@@ -288,6 +288,7 @@ void IPTCPanel::fileSaveClicked ()
     if (result==Gtk::RESPONSE_OK)
     {
     	PartialPasteIPTCDlg selectDlg(chgList);
+    	selectDlg.set_title (M("PARTIALPASTE_DIALOGIPTCSELECT"));
         if ( selectDlg.run ()) {
         	rtengine::MetadataList iptc = selectDlg.getIPTC();
         	Glib::ustring filename( dialog.get_filename() );
@@ -458,7 +459,7 @@ XRTEntryMultivalue::XRTEntryMultivalue( Gtk::Table* table, int row, const std::s
     scrolledWindowkw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowkw->add(*controlList);
 
-    control  = Gtk::manage( new Gtk::ComboBoxEntryText () );
+    control  = Gtk::manage( new MyComboBoxEntryText() );
     control->set_size_request (32, -1);
     addKW = Gtk::manage( new Gtk::Button () );
     delKW = Gtk::manage( new Gtk::Button () );
@@ -553,7 +554,7 @@ XRTCombo::XRTCombo( Gtk::Table* table, int row, const std::string &key, rtengine
 
     Gtk::Label* lab = Gtk::manage( new Gtk::Label (M(meta.guiName)+":") );
     lab->set_tooltip_text (M(meta.description));
-    control = Gtk::manage( new Gtk::ComboBoxEntryText () );
+    control = Gtk::manage( new MyComboBoxEntryText() );
     control->set_size_request (32, -1);
 
     Glib::ustring s;

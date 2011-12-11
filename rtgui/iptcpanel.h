@@ -83,7 +83,7 @@ class XRTEntryMultivalue: public XRTWidget
     Gtk::Button *delKW;
     Gtk::Image* addKWImg;
     Gtk::Image* delKWImg;
-    Gtk::ComboBoxEntryText *control;
+    MyComboBoxEntryText *control;
     Gtk::ListViewText *controlList;
 
     void add();
@@ -98,7 +98,7 @@ public:
 
 class XRTCombo: public XRTWidget
 {
-	Gtk::ComboBoxEntryText *control;
+	MyComboBoxEntryText *control;
 	rtengine::IPTCPairList_t &predefValues;
 	int readValue( );
 	int writeValue( );
