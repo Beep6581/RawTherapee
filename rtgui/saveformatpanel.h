@@ -42,7 +42,6 @@ class SaveFormatPanel : public Gtk::VBox, public AdjusterListener {
         int                 oformat;
         FormatChangeListener* listener;
         Glib::ustring       fstr[5];
-        Gtk::CheckButton*   savespp;
         
         
     public:

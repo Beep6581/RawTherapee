@@ -342,19 +342,6 @@ class RAWParamsEdited {
         bool isUnchanged() const;
 };
 
-class ExifPairEdited {
-
-    public:
-        Glib::ustring field;
-        bool value;
-};
-
-class IPTCPairEdited {
-
-    public:
-        Glib::ustring field;
-        bool values;
-};
 
 class ParamsEdited {
 
@@ -390,8 +377,6 @@ class ParamsEdited {
         RAWParamsEdited               raw;
         DirPyrEqualizerParamsEdited   dirpyrequalizer;
         HSVEqualizerParamsEdited      hsvequalizer;
-        std::vector<ExifPairEdited>   exif;
-        std::vector<IPTCPairEdited>   iptc;
 
         ParamsEdited ();
 

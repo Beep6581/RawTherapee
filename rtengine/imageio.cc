@@ -31,8 +31,7 @@
 #else
 #include <netinet/in.h>
 #endif
-#include <iptcpairs.h>
-#include <libiptcdata/iptc-jpeg.h>
+
 
 extern "C" {
 #include <iccjpeg.h>
@@ -45,79 +44,6 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
-
-// For only copying the raw input data
-void ImageIO::setMetadata (const rtexif::TagDirectory* eroot) {
-    if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
-    
-    if (eroot) {
-        rtexif::TagDirectory* td = ((rtexif::TagDirectory*)eroot)->clone (NULL);
-
-        // make IPTC and XMP pass through
-        td->keepTag(0x83bb);  // IPTC
-        td->keepTag(0x02bc);  // XMP
-
-        exifRoot=td;
-    }
-}
-
-// For merging with RT specific data
-void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<ExifPair>& exif, const std::vector<IPTCPair>& iptcc) {
-
-    // store exif info
-    exifChange.resize (exif.size());
-    for (int i=0; i<exif.size(); i++) {
-        exifChange[i].first  = exif[i].field;
-        exifChange[i].second = exif[i].value;
-    }
-
-    if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
-    
-    if (eroot)
-        exifRoot = ((rtexif::TagDirectory*)eroot)->clone (NULL);
-
-    if (iptc!=NULL) { iptc_data_free (iptc); iptc = NULL; }
-    
-    // build iptc structures for libiptcdata
-    if (iptcc.size()==0)
-        return;
-        
-    iptc = iptc_data_new ();
-    for (int i=0; i<iptcc.size(); i++) {
-        if (iptcc[i].field == "Keywords" && iptcc[i].values.size()>0) {
-            for (int j=0; j<iptcc[i].values.size(); j++) {
-                IptcDataSet * ds = iptc_dataset_new ();
-                iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
-                std::string loc = safe_locale_to_utf8(iptcc[i].values[j]);
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(64,loc.size()), IPTC_DONT_VALIDATE);
-                iptc_data_add_dataset (iptc, ds);
-                iptc_dataset_unref (ds);
-            }
-            continue;
-        }
-        else if (iptcc[i].field == "SupplementalCategories" && iptcc[i].values.size()>0) {
-            for (int j=0; j<iptcc[i].values.size(); j++) {
-                IptcDataSet * ds = iptc_dataset_new ();
-                iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
-                std::string loc = safe_locale_to_utf8(iptcc[i].values[j]);
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(32,loc.size()), IPTC_DONT_VALIDATE);
-                iptc_data_add_dataset (iptc, ds);
-                iptc_dataset_unref (ds);
-            }
-            continue;
-        }
-        for (int j=0; j<16; j++)
-            if (iptcc[i].field == strTags[j].field && iptcc[i].values.size()>0) {
-                IptcDataSet * ds = iptc_dataset_new ();
-                iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
-                std::string loc = safe_locale_to_utf8(iptcc[i].values[0]);
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(strTags[j].size,loc.size()), IPTC_DONT_VALIDATE);
-                iptc_data_add_dataset (iptc, ds);
-                iptc_dataset_unref (ds);
-            }
-    }
-    iptc_data_sort (iptc);
-}
 
 void ImageIO::setOutputProfile  (char* pdata, int plen) {
 
@@ -136,7 +62,8 @@ ImageIO::~ImageIO () {
     if (embProfile)
         cmsCloseProfile(embProfile);
     delete [] loadedProfileData;
-    delete exifRoot;
+    if( idata )
+    	delete idata;
     delete [] profileData;
 }
 
@@ -592,7 +519,11 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
 
     delete [] row;
 	fclose (file);
-
+	if( idata ){
+		idata->setOutputImageInfo ( getW(), getH(), bps );
+		idata->writeToImage( fname );
+	}
+	
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);
@@ -644,33 +575,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 
 	jpeg_start_compress(&cinfo, TRUE);
 
-    // buffer for exif and iptc markers
-	unsigned char* buffer = new unsigned char[165535];	//TODO: Is it really 165535... or 65535 ?
-    unsigned int size;
-    // assemble and write exif marker
-   if (exifRoot) {
-        int size = rtexif::ExifManager::createJPEGMarker (exifRoot, exifChange, cinfo.image_width, cinfo.image_height, buffer);
-        if (size>0 && size<65530)
-            jpeg_write_marker(&cinfo, JPEG_APP0+1, buffer, size);
-    }
-    // assemble and write iptc marker
-    if (iptc) {
-        unsigned char* iptcdata;
-        bool error = false;
-        if (iptc_data_save (iptc, &iptcdata, &size)) {
-            if (iptcdata)
-                iptc_data_free_buf (iptc, iptcdata);
-            error = true;
-        }
-        int bytes = 0;
-        if (!error && (bytes = iptc_jpeg_ps3_save_iptc (NULL, 0, iptcdata, size, buffer, 65532)) < 0) {
-            if (iptcdata)
-                iptc_data_free_buf (iptc, iptcdata);
-            error = true;
-        }
-        if (!error)
-            jpeg_write_marker(&cinfo, JPEG_APP0+13, buffer, bytes);
-    }
+
     // write icc profile to the output
     if (profileData)
         write_icc_profile (&cinfo, (JOCTET*)profileData, profileLength);
@@ -698,10 +603,12 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	jpeg_destroy_compress (&cinfo);
 
     delete [] row;
-    delete [] buffer;
-
 	fclose (file);
-
+	if( idata ){
+		idata->setOutputImageInfo ( getW(), getH(), 8 );
+		idata->writeToImage( fname );
+	}
+	
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);
@@ -720,56 +627,9 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 
     int lineWidth = width*3*bps/8;
     unsigned char* linebuffer = new unsigned char[lineWidth];
-// TODO the following needs to be looked into - do we really need two ways to write a Tiff file ?
-    if (exifRoot && uncompressed) {
-        FILE *file = safe_g_fopen_WriteBinLock (fname);
-
-        if (!file)
-            return IMIO_CANNOTREADFILE;           
-            
-        if (pl) {
-            pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
-            pl->setProgress (0.0);
-        }
-        
-        // buffer for the exif and iptc
-        unsigned char* buffer = new unsigned char[165535];	//TODO: Is it really 165535... or 65535 ?
-        unsigned char* iptcdata = NULL;
-        unsigned int iptclen = 0;
-        if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen) && iptcdata) {
-            iptc_data_free_buf (iptc, iptcdata);
-            iptcdata = NULL;
-        }
-        int size = rtexif::ExifManager::createTIFFHeader (exifRoot, exifChange, width, height, bps, profileData, profileLength, (char*)iptcdata, iptclen, buffer);
-        if (iptcdata) 
-            iptc_data_free_buf (iptc, iptcdata);
-
-        // The maximum lenght is strangely not the same than for the JPEG file...
-        // Which maximum length is the good one ?
-        if (size>0 && size<165530)
-            fwrite (buffer, size, 1, file);
-
-        bool needsReverse = bps==16 && exifRoot->getOrder()==rtexif::MOTOROLA;
-        
-        for (int i=0; i<height; i++) {
-            getScanline (i, linebuffer, bps);
-            if (needsReverse)
-                for (int i=0; i<lineWidth; i+=2) {
-                    char c = linebuffer[i];
-                    linebuffer[i] = linebuffer[i+1];
-                    linebuffer[i+1] = c;
-                }
-            fwrite (linebuffer, lineWidth, 1, file);
-            if (pl && !(i%100))
-                pl->setProgress ((double)(i+1)/height);
-        }
-        delete [] buffer;
-        
-        fclose (file);
-    }
-    else {
-				// little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
-				const char *mode = !exifRoot ? "w" : (exifRoot->getOrder()==rtexif::INTEL ? "wl":"wb");
+    {
+		// little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
+		const char *mode = "w"; //!exifRoot ? "w" : (exifRoot->getOrder()==rtexif::INTEL ? "wl":"wb");
         #ifdef WIN32
         wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
         TIFF* out = TIFFOpenW (wfilename, mode);
@@ -785,39 +645,6 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
             pl->setProgress (0.0);
         }
         
-        if (exifRoot){
-        	rtexif::Tag *tag = exifRoot->getTag (TIFFTAG_EXIFIFD);
-        	if (tag && tag->isDirectory()){
-							rtexif::TagDirectory *exif = tag->getDirectory();
-							if (exif)	{
-								int exif_size = exif->calculateSize();
-								unsigned char *buffer = new unsigned char[exif_size+8];
-								// TIFFOpen writes out the header and sets file pointer at position 8
-								
-								exif->write (8, buffer);
-								write (TIFFFileno (out), buffer+8, exif_size);
-								delete [] buffer;
-								// let libtiff know that scanlines or any other following stuff should go 
-								// at a different offset:
-								TIFFSetWriteOffset (out, exif_size+8);
-								TIFFSetField (out, TIFFTAG_EXIFIFD, 8);								
-							}
-        	}
-
-//TODO Even though we are saving EXIF IFD - MakerNote still comes out screwy.
-
-        	if ((tag = exifRoot->getTag (TIFFTAG_MODEL)) != NULL)
-						TIFFSetField (out, TIFFTAG_MODEL, tag->getValue());
-        	if ((tag = exifRoot->getTag (TIFFTAG_MAKE)) != NULL)
-						TIFFSetField (out, TIFFTAG_MAKE, tag->getValue());
-        	if ((tag = exifRoot->getTag (TIFFTAG_DATETIME)) != NULL)
-						TIFFSetField (out, TIFFTAG_DATETIME, tag->getValue());
-        	if ((tag = exifRoot->getTag (TIFFTAG_ARTIST)) != NULL)
-						TIFFSetField (out, TIFFTAG_ARTIST, tag->getValue());
-        	if ((tag = exifRoot->getTag (TIFFTAG_COPYRIGHT)) != NULL)
-						TIFFSetField (out, TIFFTAG_COPYRIGHT, tag->getValue());
-	
-        }
 				
         TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee 4");
         TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
@@ -835,10 +662,15 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
 
         if (profileData)
             TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
-
+        bool needsReverse =false;
         for (int row = 0; row < height; row++) {
             getScanline (row, linebuffer, bps);
-        
+            if (needsReverse)
+                for (int i=0; i<lineWidth; i+=2) {
+                    char c = linebuffer[i];
+                    linebuffer[i] = linebuffer[i+1];
+                    linebuffer[i+1] = c;
+                }        
             if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
                 TIFFClose (out);
                 delete [] linebuffer;
@@ -851,6 +683,10 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
     }
 
     delete [] linebuffer;
+	if( idata ){
+		idata->setOutputImageInfo ( getW(), getH(), bps );
+		idata->writeToImage( fname );
+	}	
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);

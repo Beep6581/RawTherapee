@@ -72,6 +72,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* menuLabel;
     Gtk::MenuItem* menuFileOperations;
     Gtk::ImageMenuItem* menuProfileOperations;
+    Gtk::ImageMenuItem* menuIPTCOperations;
     Gtk::MenuItem* menuDF;
     Gtk::MenuItem* selectDF;
     Gtk::MenuItem* thisIsDF;
@@ -85,6 +86,10 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* copyprof;
     Gtk::MenuItem* pasteprof;
     Gtk::MenuItem* partpasteprof;
+    Gtk::MenuItem* copyIPTC;
+    Gtk::MenuItem* pasteIPTC;
+    Gtk::MenuItem* partpasteIPTC;
+    Gtk::MenuItem* resyncIPTC;
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* applypartprof;
     Gtk::MenuItem* execcustprof;
@@ -141,6 +146,10 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void copyProfile ();
     void pasteProfile ();
     void partPasteProfile ();
+    void copyMetadata ();
+    void pasteMetadata ();
+    void partPasteMetadata ();
+    void resyncMetadata ();
 
     void openDefaultViewer (int destination);
 
