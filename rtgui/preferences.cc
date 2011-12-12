@@ -305,11 +305,18 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     Gtk::Frame* fdp = Gtk::manage (new Gtk::Frame (M("PREFERENCES_PROFILEHANDLING")));
     Gtk::VBox* vbdp = Gtk::manage (new Gtk::VBox ());
     vbdp->set_border_width (4);
-    saveParamsFile = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_PROFILESAVEINPUT")));
-    vbdp->pack_start (*saveParamsFile, Gtk::PACK_SHRINK, 4);
+    saveXmpIntoDng = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_XMP_INSIDE_DNG")));
+    vbdp->pack_start (*saveXmpIntoDng, Gtk::PACK_SHRINK, 4);
+    saveXmpIntoJpg = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_XMP_INSIDE_JPG")));
+    vbdp->pack_start (*saveXmpIntoJpg, Gtk::PACK_SHRINK, 4);
+    saveXmpIntoPng = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_XMP_INSIDE_PNG")));
+    vbdp->pack_start (*saveXmpIntoPng, Gtk::PACK_SHRINK, 4);
+    saveXmpIntoTiff = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_XMP_INSIDE_TIFF")));
+    vbdp->pack_start (*saveXmpIntoTiff, Gtk::PACK_SHRINK, 4);
+
     saveParamsCache = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_PROFILESAVECACHE")));
     vbdp->pack_start (*saveParamsCache, Gtk::PACK_SHRINK, 4);
-    Gtk::Label* lplab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PROFILELOADPR")+":"));
+    /*Gtk::Label* lplab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PROFILELOADPR")+":"));
     loadParamsPreference = Gtk::manage (new Gtk::ComboBoxText ());
     loadParamsPreference->append_text (M("PREFERENCES_PROFILEPRCACHE"));
     loadParamsPreference->append_text (M("PREFERENCES_PROFILEPRFILE"));
@@ -317,7 +324,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     hb41->pack_start (*lplab, Gtk::PACK_SHRINK, 0);
     hb41->pack_start (*loadParamsPreference, Gtk::PACK_EXPAND_WIDGET, 0);
     hb41->set_spacing(4);
-    vbdp->pack_start (*hb41, Gtk::PACK_EXPAND_WIDGET, 4);
+    vbdp->pack_start (*hb41, Gtk::PACK_EXPAND_WIDGET, 4);*/
     fdp->add (*vbdp);
     mvbpp->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 
@@ -367,8 +374,15 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 
     Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M("PREFERENCES_METADATA")));
     Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
-    ckbTunnelMetaData = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_TUNNELMETADATA")));
-    vbmd->pack_start (*ckbTunnelMetaData, Gtk::PACK_SHRINK, 4);
+    ckbWriteMetaData = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_OUTPUTMETADATA")));
+    vbmd->pack_start (*ckbWriteMetaData, Gtk::PACK_SHRINK, 4);
+    Gtk::HBox* hb44 = Gtk::manage (new Gtk::HBox ());
+    fcDefMetadata = Gtk::manage (new Gtk::FileChooserButton(M("PREFERENCES_DEFAULT_METADATA"), Gtk::FILE_CHOOSER_ACTION_OPEN) );
+
+    Gtk::Label *dmLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_DEFAULT_METADATA")));
+    hb44->pack_start(*dmLab , Gtk::PACK_SHRINK, 4 );
+    hb44->pack_start(*fcDefMetadata);
+    vbmd->pack_start (*hb44, Gtk::PACK_SHRINK, 4);
     fmd->add (*vbmd);
     mvbpp->pack_start (*fmd, Gtk::PACK_SHRINK, 4);
 
@@ -1045,11 +1059,15 @@ void Preferences::storePreferences () {
     moptions.overlayedFileNames = overlayedFileNames->get_active ();
     moptions.internalThumbIfUntouched = ckbInternalThumbIfUntouched->get_active ();
     
-    moptions.saveParamsFile = saveParamsFile->get_active ();
+    moptions.embedXmpIntoDNG = saveXmpIntoDng->get_active ();
+    moptions.embedXmpIntoJPG = saveXmpIntoJpg->get_active ();
+    moptions.embedXmpIntoPNG = saveXmpIntoPng->get_active ();
+    moptions.embedXmpIntoTIFF= saveXmpIntoTiff->get_active ();
     moptions.saveParamsCache = saveParamsCache->get_active ();
-    moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
+    //moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
 
-    moptions.tunnelMetaData = ckbTunnelMetaData->get_active ();
+    moptions.outputMetaData = ckbWriteMetaData->get_active ();
+    moptions.defMetadata    = fcDefMetadata->get_filename();
 
     moptions.rtSettings.darkFramesPath =   darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath =   flatFieldDir->get_filename();
@@ -1169,12 +1187,24 @@ void Preferences::fillPreferences () {
     overlayedFileNames->set_active (moptions.overlayedFileNames);
     ckbInternalThumbIfUntouched->set_active(moptions.internalThumbIfUntouched);
     
-    saveParamsFile->set_active (moptions.saveParamsFile);
+    saveXmpIntoDng->set_active (moptions.embedXmpIntoDNG);
+    saveXmpIntoJpg->set_active (moptions.embedXmpIntoJPG);
+    saveXmpIntoPng->set_active (moptions.embedXmpIntoPNG);
+    saveXmpIntoTiff->set_active (moptions.embedXmpIntoTIFF);
+
     saveParamsCache->set_active (moptions.saveParamsCache);
-    loadParamsPreference->set_active (moptions.paramsLoadLocation);    
+    //loadParamsPreference->set_active (moptions.paramsLoadLocation);
 
-    ckbTunnelMetaData->set_active (moptions.tunnelMetaData); 
-
+    ckbWriteMetaData->set_active (moptions.outputMetaData);
+    if( safe_file_test (moptions.defMetadata, Glib::FILE_TEST_EXISTS))
+       fcDefMetadata->set_filename( moptions.defMetadata );
+    else if( moptions.defMetadata.empty() ){
+    	fcDefMetadata->set_filename("");
+		if (options.multiUser)
+			fcDefMetadata->set_current_folder (Options::rtdir + "/iptc" );
+		else
+			fcDefMetadata->set_current_folder (argv0 + "/iptc" );
+    }
     if (!moptions.tabbedUI)
         editorLayout->set_active(moptions.mainNBVertical ? 1 : 0);
     else 

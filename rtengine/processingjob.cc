@@ -20,14 +20,14 @@
 
 namespace rtengine {
 
-ProcessingJob* ProcessingJob::create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams) {
+ProcessingJob* ProcessingJob::create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams, rtengine::ImageMetaData* md, bool writeMeta)  {
 
-    return new ProcessingJobImpl (fname, isRaw, pparams);
+    return new ProcessingJobImpl (fname, isRaw, pparams, md, writeMeta);
 }
 
-ProcessingJob* ProcessingJob::create (InitialImage* initialImage, const procparams::ProcParams& pparams) {
+ProcessingJob* ProcessingJob::create (InitialImage* initialImage, const procparams::ProcParams& pparams, rtengine::ImageMetaData* md, bool writeMeta) {
 
-    return new ProcessingJobImpl (initialImage, pparams);
+    return new ProcessingJobImpl (initialImage, pparams, md, writeMeta );
 }
 
 void ProcessingJob::destroy (ProcessingJob* job) {

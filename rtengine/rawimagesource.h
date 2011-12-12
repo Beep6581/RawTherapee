@@ -128,7 +128,7 @@ class RawImageSource : public ImageSource {
         inline void getRowStartEnd (int x, int &start, int &end);
 
     public:
-        RawImageSource ();
+        RawImageSource (ImageMetaData *meta);
         ~RawImageSource ();
 
         int         load        (Glib::ustring fname, bool batch = false);
@@ -157,7 +157,6 @@ class RawImageSource : public ImageSource {
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 
-        ImageData*  getImageData () { return idata; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);

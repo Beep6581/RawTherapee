@@ -30,8 +30,6 @@
 #include <rtengine.h>
 #include <glibmm.h>
 #include <procparams.h>
-#include <libiptcdata/iptc-data.h>
-#include <rtexif.h>
 
 namespace rtengine {
 
@@ -44,15 +42,14 @@ class ImageIO {
         int profileLength;
         char* loadedProfileData;
         int loadedProfileLength;
-        std::vector<std::pair<std::string,std::string> > exifChange;
-        IptcData* iptc;
-        const rtexif::TagDirectory* exifRoot;
+
+		ImageMetaData *idata;
         Glib::Mutex imutex;
 
     public:
         static Glib::ustring errorMsg[6];
     	
-        ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), loadedProfileData(NULL), loadedProfileLength(0), iptc(NULL), exifRoot (NULL) {}
+        ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), loadedProfileData(NULL), loadedProfileLength(0), idata(NULL) {}
         
         virtual ~ImageIO ();
 
@@ -82,8 +79,7 @@ class ImageIO {
         cmsHPROFILE getEmbeddedProfile () { return embProfile; }
         void        getEmbeddedProfileData (int& length, unsigned char*& pdata) { length = loadedProfileLength; pdata = (unsigned char*)loadedProfileData; }
 
-		void setMetadata (const rtexif::TagDirectory* eroot);    
-        void setMetadata (const rtexif::TagDirectory* eroot, const std::vector<rtengine::procparams::ExifPair>& exif, const std::vector<rtengine::procparams::IPTCPair>& iptcc);    
+		void setMetadata( ImageMetaData *mdata ){ if(idata) delete idata; idata = mdata; }
         void setOutputProfile  (char* pdata, int plen);
         Glib::Mutex& mutex () { return imutex; }
 };
