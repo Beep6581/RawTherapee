@@ -803,7 +803,13 @@ if (keyFile.has_group ("Crop")) {
     if (keyFile.has_key ("Crop", "W"))          crop.w          = keyFile.get_integer ("Crop", "W");
     if (keyFile.has_key ("Crop", "H"))          crop.h          = keyFile.get_integer ("Crop", "H");
     if (keyFile.has_key ("Crop", "FixedRatio")) crop.fixratio   = keyFile.get_boolean ("Crop", "FixedRatio");
-    if (keyFile.has_key ("Crop", "Ratio"))      crop.ratio      = keyFile.get_string  ("Crop", "Ratio");
+    if (keyFile.has_key ("Crop", "Ratio")){
+    	crop.ratio      = keyFile.get_string  ("Crop", "Ratio");
+    	//backwards compatibility for crop.ratio
+    	if (crop.ratio=="DIN")    crop.ratio = "1.414 - DIN EN ISO 216";
+    	if (crop.ratio=="8.5:11") crop.ratio = "8.5:11 - US Letter";
+    	if (crop.ratio=="11:17")  crop.ratio = "11:17 - Tabloid";
+    }
     if (keyFile.has_key ("Crop", "Orientation"))crop.orientation= keyFile.get_string  ("Crop", "Orientation");
     if (keyFile.has_key ("Crop", "Guide"))      crop.guide      = keyFile.get_string  ("Crop", "Guide");
 }

@@ -130,27 +130,45 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
 
   ppi->set_value (300);
   // ppibox END
+  
+ /****************
+ * Crop Ratio
+ *****************/
+  int NumberOfCropRatios = 25;    //!!! change this value when adding new crop ratios
+  cropratio.resize (NumberOfCropRatios);
 
-  ratio->append_text ("3:2");     //0
-  ratio->append_text ("4:3");     //1
-  ratio->append_text ("16:9");    //2
-  ratio->append_text ("16:10");   //3
-  ratio->append_text ("1:1");     //4
-  ratio->append_text ("2:1");     //5
-  ratio->append_text ("3:1");     //6
-  ratio->append_text ("4:1");     //7
-  ratio->append_text ("5:1");     //8
-  ratio->append_text ("6:1");     //9
-  ratio->append_text ("7:1");     //10
-  ratio->append_text ("6:17");    //11
-  ratio->append_text ("5:4");     //12
-  ratio->append_text ("5:7");     //13
-  ratio->append_text ("DIN");     //14
-  ratio->append_text ("8.5:11");  //15
-  ratio->append_text ("11:14");   //16
-  ratio->append_text ("11:17");   //17
-  ratio->append_text ("13:19");   //18
-  ratio->append_text ("17:22");   //19
+  cropratio[0].label  = "3:2";                     cropratio[0].value  = 3.0/2.0;
+  cropratio[1].label  = "4:3";                     cropratio[1].value  = 4.0/3.0;
+  cropratio[2].label  = "16:9";                    cropratio[2].value  = 16.0/9.0;
+  cropratio[3].label  = "16:10";                   cropratio[3].value  = 16.0/10.0;
+  cropratio[4].label  = "1:1";                     cropratio[4].value  = 1.0/1.0;
+  cropratio[5].label  = "2:1";                     cropratio[5].value  = 2.0/1.0;
+  cropratio[6].label  = "3:1";                     cropratio[6].value  = 3.0/1.0;
+  cropratio[7].label  = "4:1";                     cropratio[7].value  = 4.0/1.0;
+  cropratio[8].label  = "5:1";                     cropratio[8].value  = 5.0/1.0;
+  cropratio[9].label  = "6:1";                     cropratio[9].value  = 6.0/1.0;
+  cropratio[10].label = "7:1";                     cropratio[10].value = 7.0/1.0;
+  cropratio[11].label = "4:5";                     cropratio[11].value = 4.0/5.0;
+  cropratio[12].label = "5:7";                     cropratio[12].value = 5.0/7.0;
+  cropratio[13].label = "6:7";                     cropratio[13].value = 6.0/7.0;
+  cropratio[14].label = "6:17";                    cropratio[14].value = 6.0/17.0;
+  cropratio[15].label = "24:65 - XPAN";            cropratio[15].value = 24.0/65.0;
+  cropratio[16].label = "1.414 - DIN EN ISO 216";  cropratio[16].value = 1.414;
+  cropratio[17].label = "3.5:5";                   cropratio[17].value = 3.5/5.0;
+  cropratio[18].label = "8.5:11 - US Letter";      cropratio[18].value = 8.5/11.0;
+  cropratio[19].label = "9.5:12";                  cropratio[19].value = 9.5/12.0;
+  cropratio[20].label = "10:12";                   cropratio[20].value = 10.0/12.0;
+  cropratio[21].label = "11:14";                   cropratio[21].value = 11.0/14.0;
+  cropratio[22].label = "11:17 - Tabloid";         cropratio[22].value = 11.0/17.0;
+  cropratio[23].label = "13:19";                   cropratio[23].value = 13.0/19.0;
+  cropratio[24].label = "17:22";                   cropratio[24].value = 17.0/22.0;
+
+
+    
+  // populate the combobox
+  for (int i=0; i<NumberOfCropRatios; i++) {
+     ratio->append_text (cropratio[i].label);
+  }
 
   ratio->set_active (0);
 
@@ -940,48 +958,8 @@ double Crop::getRatio () {
   double r = -1.0;
   if (fixr->get_active()==false)
     return r;
-  if (ratio->get_active_row_number()==0)
-    r = 3.0/2.0;
-  else if (ratio->get_active_row_number()==1)
-    r = 4.0/3.0;
-  else if (ratio->get_active_row_number()==2)
-    r = 16.0/9.0;
-  else if (ratio->get_active_row_number()==3)
-    r = 16.0/10.0;
 
-  else if (ratio->get_active_row_number()==4)
-    r = 1.0/1.0;
-  else if (ratio->get_active_row_number()==5)
-    r = 2.0/1.0;
-  else if (ratio->get_active_row_number()==6)
-    r = 3.0/1.0;
-  else if (ratio->get_active_row_number()==7)
-    r = 4.0/1.0;
-  else if (ratio->get_active_row_number()==8)
-    r = 5.0/1.0;
-  else if (ratio->get_active_row_number()==9)
-    r = 6.0/1.0;
-  else if (ratio->get_active_row_number()==10)
-    r = 7.0/1.0;
-  else if (ratio->get_active_row_number()==11)
-    r = 6.0/17.0;
-
-  else if (ratio->get_active_row_number()==12)
-    r = 5.0/4.0;
-  else if (ratio->get_active_row_number()==13)
-    r = 5.0/7.0;
-  else if (ratio->get_active_row_number()==14)
-    r = 1.414;//DIN
-  else if (ratio->get_active_row_number()==15)
-    r = 8.5/11.0;
-  else if (ratio->get_active_row_number()==16)
-    r = 11.0/14.0;
-  else if (ratio->get_active_row_number()==17)
-    r = 11.0/17.0;
-  else if (ratio->get_active_row_number()==18)
-    r = 13.0/19.0;
-  else if (ratio->get_active_row_number()==19)
-    r = 17.0/22.0;
+  r = cropratio[ratio->get_active_row_number()].value;
 
   if (orientation->get_active_row_number()==0)
     return r;
