@@ -23,6 +23,7 @@
 #include <cropguilistener.h>
 #include <toolpanel.h>
 #include <guiutils.h>
+#include <vector>
 
 class CropPanelListener {
 
@@ -30,6 +31,12 @@ class CropPanelListener {
     virtual void cropSelectRequested () {}
 };
 
+class CropRatio {
+
+    public:
+        Glib::ustring label;
+        double value;
+};
 
 class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel, public rtengine::SizeListener {
 
@@ -57,6 +64,7 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     sigc::connection xconn, yconn, wconn, hconn, econn, fconn, rconn, oconn, gconn;
     bool wDirty, hDirty, xDirty, yDirty, lastEnabled, lastFixRatio;
     void adjustCropToRatio();
+    std::vector<CropRatio>   cropratio;
 
   public:
 
