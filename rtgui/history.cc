@@ -109,6 +109,7 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener
     bscrollw->add (*bTreeView);
     
     bookmarkModel = Gtk::ListStore::create (bookmarkColumns);
+    bookmarkModel->set_sort_column(bookmarkColumns.name, Gtk::SORT_ASCENDING);
     bTreeView->set_model (bookmarkModel);
     bTreeView->set_headers_visible (false);
     //bTreeView->append_column_editable (M("HISTORY_SNAPSHOTS"), bookmarkColumns.text);
