@@ -1228,9 +1228,8 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 				for (int n=0; n<2; n++) {
 					for (int row = 0; row+m < H; row+=2) 
 						for (int col = 0; col+n < W; col+=2) {
-							
 							vignettecorr = ( refcolor[m][n]/MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black()) );
-							rawData[row+m][col+n] = (rawData[row+m][col+n] * vignettecorr); 	
+							rawData[row+m][col+n] = (rawData[row+m][col+n]-ri->get_black()) * vignettecorr + ri->get_black(); 	
 						}
 				}
 			
@@ -1251,7 +1250,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 							for (int col = 0; col+n < W; col+=2) {
 								hlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
 								vlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
-								rawData[row+m][col+n] = (rawData[row+m][col+n] * hlinecorr * vlinecorr); 
+								rawData[row+m][col+n] = ((rawData[row+m][col+n]-ri->get_black()) * hlinecorr * vlinecorr + ri->get_black()); 
 							}
 					}
 				free (cfablur1);
@@ -1288,65 +1287,92 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 		}
 	}
 }
-	
-	void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW ) {
 
-		float (*temp);
-		temp = (float (*)) calloc (H*W, sizeof *temp);
-		
-		//box blur cfa image; box size = BS
-		//horizontal blur
-		for (int row = 0; row < H; row++) {
-			int len = boxW/2 + 1;
-			temp[row*W+0] = (float)riFlatFile->data[row][0]/len;
-			temp[row*W+1] = (float)riFlatFile->data[row][1]/len;
-			for (int j=2; j<=boxW; j+=2) {
-				temp[row*W+0] += (float)riFlatFile->data[row][j]/len;
-				temp[row*W+1] += (float)riFlatFile->data[row][j+1]/len;
-			}
-			for (int col=2; col<=boxW; col+=2) {
-				temp[row*W+col] = (temp[row*W+col-2]*len + riFlatFile->data[row][col+boxW])/(len+1);
-				temp[row*W+col+1] = (temp[row*W+col-1]*len + riFlatFile->data[row][col+boxW+1])/(len+1);
-				len ++;
-			}
-			for (int col = boxW+2; col < W-boxW; col++) {
-				temp[row*W+col] = temp[row*W+col-2] + ((float)(riFlatFile->data[row][col+boxW] - riFlatFile->data[row][col-boxW-2]))/len;
-			}
-			for (int col=W-boxW; col<W; col+=2) {
-				temp[row*W+col] = (temp[row*W+col-2]*len - riFlatFile->data[row][col-boxW-2])/(len-1);
-				if (col+1<W) 
-					temp[row*W+col+1] = (temp[row*W+col-1]*len - riFlatFile->data[row][col-boxW-1])/(len-1);
-				len --;
-			}
-		}
+void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, int boxW ) {
 
-		//vertical blur
-		for (int col = 0; col < W; col++) {
-			int len = boxH/2 + 1;
-			cfablur[0*W+col] = temp[0*W+col]/len;
-			cfablur[1*W+col] = temp[1*W+col]/len;
-			for (int i=2; i<boxH+2; i+=2) {
-				cfablur[0*W+col] += temp[i*W+col]/len;
-				cfablur[1*W+col] += temp[(i+1)*W+col]/len;
-			}
-			for (int row=2; row<boxH+2; row+=2) {
-				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len + temp[(row+boxH)*W+col])/(len+1);
-				cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len + temp[(row+boxH+1)*W+col])/(len+1);
-				len ++;
-			}
-			for (int row = boxH+2; row < H-boxH; row++) {
-				cfablur[row*W+col] = cfablur[(row-2)*W+col] + (temp[(row+boxH)*W+col] - temp[(row-boxH-2)*W+col])/len;
-			}
-			for (int row=H-boxH; row<H; row+=2) {
-				cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len - temp[(row-boxH-2)*W+col])/(len-1);
-				if (row+1<H) 
-					cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len - temp[(row-boxH-1)*W+col])/(len-1);
-				len --;
-			}
-		}
-		free (temp);
+	float (*cfatmp);
+	cfatmp = (float (*)) calloc (H*W, sizeof *cfatmp);
+	float clean0, clean1;
+	float deadthresh = 0.125;
 		
+	for (int i=0; i<H; i++) {
+		int iprev,inext,jprev,jnext;
+		float p[9],temp;
+		if (i<2) {iprev=i+2;} else {iprev=i-2;}
+		if (i>H-3) {inext=i-2;} else {inext=i+2;}
+		for (int j=0; j<W; j++) {
+			if (j<2) {jprev=j+2;} else {jprev=j-2;}
+			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
+			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext], \
+				   rawData[i][jprev],rawData[i][j],rawData[i][jnext], \
+				   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],cfatmp[i*W+j]);
+		}
 	}
+	
+	//box blur cfa image; box size = BS
+	//horizontal blur
+	for (int row = 0; row < H; row++) {
+		int len = boxW/2 + 1;
+		clean0 = (riFlatFile->data[row][0] < deadthresh * cfatmp[row*W+0]) ? cfatmp[row*W+0] : riFlatFile->data[row][0];
+		clean1 = (riFlatFile->data[row][1] < deadthresh * cfatmp[row*W+1]) ? cfatmp[row*W+1] : riFlatFile->data[row][1];
+		cfatmp[row*W+0] = clean0/len;
+		cfatmp[row*W+1] = clean1/len;
+		for (int j=2; j<=boxW; j+=2) {
+			clean0 = (riFlatFile->data[row][j]   < deadthresh * cfatmp[row*W])   ? cfatmp[row*W]   : riFlatFile->data[row][j];
+			clean1 = (riFlatFile->data[row][j+1] < deadthresh * cfatmp[row*W+1]) ? cfatmp[row*W+1] : riFlatFile->data[row][j+1];
+			cfatmp[row*W+0] += clean0/len;
+			cfatmp[row*W+1] += clean1/len;
+		}
+		for (int col=2; col<=boxW; col+=2) {
+			clean0 = (riFlatFile->data[row][col+boxW]   < deadthresh * cfatmp[row*W+col])   ? cfatmp[row*W+col]   : riFlatFile->data[row][col+boxW];
+			clean1 = (riFlatFile->data[row][col+boxW+1] < deadthresh * cfatmp[row*W+col+1]) ? cfatmp[row*W+col+1] : riFlatFile->data[row][col+boxW+1];
+			cfatmp[row*W+col] = (cfatmp[row*W+col-2]*len + clean0)/(len+1);
+			cfatmp[row*W+col+1] = (cfatmp[row*W+col-1]*len + clean1)/(len+1);
+			len ++;
+		}
+		for (int col = boxW+2; col < W-boxW; col++) {
+			clean0 = (riFlatFile->data[row][col+boxW]   < deadthresh * cfatmp[row*W+col])   ? cfatmp[row*W+col]   : riFlatFile->data[row][col+boxW];
+			clean1 = (riFlatFile->data[row][col-boxW-2] < deadthresh * cfatmp[row*W+col-boxW-2]) ? cfatmp[row*W+col-boxW-2] : riFlatFile->data[row][col-boxW-2];
+			cfatmp[row*W+col] = cfatmp[row*W+col-2] + (clean0-clean1)/len;
+		}
+		for (int col=W-boxW; col<W; col+=2) {
+			clean0 = (riFlatFile->data[row][col-boxW-2] < deadthresh * cfatmp[row*W+col-boxW-2]) ? cfatmp[row*W+col-boxW-2] : riFlatFile->data[row][col-boxW-2];
+			cfatmp[row*W+col] = (cfatmp[row*W+col-2]*len - clean0)/(len-1);
+			if (col+1<W) {
+				clean0 = (riFlatFile->data[row][col-boxW-1] < deadthresh * cfatmp[row*W+col-boxW-1]) ? cfatmp[row*W+col-boxW-1] : riFlatFile->data[row][col-boxW-1];
+				cfatmp[row*W+col+1] = (cfatmp[row*W+col-1]*len - clean0)/(len-1);
+			}
+			len --;
+		}
+	}
+
+	//vertical blur
+	for (int col = 0; col < W; col++) {
+		int len = boxH/2 + 1;
+		cfablur[0*W+col] = cfatmp[0*W+col]/len;
+		cfablur[1*W+col] = cfatmp[1*W+col]/len;
+		for (int i=2; i<boxH+2; i+=2) {
+			cfablur[0*W+col] += cfatmp[i*W+col]/len;
+			cfablur[1*W+col] += cfatmp[(i+1)*W+col]/len;
+		}
+		for (int row=2; row<boxH+2; row+=2) {
+			cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len + cfatmp[(row+boxH)*W+col])/(len+1);
+			cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len + cfatmp[(row+boxH+1)*W+col])/(len+1);
+			len ++;
+		}
+		for (int row = boxH+2; row < H-boxH; row++) {
+			cfablur[row*W+col] = cfablur[(row-2)*W+col] + (cfatmp[(row+boxH)*W+col] - cfatmp[(row-boxH-2)*W+col])/len;
+		}
+		for (int row=H-boxH; row<H; row+=2) {
+			cfablur[row*W+col] = (cfablur[(row-2)*W+col]*len - cfatmp[(row-boxH-2)*W+col])/(len-1);
+			if (row+1<H) 
+				cfablur[(row+1)*W+col] = (cfablur[(row-1)*W+col]*len - cfatmp[(row-boxH-1)*W+col])/(len-1);
+			len --;
+		}
+	}
+	free (cfatmp);
+	
+}
 	
 
 // Scale original pixels into the range 0 65535 using black offsets and multipliers 
