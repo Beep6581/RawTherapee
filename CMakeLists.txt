@@ -306,6 +306,10 @@ if (OPTION_OMP)
     endif (OPENMP_FOUND)
 endif (OPTION_OMP)
 
+if (UNIX)
+    install (PROGRAMS rtstart DESTINATION ${BINDIR})
+endif (UNIX)
+
 install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
 install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
 install (FILES AboutThisBuild.txt DESTINATION ${CREDITSDIR})

@@ -73,7 +73,15 @@ class ImProcCoordinator : public StagedImageProcessor {
 		LUTf chroma_acurve;
 		LUTf chroma_bcurve;
 		LUTf satcurve;
-        
+	
+	LUTf rCurve;
+	LUTf gCurve;
+	LUTf bCurve;
+
+	LUTu rcurvehist, rcurvehistCropped, rbeforehist;
+	LUTu gcurvehist, gcurvehistCropped, gbeforehist;
+	LUTu bcurvehist, bcurvehistCropped, bbeforehist;
+
 		LUTu vhist16;
 		LUTu lhist16,lhist16Cropped;
         LUTu histCropped;

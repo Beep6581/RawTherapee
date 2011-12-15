@@ -62,6 +62,17 @@ class LCurveParams {
 };
 
 /**
+  * Parameters of the RGB curves
+  */
+class RGBCurvesParams {
+
+    public:
+        std::vector<double>   rcurve;
+        std::vector<double>   gcurve;
+        std::vector<double>   bcurve;
+};
+
+/**
   * Parameters of the sharpening
   */
 class SharpeningParams {
@@ -476,6 +487,7 @@ class ProcParams {
     public:
         ToneCurveParams         toneCurve;       ///< Tone curve parameters
         LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
+        RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
         SharpeningParams        sharpening;      ///< Sharpening parameters
         SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
         SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters

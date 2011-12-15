@@ -78,7 +78,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void curveChanged ();
     void expandCurve (bool isExpanded);
     bool isCurveExpanded ();
-    void updateCurveBackgroundHistogram (LUTu & hist);
+    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 };
 
 #endif

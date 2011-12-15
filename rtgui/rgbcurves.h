@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _LABCURVE_H_
-#define _LABCURVE_H_
+#ifndef _RGBCURVES_H_
+#define _RGBCURVES_H_
 
 #include <gtkmm.h>
 #include <adjuster.h>
@@ -26,42 +26,24 @@
 #include <curveeditorgroup.h>
 #include <colorprovider.h>
 
-class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
+class RGBCurves : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 
   protected:
 	CurveEditorGroup* curveEditorG;
-    Adjuster* brightness;
-    Adjuster* contrast;
-	Adjuster* saturation;
-	DiagonalCurveEditor* lshape;
-	DiagonalCurveEditor* ashape;
-	DiagonalCurveEditor* bshape;
-	
-	//%%%%%%%%%%%%%%%%
-	Gtk::CheckButton* avoidclip;  
-    Gtk::CheckButton* enablelimiter;  
-    Adjuster* saturationlimiter;
-    bool cbAdd;
-    sigc::connection  acconn, elconn;
-    bool lastACVal, lastELVal;
-	//%%%%%%%%%%%%%%%%
+	DiagonalCurveEditor* Rshape;
+	DiagonalCurveEditor* Gshape;
+	DiagonalCurveEditor* Bshape;
 
   public:
 
-    LCurve ();
-    ~LCurve ();
+    RGBCurves ();
+    ~RGBCurves ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
-    void setAdjusterBehavior (bool bradd, bool contradd, bool satadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
 
     void curveChanged (CurveEditor* ce);
-    void adjusterChanged (Adjuster* a, double newval);
-	void avoidclip_toggled ();
-    void enablelimiter_toggled ();
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
     virtual void colorForValue (double valX, double valY);

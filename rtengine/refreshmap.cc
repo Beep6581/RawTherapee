@@ -181,7 +181,10 @@ SHARPENING,       // EvEPDStrength
 SHARPENING,       // EvEPDEdgeStopping
 SHARPENING,       // EvEPDScale
 SHARPENING,       // EvEPDReweightingIterates
-SHARPENING        // EvEPDEnabled
-
+SHARPENING,       // EvEPDEnabled
+RGBCURVE,         // EvRGBrCurve
+RGBCURVE,         // EvRGBgCurve
+RGBCURVE          // EvRGBbCurve
+	
 };
 

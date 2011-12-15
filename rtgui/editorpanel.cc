@@ -1307,7 +1307,7 @@ void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & his
     LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
 
     if (histogramPanel) histogramPanel->histogramChanged (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
-    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve);
+    tpc->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histRed, histGreen, histBlue, histLuma);
 }
 
 bool EditorPanel::CheckSidePanelsVisibility() {

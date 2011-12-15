@@ -184,7 +184,10 @@ enum ProcEvent {
 	EvEPDScale=159,
 	EvEPDReweightingIterates=160,
 	EvEPDEnabled=161,
-	NUMOFEVENTS=162
+	EvRGBrCurve=162,
+	EvRGBgCurve=163,
+	EvRGBbCurve=164,
+	NUMOFEVENTS=165
 };
 }    
 #endif    

@@ -55,7 +55,13 @@ ImProcCoordinator::ImProcCoordinator ()
     histToneCurve(256);
     histLCurve(256);
     bcabhist(256);
-
+		
+		rCurve(65536,0);
+		rcurvehist(256); rcurvehistCropped(256); rbeforehist(256);
+		gCurve(65536,0);
+		gcurvehist(256); gcurvehistCropped(256); gbeforehist(256);		
+		bCurve(65536,0);
+		bcurvehist(256); bcurvehistCropped(256); bbeforehist(256);
 }
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {
@@ -225,10 +231,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
 									imgsrc->getGamma(), true, params.toneCurve.curve, \
 									vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, scale==1 ? 1 : 1);
-        
+		
+		CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale==1 ? 1 : 1);
+		CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale==1 ? 1 : 1);
+		CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale==1 ? 1 : 1);
+
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=CROP ) {
-            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
+            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation, \
+						 rCurve, gCurve, bCurve);
         }
 
         // compute L channel histogram

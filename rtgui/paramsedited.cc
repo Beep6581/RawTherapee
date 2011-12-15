@@ -48,6 +48,9 @@ void ParamsEdited::set (bool v) {
 	labCurve.avoidclip   = v;
 	labCurve.enable_saturationlimiter = v;
 	labCurve.saturationlimit      = v;
+	rgbCurves.rcurve      = v;
+	rgbCurves.gcurve      = v;
+	rgbCurves.bcurve      = v;
 	sharpening.enabled            = v;
 	sharpening.radius             = v;
 	sharpening.amount             = v;
@@ -231,7 +234,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.saturation = labCurve.saturation && p.labCurve.saturation == other.labCurve.saturation;
         labCurve.avoidclip = labCurve.avoidclip && p.labCurve.avoidclip == other.labCurve.avoidclip;
         labCurve.enable_saturationlimiter = labCurve.enable_saturationlimiter && p.labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter;
-        labCurve.saturationlimit = labCurve.saturationlimit && p.labCurve.saturationlimit == other.labCurve.saturationlimit;		
+        labCurve.saturationlimit = labCurve.saturationlimit && p.labCurve.saturationlimit == other.labCurve.saturationlimit;
+        rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
+        rgbCurves.gcurve = rgbCurves.gcurve && p.rgbCurves.gcurve == other.rgbCurves.gcurve;
+        rgbCurves.bcurve = rgbCurves.bcurve && p.rgbCurves.bcurve == other.rgbCurves.bcurve;
         sharpenEdge.enabled = sharpenEdge.enabled && p.sharpenEdge.enabled == other.sharpenEdge.enabled;
         sharpenEdge.passes = sharpenEdge.passes && p.sharpenEdge.passes == other.sharpenEdge.passes;
         sharpenEdge.amount = sharpenEdge.amount && p.sharpenEdge.amount == other.sharpenEdge.amount;
@@ -413,6 +419,11 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.avoidclip)					toEdit.labCurve.avoidclip 	= mods.labCurve.avoidclip;
 	if (labCurve.enable_saturationlimiter)	toEdit.labCurve.enable_saturationlimiter 	= mods.labCurve.enable_saturationlimiter;
 	if (labCurve.saturationlimit)			toEdit.labCurve.saturationlimit 	= mods.labCurve.saturationlimit;	
+
+	if (rgbCurves.rcurve)		            toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
+	if (rgbCurves.gcurve)		            toEdit.rgbCurves.gcurve     = mods.rgbCurves.gcurve;
+	if (rgbCurves.bcurve)		            toEdit.rgbCurves.bcurve     = mods.rgbCurves.bcurve;
+
 	if (sharpenEdge.enabled)				toEdit.sharpenEdge.enabled 	= mods.sharpenEdge.enabled;
 	if (sharpenEdge.passes)					toEdit.sharpenEdge.passes	= dontforceSet && options.baBehav[ADDSET_SHARPENEDGE_PASS] ? toEdit.sharpenEdge.passes + mods.sharpenEdge.passes : mods.sharpenEdge.passes;
 	if (sharpenEdge.amount)					toEdit.sharpenEdge.amount	= dontforceSet && options.baBehav[ADDSET_SHARPENEDGE_AMOUNT] ? toEdit.sharpenEdge.amount + mods.sharpenEdge.amount : mods.sharpenEdge.amount;

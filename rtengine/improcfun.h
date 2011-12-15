@@ -111,7 +111,8 @@ class ImProcFunctions {
 		bool needsTransform   ();
 
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
-		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, SHMap* shmap, int sat);
+		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, \
+							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance

@@ -328,9 +328,9 @@ void LCurve::setBatchMode (bool batchMode) {
 }
 
 
-void LCurve::updateCurveBackgroundHistogram (LUTu & hist) {
+void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
 
-    lshape->updateBackgroundHistogram (hist);
+    lshape->updateBackgroundHistogram (histLCurve);
 }
 
 void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd) {

@@ -421,7 +421,7 @@ namespace rtengine {
 		DiagonalCurve* tcurve = NULL;
 		if (curvePoints.size()>0 && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
-			if (outBeforeCCurveHistogram && histogramCropped)
+			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
 		}
 		if (tcurve && tcurve->isIdentity()) {
@@ -434,11 +434,12 @@ namespace rtengine {
 
 			if (histNeeded) {
 				float fi=i;
-				float hval = dcurve[shCurve[hlCurve[i]*fi]*fi];
+				float hval = hlCurve[i]*fi;
+				hval = dcurve[shCurve[hval]*hval];
 				//if (needigamma)
 				//	hval = igamma2 (hval);
 				int hi = (int)(255.0*(hval));
-				outBeforeCCurveHistogram[hi] += histogramCropped[i] ;
+				outBeforeCCurveHistogram[hi] += histogram/*Cropped*/[i] ;
 			}
 
 			// apply custom/parametric/NURBS curve, if any
@@ -585,7 +586,7 @@ namespace rtengine {
 		bool histNeeded = false;
 		if (curvePoints.size()>0 && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
-			if (outBeforeCCurveHistogram && histogramCropped)
+			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
 		}
 		if (tcurve && tcurve->isIdentity()) {
@@ -601,7 +602,7 @@ namespace rtengine {
 				if (histNeeded) {
 					float hval = dcurve[i];
 					int hi = (int)(255.0*CLIPD(hval));
-					outBeforeCCurveHistogram[hi]+=histogramCropped[i] ;
+					outBeforeCCurveHistogram[hi]+=histogram/*Cropped*/[i] ;
 				}
 
 				// apply custom/parametric/NURBS curve, if any
@@ -617,7 +618,7 @@ namespace rtengine {
 				if (histNeeded) {
 					float hval = dcurve[i];
 					int hi = (int)(255.0*CLIPD(hval));
-					outBeforeCCurveHistogram[hi]+=histogramCropped[i] ;
+					outBeforeCCurveHistogram[hi]+=histogram/*Cropped*/[i] ;
 				}
 
 				outCurve[i] = 32767.0*dcurve[i];
@@ -636,7 +637,47 @@ namespace rtengine {
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void CurveFactory::RGBCurve (const std::vector<double>& curvePoints, LUTf & outCurve, int skip) {
+		
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+						
+		// create a curve if needed
+		DiagonalCurve* tcurve = NULL;
+		bool histNeeded = false;
+		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
+		}
+		if (tcurve && tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+		
+		if (tcurve) {
+			for (int i=0; i<65536; i++) {				
+				// apply custom/parametric/NURBS curve, if any
+				float val = tcurve->getVal ((float)i/65536.0f);
+				outCurve[i] = (65536.0f * val);
+			}
+		}
+		else {
+			// Skip the slow getval method if no curve is used (or an identity curve)
+			for (int i=0; i<65536; i++) {
+				outCurve[i] = i;
+			}
+		}
+		
+		if (tcurve)
+			delete tcurve;
 
+	}
+	
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	
 
 LUTf CurveFactory::gammatab;
 LUTf CurveFactory::igammatab_srgb;
