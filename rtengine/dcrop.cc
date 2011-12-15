@@ -128,7 +128,7 @@ void Crop::update (int todo) {
     }
 
     // shadows & highlights & tone curve & convert to cielab
-	int xref,yref;
+	/*int xref,yref;
 	xref=000;yref=000;
 	if (colortest && cropw>115 && croph>115) 
 		for(int j=1;j<5;j++){	
@@ -138,12 +138,13 @@ void Crop::update (int todo) {
 				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
 				   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
 				   parent->imgsrc->getGamma());
-		}
+		}*/
 	
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap, params.toneCurve.saturation);
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap, \
+							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve );
 
-	xref=000;yref=000;
+	/*xref=000;yref=000;
 	if (colortest && cropw>115 && croph>115) 
 	for(int j=1;j<5;j++){	
 		xref+=j*30;yref+=j*30;
@@ -157,7 +158,7 @@ void Crop::update (int todo) {
 			       laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
 			       laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
         }
-	}
+	}*/
 	
 	// apply luminance operations
 	if (todo & (M_LUMINANCE+M_COLOR)) {

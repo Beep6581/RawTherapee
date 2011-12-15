@@ -91,7 +91,15 @@ void ProcParams::setDefaults () {
     labCurve.acurve.push_back(DCT_Linear);
     labCurve.bcurve.clear ();
     labCurve.bcurve.push_back(DCT_Linear);
-   
+
+    rgbCurves.rcurve.clear ();
+    rgbCurves.rcurve.push_back(DCT_Linear);
+    rgbCurves.gcurve.clear ();
+    rgbCurves.gcurve.push_back(DCT_Linear);
+    rgbCurves.bcurve.clear ();
+    rgbCurves.bcurve.push_back(DCT_Linear);
+
+
     sharpenEdge.enabled         = false;
     sharpenEdge.passes          = 2;
     sharpenEdge.amount        = 50.0;
@@ -521,6 +529,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     keyFile.set_double_list("HSV Equalizer", "SCurve", scurve);
     keyFile.set_double_list("HSV Equalizer", "VCurve", vcurve);
 
+    Glib::ArrayHandle<double> RGBrcurve = rgbCurves.rcurve;
+    Glib::ArrayHandle<double> RGBgcurve = rgbCurves.gcurve;
+    Glib::ArrayHandle<double> RGBbcurve = rgbCurves.bcurve;
+    keyFile.set_double_list("RGB Curves", "rCurve", RGBrcurve);
+    keyFile.set_double_list("RGB Curves", "gCurve", RGBgcurve);
+    keyFile.set_double_list("RGB Curves", "bCurve", RGBbcurve);
+
     // save RAW parameters
     keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
     keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
@@ -906,6 +921,13 @@ if (keyFile.has_group ("HSV Equalizer")) {
 	}
 }
 
+// load RGB curves
+if (keyFile.has_group ("RGB Curves")) {
+if (keyFile.has_key ("RGB Curves", "rCurve"))          rgbCurves.rcurve      = keyFile.get_double_list ("RGB Curves", "rCurve");
+if (keyFile.has_key ("RGB Curves", "gCurve"))          rgbCurves.gcurve      = keyFile.get_double_list ("RGB Curves", "gCurve");
+if (keyFile.has_key ("RGB Curves", "bCurve"))          rgbCurves.bcurve      = keyFile.get_double_list ("RGB Curves", "bCurve");
+}
+
 	// load raw settings
 if (keyFile.has_group ("RAW")) {
 	if (keyFile.has_key ("RAW", "DarkFrame"))     raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" );
@@ -1148,6 +1170,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve
 		&& hsvequalizer.scurve == other.hsvequalizer.scurve
 		&& hsvequalizer.vcurve == other.hsvequalizer.vcurve
+		&& rgbCurves.rcurve == other.rgbCurves.rcurve
+		&& rgbCurves.gcurve == other.rgbCurves.gcurve
+		&& rgbCurves.bcurve == other.rgbCurves.bcurve
 		&& exif==other.exif
 		&& iptc==other.iptc
 		&& raw.expos==other.raw.expos

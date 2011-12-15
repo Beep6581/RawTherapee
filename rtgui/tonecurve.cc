@@ -410,7 +410,7 @@ void ToneCurve::trimValues (rtengine::procparams::ProcParams* pp) {
 	saturation->trimValue(pp->toneCurve.saturation);
 }
 
-void ToneCurve::updateCurveBackgroundHistogram (LUTu & hist) {
+void ToneCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {
 
-    shape->updateBackgroundHistogram (hist);
+    shape->updateBackgroundHistogram (histToneCurve);
 }

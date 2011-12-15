@@ -733,6 +733,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf curve2 (65536);
 	LUTf curve (65536);
 	LUTf satcurve (65536);
+	LUTf rCurve (65536);
+	LUTf gCurve (65536);
+	LUTf bCurve (65536);
 
 	LUTu dummy;
     //CurveFactory::complexCurve (expcomp, black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
@@ -742,10 +745,13 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 								params.toneCurve.shcompr, bright, contr, gamma, true, 
 								params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, 16);
 	
+	CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 16);
+	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 16);
+	CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 16);
 	
 	LabImage* labView = new LabImage (fw,fh);
 
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve );
 
     if (shmap)
         delete shmap;

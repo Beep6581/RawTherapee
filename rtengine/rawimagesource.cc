@@ -67,6 +67,11 @@ PIX_SORT(p[3],p[6]); PIX_SORT(p[1],p[4]); PIX_SORT(p[2],p[5]); \
 PIX_SORT(p[4],p[7]); PIX_SORT(p[4],p[2]); PIX_SORT(p[6],p[4]); \
 PIX_SORT(p[4],p[2]); median=p[4];} //a4 is the median
 	
+#define med5(a0,a1,a2,a3,a4,median) { \
+p[0]=a0; p[1]=a1; p[2]=a2; p[3]=a3; p[4]=a4; \
+PIX_SORT(p[0],p[1]) ; PIX_SORT(p[3],p[4]) ; PIX_SORT(p[0],p[3]) ; \
+PIX_SORT(p[1],p[4]) ; PIX_SORT(p[1],p[2]) ; PIX_SORT(p[2],p[3]) ; \
+PIX_SORT(p[1],p[2]) ; median=p[2] ;}
 	
 
 RawImageSource::RawImageSource ()
@@ -1303,9 +1308,8 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 		for (int j=0; j<W; j++) {
 			if (j<2) {jprev=j+2;} else {jprev=j-2;}
 			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
-			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext], \
-				   rawData[i][jprev],rawData[i][j],rawData[i][jnext], \
-				   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],cfatmp[i*W+j]);
+			med5(rawData[iprev][j], rawData[i][jprev],rawData[i][j], \
+				 rawData[i][jnext], rawData[inext][j],cfatmp[i*W+j]);
 		}
 	}
 	

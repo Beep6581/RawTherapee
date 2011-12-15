@@ -62,6 +62,8 @@
 #include <rawexposure.h>
 #include <sharpenmicro.h>
 #include <sharpenedge.h>
+#include "rgbcurves.h"
+
 class ImageEditorCoordinator;
 
 class ToolPanelCoordinator :    public ToolPanelListener, 
@@ -101,6 +103,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         SharpenEdge* sharpenEdge;
         SharpenMicro* sharpenMicro;
         LCurve* lcurve;
+        RGBCurves* rgbcurves;
         DirPyrEqualizer * dirpyrequalizer;
         HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
@@ -172,7 +175,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
-		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurves);
+		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
         void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)

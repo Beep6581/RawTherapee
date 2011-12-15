@@ -207,7 +207,8 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 }
 
 // Process RGB image and convert to LAB space
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, SHMap* shmap, int sat) {
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, \
+							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve) {
 
     int h_th, s_th;
     if (shmap) {
@@ -334,9 +335,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			b *= tonefactor;
 			
 			//brightness/contrast and user tone curve
-			r = tonecurve[r];
-			g = tonecurve[g];
-			b = tonecurve[b];
+			r = rCurve[tonecurve[r]];
+			g = gCurve[tonecurve[g]];
+			b = bCurve[tonecurve[b]];
 			
 			//if (r<0 || g<0 || b<0) {
 			//	printf("negative values row=%d col=%d  r=%f  g=%f  b=%f  \n", i,j,r,g,b);
@@ -505,7 +506,7 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
 	}
 	
 
-#include "cubic.cc"
+//#include "cubic.cc"
 
 void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 
@@ -811,18 +812,18 @@ fclose(f);*/
 		contr = MAX(0,MIN(100,contr));
 		
 		//diagnostics
-		printf ("**************** AUTO LEVELS ****************\n");
-		printf ("gain1= %f   gain2= %f		gain= %f\n",expcomp1,expcomp2,gain);
-		printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
+		//printf ("**************** AUTO LEVELS ****************\n");
+		//printf ("gain1= %f   gain2= %f		gain= %f\n",expcomp1,expcomp2,gain);
+		//printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
 		//printf ("average: %f\n",ave);
 		//printf ("median/average: %f\n",median/ave);
-		printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
+		//printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
 		//printf ("lodev: %f\n",lodev);
 		//printf ("hidev: %f\n",hidev);
-		printf ("rawmax= %d  whiteclip= %d  gain= %f\n",rawmax,whiteclip,gain);
+		//printf ("rawmax= %d  whiteclip= %d  gain= %f\n",rawmax,whiteclip,gain);
 		
-		printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);    
-		printf ("ospread= %f\n",ospread);
+		//printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);    
+		//printf ("ospread= %f\n",ospread);
 		
 		
 		/*

@@ -54,6 +54,14 @@ class LCurveParamsEdited {
         bool bcurve;
 };
 
+class RGBCurvesParamsEdited {
+
+    public:
+        bool rcurve;
+        bool gcurve;
+        bool bcurve;
+};
+
 class SharpenEdgeParamsEdited {
 
     public :
@@ -361,6 +369,7 @@ class ParamsEdited {
     public:
         ToneCurveParamsEdited         toneCurve;
         LCurveParamsEdited            labCurve;
+        RGBCurvesParamsEdited         rgbCurves;
         SharpeningParamsEdited        sharpening;
         SharpenEdgeParamsEdited       sharpenEdge;
         SharpenMicroParamsEdited      sharpenMicro;
