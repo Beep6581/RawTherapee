@@ -130,8 +130,10 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 		}
     }
 
-    if (n>0)
-        ColorTemp::mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
+    if (n>0) {
+        ColorTemp cTemp;
+        cTemp.mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
+    }
 
     delete img;
     tpp->init ();
@@ -477,7 +479,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	double gm = ri->get_rgb_cam(1, 0) * reds + ri->get_rgb_cam(1, 1) * greens + ri->get_rgb_cam(1, 2) * blues;
 	double bm = ri->get_rgb_cam(2, 0) * reds + ri->get_rgb_cam(2, 1) * greens + ri->get_rgb_cam(2, 2) * blues;
 
-	ColorTemp::mul2temp(rm, gm, bm, tpp->autowbTemp, tpp->autowbGreen);
+	ColorTemp cTemp;
+	cTemp.mul2temp(rm, gm, bm, tpp->autowbTemp, tpp->autowbGreen);
 
 	if (rotate && ri->get_rotateDegree() > 0) {
 		Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
@@ -582,7 +585,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, double& myscale) {
 
     // compute WB multipliers
-    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
+    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
     if (params.wb.method=="Camera") {
 		//recall colorMatrix is rgb_cam
         double cam_r = colorMatrix[0][0]*camwbRed + colorMatrix[0][1]*camwbGreen + colorMatrix[0][2]*camwbBlue;
@@ -591,7 +594,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         currWB = ColorTemp (cam_r, cam_g, cam_b);
     }
     else if (params.wb.method=="Auto")
-        currWB = ColorTemp (autowbTemp, autowbGreen);
+        currWB = ColorTemp (autowbTemp, autowbGreen, "Custom");
     double r, g, b;
     currWB.getMultipliers (r, g, b);
 	//iColorMatrix is cam_rgb
