@@ -1298,18 +1298,27 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 	float (*cfatmp);
 	cfatmp = (float (*)) calloc (H*W, sizeof *cfatmp);
 	float clean0, clean1;
-	float deadthresh = 0.125;
+	float hotdeadthresh = 0.5;
 		
 	for (int i=0; i<H; i++) {
 		int iprev,inext,jprev,jnext;
-		float p[9],temp;
+		float p[9],temp, median;
 		if (i<2) {iprev=i+2;} else {iprev=i-2;}
 		if (i>H-3) {inext=i-2;} else {inext=i+2;}
 		for (int j=0; j<W; j++) {
 			if (j<2) {jprev=j+2;} else {jprev=j-2;}
 			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
-			med5(rawData[iprev][j], rawData[i][jprev],rawData[i][j], \
-				 rawData[i][jnext], rawData[inext][j],cfatmp[i*W+j]);
+			//med3x3(riFlatFile->data[iprev][jprev], riFlatFile->data[iprev][j], riFlatFile->data[iprev][jnext], \
+				   riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext], \
+				   riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
+			med5(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev],riFlatFile->data[i][j], \
+				 riFlatFile->data[i][jnext], riFlatFile->data[inext][j],median);
+			if (riFlatFile->data[i][j]>hotdeadthresh*median || median>hotdeadthresh*riFlatFile->data[i][j]) {
+				cfatmp[i*W+j] = median;
+			} else {
+				cfatmp[i*W+j] = riFlatFile->data[i][j];
+			}
+
 		}
 	}
 	
@@ -1317,34 +1326,24 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 	//horizontal blur
 	for (int row = 0; row < H; row++) {
 		int len = boxW/2 + 1;
-		clean0 = (riFlatFile->data[row][0] < deadthresh * cfatmp[row*W+0]) ? cfatmp[row*W+0] : riFlatFile->data[row][0];
-		clean1 = (riFlatFile->data[row][1] < deadthresh * cfatmp[row*W+1]) ? cfatmp[row*W+1] : riFlatFile->data[row][1];
-		cfatmp[row*W+0] = clean0/len;
-		cfatmp[row*W+1] = clean1/len;
+		cfatmp[row*W+0] = cfatmp[row*W+0]/len;
+		cfatmp[row*W+1] = cfatmp[row*W+1]/len;
 		for (int j=2; j<=boxW; j+=2) {
-			clean0 = (riFlatFile->data[row][j]   < deadthresh * cfatmp[row*W])   ? cfatmp[row*W]   : riFlatFile->data[row][j];
-			clean1 = (riFlatFile->data[row][j+1] < deadthresh * cfatmp[row*W+1]) ? cfatmp[row*W+1] : riFlatFile->data[row][j+1];
-			cfatmp[row*W+0] += clean0/len;
-			cfatmp[row*W+1] += clean1/len;
+			cfatmp[row*W+0] += cfatmp[row*W+j]/len;
+			cfatmp[row*W+1] += cfatmp[row*W+j+1]/len;
 		}
 		for (int col=2; col<=boxW; col+=2) {
-			clean0 = (riFlatFile->data[row][col+boxW]   < deadthresh * cfatmp[row*W+col])   ? cfatmp[row*W+col]   : riFlatFile->data[row][col+boxW];
-			clean1 = (riFlatFile->data[row][col+boxW+1] < deadthresh * cfatmp[row*W+col+1]) ? cfatmp[row*W+col+1] : riFlatFile->data[row][col+boxW+1];
-			cfatmp[row*W+col] = (cfatmp[row*W+col-2]*len + clean0)/(len+1);
-			cfatmp[row*W+col+1] = (cfatmp[row*W+col-1]*len + clean1)/(len+1);
+			cfatmp[row*W+col] = (cfatmp[row*W+col-2]*len + cfatmp[row*W+boxW+col])/(len+1);
+			cfatmp[row*W+col+1] = (cfatmp[row*W+col-1]*len + cfatmp[row*W+boxW+col+1])/(len+1);
 			len ++;
 		}
 		for (int col = boxW+2; col < W-boxW; col++) {
-			clean0 = (riFlatFile->data[row][col+boxW]   < deadthresh * cfatmp[row*W+col])   ? cfatmp[row*W+col]   : riFlatFile->data[row][col+boxW];
-			clean1 = (riFlatFile->data[row][col-boxW-2] < deadthresh * cfatmp[row*W+col-boxW-2]) ? cfatmp[row*W+col-boxW-2] : riFlatFile->data[row][col-boxW-2];
-			cfatmp[row*W+col] = cfatmp[row*W+col-2] + (clean0-clean1)/len;
+			cfatmp[row*W+col] = cfatmp[row*W+col-2] + (cfatmp[row*W+boxW+col]-cfatmp[row*W+col-boxW-2])/len;
 		}
 		for (int col=W-boxW; col<W; col+=2) {
-			clean0 = (riFlatFile->data[row][col-boxW-2] < deadthresh * cfatmp[row*W+col-boxW-2]) ? cfatmp[row*W+col-boxW-2] : riFlatFile->data[row][col-boxW-2];
-			cfatmp[row*W+col] = (cfatmp[row*W+col-2]*len - clean0)/(len-1);
+			cfatmp[row*W+col] = (cfatmp[row*W+col-2]*len - cfatmp[row*W+col-boxW-2])/(len-1);
 			if (col+1<W) {
-				clean0 = (riFlatFile->data[row][col-boxW-1] < deadthresh * cfatmp[row*W+col-boxW-1]) ? cfatmp[row*W+col-boxW-1] : riFlatFile->data[row][col-boxW-1];
-				cfatmp[row*W+col+1] = (cfatmp[row*W+col-1]*len - clean0)/(len-1);
+				cfatmp[row*W+col+1] = (cfatmp[row*W+col-1]*len - cfatmp[row*W+col-boxW-1])/(len-1);
 			}
 			len --;
 		}
