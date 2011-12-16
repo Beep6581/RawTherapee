@@ -94,7 +94,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ImProcFunctions ipf (&params, true);
 
 	// set the color temperature
-    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
+    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
     if (params.wb.method=="Camera")
         currWB = imgsrc->getWB ();
     else if (params.wb.method=="Auto")

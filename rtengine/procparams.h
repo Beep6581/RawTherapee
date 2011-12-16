@@ -138,12 +138,42 @@ class ColorBoostParams {
 /**
   * Parameters of the white balance adjustments
   */
+
+enum WBTypes {
+    WBT_CAMERA,
+    WBT_AUTO,
+    WBT_DAYLIGHT,
+    WBT_CLOUDY,
+    WBT_SHADE,
+    WBT_TUNGSTEN,
+    WBT_FLUORESCENT,
+    WBT_LAMP,
+    WBT_FLASH,
+    WBT_LED,
+    // WBT_CUSTOM one must remain the last one!
+    WBT_CUSTOM
+};
+
+class WBEntry {
+public:
+    Glib::ustring ppLabel;
+    enum WBTypes type;
+    Glib::ustring GUILabel;
+    int temperature;
+
+    WBEntry(Glib::ustring p, enum WBTypes t, Glib::ustring l, int temp) : ppLabel(p), type(t), GUILabel(l), temperature(temp) {};
+};
+
 class WBParams {
 
     public:
+	    static std::vector<WBEntry*> wbEntries;
         Glib::ustring   method;
         int             temperature;
         double          green;
+
+        static void     init();
+        static void     cleanup();
 };
 
 /**
@@ -557,6 +587,9 @@ class ProcParams {
       /** Destroys an instance of ProcParams.
         * @param pp a pointer to the ProcParams instance to destroy. */
         static void        destroy (ProcParams* pp);
+
+        static void init ();
+        static void cleanup ();
 
         bool operator== (const ProcParams& other);
         bool operator!= (const ProcParams& other);

@@ -21,6 +21,7 @@
 #include <preferences.h>
 #include <cursormanager.h>
 #include <rtimage.h>
+#include "whitebalance.h"
 
 RTWindow::RTWindow ()
 :fpanel(NULL)
@@ -30,6 +31,7 @@ RTWindow::RTWindow ()
 {
 
     cacheMgr->init ();
+    WhiteBalance::init();
 
     Glib::ustring fName = "rt-logo.png";
     Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
@@ -392,6 +394,8 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
        epanel->saveProfile();
     
     cacheMgr->closeCache ();  // also makes cleanup if too large
+    WhiteBalance::cleanup();
+
 
     options.firstRun = false;
 

@@ -18,6 +18,7 @@
  */
 #include <glib/gstdio.h>
 #include <safegtk.h>
+#include <multilangmgr.h>
 #include <procparams.h>
 #include <glibmm.h>
 #include <sstream>
@@ -37,6 +38,49 @@ namespace procparams {
 
 const char *RAWParams::methodstring[RAWParams::numMethods]={"eahd", "hphd", "vng4", "dcb", "amaze", "ahd", "fast" };
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
+std::vector<WBEntry*> WBParams::wbEntries;
+
+void WBParams::init() {
+    // Creation of the different methods and its associated temperature value
+    wbEntries.push_back(new WBEntry("Camera"              ,WBT_CAMERA,      M("TP_WBALANCE_CAMERA"),        0));
+    wbEntries.push_back(new WBEntry("Auto"                ,WBT_AUTO,        M("TP_WBALANCE_AUTO"),          0));
+    wbEntries.push_back(new WBEntry("Daylight"            ,WBT_DAYLIGHT,    M("TP_WBALANCE_DAYLIGHT"),   5300));
+    wbEntries.push_back(new WBEntry("Cloudy"              ,WBT_CLOUDY,      M("TP_WBALANCE_CLOUDY"),     6200));
+    wbEntries.push_back(new WBEntry("Shade"               ,WBT_SHADE,       M("TP_WBALANCE_SHADE"),      7600));
+    wbEntries.push_back(new WBEntry("Tungsten"            ,WBT_TUNGSTEN,    M("TP_WBALANCE_TUNGSTEN"),   2856));
+    wbEntries.push_back(new WBEntry("Fluo F1"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO1"),      6430));
+    wbEntries.push_back(new WBEntry("Fluo F2"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO2"),      4230));
+    wbEntries.push_back(new WBEntry("Fluo F3"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO3"),      3450));
+    wbEntries.push_back(new WBEntry("Fluo F4"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO4"),      2940));
+    wbEntries.push_back(new WBEntry("Fluo F5"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO5"),      6350));
+    wbEntries.push_back(new WBEntry("Fluo F6"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO6"),      4150));
+    wbEntries.push_back(new WBEntry("Fluo F7"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO7"),      6500));
+    wbEntries.push_back(new WBEntry("Fluo F8"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO8"),      5020));
+    wbEntries.push_back(new WBEntry("Fluo F9"             ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO9"),      4330));
+    wbEntries.push_back(new WBEntry("Fluo F10"            ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO10"),     5300));
+    wbEntries.push_back(new WBEntry("Fluo F11"            ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO11"),     4000));
+    wbEntries.push_back(new WBEntry("Fluo F12"            ,WBT_FLUORESCENT, M("TP_WBALANCE_FLUO12"),     3000));
+    wbEntries.push_back(new WBEntry("HMI Lamp"            ,WBT_LAMP,        M("TP_WBALANCE_HMI"),        4800));
+    wbEntries.push_back(new WBEntry("GTI Lamp"            ,WBT_LAMP,        M("TP_WBALANCE_GTI"),        5000));
+    wbEntries.push_back(new WBEntry("JudgeIII Lamp"       ,WBT_LAMP,        M("TP_WBALANCE_JUDGEIII"),   5100));
+    wbEntries.push_back(new WBEntry("Solux Lamp 3500K"    ,WBT_LAMP,        M("TP_WBALANCE_SOLUX35"),    3480));
+    wbEntries.push_back(new WBEntry("Solux Lamp 4100K"    ,WBT_LAMP,        M("TP_WBALANCE_SOLUX41"),    3930));
+    wbEntries.push_back(new WBEntry("Solux Lamp 4700K"    ,WBT_LAMP,        M("TP_WBALANCE_SOLUX47"),    4700));
+    wbEntries.push_back(new WBEntry("NG Solux Lamp 4700K" ,WBT_LAMP,        M("TP_WBALANCE_SOLUX47_NG"), 4480));
+    wbEntries.push_back(new WBEntry("LED LSI Lumelex 2040",WBT_LED,         M("TP_WBALANCE_LED_LSI"),    3000));
+    wbEntries.push_back(new WBEntry("LED CRS SP12 WWMR16" ,WBT_LED,         M("TP_WBALANCE_LED_CRS"),    3050));
+    wbEntries.push_back(new WBEntry("Flash 5500K"         ,WBT_FLASH,       M("TP_WBALANCE_FLASH55"),    5500));
+    wbEntries.push_back(new WBEntry("Flash 6000K"         ,WBT_FLASH,       M("TP_WBALANCE_FLASH60"),    6000));
+    wbEntries.push_back(new WBEntry("Flash 6500K"         ,WBT_FLASH,       M("TP_WBALANCE_FLASH65"),    6500));
+    // Should remain the last one
+    wbEntries.push_back(new WBEntry("Custom"              ,WBT_CUSTOM,      M("TP_WBALANCE_CUSTOM"),        0));
+}
+
+void WBParams::cleanup() {
+    for (unsigned int i=0; i<wbEntries.size(); i++) {
+        delete wbEntries[i];
+    }
+}
 
 // Maps crop to resized width (e.g. smaller previews)
 void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const {
@@ -52,6 +96,16 @@ void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, in
 ProcParams::ProcParams () { 
 
     setDefaults (); 
+}       
+
+void ProcParams::init () {
+
+    WBParams::init();
+}
+
+void ProcParams::cleanup () {
+
+    WBParams::cleanup();
 }       
 
 ProcParams* ProcParams::create () {
@@ -140,7 +194,7 @@ void ProcParams::setDefaults () {
     
     wb.method       = "Camera";
     wb.temperature  = 6504;
-    wb.green        = 1.00102;
+    wb.green        = 1.0;
     
     colorShift.a    = 0;
     colorShift.b    = 0;
@@ -389,11 +443,11 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     keyFile.set_double  ("Color Boost", "SaturationLimit",     colorBoost.saturationlimit);
 
     // save wb
-    if (wb.method=="Camera")
-        keyFile.set_string  ("White Balance", "Setting",     "Camera");
-    else
+    if (wb.method=="Auto")
+        // note that "Auto" has been ruled out. It's just custom.
         keyFile.set_string  ("White Balance", "Setting",     "Custom");
-    // not that "Auto" has been ruled out. It's just custom.
+    else
+        keyFile.set_string  ("White Balance", "Setting",     wb.method);
 
     keyFile.set_integer ("White Balance", "Temperature", wb.temperature);
     keyFile.set_double  ("White Balance", "Green",       wb.green);
@@ -921,11 +975,11 @@ if (keyFile.has_group ("HSV Equalizer")) {
 	}
 }
 
-// load RGB curves
+	// load RGB curves
 if (keyFile.has_group ("RGB Curves")) {
-if (keyFile.has_key ("RGB Curves", "rCurve"))          rgbCurves.rcurve      = keyFile.get_double_list ("RGB Curves", "rCurve");
-if (keyFile.has_key ("RGB Curves", "gCurve"))          rgbCurves.gcurve      = keyFile.get_double_list ("RGB Curves", "gCurve");
-if (keyFile.has_key ("RGB Curves", "bCurve"))          rgbCurves.bcurve      = keyFile.get_double_list ("RGB Curves", "bCurve");
+	if (keyFile.has_key ("RGB Curves", "rCurve"))          rgbCurves.rcurve      = keyFile.get_double_list ("RGB Curves", "rCurve");
+	if (keyFile.has_key ("RGB Curves", "gCurve"))          rgbCurves.gcurve      = keyFile.get_double_list ("RGB Curves", "gCurve");
+	if (keyFile.has_key ("RGB Curves", "bCurve"))          rgbCurves.bcurve      = keyFile.get_double_list ("RGB Curves", "bCurve");
 }
 
 	// load raw settings

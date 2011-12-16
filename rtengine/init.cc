@@ -37,6 +37,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
 	iccStore->findDefaultMonitorProfile();
 
+    ProcParams::init ();
     CurveFactory::init ();
     ImProcFunctions::initMunsell();
     ImProcFunctions::initCache ();
@@ -50,6 +51,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 
 void cleanup () {
 
+    ProcParams::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }
