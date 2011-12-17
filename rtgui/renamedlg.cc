@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <renamedlg.h>
-#include <multilangmgr.h>
-#include <options.h>
-#include <rtimage.h>
+#include "renamedlg.h"
+#include "multilangmgr.h"
+#include "options.h"
+#include "rtimage.h"
 
 RenameDialog::RenameDialog (Gtk::Window* parent) 
     : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), p(parent), imageData(NULL) {

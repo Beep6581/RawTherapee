@@ -20,9 +20,9 @@
 #define _RAWPROCESS_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <guiutils.h>
-#include <toolpanel.h>
+#include "adjuster.h"
+#include "guiutils.h"
+#include "toolpanel.h"
 
 
 class RawProcess : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel{

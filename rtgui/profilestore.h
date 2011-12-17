@@ -21,7 +21,7 @@
 
 #include <map>
 #include <vector>
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 #include <glibmm.h>
 
 class ProfileStore {

@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <preprocess.h>
-#include <guiutils.h>
-#include <safegtk.h>
+#include "preprocess.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
 #include <sstream>
 
 using namespace rtengine;

@@ -19,7 +19,7 @@
 #ifndef _PROFILECHANGELISTENER_
 #define _PROFILECHANGELISTENER_
 
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 #include <glibmm.h>
 
 class ProfileChangeListener {

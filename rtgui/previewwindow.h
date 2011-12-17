@@ -20,8 +20,8 @@
 #define _PREVIEWWINDOW_
 
 #include <gtkmm.h>
-#include <previewhandler.h>
-#include <cropwindow.h>
+#include "previewhandler.h"
+#include "cropwindow.h"
 
 class PreviewWindow : public Gtk::DrawingArea, public PreviewListener, public CropWindowListener {
 

@@ -20,8 +20,8 @@
 #define _RENAMEDLG_
 
 #include <gtkmm.h>
-#include <cacheimagedata.h>
-#include <guiutils.h>
+#include "cacheimagedata.h"
+#include "guiutils.h"
 
 #define RESPONSE_ALL 100
 

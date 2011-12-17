@@ -21,8 +21,8 @@
 
 #include <sigc++/sigc++.h>
 #include <gtkmm.h>
-#include <rtengine.h>
-#include <guiutils.h>
+#include "../rtengine/rtengine.h"
+#include "guiutils.h"
 
 #undef THREAD_PRIORITY_NORMAL
 

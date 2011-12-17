@@ -19,7 +19,7 @@
 #ifndef _PREVIEWHANDLER_
 #define _PREVIEWHANDLER_
 
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 #include <gtkmm.h>
 #include <list>
 

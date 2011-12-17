@@ -20,10 +20,10 @@
 #define _RECENTBROWSER_
 
 #include <gtkmm.h>
-#include <dirbrowserremoteinterface.h>
-#include <dirselectionlistener.h>
-#include <multilangmgr.h>
-#include <guiutils.h>
+#include "dirbrowserremoteinterface.h"
+#include "dirselectionlistener.h"
+#include "multilangmgr.h"
+#include "guiutils.h"
 
 class RecentBrowser : public Gtk::VBox, public DirSelectionListener {
 
