@@ -20,16 +20,16 @@
 #define _FILEPANEL_
 
 #include <gtkmm.h>
-#include <batchtoolpanelcoord.h>
-#include <filecatalog.h>
-#include <dirbrowser.h>
-#include <fileselectionlistener.h>
-#include <placesbrowser.h>
-#include <recentbrowser.h>
-#include <pparamschangelistener.h>
-#include <history.h>
-#include <filterpanel.h>
-#include <progressconnector.h>
+#include "batchtoolpanelcoord.h"
+#include "filecatalog.h"
+#include "dirbrowser.h"
+#include "fileselectionlistener.h"
+#include "placesbrowser.h"
+#include "recentbrowser.h"
+#include "pparamschangelistener.h"
+#include "history.h"
+#include "filterpanel.h"
+#include "progressconnector.h"
 
 class RTWindow;
 class FilePanel : public Gtk::HPaned,

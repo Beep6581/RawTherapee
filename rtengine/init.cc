@@ -16,14 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <iccstore.h>
-#include <improcfun.h>
-#include <improccoordinator.h>
-#include <curves.h>
-#include <dfmanager.h>
-#include <ffmanager.h>
-#include <rtthumbnail.h>
+#include "rtengine.h"
+#include "iccstore.h"
+#include "improcfun.h"
+#include "improccoordinator.h"
+#include "curves.h"
+#include "dfmanager.h"
+#include "ffmanager.h"
+#include "rtthumbnail.h"
 
 namespace rtengine {
 

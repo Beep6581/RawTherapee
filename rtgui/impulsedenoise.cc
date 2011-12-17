@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <impulsedenoise.h>
-#include <math.h>
+#include "impulsedenoise.h"
+#include <cmath>
 #include <iomanip>
-#include <guiutils.h>
+#include "guiutils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

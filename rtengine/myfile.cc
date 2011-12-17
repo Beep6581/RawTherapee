@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <myfile.h>
+#include "myfile.h"
 #include <cstdarg>
 #include <glibmm.h>
-#include <safegtk.h>
+#include "safegtk.h"
 #ifdef BZIP_SUPPORT
 #include <bzlib.h>
 #endif

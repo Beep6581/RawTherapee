@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filterpanel.h>
-#include <multilangmgr.h>
-#include <rtengine.h>
+#include "filterpanel.h"
+#include "multilangmgr.h"
+#include "../rtengine/rtengine.h"
 
 using namespace rtengine;
 

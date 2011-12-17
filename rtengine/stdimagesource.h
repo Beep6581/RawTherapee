@@ -19,7 +19,7 @@
 #ifndef _STDIMAGESOURCE_
 #define _STDIMAGESOURCE_
 
-#include <imagesource.h>
+#include "imagesource.h"
 
 namespace rtengine {
 

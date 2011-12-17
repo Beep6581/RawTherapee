@@ -22,8 +22,8 @@
 
 #include <cstddef>
 #include <algorithm>
-#include <labimage.h>
-#include <improcfun.h>
+#include "labimage.h"
+#include "improcfun.h"
 
 
 namespace rtengine {

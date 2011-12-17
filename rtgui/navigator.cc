@@ -16,11 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <navigator.h>
-#include <toolpanel.h>
-#include <iccmatrices.h> // from rtengine
-#include <iccstore.h>
-#include <curves.h>
+#include "navigator.h"
+#include "toolpanel.h"
+#include "../rtengine/iccmatrices.h"
+#include "../rtengine/iccstore.h"
+#include "../rtengine/curves.h"
 
 #define D50x 0.96422
 #define D50z 0.82521

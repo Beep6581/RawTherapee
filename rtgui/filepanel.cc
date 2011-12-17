@@ -17,9 +17,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filepanel.h>
-#include <rtwindow.h>
-#include <safegtk.h>
+#include "filepanel.h"
+#include "rtwindow.h"
+#include "../rtengine/safegtk.h"
 
 int FilePanelInitUI (void* data) {
     ((FilePanel*)data)->init ();

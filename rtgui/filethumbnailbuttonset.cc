@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filethumbnailbuttonset.h>
-#include <multilangmgr.h>
-#include <safegtk.h>
+#include "filethumbnailbuttonset.h"
+#include "multilangmgr.h"
+#include "../rtengine/safegtk.h"
 
 extern Glib::ustring argv0;
 

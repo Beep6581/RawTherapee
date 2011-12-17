@@ -19,14 +19,14 @@
 #ifndef __IMAGEDATA_H__
 #define __IMAGEDATA_H__
 
-#include <stdio.h>
-#include <rawimage.h>
+#include <cstdio>
+#include "rawimage.h"
 #include <string>
 #include <glibmm.h>
-#include <rtexif.h>
-#include <procparams.h>
+#include "../rtexif/rtexif.h"
+#include "procparams.h"
 #include <libiptcdata/iptc-data.h>
-#include <rtengine.h>
+#include "rtengine.h"
 
 namespace rtengine {
 

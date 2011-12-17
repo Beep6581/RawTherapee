@@ -16,11 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <limits.h>
-#include <stdio.h>
-#include <rawimagesource.h>
-#include <rawimagesource_i.h>
-#include <options.h>
+#include <climits>
+#include <cstdio>
+#include "rawimagesource.h"
+#include "rawimagesource_i.h"
+#include "../rtgui/options.h"
 
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)

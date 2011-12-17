@@ -1,7 +1,7 @@
 #ifndef _RT_JPEG_H
 #define _RT_JPEG_H
 
-#include <setjmp.h>
+#include <csetjmp>
 
 #ifdef __cplusplus
 extern "C" {

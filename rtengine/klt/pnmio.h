@@ -5,7 +5,7 @@
 #ifndef _PNMIO_H_
 #define _PNMIO_H_
 
-#include <stdio.h>
+#include <cstdio>
 
 /**********
  * With pgmReadFile and pgmRead, setting img to NULL causes memory

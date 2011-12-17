@@ -21,8 +21,8 @@
 
 #include <glibmm.h>
 #include <vector>
-#include <rtengine.h>
-#include <procparams.h>
+#include "../rtengine/rtengine.h"
+#include "../rtengine/procparams.h"
 
 class ToneCurveParamsEdited {
 

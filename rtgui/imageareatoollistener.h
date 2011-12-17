@@ -19,9 +19,9 @@
 #ifndef _IMAGEAREATOOLLISTENER_
 #define _IMAGEAREATOOLLISTENER_
 
-#include <toolbar.h>
-#include <thumbnail.h>
-#include <cropguilistener.h>
+#include "toolbar.h"
+#include "thumbnail.h"
+#include "cropguilistener.h"
 
 class ImageAreaToolListener {
 

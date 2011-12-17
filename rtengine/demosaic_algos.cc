@@ -16,19 +16,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rawimagesource.h>
-#include <rawimagesource_i.h>
-#include <median.h>
-#include <rawimage.h>
-#include <math.h>
-#include <mytime.h>
-#include <iccmatrices.h>
-#include <iccstore.h>
-#include <image8.h>
-#include <curves.h>
-#include <dfmanager.h>
-#include <slicer.h>
-#include <assert.h>
+#include "rawimagesource.h"
+#include "rawimagesource_i.h"
+#include "median.h"
+#include "rawimage.h"
+#include <cmath>
+#include "mytime.h"
+#include "iccmatrices.h"
+#include "iccstore.h"
+#include "image8.h"
+#include "curves.h"
+#include "dfmanager.h"
+#include "slicer.h"
+#include <cassert>
 
 #ifdef _OPENMP
 #include <omp.h>

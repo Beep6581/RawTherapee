@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <defringe.h>
+#include "defringe.h"
 #include <iomanip>
-#include <math.h>
+#include <cmath>
 
 using namespace rtengine;
 using namespace rtengine::procparams;

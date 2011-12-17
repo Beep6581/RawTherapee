@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <splash.h>
-#include <multilangmgr.h>
+#include "splash.h"
+#include "multilangmgr.h"
 #include <glib/gstdio.h>
-#include <safegtk.h>
+#include "../rtengine/safegtk.h"
 
 extern Glib::ustring argv0;
 extern Glib::ustring creditsPath;

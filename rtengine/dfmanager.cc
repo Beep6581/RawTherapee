@@ -16,16 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <dfmanager.h>
-#include <options.h>
+#include "dfmanager.h"
+#include "../rtgui/options.h"
 #include <giomm.h>
-#include <guiutils.h>
-#include <safegtk.h>
-#include <rawimage.h>
+#include "../rtgui/guiutils.h"
+#include "safegtk.h"
+#include "rawimage.h"
 #include <sstream>
 #include <iostream>
-#include <stdio.h>
-#include <imagedata.h>
+#include <cstdio>
+#include "imagedata.h"
 
 namespace rtengine{
 

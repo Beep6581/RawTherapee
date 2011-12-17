@@ -17,11 +17,11 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <math.h>
+#include <cmath>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <slicer.h>
+#include "slicer.h"
 #include <gtkmm.h>
 
 // If no parameter set, everything = 0 -> process all the image

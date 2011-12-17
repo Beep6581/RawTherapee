@@ -17,16 +17,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <editorpanel.h>
-#include <options.h>
-#include <progressconnector.h>
-#include <rtwindow.h>
-#include <guiutils.h>
-#include <procparamchangers.h>
-#include <safegtk.h>
-#include <imagesource.h>
-#include <soundman.h>
-#include <rtimage.h>
+#include "editorpanel.h"
+#include "options.h"
+#include "progressconnector.h"
+#include "rtwindow.h"
+#include "guiutils.h"
+#include "procparamchangers.h"
+#include "../rtengine/safegtk.h"
+#include "../rtengine/imagesource.h"
+#include "soundman.h"
+#include "rtimage.h"
 
 using namespace rtengine::procparams;
 

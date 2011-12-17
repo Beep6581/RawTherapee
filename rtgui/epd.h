@@ -20,8 +20,8 @@
 #define _EPD_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
+#include "adjuster.h"
+#include "toolpanel.h"
 
 class EdgePreservingDecompositionUI : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 protected:

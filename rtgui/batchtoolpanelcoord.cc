@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <multilangmgr.h>
-#include <batchtoolpanelcoord.h>
-#include <options.h>
-#include <filepanel.h>
-#include <procparamchangers.h>
-#include <addsetids.h>
+#include "multilangmgr.h"
+#include "batchtoolpanelcoord.h"
+#include "options.h"
+#include "filepanel.h"
+#include "procparamchangers.h"
+#include "addsetids.h"
 
 using namespace rtengine::procparams;
 

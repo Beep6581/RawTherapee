@@ -18,8 +18,8 @@
 *
 */
 
-#include <soundman.h>
-#include <options.h>
+#include "soundman.h"
+#include "options.h"
 
 #ifdef WIN32
 #include <windows.h>

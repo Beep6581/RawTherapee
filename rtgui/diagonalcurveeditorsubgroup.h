@@ -20,7 +20,7 @@
 #define _DIAGONALCURVEEDITORSUBGROUP_
 
 #include <gtkmm.h>
-#include <curveeditorgroup.h>
+#include "curveeditorgroup.h"
 
 class DiagonalCurveEditor;
 

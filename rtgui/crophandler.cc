@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <crophandler.h>
+#include "crophandler.h"
 #undef THREAD_PRIORITY_NORMAL
 
 #include <cstring>
-#include <guiutils.h>
-#include <refreshmap.h>
+#include "guiutils.h"
+#include "../rtengine/refreshmap.h"
 
 using namespace rtengine;
 

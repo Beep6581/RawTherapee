@@ -17,10 +17,10 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "saveasdlg.h"
-#include <multilangmgr.h>
-#include <guiutils.h>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "multilangmgr.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 extern Options options;
 SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {

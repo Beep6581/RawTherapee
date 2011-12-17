@@ -22,8 +22,8 @@
 #include <string>
 #include <map>
 #include <glibmm.h>
-#include <thumbnail.h>
-#include <stdio.h>
+#include "thumbnail.h"
+#include <cstdio>
 
 class Thumbnail;
 

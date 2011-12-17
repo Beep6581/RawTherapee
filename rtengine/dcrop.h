@@ -19,13 +19,13 @@
 #ifndef _CROP_H_
 #define _CROP_H_
 
-#include <improccoordinator.h>
-#include <rtengine.h>
-#include <improcfun.h>
-#include <image8.h>
-#include <image16.h>
-#include <imagesource.h>
-#include <procevents.h>
+#include "improccoordinator.h"
+#include "rtengine.h"
+#include "improcfun.h"
+#include "image8.h"
+#include "image16.h"
+#include "imagesource.h"
+#include "procevents.h"
 
 namespace rtengine {
 

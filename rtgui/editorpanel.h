@@ -21,19 +21,19 @@
 #define _EDITORPANEL_
 
 #include <gtkmm.h>
-#include <imageareapanel.h>
-#include <toolpanelcoord.h>
-#include <profilepanel.h>
-#include <rtengine.h>
-#include <history.h>
-#include <histogrampanel.h>
-#include <thumbnail.h>
-#include <saveasdlg.h>
-#include <batchqueueentry.h>
-#include <thumbnaillistener.h>
-#include <navigator.h>
-#include <progressconnector.h>
-#include <filepanel.h>
+#include "imageareapanel.h"
+#include "toolpanelcoord.h"
+#include "profilepanel.h"
+#include "../rtengine/rtengine.h"
+#include "history.h"
+#include "histogrampanel.h"
+#include "thumbnail.h"
+#include "saveasdlg.h"
+#include "batchqueueentry.h"
+#include "thumbnaillistener.h"
+#include "navigator.h"
+#include "progressconnector.h"
+#include "filepanel.h"
 
 class EditorPanel;
 struct EditorPanelIdleHelper {

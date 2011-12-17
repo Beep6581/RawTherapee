@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <shmap.h>
-#include <gauss.h>
-#include <bilateral2.h>
-#include <rtengine.h>
+#include "shmap.h"
+#include "gauss.h"
+#include "bilateral2.h"
+#include "rtengine.h"
 
-#include <rawimagesource.h>//for dirpyr
+#include "rawimagesource.h"//for dirpyr
 
 
 #undef MAXVAL

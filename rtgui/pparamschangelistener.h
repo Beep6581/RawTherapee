@@ -19,9 +19,9 @@
 #ifndef _PPARAMSCHANGELISTENER_
 #define _PPARAMSCHANGELISTENER_
 
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 #include <glibmm.h>
-#include <paramsedited.h>
+#include "paramsedited.h"
 
 class PParamsChangeListener {
 

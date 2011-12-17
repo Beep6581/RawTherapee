@@ -22,7 +22,7 @@
 #define _POPUPBUTTON_
 
 #include <gtkmm.h>
-#include <popupcommon.h>
+#include "popupcommon.h"
 
 class PopUpButton : public Gtk::Button, public PopUpCommon {
 

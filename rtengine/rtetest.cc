@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
+#include "rtengine.h"
 #include <iostream> 
 //#include <giomm.h>
 #include <helpers.h>

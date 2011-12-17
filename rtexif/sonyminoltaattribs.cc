@@ -19,11 +19,9 @@
 #ifndef _SONYMINOLTAATTRIBS_
 #define _SONYMINOLTAATTRIBS_
 
-#include <rtexif.h>
-#include <string>
-#include <math.h>
-#include <iomanip>
+#include <cmath>
 
+#include "rtexif.h"
 
 namespace rtexif {
 

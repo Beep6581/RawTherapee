@@ -19,24 +19,23 @@
  */
 #include <png.h>
 #include <glib/gstdio.h>
-#include <imageio.h>
-#include <safegtk.h>
+#include "imageio.h"
+#include "safegtk.h"
 #include <tiff.h>
 #include <tiffio.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <fcntl.h>
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
-#include <iptcpairs.h>
+#include "iptcpairs.h"
 #include <libiptcdata/iptc-jpeg.h>
 
-extern "C" {
-#include <iccjpeg.h>
-}
+#include "iccjpeg.h"
+
 #include "jpeg.h"
 
 Glib::ustring safe_locale_to_utf8 (const std::string& src);

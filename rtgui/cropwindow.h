@@ -19,15 +19,15 @@
 #ifndef _CROPWINDOW_
 #define _CROPWINDOW_
 
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 #include <gtkmm.h>
-#include <lwbutton.h>
-#include <lwbuttonset.h>
-#include <editenums.h>
-#include <crophandler.h>
+#include "lwbutton.h"
+#include "lwbuttonset.h"
+#include "editenums.h"
+#include "crophandler.h"
 #include <list>
-#include <cropguilistener.h>
-#include <pointermotionlistener.h>
+#include "cropguilistener.h"
+#include "pointermotionlistener.h"
 
 class CropWindow;
 class CropWindowListener {

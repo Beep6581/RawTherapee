@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <thumbbrowserentrybase.h>
-#include <thumbbrowserbase.h>
-#include <options.h>
-#include <mytime.h>
+#include "thumbbrowserentrybase.h"
+#include "thumbbrowserbase.h"
+#include "options.h"
+#include "../rtengine/mytime.h"
 
 ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) 
     : preh(0), preview(NULL), buttonSet(NULL), exp_width(0), exp_height(0), redrawRequests(0),

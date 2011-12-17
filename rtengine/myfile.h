@@ -20,8 +20,8 @@
 #define _MYFILE_
 
 #include <glib/gstdio.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 struct IMFILE {
 	int fd;
 	int pos;

@@ -16,16 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <iccstore.h>
+#include "iccstore.h"
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
-#include <iccmatrices.h>
+#include "iccmatrices.h"
 #include <glib/gstdio.h>
-#include <safegtk.h>
-#include <options.h>
+#include "safegtk.h"
+#include "../rtgui/options.h"
 
 #include <cstring>
 
@@ -67,10 +67,10 @@ std::vector<std::string> ICCStore::getOutputProfiles () {
     std::vector<std::string> res;
     for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++){
     	std::string name(i->first);
-    	std::string::size_type  i = name.find_last_of('/');
-    	if( i == std::string::npos )
-    		i = name.find_last_of('\\');
-    	if( i == std::string::npos )
+    	std::string::size_type  i2 = name.find_last_of('/');
+    	if( i2 == std::string::npos )
+    		i2 = name.find_last_of('\\');
+    	if( i2 == std::string::npos )
            res.push_back ( name ); // list only profiles inside selected profiles directory
     }
     return res;

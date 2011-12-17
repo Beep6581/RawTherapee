@@ -20,7 +20,7 @@
 #define _PARTIALPASTEDLG_
 
 #include <gtkmm.h>
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 
 class PartialPasteDlg : public Gtk::Dialog {
 

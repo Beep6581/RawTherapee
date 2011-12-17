@@ -20,7 +20,7 @@
 #define _EXIFPANEL_
 
 #include <gtkmm.h>
-#include <toolpanel.h>
+#include "toolpanel.h"
 
 class ExifPanel : public Gtk::VBox, public ToolPanel {
 

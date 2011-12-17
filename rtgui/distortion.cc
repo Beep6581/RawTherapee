@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <distortion.h>
+#include "distortion.h"
 #include <iomanip>
-#include <rtimage.h>
+#include "rtimage.h"
 
 extern Glib::ustring argv0;
 

@@ -16,24 +16,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <improcfun.h>
-#include <curves.h>
-#include <math.h>
-#include <colorclip.h>
-#include <gauss.h>
-#include <bilateral2.h>
-#include <minmax.h>
-#include <mytime.h>
+#include "rtengine.h"
+#include "improcfun.h"
+#include "curves.h"
+#include <cmath>
+#include "colorclip.h"
+#include "gauss.h"
+#include "bilateral2.h"
+#include "minmax.h"
+#include "mytime.h"
 #include <glib.h>
 #include <glibmm.h>
-#include <iccstore.h>
-#include <impulse_denoise.h>
-#include <imagesource.h>
-#include <rtthumbnail.h>
-#include <utils.h>
-#include <iccmatrices.h>
-
+#include "iccstore.h"
+#include "impulse_denoise.h"
+#include "imagesource.h"
+#include "rtthumbnail.h"
+#include "../rtengine/utils.h"
+#include "iccmatrices.h"
+#include "calc_distort.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -859,8 +859,6 @@ fclose(f);*/
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-	 #include "calc_distort.h"
-	 
 	double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size) {
 		if (fname != "") {
 			rtengine::RawMetaDataLocation ri;

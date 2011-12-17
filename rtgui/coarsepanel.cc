@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <coarsepanel.h>
-#include <rtimage.h>
+#include "coarsepanel.h"
+#include "rtimage.h"
 
 extern Glib::ustring argv0;
 

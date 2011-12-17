@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <sharpenmicro.h>
-#include <guiutils.h>
-#include <safegtk.h>
+#include "sharpenmicro.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
 #include <sstream>
 #include <iomanip>
-#include <math.h>
+#include <cmath>
 
 using namespace rtengine;
 using namespace rtengine::procparams;

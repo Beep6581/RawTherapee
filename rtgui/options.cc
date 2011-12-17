@@ -16,15 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <options.h>
-#include <stdio.h>
+#include "options.h"
+#include <cstdio>
 #include <glib/gstdio.h>
 #include <sstream>
-#include <multilangmgr.h>
-#include <safekeyfile.h>
-#include <addsetids.h>
-#include <guiutils.h>
-#include <safegtk.h>
+#include "multilangmgr.h"
+#include "../rtengine/safekeyfile.h"
+#include "addsetids.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
 #include "version.h"
 
 #ifdef WIN32

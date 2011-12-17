@@ -19,15 +19,15 @@
 #ifndef _IMAGESOURCE_
 #define _IMAGESOURCE_
 
-#include <rtengine.h>
-#include <colortemp.h>
+#include "rtengine.h"
+#include "colortemp.h"
 #include <glibmm.h>
-#include <image16.h>
-#include <imagefloat.h>
-#include <procparams.h>
-#include <coord2d.h>
+#include "image16.h"
+#include "imagefloat.h"
+#include "procparams.h"
+#include "coord2d.h"
 #include <vector>
-#include <imagedata.h>
+#include "imagedata.h"
 #include "LUT.h"
 
 namespace rtengine {

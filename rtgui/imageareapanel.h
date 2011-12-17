@@ -19,7 +19,7 @@
 #ifndef _IMAGEAREAPANEL_
 #define _IMAGEAREAPANEL_
 
-#include <imagearea.h>
+#include "imagearea.h"
 
 class ImageArea;
 class ImageAreaPanel : public Gtk::VBox {

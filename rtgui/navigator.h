@@ -20,9 +20,9 @@
 #define _NAVIGATOR_
 
 #include <gtkmm.h>
-#include <previewwindow.h>
-#include <pointermotionlistener.h>
-#include <iccstore.h>
+#include "previewwindow.h"
+#include "pointermotionlistener.h"
+#include "../rtengine/iccstore.h"
 
 class Navigator : public Gtk::Frame, public PointerMotionListener {
 

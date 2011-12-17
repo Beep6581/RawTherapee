@@ -16,18 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <colortemp.h>
-#include <imagesource.h>
-#include <improcfun.h>
-#include <curves.h>
-#include <iccstore.h>
-#include <processingjob.h>
+#include "rtengine.h"
+#include "colortemp.h"
+#include "imagesource.h"
+#include "improcfun.h"
+#include "curves.h"
+#include "iccstore.h"
+#include "processingjob.h"
 #include <glibmm.h>
-#include <options.h>
+#include "../rtgui/options.h"
 #include <iostream>
-#include <rawimagesource.h>
-#include "ppversion.h"
+#include "rawimagesource.h"
+#include "../rtgui/ppversion.h"
 #undef THREAD_PRIORITY_NORMAL
 
 #define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)

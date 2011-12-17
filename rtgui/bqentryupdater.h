@@ -20,8 +20,8 @@
 #define _BQENTRYUPDATER_
 
 #include <glibmm.h>
-#include <rtengine.h>
-#include <thumbnail.h>
+#include "../rtengine/rtengine.h"
+#include "thumbnail.h"
 
 class BQEntryUpdateListener {
 

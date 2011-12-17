@@ -23,9 +23,9 @@
 ////////////////////////////////////////////////////////////////
 #define TS 256	 // Tile size
 
-#include <math.h>
-#include <stdlib.h>
-#include <time.h>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 
 #define SQR(x) ((x)*(x))

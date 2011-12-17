@@ -20,21 +20,21 @@
 #define _FILECATALOG_
 
 #ifdef WIN32
-#include <windirmonitor.h>
+#include "windirmonitor.h"
 #endif
-#include <dirbrowserremoteinterface.h>
-#include <dirselectionlistener.h>
-#include <filebrowser.h>
-#include <exiffiltersettings.h>
+#include "dirbrowserremoteinterface.h"
+#include "dirselectionlistener.h"
+#include "filebrowser.h"
+#include "exiffiltersettings.h"
 #include <giomm.h>
-#include <fileselectionlistener.h>
+#include "fileselectionlistener.h"
 #include <set>
-#include <fileselectionchangelistener.h>
-#include <coarsepanel.h>
-#include <toolbar.h>
-#include <filterpanel.h>
-#include <previewloader.h>
-#include <multilangmgr.h>
+#include "fileselectionchangelistener.h"
+#include "coarsepanel.h"
+#include "toolbar.h"
+#include "filterpanel.h"
+#include "previewloader.h"
+#include "multilangmgr.h"
 
 
 class DirEntry {

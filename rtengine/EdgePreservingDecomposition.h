@@ -35,11 +35,11 @@ It's likely that I'll take apart and rerelease contents of this file (in the dis
 and rather supporting material. SparseConjugateGradient alone is a workhorse I and a few others have been exploiting for a few years.
 
 EdgePreservingDecomposition.h and EdgePreservingDecomposition.cpp are released under the following licence:
-	• It's free.
-	• You may not incorporate this code as part of proprietary or commercial software, but via freeware you may use its output for profit.
-	• You may modify and redistribute, but keep this big comment block intact and not for profit in any way unless I give specific permission.
-	• If you're unsure about anything else, treat as public domain.
-	• Don't be a dick.
+	ï¿½ It's free.
+	ï¿½ You may not incorporate this code as part of proprietary or commercial software, but via freeware you may use its output for profit.
+	ï¿½ You may modify and redistribute, but keep this big comment block intact and not for profit in any way unless I give specific permission.
+	ï¿½ If you're unsure about anything else, treat as public domain.
+	ï¿½ Don't be a dick.
 
 My email address is my screen name followed by @yahoo.com. I'm also known as ben_s or nonbasketless. Enjoy!
 */
@@ -47,8 +47,8 @@ My email address is my screen name followed by @yahoo.com. I'm also known as ben
 
 
 #include <cmath>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 
 //This is for solving big symmetric positive definite linear problems.

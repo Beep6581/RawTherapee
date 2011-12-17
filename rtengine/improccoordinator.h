@@ -19,13 +19,13 @@
 #ifndef _IMPROCCOORDINATOR_H_
 #define _IMPROCCOORDINATOR_H_
 
-#include <rtengine.h>
-#include <improcfun.h>
-#include <image8.h>
-#include <image16.h>
-#include <imagesource.h>
-#include <procevents.h>
-#include <dcrop.h>
+#include "rtengine.h"
+#include "improcfun.h"
+#include "image8.h"
+#include "image16.h"
+#include "imagesource.h"
+#include "procevents.h"
+#include "dcrop.h"
 #include "LUT.h"
 
 namespace rtengine {

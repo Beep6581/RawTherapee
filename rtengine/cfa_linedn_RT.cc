@@ -28,16 +28,16 @@
 #define CLASS
 
 /*
-#include <ctype.h>
-#include <errno.h>
+#include <cctype>
+#include <cerrno>
 #include <fcntl.h>
-#include <float.h>
-#include <limits.h>
-#include <setjmp.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>*/
-#include <math.h>
+#include <cfloat>
+#include <climits>
+#include <csetjmp>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>*/
+#include <cmath>
 
 
 //#include "shrtdct_float.c"

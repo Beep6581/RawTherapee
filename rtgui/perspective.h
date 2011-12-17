@@ -20,8 +20,8 @@
 #define _PERSPECTIVE_PANEL_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
+#include "adjuster.h"
+#include "toolpanel.h"
 
 class PerspCorrection : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 

@@ -22,13 +22,13 @@
 //
 ////////////////////////////////////////////////////////////////
 
-//#include <rtengine.h>
+//#include "rtengine.h"
 #include <cstddef>
-#include <math.h>
-#include <curves.h>
-#include <array2D.h>
-#include <improcfun.h>
-#include <rawimagesource.h>
+#include <cmath>
+#include "curves.h"
+#include "array2D.h"
+#include "improcfun.h"
+#include "rawimagesource.h"
 //#include "stack1.h"
 
 

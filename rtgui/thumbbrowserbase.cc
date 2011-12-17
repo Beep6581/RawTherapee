@@ -14,11 +14,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <thumbbrowserbase.h>
+#include "thumbbrowserbase.h"
 #include <glibmm.h>
-#include <multilangmgr.h>
-#include <options.h>
-#include <mytime.h>
+#include "multilangmgr.h"
+#include "options.h"
+#include "../rtengine/mytime.h"
 
 ThumbBrowserBase::ThumbBrowserBase () 
     : lastClicked(NULL), previewHeight(options.thumbSize) {

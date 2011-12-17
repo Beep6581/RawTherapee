@@ -19,8 +19,8 @@
 #include <string>
 #include <glibmm/ustring.h>
 #include <map>
-#include <math.h>
-#include <rawimage.h>
+#include <cmath>
+#include "rawimage.h"
 
 namespace rtengine{
 

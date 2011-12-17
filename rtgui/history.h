@@ -20,10 +20,10 @@
 #define _HISTORY_
 
 #include <gtkmm.h>
-#include <rtengine.h>
-#include <pparamschangelistener.h>
-#include <profilechangelistener.h>
-#include <paramsedited.h>
+#include "../rtengine/rtengine.h"
+#include "pparamschangelistener.h"
+#include "profilechangelistener.h"
+#include "paramsedited.h"
 
 class HistoryBeforeLineListener {
 

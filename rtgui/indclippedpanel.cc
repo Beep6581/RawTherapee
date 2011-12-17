@@ -15,11 +15,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <indclippedpanel.h>
-#include <options.h>
-#include <multilangmgr.h>
-#include <imagearea.h>
-#include <rtimage.h>
+#include "indclippedpanel.h"
+#include "options.h"
+#include "multilangmgr.h"
+#include "imagearea.h"
+#include "rtimage.h"
 
 IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia) {
 

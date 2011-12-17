@@ -27,11 +27,11 @@
 #define IMIO_VARIANTNOTSUPPORTED   5
 #define IMIO_FILETYPENOTSUPPORTED  6
 
-#include <rtengine.h>
+#include "rtengine.h"
 #include <glibmm.h>
-#include <procparams.h>
+#include "procparams.h"
 #include <libiptcdata/iptc-data.h>
-#include <rtexif.h>
+#include "../rtexif/rtexif.h"
 
 namespace rtengine {
 

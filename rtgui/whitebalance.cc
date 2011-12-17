@@ -16,11 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <whitebalance.h>
+#include "whitebalance.h"
 #include <iomanip>
-#include <rtimage.h>
-#include <options.h>
-#include <safegtk.h>
+#include "rtimage.h"
+#include "options.h"
+#include "../rtengine/safegtk.h"
 
 #define MINTEMP 2000   //1200
 #define MAXTEMP 25000  //12000

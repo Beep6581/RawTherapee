@@ -29,17 +29,17 @@
 #define _GNU_SOURCE
 #endif
 #define _USE_MATH_DEFINES
-#include <ctype.h>
-#include <errno.h>
+#include <cctype>
+#include <cerrno>
 #include <fcntl.h>
-#include <float.h>
-#include <limits.h>
-#include <math.h>
-#include <setjmp.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <csetjmp>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 #include <sys/types.h>
 
 #ifdef NODEPS

@@ -22,9 +22,9 @@
 #ifndef _IMAGE16_
 #define _IMAGE16_
 
-#include <imageio.h>
-#include <rtengine.h>
-#include <imagefloat.h>
+#include "imageio.h"
+#include "rtengine.h"
+#include "imagefloat.h"
 
 namespace rtengine {
 

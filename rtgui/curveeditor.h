@@ -19,8 +19,8 @@
 #ifndef _CURVEEDITOR_
 #define _CURVEEDITOR_
 
-#include <popuptogglebutton.h>
-#include <LUT.h>
+#include "popuptogglebutton.h"
+#include "../rtengine/LUT.h"
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;

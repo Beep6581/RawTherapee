@@ -22,12 +22,12 @@
 #include <gtkmm.h>
 #include <fstream>
 #include <string>
-#include <guiutils.h>
-#include <mycurve.h>
-#include <myflatcurve.h>
-#include <mydiagonalcurve.h>
-#include <shcselector.h>
-#include <adjuster.h>
+#include "guiutils.h"
+#include "mycurve.h"
+#include "myflatcurve.h"
+#include "mydiagonalcurve.h"
+#include "shcselector.h"
+#include "adjuster.h"
 
 class CurveEditor;
 class DiagonalCurveEditorSubGroup;

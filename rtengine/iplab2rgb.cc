@@ -16,16 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <improcfun.h>
+#include "rtengine.h"
+#include "improcfun.h"
 #include <glibmm.h>
-#include <iccstore.h>
-#include <iccmatrices.h>
-#include <mytime.h>
-#include <icmpanel.h>
-#include <options.h>
-#include <settings.h>
-#include <curves.h>
+#include "iccstore.h"
+#include "iccmatrices.h"
+#include "mytime.h"
+#include "../rtgui/icmpanel.h"
+#include "../rtgui/options.h"
+#include "settings.h"
+#include "curves.h"
 
 
 #ifdef _OPENMP

@@ -19,11 +19,11 @@
 #ifndef _THUMBPROCESSINGPARAMETERS_
 #define _THUMBPROCESSINGPARAMETERS_
 
-#include <rawmetadatalocation.h>
-#include <procparams.h>
+#include "rawmetadatalocation.h"
+#include "procparams.h"
 #include <glibmm.h>
 #include <lcms2.h>
-#include <image16.h>
+#include "image16.h"
 
 namespace rtengine {
 

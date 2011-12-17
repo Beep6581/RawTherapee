@@ -22,10 +22,10 @@
 #include <glibmm.h>
 #include <map>
 #include <string>
-#include <math.h>
-#include <mycurve.h>
-#include <myflatcurve.h>
-#include <mydiagonalcurve.h>
+#include <cmath>
+#include "../rtgui/mycurve.h"
+#include "../rtgui/myflatcurve.h"
+#include "../rtgui/mydiagonalcurve.h"
 
 #include "LUT.h"
 

@@ -19,12 +19,12 @@
 #ifndef _BILATERAL2_
 #define _BILATERAL2_
 
-#include <math.h>
-#include <string.h>
-#include <stdio.h>
-#include <alignedbuffer.h>
-#include <mytime.h>
-#include <gauss.h>
+#include <cmath>
+#include <cstring>
+#include <cstdio>
+#include "alignedbuffer.h"
+#include "mytime.h"
+#include "gauss.h"
 #include <glibmm.h>
 #ifdef _OPENMP
 #include <omp.h>

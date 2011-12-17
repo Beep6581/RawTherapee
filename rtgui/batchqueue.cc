@@ -16,15 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <batchqueue.h>
+#include "batchqueue.h"
 #include <glibmm.h>
 #include <glib/gstdio.h>
-#include <multilangmgr.h>
-#include <filecatalog.h>
-#include <batchqueuebuttonset.h>
-#include <guiutils.h>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "multilangmgr.h"
+#include "filecatalog.h"
+#include "batchqueuebuttonset.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 #include <cstring>
 

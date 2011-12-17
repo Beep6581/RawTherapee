@@ -19,17 +19,17 @@
 #ifndef _RTENGINE_
 #define _RTENGINE_
 
-#include <procparams.h>
-#include <procevents.h>
+#include "procparams.h"
+#include "procevents.h"
 #include <lcms2.h>
 #include <string>
 #include <glibmm.h>
-#include <time.h>
-#include <rtexif.h>
-#include <rawmetadatalocation.h>
-#include <iimage.h>
-#include <utils.h>
-#include <settings.h>
+#include <ctime>
+#include "../rtexif/rtexif.h"
+#include "rawmetadatalocation.h"
+#include "iimage.h"
+#include "../rtengine/utils.h"
+#include "settings.h"
 #include "LUT.h"
 /**
  * @file 

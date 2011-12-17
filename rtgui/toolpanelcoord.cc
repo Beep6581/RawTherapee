@@ -16,18 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <multilangmgr.h>
-#include <toolpanelcoord.h>
-#include <ilabel.h>
-#include <options.h>
-#include <imagesource.h>
-#include <dfmanager.h>
-#include <ffmanager.h>
-#include <improcfun.h>
-#include <procevents.h>
-#include <refreshmap.h>
-#include <guiutils.h>
-#include <rtimage.h>
+#include "multilangmgr.h"
+#include "toolpanelcoord.h"
+#include "ilabel.h"
+#include "options.h"
+#include "../rtengine/imagesource.h"
+#include "../rtengine/dfmanager.h"
+#include "../rtengine/ffmanager.h"
+#include "../rtengine/improcfun.h"
+#include "../rtengine/procevents.h"
+#include "../rtengine/refreshmap.h"
+#include "guiutils.h"
+#include "rtimage.h"
 
 using namespace rtengine::procparams;
 

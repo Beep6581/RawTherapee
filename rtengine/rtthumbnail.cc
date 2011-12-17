@@ -16,27 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <rtthumbnail.h>
-#include <image8.h>
+#include "rtengine.h"
+#include "rtthumbnail.h"
+#include "image8.h"
 #include <lcms2.h>
-#include <curves.h>
+#include "curves.h"
 #include <glibmm.h>
-#include <improcfun.h>
-#include <colortemp.h> 
-#include <mytime.h>
-#include <utils.h>
-#include <iccstore.h>
-#include <iccmatrices.h>
-#include <rawimagesource.h>
-#include <stdimagesource.h>
+#include "improcfun.h"
+#include "colortemp.h" 
+#include "mytime.h"
+#include "../rtengine/utils.h"
+#include "iccstore.h"
+#include "iccmatrices.h"
+#include "rawimagesource.h"
+#include "stdimagesource.h"
 #include <glib/gstdio.h>
-#include <setjmp.h>
-#include <safekeyfile.h>
-#include <safegtk.h>
-#include <rawimage.h>
+#include <csetjmp>
+#include "safekeyfile.h"
+#include "safegtk.h"
+#include "rawimage.h"
 #include "jpeg.h"
-#include "ppversion.h"
+#include "../rtgui/ppversion.h"
 
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)

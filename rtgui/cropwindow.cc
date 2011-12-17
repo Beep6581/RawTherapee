@@ -16,14 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <cropwindow.h>
-#include <options.h>
+#include "cropwindow.h"
+#include "options.h"
 #include <iomanip>
-#include <guiutils.h>
-#include <mytime.h>
-#include <imagearea.h>
-#include <cursormanager.h>
-#include <safegtk.h>
+#include "guiutils.h"
+#include "../rtengine/mytime.h"
+#include "imagearea.h"
+#include "cursormanager.h"
+#include "../rtengine/safegtk.h"
 
 struct ZoomStep {   
     Glib::ustring label;

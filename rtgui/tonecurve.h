@@ -20,12 +20,12 @@
 #define _TONECURVE_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
-#include <curveeditor.h>
-#include <curveeditorgroup.h>
-#include <mycurve.h>
-#include <guiutils.h>
+#include "adjuster.h"
+#include "toolpanel.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "mycurve.h"
+#include "guiutils.h"
 
 class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public CurveListener {
 

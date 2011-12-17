@@ -20,15 +20,15 @@
 #include <gtkmm.h>
 #include <fstream>
 #include <string>
-#include <guiutils.h>
-#include <multilangmgr.h>
-#include <guiutils.h>
-#include <mycurve.h>
-#include <shcselector.h>
-#include <adjuster.h>
-#include <mycurve.h>
-#include <curveeditor.h>
-#include <flatcurveeditorsubgroup.h>
+#include "guiutils.h"
+#include "multilangmgr.h"
+#include "guiutils.h"
+#include "mycurve.h"
+#include "shcselector.h"
+#include "adjuster.h"
+#include "mycurve.h"
+#include "curveeditor.h"
+#include "flatcurveeditorsubgroup.h"
 
 FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt) {
 
