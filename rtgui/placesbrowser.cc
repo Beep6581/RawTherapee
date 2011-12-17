@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <placesbrowser.h>
-#include <options.h>
-#include <toolpanel.h>
-#include <safegtk.h>
-#include <guiutils.h>
-#include <rtimage.h>
+#include "placesbrowser.h"
+#include "options.h"
+#include "toolpanel.h"
+#include "../rtengine/safegtk.h"
+#include "guiutils.h"
+#include "rtimage.h"
 
 PlacesBrowser::PlacesBrowser () : listener (NULL) {
 

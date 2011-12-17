@@ -65,6 +65,8 @@
 #define LUTi LUT<int>
 #define LUTu LUT<unsigned int>
 
+#include <cstring>
+
 template<typename T>
 class LUT {
 private:

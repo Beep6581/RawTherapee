@@ -18,9 +18,9 @@
  */
 
 #include <set>
-#include <thumbimageupdater.h>
+#include "thumbimageupdater.h"
 #include <gtkmm.h>
-#include <guiutils.h>
+#include "guiutils.h"
 
 #ifdef _OPENMP
 #include <omp.h>

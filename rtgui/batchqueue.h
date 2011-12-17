@@ -19,11 +19,11 @@
 #define _BATCHQUEUE_
 
 #include <gtkmm.h>
-#include <batchqueueentry.h>
-#include <rtengine.h>
-#include <options.h>
-#include <lwbuttonset.h>
-#include <thumbbrowserbase.h>
+#include "batchqueueentry.h"
+#include "../rtengine/rtengine.h"
+#include "options.h"
+#include "lwbuttonset.h"
+#include "thumbbrowserbase.h"
 
 class BatchQueueListener {
 

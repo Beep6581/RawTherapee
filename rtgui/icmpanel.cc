@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <icmpanel.h>
-#include <options.h>
-#include <guiutils.h>
-#include <safegtk.h>
-#include <iccstore.h>
-#include <rtimage.h>
+#include "icmpanel.h"
+#include "options.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
+#include "../rtengine/iccstore.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

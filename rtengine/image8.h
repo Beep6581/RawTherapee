@@ -22,8 +22,8 @@
 #ifndef _IMAGE8_
 #define _IMAGE8_
 
-#include <imageio.h>
-#include <rtengine.h>
+#include "imageio.h"
+#include "rtengine.h"
 
 namespace rtengine {
 

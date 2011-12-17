@@ -55,7 +55,7 @@
 #ifndef ARRAY2D_H_
 #define ARRAY2D_H_
 #include <csignal>  // for raise()
-#include <assert.h>
+#include <cassert>
 
 // flags for use
 #define ARRAY2D_LOCK_DATA	1

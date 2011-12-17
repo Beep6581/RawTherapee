@@ -4,16 +4,16 @@
  *  Created on: 20/nov/2010
  */
 
-#include <rawimage.h>
-#include <settings.h>
-#include <colortemp.h>
-#include <utils.h>
+#include "rawimage.h"
+#include "settings.h"
+#include "colortemp.h"
+#include "../rtengine/utils.h"
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
-#include <safegtk.h>
+#include "safegtk.h"
 
 namespace rtengine{
 

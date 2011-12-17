@@ -17,20 +17,20 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <glib/gstdio.h>
-#include <safegtk.h>
-#include <multilangmgr.h>
-#include <procparams.h>
+#include "safegtk.h"
+#include "../rtgui/multilangmgr.h"
+#include "procparams.h"
 #include <glibmm.h>
 #include <sstream>
-#include <string.h>
-#include "version.h"
-#include <ppversion.h>
-#include <mydiagonalcurve.h>
-#include <myflatcurve.h>
+#include <cstring>
+#include "../rtgui/version.h"
+#include "../rtgui/ppversion.h"
+#include "../rtgui/mydiagonalcurve.h"
+#include "../rtgui/myflatcurve.h"
+#include "safekeyfile.h"
+#include "rawimage.h"
+#include "../rtgui/ppversion.h"
 
-#include <safekeyfile.h>
-#include <rawimage.h>
-#include "ppversion.h"
 #define APPVERSION VERSION
 
 namespace rtengine {

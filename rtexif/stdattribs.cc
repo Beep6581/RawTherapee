@@ -20,11 +20,10 @@
 #ifndef _STDATTRIBS_
 #define _STDATTRIBS_
 
-#include <rtexif.h>
-#include <string>
-#include <map>
-#include <math.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
+
+#include "rtexif.h"
 
 namespace rtexif {
 
@@ -558,12 +557,5 @@ const TagAttrib iopAttribs[] = {
  {-1, 0, 0,  0, 0, "", NULL}};
 
 };
-
-/*#include <nikonattribs.h>
-#include <canonattribs.h>
-#include <pentaxattribs.h>
-#include <olympusattribs.h>
-#include <fujiattribs.h>
-#include <sonyminoltaattribs.h>*/
 
 #endif

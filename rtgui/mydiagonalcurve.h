@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 #include <vector>
-#include <curvelistener.h>
-#include <cursormanager.h>
-#include <mycurve.h>
-#include <LUT.h>
+#include "curvelistener.h"
+#include "cursormanager.h"
+#include "mycurve.h"
+#include "../rtengine/LUT.h"
 
 
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget

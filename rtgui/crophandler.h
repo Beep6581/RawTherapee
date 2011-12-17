@@ -19,7 +19,7 @@
 #ifndef __CROPHANDLER__
 #define __CROPHANDLER__
 
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 #include <gtkmm.h>
 
 class CropHandlerListener {

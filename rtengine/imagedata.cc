@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <imagedata.h>
-#include <iptcpairs.h>
+#include "imagedata.h"
+#include "iptcpairs.h"
 #include <glib/gstdio.h>
-#include <safegtk.h>
+#include "safegtk.h"
 
 #ifndef GLIBMM_EXCEPTIONS_ENABLED
 #include <memory>

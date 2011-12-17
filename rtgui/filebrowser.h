@@ -20,11 +20,11 @@
 #define _FILEBROWSER_
 
 #include <gtkmm.h>
-#include <thumbbrowserbase.h>
-#include <exiffiltersettings.h>
-#include <filebrowserentry.h>
-#include <browserfilter.h>
-#include <partialpastedlg.h>
+#include "thumbbrowserbase.h"
+#include "exiffiltersettings.h"
+#include "filebrowserentry.h"
+#include "browserfilter.h"
+#include "partialpastedlg.h"
 
 class FileBrowser;
 class FileBrowserEntry;

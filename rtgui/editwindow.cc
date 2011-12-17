@@ -15,13 +15,13 @@
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <editwindow.h>
-#include <options.h>
-#include <preferences.h>
-#include <cursormanager.h>
-#include <rtwindow.h>
+#include "editwindow.h"
+#include "options.h"
+#include "preferences.h"
+#include "cursormanager.h"
+#include "rtwindow.h"
 #include <gtk/gtkwidget.h>
-#include <rtimage.h>
+#include "rtimage.h"
 
 static EditWindow* editWnd = NULL;
 

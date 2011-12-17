@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <stdimagesource.h>
-#include <mytime.h>
-#include <iccstore.h>
+#include "stdimagesource.h"
+#include "mytime.h"
+#include "iccstore.h"
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
-#include <curves.h>
+#include "curves.h"
 
 #undef THREAD_PRIORITY_NORMAL
 

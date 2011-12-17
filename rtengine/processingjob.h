@@ -19,7 +19,7 @@
 #ifndef _PROCESSINGJOB_
 #define _PROCESSINGJOB_
 
-#include <rtengine.h>
+#include "rtengine.h"
 
 namespace rtengine {
 

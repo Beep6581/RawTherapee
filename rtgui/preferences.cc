@@ -18,15 +18,15 @@
  */
 #include <sigc++/class_slot.h>
 #include "preferences.h"
-#include <multilangmgr.h>
-#include <splash.h>
-#include <cachemanager.h>
-#include <addsetids.h>
-#include <dfmanager.h>
-#include <ffmanager.h>
+#include "multilangmgr.h"
+#include "splash.h"
+#include "cachemanager.h"
+#include "addsetids.h"
+#include "../rtengine/dfmanager.h"
+#include "../rtengine/ffmanager.h"
 #include <sstream>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 extern Options options;
 extern Glib::ustring argv0;

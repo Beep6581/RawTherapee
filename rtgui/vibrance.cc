@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <vibrance.h>
+#include "vibrance.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

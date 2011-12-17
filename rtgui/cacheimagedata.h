@@ -20,7 +20,7 @@
 #define _CACHEIMAGEDATA_
 
 #include <glibmm.h>
-#include <options.h>
+#include "options.h"
 
 class CacheImageData {
 

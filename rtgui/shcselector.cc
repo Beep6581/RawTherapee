@@ -17,9 +17,9 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <shcselector.h>
+#include "shcselector.h"
 #include <iomanip>
-#include <mycurve.h>
+#include "mycurve.h"
 
 SHCSelector::SHCSelector() : movingPosition(-1), cl(NULL) {
 

@@ -20,9 +20,9 @@
 #ifndef RAWIMAGESOURCE_I_H_INCLUDED
 #define RAWIMAGESOURCE_I_H_INCLUDED
 
-#include <rawimagesource.h>
+#include "rawimagesource.h"
 
-#include <curves.h>
+#include "curves.h"
 
 #undef MAXVAL
 #undef CLIP

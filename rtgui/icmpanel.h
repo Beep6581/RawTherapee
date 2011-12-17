@@ -20,11 +20,11 @@
 #define _ICMPANEL_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <guiutils.h>
+#include "adjuster.h"
+#include "guiutils.h"
 
-#include <toolpanel.h>
-#include <imagedata.h>
+#include "toolpanel.h"
+#include "../rtengine/imagedata.h"
 
 class ICMPanelListener {
 

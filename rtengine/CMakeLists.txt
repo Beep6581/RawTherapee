@@ -1,8 +1,6 @@
-
-include_directories (${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../rtexif
-    ${EXTRA_INCDIR} ${GTHREAD_INCLUDE_DIRS} ${GOBJECT_INCLUDE_DIRS} ${GLIB2_INCLUDE_DIRS}
+include_directories (${EXTRA_INCDIR} ${GTHREAD_INCLUDE_DIRS} ${GOBJECT_INCLUDE_DIRS} ${GLIB2_INCLUDE_DIRS}
     ${GLIBMM_INCLUDE_DIRS} ${IPTCDATA_INCLUDE_DIRS} ${LCMS_INCLUDE_DIRS}
-	${CMAKE_CURRENT_SOURCE_DIR}/../rtgui ${GTKMM_INCLUDE_DIRS} ${GTK_INCLUDE_DIRS})
+    ${GTKMM_INCLUDE_DIRS} ${GTK_INCLUDE_DIRS})
 link_directories (${CMAKE_CURRENT_SOURCE_DIR}/../rtexif ${EXTRA_LIBDIR} ${GTHREAD_LIBRARY_DIRS}
     ${GOBJECT_LIBRARY_DIRS} ${GLIB2_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS}
     ${IPTCDATA_LIBRARY_DIRS} ${LCMS_LIBRARY_DIRS})
@@ -10,15 +8,15 @@ link_directories (${CMAKE_CURRENT_SOURCE_DIR}/../rtexif ${EXTRA_LIBDIR} ${GTHREA
 set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagonalcurves.cc dcraw.cc iccstore.cc
     dfmanager.cc ffmanager.cc rawimage.cc image8.cc image16.cc imagefloat.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
     loadinitial.cc procparams.cc rawimagesource.cc demosaic_algos.cc shmap.cc simpleprocess.cc refreshmap.cc
-    stdimagesource.cc myfile.cc iccjpeg.c hlmultipliers.cc improccoordinator.cc
+    stdimagesource.cc myfile.cc iccjpeg.cc hlmultipliers.cc improccoordinator.cc
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc
-	jpeg_memsrc.c jdatasrc.c
+	jpeg_memsrc.cc jdatasrc.cc
 	PF_correct_RT.cc
     dirpyrLab_denoise.cc dirpyrLab_equalizer.cc dirpyr_equalizer.cc
-    calc_distort.c
-    klt/convolve.c klt/error.c klt/klt.c klt/klt_util.c klt/pnmio.c klt/pyramid.c klt/selectGoodFeatures.c
-    klt/storeFeatures.c klt/trackFeatures.c klt/writeFeatures.c
+    calc_distort.cc
+    klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
+    klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
     )
 
 add_library (rtengine ${RTENGINESOURCEFILES})

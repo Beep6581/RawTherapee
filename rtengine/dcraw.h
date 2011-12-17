@@ -20,8 +20,8 @@
 #ifndef DCRAW_H
 #define DCRAW_H
 
-#include <myfile.h>
-#include <setjmp.h>
+#include "myfile.h"
+#include <csetjmp>
 
 
 class DCraw

@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filebrowserentry.h>
-#include <thumbbrowserbase.h>
-#include <cursormanager.h>
+#include "filebrowserentry.h"
+#include "thumbbrowserbase.h"
+#include "cursormanager.h"
 #include <iomanip>
-#include <guiutils.h>
-#include <safegtk.h>
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
 
 #include <cstring>
 

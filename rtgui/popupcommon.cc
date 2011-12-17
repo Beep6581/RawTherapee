@@ -19,10 +19,10 @@
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
 
-#include <multilangmgr.h>
-#include <popupcommon.h>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "multilangmgr.h"
+#include "popupcommon.h"
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 extern Glib::ustring argv0;
 

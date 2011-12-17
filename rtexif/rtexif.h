@@ -19,13 +19,13 @@
 #ifndef _MEXIF3_
 #define _MEXIF3_
 
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 #include <map>
 #include <string>
 #include <sstream>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 
 namespace rtexif {
 
@@ -33,6 +33,8 @@ enum TagType {INVALID=0, BYTE=1, ASCII=2, SHORT=3, LONG=4, RATIONAL=5, UNDEFINED
 enum ActionCode {DONTWRITE=0, WRITE=1, SYSTEM=2};
 enum ByteOrder {INTEL=0x4949, MOTOROLA=0x4D4D};
 enum MNKind {NOMK, IFD, HEADERIFD, NIKON3, OLYMPUS2, FUJI,TABLESUBDIR};
+
+bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
 
 struct TIFFHeader {
 
@@ -339,7 +341,6 @@ inline void sset2 (unsigned short v, unsigned char *s, ByteOrder order);
 inline void sset4 (int v, unsigned char *s, ByteOrder order);
 inline float int_to_float (int i);
 inline short int int2_to_signed (short unsigned int i);
-bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, double &maxApertureAtMinFocal, double &maxApertureAtMaxFocal);
 
 extern const TagAttrib exifAttribs[];
 extern const TagAttrib gpsAttribs[];

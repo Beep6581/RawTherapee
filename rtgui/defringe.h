@@ -20,8 +20,8 @@
 #define _DEFRINGE_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
+#include "adjuster.h"
+#include "toolpanel.h"
 
 class Defringe : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 

@@ -14,17 +14,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  © 2010 Emil Martinec <ejmartin@uchicago.edu>
+ *  ï¿½ 2010 Emil Martinec <ejmartin@uchicago.edu>
  *    
  */
 
-//#include <rtengine.h>
+//#include "rtengine.h"
 #include <cstddef>
-#include <math.h>
-#include <curves.h>
-#include <labimage.h>
-#include <improcfun.h>
-#include <array2D.h>
+#include <cmath>
+#include "curves.h"
+#include "labimage.h"
+#include "improcfun.h"
+#include "array2D.h"
 
 #ifdef _OPENMP
 #include <omp.h>

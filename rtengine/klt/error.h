@@ -5,8 +5,8 @@
 #ifndef _ERROR_H_
 #define _ERROR_H_
 
-#include <stdio.h>
-#include <stdarg.h>
+#include <cstdio>
+#include <cstdarg>
 
 void KLTError(char *fmt, ...);
 void KLTWarning(char *fmt, ...);

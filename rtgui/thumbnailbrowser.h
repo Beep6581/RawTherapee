@@ -20,8 +20,8 @@
 #define _THUMBNAILBROWSER_
 
 #include <gtkmm.h>
-#include <thumbnail.h>
-#include <filecatalog.h>
+#include "thumbnail.h"
+#include "filecatalog.h"
 
 class ThumbBrowserEntry {
 

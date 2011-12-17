@@ -19,9 +19,9 @@
 #ifndef __RAWIMAGE_H
 #define __RAWIMAGE_H
 
-#include <time.h>
+#include <ctime>
 #include <glibmm.h>
-#include <dcraw.h>
+#include "dcraw.h"
 
 namespace rtengine {
 

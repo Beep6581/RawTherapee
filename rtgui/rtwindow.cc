@@ -16,11 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtwindow.h>
-#include <options.h>
-#include <preferences.h>
-#include <cursormanager.h>
-#include <rtimage.h>
+#include "rtwindow.h"
+#include "options.h"
+#include "preferences.h"
+#include "cursormanager.h"
+#include "rtimage.h"
 #include "whitebalance.h"
 
 RTWindow::RTWindow ()

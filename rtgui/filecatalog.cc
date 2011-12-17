@@ -17,20 +17,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filecatalog.h>
-#include <filepanel.h>
-#include <options.h>
-#include <cachemanager.h>
-#include <multilangmgr.h>
-#include <guiutils.h>
+#include "filecatalog.h"
+#include "filepanel.h"
+#include "options.h"
+#include "cachemanager.h"
+#include "multilangmgr.h"
+#include "guiutils.h"
 #include <glib/gstdio.h>
 #include <iostream>
 #include <iomanip>
-#include <renamedlg.h>
-#include <thumbimageupdater.h>
-#include <safegtk.h>
-#include <batchqueue.h>
-#include <rtimage.h>
+#include "renamedlg.h"
+#include "thumbimageupdater.h"
+#include "../rtengine/safegtk.h"
+#include "batchqueue.h"
+#include "rtimage.h"
 
 
 #define CHECKTIME 2000

@@ -17,7 +17,7 @@
  *  © 2010 Emil Martinec <ejmartin@uchicago.edu>
  */
 
-#include <dirpyrequalizer.h>
+#include "dirpyrequalizer.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

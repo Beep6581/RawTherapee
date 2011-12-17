@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
-#include <rtengine.h>
-#include <procparams.h>
-#include <multilangmgr.h>
-#include <paramsedited.h>
+#include "../rtengine/rtengine.h"
+#include "../rtengine/procparams.h"
+#include "multilangmgr.h"
+#include "paramsedited.h"
 
 class ToolPanel;
 class FoldableToolPanel;

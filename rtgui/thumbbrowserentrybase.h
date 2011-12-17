@@ -20,8 +20,8 @@
 #define _THUMBNAILBROWSERENTRYBASE_
 
 #include <gtkmm.h>
-#include <lwbuttonset.h>
-#include <thumbnail.h>
+#include "lwbuttonset.h"
+#include "thumbnail.h"
 
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase {

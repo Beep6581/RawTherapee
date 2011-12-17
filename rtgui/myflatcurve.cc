@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <myflatcurve.h>
-#include <curves.h>
-#include <string.h>
+#include "myflatcurve.h"
+#include "../rtengine/curves.h"
+#include <cstring>
 #include <gdkmm/types.h>
 
 MyFlatCurve::MyFlatCurve () {

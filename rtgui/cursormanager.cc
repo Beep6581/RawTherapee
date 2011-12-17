@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <cursormanager.h>
-#include <options.h>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "cursormanager.h"
+#include "options.h"
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 CursorManager cursorManager;
 

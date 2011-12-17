@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <history.h>
-#include <multilangmgr.h>
-#include <rtimage.h>
+#include "history.h"
+#include "multilangmgr.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

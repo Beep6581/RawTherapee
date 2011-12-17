@@ -16,15 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <imagearea.h>
-#include <time.h>
-#include <math.h>
-#include <options.h>
-#include <multilangmgr.h>
+#include "imagearea.h"
+#include <ctime>
+#include <cmath>
+#include "options.h"
+#include "multilangmgr.h"
 #include <iomanip>
-#include <cropwindow.h>
-#include <refreshmap.h>
-#include <options.h>
+#include "cropwindow.h"
+#include "../rtengine/refreshmap.h"
+#include "options.h"
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 

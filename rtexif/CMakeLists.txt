@@ -1,4 +1,3 @@
-include_directories (.)
 add_library (rtexif rtexif.cc stdattribs.cc nikonattribs.cc canonattribs.cc
     pentaxattribs.cc fujiattribs.cc sonyminoltaattribs.cc olympusattribs.cc)
 

@@ -19,8 +19,8 @@
 #ifndef __SHMAP__
 #define __SHMAP__
 
-#include <imagefloat.h>
-#include <image16.h>
+#include "imagefloat.h"
+#include "image16.h"
 
 namespace rtengine {
 

@@ -16,14 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <adjuster.h>
+#include "adjuster.h"
 #include <sigc++/class_slot.h>
-#include <math.h>
-#include <multilangmgr.h>
-#include <rtengine.h>
-#include <options.h>
-#include <guiutils.h>
-#include <rtimage.h>
+#include <cmath>
+#include "multilangmgr.h"
+#include "../rtengine/rtengine.h"
+#include "options.h"
+#include "guiutils.h"
+#include "rtimage.h"
 
 #define MIN_RESET_BUTTON_HEIGHT 17
 

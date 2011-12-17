@@ -1,7 +1,7 @@
 // main.cpp : Defines the entry point for the console application.
 //
 
-#include <stdio.h>  // printf
+#include <cstdio>  // printf
 
 extern "C" {
 	void RunExample1();

@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <improccoordinator.h>
-#include <curves.h>
-#include <mytime.h>
-#include <refreshmap.h>
-#include <simpleprocess.h>
-#include "ppversion.h"
+#include "improccoordinator.h"
+#include "curves.h"
+#include "mytime.h"
+#include "refreshmap.h"
+#include "simpleprocess.h"
+#include "../rtgui/ppversion.h"
 #define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
 #define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 

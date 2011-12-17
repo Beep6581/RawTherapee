@@ -19,12 +19,12 @@
 #ifndef _OLYMPUSATTRIBS_
 #define _OLYMPUSATTRIBS_
 
-#include <rtexif.h>
 #include <string>
-#include <map>
-#include <math.h>
-#include <sstream>
+#include <cmath>
 #include <iomanip>
+#include <sstream>
+
+#include "rtexif.h"
 
 namespace rtexif {
 

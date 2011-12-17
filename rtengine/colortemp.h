@@ -20,7 +20,7 @@
 #define _COLORTEMP_
 
 #include <gtkmm.h>
-#include <math.h>
+#include <cmath>
 
 namespace rtengine {
 

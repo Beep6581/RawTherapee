@@ -19,13 +19,13 @@
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
 
-#include <curveeditor.h>
-#include <curveeditorgroup.h>
-#include <diagonalcurveeditorsubgroup.h>
-#include <flatcurveeditorsubgroup.h>
-#include <multilangmgr.h>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "diagonalcurveeditorsubgroup.h"
+#include "flatcurveeditorsubgroup.h"
+#include "multilangmgr.h"
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 extern Glib::ustring argv0;
 

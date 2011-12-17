@@ -25,11 +25,11 @@
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-//#include <rtengine.h>
-//#include <math.h>
-#include <gauss.h>
-//#include <bilateral2.h>
-#include <improcfun.h>
+//#include "rtengine.h"
+//#include <cmath>
+#include "gauss.h"
+//#include "bilateral2.h"
+#include "improcfun.h"
 
 #ifdef _OPENMP
 #include <omp.h>

@@ -23,16 +23,16 @@
 
 // This file is for your program, I won't touch it again!
 
-#include <config.h>
+#include "config.h"
 #include <gtkmm.h>
 #include <giomm.h>
 #include <iostream>
-#include <rtwindow.h>
-#include <string.h>
-#include <stdlib.h>
-#include <options.h>
-#include <soundman.h>
-#include <rtimage.h>
+#include "rtwindow.h"
+#include <cstring>
+#include <cstdlib>
+#include "options.h"
+#include "soundman.h"
+#include "rtimage.h"
 #include "version.h"
 
 #ifndef WIN32
@@ -41,7 +41,7 @@
 #include <glib/gstdio.h>
 #endif
 
-#include <safegtk.h>
+#include "../rtengine/safegtk.h"
 
 extern Options options;
 

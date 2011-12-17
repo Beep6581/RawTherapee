@@ -18,11 +18,11 @@
  */
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <curves.h>
-#include <math.h>
+#include "curves.h"
+#include <cmath>
 #include <vector>
-#include <mytime.h>
-#include <string.h>
+#include "mytime.h"
+#include <cstring>
 
 #include "array2D.h"
 #include "LUT.h"

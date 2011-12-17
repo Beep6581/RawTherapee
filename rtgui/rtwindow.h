@@ -19,12 +19,12 @@
 #define _RTWINDOW_
 
 #include <gtkmm.h>
-#include <filepanel.h>
-#include <editorpanel.h>
-#include <batchqueuepanel.h>
+#include "filepanel.h"
+#include "editorpanel.h"
+#include "batchqueuepanel.h"
 #include <set>
-#include <progressconnector.h>
-#include <editwindow.h>
+#include "progressconnector.h"
+#include "editwindow.h"
 
 class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 

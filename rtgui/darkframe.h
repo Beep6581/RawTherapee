@@ -20,9 +20,9 @@
 #define _DARKFRAME_H_
 
 #include <gtkmm.h>
-#include <toolpanel.h>
-#include <rawimage.h>
-#include <guiutils.h>
+#include "toolpanel.h"
+#include "../rtengine/rawimage.h"
+#include "guiutils.h"
 
 class DFProvider {
   public:

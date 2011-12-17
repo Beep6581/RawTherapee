@@ -20,7 +20,7 @@
 #define _FILTERPANEL_
 
 #include <gtkmm.h>
-#include <exiffiltersettings.h>
+#include "exiffiltersettings.h"
 
 class FilterPanelListener {
 

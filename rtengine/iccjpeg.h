@@ -16,7 +16,7 @@
  * for details.
  */
 
-#include <stdio.h>		/* needed to define "FILE", "NULL" */
+#include <cstdio>		/* needed to define "FILE", "NULL" */
 #include "jpeglib.h"
 
 

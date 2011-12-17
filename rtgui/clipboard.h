@@ -20,8 +20,8 @@
 #define _CLIPBOARD_
 
 #include <vector>
-#include <rtengine.h>
-#include <mydiagonalcurve.h>
+#include "../rtengine/rtengine.h"
+#include "mydiagonalcurve.h"
 
 class Clipboard {
     

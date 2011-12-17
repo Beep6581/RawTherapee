@@ -20,15 +20,15 @@
 #define __IMAGEAREA_H__
 
 #include <gtkmm.h>
-#include <cropguilistener.h>
-#include <imageareapanel.h>
-#include <editenums.h>
-#include <toolbar.h>
-#include <previewhandler.h>
-#include <imageareatoollistener.h>
-#include <cropwindow.h>
-#include <zoompanel.h>
-#include <indclippedpanel.h>
+#include "cropguilistener.h"
+#include "imageareapanel.h"
+#include "editenums.h"
+#include "toolbar.h"
+#include "previewhandler.h"
+#include "imageareatoollistener.h"
+#include "cropwindow.h"
+#include "zoompanel.h"
+#include "indclippedpanel.h"
 
 class ImageAreaPanel;
 class ImageArea : public Gtk::DrawingArea, public CropWindowListener {

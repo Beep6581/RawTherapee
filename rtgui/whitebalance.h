@@ -20,11 +20,11 @@
 #define _WB_H_
 
 #include <gtkmm.h>
-#include <toolpanel.h>
-#include <adjuster.h>
-#include <guiutils.h>
-#include <wbprovider.h>
-#include "procparams.h"
+#include "toolpanel.h"
+#include "adjuster.h"
+#include "guiutils.h"
+#include "wbprovider.h"
+#include "../rtengine/procparams.h"
 
 class SpotWBListener {
 

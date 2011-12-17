@@ -16,11 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <cacheimagedata.h>
+#include "cacheimagedata.h"
 #include <vector>
 #include <glib/gstdio.h>
-#include <safekeyfile.h>
-#include <safegtk.h>
+#include "../rtengine/safekeyfile.h"
+#include "../rtengine/safegtk.h"
 #include "version.h"
 
 CacheImageData::CacheImageData () 

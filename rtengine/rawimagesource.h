@@ -19,11 +19,11 @@
 #ifndef _RAWIMAGESOURCE_
 #define _RAWIMAGESOURCE_
 
-#include <imagesource.h>
+#include "imagesource.h"
 #include <lcms2.h>
-#include <array2D.h>
-#include <curves.h>
-#include <cacheimagedata.h>
+#include "array2D.h"
+#include "curves.h"
+#include "../rtgui/cacheimagedata.h"
 
 #define HR_SCALE 2
 

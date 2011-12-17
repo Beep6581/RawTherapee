@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <improcfun.h>
+#include "rtengine.h"
+#include "improcfun.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <mytime.h>
+#include "mytime.h"
 
 namespace rtengine {
 

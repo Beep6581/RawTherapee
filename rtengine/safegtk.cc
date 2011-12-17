@@ -19,17 +19,17 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <safegtk.h>
-#include <guiutils.h>
+#include "safegtk.h"
+#include "../rtgui/guiutils.h"
 #include <glib/gstdio.h>
 #include <fcntl.h>
 #ifdef WIN32
 #include <windows.h>
 #include <shlobj.h>
 #else
-#include <stdio.h>
+#include <cstdio>
 #endif
-#include <rtimage.h>
+#include "../rtgui/rtimage.h"
 #include <memory>
 
 

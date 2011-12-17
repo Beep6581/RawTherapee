@@ -15,21 +15,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <multilangmgr.h>
-#include <thumbnail.h>
+#include "multilangmgr.h"
+#include "thumbnail.h"
 #include <sstream>
 #include <iomanip>
-#include <options.h>
-#include <mytime.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "options.h"
+#include "../rtengine/mytime.h"
+#include <cstdio>
+#include <cstdlib>
 #include <glibmm.h>
-#include <imagedata.h>
+#include "../rtengine/imagedata.h"
 #include <glib/gstdio.h>
-#include <guiutils.h>
-#include <profilestore.h>
-#include <batchqueue.h>
-#include <safegtk.h>
+#include "guiutils.h"
+#include "profilestore.h"
+#include "batchqueue.h"
+#include "../rtengine/safegtk.h"
 
 using namespace rtengine::procparams;
 

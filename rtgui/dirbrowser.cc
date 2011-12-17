@@ -16,17 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <dirbrowser.h>
+#include "dirbrowser.h"
 #ifdef WIN32
 #define _WIN32_WINNT 0x0600
 #include <windows.h>
 #endif
-#include <options.h>
-#include <safegtk.h>
+#include "options.h"
+#include "../rtengine/safegtk.h"
 
 #include <cstring>
-#include <guiutils.h>
-#include <rtimage.h>
+#include "guiutils.h"
+#include "rtimage.h"
 
 #define CHECKTIME 5000
 extern Glib::ustring argv0;

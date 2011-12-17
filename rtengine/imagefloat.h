@@ -22,8 +22,8 @@
 #ifndef _IMAGEFLOAT_
 #define _IMAGEFLOAT_
 
-#include <imageio.h>
-#include <rtengine.h>
+#include "imageio.h"
+#include "rtengine.h"
 
 namespace rtengine {
     using namespace procparams;

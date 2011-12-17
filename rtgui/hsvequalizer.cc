@@ -17,8 +17,8 @@
  *  2010 Ilya Popov <ilia_popov@rambler.ru>
  */
 
-#include <hsvequalizer.h>
-#include <utils.h>
+#include "hsvequalizer.h"
+#include "../rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

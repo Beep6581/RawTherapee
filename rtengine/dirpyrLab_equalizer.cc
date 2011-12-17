@@ -18,13 +18,13 @@
  *    
  */
 
-//#include <rtengine.h>
+//#include "rtengine.h"
 #include <cstddef>
-#include <math.h>
-#include <curves.h>
-#include <labimage.h>
-#include <improcfun.h>
-#include <rawimagesource.h>
+#include <cmath>
+#include "curves.h"
+#include "labimage.h"
+#include "improcfun.h"
+#include "rawimagesource.h"
 
 #ifdef _OPENMP
 #include <omp.h>

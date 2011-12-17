@@ -21,12 +21,12 @@
 
 #include <string>
 #include <glibmm.h>
-#include <cachemanager.h>
-#include <options.h>
-#include <rtengine.h>
-#include <rtthumbnail.h>
-#include <cacheimagedata.h>
-#include <thumbnaillistener.h>
+#include "cachemanager.h"
+#include "options.h"
+#include "../rtengine/rtengine.h"
+#include "../rtengine/rtthumbnail.h"
+#include "cacheimagedata.h"
+#include "thumbnaillistener.h"
 
 class CacheManager;
 class Thumbnail {

@@ -19,13 +19,13 @@
 #ifndef _IMPROCFUN_H_
 #define _IMPROCFUN_H_
 
-#include <imagefloat.h>
-#include <image16.h>
-#include <image8.h>
-#include <procparams.h>
-#include <shmap.h>
-#include <coord2d.h>
-#include <labimage.h>
+#include "imagefloat.h"
+#include "image16.h"
+#include "image8.h"
+#include "procparams.h"
+#include "shmap.h"
+#include "coord2d.h"
+#include "labimage.h"
 #include "LUT.h"
 
 namespace rtengine {

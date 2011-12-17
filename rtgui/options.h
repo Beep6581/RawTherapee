@@ -20,7 +20,7 @@
 #define _OPTIONS_
 
 #include <glibmm.h>
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 
 #define STARTUPDIR_CURRENT 0
 #define STARTUPDIR_HOME    1

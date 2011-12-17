@@ -20,7 +20,7 @@
 #define _LWBUTTONSET_
 
 #include <gtkmm.h>
-#include <lwbutton.h>
+#include "lwbutton.h"
 #include <vector>
 
 class LWButtonSet {

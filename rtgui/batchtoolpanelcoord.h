@@ -19,12 +19,12 @@
 #ifndef __BATCHTOOLPANELCCORD__
 #define __BATCHTOOLPANELCCORD__
 
-#include <thumbnail.h>
-#include <toolpanelcoord.h>
-#include <fileselectionchangelistener.h>
-#include <rtengine.h>
-#include <paramsedited.h>
-#include <thumbnaillistener.h>
+#include "thumbnail.h"
+#include "toolpanelcoord.h"
+#include "fileselectionchangelistener.h"
+#include "../rtengine/rtengine.h"
+#include "paramsedited.h"
+#include "thumbnaillistener.h"
 
 class FilePanel;
 class BatchToolPanelCoordinator : 

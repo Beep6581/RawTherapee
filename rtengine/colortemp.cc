@@ -16,11 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <colortemp.h>
-#include <iccmatrices.h>
-#include <rtengine.h>
-#include <improcfun.h>
-#include <curves.h>
+#include "colortemp.h"
+#include "iccmatrices.h"
+#include "rtengine.h"
+#include "improcfun.h"
+#include "curves.h"
 
 namespace rtengine {
 
