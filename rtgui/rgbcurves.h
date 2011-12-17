@@ -20,11 +20,11 @@
 #define _RGBCURVES_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
-#include <curveeditor.h>
-#include <curveeditorgroup.h>
-#include <colorprovider.h>
+#include "adjuster.h"
+#include "toolpanel.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "colorprovider.h"
 
 class RGBCurves : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 

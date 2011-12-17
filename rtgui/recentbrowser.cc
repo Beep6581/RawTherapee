@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <recentbrowser.h>
-#include <multilangmgr.h>
+#include "recentbrowser.h"
+#include "multilangmgr.h"
 
 using namespace rtengine;
 

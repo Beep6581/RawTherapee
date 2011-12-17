@@ -21,7 +21,7 @@
 
 #include <set>
 #include <glibmm.h>
-#include <filebrowserentry.h>
+#include "filebrowserentry.h"
 
 class PreviewLoaderListener 
 {

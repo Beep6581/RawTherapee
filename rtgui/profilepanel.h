@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 #include <vector>
-#include <rtengine.h>
-#include <pparamschangelistener.h>
-#include <profilechangelistener.h>
-#include <guiutils.h>
+#include "../rtengine/rtengine.h"
+#include "pparamschangelistener.h"
+#include "profilechangelistener.h"
+#include "guiutils.h"
 
 class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
 

@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <profilestore.h>
-#include <options.h>
-#include <toolpanel.h>
-#include <safegtk.h>
+#include "profilestore.h"
+#include "options.h"
+#include "toolpanel.h"
+#include "../rtengine/safegtk.h"
 
 ProfileStore profileStore;
 

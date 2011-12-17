@@ -20,8 +20,8 @@
 #define __PREFERENCES_H__
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <options.h>
+#include "adjuster.h"
+#include "options.h"
 #include <vector>
 #include "rtwindow.h"
 

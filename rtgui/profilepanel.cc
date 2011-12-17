@@ -16,13 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <profilepanel.h>
-#include <options.h>
-#include <profilestore.h>
-#include <clipboard.h>
-#include <multilangmgr.h>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "profilepanel.h"
+#include "options.h"
+#include "profilestore.h"
+#include "clipboard.h"
+#include "multilangmgr.h"
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

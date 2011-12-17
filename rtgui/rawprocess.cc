@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rawprocess.h>
-#include <options.h>
-#include <guiutils.h>
+#include "rawprocess.h"
+#include "options.h"
+#include "guiutils.h"
 using namespace rtengine;
 using namespace rtengine::procparams;
 

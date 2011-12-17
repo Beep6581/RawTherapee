@@ -20,9 +20,9 @@
 #define _RAWCACORRECTION_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
-#include <rawimage.h>
+#include "adjuster.h"
+#include "toolpanel.h"
+#include "../rtengine/rawimage.h"
 
 class RAWCACorr : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
