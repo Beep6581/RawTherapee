@@ -678,6 +678,9 @@ int ImageMetaData::saveXMP( ) const
         return 1;
     }
 
+    // TODO: why there is the need to reread? It seems XmpParser::encode messes up xmpData!
+    Exiv2::XmpParser::decode( *const_cast< Exiv2::XmpData *>(  &xmpData ),xmpPacket);
+
     FILE *f = safe_g_fopen (fnameMeta, "wt");
     if (f!=NULL){
     	 fwrite( xmpPacket.c_str(), 1, xmpPacket.size(), f );
