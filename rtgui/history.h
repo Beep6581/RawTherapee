@@ -57,8 +57,8 @@ class History : public Gtk::VBox, public PParamsChangeListener {
                 Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
                 Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
                 Gtk::TreeModelColumn<Glib::ustring> name;
-
-                BookmarkColumns() { add(id); add(params); add(paramsEdited); add(name); }
+                Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > status;
+                BookmarkColumns() { add(id); add(params); add(paramsEdited); add(name); add(status);}
         };
         BookmarkColumns bookmarkColumns;
 
@@ -86,8 +86,11 @@ class History : public Gtk::VBox, public PParamsChangeListener {
         SnapshotListener *slistener;
         ProfileChangeListener* tpc;
         ParamsEdited defParamsEdited;
-        int bmnum;        
-        
+        int bmnum;
+        static bool iconsLoaded;
+        static Glib::RefPtr<Gdk::Pixbuf> recentlySavedIcon;
+        static Glib::RefPtr<Gdk::Pixbuf> enqueuedIcon;
+        static Glib::RefPtr<Gdk::Pixbuf> voidIcon;
     public:
         
         History (bool bookmarkSupport = true);
@@ -110,6 +113,7 @@ class History : public Gtk::VBox, public PParamsChangeListener {
         void addBookmarkPressed ();
         void delBookmarkPressed ();
         void addSnapshot(const rtengine::SnapshotInfo &snapInfo );
+        void updateSnapshot(const rtengine::SnapshotInfo &snapInfo );
         int  getSelectedSnapshot();
         bool findName( Glib::ustring text );
 

@@ -730,7 +730,11 @@ bool Thumbnail::imageLoad(bool loading)
  */
 int Thumbnail::newSnapshot(const Glib::ustring &newName, const rtengine::procparams::ProcParams& params, bool queued)
 {
-	return idata->newSnapshot( newName,params,queued);
+	int id =idata->newSnapshot( newName,params,queued);
+
+    for (int i=0; i<listeners.size(); i++)
+        listeners[i]->snapshotChanged(this,id);
+    return id;
 }
 
 /* Delete the snapshot with the given id
@@ -738,7 +742,6 @@ int Thumbnail::newSnapshot(const Glib::ustring &newName, const rtengine::procpar
  */
 bool Thumbnail::deleteSnapshot( int id )
 {
-
 	return idata->deleteSnapshot(id );
 }
 
@@ -747,7 +750,10 @@ bool Thumbnail::deleteSnapshot( int id )
  */
 bool Thumbnail::renameSnapshot(int id, const Glib::ustring &newname )
 {
-   return idata->renameSnapshot(id, newname);
+   bool b= idata->renameSnapshot(id, newname);
+   for (int i=0; i<listeners.size(); i++)
+       listeners[i]->snapshotChanged(this,id);
+   return b;
 }
 
 /*
@@ -770,12 +776,18 @@ rtengine::SnapshotInfo Thumbnail::getSnapshot( int id )
 
 bool  Thumbnail::setQueued( int id, bool inqueue )
 {
-    return idata->setQueuedSnapshot( id, inqueue );
+    bool b= idata->setQueuedSnapshot( id, inqueue );
+    for (int i=0; i<listeners.size(); i++)
+        listeners[i]->snapshotChanged(this,id);
+    return b;
 }
 
 bool Thumbnail::setSaved( int id, bool saved, const Glib::ustring &filename )
 {
-    return idata->setSavedSnapshot( id, saved, filename );
+    bool b= idata->setSavedSnapshot( id, saved, filename );
+    for (int i=0; i<listeners.size(); i++)
+        listeners[i]->snapshotChanged(this,id);
+    return b;
 }
 
 void Thumbnail::setRank  (int rank)
