@@ -99,7 +99,7 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 		    char stringTimestamp [80];
 		    time ( &rawtime );
 		    timeinfo = localtime ( &rawtime );
-		    strftime (stringTimestamp,sizeof(stringTimestamp),"Queued_%Y-%m-%d %H:%M:%S",timeinfo);
+		    strftime (stringTimestamp,sizeof(stringTimestamp),"%Y-%m-%d %H:%M:%S",timeinfo);
 
 			int id = (*entry)->thumbnail->newSnapshot(stringTimestamp,(*entry)->params,true );
 			(*entry)->currentSnapshoId = id;

@@ -524,6 +524,7 @@ IPTC_VOCABULARY_HINT;Term to describe the content of the image by a value from a
 IPTC_WRITER;Description Writer
 IPTC_WRITER_HINT;The name of the person involved in writing, editing or correcting the description of the image IIM 2:122
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
+IPTCPANEL_FILEDLGFILTERXMP;IPTC template files (xmp)
 IPTCPANEL_LOADDLGLABEL;Load IPTC settings
 IPTCPANEL_OPENHINT;Load IPTC settings from file
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
@@ -824,6 +825,7 @@ PREFERENCES_XMP_INSIDE_PNG;Save XMP metadata and processing params inside PNG (n
 PREFERENCES_XMP_INSIDE_TIFF;Save XMP metadata and processing params inside TIFF (no sidecar file)
 PROFILEPANEL_FILEDLGFILTERANY;Any files
 PROFILEPANEL_FILEDLGFILTERPP;Postprocessing profiles
+PROFILEPANEL_FILEDLGFILTERPP3;Old postprocessing profiles(pp3)
 PROFILEPANEL_LABEL;Postprocessing Profiles
 PROFILEPANEL_LOADDLGLABEL;Load Postprocessing Parameters...
 PROFILEPANEL_PCUSTOM;Custom
