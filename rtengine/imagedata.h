@@ -39,6 +39,8 @@ class SnapshotInfo{
 		procparams::ProcParams params; // Processing parameters
 
 		static const char *kCurrentSnapshotName;
+
+		SnapshotInfo():id(-1),queued(false),saved(false){}
 };
 
 typedef std::map< unsigned int , SnapshotInfo > snapshotsList_t;

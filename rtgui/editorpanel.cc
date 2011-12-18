@@ -409,8 +409,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     rtengine::snapshotsList_t snapshots = openThm->getSnapshotsList();
     for( rtengine::snapshotsList_t::iterator iter = snapshots.begin(); iter != snapshots.end(); iter++ ){
-    	if( iter->second.name.compare( rtengine::SnapshotInfo::kCurrentSnapshotName)!= 0 )
-    	   history->addSnapshot( iter->second );
+    	history->addSnapshot( iter->second );
     }
     history->setSnapshotListener( openThm );
     openThm->addThumbnailListener (this);
@@ -899,6 +898,14 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
 
     if (whoChangedIt!=EDITOR)
       tpc->profileChange (&openThm->getProcParams(), rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
+}
+
+void EditorPanel::snapshotChanged( Thumbnail* thm, int id )
+{
+	if( thm && id >=0 ){
+	   rtengine::SnapshotInfo info = thm->getSnapshot( id );
+	   history->updateSnapshot( info );
+	}
 }
 
 bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf) {

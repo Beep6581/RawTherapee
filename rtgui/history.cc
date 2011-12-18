@@ -19,6 +19,7 @@
 #include <history.h>
 #include <multilangmgr.h>
 #include <rtimage.h>
+#include <safegtk.h>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -26,7 +27,19 @@ using namespace rtengine::procparams;
 Glib::ustring eventDescrArray[NUMOFEVENTS];
 extern Glib::ustring argv0;
 
+bool History::iconsLoaded = false;
+Glib::RefPtr<Gdk::Pixbuf> History::recentlySavedIcon;
+Glib::RefPtr<Gdk::Pixbuf> History::enqueuedIcon;
+Glib::RefPtr<Gdk::Pixbuf> History::voidIcon;
+
 History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener(NULL), bmnum (1) {
+
+    if (!iconsLoaded) {
+        recentlySavedIcon = safe_create_from_file ("recent-save.png");
+        enqueuedIcon = safe_create_from_file ("processing.png");
+        voidIcon = safe_create_from_file ("unrated.png");
+        iconsLoaded = true;
+    }
 
 	blistenerLock = false; // sets default that the Before preview will not be locked
 
@@ -112,7 +125,7 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener
     bookmarkModel->set_sort_column(bookmarkColumns.name, Gtk::SORT_ASCENDING);
     bTreeView->set_model (bookmarkModel);
     bTreeView->set_headers_visible (false);
-    //bTreeView->append_column_editable (M("HISTORY_SNAPSHOTS"), bookmarkColumns.text);
+    bTreeView->append_column( "icon",bookmarkColumns.status );
 
     m_treeviewcolumn_validated.set_title("validated");
     m_treeviewcolumn_validated.pack_start(m_cellrenderer_validated);
@@ -341,7 +354,7 @@ void History::addBookmarkWithText (Glib::ustring text) {
     	if( newId<0 )
     		return;
     }
-
+/*
     // append new row to bookmarks
     Gtk::TreeModel::Row newrow = *(bookmarkModel->append());
     //newrow[bookmarkColumns.text] = text;
@@ -349,20 +362,48 @@ void History::addBookmarkWithText (Glib::ustring text) {
     newrow[bookmarkColumns.name] = text;
     newrow[bookmarkColumns.params] = params;
     newrow[bookmarkColumns.paramsEdited] = paramsEdited;
-
+*/
 }
 
 void History::addSnapshot( const rtengine::SnapshotInfo &snapInfo )
 {
+	// don't show current snapshot
+	if( snapInfo.name.compare( rtengine::SnapshotInfo::kCurrentSnapshotName)== 0 )
+		return;
+
     // append new row to bookmarks
     Gtk::TreeModel::Row newrow = *(bookmarkModel->append());
     newrow[bookmarkColumns.id] = snapInfo.id;
     newrow[bookmarkColumns.name] = snapInfo.name;
     newrow[bookmarkColumns.params] = snapInfo.params;
+	if( snapInfo.queued )
+		newrow[bookmarkColumns.status]=enqueuedIcon;
+	else if( snapInfo.saved )
+		newrow[bookmarkColumns.status]=recentlySavedIcon;
+	else
+		newrow[bookmarkColumns.status]= voidIcon;
     ParamsEdited paramsEdited;
     paramsEdited.set(true);
     newrow[bookmarkColumns.paramsEdited] = paramsEdited;
+}
 
+void History::updateSnapshot(const rtengine::SnapshotInfo &snapInfo )
+{
+	Gtk::ListStore::Children l= bookmarkModel->children();
+	for( Gtk::ListStore::Children::iterator iter = l.begin();iter!=l.end();iter++ ){
+		if( snapInfo.id == (*iter)[bookmarkColumns.id] ){
+			(*iter)[bookmarkColumns.name] = snapInfo.name;
+			if( snapInfo.queued )
+				(*iter)[bookmarkColumns.status]=enqueuedIcon;
+			else if( snapInfo.saved )
+				(*iter)[bookmarkColumns.status]=recentlySavedIcon;
+			else
+				(*iter)[bookmarkColumns.status]= voidIcon;
+			return;
+		}
+	}
+	// if not found add it!
+	addSnapshot( snapInfo );
 }
 
 int  History::getSelectedSnapshot()
