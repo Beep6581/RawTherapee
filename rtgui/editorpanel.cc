@@ -952,7 +952,7 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 		char stringTimestamp [80];
 		time ( &rawtime );
 		timeinfo = localtime ( &rawtime );
-		strftime (stringTimestamp,sizeof(stringTimestamp),"Saved_%Y-%m-%d %H:%M:%S",timeinfo);
+		strftime (stringTimestamp,sizeof(stringTimestamp),"%Y-%m-%d %H:%M:%S",timeinfo);
 		int id = openThm->newSnapshot(stringTimestamp, pparams);
 		openThm->setSaved(id ,true, fname );
 

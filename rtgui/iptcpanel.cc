@@ -238,10 +238,10 @@ void IPTCPanel::fileOpenClicked ()
 
     //Add filters, so that only certain file types can be selected:
 
-    Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
-    filter_pp.add_pattern("*"+paramFileExtension);
-    dialog.add_filter(filter_pp);
+    Gtk::FileFilter filter_xmp;
+    filter_xmp.set_name(M("IPTCPANEL_FILEDLGFILTERXMP"));
+    filter_xmp.add_pattern("*"+paramFileExtension);
+    dialog.add_filter(filter_xmp);
 
     int result = dialog.run();
 
@@ -279,7 +279,7 @@ void IPTCPanel::fileSaveClicked ()
 
     //Add filters, so that only certain file types can be selected:
     Gtk::FileFilter filter_pp;
-    filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
+    filter_pp.set_name(M("IPTCPANEL_FILEDLGFILTERXMP"));
     filter_pp.add_pattern("*"+paramFileExtension);
     dialog.add_filter(filter_pp);
 

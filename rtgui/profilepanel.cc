@@ -221,6 +221,11 @@ void ProfilePanel::load_clicked () {
     filter_pp.add_pattern("*"+paramFileExtension);
     dialog.add_filter(filter_pp);
 
+    Gtk::FileFilter filter_pp3;
+    filter_pp3.set_name(M("PROFILEPANEL_FILEDLGFILTERPP3"));
+    filter_pp3.add_pattern("*.pp3"); // For backward compatibility
+    dialog.add_filter(filter_pp3);
+
     Gtk::FileFilter filter_any;
     filter_any.set_name(M("PROFILEPANEL_FILEDLGFILTERANY"));
     filter_any.add_pattern("*");
