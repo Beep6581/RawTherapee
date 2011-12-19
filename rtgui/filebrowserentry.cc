@@ -110,9 +110,9 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getIconsOnImageArea ()
 
     if (thumbnail->hasProcParams() && editedIcon)
         ret.push_back (editedIcon);
-    if (thumbnail->isRecentlySaved() && recentlySavedIcon)
+    if (thumbnail->getNumSaved()>0 && recentlySavedIcon)
         ret.push_back (recentlySavedIcon);
-    if (thumbnail->isEnqueued () && enqueuedIcon)
+    if (thumbnail->getNumQueued ()>0 && enqueuedIcon)
         ret.push_back (enqueuedIcon);
 
    return ret;

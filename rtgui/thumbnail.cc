@@ -35,7 +35,7 @@
 using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
-    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
+    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), tpp(NULL),
       pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
 		initial_(false), lastW(0), lastH(0), lastScale(0),pparamsId(-1),idata(NULL) {
 
@@ -50,7 +50,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 }
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
-    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
+    : fname(fname), cachemgr(cm), ref(1), tpp(NULL), pparamsValid(false),
       needsReProcessing(true),imageLoading(false), lastImg(NULL),
 		initial_(true),pparamsId(-1),idata(NULL) {
 
@@ -262,10 +262,6 @@ void Thumbnail::imageDeveloped () {
         
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data")+".txt");
-}
-
-bool Thumbnail::isEnqueued () {
-    return enqueueNumber > 0;
 }
 
 void Thumbnail::increaseRef ()
@@ -780,6 +776,11 @@ bool  Thumbnail::setQueued( int id, bool inqueue )
     for (int i=0; i<listeners.size(); i++)
         listeners[i]->snapshotChanged(this,id);
     return b;
+}
+
+int Thumbnail::getNumSaved()
+{
+    return idata->getSavedSnapshots();
 }
 
 bool Thumbnail::setSaved( int id, bool saved, const Glib::ustring &filename )

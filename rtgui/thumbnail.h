@@ -46,7 +46,6 @@ class Thumbnail :public SnapshotListener{
         CacheImageData  cfs;                // cache entry corresponding to the thumbnail
         CacheManager*   cachemgr;           // parent
         int             ref;                // variable for reference counting
-        int             enqueueNumber;      // the number of instances in the batch queue corresponding to this thumbnail
        
         // if the thumbnail is in processed mode, this class holds its data:
         rtengine::Thumbnail* tpp;
@@ -111,7 +110,6 @@ class Thumbnail :public SnapshotListener{
 
         bool              isRecentlySaved ();
         void              imageDeveloped ();
-        bool              isEnqueued ();
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
         rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
@@ -162,6 +160,7 @@ class Thumbnail :public SnapshotListener{
 		rtengine::snapshotsList_t getSnapshotsList();
 		rtengine::SnapshotInfo    getSnapshot( int id );
 		int				getNumQueued();
+		int				getNumSaved();
 		bool			setQueued( int id, bool inqueue=true );
 		bool			setSaved( int id, bool saved=true, const Glib::ustring &filename="" );
 };

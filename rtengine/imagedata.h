@@ -154,6 +154,9 @@ class ImageMetaData {
 	/** Set/reset the flag saved adn optionally the filename of the output file*/
 	bool			setSavedSnapshot( int id, bool saved=true, const Glib::ustring &filename="" );
 
+	/** Return number of snapshots saved */
+	int				getSavedSnapshots( );
+
 	/** Full EXIF is read only when thumbnail is loaded first time, so, to access full EXIF call updateExif*/
 	int             updateExif();
 
