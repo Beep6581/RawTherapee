@@ -354,6 +354,7 @@ HISTORY_MSG_162;Tone Mapping
 HISTORY_MSG_163;RGB Curves - R
 HISTORY_MSG_164;RGB Curves - G
 HISTORY_MSG_165;RGB Curves - B
+HISTORY_MSG_166;Neutral levels
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -835,9 +836,11 @@ TP_EQUALIZER_LARGEST;coarsest
 TP_EQUALIZER_NEUTRAL;Neutral
 TP_EXPOSCORR_LABEL;Raw white-black point
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
+TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
 TP_EXPOSURE_BLACKLEVEL;Black
 TP_EXPOSURE_BRIGHTNESS;Brightness
 TP_EXPOSURE_CLIP;Clip
+TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
 TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
@@ -917,6 +920,8 @@ TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
 TP_LUMADENOISE_LABEL;Luminance Noise Reduction
 TP_LUMADENOISE_RADIUS;Radius
+TP_NEUTRAL;Neutral
+TP_NEUTRAL_TIP;Reset exposure controls to neutral values
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical

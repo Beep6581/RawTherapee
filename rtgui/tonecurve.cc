@@ -32,6 +32,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   abox->set_border_width (2);
 
   autolevels = Gtk::manage (new Gtk::ToggleButton (M("TP_EXPOSURE_AUTOLEVELS")));
+  autolevels->set_tooltip_markup (M("TP_EXPOSURE_AUTOLEVELS_TIP"));
   autoconn = autolevels->signal_toggled().connect( sigc::mem_fun(*this, &ToneCurve::autolevels_toggled) );
 
   sclip = Gtk::manage (new MySpinButton ());
@@ -39,9 +40,18 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   sclip->set_increments (0.001, 0.01);
   sclip->set_value (0.002);
   sclip->set_digits (4);
+  sclip->set_tooltip_text (M("TP_EXPOSURE_CLIP_TIP"));
   sclip->signal_value_changed().connect( sigc::mem_fun(*this, &ToneCurve::clip_changed) );
 
+  neutral = Gtk::manage (new Gtk::Button (M("TP_NEUTRAL")));
+  neutral->set_tooltip_text (M("TP_NEUTRAL_TIP"));
+  neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &ToneCurve::neutral_pressed) );
+  neutral->show();
+
   abox->pack_start (*autolevels);
+  // pack_end is used for these controls as autolevels is replaceable using pack_start in batchmode
+  abox->pack_end (*neutral);
+  abox->pack_end (*Gtk::manage (new Gtk::Label (" "))); //spacer
   abox->pack_end (*sclip);
   abox->pack_end (*Gtk::manage (new Gtk::Label (M("TP_EXPOSURE_CLIP"))));
   pack_start (*abox);
@@ -242,6 +252,35 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvSHCompr, costr);
 }
 
+void ToneCurve::neutral_pressed () {
+// This method deselects auto levels 
+// and sets neutral values to params in exposure panel
+
+    if (batchMode) {
+        autolevels->set_inconsistent (false);
+        autoconn.block (true);
+        autolevels->set_active (false);
+        autoconn.block (false);
+
+        lastAuto = autolevels->get_active ();
+    }
+    else { //!batchMode
+        autolevels->set_active (false);
+        autolevels->set_inconsistent (false);
+    }
+    
+    expcomp->setValue(0);
+    hlcompr->setValue(0);
+    hlcomprthresh->setValue(0);
+    brightness->setValue(0);
+    black->setValue(0);
+    shcompr->setValue(0);
+    if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
+    contrast->setValue(0);
+    //saturation->setValue(0);
+    
+    listener->panelChanged (EvNeutralExp, M("GENERAL_ENABLED"));
+}
 void ToneCurve::autolevels_toggled () {
 
     if (batchMode) {
@@ -370,6 +409,7 @@ void ToneCurve::setBatchMode (bool batchMode) {
 
     removeIfThere (abox, autolevels, false);
     autolevels = Gtk::manage (new Gtk::CheckButton (M("TP_EXPOSURE_AUTOLEVELS")));
+    autolevels->set_tooltip_markup (M("TP_EXPOSURE_AUTOLEVELS_TIP"));
     autoconn = autolevels->signal_toggled().connect( sigc::mem_fun(*this, &ToneCurve::autolevels_toggled) );
     abox->pack_start (*autolevels);
 
