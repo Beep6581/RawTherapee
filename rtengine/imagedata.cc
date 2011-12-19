@@ -52,6 +52,7 @@ ImageMetaData* ImageMetaData::fromFile (const Glib::ustring& fname, const Glib::
 						int rank=0;
 						if( !pparams.load( fname+".pp3",&rank ) ){
 							newData->newSnapshot("PP3", pparams, false);
+							newData->newSnapshot( SnapshotInfo::kCurrentSnapshotName, pparams, false);
 							if( rank > 0 )
 								newData->xmpData["Xmp.xmp.Rating"] = rank;
 
