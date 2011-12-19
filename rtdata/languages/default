@@ -501,6 +501,8 @@ IPTC_RIGHTS;Copyright Notice
 IPTC_RIGHTS_HINT;Contains any necessary copyright notice for claiming the intellectual property for this photograph and should identify the current owner of the copyright for the photograph IIM 2:116 Copyright Notice
 IPTC_RIGHTSOWNER;Copyright Owner
 IPTC_RIGHTSOWNER_HINT;The owner or owners of the copyright in the licensed image
+IPTC_RIGHTSSTATUS;Copyright status
+IPTC_RIGHTSSTATUS_HINT;Copyright status of the image:Protected,Public Domain,Unknown
 IPTC_SCENE;Scene code
 IPTC_SCENE_HINT;Describes the scene of a photo content. Specifies one ore more terms from the IPTC 'Scene-NewsCodes' (http://www.newscodes.org/). Each Scene is represented as a string of 6 digits in an unordered list.
 IPTC_SOURCE;Source

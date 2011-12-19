@@ -26,6 +26,7 @@ IPTCPairList_t IPTCMeta::IPTCScene;
 IPTCPairList_t IPTCMeta::IPTCSubject;
 IPTCPairList_t IPTCMeta::IPTCGenre;
 IPTCPairList_t IPTCMeta::IPTCReleaseStatus;
+IPTCPairList_t IPTCMeta::IPTCCopyrightStatus;
 IPTCPairList_t IPTCMeta::IPTCWorldRegion;
 IPTCPairList_t IPTCMeta::IPTCISO3166;
 
@@ -93,6 +94,7 @@ const char *kIPTCRegistryID = "Iptc4xmpExt:RegistryEntryDetails/Iptc4xmpExt:RegI
 const char *kIPTCRegistryOrgID  = "Iptc4xmpExt:RegistryEntryDetails/Iptc4xmpExt:RegOrgId";
 const char *kIPTCRights     = "dc:rights";
 const char *kIPTCRightsOwner    = "plus:CopyrightOwner/plus:CopyrightOwnerName";
+const char *kIPTCRightsStatus   = "plus:CopyrightStatus";
 const char *kIPTCScene      = "Iptc4xmpCore:Scene";
 const char *kIPTCSource     = "photoshop:Source";
 const char *kIPTCState      = "photoshop:State";
@@ -186,6 +188,7 @@ void IPTCMeta::initIPTCMeta()
     IPTCtags[kIPTCArtworkTitle]   = IPTCMeta(kIPTCArtworkTitle,"IPTC_ARTWORKTITLE","IPTC_ARTWORKTITLE_HINT");
 
     IPTCtags[kIPTCRightsOwner]    = IPTCMeta(kIPTCRightsOwner,"IPTC_RIGHTSOWNER","IPTC_RIGHTSOWNER_HINT",Exiv2::xmpSeq);
+    IPTCtags[kIPTCRightsStatus]   = IPTCMeta(kIPTCRightsStatus,"IPTC_RIGHTSSTATUS","IPTC_RIGHTSSTATUS_HINT" );
     IPTCtags[kIPTCImageCreator]   = IPTCMeta(kIPTCImageCreator,"IPTC_IMAGECREATOR","IPTC_IMAGECREATOR_HINT");
     IPTCtags[kIPTCLicensor]       = IPTCMeta(kIPTCLicensor,"IPTC_LICENSOR","IPTC_LICENSOR_HINT");
     IPTCtags[kIPTCImageSupplier]  = IPTCMeta(kIPTCImageSupplier,"IPTC_IMAGESUPPLIER","IPTC_IMAGESUPPLIER_HINT");
@@ -304,6 +307,10 @@ void IPTCMeta::initIPTCMeta()
     IPTCReleaseStatus["Not Applicable"] = "There are no items requiring a release";
     IPTCReleaseStatus["Unlimited Property Releases"] = "Releases are available for all";
     IPTCReleaseStatus["Incomplete Model Releases"] = "There are releases only for some";
+
+    IPTCCopyrightStatus["Unknown"]="Unknown status";
+    IPTCCopyrightStatus["Protected"] = "Protected";
+    IPTCCopyrightStatus["Public Domain"] ="Public Domain";
 
     // World regions/continent
     IPTCWorldRegion["r001"] = "World: The whole world";
