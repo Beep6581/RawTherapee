@@ -90,6 +90,7 @@ extern const char *kIPTCRegistryID;
 extern const char *kIPTCRegistryOrgID;
 extern const char *kIPTCRights;
 extern const char *kIPTCRightsOwner;
+extern const char *kIPTCRightsStatus;
 extern const char *kIPTCScene;
 extern const char *kIPTCSource;
 extern const char *kIPTCState;
@@ -127,6 +128,7 @@ public:
 	static IPTCPairList_t IPTCSubject; // Subject codes
 	static IPTCPairList_t IPTCGenre; // Genre
 	static IPTCPairList_t IPTCReleaseStatus; // Release status values
+	static IPTCPairList_t IPTCCopyrightStatus; // Copyright status values
 	static IPTCPairList_t IPTCWorldRegion;
 	static IPTCPairList_t IPTCISO3166;
 
