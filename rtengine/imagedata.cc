@@ -1061,4 +1061,23 @@ bool ImageMetaData::setSavedSnapshot( int id, bool saved, const Glib::ustring &f
     return false;
 }
 
+int ImageMetaData::getSavedSnapshots( )
+{
+	int saved=0;
+    int currentSet=1;
+    std::string key,keyID;
+    while( 1 ){
+    	keyID = Glib::ustring::compose("Xmp.rt.%1[%2]/rt:%3",rtengine::kXmpProcessing,currentSet,rtengine::kXmpSnapshotId);
+		key = Glib::ustring::compose("Xmp.rt.%1[%2]/rt:%3",rtengine::kXmpProcessing,currentSet,rtengine::kXmpSaved);
+		Exiv2::XmpData::iterator iter = xmpData.findKey(Exiv2::XmpKey(keyID));
+		if( iter == xmpData.end() )
+			break;
+		iter = xmpData.findKey(Exiv2::XmpKey(key));
+		if( iter != xmpData.end() && (iter->getValue()->toString().compare("True")==0) )
+			saved++;
+		currentSet ++;
+    }
+    return saved;
+}
+
 }
