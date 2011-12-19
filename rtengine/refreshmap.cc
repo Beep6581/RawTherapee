@@ -184,7 +184,8 @@ SHARPENING,       // EvEPDReweightingIterates
 SHARPENING,       // EvEPDEnabled
 RGBCURVE,         // EvRGBrCurve
 RGBCURVE,         // EvRGBgCurve
-RGBCURVE          // EvRGBbCurve
+RGBCURVE,         // EvRGBbCurve
+RGBCURVE          // EvNeutralExp
 	
 };
 

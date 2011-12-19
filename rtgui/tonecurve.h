@@ -33,6 +33,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     Gtk::HBox* abox;
     Gtk::ToggleButton* autolevels;
     MySpinButton* sclip;
+    Gtk::Button* neutral;
     Adjuster* expcomp;
     Adjuster* brightness;
     Adjuster* black;
@@ -43,7 +44,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
 	Adjuster* saturation;
 
     bool clipDirty, lastAuto;
-    sigc::connection autoconn;
+    sigc::connection autoconn, neutralconn;
     CurveEditorGroup* curveEditorG;
     DiagonalCurveEditor* shape;
 
@@ -68,6 +69,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
 
 
     void adjusterChanged (Adjuster* a, double newval);
+    void neutral_pressed ();
     void autolevels_toggled ();
     void clip_changed ();
     bool clip_changed_ ();
