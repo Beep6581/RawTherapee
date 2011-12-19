@@ -402,7 +402,7 @@ void Thumbnail::generateExifDateTimeStrings () {
     		idata->getFocalLen());
 
     if (options.fbShowExpComp && idata->getExpComp() ) // don't show exposure compensation if it is 0.00EV;
-    	exifString = Glib::ustring::compose ("%1 %2EV", exifString, idata->getExpComp()); // append exposure compensation to exifString
+    	exifString = Glib::ustring::compose ("%1 %2EV", exifString, idata->expcompToString (idata->getExpComp(), false)); // append exposure compensation to exifString
 
     std::string dateFormat = options.dateFormat;
     std::ostringstream ostr;
