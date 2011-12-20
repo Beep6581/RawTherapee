@@ -73,17 +73,17 @@
        rt:Temperature="5000"
        rt:Green="1"/>
       <rt:ImpulseDenoise
-       rt:Enabled="False"
+       rt:Enabled="True"
        rt:Threshold="50"/>
       <rt:Defringe
        rt:Enabled="False"
        rt:Radius="2"
        rt:Threshold="25"/>
       <rt:PyramidDenoise
-       rt:Enabled="False"
-       rt:Luma="5"
+       rt:Enabled="True"
+       rt:Luma="0"
        rt:Chroma="5"
-       rt:Gamma="2"/>
+       rt:Gamma="1.2"/>
       <rt:ShadowHighlights
        rt:Enabled="False"
        rt:HighQuality="False"
@@ -145,7 +145,7 @@
        rt:GammaSlope="4.5"/>
       <rt:DirectionalPyramidEqualizer
        rt:Enabled="True"
-       rt:Coeff="3;1;1;1;0.2;"/>
+       rt:Coeff="1;2;1;1;0.5;"/>
       <rt:HSVEqualizer
        rt:HCurve="0;"
        rt:SCurve="0;"

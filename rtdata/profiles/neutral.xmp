@@ -3,7 +3,7 @@
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
     xmlns:rt="http://www.rawtherapee.com/1.0/"
-   rt:Version="4.0.5.104.0.6.4">
+   rt:Version="4.0.6">
    <rt:Processing>
     <rdf:Bag>
      <rdf:li>

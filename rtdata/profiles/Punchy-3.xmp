@@ -13,9 +13,9 @@
        rt:Auto="True"
        rt:Clip="0"
        rt:Compensation="0"
-       rt:Brightness="0"
-       rt:Contrast="20"
-       rt:Saturation="5"
+       rt:Brightness="3"
+       rt:Contrast="0"
+       rt:Saturation="0"
        rt:Black="0"
        rt:HighlightCompression="0"
        rt:HighlightComprThreshold="33"
@@ -28,17 +28,17 @@
       <rt:ExposureLab
        rt:Brightness="0"
        rt:Contrast="0"
-       rt:Saturation="5"
+       rt:Saturation="0"
        rt:AvoidColorClipping="False"
        rt:SaturationLimitEnabled="False"
        rt:SaturationLimit="40"
-       rt:LCurve="0;"
+       rt:LCurve="3;0;0;0.0930233;0.0186047;0.883721;0.976744;1;1;"
        rt:aCurve="0;"
        rt:bCurve="0;"/>
       <rt:Vibrance
-       rt:Enabled="False"
-       rt:Pastels="0"
-       rt:Saturated="0"
+       rt:Enabled="True"
+       rt:Pastels="50"
+       rt:Saturated="50"
        rt:PSThreshold="75"
        rt:ProtectSkins="False"
        rt:AvoidColorShift="True"
@@ -70,8 +70,8 @@
        rt:Amount="20"/>
       <rt:WhiteBalance
        rt:Mode="Camera"
-       rt:Temperature="5000"
-       rt:Green="1"/>
+       rt:Temperature="5745"
+       rt:Green="1.035"/>
       <rt:ImpulseDenoise
        rt:Enabled="False"
        rt:Threshold="50"/>
@@ -97,8 +97,8 @@
        rt:Enabled="False"
        rt:X="0"
        rt:Y="0"
-       rt:Width="4281"
-       rt:Height="2871"/>
+       rt:Width="4276"
+       rt:Height="2836"/>
       <rt:CoarseGeo
        rt:RotationDegree="0"
        rt:HorizontalFlip="False"
@@ -133,19 +133,19 @@
        rt:AppliesTo="Cropped area"
        rt:Method="Bicubic"
        rt:DataSpecified="0"
-       rt:Width="4281"
-       rt:Height="2871"/>
+       rt:Width="4276"
+       rt:Height="2836"/>
       <rt:ColorManagement
        rt:InputProfile="(camera)"
        rt:WorkingProfile="ProPhoto"
-       rt:OutputProfile="RT_sRGB"
+       rt:OutputProfile="No ICM: sRGB output"
        rt:FreeGamma="default"
        rt:FreeGammaEnabled="False"
        rt:GammaValue="2.22"
        rt:GammaSlope="4.5"/>
       <rt:DirectionalPyramidEqualizer
        rt:Enabled="True"
-       rt:Coeff="3;1;1;1;0.2;"/>
+       rt:Coeff="3;1.8;1.3;1;0.2;"/>
       <rt:HSVEqualizer
        rt:HCurve="0;"
        rt:SCurve="0;"

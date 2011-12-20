@@ -12,22 +12,22 @@
       <rt:ExposureRGB
        rt:Auto="True"
        rt:Clip="0"
-       rt:Compensation="0"
+       rt:Compensation="-0"
        rt:Brightness="0"
-       rt:Contrast="20"
-       rt:Saturation="5"
+       rt:Contrast="0"
+       rt:Saturation="0"
        rt:Black="0"
        rt:HighlightCompression="0"
        rt:HighlightComprThreshold="33"
        rt:ShadowCompression="50"
        rt:ToneCurve="0;"/>
       <rt:ChannelMixer
-       rt:Red="100;0;0;"
-       rt:Green="0;100;0;"
-       rt:Blue="0;0;100;"/>
+       rt:Red="120;-10;-10;"
+       rt:Green="-10;120;-10;"
+       rt:Blue="-10;-10;120;"/>
       <rt:ExposureLab
        rt:Brightness="0"
-       rt:Contrast="0"
+       rt:Contrast="10"
        rt:Saturation="5"
        rt:AvoidColorClipping="False"
        rt:SaturationLimitEnabled="False"
@@ -70,8 +70,8 @@
        rt:Amount="20"/>
       <rt:WhiteBalance
        rt:Mode="Camera"
-       rt:Temperature="5000"
-       rt:Green="1"/>
+       rt:Temperature="5745"
+       rt:Green="1.03533"/>
       <rt:ImpulseDenoise
        rt:Enabled="False"
        rt:Threshold="50"/>
@@ -97,8 +97,8 @@
        rt:Enabled="False"
        rt:X="0"
        rt:Y="0"
-       rt:Width="4281"
-       rt:Height="2871"/>
+       rt:Width="4276"
+       rt:Height="2836"/>
       <rt:CoarseGeo
        rt:RotationDegree="0"
        rt:HorizontalFlip="False"
@@ -145,7 +145,7 @@
        rt:GammaSlope="4.5"/>
       <rt:DirectionalPyramidEqualizer
        rt:Enabled="True"
-       rt:Coeff="3;1;1;1;0.2;"/>
+       rt:Coeff="3;1.8;1.3;1;0.2;"/>
       <rt:HSVEqualizer
        rt:HCurve="0;"
        rt:SCurve="0;"

@@ -14,8 +14,8 @@
        rt:Clip="0"
        rt:Compensation="0"
        rt:Brightness="0"
-       rt:Contrast="20"
-       rt:Saturation="5"
+       rt:Contrast="0"
+       rt:Saturation="0"
        rt:Black="0"
        rt:HighlightCompression="0"
        rt:HighlightComprThreshold="33"
@@ -27,12 +27,12 @@
        rt:Blue="0;0;100;"/>
       <rt:ExposureLab
        rt:Brightness="0"
-       rt:Contrast="0"
-       rt:Saturation="5"
+       rt:Contrast="-35"
+       rt:Saturation="-100"
        rt:AvoidColorClipping="False"
        rt:SaturationLimitEnabled="False"
        rt:SaturationLimit="40"
-       rt:LCurve="0;"
+       rt:LCurve="3;0;0;0.186235;0.0283401;0.506073;0.506073;0.777328;0.979757;1;1;"
        rt:aCurve="0;"
        rt:bCurve="0;"/>
       <rt:Vibrance
@@ -97,8 +97,8 @@
        rt:Enabled="False"
        rt:X="0"
        rt:Y="0"
-       rt:Width="4281"
-       rt:Height="2871"/>
+       rt:Width="4276"
+       rt:Height="2836"/>
       <rt:CoarseGeo
        rt:RotationDegree="0"
        rt:HorizontalFlip="False"
@@ -133,8 +133,8 @@
        rt:AppliesTo="Cropped area"
        rt:Method="Bicubic"
        rt:DataSpecified="0"
-       rt:Width="4281"
-       rt:Height="2871"/>
+       rt:Width="4276"
+       rt:Height="2836"/>
       <rt:ColorManagement
        rt:InputProfile="(camera)"
        rt:WorkingProfile="ProPhoto"
