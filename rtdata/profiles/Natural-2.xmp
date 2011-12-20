@@ -20,7 +20,7 @@
        rt:HighlightCompression="0"
        rt:HighlightComprThreshold="33"
        rt:ShadowCompression="50"
-       rt:ToneCurve="0;"/>
+       rt:ToneCurve="1;0;0;0.457543;0.579067;1;1;"/>
       <rt:ChannelMixer
        rt:Red="100;0;0;"
        rt:Green="0;100;0;"
@@ -32,7 +32,7 @@
        rt:AvoidColorClipping="False"
        rt:SaturationLimitEnabled="False"
        rt:SaturationLimit="40"
-       rt:LCurve="0;"
+       rt:LCurve="3;0;0;0.848921;0.690647;1;1;"
        rt:aCurve="0;"
        rt:bCurve="0;"/>
       <rt:Vibrance

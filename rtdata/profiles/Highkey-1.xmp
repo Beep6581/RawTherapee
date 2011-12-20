@@ -14,21 +14,21 @@
        rt:Clip="0"
        rt:Compensation="0"
        rt:Brightness="0"
-       rt:Contrast="20"
-       rt:Saturation="5"
+       rt:Contrast="0"
+       rt:Saturation="-10"
        rt:Black="0"
        rt:HighlightCompression="0"
        rt:HighlightComprThreshold="33"
        rt:ShadowCompression="50"
-       rt:ToneCurve="0;"/>
+       rt:ToneCurve="2;0.105;0.25;0.75;15;60;30;-70;"/>
       <rt:ChannelMixer
        rt:Red="100;0;0;"
        rt:Green="0;100;0;"
        rt:Blue="0;0;100;"/>
       <rt:ExposureLab
        rt:Brightness="0"
-       rt:Contrast="0"
-       rt:Saturation="5"
+       rt:Contrast="5"
+       rt:Saturation="-10"
        rt:AvoidColorClipping="False"
        rt:SaturationLimitEnabled="False"
        rt:SaturationLimit="40"
