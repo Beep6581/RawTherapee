@@ -29,6 +29,7 @@ IPTCPairList_t IPTCMeta::IPTCReleaseStatus;
 IPTCPairList_t IPTCMeta::IPTCCopyrightStatus;
 IPTCPairList_t IPTCMeta::IPTCWorldRegion;
 IPTCPairList_t IPTCMeta::IPTCISO3166;
+IPTCPairList_t IPTCMeta::IPTCBoolean;
 
 const char *kIPTCArtworkRights  = "Iptc4xmpExt:ArtworkOrObjectDetails/Iptc4xmpExt:AOCopyrightNotice";
 const char *kIPTCArtworkCreator = "Iptc4xmpExt:ArtworkOrObjectDetails/Iptc4xmpExt:AOCreator";
@@ -93,7 +94,10 @@ const char *kIPTCReference  = "photoshop:TransmissionReference";
 const char *kIPTCRegistryID = "Iptc4xmpExt:RegistryEntryDetails/Iptc4xmpExt:RegItemId";
 const char *kIPTCRegistryOrgID  = "Iptc4xmpExt:RegistryEntryDetails/Iptc4xmpExt:RegOrgId";
 const char *kIPTCRights     = "dc:rights";
+const char *kIPTCRightsCertif   = "xmpRights:Certificate";
+const char *kIPTCRightsMarked   = "xmpRights:Marked";
 const char *kIPTCRightsOwner    = "plus:CopyrightOwner/plus:CopyrightOwnerName";
+const char *kIPTCRightsStatement= "xmpRights:WebStatement";
 const char *kIPTCRightsStatus   = "plus:CopyrightStatus";
 const char *kIPTCScene      = "Iptc4xmpCore:Scene";
 const char *kIPTCSource     = "photoshop:Source";
@@ -187,8 +191,11 @@ void IPTCMeta::initIPTCMeta()
     IPTCtags[kIPTCArtworkNumber]  = IPTCMeta(kIPTCArtworkNumber,"IPTC_ARTWORKNUMBER","IPTC_ARTWORKNUMBER_HINT");
     IPTCtags[kIPTCArtworkTitle]   = IPTCMeta(kIPTCArtworkTitle,"IPTC_ARTWORKTITLE","IPTC_ARTWORKTITLE_HINT");
 
-    IPTCtags[kIPTCRightsOwner]    = IPTCMeta(kIPTCRightsOwner,"IPTC_RIGHTSOWNER","IPTC_RIGHTSOWNER_HINT",Exiv2::xmpSeq);
+    IPTCtags[kIPTCRightsOwner]    = IPTCMeta(kIPTCRightsOwner,"IPTC_RIGHTSOWNER","IPTC_RIGHTSOWNER_HINT",Exiv2::xmpBag);
     IPTCtags[kIPTCRightsStatus]   = IPTCMeta(kIPTCRightsStatus,"IPTC_RIGHTSSTATUS","IPTC_RIGHTSSTATUS_HINT" );
+    IPTCtags[kIPTCRightsMarked]   = IPTCMeta(kIPTCRightsMarked,"IPTC_RIGHTSMARKED","IPTC_RIGHTSMARKED_HINT");
+    IPTCtags[kIPTCRightsCertif]   = IPTCMeta(kIPTCRightsCertif,"IPTC_RIGHTSCERTIFICATE","IPTC_RIGHTSCERTIFICATE_HINT");
+    IPTCtags[kIPTCRightsStatement]= IPTCMeta(kIPTCRightsStatement,"IPTC_RIGHTSSTATEMENT","IPTC_RIGHTSSTATEMENT_HINT");
     IPTCtags[kIPTCImageCreator]   = IPTCMeta(kIPTCImageCreator,"IPTC_IMAGECREATOR","IPTC_IMAGECREATOR_HINT");
     IPTCtags[kIPTCLicensor]       = IPTCMeta(kIPTCLicensor,"IPTC_LICENSOR","IPTC_LICENSOR_HINT");
     IPTCtags[kIPTCImageSupplier]  = IPTCMeta(kIPTCImageSupplier,"IPTC_IMAGESUPPLIER","IPTC_IMAGESUPPLIER_HINT");
@@ -309,8 +316,8 @@ void IPTCMeta::initIPTCMeta()
     IPTCReleaseStatus["Incomplete Model Releases"] = "There are releases only for some";
 
     IPTCCopyrightStatus["Unknown"]="Unknown status";
-    IPTCCopyrightStatus["Protected"] = "Protected";
-    IPTCCopyrightStatus["Public Domain"] ="Public Domain";
+    IPTCCopyrightStatus["Protected"] = "Resource is protected by copyright";
+    IPTCCopyrightStatus["Public Domain"] ="Public Domain resource";
 
     // World regions/continent
     IPTCWorldRegion["r001"] = "World: The whole world";
@@ -321,6 +328,9 @@ void IPTCMeta::initIPTCMeta()
     IPTCWorldRegion["r142"] = "Asia: The continent of Asia";
     IPTCWorldRegion["r150"] = "Europe: The continent of Europe";
     IPTCWorldRegion["r901"] = "Antarctica: The continent of the Antarctica";
+
+    IPTCBoolean["True"]="";
+    IPTCBoolean["False"]="";
 
     IPTCISO3166["ABW"] = "Aruba";
     IPTCISO3166["AFG"] = "Afghanistan";

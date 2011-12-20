@@ -90,6 +90,9 @@ IPTCPanel::IPTCPanel () {
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCSource, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRights, chgList ) );
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCRightsStatus, rtengine::IPTCMeta::IPTCCopyrightStatus, chgList ) );
+    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCRightsMarked, rtengine::IPTCMeta::IPTCBoolean, chgList ) );
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRightsCertif, chgList ) );
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRightsStatement, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCInstruct, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCUsageTerms, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRightsOwner, chgList ) );

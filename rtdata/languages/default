@@ -499,8 +499,14 @@ IPTC_REGISTRYORG;Registry Organisation Id
 IPTC_REGISTRYORG_HINT;An identifier for the registry which issued the corresponding Registry Image Id
 IPTC_RIGHTS;Copyright Notice
 IPTC_RIGHTS_HINT;Contains any necessary copyright notice for claiming the intellectual property for this photograph and should identify the current owner of the copyright for the photograph IIM 2:116 Copyright Notice
+IPTC_RIGHTSCERTIFICATE;Rights certificate URL
+IPTC_RIGHTSCERTIFICATE_HINT;A web URL for a rights management certificate
+IPTC_RIGHTSMARKED;Rights managed
+IPTC_RIGHTSMARKED_HINT;If True indicates that this is a rights-managed resource. When False, indicates that this is a public-domain resource.
 IPTC_RIGHTSOWNER;Copyright Owner
 IPTC_RIGHTSOWNER_HINT;The owner or owners of the copyright in the licensed image
+IPTC_RIGHTSSTATEMENT;Rights web statement
+IPTC_RIGHTSSTATEMENT_HINT;A web URL for a statement of the ownership and usage rights for this resource
 IPTC_RIGHTSSTATUS;Copyright status
 IPTC_RIGHTSSTATUS_HINT;Copyright status of the image:Protected,Public Domain,Unknown
 IPTC_SCENE;Scene code
