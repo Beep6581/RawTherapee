@@ -89,7 +89,10 @@ extern const char *kIPTCPropertyRelSt;
 extern const char *kIPTCRegistryID;
 extern const char *kIPTCRegistryOrgID;
 extern const char *kIPTCRights;
+extern const char *kIPTCRightsCertif;
+extern const char *kIPTCRightsMarked;
 extern const char *kIPTCRightsOwner;
+extern const char *kIPTCRightsStatement;
 extern const char *kIPTCRightsStatus;
 extern const char *kIPTCScene;
 extern const char *kIPTCSource;
@@ -131,6 +134,7 @@ public:
 	static IPTCPairList_t IPTCCopyrightStatus; // Copyright status values
 	static IPTCPairList_t IPTCWorldRegion;
 	static IPTCPairList_t IPTCISO3166;
+	static IPTCPairList_t IPTCBoolean;
 
 	static void initIPTCMeta();
 };
