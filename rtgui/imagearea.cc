@@ -42,6 +42,7 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 	
     zoomPanel = Gtk::manage (new ZoomPanel (this));
     indClippedPanel = Gtk::manage (new IndicateClippedPanel (this));
+    previewModePanel =  Gtk::manage (new PreviewModePanel (this));
 
     signal_style_changed().connect( sigc::mem_fun(*this, &ImageArea::styleChanged) );
     signal_size_allocate().connect( sigc::mem_fun(*this, &ImageArea::on_resized) );

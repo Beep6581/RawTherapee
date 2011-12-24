@@ -29,6 +29,7 @@
 #include "cropwindow.h"
 #include "zoompanel.h"
 #include "indclippedpanel.h"
+#include "previewmodepanel.h"
 
 class ImageAreaPanel;
 class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
@@ -64,6 +65,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     CropWindow* mainCropWindow;
     ZoomPanel* zoomPanel;
 	IndicateClippedPanel* indClippedPanel;
+	PreviewModePanel* previewModePanel;
 
     ImageArea (ImageAreaPanel* p);
     ~ImageArea ();

@@ -126,6 +126,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::VSeparator* vsepcl = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz2 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz3 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::VSeparator* vsepz4 = Gtk::manage (new Gtk::VSeparator ());
 
     iarea = new ImageAreaPanel ();
 
@@ -144,6 +145,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*iarea->imageArea->indClippedPanel, Gtk::PACK_SHRINK, 0);
     toolBarPanel->pack_end   (*vsepz, Gtk::PACK_SHRINK, 2);
+    toolBarPanel->pack_end   (*iarea->imageArea->previewModePanel, Gtk::PACK_SHRINK, 0);
+    toolBarPanel->pack_end   (*vsepz4, Gtk::PACK_SHRINK, 2);
 
     afterBox = Gtk::manage (new Gtk::VBox ());
     afterBox->pack_start (*iarea);
@@ -849,7 +852,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				case GDK_greater:
 					iarea->imageArea->indClippedPanel->toggleClipped(false);
 					return true;
-
+//TODO add shortcuts for previewModePanel buttons
 				case GDK_F5:
 					openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
 					return true;
