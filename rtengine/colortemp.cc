@@ -497,32 +497,34 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
     double x, y, z;
 
     // We first test for specially handled methods
-    if     (method == "Daylight"           ) spectrum_to_xyz(Daylight5300_spect, 0., 0., 0., x, y, z);
-    else if(method == "Cloudy"             ) spectrum_to_xyz(Cloudy6200_spect,   0., 0., 0., x, y, z);
-    else if(method == "Shade"              ) spectrum_to_xyz(Shade7600_spect,    0., 0., 0., x, y, z);
-    else if(method == "Tungsten"           ) spectrum_to_xyz(A2856_spect,        0., 0., 0., x, y, z);
-    else if(method == "Fluo F1"            ) spectrum_to_xyz(FluoF1_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F2"            ) spectrum_to_xyz(FluoF2_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F3"            ) spectrum_to_xyz(FluoF3_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F4"            ) spectrum_to_xyz(FluoF4_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F5"            ) spectrum_to_xyz(FluoF5_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F6"            ) spectrum_to_xyz(FluoF6_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F7"            ) spectrum_to_xyz(FluoF7_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F8"            ) spectrum_to_xyz(FluoF8_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F9"            ) spectrum_to_xyz(FluoF9_spect,       0., 0., 0., x, y, z);
-    else if(method == "Fluo F10"           ) spectrum_to_xyz(FluoF10_spect,      0., 0., 0., x, y, z);
-    else if(method == "Fluo F11"           ) spectrum_to_xyz(FluoF11_spect,      0., 0., 0., x, y, z);
-    else if(method == "Fluo F12"           ) spectrum_to_xyz(FluoF12_spect,      0., 0., 0., x, y, z);
-    else if(method == "HMI Lamp"           ) spectrum_to_xyz(HMI_spect,          0., 0., 0., x, y, z);
-    else if(method == "GTI Lamp"           ) spectrum_to_xyz(GTI_spect,          0., 0., 0., x, y, z);
-    else if(method == "JudgeIII Lamp"      ) spectrum_to_xyz(JudgeIII_spect,     0., 0., 0., x, y, z);
-    else if(method == "Solux Lamp 3500K"   ) spectrum_to_xyz(Solux3500_spect,      0., 0., 0., x, y, z);
-    else if(method == "Solux Lamp 4100K"   ) spectrum_to_xyz(Solux4100_spect,      0., 0., 0., x, y, z);
-    else if(method == "Solux Lamp 4700K"   ) spectrum_to_xyz(Solux4700_spect,      0., 0., 0., x, y, z);
-    else if(method == "NG Solux Lamp 4700K") spectrum_to_xyz(NG_Solux4700_spect,   0., 0., 0., x, y, z);
-    else if(method == "Flash 5500K"        ) spectrum_to_xyz(Flash5500_spect,    0., 0., 0., x, y, z);
-    else if(method == "Flash 6000K"        ) spectrum_to_xyz(Flash6000_spect,    0., 0., 0., x, y, z);
-    else if(method == "Flash 6500K"        ) spectrum_to_xyz(Flash6500_spect,    0., 0., 0., x, y, z);
+    if     (method == "Daylight"            ) spectrum_to_xyz(Daylight5300_spect,     0., 0., 0., x, y, z);
+    else if(method == "Cloudy"              ) spectrum_to_xyz(Cloudy6200_spect,       0., 0., 0., x, y, z);
+    else if(method == "Shade"               ) spectrum_to_xyz(Shade7600_spect,        0., 0., 0., x, y, z);
+    else if(method == "Tungsten"            ) spectrum_to_xyz(A2856_spect,            0., 0., 0., x, y, z);
+    else if(method == "Fluo F1"             ) spectrum_to_xyz(FluoF1_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F2"             ) spectrum_to_xyz(FluoF2_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F3"             ) spectrum_to_xyz(FluoF3_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F4"             ) spectrum_to_xyz(FluoF4_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F5"             ) spectrum_to_xyz(FluoF5_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F6"             ) spectrum_to_xyz(FluoF6_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F7"             ) spectrum_to_xyz(FluoF7_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F8"             ) spectrum_to_xyz(FluoF8_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F9"             ) spectrum_to_xyz(FluoF9_spect,           0., 0., 0., x, y, z);
+    else if(method == "Fluo F10"            ) spectrum_to_xyz(FluoF10_spect,          0., 0., 0., x, y, z);
+    else if(method == "Fluo F11"            ) spectrum_to_xyz(FluoF11_spect,          0., 0., 0., x, y, z);
+    else if(method == "Fluo F12"            ) spectrum_to_xyz(FluoF12_spect,          0., 0., 0., x, y, z);
+    else if(method == "HMI Lamp"            ) spectrum_to_xyz(HMI_spect,              0., 0., 0., x, y, z);
+    else if(method == "GTI Lamp"            ) spectrum_to_xyz(GTI_spect,              0., 0., 0., x, y, z);
+    else if(method == "JudgeIII Lamp"       ) spectrum_to_xyz(JudgeIII_spect,         0., 0., 0., x, y, z);
+    else if(method == "Solux Lamp 3500K"    ) spectrum_to_xyz(Solux3500_spect,        0., 0., 0., x, y, z);
+    else if(method == "Solux Lamp 4100K"    ) spectrum_to_xyz(Solux4100_spect,        0., 0., 0., x, y, z);
+    else if(method == "Solux Lamp 4700K"    ) spectrum_to_xyz(Solux4700_spect,        0., 0., 0., x, y, z);
+    else if(method == "NG Solux Lamp 4700K" ) spectrum_to_xyz(NG_Solux4700_spect,     0., 0., 0., x, y, z);
+    else if(method == "LED LSI Lumelex 2040") spectrum_to_xyz(NG_LEDLSI2040_spect,    0., 0., 0., x, y, z);
+    else if(method == "LED CRS SP12 WWMR16" ) spectrum_to_xyz(NG_CRSSP12WWMR16_spect, 0., 0., 0., x, y, z);
+    else if(method == "Flash 5500K"         ) spectrum_to_xyz(Flash5500_spect,        0., 0., 0., x, y, z);
+    else if(method == "Flash 6000K"         ) spectrum_to_xyz(Flash6000_spect,        0., 0., 0., x, y, z);
+    else if(method == "Flash 6500K"         ) spectrum_to_xyz(Flash6500_spect,        0., 0., 0., x, y, z);
     else {
         // otherwise we use the Temp+Green generic solution
         if (temp <= 4000) {
