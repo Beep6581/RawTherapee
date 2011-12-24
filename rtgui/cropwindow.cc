@@ -677,6 +677,16 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     //t3.set ();
 			bool showcs = iarea->indClippedPanel->showClippedShadows();
 			bool showch = iarea->indClippedPanel->showClippedHighlights();
+			bool showR  = iarea->previewModePanel->showR();
+			bool showG  = iarea->previewModePanel->showG();
+			bool showB  = iarea->previewModePanel->showB();
+			bool showL  = iarea->previewModePanel->showL();
+			bool showFocusMask  = iarea->previewModePanel->showFocusMask();
+			// additional flags to control clipping indicators for individual channels and across all channels
+			bool showclippedAll = (!showR && !showG && !showB && !showL);
+			bool showclippedR = showR || showL || showclippedAll;
+			bool showclippedG = showG || showL || showclippedAll;
+			bool showclippedB = showB || showL || showclippedAll;
 
             // If ALT was pressed, auto-enable highlight and shadow
             // TODO: Add linux/MacOS specific functions for alternative
@@ -686,7 +696,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
             }
             #endif
 
-			if (showcs || showch) {
+			if (showcs || showch || showR || showG || showB || showL /*|| showFocusMask*/) {
 				Glib::RefPtr<Gdk::Pixbuf> tmp = cropHandler.cropPixbuf->copy ();
 				guint8* pix = tmp->get_pixels();
                 guint8* pixWrkSpace = cropHandler.cropPixbuftrue->get_pixels();
@@ -704,36 +714,59 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                     guint8* curr = pix + i*pixRowStride;
                     guint8* currWS = pixWrkSpace + i*pixWSRowStride;
 
-                    int delta; bool changed;
+                    int delta; bool changedHL; bool changedSH;
 
                     for (int j=0; j<tmp->get_width(); j++) {
                         // we must compare clippings in working space, since the cropPixbuf is in sRGB, with mon profile
 
+                        changedHL=false;
+                        changedSH=false;
+
                         if (showch) {
-                            delta=0; changed=false;
+                            delta=0; changedHL=false;
 
-                            if (currWS[0]>=options.highlightThreshold) { delta += 255-currWS[0]; changed=true; }
-                            if (currWS[1]>=options.highlightThreshold) { delta += 255-currWS[1]; changed=true; }
-                            if (currWS[2]>=options.highlightThreshold) { delta += 255-currWS[2]; changed=true; }
+                            if (currWS[0]>=options.highlightThreshold && showclippedR) { delta += 255-currWS[0]; changedHL=true; }
+                            if (currWS[1]>=options.highlightThreshold && showclippedG) { delta += 255-currWS[1]; changedHL=true; }
+                            if (currWS[2]>=options.highlightThreshold && showclippedB) { delta += 255-currWS[2]; changedHL=true; }
 
-                            if (changed) { 
+                            if (changedHL) { 
                                 delta *= HighlightFac; 
-                                curr[0]=curr[1]=curr[2]=delta;
+                                if (showclippedAll) curr[0]=curr[1]=curr[2]=delta; // indicate clipped highlights in gray
+	                            else {curr[0]=255; curr[1]=curr[2]=delta;}         // indicate clipped highlights in red
                             }
                         }
                         if (showcs) {
-                            delta=0; changed=false;
+                            delta=0; changedSH=false;
 
-                            if (currWS[0]<=options.shadowThreshold) { delta += currWS[0]; changed=true; }
-                            if (currWS[1]<=options.shadowThreshold) { delta += currWS[1]; changed=true; }
-                            if (currWS[2]<=options.shadowThreshold) { delta += currWS[2]; changed=true; }
-
+                            if (currWS[0]<=options.shadowThreshold && showclippedR) { delta += currWS[0]; changedSH=true; }
+                            if (currWS[1]<=options.shadowThreshold && showclippedG) { delta += currWS[1]; changedSH=true; }
+                            if (currWS[2]<=options.shadowThreshold && showclippedB) { delta += currWS[2]; changedSH=true; }
                                 
-                            if (changed) {
-                                delta = 255 - (delta * ShawdowFac);
-                                curr[0]=curr[1]=curr[2]=delta; 
+                            if (changedSH) {                            
+                                if (showclippedAll) {
+                                    delta = 255 - (delta * ShawdowFac);
+                                    curr[0]=curr[1]=curr[2]=delta;      // indicate clipped shadows in gray
+                                }
+	                            else {
+	                                delta *= ShawdowFac;
+	                                curr[2]=255; curr[0]=curr[1]=delta; // indicate clipped shadows in blue
+	                            }
+                            }
+                        } //if (showcs)
+                        
+                        // modulate the preview of channels & L;
+                        if (!changedHL && !changedSH){          //This condition allows clipping indicators for RGB channels to remain in color
+                            if (showR) curr[1]=curr[2]=curr[0]; //Red   channel in grayscale
+                            if (showG) curr[0]=curr[2]=curr[1]; //Green channel in grayscale
+                            if (showB) curr[0]=curr[1]=curr[2]; //Blue  channel in grayscale
+                            if (showL) {                        //Luminosity
+                            	// see http://en.wikipedia.org/wiki/HSL_and_HSV#Lightness for more info
+                            	//int L = (int)(0.212671*curr[0]+0.715160*curr[1]+0.072169*curr[2]);
+                            	int L = (int)(0.299*curr[0]+0.587*curr[1]+0.114*curr[2]); //Lightness - this matches Luminance mode in Photoshop CS5
+                            	curr[0]=curr[1]=curr[2]=L; 
                             }
                         }
+                        //if (showFocusMask){}; TODO add display of focus mask here
 
                         /*
 						    if (showch && (currWS[0]>=options.highlightThreshold || currWS[1]>=options.highlightThreshold || currWS[2]>=options.highlightThreshold))
