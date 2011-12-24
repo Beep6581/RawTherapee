@@ -762,7 +762,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                             if (showL) {                        //Luminosity
                             	// see http://en.wikipedia.org/wiki/HSL_and_HSV#Lightness for more info
                             	//int L = (int)(0.212671*curr[0]+0.715160*curr[1]+0.072169*curr[2]);
-                            	int L = (int)(0.299*curr[0]+0.587*curr[1]+0.114*curr[2]); //Lightness - this matches Luminance mode in Photoshop CS5
+                            	int L = (int)(0.299*curr[0]+0.587*curr[1]+0.114*curr[2]); //Lightness - this matches Luminosity mode in Photoshop CS5
                             	curr[0]=curr[1]=curr[2]=L; 
                             }
                         }
