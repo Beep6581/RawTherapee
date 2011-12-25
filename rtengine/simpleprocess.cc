@@ -29,8 +29,9 @@
 #include "rawimagesource.h"
 #include "../rtgui/ppversion.h"
 #undef THREAD_PRIORITY_NORMAL
-
 #define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
+
+
 
 
 namespace rtengine {
@@ -247,8 +248,24 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     bool useLCMS;
 
     if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
-        double ga0,ga1,ga2,ga3,ga4,ga5,ga6;
-        readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0,ga1,ga2,ga3,ga4,ga5,ga6 );
+ 		cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
+		
+        cmsToneCurve* GammaTRC[3];
+        cmsFloat64Number Parameters[7];
+		double ga0,ga1,ga2,ga3,ga4,ga5,ga6;
+       // wchar_t string[80] ;
+		const wchar_t* stri[]= {L" RT_Large ", L" RT_Medium",L" RT_sRGB  ",L" WideGamut",L" Beta RGB ",L" BestRGB  ",L" BruceRGB"};//label for Free gamma and Output Gamma
+		int ns;//numero of stri[]
+		if      (params.icm.working=="ProPhoto")   ns=0;
+		else if (params.icm.working=="Adobe RGB")  ns=1;
+		else if (params.icm.working=="sRGB")  	   ns=2;
+		else if (params.icm.working=="WideGamut")  ns=3;
+		else if (params.icm.working=="Beta RGB")   ns=4;
+		else if (params.icm.working=="BestRGB")    ns=5;
+		else if (params.icm.working=="BruceRGB")   ns=6;
+
+
+		readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0,ga1,ga2,ga3,ga4,ga5,ga6 );
         customGamma = true;
 
         //or selected Free gamma
@@ -306,8 +323,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 if (settings->verbose) printf("\"%s\" ICC output profile not found!\n", outProfile.c_str());
             }
             else {
-                cmsToneCurve* GammaTRC[3];
-                cmsFloat64Number Parameters[7];
                 Parameters[0] = ga0;
                 Parameters[1] = ga1;
                 Parameters[2] = ga2;
@@ -316,11 +331,112 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 Parameters[5] = ga5;
                 Parameters[6] = ga6;
                 // 7 parameters for smoother curves
+				//change desc Tag , to "free gamma", or "BT709", etc.
+				cmsContext ContextID = cmsGetProfileContextID(jprof);//modification TAG
+				DescriptionMLU  = cmsMLUalloc(ContextID, 1);
+				CopyrightMLU    = cmsMLUalloc(ContextID, 1);//for ICC
+				DmndMLU=cmsMLUalloc(ContextID, 1);//for ICC
+				DmddMLU=cmsMLUalloc(ContextID, 1);// for ICC
+  
+
+
+				// instruction with //ICC are used for generate icc profile
+				if (DescriptionMLU == NULL) printf("Error Description\n");
+				cmsMLUsetWide(CopyrightMLU,    "en", "US", L"No copyright Rawtherapee -Prophoto compatible")	;//adapt to profil	
+				cmsMLUsetWide(DmndMLU,    "en", "US", L"Rawtherapee")	;	
+			    cmsMLUsetWide(DmddMLU,    "en", "US", L"RTLarge")	;	//adapt to profil
+				//display Tag desc with : selection of gamma and Primaries
+				if(params.icm.gamma=="High_g1.3_s3.35" && !params.icm.freegamma) {
+										wchar_t string1[80] = L"GammaTRC: High g1.3 s3.35";
+										wcsncat( string1, stri[ns], 37 );
+										cmsMLUsetWide(DescriptionMLU,  "en", "US", string1);
+																				}
+					else if (params.icm.gamma=="Low_g2.6_s6.9" && !params.icm.freegamma) {
+										wchar_t string2[80] = L"GammaTRC: Low g2.6 s6.9";
+										wcsncat( string2, stri[ns], 36 );
+										cmsMLUsetWide(DescriptionMLU,  "en", "US", string2);
+																				}
+					else if (params.icm.gamma=="sRGB_g2.4_s12.92" && !params.icm.freegamma) {
+										wchar_t string3[80] = L"GammaTRC: sRGB g2.4 s12.92";
+										wcsncat( string3, stri[ns], 37 );
+										cmsMLUsetWide(DescriptionMLU,  "en", "US", string3);
+																				}
+					else if (params.icm.gamma== "BT709_g2.2_s4.5" && !params.icm.freegamma) {
+										wchar_t string4[80] = L"GammaTRC: BT709 g2.2 s4.5";
+										wcsncat( string4, stri[ns], 36 );
+										cmsMLUsetWide(DescriptionMLU,  "en", "US", string4);
+																				}
+					else if (params.icm.gamma== "linear_g1.0" && !params.icm.freegamma) {
+										wchar_t string5[80] = L"GammaTRC: Linear g1.0";
+										wcsncat( string5, stri[ns], 32 );
+										cmsMLUsetWide(DescriptionMLU,  "en", "US", string5);
+																				}
+					else if (params.icm.gamma== "standard_g2.2" && !params.icm.freegamma) {
+										wchar_t string6[80] = L"GammaTRC: g2.2";
+										wcsncat( string6, stri[ns], 30 );
+										cmsMLUsetWide(DescriptionMLU,  "en", "US", string6);
+																				}
+					else if (params.icm.gamma== "standard_g1.8" && !params.icm.freegamma) {
+										wchar_t string7[80] = L"GammaTRC: g1.8";
+										wcsncat( string7, stri[ns], 30 );
+										cmsMLUsetWide(DescriptionMLU,  "en", "US", string7);
+																				}
+
+					//for elaboration ICC profiles
+				//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Medium gamma sRGB(AdobeRGB compatible)");
+				//	else if (params.icm.gamma==	"BT709_g2.2_s4.5" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma BT709(IEC61966 equivalent)");
+				//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma sRGB(IEC61966 equivalent)");
+				//	else if (params.icm.gamma==	"linear_g1.0" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma Linear1.0(IEC61966 equivalent)");
+				//	else if (params.icm.gamma==	"BT709_g2.2_s4.5" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma BT709(Prophoto compatible)");
+				//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma sRGB(Prophoto compatible)");
+				//	else if (params.icm.gamma==	"linear_g1.0" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma Linear1.0(Prophoto compatible)");
+				
+					else if (params.icm.freegamma) {//prepare wchar_t for Free Gamma
+								std::wostringstream sgamm;
+								float gamm = params.icm.gampos;//gamma
+								sgamm<<gamm;     
+								std::wstring ws = sgamm.str();
+								const wchar_t* cga = {ws.c_str()};
+								std::vector<wchar_t> buf( cga , cga + (ws.size() + 1) );
+								wchar_t* wp = &buf[0];
+								wchar_t wpr[5]=L"2222";
+								wcsncpy(wpr,wp,4);	//gamma (gampos==> string)
+								wchar_t string[80] = L"Free Gamma g=";
+
+								wchar_t mid[5]=L" s=";
+								wcsncat( string, wpr, 17 );
+								wcsncat( string, mid, 20 );
+								
+								std::wostringstream slp;//slope
+								float slop = params.icm.slpos;
+								slp<<slop;       
+								std::wstring ws2 = slp.str();
+								const wchar_t* cslo = {ws2.c_str()};// const wchar_t*
+								std::vector<wchar_t> buf2( cslo , cslo + (ws2.size() + 1) );
+								wchar_t* wp2 = &buf2[0];  // wchar_t*
+								wchar_t wpr2[6]=L"22222";
+								wcsncpy(wpr2,wp2,5);	//Slope (slope==> string)
+
+								wcsncat( string, wpr2, 23 );
+								wcsncat( string, stri[ns], 33 );
+								cmsMLUsetWide(DescriptionMLU,  "en", "US", string);}//display description with gamma + slope + primaries
+
+				cmsWriteTag(jprof, cmsSigProfileDescriptionTag,  DescriptionMLU);//desc changed
+				//cmsWriteTag(jprof, cmsSigCopyrightTag,           CopyrightMLU);    
+				//cmsWriteTag(jprof, cmsSigDeviceMfgDescTag, DmndMLU);
+				//cmsWriteTag(jprof, cmsSigDeviceModelDescTag, DmddMLU);
+				
                 // Calculate output profile's rTRC bTRC gTRC
                 GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters);
                 cmsWriteTag(jprof, cmsSigGreenTRCTag, (void*)GammaTRC[1] );
                 cmsWriteTag(jprof, cmsSigRedTRCTag,   (void*)GammaTRC[0] );
                 cmsWriteTag(jprof, cmsSigBlueTRCTag,  (void*)GammaTRC[2] );
+				//for generation ICC profiles : here Prophoto ==> Large
+			//	if(params.icm.gamma==	"BT709_g2.2_s4.5") cmsSaveProfileToFile(jprof, "RT_Large_gBT709.icc");
+			//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92") cmsSaveProfileToFile(jprof, "RT_Large_gsRGB.icc");
+			//	else if (params.icm.gamma==	"linear_g1.0") cmsSaveProfileToFile(jprof, "RT_Large_g10.icc");
+			
+				
             }
         }
     }
