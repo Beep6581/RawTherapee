@@ -235,7 +235,7 @@ void Options::setDefaults () {
     rtSettings.monitorProfile = "";
 	rtSettings.autoMonitorProfile = false;
     rtSettings.LCMSSafeMode = true;
-    rtSettings.adobe = "RT_Middle_gsRGB"; // put the name of yours profiles (here windows)
+    rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"
     rtSettings.prophoto10 = "RT_Large_g10"; // these names appear in the menu "output profile"
     rtSettings.srgb10 = "RT_sRGB_g10";
