@@ -13,8 +13,8 @@ MultiUser=true
 UseSystemTheme=false
 
 [File Browser]
-ParseExtensions=arw;cr2;crf;crw;dng;jpg;kdc;mef;mrw;nef;orf;pef;png;raf;raw;rw2;rwz;sr2;srw;tif;tiff;
-ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;
+ParseExtensions=arw;cr2;crf;crw;dng;jpg;kdc;mef;mrw;nef;nrw;orf;pef;png;raf;raw;rw2;rwz;sr2;srw;tif;tiff;
+ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;
 
 [Output]
 PathTemplate=%p1/converted/%f
