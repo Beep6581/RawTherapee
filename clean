@@ -1,5 +1,5 @@
 #!/bin/sh
-rm -v CMakeCache.txt
+find -name CMakeCache.txt -delete
 rm -v install_manifest.txt
 
 rm -vr ./CMakeFiles 

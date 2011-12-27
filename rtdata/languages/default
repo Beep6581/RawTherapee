@@ -475,20 +475,20 @@ MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F
 MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
+MAIN_TOOLTIP_PREFERENCES;Set preferences
 MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b>
 MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>
-MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>
 MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>\n0.299*R + 0.587*G + 0.114*B
-MAIN_TOOLTIP_PREFERENCES;Set preferences
+MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>
 MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
 MAIN_TOOLTIP_SAVE;Save image to the default folder
 MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
-MAIN_TOOLTIP_TOGGLE;Toggle <b>before</b>/<b>after</b> view <b>B</b>
 MAIN_TOOLTIP_THRESHOLD;Threshold
+MAIN_TOOLTIP_TOGGLE;Toggle <b>before</b>/<b>after</b> view <b>B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = n/a
@@ -1024,10 +1024,11 @@ TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy
 TP_WBALANCE_CUSTOM;Custom
-TP_WBALANCE_FLASH_HEADER;Flash
+TP_WBALANCE_DAYLIGHT;Daylight (sunny)
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+TP_WBALANCE_FLASH_HEADER;Flash
 TP_WBALANCE_FLUO1;F1 - Daylight
 TP_WBALANCE_FLUO2;F2 - Cool white
 TP_WBALANCE_FLUO3;F3 - White
@@ -1058,7 +1059,6 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Spot WB
-TP_WBALANCE_DAYLIGHT;Daylight (sunny)
 TP_WBALANCE_TEMPERATURE;Temperature
 TP_WBALANCE_TUNGSTEN;Tungsten
 ZOOMBAR_DETAIL;Detail
