@@ -80,6 +80,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !EXIFFILTER_APERTURE;Aperture
 !EXIFFILTER_CAMERA;Camera
 !EXIFFILTER_DIALOGLABEL;Exif Filter
+!EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)
 !EXIFFILTER_FILETYPE;File Type
 !EXIFFILTER_FOCALLEN;Focal Length
 !EXIFFILTER_ISO;ISO
@@ -374,6 +375,10 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !HISTORY_MSG_160;Scale
 !HISTORY_MSG_161;Reweighting iterates
 !HISTORY_MSG_162;Tone Mapping
+!HISTORY_MSG_163;RGB Curves - R
+!HISTORY_MSG_164;RGB Curves - G
+!HISTORY_MSG_165;RGB Curves - B
+!HISTORY_MSG_166;Neutral levels
 !HISTORY_NEWSNAPSHOTAS;As...
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -490,12 +495,18 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
 !MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
 !MAIN_TOOLTIP_PREFERENCES;Set preferences
+!MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b>
+!MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>
+!MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>n0.299*R + 0.587*G + 0.114*B
+!MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>
 !MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 !MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
 !MAIN_TOOLTIP_SAVE;Save image to the default folder
 !MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
 !MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
+!MAIN_TOOLTIP_THRESHOLD;Threshold
 !MAIN_TOOLTIP_TOGGLE;Toggle <b>before</b>/<b>after</b> view <b>B</b>
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
@@ -569,6 +580,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RESIZE;Resize
+!PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_ROTATION;Rotation
 !PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
 !PARTIALPASTE_SHARPENEDGE;Edges
@@ -618,7 +630,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PREFERENCES_EDITORCMDLINE;Other command line
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_EXTERNALEDITOR;External editor
-!PREFERENCES_FBROWSEROPTS;File Browser Options
+!PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
 !PREFERENCES_FILEFORMAT;File format
 !PREFERENCES_FLATFIELDFOUND;Found
@@ -681,6 +693,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 !PREFERENCES_SHOWDATETIME;Show date and time
+!PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 !PREFERENCES_SHOWONLYRAW;Show only raw files
 !PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
@@ -834,9 +847,11 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !TP_EQUALIZER_NEUTRAL;Neutral
 !TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_AUTOLEVELS;Auto Levels
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
 !TP_EXPOSURE_CLIP;Clip
+!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
 !TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
@@ -914,6 +929,8 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
 !TP_LUMADENOISE_LABEL;Luminance Noise Reduction
 !TP_LUMADENOISE_RADIUS;Radius
+!TP_NEUTRAL;Neutral
+!TP_NEUTRAL_TIP;Reset exposure controls to neutral values
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
 !TP_PERSPECTIVE_LABEL;Perspective
 !TP_PERSPECTIVE_VERTICAL;Vertical
@@ -957,6 +974,7 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !TP_RESIZE_SPECIFY;Specify:
 !TP_RESIZE_WIDTH;Width
 !TP_RESIZE_W;W:
+!TP_RGBCURVES_LABEL;RGB Curves
 !TP_ROTATE_DEGREE;Degree
 !TP_ROTATE_LABEL;Rotate
 !TP_ROTATE_SELECTLINE;    Select Straight Line
@@ -1006,13 +1024,45 @@ TP_RAW_FALSECOLOR;False colour suppression steps
 !TP_VIGNETTING_STRENGTH;Strength
 !TP_WBALANCE_AUTO;Auto
 !TP_WBALANCE_CAMERA;Camera
+!TP_WBALANCE_CLOUDY;Cloudy
 !TP_WBALANCE_CUSTOM;Custom
+!TP_WBALANCE_DAYLIGHT;Daylight (sunny)
+!TP_WBALANCE_FLASH55;Leica
+!TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
+!TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+!TP_WBALANCE_FLASH_HEADER;Flash
+!TP_WBALANCE_FLUO1;F1 - Daylight
+!TP_WBALANCE_FLUO2;F2 - Cool white
+!TP_WBALANCE_FLUO3;F3 - White
+!TP_WBALANCE_FLUO4;F4 - Warm white
+!TP_WBALANCE_FLUO5;F5 - Daylight
+!TP_WBALANCE_FLUO6;F6 - Lite white
+!TP_WBALANCE_FLUO7;F7 - D65 Daylight simulator
+!TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
+!TP_WBALANCE_FLUO9;F9 - Cool white deluxe
+!TP_WBALANCE_FLUO10;F10 - Philips TL85
+!TP_WBALANCE_FLUO11;F11 - Philips TL84
+!TP_WBALANCE_FLUO12;F12 - Philips TL83
+!TP_WBALANCE_FLUO_HEADER;Fluorescent
 !TP_WBALANCE_GREEN;Tint
+!TP_WBALANCE_GTI;GTI
+!TP_WBALANCE_HMI;HMI
+!TP_WBALANCE_JUDGEIII;JudgeIII
 !TP_WBALANCE_LABEL;White Balance
+!TP_WBALANCE_LAMP_HEADER;Lamp
+!TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+!TP_WBALANCE_LED_HEADER;LED
+!TP_WBALANCE_LED_LSI;LSI Lumelex 2040
 !TP_WBALANCE_METHOD;Method
+!TP_WBALANCE_SHADE;Shade
 !TP_WBALANCE_SIZE;Size:
+!TP_WBALANCE_SOLUX35;Solux 3500K
+!TP_WBALANCE_SOLUX41;Solux 4100K
+!TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+!TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 !TP_WBALANCE_SPOTWB;Spot WB
 !TP_WBALANCE_TEMPERATURE;Temperature
+!TP_WBALANCE_TUNGSTEN;Tungsten
 !ZOOMBAR_DETAIL;Detail
 !ZOOMBAR_HUGE;Huge
 !ZOOMBAR_LARGE;Large
