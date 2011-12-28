@@ -88,14 +88,17 @@ void ImageAreaPanel::configScrollBars () {
         hscroll->set_value (x);
         vscroll->set_value (y);
 
-        if(iw>=imgw)
+        // A "gray zone" where scrollbars stays displayed/hidden between imgw and imgw+30
+        // has been introduced to avoid infinite loop. 30px should be enough and represent
+        // the width of the scrollbar
+        if(iw >= (imgw+30))
             hscroll->hide();    
-        else
+        else if(iw < imgw)
             hscroll->show();
 
-        if(ih>=imgh)
+        if(ih >= (imgh+30))
             vscroll->hide();
-        else
+        else if(ih < imgh)
             vscroll->show();
 
         if (before && this==after)
