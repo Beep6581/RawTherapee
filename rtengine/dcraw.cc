@@ -30,27 +30,27 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.445 $
-   $Date: 2011/10/07 01:00:37 $
+   $Revision: 1.447 $
+   $Date: 2011/12/26 17:31:23 $
  */
 
-#define DCRAW_VERSION "9.11"
+#define DCRAW_VERSION "9.12"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
 #define _USE_MATH_DEFINES
-#include <ctype.h>
-#include <errno.h>
+#include <cctype>
+#include <cerrno>
 #include <fcntl.h>
-#include <float.h>
-#include <limits.h>
-#include <math.h>
-#include <setjmp.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <csetjmp>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 #include <sys/types.h>
 
 #ifdef NODEPS
@@ -6202,8 +6202,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6188,-1341,-890,-7168,14489,2937,-2640,3228,8483 } },
     { "Canon EOS 5D Mark II", 0, 0x3cf0,
 	{ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 } },
-    { "Canon EOS 5D", 0, 0xe6c,
-	{ 6347,-479,-972,-8297,15954,2480,-1968,2131,7649 } },
+    { "Canon EOS 5D", 0, 0xe6c, /* RT */
+	{ 6319,-793,-614,-5809,13342,2738,-1132,1559,7971 } },
     { "Canon EOS 7D", 0, 0x3510, /* RT - Colin Walker */
 	{ 5962,-171,-732,-4189,12307,2099,-911,1981,6304 } },
     { "Canon EOS 10D", 0, 0xfa0,
@@ -6262,8 +6262,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ -5300,9846,1776,3436,684,3939,-5540,9879,6200,-1404,11175,217 } },
     { "Canon PowerShot A5", 0, 0,
 	{ -4801,9475,1952,2926,1611,4094,-5259,10164,5947,-1554,10883,547 } },
-    { "Canon PowerShot G10", 0, 0,
-	{ 11093,-3906,-1028,-5047,12492,2879,-1003,1750,5561 } },
+    { "Canon PowerShot G10", 0, 0, /* RT */
+	{ 12535,-5030,-796,-2711,10134,3006,-413,1605,5264 } },
     { "Canon PowerShot G11", 0, 0,
 	{ 12177,-4817,-1069,-1612,9864,2049,-98,850,4471 } },
     { "Canon PowerShot G12", 0, 0,
@@ -6504,8 +6504,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10231,-2769,-1255,-8301,15900,2552,-797,680,7148 } },
     { "NIKON D3000", 0, 0,
 	{ 8736,-2458,-935,-9075,16894,2251,-1354,1242,8263 } },
-    { "NIKON D3100", 0, 0,
-	{ 7911,-2167,-813,-5327,13150,2408,-1288,2483,7968 } },
+    { "NIKON D3100", 0, 0, /* RT */
+	{ 7729,-2212,-481,-5709,13148,2858,-1295,1908,8936 } },
     { "NIKON D300", 0, 0,
 	{ 9030,-1992,-715,-8465,16302,2255,-2689,3217,8069 } },
     { "NIKON D3X", 0, 0,
