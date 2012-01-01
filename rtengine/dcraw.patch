@@ -1,5 +1,5 @@
 --- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Thu Dec 29 11:43:38 2011
-+++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Thu Dec 29 12:21:22 2011
++++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Sun Jan 01 11:04:17 2012
 @@ -1,3 +1,14 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -15,21 +15,34 @@
  /*
     dcraw.c -- Dave Coffin's raw photo decoder
     Copyright 1997-2011 by Dave Coffin, dcoffin a cybercom o net
-@@ -19,11 +30,11 @@
-    *If you have not modified dcraw.c in any way, a link to my
-    homepage qualifies as "full source code".
- 
--   $Revision: 1.447 $
--   $Date: 2011/12/26 17:31:23 $
-+   $Revision: 1.445 $
-+   $Date: 2011/10/07 01:00:37 $
-  */
- 
--#define DCRAW_VERSION "9.12"
-+#define DCRAW_VERSION "9.11"
- 
- #ifndef _GNU_SOURCE
+@@ -29,17 +40,17 @@
  #define _GNU_SOURCE
+ #endif
+ #define _USE_MATH_DEFINES
+-#include <ctype.h>
+-#include <errno.h>
++#include <cctype>
++#include <cerrno>
+ #include <fcntl.h>
+-#include <float.h>
+-#include <limits.h>
+-#include <math.h>
+-#include <setjmp.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <time.h>
++#include <cfloat>
++#include <climits>
++#include <cmath>
++#include <csetjmp>
++#include <cstdio>
++#include <cstdlib>
++#include <cstring>
++#include <ctime>
+ #include <sys/types.h>
+ 
+ #ifdef NODEPS
 @@ -98,18 +109,16 @@
  #define LONG_BIT (8 * sizeof (long))
  #endif
@@ -355,12 +368,16 @@
      if (parse_tiff (save+6)) apply_tiff();
      fseek (ifp, save+len, SEEK_SET);
    }
-@@ -6183,34 +6204,34 @@
+@@ -6181,36 +6202,36 @@
+ 	{ 6188,-1341,-890,-7168,14489,2937,-2640,3228,8483 } },
+     { "Canon EOS 5D Mark II", 0, 0x3cf0,
  	{ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 } },
-     { "Canon EOS 5D", 0, 0xe6c,
- 	{ 6347,-479,-972,-8297,15954,2480,-1968,2131,7649 } },
+-    { "Canon EOS 5D", 0, 0xe6c,
+-	{ 6347,-479,-972,-8297,15954,2480,-1968,2131,7649 } },
 -    { "Canon EOS 7D", 0, 0x3510,
 -	{ 6844,-996,-856,-3876,11761,2396,-593,1772,6198 } },
++    { "Canon EOS 5D", 0, 0xe6c, /* RT */
++	{ 6319,-793,-614,-5809,13342,2738,-1132,1559,7971 } },
 +    { "Canon EOS 7D", 0, 0x3510, /* RT - Colin Walker */
 +	{ 5962,-171,-732,-4189,12307,2099,-911,1981,6304 } },
      { "Canon EOS 10D", 0, 0xfa0,
@@ -411,6 +428,17 @@
      { "Canon EOS-1D Mark II N", 0, 0xe80,
  	{ 6240,-466,-822,-8180,15825,2500,-1801,1938,8042 } },
      { "Canon EOS-1D Mark II", 0, 0xe80,
+@@ -6241,8 +6262,8 @@
+ 	{ -5300,9846,1776,3436,684,3939,-5540,9879,6200,-1404,11175,217 } },
+     { "Canon PowerShot A5", 0, 0,
+ 	{ -4801,9475,1952,2926,1611,4094,-5259,10164,5947,-1554,10883,547 } },
+-    { "Canon PowerShot G10", 0, 0,
+-	{ 11093,-3906,-1028,-5047,12492,2879,-1003,1750,5561 } },
++    { "Canon PowerShot G10", 0, 0, /* RT */
++	{ 12535,-5030,-796,-2711,10134,3006,-413,1605,5264 } },
+     { "Canon PowerShot G11", 0, 0,
+ 	{ 12177,-4817,-1069,-1612,9864,2049,-98,850,4471 } },
+     { "Canon PowerShot G12", 0, 0,
 @@ -6302,7 +6323,7 @@
      { "Canon PowerShot SX1 IS", 0, 0,
  	{ 6578,-259,-502,-5974,13030,3309,-308,1058,4970 } },
@@ -431,7 +459,7 @@
      { "FUJIFILM X10", 0, 0,
  	{ 13509,-6199,-1254,-4430,12733,1865,-331,1441,5022 } },
      { "Imacon Ixpress", 0, 0,		/* DJC */
-@@ -6475,8 +6496,8 @@
+@@ -6475,22 +6496,22 @@
  	{ 7702,-2245,-975,-9114,17242,1875,-2679,3055,8521 } },
      { "NIKON D1", 0, 0, /* multiplied by 2.218750, 1.0, 1.148438 */
  	{ 16772,-4726,-2141,-7611,15713,1972,-2846,3494,9521 } },
@@ -442,7 +470,14 @@
      { "NIKON D2H", 0, 0,
  	{ 5710,-901,-615,-8594,16617,2024,-2975,4120,6830 } },
      { "NIKON D2X", 0, 0,
-@@ -6489,8 +6510,8 @@
+ 	{ 10231,-2769,-1255,-8301,15900,2552,-797,680,7148 } },
+     { "NIKON D3000", 0, 0,
+ 	{ 8736,-2458,-935,-9075,16894,2251,-1354,1242,8263 } },
+-    { "NIKON D3100", 0, 0,
+-	{ 7911,-2167,-813,-5327,13150,2408,-1288,2483,7968 } },
++    { "NIKON D3100", 0, 0, /* RT */
++	{ 7729,-2212,-481,-5709,13148,2858,-1295,1908,8936 } },
+     { "NIKON D300", 0, 0,
  	{ 9030,-1992,-715,-8465,16302,2255,-2689,3217,8069 } },
      { "NIKON D3X", 0, 0,
  	{ 7171,-1986,-648,-8085,15555,2718,-2170,2512,7457 } },
