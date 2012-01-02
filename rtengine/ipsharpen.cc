@@ -490,7 +490,7 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 					n++;
 				}
 			if      (k==1) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width]))/chmax; //for 3x3
-			else if (k==2) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])\
+			else if (k==2) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])
 									      +fabs(LM[offset+2]-LM[offset-2])*fabs(LM[offset+2]-LM[offset-2])+fabs(LM[offset+2*width]-LM[offset-2*width])*fabs(LM[offset+2*width]-LM[offset-2*width]))/(2*chmax);  //for 5x5
 
 			if (contrast>1.0f)

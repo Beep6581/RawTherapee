@@ -741,10 +741,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf bCurve (65536);
 
 	LUTu dummy;
-    //CurveFactory::complexCurve (expcomp, black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
-								params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
-								gamma, true, params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, 16);
-    CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, params.toneCurve.hlcomprthresh, \
+      //CurveFactory::complexCurve (expcomp, black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
+      //							params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
+      //							gamma, true, params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, 16);
+    CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, params.toneCurve.hlcomprthresh,
 								params.toneCurve.shcompr, bright, contr, gamma, true, 
 								params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, 16);
 	
@@ -770,7 +770,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
         hist16, hist16, curve, dummy, 16);
-    CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+    CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
 								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 16);
     ipf.luminanceCurve (labView, labView, curve);
     ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
@@ -852,7 +852,7 @@ void Thumbnail::applyAutoExp (procparams::ProcParams& params) {
 
     if (params.toneCurve.autoexp && aeHistogram) {
         ImProcFunctions ipf (&params, false);
-        ipf.getAutoExp (aeHistogram, aeHistCompression, log(defGain)/log(2.0), params.toneCurve.clip, params.toneCurve.expcomp, \
+        ipf.getAutoExp (aeHistogram, aeHistCompression, log(defGain)/log(2.0), params.toneCurve.clip, params.toneCurve.expcomp,
 						params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
     }
 }

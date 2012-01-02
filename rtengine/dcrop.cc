@@ -133,15 +133,15 @@ void Crop::update (int todo) {
 	if (colortest && cropw>115 && croph>115) 
 		for(int j=1;j<5;j++){	
 			xref+=j*30;yref+=j*30;
-			if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip, \
-				   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
-				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
+			if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip,
+				   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
+				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
 				   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
 				   parent->imgsrc->getGamma());
 		}*/
 	
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap, \
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
 							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve );
 
 	/*xref=000;yref=000;
@@ -149,13 +149,13 @@ void Crop::update (int todo) {
 	for(int j=1;j<5;j++){	
 		xref+=j*30;yref+=j*30;
 		if (settings->verbose) {
-            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip, \
-			       baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
-			       baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
+            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
+			       baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
+			       baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
 			       baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
 		    printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, 
-			       laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327, \
-			       laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
+			       laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
+			       laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
 			       laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
         }
 	}*/
@@ -200,24 +200,24 @@ void Crop::update (int todo) {
 		int glin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1]/255.0) * 255.0);
 		int blin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2]/255.0) * 255.0);
 
-		printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip, \
+		printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip,
 			   rlin,glin,blin);
-			   //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))], \
-			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)], \
+			   //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))],
+			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)],
 			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2)]);
 		//printf("after lab2rgb Lab lab2 Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-		printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, \
-			   labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327, \
-			   labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
-			   labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+		printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
+			   labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
+			   labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
+			   labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327)q;
 	}
 	*/
 	/*
 	if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
 		xref=000;yref=000;
-		printf("dcrop final R= %d  G= %d  B= %d  \n", \
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)], \
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+1], \
+		printf("dcrop final R= %d  G= %d  B= %d  \n",
+			   cropImg->data[3*xref/(skip)*(cropImg->width+1)],
+			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+1],
 			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
 	}
 	*/

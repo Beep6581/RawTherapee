@@ -503,8 +503,8 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 		for (int j=0; j<W; j++) {
 			if (j<2) {jprev=j+2;} else {jprev=j-2;}
 			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
-			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext], \
-				   rawData[i][jprev],rawData[i][j],rawData[i][jnext], \
+			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext],
+				   rawData[i][jprev],rawData[i][j],rawData[i][jnext],
 				   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],cfablur[i*W+j]);
 		}
 	}
@@ -1308,10 +1308,10 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 		for (int j=0; j<W; j++) {
 			if (j<2) {jprev=j+2;} else {jprev=j-2;}
 			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
-			//med3x3(riFlatFile->data[iprev][jprev], riFlatFile->data[iprev][j], riFlatFile->data[iprev][jnext], \
-				   riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext], \
-				   riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
-			med5(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev],riFlatFile->data[i][j], \
+			//med3x3(riFlatFile->data[iprev][jprev], riFlatFile->data[iprev][j], riFlatFile->data[iprev][jnext],
+			//	   riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext],
+			//	   riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
+			med5(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev],riFlatFile->data[i][j],
 				 riFlatFile->data[i][jnext], riFlatFile->data[inext][j],median);
 			if (riFlatFile->data[i][j]>hotdeadthresh*median || median>hotdeadthresh*riFlatFile->data[i][j]) {
 				cfatmp[i*W+j] = median;
@@ -2086,7 +2086,7 @@ void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, f
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, \
+void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout,
 										int width, float maxval, double xyz_cam[3][3], double cam_xyz[3][3]) {
 
     //static bool crTableReady = false;
@@ -2500,8 +2500,8 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::inverse33 (double (*rgb_cam)[3], double (*cam_rgb)[3]) {
-	double nom = (rgb_cam[0][2]*rgb_cam[1][1]*rgb_cam[2][0] - rgb_cam[0][1]*rgb_cam[1][2]*rgb_cam[2][0] - \
-				  rgb_cam[0][2]*rgb_cam[1][0]*rgb_cam[2][1] + rgb_cam[0][0]*rgb_cam[1][2]*rgb_cam[2][1] + \
+	double nom = (rgb_cam[0][2]*rgb_cam[1][1]*rgb_cam[2][0] - rgb_cam[0][1]*rgb_cam[1][2]*rgb_cam[2][0] -
+				  rgb_cam[0][2]*rgb_cam[1][0]*rgb_cam[2][1] + rgb_cam[0][0]*rgb_cam[1][2]*rgb_cam[2][1] +
 				  rgb_cam[0][1]*rgb_cam[1][0]*rgb_cam[2][2] - rgb_cam[0][0]*rgb_cam[1][1]*rgb_cam[2][2] );
 	cam_rgb[0][0] = (rgb_cam[1][2]*rgb_cam[2][1]-rgb_cam[1][1]*rgb_cam[2][2]) / nom;
 	cam_rgb[0][1] = -(rgb_cam[0][2]*rgb_cam[2][1]-rgb_cam[0][1]*rgb_cam[2][2]) / nom;

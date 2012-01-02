@@ -150,10 +150,10 @@ namespace rtengine {
 		//set up NR weight functions
 		
 		//gamma correction for chroma in shadows
-		float nrwtl_norm = ((CurveFactory::gamma((double)65535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) - \
+		float nrwtl_norm = ((CurveFactory::gamma((double)65535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) -
 							(CurveFactory::gamma((double)75535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)));
 		for (int i=0; i<65536; i++) {
-			nrwt_l[i] = ((CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) - \
+			nrwt_l[i] = ((CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) -
 						  CurveFactory::gamma((double)(i+10000)/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) )/nrwtl_norm;
 			//if (i % 100 ==0) printf("%d %f \n",i,nrwt_l[i]);
 		}
@@ -280,8 +280,8 @@ namespace rtengine {
 		
 	};
 	
-	void ImProcFunctions::dirpyr(LabImage* data_fine, LabImage* data_coarse, int level, \
-								 LUTf & rangefn_L, LUTf & rangefn_ab, int pitch, int scale, \
+	void ImProcFunctions::dirpyr(LabImage* data_fine, LabImage* data_coarse, int level,
+								 LUTf & rangefn_L, LUTf & rangefn_ab, int pitch, int scale,
 								 const int luma, const int chroma )
 	{
 		
@@ -361,7 +361,7 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void ImProcFunctions::idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab, \
+	void ImProcFunctions::idirpyr(LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
 								  int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ )
 	{
 		

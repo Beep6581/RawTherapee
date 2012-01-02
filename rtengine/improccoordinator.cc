@@ -216,7 +216,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, 
 							params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
 			if (aeListener)
-				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, \
+				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
 											params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
         }
     }
@@ -226,10 +226,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
         // complexCurve also calculated pre-curves histogram dependend on crop
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, \
-									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
-									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
-									imgsrc->getGamma(), true, params.toneCurve.curve, \
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0,
+									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
+									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
+									imgsrc->getGamma(), true, params.toneCurve.curve,
 									vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, scale==1 ? 1 : 1);
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale==1 ? 1 : 1);
@@ -238,7 +238,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=CROP ) {
-            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation, \
+            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve);
         }
 
@@ -265,7 +265,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     if (todo & M_LUMACURVE) {
-		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
 									   params.labCurve.acurve, params.labCurve.bcurve, chroma_acurve, chroma_bcurve, satcurve, scale==1 ? 1 : 16);
 	}
 	
