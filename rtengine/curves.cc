@@ -136,8 +136,8 @@ namespace rtengine {
 	}
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, \
-										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints, \
+	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh,
+										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,
 										LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, int skip) {
 		
 		//colormult = chroma_scale for Lab manipulations
@@ -239,16 +239,16 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, \
-									 double shcompr, double br, double contr, double gamma_, bool igamma_, \
-									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped, \
-									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, \
+	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
+									 double shcompr, double br, double contr, double gamma_, bool igamma_,
+									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
 									 LUTu & outBeforeCCurveHistogram, int skip) {
 		
 		
 		//double def_mul = pow (2.0, defmul);
 		
-		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  \
+		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f
 				gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);*/
 		
 		// compute parameters of the gamma curve
@@ -469,8 +469,8 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints, \
-									 LUTu & histogram, LUTu & histogramCropped, LUTf & outCurve, \
+	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints,
+									 LUTu & histogram, LUTu & histogramCropped, LUTf & outCurve,
 									 LUTu & outBeforeCCurveHistogram, int skip) {
 		
 		// curve without contrast

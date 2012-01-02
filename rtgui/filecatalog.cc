@@ -1152,25 +1152,25 @@ BrowserFilter FileCatalog::getFilter () {
 	 * filter is setup in 2 steps
 	 * Step 1: handle individual filters
 	*/
-    filter.showRanked[0] = bFilterClear->get_active() || bUnRanked->get_active () || bTrash->get_active () || \
+    filter.showRanked[0] = bFilterClear->get_active() || bUnRanked->get_active () || bTrash->get_active () ||
                            anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
-    filter.showCLabeled[0] = bFilterClear->get_active() || bUnCLabeled->get_active () || bTrash->get_active ()  || \
+    filter.showCLabeled[0] = bFilterClear->get_active() || bUnCLabeled->get_active () || bTrash->get_active ()  ||
         		             anyRankFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
     for (int i=1; i<=5; i++){
-        filter.showRanked[i] = bFilterClear->get_active() || bRank[i-1]->get_active () || bTrash->get_active () || \
+        filter.showRanked[i] = bFilterClear->get_active() || bRank[i-1]->get_active () || bTrash->get_active () ||
                                anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
-        filter.showCLabeled[i] = bFilterClear->get_active() || bCLabel[i-1]->get_active () || bTrash->get_active ()  || \
+        filter.showCLabeled[i] = bFilterClear->get_active() || bCLabel[i-1]->get_active () || bTrash->get_active ()  ||
                                  anyRankFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
     }
 
     for (int i=0; i<2; i++){
-    	filter.showEdited[i] = bFilterClear->get_active() || bEdited[i]->get_active () || bTrash->get_active ()  || \
+    	filter.showEdited[i] = bFilterClear->get_active() || bEdited[i]->get_active () || bTrash->get_active ()  ||
                                anyRankFilterActive || anyCLabelFilterActive || anyRecentlySavedFilterActive;
 
-    	filter.showRecentlySaved[i] = bFilterClear->get_active() || bRecentlySaved[i]->get_active () || bTrash->get_active ()  || \
+    	filter.showRecentlySaved[i] = bFilterClear->get_active() || bRecentlySaved[i]->get_active () || bTrash->get_active ()  ||
     	                          anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive;
     }
     if( options.rtSettings.verbose ){
@@ -1188,11 +1188,11 @@ BrowserFilter FileCatalog::getFilter () {
 	 * if no filters in a group are active, filter.show for each member of that group will be set to true
 	 * otherwise they are set based on UI input
 	 */
-    if ((anyRankFilterActive && anyCLabelFilterActive ) || \
-    	(anyRankFilterActive && anyEditedFilterActive ) || \
-    	(anyRankFilterActive && anyRecentlySavedFilterActive ) || \
-    	(anyCLabelFilterActive && anyEditedFilterActive ) || \
-    	(anyCLabelFilterActive && anyRecentlySavedFilterActive ) || \
+    if ((anyRankFilterActive && anyCLabelFilterActive ) ||
+    	(anyRankFilterActive && anyEditedFilterActive ) ||
+    	(anyRankFilterActive && anyRecentlySavedFilterActive ) ||
+    	(anyCLabelFilterActive && anyEditedFilterActive ) ||
+    	(anyCLabelFilterActive && anyRecentlySavedFilterActive ) ||
         (anyEditedFilterActive && anyRecentlySavedFilterActive)){
 
     	filter.multiselect = true;

@@ -200,7 +200,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1);
 
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
 								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 1);
 	ipf.luminanceCurve (labView, labView, curve);
 	ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);

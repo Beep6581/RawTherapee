@@ -385,14 +385,14 @@ void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transforme
 	// auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
     double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
-    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-SQR(oW*tan(vpalpha)) + (vpdeg>0 ? 1.0 : -1.0) * \
+    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-SQR(oW*tan(vpalpha)) + (vpdeg>0 ? 1.0 : -1.0) *
 																oW*tan(vpalpha)*sqrt(SQR(4*maxRadius)+SQR(oW*tan(vpalpha))))/(SQR(maxRadius)*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
 
 	// auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
     double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
-    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-SQR(oH*tan(hpalpha)) + (hpdeg>0 ? 1.0 : -1.0) * \
+    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-SQR(oH*tan(hpalpha)) + (hpdeg>0 ? 1.0 : -1.0) *
 																oH*tan(hpalpha)*sqrt(SQR(4*maxRadius)+SQR(oH*tan(hpalpha))))/(SQR(maxRadius)*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 

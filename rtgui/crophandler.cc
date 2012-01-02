@@ -232,7 +232,7 @@ int createpixbufs (void* data) {
     return 0;
 }
 
-void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procparams::ColorManagementParams cmp, \
+void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procparams::ColorManagementParams cmp,
 								   rtengine::procparams::CropParams cp, int ax, int ay, int aw, int ah, int askip) {
 
    if (!enabled)
