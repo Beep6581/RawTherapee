@@ -19,6 +19,7 @@
 #define _PREVIEWMODEPANEL_
 
 #include <gtkmm.h>
+#include "adjuster.h"//dev
 
 class ImageArea;
 class PreviewModePanel : public Gtk::HBox {

@@ -827,7 +827,6 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				case GDK_I:
 					info->set_active (!info->get_active());
 					return true;
-				case GDK_b:
 				case GDK_B:
 					beforeAfter->set_active (!beforeAfter->get_active());
 					return true;
@@ -843,6 +842,22 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 					iarea->imageArea->zoomPanel->zoom11Clicked();
 					return true;
 
+				case GDK_r: //preview mode Red
+					iarea->imageArea->previewModePanel->toggleR();
+					return true;
+				case GDK_g: //preview mode Green
+					iarea->imageArea->previewModePanel->toggleG();
+					return true;
+				case GDK_b: //preview mode Blue
+					iarea->imageArea->previewModePanel->toggleB();
+					return true;
+				case GDK_v: //preview mode Luminosity
+					iarea->imageArea->previewModePanel->toggleL();
+					return true;
+				case GDK_F: //preview mode Focus Mask
+					iarea->imageArea->previewModePanel->toggleFocusMask();
+					return true;
+
 				case GDK_f:
 					iarea->imageArea->zoomPanel->zoomFitClicked();
 					return true;
@@ -852,7 +867,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				case GDK_greater:
 					iarea->imageArea->indClippedPanel->toggleClipped(false);
 					return true;
-//TODO add shortcuts for previewModePanel buttons
+
 				case GDK_F5:
 					openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
 					return true;

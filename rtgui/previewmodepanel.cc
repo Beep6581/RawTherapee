@@ -42,7 +42,6 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia) {
     previewFocusMask = Gtk::manage (new Gtk::ToggleButton ("F"));
     previewFocusMask->set_relief(Gtk::RELIEF_NONE);
     previewFocusMask->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWFOCUSMASK"));
-    previewFocusMask->hide();//TODO re-enable when Focus Mask is developed
 
     previewR->set_active (false);
     previewG->set_active (false);
@@ -54,7 +53,7 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia) {
     pack_start (*previewG, Gtk::PACK_SHRINK, 0);
     pack_start (*previewB, Gtk::PACK_SHRINK, 0);
     pack_start (*previewL, Gtk::PACK_SHRINK, 0);
-    //pack_start (*previewFocusMask, Gtk::PACK_SHRINK, 0); //TODO re-enable when Focus Mask is developed
+    pack_start (*previewFocusMask, Gtk::PACK_SHRINK, 0);
 
     connR = previewR->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &PreviewModePanel::buttonToggled),previewR) );
     connG = previewG->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &PreviewModePanel::buttonToggled),previewG) );
@@ -67,19 +66,19 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia) {
 
 //TODO: use functions below for shortcuts
 void PreviewModePanel::toggleR () {
-
+    previewR->set_active(!previewR->get_active());
 }
 void PreviewModePanel::toggleG () {
-
+    previewG->set_active(!previewG->get_active());
 }
 void PreviewModePanel::toggleB () {
-
+    previewB->set_active(!previewB->get_active());
 }
 void PreviewModePanel::toggleL () {
-
+    previewL->set_active(!previewL->get_active());
 }
 void PreviewModePanel::toggleFocusMask () {
-
+    previewFocusMask->set_active(!previewFocusMask->get_active());
 }
 
 void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview) {
