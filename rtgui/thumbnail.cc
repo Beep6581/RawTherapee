@@ -36,7 +36,7 @@ using namespace rtengine::procparams;
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
-		initial_(false), lastW(0), lastH(0), lastScale(0) {
+		lastW(0), lastH(0), lastScale(0), initial_(false) {
 
     cfs.load (getCacheFileName ("data")+".txt");
     loadProcParams ();

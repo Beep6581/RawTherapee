@@ -39,7 +39,7 @@ class ProfileContent {
         ProfileContent (const ProfileContent& other);
         ProfileContent (cmsHPROFILE hProfile);
         ~ProfileContent ();
-        ProfileContent& operator= (const ProfileContent other);
+        ProfileContent& operator= (const rtengine::ProfileContent& other);
         cmsHPROFILE toProfile ();
 };
 

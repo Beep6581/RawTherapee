@@ -118,7 +118,7 @@ void PlacesBrowser::refreshPlacesList () {
       } catch (Gio::Error&) { /* This will be thrown if the path doesn't exist */ }
     }
 
-    if (placesModel->children().size()>0) {
+    if (!placesModel->children().empty()) {
       Gtk::TreeModel::Row newrow = *(placesModel->append());
       newrow[placesColumns.rowSeparator] = true;
     }
@@ -127,7 +127,7 @@ void PlacesBrowser::refreshPlacesList () {
     std::vector<Glib::RefPtr<Gio::Drive> > drives = vm->get_connected_drives ();
     for (int j=0; j<drives.size (); j++) {
         std::vector<Glib::RefPtr<Gio::Volume> > volumes = drives[j]->get_volumes ();
-        if (volumes.size()==0) {
+        if (volumes.empty()) {
             Gtk::TreeModel::Row newrow = *(placesModel->append());
             newrow[placesColumns.label] = drives[j]->get_name ();
             newrow[placesColumns.icon]  = drives[j]->get_icon ();
@@ -200,7 +200,7 @@ void PlacesBrowser::refreshPlacesList () {
         }
     }
     // append favorites
-    if (placesModel->children().size()>0) {
+    if (!placesModel->children().empty()) {
             Gtk::TreeModel::Row newrow = *(placesModel->append());
             newrow[placesColumns.rowSeparator] = true;
     }

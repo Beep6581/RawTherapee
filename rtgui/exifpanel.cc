@@ -227,7 +227,7 @@ void ExifPanel::exifSelectionChanged () {
             keep->set_sensitive (0);
             reset->set_sensitive (0);
         }
-        else if (iter->children().size()>0) {
+        else if (!iter->children().empty()) {
             remove->set_sensitive (1);
             keep->set_sensitive (1);
             reset->set_sensitive (1);
@@ -553,7 +553,7 @@ void ExifPanel::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewCo
 
     Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (path);
     if (iter) {
-        if (iter->children().size()>0)
+        if (!iter->children().empty())
             if (exifTree->row_expanded (path))
                 exifTree->collapse_row (path);
             else

@@ -24,10 +24,10 @@
 #include "whitebalance.h"
 
 RTWindow::RTWindow ()
-:fpanel(NULL)
-,epanel(NULL)
+:mainNB(NULL)
 ,bpanel(NULL)
-,mainNB(NULL)
+,epanel(NULL)
+,fpanel(NULL)
 {
 
     cacheMgr->init ();
@@ -465,7 +465,7 @@ void RTWindow::SetMainCurrent()
 
 void RTWindow::MoveFileBrowserToMain()
 {
-    if( fpanel->ribbonPane->get_children().size() ==0)
+    if( fpanel->ribbonPane->get_children().empty())
     {
         FileCatalog *fCatalog = fpanel->fileCatalog;
         epanel->catalogPane->remove(*fCatalog);
@@ -478,7 +478,7 @@ void RTWindow::MoveFileBrowserToMain()
 
 void RTWindow::MoveFileBrowserToEditor()
 {
-    if(epanel->catalogPane->get_children().size() ==0 )
+    if(epanel->catalogPane->get_children().empty() )
     {
         FileCatalog *fCatalog = fpanel->fileCatalog;
         fpanel->ribbonPane->remove(*fCatalog);

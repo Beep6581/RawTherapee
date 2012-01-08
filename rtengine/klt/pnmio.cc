@@ -53,9 +53,11 @@ void pnmReadHeader(
 	
   /* Read magic number */
   _getNextString(fp, line);
-  if (line[0] != 'P')
+  if (line[0] != 'P') {
     KLTError("(pnmReadHeader) Magic number does not begin with 'P', "
              "but with a '%c'", line[0]);
+    exit(1);
+  }
   sscanf(line, "P%d", magic);
 	
   /* Read size, skipping comments */
@@ -63,9 +65,11 @@ void pnmReadHeader(
   *ncols = atoi(line);
   _getNextString(fp, line);
   *nrows = atoi(line);
-  if (*ncols < 0 || *nrows < 0 || *ncols > 10000 || *nrows > 10000)
+  if (*ncols < 0 || *nrows < 0 || *ncols > 10000 || *nrows > 10000) {
     KLTError("(pnmReadHeader) The dimensions %d x %d are unacceptable",
              *ncols, *nrows);
+    exit(1);
+  }
 	
   /* Read maxval, skipping comments */
   _getNextString(fp, line);
@@ -88,8 +92,10 @@ void pgmReadHeader(
   int *maxval)
 {
   pnmReadHeader(fp, magic, ncols, nrows, maxval);
-  if (*magic != 5)
+  if (*magic != 5) {
     KLTError("(pgmReadHeader) Magic number is not 'P5', but 'P%d'", *magic);
+    exit(1);
+  }
 }
 
 
@@ -104,8 +110,10 @@ void ppmReadHeader(
   int *maxval)
 {
   pnmReadHeader(fp, magic, ncols, nrows, maxval);
-  if (*magic != 6)
+  if (*magic != 6) {
     KLTError("(ppmReadHeader) Magic number is not 'P6', but 'P%d'", *magic);
+    exit(1);
+  }
 }
 
 
@@ -122,8 +130,10 @@ void pgmReadHeaderFile(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "rb")) == NULL)
+  if ( (fp = fopen(fname, "rb")) == NULL) {
     KLTError("(pgmReadHeaderFile) Can't open file named '%s' for reading\n", fname);
+    exit(1);
+  }
 
   /* Read header */
   pgmReadHeader(fp, magic, ncols, nrows, maxval);
@@ -146,8 +156,10 @@ void ppmReadHeaderFile(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "rb")) == NULL)
+  if ( (fp = fopen(fname, "rb")) == NULL) {
     KLTError("(ppmReadHeaderFile) Can't open file named '%s' for reading\n", fname);
+    exit(1);
+  }
 
   /* Read header */
   ppmReadHeader(fp, magic, ncols, nrows, maxval);
@@ -178,8 +190,10 @@ unsigned char* pgmRead(
   /* Allocate memory, if necessary, and set pointer */
   if (img == NULL)  {
     ptr = (unsigned char *) malloc(*ncols * *nrows * sizeof(char));
-    if (ptr == NULL)  
+    if (ptr == NULL) {
       KLTError("(pgmRead) Memory not allocated");
+      exit(1);
+    }
   }
   else
     ptr = img;
@@ -212,8 +226,10 @@ unsigned char* pgmReadFile(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "rb")) == NULL)
+  if ( (fp = fopen(fname, "rb")) == NULL) {
     KLTError("(pgmReadFile) Can't open file named '%s' for reading\n", fname);
+    exit(1);
+  }
 
   /* Read file */
   ptr = pgmRead(fp, img, ncols, nrows);
@@ -263,8 +279,10 @@ void pgmWriteFile(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "wb")) == NULL)
+  if ( (fp = fopen(fname, "wb")) == NULL) {
     KLTError("(pgmWriteFile) Can't open file named '%s' for writing\n", fname);
+    exit(1);
+  }
 
   /* Write to file */
   pgmWrite(fp, img, ncols, nrows);
@@ -320,8 +338,10 @@ void ppmWriteFileRGB(
   FILE *fp;
 
   /* Open file */
-  if ( (fp = fopen(fname, "wb")) == NULL)
+  if ( (fp = fopen(fname, "wb")) == NULL) {
     KLTError("(ppmWriteFileRGB) Can't open file named '%s' for writing\n", fname);
+    exit(1);
+  }
 
   /* Write to file */
   ppmWrite(fp, redimg, greenimg, blueimg, ncols, nrows);

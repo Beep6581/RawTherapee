@@ -391,7 +391,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				if (dst < src) {
 					curve.x.erase (itx, curve.x.end());
 					curve.y.erase (ity, curve.y.end());
-					if (!curve.x.size()) {
+					if (curve.x.empty()) {
 						curve.x.push_back (0);
 						curve.y.push_back (0);
 						interpolate ();

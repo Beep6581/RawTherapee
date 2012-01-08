@@ -318,7 +318,10 @@ static _FloatWindow _allocateFloatWindow(
   _FloatWindow fw;
 
   fw = (_FloatWindow) malloc(width*height*sizeof(float));
-  if (fw == NULL)  KLTError("(_allocateFloatWindow) Out of memory.");
+  if (fw == NULL) {
+   KLTError("(_allocateFloatWindow) Out of memory.");
+   exit(1);
+  }
   return fw;
 }
 
@@ -578,7 +581,12 @@ static int _am_gauss_jordan_elimination(float **a, int n, float **b, int m)
 					      }
     indxr[i]=row;
     indxc[i]=col;
-    if (a[col][col] == 0.0) return KLT_SMALL_DET;
+    if (a[col][col] == 0.0) {
+      free(ipiv);
+      free(indxr);
+      free(indxc);
+      return KLT_SMALL_DET;
+    }
     pivinv=1.0f/a[col][col];
     a[col][col]=1.0;
     for (l=0;l<n;l++) a[col][l] *= pivinv;
@@ -1288,10 +1296,12 @@ void KLTTrackFeatures(
 		pyramid1 = (_KLT_Pyramid) tc->pyramid_last;
 		pyramid1_gradx = (_KLT_Pyramid) tc->pyramid_last_gradx;
 		pyramid1_grady = (_KLT_Pyramid) tc->pyramid_last_grady;
-		if (pyramid1->ncols[0] != ncols || pyramid1->nrows[0] != nrows)
+		if (pyramid1->ncols[0] != ncols || pyramid1->nrows[0] != nrows) {
 			KLTError("(KLTTrackFeatures) Size of incoming image (%d by %d) "
 			"is different from size of previous image (%d by %d)\n",
 			ncols, nrows, pyramid1->ncols[0], pyramid1->nrows[0]);
+                        exit(1);
+                }
 		assert(pyramid1_gradx != NULL);
 		assert(pyramid1_grady != NULL);
 	} else  {

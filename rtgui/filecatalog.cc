@@ -38,17 +38,17 @@
 extern Glib::ustring argv0;
 
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
+		filepanel(filepanel),
 		selectedDirectoryId(1),
 		listener(NULL),
 		fslistener(NULL),
 		dirlistener(NULL),
 		hasValidCurrentEFS(false),
 		filterPanel(NULL),
-		coarsePanel(cp),
-		toolBar(tb),
-		filepanel(filepanel),
 		previewsToLoad(0),
-		previewsLoaded(0)
+		previewsLoaded(0),
+		coarsePanel(cp),
+		toolBar(tb)
 		{
 
     inTabMode=false;
@@ -708,7 +708,7 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb) {
 
 void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {
 
-    if (tbe.size()==0)
+    if (tbe.empty())
         return;
 
     Gtk::MessageDialog msd (M("FILEBROWSER_DELETEDLGLABEL"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
@@ -748,7 +748,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
 
 void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {
 
-    if (tbe.size()==0)
+    if (tbe.empty())
         return;
 
 
@@ -977,7 +977,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 
 void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {
 
-	 if (tbe.size()==0)
+	 if (tbe.empty())
 	        return;
 
 	 for (unsigned int i=0; i<tbe.size(); i++) {

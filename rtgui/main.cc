@@ -296,7 +296,7 @@ int processLineParams( int argc, char **argv )
 	}
 	if( !argv1.empty() )
 		return 1;
-	if( !inputFiles.size() )
+	if( inputFiles.empty() )
 		return 2;
 
 	rtengine::procparams::ProcParams params,paramsRaw,paramsImg, *currentParams;

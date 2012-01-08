@@ -339,7 +339,7 @@ IPTCPanel::IPTCPanel () {
 void IPTCPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
-    if (pp->iptc.size()>0)
+    if (!pp->iptc.empty())
         changeList = pp->iptc;
     else
         changeList = embeddedData;
@@ -364,7 +364,7 @@ void IPTCPanel::setImageData (const ImageMetaData* id) {
     else
         embeddedData.clear ();
 
-    file->set_sensitive (embeddedData.size() > 0);
+    file->set_sensitive (!embeddedData.empty());
 }
 
 void IPTCPanel::notifyListener () {
@@ -400,7 +400,7 @@ void IPTCPanel::addKeyWord () {
 void IPTCPanel::delKeyWord () {
 
     std::vector<int> selection = keywords->get_selected ();
-    if (selection.size()>0) {
+    if (!selection.empty()) {
         std::vector<Glib::ustring> keep;
         for (int i=0; i<keywords->size(); i++)
             if (std::find (selection.begin(), selection.end(), i) == selection.end())
@@ -439,7 +439,7 @@ void IPTCPanel::addSuppCategory () {
 void IPTCPanel::delSuppCategory () {
 
     std::vector<int> selection = suppCategories->get_selected ();
-    if (selection.size()>0) {
+    if (!selection.empty()) {
         std::vector<Glib::ustring> keep;
         for (int i=0; i<suppCategories->size(); i++)
             if (std::find (selection.begin(), selection.end(), i) == selection.end())
@@ -525,43 +525,43 @@ void IPTCPanel::applyChangeList () {
     suppCategory->get_entry()->set_text ("");
     
     for (int i=0; i<changeList.size(); i++) 
-        if (changeList[i].field == "Caption" && changeList[i].values.size()>0) 
+        if (changeList[i].field == "Caption" && !changeList[i].values.empty()) 
             captionText->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "CaptionWriter" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "CaptionWriter" && !changeList[i].values.empty())
             captionWriter->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Headline" && changeList[i].values.size()>0) 
+        else if (changeList[i].field == "Headline" && !changeList[i].values.empty()) 
             headline->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Instructions" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Instructions" && !changeList[i].values.empty())
             instructions->set_text (changeList[i].values[0]);
         else if (changeList[i].field == "Keywords") 
             for (int j=0; j<changeList[i].values.size(); j++)
                 keywords->append_text (changeList[i].values[j]);
-        else if (changeList[i].field == "Category" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Category" && !changeList[i].values.empty())
             category->get_entry()->set_text (changeList[i].values[0]);
         else if (changeList[i].field == "SupplementalCategories") 
             for (int j=0; j<changeList[i].values.size(); j++)
                 suppCategories->append_text (changeList[i].values[j]);
-        else if (changeList[i].field == "Author" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Author" && !changeList[i].values.empty())
             author->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "AuthorsPosition" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "AuthorsPosition" && !changeList[i].values.empty())
             authorPos->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Credit" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Credit" && !changeList[i].values.empty())
             credit->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Source" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Source" && !changeList[i].values.empty())
             source->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Copyright" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Copyright" && !changeList[i].values.empty())
             copyright->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "City" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "City" && !changeList[i].values.empty())
             city->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Province" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Province" && !changeList[i].values.empty())
             province->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Country" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Country" && !changeList[i].values.empty())
             country->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Title" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "Title" && !changeList[i].values.empty())
             title->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "DateCreated" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "DateCreated" && !changeList[i].values.empty())
             dateCreated->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "TransReference" && changeList[i].values.size()>0)
+        else if (changeList[i].field == "TransReference" && !changeList[i].values.empty())
             transReference->set_text (changeList[i].values[0]);
 
     for (int i=0; i<16; i++)

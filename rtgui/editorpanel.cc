@@ -31,7 +31,7 @@
 using namespace rtengine::procparams;
 
 EditorPanel::EditorPanel (FilePanel* filePanel) 
-    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), beforeIpc(NULL), ipc(NULL), catalogPane(NULL), isProcessing(false) {
+    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL) {
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;

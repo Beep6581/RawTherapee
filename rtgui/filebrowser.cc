@@ -235,7 +235,7 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
     pasteprof->set_sensitive (clipboard.hasProcParams());
     partpasteprof->set_sensitive (clipboard.hasProcParams());
     copyprof->set_sensitive (selected.size()==1);
-    clearprof->set_sensitive (selected.size()>0);
+    clearprof->set_sensitive (!selected.empty());
 
     // submenu applmenu
     int p = 0;
@@ -446,7 +446,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     for (int i=0; i<selected.size(); i++)
         mselected.push_back ((FileBrowserEntry*)selected[i]);
 
-    if (!tbl || (m!=selall && mselected.size()==0) )
+    if (!tbl || (m!=selall && mselected.empty()) )
         return;
 
     for (int i=0; i<6; i++) 
@@ -511,7 +511,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 			mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
 		}
     }else if (m==selectDF){
-    	if( mselected.size() > 0 ){
+    	if( !mselected.empty() ){
     		rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
     		Gtk::FileChooserDialog fc("Dark Frame",Gtk::FILE_CHOOSER_ACTION_OPEN );
     		fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -530,7 +530,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 			}
     	}
     }else if( m==thisIsDF){
-    	if( options.rtSettings.darkFramesPath.size() >0 && Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
+    	if( !options.rtSettings.darkFramesPath.empty() && Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
 			for (int i=0; i<mselected.size(); i++){
 				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
 				if( !file )continue;
@@ -551,7 +551,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 		}
     }
     else if (m==selectFF){
-    	if( mselected.size() > 0 ){
+    	if( !mselected.empty() ){
     		rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
     		Gtk::FileChooserDialog fc("Flat Field",Gtk::FILE_CHOOSER_ACTION_OPEN );
     		fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -571,7 +571,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     	}
     }
     else if( m==thisIsFF){
-    	if( options.rtSettings.flatFieldsPath.size() >0 && Gio::File::create_for_path(options.rtSettings.flatFieldsPath)->query_exists() ){
+    	if( !options.rtSettings.flatFieldsPath.empty() && Gio::File::create_for_path(options.rtSettings.flatFieldsPath)->query_exists() ){
 			for (int i=0; i<mselected.size(); i++){
 				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
 				if( !file )continue;
@@ -625,7 +625,7 @@ void FileBrowser::pasteProfile () {
     for (int i=0; i<selected.size(); i++)
         mselected.push_back ((FileBrowserEntry*)selected[i]);
 
-    if (!tbl || mselected.size()==0)
+    if (!tbl || mselected.empty())
         return;
 
     for (int i=0; i<mselected.size(); i++) 
@@ -640,7 +640,7 @@ void FileBrowser::partPasteProfile () {
     for (int i=0; i<selected.size(); i++)
         mselected.push_back ((FileBrowserEntry*)selected[i]);
 
-    if (!tbl || mselected.size()==0)
+    if (!tbl || mselected.empty())
         return;
 
     if (partialPasteDlg.run ()) {
@@ -721,7 +721,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
 void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
 
     rtengine::procparams::ProcParams* pparams = profileStore.getProfile (ppname);
-    if (pparams && selected.size()>0) {
+    if (pparams && !selected.empty()) {
         for (int i=0; i<selected.size(); i++) 
             ((FileBrowserEntry*)selected[i])->thumbnail->setProcParams (*pparams, FILEBROWSER);
         queue_draw ();
@@ -730,7 +730,7 @@ void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
 
 void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 
-	if (!tbl || selected.size()==0)
+	if (!tbl || selected.empty())
 		return;
 
 	rtengine::procparams::ProcParams* pparams = profileStore.getProfile (ppname);
@@ -801,7 +801,7 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
         return false;
 
     // return false is query is not satisfied
-    if (filter.queryFileName.size()>0){
+    if (!filter.queryFileName.empty()){
     	// check if image's FileName contains queryFileName (case insensitive)
     	// TODO should we provide case-sensitive search option via preferences?
     	Glib::ustring FileName;
@@ -945,7 +945,7 @@ void FileBrowser::openNextImage () {
 	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
-    if (fd.size()>0) {
+    if (!fd.empty()) {
         for (int i=fd.size()-1; i>=0; i--)
             if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
                 if (i<fd.size()-1 && tbl) {
@@ -968,7 +968,7 @@ void FileBrowser::openPrevImage () {
 	Glib::RWLock::ReaderLock l(entryRW);
 	#endif
 
-    if (fd.size()>0) {
+    if (!fd.empty()) {
         for (int i=0; i<fd.size(); i++)
             if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
                 if (i>0 && tbl) {

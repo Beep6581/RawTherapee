@@ -26,6 +26,8 @@
 
 #include "rtexif.h"
 
+using namespace std;
+
 namespace rtexif {
 
 class NAISOInterpreter : public Interpreter {
@@ -664,7 +666,7 @@ class NALensDataInterpreter : public Interpreter {
                     buffer[i] ^= (cj += ci * ck++);
             }
                 
-            if (!d100)
+            if (!d100) {
                if( ver<204 ){
 					ld << "ExitPupilPosition = " << (int) buffer[0] << std::endl;
 					ld << "AFAperture = "        << (int) buffer[1] << std::endl;
@@ -680,6 +682,7 @@ class NALensDataInterpreter : public Interpreter {
 					ld << "FocalLength = "       << (int) buffer[7] << std::endl;
 					ld << "EffectiveMaxAperture = "  << (int) buffer[15] << std::endl;
 				}
+            }
                 
             for (int i=0; i<7; i++)
                  lid << std::setw(2) << std::setfill('0') << (int)buffer[lidoffs+i] << ' ';

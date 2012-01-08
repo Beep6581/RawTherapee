@@ -209,7 +209,7 @@ using namespace rtengine::procparams;
 void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>& src) {
 
     set (true);
-    if (src.size()==0)
+    if (src.empty())
         return;
 
     const ProcParams& p = src[0];

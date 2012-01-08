@@ -40,20 +40,23 @@ public:
 
 
 	DCraw()
-    :ifp(NULL),ofp(NULL)
+    :exif_base(-1)
+    ,ciff_base(-1)
+    ,ciff_len(0)
+    ,ifp(NULL),ofp(NULL)
     ,order(0x4949)
     ,ifname(NULL)
     ,meta_data(NULL)
     ,shot_select(0),multi_out(0)
-    ,half_size(0),four_color_rgb(0),document_mode(0),highlight(0)
-    ,verbose(0),use_auto_wb(0),use_camera_wb(0),use_camera_matrix(-1)
-    ,output_color(1),output_bps(8),output_tiff(0),med_passes(0),no_auto_bright(0)
+    ,image(NULL)
     ,bright(1.),threshold(0.)
+    ,half_size(0),four_color_rgb(0),document_mode(0),highlight(0)
+    ,verbose(0)
+    ,use_auto_wb(0),use_camera_wb(0),use_camera_matrix(-1)
+    ,output_color(1),output_bps(8),output_tiff(0),med_passes(0),no_auto_bright(0)
 	,getbithuff(this,ifp,zero_after_ff)
+	,ph1_bithuff(this,ifp,order)	
 	,pana_bits(ifp,load_flags)
-	,ph1_bithuff(this,ifp,order)
-	,image(NULL)
-	,exif_base(-1), ciff_base(-1), ciff_len(0)
     {
         aber[0]=aber[1]=aber[2]=aber[3]=1;
         gamm[0]=0.45;gamm[1]=4.5;gamm[2]=gamm[3]=gamm[4]=gamm[5]=0;
@@ -89,7 +92,7 @@ protected:
     double gamm[6];
     dcrawImage_t image;
     ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
-    float bright, user_mul[4], threshold;
+    float bright, threshold, user_mul[4];
     
     int half_size, four_color_rgb, document_mode, highlight;
     int verbose, use_auto_wb, use_camera_wb, use_camera_matrix;

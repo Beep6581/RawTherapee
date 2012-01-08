@@ -204,7 +204,7 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
     
   safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
 
-	if (subDirs.size() == 0)
+	if (subDirs.empty())
 			dirtree->collapse_row (path);
 	else {
 	
