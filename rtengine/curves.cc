@@ -209,7 +209,7 @@ namespace rtengine {
 
 		needed = false;
 		// create a curve if needed
-		if (acurvePoints.size()>0 && acurvePoints[0]!=0) {
+		if (!acurvePoints.empty() && acurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (acurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (dCurve && !dCurve->isIdentity())
 				needed = true;
@@ -223,7 +223,7 @@ namespace rtengine {
 		//-----------------------------------------------------
 
 		needed = false;
-		if (bcurvePoints.size()>0 && bcurvePoints[0]!=0) {
+		if (!bcurvePoints.empty() && bcurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (bcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (dCurve && !dCurve->isIdentity())
 				needed = true;
@@ -419,7 +419,7 @@ namespace rtengine {
 		// create a curve if needed
 		bool histNeeded = false;
 		DiagonalCurve* tcurve = NULL;
-		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
@@ -584,7 +584,7 @@ namespace rtengine {
 		// create a curve if needed
 		DiagonalCurve* tcurve = NULL;
 		bool histNeeded = false;
-		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
@@ -647,7 +647,7 @@ namespace rtengine {
 		// create a curve if needed
 		DiagonalCurve* tcurve = NULL;
 		bool histNeeded = false;
-		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 		}
 		if (tcurve && tcurve->isIdentity()) {

@@ -27,6 +27,8 @@
 
 #include "rtexif.h"
 
+using namespace std;
+
 namespace rtexif {
 
 StdInterpreter stdInterpreter;
@@ -302,7 +304,6 @@ void TagDirectory::applyChange (std::string name, std::string value) {
     else {
         // try to find it
         std::string::size_type dp1 = fseg.find_first_of ('[');
-        std::string::size_type dp2 = fseg.find_first_of (']');
         std::string basename = fseg.substr (0,dp1);
         Tag* t = NULL;
         int dirnum = -1;
@@ -405,7 +406,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
   keep = false;
 
   // filter out invalid tags
-  if ((int)type<1 || (int)type>14 || count>900000 || count<0) {
+  if ((int)type<1 || (int)type>14 || count>900000) {
     type = INVALID;
     return;
   }
@@ -845,6 +846,7 @@ void Tag::toString (char* buffer, int ofs) {
         case SRATIONAL: 
         case RATIONAL: sprintf (b, "%d/%d", (int)sget4 (value+8*i+ofs, getOrder()), (int)sget4 (value+8*i+ofs+4, getOrder())); break; 
         case FLOAT:    sprintf (b, "%g", toDouble(8*i+ofs)); break;
+	default: break;
     }
   }
   if (count > maxcount)
@@ -1356,7 +1358,6 @@ TagDirectory* ExifManager::parseJPEG (FILE* f) {
   fread (&c, 1, 1, f);
   const char exifid[] = "Exif\0\0";
   char idbuff[8];
-  bool success = false;
   int tiffbase = -1;
   while (fread (&c, 1, 1, f)) {
     if (c!=markerl) continue;

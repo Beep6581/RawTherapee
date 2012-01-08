@@ -20,11 +20,11 @@ namespace rtengine{
 extern const Settings* settings;
 
 RawImage::RawImage(  const Glib::ustring name )
-:allocation(NULL)
-,data(NULL)
-,profile_data(NULL)
-,filename(name)
+:data(NULL)
 ,prefilters(0)
+,filename(name)
+,profile_data(NULL)
+,allocation(NULL)
 {
 }
 

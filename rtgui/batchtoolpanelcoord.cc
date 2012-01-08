@@ -99,7 +99,7 @@ void BatchToolPanelCoordinator::initSession () {
 
     crop->setDimensions (100000, 100000);
 
-/*    if (selected.size()>0) {
+/*    if (!selected.empty()) {
         pparams = selected[0]->getProcParams ();
         for (int i=0; i<toolPanels.size(); i++) {
             toolPanels[i]->setDefaults (&pparams, &pparamsEdited);
@@ -110,7 +110,7 @@ void BatchToolPanelCoordinator::initSession () {
     }
 */
 
-    if (selected.size()>0) {
+    if (!selected.empty()) {
 
 		// The first selected image (in the thumbnail list, not the click list) is used to populate the EditorPanel and set the default values
 		pparams = selected[0]->getProcParams ();
@@ -234,7 +234,7 @@ void BatchToolPanelCoordinator::initSession () {
 
 void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::ustring& descr) {
 
-    if (selected.size()==0)
+    if (selected.empty())
         return;
 
     somethingChanged = true;
@@ -280,13 +280,13 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
 
 void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green) {
 
-    if (selected.size()>0)
+    if (!selected.empty())
         selected[0]->getAutoWB (temp, green);       
 }
 
 void BatchToolPanelCoordinator::getCamWB (double& temp, double& green) {
     
-    if (selected.size()>0)
+    if (!selected.empty())
         selected[0]->getCamWB (temp, green);
 }    
 

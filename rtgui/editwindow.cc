@@ -20,7 +20,7 @@
 #include "preferences.h"
 #include "cursormanager.h"
 #include "rtwindow.h"
-#include <gtk/gtkwidget.h>
+#include <gtk/gtk.h>
 #include "rtimage.h"
 
 static EditWindow* editWnd = NULL;

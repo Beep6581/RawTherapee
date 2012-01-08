@@ -30,10 +30,10 @@ namespace rtengine {
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : awbComputed(false), ipf(&params, true), scale(10), allocated(false),
-    pW(-1), pH(-1), plistener(NULL), lastHighDetail(false),
+    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), lastHighDetail(false), allocated(false),
+    pW(-1), pH(-1), plistener(NULL),
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
-    changeSinceLast(0), updaterRunning(false), destroying(false), workimg(NULL) {
+    changeSinceLast(0), updaterRunning(false), destroying(false) {
 
     hltonecurve(65536,0);
     shtonecurve(65536,2);//clip above
@@ -433,7 +433,7 @@ if (settings->verbose) printf ("setscale before lock\n");
     fullw = fw;
     fullh = fh;
     if (settings->verbose) printf ("setscale ends\n");
-    if (sizeListeners.size()>0)
+    if (!sizeListeners.empty())
         for (int i=0; i<sizeListeners.size(); i++)
             sizeListeners[i]->sizeChanged (fullw, fullh, fw, fh);
     if (settings->verbose) printf ("setscale ends2\n");

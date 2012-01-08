@@ -327,7 +327,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
         doubleClicked (selected[0]);
     else if (button==1 && type==GDK_BUTTON_PRESS) {
         if (fileDescr && state & GDK_SHIFT_MASK) {
-            if (selected.size()==0) {
+            if (selected.empty()) {
                 selected.push_back (fileDescr);
                 fileDescr->selected = true;
                 lastClicked = fileDescr;
@@ -473,7 +473,7 @@ void ThumbBrowserBase::redraw () {
 
 void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 
-    int newHeight;
+    int newHeight=0;
     int i=0;
     int optThumbSize=getCurrentThumbSize();
     if (zoomIn)

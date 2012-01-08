@@ -64,6 +64,7 @@
 #define ARRAY2D_VERBOSE		8
 
 #include <cstring>
+#include <cstdio>
 
 template<typename T>
 class array2D {
@@ -98,7 +99,7 @@ public:
 	// use as empty declaration, resize before use!
 	// very useful as a member object
 	array2D() :
-		x(0), y(0), owner(0), data(NULL), ptr(NULL), lock(0) {
+		x(0), y(0), owner(0), ptr(NULL), data(NULL), lock(0) {
 		//printf("got empty array2D init\n");
 	}
 
@@ -156,7 +157,7 @@ public:
 
 	// use with indices
 	T * operator[](size_t index) {
-        assert(index>=0 && index<y); 
+        assert(index<y); 
 		return ptr[index];
 	}
 
@@ -260,7 +261,7 @@ public:
 	}
 
 	array2D<T> & operator[](size_t index) {
-		if (index < 0 || index >= num) {
+		if (index >= num) {
 			printf("index %zu is out of range[0..%zu]", index, num - 1);
 			raise( SIGSEGV);
 		}

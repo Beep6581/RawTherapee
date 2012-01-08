@@ -1,6 +1,7 @@
 syntax: glob
 
 *~
+*.orig
 
 CMakeFiles
 Makefile
@@ -10,12 +11,14 @@ CMakeCache.txt
 Debug
 RelWithDebInfo
 MinSizeRel
-release
+Release
+
 rtdata/rawtherapee.desktop
 rtengine/librtengine.a
 rtexif/librtexif.a
 rtgui/config.h
 rtgui/version.h
 rtgui/rawtherapee
+rtgui/rawtherapee.exe
 install_manifest.txt
 AboutThisBuild.txt

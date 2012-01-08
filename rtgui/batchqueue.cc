@@ -335,7 +335,7 @@ void BatchQueue::selectAll () {
 }
 
 void BatchQueue::startProcessing () {
-    if (!processing && fd.size()>0) {
+    if (!processing && !fd.empty()) {
         BatchQueueEntry* next;
 
         {
@@ -421,7 +421,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         fd.erase (fd.begin());
 
         // return next job
-        if (fd.size()==0) {
+        if (fd.empty()) {
             queueEmptied=true;
         }
         else if (listener && listener->canStartNext ()) {
@@ -442,7 +442,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         if (saveBatchQueue( )) {
             safe_g_remove( processedParams );
             // Delete all files in directory \batch when finished, just to be sure to remove zombies
-            if( fd.size()==0 ){
+            if( fd.empty() ){
                 std::vector<Glib::ustring> names;
                 Glib::ustring batchdir = options.rtdir+"/batch/";
                 Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);

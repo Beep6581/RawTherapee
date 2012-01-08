@@ -50,11 +50,11 @@ ZoomStep zoomSteps[] = {{" 10%",  0.1,     10},
 #define ZOOM11INDEX  7
 
 CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_) 
-    : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false),
+    : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_),
     backColor(options.bgcolor), decorated(true), titleHeight(30),
     sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
     xpos(30), ypos(30), imgX(0), imgY(0), imgW(1), imgH(1), iarea(parent),
-    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL), isLowUpdatePriority(isLowUpdatePriority_) {
+    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL) {
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();       

@@ -549,6 +549,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 				blockvar[j][c] = blocksqave[j][c]/blockdenom[j][c]-SQR(blockave[j][c]/blockdenom[j][c]);
 			} else {
 				printf ("blockdenom vanishes \n");
+                                free(buffer1);
 				return;
 			}
 		}
@@ -636,6 +637,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 		polyord=2; numpar=4;
 		if (numblox[1]< 10) {
 			printf ("numblox = %d \n",numblox[1]);
+                        free(buffer1);
 			return;
 		}
 	}
@@ -646,6 +648,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 			res = LinEqSolve(numpar, polymat[c][dir], shiftmat[c][dir], fitparams[c][dir]);
 			if (res) {
 				printf ("CA correction pass failed -- can't solve linear equations for color %d direction %d...\n",c,dir);
+                                free(buffer1);
 				return;
 			}
 		}

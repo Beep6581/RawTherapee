@@ -234,7 +234,7 @@ void CurveEditorGroup::updateGUI (CurveEditor* ce) {
  * Called from the outside to set the curve type & values
  */
 void CurveEditorGroup::setCurveExternal (CurveEditor* ce, const std::vector<double>& c) {
-	if (c.size()) {
+	if (!c.empty()) {
 		ce->subGroup->storeCurveValues(ce, c);	// The new curve is saved in the CurveEditor
 		(ce)->selected = c[0];		// We set the selected curve type in the CurveEditor to the one of the specified curve
 	}

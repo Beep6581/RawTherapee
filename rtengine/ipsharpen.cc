@@ -322,7 +322,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						contrast=1.0;
 
 					// new possible values
-					if ((L[offset]<L[offset-1])&&(L[offset]>L[offset+1])||(L[offset]>L[offset-1])&&(L[offset]<L[offset+1])){
+					if (((L[offset]<L[offset-1])&&(L[offset]>L[offset+1])) || ((L[offset]>L[offset-1])&&(L[offset]<L[offset+1]))){
 						f1 = fabs(L[offset-2]-L[offset-1]);
 						f2 = fabs(L[offset-1]-L[offset]);
 						f3 = fabs(L[offset-1]-L[offset-width])*fabs(L[offset-1]-L[offset+width]);
@@ -339,7 +339,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset-width])&&(L[offset]>L[offset+width])||(L[offset]>L[offset-width])&&(L[offset]<L[offset+width])) {
+					if (((L[offset]<L[offset-width])&&(L[offset]>L[offset+width])) || ((L[offset]>L[offset-width])&&(L[offset]<L[offset+width]))) {
 						f1 = fabs(L[offset-width2]-L[offset-width]);
 						f2 = fabs(L[offset-width]-L[offset]);
 						f3 = fabs(L[offset-width]-L[offset-1])*fabs(L[offset-width]-L[offset+1]);
@@ -356,7 +356,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset-1-width])&&(L[offset]>L[offset+1+width])||(L[offset]>L[offset-1-width])&&(L[offset]<L[offset+1+width])) {
+					if (((L[offset]<L[offset-1-width])&&(L[offset]>L[offset+1+width])) || ((L[offset]>L[offset-1-width])&&(L[offset]<L[offset+1+width]))) {
 						f1 = fabs(L[offset-2-width2]-L[offset-1-width]);
 						f2 = fabs(L[offset-1-width]-L[offset]);
 						f3 = fabs(L[offset-1-width]-L[offset-width+1])*fabs(L[offset-1-width]-L[offset+width-1]);
@@ -373,7 +373,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset+1-width])&&(L[offset]>L[offset-1+width])||(L[offset]>L[offset+1-width])&&(L[offset]<L[offset-1+width])) {
+					if (((L[offset]<L[offset+1-width])&&(L[offset]>L[offset-1+width])) || ((L[offset]>L[offset+1-width])&&(L[offset]<L[offset-1+width]))) {
 						f1 = fabs(L[offset-2+width2]-L[offset-1+width]);
 						f2 = fabs(L[offset-1+width]-L[offset]);
 						f3 = fabs(L[offset-1+width]-L[offset-width-1])*fabs(L[offset-1+width]-L[offset+width+1]);
