@@ -171,9 +171,9 @@ Width=4276
 Height=2836
 
 [Color Management]
-InputProfile=(camera)
-BlendCMSMatrix=false
-WorkingProfile=Adobe RGB
+InputProfile=(cameraICC)
+BlendCMSMatrix=true
+WorkingProfile=sRGB
 OutputProfile=RT_sRGB
 Gammafree=default
 Freegamma=false
