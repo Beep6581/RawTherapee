@@ -264,8 +264,10 @@ void WhiteBalance::optChanged () {
                 if (wbp) {
                     double ctemp, cgreen;
                     wbp->getAutoWB (ctemp, cgreen);
-                    temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
-                    green->setValue (green->getAddMode() ? 0.0 : cgreen);
+                    if (ctemp != -1.0) {
+                        temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
+                        green->setValue (green->getAddMode() ? 0.0 : cgreen);
+                    }
                     if (batchMode) {
                         temp->setEditedState (UnEdited);
                         green->setEditedState (UnEdited);
@@ -371,10 +373,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
                 double ctemp; double cgreen;
                 wbp->getAutoWB (ctemp, cgreen);
 
-                // Set the automatics temperature value, or 0.0 if in ADD mode
-                temp->setValue (temp->getAddMode() ? 0.0 : ctemp);
-                // Set the automatics green value, or 0.0 if in ADD mode
-                green->setValue (green->getAddMode() ? 0.0 : cgreen);
+                if (ctemp != -1.0) {
+                    // Set the automatics temperature value, or 0.0 if in ADD mode
+                    temp->setValue (temp->getAddMode() ? 0.0 : ctemp);
+                    // Set the automatics green value, or 0.0 if in ADD mode
+                    green->setValue (green->getAddMode() ? 0.0 : cgreen);
+                }
 
                 //cache_customWB ((int)ctemp, cgreen); // this will be used to set initial Custom WB setting
             }
@@ -420,7 +424,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited) {
     WBEntry* ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
 
     if (ppMethod)
-        pp->wb.method = ppMethod->ppLabel == "Auto" ? "Custom" : ppMethod->ppLabel;
+        pp->wb.method = ppMethod->ppLabel;
     pp->wb.temperature = temp->getIntValue ();
     pp->wb.green = green->getValue ();
     
@@ -435,10 +439,19 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         green->setDefault (green->getAddMode() ? 0 : cgreen);
     }
     else if (wbp && defParams->wb.method == "Auto") {
+        // this setDefaults method is called too early ; the wbp has been set,
+        // but wbp is not ready to provide!
         double ctemp; double cgreen;
         wbp->getAutoWB (ctemp, cgreen);
-        temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
-        green->setDefault (green->getAddMode() ? 0 : cgreen);
+        if (ctemp != -1.0) {
+            temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
+            green->setDefault (green->getAddMode() ? 0 : cgreen);
+        }
+        else {
+            // 6504 & 1.0 = same values as in ProcParams::setDefaults
+            temp->setDefault (temp->getAddMode() ? 0 : 6504);
+            green->setDefault (green->getAddMode() ? 0 : 1.0);
+        }
     }
     else {
         temp->setDefault (defParams->wb.temperature);

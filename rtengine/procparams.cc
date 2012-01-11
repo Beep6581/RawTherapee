@@ -443,12 +443,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     keyFile.set_double  ("Color Boost", "SaturationLimit",     colorBoost.saturationlimit);
 
     // save wb
-    if (wb.method=="Auto")
-        // note that "Auto" has been ruled out. It's just custom.
-        keyFile.set_string  ("White Balance", "Setting",     "Custom");
-    else
-        keyFile.set_string  ("White Balance", "Setting",     wb.method);
-
+    keyFile.set_string  ("White Balance", "Setting",     wb.method);
     keyFile.set_integer ("White Balance", "Temperature", wb.temperature);
     keyFile.set_double  ("White Balance", "Green",       wb.green);
     
