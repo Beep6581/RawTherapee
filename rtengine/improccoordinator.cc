@@ -354,6 +354,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             imageListener->setImage (previmg, scale, params.crop);
     }
     if (imageListener)
+    	// TODO: The WB tool should be advertised too in order to get the AutoWB's temp and green values
         imageListener->imageReady (params.crop);
 
     readyphase++;
@@ -487,9 +488,9 @@ void ImProcCoordinator::progress (Glib::ustring str, int pr) {
   }*/
 }
 
-void ImProcCoordinator::getAutoWB (double& temp, double& green) {
+bool ImProcCoordinator::getAutoWB (double& temp, double& green) {
 
-    if (imgsrc) {
+    if (imgsrc && imgsrc->isWBProviderReady()) {
         if (!awbComputed) {
             minit.lock ();
             autoWB = imgsrc->getAutoWB ();
@@ -498,6 +499,12 @@ void ImProcCoordinator::getAutoWB (double& temp, double& green) {
         }
         temp = autoWB.getTemp ();
         green = autoWB.getGreen ();
+        return true;
+    }
+    else {
+        temp = -1.0;
+        green = -1.0;
+        return false;
     }
 }
 

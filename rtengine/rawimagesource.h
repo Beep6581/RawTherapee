@@ -57,7 +57,7 @@ template<class T> void freeArray2 (T** a, int H) {
 
 class RawImageSource : public ImageSource {
 
-	private:
+    private:
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
         static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, cmsHPROFILE& in);
@@ -69,10 +69,10 @@ class RawImageSource : public ImageSource {
         ColorTemp wb;
         ProgressListener* plistener;
         float scale_mul[4]; // multiplier for each color
-		float cblack[4];// black
-		float scale_mu_l[4];// copy of scale_mul, for saturation
-		float c_black[4]; // copy of cblack Dcraw for black level
-		float cblacksom[4];
+        float cblack[4];// black
+        float scale_mu_l[4];// copy of scale_mul, for saturation
+        float c_black[4]; // copy of cblack Dcraw for black level
+        float cblacksom[4];
         double camwb_red;
         double camwb_green;
         double camwb_blue;
@@ -86,8 +86,8 @@ class RawImageSource : public ImageSource {
         //char** hpmap;
         float** hrmap[3];   // for color propagation
         char** needhr;      // for color propagation
-		int max[3];
-		float chmax[4],hlmax[4];
+        int max[3];
+        float chmax[4],hlmax[4];
         double initialGain; // initial gain calculated after scale_colors
         double defGain;
         bool full;
@@ -96,7 +96,7 @@ class RawImageSource : public ImageSource {
         bool rgbSourceModified;
 
         RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
-        
+
         // to accelerate CIELAB conversion:
         double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
         double* cache;
@@ -149,6 +149,7 @@ class RawImageSource : public ImageSource {
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
+        bool        isWBProviderReady () { return rawData != NULL; };
 
         double      getDefGain  () { return defGain; }
 
@@ -166,17 +167,17 @@ class RawImageSource : public ImageSource {
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
 
-	void boxblur2(float** src, float** dst, int H, int W, int box );
-	void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp ); 
+        void boxblur2(float** src, float** dst, int H, int W, int box );
+        void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp );
 
-	//void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3], \
-						multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
-	void HLRecovery_inpaint (float** red, float** green, float** blue);
-	//void HLRecovery_inpaint ();
-	
+        //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],
+        //                multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
+        void HLRecovery_inpaint (float** red, float** green, float** blue);
+        //void HLRecovery_inpaint ();
+
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
-		static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax);
+        static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax);
 
     protected:
         typedef unsigned short ushort;
