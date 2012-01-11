@@ -38,15 +38,9 @@ namespace rtengine {
 		x = 0;
 		y = 0;
 		ypp = 0;
-	    hash = NULL;
-	    hashSize = 1000;  // has to be initiallised to the maximum value
+		hashSize = 1000;  // has to be initiallised to the maximum value
 	}
 	
-	Curve::~Curve () {
-		if (hash)
-			delete [] hash;
-	}
-
 	void Curve::AddPolygons ()
 	{
 		if (firstPointIncluded) {
@@ -68,29 +62,50 @@ namespace rtengine {
 		poly_x.push_back(x3);
 		poly_y.push_back(y3);
 	}
-	
+
 	void Curve::fillHash() {
-    	hash = new unsigned short int[hashSize+2];
+    	hash.resize(hashSize+2);
 
     	unsigned int polyIter = 0;
     	double const increment = 1./hashSize;
     	double milestone = 0.;
 
-    	for (unsigned int i=0; i<(hashSize+1);) {
+		for (unsigned short i=0; i<(hashSize+1);) {
     		while(poly_x[polyIter] <= milestone) ++polyIter;
-    		hash[i] = polyIter-1;
-    		milestone = (++i)*increment;
+    		hash.at(i).smallerValue = polyIter-1;
+    		++i;
+    		milestone = i*increment;
     	}
-    	hash[hashSize+1] = poly_x.size()-1;
+		milestone = 0.;
+		polyIter = 0;
+		for (unsigned int i=0; i<(hashSize+1);) {
+    		while(poly_x[polyIter] < (milestone+increment)) ++polyIter;
+    		hash.at(i).higherValue = polyIter;
+    		++i;
+    		milestone = i*increment;
+    	}
+    	hash.at(hashSize+1).smallerValue = poly_x.size()-1;
+    	hash.at(hashSize+1).higherValue = poly_x.size();
 
-		/*
-		// Debug output to file
-		FILE* f = fopen ("hash.txt", "wt");
-		for (int i=0; i<(hashSize+2); i++)
-			fprintf (f, "%d: %d   >   %.6f, %.6f\n", i, hash[i], poly_x[hash[i]], poly_y[hash[i]]);
-		fprintf (f, "\nppn: %d\npoly_x: %d\n", ppn, poly_x.size());
-		fclose (f);
-		*/
+    	/*
+    	 * Uncoment the code below to dump the polygon points and the hash table in files
+    	if (poly_x.size() > 500) {
+    		printf("Files generated (%d points)\n", poly_x.size());
+			FILE* f = fopen ("hash.txt", "wt");
+			for (unsigned int i=0; i<hashSize;i++) {
+				unsigned short s = hash.at(i).smallerValue;
+				unsigned short h = hash.at(i).higherValue;
+				fprintf (f, "%d: %d<%d (%.5f<%.5f)\n", i, s, h, poly_x[s], poly_x[h]);
+			}
+			fclose (f);
+			f = fopen ("poly_x.txt", "wt");
+			for (unsigned int i=0; i<poly_x.size();i++) {
+				fprintf (f, "%d: %.5f, %.5f\n", i, poly_x[i], poly_y[i]);
+			}
+			fclose (f);
+    	}
+    	*/
+
 	}
 
     // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.

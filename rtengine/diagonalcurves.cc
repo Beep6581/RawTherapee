@@ -30,11 +30,11 @@ namespace rtengine {
 
 DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn) {
 
-    ppn = poly_pn;
+    ppn = poly_pn > 65500 ? 65500 : poly_pn;
     bool identity = true;
 
-    if (ppn < 500) hashSize = 100;  // Arbitrary cut-off value
-    if (ppn < 50) hashSize = 10;  	// Arbitrary cut-off value
+    if (ppn < 500) hashSize = 100;  // Arbitrary cut-off value, but mutliple of 10
+    if (ppn < 50) hashSize = 10;  	// Arbitrary cut-off value, but mutliple of 10
 
     if (p.size()<3) {
         kind = DCT_Empty;
@@ -210,7 +210,7 @@ void DiagonalCurve::NURBS_set () {
     }
 
     // adding the final horizontal segment, always (see under)
-   	poly_x.push_back(1.1);		// 1.1 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
+   	poly_x.push_back(3.0);		// 3.0 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
    	poly_y.push_back(y[N-1]);
 }
 
@@ -282,7 +282,7 @@ double DiagonalCurve::getVal (double t) {
     	unsigned short int i = (unsigned short int)(t*hashSize);
 
     	if (i > (hashSize+1)) {
-    		//printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f, corresponding polygon's point #%d (out of %d point) x value: %.8f\n\n", i, t, hash[i], poly_x.size(), poly_x[hash[i]]);
+    		//printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f, corresponding polygon's point #%d (out of %d point) x value: %.8f\n\n", i, t, hash.at(i), poly_x.size(), poly_x[hash.at(i)]);
     		printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f\n\n", i, t);
     		return t;
     	}
@@ -290,8 +290,8 @@ double DiagonalCurve::getVal (double t) {
     	unsigned int k_lo = 0;
     	unsigned int k_hi = 0;
 
-		k_lo = hash[i];
-		k_hi = hash[i+1];
+		k_lo = hash.at(i).smallerValue;
+		k_hi = hash.at(i).higherValue;
 
 		// do a binary search for the right interval :
 		while (k_hi - k_lo > 1){
