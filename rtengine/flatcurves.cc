@@ -31,7 +31,7 @@ namespace rtengine {
 
 FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn) : leftTangent(NULL), rightTangent(NULL) {
 
-    ppn = poly_pn;
+    ppn = poly_pn > 65500 ? 65500 : poly_pn;
     poly_x.clear();
     poly_y.clear();
 

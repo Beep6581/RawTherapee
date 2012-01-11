@@ -205,6 +205,11 @@ class CurveFactory {
 
 class Curve {
 
+    class HashEntry {
+    public:
+        unsigned short smallerValue;
+        unsigned short higherValue;
+    };
   protected:
     int N;
     int ppn;			// targeted polyline point number
@@ -212,10 +217,10 @@ class Curve {
     double* y;
     std::vector<double> poly_x;		// X points of the faceted curve
     std::vector<double> poly_y;		// Y points of the faceted curve
-	unsigned short int* hash;
-	unsigned int hashSize;		// hash table's size, between [10, 100, 1000]
+    std::vector<HashEntry> hash;
+    unsigned short hashSize;		// hash table's size, between [10, 100, 1000]
 
-	double* ypp;
+    double* ypp;
 
     // Fields for the elementary curve polygonisation
     double x1, y1, x2, y2, x3, y3;
@@ -233,7 +238,6 @@ class Curve {
 
   public:
     Curve ();
-    ~Curve ();
     void AddPolygons ();
     virtual double getVal (double t) = 0;
     virtual void   getVal (const std::vector<double>& t, std::vector<double>& res) = 0;
