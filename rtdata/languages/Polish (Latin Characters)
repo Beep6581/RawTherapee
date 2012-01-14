@@ -30,6 +30,7 @@ EDITWINDOW_TITLE;Edytuj obraz
 EXIFFILTER_APERTURE;Przyslona
 EXIFFILTER_CAMERA;Aparat
 EXIFFILTER_DIALOGLABEL;Filtr Exif
+EXIFFILTER_EXPOSURECOMPENSATION;Korekta Ekspozycji (EV)
 EXIFFILTER_FILETYPE;Typ pliku
 EXIFFILTER_FOCALLEN;Wartosc ogniskowej
 EXIFFILTER_ISO;ISO
@@ -349,6 +350,10 @@ HISTORY_MSG_159;Wyszukanie krawedzi
 HISTORY_MSG_160;Skala
 HISTORY_MSG_161;Powtarzanie rozwazania
 HISTORY_MSG_162;Tone Mapping
+HISTORY_MSG_163;Krzywe RGB - R
+HISTORY_MSG_164;Krzywe RGB - G
+HISTORY_MSG_165;Krzywe RGB - B
+HISTORY_MSG_166;Ustawienia neutralne
 HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSNAPSHOT;Nowa migawka
 HISTORY_NEWSSDIALOGLABEL;Nazwa migawki:
@@ -473,12 +478,18 @@ MAIN_TOOLTIP_HIDEHP;Pokaz/ukryj lewy panel (razem z historia, klawisz skrotu: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Pokaz przeswietlenia
 MAIN_TOOLTIP_INDCLIPPEDS;Pokaz niedoswietlenia
 MAIN_TOOLTIP_PREFERENCES;Ustaw preferencje
+MAIN_TOOLTIP_PREVIEWB;Podglad <b>kanalu niebieskiego</b>\n<b>Skrot: b</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Podglad <b>maski ostrosci</b> <i>(beta)</i>\n<b>Skrot: Shift-F</b>\nDokladniejsze w przypadku zdjec o plytkiej glebi ostrosci, niskim pozimie szumow i o wiekszym przyblizeniu. W przypadku zdjec o wyzszym poziomie szumow maska ostrosci bedzie dokladniejsza przy mniejszym zoomie (10-30%)
+MAIN_TOOLTIP_PREVIEWG;Podglad <b>kanalu zielonego</b>\n<b>Skrot: g</b>
+MAIN_TOOLTIP_PREVIEWL;Podglad <b>kanalu jasnosci</b>\n0.299*R + 0.587*G + 0.114*B\n<b>Skrot: v</b>
+MAIN_TOOLTIP_PREVIEWR;Podglad <b>kanalu czerwonego</b>\n<b>Skrot: r</b>
 MAIN_TOOLTIP_QINFO;Informacje o pliku
 MAIN_TOOLTIP_SAVEAS;Zapisz obraz we wskazanym katalogu
 MAIN_TOOLTIP_SAVE;Zapisz obraz w katalogu domyslnym
 MAIN_TOOLTIP_SHOWHIDELP1;Pokaz/Ukryj lewy panel <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Pokaz/Ukryj prawy panel <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Pokaz/Ukryj gorny panel <b>Shift-l</b>
+MAIN_TOOLTIP_THRESHOLD;Prog
 MAIN_TOOLTIP_TOGGLE;Przelacz widok Przed/Po <b>B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
@@ -559,6 +570,7 @@ PARTIALPASTE_RAW_DCBITERATIONS;Liczba powtorzen DCB
 PARTIALPASTE_RAW_DMETHOD;Algorytm demozaikowania
 PARTIALPASTE_RAW_FALSECOLOR;Tlumienie falszowania koloru
 PARTIALPASTE_RESIZE;Zmien rozmiar
+PARTIALPASTE_RGBCURVES;Krzywe RGB
 PARTIALPASTE_ROTATION;Rotacja
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Niedoswietlenia/Przeswietlenia
 PARTIALPASTE_SHARPENEDGE;Krawedzie
@@ -677,6 +689,7 @@ PREFERENCES_SELECTTHEME;Wybierz temat
 PREFERENCES_SET;Ustaw
 PREFERENCES_SHOWBASICEXIF;Pokaz podstawowe dane Exif
 PREFERENCES_SHOWDATETIME;Pokaz date i czas
+PREFERENCES_SHOWEXPOSURECOMPENSATION;Pokaz korekte ekspozycji
 PREFERENCES_SHOWONLYRAW;Pokaz tylko pliki RAW
 PREFERENCES_SHOWPROFILESELECTOR;Umozliw wybor profilu
 PREFERENCES_SHTHRESHOLD;Prog dla niedoswietlen
@@ -839,9 +852,11 @@ TP_EQUALIZER_LARGEST;zgrubnie
 TP_EQUALIZER_NEUTRAL;Neutralne
 TP_EXPOSCORR_LABEL;Punkt bieli RAW
 TP_EXPOSURE_AUTOLEVELS;Wyrownaj poziomy
+TP_EXPOSURE_AUTOLEVELS_TIP;Dokonaj automatycznego ustawienia parametrow ekspozycji na podstawie analizy obrazu
 TP_EXPOSURE_BLACKLEVEL;Czern
 TP_EXPOSURE_BRIGHTNESS;Jasnosc
 TP_EXPOSURE_CLIP;Przytnij
+TP_EXPOSURE_CLIP_TIP;Ulamek pikseli ktore maja zostac rozjasnione do punktu przeswietlenia podczas automatycznego wyrownania poziomow
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Prog kompresji swiatel
 TP_EXPOSURE_COMPRHIGHLIGHTS;Kompresja swiatel
 TP_EXPOSURE_COMPRSHADOWS;Kompresja cieni
@@ -929,6 +944,8 @@ TP_LUMACURVE_LABEL;Krzywa luminancji
 TP_LUMADENOISE_EDGETOLERANCE;Tolerancja krawedzi
 TP_LUMADENOISE_LABEL;Odszumianie luminancji
 TP_LUMADENOISE_RADIUS;Promien
+TP_NEUTRAL;Neutralne
+TP_NEUTRAL_TIP;Zresetuj ustawienia do wartosci neutralnych
 TP_PERSPECTIVE_HORIZONTAL;Pozioma
 TP_PERSPECTIVE_LABEL;Perspektywa
 TP_PERSPECTIVE_VERTICAL;Pionowa
@@ -975,6 +992,11 @@ TP_RESIZE_SCALE;Skale
 TP_RESIZE_SPECIFY;Okresl:
 TP_RESIZE_WIDTH;Szerokosc
 TP_RESIZE_W;S:
+TP_RGBCURVES_BLUE;B
+TP_RGBCURVES_CHANNEL;Kanal
+TP_RGBCURVES_GREEN;G
+TP_RGBCURVES_LABEL;Krzywe RGB
+TP_RGBCURVES_RED;R
 TP_ROTATE_AUTOCROP;Auto przycinanie
 TP_ROTATE_DEGREE;Stopnie
 TP_ROTATE_FILL;Wypelnij
@@ -1026,13 +1048,45 @@ TP_VIGNETTING_RADIUS;Promien
 TP_VIGNETTING_STRENGTH;Sila
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Z aparatu
+TP_WBALANCE_CLOUDY;Pochmurnie
 TP_WBALANCE_CUSTOM;Reczny
+TP_WBALANCE_DAYLIGHT;Swiatlo dzienne (slonecznie)
+TP_WBALANCE_FLASH55;Leica
+TP_WBALANCE_FLASH60;Standardowe, Canon, Pentax, Olympus
+TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+TP_WBALANCE_FLASH_HEADER;Flash
+TP_WBALANCE_FLUO1;F1 - Swiatlo dzienne
+TP_WBALANCE_FLUO2;F2 - Chlodne biale
+TP_WBALANCE_FLUO3;F3 - Biale
+TP_WBALANCE_FLUO4;F4 - Cieple biale
+TP_WBALANCE_FLUO5;F5 - Swiatlo dzienne
+TP_WBALANCE_FLUO6;F6 - Biale Lite
+TP_WBALANCE_FLUO7;F7 - D65 Symulator swiatla dziennego
+TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
+TP_WBALANCE_FLUO9;F9 - Chlodne biale deluxe
+TP_WBALANCE_FLUO10;F10 - Philips TL85
+TP_WBALANCE_FLUO11;F11 - Philips TL84
+TP_WBALANCE_FLUO12;F12 - Philips TL83
+TP_WBALANCE_FLUO_HEADER;Jarzeniowe
 TP_WBALANCE_GREEN;Odcien
+TP_WBALANCE_GTI;GTI
+TP_WBALANCE_HMI;HMI
+TP_WBALANCE_JUDGEIII;JudgeIII
 TP_WBALANCE_LABEL;Balans bieli
+TP_WBALANCE_LAMP_HEADER;Lamp
+TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+TP_WBALANCE_LED_HEADER;LED
+TP_WBALANCE_LED_LSI;LSI Lumelex 2040
 TP_WBALANCE_METHOD;Metoda
+TP_WBALANCE_SHADE;Cien
 TP_WBALANCE_SIZE;Wielkosc:
+TP_WBALANCE_SOLUX35;Solux 3500K
+TP_WBALANCE_SOLUX41;Solux 4100K
+TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Punktowy
 TP_WBALANCE_TEMPERATURE;Temperatura
+TP_WBALANCE_TUNGSTEN;Wolfram
 ZOOMBAR_DETAIL;Lupa
 ZOOMBAR_HUGE;Olbrzymia
 ZOOMBAR_LARGE;Duza
@@ -1058,61 +1112,11 @@ ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
 #08 06.09.2011
 #09 Dariusz 'Salvadhor' Duma
 #10 The race for the bleeding edge - update for 4.x
-#11 2011-11-30 Updated by DrSlony
-
+#11 2011-11-30 DrSlony
+#12 2012-01-14 DrSlony
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)
-!HISTORY_MSG_163;RGB Curves - R
-!HISTORY_MSG_164;RGB Curves - G
-!HISTORY_MSG_165;RGB Curves - B
-!HISTORY_MSG_166;Neutral levels
-!MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b>
-!MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>
-!MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>n0.299*R + 0.587*G + 0.114*B
-!MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>
-!MAIN_TOOLTIP_THRESHOLD;Threshold
-!PARTIALPASTE_RGBCURVES;RGB curves
-!PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
-!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
-!TP_NEUTRAL;Neutral
-!TP_NEUTRAL_TIP;Reset exposure controls to neutral values
-!TP_RGBCURVES_LABEL;RGB Curves
-!TP_WBALANCE_CLOUDY;Cloudy
-!TP_WBALANCE_DAYLIGHT;Daylight (sunny)
-!TP_WBALANCE_FLASH55;Leica
-!TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
-!TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
-!TP_WBALANCE_FLASH_HEADER;Flash
-!TP_WBALANCE_FLUO1;F1 - Daylight
-!TP_WBALANCE_FLUO2;F2 - Cool white
-!TP_WBALANCE_FLUO3;F3 - White
-!TP_WBALANCE_FLUO4;F4 - Warm white
-!TP_WBALANCE_FLUO5;F5 - Daylight
-!TP_WBALANCE_FLUO6;F6 - Lite white
-!TP_WBALANCE_FLUO7;F7 - D65 Daylight simulator
-!TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
-!TP_WBALANCE_FLUO9;F9 - Cool white deluxe
-!TP_WBALANCE_FLUO10;F10 - Philips TL85
-!TP_WBALANCE_FLUO11;F11 - Philips TL84
-!TP_WBALANCE_FLUO12;F12 - Philips TL83
-!TP_WBALANCE_FLUO_HEADER;Fluorescent
-!TP_WBALANCE_GTI;GTI
-!TP_WBALANCE_HMI;HMI
-!TP_WBALANCE_JUDGEIII;JudgeIII
-!TP_WBALANCE_LAMP_HEADER;Lamp
-!TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
-!TP_WBALANCE_LED_HEADER;LED
-!TP_WBALANCE_LED_LSI;LSI Lumelex 2040
-!TP_WBALANCE_SHADE;Shade
-!TP_WBALANCE_SOLUX35;Solux 3500K
-!TP_WBALANCE_SOLUX41;Solux 4100K
-!TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
-!TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
-!TP_WBALANCE_TUNGSTEN;Tungsten
