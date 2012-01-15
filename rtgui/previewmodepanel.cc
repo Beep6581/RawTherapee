@@ -23,25 +23,42 @@
 
 PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia) {
 
-    previewR = Gtk::manage (new Gtk::ToggleButton ("R"));
+    iR  = new RTImage ("previewmodeR-on.png");
+    iG  = new RTImage ("previewmodeG-on.png");
+    iB  = new RTImage ("previewmodeB-on.png");
+    iL  = new RTImage ("previewmodeL-on.png");
+    iF  = new RTImage ("previewmodeF-on.png");
+    
+    igR = new RTImage ("previewmodeR-off.png");
+    igG = new RTImage ("previewmodeG-off.png");
+    igB = new RTImage ("previewmodeB-off.png");
+    igL = new RTImage ("previewmodeL-off.png");
+    igF = new RTImage ("previewmodeF-off.png");
+
+    previewR = Gtk::manage (new Gtk::ToggleButton ());
     previewR->set_relief(Gtk::RELIEF_NONE);
     previewR->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWR"));
+    previewR->set_image(*igR);
     
-    previewG = Gtk::manage (new Gtk::ToggleButton ("G"));
+    previewG = Gtk::manage (new Gtk::ToggleButton ());
     previewG->set_relief(Gtk::RELIEF_NONE);
     previewG->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWG"));
+    previewG->set_image(*igG);
 
-    previewB = Gtk::manage (new Gtk::ToggleButton ("B"));
+    previewB = Gtk::manage (new Gtk::ToggleButton ());
     previewB->set_relief(Gtk::RELIEF_NONE);
     previewB->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWB"));
+    previewB->set_image(*igB);
 
-    previewL = Gtk::manage (new Gtk::ToggleButton ("L"));
+    previewL = Gtk::manage (new Gtk::ToggleButton ());
     previewL->set_relief(Gtk::RELIEF_NONE);
     previewL->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWL"));
+    previewL->set_image(*igL);
 
-    previewFocusMask = Gtk::manage (new Gtk::ToggleButton ("F"));
+    previewFocusMask = Gtk::manage (new Gtk::ToggleButton ());
     previewFocusMask->set_relief(Gtk::RELIEF_NONE);
     previewFocusMask->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWFOCUSMASK"));
+    previewFocusMask->set_image(*igF);
 
     previewR->set_active (false);
     previewG->set_active (false);
@@ -64,6 +81,18 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia) {
 	//show_all ();
 }
 
+PreviewModePanel::~PreviewModePanel (){
+	delete iR;
+	delete iG;
+	delete iB;
+	delete iL;
+	delete iF;
+	delete igR;
+	delete igG;
+	delete igB;
+	delete igL;
+	delete igF;
+}
 //TODO: use functions below for shortcuts
 void PreviewModePanel::toggleR () {
     previewR->set_active(!previewR->get_active());
@@ -82,7 +111,6 @@ void PreviewModePanel::toggleFocusMask () {
 }
 
 void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview) {
-	// only 0 or 1 button at a time can remain pressed
 	
 	connR.block(true);
 	connG.block(true);
@@ -90,45 +118,20 @@ void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview) {
 	connL.block(true);
 	connFocusMask.block(true);
 
-	if (tbpreview==previewR){
-		//
-		previewG->set_active(false);
-		previewB->set_active(false);
-		previewL->set_active(false);
-		previewFocusMask->set_active(false);
-	}
+	// control state of the buttons
+	// only 0 or 1 button at a time can remain pressed
+	if (tbpreview!=previewR) previewR->set_active(false);
+	if (tbpreview!=previewG) previewG->set_active(false);
+	if (tbpreview!=previewB) previewB->set_active(false);
+	if (tbpreview!=previewL) previewL->set_active(false);
+	if (tbpreview!=previewFocusMask) previewFocusMask->set_active(false);
 
-	if (tbpreview==previewG){
-		previewR->set_active(false);
-		//
-		previewB->set_active(false);
-		previewL->set_active(false);
-		previewFocusMask->set_active(false);
-	}
-
-	if (tbpreview==previewB){
-		previewR->set_active(false);
-		previewG->set_active(false);
-		//
-		previewL->set_active(false);
-		previewFocusMask->set_active(false);
-	}
-
-	if (tbpreview==previewL){
-		previewR->set_active(false);
-		previewG->set_active(false);
-		previewB->set_active(false);
-		//
-		previewFocusMask->set_active(false);
-	}
-
-	if (tbpreview==previewFocusMask){
-		previewR->set_active(false);
-		previewG->set_active(false);
-		previewB->set_active(false);
-		previewL->set_active(false);
-		//
-	}
+	// set image based on button's state
+	previewR->set_image(previewR->get_active()?*iR:*igR);
+	previewG->set_image(previewG->get_active()?*iG:*igG);
+	previewB->set_image(previewB->get_active()?*iB:*igB);
+	previewL->set_image(previewL->get_active()?*iL:*igL);
+	previewFocusMask->set_image(previewFocusMask->get_active()?*iF:*igF);
 
 	connR.block(false);
 	connG.block(false);
