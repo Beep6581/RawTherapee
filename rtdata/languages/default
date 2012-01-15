@@ -477,7 +477,7 @@ MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
 MAIN_TOOLTIP_PREFERENCES;Set preferences
 MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>\n<b>-b</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b> <i>(beta)</i> <b>Shift-F</b>\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\nTo improve detection accuracy for higher noise images evaluate at smaller zoom 10-30%
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b> <i>(beta)</i> <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
 MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>\n<b>-g</b>
 MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>\n0.299*R + 0.587*G + 0.114*B\n<b>-v</b>
 MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>\n<b>-r</b>
