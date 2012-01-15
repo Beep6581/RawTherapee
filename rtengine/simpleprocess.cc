@@ -422,9 +422,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 								cmsMLUsetWide(DescriptionMLU,  "en", "US", string);}//display description with gamma + slope + primaries
 
 				cmsWriteTag(jprof, cmsSigProfileDescriptionTag,  DescriptionMLU);//desc changed
-				cmsWriteTag(jprof, cmsSigCopyrightTag,           CopyrightMLU);    
-				cmsWriteTag(jprof, cmsSigDeviceMfgDescTag, DmndMLU);
-				cmsWriteTag(jprof, cmsSigDeviceModelDescTag, DmddMLU);
+			//	cmsWriteTag(jprof, cmsSigCopyrightTag,           CopyrightMLU);    
+			//	cmsWriteTag(jprof, cmsSigDeviceMfgDescTag, DmndMLU);
+			//	cmsWriteTag(jprof, cmsSigDeviceModelDescTag, DmddMLU);
 				
                 // Calculate output profile's rTRC bTRC gTRC
                 GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters);
