@@ -342,9 +342,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 				// instruction with //ICC are used for generate icc profile
 				if (DescriptionMLU == NULL) printf("Error Description\n");
-				cmsMLUsetWide(CopyrightMLU,    "en", "US", L"No copyright Rawtherapee -Prophoto compatible")	;//adapt to profil	
+				cmsMLUsetWide(CopyrightMLU,    "en", "US", L"No copyright Rawtherapee -AdobeRGB compatible")	;//adapt to profil	
 				cmsMLUsetWide(DmndMLU,    "en", "US", L"Rawtherapee")	;	
-			    cmsMLUsetWide(DmddMLU,    "en", "US", L"RTLarge")	;	//adapt to profil
+			    cmsMLUsetWide(DmddMLU,    "en", "US", L"RTMedium")	;	//adapt to profil
 				//display Tag desc with : selection of gamma and Primaries
 				if(params.icm.gamma=="High_g1.3_s3.35" && !params.icm.freegamma) {
 										wchar_t string1[80] = L"GammaTRC: High g1.3 s3.35";
@@ -365,7 +365,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 										wchar_t string4[80] = L"GammaTRC: BT709 g2.2 s4.5";
 										wcsncat( string4, stri[ns], 36 );
 										cmsMLUsetWide(DescriptionMLU,  "en", "US", string4);
-																				}
+																				} 
 					else if (params.icm.gamma== "linear_g1.0" && !params.icm.freegamma) {
 										wchar_t string5[80] = L"GammaTRC: Linear g1.0";
 										wcsncat( string5, stri[ns], 32 );
@@ -387,7 +387,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 				//	else if (params.icm.gamma==	"BT709_g2.2_s4.5" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma BT709(IEC61966 equivalent)");
 				//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma sRGB(IEC61966 equivalent)");
 				//	else if (params.icm.gamma==	"linear_g1.0" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_sRGB gamma Linear1.0(IEC61966 equivalent)");
-				//	else if (params.icm.gamma==	"BT709_g2.2_s4.5" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma BT709(Prophoto compatible)");
+				//else if (params.icm.gamma==	"BT709_g2.2_s4.5" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma BT709(Prophoto compatible)");
 				//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma sRGB(Prophoto compatible)");
 				//	else if (params.icm.gamma==	"linear_g1.0" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma Linear1.0(Prophoto compatible)");
 				
@@ -422,9 +422,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 								cmsMLUsetWide(DescriptionMLU,  "en", "US", string);}//display description with gamma + slope + primaries
 
 				cmsWriteTag(jprof, cmsSigProfileDescriptionTag,  DescriptionMLU);//desc changed
-				//cmsWriteTag(jprof, cmsSigCopyrightTag,           CopyrightMLU);    
-				//cmsWriteTag(jprof, cmsSigDeviceMfgDescTag, DmndMLU);
-				//cmsWriteTag(jprof, cmsSigDeviceModelDescTag, DmddMLU);
+				cmsWriteTag(jprof, cmsSigCopyrightTag,           CopyrightMLU);    
+				cmsWriteTag(jprof, cmsSigDeviceMfgDescTag, DmndMLU);
+				cmsWriteTag(jprof, cmsSigDeviceModelDescTag, DmddMLU);
 				
                 // Calculate output profile's rTRC bTRC gTRC
                 GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, 5, Parameters);
@@ -432,8 +432,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
                 cmsWriteTag(jprof, cmsSigRedTRCTag,   (void*)GammaTRC[0] );
                 cmsWriteTag(jprof, cmsSigBlueTRCTag,  (void*)GammaTRC[2] );
 				//for generation ICC profiles : here Prophoto ==> Large
-			//	if(params.icm.gamma==	"BT709_g2.2_s4.5") cmsSaveProfileToFile(jprof, "RT_Large_gBT709.icc");
-			//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92") cmsSaveProfileToFile(jprof, "RT_Large_gsRGB.icc");
+			//	if(params.icm.gamma==	"BT709_g2.2_s4.5") cmsSaveProfileToFile(jprof, "RT_sRGB_gBT709.icm");
+			//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92") cmsSaveProfileToFile(jprof, "RT_Medium_gsRGB.icc");
 			//	else if (params.icm.gamma==	"linear_g1.0") cmsSaveProfileToFile(jprof, "RT_Large_g10.icc");
 			
 				
