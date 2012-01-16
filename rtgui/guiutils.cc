@@ -320,18 +320,22 @@ MySpinButton::MySpinButton () {
 void MySpinButton::updateSize() {
 	double vMin, vMax;
 	double step, page;
-	double maxAbs;
+	int maxAbs;
 	unsigned int digits, digits2;
 	unsigned int maxLen;
 
 	get_range(vMin, vMax);
 	get_increments (step, page);
 
-	maxAbs = fmax(fabs(vMin), fabs(vMax));
 	digits = get_digits();
-	for (digits2=0; maxAbs/pow(double(10),digits2)>=1.0; digits2++);
+	maxAbs = (int)(fmax(fabs(vMin), fabs(vMax))+0.000001);
+	if (maxAbs==0)
+		digits2 = 1;
+	else {
+		digits2 = (int)(log10(double(maxAbs))+0.000001);
+		digits2++;
+	}
 	maxLen = digits+digits2+(vMin<0?1:0)+(digits>0?1:0);
-
 	set_max_length(maxLen);
 	set_width_chars(maxLen);
 }
