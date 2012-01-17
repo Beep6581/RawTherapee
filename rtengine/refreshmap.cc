@@ -89,7 +89,7 @@ ALLNORAW,         // EvHREnabled,
 ALLNORAW,         // EvHRAmount,
 ALLNORAW,         // EvHRMethod,
 ALL,              // EvWProfile,
-ALL,              // EvOProfile,
+OUTPUTPROFIL,     // EvOProfile,
 ALL,              // EvIProfile,
 TRANSFORM,        // EvVignetting,
 RGBCURVE,         // EvChMixer,
@@ -152,10 +152,10 @@ FLATFIELD,        // EvFlatFieldBlurType,
 TRANSFORM,        // EvAutoDIST,
 DIRPYRDENOISE,    // EvDPDNLumCurve,
 DIRPYRDENOISE,    // EvDPDNChromCurve,
-ALL,              // EvGAMMA
-ALL,              // EvGAMPOS
-ALL,              // EvGAMFREE
-ALL,              // EvSLPOS
+GAMMA,            // EvGAMMA
+GAMMA,            // EvGAMPOS
+GAMMA,            // EvGAMFREE
+GAMMA,            // EvSLPOS
 DARKFRAME,        // EvPreProcessExpBlackzero
 DARKFRAME,        // EvPreProcessExpBlackone
 DARKFRAME,        // EvPreProcessExpBlacktwo

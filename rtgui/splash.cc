@@ -70,16 +70,17 @@ bool SplashImage::on_expose_event (GdkEventExpose* event) {
     return true;
 }
 
-Splash::Splash () {
+Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true) {
 
-    set_title (M("GENERAL_ABOUT"));
     set_border_width (4);
 
-    Gtk::Notebook* nb = Gtk::manage (new Gtk::Notebook ());
+    caveatsSW = NULL;
+
+    nb = Gtk::manage (new Gtk::Notebook ());
     get_vbox()->pack_start (*nb);
 
     // Tab 1: the image
-    splashImage = new SplashImage ();
+    splashImage = Gtk::manage(new SplashImage ());
     nb->append_page (*splashImage,  M("ABOUT_TAB_SPLASH"));
     splashImage->show ();
 
@@ -145,10 +146,33 @@ Splash::Splash () {
 	        textBuffer->set_text((Glib::ustring)(ostr.str()));
 
 	        Gtk::ScrolledWindow *licenseSW = Gtk::manage (new Gtk::ScrolledWindow());
-			Gtk::TextView *creditsTV = Gtk::manage (new Gtk::TextView (textBuffer));
-			creditsTV->set_editable(false);
-			licenseSW->add(*creditsTV);
+			Gtk::TextView *licenseTV = Gtk::manage (new Gtk::TextView (textBuffer));
+			licenseTV->set_editable(false);
+			licenseSW->add(*licenseTV);
 		    nb->append_page (*licenseSW, M("ABOUT_TAB_LICENSE"));
+	    }
+	}
+
+    // Tab 5: the caveats
+	std::string caveatsFileName = Glib::build_filename (creditsPath, "CAVEATS.txt");
+	if ( safe_file_test(caveatsFileName, (Glib::FILE_TEST_EXISTS)) ) {
+	    FILE *f = safe_g_fopen (caveatsFileName, "rt");
+	    if (f != NULL) {
+	        char* buffer = new char[1024];
+	        std::ostringstream ostr;
+	        while (fgets (buffer, 1024, f))
+	            ostr << buffer;
+	        delete [] buffer;
+	        fclose (f);
+
+	        Glib::RefPtr<Gtk::TextBuffer> textBuffer = Gtk::TextBuffer::create();
+	        textBuffer->set_text((Glib::ustring)(ostr.str()));
+
+	        caveatsSW = Gtk::manage (new Gtk::ScrolledWindow());
+			Gtk::TextView *caveatsTV = Gtk::manage (new Gtk::TextView (textBuffer));
+			caveatsTV->set_editable(false);
+			caveatsSW->add(*caveatsTV);
+		    nb->append_page (*caveatsSW, M("ABOUT_TAB_CAVEATS"));
 	    }
 	}
 
@@ -160,15 +184,12 @@ Splash::Splash () {
     nb->set_current_page (0);
 
     show_all_children ();
-    set_modal (true);
     set_keep_above (true);
 }
 
-Splash::Splash (int maxtime) {
+Splash::Splash (Gtk::Window& parent, int maxtime) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true) {
 
-    set_title (M("GENERAL_ABOUT"));
-
-    splashImage = new SplashImage ();
+    splashImage = Gtk::manage(new SplashImage ());
 //    add (*splashImage);
     get_vbox()->pack_start (*splashImage);
     splashImage->show ();
@@ -190,8 +211,16 @@ bool Splash::on_timer () {
     return false;
 }
 
+/*
+ * removed as it seem to be too sensitive in some OS
 bool Splash::on_button_release_event (GdkEventButton* event) {
 
     hide ();
     return true;
+}
+*/
+
+void Splash::showCaveats() {
+	if (caveatsSW)
+		nb->set_current_page(nb->page_num(*caveatsSW));
 }
