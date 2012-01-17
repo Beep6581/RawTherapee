@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "rtwindow.h"
 #include "options.h"
 #include "preferences.h"
@@ -28,6 +29,7 @@ RTWindow::RTWindow ()
 ,bpanel(NULL)
 ,epanel(NULL)
 ,fpanel(NULL)
+,splash(NULL)
 {
 
     cacheMgr->init ();
@@ -202,6 +204,27 @@ RTWindow::RTWindow ()
     if (!isSingleTabMode()&& !simpleEditor) epanel->hide_all();
 }
 
+void RTWindow::findVerNumbers(int* numbers, Glib::ustring versionStr) {
+	numbers[0] = numbers[1] = numbers[2] = numbers[3] = 0;
+	int n=0;
+	for (unsigned int i=0; i<versionStr.length(); i++) {
+		char chr = (char)versionStr.at(i);
+		if (chr >= '0' && chr <= '9') {
+			numbers[n] *= 10;
+			numbers[n] += (int)(chr - '0');
+		}
+		else {
+			n++;
+			if (n>4) {
+				printf("Error: malformed version string; \"%s\" must follow this format: xx.xx.xx.xx. Admitting it's a developer version...\n", versionStr.c_str());
+				// Reseting the already found numbers
+				numbers[0] = numbers[1] = numbers[2] = numbers[3] = 100;
+				return;
+			}
+		}
+	}
+}
+
 void RTWindow::on_realize () {
     Gtk::Window::on_realize ();
 
@@ -209,6 +232,38 @@ void RTWindow::on_realize () {
        fpanel->setAspect();
 
     cursorManager.init (get_window());
+
+    // Check if first run of this version, then display the caveats text
+    if (options.version != versionString) {
+        int prevVerNbr[4];
+        int currVerNbr[4];
+        findVerNumbers(prevVerNbr, options.version);
+        findVerNumbers(currVerNbr, versionString);
+
+        // Now we can update the version parameter with the right value
+        options.version = versionString;
+
+        bool showCaveats = false;
+        // Check if the current version is newer
+        if      (currVerNbr[0] > prevVerNbr[0]) showCaveats = true;
+        else if (currVerNbr[1] > prevVerNbr[1]) showCaveats = true;
+        else if (currVerNbr[2] > prevVerNbr[2]) showCaveats = true;
+
+        if (showCaveats) {
+        	// this is a first run!
+            splash = new Splash (*this);
+            splash->set_transient_for (*this);
+            splash->signal_delete_event().connect( sigc::mem_fun(*this, &RTWindow::splashClosed) );
+            if (splash->hasCaveats()) {
+            	splash->showCaveats();
+            	splash->show ();
+            }
+            else {
+            	delete splash;
+            	splash = NULL;
+            }
+        }
+    }
 }
 
 bool RTWindow::on_window_state_event(GdkEventWindowState* event) {
@@ -317,7 +372,7 @@ bool RTWindow::selectEditorPanel(const std::string &name) {
 bool RTWindow::keyPressed (GdkEventKey* event) {
 
 	bool ctrl = event->state & GDK_CONTROL_MASK;
-	bool shift = event->state & GDK_SHIFT_MASK;
+	//bool shift = event->state & GDK_SHIFT_MASK;
 
 	if (ctrl) {
 		switch(event->keyval) {
@@ -396,8 +451,6 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     cacheMgr->closeCache ();  // also makes cleanup if too large
     WhiteBalance::cleanup();
 
-
-    options.firstRun = false;
 
     if (!options.windowMaximized) {
 		options.windowWidth = get_width();
@@ -530,4 +583,10 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition) {
 	for(itr = epanels.begin(); itr != epanels.end(); ++itr){
 		((*itr).second)->updateHistogramPosition (oldPosition, newPosition);
 	}
+}
+
+bool RTWindow::splashClosed(GdkEventAny* event) {
+	delete splash;
+	splash = NULL;
+	return true;
 }

@@ -39,13 +39,17 @@ class Splash : public Gtk::Dialog {
 
   private:
     SplashImage* splashImage;
+    Gtk::Notebook* nb;
+    Gtk::ScrolledWindow* caveatsSW;
 
   public:
-    Splash (int maxtime);
-    Splash ();
+    Splash (Gtk::Window& parent, int maxtime);
+    Splash (Gtk::Window& parent);
 
+    bool hasCaveats() { return caveatsSW != NULL; };
+    void showCaveats();
     bool on_timer ();
-    virtual bool on_button_release_event (GdkEventButton* event);
+    //virtual bool on_button_release_event (GdkEventButton* event);
 };
 
 #endif

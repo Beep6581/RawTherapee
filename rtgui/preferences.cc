@@ -33,6 +33,8 @@ extern Glib::ustring argv0;
 
 Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
   
+	splash = NULL;
+
     set_title (M("MAIN_BUTTON_PREFERENCES"));
 
     moptions.copyFrom (&options);
@@ -1296,9 +1298,9 @@ void Preferences::selectStartupDir () {
 
 void Preferences::aboutPressed () {
 
-    Splash* splash = new Splash ();
+    splash = new Splash (*this);
     splash->set_transient_for (*this);
-    splash->set_modal (true);   
+    splash->signal_delete_event().connect( sigc::mem_fun(*this, &Preferences::splashClosed) );
     splash->show ();
 }
 
@@ -1477,4 +1479,10 @@ void Preferences::updateFFinfos()
     rtengine::ffm.getStat(t1,t2);
     Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_FLATFIELDFOUND"), t1, M("PREFERENCES_FLATFIELDSHOTS"), t2, M("PREFERENCES_FLATFIELDTEMPLATES"));
     ffLabel->set_text(s);
+}
+
+bool Preferences::splashClosed(GdkEventAny* event) {
+	delete splash;
+	splash = NULL;
+	return true;
 }
