@@ -24,6 +24,12 @@
 #include <guiutils.h>
 #include <iptcmeta.h>
 
+/*class IPTCSectionTitle{
+
+public:
+	IPTCSectionTitle(Gtk::Table* table, int row, Glib::ustring &label);
+};*/
+
 class XRTWidget{
 protected:
 	std::string key;
@@ -107,8 +113,6 @@ public:
 	XRTCombo( Gtk::Table* table, int row, const std::string &key, rtengine::IPTCPairList_t &info, rtengine::MetadataList &l );
 
 };
-
-
 
 class IPTCPanel : public Gtk::VBox, public ToolPanel {
 

@@ -30,24 +30,63 @@ IPTCPanel::IPTCPanel () {
 
     set_border_width (2);
 
-    Gtk::Table* iptc = Gtk::manage( new Gtk::Table (70, 2) );
+    Gtk::Table* iptc = Gtk::manage( new Gtk::Table (72, 2) );
     
     int row = 0;
+
+    Gtk::Label* H0 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_DESCRIPTION")) );
+    H0->set_use_markup (true);
+    H0->set_alignment(Gtk::ALIGN_LEFT);
+    iptc->attach (*H0, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
+
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCHeadline, chgList ) );
     wdgt.push_back( new XRTEntryMultiline( iptc, row++, kIPTCDescription, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCWriter, chgList ) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocation, chgList ) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCCity, chgList ) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCState, chgList ) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCCountry, chgList ) );
-    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCCountryCode, rtengine::IPTCMeta::IPTCISO3166, chgList) );
 
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocationCity, chgList ) );
+    Gtk::VBox* vbox1 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H1 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_LOCATIONSHOWNCORE")) );
+    H1->set_use_markup (true);
+    H1->set_alignment(Gtk::ALIGN_LEFT);
+    vbox1->pack_start(*hsept, Gtk::PACK_SHRINK, 4);
+    vbox1->pack_start(*H1);
+    iptc->attach (*vbox1, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
+
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocation, chgList ) ); //Iptc4xmpCore:Location
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCCity, chgList ) );     //photoshop:City
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCState, chgList ) );    //photoshop:State
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCCountry, chgList ) );  //photoshop:Country
+    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCCountryCode, rtengine::IPTCMeta::IPTCISO3166, chgList) ); //Iptc4xmpCore:CountryCode
+
+    Gtk::VBox* vbox2 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept2 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H2 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_LOCATIONSHOWNEXT")) );
+    H2->set_use_markup (true);
+    H2->set_alignment(Gtk::ALIGN_LEFT);
+    vbox2->pack_start(*hsept2, Gtk::PACK_SHRINK, 4);
+    vbox2->pack_start(*H2);
+    iptc->attach (*vbox2, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
+
+    //Location based on Iptc4xmpExt
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocationSubloc, chgList ) );
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocationCity, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocationState, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocationCtry, chgList ) );
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCLocationCode, rtengine::IPTCMeta::IPTCISO3166, chgList) );
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCLocationRegion, rtengine::IPTCMeta::IPTCWorldRegion, chgList) );
+
+    Gtk::VBox* vbox3 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept3 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H3 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_LOCATIONCREATED")) );
+    H3->set_use_markup (true);
+    H3->set_alignment(Gtk::ALIGN_LEFT);
+    vbox3->pack_start(*hsept3, Gtk::PACK_SHRINK, 4);
+    vbox3->pack_start(*H3);
+    iptc->attach (*vbox3, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
 
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocCreateSubloc, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLocCreateCity, chgList ) );
@@ -56,12 +95,32 @@ IPTCPanel::IPTCPanel () {
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCLocCreateCode, rtengine::IPTCMeta::IPTCISO3166, chgList) );
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCLocCreateRegion, rtengine::IPTCMeta::IPTCWorldRegion, chgList) );
 
+    Gtk::VBox* vbox4 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept4 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H4 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_ARTWORKOROBJECT")) );
+    H4->set_use_markup (true);
+    H4->set_alignment(Gtk::ALIGN_LEFT);
+    vbox4->pack_start(*hsept4, Gtk::PACK_SHRINK, 4);
+    vbox4->pack_start(*H4);
+    iptc->attach (*vbox4, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
+
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCArtworkTitle, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCArtworkCreator, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCArtworkRights, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCArtworkDate, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCArtworkSource, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCArtworkNumber, chgList ) );
+
+    Gtk::VBox* vbox5 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept5 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H5 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_CLASSIFICATION")) );
+    H5->set_use_markup (true);
+    H5->set_alignment(Gtk::ALIGN_LEFT);
+    vbox5->pack_start(*hsept5, Gtk::PACK_SHRINK, 4);
+    vbox5->pack_start(*H5);
+    iptc->attach (*vbox5, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
 
     wdgt.push_back( new XRTEntryMultivalue( iptc, row++, kIPTCKeywords, chgList ) );row++;
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCCategory, rtengine::IPTCMeta::IPTCSubject, chgList) );
@@ -71,9 +130,29 @@ IPTCPanel::IPTCPanel () {
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCSubjCode, rtengine::IPTCMeta::IPTCSubject, chgList) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCEvent, chgList ) );
 
+    Gtk::VBox* vbox6 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept6 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H6 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_ABOUTMODELS")) );
+    H6->set_use_markup (true);
+    H6->set_alignment(Gtk::ALIGN_LEFT);
+    vbox6->pack_start(*hsept6, Gtk::PACK_SHRINK, 4);
+    vbox6->pack_start(*H6);
+    iptc->attach (*vbox6, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
+
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCPerson, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCModelAge, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCModelInfo, chgList ) );
+
+    Gtk::VBox* vbox7 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept7 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H7 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_CREATORINFO")) );
+    H7->set_use_markup (true);
+    H7->set_alignment(Gtk::ALIGN_LEFT);
+    vbox7->pack_start(*hsept7, Gtk::PACK_SHRINK, 4);
+    vbox7->pack_start(*H7);
+    iptc->attach (*vbox7, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
 
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCCreator, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCAuthorPos, chgList ) );
@@ -86,11 +165,21 @@ IPTCPanel::IPTCPanel () {
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCCreatorTel, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCCreatorUrl, chgList ) );
 
+    Gtk::VBox* vbox8 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept8 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H8 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_RIGHTSINFO")) );
+    H8->set_use_markup (true);
+    H8->set_alignment(Gtk::ALIGN_LEFT);
+    vbox8->pack_start(*hsept8, Gtk::PACK_SHRINK, 4);
+    vbox8->pack_start(*H8);
+    iptc->attach (*vbox8, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
+
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCCredit, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCSource, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRights, chgList ) );
     wdgt.push_back( new XRTCombo( iptc, row++, kIPTCRightsStatus, rtengine::IPTCMeta::IPTCCopyrightStatus, chgList ) );
-    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCRightsMarked, rtengine::IPTCMeta::IPTCBoolean, chgList ) );
+    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCRightsMarked, rtengine::IPTCMeta::IPTCRightsMarked, chgList) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRightsCertif, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRightsStatement, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCInstruct, chgList ) );
@@ -98,25 +187,78 @@ IPTCPanel::IPTCPanel () {
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRightsOwner, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCImageCreator, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCLicensor, chgList ) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCImageSupplier, chgList ) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCGUIDSupplier, chgList ) );
 
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCMinorDisclosure, chgList ) );
+    Gtk::VBox* vbox9 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept9 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H9 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_RELEASEINFO")) );
+    H9->set_use_markup (true);
+    H9->set_alignment(Gtk::ALIGN_LEFT);
+    vbox9->pack_start(*hsept9, Gtk::PACK_SHRINK, 4);
+    vbox9->pack_start(*H9);
+    iptc->attach (*vbox9, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
+
+    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCMinorModelAgeDisclosure, rtengine::IPTCMeta::IPTCMinorModelAgeDisclosure, chgList) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCModelReleaseID, chgList ) );
-    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCModelReleaseSt, rtengine::IPTCMeta::IPTCReleaseStatus, chgList) );
+    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCModelReleaseSt, rtengine::IPTCMeta::IPTCModelReleaseStatus, chgList) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCPropertyRelID, chgList ) );
-    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCPropertyRelSt, rtengine::IPTCMeta::IPTCReleaseStatus, chgList) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRegistryID, chgList ) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRegistryOrgID, chgList ) );
+    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCPropertyRelSt, rtengine::IPTCMeta::IPTCPropertyReleaseStatus, chgList) );
+
+
+    Gtk::VBox* vbox13 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept13 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H13 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_FEATUREDORGANISATION")) );
+    H13->set_use_markup (true);
+    H13->set_alignment(Gtk::ALIGN_LEFT);
+    vbox13->pack_start(*hsept13, Gtk::PACK_SHRINK, 4);
+    vbox13->pack_start(*H13);
+    iptc->attach (*vbox13, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
+
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCOrganisationName, chgList ) );
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCOrganisationCode, chgList ) );
+
+
+    Gtk::VBox* vbox10 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept10 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H10 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_REFERENCEADMINISTRATION")) );
+    H10->set_use_markup (true);
+    H10->set_alignment(Gtk::ALIGN_LEFT);
+    vbox10->pack_start(*hsept10, Gtk::PACK_SHRINK, 4);
+    vbox10->pack_start(*H10);
+    iptc->attach (*vbox10, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
 
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCTitle, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCReference, chgList ) );
-    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCUrgency, chgList ) );
+    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCUrgency, rtengine::IPTCMeta::IPTCUrgency, chgList) );
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRegistryID, chgList ) );
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRegistryOrgID, chgList ) );
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCImageSupplier, chgList ) );
+    wdgt.push_back( new XRTEntry( iptc, row++, kIPTCGUIDSupplier, chgList ) );
+
+    Gtk::VBox* vbox11 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept11 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* H11 = Gtk::manage( new Gtk::Label (M("IPTC_GROUPNAME_READONLYINFORMATION")) );
+    H11->set_use_markup (true);
+    H11->set_alignment(Gtk::ALIGN_LEFT);
+    vbox11->pack_start(*hsept11, Gtk::PACK_SHRINK, 4);
+    vbox11->pack_start(*H11);
+    iptc->attach (*vbox11, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+    row=row+1;
 
     wdgt.push_back( new XRTLabel( iptc, row++, kIPTCDate, chgList ) );
     wdgt.push_back( new XRTLabel( iptc, row++, kIPTCGUID, chgList ) );
     wdgt.push_back( new XRTLabel( iptc, row++, kIPTCMaxHeight, chgList ) );
     wdgt.push_back( new XRTLabel( iptc, row++, kIPTCMaxWidth, chgList ) );
+
+    // add panel ending
+    Gtk::VBox* vbox12 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept12 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Image* peImg = Gtk::manage (new RTImage("PanelEnding.png"));
+    vbox12->pack_start(*hsept12, Gtk::PACK_SHRINK, 4);
+    vbox12->pack_start(*peImg);
+    iptc->attach (*vbox12, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
 
     Gtk::ScrolledWindow* scrolledWindow = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindow->set_border_width(2);
@@ -326,8 +468,8 @@ void IPTCPanel::pasteClicked () {
 void XRTWidget::attachToTable( Gtk::Table &table, int row, Gtk::Label &label, Gtk::Widget &widg )
 {
 	label.set_alignment(Gtk::ALIGN_RIGHT);
-    table.attach (label, 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 2, 2);
-    table.attach (widg, 1, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+    table.attach (label, 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 1, 1);
+    table.attach (widg, 1, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 1, 1);
 }
 
 void XRTWidget::updateList()
@@ -467,8 +609,8 @@ XRTEntryMultivalue::XRTEntryMultivalue( Gtk::Table* table, int row, const std::s
     control->set_size_request (32, -1);
     addKW = Gtk::manage( new Gtk::Button () );
     delKW = Gtk::manage( new Gtk::Button () );
-    addKWImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-add12.png") );
-    delKWImg = Gtk::manage( new Gtk::Image (argv0+"/images/list-remove12r.png") );
+    addKWImg = Gtk::manage (new RTImage ("list-add-small.png"));
+    delKWImg = Gtk::manage (new RTImage ("list-remove-red-small.png"));
     addKW->add (*addKWImg);
     delKW->add (*delKWImg);
     addKW->signal_clicked().connect( sigc::mem_fun(*this, &XRTEntryMultivalue::add) );
@@ -618,3 +760,14 @@ int XRTCombo::writeValue( )
 	return 0;
 }
 
+/*IPTCSectionTitle::IPTCSectionTitle(Gtk::Table* table, int row, Glib::ustring &label)
+{
+    Gtk::VBox* vbox1 = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hsept1 = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Label* Title = Gtk::manage( new Gtk::Label (label) );
+    Title->set_use_markup (true);
+    Title->set_alignment(Gtk::ALIGN_LEFT);
+    vbox1->pack_start(*hsept1);
+    vbox1->pack_start(*Title);
+    table->attach (*vbox1, 0, 2, row, row+1, Gtk::FILL, Gtk::FILL, 4, 4);
+}*/
