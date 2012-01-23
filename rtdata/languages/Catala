@@ -1,0 +1,1060 @@
+ABOUT_TAB_BUILD;Versió
+ABOUT_TAB_CREDITS;Crèdits
+ABOUT_TAB_LICENSE;Llicència
+ABOUT_TAB_SPLASH;Splash
+ADJUSTER_RESET_TO_DEFAULT;Restaura predeterminats
+BATCHQUEUE_AUTOSTART;Auto engega
+BATCH_PROCESSING;Processament per lots
+CURVEEDITOR_CURVES;Corbes
+CURVEEDITOR_CURVE;Corba
+CURVEEDITOR_CUSTOM;A mida
+CURVEEDITOR_DARKS;Foscos
+CURVEEDITOR_FILEDLGFILTERANY;Tots els fitxers
+CURVEEDITOR_FILEDLGFILTERCURVE;Fitxers de corba
+CURVEEDITOR_HIGHLIGHTS;Clars intensos
+CURVEEDITOR_LIGHTS;Clars
+CURVEEDITOR_LINEAR;Lineal
+CURVEEDITOR_LOADDLGLABEL;Carrega corba...
+CURVEEDITOR_MINMAXCPOINTS;Mínima/Màxima punts de control
+CURVEEDITOR_NURBS;Gàbia de control
+CURVEEDITOR_PARAMETRIC;Paramètric
+CURVEEDITOR_SAVEDLGLABEL;Desa corba...
+CURVEEDITOR_SHADOWS;Ombres
+CURVEEDITOR_TOOLTIPCOPY;Copia la corba actual al portap.
+CURVEEDITOR_TOOLTIPLINEAR;Restaura corba lineal (recta)
+CURVEEDITOR_TOOLTIPLOAD;Carrega corba de fitxer
+CURVEEDITOR_TOOLTIPPASTE;Enganxa corba del portap.
+CURVEEDITOR_TOOLTIPSAVE;Desa la corba actual
+CURVEEDITOR_TYPE;Tipus
+EDITWINDOW_TITLE;Edita imatge
+EXIFFILTER_APERTURE;Obertura
+EXIFFILTER_CAMERA;Càmera
+EXIFFILTER_DIALOGLABEL;Filtre Exif
+EXIFFILTER_FILETYPE;Tipus de fitxer
+EXIFFILTER_FOCALLEN;Distància focal
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Objectiu
+EXIFFILTER_METADATAFILTER;Empra filtres Metadata
+EXIFFILTER_SHUTTER;Temps d'exposició
+EXIFPANEL_ADDEDITHINT;Afegir nou atribut o editar-lo
+EXIFPANEL_ADDEDIT;Afegir/Editar
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Entrar valor
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Selecciona atribut
+EXIFPANEL_ADDTAGDLG_TITLE;Afegir/Editar atribut
+EXIFPANEL_KEEPHINT;Conserva atributs seleccionats en escriure un nou fitxer
+EXIFPANEL_KEEP;Guarda
+EXIFPANEL_REMOVEHINT;Esborra atributs seleccionats en escriure un nou fitxer
+EXIFPANEL_REMOVE;Esborra
+EXIFPANEL_RESETALLHINT;Reinicialitza atributs als valors originals
+EXIFPANEL_RESETALL;Reinic. tot
+EXIFPANEL_RESETHINT;Reinic. atributs seleccionats als valors originals
+EXIFPANEL_RESET;Reinicialitza
+EXIFPANEL_SUBDIRECTORY;Subdirectori
+FILEBROWSER_ADDDELTEMPLATE;Afeg/Treu plantilles...
+FILEBROWSER_APPLYPROFILE;Aplica perfil
+FILEBROWSER_ARRANGEMENTHINT;Canvia entre alineació vertical/horitzontal de les minifotos
+FILEBROWSER_AUTODARKFRAME;Auto marc fosc
+FILEBROWSER_AUTOFLATFIELD;Auto camp pla
+FILEBROWSER_BROWSEPATHBUTTONHINT;Clic per navegar al path escollit
+FILEBROWSER_BROWSEPATHHINT;Posa path on buscar (<b>Ctrl-o</b> set focus,<b>Ctrl-Enter</b> navegar amb gestor d'arxius);nPath dreceres: <b>~</b> - directori d'usuari, <b>!</b> - carpeta de fotos de l'usuari
+FILEBROWSER_CACHECLEARFROMFULL;Esborra el cau - tot
+FILEBROWSER_CACHECLEARFROMPARTIAL;Esborra el cau - part
+FILEBROWSER_CACHE;Cau
+FILEBROWSER_CLEARPROFILE;Treu perfil
+FILEBROWSER_COPYPROFILE;Copia perfil
+FILEBROWSER_CURRENT_NAME;Nom actual:
+FILEBROWSER_DARKFRAME;Marc fosc
+FILEBROWSER_DELETEDLGLABEL;Confirmació d'esborrar fitxer
+FILEBROWSER_DELETEDLGMSGINCLPROC;Segur que voleu suprimir els %1 seleccionats INCLOENT la versió processada?
+FILEBROWSER_DELETEDLGMSG;Segur que voleu esborrar els %1 fitxers?
+FILEBROWSER_EMPTYTRASHHINT;Buida permanentment la paperera
+FILEBROWSER_EMPTYTRASH;Buida paperera
+FILEBROWSER_EXIFFILTERAPPLYHINT;Commuta on/off el filtre exif del gestor de fitxers
+FILEBROWSER_EXIFFILTERAPPLY;Aplica
+FILEBROWSER_EXIFFILTERLABEL;Filtre Exif
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Canvia ajustos del filtre Exif
+FILEBROWSER_EXIFFILTERSETTINGS;Ajustos
+FILEBROWSER_FLATFIELD;Camp pla
+FILEBROWSER_MOVETODARKFDIR;Canvia al directori de camps foscos
+FILEBROWSER_MOVETOFLATFIELDDIR;Canvia al directori de camps plans
+FILEBROWSER_NEW_NAME;Nou nom:
+FILEBROWSER_PARTIALPASTEPROFILE;Enganxa al perfil parcialment
+FILEBROWSER_PASTEPROFILE;Enganxa perfil
+FILEBROWSER_POPUPCANCELJOB;Cancel·la treball
+FILEBROWSER_POPUPCOPYTO;Copia a...
+FILEBROWSER_POPUPMOVEEND;Mou a la fi de la cua
+FILEBROWSER_POPUPMOVEHEAD;Mou a l'inici de la cua
+FILEBROWSER_POPUPMOVETO;Mou cap a...
+FILEBROWSER_POPUPOPEN;Obre
+FILEBROWSER_POPUPPROCESS;Posa a la cua de processos
+FILEBROWSER_POPUPRANK1;Rang 1
+FILEBROWSER_POPUPRANK2;Rang 2
+FILEBROWSER_POPUPRANK3;Rang 3
+FILEBROWSER_POPUPRANK4;Rang 4
+FILEBROWSER_POPUPRANK5;Rang 5
+FILEBROWSER_POPUPREMOVEINCLPROC;Treu del sist. de fitxers & process. en curs
+FILEBROWSER_POPUPREMOVESUBMENU;Suprimeix
+FILEBROWSER_POPUPREMOVE;Esborra el fitxer
+FILEBROWSER_POPUPRENAME;Reanomena
+FILEBROWSER_POPUPSELECTALL;Selec. tot
+FILEBROWSER_POPUPTRASH;Llença a la paperera
+FILEBROWSER_POPUPUNRANK;Treu el rang
+FILEBROWSER_POPUPUNTRASH;Recup. de la paperera
+FILEBROWSER_PROCESSINGSETTINGSHINT;Indica format de fitxer i directori de sortida
+FILEBROWSER_PROCESSINGSETTINGS;Ajustos
+FILEBROWSER_RENAMEDLGLABEL;Reanomena fitxer
+FILEBROWSER_RENAMEDLGMSG;Reanomena fitxer "%1" a:
+FILEBROWSER_SELECTDARKFRAME;Selecc. marc fosc...
+FILEBROWSER_SELECTFLATFIELD;Selecc. camp pla...
+FILEBROWSER_SHOWDIRHINT;Exposa totes les imatges del directori
+FILEBROWSER_SHOWEXIFINFO;Mostra dades EXIF <b>i</b>
+FILEBROWSER_SHOWQUEUEHINT;Ensenya el contingut de la cua de procés
+FILEBROWSER_SHOWRANK1HINT;Exposa imatges d' 1 estrella
+FILEBROWSER_SHOWRANK2HINT;Exposa imatges de 2 estrelles
+FILEBROWSER_SHOWRANK3HINT;Exposa imatges de 3 estrelles
+FILEBROWSER_SHOWRANK4HINT;Exposa imatges de 4 estrelles
+FILEBROWSER_SHOWRANK5HINT;Exposa imatges de 5 estrelles
+FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera
+FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang
+FILEBROWSER_STARTPROCESSINGHINT;Inicia processar/desar d'imatges de la cua
+FILEBROWSER_STARTPROCESSING;Inicia procés
+FILEBROWSER_STOPPROCESSINGHINT;Atura processament d'imatges
+FILEBROWSER_STOPPROCESSING;Atura processament
+FILEBROWSER_THUMBSIZE;Tamany minifoto
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Inicia processat automàticament en rebre un nou treball
+FILEBROWSER_USETEMPLATE;Usa plantilla:
+FILEBROWSER_ZOOMINHINT;Engrandir minifoto
+FILEBROWSER_ZOOMOUTHINT;Reduïr minifoto
+GENERAL_ABOUT;Respecte a
+GENERAL_AFTER;Després
+GENERAL_BEFORE;Abans
+GENERAL_CANCEL;Cancel·la
+GENERAL_DISABLED;Inactivat
+GENERAL_DISABLE;Inactiva
+GENERAL_ENABLED;Activat
+GENERAL_ENABLE;Activa
+GENERAL_FILE;Fitxer
+GENERAL_HIGH_QUALITY;Alta qualitat
+GENERAL_LANDSCAPE;Horitzontal
+GENERAL_LOAD;Carrega
+GENERAL_NA;n/a
+GENERAL_NONE;No cap
+GENERAL_NO;No
+GENERAL_OK;OK
+GENERAL_PORTRAIT;Vertical
+GENERAL_SAVE;Desa
+GENERAL_UNCHANGED;(No canviat)
+GENERAL_YES;Sí
+HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_G;G
+HISTOGRAM_BUTTON_L;L
+HISTOGRAM_BUTTON_RAW;Raw
+HISTOGRAM_BUTTON_R;R
+HISTOGRAM_LABEL;Histograma
+HISTOGRAM_TOOLTIP_B;Ensenya/amaga l'histograma BLAU
+HISTOGRAM_TOOLTIP_G;Ensenya/amaga l'histograma VERD
+HISTOGRAM_TOOLTIP_L;Ensenya/amaga l'histograma de luminància CIELAB
+HISTOGRAM_TOOLTIP_RAW;Mostra/Amaga l'histograma RAW
+HISTOGRAM_TOOLTIP_R;Ensenya/amaga l'histograma VERMELL
+HISTORY_CHANGED;Canviat
+HISTORY_CUSTOMCURVE;Corba particular
+HISTORY_DELSNAPSHOT;Treu instant.
+HISTORY_FROMCLIPBOARD;Del portapapers
+HISTORY_LABEL;Història
+HISTORY_MSG_1;Imatge oberta
+HISTORY_MSG_2;Perfil carregat
+HISTORY_MSG_3;Perfil canviat
+HISTORY_MSG_4;Repassant la història
+HISTORY_MSG_5;Brillantor
+HISTORY_MSG_6;Contrast
+HISTORY_MSG_7;Negre
+HISTORY_MSG_8;Compensació d'exposició
+HISTORY_MSG_9;Compressió de clars intensos
+HISTORY_MSG_10;Compressió de foscos
+HISTORY_MSG_11;Corba de to
+HISTORY_MSG_12;Exposició automàtica
+HISTORY_MSG_13;Pèrdua per exposició
+HISTORY_MSG_14;Luminància: Brillantor
+HISTORY_MSG_15;Luminància: Contrast
+HISTORY_MSG_16;Luminància: Negre
+HISTORY_MSG_17;Luminància: Compressió de clars intensos
+HISTORY_MSG_18;Luminància: Compressió de foscos
+HISTORY_MSG_19;Corba de luminància
+HISTORY_MSG_20;Enfocant
+HISTORY_MSG_21;Enfocant: Radi
+HISTORY_MSG_22;Enfocant: Quantitat
+HISTORY_MSG_23;Enfocant: Llindar
+HISTORY_MSG_24;Enfocar només vores
+HISTORY_MSG_25;Enfocant: Radi detecció de vora
+HISTORY_MSG_26;Enfocant: Tolerància vora
+HISTORY_MSG_27;Enfocant: Control de halo
+HISTORY_MSG_28;Control de halo: quantitat
+HISTORY_MSG_29;Mètode d'enfocar
+HISTORY_MSG_30;Deconvolució: Radi
+HISTORY_MSG_31;Deconvolució: Quantitat
+HISTORY_MSG_32;Deconvolució: Ablaniment
+HISTORY_MSG_33;Deconvolució: Iteracions
+HISTORY_MSG_34;Evitar pèrdua de color
+HISTORY_MSG_35;Saturació: limitador
+HISTORY_MSG_36;Saturació límit
+HISTORY_MSG_37;Augment de color
+HISTORY_MSG_38;Mètode de balanç de blancs
+HISTORY_MSG_39;Temperatura de color
+HISTORY_MSG_40;Tint de balanç de blancs
+HISTORY_MSG_41;Canvi color "A"
+HISTORY_MSG_42;Canvi color "B"
+HISTORY_MSG_43;Dessorollant luminància
+HISTORY_MSG_44;Lumin. dessoroll Radi
+HISTORY_MSG_45;Lumin. dessoroll, tolerància vores
+HISTORY_MSG_46;Dessorollant color
+HISTORY_MSG_47;Dessoroll de color: Radi
+HISTORY_MSG_48;Dessoroll de color: Tolerància vores
+HISTORY_MSG_49;Dessoroll de color, sensib. de vores
+HISTORY_MSG_50;Eina de foscos/clars intensos
+HISTORY_MSG_51;Augment de clars
+HISTORY_MSG_52;Augment de foscos
+HISTORY_MSG_53;Amplada de to de clars
+HISTORY_MSG_54;Amplada de to de foscos
+HISTORY_MSG_55;Contrast local
+HISTORY_MSG_56;Radi foscos/clars intensos
+HISTORY_MSG_57;Rotació tosca
+HISTORY_MSG_58;Inversió horitzontal
+HISTORY_MSG_59;Inversió vertical
+HISTORY_MSG_60;Rotació
+HISTORY_MSG_61;Rotació
+HISTORY_MSG_62;Correcció distorsió de l'objectiu
+HISTORY_MSG_63;Instantània seleccionada
+HISTORY_MSG_64;Retalla foto
+HISTORY_MSG_65;Correcció A.C.
+HISTORY_MSG_66;Recuperació de clars intensos
+HISTORY_MSG_67;Recup. de clars: quantitat
+HISTORY_MSG_68;Recup. de clars: mètode
+HISTORY_MSG_69;Espai de color de treball
+HISTORY_MSG_70;Espai de color de sortida
+HISTORY_MSG_71;Espai de color d'entrada
+HISTORY_MSG_72;Correcció del vorafosc
+HISTORY_MSG_73;Barrejador de canals
+HISTORY_MSG_74;Canviar l'escala
+HISTORY_MSG_75;Mètode de canvi d'escala
+HISTORY_MSG_76;Metadades Exif
+HISTORY_MSG_77;Metadades IPTC
+HISTORY_MSG_78;Especificacions per a escalar
+HISTORY_MSG_79;Variar amplada
+HISTORY_MSG_80;Variar alçada
+HISTORY_MSG_81;Escalat activat
+HISTORY_MSG_82;Perfil canviat
+HISTORY_MSG_83;Alta qual. ombres/clars intensos
+HISTORY_MSG_84;Correcció de perspectiva
+HISTORY_MSG_85;Coeficients d'ónula
+HISTORY_MSG_86;Equalitzador d'ónula
+HISTORY_MSG_87;Impuls de Reduc. de Soroll
+HISTORY_MSG_88;Llindar impuls RS
+HISTORY_MSG_89;Reducció de soroll
+HISTORY_MSG_90;RS - luminància
+HISTORY_MSG_91;RS - crominància
+HISTORY_MSG_92;RS - gama
+HISTORY_MSG_93;Intens. de contrast per grau de detall
+HISTORY_MSG_94;Contrast per grau de detall
+HISTORY_MSG_95;Saturació
+HISTORY_MSG_96;corba 'a'
+HISTORY_MSG_97;corba 'b'
+HISTORY_MSG_98;Mètode demosaicat
+HISTORY_MSG_99;Filtre píxels cremats/morts
+HISTORY_MSG_100;Saturació RGB
+HISTORY_MSG_101;HSV EQ -- Hue
+HISTORY_MSG_102;HSV EQ -- Saturació
+HISTORY_MSG_103;HSV EQ -- Valor
+HISTORY_MSG_104;HSV Equalitzador
+HISTORY_MSG_105;Desserrellant
+HISTORY_MSG_106;Desserrellar, radi
+HISTORY_MSG_107;Desserrellar, llindar
+HISTORY_MSG_108;Llindar compr. clars intensos
+HISTORY_MSG_109;Escala capsa d'inclusió
+HISTORY_MSG_110;L'escalat s'aplica a
+HISTORY_MSG_111;Evita estralls de color
+HISTORY_MSG_112;Limitador de saturació
+HISTORY_MSG_113;Saturació límit
+HISTORY_MSG_114;Iteracions DCB
+HISTORY_MSG_115;Iteracions fals color
+HISTORY_MSG_116;DCB ampliat
+HISTORY_MSG_117;Correcció CA vermell
+HISTORY_MSG_118;Correcció CA blau
+HISTORY_MSG_119;Línia dessoroll
+HISTORY_MSG_120;Llindar equil. verd
+HISTORY_MSG_121;Auto CA
+HISTORY_MSG_122;Auto marc fosc
+HISTORY_MSG_123;Fitxer de camp fosc
+HISTORY_MSG_124;Correc. expo. linear
+HISTORY_MSG_125;Correc. HL preservant expos.
+HISTORY_MSG_126;Fitxer de camp pla
+HISTORY_MSG_127;Auto-sel. camp pla
+HISTORY_MSG_128;Camp pla borrós - radi
+HISTORY_MSG_129;Camp pla borrós - tipus
+HISTORY_NEWSNAPSHOTAS;Com...
+HISTORY_NEWSNAPSHOT;Afegeix
+HISTORY_NEWSSDIALOGLABEL;Etiqueta d'instantània:
+HISTORY_NEWSSDIALOGTITLE;Afegir instant.
+HISTORY_SETTO;Fixat a
+HISTORY_SNAPSHOTS;Instantànies
+HISTORY_SNAPSHOT;Instantània
+ICMPANEL_FILEDLGFILTERANY;Tots els fitxers
+ICMPANEL_FILEDLGFILTERICM;Fitxers de perfils ICC
+ICMPANEL_GAMMABEFOREINPUT;El perfil aplica Gamma
+ICMPANEL_INPUTCAMERA;Propi de la càmera
+ICMPANEL_INPUTCUSTOM;Especial
+ICMPANEL_INPUTDLGLABEL;Selecc. perfil ICC d'entrada...
+ICMPANEL_INPUTEMBEDDED;Usar l'encastat si és possible
+ICMPANEL_INPUTPROFILE;Perfil d'entrada
+ICMPANEL_NOICM;No cap ICM: Sortida sRGB
+ICMPANEL_OUTPUTDLGLABEL;Selecc. perfil ICC de sortida...
+ICMPANEL_OUTPUTPROFILE;Perfil de sortida
+ICMPANEL_SAVEREFERENCE;Desa com a imatge de ref. als perfils
+ICMPANEL_WORKINGPROFILE;Perfil de treball
+IMAGEAREA_DETAILVIEW;Vista de detall
+IPTCPANEL_AUTHORHINT;Nom del creador de l'objecte, p.e. escriptor, fotògraf o artista gràfic (By-line).
+IPTCPANEL_AUTHORSPOSITIONHINT;Títol del(s) creador(s) de l'objecte (By-line Title).
+IPTCPANEL_AUTHORSPOSITION;Tractament o títol de l'autor
+IPTCPANEL_AUTHOR;Autor
+IPTCPANEL_CAPTIONHINT;Un text de descripció de les dades (Caption - Abstract).
+IPTCPANEL_CAPTIONWRITERHINT;Nom de qui ha escrit, editat o corregit la imatge o la descripció (Writer - Editor).
+IPTCPANEL_CAPTIONWRITER;Autor de la descripció
+IPTCPANEL_CAPTION;Text descriptiu
+IPTCPANEL_CATEGORYHINT;Classificació de la imatge, segons el proveïdor (Category).
+IPTCPANEL_CATEGORY;Classificació
+IPTCPANEL_CITYHINT;Ciutat d'origen de la imatge (City).
+IPTCPANEL_CITY;Ciutat
+IPTCPANEL_COPYHINT;Copiar dades actuals IPTC al portapapers
+IPTCPANEL_COPYRIGHTHINT;Qualsevol notificació necessària sobre copyright (Copyright Notice).
+IPTCPANEL_COPYRIGHT;Copyright
+IPTCPANEL_COUNTRYHINT;Nom del país o lloc on va ser creada la imatge (Country - Primary Location Name).
+IPTCPANEL_COUNTRY;País
+IPTCPANEL_CREDITHINT;Identitat del proveïdor de la imatge, no necessàriament el propietari/creador (Credit).
+IPTCPANEL_CREDIT;Crèdit
+IPTCPANEL_DATECREATEDHINT;Data en què va ser creat el contingut intel·lectual de la imatge; Format: AAAAMMDD (Date Created).
+IPTCPANEL_DATECREATED;Data de creació
+IPTCPANEL_EMBEDDEDHINT;Restaurar les dades IPTC encastades al fitxer d'imatge
+IPTCPANEL_EMBEDDED;Encastat
+IPTCPANEL_HEADLINEHINT;Una nota publicable que és una sinopsi dels continguts de la imatge (Headline).
+IPTCPANEL_HEADLINE;Capçalera
+IPTCPANEL_INSTRUCTIONSHINT;Altres instruccions editorials sobre l'ús de la imatge (Special Instructions).
+IPTCPANEL_INSTRUCTIONS;Instruccions
+IPTCPANEL_KEYWORDSHINT;Paraules clau que faciliten la recerca de la imatge (Keywords).
+IPTCPANEL_KEYWORDS;Paraules clau
+IPTCPANEL_PASTEHINT;Enganxa les dades IPTC del portapapers
+IPTCPANEL_PROVINCEHINT;Regió/Estat d'origen de la imatge (Province-State).
+IPTCPANEL_PROVINCE;Regió
+IPTCPANEL_RESETHINT;Reinici perfil per omissió
+IPTCPANEL_RESET;Reinici
+IPTCPANEL_SOURCEHINT;Propietari original del contingut intel·lectual de la imatge (Source).
+IPTCPANEL_SOURCE;Font
+IPTCPANEL_SUPPCATEGORIESHINT;Precisió sobre el tema de la imatge (Supplemental Categories).
+IPTCPANEL_SUPPCATEGORIES;Classif. detallada
+IPTCPANEL_TITLEHINT;Referència breu de la imatge (Object Name).
+IPTCPANEL_TITLE;Títol
+IPTCPANEL_TRANSREFERENCEHINT;Codi que indica el lloc de la transmissió original (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Refer. transmissió
+MAIN_BUTTON_EXIT;Sortida
+MAIN_BUTTON_FULLSCREEN;Pantalla sencera
+MAIN_BUTTON_PREFERENCES;Preferències
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Afeg. imatge actual a la cua de procés <b>Ctrl+Q</b>
+MAIN_BUTTON_QUEUE;Posa a la cua
+MAIN_BUTTON_SAVEAS;Com...
+MAIN_BUTTON_SAVE;Desa la imatge
+MAIN_BUTTON_SAVE_TOOLTIP;Desa imatge actual <b>Ctrl+S</b>
+MAIN_BUTTON_SENDTOEDITOR;Envia a l'editor
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edita la imatge actual a un editor extern <b>Ctrl+E</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostra/amaga panells laterals <b>m</b>
+MAIN_BUTTON_UNFULLSCREEN;Fi pantalla sencera
+MAIN_FRAME_BATCHQUEUE;Cua de procés
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Cua de procés  <b>Ctrl-F3</b>
+MAIN_FRAME_EDITOR;Editor
+MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
+MAIN_FRAME_FILEBROWSER;Gestor de fitxers 
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Gestor de fitxers <b>Ctrl-F2</b>
+MAIN_FRAME_PLACES;Llocs 
+MAIN_FRAME_PLACES_ADD;Afeg
+MAIN_FRAME_PLACES_DEL;Treu
+MAIN_FRAME_RECENT;Carpetes recents 
+MAIN_MSG_ALREADYEXISTS;Fitxer ja existent
+MAIN_MSG_CANNOTLOAD;No puc carregar la imatge
+MAIN_MSG_CANNOTSAVE;Error desant el fitxer
+MAIN_MSG_CANNOTSTARTEDITOR;No puc iniciar l'editor
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Poseu el path correcte en el diàleg "Preferències".
+MAIN_MSG_ERRORDURINGIMAGESAVING;Error en desar la imatge
+MAIN_MSG_EXITJOBSINQUEUEINFO;Les imatges no processades de la cua es perdran en sortir.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Segur que voleu sortir? Hi ha imatges no processades a la cua.
+MAIN_MSG_JOBSINQUEUE;Treball(s) a la cua.
+MAIN_MSG_NAVIGATOR;Navegador
+MAIN_MSG_PLACES;Llocs
+MAIN_MSG_QOVERWRITE;El voleu sobreescriure?
+MAIN_TAB_BASIC;Bàsic
+MAIN_TAB_COLOR;Color
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
+MAIN_TAB_DETAIL;Detall
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+MAIN_TAB_DEVELOP;Desenv.
+MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPOSURE;Exposició
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
+MAIN_TAB_FILTER;Filtre
+MAIN_TAB_ICM;ICM
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metadades
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
+MAIN_TAB_RAW;RAW
+MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
+MAIN_TAB_TAGGING;Tagging
+MAIN_TAB_TRANSFORM;Forma
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+MAIN_TOGGLE_BEFORE_AFTER;B|A
+MAIN_TOOLTIP_HIDEFP;Mostra/amaga panell inferior (directori i gestor de fitxers, tecla: F)
+MAIN_TOOLTIP_HIDEHP;Mostra/amaga panell esquerre (incloent la història, tecla: H)
+MAIN_TOOLTIP_INDCLIPPEDH;Indicador de pèrdues en clars
+MAIN_TOOLTIP_INDCLIPPEDS;Indicador de pèrdues en foscos
+MAIN_TOOLTIP_PREFERENCES;Fixa preferències
+MAIN_TOOLTIP_QINFO;Info breu de la imatge
+MAIN_TOOLTIP_SAVEAS;Desa la imatge en directori escollit
+MAIN_TOOLTIP_SAVE;Desa la imatge al directori per defecte
+MAIN_TOOLTIP_SHOWHIDELP1;Mostra/amaga panell esquerre <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Mostra/amaga panell dret <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Mostra/amaga panell superior <b>Shift-l</b>
+MAIN_TOOLTIP_TOGGLE;Alterna vista abans/després <b>B</b>
+NAVIGATOR_B_NA;B = n/a
+NAVIGATOR_B_VALUE;B = %1
+NAVIGATOR_G_NA;G = n/a
+NAVIGATOR_G_VALUE;G = %1
+NAVIGATOR_H_NA;H = n/a
+NAVIGATOR_H_VALUE;H = %1
+NAVIGATOR_LAB_A_NA;A = n/a
+NAVIGATOR_LAB_A_VALUE;A = %1
+NAVIGATOR_LAB_B_NA;B = n/a
+NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_L_NA;L = n/a
+NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_R_NA;R = n/a
+NAVIGATOR_R_VALUE;R = %1
+NAVIGATOR_S_NA;S = n/a
+NAVIGATOR_S_VALUE;S = %1
+NAVIGATOR_V_NA;V = n/a
+NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_NA;x = n/a, y = n/a
+PARTIALPASTE_BASICGROUP;Ajustos bàsics
+PARTIALPASTE_CACORRECTION;Correcció A. C.(Aberració Cromàtica)
+PARTIALPASTE_CHANNELMIXER;Barrejador de canals
+PARTIALPASTE_COARSETRANS;Rotació 90 graus/ inversió
+PARTIALPASTE_COLORBOOST;Augment de color
+PARTIALPASTE_COLORDENOISE;Dessorollar color
+PARTIALPASTE_COLORGROUP;Ajustos de color
+PARTIALPASTE_COLORMIXER;Barrejador de color
+PARTIALPASTE_COLORSHIFT;Canvi de color
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-omple
+PARTIALPASTE_COMPOSITIONGROUP;Ajustos de composició
+PARTIALPASTE_CROP;Retalla
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Auto-sel. marc fosc
+PARTIALPASTE_DARKFRAMEFILE;Fitxer de marc fosc
+PARTIALPASTE_DEFRINGE;Desserrella
+PARTIALPASTE_DETAILGROUP;Ajustos de detall
+PARTIALPASTE_DIALOGLABEL;Enganxa parcialment al perfil de procés
+PARTIALPASTE_DIRPYRDENOISE;Reducció de soroll
+PARTIALPASTE_DIRPYREQUALIZER;Contrast per grau de detall
+PARTIALPASTE_DISTORTION;Correcció de distorsió
+PARTIALPASTE_EVERYTHING;Tot plegat
+PARTIALPASTE_EXIFCHANGES;Canvis a les dades Exif
+PARTIALPASTE_EXPOSURE;Exposició
+PARTIALPASTE_FLATFIELDAUTOSELECT;Auto-sel. Camp Pla
+PARTIALPASTE_FLATFIELDBLURRADIUS;Radi borrositat CP
+PARTIALPASTE_FLATFIELDBLURTYPE;Tipus borrositat CP
+PARTIALPASTE_FLATFIELDFILE;Fitxer de camp pla
+PARTIALPASTE_HLRECONSTRUCTION;Reconstrucc. clars intensos
+PARTIALPASTE_HLRECOVERYAMOUNT;Quant. recup. clars intensos
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Llindar recup. clars intensos
+PARTIALPASTE_HLRECOVERY;Recup. de clars intensos
+PARTIALPASTE_HSVEQUALIZER;Equalitzador HSV
+PARTIALPASTE_ICMSETTINGS;Ajustos ICM
+PARTIALPASTE_IMPULSEDENOISE;Impuls de reducció de soroll
+PARTIALPASTE_IPTCINFO;Dades IPTC
+PARTIALPASTE_LABCURVE;Ajustos Lab
+PARTIALPASTE_LENSGROUP;Ajustos de l'objectiu
+PARTIALPASTE_LUMACURVE;Corba de luminància
+PARTIALPASTE_LUMADENOISE;Reducció de soroll de luminància
+PARTIALPASTE_LUMINANCEGROUP;Ajustos de luminància
+PARTIALPASTE_METAICMGROUP;Ajustos Metadades/ICM
+PARTIALPASTE_PERSPECTIVE;Perspectiva
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Equilibri verd
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Aplica filtre píxels cremats/morts
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtre línia de soroll
+PARTIALPASTE_RAWCACORR_AUTO;Auto-correcció AC
+PARTIALPASTE_RAWCACORR_CABLUE;AC blau
+PARTIALPASTE_RAWCACORR_CARED;AC vermell
+PARTIALPASTE_RAWEXPOS_LINEAR;Punt blanc raw corr. factor linear
+PARTIALPASTE_RAWEXPOS_PRESER;Corr. punt blanc raw preservant HL (EV)
+PARTIALPASTE_RAWGROUP;Ajustos raw
+PARTIALPASTE_RAW_DCBENHANCE;Aplica pas de millora DCB
+PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'iteracions DCB
+PARTIALPASTE_RAW_DMETHOD;Mètode demosaicat
+PARTIALPASTE_RAW_FALSECOLOR;Passos de supressió de fals color demosaicant
+PARTIALPASTE_RESIZE;Canviar tamany
+PARTIALPASTE_ROTATION;Rotació
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Foscos/clars intensos
+PARTIALPASTE_SHARPENING;Enfocant
+PARTIALPASTE_VIGNETTING;Correcció del vorafosc
+PARTIALPASTE_WAVELETEQUALIZER;Equalitzador d'ónula
+PARTIALPASTE_WHITEBALANCE;Balanç de blancs
+PREFERENCES_ADD;AFEG
+PREFERENCES_APPLNEXTSTARTUP;Efectiu en reiniciar
+PREFERENCES_AUTOMONPROFILE;Usa els perfils dels monitors dels sist. operatius automàticament
+PREFERENCES_BATCH_PROCESSING;Process. per lots
+PREFERENCES_BEHAVIOR;Comportament
+PREFERENCES_BLINKCLIPPED;Parpelleig d'àrees perdudes
+PREFERENCES_CACHECLEARALL;Esborrar tot
+PREFERENCES_CACHECLEARPROFILES;Esborrar perfils
+PREFERENCES_CACHECLEARTHUMBS;Esborra minifotos
+PREFERENCES_CACHEFORMAT1;Propi (ràpid i millor qualitat)
+PREFERENCES_CACHEFORMAT2;JPEG (ocupa menys espai al disc)
+PREFERENCES_CACHEMAXENTRIES;Màxim nombre d'entrades a la mem. cau
+PREFERENCES_CACHEOPTS;Opcions memòria cau
+PREFERENCES_CACHESTRAT1;Preferir rapidesa a baix ús de memòria
+PREFERENCES_CACHESTRAT2;Preferir baix ús de memòria a rapidesa
+PREFERENCES_CACHESTRAT;Estratègia del cau
+PREFERENCES_CACHETHUMBFORM;Format del cau en minifoto
+PREFERENCES_CACHETHUMBHEIGHT;Màxima alçada de minifoto
+PREFERENCES_CLEARDLG_LINE1;Esborrant el cau
+PREFERENCES_CLEARDLG_LINE2;Això pot tardar alguns segons
+PREFERENCES_CLEARDLG_TITLE;Espereu..
+PREFERENCES_CLIPPINGIND;Indicador de pèrdues
+PREFERENCES_CMETRICINTENT;Intent colorimètric
+PREFERENCES_CUTOVERLAYBRUSH;Cropa màscara color/transparència
+PREFERENCES_DARKFRAMEFOUND;Trobat
+PREFERENCES_DARKFRAMESHOTS;trets
+PREFERENCES_DARKFRAMETEMPLATES;plantilles
+PREFERENCES_DARKFRAME;Marc fosc
+PREFERENCES_DATEFORMATFRAME;Format de data
+PREFERENCES_DATEFORMATHINT;<i>Podeu fer servir les següents cadenes formatades:</i>\n<b>%y</b><i> : any</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPer exemple, el format de data hongarès és:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Format de data
+PREFERENCES_DEFAULTLANG;Idioma per omissió
+PREFERENCES_DEFAULTTHEME;Tema per omissió
+PREFERENCES_DEMOSAICINGALGO;Algoritme de demosaicat
+PREFERENCES_DIRDARKFRAMES;Carpeta de marcs foscos
+PREFERENCES_DIRHOME;directori home
+PREFERENCES_DIRLAST;Últim directori usat
+PREFERENCES_DIROTHER;Un altre
+PREFERENCES_DIRSELECTDLG;Selecc. directori d'inici...
+PREFERENCES_DIRSOFTWARE;Instal·lació al directori
+PREFERENCES_EDITORCMDLINE;Una altra línia de comandament
+PREFERENCES_EDITORLAYOUT;Sortida d'editor
+PREFERENCES_EXTERNALEDITOR;Editor extern
+PREFERENCES_FBROWSEROPTS;Opcions gestor d'arxius
+PREFERENCES_FILEFORMAT;Format de fitxer
+PREFERENCES_FLATFIELDFOUND;Trobat
+PREFERENCES_FLATFIELDSDIR;Carpeta de camps plans
+PREFERENCES_FLATFIELDSHOTS;trets
+PREFERENCES_FLATFIELDTEMPLATES;plantilles
+PREFERENCES_FLATFIELD;Camp pla
+PREFERENCES_FORIMAGE;Per fitxers d'imatge
+PREFERENCES_FORRAW;Per fitxers RAW
+PREFERENCES_GIMPPATH;Directori d'instal. del GIMP
+PREFERENCES_GTKTHEME;GTK predeterminat
+PREFERENCES_HINT;Consell
+PREFERENCES_HLTHRESHOLD;Llindar pèrdues en clars
+PREFERENCES_ICCDIR;Directori dels perfils ICC
+PREFERENCES_IMPROCPARAMS;Paràm. per omissió de procés d'imatge
+PREFERENCES_INTENT_ABSOLUTE;Colorimètric absolut
+PREFERENCES_INTENT_PERCEPTUAL;Perceptual
+PREFERENCES_INTENT_RELATIVE;Colorimètric relatiu
+PREFERENCES_INTENT_SATURATION;Saturació
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Mostra minifoto RAW interna si no està editada
+PREFERENCES_LIVETHUMBNAILS;Minifotos vives (lent)
+PREFERENCES_METADATA;Metadata
+PREFERENCES_MONITORICC;Perfil del monitor
+PREFERENCES_MULTITABDUALMON;Mode multitreball en segon monitor, si se'n té un
+PREFERENCES_MULTITAB;Mode multitreball
+PREFERENCES_OUTDIRFOLDERHINT;Posa les imatges desades al directori seleccionat
+PREFERENCES_OUTDIRFOLDER;Desa al directori
+PREFERENCES_OUTDIRHINT;<i>Podeu usar les següents cadenes de format:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nAquestes cadenes de format refereixen als directoris i sub-paths del path del fitxer RAW.\n\nPer exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ha estat obert, el significat de les cadenes de format és:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, %p3=/home/tom, ...\n</b><i>\nSi voleu desar la imatge actual on hi ha l'original, escriviu:\n</i><b>%p1/%f\n</b><i>\nSi voleu desar la imatge actual en el directori 'refetes' dins el directori on hi ha l'original, escriviu:\n</i><b>%p1/refetes/%f\n</b><i>\nSi voleu desar la imatge actual en el directori '/home/tom/refetes' conservant el mateix subdirectori de dates, escriviu:\n</i><b>%p2/refetes/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Podeu usar les següents cadenes de format:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nAquestes cadenes de format refereixen als directoris i sub-paths del path del fitxer RAW.\n\nPer exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ha estat obert, el significat de les cadenes de format és:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, %p3=/home/tom, ...\n</b><i>\nSi voleu desar la imatge actual en el directori on hi ha l'original, escriviu:\n</i><b>%p1/%f\n</b><i>\nSi voleu desar la imatge actual en el directori 'refetes' sota el directori on hi ha l'original, escriviu:\n</i><b>%p1/refetes/%f\n</b><i>\nSi voleu desar la imatge actual en el directori '/home/tom/refetes' conservant el mateix subdirectori de dates, escriviu:\n</i><b>%p2/refetes/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
+PREFERENCES_OUTDIR;Directori de sortida
+PREFERENCES_OVERLAY_FILENAMES;Sobreposar noms de fitxer a les minifotos
+PREFERENCES_OVERWRITEOUTPUTFILE;Sobrescriu fitxers en desar-los
+PREFERENCES_PARSEDEXTADDHINT;Escriu una extensió i prem aquí per veure la llista
+PREFERENCES_PARSEDEXTADD;Afegir extensió
+PREFERENCES_PARSEDEXTDELHINT;Esborrar l'extensió seleccionada de la llista
+PREFERENCES_PARSEDEXT;Extensions analitzades
+PREFERENCES_PROFILEHANDLING;Ficant mà als perfils de procés
+PREFERENCES_PROFILELOADPR;Prioritat de càrrega de perfils
+PREFERENCES_PROFILEPRCACHE;Perfil a la mem. cau
+PREFERENCES_PROFILEPRFILE;Perfil juntament amb el fitxer
+PREFERENCES_PROFILESAVECACHE;Desa els paràmetres de procés a la memòria cau
+PREFERENCES_PROFILESAVEINPUT;Desa els paràm. de procés juntament amb la imatge
+PREFERENCES_PROPERTY;Propietat
+PREFERENCES_PSPATH;Directori d'instal. d'Adobe Photoshop
+PREFERENCES_SELECTFONT;Selec. font
+PREFERENCES_SELECTICCDIRDLG;Directori de perfils ICC...
+PREFERENCES_SELECTLANG;Seleccionar idioma
+PREFERENCES_SELECTMONITORPROFDLG;Selecc. perfil ICC del monitor...
+PREFERENCES_SELECTTHEME;Seleccionar tema
+PREFERENCES_SET;FIXA
+PREFERENCES_SHOWBASICEXIF;Mostra inform. bàsica Exif
+PREFERENCES_SHOWDATETIME;Indica data i hora
+PREFERENCES_SHOWONLYRAW;Exposa només fitxers RAW
+PREFERENCES_SHTHRESHOLD;Llindar pèrdues en foscos
+PREFERENCES_SINGLETABVERTAB;Mode simple treball, vistes verticals
+PREFERENCES_SINGLETAB;Mode simple treball
+PREFERENCES_SND_BATCHQUEUEDONE;Procs. de la cua fets
+PREFERENCES_SND_HELP;Poseu el path o bé no res (res=silenci). A Windows useu "SystemDefault", "SystemAsterisk" etc. pels sons del sistema.
+PREFERENCES_SND_LNGEDITPROCDONE;Process. d'editor fet
+PREFERENCES_STARTUPIMDIR;Directori inicial de les imatges
+PREFERENCES_TAB_BROWSER;Gestor de fitxers
+PREFERENCES_TAB_COLORMGR;Maneig del color
+PREFERENCES_TAB_GENERAL;General
+PREFERENCES_TAB_IMPROC;Processament de la imatge
+PREFERENCES_TAB_OUTPUT;Opcions de sortida
+PREFERENCES_TAB_SOUND;Sons
+PREFERENCES_THUMBSIZE;Tamany minifoto
+PREFERENCES_TUNNELMETADATA;Copia IPTC/XMP sense canvis al fitxer de sortida (en treball amb altres progs.)
+PREFERENCES_USESYSTEMTHEME; Use tema del sistema
+PREFERENCES_WORKFLOW;Flux de treball
+PROFILEPANEL_FILEDLGFILTERANY;Tots els fitxers
+PROFILEPANEL_FILEDLGFILTERPP;Perfils de postprocés
+PROFILEPANEL_LABEL;Perfils de postprocés
+PROFILEPANEL_LOADDLGLABEL;Carrega paràm. de postprocés...
+PROFILEPANEL_PCUSTOM;Especial
+PROFILEPANEL_PFILE;Del fitxer
+PROFILEPANEL_PLASTPHOTO;Darrera foto
+PROFILEPANEL_PLASTSAVED;Darrera desada
+PROFILEPANEL_PROFILE;Perfil
+PROFILEPANEL_SAVEDLGLABEL;Desar paràm. de postprocés...
+PROFILEPANEL_TOOLTIPCOPY;Copia perfil actual al portapapers
+PROFILEPANEL_TOOLTIPLOAD;Carrega perfil d'un fitxer
+PROFILEPANEL_TOOLTIPPASTE; Enganxa perfil del portapapers
+PROFILEPANEL_TOOLTIPSAVE;Desa l'actual com a perfil
+PROGRESSBAR_BADPIXELS;Píxels dolents...
+PROGRESSBAR_CACORRECTION;Correcció AC...
+PROGRESSBAR_DARKFRAME;Marc fost...
+PROGRESSBAR_DECODING;Decodificant fitxer RAW...
+PROGRESSBAR_DEMOSAICING;Demosaicant...
+PROGRESSBAR_GREENEQUIL;Equilibri verd...
+PROGRESSBAR_LINEDENOISE;Línia desoroll...
+PROGRESSBAR_LOADINGTHUMBS;Carregant minifotos...
+PROGRESSBAR_LOADING;Carregant imatge...
+PROGRESSBAR_LOADJPEG;Carregant fitxer JPEG...
+PROGRESSBAR_LOADPNG;Carregant fitxer PNG...
+PROGRESSBAR_LOADTIFF;Carregant fitxer TIFF...
+PROGRESSBAR_PROCESSING;Processant imatge...
+PROGRESSBAR_READY;A punt.
+PROGRESSBAR_SAVEJPEG;Desant fitxer JPEG...
+PROGRESSBAR_SAVEPNG;Desant fitxer PNG...
+PROGRESSBAR_SAVETIFF;Desant fitxer TIFF...
+PROGRESSDLG_LOADING;Carregant fitxer...
+PROGRESSDLG_PROCESSING;Processant imatge...
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Perfil canviat al navegador
+PROGRESSDLG_SAVING;Desant fitxer...
+QINFO_FOCALLENGTH;Distància focal
+QINFO_ISO;ISO
+QINFO_LENS;Objectiu
+QINFO_NOEXIF;No hi ha dades Exif.
+SAVEDLG_AUTOSUFFIX;Afegeix automàticament un sufix si el fitxer ja hi és
+SAVEDLG_FILEFORMAT;Format del fitxer
+SAVEDLG_JPEGQUAL;Qualitat JPEG
+SAVEDLG_JPGFILTER;Fitxers JPEG
+SAVEDLG_PNGCOMPR;Compressió PNG
+SAVEDLG_PNGFILTER;Fitxers PNG
+SAVEDLG_PUTTOQUEUEHEAD;Posa al principi de la cua de procés
+SAVEDLG_PUTTOQUEUETAIL;Posa a la fi de la cua de procés
+SAVEDLG_PUTTOQUEUE;Posa a la cua de procés
+SAVEDLG_SAVEIMMEDIATELY;Desa ara mateix
+SAVEDLG_SAVESPP;Desa els paràmetres de procés amb la imatge
+SAVEDLG_TIFFFILTER;Fitxers TIFF
+SAVEDLG_TIFFUNCOMPRESSED;TIFF no comprimit
+TOOLBAR_TOOLTIP_CROP;Selecció retall (Tecla: C)
+TOOLBAR_TOOLTIP_HAND;Eina mà (Tecla: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Selecc. línia recta (Tecla: S)
+TOOLBAR_TOOLTIP_WB;Afina balanç de blancs (Tecla: W)
+TP_CACORRECTION_BLUE;Blau
+TP_CACORRECTION_LABEL;Correcció A. C. (Aberració Cromàtica)
+TP_CACORRECTION_RED;Vermell
+TP_CHMIXER_BLUE;Blau
+TP_CHMIXER_GREEN;Verd
+TP_CHMIXER_LABEL;Barrejador de canals
+TP_CHMIXER_RED;Vermell
+TP_CHROMATABERR_LABEL;Aberració cromàtica
+TP_COARSETRAF_DEGREE;graus:
+TP_COARSETRAF_TOOLTIP_HFLIP;Inversió horitzontal
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotació esquerra
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotació dreta
+TP_COARSETRAF_TOOLTIP_VFLIP;Inversió vertical
+TP_COLORBOOST_ACHANNEL;Canal "a"
+TP_COLORBOOST_AMOUNT;Quantitat
+TP_COLORBOOST_AVOIDCOLORCLIP;Evitar pèrdua per color
+TP_COLORBOOST_BCHANNEL;Canal "b"
+TP_COLORBOOST_CHANNEL;Canal
+TP_COLORBOOST_CHSEPARATE;independent
+TP_COLORBOOST_ENABLESATLIMITER;Activa limitador de saturació
+TP_COLORBOOST_LABEL;Augment de color
+TP_COLORBOOST_SATLIMIT;Saturació límit
+TP_COLORDENOISE_EDGESENSITIVE;Sensibilitat vores
+TP_COLORDENOISE_EDGETOLERANCE;Tolerància vores
+TP_COLORDENOISE_LABEL;Reducció del soroll de color
+TP_COLORDENOISE_RADIUS;Radi
+TP_COLORSHIFT_BLUEYELLOW;Blau-Groc
+TP_COLORSHIFT_GREENMAGENTA;Verd-Magenta
+TP_COLORSHIFT_LABEL;Canvi de color
+TP_CROP_DPI;DPI=
+TP_CROP_FIXRATIO;Fixa proporció:
+TP_CROP_GTDIAGONALS;Regla de diagonals
+TP_CROP_GTHARMMEANS1;Tipus armònic 1
+TP_CROP_GTHARMMEANS2;Tipus armònic 2
+TP_CROP_GTHARMMEANS3;Tipus armònic 3
+TP_CROP_GTHARMMEANS4;Tipus armònic 4
+TP_CROP_GTNONE;No cap
+TP_CROP_GTRULETHIRDS;Regla dels terços
+TP_CROP_GUIDETYPE;Tipus de guia:
+TP_CROP_H;A
+TP_CROP_LABEL;Retall
+TP_CROP_PPI;PPI=
+TP_CROP_SELECTCROP;    Selecc. retall
+TP_CROP_W;L
+TP_CROP_X;x
+TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Auto-selecció
+TP_DARKFRAME_LABEL;Marc fosc
+TP_DEFRINGE_LABEL;Desserrella
+TP_DEFRINGE_RADIUS;Radi
+TP_DEFRINGE_THRESHOLD;llindar
+TP_DETAIL_AMOUNT;Quantitat
+TP_DIRPYRDENOISE_CHROMA;Crominància
+TP_DIRPYRDENOISE_GAMMA;Gama
+TP_DIRPYRDENOISE_LABEL;Reducció de soroll
+TP_DIRPYRDENOISE_LUMA;Luminància
+TP_DIRPYREQUALIZER_LABEL;Contrast per grau de detall
+TP_DIRPYREQUALIZER_LUMACOARSEST;Més bast
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
+TP_DIRPYREQUALIZER_LUMAFINEST;Més fi
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+TP_DIRPYREQUALIZER_THRESHOLD;Llindar
+TP_DISTORTION_AMOUNT;Quantitat
+TP_DISTORTION_AUTO;Auto correcció de distorsió
+TP_DISTORTION_AUTO_TIP;(Experimental) Correc. automàtica de distorsió de lent per algunes càmeres (M4/3, algunes compactes DC, etc.)
+TP_DISTORTION_LABEL;Distorsió
+TP_EQUALIZER_CONTRAST_MINUS;Contrast-
+TP_EQUALIZER_CONTRAST_PLUS;Contrast+
+TP_EQUALIZER_FINEST;més fi
+TP_EQUALIZER_LABEL;Equalitzador d'ónula
+TP_EQUALIZER_LARGEST;més bast
+TP_EQUALIZER_NEUTRAL;Neutral
+TP_EXPOSCORR_LABEL;Punt blanc raw
+TP_EXPOSURE_AUTOLEVELS;Nivells automàtics
+TP_EXPOSURE_BLACKLEVEL;Negre
+TP_EXPOSURE_BRIGHTNESS;Brillantor
+TP_EXPOSURE_CLIP;Retall
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Llindar recup. clars intensos
+TP_EXPOSURE_COMPRHIGHLIGHTS;Compressió de clars
+TP_EXPOSURE_COMPRSHADOWS;Compressió de foscos
+TP_EXPOSURE_CONTRAST;Contrast
+TP_EXPOSURE_CURVEEDITOR;Corba de to
+TP_EXPOSURE_EXPCOMP;Compens. d'exposició
+TP_EXPOSURE_LABEL;Exposició
+TP_EXPOSURE_SATURATION;Saturació
+TP_FLATFIELD_AUTOSELECT;Auto selecció
+TP_FLATFIELD_BLURRADIUS;Radi borrositat
+TP_FLATFIELD_BLURTYPE;Tipus borrositat
+TP_FLATFIELD_BT_AREA;Àrea
+TP_FLATFIELD_BT_HORIZONTAL;Horitzontal
+TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horitz.
+TP_FLATFIELD_BT_VERTICAL;Vertical
+TP_FLATFIELD_LABEL;Camp pla
+TP_GAMMA_CURV;gama
+TP_GAMMA_FREE;Lliure gama
+TP_GAMMA_OUTPUT;Sortida gama
+TP_GAMMA_SLOP;Inclinació (linear)
+TP_HLREC_CIELAB;Superposició CIELab
+TP_HLREC_COLOR;Propagació de color
+TP_HLREC_LABEL;Recuperació de clars
+TP_HLREC_LUMINANCE;Recuperació de luminància
+TP_HLREC_METHOD;Mètode:
+TP_HSVEQUALIZER1;Vermell
+TP_HSVEQUALIZER2;Groc
+TP_HSVEQUALIZER3;Llima
+TP_HSVEQUALIZER4;Verd
+TP_HSVEQUALIZER5;Aquós
+TP_HSVEQUALIZER6;Blau
+TP_HSVEQUALIZER7;Porpra
+TP_HSVEQUALIZER8;Magenta
+TP_HSVEQUALIZER_CHANNEL;Canal HSV
+TP_HSVEQUALIZER_HUE;H
+TP_HSVEQUALIZER_LABEL;HSV Equalitzador
+TP_HSVEQUALIZER_NEUTRAL;Neutral
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
+TP_ICM_FILEDLGFILTERANY;Tots els fitxers
+TP_ICM_FILEDLGFILTERICM;Fitxers de perfils ICC
+TP_ICM_GAMMABEFOREINPUT;El perfil aplica Gamma
+TP_ICM_INPUTCAMERA;Propi de la càmera
+TP_ICM_INPUTCUSTOM;Especial
+TP_ICM_INPUTDLGLABEL;Selecc. perfil d'entrada ICC...
+TP_ICM_INPUTEMBEDDED;Usar l'encastat si és possible
+TP_ICM_INPUTNONE;Sense perfil
+TP_ICM_INPUTPROFILE;Perfil d'entrada
+TP_ICM_LABEL;ICM
+TP_ICM_NOICM;No cap ICM: Sortida  sRGB
+TP_ICM_OUTPUTDLGLABEL;Selecc. perfil de sortida ICC...
+TP_ICM_OUTPUTPROFILE;Perfil de sortida
+TP_ICM_SAVEREFERENCE;Desa com a imatge de ref. als perfils
+TP_ICM_WORKINGPROFILE;Perfil de treball
+TP_IMPULSEDENOISE_LABEL;Impuls Reducció de Soroll
+TP_IMPULSEDENOISE_THRESH;Llindar d'impuls RS
+TP_LABCURVE_AVOIDCOLORCLIP;Evita estralls de color
+TP_LABCURVE_BRIGHTNESS;Brillantor
+TP_LABCURVE_CONTRAST;Contrast
+TP_LABCURVE_CURVEEDITOR;Corba de luminància
+TP_LABCURVE_ENABLESATLIMITER;Aplica limitador de saturació
+TP_LABCURVE_LABEL;Ajustos Lab
+TP_LABCURVE_SATLIMIT;Saturació límit
+TP_LABCURVE_SATURATION;Saturació
+TP_LENSGEOM_AUTOCROP;Auto cropa
+TP_LENSGEOM_FILL;Auto omple
+TP_LENSGEOM_LABEL;Lent / Geometria
+TP_LUMACURVE_BLACKLEVEL;Negre
+TP_LUMACURVE_BRIGHTNESS;Brillantor
+TP_LUMACURVE_COMPRHIGHLIGHTS;Compressió de clars
+TP_LUMACURVE_COMPRSHADOWS;Compressió de foscos
+TP_LUMACURVE_CONTRAST;Contrast
+TP_LUMACURVE_CURVEEDITOR;Corba de luminància
+TP_LUMACURVE_LABEL;Corba de luminància
+TP_LUMADENOISE_EDGETOLERANCE;Tolerància vores
+TP_LUMADENOISE_LABEL;Reducció de soroll de luminància
+TP_LUMADENOISE_RADIUS;Radi
+TP_PERSPECTIVE_HORIZONTAL;Horitzontal
+TP_PERSPECTIVE_LABEL;Perspectiva
+TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PREPROCESS_GREENEQUIL;Equilibri verd
+TP_PREPROCESS_HOTDEADPIXFILT;Aplica filtre píxels cremats/morts
+TP_PREPROCESS_LABEL;Preprocessant
+TP_PREPROCESS_LINEDENOISE;Filtre línia dessoroll
+TP_PREPROCESS_NO_FOUND;No trobat
+TP_RAWCACORR_AUTO;Auto correcció
+TP_RAWCACORR_CABLUE;Blau
+TP_RAWCACORR_CARED;Vermell
+TP_RAWEXPOS_LINEAR;Factor de correcció linear
+TP_RAWEXPOS_PRESER;Correc. clars intensos preservant (EV)
+TP_RAW_DCBENHANCE;Aplica pas de millora  DCB
+TP_RAW_DCBITERATIONS;Nombre d'iteracions DCB
+TP_RAW_DMETHOD;Mètode
+TP_RAW_FALSECOLOR;Passos de supressió del fals color
+TP_RAW_LABEL;Demosaicant
+TP_RESIZE_APPLIESTO;S'aplica a:
+TP_RESIZE_BICUBICSF;Bicúbic (Fluix)
+TP_RESIZE_BICUBICSH;Bicúbic (Més intens)
+TP_RESIZE_BICUBIC;Bicúbic
+TP_RESIZE_BILINEAR;Bilinear
+TP_RESIZE_CROPPEDAREA;Àrea cropada
+TP_RESIZE_DOWNSCALEB;Empetitir (millor)
+TP_RESIZE_DOWNSCALEF;Empetitir (ràpid)
+TP_RESIZE_FITBOX;Capsa d'inclusió
+TP_RESIZE_FULLIMAGE;Imatge sencera
+TP_RESIZE_FULLSIZE;Tamany imatge sencera:
+TP_RESIZE_HEIGHT;Alt
+TP_RESIZE_H;A:
+TP_RESIZE_LABEL;Canviar tamany
+TP_RESIZE_LANCZOS;Lanczos
+TP_RESIZE_METHOD;Mètode:
+TP_RESIZE_NEAREST;Més proper
+TP_RESIZE_SCALE;Escala
+TP_RESIZE_SPECIFY;Especifica:
+TP_RESIZE_WIDTH;Ample
+TP_RESIZE_W;L:
+TP_ROTATE_AUTOCROP;Auto retalla
+TP_ROTATE_DEGREE;Graus
+TP_ROTATE_FILL;Omple
+TP_ROTATE_LABEL;Rota
+TP_ROTATE_SELECTLINE;    Selecc. línia recta
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Clars intensos
+TP_SHADOWSHLIGHTS_HLTONALW;Amplada de to
+TP_SHADOWSHLIGHTS_LABEL;Foscos/Clars intensos
+TP_SHADOWSHLIGHTS_LOCALCONTR;Contrast local
+TP_SHADOWSHLIGHTS_RADIUS;Radi
+TP_SHADOWSHLIGHTS_SHADOWS;Foscos
+TP_SHADOWSHLIGHTS_SHTONALW;Amplada de to
+TP_SHARPENING_AMOUNT;Quantitat
+TP_SHARPENING_EDRADIUS;Radi
+TP_SHARPENING_EDTOLERANCE;Tolerància vores
+TP_SHARPENING_HALOCONTROL;Control de halo
+TP_SHARPENING_HCAMOUNT;Quantitat
+TP_SHARPENING_LABEL;Enfocant
+TP_SHARPENING_METHOD;Mètode
+TP_SHARPENING_ONLYEDGES;Enfocar només vores
+TP_SHARPENING_RADIUS;Radi
+TP_SHARPENING_RLD;RL Deconvolució
+TP_SHARPENING_RLD_AMOUNT;Quantitat
+TP_SHARPENING_RLD_DAMPING;Ablaniment
+TP_SHARPENING_RLD_ITERATIONS;Iteracions
+TP_SHARPENING_THRESHOLD;Llindar
+TP_SHARPENING_USM;Màscara d'enfocament
+TP_VIGNETTING_AMOUNT;Quantitat
+TP_VIGNETTING_CENTER;Centre
+TP_VIGNETTING_CENTER_X;Centre X
+TP_VIGNETTING_CENTER_Y;Centre Y
+TP_VIGNETTING_LABEL;Correcció vorafosc
+TP_VIGNETTING_RADIUS;Radi
+TP_VIGNETTING_STRENGTH;Força
+TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_CAMERA;Càmera
+TP_WBALANCE_CUSTOM;Especial
+TP_WBALANCE_GREEN;Tint
+TP_WBALANCE_LABEL;Balanç de blancs
+TP_WBALANCE_METHOD;Mètode
+TP_WBALANCE_SIZE;Tamany:
+TP_WBALANCE_SPOTWB;Punt b. blancs
+TP_WBALANCE_TEMPERATURE;Temperatura
+ZOOMBAR_DETAIL;Detall
+ZOOMBAR_HUGE;Enorme
+ZOOMBAR_LARGE;Gran
+ZOOMBAR_NORMAL;Normal
+ZOOMBAR_PREVIEW;Previsualització
+ZOOMBAR_SCALE;Escala
+ZOOMBAR_SMALL;Petit
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Obre una altra finestra de detall
+ZOOMPANEL_ZOOM100;Zoom 100% <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;Ajusta a la finestra <b>F</b>
+ZOOMPANEL_ZOOMIN;Apropa <b>+</b>
+ZOOMPANEL_ZOOMOUT;Allunya <b>-</b>
+
+#00 Catala
+#01 10.10.2009: JMG
+# Cropar: Seleccionar una àrea per a treballar i excloure tota la resta
+# Defringe: desserrellar
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
+!FILEBROWSER_EXEC_CPB;Run custom profile builder
+!FILEBROWSER_POPUPCOLORLABEL0;Label: None
+!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
+!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
+!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
+!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
+!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
+!FILEBROWSER_POPUPCOLORLABEL;Color label
+!FILEBROWSER_POPUPFILEOPERATIONS;File Operations
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
+!FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
+!FILEBROWSER_QUERYHINT;Type a part of filename to search by n<b>Ctrl-f</b> set focus (in File Browser);n<b>Enter</b> to find
+!FILEBROWSER_QUERYLABEL; Find:
+!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
+!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
+!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
+!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
+!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
+!FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
+!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
+!HISTOGRAM_BUTTON_BAR;RGB
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
+!HISTORY_MSG_130;Auto Distorion
+!HISTORY_MSG_131;Noise Reduction Luma
+!HISTORY_MSG_132;Noise Reduction Chroma
+!HISTORY_MSG_133;Gamma
+!HISTORY_MSG_134;Gamma Position
+!HISTORY_MSG_135;Gamma Free
+!HISTORY_MSG_136;Gamma Slope
+!HISTORY_MSG_137;Black level green 1
+!HISTORY_MSG_138;Black level red
+!HISTORY_MSG_139;Black level blue
+!HISTORY_MSG_140;Black level green 2
+!HISTORY_MSG_141;Black level green together
+!HISTORY_MSG_142;Edges sharpening - iterations
+!HISTORY_MSG_143;Edges sharpening - quantity
+!HISTORY_MSG_144;Microcontrast - quantity
+!HISTORY_MSG_145;Microcontrast - uniformity
+!HISTORY_MSG_146;Edges Sharpening
+!HISTORY_MSG_147;Edges sharpening - luminance only
+!HISTORY_MSG_148;Microcontrast
+!HISTORY_MSG_149;Microcontrast - 3x3 matrix
+!HISTORY_MSG_150;Post demosaic artifact/noise reduction
+!HISTORY_MSG_151;Vibrance
+!HISTORY_MSG_152;Vibrance - Pastel tones
+!HISTORY_MSG_153;Vibrance - Saturated tones
+!HISTORY_MSG_154;Vibrance - Protect skin tones
+!HISTORY_MSG_155;Vibrance - Avoid color drift
+!HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
+!HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
+!MAIN_MSG_EMPTYFILENAME;Filename unspecified!
+!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
+!PARTIALPASTE_EPD;Tone Mapping
+!PARTIALPASTE_ICMGAMMA;Output gamma
+!PARTIALPASTE_RAWEXPOS_BLACK;Black Level
+!PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!PARTIALPASTE_SHARPENEDGE;Edges
+!PARTIALPASTE_SHARPENMICRO;Microcontrast
+!PARTIALPASTE_VIBRANCE;Vibrance
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDPATH;Executable path
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
+!PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
+!PREFERENCES_LANGAUTODETECT;Use OS language setting
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
+!PREFERENCES_MENUGROUPLABEL;Group Labeling
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
+!PREFERENCES_MENUGROUPRANK;Group Ranking
+!PREFERENCES_MENUOPTIONS;Menu Options
+!PREFERENCES_PANFACTORFRAME;Pan rate amplification
+!PREFERENCES_PANFACTORLABEL;Factor
+!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
+!PREFERENCES_SLIMUI;Slim interface
+!PREFERENCES_SND_TRESHOLDSECS;after secs
+!PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
+!PREFERENCES_TP_LABEL;Tool panel:
+!PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
+!TP_CROP_GTGRID;Grid
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
+!TP_EXPO_AFTER; After interpolation (before RGB conversion)
+!TP_HLREC_BLEND;Blend
+!TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
+!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
+!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
+!TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
+!TP_RAWEXPOS_BLACKONE;Black Level: Red
+!TP_RAWEXPOS_BLACKS;Black Levels
+!TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
+!TP_RAWEXPOS_BLACKTWO;Black Level: Blue
+!TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
+!TP_RAWEXPOS_TWOGREEN;Two greens together
+!TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!TP_SHARPENEDGE_AMOUNT;Quantity
+!TP_SHARPENEDGE_LABEL;Edges
+!TP_SHARPENEDGE_PASSES;Iterations
+!TP_SHARPENEDGE_THREE;Luminance only
+!TP_SHARPENMICRO_AMOUNT;Quantity
+!TP_SHARPENMICRO_LABEL;Microcontrast
+!TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
+!TP_SHARPENMICRO_UNIFORMITY;Uniformity
+!TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_LABEL;Vibrance
+!TP_VIBRANCE_PASTELS;Pastel tones
+!TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
+!TP_VIBRANCE_PROTECTSKINS;Protect skin tones
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_SATURATED;Saturated tones

@@ -1,0 +1,12 @@
+=======================================================================
+speed of KLT versus OpenCV feature tracker on a 2.8 GHz P4 computer:
+
+                        KLT      OpenCV
+---------------------------------------------
+track (100)             54 ms     47 ms
+track/replace (100)     95 ms     82 ms
+track (1000)            79 ms     59 ms
+track/replace (1000)   139 ms    103 ms
+
+The number of features is given in parentheses.  These times were computed by running the code on the same image multiple times in succession, then averaging.  As a result, they may not reflect the overhead of loading the image and cache misses that would occur in a real scenario.
+======================================================================= 
