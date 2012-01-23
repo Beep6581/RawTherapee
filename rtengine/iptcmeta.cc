@@ -25,11 +25,16 @@ IPTCMeta::IPTCtagsList_t IPTCMeta::IPTCtags;
 IPTCPairList_t IPTCMeta::IPTCScene;
 IPTCPairList_t IPTCMeta::IPTCSubject;
 IPTCPairList_t IPTCMeta::IPTCGenre;
-IPTCPairList_t IPTCMeta::IPTCReleaseStatus;
+IPTCPairList_t IPTCMeta::IPTCModelReleaseStatus;
+IPTCPairList_t IPTCMeta::IPTCPropertyReleaseStatus;
 IPTCPairList_t IPTCMeta::IPTCCopyrightStatus;
 IPTCPairList_t IPTCMeta::IPTCWorldRegion;
 IPTCPairList_t IPTCMeta::IPTCISO3166;
 IPTCPairList_t IPTCMeta::IPTCBoolean;
+IPTCPairList_t IPTCMeta::IPTCUrgency;
+IPTCPairList_t IPTCMeta::IPTCRightsMarked;
+IPTCPairList_t IPTCMeta::IPTCMinorModelAgeDisclosure;
+
 
 const char *kIPTCArtworkRights  = "Iptc4xmpExt:ArtworkOrObjectDetails/Iptc4xmpExt:AOCopyrightNotice";
 const char *kIPTCArtworkCreator = "Iptc4xmpExt:ArtworkOrObjectDetails/Iptc4xmpExt:AOCreator";
@@ -78,14 +83,15 @@ const char *kIPTCLocCreateCtry  = "Iptc4xmpExt:LocationCreated/Iptc4xmpExt:Count
 const char *kIPTCLocCreateState = "Iptc4xmpExt:LocationCreated/Iptc4xmpExt:ProvinceState";
 const char *kIPTCLocCreateSubloc= "Iptc4xmpExt:LocationCreated/Iptc4xmpExt:Sublocation";
 const char *kIPTCLocCreateRegion= "Iptc4xmpExt:LocationCreated/Iptc4xmpExt:WorldRegion";
-const char *kIPTCMinorDisclosure= "plus:MinorModelAgeDisclosure";
+const char *kIPTCMinorModelAgeDisclosure= "plus:MinorModelAgeDisclosure";
 const char *kIPTCMaxHeight  = "Iptc4xmpExt:MaxAvailHeight";
 const char *kIPTCMaxWidth   = "Iptc4xmpExt:MaxAvailWidth";
 const char *kIPTCModelAge   = "Iptc4xmpExt:ModelAge";
 const char *kIPTCModelInfo  = "Iptc4xmpExt:AddlModelInfo";
 const char *kIPTCModelReleaseID = "plus:ModelReleaseID";
 const char *kIPTCModelReleaseSt = "plus:ModelReleaseStatus";
-const char *kIPTCOrganization   = "Iptc4xmpExt:OrganisationInImageCode";
+const char *kIPTCOrganisationCode   = "Iptc4xmpExt:OrganisationInImageCode";
+const char *kIPTCOrganisationName   = "Iptc4xmpExt:OrganisationInImageName";
 const char *kIPTCPerson     = "Iptc4xmpExt:PersonInImage";
 const char *kIPTCPlusVersion    = "plus:Version";
 const char *kIPTCPropertyRelID  = "plus:PropertyReleaseID";
@@ -166,7 +172,8 @@ void IPTCMeta::initIPTCMeta()
     IPTCtags[kIPTCModelInfo]      = IPTCMeta(kIPTCModelInfo,"IPTC_MODELINFO","IPTC_MODELINFO_HINT");
     IPTCtags[kIPTCModelAge]       = IPTCMeta(kIPTCModelAge,"IPTC_MODELAGE","IPTC_MODELAGE_HINT",Exiv2::xmpBag);
     IPTCtags[kIPTCPerson]         = IPTCMeta(kIPTCPerson,"IPTC_PERSON","IPTC_PERSON_HINT",Exiv2::xmpBag);
-    IPTCtags[kIPTCOrganization]   = IPTCMeta(kIPTCOrganization,"IPTC_ORGANIZATION","IPTC_ORGANIZATION_HINT");
+    IPTCtags[kIPTCOrganisationCode]   = IPTCMeta(kIPTCOrganisationCode,"IPTC_ORGANISATIONCODE","IPTC_ORGANISATIONCODE_HINT");
+    IPTCtags[kIPTCOrganisationName]   = IPTCMeta(kIPTCOrganisationName,"IPTC_ORGANISATIONNAME","IPTC_ORGANISATIONNAME_HINT");
     IPTCtags[kIPTCCVterm]         = IPTCMeta(kIPTCCVterm,"IPTC_VOCABULARY","IPTC_VOCABULARY_HINT",Exiv2::xmpBag );
     IPTCtags[kIPTCEvent]          = IPTCMeta(kIPTCEvent,"IPTC_EVENT","IPTC_EVENT_HINT",Exiv2::langAlt);
 
@@ -200,7 +207,7 @@ void IPTCMeta::initIPTCMeta()
     IPTCtags[kIPTCLicensor]       = IPTCMeta(kIPTCLicensor,"IPTC_LICENSOR","IPTC_LICENSOR_HINT");
     IPTCtags[kIPTCImageSupplier]  = IPTCMeta(kIPTCImageSupplier,"IPTC_IMAGESUPPLIER","IPTC_IMAGESUPPLIER_HINT");
     IPTCtags[kIPTCGUIDSupplier]   = IPTCMeta(kIPTCGUIDSupplier,"IPTC_IMAGESUPPLIERGUID","IPTC_IMAGESUPPLIERGUID_HINT");
-    IPTCtags[kIPTCMinorDisclosure]= IPTCMeta(kIPTCMinorDisclosure,"IPTC_MINORDISCLOSURE","IPTC_MINORDISCLOSURE_HINT");
+    IPTCtags[kIPTCMinorModelAgeDisclosure]= IPTCMeta(kIPTCMinorModelAgeDisclosure,"IPTC_MINORDISCLOSURE","IPTC_MINORDISCLOSURE_HINT");
     IPTCtags[kIPTCModelReleaseID] = IPTCMeta(kIPTCModelReleaseID,"IPTC_MODELRELID","IPTC_MODELRELID_HINT", Exiv2::xmpBag);
     IPTCtags[kIPTCModelReleaseSt] = IPTCMeta(kIPTCModelReleaseSt,"IPTC_MODELRELSTATUS","IPTC_MODELRELSTATUS_HINT");
     IPTCtags[kIPTCPropertyRelID]  = IPTCMeta(kIPTCPropertyRelID,"IPTC_PROPERTYRELID","IPTC_PROPERTYRELID_HINT", Exiv2::xmpBag);
@@ -217,7 +224,8 @@ void IPTCMeta::initIPTCMeta()
     IPTCtags[kIPTCMaxHeight].readOnly = true;
     IPTCtags[kIPTCMaxWidth]       = IPTCMeta(kIPTCMaxWidth,"IPTC_IMAGEMAXWIDTH","IPTC_IMAGEMAXWIDTH_HINT");
     IPTCtags[kIPTCMaxWidth].readOnly = true;
-    // PLUS versione is 1.2.0
+
+    // PLUS version is 1.2.0
     IPTCtags[kIPTCPlusVersion]    = IPTCMeta(kIPTCPlusVersion,"IPTC_PLUSVERSION","IPTC_PLUSVERSION_HINT");
     IPTCtags[kIPTCPlusVersion].readOnly = true;
 
@@ -309,15 +317,27 @@ void IPTCMeta::initIPTCMeta()
     IPTCGenre["Feature"] = "The object content is about a particular event or individual that may not be significant to the current breaking news.";
     // ...other
 
-    // Release status
-    IPTCReleaseStatus["None"] = "No release is available";
-    IPTCReleaseStatus["Not Applicable"] = "There are no items requiring a release";
-    IPTCReleaseStatus["Unlimited Property Releases"] = "Releases are available for all";
-    IPTCReleaseStatus["Incomplete Model Releases"] = "There are releases only for some";
+    // Model Release status
+    IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-NON"] = "None";
+    IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-NAP"] = "Not Applicable";
+    IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-UPR"] = "Unlimited Model Releases";
+    IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-LPR"] = "Limited or Incomplete Model Release";
 
-    IPTCCopyrightStatus["Unknown"]="Unknown status";
-    IPTCCopyrightStatus["Protected"] = "Resource is protected by copyright";
-    IPTCCopyrightStatus["Public Domain"] ="Public Domain resource";
+    // Property Release status
+    IPTCPropertyReleaseStatus["http://ns.useplus.org/ldf/vocab/PR-NON"] = "None";
+    IPTCPropertyReleaseStatus["http://ns.useplus.org/ldf/vocab/PR-NAP"] = "Not Applicable";
+    IPTCPropertyReleaseStatus["http://ns.useplus.org/ldf/vocab/PR-UPR"] = "Unlimited Property Releases";
+    IPTCPropertyReleaseStatus["http://ns.useplus.org/ldf/vocab/PR-LPR"] = "Limited or Incomplete Property Release";
+
+    // CopyrightStatus
+    IPTCCopyrightStatus["http://ns.useplus.org/ldf/vocab/CS-PRO"] = "Protected";
+    IPTCCopyrightStatus["http://ns.useplus.org/ldf/vocab/CS-PUB"] = "Public Domain";
+    IPTCCopyrightStatus["http://ns.useplus.org/ldf/vocab/CS-UNK"] = "Unknown";
+
+    // RightsMarked status
+    IPTCRightsMarked["True"]  = "Copyrighted";
+    IPTCRightsMarked["False"] = "Public Domain";
+    IPTCRightsMarked[""]      = "Unknown";
 
     // World regions/continent
     IPTCWorldRegion["r001"] = "World: The whole world";
@@ -331,6 +351,33 @@ void IPTCMeta::initIPTCMeta()
 
     IPTCBoolean["True"]="";
     IPTCBoolean["False"]="";
+
+    // Urgency status
+    IPTCUrgency[""] = "(None)";
+    IPTCUrgency["1"] = "High";
+    IPTCUrgency["2"] = "2";
+    IPTCUrgency["3"] = "3";
+    IPTCUrgency["4"] = "4";
+    IPTCUrgency["5"] = "Normal";
+    IPTCUrgency["6"] = "6";
+    IPTCUrgency["7"] = "7";
+    IPTCUrgency["8"] = "Low";
+
+    // MinorModelAgeDisclosure
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-UNK"] = "(Age Unknown)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A25"] = "(Age 25 or Over)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A24"] = "(Age 24)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A23"] = "(Age 23)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A22"] = "(Age 22)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A21"] = "(Age 21)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A20"] = "(Age 20)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A19"] = "(Age 19)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A18"] = "(Age 18)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A17"] = "(Age 17)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A16"] = "(Age 16)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A15"] = "(Age 15)";
+    IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-U14"] = "(Age 14 or Under)";
+
 
     IPTCISO3166["ABW"] = "Aruba";
     IPTCISO3166["AFG"] = "Afghanistan";

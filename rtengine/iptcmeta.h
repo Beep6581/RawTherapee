@@ -75,12 +75,13 @@ extern const char *kIPTCLocCreateSubloc;
 extern const char *kIPTCLocCreateRegion;
 extern const char *kIPTCMaxHeight;
 extern const char *kIPTCMaxWidth;
-extern const char *kIPTCMinorDisclosure;
+extern const char *kIPTCMinorModelAgeDisclosure;
 extern const char *kIPTCModelAge;
 extern const char *kIPTCModelInfo;
 extern const char *kIPTCModelReleaseID;
 extern const char *kIPTCModelReleaseSt;
-extern const char *kIPTCOrganization;
+extern const char *kIPTCOrganisationCode;
+extern const char *kIPTCOrganisationName;
 extern const char *kIPTCPerson;
 extern const char *kIPTCPlusVersion;
 extern const char *kIPTCReference;
@@ -130,11 +131,15 @@ public:
 	static IPTCPairList_t IPTCScene; // Scene codes
 	static IPTCPairList_t IPTCSubject; // Subject codes
 	static IPTCPairList_t IPTCGenre; // Genre
-	static IPTCPairList_t IPTCReleaseStatus; // Release status values
+	static IPTCPairList_t IPTCModelReleaseStatus;    // Model Release status values
+	static IPTCPairList_t IPTCPropertyReleaseStatus; // Property Release status values
 	static IPTCPairList_t IPTCCopyrightStatus; // Copyright status values
 	static IPTCPairList_t IPTCWorldRegion;
 	static IPTCPairList_t IPTCISO3166;
 	static IPTCPairList_t IPTCBoolean;
+	static IPTCPairList_t IPTCUrgency;
+	static IPTCPairList_t IPTCRightsMarked;
+	static IPTCPairList_t IPTCMinorModelAgeDisclosure;
 
 	static void initIPTCMeta();
 };
