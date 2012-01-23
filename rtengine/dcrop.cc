@@ -89,8 +89,8 @@ void Crop::update (int todo) {
 
     bool needstransform  = parent->ipf.needsTransform();
 
-    if (todo & M_INIT) {
-        Glib::Mutex::Lock lock(parent->minit);  // Also used in inproccoord
+    if (todo & (M_INIT|M_LINDENOISE)) {
+        Glib::Mutex::Lock lock(parent->minit);  // Also used in improccoord
 
         int tr = TR_NONE;
         if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -104,7 +104,17 @@ void Crop::update (int todo) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
-    }
+
+        if (todo & M_LINDENOISE) {
+			if (skip==1 && params.dirpyrDenoise.enabled) {
+				//array2D<float> Ldn(cropw,croph);
+				//parent->ipf.L_denoise(origCrop, laboCrop, params.dirpyrDenoise);
+				//parent->ipf.dirpyrLab_denoise(laboCrop, origCrop, params.dirpyrDenoise);
+				parent->ipf.RGB_denoise(origCrop, origCrop, /*Roffset,*/ params.dirpyrDenoise, params.defringe);
+			}
+        }
+        parent->imgsrc->convertColorSpace(origCrop, params.icm);
+}
 
     // transform
     if ((!needstransform && transCrop) || (transCrop && (transCrop->width!=cropw || transCrop->height!=croph))) {
@@ -165,7 +175,7 @@ void Crop::update (int todo) {
 		//I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
 		labnCrop->CopyFrom(laboCrop);
 
-		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
+		//parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
 		parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
 		parent->ipf.chrominanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve);
@@ -175,7 +185,7 @@ void Crop::update (int todo) {
 		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
 			parent->ipf.defringe (labnCrop);
-			parent->ipf.dirpyrdenoise (labnCrop);
+			//parent->ipf.dirpyrdenoise (labnCrop);
 			parent->ipf.MLsharpen (labnCrop);
 			parent->ipf.MLmicrocontrast (labnCrop);
 			//parent->ipf.MLmicrocontrast (labnCrop);

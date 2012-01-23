@@ -514,16 +514,16 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			}
 			
 			// Calculate the lightness correction ratio (chratio)
-			for (int i=0; i<2; i++) {
+			for (int i2=0; i<2; i++) {
 				FOREACHCOLOR {
-					lab[i][c]=0;
+					lab[i2][c]=0;
 					for (int j=0; j < ColorCount; j++)
-						lab[i][c] += trans[ColorCount-3][c][j] * cam[i][j];
+						lab[i2][c] += trans[ColorCount-3][c][j] * cam[i2][j];
 				}
 				
-				sum[i]=0;
+				sum[i2]=0;
 				for (int c=1; c < ColorCount; c++)
-					sum[i] += SQR(lab[i][c]);
+					sum[i2] += SQR(lab[i2][c]);
 			}
 			chratio = sqrt(sum[1]/sum[0]);
 			

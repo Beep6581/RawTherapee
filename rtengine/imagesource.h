@@ -53,6 +53,15 @@ class PreviewProps {
 
 };
 
+class ImageMatrices {
+
+public:
+    double rgb_cam[3][3];
+    double cam_rgb[3][3];
+    double xyz_cam[3][3];
+    double cam_xyz[3][3];
+};
+
 class ImageSource : public InitialImage {
 
     private:
@@ -62,6 +71,7 @@ class ImageSource : public InitialImage {
         cmsHPROFILE embProfile;
         Glib::ustring fileName;
         ImageData* idata;
+        ImageMatrices imatrices;
 
     public:
                             ImageSource () : references (1), embProfile(NULL), idata(NULL) {}
@@ -78,6 +88,7 @@ class ImageSource : public InitialImage {
         virtual bool        IsrgbSourceModified() =0; // tracks whether cached rgb output of demosaic has been modified
 
         virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
+        virtual void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp) =0;
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;
         virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) =0;
@@ -89,7 +100,9 @@ class ImageSource : public InitialImage {
         virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
         virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
 
-        virtual ImageData*  getImageData () =0;
+        virtual ImageData*     getImageData () =0;
+        virtual ImageMatrices* getImageMatrices () =0;
+
         virtual void        setProgressListener (ProgressListener* pl) {}
 
                 void        increaseRef () { references++; }

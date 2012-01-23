@@ -440,8 +440,8 @@ float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Sc
 
 	//We're working with luminance, which does better logarithmic.
 	unsigned int i;
-	for(i = 0; i != n; i++)
-		Source[i] = logf(Source[i] + eps);
+	//for(i = 0; i != n; i++)
+	//	Source[i] = logf(Source[i] + eps);
 
 	//Blur. Also setup memory for Compressed (we can just use u since each element of u is used in one calculation).
 	float *u = CreateIteratedBlur(Source, Scale, EdgeStopping, Iterates, Reweightings);
@@ -452,7 +452,7 @@ float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Sc
 		float ce = expf(Source[i] + u[i]*(CompressionExponent - 1.0f)) - eps;
 		float ue = expf(u[i]) - eps;
 		Source[i] = expf(Source[i]) - eps;
-		Compressed[i] = ce + DetailBoost*(Source[i] - ue);
+		Compressed[i] = u[i];//ce + DetailBoost*(Source[i] - ue);
 	}
 
 	if(Compressed != u) delete[] u;

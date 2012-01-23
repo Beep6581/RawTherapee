@@ -185,7 +185,8 @@ SHARPENING,       // EvEPDEnabled
 RGBCURVE,         // EvRGBrCurve
 RGBCURVE,         // EvRGBgCurve
 RGBCURVE,         // EvRGBbCurve
-RGBCURVE          // EvNeutralExp
+RGBCURVE,         // EvNeutralExp
+ALLNORAW          // EvDPDNLamt
 	
 };
 

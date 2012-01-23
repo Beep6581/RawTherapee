@@ -36,18 +36,22 @@ DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 	
 	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enabledChanged) );
 	
+	Lamt  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LAMT"), 0, 100, 1, 10));
 	luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMA"), 0, 100, 1, 10));
 	chroma    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMA"), 0, 100, 1, 10));
 	gamma	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 0.10));
 	
+	Lamt->setAdjusterListener (this);
 	luma->setAdjusterListener (this);
 	chroma->setAdjusterListener (this); 
     gamma->setAdjusterListener (this); 
 	
+    Lamt->show();
 	luma->show();
 	chroma->show();
 	gamma->show();
 	
+	pack_start (*Lamt);
 	pack_start (*luma);
 	pack_start (*chroma);
 	pack_start (*gamma);
@@ -59,9 +63,10 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     disableListener ();
 	
     if (pedited) {
-        luma->setEditedState    (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
-        chroma->setEditedState      (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
-        gamma->setEditedState      (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
+    	Lamt->setEditedState      (pedited->dirpyrDenoise.Lamt ? Edited : UnEdited);
+    	luma->setEditedState      (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
+        chroma->setEditedState    (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
+        gamma->setEditedState     (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
         enabled->set_inconsistent (!pedited->dirpyrDenoise.enabled);
     }
 	
@@ -71,21 +76,24 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     
     lastEnabled = pp->dirpyrDenoise.enabled;
 	
+    Lamt->setValue    (pp->dirpyrDenoise.Lamt);
     luma->setValue    (pp->dirpyrDenoise.luma);
-    chroma->setValue      (pp->dirpyrDenoise.chroma);
-	gamma->setValue      (pp->dirpyrDenoise.gamma);
+    chroma->setValue  (pp->dirpyrDenoise.chroma);
+	gamma->setValue   (pp->dirpyrDenoise.gamma);
 
     enableListener ();
 }
 
 void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 	
+	pp->dirpyrDenoise.Lamt      = Lamt->getValue ();
 	pp->dirpyrDenoise.luma      = luma->getValue ();
 	pp->dirpyrDenoise.chroma	= chroma->getValue ();
 	pp->dirpyrDenoise.gamma		= gamma->getValue ();
 	pp->dirpyrDenoise.enabled   = enabled->get_active();
 	
     if (pedited) {
+        pedited->dirpyrDenoise.Lamt     = Lamt->getEditedState ();
         pedited->dirpyrDenoise.luma     = luma->getEditedState ();
         pedited->dirpyrDenoise.chroma	= chroma->getEditedState ();
 		pedited->dirpyrDenoise.gamma	= gamma->getEditedState ();
@@ -95,19 +103,22 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 
 void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 	
-    luma->setDefault (defParams->dirpyrDenoise.luma);
+	Lamt->setDefault   (defParams->dirpyrDenoise.Lamt);
+    luma->setDefault   (defParams->dirpyrDenoise.luma);
     chroma->setDefault (defParams->dirpyrDenoise.chroma);
-	gamma->setDefault (defParams->dirpyrDenoise.chroma);
+	gamma->setDefault  (defParams->dirpyrDenoise.chroma);
 
     if (pedited) {
+    	Lamt->setDefaultEditedState		(pedited->dirpyrDenoise.Lamt ? Edited : UnEdited);
         luma->setDefaultEditedState		(pedited->dirpyrDenoise.luma ? Edited : UnEdited);
         chroma->setDefaultEditedState   (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
-		gamma->setDefaultEditedState   (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
+		gamma->setDefaultEditedState    (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
    }
     else {
-        luma->setDefaultEditedState (Irrelevant);
-        chroma->setDefaultEditedState   (Irrelevant);
-        gamma->setDefaultEditedState   (Irrelevant);
+    	Lamt->setDefaultEditedState   (Irrelevant);
+    	luma->setDefaultEditedState   (Irrelevant);
+        chroma->setDefaultEditedState (Irrelevant);
+        gamma->setDefaultEditedState  (Irrelevant);
     }
 }
 
@@ -115,16 +126,14 @@ void DirPyrDenoise::adjusterChanged (Adjuster* a, double newval) {
 	
     if (listener && enabled->get_active()) {
         
-        if (a==luma) {
+        if (a==Lamt)
+            listener->panelChanged (EvDPDNLamt, Glib::ustring::format ((int)a->getValue()));
+        else if (a==luma)
             listener->panelChanged (EvDPDNLuma, Glib::ustring::format ((int)a->getValue()));
-        } else {
-			if (a==chroma) { 
+        else if (a==chroma)
             listener->panelChanged (EvDPDNChroma, Glib::ustring::format ((int)a->getValue()));
-			} else {
-				if (a==gamma) 
-					listener->panelChanged (EvDPDNGamma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-			}
-		}
+        else if (a==gamma)
+			listener->panelChanged (EvDPDNGamma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
 	}
 }
 
@@ -154,12 +163,14 @@ void DirPyrDenoise::enabledChanged () {
 void DirPyrDenoise::setBatchMode (bool batchMode) {
 	
     ToolPanel::setBatchMode (batchMode);
+    Lamt->showEditedCB ();
     luma->showEditedCB ();
     chroma->showEditedCB ();
 }
 
 void DirPyrDenoise::setAdjusterBehavior (bool chrolumaadd, bool gammaadd) {
 
+	Lamt->setAddMode(chrolumaadd);
 	luma->setAddMode(chrolumaadd);
 	chroma->setAddMode(chrolumaadd);
 	gamma->setAddMode(gammaadd);
@@ -167,6 +178,7 @@ void DirPyrDenoise::setAdjusterBehavior (bool chrolumaadd, bool gammaadd) {
 
 void DirPyrDenoise::trimValues (rtengine::procparams::ProcParams* pp) {
 
+	Lamt->trimValue(pp->dirpyrDenoise.Lamt);
 	luma->trimValue(pp->dirpyrDenoise.luma);
 	chroma->trimValue(pp->dirpyrDenoise.chroma);
 	gamma->trimValue(pp->dirpyrDenoise.gamma);

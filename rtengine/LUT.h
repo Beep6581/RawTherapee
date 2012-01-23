@@ -103,7 +103,7 @@ public:
 	}
 
 	LUT(void) {
-		data = NULL;
+		data = 0;
 		owner = 1;
 		size = 0;
 		maxs=0;
@@ -119,9 +119,9 @@ public:
 	      if (rhs.size>this->size)
 	      {
 	    	delete [] this->data;
-	    	this->data=NULL;
+	    	this->data=0;
 	      }
-	      if (this->data==NULL) this->data=new T[rhs.size];
+	      if (this->data==0) this->data=new T[rhs.size];
 	      this->clip=rhs.clip;
 	      this->owner=1;
 	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));

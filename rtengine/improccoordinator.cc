@@ -150,7 +150,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     lastHighDetail=highDetailNeeded;
 
 
-    if (todo & M_INIT) {
+    if (todo & (M_INIT|M_LINDENOISE)) {
         Glib::Mutex::Lock lock(minit);  // Also used in crop window
 
         imgsrc->HLRecovery_Global( params.hlrecovery ); // this handles Color HLRecovery
@@ -181,6 +181,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         PreviewProps pp (0, 0, fw, fh, scale);
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
+
+        if (todo & M_LINDENOISE) {
+        	// @Emil: put your luminance denoise tool here ; of course, at this stage, you only have an ImageFloat, no LabImage yet...
+			if (scale==1 && params.dirpyrDenoise.enabled) {
+				//array2D<float> Ldn(fw,fh);
+				//ipf.L_denoise(orig_prev, oprevl, params.dirpyrDenoise);
+				ipf.RGB_denoise(orig_prev, orig_prev, params.dirpyrDenoise, params.defringe);
+			}
+			ImageMatrices* imatrices = imgsrc->getImageMatrices ();
+        }
+        imgsrc->convertColorSpace(orig_prev, params.icm);
+
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
     }
     readyphase++;
@@ -272,7 +284,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	if (todo & (M_LUMINANCE+M_COLOR) ) {
 		nprevl->CopyFrom(oprevl);
 
-		ipf.EPDToneMap(nprevl,0,scale);
+		//ipf.EPDToneMap(nprevl,0,scale);
 
 		progress ("Applying Luminance Curve...",100*readyphase/numofphases);
 
@@ -292,7 +304,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             ipf.defringe (nprevl);
             readyphase++;
             progress ("Denoising luma/chroma...",100*readyphase/numofphases);
-            ipf.dirpyrdenoise (nprevl);
+            //ipf.dirpyrdenoise (nprevl);
             readyphase++;
 			if (params.sharpenEdge.enabled) {
                 progress ("Edge sharpening...",100*readyphase/numofphases);
@@ -590,6 +602,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	params.wb.temperature = currWB.getTemp ();
 	params.wb.green = currWB.getGreen ();
 	imgsrc->getImage (currWB, 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+	imgsrc->convertColorSpace(im, ppar.icm);
 	im16 = im->to16();
 	im16->saveTIFF (fname,16,true);
 	//im->saveJPEG (fname, 85);

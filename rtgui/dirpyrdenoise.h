@@ -26,6 +26,7 @@
 class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
+	Adjuster* Lamt;
     Adjuster* luma;
     Adjuster* chroma;
 	Adjuster* gamma;

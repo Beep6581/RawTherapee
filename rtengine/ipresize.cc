@@ -294,5 +294,70 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
         << (float)(t2 - t1) / CLOCKS_PER_SEC << std::endl;
 #endif
 }
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void ImProcFunctions::resize (LabImage* src, LabImage* dst, float dScale) {
+	
+	//bicubic resampling of Lab image
+	float Av = -0.5f;
+#pragma omp parallel for if (multiThread)
+	for (int i=0; i<dst->H; i++) {
+		float wx[4], wy[4];
+		float Dy = i / dScale;
+		int yc  =  (int) Dy;
+		Dy -= (float)yc;
+		int ys = yc - 1; // smallest y-index used for interpolation
+		// compute vertical weights
+		float t1y = -Av*(Dy-1.0f)*Dy;
+		float t2y = (3.0f - 2.0f*Dy)*Dy*Dy;
+		wy[3] = t1y*Dy;
+		wy[2] = t1y*(Dy - 1.0f) + t2y;
+		wy[1] = -t1y*Dy + 1.0f - t2y;
+		wy[0] = -t1y*(Dy - 1.0f);
+		for (int j = 0; j < dst->W; j++) {
+			float Dx = j / dScale;
+			int xc  =  (int) Dx;
+			Dx -= (float)xc;
+			int xs = xc - 1; // smallest x-index used for interpolation
+			if (ys >= 0 && ys < src->H-3 && xs >= 0 && xs <= src->W-3) {
+				// compute horizontal weights
+				float t1 = -Av*(Dx-1.0f)*Dx;
+				float t2 = (3.0f - 2.0f*Dx)*Dx*Dx;
+				wx[3] = t1*Dx;
+				wx[2] = t1*(Dx - 1.0f) + t2;
+				wx[1] = -t1*Dx + 1.0f - t2;
+				wx[0] = -t1*(Dx - 1.0f);
+				// compute weighted sum
+				float L = 0;
+				float a = 0;
+				float b = 0;
+				for (int x=0; x<4; x++)
+					for (int y=0; y<4; y++) {
+						float w = wx[x]*wy[y];
+						L += w*src->L[ys+y][xs+x];
+						a += w*src->a[ys+y][xs+x];
+						b += w*src->b[ys+y][xs+x];
+					}
+				dst->L[i][j] = (L);
+				dst->a[i][j] = (a);
+				dst->b[i][j] = (b);
+			}
+			else {
+				xc = CLIPTO(xc, 0, src->W-1);
+				yc = CLIPTO(yc, 0, src->H-1);
+				int nx = xc + 1;
+				if (nx >= src->W)
+					nx = xc;
+				int ny = yc + 1;
+				if (ny >= src->H)
+					ny = yc;
+				dst->L[i][j] = (1-Dx)*(1-Dy)*src->L[yc][xc] + (1-Dx)*Dy*src->L[ny][xc] + Dx*(1-Dy)*src->L[yc][nx] + Dx*Dy*src->L[ny][nx];
+				dst->a[i][j] = (1-Dx)*(1-Dy)*src->a[yc][xc] + (1-Dx)*Dy*src->a[ny][xc] + Dx*(1-Dy)*src->a[yc][nx] + Dx*Dy*src->a[ny][nx];
+				dst->b[i][j] = (1-Dx)*(1-Dy)*src->b[yc][xc] + (1-Dx)*Dy*src->b[ny][xc] + Dx*(1-Dy)*src->b[yc][nx] + Dx*Dy*src->b[ny][nx];
+			}
+		}
+	}
+}
 
 }

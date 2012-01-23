@@ -216,6 +216,7 @@ void ProcParams::setDefaults () {
     defringe.threshold          = 25;
 
     dirpyrDenoise.enabled       = false;
+    dirpyrDenoise.Lamt          = 10;
     dirpyrDenoise.luma          = 10;
     dirpyrDenoise.chroma        = 10;
     dirpyrDenoise.gamma         = 2.0;
@@ -467,6 +468,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
 	
 	// save dirpyrDenoise
     keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
+    keyFile.set_integer ("Directional Pyramid Denoising", "Lamt",    dirpyrDenoise.Lamt);
     keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
     keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
 	keyFile.set_double	("Directional Pyramid Denoising", "Gamma",  dirpyrDenoise.gamma);
@@ -822,6 +824,7 @@ if (keyFile.has_group ("Impulse Denoising")) {
 	// load dirpyrDenoise
 if (keyFile.has_group ("Directional Pyramid Denoising")) {    
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled")) dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled");
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Lamt"))    dirpyrDenoise.Lamt    = keyFile.get_integer ("Directional Pyramid Denoising", "Lamt");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))    dirpyrDenoise.luma    = keyFile.get_integer ("Directional Pyramid Denoising", "Luma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))  dirpyrDenoise.chroma  = keyFile.get_integer ("Directional Pyramid Denoising", "Chroma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))  dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma");
@@ -1132,6 +1135,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& impulseDenoise.enabled == other.impulseDenoise.enabled
 		&& impulseDenoise.thresh == other.impulseDenoise.thresh
 		&& dirpyrDenoise.enabled == other.dirpyrDenoise.enabled
+		&& dirpyrDenoise.Lamt == other.dirpyrDenoise.Lamt
 		&& dirpyrDenoise.luma == other.dirpyrDenoise.luma
 		&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma

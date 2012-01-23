@@ -100,6 +100,7 @@ void ParamsEdited::set (bool v) {
 	impulseDenoise.enabled     = v;
 	impulseDenoise.thresh      = v;
 	dirpyrDenoise.enabled      = v;
+	dirpyrDenoise.Lamt         = v;
 	dirpyrDenoise.luma         = v;
 	dirpyrDenoise.chroma       = v;
 	dirpyrDenoise.gamma        = v;
@@ -289,6 +290,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         impulseDenoise.thresh = impulseDenoise.thresh && p.impulseDenoise.thresh == other.impulseDenoise.thresh;
 
         dirpyrDenoise.enabled = dirpyrDenoise.enabled && p.dirpyrDenoise.enabled == other.dirpyrDenoise.enabled;
+        dirpyrDenoise.Lamt = dirpyrDenoise.Lamt && p.dirpyrDenoise.Lamt == other.dirpyrDenoise.Lamt;
         dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
         dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
@@ -453,11 +455,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (vibrance.protectskins)				toEdit.vibrance.protectskins	= mods.vibrance.protectskins;
 	if (vibrance.avoidcolorshift)			toEdit.vibrance.avoidcolorshift	= mods.vibrance.avoidcolorshift;
 	if (vibrance.pastsattog)				toEdit.vibrance.pastsattog	    = mods.vibrance.pastsattog;
-	
-	
-	
-	
-	
 	if (colorBoost.amount)					toEdit.colorBoost.amount		= dontforceSet && options.baBehav[ADDSET_CBOOST_AMOUNT] ? toEdit.colorBoost.amount + mods.colorBoost.amount : mods.colorBoost.amount;
 	if (colorBoost.avoidclip)				toEdit.colorBoost.avoidclip 	= mods.colorBoost.avoidclip;
 	if (colorBoost.enable_saturationlimiter)toEdit.colorBoost.enable_saturationlimiter 	= mods.colorBoost.enable_saturationlimiter;
@@ -481,6 +478,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
 
 	if (dirpyrDenoise.enabled)				toEdit.dirpyrDenoise.enabled 	= mods.dirpyrDenoise.enabled;
+	if (dirpyrDenoise.Lamt)					toEdit.dirpyrDenoise.Lamt		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.Lamt + mods.dirpyrDenoise.Lamt : mods.dirpyrDenoise.Lamt;
 	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.luma + mods.dirpyrDenoise.luma : mods.dirpyrDenoise.luma;
 	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.chroma + mods.dirpyrDenoise.chroma : mods.dirpyrDenoise.chroma;
 	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_GAMMA] ? toEdit.dirpyrDenoise.gamma + mods.dirpyrDenoise.gamma : mods.dirpyrDenoise.gamma;

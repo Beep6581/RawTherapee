@@ -43,10 +43,6 @@ namespace rtengine {
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 	
-	
-#define D50x 0.96422
-#define D50z 0.82521
-
 extern const Settings* settings;
 	
 const double (*wprof[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
@@ -65,7 +61,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
         #pragma omp parallel for
 		for (int i=0; i<lab->H; i++) {
             float buffer[3*lab->W];
-            float g;
+            //float g;  // unused
 
             const int ix = i * 3 * lab->W;
             int iy = 0;
@@ -102,7 +98,7 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
 			int ix = i * 3 * lab->W;
-			float g;
+            //float g;  // unused
 
 			float R,G,B;
             float fy,fx,fz,x_,y_,z_;
@@ -158,7 +154,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 		#pragma omp parallel for
         for (int i=cy; i<cy+ch; i++) {
             short buffer [3*cw];
-            float g;
+            //float g;  // unused
 
             const int ix = i * 3 * cw;
             int iy = 0;
@@ -202,7 +198,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 		
 		#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
-			float g;
+			//float g;  // unused
 			float R,G,B;
             float* rL = lab->L[i];
             float* ra = lab->a[i];
@@ -246,7 +242,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
     if (oprof) {
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
-			float g;
+			//float g;  // unused
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
@@ -279,7 +275,7 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 	} else {
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
-			float g;
+			//float g; //unused
 			float R,G,B;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
@@ -317,7 +313,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     if (cy+ch>lab->H) ch = lab->H-cy;
 
     Image16* image = new Image16 (cw, ch);
-	cmsBool  rc = TRUE;
+	//cmsBool  rc = TRUE;  // unused
 	float p1,p2,p3,p4,p5,p6;//primaries
 	//double ga0,ga1,ga2,ga3,ga4,ga5=0.0,ga6=0.0;//gamma parameters
 	double g_a0,g_a1,g_a2,g_a3,g_a4,g_a5;//gamma parameters
@@ -343,7 +339,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 	if (!freegamma) {//if Free gamma not selected	
 	// gamma : ga0,ga1,ga2,ga3,ga4,ga5 by calcul
     if(gam=="BT709_g2.2_s4.5") 		{ga0=2.222;ga1=1./1.099258;ga2=0.099258/1.099258;ga3=1./4.5; ga4=0.01805;ga5=0.0;}//BT709  2.2  4.5  - my prefered as D.Coffin ga4=0.01805	
-	else if (gam=="sRGB_g2.4_s12.92")	{ga0=CurveFactory::sRGBGammaCurve-0.0001; ga1=1./1.0550; ga2=0.0550/1.0550;ga3=1./12.92;ga4=0.039289;}//sRGB 2.4 12.92  - RT default as Lightroom
+	else if (gam=="sRGB_g2.4_s12.92")	{ga0=Color::sRGBGammaCurve-0.0001; ga1=1./1.0550; ga2=0.0550/1.0550;ga3=1./12.92;ga4=0.039289;}//sRGB 2.4 12.92  - RT default as Lightroom
 	else if (gam=="High_g1.3_s3.35")	{ga0=1.3 ; ga1=1./1.001724; ga2=0.001724/1.001724;ga3=1./3.35;ga4=0.001715;}//for high dynamic images
 	else if (gam== "Low_g2.6_s6.9")   {ga0=2.6 ; ga1=1./1.12213; ga2=0.12213/1.12213;ga3=1./6.90;ga4=0.01;} //gamma 2.6 variable : for low contrast images
 	else if (gam=="linear_g1.0")   {ga0=1.0; ga1=1.;ga2=0.;ga3=1./eps;ga4=0.;}//gamma=1 linear : for high dynamic images (cf : D.Coffin...)
@@ -386,7 +382,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     if (oprofdef) {
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
-			float g;
+            //float g;  // unused
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
@@ -420,7 +416,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 	// 
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
-			float g;
+            //float g;  // unused
 			float R,G,B;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];

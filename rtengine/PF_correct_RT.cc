@@ -65,8 +65,8 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 		gaussVertical<float>   (tmp1->a, tmp1->a, buffer, src->W, src->H, radius, multiThread);
 		gaussVertical<float>   (tmp1->b, tmp1->b, buffer, src->W, src->H, radius, multiThread);
 
-		gaussHorizontal<float> (src->L, tmp1->L, buffer, src->W, src->H, radius, multiThread);
-		gaussVertical<float>   (tmp1->L, tmp1->L, buffer, src->W, src->H, radius, multiThread);
+		//gaussHorizontal<float> (src->L, tmp1->L, buffer, src->W, src->H, radius, multiThread);
+		//gaussVertical<float>   (tmp1->L, tmp1->L, buffer, src->W, src->H, radius, multiThread);
 
 		delete buffer;
 	}

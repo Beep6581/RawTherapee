@@ -20,7 +20,6 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#cmakedefine BUILD_BUNDLE
 #define DATA_SEARCH_PATH "${DATADIR}"
 #define DOC_SEARCH_PATH "${DOCDIR}"
 #define CREDITS_SEARCH_PATH "${CREDITSDIR}"

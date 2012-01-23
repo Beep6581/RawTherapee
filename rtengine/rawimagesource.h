@@ -23,6 +23,8 @@
 #include <lcms2.h>
 #include "array2D.h"
 #include "curves.h"
+#include <fftw3.h>
+#include "color.h"
 #include "../rtgui/cacheimagedata.h"
 
 #define HR_SCALE 2
@@ -69,25 +71,21 @@ class RawImageSource : public ImageSource {
         ColorTemp wb;
         ProgressListener* plistener;
         float scale_mul[4]; // multiplier for each color
-		float cblack[4];// black
-		float scale_mu_l[4];// copy of scale_mul, for saturation
-		float c_black[4]; // copy of cblack Dcraw for black level
-		float cblacksom[4];
+        float cblack[4];// black
+        float scale_mu_l[4];// copy of scale_mul, for saturation
+        float c_black[4]; // copy of cblack Dcraw for black level
+        float cblacksom[4];
         double camwb_red;
         double camwb_green;
         double camwb_blue;
-        double rgb_cam[3][3];
-        double cam_rgb[3][3];
-        double xyz_cam[3][3];
-        double cam_xyz[3][3];
         bool fuji;
         bool d1x;
         int border;
         //char** hpmap;
         float** hrmap[3];   // for color propagation
         char** needhr;      // for color propagation
-		int max[3];
-		float chmax[4],hlmax[4];
+        int max[3];
+        float chmax[4],hlmax[4];
         double initialGain; // initial gain calculated after scale_colors
         double defGain;
         bool full;
@@ -96,7 +94,7 @@ class RawImageSource : public ImageSource {
         bool rgbSourceModified;
 
         RawImage* ri;  // Copy of raw pixels, NOT corrected for initial gain, blackpoint etc.
-        
+
         // to accelerate CIELAB conversion:
         double lc00, lc01, lc02, lc10, lc11, lc12, lc20, lc21, lc22;
         double* cache;
@@ -136,7 +134,7 @@ class RawImageSource : public ImageSource {
         void        demosaic    (const RAWParams &raw);
         void        flushRawData      ();
         void        flushRGB          ();
-        void        HLRecovery_Global (HRecParams hrp);
+        void        HLRecovery_Global  (HRecParams hrp);
         void        refinement_lassus ();
 
         bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
@@ -152,31 +150,33 @@ class RawImageSource : public ImageSource {
 
         double      getDefGain  () { return defGain; }
 
-        double      getGamma    () { return CurveFactory::sRGBGamma; }
-
+        double      getGamma    () { return Color::sRGBGamma; }
+       
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 
-        ImageData*  getImageData () { return idata; }
-        void        setProgressListener (ProgressListener* pl) { plistener = pl; }
+        ImageData*     getImageData () { return idata; }
+        ImageMatrices* getImageMatrices () { return &imatrices; }
+        void           setProgressListener (ProgressListener* pl) { plistener = pl; }
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
+        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp);
         static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
 
-	void boxblur2(float** src, float** dst, int H, int W, int box );
-	void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp ); 
+        void boxblur2(float** src, float** dst, int H, int W, int box );
+        void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp );
 
-	//void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3], \
-						multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
-	void HLRecovery_inpaint (float** red, float** green, float** blue);
-	//void HLRecovery_inpaint ();
-	
+        //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3], \
+                              multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
+        void HLRecovery_inpaint (float** red, float** green, float** blue);
+        //void HLRecovery_inpaint ();
+
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
-		static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax);
+        static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax);
 
     protected:
         typedef unsigned short ushort;
@@ -198,6 +198,8 @@ class RawImageSource : public ImageSource {
         int  findHotDeadPixel( PixelsMap &bpMap, float thresh);
 
         void cfa_linedn (float linenoiselevel);//Emil's line denoise
+        void cfa_tile_denoise (fftwf_complex * fcfablox, int vblk, int hblk, int numblox_H, int numblox_W, float noisevar, float * rolloff );
+        void cfa_output_tile_row (float *cfabloxrow, float ** cfahipassdn, float ** tilemask_out, int height, int width, int top, int blkrad);
 
         void green_equilibrate (float greenthresh);//Emil's green equilibration
 

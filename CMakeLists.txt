@@ -66,96 +66,64 @@ option(USE_CLANG "Build rawtherapee with clang" OFF)
 option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
+option (WITH_RAWZOR "Build with Rawzor support" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
-option (BUILD_BUNDLE "Self-contained build" OFF)
 
 # set install directories
-if (WIN32 OR APPLE)
-    set (BUILD_BUNDLE ON FORCE)
-endif(WIN32 OR APPLE)
-
-if (NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
-    set (BUNDLE_BASE_INSTALL_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
-endif (NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
-
-if (BUILD_BUNDLE)
-    set (BINDIR .)
-    set (CMAKE_INSTALL_PREFIX ${BUNDLE_BASE_INSTALL_DIR})
-endif (BUILD_BUNDLE)
-
-if (NOT DEFINED BINDIR)
-    set (BINDIR  ${CMAKE_INSTALL_PREFIX}/bin)
-endif (NOT DEFINED BINDIR)
-
 if (NOT DEFINED DATADIR)
-    if (BUILD_BUNDLE)
-        set (DATADIR .)
-    else (BUILD_BUNDLE)
+    if (WIN32 OR APPLE)
+        set (DATADIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
         set (DATADIR ${CMAKE_INSTALL_PREFIX}/share/rawtherapee)
-    endif (BUILD_BUNDLE)
+    endif (WIN32 OR APPLE)
 endif (NOT DEFINED DATADIR)
 
+if (NOT DEFINED BINDIR)
+    if (WIN32 OR APPLE)
+        set (BINDIR  ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
+        set (BINDIR  ${CMAKE_INSTALL_PREFIX}/bin)
+    endif (WIN32 OR APPLE)
+endif (NOT DEFINED BINDIR)
+
 if (NOT DEFINED LIBDIR)
-    if (BUILD_BUNDLE)
-        set (LIBDIR .)
-    else (BUILD_BUNDLE)
+    if (WIN32 OR APPLE)
+        set (LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
         # Respect CMAKE_INSTALL_LIBDIR if set
         if (DEFINED CMAKE_INSTALL_LIBDIR)
-	    if (IS_ABSOLUTE ${LIBDIR})
-            	set (LIBDIR ${CMAKE_INSTALL_LIBDIR})
-	    else (IS_ABSOLUTE ${LIBDIR})
-		set (LIBDIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
-	    endif (IS_ABSOLUTE ${LIBDIR})
+            set (LIBDIR ${CMAKE_INSTALL_LIBDIR})
         else (DEFINED CMAKE_INSTALL_LIBDIR)
             set (LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
         endif (DEFINED CMAKE_INSTALL_LIBDIR)
-    endif (BUILD_BUNDLE)
+    endif (WIN32 OR APPLE)
 endif (NOT DEFINED LIBDIR)
 
 if (NOT DEFINED DOCDIR)
-    if (BUILD_BUNDLE)
-        set (DOCDIR ./doc)
-    else (BUILD_BUNDLE)
-        set (DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee)
-    endif (BUILD_BUNDLE)
+    if (WIN32 OR APPLE)
+        set (DOCDIR ${CMAKE_CURRENT_SOURCE_DIR}/release/doc)
+    else (WIN32 OR APPLE)
+        set (DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
 endif (NOT DEFINED DOCDIR)
 
 if (NOT DEFINED CREDITSDIR)
-    if (BUILD_BUNDLE)
-        set (CREDITSDIR .)
-    else (BUILD_BUNDLE)
-        set (CREDITSDIR ${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee)
-    endif (BUILD_BUNDLE)
+    if (WIN32 OR APPLE)
+        set (CREDITSDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
+        set (CREDITSDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
 endif (NOT DEFINED CREDITSDIR)
 
 if (NOT DEFINED LICENCEDIR)
-    if (BUILD_BUNDLE)
-        set (LICENCEDIR .)
-    else (BUILD_BUNDLE)
-        set (LICENCEDIR ${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee)
-    endif (BUILD_BUNDLE)
+    if (WIN32 OR APPLE)
+        set (LICENCEDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
+    else (WIN32 OR APPLE)
+        set (LICENCEDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
+    endif (WIN32 OR APPLE)
 endif (NOT DEFINED LICENCEDIR)
-
-if (NOT DEFINED DESKTOPDIR)
-    if (UNIX)
-        set (DESKTOPDIR ${CMAKE_INSTALL_PREFIX}/share/applications)
-    endif (UNIX)
-endif (NOT DEFINED DESKTOPDIR)
-
-if (NOT DEFINED ICONSDIR)
-    if (UNIX)
-        set (ICONSDIR ${CMAKE_INSTALL_PREFIX}/share/icons)
-    endif (UNIX)
-endif (NOT DEFINED ICONSDIR)
-
-# non-bundle builds has to use absolute paths
-if (NOT BUILD_BUNDLE AND
-    NOT (IS_ABSOLUTE ${BINDIR} AND IS_ABSOLUTE ${DATADIR} AND IS_ABSOLUTE ${LIBDIR} AND
-    IS_ABSOLUTE ${DOCDIR} AND IS_ABSOLUTE ${CREDITSDIR} AND IS_ABSOLUTE ${LICENCEDIR}))
-    message (FATAL_ERROR "The paths has to be absolute or use -DBUILD_BUNDLE=ON")
-endif ()
 
 # check for libraries
 find_package(PkgConfig)
@@ -180,7 +148,9 @@ if (WIN32)
 endif (WIN32)
 # you may need lcms v1.xx for older version : pkg_check_modules (LCMS REQUIRED lcms<=1.99)
 pkg_check_modules (LCMS REQUIRED lcms2)
+pkg_check_modules (FFTW3F REQUIRED fftw3f)
 pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
+pkg_check_modules(FFTW3 fftw3)
 find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
@@ -227,6 +197,7 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=\"${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
               -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Windows.cmake
       COMMENT "Creating the about file"
     )
@@ -247,6 +218,7 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
               -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Apple.cmake
       COMMENT "Creating the about file"
     )
@@ -268,6 +240,7 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
               -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Linux.cmake
       COMMENT "Creating the about file"
     )
@@ -285,6 +258,48 @@ else (AUTOMATED_BUILD_SYSTEM)
 
 endif (AUTOMATED_BUILD_SYSTEM)
 
+# link rawzor
+if (WITH_RAWZOR)
+    set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor")
+    add_definitions (-DRAWZOR_SUPPORT)
+    if (WIN32)
+        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win32")
+            set (EXTRA_LIB ${EXTRA_LIB} "rwz_sdk.lib")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win32/rwz_sdk.dll DESTINATION ${BINDIR}
+                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win64")
+            set (EXTRA_LIB ${EXTRA_LIB} "rwz_sdk.lib")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win64/rwz_sdk.dll DESTINATION ${BINDIR}
+                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    elseif (APPLE)
+        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac32")
+            set (EXTRA_LIB "-lrwz_sdk")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac32/rwz_sdk.dylib DESTINATION ${LIBDIR}
+                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac64")
+            set (EXTRA_LIB "-lrwz_sdk_64")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac64/rwz_sdk_64.dylib DESTINATION ${LIBDIR}
+                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    else (WIN32)
+        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin32")
+            set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin32/librwz_sdk.so DESTINATION ${LIBDIR}
+                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
+        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin64")
+            set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
+            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin64/librwz_sdk.so DESTINATION ${LIBDIR}
+                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
+        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    endif (WIN32)
+endif (WITH_RAWZOR)
 
 # link witz bzip
 if (WITH_BZIP)
@@ -340,6 +355,10 @@ if(USE_CLANG)
     SET (CMAKE_LINKER  LDGOLD_CMD)
     endif (LDGOLD_CMD STREQUAL LDGOLD_CMD-NOTFOUND)
 endif(USE_CLANG)
+
+if (UNIX)
+    install (PROGRAMS rtstart DESTINATION ${BINDIR})
+endif (UNIX)
 
 install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
 install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
