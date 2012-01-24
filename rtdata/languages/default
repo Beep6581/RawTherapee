@@ -435,6 +435,8 @@ IPTC_DATE;Date created
 IPTC_DATE_HINT;The Date the image was taken \nIIM 2:55
 IPTC_DESCRIPTION;Description
 IPTC_DESCRIPTION_HINT;A 'caption' describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image. \nIIM 2:120 Caption/Abstract
+IPTC_DIGITALSOURCETYPE;Digital Source Type
+IPTC_DIGITALSOURCETYPE_HINT;Select one of the values for identifying the source type of the digital image from the controlled vocabulary.\n\n - Original digital capture of a real life scene\nThe digital image is the original and only instance and was taken by a digital camera\n\n - Digitised from a negative on film\nThe digital image was digitised from a negative on film on any other transparent medium\n\n - Digitised from a positive on film\nThe digital image was digitised from a positive on a transparency or any other transparent medium\n\n - Digitised from a print on non-transparent medium\nThe digital image was digitised from an image printed on a non-transparent medium\n\n - Created by software\nShould be used for all kinds of computer generated images (CGI), such as images composited from several different photos and/or graphic elements, or images created entirely in the computer.
 IPTC_EVENT;Event
 IPTC_EVENT_HINT;The name or description of the event where this image was taken
 IPTC_GENRE;Intellectual Genre

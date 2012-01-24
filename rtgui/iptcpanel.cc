@@ -236,6 +236,8 @@ IPTCPanel::IPTCPanel () {
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCRegistryOrgID, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCImageSupplier, chgList ) );
     wdgt.push_back( new XRTEntry( iptc, row++, kIPTCGUIDSupplier, chgList ) );
+    //TODO!!! kIPTCDigitalSourceType contains long values, may be display it in 2 rows?
+    wdgt.push_back( new XRTCombo( iptc, row++, kIPTCDigitalSourceType, rtengine::IPTCMeta::IPTCDigitalSourceType, chgList) );
 
     Gtk::VBox* vbox11 = Gtk::manage (new Gtk::VBox ());
     Gtk::HSeparator* hsept11 = Gtk::manage (new Gtk::HSeparator ());

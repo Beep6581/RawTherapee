@@ -50,6 +50,7 @@ extern const char *kIPTCCredit;
 extern const char *kIPTCCVterm;
 extern const char *kIPTCDate;
 extern const char *kIPTCDescription;
+extern const char *kIPTCDigitalSourceType;
 extern const char *kIPTCEvent;
 extern const char *kIPTCGenre;
 extern const char *kIPTCGUID;
@@ -140,6 +141,7 @@ public:
 	static IPTCPairList_t IPTCUrgency;
 	static IPTCPairList_t IPTCRightsMarked;
 	static IPTCPairList_t IPTCMinorModelAgeDisclosure;
+	static IPTCPairList_t IPTCDigitalSourceType;
 
 	static void initIPTCMeta();
 };
