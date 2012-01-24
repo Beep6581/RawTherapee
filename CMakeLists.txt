@@ -344,7 +344,7 @@ endif(USE_CLANG)
 install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
 install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
 install (FILES AboutThisBuild.txt DESTINATION ${CREDITSDIR})
-install (FILES Caveats.txt DESTINATION ${CREDITSDIR} OPTIONAL)
+install (FILES CAVEATS.txt DESTINATION ${CREDITSDIR} OPTIONAL)
 
 add_subdirectory (rtexif)
 add_subdirectory (rtengine)
