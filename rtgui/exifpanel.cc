@@ -40,7 +40,16 @@ ExifPanel::ExifPanel () : idata(NULL) {
    scrolledWindow->set_shadow_type(Gtk::SHADOW_NONE);
    scrolledWindow->set_policy(Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
    scrolledWindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
-   scrolledWindow->add(*exifTree);
+   //scrolledWindow->add(*exifTree);
+
+   Gtk::VBox* vboxMain = Gtk::manage (new Gtk::VBox ());
+   Gtk::HSeparator* hseptPE = Gtk::manage (new Gtk::HSeparator ());
+   Gtk::Image* peImg = Gtk::manage (new RTImage("PanelEnding.png"));
+   // add panel ending and exifTree to vboxMain
+   vboxMain->pack_end(*peImg, Gtk::PACK_SHRINK, 0);
+   vboxMain->pack_end(*hseptPE, Gtk::PACK_SHRINK, 4);
+   vboxMain->pack_start(*exifTree, Gtk::PACK_EXPAND_WIDGET,0);
+   scrolledWindow->add(*vboxMain);
    
    exifTreeModel = Gtk::TreeStore::create(exifColumns);
    exifTree->set_model (exifTreeModel);
@@ -66,11 +75,11 @@ ExifPanel::ExifPanel () : idata(NULL) {
    viewcolv->add_attribute (*render_txtv, "markup", exifColumns.value);
    
    render_txtv->property_ypad() = 0;
-  
+   
    exifTree->append_column (*viewcolv); 
-  
+   
    pack_start (*scrolledWindow);
-
+   
    show_all ();
 }
 

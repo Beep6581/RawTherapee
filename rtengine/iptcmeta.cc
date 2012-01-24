@@ -34,6 +34,7 @@ IPTCPairList_t IPTCMeta::IPTCBoolean;
 IPTCPairList_t IPTCMeta::IPTCUrgency;
 IPTCPairList_t IPTCMeta::IPTCRightsMarked;
 IPTCPairList_t IPTCMeta::IPTCMinorModelAgeDisclosure;
+IPTCPairList_t IPTCMeta::IPTCDigitalSourceType;
 
 
 const char *kIPTCArtworkRights  = "Iptc4xmpExt:ArtworkOrObjectDetails/Iptc4xmpExt:AOCopyrightNotice";
@@ -60,6 +61,7 @@ const char *kIPTCCredit     = "photoshop:Credit";
 const char *kIPTCCVterm     = "Iptc4xmpExt:CVterm";
 const char *kIPTCDate       = "photoshop:DateCreated";
 const char *kIPTCDescription= "dc:description";
+const char *kIPTCDigitalSourceType = "Iptc4xmpExt:DigitalSourceType";
 const char *kIPTCEvent      = "Iptc4xmpExt:Event";
 const char *kIPTCGenre      = "Iptc4xmpCore:IntellectualGenre";
 const char *kIPTCGUID       = "Iptc4xmpExt:DigImageGUID";
@@ -207,6 +209,8 @@ void IPTCMeta::initIPTCMeta()
     IPTCtags[kIPTCLicensor]       = IPTCMeta(kIPTCLicensor,"IPTC_LICENSOR","IPTC_LICENSOR_HINT");
     IPTCtags[kIPTCImageSupplier]  = IPTCMeta(kIPTCImageSupplier,"IPTC_IMAGESUPPLIER","IPTC_IMAGESUPPLIER_HINT");
     IPTCtags[kIPTCGUIDSupplier]   = IPTCMeta(kIPTCGUIDSupplier,"IPTC_IMAGESUPPLIERGUID","IPTC_IMAGESUPPLIERGUID_HINT");
+    IPTCtags[kIPTCDigitalSourceType] = IPTCMeta(kIPTCDigitalSourceType,"IPTC_DIGITALSOURCETYPE","IPTC_DIGITALSOURCETYPE_HINT");
+
     IPTCtags[kIPTCMinorModelAgeDisclosure]= IPTCMeta(kIPTCMinorModelAgeDisclosure,"IPTC_MINORDISCLOSURE","IPTC_MINORDISCLOSURE_HINT");
     IPTCtags[kIPTCModelReleaseID] = IPTCMeta(kIPTCModelReleaseID,"IPTC_MODELRELID","IPTC_MODELRELID_HINT", Exiv2::xmpBag);
     IPTCtags[kIPTCModelReleaseSt] = IPTCMeta(kIPTCModelReleaseSt,"IPTC_MODELRELSTATUS","IPTC_MODELRELSTATUS_HINT");
@@ -256,6 +260,7 @@ void IPTCMeta::initIPTCMeta()
     IPTCScene["012400"] = "movie scene: photos taken during the shooting of a movie or TV production";
 
     /* Subject codes: http://cv.iptc.org/newscodes/subjectcode/    */
+    // TODO!!! adopt better handling of subject codes from http://xml.coverpages.org/NITF30-subject-codes.html
     IPTCSubject["01000000"] = "arts, culture and entertainment: Matters pertaining to the advancement and refinement of the human mind, of interests, skills, tastes and emotions";
     IPTCSubject["01001000"] = "archaeology: Probing the past through ruins and artefacts";
     IPTCSubject["01002000"] = "architecture: Designing of buildings, monuments and the spaces around them";
@@ -378,6 +383,12 @@ void IPTCMeta::initIPTCMeta()
     IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-A15"] = "(Age 15)";
     IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-U14"] = "(Age 14 or Under)";
 
+    // DigitalSourceType
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/negativeFilm"]  = "Digitised from a negative on film";
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/positiveFilm"]  = "Digitised from a positive on film";
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/print"]         = "Digitised from a print on non-transparent medium";
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/softwareImage"] = "Created by software";
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture"]= "Original digital capture of a real life scene";
 
     IPTCISO3166["ABW"] = "Aruba";
     IPTCISO3166["AFG"] = "Afghanistan";
