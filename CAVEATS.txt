@@ -1,24 +1,13 @@
 
+RT 4.0.7 CAVEATS
 
-                             RT 4.0.7 CAVEATS
 
 
 Difference between Preview and Output image:
 
 
-   The color managed preview in RawTherapee is (and has always been) based 
-   on image data in the Working Space profile. Although the actual preview 
-   is rendered using a monitor profile (or sRGB profile, if monitor profile 
-   is not specified), it does not reflect the Output profile & Output Gamma 
-   settings. This can lead to a slightly different output rendering when 
-   Working Space profile and Output Space profiles are not the same. 
-   A workaround is to set them to the same values to ensure the preview 
-   accurately reflects the final render output.
+The color managed preview in RawTherapee is (and has always been) based on image data in the Working Space profile. Although the actual preview is rendered using a monitor profile (or sRGB profile, if monitor profile is not specified), it does not reflect the Output profile & Output Gamma settings. This can lead to a slightly different output rendering when Working Space profile and Output Space profiles are not the same. A workaround is to set them to the same values to ensure the preview accurately reflects the final render output.
    
-   For generic use in sRGB workflow when output is targeting web-based image 
-   display, it is recommended to use the default values of the Color/ICM toolset.
+For generic use in sRGB workflow when output is targeting web-based image display, it is recommended to use the default values of the Color/ICM toolset.
    
-   Future releases of RawTherapee are planned to support a more comprehensive 
-   color-managed preview that will allow accurate visualization of the final 
-   output render based on not only the working space and monitor profiles, 
-   but also on user-selected Output color profile and Output Gamma.
+Future releases of RawTherapee are planned to support a more comprehensive color-managed preview that will allow accurate visualization of the final output render based on not only the working space and monitor profiles, but also on user-selected Output color profile and Output Gamma.
