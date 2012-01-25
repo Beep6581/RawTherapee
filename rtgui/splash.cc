@@ -171,6 +171,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 	        caveatsSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *caveatsTV = Gtk::manage (new Gtk::TextView (textBuffer));
 			caveatsTV->set_editable(false);
+			caveatsTV->set_wrap_mode(Gtk::WRAP_WORD);
 			caveatsSW->add(*caveatsTV);
 		    nb->append_page (*caveatsSW, M("ABOUT_TAB_CAVEATS"));
 	    }
