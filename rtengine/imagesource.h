@@ -77,7 +77,9 @@ class ImageSource : public InitialImage {
 
         virtual bool        IsrgbSourceModified() =0; // tracks whether cached rgb output of demosaic has been modified
 
+        // use the right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
         virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
+        // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
         virtual bool        isWBProviderReady () =0;
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;

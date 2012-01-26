@@ -248,24 +248,23 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     bool useLCMS;
 
     if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
- 		cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
-		
+        cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
+
         cmsToneCurve* GammaTRC[3];
         cmsFloat64Number Parameters[7];
-		double ga0,ga1,ga2,ga3,ga4,ga5,ga6;
+        double ga0,ga1,ga2,ga3,ga4,ga5,ga6;
        // wchar_t string[80] ;
-		const wchar_t* stri[]= {L" RT_Large ", L" RT_Medium",L" RT_sRGB  ",L" WideGamut",L" Beta RGB ",L" BestRGB  ",L" BruceRGB"};//label for Free gamma and Output Gamma
-		int ns;//numero of stri[]
-		if      (params.icm.working=="ProPhoto")   ns=0;
-		else if (params.icm.working=="Adobe RGB")  ns=1;
-		else if (params.icm.working=="sRGB")  	   ns=2;
-		else if (params.icm.working=="WideGamut")  ns=3;
-		else if (params.icm.working=="Beta RGB")   ns=4;
-		else if (params.icm.working=="BestRGB")    ns=5;
-		else if (params.icm.working=="BruceRGB")   ns=6;
+        int ns;//numero of stri[]
+        if      (params.icm.working=="ProPhoto")   ns=0;
+        else if (params.icm.working=="Adobe RGB")  ns=1;
+        else if (params.icm.working=="sRGB")  	   ns=2;
+        else if (params.icm.working=="WideGamut")  ns=3;
+        else if (params.icm.working=="Beta RGB")   ns=4;
+        else if (params.icm.working=="BestRGB")    ns=5;
+        else if (params.icm.working=="BruceRGB")   ns=6;
 
 
-		readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0,ga1,ga2,ga3,ga4,ga5,ga6 );
+        readyImg = ipf.lab2rgb16b (labView, cx, cy, cw, ch, params.icm.output, params.icm.working, params.icm.gamma, params.icm.freegamma, params.icm.gampos, params.icm.slpos, ga0,ga1,ga2,ga3,ga4,ga5,ga6 );
         customGamma = true;
 
         //or selected Free gamma
@@ -337,50 +336,38 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 				CopyrightMLU    = cmsMLUalloc(ContextID, 1);//for ICC
 				DmndMLU=cmsMLUalloc(ContextID, 1);//for ICC
 				DmddMLU=cmsMLUalloc(ContextID, 1);// for ICC
-  
 
 
 				// instruction with //ICC are used for generate icc profile
-				if (DescriptionMLU == NULL) printf("Error Description\n");
-				cmsMLUsetWide(CopyrightMLU,    "en", "US", L"No copyright Rawtherapee -AdobeRGB compatible")	;//adapt to profil	
-				cmsMLUsetWide(DmndMLU,    "en", "US", L"Rawtherapee")	;	
-			    cmsMLUsetWide(DmddMLU,    "en", "US", L"RTMedium")	;	//adapt to profil
+				if (DescriptionMLU == NULL) printf("Description error\n");
+				cmsMLUsetWide(CopyrightMLU, "en", "US", L"General Public License - AdobeRGB compatible")	;//adapt to profil
+				cmsMLUsetWide(DmndMLU,      "en", "US", L"RawTherapee")	;
+				cmsMLUsetWide(DmddMLU,      "en", "US", L"RTMedium")	;	//adapt to profil
 				//display Tag desc with : selection of gamma and Primaries
-				if(params.icm.gamma=="High_g1.3_s3.35" && !params.icm.freegamma) {
-										wchar_t string1[80] = L"GammaTRC: High g1.3 s3.35";
-										wcsncat( string1, stri[ns], 37 );
-										cmsMLUsetWide(DescriptionMLU,  "en", "US", string1);
-																				}
-					else if (params.icm.gamma=="Low_g2.6_s6.9" && !params.icm.freegamma) {
-										wchar_t string2[80] = L"GammaTRC: Low g2.6 s6.9";
-										wcsncat( string2, stri[ns], 36 );
-										cmsMLUsetWide(DescriptionMLU,  "en", "US", string2);
-																				}
-					else if (params.icm.gamma=="sRGB_g2.4_s12.92" && !params.icm.freegamma) {
-										wchar_t string3[80] = L"GammaTRC: sRGB g2.4 s12.92";
-										wcsncat( string3, stri[ns], 37 );
-										cmsMLUsetWide(DescriptionMLU,  "en", "US", string3);
-																				}
-					else if (params.icm.gamma== "BT709_g2.2_s4.5" && !params.icm.freegamma) {
-										wchar_t string4[80] = L"GammaTRC: BT709 g2.2 s4.5";
-										wcsncat( string4, stri[ns], 36 );
-										cmsMLUsetWide(DescriptionMLU,  "en", "US", string4);
-																				} 
-					else if (params.icm.gamma== "linear_g1.0" && !params.icm.freegamma) {
-										wchar_t string5[80] = L"GammaTRC: Linear g1.0";
-										wcsncat( string5, stri[ns], 32 );
-										cmsMLUsetWide(DescriptionMLU,  "en", "US", string5);
-																				}
-					else if (params.icm.gamma== "standard_g2.2" && !params.icm.freegamma) {
-										wchar_t string6[80] = L"GammaTRC: g2.2";
-										wcsncat( string6, stri[ns], 30 );
-										cmsMLUsetWide(DescriptionMLU,  "en", "US", string6);
-																				}
-					else if (params.icm.gamma== "standard_g1.8" && !params.icm.freegamma) {
-										wchar_t string7[80] = L"GammaTRC: g1.8";
-										wcsncat( string7, stri[ns], 30 );
-										cmsMLUsetWide(DescriptionMLU,  "en", "US", string7);
-																				}
+				if (!params.icm.freegamma) {
+					std::wstring gammaStr;
+					if(params.icm.gamma=="High_g1.3_s3.35") {
+						gammaStr = std::wstring(L"GammaTRC: High g=1.3 s=3.35");
+					}
+					else if (params.icm.gamma=="Low_g2.6_s6.9") {
+						gammaStr = std::wstring(L"GammaTRC: Low g=2.6 s=6.9");
+					}
+					else if (params.icm.gamma=="sRGB_g2.4_s12.92") {
+						gammaStr = std::wstring(L"GammaTRC: sRGB g=2.4 s=12.92");
+					}
+					else if (params.icm.gamma== "BT709_g2.2_s4.5") {
+						gammaStr = std::wstring(L"GammaTRC: BT709 g=2.2 s=4.5");
+					}
+					else if (params.icm.gamma== "linear_g1.0") {
+						gammaStr = std::wstring(L"GammaTRC: Linear g=1.0");
+					}
+					else if (params.icm.gamma== "standard_g2.2") {
+						gammaStr = std::wstring(L"GammaTRC: g=2.2");
+					}
+					else if (params.icm.gamma== "standard_g1.8") {
+						gammaStr = std::wstring(L"GammaTRC: g=1.8");
+					}
+					cmsMLUsetWide(DescriptionMLU,  "en", "US", gammaStr.c_str());
 
 					//for elaboration ICC profiles
 				//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Medium gamma sRGB(AdobeRGB compatible)");
@@ -390,36 +377,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 				//else if (params.icm.gamma==	"BT709_g2.2_s4.5" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma BT709(Prophoto compatible)");
 				//	else if (params.icm.gamma==	"sRGB_g2.4_s12.92" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma sRGB(Prophoto compatible)");
 				//	else if (params.icm.gamma==	"linear_g1.0" && !params.icm.freegamma) cmsMLUsetWide(DescriptionMLU,  "en", "US", L"RT_Large gamma Linear1.0(Prophoto compatible)");
-				
-					else if (params.icm.freegamma) {//prepare wchar_t for Free Gamma
-								std::wostringstream sgamm;
-								float gamm = params.icm.gampos;//gamma
-								sgamm<<gamm;     
-								std::wstring ws = sgamm.str();
-								const wchar_t* cga = {ws.c_str()};
-								std::vector<wchar_t> buf( cga , cga + (ws.size() + 1) );
-								wchar_t* wp = &buf[0];
-								wchar_t wpr[5]=L"2222";
-								wcsncpy(wpr,wp,4);	//gamma (gampos==> string)
-								wchar_t string[80] = L"Free Gamma g=";
-
-								wchar_t mid[5]=L" s=";
-								wcsncat( string, wpr, 17 );
-								wcsncat( string, mid, 20 );
-								
-								std::wostringstream slp;//slope
-								float slop = params.icm.slpos;
-								slp<<slop;       
-								std::wstring ws2 = slp.str();
-								const wchar_t* cslo = {ws2.c_str()};// const wchar_t*
-								std::vector<wchar_t> buf2( cslo , cslo + (ws2.size() + 1) );
-								wchar_t* wp2 = &buf2[0];  // wchar_t*
-								wchar_t wpr2[6]=L"22222";
-								wcsncpy(wpr2,wp2,5);	//Slope (slope==> string)
-
-								wcsncat( string, wpr2, 23 );
-								wcsncat( string, stri[ns], 33 );
-								cmsMLUsetWide(DescriptionMLU,  "en", "US", string);}//display description with gamma + slope + primaries
+				}
+				else {
+					// create description with gamma + slope + primaries
+					std::wostringstream gammaWs;
+					gammaWs.precision(2);
+					gammaWs<<"Manual GammaTRC: g="<<(float)params.icm.gampos<<" s="<<(float)params.icm.slpos;
+					cmsMLUsetWide(DescriptionMLU,  "en", "US", gammaWs.str().c_str());
+				}
 
 				cmsWriteTag(jprof, cmsSigProfileDescriptionTag,  DescriptionMLU);//desc changed
 			//	cmsWriteTag(jprof, cmsSigCopyrightTag,           CopyrightMLU);    
@@ -521,7 +486,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // Setting the output curve to readyImg
     if (customGamma) {
         if (!useLCMS) {
-            // use corrected sRGB profile in order to apply a good TRC if present, otherwise use LCMS2 profile generate by lab2rgb16b
+            // use corrected sRGB profile in order to apply a good TRC if present, otherwise use LCMS2 profile generated by lab2rgb16b
             ProfileContent pc(jprof);
             readyImg->setOutputProfile (pc.data, pc.length);
         }

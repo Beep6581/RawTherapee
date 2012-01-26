@@ -1,4 +1,5 @@
 ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CAVEATS;Mise en garde
 ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
 ABOUT_TAB_SPLASH;Splash
@@ -1062,7 +1063,7 @@ HISTORY_MSG_165;Courbes RVB - B
 HISTORY_MSG_166;Niveaux neutre
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumultaif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
 MAIN_TOOLTIP_PREVIEWB;Affichage du <b>canal Bleu</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Affichage du <b>Masque du focus</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Affichage du <b>Masque du focus</b> <i>(beta)</i> <b>Shift-F</b>\n\nPlus précis sur les images avec une faible profondeur de champ, à faible bruit et à des niveaux de zoom élevé\n\nPour améliorer la précision de détection des images bruitées, évaluez les à un facteur de zoom de 10-30%\n\nLa prévisualisation met plus de temps à se calculer lorsque cet outil est actif.
 MAIN_TOOLTIP_PREVIEWG;Affichage du <b>canal Vert</b>
 MAIN_TOOLTIP_PREVIEWL;Affichage de la <b>Luminosité</b>\n0.299*R + 0.587*V + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Affichage du <b>canal Rouge</b>
