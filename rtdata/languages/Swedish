@@ -1,0 +1,1113 @@
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Erkännande
+ABOUT_TAB_LICENSE;Licens
+ABOUT_TAB_SPLASH;Splash
+ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
+BATCHQUEUE_AUTOSTART;Autostart
+BATCH_PROCESSING;Batchbehandling
+CURVEEDITOR_CURVES;Kurvor
+CURVEEDITOR_CURVE;Kurva
+CURVEEDITOR_CUSTOM;Egen
+CURVEEDITOR_DARKS;Mörka partier
+CURVEEDITOR_FILEDLGFILTERANY;Vilka filer som helst
+CURVEEDITOR_FILEDLGFILTERCURVE;Kurvfiler
+CURVEEDITOR_HIGHLIGHTS;Högdagrar
+CURVEEDITOR_LIGHTS;Ljusa partier
+CURVEEDITOR_LINEAR;Linjär
+CURVEEDITOR_LOADDLGLABEL;Ladda kurva...
+CURVEEDITOR_MINMAXCPOINTS;Minimi/Maxima kontrollpunkter
+CURVEEDITOR_NURBS;Kontrollerad justering
+CURVEEDITOR_PARAMETRIC;Parametisk
+CURVEEDITOR_SAVEDLGLABEL;Spara kurva...
+CURVEEDITOR_SHADOWS;Skuggor
+CURVEEDITOR_TOOLTIPCOPY;Kopiera nuvarande kurva till klippbordet
+CURVEEDITOR_TOOLTIPLINEAR;Återställ kurva till linjär
+CURVEEDITOR_TOOLTIPLOAD;Ladda kurva från fil
+CURVEEDITOR_TOOLTIPPASTE;Klistra in kurva från klippbordet
+CURVEEDITOR_TOOLTIPSAVE;Spara nuvarande kurva
+CURVEEDITOR_TYPE;Typ:
+EDITWINDOW_TITLE;Bildredigering
+EXIFFILTER_APERTURE;Bländare
+EXIFFILTER_CAMERA;Kamera
+EXIFFILTER_DIALOGLABEL;EXIF-filter
+EXIFFILTER_FILETYPE;Filtyp
+EXIFFILTER_FOCALLEN;Brännvidd
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Objektiv
+EXIFFILTER_METADATAFILTER;Använd metadatafilter
+EXIFFILTER_SHUTTER;Slutartid
+EXIFPANEL_ADDEDITHINT;Lägg till en ny eller redigera en etikett
+EXIFPANEL_ADDEDIT;Lägg till/Redigera
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Ange värde
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Välj etikett
+EXIFPANEL_ADDTAGDLG_TITLE;Lägg till/redigera etikett
+EXIFPANEL_KEEPHINT;Behåll de valda etiketterna vid spara
+EXIFPANEL_KEEP;Behåll
+EXIFPANEL_REMOVEHINT;Ta bort de valda etiketterna vid spara
+EXIFPANEL_REMOVE;Ta bort
+EXIFPANEL_RESETALLHINT;Återställ alla etiketter till deras originalvärden
+EXIFPANEL_RESETALL;Återställ alla
+EXIFPANEL_RESETHINT;Återställ de valda etiketterna till deras originalvärden
+EXIFPANEL_RESET;Återställ
+EXIFPANEL_SUBDIRECTORY;Underkatalog
+FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
+FILEBROWSER_APPLYPROFILE;Använd profil
+FILEBROWSER_APPLYPROFILE_PARTIAL;Applicera profil (partiell)
+FILEBROWSER_ARRANGEMENTHINT;Växla mellan vertikal och horistonell visning av miniatyrbilder
+FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
+FILEBROWSER_AUTOFLATFIELD;Automatisk plattfältskorrigering
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klicka för att komma till vald sökväg
+FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren)
+FILEBROWSER_CACHECLEARFROMFULL;Rensa från cachen - fullständigt
+FILEBROWSER_CACHECLEARFROMPARTIAL;Rensa från cachen - delvis
+FILEBROWSER_CACHE;Cache
+FILEBROWSER_CLEARPROFILE;Återställ profilen
+FILEBROWSER_COPYPROFILE;Kopiera profil
+FILEBROWSER_CURRENT_NAME;Nuvarande namn:
+FILEBROWSER_DARKFRAME;Svartbild
+FILEBROWSER_DELETEDLGLABEL;Bekräftelse vid borttag
+FILEBROWSER_DELETEDLGMSGINCLPROC;Är du säker på att du vill ta bort de valda filerna %1 OCH den behandlade versionen?
+FILEBROWSER_DELETEDLGMSG;Är du säker på att du vill ta bort de valda %1 filerna?
+FILEBROWSER_EMPTYTRASHHINT;Ta bort papperskorgens filer permanent
+FILEBROWSER_EMPTYTRASH;Töm papperskorgen
+FILEBROWSER_EXIFFILTERAPPLYHINT;Visa/dölj EXIF-filtret i filhanteraren
+FILEBROWSER_EXIFFILTERAPPLY;Använd
+FILEBROWSER_EXIFFILTERLABEL;EXIF-filter
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändra inställningar för EXIF-filtret
+FILEBROWSER_EXIFFILTERSETTINGS;Inställningar
+FILEBROWSER_FLATFIELD;Plattfält
+FILEBROWSER_MOVETODARKFDIR;Flytta till katalogen för svartbilder
+FILEBROWSER_MOVETOFLATFIELDDIR;Flytta till plattfältskatalogen
+FILEBROWSER_NEW_NAME;Nytt namn:
+FILEBROWSER_PARTIALPASTEPROFILE;Klistra in partiell profil
+FILEBROWSER_PASTEPROFILE;Klistra in profil
+FILEBROWSER_POPUPCANCELJOB;Avbryt
+FILEBROWSER_POPUPCOLORLABEL0;Etikett: Ingen
+FILEBROWSER_POPUPCOLORLABEL1;Etikett: Röd
+FILEBROWSER_POPUPCOLORLABEL2;Etikett: Gul
+FILEBROWSER_POPUPCOLORLABEL3;Etikett: Grön
+FILEBROWSER_POPUPCOLORLABEL4;Etikett: Blå
+FILEBROWSER_POPUPCOLORLABEL5;Etikett: Lila
+FILEBROWSER_POPUPCOLORLABEL;Färgetikett
+FILEBROWSER_POPUPCOPYTO;Kopiera till...
+FILEBROWSER_POPUPFILEOPERATIONS;Filaktiviteter
+FILEBROWSER_POPUPMOVEEND;Flytta till slutet av behandlingskön
+FILEBROWSER_POPUPMOVEHEAD;Flytta till början av behandlingskön
+FILEBROWSER_POPUPMOVETO;Flytta till...
+FILEBROWSER_POPUPOPEN;Öppna 
+FILEBROWSER_POPUPPROCESS;Flytta till behandlingskön
+FILEBROWSER_POPUPPROFILEOPERATIONS;Profilaktiviteter
+FILEBROWSER_POPUPRANK1;Betyg 1
+FILEBROWSER_POPUPRANK2;Betyg 2
+FILEBROWSER_POPUPRANK3;Betyg 3
+FILEBROWSER_POPUPRANK4;Betyg 4
+FILEBROWSER_POPUPRANK5;Betyg 5
+FILEBROWSER_POPUPREMOVEINCLPROC;Ta bort från filsystemet inkl. den behandlade
+FILEBROWSER_POPUPREMOVESUBMENU;Ta bort
+FILEBROWSER_POPUPREMOVE;Ta bort från filsystemet
+FILEBROWSER_POPUPRENAME;Byt namn
+FILEBROWSER_POPUPSELECTALL;Markera allt
+FILEBROWSER_POPUPTRASH;Flytta till papperskorgen
+FILEBROWSER_POPUPUNRANK;Ta bort betyg
+FILEBROWSER_POPUPUNTRASH;Ta bort från papperskorgen
+FILEBROWSER_PROCESSINGSETTINGSHINT;Ange filformat och målkatalog
+FILEBROWSER_PROCESSINGSETTINGS;Inställningar
+FILEBROWSER_QUERYBUTTONHINT;Rensa hittafältet
+FILEBROWSER_QUERYHINT;Skriv in en del av filnamnet att söka efter. \nTryck <b>Ctrl-f</b> (i filhanteraren) för att sätta fokus i sökfältet och tryck <b>Enter</b> för att söka
+FILEBROWSER_QUERYLABEL; Hitta:
+FILEBROWSER_RENAMEDLGLABEL;Byt namn
+FILEBROWSER_RENAMEDLGMSG;Byt namn på "%1" till:
+FILEBROWSER_SELECTDARKFRAME;Välj svartbild... 
+FILEBROWSER_SELECTFLATFIELD;Välj plattfält...
+FILEBROWSER_SHOWCOLORLABEL1HINT;Visa bilder märkta som röda <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Visa bilder märkta som gula<b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Visa bilder märkta som gröna<b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Visa bilder märkta som blå<b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Visa bilder märkta som lila <b>Alt-5</b>
+FILEBROWSER_SHOWDIRHINT;Visa alla bilder i biblioteket
+FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder <b>6</b>
+FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information
+FILEBROWSER_SHOWQUEUEHINT;Visa innehållet i behandlingskön
+FILEBROWSER_SHOWRANK1HINT;Visa bilder med betyg 1
+FILEBROWSER_SHOWRANK2HINT;Visa bilder med betyg 2
+FILEBROWSER_SHOWRANK3HINT;Visa bilder med betyg 3
+FILEBROWSER_SHOWRANK4HINT;Visa bilder med betyg 4
+FILEBROWSER_SHOWRANK5HINT;Visa bilder med betyg 5
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Visa bilder som nyligen sparats <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Visa bilder som inte nyligen sparats <b>Alt-6</b>
+FILEBROWSER_SHOWTRASHHINT;Visa innehållet i papperskorgen
+FILEBROWSER_SHOWUNCOLORHINT;Visa bilder utan färgetikett <b>Alt-`</b>
+FILEBROWSER_SHOWUNRANKHINT;Visa icke-betygsatta bilder
+FILEBROWSER_STARTPROCESSINGHINT;Starta behandlingen och spara bilderna i behandlingskön
+FILEBROWSER_STARTPROCESSING;Starta behandlingen
+FILEBROWSER_STOPPROCESSINGHINT;Avbryt behandlingen av bilderna
+FILEBROWSER_STOPPROCESSING;Avbryt behandlingen
+FILEBROWSER_THUMBSIZE;Miniatyrbildens storlek
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Starta behandlingen automatiskt när en ny bild kommer in
+FILEBROWSER_USETEMPLATE;Använd förinställning:
+FILEBROWSER_ZOOMINHINT;Förstora miniatyrbilderna
+FILEBROWSER_ZOOMOUTHINT;Förminska miniatyrbilderna
+GENERAL_ABOUT;Om
+GENERAL_AFTER;Efter
+GENERAL_BEFORE;Före
+GENERAL_CANCEL;Avbryt
+GENERAL_DISABLED;Avaktivera
+GENERAL_DISABLE;Avaktivera
+GENERAL_ENABLED;Verkställ
+GENERAL_ENABLE;Verkställ
+GENERAL_FILE;Fil
+GENERAL_HIGH_QUALITY;Hög kvalitet
+GENERAL_LANDSCAPE;Landskap
+GENERAL_LOAD;Ladda
+GENERAL_NA;Ej tillgänglig
+GENERAL_NONE;Inga
+GENERAL_NO;Nej
+GENERAL_OK;Ok
+GENERAL_PORTRAIT;Porträtt
+GENERAL_SAVE;Spara
+GENERAL_UNCHANGED;(Oförändrad)
+GENERAL_YES;Ja
+HISTOGRAM_BUTTON_BAR;RGB
+HISTOGRAM_BUTTON_B;B
+HISTOGRAM_BUTTON_G;G
+HISTOGRAM_BUTTON_L;L
+HISTOGRAM_BUTTON_RAW;Råbild
+HISTOGRAM_BUTTON_R;R
+HISTOGRAM_LABEL;Histogram
+HISTOGRAM_TOOLTIP_BAR;Visa/dölj RBG-indikatorer Klicka på höger musknapp på förhandsvisningen för att frysa
+HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
+HISTOGRAM_TOOLTIP_G;Visa/dölj grönt histogram
+HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
+HISTOGRAM_TOOLTIP_RAW;Visa/dölj råbildens histogram
+HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
+HISTORY_CHANGED;Ändrad
+HISTORY_CUSTOMCURVE;Egen kurva
+HISTORY_DELSNAPSHOT;Ta bort
+HISTORY_FROMCLIPBOARD;Från klippbordet
+HISTORY_LABEL;Historia
+HISTORY_MSG_1;Fotot laddades
+HISTORY_MSG_2;Profil laddad
+HISTORY_MSG_3;Profil ändrad
+HISTORY_MSG_4;Historia-bläddrande
+HISTORY_MSG_5;Ljusstyrka
+HISTORY_MSG_6;Kontrast
+HISTORY_MSG_7;Svärta
+HISTORY_MSG_8;Exponeringskomprimering
+HISTORY_MSG_9;Högdageråterställning
+HISTORY_MSG_10;Skuggkomprimering
+HISTORY_MSG_11;Tonkurva
+HISTORY_MSG_12;Autoexponering
+HISTORY_MSG_13;Exponeringsmarkering
+HISTORY_MSG_14;Luminansljusstyrka
+HISTORY_MSG_15;Luminanskontrast
+HISTORY_MSG_16;Svart luminans
+HISTORY_MSG_17;Luminans högdagerkompr.
+HISTORY_MSG_18;Luminans skuggkompr.
+HISTORY_MSG_19;Luminanskurva
+HISTORY_MSG_20;Skärpning
+HISTORY_MSG_21;Skärpningsradie
+HISTORY_MSG_22;Skärpningsmängd
+HISTORY_MSG_23;Skärpningströskelvärde
+HISTORY_MSG_24;Skärp bara kanter
+HISTORY_MSG_25;Kantupptäckningsradie-skärpning
+HISTORY_MSG_26;Kantskärpningstolerans
+HISTORY_MSG_27;Halo-skärpningskontroll
+HISTORY_MSG_28;Halo-kontrollstorlek
+HISTORY_MSG_29;Skärpningsmetod
+HISTORY_MSG_30;Deconvolution-radie
+HISTORY_MSG_31;Deconvolution-storlek
+HISTORY_MSG_32;Deconvolution-dämpning
+HISTORY_MSG_33;Deconvolution-upprepning
+HISTORY_MSG_34;Undvik att färgen klipper
+HISTORY_MSG_35;Mättnadsbegränsning
+HISTORY_MSG_36;Mättnadsgräns
+HISTORY_MSG_37;Färgförstärkning
+HISTORY_MSG_38;Vitbalansmetod
+HISTORY_MSG_39;Färgtemperatur
+HISTORY_MSG_40;Färgton
+HISTORY_MSG_41;Färgskiftning "A"
+HISTORY_MSG_42;Färgskiftning "B"
+HISTORY_MSG_43;Reducering av luminansbrus
+HISTORY_MSG_44;Borttagningsradie för luminansbrusreducering
+HISTORY_MSG_45;Kanttolerans för luminansbrusreducering
+HISTORY_MSG_46;Färgbrusreducering
+HISTORY_MSG_47;Radie för färgbrusreducering
+HISTORY_MSG_48;Kanttolerans för färgbrusreducering
+HISTORY_MSG_49;Kantkänslighet för färgbrusreducering
+HISTORY_MSG_50;Skugg/högdagerverktyg
+HISTORY_MSG_51;Högdagerförstärkning
+HISTORY_MSG_52;Skuggförstärkning
+HISTORY_MSG_53;Högdagertonvidd
+HISTORY_MSG_54;Skuggtonvidd
+HISTORY_MSG_55;Lokal kontrast
+HISTORY_MSG_56;Skugg/högdagerradie
+HISTORY_MSG_57;Enkel rotation
+HISTORY_MSG_58;Vänd horisontellt
+HISTORY_MSG_59;Vänd vertikalt
+HISTORY_MSG_60;Rotation
+HISTORY_MSG_61;Fyll automatiskt
+HISTORY_MSG_62;Korrigering av objektivdistorsion
+HISTORY_MSG_63;Valt bokmärke
+HISTORY_MSG_64;Beskär foto
+HISTORY_MSG_65;Korrigera kromatiska abberationer
+HISTORY_MSG_66;Högdageråterställning
+HISTORY_MSG_67;Mängd på högdageråterställning
+HISTORY_MSG_68;Metod för högdageråterställning
+HISTORY_MSG_69;Färgrymd
+HISTORY_MSG_70;Utmatningsfärgrymd
+HISTORY_MSG_71;Inmatningsfärgrymd
+HISTORY_MSG_72;Korrigering av vinjettering
+HISTORY_MSG_73;Kanalmixer
+HISTORY_MSG_74;Ändra storleksskala
+HISTORY_MSG_75;Ändra storleksmetod
+HISTORY_MSG_76;EXIF Metadata
+HISTORY_MSG_77;IPTC Metadata
+HISTORY_MSG_78;Data som ska ändra storlek
+HISTORY_MSG_79;Storleksförändring, bredd
+HISTORY_MSG_80;Storleksförändring, höjd
+HISTORY_MSG_81;Storleksförändring aktiverad
+HISTORY_MSG_82;Profilen har ändrats
+HISTORY_MSG_83;Högkvalitet Skuggor/högdagrar
+HISTORY_MSG_84;Korrigering av perspektiv
+HISTORY_MSG_85;Waveletkoefficienter
+HISTORY_MSG_86;Waveletequalizer
+HISTORY_MSG_87;Brusreducering mha av stegsvar
+HISTORY_MSG_88;Tröskelvärde för punktbrusreducering
+HISTORY_MSG_89;Brusreducering
+HISTORY_MSG_90;Brusreducering - luminans
+HISTORY_MSG_91;Brusreducering - krominans
+HISTORY_MSG_92;Brusreducering - gamma
+HISTORY_MSG_93;Kontrast genom detaljnivåvärden
+HISTORY_MSG_94;Kontrast genom detaljnivåer
+HISTORY_MSG_95;Mättnad
+HISTORY_MSG_96;'a'-kurvan
+HISTORY_MSG_97;'b'-kurvan
+HISTORY_MSG_98;Demozaicing
+HISTORY_MSG_99;Förbehandling
+HISTORY_MSG_100;Mättnad, RGB
+HISTORY_MSG_101;HSV EQ - Nyans
+HISTORY_MSG_102;HSV EQ - Mättnad
+HISTORY_MSG_103;HSV EQ - Värde
+HISTORY_MSG_104;HSV Equalizer
+HISTORY_MSG_105;Reducering av överstrålning
+HISTORY_MSG_106;Radie för reducering av överstrålning
+HISTORY_MSG_107;Tröskelvärde för reducering av överstrålning
+HISTORY_MSG_108;Storleksförändring på avgränsad yta
+HISTORY_MSG_109;Storleksförändring tillämpas på
+HISTORY_MSG_110;Storleksförändring tillämpas på
+HISTORY_MSG_111;Undvik att färgen klipper
+HISTORY_MSG_112;Mättnadsbegränsare
+HISTORY_MSG_113;Mättnadsgräns
+HISTORY_MSG_114;Antal DCB-iterationer
+HISTORY_MSG_115;Falska färger iterationer
+HISTORY_MSG_116;Förbättrad DCB
+HISTORY_MSG_117;Röd CA korrigering
+HISTORY_MSG_118;Blå CA korrigering
+HISTORY_MSG_119;Linjärt brusfilter
+HISTORY_MSG_120;Grönbalanseringsgräns
+HISTORY_MSG_121;Automatisk CA-reducering
+HISTORY_MSG_122;Automatisk svartbild
+HISTORY_MSG_123;Svartbildsfil
+HISTORY_MSG_124;Linjär exponeringskompensering
+HISTORY_MSG_125;Exponeringskorrigering med bevarande högdagrar
+HISTORY_MSG_126;Plattfältsfil
+HISTORY_MSG_127;Automatiskt val av plattfält
+HISTORY_MSG_128;Oskärperadie för plattfält
+HISTORY_MSG_129;Oskärpetyp hos plattfältet
+HISTORY_MSG_130;Autodistorion
+HISTORY_MSG_131;Brusreducering, luminans
+HISTORY_MSG_132;Brusreducering, krominans
+HISTORY_MSG_133;Gamma
+HISTORY_MSG_134;Gammaposition
+HISTORY_MSG_135;Gamma, fri
+HISTORY_MSG_136;Gammalutning
+HISTORY_MSG_137;Svartpunktsnivå grön 1
+HISTORY_MSG_138;Svartpunktsnivå röd
+HISTORY_MSG_139;Svartpunktsnivå blå
+HISTORY_MSG_140;Svartpunktsnivå grön 2
+HISTORY_MSG_141;Svartpunktsnivå grön tillsammans
+HISTORY_MSG_142;Kantskärpning - iterationer
+HISTORY_MSG_143;Kantskärpning - mängd
+HISTORY_MSG_144;Mikrokontrast - mängd
+HISTORY_MSG_145;Mikrokontrast - enhetlighet
+HISTORY_MSG_146;Kantskärpning
+HISTORY_MSG_147;Kantskärpning - endast luminans
+HISTORY_MSG_148;Mikrokontrast
+HISTORY_MSG_149;Mikrokontrast- 3x3-matris
+HISTORY_MSG_150;Reducering av artefakter och brus efter demosaicing
+HISTORY_NEWSNAPSHOTAS;Som...
+HISTORY_NEWSNAPSHOT;Nytt
+HISTORY_NEWSSDIALOGLABEL;Namn på bokmärket:
+HISTORY_NEWSSDIALOGTITLE;Lägg till nytt bokmärke
+HISTORY_SETTO;Ställ in till
+HISTORY_SNAPSHOTS;Bokmärken
+HISTORY_SNAPSHOT;Bokmärke
+ICMPANEL_FILEDLGFILTERANY;Vilka filer som helst
+ICMPANEL_FILEDLGFILTERICM;ICC profilfiler
+ICMPANEL_GAMMABEFOREINPUT;Profilapplicerad gamma
+ICMPANEL_INPUTCAMERA;Kameraval
+ICMPANEL_INPUTCUSTOM;Egen
+ICMPANEL_INPUTDLGLABEL;Välj inmatnings ICC-profil...
+ICMPANEL_INPUTEMBEDDED;Använd inbäddad, om möjligt
+ICMPANEL_INPUTPROFILE;Inmatningsprofil
+ICMPANEL_NOICM;Ingen ICM: sRGB-utmatning
+ICMPANEL_OUTPUTDLGLABEL;Välj utmatnings ICC-profil...
+ICMPANEL_OUTPUTPROFILE;Utmatningsprofil
+ICMPANEL_SAVEREFERENCE;Spara referensbild för profilering
+ICMPANEL_WORKINGPROFILE;Färgrymd
+IMAGEAREA_DETAILVIEW;Detalj
+IPTCPANEL_AUTHORHINT;Namn på skaparen, t ex skribenten, fotografen eller den grafiska artisten (by-line)
+IPTCPANEL_AUTHORSPOSITIONHINT;Titeln på upphovsmannen/männen (byline)
+IPTCPANEL_AUTHORSPOSITION;Upphovmannens position
+IPTCPANEL_AUTHOR;Upphovsman
+IPTCPANEL_CAPTIONHINT;En beskrivning av informationen
+IPTCPANEL_CAPTIONWRITERHINT;Namnet på den person som är involverad i att skapa eller redigera eller korrigera bilden
+IPTCPANEL_CATEGORYHINT;Identifierar bildens titel enligt tillhandahållaren.
+IPTCPANEL_CATEGORY;Kategori
+IPTCPANEL_CITYHINT;Staden där bilden togs
+IPTCPANEL_CITY;Stad
+IPTCPANEL_COPYHINT;Kopiera IPTC-inställningarna till klippbordet
+IPTCPANEL_COPYRIGHTHINT;Nödvändig upphovsrättslig information
+IPTCPANEL_COPYRIGHT;Upphovsrätt
+IPTCPANEL_COUNTRYHINT;Namnet på landet/platsen där bilden togs
+IPTCPANEL_COUNTRY;Land
+IPTCPANEL_CREDITHINT;Identifierar tillhandahållaren av bilden, inte nödvändigtvis upphovsmannen
+IPTCPANEL_CREDIT;Erkännande
+IPTCPANEL_DATECREATEDHINT;Datumet då innehållet av bilden skapades. Format: ÅÅÅÅMMDD.
+IPTCPANEL_DATECREATED;Skapad datum
+IPTCPANEL_EMBEDDEDHINT;Återställ IPTC-informationen till innehållet i bildfilen.
+IPTCPANEL_EMBEDDED;Inbäddad
+IPTCPANEL_HEADLINEHINT;En sammanfattning av vad bilden innehåller.
+IPTCPANEL_HEADLINE;Rubrik
+IPTCPANEL_INSTRUCTIONSHINT;Andra instruktioner som rör användandet av bilden.
+IPTCPANEL_INSTRUCTIONS;Instruktioner
+IPTCPANEL_KEYWORDSHINT;Indikerar nyckelord
+IPTCPANEL_KEYWORDS;Nyckelord
+IPTCPANEL_PASTEHINT;Klistra in IPTC-inställningar från klippbordet
+IPTCPANEL_PROVINCEHINT;Den provins eller stat från vilken bilden härrör. 
+IPTCPANEL_PROVINCE;Provins
+IPTCPANEL_RESETHINT;Återställ till standardprofilen
+IPTCPANEL_RESET;Återställ
+IPTCPANEL_SOURCEHINT;Den ursprungliga ägaren av innehållet.
+IPTCPANEL_SOURCE;Källa
+IPTCPANEL_SUPPCATEGORIESHINT;Ytterligare beskrivning av bilden
+IPTCPANEL_SUPPCATEGORIES;Övriga kategorier
+IPTCPANEL_TITLEHINT;En kortfattad bildreferens
+IPTCPANEL_TITLE;Titel
+IPTCPANEL_TRANSREFERENCEHINT;En kod som representerar platsen för överföring
+IPTCPANEL_TRANSREFERENCE;Överföringsreferens
+MAIN_BUTTON_EXIT;Avsluta
+MAIN_BUTTON_FULLSCREEN;Helskärm
+MAIN_BUTTON_PREFERENCES;Inställningar
+MAIN_BUTTON_PUTTOQUEUE;Behandla
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. Kortkommando: Ctrl+Q
+MAIN_BUTTON_QUEUE;Placera i behandlingskön
+MAIN_BUTTON_SAVEAS;Som...
+MAIN_BUTTON_SAVE;Spara
+MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild. Kortkommando: Ctrl+S
+MAIN_BUTTON_SENDTOEDITOR;Redigera
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Visa/dölj alla sidopaneler <b>m</b>
+MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
+MAIN_FRAME_BATCHQUEUE;Batchkö
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batchkö <b>Ctrl-F3</b>
+MAIN_FRAME_EDITOR;Redigerfönster
+MAIN_FRAME_EDITOR;Redigering
+MAIN_FRAME_EDITOR_TOOLTIP; Redigeringsvy <b>Ctrl-F4</b>
+MAIN_FRAME_FILEBROWSER;Filhanterare
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Filhanteraren <b>Ctrl-F2</b>
+MAIN_FRAME_PLACES;Platser
+MAIN_FRAME_PLACES_ADD;Lägg till
+MAIN_FRAME_PLACES_DEL;Ta bort
+MAIN_FRAME_RECENT;Nyligen använda kataloger
+MAIN_MSG_ALREADYEXISTS;Filen existerar redan.
+MAIN_MSG_CANNOTLOAD;Kan inte ladda bilden
+MAIN_MSG_CANNOTSAVE;Filsparningsfel
+MAIN_MSG_CANNOTSTARTEDITOR;Kan ej starta externt redigeringsprogram
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Var vänlig och ange rätt sökväg i inställningarna
+MAIN_MSG_EMPTYFILENAME;Ospecificerat filnamn!
+MAIN_MSG_ERRORDURINGIMAGESAVING;Fel uppstod när bilden sparades
+MAIN_MSG_EXITJOBSINQUEUEINFO;Obehandlade bilder i behandlingskön kommer att gå förlorade om programmet stängs av.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Är du säker på att du vill avsluta? Det finns obehandlade bilder i behandlingskön.
+MAIN_MSG_JOBSINQUEUE;Arbete(n) i kö
+MAIN_MSG_NAVIGATOR;Översikt
+MAIN_MSG_PLACES;Platser
+MAIN_MSG_QOVERWRITE;Vill du skriva över den?
+MAIN_TAB_BASIC;Grund
+MAIN_TAB_COLOR;Färger
+MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
+MAIN_TAB_DETAIL;Detaljer
+MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+MAIN_TAB_DEVELOP;Framkalla
+MAIN_TAB_EXIF;EXIF
+MAIN_TAB_EXPOSURE;Exponering
+MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
+MAIN_TAB_FILTER;Filter
+MAIN_TAB_ICM;ICM
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metadata
+MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
+MAIN_TAB_RAW;Råbild
+MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
+MAIN_TAB_TAGGING;Etiketter
+MAIN_TAB_TRANSFORM;Omvandla
+MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+MAIN_TOGGLE_BEFORE_AFTER;B|A
+MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen. Kortkommando: F
+MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen. Kortkommando: H
+MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdagerindikation
+MAIN_TOOLTIP_INDCLIPPEDS;Markerad skuggindikation
+MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
+MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden
+MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald katalog
+MAIN_TOOLTIP_SAVE;Spara bilden till standardkatalogen
+MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>H</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Visa/dölj den högra panelen <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-l</b>
+MAIN_TOOLTIP_TOGGLE;Växla före/efter vy. Kortkommando: B
+NAVIGATOR_B_NA;B = -
+NAVIGATOR_B_VALUE;B = %1
+NAVIGATOR_G_NA;G = -
+NAVIGATOR_G_VALUE;G = %1
+NAVIGATOR_H_NA;H = -
+NAVIGATOR_H_VALUE;H = %1
+NAVIGATOR_LAB_A_NA;A = -
+NAVIGATOR_LAB_A_VALUE;A = %1
+NAVIGATOR_LAB_B_NA;B = -
+NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_L_NA;L = -
+NAVIGATOR_LAB_L_VALUE;L = %1
+NAVIGATOR_R_NA;R = -
+NAVIGATOR_R_VALUE;R = %1
+NAVIGATOR_S_NA;S = -
+NAVIGATOR_S_VALUE;S = %1
+NAVIGATOR_V_NA;V = -
+NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_NA;x = -, y = -
+PARTIALPASTE_BASICGROUP;Grundläggande inställningar
+PARTIALPASTE_CACORRECTION;Reducera kromatiska abberationer
+PARTIALPASTE_CHANNELMIXER;Kanalmixer
+PARTIALPASTE_COARSETRANS;90-graders rotering
+PARTIALPASTE_COLORBOOST;Förstärk färger
+PARTIALPASTE_COLORDENOISE;Reducera färgbrus
+PARTIALPASTE_COLORGROUP;Färgrelaterade inställningar
+PARTIALPASTE_COLORMIXER;Färgmixer
+PARTIALPASTE_COLORSHIFT;Färgskift
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
+PARTIALPASTE_COMPOSITIONGROUP;Komponeringsinställningar
+PARTIALPASTE_CROP;Beskär
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Automatiskt val av svartbild
+PARTIALPASTE_DARKFRAMEFILE;Svartbildsfil
+PARTIALPASTE_DEFRINGE;Fyll ut överstrålning
+PARTIALPASTE_DETAILGROUP;Detaljinställningar
+PARTIALPASTE_DIALOGLABEL;Partiell inklistring av processprofiler
+PARTIALPASTE_DIRPYRDENOISE;Brusreducering
+PARTIALPASTE_DIRPYREQUALIZER;Kontrast genom detaljnivåer
+PARTIALPASTE_DISTORTION;Distortionsrättning
+PARTIALPASTE_EVERYTHING;Allt
+PARTIALPASTE_EXIFCHANGES;Förändringar i EXIF-informationen
+PARTIALPASTE_EXPOSURE;Exponering
+PARTIALPASTE_FLATFIELDAUTOSELECT;Välj plattfält automatiskt
+PARTIALPASTE_FLATFIELDBLURRADIUS;Oskärperadie för plattfält
+PARTIALPASTE_FLATFIELDBLURTYPE;Oskärpetyp hos plattfältet
+PARTIALPASTE_FLATFIELDFILE;Plattfältsfil
+PARTIALPASTE_HLRECONSTRUCTION;Högdageråterställning
+PARTIALPASTE_HLRECOVERYAMOUNT;Högdageråterställningsmängd
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdageråterställning, tröskelvärde
+PARTIALPASTE_HLRECOVERY;Högdageråterställning
+PARTIALPASTE_HSVEQUALIZER;HSV-equalizer
+PARTIALPASTE_ICMSETTINGS;ICM-inställningar
+PARTIALPASTE_IMPULSEDENOISE;Brusreducering mha stegsvar
+PARTIALPASTE_IPTCINFO;IPTC info
+PARTIALPASTE_LABCURVE;Labkurva
+PARTIALPASTE_LENSGROUP;Objektivrelaterade inställningar
+PARTIALPASTE_LUMACURVE;Luminanskurva
+PARTIALPASTE_LUMADENOISE;Reducera luminansbrus
+PARTIALPASTE_LUMINANCEGROUP;Luminansrelaterade inställningar
+PARTIALPASTE_METAICMGROUP;Metadata/ICM inställningar
+PARTIALPASTE_PERSPECTIVE;Perspektiv
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Grönbalansering
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Tillämpa het- och dödpixelfilter
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Linjärt brusfilter
+PARTIALPASTE_RAWCACORR_AUTO;Reducera kromatiska abberationer
+PARTIALPASTE_RAWCACORR_CABLUE;Blå
+PARTIALPASTE_RAWCACORR_CARED;Röd
+PARTIALPASTE_RAWEXPOS_BLACK;Svärta
+PARTIALPASTE_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
+PARTIALPASTE_RAWEXPOS_PRESER;Korrigering av högdagrar(EV)
+PARTIALPASTE_RAWGROUP;Råbildsinställningar
+PARTIALPASTE_RAW_ALLENHANCE;Applicera reducering av artefakter och brus efter demosaicing
+PARTIALPASTE_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
+PARTIALPASTE_RAW_DCBITERATIONS;Antal DCB-iterationer
+PARTIALPASTE_RAW_DMETHOD;Metodi för demosaicing
+PARTIALPASTE_RAW_FALSECOLOR;Falskt färgbortträngningssteg
+PARTIALPASTE_RESIZE;Ändra storlek
+PARTIALPASTE_ROTATION;Rotering
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Skugg- och högdageråterställning
+PARTIALPASTE_SHARPENEDGE;Kanter
+PARTIALPASTE_SHARPENING;Skärpa
+PARTIALPASTE_SHARPENMICRO;Mikrokontrast
+PARTIALPASTE_VIGNETTING;Reducera vinjettering
+PARTIALPASTE_WAVELETEQUALIZER;Waveletequalizer
+PARTIALPASTE_WHITEBALANCE;Vitbalans
+PREFERENCES_ADD;Lägg till
+PREFERENCES_APPLNEXTSTARTUP;Ändras vid nästa uppstart
+PREFERENCES_AUTOMONPROFILE;Använd operativsystemets skärmprofil
+PREFERENCES_BATCH_PROCESSING;Batchbehandling
+PREFERENCES_BEHAVIOR;Uppträdande
+PREFERENCES_BLINKCLIPPED;Blinka markerade områden
+PREFERENCES_CACHECLEARALL;Återställ alla
+PREFERENCES_CACHECLEARPROFILES;Återställ profiler
+PREFERENCES_CACHECLEARTHUMBS;Ta bort cachade miniatyrbilder
+PREFERENCES_CACHEFORMAT1;Proprietär (snabbare och med bättre kvalitet)
+PREFERENCES_CACHEFORMAT2;JPEG (tar mindre plats)
+PREFERENCES_CACHEMAXENTRIES;Maximalt antal cachefiler
+PREFERENCES_CACHEOPTS;Cacheinställningar
+PREFERENCES_CACHESTRAT1;Föredra hastighet framför låg minnesanvändning
+PREFERENCES_CACHESTRAT2;Föredra låg minnesanvändning framför hastighet
+PREFERENCES_CACHESTRAT;Cachestrategi
+PREFERENCES_CACHETHUMBFORM;Miniatyrbildens format i cachen
+PREFERENCES_CACHETHUMBHEIGHT;Maximal storlek på miniatyrbilderna
+PREFERENCES_CLEARDLG_LINE1;Rensa cache
+PREFERENCES_CLEARDLG_LINE2;Det här tar kanske ett par sekunder...
+PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
+PREFERENCES_CLIPPINGIND;Markeringsindikation
+PREFERENCES_CMETRICINTENT;Kolorimetrisk återgivning
+PREFERENCES_CUSTPROFBUILDHINT;Exekverbar (eller skript) fil som anropas när en ny initial profil skall genereras för en bild. nMottar kommandoradparametrar för att tillåta generering av en regelbaserad .pp3-fil:n[Sökväg Raw/JPG] [Sökväg till standardprofil] [f-nr] [exponering i sek] [brännvidd i mm] [ISO] [Objektiv] [Kamera]
+PREFERENCES_CUSTPROFBUILDPATH;Exekverbar sökväg
+PREFERENCES_CUTOVERLAYBRUSH;Bakgrundsfärg vid beskärning
+PREFERENCES_DARKFRAMEFOUND;Hittade
+PREFERENCES_DARKFRAMESHOTS;bilder
+PREFERENCES_DARKFRAMETEMPLATES;mallar
+PREFERENCES_DARKFRAME;Svartbild
+PREFERENCES_DATEFORMATFRAME;Datumformat
+PREFERENCES_DATEFORMATHINT;Du kan använda följande formatsträngar:\n<b>%y</b>: år\n<b>%m</b>: månad\n<b>%d</b>: dag\n\nTill exempel är det svenska datumformatet:\n<b>%y-%m-%d</b>
+PREFERENCES_DATEFORMAT;Datumformat
+PREFERENCES_DEFAULTLANG;Förvalt språk
+PREFERENCES_DEFAULTTHEME;Förvalt tema
+PREFERENCES_DEMOSAICINGALGO;Algoritm för demosaicing
+PREFERENCES_DIRDARKFRAMES;Katalog för svartbilder
+PREFERENCES_DIRHOME;Hemkatalog
+PREFERENCES_DIRLAST;Senaste besökta katalog
+PREFERENCES_DIROTHER;Annan
+PREFERENCES_DIRSELECTDLG;Välj bildkatalog vid uppstart...
+PREFERENCES_DIRSOFTWARE;Installationskatalog
+PREFERENCES_EDITORCMDLINE;Annan kommandorad
+PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
+PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
+PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Filhanterarens verktygsrad som en rad (avmarkera för lågupplösta skärmar)
+PREFERENCES_FILEFORMAT;Filformat
+PREFERENCES_FLATFIELDFOUND;Hittade
+PREFERENCES_FLATFIELDSDIR;Plattfältskatalog
+PREFERENCES_FLATFIELDSHOTS;bilder
+PREFERENCES_FLATFIELDTEMPLATES;mallar
+PREFERENCES_FLATFIELD;Plattfält
+PREFERENCES_FORIMAGE;För bildfiler
+PREFERENCES_FORRAW;För råbilder
+PREFERENCES_GIMPPATH;Installationskatalog för GIMP
+PREFERENCES_GTKTHEME;GTK standard
+PREFERENCES_HINT;Tips
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogrammet till vänster
+PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
+PREFERENCES_ICCDIR;Katalog för ICC-profiler
+PREFERENCES_IMPROCPARAMS;Standardprofiler
+PREFERENCES_INTENT_ABSOLUTE;Totalkolorimetrisk
+PREFERENCES_INTENT_PERCEPTUAL;Upplevd
+PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
+PREFERENCES_INTENT_SATURATION;Mättnad
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Visa intern råbild om oredigerad
+PREFERENCES_LANGAUTODETECT;Använd oeprativsystemets språkinställning
+PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
+PREFERENCES_MENUGROUPFILEOPERATIONS;Gruppera filaktiviteter
+PREFERENCES_MENUGROUPLABEL;Gruppera etikettering
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Gruppera profilaktiviteter
+PREFERENCES_MENUGROUPRANK;Gruppera ranking
+PREFERENCES_MENUOPTIONS;Menyval
+PREFERENCES_METADATA;Metadata
+PREFERENCES_MONITORICC;Skärmprofil
+PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt i flerfliksläge
+PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
+PREFERENCES_OUTDIRFOLDERHINT;Flytta de sparade filerna i den valda katalogen
+PREFERENCES_OUTDIRFOLDER;Spara till katalog
+PREFERENCES_OUTDIRHINT;Du kan använda följande formatsträngar:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012 \n%d1=2010-09-02 \n%d2=bilder \n%p1=/home/tom/bilder/2010-09-02, \n%p2=/home/tom/bilder\n%p3=/home/tom \n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;Du kan använda följande formatsträngar:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här formatsträngarna hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012 \n%d1=2010-09-02 \n%d2=bilder \n%p1=/home/tom/bilder/2010-09-02, \n%p2=/home/tom/bilder\n%p3=/home/tom \n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
+PREFERENCES_OUTDIR;Utmatningskatalog
+PREFERENCES_OVERLAY_FILENAMES;Visa filnamn över miniatyrbilder
+PREFERENCES_OVERWRITEOUTPUTFILE;Skriv över existerande utfiler
+PREFERENCES_PANFACTORFRAME;Förstärkning av panoreringstakten
+PREFERENCES_PANFACTORLABEL;Faktor
+PREFERENCES_PARSEDEXTADDHINT;Skriv in en filändelse och tryck på den här knappen för att lägga till den i listan
+PREFERENCES_PARSEDEXTADD;Lägg till filtyp
+PREFERENCES_PARSEDEXTDELHINT;Ta bort de markerade filändelserna från listan
+PREFERENCES_PARSEDEXT;Behandlade filtyper
+PREFERENCES_PROFILEHANDLING;Hantering av bildbehandlingsparametrar
+PREFERENCES_PROFILELOADPR;Laddningsprioritet för profil
+PREFERENCES_PROFILEPRCACHE;Profil i cache
+PREFERENCES_PROFILEPRFILE;Profil i indatafilen
+PREFERENCES_PROFILESAVECACHE;Spara behandlingsparametrar till cachen
+PREFERENCES_PROFILESAVEINPUT;Spara behandlingsparametrar med indatabildfilen
+PREFERENCES_PROPERTY;Egenskaper
+PREFERENCES_PSPATH;Adobe Photoshops installationskatalog
+PREFERENCES_SELECTFONT;Välj typsnitt
+PREFERENCES_SELECTICCDIRDLG;Välj ICC-profil katalog...
+PREFERENCES_SELECTLANG;Välj språk
+PREFERENCES_SELECTMONITORPROFDLG;Välj ICC-profil för skärmen...
+PREFERENCES_SELECTTHEME;Välj tema
+PREFERENCES_SET;Aktivera
+PREFERENCES_SHOWBASICEXIF;Visa grundlig EXIF-information
+PREFERENCES_SHOWDATETIME;Visa datum och tid
+PREFERENCES_SHOWONLYRAW;Visa bara RAW-filer
+PREFERENCES_SHOWPROFILESELECTOR;Visa profilväljaren
+PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
+PREFERENCES_SINGLETABVERTAB;Enkelfliksläge, vertikala flikar
+PREFERENCES_SINGLETABVERTAB;En-fliksläge med vertikala flikar
+PREFERENCES_SINGLETAB;Öppna en bild åt gången
+PREFERENCES_SLIMUI;Slimmat gränssnitt
+PREFERENCES_SND_BATCHQUEUEDONE;Batchkön färdig
+PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud. I Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas.
+PREFERENCES_SND_LNGEDITPROCDONE;När behandlingen är klar
+PREFERENCES_SND_TRESHOLDSECS;Ljudet kommer efter så här många sekunder
+PREFERENCES_SQUAREDETAILWINDOW;Kvadratiskt detaljfönster (snabbare)
+PREFERENCES_STARTUPIMDIR;Bildkatalog som visas vid uppstart
+PREFERENCES_TAB_BROWSER;Filbläddrare
+PREFERENCES_TAB_COLORMGR;Färghantering
+PREFERENCES_TAB_GENERAL;Allmän
+PREFERENCES_TAB_IMPROC;Bildbehandling
+PREFERENCES_TAB_OUTPUT;Utmatningsinställningar
+PREFERENCES_TAB_SOUND;Ljud
+PREFERENCES_THUMBSIZE;Miniatyrbildstorlek
+PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
+PREFERENCES_TUNNELMETADATA;Tunnla oförändrad IPTC/XMP till utfilen
+PREFERENCES_USESYSTEMTHEME;Använd systemtema
+PREFERENCES_WORKFLOW;Arbetsflöde
+PROFILEPANEL_FILEDLGFILTERANY;Vilka filer som helst
+PROFILEPANEL_FILEDLGFILTERPP;Efterbehandlingsprofiler
+PROFILEPANEL_LABEL;Efterbehandlingsprofiler
+PROFILEPANEL_LOADDLGLABEL;Ladda efterbehandlingsparametrar...
+PROFILEPANEL_PCUSTOM;Egen
+PROFILEPANEL_PFILE;Från fil
+PROFILEPANEL_PLASTPHOTO;Senaste foto
+PROFILEPANEL_PLASTSAVED;Senast sparad
+PROFILEPANEL_PROFILE;Profil
+PROFILEPANEL_SAVEDLGLABEL;Spara efterbehandlingsparametrar...
+PROFILEPANEL_TOOLTIPCOPY;Kopiera nuvarande profil till klippbordet
+PROFILEPANEL_TOOLTIPLOAD;Ladda profil
+PROFILEPANEL_TOOLTIPPASTE; Klistra in profil från klippbordet
+PROFILEPANEL_TOOLTIPSAVE;Spara nuvarande profil
+PROGRESSBAR_BADPIXELS;Dåliga pixlar...
+PROGRESSBAR_CACORRECTION;Reducera kromatiska abberationer...
+PROGRESSBAR_DARKFRAME;Mörkbild...
+PROGRESSBAR_DECODING;Avkodar råbild...
+PROGRESSBAR_DEMOSAICING;Demosaicing...
+PROGRESSBAR_GREENEQUIL;Grönbalansera...
+PROGRESSBAR_LINEDENOISE;Brusreducera linjärt...
+PROGRESSBAR_LOADINGTHUMBS;Laddar miniatyrbilder...
+PROGRESSBAR_LOADING;Laddar bild...
+PROGRESSBAR_LOADJPEG;Laddar JPEG-fil...
+PROGRESSBAR_LOADPNG;Laddar PNG-fil...
+PROGRESSBAR_LOADTIFF;Laddar TIFF-fil...
+PROGRESSBAR_PROCESSING;Bearbetar bild...
+PROGRESSBAR_READY;Klar
+PROGRESSBAR_SAVEJPEG;Sparar JPEG-fil...
+PROGRESSBAR_SAVEPNG;Sparar PNG-fil...
+PROGRESSBAR_SAVETIFF;Sparar TIFF-fil...
+PROGRESSDLG_LOADING;Loading file...
+PROGRESSDLG_PROCESSING;Bearbetar bild...
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Profilen har ändrats i filhanteraren
+PROGRESSDLG_SAVING;Sparar fil...
+QINFO_FOCALLENGTH;Brännvidd
+QINFO_ISO;ISO
+QINFO_LENS;Objektiv
+QINFO_NOEXIF;EXIF-information ej tillgänglig.
+SAVEDLG_AUTOSUFFIX;Lägg automatiskt till en ändelse om filnamnet redan existerar
+SAVEDLG_FILEFORMAT;Filformat
+SAVEDLG_JPEGQUAL;JPEG-kvalitet
+SAVEDLG_JPGFILTER;JPEG-filer
+SAVEDLG_PNGCOMPR;PNG-komprimering
+SAVEDLG_PNGFILTER;PNG-filer
+SAVEDLG_PUTTOQUEUEHEAD;Flytta längst fram i behandlingskön
+SAVEDLG_PUTTOQUEUETAIL;Flytta längst bak i behandlingskön
+SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
+SAVEDLG_SAVEIMMEDIATELY;Spara direkt
+SAVEDLG_SAVESPP;Spara behandlingsparametrarna med bilderna
+SAVEDLG_TIFFFILTER;TIFF-filer
+SAVEDLG_TIFFUNCOMPRESSED;Okomprimerad TIFF
+TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde. Kortkommando: C
+TOOLBAR_TOOLTIP_HAND;Handverktyg. Kortkommando: N
+TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp. Kortkommando: S
+TOOLBAR_TOOLTIP_WB;Egen vitbalans. Kortkommando: W
+TP_CACORRECTION_BLUE;Blå
+TP_CACORRECTION_LABEL;Reducera kromatiska abberationer
+TP_CACORRECTION_RED;Röd
+TP_CHMIXER_BLUE;Blå
+TP_CHMIXER_GREEN;Grön
+TP_CHMIXER_LABEL;Kanalmixer
+TP_CHMIXER_RED;Röd
+TP_CHROMATABERR_LABEL;Kromatiska abberationer
+TP_COARSETRAF_DEGREE;grad:
+TP_COARSETRAF_TOOLTIP_HFLIP;Vänd horisontellt
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotera åt vänster
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotera åt höger
+TP_COARSETRAF_TOOLTIP_VFLIP;Vänd vertikalt
+TP_COLORBOOST_ACHANNEL;Kanal "a"
+TP_COLORBOOST_AMOUNT;Mängd
+TP_COLORBOOST_AVOIDCOLORCLIP;Undvik att färgen klipper
+TP_COLORBOOST_BCHANNEL;Kanal "b"
+TP_COLORBOOST_CHANNEL;Kanal
+TP_COLORBOOST_CHSEPARATE;Separat
+TP_COLORBOOST_ENABLESATLIMITER;Mättnadsbegränsning
+TP_COLORBOOST_LABEL;Färgförstärkning
+TP_COLORBOOST_SATLIMIT;Mättnadsgräns
+TP_COLORDENOISE_EDGESENSITIVE;Kantkänslighet
+TP_COLORDENOISE_EDGETOLERANCE;Kanttolerans
+TP_COLORDENOISE_LABEL;Färgbrusreducering
+TP_COLORDENOISE_RADIUS;Radie
+TP_COLORSHIFT_BLUEYELLOW;Blå-Gul
+TP_COLORSHIFT_GREENMAGENTA;Grön-Magenta
+TP_COLORSHIFT_LABEL;Färgskiftningar
+TP_CROP_DPI;DPI=
+TP_CROP_FIXRATIO;Fast proportion
+TP_CROP_GTDIAGONALS;Diagonalregeln
+TP_CROP_GTGRID;Rutnät
+TP_CROP_GTHARMMEANS1;Harmoniskt medel 1
+TP_CROP_GTHARMMEANS2;Harmoniskt medel 2
+TP_CROP_GTHARMMEANS3;Harmoniskt medel 3
+TP_CROP_GTHARMMEANS4;Harmoniskt medel 4
+TP_CROP_GTNONE;Ingen
+TP_CROP_GTRULETHIRDS;Tredjedelsregeln
+TP_CROP_GUIDETYPE;Guidetyp:
+TP_CROP_H;H
+TP_CROP_LABEL;Beskär
+TP_CROP_PPI;PPI=
+TP_CROP_SELECTCROP;Välj beskärningsområde
+TP_CROP_W;B
+TP_CROP_X;x
+TP_CROP_Y;y
+TP_DARKFRAME_AUTOSELECT;Välj svartbild automatiskt
+TP_DARKFRAME_LABEL;Svartbild
+TP_DEFRINGE_LABEL;Fyll ut överstrålning
+TP_DEFRINGE_RADIUS;Radie
+TP_DEFRINGE_THRESHOLD;Tröskelvärde
+TP_DETAIL_AMOUNT;Mängd
+TP_DIRPYRDENOISE_CHROMA;Krominans
+TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_LABEL;Brusreducering
+TP_DIRPYRDENOISE_LUMA;Luminans
+TP_DIRPYREQUALIZER_LABEL;Kontrast genom detaljnivåer
+TP_DIRPYREQUALIZER_LUMACOARSEST;Grövst
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Minska kontrasten
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Öka kontrasten
+TP_DIRPYREQUALIZER_LUMAFINEST;Finast
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutralt
+TP_DIRPYREQUALIZER_THRESHOLD;Tröskelvärde
+TP_DISTORTION_AMOUNT;Mängd
+TP_DISTORTION_AUTO;Automatisk distorsionskorrigering
+TP_DISTORTION_AUTO_TIP;(Experimentell) Korrigera automatiskt objektivdistorsion för vissa kameror (M4/3, vissa kompaktkameror, etc.)
+TP_DISTORTION_LABEL;Distorsion
+TP_EQUALIZER_CONTRAST_MINUS;Minska kontrasten
+TP_EQUALIZER_CONTRAST_PLUS;Öka kontrasten
+TP_EQUALIZER_FINEST;Finast
+TP_EQUALIZER_LABEL;Waveletequalizer
+TP_EQUALIZER_LARGEST;Grövst
+TP_EQUALIZER_NEUTRAL;Neutral
+TP_EXPOSCORR_LABEL;Vitpunktskorrigering, råbild
+TP_EXPOSURE_AUTOLEVELS;Autonivåer
+TP_EXPOSURE_BLACKLEVEL;Svärta
+TP_EXPOSURE_BRIGHTNESS;Intensitet
+TP_EXPOSURE_CLIP;Klippnivå
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Högdageråterställning, tröskelvärde
+TP_EXPOSURE_COMPRHIGHLIGHTS;Högdageråterställning
+TP_EXPOSURE_COMPRSHADOWS;Skuggåterställning
+TP_EXPOSURE_CONTRAST;Kontrast
+TP_EXPOSURE_CURVEEDITOR;Tonkurva
+TP_EXPOSURE_EXPCOMP;Exponeringskompensation
+TP_EXPOSURE_LABEL;Exponering
+TP_EXPOSURE_SATURATION;Mättnad
+TP_EXPO_AFTER; Efter interpolation (före RGB-konvertering)
+TP_FLATFIELD_AUTOSELECT;Autoval
+TP_FLATFIELD_BLURRADIUS;Oskärperadie
+TP_FLATFIELD_BLURTYPE;Oskärpetyp
+TP_FLATFIELD_BT_AREA;Area
+TP_FLATFIELD_BT_HORIZONTAL;Horisontell
+TP_FLATFIELD_BT_VERTHORIZ;Vertikal + horisontell
+TP_FLATFIELD_BT_VERTICAL;Vertikal
+TP_FLATFIELD_LABEL;Plattfält
+TP_GAMMA_COMMENT;(utprofilen inaktiverad förutom "default")
+TP_GAMMA_CURV;gamma
+TP_GAMMA_FREE;Obunden gamma
+TP_GAMMA_OUTPUT;Gamma ut
+TP_GAMMA_SLOP;lutning(linjär)
+TP_HLREC_CIELAB;CIELab mix
+TP_HLREC_COLOR;Färgspridning
+TP_HLREC_LABEL;Högdageråterställning
+TP_HLREC_LUMINANCE;Bättring av luminans
+TP_HLREC_METHOD;Metod: 
+TP_HSVEQUALIZER1;Röd
+TP_HSVEQUALIZER2;Orange
+TP_HSVEQUALIZER3;Gul
+TP_HSVEQUALIZER4;Grön
+TP_HSVEQUALIZER5;Vatten
+TP_HSVEQUALIZER6;Blå
+TP_HSVEQUALIZER7;Lila
+TP_HSVEQUALIZER8;Magenta
+TP_HSVEQUALIZER_CHANNEL;HSV-kanal
+TP_HSVEQUALIZER_HUE;Nyans
+TP_HSVEQUALIZER_LABEL;HSV-equalizer
+TP_HSVEQUALIZER_NEUTRAL;Neutral
+TP_HSVEQUALIZER_SAT;Mättnad
+TP_HSVEQUALIZER_VAL;Värde
+TP_ICM_FILEDLGFILTERANY;Vilka filer som helst
+TP_ICM_FILEDLGFILTERICM;ICC-profiler
+TP_ICM_GAMMABEFOREINPUT;Profilapplicerad gamma
+TP_ICM_INPUTCAMERAICC;Kamerastandard eller ICC
+TP_ICM_INPUTCAMERA;Kameraval
+TP_ICM_INPUTCUSTOM;Egen
+TP_ICM_INPUTDLGLABEL;Välj inmatnings ICC-profil...
+TP_ICM_INPUTEMBEDDED;Använd inbäddad, om möjligt
+TP_ICM_INPUTNONE;Ingen profil
+TP_ICM_INPUTPROFILE;Inmatningsprofil
+TP_ICM_LABEL;ICM
+TP_ICM_NOICM;Ingen ICM: sRGB-utmatning
+TP_ICM_OUTPUTDLGLABEL;Välj utmatnings ICC-profil...
+TP_ICM_OUTPUTPROFILE;Utmatningsprofil
+TP_ICM_SAVEREFERENCE;Spara referensbild för profilering
+TP_ICM_WORKINGPROFILE;Färgrymd
+TP_IMPULSEDENOISE_LABEL;Brusreducering mha av stegsvar
+TP_IMPULSEDENOISE_THRESH;Tröskelvärde
+TP_LABCURVE_AVOIDCOLORCLIP;Undvik att färgen klipper
+TP_LABCURVE_BRIGHTNESS;Intensitet
+TP_LABCURVE_CONTRAST;Kontrast
+TP_LABCURVE_CURVEEDITOR;Luminanskurva
+TP_LABCURVE_ENABLESATLIMITER;Slå på mättnadsbegränsare
+TP_LABCURVE_LABEL;Labkurvor
+TP_LABCURVE_SATLIMIT;Mättnadsbegränsning
+TP_LABCURVE_SATURATION;Mättnad
+TP_LENSGEOM_AUTOCROP;Autobeskärning
+TP_LENSGEOM_FILL;Fyll automatiskt
+TP_LENSGEOM_LABEL;Geometri- och distorsionskorrigering
+TP_LUMACURVE_BLACKLEVEL;Svärta
+TP_LUMACURVE_BRIGHTNESS;Intensitet
+TP_LUMACURVE_COMPRHIGHLIGHTS;Högdageråterställning
+TP_LUMACURVE_COMPRSHADOWS;Skuggåterställning
+TP_LUMACURVE_CONTRAST;Kontrast
+TP_LUMACURVE_CURVEEDITOR;Luminanskurva
+TP_LUMACURVE_LABEL;Luminanskurva
+TP_LUMADENOISE_EDGETOLERANCE;Kanttolerans
+TP_LUMADENOISE_LABEL;Reducering av luminansbrus
+TP_LUMADENOISE_RADIUS;Radie
+TP_PERSPECTIVE_HORIZONTAL;Horisontell
+TP_PERSPECTIVE_LABEL;Perspektiv
+TP_PERSPECTIVE_VERTICAL;Vertikal
+TP_PREPROCESS_GREENEQUIL;Grönbalansering
+TP_PREPROCESS_HOTDEADPIXFILT;Applicera het- och dödpixelfiltrering
+TP_PREPROCESS_LABEL;Förbehandling
+TP_PREPROCESS_LINEDENOISE;Linjärt brusfilter
+TP_PREPROCESS_NO_FOUND;Inga hittade
+TP_RAWCACORR_AUTO;Reducera kromatiska abberationer
+TP_RAWCACORR_CABLUE;Blå
+TP_RAWCACORR_CARED;Röd
+TP_RAWEXPOS_BLACKONE;Svartpunktsnivå: Röd
+TP_RAWEXPOS_BLACKS;Svartpunktsnivåer
+TP_RAWEXPOS_BLACKTHREE;Svartpunktsnivå: Grön 2
+TP_RAWEXPOS_BLACKTWO;Svartpunktsnivå: Blå
+TP_RAWEXPOS_BLACKZERO;Svartpunktsnivå: Grön 1 (ledaren)
+TP_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
+TP_RAWEXPOS_PRESER;Bevara högdagerkorrigering (EV)
+TP_RAWEXPOS_TWOGREEN;Två gröna tillsammans
+TP_RAW_ALLENHANCE;Applicera reducering av artefakter och brus efter demosaicing
+TP_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
+TP_RAW_DCBITERATIONS;Antal DCB-iterationer
+TP_RAW_DMETHODBATCH;Batch
+TP_RAW_DMETHOD;Metod
+TP_RAW_FALSECOLOR;Falskt färgbortträngningssteg
+TP_RAW_LABEL;Demosaicing
+TP_RESIZE_APPLIESTO;Tillämpas på:
+TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
+TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
+TP_RESIZE_BICUBIC;Bikubisk
+TP_RESIZE_BILINEAR;Bilinjär
+TP_RESIZE_CROPPEDAREA;Beskuren yta
+TP_RESIZE_DOWNSCALEB;Nedsampla (Bättre)
+TP_RESIZE_DOWNSCALEF;Skala ned (Snabbare)
+TP_RESIZE_FITBOX;Begränsad yta
+TP_RESIZE_FULLIMAGE;Hela bilden
+TP_RESIZE_FULLSIZE;Full bildstorlek:
+TP_RESIZE_HEIGHT;Höjd
+TP_RESIZE_H;H:
+TP_RESIZE_LABEL;Ändra storlek
+TP_RESIZE_LANCZOS;Lanczos
+TP_RESIZE_METHOD;Metod: 
+TP_RESIZE_NEAREST;Närmast
+TP_RESIZE_SCALE;Skala
+TP_RESIZE_SPECIFY;Specificera:
+TP_RESIZE_WIDTH;Bredd
+TP_RESIZE_W;B:
+TP_ROTATE_AUTOCROP;Autobeskär
+TP_ROTATE_DEGREE;Antal grader
+TP_ROTATE_FILL;Fyll
+TP_ROTATE_LABEL;Räta upp
+TP_ROTATE_SELECTLINE;Välj rak linje
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Högdager
+TP_SHADOWSHLIGHTS_HLTONALW;Tonvidd (Högdagrar)
+TP_SHADOWSHLIGHTS_LABEL;Skugg- och högdageråterställning
+TP_SHADOWSHLIGHTS_LOCALCONTR;Lokal kontrast
+TP_SHADOWSHLIGHTS_RADIUS;Radie
+TP_SHADOWSHLIGHTS_SHADOWS;Skuggor
+TP_SHADOWSHLIGHTS_SHTONALW;Tonvidd (Skuggor)
+TP_SHARPENEDGE_AMOUNT;Mängd
+TP_SHARPENEDGE_LABEL;Kanter
+TP_SHARPENEDGE_PASSES;Iterationer
+TP_SHARPENEDGE_THREE;Endast luminans
+TP_SHARPENING_AMOUNT;Mängd
+TP_SHARPENING_EDRADIUS;Radie
+TP_SHARPENING_EDTOLERANCE;Kanttolerans
+TP_SHARPENING_HALOCONTROL;Halo-kontroll
+TP_SHARPENING_HCAMOUNT;Mängd
+TP_SHARPENING_LABEL;Skärpa
+TP_SHARPENING_METHOD;Metod
+TP_SHARPENING_ONLYEDGES;Skärp bara kanter
+TP_SHARPENING_RADIUS;Radie
+TP_SHARPENING_RLD;RL-dekonvolution
+TP_SHARPENING_RLD_AMOUNT;Mängd
+TP_SHARPENING_RLD_DAMPING;Dämpning
+TP_SHARPENING_RLD_ITERATIONS;Upprepningar
+TP_SHARPENING_THRESHOLD;Tröskelvärde
+TP_SHARPENING_USM;Oskarp mask
+TP_SHARPENMICRO_AMOUNT;Mängd
+TP_SHARPENMICRO_LABEL;Mikrokontrast
+TP_SHARPENMICRO_MATRIX;3×3-matris istället för 5×5
+TP_SHARPENMICRO_UNIFORMITY;Enhetlighet
+TP_VIGNETTING_AMOUNT;Mängd
+TP_VIGNETTING_CENTER;Centrum
+TP_VIGNETTING_CENTER_X;Centrum X
+TP_VIGNETTING_CENTER_Y;Centrum Y
+TP_VIGNETTING_LABEL;Vinjetteringskorrigering
+TP_VIGNETTING_RADIUS;Radie
+TP_VIGNETTING_STRENGTH;Mängd
+TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_CAMERA;Kamera
+TP_WBALANCE_CUSTOM;Egen
+TP_WBALANCE_GREEN;Färgton
+TP_WBALANCE_LABEL;Vitbalans
+TP_WBALANCE_METHOD;Metod
+TP_WBALANCE_SIZE;Storlek:
+TP_WBALANCE_SPOTWB;Vitbalansväljare
+TP_WBALANCE_TEMPERATURE;Temperatur
+ZOOMBAR_DETAIL;Lupp
+ZOOMBAR_HUGE;Enorm
+ZOOMBAR_LARGE;Stor
+ZOOMBAR_NORMAL;Normal
+ZOOMBAR_PREVIEW;Förhandsvisning
+ZOOMBAR_SCALE;Skala
+ZOOMBAR_SMALL;Liten
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Öppna (nytt) detaljfönster.
+ZOOMPANEL_ZOOM100;Förstora till 100%. Kortkommando: 1
+ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen. Kortkommando: F
+ZOOMPANEL_ZOOMIN;Förstora. Kortkommando: +
+ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
+
+#00 Swedish
+#01 Translated by Emil Ericsson
+#02 2008-01-22
+#03 Updated 2010, 2011 by Johan Andersson. Last update: 2011-09-12.
+﻿
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+!EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)
+!FILEBROWSER_EXEC_CPB;Run custom profile builder
+!HISTORY_MSG_151;Vibrance
+!HISTORY_MSG_152;Vibrance - Pastel tones
+!HISTORY_MSG_153;Vibrance - Saturated tones
+!HISTORY_MSG_154;Vibrance - Protect skin tones
+!HISTORY_MSG_155;Vibrance - Avoid color drift
+!HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
+!HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
+!HISTORY_MSG_158;Strength
+!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_160;Scale
+!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_162;Tone Mapping
+!HISTORY_MSG_163;RGB Curves - R
+!HISTORY_MSG_164;RGB Curves - G
+!HISTORY_MSG_165;RGB Curves - B
+!HISTORY_MSG_166;Neutral levels
+!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
+!MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b>
+!MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>
+!MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>n0.299*R + 0.587*G + 0.114*B
+!MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>
+!MAIN_TOOLTIP_THRESHOLD;Threshold
+!PARTIALPASTE_EPD;Tone Mapping
+!PARTIALPASTE_ICMGAMMA;Output gamma
+!PARTIALPASTE_RGBCURVES;RGB curves
+!PARTIALPASTE_VIBRANCE;Vibrance
+!PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
+!PREFERENCES_TP_LABEL;Tool panel:
+!PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
+!TP_EPD_EDGESTOPPING;Edge stopping
+!TP_EPD_LABEL;Tone Mapping
+!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+!TP_EPD_SCALE;Scale
+!TP_EPD_STRENGTH;Strength
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
+!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
+!TP_HLREC_BLEND;Blend
+!TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
+!TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
+!TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
+!TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
+!TP_NEUTRAL;Neutral
+!TP_NEUTRAL_TIP;Reset exposure controls to neutral values
+!TP_RGBCURVES_LABEL;RGB Curves
+!TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_LABEL;Vibrance
+!TP_VIBRANCE_PASTELS;Pastel tones
+!TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
+!TP_VIBRANCE_PROTECTSKINS;Protect skin tones
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_SATURATED;Saturated tones
+!TP_WBALANCE_CLOUDY;Cloudy
+!TP_WBALANCE_DAYLIGHT;Daylight (sunny)
+!TP_WBALANCE_FLASH55;Leica
+!TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
+!TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+!TP_WBALANCE_FLASH_HEADER;Flash
+!TP_WBALANCE_FLUO1;F1 - Daylight
+!TP_WBALANCE_FLUO2;F2 - Cool white
+!TP_WBALANCE_FLUO3;F3 - White
+!TP_WBALANCE_FLUO4;F4 - Warm white
+!TP_WBALANCE_FLUO5;F5 - Daylight
+!TP_WBALANCE_FLUO6;F6 - Lite white
+!TP_WBALANCE_FLUO7;F7 - D65 Daylight simulator
+!TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
+!TP_WBALANCE_FLUO9;F9 - Cool white deluxe
+!TP_WBALANCE_FLUO10;F10 - Philips TL85
+!TP_WBALANCE_FLUO11;F11 - Philips TL84
+!TP_WBALANCE_FLUO12;F12 - Philips TL83
+!TP_WBALANCE_FLUO_HEADER;Fluorescent
+!TP_WBALANCE_GTI;GTI
+!TP_WBALANCE_HMI;HMI
+!TP_WBALANCE_JUDGEIII;JudgeIII
+!TP_WBALANCE_LAMP_HEADER;Lamp
+!TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+!TP_WBALANCE_LED_HEADER;LED
+!TP_WBALANCE_LED_LSI;LSI Lumelex 2040
+!TP_WBALANCE_SHADE;Shade
+!TP_WBALANCE_SOLUX35;Solux 3500K
+!TP_WBALANCE_SOLUX41;Solux 4100K
+!TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+!TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
+!TP_WBALANCE_TUNGSTEN;Tungsten

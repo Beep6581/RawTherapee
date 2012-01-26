@@ -1,0 +1,24 @@
+syntax: glob
+
+*~
+*.orig
+
+CMakeFiles
+Makefile
+cmake_install.cmake
+CMakeCache.txt
+
+Debug
+RelWithDebInfo
+MinSizeRel
+Release
+
+rtdata/rawtherapee.desktop
+rtengine/librtengine.a
+rtexif/librtexif.a
+rtgui/config.h
+rtgui/version.h
+rtgui/rawtherapee
+rtgui/rawtherapee.exe
+install_manifest.txt
+AboutThisBuild.txt
