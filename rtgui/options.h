@@ -49,7 +49,6 @@ class Options {
     void error (int line); 
 
   public:
-    bool firstRun;
     bool savesParamsAtExit;
     SaveFormat saveFormat,saveFormatBatch;
     Glib::ustring savePathTemplate;
