@@ -1,3 +1,4 @@
+
 Project initiator:
 
 	Gábor Horváth <hgabor@rawtherapee.com>

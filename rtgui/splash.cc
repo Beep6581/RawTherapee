@@ -74,7 +74,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
     set_border_width (4);
 
-    caveatsSW = NULL;
+    releaseNotesSW = NULL;
 
     nb = Gtk::manage (new Gtk::Notebook ());
     get_vbox()->pack_start (*nb);
@@ -102,6 +102,8 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 	        Gtk::ScrolledWindow *buildSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *buildTV = Gtk::manage (new Gtk::TextView (textBuffer));
 			buildTV->set_editable(false);
+			buildTV->set_left_margin (10);
+			buildTV->set_right_margin (5);
 			buildSW->add(*buildTV);
 		    nb->append_page (*buildSW, M("ABOUT_TAB_BUILD"));
 	    }
@@ -124,6 +126,9 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
 	        Gtk::ScrolledWindow *creditsSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *creditsTV = Gtk::manage (new Gtk::TextView (textBuffer));
+			creditsTV->set_left_margin (10);
+			creditsTV->set_right_margin (5);
+			creditsTV->set_wrap_mode(Gtk::WRAP_WORD);
 			creditsTV->set_editable(false);
 			creditsSW->add(*creditsTV);
 		    nb->append_page (*creditsSW, M("ABOUT_TAB_CREDITS"));
@@ -147,16 +152,18 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
 	        Gtk::ScrolledWindow *licenseSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *licenseTV = Gtk::manage (new Gtk::TextView (textBuffer));
+			licenseTV->set_left_margin (10);
+			licenseTV->set_right_margin (5);
 			licenseTV->set_editable(false);
 			licenseSW->add(*licenseTV);
 		    nb->append_page (*licenseSW, M("ABOUT_TAB_LICENSE"));
 	    }
 	}
 
-    // Tab 5: the caveats
-	std::string caveatsFileName = Glib::build_filename (creditsPath, "CAVEATS.txt");
-	if ( safe_file_test(caveatsFileName, (Glib::FILE_TEST_EXISTS)) ) {
-	    FILE *f = safe_g_fopen (caveatsFileName, "rt");
+    // Tab 5: the Release Notes
+	std::string releaseNotesFileName = Glib::build_filename (creditsPath, "RELEASE_NOTES.txt");
+	if ( safe_file_test(releaseNotesFileName, (Glib::FILE_TEST_EXISTS)) ) {
+	    FILE *f = safe_g_fopen (releaseNotesFileName, "rt");
 	    if (f != NULL) {
 	        char* buffer = new char[1024];
 	        std::ostringstream ostr;
@@ -168,12 +175,14 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 	        Glib::RefPtr<Gtk::TextBuffer> textBuffer = Gtk::TextBuffer::create();
 	        textBuffer->set_text((Glib::ustring)(ostr.str()));
 
-	        caveatsSW = Gtk::manage (new Gtk::ScrolledWindow());
-			Gtk::TextView *caveatsTV = Gtk::manage (new Gtk::TextView (textBuffer));
-			caveatsTV->set_editable(false);
-			caveatsTV->set_wrap_mode(Gtk::WRAP_WORD);
-			caveatsSW->add(*caveatsTV);
-		    nb->append_page (*caveatsSW, M("ABOUT_TAB_CAVEATS"));
+	        releaseNotesSW = Gtk::manage (new Gtk::ScrolledWindow());
+			Gtk::TextView *releaseNotesTV = Gtk::manage (new Gtk::TextView (textBuffer));
+			releaseNotesTV->set_left_margin (10);
+			releaseNotesTV->set_right_margin (3);
+			releaseNotesTV->set_editable(false);
+			releaseNotesTV->set_wrap_mode(Gtk::WRAP_WORD);
+			releaseNotesSW->add(*releaseNotesTV);
+		    nb->append_page (*releaseNotesSW, M("ABOUT_TAB_RELEASENOTES"));
 	    }
 	}
 
@@ -221,7 +230,7 @@ bool Splash::on_button_release_event (GdkEventButton* event) {
 }
 */
 
-void Splash::showCaveats() {
-	if (caveatsSW)
-		nb->set_current_page(nb->page_num(*caveatsSW));
+void Splash::showReleaseNotes() {
+	if (releaseNotesSW)
+		nb->set_current_page(nb->page_num(*releaseNotesSW));
 }
