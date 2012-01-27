@@ -40,14 +40,14 @@ class Splash : public Gtk::Dialog {
   private:
     SplashImage* splashImage;
     Gtk::Notebook* nb;
-    Gtk::ScrolledWindow* caveatsSW;
+    Gtk::ScrolledWindow* releaseNotesSW;
 
   public:
     Splash (Gtk::Window& parent, int maxtime);
     Splash (Gtk::Window& parent);
 
-    bool hasCaveats() { return caveatsSW != NULL; };
-    void showCaveats();
+    bool hasReleaseNotes() { return releaseNotesSW != NULL; };
+    void showReleaseNotes();
     bool on_timer ();
     //virtual bool on_button_release_event (GdkEventButton* event);
 };

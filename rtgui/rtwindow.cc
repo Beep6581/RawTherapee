@@ -233,7 +233,7 @@ void RTWindow::on_realize () {
 
     cursorManager.init (get_window());
 
-    // Check if first run of this version, then display the caveats text
+    // Check if first run of this version, then display the Release Notes text
     if (options.version != versionString) {
         int prevVerNbr[4];
         int currVerNbr[4];
@@ -243,19 +243,19 @@ void RTWindow::on_realize () {
         // Now we can update the version parameter with the right value
         options.version = versionString;
 
-        bool showCaveats = false;
+        bool showReleaseNotes = false;
         // Check if the current version is newer
-        if      (currVerNbr[0] > prevVerNbr[0]) showCaveats = true;
-        else if (currVerNbr[1] > prevVerNbr[1]) showCaveats = true;
-        else if (currVerNbr[2] > prevVerNbr[2]) showCaveats = true;
+        if      (currVerNbr[0] > prevVerNbr[0]) showReleaseNotes = true;
+        else if (currVerNbr[1] > prevVerNbr[1]) showReleaseNotes = true;
+        else if (currVerNbr[2] > prevVerNbr[2]) showReleaseNotes = true;
 
-        if (showCaveats) {
+        if (showReleaseNotes) {
         	// this is a first run!
             splash = new Splash (*this);
             splash->set_transient_for (*this);
             splash->signal_delete_event().connect( sigc::mem_fun(*this, &RTWindow::splashClosed) );
-            if (splash->hasCaveats()) {
-            	splash->showCaveats();
+            if (splash->hasReleaseNotes()) {
+            	splash->showReleaseNotes();
             	splash->show ();
             }
             else {
