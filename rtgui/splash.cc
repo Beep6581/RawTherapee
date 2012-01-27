@@ -152,6 +152,13 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
 	        Gtk::ScrolledWindow *licenseSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *licenseTV = Gtk::manage (new Gtk::TextView (textBuffer));
+
+	        // set monospace font to enhance readability of formatted text
+			Pango::FontDescription fdescLicense;
+			fdescLicense.set_family("monospace");
+			fdescLicense.set_absolute_size (11*Pango::SCALE);
+			licenseTV->modify_font(fdescLicense);
+
 			licenseTV->set_left_margin (10);
 			licenseTV->set_right_margin (5);
 			licenseTV->set_editable(false);
@@ -177,6 +184,14 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
 	        releaseNotesSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *releaseNotesTV = Gtk::manage (new Gtk::TextView (textBuffer));
+
+	        // set monospace font to enhance readability of formatted text
+			Pango::FontDescription fdescReleaseNotes;
+			fdescReleaseNotes.set_family("monospace");
+			fdescReleaseNotes.set_absolute_size (11*Pango::SCALE);
+	        releaseNotesTV->modify_font(fdescReleaseNotes);
+
+
 			releaseNotesTV->set_left_margin (10);
 			releaseNotesTV->set_right_margin (3);
 			releaseNotesTV->set_editable(false);
