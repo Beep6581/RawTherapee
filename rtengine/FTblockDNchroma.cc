@@ -124,7 +124,7 @@ void ImProcFunctions::RGB_InputTransf(Imagefloat * src, LabImage * dst, LabImage
 		}*/
 
 	//cplx_wavelet_decomposition Ldecomp(dst->data, dst->W, dst->H, 2 /*maxlvl*/);
-
+	//Ldecomp.reconstruct(dst->data);
 	
 	impulse_nr (dst, 50.0f/20.0f);
 	//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
@@ -180,7 +180,7 @@ void ImProcFunctions::RGB_InputTransf(Imagefloat * src, LabImage * dst, LabImage
 		for (int j=0; j<src->width; j++) {
 			//float wt = expf(-100.0f*fabs(dst->L[i][j]-blur->L[i][j])/((float)dnparams.luma));
 			//blur->L[i][j] = wt*dst->L[i][j] + (1-wt)*blur->L[i][j];
-			
+			//blur->L[i][j] = dst->L[i][j];
 			blur->a[i][j] /*= 32768.0f*0.2f*(blur->a[i][j]-blur->L[i][j]);/*/*= 32768.0f;
 			blur->b[i][j] /*= 32768.0f*0.2f*(blur->L[i][j]-blur->b[i][j]);/*/*= 32768.0f;
 			blur->L[i][j] *= 32768.0f;//= gamcurve[32768.0f*blur->L[i][j]];
@@ -191,7 +191,7 @@ void ImProcFunctions::RGB_InputTransf(Imagefloat * src, LabImage * dst, LabImage
 			
 		}
 	}
-	
+
 	//dirpyr_ab(blur, blur, dnparams);//use dirpyr here if using it to blur ab channels only
 	//dirpyrLab_denoise(blur, blur, dnparams);//use dirpyr here if using it to blur ab channels only
 
@@ -705,7 +705,7 @@ void ImProcFunctions::RGBtile_denoise (fftwf_complex ** fLblox, fftwf_complex **
 			//float RLfactor = 1;//(2*RLblockvar)/(eps+RLwsq+RLblockvar);
 			//float BLfactor = 1;//(2*BLblockvar)/(eps+BLwsq+BLblockvar);
 			Lwsq = MAX(0.0f, Lwsq-0.25*Lblockvar);
-			float  Lshrinkfactor = Lwsq/( Lwsq+noisevar_L * Lfactor);
+			float  Lshrinkfactor = Lwsq/(Lwsq + noisevar_L * Lfactor);
 			//float RLshrinkfactor = RLwsq/(RLwsq+noisevar_ab*RLfactor);
 			//float BLshrinkfactor = BLwsq/(BLwsq+noisevar_ab*BLfactor);
 			

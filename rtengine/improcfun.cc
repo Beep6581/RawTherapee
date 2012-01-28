@@ -35,6 +35,7 @@
 #include "iccmatrices.h"
 #include "color.h"
 #include "calc_distort.h"
+#include "cplx_wavelet_dec.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -558,7 +559,9 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		
 		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
 			
-			impulse_nr (lab, (float)params->impulseDenoise.thresh/20.0 );
+			//impulse_nr (lab, (float)params->impulseDenoise.thresh/20.0 );
+		{	cplx_wavelet_decomposition Ldecomp(lab->data, lab->W, lab->H, 1 /*maxlvl*/);
+			Ldecomp.reconstruct(lab->data);}
 	}
 	
 	void ImProcFunctions::defringe (LabImage* lab) {
