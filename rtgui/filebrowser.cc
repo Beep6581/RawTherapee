@@ -48,6 +48,7 @@ FileBrowser::FileBrowser ()
     pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN"))), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(develop = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPPROCESS"))), 0, 1, p, p+1); p++;
     develop->set_image(*Gtk::manage(new RTImage ("processing.png")));
+    pmenu->attach (*Gtk::manage(developfast = new Gtk::ImageMenuItem (M("FILEBROWSER_POPUPPROCESSFAST"))), 0, 1, p, p+1); p++;
 
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
     pmenu->attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p+1); p++;
@@ -196,6 +197,7 @@ FileBrowser::FileBrowser ()
     trash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), trash));    
     untrash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), untrash));    
     develop->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), develop));    
+    developfast->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), developfast));
     rename->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rename));    
     remove->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), remove));    
     removeInclProc->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), removeInclProc));
@@ -473,8 +475,12 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         toTrashRequested (mselected);
     else if (m==untrash) 
         fromTrashRequested (mselected);
+
     else if (m==develop)
-        tbl->developRequested (mselected);
+        tbl->developRequested (mselected, false);
+    else if (m==developfast)
+        tbl->developRequested (mselected, true);
+
     else if (m==rename)
         tbl->renameRequested (mselected);
     else if (m==selall) {
@@ -926,7 +932,7 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
     else if (actionCode==6 && tbl) { // to processing queue
         std::vector<FileBrowserEntry*> tbe;
         tbe.push_back ((FileBrowserEntry*)actionData);
-        tbl->developRequested (tbe);
+        tbl->developRequested (tbe, false); // not a fast, but a FULL mode
     }
     else if (actionCode==7) { // to trash / undelete
         std::vector<FileBrowserEntry*> tbe;
@@ -1019,4 +1025,17 @@ void FileBrowser::redrawNeeded (LWButton* button) {
 }
 FileBrowser::type_trash_changed FileBrowser::trash_changed () {
     return m_trash_changed;
+}
+
+
+// ExportPanel interface
+void FileBrowser::exportRequested (){
+	FileBrowser::menuItemActivated(developfast);
+}
+
+void FileBrowser::setExportPanel (ExportPanel* expanel) {
+
+	exportPanel = expanel;
+	exportPanel->set_sensitive (false);
+	exportPanel->setExportPanelListener (this);
 }

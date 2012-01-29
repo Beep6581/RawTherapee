@@ -3,6 +3,7 @@ RAWTHERAPEE 4.0.7 RELEASE NOTES
 -------------------------------
 
 CAVEATS
+-------
 - Memory requirements
 Please read http://rawtherapee.com/blog/maximizing-memory-efficiency
 
@@ -24,11 +25,13 @@ The profiles supplied with RawTherapee were changed to be compatible with the ne
 
 - The new Exposure Compensation in thumbnail captions and file browser filter requires clearing of Rawtherapee's thumbnail cache (see Preferences > File Browser). If the thubmnail cache is not cleared, exposure compensation values will not be displayed in captions or recognised in filtering *for previously browsed images* only.
 
-
 NEW FEATURES
-- RGB curves,
+------------
+- New RGB curves,
 - New white balance presets for specific spectra,
-- Preview modes: red, green, blue, luminosity and focus mask (see which areas are in focus),
+- New Preview modes: red, green, blue, luminosity 
+  and Focus Mask (see which areas are in focus),
+- New Export Panel with Fast Export Options,
 - DCRAW updated to 9.12
   Support added for these cameras:
     Canon PowerShot S100
@@ -52,14 +55,17 @@ NEW FEATURES
 
 
 DOCUMENTATION
+------------_
 http://rawtherapee.com/blog/documentation
 
 
 REPORTING BUGS
+--------------
 http://rawtherapee.com/forum/viewtopic.php?f=3&t=3639
 
 
 LIVE CHAT WITH RT USERS
+-----------------------
 Network: freenode
 Server: chat.freenode.net
 Channel #rawtherapee
@@ -67,7 +73,8 @@ http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
 http://rawtherapee.com/forum/viewtopic.php?f=1&t=945
 
 
-REVISION HISTORY 
+REVISION HISTORY
+----------------
 The complete change log is available at 
 http://code.google.com/p/rawtherapee/source/list
 

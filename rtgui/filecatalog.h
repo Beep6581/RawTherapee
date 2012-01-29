@@ -33,6 +33,7 @@
 #include "coarsepanel.h"
 #include "toolbar.h"
 #include "filterpanel.h"
+#include "exportpanel.h"
 #include "previewloader.h"
 #include "multilangmgr.h"
 
@@ -59,7 +60,8 @@ class FileCatalog : public Gtk::VBox,
                     public DirSelectionListener, 
                     public PreviewLoaderListener, 
 					public FilterPanelListener,
-                    public FileBrowserListener
+                    public FileBrowserListener,
+                    public ExportPanelListener
 #ifdef WIN32
                   , public WinDirChangeListener
 #endif
@@ -133,6 +135,7 @@ class FileCatalog : public Gtk::VBox,
         bool hasValidCurrentEFS;  
 
 		FilterPanel* filterPanel;
+		ExportPanel* exportPanel;
 
         int previewsToLoad;
         int previewsLoaded;
@@ -177,6 +180,9 @@ class FileCatalog : public Gtk::VBox,
 				// filterpanel interface
 				void exifFilterChanged ();
 				
+				// exportpanel interface
+				void exportRequested();
+				
 				Glib::ustring lastSelectedDir () { return selectedDirectory; }
                 void setEnabled (bool e);   // if not enabled, it does not open image
                 void enableTabMode(bool enable);  // sets progress bar
@@ -189,7 +195,7 @@ class FileCatalog : public Gtk::VBox,
                 void openRequested          (std::vector<Thumbnail*> tbe);
                 void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed);
                 void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested);
-                void developRequested       (std::vector<FileBrowserEntry*> tbe);
+                void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode);
                 void renameRequested        (std::vector<FileBrowserEntry*> tbe);
                 void clearFromCacheRequested(std::vector<FileBrowserEntry*> tbe, bool leavenotrace);
                 void selectionChanged       (std::vector<Thumbnail*> tbe);
@@ -202,6 +208,7 @@ class FileCatalog : public Gtk::VBox,
                 void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l) { dirlistener = l; }
 
 				void setFilterPanel (FilterPanel* fpanel);
+				void setExportPanel (ExportPanel* expanel);
 				void exifInfoButtonToggled();
                 void categoryButtonToggled (Gtk::ToggleButton* b);
                 bool capture_event(GdkEventButton* event);

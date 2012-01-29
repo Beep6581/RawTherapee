@@ -431,6 +431,9 @@ void FileCatalog::closeDir () {
 
 	if (filterPanel)
 		filterPanel->set_sensitive (false);
+		
+	if (exportPanel)
+		exportPanel->set_sensitive (false);
 
 #ifndef WIN32
     if (dirMonitor)
@@ -627,6 +630,10 @@ void FileCatalog::previewsFinishedUI () {
 		    filterPanel->setFilter ( currentEFS,false );
 	    }
 	}
+	
+	if (exportPanel)
+		exportPanel->set_sensitive (true);
+
  	// restart anything that might have been loaded low quality
  	fileBrowser->refreshQuickThumbImages();
  	fileBrowser->applyFilter (getFilter());  // refresh total image count
@@ -843,7 +850,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
         _refreshProgressBar();
 	} // Gtk::RESPONSE_OK
 }
-void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
+void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fastmode) {
 
     if (listener) {
     	std::vector<BatchQueueEntry*> entries;
@@ -851,6 +858,44 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
         #pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
+
+            // if fast mode is selected, override (disable) prams
+            // controlling time and resource consuming tasks
+            // and also those which effect is not pronounced after reducing the image size
+            // TODO!!! could expose selections below via preferences
+            if (fastmode){
+				if (options.fastexport_bypass_sharpening         ) params.sharpening.enabled          = false;
+				if (options.fastexport_bypass_sharpenEdge        ) params.sharpenEdge.enabled         = false;
+				if (options.fastexport_bypass_sharpenMicro       ) params.sharpenMicro.enabled        = false;
+				if (options.fastexport_bypass_lumaDenoise        ) params.lumaDenoise.enabled         = false;
+				if (options.fastexport_bypass_colorDenoise       ) params.colorDenoise.enabled        = false;
+				if (options.fastexport_bypass_defringe           ) params.defringe.enabled            = false;
+				if (options.fastexport_bypass_dirpyrDenoise      ) params.dirpyrDenoise.enabled       = false;
+				if (options.fastexport_bypass_sh_hq              ) params.sh.hq                       = false;
+				if (options.fastexport_bypass_dirpyrequalizer    ) params.dirpyrequalizer.enabled     = false;
+				if (options.fastexport_bypass_raw_all_enhance    ) params.raw.all_enhance             = false;
+				if (options.fastexport_bypass_raw_ccSteps        ) params.raw.ccSteps                 = 0;
+				if (options.fastexport_bypass_raw_dcb_iterations ) params.raw.dcb_iterations          = 0;
+				if (options.fastexport_bypass_raw_dcb_enhance    ) params.raw.dcb_enhance             = false;
+				if (options.fastexport_bypass_raw_ca             ) {params.raw.ca_autocorrect =false; params.raw.cared=0; params.raw.cablue=0;}
+				if (options.fastexport_bypass_raw_linenoise      ) params.raw.linenoise               = 0;
+				if (options.fastexport_bypass_raw_greenthresh    ) params.raw.greenthresh             = 0;
+				if (options.fastexport_bypass_raw_df             ) {params.raw.df_autoselect = false; params.raw.dark_frame="";}
+				if (options.fastexport_bypass_raw_ff             ) {params.raw.ff_AutoSelect = false; params.raw.ff_file="";}
+				params.raw.dmethod       = options.fastexport_raw_dmethod     ;
+				params.icm.input         = options.fastexport_icm_input       ;
+				params.icm.working       = options.fastexport_icm_working     ;
+				params.icm.output        = options.fastexport_icm_output      ;
+				params.icm.gamma         = options.fastexport_icm_gamma       ;
+				params.resize.enabled    = options.fastexport_resize_enabled  ;
+				params.resize.scale      = options.fastexport_resize_scale    ;
+				params.resize.appliesTo  = options.fastexport_resize_appliesTo;
+				params.resize.method     = options.fastexport_resize_method   ;
+				params.resize.dataspec   = options.fastexport_resize_dataspec ;
+				params.resize.width      = options.fastexport_resize_width    ;
+				params.resize.height     = options.fastexport_resize_height   ;
+            }
+
             rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
             double tmpscale;
             rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
@@ -878,6 +923,18 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
         listener->addBatchQueueJobs( entries );
     }
+}
+
+void FileCatalog::exportRequested (){
+
+}
+
+void FileCatalog::setExportPanel (ExportPanel* expanel) {
+
+	exportPanel = expanel;
+	exportPanel->set_sensitive (false);
+	exportPanel->setExportPanelListener (this);
+	fileBrowser->setExportPanel(expanel);
 }
 
 void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
