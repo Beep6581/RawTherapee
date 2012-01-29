@@ -19,6 +19,7 @@
 #include "filterpanel.h"
 #include "multilangmgr.h"
 #include "../rtengine/rtengine.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 
@@ -121,6 +122,14 @@ FilterPanel::FilterPanel () : listener (NULL) {
 	sfiletype->add(*filetype);
 	ftvb->pack_start (*sfiletype, Gtk::PACK_SHRINK, 0);
 	pack_start (*ftvb, Gtk::PACK_SHRINK, 4);
+
+    // add panel ending
+    Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hseptpe = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Image* peImg = Gtk::manage (new RTImage("PanelEnding.png"));
+    vboxpe->pack_start(*hseptpe, Gtk::PACK_SHRINK, 4);
+    vboxpe->pack_start(*peImg);
+    pack_start(*vboxpe, Gtk::PACK_SHRINK, 0);
 
 	conns = 0;
     sChange[conns++] = fnumberFrom->signal_changed().connect (sigc::mem_fun(*this, &FilterPanel::valueChanged));

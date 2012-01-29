@@ -162,6 +162,37 @@ void Options::setDefaults () {
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
 
+    fastexport_bypass_sharpening         = true;
+    fastexport_bypass_sharpenEdge        = true;
+    fastexport_bypass_sharpenMicro       = true;
+    fastexport_bypass_lumaDenoise        = true;
+    fastexport_bypass_colorDenoise       = true;
+    fastexport_bypass_defringe           = true;
+    fastexport_bypass_dirpyrDenoise      = true;
+    fastexport_bypass_sh_hq              = true;
+    fastexport_bypass_dirpyrequalizer    = true;
+    fastexport_bypass_raw_all_enhance    = true;
+    fastexport_bypass_raw_ccSteps        = true;
+    fastexport_bypass_raw_dcb_iterations = true;
+    fastexport_bypass_raw_dcb_enhance    = true;
+    fastexport_bypass_raw_ca             = true;
+    fastexport_bypass_raw_linenoise      = true;
+    fastexport_bypass_raw_greenthresh    = true;
+    fastexport_bypass_raw_df             = true;
+    fastexport_bypass_raw_ff             = true;
+    fastexport_raw_dmethod               = "fast";
+    fastexport_icm_input                 = "(camera)";
+    fastexport_icm_working               = "sRGB";
+    fastexport_icm_output                = "RT_sRGB";
+    fastexport_icm_gamma                 = "default";
+    fastexport_resize_enabled            = true;
+    fastexport_resize_scale              = 1;
+    fastexport_resize_appliesTo          = "Cropped area";
+    fastexport_resize_method             = "Lanczos";
+    fastexport_resize_dataspec           = 3;
+    fastexport_resize_width              = 1000;
+    fastexport_resize_height             = 1000;
+
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p
 
@@ -459,6 +490,38 @@ if (keyFile.has_group ("Sounds")) {
     if (keyFile.has_key ("Sounds", "LngEditProcDoneSecs")) sndLngEditProcDoneSecs = keyFile.get_double ("Sounds", "LngEditProcDoneSecs");
 }
 
+if (keyFile.has_group ("Fast Export")) {
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpening"        ))  fastexport_bypass_sharpening          = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpening"        );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenEdge"       ))  fastexport_bypass_sharpenEdge         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"       );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenMicro"      ))  fastexport_bypass_sharpenMicro        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"      );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_lumaDenoise"       ))  fastexport_bypass_lumaDenoise         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"       );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_colorDenoise"      ))  fastexport_bypass_colorDenoise        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_colorDenoise"      );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_defringe"          ))  fastexport_bypass_defringe            = keyFile.get_boolean ("Fast Export", "fastexport_bypass_defringe"          );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrDenoise"     ))  fastexport_bypass_dirpyrDenoise       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"     );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_sh_hq"             ))  fastexport_bypass_sh_hq               = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sh_hq"             );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrequalizer"   ))  fastexport_bypass_dirpyrequalizer     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_all_enhance"   ))  fastexport_bypass_raw_all_enhance     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ccSteps"       ))  fastexport_bypass_raw_ccSteps         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"       );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_iterations"))  fastexport_bypass_raw_dcb_iterations  = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_iterations");
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_enhance"   ))  fastexport_bypass_raw_dcb_enhance     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_enhance"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ca"            ))  fastexport_bypass_raw_ca              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ca"            );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_linenoise"     ))  fastexport_bypass_raw_linenoise       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_linenoise"     );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_greenthresh"   ))  fastexport_bypass_raw_greenthresh     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_greenthresh"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_df"            ))  fastexport_bypass_raw_df              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_df"            );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ff"            ))  fastexport_bypass_raw_ff              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ff"            );
+    if (keyFile.has_key ("Fast Export", "fastexport_raw_dmethod"              ))  fastexport_raw_dmethod                = keyFile.get_string  ("Fast Export", "fastexport_raw_dmethod"              );
+    if (keyFile.has_key ("Fast Export", "fastexport_icm_input"                ))  fastexport_icm_input                  = keyFile.get_string  ("Fast Export", "fastexport_icm_input"                );
+    if (keyFile.has_key ("Fast Export", "fastexport_icm_working"              ))  fastexport_icm_working                = keyFile.get_string  ("Fast Export", "fastexport_icm_working"              );
+    if (keyFile.has_key ("Fast Export", "fastexport_icm_output"               ))  fastexport_icm_output                 = keyFile.get_string  ("Fast Export", "fastexport_icm_output"               );
+    if (keyFile.has_key ("Fast Export", "fastexport_icm_gamma"                ))  fastexport_icm_gamma                  = keyFile.get_string  ("Fast Export", "fastexport_icm_gamma"                );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_enabled"           ))  fastexport_resize_enabled             = keyFile.get_boolean ("Fast Export", "fastexport_resize_enabled"           );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_scale"             ))  fastexport_resize_scale               = keyFile.get_double  ("Fast Export", "fastexport_resize_scale"             );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_appliesTo"         ))  fastexport_resize_appliesTo           = keyFile.get_string  ("Fast Export", "fastexport_resize_appliesTo"         );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_method"            ))  fastexport_resize_method              = keyFile.get_string  ("Fast Export", "fastexport_resize_method"            );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_dataspec"          ))  fastexport_resize_dataspec            = keyFile.get_integer ("Fast Export", "fastexport_resize_dataspec"          );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_width"             ))  fastexport_resize_width               = keyFile.get_integer ("Fast Export", "fastexport_resize_width"             );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            ))  fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
+}
         filterOutParsedExtensions ();
 
         return 0;
@@ -632,6 +695,38 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
     keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
     keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
+
+
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpening"         , fastexport_bypass_sharpening        );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"        , fastexport_bypass_sharpenEdge       );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"       , fastexport_bypass_sharpenMicro      );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"        , fastexport_bypass_lumaDenoise       );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_colorDenoise"       , fastexport_bypass_colorDenoise      );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_defringe"           , fastexport_bypass_defringe          );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"      , fastexport_bypass_dirpyrDenoise     );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq"              , fastexport_bypass_sh_hq             );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"    , fastexport_bypass_dirpyrequalizer   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"    , fastexport_bypass_raw_all_enhance   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"        , fastexport_bypass_raw_ccSteps       );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_dcb_iterations" , fastexport_bypass_raw_dcb_iterations);
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_dcb_enhance"    , fastexport_bypass_raw_dcb_enhance   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ca"             , fastexport_bypass_raw_ca            );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_linenoise"      , fastexport_bypass_raw_linenoise     );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_greenthresh"    , fastexport_bypass_raw_greenthresh   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_df"             , fastexport_bypass_raw_df            );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ff"             , fastexport_bypass_raw_ff            );
+    keyFile.set_string  ("Fast Export", "fastexport_raw_dmethod"               , fastexport_raw_dmethod              );
+    keyFile.set_string  ("Fast Export", "fastexport_icm_input"                 , fastexport_icm_input                );
+    keyFile.set_string  ("Fast Export", "fastexport_icm_working"               , fastexport_icm_working              );
+    keyFile.set_string  ("Fast Export", "fastexport_icm_output"                , fastexport_icm_output               );
+    keyFile.set_string  ("Fast Export", "fastexport_icm_gamma"                 , fastexport_icm_gamma                );
+    keyFile.set_boolean ("Fast Export", "fastexport_resize_enabled"            , fastexport_resize_enabled           );
+    keyFile.set_double  ("Fast Export", "fastexport_resize_scale"              , fastexport_resize_scale             );
+    keyFile.set_string  ("Fast Export", "fastexport_resize_appliesTo"          , fastexport_resize_appliesTo         );
+    keyFile.set_string  ("Fast Export", "fastexport_resize_method"             , fastexport_resize_method            );
+    keyFile.set_integer ("Fast Export", "fastexport_resize_dataspec"           , fastexport_resize_dataspec          );
+    keyFile.set_integer ("Fast Export", "fastexport_resize_width"              , fastexport_resize_width             );
+    keyFile.set_integer ("Fast Export", "fastexport_resize_height"             , fastexport_resize_height            );
 
 
     FILE *f = safe_g_fopen (fname, "wt");
