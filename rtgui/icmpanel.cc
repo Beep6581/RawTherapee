@@ -207,6 +207,12 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         icameraICC->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (true);
     }
+    else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
+    	// this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
+    	// therefore falling back UI to explicitly reflect the (camera) option
+    	icamera->set_active (true);
+    	ckbBlendCMSMatrix->set_sensitive (false);
+    }
     else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
