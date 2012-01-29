@@ -885,7 +885,7 @@ TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 TP_ICM_FILEDLGFILTERANY;Any files
 TP_ICM_FILEDLGFILTERICM;ICC Profile Files
-TP_ICM_INPUTCAMERAICC;Camera standard or ICC
+TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific ICC
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
