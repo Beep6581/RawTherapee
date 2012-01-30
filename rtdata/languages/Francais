@@ -1,7 +1,7 @@
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
-ABOUT_TAB_RELEASENOTES;Notes de Mise
+ABOUT_TAB_RELEASENOTES;Notes de version
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
@@ -51,6 +51,32 @@ EXIFPANEL_RESETALL;Réinitialiser tout
 EXIFPANEL_RESETHINT;Réinitialise les données sélectionnées à la valeur initiale
 EXIFPANEL_RESET;Réinitialiser
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
+EXPORT_BYPASS_ALL;Sélectionner / Désélectionner tout
+EXPORT_BYPASS_COLORDENOISE;Forcer la réduction du bruit chromatique
+EXPORT_BYPASS_DEFRINGE;Forcer l'aberration chromatique
+EXPORT_BYPASS_DIRPYRDENOISE;Forcer la réduction du bruit
+EXPORT_BYPASS_DIRPYREQUALIZER;Forcer le contraste par niveaux de détail
+EXPORT_BYPASS_LUMADENOISE;Forcer la réduction du bruit de luminance
+EXPORT_BYPASS_RAW_ALL_ENHANCE;Forcer l'application de la réduction de bruit/artefact post-dématriçage
+EXPORT_BYPASS_RAW_CA;Forcer la correction d'aberration chromatique [raw]
+EXPORT_BYPASS_RAW_CCSTEPS;Forcer la suppression des fausses couleurs [raw]
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Forcer l'application de la phase d'amélioration de DCB [raw]
+EXPORT_BYPASS_RAW_DCB_ITERATIONS;Forcer le nombre d'itération de DCB [raw]
+EXPORT_BYPASS_RAW_DF;Forcer la Trame Noire [raw]
+EXPORT_BYPASS_RAW_FF;Forcer le Champ Uniforme [raw]
+EXPORT_BYPASS_RAW_GREENTHRESH;Forcer l'équilibrage du vert [raw]
+EXPORT_BYPASS_RAW_LINENOISE;Forcer le filtre de bruit de ligne [raw]
+EXPORT_BYPASS_SH_HQ;Forcer Ombres/Hautes lumières (haute qualité)
+EXPORT_BYPASS_SHARPENEDGE;Forcer netteté des bords
+EXPORT_BYPASS_SHARPENING;Forcer la netteté
+EXPORT_BYPASS_SHARPENMICRO;Forcer netteté des microcontrastes
+EXPORT_FASTEXPORTOPTIONS;<b>Options d'Export Rapide</b>
+EXPORT_INSTRUCTIONS;Les options d'Export Rapide permettent de forcer des paramètres afin d'éviter d'utiliser des outils très consommateur de temps et de ressources, et d'utiliser ces options dans la file de traitement. Cette méthode est recommandée pour la génération rapide d'images de basse résolution quand la vitesse est une priorité ou lorsqu'on désir une version redimensionnée d'une ou plusieurs images de sortie sans avoir à modifier leurs paramètres de développement.
+EXPORT_MAXHEIGHT;Hauteur maximum:
+EXPORT_MAXWIDTH;Largeur maximum:
+EXPORT_PUTTOQUEUEFAST;  Mettre dans la file de traitement pour Export Rapide
+EXPORT_RAW_DMETHOD;Méthode de dématriçage
+EXPORT_RESIZEMETHOD;Méthode de redimensionnement
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Appliquer le profil (partiel)
@@ -98,6 +124,7 @@ FILEBROWSER_POPUPMOVEHEAD;Déplacer en tête de file
 FILEBROWSER_POPUPMOVETO;Déplacer vers...
 FILEBROWSER_POPUPOPEN;Ouvrir
 FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
+FILEBROWSER_POPUPPROCESSFAST;Mettre dans la file de traitement (Export Rapide)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Opérations sur les profils
 FILEBROWSER_POPUPRANK1;1 étoile
 FILEBROWSER_POPUPRANK2;2 étoiles
@@ -446,11 +473,12 @@ MAIN_TAB_COLOR;Couleur
 MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_DETAIL;Détail
 MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
-MAIN_TAB_DEVELOP;Développer
+MAIN_TAB_DEVELOP; Développer 
 MAIN_TAB_EXIF;EXIF
+MAIN_TAB_EXPORT; Exporter 
 MAIN_TAB_EXPOSURE;Exposition
 MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
-MAIN_TAB_FILTER;Filtrer
+MAIN_TAB_FILTER; Filtrer 
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Métadonnées
@@ -865,7 +893,7 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lors
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil ICC
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil
-TP_ICM_INPUTCAMERAICC;Celui de l'appareil photo ou ICC
+TP_ICM_INPUTCAMERAICC;Profil ICC spécifique à l'APN\nsélectionné automatiquement
 TP_ICM_INPUTCAMERA;Celui de l'appareil photo
 TP_ICM_INPUTCUSTOM;Personnel
 TP_ICM_INPUTDLGLABEL;Choix du profil ICC d'entrée...
@@ -1079,11 +1107,11 @@ TP_EPD_SCALE;Échelle
 TP_EPD_STRENGTH;Force
 TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de <b>Niveaux automatiques</b> afin de régler\nautomatiquement les valeurs basé sur l'analyse de l'image  
 TP_EXPOSURE_CLIP_TIP;La fraction de pixels que l'outil <b>Niveaux automatiques</b> passera en dehors du domaine
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils ICC par défaut de RawTherapee. Plus précises qu'une simple matrice, mais disponible pour certains appareil photo seulement.
-TP_ICM_INPUTCAMERA_TOOLTIP;Utilise les matrices de couleur simple fournis par DCRAW ou incluse dans le fichier RAW
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils ICC d'entrée spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareil photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
+TP_ICM_INPUTCAMERA_TOOLTIP;Par ordre de préférence, utilise les matrices de couleur inclus dans le fichier RAW, les matrices de couleur simple fournis par RawTherapee ou celles de DCRaw
 TP_ICM_INPUTCUSTOM_TOOLTIP;Sélectionez votre propre profil ICC pour votre appareil photo
 TP_ICM_INPUTEMBEDDED_TOOLTIP;Utilise le profil inclus dans les fichiers non-Raw
-TP_ICM_INPUTNONE_TOOLTIP;N'utilise aucun profil couleur du tout. À n'utiliser que dans des cas très spéciaux.
+TP_ICM_INPUTNONE_TOOLTIP;N'utilise aucun profil couleur d'entrée du tout. À n'utiliser que dans des cas très spéciaux.
 TP_NEUTRAL;Neutre
 TP_NEUTRAL_TIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
 TP_RGBCURVES_LABEL;Courbes RVB
