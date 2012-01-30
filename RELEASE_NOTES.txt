@@ -15,7 +15,7 @@ For generic use in an sRGB workflow when the output target is web-based image di
 Future releases of RawTherapee are planned to support a more comprehensive color-managed preview that will allow proofing with accurate visualization of the final output render based not only on the working space and monitor profiles, but also on the user-selected Output Profile and Output Gamma.
 
 - Auto Levels behavior has changed
-The new algorithm drives the folowing parameters: 
+The new algorithm drives the following parameters: 
   Exposure compensation, 
   Highlight recovery amount & threshold, 
   Black level & shadow compression,
@@ -23,7 +23,7 @@ The new algorithm drives the folowing parameters:
   RGB contrast.
 The profiles supplied with RawTherapee were changed to be compatible with the new auto levels logic, as in older profiles RGB contrast and brightness were preset to a fixed value. Old Tuned-# profiles have been removed.
 
-- The new Exposure Compensation in thumbnail captions and file browser filter requires clearing of Rawtherapee's thumbnail cache (see Preferences > File Browser). If the thubmnail cache is not cleared, exposure compensation values will not be displayed in captions or recognised in filtering *for previously browsed images* only.
+- The new Exposure Compensation in thumbnail captions and file browser filter requires clearing of Rawtherapee's thumbnail cache (see Preferences > File Browser). If the thumbnail cache is not cleared, exposure compensation values will not be displayed in captions or recognized in filtering *for previously browsed images* only.
 
 NEW FEATURES
 ------------
@@ -43,7 +43,7 @@ NEW FEATURES
     Samsung NX
     Samsung NX200
     Sony NEX-7
-- Enhanced color matices and RT-specific input ICC profiles for the following cameras: 
+- Enhanced color matrices and RT-specific input ICC profiles for the following cameras: 
     Canon EOS 5D
     Canon PowerShot G10
     Nikon D3100
@@ -55,7 +55,7 @@ NEW FEATURES
 
 
 DOCUMENTATION
-------------_
+-------------
 http://rawtherapee.com/blog/documentation
 
 
