@@ -1,6 +1,8 @@
+
 ABOUT_TAB_BUILD;Wersja
 ABOUT_TAB_CREDITS;Zasługi
 ABOUT_TAB_LICENSE;Licencja
+ABOUT_TAB_RELEASENOTES;Notatki eksploatacyjne
 ABOUT_TAB_SPLASH;Ekran powitalny
 ADJUSTER_RESET_TO_DEFAULT;Przywróć domyślne
 BATCHQUEUE_AUTOSTART;Autostart
@@ -11,7 +13,7 @@ CURVEEDITOR_CUSTOM;Własna
 CURVEEDITOR_DARKS;Cienie
 CURVEEDITOR_FILEDLGFILTERANY;Wszystkie pliki
 CURVEEDITOR_FILEDLGFILTERCURVE;Pliki z krzywymi
-CURVEEDITOR_HIGHLIGHTS;Prześwietlenia
+CURVEEDITOR_HIGHLIGHTS;Światła
 CURVEEDITOR_LIGHTS;Światła
 CURVEEDITOR_LINEAR;Liniowa
 CURVEEDITOR_LOADDLGLABEL;Wczytaj krzywą...
@@ -19,7 +21,7 @@ CURVEEDITOR_MINMAXCPOINTS;Min/Max punktów kontrolnych
 CURVEEDITOR_NURBS;Kontrolowana
 CURVEEDITOR_PARAMETRIC;Parametryczna
 CURVEEDITOR_SAVEDLGLABEL;Zapisz krzywą...
-CURVEEDITOR_SHADOWS;Niedoświetlenia
+CURVEEDITOR_SHADOWS;Cienie
 CURVEEDITOR_TOOLTIPCOPY;Skopiuj aktualną krzywą do schowka
 CURVEEDITOR_TOOLTIPLINEAR;Zresetuj krzywą do liniowej
 CURVEEDITOR_TOOLTIPLOAD;Wczytaj krzywą z pliku
@@ -51,6 +53,32 @@ EXIFPANEL_RESETALL;Przywróć wszystkie
 EXIFPANEL_RESETHINT;Przywraca orginalne wartości wybranych etykiet
 EXIFPANEL_RESET;Przywróć
 EXIFPANEL_SUBDIRECTORY;Podkatalog
+EXPORT_BYPASS_ALL;Zaznacz / Odznacz wszystkie
+EXPORT_BYPASS_COLORDENOISE;Pomiń odszumienie koloru
+EXPORT_BYPASS_DEFRINGE;Pomiń usuwanie widma
+EXPORT_BYPASS_DIRPYRDENOISE;Pomiń redukcje szumu
+EXPORT_BYPASS_DIRPYREQUALIZER;Pomiń kontrast wg. poziomu detali
+EXPORT_BYPASS_LUMADENOISE;Pomiń odszumianie luminancji
+EXPORT_BYPASS_RAW_ALL_ENHANCE;Pomiń redukcję szumu i artefaktów po demozaikowaniu
+EXPORT_BYPASS_RAW_CA;Pomiń redukcję aberracji chromatycznej (raw)
+EXPORT_BYPASS_RAW_CCSTEPS;Pomiń tłumienie fałszowania koloru (raw)
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Pomiń poprawę DCB (raw)
+EXPORT_BYPASS_RAW_DCB_ITERATIONS;Pomiń liczbę powtórzeń DCB (raw)
+EXPORT_BYPASS_RAW_DF;Pomiń czarną klatkę (raw)
+EXPORT_BYPASS_RAW_FF;Pomiń puste polę (raw)
+EXPORT_BYPASS_RAW_GREENTHRESH;Pomiń wyrównanie zieleni (raw)
+EXPORT_BYPASS_RAW_LINENOISE;Pomiń redukcję szumów liniowych (raw)
+EXPORT_BYPASS_SHARPENEDGE;Pomiń wyostrzanie krawędzi
+EXPORT_BYPASS_SHARPENING;Pomiń wyostrzanie
+EXPORT_BYPASS_SHARPENMICRO;Pomiń mikrokontrast
+EXPORT_BYPASS_SH_HQ;Pomiń wysokiej jakości korekte cieni/świateł
+EXPORT_FASTEXPORTOPTIONS;<b>Opcje szybkiego eksportu</b>
+EXPORT_INSTRUCTIONS;Opcje szybkiego eksportu umożliwiają pominięcie pewnych narzędzi które mogą być dość wymagające na procesor oraz mogą znacznie przedłużyc czas przetwarzania podczas eksportowania zdjęć. Ta metoda jest zalecana w razie potrzeby szybkiego uzyskania zdjęć o niższej rozdzielczości oraz jakości kiedy zależy nam na czasie a nie chcemy modyfikować plików PP3.
+EXPORT_MAXHEIGHT;Maksymalna wysokość: 
+EXPORT_MAXWIDTH;Maksymalna szerokość: 
+EXPORT_PUTTOQUEUEFAST;  Dodaj do kolejki szybkiego eksportu
+EXPORT_RAW_DMETHOD;Algorytm demozaikowania
+EXPORT_RESIZEMETHOD;Metoda zmiany rozmiaru
 FILEBROWSER_ADDDELTEMPLATE;Dodaj/Usuń szablon...
 FILEBROWSER_APPLYPROFILE;Zastosuj profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Zastosuj profil (częściowo)
@@ -97,6 +125,7 @@ FILEBROWSER_POPUPMOVEEND;Przenieś na koniec kolejki
 FILEBROWSER_POPUPMOVEHEAD;Przenieś na początek kolejki
 FILEBROWSER_POPUPMOVETO;Przenieś do...
 FILEBROWSER_POPUPOPEN;Otwórz
+FILEBROWSER_POPUPPROCESSFAST;Dodaj do kolejki szybkiego eksportu
 FILEBROWSER_POPUPPROCESS;Umieść w kolejce do przetwarzania
 FILEBROWSER_POPUPPROFILEOPERATIONS;Profile
 FILEBROWSER_POPUPRANK1;Ocena 1
@@ -232,10 +261,10 @@ HISTORY_MSG_41;Przesunięcie koloru "A"
 HISTORY_MSG_42;Przesunięcie koloru "B"
 HISTORY_MSG_43;Odszumianie luminancji
 HISTORY_MSG_44;Promień odszumiania lum.
-HISTORY_MSG_45;Tol. krawędzi odszumiania lum.
+HISTORY_MSG_45;Tolerancja krawędzi odszumiania lum.
 HISTORY_MSG_46;Odszumianie koloru
 HISTORY_MSG_47;Promień odszumiania kolorowego
-HISTORY_MSG_48;Tol. krawędzi odszumiania kol.
+HISTORY_MSG_48;Tolerancja krawędzi odszumiania kol.
 HISTORY_MSG_49;Odszumianie koloru z czuł. kraw.
 HISTORY_MSG_50;Narzędzie światła/cienie
 HISTORY_MSG_51;Wzmocnienie świateł
@@ -331,12 +360,12 @@ HISTORY_MSG_140;Czerń - poziom zieleni 2
 HISTORY_MSG_141;Czerń - poziom zieleń 1+2
 HISTORY_MSG_142;Powtórzenia wyostrzania krawędzi
 HISTORY_MSG_143;Siła wyostrzania krawędzi
-HISTORY_MSG_144;Siła kontrastu lokalnego
-HISTORY_MSG_145;Jednolitość kontrastu lokalnego
+HISTORY_MSG_144;Siła mikrokontrastu
+HISTORY_MSG_145;Jednolitość mikrokontrastu
 HISTORY_MSG_146;Wyostrzanie krawędzi
 HISTORY_MSG_147;Wyostrzanie krawędzi - tylko luminacja
-HISTORY_MSG_148;Kontrast lokalny
-HISTORY_MSG_149;Kontrast lokalny - matryca 3x3
+HISTORY_MSG_148;Mikrokontrast
+HISTORY_MSG_149;Mikrokontrast - matryca 3x3
 HISTORY_MSG_150;Redukcja szumu i artefaktów po demozaikowaniu
 HISTORY_MSG_151;Jaskrawość
 HISTORY_MSG_152;Jaskrawość - Odcienie pastelowe
@@ -457,11 +486,12 @@ MAIN_TAB_COLOR;Kolor
 MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_DETAIL;Szczegóły
 MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
-MAIN_TAB_DEVELOP;Przetwarzanie
+MAIN_TAB_DEVELOP; Przetwarzanie 
 MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPORT; Eksport 
 MAIN_TAB_EXPOSURE;Ekspozycja
 MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
-MAIN_TAB_FILTER;Filter
+MAIN_TAB_FILTER; Filter 
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadane
@@ -572,10 +602,10 @@ PARTIALPASTE_RAW_FALSECOLOR;Tłumienie fałszowania koloru
 PARTIALPASTE_RESIZE;Zmień rozmiar
 PARTIALPASTE_RGBCURVES;Krzywe RGB
 PARTIALPASTE_ROTATION;Rotacja
-PARTIALPASTE_SHADOWSHIGHLIGHTS;Niedoświetlenia/Prześwietlenia
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Cienie/Światła
 PARTIALPASTE_SHARPENEDGE;Krawędzie
 PARTIALPASTE_SHARPENING;Wyostrzanie
-PARTIALPASTE_SHARPENMICRO;Kontrast lokalny
+PARTIALPASTE_SHARPENMICRO;Mikrokontrast
 PARTIALPASTE_VIBRANCE;Jaskrawość
 PARTIALPASTE_VIGNETTING;Korekcja winiety
 PARTIALPASTE_WAVELETEQUALIZER;Korektor Wavelet
@@ -1029,7 +1059,7 @@ TP_SHARPENING_RLD_ITERATIONS;Powtórzenia
 TP_SHARPENING_THRESHOLD;Próg
 TP_SHARPENING_USM;Maska wyostrzająca
 TP_SHARPENMICRO_AMOUNT;Siła
-TP_SHARPENMICRO_LABEL;Kontrast lokalny
+TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;Matryca 3×3 zamiast 5×5
 TP_SHARPENMICRO_UNIFORMITY;Jednolitość
 TP_VIBRANCE_AVOIDCOLORSHIFT;Zapobiegaj przesunięcia kolorów
@@ -1114,9 +1144,8 @@ ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
 #10 The race for the bleeding edge - update for 4.x
 #11 2011-11-30 DrSlony
 #12 2012-01-14 DrSlony
+#13 2012-01-30 DrSlony
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
-
-

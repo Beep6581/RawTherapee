@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Créditos
 ABOUT_TAB_SPLASH;Splash
@@ -901,10 +902,37 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 
 
 !ABOUT_TAB_LICENSE;License
+!ABOUT_TAB_RELEASENOTES;Release Notes
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
 !EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)
+!EXPORT_BYPASS_ALL;Select / Unselect All
+!EXPORT_BYPASS_COLORDENOISE;Bypass Color denoise
+!EXPORT_BYPASS_DEFRINGE;Bypass Defringe
+!EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
+!EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by detail levels
+!EXPORT_BYPASS_LUMADENOISE;Bypass Luma denoise
+!EXPORT_BYPASS_RAW_ALL_ENHANCE;Bypass Post demosaic artifact/noise reduction
+!EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration correction
+!EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False color suppression
+!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB enhancement steps
+!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB iterations
+!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
+!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
+!EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green equilibration
+!EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line noise filter
+!EXPORT_BYPASS_SHARPENEDGE;Bypass Edge sharpening
+!EXPORT_BYPASS_SHARPENING;Bypass Sharpening
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+!EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (high quality)
+!EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
+!EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
+!EXPORT_MAXHEIGHT;Maximum Height: 
+!EXPORT_MAXWIDTH;Maximum Width:  
+!EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
+!EXPORT_RAW_DMETHOD;Demosaic method
+!EXPORT_RESIZEMETHOD;Resize method
 !FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
 !FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
@@ -917,6 +945,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
 !FILEBROWSER_POPUPCOLORLABEL;Color label
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
+!FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 !FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
@@ -996,16 +1025,17 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 !MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+!MAIN_TAB_EXPORT; Export 
 !MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 !MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
 !MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
-!MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b>
-!MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>
-!MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>n0.299*R + 0.587*G + 0.114*B
-!MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>
+!MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>n<b>-b</b>
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b> <i>(beta)</i> <b>Shift-F</b>nnMore accurate on images with shallow depth of field, low noise and at higher zoom levelsnnTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%nnPreview is rendered slower with Focus Mask turned on. 
+!MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>n<b>-g</b>
+!MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>n0.299*R + 0.587*G + 0.114*Bn<b>-v</b>
+!MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>n<b>-r</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
@@ -1088,12 +1118,12 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_HLREC_BLEND;Blend
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
-!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
-!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific ICC
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by DCRAW, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
 !TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
-!TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
+!TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
 !TP_NEUTRAL;Neutral
 !TP_NEUTRAL_TIP;Reset exposure controls to neutral values
 !TP_PREPROCESS_NO_FOUND;None found
@@ -1104,7 +1134,11 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
 !TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
+!TP_RGBCURVES_BLUE;B
+!TP_RGBCURVES_CHANNEL;Channel
+!TP_RGBCURVES_GREEN;G
 !TP_RGBCURVES_LABEL;RGB Curves
+!TP_RGBCURVES_RED;R
 !TP_SHARPENEDGE_AMOUNT;Quantity
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations
