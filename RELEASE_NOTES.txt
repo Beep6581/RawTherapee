@@ -21,16 +21,16 @@ The new algorithm drives the following parameters:
   Black level & shadow compression,
   RGB brightness,
   RGB contrast.
-The profiles supplied with RawTherapee were changed to be compatible with the new auto levels logic, as in older profiles RGB contrast and brightness were preset to a fixed value. Old Tuned-# profiles have been removed.
 
-- The new Exposure Compensation in thumbnail captions and file browser filter requires clearing of Rawtherapee's thumbnail cache (see Preferences > File Browser). If the thumbnail cache is not cleared, exposure compensation values will not be displayed in captions or recognized in filtering *for previously browsed images* only.
+The profiles supplied with RawTherapee were changed to be compatible with the new Auto Levels logic, as in older profiles RGB contrast and brightness were preset to a fixed value. Old Tuned-# profiles have been removed.
+
+- The new Exposure Compensation tag in thumbnail captions and in the file browser filter requires clearing of Rawtherapee's thumbnail cache (see Preferences > File Browser). If the thumbnail cache is not cleared, exposure compensation values will not be displayed in captions or recognized in filtering *for previously browsed images only*.
 
 NEW FEATURES
 ------------
 - New RGB curves,
 - New white balance presets for specific spectra,
-- New Preview modes: red, green, blue, luminosity 
-  and Focus Mask (see which areas are in focus),
+- New preview modes: red, green, blue, luminosity and Focus Mask (see which areas are in focus),
 - New Export Panel with Fast Export Options,
 - DCRAW updated to 9.12
   Support added for these cameras:
@@ -49,7 +49,7 @@ NEW FEATURES
     Nikon D3100
 - Additional crop ratios,
 - Additional output ICC profiles,
-- 1-click neutral setting for exposure values
+- 1-click neutral setting for exposure values,
 - Exposure Compensation thumbnail caption and filter option in the file browser metadata filter,
 - Automatic display of this RELEASE_NOTES.txt file on the first run after a RawTherapee upgrade (e.g. 4.0.6 > 4.0.7)
 
@@ -61,7 +61,7 @@ http://rawtherapee.com/blog/documentation
 
 REPORTING BUGS
 --------------
-http://rawtherapee.com/forum/viewtopic.php?f=3&t=3639
+http://rawtherapee.com/forum/viewtopic.php?f=3&t=3639#p25814
 
 
 LIVE CHAT WITH RT USERS
@@ -70,39 +70,82 @@ Network: freenode
 Server: chat.freenode.net
 Channel #rawtherapee
 http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
-http://rawtherapee.com/forum/viewtopic.php?f=1&t=945
+http://rawtherapee.com/forum/viewtopic.php?f=1&t=945#p4603
 
 
 REVISION HISTORY
 ----------------
-The complete change log is available at 
+The complete change log is available at
 http://code.google.com/p/rawtherapee/source/list
 
 Changes since version 4.0.6:
-
-changeset:   1745:1782f47ae9c9
+changeset:   1757:0d7bf6ba4a29
 tag:         tip
-user:        natureh
+user:        Hombre 
+date:        Tue Jan 31 00:46:04 2012 +0100
+description: Updated french strings and ben_pcc added to the Authors 
+             list (without his complete name as requested)
+             
+changeset:   1756:70397c2dea1c
+user:        Michael Ezra
+date:        Mon Jan 30 08:19:06 2012 -0500
+description: Fixing spelling errors in the release notes
+             
+changeset:   1755:4dc3126bca36
+user:        Michael Ezra
+date:        Sun Jan 29 16:25:27 2012 -0500
+description: Changes to ICM panel tooltips (see issue 1220)
+             
+changeset:   1754:6345b81b1d3d
+user:        Michael Ezra
+date:        Sun Jan 29 16:15:26 2012 -0500
+description: New feature: Export panel with Fast Export options.
+             Fast Export options provide overrides to bypass time and 
+             resource consuming development settings and to run queue 
+             processing using the fast export settings instead. This 
+             method is recommended for quicker generation of lower 
+             resolution images when speed is a priority or when resized 
+             output is desired for one or many images without making 
+             modifications to their saved development parameters.
+             
+changeset:   1753:295cdd4f2329
+user:        Michael Ezra
+date:        Sun Jan 29 10:58:49 2012 -0500
+description: Fix for correctly reflecting Input Profile option in the UI.
+             If auto-matched camera-specific ICC profile is not found 
+             Editor UI falls back to reflect "Camera standard" option.
+             
+changeset:   1752:68c38e327c03
+user:        Michael Ezra
+date:        Fri Jan 27 11:18:10 2012 -0500
+description: Monospace formatting for license and release notes in the 
+             splash screen.
+             
+changeset:   1751:fc727c21dbb3
+user:        Michael Ezra
+date:        Thu Jan 26 21:57:23 2012 -0500
+description: Renaming Caveats to Release Notes, adding text margins to 
+             the splash screen
+             
+changeset:   1749:1782f47ae9c9
+user:        Hombre
 date:        Wed Jan 25 23:14:59 2012 +0100
 description: CAVEATS file now word-wrapped in the Text area.
              
-changeset:   1744:d4a2ae08dad5
+changeset:   1748:d4a2ae08dad5
 user:        DrSlony 
 date:        Tue Jan 24 20:53:13 2012 +0000
 description: Fixed a problem where the CAVEATS.txt file was not copied 
              into the compiled dir in Linux. Wrong capitalization in 
              CMakeLists.txt. Issue 1206
              
-changeset:   1743:78b3abb4b606
-user:        DrSlony 
-date:        Tue Jan 24 01:17:18 2012 +0000
-description: Hopefully fixing two "default" heads or breaking it 
-             further. See 
-             http://code.google.com/p/rawtherapee/source/detail?r=3dbea14
-             75c8d1a1cf4aba06cbc5b22a9431dddab
+changeset:   1746:f0dd4ae23d76
+user:        Michael Ezra
+date:        Wed Jan 25 22:47:18 2012 -0500
+description: Renaming profile Tuned-1 to Highkey-1
              
-changeset:   1742:78318196e0de
-user:        natureh
+changeset:   1745:78318196e0de
+user:        Hombre
 date:        Wed Jan 18 00:20:19 2012 +0100
 description: Solving issue 1206: "Caveats file handling". May also solve 
              issue 1089: "About RT: version window disappears". This 
@@ -110,8 +153,8 @@ description: Solving issue 1206: "Caveats file handling". May also solve
              CAVEATS.txt is optional and may be deleted in future 
              release.
              
-changeset:   1741:f55d097357ec
-user:        natureh
+changeset:   1743:f55d097357ec
+user:        Hombre
 date:        Mon Jan 16 02:16:09 2012 +0100
 description: Fix a bug in the Adjuster class that were causing system 
              Beep when reaching the limits, or at each move when the 
@@ -119,89 +162,89 @@ description: Fix a bug in the Adjuster class that were causing system
              bug of the too small spin button (displaying not enough 
              digits).
              
-changeset:   1740:a51f811a74a9
-user:        Michael Ezra
+changeset:   1741:a51f811a74a9
+user:        MichaelEzra
 date:        Sun Jan 15 15:54:24 2012 -0500
 description: Preview modes (RGBLF) - adding icons and code optimization
              
-changeset:   1739:357fb2cd4855
+changeset:   1740:357fb2cd4855
 user:        Philippe Hupe 
 date:        Sun Jan 15 21:11:09 2012 +0100
 description: gtk-paste and gtk-copy icons were missing for both Dark and 
              Light theme. They have been added.
              
-changeset:   1738:0f2d5a79b325
+changeset:   1739:0f2d5a79b325
 user:        jdc 
 date:        Sun Jan 15 18:36:20 2012 +0100
 description: little correction for tags Output profiles
              
-changeset:   1737:51f334300825
+changeset:   1738:51f334300825
 user:        jdc 
 date:        Sun Jan 15 18:32:37 2012 +0100
 description: modification of LUT of Output-profiles  Output-gamma 
              Free-Gamma, suppression of discontinuity
              
-changeset:   1736:82d31eab71b1
+changeset:   1737:82d31eab71b1
 user:        DrSlony 
 date:        Sat Jan 14 03:22:07 2012 +0000
 description: Updated Polish translations
              
-changeset:   1735:2be56e1f68e1
+changeset:   1736:2be56e1f68e1
 user:        DrSlony 
 date:        Sat Jan 14 03:20:03 2012 +0000
 description: Modified the generateTranslationDiffs.sh file, runs ~34% 
              faster
              
-changeset:   1734:43ae4752ef6e
-user:        natureh
+changeset:   1735:43ae4752ef6e
+user:        Hombre
 date:        Fri Jan 13 00:33:40 2012 +0100
 description: Updated french strings + added localisation for the "RGB 
              Curves" tool
              
-changeset:   1733:abfe22ba9400
-user:        natureh
+changeset:   1734:abfe22ba9400
+user:        Hombre
 date:        Wed Jan 11 02:06:23 2012 +0100
 description: Solving issue 1001: "Auto WB is saved as Custom in profile 
              files" and 929: "Crash on image open with WB method = Auto" 
              with a different workaround
              
-changeset:   1732:03d19f04768d
-user:        natureh
+changeset:   1733:03d19f04768d
+user:        Hombre
 date:        Wed Jan 11 01:50:10 2012 +0100
 description: Solving issue 1196: "Strange blown highlights with control 
              cage tone curve in 32 bit release builds"
              
-changeset:   1731:d25652ca80b3
+changeset:   1732:d25652ca80b3
 user:        DrSlony 
 date:        Sun Jan 08 18:29:38 2012 +0000
 description: Set InputProfile=(CameraICC), WorkingProfile=sRGB, 
              OutputProfile=RT_sRGB, GammaValue=2.22 and GammaSlope=4.5 
              in all pp3 files.
              
-changeset:   1730:6e231b0019ee
+changeset:   1731:6e231b0019ee
 user:        DrSlony 
 date:        Sun Jan 08 17:35:33 2012 +0000
 description: Code cleanup: size() vs empty(), possible memleaks, 
              initialization list order. On behalf of lebedev.ri, see 
              issue 1195
              
-changeset:   1729:d91fe5efdbb2
+changeset:   1730:d91fe5efdbb2
 user:        DrSlony 
 date:        Mon Jan 02 15:00:48 2012 +0000
 description: Code cleanup: removal of unnessesary backslashes, committed 
              on behalf of lebedev.ri, issue 1162
              
-changeset:   1728:d267c081df9d
+changeset:   1729:d267c081df9d
 user:        DrSlony 
 date:        Mon Jan 02 13:53:27 2012 +0000
 description: Updated German translation on behalf of maweso, issue 1164
              
-changeset:   1727:d14be2436fef
+changeset:   1728:d14be2436fef
 user:        DrSlony 
 date:        Mon Jan 02 13:44:44 2012 +0000
 description: Updated Czech translation on behalf of mkyral, issue 1180
              
-changeset:   1726:1620adfa76ca
+changeset:   1727:1620adfa76ca
 user:        Michael Ezra
 date:        Mon Jan 02 00:10:55 2012 -0500
 description: Focus Mask (beta) and shortcuts for preview modes (issue 
@@ -213,49 +256,49 @@ description: Focus Mask (beta) and shortcuts for preview modes (issue
              Preview Focus Mask:    Shift-F
              Before-After:          changed to Shift-B
              
-changeset:   1725:513c6326fcdc
+changeset:   1726:513c6326fcdc
 user:        Oliver Duis 
 date:        Sun Jan 01 20:37:34 2012 +0100
 description: New camera color profiles: Canon 5D, G10, Nikon D3100; 
              DCRAW cleanups
              see issue 1186
              
-changeset:   1724:2c1afe0fd883
+changeset:   1725:2c1afe0fd883
 user:        Oliver Duis 
 date:        Fri Dec 30 11:57:11 2011 +0100
 description: Update to DCRAW 9.12, adding new cameras
              see issue 1179
              
-changeset:   1723:d14df629a92d
+changeset:   1724:d14df629a92d
 user:        DrSlony 
 date:        Wed Dec 28 19:05:15 2011 +0000
 description: Set all tools to SET by default in Preferences - Batch 
              Processing, issue 1154
              
-changeset:   1722:264a8634e1b3
+changeset:   1723:264a8634e1b3
 user:        Hombre 
 date:        Wed Dec 28 12:23:56 2011 +0100
 description: Solving issue 1096: "Infinite loop when switching to 
              before/after view"
              
-changeset:   1721:449d8192217c
+changeset:   1722:449d8192217c
 user:        DrSlony 
 date:        Tue Dec 27 20:00:47 2011 +0000
 description: Updated Nederlands translation on behalf of Paul 
              Matthijsse, issue 1129, and ran generateTranslationDiffs
              
-changeset:   1720:8478428eeb2e
+changeset:   1721:8478428eeb2e
 user:        Hombre 
 date:        Mon Dec 26 14:24:33 2011 +0100
 description: Solving issue 1175: "Pls add the [Nikon's] file extension 
              nrw to the "Parsed Extensions" list by default".
              
-changeset:   1719:0c4018b036a8
+changeset:   1720:0c4018b036a8
 user:        jdc 
 date:        Mon Dec 26 06:18:19 2011 +0100
 description: Change with ICC files
              
-changeset:   1718:eb5b9a526b93
+changeset:   1719:eb5b9a526b93
 user:        jdc 
 date:        Sun Dec 25 09:11:26 2011 +0100
 description: suppress RT_Middle_gsRGB.icc
@@ -265,77 +308,77 @@ user:        jdc
 date:        Sun Dec 25 07:57:59 2011 +0100
 description: New Output Profiles see #issue1166
              
-changeset:   1712:8ed4c2edc88f
-user:        Michael Ezra
+changeset:   1713:8ed4c2edc88f
+user:        MichaelEzra
 date:        Sat Dec 24 12:12:01 2011 -0500
 description: Fix for typo in comment
              
-changeset:   1710:d3d4f7b28576
-user:        Michael Ezra
+changeset:   1711:d3d4f7b28576
+user:        MichaelEzra
 date:        Sat Dec 24 12:04:22 2011 -0500
 description: Preview modes: R,B,G channels and Luminosity (issue 1167)
              
-changeset:   1708:f3eea179e4de
+changeset:   1709:f3eea179e4de
 user:        Hombre 
 date:        Sat Dec 24 15:57:48 2011 +0100
 description: Adding 2 lines forgotten in the previous WB patch: the LED 
              profiles wasn't applied.
              
-changeset:   1706:136288db1b0b
+changeset:   1707:136288db1b0b
 user:        DrSlony 
 date:        Mon Dec 19 20:48:54 2011 +0000
 description: Re-tagging 4.0.6, hopefully fixing the screwed up tag and 
              aligning the latesttagdistance back with what it should be
              
-changeset:   1704:40958891b202
-user:        Michael Ezra
+changeset:   1705:40958891b202
+user:        MichaelEzra
 date:        Sun Dec 18 19:12:47 2011 -0500
 description: Neutral Levels & tooltips (issue 1161)
              
-changeset:   1702:dca21e324066
-user:        Michael Ezra
+changeset:   1703:dca21e324066
+user:        MichaelEzra
 date:        Sat Dec 17 12:14:44 2011 -0500
 description: Major rework of headers inclusion style Part2 on behalf of 
              lebedev.ri (issue 1079)
              
-changeset:   1700:bc56188f39df
-user:        Michael Ezra
+changeset:   1701:bc56188f39df
+user:        MichaelEzra
 date:        Sat Dec 17 12:08:57 2011 -0500
 description: Major rework of headers inclusion style on behalf of 
              lebedev.ri (issue 1079)
              
-changeset:   1698:d40209c8298b
+changeset:   1699:d40209c8298b
 user:        Emil Martinec 
 date:        Fri Dec 16 11:25:46 2011 -0600
 description: Bugfix :) for flat field correction bugfix :(
              
-changeset:   1696:1a4d9d0f95fb
+changeset:   1697:1a4d9d0f95fb
 user:        Hombre 
 date:        Fri Dec 16 01:37:22 2011 +0100
 description: Patch from issue 1131: "Predefined White Balance values".
              
-changeset:   1694:29639856f89a
+changeset:   1695:29639856f89a
 user:        DrSlony 
 date:        Thu Dec 15 23:05:19 2011 +0000
 description: Removed rtstart reference from CMakeLists.txt, see issue 
              1160
              
-changeset:   1692:0afb790abada
+changeset:   1693:0afb790abada
 user:        Emil Martinec 
 date:        Thu Dec 15 09:43:22 2011 -0600
 description: Implementing RGB curves.
              
-changeset:   1690:218eac5d3a3b
+changeset:   1691:218eac5d3a3b
 user:        Emil Martinec 
 date:        Wed Dec 14 15:10:00 2011 -0600
 description: Bugfix for flatfield correction tool.
              
-changeset:   1688:f08ce67af335
+changeset:   1689:f08ce67af335
 user:        Michael Ezra
 date:        Mon Dec 12 15:58:20 2011 -0500
 description: Crop ratios: new values, code optimization (issue 1153)
              
-changeset:   1686:2bfb4b5255a7
+changeset:   1687:2bfb4b5255a7
 user:        Michael Ezra
 date:        Fri Dec 09 21:17:37 2011 -0500
 description: Thumbnail Exif string: append exposure compensation (see 
@@ -344,14 +387,14 @@ description: Thumbnail Exif string: append exposure compensation (see
              thumbs the cache must be cleared.
              (Please be sure to add to the build release notes)
              
-changeset:   1684:78fee2fd065b
+changeset:   1685:78fee2fd065b
 user:        Philippe Hupe 
 date:        Wed Dec 07 20:45:06 2011 +0100
 description: lock-off.png and lock-on.png icon were trimmed, the header 
              height has been increased from 15 to 17 (issue 1116)
              
-changeset:   1682:69b8bd8bb944
-user:        Michael Ezra
+changeset:   1683:69b8bd8bb944
+user:        MichaelEzra
 date:        Tue Dec 06 19:33:37 2011 -0500
 description: File browser filter: Exposure Compensation (see issue 1003)
              In order to use this new filter with previously browsed 
@@ -361,24 +404,24 @@ description: File browser filter: Exposure Compensation (see issue 1003)
              /Clear from cache - partial
                 reload folder in file browser
              
-changeset:   1679:c7337c4732d3
+changeset:   1681:c7337c4732d3
 user:        DrSlony 
 date:        Sun Dec 04 10:40:24 2011 +0000
 description: Updated Japanese translation on behalf of a3novy, issue 1145
              
-changeset:   1677:eda4134c4a2b
-user:        natureh
+changeset:   1678:eda4134c4a2b
+user:        Hombre
 date:        Sat Dec 03 19:10:34 2011 +0100
 description: Solving issue 1084 (please confirm): "White rectangles 
              appear in the final image file". See also issue 1112, 
              comment 150.
              
-changeset:   1675:643dcde3c0a2
+changeset:   1676:643dcde3c0a2
 user:        DrSlony 
 date:        Thu Dec 01 00:53:19 2011 +0000
 description: - language file changes,
              - profile changes,
-             - tagged 4.0.6
+             - tagged 4.0.6 (tag was lost)
              - line endings normalized to CR+LF in language files and 
              postprocessing profiles
              - fixed capitalization of "raw"
@@ -387,55 +430,14 @@ description: - language file changes,
              between. Small change - now comments appear before the 
              "!!!!!" section. Not worth worrying about imho. Also used 
              sort's -unique capabilities to not unnecessarily spawn 
-             another process.
-             see 
+             another process. See
              http://code.google.com/p/rawtherapee/source/detail?r=71bb39a
              b934e2e8654b35c1e36dcc1a572a26f03
-             
-changeset:   1673:2e2ca6d7bc56
-user:        Emil Martinec 
-date:        Wed Nov 30 16:02:00 2011 -0600
-description: remerging and eliminating 'fixit'
-             
-changeset:   1670:1d533d5a4e9d
-user:        Emil Martinec 
-date:        Wed Nov 30 15:59:32 2011 -0600
-description: Restoring changeset 286a06753099
              
 changeset:   1667:112fc99c7186
 user:        Emil Martinec 
 date:        Wed Nov 30 15:06:33 2011 -0600
 description: More fixes
-             
-changeset:   1665:ab4ae51a26f8
-user:        Emil Martinec 
-date:        Wed Nov 30 14:34:17 2011 -0600
-description: This is not corrupted (fingers crossed).
-             
-changeset:   1662:5ed6967270a6
-user:        Emil Martinec 
-date:        Wed Nov 30 14:26:40 2011 -0600
-description: Backout changes
-             
-changeset:   1660:3cccc96a2099
-user:        Emil Martinec 
-date:        Wed Nov 30 14:26:07 2011 -0600
-description: Backout changes
-             
-changeset:   1658:edbb9fccb78e
-user:        Emil Martinec 
-date:        Wed Nov 30 14:22:48 2011 -0600
-description: Backout changes
-             
-changeset:   1656:25f86e70a8bb
-user:        Emil Martinec 
-date:        Wed Nov 30 10:44:39 2011 -0600
-description: Backing out changes.
-             
-changeset:   1654:d35165fc2162
-user:        Emil Martinec 
-date:        Wed Nov 30 10:41:28 2011 -0600
-description: Backing out changes.
              
 changeset:   1653:5fc887f050d5
 user:        DrSlony 
@@ -444,7 +446,7 @@ description: Changed OutputProfile from 'No ICM: sRGB output' to
              'RT_sRGB'. Issue 1102, comments 34 onwards.
              
 changeset:   1652:286a06753099
-user:        Michael Ezra
+user:        MichaelEzra
 date:        Mon Nov 28 21:40:22 2011 -0500
 description: Small fix to partialpaste/tone mapper
              
@@ -466,3 +468,4 @@ user:        DrSlony
 date:        Mon Nov 28 23:49:05 2011 +0000
 description: Removed WindowsEnvironmentSetup.html Issue 1112 comments 
              125 onwards.
+             
