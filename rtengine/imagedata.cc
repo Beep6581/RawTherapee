@@ -319,13 +319,7 @@ void ImageMetaData::setIPTCData( const rtengine::MetadataList &meta )
 
     for( rtengine::MetadataList::const_iterator iter = meta.begin(); iter != meta.end(); iter++ ){
     	std::string key = iter->first;
-
-    	IPTCMeta::IPTCtagsList_t::iterator it = IPTCMeta::IPTCtags.begin();
-    	while ( it != IPTCMeta::IPTCtags.end() && it->first.compare(key)!=0 )it++;
-    	if( it == IPTCMeta::IPTCtags.end() )
-    		continue;
-    	IPTCMeta &metaTag = it->second;
-    	//IPTCMeta &metaTag = IPTCMeta::IPTCtags[key];
+    	IPTCMeta &metaTag = IPTCMeta::IPTCtags[key];
 
     	if( metaTag.readOnly )
     		continue;
@@ -557,8 +551,8 @@ std::string ImageMetaData::getCamera()
 
 ImageMetaData::ePhotoOrientation ImageMetaData::getOrientation ()
 {
-	if( xmpData.findKey(Exiv2::XmpKey("Xmp.tiff.Model")) != xmpData.end() ){
-		return ePhotoOrientation(xmpData["Xmp.tiff.Model"].value().toLong());
+	if( xmpData.findKey(Exiv2::XmpKey("Xmp.tiff.Orientation")) != xmpData.end() ){
+		return ePhotoOrientation(xmpData["Xmp.tiff.Orientation"].value().toLong());
 	}
 	return ePhotoOrientationNormal; // default is normal
 }
