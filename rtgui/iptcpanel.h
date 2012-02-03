@@ -108,7 +108,7 @@ class XRTCombo: public XRTWidget
 	rtengine::IPTCPairList_t &predefValues;
 	int readValue( );
 	int writeValue( );
-
+	void updateTooltip( );
 public:
 	XRTCombo( Gtk::Table* table, int row, const std::string &key, rtengine::IPTCPairList_t &info, rtengine::MetadataList &l );
 

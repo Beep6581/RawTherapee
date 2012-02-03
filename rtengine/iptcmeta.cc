@@ -234,99 +234,99 @@ void IPTCMeta::initIPTCMeta()
     IPTCtags[kIPTCPlusVersion].readOnly = true;
 
     /* Scene codes: http://cv.iptc.org/newscodes/scene/ */
-    IPTCScene["010100"] = "headshot:a head only view of a person (or animal/s) or persons as in a montage";
-    IPTCScene["010200"] = "half-length: a torso and head view of a person or persons";
-    IPTCScene["010300"] = "full-length: a view from head to toe of a person or persons";
-    IPTCScene["010400"] = "profile: a view of a person from the side";
-    IPTCScene["010500"] = "rear view: a view of a person or persons from the rear";
-    IPTCScene["010600"] = "single: a view of only one person, object or animal";
-    IPTCScene["010700"] = "couple: a view of two people who are in a personal relationship, for example engaged, married or in a romantic partnership";
-    IPTCScene["010800"] = "two: a view of two people";
-    IPTCScene["010900"] = "group: a view of more than two people";
-    IPTCScene["011000"] = "general view: an overall view of the subject and its surrounds";
-    IPTCScene["011100"] = "panoramic view: a panoramic or wide angle view of a subject and its surrounds";
-    IPTCScene["011200"] = "aerial view: a view taken from above";
-    IPTCScene["011300"] = "under-water: a photo taken under water";
-    IPTCScene["011400"] = "night scene: a photo taken during darkness";
-    IPTCScene["011500"] = "satellite: a photo taken from a satellite in orbit";
-    IPTCScene["011600"] = "exterior view: a photo that shows the exterior of a building or other object";
-    IPTCScene["011700"] = "interior view: a scene or view of the interior of a building or other object";
-    IPTCScene["011800"] = "close-up: a view of, or part of a person/object taken at close range in order to emphasize detail or accentuate mood. Macro photography";
-    IPTCScene["011900"] = "action: a subject in motion such as children jumping, horse running";
-    IPTCScene["012000"] = "performing: subject or subjects on a stage performing to an audience";
-    IPTCScene["012100"] = "posing: subject or subjects posing such as a 'victory' pose or other stance that symbolizes leadership";
-    IPTCScene["012200"] = "symbolic: a posed picture symbolizing an event - two rings for marriage";
-    IPTCScene["012300"] = "off-beat: an attractive, perhaps fun picture of everyday events - dog with sunglasses, people cooling off in the fountain";
-    IPTCScene["012400"] = "movie scene: photos taken during the shooting of a movie or TV production";
+    IPTCScene["010100"] = "headshot::A head only view of a person (or animal/s) or persons as in a montage";
+    IPTCScene["010200"] = "half-length::A torso and head view of a person or persons";
+    IPTCScene["010300"] = "full-length::A view from head to toe of a person or persons";
+    IPTCScene["010400"] = "profile::A view of a person from the side";
+    IPTCScene["010500"] = "rear view::A view of a person or persons from the rear";
+    IPTCScene["010600"] = "single::A view of only one person, object or animal";
+    IPTCScene["010700"] = "couple::A view of two people who are in a personal relationship, for example engaged, married or in a romantic partnership";
+    IPTCScene["010800"] = "two::A view of two people";
+    IPTCScene["010900"] = "group::A view of more than two people";
+    IPTCScene["011000"] = "general view::An overall view of the subject and its surrounds";
+    IPTCScene["011100"] = "panoramic view::A panoramic or wide angle view of a subject and its surrounds";
+    IPTCScene["011200"] = "aerial view::A view taken from above";
+    IPTCScene["011300"] = "under-water::A photo taken under water";
+    IPTCScene["011400"] = "night scene::A photo taken during darkness";
+    IPTCScene["011500"] = "satellite::A photo taken from a satellite in orbit";
+    IPTCScene["011600"] = "exterior view::A photo that shows the exterior of a building or other object";
+    IPTCScene["011700"] = "interior view::A scene or view of the interior of a building or other object";
+    IPTCScene["011800"] = "close-up::A view of, or part of a person/object taken at close range in order to emphasize detail or accentuate mood. Macro photography";
+    IPTCScene["011900"] = "action::A subject in motion such as children jumping, horse running";
+    IPTCScene["012000"] = "performing::Subject or subjects on a stage performing to an audience";
+    IPTCScene["012100"] = "posing::Subject or subjects posing such as a 'victory' pose or other stance that symbolizes leadership";
+    IPTCScene["012200"] = "symbolic::A posed picture symbolizing an event - two rings for marriage";
+    IPTCScene["012300"] = "off-beat::An attractive, perhaps fun picture of everyday events - dog with sunglasses, people cooling off in the fountain";
+    IPTCScene["012400"] = "movie scene::Photos taken during the shooting of a movie or TV production";
 
     /* Subject codes: http://cv.iptc.org/newscodes/subjectcode/    */
     // TODO!!! adopt better handling of subject codes from http://xml.coverpages.org/NITF30-subject-codes.html
-    IPTCSubject["01000000"] = "arts, culture and entertainment: Matters pertaining to the advancement and refinement of the human mind, of interests, skills, tastes and emotions";
-    IPTCSubject["01001000"] = "archaeology: Probing the past through ruins and artefacts";
-    IPTCSubject["01002000"] = "architecture: Designing of buildings, monuments and the spaces around them";
-    IPTCSubject["01003000"] = "bullfighting: Classical contest pitting man against the bull";
-    IPTCSubject["01004000"] = "festive event (including carnival): Parades, parties, celebrations and the like not necessarily tied to a fixed occasion or date";
-    IPTCSubject["01005000"] = "cinema: Stories related to cinema as art and entertainment";
-    IPTCSubject["01005001"] = "film festival: Stories about national and international motion pictures festivals, selections, festival juries, nominations, awards etc.";
-    IPTCSubject["01006000"] = "dance: The expression of emotion or message through movement";
-    IPTCSubject["01007000"] = "fashion: The design of clothing and accessories";
-    IPTCSubject["01007001"] = "jewelry: Accessories to clothing";
-    IPTCSubject["01008000"] = "language: The means by which people communicate with each other";
-    IPTCSubject["01009000"] = "library and museum: Edifices used to house collections of books, music, art, or objects from the past and present for public use and display";
-    IPTCSubject["01010000"] = "literature: The use of pamphlets, books or other printed matter to convey ideas, stories or other messages for the public";
-    IPTCSubject["01010001"] = "fiction: Structured stories that are usually not based on fact but are the creation of the authors imagination";
-    IPTCSubject["01010002"] = "poetry: The art, structure, forms of poetic expression";
-    IPTCSubject["01011000"] = "music: Expressing emotion or message through instruments or voice using different sounds, tones, harmonies and the like";
-    IPTCSubject["01011001"] = "classical music: Music that follows classic structures of rhythm and harmony";
-    IPTCSubject["01011002"] = "folk music: Music that developed from folk cultures, often based on story-telling";
-    IPTCSubject["01011003"] = "jazz music: A music of diverse harmonics, often improvised";
-    IPTCSubject["01011004"] = "popular music: The latest fad in music, generally aimed at the younger generation";
-    IPTCSubject["01011005"] = "country music: Similar to folk but is unique to the United States and is less about story telling than about loves sought and lost";
-    IPTCSubject["01011006"] = "rock and roll music: Popular dance music developed in the 1950s";
-    IPTCSubject["01012000"] = "painting: Using the mediums of oils, watercolour, pastel, pencils, chalk, crayon etc on various grounds to express emotion or message";
-    IPTCSubject["01013000"] = "photography:	Mechanical means of creating images of objects by use of light and light sensitive materials with chemicals or by digitals means";
-    IPTCSubject["01014000"] = "radio: Stories related to radio as art and entertainment";
-    IPTCSubject["01015000"] = "sculpture: Representation of forms in clays, stone, woods, metals or other materials";
-    IPTCSubject["01015001"] = "plastic art:	Forms of hand created art including installations";
-    IPTCSubject["01016000"] = "television: Stories related to television as art and entertainment";
-    IPTCSubject["01017000"] = "theatre: Telling of a story or idea through dialogue, music and physical expression in a space or building designed for it";
-    IPTCSubject["01017001"] = "music theatre: Opera, operetta, music revues etc";
-    IPTCSubject["01018000"] = "monument and heritage site: Areas containing commemorative objects for historical people or events";
-    IPTCSubject["01019000"] = "customs and tradition: A particular way of behaving, or observances that have developed over time by a group of people";
-    IPTCSubject["01020000"] = "arts (general): The collective expression of message or emotion through music, literature, painting, theatre or other means";
-    IPTCSubject["01021000"] = "entertainment (general):	The collective use of television, radio, theatre, music and the like for the amusement of people";
-    IPTCSubject["01022000"] = "culture (general): The ideas, customs, arts, skills of a particular group";
-    IPTCSubject["01022001"] = "cultural development: The history of the development of art and culture such as the rise of cave paintings, pre-Colombian art, Chinese paper-making, anything non-political";
-    IPTCSubject["01023000"] = "nightclub: A commercial establishment providing music, or other entertainment along with food and drink to selected clientele";
-    IPTCSubject["01024000"] = "cartoon:	Still images such as editorial cartoons and comic strips";
-    IPTCSubject["01025000"] = "animation: Animation, including full-length and short cinema, artists and merchandising of goods featuring animation characters.";
-    IPTCSubject["01026000"] = "mass media: Television, radio, magazines, newspapers etc";
-    IPTCSubject["01026001"] = "periodicals:	Written material that is usually published weekly, bi-weekly, monthly or annually for a long time";
-    IPTCSubject["01026002"] = "news media: Television, wire services, radio that collect facts about incidents, developing and presenting them to audiences as a whole story";
-    IPTCSubject["01026003"] = "newspapers: Daily or weekly publications that present the day to day history of the world, as well as features, comics etc";
-    IPTCSubject["01026004"] = "reviews:	A critical look at someone else's work, whether film, theatre or writing";
+    IPTCSubject["01000000"] = "arts, culture and entertainment:: Matters pertaining to the advancement and refinement of the human mind, of interests, skills, tastes and emotions";
+    IPTCSubject["01001000"] = "archaeology::Probing the past through ruins and artefacts";
+    IPTCSubject["01002000"] = "architecture::Designing of buildings, monuments and the spaces around them";
+    IPTCSubject["01003000"] = "bullfighting::Classical contest pitting man against the bull";
+    IPTCSubject["01004000"] = "festive event (including carnival)::Parades, parties, celebrations and the like not necessarily tied to a fixed occasion or date";
+    IPTCSubject["01005000"] = "cinema::Stories related to cinema as art and entertainment";
+    IPTCSubject["01005001"] = "film festival::Stories about national and international motion pictures festivals, selections, festival juries, nominations, awards etc.";
+    IPTCSubject["01006000"] = "dance::The expression of emotion or message through movement";
+    IPTCSubject["01007000"] = "fashion::The design of clothing and accessories";
+    IPTCSubject["01007001"] = "jewelry::Accessories to clothing";
+    IPTCSubject["01008000"] = "language::The means by which people communicate with each other";
+    IPTCSubject["01009000"] = "library and museum::Edifices used to house collections of books, music, art, or objects from the past and present for public use and display";
+    IPTCSubject["01010000"] = "literature::The use of pamphlets, books or other printed matter to convey ideas, stories or other messages for the public";
+    IPTCSubject["01010001"] = "fiction::Structured stories that are usually not based on fact but are the creation of the authors imagination";
+    IPTCSubject["01010002"] = "poetry::The art, structure, forms of poetic expression";
+    IPTCSubject["01011000"] = "music::Expressing emotion or message through instruments or voice using different sounds, tones, harmonies and the like";
+    IPTCSubject["01011001"] = "classical music::Music that follows classic structures of rhythm and harmony";
+    IPTCSubject["01011002"] = "folk music::Music that developed from folk cultures, often based on story-telling";
+    IPTCSubject["01011003"] = "jazz music::A music of diverse harmonics, often improvised";
+    IPTCSubject["01011004"] = "popular music::The latest fad in music, generally aimed at the younger generation";
+    IPTCSubject["01011005"] = "country music::Similar to folk but is unique to the United States and is less about story telling than about loves sought and lost";
+    IPTCSubject["01011006"] = "rock and roll music::Popular dance music developed in the 1950s";
+    IPTCSubject["01012000"] = "painting::Using the mediums of oils, watercolour, pastel, pencils, chalk, crayon etc on various grounds to express emotion or message";
+    IPTCSubject["01013000"] = "photography::Mechanical means of creating images of objects by use of light and light sensitive materials with chemicals or by digitals means";
+    IPTCSubject["01014000"] = "radio::Stories related to radio as art and entertainment";
+    IPTCSubject["01015000"] = "sculpture::Representation of forms in clays, stone, woods, metals or other materials";
+    IPTCSubject["01015001"] = "plastic art::Forms of hand created art including installations";
+    IPTCSubject["01016000"] = "television::Stories related to television as art and entertainment";
+    IPTCSubject["01017000"] = "theatre::Telling of a story or idea through dialogue, music and physical expression in a space or building designed for it";
+    IPTCSubject["01017001"] = "music theatre::Opera, operetta, music revues etc";
+    IPTCSubject["01018000"] = "monument and heritage site::Areas containing commemorative objects for historical people or events";
+    IPTCSubject["01019000"] = "customs and tradition::A particular way of behaving, or observances that have developed over time by a group of people";
+    IPTCSubject["01020000"] = "arts (general)::The collective expression of message or emotion through music, literature, painting, theatre or other means";
+    IPTCSubject["01021000"] = "entertainment (general)::The collective use of television, radio, theatre, music and the like for the amusement of people";
+    IPTCSubject["01022000"] = "culture (general)::The ideas, customs, arts, skills of a particular group";
+    IPTCSubject["01022001"] = "cultural development::The history of the development of art and culture such as the rise of cave paintings, pre-Colombian art, Chinese paper-making, anything non-political";
+    IPTCSubject["01023000"] = "nightclub::A commercial establishment providing music, or other entertainment along with food and drink to selected clientele";
+    IPTCSubject["01024000"] = "cartoon::Still images such as editorial cartoons and comic strips";
+    IPTCSubject["01025000"] = "animation::Animation, including full-length and short cinema, artists and merchandising of goods featuring animation characters.";
+    IPTCSubject["01026000"] = "mass media::Television, radio, magazines, newspapers etc";
+    IPTCSubject["01026001"] = "periodicals::Written material that is usually published weekly, bi-weekly, monthly or annually for a long time";
+    IPTCSubject["01026002"] = "news media::Television, wire services, radio that collect facts about incidents, developing and presenting them to audiences as a whole story";
+    IPTCSubject["01026003"] = "newspapers::Daily or weekly publications that present the day to day history of the world, as well as features, comics etc";
+    IPTCSubject["01026004"] = "reviews::A critical look at someone else's work, whether film, theatre or writing";
     // ... others
 
     /* Genre codes http://cv.iptc.org/newscodes/genre/ */
-    IPTCGenre["Actuality"] = "The object contains the recording of the event.";
-    IPTCGenre["Advice"] = "The object contains advice, typically letters and answers about personal problems, that are publishable.";
-    IPTCGenre["Almanac"] = "List of data, including birthdays of famous people and items of historical significance, for a given day";
-    IPTCGenre["Analysis"] = "The object contains data and conclusions drawn by a journalist who has researched the story in depth.";
-    IPTCGenre["Anniversary"] = "Stories about the anniversary of some important event that took place in recent history, usually bringing a short review of the event itself.";
-    IPTCGenre["Archive material"] = "The object contains material distributed previously that has been selected from the originator's archives.";
-    IPTCGenre["Background"] = "The object provides some scene setting and explanation for the event being reported.";
-    IPTCGenre["Current"] = "The object content is about events taking place at the time of the report.";
-    IPTCGenre["Curtain Raiser"] = "The object contains information about the staging and outcome of an immediately upcoming event.";
-    IPTCGenre["Daybook"] = "Items filed on a regular basis that are lists of upcoming events with time and place, designed to inform others of events for planning purposes.";
-    IPTCGenre["Exclusive"] = "Information content, in any form, that is unique to a specific information provider.";
-    IPTCGenre["Feature"] = "The object content is about a particular event or individual that may not be significant to the current breaking news.";
+    IPTCGenre["Actuality"] = "Actuality::The object contains the recording of the event.";
+    IPTCGenre["Advice"] = "Advice::The object contains advice, typically letters and answers about personal problems, that are publishable.";
+    IPTCGenre["Almanac"] = "Almanac::List of data, including birthdays of famous people and items of historical significance, for a given day";
+    IPTCGenre["Analysis"] = "Analysis::The object contains data and conclusions drawn by a journalist who has researched the story in depth.";
+    IPTCGenre["Anniversary"] = "Anniversary::Stories about the anniversary of some important event that took place in recent history, usually bringing a short review of the event itself.";
+    IPTCGenre["Archive material"] = "Archive::The object contains material distributed previously that has been selected from the originator's archives.";
+    IPTCGenre["Background"] = "Background::The object provides some scene setting and explanation for the event being reported.";
+    IPTCGenre["Current"] = "Current::The object content is about events taking place at the time of the report.";
+    IPTCGenre["Curtain Raiser"] = "Curtain Raiser::The object contains information about the staging and outcome of an immediately upcoming event.";
+    IPTCGenre["Daybook"] = "Daybook::Items filed on a regular basis that are lists of upcoming events with time and place, designed to inform others of events for planning purposes.";
+    IPTCGenre["Exclusive"] = "Exclusive::Information content, in any form, that is unique to a specific information provider.";
+    IPTCGenre["Feature"] = "Feature::The object content is about a particular event or individual that may not be significant to the current breaking news.";
     // ...other
 
     // Model Release status
     IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-NON"] = "None";
     IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-NAP"] = "Not Applicable";
-    IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-UPR"] = "Unlimited Model Releases";
-    IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-LPR"] = "Limited or Incomplete Model Release";
+    IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-UMR"] = "Unlimited Model Releases";
+    IPTCModelReleaseStatus["http://ns.useplus.org/ldf/vocab/MR-LMR"] = "Limited or Incomplete Model Release";
 
     // Property Release status
     IPTCPropertyReleaseStatus["http://ns.useplus.org/ldf/vocab/PR-NON"] = "None";
@@ -342,23 +342,21 @@ void IPTCMeta::initIPTCMeta()
     // RightsMarked status
     IPTCRightsMarked["True"]  = "Copyrighted";
     IPTCRightsMarked["False"] = "Public Domain";
-    IPTCRightsMarked[""]      = "Unknown";
 
     // World regions/continent
-    IPTCWorldRegion["r001"] = "World: The whole world";
-    IPTCWorldRegion["r002"] = "Africa: 	The continent of Africa";
-    IPTCWorldRegion["r005"] = "South America: The southern region of the Americas";
-    IPTCWorldRegion["r009"] = "Oceania: The continent of Oceania";
-    IPTCWorldRegion["r021"] = "North America: The northern part of the Americas";
-    IPTCWorldRegion["r142"] = "Asia: The continent of Asia";
-    IPTCWorldRegion["r150"] = "Europe: The continent of Europe";
-    IPTCWorldRegion["r901"] = "Antarctica: The continent of the Antarctica";
+    IPTCWorldRegion["r001"] = "World::The whole world";
+    IPTCWorldRegion["r002"] = "Africa::The continent of Africa";
+    IPTCWorldRegion["r005"] = "South America::The southern region of the Americas";
+    IPTCWorldRegion["r009"] = "Oceania::The continent of Oceania";
+    IPTCWorldRegion["r021"] = "North America::The northern part of the Americas";
+    IPTCWorldRegion["r142"] = "Asia::The continent of Asia";
+    IPTCWorldRegion["r150"] = "Europe::The continent of Europe";
+    IPTCWorldRegion["r901"] = "Antarctica::The continent of the Antarctica";
 
-    IPTCBoolean["True"]="";
-    IPTCBoolean["False"]="";
+    IPTCBoolean["True"]="True";
+    IPTCBoolean["False"]="False";
 
     // Urgency status
-    IPTCUrgency[""] = "(None)";
     IPTCUrgency["1"] = "High";
     IPTCUrgency["2"] = "2";
     IPTCUrgency["3"] = "3";
@@ -384,11 +382,11 @@ void IPTCMeta::initIPTCMeta()
     IPTCMinorModelAgeDisclosure["http://ns.useplus.org/ldf/vocab/AG-U14"] = "(Age 14 or Under)";
 
     // DigitalSourceType
-    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/negativeFilm"]  = "Digitised from a negative on film";
-    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/positiveFilm"]  = "Digitised from a positive on film";
-    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/print"]         = "Digitised from a print on non-transparent medium";
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/negativeFilm"]  = "Negative digitized::Digitised from a negative on film";
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/positiveFilm"]  = "Positive digitized::Digitised from a positive on film";
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/print"]         = "Print digitized::Digitised from a print on non-transparent medium";
     IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/softwareImage"] = "Created by software";
-    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture"]= "Original digital capture of a real life scene";
+    IPTCDigitalSourceType["http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture"]= "Real life scene::Original digital capture of a real life scene";
 
     IPTCISO3166["ABW"] = "Aruba";
     IPTCISO3166["AFG"] = "Afghanistan";
