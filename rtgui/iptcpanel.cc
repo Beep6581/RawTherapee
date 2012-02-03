@@ -517,7 +517,6 @@ XRTEntry::XRTEntry( Gtk::Table* table, int row, const std::string &key, rtengine
 	Gtk::Label* lab = Gtk::manage( new Gtk::Label (M(meta.guiName)+":") );
 	lab->set_tooltip_text (M(meta.description));
 	control = Gtk::manage( new Gtk::Entry () );
-	connChange = control->signal_changed().connect( sigc::mem_fun(*this, &XRTWidget::updateList) );
 
 	XRTWidget::attachToTable( *table, row, *lab, *control );
 }
@@ -562,7 +561,6 @@ XRTEntryMultiline::XRTEntryMultiline( Gtk::Table* table, int row, const std::str
     Gtk::ScrolledWindow* scrolledWindowc = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindowc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowc->add(*captionView);
-    connChange = control->signal_changed().connect( sigc::mem_fun(*this, &XRTWidget::updateList) );
 
     XRTWidget::attachToTable( *table, row, *lab, *scrolledWindowc );
 }
@@ -707,14 +705,14 @@ XRTCombo::XRTCombo( Gtk::Table* table, int row, const std::string &key, rtengine
 
     Glib::ustring s;
     for( IPTCPairList_t::iterator iter = info.begin(); iter != info.end(); iter ++){
-    	Glib::ustring::size_type iPos = iter->second.find_first_of(':',0);
-    	if( iPos == Glib::ustring::npos )
-    		control->append_text( iter->first + ": " + iter->second.substr(0,32-iter->first.size()));
-    	else
-    		control->append_text( iter->first + ": " + iter->second.substr(0,iPos));
+		Glib::ustring::size_type iPos = iter->second.find("::",0);
+		if( iPos == Glib::ustring::npos )
+			control->append_text (iter->second);
+		else
+			control->append_text (iter->second.substr(0,iPos));
     }
     //control->set_tooltip_text (s);
-    connChange = control->signal_changed().connect( sigc::mem_fun(*this, &XRTWidget::updateList) );
+    connChange = control->signal_changed().connect( sigc::mem_fun(*this, &XRTCombo::updateTooltip) );
     XRTWidget::attachToTable( *table, row, *lab, *control );
 
 }
@@ -725,29 +723,79 @@ int XRTCombo::readValue( )
     	std::string val( iter->second[0] );
     	rtengine::IPTCPairList_t::iterator vIter = predefValues.find( val );
     	if( vIter != predefValues.end()) {
-    		Glib::ustring::size_type iPos = vIter->second.find_first_of(':',0);
+    		// set description as current value !!
+    		Glib::ustring tt;
+    		tt += "[";
+    		tt += val;
+    		tt += "]\n";
+    		Glib::ustring::size_type iPos = vIter->second.find("::");
     		if( iPos == Glib::ustring::npos ){
-    			val = vIter->first +": " + vIter->second.substr(0,32);
-    		}else
-    			val = vIter->first +": " + vIter->second.substr(0,iPos);
-    		control->set_tooltip_text ( vIter->second );
+    			control->get_entry()->set_text (vIter->second.substr(0,32));
+        		tt += vIter->second;
+    		}else{
+    			control->get_entry()->set_text (vIter->second.substr(0,iPos));
+        		tt += vIter->second.substr(iPos+2);
+    		}
+
+    		control->set_tooltip_text ( tt );
+    	}else{
+    		control->get_entry()->set_text (val); // value is not inside current available choices?
+    		control->set_tooltip_text ( "New Value!" );
     	}
-    	control->get_entry()->set_text (  val );
     }else{
     	control->get_entry()->set_text ("");
     }
 	return 0;
 }
 
+void XRTCombo::updateTooltip( )
+{
+	Glib::ustring newValue(control->get_entry()->get_text ());
+	// search current control text inside descriptions of possible choices
+	if( !newValue.empty() ){
+		for(rtengine::IPTCPairList_t::iterator vIter = predefValues.begin(); vIter != predefValues.end(); vIter++)
+			if( vIter->second.find( newValue ) != Glib::ustring::npos ){
+				newValue = vIter->first; // found: replace current text with actual choice value
+				Glib::ustring::size_type iPos = vIter->second.find("::");
+	    		Glib::ustring tt;
+	    		tt += "[";
+	    		tt += newValue;
+	    		tt += "]\n";
+				if( iPos == Glib::ustring::npos )
+					tt += vIter->second;
+				else
+					tt += vIter->second.substr(iPos+2);
+				control->set_tooltip_text ( tt );
+				break;
+			}
+	}else{
+		control->set_tooltip_text ( "" );
+	}
+}
+
 int XRTCombo::writeValue( )
 {
 	Glib::ustring newValue(control->get_entry()->get_text ());
-	Glib::ustring::size_type iPos = newValue.find_first_of(':',0);
-	if( iPos != Glib::ustring::npos )
-		newValue = newValue.substr(0,iPos );
-	rtengine::IPTCPairList_t::iterator vIter = predefValues.find( newValue );
-	if( vIter != predefValues.end())
-		control->set_tooltip_text ( vIter->second );
+	// search current control text inside descriptions of possible choices
+	if( !newValue.empty() ){
+		for(rtengine::IPTCPairList_t::iterator vIter = predefValues.begin(); vIter != predefValues.end(); vIter++)
+			if( vIter->second.find( newValue ) != Glib::ustring::npos ){
+				newValue = vIter->first; // found: replace current text with actual choice value
+				Glib::ustring::size_type iPos = vIter->second.find("::");
+	    		Glib::ustring tt;
+	    		tt += "[";
+	    		tt += newValue;
+	    		tt += "]\n";
+				if( iPos == Glib::ustring::npos )
+					tt += vIter->second;
+				else
+					tt += vIter->second.substr(iPos+2);
+				control->set_tooltip_text ( tt );
+				break;
+			}
+	}else{
+		control->set_tooltip_text ( "" );
+	}
 	Glib::ustring oldValue;
 	rtengine::MetadataList::iterator iter = list.find( key );
     if( iter != list.end() && !iter->second.empty() ){
