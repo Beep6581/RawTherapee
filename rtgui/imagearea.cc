@@ -49,6 +49,7 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 
     dirty = false;
     ipc = NULL;
+    iLinkedImageArea = NULL;
 }
 
 ImageArea::~ImageArea () {
