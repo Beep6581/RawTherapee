@@ -1249,6 +1249,7 @@ void EditorPanel::beforeAfterToggled () {
         if (beforeIpc)
             beforeIpc->stopProcessing ();
         iarea->setBeforeAfterViews (NULL, iarea);
+        iarea->imageArea->iLinkedImageArea = NULL;
         delete beforeIarea;
         beforeIarea = NULL;
         if (beforeIpc)
@@ -1306,6 +1307,10 @@ void EditorPanel::beforeAfterToggled () {
         beforeIpc->setPreviewImageListener (beforePreviewHandler);
         beforeIarea->imageArea->setPreviewHandler (beforePreviewHandler);
         beforeIarea->imageArea->setImProcCoordinator (beforeIpc);
+
+        beforeIarea->imageArea->setPreviewModePanel(iarea->imageArea->previewModePanel);
+        beforeIarea->imageArea->setIndicateClippedPanel(iarea->imageArea->indClippedPanel);
+        iarea->imageArea->iLinkedImageArea = beforeIarea->imageArea;
 
         iarea->setBeforeAfterViews (beforeIarea, iarea);
         beforeIarea->setBeforeAfterViews (beforeIarea, iarea);
