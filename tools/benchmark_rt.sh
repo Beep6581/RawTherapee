@@ -34,12 +34,8 @@ Benchmark the time it takes for a given version of RawTherapee to process a file
                   minsizerel
                   relwithdebuginfo
 
-    -e        - Specify the whole path to (and including) the "rawtherapee" executable.
-                e.g. "-e $HOME/rt_${branch}_${buildType}/rawtherapee"
-
-                Note that if you use a package manager to install RawTherapee, then
-                you do not need to specify the path, just "-e rawtherapee" would do,
-                but you don't need to specify that either as it's the default value.
+    -e        - Specify the whole path to (but excluding) the "rawtherapee" executable.
+                e.g. "-e $HOME/rt_${branch}_${buildType}"
 
     -h        - Print this help screen.
 
@@ -112,7 +108,7 @@ buildRT() {
 
 while getopts "e:h?r:i:s:m:b:" opt; do
     case "$opt" in
-        e)  rtExe="$OPTARG"
+        e)  customExe="$OPTARG"
             ;;
         h|\?)
             howto
@@ -200,12 +196,14 @@ else # if sidecarCustom was not specified, use the ones in sidecarDefault
   sidecarFiles=("${sidecarDefault[@]}")
 fi
 
-rtExeDirs=("${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee/")
+rtExeDirs=("${customExe}" "${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee/")
 for rtExeDir in "${rtExeDirs}"; do
+  #if [[ -n "$customExe"
   if [[ -x "${rtExeDir}/${rtExe}" ]]; then
     break
   else
     printf "%s\n" "Could not find the rawtherapee executable. Either re-run this script using the -e flag, or continue to have this script clone the source code repository and compile RawTherapee for you. For this to work, you need to have the correct dependencies installed - see http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" | fold -s
+  echo
   read -p "Do you want to proceed? y/n: " YN
   [[ "$YN" = y ]] && buildRT || exit 0
   fi
