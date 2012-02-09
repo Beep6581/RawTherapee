@@ -29,6 +29,7 @@
 #include "labimage.h"
 #include "LUT.h"
 #include <fftw3.h>
+#include "cplx_wavelet_dec.h"
 
 namespace rtengine {
 	
@@ -144,7 +145,7 @@ namespace rtengine {
 		//void L_denoise(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams);//Emil's FT denoise
 		//void tile_denoise (fftwf_complex ** fLblox, int vblproc, int hblproc, \
 		int blkrad, int numblox_H, int numblox_W, float noisevar );
-		void RGB_InputTransf(Imagefloat * src, LabImage * dst, LabImage * blur, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
+		void RGB_InputTransf(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
 		void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
 		void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
 		void RGB_denoise(Imagefloat * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
@@ -157,6 +158,17 @@ namespace rtengine {
 		void dirpyr_ab(LabImage * data_fine, LabImage * data_coarse, const procparams::DirPyrDenoiseParams & dnparams);
 		void dirpyr_ablevel(LabImage * data_fine, LabImage * data_coarse, int width, int height, \
 							LUTf &rangefn_L, LUTf &rangefn_ab, int level, int scale);
+		void ImStats(float* src, float* dst, int H, int W, int box );
+		void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
+		void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
+		void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, \
+					  int W, int H, int level, int padding, float noisevar);
+		void BiShrink(float ** WavCoeffs, float ** WavParents, int W, int H, int level, int padding, float noisevar);
+		void FirstStageWiener(float* ReCoeffs, float* ImCoeffs, float* wiener1, int W, int H, int rad, float noisevar);
+		void SecondStageWiener(float* ReCoeffs, float* ImCoeffs, float* wiener1, int W, int H, int rad, float noisevar);
+		void QCoeffs (float* srcre, float* srcim, float* wiener1, float* dst, int rad, int W, int H);
+		float UniversalThresh(float * HH_Coeffs, int datalen);
+
 		
 		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer

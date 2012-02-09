@@ -233,9 +233,11 @@ template<class T> void gaussDerivH (T** src, T** dst, AlignedBuffer<double>* buf
 			double* temp = buffer->data;
 			for (int j=1; j<W-1; j++)
 				temp[j] = (0.5 * (src[i][j+1] - src[i][j-1]) );
-			dst[i][0] = 0.5*(src[i][1]-src[i][0]);
-			memcpy (dst[i]+1, temp+1, (W-2)*sizeof(T));
-			dst[i][W-1] = 0.5*(src[i][W-1]-src[i][W-2]);
+			dst[i][0] = (src[i][1]-src[i][0]);
+			//memcpy (dst[i]+1, temp+1, (W-2)*sizeof(T));
+			for (int j=1; j<W-1; j++)
+				dst[i][j] = temp[j];
+			dst[i][W-1] = (src[i][W-1]-src[i][W-2]);
 		}
         return;
     }
@@ -273,7 +275,7 @@ template<class T> void gaussDerivH (T** src, T** dst, AlignedBuffer<double>* buf
     for (int i=0; i<H; i++) {
         double* temp2 = buffer->data;
 		
-		double src0 = 0.5*(src[i][1]-src[i][0]);
+		double src0 = (src[i][1]-src[i][0]);
 		
         temp2[0] = B * src0 + b1*src0 + b2*src0 + b3*src0;
         temp2[1] = B * 0.5*(src[i][2]-src[i][0]) + b1*temp2[0]  + b2*src0 + b3*src0;
@@ -282,7 +284,7 @@ template<class T> void gaussDerivH (T** src, T** dst, AlignedBuffer<double>* buf
         for (int j=3; j<W-1; j++)
             temp2[j] = B * 0.5*(src[i][j+1]-src[i][j-1]) + b1*temp2[j-1] + b2*temp2[j-2] + b3*temp2[j-3];
 		
-		double srcWm1 = 0.5*(src[i][W-1]-src[i][W-2]);
+		double srcWm1 = (src[i][W-1]-src[i][W-2]);
 
 		temp2[W-1] = B * srcWm1 + b1*temp2[W-2] + b2*temp2[W-3] + b3*temp2[W-4];
 		
@@ -310,14 +312,14 @@ template<class T> void gaussDerivV (T** src, T** dst, AlignedBuffer<double>* buf
 #ifdef _OPENMP
 #pragma omp for
 #endif
-		for (int i=0; i<W; i++) {
+		for (int j=0; j<W; j++) {
 			double* temp = buffer->data;
-			for (int j = 1; j<H-1; j++) 
-				temp[j] = (0.5 * (src[j+1][i] - src[j-1][i]) );
-			dst[0][i] = 0.5*(src[1][i]-src[0][i]);
-			for (int j=1; j<H-1; j++)
-				dst[j][i] = temp[j];
-			dst[H-1][i] = 0.5*(src[H-1][i]-src[H-2][i]);
+			for (int i = 1; i<H-1; i++) 
+				temp[i] = (0.5 * (src[i+1][j] - src[i-1][j]) );
+			dst[0][j] = (src[1][j]-src[0][j]);
+			for (int i=1; i<H-1; i++)
+				dst[i][j] = temp[i];
+			dst[H-1][j] = (src[H-1][j]-src[H-2][j]);
 		}
         return;
     }

@@ -1,4 +1,9 @@
 #include "EdgePreserveLab.h"
+#include "boxblur.h"
+#include <cstdlib>
+
+#define MAX(a,b) ((a)<(b)?(b):(a))
+#define MIN(a,b) ((a)>(b)?(b):(a))
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,28 +55,33 @@ float *EdgePreserveLab::CreateBlur(float *Source, float LScale, float abScale, f
 	
 	unsigned int x, y, i;
 	unsigned int w1 = w - 1, h1 = h - 1;
-	float eps = 0.02f;
+	float eps = 0.0001f;
 	float scL = powf(100.0f,LScale);
 	float scab = powf(200.0f,abScale);
+	
+	float * var = new float[w*h];
+	boxvar(g, var, 1, 1, w, h);
 
 	for(y = 0; y != h1; y++){
 		float *rg = &g[w*y];
 		for(x = 0; x != w1; x++){
 			//Estimate the central difference gradient in the center of a four pixel square. (gx, gy) is actually 2*gradient.
-			float gx = (fabs((rg[x + 1] - rg[x]) + (rg[x + w + 1] - rg[x + w])));
+			/*float gx = (fabs((rg[x + 1] - rg[x]) + (rg[x + w + 1] - rg[x + w])));
 			float gy = (fabs((rg[x + w] - rg[x]) + (rg[x + w + 1] - rg[x + 1])));
-			
-			float Lave = 0;//0.25*((rg[x + 1] + rg[x]) + (rg[x + w + 1] + rg[x + w]));
-			
+						
+			//TODO: combine this with gx, gy if not needing separate quantities
 			float hx =  (fabs((rg[x + 1 + n] - rg[x + n]) + (rg[x + w + 1 + n] - rg[x + w + n])) + \
 						 fabs((rg[x + 1 + 2*n] - rg[x + 2*n]) + (rg[x + w + 1 + 2*n] - rg[x + w + 2*n]))); 
 			float hy = (fabs((rg[x + w + n] - rg[x + n]) + (rg[x + w + 1 + n] - rg[x + 1 + n])) + \
 						fabs((rg[x + w + 2*n] - rg[x + 2*n]) + (rg[x + w + 1 + 2*n] - rg[x + 1 + 2*n])));
-			
+			*/
+			//float gradtot = (gx+gy+hx+hy);
+			//gradhisto[MAX(0,MIN(32767,(int)gradtot))] ++;
 			
 			//Apply power to the magnitude of the gradient to get the edge stopping function.
-			a[x + w*y] = scL*expf(-100.0f*(gx + gy + hx + hy)/(EdgeStoppingLuma));
-			//a[x + w*y] = LScale*100.0f*expf(-100.0f*SQR(gx + gy)/SQR(EdgeStoppingLuma));///(0.1+rg[x]);
+			//a[x + w*y] = scL*expf(-100.0f*(gx + gy + hx + hy)/(EdgeStoppingLuma));
+			//a[x + w*y] = scL*expf(-var[y*w+x]/SQR(0.02*EdgeStoppingLuma));///(0.1+rg[x]);
+			a[x + w*y] = scL*expf(-50.0f*sqrt(var[y*w+x])/(EdgeStoppingLuma+eps));///(0.1+rg[x]);
 
 			//b[x + w*y] = (scab)*expf(-20.0f*(gx + gy + Lave*(hx + hy))/(EdgeStoppingChroma));
 			//b[x + w*y] = (scab)*expf(-400.0f*SQR(gx + gy + Lave*(hx + hy))/SQR(EdgeStoppingChroma));;
