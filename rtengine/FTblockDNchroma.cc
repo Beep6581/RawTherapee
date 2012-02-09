@@ -34,6 +34,7 @@
 #include "LUT.h"
 #include "array2D.h"
 #include "iccmatrices.h"
+#include "boxblur.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -51,9 +52,9 @@
 //#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 //#define CLIP(x) LIM(x,0,65535)
 
-#define TS 256		// Tile size
-#define offset TS/2	// shift between tiles
-#define fTS ((TS/2+1))	// shift between Fourier tiles
+#define TS 128		// Tile size
+#define offset (TS/4)	// shift between tiles
+#define fTS ((TS/2+1))	// second dimension of Fourier tiles
 //#define eps 0.01f/(TS*TS) //tolerance
 
 namespace rtengine {
@@ -79,301 +80,261 @@ namespace rtengine {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void ImProcFunctions::RGB_InputTransf(Imagefloat * src, LabImage * dst, LabImage * blur, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe) {
 	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// gamma transform input channel data
-	float gam = dnparams.gamma;
-	float gamthresh = 0.03;
-	float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
-	float gam3slope = exp(log((double)gamthresh)/3.0f)/gamthresh;
-
-	LUTf gamcurve(65536,0);
-	
-	for (int i=0; i<65536; i++) {
-		gamcurve[i] = (gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0));// * 32768.0f;
-	}
-	
+	void ImProcFunctions::RGB_InputTransf(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe) {
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// gamma transform input channel data
+		float gam = dnparams.gamma;
+		float gamthresh = 0.03;
+		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
+		float gam3slope = exp(log((double)gamthresh)/3.0f)/gamthresh;
+		
+		LUTf gamcurve(65536,0);
+		
+		for (int i=0; i<65536; i++) {
+			gamcurve[i] = (gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;
+		}
+		
+		//srand((unsigned)time(0));//test with random data
+		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	for (int i=0; i<src->height; i++) 
-		for (int j=0; j<src->width; j++) {
-						
-			float X = xyz_prophoto[0][0]*src->r[i][j] + xyz_prophoto[0][1]*src->g[i][j] + xyz_prophoto[0][2]*src->b[i][j];
-			float Y = xyz_prophoto[1][0]*src->r[i][j] + xyz_prophoto[1][1]*src->g[i][j] + xyz_prophoto[1][2]*src->b[i][j];
-			float Z = xyz_prophoto[2][0]*src->r[i][j] + xyz_prophoto[2][1]*src->g[i][j] + xyz_prophoto[2][2]*src->b[i][j];
-			
-			X = gamcurve[X];
-			Y = gamcurve[Y];
-			Z = gamcurve[Z];
-			
-			dst->L[i][j] = Y;
-			dst->a[i][j] = 0.2f*(X-Y);
-			dst->b[i][j] = 0.2f*(Y-Z);
-			
-		}
-	
-	//pre-blur L channel to mitigate artifacts
-	/*for (int i=1; i<src->height-1; i++) 
-		for (int j=1; j<src->width-1; j++) {
-			dst->L[i][j] = 0.25*(dst->L[i][j]+0.5*(dst->L[i-1][j]+dst->L[i+1][j]+dst->L[i][j-1]+dst->L[i][j+1])
-								 +0.25*(dst->L[i-1][j-1]+dst->L[i-1][j+1]+dst->L[i+1][j-1]+dst->L[i+1][j+1]));
-			
-		}*/
+		for (int i=0; i<src->height; i++) 
+			for (int j=0; j<src->width; j++) {
+				
+				float X = xyz_prophoto[0][0]*src->r[i][j] + xyz_prophoto[0][1]*src->g[i][j] + xyz_prophoto[0][2]*src->b[i][j];
+				float Y = xyz_prophoto[1][0]*src->r[i][j] + xyz_prophoto[1][1]*src->g[i][j] + xyz_prophoto[1][2]*src->b[i][j];
+				float Z = xyz_prophoto[2][0]*src->r[i][j] + xyz_prophoto[2][1]*src->g[i][j] + xyz_prophoto[2][2]*src->b[i][j];
+				
+				X = X<65535.0f ? gamcurve[X] : (gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+				Y = Y<65535.0f ? gamcurve[Y] : (gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+				Z = Z<65535.0f ? gamcurve[Z] : (gamma((double)Z/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+				
+				dst->L[i][j] = Y;
+				dst->a[i][j] = 0.2f*(X-Y);
+				dst->b[i][j] = 0.2f*(Y-Z);
+				
+				//Y = 0.05+0.1*((float)rand()/(float)RAND_MAX);//test with random data
+				//dst->L[i][j] = gamcurve[65535.0f*Y];
+				
+			}
 
-	//cplx_wavelet_decomposition Ldecomp(dst->data, dst->W, dst->H, 2 /*maxlvl*/);
-	//Ldecomp.reconstruct(dst->data);
-	
-	impulse_nr (dst, 50.0f/20.0f);
-	//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
-
-	
-	//blur the image
-	//dirpyr_ab(dst, blur, dnparams);//use dirpyr here if using it to blur all channels
-	
-	EPDParams *p = (EPDParams *)(&params->edgePreservingDecompositionUI);
-
-	float EdgeStop = (pow(0.15f, 1.0f/dnparams.gamma)/0.15f) * (float)dnparams.Lamt/10.0f;//compensate edgestopping power according to gamma
-	EdgePreserveLab epd = EdgePreserveLab(dst->W, dst->H);
-	blur->data = epd.CreateIteratedBlur(dst->data /*Source*/, (float)p->Scale /*LScale*/, (float)p->EdgeStopping /*abScale*/, \
-										EdgeStop /*(float)dnparams.Lamt/10.0f*/ /*EdgeStoppingLuma*/, (float)dnparams.chroma/25.0f/*p->EdgeStopping*/ /*EdgeStoppingChroma*/, \
-										5/*Iterates*/, 0/*Reweightings*/, blur->data/*Blur*/);
-	
-	//impulsedenoise (blur);
-
-/*	
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-	{
-		AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(dst->W,dst->H));
-		//gaussHorizontal<float> (src->L, tmp1->L, buffer, src->W, src->H, radius, multiThread);
-		//gaussHorizontal<float> (src->b, tmp1->b, buffer, src->W, src->H, radius, multiThread);
-		//gaussVertical<float>   (tmp1->a, tmp1->a, buffer, src->W, src->H, radius, multiThread);
-		//gaussVertical<float>   (tmp1->b, tmp1->b, buffer, src->W, src->H, radius, multiThread);
 		
-		gaussHorizontal<float> (dst->L, blur->L, buffer, dst->W, dst->H, (double)dnparams.Lamt/25.0f, multiThread);
-		gaussVertical<float>   (blur->L, blur->L, buffer, dst->W, dst->H, (double)dnparams.Lamt/25.0f, multiThread);
-		//gaussHorizontal<float> (blur->L, blur->L, buffer, dst->W, dst->H, (double)dnparams.Lamt/25.0f, multiThread);
-		//gaussVertical<float>   (blur->L, blur->L, buffer, dst->W, dst->H, (double)dnparams.Lamt/25.0f, multiThread);
-
-		delete buffer;
 	}
-*/	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// gamma transform input channel data
-	/*gam = dnparams.gamma/3.0f;
-	gamthresh = 0.03;
-	gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
-	gam3slope = exp(log((double)gamthresh)/3.0f)/gamthresh;
-		
-	for (int i=0; i<65536; i++) {
-		gamcurve[i] = (gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) * 65535.0f;
-	}*/
 	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams) {
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// gamma transform output channel data
+		float gam = dnparams.gamma;
+		float gamthresh = 0.03;
+		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
+		float igam = 1/gam;
+		float igamthresh = gamthresh*gamslope;
+		float igamslope = 1/gamslope;
+		
+		float gamL = dnparams.gamma/3.0f;
+		float gamslopeL = exp(log((double)gamthresh)/gamL)/gamthresh;
+		float igamL = 1/gamL;
+		float igamthreshL = gamthresh*gamslopeL;
+		float igamslopeL = 1/gamslopeL;
+		
+		LUTf gamcurve(65536,0);
+		LUTf igamcurve(65536,0);
+		LUTf igamcurveL(65536,0);
+		
+		for (int i=0; i<65536; i++) {
+			
+			igamcurve[i] = (gamma((float)i/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+			
+			/*float L = (gamma((float)i/65535.0f, igamL, igamthreshL, igamslopeL, 1.0, 0.0) * 200.0f);
+			 float fy = (0.00862069 * L) + 0.137932; // (L+16)/116
+			 float Y = f2xyz(fy);
+			 igamcurveL[i] = (gamma(Y, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;*/
+		}
+		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	for (int i=0; i<src->height; i++) {
-		for (int j=0; j<src->width; j++) {
-			//float wt = expf(-100.0f*fabs(dst->L[i][j]-blur->L[i][j])/((float)dnparams.luma));
-			//blur->L[i][j] = wt*dst->L[i][j] + (1-wt)*blur->L[i][j];
-			//blur->L[i][j] = dst->L[i][j];
-			blur->a[i][j] /*= 32768.0f*0.2f*(blur->a[i][j]-blur->L[i][j]);/*/*= 32768.0f;
-			blur->b[i][j] /*= 32768.0f*0.2f*(blur->L[i][j]-blur->b[i][j]);/*/*= 32768.0f;
-			blur->L[i][j] *= 32768.0f;//= gamcurve[32768.0f*blur->L[i][j]];
-
-			dst->L[i][j] *= 32768.0f;//= gamcurve[32768.0f*dst->L[i][j]];
-			dst->a[i][j] *= 32768.0f;
-			dst->b[i][j] *= 32768.0f;
-			
-		}
-	}
-
-	//dirpyr_ab(blur, blur, dnparams);//use dirpyr here if using it to blur ab channels only
-	//dirpyrLab_denoise(blur, blur, dnparams);//use dirpyr here if using it to blur ab channels only
-
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void ImProcFunctions::RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams) {
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// gamma transform output channel data
-	float gam = dnparams.gamma;
-	float gamthresh = 0.03;
-	float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
-	float igam = 1/gam;
-	float igamthresh = gamthresh*gamslope;
-	float igamslope = 1/gamslope;
-	
-	float gamL = dnparams.gamma/3.0f;
-	float gamslopeL = exp(log((double)gamthresh)/gamL)/gamthresh;
-	float igamL = 1/gamL;
-	float igamthreshL = gamthresh*gamslopeL;
-	float igamslopeL = 1/gamslopeL;
-	
-	LUTf gamcurve(65536,0);
-	LUTf igamcurve(65536,0);
-	LUTf igamcurveL(65536,0);
-
-	for (int i=0; i<65536; i++) {
-		
-		igamcurve[i] = (gamma((float)i/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-		
-		/*float L = (gamma((float)i/65535.0f, igamL, igamthreshL, igamslopeL, 1.0, 0.0) * 200.0f);
-		float fy = (0.00862069 * L) + 0.137932; // (L+16)/116
-		float Y = f2xyz(fy);
-		igamcurveL[i] = (gamma(Y, gam, gamthresh, gamslope, 1.0, 0.0)) * 32768.0f;*/
-	}
-	
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-	for (int i=0; i<src->H; i++) {
-		float X,Y,Z;
-		for (int j=0; j<src->W; j++) {
-			//input normalized to (0,1)
-			//Y = igamcurveL[ src->L[i][j] ];
-			Y = src->L[i][j];
-			X = (5.0f*(src->a[i][j])) + Y;
-			Z = Y - (5.0f*(src->b[i][j]));
-			
-			X = igamcurve[X];
-			Y = igamcurve[Y];
-			Z = igamcurve[Z];
-			
-			dst->r[i][j] = prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
-			dst->g[i][j] = prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
-			dst->b[i][j] = prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
-			
-		}
-	}
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roffset,*/ const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe)
-{	
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	/*if (plistener) {
-	 plistener->setProgressStr ("Block FT Luma Denoise...");
-	 plistener->setProgress (0.0);
-	 }*/
-	
-	volatile double progress = 0.0;
-
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	const short int height=src->height, width=src->width;
-	const short int hfh=(height+1)/2, hfw=(width+1)/2;
-	//const short int hfh=(height+1), hfw=(width+1);
-
-	const int blkrad=1;
-	float noisevar_L = SQR(dnparams.luma * TS * 40.0f);
-	float noisevar_ab = SQR(dnparams.chroma * TS * 200.0f);
-	
-	//int dxr=Roffset&1, dyr=(Roffset&2)/2, dxb=(1-dxr), dyb=(1-dyr);
-	//int rdx, rdy, bdx, bdy;
-	
-	// calculation for tiling
-	const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
-	const int numblox_H = ceil(((float)(height))/(offset))+2*blkrad;
-	//const int nrtiles = numblox_W*numblox_H;
-	// end of tiling calc
-	
-	//const float eps = 1.0f;
-	
-
-
-	array2D<float> tilemask_in(TS,TS);
-	array2D<float> tilemask_out(TS,TS);
-
-	array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);
-	
-	for (int i=0; i<TS; i++) {
-		float i1 = abs((i>TS/2 ? i-TS : i));
-		float vmask = (i1<8 ? SQR(sin(M_PI*i1/16.0f)) : 1.0f);
-		for (int j=0; j<TS; j++) {
-			float j1 = abs((j>TS/2 ? j-TS : j));
-			//tilemask_in[i][j] = vmask * (j1<4 ? SQR(sin(M_PI*(float)j1/8.0f)) : 1.0f);
-			tilemask_in[i][j] = (exp(-(SQR(i-TS/2-0.5f)+SQR(j-TS/2-0.5f))/(2*SQR(TS/4.0f))) * \
-								 vmask * (j1<8 ? SQR(sin(M_PI*(float)j1/16.0f)) : 1.0f));
-
-			tilemask_out[i][j] = (SQR(MAX(0.0f, sin(M_PI*(float)(i-4.0f)/(TS-9) ))) * \
-								  SQR(MAX(0.0f, sin(M_PI*(float)(j-4.0f)/(TS-9) ))));
-			//tilemask_out[i][j] = exp(-(SQR(i-TS/2-0.5f)+SQR(j-TS/2-0.5f))/(SQR(TS/4.0f)));
-
+		for (int i=0; i<src->H; i++) {
+			float X,Y,Z;
+			for (int j=0; j<src->W; j++) {
+				//input normalized to (0,1)
+				//Y = igamcurveL[ src->L[i][j] ];
+				Y = src->L[i][j];
+				X = (5.0f*(src->a[i][j])) + Y;
+				Z = Y - (5.0f*(src->b[i][j]));
+				
+				X = X<32768.0f ? igamcurve[X] : (gamma((float)X/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+				Y = Y<32768.0f ? igamcurve[Y] : (gamma((float)Y/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+				Z = Z<32768.0f ? igamcurve[Z] : (gamma((float)Z/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+				
+				//Y = 65535.0f*(0.05+0.1*((float)rand()/(float)RAND_MAX));//test with random data
+				
+				dst->r[i][j] = prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
+				dst->g[i][j] = prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
+				dst->b[i][j] = prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
+				
+			}
 		}
 	}
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-	LabImage * labin = new LabImage(width,height);
-	LabImage * labblur = new LabImage(width,height);
 	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// transform RGB input to ersatz Lab
-	
-	RGB_InputTransf(src, labin, labblur, dnparams, defringe);
-	
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// initialize FT and output data structures
-	LabImage * labdn = new LabImage(width,height);
-	float ** Lblox = new float *[8] ;
-	float ** RLblox = new float *[8] ;
-	float ** BLblox = new float *[8] ;
-	
-	fftwf_complex ** fLblox = new fftwf_complex *[8] ;	//for FT
-	//float ** fLblox = new float *[8] ;				//for DCT
-
-	fftwf_complex ** fRLblox = new fftwf_complex *[8] ;
-	fftwf_complex ** fBLblox = new fftwf_complex *[8] ;
-	
-	for( int i = 0 ; i < 8 ; i++ ) {
-		Lblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
-		//RLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
-		//BLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
+	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roffset,*/ const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe)
+	{	
 		
-		fLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));	//for FT
-		//fLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));				//for DCT
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		/*if (plistener) {
+		 plistener->setProgressStr ("Block FT Luma Denoise...");
+		 plistener->setProgress (0.0);
+		 }*/
+		
+		volatile double progress = 0.0;
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		const short int height=src->height, width=src->width;
+		const short int hfh=(height+1)/2, hfw=(width+1)/2;
+		//const short int hfh=(height+1), hfw=(width+1);
+		
+		const int blkrad=1;
+		float noisevar_L = SQR(dnparams.luma * TS * 10.0f);
+		float noisevar_ab = SQR(dnparams.chroma * TS * 100.0f);
+		
+		//int dxr=Roffset&1, dyr=(Roffset&2)/2, dxb=(1-dxr), dyb=(1-dyr);
+		//int rdx, rdy, bdx, bdy;
+		
+		// calculation for tiling
+		const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
+		const int numblox_H = ceil(((float)(height))/(offset))+2*blkrad;
+		//const int nrtiles = numblox_W*numblox_H;
+		// end of tiling calc
+		
+		//const float eps = 1.0f;
+		
+		
+		
+		array2D<float> tilemask_in(TS,TS);
+		array2D<float> tilemask_out(TS,TS);
+		
+		array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);
+		
+		for (int i=0; i<TS; i++) {
+			float i1 = abs((i>TS/2 ? i-TS : i));
+			float vmask = (i1<8 ? SQR(sin(M_PI*i1/16.0f)) : 1.0f);
+			float vmask2 = (i1<32 ? SQR(sin(M_PI*i1/64.0f)) : 1.0f);
+			for (int j=0; j<TS; j++) {
+				float j1 = abs((j>TS/2 ? j-TS : j));
+				//tilemask_in[i][j] = vmask * (j1<4 ? SQR(sin(M_PI*(float)j1/8.0f)) : 1.0f);
+				tilemask_in[i][j] = (exp(-(SQR(i-TS/2-0.5f)+SQR(j-TS/2-0.5f))/(2*SQR(TS/4.0f))) * \
+									 vmask * (j1<8 ? SQR(sin(M_PI*(float)j1/16.0f)) : 1.0f));
+				
+				//tilemask_out[i][j] = (SQR(MAX(0.0f, sin(M_PI*(float)(i-8.0f)/(TS-17) ))) * \
+				SQR(MAX(0.0f, sin(M_PI*(float)(j-8.0f)/(TS-17) ))));
+				tilemask_out[i][j] = vmask2 * (j1<32 ? SQR(sin(M_PI*(float)j1/64.0f)) : 1.0f);
+				
+				//tilemask_out[i][j] = exp(-(SQR(i-TS/2-0.5f)+SQR(j-TS/2-0.5f))/(SQR(TS/4.0f)));
+				
+			}
+		}
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		LabImage * labin = new LabImage(width,height);
+		LabImage * labblur = new LabImage(width,height);
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// transform RGB input to ersatz Lab
+		
+		RGB_InputTransf(src, labin, dnparams, defringe);
+		
+		wavelet_decomposition Ldecomp(labin->data, labin->W, labin->H, 5 );//last arg is num levels
+		WaveletDenoise(Ldecomp, SQR((float)dnparams.Lamt/25.0f));
+		Ldecomp.reconstruct(labblur->data);
+		
+		
+		//impulse_nr (dst, 50.0f/20.0f);
+		//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
+		
+		
+		int datalen = labin->W*labin->H;
+		
+		for (int i=datalen; i<3*datalen; i++) {
+			labblur->data[i]=labin->data[i];
+		}
+		/*
+		wavelet_decomposition adecomp(labin->data+datalen, labin->W, labin->H, 5 );//last arg is num levels
+		WaveletDenoise(adecomp, SQR((float)dnparams.chroma/5.0f));
+		adecomp.reconstruct(labblur->data+datalen);
+		
+		wavelet_decomposition bdecomp(labin->data+2*datalen, labin->W, labin->H, 5 );//last arg is num levels
+		WaveletDenoise(bdecomp, SQR((float)dnparams.chroma/5.0f));
+		bdecomp.reconstruct(labblur->data+2*datalen);
+		*/
+		
+		//dirpyr_ab(labin, labblur, dnparams);//use dirpyr here if using it to blur ab channels only
+		//dirpyrLab_denoise(labin, labblur, dnparams);//use dirpyr here if using it to blur ab channels only
 
-		//fRLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
-		//fBLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
-	}
-	
-	//make a plan for FFTW
-	fftwf_plan plan_forward_blox, plan_backward_blox;
-	
-	int nfwd[2]={TS,TS};
-	
-	//for FT:
-	plan_forward_blox  = fftwf_plan_many_dft_r2c(2, nfwd, numblox_W, Lblox[0], NULL, 1, TS*TS, \
-												 fLblox[0], NULL, 1, TS*fTS, FFTW_ESTIMATE );
-	plan_backward_blox = fftwf_plan_many_dft_c2r(2, nfwd, numblox_W, fLblox[0], NULL, 1, TS*fTS, \
-												 Lblox[0], NULL, 1, TS*TS, FFTW_ESTIMATE );
-	
-	//for DCT:
-	/*const fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
-	const fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
-	
-	plan_forward_blox  = fftwf_plan_many_r2r(2, nfwd, numblox_W, Lblox[0], NULL, 1, TS*TS, \
-											 fLblox[0], NULL, 1, TS*TS, fwdkind, FFTW_ESTIMATE );
-	plan_backward_blox = fftwf_plan_many_r2r(2, nfwd, numblox_W, fLblox[0], NULL, 1, TS*TS, \
-											 Lblox[0], NULL, 1, TS*TS, bwdkind, FFTW_ESTIMATE );*/
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// initialize FT and output data structures
+		LabImage * labdn = new LabImage(width,height);
+		for (int i=0; i<3*labdn->W*labdn->H; i++) {
+			labdn->data[i] = 0.0f;
+		}
+		float ** Lblox = new float *[8] ;
+		float ** RLblox = new float *[8] ;
+		float ** BLblox = new float *[8] ;
+		
+		fftwf_complex ** fLblox = new fftwf_complex *[8] ;	//for FT
+		//float ** fLblox = new float *[8] ;				//for DCT
+		
+		fftwf_complex ** fRLblox = new fftwf_complex *[8] ;
+		fftwf_complex ** fBLblox = new fftwf_complex *[8] ;
+		
+		for( int i = 0 ; i < 8 ; i++ ) {
+			Lblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
+			//RLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
+			//BLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
+			
+			fLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));	//for FT
+			//fLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));				//for DCT
+			
+			//fRLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
+			//fBLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
+		}
+		
+		//make a plan for FFTW
+		fftwf_plan plan_forward_blox, plan_backward_blox;
+		
+		int nfwd[2]={TS,TS};
+		
+		//for FT:
+		plan_forward_blox  = fftwf_plan_many_dft_r2c(2, nfwd, numblox_W, Lblox[0], NULL, 1, TS*TS, \
+													 fLblox[0], NULL, 1, TS*fTS, FFTW_ESTIMATE );
+		plan_backward_blox = fftwf_plan_many_dft_c2r(2, nfwd, numblox_W, fLblox[0], NULL, 1, TS*fTS, \
+													 Lblox[0], NULL, 1, TS*TS, FFTW_ESTIMATE );
+		
+		//for DCT:
+		//const fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
+		//const fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
+		
+		//plan_forward_blox  = fftwf_plan_many_r2r(2, nfwd, numblox_W, Lblox[0], NULL, 1, TS*TS, \
+		fLblox[0], NULL, 1, TS*TS, fwdkind, FFTW_ESTIMATE );
+		//plan_backward_blox = fftwf_plan_many_r2r(2, nfwd, numblox_W, fLblox[0], NULL, 1, TS*TS, \
+		Lblox[0], NULL, 1, TS*TS, bwdkind, FFTW_ESTIMATE );
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// Main algorithm: Tile loop
 #pragma omp parallel for schedule(dynamic)
 		//int vblock=0, hblock=0;
@@ -395,14 +356,14 @@ void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roff
 				int indx = (hblk)*TS;//index of block in malloc
 				
 				// load Lab high pass data
-								
+				
 				for (int i=imin; i<imax; i++)
 					for (int j=jmin; j<jmax; j++) {
 						
 						Lblox[vblkmod][(indx + i)*TS+j]  = tilemask_in[i][j]*(labin->L[top+i][left+j]-labblur->L[top+i][left+j]);// luma data
 						//RLblox[vblkmod][(indx + i)*TS+j] = tilemask_in[i][j]*(labin->a[top+i][left+j]-labblur->a[top+i][left+j]);// high pass chroma data
 						//BLblox[vblkmod][(indx + i)*TS+j] = tilemask_in[i][j]*(labin->b[top+i][left+j]-labblur->b[top+i][left+j]);// high pass chroma data
-
+						
 						totwt[top+i][left+j] += tilemask_in[i][j]*tilemask_out[i][j];
 					}
 				
@@ -459,7 +420,7 @@ void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roff
 							}
 					}
 				}
-
+				
 				
 				if (jmax<TS) {
 					for (int j=jmax; j<TS; j++) 
@@ -479,15 +440,17 @@ void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roff
 				}
 				//end of tile padding
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			}//end of filling block row
+				Lblox[vblkmod][(indx + TS/2)*TS+TS/2]=32768.0f;//testing: locate block center
 				
+			}//end of filling block row
+			
 			//fftwf_print_plan (plan_forward_blox);
 			fftwf_execute_dft_r2c(plan_forward_blox,Lblox[vblkmod],fLblox[vblkmod]);	// FT an entire row of tiles
 			//fftwf_execute_r2r(plan_forward_blox,Lblox[vblkmod],fLblox[vblkmod]);		// DCT an entire row of tiles
-
+			
 			//fftwf_execute_dft_r2c(plan_forward_blox,RLblox[vblkmod],fRLblox[vblkmod]);// FT an entire row of tiles
 			//fftwf_execute_dft_r2c(plan_forward_blox,BLblox[vblkmod],fBLblox[vblkmod]);// FT an entire row of tiles
-
+			
 			if (vblk<blkrad) continue;
 			
 			int vblproc = (vblk-blkrad);
@@ -496,7 +459,7 @@ void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roff
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			// now process the vblproc row of tiles for noise reduction
 			for (int hblk=0; hblk<numblox_W; hblk++) {
-
+				
 				int hblproc = hblk;
 				
 				RGBtile_denoise (fLblox, fRLblox, fBLblox, vblproc, hblproc, blkrad, numblox_H, numblox_W, 
@@ -517,18 +480,18 @@ void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roff
 			//now perform inverse FT of an entire row of tiles
 			fftwf_execute_dft_c2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for FT
 			//fftwf_execute_r2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for DCT
-
+			
 			//fftwf_execute_dft_c2r(plan_backward_blox,fRLblox[vblprocmod],RLblox[vblprocmod]);
 			//fftwf_execute_dft_c2r(plan_backward_blox,fBLblox[vblprocmod],BLblox[vblprocmod]);
-
+			
 			int topproc = (vblproc-blkrad)*offset;
 			
 			//add row of tiles to output image
 			RGBoutput_tile_row (Lblox[vblprocmod], RLblox[vblprocmod], BLblox[vblprocmod], labdn, \
 								tilemask_out, height, width, topproc, blkrad );
-
+			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+			
 			if (vblk==(numblox_H-1)) {//inverse FT last blkrad rows
 				for (int vblproc=(vblk-blkrad+1); vblproc<numblox_H; vblproc++) {
 					topproc=(vblproc-blkrad)*offset;
@@ -538,10 +501,10 @@ void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roff
 					
 					//fftwf_execute_dft_c2r(plan_backward_blox,fRLblox[vblprocmod],RLblox[vblprocmod]);
 					//fftwf_execute_dft_c2r(plan_backward_blox,fBLblox[vblprocmod],BLblox[vblprocmod]);
-
+					
 					RGBoutput_tile_row (Lblox[vblprocmod], RLblox[vblprocmod], BLblox[vblprocmod], labdn, \
-									 tilemask_out, height, width, topproc, blkrad );
-
+										tilemask_out, height, width, topproc, blkrad );
+					
 				}
 			}
 			
@@ -549,225 +512,232 @@ void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, /*int Roff
 			
 		}//end of vertical tile loop
 		
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	// clean up
-	//#pragma omp single nowait
-	fftwf_destroy_plan( plan_forward_blox );
-	//#pragma omp single nowait
-	fftwf_destroy_plan( plan_backward_blox );
-	
-	for( int i = 0 ; i < 8 ; i++ ) {
-		fftwf_free ( Lblox[i]);
-		//fftwf_free (RLblox[i]);
-		//fftwf_free (BLblox[i]);
-		fftwf_free ( fLblox[i]);
-		//fftwf_free (fRLblox[i]);
-		//fftwf_free (fBLblox[i]);
-	}
-	delete[]  Lblox;	
-	//delete[] RLblox;
-	//delete[] BLblox;
-	delete[]  fLblox;
-	//delete[] fRLblox;
-	//delete[] fBLblox;
-
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-	for (int i=0; i<height; i++) {
-		for (int j=0; j<width; j++) {
-			//may want to include masking threshold for large hipass data to preserve edges/detail
-			//or compare original hpf to denoised; restore original based on their ratio
-			float hporig = labin->L[i][j]-labblur->L[i][j];
-			float hpdn = labdn->L[i][j]/totwt[i][j];//note that labdn initially stores the denoised hipass data
-			float hgratio = 0;//MIN(1.0f,(abs(hpdn)+eps)/(abs(hporig)+eps));
-
-			labdn->L[i][j] = labblur->L[i][j] + (hgratio*hporig+(1-hgratio)*hpdn);
-			//labdn->L[i][j] = -(hporig)+0.25;
-			
-			hporig = labin->a[i][j]-labblur->a[i][j];
-			hpdn = labdn->a[i][j]/totwt[i][j];
-			labdn->a[i][j] = labblur->a[i][j] ;//+ (hgratio*hporig+(1-hgratio)*hpdn);
-			//labdn->a[i][j] = (hporig);
-			
-
-			hporig = labin->b[i][j]-labblur->b[i][j];
-			hpdn = labdn->b[i][j]/totwt[i][j];
-			labdn->b[i][j] = labblur->b[i][j] ;//+ (hgratio*hporig+(1-hgratio)*hpdn);
-			//labdn->b[i][j] = (hporig);
-			 
-			
-			//labdn->a[i][j] = labin->a[i][j];
-			//labdn->b[i][j] = labin->b[i][j];
+		// clean up
+		//#pragma omp single nowait
+		fftwf_destroy_plan( plan_forward_blox );
+		//#pragma omp single nowait
+		fftwf_destroy_plan( plan_backward_blox );
+		
+		for( int i = 0 ; i < 8 ; i++ ) {
+			fftwf_free ( Lblox[i]);
+			//fftwf_free (RLblox[i]);
+			//fftwf_free (BLblox[i]);
+			fftwf_free ( fLblox[i]);
+			//fftwf_free (fRLblox[i]);
+			//fftwf_free (fBLblox[i]);
 		}
-	}
-	
-	//dirpyr_ab(labdn, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
-
-	dirpyrdenoise(labdn);//denoise ab channels using ImProcFns denoise (stripped to ab channels only)
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// transform denoised "Lab" to output RGB
-	
-	RGB_OutputTransf(labdn, dst, dnparams);
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	delete labin;
-	delete labdn;
-	delete labblur;
-
-}//end of main RB_denoise
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-void ImProcFunctions::RGBtile_denoise (fftwf_complex ** fLblox, fftwf_complex ** fRLblox, fftwf_complex ** fBLblox, \
-									   int vblproc, int hblproc, int blkrad, int numblox_H, int numblox_W, \
-									   float noisevar_L, float noisevar_ab )	//for FT
-//void ImProcFunctions::RGBtile_denoise (float ** fLblox, fftwf_complex ** fRLblox, fftwf_complex ** fBLblox, \
-									   int vblproc, int hblproc, int blkrad, int numblox_H, int numblox_W, \
-									   float noisevar_L, float noisevar_ab )	//for DCT
-{
-	int vblprocmod=vblproc%8;
-	
-	float eps = 0.01f/(TS*TS); //tolerance
-	
-	float RLblockvar=eps, BLblockvar=eps, Lblockvar=eps;
-	
-	for (int i=TS/4; i<3*TS/4; i++) 
-		for (int j=TS/4; j<fTS; j++) {	//for FT
-		//for (int j=TS/4; j<3*TS/4; j++) {	//for DCT
-
-			Lblockvar += (SQR( fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR( fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));	//for FT
-			//Lblockvar += SQR( fLblox[vblprocmod][(hblproc*TS+i)*TS+j]);		//for DCT
-
-			//RLblockvar += (SQR(fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR(fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));
-			//BLblockvar += (SQR(fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR(fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));
-			
-		}
-	
-	Lblockvar /= (TS/2)*(fTS-TS/4);	//for FT
-	//Lblockvar /= (TS/2)*(TS/2);	//for DCT
-
-	//RLblockvar /= (TS/2)*(fTS-TS/4);
-	//BLblockvar /= (TS/2)*(fTS-TS/4);
-	 Lblockvar = (3*Lblockvar);
-	//RLblockvar = (3*RLblockvar);
-	//BLblockvar = (3*BLblockvar);
-
-	//printf("vblock=%d  hblock=%d  blockstddev=%f \n",vblproc,hblproc,sqrt(blockvar));
-
-	//float wsqave=0;
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	for (int i=0; i<TS; i++) 
-		for (int j=0; j<fTS; j++) {		//for FT
-		//for (int j=0; j<TS; j++) {	//for DCT
-			
-			
-			float Lcoeffre = fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];	//for FT
-			float Lcoeffim = fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
-			
-			//float Lcoeff = fLblox[vblprocmod][(hblproc*TS+i)*TS+j];		//for DCT
-			
-			//float RLcoeffre = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
-			//float RLcoeffim = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
-			
-			//float BLcoeffre = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
-			//float BLcoeffim = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
-			
-			double nbrave=0, nbrsqave=0, coeffsq;
-			int vblnbrmod, hblnbrmod;
-			for (int k=0; k<9; k++) {
-				vblnbrmod = (vblproc+(k/3)+7)%8;
-				hblnbrmod = MAX(0,hblproc+(k%3)-1);
-				if (hblnbrmod==numblox_W) hblnbrmod=numblox_W-1;
-				coeffsq = SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*fTS+j][0])+SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*fTS+j][1]);	//for FT
-				//coeffsq = SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*TS+j]);	//for DCT
-
-				nbrave += sqrt(coeffsq);
-				nbrsqave += coeffsq;
+		delete[]  Lblox;	
+		//delete[] RLblox;
+		//delete[] BLblox;
+		delete[]  fLblox;
+		//delete[] fRLblox;
+		//delete[] fBLblox;
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		for (int i=0; i<height; i++) {
+			for (int j=0; j<width; j++) {
+				//may want to include masking threshold for large hipass data to preserve edges/detail
+				float hpdn = labdn->L[i][j]/totwt[i][j];//note that labdn initially stores the denoised hipass data
+				
+				labdn->L[i][j] = labblur->L[i][j] + hpdn;
+				//labdn->L[i][j] = -(hporig)+0.25;
+				
+				//hpdn = labdn->a[i][j]/totwt[i][j];
+				//labdn->a[i][j] = labblur->a[i][j] ;//+ hpdn;
+				//labdn->a[i][j] = (hporig);
+				
+				
+				//hpdn = labdn->b[i][j]/totwt[i][j];
+				//labdn->b[i][j] = labblur->b[i][j] ;//+ hpdn;
+				//labdn->b[i][j] = (hporig);
+				
+				
+				labdn->a[i][j] = labblur->a[i][j];
+				labdn->b[i][j] = labblur->b[i][j];
 			}
-			float nbrvar = (nbrsqave/9.0f)-SQR(nbrave/9.0f);
-			
-			float  Lwsq = eps+SQR( Lcoeffre)+SQR( Lcoeffim);	//for FT
-			//float  Lwsq = eps+SQR( Lcoeff);					//for DCT
-
-			//float RLwsq = eps+SQR(RLcoeffre)+SQR(RLcoeffim);
-			//float BLwsq = eps+SQR(BLcoeffre)+SQR(BLcoeffim);
-
-			//wsqave += Lwsq;
-			float Lfactor = (4*Lblockvar)/(eps+(Lwsq+nbrvar)+2*Lblockvar);
-			//float Lfactor = expf(-Lwsq/(9*Lblockvar));
-			//float  Lfactor = 1;//(2* Lblockvar)/(eps+ Lwsq+ Lblockvar);
-			//float RLfactor = 1;//(2*RLblockvar)/(eps+RLwsq+RLblockvar);
-			//float BLfactor = 1;//(2*BLblockvar)/(eps+BLwsq+BLblockvar);
-			Lwsq = MAX(0.0f, Lwsq-0.25*Lblockvar);
-			float  Lshrinkfactor = Lwsq/(Lwsq + noisevar_L * Lfactor);
-			//float RLshrinkfactor = RLwsq/(RLwsq+noisevar_ab*RLfactor);
-			//float BLshrinkfactor = BLwsq/(BLwsq+noisevar_ab*BLfactor);
-			
-			//float shrinkfactor = (wsq<noisevar ? 0 : 1);//hard threshold
-
-			fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= Lshrinkfactor;	//for FT
-			fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= Lshrinkfactor;
-			//fLblox[vblprocmod][(hblproc*TS+i)*TS+j] *= Lshrinkfactor;		//for DCT
-
-			//fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= Lshrinkfactor;
-			//fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= Lshrinkfactor;
-			
-			//fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= Lshrinkfactor;
-			//fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= Lshrinkfactor;
-			
-		}//end of block denoise		
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//printf("vblk=%d  hlk=%d  wsqave=%f   ||   ",vblproc,hblproc,wsqave);
-
-}//end of function tile_denoise
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, float *bloxrow_a, float *bloxrow_b, LabImage * labdn,
-										  float ** tilemask_out, int height, int width, int top, int blkrad )
-{
-	const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
+		}
+		
+		//dirpyr_ab(labdn, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
+		
+		//dirpyrdenoise(labdn);//denoise ab channels using ImProcFns denoise (stripped to ab channels only)
+		
+		//Wavelet denoise of ab channels
+		//int numpix = labdn->W*labdn->H;
+		//cplx_wavelet_decomposition adecomp(labdn->data+numpix, labdn->W, labdn->H, 5 );//last arg is num levels
+		//WaveletDenoise(adecomp, SQR((float)dnparams.chroma*100.0f));
+		//adecomp.reconstruct(labdn->data+numpix);
+		//cplx_wavelet_decomposition bdecomp(labdn->data+2*numpix, labdn->W, labdn->H, 5 );//last arg is num levels
+		//WaveletDenoise(bdecomp, SQR((float)dnparams.chroma*100.0f));
+		//bdecomp.reconstruct(labdn->data+2*numpix);
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// transform denoised "Lab" to output RGB
+		
+		RGB_OutputTransf(labdn, dst, dnparams);
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		delete labin;
+		delete labdn;
+		delete labblur;
+		
+	}//end of main RB_denoise
 	
-	//add row of tiles to output image
-	for (int hblk=0; hblk < numblox_W; hblk++) {
-		int left = (hblk-blkrad)*offset;
-		int bottom = MIN( top+TS,height);
-		int right  = MIN(left+TS, width);
-		int imin = MAX(0,-top);
-		int jmin = MAX(0,-left);
-		int imax = bottom - top;
-		int jmax = right - left;
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	
+	void ImProcFunctions::RGBtile_denoise (fftwf_complex ** fLblox, fftwf_complex ** fRLblox, fftwf_complex ** fBLblox, \
+										   int vblproc, int hblproc, int blkrad, int numblox_H, int numblox_W, \
+										   float noisevar_L, float noisevar_ab )	//for FT
+	//void ImProcFunctions::RGBtile_denoise (float ** fLblox, fftwf_complex ** fRLblox, fftwf_complex ** fBLblox, \
+	int vblproc, int hblproc, int blkrad, int numblox_H, int numblox_W, \
+	float noisevar_L, float noisevar_ab )	//for DCT
+	{
+		int vblprocmod=vblproc%8;
 		
-		int indx = hblk*TS;
+		const float eps = 0.01f/(TS*TS); //tolerance
+		const float cutoffsq = 8.0f;//frequency cutoff
 		
-		for (int i=imin; i<imax; i++)
-			for (int j=jmin; j<jmax; j++) {
-
-				labdn->L[top+i][left+j] += tilemask_out[i][j]*bloxrow_L[(indx + i)*TS+j]/(TS*TS); 
-				//labdn->a[top+i][left+j] += tilemask_out[i][j]*bloxrow_a[(indx + i)*TS+j]/(TS*TS); 
-				//labdn->b[top+i][left+j] += tilemask_out[i][j]*bloxrow_b[(indx + i)*TS+j]/(TS*TS); 
+		
+		float RLblockvar=eps, BLblockvar=eps, Lblockvar=eps;
+		
+		for (int i=TS/4; i<3*TS/4; i++) 
+			for (int j=TS/4; j<fTS; j++) {	//for FT
+				//for (int j=TS/4; j<3*TS/4; j++) {	//for DCT
+				
+				Lblockvar += (SQR( fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR( fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));	//for FT
+				//Lblockvar += SQR( fLblox[vblprocmod][(hblproc*TS+i)*TS+j]);		//for DCT
+				
+				//RLblockvar += (SQR(fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR(fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));
+				//BLblockvar += (SQR(fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR(fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));
 				
 			}
+		
+		Lblockvar /= (TS/2)*(fTS-TS/4);	//for FT
+		//Lblockvar /= (TS/2)*(TS/2);	//for DCT
+		
+		//RLblockvar /= (TS/2)*(fTS-TS/4);
+		//BLblockvar /= (TS/2)*(fTS-TS/4);
+		Lblockvar = (3*Lblockvar);
+		//RLblockvar = (3*RLblockvar);
+		//BLblockvar = (3*BLblockvar);
+		
+		//printf("vblock=%d  hblock=%d  blockstddev=%f \n",vblproc,hblproc,sqrt(blockvar));
+		
+		//float wsqave=0;
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		for (int i=0; i<TS; i++) 
+			for (int j=0; j<fTS; j++) {		//for FT
+				//for (int j=0; j<TS; j++) {	//for DCT
+				
+				
+				float Lcoeffre = fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];	//for FT
+				float Lcoeffim = fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
+				
+				//float Lcoeff = fLblox[vblprocmod][(hblproc*TS+i)*TS+j];		//for DCT
+				
+				//float RLcoeffre = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
+				//float RLcoeffim = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
+				
+				//float BLcoeffre = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
+				//float BLcoeffim = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
+				
+				/*double nbrave=0, nbrsqave=0, coeffsq;
+				int vblnbrmod, hblnbrmod;
+				for (int k=0; k<9; k++) {
+					vblnbrmod = (vblproc+(k/3)+7)%8;
+					hblnbrmod = MAX(0,hblproc+(k%3)-1);
+					if (hblnbrmod==numblox_W) hblnbrmod=numblox_W-1;
+					coeffsq = SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*fTS+j][0])+SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*fTS+j][1]);	//for FT
+					//coeffsq = SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*TS+j]);	//for DCT
+					
+					nbrave += sqrt(coeffsq);
+					nbrsqave += coeffsq;
+				}
+				float nbrvar = (nbrsqave/9.0f)-SQR(nbrave/9.0f);*/
+				
+				float  Lwsq = eps+SQR( Lcoeffre)+SQR( Lcoeffim);	//for FT
+				//float  Lwsq = eps+SQR( Lcoeff);					//for DCT
+				
+				//float RLwsq = eps+SQR(RLcoeffre)+SQR(RLcoeffim);
+				//float BLwsq = eps+SQR(BLcoeffre)+SQR(BLcoeffim);
+				
+				//wsqave += Lwsq;
+				//float Lfactor = (4*Lblockvar)/(eps+(Lwsq+nbrvar)+2*Lblockvar);
+				//float Lfactor = expf(-Lwsq/(9*Lblockvar));
+				float freqfactor = 1.0f-MAX((expf(-(SQR(i)+SQR(j))/cutoffsq)),(expf(-(SQR(TS-i)+SQR(j))/cutoffsq)));
+				float  Lfactor = 1;//freqfactor;//*(2* Lblockvar)/(eps+ Lwsq+ Lblockvar);
+				//float RLfactor = 1;//(2*RLblockvar)/(eps+RLwsq+RLblockvar);
+				//float BLfactor = 1;//(2*BLblockvar)/(eps+BLwsq+BLblockvar);
+				//Lwsq = MAX(0.0f, Lwsq-0.25*Lblockvar);
+				float  Lshrinkfactor = SQR(Lwsq/(Lwsq + noisevar_L * Lfactor*exp(-Lwsq/(3*noisevar_L))));
+				//float RLshrinkfactor = RLwsq/(RLwsq+noisevar_ab*RLfactor);
+				//float BLshrinkfactor = BLwsq/(BLwsq+noisevar_ab*BLfactor);
+				
+				//float shrinkfactor = (wsq<noisevar ? 0 : 1);//hard threshold
+				
+				fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= Lshrinkfactor;	//for FT
+				fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= Lshrinkfactor;
+				//fLblox[vblprocmod][(hblproc*TS+i)*TS+j] *= Lshrinkfactor;		//for DCT
+				
+				//fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= Lshrinkfactor;
+				//fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= Lshrinkfactor;
+				
+				//fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= Lshrinkfactor;
+				//fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= Lshrinkfactor;
+				
+			}//end of block denoise		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//printf("vblk=%d  hlk=%d  wsqave=%f   ||   ",vblproc,hblproc,wsqave);
+		
+	}//end of function tile_denoise
+	
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, float *bloxrow_a, float *bloxrow_b, LabImage * labdn,
+											  float ** tilemask_out, int height, int width, int top, int blkrad )
+	{
+		const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
+		
+		//add row of tiles to output image
+		for (int hblk=0; hblk < numblox_W; hblk++) {
+			int left = (hblk-blkrad)*offset;
+			int bottom = MIN( top+TS,height);
+			int right  = MIN(left+TS, width);
+			int imin = MAX(0,-top);
+			int jmin = MAX(0,-left);
+			int imax = bottom - top;
+			int jmax = right - left;
+			
+			int indx = hblk*TS;
+			
+			for (int i=imin; i<imax; i++)
+				for (int j=jmin; j<jmax; j++) {
+					
+					labdn->L[top+i][left+j] += tilemask_out[i][j]*bloxrow_L[(indx + i)*TS+j]/(TS*TS); 
+					//labdn->a[top+i][left+j] += tilemask_out[i][j]*bloxrow_a[(indx + i)*TS+j]/(TS*TS); 
+					//labdn->b[top+i][left+j] += tilemask_out[i][j]*bloxrow_b[(indx + i)*TS+j]/(TS*TS); 
+					
+				}
+		}
+		
 	}
 	
-}
-
 #undef TS
 #undef fTS
 #undef offset
-#undef eps
-
+	//#undef eps
+	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //experimental dirpyr low-pass filter
 
@@ -813,8 +783,10 @@ void ImProcFunctions::dirpyr_ab(LabImage * data_fine, LabImage * data_coarse, co
 	//delete dirpyrlo[1];
 }
 	
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
 
 void ImProcFunctions::dirpyr_ablevel(LabImage * data_fine, LabImage * data_coarse, int width, int height, LUTf & rangefn_L, LUTf & rangefn_ab, int level, int scale)
 {
@@ -897,6 +869,10 @@ void ImProcFunctions::dirpyr_ablevel(LabImage * data_fine, LabImage * data_coars
 	}
 	
 }
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
 /*
 void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radius, int thresh) { 
  
@@ -985,6 +961,318 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 	
 }	
 */
+	
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar ) 
+	{
+		int maxlvl = DualTreeCoeffs.maxlevel();
+		int rad_stage1[8] = {3,2,1,1,1,1,1,1};
+		int rad_stage2[8] = {2,1,1,1,1,1,1,1};
+		
+		for (int lvl=0; lvl<maxlvl-1; lvl++) {
+			int Wlvl = DualTreeCoeffs.level_W(lvl,0);
+			int Hlvl = DualTreeCoeffs.level_H(lvl,0);
+			
+			array2D<float> wiener1(Wlvl,Hlvl);
 
+			for (int m=0; m<2; m++) {
+				float ** ReCoeffs = DualTreeCoeffs.level_coeffs(lvl,0+m);
+				float ** ImCoeffs = DualTreeCoeffs.level_coeffs(lvl,2+m);
+				float ** ReParents = DualTreeCoeffs.level_coeffs(lvl+1,0+m);
+				float ** ImParents = DualTreeCoeffs.level_coeffs(lvl+1,2+m);
+				int ParentPadding = DualTreeCoeffs.level_pad(lvl+1,0+m);
+				for (int dir=1; dir<4; dir++) {
+					//FirstStageWiener (ReCoeffs[dir],ImCoeffs[dir],wiener1,Wlvl,Hlvl,rad_stage1[lvl], noisevar);
+					//SecondStageWiener(ReCoeffs[dir],ImCoeffs[dir],wiener1,Wlvl,Hlvl,rad_stage2[lvl], noisevar);
+
+					BiShrink(ReCoeffs[dir], ImCoeffs[dir], ReParents[dir], ImParents[dir], Wlvl, Hlvl, lvl, ParentPadding, noisevar);
+				}
+			}
+		}
+		
+	}
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar ) 
+	{
+		int maxlvl = WaveletCoeffs.maxlevel();
+		int rad_stage1[8] = {3,2,1,1,1,1,1,1};
+		int rad_stage2[8] = {2,1,1,1,1,1,1,1};
+		
+		for (int lvl=0; lvl<maxlvl/*-1*/; lvl++) {
+			int Wlvl = WaveletCoeffs.level_W(lvl);
+			int Hlvl = WaveletCoeffs.level_H(lvl);
+			
+			//array2D<float> wiener1(Wlvl,Hlvl);
+			int ParentPadding;
+			float ** WavParents;
+			float ** WavCoeffs = WaveletCoeffs.level_coeffs(lvl);
+			if (lvl<maxlvl-1) {
+				WavParents = WaveletCoeffs.level_coeffs(lvl+1);
+				ParentPadding = WaveletCoeffs.level_pad(lvl+1);
+			} else {
+				WavParents = WaveletCoeffs.level_coeffs(lvl);
+				ParentPadding = 0;
+			}
+			
+			float threshsq = noisevar;//*SQR(UniversalThresh(WaveletCoeffs.level_coeffs(lvl)[3], Wlvl*Hlvl));
+				
+			BiShrink(WavCoeffs, WavParents, Wlvl, Hlvl, lvl, ParentPadding, threshsq/*noisevar*/);
+		}
+		
+	}
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, int W, int H, int level, int pad, float noisevar) 
+	{	
+		//bivariate shrinkage of Sendur & Selesnick
+		float * sigma = new float[W*H]; 
+		int rad = 3*(1<<level);
+		boxvar(ReCoeffs,sigma,rad,rad,W,H);//box blur detail coeffs to estimate local variance
+		const float root3 = sqrt(3);
+		const int Wpar = (W+2*pad);
+		//const int Hpar = (H+1+2*pad)/2;
+		const float eps = 0.01f;
+		
+		for (int i=0; i<H; i++) {
+			for (int j=0; j<W; j++) {
+				
+				float thresh = root3 * noisevar/sqrt(MAX(sigma[i*W+j]-noisevar, eps));
+				int parentloc = ((i)-pad)*Wpar+(j)-pad;
+				int coeffloc  = i*W+j;
+				float mag = sqrt(SQR(ReCoeffs[coeffloc]) + SQR(ImCoeffs[coeffloc]) + SQR(ReParents[parentloc]) + SQR(ImParents[parentloc]));
+				float shrinkfactor = MAX(0,mag-thresh);
+				shrinkfactor /= (shrinkfactor+thresh+eps);
+				//float shrinkfactor = mag/(mag+noisevar+eps);
+				//float shrinkre = SQR(ReCoeffs[coeffloc])/(noisevar+ SQR(ReCoeffs[coeffloc]) +eps);
+				//float shrinkim = SQR(ImCoeffs[coeffloc])/(noisevar+ SQR(ImCoeffs[coeffloc]) +eps);
+				ReCoeffs[coeffloc] *= shrinkfactor;
+				ImCoeffs[coeffloc] *= shrinkfactor;
+				
+			}
+		}
+		
+		delete[] sigma;
+	}
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::BiShrink(float ** WavCoeffs, float ** WavParents, int W, int H, int level, int pad, float noisevar) 
+	{	
+		//bivariate shrinkage of Sendur & Selesnick
+		float * sigma = new float[W*H]; 
+		int rad = 256;//3*(1<<level);
+		//boxdev(WavCoeffs[3],sigma,rad,rad,W,H);//box blur detail coeffs to estimate local variance
+		const float root3 = sqrt(3);
+		const int Wpar = (W+2*pad);
+		//const int Hpar = (H+1+2*pad)/2;
+		const float eps = 0.01f;
+		printf("level=%d  ",level);
+		for (int dir=1; dir<4; dir++) {
+			float mad = SQR(UniversalThresh(WavCoeffs[dir], W*H));//*6*/(level+1);
+			printf("  dir=%d  mad=%f	",dir,sqrt(mad));
+			for (int i=0; i<H; i++) {
+				for (int j=0; j<W; j++) {
+					
+					//float thresh = root3 * noisevar/sqrt(MAX(sigma[i*W+j]-noisevar, eps));
+					//int parentloc = ((i)-pad)*Wpar+(j)-pad;
+					int coeffloc  = i*W+j;
+					//float mag = (SQR(WavCoeffs[dir][coeffloc]) + SQR(WavParents[dir][parentloc]) );
+					//float shrinkfactor = MAX(0,mag-thresh);
+					//shrinkfactor /= (shrinkfactor+thresh+eps);
+					float mag = SQR(WavCoeffs[dir][coeffloc]);
+					float shrinkfactor = mag/(mag+noisevar*mad*exp(-mag/(3*noisevar*mad))+eps);
+					//float shrinkfactor = mag/(mag+noisevar*SQR(sigma[coeffloc])+eps);
+					
+					//WavCoeffs[dir][coeffloc] *= shrinkfactor;
+					sigma[coeffloc] = shrinkfactor;
+				}
+			}
+			
+			boxblur(sigma, sigma, 1, 1, W, H);
+			for (int i=0; i<W*H; i++) {
+				float mag = SQR(WavCoeffs[dir][i]);
+				float sf = mag/(mag+noisevar*mad+eps);
+				//float sf1 = mag/(mag+4*noisevar*mad+eps);
+				
+				WavCoeffs[dir][i] *= (SQR(sigma[i])+SQR(sf))/(sigma[i]+sf+eps);
+				
+				//float wdn = WavCoeffs[dir][i]*sf;
+				//float wdn1 = WavCoeffs[dir][i]*sf1;
+
+				//WavCoeffs[dir][i] = wdn-wdn1;
+			}
+		}
+		printf("\n");
+		delete[] sigma;
+	}
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::FirstStageWiener(float* ReCoeffs, float* ImCoeffs, float* wiener1, int W, int H, int rad, float noisevar) {
+		
+		//wiener filter
+		float * sigmare = new float[W*H]; 
+		float * sigmaim = new float[W*H]; 
+
+		//box blur detail coeffs to estimate local variance
+		boxvar(ReCoeffs,sigmare,rad,rad,W,H);
+		boxvar(ImCoeffs,sigmaim,rad,rad,W,H);
+
+		const float eps = 0.01f;
+		
+		for (int i=0; i<H; i++) {
+			for (int j=0; j<W; j++) {
+				//classic Wiener filter
+				float var = sigmare[i*W+j]+sigmaim[i*W+j];
+				wiener1[i*W+j] = MAX(var-noisevar, eps)/(var+eps);
+			}
+		}
+		
+		delete[] sigmare;
+		delete[] sigmaim;
+	}
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::SecondStageWiener(float* ReCoeffs, float* ImCoeffs, float* wiener1, int W, int H, int rad, float noisevar) {
+		
+		//wiener filter
+		float * Q = new float[W*H]; 
+		float * C = new float[W*H]; 
+		
+		//compute matched filter and neighborhood wiener ave
+		QCoeffs(ReCoeffs, ImCoeffs, wiener1, Q, rad, W, H);
+		boxblur(wiener1, C, rad, rad, W, H);
+		
+		const float eps = 0.01f;
+		
+		for (int i=0; i<H; i++) {
+			for (int j=0; j<W; j++) {
+				//classic Wiener filter
+				float wiener2 = MAX(C[i*W+j]*noisevar,Q[i*W+j]-C[i*W+j]*noisevar)/(Q[i*W+j]+(1-C[i*W+j])*noisevar+eps);
+				ReCoeffs[i*W+j] *= wiener2;
+				ImCoeffs[i*W+j] *= wiener2;
+			}
+		}
+		
+		delete[] Q;
+		delete[] C;
+	}
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void ImProcFunctions::QCoeffs (float* srcre, float* srcim, float* wiener1, float* dst, int rad, int W, int H) {
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//box blur image; box size is (2*rad+1)x(2*rad+1)
+		
+		AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
+		float* temp = buffer->data;
+		
+		if (rad==0) {
+			for (int row=0; row<H; row++) 
+				for (int col=0; col<H; col++) {
+					temp[row*H+col] = wiener1[row*W+col]*(SQR(srcre[row*W+col])+SQR(srcim[row*W+col]));
+				}
+		} else {
+			//horizontal blur
+			for (int row = 0; row < H; row++) {
+				int len = rad + 1;
+				temp[row*W+0] = wiener1[row*W+0]*(SQR(srcre[row*W+0])+SQR(srcim[row*W+0]))/len;
+				for (int j=1; j<=rad; j++) {
+					temp[row*W+0] += wiener1[row*W+j]*(SQR(srcre[row*W+j])+SQR(srcim[row*W+j]))/len;
+				}
+				for (int col=1; col<=rad; col++) {
+					temp[row*W+col] = (temp[row*W+col-1]*len + 
+									   wiener1[row*W+col+rad]*(SQR(srcre[row*W+col+rad])+SQR(srcim[row*W+col+rad])))/(len+1);
+					len ++;
+				}
+				for (int col = rad+1; col < W-rad; col++) {
+					temp[row*W+col] = temp[row*W+col-1] + (wiener1[row*W+col+rad]*(SQR(srcre[row*W+col+rad])+SQR(srcim[row*W+col+rad])) - \
+														   wiener1[row*W+col-rad-1]*(SQR(srcre[row*W+col-rad-1])+SQR(srcim[row*W+col-rad-1])))/len;
+				}
+				for (int col=W-rad; col<W; col++) {
+					temp[row*W+col] = (temp[row*W+col-1]*len - wiener1[row*W+col-rad-1]*(SQR(srcre[row*W+col-rad-1])+SQR(srcim[row*W+col-rad-1])))/(len-1);
+					len --;
+				}
+			}
+		}
+		
+		if (rad==0) {
+			for (int row=0; row<H; row++) 
+				for (int col=0; col<H; col++) {
+					dst[row*W+col] = temp[row*W+col];
+				}
+		} else {
+			//vertical blur
+			for (int col = 0; col < W; col++) {
+				int len = rad + 1;
+				dst[0*W+col] = temp[0*W+col]/len;
+				for (int i=1; i<=rad; i++) {
+					dst[0*W+col] += temp[i*W+col]/len;
+				}
+				for (int row=1; row<=rad; row++) {
+					dst[row*W+col] = (dst[(row-1)*W+col]*len + temp[(row+rad)*W+col])/(len+1);
+					len ++;
+				}
+				for (int row = rad+1; row < H-rad; row++) {
+					dst[row*W+col] = dst[(row-1)*W+col] + (temp[(row+rad)*W+col] - temp[(row-rad-1)*W+col])/len;
+				}
+				for (int row=H-rad; row<H; row++) {
+					dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rad-1)*W+col])/(len-1);
+					len --;
+				}
+			}
+		}
+		
+		delete buffer;
+		
+	}
+	
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	float ImProcFunctions::UniversalThresh(float * HH_Coeffs, int datalen) {
+		
+		int * histo = new int[65536];
+		//memset(histo, 0, 65536*sizeof(histo));
+		for (int i=0; i<65536; i++) histo[i]=0;
+		
+		//calculate histogram of absolute values of HH wavelet coeffs
+		for (int i=0; i<datalen; i++) {
+			histo[MAX(0,MIN(65535,abs((int)HH_Coeffs[i])))]++;
+		}
+		
+		//find median of luminance
+		int median=0, count=0;
+		while (count<datalen/2) {
+			count += histo[median];
+			median++;
+		}
+		
+		int count_ = count - histo[median-1];
+		
+		delete[] histo;
+		
+		return (( (median-1) + (datalen/2-count_)/((float)(count-count_)) )/0.6745);
+		
+	}
+
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 };

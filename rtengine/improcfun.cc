@@ -36,6 +36,7 @@
 #include "color.h"
 #include "calc_distort.h"
 #include "cplx_wavelet_dec.h"
+#include "boxblur.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -558,10 +559,68 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 	void ImProcFunctions::impulsedenoise (LabImage* lab) {
 		
 		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
+		{
+			//impulse_nr (lab, (float)params->impulseDenoise.thresh/10.0 );//20 is normal
 			
-			//impulse_nr (lab, (float)params->impulseDenoise.thresh/20.0 );
-		{	cplx_wavelet_decomposition Ldecomp(lab->data, lab->W, lab->H, 1 /*maxlvl*/);
-			Ldecomp.reconstruct(lab->data);}
+			for (int i=0; i<lab->W*lab->H; i++) {
+				lab->data[i] *= lab->data[i]/32768.0f;
+			}
+			wavelet_decomposition Ldecomp(lab->data, lab->W, lab->H, 5 );//last arg is num levels
+			//WaveletDenoise(Ldecomp, SQR((float)params->impulseDenoise.thresh*25.0f));
+			WaveletDenoise(Ldecomp, SQR((float)params->impulseDenoise.thresh/25.0f));
+			
+			LabImage* labtmp = new LabImage (lab->W,lab->H);
+			
+			int lvl = (params->impulseDenoise.thresh>>4)&7;
+			int branch = (params->impulseDenoise.thresh>>2)&1;//2*re_im + dir
+			int subband = params->impulseDenoise.thresh&3;//orientation for detail subbands
+			float noisevar = SQR((float)params->defringe.threshold * 10.0f);
+			/*for (int i=0; i<lab->W*lab->H; i++) {
+			 //float recoeff = Ldecomp.level_coeffs(lvl,branch)[subband][i]/(2<<lvl);
+			 //float imcoeff = Ldecomp.level_coeffs(lvl,branch+2)[subband][i]/(2<<lvl);
+			 //float shrink = (SQR(recoeff)+SQR(imcoeff))/(SQR(recoeff)+SQR(imcoeff)+noisevar);
+			 //lab->data[i] = sqrt(SQR(recoeff)+SQR(imcoeff)) * (subband != 0 ? 2*shrink : 0.707);
+			 lab->data[i] = Ldecomp.level_coeffs(lvl,branch)[subband][i] + (subband != 0 ? 10000 : 0);
+			 }*/
+			//for (int i=0; i<lab->W*lab->H; i++) {
+			//	Ldecomp.level_coeffs(4)[0][i] = 0;
+			//}
+			Ldecomp.reconstruct(labtmp->data);
+			
+			//double radius = (int)(params->impulseDenoise.thresh/10) ;
+			//boxvar(lab->data, lab->data, radius, radius, lab->W, lab->H);
+			
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+			/*int w=lab->W;
+			int h=lab->H;
+			for(int y = 0; y != h-1; y++){
+				float *rg = &lab->data[w*y];
+				for(int x = 0; x != w-1; x++){
+					float gx = (fabs((rg[x + 1] - rg[x]) + (rg[x + w + 1] - rg[x + w])));
+					float gy = (fabs((rg[x + w] - rg[x]) + (rg[x + w + 1] - rg[x + 1])));
+					lab->data[w*y+x] = gx+gy;//sqrt(lab->data[i]/32768.0f)*32768.0f;
+				}
+			}*/
+			
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			//double radius = (double)params->impulseDenoise.thresh/40.0 ;
+			//AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
+			//gaussDerivH<float> (lab->L, lab->L, buffer, lab->W, lab->H, radius, false/*multiThread*/);
+			//gaussVertical<float>(lab->L, lab->L, buffer, lab->W, lab->H, radius, false/*multiThread*/);
+			//delete buffer;
+			
+			//impulse_nr (labtmp, 50.0f/20.0f);
+
+			for (int i=0; i<lab->W*lab->H; i++) {
+				//lab->data[i] = 4*(labtmp->data[i]-lab->data[i])+10000;
+				lab->data[i] = sqrt(MAX(0,labtmp->data[i]/32768.0f))*32768.0f;
+			}
+			delete labtmp;
+			
+			impulse_nr (lab, 50.0f/20.0f);
+
+		}
 	}
 	
 	void ImProcFunctions::defringe (LabImage* lab) {
@@ -646,7 +705,6 @@ fclose(f);*/
 	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double defgain, double clip, \
 									   double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh) {
 		
-		double corr = 1;//pow(2.0, defgain);//defgain may be redundant legacy of superceded code???
 		float scale = 65536.0;
 		float midgray=0.15;//0.18445f;//middle gray in linear gamma = 0.18445*65535
 		
@@ -677,15 +735,13 @@ fclose(f);*/
 				octile[count] += histogram[i];
 				if (octile[count]>sum/8 || (count==7 && octile[count]>sum/16)) {
 					octile[count]=log(1+i)/log(2);
-					count++;// = MIN(count+1,7);
+					count++;
 				}
 			}
 			if (i<ave) {
-				//lodev += SQR(ave-i)*histogram[i];
 				lodev += (log(ave+1)-log(i+1))*histogram[i];
 				losum += histogram[i];
 			} else {
-				//hidev += SQR(i-ave)*histogram[i];
 				hidev += (log(i+1)-log(ave+1))*histogram[i];
 				hisum += histogram[i];
 			}
@@ -701,7 +757,7 @@ fclose(f);*/
 		for (int i=1; i<6; i++) {
 			ospread += (octile[i+1]-octile[i])/MAX(0.5,(i>2 ? (octile[i+1]-octile[3]) : (octile[3]-octile[i])));
 		}
-		ospread /= 5;
+		ospread /= 5;//average width of octiles
 		
 		// compute clipping points based on the original histograms (linear, without exp comp.)
 		int clipped = 0;
@@ -743,13 +799,9 @@ fclose(f);*/
 		//sets the mean or median at middle gray, and the amount that sets the estimated top 
 		//of the histogram at or near clipping.  
 		
-		float expcomp1 = log(/*(median/ave)*//*(hidev/lodev)*/midgray*scale/(ave-shc+midgray*shc))/log(2);
+		float expcomp1 = log(midgray*scale/(ave-shc+midgray*shc))/log(2);
 		float expcomp2 = 0.5*( (15.5f-histcompr-(2*octile[7]-octile[6])) + log(scale/rawmax)/log(2) );
 
-		/*expcomp = (expcomp1*fabs(expcomp2)+expcomp2*fabs(expcomp1))/(fabs(expcomp1)+fabs(expcomp2));
-		if (expcomp<0) {
-			MIN(0.0f,MAX(expcomp1,expcomp2));
-		}*/
 		expcomp = 0.5 * (expcomp1 + expcomp2);
 		float gain = exp(expcomp*log(2));
 		
@@ -765,7 +817,7 @@ fclose(f);*/
 		float shoulder = ((scale/MAX(1,gain))*(hlcomprthresh/200.0))+0.1;
 		//this is a series approximation of the actual formula for comp,
 		//which is a transcendental equation
-		float comp = (gain*((float)whiteclip)/scale - 1)*2;//*(1-shoulder/scale);
+		float comp = (gain*((float)whiteclip)/scale - 1)*2;
 		hlcompr=(int)(100*comp/(MAX(0,expcomp) + 1.0));
 		hlcompr = MAX(0,MIN(100,hlcompr));
 		
@@ -778,52 +830,12 @@ fclose(f);*/
 			bright = (midgray-midtmp)*15.0/(0.10833-0.0833*midtmp);
 		}
 		
-		bright = 0.25*/*(median/ave)*(hidev/lodev)*/MAX(0,bright);
+		bright = 0.25*MAX(0,bright);
 		
 		//compute contrast that spreads the average spacing of octiles
 		contr = 50.0*(1.1-ospread);
 		contr = MAX(0,MIN(100,contr));
 		
-		//diagnostics
-		//printf ("**************** AUTO LEVELS ****************\n");
-		//printf ("gain1= %f   gain2= %f		gain= %f\n",expcomp1,expcomp2,gain);
-		//printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
-		//printf ("average: %f\n",ave);
-		//printf ("median/average: %f\n",median/ave);
-		//printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
-		//printf ("lodev: %f\n",lodev);
-		//printf ("hidev: %f\n",hidev);
-		//printf ("rawmax= %d  whiteclip= %d  gain= %f\n",rawmax,whiteclip,gain);
-		
-		//printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);    
-		//printf ("ospread= %f\n",ospread);
-		
-		
-		/*
-		 // %%%%%%%%%% LEGACY AUTOEXPOSURE CODE %%%%%%%%%%%%%
-		 // black point selection is based on the linear result (yielding better visual results)
-		 black = (int)(shc * corr);
-		 // compute the white point of the exp. compensated gamma corrected image
-		 double whiteclipg = (int)(CurveFactory::gamma2 (whiteclip * corr / 65536.0) * 65536.0);
-		 
-		 // compute average intensity of the exp compensated, gamma corrected image
-		 double gavg = 0;
-		 for (int i=0; i<65536>>histcompr; i++) 
-		 gavg += histogram[i] * CurveFactory::gamma2((int)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
-		 
-		 if (black < gavg) {
-		 int maxwhiteclip = (gavg - black) * 4 / 3 + black; // dont let whiteclip be such large that the histogram average goes above 3/4
-		 //double mavg = 65536.0 / (whiteclipg-black) * (gavg - black);
-		 if (whiteclipg < maxwhiteclip)
-		 whiteclipg = maxwhiteclip;
-		 }
-		 
-		 whiteclipg = CurveFactory::igamma2 ((float)(whiteclipg/65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
-		 
-		 black = (int)((65535*black)/whiteclipg);
-		 expcomp = log(65535.0 / (whiteclipg)) / log(2.0);
-		 
-		 if (expcomp<0.0)	expcomp = 0.0;*/
 		
 		if (expcomp<-5.0)	expcomp = -5.0;
 		if (expcomp>10.0)	expcomp = 10.0;
