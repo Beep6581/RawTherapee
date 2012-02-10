@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Use this Bash script to test RT processing speed.
 # Written by DrSlony
-# 2012-02-05
+# 2012-02-10
 # www.seeitmyway.org
 # www.rawtherapee.com
 
@@ -34,7 +34,8 @@ Benchmark the time it takes for a given version of RawTherapee to process a file
                   minsizerel
                   relwithdebuginfo
 
-    -e        - Specify the whole path to (but excluding) the "rawtherapee" executable.
+    -e        - Specify the whole path to (but excluding) the "rawtherapee"
+                executable.
                 e.g. "-e $HOME/rt_${branch}_${buildType}"
 
     -h        - Print this help screen.
@@ -108,7 +109,7 @@ buildRT() {
 
 while getopts "e:h?r:i:s:m:b:" opt; do
     case "$opt" in
-        e)  customExe="$OPTARG"
+        e)  customExeDir="$OPTARG"
             ;;
         h|\?)
             howto
@@ -196,7 +197,7 @@ else # if sidecarCustom was not specified, use the ones in sidecarDefault
   sidecarFiles=("${sidecarDefault[@]}")
 fi
 
-rtExeDirs=("${customExe}" "${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee/")
+rtExeDirs=("${customExeDir}" "${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee/")
 for rtExeDir in "${rtExeDirs}"; do
   #if [[ -n "$customExe"
   if [[ -x "${rtExeDir}/${rtExe}" ]]; then
