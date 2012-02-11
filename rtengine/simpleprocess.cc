@@ -144,7 +144,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	int    hlcomprthresh = params.toneCurve.hlcomprthresh;
 
     if (params.toneCurve.autoexp) {
-		printf("silpleprocess calling autoexp\n");
 		LUTu aehist; int aehistcompr;
 		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
 		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
