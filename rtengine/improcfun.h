@@ -161,14 +161,14 @@ namespace rtengine {
 		void ImStats(float* src, float* dst, int H, int W, int box );
 		void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
 		void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
+		void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
+							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
 		void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, \
 					  int W, int H, int level, int padding, float noisevar);
-		void BiShrink(float ** WavCoeffs, float ** WavParents, int W, int H, int level, int padding, float noisevar);
-		void FirstStageWiener(float* ReCoeffs, float* ImCoeffs, float* wiener1, int W, int H, int rad, float noisevar);
-		void SecondStageWiener(float* ReCoeffs, float* ImCoeffs, float* wiener1, int W, int H, int rad, float noisevar);
-		void QCoeffs (float* srcre, float* srcim, float* wiener1, float* dst, int rad, int W, int H);
+		void Shrink(float ** WavCoeffs, int W, int H, int level, float noisevar);
+		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, \
+					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_ab);
 		float UniversalThresh(float * HH_Coeffs, int datalen);
-
 		
 		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer

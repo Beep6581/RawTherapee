@@ -62,9 +62,8 @@ private:
 
     static const int maxlevels = 8;//should be greater than any conceivable order of decimation
     
-    int lvltot;
+    int lvltot, subsamp;
     size_t m_w, m_h;//dimensions
-    size_t m_w1, m_h1;
 	
 	int first_lev_len, first_lev_offset;
 	float *first_lev_anal;
@@ -83,7 +82,7 @@ private:
 public:
 
     template<typename E>
-    cplx_wavelet_decomposition(E * src, int width, int height, int maxlvl);
+    cplx_wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling);
     
     ~cplx_wavelet_decomposition();
 	
@@ -122,11 +121,9 @@ public:
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	template<typename E>
-	cplx_wavelet_decomposition::cplx_wavelet_decomposition(E * src, int width, int height, int maxlvl)
-	: lvltot(0), m_w(width), m_h(height), m_w1(0), m_h1(0)
+	cplx_wavelet_decomposition::cplx_wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling)
+	: lvltot(0), subsamp(subsampling), m_w(width), m_h(height)
 	{
-		m_w1 = width;
-		m_h1 = height;
 		
 		//initialize wavelet filters
 		
@@ -187,11 +184,11 @@ public:
 			for (int m=0; m<2; m++) {
 				lvltot=0;
 				float padding = 0;//1<<(maxlvl-1);
-				dual_tree[0][2*n+m] = new wavelet_level<internal_type>(src, lvltot, padding, m_w, m_h, first_lev_anal+first_lev_len*2*n, \
+				dual_tree[0][2*n+m] = new wavelet_level<internal_type>(src, lvltot, subsamp, padding, m_w, m_h, first_lev_anal+first_lev_len*2*n, \
 																				   first_lev_anal+first_lev_len*2*m, first_lev_len, first_lev_offset);
 				while(lvltot < maxlvl) {
 					lvltot++;
-					dual_tree[lvltot][2*n+m] = new wavelet_level<internal_type>(dual_tree[lvltot-1][2*n+m]->lopass()/*lopass*/, lvltot, 0/*no padding*/, \
+					dual_tree[lvltot][2*n+m] = new wavelet_level<internal_type>(dual_tree[lvltot-1][2*n+m]->lopass()/*lopass*/, lvltot, subsamp, 0/*no padding*/, \
 																							dual_tree[lvltot-1][2*n+m]->width(), \
 																							dual_tree[lvltot-1][2*n+m]->height(), \
 																							wavfilt_anal+wavfilt_len*2*n, wavfilt_anal+wavfilt_len*2*m, \
@@ -305,9 +302,8 @@ public:
 		
 		static const int maxlevels = 8;//should be greater than any conceivable order of decimation
 		
-		int lvltot;
+		int lvltot, subsamp;
 		size_t m_w, m_h;//dimensions
-		size_t m_w1, m_h1;
 		
 		int wavfilt_len, wavfilt_offset;
 		float *wavfilt_anal;
@@ -322,7 +318,7 @@ public:
 	public:
 		
 		template<typename E>
-		wavelet_decomposition(E * src, int width, int height, int maxlvl);
+		wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling);
 		
 		~wavelet_decomposition();
 		
@@ -346,9 +342,19 @@ public:
 			return wavelet_decomp[level]->padding();
 		}
 		
+		int level_stride(int level) const
+		{
+			return wavelet_decomp[level]->stride();
+		}
+		
 		int maxlevel() const
 		{
 			return lvltot;
+		}
+		
+		int subsample() const
+		{
+			return subsamp;
 		}
 		
 		template<typename E>
@@ -361,14 +367,11 @@ public:
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	template<typename E>
-	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl)
-	: lvltot(0), m_w(width), m_h(height), m_w1(0), m_h1(0)
+	wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling)
+	: lvltot(0), subsamp(subsampling), m_w(width), m_h(height)
 	{
-		m_w1 = width;
-		m_h1 = height;
 		
 		//initialize wavelet filters
-		
 		
 		wavfilt_len = Haar_len;
 		wavfilt_offset = Haar_offset;
@@ -396,11 +399,11 @@ public:
 		
 		int padding = 0;//pow(2, maxlvl);//must be a multiple of two
 		lvltot=0;
-		wavelet_decomp[lvltot] = new wavelet_level<internal_type>(src, lvltot/*level*/, padding/*padding*/, m_w, m_h, \
+		wavelet_decomp[lvltot] = new wavelet_level<internal_type>(src, lvltot/*level*/, subsamp, padding/*padding*/, m_w, m_h, \
 																  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset);
 		while(lvltot < maxlvl) {
 			lvltot++;
-			wavelet_decomp[lvltot] = new wavelet_level<internal_type>(wavelet_decomp[lvltot-1]->lopass()/*lopass*/, lvltot/*level*/, 0/*no padding*/, \
+			wavelet_decomp[lvltot] = new wavelet_level<internal_type>(wavelet_decomp[lvltot-1]->lopass()/*lopass*/, lvltot/*level*/, subsamp, 0/*no padding*/, \
 																	  wavelet_decomp[lvltot-1]->width(), wavelet_decomp[lvltot-1]->height(), \
 																	  wavfilt_anal, wavfilt_anal, wavfilt_len, wavfilt_offset);
 		}
@@ -417,15 +420,15 @@ public:
 		
 		// data structure is wavcoeffs[scale][channel={lo,hi1,hi2,hi3}][pixel_array]
 		
-		int skip=1<<(lvltot-1);
+		//int skip=1<<(lvltot-1);
 		for (int lvl=lvltot-1; lvl>0; lvl--) {
-			wavelet_decomp[lvl]->reconstruct_level(wavelet_decomp[lvl-1]->wavcoeffs[0], wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset, skip);
-			skip /=2;
+			wavelet_decomp[lvl]->reconstruct_level(wavelet_decomp[lvl-1]->wavcoeffs[0], wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset, subsamp);
+			//skip /=2;
 		}
 		
 		internal_type * tmp = new internal_type[m_w*m_h];
 
-		wavelet_decomp[0]->reconstruct_level(tmp, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset, skip);
+		wavelet_decomp[0]->reconstruct_level(tmp, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset, subsamp);
 		
 		copy_out(tmp,dst,m_w*m_h);
 		

@@ -29,6 +29,8 @@
 
 namespace rtengine {
 	
+#undef MAX
+#undef MIN
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define MIN(a,b) ((a) > (b) ? (b) : (a))
 #define SQR(x) ((x)*(x))
@@ -50,6 +52,9 @@ namespace rtengine {
 		
 		// level of decomposition
 		int lvl;
+		
+		// whether to subsample the output
+		bool subsamp_out;
 		
 		// spacing of filter taps
 		size_t skip;
@@ -80,6 +85,17 @@ namespace rtengine {
 		void SynthesisFilter (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, 
 							  float *filterLo, float *filterHi, int taps, int offset, int pitch, int dstlen);
 		
+		void AnalysisFilterHaar (T * srcbuffer, T * dstLo, T * dstHi, int pitch, int srclen);
+		void SynthesisFilterHaar (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, int pitch, int dstlen);
+		
+		void AnalysisFilterSubsamp (T * srcbuffer, T * dstLo, T * dstHi, float *filterLo, float *filterHi, 
+							 int taps, int offset, int pitch, int srclen);
+		void SynthesisFilterSubsamp (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, 
+							  float *filterLo, float *filterHi, int taps, int offset, int pitch, int dstlen);
+		
+		void AnalysisFilterSubsampHaar (T * srcbuffer, T * dstLo, T * dstHi, int pitch, int srclen);
+		void SynthesisFilterSubsampHaar (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, int pitch, int dstlen);
+		
 		void imp_nr (T* src, int width, int height, double thresh);
 
 		
@@ -88,11 +104,17 @@ namespace rtengine {
 		T ** wavcoeffs;
 		
 		template<typename E>
-		wavelet_level(E * src, int level, int padding, size_t w, size_t h, float *filterV, float *filterH, int len, int offset)
-		: m_w(w), m_h(h), m_w2(w), m_h2(h), m_pad(padding), wavcoeffs(NULL), lvl(level), skip(1<<level)
+		wavelet_level(E * src, int level, int subsamp, int padding, size_t w, size_t h, float *filterV, float *filterH, int len, int offset)
+		: m_w(w), m_h(h), m_w2(w), m_h2(h), m_pad(padding), wavcoeffs(NULL), lvl(level), skip(1<<level), subsamp_out((subsamp>>level)&1)
 		{
-			m_w2 = (w+2*skip*padding);
-			m_h2 = (h+2*skip*padding);
+			if (subsamp) {
+				skip = 1;
+				for (int n=0; n<level; n++) {
+					skip *= 2-((subsamp>>n)&1);
+				}
+			}
+			m_w2 = (subsamp_out ? ((w+1+2*skip*padding)/2) : (w+2*skip*padding));
+			m_h2 = (subsamp_out ? ((h+1+2*skip*padding)/2) : (h+2*skip*padding));
 			m_pad= skip*padding;
 			
 			wavcoeffs = create((m_w2)*(m_h2));
@@ -128,6 +150,11 @@ namespace rtengine {
 		size_t padding() const
 		{
 			return m_pad/skip;
+		}
+		
+		size_t stride() const
+		{
+			return skip;
 		}
 		
 		template<typename E>
@@ -168,38 +195,13 @@ namespace rtengine {
 	}
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 	template<typename T> template<typename E>
 	void wavelet_level<T>::loadbuffer(E * src, E * dst, int pitch, int srclen)
 	{
 		E * tmp = dst + m_pad;
 		memset(dst, 0, (MAX(m_w2,m_h2))*sizeof(E));
-		
-		/*int cosetlen = (srclen+1)/skip;
-		
-		//create buffer with 'skip' rows and 'cosetlen' columns from src data
-		//'skip' is the spacing of taps on the wavelet filter to be applied to src rows/columns
-		//therefore there are 'skip' cosets of the row/column data, each of length 'cosetlen'
-		//'pitch' is 1 for rows, W for columns
-		for (size_t i = 0, j = 0; i<srclen; i++, j += pitch)
-		{
-			int coset = i%skip;
-			int indx  = i/skip;
-			tmp[coset*cosetlen + indx] = src[j];
-		}	
-		
-		//even up last row/column if srclen is not a multiple of 'skip'
-		for (size_t i=srclen; i<srclen+(srclen%skip); i++) {
-			tmp[i] = tmp[i-skip];
-		}
-		
-		// extend each coset mirror-like by padding amount 'm_pad'
-		for (size_t coset=0; coset<skip*cosetlen; coset+=cosetlen) {
-			for (size_t i=1; i<=MIN(cosetlen-1,m_pad); i++) {
-				tmp[coset-i] = tmp[coset+i];
-				tmp[coset+cosetlen+i-1] = tmp[coset+cosetlen-i-1];
-			}
-		}*/
 		
 		//create padded buffer from src data
 		for (size_t i = 0, j = 0; i<srclen; i++, j += pitch)
@@ -229,40 +231,11 @@ namespace rtengine {
 		
 		/* Basic convolution code
 		 * Applies an FIR filter 'filter' with filter length 'taps', 
-		 * aligning the 'offset' element of the filter
-		 * with the input pixel, and skipping 'pitch' pixels
-		 * between taps (eg pitch=1 for horizontal filtering, 
-		 * pitch=W for vertical, pitch=W+1,W-1 for diagonals.
-		 * Currently diagonal filtering is not supported
-		 * for the full source array, until a more sophisticated 
-		 * treatment of mirror BC's is implemented.
+		 * aligning the 'offset' element of the filter with
+		 * the input pixel, and skipping 'skip' pixels between taps 
 		 *
 		 */
 		
-		//input data is 'skip' rows and cosetlen=srclen/skip columns (which includes padding at either and)
-		
-		/*int cosetlen = srclen/skip;
-		
-		for (size_t coset=0; coset<srclen; coset+=cosetlen) {
-			for (size_t i = 0; i < (cosetlen); i++) {
-				float lo=0,hi=0;
-				if (i>taps && i<cosetlen-taps) {//bulk
-					for (int j=0, l=-offset; j<taps; j++, l++) {
-						lo += filterLo[j] * src[i-l];//lopass channel
-						hi += filterHi[j] * src[i-l];//hipass channel
-					}
-				} else {//boundary
-					for (int j=0; j<taps; j++) {
-						int arg = MAX(0,MIN(i+(offset-j),srclen-1));//clamped BC's
-						lo += filterLo[j] * src[arg];//lopass channel
-						hi += filterHi[j] * src[arg];//hipass channel
-					}
-				}
-			
-				dstLo[(pitch*(coset+i))] = lo;
-				dstHi[(pitch*(coset+i))] = hi;
-			}
-		}*/
 				
 		for (size_t i = 0; i < (srclen); i++) {
 			float lo=0,hi=0;
@@ -286,56 +259,19 @@ namespace rtengine {
 	}
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 	template<typename T>
 	void wavelet_level<T>::SynthesisFilter (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, float *filterLo, 
 												 float *filterHi, int taps, int offset, int pitch, int dstlen) {
 		
 		/* Basic convolution code
-		 * Applies an FIR filter 'filter' with 'len' taps, 
-		 * aligning the 'offset' element of the filter
-		 * with the input pixel, and skipping 'pitch' pixels
-		 * between taps (eg pitch=1 for horizontal filtering, 
-		 * pitch=W for vertical, pitch=W+1,W-1 for diagonals.
-		 * Currently diagonal filtering is not supported
-		 * for the full source array, until a more sophisticated 
-		 * treatment of mirror BC's is implemented.
+		 * Applies an FIR filter 'filter' with filter length 'taps', 
+		 * aligning the 'offset' element of the filter with
+		 * the input pixel, and skipping 'skip' pixels between taps 
 		 *
 		 */
-
 		
-		
-		// load into buffer
-		/*
-		int srclen=(dstlen+(dstlen%skip)+2*m_pad);	//length of row/col in src (coarser level)
-		int cosetlen = srclen/skip;						//length of coset (skip is spacing of taps in filter)
-
-		for (size_t i=0, j=0; i<srclen; i++, j+=pitch) {
-			int indx = (i%skip)*cosetlen + i/skip;
-			bufferLo[indx]=srcLo[j];
-			bufferHi[indx]=srcHi[j];
-		}
-		
-		for (size_t coset=0; coset<srclen; coset+=cosetlen) {
-			for (size_t i = m_pad; i < (cosetlen-m_pad); i++) {
-				float tot=0;
-				if (i>taps && i<(cosetlen-taps)) {//bulk
-					for (int j=0, l=-shift; j<taps; j++, l++) {
-						tot += (filterLo[j] * bufferLo[i-l] + filterHi[j] * bufferHi[i-l]);
-					}
-				} else {//boundary
-					if (coset+i-m_pad == srclen) return;
-					for (int j=0, l=-shift; j<taps; j++, l++) {
-						int arg = MAX(0,MIN((i-l),srclen-1));//clamped BC's
-						tot += (filterLo[j] * bufferLo[arg] + filterHi[j] * bufferHi[arg]);
-					}
-				}
-				
-				dst[pitch*(coset+i-m_pad)] = tot;
-			}
-		}*/
-		
-		// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		// load into buffer
 		
@@ -346,30 +282,81 @@ namespace rtengine {
 			bufferHi[i]=srcHi[j];
 		}
 		
-		int shift=(taps-offset-1);
+		int shift=skip*(taps-offset-1);
 		for(size_t i = m_pad; i < (dstlen+m_pad); i++) {
 			float tot=0;
 			if (i>skip*taps && i<(srclen-skip*taps)) {//bulk
-				for (int j=0, l=-skip*shift; j<taps; j++, l+=skip) {
+				for (int j=0, l=-shift; j<taps; j++, l+=skip) {
 					tot += (filterLo[j] * bufferLo[i-l] + filterHi[j] * bufferHi[i-l]);
 				}
 			} else {//boundary
-				for (int j=0, l=-skip*shift; j<taps; j++, l+=skip) {
+				for (int j=0, l=-shift; j<taps; j++, l+=skip) {
 					int arg = MAX(0,MIN((i-l),srclen-1));//clamped BC's
 					tot += (filterLo[j] * bufferLo[arg] + filterHi[j] * bufferHi[arg]);
 				}
 			}
 			
 			dst[pitch*(i-m_pad)] = tot;
-			if (tot<0.0f || tot>65535.0f) {
-				float xxx=tot;
-				float yyy=1.0f;
-			}
+
 		}
 		
 	}
 	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	template<typename T>
+	void wavelet_level<T>::AnalysisFilterHaar (T * srcbuffer, T * dstLo, T * dstHi, int pitch, int srclen) {
+		
+		/* Basic convolution code
+		 * Applies a Haar filter 
+		 *
+		 */										
+		
+		for(size_t i = 0; i < (srclen - skip); i++) {
+			dstLo[(pitch*(i))] = 0.5*(srcbuffer[i] + srcbuffer[i+skip]);
+			dstHi[(pitch*(i))] = 0.5*(srcbuffer[i] - srcbuffer[i+skip]);
+		}
+		
+		for(size_t i = (srclen-skip); i < (srclen); i++) {
+			dstLo[(pitch*(i))] = 0.5*(srcbuffer[i] + srcbuffer[i-skip]);
+			dstHi[(pitch*(i))] = 0.5*(srcbuffer[i] - srcbuffer[i-skip]);
+		}
+																		 
+	}
+	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	
+	template<typename T>
+	void wavelet_level<T>::SynthesisFilterHaar (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, int pitch, int dstlen) {
+		
+		/* Basic convolution code
+		 * Applies a Haar filter 
+		 *
+		 */
+		
+		int srclen = (dstlen==m_w ? m_w2 : m_h2);//length of row/col in src (coarser level)
+		
+		for (size_t i=0, j=0; i<srclen; i++, j+=pitch) {
+			bufferLo[i]=srcLo[j];
+			bufferHi[i]=srcHi[j];
+		}
+		
+		for(size_t i = m_pad; i < (dstlen+m_pad-skip); i++) {
+			dst[pitch*(i-m_pad)] = 0.5*(bufferLo[i] - bufferHi[i] + bufferLo[i+skip] + bufferHi[i+skip]);			
+		}
+		
+		for(size_t i = (dstlen+m_pad-skip); i < (dstlen+m_pad); i++) {
+			dst[pitch*(i-m_pad)] = 0.5*(bufferLo[i] - bufferHi[i] + bufferLo[i-skip] + bufferHi[i-skip]);			
+		}
+	}
+	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 	
 	template<typename T> template<typename E>
 	void wavelet_level<T>::decompose_level(E *src, float *filterV, float *filterH, int taps, int offset, int skip) { 
@@ -377,20 +364,32 @@ namespace rtengine {
 		T *tmpLo = new T[m_w*m_h2];
 		T *tmpHi = new T[m_w*m_h2];
 		
-		T *buffer = new T[MAX(m_w2,m_h2)];
+		T *buffer = new T[MAX(m_w,m_h)];
 		
 		/* filter along columns */
 		for (int j=0; j<m_w; j++) {
 			loadbuffer(src+j, buffer, m_w/*pitch*/, m_h/*srclen*/);//pad a column of data and load it to buffer
-			AnalysisFilter (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
+			if (subsamp_out) {
+				AnalysisFilterSubsamp (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
+			} else {
+				AnalysisFilter (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
+			}
 		}
 		
 		/* filter along rows */
 		for (int i=0; i<m_h2; i++) {
 			loadbuffer(tmpLo+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);//pad a row of data and load it to buffer
-			AnalysisFilter (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+			if (subsamp_out) {
+				AnalysisFilterSubsamp (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+			} else {
+				AnalysisFilter (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+			}
 			loadbuffer(tmpHi+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);
-			AnalysisFilter (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+			if (subsamp_out) {
+				AnalysisFilterSubsamp (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+			} else {
+				AnalysisFilter (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+			}
 		}
 		
 		//imp_nr (wavcoeffs[0], m_w2, m_h2, 50.0f/20.0f);
@@ -400,8 +399,9 @@ namespace rtengine {
 		delete[] buffer;
 	}
 	
-	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
-	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 	template<typename T> template<typename E>
 	void wavelet_level<T>::reconstruct_level(E *dst, float *filterV, float *filterH, int taps, int offset, int skip) { 
 		
@@ -415,16 +415,28 @@ namespace rtengine {
 		/* filter along rows */
 		for (int i=0; i<m_h2; i++) {
 			
-			SynthesisFilter (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,  
-							 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
-			SynthesisFilter (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,  
-							 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+			if (subsamp_out) {
+				SynthesisFilterSubsamp (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,  
+										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+				SynthesisFilterSubsamp (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,  
+										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+			} else {
+				SynthesisFilter (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,  
+								 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+				SynthesisFilter (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,  
+								 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+			}
 		}
 		
 		/* filter along columns */
 		for (int j=0; j<m_w; j++) {
-			SynthesisFilter (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, 
-							 filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
+			if (subsamp_out) {
+				SynthesisFilterSubsamp (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, 
+								 filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
+			} else {
+				SynthesisFilter (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, 
+								 filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
+			}
 		}
 
 		
@@ -435,85 +447,153 @@ namespace rtengine {
 		
 	}
 	
-	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
-	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
-	
-	template<typename T> 
-	void wavelet_level<T>::imp_nr (T* src, int width, int height, double thresh) {
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+	template<typename T>
+	void wavelet_level<T>::AnalysisFilterSubsamp (T * srcbuffer, T * dstLo, T * dstHi, float *filterLo, float *filterHi, 
+												int taps, int offset, int pitch, int srclen) {
 		
+		/* Basic convolution code
+		 * Applies an FIR filter 'filter' with filter length 'taps', 
+		 * aligning the 'offset' element of the filter with
+		 * the input pixel, and skipping 'skip' pixels between taps 
+		 * Output is subsampled by two
+		 */
 		
-		// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// impulse noise removal
-		// local variables
+		// calculate coefficients
 		
-		float hpfabs, hfnbrave;
-		const float eps = 0.01;
+		for(int i = 0; i < (srclen); i+=2) {
+			float lo=0,hi=0;
+			if (i>skip*taps && i<srclen-skip*taps) {//bulk
+				for (int j=0, l=-skip*offset; j<taps; j++, l+=skip) {
+					lo += filterLo[j] * srcbuffer[i-l];//lopass channel
+					hi += filterHi[j] * srcbuffer[i-l];//hipass channel
+				}
+			} else {//boundary
+				for (int j=0; j<taps; j++) {
+					int arg = MAX(0,MIN(i+skip*(offset-j),srclen-1));//clamped BC's
+					lo += filterLo[j] * srcbuffer[arg];//lopass channel
+					hi += filterHi[j] * srcbuffer[arg];//hipass channel
+				}
+			}
+			
+			dstLo[(pitch*(i/2))] = lo;
+			dstHi[(pitch*(i/2))] = hi;
+		}
 		
-		// buffer for the lowpass image
-		float * lpf = new float[width*height];
-		// buffer for the highpass image
-		float * impish = new float[width*height];
-		
-		//The cleaning algorithm starts here
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// modified bilateral filter for lowpass image, omitting input pixel; or Gaussian blur
-		/*
-		static float eps = 1.0;
-		float wtdsum[3], dirwt, norm;
-		int i1, j1;	
-				
-		AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(width,height));
-		
-		gaussHorizontal<float> (src, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false);
-		gaussVertical<float>   (lpf, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false);
-		
-		delete buffer;
-		*/
-		
-		boxblur(src, lpf, 2, 2, width, height);
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		float impthr = MAX(1.0,5.5-thresh);
-		
-		for (int i=0; i < height; i++) 
-			for (int j=0; j < width; j++) {
-				hpfabs = fabs(src[i*width+j]-lpf[i*width+j]);
-				//block average of high pass data
-				for (int i1=MAX(0,i-2), hfnbrave=0; i1<=MIN(i+2,height-1); i1++ )
-					for (int j1=MAX(0,j-2); j1<=MIN(j+2,width-1); j1++ ) {
-						hfnbrave += fabs(src[i1*width+j1]-lpf[i1*width+j1]);
-					}
-				hfnbrave = (hfnbrave-hpfabs)/24;
-				hpfabs>(hfnbrave*impthr) ? impish[i*width+j]=1 : impish[i*width+j]=0;
-				
-			}//now impulsive values have been identified
-		
-		for (int i=0; i < height; i++)
-			for (int j=0; j < width; j++) {
-				if (!impish[i*width+j]) continue;
-				float norm=0.0;
-				float wtdsum=0.0;
-				for (int i1=MAX(0,i-2), hfnbrave=0; i1<=MIN(i+2,height-1); i1++ )
-					for (int j1=MAX(0,j-2); j1<=MIN(j+2,width-1); j1++ ) {
-						if (i1==i && j1==j) continue;
-						if (impish[i1*width+j1]) continue;
-						float dirwt = 1/(SQR(src[i1*width+j1]-src[i*width+j])+eps);//use more sophisticated rangefn???
-						wtdsum += dirwt*src[i1*width+j1];
-						norm += dirwt;
-					}
-				//wtdsum /= norm;
-				if (norm) {
-					src[i*width+j]=wtdsum/norm;//low pass filter
-				} 
-				
-			}//now impulsive values have been corrected
-		
-	delete [] lpf;
-	delete [] impish;
-	
 	}
+	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	template<typename T>
+	void wavelet_level<T>::SynthesisFilterSubsamp (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, 
+												 float *filterLo, float *filterHi, int taps, int offset, int pitch, int dstlen) {
+		
+		/* Basic convolution code
+		 * Applies an FIR filter 'filter' with filter length 'taps', 
+		 * aligning the 'offset' element of the filter with
+		 * the input pixel, and skipping 'skip' pixels between taps 
+		 * Output is subsampled by two
+		 */
+		
+		
+		
+		// calculate coefficients
+		
+		int srclen = (dstlen==m_w ? m_w2 : m_h2);//length of row/col in src (coarser level)
+		
+		//fill a buffer with a given row/column of data
+		for (size_t i=0, j=0; i<srclen; i++, j+=pitch) {
+			bufferLo[i]=srcLo[j];
+			bufferHi[i]=srcHi[j];
+		}
+				
+		int shift=skip*(taps-offset-1);//align filter with data
+		for(size_t i = m_pad; i < (dstlen+m_pad); i++) {
+			
+			float tot=0;
+			int i_src = (i+shift)/2;
+			int begin = (i+shift)%2;
+			if (i>skip*taps && i<(srclen-skip*taps)) {//bulk
+				for (int j=begin, l=0; j<taps; j+=2, l+=skip) {
+					tot += 2*((filterLo[j] * bufferLo[i_src-l] + filterHi[j] * bufferHi[i_src-l]));
+				}
+			} else {//boundary
+				for (int j=begin, l=0; j<taps; j+=2, l+=skip) {
+					int arg = MAX(0,MIN((i_src-l),srclen-1));//clamped BC's
+					tot += 2*((filterLo[j] * bufferLo[arg] + filterHi[j] * bufferHi[arg]));
+				}
+			}
+			
+			dst[pitch*(i-m_pad)] = tot;
+			
+		}
+		
+	}
+	
+	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	
+	
+	template<typename T>
+	void wavelet_level<T>::AnalysisFilterSubsampHaar (T * srcbuffer, T * dstLo, T * dstHi, int pitch, int srclen) {
+		
+		/* Basic convolution code
+		 * Applies a Haar filter
+		 * Output is subsampled by two
+		 */
+		
+		// calculate coefficients
+		
+		for(size_t i = 0; i < (srclen - skip); i+=2) {
+			dstLo[(pitch*(i/2))] = 0.5*(srcbuffer[i] + srcbuffer[i+skip]);
+			dstHi[(pitch*(i/2))] = 0.5*(srcbuffer[i] - srcbuffer[i+skip]);
+		}
+		
+		for(size_t i = (srclen-skip)-(srclen-skip)&1; i < (srclen); i+=2) {
+			dstLo[(pitch*(i/2))] = 0.5*(srcbuffer[i] + srcbuffer[i-skip]);
+			dstHi[(pitch*(i/2))] = 0.5*(srcbuffer[i] - srcbuffer[i-skip]);
+		}
+		
+	}
+	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	template<typename T>
+	void wavelet_level<T>::SynthesisFilterSubsampHaar (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, int pitch, int dstlen) {
+		
+		/* Basic convolution code
+		 * Applies a Haar filter 
+		 * Output was subsampled by two
+		 */
+		
+		
+		// calculate coefficients
+				
+		for(size_t i = m_pad; i < (dstlen+m_pad-skip); i+=2) {
+			dst[pitch*(i-m_pad)] = bufferLo[i/2]+bufferHi[i/2];
+			dst[pitch*(i+skip-m_pad)] = bufferLo[i/2]-bufferHi[i/2];
+		}
+		
+		if ((dstlen+m_pad)&1) {
+			dst[pitch*(dstlen-1)] = bufferLo[(dstlen+m_pad-1)/2]+bufferHi[(dstlen+m_pad-1)/2];
+		}
+		
+	}
+	
+	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+	
 
 	
 };
