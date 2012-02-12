@@ -561,14 +561,22 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
 		{
 			//impulse_nr (lab, (float)params->impulseDenoise.thresh/10.0 );//20 is normal
-			
-			for (int i=0; i<lab->W*lab->H; i++) {
+			int datalen = lab->W*lab->H;
+			for (int i=0; i<datalen; i++) {
 				lab->data[i] *= lab->data[i]/32768.0f;
+				//lab->data[i] = 5000;
 			}
-			wavelet_decomposition Ldecomp(lab->data, lab->W, lab->H, 5 );//last arg is num levels
-			//WaveletDenoise(Ldecomp, SQR((float)params->impulseDenoise.thresh*25.0f));
-			WaveletDenoise(Ldecomp, SQR((float)params->impulseDenoise.thresh/25.0f));
-			
+			//lab->data[100*lab->W+100] = 20000;
+			wavelet_decomposition Ldecomp(lab->data, lab->W, lab->H, 5/*maxlevel*/, 1/*subsampling*/ );
+			wavelet_decomposition adecomp(lab->data+datalen, lab->W, lab->H, 5, 1 );//last args are maxlevels, subsampling
+			wavelet_decomposition bdecomp(lab->data+2*datalen, lab->W, lab->H, 5, 1 );//last args are maxlevels, subsampling
+
+			float noisevar_L = SQR((float)params->impulseDenoise.thresh/25.0f);
+			float noisevar_ab = SQR((float)params->defringe.threshold / 5.0f);
+
+			//WaveletDenoise(Ldecomp, SQR((float)params->impulseDenoise.thresh/25.0f));
+			WaveletDenoiseAll(Ldecomp, adecomp, bdecomp, noisevar_L, noisevar_ab);
+
 			LabImage* labtmp = new LabImage (lab->W,lab->H);
 			
 			int lvl = (params->impulseDenoise.thresh>>4)&7;
@@ -576,17 +584,20 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			int subband = params->impulseDenoise.thresh&3;//orientation for detail subbands
 			float noisevar = SQR((float)params->defringe.threshold * 10.0f);
 			/*for (int i=0; i<lab->W*lab->H; i++) {
-			 //float recoeff = Ldecomp.level_coeffs(lvl,branch)[subband][i]/(2<<lvl);
-			 //float imcoeff = Ldecomp.level_coeffs(lvl,branch+2)[subband][i]/(2<<lvl);
-			 //float shrink = (SQR(recoeff)+SQR(imcoeff))/(SQR(recoeff)+SQR(imcoeff)+noisevar);
-			 //lab->data[i] = sqrt(SQR(recoeff)+SQR(imcoeff)) * (subband != 0 ? 2*shrink : 0.707);
-			 lab->data[i] = Ldecomp.level_coeffs(lvl,branch)[subband][i] + (subband != 0 ? 10000 : 0);
-			 }*/
+				//float recoeff = Ldecomp.level_coeffs(lvl,branch)[subband][i]/(2<<lvl);
+				//float imcoeff = Ldecomp.level_coeffs(lvl,branch+2)[subband][i]/(2<<lvl);
+				//float shrink = (SQR(recoeff)+SQR(imcoeff))/(SQR(recoeff)+SQR(imcoeff)+noisevar);
+				//lab->data[i] = sqrt(SQR(recoeff)+SQR(imcoeff)) * (subband != 0 ? 2*shrink : 0.707);
+				lab->data[i] = Ldecomp.level_coeffs(lvl,branch)[subband][i] + (subband != 0 ? 10000 : 0);
+
+			}*/
 			//for (int i=0; i<lab->W*lab->H; i++) {
 			//	Ldecomp.level_coeffs(4)[0][i] = 0;
 			//}
 			Ldecomp.reconstruct(labtmp->data);
-			
+			adecomp.reconstruct(lab->data+datalen);
+			bdecomp.reconstruct(lab->data+2*datalen);
+
 			//double radius = (int)(params->impulseDenoise.thresh/10) ;
 			//boxvar(lab->data, lab->data, radius, radius, lab->W, lab->H);
 			
@@ -612,13 +623,13 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			
 			//impulse_nr (labtmp, 50.0f/20.0f);
 
-			for (int i=0; i<lab->W*lab->H; i++) {
+			for (int i=0; i<datalen; i++) {
 				//lab->data[i] = 4*(labtmp->data[i]-lab->data[i])+10000;
 				lab->data[i] = sqrt(MAX(0,labtmp->data[i]/32768.0f))*32768.0f;
 			}
 			delete labtmp;
 			
-			impulse_nr (lab, 50.0f/20.0f);
+			//impulse_nr (lab, 50.0f/20.0f);
 
 		}
 	}
