@@ -24,7 +24,6 @@
 #include <cstddef>
 #include <algorithm>
 
-#include "array2D.h"
 #include "gauss.h"
 
 namespace rtengine {
@@ -59,16 +58,6 @@ namespace rtengine {
 		// spacing of filter taps
 		size_t skip;
 		
-		// array of pointers to lines of coeffs
-		// actually is a single contiguous data array pointed by m_coeffs[0]
-		//T ** m_coeffs;
-		//array2D<float> wavcoeffs(4,1);
-		//data structure: first label is output channel (LL,LH,HL,HH), second is pixel location in flattened array
-		
-		// weights storage
-		//T ** m_weights_rows;
-		//T ** m_weights_cols;
-		
 		// allocation and destruction of data storage
 		T ** create(size_t n);
 		void destroy(T ** subbands);
@@ -76,9 +65,6 @@ namespace rtengine {
 		// load a row/column of input data, possibly with padding
 		template<typename E>
 		void loadbuffer(E * src, E * dst, int srclen, int pitch);
-		
-		//void dwt_2d(size_t w, size_t h);
-		//void idwt_2d(size_t w, size_t h, int alpha);
 		
 		void AnalysisFilter (T * srcbuffer, T * dstLo, T * dstHi, float *filterLo, float *filterHi, 
 							 int taps, int offset, int pitch, int srclen);

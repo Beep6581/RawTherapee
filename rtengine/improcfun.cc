@@ -563,7 +563,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			//impulse_nr (lab, (float)params->impulseDenoise.thresh/10.0 );//20 is normal
 			int datalen = lab->W*lab->H;
 			for (int i=0; i<datalen; i++) {
-				lab->data[i] *= lab->data[i]/32768.0f;
+				//lab->data[i] *= lab->data[i]/32768.0f;
+				lab->data[i] = pow(lab->data[i]/32768.0f,3.0)*32768.0f;
 				//lab->data[i] = 5000;
 			}
 			//lab->data[100*lab->W+100] = 20000;
@@ -572,7 +573,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			wavelet_decomposition bdecomp(lab->data+2*datalen, lab->W, lab->H, 5, 1 );//last args are maxlevels, subsampling
 
 			float noisevar_L = SQR((float)params->impulseDenoise.thresh/25.0f);
-			float noisevar_ab = SQR((float)params->defringe.threshold / 5.0f);
+			float noisevar_ab = SQR((float)params->defringe.threshold / 25.0f);
 
 			//WaveletDenoise(Ldecomp, SQR((float)params->impulseDenoise.thresh/25.0f));
 			WaveletDenoiseAll(Ldecomp, adecomp, bdecomp, noisevar_L, noisevar_ab);
@@ -595,8 +596,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			//	Ldecomp.level_coeffs(4)[0][i] = 0;
 			//}
 			Ldecomp.reconstruct(labtmp->data);
-			adecomp.reconstruct(lab->data+datalen);
-			bdecomp.reconstruct(lab->data+2*datalen);
+			adecomp.reconstruct(labtmp->data+datalen);
+			bdecomp.reconstruct(labtmp->data+2*datalen);
 
 			//double radius = (int)(params->impulseDenoise.thresh/10) ;
 			//boxvar(lab->data, lab->data, radius, radius, lab->W, lab->H);
@@ -624,8 +625,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			//impulse_nr (labtmp, 50.0f/20.0f);
 
 			for (int i=0; i<datalen; i++) {
-				//lab->data[i] = 4*(labtmp->data[i]-lab->data[i])+10000;
-				lab->data[i] = sqrt(MAX(0,labtmp->data[i]/32768.0f))*32768.0f;
+				lab->data[i] = 4*(labtmp->data[i+datalen]-lab->data[i+datalen])+10000;
+				//lab->data[i] = sqrt(MAX(0,labtmp->data[i]/32768.0f))*32768.0f;
 			}
 			delete labtmp;
 			
@@ -636,9 +637,9 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 	
 	void ImProcFunctions::defringe (LabImage* lab) {
 		
-		if (params->defringe.enabled && lab->W>=8 && lab->H>=8)
+		//if (params->defringe.enabled && lab->W>=8 && lab->H>=8)
 			
-			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
+			//PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
 	}
 	
 	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
