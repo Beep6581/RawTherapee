@@ -52,7 +52,7 @@
 //#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 //#define CLIP(x) LIM(x,0,65535)
 
-#define TS 128		// Tile size
+#define TS 256		// Tile size
 #define offset (TS/4)	// shift between tiles
 #define fTS ((TS/2+1))	// second dimension of Fourier tiles
 //#define eps 0.01f/(TS*TS) //tolerance
@@ -85,7 +85,7 @@ namespace rtengine {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// gamma transform input channel data
-		float gam = dnparams.gamma-0.5;
+		float gam = dnparams.gamma;
 		float gamthresh = 0.03;
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
 		
@@ -103,16 +103,16 @@ namespace rtengine {
 		for (int i=0; i<src->height; i++) 
 			for (int j=0; j<src->width; j++) {
 				
-				float X = xyz_prophoto[0][0]*src->r[i][j] + xyz_prophoto[0][1]*src->g[i][j] + xyz_prophoto[0][2]*src->b[i][j];
-				float Y = xyz_prophoto[1][0]*src->r[i][j] + xyz_prophoto[1][1]*src->g[i][j] + xyz_prophoto[1][2]*src->b[i][j];
-				float Z = xyz_prophoto[2][0]*src->r[i][j] + xyz_prophoto[2][1]*src->g[i][j] + xyz_prophoto[2][2]*src->b[i][j];
+				float X = src->r[i][j];//xyz_prophoto[0][0]*src->r[i][j] + xyz_prophoto[0][1]*src->g[i][j] + xyz_prophoto[0][2]*src->b[i][j];
+				float Y = src->g[i][j];//xyz_prophoto[1][0]*src->r[i][j] + xyz_prophoto[1][1]*src->g[i][j] + xyz_prophoto[1][2]*src->b[i][j];
+				float Z = src->b[i][j];//xyz_prophoto[2][0]*src->r[i][j] + xyz_prophoto[2][1]*src->g[i][j] + xyz_prophoto[2][2]*src->b[i][j];
 				
 				X = X<65535.0f ? gamcurve[X] : (gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 				Y = Y<65535.0f ? gamcurve[Y] : (gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 				Z = Z<65535.0f ? gamcurve[Z] : (gamma((double)Z/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 				
 				dst->L[i][j] = Y;
-				dst->a[i][j] = 0.5f*(X-Y);
+				dst->a[i][j] = 0.2f*(X-Y);
 				dst->b[i][j] = 0.2f*(Y-Z);
 				
 				//Y = 0.05+0.1*((float)rand()/(float)RAND_MAX);//test with random data
@@ -130,7 +130,7 @@ namespace rtengine {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// gamma transform output channel data
-		float gam = dnparams.gamma-0.5;
+		float gam = dnparams.gamma;
 		float gamthresh = 0.03;
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
 		float igam = 1/gam;
@@ -152,7 +152,7 @@ namespace rtengine {
 				//input normalized to (0,1)
 				//Y = igamcurveL[ src->L[i][j] ];
 				Y = src->L[i][j];
-				X = (2.0f*(src->a[i][j])) + Y;
+				X = (5.0f*(src->a[i][j])) + Y;
 				Z = Y - (5.0f*(src->b[i][j]));
 				
 				X = X<32768.0f ? igamcurve[X] : (gamma((float)X/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
@@ -161,9 +161,9 @@ namespace rtengine {
 				
 				//Y = 65535.0f*(0.05+0.1*((float)rand()/(float)RAND_MAX));//test with random data
 				
-				dst->r[i][j] = prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
-				dst->g[i][j] = prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
-				dst->b[i][j] = prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
+				dst->r[i][j] = X;//prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
+				dst->g[i][j] = Y;//prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
+				dst->b[i][j] = Z;//prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
 				
 			}
 		}
@@ -285,14 +285,14 @@ namespace rtengine {
 		
 		for( int i = 0 ; i < 8 ; i++ ) {
 			Lblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
-			RLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
-			BLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
+			//RLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
+			//BLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
 			
 			fLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));	//for FT
 			//fLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));				//for DCT
 			
-			fRLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
-			fBLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
+			//fRLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
+			//fBLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
 		}
 		
 		//make a plan for FFTW
@@ -343,8 +343,8 @@ namespace rtengine {
 					for (int j=jmin; j<jmax; j++) {
 						
 						Lblox[vblkmod][(indx + i)*TS+j]  = tilemask_in[i][j]*(labin->L[top+i][left+j]-labblur->L[top+i][left+j]);// luma data
-						RLblox[vblkmod][(indx + i)*TS+j] = tilemask_in[i][j]*(labin->a[top+i][left+j]-labblur->a[top+i][left+j]);// high pass chroma data
-						BLblox[vblkmod][(indx + i)*TS+j] = tilemask_in[i][j]*(labin->b[top+i][left+j]-labblur->b[top+i][left+j]);// high pass chroma data
+						//RLblox[vblkmod][(indx + i)*TS+j] = tilemask_in[i][j]*(labin->a[top+i][left+j]-labblur->a[top+i][left+j]);// high pass chroma data
+						//BLblox[vblkmod][(indx + i)*TS+j] = tilemask_in[i][j]*(labin->b[top+i][left+j]-labblur->b[top+i][left+j]);// high pass chroma data
 						
 						totwt[top+i][left+j] += tilemask_in[i][j]*tilemask_out[i][j];
 					}
@@ -356,15 +356,15 @@ namespace rtengine {
 					for (int i=0; i<imin; i++) 
 						for (int j=jmin; j<jmax; j++) {
 							Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[2*imin-i-1][left+j]-labblur->L[2*imin-i-1][left+j]);
-							RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][left+j]-labblur->a[2*imin-i-1][left+j]);
-							BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][left+j]-labblur->b[2*imin-i-1][left+j]);
+							//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][left+j]-labblur->a[2*imin-i-1][left+j]);
+							//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][left+j]-labblur->b[2*imin-i-1][left+j]);
 						}
 					if (jmin>0) {
 						for (int i=0; i<imin; i++) 
 							for (int j=0; j<jmin; j++) {
 								Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[2*imin-i-1][2*jmin-j-1]-labblur->L[2*imin-i-1][2*jmin-j-1]);
-								RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][2*jmin-j-1]-labblur->a[2*imin-i-1][2*jmin-j-1]);
-								BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][2*jmin-j-1]-labblur->b[2*imin-i-1][2*jmin-j-1]);
+								//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][2*jmin-j-1]-labblur->a[2*imin-i-1][2*jmin-j-1]);
+								//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][2*jmin-j-1]-labblur->b[2*imin-i-1][2*jmin-j-1]);
 							}
 					}
 				}
@@ -373,15 +373,15 @@ namespace rtengine {
 					for (int i=imax; i<TS; i++) 
 						for (int j=jmin; j<jmax; j++) {
 							Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[height+imax-i-1][left+j]-labblur->L[height+imax-i-1][left+j]);
-							RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][left+j]-labblur->a[height+imax-i-1][left+j]);
-							BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][left+j]-labblur->b[height+imax-i-1][left+j]);
+							//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][left+j]-labblur->a[height+imax-i-1][left+j]);
+							//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][left+j]-labblur->b[height+imax-i-1][left+j]);
 						}
 					if (jmax<TS) {
 						for (int i=imax; i<TS; i++) 
 							for (int j=jmax; j<TS; j++) {
 								Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[height+imax-i-1][width+jmax-j-1]-labblur->L[height+imax-i-1][width+jmax-j-1]);
-								RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][width+jmax-j-1]-labblur->a[height+imax-i-1][width+jmax-j-1]);
-								BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][width+jmax-j-1]-labblur->b[height+imax-i-1][width+jmax-j-1]);
+								//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][width+jmax-j-1]-labblur->a[height+imax-i-1][width+jmax-j-1]);
+								//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][width+jmax-j-1]-labblur->b[height+imax-i-1][width+jmax-j-1]);
 							}
 					}
 				}
@@ -390,15 +390,15 @@ namespace rtengine {
 					for (int j=0; j<jmin; j++) 
 						for (int i=imin; i<imax; i++) {
 							Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[top+i][2*jmin-j-1]-labblur->L[top+i][2*jmin-j-1]);
-							RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[top+i][2*jmin-j-1]-labblur->a[top+i][2*jmin-j-1]);
-							BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[top+i][2*jmin-j-1]-labblur->b[top+i][2*jmin-j-1]);
+							//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[top+i][2*jmin-j-1]-labblur->a[top+i][2*jmin-j-1]);
+							//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[top+i][2*jmin-j-1]-labblur->b[top+i][2*jmin-j-1]);
 						}
 					if (imax<TS) {
 						for (int j=0; j<jmin; j++) 
 							for (int i=imax; i<TS; i++) {
 								Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[height+imax-i-1][2*jmin-j-1]-labblur->L[height+imax-i-1][2*jmin-j-1]);
-								RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][2*jmin-j-1]-labblur->a[height+imax-i-1][2*jmin-j-1]);
-								BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][2*jmin-j-1]-labblur->b[height+imax-i-1][2*jmin-j-1]);
+								//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][2*jmin-j-1]-labblur->a[height+imax-i-1][2*jmin-j-1]);
+								//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][2*jmin-j-1]-labblur->b[height+imax-i-1][2*jmin-j-1]);
 							}
 					}
 				}
@@ -408,15 +408,15 @@ namespace rtengine {
 					for (int j=jmax; j<TS; j++) 
 						for (int i=imin; i<imax; i++) {
 							Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[top+i][width+jmax-j-1]-labblur->L[top+i][width+jmax-j-1]);
-							RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[top+i][width+jmax-j-1]-labblur->a[top+i][width+jmax-j-1]);
-							BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[top+i][width+jmax-j-1]-labblur->b[top+i][width+jmax-j-1]);
+							//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[top+i][width+jmax-j-1]-labblur->a[top+i][width+jmax-j-1]);
+							//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[top+i][width+jmax-j-1]-labblur->b[top+i][width+jmax-j-1]);
 						}
 					if (imin>0) {
 						for (int i=0; i<imin; i++)
 							for (int j=jmax; j<TS; j++) {
 								Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[2*imin-i-1][width+jmax-j-1]-labblur->L[2*imin-i-1][width+jmax-j-1]);
-								RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][width+jmax-j-1]-labblur->a[2*imin-i-1][width+jmax-j-1]);
-								BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][width+jmax-j-1]-labblur->b[2*imin-i-1][width+jmax-j-1]);
+								//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][width+jmax-j-1]-labblur->a[2*imin-i-1][width+jmax-j-1]);
+								//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][width+jmax-j-1]-labblur->b[2*imin-i-1][width+jmax-j-1]);
 							}
 					}
 				}
@@ -430,8 +430,8 @@ namespace rtengine {
 			fftwf_execute_dft_r2c(plan_forward_blox,Lblox[vblkmod],fLblox[vblkmod]);	// FT an entire row of tiles
 			//fftwf_execute_r2r(plan_forward_blox,Lblox[vblkmod],fLblox[vblkmod]);		// DCT an entire row of tiles
 			
-			fftwf_execute_dft_r2c(plan_forward_blox,RLblox[vblkmod],fRLblox[vblkmod]);// FT an entire row of tiles
-			fftwf_execute_dft_r2c(plan_forward_blox,BLblox[vblkmod],fBLblox[vblkmod]);// FT an entire row of tiles
+			//fftwf_execute_dft_r2c(plan_forward_blox,RLblox[vblkmod],fRLblox[vblkmod]);// FT an entire row of tiles
+			//fftwf_execute_dft_r2c(plan_forward_blox,BLblox[vblkmod],fBLblox[vblkmod]);// FT an entire row of tiles
 			
 			if (vblk<blkrad) continue;
 			
@@ -463,8 +463,8 @@ namespace rtengine {
 			fftwf_execute_dft_c2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for FT
 			//fftwf_execute_r2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for DCT
 			
-			fftwf_execute_dft_c2r(plan_backward_blox,fRLblox[vblprocmod],RLblox[vblprocmod]);
-			fftwf_execute_dft_c2r(plan_backward_blox,fBLblox[vblprocmod],BLblox[vblprocmod]);
+			//fftwf_execute_dft_c2r(plan_backward_blox,fRLblox[vblprocmod],RLblox[vblprocmod]);
+			//fftwf_execute_dft_c2r(plan_backward_blox,fBLblox[vblprocmod],BLblox[vblprocmod]);
 			
 			int topproc = (vblproc-blkrad)*offset;
 			
@@ -481,8 +481,8 @@ namespace rtengine {
 					fftwf_execute_dft_c2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for FT
 					//fftwf_execute_r2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for DCT
 					
-					fftwf_execute_dft_c2r(plan_backward_blox,fRLblox[vblprocmod],RLblox[vblprocmod]);
-					fftwf_execute_dft_c2r(plan_backward_blox,fBLblox[vblprocmod],BLblox[vblprocmod]);
+					//fftwf_execute_dft_c2r(plan_backward_blox,fRLblox[vblprocmod],RLblox[vblprocmod]);
+					//fftwf_execute_dft_c2r(plan_backward_blox,fBLblox[vblprocmod],BLblox[vblprocmod]);
 					
 					RGBoutput_tile_row (Lblox[vblprocmod], RLblox[vblprocmod], BLblox[vblprocmod], labdn, \
 										tilemask_out, height, width, topproc, blkrad );
@@ -504,18 +504,18 @@ namespace rtengine {
 		
 		for( int i = 0 ; i < 8 ; i++ ) {
 			fftwf_free ( Lblox[i]);
-			fftwf_free (RLblox[i]);
-			fftwf_free (BLblox[i]);
+			//fftwf_free (RLblox[i]);
+			//fftwf_free (BLblox[i]);
 			fftwf_free ( fLblox[i]);
-			fftwf_free (fRLblox[i]);
-			fftwf_free (fBLblox[i]);
+			//fftwf_free (fRLblox[i]);
+			//fftwf_free (fBLblox[i]);
 		}
 		delete[]  Lblox;	
-		delete[] RLblox;
-		delete[] BLblox;
+		//delete[] RLblox;
+		//delete[] BLblox;
 		delete[]  fLblox;
-		delete[] fRLblox;
-		delete[] fBLblox;
+		//delete[] fRLblox;
+		//delete[] fBLblox;
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
@@ -527,14 +527,14 @@ namespace rtengine {
 				labdn->L[i][j] = labblur->L[i][j] + hpdn;
 				//labdn->L[i][j] = -(hporig)+0.25;
 				
-				hpdn = labdn->a[i][j]/totwt[i][j];
-				labdn->a[i][j] = labblur->a[i][j] + hpdn;
+				//hpdn = labdn->a[i][j]/totwt[i][j];
+				//labdn->a[i][j] = labblur->a[i][j] + hpdn;
 				
-				hpdn = labdn->b[i][j]/totwt[i][j];
-				labdn->b[i][j] = labblur->b[i][j] + hpdn;
+				//hpdn = labdn->b[i][j]/totwt[i][j];
+				//labdn->b[i][j] = labblur->b[i][j] + hpdn;
 				
-				//labdn->a[i][j] = labblur->a[i][j];
-				//labdn->b[i][j] = labblur->b[i][j];
+				labdn->a[i][j] = labblur->a[i][j];
+				labdn->b[i][j] = labblur->b[i][j];
 			}
 		}
 		
@@ -619,11 +619,11 @@ namespace rtengine {
 				
 				//float Lcoeff = fLblox[vblprocmod][(hblproc*TS+i)*TS+j];		//for DCT
 				
-				float RLcoeffre = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
-				float RLcoeffim = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
+				//float RLcoeffre = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
+				//float RLcoeffim = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
 				
-				float BLcoeffre = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
-				float BLcoeffim = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
+				//float BLcoeffre = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
+				//float BLcoeffim = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
 				
 				/*double nbrave=0, nbrsqave=0, coeffsq;
 				int vblnbrmod, hblnbrmod;
@@ -642,20 +642,20 @@ namespace rtengine {
 				float  Lwsq = eps+SQR( Lcoeffre)+SQR( Lcoeffim);	//for FT
 				//float  Lwsq = eps+SQR( Lcoeff);					//for DCT
 				
-				float RLwsq = eps+SQR(RLcoeffre)+SQR(RLcoeffim);
-				float BLwsq = eps+SQR(BLcoeffre)+SQR(BLcoeffim);
+				//float RLwsq = eps+SQR(RLcoeffre)+SQR(RLcoeffim);
+				//float BLwsq = eps+SQR(BLcoeffre)+SQR(BLcoeffim);
 				
 				//wsqave += Lwsq;
 				//float Lfactor = (4*Lblockvar)/(eps+(Lwsq+nbrvar)+2*Lblockvar);
 				//float Lfactor = expf(-Lwsq/(9*Lblockvar));
 				float freqfactor = 1.0f-MAX((expf(-(SQR(i)+SQR(j))/cutoffsq)),(expf(-(SQR(TS-i)+SQR(j))/cutoffsq)));
 				float  Lfactor = 1;//freqfactor;//*(2* Lblockvar)/(eps+ Lwsq+ Lblockvar);
-				float RLfactor = 1;//(2*RLblockvar)/(eps+RLwsq+RLblockvar);
-				float BLfactor = 1;//(2*BLblockvar)/(eps+BLwsq+BLblockvar);
+				//float RLfactor = 1;//(2*RLblockvar)/(eps+RLwsq+RLblockvar);
+				//float BLfactor = 1;//(2*BLblockvar)/(eps+BLwsq+BLblockvar);
 
 				float  Lshrinkfactor = SQR(Lwsq/(Lwsq + noisevar_L * Lfactor*exp(-Lwsq/(3*noisevar_L))));
-				float RLshrinkfactor = RLwsq/(RLwsq+noisevar_ab*RLfactor*exp(-Lwsq/(3*noisevar_L)));
-				float BLshrinkfactor = BLwsq/(BLwsq+noisevar_ab*BLfactor*exp(-Lwsq/(3*noisevar_L)));
+				//float RLshrinkfactor = RLwsq/(RLwsq+noisevar_ab*RLfactor*exp(-Lwsq/(3*noisevar_L)));
+				//float BLshrinkfactor = BLwsq/(BLwsq+noisevar_ab*BLfactor*exp(-Lwsq/(3*noisevar_L)));
 				
 				//float shrinkfactor = (wsq<noisevar ? 0 : 1);//hard threshold
 				
@@ -663,11 +663,11 @@ namespace rtengine {
 				fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= Lshrinkfactor;
 				//fLblox[vblprocmod][(hblproc*TS+i)*TS+j] *= Lshrinkfactor;		//for DCT
 				
-				fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= RLshrinkfactor;
-				fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= RLshrinkfactor;
+				//fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= RLshrinkfactor;
+				//fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= RLshrinkfactor;
 				
-				fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= BLshrinkfactor;
-				fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= BLshrinkfactor;
+				//fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= BLshrinkfactor;
+				//fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= BLshrinkfactor;
 				
 			}//end of block denoise		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -700,8 +700,8 @@ namespace rtengine {
 				for (int j=jmin; j<jmax; j++) {
 					
 					labdn->L[top+i][left+j] += tilemask_out[i][j]*bloxrow_L[(indx + i)*TS+j]/(TS*TS); 
-					labdn->a[top+i][left+j] += tilemask_out[i][j]*bloxrow_a[(indx + i)*TS+j]/(TS*TS); 
-					labdn->b[top+i][left+j] += tilemask_out[i][j]*bloxrow_b[(indx + i)*TS+j]/(TS*TS); 
+					//labdn->a[top+i][left+j] += tilemask_out[i][j]*bloxrow_a[(indx + i)*TS+j]/(TS*TS); 
+					//labdn->b[top+i][left+j] += tilemask_out[i][j]*bloxrow_b[(indx + i)*TS+j]/(TS*TS); 
 					
 				}
 		}
@@ -1089,7 +1089,7 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	float ImProcFunctions::UniversalThresh(float * HH_Coeffs, int datalen) {
+	float ImProcFunctions::UniversalThresh(float * Detail_Coeffs, int datalen) {
 		
 		int * histo = new int[65536];
 		//memset(histo, 0, 65536*sizeof(histo));
@@ -1097,10 +1097,10 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 		
 		//calculate histogram of absolute values of HH wavelet coeffs
 		for (int i=0; i<datalen; i++) {
-			histo[MAX(0,MIN(65535,abs((int)HH_Coeffs[i])))]++;
+			histo[MAX(0,MIN(65535,abs((int)Detail_Coeffs[i])))]++;
 		}
 		
-		//find median of luminance
+		//find median of histogram
 		int median=0, count=0;
 		while (count<datalen/2) {
 			count += histo[median];
@@ -1111,6 +1111,7 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 		
 		delete[] histo;
 		
+		// interpolate 
 		return (( (median-1) + (datalen/2-count_)/((float)(count-count_)) )/0.6745);
 		
 	}
@@ -1162,6 +1163,10 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 			float mad_L = SQR(UniversalThresh(WavCoeffs_L[dir], W_L*H_L));//*6*/(level+1);
 			float mad_a = SQR(UniversalThresh(WavCoeffs_a[dir], W_ab*H_ab));//*6*/(level+1);
 			float mad_b = SQR(UniversalThresh(WavCoeffs_b[dir], W_ab*H_ab));//*6*/(level+1);
+			
+			float thresh_L = sqrt(mad_L*noisevar_L);
+			float thresh_a = sqrt(mad_a*noisevar_ab);
+			float thresh_b = sqrt(mad_b*noisevar_ab);
 
 			printf("  dir=%d  mad_L=%f	mad_a=%f	mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
 			
@@ -1175,24 +1180,46 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 					float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 					float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 					
-					float edgefactor = exp(-mag_L/(sqrt(noisevar_L)*mad_L)) * exp(-mag_a/(3*noisevar_ab*mad_a)) * exp(-mag_b/(3*noisevar_ab*mad_b));
+					float edgefactor = exp(-mag_L/(sqrt(noisevar_L*mad_L))) * exp(-mag_a/(3*noisevar_ab*mad_a)) * exp(-mag_b/(3*noisevar_ab*mad_b));
+
+					//WavCoeffs_a[dir][coeffloc_ab] *= mag_a/(mag_a + noisevar_ab*mad_a*edgefactor + eps);
+					//WavCoeffs_b[dir][coeffloc_ab] *= mag_b/(mag_b + noisevar_ab*mad_b*edgefactor + eps);
 					
-					WavCoeffs_a[dir][coeffloc_ab] *= mag_a/(mag_a + noisevar_ab*mad_a*edgefactor + eps);
-					WavCoeffs_b[dir][coeffloc_ab] *= mag_b/(mag_b + noisevar_ab*mad_b*edgefactor + eps);
+					float coeff_a = fabs(WavCoeffs_a[dir][coeffloc_ab]);
+					float coeff_b = fabs(WavCoeffs_b[dir][coeffloc_ab]);
+
+					// 'firm' threshold of chroma coefficients
+					WavCoeffs_a[dir][coeffloc_ab] *= (coeff_a>2*thresh_a ? 1 : (coeff_a<thresh_a ? 0 : (coeff_a/thresh_a - 1)));
+					WavCoeffs_b[dir][coeffloc_ab] *= (coeff_b>2*thresh_b ? 1 : (coeff_b<thresh_b ? 0 : (coeff_b/thresh_b - 1)));
+
+					//WavCoeffs_b[dir][coeffloc_ab] *= (fabs(WavCoeffs_b[dir][coeffloc_ab])<thresh_a*noise_ab ? 0 : 1);
+
+
 				}
 			}
 			
 			for (int i=0; i<W_L*H_L; i++) {
+				
+				//float coeff_L = fabs(WavCoeffs_L[dir][i]);
+				// 'firm' threshold of luma coefficients
+				//float shrinkfactor = (coeff_L>2*thresh_L ? 1 : (coeff_L<thresh_L ? 0 : (coeff_L/thresh_L - 1)));
+				
 				float mag = SQR(WavCoeffs_L[dir][i]);
 				float shrinkfactor = mag/(mag+noisevar_L*mad_L*exp(-mag/(3*noisevar_L*mad_L))+eps);
+				
 				//float shrinkfactor = mag/(mag+noisevar*SQR(sigma[coeffloc])+eps);
 				
-				//WavCoeffs[dir][coeffloc] *= shrinkfactor;
+				//WavCoeffs_L[dir][i] *= shrinkfactor;
 				sigma[i] = shrinkfactor;
 			}
 			
-			boxblur(sigma, sigma, 1, 1, W_L, H_L);//increase smoothness by locally averaging shrinkage
+			boxblur(sigma, sigma, level+2, level+2, W_L, H_L);//increase smoothness by locally averaging shrinkage
 			for (int i=0; i<W_L*H_L; i++) {
+				
+				//float coeff_L = fabs(WavCoeffs_L[dir][i]);
+				// 'firm' threshold of chroma coefficients
+				//float sf = (coeff_L>2*thresh_L ? 1 : (coeff_L<thresh_L ? 0 : (coeff_L/thresh_L - 1)));
+				
 				float mag = SQR(WavCoeffs_L[dir][i]);
 				float sf = mag/(mag+noisevar_L*mad_L+eps);
 				
