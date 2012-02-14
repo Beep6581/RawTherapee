@@ -183,6 +183,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
 
         if (todo & M_LINDENOISE) {
+        	printf("denoising!\n");
         	// @Emil: put your luminance denoise tool here ; of course, at this stage, you only have an ImageFloat, no LabImage yet...
 			if (scale==1 && params.dirpyrDenoise.enabled) {
 				//array2D<float> Ldn(fw,fh);

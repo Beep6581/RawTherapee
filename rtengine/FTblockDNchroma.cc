@@ -188,7 +188,17 @@ namespace rtengine {
 		
 		const short int height=src->height, width=src->width;
 		const short int hfh=(height+1)/2, hfw=(width+1)/2;
-		//const short int hfh=(height+1), hfw=(width+1);
+		
+		if (dnparams.Lamt==0) {//nothing to do; copy src to dst
+			for (int i=0; i<height; i++) {
+				for (int j=0; j<width; j++) {
+					dst->r[i][j] = src->r[i][j];
+					dst->r[i][j] = src->r[i][j];
+					dst->r[i][j] = src->r[i][j];
+				}
+			}
+			return;
+		}
 		
 		const int blkrad=1;
 		float noisevar_L = SQR(dnparams.luma * TS * 10.0f);
@@ -1155,7 +1165,7 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 	{	
 		//simple wavelet shrinkage
 		const float eps = 0.01f;
-		float * sigma = new float[W_L*H_L]; 
+		float * sfave = new float[W_L*H_L]; 
 
 		printf("\n level=%d  \n",level);
 		
@@ -1207,13 +1217,13 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 				float mag = SQR(WavCoeffs_L[dir][i]);
 				float shrinkfactor = mag/(mag+noisevar_L*mad_L*exp(-mag/(3*noisevar_L*mad_L))+eps);
 				
-				//float shrinkfactor = mag/(mag+noisevar*SQR(sigma[coeffloc])+eps);
+				//float shrinkfactor = mag/(mag+noisevar*SQR(sfave[coeffloc])+eps);
 				
 				//WavCoeffs_L[dir][i] *= shrinkfactor;
-				sigma[i] = shrinkfactor;
+				sfave[i] = shrinkfactor;
 			}
 			
-			boxblur(sigma, sigma, level+2, level+2, W_L, H_L);//increase smoothness by locally averaging shrinkage
+			boxblur(sfave, sfave, level+2, level+2, W_L, H_L);//increase smoothness by locally averaging shrinkage
 			for (int i=0; i<W_L*H_L; i++) {
 				
 				//float coeff_L = fabs(WavCoeffs_L[dir][i]);
@@ -1224,7 +1234,7 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 				float sf = mag/(mag+noisevar_L*mad_L+eps);
 				
 				//use smoothed shrinkage unless local shrinkage is much less
-				WavCoeffs_L[dir][i] *= (SQR(sigma[i])+SQR(sf))/(sigma[i]+sf+eps);
+				WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
 				
 				//the following is for testing
 				//float wdn = WavCoeffs[dir][i]*sf;
@@ -1237,7 +1247,163 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 			
 
 		}
-		delete[] sigma;
+		delete[] sfave;
+	}
+	
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	
+	void ImProcFunctions::WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
+													 wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab ) 
+	{
+		int maxlvl = WaveletCoeffs_L.maxlevel();
+		const float eps = 0.01f;
+		
+		float madL[8][3], mada[8][3], madb[8][3];
+
+		for (int lvl=0; lvl<maxlvl; lvl++) {
+			// compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
+			
+			int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
+			int Hlvl_L = WaveletCoeffs_L.level_H(lvl);
+			
+			int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
+			int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
+			
+			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
+			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
+			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
+			
+			for (int dir=1; dir<4; dir++) {
+				madL[lvl][dir-1] = SQR(UniversalThresh(WavCoeffs_L[dir], Wlvl_L*Hlvl_L));//*6*/(level+1);
+				mada[lvl][dir-1] = SQR(UniversalThresh(WavCoeffs_a[dir], Wlvl_ab*Hlvl_ab));//*6*/(level+1);
+				madb[lvl][dir-1] = SQR(UniversalThresh(WavCoeffs_b[dir], Wlvl_ab*Hlvl_ab));//*6*/(level+1);
+			}
+		}
+			
+		for (int lvl=0; lvl<maxlvl; lvl++) {//for levels less than max, do bishrink
+			
+			int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
+			int Hlvl_L = WaveletCoeffs_L.level_H(lvl);
+			
+			int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
+			int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
+			
+			float skip_L = WaveletCoeffs_L.level_stride(lvl);
+			float skip_ab = WaveletCoeffs_a.level_stride(lvl);
+			
+			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
+			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
+			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
+			
+			if (lvl==maxlvl-1) {
+				ShrinkAll(WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, lvl, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,
+						  skip_L, skip_ab, noisevar_L, noisevar_ab);
+			} else {
+				
+				float ** WavPars_L = WaveletCoeffs_L.level_coeffs(lvl+1);
+				float ** WavPars_a = WaveletCoeffs_a.level_coeffs(lvl+1);
+				float ** WavPars_b = WaveletCoeffs_b.level_coeffs(lvl+1);
+				
+				//simple wavelet shrinkage
+				float * sfave = new float[Wlvl_L*Hlvl_L]; 
+				
+				printf("\n level=%d  \n",lvl);
+				
+				for (int dir=1; dir<4; dir++) {
+					float mad_L = madL[lvl][dir-1];//SQR(UniversalThresh(WavCoeffs_L[dir], W_L*H_L));// *6/(level+1);
+					float mad_a = mada[lvl][dir-1];//SQR(UniversalThresh(WavCoeffs_a[dir], W_ab*H_ab));// *6/(level+1);
+					float mad_b = madb[lvl][dir-1];//SQR(UniversalThresh(WavCoeffs_b[dir], W_ab*H_ab));// *6/(level+1);
+					
+					float thresh_L = sqrt(mad_L*noisevar_L);
+					float thresh_a = sqrt(mad_a*noisevar_ab);
+					float thresh_b = sqrt(mad_b*noisevar_ab);
+					
+					float skip_ab_ratio = WaveletCoeffs_a.level_stride(lvl+1)/skip_ab;
+					
+					printf("  dir=%d  mad_L=%f	mad_a=%f	mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
+					
+					for (int i=0; i<Hlvl_ab; i++) {
+						for (int j=0; j<Wlvl_ab; j++) {
+							
+							int coeffloc_ab = i*Wlvl_ab+j;
+							int coeffloc_abpar = (MAX(0,i-skip_ab)*Wlvl_ab+MAX(0,i-skip_ab))/skip_ab_ratio;
+
+							int coeffloc_L	= ((i*skip_L)/skip_ab)*Wlvl_L + ((j*skip_L)/skip_ab);
+							
+							float mag_L = fabs(WavCoeffs_L[dir][coeffloc_L ])*noisevar_L+eps;
+							float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])*noisevar_ab+eps;
+							float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])*noisevar_ab+eps;
+							float mag_apar = SQR(WavPars_a[dir][coeffloc_abpar])*noisevar_ab+eps;
+							float mag_bpar = SQR(WavPars_b[dir][coeffloc_abpar])*noisevar_ab+eps;
+							
+							float edgefactor = exp(-mag_L/(sqrt(noisevar_L*mad_L))) * exp(-mag_a/(3*noisevar_ab*mad_a)) * exp(-mag_b/(3*noisevar_ab*mad_b));
+							
+							//WavCoeffs_a[dir][coeffloc_ab] *= mag_a/(mag_a + noisevar_ab*mad_a*edgefactor + eps);
+							//WavCoeffs_b[dir][coeffloc_ab] *= mag_b/(mag_b + noisevar_ab*mad_b*edgefactor + eps);
+							
+							float coeff_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
+							float coeff_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
+							float coeff_apar = SQR(WavPars_a[dir][coeffloc_abpar]);
+							float coeff_bpar = SQR(WavPars_b[dir][coeffloc_abpar]);
+							
+							float sf_a = 1-expf(-(coeff_a/mag_a)-(coeff_apar/mag_apar));
+							float sf_b = 1-expf(-(coeff_b/mag_b)-(coeff_bpar/mag_bpar));
+
+							// 'firm' threshold of chroma coefficients
+							WavCoeffs_a[dir][coeffloc_ab] *= sf_a;//(coeff_a>2*thresh_a ? 1 : (coeff_a<thresh_a ? 0 : (coeff_a/thresh_a - 1)));
+							WavCoeffs_b[dir][coeffloc_ab] *= sf_b;//(coeff_b>2*thresh_b ? 1 : (coeff_b<thresh_b ? 0 : (coeff_b/thresh_b - 1)));
+							
+							//WavCoeffs_b[dir][coeffloc_ab] *= (fabs(WavCoeffs_b[dir][coeffloc_ab])<thresh_a*noise_ab ? 0 : 1);
+							
+							
+						}
+					}
+					
+					for (int i=0; i<Wlvl_L*Hlvl_L; i++) {
+						
+						//float coeff_L = fabs(WavCoeffs_L[dir][i]);
+						// 'firm' threshold of luma coefficients
+						//float shrinkfactor = (coeff_L>2*thresh_L ? 1 : (coeff_L<thresh_L ? 0 : (coeff_L/thresh_L - 1)));
+						
+						float mag = SQR(WavCoeffs_L[dir][i]);
+						float shrinkfactor = mag/(mag+noisevar_L*mad_L*exp(-mag/(3*noisevar_L*mad_L))+eps);
+						
+						//float shrinkfactor = mag/(mag+noisevar*SQR(sfave[coeffloc])+eps);
+						
+						//WavCoeffs_L[dir][i] *= shrinkfactor;
+						sfave[i] = shrinkfactor;
+					}
+					
+					boxblur(sfave, sfave, lvl+2, lvl+2, Wlvl_L, Hlvl_L);//increase smoothness by locally averaging shrinkage
+					for (int i=0; i<Wlvl_L*Hlvl_L; i++) {
+						
+						//float coeff_L = fabs(WavCoeffs_L[dir][i]);
+						// 'firm' threshold of chroma coefficients
+						//float sf = (coeff_L>2*thresh_L ? 1 : (coeff_L<thresh_L ? 0 : (coeff_L/thresh_L - 1)));
+						
+						float mag = SQR(WavCoeffs_L[dir][i]);
+						float sf = mag/(mag+noisevar_L*mad_L+eps);
+						
+						//use smoothed shrinkage unless local shrinkage is much less
+						WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
+						
+						//the following is for testing
+						//float wdn = WavCoeffs[dir][i]*sf;
+						//float sf1 = mag/(mag+4*noisevar*mad+eps);
+						//float wdn1 = WavCoeffs[dir][i]*sf1;
+						
+						//WavCoeffs[dir][i] = wdn-wdn1;
+					}//now luminance coeffs are denoised
+					
+					
+					
+				}
+				delete[] sfave;
+			}
+		}
 	}
 	
 	
