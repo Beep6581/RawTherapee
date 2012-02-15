@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.0, 2012-02-10
+# Version 2.0.1, 2012-02-15
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.seeitmyway.org
 # www.rawtherapee.com
@@ -75,6 +75,7 @@ compile () {
 
       # if you manually applied a patch, this check avoids having it undone or broken by a hg update
       if [[ ! $patched = b ]]; then
+        printf "%s\n" "\$patched is ${patched}"
         printf "%s\n" "Updating the local repository."
         hg pull
         hg update ${branch}
@@ -86,29 +87,11 @@ compile () {
       verLatesttag="`hg parents --template '{latesttag}'`"
       verLatesttagdistance="`hg parents --template '{latesttagdistance}'`"
       verMajor=${verLatesttag%%.*}
-      cmake -DCMAKE_BUILD_TYPE=${buildType} -DPROC_TARGET_NUMBER:STRING=${procTarget} -DCMAKE_C_FLAGS="-O3 -pipe" -DCMAKE_CXX_FLAGS="${CMAKE_C_FLAGS}" ${noomp} -DCMAKE_INSTALL_PREFIX=rawtherapee -DBUILD_BUNDLE=ON -DBINDIR=. -DDATADIR=. -DCACHE_NAME_SUFFIX=${verMajor} || { echo "Error during cmake, exiting." >&2; exit 1; }
+      cmake -DCMAKE_BUILD_TYPE="$buildType" -DPROC_TARGET_NUMBER="$procTarget" -DCMAKE_C_FLAGS="-O2 -pipe" -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS" -DCMAKE_CXX_FLAGS_RELEASE="$CMAKE_CXX_FLAGS" "$noomp" -DCMAKE_INSTALL_PREFIX="rawtherapee" -DBUILD_BUNDLE="ON" -DBINDIR="." -DDATADIR="." -DCACHE_NAME_SUFFIX="$verMajor" || { echo "Error during cmake, exiting." >&2; exit 1; }
       time { make -j${cpuCount} install; } || { printf "%s\n" "" "Error during make, exiting."; exit 1; }
       printf "%-15b %b\n" "" "" "Rawtherapee compiled:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "" ""
 
-#      # branch "branch_3.0" will compile into a dir called "rawtherapee", good, no action needed.
-#      # branch "default" with "-DCMAKE_BUILD_TYPE=release" will compile into a dir called "release", rename to "rawtherapee"
-#      # branch "default" with "-DCMAKE_BUILD_TYPE=debug" will compile into a dir called "debug", rename to "rawtherapee"
-#      # 2012-12-28 compilng branch_3.0 fails, probably due to a requirement on outdated dependencies, and I will remove this section once RT4 goes officially stable
-#      if [[ -d "$repo/release" ]]
-#        then
-#          echo "Found $repo/release, moving to ${repo}/rawtherapee"
-#          mv -v "${repo}/release" "${repo}/rawtherapee" || { echo "Something went wrong while moving ${repo}/release to ${repo}/rawtherapee" >&2; exit 1; }
-#      elif [[ -d "$repo/debug" ]]
-#        then
-#          echo "Found $repo/debug, moving to ${repo}/rawtherapee"
-#          mv -v "${repo}/debug" "${repo}/rawtherapee" || { echo "Something went wrong while moving ${repo}/debug to ${repo}/rawtherapee" >&2; exit 1; }
-#      elif [[ -d "$repo/minsizerel" ]]
-#        then
-#          echo "Found $repo/minsizerel, moving to ${repo}/rawtherapee"
-#          mv -v "${repo}/minsizerel" "${repo}/rawtherapee" || { echo "Something went wrong while moving ${repo}/minsizerel to ${repo}/rawtherapee" >&2; exit 1; }
-#      fi
-
-      [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Moving ${repo}/${buildType} to ${repo}/rawtherapee"; mv "${repo}/${buildType}" "${repo}/rawtherapee"; } || { printf "%s\n" "Could not find the directory containing the compiled RawTherapee in ${repo}" "Please notify DrSlony in the forum:" "http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" "" "Exiting"; exit 1; }
+      [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Moving \"${repo}/${buildType}\" to \"${repo}/rawtherapee\""; mv "${repo}/${buildType}" "${repo}/rawtherapee"; } || { printf "%s\n" "Could not find the directory containing the compiled RawTherapee in ${repo}" "Please notify DrSlony in the forum:" "http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" "" "Exiting"; exit 1; }
 
       echo
       cat AboutThisBuild.txt || { printf "%s\n" "${repo}/AboutThisBuild.txt not found, exiting."; exit 1; }
@@ -124,7 +107,7 @@ compile () {
       mv "${repo}/rawtherapee" "${HOME}/rt_${branch}_${buildType}" || { printf "%s\n" "" "Could not move \"${repo}/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}\", exiting."; exit 1; }
 
       printf "%-15b %b\n" "" "" "Build ready:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget"
-      printf "%s\n" "" "To run RawTherapee, fire up a terminal and type:" "~/rt_${branch}_${buildType}/rawtherapee" "" "------------------------------------------" ""
+      printf "%s\n" "" "To run RawTherapee, fire up a terminal and type:" "~/rt_${branch}_${buildType}/rawtherapee" "" "------------------------------------------"
       alert "RawTherapee-${verLatesttag}.${verLatesttagdistance} ready.\nChoice number ${choiceNumber}, branch: ${branch}, type: ${buildType}, target: ${procTarget}"
       done
 }
@@ -207,7 +190,7 @@ checkBits () {
 }
 
 setVars () {
-  unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo patched param
+  unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo param
   checkDistro
   checkBits
   repo="${HOME}/rawtherapee" && echo "Repository is set to ${repo}"
@@ -236,7 +219,7 @@ alert () {
 finishUp () {
   # builds=( /tmp/RawTherapee* ); for f in ${builds[@]}; do echo ${f#/tmp/}; done
   if [[ $patched != b ]]; then
-    printf "%s\n" "RawTherapee zipped builds read in /tmp"
+    printf "%s\n" "RawTherapee zipped builds ready in /tmp"
     ls -lh /tmp/RawTherapee*
   fi
   printf "%s\n" "" "Finished building all chosen versions of RawTherapee"

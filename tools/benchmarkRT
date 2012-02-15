@@ -21,59 +21,59 @@ howto() {
   fold -s <<END
 Benchmark the time it takes for a given version of RawTherapee to process a file. The designated file will be processed three times in a row, and the average time of those three runs will be calculated. Make sure you have no unnecessary background activity - no programs intensely using the CPU. Turn off all P2P, multimedia, graphics editing, games, database, server and other "heavy" software, otherwise the timings will be skewed. You can use the "top" and "ps ux" commands to see a list of running processes and their CPU usage.
 
-  Usage:
-  ./benchmark_rt.sh [OPTIONS]
+Usage:
+  ./benchmarkRT [OPTIONS]
 
-  Options:
-    -b <type> - Specify the CMAKE_BUILD_TYPE.
-                The default value is "release".
+Options:
+  -b <type> - Specify the CMAKE_BUILD_TYPE.
+              The default value is "release".
                 
-                Valid types are:
-                  release
-                  debug
-                  minsizerel
-                  relwithdebuginfo
+              Valid types are:
+                release
+                debug
+                minsizerel
+                relwithdebuginfo
 
-    -e        - Specify the whole path to (but excluding) the "rawtherapee"
-                executable.
-                e.g. "-e $HOME/rt_${branch}_${buildType}"
+  -e        - Specify the whole path to (but excluding) the "rawtherapee"
+              executable.
+              e.g. "-e $HOME/rt_${branch}_${buildType}"
 
-    -h        - Print this help screen.
+  -h        - Print this help screen.
 
-    -i <file> - Input file name. This can be a file on your hard drive or a url.
-                The url must start with "http". The default behavior if you do
-                not use -i is to download a test file from www.rawtherapee.com
+  -i <file> - Input file name. This can be a file on your hard drive or a url.
+              The url must start with "http". The default behavior if you do
+              not use -i is to download a test file from www.rawtherapee.com
 
-    -m <path> - Path to your clone of the RawTherapee source code repository.
-                The default path is ~/rawtherapee
-                If you do not specify a path and ~/rawtherapee is not found, it
-                will be cloned.
+  -m <path> - Path to your clone of the RawTherapee source code repository.
+              The default path is ~/rawtherapee
+              If you do not specify a path and ~/rawtherapee is not found, it
+              will be cloned.
 
-    -r <rev>  - You can try out any revision of RawTherapee.
+  -r <rev>  - You can try out any revision of RawTherapee.
 
-                Valid values are digits or the word "tip" (excluding quotation
-                marks), e.g.
-                1234
-                tip
+              Valid values are digits or the word "tip" (excluding quotation
+              marks), e.g.
+              1234
+              tip
 
-    -s <file> - Input sidecar file name. The name of the PP3 or XMP file by
-                which the input file must be developed.
-                This can be a file on your hard drive or a url.
-                The default behaviour if you do not use -s is to use the
-                "neutral" profile.
+  -s <file> - Input sidecar file name. The name of the PP3 or XMP file by
+              which the input file must be developed.
+              This can be a file on your hard drive or a url.
+              The default behaviour if you do not use -s is to use the
+              "neutral" profile.
 
-    Examples:
-      Run the default benchmark (recommended)
-        ./benchmark_rt.sh
+Examples:
+  Run the default benchmark (recommended)
+    ./benchmarkRT
 
-      Run a benchmark using your own files and existing RT clone dir
-        ./benchmark_rt.sh -b release -i kittens.raw -s kittens.raw.pp3 -m /home/fruitloops/rawtherapee-clone -r 4.0.0
+  Run a benchmark using your own files and existing RT clone dir
+    ./benchmarkRT -b release -i kittens.raw -s kittens.raw.pp3 -m /home/fruitloops/rawtherapee-clone -r 4.0.0
 
-  Further help:
-    If you need further help, discover bugs or want to request new functionality
-    in this script, then tell us in the forum or on IRC:
-      http://rawtherapee.com/forum/
-      http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
+Further help:
+  If you need further help, discover bugs or want to request new functionality
+  in this script, then tell us in the forum or on IRC:
+    http://rawtherapee.com/forum/
+    http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
 
 END
 }
