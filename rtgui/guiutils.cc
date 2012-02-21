@@ -155,6 +155,17 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                     }
                 }
             }   
+            else if (cparams.guide=="ePassport") {
+                /* Official measurements do not specify exact ratios, just min/max measurements within which the eyes and chin-crown distance must lie. I averaged those measurements to produce these guides.
+                 * The first horizontal guide is for the crown, the second is rougly for the nostrils, the third is for the chin.
+                 * http://www.homeoffice.gov.uk/agencies-public-bodies/ips/passports/information-photographers/
+                 * "(...) the measurement of the face from the bottom of the chin to the crown (ie the top of the head, not the top of the hair) is between 29mm and 34mm."
+                 */
+                horiz_ratios.push_back (7.0/45.0);
+                horiz_ratios.push_back (26.0/45.0);
+                horiz_ratios.push_back (37.0/45.0);
+                vert_ratios.push_back (0.5);
+            }
 
             // Horizontals
             for (int i=0; i<horiz_ratios.size(); i++) {
