@@ -833,6 +833,7 @@ TP_COLORSHIFT_LABEL;Przesunięcie koloru
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Zablokuj proporcje:
 TP_CROP_GTDIAGONALS;Przekątna
+TP_CROP_GTEPASSPORT;Paszport biometryczny
 TP_CROP_GTGRID;Siatka
 TP_CROP_GTHARMMEANS1;Złoty podział 1
 TP_CROP_GTHARMMEANS2;Złoty podział 2
@@ -1130,7 +1131,6 @@ ZOOMPANEL_ZOOM100;Powiększ do 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Dopasuj do ekranu <b>F</b>
 ZOOMPANEL_ZOOMIN;Przybliż <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
-
 #00 Polish
 #01 24.12.2007
 #02 Mateusz Ludwin
@@ -1146,6 +1146,9 @@ ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
 #12 2012-01-14 DrSlony
 #13 2012-01-30 DrSlony
 
+
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
+
+
