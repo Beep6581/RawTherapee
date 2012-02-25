@@ -89,7 +89,8 @@ void ImageArea::on_resized (Gtk::Allocation& req) {
 		else {
 			mainCropWindow->setSize (get_width(), get_height());
 		}
-	}
+        parent->syncBeforeAfterViews();
+	}    
 }
 
 void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_) {
@@ -382,19 +383,19 @@ void ImageArea::setScrollPosition (int x, int y) {
 
 void ImageArea::cropPositionChanged (CropWindow* cw) { 
 
-    updateScrollbars ();
+    syncBeforeAfterViews ();
 }
 
 void ImageArea::cropWindowSizeChanged (CropWindow* cw) {
 
-    updateScrollbars ();
+    syncBeforeAfterViews ();
 }
 
 void ImageArea::cropZoomChanged (CropWindow* cw) {
 
     if (cw==mainCropWindow) {
         parent->zoomChanged ();
-        updateScrollbars ();
+        syncBeforeAfterViews ();
         zoomPanel->refreshZoomLabel ();
     }
 }
@@ -421,8 +422,8 @@ void ImageArea::initialImageArrived (CropWindow* cw) {
         mainCropWindow->zoomFit ();
 }
 
-void ImageArea::updateScrollbars () {
-    parent->refreshScrollBars (); 
+void ImageArea::syncBeforeAfterViews () {
+    parent->syncBeforeAfterViews ();
 }
 
 void ImageArea::setCropGUIListener (CropGUIListener* l) { 

@@ -1273,7 +1273,7 @@ void CropWindow::cropImageUpdated () {
 void CropWindow::cropWindowChanged () {
 
     if (!decorated)
-        iarea->updateScrollbars ();
+        iarea->syncBeforeAfterViews ();
     iarea->redraw ();
 }
 

@@ -22,36 +22,20 @@ ImageAreaPanel::ImageAreaPanel () : before(NULL), after(NULL) {
 
     set_border_width (2);
 
-    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* hb2 = Gtk::manage (new Gtk::HBox ());
-    hscroll = Gtk::manage (new Gtk::HScrollbar ());
-    vscroll = Gtk::manage (new Gtk::VScrollbar ());
     imageArea = new ImageArea (this);
+
+    Gtk::HBox*  hb1   = Gtk::manage (new Gtk::HBox ());
     Gtk::Frame* frame = Gtk::manage (new Gtk::Frame ());
+
     frame->add (*imageArea);
     frame->set_shadow_type (Gtk::SHADOW_IN );
     hb1->pack_start (*frame, Gtk::PACK_EXPAND_WIDGET);
-    hb1->pack_end (*vscroll, Gtk::PACK_SHRINK, 0);
 
     pack_start (*hb1);
-    vscroll->show ();
     frame->show ();
     imageArea->show ();
     hb1->show ();
 
-    hb2->pack_start (*hscroll);
-
-    pack_start (*hb2,Gtk::PACK_SHRINK, 0);
-    hscroll->show ();
-    hb2->show ();
-
-    hscroll->set_update_policy (Gtk::UPDATE_CONTINUOUS);
-    vscroll->set_update_policy (Gtk::UPDATE_CONTINUOUS);
-
-    vscrollconn = vscroll->signal_value_changed().connect( sigc::mem_fun(*this, &ImageAreaPanel::scrollChanged) );
-    hscrollconn = hscroll->signal_value_changed().connect( sigc::mem_fun(*this, &ImageAreaPanel::scrollChanged) );
-
-    imageArea->signal_size_allocate().connect( sigc::mem_fun(*this, &ImageAreaPanel::imageAreaResized) );
 }
 
 ImageAreaPanel::~ImageAreaPanel () {
@@ -59,88 +43,21 @@ ImageAreaPanel::~ImageAreaPanel () {
     delete imageArea;
 }
 
-void ImageAreaPanel::configScrollBars () {
+void ImageAreaPanel::syncBeforeAfterViews () {
 
-    int imgw, imgh;
-    imageArea->getScrollImageSize (imgw, imgh);
-
-    if (imgw>0 && imgh>0) {
-  
-        int iw = imageArea->get_width ();
-        int ih = imageArea->get_height ();
-
-        hscrollconn.block (true);
-        vscrollconn.block (true);
-
-        hscroll->get_adjustment()->set_upper (imgw);
-        vscroll->get_adjustment()->set_upper (imgh);
-        hscroll->get_adjustment()->set_lower (0);
-        vscroll->get_adjustment()->set_lower (0);
-        hscroll->get_adjustment()->set_step_increment (imgw/100);
-        vscroll->get_adjustment()->set_step_increment (imgh/100);
-        hscroll->get_adjustment()->set_page_increment (imgw/5);
-        vscroll->get_adjustment()->set_page_increment (imgh/5);
-        hscroll->get_adjustment()->set_page_size (iw);
-        vscroll->get_adjustment()->set_page_size (ih);
-        
-        int x, y;
-        imageArea->getScrollPosition (x, y);
-        hscroll->set_value (x);
-        vscroll->set_value (y);
-
-        // A "gray zone" where scrollbars stays displayed/hidden between imgw and imgw+30
-        // has been introduced to avoid infinite loop. 30px should be enough and represent
-        // the width of the scrollbar
-        if(iw >= (imgw+30))
-            hscroll->hide();    
-        else if(iw < imgw)
-            hscroll->show();
-
-        if(ih >= (imgh+30))
-            vscroll->hide();
-        else if(ih < imgh)
-            vscroll->show();
-
-        if (before && this==after)
-            before->synchronize ();
-        else if (after && this==before)
-            after->synchronize ();
-
-        hscrollconn.block (false);
-        vscrollconn.block (false);
-    }
-}
-
-void ImageAreaPanel::refreshScrollBars () {
-    
-    configScrollBars ();
-    queue_draw ();
-}
-
-void ImageAreaPanel::imageAreaResized (Gtk::Allocation& req) {
-
-    configScrollBars ();
-    queue_draw ();
-}
-
-void ImageAreaPanel::scrollChanged () {
-
-    imageArea->setScrollPosition ((int)(hscroll->get_value()), (int)(vscroll->get_value()));
-    imageArea->queue_draw ();
-#ifdef WIN32
-    gdk_window_process_updates (get_window()->gobj(), true);
-#endif
-    if (before && this==after) 
+    if (before && this==after)
         before->synchronize ();
     else if (after && this==before)
         after->synchronize ();
+
+    queue_draw ();
 }
 
 void ImageAreaPanel::setBeforeAfterViews (ImageAreaPanel* bef, ImageAreaPanel* aft) {
 
     before = bef;
     after = aft;
-    configScrollBars ();
+    syncBeforeAfterViews ();
 }
 
 void ImageAreaPanel::zoomChanged () {
@@ -153,29 +70,28 @@ void ImageAreaPanel::zoomChanged () {
 
 void ImageAreaPanel::synchronize () {
 
-    hscrollconn.block (true);
-    vscrollconn.block (true);
-
     if (after && this==before) {
         int imgw, imgh, x, y;
         after->imageArea->getScrollImageSize (imgw, imgh);
         after->imageArea->getScrollPosition (x, y);
-        int bimgw, bimgh;
-        imageArea->getScrollImageSize (bimgw, bimgh);
-        imageArea->setScrollPosition (x*bimgw/imgw, y*bimgh/imgh);
-        imageArea->queue_draw ();
+        if (imgw>0 && imgh>0) {
+            int bimgw, bimgh;
+            imageArea->getScrollImageSize (bimgw, bimgh);
+            imageArea->setScrollPosition (x*bimgw/imgw, y*bimgh/imgh);
+            imageArea->queue_draw ();
+        }
     }
     else if (before && this==after) {
         int imgw, imgh, x, y;
         before->imageArea->getScrollImageSize (imgw, imgh);
         before->imageArea->getScrollPosition (x, y);
-        int bimgw, bimgh;
-        imageArea->getScrollImageSize (bimgw, bimgh);
-        imageArea->setScrollPosition (x*bimgw/imgw, y*bimgh/imgh);
-        imageArea->queue_draw ();
+        if (imgw>0 && imgh>0) {
+            int bimgw, bimgh;
+            imageArea->getScrollImageSize (bimgw, bimgh);
+            imageArea->setScrollPosition (x*bimgw/imgw, y*bimgh/imgh);
+            imageArea->queue_draw ();
+        }
     }
 
-    hscrollconn.block (false);
-    vscrollconn.block (false);
 }
 

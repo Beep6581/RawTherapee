@@ -92,7 +92,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     bool on_scroll_event        (GdkEventScroll* event);
     void on_resized             (Gtk::Allocation& req);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
-    void updateScrollbars       ();
+    void syncBeforeAfterViews       ();
 
     void            setCropGUIListener       (CropGUIListener* l);
     void            setPointerMotionListener  (PointerMotionListener* pml);
