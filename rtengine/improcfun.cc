@@ -178,10 +178,10 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 		memset (hist[i], 0, 65536*sizeof(int));
     }
 
-    int H = original->height;
 #ifdef _OPENMP
 	#pragma omp parallel if (multiThread)
     {
+	        int H = original->height;
 		int tid = omp_get_thread_num();
 		int nthreads = omp_get_num_threads();
 		int blk = H/nthreads;
@@ -673,7 +673,6 @@ fclose(f);*/
 	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double defgain, double clip,
 									   double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh) {
 		
-		double corr = 1;//pow(2.0, defgain);//defgain may be redundant legacy of superceded code???
 		float scale = 65536.0;
 		float midgray=0.15;//0.18445f;//middle gray in linear gamma = 0.18445*65535
 		
@@ -789,7 +788,6 @@ fclose(f);*/
 		
 		//now tune hlcompr to bring back rawmax to 65535
 		hlcomprthresh = 33;
-		float shoulder = ((scale/MAX(1,gain))*(hlcomprthresh/200.0))+0.1;
 		//this is a series approximation of the actual formula for comp,
 		//which is a transcendental equation
 		float comp = (gain*((float)whiteclip)/scale - 1)*2;//*(1-shoulder/scale);
@@ -1019,7 +1017,7 @@ fclose(f);*/
 void ImProcFunctions::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {
 {//from Dcraw (D.Coffin)
   int i;
-  double g[6], bnd[2]={0,0}, r;
+  double g[6], bnd[2]={0,0};
 
   g[0] = pwr;
   g[1] = ts;

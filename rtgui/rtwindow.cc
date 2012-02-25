@@ -27,9 +27,9 @@
 RTWindow::RTWindow ()
 :mainNB(NULL)
 ,bpanel(NULL)
+,splash(NULL)
 ,epanel(NULL)
 ,fpanel(NULL)
-,splash(NULL)
 {
 
     cacheMgr->init ();
@@ -282,7 +282,7 @@ void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
 	if (page_num > 1) {
         if (isSingleTabMode()) MoveFileBrowserToEditor();
 
-		EditorPanel *ep = (EditorPanel *)mainNB->get_nth_page(page_num);
+	EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
 		ep->setAspect();
 	} else {
         // in single tab mode with command line filename epanel does not exist yet
@@ -401,7 +401,7 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
         return false;
     }
     else {
-        EditorPanel* ep = (EditorPanel*)mainNB->get_nth_page (mainNB->get_current_page());
+      EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
         return ep->handleShortcutKey (event);
     }
     return false;
@@ -433,7 +433,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
         // First and second are file browser and batch queue
         if (pageCount>2) {
             for (int i=2;i<pageCount;i++) 
-                isProcessing |= ((EditorPanel*)mainNB->get_nth_page(i))->getIsProcessing();
+	      isProcessing |= (static_cast<EditorPanel*>(mainNB->get_nth_page(i)))->getIsProcessing();
         }
     }
 

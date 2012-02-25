@@ -89,7 +89,7 @@ public:
 	//This is the same as above, but designed to take this class as a pass through variable. By this way you can feed
 	//the meat of this class into an independent function, such as SparseConjugateGradient.
 	static void PassThroughVectorProduct(float *Product, float *x, void *Pass){
-		((MultiDiagonalSymmetricMatrix *)Pass)->VectorProduct(Product, x);
+	    (static_cast<MultiDiagonalSymmetricMatrix *>(Pass))->VectorProduct(Product, x);
 	};
 
 	/* CreateIncompleteCholeskyFactorization creates another matrix which is an incomplete (or complete if MaxFillAbove is big enough)
@@ -102,7 +102,7 @@ public:
 	MultiDiagonalSymmetricMatrix *IncompleteCholeskyFactorization;
 
 	static void PassThroughCholeskyBackSolve(float *Product, float *x, void *Pass){
-		((MultiDiagonalSymmetricMatrix *)Pass)->CholeskyBackSolve(Product, x);
+	    (static_cast<MultiDiagonalSymmetricMatrix *>(Pass))->CholeskyBackSolve(Product, x);
 	};
 
 };

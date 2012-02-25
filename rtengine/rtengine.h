@@ -95,6 +95,8 @@ namespace rtengine {
           /** Functions to convert between floating point and string representation of exposure compensation */
             static std::string expcompToString (double expcomp, bool maskZeroexpcomp);
             
+	    virtual ~ImageMetaData () {}
+
           /** Reads metadata from file.
             * @param fname is the name of the file
             * @param rml is a struct containing information about metadata location. Use it only for raw files. In case
@@ -147,6 +149,7 @@ namespace rtengine {
             * (the last one deletes the instance automatically). */
             virtual void decreaseRef () {}
 
+            virtual ~InitialImage () {}
 
           /** Loads an image into the memory.
             * @param fname the name of the file

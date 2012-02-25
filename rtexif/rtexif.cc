@@ -1418,6 +1418,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const std::vector< 
 
   TagDirectory* cl;
   if (root)
+    //FIXME: static_cast needed here
     cl = ((TagDirectory*)root)->clone (NULL);
   else
     cl = new TagDirectory (NULL, ifdAttribs, INTEL);
@@ -1454,6 +1455,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const std::vector< 
 
     TagDirectory* cl;
     if (root)
+	//FIXME: static_cast needed here
         cl = ((TagDirectory*)root)->clone (NULL);
     else
         cl = new TagDirectory (NULL, ifdAttribs, INTEL);

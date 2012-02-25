@@ -71,9 +71,9 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 
-	lshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "L");
-	ashape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "a");
-	bshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "b");
+	lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L"));
+	ashape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "a"));
+	bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "b"));
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();

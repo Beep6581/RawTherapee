@@ -224,12 +224,12 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
     trash->set_sensitive (false);
     untrash->set_sensitive (false);
     for (int i=0; i<selected.size(); i++) 
-        if (((FileBrowserEntry*)selected[i])->thumbnail->getStage()==1) {
+      if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()==1) {
             untrash->set_sensitive (true);
             break;
         }
     for (int i=0; i<selected.size(); i++) 
-        if (((FileBrowserEntry*)selected[i])->thumbnail->getStage()==0) {
+      if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()==0) {
             trash->set_sensitive (true);
             break;
         }
@@ -304,7 +304,7 @@ void FileBrowser::doubleClicked (ThumbBrowserEntryBase* entry) {
 
     if (tbl && entry) {
         std::vector<Thumbnail*> entries;
-        entries.push_back (((FileBrowserEntry*)entry)->thumbnail);
+	entries.push_back ((static_cast<FileBrowserEntry*>(entry))->thumbnail);
         tbl->openRequested (entries);
     }
 }
@@ -406,7 +406,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
                 lastClicked = NULL;
             redraw ();
 
-            return (FileBrowserEntry*)entry;
+	    return (static_cast<FileBrowserEntry*>(entry));
         }
     return NULL;
 }
@@ -446,7 +446,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 
     std::vector<FileBrowserEntry*> mselected;
     for (int i=0; i<selected.size(); i++)
-        mselected.push_back ((FileBrowserEntry*)selected[i]);
+      mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
 
     if (!tbl || (m!=selall && mselected.empty()) )
         return;
@@ -622,14 +622,14 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 void FileBrowser::copyProfile () {
 
     if (selected.size()==1)
-        clipboard.setProcParams (((FileBrowserEntry*)selected[0])->thumbnail->getProcParams());
+      clipboard.setProcParams ((static_cast<FileBrowserEntry*>(selected[0]))->thumbnail->getProcParams());
 }
 
 void FileBrowser::pasteProfile () {
 
     std::vector<FileBrowserEntry*> mselected;
     for (int i=0; i<selected.size(); i++)
-        mselected.push_back ((FileBrowserEntry*)selected[i]);
+      mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
 
     if (!tbl || mselected.empty())
         return;
@@ -644,7 +644,7 @@ void FileBrowser::partPasteProfile () {
 
     std::vector<FileBrowserEntry*> mselected;
     for (int i=0; i<selected.size(); i++)
-        mselected.push_back ((FileBrowserEntry*)selected[i]);
+      mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
 
     if (!tbl || mselected.empty())
         return;
@@ -665,7 +665,7 @@ void FileBrowser::partPasteProfile () {
 
 void FileBrowser::openDefaultViewer (int destination) {
     if (selected.size()==1)
-        ((FileBrowserEntry*)selected[0])->thumbnail->openDefaultViewer(destination);
+      (static_cast<FileBrowserEntry*>(selected[0]))->thumbnail->openDefaultViewer(destination);
 }
 
 bool FileBrowser::keyPressed (GdkEventKey* event) {
@@ -729,7 +729,7 @@ void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
     rtengine::procparams::ProcParams* pparams = profileStore.getProfile (ppname);
     if (pparams && !selected.empty()) {
         for (int i=0; i<selected.size(); i++) 
-            ((FileBrowserEntry*)selected[i])->thumbnail->setProcParams (*pparams, FILEBROWSER);
+	  (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*pparams, FILEBROWSER);
         queue_draw ();
     }
 }
@@ -747,9 +747,9 @@ void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 			for (int i=0; i<selected.size(); i++) {
                 selected[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
-				rtengine::procparams::ProcParams params = ((FileBrowserEntry*)selected[i])->thumbnail->getProcParams ();
+		rtengine::procparams::ProcParams params = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getProcParams ();
 				partialPasteDlg.applyPaste (&params, pparams);
-				((FileBrowserEntry*)selected[i])->thumbnail->setProcParams (params, FILEBROWSER);
+				(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (params, FILEBROWSER);
 			}
 			queue_draw ();
 		}
@@ -791,7 +791,7 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
 
 bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry complies filter
     
-    FileBrowserEntry* entry = (FileBrowserEntry*)entryb;
+    FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(entryb);
     // return false if basic filter settings are not satisfied
     if ((filter.showRanked[entry->thumbnail->getRank()]==false ) ||
         (filter.showCLabeled[entry->thumbnail->getColorLabel()]==false ) ||
@@ -926,17 +926,17 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
 
     if (actionCode>=0 && actionCode<=5) { // rank
         std::vector<FileBrowserEntry*> tbe;
-        tbe.push_back ((FileBrowserEntry*)actionData);
+	tbe.push_back (static_cast<FileBrowserEntry*>(actionData));
         rankingRequested (tbe, actionCode);
     }
     else if (actionCode==6 && tbl) { // to processing queue
         std::vector<FileBrowserEntry*> tbe;
-        tbe.push_back ((FileBrowserEntry*)actionData);
+	tbe.push_back (static_cast<FileBrowserEntry*>(actionData));
         tbl->developRequested (tbe, false); // not a fast, but a FULL mode
     }
     else if (actionCode==7) { // to trash / undelete
         std::vector<FileBrowserEntry*> tbe;
-        FileBrowserEntry* entry = (FileBrowserEntry*)actionData;
+	FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(actionData);
         tbe.push_back (entry);
         if (entry->thumbnail->getStage()==0)
             toTrashRequested (tbe);
@@ -956,13 +956,13 @@ void FileBrowser::openNextImage () {
             if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
                 if (i<fd.size()-1 && tbl) {
                     std::vector<Thumbnail*> entries;
-                    entries.push_back (((FileBrowserEntry*)fd[i+1])->thumbnail);
+		    entries.push_back ((static_cast<FileBrowserEntry*>(fd[i+1]))->thumbnail);
                     tbl->openRequested (entries);
                     return;
                 }
         if (tbl) {
             std::vector<Thumbnail*> entries;
-            entries.push_back (((FileBrowserEntry*)fd[0])->thumbnail);
+	    entries.push_back ((static_cast<FileBrowserEntry*>(fd[0]))->thumbnail);
             tbl->openRequested (entries);
         }
     }
@@ -979,20 +979,20 @@ void FileBrowser::openPrevImage () {
             if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
                 if (i>0 && tbl) {
                     std::vector<Thumbnail*> entries;
-                    entries.push_back (((FileBrowserEntry*)fd[i-1])->thumbnail);
+		    entries.push_back ((static_cast<FileBrowserEntry*>(fd[i-1]))->thumbnail);
                     tbl->openRequested (entries);
                     return;
                 }
         if (tbl) {
             std::vector<Thumbnail*> entries;
-            entries.push_back (((FileBrowserEntry*)fd[fd.size()-1])->thumbnail);
+	    entries.push_back ((static_cast<FileBrowserEntry*>(fd[fd.size()-1]))->thumbnail);
             tbl->openRequested (entries);
         }
     }
 }
 
 int refreshThumbImagesUI (void* data) {
-    ((FileBrowser*)data)->_thumbRearrangementNeeded ();
+  (static_cast<FileBrowser*>(data))->_thumbRearrangementNeeded ();
     return 0;
 }
 
@@ -1014,7 +1014,7 @@ void FileBrowser::notifySelectionListener () {
     if (tbl) {
         std::vector<Thumbnail*> thm;
         for (int i=0; i<selected.size(); i++)
-            thm.push_back (((FileBrowserEntry*)selected[i])->thumbnail);
+	  thm.push_back ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail);
         tbl->selectionChanged (thm);
     }    
 }

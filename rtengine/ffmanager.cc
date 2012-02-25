@@ -179,10 +179,9 @@ void FFManager::init( Glib::ustring pathname )
 	
 	ffList.clear();
     for (int i=0; i<names.size(); i++) {
-        int lastdot = names[i].find_last_of ('.');
         try{
             addFileInfo(names[i]);
-        }catch( std::exception e ){}
+        }catch( std::exception& e ){}
     }
     // Where multiple shots exist for same group, move filename to list
     for( ffList_t::iterator iter = ffList.begin(); iter != ffList.end();iter++ ){

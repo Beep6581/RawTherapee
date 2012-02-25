@@ -661,7 +661,6 @@ namespace rtengine {
 						
 		// create a curve if needed
 		DiagonalCurve* tcurve = NULL;
-		bool histNeeded = false;
 		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 		}

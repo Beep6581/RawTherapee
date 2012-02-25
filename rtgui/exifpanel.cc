@@ -198,6 +198,7 @@ Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root
 void ExifPanel::addDirectory (const TagDirectory* dir, Gtk::TreeModel::Children root) {
 
     for (int i=0; i<dir->getCount(); i++) {
+	    //FIXME: static_cast needed here
         Tag* t = ((TagDirectory*)dir)->getTagByIndex (i);
         if (t->getAttrib() && t->getAttrib()->action==SYSTEM)
             continue;

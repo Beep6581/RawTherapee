@@ -172,7 +172,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Gtk::Notebook* toolPanelNotebook;
 
         ToolPanelCoordinator ();
-        ~ToolPanelCoordinator ();
+        virtual ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
 		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);

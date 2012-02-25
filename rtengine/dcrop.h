@@ -63,7 +63,7 @@ class Crop : public DetailedCrop {
         
     public:
              Crop        (ImProcCoordinator* parent);
-            ~Crop        ();
+            virtual ~Crop        ();
     
         bool hasListener () { return cropImageListener; }
         void update      (int todo);
@@ -73,7 +73,7 @@ class Crop : public DetailedCrop {
 		void fullUpdate  ();  // called via thread
 	
         void setListener (DetailedCropListener* il);
-        void destroy     () { delete this; }
+        void destroy     () {}
         int  get_skip    () { return skip;}
 };
 }

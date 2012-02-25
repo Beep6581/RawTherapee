@@ -462,12 +462,12 @@ void Crop::enabledChanged () {
 }
 
 int notifyListenerUI (void* data) {
-    ((Crop*)data)->notifyListener ();
+    (static_cast<Crop*>(data))->notifyListener ();
     return 0;
 }
 
 int refreshSpinsUI (void* data) {
-    RefreshSpinHelper* rsh = (RefreshSpinHelper*) data;
+    RefreshSpinHelper* rsh = static_cast<RefreshSpinHelper*>(data);
     rsh->crop->refreshSpins (rsh->notify);
     delete rsh;
     return 0;

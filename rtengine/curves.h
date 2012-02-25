@@ -259,7 +259,7 @@ class DiagonalCurve : public Curve {
 
   public:
     DiagonalCurve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
-   ~DiagonalCurve ();
+    virtual ~DiagonalCurve ();
 
     double getVal     (double t);
     void   getVal     (const std::vector<double>& t, std::vector<double>& res);
@@ -279,7 +279,7 @@ class FlatCurve : public Curve {
   public:
 
     FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn=CURVES_MIN_POLY_POINTS);
-   ~FlatCurve ();
+    virtual ~FlatCurve ();
 
     double getVal     (double t);
     void   getVal     (const std::vector<double>& t, std::vector<double>& res);

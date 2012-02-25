@@ -65,7 +65,6 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
         #pragma omp parallel for
 		for (int i=0; i<lab->H; i++) {
             float buffer[3*lab->W];
-            float g;
 
             const int ix = i * 3 * lab->W;
             int iy = 0;
@@ -102,7 +101,6 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
 			int ix = i * 3 * lab->W;
-			float g;
 
 			float R,G,B;
             float fy,fx,fz,x_,y_,z_;
@@ -158,7 +156,6 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 		#pragma omp parallel for
         for (int i=cy; i<cy+ch; i++) {
             short buffer [3*cw];
-            float g;
 
             const int ix = i * 3 * cw;
             int iy = 0;
@@ -202,7 +199,6 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 		
 		#pragma omp parallel for if (multiThread)
         for (int i=cy; i<cy+ch; i++) {
-			float g;
 			float R,G,B;
             float* rL = lab->L[i];
             float* ra = lab->a[i];
@@ -246,7 +242,6 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
     if (oprof) {
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
-			float g;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
@@ -279,7 +274,6 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 	} else {
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
-			float g;
 			float R,G,B;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
@@ -317,7 +311,6 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     if (cy+ch>lab->H) ch = lab->H-cy;
 
     Image16* image = new Image16 (cw, ch);
-	cmsBool  rc = TRUE;
 	float p1,p2,p3,p4,p5,p6;//primaries
 	//double ga0,ga1,ga2,ga3,ga4,ga5=0.0,ga6=0.0;//gamma parameters
 	double g_a0,g_a1,g_a2,g_a3,g_a4,g_a5;//gamma parameters
@@ -388,7 +381,6 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
     if (oprofdef) {
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
-			float g;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
@@ -422,7 +414,6 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 	// 
 		#pragma omp parallel for if (multiThread)
 		for (int i=cy; i<cy+ch; i++) {
-			float g;
 			float R,G,B;
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];

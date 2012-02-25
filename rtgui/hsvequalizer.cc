@@ -31,9 +31,9 @@ HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 
-	hshape = (FlatCurveEditor*)curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE"));
-	sshape = (FlatCurveEditor*)curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_SAT"));
-	vshape = (FlatCurveEditor*)curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_VAL"));
+	hshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE")));
+	sshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_SAT")));
+	vshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_VAL")));
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();

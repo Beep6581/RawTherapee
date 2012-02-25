@@ -48,9 +48,6 @@ void RawImageSource::green_equilibrate(float thresh)
 	
 	static const float eps=1.0;	//tolerance to avoid dividing by zero
 	
-	static const float diffthresh=0.25; //threshold for texture, not to be equilibrated
-	
-	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	// Fill G interpolated values with border interpolation and input values

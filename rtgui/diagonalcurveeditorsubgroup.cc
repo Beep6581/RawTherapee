@@ -254,7 +254,7 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 
 	removeEditor();
 
-	DiagonalCurveEditor* dCurve = (DiagonalCurveEditor*)(parent->displayedCurve);
+	DiagonalCurveEditor* dCurve = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
 
 	if (dCurve) {
 
@@ -507,13 +507,13 @@ void DiagonalCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::
 
 		switch (t) {
 		case (DCT_Spline):
-			((DiagonalCurveEditor*)ce)->customCurveEd = p;
+			(static_cast<DiagonalCurveEditor*>(ce))->customCurveEd = p;
 			break;
 		case (DCT_Parametric):
-			((DiagonalCurveEditor*)ce)->paramCurveEd = p;
+			(static_cast<DiagonalCurveEditor*>(ce))->paramCurveEd = p;
 			break;
 		case (DCT_NURBS):
-			((DiagonalCurveEditor*)ce)->NURBSCurveEd = p;
+			(static_cast<DiagonalCurveEditor*>(ce))->NURBSCurveEd = p;
 			break;
 		default:
 			break;

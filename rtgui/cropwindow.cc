@@ -732,7 +732,6 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                             float sum_L, sum_L2;
                             float sumsq_L, sumsq_L2; //sum of deviations squared
                             float stdDev_L, stdDev_L2;
-                            float focus_gradation, focus_coef;
                             float focus_thresh, focus_thresh2;
                             int kernel_size, kernel_size2;// count of pixels in the blur kernel
                             float opacity = 0.9;//TODO: implement opacity

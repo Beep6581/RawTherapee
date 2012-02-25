@@ -559,7 +559,7 @@ void FileCatalog::_refreshProgressBar () {
 }
 
 int refreshProgressBarUI (void* data) {
-    ((FileCatalog*)data)->_refreshProgressBar ();
+    (static_cast<FileCatalog*>(data))->_refreshProgressBar ();
     return 0;
 }
 
@@ -611,7 +611,7 @@ void FileCatalog::previewReadyUI (int dir_id, FileBrowserEntry* fdn) {
 
 int prevfinished (void* data) {
  	GThreadLock lock;
-    ((FileCatalog*)data)->previewsFinishedUI ();
+    (static_cast<FileCatalog*>(data))->previewsFinishedUI ();
     return 0;
 }
 
@@ -807,7 +807,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 						// re-attach cache files
 						cacheMgr->renameEntry (src_fPath, tbe[i]->thumbnail->getMD5(), dest_fPath);
 						// remove from browser
-						FileBrowserEntry* t = fileBrowser->delEntry (src_fPath);
+						fileBrowser->delEntry (src_fPath);
 
                         previewsLoaded--;
 					}
@@ -1352,7 +1352,7 @@ void FileCatalog::reparseDirectory () {
 
 #ifdef WIN32
 int winDirChangedUITread (void* cat) {
-    ((FileCatalog*)cat)->reparseDirectory ();
+    (static_cast<FileCatalog*>(cat))->reparseDirectory ();
     return 0;
 }
 
@@ -1426,8 +1426,8 @@ void FileCatalog::emptyTrash () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     std::vector<FileBrowserEntry*> toDel;
     for (size_t i=0; i<t.size(); i++)
-        if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
-            toDel.push_back (((FileBrowserEntry*)t[i]));
+      if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getStage()==1)
+	toDel.push_back (static_cast<FileBrowserEntry*>(t[i]));
     deleteRequested (toDel, false);
     trashChanged();
 }
@@ -1435,7 +1435,7 @@ void FileCatalog::emptyTrash () {
 bool FileCatalog::trashIsEmpty () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     for (size_t i=0; i<t.size(); i++)
-        if (((FileBrowserEntry*)t[i])->thumbnail->getStage()==1)
+      if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getStage()==1)
             return false;
 
     return true;

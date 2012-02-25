@@ -609,7 +609,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP) {
     	s->val = 1.0;
 
 #ifdef WIN32
-        if (!firstProcessingDone && (RTWindow*)parent->getIsFullscreen()) { parent->fullscreen(); }
+	if (!firstProcessingDone && static_cast<RTWindow*>(parent)->getIsFullscreen()) { parent->fullscreen(); }
 #endif
         firstProcessingDone = true;
 }

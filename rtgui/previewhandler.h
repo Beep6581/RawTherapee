@@ -55,7 +55,7 @@ class PreviewHandler : public rtengine::PreviewImageListener {
     public:
 
         PreviewHandler ();    
-        ~PreviewHandler ();
+        virtual ~PreviewHandler ();
 
         void addPreviewImageListener (PreviewListener* l) { listeners.push_back (l); }
 

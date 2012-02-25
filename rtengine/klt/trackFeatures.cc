@@ -195,7 +195,6 @@ static void _computeGradientSumLightingInsensitive(
   float g1, g2, sum1_squared = 0, sum2_squared = 0;
   int i, j;
   
-  float sum1 = 0, sum2 = 0;
   float mean1, mean2, alpha;
   for (j = -hh ; j <= hh ; j++)
     for (i = -hw ; i <= hw ; i++)  {

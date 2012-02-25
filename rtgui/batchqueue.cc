@@ -229,8 +229,8 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
 
 int cancelItemUI (void* data)
 {
-	safe_g_remove( ((BatchQueueEntry*)data)->savedParamsFile );
-    delete (BatchQueueEntry*)data;
+    safe_g_remove( (static_cast<BatchQueueEntry*>(data))->savedParamsFile );
+    delete static_cast<BatchQueueEntry*>(data);
     return 0;
 }
 
@@ -344,7 +344,7 @@ void BatchQueue::startProcessing () {
 	        Glib::RWLock::WriterLock l(entryRW);
 	        #endif
 
-            next = (BatchQueueEntry*)fd[0];
+	    next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as processing        
             next->processing = true;
             processing = next;
@@ -425,7 +425,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             queueEmptied=true;
         }
         else if (listener && listener->canStartNext ()) {
-            BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
+	    BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as selected        
             next->processing = true;
             processing = next;
@@ -588,7 +588,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 }
 
 int setProgressUI (void* p) {
-    ((BatchQueue*)p)->redraw();
+  (static_cast<BatchQueue*>(p))->redraw();
     return 0;
 }
 
@@ -603,7 +603,7 @@ void BatchQueue::setProgress (double p) {
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData) {
     
     std::vector<ThumbBrowserEntryBase*> bqe;
-    bqe.push_back ((BatchQueueEntry*)actionData);
+    bqe.push_back (static_cast<BatchQueueEntry*>(actionData));
 
     if (actionCode==10)  // cancel
         cancelItems (&bqe);

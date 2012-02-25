@@ -185,7 +185,6 @@ void ThumbBrowserBase::arrangeFiles () {
         int availWidth = internal.get_width();
         // initial number of columns
         int numOfCols = 0;
-        int currColNum = 0;
         int colsWidth = 0;
         for (int i=0; i<N; i++)
             if (!fd[i]->filtered && colsWidth + fd[i]->getMinimalWidth() <= availWidth) {

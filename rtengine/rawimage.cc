@@ -45,7 +45,7 @@ RawImage::~RawImage()
 int RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_)
 
 {
-	unsigned  row, col, ur, uc, i, x, y, c, sum[8];
+	unsigned  row, col, x, y, c, sum[8];
 	unsigned  W = this->get_width();
 	unsigned  H = this->get_height();
 	int val, dark, sat;

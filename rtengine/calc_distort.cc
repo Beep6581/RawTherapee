@@ -35,7 +35,6 @@ double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int n
     KLT_TrackingContext tc;
     KLT_FeatureList fl;
     KLT_FeatureTable ft;
-    int nFeatures = N_FEATURES;
     int i,n;
     double radius, wc, hc;
 

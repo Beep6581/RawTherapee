@@ -88,7 +88,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   curveEditorG = new CurveEditorGroup (M("TP_EXPOSURE_CURVEEDITOR"));
   curveEditorG->setCurveListener (this);
 
-  shape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "");
+  shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
 
   // This will add the reset button at the end of the curveType buttons
   curveEditorG->curveListComplete();
@@ -358,7 +358,7 @@ void ToneCurve::waitForAutoExp () {
 }
 
 int autoExpChangedUI (void* data) {
-    ((ToneCurve*)data)->autoExpComputed_ ();
+    (static_cast<ToneCurve*>(data))->autoExpComputed_ ();
     return 0;
 }
 

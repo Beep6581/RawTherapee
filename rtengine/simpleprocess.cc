@@ -41,7 +41,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     errorCode = 0;
 
-    ProcessingJobImpl* job = (ProcessingJobImpl*) pjob;
+    ProcessingJobImpl* job = static_cast<ProcessingJobImpl*>(pjob);
 
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_PROCESSING");

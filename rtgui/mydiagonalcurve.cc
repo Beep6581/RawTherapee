@@ -703,7 +703,7 @@ void MyDiagonalCurve::setActiveParam (int ac) {
 
 int diagonalmchistupdateUI (void* data) {
 
-    MyCurveIdleHelper* mcih = (MyCurveIdleHelper*)data;
+    MyCurveIdleHelper* mcih = static_cast<MyCurveIdleHelper*>(data);
 
     if (mcih->destroyed) {
         if (mcih->pending == 1)

@@ -226,7 +226,7 @@ void phase_one_load_raw();
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
 public:
-   ph1_bithuff_t(DCraw *p,IMFILE *&i,short &o):parent(p),bitbuf(0),vbits(0),ifp(i),order(o){}
+   ph1_bithuff_t(DCraw *p,IMFILE *&i,short &o):parent(p),order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
 private:
    unsigned get4(){

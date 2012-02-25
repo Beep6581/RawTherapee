@@ -139,7 +139,6 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
 
                     double ratio[2] = {0.0, 0.0};
                     int count[2] = {0, 0};
-                    int ix = 0;
                     for (int x=-1; x<=1; x++)
                         for (int y=-1; y<=1; y++) {
                             // average m/c color ratios in the surrounding pixels
@@ -158,7 +157,6 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
                             }
                         }
                     // compute new pixel values from the surrounding color ratios
-                    int nc = 0;
                     if ((phase==1 && count[0]>2) || (phase==3 && count[0]>1)) {
                         rec[c1][i][j] = - (int) ((double)rec[co][i][j] / ratio[0] * count[0]);
                         changed++;
@@ -224,7 +222,6 @@ void RawImageSource::HLRecovery_ColorPropagation (float* red, float* green, floa
     if (blr<0 || blr>=H/HR_SCALE-2)
         return;
     double mr1 = 1.0 - ((double)((i+HR_SCALE/2) % HR_SCALE) / HR_SCALE + 0.5 / HR_SCALE);
-    int jx = 0;
     int maxcol = W/HR_SCALE-2;
     for (int j=sx1, jx=0; jx<width; j+=skip, jx++) {
 		if (needhr[i][j]) {

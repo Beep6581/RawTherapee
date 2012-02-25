@@ -52,9 +52,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	//shifts of pointer value to access pixels in vertical and diagonal directions
 	static const int v1=TS, v2=2*TS, v3=3*TS, p1=-TS+1, p2=-2*TS+2, p3=-3*TS+3, m1=TS+1, m2=2*TS+2, m3=3*TS+3;
 
-	//neighborhood of a pixel
-	static const int nbr[5] = {-v2,-2,2,v2,0};
-
 	//tolerance to avoid dividing by zero
 	static const float eps=1e-5, epssq=1e-10;			//tolerance to avoid dividing by zero
 
@@ -62,18 +59,12 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	static const float arthresh=0.75;
 	//nyquist texture test threshold
 	static const float nyqthresh=0.5;
-	//diagonal interpolation test threshold
-	static const float pmthresh=0.25;
-	//factors for bounding interpolation in saturated regions
-	static const float lbd=1.0, ubd=1.0; //lbd=0.66, ubd=1.5 alternative values;
 
 	//gaussian on 5x5 quincunx, sigma=1.2
 	static const float gaussodd[4] = {0.14659727707323927f, 0.103592713382435f, 0.0732036125103057f, 0.0365543548389495f};
 	//gaussian on 5x5, sigma=1.2
 	static const float gaussgrad[6] = {0.07384411893421103f, 0.06207511968171489f, 0.0521818194747806f,
 	0.03687419286733595f, 0.03099732204057846f, 0.018413194161458882f};
-	//gaussian on 3x3, sigma =0.7
-	static const float gauss1[3] = {0.3376688223162362f, 0.12171198028231786f, 0.04387081413862306f};
 	//gaussian on 5x5 alt quincunx, sigma=1.5
 	static const float gausseven[2] = {0.13719494435797422f, 0.05640252782101291f};
 	//guassian on quincunx grid
@@ -246,8 +237,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 			int c;
 			//pointer counters within the tile
 			int indx, indx1;
-			//direction counter for nbrs[]
-			int dir;
 			//dummy indices
 			int i, j;
 			// +1 or -1
@@ -267,8 +256,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 			float Ginthar, Ginthha, Gintvar, Gintvha;
 			//color difference (G-R or G-B) variance in up/down/left/right directions
 			float Dgrbvvaru, Dgrbvvard, Dgrbhvarl, Dgrbhvarr;
-			//gradients in various directions
-			float gradp, gradm, gradv, gradh, gradpm, gradhv;
 			//color difference variances in vertical and horizontal directions
 			float vcdvar, hcdvar, vcdvar1, hcdvar1, hcdaltvar, vcdaltvar;
 			//adaptive interpolation weight using variance of color differences
