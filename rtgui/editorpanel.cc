@@ -128,7 +128,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::VSeparator* vsepz3 = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepz4 = Gtk::manage (new Gtk::VSeparator ());
 
-    iarea = new ImageAreaPanel ();
+    iareapanel = new ImageAreaPanel ();
 
     Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
     toolBarPanel->pack_start (*hidehp, Gtk::PACK_SHRINK, 1);
@@ -143,13 +143,13 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     toolBarPanel->pack_end   (*vsep1, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 2);
-    toolBarPanel->pack_end   (*iarea->imageArea->indClippedPanel, Gtk::PACK_SHRINK, 0);
+    toolBarPanel->pack_end   (*iareapanel->imageArea->indClippedPanel, Gtk::PACK_SHRINK, 0);
     toolBarPanel->pack_end   (*vsepz, Gtk::PACK_SHRINK, 2);
-    toolBarPanel->pack_end   (*iarea->imageArea->previewModePanel, Gtk::PACK_SHRINK, 0);
+    toolBarPanel->pack_end   (*iareapanel->imageArea->previewModePanel, Gtk::PACK_SHRINK, 0);
     toolBarPanel->pack_end   (*vsepz4, Gtk::PACK_SHRINK, 2);
 
     afterBox = Gtk::manage (new Gtk::VBox ());
-    afterBox->pack_start (*iarea);
+    afterBox->pack_start (*iareapanel);
 
     beforeAfterBox = Gtk::manage (new Gtk::HBox());
     beforeAfterBox->pack_start (*afterBox);
@@ -215,7 +215,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 	iops->pack_end (*vsepz2, Gtk::PACK_SHRINK,1);
 
     // Zoom panel
-    iops->pack_end (*iarea->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
+    iops->pack_end (*iareapanel->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
     iops->pack_end (*vsepz3, Gtk::PACK_SHRINK, 2);
 
     editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
@@ -274,9 +274,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tpc->addPParamsChangeListener (profilep);
     tpc->addPParamsChangeListener (history);
     tpc->addPParamsChangeListener (this);
-    iarea->imageArea->setCropGUIListener (tpc->getCropGUIListener());
-    iarea->imageArea->setPointerMotionListener (navigator);
-    iarea->imageArea->setImageAreaToolListener (tpc);
+    iareapanel->imageArea->setCropGUIListener (tpc->getCropGUIListener());
+    iareapanel->imageArea->setPointerMotionListener (navigator);
+    iareapanel->imageArea->setImageAreaToolListener (tpc);
 
     // initialize components
     info->set_active (options.showInfo);
@@ -298,9 +298,9 @@ EditorPanel::~EditorPanel () {
 
     history->setHistoryBeforeLineListener (NULL);
     // the order is important!
-    iarea->setBeforeAfterViews (NULL, iarea);
-    delete iarea;
-    iarea = NULL;
+    iareapanel->setBeforeAfterViews (NULL, iareapanel);
+    delete iareapanel;
+    iareapanel = NULL;
 
     if (beforeIpc)
         beforeIpc->stopProcessing ();
@@ -394,10 +394,10 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     ipc->setHistogramListener (this);
 
 //    iarea->fitZoom ();   // tell to the editorPanel that the next image has to be fitted to the screen
-    iarea->imageArea->setPreviewHandler (previewHandler);
-    iarea->imageArea->setImProcCoordinator (ipc);
+    iareapanel->imageArea->setPreviewHandler (previewHandler);
+    iareapanel->imageArea->setImProcCoordinator (ipc);
     navigator->previewWindow->setPreviewHandler (previewHandler);
-    navigator->previewWindow->setImageArea (iarea->imageArea);
+    navigator->previewWindow->setImageArea (iareapanel->imageArea);
 
     rtengine::ImageSource* is=isrc->getImageSource();
     is->setProgressListener( this );
@@ -420,17 +420,17 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     // If in single tab mode, the main crop window is not constructed the very first time
     // since there was no resize event
-    if (iarea->imageArea->mainCropWindow)
+    if (iareapanel->imageArea->mainCropWindow)
     {
-    	iarea->imageArea->mainCropWindow->cropHandler.newImage(ipc);
-        iarea->imageArea->mainCropWindow->initialImageArrived();
+        iareapanel->imageArea->mainCropWindow->cropHandler.newImage(ipc);
+        iareapanel->imageArea->mainCropWindow->initialImageArrived();
 
 		// In single tab mode, the image is not always updated between switches
 		// normal redraw don't work, so this is the hard way
-		if (!options.tabbedUI) iarea->imageArea->mainCropWindow->cropHandler.update();
+        if (!options.tabbedUI) iareapanel->imageArea->mainCropWindow->cropHandler.update();
     } else {
         Gtk::Allocation alloc;
-        iarea->imageArea->on_resized(alloc);
+        iareapanel->imageArea->on_resized(alloc);
     }
 }
 
@@ -453,10 +453,10 @@ void EditorPanel::close () {
         delete previewHandler;
         previewHandler= NULL;
 
-        if(iarea)
+        if(iareapanel)
         {
-            iarea->imageArea->setPreviewHandler (NULL);
-            iarea->imageArea->setImProcCoordinator (NULL);
+            iareapanel->imageArea->setPreviewHandler (NULL);
+            iareapanel->imageArea->setImProcCoordinator (NULL);
         }
         rtengine::StagedImageProcessor::destroy (ipc);
         ipc = NULL;
@@ -700,8 +700,8 @@ void EditorPanel::info_toggled () {
     else
         infoString = M("QINFO_NOEXIF");
 
-    iarea->imageArea->setInfoText (infoString);
-    iarea->imageArea->infoEnabled (info->get_active ());
+    iareapanel->imageArea->setInfoText (infoString);
+    iareapanel->imageArea->infoEnabled (info->get_active ());
 }
 
 void EditorPanel::hideHistoryActivated () {
@@ -832,40 +832,40 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 					return true;
 				case GDK_plus:
 				case GDK_equal:
-					iarea->imageArea->zoomPanel->zoomInClicked();
+                    iareapanel->imageArea->zoomPanel->zoomInClicked();
 					return true;
 				case GDK_minus:
 				case GDK_underscore:
-					iarea->imageArea->zoomPanel->zoomOutClicked();
+                    iareapanel->imageArea->zoomPanel->zoomOutClicked();
 					return true;
 				case GDK_1:
-					iarea->imageArea->zoomPanel->zoom11Clicked();
+                    iareapanel->imageArea->zoomPanel->zoom11Clicked();
 					return true;
 
 				case GDK_r: //preview mode Red
-					iarea->imageArea->previewModePanel->toggleR();
+                    iareapanel->imageArea->previewModePanel->toggleR();
 					return true;
 				case GDK_g: //preview mode Green
-					iarea->imageArea->previewModePanel->toggleG();
+                    iareapanel->imageArea->previewModePanel->toggleG();
 					return true;
 				case GDK_b: //preview mode Blue
-					iarea->imageArea->previewModePanel->toggleB();
+                    iareapanel->imageArea->previewModePanel->toggleB();
 					return true;
 				case GDK_v: //preview mode Luminosity
-					iarea->imageArea->previewModePanel->toggleL();
+                    iareapanel->imageArea->previewModePanel->toggleL();
 					return true;
 				case GDK_F: //preview mode Focus Mask
-					iarea->imageArea->previewModePanel->toggleFocusMask();
+                    iareapanel->imageArea->previewModePanel->toggleFocusMask();
 					return true;
 
 				case GDK_f:
-					iarea->imageArea->zoomPanel->zoomFitClicked();
+                    iareapanel->imageArea->zoomPanel->zoomFitClicked();
 					return true;
 				case GDK_less:
-					iarea->imageArea->indClippedPanel->toggleClipped(true);
+                    iareapanel->imageArea->indClippedPanel->toggleClipped(true);
 					return true;
 				case GDK_greater:
-					iarea->imageArea->indClippedPanel->toggleClipped(false);
+                    iareapanel->imageArea->indClippedPanel->toggleClipped(false);
 					return true;
 
 				case GDK_F5:
@@ -1248,8 +1248,8 @@ void EditorPanel::beforeAfterToggled () {
     if (beforeIarea) {
         if (beforeIpc)
             beforeIpc->stopProcessing ();
-        iarea->setBeforeAfterViews (NULL, iarea);
-        iarea->imageArea->iLinkedImageArea = NULL;
+        iareapanel->setBeforeAfterViews (NULL, iareapanel);
+        iareapanel->imageArea->iLinkedImageArea = NULL;
         delete beforeIarea;
         beforeIarea = NULL;
         if (beforeIpc)
@@ -1308,12 +1308,12 @@ void EditorPanel::beforeAfterToggled () {
         beforeIarea->imageArea->setPreviewHandler (beforePreviewHandler);
         beforeIarea->imageArea->setImProcCoordinator (beforeIpc);
 
-        beforeIarea->imageArea->setPreviewModePanel(iarea->imageArea->previewModePanel);
-        beforeIarea->imageArea->setIndicateClippedPanel(iarea->imageArea->indClippedPanel);
-        iarea->imageArea->iLinkedImageArea = beforeIarea->imageArea;
+        beforeIarea->imageArea->setPreviewModePanel(iareapanel->imageArea->previewModePanel);
+        beforeIarea->imageArea->setIndicateClippedPanel(iareapanel->imageArea->indClippedPanel);
+        iareapanel->imageArea->iLinkedImageArea = beforeIarea->imageArea;
 
-        iarea->setBeforeAfterViews (beforeIarea, iarea);
-        beforeIarea->setBeforeAfterViews (beforeIarea, iarea);
+        iareapanel->setBeforeAfterViews (beforeIarea, iareapanel);
+        beforeIarea->setBeforeAfterViews (beforeIarea, iareapanel);
 
         rtengine::procparams::ProcParams params;
         if (history->getBeforeLineParams (params))
@@ -1447,5 +1447,5 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition) {
 		break;
 	}
 
-	iarea->imageArea->setPointerMotionHListener (histogramPanel);
+    iareapanel->imageArea->setPointerMotionHListener (histogramPanel);
 }
