@@ -40,8 +40,6 @@
 namespace rtengine {
 
 void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh) { 
-	
-	float threshsqr = SQR(thresh);
 	int halfwin = ceil(2*radius)+1;
 	
 #define SQR(x) ((x)*(x))

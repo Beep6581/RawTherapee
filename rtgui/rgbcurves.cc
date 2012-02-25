@@ -28,9 +28,9 @@ RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 
-	Rshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_RED"));
-	Gshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_GREEN"));
-	Bshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_BLUE"));
+	Rshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_RED")));
+	Gshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_GREEN")));
+	Bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_BLUE")));
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();

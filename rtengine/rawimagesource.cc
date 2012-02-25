@@ -432,7 +432,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
-    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, ((const ImageData*)getMetaData())->getCamera(), defGain);
+    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera(), defGain);
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1222,7 +1222,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
 				cfaboxblur(riFlatFile, cfablur, BS, BS);
 			
-			float refctrval,reflocval,refcolor[2][2],vignettecorr,colorcastcorr;
+			float refcolor[2][2],vignettecorr;
 			//find center ave values by channel
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
@@ -1297,7 +1297,6 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 
 	float (*cfatmp);
 	cfatmp = (float (*)) calloc (H*W, sizeof *cfatmp);
-	float clean0, clean1;
 	float hotdeadthresh = 0.5;
 		
 	for (int i=0; i<H; i++) {
@@ -1728,10 +1727,6 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 			( wprof[2][2])
         }
 		};
-	float wip[3][3] = {
-		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
-		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
-		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}};
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), 
             INTENT_RELATIVE_COLORIMETRIC,  // float is clipless, so don't trim it
@@ -2093,7 +2088,6 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 	
 	// lookup table for Lab conversion
 	// perhaps should be centralized, universally defined so we don't keep remaking it???
-    ImProcFunctions::cachef;
     /*for (int ix=0; ix < 0x10000; ix++) {
     	    float rx = ix / 65535.0;
         	fv[ix] = rx > 0.008856 ? exp(1.0/3 * log(rx)) : 7.787*rx + 16/116.0;

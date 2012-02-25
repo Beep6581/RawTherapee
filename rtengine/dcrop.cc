@@ -61,9 +61,6 @@ void Crop::setListener (DetailedCropListener* il) {
 void Crop::update (int todo) {
 	Glib::Mutex::Lock lock(cropMutex);
 
-	//flag for testing color accuracy
-	bool colortest = false;
-
     ProcParams& params = parent->params;
 
 

@@ -66,14 +66,14 @@ CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabe
 		if (!diagonalSubGroup) {
 			diagonalSubGroup = new DiagonalCurveEditorSubGroup(this);
 		}
-		return (CurveEditor*)diagonalSubGroup->addCurve(curveLabel);
+		return (static_cast<CurveEditor*>(diagonalSubGroup->addCurve(curveLabel)));
 	case (CT_Flat):
 		if (!flatSubGroup) {
 			flatSubGroup = new FlatCurveEditorSubGroup(this);
 		}
-		return (CurveEditor*)flatSubGroup->addCurve(curveLabel, periodic);
+		return (static_cast<CurveEditor*>(flatSubGroup->addCurve(curveLabel, periodic)));
 	default:
-		return (CurveEditor*)NULL;
+		return (static_cast<CurveEditor*>(NULL));
 		break;
 	}
 }
@@ -238,7 +238,7 @@ void CurveEditorGroup::setCurveExternal (CurveEditor* ce, const std::vector<doub
 		ce->subGroup->storeCurveValues(ce, c);	// The new curve is saved in the CurveEditor
 		(ce)->selected = c[0];		// We set the selected curve type in the CurveEditor to the one of the specified curve
 	}
-	updateGUI((CurveEditor*)ce);				// And we update the GUI if necessary
+	updateGUI(static_cast<CurveEditor*>(ce));				// And we update the GUI if necessary
 }
 
 /*

@@ -262,12 +262,6 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 
 bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
 {
-	std::string cmd;
-	std::string stdOut;
-	std::string stdErr;
-
-	//bool success = false;  // unused
-
 	int exitStatus=-1;
 	try {
 		//cmd = Glib::filename_from_utf8(cmd_utf8);

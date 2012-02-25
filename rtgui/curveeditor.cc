@@ -28,7 +28,7 @@
 
 extern Glib::ustring argv0;
 
-DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, (CurveEditorGroup*) ceGroup, ceSubGroup) {
+DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup) {
 
     // Order set in the same order than "enum DiagonalCurveType". Shouldn't change, for compatibility reason
     curveType->addEntry("curveType-linear.png",     M("CURVEEDITOR_LINEAR"));		// 0 Linear
@@ -56,7 +56,7 @@ std::vector<double> DiagonalCurveEditor::getCurve () {
 	}
 }
 
-FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, bool isPeriodic) : CurveEditor::CurveEditor(text, (CurveEditorGroup*) ceGroup, ceSubGroup) {
+FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, bool isPeriodic) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup) {
 
 	periodic = isPeriodic;
 

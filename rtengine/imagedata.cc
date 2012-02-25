@@ -101,8 +101,6 @@ void ImageData::extractInfo () {
   if (!root) 
     return;
 
-  char buffer[256];
-
   make = "";
   model = "";
   serial = "";

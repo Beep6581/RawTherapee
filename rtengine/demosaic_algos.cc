@@ -134,8 +134,6 @@ void RawImageSource::eahd_demosaic () {
     homv[1][j] = 0;
   }
 
-  const static int delta = 1;
-
   int dLmaph[9];
   int dLmapv[9];
   int dCamaph[9];
@@ -595,7 +593,7 @@ void RawImageSource::vng4_demosaic () {
   int row, col, x, y, x1, x2, y1, y2, t, weight, grads, color, diag;
   int g, diff, thold, num, c, width=W, height=H, colors=4;
   float (*image)[4];
-  int lcode[16][16][32], shift, i, j;
+  int lcode[16][16][32], shift, i;
 
   image = (float (*)[4]) calloc (H*W, sizeof *image);
   for (int ii=0; ii<H; ii++)
@@ -765,7 +763,6 @@ void RawImageSource::ppg_demosaic()
   float (*pix)[4];
 
   float (*image)[4];
-  int colors = 3;
 
   if (plistener) {
     plistener->setProgressStr ("Demosaicing...");
@@ -905,7 +902,6 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
     };
 
     const float d65_white[3] = { 0.950456, 1, 1.088754 };
-	const float d50_white[3] = { 0.96422,  1, 0.82521  };
 
     if (plistener) {
         plistener->setProgressStr ("AHD Demosaicing...");
@@ -1119,7 +1115,6 @@ void RawImageSource::refinement_lassus()
             // Reinforce interpolated green pixels on RED/BLUE pixel locations
 #pragma omp for
             for (int row=6; row<H-6; row++) {
-                int c,d;
                 for (int col=6+(FC(row,2)&1),c=FC(row,col); col<W-6; col+=2) {
                     float (*pix)[4]=image+row*W+col;
 
@@ -1145,7 +1140,6 @@ void RawImageSource::refinement_lassus()
             // Reinforce interpolated red/blue pixels on GREEN pixel locations
 #pragma omp for 
             for (int row=6; row<H-6; row++) {
-                int c,d;
                 for (int col=6+(FC(row,3)&1),c=FC(row,col+1); col<W-6; col+=2) {
                     float (*pix)[4]=image+row*W+col;
                     for (int i=0; i<2; c=2-c,i++) {
@@ -1168,7 +1162,6 @@ void RawImageSource::refinement_lassus()
             // Reinforce integrated red/blue pixels on BLUE/RED pixel locations
 #pragma omp for
             for (int row=6; row<H-6; row++) {
-                int c,d;
                 for (int col=6+(FC(row,2)&1),c=2-FC(row,col),d=2-c; col<W-6; col+=2) {
                     float (*pix)[4]=image+row*W+col;
 
@@ -1469,7 +1462,7 @@ void RawImageSource::dcb_correction(float (*image)[4], int x0, int y0)
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,2);
 
 	for (int row=rowMin; row < rowMax; row++) {
-		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=FC(y0-TILEBORDER+row,x0-TILEBORDER+col); col < colMax; col+=2, indx+=2) {
+		for (int col = colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col; col < colMax; col+=2, indx+=2) {
 			float current = 4.f * image[indx][3] +
 						  2.f * (image[indx+u][3] + image[indx-u][3] + image[indx+1][3] + image[indx-1][3]) +
 							image[indx+v][3] + image[indx-v][3] + image[indx+2][3] + image[indx-2][3];
@@ -1603,11 +1596,10 @@ void RawImageSource::dcb_refinement(float (*image)[4], int x0, int y0)
 // missing colors are interpolated using high quality algorithm by Luis Sanz Rodr‚àö‚â†guez
 void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*chroma)[2])
 {
-	const int u=CACHESIZE, v=2*CACHESIZE, w=3*CACHESIZE;
+	const int u=CACHESIZE, w=3*CACHESIZE;
 	int rowMin,colMin,rowMax,colMax;
 	dcb_initTileLimits(colMin,rowMin,colMax,rowMax,x0,y0,3);
 
-	int i,j;
 	float f[4],g[4];
 
 	for (int row=1; row < CACHESIZE-1; row++)
@@ -1617,7 +1609,7 @@ void RawImageSource::dcb_color_full(float (*image)[4], int x0, int y0, float (*c
         }
 
 	for (int row=rowMin; row<rowMax; row++)
-		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=1-FC(y0-TILEBORDER+row,x0-TILEBORDER+col)/2,d=1-c; col<colMax; col+=2,indx+=2) {
+		for (int col=colMin+(FC(y0-TILEBORDER+row,x0-TILEBORDER+colMin)&1),indx=row*CACHESIZE+col,c=1-FC(y0-TILEBORDER+row,x0-TILEBORDER+col)/2; col<colMax; col+=2,indx+=2) {
 			f[0]=1.f/(float)(1.f+fabs(chroma[indx-u-1][c]-chroma[indx+u+1][c])+fabs(chroma[indx-u-1][c]-chroma[indx-w-3][c])+fabs(chroma[indx+u+1][c]-chroma[indx-w-3][c]));
 			f[1]=1.f/(float)(1.f+fabs(chroma[indx-u+1][c]-chroma[indx+u-1][c])+fabs(chroma[indx-u+1][c]-chroma[indx-w+3][c])+fabs(chroma[indx+u-1][c]-chroma[indx-w+3][c]));
 			f[2]=1.f/(float)(1.f+fabs(chroma[indx+u-1][c]-chroma[indx-u+1][c])+fabs(chroma[indx+u-1][c]-chroma[indx+w+3][c])+fabs(chroma[indx-u+1][c]-chroma[indx+w-3][c]));

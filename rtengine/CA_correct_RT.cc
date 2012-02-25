@@ -103,8 +103,6 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 	#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 	#define SQR(x) ((x)*(x))
 
-	const float clip_pt = initialGain;
-		
 	// local variables
 	int width=W, height=H;
 	//temporary array to store simple interpolation of G

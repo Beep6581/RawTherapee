@@ -52,7 +52,7 @@ class ImageData : public ImageMetaData {
   public:
 
     ImageData (Glib::ustring fname, RawMetaDataLocation* rml=NULL);
-    ~ImageData ();
+    virtual ~ImageData ();
 
     const rtexif::TagDirectory*   getExifData () const { return root; }
     const std::vector<procparams::IPTCPair> getIPTCData () const;

@@ -22,7 +22,7 @@
 #include "../rtengine/safegtk.h"
 
 int FilePanelInitUI (void* data) {
-    ((FilePanel*)data)->init ();
+    (static_cast<FilePanel*>(data))->init ();
     return 0;
 }
 

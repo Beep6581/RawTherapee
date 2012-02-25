@@ -321,14 +321,14 @@ if(USE_CLANG)
 
       SET (CMAKE_C_COMPILER             ${CLANG_CMD})
       SET (CMAKE_C_FLAGS                "") #-Wall
-      SET (CMAKE_C_FLAGS_DEBUG          "-g")
+      SET (CMAKE_C_FLAGS_DEBUG          "-O0 -g")
       SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
       SET (CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
       SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
 
       SET (CMAKE_CXX_COMPILER             ${CLANGPP_CMD})
       SET (CMAKE_CXX_FLAGS                "") #-Wall
-      SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
+      SET (CMAKE_CXX_FLAGS_DEBUG          "-O0 -g")
       SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
       SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
       SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")

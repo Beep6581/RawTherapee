@@ -52,8 +52,8 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentCon
 void FoldableToolPanel::foldThemAll (GdkEventButton* event) {
 	if (event->button == 3)	{
 		if (listener)
-			((ToolPanelCoordinator*)listener)->foldAllButOne( parentContainer, this);
+		  (static_cast<ToolPanelCoordinator*>(listener))->foldAllButOne( parentContainer, this);
 		else
-			((ToolPanelCoordinator*)tmp)->foldAllButOne( parentContainer, this);
+		  (static_cast<ToolPanelCoordinator*>(tmp))->foldAllButOne( parentContainer, this);
 	}
 }

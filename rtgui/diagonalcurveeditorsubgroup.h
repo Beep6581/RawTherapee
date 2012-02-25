@@ -61,7 +61,7 @@ protected:
 
 public:
 	DiagonalCurveEditorSubGroup(CurveEditorGroup* prt);
-	~DiagonalCurveEditorSubGroup();
+	virtual ~DiagonalCurveEditorSubGroup();
 
 	DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = "");
 	virtual void updateBackgroundHistogram (CurveEditor* ce);

@@ -506,7 +506,7 @@ void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* o
 	FoldableToolPanel* currentTP;
 
     for (int i=0; i<toolPanels.size(); i++) {
-        currentTP = (FoldableToolPanel*)toolPanels[i];
+	currentTP = static_cast<FoldableToolPanel*>(toolPanels[i]);
         if (currentTP->getParent() == parent) {
             // Section in the same tab, we unfold it if it's not the one that has been clicked
             if (currentTP != openedSection) {

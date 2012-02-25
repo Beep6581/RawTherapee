@@ -263,9 +263,6 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	tpp->greenMultiplier = ri->get_pre_mul(1);
 	tpp->blueMultiplier = ri->get_pre_mul(2);
 
-	float pre_mul[4], scale_mul[4];
-	int cblack[4];
-
 	ri->scale_colors();
 	ri->pre_interpolate();
 
@@ -306,7 +303,6 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	if (!ri->get_model().compare("D1X"))
 		hskip *= 2;
 
-	int ix = 0;
 	int rofs = 0;
 	int tmpw = (width - 2) / hskip;
 	int tmph = (height - 2) / vskip;
@@ -362,8 +358,6 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 					continue;
 				double fr = r - ur;
 				double fc = c - uc;
-				int oofs = (ur * tmpw + uc) * 3;
-				int fofs = (row * wide + col) * 3;
 				fImg->r[row][col] = (tmpImg->r[ur][uc] * (1 - fc)
 						+ tmpImg->r[ur][uc + 1] * fc) * (1 - fr)
 						+ (tmpImg->r[ur + 1][uc] * (1 - fc)
@@ -1150,7 +1144,6 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
 
             jpeg_set_quality (&cinfo, 87, true);
         	jpeg_start_compress(&cinfo, TRUE);
-            int rowlen = thumbImg->width*3;
         	while (cinfo.next_scanline < cinfo.image_height) {
                 unsigned char* row = tmpdata + cinfo.next_scanline*thumbImg->width*3;
         		if (jpeg_write_scanlines (&cinfo, &row, 1) < 1) {

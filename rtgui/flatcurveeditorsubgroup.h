@@ -38,7 +38,7 @@ protected:
 
 public:
 	FlatCurveEditorSubGroup(CurveEditorGroup* prt);
-	~FlatCurveEditorSubGroup();
+	virtual ~FlatCurveEditorSubGroup();
 
 	FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
 	//virtual void updateBackgroundHistogram (CurveEditor* ce);

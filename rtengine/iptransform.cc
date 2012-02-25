@@ -228,7 +228,6 @@ void ImProcFunctions::vignetting (Imagefloat* original, Imagefloat* transformed,
 	#pragma omp parallel for if (multiThread)
 	for (int y=0; y<transformed->height; y++) {
 		double vig_y_d = (double) (y + cy) - vig_h2 ;
-		int val;
 		for (int x=0; x<transformed->width; x++) {
 			double vig_x_d = (double) (x + cx) - vig_w2 ;
 			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);

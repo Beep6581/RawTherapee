@@ -44,7 +44,7 @@ public:
 	:pathname(name),maker(mak),model(mod),lens(len),aperture(apert),focallength(focal),timestamp(t),ri(NULL){}
 
 	ffInfo( const ffInfo &o)
-	:pathname(o.pathname),maker(o.maker),model(o.model),lens(o.lens),focallength(o.focallength),aperture(o.aperture),timestamp(o.timestamp),ri(NULL){}
+	:pathname(o.pathname),maker(o.maker),model(o.model),lens(o.lens),aperture(o.aperture),focallength(o.focallength),timestamp(o.timestamp),ri(NULL){}
 	~ffInfo() { if( ri ) delete ri; }
 
 	

@@ -219,9 +219,6 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
 	else
 		png_set_gamma(png,2.0, 0.45455);
 
-    int bps = getBPS ();
-
-
 //	if (bps==8 && bit_depth==16) png_set_strip_16(png);
 
 	//updating png info struct
@@ -293,7 +290,6 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
         //jpeg_memory_src (&cinfo,buffer,bufsize);
         jpeg_read_header(&cinfo, TRUE);
 
-        unsigned int proflen;
         if( loadedProfileData ){
            delete [] loadedProfileData;
            loadedProfileData = NULL;
@@ -371,7 +367,6 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     	    return IMIO_READERROR;
     	}
 
-        unsigned int proflen;    	
         delete loadedProfileData;
         loadedProfileData = NULL;
         bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);

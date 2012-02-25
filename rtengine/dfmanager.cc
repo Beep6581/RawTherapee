@@ -223,7 +223,7 @@ void DFManager::init( Glib::ustring pathname )
         }
         try{
             addFileInfo(names[i]);
-        }catch( std::exception e ){}
+        }catch( std::exception& e ){}
     }
     // Where multiple shots exist for same group, move filename to list
     for( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
@@ -379,11 +379,15 @@ std::list<badPix> *DFManager::getHotPixels ( const std::string &mak, const std::
 {
    dfInfo *df = find( mak, mod, iso, shut, t );
    if( df ){
-	   if( settings->verbose )
-		   if( !df->pathname.empty() )
+	   if( settings->verbose ) {
+		   if( !df->pathname.empty() ) {
 		      printf( "Searched hotpixels from %s\n",df->pathname.c_str());
-		   else if( !df->pathNames.empty() )
+		   } else {
+			if( !df->pathNames.empty() ) {
 			  printf( "Searched hotpixels from template (first %s)\n",df->pathNames.begin()->c_str());
+		   	}
+		   }
+	   }
 	   return &df->getHotPixels();
    }else
 	   return 0;

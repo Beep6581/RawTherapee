@@ -184,8 +184,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 		plistener->setProgressStr ("HL reconstruction...");
 		plistener->setProgress (0.0);
 	}
-	float progress = 0.0;
-	
 	
 	int height = H;
 	int width = W;
@@ -205,7 +203,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 
 	//%%%%%%%%%%%%%%%%%%%%
 	//for blend algorithm:
-	static const float clipthresh = 0.95, blendthresh=1.0;
+	static const float blendthresh=1.0;
 	const int ColorCount=3;
 	// Transform matrixes rgb>lab and back
 	static const float trans[2][ColorCount][ColorCount] =
@@ -260,7 +258,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	sat -= black;
 	float camwb[4];
 	for (int c=0; c<4; c++) camwb[c]=ri->get_cam_mul(c);
-	float min = MIN(MIN(camwb[0],camwb[1]),camwb[2]);
 
 	multi_array2D<float,3> channelblur(width,height,ARRAY2D_CLEAR_DATA);
 	
@@ -483,7 +480,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// now reconstruct clipped channels using color ratios
 	
-	const float Yclip = (0.299*max[0] + 0.587*max[1] + 0.114*max[2]);
 	//const float Yclip = 0.3333*(max[0] + max[1] + max[2]);
 	//float sumwt=0, counts=0;
 	
@@ -514,16 +510,16 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			}
 			
 			// Calculate the lightness correction ratio (chratio)
-			for (int i=0; i<2; i++) {
+			for (int i2=0; i2<2; i2++) {
 				FOREACHCOLOR {
-					lab[i][c]=0;
+					lab[i2][c]=0;
 					for (int j=0; j < ColorCount; j++)
-						lab[i][c] += trans[ColorCount-3][c][j] * cam[i][j];
+						lab[i2][c] += trans[ColorCount-3][c][j] * cam[i2][j];
 				}
 				
-				sum[i]=0;
+				sum[i2]=0;
 				for (int c=1; c < ColorCount; c++)
-					sum[i] += SQR(lab[i][c]);
+					sum[i2] += SQR(lab[i2][c]);
 			}
 			chratio = sqrt(sum[1]/sum[0]);
 			
@@ -556,7 +552,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			
 			//there are clipped highlights
 			//first, determine weighted average of unclipped extensions (weighting is by 'hue' proximity)
-			float dirwt, factor, Y, I, Q;
+			float dirwt, factor, Y;
 			float totwt=0;//0.0003;
 			float clipfix[3]={0,0,0};//={totwt*rgb_blend[0],totwt*rgb_blend[1],totwt*rgb_blend[2]};
 			for (int dir=0; dir<numdirs; dir++) {
