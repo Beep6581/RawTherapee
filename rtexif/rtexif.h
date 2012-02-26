@@ -26,6 +26,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <cmath>
+#include "../rtengine/procparams.h"
 
 namespace rtexif {
 
@@ -203,8 +204,8 @@ class ExifManager {
     static void          parseCIFF (FILE* f, int base, int length, TagDirectory* root);
     
     static const std::vector<Tag*>& getDefaultTIFFTags (TagDirectory* forthis);
-    static int    createJPEGMarker (const TagDirectory* root, const std::vector< std::pair<std::string,std::string> >& changeList, int W, int H, unsigned char* buffer);
-    static int    createTIFFHeader (const TagDirectory* root, const std::vector< std::pair<std::string,std::string> >& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char* buffer);
+    static int    createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char* buffer);
+    static int    createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char* buffer);
 };
 
 class Interpreter {

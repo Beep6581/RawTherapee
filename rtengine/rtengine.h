@@ -58,7 +58,7 @@ namespace rtengine {
             virtual bool hasIPTC () const =0;
           /** Returns the directory of IPTC tags.
             * @return The directory of IPTC tags */
-            virtual const std::vector<procparams::IPTCPair> getIPTCData () const =0;
+            virtual const procparams::IPTCPairs getIPTCData () const =0;
           /** @return a struct containing the date and time of the image */
             virtual struct tm   getDateTime () const =0;
           /** @return a timestamp containing the date and time of the image */

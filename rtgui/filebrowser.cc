@@ -32,7 +32,7 @@
 extern Options options;
 
 FileBrowser::FileBrowser () 
-    : tbl(NULL),numFiltered(0) {
+    : tbl(NULL),numFiltered(0), partialPasteDlg(M("PARTIALPASTE_DIALOGLABEL")) {
 
     fbih = new FileBrowserIdleHelper;
     fbih->fbrowser = this;
@@ -514,7 +514,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
 			pp.raw.df_autoselect= true;
 			pp.raw.dark_frame.clear();
-			mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
+			mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
 		}
     }else if (m==selectDF){
     	if( !mselected.empty() ){
@@ -531,7 +531,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
 					pp.raw.dark_frame= fc.get_filename();
 					pp.raw.df_autoselect= false;
-					mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
+					mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
 				}
 			}
     	}
@@ -553,7 +553,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
 			pp.raw.ff_AutoSelect= true;
 			pp.raw.ff_file.clear();
-			mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
+			mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
 		}
     }
     else if (m==selectFF){
@@ -571,7 +571,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
 					pp.raw.ff_file= fc.get_filename();
 					pp.raw.ff_AutoSelect= false;
-					mselected[i]->thumbnail->setProcParams(pp,FILEBROWSER,false);
+					mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
 				  }
 			  }
     	}
@@ -605,7 +605,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 
             // Empty run to update the thumb
             rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            mselected[i]->thumbnail->setProcParams (params, FILEBROWSER);
+            mselected[i]->thumbnail->setProcParams (params, NULL, FILEBROWSER);
     }
     } else if (m==clearFromCache) {
 		for (int i=0; i<mselected.size(); i++)
@@ -627,40 +627,60 @@ void FileBrowser::copyProfile () {
 
 void FileBrowser::pasteProfile () {
 
-    std::vector<FileBrowserEntry*> mselected;
-    for (int i=0; i<selected.size(); i++)
-      mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+    if (clipboard.hasProcParams()) {
+        std::vector<FileBrowserEntry*> mselected;
+        for (unsigned int i=0; i<selected.size(); i++)
+            mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
 
-    if (!tbl || mselected.empty())
-        return;
+        if (!tbl || mselected.empty())
+            return;
 
-    for (int i=0; i<mselected.size(); i++) 
-        mselected[i]->thumbnail->setProcParams (clipboard.getProcParams(), FILEBROWSER);
-    
-    queue_draw ();
-}
+        for (unsigned int i=0; i<mselected.size(); i++) {
+            // copying read only clipboard PartialProfile to a temporary one
+            rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
+            rtengine::procparams::PartialProfile pastedPartProf(cbPartProf.pparams, cbPartProf.pedited, true);
 
-void FileBrowser::partPasteProfile () {
-
-    std::vector<FileBrowserEntry*> mselected;
-    for (int i=0; i<selected.size(); i++)
-      mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
-
-    if (!tbl || mselected.empty())
-        return;
-
-    if (partialPasteDlg.run ()) {
-    
-        for (int i=0; i<mselected.size(); i++) {
-            mselected[i]->thumbnail->createProcParamsForUpdate(false,false);  // this can execute customprofilebuilder to generate param file
-            rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            partialPasteDlg.applyPaste (&params, &clipboard.getProcParams());
-            mselected[i]->thumbnail->setProcParams (params, FILEBROWSER);
+            // applying the PartialProfile to the thumb's ProcParams
+            mselected[i]->thumbnail->setProcParams (*pastedPartProf.pparams, pastedPartProf.pedited, FILEBROWSER);
+            pastedPartProf.deleteInstance();
         }
 
         queue_draw ();
     }
-    partialPasteDlg.hide ();
+}
+
+void FileBrowser::partPasteProfile () {
+
+    if (clipboard.hasProcParams()) {
+
+        std::vector<FileBrowserEntry*> mselected;
+        for (unsigned int i=0; i<selected.size(); i++)
+            mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+
+        if (!tbl || mselected.empty())
+            return;
+
+        int i = partialPasteDlg.run ();
+        if (i == Gtk::RESPONSE_OK) {
+
+            for (unsigned int i=0; i<mselected.size(); i++) {
+                // copying read only clipboard PartialProfile to a temporary one, initialized to the thumb's ProcParams
+                mselected[i]->thumbnail->createProcParamsForUpdate(false,false);  // this can execute customprofilebuilder to generate param file
+                rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
+                rtengine::procparams::PartialProfile pastedPartProf(&mselected[i]->thumbnail->getProcParams (), NULL);
+
+                // pushing the selected values of the clipboard PartialProfile to the temporary PartialProfile
+                partialPasteDlg.applyPaste (pastedPartProf.pparams, pastedPartProf.pedited, cbPartProf.pparams, cbPartProf.pedited);
+
+                // applying the temporary PartialProfile to the thumb's ProcParams
+                mselected[i]->thumbnail->setProcParams (*pastedPartProf.pparams, pastedPartProf.pedited, FILEBROWSER);
+                pastedPartProf.deleteInstance();
+            }
+
+            queue_draw ();
+        }
+        partialPasteDlg.hide ();
+    }
 }
 
 void FileBrowser::openDefaultViewer (int destination) {
@@ -726,10 +746,10 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
 
 void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
 
-    rtengine::procparams::ProcParams* pparams = profileStore.getProfile (ppname);
-    if (pparams && !selected.empty()) {
-        for (int i=0; i<selected.size(); i++) 
-	  (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*pparams, FILEBROWSER);
+    rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (ppname);
+    if (partProfile->pparams && !selected.empty()) {
+        for (int i=0; i<selected.size(); i++)
+            (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*partProfile->pparams, partProfile->pedited, FILEBROWSER);
         queue_draw ();
     }
 }
@@ -739,17 +759,20 @@ void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 	if (!tbl || selected.empty())
 		return;
 
-	rtengine::procparams::ProcParams* pparams = profileStore.getProfile (ppname);
+	rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (ppname);
 
-	if (pparams) {
-		if (partialPasteDlg.run ()) {
+	if (srcProfiles->pparams) {
+		if (partialPasteDlg.run()==Gtk::RESPONSE_OK) {
 
 			for (int i=0; i<selected.size(); i++) {
-                selected[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+				selected[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
-		rtengine::procparams::ProcParams params = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getProcParams ();
-				partialPasteDlg.applyPaste (&params, pparams);
-				(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (params, FILEBROWSER);
+				rtengine::procparams::PartialProfile dstProfile(true);
+				*dstProfile.pparams = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getProcParams ();
+				dstProfile.set(true);
+				partialPasteDlg.applyPaste (dstProfile.pparams, dstProfile.pedited, srcProfiles->pparams, srcProfiles->pedited);
+				(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*dstProfile.pparams, dstProfile.pedited, FILEBROWSER);
+				dstProfile.deleteInstance();
 			}
 			queue_draw ();
 		}

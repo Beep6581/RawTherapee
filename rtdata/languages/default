@@ -748,10 +748,14 @@ PROFILEPANEL_PLASTPHOTO;Last Photo
 PROFILEPANEL_PLASTSAVED;Last Saved
 PROFILEPANEL_PROFILE;Profile
 PROFILEPANEL_SAVEDLGLABEL;Save Postprocessing Parameters...
-PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
-PROFILEPANEL_TOOLTIPLOAD;Load a profile from file
-PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
-PROFILEPANEL_TOOLTIPSAVE;Save current profile
+PROFILEPANEL_COPYPPASTE;Parameters to copy
+PROFILEPANEL_LOADPPASTE;Parameters to load
+PROFILEPANEL_PASTEPPASTE;Parameters to paste
+PROFILEPANEL_SAVEPPASTE;Parameters to save
+PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard\nCTRL-click to select the parameters to copy
+PROFILEPANEL_TOOLTIPLOAD;Load a profile from file\nCTRL-click to select the parameters to load
+PROFILEPANEL_TOOLTIPPASTE;Paste profile from clipboard\nCTRL-click key to select the parameters to paste
+PROFILEPANEL_TOOLTIPSAVE;Save current profile\nCTRL-click key to select the parameters to save
 PROGRESSBAR_BADPIXELS;Bad pixels...
 PROGRESSBAR_CACORRECTION;CA correction...
 PROGRESSBAR_DARKFRAME;Darkframe... 
@@ -955,6 +959,7 @@ TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
 TP_PREPROCESS_GREENEQUIL;Green equilibration
 TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
 TP_PREPROCESS_LABEL;Preprocessing
 TP_PREPROCESS_LINEDENOISE;Line noise filter
 TP_PREPROCESS_NO_FOUND;None found
@@ -1101,4 +1106,5 @@ ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>
 #00 default translation file 
-#01 Developers should add translations to this file and then run 'generateDifferences.sh' script to update other locales.
+#01 Developers should add translations to this file and then run 'generateTranslationDiffs' script to update other locales.
+#02 WARNING: This script works on Linux only

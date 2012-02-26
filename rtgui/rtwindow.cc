@@ -34,6 +34,7 @@ RTWindow::RTWindow ()
 
     cacheMgr->init ();
     WhiteBalance::init();
+    ProfilePanel::init();
 
     Glib::ustring fName = "rt-logo.png";
     Glib::ustring fullPath = RTImage::findIconAbsolutePath(fName);
@@ -450,6 +451,7 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
     
     cacheMgr->closeCache ();  // also makes cleanup if too large
     WhiteBalance::cleanup();
+    ProfilePanel::cleanup();
 
 
     if (!options.windowMaximized) {

@@ -867,8 +867,8 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 				if (options.fastexport_bypass_sharpening         ) params.sharpening.enabled          = false;
 				if (options.fastexport_bypass_sharpenEdge        ) params.sharpenEdge.enabled         = false;
 				if (options.fastexport_bypass_sharpenMicro       ) params.sharpenMicro.enabled        = false;
-				if (options.fastexport_bypass_lumaDenoise        ) params.lumaDenoise.enabled         = false;
-				if (options.fastexport_bypass_colorDenoise       ) params.colorDenoise.enabled        = false;
+				//if (options.fastexport_bypass_lumaDenoise        ) params.lumaDenoise.enabled         = false;
+				//if (options.fastexport_bypass_colorDenoise       ) params.colorDenoise.enabled        = false;
 				if (options.fastexport_bypass_defringe           ) params.defringe.enabled            = false;
 				if (options.fastexport_bypass_dirpyrDenoise      ) params.dirpyrDenoise.enabled       = false;
 				if (options.fastexport_bypass_sh_hq              ) params.sh.hq                       = false;

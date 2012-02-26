@@ -39,8 +39,8 @@ class ExportPanel : public Gtk::VBox {
 	    Gtk::CheckButton* bypass_sharpenEdge;
 	    Gtk::CheckButton* bypass_sharpenMicro;
 	    Gtk::CheckButton* bypass_sharpening;
-	    Gtk::CheckButton* bypass_lumaDenoise;
-	    Gtk::CheckButton* bypass_colorDenoise;
+	    //Gtk::CheckButton* bypass_lumaDenoise;
+	    //Gtk::CheckButton* bypass_colorDenoise;
 	    Gtk::CheckButton* bypass_defringe;
 	    Gtk::CheckButton* bypass_dirpyrDenoise;
 	    Gtk::CheckButton* bypass_sh_hq;
@@ -77,8 +77,8 @@ class ExportPanel : public Gtk::VBox {
 		sigc::connection bypass_sharpeningConn        ;
 		sigc::connection bypass_sharpenEdgeConn       ;
 		sigc::connection bypass_sharpenMicroConn      ;
-		sigc::connection bypass_lumaDenoiseConn       ;
-		sigc::connection bypass_colorDenoiseConn      ;
+		//sigc::connection bypass_lumaDenoiseConn       ;
+		//sigc::connection bypass_colorDenoiseConn      ;
 		sigc::connection bypass_defringeConn          ;
 		sigc::connection bypass_dirpyrDenoiseConn     ;
 		sigc::connection bypass_sh_hqConn             ;

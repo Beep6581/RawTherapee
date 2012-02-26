@@ -479,7 +479,7 @@ void EditorPanel::saveProfile () {
     ipc->getParams (&params);
 
         // Will call updateCache, which will update both the cached and sidecar files if necessary
-        openThm->setProcParams (params, EDITOR);
+        openThm->setProcParams (params, NULL, EDITOR);
 }
 }
 
@@ -592,7 +592,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP) {
 			if (ipc && openThm && tpc->getChangedState()) {
         rtengine::procparams::ProcParams pparams;
         ipc->getParams (&pparams);
-        openThm->setProcParams (pparams, EDITOR, false);
+            openThm->setProcParams (pparams, NULL, EDITOR, false);
     }
 
 		// Ring a sound if it was a long event
@@ -908,8 +908,13 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 
 void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
 
-    if (whoChangedIt!=EDITOR)
-      tpc->profileChange (&openThm->getProcParams(), rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
+    if (whoChangedIt!=EDITOR) {
+        PartialProfile pp(true);
+        pp.set(true);
+        *(pp.pparams) = openThm->getProcParams();
+        tpc->profileChange (&pp, rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
+        pp.deleteInstance();
+    }
 }
 
 bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf) {

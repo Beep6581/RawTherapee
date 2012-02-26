@@ -24,36 +24,41 @@
 #include "../rtengine/rtengine.h"
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
+#include "partialpastedlg.h"
 #include "guiutils.h"
 
 class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
 
   protected:
 
+    static PartialPasteDlg* partialProfileDlg;
     Gtk::Button* save;
     Gtk::Button* load;
     Gtk::Button* copy;
     Gtk::Button* paste;
     MyComboBoxText* profiles;
     std::vector<Glib::ustring> pparams;
-    rtengine::procparams::ProcParams* custom;
-    rtengine::procparams::ProcParams* lastsaved;
-    rtengine::procparams::ProcParams* lastphoto;
+    rtengine::procparams::PartialProfile* custom;
+    rtengine::procparams::PartialProfile* lastsaved;
+    rtengine::procparams::PartialProfile* lastphoto;
     Glib::ustring old;
     ProfileChangeListener* tpc;
     bool dontupdate;
     sigc::connection changeconn;
     Gtk::FileChooserDialog* savedialog;
 
-    void changeTo (rtengine::procparams::ProcParams* newpp, Glib::ustring profname); 
+    void changeTo (rtengine::procparams::PartialProfile* newpp, Glib::ustring profname);
     void refreshProfileList ();
 
   public:
 
-    ProfilePanel ();
+    ProfilePanel (bool readOnly=false);
     virtual ~ProfilePanel ();
 
     void setProfileChangeListener (ProfileChangeListener* ppl) { tpc = ppl; }
+
+    static void init ();
+    static void cleanup ();
 
     void initProfile (const Glib::ustring& profname, rtengine::procparams::ProcParams* lastSaved, rtengine::procparams::ProcParams* lastPhoto);
 
@@ -61,10 +66,10 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);
 
     // gui callbacks
-    void save_clicked ();
-    void load_clicked ();
-    void copy_clicked ();
-    void paste_clicked ();
+    void save_clicked (GdkEventButton* event);
+    void load_clicked (GdkEventButton* event);
+    void copy_clicked (GdkEventButton* event);
+    void paste_clicked (GdkEventButton* event);
     void selection_changed ();
 };
 
