@@ -86,7 +86,7 @@ class Thumbnail {
         // Use this to create params on demand for update
         rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB);
 
-        void              setProcParams (const rtengine::procparams::ProcParams& pp, int whoChangedIt=-1, bool updateCacheNow=true);
+        void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe=NULL, int whoChangedIt=-1, bool updateCacheNow=true);
         void              clearProcParams (int whoClearedIt=-1);
         void              loadProcParams ();
 

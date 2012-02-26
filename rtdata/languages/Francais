@@ -731,10 +731,14 @@ PROFILEPANEL_PLASTPHOTO;Photo précédente
 PROFILEPANEL_PLASTSAVED;Dernière sauvegarde
 PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Enregistrer les paramètres de post-traitement...
-PROFILEPANEL_TOOLTIPCOPY;Copie le profil courant dans le presse-papier
-PROFILEPANEL_TOOLTIPLOAD;Charger un profil depuis un fichier
-PROFILEPANEL_TOOLTIPPASTE; Colle le profil depuis le presse-papier
-PROFILEPANEL_TOOLTIPSAVE;Enregistrer le profil actuel
+PROFILEPANEL_COPYPPASTE;Paramètres à copier
+PROFILEPANEL_LOADPPASTE;Paramètres à charger
+PROFILEPANEL_PASTEPPASTE;Paramètres à coller
+PROFILEPANEL_SAVEPPASTE;Paramètres à enregistrer
+PROFILEPANEL_TOOLTIPCOPY;Copie le profil courant dans le presse-papier\nCTRL-clic pour sélectionner les paramètres à copier
+PROFILEPANEL_TOOLTIPLOAD;Charger un profil depuis un fichier\nCTRL-clic pour sélectionner les paramètres à charger
+PROFILEPANEL_TOOLTIPPASTE;Colle le profil depuis le presse-papier\nCTRL-clic pour sélectionner les paramètres à coller
+PROFILEPANEL_TOOLTIPSAVE;Enregistrer le profil actuel\nCTRL-clic pour sélectionner les paramètres à enregistrer
 PROGRESSBAR_BADPIXELS;Pixels chauds/morts...
 PROGRESSBAR_CACORRECTION;Correction de l'aberr. chomatique...
 PROGRESSBAR_DARKFRAME;Trame Noire...
@@ -808,6 +812,7 @@ TP_COLORSHIFT_GREENMAGENTA;Vert-Magenta
 TP_COLORSHIFT_LABEL;Décalage couleur
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
+TP_CROP_GTEPASSPORT;Passeport biométrique
 TP_CROP_GTGRID;Grille
 TP_CROP_GTHARMMEANS1;Manière harmonique 1
 TP_CROP_GTHARMMEANS2;Manière harmonique 2
@@ -927,6 +932,7 @@ TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Verticale
 TP_PREPROCESS_GREENEQUIL;Équilibrage du vert
 TP_PREPROCESS_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
+TP_PREPROCESS_HOTDEADPIXTHRESH;Seuil de détection des pixels morts
 TP_PREPROCESS_LABEL;Traitement pre-dématriçage
 TP_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
 TP_PREPROCESS_NO_FOUND;Aucun trouvé

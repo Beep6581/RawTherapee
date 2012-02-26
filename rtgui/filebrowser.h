@@ -102,8 +102,8 @@ class FileBrowser  : public ThumbBrowserBase,
 
     FileBrowserListener* tbl;
     BrowserFilter filter;
-    PartialPasteDlg partialPasteDlg;
     int numFiltered;
+    PartialPasteDlg partialPasteDlg;
     FileBrowserIdleHelper* fbih;
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);

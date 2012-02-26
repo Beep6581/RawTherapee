@@ -76,6 +76,7 @@ void Options::setDefaults () {
     startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)
     startupPath = "";
     profilePath = "profiles";
+    loadSaveProfilePath = "";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
     preferencesWidth = 0;
@@ -165,8 +166,8 @@ void Options::setDefaults () {
     fastexport_bypass_sharpening         = true;
     fastexport_bypass_sharpenEdge        = true;
     fastexport_bypass_sharpenMicro       = true;
-    fastexport_bypass_lumaDenoise        = true;
-    fastexport_bypass_colorDenoise       = true;
+    //fastexport_bypass_lumaDenoise        = true;
+    //fastexport_bypass_colorDenoise       = true;
     fastexport_bypass_defringe           = true;
     fastexport_bypass_dirpyrDenoise      = true;
     fastexport_bypass_sh_hq              = true;
@@ -211,12 +212,12 @@ void Options::setDefaults () {
 			0,  // ADDSET_LC_BRIGHTNESS
 			0,  // ADDSET_LC_CONTRAST
 			0,  // ADDSET_SHARP_AMOUNT
-			0,  // ADDSET_LD_EDGETOLERANCE
+			//0,  // ADDSET_LD_EDGETOLERANCE -- From obsolete and removed tool
 			0,  // ADDSET_WB_TEMPERATURE
 			0,  // ADDSET_WB_GREEN
-			0,  // ADDSET_CBOOST_AMOUNT
-			0,  // ADDSET_CS_BLUEYELLOW
-			0,  // ADDSET_CS_GREENMAGENTA
+			//0,  // ADDSET_CBOOST_AMOUNT -- From obsolete and removed tool
+			//0,  // ADDSET_CS_BLUEYELLOW -- From obsolete and removed tool
+			//0,  // ADDSET_CS_GREENMAGENTA -- From obsolete and removed tool
 			0,  // ADDSET_ROTATE_DEGREE
 			0,  // ADDSET_DIST_AMOUNT
 			0,  // ADDSET_PERSPECTIVE
@@ -367,12 +368,13 @@ if (keyFile.has_group ("Output")) {
 }
 
 if (keyFile.has_group ("Profiles")) { 
-    if (keyFile.has_key ("Profiles", "Directory"))      profilePath     = keyFile.get_string ("Profiles", "Directory");
-    if (keyFile.has_key ("Profiles", "RawDefault"))     defProfRaw      = keyFile.get_string ("Profiles", "RawDefault");
-    if (keyFile.has_key ("Profiles", "ImgDefault"))     defProfImg      = keyFile.get_string ("Profiles", "ImgDefault");
-    if (keyFile.has_key ("Profiles", "SaveParamsWithFile")) saveParamsFile  = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
-    if (keyFile.has_key ("Profiles", "SaveParamsToCache"))  saveParamsCache = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
-    if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
+    if (keyFile.has_key ("Profiles", "Directory"))              profilePath          = keyFile.get_string ("Profiles", "Directory");
+    if (keyFile.has_key ("Profiles", "LoadSaveProfilePath"))    loadSaveProfilePath  = keyFile.get_string ("Profiles", "LoadSaveProfilePath");
+    if (keyFile.has_key ("Profiles", "RawDefault"))             defProfRaw           = keyFile.get_string ("Profiles", "RawDefault");
+    if (keyFile.has_key ("Profiles", "ImgDefault"))             defProfImg           = keyFile.get_string ("Profiles", "ImgDefault");
+    if (keyFile.has_key ("Profiles", "SaveParamsWithFile"))     saveParamsFile       = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
+    if (keyFile.has_key ("Profiles", "SaveParamsToCache"))      saveParamsCache      = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
+    if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation   = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
     if (keyFile.has_key ("Profiles", "CustomProfileBuilder"))   customProfileBuilder = keyFile.get_string  ("Profiles", "CustomProfileBuilder");
 }
 
@@ -494,8 +496,8 @@ if (keyFile.has_group ("Fast Export")) {
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpening"        ))  fastexport_bypass_sharpening          = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpening"        );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenEdge"       ))  fastexport_bypass_sharpenEdge         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"       );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenMicro"      ))  fastexport_bypass_sharpenMicro        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"      );
-    if (keyFile.has_key ("Fast Export", "fastexport_bypass_lumaDenoise"       ))  fastexport_bypass_lumaDenoise         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"       );
-    if (keyFile.has_key ("Fast Export", "fastexport_bypass_colorDenoise"      ))  fastexport_bypass_colorDenoise        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_colorDenoise"      );
+    //if (keyFile.has_key ("Fast Export", "fastexport_bypass_lumaDenoise"       ))  fastexport_bypass_lumaDenoise         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"       );
+    //if (keyFile.has_key ("Fast Export", "fastexport_bypass_colorDenoise"      ))  fastexport_bypass_colorDenoise        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_colorDenoise"      );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_defringe"          ))  fastexport_bypass_defringe            = keyFile.get_boolean ("Fast Export", "fastexport_bypass_defringe"          );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrDenoise"     ))  fastexport_bypass_dirpyrDenoise       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"     );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_sh_hq"             ))  fastexport_bypass_sh_hq               = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sh_hq"             );
@@ -622,6 +624,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
+    keyFile.set_string  ("Profiles", "LoadSaveProfilePath", loadSaveProfilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
     keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
     keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
@@ -700,8 +703,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpening"         , fastexport_bypass_sharpening        );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"        , fastexport_bypass_sharpenEdge       );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"       , fastexport_bypass_sharpenMicro      );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"        , fastexport_bypass_lumaDenoise       );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_colorDenoise"       , fastexport_bypass_colorDenoise      );
+    //keyFile.set_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"        , fastexport_bypass_lumaDenoise       );
+    //keyFile.set_boolean ("Fast Export", "fastexport_bypass_colorDenoise"       , fastexport_bypass_colorDenoise      );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_defringe"           , fastexport_bypass_defringe          );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"      , fastexport_bypass_dirpyrDenoise     );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq"              , fastexport_bypass_sh_hq             );

@@ -44,23 +44,23 @@ class ImageIO {
         int profileLength;
         char* loadedProfileData;
         int loadedProfileLength;
-        std::vector<std::pair<std::string,std::string> > exifChange;
+        procparams::ExifPairs exifChange;
         IptcData* iptc;
         const rtexif::TagDirectory* exifRoot;
         Glib::Mutex imutex;
 
     public:
         static Glib::ustring errorMsg[6];
-    	
+
         ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), loadedProfileData(NULL), loadedProfileLength(0), iptc(NULL), exifRoot (NULL) {}
-        
+
         virtual ~ImageIO ();
 
         void setProgressListener (ProgressListener* l) { pl = l; }
 
         virtual int     getW            () =0;
-		virtual int     getH            () =0;
-		virtual void    allocate        (int width, int height) =0;
+        virtual int     getH            () =0;
+        virtual void    allocate        (int width, int height) =0;
         virtual int     getBPS          () =0;
         virtual void    getScanline     (int row, unsigned char* buffer, int bps) {}
         virtual void    setScanline     (int row, unsigned char* buffer, int bps) {}
@@ -78,12 +78,12 @@ class ImageIO {
         int savePNG  (Glib::ustring fname, int compression = -1, volatile int bps = -1);
         int saveJPEG (Glib::ustring fname, int quality = 100);
         int saveTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false);
-        
+
         cmsHPROFILE getEmbeddedProfile () { return embProfile; }
         void        getEmbeddedProfileData (int& length, unsigned char*& pdata) { length = loadedProfileLength; pdata = (unsigned char*)loadedProfileData; }
 
-		void setMetadata (const rtexif::TagDirectory* eroot);    
-        void setMetadata (const rtexif::TagDirectory* eroot, const std::vector<rtengine::procparams::ExifPair>& exif, const std::vector<rtengine::procparams::IPTCPair>& iptcc);    
+        void setMetadata (const rtexif::TagDirectory* eroot);
+        void setMetadata (const rtexif::TagDirectory* eroot, const rtengine::procparams::ExifPairs& exif, const rtengine::procparams::IPTCPairs& iptcc);
         void setOutputProfile  (char* pdata, int plen);
         Glib::Mutex& mutex () { return imutex; }
 };

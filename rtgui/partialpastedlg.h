@@ -26,7 +26,7 @@ class PartialPasteDlg : public Gtk::Dialog {
 
     public:
 
-		Gtk::CheckButton* everything;
+        Gtk::CheckButton* everything;
 
         // main groups:
         Gtk::CheckButton* basic;
@@ -42,24 +42,24 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* exposure;
         Gtk::CheckButton* hlrec;
         Gtk::CheckButton* sh;
+        Gtk::CheckButton* epd;
         Gtk::CheckButton* labcurve;
 
         // options in detail:
         Gtk::CheckButton* sharpen;
         Gtk::CheckButton* sharpenedge;
         Gtk::CheckButton* sharpenmicro;
-		Gtk::CheckButton* impden;
-		Gtk::CheckButton* waveq;
-		Gtk::CheckButton* dirpyrden;
-		Gtk::CheckButton* defringe;
-		Gtk::CheckButton* edgePreservingDecompositionUI;
-		Gtk::CheckButton* dirpyreq;
+        Gtk::CheckButton* impden;
+        //Gtk::CheckButton* waveq;
+        Gtk::CheckButton* dirpyrden;
+        Gtk::CheckButton* defringe;
+        Gtk::CheckButton* dirpyreq;
 
         // options in color:
         Gtk::CheckButton* vibrance;
         Gtk::CheckButton* chmixer;
-		Gtk::CheckButton* hsveq;
-		Gtk::CheckButton* rgbcurves;
+        Gtk::CheckButton* hsveq;
+        Gtk::CheckButton* rgbcurves;
        // Gtk::CheckButton* icm;
 
         // options in lens:
@@ -96,18 +96,18 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* raw_dcb_iterations;
         Gtk::CheckButton* raw_dcb_enhance;
         Gtk::CheckButton* raw_all_enhance;
-		
+
         Gtk::CheckButton* df_file;
-		Gtk::CheckButton* df_AutoSelect;
-		Gtk::CheckButton* ff_file;
-		Gtk::CheckButton* ff_AutoSelect;
-		Gtk::CheckButton* ff_BlurRadius;
-		Gtk::CheckButton* ff_BlurType;
+        Gtk::CheckButton* df_AutoSelect;
+        Gtk::CheckButton* ff_file;
+        Gtk::CheckButton* ff_AutoSelect;
+        Gtk::CheckButton* ff_BlurRadius;
+        Gtk::CheckButton* ff_BlurType;
 
         sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;;
 
         sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn;
-        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, edgePreservingDecompositionUIConn, dirpyreqConn;
+        sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn;
         sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
@@ -115,19 +115,19 @@ class PartialPasteDlg : public Gtk::Dialog {
         sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
         sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_all_enhanceConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn;
 
-        public:
-            PartialPasteDlg ();
+    public:
+        PartialPasteDlg (Glib::ustring title);
 
-            void applyPaste (rtengine::procparams::ProcParams* dst, const rtengine::procparams::ProcParams* src);
+        void applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE=NULL);
 
-            void everythingToggled ();
-            void basicToggled ();
-            void detailToggled ();
-            void colorToggled ();
-            void lensToggled ();
-            void compositionToggled ();
-            void metaicmToggled ();
-            void rawToggled ();
+        void everythingToggled ();
+        void basicToggled ();
+        void detailToggled ();
+        void colorToggled ();
+        void lensToggled ();
+        void compositionToggled ();
+        void metaicmToggled ();
+        void rawToggled ();
 };
 
 #endif

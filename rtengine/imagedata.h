@@ -55,7 +55,7 @@ class ImageData : public ImageMetaData {
     virtual ~ImageData ();
 
     const rtexif::TagDirectory*   getExifData () const { return root; }
-    const std::vector<procparams::IPTCPair> getIPTCData () const;
+    const procparams::IPTCPairs   getIPTCData () const;
 
     bool hasExif () const { return root && root->getCount(); }
     bool hasIPTC () const { return iptc; }

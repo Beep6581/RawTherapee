@@ -77,7 +77,7 @@ void BatchToolPanelCoordinator::closeSession (bool save) {
     		for (unsigned int j=0; j<toolPanels.size(); j++)
     			toolPanels[j]->trimValues (&newParams);
 
-    		selected[i]->setProcParams (newParams, BATCHEDITOR, true);
+    		selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, true);
         }
     }
     for (int i=0; i<paramcListeners.size(); i++)
@@ -95,6 +95,7 @@ void BatchToolPanelCoordinator::initSession () {
         selected[i]->addThumbnailListener (this);
     }
 
+    // compare all the ProcParams and describe which parameters has different (i.e. inconsistent) values in pparamsEdited
     pparamsEdited.initFrom (initialPP);
 
     crop->setDimensions (100000, 100000);
@@ -188,7 +189,7 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY])  pparams.sharpenMicro.uniformity = 0;
 
 			if (options.baBehav[ADDSET_CHMIXER]) for (int i=0; i<3; i++) pparams.chmixer.red[i] = pparams.chmixer.green[i] = pparams.chmixer.blue[i] = 0;
-			if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
+			//if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
 
 			if (options.baBehav[ADDSET_WB_TEMPERATURE])  pparams.wb.temperature = 0;
 			if (options.baBehav[ADDSET_WB_GREEN])  pparams.wb.green = 0;
@@ -199,10 +200,10 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA])  pparams.icm.gampos = 0;
 			if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE])  pparams.icm.slpos = 0;
 			
-			if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
+			//if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
 
-			if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
-			if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
+			//if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
+			//if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
 
 			if (options.baBehav[ADDSET_ROTATE_DEGREE])  pparams.rotate.degree = 0;
 			if (options.baBehav[ADDSET_DIST_AMOUNT])  pparams.distortion.amount = 0;
@@ -228,6 +229,7 @@ void BatchToolPanelCoordinator::initSession () {
 			toolPanels[i]->read (&pparams, &pparamsEdited);
 		}
 		for (int i=0; i<paramcListeners.size(); i++)
+			// send this initial state to the History
 			paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M("BATCH_PROCESSING"), &pparamsEdited);
 	}
 }
@@ -271,7 +273,7 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
 		for (unsigned int j=0; j<toolPanels.size(); j++)
 			toolPanels[j]->trimValues (&newParams);
 
-        selected[i]->setProcParams (newParams, BATCHEDITOR, false);
+        selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, false);
     }
 
     for (int i=0; i<paramcListeners.size(); i++)
@@ -304,13 +306,26 @@ void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChange
     }
 }
 
-void BatchToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
+/*
+ * WARNING: profileChange is actually called by the History only.
+ *          Using aProfile panel in the batch tool panel editor is actually
+ *          not supported by BatchToolPanelCoordinator::profileChange!
+ */
+void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
 
-    pparams = *nparams;
+    if (event==rtengine::EvProfileChanged) {
+    	// a profile has been selected in a hypothetical Profile panel
+    	// -> ACTUALLY NOT SUPPORTED
+    	return;
+    }
+
+    pparams = *(nparams->pparams);
     if (paramsEdited)
         pparamsEdited = *paramsEdited;
 
+
     for (int i=0; i<toolPanels.size(); i++) 
+    	// writing the values to the GUI
         toolPanels[i]->read (&pparams, &pparamsEdited);
 
     somethingChanged = true;
@@ -319,12 +334,12 @@ void BatchToolPanelCoordinator::profileChange  (const ProcParams *nparams, rteng
     for (int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (&pparams, &pparamsEdited);
 
-    // combine with initial parameters and set
+    // combine with initial parameters of each image and set
     ProcParams newParams;
     for (int i=0; i<selected.size(); i++) {
         newParams = initialPP[i];
         pparamsEdited.combine (newParams, pparams, true);
-        selected[i]->setProcParams (newParams, BATCHEDITOR, false);
+        selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, false);
     }
 
     for (int i=0; i<paramcListeners.size(); i++)

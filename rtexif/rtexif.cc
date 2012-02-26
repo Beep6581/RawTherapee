@@ -1404,7 +1404,7 @@ const std::vector<Tag*>& ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
 
 
 
-int ExifManager::createJPEGMarker (const TagDirectory* root, const std::vector< std::pair<std::string,std::string> >& changeList, int W, int H, unsigned char* buffer) {
+int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char* buffer) {
 
   // write tiff header
   int offs = 6;
@@ -1423,8 +1423,8 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const std::vector< 
   else
     cl = new TagDirectory (NULL, ifdAttribs, INTEL);
 
-  for (int i=0; i<changeList.size(); i++)
-     cl->applyChange (changeList[i].first, changeList[i].second);
+  for (rtengine::procparams::ExifPairs::const_iterator i=changeList.begin(); i!=changeList.end(); i++)
+     cl->applyChange (i->first, i->second);
   
    getDefaultTIFFTags (cl);
   
@@ -1442,7 +1442,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const std::vector< 
   return size + 6;
 }
 
-int ExifManager::createTIFFHeader (const TagDirectory* root, const std::vector< std::pair<std::string,std::string> >& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char* buffer) {
+int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char* buffer) {
 
 // write tiff header
     int offs = 0;
@@ -1489,8 +1489,8 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const std::vector< 
     }
     
 // apply list of changes
-    for (int i=0; i<changeList.size(); i++)
-        cl->applyChange (changeList[i].first, changeList[i].second);
+    for (rtengine::procparams::ExifPairs::const_iterator i=changeList.begin(); i!=changeList.end(); i++)
+        cl->applyChange (i->first, i->second);
   
   // append default properties   
         getDefaultTIFFTags (cl);

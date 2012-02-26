@@ -50,8 +50,8 @@ ExportPanel::ExportPanel () : listener (NULL) {
 	bypass_sharpening       = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENING")));
 	bypass_sharpenEdge      = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENEDGE")));
 	bypass_sharpenMicro     = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENMICRO")));
-	bypass_lumaDenoise      = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_LUMADENOISE")));
-	bypass_colorDenoise     = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_COLORDENOISE")));
+	//bypass_lumaDenoise      = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_LUMADENOISE")));
+	//bypass_colorDenoise     = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_COLORDENOISE")));
 	bypass_defringe         = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_DEFRINGE")));
 	bypass_dirpyrDenoise    = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_DIRPYRDENOISE")));
 	bypass_sh_hq            = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SH_HQ")));
@@ -162,8 +162,8 @@ ExportPanel::ExportPanel () : listener (NULL) {
 	bypass_sharpeningConn         = bypass_sharpening->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_sharpenEdgeConn        = bypass_sharpenEdge->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_sharpenMicroConn       = bypass_sharpenMicro->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
-	bypass_lumaDenoiseConn        = bypass_lumaDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
-	bypass_colorDenoiseConn       = bypass_colorDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
+	//bypass_lumaDenoiseConn        = bypass_lumaDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
+	//bypass_colorDenoiseConn       = bypass_colorDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_defringeConn           = bypass_defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_dirpyrDenoiseConn      = bypass_dirpyrDenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_sh_hqConn              = bypass_sh_hq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
@@ -201,8 +201,8 @@ void ExportPanel::SaveSettingsAsDefault(){
 	options.fastexport_bypass_sharpening         = bypass_sharpening->get_active        ();
 	options.fastexport_bypass_sharpenEdge        = bypass_sharpenEdge->get_active       ();
 	options.fastexport_bypass_sharpenMicro       = bypass_sharpenMicro->get_active      ();
-	options.fastexport_bypass_lumaDenoise        = bypass_lumaDenoise->get_active       ();
-	options.fastexport_bypass_colorDenoise       = bypass_colorDenoise->get_active      ();
+	//options.fastexport_bypass_lumaDenoise        = bypass_lumaDenoise->get_active       ();
+	//options.fastexport_bypass_colorDenoise       = bypass_colorDenoise->get_active      ();
 	options.fastexport_bypass_defringe           = bypass_defringe->get_active          ();
 	options.fastexport_bypass_dirpyrDenoise      = bypass_dirpyrDenoise->get_active     ();
 	options.fastexport_bypass_sh_hq              = bypass_sh_hq->get_active             ();
@@ -254,8 +254,8 @@ void ExportPanel::LoadDefaultSettings(){
 	bypass_sharpening->set_active        (options.fastexport_bypass_sharpening         );
 	bypass_sharpenEdge->set_active       (options.fastexport_bypass_sharpenEdge        );
 	bypass_sharpenMicro->set_active      (options.fastexport_bypass_sharpenMicro       );
-	bypass_lumaDenoise->set_active       (options.fastexport_bypass_lumaDenoise        );
-	bypass_colorDenoise->set_active      (options.fastexport_bypass_colorDenoise       );
+	//bypass_lumaDenoise->set_active       (options.fastexport_bypass_lumaDenoise        );
+	//bypass_colorDenoise->set_active      (options.fastexport_bypass_colorDenoise       );
 	bypass_defringe->set_active          (options.fastexport_bypass_defringe           );
 	bypass_dirpyrDenoise->set_active     (options.fastexport_bypass_dirpyrDenoise      );
 	bypass_sh_hq->set_active             (options.fastexport_bypass_sh_hq              );
@@ -323,8 +323,8 @@ void ExportPanel::bypassALL_Toggled(){
 	bypass_sharpeningConn.block         (true);
 	bypass_sharpenEdgeConn.block        (true);
 	bypass_sharpenMicroConn.block       (true);
-	bypass_lumaDenoiseConn.block        (true);
-	bypass_colorDenoiseConn.block       (true);
+	//bypass_lumaDenoiseConn.block        (true);
+	//bypass_colorDenoiseConn.block       (true);
 	bypass_defringeConn.block           (true);
 	bypass_dirpyrDenoiseConn.block      (true);
 	bypass_sh_hqConn.block              (true);
@@ -344,8 +344,8 @@ void ExportPanel::bypassALL_Toggled(){
 	bypass_sharpening->set_active(bypass_ALL->get_active());
 	bypass_sharpenEdge->set_active(bypass_ALL->get_active());
 	bypass_sharpenMicro->set_active(bypass_ALL->get_active());
-	bypass_lumaDenoise->set_active(bypass_ALL->get_active());
-	bypass_colorDenoise->set_active(bypass_ALL->get_active());
+	//bypass_lumaDenoise->set_active(bypass_ALL->get_active());
+	//bypass_colorDenoise->set_active(bypass_ALL->get_active());
 	bypass_defringe->set_active(bypass_ALL->get_active());
 	bypass_dirpyrDenoise->set_active(bypass_ALL->get_active());
 	bypass_sh_hq->set_active(bypass_ALL->get_active());
@@ -363,8 +363,8 @@ void ExportPanel::bypassALL_Toggled(){
 	bypass_sharpeningConn.block         (false);
 	bypass_sharpenEdgeConn.block        (false);
 	bypass_sharpenMicroConn.block       (false);
-	bypass_lumaDenoiseConn.block        (false);
-	bypass_colorDenoiseConn.block       (false);
+	//bypass_lumaDenoiseConn.block        (false);
+	//bypass_colorDenoiseConn.block       (false);
 	bypass_defringeConn.block           (false);
 	bypass_dirpyrDenoiseConn.block      (false);
 	bypass_sh_hqConn.block              (false);

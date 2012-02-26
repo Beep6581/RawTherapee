@@ -28,8 +28,8 @@ class ExifPanel : public Gtk::VBox, public ToolPanel {
         const rtengine::ImageMetaData* idata;
         int fullw, fullh, cx, cy, cw, ch;
         bool crenabled;
-        std::vector<rtengine::procparams::ExifPair> changeList;
-        std::vector<rtengine::procparams::ExifPair> defChangeList;
+        rtengine::procparams::ExifPairs changeList;
+        rtengine::procparams::ExifPairs defChangeList;
         bool recursiveOp;
         
         class ExifColumns : public Gtk::TreeModelColumnRecord {

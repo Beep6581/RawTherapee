@@ -55,7 +55,7 @@ class BatchToolPanelCoordinator :
         void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
         // profilechangelistener interface
-        void profileChange  (const rtengine::procparams::ProcParams* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);    
+        void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);
 
         // wbprovider interface
         void getAutoWB (double& temp, double& green);

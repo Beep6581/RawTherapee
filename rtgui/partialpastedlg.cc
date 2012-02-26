@@ -18,11 +18,12 @@
  */
 #include "partialpastedlg.h"
 #include "multilangmgr.h"
+#include "paramsedited.h"
 
-PartialPasteDlg::PartialPasteDlg () {
+PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
 
     set_modal (true);
-    set_title (M("PARTIALPASTE_DIALOGLABEL"));
+    set_title (title);
 
     everything  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EVERYTHING")));
     everything  ->set_name("partialPasteHeader");
@@ -47,6 +48,7 @@ PartialPasteDlg::PartialPasteDlg () {
     exposure    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXPOSURE")));
     hlrec       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_HLRECONSTRUCTION")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
+    epd         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
     labcurve    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LABCURVE")));
 
     // options in detail:
@@ -56,7 +58,6 @@ PartialPasteDlg::PartialPasteDlg () {
     impden		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IMPULSEDENOISE")));
     dirpyreq    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYREQUALIZER")));
     defringe    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DEFRINGE")));
-    edgePreservingDecompositionUI = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
 
     // options in color:
     vibrance    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIBRANCE")));
@@ -122,6 +123,7 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[0]->pack_start (*exposure, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*hlrec, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
+    vboxes[0]->pack_start (*epd, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*labcurve, Gtk::PACK_SHRINK, 2);
 
     vboxes[1]->pack_start (*detail, Gtk::PACK_SHRINK, 2);
@@ -132,7 +134,6 @@ PartialPasteDlg::PartialPasteDlg () {
     vboxes[1]->pack_start (*impden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyrden, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*defringe, Gtk::PACK_SHRINK, 2);
-    vboxes[1]->pack_start (*edgePreservingDecompositionUI, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*dirpyreq, Gtk::PACK_SHRINK, 2);
     //vboxes[1]->pack_start (*waveq, Gtk::PACK_SHRINK, 2);
 
@@ -239,6 +240,7 @@ PartialPasteDlg::PartialPasteDlg () {
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
     hlrecConn       = hlrec->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
 
     sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
@@ -249,7 +251,6 @@ PartialPasteDlg::PartialPasteDlg () {
     dirpyreqConn	= dirpyreq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     //waveqConn	    = waveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     defringeConn    = defringe->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
-    edgePreservingDecompositionUIConn = edgePreservingDecompositionUI->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
 
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
@@ -294,10 +295,10 @@ PartialPasteDlg::PartialPasteDlg () {
     ff_BlurRadiusConn       = ff_BlurRadius->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_BlurTypeConn         = ff_BlurType->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
 
-    add_button (Gtk::StockID("gtk-ok"), 1);
-    add_button (Gtk::StockID("gtk-cancel"), 0);
-    set_response_sensitive (1);
-    set_default_response (1);
+    add_button (Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
+    add_button (Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+    set_response_sensitive (Gtk::RESPONSE_OK);
+    set_default_response (Gtk::RESPONSE_OK);
     show_all_children ();
 }
 
@@ -414,6 +415,7 @@ void PartialPasteDlg::basicToggled () {
     exposureConn.block (true);
     hlrecConn.block (true);
     shConn.block (true);
+    epdConn.block(true);
     labcurveConn.block (true);
 
     basic->set_inconsistent (false);
@@ -422,13 +424,15 @@ void PartialPasteDlg::basicToggled () {
     exposure->set_active (basic->get_active ());
     hlrec->set_active (basic->get_active ());
     sh->set_active (basic->get_active ());
+    epd->set_active (basic->get_active ());
     labcurve->set_active (basic->get_active ());
 
     wbConn.block (false);
     exposureConn.block (false);
     hlrecConn.block (false);
-    labcurveConn.block (false);
     shConn.block (false);
+    epdConn.block (false);
+    labcurveConn.block (false);
 }
 
 void PartialPasteDlg::detailToggled () {
@@ -439,7 +443,6 @@ void PartialPasteDlg::detailToggled () {
     impdenConn.block (true);
     dirpyrdenConn.block (true);
     defringeConn.block (true);
-    edgePreservingDecompositionUIConn.block(true);
     dirpyreqConn.block (true);
     //waveqConn.block (true);
 
@@ -448,10 +451,9 @@ void PartialPasteDlg::detailToggled () {
     sharpen->set_active (detail->get_active ());
     sharpenedge->set_active (detail->get_active ());
     sharpenmicro->set_active (detail->get_active ());
-	impden->set_active (detail->get_active ());
+    impden->set_active (detail->get_active ());
     dirpyrden->set_active (detail->get_active ());
     defringe->set_active (detail->get_active ());
-    edgePreservingDecompositionUI->set_active (detail->get_active ());
     dirpyreq->set_active (detail->get_active ());
     //waveq->set_active (detail->get_active ());
 
@@ -461,32 +463,31 @@ void PartialPasteDlg::detailToggled () {
     impdenConn.block (false);
     dirpyrdenConn.block (false);
     defringeConn.block (false);
-    edgePreservingDecompositionUIConn.block (false);
     dirpyreqConn.block (false);
     //waveqConn.block (false);
 }
 
 void PartialPasteDlg::colorToggled () {
 
-	vibranceConn.block (true);
+    vibranceConn.block (true);
     chmixerConn.block (true);
     hsveqConn.block (true);
     rgbcurvesConn.block (true);
-	gamcsconn.block (true);
+    gamcsconn.block (true);
     color->set_inconsistent (false);
 
     vibrance->set_active (color->get_active ());
     chmixer->set_active (color->get_active ());
-	hsveq->set_active (color->get_active ());
-	rgbcurves->set_active (color->get_active ());
-	icm->set_active (color->get_active ());
-	
-	vibranceConn.block (false);
+    hsveq->set_active (color->get_active ());
+    rgbcurves->set_active (color->get_active ());
+    icm->set_active (color->get_active ());
+
+    vibranceConn.block (false);
     chmixerConn.block (false);
     hsveqConn.block (false);
     rgbcurvesConn.block (false);
-	gamcsconn.block (false);
-	
+    gamcsconn.block (false);
+
 }
 
 void PartialPasteDlg::lensToggled () {
@@ -537,7 +538,7 @@ void PartialPasteDlg::metaicmToggled () {
     exifchConn.block (true);
     iptcConn.block (true);
     icmConn.block (true);
-	gamcsconn.block (true);
+    gamcsconn.block (true);
     metaicm->set_inconsistent (false);
 
     exifch->set_active (metaicm->get_active ());
@@ -548,75 +549,99 @@ void PartialPasteDlg::metaicmToggled () {
     exifchConn.block (false);
     iptcConn.block (false);
     icmConn.block (false);
-	gamcsconn.block (false);
+    gamcsconn.block (false);
 
 }
 
 
-void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dst, const rtengine::procparams::ProcParams* src) {
+/*
+ * Copies the selected items from the source ProcParams+ParamsEdited(optional)
+ * to the destination ProcParams.
+ */
+void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE) {
 
-    if (wb->get_active ())          dst->wb = src->wb;
-    if (exposure->get_active ())    dst->toneCurve = src->toneCurve;
-    if (hlrec->get_active ())       dst->hlrecovery = src->hlrecovery;
-    if (sh->get_active ())          dst->sh = src->sh;
-    if (labcurve->get_active ())    dst->labCurve = src->labCurve;
-
-    if (sharpen->get_active ())     dst->sharpening = src->sharpening;
-    if (sharpenedge->get_active ()) dst->sharpenEdge = src->sharpenEdge;
-    if (sharpenmicro->get_active()) dst->sharpenMicro = src->sharpenMicro;
-    if (impden->get_active ())		dst->impulseDenoise = src->impulseDenoise;
-    if (dirpyreq->get_active ())	dst->dirpyrequalizer = src->dirpyrequalizer;
-    if (defringe->get_active ())    dst->defringe = src->defringe;
-    if (dirpyrden->get_active ())   dst->dirpyrDenoise = src->dirpyrDenoise;
-
-    if (vibrance->get_active ())    dst->vibrance = src->vibrance;
-    if (chmixer->get_active ())     dst->chmixer = src->chmixer;
-	if (hsveq->get_active ())		dst->hsvequalizer = src->hsvequalizer;
-	if (rgbcurves->get_active ())	dst->rgbCurves = src->rgbCurves;
-	if (icm->get_active ())			dst->icm = src->icm;
-	
-    if (distortion->get_active ())  dst->distortion = src->distortion;
-    if (cacorr->get_active ())      dst->cacorrection = src->cacorrection;
-    if (vignetting->get_active ())  dst->vignetting = src->vignetting;
-
-    if (coarserot->get_active ())   dst->coarse = src->coarse;
-    if (finerot->get_active ())     dst->rotate = src->rotate;
-    if (crop->get_active ())        dst->crop = src->crop;
-    if (resize->get_active ())      dst->resize = src->resize;
-    if (perspective->get_active ()) dst->perspective = src->perspective;
-    if (commonTrans->get_active ()) dst->commonTrans = src->commonTrans;
-
-    if (exifch->get_active ())      dst->exif = src->exif;
-    if (iptc->get_active ())        dst->iptc = src->iptc;
-    if (icm->get_active ())         dst->icm = src->icm;
-    if (gam->get_active ())         dst->gam = src->gam;
-
-    if (raw_dmethod->get_active ())         dst->raw.dmethod        =src->raw.dmethod;
-    if (raw_ccSteps->get_active ())         dst->raw.ccSteps        =src->raw.ccSteps;
-    if (raw_dcb_iterations->get_active ())  dst->raw.dcb_iterations =src->raw.dcb_iterations;
-    if (raw_dcb_enhance->get_active ())     dst->raw.dcb_enhance    =src->raw.dcb_enhance;
-    if (raw_all_enhance->get_active ())     dst->raw.all_enhance    =src->raw.all_enhance;
-
-    if (raw_expos->get_active ())           dst->raw.expos          =src->raw.expos;
-    if (raw_preser->get_active ())          dst->raw.preser         =src->raw.preser;
-    if (raw_black->get_active ()){
-    	dst->raw.blackzero        =src->raw.blackzero;
-    	dst->raw.blackone         =src->raw.blackone;
-    	dst->raw.blacktwo         =src->raw.blacktwo;
-    	dst->raw.blackthree       =src->raw.blackthree;
-    	dst->raw.twogreen         =src->raw.twogreen;
+    ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
+    ParamsEdited filterPE; // Contains the initial information about the loaded values
+    if (srcPE) {
+        filterPE = *srcPE;
     }
-    if (raw_ca_autocorrect->get_active ())  dst->raw.ca_autocorrect =src->raw.ca_autocorrect;
-    if (raw_cared->get_active ())           dst->raw.cared          =src->raw.cared;
-    if (raw_cablue->get_active ())          dst->raw.cablue         =src->raw.cablue;
-    if (raw_hotdeadpix_filt->get_active ()) dst->raw.hotdeadpix_filt=src->raw.hotdeadpix_filt;
-    if (raw_linenoise->get_active ())       dst->raw.linenoise      =src->raw.linenoise;
-    if (raw_greenthresh->get_active ())     dst->raw.greenthresh    =src->raw.greenthresh;
-    if (df_file->get_active ())        dst->raw.dark_frame = src->raw.dark_frame;
-    if (df_AutoSelect->get_active ())  dst->raw.df_autoselect = src->raw.df_autoselect;
-    if (ff_file->get_active ())        dst->raw.ff_file = src->raw.ff_file;
-    if (ff_AutoSelect->get_active ())  dst->raw.ff_AutoSelect = src->raw.ff_AutoSelect;
-    if (ff_BlurRadius->get_active ())  dst->raw.ff_BlurRadius = src->raw.ff_BlurRadius;
-    if (ff_BlurType->get_active ())    dst->raw.ff_BlurType = src->raw.ff_BlurType;
+    else {
+        // By default, everything has to be copied
+        filterPE.set(true);
+    }
+
+
+    // the general section is always ignored, whichever operation we use the PartialPaste for
+    filterPE.general = falsePE.general;
+
+
+    // Now we filter out the filter depending on the checked items
+    if (!wb->get_active ())          filterPE.wb         = falsePE.wb;
+    if (!exposure->get_active ())    filterPE.toneCurve  = falsePE.toneCurve;
+    if (!hlrec->get_active ())       filterPE.hlrecovery = falsePE.hlrecovery;
+    if (!sh->get_active ())          filterPE.sh         = falsePE.sh;
+    if (!epd->get_active ())         filterPE.edgePreservingDecompositionUI = falsePE.edgePreservingDecompositionUI;
+    if (!labcurve->get_active ())    filterPE.labCurve   = falsePE.labCurve;
+
+    if (!sharpen->get_active ())     filterPE.sharpening      = falsePE.sharpening;
+    if (!sharpenedge->get_active ()) filterPE.sharpenEdge     = falsePE.sharpenEdge;
+    if (!sharpenmicro->get_active()) filterPE.sharpenMicro    = falsePE.sharpenMicro;
+    if (!impden->get_active ())      filterPE.impulseDenoise  = falsePE.impulseDenoise;
+    if (!dirpyreq->get_active ())    filterPE.dirpyrequalizer = falsePE.dirpyrequalizer;
+    if (!defringe->get_active ())    filterPE.defringe        = falsePE.defringe;
+    if (!dirpyrden->get_active ())   filterPE.dirpyrDenoise   = falsePE.dirpyrDenoise;
+
+    if (!vibrance->get_active ())    filterPE.vibrance     = falsePE.vibrance;
+    if (!chmixer->get_active ())     filterPE.chmixer      = falsePE.chmixer;
+    if (!hsveq->get_active ())       filterPE.hsvequalizer = falsePE.hsvequalizer;
+    if (!rgbcurves->get_active ())   filterPE.rgbCurves    = falsePE.rgbCurves;
+    if (!icm->get_active ())         filterPE.icm          = falsePE.icm;
+
+    if (!distortion->get_active ())  filterPE.distortion   = falsePE.distortion;
+    if (!cacorr->get_active ())      filterPE.cacorrection = falsePE.cacorrection;
+    if (!vignetting->get_active ())  filterPE.vignetting   = falsePE.vignetting;
+
+    if (!coarserot->get_active ())   filterPE.coarse      = falsePE.coarse;
+    if (!finerot->get_active ())     filterPE.rotate      = falsePE.rotate;
+    if (!crop->get_active ())        filterPE.crop        = falsePE.crop;
+    if (!resize->get_active ())      filterPE.resize      = falsePE.resize;
+    if (!perspective->get_active ()) filterPE.perspective = falsePE.perspective;
+    if (!commonTrans->get_active ()) filterPE.commonTrans = falsePE.commonTrans;
+
+    if (!exifch->get_active ())      filterPE.exif = falsePE.exif;
+    if (!iptc->get_active ())        filterPE.iptc = falsePE.iptc;
+    if (!icm->get_active ())         filterPE.icm  = falsePE.icm;
+
+    if (!raw_dmethod->get_active ())           filterPE.raw.dmethod            = falsePE.raw.dmethod;
+    if (!raw_ccSteps->get_active ())           filterPE.raw.ccSteps            = falsePE.raw.ccSteps;
+    if (!raw_dcb_iterations->get_active ())    filterPE.raw.dcbIterations      = falsePE.raw.dcbIterations;
+    if (!raw_dcb_enhance->get_active ())       filterPE.raw.dcbEnhance         = falsePE.raw.dcbEnhance;
+    if (!raw_all_enhance->get_active ())       filterPE.raw.allEnhance         = falsePE.raw.allEnhance;
+
+    if (!raw_expos->get_active ())             filterPE.raw.exPos              = falsePE.raw.exPos;
+    if (!raw_preser->get_active ())            filterPE.raw.exPreser           = falsePE.raw.exPreser;
+    if (!raw_black->get_active ()) {           filterPE.raw.exBlackzero        = falsePE.raw.exBlackzero;
+                                               filterPE.raw.exBlackone         = falsePE.raw.exBlackone;
+                                               filterPE.raw.exBlacktwo         = falsePE.raw.exBlacktwo;
+                                               filterPE.raw.exBlackthree       = falsePE.raw.exBlackthree;
+                                               filterPE.raw.exTwoGreen         = falsePE.raw.exTwoGreen; }
+    if (!raw_ca_autocorrect->get_active ())    filterPE.raw.caCorrection       = falsePE.raw.caCorrection;
+    if (!raw_cared->get_active ())             filterPE.raw.caRed              = falsePE.raw.caRed;
+    if (!raw_cablue->get_active ())            filterPE.raw.caBlue             = falsePE.raw.caBlue;
+    if (!raw_hotdeadpix_filt->get_active ()) { filterPE.raw.hotDeadPixelFilter = falsePE.raw.hotDeadPixelFilter;
+                                               filterPE.raw.hotDeadPixelThresh = falsePE.raw.hotDeadPixelThresh; }
+    if (!raw_linenoise->get_active ())         filterPE.raw.linenoise          = falsePE.raw.linenoise;
+    if (!raw_greenthresh->get_active ())       filterPE.raw.greenEq            = falsePE.raw.greenEq;
+    if (!df_file->get_active ())               filterPE.raw.darkFrame          = falsePE.raw.darkFrame;
+    if (!df_AutoSelect->get_active ())         filterPE.raw.dfAuto             = falsePE.raw.dfAuto;
+    if (!ff_file->get_active ())               filterPE.raw.ff_file            = falsePE.raw.ff_file;
+    if (!ff_AutoSelect->get_active ())         filterPE.raw.ff_AutoSelect      = falsePE.raw.ff_AutoSelect;
+    if (!ff_BlurRadius->get_active ())         filterPE.raw.ff_BlurRadius      = falsePE.raw.ff_BlurRadius;
+    if (!ff_BlurType->get_active ())           filterPE.raw.ff_BlurType        = falsePE.raw.ff_BlurType;
+
+    if (dstPE) *dstPE = filterPE;
+
+    // Apply the filter!
+    filterPE.combine(*dstPP, *srcPP, true);
 }
 

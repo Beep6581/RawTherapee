@@ -22,6 +22,8 @@
 #include <glibmm.h>
 #include <vector>
 
+class ParamsEdited;
+
 namespace rtengine {
 namespace procparams {
 
@@ -126,14 +128,14 @@ class VibranceParams {
 /**
   * Parameters of the color boost
   */
-class ColorBoostParams {
+/*class ColorBoostParams {
 
     public: 
         int     amount;
         bool    avoidclip;
         bool    enable_saturationlimiter;
         double  saturationlimit;
-};
+};*/
 
 /**
   * Parameters of the white balance adjustments
@@ -179,36 +181,35 @@ class WBParams {
 /**
   * Parameters of the color shift
   */
-class ColorShiftParams {
+/*class ColorShiftParams {
 
     public:
         double  a;
         double  b;
-};
+};*/
 
 /**
   * Parameters of the luminance denoising
   */
-class LumaDenoiseParams {
+/*class LumaDenoiseParams {
 
     public:
         bool    enabled;
         double  radius;
         int     edgetolerance;
-};
+};*/
 
 /**
   * Parameters of the color denoising
   */
-class ColorDenoiseParams {
+/*class ColorDenoiseParams {
 
     public:
         bool    enabled;
-        double  radius;
         int     edgetolerance;
         bool    edgesensitive;
         int		amount;
-};
+};*/
 	
 	/**
 	 * Parameters of defringing
@@ -243,8 +244,6 @@ class ColorDenoiseParams {
         int		luma;
         int     chroma;
 		float	gamma;
-		std::vector<double>   lumcurve;
-		std::vector<double>   chromcurve;
 	};
 
 //EPD related parameters.
@@ -420,24 +419,14 @@ class ColorManagementParams {
 };
 
 /**
-  * A class representing a key/value for the exif metadata information
+  * Typedef for representing a key/value for the exif metadata information
   */
-class ExifPair {
-
-    public:
-        Glib::ustring field;
-        Glib::ustring value;
-};
+typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
 
 /**
   * The IPTC key/value pairs
   */
-class IPTCPair {
-
-    public:
-        Glib::ustring field;
-        std::vector<Glib::ustring> values;
-};
+typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
 
 /**
 * Directional pyramid equalizer params
@@ -522,11 +511,11 @@ class ProcParams {
         SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
         SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
         VibranceParams          vibrance;        ///< Vibrance parameters
-        ColorBoostParams        colorBoost;      ///< Color boost parameters
+        //ColorBoostParams        colorBoost;      ///< Color boost parameters
         WBParams                wb;              ///< White balance parameters
-        ColorShiftParams        colorShift;      ///< Color shift parameters
-        LumaDenoiseParams       lumaDenoise;     ///< Luminance denoising parameters
-        ColorDenoiseParams      colorDenoise;    ///< Color denoising parameters
+        //ColorShiftParams        colorShift;      ///< Color shift parameters
+        //LumaDenoiseParams       lumaDenoise;     ///< Luminance denoising parameters
+        //ColorDenoiseParams      colorDenoise;    ///< Color denoising parameters
         DefringeParams          defringe;        ///< Defringing parameters
         ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
         DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
@@ -544,18 +533,18 @@ class ProcParams {
         HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
-        ColorManagementParams   gam;             ///< profiles/color spaces used during the image processing
 		
         RAWParams               raw;             ///< RAW parameters before demosaicing
         DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
-        std::vector<ExifPair>   exif;            ///< List of modifications appplied on the exif tags of the input image
-        std::vector<IPTCPair>   iptc;            ///< The IPTC tags and values to be saved to the output image
         char                    rank;            ///< Custom image quality ranking
         char                    colorlabel;      ///< Custom color label
         bool                    inTrash;         ///< Marks deleted image
-        Glib::ustring appVersion;                ///< Version of the application that generated the parameters
-        int ppVersion;                           ///< Version of the PP file from which the parameters have been read
+        Glib::ustring           appVersion;      ///< Version of the application that generated the parameters
+        int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
+
+        ExifPairs                exif;            ///< List of modifications appplied on the exif tags of the input image
+        IPTCPairs                iptc;            ///< The IPTC tags and values to be saved to the output image
 
       /**
         * The constructor only sets the hand-wired defaults.
@@ -568,17 +557,19 @@ class ProcParams {
       /**
         * Saves the parameters to possibly two files. This is a performance improvement if a function has to
         * save the same file in two different location, i.e. the cache and the image's directory
-        * @param fname  the name of the first file (can be an empty string)
-        * @param fname2 the name of the second file (can be an empty string) (optional)
+        * @param fname   the name of the first file (can be an empty string)
+        * @param fname2  the name of the second file (can be an empty string) (optional)
+        * @param pedited pointer to a ParamsEdited object (optional) to store which values has to be saved
         * @return Error code (=0 if all supplied filenames where created correctly)
         */
-        int     save        (Glib::ustring fname, Glib::ustring fname2 = "") const;
+        int     save        (Glib::ustring fname, Glib::ustring fname2 = "", ParamsEdited* pedited=NULL) const;
       /**
         * Loads the parameters from a file.
         * @param fname the name of the file
+        * @params pedited pointer to a ParamsEdited object (optional) to store which values has been loaded
         * @return Error code (=0 if no error)
         */
-        int     load        (Glib::ustring fname);
+        int     load        (Glib::ustring fname, ParamsEdited* pedited=NULL);
 
       /** Creates a new instance of ProcParams.
         * @return a pointer to the new ProcParams instance. */
@@ -603,6 +594,32 @@ class ProcParams {
         int write (Glib::ustring &fname, Glib::ustring &content) const;
 
 };
+
+/**
+  * This class associate a ProcParams object and a ParamEdited object through a pointer
+  * to instance of each type in order to handle partial pp3 file loading (and later maybe
+  * saving too)
+  *
+  * PartialProfile is not responsible of ProcParams and ParamsEdited object creation
+  * and hence is not responsible of their destructions. The function that instanciate
+  * PartialProfile object has to handle all this itself.
+  */
+class PartialProfile {
+    public:
+        rtengine::procparams::ProcParams* pparams;
+        ParamsEdited* pedited;
+        PartialProfile& operator=(PartialProfile& rhs) { pparams=rhs.pparams; pedited=rhs.pedited; return *this; };
+
+        PartialProfile      (bool createInstance=false);
+        PartialProfile      (ProcParams* pp, ParamsEdited* pe=NULL, bool fullCopy=false);
+        PartialProfile      (const ProcParams* pp, const ParamsEdited* pe=NULL);
+        void deleteInstance ();
+        void clearGeneral   ();
+        int  load           (Glib::ustring fName);
+        void set            (bool v);
+        void applyTo        (ProcParams *destParams) const ;
+};
+
 }
 }
 #endif

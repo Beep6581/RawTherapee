@@ -61,6 +61,7 @@ class Options {
     int  startupDir;
     Glib::ustring startupPath;
     Glib::ustring profilePath;
+    Glib::ustring loadSaveProfilePath;
     Glib::ustring lastSaveAsPath;
     int saveAsDialogWidth;
     int saveAsDialogHeight;
@@ -167,8 +168,8 @@ class Options {
     bool fastexport_bypass_sharpening;
     bool fastexport_bypass_sharpenEdge;
     bool fastexport_bypass_sharpenMicro;
-    bool fastexport_bypass_lumaDenoise;
-    bool fastexport_bypass_colorDenoise;
+    //bool fastexport_bypass_lumaDenoise;
+    //bool fastexport_bypass_colorDenoise;
     bool fastexport_bypass_defringe;
     bool fastexport_bypass_dirpyrDenoise;
     bool fastexport_bypass_sh_hq;
