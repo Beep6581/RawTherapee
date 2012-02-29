@@ -398,7 +398,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 			// We keep the extension to avoid overwriting the profile when we have
 			// the same output filename with different extension
             //processing->params.save (removeExtension(fname) + paramFileExtension);
-            processing->params.save (fname + paramFileExtension);
+            processing->params.save (fname + ".out" + paramFileExtension);
         }
 
         if (processing->thumbnail) {
