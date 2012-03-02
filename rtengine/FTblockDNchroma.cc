@@ -251,8 +251,6 @@ namespace rtengine {
 		RGB_InputTransf(src, labin, dnparams, defringe);
 		
 		memcpy (labdn->data, labin->data, 3*width*height*sizeof(float));
-		//dirpyr_ab(labin, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
-		//dirpyrLab_denoise(labin, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
 
 		impulse_nr (labdn, 50.0f/20.0f);
 		
@@ -273,9 +271,6 @@ namespace rtengine {
 		
 		impulse_nr (labdn, 50.0f/20.0f);
 		//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
-		
-		//dirpyr_ab(labin, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
-		//dirpyrLab_denoise(labin, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
 
 		
 		float * Ldnptr = Ldn;
@@ -444,9 +439,7 @@ namespace rtengine {
 				
 			}
 		}
-		
-		//dirpyrLab_denoise(labdn, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
-		
+				
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// transform denoised "Lab" to output RGB
 		
@@ -522,141 +515,6 @@ namespace rtengine {
 #undef fTS
 #undef offset
 	//#undef eps
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//experimental dirpyr low-pass filter
-	
-	void ImProcFunctions::dirpyr_ab(LabImage * data_fine, LabImage * data_coarse, const procparams::DirPyrDenoiseParams & dnparams)
-	{
-		int W = data_fine->W;
-		int H = data_fine->H;
-		float thresh_L = 10.0f*dnparams.luma;
-		float threshsq_L = SQR(thresh_L);
-		float thresh_ab = 10.0f*dnparams.chroma;
-		float threshsq_ab = SQR(thresh_ab);
-		LUTf rangefn_L(0x10000);
-		LUTf rangefn_ab(0x10000);
-		
-		LabImage * dirpyrlo[2];
-		
-		//set up range functions
-		
-		for (int i=0; i<0x10000; i++) {
-			rangefn_L[i] =  exp(-((float)i) / (1.0+thresh_L)) ;// * (1.0+thresh_L)/(((float)i) + thresh_L+1.0); 
-			rangefn_ab[i] =  exp(-SQR((float)i) / (1.0+threshsq_ab)) ;// * (1.0+thresh_ab)/(((float)i) + thresh_ab+1.0); 
-		}
-		dirpyrlo[0] = new LabImage (W, H);
-		dirpyrlo[1] = new LabImage (W, H);
-		
-		//int scale[4]={1,3,5,9/*1*/};
-		int scale[5]={1,2,4,7,13/*1*/};
-		
-		int level=0;
-		int indx=0;
-		dirpyr_ablevel(data_fine, dirpyrlo[indx], W, H, rangefn_L,rangefn_ab, 0, scale[level] );
-		level += 1;
-		indx = 1-indx;
-		while (level<3) {
-			dirpyr_ablevel(dirpyrlo[1-indx], dirpyrlo[indx], W, H, rangefn_L,rangefn_ab, level, scale[level] );
-			level += 1;
-			indx = 1-indx;
-		}
-		
-		dirpyr_ablevel(dirpyrlo[1-indx], data_coarse, W, H, rangefn_L,rangefn_ab, level, scale[level] );
-		
-		//delete dirpyrlo[0];//TODO: this seems to disable the NR ???
-		//delete dirpyrlo[1];
-	}
-	
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	
-	void ImProcFunctions::dirpyr_ablevel(LabImage * data_fine, LabImage * data_coarse, int width, int height, LUTf & rangefn_L, LUTf & rangefn_ab, int level, int scale)
-	{
-		//scale is spacing of directional averaging weights
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// calculate weights, compute directionally weighted average
-		
-		//int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
-		//int domker[5][5] = {{1, 2, 4, 2, 1}, {2, 4, 8, 4, 2}, {4, 8, 16, 8, 4}, {2, 4, 8, 4, 2}, {1, 2, 4, 2, 1}};
-		float domker[5][5] = {{0.129923f, 0.279288f, 0.360448f, 0.279288f, 0.129923f}, \
-			{0.279288f, 0.600373f, 0.774837f, 0.600373f, 0.279288f}, \
-			{0.360448f, 0.774837f, 1.0f,      0.774837f, 0.360448f}, \
-			{0.279288f, 0.600373f, 0.774837f, 0.600373f, 0.279288f}, \
-			{0.129923f, 0.279288f, 0.360448f, 0.279288f, 0.129923f}};//Gaussian with sigma=1.4
-		
-		
-		int scalewin = 2*scale;
-		
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-		for(int i = 0; i < height; i++) {
-			for(int j = 0; j < width; j++)
-			{
-				float valL=0, vala=0, valb=0;
-				float norm_L=0, norm_ab=0;
-				
-				for(int inbr=MAX(0,(i-scalewin)); inbr<=MIN(height-1,(i+scalewin)); inbr+=scale) {
-					for (int jnbr=MAX(0,(j-scalewin)); jnbr<=MIN(width-1,(j+scalewin)); jnbr+=scale) {
-						//it seems that weighting the blur by L (gamma=3) works better
-						//than using the variable gamma source
-						//float desat = 1-rangefn_ab[data_fine->L[i][j]+abs(data_fine->a[i][j])+abs(data_fine->b[i][j])];
-						
-						float nbrdiff_L = fabs(data_fine->L[inbr][jnbr]-data_fine->L[i][j])/level;
-						float nbrdiff_ab = (fabs(data_fine->a[inbr][jnbr]-data_fine->a[i][j]) + \
-											fabs(data_fine->b[inbr][jnbr]-data_fine->b[i][j]));
-						float dirwt_L = ( domker[(inbr-i)/scale+2][(jnbr-j)/scale+2] * rangefn_L[nbrdiff_L] );
-						float dirwt_ab = ( /*domker[(inbr-i)/scale+2][(jnbr-j)/scale+2] */ rangefn_ab[nbrdiff_ab] );
-						//valL += dirwt_L *data_fine->L[inbr][jnbr];
-						vala += dirwt_L*dirwt_ab*data_fine->a[inbr][jnbr];
-						valb += dirwt_L*dirwt_ab*data_fine->b[inbr][jnbr];
-						//norm_L += dirwt_L;
-						norm_ab += dirwt_L*dirwt_ab;
-						
-					}
-				}
-				
-				//data_coarse->L[i][j] = valL/norm_L; // low pass filter
-				data_coarse->L[i][j] = data_fine->L[i][j];
-				data_coarse->a[i][j] = vala/norm_ab; // low pass filter
-				data_coarse->b[i][j] = valb/norm_ab; // low pass filter
-				
-				/*if (level!=3) {
-				 data_coarse->L[i][j] = valL/norm_L; // low pass filter
-				 } else {
-				 float valL=0, vala=0, valb=0;
-				 float norm=0;
-				 for(int inbr=MAX(0,(i-2)); inbr<=MIN(height-1,(i+2)); inbr++) {
-				 for (int jnbr=MAX(0,(j-2)); jnbr<=MIN(width-1,(j+2)); jnbr++) {
-				 //it seems that weighting the blur by Lab luminance (~gamma=3) 
-				 //works better than using the variable gamma source
-				 float nbrdiff = (fabs(data_fine->L[inbr][jnbr]-data_fine->L[i][j]) + \
-				 fabs(data_fine->a[inbr][jnbr]-data_fine->a[i][j]) + \
-				 fabs(data_fine->b[inbr][jnbr]-data_fine->b[i][j]))/(level);
-				 float dirwt = ( domker[(inbr-i)/scale+2][(jnbr-j)+2] * rangefn_L[nbrdiff] );
-				 valL += dirwt*data_fine->L[inbr][jnbr];
-				 vala += dirwt*data_fine->a[inbr][jnbr];
-				 valb += dirwt*data_fine->b[inbr][jnbr];
-				 norm += dirwt;
-				 
-				 }
-				 }
-				 data_coarse->L[i][j] = data_fine->L[i][j];//valL/norm;
-				 data_coarse->a[i][j] = vala/norm; 
-				 data_coarse->b[i][j] = valb/norm; 
-				 }*/
-				
-			}
-		}
-		
-	}
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

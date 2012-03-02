@@ -160,10 +160,6 @@ namespace rtengine {
 		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, \
 					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_ab);
 		float MadMax(float * HH_Coeffs, int &max, int datalen);
-		void dirpyr_ab(LabImage * data_fine, LabImage * data_coarse, const procparams::DirPyrDenoiseParams & dnparams);
-		void dirpyr_ablevel(LabImage * data_fine, LabImage * data_coarse, int width, int height, LUTf & rangefn_L, LUTf & rangefn_ab, int level, int scale);
-
-		//float gain;
 		
 		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
