@@ -41,11 +41,11 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 	// buffer for the lowpass image
     float ** lpf = new float *[height];
 	// buffer for the highpass image
-    float ** impish = new float *[height];
+    char ** impish = new char *[height];
     for (int i=0; i<height; i++) {
         lpf[i] = new float [width];
         //memset (lpf[i], 0, width*sizeof(float));
-		impish[i] = new float [width];
+		impish[i] = new char [width];
 		//memset (impish[i], 0, width*sizeof(unsigned short));
     }
 

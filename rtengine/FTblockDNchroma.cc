@@ -27,7 +27,7 @@
 #include <fftw3.h>
 
 //#include "bilateral2.h"
-//#include "gauss.h"
+#include "gauss.h"
 
 #include "rtengine.h"
 #include "improcfun.h"
@@ -40,8 +40,6 @@
 #include <omp.h>
 #endif
 
-
-#include "EdgePreserveLab.h"
 #include "cplx_wavelet_dec.h"
 
 
@@ -52,9 +50,10 @@
 //#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 //#define CLIP(x) LIM(x,0,65535)
 
-#define TS 256		// Tile size
-#define offset (TS/4)	// shift between tiles
+#define TS 64		// Tile size
+#define offset 25	// shift between tiles
 #define fTS ((TS/2+1))	// second dimension of Fourier tiles
+#define blkrad 0	// radius of block averaging
 //#define eps 0.01f/(TS*TS) //tolerance
 
 namespace rtengine {
@@ -97,15 +96,20 @@ namespace rtengine {
 		
 		//srand((unsigned)time(0));//test with random data
 		
+		//int max;
+		//float median = MadMax(src->data, max, src->width*src->height);
+		//gain = sqrt(MAX(1.0f,(0.15f*65535.0f/median))*(65535.0f/max));//'gain' is public float allocated in improcfun.h;
+		const float gain = pow (2.0, dnparams.expcomp);
+		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 		for (int i=0; i<src->height; i++) 
 			for (int j=0; j<src->width; j++) {
 				
-				float X = src->r[i][j];//xyz_prophoto[0][0]*src->r[i][j] + xyz_prophoto[0][1]*src->g[i][j] + xyz_prophoto[0][2]*src->b[i][j];
-				float Y = src->g[i][j];//xyz_prophoto[1][0]*src->r[i][j] + xyz_prophoto[1][1]*src->g[i][j] + xyz_prophoto[1][2]*src->b[i][j];
-				float Z = src->b[i][j];//xyz_prophoto[2][0]*src->r[i][j] + xyz_prophoto[2][1]*src->g[i][j] + xyz_prophoto[2][2]*src->b[i][j];
+				float X = gain*src->r[i][j];//xyz_prophoto[0][0]*src->r[i][j] + xyz_prophoto[0][1]*src->g[i][j] + xyz_prophoto[0][2]*src->b[i][j];
+				float Y = gain*src->g[i][j];//xyz_prophoto[1][0]*src->r[i][j] + xyz_prophoto[1][1]*src->g[i][j] + xyz_prophoto[1][2]*src->b[i][j];
+				float Z = gain*src->b[i][j];//xyz_prophoto[2][0]*src->r[i][j] + xyz_prophoto[2][1]*src->g[i][j] + xyz_prophoto[2][2]*src->b[i][j];
 				
 				X = X<65535.0f ? gamcurve[X] : (gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 				Y = Y<65535.0f ? gamcurve[Y] : (gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
@@ -143,6 +147,8 @@ namespace rtengine {
 			igamcurve[i] = (gamma((float)i/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
 		}
 		
+		const float gain = pow (2.0, dnparams.expcomp);
+		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -161,9 +167,9 @@ namespace rtengine {
 				
 				//Y = 65535.0f*(0.05+0.1*((float)rand()/(float)RAND_MAX));//test with random data
 				
-				dst->r[i][j] = X;//prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
-				dst->g[i][j] = Y;//prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
-				dst->b[i][j] = Z;//prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
+				dst->r[i][j] = X/gain;//prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
+				dst->g[i][j] = Y/gain;//prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
+				dst->b[i][j] = Z/gain;//prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
 				
 			}
 		}
@@ -178,7 +184,7 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		/*if (plistener) {
-		 plistener->setProgressStr ("Block FT Luma Denoise...");
+		 plistener->setProgressStr ("Denoise...");
 		 plistener->setProgress (0.0);
 		 }*/
 		
@@ -200,43 +206,34 @@ namespace rtengine {
 			return;
 		}
 		
-		const int blkrad=1;
-		float noisevar_L = SQR(dnparams.luma * TS * 10.0f);
-		float noisevar_ab = SQR(dnparams.chroma * TS * 100.0f);
-		
-		//int dxr=Roffset&1, dyr=(Roffset&2)/2, dxb=(1-dxr), dyb=(1-dyr);
-		//int rdx, rdy, bdx, bdy;
+		//const int blkrad=2;
+		float noisevar_L = SQR((100-dnparams.luma) * TS * 100.0f);
+		float noisevar_ab = SQR(dnparams.chroma * TS * 150.0f);
 		
 		// calculation for tiling
 		const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
 		const int numblox_H = ceil(((float)(height))/(offset))+2*blkrad;
 		//const int nrtiles = numblox_W*numblox_H;
 		// end of tiling calc
-		
-		//const float eps = 1.0f;
-		
+				
 		
 		
 		array2D<float> tilemask_in(TS,TS);
 		array2D<float> tilemask_out(TS,TS);
 		
 		array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);
+				
+		const int border = MAX(2,TS/16);
 		
 		for (int i=0; i<TS; i++) {
-			float i1 = abs((i>TS/2 ? i-TS : i));
-			float vmask = (i1<8 ? SQR(sin(M_PI*i1/16.0f)) : 1.0f);
-			float vmask2 = (i1<32 ? SQR(sin(M_PI*i1/64.0f)) : 1.0f);
+			float i1 = abs((i>TS/2 ? i-TS+1 : i));
+			float vmask = (i1<border ? SQR(sin((M_PI*i1)/(2*border))) : 1.0f);
+			float vmask2 = (i1<2*border ? SQR(sin((M_PI*i1)/(2*border))) : 1.0f);
 			for (int j=0; j<TS; j++) {
-				float j1 = abs((j>TS/2 ? j-TS : j));
-				//tilemask_in[i][j] = vmask * (j1<4 ? SQR(sin(M_PI*(float)j1/8.0f)) : 1.0f);
-				tilemask_in[i][j] = (exp(-(SQR(i-TS/2-0.5f)+SQR(j-TS/2-0.5f))/(2*SQR(TS/4.0f))) * \
-									 vmask * (j1<8 ? SQR(sin(M_PI*(float)j1/16.0f)) : 1.0f));
+				float j1 = abs((j>TS/2 ? j-TS+1 : j));
+				tilemask_in[i][j] = (vmask * (j1<border ? SQR(sin((M_PI*j1)/(2*border))) : 1.0f));
 				
-				//tilemask_out[i][j] = (SQR(MAX(0.0f, sin(M_PI*(float)(i-8.0f)/(TS-17) ))) * \
-				SQR(MAX(0.0f, sin(M_PI*(float)(j-8.0f)/(TS-17) ))));
-				tilemask_out[i][j] = vmask2 * (j1<32 ? SQR(sin(M_PI*(float)j1/64.0f)) : 1.0f);
-				
-				//tilemask_out[i][j] = exp(-(SQR(i-TS/2-0.5f)+SQR(j-TS/2-0.5f))/(SQR(TS/4.0f)));
+				tilemask_out[i][j] = vmask2 * (j1<2*border ? SQR(sin((M_PI*j1)/(2*border))) : 1.0f);
 				
 			}
 		}
@@ -245,12 +242,19 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		LabImage * labin = new LabImage(width,height);
-		LabImage * labblur = new LabImage(width,height);
+		LabImage * labdn = new LabImage(width,height);
+		array2D<float> Ldn(width,height);
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// transform RGB input to ersatz Lab
 		
 		RGB_InputTransf(src, labin, dnparams, defringe);
+		
+		memcpy (labdn->data, labin->data, 3*width*height*sizeof(float));
+		//dirpyr_ab(labin, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
+		//dirpyrLab_denoise(labin, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
+
+		impulse_nr (labdn, 50.0f/20.0f);
 		
 		int datalen = labin->W * labin->H;
 		
@@ -259,50 +263,39 @@ namespace rtengine {
 		wavelet_decomposition bdecomp(labin->data+2*datalen, labin->W, labin->H, 5, 1 );//last args are maxlevels, subsampling
 
 		float noisevarL	 = SQR(dnparams.Lamt/25.0f);//TODO: clean up naming confusion about params
-		float noisevarab = SQR(dnparams.chroma/25.0f);
+		float noisevarab = SQR(dnparams.chroma/10.0f);
 		
-		//WaveletDenoise(Ldecomp, SQR((float)dnparams.Lamt/25.0f));
-		WaveletDenoiseAll(Ldecomp, adecomp, bdecomp, noisevarL, noisevarab);
+		WaveletDenoiseAll_BiShrink(Ldecomp, adecomp, bdecomp, noisevarL, noisevarab);
 
-		Ldecomp.reconstruct(labblur->data);
-		adecomp.reconstruct(labblur->data+datalen);
-		bdecomp.reconstruct(labblur->data+2*datalen);
-
+		Ldecomp.reconstruct(labdn->data);
+		adecomp.reconstruct(labdn->data+datalen);
+		bdecomp.reconstruct(labdn->data+2*datalen);
 		
-		//impulse_nr (dst, 50.0f/20.0f);
+		impulse_nr (labdn, 50.0f/20.0f);
 		//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
 		
-		
-		//dirpyr_ab(labin, labblur, dnparams);//use dirpyr here if using it to blur ab channels only
-		//dirpyrLab_denoise(labin, labblur, dnparams);//use dirpyr here if using it to blur ab channels only
+		//dirpyr_ab(labin, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
+		//dirpyrLab_denoise(labin, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
 
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// initialize FT and output data structures
-		LabImage * labdn = new LabImage(width,height);
-		for (int i=0; i<3*labdn->W*labdn->H; i++) {
+		
+		float * Ldnptr = Ldn;
+		memcpy (Ldnptr, labdn->data, width*height*sizeof(float));
+		for (int i=0; i<labdn->W*labdn->H; i++) {
 			labdn->data[i] = 0.0f;
 		}
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// allocate FT data structures
+		
 		float ** Lblox = new float *[8] ;
-		float ** RLblox = new float *[8] ;
-		float ** BLblox = new float *[8] ;
 		
-		fftwf_complex ** fLblox = new fftwf_complex *[8] ;	//for FT
-		//float ** fLblox = new float *[8] ;				//for DCT
-		
-		fftwf_complex ** fRLblox = new fftwf_complex *[8] ;
-		fftwf_complex ** fBLblox = new fftwf_complex *[8] ;
+		float ** fLblox = new float *[8] ;				//for DCT
 		
 		for( int i = 0 ; i < 8 ; i++ ) {
 			Lblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
-			//RLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
-			//BLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
+			fLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));				//for DCT
 			
-			fLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));	//for FT
-			//fLblox[i] = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));				//for DCT
-			
-			//fRLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
-			//fBLblox[i] = (fftwf_complex *) fftwf_malloc (numblox_W*TS*fTS * sizeof (fftwf_complex));
 		}
 		
 		//make a plan for FFTW
@@ -310,20 +303,13 @@ namespace rtengine {
 		
 		int nfwd[2]={TS,TS};
 		
-		//for FT:
-		plan_forward_blox  = fftwf_plan_many_dft_r2c(2, nfwd, numblox_W, Lblox[0], NULL, 1, TS*TS, \
-													 fLblox[0], NULL, 1, TS*fTS, FFTW_ESTIMATE );
-		plan_backward_blox = fftwf_plan_many_dft_c2r(2, nfwd, numblox_W, fLblox[0], NULL, 1, TS*fTS, \
-													 Lblox[0], NULL, 1, TS*TS, FFTW_ESTIMATE );
 		
 		//for DCT:
-		//const fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
-		//const fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
+		const fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
+		const fftw_r2r_kind bwdkind[2] = {FFTW_REDFT01, FFTW_REDFT01};
 		
-		//plan_forward_blox  = fftwf_plan_many_r2r(2, nfwd, numblox_W, Lblox[0], NULL, 1, TS*TS, \
-		fLblox[0], NULL, 1, TS*TS, fwdkind, FFTW_ESTIMATE );
-		//plan_backward_blox = fftwf_plan_many_r2r(2, nfwd, numblox_W, fLblox[0], NULL, 1, TS*TS, \
-		Lblox[0], NULL, 1, TS*TS, bwdkind, FFTW_ESTIMATE );
+		plan_forward_blox  = fftwf_plan_many_r2r(2, nfwd, numblox_W, Lblox[0], NULL, 1, TS*TS, fLblox[0], NULL, 1, TS*TS, fwdkind, FFTW_ESTIMATE );
+		plan_backward_blox = fftwf_plan_many_r2r(2, nfwd, numblox_W, fLblox[0], NULL, 1, TS*TS, Lblox[0], NULL, 1, TS*TS, bwdkind, FFTW_ESTIMATE );
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -335,113 +321,53 @@ namespace rtengine {
 			int vblkmod = vblk%8;
 			
 			int top = (vblk-blkrad)*offset;
-			
-			for (int hblk=0; hblk<numblox_W; hblk++) {
-				int left = (hblk-blkrad)*offset;
-				int bottom = MIN( top+TS,height);
-				int right  = MIN(left+TS, width);
-				int imin = MIN(TS-1,MAX(0,-top));
-				int jmin = MIN(TS-1,MAX(0,-left));
-				int imax = MAX(0,bottom - top);
-				int jmax = MAX(0,right - left);
+
+			float * buffer = new float [width + TS + 2*blkrad*offset];
+			float * datarow = buffer+blkrad*offset;
+			for (int i=0, row=top; i<TS; i++, row++) {
 				
-				int indx = (hblk)*TS;//index of block in malloc
+				int rr = row;
+				if (row<0) {
+					rr = MIN(-row,height-1);
+				} else if (row>=height) {
+					rr = MAX(0,2*height-2-row);
+				} 
 				
-				// load Lab high pass data
+				for (int j=0; j<labin->W; j++) {
+					datarow[j] = (labin->L[rr][j]-Ldn[rr][j]);
+				}
 				
-				for (int i=imin; i<imax; i++)
-					for (int j=jmin; j<jmax; j++) {
+				for (int j=-blkrad*offset; j<0; j++) {
+					datarow[j] = datarow[MIN(-j,width-1)];
+				}
+				for (int j=width; j<width+(TS-(width%TS)-1)+blkrad*offset; j++) {
+					datarow[j] = datarow[MAX(0,2*width-2-j)];
+				}//now we have a padded data row
+				
+				//now fill this row of the tiles with Lab high pass data
+				for (int hblk=0; hblk<numblox_W; hblk++) {
+					int left = (hblk-blkrad)*offset;
+					int indx = (hblk)*TS;//index of block in malloc
+					
+					for (int j=0; j<TS; j++) {
 						
-						Lblox[vblkmod][(indx + i)*TS+j]  = tilemask_in[i][j]*(labin->L[top+i][left+j]-labblur->L[top+i][left+j]);// luma data
-						//RLblox[vblkmod][(indx + i)*TS+j] = tilemask_in[i][j]*(labin->a[top+i][left+j]-labblur->a[top+i][left+j]);// high pass chroma data
-						//BLblox[vblkmod][(indx + i)*TS+j] = tilemask_in[i][j]*(labin->b[top+i][left+j]-labblur->b[top+i][left+j]);// high pass chroma data
-						
-						totwt[top+i][left+j] += tilemask_in[i][j]*tilemask_out[i][j];
-					}
-				
-				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-				//pad the image to size TS on both sides
-				
-				if (imin>0) {
-					for (int i=0; i<imin; i++) 
-						for (int j=jmin; j<jmax; j++) {
-							Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[2*imin-i-1][left+j]-labblur->L[2*imin-i-1][left+j]);
-							//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][left+j]-labblur->a[2*imin-i-1][left+j]);
-							//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][left+j]-labblur->b[2*imin-i-1][left+j]);
+						Lblox[vblkmod][(indx + i)*TS+j]  = tilemask_in[i][j]*datarow[left+j];// luma data
+						if (top+i>=0 && top+i<height && left+j>=0 && left+j<width) {
+							totwt[top+i][left+j] += tilemask_in[i][j]*tilemask_out[i][j];
 						}
-					if (jmin>0) {
-						for (int i=0; i<imin; i++) 
-							for (int j=0; j<jmin; j++) {
-								Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[2*imin-i-1][2*jmin-j-1]-labblur->L[2*imin-i-1][2*jmin-j-1]);
-								//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][2*jmin-j-1]-labblur->a[2*imin-i-1][2*jmin-j-1]);
-								//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][2*jmin-j-1]-labblur->b[2*imin-i-1][2*jmin-j-1]);
-							}
 					}
 				}
-				
-				if (imax<TS) {
-					for (int i=imax; i<TS; i++) 
-						for (int j=jmin; j<jmax; j++) {
-							Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[height+imax-i-1][left+j]-labblur->L[height+imax-i-1][left+j]);
-							//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][left+j]-labblur->a[height+imax-i-1][left+j]);
-							//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][left+j]-labblur->b[height+imax-i-1][left+j]);
-						}
-					if (jmax<TS) {
-						for (int i=imax; i<TS; i++) 
-							for (int j=jmax; j<TS; j++) {
-								Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[height+imax-i-1][width+jmax-j-1]-labblur->L[height+imax-i-1][width+jmax-j-1]);
-								//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][width+jmax-j-1]-labblur->a[height+imax-i-1][width+jmax-j-1]);
-								//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][width+jmax-j-1]-labblur->b[height+imax-i-1][width+jmax-j-1]);
-							}
-					}
-				}
-				
-				if (jmin>0) {
-					for (int j=0; j<jmin; j++) 
-						for (int i=imin; i<imax; i++) {
-							Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[top+i][2*jmin-j-1]-labblur->L[top+i][2*jmin-j-1]);
-							//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[top+i][2*jmin-j-1]-labblur->a[top+i][2*jmin-j-1]);
-							//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[top+i][2*jmin-j-1]-labblur->b[top+i][2*jmin-j-1]);
-						}
-					if (imax<TS) {
-						for (int j=0; j<jmin; j++) 
-							for (int i=imax; i<TS; i++) {
-								Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[height+imax-i-1][2*jmin-j-1]-labblur->L[height+imax-i-1][2*jmin-j-1]);
-								//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[height+imax-i-1][2*jmin-j-1]-labblur->a[height+imax-i-1][2*jmin-j-1]);
-								//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[height+imax-i-1][2*jmin-j-1]-labblur->b[height+imax-i-1][2*jmin-j-1]);
-							}
-					}
-				}
-				
-				
-				if (jmax<TS) {
-					for (int j=jmax; j<TS; j++) 
-						for (int i=imin; i<imax; i++) {
-							Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[top+i][width+jmax-j-1]-labblur->L[top+i][width+jmax-j-1]);
-							//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[top+i][width+jmax-j-1]-labblur->a[top+i][width+jmax-j-1]);
-							//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[top+i][width+jmax-j-1]-labblur->b[top+i][width+jmax-j-1]);
-						}
-					if (imin>0) {
-						for (int i=0; i<imin; i++)
-							for (int j=jmax; j<TS; j++) {
-								Lblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->L[2*imin-i-1][width+jmax-j-1]-labblur->L[2*imin-i-1][width+jmax-j-1]);
-								//RLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->a[2*imin-i-1][width+jmax-j-1]-labblur->a[2*imin-i-1][width+jmax-j-1]);
-								//BLblox[vblkmod][(indx + i)*TS+j]=tilemask_in[i][j]*(labin->b[2*imin-i-1][width+jmax-j-1]-labblur->b[2*imin-i-1][width+jmax-j-1]);
-							}
-					}
-				}
-				//end of tile padding
-				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-				//Lblox[vblkmod][(indx + TS/2)*TS+TS/2]=32768.0f;//testing: locate block centers
-				
 			}//end of filling block row
+			delete[] buffer;
+
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 			
 			//fftwf_print_plan (plan_forward_blox);
-			fftwf_execute_dft_r2c(plan_forward_blox,Lblox[vblkmod],fLblox[vblkmod]);	// FT an entire row of tiles
-			//fftwf_execute_r2r(plan_forward_blox,Lblox[vblkmod],fLblox[vblkmod]);		// DCT an entire row of tiles
+			fftwf_execute_r2r(plan_forward_blox,Lblox[vblkmod],fLblox[vblkmod]);		// DCT an entire row of tiles
+
 			
-			//fftwf_execute_dft_r2c(plan_forward_blox,RLblox[vblkmod],fRLblox[vblkmod]);// FT an entire row of tiles
-			//fftwf_execute_dft_r2c(plan_forward_blox,BLblox[vblkmod],fBLblox[vblkmod]);// FT an entire row of tiles
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
 			if (vblk<blkrad) continue;
 			
@@ -454,14 +380,12 @@ namespace rtengine {
 				
 				int hblproc = hblk;
 				
-				RGBtile_denoise (fLblox, fRLblox, fBLblox, vblproc, hblproc, blkrad, numblox_H, numblox_W, 
-								 noisevar_L, noisevar_ab );
+				RGBtile_denoise (fLblox, vblproc, hblproc, numblox_H, numblox_W, noisevar_L, noisevar_ab );
 				
 				if (vblk==(numblox_H-1)) {//denoise last blkrad rows
 					for (vblproc=(vblk-blkrad+1); vblproc<numblox_H; vblproc++) {
 						vblprocmod = vblproc%8;
-						RGBtile_denoise (fLblox, fRLblox, fBLblox, vblproc, hblproc, blkrad, numblox_H, numblox_W, 
-										 noisevar_L, noisevar_ab );
+						RGBtile_denoise (fLblox, vblproc, hblproc, numblox_H, numblox_W, noisevar_L, noisevar_ab );
 					}
 				}
 				
@@ -470,17 +394,12 @@ namespace rtengine {
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
 			//now perform inverse FT of an entire row of tiles
-			fftwf_execute_dft_c2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for FT
-			//fftwf_execute_r2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for DCT
-			
-			//fftwf_execute_dft_c2r(plan_backward_blox,fRLblox[vblprocmod],RLblox[vblprocmod]);
-			//fftwf_execute_dft_c2r(plan_backward_blox,fBLblox[vblprocmod],BLblox[vblprocmod]);
+			fftwf_execute_r2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for DCT
 			
 			int topproc = (vblproc-blkrad)*offset;
 			
 			//add row of tiles to output image
-			RGBoutput_tile_row (Lblox[vblprocmod], RLblox[vblprocmod], BLblox[vblprocmod], labdn, \
-								tilemask_out, height, width, topproc, blkrad );
+			RGBoutput_tile_row (Lblox[vblprocmod], labdn, tilemask_out, height, width, topproc );
 			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			
@@ -488,14 +407,9 @@ namespace rtengine {
 				for (int vblproc=(vblk-blkrad+1); vblproc<numblox_H; vblproc++) {
 					topproc=(vblproc-blkrad)*offset;
 					vblprocmod=vblproc%8;
-					fftwf_execute_dft_c2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for FT
-					//fftwf_execute_r2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for DCT
+					fftwf_execute_r2r(plan_backward_blox,fLblox[vblprocmod],Lblox[vblprocmod]);	//for DCT
 					
-					//fftwf_execute_dft_c2r(plan_backward_blox,fRLblox[vblprocmod],RLblox[vblprocmod]);
-					//fftwf_execute_dft_c2r(plan_backward_blox,fBLblox[vblprocmod],BLblox[vblprocmod]);
-					
-					RGBoutput_tile_row (Lblox[vblprocmod], RLblox[vblprocmod], BLblox[vblprocmod], labdn, \
-										tilemask_out, height, width, topproc, blkrad );
+					RGBoutput_tile_row (Lblox[vblprocmod], labdn, tilemask_out, height, width, topproc );
 					
 				}
 			}
@@ -514,18 +428,10 @@ namespace rtengine {
 		
 		for( int i = 0 ; i < 8 ; i++ ) {
 			fftwf_free ( Lblox[i]);
-			//fftwf_free (RLblox[i]);
-			//fftwf_free (BLblox[i]);
 			fftwf_free ( fLblox[i]);
-			//fftwf_free (fRLblox[i]);
-			//fftwf_free (fBLblox[i]);
 		}
-		delete[]  Lblox;	
-		//delete[] RLblox;
-		//delete[] BLblox;
+		delete[]  Lblox;
 		delete[]  fLblox;
-		//delete[] fRLblox;
-		//delete[] fBLblox;
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
@@ -534,32 +440,12 @@ namespace rtengine {
 				//may want to include masking threshold for large hipass data to preserve edges/detail
 				float hpdn = labdn->L[i][j]/totwt[i][j];//note that labdn initially stores the denoised hipass data
 				
-				labdn->L[i][j] = labblur->L[i][j] + hpdn;
-				//labdn->L[i][j] = -(hporig)+0.25;
+				labdn->L[i][j] = Ldn[i][j] + hpdn;
 				
-				//hpdn = labdn->a[i][j]/totwt[i][j];
-				//labdn->a[i][j] = labblur->a[i][j] + hpdn;
-				
-				//hpdn = labdn->b[i][j]/totwt[i][j];
-				//labdn->b[i][j] = labblur->b[i][j] + hpdn;
-				
-				labdn->a[i][j] = labblur->a[i][j];
-				labdn->b[i][j] = labblur->b[i][j];
 			}
 		}
 		
-		//dirpyr_ab(labdn, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
-		
-		//dirpyrdenoise(labdn);//denoise ab channels using ImProcFns denoise (stripped to ab channels only)
-		
-		//Wavelet denoise of ab channels
-		//int numpix = labdn->W*labdn->H;
-		//cplx_wavelet_decomposition adecomp(labdn->data+numpix, labdn->W, labdn->H, 5 );//last arg is num levels
-		//WaveletDenoise(adecomp, SQR((float)dnparams.chroma*100.0f));
-		//adecomp.reconstruct(labdn->data+numpix);
-		//cplx_wavelet_decomposition bdecomp(labdn->data+2*numpix, labdn->W, labdn->H, 5 );//last arg is num levels
-		//WaveletDenoise(bdecomp, SQR((float)dnparams.chroma*100.0f));
-		//bdecomp.reconstruct(labdn->data+2*numpix);
+		//dirpyrLab_denoise(labdn, labdn, dnparams);//use dirpyr here if using it to blur ab channels only
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// transform denoised "Lab" to output RGB
@@ -570,116 +456,31 @@ namespace rtengine {
 		
 		delete labin;
 		delete labdn;
-		delete labblur;
 		
-	}//end of main RB_denoise
+	}//end of main RGB_denoise
 	
+
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	
-	void ImProcFunctions::RGBtile_denoise (fftwf_complex ** fLblox, fftwf_complex ** fRLblox, fftwf_complex ** fBLblox, \
-										   int vblproc, int hblproc, int blkrad, int numblox_H, int numblox_W, \
-										   float noisevar_L, float noisevar_ab )	//for FT
-	//void ImProcFunctions::RGBtile_denoise (float ** fLblox, fftwf_complex ** fRLblox, fftwf_complex ** fBLblox, \
-	int vblproc, int hblproc, int blkrad, int numblox_H, int numblox_W, \
-	float noisevar_L, float noisevar_ab )	//for DCT
+	void ImProcFunctions::RGBtile_denoise (float ** fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, \
+										   float noisevar_L, float noisevar_ab )	//for DCT
 	{
 		int vblprocmod=vblproc%8;
 		
-		const float eps = 0.01f/(TS*TS); //tolerance
-		const float cutoffsq = 8.0f;//frequency cutoff
+		float * nbrwt  = new float[TS*TS];	//for DCT
 		
+		int blkstart = hblproc*TS*TS;
 		
-		float RLblockvar=eps, BLblockvar=eps, Lblockvar=eps;
+		boxabsblur(fLblox[vblprocmod]+blkstart, nbrwt, 3, 3, TS, TS);//blur neighbor weights for more robust estimation	//for DCT
 		
-		for (int i=TS/4; i<3*TS/4; i++) 
-			for (int j=TS/4; j<fTS; j++) {	//for FT
-				//for (int j=TS/4; j<3*TS/4; j++) {	//for DCT
-				
-				Lblockvar += (SQR( fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR( fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));	//for FT
-				//Lblockvar += SQR( fLblox[vblprocmod][(hblproc*TS+i)*TS+j]);		//for DCT
-				
-				//RLblockvar += (SQR(fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR(fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));
-				//BLblockvar += (SQR(fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0])+SQR(fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1]));
-				
-			}
+		for (int n=0; n<TS*TS; n++) {		//for DCT
+			fLblox[vblprocmod][blkstart+n] *= (1-expf(-SQR(nbrwt[n])/noisevar_L));
+		}//output neighbor averaged result
 		
-		Lblockvar /= (TS/2)*(fTS-TS/4);	//for FT
-		//Lblockvar /= (TS/2)*(TS/2);	//for DCT
+		delete[] nbrwt;
 		
-		//RLblockvar /= (TS/2)*(fTS-TS/4);
-		//BLblockvar /= (TS/2)*(fTS-TS/4);
-		Lblockvar = (3*Lblockvar);
-		//RLblockvar = (3*RLblockvar);
-		//BLblockvar = (3*BLblockvar);
-		
-		//printf("vblock=%d  hblock=%d  blockstddev=%f \n",vblproc,hblproc,sqrt(blockvar));
-		
-		//float wsqave=0;
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		for (int i=0; i<TS; i++) 
-			for (int j=0; j<fTS; j++) {		//for FT
-				//for (int j=0; j<TS; j++) {	//for DCT
-				
-				
-				float Lcoeffre = fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];	//for FT
-				float Lcoeffim = fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
-				
-				//float Lcoeff = fLblox[vblprocmod][(hblproc*TS+i)*TS+j];		//for DCT
-				
-				//float RLcoeffre = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
-				//float RLcoeffim = fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
-				
-				//float BLcoeffre = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0];
-				//float BLcoeffim = fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1];
-				
-				/*double nbrave=0, nbrsqave=0, coeffsq;
-				int vblnbrmod, hblnbrmod;
-				for (int k=0; k<9; k++) {
-					vblnbrmod = (vblproc+(k/3)+7)%8;
-					hblnbrmod = MAX(0,hblproc+(k%3)-1);
-					if (hblnbrmod==numblox_W) hblnbrmod=numblox_W-1;
-					coeffsq = SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*fTS+j][0])+SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*fTS+j][1]);	//for FT
-					//coeffsq = SQR(fLblox[vblnbrmod][(hblnbrmod*TS+i)*TS+j]);	//for DCT
-					
-					nbrave += sqrt(coeffsq);
-					nbrsqave += coeffsq;
-				}
-				float nbrvar = (nbrsqave/9.0f)-SQR(nbrave/9.0f);*/
-				
-				float  Lwsq = eps+SQR( Lcoeffre)+SQR( Lcoeffim);	//for FT
-				//float  Lwsq = eps+SQR( Lcoeff);					//for DCT
-				
-				//float RLwsq = eps+SQR(RLcoeffre)+SQR(RLcoeffim);
-				//float BLwsq = eps+SQR(BLcoeffre)+SQR(BLcoeffim);
-				
-				//wsqave += Lwsq;
-				//float Lfactor = (4*Lblockvar)/(eps+(Lwsq+nbrvar)+2*Lblockvar);
-				//float Lfactor = expf(-Lwsq/(9*Lblockvar));
-				float freqfactor = 1.0f-MAX((expf(-(SQR(i)+SQR(j))/cutoffsq)),(expf(-(SQR(TS-i)+SQR(j))/cutoffsq)));
-				float  Lfactor = 1;//freqfactor;//*(2* Lblockvar)/(eps+ Lwsq+ Lblockvar);
-				//float RLfactor = 1;//(2*RLblockvar)/(eps+RLwsq+RLblockvar);
-				//float BLfactor = 1;//(2*BLblockvar)/(eps+BLwsq+BLblockvar);
-
-				float  Lshrinkfactor = SQR(Lwsq/(Lwsq + noisevar_L * Lfactor*exp(-Lwsq/(3*noisevar_L))));
-				//float RLshrinkfactor = RLwsq/(RLwsq+noisevar_ab*RLfactor*exp(-Lwsq/(3*noisevar_L)));
-				//float BLshrinkfactor = BLwsq/(BLwsq+noisevar_ab*BLfactor*exp(-Lwsq/(3*noisevar_L)));
-				
-				//float shrinkfactor = (wsq<noisevar ? 0 : 1);//hard threshold
-				
-				fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= Lshrinkfactor;	//for FT
-				fLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= Lshrinkfactor;
-				//fLblox[vblprocmod][(hblproc*TS+i)*TS+j] *= Lshrinkfactor;		//for DCT
-				
-				//fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= RLshrinkfactor;
-				//fRLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= RLshrinkfactor;
-				
-				//fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][0] *= BLshrinkfactor;
-				//fBLblox[vblprocmod][(hblproc*TS+i)*fTS+j][1] *= BLshrinkfactor;
-				
-			}//end of block denoise		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//printf("vblk=%d  hlk=%d  wsqave=%f   ||   ",vblproc,hblproc,wsqave);
 		
@@ -689,11 +490,12 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, float *bloxrow_a, float *bloxrow_b, LabImage * labdn,
-											  float ** tilemask_out, int height, int width, int top, int blkrad )
+	void ImProcFunctions::RGBoutput_tile_row (float *bloxrow_L, LabImage * labdn, float ** tilemask_out, int height, int width, int top )
 	{
 		const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
-		
+		//const float FTnorm = 1.0f/(TS*TS); //for FT
+		const float DCTnorm = 1.0f/(4*TS*TS); //for DCT
+
 		//add row of tiles to output image
 		for (int hblk=0; hblk < numblox_W; hblk++) {
 			int left = (hblk-blkrad)*offset;
@@ -709,9 +511,7 @@ namespace rtengine {
 			for (int i=imin; i<imax; i++)
 				for (int j=jmin; j<jmax; j++) {
 					
-					labdn->L[top+i][left+j] += tilemask_out[i][j]*bloxrow_L[(indx + i)*TS+j]/(TS*TS); 
-					//labdn->a[top+i][left+j] += tilemask_out[i][j]*bloxrow_a[(indx + i)*TS+j]/(TS*TS); 
-					//labdn->b[top+i][left+j] += tilemask_out[i][j]*bloxrow_b[(indx + i)*TS+j]/(TS*TS); 
+					labdn->L[top+i][left+j] += tilemask_out[i][j]*bloxrow_L[(indx + i)*TS+j]*DCTnorm; //for DCT
 					
 				}
 		}
@@ -723,143 +523,145 @@ namespace rtengine {
 #undef offset
 	//#undef eps
 	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//experimental dirpyr low-pass filter
 	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//experimental dirpyr low-pass filter
-
-void ImProcFunctions::dirpyr_ab(LabImage * data_fine, LabImage * data_coarse, const procparams::DirPyrDenoiseParams & dnparams)
-{
-	int W = data_fine->W;
-	int H = data_fine->H;
-	float thresh_L = 10.0f*dnparams.luma;
-	float threshsq_L = SQR(thresh_L);
-	float thresh_ab = 10.0f*dnparams.chroma;
-	float threshsq_ab = SQR(thresh_ab);
-	LUTf rangefn_L(0x10000);
-	LUTf rangefn_ab(0x10000);
-
-	LabImage * dirpyrlo[2];
-	
-	//set up range functions
-	
-	for (int i=0; i<0x10000; i++) {
-		rangefn_L[i] =  exp(-((float)i) / (1.0+thresh_L)) ;// * (1.0+thresh_L)/(((float)i) + thresh_L+1.0); 
-		rangefn_ab[i] =  exp(-SQR((float)i) / (1.0+threshsq_ab)) ;// * (1.0+thresh_ab)/(((float)i) + thresh_ab+1.0); 
-	}
-	dirpyrlo[0] = new LabImage (W, H);
-	dirpyrlo[1] = new LabImage (W, H);
-	
-	//int scale[4]={1,3,5,9/*1*/};
-	int scale[5]={1,2,4,7,13/*1*/};
-
-	int level=0;
-	int indx=0;
-	dirpyr_ablevel(data_fine, dirpyrlo[indx], W, H, rangefn_L,rangefn_ab, 0, scale[level] );
-	level += 1;
-	indx = 1-indx;
-	while (level<3) {
-		dirpyr_ablevel(dirpyrlo[1-indx], dirpyrlo[indx], W, H, rangefn_L,rangefn_ab, level, scale[level] );
+	void ImProcFunctions::dirpyr_ab(LabImage * data_fine, LabImage * data_coarse, const procparams::DirPyrDenoiseParams & dnparams)
+	{
+		int W = data_fine->W;
+		int H = data_fine->H;
+		float thresh_L = 10.0f*dnparams.luma;
+		float threshsq_L = SQR(thresh_L);
+		float thresh_ab = 10.0f*dnparams.chroma;
+		float threshsq_ab = SQR(thresh_ab);
+		LUTf rangefn_L(0x10000);
+		LUTf rangefn_ab(0x10000);
+		
+		LabImage * dirpyrlo[2];
+		
+		//set up range functions
+		
+		for (int i=0; i<0x10000; i++) {
+			rangefn_L[i] =  exp(-((float)i) / (1.0+thresh_L)) ;// * (1.0+thresh_L)/(((float)i) + thresh_L+1.0); 
+			rangefn_ab[i] =  exp(-SQR((float)i) / (1.0+threshsq_ab)) ;// * (1.0+thresh_ab)/(((float)i) + thresh_ab+1.0); 
+		}
+		dirpyrlo[0] = new LabImage (W, H);
+		dirpyrlo[1] = new LabImage (W, H);
+		
+		//int scale[4]={1,3,5,9/*1*/};
+		int scale[5]={1,2,4,7,13/*1*/};
+		
+		int level=0;
+		int indx=0;
+		dirpyr_ablevel(data_fine, dirpyrlo[indx], W, H, rangefn_L,rangefn_ab, 0, scale[level] );
 		level += 1;
 		indx = 1-indx;
+		while (level<3) {
+			dirpyr_ablevel(dirpyrlo[1-indx], dirpyrlo[indx], W, H, rangefn_L,rangefn_ab, level, scale[level] );
+			level += 1;
+			indx = 1-indx;
+		}
+		
+		dirpyr_ablevel(dirpyrlo[1-indx], data_coarse, W, H, rangefn_L,rangefn_ab, level, scale[level] );
+		
+		//delete dirpyrlo[0];//TODO: this seems to disable the NR ???
+		//delete dirpyrlo[1];
 	}
 	
-	dirpyr_ablevel(dirpyrlo[1-indx], data_coarse, W, H, rangefn_L,rangefn_ab, level, scale[level] );
-	
-	//delete dirpyrlo[0];//TODO: this seems to disable the NR ???
-	//delete dirpyrlo[1];
-}
-	
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-
-void ImProcFunctions::dirpyr_ablevel(LabImage * data_fine, LabImage * data_coarse, int width, int height, LUTf & rangefn_L, LUTf & rangefn_ab, int level, int scale)
-{
-	//scale is spacing of directional averaging weights
 	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// calculate weights, compute directionally weighted average
-	
-	//int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
-	//int domker[5][5] = {{1, 2, 4, 2, 1}, {2, 4, 8, 4, 2}, {4, 8, 16, 8, 4}, {2, 4, 8, 4, 2}, {1, 2, 4, 2, 1}};
-	float domker[5][5] = {{0.129923f, 0.279288f, 0.360448f, 0.279288f, 0.129923f}, \
-		{0.279288f, 0.600373f, 0.774837f, 0.600373f, 0.279288f}, \
-		{0.360448f, 0.774837f, 1.0f,      0.774837f, 0.360448f}, \
-		{0.279288f, 0.600373f, 0.774837f, 0.600373f, 0.279288f}, \
-		{0.129923f, 0.279288f, 0.360448f, 0.279288f, 0.129923f}};//Gaussian with sigma=1.4
-	
-	
-	int scalewin = 2*scale;
-	
+	void ImProcFunctions::dirpyr_ablevel(LabImage * data_fine, LabImage * data_coarse, int width, int height, LUTf & rangefn_L, LUTf & rangefn_ab, int level, int scale)
+	{
+		//scale is spacing of directional averaging weights
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// calculate weights, compute directionally weighted average
+		
+		//int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
+		//int domker[5][5] = {{1, 2, 4, 2, 1}, {2, 4, 8, 4, 2}, {4, 8, 16, 8, 4}, {2, 4, 8, 4, 2}, {1, 2, 4, 2, 1}};
+		float domker[5][5] = {{0.129923f, 0.279288f, 0.360448f, 0.279288f, 0.129923f}, \
+			{0.279288f, 0.600373f, 0.774837f, 0.600373f, 0.279288f}, \
+			{0.360448f, 0.774837f, 1.0f,      0.774837f, 0.360448f}, \
+			{0.279288f, 0.600373f, 0.774837f, 0.600373f, 0.279288f}, \
+			{0.129923f, 0.279288f, 0.360448f, 0.279288f, 0.129923f}};//Gaussian with sigma=1.4
+		
+		
+		int scalewin = 2*scale;
+		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	for(int i = 0; i < height; i++) {
-		for(int j = 0; j < width; j++)
-		{
-			float valL=0, vala=0, valb=0;
-			float norm_L=0, norm_ab=0;
-			
-			for(int inbr=MAX(0,(i-scalewin)); inbr<=MIN(height-1,(i+scalewin)); inbr+=scale) {
-				for (int jnbr=MAX(0,(j-scalewin)); jnbr<=MIN(width-1,(j+scalewin)); jnbr+=scale) {
-					//it seems that weighting the blur by L (gamma=3) works better
-					//than using the variable gamma source
-					//float desat = 1-rangefn_ab[data_fine->L[i][j]+abs(data_fine->a[i][j])+abs(data_fine->b[i][j])];
-
-					float nbrdiff_L = fabs(data_fine->L[inbr][jnbr]-data_fine->L[i][j])/level;
-					float nbrdiff_ab = (fabs(data_fine->a[inbr][jnbr]-data_fine->a[i][j]) + \
-										fabs(data_fine->b[inbr][jnbr]-data_fine->b[i][j]));
-					float dirwt_L = ( domker[(inbr-i)/scale+2][(jnbr-j)/scale+2] * rangefn_L[nbrdiff_L] );
-					float dirwt_ab = ( /*domker[(inbr-i)/scale+2][(jnbr-j)/scale+2] */ rangefn_ab[nbrdiff_ab] );
-					//valL += dirwt_L *data_fine->L[inbr][jnbr];
-					vala += dirwt_L*dirwt_ab*data_fine->a[inbr][jnbr];
-					valb += dirwt_L*dirwt_ab*data_fine->b[inbr][jnbr];
-					//norm_L += dirwt_L;
-					norm_ab += dirwt_L*dirwt_ab;
-
-				}
-			}
-			
-			//data_coarse->L[i][j] = valL/norm_L; // low pass filter
-			data_coarse->L[i][j] = data_fine->L[i][j];
-			data_coarse->a[i][j] = vala/norm_ab; // low pass filter
-			data_coarse->b[i][j] = valb/norm_ab; // low pass filter
-			
-			/*if (level!=3) {
-				data_coarse->L[i][j] = valL/norm_L; // low pass filter
-			} else {
+		for(int i = 0; i < height; i++) {
+			for(int j = 0; j < width; j++)
+			{
 				float valL=0, vala=0, valb=0;
-				float norm=0;
-				for(int inbr=MAX(0,(i-2)); inbr<=MIN(height-1,(i+2)); inbr++) {
-					for (int jnbr=MAX(0,(j-2)); jnbr<=MIN(width-1,(j+2)); jnbr++) {
-						//it seems that weighting the blur by Lab luminance (~gamma=3) 
-						//works better than using the variable gamma source
-						float nbrdiff = (fabs(data_fine->L[inbr][jnbr]-data_fine->L[i][j]) + \
-										 fabs(data_fine->a[inbr][jnbr]-data_fine->a[i][j]) + \
-										 fabs(data_fine->b[inbr][jnbr]-data_fine->b[i][j]))/(level);
-						float dirwt = ( domker[(inbr-i)/scale+2][(jnbr-j)+2] * rangefn_L[nbrdiff] );
-						valL += dirwt*data_fine->L[inbr][jnbr];
-						vala += dirwt*data_fine->a[inbr][jnbr];
-						valb += dirwt*data_fine->b[inbr][jnbr];
-						norm += dirwt;
+				float norm_L=0, norm_ab=0;
+				
+				for(int inbr=MAX(0,(i-scalewin)); inbr<=MIN(height-1,(i+scalewin)); inbr+=scale) {
+					for (int jnbr=MAX(0,(j-scalewin)); jnbr<=MIN(width-1,(j+scalewin)); jnbr+=scale) {
+						//it seems that weighting the blur by L (gamma=3) works better
+						//than using the variable gamma source
+						//float desat = 1-rangefn_ab[data_fine->L[i][j]+abs(data_fine->a[i][j])+abs(data_fine->b[i][j])];
+						
+						float nbrdiff_L = fabs(data_fine->L[inbr][jnbr]-data_fine->L[i][j])/level;
+						float nbrdiff_ab = (fabs(data_fine->a[inbr][jnbr]-data_fine->a[i][j]) + \
+											fabs(data_fine->b[inbr][jnbr]-data_fine->b[i][j]));
+						float dirwt_L = ( domker[(inbr-i)/scale+2][(jnbr-j)/scale+2] * rangefn_L[nbrdiff_L] );
+						float dirwt_ab = ( /*domker[(inbr-i)/scale+2][(jnbr-j)/scale+2] */ rangefn_ab[nbrdiff_ab] );
+						//valL += dirwt_L *data_fine->L[inbr][jnbr];
+						vala += dirwt_L*dirwt_ab*data_fine->a[inbr][jnbr];
+						valb += dirwt_L*dirwt_ab*data_fine->b[inbr][jnbr];
+						//norm_L += dirwt_L;
+						norm_ab += dirwt_L*dirwt_ab;
 						
 					}
 				}
-				data_coarse->L[i][j] = data_fine->L[i][j];//valL/norm;
-				data_coarse->a[i][j] = vala/norm; 
-				data_coarse->b[i][j] = valb/norm; 
-			}*/
-
+				
+				//data_coarse->L[i][j] = valL/norm_L; // low pass filter
+				data_coarse->L[i][j] = data_fine->L[i][j];
+				data_coarse->a[i][j] = vala/norm_ab; // low pass filter
+				data_coarse->b[i][j] = valb/norm_ab; // low pass filter
+				
+				/*if (level!=3) {
+				 data_coarse->L[i][j] = valL/norm_L; // low pass filter
+				 } else {
+				 float valL=0, vala=0, valb=0;
+				 float norm=0;
+				 for(int inbr=MAX(0,(i-2)); inbr<=MIN(height-1,(i+2)); inbr++) {
+				 for (int jnbr=MAX(0,(j-2)); jnbr<=MIN(width-1,(j+2)); jnbr++) {
+				 //it seems that weighting the blur by Lab luminance (~gamma=3) 
+				 //works better than using the variable gamma source
+				 float nbrdiff = (fabs(data_fine->L[inbr][jnbr]-data_fine->L[i][j]) + \
+				 fabs(data_fine->a[inbr][jnbr]-data_fine->a[i][j]) + \
+				 fabs(data_fine->b[inbr][jnbr]-data_fine->b[i][j]))/(level);
+				 float dirwt = ( domker[(inbr-i)/scale+2][(jnbr-j)+2] * rangefn_L[nbrdiff] );
+				 valL += dirwt*data_fine->L[inbr][jnbr];
+				 vala += dirwt*data_fine->a[inbr][jnbr];
+				 valb += dirwt*data_fine->b[inbr][jnbr];
+				 norm += dirwt;
+				 
+				 }
+				 }
+				 data_coarse->L[i][j] = data_fine->L[i][j];//valL/norm;
+				 data_coarse->a[i][j] = vala/norm; 
+				 data_coarse->b[i][j] = valb/norm; 
+				 }*/
+				
+			}
 		}
+		
 	}
 	
-}
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
 	
 /*
 void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radius, int thresh) { 
@@ -1008,7 +810,7 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 				ParentPadding = 0;
 			}
 			
-			float threshsq = noisevar;//*SQR(UniversalThresh(WaveletCoeffs.level_coeffs(lvl)[3], Wlvl*Hlvl));
+			float threshsq = noisevar;//*SQR(MadMax(WaveletCoeffs.level_coeffs(lvl)[3], max, Wlvl*Hlvl));
 				
 			Shrink(WavCoeffs, Wlvl, Hlvl, lvl, threshsq/*noisevar*/);
 		}
@@ -1058,9 +860,11 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 		//simple wavelet shrinkage
 		float * sigma = new float[W*H]; 
 		const float eps = 0.01f;
+		int max;
+		
 		printf("level=%d  ",level);
 		for (int dir=1; dir<4; dir++) {
-			float mad = SQR(UniversalThresh(WavCoeffs[dir], W*H));//*6*/(level+1);
+			float mad = SQR(MadMax(WavCoeffs[dir], max, W*H));//*6*/(level+1);
 			printf("  dir=%d  mad=%f	",dir,sqrt(mad));
 			for (int i=0; i<H; i++) {
 				for (int j=0; j<W; j++) {
@@ -1083,12 +887,6 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 				//use smoothed shrinkage unless local shrinkage is much less
 				WavCoeffs[dir][i] *= (SQR(sigma[i])+SQR(sf))/(sigma[i]+sf+eps);
 				
-				//the following is for testing
-				//float wdn = WavCoeffs[dir][i]*sf;
-				//float sf1 = mag/(mag+4*noisevar*mad+eps);
-				//float wdn1 = WavCoeffs[dir][i]*sf1;
-
-				//WavCoeffs[dir][i] = wdn-wdn1;
 			}
 		}
 		printf("\n");
@@ -1099,7 +897,10 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	float ImProcFunctions::UniversalThresh(float * Detail_Coeffs, int datalen) {
+	float ImProcFunctions::MadMax(float * DataList, int & max, int datalen) {
+		
+		//computes Median Absolute Deviation and Maximum of DataList
+		//DataList values should mostly have abs val < 65535
 		
 		int * histo = new int[65536];
 		//memset(histo, 0, 65536*sizeof(histo));
@@ -1107,7 +908,7 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 		
 		//calculate histogram of absolute values of HH wavelet coeffs
 		for (int i=0; i<datalen; i++) {
-			histo[MAX(0,MIN(65535,abs((int)Detail_Coeffs[i])))]++;
+			histo[MAX(0,MIN(65535,abs((int)DataList[i])))]++;
 		}
 		
 		//find median of histogram
@@ -1115,6 +916,12 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 		while (count<datalen/2) {
 			count += histo[median];
 			median++;
+		}
+		
+		//find max of histogram
+		max=65535;
+		while (histo[max]==0) {
+			max--;
 		}
 		
 		int count_ = count - histo[median-1];
@@ -1165,20 +972,28 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 	{	
 		//simple wavelet shrinkage
 		const float eps = 0.01f;
-		float * sfave = new float[W_L*H_L]; 
+		float * sfave = new float[W_L*H_L];
+		int max;
 
 		printf("\n level=%d  \n",level);
 		
 		for (int dir=1; dir<4; dir++) {
-			float mad_L = SQR(UniversalThresh(WavCoeffs_L[dir], W_L*H_L));//*6*/(level+1);
-			float mad_a = SQR(UniversalThresh(WavCoeffs_a[dir], W_ab*H_ab));//*6*/(level+1);
-			float mad_b = SQR(UniversalThresh(WavCoeffs_b[dir], W_ab*H_ab));//*6*/(level+1);
+			float madL = SQR(MadMax(WavCoeffs_L[dir], max, W_L*H_L));	
+			float mada = SQR(MadMax(WavCoeffs_a[dir], max, W_ab*H_ab));
+			float madb = SQR(MadMax(WavCoeffs_b[dir], max, W_ab*H_ab));
 			
-			float thresh_L = sqrt(mad_L*noisevar_L);
-			float thresh_a = sqrt(mad_a*noisevar_ab);
-			float thresh_b = sqrt(mad_b*noisevar_ab);
+			//float thresh_L = sqrt(mad_L*noisevar_L);
+			//float thresh_a = sqrt(mad_a*noisevar_ab);
+			//float thresh_b = sqrt(mad_b*noisevar_ab);
 
-			printf("  dir=%d  mad_L=%f	mad_a=%f	mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
+			printf("  dir=%d  mad_L=%f	mad_a=%f	mad_b=%f	\n",dir,sqrt(madL),sqrt(mada),sqrt(madb));
+			
+			//float mad_L = noisevar_L *6/((level+2)*pow(2.0f,level));	
+			//float mad_a = noisevar_ab;
+			//float mad_b = noisevar_ab;
+			float mad_L = madL*noisevar_L *6/(level+2);
+			float mad_a = mada*noisevar_ab;
+			float mad_b = madb*noisevar_ab;
 			
 			for (int i=0; i<H_ab; i++) {
 				for (int j=0; j<W_ab; j++) {
@@ -1186,21 +1001,22 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 					int coeffloc_ab = i*W_ab+j;
 					int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
 					
-					float mag_L = fabs(WavCoeffs_L[dir][coeffloc_L ])+eps;
+					float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
 					float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 					float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 					
-					float edgefactor = exp(-mag_L/(sqrt(noisevar_L*mad_L))) * exp(-mag_a/(3*noisevar_ab*mad_a)) * exp(-mag_b/(3*noisevar_ab*mad_b));
-
+					//float edgefactor = exp(-mag_L/(3*mad_L))) * exp(-mag_a/(3*mad_a)) * exp(-mag_b/(3*mad_b));
+					//float edgefactor = 1-exp(-mag_L/(9*mad_L));
+					
 					//WavCoeffs_a[dir][coeffloc_ab] *= mag_a/(mag_a + noisevar_ab*mad_a*edgefactor + eps);
 					//WavCoeffs_b[dir][coeffloc_ab] *= mag_b/(mag_b + noisevar_ab*mad_b*edgefactor + eps);
 					
-					float coeff_a = fabs(WavCoeffs_a[dir][coeffloc_ab]);
-					float coeff_b = fabs(WavCoeffs_b[dir][coeffloc_ab]);
+					//float coeff_a = fabs(WavCoeffs_a[dir][coeffloc_ab]);
+					//float coeff_b = fabs(WavCoeffs_b[dir][coeffloc_ab]);
 
 					// 'firm' threshold of chroma coefficients
-					WavCoeffs_a[dir][coeffloc_ab] *= (coeff_a>2*thresh_a ? 1 : (coeff_a<thresh_a ? 0 : (coeff_a/thresh_a - 1)));
-					WavCoeffs_b[dir][coeffloc_ab] *= (coeff_b>2*thresh_b ? 1 : (coeff_b<thresh_b ? 0 : (coeff_b/thresh_b - 1)));
+					WavCoeffs_a[dir][coeffloc_ab] *= SQR(1-exp(-(mag_a/mad_a)-(mag_L/(9*madL))));//(coeff_a>2*thresh_a ? 1 : (coeff_a<thresh_a ? 0 : (coeff_a/thresh_a - 1)));
+					WavCoeffs_b[dir][coeffloc_ab] *= SQR(1-exp(-(mag_b/mad_b)-(mag_L/(9*madL))));//(coeff_b>2*thresh_b ? 1 : (coeff_b<thresh_b ? 0 : (coeff_b/thresh_b - 1)));
 
 					//WavCoeffs_b[dir][coeffloc_ab] *= (fabs(WavCoeffs_b[dir][coeffloc_ab])<thresh_a*noise_ab ? 0 : 1);
 
@@ -1215,8 +1031,9 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 				//float shrinkfactor = (coeff_L>2*thresh_L ? 1 : (coeff_L<thresh_L ? 0 : (coeff_L/thresh_L - 1)));
 				
 				float mag = SQR(WavCoeffs_L[dir][i]);
-				float shrinkfactor = mag/(mag+noisevar_L*mad_L*exp(-mag/(3*noisevar_L*mad_L))+eps);
-				
+				float shrinkfactor = mag/(mag+mad_L*exp(-mag/(9*mad_L))+eps);
+				//float shrinkfactor = SQR(1-exp(-(mag/(mad_L))));
+
 				//float shrinkfactor = mag/(mag+noisevar*SQR(sfave[coeffloc])+eps);
 				
 				//WavCoeffs_L[dir][i] *= shrinkfactor;
@@ -1231,17 +1048,13 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 				//float sf = (coeff_L>2*thresh_L ? 1 : (coeff_L<thresh_L ? 0 : (coeff_L/thresh_L - 1)));
 				
 				float mag = SQR(WavCoeffs_L[dir][i]);
-				float sf = mag/(mag+noisevar_L*mad_L+eps);
+				float sf = mag/(mag+mad_L*exp(-mag/(9*mad_L))+eps);
+				//float sf = SQR(1-exp(-(mag/(mad_L))));
+				//float sf = mag/(mag+noisevar_L*mad_L);
 				
 				//use smoothed shrinkage unless local shrinkage is much less
 				WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
 				
-				//the following is for testing
-				//float wdn = WavCoeffs[dir][i]*sf;
-				//float sf1 = mag/(mag+4*noisevar*mad+eps);
-				//float wdn1 = WavCoeffs[dir][i]*sf1;
-				
-				//WavCoeffs[dir][i] = wdn-wdn1;
 			}//now luminance coeffs are denoised
 			
 			
@@ -1260,9 +1073,11 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 	{
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 		const float eps = 0.01f;
+		int max;
+		float parfrac = 0.05;
 		
 		float madL[8][3], mada[8][3], madb[8][3];
-
+		
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 			// compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
 			
@@ -1277,13 +1092,14 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 			
 			for (int dir=1; dir<4; dir++) {
-				madL[lvl][dir-1] = SQR(UniversalThresh(WavCoeffs_L[dir], Wlvl_L*Hlvl_L));//*6*/(level+1);
-				mada[lvl][dir-1] = SQR(UniversalThresh(WavCoeffs_a[dir], Wlvl_ab*Hlvl_ab));//*6*/(level+1);
-				madb[lvl][dir-1] = SQR(UniversalThresh(WavCoeffs_b[dir], Wlvl_ab*Hlvl_ab));//*6*/(level+1);
+				madL[lvl][dir-1] = SQR(MadMax(WavCoeffs_L[dir], max, Wlvl_L*Hlvl_L));
+				mada[lvl][dir-1] = SQR(MadMax(WavCoeffs_a[dir], max, Wlvl_ab*Hlvl_ab));
+				madb[lvl][dir-1] = SQR(MadMax(WavCoeffs_b[dir], max, Wlvl_ab*Hlvl_ab));
 			}
 		}
-			
-		for (int lvl=0; lvl<maxlvl; lvl++) {//for levels less than max, do bishrink
+		
+		for (int lvl=maxlvl-1; lvl>=0; lvl--) {//for levels less than max, use level diff to make edge mask
+			//for (int lvl=0; lvl<maxlvl; lvl++) {
 			
 			int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
 			int Hlvl_L = WaveletCoeffs_L.level_H(lvl);
@@ -1300,108 +1116,109 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 			
 			if (lvl==maxlvl-1) {
 				ShrinkAll(WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, lvl, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,
-						  skip_L, skip_ab, noisevar_L, noisevar_ab);
+						  skip_L, skip_ab, noisevar_L, noisevar_ab);//TODO: this implies redundant evaluation of MAD
 			} else {
 				
 				float ** WavPars_L = WaveletCoeffs_L.level_coeffs(lvl+1);
-				float ** WavPars_a = WaveletCoeffs_a.level_coeffs(lvl+1);
-				float ** WavPars_b = WaveletCoeffs_b.level_coeffs(lvl+1);
+				//float ** WavPars_a = WaveletCoeffs_a.level_coeffs(lvl+1);
+				//float ** WavPars_b = WaveletCoeffs_b.level_coeffs(lvl+1);
 				
 				//simple wavelet shrinkage
 				float * sfave = new float[Wlvl_L*Hlvl_L]; 
-				
+				//float * edge = new float[Wlvl_L*Hlvl_L];
+				array2D<float> edge(Wlvl_L,Hlvl_L);
+				AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(Wlvl_L,Hlvl_L));
+
 				printf("\n level=%d  \n",lvl);
 				
 				for (int dir=1; dir<4; dir++) {
-					float mad_L = madL[lvl][dir-1];//SQR(UniversalThresh(WavCoeffs_L[dir], W_L*H_L));// *6/(level+1);
-					float mad_a = mada[lvl][dir-1];//SQR(UniversalThresh(WavCoeffs_a[dir], W_ab*H_ab));// *6/(level+1);
-					float mad_b = madb[lvl][dir-1];//SQR(UniversalThresh(WavCoeffs_b[dir], W_ab*H_ab));// *6/(level+1);
+					float mad_L = madL[lvl][dir-1];
+					float mad_a = noisevar_ab*mada[lvl][dir-1];
+					float mad_b = noisevar_ab*madb[lvl][dir-1];
+					//float mad_Lpar = madL[lvl+1][dir-1];
+					//float mad_apar = mada[lvl+1][dir-1];
+					//float mad_bpar = mada[lvl+1][dir-1];
 					
-					float thresh_L = sqrt(mad_L*noisevar_L);
-					float thresh_a = sqrt(mad_a*noisevar_ab);
-					float thresh_b = sqrt(mad_b*noisevar_ab);
+					//float skip_ab_ratio = WaveletCoeffs_a.level_stride(lvl+1)/skip_ab;
+					float skip_L_ratio =  WaveletCoeffs_L.level_stride(lvl+1)/skip_L;
 					
-					float skip_ab_ratio = WaveletCoeffs_a.level_stride(lvl+1)/skip_ab;
-					
-					printf("  dir=%d  mad_L=%f	mad_a=%f	mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
+					printf("  dir=%d  mad_L=%f		mad_a=%f		mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
 					
 					for (int i=0; i<Hlvl_ab; i++) {
 						for (int j=0; j<Wlvl_ab; j++) {
 							
 							int coeffloc_ab = i*Wlvl_ab+j;
-							int coeffloc_abpar = (MAX(0,i-skip_ab)*Wlvl_ab+MAX(0,i-skip_ab))/skip_ab_ratio;
-
+							//int coeffloc_abpar = (MAX(0,i-skip_ab)*Wlvl_ab+MAX(0,j-skip_ab))/skip_ab_ratio;
+							
 							int coeffloc_L	= ((i*skip_L)/skip_ab)*Wlvl_L + ((j*skip_L)/skip_ab);
-							
-							float mag_L = fabs(WavCoeffs_L[dir][coeffloc_L ])*noisevar_L+eps;
-							float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])*noisevar_ab+eps;
-							float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])*noisevar_ab+eps;
-							float mag_apar = SQR(WavPars_a[dir][coeffloc_abpar])*noisevar_ab+eps;
-							float mag_bpar = SQR(WavPars_b[dir][coeffloc_abpar])*noisevar_ab+eps;
-							
-							float edgefactor = exp(-mag_L/(sqrt(noisevar_L*mad_L))) * exp(-mag_a/(3*noisevar_ab*mad_a)) * exp(-mag_b/(3*noisevar_ab*mad_b));
-							
-							//WavCoeffs_a[dir][coeffloc_ab] *= mag_a/(mag_a + noisevar_ab*mad_a*edgefactor + eps);
-							//WavCoeffs_b[dir][coeffloc_ab] *= mag_b/(mag_b + noisevar_ab*mad_b*edgefactor + eps);
-							
-							float coeff_a = SQR(WavCoeffs_a[dir][coeffloc_ab]);
-							float coeff_b = SQR(WavCoeffs_b[dir][coeffloc_ab]);
-							float coeff_apar = SQR(WavPars_a[dir][coeffloc_abpar]);
-							float coeff_bpar = SQR(WavPars_b[dir][coeffloc_abpar]);
-							
-							float sf_a = 1-expf(-(coeff_a/mag_a)-(coeff_apar/mag_apar));
-							float sf_b = 1-expf(-(coeff_b/mag_b)-(coeff_bpar/mag_bpar));
 
+							float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
+							float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
+							float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
+							
+							//float edgefactor = 1-exp(-mag_L/(9*mad_L));// * exp(-mag_a/(4*mad_a)) * exp(-mag_b/(4*mad_b));
+							
+							//float coeff_a = sqrt(SQR(WavCoeffs_a[dir][coeffloc_ab])/mad_a+SQR(parfrac*WavPars_a[dir][coeffloc_abpar])/mad_apar);
+							//float coeff_b = sqrt(SQR(WavCoeffs_b[dir][coeffloc_ab])/mad_b+SQR(parfrac*WavPars_b[dir][coeffloc_abpar])/mad_bpar);
+							
 							// 'firm' threshold of chroma coefficients
-							WavCoeffs_a[dir][coeffloc_ab] *= sf_a;//(coeff_a>2*thresh_a ? 1 : (coeff_a<thresh_a ? 0 : (coeff_a/thresh_a - 1)));
-							WavCoeffs_b[dir][coeffloc_ab] *= sf_b;//(coeff_b>2*thresh_b ? 1 : (coeff_b<thresh_b ? 0 : (coeff_b/thresh_b - 1)));
+							//WavCoeffs_a[dir][coeffloc_ab] *= edgefactor*(coeff_a>2 ? 1 : (coeff_a<1 ? 0 : (coeff_a - 1)));
+							//WavCoeffs_b[dir][coeffloc_ab] *= edgefactor*(coeff_b>2 ? 1 : (coeff_b<1 ? 0 : (coeff_b - 1)));
 							
-							//WavCoeffs_b[dir][coeffloc_ab] *= (fabs(WavCoeffs_b[dir][coeffloc_ab])<thresh_a*noise_ab ? 0 : 1);
-							
-							
+							WavCoeffs_a[dir][coeffloc_ab] *= SQR(1-exp(-(mag_a/mad_a)-(mag_L/(9*mad_L))));
+							WavCoeffs_b[dir][coeffloc_ab] *= SQR(1-exp(-(mag_b/mad_b)-(mag_L/(9*mad_L))));
+
 						}
-					}
+					}//now chrominance coefficients are denoised
 					
-					for (int i=0; i<Wlvl_L*Hlvl_L; i++) {
-						
-						//float coeff_L = fabs(WavCoeffs_L[dir][i]);
-						// 'firm' threshold of luma coefficients
-						//float shrinkfactor = (coeff_L>2*thresh_L ? 1 : (coeff_L<thresh_L ? 0 : (coeff_L/thresh_L - 1)));
-						
-						float mag = SQR(WavCoeffs_L[dir][i]);
-						float shrinkfactor = mag/(mag+noisevar_L*mad_L*exp(-mag/(3*noisevar_L*mad_L))+eps);
-						
-						//float shrinkfactor = mag/(mag+noisevar*SQR(sfave[coeffloc])+eps);
-						
-						//WavCoeffs_L[dir][i] *= shrinkfactor;
-						sfave[i] = shrinkfactor;
-					}
+					mad_L *= noisevar_L*5/(lvl+1);
+										
+					for (int i=0; i<Hlvl_L; i++) 
+						for (int j=0; j<Wlvl_L; j++) {
+							
+							int coeffloc_L = i*Wlvl_L+j;
+							int coeffloc_Lpar = (MAX(0,i-skip_L)*Wlvl_L+MAX(0,j-skip_L))/skip_L_ratio;
+							
+							float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
+							//float mag_Lpar = SQR(parfrac*WavPars_L[dir][coeffloc_Lpar]);
+							//float sf_L = SQR(1-expf(-(mag_L/mad_L)-(mag_Lpar/mad_L)));
+							float sf_L = mag_L/(mag_L+mad_L*exp(-mag_L/(9*mad_L))+eps);
+
+							sfave[coeffloc_L] = sf_L;
+							
+							edge[i][j] = (WavCoeffs_L[dir][coeffloc_L] - WavPars_L[dir][coeffloc_Lpar]);
+						}
 					
+					//blur edge measure
+					gaussHorizontal<float> (edge, edge, buffer, Wlvl_L, Hlvl_L, 1<<(lvl+1), false /*multiThread*/);
+					gaussVertical<float>   (edge, edge, buffer, Wlvl_L, Hlvl_L, 1<<(lvl+1), false);
+										
 					boxblur(sfave, sfave, lvl+2, lvl+2, Wlvl_L, Hlvl_L);//increase smoothness by locally averaging shrinkage
-					for (int i=0; i<Wlvl_L*Hlvl_L; i++) {
-						
-						//float coeff_L = fabs(WavCoeffs_L[dir][i]);
-						// 'firm' threshold of chroma coefficients
-						//float sf = (coeff_L>2*thresh_L ? 1 : (coeff_L<thresh_L ? 0 : (coeff_L/thresh_L - 1)));
-						
-						float mag = SQR(WavCoeffs_L[dir][i]);
-						float sf = mag/(mag+noisevar_L*mad_L+eps);
-						
-						//use smoothed shrinkage unless local shrinkage is much less
-						WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
-						
-						//the following is for testing
-						//float wdn = WavCoeffs[dir][i]*sf;
-						//float sf1 = mag/(mag+4*noisevar*mad+eps);
-						//float wdn1 = WavCoeffs[dir][i]*sf1;
-						
-						//WavCoeffs[dir][i] = wdn-wdn1;
-					}//now luminance coeffs are denoised
+					
+					for (int i=0; i<Hlvl_L; i++) 
+						for (int j=0; j<Wlvl_L; j++) {
+							
+							int coeffloc_L = i*Wlvl_L+j;
+							
+							float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
+							//float sf_L = SQR(1-expf(-(mag_L/mad_L)-(mag_Lpar/mad_L)));
+							
+							float edgefactor = 1;//expf(-SQR(edge[i][j])/mad_L);
+							
+							float sf_L = mag_L/(mag_L + edgefactor*mad_L*exp(-mag_L/(9*mad_L))+eps);
+
+							//use smoothed shrinkage unless local shrinkage is much less
+							WavCoeffs_L[dir][coeffloc_L] *= (SQR(edgefactor*sfave[coeffloc_L])+SQR(sf_L))/(edgefactor*sfave[coeffloc_L]+sf_L+eps);
+							
+						}//now luminance coeffs are denoised
 					
 					
 					
 				}
 				delete[] sfave;
+				//delete[] edge;
+				delete buffer;
+
 			}
 		}
 	}

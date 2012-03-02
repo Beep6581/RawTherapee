@@ -29,6 +29,8 @@
 #endif
 
 #define SQR(x) ((x)*(x))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 // classical filtering if the support window is small:
 
@@ -460,5 +462,158 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, int radx, int rady, int W, int H) {
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
+	
+	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
+	float* temp = buffer->data;
+	
+	if (radx==0) {
+		for (int row=0; row<H; row++) {
+			int rr = MIN(H-1,MAX(0,row+dy));
+			for (int col=0; col<H; col++) {
+				int cc = MIN(W-1,MAX(0,col+dx));
+				temp[row*H+col] = dy>0 ? (src[row*W+col])*(src[rr*W+cc]) : 0;
+			}
+		}
+	} else {
+		//horizontal blur
+		for (int row = 0; row < H; row++) {
+			int len = radx + 1;
+			int rr = MIN(H-1,MAX(0,row+dy));
+			int cc = MIN(W-1,MAX(0,0+dx));
+			temp[row*W+0] = ((float)src[row*W+0])*(src[rr*W+cc])/len;
+			for (int j=1; j<=radx; j++) {
+				int cc = MIN(W-1,MAX(0,j+dx));
+				temp[row*W+0] += ((float)src[row*W+j])*(src[rr*W+cc])/len;
+			}
+			for (int col=1; col<=radx; col++) {
+				int cc = MIN(W-1,MAX(0,col+dx+radx));
+				temp[row*W+col] = (temp[row*W+col-1]*len + (src[row*W+col+radx])*(src[rr*W+cc]))/(len+1);
+				len ++;
+			}
+			for (int col = radx+1; col < W-radx; col++) {
+				int cc = MIN(W-1,MAX(0,col+dx+radx));
+				int cc1 = MIN(W-1,MAX(0,col+dx-radx-1));
+				temp[row*W+col] = temp[row*W+col-1] + ((float)((src[row*W+col+radx])*(src[rr*W+cc]) - 
+															   (src[row*W+col-radx-1])*(src[rr*W+cc1])))/len;
+			}
+			for (int col=W-radx; col<W; col++) {
+				int cc1 = MIN(W-1,MAX(0,col+dx-radx-1));
+				temp[row*W+col] = (temp[row*W+col-1]*len - (src[row*W+col-radx-1])*(src[rr*W+cc1]))/(len-1);
+				len --;
+			}
+		}
+	}
+	
+	if (rady==0) {
+		for (int row=0; row<H; row++) 
+			for (int col=0; col<H; col++) {
+				dst[row*W+col] = temp[row*W+col];
+			}
+	} else {
+		//vertical blur
+		for (int col = 0; col < W; col++) {
+			int len = rady + 1;
+			dst[0*W+col] = temp[0*W+col]/len;
+			for (int i=1; i<=rady; i++) {
+				dst[0*W+col] += temp[i*W+col]/len;
+			}
+			for (int row=1; row<=rady; row++) {
+				dst[row*W+col] = (dst[(row-1)*W+col]*len + temp[(row+rady)*W+col])/(len+1);
+				len ++;
+			}
+			for (int row = rady+1; row < H-rady; row++) {
+				dst[row*W+col] = dst[(row-1)*W+col] + (temp[(row+rady)*W+col] - temp[(row-rady-1)*W+col])/len;
+			}
+			for (int row=H-rady; row<H; row++) {
+				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
+				len --;
+			}
+		}
+	}
+	
+	delete buffer;
+	
+}
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, int W, int H) {
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
+	
+	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
+	float* temp = buffer->data;
+	
+	if (radx==0) {
+		for (int row=0; row<H; row++) 
+			for (int col=0; col<H; col++) {
+				temp[row*H+col] = fabs(src[row*W+col]);
+			}
+	} else {
+		//horizontal blur
+		for (int row = 0; row < H; row++) {
+			int len = radx + 1;
+			temp[row*W+0] = fabs((float)src[row*W+0])/len;
+			for (int j=1; j<=radx; j++) {
+				temp[row*W+0] += fabs((float)src[row*W+j])/len;
+			}
+			for (int col=1; col<=radx; col++) {
+				temp[row*W+col] = (temp[row*W+col-1]*len + fabs(src[row*W+col+radx]))/(len+1);
+				len ++;
+			}
+			for (int col = radx+1; col < W-radx; col++) {
+				temp[row*W+col] = temp[row*W+col-1] + ((float)(fabs(src[row*W+col+radx]) - fabs(src[row*W+col-radx-1])))/len;
+			}
+			for (int col=W-radx; col<W; col++) {
+				temp[row*W+col] = (temp[row*W+col-1]*len - fabs(src[row*W+col-radx-1]))/(len-1);
+				len --;
+			}
+		}
+	}
+	
+	if (rady==0) {
+		for (int row=0; row<H; row++) 
+			for (int col=0; col<H; col++) {
+				dst[row*W+col] = temp[row*W+col];
+			}
+	} else {
+		//vertical blur
+		for (int col = 0; col < W; col++) {
+			int len = rady + 1;
+			dst[0*W+col] = temp[0*W+col]/len;
+			for (int i=1; i<=rady; i++) {
+				dst[0*W+col] += temp[i*W+col]/len;
+			}
+			for (int row=1; row<=rady; row++) {
+				dst[row*W+col] = (dst[(row-1)*W+col]*len + temp[(row+rady)*W+col])/(len+1);
+				len ++;
+			}
+			for (int row = rady+1; row < H-rady; row++) {
+				dst[row*W+col] = dst[(row-1)*W+col] + (temp[(row+rady)*W+col] - temp[(row-rady-1)*W+col])/len;
+			}
+			for (int row=H-rady; row<H; row++) {
+				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
+				len --;
+			}
+		}
+	}
+	
+	delete buffer;
+	
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 #endif /* _BOXBLUR_H_ */

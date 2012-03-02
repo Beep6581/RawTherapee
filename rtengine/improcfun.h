@@ -142,23 +142,12 @@ namespace rtengine {
 							   int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ );
 		
 		// FT denoise
-		//void L_denoise(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams);//Emil's FT denoise
-		//void tile_denoise (fftwf_complex ** fLblox, int vblproc, int hblproc, \
-		int blkrad, int numblox_H, int numblox_W, float noisevar );
 		void RGB_InputTransf(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
 		void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
 		void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
 		void RGB_denoise(Imagefloat * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
-		void RGBtile_denoise (fftwf_complex ** fLblox, fftwf_complex ** fRLblox, fftwf_complex ** fBLblox, \
-							  int vblproc, int hblproc, int blkrad, int numblox_H, int numblox_W, float noisevar_L, float noisevar_ab );	//for FT
-		//void RGBtile_denoise (float ** fLblox, fftwf_complex ** fRLblox, fftwf_complex ** fBLblox, \
-							  int vblproc, int hblproc, int blkrad, int numblox_H, int numblox_W, float noisevar_L, float noisevar_ab );	//for DCT
-		void RGBoutput_tile_row (float *Lbloxrow, float *RLbloxrow, float *BLbloxrow, LabImage * labdn, \
-								 float ** tilemask_out, int height, int width, int top, int blkrad );
-		void dirpyr_ab(LabImage * data_fine, LabImage * data_coarse, const procparams::DirPyrDenoiseParams & dnparams);
-		void dirpyr_ablevel(LabImage * data_fine, LabImage * data_coarse, int width, int height, \
-							LUTf &rangefn_L, LUTf &rangefn_ab, int level, int scale);
-		void ImStats(float* src, float* dst, int H, int W, int box );
+		void RGBtile_denoise (float ** fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_L, float noisevar_ab );	//for DCT
+		void RGBoutput_tile_row (float *Lbloxrow, LabImage * labdn, float ** tilemask_out, int height, int width, int top );
 		void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
 		void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
 		void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
@@ -170,7 +159,11 @@ namespace rtengine {
 		void Shrink(float ** WavCoeffs, int W, int H, int level, float noisevar);
 		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, \
 					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_ab);
-		float UniversalThresh(float * HH_Coeffs, int datalen);
+		float MadMax(float * HH_Coeffs, int &max, int datalen);
+		void dirpyr_ab(LabImage * data_fine, LabImage * data_coarse, const procparams::DirPyrDenoiseParams & dnparams);
+		void dirpyr_ablevel(LabImage * data_fine, LabImage * data_coarse, int width, int height, LUTf & rangefn_L, LUTf & rangefn_ab, int level, int scale);
+
+		//float gain;
 		
 		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
@@ -186,7 +179,7 @@ namespace rtengine {
 		
 		bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1);
 		bool transCoord       (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);
-		void getAutoExp       (LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
+		void getAutoExp       (LUTu & histogram, int histcompr, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
 		static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);	
 		double getTransformAutoFill (int oW, int oH);
 	};

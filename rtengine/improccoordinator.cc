@@ -181,13 +181,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         PreviewProps pp (0, 0, fw, fh, scale);
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
+		
+		LUTu aehist; int aehistcompr;
+		double clip;
+		int brightness, contrast, black, hlcompr, hlcomprthresh;
+		
+		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+		ipf.getAutoExp (aehist, aehistcompr, clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);		
 
         if (todo & M_LINDENOISE) {
         	printf("denoising!\n");
         	// @Emil: put your luminance denoise tool here ; of course, at this stage, you only have an ImageFloat, no LabImage yet...
 			if (scale==1 && params.dirpyrDenoise.enabled) {
-				//array2D<float> Ldn(fw,fh);
-				//ipf.L_denoise(orig_prev, oprevl, params.dirpyrDenoise);
 				ipf.RGB_denoise(orig_prev, orig_prev, params.dirpyrDenoise, params.defringe);
 			}
 			ImageMatrices* imatrices = imgsrc->getImageMatrices ();
@@ -226,8 +231,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (params.toneCurve.autoexp) {
 			LUTu aehist; int aehistcompr;
 			imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-			ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, 
-							params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+			ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, 
+							params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
 			if (aeListener)
 				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, \
 											params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
@@ -285,7 +290,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	if (todo & (M_LUMINANCE+M_COLOR) ) {
 		nprevl->CopyFrom(oprevl);
 
-		//ipf.EPDToneMap(nprevl,0,scale);
+		ipf.EPDToneMap(nprevl,0,scale);
 
 		progress ("Applying Luminance Curve...",100*readyphase/numofphases);
 

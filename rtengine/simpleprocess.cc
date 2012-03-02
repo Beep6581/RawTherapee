@@ -154,7 +154,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 		printf("silpleprocess calling autoexp\n");
 		LUTu aehist; int aehistcompr;
 		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
+		ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
     }
 
     // at this stage, we can flush the raw data to free up quite an important amount of memory
