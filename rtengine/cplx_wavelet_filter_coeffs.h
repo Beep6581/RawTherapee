@@ -102,15 +102,24 @@ const float Kingsbury_anal[2][2][10] =	{//analysis filter
 //synthesis filter is the reverse (see cplx_wavelet_dec.h)
 
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+
+const int Haar_len=2;//length of filter
+const int Haar_offset=1;//offset
+
+const float Haar_anal[2][2] =	{{0.5,0.5}, {0.5,-0.5}};//analysis filter
+
+//synthesis filter is the reverse (see cplx_wavelet_dec.h)
+
+/* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+
+const int LeGall_len=6;
+const int LeGall_offset=2;
+const float LeGall_anal[2][6] = {{0, 0.25, 0.5, 0.25, 0, 0}, {0, -0.125, -0.25, 0.75, -0.25, -0.125}};
+const float LeGall_synth[2][6] = {{-0.125, 0.25, 0.75, 0.25, -0.125, 0}, {0, 0, -0.25, 0.5, -0.25, 0}};
+
+	//{{{-1, 0.25}, {0, 0.5}, {1, 0.25}}, {{-1, -0.125}, {0, -0.25}, {1,  0.75}, {2, -0.25}, {3, -0.125}}}
 	
-	const int Haar_len=2;//length of filter
-	const int Haar_offset=1;//offset
-	
-	const float Haar_anal[2][2] =	{{0.5,0.5}, {0.5,-0.5}};//analysis filter
-	
-	//synthesis filter is the reverse (see cplx_wavelet_dec.h)
-	
-	/* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+	//{{{-2, -0.125}, {-1, 0.25}, {0, 0.75}, {1,  0.25}, {2, -0.125}}, {{0, -0.25}, {1, 0.5}, {2, -0.25}}}
 
 };
 

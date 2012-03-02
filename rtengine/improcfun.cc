@@ -559,87 +559,15 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 	void ImProcFunctions::impulsedenoise (LabImage* lab) {
 		
 		if (params->impulseDenoise.enabled && lab->W>=8 && lab->H>=8)
-		{
-			//impulse_nr (lab, (float)params->impulseDenoise.thresh/10.0 );//20 is normal
-			int datalen = lab->W*lab->H;
-			for (int i=0; i<datalen; i++) {
-				//lab->data[i] *= lab->data[i]/32768.0f;
-				lab->data[i] = pow(lab->data[i]/32768.0f,3.0)*32768.0f;
-				//lab->data[i] = 5000;
-			}
-			//lab->data[100*lab->W+100] = 20000;
-			wavelet_decomposition Ldecomp(lab->data, lab->W, lab->H, 5/*maxlevel*/, 1/*subsampling*/ );
-			wavelet_decomposition adecomp(lab->data+datalen, lab->W, lab->H, 5, 1 );//last args are maxlevels, subsampling
-			wavelet_decomposition bdecomp(lab->data+2*datalen, lab->W, lab->H, 5, 1 );//last args are maxlevels, subsampling
-
-			float noisevar_L = SQR((float)params->impulseDenoise.thresh/25.0f);
-			float noisevar_ab = SQR((float)params->defringe.threshold / 25.0f);
-
-			//WaveletDenoise(Ldecomp, SQR((float)params->impulseDenoise.thresh/25.0f));
-			WaveletDenoiseAll(Ldecomp, adecomp, bdecomp, noisevar_L, noisevar_ab);
-
-			LabImage* labtmp = new LabImage (lab->W,lab->H);
 			
-			int lvl = (params->impulseDenoise.thresh>>4)&7;
-			int branch = (params->impulseDenoise.thresh>>2)&1;//2*re_im + dir
-			int subband = params->impulseDenoise.thresh&3;//orientation for detail subbands
-			float noisevar = SQR((float)params->defringe.threshold * 10.0f);
-			/*for (int i=0; i<lab->W*lab->H; i++) {
-				//float recoeff = Ldecomp.level_coeffs(lvl,branch)[subband][i]/(2<<lvl);
-				//float imcoeff = Ldecomp.level_coeffs(lvl,branch+2)[subband][i]/(2<<lvl);
-				//float shrink = (SQR(recoeff)+SQR(imcoeff))/(SQR(recoeff)+SQR(imcoeff)+noisevar);
-				//lab->data[i] = sqrt(SQR(recoeff)+SQR(imcoeff)) * (subband != 0 ? 2*shrink : 0.707);
-				lab->data[i] = Ldecomp.level_coeffs(lvl,branch)[subband][i] + (subband != 0 ? 10000 : 0);
-
-			}*/
-			//for (int i=0; i<lab->W*lab->H; i++) {
-			//	Ldecomp.level_coeffs(4)[0][i] = 0;
-			//}
-			Ldecomp.reconstruct(labtmp->data);
-			adecomp.reconstruct(labtmp->data+datalen);
-			bdecomp.reconstruct(labtmp->data+2*datalen);
-
-			//double radius = (int)(params->impulseDenoise.thresh/10) ;
-			//boxvar(lab->data, lab->data, radius, radius, lab->W, lab->H);
-			
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			
-			/*int w=lab->W;
-			int h=lab->H;
-			for(int y = 0; y != h-1; y++){
-				float *rg = &lab->data[w*y];
-				for(int x = 0; x != w-1; x++){
-					float gx = (fabs((rg[x + 1] - rg[x]) + (rg[x + w + 1] - rg[x + w])));
-					float gy = (fabs((rg[x + w] - rg[x]) + (rg[x + w + 1] - rg[x + 1])));
-					lab->data[w*y+x] = gx+gy;//sqrt(lab->data[i]/32768.0f)*32768.0f;
-				}
-			}*/
-			
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			//double radius = (double)params->impulseDenoise.thresh/40.0 ;
-			//AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(lab->W,lab->H));
-			//gaussDerivH<float> (lab->L, lab->L, buffer, lab->W, lab->H, radius, false/*multiThread*/);
-			//gaussVertical<float>(lab->L, lab->L, buffer, lab->W, lab->H, radius, false/*multiThread*/);
-			//delete buffer;
-			
-			//impulse_nr (labtmp, 50.0f/20.0f);
-
-			for (int i=0; i<datalen; i++) {
-				lab->data[i] = 4*(labtmp->data[i+datalen]-lab->data[i+datalen])+10000;
-				//lab->data[i] = sqrt(MAX(0,labtmp->data[i]/32768.0f))*32768.0f;
-			}
-			delete labtmp;
-			
-			//impulse_nr (lab, 50.0f/20.0f);
-
-		}
+			impulse_nr (lab, (float)params->impulseDenoise.thresh/20.0 );
 	}
 	
 	void ImProcFunctions::defringe (LabImage* lab) {
 		
-		//if (params->defringe.enabled && lab->W>=8 && lab->H>=8)
+		if (params->defringe.enabled && lab->W>=8 && lab->H>=8)
 			
-			//PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
+			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
 	}
 	
 	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
@@ -714,8 +642,8 @@ fclose(f);*/
 }
 
 	
-	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double defgain, double clip, \
-									   double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh) {
+	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double clip, double& expcomp, 
+									   int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh) {
 		
 		float scale = 65536.0;
 		float midgray=0.15;//0.18445f;//middle gray in linear gamma = 0.18445*65535
@@ -818,7 +746,7 @@ fclose(f);*/
 		float gain = exp(expcomp*log(2));
 		
 		
-		gain = /*(median/ave)*/sqrt(gain*scale/rawmax);
+		gain = sqrt(gain*scale/rawmax);
 		black = shc*gain;
 		expcomp = log(gain)/log(2.0);//convert to stops
 		

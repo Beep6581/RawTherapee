@@ -220,11 +220,8 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.luma          = 10;
     dirpyrDenoise.chroma        = 10;
     dirpyrDenoise.gamma         = 2.0;
-    dirpyrDenoise.lumcurve.clear ();
-    dirpyrDenoise.lumcurve.push_back (DCT_Linear);
-    dirpyrDenoise.chromcurve.clear ();
-    dirpyrDenoise.chromcurve.push_back (DCT_Linear);
-   
+	dirpyrDenoise.expcomp       = 0.0;
+
 	edgePreservingDecompositionUI.enabled = false;
 	edgePreservingDecompositionUI.Strength = 0.25;
 	edgePreservingDecompositionUI.EdgeStopping = 1.4;
@@ -472,10 +469,6 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2) const {
     keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
     keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
 	keyFile.set_double	("Directional Pyramid Denoising", "Gamma",  dirpyrDenoise.gamma);
-    Glib::ArrayHandle<double> lumcurve = dirpyrDenoise.lumcurve;
-    Glib::ArrayHandle<double> chromcurve = dirpyrDenoise.chromcurve;
-    keyFile.set_double_list("Directional Pyramid Denoising", "LumCurve", lumcurve);
-    keyFile.set_double_list("Directional Pyramid Denoising", "ChromCurve", chromcurve);
 
 	//Save edgePreservingDecompositionUI.
 	keyFile.set_boolean	("EPD", "Enabled", edgePreservingDecompositionUI.enabled);
@@ -828,8 +821,6 @@ if (keyFile.has_group ("Directional Pyramid Denoising")) {
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))    dirpyrDenoise.luma    = keyFile.get_integer ("Directional Pyramid Denoising", "Luma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))  dirpyrDenoise.chroma  = keyFile.get_integer ("Directional Pyramid Denoising", "Chroma");
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))  dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma");
-	if (keyFile.has_key ("Directional Pyramid Denoising", "LumCurve"))    dirpyrDenoise.lumcurve   = keyFile.get_double_list ("Directional Pyramid Denoising", "LumCurve");
-	if (keyFile.has_key ("Directional Pyramid Denoising", "ChromCurve"))  dirpyrDenoise.chromcurve = keyFile.get_double_list ("Directional Pyramid Denoising", "ChromCurve");
 }
 
 //Load EPD.
@@ -1139,8 +1130,6 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& dirpyrDenoise.luma == other.dirpyrDenoise.luma
 		&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
-		&& dirpyrDenoise.lumcurve == other.dirpyrDenoise.lumcurve
-		&& dirpyrDenoise.chromcurve == other.dirpyrDenoise.chromcurve
 		&& edgePreservingDecompositionUI.enabled == other.edgePreservingDecompositionUI.enabled
 		&& edgePreservingDecompositionUI.Strength == other.edgePreservingDecompositionUI.Strength
 		&& edgePreservingDecompositionUI.EdgeStopping == other.edgePreservingDecompositionUI.EdgeStopping

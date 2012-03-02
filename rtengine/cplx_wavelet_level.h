@@ -329,110 +329,79 @@ namespace rtengine {
 			bufferHi[i]=srcHi[j];
 		}
 		
-		for(size_t i = m_pad; i < (dstlen+m_pad-skip); i++) {
-			dst[pitch*(i-m_pad)] = 0.5*(bufferLo[i] - bufferHi[i] + bufferLo[i+skip] + bufferHi[i+skip]);			
+		for(size_t i = m_pad+skip; i < (dstlen+m_pad); i++) {
+			dst[pitch*(i-m_pad)] = 0.5*(bufferLo[i] + bufferHi[i] + bufferLo[i-skip] - bufferHi[i-skip]);			
 		}
 		
-		for(size_t i = (dstlen+m_pad-skip); i < (dstlen+m_pad); i++) {
-			dst[pitch*(i-m_pad)] = 0.5*(bufferLo[i] - bufferHi[i] + bufferLo[i-skip] + bufferHi[i-skip]);			
+		for(size_t i = (m_pad); i < (m_pad+skip); i++) {
+			dst[pitch*(i-m_pad)] = (bufferLo[i] + bufferHi[i]);			
 		}
 	}
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-
-	
-	template<typename T> template<typename E>
-	void wavelet_level<T>::decompose_level(E *src, float *filterV, float *filterH, int taps, int offset, int skip) { 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	/*
+	template<typename T>
+	void wavelet_level<T>::AnalysisFilterLeGall (T * srcbuffer, T * dstLo, T * dstHi, int pitch, int srclen) {
 		
-		T *tmpLo = new T[m_w*m_h2];
-		T *tmpHi = new T[m_w*m_h2];
+		// Basic convolution code
+		// Applies a LeGall (CDF 5/3) filter 
+									
 		
-		T *buffer = new T[MAX(m_w,m_h)];
-		
-		/* filter along columns */
-		for (int j=0; j<m_w; j++) {
-			loadbuffer(src+j, buffer, m_w/*pitch*/, m_h/*srclen*/);//pad a column of data and load it to buffer
-			if (subsamp_out) {
-				AnalysisFilterSubsamp (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
-			} else {
-				AnalysisFilter (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
-			}
+		for(size_t i = skip; i < (srclen - 3*skip); i++) {
+			dstLo[(pitch*(i))] = 0.25*(srcbuffer[i-skip] + 2*srcbuffer[i] + srcbuffer[i+skip]);
+			dstHi[(pitch*(i))] = -0.125*(srcbuffer[i-skip] + srcbuffer[i+3*skip]) - 0.25*(srcbuffer[i] + srcbuffer[i+2*skip]) + 0.75*srcbuffer[i+skip];
 		}
 		
-		/* filter along rows */
-		for (int i=0; i<m_h2; i++) {
-			loadbuffer(tmpLo+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);//pad a row of data and load it to buffer
-			if (subsamp_out) {
-				AnalysisFilterSubsamp (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
-			} else {
-				AnalysisFilter (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+		for(size_t i = 0; i < skip; i++) {
+			dstLo[(pitch*(i))] = 0.25*(srcbuffer[MAX(0,i-skip)] + 2*srcbuffer[i] + srcbuffer[i+skip]);
+			dstHi[(pitch*(i))] = (-0.125*(srcbuffer[MAX(0,i-skip)] + srcbuffer[i+3*skip]) - \
+								  0.25*(srcbuffer[i] + srcbuffer[i+2*skip]) + 0.75*srcbuffer[i+skip]);
 			}
-			loadbuffer(tmpHi+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);
-			if (subsamp_out) {
-				AnalysisFilterSubsamp (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
-			} else {
-				AnalysisFilter (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
-			}
+		
+		for(size_t i = (srclen-3*skip); i < (srclen); i++) {
+			dstLo[(pitch*(i))] = 0.25*(srcbuffer[i-skip] + 2*srcbuffer[i] + srcbuffer[MIN(srclen-1,i+skip)]);
+			dstHi[(pitch*(i))] = (-0.125*(srcbuffer[i-skip] + srcbuffer[MIN(srclen-1,i+3*skip)]) - \
+								  0.25*(srcbuffer[i] + srcbuffer[MIN(srclen-1,i+2*skip)]) + 0.75*srcbuffer[MIN(srclen-1,i+skip)]);
 		}
-		
-		//imp_nr (wavcoeffs[0], m_w2, m_h2, 50.0f/20.0f);
-
-		delete[] tmpLo;
-		delete[] tmpHi;
-		delete[] buffer;
-	}
-	
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-
-	template<typename T> template<typename E>
-	void wavelet_level<T>::reconstruct_level(E *dst, float *filterV, float *filterH, int taps, int offset, int skip) { 
-		
-		T *tmpLo = new T[m_w*m_h2];
-		T *tmpHi = new T[m_w*m_h2];
-		
-		int buflen = MAX(m_w2,m_h2);
-		float *bufferLo = new float[buflen];
-		float *bufferHi = new float[buflen];
-		
-		/* filter along rows */
-		for (int i=0; i<m_h2; i++) {
-			
-			if (subsamp_out) {
-				SynthesisFilterSubsamp (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,  
-										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
-				SynthesisFilterSubsamp (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,  
-										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
-			} else {
-				SynthesisFilter (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,  
-								 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
-				SynthesisFilter (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,  
-								 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
-			}
-		}
-		
-		/* filter along columns */
-		for (int j=0; j<m_w; j++) {
-			if (subsamp_out) {
-				SynthesisFilterSubsamp (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, 
-								 filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
-			} else {
-				SynthesisFilter (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, 
-								 filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
-			}
-		}
-
-		
-		delete[] tmpLo;
-		delete[] tmpHi;
-		delete[] bufferLo;
-		delete[] bufferHi;
 		
 	}
 	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	
+	template<typename T>
+	void wavelet_level<T>::SynthesisFilterLeGall (T * srcLo, T * srcHi, T * dst, T *bufferLo, T *bufferHi, int pitch, int dstlen) {
+		
+		// Basic convolution code
+		//Applies a LeGall (CDF 5/3) filter 
+
+		
+		int srclen = (dstlen==m_w ? m_w2 : m_h2);//length of row/col in src (coarser level)
+		
+		for (size_t i=0, j=0; i<srclen; i++, j+=pitch) {
+			bufferLo[i]=srcLo[j];
+			bufferHi[i]=srcHi[j];
+		}
+		
+		for(size_t i = m_pad+2*skip; i < (dstlen+m_pad-2*skip); i++) {
+			dst[pitch*(i-m_pad)] = (-0.125*(bufferLo[i-2*skip] + bufferLo[i+2*skip]) + 0.25*(bufferLo[i-skip] - bufferLo[i+skip]) + 0.75*bufferLo[skip] + \
+									-0.25*(bufferHi[i] + bufferHi[i+2*skip]) + 0.5*bufferHi[skip]);			
+		}
+		
+		for(size_t i = m_pad; i < (m_pad+2*skip); i++) {
+			dst[pitch*(i-m_pad)] = (-0.125*(bufferLo[MAX(0,i-2*skip)] + bufferLo[i+2*skip]) + 0.25*(bufferLo[MAX(0,i-skip)] - bufferLo[i+skip]) + 0.75*bufferLo[skip] + \
+									-0.25*(bufferHi[i] + bufferHi[i+2*skip]) + 0.5*bufferHi[i+skip]);			
+		}
+									
+		for(size_t i = (dstlen+m_pad-2*skip); i < dstlen; i++) {
+			dst[pitch*(i-m_pad)] = (-0.125*(bufferLo[i-2*skip] + bufferLo[MIN(dstlen-1,i+2*skip)]) + 0.25*(bufferLo[i-skip] - bufferLo[MIN(dstlen-1,i+skip)]) + 0.75*bufferLo[skip] + \
+									-0.25*(bufferHi[i] + bufferHi[MIN(dstlen-1,i+2*skip)]) + 0.5*bufferHi[MIN(dstlen-1,i+skip)]);			
+		}
+
+		
+	}
+	*/
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -565,7 +534,7 @@ namespace rtengine {
 				
 		for(size_t i = m_pad; i < (dstlen+m_pad-skip); i+=2) {
 			dst[pitch*(i-m_pad)] = bufferLo[i/2]+bufferHi[i/2];
-			dst[pitch*(i+skip-m_pad)] = bufferLo[i/2]-bufferHi[i/2];
+			dst[pitch*(i+1-m_pad)] = bufferLo[i/2]-bufferHi[i/2];
 		}
 		
 		if ((dstlen+m_pad)&1) {
@@ -574,13 +543,112 @@ namespace rtengine {
 		
 	}
 	
+
+
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	
+	
+	template<typename T> template<typename E>
+	void wavelet_level<T>::decompose_level(E *src, float *filterV, float *filterH, int taps, int offset, int skip) { 
+		
+		T *tmpLo = new T[m_w*m_h2];
+		T *tmpHi = new T[m_w*m_h2];
+		
+		T *buffer = new T[MAX(m_w,m_h)];
+		
+		/* filter along columns */
+		for (int j=0; j<m_w; j++) {
+			loadbuffer(src+j, buffer, m_w/*pitch*/, m_h/*srclen*/);//pad a column of data and load it to buffer
+			if (subsamp_out) {
+				AnalysisFilterSubsamp (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
+			} else {
+				//AnalysisFilter (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
+				AnalysisFilterHaar (buffer, tmpLo+j, tmpHi+j, m_w, m_h);
+			}
+		}
+		
+		/* filter along rows */
+		for (int i=0; i<m_h2; i++) {
+			loadbuffer(tmpLo+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);//pad a row of data and load it to buffer
+			if (subsamp_out) {
+				AnalysisFilterSubsamp (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+			} else {
+				//AnalysisFilter (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+				AnalysisFilterHaar (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, 1, m_w);
+			}
+			loadbuffer(tmpHi+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);
+			if (subsamp_out) {
+				AnalysisFilterSubsamp (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+			} else {
+				//AnalysisFilter (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+				AnalysisFilterHaar (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, 1, m_w);
+			}
+		}
+		
+		//imp_nr (wavcoeffs[0], m_w2, m_h2, 50.0f/20.0f);
+		
+		delete[] tmpLo;
+		delete[] tmpHi;
+		delete[] buffer;
+	}
+	
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	
+	template<typename T> template<typename E>
+	void wavelet_level<T>::reconstruct_level(E *dst, float *filterV, float *filterH, int taps, int offset, int skip) { 
+		
+		T *tmpLo = new T[m_w*m_h2];
+		T *tmpHi = new T[m_w*m_h2];
+		
+		int buflen = MAX(m_w2,m_h2);
+		float *bufferLo = new float[buflen];
+		float *bufferHi = new float[buflen];
+		
+		/* filter along rows */
+		for (int i=0; i<m_h2; i++) {
+			
+			if (subsamp_out) {
+				SynthesisFilterSubsamp (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,  
+										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+				SynthesisFilterSubsamp (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,  
+										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+			} else {
+				//SynthesisFilter (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi, \
+								 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+				//SynthesisFilter (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi, \
+								 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+				SynthesisFilterHaar (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi, 1, m_w);
+				SynthesisFilterHaar (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi, 1, m_w);
+			}
+		}
+		
+		/* filter along columns */
+		for (int j=0; j<m_w; j++) {
+			if (subsamp_out) {
+				SynthesisFilterSubsamp (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, 
+										filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
+			} else {
+				//SynthesisFilter (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, \
+								 filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
+				SynthesisFilterHaar (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, m_w, m_h);
+			}
+		}
+		
+		
+		delete[] tmpLo;
+		delete[] tmpHi;
+		delete[] bufferLo;
+		delete[] bufferHi;
+		
+	}
+
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-	
-
 	
 };
 

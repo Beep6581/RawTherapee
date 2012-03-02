@@ -244,8 +244,7 @@ class ColorDenoiseParams {
         int		luma;
         int     chroma;
 		float	gamma;
-		std::vector<double>   lumcurve;
-		std::vector<double>   chromcurve;
+		double	expcomp;
 	};
 
 //EPD related parameters.
