@@ -157,7 +157,7 @@ public:
 
 	// use with indices
 	T * operator[](int index) {
-        assert(index<y); 
+        assert((index>=0) && (index < y));
 		return ptr[index];
 	}
 
