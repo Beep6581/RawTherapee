@@ -114,7 +114,7 @@ namespace rtengine {
 		//LUTf Lcurve(65536);
 		//LUTf abcurve(65536);
 		for (int i=0; i<65536; i++) {
-			int g = (int)(CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
+			int g = (int)(Color::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) * 65535.0);
 			gamcurve[i] = CLIP(g);
 			/*float val = (float)i/65535.0;
 			float Lval = (2*(lumacurve->getVal(val)));
@@ -132,7 +132,7 @@ namespace rtengine {
 		//#pragma omp parallel for if (multiThread)
 		for (int i=0; i<src->H; i++) {
 			for (int j=0; j<src->W; j++) {
-				//src->L[i][j] = CurveFactory::flinterp(gamcurve,src->L[i][j]);
+				//src->L[i][j] = Color::flinterp(gamcurve,src->L[i][j]);
 				src->L[i][j] = gamcurve[src->L[i][j]];
 			}
 		}
@@ -150,11 +150,11 @@ namespace rtengine {
 		//set up NR weight functions
 		
 		//gamma correction for chroma in shadows
-		float nrwtl_norm = ((CurveFactory::gamma((double)65535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) -
-							(CurveFactory::gamma((double)75535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)));
+		float nrwtl_norm = ((Color::gamma((double)65535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) -
+							(Color::gamma((double)75535.0/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)));
 		for (int i=0; i<65536; i++) {
-			nrwt_l[i] = ((CurveFactory::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) -
-						  CurveFactory::gamma((double)(i+10000)/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) )/nrwtl_norm;
+			nrwt_l[i] = ((Color::gamma((double)i/65535.0, gam, gamthresh, gamslope, 1.0, 0.0) -
+						  Color::gamma((double)(i+10000)/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)) )/nrwtl_norm;
 			//if (i % 100 ==0) printf("%d %f \n",i,nrwt_l[i]);
 		}
 		
@@ -262,7 +262,7 @@ namespace rtengine {
 		float igamthresh = gamthresh*gamslope;
 		float igamslope = 1/gamslope;
 		for (int i=0; i<65536; i++) {
-			gamcurve[i] = (CurveFactory::gamma((float)i/65535.0, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0);
+			gamcurve[i] = (Color::gamma((float)i/65535.0, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0);
 		}
 		
 		
