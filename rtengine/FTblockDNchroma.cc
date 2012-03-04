@@ -1023,8 +1023,11 @@ void ImProcFunctions::FixImpulse_ab(LabImage * src, LabImage * dst, double radiu
 							//WavCoeffs_a[dir][coeffloc_ab] *= edgefactor*(coeff_a>2 ? 1 : (coeff_a<1 ? 0 : (coeff_a - 1)));
 							//WavCoeffs_b[dir][coeffloc_ab] *= edgefactor*(coeff_b>2 ? 1 : (coeff_b<1 ? 0 : (coeff_b - 1)));
 							
-							WavCoeffs_a[dir][coeffloc_ab] *= SQR(1-exp(-(mag_a/mad_a)-(mag_L/(9*mad_L))));
-							WavCoeffs_b[dir][coeffloc_ab] *= SQR(1-exp(-(mag_b/mad_b)-(mag_L/(9*mad_L))));
+							//float satfactor_a = mad_a/(mad_a+0.5*SQR(WavCoeffs_a[0][coeffloc_ab]));
+							//float satfactor_b = mad_b/(mad_b+0.5*SQR(WavCoeffs_b[0][coeffloc_ab]));
+
+							WavCoeffs_a[dir][coeffloc_ab] *= SQR(1-exp(-(mag_a/mad_a)-(mag_L/(9*mad_L)))/*satfactor_a*/);
+							WavCoeffs_b[dir][coeffloc_ab] *= SQR(1-exp(-(mag_b/mad_b)-(mag_L/(9*mad_L)))/*satfactor_b*/);
 
 						}
 					}//now chrominance coefficients are denoised

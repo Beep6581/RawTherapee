@@ -190,8 +190,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		ipf.getAutoExp (aehist, aehistcompr, clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);		
 
         if (todo & M_LINDENOISE) {
-        	printf("denoising!\n");
-        	// @Emil: put your luminance denoise tool here ; of course, at this stage, you only have an ImageFloat, no LabImage yet...
+        	//printf("denoising!\n");
 			if (scale==1 && params.dirpyrDenoise.enabled) {
 				ipf.RGB_denoise(orig_prev, orig_prev, params.dirpyrDenoise, params.defringe);
 			}

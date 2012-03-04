@@ -557,7 +557,7 @@ namespace rtengine {
 		T *tmpLo = new T[m_w*m_h2];
 		T *tmpHi = new T[m_w*m_h2];
 		
-		T *buffer = new T[MAX(m_w,m_h)];
+		T *buffer = new T[MAX(m_w,m_h)+2*m_pad];
 		
 		/* filter along columns */
 		for (int j=0; j<m_w; j++) {

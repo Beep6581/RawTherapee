@@ -111,6 +111,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// start tile processing...???
 
     // perform luma denoise
     LabImage* labView = new LabImage (fw,fh);
