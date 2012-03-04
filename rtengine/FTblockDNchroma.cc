@@ -195,7 +195,7 @@ namespace rtengine {
 		const short int height=src->height, width=src->width;
 		const short int hfh=(height+1)/2, hfw=(width+1)/2;
 		
-		if (dnparams.Lamt==0) {//nothing to do; copy src to dst
+		if (dnparams.luma==0) {//nothing to do; copy src to dst
 			for (int i=0; i<height; i++) {
 				for (int j=0; j<width; j++) {
 					dst->r[i][j] = src->r[i][j];
@@ -207,7 +207,7 @@ namespace rtengine {
 		}
 		
 		//const int blkrad=2;
-		float noisevar_L = SQR((100-dnparams.luma) * TS * 100.0f);
+		float noisevar_L = SQR((100-dnparams.Ldetail) * TS * 100.0f);
 		float noisevar_ab = SQR(dnparams.chroma * TS * 150.0f);
 		
 		// calculation for tiling
@@ -260,7 +260,7 @@ namespace rtengine {
 		wavelet_decomposition adecomp(labin->data+datalen, labin->W, labin->H, 5, 1 );//last args are maxlevels, subsampling
 		wavelet_decomposition bdecomp(labin->data+2*datalen, labin->W, labin->H, 5, 1 );//last args are maxlevels, subsampling
 
-		float noisevarL	 = SQR(dnparams.Lamt/25.0f);//TODO: clean up naming confusion about params
+		float noisevarL	 = SQR(dnparams.luma/25.0f);//TODO: clean up naming confusion about params
 		float noisevarab = SQR(dnparams.chroma/10.0f);
 		
 		WaveletDenoiseAll_BiShrink(Ldecomp, adecomp, bdecomp, noisevarL, noisevarab);
