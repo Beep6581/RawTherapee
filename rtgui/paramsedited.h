@@ -170,7 +170,7 @@ class DirPyrDenoiseParamsEdited {
 	
 public:
 	bool enabled;
-	bool Lamt;
+	bool Ldetail;
 	bool luma;
 	bool chroma;
 	bool gamma;

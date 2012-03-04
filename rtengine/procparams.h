@@ -240,9 +240,9 @@ class ColorDenoiseParams {
 		
     public:
         bool    enabled;
-        int		Lamt;
-        int		luma;
-        int     chroma;
+        double	luma;
+        double	Ldetail;
+        double  chroma;
 		float	gamma;
 		double	expcomp;
 	};

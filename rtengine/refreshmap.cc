@@ -186,7 +186,7 @@ RGBCURVE,         // EvRGBrCurve
 RGBCURVE,         // EvRGBgCurve
 RGBCURVE,         // EvRGBbCurve
 RGBCURVE,         // EvNeutralExp
-ALLNORAW          // EvDPDNLamt
+ALLNORAW          // EvDPDNLdetail
 	
 };
 
