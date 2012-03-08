@@ -184,9 +184,9 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		/*if (plistener) {
-		 plistener->setProgressStr ("Denoise...");
-		 plistener->setProgress (0.0);
-		 }*/
+			plistener->setProgressStr ("Denoise...");
+			plistener->setProgress (0.0);
+		}*/
 		
 		volatile double progress = 0.0;
 		
@@ -207,15 +207,7 @@ namespace rtengine {
 		}
 		
 		//const int blkrad=2;
-		float noisevar_L = SQR((100-dnparams.Ldetail) * TS * 100.0f);
-		float noisevar_ab = SQR(dnparams.chroma * TS * 150.0f);
-		
-		// calculation for tiling
-		const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
-		const int numblox_H = ceil(((float)(height))/(offset))+2*blkrad;
-		//const int nrtiles = numblox_W*numblox_H;
-		// end of tiling calc
-				
+		float noisevar_Ldetail = SQR((100-dnparams.Ldetail) * TS * 100.0f);
 		
 		
 		array2D<float> tilemask_in(TS,TS);
@@ -240,6 +232,18 @@ namespace rtengine {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		// TODO: begin block processing
+		
+		const int tilesize = 1000;
+		const int overlap = 100;
+		if (width>tilesize and height>tilesize) {
+			const int numtiles_W = ceil(((float)(width))/(tilesize-overlap));
+			const int numtiles_H = ceil(((float)(height))/(tilesize-overlap));
+			int tilewidth  = ceil(((float)(width))/(numtiles_W));
+			int tileheight = ceil(((float)(height))/(numtiles_H));
+			tilewidth  = tilewidth + (tilewidth&1);
+			tileheight = tileheight + (tileheight&1);
+		}
 		
 		LabImage * labin = new LabImage(width,height);
 		LabImage * labdn = new LabImage(width,height);
@@ -252,15 +256,17 @@ namespace rtengine {
 		
 		memcpy (labdn->data, labin->data, 3*width*height*sizeof(float));
 
+		//initial impulse denoise
 		impulse_nr (labdn, 50.0f/20.0f);
 		
 		int datalen = labin->W * labin->H;
 		
+		//now perform basic wavelet denoise
 		wavelet_decomposition Ldecomp(labin->data, labin->W, labin->H, 5/*maxlevels*/, 0/*subsampling*/ );
 		wavelet_decomposition adecomp(labin->data+datalen, labin->W, labin->H, 5, 1 );//last args are maxlevels, subsampling
 		wavelet_decomposition bdecomp(labin->data+2*datalen, labin->W, labin->H, 5, 1 );//last args are maxlevels, subsampling
 
-		float noisevarL	 = SQR(dnparams.luma/25.0f);//TODO: clean up naming confusion about params
+		float noisevarL	 = SQR(dnparams.luma/25.0f);
 		float noisevarab = SQR(dnparams.chroma/10.0f);
 		
 		WaveletDenoiseAll_BiShrink(Ldecomp, adecomp, bdecomp, noisevarL, noisevarab);
@@ -269,6 +275,9 @@ namespace rtengine {
 		adecomp.reconstruct(labdn->data+datalen);
 		bdecomp.reconstruct(labdn->data+2*datalen);
 		
+		//TODO: at this point wavelet coefficients storage can be freed
+		
+		//second impulse denoise
 		impulse_nr (labdn, 50.0f/20.0f);
 		//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
 
@@ -281,7 +290,17 @@ namespace rtengine {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// allocate FT data structures
+		// now do detail recovery using block DCT to detect patterns 
+		// missed by wavelet denoise
+		
+		
+		// allocate DCT data structures
+		
+		// calculation for detail recovery tiling
+		const int numblox_W = ceil(((float)(width))/(offset))+2*blkrad;
+		const int numblox_H = ceil(((float)(height))/(offset))+2*blkrad;
+		//const int nrtiles = numblox_W*numblox_H;
+		// end of tiling calc
 		
 		float ** Lblox = new float *[8] ;
 		
@@ -375,12 +394,12 @@ namespace rtengine {
 				
 				int hblproc = hblk;
 				
-				RGBtile_denoise (fLblox, vblproc, hblproc, numblox_H, numblox_W, noisevar_L, noisevar_ab );
+				RGBtile_denoise (fLblox, vblproc, hblproc, numblox_H, numblox_W, noisevar_Ldetail );
 				
 				if (vblk==(numblox_H-1)) {//denoise last blkrad rows
 					for (vblproc=(vblk-blkrad+1); vblproc<numblox_H; vblproc++) {
 						vblprocmod = vblproc%8;
-						RGBtile_denoise (fLblox, vblproc, hblproc, numblox_H, numblox_W, noisevar_L, noisevar_ab );
+						RGBtile_denoise (fLblox, vblproc, hblproc, numblox_H, numblox_W, noisevar_Ldetail );
 					}
 				}
 				
@@ -457,8 +476,7 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void ImProcFunctions::RGBtile_denoise (float ** fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, \
-										   float noisevar_L, float noisevar_ab )	//for DCT
+	void ImProcFunctions::RGBtile_denoise (float ** fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_Ldetail )	//for DCT
 	{
 		int vblprocmod=vblproc%8;
 		
@@ -469,7 +487,7 @@ namespace rtengine {
 		boxabsblur(fLblox[vblprocmod]+blkstart, nbrwt, 3, 3, TS, TS);//blur neighbor weights for more robust estimation	//for DCT
 		
 		for (int n=0; n<TS*TS; n++) {		//for DCT
-			fLblox[vblprocmod][blkstart+n] *= (1-expf(-SQR(nbrwt[n])/noisevar_L));
+			fLblox[vblprocmod][blkstart+n] *= (1-expf(-SQR(nbrwt[n])/noisevar_Ldetail));
 		}//output neighbor averaged result
 		
 		delete[] nbrwt;
