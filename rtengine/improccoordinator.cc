@@ -145,6 +145,19 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     	|| (!params.hlrecovery.enabled && params.hlrecovery.method=="Color" && imgsrc->IsrgbSourceModified())){
 
     	if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
+		
+		currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
+        if (params.wb.method=="Camera")
+            currWB = imgsrc->getWB ();
+        else if (params.wb.method=="Auto") {
+            if (!awbComputed) {
+                autoWB = imgsrc->getAutoWB ();
+                awbComputed = true;
+            }
+            currWB = autoWB;
+        }
+        params.wb.temperature = currWB.getTemp ();
+        params.wb.green = currWB.getGreen ();
     	imgsrc->demosaic( rp );
     }
     lastHighDetail=highDetailNeeded;
