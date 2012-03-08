@@ -511,7 +511,6 @@ void IPTCPanel::applyChangeList () {
     suppCategory->get_entry()->set_text ("");
     
     for (rtengine::procparams::IPTCPairs::iterator i=changeList.begin(); i!=changeList.end(); i++) {
-    	printf("- %s: %s\n", i->first.c_str(), i->second.empty()?"[vide]":i->second.at(0).c_str());
         if (i->first == "Caption" && !i->second.empty())
             captionText->set_text (i->second.at(0));
         else if (i->first == "CaptionWriter" && !i->second.empty())
