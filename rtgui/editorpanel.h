@@ -78,7 +78,7 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Button* saveimgas;
         Gtk::Button* sendtogimp;
 
-        ImageAreaPanel* iarea;
+        ImageAreaPanel* iareapanel;
         PreviewHandler* previewHandler;
         PreviewHandler* beforePreviewHandler;   // for the before-after view
         Navigator* navigator;

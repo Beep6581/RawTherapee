@@ -30,9 +30,9 @@ extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent)
     : resizeCrop(NULL), transCrop(NULL), updating(false),
-    cropw(-1), croph(-1), trafw(-1), trafh(-1),
+    skip(10),cropw(-1), croph(-1), trafw(-1), trafh(-1),
     borderRequested(32), cropAllocated(false),
-    cropImageListener(NULL), parent(parent),skip(10)
+    cropImageListener(NULL), parent(parent)
 {
     parent->crops.push_back (this);
 }
@@ -60,9 +60,6 @@ void Crop::setListener (DetailedCropListener* il) {
 
 void Crop::update (int todo) {
 	Glib::Mutex::Lock lock(cropMutex);
-
-	//flag for testing color accuracy
-	bool colortest = false;
 
     ProcParams& params = parent->params;
 
@@ -138,7 +135,7 @@ void Crop::update (int todo) {
     }
 	
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap, \
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
 							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve );
 
 	

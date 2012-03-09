@@ -26,9 +26,9 @@
 class IPTCPanel : public Gtk::VBox, public ToolPanel {
 
     private: 
-        std::vector<rtengine::procparams::IPTCPair> changeList;
-        std::vector<rtengine::procparams::IPTCPair> defChangeList;
-        std::vector<rtengine::procparams::IPTCPair> embeddedData;
+        rtengine::procparams::IPTCPairs changeList;
+        rtengine::procparams::IPTCPairs defChangeList;
+        rtengine::procparams::IPTCPairs embeddedData;
         
         Gtk::TextView*  captionView;
         Glib::RefPtr<Gtk::TextBuffer> captionText;

@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <iomanip>
 #include "icmpanel.h"
 #include "options.h"
 #include "guiutils.h"
@@ -206,6 +207,12 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         icameraICC->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (true);
     }
+    else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
+    	// this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
+    	// therefore falling back UI to explicitly reflect the (camera) option
+    	icamera->set_active (true);
+    	ckbBlendCMSMatrix->set_sensitive (false);
+    }
     else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
@@ -331,7 +338,7 @@ void ICMPanel::adjusterChanged (Adjuster* a, double newval) {
 
     if (listener && freegamma->get_active()) {
 
-        Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
+        Glib::ustring costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), newval);
 
         if (a==gampos) 
             listener->panelChanged (EvGAMPOS, costr);

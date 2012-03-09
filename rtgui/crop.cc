@@ -134,7 +134,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
  /****************
  * Crop Ratio
  *****************/
-  int NumberOfCropRatios = 25;    //!!! change this value when adding new crop ratios
+  int NumberOfCropRatios = 26;    //!!! change this value when adding new crop ratios
   cropratio.resize (NumberOfCropRatios);
 
   cropratio[0].label  = "3:2";                     cropratio[0].value  = 3.0/2.0;
@@ -162,6 +162,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   cropratio[22].label = "11:17 - Tabloid";         cropratio[22].value = 11.0/17.0;
   cropratio[23].label = "13:19";                   cropratio[23].value = 13.0/19.0;
   cropratio[24].label = "17:22";                   cropratio[24].value = 17.0/22.0;
+  cropratio[25].label = "45:35 - ePassport";       cropratio[25].value = 45.0/35.0;
 
 
     
@@ -184,6 +185,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   guide->append_text (M("TP_CROP_GTHARMMEANS3"));
   guide->append_text (M("TP_CROP_GTHARMMEANS4"));
   guide->append_text (M("TP_CROP_GTGRID"));
+  guide->append_text (M("TP_CROP_GTEPASSPORT"));
   guide->set_active (0);
 
   w->set_range (0, maxw);
@@ -290,6 +292,8 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
         guide->set_active (6);
     else if (pp->crop.guide == "Grid")
         guide->set_active (7);
+    else if (pp->crop.guide == "ePassport")
+        guide->set_active (8);
 
     x->set_value (pp->crop.x);
     y->set_value (pp->crop.y);
@@ -370,12 +374,14 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->crop.guide = "Harmonic means 4";
   else if (guide->get_active_row_number()==7)
     pp->crop.guide = "Grid";
+  else if (guide->get_active_row_number()==8)
+    pp->crop.guide = "ePassport";
 
     if (pedited) {
         pedited->crop.enabled       = !enabled->get_inconsistent();
         pedited->crop.ratio         = ratio->get_active_row_number() != 8;
         pedited->crop.orientation   = orientation->get_active_row_number() != 2;
-        pedited->crop.guide         = guide->get_active_row_number() != 7;
+        pedited->crop.guide         = guide->get_active_row_number() != 8;
         pedited->crop.fixratio      = !fixr->get_inconsistent();
         pedited->crop.w             = wDirty;
         pedited->crop.h             = hDirty;
@@ -456,12 +462,12 @@ void Crop::enabledChanged () {
 }
 
 int notifyListenerUI (void* data) {
-    ((Crop*)data)->notifyListener ();
+    (static_cast<Crop*>(data))->notifyListener ();
     return 0;
 }
 
 int refreshSpinsUI (void* data) {
-    RefreshSpinHelper* rsh = (RefreshSpinHelper*) data;
+    RefreshSpinHelper* rsh = static_cast<RefreshSpinHelper*>(data);
     rsh->crop->refreshSpins (rsh->notify);
     delete rsh;
     return 0;

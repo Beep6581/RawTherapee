@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -30,6 +31,7 @@ EDITWINDOW_TITLE;Editace obrázku
 EXIFFILTER_APERTURE;Clona
 EXIFFILTER_CAMERA;Aparát
 EXIFFILTER_DIALOGLABEL;Filtrovat dle Exif
+EXIFFILTER_EXPOSURECOMPENSATION;Kompenzace expozice (EV)
 EXIFFILTER_FILETYPE;Typ souboru
 EXIFFILTER_FOCALLEN;Ohnisková vzdálenost
 EXIFFILTER_ISO;ISO
@@ -181,7 +183,7 @@ HISTOGRAM_TOOLTIP_BAR;Skrýt/zobrazit řádek RGB indikátoru\nKlikněte pravým
 HISTOGRAM_TOOLTIP_B;Skrýt /zobrazit histogram pro MODROU barvu
 HISTOGRAM_TOOLTIP_G;Skrýt /zobrazit histogram pro ZELENOU barvu
 HISTOGRAM_TOOLTIP_L;Skrýt /zobrazit CIELAB histogram jasu
-HISTOGRAM_TOOLTIP_RAW;Skrýt /zobrazit RAW histogram
+HISTOGRAM_TOOLTIP_RAW;Skrýt /zobrazit raw histogram
 HISTOGRAM_TOOLTIP_R;Skrýt /zobrazit histogram pro ČERVENOU barvu
 HISTORY_CHANGED;Změněno
 HISTORY_CUSTOMCURVE;Vlastní křivka
@@ -195,7 +197,7 @@ HISTORY_MSG_4;Prohlížení historie
 HISTORY_MSG_5;Jas
 HISTORY_MSG_6;Kontrast
 HISTORY_MSG_7;Černá
-HISTORY_MSG_8;Expoziční korekce
+HISTORY_MSG_8;Kompenzace expozice
 HISTORY_MSG_9;Komprese světel
 HISTORY_MSG_10;Komprese stínů
 HISTORY_MSG_11;Tónová křivka
@@ -220,7 +222,7 @@ HISTORY_MSG_29;Metoda doostření
 HISTORY_MSG_30;Poloměr dekonvoluce
 HISTORY_MSG_31;Míra dekonvoluce
 HISTORY_MSG_32;Útlum dekonvoluce
-HISTORY_MSG_33;Počet opakování dekonvoluce
+HISTORY_MSG_33;Počet průchodů dekonvoluce
 HISTORY_MSG_34;Zabránit oříznutí barev
 HISTORY_MSG_35;Povolit omezení saturace
 HISTORY_MSG_36;Omezení saturace
@@ -301,8 +303,8 @@ HISTORY_MSG_110;Změna rozměrů aplikována na
 HISTORY_MSG_111;Zabránit oříznutí barev
 HISTORY_MSG_112;Povolit omezení saturace
 HISTORY_MSG_113;Omezení saturace
-HISTORY_MSG_114;Iterace DCB
-HISTORY_MSG_115;Iterace chybných barev
+HISTORY_MSG_114;Průchody DCB
+HISTORY_MSG_115;Průchody chybných barev
 HISTORY_MSG_116;Rozšířené DCB
 HISTORY_MSG_117;Korekce červené CA
 HISTORY_MSG_118;Korekce modré CA
@@ -329,7 +331,7 @@ HISTORY_MSG_138;Úroveň černé: Červená
 HISTORY_MSG_139;Úroveň černé: Modrá
 HISTORY_MSG_140;Úroveň černé: Zelená 2
 HISTORY_MSG_141;Úroveň černé: Zelené zároveň
-HISTORY_MSG_142;Doostření hran - počet opakování
+HISTORY_MSG_142;Doostření hran - počet průchodů
 HISTORY_MSG_143;Doostření hran - kvalita
 HISTORY_MSG_144;Mikrokontrast - kvantita
 HISTORY_MSG_145;Mikrokontrast - jednolitost
@@ -345,6 +347,15 @@ HISTORY_MSG_154;Živost - zachovat tóny pleti
 HISTORY_MSG_155;Živost - Vyvarovat se posunu barev
 HISTORY_MSG_156;Živost - propojit pastelové a saturované tóny
 HISTORY_MSG_157;Živost - práh mezi pastelovými a saturovanými tóny
+HISTORY_MSG_158;Síla
+HISTORY_MSG_159;Zarážka hran
+HISTORY_MSG_160;Měřítko
+HISTORY_MSG_161;Počet průchodů převážení
+HISTORY_MSG_162;Mapování tónů
+HISTORY_MSG_163;RGB křivky - R
+HISTORY_MSG_164;RGB křivky - G
+HISTORY_MSG_165;RGB křivky - B
+HISTORY_MSG_166;Neutrální úrovně
 HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSNAPSHOT;Přidat
 HISTORY_NEWSSDIALOGLABEL;Titulek snímku:
@@ -454,7 +465,7 @@ MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-MAIN_TAB_RAW;RAW
+MAIN_TAB_RAW;Raw
 MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
 MAIN_TAB_TAGGING;Štítky
 MAIN_TAB_TRANSFORM;Transformace
@@ -466,12 +477,18 @@ MAIN_TOOLTIP_HIDEHP;Zobrazit či schovat levý panel (obsahující historii <b>H
 MAIN_TOOLTIP_INDCLIPPEDH;Zvýraznit oříznuté světla (Klávesa <)
 MAIN_TOOLTIP_INDCLIPPEDS;Zvýraznit oříznuté stíny (Klávesa >)
 MAIN_TOOLTIP_PREFERENCES;Změnit volby
+MAIN_TOOLTIP_PREVIEWB;Náhled <b>modrého kanálu</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Náhled <b>Masky zaostření</b>
+MAIN_TOOLTIP_PREVIEWG;Náhled <b>zeleného kanálu</b>
+MAIN_TOOLTIP_PREVIEWL;Náhled <b>světlosti</b>\n0.299*R + 0.587*G + 0.114*B
+MAIN_TOOLTIP_PREVIEWR;Náhled <b>červeného kanálu</b>
 MAIN_TOOLTIP_QINFO;Stručné informace o obrázku <b>I</b>
 MAIN_TOOLTIP_SAVEAS;Uložit obrázek do vybrané složky
 MAIN_TOOLTIP_SAVE;Uložit obrázek do výchozí složky
 MAIN_TOOLTIP_SHOWHIDELP1;Zobrazit/skrýt levý panel <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Zobrazit/skrýt pravý panel <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Zobrazit/skrýt horní panel <b>Shift-l</b>
+MAIN_TOOLTIP_THRESHOLD;Práh
 MAIN_TOOLTIP_TOGGLE;Přepnout pohled Před a Po <b>B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
@@ -512,6 +529,7 @@ PARTIALPASTE_DIALOGLABEL;Částečné vložení profilu zpracování
 PARTIALPASTE_DIRPYRDENOISE;Redukce šumu
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast dle detailu úrovní
 PARTIALPASTE_DISTORTION;Korekce zkreslení
+PARTIALPASTE_EPD;Mapování tónů
 PARTIALPASTE_EVERYTHING;Vše
 PARTIALPASTE_EXIFCHANGES;Upravená exif data
 PARTIALPASTE_EXPOSURE;Expozice
@@ -546,10 +564,11 @@ PARTIALPASTE_RAWEXPOS_PRESER;Korekce zach. Raw bílého bodu (EV)
 PARTIALPASTE_RAWGROUP;Nastavení Raw
 PARTIALPASTE_RAW_ALLENHANCE;Aplikovat redukci artefaktů/šumu po demozajkování
 PARTIALPASTE_RAW_DCBENHANCE;Aplikovat kroky rozšiřeného DCB
-PARTIALPASTE_RAW_DCBITERATIONS;Počet kroků DCB
+PARTIALPASTE_RAW_DCBITERATIONS;Počet průchodů DCB
 PARTIALPASTE_RAW_DMETHOD;Metoda demozajkování
 PARTIALPASTE_RAW_FALSECOLOR;Kroky potlačení falešných barev demozajkování
 PARTIALPASTE_RESIZE;Změna velikosti
+PARTIALPASTE_RGBCURVES;RGB křivky
 PARTIALPASTE_ROTATION;Otočení
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Stíny/Světla
 PARTIALPASTE_SHARPENEDGE;Hrany
@@ -602,7 +621,7 @@ PREFERENCES_DIRSOFTWARE;Instalační složka
 PREFERENCES_EDITORCMDLINE;Jiný příkaz
 PREFERENCES_EDITORLAYOUT;Rozvržení editoru
 PREFERENCES_EXTERNALEDITOR;Externí editor
-PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů
+PREFERENCES_FBROWSEROPTS;Volby prohlížeče souborů / náhledů
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Jednořádková lišta nástrojů v prohlížeči souborů (vypněte na nízkých rozlišeních)
 PREFERENCES_FILEFORMAT;Formát souboru
 PREFERENCES_FLATFIELDFOUND;Nalezeno
@@ -611,7 +630,7 @@ PREFERENCES_FLATFIELDSHOTS;snímků
 PREFERENCES_FLATFIELDTEMPLATES;šablon
 PREFERENCES_FLATFIELD;Flat-Field
 PREFERENCES_FORIMAGE;Pro obrázkové soubory
-PREFERENCES_FORRAW;Pro RAW soubory
+PREFERENCES_FORRAW;Pro raw soubory
 PREFERENCES_GIMPPATH;GIMP instalační složka
 PREFERENCES_GTKTHEME;GTK výchozí
 PREFERENCES_HINT;Nápověda
@@ -623,7 +642,7 @@ PREFERENCES_INTENT_ABSOLUTE;Absolutní kolorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Vnímání
 PREFERENCES_INTENT_RELATIVE;Relativní kolorimetrie
 PREFERENCES_INTENT_SATURATION;Sytost
-PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Ukázat interní náhledy RAW nezpracovaných snímků
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Ukázat interní raw náhledy u needitovaných snímků
 PREFERENCES_LANGAUTODETECT;Použít jazykové nastavení OS
 PREFERENCES_LIVETHUMBNAILS;Živé náhledy (pomalejší)
 PREFERENCES_MENUGROUPFILEOPERATIONS;Seskupit souborové operace
@@ -665,7 +684,8 @@ PREFERENCES_SELECTTHEME;Zvolit vzhled
 PREFERENCES_SET;Nastavit
 PREFERENCES_SHOWBASICEXIF;Zobrazovat základní EXIF informace
 PREFERENCES_SHOWDATETIME;Zobrazovat datum a čas
-PREFERENCES_SHOWONLYRAW;Zobrazovat pouze soubory RAW
+PREFERENCES_SHOWEXPOSURECOMPENSATION;Přidat kompenzaci expozice
+PREFERENCES_SHOWONLYRAW;Zobrazovat pouze soubory raw
 PREFERENCES_SHOWPROFILESELECTOR;Zobrazit výbět profilu
 PREFERENCES_SHTHRESHOLD;Práh oříznutých stínů
 PREFERENCES_SINGLETABVERTAB;Mód jedné karty, svislé karty
@@ -810,6 +830,11 @@ TP_DISTORTION_AMOUNT;Míra
 TP_DISTORTION_AUTO;    Automatická korekce zkreslení objektivu
 TP_DISTORTION_AUTO_TIP;(Experimentální) Automatická korekce zkreslení objektivu pro některé fotoaparáty (M4/3, některé kompakty a jiné).
 TP_DISTORTION_LABEL;Oprava zkreslení objektivu
+TP_EPD_EDGESTOPPING;Zarážka hran
+TP_EPD_LABEL;Mapování tónů
+TP_EPD_REWEIGHTINGITERATES;Počet průchodů převážení
+TP_EPD_SCALE;Měřítko
+TP_EPD_STRENGTH;Síla
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
 TP_EQUALIZER_FINEST;Nejjemnější
@@ -818,9 +843,11 @@ TP_EQUALIZER_LARGEST;Nejhrubší
 TP_EQUALIZER_NEUTRAL;Neutrální
 TP_EXPOSCORR_LABEL;Raw bílý-černý bod
 TP_EXPOSURE_AUTOLEVELS;Úrovně automaticky
+TP_EXPOSURE_AUTOLEVELS_TIP;Přepne provedení automatických úrovní na automatickou sadu hodnot parametrů založených na analýze obrázku  
 TP_EXPOSURE_BLACKLEVEL;Černá
 TP_EXPOSURE_BRIGHTNESS;Jas
 TP_EXPOSURE_CLIP;Oříznutí
+TP_EXPOSURE_CLIP_TIP;Podíl klipujících bodů v automatických operacích úrovní
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Práh obnovení světel
 TP_EXPOSURE_COMPRHIGHLIGHTS;Míra obnovení světel
 TP_EXPOSURE_COMPRSHADOWS;Komprese stínů
@@ -874,7 +901,7 @@ TP_ICM_INPUTCUSTOM;Vlastní
 TP_ICM_INPUTCUSTOM_TOOLTIP;Vyberte vlastní ICC profil pro fotoaparát
 TP_ICM_INPUTDLGLABEL;Vybrat vstupní ICC profil...
 TP_ICM_INPUTEMBEDDED;Použít vložený profil, pokud je k dispozici
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Použít barevný profil vložený do jiných než RAW souborů
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Použít barevný profil vložený do ne-RAW souborů
 TP_ICM_INPUTNONE;Bez profilu
 TP_ICM_INPUTNONE_TOOLTIP;Nepoužívat barevný profil. Pouze ve speciálních případech.
 TP_ICM_INPUTPROFILE;Vstupní profil
@@ -900,6 +927,8 @@ TP_LENSGEOM_LABEL;Objektiv / Geometrie
 TP_LUMADENOISE_EDGETOLERANCE;Tolerance okrajům
 TP_LUMADENOISE_LABEL;Redukce šumu v jasech
 TP_LUMADENOISE_RADIUS;Poloměr
+TP_NEUTRAL;Neutrální
+TP_NEUTRAL_TIP;Vrátí nastavení expozice na neutrální hodnoty
 TP_PERSPECTIVE_HORIZONTAL;Vodorovně
 TP_PERSPECTIVE_LABEL;Perspektiva
 TP_PERSPECTIVE_VERTICAL;Svisle
@@ -921,7 +950,7 @@ TP_RAWEXPOS_PRESER;Bílý bod: Kor. zachování světel (EV)
 TP_RAWEXPOS_TWOGREEN;Obě zelené zároveň
 TP_RAW_ALLENHANCE;Aplikovat redukci artefaktů/šumu po demozajkování
 TP_RAW_DCBENHANCE;Aplikovat kroky rozšiřeného DCB
-TP_RAW_DCBITERATIONS;Počet kroků DCB
+TP_RAW_DCBITERATIONS;Počet průchodů DCB
 TP_RAW_DMETHOD;Metoda
 TP_RAW_FALSECOLOR;Počet kroků při potlačování chybných barev
 TP_RAW_LABEL;Demozajkování
@@ -944,6 +973,7 @@ TP_RESIZE_SCALE;Měřítko
 TP_RESIZE_SPECIFY;Zvolte:
 TP_RESIZE_WIDTH;Šířka
 TP_RESIZE_W;Š:
+TP_RGBCURVES_LABEL;RGB křivky
 TP_ROTATE_DEGREE;Stupně
 TP_ROTATE_LABEL;Otočení
 TP_ROTATE_SELECTLINE;    Vyznačit rovinu
@@ -956,7 +986,7 @@ TP_SHADOWSHLIGHTS_SHADOWS;Stíny
 TP_SHADOWSHLIGHTS_SHTONALW;Tonální rozsah stínů
 TP_SHARPENEDGE_AMOUNT;Kvantita
 TP_SHARPENEDGE_LABEL;Hrany
-TP_SHARPENEDGE_PASSES;Počet opakování
+TP_SHARPENEDGE_PASSES;Počet průchodů
 TP_SHARPENEDGE_THREE;Pouze jas
 TP_SHARPENING_AMOUNT;Míra
 TP_SHARPENING_EDRADIUS;Poloměr
@@ -970,7 +1000,7 @@ TP_SHARPENING_RADIUS;Poloměr
 TP_SHARPENING_RLD;RL Dekonvoluce
 TP_SHARPENING_RLD_AMOUNT;Míra
 TP_SHARPENING_RLD_DAMPING;Útlum
-TP_SHARPENING_RLD_ITERATIONS;Počet opakování
+TP_SHARPENING_RLD_ITERATIONS;Počet průchodů
 TP_SHARPENING_THRESHOLD;Práh
 TP_SHARPENING_USM;Maskování rozostření
 TP_SHARPENMICRO_AMOUNT;Kvantita
@@ -993,13 +1023,45 @@ TP_VIGNETTING_RADIUS;Poloměr
 TP_VIGNETTING_STRENGTH;Síla
 TP_WBALANCE_AUTO;Automaticky
 TP_WBALANCE_CAMERA;Aparát
+TP_WBALANCE_CLOUDY;Zataženo
 TP_WBALANCE_CUSTOM;Vlastní
+TP_WBALANCE_DAYLIGHT;Denní světlo (slunečno)
+TP_WBALANCE_FLASH55;Leica
+TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
+TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+TP_WBALANCE_FLASH_HEADER;Blesk
+TP_WBALANCE_FLUO1;F1 - Denní světlo
+TP_WBALANCE_FLUO2;F2 - Studená bílá
+TP_WBALANCE_FLUO3;F3 - Bílá
+TP_WBALANCE_FLUO4;F4 - Teplá bílá
+TP_WBALANCE_FLUO5;F5 - Denní světlo
+TP_WBALANCE_FLUO6;F6 - Lehká bílá
+TP_WBALANCE_FLUO7;F7 - D65 Simulace denního světla
+TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
+TP_WBALANCE_FLUO9;F9 - Studená bílá deluxe
+TP_WBALANCE_FLUO10;F10 - Philips TL85
+TP_WBALANCE_FLUO11;F11 - Philips TL84
+TP_WBALANCE_FLUO12;F12 - Philips TL83
+TP_WBALANCE_FLUO_HEADER;Fluorescenční
 TP_WBALANCE_GREEN;Odstín
+TP_WBALANCE_GTI;GTI
+TP_WBALANCE_HMI;HMI
+TP_WBALANCE_JUDGEIII;JudgeIII
 TP_WBALANCE_LABEL;Vyvážení bílé
+TP_WBALANCE_LAMP_HEADER;Žárovka
+TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+TP_WBALANCE_LED_HEADER;LED
+TP_WBALANCE_LED_LSI;LSI Lumelex 2040
 TP_WBALANCE_METHOD;Metoda
+TP_WBALANCE_SHADE;Odstín
 TP_WBALANCE_SIZE;Rozměr:
+TP_WBALANCE_SOLUX35;Solux 3500K
+TP_WBALANCE_SOLUX41;Solux 4100K
+TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Bodové vyvážení
 TP_WBALANCE_TEMPERATURE;Teplota
+TP_WBALANCE_TUNGSTEN;Wolfram
 ZOOMBAR_DETAIL;Detaily
 ZOOMBAR_HUGE;Veliký
 ZOOMBAR_LARGE;Větší
@@ -1013,7 +1075,6 @@ ZOOMPANEL_ZOOM100;Zvětšit na 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrazovce <b>F</b>
 ZOOMPANEL_ZOOMIN;Přiblížit <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
-
 #00 Czech
 #01 20.1.2008: translated by absolution
 #02 21.2.2008: updated by mkyral (typos and some missing strings)
@@ -1032,6 +1093,7 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 #15 04.09.2011: updated by mkyral
 #16 06.09.2011: updated by mkyral
 #17 12.11.2011: updated by mkyral
+#18 29.12.2011: updated by mkyral
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1039,14 +1101,36 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-!HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
-!HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
-!HISTORY_MSG_162;Tone Mapping
-!PARTIALPASTE_EPD;Tone Mapping
-!TP_EPD_EDGESTOPPING;Edge stopping
-!TP_EPD_LABEL;Tone Mapping
-!TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
-!TP_EPD_SCALE;Scale
-!TP_EPD_STRENGTH;Strength
+!ABOUT_TAB_RELEASENOTES;Release Notes
+!EXPORT_BYPASS_ALL;Select / Unselect All
+!EXPORT_BYPASS_COLORDENOISE;Bypass Color denoise
+!EXPORT_BYPASS_DEFRINGE;Bypass Defringe
+!EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
+!EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by detail levels
+!EXPORT_BYPASS_LUMADENOISE;Bypass Luma denoise
+!EXPORT_BYPASS_RAW_ALL_ENHANCE;Bypass Post demosaic artifact/noise reduction
+!EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration correction
+!EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False color suppression
+!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB enhancement steps
+!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB iterations
+!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
+!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
+!EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green equilibration
+!EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line noise filter
+!EXPORT_BYPASS_SHARPENEDGE;Bypass Edge sharpening
+!EXPORT_BYPASS_SHARPENING;Bypass Sharpening
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+!EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (high quality)
+!EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
+!EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
+!EXPORT_MAXHEIGHT;Maximum Height: 
+!EXPORT_MAXWIDTH;Maximum Width:  
+!EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
+!EXPORT_RAW_DMETHOD;Demosaic method
+!EXPORT_RESIZEMETHOD;Resize method
+!FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
+!MAIN_TAB_EXPORT; Export 
+!TP_RGBCURVES_BLUE;B
+!TP_RGBCURVES_CHANNEL;Channel
+!TP_RGBCURVES_GREEN;G
+!TP_RGBCURVES_RED;R

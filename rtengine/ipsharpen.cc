@@ -254,7 +254,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 
 	int offset,c,i,j,p,width2;
 	int width = lab->W, height = lab->H;
-	float *L,lumH,lumV,lumD1,lumD2,v,contrast,med,s;
+	float *L,lumH,lumV,lumD1,lumD2,v,contrast,s;
 	float difL,difR,difT,difB,difLT,difRB,difLB,difRT,wH,wV,wD1,wD2,chmax[3];
 	float f1,f2,f3,f4;
 	float templab;
@@ -322,7 +322,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						contrast=1.0;
 
 					// new possible values
-					if ((L[offset]<L[offset-1])&&(L[offset]>L[offset+1])||(L[offset]>L[offset-1])&&(L[offset]<L[offset+1])){
+					if (((L[offset]<L[offset-1])&&(L[offset]>L[offset+1])) || ((L[offset]>L[offset-1])&&(L[offset]<L[offset+1]))){
 						f1 = fabs(L[offset-2]-L[offset-1]);
 						f2 = fabs(L[offset-1]-L[offset]);
 						f3 = fabs(L[offset-1]-L[offset-width])*fabs(L[offset-1]-L[offset+width]);
@@ -339,7 +339,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset-width])&&(L[offset]>L[offset+width])||(L[offset]>L[offset-width])&&(L[offset]<L[offset+width])) {
+					if (((L[offset]<L[offset-width])&&(L[offset]>L[offset+width])) || ((L[offset]>L[offset-width])&&(L[offset]<L[offset+width]))) {
 						f1 = fabs(L[offset-width2]-L[offset-width]);
 						f2 = fabs(L[offset-width]-L[offset]);
 						f3 = fabs(L[offset-width]-L[offset-1])*fabs(L[offset-width]-L[offset+1]);
@@ -356,7 +356,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset-1-width])&&(L[offset]>L[offset+1+width])||(L[offset]>L[offset-1-width])&&(L[offset]<L[offset+1+width])) {
+					if (((L[offset]<L[offset-1-width])&&(L[offset]>L[offset+1+width])) || ((L[offset]>L[offset-1-width])&&(L[offset]<L[offset+1+width]))) {
 						f1 = fabs(L[offset-2-width2]-L[offset-1-width]);
 						f2 = fabs(L[offset-1-width]-L[offset]);
 						f3 = fabs(L[offset-1-width]-L[offset-width+1])*fabs(L[offset-1-width]-L[offset+width-1]);
@@ -373,7 +373,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset+1-width])&&(L[offset]>L[offset-1+width])||(L[offset]>L[offset+1-width])&&(L[offset]<L[offset-1+width])) {
+					if (((L[offset]<L[offset+1-width])&&(L[offset]>L[offset-1+width])) || ((L[offset]>L[offset+1-width])&&(L[offset]<L[offset-1+width]))) {
 						f1 = fabs(L[offset-2+width2]-L[offset-1+width]);
 						f2 = fabs(L[offset-1+width]-L[offset]);
 						f3 = fabs(L[offset-1+width]-L[offset-width-1])*fabs(L[offset-1+width]-L[offset+width+1]);
@@ -431,7 +431,7 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 	// k=2 matrix 5x5  k=1 matrix 3x3
 	int offset,offset2,c,i,j,col,row,n;
 	float temp,temp2,temp3,temp4,tempL;
-	float *LM,v,s,contrast,w;
+	float *LM,v,s,contrast;
 	int signs[25];
 	int width = lab->W, height = lab->H;
 	float uniform = params->sharpenMicro.uniformity;//between 0 to 100
@@ -476,7 +476,7 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 			LM[offset] = lab->L[j][i]/327.68f;// adjust to 0.100 and to RT variables
 		}
 
-#pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,w,temp2,temp3,tempL,temp4) shared(lab,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
+#pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,temp2,temp3,tempL,temp4) shared(lab,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
 	for(j=k; j<height-k; j++)
 		for(i=k,offset=j*width+i; i<width-k; i++,offset++) {
 			s=amount;
@@ -490,7 +490,7 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 					n++;
 				}
 			if      (k==1) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width]))/chmax; //for 3x3
-			else if (k==2) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])\
+			else if (k==2) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])
 									      +fabs(LM[offset+2]-LM[offset-2])*fabs(LM[offset+2]-LM[offset-2])+fabs(LM[offset+2*width]-LM[offset-2*width])*fabs(LM[offset+2*width]-LM[offset-2*width]))/(2*chmax);  //for 5x5
 
 			if (contrast>1.0f)

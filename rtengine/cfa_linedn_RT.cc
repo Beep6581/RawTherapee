@@ -59,7 +59,6 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 {  
 	// local variables
 	int height=H, width=W;
-	int verbose=1;
 	
 	const float clip_pt = 0.8*initialGain* 65535.0;
 	

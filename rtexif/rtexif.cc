@@ -27,6 +27,8 @@
 
 #include "rtexif.h"
 
+using namespace std;
+
 namespace rtexif {
 
 StdInterpreter stdInterpreter;
@@ -302,7 +304,6 @@ void TagDirectory::applyChange (std::string name, std::string value) {
     else {
         // try to find it
         std::string::size_type dp1 = fseg.find_first_of ('[');
-        std::string::size_type dp2 = fseg.find_first_of (']');
         std::string basename = fseg.substr (0,dp1);
         Tag* t = NULL;
         int dirnum = -1;
@@ -405,7 +406,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
   keep = false;
 
   // filter out invalid tags
-  if ((int)type<1 || (int)type>14 || count>900000 || count<0) {
+  if ((int)type<1 || (int)type>14 || count>900000) {
     type = INVALID;
     return;
   }
@@ -845,6 +846,7 @@ void Tag::toString (char* buffer, int ofs) {
         case SRATIONAL: 
         case RATIONAL: sprintf (b, "%d/%d", (int)sget4 (value+8*i+ofs, getOrder()), (int)sget4 (value+8*i+ofs+4, getOrder())); break; 
         case FLOAT:    sprintf (b, "%g", toDouble(8*i+ofs)); break;
+	default: break;
     }
   }
   if (count > maxcount)
@@ -1356,7 +1358,6 @@ TagDirectory* ExifManager::parseJPEG (FILE* f) {
   fread (&c, 1, 1, f);
   const char exifid[] = "Exif\0\0";
   char idbuff[8];
-  bool success = false;
   int tiffbase = -1;
   while (fread (&c, 1, 1, f)) {
     if (c!=markerl) continue;
@@ -1403,7 +1404,7 @@ const std::vector<Tag*>& ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
 
 
 
-int ExifManager::createJPEGMarker (const TagDirectory* root, const std::vector< std::pair<std::string,std::string> >& changeList, int W, int H, unsigned char* buffer) {
+int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char* buffer) {
 
   // write tiff header
   int offs = 6;
@@ -1417,12 +1418,13 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const std::vector< 
 
   TagDirectory* cl;
   if (root)
+    //FIXME: static_cast needed here
     cl = ((TagDirectory*)root)->clone (NULL);
   else
     cl = new TagDirectory (NULL, ifdAttribs, INTEL);
 
-  for (int i=0; i<changeList.size(); i++)
-     cl->applyChange (changeList[i].first, changeList[i].second);
+  for (rtengine::procparams::ExifPairs::const_iterator i=changeList.begin(); i!=changeList.end(); i++)
+     cl->applyChange (i->first, i->second);
   
    getDefaultTIFFTags (cl);
   
@@ -1440,7 +1442,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const std::vector< 
   return size + 6;
 }
 
-int ExifManager::createTIFFHeader (const TagDirectory* root, const std::vector< std::pair<std::string,std::string> >& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char* buffer) {
+int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, int bps, const char* profiledata, int profilelen, const char* iptcdata, int iptclen, unsigned char* buffer) {
 
 // write tiff header
     int offs = 0;
@@ -1453,6 +1455,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const std::vector< 
 
     TagDirectory* cl;
     if (root)
+	//FIXME: static_cast needed here
         cl = ((TagDirectory*)root)->clone (NULL);
     else
         cl = new TagDirectory (NULL, ifdAttribs, INTEL);
@@ -1486,8 +1489,8 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const std::vector< 
     }
     
 // apply list of changes
-    for (int i=0; i<changeList.size(); i++)
-        cl->applyChange (changeList[i].first, changeList[i].second);
+    for (rtengine::procparams::ExifPairs::const_iterator i=changeList.begin(); i!=changeList.end(); i++)
+        cl->applyChange (i->first, i->second);
   
   // append default properties   
         getDefaultTIFFTags (cl);

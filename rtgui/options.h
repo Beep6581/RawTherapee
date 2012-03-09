@@ -49,7 +49,6 @@ class Options {
     void error (int line); 
 
   public:
-    bool firstRun;
     bool savesParamsAtExit;
     SaveFormat saveFormat,saveFormatBatch;
     Glib::ustring savePathTemplate;
@@ -62,6 +61,7 @@ class Options {
     int  startupDir;
     Glib::ustring startupPath;
     Glib::ustring profilePath;
+    Glib::ustring loadSaveProfilePath;
     Glib::ustring lastSaveAsPath;
     int saveAsDialogWidth;
     int saveAsDialogHeight;
@@ -163,6 +163,38 @@ class Options {
     bool menuGroupLabel;
     bool menuGroupFileOperations;
     bool menuGroupProfileOperations;
+
+    // fast export options
+    bool fastexport_bypass_sharpening;
+    bool fastexport_bypass_sharpenEdge;
+    bool fastexport_bypass_sharpenMicro;
+    //bool fastexport_bypass_lumaDenoise;
+    //bool fastexport_bypass_colorDenoise;
+    bool fastexport_bypass_defringe;
+    bool fastexport_bypass_dirpyrDenoise;
+    bool fastexport_bypass_sh_hq;
+    bool fastexport_bypass_dirpyrequalizer;
+    bool fastexport_bypass_raw_all_enhance;
+    bool fastexport_bypass_raw_ccSteps;
+    bool fastexport_bypass_raw_dcb_iterations;
+    bool fastexport_bypass_raw_dcb_enhance;
+    bool fastexport_bypass_raw_ca;
+    bool fastexport_bypass_raw_linenoise;
+    bool fastexport_bypass_raw_greenthresh;
+    bool fastexport_bypass_raw_df;
+    bool fastexport_bypass_raw_ff;
+    Glib::ustring fastexport_raw_dmethod;
+    Glib::ustring fastexport_icm_input;
+    Glib::ustring fastexport_icm_working;
+    Glib::ustring fastexport_icm_output;
+    Glib::ustring fastexport_icm_gamma;
+    bool          fastexport_resize_enabled;
+    double        fastexport_resize_scale;
+    Glib::ustring fastexport_resize_appliesTo;
+    Glib::ustring fastexport_resize_method;
+    int           fastexport_resize_dataspec;
+    int           fastexport_resize_width;
+    int           fastexport_resize_height;
 
     Options ();
 

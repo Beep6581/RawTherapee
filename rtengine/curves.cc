@@ -39,15 +39,9 @@ namespace rtengine {
 		x = 0;
 		y = 0;
 		ypp = 0;
-	    hash = NULL;
-	    hashSize = 1000;  // has to be initiallised to the maximum value
+		hashSize = 1000;  // has to be initiallised to the maximum value
 	}
 	
-	Curve::~Curve () {
-		if (hash)
-			delete [] hash;
-	}
-
 	void Curve::AddPolygons ()
 	{
 		if (firstPointIncluded) {
@@ -69,29 +63,50 @@ namespace rtengine {
 		poly_x.push_back(x3);
 		poly_y.push_back(y3);
 	}
-	
+
 	void Curve::fillHash() {
-    	hash = new unsigned short int[hashSize+2];
+    	hash.resize(hashSize+2);
 
     	unsigned int polyIter = 0;
     	double const increment = 1./hashSize;
     	double milestone = 0.;
 
-    	for (unsigned int i=0; i<(hashSize+1);) {
+		for (unsigned short i=0; i<(hashSize+1);) {
     		while(poly_x[polyIter] <= milestone) ++polyIter;
-    		hash[i] = polyIter-1;
-    		milestone = (++i)*increment;
+    		hash.at(i).smallerValue = polyIter-1;
+    		++i;
+    		milestone = i*increment;
     	}
-    	hash[hashSize+1] = poly_x.size()-1;
+		milestone = 0.;
+		polyIter = 0;
+		for (unsigned int i=0; i<(hashSize+1);) {
+    		while(poly_x[polyIter] < (milestone+increment)) ++polyIter;
+    		hash.at(i).higherValue = polyIter;
+    		++i;
+    		milestone = i*increment;
+    	}
+    	hash.at(hashSize+1).smallerValue = poly_x.size()-1;
+    	hash.at(hashSize+1).higherValue = poly_x.size();
 
-		/*
-		// Debug output to file
-		FILE* f = fopen ("hash.txt", "wt");
-		for (int i=0; i<(hashSize+2); i++)
-			fprintf (f, "%d: %d   >   %.6f, %.6f\n", i, hash[i], poly_x[hash[i]], poly_y[hash[i]]);
-		fprintf (f, "\nppn: %d\npoly_x: %d\n", ppn, poly_x.size());
-		fclose (f);
-		*/
+    	/*
+    	 * Uncoment the code below to dump the polygon points and the hash table in files
+    	if (poly_x.size() > 500) {
+    		printf("Files generated (%d points)\n", poly_x.size());
+			FILE* f = fopen ("hash.txt", "wt");
+			for (unsigned int i=0; i<hashSize;i++) {
+				unsigned short s = hash.at(i).smallerValue;
+				unsigned short h = hash.at(i).higherValue;
+				fprintf (f, "%d: %d<%d (%.5f<%.5f)\n", i, s, h, poly_x[s], poly_x[h]);
+			}
+			fclose (f);
+			f = fopen ("poly_x.txt", "wt");
+			for (unsigned int i=0; i<poly_x.size();i++) {
+				fprintf (f, "%d: %.5f, %.5f\n", i, poly_x[i], poly_y[i]);
+			}
+			fclose (f);
+    	}
+    	*/
+
 	}
 
 	void fillCurveArray(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool needed) {
@@ -131,8 +146,8 @@ namespace rtengine {
 	}
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, \
-										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints, \
+	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh,
+										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,
 										LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, int skip) {
 		
 		//colormult = chroma_scale for Lab manipulations
@@ -204,7 +219,7 @@ namespace rtengine {
 
 		needed = false;
 		// create a curve if needed
-		if (acurvePoints.size()>0 && acurvePoints[0]!=0) {
+		if (!acurvePoints.empty() && acurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (acurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (dCurve && !dCurve->isIdentity())
 				needed = true;
@@ -218,7 +233,7 @@ namespace rtengine {
 		//-----------------------------------------------------
 
 		needed = false;
-		if (bcurvePoints.size()>0 && bcurvePoints[0]!=0) {
+		if (!bcurvePoints.empty() && bcurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (bcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (dCurve && !dCurve->isIdentity())
 				needed = true;
@@ -234,16 +249,16 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, \
-									 double shcompr, double br, double contr, double gamma_, bool igamma_, \
-									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped, \
-									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, \
+	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
+									 double shcompr, double br, double contr, double gamma_, bool igamma_,
+									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
 									 LUTu & outBeforeCCurveHistogram, int skip) {
 		
 		
 		//double def_mul = pow (2.0, defmul);
 		
-		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  \
+		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f
 				gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);*/
 		
 		// compute parameters of the gamma curve
@@ -414,7 +429,7 @@ namespace rtengine {
 		// create a curve if needed
 		bool histNeeded = false;
 		DiagonalCurve* tcurve = NULL;
-		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
@@ -464,8 +479,8 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints, \
-									 LUTu & histogram, LUTu & histogramCropped, LUTf & outCurve, \
+	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints,
+									 LUTu & histogram, LUTu & histogramCropped, LUTf & outCurve,
 									 LUTu & outBeforeCCurveHistogram, int skip) {
 		
 		// curve without contrast
@@ -579,7 +594,7 @@ namespace rtengine {
 		// create a curve if needed
 		DiagonalCurve* tcurve = NULL;
 		bool histNeeded = false;
-		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
@@ -641,8 +656,7 @@ namespace rtengine {
 						
 		// create a curve if needed
 		DiagonalCurve* tcurve = NULL;
-		bool histNeeded = false;
-		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 		}
 		if (tcurve && tcurve->isIdentity()) {

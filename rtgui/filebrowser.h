@@ -25,6 +25,7 @@
 #include "filebrowserentry.h"
 #include "browserfilter.h"
 #include "partialpastedlg.h"
+#include "exportpanel.h"
 
 class FileBrowser;
 class FileBrowserEntry;
@@ -32,7 +33,7 @@ class FileBrowserListener {
 
     public:
         virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
-        virtual void developRequested       (std::vector<FileBrowserEntry*> tbe) {}
+        virtual void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode) {}
         virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
         virtual void deleteRequested        (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {}
         virtual void copyMoveRequested      (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {}
@@ -49,7 +50,9 @@ struct FileBrowserIdleHelper {
 /*
  * Class handling actions common to all thumbnails of the file browser
  */
-class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {  
+class FileBrowser  : public ThumbBrowserBase,
+                     public LWButtonListener,
+                     public ExportPanelListener{
 
     typedef sigc::signal<void> type_trash_changed;
 
@@ -60,6 +63,7 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     Gtk::MenuItem* trash;
     Gtk::MenuItem* untrash;
     Gtk::ImageMenuItem* develop;
+    Gtk::ImageMenuItem* developfast;
     Gtk::MenuItem* rename;
     Gtk::MenuItem* remove;
 	Gtk::MenuItem* removeInclProc;
@@ -98,8 +102,8 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
 
     FileBrowserListener* tbl;
     BrowserFilter filter;
-    PartialPasteDlg partialPasteDlg;
     int numFiltered;
+    PartialPasteDlg partialPasteDlg;
     FileBrowserIdleHelper* fbih;
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);
@@ -108,6 +112,8 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     void colorlabelRequested   (std::vector<FileBrowserEntry*> tbe, int colorlabel);
     void notifySelectionListener ();
     
+    ExportPanel* exportPanel;
+
     type_trash_changed m_trash_changed;
     
   public:
@@ -149,6 +155,10 @@ class FileBrowser  : public ThumbBrowserBase, public LWButtonListener {
     
     void selectionChanged ();
     
+    void setExportPanel (ExportPanel* expanel);
+	// exportpanel interface
+	void exportRequested();
+
     type_trash_changed trash_changed();
 };
 

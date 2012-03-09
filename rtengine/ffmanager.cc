@@ -106,7 +106,7 @@ void ffInfo::updateRawImage()
 	typedef unsigned int acc_t;
 	// averaging of flatfields if more than one is found matching the same key.
 	// this may not be necessary, as flatfield is further blurred before being applied to the processed image.
-	if( pathNames.size() >0 ){
+	if( !pathNames.empty() ){
 		std::list<Glib::ustring>::iterator iName = pathNames.begin();
 		ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
 		if( ri->loadRaw(true)){
@@ -179,15 +179,14 @@ void FFManager::init( Glib::ustring pathname )
 	
 	ffList.clear();
     for (int i=0; i<names.size(); i++) {
-        int lastdot = names[i].find_last_of ('.');
         try{
             addFileInfo(names[i]);
-        }catch( std::exception e ){}
+        }catch( std::exception& e ){}
     }
     // Where multiple shots exist for same group, move filename to list
     for( ffList_t::iterator iter = ffList.begin(); iter != ffList.end();iter++ ){
     	ffInfo &i = iter->second;
-    	if( i.pathNames.size()>0 && !i.pathname.empty() ){
+    	if( !i.pathNames.empty() && !i.pathname.empty() ){
     		i.pathNames.push_back( i.pathname );
     		i.pathname.clear();
     	}
@@ -275,7 +274,7 @@ void FFManager::getStat( int &totFiles, int &totTemplates)
  */
 ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert, time_t t )
 {
-	if( ffList.size() == 0 )
+	if( ffList.empty() )
 		return 0;
 	std::string key( ffInfo::key(mak,mod,len,focal,apert) );
 	ffList_t::iterator iter = ffList.find( key );

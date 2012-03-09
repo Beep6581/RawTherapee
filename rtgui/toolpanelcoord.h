@@ -172,7 +172,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Gtk::Notebook* toolPanelNotebook;
 
         ToolPanelCoordinator ();
-        ~ToolPanelCoordinator ();
+        virtual ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
 		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
@@ -185,7 +185,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
         // profilechangelistener interface
-        void profileChange  (const rtengine::procparams::ProcParams* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);    
+        void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);
         void setDefaults    (rtengine::procparams::ProcParams* defparams);
 
         // to support the GUI:

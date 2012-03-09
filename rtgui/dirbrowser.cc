@@ -161,11 +161,11 @@ void DirBrowser::updateVolumes () {
 }
 
 int updateVolumesUI (void* br) {
-    ((DirBrowser*)br)->updateVolumes ();
+    (static_cast<DirBrowser*>(br))->updateVolumes ();
     return 1;
 }
 int updateDirTreeUI (void* br) {
-    ((DirBrowser*)br)->updateDirTreeRoot ();
+    (static_cast<DirBrowser*>(br))->updateDirTreeRoot ();
     return 0;
 }
 
@@ -204,7 +204,7 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
     
   safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
 
-	if (subDirs.size() == 0)
+	if (subDirs.empty())
 			dirtree->collapse_row (path);
 	else {
 	
@@ -282,8 +282,6 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
     Gtk::TreeModel::Path path;
     path.append_index(0);
 
-    int end = 0;
-    int beg = 0;
     char* dcpy = strdup (absDirPath.c_str());
     char* dir = strtok (dcpy, "/\\");
     int count = 0;

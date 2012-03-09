@@ -508,8 +508,8 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 		for (int j=0; j<W; j++) {
 			if (j<2) {jprev=j+2;} else {jprev=j-2;}
 			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
-			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext], \
-				   rawData[i][jprev],rawData[i][j],rawData[i][jnext], \
+			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext],
+				   rawData[i][jprev],rawData[i][j],rawData[i][jnext],
 				   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],cfablur[i*W+j]);
 		}
 	}
@@ -970,7 +970,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	Glib::ustring newDF = raw.dark_frame;
 	RawImage *rid=NULL;
 	if (!raw.df_autoselect) {
-		if( raw.dark_frame.size()>0)
+		if( !raw.dark_frame.empty())
 			rid = dfm.searchDarkFrame( raw.dark_frame );
 	} else {
 		rid = dfm.searchDarkFrame( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
@@ -984,7 +984,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	Glib::ustring newFF = raw.ff_file;
 	RawImage *rif=NULL;
 	if (!raw.ff_AutoSelect) {
-		if( raw.ff_file.size()>0)
+		if( !raw.ff_file.empty())
 			rif = ffm.searchFlatField( raw.ff_file );
 	} else {
 		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getLens(),idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
@@ -1013,11 +1013,11 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	bp = 0;
 	if( raw.df_autoselect ){
 		bp = dfm.getHotPixels( ri->get_maker(), ri->get_model(), ri->get_ISOspeed(), ri->get_shutter(), ri->get_timestamp());
-	}else if( raw.dark_frame.size()>0 )
+	}else if( !raw.dark_frame.empty() )
 		bp = dfm.getHotPixels( raw.dark_frame );
 	if(bp){
 		totBP+=bitmapBads.set( *bp );
-		if( settings->verbose && bp->size()>0){
+		if( settings->verbose && !bp->empty()){
 			std::cout << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
 		}
 	}
@@ -1042,7 +1042,7 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	   cfaCleanFromMap( bitmapBads );
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
-    if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer()) ) {
+    if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,9)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer()) ) {
         // global correction
         int ng1=0, ng2=0, i=0;
         double avgg1=0., avgg2=0.;
@@ -1227,7 +1227,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			else //(raw.ff_BlurType == RAWParams::ff_BlurTypestring[RAWParams::area_ff])
 				cfaboxblur(riFlatFile, cfablur, BS, BS);
 			
-			float refctrval,reflocval,refcolor[2][2],vignettecorr,colorcastcorr;
+			float refcolor[2][2],vignettecorr;
 			//find center ave values by channel
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
@@ -1302,7 +1302,6 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 
 	float (*cfatmp);
 	cfatmp = (float (*)) calloc (H*W, sizeof *cfatmp);
-	float clean0, clean1;
 	float hotdeadthresh = 0.5;
 		
 	for (int i=0; i<H; i++) {
@@ -1313,10 +1312,10 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 		for (int j=0; j<W; j++) {
 			if (j<2) {jprev=j+2;} else {jprev=j-2;}
 			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
-			//med3x3(riFlatFile->data[iprev][jprev], riFlatFile->data[iprev][j], riFlatFile->data[iprev][jnext], \
-				   riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext], \
-				   riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
-			med5(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev],riFlatFile->data[i][j], \
+			//med3x3(riFlatFile->data[iprev][jprev], riFlatFile->data[iprev][j], riFlatFile->data[iprev][jnext],
+			//	   riFlatFile->data[i][jprev], riFlatFile->data[i][j], riFlatFile->data[i][jnext],
+			//	   riFlatFile->data[inext][jprev], riFlatFile->data[inext][j], riFlatFile->data[inext][jnext], cfatmp[i*W+j]);
+			med5(riFlatFile->data[iprev][j], riFlatFile->data[i][jprev],riFlatFile->data[i][j],
 				 riFlatFile->data[i][jnext], riFlatFile->data[inext][j],median);
 			if (riFlatFile->data[i][j]>hotdeadthresh*median || median>hotdeadthresh*riFlatFile->data[i][j]) {
 				cfatmp[i*W+j] = median;
@@ -1733,10 +1732,6 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 			( wprof[2][2])
         }
 		};
-	float wip[3][3] = {
-		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
-		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
-		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}};
         lcmsMutex->lock ();
         cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), 
             INTENT_RELATIVE_COLORIMETRIC,  // float is clipless, so don't trim it
@@ -2091,14 +2086,13 @@ void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, f
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, \
+void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout,
 										int width, float maxval, double xyz_cam[3][3], double cam_xyz[3][3]) {
 
     //static bool crTableReady = false;
 	
 	// lookup table for Lab conversion
 	// perhaps should be centralized, universally defined so we don't keep remaking it???
-    ImProcFunctions::cachef;
     /*for (int ix=0; ix < 0x10000; ix++) {
     	    float rx = ix / 65535.0;
         	fv[ix] = rx > 0.008856 ? exp(1.0/3 * log(rx)) : 7.787*rx + 16/116.0;
@@ -2508,8 +2502,8 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::inverse33 (double (*rgb_cam)[3], double (*cam_rgb)[3]) {
-	double nom = (rgb_cam[0][2]*rgb_cam[1][1]*rgb_cam[2][0] - rgb_cam[0][1]*rgb_cam[1][2]*rgb_cam[2][0] - \
-				  rgb_cam[0][2]*rgb_cam[1][0]*rgb_cam[2][1] + rgb_cam[0][0]*rgb_cam[1][2]*rgb_cam[2][1] + \
+	double nom = (rgb_cam[0][2]*rgb_cam[1][1]*rgb_cam[2][0] - rgb_cam[0][1]*rgb_cam[1][2]*rgb_cam[2][0] -
+				  rgb_cam[0][2]*rgb_cam[1][0]*rgb_cam[2][1] + rgb_cam[0][0]*rgb_cam[1][2]*rgb_cam[2][1] +
 				  rgb_cam[0][1]*rgb_cam[1][0]*rgb_cam[2][2] - rgb_cam[0][0]*rgb_cam[1][1]*rgb_cam[2][2] );
 	cam_rgb[0][0] = (rgb_cam[1][2]*rgb_cam[2][1]-rgb_cam[1][1]*rgb_cam[2][2]) / nom;
 	cam_rgb[0][1] = -(rgb_cam[0][2]*rgb_cam[2][1]-rgb_cam[0][1]*rgb_cam[2][2]) / nom;

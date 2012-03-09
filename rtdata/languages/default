@@ -1,6 +1,7 @@
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Credits
 ABOUT_TAB_LICENSE;License
+ABOUT_TAB_RELEASENOTES;Release Notes
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
 BATCHQUEUE_AUTOSTART;Auto start
@@ -51,6 +52,32 @@ EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values
 EXIFPANEL_RESET;Reset
 EXIFPANEL_SUBDIRECTORY;Subdirectory
+EXPORT_BYPASS_ALL;Select / Unselect All
+EXPORT_BYPASS_COLORDENOISE;Bypass Color denoise
+EXPORT_BYPASS_DEFRINGE;Bypass Defringe
+EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
+EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by detail levels
+EXPORT_BYPASS_LUMADENOISE;Bypass Luma denoise
+EXPORT_BYPASS_RAW_ALL_ENHANCE;Bypass Post demosaic artifact/noise reduction
+EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration correction
+EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False color suppression
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB enhancement steps
+EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB iterations
+EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
+EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
+EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green equilibration
+EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line noise filter
+EXPORT_BYPASS_SHARPENEDGE;Bypass Edge sharpening
+EXPORT_BYPASS_SHARPENING;Bypass Sharpening
+EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (high quality)
+EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
+EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
+EXPORT_MAXHEIGHT;Maximum Height: 
+EXPORT_MAXWIDTH;Maximum Width:  
+EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
+EXPORT_RAW_DMETHOD;Demosaic method
+EXPORT_RESIZEMETHOD;Resize method
 FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
@@ -97,6 +124,7 @@ FILEBROWSER_POPUPMOVEEND;Move to end of queue
 FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
 FILEBROWSER_POPUPMOVETO;Move to...
 FILEBROWSER_POPUPOPEN;Open
+FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 FILEBROWSER_POPUPPROCESS;Put to Queue
 FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
 FILEBROWSER_POPUPRANK1;Rank 1 *
@@ -455,11 +483,12 @@ MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
 MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
-MAIN_TAB_DEVELOP;Develop
+MAIN_TAB_DEVELOP; Develop 
 MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPORT; Export 
 MAIN_TAB_EXPOSURE;Exposure
 MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
-MAIN_TAB_FILTER;Filter
+MAIN_TAB_FILTER; Filter 
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
@@ -475,20 +504,20 @@ MAIN_TOOLTIP_HIDEFP;Show/hide the bottom panel (directory and file browser) <b>F
 MAIN_TOOLTIP_HIDEHP;Show/hide the left panel (including the history) <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication (Key <)
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication (Key >)
-MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b>
-MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>
-MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>
-MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREFERENCES;Set preferences
+MAIN_TOOLTIP_PREVIEWB;Preview <b>Blue channel</b>\n<b>-b</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview <b>Focus Mask</b> <i>(beta)</i> <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
+MAIN_TOOLTIP_PREVIEWG;Preview <b>Green channel</b>\n<b>-g</b>
+MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>\n0.299*R + 0.587*G + 0.114*B\n<b>-v</b>
+MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>\n<b>-r</b>
 MAIN_TOOLTIP_QINFO;Quick info on the image <b>I</b>
 MAIN_TOOLTIP_SAVEAS;Save image to a selected folder
 MAIN_TOOLTIP_SAVE;Save image to the default folder
 MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
-MAIN_TOOLTIP_TOGGLE;Toggle <b>before</b>/<b>after</b> view <b>B</b>
 MAIN_TOOLTIP_THRESHOLD;Threshold
+MAIN_TOOLTIP_TOGGLE;Toggle <b>before</b>/<b>after</b> view <b>Shift-B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = n/a
@@ -719,10 +748,14 @@ PROFILEPANEL_PLASTPHOTO;Last Photo
 PROFILEPANEL_PLASTSAVED;Last Saved
 PROFILEPANEL_PROFILE;Profile
 PROFILEPANEL_SAVEDLGLABEL;Save Postprocessing Parameters...
-PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
-PROFILEPANEL_TOOLTIPLOAD;Load a profile from file
-PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
-PROFILEPANEL_TOOLTIPSAVE;Save current profile
+PROFILEPANEL_COPYPPASTE;Parameters to copy
+PROFILEPANEL_LOADPPASTE;Parameters to load
+PROFILEPANEL_PASTEPPASTE;Parameters to paste
+PROFILEPANEL_SAVEPPASTE;Parameters to save
+PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard\nCTRL-click to select the parameters to copy
+PROFILEPANEL_TOOLTIPLOAD;Load a profile from file\nCTRL-click to select the parameters to load
+PROFILEPANEL_TOOLTIPPASTE;Paste profile from clipboard\nCTRL-click key to select the parameters to paste
+PROFILEPANEL_TOOLTIPSAVE;Save current profile\nCTRL-click key to select the parameters to save
 PROGRESSBAR_BADPIXELS;Bad pixels...
 PROGRESSBAR_CACORRECTION;CA correction...
 PROGRESSBAR_DARKFRAME;Darkframe... 
@@ -793,6 +826,7 @@ TP_COLORSHIFT_GREENMAGENTA;Green-Magenta
 TP_COLORSHIFT_LABEL;Color Shift
 TP_CROP_FIXRATIO;Fix Ratio:
 TP_CROP_GTDIAGONALS;Rule of diagonals
+TP_CROP_GTEPASSPORT;Biometric Passport
 TP_CROP_GTGRID;Grid
 TP_CROP_GTHARMMEANS1;Harmonic means 1
 TP_CROP_GTHARMMEANS2;Harmonic means 2
@@ -814,11 +848,10 @@ TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
 TP_DETAIL_AMOUNT;Amount
-TP_DIRPYRDENOISE_CHROMA;Chroma noise reduction
+TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Noise reduction
-TP_DIRPYRDENOISE_LDETAIL;Luma detail recovery
-TP_DIRPYRDENOISE_LUMA;Luma noise reduction
+TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels
 TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
@@ -875,14 +908,6 @@ TP_HLREC_COLOR;Color Propagation
 TP_HLREC_LABEL;Highlight Reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
 TP_HLREC_METHOD;Method: 
-TP_HSVEQUALIZER1;Red
-TP_HSVEQUALIZER2;Yellow
-TP_HSVEQUALIZER3;Lime
-TP_HSVEQUALIZER4;Green
-TP_HSVEQUALIZER5;Aqua
-TP_HSVEQUALIZER6;Blue
-TP_HSVEQUALIZER7;Purple
-TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;HSV Channel
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
@@ -893,17 +918,17 @@ TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 TP_ICM_FILEDLGFILTERANY;Any files
 TP_ICM_FILEDLGFILTERICM;ICC Profile Files
-TP_ICM_INPUTCAMERAICC;Camera standard or ICC
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
+TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific ICC
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
 TP_ICM_INPUTCAMERA;Camera standard
-TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
+TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by DCRAW, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
 TP_ICM_INPUTCUSTOM;Custom
 TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
 TP_ICM_INPUTDLGLABEL;Select Input ICC Profile...
 TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
 TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 TP_ICM_INPUTNONE;No profile
-TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
+TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
 TP_ICM_INPUTPROFILE;Input Profile
 TP_ICM_LABEL;Color Management
 TP_ICM_NOICM;No ICM: sRGB output
@@ -934,6 +959,7 @@ TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
 TP_PREPROCESS_GREENEQUIL;Green equilibration
 TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
 TP_PREPROCESS_LABEL;Preprocessing
 TP_PREPROCESS_LINEDENOISE;Line noise filter
 TP_PREPROCESS_NO_FOUND;None found
@@ -973,7 +999,11 @@ TP_RESIZE_SCALE;Scale
 TP_RESIZE_SPECIFY;Specify:
 TP_RESIZE_WIDTH;Width
 TP_RESIZE_W;W:
+TP_RGBCURVES_BLUE;B
+TP_RGBCURVES_CHANNEL;Channel
+TP_RGBCURVES_GREEN;G
 TP_RGBCURVES_LABEL;RGB Curves
+TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degree
 TP_ROTATE_LABEL;Rotate
 TP_ROTATE_SELECTLINE;    Select Straight Line
@@ -1025,10 +1055,11 @@ TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy
 TP_WBALANCE_CUSTOM;Custom
-TP_WBALANCE_FLASH_HEADER;Flash
+TP_WBALANCE_DAYLIGHT;Daylight (sunny)
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+TP_WBALANCE_FLASH_HEADER;Flash
 TP_WBALANCE_FLUO1;F1 - Daylight
 TP_WBALANCE_FLUO2;F2 - Cool white
 TP_WBALANCE_FLUO3;F3 - White
@@ -1059,7 +1090,6 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Spot WB
-TP_WBALANCE_DAYLIGHT;Daylight (sunny)
 TP_WBALANCE_TEMPERATURE;Temperature
 TP_WBALANCE_TUNGSTEN;Tungsten
 ZOOMBAR_DETAIL;Detail
@@ -1076,4 +1106,5 @@ ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>
 #00 default translation file 
-#01 Developers should add translations to this file and then run 'generateDifferences.sh' script to update other locales.
+#01 Developers should add translations to this file and then run 'generateTranslationDiffs' script to update other locales.
+#02 WARNING: This script works on Linux only

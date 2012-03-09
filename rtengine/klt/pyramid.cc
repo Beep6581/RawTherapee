@@ -34,15 +34,19 @@ _KLT_Pyramid _KLTCreatePyramid(
   int i;
 
   if (subsampling != 2 && subsampling != 4 && 
-      subsampling != 8 && subsampling != 16 && subsampling != 32)
+      subsampling != 8 && subsampling != 16 && subsampling != 32) {
     KLTError("(_KLTCreatePyramid)  Pyramid's subsampling must "
              "be either 2, 4, 8, 16, or 32");
+    exit(1);
+  }
 
      
   /* Allocate memory for structure and set parameters */
   pyramid = (_KLT_Pyramid)  malloc(nbytes);
-  if (pyramid == NULL)
+  if (pyramid == NULL) {
     KLTError("(_KLTCreatePyramid)  Out of memory");
+    exit(1);
+  }
      
   /* Set parameters */
   pyramid->subsampling = subsampling;
@@ -98,9 +102,11 @@ void _KLTComputePyramid(
   int i, x, y;
 	
   if (subsampling != 2 && subsampling != 4 && 
-      subsampling != 8 && subsampling != 16 && subsampling != 32)
+      subsampling != 8 && subsampling != 16 && subsampling != 32) {
     KLTError("(_KLTComputePyramid)  Pyramid's subsampling must "
              "be either 2, 4, 8, 16, or 32");
+    exit(1);
+  }
 
   assert(pyramid->ncols[0] == img->ncols);
   assert(pyramid->nrows[0] == img->nrows);

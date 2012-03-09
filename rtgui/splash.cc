@@ -21,11 +21,9 @@
 #include <glib/gstdio.h>
 #include "../rtengine/safegtk.h"
 
-#ifndef WIN32
-#include "config.h"
-#endif
-
 extern Glib::ustring argv0;
+extern Glib::ustring creditsPath;
+extern Glib::ustring licensePath;
 extern Glib::ustring versionString;
 
 SplashImage::SplashImage () {
@@ -72,25 +70,22 @@ bool SplashImage::on_expose_event (GdkEventExpose* event) {
     return true;
 }
 
-Splash::Splash () {
+Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true) {
 
-    set_title (M("GENERAL_ABOUT"));
     set_border_width (4);
 
-    Gtk::Notebook* nb = Gtk::manage (new Gtk::Notebook ());
+    releaseNotesSW = NULL;
+
+    nb = Gtk::manage (new Gtk::Notebook ());
     get_vbox()->pack_start (*nb);
 
     // Tab 1: the image
-    splashImage = new SplashImage ();
+    splashImage = Gtk::manage(new SplashImage ());
     nb->append_page (*splashImage,  M("ABOUT_TAB_SPLASH"));
     splashImage->show ();
 
     // Tab 2: the informations about the current version
-#if defined WIN32 || defined __APPLE__
- 	std::string buildFileName = Glib::build_filename (argv0, "AboutThisBuild.txt");
-#else
-	std::string buildFileName = Glib::build_filename (CREDITS_SEARCH_PATH, "AboutThisBuild.txt");
-#endif
+	std::string buildFileName = Glib::build_filename (creditsPath, "AboutThisBuild.txt");
 	if ( safe_file_test(buildFileName, (Glib::FILE_TEST_EXISTS)) ) {
 	    FILE *f = safe_g_fopen (buildFileName, "rt");
 	    if (f != NULL) {
@@ -107,17 +102,15 @@ Splash::Splash () {
 	        Gtk::ScrolledWindow *buildSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *buildTV = Gtk::manage (new Gtk::TextView (textBuffer));
 			buildTV->set_editable(false);
+			buildTV->set_left_margin (10);
+			buildTV->set_right_margin (5);
 			buildSW->add(*buildTV);
 		    nb->append_page (*buildSW, M("ABOUT_TAB_BUILD"));
 	    }
 	}
 
     // Tab 3: the credits
-#if defined WIN32 || defined __APPLE__
-	std::string creditsFileName = Glib::build_filename (argv0, "AUTHORS.txt");
-#else
-	std::string creditsFileName = Glib::build_filename (CREDITS_SEARCH_PATH, "AUTHORS.txt");
-#endif
+	std::string creditsFileName = Glib::build_filename (creditsPath, "AUTHORS.txt");
 	if ( safe_file_test(creditsFileName, (Glib::FILE_TEST_EXISTS)) ) {
 	    FILE *f = safe_g_fopen (creditsFileName, "rt");
 	    if (f != NULL) {
@@ -133,6 +126,9 @@ Splash::Splash () {
 
 	        Gtk::ScrolledWindow *creditsSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *creditsTV = Gtk::manage (new Gtk::TextView (textBuffer));
+			creditsTV->set_left_margin (10);
+			creditsTV->set_right_margin (5);
+			creditsTV->set_wrap_mode(Gtk::WRAP_WORD);
 			creditsTV->set_editable(false);
 			creditsSW->add(*creditsTV);
 		    nb->append_page (*creditsSW, M("ABOUT_TAB_CREDITS"));
@@ -140,11 +136,7 @@ Splash::Splash () {
 	}
 
     // Tab 4: the license
-#if defined WIN32 || defined __APPLE__
-	std::string licenseFileName = Glib::build_filename (argv0, "LICENSE.txt");
-#else
-	std::string licenseFileName = Glib::build_filename (LICENCE_SEARCH_PATH, "LICENSE.txt");
-#endif
+	std::string licenseFileName = Glib::build_filename (licensePath, "LICENSE.txt");
 	if ( safe_file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
 	    FILE *f = safe_g_fopen (licenseFileName, "rt");
 	    if (f != NULL) {
@@ -159,10 +151,53 @@ Splash::Splash () {
 	        textBuffer->set_text((Glib::ustring)(ostr.str()));
 
 	        Gtk::ScrolledWindow *licenseSW = Gtk::manage (new Gtk::ScrolledWindow());
-			Gtk::TextView *creditsTV = Gtk::manage (new Gtk::TextView (textBuffer));
-			creditsTV->set_editable(false);
-			licenseSW->add(*creditsTV);
+			Gtk::TextView *licenseTV = Gtk::manage (new Gtk::TextView (textBuffer));
+
+	        // set monospace font to enhance readability of formatted text
+			Pango::FontDescription fdescLicense;
+			fdescLicense.set_family("monospace");
+			fdescLicense.set_absolute_size (11*Pango::SCALE);
+			licenseTV->modify_font(fdescLicense);
+
+			licenseTV->set_left_margin (10);
+			licenseTV->set_right_margin (5);
+			licenseTV->set_editable(false);
+			licenseSW->add(*licenseTV);
 		    nb->append_page (*licenseSW, M("ABOUT_TAB_LICENSE"));
+	    }
+	}
+
+    // Tab 5: the Release Notes
+	std::string releaseNotesFileName = Glib::build_filename (creditsPath, "RELEASE_NOTES.txt");
+	if ( safe_file_test(releaseNotesFileName, (Glib::FILE_TEST_EXISTS)) ) {
+	    FILE *f = safe_g_fopen (releaseNotesFileName, "rt");
+	    if (f != NULL) {
+	        char* buffer = new char[1024];
+	        std::ostringstream ostr;
+	        while (fgets (buffer, 1024, f))
+	            ostr << buffer;
+	        delete [] buffer;
+	        fclose (f);
+
+	        Glib::RefPtr<Gtk::TextBuffer> textBuffer = Gtk::TextBuffer::create();
+	        textBuffer->set_text((Glib::ustring)(ostr.str()));
+
+	        releaseNotesSW = Gtk::manage (new Gtk::ScrolledWindow());
+			Gtk::TextView *releaseNotesTV = Gtk::manage (new Gtk::TextView (textBuffer));
+
+	        // set monospace font to enhance readability of formatted text
+			Pango::FontDescription fdescReleaseNotes;
+			fdescReleaseNotes.set_family("monospace");
+			fdescReleaseNotes.set_absolute_size (11*Pango::SCALE);
+	        releaseNotesTV->modify_font(fdescReleaseNotes);
+
+
+			releaseNotesTV->set_left_margin (10);
+			releaseNotesTV->set_right_margin (3);
+			releaseNotesTV->set_editable(false);
+			releaseNotesTV->set_wrap_mode(Gtk::WRAP_WORD);
+			releaseNotesSW->add(*releaseNotesTV);
+		    nb->append_page (*releaseNotesSW, M("ABOUT_TAB_RELEASENOTES"));
 	    }
 	}
 
@@ -174,15 +209,12 @@ Splash::Splash () {
     nb->set_current_page (0);
 
     show_all_children ();
-    set_modal (true);
     set_keep_above (true);
 }
 
-Splash::Splash (int maxtime) {
+Splash::Splash (Gtk::Window& parent, int maxtime) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true) {
 
-    set_title (M("GENERAL_ABOUT"));
-
-    splashImage = new SplashImage ();
+    splashImage = Gtk::manage(new SplashImage ());
 //    add (*splashImage);
     get_vbox()->pack_start (*splashImage);
     splashImage->show ();
@@ -204,8 +236,16 @@ bool Splash::on_timer () {
     return false;
 }
 
+/*
+ * removed as it seem to be too sensitive in some OS
 bool Splash::on_button_release_event (GdkEventButton* event) {
 
     hide ();
     return true;
+}
+*/
+
+void Splash::showReleaseNotes() {
+	if (releaseNotesSW)
+		nb->set_current_page(nb->page_num(*releaseNotesSW));
 }

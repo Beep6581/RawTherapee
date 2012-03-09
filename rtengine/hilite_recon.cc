@@ -184,8 +184,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 		plistener->setProgressStr ("HL reconstruction...");
 		plistener->setProgress (0.0);
 	}
-	float progress = 0.0;
-	
 	
 	int height = H;
 	int width = W;
@@ -205,7 +203,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 
 	//%%%%%%%%%%%%%%%%%%%%
 	//for blend algorithm:
-	static const float clipthresh = 0.95, blendthresh=1.0;
+	static const float blendthresh=1.0;
 	const int ColorCount=3;
 	// Transform matrixes rgb>lab and back
 	static const float trans[2][ColorCount][ColorCount] =
@@ -260,7 +258,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	sat -= black;
 	float camwb[4];
 	for (int c=0; c<4; c++) camwb[c]=ri->get_cam_mul(c);
-	float min = MIN(MIN(camwb[0],camwb[1]),camwb[2]);
 
 	multi_array2D<float,3> channelblur(width,height,ARRAY2D_CLEAR_DATA);
 	
@@ -282,7 +279,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			
 			//if one or more channels is highlight but none are blown, add to highlight accumulator
 			
-			if ((red[i][j]>thresh[0] || green[i][j]>thresh[1] || blue[i][j]>thresh[2]) && \
+			if ((red[i][j]>thresh[0] || green[i][j]>thresh[1] || blue[i][j]>thresh[2]) &&
 				(red[i][j]<max[0] && green[i][j]<max[1] && blue[i][j]<max[2])) {
 				
 				hipass_sum += fabs(channelblur[0][i][j]-red[i][j]) + fabs(channelblur[1][i][j]-green[i][j]) + fabs(channelblur[2][i][j]-blue[i][j]);
@@ -375,7 +372,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 				}
 			} else {
 				for (int c=0; c<4; c++) {
-					hilite_dir[c][i][j] = 0.1*((hilite_dir[0+c][i-2][j-1]+hilite_dir[0+c][i-1][j-1]+hilite_dir[0+c][i][j-1]+hilite_dir[0+c][i+1][j-1]+hilite_dir[0+c][i+2][j-1])/ \
+					hilite_dir[c][i][j] = 0.1*((hilite_dir[0+c][i-2][j-1]+hilite_dir[0+c][i-1][j-1]+hilite_dir[0+c][i][j-1]+hilite_dir[0+c][i+1][j-1]+hilite_dir[0+c][i+2][j-1])/
 											  (hilite_dir[0+3][i-2][j-1]+hilite_dir[0+3][i-1][j-1]+hilite_dir[0+3][i][j-1]+hilite_dir[0+3][i+1][j-1]+hilite_dir[0+3][i+2][j-1]+0.00001));
 					hilite_dir[4+c][i][j+1]  += hilite_dir[c][i][j];
 					hilite_dir[8+c][i-2][j]  += hilite_dir[c][i][j];
@@ -395,7 +392,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 				}
 			} else {
 				for (int c=0; c<4; c++) {
-					hilite_dir[4+c][i][j] = 0.1*((hilite_dir[4+c][(i-2)][(j+1)]+hilite_dir[4+c][(i-1)][(j+1)]+hilite_dir[4+c][(i)][(j+1)]+hilite_dir[4+c][(i+1)][(j+1)]+hilite_dir[4+c][(i+2)][(j+1)])/ \
+					hilite_dir[4+c][i][j] = 0.1*((hilite_dir[4+c][(i-2)][(j+1)]+hilite_dir[4+c][(i-1)][(j+1)]+hilite_dir[4+c][(i)][(j+1)]+hilite_dir[4+c][(i+1)][(j+1)]+hilite_dir[4+c][(i+2)][(j+1)])/
 														  (hilite_dir[4+3][(i-2)][(j+1)]+hilite_dir[4+3][(i-1)][(j+1)]+hilite_dir[4+3][(i)][(j+1)]+hilite_dir[4+3][(i+1)][(j+1)]+hilite_dir[4+3][(i+2)][(j+1)]+0.00001));
 					hilite_dir[8+c][i-2][j] += hilite_dir[4+c][i][j];
 					hilite_dir[12+c][i+2][j] += hilite_dir[4+c][i][j];
@@ -417,7 +414,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 				}
 			} else {
 				for (int c=0; c<4; c++) {
-					hilite_dir[8+c][i][j] = 0.1*((hilite_dir[8+c][i-1][j-2]+hilite_dir[8+c][i-1][j-1]+hilite_dir[8+c][i-1][j]+hilite_dir[8+c][i-1][j+1]+hilite_dir[8+c][i-1][j+2])/ \
+					hilite_dir[8+c][i][j] = 0.1*((hilite_dir[8+c][i-1][j-2]+hilite_dir[8+c][i-1][j-1]+hilite_dir[8+c][i-1][j]+hilite_dir[8+c][i-1][j+1]+hilite_dir[8+c][i-1][j+2])/
 											  (hilite_dir[8+3][i-1][j-2]+hilite_dir[8+3][i-1][j-1]+hilite_dir[8+3][i-1][j]+hilite_dir[8+3][i-1][j+1]+hilite_dir[8+3][i-1][j+2]+0.00001));
 					hilite_dir[12+c][i+1][j] += hilite_dir[8+c][i][j];
 				}
@@ -435,7 +432,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 				}
 			} else {
 				for (int c=0; c<4; c++) {
-					hilite_dir[12+c][i][j] = 0.1*((hilite_dir[12+c][(i+1)][(j-2)]+hilite_dir[12+c][(i+1)][(j-1)]+hilite_dir[12+c][(i+1)][(j)]+hilite_dir[12+c][(i+1)][(j+1)]+hilite_dir[12+c][(i+1)][(j+2)])/ \
+					hilite_dir[12+c][i][j] = 0.1*((hilite_dir[12+c][(i+1)][(j-2)]+hilite_dir[12+c][(i+1)][(j-1)]+hilite_dir[12+c][(i+1)][(j)]+hilite_dir[12+c][(i+1)][(j+1)]+hilite_dir[12+c][(i+1)][(j+2)])/
 														  (hilite_dir[12+3][(i+1)][(j-2)]+hilite_dir[12+3][(i+1)][(j-1)]+hilite_dir[12+3][(i+1)][(j)]+hilite_dir[12+3][(i+1)][(j+1)]+hilite_dir[12+3][(i+1)][(j+2)]+0.00001));
 				}
 			}
@@ -483,7 +480,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// now reconstruct clipped channels using color ratios
 	
-	const float Yclip = (0.299*max[0] + 0.587*max[1] + 0.114*max[2]);
 	//const float Yclip = 0.3333*(max[0] + max[1] + max[2]);
 	//float sumwt=0, counts=0;
 	
@@ -514,7 +510,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			}
 			
 			// Calculate the lightness correction ratio (chratio)
-			for (int i2=0; i<2; i++) {
+			for (int i2=0; i2<2; i2++) {
 				FOREACHCOLOR {
 					lab[i2][c]=0;
 					for (int j=0; j < ColorCount; j++)
@@ -556,15 +552,15 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 			
 			//there are clipped highlights
 			//first, determine weighted average of unclipped extensions (weighting is by 'hue' proximity)
-			float dirwt, factor, Y, I, Q;
+			float dirwt, factor, Y;
 			float totwt=0;//0.0003;
 			float clipfix[3]={0,0,0};//={totwt*rgb_blend[0],totwt*rgb_blend[1],totwt*rgb_blend[2]};
 			for (int dir=0; dir<numdirs; dir++) {
 				float Yhi = 0.001+(hilite_dir[dir*4+0][i1][j1] + hilite_dir[dir*4+1][i1][j1] + hilite_dir[dir*4+2][i1][j1]);
 				float Y   = 0.001+(rgb_blend[0]+rgb_blend[1]+rgb_blend[2]);
 				if (hilite_dir[dir*4+0][i1][j1]+hilite_dir[dir*4+1][i1][j1]+hilite_dir[dir*4+2][i1][j1]>0.5) {
-					dirwt = invfn[65535*(SQR(rgb_blend[0]/Y-hilite_dir[dir*4+0][i1][j1]/Yhi) + \
-										 SQR(rgb_blend[1]/Y-hilite_dir[dir*4+1][i1][j1]/Yhi) + \
+					dirwt = invfn[65535*(SQR(rgb_blend[0]/Y-hilite_dir[dir*4+0][i1][j1]/Yhi) +
+										 SQR(rgb_blend[1]/Y-hilite_dir[dir*4+1][i1][j1]/Yhi) +
 										 SQR(rgb_blend[2]/Y-hilite_dir[dir*4+2][i1][j1]/Yhi))];
 					totwt += dirwt;
 					clipfix[0] += dirwt*hilite_dir[dir*4+0][i1][j1]/(hilite_dir[dir*4+3][i1][j1]+0.00001);
@@ -591,15 +587,15 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 				int notclipped[3] = {pixel[0]<max[0] ? 1 : 0, pixel[1]<max[1] ? 1 : 0, pixel[2]<max[2] ? 1 : 0};
 				
 				if (notclipped[0]==0) {//red clipped
-					red[i][j]  = MAX(red[i][j],(clipfix[0]*((notclipped[1]*pixel[1] + notclipped[2]*pixel[2])/ \
+					red[i][j]  = MAX(red[i][j],(clipfix[0]*((notclipped[1]*pixel[1] + notclipped[2]*pixel[2])/
 																(notclipped[1]*clipfix[1] + notclipped[2]*clipfix[2]))));
 				}
 				if (notclipped[1]==0) {//green clipped
-					green[i][j] = MAX(green[i][j],(clipfix[1]*((notclipped[2]*pixel[2] + notclipped[0]*pixel[0])/ \
+					green[i][j] = MAX(green[i][j],(clipfix[1]*((notclipped[2]*pixel[2] + notclipped[0]*pixel[0])/
 																   (notclipped[2]*clipfix[2] + notclipped[0]*clipfix[0]))));
 				}
 				if (notclipped[2]==0) {//blue clipped
-					blue[i][j]  = MAX(blue[i][j],(clipfix[2]*((notclipped[0]*pixel[0] + notclipped[1]*pixel[1])/ \
+					blue[i][j]  = MAX(blue[i][j],(clipfix[2]*((notclipped[0]*pixel[0] + notclipped[1]*pixel[1])/
 																 (notclipped[0]*clipfix[0] + notclipped[1]*clipfix[1]))));
 				}
 			}

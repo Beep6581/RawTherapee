@@ -61,14 +61,17 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot) {
 }
 
 // For merging with RT specific data
-void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<ExifPair>& exif, const std::vector<IPTCPair>& iptcc) {
+void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::procparams::ExifPairs& exif, const rtengine::procparams::IPTCPairs& iptcc) {
 
     // store exif info
-    exifChange.resize (exif.size());
-    for (int i=0; i<exif.size(); i++) {
-        exifChange[i].first  = exif[i].field;
-        exifChange[i].second = exif[i].value;
-    }
+    exifChange.clear();
+    exifChange = exif;
+    /*unsigned int j=0;
+    for (rtengine::procparams::ExifPairs::const_iterator i=exif.begin(); i!=exif.end(); i++) {
+        exifChange.at(j).first  = i->first;
+        exifChange.at(j).second = i->second;
+        j++;
+    }*/
 
     if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
     
@@ -78,27 +81,27 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<
     if (iptc!=NULL) { iptc_data_free (iptc); iptc = NULL; }
     
     // build iptc structures for libiptcdata
-    if (iptcc.size()==0)
+    if (iptcc.empty())
         return;
         
     iptc = iptc_data_new ();
-    for (int i=0; i<iptcc.size(); i++) {
-        if (iptcc[i].field == "Keywords" && iptcc[i].values.size()>0) {
-            for (int j=0; j<iptcc[i].values.size(); j++) {
+    for (rtengine::procparams::IPTCPairs::const_iterator i=iptcc.begin(); i!=iptcc.end(); i++) {
+        if (i->first == "Keywords" && !(i->second.empty())) {
+            for (unsigned int j=0; j<i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
-                std::string loc = safe_locale_to_utf8(iptcc[i].values[j]);
+                std::string loc = safe_locale_to_utf8(i->second.at(j));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(64,loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
             continue;
         }
-        else if (iptcc[i].field == "SupplementalCategories" && iptcc[i].values.size()>0) {
-            for (int j=0; j<iptcc[i].values.size(); j++) {
+        else if (i->first == "SupplementalCategories" && !(i->second.empty())) {
+            for (unsigned int j=0; j<i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
-                std::string loc = safe_locale_to_utf8(iptcc[i].values[j]);
+                std::string loc = safe_locale_to_utf8(i->second.at(j));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(32,loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
@@ -106,10 +109,10 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const std::vector<
             continue;
         }
         for (int j=0; j<16; j++)
-            if (iptcc[i].field == strTags[j].field && iptcc[i].values.size()>0) {
+            if (i->first == strTags[j].field && !(i->second.empty())) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
-                std::string loc = safe_locale_to_utf8(iptcc[i].values[0]);
+                std::string loc = safe_locale_to_utf8(i->second.at(0));
                 iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(strTags[j].size,loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
@@ -219,9 +222,6 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
 	else
 		png_set_gamma(png,2.0, 0.45455);
 
-    int bps = getBPS ();
-
-
 //	if (bps==8 && bit_depth==16) png_set_strip_16(png);
 
 	//updating png info struct
@@ -246,7 +246,7 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
   	    png_read_row (png, (png_byte*)row, NULL);
   	    if (bit_depth==16) {  // convert scanline to host byte order
   	        unsigned short* srow = (unsigned short*)row;
-  	        for (int j=0; j<width*3; j++)
+  	        for (unsigned int j=0; j<width*3; j++)
   	            srow[j] = ntohs (srow[j]);
   	    }
         setScanline (i, row, bit_depth);
@@ -293,7 +293,6 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
         //jpeg_memory_src (&cinfo,buffer,bufsize);
         jpeg_read_header(&cinfo, TRUE);
 
-        unsigned int proflen;
         if( loadedProfileData ){
            delete [] loadedProfileData;
            loadedProfileData = NULL;
@@ -371,7 +370,6 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     	    return IMIO_READERROR;
     	}
 
-        unsigned int proflen;    	
         delete loadedProfileData;
         loadedProfileData = NULL;
         bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
@@ -570,7 +568,7 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
     unsigned char *row = new unsigned char [rowlen];
 
 	png_write_info(png,info);
-	for (unsigned int i=0;i<height;i++) {
+	for (int i=0;i<height;i++) {
         getScanline (i, row, bps);
         if (bps==16) {
             // convert to network byte order
@@ -723,8 +721,10 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
     if (exifRoot && uncompressed) {
         FILE *file = safe_g_fopen_WriteBinLock (fname);
 
-        if (!file)
+        if (!file) {
+	    delete [] linebuffer;
             return IMIO_CANNOTREADFILE;           
+	}
             
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
@@ -776,8 +776,10 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         #else
         TIFF* out = TIFFOpen(fname.c_str(), mode);
         #endif
-        if (!out) 
+        if (!out) { 
+	    delete [] linebuffer;
             return IMIO_CANNOTREADFILE;
+	}
 
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
@@ -893,7 +895,7 @@ void png_flush(png_structp png_ptr) {
 
 int ImageIO::load (Glib::ustring fname) {
 
-  int lastdot = fname.find_last_of ('.');
+  unsigned int lastdot = fname.find_last_of ('.');
   if( Glib::ustring::npos == lastdot )
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
@@ -907,7 +909,7 @@ int ImageIO::load (Glib::ustring fname) {
 
 int ImageIO::save (Glib::ustring fname) {
 
-  int lastdot = fname.find_last_of ('.');
+  unsigned int lastdot = fname.find_last_of ('.');
   if( Glib::ustring::npos == lastdot )
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))

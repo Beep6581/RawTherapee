@@ -126,6 +126,7 @@ IMFILE* fopen (const char* fname)
 
 	      while (ret == BZ_OK) {
 		buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
+		if (!buffer) free(buffer);
 
 		stream.next_out = buffer + buffer_out_count; // output data adress
 		stream.avail_out = buffer_size - buffer_out_count;
@@ -238,6 +239,7 @@ IMFILE* gfopen (const char* fname) {
 
 	  while (ret == BZ_OK) {
 	    buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
+	    if (!buffer) free(buffer);
 
 	    stream.next_out = buffer + buffer_out_count; // output data adress
 	    stream.avail_out = buffer_size - buffer_out_count;

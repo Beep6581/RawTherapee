@@ -19,6 +19,10 @@
 #include <cmath>
 #include <cstring>
 #include <cstdio>
+#include <ctime>
+
+#include "gauss.h"
+
 #define MAXVAL  65535.0
 #define CLIP(a) ((a)>0.0?((a)<MAXVAL?(a):MAXVAL):0.0)
 

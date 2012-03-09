@@ -28,12 +28,23 @@ using namespace rtengine::procparams;
 
 extern Glib::ustring argv0;
 
+ProfileStore::~ProfileStore () {
+    for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++) {
+        if (i->second->pparams) delete i->second->pparams;
+        if (i->second->pedited) delete i->second->pedited;
+        delete i->second;
+    }
+}
+
 void ProfileStore::parseProfiles () {
 
     // clear loaded profiles
-    for (std::map<Glib::ustring,ProcParams*>::iterator i = pparams.begin(); i!=pparams.end(); i++)
+    for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++) {
+        delete i->second->pparams;
+        delete i->second->pedited;
         delete i->second;
-    pparams.clear ();
+    }
+    partProfiles.clear ();
 
     if (options.multiUser) {
         Glib::ustring userPD = options.rtdir + "/" + options.profilePath;
@@ -68,16 +79,21 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
           if( options.rtSettings.verbose )
             printf ("Processing file %s...\n", fname.c_str());
           Glib::ustring name = sname.substr(0,lastdot);
-          if (pparams.find(name)!=pparams.end()) {
-            delete pparams[name];
-            pparams.erase (pparams.find(name));
+          std::map<Glib::ustring,PartialProfile*>::iterator j = partProfiles.find(name);
+          if (j!=partProfiles.end()) {
+            j->second->deleteInstance();
+            delete j->second;
+            partProfiles.erase (j);
           }
-          ProcParams* pp = new ProcParams ();
-          int res = pp->load (fname);
-          if (!res && pp->ppVersion>=220)
-            pparams[name] = pp;
-          else
-            delete pp;
+          PartialProfile* pProf = new PartialProfile (true);
+          int res = pProf->load (fname);
+          if (!res && pProf->pparams->ppVersion>=220) {
+            partProfiles[name] = pProf;
+          }
+          else {
+            pProf->deleteInstance();
+            delete pProf;
+          }
         }
       }
     }
@@ -85,26 +101,31 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
   }
 }
 
-rtengine::procparams::ProcParams* ProfileStore::getProfile (const Glib::ustring& profname) {
+PartialProfile* ProfileStore::getProfile (const Glib::ustring& profname) {
 
-    return pparams[profname];
+    std::map<Glib::ustring, PartialProfile*>::iterator prof = partProfiles.find(profname);
+    if (prof != partProfiles.end())
+        return partProfiles[profname];
+    else
+        return NULL;
 }
 
 std::vector<Glib::ustring> ProfileStore::getProfileNames () {
 
     std::vector<Glib::ustring> ret;
-    for (std::map<Glib::ustring,ProcParams*>::iterator i = pparams.begin(); i!=pparams.end(); i++)
+    for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++)
         ret.push_back (i->first);
     return ret;
 }
 
-rtengine::procparams::ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
+ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
 
-		rtengine::procparams::ProcParams* pp = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
-		if (!pp) {
-				pp = new ProcParams ();
-				pparams[isRaw ? options.defProfRaw : options.defProfImg] = pp;
-		}
-		return pp;
+    PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
+    if (!pProf) {
+    	Glib::ustring profName = isRaw ? options.defProfRaw : options.defProfImg;
+    	pProf = new PartialProfile (true);
+        partProfiles[profName] = pProf;
+    }
+    return pProf->pparams;
 }
 

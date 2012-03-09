@@ -339,7 +339,8 @@ IPTCPanel::IPTCPanel () {
 void IPTCPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
-    if (pp->iptc.size()>0)
+    changeList.clear();
+    if (!pp->iptc.empty())
         changeList = pp->iptc;
     else
         changeList = embeddedData;
@@ -364,7 +365,7 @@ void IPTCPanel::setImageData (const ImageMetaData* id) {
     else
         embeddedData.clear ();
 
-    file->set_sensitive (embeddedData.size() > 0);
+    file->set_sensitive (!embeddedData.empty());
 }
 
 void IPTCPanel::notifyListener () {
@@ -377,7 +378,7 @@ void IPTCPanel::addKeyWord () {
 
     keyword->get_entry()->select_region (0, keyword->get_entry()->get_text().size());
 
-    for (int i=0; i<keywords->size(); i++)
+    for (unsigned int i=0; i<keywords->size(); i++)
         if (keywords->get_text (i) == keyword->get_entry()->get_text()) 
             return;
         
@@ -390,7 +391,7 @@ void IPTCPanel::addKeyWord () {
         items.push_back (s);
     }
     keyword->clear_items ();
-    for (int i=0; i<10 && i<items.size(); i++)
+    for (unsigned int i=0; i<10 && i<items.size(); i++)
         keyword->append_text (items[i]);
     keywords->scroll_to_row (keywords->get_model()->get_path(--keywords->get_model()->children().end()));
     
@@ -400,13 +401,13 @@ void IPTCPanel::addKeyWord () {
 void IPTCPanel::delKeyWord () {
 
     std::vector<int> selection = keywords->get_selected ();
-    if (selection.size()>0) {
+    if (!selection.empty()) {
         std::vector<Glib::ustring> keep;
-        for (int i=0; i<keywords->size(); i++)
+        for (unsigned int i=0; i<keywords->size(); i++)
             if (std::find (selection.begin(), selection.end(), i) == selection.end())
                 keep.push_back (keywords->get_text (i));
         keywords->clear_items ();
-        for (int i=0; i<keep.size(); i++)
+        for (unsigned int i=0; i<keep.size(); i++)
             keywords->append_text (keep[i]);
     }
 
@@ -415,7 +416,7 @@ void IPTCPanel::delKeyWord () {
 
 void IPTCPanel::addSuppCategory () {
 
-    for (int i=0; i<suppCategories->size(); i++)
+    for (unsigned int i=0; i<suppCategories->size(); i++)
         if (suppCategories->get_text (i) == suppCategory->get_entry()->get_text())
             return;
 
@@ -428,7 +429,7 @@ void IPTCPanel::addSuppCategory () {
         items.push_back (s);
     }
     suppCategory->clear_items ();
-    for (int i=0; i<10 && i<items.size(); i++)
+    for (unsigned int i=0; i<10 && i<items.size(); i++)
         suppCategory->append_text (items[i]);
     suppCategories->scroll_to_row (suppCategories->get_model()->get_path(--suppCategories->get_model()->children().end()));
     suppCategory->get_entry()->select_region (0, suppCategory->get_entry()->get_text().size());
@@ -439,13 +440,13 @@ void IPTCPanel::addSuppCategory () {
 void IPTCPanel::delSuppCategory () {
 
     std::vector<int> selection = suppCategories->get_selected ();
-    if (selection.size()>0) {
+    if (!selection.empty()) {
         std::vector<Glib::ustring> keep;
-        for (int i=0; i<suppCategories->size(); i++)
+        for (unsigned int i=0; i<suppCategories->size(); i++)
             if (std::find (selection.begin(), selection.end(), i) == selection.end())
                 keep.push_back (suppCategories->get_text (i));
         suppCategories->clear_items ();
-        for (int i=0; i<keep.size(); i++)
+        for (unsigned int i=0; i<keep.size(); i++)
             suppCategories->append_text (keep[i]);
     }
 
@@ -455,45 +456,30 @@ void IPTCPanel::delSuppCategory () {
 void IPTCPanel::updateChangeList () {
 
     changeList.clear ();
-    changeList.resize (18);
-    changeList[0].field = "Caption";
-    changeList[0].values.push_back (captionText->get_text ());
-    changeList[1].field = "CaptionWriter";
-    changeList[1].values.push_back (captionWriter->get_text ());
-    changeList[2].field = "Headline";
-    changeList[2].values.push_back (headline->get_text ());
-    changeList[3].field = "Instructions";
-    changeList[3].values.push_back (instructions->get_text ());
-    changeList[4].field = "Keywords";
-    for (int i=0; i<keywords->size(); i++)
-        changeList[4].values.push_back (keywords->get_text (i));
-    changeList[5].field = "Category";
-    changeList[5].values.push_back (category->get_entry()->get_text ());
-    changeList[6].field = "SupplementalCategories";
-    for (int i=0; i<suppCategories->size(); i++)
-        changeList[6].values.push_back (suppCategories->get_text (i));
-    changeList[7].field = "Author";
-    changeList[7].values.push_back (author->get_text ());
-    changeList[8].field = "AuthorsPosition";
-    changeList[8].values.push_back (authorPos->get_text ());
-    changeList[9].field = "Credit";
-    changeList[9].values.push_back (credit->get_text ());
-    changeList[10].field = "Source";
-    changeList[10].values.push_back (source->get_text ());
-    changeList[11].field = "Copyright";
-    changeList[11].values.push_back (copyright->get_text ());
-    changeList[12].field = "City";
-    changeList[12].values.push_back (city->get_text ());
-    changeList[13].field = "Province";
-    changeList[13].values.push_back (province->get_text ());
-    changeList[14].field = "Country";
-    changeList[14].values.push_back (country->get_text ());
-    changeList[15].field = "Title";
-    changeList[15].values.push_back (title->get_text ());
-    changeList[16].field = "DateCreated";
-    changeList[16].values.push_back (dateCreated->get_text ());
-    changeList[17].field = "TransReference";
-    changeList[17].values.push_back (transReference->get_text ());
+    changeList["Caption"        ].push_back (captionText->get_text ());
+    changeList["CaptionWriter"  ].push_back (captionWriter->get_text ());
+    changeList["Headline"       ].push_back (headline->get_text ());
+    changeList["Instructions"   ].push_back (instructions->get_text ());
+
+    for (unsigned int i=0; i<keywords->size(); i++)
+    changeList["Keywords"       ].push_back (keywords->get_text (i));
+
+    changeList["Category"       ].push_back (category->get_entry()->get_text ());
+
+    for (unsigned int i=0; i<suppCategories->size(); i++)
+    changeList["SupplementalCategories"].push_back (suppCategories->get_text (i));
+
+    changeList["Author"         ].push_back (author->get_text ());
+    changeList["AuthorsPosition"].push_back (authorPos->get_text ());
+    changeList["Credit"         ].push_back (credit->get_text ());
+    changeList["Source"         ].push_back (source->get_text ());
+    changeList["Copyright"      ].push_back (copyright->get_text ());
+    changeList["City"           ].push_back (city->get_text ());
+    changeList["Province"       ].push_back (province->get_text ());
+    changeList["Country"        ].push_back (country->get_text ());
+    changeList["Title"          ].push_back (title->get_text ());
+    changeList["DateCreated"    ].push_back (dateCreated->get_text ());
+    changeList["TransReference" ].push_back (transReference->get_text ());
 
     notifyListener ();
 }
@@ -524,45 +510,47 @@ void IPTCPanel::applyChangeList () {
     keyword->get_entry()->set_text ("");
     suppCategory->get_entry()->set_text ("");
     
-    for (int i=0; i<changeList.size(); i++) 
-        if (changeList[i].field == "Caption" && changeList[i].values.size()>0) 
-            captionText->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "CaptionWriter" && changeList[i].values.size()>0)
-            captionWriter->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Headline" && changeList[i].values.size()>0) 
-            headline->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Instructions" && changeList[i].values.size()>0)
-            instructions->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Keywords") 
-            for (int j=0; j<changeList[i].values.size(); j++)
-                keywords->append_text (changeList[i].values[j]);
-        else if (changeList[i].field == "Category" && changeList[i].values.size()>0)
-            category->get_entry()->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "SupplementalCategories") 
-            for (int j=0; j<changeList[i].values.size(); j++)
-                suppCategories->append_text (changeList[i].values[j]);
-        else if (changeList[i].field == "Author" && changeList[i].values.size()>0)
-            author->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "AuthorsPosition" && changeList[i].values.size()>0)
-            authorPos->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Credit" && changeList[i].values.size()>0)
-            credit->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Source" && changeList[i].values.size()>0)
-            source->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Copyright" && changeList[i].values.size()>0)
-            copyright->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "City" && changeList[i].values.size()>0)
-            city->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Province" && changeList[i].values.size()>0)
-            province->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Country" && changeList[i].values.size()>0)
-            country->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "Title" && changeList[i].values.size()>0)
-            title->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "DateCreated" && changeList[i].values.size()>0)
-            dateCreated->set_text (changeList[i].values[0]);
-        else if (changeList[i].field == "TransReference" && changeList[i].values.size()>0)
-            transReference->set_text (changeList[i].values[0]);
+    for (rtengine::procparams::IPTCPairs::iterator i=changeList.begin(); i!=changeList.end(); i++) {
+    	printf("- %s: %s\n", i->first.c_str(), i->second.empty()?"[vide]":i->second.at(0).c_str());
+        if (i->first == "Caption" && !i->second.empty())
+            captionText->set_text (i->second.at(0));
+        else if (i->first == "CaptionWriter" && !i->second.empty())
+            captionWriter->set_text (i->second.at(0));
+        else if (i->first == "Headline" && !i->second.empty())
+            headline->set_text (i->second.at(0));
+        else if (i->first == "Instructions" && !i->second.empty())
+            instructions->set_text (i->second.at(0));
+        else if (i->first == "Keywords")
+            for (unsigned int j=0; j<i->second.size(); j++)
+                keywords->append_text (i->second.at(j));
+        else if (i->first == "Category" && !i->second.empty())
+            category->get_entry()->set_text (i->second.at(0));
+        else if (i->first == "SupplementalCategories")
+            for (unsigned int j=0; j<i->second.size(); j++)
+                suppCategories->append_text (i->second.at(j));
+        else if (i->first == "Author" && !i->second.empty())
+            author->set_text (i->second.at(0));
+        else if (i->first == "AuthorsPosition" && !i->second.empty())
+            authorPos->set_text (i->second.at(0));
+        else if (i->first == "Credit" && !i->second.empty())
+            credit->set_text (i->second.at(0));
+        else if (i->first == "Source" && !i->second.empty())
+            source->set_text (i->second.at(0));
+        else if (i->first == "Copyright" && !i->second.empty())
+            copyright->set_text (i->second.at(0));
+        else if (i->first == "City" && !i->second.empty())
+            city->set_text (i->second.at(0));
+        else if (i->first == "Province" && !i->second.empty())
+            province->set_text (i->second.at(0));
+        else if (i->first == "Country" && !i->second.empty())
+            country->set_text (i->second.at(0));
+        else if (i->first == "Title" && !i->second.empty())
+            title->set_text (i->second.at(0));
+        else if (i->first == "DateCreated" && !i->second.empty())
+            dateCreated->set_text (i->second.at(0));
+        else if (i->first == "TransReference" && !i->second.empty())
+            transReference->set_text (i->second.at(0));
+}
 
     for (int i=0; i<16; i++)
         conns[i].block (false);

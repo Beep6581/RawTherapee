@@ -36,7 +36,7 @@ using namespace rtengine::procparams;
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
-		initial_(false), lastW(0), lastH(0), lastScale(0) {
+		lastW(0), lastH(0), lastScale(0), initial_(false) {
 
     cfs.load (getCacheFileName ("data")+".txt");
     loadProcParams ();
@@ -174,7 +174,10 @@ const ProcParams& Thumbnail::getProcParams () {
     return pparams; // there is no valid pp to return, but we have to return something
 }
 
-// Create default params on demand and returns a new updatable object
+/*
+ *  Create default params on demand and returns a new updatable object
+ *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
+ */
 rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB) {
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = NULL;
@@ -195,7 +198,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
  
         bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
 
-        // Now they SHOULD be there, so try to load them
+        // Now they SHOULD be there (and potentially "partial"), so try to load them and store it as a full procparam
         if (success) loadProcParams();
     }
 
@@ -212,6 +215,14 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt){
 		listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
+/*
+ * Load the procparams from the cache or from the sidecar file (priority set in
+ * the Preferences).
+ *
+ * The result is a complete ProcParams with default values merged with the values
+ * from the default Raw or Image ProcParams, then with the values from the loaded
+ * ProcParams (sidecar or cache file).
+ */
 void Thumbnail::loadProcParams () {
 	// TODO: Check for Linux
 	#ifdef WIN32
@@ -219,17 +230,22 @@ void Thumbnail::loadProcParams () {
 	#endif
 
     pparamsValid = false;
+    pparams.setDefaults();
+    // WARNING: loading the default Raw or Img pp3 file at each thumbnail may be a performance bottleneck
+    pparams.load(options.profilePath+"/" + (getType()==FT_Raw?options.defProfRaw:options.defProfImg) + paramFileExtension);
+
     if (options.paramsLoadLocation==PLL_Input) {
         // try to load it from params file next to the image file
         int ppres = pparams.load (fname + paramFileExtension);
         pparamsValid = !ppres && pparams.ppVersion>=220;
+        // if no success, try to load the cached version of the procparams
         if (!pparamsValid) 
-                pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
+            pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
     }
     else {
         // try to load it from cache
         pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
-        // if no success, load it from params file next to the image file
+        // if no success, try to load it from params file next to the image file
         if (!pparamsValid) {
             int ppres = pparams.load (fname + paramFileExtension);
             pparamsValid = !ppres && pparams.ppVersion>=220;
@@ -304,7 +320,7 @@ bool Thumbnail::hasProcParams () {
     return pparamsValid;
 }
 
-void Thumbnail::setProcParams (const ProcParams& pp, int whoChangedIt, bool updateCacheNow) {
+void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow) {
 	// TODO: Check for Linux
 	#ifdef WIN32
 	Glib::Mutex::Lock lock(mutex);
@@ -318,7 +334,13 @@ void Thumbnail::setProcParams (const ProcParams& pp, int whoChangedIt, bool upda
     int colorlabel = getColorLabel();
     int inTrash = getStage();
 
-    pparams = pp;
+    if (pe) {
+    	// coarse.rotate works in ADD mode only, so we set it to 0 first
+    	if (pe->coarse.rotate)
+    		pparams.coarse.rotate = 0;
+    	pe->combine(pparams, pp, true);
+    }
+    else pparams = pp;
     pparamsValid = true;
     needsReProcessing = true;
 

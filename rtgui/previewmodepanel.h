@@ -19,6 +19,7 @@
 #define _PREVIEWMODEPANEL_
 
 #include <gtkmm.h>
+#include "adjuster.h"//dev
 
 class ImageArea;
 class PreviewModePanel : public Gtk::HBox {
@@ -31,8 +32,15 @@ class PreviewModePanel : public Gtk::HBox {
         Gtk::ToggleButton* previewFocusMask;
 		ImageArea* imageArea;
 
+		Gtk::Image* iR, *igR;
+		Gtk::Image* iG, *igG;
+		Gtk::Image* iB, *igB;
+		Gtk::Image* iL, *igL;
+		Gtk::Image* iF, *igF;
+
 	public:
 		PreviewModePanel (ImageArea* ia);
+		~PreviewModePanel();
 
 		void toggleR ();
 		void toggleG ();

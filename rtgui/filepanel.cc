@@ -22,7 +22,7 @@
 #include "../rtengine/safegtk.h"
 
 int FilePanelInitUI (void* data) {
-    ((FilePanel*)data)->init ();
+    (static_cast<FilePanel*>(data))->init ();
     return 0;
 }
 
@@ -78,7 +78,13 @@ FilePanel::FilePanel () : parent(NULL) {
 	sFilterPanel->add (*filterPanel);
 	sFilterPanel->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
+    Gtk::ScrolledWindow* sExportPanel = Gtk::manage ( new Gtk::ScrolledWindow() );
+    exportPanel = Gtk::manage ( new ExportPanel () );
+	sExportPanel->add (*exportPanel);
+	sExportPanel->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
 	fileCatalog->setFilterPanel (filterPanel);
+	fileCatalog->setExportPanel (exportPanel);
     fileCatalog->setImageAreaToolListener (tpc);
 
     //------------------
@@ -91,6 +97,8 @@ FilePanel::FilePanel () : parent(NULL) {
     filtLab->set_angle (90);
     //Gtk::Label* tagLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_TAGGING")) );
     //tagLab->set_angle (90);
+    Gtk::Label* exportLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_EXPORT")) );
+    exportLab->set_angle (90);
 
     tpcPaned = Gtk::manage ( new Gtk::VPaned () );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
@@ -99,6 +107,7 @@ FilePanel::FilePanel () : parent(NULL) {
     rightNotebook->append_page (*tpcPaned, *devLab);
     rightNotebook->append_page (*sFilterPanel, *filtLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
+    rightNotebook->append_page (*sExportPanel, *exportLab);
 
     rightBox->pack_start (*rightNotebook);
 

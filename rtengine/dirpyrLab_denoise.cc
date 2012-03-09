@@ -311,7 +311,6 @@ namespace rtengine {
 			for(int j = 0, j1=0; j < width; j+=pitch, j1++)
 			{	
 				float dirwt_l, dirwt_ab, norm_l, norm_ab;
-				float Lmed,Lhmf;
 				//float lops,aops,bops;
 				float Lout, aout, bout;
 				norm_l = norm_ab = 0;//if we do want to include the input pixel in the sum
@@ -414,7 +413,6 @@ namespace rtengine {
 #endif
 			for(int  i = 0; i < height; i++)
 				for(int  j = 0; j < width; j++) {
-					double wtdsum[3], norm;
 					float hipass[3], hpffluct[3], tonefactor, nrfactor;
 					
 					tonefactor = (nrwt_l[data_coarse->L[i][j]]);
@@ -469,7 +467,7 @@ namespace rtengine {
 				//nrfctrave = nrfactorL[i][j];
 				//nrfctrave=1;
 				
-				float hipass[3],p[9],temp,median;
+				float hipass[3];
 
 				//luma
 				
@@ -663,7 +661,7 @@ namespace rtengine {
 				//nrfctrave=1;
 
 				
-				float hipass[3],p[9],temp,median;
+				float hipass[3];
 				
 				//luma
 				

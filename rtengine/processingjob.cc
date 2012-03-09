@@ -32,7 +32,7 @@ ProcessingJob* ProcessingJob::create (InitialImage* initialImage, const procpara
 
 void ProcessingJob::destroy (ProcessingJob* job) {
 
-    delete (ProcessingJobImpl*) job;
+  delete static_cast<ProcessingJobImpl*>(job);
 }
 
 }

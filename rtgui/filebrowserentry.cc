@@ -137,7 +137,7 @@ void FileBrowserEntry::getIconSize (int& w, int& h) {
 
 FileThumbnailButtonSet* FileBrowserEntry::getThumbButtonSet () {
 
-    return (FileThumbnailButtonSet*)buttonSet;
+  return (static_cast<FileThumbnailButtonSet*>(buttonSet));
 }
 
 void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt) {

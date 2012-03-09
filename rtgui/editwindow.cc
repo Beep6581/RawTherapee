@@ -20,7 +20,7 @@
 #include "preferences.h"
 #include "cursormanager.h"
 #include "rtwindow.h"
-#include <gtk/gtkwidget.h>
+#include <gtk/gtk.h>
 #include "rtimage.h"
 
 static EditWindow* editWnd = NULL;
@@ -114,7 +114,7 @@ bool EditWindow::on_window_state_event(GdkEventWindowState* event) {
 
 void EditWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
     if (page_num > 1) {
-        EditorPanel *ep = (EditorPanel *)mainNB->get_nth_page(page_num);
+	EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
         ep->setAspect();
     }
 }
@@ -175,7 +175,7 @@ bool EditWindow::keyPressed (GdkEventKey* event) {
         toggleFullscreen();
         return true;
     } else {
-        EditorPanel* ep = (EditorPanel*)mainNB->get_nth_page (mainNB->get_current_page());
+	EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
         return ep->handleShortcutKey (event);
     }
 }

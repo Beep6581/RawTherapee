@@ -155,6 +155,17 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                     }
                 }
             }   
+            else if (cparams.guide=="ePassport") {
+                /* Official measurements do not specify exact ratios, just min/max measurements within which the eyes and chin-crown distance must lie. I averaged those measurements to produce these guides.
+                 * The first horizontal guide is for the crown, the second is rougly for the nostrils, the third is for the chin.
+                 * http://www.homeoffice.gov.uk/agencies-public-bodies/ips/passports/information-photographers/
+                 * "(...) the measurement of the face from the bottom of the chin to the crown (ie the top of the head, not the top of the hair) is between 29mm and 34mm."
+                 */
+                horiz_ratios.push_back (7.0/45.0);
+                horiz_ratios.push_back (26.0/45.0);
+                horiz_ratios.push_back (37.0/45.0);
+                vert_ratios.push_back (0.5);
+            }
 
             // Horizontals
             for (int i=0; i<horiz_ratios.size(); i++) {
@@ -320,18 +331,22 @@ MySpinButton::MySpinButton () {
 void MySpinButton::updateSize() {
 	double vMin, vMax;
 	double step, page;
-	double maxAbs;
+	int maxAbs;
 	unsigned int digits, digits2;
 	unsigned int maxLen;
 
 	get_range(vMin, vMax);
 	get_increments (step, page);
 
-	maxAbs = fmax(fabs(vMin), fabs(vMax));
 	digits = get_digits();
-	for (digits2=0; maxAbs/pow(double(10),digits2)>=1.0; digits2++);
+	maxAbs = (int)(fmax(fabs(vMin), fabs(vMax))+0.000001);
+	if (maxAbs==0)
+		digits2 = 1;
+	else {
+		digits2 = (int)(log10(double(maxAbs))+0.000001);
+		digits2++;
+	}
 	maxLen = digits+digits2+(vMin<0?1:0)+(digits>0?1:0);
-
 	set_max_length(maxLen);
 	set_width_chars(maxLen);
 }

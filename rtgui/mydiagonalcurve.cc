@@ -391,7 +391,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				if (dst < src) {
 					curve.x.erase (itx, curve.x.end());
 					curve.y.erase (ity, curve.y.end());
-					if (!curve.x.size()) {
+					if (curve.x.empty()) {
 						curve.x.push_back (0);
 						curve.y.push_back (0);
 						interpolate ();
@@ -703,7 +703,7 @@ void MyDiagonalCurve::setActiveParam (int ac) {
 
 int diagonalmchistupdateUI (void* data) {
 
-    MyCurveIdleHelper* mcih = (MyCurveIdleHelper*)data;
+    MyCurveIdleHelper* mcih = static_cast<MyCurveIdleHelper*>(data);
 
     if (mcih->destroyed) {
         if (mcih->pending == 1)

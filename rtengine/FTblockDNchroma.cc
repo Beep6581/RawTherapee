@@ -234,7 +234,7 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// TODO: begin block processing
 		
-		const int tilesize = 1000;
+		/*const int tilesize = 1000;
 		const int overlap = 100;
 		if (width>tilesize and height>tilesize) {
 			const int numtiles_W = ceil(((float)(width))/(tilesize-overlap));
@@ -243,7 +243,7 @@ namespace rtengine {
 			int tileheight = ceil(((float)(height))/(numtiles_H));
 			tilewidth  = tilewidth + (tilewidth&1);
 			tileheight = tileheight + (tileheight&1);
-		}
+		}*/
 		
 		LabImage * labin = new LabImage(width,height);
 		LabImage * labdn = new LabImage(width,height);

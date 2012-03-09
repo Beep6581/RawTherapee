@@ -147,10 +147,10 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 		memset (hist[i], 0, 65536*sizeof(int));
     }
 
-    int H = original->height;
 #ifdef _OPENMP
 	#pragma omp parallel if (multiThread)
     {
+	    int H = original->height;
 		int tid = omp_get_thread_num();
 		int nthreads = omp_get_num_threads();
 		int blk = H/nthreads;
@@ -176,7 +176,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 }
 
 // Process RGB image and convert to LAB space
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, \
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
 							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve) {
 
     int h_th, s_th;
@@ -208,8 +208,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     };
 
 
-    bool mixchannels = (params->chmixer.red[0]!=100	|| params->chmixer.red[1]!=0     || params->chmixer.red[2]!=0   || \
-						params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 || \
+    bool mixchannels = (params->chmixer.red[0]!=100	|| params->chmixer.red[1]!=0     || params->chmixer.red[2]!=0   ||
+						params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 ||
 						params->chmixer.blue[0]!=0	|| params->chmixer.blue[1]!=0    || params->chmixer.blue[2]!=100);
 
     int tW = working->width;
@@ -288,8 +288,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 			//TODO: proper treatment of out-of-gamut colors
 			//float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
-			float tonefactor=((r<MAXVAL ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) + \
-							  (g<MAXVAL ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) + \
+			float tonefactor=((r<MAXVAL ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
+							  (g<MAXVAL ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
 							  (b<MAXVAL ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
 			
 			r = (r*tonefactor);
@@ -754,7 +754,6 @@ fclose(f);*/
 		
 		//now tune hlcompr to bring back rawmax to 65535
 		hlcomprthresh = 33;
-		float shoulder = ((scale/MAX(1,gain))*(hlcomprthresh/200.0))+0.1;
 		//this is a series approximation of the actual formula for comp,
 		//which is a transcendental equation
 		float comp = (gain*((float)whiteclip)/scale - 1)*2;

@@ -69,7 +69,7 @@ class BatchQueue  : public ThumbBrowserBase,
 
     void startProcessing ();
     
-    bool hasJobs () { return fd.size()>0; }
+    bool hasJobs () { return (!fd.empty()); }
 
     rtengine::ProcessingJob* imageReady (rtengine::IImage16* img);
     void setProgress (double p);

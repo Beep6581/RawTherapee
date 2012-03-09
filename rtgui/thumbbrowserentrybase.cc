@@ -125,7 +125,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     istartx += iofs_x;
     istarty += iofs_y;
     
-    if (bbIcons.size()>0) {
+    if (!bbIcons.empty()) {
         int iwidth = igap;
         int iheight = 0;
         for (int i=0; i<bbIcons.size(); i++) {

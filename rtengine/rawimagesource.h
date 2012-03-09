@@ -59,7 +59,7 @@ template<class T> void freeArray2 (T** a, int H) {
 
 class RawImageSource : public ImageSource {
 
-	private:
+    private:
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
         static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, cmsHPROFILE& in);
@@ -147,6 +147,7 @@ class RawImageSource : public ImageSource {
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
+		bool        isWBProviderReady () { return rawData != NULL; };
 
         double      getDefGain  () { return defGain; }
 
@@ -169,8 +170,8 @@ class RawImageSource : public ImageSource {
         void boxblur2(float** src, float** dst, int H, int W, int box );
         void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp );
 
-        //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3], \
-                              multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
+        //void boxblur_resamp(float **red, float **green, float **blue, int H, int W, float thresh[3], float max[3],
+        //                multi_array2D<float,3> & hfsize, multi_array2D<float,3> & hilite, int box );
         void HLRecovery_inpaint (float** red, float** green, float** blue);
         //void HLRecovery_inpaint ();
 

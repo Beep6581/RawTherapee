@@ -229,8 +229,8 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename
 
 int cancelItemUI (void* data)
 {
-	safe_g_remove( ((BatchQueueEntry*)data)->savedParamsFile );
-    delete (BatchQueueEntry*)data;
+    safe_g_remove( (static_cast<BatchQueueEntry*>(data))->savedParamsFile );
+    delete static_cast<BatchQueueEntry*>(data);
     return 0;
 }
 
@@ -335,7 +335,7 @@ void BatchQueue::selectAll () {
 }
 
 void BatchQueue::startProcessing () {
-    if (!processing && fd.size()>0) {
+    if (!processing && !fd.empty()) {
         BatchQueueEntry* next;
 
         {
@@ -344,7 +344,7 @@ void BatchQueue::startProcessing () {
 	        Glib::RWLock::WriterLock l(entryRW);
 	        #endif
 
-            next = (BatchQueueEntry*)fd[0];
+	    next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as processing        
             next->processing = true;
             processing = next;
@@ -398,7 +398,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 			// We keep the extension to avoid overwriting the profile when we have
 			// the same output filename with different extension
             //processing->params.save (removeExtension(fname) + paramFileExtension);
-            processing->params.save (fname + paramFileExtension);
+            processing->params.save (fname + ".out" + paramFileExtension);
         }
 
         if (processing->thumbnail) {
@@ -421,11 +421,11 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         fd.erase (fd.begin());
 
         // return next job
-        if (fd.size()==0) {
+        if (fd.empty()) {
             queueEmptied=true;
         }
         else if (listener && listener->canStartNext ()) {
-            BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
+	    BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as selected        
             next->processing = true;
             processing = next;
@@ -442,7 +442,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         if (saveBatchQueue( )) {
             safe_g_remove( processedParams );
             // Delete all files in directory \batch when finished, just to be sure to remove zombies
-            if( fd.size()==0 ){
+            if( fd.empty() ){
                 std::vector<Glib::ustring> names;
                 Glib::ustring batchdir = options.rtdir+"/batch/";
                 Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
@@ -588,7 +588,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 }
 
 int setProgressUI (void* p) {
-    ((BatchQueue*)p)->redraw();
+  (static_cast<BatchQueue*>(p))->redraw();
     return 0;
 }
 
@@ -603,7 +603,7 @@ void BatchQueue::setProgress (double p) {
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData) {
     
     std::vector<ThumbBrowserEntryBase*> bqe;
-    bqe.push_back ((BatchQueueEntry*)actionData);
+    bqe.push_back (static_cast<BatchQueueEntry*>(actionData));
 
     if (actionCode==10)  // cancel
         cancelItems (&bqe);

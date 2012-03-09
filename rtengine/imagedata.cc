@@ -101,8 +101,6 @@ void ImageData::extractInfo () {
   if (!root) 
     return;
 
-  char buffer[256];
-
   make = "";
   model = "";
   serial = "";
@@ -279,9 +277,9 @@ ImageData::~ImageData () {
         iptc_data_free (iptc);
 }
 
-const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
+const procparams::IPTCPairs ImageData::getIPTCData () const {
 
-    std::vector<procparams::IPTCPair> iptcc;
+    procparams::IPTCPairs iptcc;
     if (!iptc)
         return iptcc;
    
@@ -290,31 +288,28 @@ const std::vector<procparams::IPTCPair> ImageData::getIPTCData () const {
         IptcDataSet* ds = iptc_data_get_next_dataset (iptc, NULL, IPTC_RECORD_APP_2, strTags[i].tag);
         if (ds) {
             iptc_dataset_get_data (ds, buffer, 2100);
-            procparams::IPTCPair ic;
-            ic.field = strTags[i].field;
-            ic.values.push_back (safe_locale_to_utf8((char*)buffer));
+            std::vector<Glib::ustring> icValues;
+            icValues.push_back (safe_locale_to_utf8((char*)buffer));
 
-            iptcc.push_back (ic);
+            iptcc[strTags[i].field] = icValues;
             iptc_dataset_unref (ds);
         }
     }
     IptcDataSet* ds = NULL;
-    procparams::IPTCPair ickw;
-    ickw.field = "Keywords";
+    std::vector<Glib::ustring> keywords;
     while ((ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS))) {
         iptc_dataset_get_data (ds, buffer, 2100);
-        ickw.values.push_back (safe_locale_to_utf8((char*)buffer));
+        keywords.push_back (safe_locale_to_utf8((char*)buffer));
     }
-    iptcc.push_back (ickw);
+    iptcc["Keywords"] = keywords;
     ds = NULL;
-    procparams::IPTCPair icsc;
-    icsc.field = "SupplementalCategories";
+    std::vector<Glib::ustring> suppCategories;
     while ((ds=iptc_data_get_next_dataset (iptc, ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY))) {
         iptc_dataset_get_data (ds, buffer, 2100);
-        icsc.values.push_back (safe_locale_to_utf8((char*)buffer));
+        suppCategories.push_back (safe_locale_to_utf8((char*)buffer));
         iptc_dataset_unref (ds);
     }
-    iptcc.push_back (icsc);
+    iptcc["SupplementalCategories"] = suppCategories;
     return iptcc;
 }
 

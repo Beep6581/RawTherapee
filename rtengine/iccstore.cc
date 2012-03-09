@@ -316,7 +316,7 @@ ProfileContent::ProfileContent (cmsHPROFILE hProfile) {
 }
 
 
-ProfileContent& ProfileContent::operator= (const ProfileContent other) {
+ProfileContent& ProfileContent::operator= (const ProfileContent& other) {
 
     length = other.length;
     if (data)

@@ -32,7 +32,7 @@ class PListener : public rtengine::ProgressListener {
         }
 };
 
-clas MyPrevImgListener : public rtengine::PreviewImageListener {
+class MyPrevImgListener : public rtengine::PreviewImageListener {
     
     IImage8* i;
 

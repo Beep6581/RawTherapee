@@ -71,9 +71,10 @@ static void** _createArray2D(int ncols, int nrows, int nbytes)
 
   tt = (char **) malloc(nrows * sizeof(void *) +
                         ncols * nrows * nbytes);
-  if (tt == NULL)
+  if (tt == NULL) {
     KLTError("(createArray2D) Out of memory");
-
+    exit(1);
+  }
   for (i = 0 ; i < nrows ; i++)
     tt[i] = ((char *) tt) + (nrows * sizeof(void *) +
                              i * ncols * nbytes);

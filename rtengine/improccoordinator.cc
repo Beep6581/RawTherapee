@@ -30,10 +30,10 @@ namespace rtengine {
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : awbComputed(false), ipf(&params, true), scale(10), allocated(false),
-    pW(-1), pH(-1), plistener(NULL), lastHighDetail(false),
+    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), lastHighDetail(false), allocated(false),
+    pW(-1), pH(-1), plistener(NULL),
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
-    changeSinceLast(0), updaterRunning(false), destroying(false), workimg(NULL) {
+    changeSinceLast(0), updaterRunning(false), destroying(false) {
 
     hltonecurve(65536,0);
     shtonecurve(65536,2);//clip above
@@ -246,7 +246,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, 
 							params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
 			if (aeListener)
-				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, \
+				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
 											params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
         }
     }
@@ -256,10 +256,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
         // complexCurve also calculated pre-curves histogram dependend on crop
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, \
-									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
-									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
-									imgsrc->getGamma(), true, params.toneCurve.curve, \
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0,
+									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
+									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
+									imgsrc->getGamma(), true, params.toneCurve.curve,
 									vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, scale==1 ? 1 : 1);
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale==1 ? 1 : 1);
@@ -268,7 +268,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=CROP ) {
-            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation, \
+            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve);
         }
 
@@ -295,7 +295,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     if (todo & M_LUMACURVE) {
-		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
 									   params.labCurve.acurve, params.labCurve.bcurve, chroma_acurve, chroma_bcurve, satcurve, scale==1 ? 1 : 16);
 	}
 	
@@ -384,6 +384,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             imageListener->setImage (previmg, scale, params.crop);
     }
     if (imageListener)
+    	// TODO: The WB tool should be advertised too in order to get the AutoWB's temp and green values
         imageListener->imageReady (params.crop);
 
     readyphase++;
@@ -463,7 +464,7 @@ if (settings->verbose) printf ("setscale before lock\n");
     fullw = fw;
     fullh = fh;
     if (settings->verbose) printf ("setscale ends\n");
-    if (sizeListeners.size()>0)
+    if (!sizeListeners.empty())
         for (int i=0; i<sizeListeners.size(); i++)
             sizeListeners[i]->sizeChanged (fullw, fullh, fw, fh);
     if (settings->verbose) printf ("setscale ends2\n");
@@ -517,9 +518,9 @@ void ImProcCoordinator::progress (Glib::ustring str, int pr) {
   }*/
 }
 
-void ImProcCoordinator::getAutoWB (double& temp, double& green) {
+bool ImProcCoordinator::getAutoWB (double& temp, double& green) {
 
-    if (imgsrc) {
+    if (imgsrc && imgsrc->isWBProviderReady()) {
         if (!awbComputed) {
             minit.lock ();
             autoWB = imgsrc->getAutoWB ();
@@ -528,6 +529,12 @@ void ImProcCoordinator::getAutoWB (double& temp, double& green) {
         }
         temp = autoWB.getTemp ();
         green = autoWB.getGreen ();
+        return true;
+    }
+    else {
+        temp = -1.0;
+        green = -1.0;
+        return false;
     }
 }
 

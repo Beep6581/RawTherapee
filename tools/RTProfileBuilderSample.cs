@@ -169,7 +169,7 @@ namespace RTProfilerBuilder {
 				NameValueCollection nvEXIF = ParseFullExifData(sourceFile);
 
 				// File should be Windows ANSI
-				using (TextWriter tw = new StreamWriter(sourceFile + ".pp3", false, Encoding.Default)) {
+				using (TextWriter tw = new StreamWriter(sourceFile + ".pp3", false, new UTF8Encoding(false))) {
 					string section = "";
 
 					foreach (string line in lines) {
@@ -211,6 +211,7 @@ namespace RTProfilerBuilder {
 				ProcessStartInfo psi = new ProcessStartInfo(exifToolPath, "\"" + filePath + "\" -tab -short");
 				psi.CreateNoWindow = false;
 				psi.UseShellExecute = false;
+				psi.StandardOutputEncoding = System.Text.Encoding.UTF8;
 				psi.RedirectStandardOutput = true;
 
 				Process p = Process.Start(psi);

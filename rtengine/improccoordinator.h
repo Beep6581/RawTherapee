@@ -46,12 +46,12 @@ class ImProcCoordinator : public StagedImageProcessor {
         LabImage *oprevl;    
         LabImage *nprevl;    
         Image8 *previmg;
-		Image8 *workimg;
+        Image8 *workimg;
 
         ImageSource* imgsrc;
-        
+
         SHMap* shmap;
-        
+
         ColorTemp currWB;
         ColorTemp autoWB;
 
@@ -62,33 +62,33 @@ class ImProcCoordinator : public StagedImageProcessor {
         int scale;
         bool lastHighDetail;  // was the last update running in high detail?
         bool allocated;
-        
+
         void freeAll ();
 
-		LUTf hltonecurve;
-		LUTf shtonecurve;
-		LUTf tonecurve;
-	
-		LUTf lumacurve;
-		LUTf chroma_acurve;
-		LUTf chroma_bcurve;
-		LUTf satcurve;
-	
-	LUTf rCurve;
-	LUTf gCurve;
-	LUTf bCurve;
+        LUTf hltonecurve;
+        LUTf shtonecurve;
+        LUTf tonecurve;
 
-	LUTu rcurvehist, rcurvehistCropped, rbeforehist;
-	LUTu gcurvehist, gcurvehistCropped, gbeforehist;
-	LUTu bcurvehist, bcurvehistCropped, bbeforehist;
+        LUTf lumacurve;
+        LUTf chroma_acurve;
+        LUTf chroma_bcurve;
+        LUTf satcurve;
 
-		LUTu vhist16;
-		LUTu lhist16,lhist16Cropped;
+        LUTf rCurve;
+        LUTf gCurve;
+        LUTf bCurve;
+
+        LUTu rcurvehist, rcurvehistCropped, rbeforehist;
+        LUTu gcurvehist, gcurvehistCropped, gbeforehist;
+        LUTu bcurvehist, bcurvehistCropped, bbeforehist;
+
+        LUTu vhist16;
+        LUTu lhist16,lhist16Cropped;
         LUTu histCropped;
-	
-		LUTu histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, bcabhist;
+
+        LUTu histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, bcabhist;
         LUTu histRedRaw, histGreenRaw, histBlueRaw;
-        
+
         int fw, fh, tr, fullw, fullh;
         int pW, pH;
 
@@ -97,11 +97,11 @@ class ImProcCoordinator : public StagedImageProcessor {
         AutoExpListener* aeListener;
         HistogramListener* hListener;
         std::vector<SizeListener*> sizeListeners;
-        
+
         std::vector<Crop*> crops;
-        
+
         bool resultValid;
-        
+
         Glib::Mutex minit;
 
         void progress (Glib::ustring str, int pr);
@@ -124,7 +124,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         void startProcessing ();
         void process ();
-    
+
     public:
 
         ImProcCoordinator ();
@@ -153,7 +153,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         DetailedCrop* createCrop  ();
 
-        void getAutoWB   (double& temp, double& green);
+        bool getAutoWB   (double& temp, double& green);
         void getCamWB    (double& temp, double& green);
         void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
         void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);
