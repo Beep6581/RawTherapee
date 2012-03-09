@@ -31,7 +31,7 @@ class StdImageSource : public ImageSource {
         ProgressListener* plistener;
         bool full;
         float** hrmap[3];
-		char** needhr;
+        char** needhr;
         int max[3];
 
         void transform           (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
@@ -57,9 +57,11 @@ class StdImageSource : public ImageSource {
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 
         ImageData*  getImageData () { return idata; }
+        ImageMatrices* getImageMatrices () { return (ImageMatrices*)NULL; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
+        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp);
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded);
-		static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
+        static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 
 
         static inline double intpow (double a, int b) { double r = 1.0; for (int i=0; i<b; i++) r *= a; return r; }

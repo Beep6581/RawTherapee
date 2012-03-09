@@ -22,11 +22,11 @@
 //
 ////////////////////////////////////////////////////////////////
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
+
+//#include "color.h"
+
 #define SQR(x) ((x)*(x))
 
-#define D50x 0.96422
-#define D50z 0.82521
 #define u0 4.0*D50x/(D50x+15+3*D50z)
 #define v0 9.0/(D50x+15+3*D50z)
 
@@ -58,7 +58,7 @@
 // columns of the matrix p=xyz_rgb are RGB tristimulus primaries in XYZ
 // c is the color fixed on the boundary; and m=0 for c=0, m=1 for c=255
 
-void ImProcFunctions::gamutmap(float &X, float &Y, float &Z, const double p[3][3]) 
+void Color::gamutmap(float &X, float &Y, float &Z, const double p[3][3])
 {
 	float u = 4*X/(X+15*Y+3*Z)-u0;
 	float v = 9*Y/(X+15*Y+3*Z)-v0;
@@ -91,8 +91,7 @@ void ImProcFunctions::gamutmap(float &X, float &Y, float &Z, const double p[3][3
 	
 	X = (9*u*Y)/(4*v); 
 	Z = (12 - 3*u - 20*v)*Y/(4*v);
-	
-	
+
 }
 
 	

@@ -43,10 +43,6 @@ namespace rtengine {
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 	
-	
-#define D50x 0.96422
-#define D50z 0.82521
-
 extern const Settings* settings;
 	
 const double (*wprof[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};

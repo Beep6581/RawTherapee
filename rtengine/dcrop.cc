@@ -86,8 +86,8 @@ void Crop::update (int todo) {
 
     bool needstransform  = parent->ipf.needsTransform();
 
-    if (todo & M_INIT) {
-        Glib::Mutex::Lock lock(parent->minit);  // Also used in inproccoord
+    if (todo & (M_INIT|M_LINDENOISE)) {
+        Glib::Mutex::Lock lock(parent->minit);  // Also used in improccoord
 
         int tr = TR_NONE;
         if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -101,7 +101,17 @@ void Crop::update (int todo) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
-    }
+
+        if (todo & M_LINDENOISE) {
+			if (skip==1 && params.dirpyrDenoise.enabled) {
+				//array2D<float> Ldn(cropw,croph);
+				//parent->ipf.L_denoise(origCrop, laboCrop, params.dirpyrDenoise);
+				//parent->ipf.dirpyrLab_denoise(laboCrop, origCrop, params.dirpyrDenoise);
+				parent->ipf.RGB_denoise(origCrop, origCrop, /*Roffset,*/ params.dirpyrDenoise, params.defringe);
+			}
+        }
+        parent->imgsrc->convertColorSpace(origCrop, params.icm);
+}
 
     // transform
     if ((!needstransform && transCrop) || (transCrop && (transCrop->width!=cropw || transCrop->height!=croph))) {
@@ -123,39 +133,11 @@ void Crop::update (int todo) {
 		cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
         cshmap->forceStat (parent->shmap->max, parent->shmap->min, parent->shmap->avg);
     }
-
-    // shadows & highlights & tone curve & convert to cielab
-	/*int xref,yref;
-	xref=000;yref=000;
-	if (colortest && cropw>115 && croph>115) 
-		for(int j=1;j<5;j++){	
-			xref+=j*30;yref+=j*30;
-			if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip,
-				   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
-				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
-				   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
-				   parent->imgsrc->getGamma());
-		}*/
 	
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
 							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve );
 
-	/*xref=000;yref=000;
-	if (colortest && cropw>115 && croph>115) 
-	for(int j=1;j<5;j++){	
-		xref+=j*30;yref+=j*30;
-		if (settings->verbose) {
-            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
-			       baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
-			       baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
-			       baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
-		    printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, 
-			       laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
-			       laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
-			       laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-        }
-	}*/
 	
 	// apply luminance operations
 	if (todo & (M_LUMINANCE+M_COLOR)) {
@@ -172,7 +154,7 @@ void Crop::update (int todo) {
 		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
 			parent->ipf.defringe (labnCrop);
-			parent->ipf.dirpyrdenoise (labnCrop);
+			//parent->ipf.dirpyrdenoise (labnCrop);
 			parent->ipf.MLsharpen (labnCrop);
 			parent->ipf.MLmicrocontrast (labnCrop);
 			//parent->ipf.MLmicrocontrast (labnCrop);
@@ -187,37 +169,7 @@ void Crop::update (int todo) {
 	//parent->ipf.lab2rgb (laboCrop, cropImg);
 	
 	//cropImg = baseCrop->to8();
-	/*
-	//	 int xref,yref;
-	xref=000;yref=000;
-	if (colortest && cropw>115 && croph>115) 
-	for(int j=1;j<5;j++){	
-		xref+=j*30;yref+=j*30;
-		int rlin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))]/255.0) * 255.0);
-		int glin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1]/255.0) * 255.0);
-		int blin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2]/255.0) * 255.0);
 
-		printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip,
-			   rlin,glin,blin);
-			   //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))],
-			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)],
-			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2)]);
-		//printf("after lab2rgb Lab lab2 Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-		printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
-			   labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
-			   labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
-			   labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327)q;
-	}
-	*/
-	/*
-	if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
-		xref=000;yref=000;
-		printf("dcrop final R= %d  G= %d  B= %d  \n",
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)],
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+1],
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
-	}
-	*/
     if (cropImageListener) {
         // this in output space held in parallel to allow analysis like shadow/highlight
         Glib::ustring outProfile=params.icm.output;

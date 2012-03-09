@@ -23,6 +23,8 @@
 #include <lcms2.h>
 #include "array2D.h"
 #include "curves.h"
+#include <fftw3.h>
+#include "color.h"
 #include "../rtgui/cacheimagedata.h"
 
 #define HR_SCALE 2
@@ -76,10 +78,6 @@ class RawImageSource : public ImageSource {
         double camwb_red;
         double camwb_green;
         double camwb_blue;
-        double rgb_cam[3][3];
-        double cam_rgb[3][3];
-        double xyz_cam[3][3];
-        double cam_xyz[3][3];
         bool fuji;
         bool d1x;
         int border;
@@ -136,7 +134,7 @@ class RawImageSource : public ImageSource {
         void        demosaic    (const RAWParams &raw);
         void        flushRawData      ();
         void        flushRGB          ();
-        void        HLRecovery_Global (HRecParams hrp);
+        void        HLRecovery_Global  (HRecParams hrp);
         void        refinement_lassus ();
 
         bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
@@ -149,20 +147,22 @@ class RawImageSource : public ImageSource {
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
-        bool        isWBProviderReady () { return rawData != NULL; };
+		bool        isWBProviderReady () { return rawData != NULL; };
 
         double      getDefGain  () { return defGain; }
 
-        double      getGamma    () { return CurveFactory::sRGBGamma; }
-
+        double      getGamma    () { return Color::sRGBGamma; }
+       
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 
-        ImageData*  getImageData () { return idata; }
-        void        setProgressListener (ProgressListener* pl) { plistener = pl; }
+        ImageData*     getImageData () { return idata; }
+        ImageMatrices* getImageMatrices () { return &imatrices; }
+        void           setProgressListener (ProgressListener* pl) { plistener = pl; }
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
+        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp);
         static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
@@ -199,6 +199,8 @@ class RawImageSource : public ImageSource {
         int  findHotDeadPixel( PixelsMap &bpMap, float thresh);
 
         void cfa_linedn (float linenoiselevel);//Emil's line denoise
+        void cfa_tile_denoise (fftwf_complex * fcfablox, int vblk, int hblk, int numblox_H, int numblox_W, float noisevar, float * rolloff );
+        void cfa_output_tile_row (float *cfabloxrow, float ** cfahipassdn, float ** tilemask_out, int height, int width, int top, int blkrad);
 
         void green_equilibrate (float greenthresh);//Emil's green equilibration
 

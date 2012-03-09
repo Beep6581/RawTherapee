@@ -113,9 +113,9 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     tpp->aeHistogram.clear();
     int ix = 0;
     for (int i=0; i<img->height*img->width; i++) {
-		int rtmp=CurveFactory::igamma_srgb (img->data[ix++]);
-		int gtmp=CurveFactory::igamma_srgb (img->data[ix++]);
-		int btmp=CurveFactory::igamma_srgb (img->data[ix++]);
+		int rtmp=Color::igamma_srgb (img->data[ix++]);
+		int gtmp=Color::igamma_srgb (img->data[ix++]);
+		int btmp=Color::igamma_srgb (img->data[ix++]);
 		
 		tpp->aeHistogram[rtmp>>tpp->aeHistCompression]++;
 		tpp->aeHistogram[gtmp>>tpp->aeHistCompression]+=2;
@@ -502,9 +502,9 @@ void Thumbnail::initGamma () {
     igammatab = new unsigned short[256];
     gammatab = new unsigned char[65536];
     for (int i=0; i<256; i++)
-        igammatab[i] = (unsigned short)(255.0*pow((double)i/255.0,CurveFactory::sRGBGamma));
+        igammatab[i] = (unsigned short)(255.0*pow((double)i/255.0,Color::sRGBGamma));
     for (int i=0; i<65536; i++)
-        gammatab[i] = (unsigned char)(255.0*pow((double)i/65535.0,1.f/CurveFactory::sRGBGamma));
+        gammatab[i] = (unsigned char)(255.0*pow((double)i/65535.0,1.f/Color::sRGBGamma));
 }
 
 void Thumbnail::cleanupGamma () {
@@ -677,6 +677,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         }
     }
 */
+
+    // if luma denoise has to be done for thumbnails, it should be right here
+
     // perform color space transformation
     if (isRaw)
         RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, camName, logDefGain );
@@ -692,7 +695,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.setScale (sqrt(double(fw*fw+fh*fh))/sqrt(double(thumbImg->width*thumbImg->width+thumbImg->height*thumbImg->height))*scale);
 
     LUTu hist16 (65536);
-	double gamma = isRaw ? CurveFactory::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
+	double gamma = isRaw ? Color::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
     ipf.firstAnalysis (baseImg, &params, hist16,  gamma);
 
     // perform transform
@@ -722,7 +725,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	int		hlcomprthresh = params.toneCurve.hlcomprthresh;
 	
     if (params.toneCurve.autoexp && aeHistogram) {
-	    ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+	    ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
 	    //ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr);
     }
 
@@ -846,8 +849,8 @@ void Thumbnail::applyAutoExp (procparams::ProcParams& params) {
 
     if (params.toneCurve.autoexp && aeHistogram) {
         ImProcFunctions ipf (&params, false);
-        ipf.getAutoExp (aeHistogram, aeHistCompression, log(defGain)/log(2.0), params.toneCurve.clip, params.toneCurve.expcomp,
-						params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+        ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, 
+						params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
     }
 }
 
@@ -875,7 +878,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     // calculate spot wb (copy & pasted from stdimagesource)
     unsigned short igammatab[256];
     for (int i=0; i<256; i++)
-        igammatab[i] = (unsigned short)(255.0*pow(i/255.0,CurveFactory::sRGBGamma));
+        igammatab[i] = (unsigned short)(255.0*pow(i/255.0,Color::sRGBGamma));
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;

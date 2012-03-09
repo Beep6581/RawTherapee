@@ -18,6 +18,7 @@
  */
 #include "rtengine.h"
 #include "iccstore.h"
+#include "color.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
 #include "curves.h"
@@ -38,9 +39,8 @@ int init (const Settings* s, Glib::ustring baseDir) {
 	iccStore->findDefaultMonitorProfile();
 
     ProcParams::init ();
-    CurveFactory::init ();
+    Color::init ();
     ImProcFunctions::initMunsell();
-    ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;
     lcmsMutex = new Glib::Mutex;
@@ -52,7 +52,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 void cleanup () {
 
     ProcParams::cleanup ();
-    ImProcFunctions::cleanupCache ();
+	Color::cleanup ();
     Thumbnail::cleanupGamma ();
 }
 

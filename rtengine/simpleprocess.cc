@@ -111,6 +111,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// start tile processing...???
+
+    // perform luma denoise
+    LabImage* labView = new LabImage (fw,fh);
+    if (params.dirpyrDenoise.enabled) {
+        //ipf.L_denoise(baseImg, labView, params.dirpyrDenoise);
+        //ipf.dirpyrLab_denoise(labView, baseImg, params.dirpyrDenoise);
+    }
+    imgsrc->convertColorSpace(baseImg, params.icm);
 
     // perform first analysis
     LUTu hist16 (65536);
@@ -145,7 +156,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (params.toneCurve.autoexp) {
 		LUTu aehist; int aehistcompr;
 		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
+		ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
     }
 
     // at this stage, we can flush the raw data to free up quite an important amount of memory
@@ -169,8 +180,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
 	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 1);
 	CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 1);
-
-	LabImage* labView = new LabImage (fw,fh);
 
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve);
 
@@ -204,9 +213,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
 	ipf.vibrance(labView);
 
-	ipf.impulsedenoise (labView);
+  	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
-	ipf.dirpyrdenoise (labView);
+ 	//ipf.dirpyrdenoise (labView);
 	if (params.sharpenEdge.enabled) {
 		 ipf.MLsharpen(labView);
 	}

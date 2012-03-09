@@ -26,6 +26,7 @@
 
 #include "array2D.h"
 #include "LUT.h"
+#include "color.h"
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
@@ -107,12 +108,6 @@ namespace rtengine {
     	*/
 
 	}
-
-    // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
-    // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent 
-    // and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
-    const double CurveFactory::sRGBGamma = 2.2;
-    const double CurveFactory::sRGBGammaCurve = 2.4;
 
 	void fillCurveArray(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool needed) {
 		if (needed) {
@@ -367,7 +362,7 @@ namespace rtengine {
 			
 			// gamma correction
 			if (gamma_>1)
-				val = gamma (val, gamma_, start, slope, mul, add);
+				val = Color::gamma (val, gamma_, start, slope, mul, add);
 			
 			// apply brightness curve
 			if (brightcurve)
@@ -466,7 +461,7 @@ namespace rtengine {
 
 			// if inverse gamma is needed, do it (standard sRGB inverse gamma is applied)
 			if (needigamma)
-				val = igamma (val, gamma_, start, slope, mul, add);
+				val = Color::igamma (val, gamma_, start, slope, mul, add);
 
 			outCurve[i] = (65535.0 * val);
 		}
@@ -690,30 +685,5 @@ namespace rtengine {
 	
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	
-
-LUTf CurveFactory::gammatab;
-LUTf CurveFactory::igammatab_srgb;
-LUTf CurveFactory::gammatab_srgb;
-
-void CurveFactory::init () {
-	
-	gammatab(65536,0);
-	igammatab_srgb(65536,0);
-	gammatab_srgb(65536,0);
-
-  for (int i=0; i<65536; i++)
-    gammatab_srgb[i] = (65535.0 * gamma2 (i/65535.0));
-  for (int i=0; i<65536; i++)
-    igammatab_srgb[i] = (65535.0 * igamma2 (i/65535.0));
-  for (int i=0; i<65536; i++)
-    gammatab[i] = (65535.0 * pow (i/65535.0, 0.454545));
-    
-/*    FILE* f = fopen ("c.txt", "wt");
-    for (int i=0; i<256; i++)
-        fprintf (f, "%g %g\n", i/255.0, clower (i/255.0, 2.0, 1.0));
-    fclose (f);*/
-}
 
 }

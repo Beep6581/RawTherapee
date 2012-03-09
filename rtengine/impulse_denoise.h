@@ -37,17 +37,15 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 	
 	int width = lab->W;
 	int height = lab->H;
-	
-	float hpfabs, hfnbrave;
-	
+		
 	// buffer for the lowpass image
     float ** lpf = new float *[height];
 	// buffer for the highpass image
-    float ** impish = new float *[height];
+    char ** impish = new char *[height];
     for (int i=0; i<height; i++) {
         lpf[i] = new float [width];
         //memset (lpf[i], 0, width*sizeof(float));
-		impish[i] = new float [width];
+		impish[i] = new char [width];
 		//memset (impish[i], 0, width*sizeof(unsigned short));
     }
 
@@ -77,10 +75,10 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 	
 	for (int i=0; i < height; i++)
 		for (int j=0; j < width; j++) {
-			
-			hpfabs = fabs(lab->L[i][j]-lpf[i][j]);
+			float hfnbrave = 0;
+			float hpfabs = fabs(lab->L[i][j]-lpf[i][j]);
 			//block average of high pass data
-			for (i1=MAX(0,i-2), hfnbrave=0; i1<=MIN(i+2,height-1); i1++ )
+			for (i1=MAX(0,i-2); i1<=MIN(i+2,height-1); i1++ )
 				for (j1=MAX(0,j-2); j1<=MIN(j+2,width-1); j1++ ) {
 					hfnbrave += fabs(lab->L[i1][j1]-lpf[i1][j1]);
 				}
@@ -94,7 +92,7 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 			if (!impish[i][j]) continue;
 			norm=0.0;
 			wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
-			for (i1=MAX(0,i-2), hfnbrave=0; i1<=MIN(i+2,height-1); i1++ )
+			for (i1=MAX(0,i-2); i1<=MIN(i+2,height-1); i1++ )
 				for (j1=MAX(0,j-2); j1<=MIN(j+2,width-1); j1++ ) {
 					if (i1==i && j1==j) continue;
 					if (impish[i1][j1]) continue;

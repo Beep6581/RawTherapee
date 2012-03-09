@@ -26,6 +26,7 @@
 #include "mytime.h"
 #include "gauss.h"
 #include <glibmm.h>
+#include "array2D.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -434,34 +435,36 @@ template<class T, class A> void bilateral (T** src, T** dst, T** buffer, int W, 
 #define MAXVAL  65535.0
 #define CLIP(a) ((a)>0.0?((a)<MAXVAL?(a):MAXVAL):0.0)
 
-#define BINBIT 12
-#define TRANSBIT 4
+#define BINBIT 7 //bit depth of histogram -- there are 2^BINBIT discrete levels
+#define TRANSBIT 9 //bit shift = 16-BINBIT taking short ints to bit depth BINBIT
 
 template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, double sigmas, int row_from, int row_to) {
 
     // range weights
-    LUTf ec(0x20000);
+    /*LUTf ec(0x20000);
     for (int i=0; i<0x20000; i++) 
-        ec[i] = exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*sigmar*sigmar)); 
+        ec[i] = exp(-(double)(i-0x10000)*(double)(i-0x10000) / (2.0*sigmar*sigmar)); */
 
     // histogram
     LUTu hist (1<<BINBIT);
     LUTu rhist(1<<BINBIT);
 
     // buffer for the final image
-    float** buff_final = new float*[H];
+    /*float** buff_final = new float*[H];
     float * real_buff_final = new float[W*H];
     for (int i=0; i<H; i++) {
         buff_final[i] = real_buff_final + i*W;
         memset (buff_final[i], 0, W*sizeof(float));
-    }
+    }*/
+	
+	array2D<float> buff_final(W,H,ARRAY2D_CLEAR_DATA);
     
     int r = sigmas;
    
     // calculate histogram at the beginning of the row
     rhist.clear();
-    for (int x = MAX(0,row_from-r-1); x<row_from+r; x++)
-        for (int y = 0; y<r; y++)
+    for (int x = MAX(0,row_from-r); x<=MIN(H,row_from+r); x++)
+        for (int y = 0; y<r+1; y++)
             rhist[((int)src[x][y])>>TRANSBIT]++;
 
     sigmar*=2;
@@ -470,16 +473,16 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
         
         // calculate histogram at the beginning of the row
         if (i>r)
-            for (int x = 0; x<r; x++) 
+            for (int x = 0; x<=MIN(H,r); x++) 
                 rhist[((int)src[i-r-1][x])>>TRANSBIT]--;
         if (i<H-r)
-            for (int x = 0; x<r; x++) 
+            for (int x = 0; x<=MIN(H,r); x++) 
                 rhist[((int)src[i+r][x])>>TRANSBIT]++;
             
         hist=rhist;
         for (int j=0; j<W; j++) {
         
-            // substract pixels at the left and add pixels at the right
+            // subtract pixels at the left and add pixels at the right
             if (j>r)
                 for (int x=MAX(0,i-r); x<=MIN(i+r,H-1); x++) 
                     hist[(int)(src[x][j-r-1])>>TRANSBIT]--;
@@ -488,33 +491,31 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
                     hist[((int)src[x][j+r])>>TRANSBIT]++;
 
             // calculate pixel value
-            float weight = 0.0;
+            float totwt = 0.0, weight;
             for (int k=0; k<=(sigmar>>TRANSBIT); k++) {               
                 float w = 1.0 - (double)k/(sigmar>>TRANSBIT);
                 int v = (int)(src[i][j])>>TRANSBIT;
+				//float frac = ((float)(src[i][j]-(v<<TRANSBIT)))/(1<<TRANSBIT);
                 if (v-k >= 0) {
-                    weight += hist [v-k] * w;
-                    buff_final[i][j] += hist [v-k] * w * (src[i][j]-(k<<TRANSBIT));
+                    weight = hist [v-k/*+frac*/] * w;
+					totwt += weight;
+                    buff_final[i][j] += weight * (src[i][j]-(k<<TRANSBIT));
                 }
                 if (v+k < (1<<BINBIT)) {
-                    weight += hist [v+k] * w;
-                    buff_final[i][j] += hist [v+k] * w * (src[i][j]+(k<<TRANSBIT));
+                    weight = hist [v+k/*+frac*/] * w;
+					totwt += weight;
+                    buff_final[i][j] += weight * (src[i][j]+(k<<TRANSBIT));
                 }
             }
-            buff_final[i][j] /= weight;
+            buff_final[i][j] /= totwt;
         }
     }
     for (int i=row_from; i<row_to; i++) 
         for (int j=0; j<W; j++) 
             dst[i][j] = (T)CLIP(buff_final[i][j]);
 
-    //delete [] ec;
-    //delete [] hist;
-    //delete [] rhist;
-    //for (int i=0; i<H; i++)
-    //    delete [] buff_final[i];
-    delete [] real_buff_final;
-    delete [] buff_final;
+    //delete [] real_buff_final;
+    //delete [] buff_final;
 }
 #undef MAXVAL
 #undef CLIP

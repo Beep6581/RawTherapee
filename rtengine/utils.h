@@ -26,9 +26,6 @@ void nearestInterp (const unsigned char* src, int sw, int sh, unsigned char* dst
 void rotate (unsigned char* img, int& w, int& h, int deg);
 void hflip (unsigned char* img, int w, int h);
 void vflip (unsigned char* img, int w, int h);
-void rgb2hsv (int r, int g, int b, float &h, float &s, float &v);
-void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
-void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 
 }
 #endif

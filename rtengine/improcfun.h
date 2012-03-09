@@ -25,24 +25,25 @@
 #include "procparams.h"
 #include "shmap.h"
 #include "coord2d.h"
+#include "color.h"
 #include "labimage.h"
 #include "LUT.h"
+#include <fftw3.h>
+#include "cplx_wavelet_dec.h"
 
 namespace rtengine {
-
-using namespace procparams;
-
-class ImProcFunctions {
-
-		static LUTf gamma2curve;
-
+	
+	using namespace procparams;
+	
+	class ImProcFunctions : public Color {
+		
 		cmsHTRANSFORM monitorTransform;
-
+		
 		const ProcParams* params;
 		double scale;
 		bool multiThread;
 		float g;
-
+		
 		void simpltransform     (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void vignetting         (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH);
 		void transformNonSep    (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
@@ -50,26 +51,25 @@ class ImProcFunctions {
 		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
 		void firstAnalysisThread(Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
 		void dcdamping          (float** aI, float** aO, float damping, int W, int H);
-
+		
 		bool needsCA            ();
 		bool needsDistortion    ();
 		bool needsRotation      ();
 		bool needsPerspective   ();
 		bool needsVignetting    ();
- //   static cmsUInt8Number* Mempro = NULL;		
-
-
+		//   static cmsUInt8Number* Mempro = NULL;		
+		
+		
 	public:
-		static LUTf cachef;
-		// 195 LUTf for Munsell Lch correction 
-		static LUTf _4P10,_4P20,_4P30,_4P40,_4P50,_4P60;				
+		// 195 LUTf for Munsell Lch correction
+		static LUTf _4P10,_4P20,_4P30,_4P40,_4P50,_4P60;
 		static LUTf _1P10,_1P20,_1P30,_1P40,_1P50,_1P60;
-		static LUTf _5B40,_5B50,_5B60, _5B70,_5B80;			
-		static LUTf _7B40,_7B50,_7B60, _7B70,_7B80;			
-		static LUTf _9B40,_9B50,_9B60, _9B70,_9B80;			
-		static LUTf _10B40,_10B50,_10B60, _10B70,_10B80;					
-		static LUTf _05PB40,_05PB50,_05PB60, _05PB70,_05PB80;			
-		static LUTf _10PB10,_10PB20,_10PB30,_10PB40,_10PB50,_10PB60;		
+		static LUTf _5B40,_5B50,_5B60, _5B70,_5B80;
+		static LUTf _7B40,_7B50,_7B60, _7B70,_7B80;
+		static LUTf _9B40,_9B50,_9B60, _9B70,_9B80;
+		static LUTf _10B40,_10B50,_10B60, _10B70,_10B80;
+		static LUTf _05PB40,_05PB50,_05PB60, _05PB70,_05PB80;
+		static LUTf _10PB10,_10PB20,_10PB30,_10PB40,_10PB50,_10PB60;
 		static LUTf _9PB10,_9PB20,_9PB30,_9PB40,_9PB50,_9PB60,_9PB70,_9PB80;
 		static LUTf _75PB10,_75PB20,_75PB30,_75PB40,_75PB50,_75PB60,_75PB70,_75PB80;
 		static LUTf _6PB10,_6PB20,_6PB30,_6PB40,_6PB50,_6PB60,_6PB70,_6PB80;
@@ -86,8 +86,8 @@ class ImProcFunctions {
 		static LUTf  _9R30, _9R40,_9R50,_9R60,_9R70;
 		static LUTf  _7R30, _7R40,_7R50,_7R60,_7R70;
 		static LUTf  _5R10, _5R20,_5R30;
-		static LUTf  _25R10, _25R20,_25R30;	
-		static LUTf  _10RP10, _10RP20,_10RP30;		
+		static LUTf  _25R10, _25R20,_25R30;
+		static LUTf  _10RP10, _10RP20,_10RP30;
 		static LUTf  _7G30, _7G40,_7G50,_7G60,_7G70,_7G80;
 		static LUTf  _5G30, _5G40,_5G50,_5G60,_5G70,_5G80;
 		static LUTf  _25G30, _25G40,_25G50,_25G60,_25G70,_25G80;
@@ -97,90 +97,87 @@ class ImProcFunctions {
 		static LUTf  _5GY30, _5GY40,_5GY50,_5GY60,_5GY70,_5GY80;
 		
 		double lumimul[3];
-
-		static void initCache ();
-		static void cleanupCache ();
+		
 		static void initMunsell ();
 		
 		ImProcFunctions       (const ProcParams* iparams, bool imultiThread=true)
-			: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
+		: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
 		~ImProcFunctions      ();
-
+		
 		void setScale         (double iscale);
-
+		
 		bool needsTransform   ();
-
+		
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
 							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve);
-		void vibrance 		  (LabImage* lab);//Jacques' vibrance
-		void skinsat 		  (float lum, float hue, float chrom, float &satreduc);//jacques Skin color
-		void MunsellLch 	  (float lum, float hue, float chrom, float memChprov, float &correction, int zone);//jacques:  Munsell correction
+		void vibrance         (LabImage* lab);//Jacques' vibrance
+		void skinsat          (float lum, float hue, float chrom, float &satreduc);//jacques Skin color
+		void MunsellLch       (float lum, float hue, float chrom, float memChprov, float &correction, int zone);//jacques:  Munsell correction
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
 		void lab2rgb          (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
+		void resize			  (LabImage* src, LabImage* dst, float dScale);
 		void deconvsharpening (LabImage* lab, float** buffer);
 		void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
 		void MLmicrocontrast(LabImage* lab ); //Manuel's microcontrast
-
+		
 		void impulsedenoise   (LabImage* lab);//Emil's impulse denoise
 		void impulse_nr (LabImage* lab, double thresh);
-		void dirpyrdenoise    (LabImage* lab);//Emil's pyramid denoise
+		void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
 		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
-
+		
 		void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
 		
+		// pyramid denoise
 		procparams::DirPyrDenoiseParams dnparams;
 		void dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams );//Emil's directional pyramid denoise
 		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab,
 							   int pitch, int scale, const int luma, int chroma );
 		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
 							   int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ );
-
-		void dirpyrLab_equalizer (LabImage * src, LabImage * dst, const double * mult );//Emil's directional pyramid equalizer
-		void dirpyr_eq           (LabImage* data_coarse, LabImage* data_fine, LUTf & rangefn, int level, int pitch, int scale, const double * mult );
-		void idirpyr_eq          (LabImage* data_coarse, LabImage* data_fine, int *** buffer, int level, int pitch, int scale, const double * mult );
-
+		
+		// FT denoise
+		void RGB_InputTransf(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
+		void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
+		void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
+		void RGB_denoise(Imagefloat * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
+		void RGBtile_denoise (float ** fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_L );	//for DCT
+		void RGBoutput_tile_row (float *Lbloxrow, LabImage * labdn, float ** tilemask_out, int height, int width, int top );
+		void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
+		void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
+		void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
+							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
+		void WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
+										wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
+		void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, \
+					  int W, int H, int level, int padding, float noisevar);
+		void Shrink(float ** WavCoeffs, int W, int H, int level, float noisevar);
+		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, \
+					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_ab);
+		float MadMax(float * HH_Coeffs, int &max, int datalen);
+		
+		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
 		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  );
 		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );
-
+		
 		void defringe         (LabImage* lab);
 		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh);
-
+		
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6);// for gamma output		
 		Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);//without gamma ==>default
-
+		
 		bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1);
 		bool transCoord       (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1);
-		void getAutoExp       (LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
+		void getAutoExp       (LUTu & histogram, int histcompr, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
 		static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);	
 		double getTransformAutoFill (int oW, int oH);
-
-		void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
-		void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
-		void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
-		void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
-		void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
-		void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
-		void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);
-		void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
-		void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
-
-		//void gamutmap(LabImage* );
-		void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
-
-		static inline float f2xyz(float f) {
-			const float epsilonExpInv3 = 6.0/29.0;
-			const float kappaInv = 27.0/24389.0;  // inverse of kappa
-
-			return (f > epsilonExpInv3) ? f*f*f : (116 * f - 16) * kappaInv;
-		}
-};
+	};
 }
 #endif

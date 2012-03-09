@@ -22,6 +22,7 @@
 #define MAXVAL  0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 #include "curves.h"
+#include "color.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -230,9 +231,9 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
 				for (int m=0; m<skip; m++)
 					for (int n=0; n<skip; n++)
 					{
-						rtot += CurveFactory::igamma_srgb(img->r[i+m][jx+n]);
-						gtot += CurveFactory::igamma_srgb(img->g[i+m][jx+n]);
-						btot += CurveFactory::igamma_srgb(img->b[i+m][jx+n]);
+						rtot += Color::igamma_srgb(img->r[i+m][jx+n]);
+						gtot += Color::igamma_srgb(img->g[i+m][jx+n]);
+						btot += Color::igamma_srgb(img->b[i+m][jx+n]);
 					}
 				line_red[j]  = rtot;
 				line_green[j]  = gtot;
@@ -240,7 +241,7 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
 			}
 			
 			// covert back to gamma and clip
-#define GCLIP( x ) CurveFactory::gamma_srgb(CLIP(x))
+#define GCLIP( x ) Color::gamma_srgb(CLIP(x))
 			
 			if ((mtran & TR_ROT) == TR_R180) 
 				for (int j=0; j<imwidth; j++) {
@@ -287,32 +288,27 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     t1.set ();
 
     // the code will use OpenMP as of now.
-	
-	//Image16* tmpim = new Image16 (image->width,image->height);
+
+    //Image16* tmpim = new Image16 (image->width,image->height);
     getImage_ (ctemp, tran, image, pp, true, hrp);
 
-	colorSpaceConversion (image, cmp, embProfile);
-	
-	for ( int h = 0; h < image->height; ++h )
-		for ( int w = 0; w < image->width; ++w ) {
-			image->r[h][w] *= 65535.0f;
-			image->g[h][w] *= 65535.0f;
-			image->b[h][w] *= 65535.0f;
-			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",image->r[h][w],image->g[h][w],image->b[h][w]);
-		}
-	
+    // *** colorSpaceConversion was there ***
+
     // Flip if needed
     if (tran & TR_HFLIP)
-	 hflip (image);
-	 if (tran & TR_VFLIP)
-	 vflip (image);
-	
-	
+        hflip (image);
+    if (tran & TR_VFLIP)
+        vflip (image);
+
     t2.set ();
 }
-	
+
+void StdImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp) {
+    colorSpaceConversion (image, cmp, embProfile);
+}
+
 void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
-	
+
 	cmsHPROFILE in;
 	cmsHPROFILE out = iccStore->workingSpace (cmp.working);
 	if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
@@ -329,7 +325,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 				in = iccStore->getsRGBProfile ();
 		}
 	}
-	
+
 	if (cmp.input!="(none)") {
 		lcmsMutex->lock ();
 		cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 
@@ -340,8 +336,16 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 		
         cmsDeleteTransform(hTransform);
 	}
+
+	// Code moved from getImage to change the range of the float value from [0.;1.] to [0.;65535.]
+	for ( int h = 0; h < im->height; ++h )
+		for ( int w = 0; w < im->width; ++w ) {
+			im->r[h][w] *= 65535.0f;
+			im->g[h][w] *= 65535.0f;
+			im->b[h][w] *= 65535.0f;
+			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",im->r[h][w],im->g[h][w],im->b[h][w]);
+		}
 }
-	
 
 void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
 
@@ -371,6 +375,8 @@ void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
         
         cmsDeleteTransform(hTransform);
     }
+
+    // WARNING: A range update may be missing here (see colorSpaceConversion above)
 }
 
 void StdImageSource::getFullSize (int& w, int& h, int tr) {
@@ -439,9 +445,9 @@ void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
     for (int i=0; i<img->height; i++)
         for (int j=0; j<img->width; j++) {
-            histogram[(int)CurveFactory::igamma_srgb (img->r[i][j])>>histcompr]++;
-            histogram[(int)CurveFactory::igamma_srgb (img->g[i][j])>>histcompr]++;
-            histogram[(int)CurveFactory::igamma_srgb (img->b[i][j])>>histcompr]++;
+            histogram[(int)Color::igamma_srgb (img->r[i][j])>>histcompr]++;
+            histogram[(int)Color::igamma_srgb (img->g[i][j])>>histcompr]++;
+            histogram[(int)Color::igamma_srgb (img->b[i][j])>>histcompr]++;
         }
 }
 
