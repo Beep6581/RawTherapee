@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.0.1, 2012-02-15
+# Version 2.1, 2012-03-09
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.seeitmyway.org
 # www.rawtherapee.com
 
 checkDeps () {
-  hash hg 2>&- || { echo "Mercurial not found, install Mercurial first and then re-run this script." >&2; exit 1; }
-  hash curl 2>&- || { echo "Curl not found, install curl first and then re-run this script." >&2; exit 1; }
+  hash hg 2>/dev/null || { echo >&2 "Mercurial not found, install Mercurial first and then re-run this script."; exit 1; }
+  hash curl 2>/dev/null || { echo >&2 "Curl not found, install curl first and then re-run this script."; exit 1; }
 }
 
 getBranches () {
-  branches=(); while read branch _; do branches+=("$branch"); done < <(curl -s 'https://rawtherapee.googlecode.com/hg/?cmd=branchmap'; echo)
+  branches=()
+  while read branch _; do
+    branches+=("$branch")
+  done < <(curl -s 'https://rawtherapee.googlecode.com/hg/?cmd=branchmap'; echo)
 }
 
 hgClone () {
@@ -20,26 +23,23 @@ hgClone () {
 }
 
 menu () {
-  num=1
+  num="1"
   # list[0] is manually set to clone to avoid columns, so we make a bogus one and hide it so that the index will match the list entries
   list[0]="im hungry omnonom"
-  buildTypes=(release debug)
-  for branch in ${branches[@]}
-    do
-      for buildType in ${buildTypes[@]}
-        do
-          list+=( "$num - ${branch} - ${buildType}" )
-          ((num++))
-      done
+  buildTypes=("release" "debug")
+  for branch in "${branches[@]}"; do
+    for buildType in "${buildTypes[@]}"; do
+      list+=("$num - ${branch} - ${buildType}")
+      ((num++))
+    done
   done
   ((num--)) # cause of num++ in the for loop increasing a number after the last list item
 
   printf "%s\n------------------------------------------\n#   -  branch            -  build type\n------------------------------------------\n"
   printf "%s\n" "0   -  only clone the repository and exit"
   printf "%s\n" "${list[@]:1}" | column -t
-  echo -e "------------------------------------------\n\nIf you don't know which option to choose,\nthen choose the \"default\" branch,\n\"release\" build type.\n\nEnter your choices, each number\nseparated by a single space.\ne.g. 7 8\n"
-  echo -n "Your choices: "
-  read -a choiceNumbers
+  printf "%s\n" "------------------------------------------" "" "If you don't know which option to choose, then choose the \"default\" branch, \"release\" build type. Enter your choices, each number separated by a single space, e.g. 7 8" "" | fold -s
+  read -p "Your choices: " -a choiceNumbers
 
   #sanitize
   choiceNumbers=${choiceNumbers//[^0-9 ]/}
@@ -50,7 +50,7 @@ compile () {
   for choiceNumber in ${choiceNumbers[@]}
     do
       [[ $choiceNumber = 0 ]] && {
-        echo "Repository cloned."
+        printf "%s\n" "Repository cloned."
         hg parents --template 'RawTherapee-{latesttag}.{latesttagdistance} Latest tag: {latesttag}, Latest tag distance: {latesttagdistance}, Changeset: {rev}:{node|short}\n'
         exit 0;
         }
@@ -73,9 +73,11 @@ compile () {
       ./clean.sh
       echo
 
+      # print current line in script:
+      # printf "%s\n" "LINENO is \"$LINENO\", BASH_LINENO[i] is \"${BASH_LINENO[$i]}\". Patched is $patched"
+
       # if you manually applied a patch, this check avoids having it undone or broken by a hg update
       if [[ ! $patched = b ]]; then
-        printf "%s\n" "\$patched is ${patched}"
         printf "%s\n" "Updating the local repository."
         hg pull
         hg update ${branch}
@@ -87,7 +89,9 @@ compile () {
       verLatesttag="`hg parents --template '{latesttag}'`"
       verLatesttagdistance="`hg parents --template '{latesttagdistance}'`"
       verMajor=${verLatesttag%%.*}
-      cmake -DCMAKE_BUILD_TYPE="$buildType" -DPROC_TARGET_NUMBER="$procTarget" -DCMAKE_C_FLAGS="-O2 -pipe" -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS" -DCMAKE_CXX_FLAGS_RELEASE="$CMAKE_CXX_FLAGS" "$noomp" -DCMAKE_INSTALL_PREFIX="rawtherapee" -DBUILD_BUNDLE="ON" -DBINDIR="." -DDATADIR="." -DCACHE_NAME_SUFFIX="$verMajor" || { echo "Error during cmake, exiting." >&2; exit 1; }
+
+      cmake -DCMAKE_BUILD_TYPE="$buildType" -DPROC_TARGET_NUMBER="$procTarget" -DCMAKE_C_FLAGS="-pipe" -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS" "$noomp" -DCMAKE_INSTALL_PREFIX="rawtherapee" -DBUILD_BUNDLE="ON" -DBINDIR="." -DDATADIR="." -DCACHE_NAME_SUFFIX="$verMajor" || { echo "Error during cmake, exiting." >&2; exit 1; }
+
       time { make -j${cpuCount} install; } || { printf "%s\n" "" "Error during make, exiting."; exit 1; }
       printf "%-15b %b\n" "" "" "Rawtherapee compiled:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "" ""
 
@@ -190,7 +194,7 @@ checkBits () {
 }
 
 setVars () {
-  unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo param
+  unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
   checkDistro
   checkBits
   repo="${HOME}/rawtherapee" && echo "Repository is set to ${repo}"
@@ -209,9 +213,9 @@ setVars () {
 alert () {
   case "$alert_type" in
   notify-send) notify-send "RawTherapee" "$1";;
-      kdialog) kdialog --title "RawTherapee" --passivepopup "$1";;
-       zenity) zenity --notification --text="$1";;
-     xmessage) xmessage -nearmouse "$1";;
+      kdialog) kdialog --title "RawTherapee" --passivepopup "`printf "$1"`";;
+       zenity) zenity --notification --text="`printf "$1"`" &;;
+     xmessage) xmessage -nearmouse "`printf "$1"`" &;;
          none) printf "%b\n" "" "Compilation complete:" "$1";;
   esac
 }
@@ -225,14 +229,22 @@ finishUp () {
   printf "%s\n" "" "Finished building all chosen versions of RawTherapee"
 }
 
-# program start
-printf "%s\n" "Running the RawTherapee build script."
+# PROGRAM START
+printf "%s\n\n" "Running the RawTherapee build script."
 
-for param in "$@"
-  do
-    [[ $param = b ]] && { patched="b"; echo "Detected buildonly flag"; }
-    [[ $param = noomp ]] && { noomp="-DOPTION_OMP=OFF"; echo "Detected noomp flag"; }
+while getopts "bh?-nh" opt; do
+  case $opt in
+    b)    patched="b"
+          printf "%s\n" "Buildonly flag detected, will not hg pull or update";;
+    n)    noomp="-DOPTION_OMP=OFF"
+          printf "%s\n" "OpenMP disabled";;
+    h|\?|\-) printf "%s\n\n" "Usage: $0 [-b] [-n]" "-b stands for \"buildonly mode\", which skips hg pull && hg update, so that you can use this script to easily compile RawTherapee with whatever patches you manually applied." "-n disables OpenMP." | fold -s
+          exit 0;;
+  esac
 done
+
+shift $((OPTIND-1))
+[ "$1" = "--" ] && shift
 
 setVars
 checkDeps
