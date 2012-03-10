@@ -142,22 +142,22 @@ namespace rtengine {
 							   int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ );
 		
 		// FT denoise
-		void RGB_InputTransf(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
-		void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
-		void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
+		//void RGB_InputTransf(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
+		//void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
+		//void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
 		void RGB_denoise(Imagefloat * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
-		void RGBtile_denoise (float ** fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_L );	//for DCT
-		void RGBoutput_tile_row (float *Lbloxrow, LabImage * labdn, float ** tilemask_out, int height, int width, int top );
-		void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
-		void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
-		void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
-							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
+		void RGBtile_denoise (float * fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_L );	//for DCT
+		void RGBoutput_tile_row (float *Lbloxrow, float ** Ldetail, float ** tilemask_out, int height, int width, int top );
+		//void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
+		//void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
+		//void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
+		//					   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
 		void WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
 										wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
-		void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, \
-					  int W, int H, int level, int padding, float noisevar);
-		void Shrink(float ** WavCoeffs, int W, int H, int level, float noisevar);
-		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, \
+		//void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, 
+		//			  int W, int H, int level, int padding, float noisevar);
+		//void Shrink(float ** WavCoeffs, int W, int H, int level, float noisevar);
+		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
 					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_ab);
 		float MadMax(float * HH_Coeffs, int &max, int datalen);
 		
