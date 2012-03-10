@@ -12,14 +12,13 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc
 	jpeg_memsrc.cc jdatasrc.cc
-	EdgePreserveLab.cc EdgePreservingDecomposition.cc cplx_wavelet_dec.cc FTblockDNchroma.cc
+	EdgePreserveLab.cc EdgePreservingDecomposition.cc cplx_wavelet_dec.cc FTblockDN.cc
 	PF_correct_RT.cc 
     dirpyrLab_denoise.cc dirpyr_equalizer.cc
     calc_distort.cc
     klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
     klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
     )
-#FTblockDNchroma.cc
 
 add_library (rtengine ${RTENGINESOURCEFILES})
 #It may be nice to store library version too

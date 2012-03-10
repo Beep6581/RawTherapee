@@ -111,10 +111,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// start tile processing...???
-
     // perform luma denoise
     LabImage* labView = new LabImage (fw,fh);
     if (params.dirpyrDenoise.enabled) {
@@ -160,7 +156,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
 
     // at this stage, we can flush the raw data to free up quite an important amount of memory
-    // commented out because it make the application crash when batch processing...
+    // commented out because it makes the application crash when batch processing...
     // TODO: find a better place to flush rawData and rawRGB
     //imgsrc->flushRawData();
     //imgsrc->flushRGB();
@@ -194,6 +190,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (pl) 
         pl->setProgress (0.5);
 
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// start tile processing...???
 
     // luminance histogram update
     hist16.clear();
@@ -237,6 +236,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	// directional pyramid equalizer
     ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
 
+	// end tile processing...???
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     if (pl) pl->setProgress (0.60);
 
