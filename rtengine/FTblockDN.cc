@@ -161,7 +161,7 @@ namespace rtengine {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		// begin block processing of image
+		// begin tile processing of image
 		
 		//output buffer
 		Imagefloat * dsttmp = new Imagefloat(imwidth,imheight);
@@ -194,8 +194,9 @@ namespace rtengine {
 			tileheight += (tileheight&1);
 			tileHskip = tileheight-overlap;
 		}
+		//now we have tile dimensions, overlaps
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-		
 #pragma omp parallel for schedule(dynamic)
 		
 		for (int tiletop=0; tiletop<imheight; tiletop+=tileHskip) {
@@ -206,11 +207,13 @@ namespace rtengine {
 				int width  = tileright-tileleft;
 				int height = tilebottom-tiletop;
 				
-				
-				//LabImage * labin = new LabImage(width,height);
+				//input L channel
+				array2D<float> Lin(width,height);
+				//wavelet denoised image
 				LabImage * labdn = new LabImage(width,height);
+				//residual between input and denoised L channel
 				array2D<float> Ldetail(width,height);
-				
+
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -231,12 +234,8 @@ namespace rtengine {
 						labdn->b[i1][j1] = (Y-Z);
 						
 						Ldetail[i1][j1] = 0;
-						
+						Lin[i1][j1] = Y;
 					}
-				
-				array2D<float> Lin(width,height);
-				float * Linptr = Lin;
-				memcpy (Linptr, labdn->data, width*height*sizeof(float));
 				
 				//initial impulse denoise
 				impulse_nr (labdn, 50.0f/20.0f);
@@ -267,6 +266,7 @@ namespace rtengine {
 				impulse_nr (labdn, 50.0f/20.0f);
 				//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
 				
+				//wavelet denoised L channel
 				array2D<float> Lwavdn(width,height,ARRAY2D_CLEAR_DATA);
 				float * Lwavdnptr = Lwavdn;
 				memcpy (Lwavdnptr, labdn->data, width*height*sizeof(float));
@@ -277,6 +277,7 @@ namespace rtengine {
 				// missed by wavelet denoise
 				// blocks are not the same thing as tiles!
 				
+				//pixel weight
 				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining blocks
 				
 				// allocate DCT data structures
@@ -287,6 +288,7 @@ namespace rtengine {
 				//const int nrtiles = numblox_W*numblox_H;
 				// end of tiling calc
 				
+				//DCT block data storage
 				float * Lblox  = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
 				float * fLblox = (float *) fftwf_malloc (numblox_W*TS*TS * sizeof (float));
 				
@@ -295,7 +297,6 @@ namespace rtengine {
 				fftwf_plan plan_forward_blox, plan_backward_blox;
 				
 				int nfwd[2]={TS,TS};
-				
 				
 				//for DCT:
 				const fftw_r2r_kind fwdkind[2] = {FFTW_REDFT10, FFTW_REDFT10};
@@ -405,6 +406,7 @@ namespace rtengine {
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				// transform denoised "Lab" to output RGB
 				
+				//calculate mask for feathering output tile overlaps
 				float * Vmask = new float [height];
 				float * Hmask = new float [width];
 
@@ -455,7 +457,6 @@ namespace rtengine {
 				
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				
-				//delete labin;
 				delete labdn;
 				
 				

@@ -216,10 +216,10 @@ void ProcParams::setDefaults () {
     defringe.threshold          = 25;
 
     dirpyrDenoise.enabled       = false;
-    dirpyrDenoise.luma          = 10;
-    dirpyrDenoise.Ldetail       = 10;
-    dirpyrDenoise.chroma        = 10;
-    dirpyrDenoise.gamma         = 2.0;
+    dirpyrDenoise.luma          = 20;
+    dirpyrDenoise.Ldetail       = 50;
+    dirpyrDenoise.chroma        = 20;
+    dirpyrDenoise.gamma         = 1.7;
 	dirpyrDenoise.expcomp       = 0.0;
 
 	edgePreservingDecompositionUI.enabled = false;
@@ -478,9 +478,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
 
     // save dirpyrDenoise
     if (!pedited || pedited->dirpyrDenoise.enabled) keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
-    if (!pedited || pedited->dirpyrDenoise.luma)    keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
-    if (!pedited || pedited->dirpyrDenoise.luma)    keyFile.set_integer ("Directional Pyramid Denoising", "Ldetail", dirpyrDenoise.Ldetail);
-    if (!pedited || pedited->dirpyrDenoise.chroma)  keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
+    if (!pedited || pedited->dirpyrDenoise.luma)    keyFile.set_double ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
+    if (!pedited || pedited->dirpyrDenoise.Ldetail) keyFile.set_double ("Directional Pyramid Denoising", "Ldetail", dirpyrDenoise.Ldetail);
+    if (!pedited || pedited->dirpyrDenoise.chroma)  keyFile.set_double ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
     if (!pedited || pedited->dirpyrDenoise.gamma)   keyFile.set_double  ("Directional Pyramid Denoising", "Gamma",   dirpyrDenoise.gamma);
 
     //Save edgePreservingDecompositionUI.
@@ -856,9 +856,9 @@ if (keyFile.has_group ("Impulse Denoising")) {
 if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an accurate description for FT denoise
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled"))    { dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled"); if (pedited) pedited->dirpyrDenoise.enabled = true; }
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))       { dirpyrDenoise.luma    = keyFile.get_double ("Directional Pyramid Denoising", "Luma"); if (pedited) pedited->dirpyrDenoise.luma = true; }
-	if (keyFile.has_key ("Directional Pyramid Denoising", "Ldetail"))       { dirpyrDenoise.luma    = keyFile.get_double ("Directional Pyramid Denoising", "Ldetail"); if (pedited) pedited->dirpyrDenoise.Ldetail = true; }
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Ldetail"))    { dirpyrDenoise.Ldetail = keyFile.get_double ("Directional Pyramid Denoising", "Ldetail"); if (pedited) pedited->dirpyrDenoise.Ldetail = true; }
 	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))     { dirpyrDenoise.chroma  = keyFile.get_double ("Directional Pyramid Denoising", "Chroma"); if (pedited) pedited->dirpyrDenoise.chroma = true; }
-	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))      { dirpyrDenoise.gamma  = keyFile.get_double ("Directional Pyramid Denoising", "Gamma"); if (pedited) pedited->dirpyrDenoise.gamma = true; }
+	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))      { dirpyrDenoise.gamma   = keyFile.get_double ("Directional Pyramid Denoising", "Gamma"); if (pedited) pedited->dirpyrDenoise.gamma = true; }
 }
 
 //Load EPD.
