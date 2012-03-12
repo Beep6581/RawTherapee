@@ -159,6 +159,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         params.wb.temperature = currWB.getTemp ();
         params.wb.green = currWB.getGreen ();
     	imgsrc->demosaic( rp );
+		
+		LUTu aehist; int aehistcompr;
+		double clip;
+		int brightness, contrast, black, hlcompr, hlcomprthresh;
+		
+		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+		ipf.getAutoExp (aehist, aehistcompr, clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);	
     }
     lastHighDetail=highDetailNeeded;
 
@@ -194,13 +201,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         PreviewProps pp (0, 0, fw, fh, scale);
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
-		
-		LUTu aehist; int aehistcompr;
-		double clip;
-		int brightness, contrast, black, hlcompr, hlcomprthresh;
-		
-		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-		ipf.getAutoExp (aehist, aehistcompr, clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);		
 
         if (todo & M_LINDENOISE) {
         	//printf("denoising!\n");
