@@ -214,9 +214,6 @@ namespace rtengine {
 				//residual between input and denoised L channel
 				array2D<float> Ldetail(width,height);
 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 				//fill tile from image
 				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) 
 					for (int j=tileleft, j1=0; j<tileright; j++, j1++) {
@@ -425,9 +422,6 @@ namespace rtengine {
 				}
 
 				
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
 				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) {
 					float X,Y,Z;
 					for (int j=tileleft, j1=0; j<tileright; j++, j1++) {
@@ -442,15 +436,11 @@ namespace rtengine {
 						
 						//Y = 65535.0f*(0.05+0.1*((float)rand()/(float)RAND_MAX));//test with random data
 						
-						float mask = Vmask[i1]*Hmask[j1];
+						float factor = Vmask[i1]*Hmask[j1]/gain;
 						
-						if (Y<-500) {
-							float xxx=Y;
-						}
-						
-						dsttmp->r[i][j] += mask*X/gain;//prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
-						dsttmp->g[i][j] += mask*Y/gain;//prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
-						dsttmp->b[i][j] += mask*Z/gain;//prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
+						dsttmp->r[i][j] += factor*X;//prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
+						dsttmp->g[i][j] += factor*Y;//prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
+						dsttmp->b[i][j] += factor*Z;//prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
 						
 					}
 				}
@@ -797,7 +787,7 @@ namespace rtengine {
 						
 						
 					}
-				}
+				}//now chrominance coefficients are denoised
 			}
 			
 			if (noisevar_L>0.01) {
@@ -833,7 +823,7 @@ namespace rtengine {
 					//use smoothed shrinkage unless local shrinkage is much less
 					WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
 					
-				}//now luminance coeffs are denoised
+				}//now luminance coefficients are denoised
 			}
 			
 			
@@ -847,5 +837,5 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	
-};
+}
 
