@@ -1655,6 +1655,23 @@ void RawImageSource::processFalseColorCorrection  (Imagefloat* im, int steps) {
     }
 }
 	
+// Some camera input profiles need gamma preprocessing
+// gamma is applied before the CMS, correct line fac=lineFac*rawPixel+LineSum after the CMS
+void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, float& lineFac, float& lineSum) {
+    gammaFac=0; lineFac=1; lineSum=0;
+
+    char copyright[256];
+    copyright[0]=0;
+
+    if (cmsGetProfileInfoASCII(in, cmsInfoCopyright, cmsNoLanguage, cmsNoCountry, copyright, 256)>0) {
+        if (strstr(copyright,"Phase One")!=NULL)
+            gammaFac=0.55556;  // 1.8
+        else if (strstr(copyright,"Nikon Corporation")!=NULL) {
+            gammaFac=0.5; lineFac=-0.4; lineSum=1.35;  // determined in reverse by measuring NX an RT developed colorchecker PNGs
+        }
+    }
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Converts raw image including ICC input profile to working space - floating point version
@@ -1696,12 +1713,30 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
         // use supplied input profile
 		// color space transform is expecting data in the range (0,1)
+        #pragma omp parallel for
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
-				im->r[h][w] /= 65535.0f ;
-				im->g[h][w] /= 65535.0f ;
-				im->b[h][w] /= 65535.0f ;
+				im->r[h][w] /= 65535.0;
+				im->g[h][w] /= 65535.0;
+				im->b[h][w] /= 65535.0;
 			}
+
+
+        // Gamma preprocessing
+        float gammaFac, lineFac, lineSum;
+        getProfilePreprocParams(in, gammaFac, lineFac, lineSum);
+
+        if (gammaFac>0) {
+            #pragma omp parallel for
+		    for ( int h = 0; h < im->height; ++h )
+			    for ( int w = 0; w < im->width; ++w ) {
+				    im->r[h][w] = pow (MAX(im->r[h][w],0), gammaFac);
+				    im->g[h][w] = pow (MAX(im->g[h][w],0), gammaFac);
+				    im->b[h][w] = pow (MAX(im->b[h][w],0), gammaFac);
+			    }
+        }
+
+
 	if(settings->gamutICC)  
 	// use Prophoto to apply profil ICC, then converted to cmp.working (sRGB..., Adobe.., Wide..) to avoid color shifts due to relative colorimetric
 	// LCMS use intent for applying profil => suppression of negatives values and > 65535
@@ -1795,6 +1830,14 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         #pragma omp parallel for
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
+               
+                // There might be Nikon postprocessings
+                if (lineSum>0) {
+                    im->r[h][w] *= im->r[h][w] * lineFac + lineSum;
+                    im->g[h][w] *= im->g[h][w] * lineFac + lineSum;
+                    im->b[h][w] *= im->b[h][w] * lineFac + lineSum;
+                }
+
 				im->r[h][w] *= 65535.0 ;
 				im->g[h][w] *= 65535.0 ;
 				im->b[h][w] *= 65535.0 ;
@@ -1881,6 +1924,20 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 	}
 	else
 	{
+        // Gamma preprocessing
+        float gammaFac, lineFac, lineSum;
+        getProfilePreprocParams(in, gammaFac, lineFac, lineSum);
+
+        if (gammaFac>0) {
+            #pragma omp parallel for
+		    for ( int h = 0; h < im->height; ++h )
+			    for ( int w = 0; w < im->width; ++w ) {
+				    im->r[h][w]=  (int) (pow (im->r[h][w] / 65535.0, gammaFac) * 65535.0);
+				    im->g[h][w]=  (int) (pow (im->g[h][w] / 65535.0, gammaFac) * 65535.0);
+				    im->b[h][w]=  (int) (pow (im->b[h][w] / 65535.0, gammaFac) * 65535.0);
+			    }
+        }
+
 		cmsHPROFILE out = iccStore->workingSpace (cmp.working);
 		//        out = iccStore->workingSpaceGamma (wProfile);
 		lcmsMutex->lock ();
@@ -1890,6 +1947,17 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 
 		if (hTransform) {
 			im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+
+            // There might be Nikon postprocessings
+            if (lineSum>0) {
+                #pragma omp parallel for
+                for ( int h = 0; h < im->height; ++h )
+                    for ( int w = 0; w < im->width; ++w ) {
+                        im->r[h][w] *= im->r[h][w] * lineFac / 65535.0 + lineSum;
+                        im->g[h][w] *= im->g[h][w] * lineFac / 65535.0 + lineSum;
+                        im->b[h][w] *= im->b[h][w] * lineFac / 65535.0 + lineSum;
+                    }
+            }
 		}
 		else {
 			lcmsMutex->lock ();
