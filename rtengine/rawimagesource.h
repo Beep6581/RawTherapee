@@ -126,6 +126,8 @@ class RawImageSource : public ImageSource {
         void HLRecovery_ColorPropagation (float* red, float* green, float* blue, int i, int sx1, int width, int skip);
         unsigned FC(int row, int col){ return ri->FC(row,col); }
         inline void getRowStartEnd (int x, int &start, int &end);
+        static void getProfilePreprocParams(cmsHPROFILE in, float& gammafac, float& lineFac, float& lineSum);
+
 
     public:
         RawImageSource ();
