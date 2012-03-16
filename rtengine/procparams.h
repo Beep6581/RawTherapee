@@ -244,7 +244,7 @@ class WBParams {
         double	luma;
         double	Ldetail;
         double  chroma;
-		float	gamma;
+		double	gamma;
 		double	expcomp;
 	};
 
