@@ -20,7 +20,7 @@
  * exactly like printf
  */
 
-void KLTError(char *fmt, ...)
+void KLTError(const char *fmt, ...)
 {
   va_list args;
 
@@ -42,7 +42,7 @@ void KLTError(char *fmt, ...)
  * exactly like printf
  */
 
-void KLTWarning(char *fmt, ...)
+void KLTWarning(const char *fmt, ...)
 {
   va_list args;
 

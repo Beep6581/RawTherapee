@@ -122,7 +122,7 @@ void ppmReadHeader(
  */
 
 void pgmReadHeaderFile(
-  char *fname, 
+  const char *fname,
   int *magic, 
   int *ncols, int *nrows, 
   int *maxval)
@@ -148,7 +148,7 @@ void pgmReadHeaderFile(
  */
 
 void ppmReadHeaderFile(
-  char *fname, 
+  const char *fname,
   int *magic, 
   int *ncols, int *nrows, 
   int *maxval)
@@ -218,7 +218,7 @@ unsigned char* pgmRead(
  */
 
 unsigned char* pgmReadFile(
-  char *fname,
+  const char *fname,
   unsigned char *img,
   int *ncols, int *nrows)
 {
@@ -247,7 +247,7 @@ unsigned char* pgmReadFile(
 
 void pgmWrite(
   FILE *fp,
-  unsigned char *img, 
+  const unsigned char *img,
   int ncols, 
   int nrows)
 {
@@ -271,8 +271,8 @@ void pgmWrite(
  */
 
 void pgmWriteFile(
-  char *fname, 
-  unsigned char *img, 
+  const char *fname,
+  const unsigned char *img,
   int ncols, 
   int nrows)
 {
@@ -298,9 +298,9 @@ void pgmWriteFile(
 
 void ppmWrite(
   FILE *fp,
-  unsigned char *redimg,
-  unsigned char *greenimg,
-  unsigned char *blueimg,
+  const unsigned char *redimg,
+  const unsigned char *greenimg,
+  const unsigned char *blueimg,
   int ncols, 
   int nrows)
 {
@@ -328,10 +328,10 @@ void ppmWrite(
  */
 
 void ppmWriteFileRGB(
-  char *fname, 
-  unsigned char *redimg,
-  unsigned char *greenimg,
-  unsigned char *blueimg,
+  const char *fname,
+  const unsigned char *redimg,
+  const unsigned char *greenimg,
+  const unsigned char *blueimg,
   int ncols, 
   int nrows)
 {

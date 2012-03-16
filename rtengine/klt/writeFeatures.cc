@@ -40,7 +40,7 @@ void KLTWriteFeatureListToPPM(
   KLT_PixelType *greyimg,
   int ncols,
   int nrows,
-  char *filename)
+  const char *filename)
 {
   int nbytes = ncols * nrows * sizeof(char);
   uchar *redimg, *grnimg, *bluimg;
@@ -94,8 +94,8 @@ void KLTWriteFeatureListToPPM(
 
 
 static FILE* _printSetupTxt(
-  char *fname, 	/* Input: filename, or NULL for stderr */
-  char *fmt,	/* Input: format (e.g., %5.1f or %3d) */
+  const char *fname, 	/* Input: filename, or NULL for stderr */
+  const char *fmt,	/* Input: format (e.g., %5.1f or %3d) */
   char *format,	/* Output: format (e.g., (%5.1f,%5.1f)=%3d) */
   char *type)	/* Output: either 'f' or 'd', based on input format */
 {
@@ -131,7 +131,7 @@ static FILE* _printSetupTxt(
 
 
 static FILE* _printSetupBin(
-  char *fname) 	/* Input: filename */
+  const char *fname) 	/* Input: filename */
 {
   FILE *fp;
   if (fname == NULL) {
@@ -169,8 +169,8 @@ static void _printInteger(
 
 
 static KLT_BOOL _isCharInString(
-  char c,
-  char *str)
+  const char c,
+  const char *str)
 {
   int width = strlen(str);
   int i;
@@ -191,7 +191,7 @@ static KLT_BOOL _isCharInString(
  */
 
 static int _findStringWidth(
-  char *str)
+  const char *str)
 {
   int width = 0;
   int add;
@@ -234,7 +234,7 @@ static int _findStringWidth(
 
 static void _printHeader(
   FILE *fp,
-  char *format,
+  const char *format,
   structureType id,
   int nFrames,
   int nFeatures)
@@ -290,8 +290,8 @@ static void _printHeader(
 static void _printFeatureTxt(
   FILE *fp,
   KLT_Feature feat,
-  char *format,
-  char type)
+  const char *format,
+  const char type)
 {
   assert(type == 'f' || type == 'd');
 
@@ -343,8 +343,8 @@ static void _printShutdown(
 
 void KLTWriteFeatureList(
   KLT_FeatureList fl,
-  char *fname, 
-  char *fmt)
+  const char *fname,
+  const char *fmt)
 {
   FILE *fp;
   char format[100];
@@ -381,8 +381,8 @@ void KLTWriteFeatureList(
 
 void KLTWriteFeatureHistory(
   KLT_FeatureHistory fh,
-  char *fname, 
-  char *fmt)
+  const char *fname,
+  const char *fmt)
 {
   FILE *fp;
   char format[100];
@@ -420,8 +420,8 @@ void KLTWriteFeatureHistory(
 
 void KLTWriteFeatureTable(
   KLT_FeatureTable ft,
-  char *fname, 
-  char *fmt)
+  const char *fname,
+  const char *fmt)
 {
   FILE *fp;
   char format[100];
@@ -616,7 +616,7 @@ static void _readFeatureBin(
 
 KLT_FeatureList KLTReadFeatureList(
   KLT_FeatureList fl_in,
-  char *fname)
+  const char *fname)
 {
   FILE *fp;
   KLT_FeatureList fl;
@@ -679,7 +679,7 @@ KLT_FeatureList KLTReadFeatureList(
 
 KLT_FeatureHistory KLTReadFeatureHistory(
   KLT_FeatureHistory fh_in,
-  char *fname)
+  const char *fname)
 {
   FILE *fp;
   KLT_FeatureHistory fh;
@@ -741,7 +741,7 @@ KLT_FeatureHistory KLTReadFeatureHistory(
 
 KLT_FeatureTable KLTReadFeatureTable(
   KLT_FeatureTable ft_in,
-  char *fname)
+  const char *fname)
 {
   FILE *fp;
   KLT_FeatureTable ft;
