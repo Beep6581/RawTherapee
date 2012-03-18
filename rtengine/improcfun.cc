@@ -570,15 +570,6 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
 	}
 	
-	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
-		
-		if (params->dirpyrDenoise.enabled && lab->W>=8 && lab->H>=8) {
-			
-			//L_denoise(lab, lab, params->dirpyrDenoise);
-			if (params->dirpyrDenoise.chroma)
-				dirpyrLab_denoise(lab, lab, params->dirpyrDenoise );
-		}
-	}
 	
 	void ImProcFunctions::dirpyrequalizer (LabImage* lab) {
 		

@@ -216,9 +216,9 @@ void ProcParams::setDefaults () {
     defringe.threshold          = 25;
 
     dirpyrDenoise.enabled       = false;
-    dirpyrDenoise.luma          = 20;
+    dirpyrDenoise.luma          = 30;
     dirpyrDenoise.Ldetail       = 50;
-    dirpyrDenoise.chroma        = 20;
+    dirpyrDenoise.chroma        = 30;
     dirpyrDenoise.gamma         = 1.7;
 	dirpyrDenoise.expcomp       = 0.0;
 

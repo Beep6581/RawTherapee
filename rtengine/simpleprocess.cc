@@ -111,11 +111,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
-    // perform luma denoise
+    // perform luma/chroma denoise
     LabImage* labView = new LabImage (fw,fh);
     if (params.dirpyrDenoise.enabled) {
-        //ipf.L_denoise(baseImg, labView, params.dirpyrDenoise);
-        //ipf.dirpyrLab_denoise(labView, baseImg, params.dirpyrDenoise);
+		ipf.RGB_denoise(baseImg, baseImg, params.dirpyrDenoise, params.defringe);
     }
     imgsrc->convertColorSpace(baseImg, params.icm);
 
@@ -214,7 +213,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
   	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
- 	//ipf.dirpyrdenoise (labView);
 	if (params.sharpenEdge.enabled) {
 		 ipf.MLsharpen(labView);
 	}

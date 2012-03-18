@@ -32,6 +32,12 @@ namespace rtengine {
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+template <typename A>
+void copy_out(A * a, A * b, size_t datalen)
+{// for standard wavelet decomposition
+	memcpy(b, a, datalen*sizeof(A));
+}
 
 template <typename A, typename B>
 void copy_out(A ** a, B * b, size_t datalen)
