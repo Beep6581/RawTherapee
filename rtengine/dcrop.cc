@@ -104,9 +104,6 @@ void Crop::update (int todo) {
 
         if (todo & M_LINDENOISE) {
 			if (skip==1 && params.dirpyrDenoise.enabled) {
-				//array2D<float> Ldn(cropw,croph);
-				//parent->ipf.L_denoise(origCrop, laboCrop, params.dirpyrDenoise);
-				//parent->ipf.dirpyrLab_denoise(laboCrop, origCrop, params.dirpyrDenoise);
 				parent->ipf.RGB_denoise(origCrop, origCrop, /*Roffset,*/ params.dirpyrDenoise, params.defringe);
 			}
         }
@@ -154,7 +151,6 @@ void Crop::update (int todo) {
 		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
 			parent->ipf.defringe (labnCrop);
-			//parent->ipf.dirpyrdenoise (labnCrop);
 			parent->ipf.MLsharpen (labnCrop);
 			parent->ipf.MLmicrocontrast (labnCrop);
 			//parent->ipf.MLmicrocontrast (labnCrop);

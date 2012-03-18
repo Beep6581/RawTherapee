@@ -36,10 +36,12 @@ DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 	
 	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enabledChanged) );
 	
-	luma     = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMA"),    0, 100, 0.01, 20));
+
+	luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMA"), 0, 100, 0.01, 30));
 	Ldetail  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LDETAIL"), 0, 100, 0.01, 50));
-	chroma   = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMA"),  0, 100, 0.01, 20));
-	gamma	 = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 1.7));
+	chroma    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMA"), 0, 100, 0.01, 30));
+	gamma	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 1.7));
+
 	
 	luma->setAdjusterListener (this);
 	Ldetail->setAdjusterListener (this);

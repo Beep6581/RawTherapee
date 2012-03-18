@@ -208,11 +208,13 @@ namespace rtengine {
 				int height = tilebottom-tiletop;
 				
 				//input L channel
-				array2D<float> Lin(width,height);
+				array2D<float> Lin(width,height,ARRAY2D_CLEAR_DATA);
 				//wavelet denoised image
 				LabImage * labdn = new LabImage(width,height);
 				//residual between input and denoised L channel
-				array2D<float> Ldetail(width,height);
+				array2D<float> Ldetail(width,height,ARRAY2D_CLEAR_DATA);
+				//pixel weight
+				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
 
 				//fill tile from image
 				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) 
@@ -232,6 +234,7 @@ namespace rtengine {
 						
 						Ldetail[i1][j1] = 0;
 						Lin[i1][j1] = Y;
+						totwt[i1][j1] = 0;
 					}
 				
 				//initial impulse denoise
@@ -264,7 +267,7 @@ namespace rtengine {
 				//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
 				
 				//wavelet denoised L channel
-				array2D<float> Lwavdn(width,height,ARRAY2D_CLEAR_DATA);
+				array2D<float> Lwavdn(width,height);
 				float * Lwavdnptr = Lwavdn;
 				memcpy (Lwavdnptr, labdn->data, width*height*sizeof(float));
 				
@@ -274,8 +277,6 @@ namespace rtengine {
 				// missed by wavelet denoise
 				// blocks are not the same thing as tiles!
 				
-				//pixel weight
-				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining blocks
 				
 				// allocate DCT data structures
 				
@@ -305,7 +306,6 @@ namespace rtengine {
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				// Main detail recovery algorithm: Block loop
-#pragma omp parallel for schedule(dynamic)
 				for (int vblk=0; vblk<numblox_H; vblk++) {
 					//printf("vblock=%d",vblk);
 					int vblkmod = vblk%8;
@@ -335,7 +335,7 @@ namespace rtengine {
 							datarow[j] = datarow[MAX(0,2*width-2-j)];
 						}//now we have a padded data row
 						
-						//now fill this row of the tiles with Lab high pass data
+						//now fill this row of the blocks with Lab high pass data
 						for (int hblk=0; hblk<numblox_W; hblk++) {
 							int left = (hblk-blkrad)*offset;
 							int indx = (hblk)*TS;//index of block in malloc
@@ -356,26 +356,26 @@ namespace rtengine {
 					fftwf_execute_r2r(plan_forward_blox,Lblox,fLblox);		// DCT an entire row of tiles
 					
 					//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-					// now process the vblk row of tiles for noise reduction
+					// now process the vblk row of blocks for noise reduction
 					for (int hblk=0; hblk<numblox_W; hblk++) {
 						
 						RGBtile_denoise (fLblox, vblk, hblk, numblox_H, numblox_W, noisevar_Ldetail );
 						
-					}//end of horizontal tile loop
+					}//end of horizontal block loop
 					
 					//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 					
-					//now perform inverse FT of an entire row of tiles
+					//now perform inverse FT of an entire row of blocks
 					fftwf_execute_r2r(plan_backward_blox,fLblox,Lblox);	//for DCT
 					
 					int topproc = (vblk-blkrad)*offset;
 					
-					//add row of tiles to output image
+					//add row of blocks to output image tile
 					RGBoutput_tile_row (Lblox, Ldetail, tilemask_out, height, width, topproc );
 					
 					//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 					
-				}//end of vertical tile loop
+				}//end of vertical block loop
 				
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				
@@ -448,7 +448,8 @@ namespace rtengine {
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				
 				delete labdn;
-				
+				delete[] Vmask;
+				delete[] Hmask;
 				
 			}//end of tile row
 		}//end of tile loop

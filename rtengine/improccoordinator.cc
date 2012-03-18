@@ -321,9 +321,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			progress ("Defringing...",100*readyphase/numofphases);
             ipf.defringe (nprevl);
             readyphase++;
-            progress ("Denoising luma/chroma...",100*readyphase/numofphases);
-            //ipf.dirpyrdenoise (nprevl);
-            readyphase++;
 			if (params.sharpenEdge.enabled) {
                 progress ("Edge sharpening...",100*readyphase/numofphases);
 				ipf.MLsharpen (nprevl);

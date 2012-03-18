@@ -407,6 +407,7 @@ namespace rtengine {
 		for(size_t i = m_pad; i < (dstlen+m_pad); i++) {
 			
 			float tot=0;
+			//TODO: this is correct only if skip=1; otherwise, want to work with cosets of length 'skip'
 			int i_src = (i+shift)/2;
 			int begin = (i+shift)%2;
 			if (i>skip*taps && i<(srclen-skip*taps)) {//bulk
@@ -448,7 +449,7 @@ namespace rtengine {
 			dstHi[(pitch*(i/2))] = 0.5*(srcbuffer[i] - srcbuffer[i+skip]);
 		}
 		
-		for(size_t i = (srclen-skip)-(srclen-skip)&1; i < (srclen); i+=2) {
+		for(size_t i = (srclen-skip)-((srclen-skip)&1); i < (srclen); i+=2) {
 			dstLo[(pitch*(i/2))] = 0.5*(srcbuffer[i] + srcbuffer[i-skip]);
 			dstHi[(pitch*(i/2))] = 0.5*(srcbuffer[i] - srcbuffer[i-skip]);
 		}
@@ -469,16 +470,21 @@ namespace rtengine {
 		// calculate coefficients
 				
 		//TODO: this code is buggy...
-		for(size_t i = m_pad; i < (dstlen+m_pad-skip); i+=2*skip) {
-			dst[pitch*(i-m_pad)] = srcLo[i/2]+srcHi[i/2];
-			dst[pitch*(i+skip-m_pad)] = srcLo[i/2]-srcHi[i/2];
-		}
-		
-		if ((dstlen+m_pad-skip)<dstlen-1) {
-			for (size_t i=(dstlen+m_pad-skip); i<dstlen+m_pad-1; i++) {
-				dst[pitch*(dstlen-m_pad)] = srcLo[i/2]+srcHi[i/2];
+		for (int n=0; n<skip; n++) {
+			for (size_t i = m_pad; i < (dstlen+m_pad-2*skip); i+=2*skip) {
+				dst[pitch*(i-m_pad+n)] = srcLo[i/2+n]+srcHi[i/2+n];
+				dst[pitch*(i-m_pad+skip+n)] = srcLo[i/2+n]-srcHi[i/2+n];
 			}
 		}
+		
+		if ((dstlen+m_pad-2*skip)<dstlen-1) {
+			for (int n=0; n<skip; n++) {
+				for (size_t i=(dstlen+m_pad-2*skip); i<dstlen+m_pad-1; i++) {
+					dst[pitch*(dstlen-m_pad+n)] = srcLo[i/2+n]+srcHi[i/2+n];
+				}
+			}
+		}
+		
 		
 	}
 	
@@ -496,7 +502,7 @@ namespace rtengine {
 		T *tmpLo = new T[m_w*m_h2];
 		T *tmpHi = new T[m_w*m_h2];
 		
-		T *buffer = new T[MAX(m_w,m_h)+2*m_pad];
+		T *buffer = new T[MAX(m_w,m_h)+2*m_pad+skip];
 		
 		/* filter along columns */
 		for (int j=0; j<m_w; j++) {
