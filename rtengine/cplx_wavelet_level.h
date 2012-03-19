@@ -505,6 +505,7 @@ namespace rtengine {
 		T *buffer = new T[MAX(m_w,m_h)+2*m_pad+skip];
 		
 		/* filter along columns */
+//OpenMP here		
 		for (int j=0; j<m_w; j++) {
 			loadbuffer(src+j, buffer, m_w/*pitch*/, m_h/*srclen*/);//pad a column of data and load it to buffer
 			if (subsamp_out) {
@@ -517,6 +518,7 @@ namespace rtengine {
 		}
 		
 		/* filter along rows */
+//OpenMP here		
 		for (int i=0; i<m_h2; i++) {
 			loadbuffer(tmpLo+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);//pad a row of data and load it to buffer
 			if (subsamp_out) {
@@ -535,9 +537,7 @@ namespace rtengine {
 				AnalysisFilterHaar (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, 1, m_w);
 			}
 		}
-		
-		//imp_nr (wavcoeffs[0], m_w2, m_h2, 50.0f/20.0f);
-		
+				
 		delete[] tmpLo;
 		delete[] tmpHi;
 		delete[] buffer;
@@ -557,6 +557,7 @@ namespace rtengine {
 		float *bufferHi = new float[buflen];
 		
 		/* filter along rows */
+//OpenMP here		
 		for (int i=0; i<m_h2; i++) {
 			
 			if (subsamp_out) {
@@ -577,6 +578,7 @@ namespace rtengine {
 		}
 		
 		/* filter along columns */
+//OpenMP here		
 		for (int j=0; j<m_w; j++) {
 			if (subsamp_out) {
 				SynthesisFilterSubsamp (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, \

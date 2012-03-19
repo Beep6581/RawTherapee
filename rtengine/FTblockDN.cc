@@ -197,7 +197,6 @@ namespace rtengine {
 		//now we have tile dimensions, overlaps
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#pragma omp parallel for schedule(dynamic)
 		
 		for (int tiletop=0; tiletop<imheight; tiletop+=tileHskip) {
 			for (int tileleft=0; tileleft<imwidth; tileleft+=tileWskip) {
@@ -306,6 +305,7 @@ namespace rtengine {
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				// Main detail recovery algorithm: Block loop
+//OpenMP here				
 				for (int vblk=0; vblk<numblox_H; vblk++) {
 					//printf("vblock=%d",vblk);
 					int vblkmod = vblk%8;
@@ -577,7 +577,8 @@ namespace rtengine {
 		float parfrac = 0.05;
 		
 		float madL[8][3], mada[8][3], madb[8][3];
-		
+
+//OpenMP here		
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 			// compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
 			
@@ -590,7 +591,7 @@ namespace rtengine {
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
-			
+
 			for (int dir=1; dir<4; dir++) {
 				madL[lvl][dir-1] = SQR(MadMax(WavCoeffs_L[dir], max, Wlvl_L*Hlvl_L));
 				mada[lvl][dir-1] = SQR(MadMax(WavCoeffs_a[dir], max, Wlvl_ab*Hlvl_ab));
@@ -645,6 +646,7 @@ namespace rtengine {
 						
 						printf("  dir=%d  mad_L=%f		mad_a=%f		mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
 						
+//OpenMP here						
 						for (int i=0; i<Hlvl_ab; i++) {
 							for (int j=0; j<Wlvl_ab; j++) {
 								
@@ -678,7 +680,7 @@ namespace rtengine {
 					
 					if (noisevar_L>0.01) {
 						mad_L *= noisevar_L*5/(lvl+1);
-						
+//OpenMP here						
 						for (int i=0; i<Hlvl_L; i++) 
 							for (int j=0; j<Wlvl_L; j++) {
 								
@@ -700,7 +702,7 @@ namespace rtengine {
 						gaussVertical<float>   (edge, edge, buffer, Wlvl_L, Hlvl_L, 1<<(lvl+1), false);
 						
 						boxblur(sfave, sfave, lvl+2, lvl+2, Wlvl_L, Hlvl_L);//increase smoothness by locally averaging shrinkage
-						
+//OpenMP here						
 						for (int i=0; i<Hlvl_L; i++) 
 							for (int j=0; j<Wlvl_L; j++) {
 								
@@ -761,6 +763,7 @@ namespace rtengine {
 			float mad_b = madb*noisevar_ab;
 			
 			if (noisevar_ab>0.01) {
+//OpenMP here				
 				for (int i=0; i<H_ab; i++) {
 					for (int j=0; j<W_ab; j++) {
 						
@@ -792,7 +795,7 @@ namespace rtengine {
 			}
 			
 			if (noisevar_L>0.01) {
-				
+//OpenMP here				
 				for (int i=0; i<W_L*H_L; i++) {
 					
 					//float coeff_L = fabs(WavCoeffs_L[dir][i]);
@@ -808,7 +811,7 @@ namespace rtengine {
 					//WavCoeffs_L[dir][i] *= shrinkfactor;
 					sfave[i] = shrinkfactor;
 				}
-				
+//OpenMP here				
 				boxblur(sfave, sfave, level+2, level+2, W_L, H_L);//increase smoothness by locally averaging shrinkage
 				for (int i=0; i<W_L*H_L; i++) {
 					
