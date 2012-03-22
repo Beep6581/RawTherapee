@@ -213,8 +213,15 @@ void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring rtICCDir) {
 
 void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents) {
     if (rootDirName!="") {
+        std::deque<Glib::ustring> qDirs;
+
+        qDirs.push_front(rootDirName);
+
+        while (qDirs.size()) {
         // process directory
-        Glib::ustring dirname = rootDirName;
+            Glib::ustring dirname = qDirs.back();
+            qDirs.pop_back();
+
         Glib::Dir* dir = NULL;
         try {
             if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR)) return;
@@ -241,10 +248,11 @@ void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std:
                         }
                     }
                 }
-            }
+                } else qDirs.push_front(fname);  // for later scanning
         }
         delete dir;
     }
+}
 }
 
 // Determine the first monitor default profile of operating system, if selected
