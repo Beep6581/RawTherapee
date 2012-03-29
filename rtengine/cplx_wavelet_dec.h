@@ -273,11 +273,11 @@ public:
 				int skip=1<<(lvltot-1);
 				for (int lvl=lvltot-1; lvl>0; lvl--) {
 					dual_tree[lvl][2*n+m]->reconstruct_level(dual_tree[lvl-1][2*n+m]->wavcoeffs[0], wavfilt_synth+wavfilt_len*2*n, \
-																	wavfilt_synth+wavfilt_len*2*m, wavfilt_len, wavfilt_offset, skip);
+																	wavfilt_synth+wavfilt_len*2*m, wavfilt_len, wavfilt_offset);
 					skip /=2;
 				}
 				dual_tree[0][2*n+m]->reconstruct_level(tmp[2*n+m], first_lev_synth+first_lev_len*2*n, 
-															  first_lev_synth+first_lev_len*2*m, first_lev_len, first_lev_offset, skip);
+															  first_lev_synth+first_lev_len*2*m, first_lev_len, first_lev_offset);
 			}
 		}
 				
@@ -428,13 +428,13 @@ public:
 		
 		//int skip=1<<(lvltot-1);
 		for (int lvl=lvltot-1; lvl>0; lvl--) {
-			wavelet_decomp[lvl]->reconstruct_level(wavelet_decomp[lvl-1]->wavcoeffs[0], wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset, subsamp);
+			wavelet_decomp[lvl]->reconstruct_level(wavelet_decomp[lvl-1]->wavcoeffs[0], wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
 			//skip /=2;
 		}
 		
 		internal_type * tmp = new internal_type[m_w*m_h];
 
-		wavelet_decomp[0]->reconstruct_level(tmp, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset, subsamp);
+		wavelet_decomp[0]->reconstruct_level(tmp, wavfilt_synth, wavfilt_synth, wavfilt_len, wavfilt_offset);
 		
 		copy_out(tmp,dst,m_w*m_h);
 		
