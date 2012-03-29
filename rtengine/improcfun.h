@@ -150,8 +150,8 @@ namespace rtengine {
 		void RGBoutput_tile_row (float *Lbloxrow, float ** Ldetail, float ** tilemask_out, int height, int width, int top );
 		//void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
 		//void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
-		//void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
-		//					   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
+		void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
+							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
 		void WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
 										wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
 		//void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, 

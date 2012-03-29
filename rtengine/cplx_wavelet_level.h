@@ -104,7 +104,7 @@ namespace rtengine {
 			m_pad= skip*padding;
 			
 			wavcoeffs = create((m_w2)*(m_h2));
-			decompose_level(src, filterV, filterH, len, offset, skip);
+			decompose_level(src, filterV, filterH, len, offset);
 			
 		}
 		
@@ -144,10 +144,10 @@ namespace rtengine {
 		}
 		
 		template<typename E>
-		void decompose_level(E *src, float *filterV, float *filterH, int len, int offset, int skip);
+		void decompose_level(E *src, float *filterV, float *filterH, int len, int offset);
 		
 		template<typename E>
-		void reconstruct_level(E *dst, float *filterV, float *filterH, int len, int offset, int skip);
+		void reconstruct_level(E *dst, float *filterV, float *filterH, int len, int offset);
 		
 	};
 	
@@ -497,7 +497,7 @@ namespace rtengine {
 	
 	
 	template<typename T> template<typename E>
-	void wavelet_level<T>::decompose_level(E *src, float *filterV, float *filterH, int taps, int offset, int skip) { 
+	void wavelet_level<T>::decompose_level(E *src, float *filterV, float *filterH, int taps, int offset) { 
 		
 		T *tmpLo = new T[m_w*m_h2];
 		T *tmpHi = new T[m_w*m_h2];
@@ -547,7 +547,7 @@ namespace rtengine {
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 	
 	template<typename T> template<typename E>
-	void wavelet_level<T>::reconstruct_level(E *dst, float *filterV, float *filterH, int taps, int offset, int skip) { 
+	void wavelet_level<T>::reconstruct_level(E *dst, float *filterV, float *filterH, int taps, int offset) { 
 		
 		T *tmpLo = new T[m_w*m_h2];
 		T *tmpHi = new T[m_w*m_h2];
