@@ -102,6 +102,8 @@ void Crop::update (int todo) {
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
 
+		//parent->imgsrc->convertColorSpace(origCrop, params.icm);
+
         if (todo & M_LINDENOISE) {
 			if (skip==1 && params.dirpyrDenoise.enabled) {
 				parent->ipf.RGB_denoise(origCrop, origCrop, /*Roffset,*/ params.dirpyrDenoise, params.defringe);

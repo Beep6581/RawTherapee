@@ -112,7 +112,7 @@ namespace rtengine {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// gamma transform for input data
 		float gam = dnparams.gamma;
-		float gamthresh = 0.03;
+		float gamthresh = 0.001;
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
 		
 		LUTf gamcurve(65536,0);
@@ -769,6 +769,9 @@ namespace rtengine {
 		//simple wavelet shrinkage
 		const float eps = 0.01f;
 		float * sfave = new float[W_L*H_L];
+		float * sfavea = new float[W_L*H_L];
+		float * sfaveb = new float[W_L*H_L];
+
 		int max;
 		
 		printf("\n level=%d  \n",level);
@@ -797,14 +800,37 @@ namespace rtengine {
 						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 						
+						sfavea[coeffloc_ab] = (1-exp(-(mag_a/mad_a)-(mag_L/(9*madL))));
+						sfaveb[coeffloc_ab] = (1-exp(-(mag_b/mad_b)-(mag_L/(9*madL))));
 						
 						// 'firm' threshold of chroma coefficients
-						WavCoeffs_a[dir][coeffloc_ab] *= SQR(1-exp(-(mag_a/mad_a)-(mag_L/(9*madL))));//(coeff_a>2*thresh_a ? 1 : (coeff_a<thresh_a ? 0 : (coeff_a/thresh_a - 1)));
-						WavCoeffs_b[dir][coeffloc_ab] *= SQR(1-exp(-(mag_b/mad_b)-(mag_L/(9*madL))));//(coeff_b>2*thresh_b ? 1 : (coeff_b<thresh_b ? 0 : (coeff_b/thresh_b - 1)));
+						//WavCoeffs_a[dir][coeffloc_ab] *= (1-exp(-(mag_a/mad_a)-(mag_L/(9*madL))));//(coeff_a>2*thresh_a ? 1 : (coeff_a<thresh_a ? 0 : (coeff_a/thresh_a - 1)));
+						//WavCoeffs_b[dir][coeffloc_ab] *= (1-exp(-(mag_b/mad_b)-(mag_L/(9*madL))));//(coeff_b>2*thresh_b ? 1 : (coeff_b<thresh_b ? 0 : (coeff_b/thresh_b - 1)));
 												
 						
 					}
 				}//now chrominance coefficients are denoised
+				
+				boxblur(sfavea, sfavea, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
+				boxblur(sfaveb, sfaveb, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
+				for (int i=0; i<H_ab; i++) 
+					for (int j=0; j<W_ab; j++) {
+						
+						int coeffloc_ab = i*W_ab+j;
+						int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
+						
+						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
+						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
+						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
+						
+						float sfa = (1-exp(-(mag_a/mad_a)-(mag_L/(9*madL))));
+						float sfb = (1-exp(-(mag_b/mad_b)-(mag_L/(9*madL))));
+						
+						//use smoothed shrinkage unless local shrinkage is much less
+						WavCoeffs_a[dir][coeffloc_ab] *= (SQR(sfavea[coeffloc_ab])+SQR(sfa))/(sfavea[coeffloc_ab]+sfa+eps);
+						WavCoeffs_b[dir][coeffloc_ab] *= (SQR(sfaveb[coeffloc_ab])+SQR(sfb))/(sfaveb[coeffloc_ab]+sfb+eps);
+						
+					}//now chrominance coefficients are denoised
 			}
 			
 			if (noisevar_L>0.01) {
@@ -834,6 +860,9 @@ namespace rtengine {
 			
 		}
 		delete[] sfave;
+		delete[] sfavea;
+		delete[] sfaveb;
+
 	}
 
 	

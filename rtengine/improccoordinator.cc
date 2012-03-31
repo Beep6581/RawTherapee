@@ -202,6 +202,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
 
+		//imgsrc->convertColorSpace(orig_prev, params.icm);
+
         if (todo & M_LINDENOISE) {
         	//printf("denoising!\n");
 			if (scale==1 && params.dirpyrDenoise.enabled) {
