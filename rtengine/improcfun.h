@@ -162,8 +162,8 @@ class ImProcFunctions {
 		static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);	
 		double getTransformAutoFill (int oW, int oH);
 
-		void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
-		void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
+		static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
+		static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 		void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
 		void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
 		void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);

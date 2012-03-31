@@ -944,7 +944,7 @@ fclose(f);*/
 	void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 		
 		float h1 = h*6; // sector 0 to 5
-		int i = floor( h1 );
+		int i = (int)h1;  // floor() is very slow, and h1 is always >0
 		float f = h1 - i; // fractional part of h
 		
 		float p = v * ( 1 - s );
