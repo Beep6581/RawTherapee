@@ -24,6 +24,7 @@
 #include <ctime>
 #include <algorithm>
 #include <sstream>
+#include <stdint.h>
 
 #include "rtexif.h"
 
@@ -45,7 +46,7 @@ TagDirectory::TagDirectory ()
 TagDirectory::TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border) 
     : attribs(ta), order(border), parent(p) {}
 
-TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border) {
+TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored) {
 
   attribs = ta;
   order = border;
@@ -66,6 +67,7 @@ TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib*
         continue;
     }
         
+    if (skipIgnored) {
     int id = newTag->getID();
 
     // detect and possibly ignore tags of directories belonging to the embedded thumbnail image
@@ -78,6 +80,7 @@ TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib*
       delete newTag;
     else 
         addTag (newTag);
+    } else addTag (newTag);
   }  
 }
  
@@ -759,7 +762,7 @@ int Tag::toInt (int ofs, TagType astype) {
     case LONG:  return (int)sget4 (value+ofs, getOrder());
     case SRATIONAL: 
     case RATIONAL: a = (int)sget4 (value+ofs+4, getOrder()); return a==0 ? 0 : (int)sget4 (value+ofs, getOrder()) / a;
-    case FLOAT:     return (int)((float) sget4 (value+ofs, getOrder()));
+    case FLOAT:     return (int)toDouble(ofs);
     case UNDEFINED: return 0;
     default: return 0; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
@@ -767,6 +770,7 @@ int Tag::toInt (int ofs, TagType astype) {
 }
 
 double Tag::toDouble (int ofs) {
+  union IntFloat { uint32_t i; float f; } conv;
 
   double ud, dd;
   switch (type) {
@@ -778,7 +782,10 @@ double Tag::toDouble (int ofs) {
     case LONG:  return (double)((int)sget4 (value+ofs, getOrder()));
     case SRATIONAL: 
     case RATIONAL: ud = (int)sget4 (value+ofs, getOrder()); dd = (int)sget4 (value+ofs+4, getOrder()); return dd==0. ? 0. : (double)ud / (double)dd;
-    case FLOAT:     return (float) sget4 (value+ofs, getOrder());
+    case FLOAT:     
+        conv.i=sget4 (value+ofs, getOrder());
+        return conv.f;  // IEEE FLOATs are already C format, they just need a recast
+
     case UNDEFINED: return 0.;
     default: return 0.; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
@@ -1302,7 +1309,7 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root) 
   }
 }
 
-TagDirectory* ExifManager::parse (FILE* f, int base) {
+TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored) {
   setlocale(LC_NUMERIC, "C"); // to set decimal point in sscanf
   // read tiff header
   fseek (f, base, SEEK_SET);
@@ -1316,7 +1323,7 @@ TagDirectory* ExifManager::parse (FILE* f, int base) {
   fseek (f, base+firstifd, SEEK_SET);
 
   // first read the IFD directory
-  TagDirectory* root =  new TagDirectory (NULL, f, base, ifdAttribs, order);
+  TagDirectory* root =  new TagDirectory (NULL, f, base, ifdAttribs, order, skipIgnored);
 
   // fix ISO issue with nikon and panasonic cameras
   Tag* exif = root->getTag ("Exif");
@@ -1373,9 +1380,9 @@ TagDirectory* ExifManager::parseJPEG (FILE* f) {
   return NULL;
 }
 
-TagDirectory* ExifManager::parseTIFF (FILE* f) {
+TagDirectory* ExifManager::parseTIFF (FILE* f, bool skipIgnored) {
 
-  return parse (f, 0);
+  return parse (f, 0, skipIgnored);
 }
 
 std::vector<Tag*> ExifManager::defTags; 

@@ -22,6 +22,7 @@
 #include "guiutils.h"
 #include "../rtengine/safegtk.h"
 #include "../rtengine/iccstore.h"
+#include "../rtengine/dcp.h"
 #include "rtimage.h"
 
 using namespace rtengine;
@@ -160,6 +161,8 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     Gtk::FileFilter filter_icc;
     filter_icc.set_name(M("TP_ICM_FILEDLGFILTERICM"));
+    filter_icc.add_pattern("*.dcp");
+    filter_icc.add_pattern("*.DCP");
     filter_icc.add_pattern("*.icc");
     filter_icc.add_pattern("*.icm");
     filter_icc.add_pattern("*.ICC");
@@ -437,7 +440,7 @@ void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta) {
     icamera->set_active (raw);
     iembedded->set_active (!raw);
     icamera->set_sensitive (raw);
-    icameraICC->set_sensitive (raw && iccStore->getStdProfile(pMeta->getCamera()) != NULL);
+    icameraICC->set_sensitive (raw && (iccStore->getStdProfile(pMeta->getCamera()) != NULL || dcpStore->getStdProfile(pMeta->getCamera()) != NULL));
     iembedded->set_sensitive (!raw);  
 
     enableListener ();

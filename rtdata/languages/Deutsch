@@ -886,14 +886,14 @@ TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Lichter aus Matrix einmischen
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Stellt bei Verwendung von LUT-basierten\nICC-Profilen die Lichter wieder her
 TP_ICM_FILEDLGFILTERANY;Alle Dateien
-TP_ICM_FILEDLGFILTERICM;ICC-Profildateien
-TP_ICM_INPUTCAMERAICC;Kamera-Standard oder ICC
-TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapee Standard ICC-Farbprofil verwenden; präziser als einfache Matrix, aber nur für einige Kameras verfügbar
+TP_ICM_FILEDLGFILTERICM;Profildateien
+TP_ICM_INPUTCAMERAICC;Kamera-Standard oder DCP/ICC
+TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapee Standard DCP/ICC-Farbprofil verwenden; präziser als einfache Matrix, aber nur für einige Kameras verfügbar
 TP_ICM_INPUTCAMERA;Kamera-Standard
 TP_ICM_INPUTCAMERA_TOOLTIP;Einfache Standard Farbkorrektur-Matrix von DCRAW oder die im DNG eingebettete verwenden
 TP_ICM_INPUTCUSTOM;Benutzerdefiniert
-TP_ICM_INPUTCUSTOM_TOOLTIP;Eigene ICC-Farbprofildatei für die Kamera verwenden
-TP_ICM_INPUTDLGLABEL;Wähle Eingabe-ICC-Profil...
+TP_ICM_INPUTCUSTOM_TOOLTIP;Eigene DCP/ICC-Farbprofildatei für die Kamera verwenden
+TP_ICM_INPUTDLGLABEL;Wähle Eingabe-DCP/ICC-Profil...
 TP_ICM_INPUTEMBEDDED;Eingebettetes verwenden, falls möglich
 TP_ICM_INPUTEMBEDDED_TOOLTIP;Farbprofil verwenden, das ggf. in nicht-RAW Dateien eingebettet ist
 TP_ICM_INPUTNONE;Kein Profil

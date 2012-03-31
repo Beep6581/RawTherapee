@@ -21,6 +21,7 @@
 
 #include "imagesource.h"
 #include <lcms2.h>
+#include "dcp.h"
 #include "array2D.h"
 #include "curves.h"
 #include "../rtgui/cacheimagedata.h"
@@ -60,7 +61,7 @@ class RawImageSource : public ImageSource {
     private:
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
-        static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, cmsHPROFILE& in);
+        static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
 
     protected:
         Glib::Mutex getImageMutex;  // locks getImage
@@ -167,7 +168,7 @@ class RawImageSource : public ImageSource {
 
         static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
-        static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
+        static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 
         void boxblur2(float** src, float** dst, int H, int W, int box );
         void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp );

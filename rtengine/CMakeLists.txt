@@ -14,7 +14,7 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
 	jpeg_memsrc.cc jdatasrc.cc
 	PF_correct_RT.cc
     dirpyrLab_denoise.cc dirpyrLab_equalizer.cc dirpyr_equalizer.cc
-    calc_distort.cc
+    calc_distort.cc dcp.cc
     klt/convolve.cc klt/error.cc klt/klt.cc klt/klt_util.cc klt/pnmio.cc klt/pyramid.cc klt/selectGoodFeatures.cc
     klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
     )

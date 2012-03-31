@@ -31,6 +31,7 @@
 #include "slicer.h"
 #include <iostream>
 #include "../rtgui/options.h"
+#include "dcp.h"
 
 
 
@@ -1680,10 +1681,16 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     //MyTime t1, t2, t3;
     //t1.set ();
     cmsHPROFILE in;
-    if (!findInputProfile(cmp.input, embedded, camName, in)) return;
+    DCPProfile *dcpProf;
+
+    if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
+
+    if (dcpProf!=NULL) {
+        dcpProf->Apply(im, cmp.working);
+    } else {
     // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
-        float mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
@@ -1887,7 +1894,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
         if (imgPreLCMS!=NULL) delete imgPreLCMS;
     }
-
+    }
         //t3.set ();
 //        printf ("ICM TIME: %d\n", t3.etime(t1));
 }
@@ -1897,8 +1904,13 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 // Converts raw image including ICC input profile to working space - 16bit int version
 void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
 	cmsHPROFILE in;
-    if (!findInputProfile(cmp.input, embedded, camName, in)) return;
+    DCPProfile *dcpProf;
 	
+    if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
+	
+    if (dcpProf!=NULL) {
+        dcpProf->Apply(im, cmp.working);
+    } else {
 	if (in==NULL) {
         // Take camprofile from DCRAW
         // in this case we avoid using the slllllooooooowwww lcms
@@ -1970,23 +1982,30 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 
 		cmsDeleteTransform(hTransform);
 	}
-
+    }
 	//t3.set ();
 	//        printf ("ICM TIME: %d\n", t3.etime(t1));
 }
 
 // Determine RAW input and output profiles. Returns TRUE on success
-bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, cmsHPROFILE& in) {
+bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in) {
     in=NULL; // cam will be taken on NULL
+    *dcpProf=NULL;
 
     if (inProfile == "(none)") return false;
 
     if (inProfile == "(embedded)" && embedded) {
 		in = embedded;
 	} else if (inProfile=="(cameraICC)") {
-        in = iccStore->getStdProfile(camName);
+        // DCPs have higher quality, so use them first
+        *dcpProf=dcpStore->getStdProfile(camName);
+        if (*dcpProf==NULL)  in = iccStore->getStdProfile(camName);
     } else if (inProfile!="(camera)" && inProfile!="") {
-		in = iccStore->getProfile (inProfile);
+        Glib::ustring normalName=inProfile;
+        if (!inProfile.compare (0, 5, "file:")) normalName=inProfile.substr(5);
+
+        if (dcpStore->isValidDCPFileName(normalName)) *dcpProf=dcpStore->getProfile(normalName);
+        if (*dcpProf==NULL) in = iccStore->getProfile (inProfile);
     }
     
     // "in" might be NULL because of "not found". That's ok, we take the cam profile then
@@ -2561,7 +2580,7 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
 		
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::inverse33 (double (*rgb_cam)[3], double (*cam_rgb)[3]) {
+void RawImageSource::inverse33 (const double (*rgb_cam)[3], double (*cam_rgb)[3]) {
 	double nom = (rgb_cam[0][2]*rgb_cam[1][1]*rgb_cam[2][0] - rgb_cam[0][1]*rgb_cam[1][2]*rgb_cam[2][0] -
 				  rgb_cam[0][2]*rgb_cam[1][0]*rgb_cam[2][1] + rgb_cam[0][0]*rgb_cam[1][2]*rgb_cam[2][1] +
 				  rgb_cam[0][1]*rgb_cam[1][0]*rgb_cam[2][2] - rgb_cam[0][0]*rgb_cam[1][1]*rgb_cam[2][2] );

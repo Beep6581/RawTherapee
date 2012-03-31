@@ -18,6 +18,7 @@
  */
 #include "rtengine.h"
 #include "iccstore.h"
+#include "dcp.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
 #include "curves.h"
@@ -36,6 +37,8 @@ int init (const Settings* s, Glib::ustring baseDir) {
     settings = s;
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
 	iccStore->findDefaultMonitorProfile();
+
+    dcpStore->init (baseDir + "/dcpprofiles");
 
     ProcParams::init ();
     CurveFactory::init ();
