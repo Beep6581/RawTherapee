@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.1, 2012-03-09
+# Version 2.2, 2012-03-31
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.seeitmyway.org
 # www.rawtherapee.com
@@ -60,6 +60,7 @@ compile () {
       printf "%-15b %b\n" "About to compile:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "" ""
 
       [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Found old build directory \"$buildType\" in your repository. Removing it."; rm -rf "${repo}/${buildType}"; }
+      [[ -d "${repo}/rawtherapee" ]] && { printf "%s\n" "Found old build directory \"rawtherapee\" in your repository. Removing it."; rm -rf "${repo}/rawtherapee"; }
       [[ -d "${HOME}/rt_${branch}_${buildType}" ]] && {
         printf "%s\n" "Found old build directory ${HOME}/rt_${branch}_${buildType}" "It must be removed to proceed."
         read -p "Do you want to remove it and proceed? y/n: " YN
@@ -95,7 +96,12 @@ compile () {
       time { make -j${cpuCount} install; } || { printf "%s\n" "" "Error during make, exiting."; exit 1; }
       printf "%-15b %b\n" "" "" "Rawtherapee compiled:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "" ""
 
-      [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Moving \"${repo}/${buildType}\" to \"${repo}/rawtherapee\""; mv "${repo}/${buildType}" "${repo}/rawtherapee"; } || { printf "%s\n" "Could not find the directory containing the compiled RawTherapee in ${repo}" "Please notify DrSlony in the forum:" "http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" "" "Exiting"; exit 1; }
+      if [[ -d "${repo}/${buildType}" ]]; then
+        printf "%s\n" "Moving \"${repo}/${buildType}\" to \"${repo}/rawtherapee\""
+        mv "${repo}/${buildType}" "${repo}/rawtherapee"
+      elif [[ ! -d "${repo}/rawtherapee" ]]; then
+        { printf "%s\n" "Could not find the directory containing the compiled RawTherapee in ${repo}" "Please notify DrSlony in the forum:" "http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" "" "Exiting"; exit 1; }
+      fi
 
       echo
       cat AboutThisBuild.txt || { printf "%s\n" "${repo}/AboutThisBuild.txt not found, exiting."; exit 1; }
