@@ -453,6 +453,7 @@ DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName) {
 }
 
 bool DCPStore::isValidDCPFileName(Glib::ustring filename) const {
-    return safe_file_test (filename, Glib::FILE_TEST_EXISTS) 
-        && !filename.casefold().compare (filename.find_last_of ('.'), 4, ".dcp");
+    if (!safe_file_test (filename, Glib::FILE_TEST_EXISTS) || safe_file_test (filename, Glib::FILE_TEST_IS_DIR)) return false;
+    int pos=filename.find_last_of ('.');
+    return pos>0 && !filename.casefold().compare (pos, 4, ".dcp");
 }

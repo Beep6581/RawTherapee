@@ -283,7 +283,10 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (icameraICC->get_active ())
         pp->icm.input = "(cameraICC)";
     else {
+        if (safe_file_test (ipDialog->get_filename (), Glib::FILE_TEST_EXISTS) && !safe_file_test (ipDialog->get_filename (), Glib::FILE_TEST_IS_DIR))
         pp->icm.input = "file:"+ipDialog->get_filename ();
+        else
+            pp->icm.input = "";  // just a directory
 
         Glib::ustring p=Glib::path_get_dirname(ipDialog->get_filename ());
         if (p!=options.rtSettings.iccDirectory) {
