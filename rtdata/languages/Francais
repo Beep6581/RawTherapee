@@ -896,12 +896,12 @@ TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndans l'espace de la matrice
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
-TP_ICM_FILEDLGFILTERICM;Fichiers de profil ICC
+TP_ICM_FILEDLGFILTERICM;Fichiers de profil
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil
-TP_ICM_INPUTCAMERAICC;Profil ICC spécifique à l'APN\nsélectionné automatiquement
+TP_ICM_INPUTCAMERAICC;Profil spécifique à l'APN\nsélectionné automatiquement
 TP_ICM_INPUTCAMERA;Celui de l'appareil photo
 TP_ICM_INPUTCUSTOM;Personnel
-TP_ICM_INPUTDLGLABEL;Choix du profil ICC d'entrée...
+TP_ICM_INPUTDLGLABEL;Choix du profil DCP/ICC d'entrée...
 TP_ICM_INPUTEMBEDDED;Utiliser celui inclus, si possible
 TP_ICM_INPUTNONE;Sans profil
 TP_ICM_INPUTPROFILE;Profil d'entrée
@@ -1113,9 +1113,9 @@ TP_EPD_SCALE;Échelle
 TP_EPD_STRENGTH;Force
 TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de <b>Niveaux automatiques</b> afin de régler\nautomatiquement les valeurs basé sur l'analyse de l'image  
 TP_EXPOSURE_CLIP_TIP;La fraction de pixels que l'outil <b>Niveaux automatiques</b> passera en dehors du domaine
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils ICC d'entrée spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareil photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils d'entrée DCP ou ICC spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareil photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
 TP_ICM_INPUTCAMERA_TOOLTIP;Par ordre de préférence, utilise les matrices de couleur inclus dans le fichier RAW, les matrices de couleur simple fournis par RawTherapee ou celles de DCRaw
-TP_ICM_INPUTCUSTOM_TOOLTIP;Sélectionez votre propre profil ICC pour votre appareil photo
+TP_ICM_INPUTCUSTOM_TOOLTIP;Sélectionez votre propre profil DCP/ICC pour votre appareil photo
 TP_ICM_INPUTEMBEDDED_TOOLTIP;Utilise le profil inclus dans les fichiers non-Raw
 TP_ICM_INPUTNONE_TOOLTIP;N'utilise aucun profil couleur d'entrée du tout. À n'utiliser que dans des cas très spéciaux.
 TP_NEUTRAL;Neutre
