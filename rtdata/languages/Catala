@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;Versió
 ABOUT_TAB_CREDITS;Crèdits
 ABOUT_TAB_LICENSE;Llicència
@@ -1063,6 +1062,11 @@ ZOOMPANEL_ZOOMOUT;Allunya <b>-</b>
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
+!PROFILEPANEL_COPYPPASTE;Parameters to copy
+!PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_SAVEPPASTE;Parameters to save
+!TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTGRID;Grid
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_LABEL;Tone Mapping
@@ -1075,14 +1079,15 @@ ZOOMPANEL_ZOOMOUT;Allunya <b>-</b>
 !TP_HLREC_BLEND;Blend
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
-!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific ICC
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific profile
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by DCRAW, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
-!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera
 !TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
 !TP_NEUTRAL;Neutral
 !TP_NEUTRAL_TIP;Reset exposure controls to neutral values
+!TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
 !TP_RAWEXPOS_BLACKONE;Black Level: Red
 !TP_RAWEXPOS_BLACKS;Black Levels
 !TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2

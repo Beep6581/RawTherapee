@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -1130,6 +1129,12 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview <b>Luminosity</b>n0.299*R + 0.587*G + 0.114*Bn<b>-v</b>
 !MAIN_TOOLTIP_PREVIEWR;Preview <b>Red channel</b>n<b>-r</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
+!PROFILEPANEL_COPYPPASTE;Parameters to copy
+!PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_SAVEPPASTE;Parameters to save
+!TP_CROP_GTEPASSPORT;Biometric Passport
+!TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
 !TP_RGBCURVES_BLUE;B
 !TP_RGBCURVES_CHANNEL;Channel
 !TP_RGBCURVES_GREEN;G

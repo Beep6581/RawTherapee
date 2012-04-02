@@ -738,19 +738,19 @@ PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 PREFERENCES_USESYSTEMTHEME; Use System Theme
 PREFERENCES_WORKFLOW;Layout
+PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_FILEDLGFILTERANY;Any files
 PROFILEPANEL_FILEDLGFILTERPP;Postprocessing profiles
 PROFILEPANEL_LABEL;Postprocessing Profiles
 PROFILEPANEL_LOADDLGLABEL;Load Postprocessing Parameters...
+PROFILEPANEL_LOADPPASTE;Parameters to load
+PROFILEPANEL_PASTEPPASTE;Parameters to paste
 PROFILEPANEL_PCUSTOM;Custom
 PROFILEPANEL_PFILE;From file
 PROFILEPANEL_PLASTPHOTO;Last Photo
 PROFILEPANEL_PLASTSAVED;Last Saved
 PROFILEPANEL_PROFILE;Profile
 PROFILEPANEL_SAVEDLGLABEL;Save Postprocessing Parameters...
-PROFILEPANEL_COPYPPASTE;Parameters to copy
-PROFILEPANEL_LOADPPASTE;Parameters to load
-PROFILEPANEL_PASTEPPASTE;Parameters to paste
 PROFILEPANEL_SAVEPPASTE;Parameters to save
 PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard\nCTRL-click to select the parameters to copy
 PROFILEPANEL_TOOLTIPLOAD;Load a profile from file\nCTRL-click to select the parameters to load
