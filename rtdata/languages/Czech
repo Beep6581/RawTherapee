@@ -1095,39 +1095,37 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 #17 12.11.2011: updated by mkyral
 #18 29.12.2011: updated by mkyral
 
-
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 !ABOUT_TAB_RELEASENOTES;Release Notes
 !EXPORT_BYPASS_ALL;Select / Unselect All
 !EXPORT_BYPASS_COLORDENOISE;Bypass Color denoise
 !EXPORT_BYPASS_DEFRINGE;Bypass Defringe
 !EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
-!EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by detail levels
+!EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by Detail Levels
 !EXPORT_BYPASS_LUMADENOISE;Bypass Luma denoise
-!EXPORT_BYPASS_RAW_ALL_ENHANCE;Bypass Post demosaic artifact/noise reduction
-!EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration correction
-!EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False color suppression
-!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB enhancement steps
-!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB iterations
+!EXPORT_BYPASS_RAW_ALL_ENHANCE;Bypass Post Demosaic Artifact/Noise Reduction
+!EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration Correction
+!EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
+!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
+!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
 !EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
 !EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
-!EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green equilibration
-!EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line noise filter
-!EXPORT_BYPASS_SHARPENEDGE;Bypass Edge sharpening
+!EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
+!EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
+!EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 !EXPORT_BYPASS_SHARPENING;Bypass Sharpening
 !EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
-!EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (high quality)
+!EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
 !EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
 !EXPORT_MAXHEIGHT;Maximum Height: 
 !EXPORT_MAXWIDTH;Maximum Width:  
 !EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
-!EXPORT_RAW_DMETHOD;Demosaic method
-!EXPORT_RESIZEMETHOD;Resize method
+!EXPORT_RAW_DMETHOD;Demosaic Method
+!EXPORT_RESIZEMETHOD;Resize Method
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 !MAIN_TAB_EXPORT; Export 
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
