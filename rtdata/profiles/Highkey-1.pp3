@@ -1,6 +1,6 @@
 
 [Version]
-AppVersion=4.0.6
+AppVersion=4.0.8
 Version=301
 
 [General]
@@ -107,7 +107,7 @@ LocalContrast=0
 Radius=30
 
 [Common Properties for Transformations]
-AutoFill=false
+AutoFill=true
 
 [HLRecovery]
 Enabled=false

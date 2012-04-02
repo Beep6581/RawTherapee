@@ -1,6 +1,6 @@
 
 [Version]
-AppVersion=4.0.6
+AppVersion=4.0.8
 Version=301
 
 [General]
@@ -106,12 +106,59 @@ ShadowTonalWidth=80
 LocalContrast=0
 Radius=30
 
+[Crop]
+Enabled=false
+X=0
+Y=0
+W=7360
+H=4912
+FixedRatio=false
+Ratio=3:2
+Orientation=Landscape
+Guide=None
+
+[Coarse Transformation]
+Rotate=0
+HorizontalFlip=false
+VerticalFlip=false
+
 [Common Properties for Transformations]
-AutoFill=false
+AutoFill=true
+
+[Rotation]
+Degree=0
+
+[Distortion]
+Amount=0
+UseLensFun=false
+
+[Perspective]
+Horizontal=0
+Vertical=0
+
+[CACorrection]
+Red=0
+Blue=0
+
+[Vignetting Correction]
+Amount=0
+Radius=50
+Strength=1
+CenterX=0
+CenterY=0
 
 [HLRecovery]
 Enabled=false
 Method=Blend
+
+[Resize]
+Enabled=false
+Scale=1
+AppliesTo=Cropped area
+Method=Lanczos
+DataSpecified=3
+Width=900
+Height=900
 
 [Color Management]
 InputProfile=(cameraICC)
@@ -142,6 +189,12 @@ gCurve=0;
 bCurve=0;
 
 [RAW]
+DarkFrame=
+DarkFrameAuto=false
+FlatFieldFile=
+FlatFieldAutoSelect=false
+FlatFieldBlurRadius=32
+FlatFieldBlurType=Area Flatfield
 CA=false
 CARed=0
 CABlue=0
