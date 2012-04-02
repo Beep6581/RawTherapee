@@ -1146,11 +1146,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト <b>-</b>
 #04 update: 2011-12-03 (for 4.0.6)
 #05 update: 2012-02-11 (for 4.0.7)
 
-
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_LOADPPASTE;Parameters to load
