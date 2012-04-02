@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;Wersja
 ABOUT_TAB_CREDITS;Zaslugi
 ABOUT_TAB_LICENSE;Licencja
@@ -745,16 +744,20 @@ PREFERENCES_TP_VSCROLLBAR;Ukry pionowy pasek przesuwania
 PREFERENCES_TUNNELMETADATA;Skopiuj niezmienione IPTC/XMP do pliku wynikowego (gdy tagowane za pomoca innego programu)
 PREFERENCES_USESYSTEMTHEME; Uzyj tematu systemowego
 PREFERENCES_WORKFLOW;Tok pracy
+PROFILEPANEL_COPYPPASTE;Parametry do skopiowania
 PROFILEPANEL_FILEDLGFILTERANY;Wszystkie pliki
 PROFILEPANEL_FILEDLGFILTERPP;Profile przetwarzania koncowego
 PROFILEPANEL_LABEL;Profil przetwarzania koncowego
 PROFILEPANEL_LOADDLGLABEL;Wczytaj profil przetwarzania koncowego...
+PROFILEPANEL_LOADPPASTE;Parametry do zaladowania
+PROFILEPANEL_PASTEPPASTE;Parametry do wklejenia
 PROFILEPANEL_PCUSTOM;Reczny
 PROFILEPANEL_PFILE;Z pliku
 PROFILEPANEL_PLASTPHOTO;Ostatnie zdjecie
 PROFILEPANEL_PLASTSAVED;Ostatnio zapisany
 PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Zapisz parametry przetwarzania koncowego...
+PROFILEPANEL_SAVEPPASTE;Parametry do zapisania
 PROFILEPANEL_TOOLTIPCOPY;Skopiuj aktualny profil do schowka
 PROFILEPANEL_TOOLTIPLOAD;Laduj profil z pliku
 PROFILEPANEL_TOOLTIPPASTE;Wklej profil ze schowka
@@ -982,6 +985,7 @@ TP_PERSPECTIVE_LABEL;Perspektywa
 TP_PERSPECTIVE_VERTICAL;Pionowa
 TP_PREPROCESS_GREENEQUIL;Wyrownanie zieleni
 TP_PREPROCESS_HOTDEADPIXFILT;Uzyj filtra goracych/martwych pikseli
+TP_PREPROCESS_HOTDEADPIXTHRESH;Prog wykrycia goracych/martwych pikseli
 TP_PREPROCESS_LABEL;Przetwarzanie poczatkowe
 TP_PREPROCESS_LINEDENOISE;Filtr zaklocen liniowych
 TP_PREPROCESS_NO_FOUND;Nic nie znaleziono
@@ -1131,6 +1135,7 @@ ZOOMPANEL_ZOOM100;Powieksz do 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Dopasuj do ekranu <b>F</b>
 ZOOMPANEL_ZOOMIN;Przybliz <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
+
 #00 Polish
 #01 24.12.2007
 #02 Mateusz Ludwin
@@ -1145,6 +1150,7 @@ ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
 #11 2011-11-30 DrSlony
 #12 2012-01-14 DrSlony
 #13 2012-01-30 DrSlony
+#13 2012-04-02 DrSlony
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!

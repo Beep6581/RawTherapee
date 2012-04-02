@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;ヴァージョン
 ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
@@ -1139,6 +1138,7 @@ ZOOMPANEL_ZOOM100;100%にズーム <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる <b>F</b>
 ZOOMPANEL_ZOOMIN;ズームイン <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト <b>-</b>
+
 #00 Japanese
 #01 Translated by a3novy <a3novy@gmail.com>
 #02 update: 2011-05-15
@@ -1152,3 +1152,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 
+!PROFILEPANEL_COPYPPASTE;Parameters to copy
+!PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_SAVEPPASTE;Parameters to save
+!TP_CROP_GTEPASSPORT;Biometric Passport
+!TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
