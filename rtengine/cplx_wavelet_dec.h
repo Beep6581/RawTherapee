@@ -379,15 +379,15 @@ public:
 		
 		//initialize wavelet filters
 		
-		wavfilt_len = Haar_len;
-		wavfilt_offset = Haar_offset;
+		wavfilt_len = Daub4_len;
+		wavfilt_offset = Daub4_offset;
 		wavfilt_anal = new float[2*wavfilt_len];
 		wavfilt_synth = new float[2*wavfilt_len];
 		
 		for (int n=0; n<2; n++) {
 			for (int i=0; i<wavfilt_len; i++) {
-				wavfilt_anal[wavfilt_len*(n)+i]  = Haar_anal[n][i];
-				wavfilt_synth[wavfilt_len*(n)+i] = Haar_anal[n][wavfilt_len-1-i];
+				wavfilt_anal[wavfilt_len*(n)+i]  = Daub4_anal[n][i];
+				wavfilt_synth[wavfilt_len*(n)+i] = Daub4_anal[n][wavfilt_len-1-i];
 				//n=0 lopass, n=1 hipass
 			}
 		}

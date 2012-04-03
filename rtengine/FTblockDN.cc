@@ -237,7 +237,9 @@ namespace rtengine {
 					}
 				
 				//initial impulse denoise
-				impulse_nr (labdn, 50.0f/20.0f);
+				if (dnparams.luma>0.01) {
+					impulse_nr (labdn, MIN(50.0f,dnparams.luma)/20.0f);
+				}
 				
 				int datalen = labdn->W * labdn->H;
 				
@@ -263,7 +265,9 @@ namespace rtengine {
 				//TODO: at this point wavelet coefficients storage can be freed
 				
 				//second impulse denoise
-				impulse_nr (labdn, 50.0f/20.0f);
+				if (dnparams.luma>0.01) {
+					impulse_nr (labdn, MIN(50.0f,dnparams.luma)/20.0f);
+				}				
 				//PF_correct_RT(dst, dst, defringe.radius, defringe.threshold);
 				
 				//wavelet denoised L channel
