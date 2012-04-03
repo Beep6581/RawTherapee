@@ -509,8 +509,8 @@ namespace rtengine {
 		for (int j=0; j<m_w; j++) {
 			loadbuffer(src+j, buffer, m_w/*pitch*/, m_h/*srclen*/);//pad a column of data and load it to buffer
 			if (subsamp_out) {
-				//AnalysisFilterSubsamp (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
-				AnalysisFilterSubsampHaar (buffer, tmpLo+j, tmpHi+j, m_w, m_h);
+				AnalysisFilterSubsamp (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
+				//AnalysisFilterSubsampHaar (buffer, tmpLo+j, tmpHi+j, m_w, m_h);
 			} else {
 				//AnalysisFilter (buffer, tmpLo+j, tmpHi+j, filterV, filterV+taps, taps, offset, m_w/*output_pitch*/, m_h/*srclen*/);
 				AnalysisFilterHaar (buffer, tmpLo+j, tmpHi+j, m_w, m_h);
@@ -522,16 +522,16 @@ namespace rtengine {
 		for (int i=0; i<m_h2; i++) {
 			loadbuffer(tmpLo+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);//pad a row of data and load it to buffer
 			if (subsamp_out) {
-				//AnalysisFilterSubsamp (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
-				AnalysisFilterSubsampHaar (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, 1, m_w);
+				AnalysisFilterSubsamp (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+				//AnalysisFilterSubsampHaar (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, 1, m_w);
 			} else {
 				//AnalysisFilter (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
 				AnalysisFilterHaar (buffer, wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, 1, m_w);
 			}
 			loadbuffer(tmpHi+i*m_w, buffer, 1/*pitch*/, m_w/*srclen*/);
 			if (subsamp_out) {
-				//AnalysisFilterSubsamp (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
-				AnalysisFilterSubsampHaar (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, 1, m_w);
+				AnalysisFilterSubsamp (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
+				//AnalysisFilterSubsampHaar (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, 1, m_w);
 			} else {
 				//AnalysisFilter (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, filterH, filterH+taps, taps, offset, 1/*output_pitch*/, m_w/*srclen*/);
 				AnalysisFilterHaar (buffer, wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, 1, m_w);
@@ -565,7 +565,7 @@ namespace rtengine {
 										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
 				SynthesisFilterSubsamp (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,  \
 										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
-				//SynthesisFilterSubsampHaar (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, 1, m_w);
+				//SynthesisFilterSubsampHaar (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, 1, m_w);//TODO: this is buggy
 				//SynthesisFilterSubsampHaar (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, 1, m_w);
 			} else {
 				//SynthesisFilter (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi, \
