@@ -77,12 +77,8 @@ PIX_SORT(p[1],p[2]) ; median=p[2] ;}
 RawImageSource::RawImageSource ()
 :ImageSource()
 ,plistener(NULL)
-,green(NULL)
-,red(NULL)
-,blue(NULL)
 ,cache(NULL)
 ,border(4)
-,rawData(NULL)
 ,ri(NULL)
 {
     hrmap[0] = NULL;
@@ -104,15 +100,6 @@ RawImageSource::~RawImageSource () {
         delete ri;
     }
 
-	//These freeArray commands are causing RT not to terminate properly ???
-    /*if (green)
-        freeArray<float>(green, H);
-    if (red)
-        freeArray<float>(red, H);
-    if (blue)
-        freeArray<float>(blue, H);
-    if(rawData)
-    	freeArray<float>(rawData, H);*/
     if( cache )
         delete [] cache;
     if (hrmap[0]!=NULL) {
@@ -945,9 +932,9 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     rml.ciffLength = ri->get_ciffLen();
     idata = new ImageData (fname, &rml);
 
-    green = allocArray<float>(W,H);
-    red   = allocArray<float>(W,H);
-    blue  = allocArray<float>(W,H);
+    green(W,H);// = allocArray<float>(W,H);
+    red(W,H);//   = allocArray<float>(W,H);
+    blue(W,H);//  = allocArray<float>(W,H);
     //hpmap = allocArray<char>(W, H);
 
     if (plistener) {
@@ -1148,23 +1135,19 @@ void RawImageSource::flushRawData() {
         cache = 0;
     }
     if (rawData) {
-        freeArray<float>(rawData, H);
-        rawData = 0;
+        rawData(0,0);
     }
 }
 
 void RawImageSource::flushRGB() {
     if (green) {
-        freeArray<float>(green, H);
-        green = 0;
+        green(0,0);
     }
     if (red) {
-        freeArray<float>(red, H);
-        red = 0;
+        red(0,0);
     }
     if (blue) {
-        freeArray<float>(blue, H);
-        blue = 0;
+        blue(0,0);
     }
 }
 
@@ -1191,7 +1174,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 {
 	if (ri->isBayer()) {
 		if (!rawData)
-			rawData = allocArray<float>(W,H);
+			rawData(W,H);
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
@@ -1276,7 +1259,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 	} else {
         // No bayer pattern
         // TODO: Is there a flat field correction possible?
-		if (!rawData) rawData = allocArray<float>(3*W,H);
+		if (!rawData) rawData(3*W,H);
 
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
