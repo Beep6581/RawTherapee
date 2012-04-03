@@ -100,14 +100,14 @@ class RawImageSource : public ImageSource {
         double* cache;
         int threshold;
 
-        float** rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
+        array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
 
         // the interpolated green plane:
-        float** green; 
+        array2D<float> green; 
         // the interpolated red plane:
-        float** red;
+        array2D<float> red;
         // the interpolated blue plane:
-        float** blue;
+        array2D<float> blue;
 
 
         void hphd_vertical       (float** hpmap, int col_from, int col_to);

@@ -823,22 +823,19 @@ void RawImageSource::ppg_demosaic()
     if(plistener) plistener->setProgress(0.67 + 0.33*row/(height-1));
   }
 
-  red = new float*[H];
-  for (int i=0; i<H; i++) {
-    red[i] = new float[W];
-    for (int j=0; j<W; j++)
+  red(W,H);
+  for (int i=0; i<H; i++) 
+	  for (int j=0; j<W; j++) {
         red[i][j] = image[i*W+j][0];
   }
-  green = new float*[H];
-  for (int i=0; i<H; i++) {
-    green[i] = new float[W];
-    for (int j=0; j<W; j++)
+  green(W,H);
+  for (int i=0; i<H; i++) 
+	  for (int j=0; j<W; j++) {
         green[i][j] = image[i*W+j][1];
   }
-  blue = new float*[H];
-  for (int i=0; i<H; i++) {
-    blue[i] = new float[W];
-    for (int j=0; j<W; j++)
+  blue(W,H);
+  for (int i=0; i<H; i++) 
+	  for (int j=0; j<W; j++) {
         blue[i][j] = image[i*W+j][2];
   }
   free (image);
@@ -1058,21 +1055,15 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 
 void RawImageSource::nodemosaic()
 {
-    red = new float*[H];
-    green = new float*[H];
-    blue = new float*[H];
+    red(W,H);
+    green(W,H);
+    blue(W,H);
     for (int i=0; i<H; i++) {
-        red[i] = new float[W];
-        green[i] = new float[W];
-        blue[i] = new float[W];
         for (int j=0; j<W; j++){
         	switch( FC(i,j)){
 				case 0: red[i][j] = rawData[i][j]; green[i][j]=blue[i][j]=0; break;
 				case 1: green[i][j] = rawData[i][j]; red[i][j]=blue[i][j]=0; break;
 				case 2: blue[i][j] = rawData[i][j]; red[i][j]=green[i][j]=0; break;
-					//red[i][j] = rawData[i][j];
-					//green[i][j] = rawData[i][j];
-					//blue[i][j] = rawData[i][j];
         	}
         }
     }
