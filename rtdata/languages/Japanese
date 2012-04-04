@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;ヴァージョン
 ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
@@ -85,7 +86,7 @@ FILEBROWSER_ARRANGEMENTHINT;サムネイル整列 縦/横
 FILEBROWSER_AUTODARKFRAME;オート・ダークフレーム
 FILEBROWSER_AUTOFLATFIELD;オート・フラットフィールド
 FILEBROWSER_BROWSEPATHBUTTONHINT;クリックで選択したパスをブラウズ
-FILEBROWSER_BROWSEPATHHINT;参照するパスを入力します\n<b>Ctrl-o</b> フォーカスを設定\n<b>Enter</b>, <b>Ctrl-Enter</b>（ファイルブラウザで）参照する;\nパスのショートカット: <b>~</b> - ユーザーのホームディレクトリ\n  <b>!</b> - ユーザーの画像ディレクトリ
+FILEBROWSER_BROWSEPATHHINT;参照するパスを入力します\n<b>Ctrl-o</b> パスのテキストボックスにフォーカス\n<b>Enter</b> / <b>Ctrl-Enter</b>（ファイルブラウザで）その場所をブラウズします;\nパスのショートカット:\n  <b>~</b> - ユーザーのホームディレクトリ\n  <b>!</b> - ユーザーの画像ディレクトリ
 FILEBROWSER_CACHECLEARFROMFULL;キャッシュをクリア - すべて
 FILEBROWSER_CACHECLEARFROMPARTIAL;キャッシュをクリア - 一部
 FILEBROWSER_CACHE;キャッシュ
@@ -99,7 +100,7 @@ FILEBROWSER_DELETEDLGMSG;%1 を削除してもいいですか？
 FILEBROWSER_EMPTYTRASHHINT;ゴミ箱を完全に空にする
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
 FILEBROWSER_EXEC_CPB;カスタム・プロファイルビルダーを実行
-FILEBROWSER_EXIFFILTERAPPLYHINT;ファイルブラウザのExifフィルタのon/off
+FILEBROWSER_EXIFFILTERAPPLYHINT;Exifフィルタのon/off ファイルブラウザの切り替え
 FILEBROWSER_EXIFFILTERAPPLY;適用
 FILEBROWSER_EXIFFILTERLABEL;Exifフィルタ
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Exifフィルタの設定を変える
@@ -144,32 +145,32 @@ FILEBROWSER_POPUPUNTRASH;ゴミ箱から移動
 FILEBROWSER_PROCESSINGSETTINGSHINT;ファイル形式と出力ディレクトリを設定
 FILEBROWSER_PROCESSINGSETTINGS;設定
 FILEBROWSER_QUERYBUTTONHINT;検索クエリをクリア
-FILEBROWSER_QUERYHINT;検索するファイル名の一部を入力します\n<b>Ctrl-f</b> フォーカスを設定(ファイルブラウザで);\n<b>Enter</b> 検索
+FILEBROWSER_QUERYHINT;検索するファイル名の一部を入力します\n<b>Ctrl-f</b> 検索テキストボックスにフォーカス(ファイルブラウザで);\n<b>Enter</b> 検索を開始します
 FILEBROWSER_QUERYLABEL; 検索:
 FILEBROWSER_RENAMEDLGLABEL;ファイル名変更
 FILEBROWSER_RENAMEDLGMSG;"%1" にファイル名変更:
 FILEBROWSER_SELECTDARKFRAME;ダークフレーム 選択...
 FILEBROWSER_SELECTFLATFIELD;フラットフィールド選択...
-FILEBROWSER_SHOWCOLORLABEL1HINT;レッド・ラベルの画像を表示 <b>Alt-1</b>
-FILEBROWSER_SHOWCOLORLABEL2HINT;イエロー・ラベルの画像を表示 <b>Alt-2</b>
-FILEBROWSER_SHOWCOLORLABEL3HINT;グリーン・ラベルの画像を表示 <b>Alt-3</b>
-FILEBROWSER_SHOWCOLORLABEL4HINT;ブルー・ラベルの画像を表示 <b>Alt-4</b>
-FILEBROWSER_SHOWCOLORLABEL5HINT;パープル・ラベルの画像を表示 <b>Alt-5</b>
-FILEBROWSER_SHOWDIRHINT;ディレクトリのすべての画像を表示 <b>D</b>
-FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示 <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示 <b>6</b>
-FILEBROWSER_SHOWEXIFINFO;EXIF 情報表示 <b>i</b>
-FILEBROWSER_SHOWQUEUEHINT;キューの内容を表示
-FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示 <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示 <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;３つ星ランクを表示 <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;４つ星ランクを表示 <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;５つ星ランクを表示 <b>5</b>
-FILEBROWSER_SHOWRECENTLYSAVEDHINT;最近保存された画像を表示  <b>Alt-7</b>
-FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;最近保存されていない画像を表示 <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示 <b>T</b>
-FILEBROWSER_SHOWUNCOLORHINT;カラー・ラベルのない画像を表示 <b>Alt-`</b>
-FILEBROWSER_SHOWUNRANKHINT;ランクなしを表示  <b>`</b>
+FILEBROWSER_SHOWCOLORLABEL1HINT;レッド・ラベルの画像を表示\nショートカット: <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;イエロー・ラベルの画像を表示\nショートカット: <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;グリーン・ラベルの画像を表示\nショートカット: <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;ブルー・ラベルの画像を表示\nショートカット: <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;パープル・ラベルの画像を表示\nショートカット: <b>Alt-5</b>
+FILEBROWSER_SHOWDIRHINT;ディレクトリのすべての画像を表示\nショートカット: <b>d</b>
+FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示\nショートカット: <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示\nショートカット: <b>6</b>
+FILEBROWSER_SHOWEXIFINFO;EXIF 情報表示\nショートカット: <b>i</b>
+FILEBROWSER_SHOWQUEUEHINT;処理するキューの内容を表示
+FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示\nショートカット: <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示\nショートカット: <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;３つ星ランクを表示\nショートカット: <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;４つ星ランクを表示\nショートカット: <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;５つ星ランクを表示\nショートカット: <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;最近保存された画像を表示\nショートカット:  <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;最近保存されていない画像を表示\nショートカット: <b>Alt-6</b>
+FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示\nショートカット: <b>T</b>
+FILEBROWSER_SHOWUNCOLORHINT;カラー・ラベルのない画像を表示\nショートカット: <b>Alt-`</b>
+FILEBROWSER_SHOWUNRANKHINT;ランクなし画像を表示\nショートカット:  <b>`</b>
 FILEBROWSER_STARTPROCESSINGHINT;処理開始/キュー画像の保存
 FILEBROWSER_STARTPROCESSING;処理開始
 FILEBROWSER_STOPPROCESSINGHINT;画像処理の中止
@@ -177,8 +178,8 @@ FILEBROWSER_STOPPROCESSING;処理中止
 FILEBROWSER_THUMBSIZE;サムネイル.サイズ
 FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいジョブがきたら自動的に処理を開始します
 FILEBROWSER_USETEMPLATE;テンプレート使用:
-FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大 <b>+</b>
-FILEBROWSER_ZOOMOUTHINT;サムネイルサイズの縮小 <b>-</b>
+FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>
+FILEBROWSER_ZOOMOUTHINT;サムネイルサイズの縮小\nショートカット: <b>-</b>
 GENERAL_ABOUT;RawTherapeeについて..
 GENERAL_AFTER;補正後
 GENERAL_BEFORE;補正前
@@ -450,20 +451,20 @@ MAIN_BUTTON_EXIT;終了
 MAIN_BUTTON_FULLSCREEN;フルスクリーン
 MAIN_BUTTON_PREFERENCES;環境設定
 MAIN_BUTTON_PUTTOQUEUE;キューに追加
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;現在の画像をキュー処理に追加 <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;現在の画像をキュー処理に追加\nショートカット: <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;キューに追加
 MAIN_BUTTON_SAVE;画像の保存
-MAIN_BUTTON_SAVE_TOOLTIP;現在の画像を保存 <b>Ctrl+S</b>
+MAIN_BUTTON_SAVE_TOOLTIP;現在の画像を保存\nショートカット: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;エディタに送る
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディタで編集 <b>Ctrl+E</b>
-MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;表示/非表示 すべてのパネル <b>m</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディタで編集\nショートカット: <b>Ctrl+E</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;表示/非表示 すべてのパネル\nショートカット: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;フルスクリーン解除
 MAIN_FRAME_BATCHQUEUE;キュー 
-MAIN_FRAME_BATCHQUEUE_TOOLTIP;キューの処理中  <b>Ctrl-F3</b>
-MAIN_FRAME_EDITOR;エディタ
-MAIN_FRAME_EDITOR_TOOLTIP; エディタ  <b>Ctrl-F4</b>
+MAIN_FRAME_BATCHQUEUE_TOOLTIP;キューで処理します\nショートカット:  <b>Ctrl-F3</b>
+MAIN_FRAME_EDITOR;編集
+MAIN_FRAME_EDITOR_TOOLTIP; 編集\nショートカット: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;ファイルブラウザ
-MAIN_FRAME_FILEBROWSER_TOOLTIP; ファイル・ブラウザ  <b>Ctrl-F2</b>
+MAIN_FRAME_FILEBROWSER_TOOLTIP; ファイル・ブラウザ\nショートカット: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;場所 
 MAIN_FRAME_PLACES_ADD;追加
 MAIN_FRAME_PLACES_DEL;削除
@@ -483,44 +484,44 @@ MAIN_MSG_PLACES;場所
 MAIN_MSG_QOVERWRITE;上書きしますか？
 MAIN_TAB_BASIC;ベーシック
 MAIN_TAB_COLOR;カラー
-MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
+MAIN_TAB_COLOR_TOOLTIP;ショートカット: <b>Alt-c</b>
 MAIN_TAB_DETAIL;ディテール
-MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+MAIN_TAB_DETAIL_TOOLTIP;ショートカット: <b>Alt-d</b>
 MAIN_TAB_DEVELOP;現像
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPORT; 書き出し
 MAIN_TAB_EXPOSURE;露光
-MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
+MAIN_TAB_EXPOSURE_TOOLTIP;ショートカット: <b>Alt-e</b>
 MAIN_TAB_FILTER;絞り込み
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;メタデータ
-MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
+MAIN_TAB_METADATA_TOOLTIP;ショートカット: <b>Alt-m</b>
 MAIN_TAB_RAW;RAW
-MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
+MAIN_TAB_RAW_TOOLTIP;ショートカット: <b>Alt-r</b>
 MAIN_TAB_TAGGING;タグ付け
 MAIN_TAB_TRANSFORM;変形
-MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+MAIN_TAB_TRANSFORM_TOOLTIP;ショートカット: <b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;補正 前|後
-MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>固定</b> / <b>固定解除</b> - <b>補正前</b> の表示設定\n\n<b>固定</b>:　<b>補正前</b> をそのまま表示し変更されません。\n複数のツールの累積効果を評価するのに役立ちます。\nさらに、比較は履歴上のどこからでも行うことができます。\n\n<b>固定解除</b>: 現在使用のツールの効果が <b>補正後</b> に表示され、その1段階前が <b>補正前</b> に表示されます。
-MAIN_TOOLTIP_HIDEFP;ボタンパネル 表示/非表示(ディレクトリとファイルブラウザ)　<b>F</b>
-MAIN_TOOLTIP_HIDEHP;左パネル 表示/非表示 (履歴含む) <b>l</b>
-MAIN_TOOLTIP_INDCLIPPEDH;ハイライト・クリッピング領域の表示 (Key <)
-MAIN_TOOLTIP_INDCLIPPEDS;シャドウ・クリッピング領域の表示 (Key >)
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>固定</b> / <b>固定解除</b> - <b>補正前</b> の表示設定\n\n<b>固定</b>: <b>補正前</b>をそのまま表示し変更されません。\n複数のツールの累積効果を評価するのに役立ちます。\nさらに、比較は履歴上のどこからでも行うことができます。\n\n<b>固定解除</b>: 現在使用のツールの効果が <b>補正後</b> に表示され、その1段階前が <b>補正前</b> に表示されます。
+MAIN_TOOLTIP_HIDEFP;ボタンパネル 表示/非表示(ディレクトリとファイルブラウザ)\nショートカット: <b>F</b>
+MAIN_TOOLTIP_HIDEHP;左パネル 表示/非表示 (履歴含む)\nショートカット:  <b>l</b>
+MAIN_TOOLTIP_INDCLIPPEDH;ハイライト・クリッピング領域の表示\nショートカット: <b>&lt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;シャドウ・クリッピング領域の表示\nショートカット: <b>&gt;</b>
 MAIN_TOOLTIP_PREFERENCES;設定する
-MAIN_TOOLTIP_PREVIEWB;Preview <b>ブルー チャンネル</b>n<b>-b</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;プレビュー <b>フォーカス・マスク</b> <i>(beta)</i> <b>Shift-F</b>\n浅い被写界深度、低ノイズ、高ズームの画像の場合は、より正確に。\nノイズの多い画像に対しては、検出精度を向上させるため10から30%縮小して評価します。\nフォーカス・マスクをオンにするとプレビューに時間が掛かります。
-MAIN_TOOLTIP_PREVIEWG;Preview <b>グリーン チャンネルl</b>n<b>-g</b>
-MAIN_TOOLTIP_PREVIEWL;Preview <b>輝度</b>n0.299*R + 0.587*G + 0.114*Bn<b>-v</b>
-MAIN_TOOLTIP_PREVIEWR;Preview <b>レッド チャンネル</b>n<b>-r</b>
-MAIN_TOOLTIP_QINFO;画像の情報 <b>I</b>
+MAIN_TOOLTIP_PREVIEWB;<b>ブルー チャンネル</b>表示\nショートカット: <b>b</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;<b>フォーカス・マスク</b>表示\nショートカット: <b>Shift-F</b>\n\n浅い被写界深度、低ノイズ、高ズームの画像の場合は、より正確に。\n\nノイズの多い画像に対しては、検出精度を向上させるため10から30%縮小して評価します。\n\nフォーカス・マスクをオンにすると表示に時間が掛かります。
+MAIN_TOOLTIP_PREVIEWG;<b>グリーン チャンネル</b>表示\nショートカット: <b>g</b>
+MAIN_TOOLTIP_PREVIEWL;<b>輝度</b>表示\nショートカット: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
+MAIN_TOOLTIP_PREVIEWR;<b>レッド チャンネル</b>表示\nショートカット: <b>r</b>
+MAIN_TOOLTIP_QINFO;画像の情報\nショートカット: <b>i</b>
 MAIN_TOOLTIP_SAVEAS;フォルダを選択して保存
 MAIN_TOOLTIP_SAVE;デフォルトのフォルダに保存
-MAIN_TOOLTIP_SHOWHIDELP1;表示/非表示 左パネル <b>l</b>
-MAIN_TOOLTIP_SHOWHIDERP1;表示/非表示 右パネル <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;表示/非表示 上パネル <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDELP1;表示/非表示 左パネル\nショートカット: <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;表示/非表示 右パネル\nショートカット: <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;表示/非表示 上パネル\nショートカット: <b>Shift-l</b>
 MAIN_TOOLTIP_THRESHOLD;しきい値
-MAIN_TOOLTIP_TOGGLE;補正前/補正後 切り替え <b>B</b>
+MAIN_TOOLTIP_TOGGLE;<b>補正前</b>/<b>補正後</b> 切り替え\nショートカット: <b>Shift-B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = n/a
@@ -543,7 +544,7 @@ NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
-PARTIALPASTE_COARSETRANS;90度 回転 / 反転
+PARTIALPASTE_COARSETRANS;90° 回転 / 反転
 PARTIALPASTE_COLORBOOST;発色補正
 PARTIALPASTE_COLORDENOISE;カラー ノイズ低減
 PARTIALPASTE_COLORGROUP;カラー 設定
@@ -632,7 +633,7 @@ PREFERENCES_CACORRECTION;色収差補正を適用
 PREFERENCES_CARED;色収差 レッド 手動補正
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
 PREFERENCES_CMETRICINTENT;レンダリング・インテント
-PREFERENCES_CUSTPROFBUILDHINT;画像から新規のプロファイルを作成する際に呼び出される実行ファイル (またはスクリプト)\n.PP3生成のルールに基づいたコマンドライン・パラメータを受け取ります。\n[RAW/JPG・パス] [デフォルトのプロファイルのパス] [f-数値] [露出時間 秒] [焦点距離 mm] [ISO] [レンズ] [カメラ]
+PREFERENCES_CUSTPROFBUILDHINT;画像から新規のプロファイルを作成する際に呼び出される実行ファイル (またはスクリプト)\n.PP3生成のルールに基づいたコマンドライン・パラメータを受け取ります。\n[raw/JPG・パス] [デフォルトのプロファイルのパス] [f-数値] [露出時間 秒] [焦点距離 mm] [ISO] [レンズ] [カメラ]
 PREFERENCES_CUSTPROFBUILDPATH;実行ファイルのパス
 PREFERENCES_CUSTPROFBUILD;カスタム・イメージ・プロファイル・ビルダー
 PREFERENCES_CUTOVERLAYBRUSH;切り抜きマスクカラー　不透明度
@@ -657,7 +658,7 @@ PREFERENCES_DIRSOFTWARE;インストール・ディレクトリ
 PREFERENCES_DMETHODBATCH;バッチ
 PREFERENCES_DMETHOD;方法
 PREFERENCES_EDITORCMDLINE;その他・コマンド入力
-PREFERENCES_EDITORLAYOUT;エディタ レイアウト
+PREFERENCES_EDITORLAYOUT;編集 レイアウト
 PREFERENCES_EXPOS;補間前露光 :補正 (lin)
 PREFERENCES_EXTERNALEDITOR;外部エディタ
 PREFERENCES_FALSECOLOR;偽色 補間処理
@@ -703,8 +704,8 @@ PREFERENCES_MULTITABDUALMON;マルチ タブモード, セカンド・モニタ�
 PREFERENCES_MULTITAB;マルチ タブモード
 PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
-PREFERENCES_OUTDIRHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分を参照します\n\n例えば、次の画像を処理中の場合は:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分を参照します\n\n例えば、次の画像を処理中の場合は:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます。\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます。\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
 PREFERENCES_OUTDIR;出力ディレクトリ
 PREFERENCES_OVERLAY_FILENAMES;サムネイル上でファイル名を透過表示する
@@ -741,7 +742,7 @@ PREFERENCES_SINGLETAB;シングル タブモード
 PREFERENCES_SLIMUI;スリムインタフェース
 PREFERENCES_SND_BATCHQUEUEDONE;キュー処理 終了
 PREFERENCES_SND_HELP;ファイルパスを入力か無し(無音). Windowsの場合システムサウンド "SystemDefault", "SystemAsterisk"など..
-PREFERENCES_SND_LNGEDITPROCDONE;エディタ処理 終了
+PREFERENCES_SND_LNGEDITPROCDONE;編集処理 終了
 PREFERENCES_SND_TRESHOLDSECS;秒後
 PREFERENCES_SQUAREDETAILWINDOW;正方形のディテール・ウィンドウ（速い）
 PREFERENCES_STARTUPIMDIR;起動時の画像・ディレクトリ
@@ -758,20 +759,24 @@ PREFERENCES_TP_VSCROLLBAR;ツールパネルの垂直スクロール・バーを
 PREFERENCES_TUNNELMETADATA;IPTC/XMPの項目は出力するファイルに変更を加えない。
 PREFERENCES_USESYSTEMTHEME;システムのテーマを使う
 PREFERENCES_WORKFLOW;レイアウト
+PROFILEPANEL_COPYPPASTE;コピーするパラメータ
 PROFILEPANEL_FILEDLGFILTERANY;すべてのファイル
 PROFILEPANEL_FILEDLGFILTERPP;後処理プロファイル
 PROFILEPANEL_LABEL;後処理プロファイル
 PROFILEPANEL_LOADDLGLABEL;後処理プロファイルを読み込む...
+PROFILEPANEL_LOADPPASTE;読み込むパラメータ
+PROFILEPANEL_PASTEPPASTE;貼り付けるパラメータ
 PROFILEPANEL_PCUSTOM;カスタム
 PROFILEPANEL_PFILE;ファイルから
 PROFILEPANEL_PLASTPHOTO;更新済の写真
 PROFILEPANEL_PLASTSAVED;更新済
 PROFILEPANEL_PROFILE;プロファイル
 PROFILEPANEL_SAVEDLGLABEL;後処理プロファイルを保存...
-PROFILEPANEL_TOOLTIPCOPY;クリップボードにプロファイルをコピー
-PROFILEPANEL_TOOLTIPLOAD;ファイルからプロファイルを読み込む
-PROFILEPANEL_TOOLTIPPASTE; クリップボードからプロファイルを貼り付け
-PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存
+PROFILEPANEL_SAVEPPASTE;保存するパラメータ
+PROFILEPANEL_TOOLTIPCOPY;クリップボードに現在のプロファイルをコピーします。\nCtrl-クリックでコピーするパラメータを選択します
+PROFILEPANEL_TOOLTIPLOAD;ファイルからプロファイルを読み込みます。\nCtrl-クリックで読み込むパラメータを選択します
+PROFILEPANEL_TOOLTIPPASTE; クリップボードからプロファイルを貼り付けます。\nCtrl-クリックで貼り付けるパラメータを選択します
+PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存。\nCtrl-クリックで保存するパラメータを選択します
 PROGRESSBAR_BADPIXELS;不良ピクセル...
 PROGRESSBAR_CACORRECTION;色収差補正...
 PROGRESSBAR_DARKFRAME;ダークフレーム...
@@ -810,10 +815,10 @@ SAVEDLG_SAVEIMMEDIATELY;すぐに保存
 SAVEDLG_SAVESPP;設定値も保存する
 SAVEDLG_TIFFFILTER;TIFF ファイル
 SAVEDLG_TIFFUNCOMPRESSED;非圧縮 TIFF
-TOOLBAR_TOOLTIP_CROP;切り抜き範囲選択 <b>C</b>
-TOOLBAR_TOOLTIP_HAND;手の平ツール <b>H</b>
-TOOLBAR_TOOLTIP_STRAIGHTEN;<b>直線選択</b> / <b>角度補正</b>  <b>S</b> \n\n プレビュー画像上にガイド線を描画し、垂直または水平方向を指示します。回転角度は、ガイド線の隣に表示されます。回転の中心は、プレビュー画像の中心です。
-TOOLBAR_TOOLTIP_WB;スポット・ホワイトバランス <b>W</b>
+TOOLBAR_TOOLTIP_CROP;切り抜き範囲選択\nショートカット:  <b>c</b>
+TOOLBAR_TOOLTIP_HAND;手の平ツール\nショートカット:  <b>h</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;<b>直線選択</b> / <b>角度補正</b>\nショートカット: <b>s</b>\nプレビュー画像上にガイド線を描画し、垂直または水平方向を指示します。回転角度は、ガイド線の隣に表示されます。回転の中心は、プレビュー画像の中心です。
+TOOLBAR_TOOLTIP_WB;スポット・ホワイトバランス\nショートカット:  <b>w</b>
 TP_CACORRECTION_BLUE;ブルー
 TP_CACORRECTION_LABEL;色収差補正
 TP_CACORRECTION_RED;レッド
@@ -824,8 +829,8 @@ TP_CHMIXER_RED;レッド
 TP_CHROMATABERR_LABEL;色収差
 TP_COARSETRAF_DEGREE;度:
 TP_COARSETRAF_TOOLTIP_HFLIP;左右反転
-TP_COARSETRAF_TOOLTIP_ROTLEFT;90度左回転 <b>[</b>
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;90度右回転 <b>]</b>
+TP_COARSETRAF_TOOLTIP_ROTLEFT;90度左回転\nショートカット: <b>[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;90度右回転\nショートカット: <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;上下反転
 TP_COLORBOOST_ACHANNEL;a チャンネル
 TP_COLORBOOST_AMOUNT;適用量
@@ -845,6 +850,7 @@ TP_COLORSHIFT_GREENMAGENTA;グリーン-マゼンタ
 TP_COLORSHIFT_LABEL;カラー シフト
 TP_CROP_FIXRATIO;縦横比 固定:
 TP_CROP_GTDIAGONALS;対角線
+TP_CROP_GTEPASSPORT;バイオメトリック・パスポート
 TP_CROP_GTGRID;グリッド
 TP_CROP_GTHARMMEANS1;調和平均 1
 TP_CROP_GTHARMMEANS2;調和平均 2
@@ -926,14 +932,6 @@ TP_HLREC_COLOR;色の波及
 TP_HLREC_LABEL;ハイライト復元
 TP_HLREC_LUMINANCE;輝度復元
 TP_HLREC_METHOD;方式: 
-TP_HSVEQUALIZER1;レッド
-TP_HSVEQUALIZER2;イエロー
-TP_HSVEQUALIZER3;ライム
-TP_HSVEQUALIZER4;グリーン
-TP_HSVEQUALIZER5;アクア
-TP_HSVEQUALIZER6;ブルー
-TP_HSVEQUALIZER7;パープル
-TP_HSVEQUALIZER8;マゼンタ
 TP_HSVEQUALIZER_CHANNEL;HSV チャンネル
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV イコライザ
@@ -943,14 +941,14 @@ TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;マトリクスとハイライト・ブレンド
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;LUTベースのICCプロファイルを使用するときに白トビを修復
 TP_ICM_FILEDLGFILTERANY;すべてのファイル
-TP_ICM_FILEDLGFILTERICM;ICCプロファイル ファイル
-TP_ICM_INPUTCAMERAICC;カメラの標準またはICC
+TP_ICM_FILEDLGFILTERICM;プロファイル ファイル
+TP_ICM_INPUTCAMERAICC;カメラの標準
 TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapeeのデフォルトのICCカラープロファイルを使用　シンプルなマトリクスより正確だが一部のカメラでのみ使用可能
 TP_ICM_INPUTCAMERA;カメラの標準値
-TP_ICM_INPUTCAMERA_TOOLTIP;シンプルなDCRAWによる既定のカラー・マトリクス、またはDNG埋め込みを使用
+TP_ICM_INPUTCAMERA_TOOLTIP;dcrawのシンプルなカラー・マトリクス、RawTherapeeの拡張バージョン（カメラの機種によりどちらでも可能）またはDNGの埋め込みを使用
 TP_ICM_INPUTCUSTOM;カスタム
-TP_ICM_INPUTCUSTOM_TOOLTIP;カメラ用の独自のICCカラープロファイルのファイルを選択
-TP_ICM_INPUTDLGLABEL;入力 ICC プロファイルを選択...
+TP_ICM_INPUTCUSTOM_TOOLTIP;カメラ用の独自の DCP/ICCカラープロファイルのファイルを選択
+TP_ICM_INPUTDLGLABEL;DCP/ICC 入力プロファイルを選択...
 TP_ICM_INPUTEMBEDDED;埋め込み使用, 可能なら
 TP_ICM_INPUTEMBEDDED_TOOLTIP;非RAWファイルに埋め込まれたカラープロファイルを使用
 TP_ICM_INPUTNONE;プロファイルなし
@@ -991,6 +989,7 @@ TP_PREPROCESS_FLATFIELDBLURTYPE;フラットフィールド・ぼかしタイプ
 TP_PREPROCESS_FLATFIELDFILE;フラットフィールド
 TP_PREPROCESS_GREENEQUIL;グリーン 平衡化
 TP_PREPROCESS_HOTDEADPIXFILT;ホット/デッド ピクセル・フィルタを適用
+TP_PREPROCESS_HOTDEADPIXTHRESH;ホット/デッド・ピクセル検出のしきい値
 TP_PREPROCESS_LABEL;前処理
 TP_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
 TP_PREPROCESS_NO_FOUND;未検出
@@ -1129,15 +1128,15 @@ ZOOMBAR_DETAIL;ディテール
 ZOOMBAR_HUGE;特大
 ZOOMBAR_LARGE;大
 ZOOMBAR_NORMAL;標準
-ZOOMBAR_PREVIEW;プレビュー
+ZOOMBAR_PREVIEW;表示
 ZOOMBAR_SCALE;スケール
 ZOOMBAR_SMALL;小
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;新規ディテール ウィンドウを開く
-ZOOMPANEL_ZOOM100;100%にズーム <b>1</b>
-ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる <b>F</b>
-ZOOMPANEL_ZOOMIN;ズームイン <b>+</b>
-ZOOMPANEL_ZOOMOUT;ズームアウト <b>-</b>
+ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
+ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
+ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 
 #00 Japanese
 #01 Translated by a3novy <a3novy@gmail.com>
@@ -1145,14 +1144,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト <b>-</b>
 #03 update: 2011-11-13, update: 2011-11-20 (for 4.0.5)
 #04 update: 2011-12-03 (for 4.0.6)
 #05 update: 2012-02-11 (for 4.0.7)
+#06 update: 2012-04-04 (for 4.0.8)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!PROFILEPANEL_COPYPPASTE;Parameters to copy
-!PROFILEPANEL_LOADPPASTE;Parameters to load
-!PROFILEPANEL_PASTEPPASTE;Parameters to paste
-!PROFILEPANEL_SAVEPPASTE;Parameters to save
-!TP_CROP_GTEPASSPORT;Biometric Passport
-!TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
