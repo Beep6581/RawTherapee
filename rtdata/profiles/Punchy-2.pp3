@@ -10,7 +10,7 @@ InTrash=false
 
 [Exposure]
 Auto=true
-Clip=0
+Clip=0.0000
 Compensation=0.0
 Brightness=0
 Contrast=0
@@ -93,8 +93,13 @@ Enabled=false
 Luma=5
 Chroma=5
 Gamma=2
-LumCurve=0;
-ChromCurve=0;
+
+[EPD]
+Enabled=false
+Strength=0.25
+EdgeStopping=1.4
+Scale=1
+ReweightingIterates=0
 
 [Shadows & Highlights]
 Enabled=false
