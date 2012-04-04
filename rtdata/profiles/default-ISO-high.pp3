@@ -10,7 +10,7 @@ InTrash=false
 
 [Exposure]
 Auto=true
-Clip=0
+Clip=0.0000
 Compensation=0
 Brightness=0
 Contrast=20
@@ -85,7 +85,7 @@ Threshold=80
 
 [Defringing]
 Enabled=false
-Radius=2
+Radius=2.0
 Threshold=25
 
 [Directional Pyramid Denoising]
@@ -93,8 +93,13 @@ Enabled=true
 Luma=0
 Chroma=10
 Gamma=1.2
-LumCurve=0;
-ChromCurve=0;
+
+[EPD]
+Enabled=false
+Strength=0.25
+EdgeStopping=1.4
+Scale=1
+ReweightingIterates=0
 
 [Shadows & Highlights]
 Enabled=false
