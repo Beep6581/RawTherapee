@@ -335,7 +335,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         previmg->getMutex().lock();
         try
         {
-            ipf.lab2rgb (nprevl, previmg);
+            ipf.lab2monitorRgb (nprevl, previmg);
             delete workimg;
 			workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);        
         }

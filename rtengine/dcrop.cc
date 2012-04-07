@@ -182,9 +182,9 @@ void Crop::update (int todo) {
 	}
 
     // switch back to rgb
-    parent->ipf.lab2rgb (labnCrop, cropImg);
+    parent->ipf.lab2monitorRgb (labnCrop, cropImg);
 	
-	//parent->ipf.lab2rgb (laboCrop, cropImg);
+	//parent->ipf.lab2monitorRgb (laboCrop, cropImg);
 	
 	//cropImg = baseCrop->to8();
 	/*

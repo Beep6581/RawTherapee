@@ -121,7 +121,7 @@ class ImProcFunctions {
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
-		void lab2rgb          (LabImage* lab, Image8* image);
+		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
 		void deconvsharpening (LabImage* lab, float** buffer);
 		void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
