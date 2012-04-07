@@ -145,7 +145,7 @@ public:
 	}
 	// use with float indices
 	T operator[](float index) {
-		int idx = floor(index);
+		int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
 		if (((unsigned int)idx) > maxs) {
 			if (idx<0)
 			{

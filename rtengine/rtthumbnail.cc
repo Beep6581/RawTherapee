@@ -775,7 +775,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // obtain final image
     Image8* readyImg = new Image8 (fw, fh);
-    ipf.lab2rgb (labView, readyImg);
+    ipf.lab2monitorRgb (labView, readyImg);
     delete labView;
     delete baseImg;
 

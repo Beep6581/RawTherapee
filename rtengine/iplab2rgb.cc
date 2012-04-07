@@ -54,7 +54,7 @@ const double (*iwprof[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz,
 const char* wprofnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB"};
 const int numprof = 7;
 
-void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
+void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 	//MyTime tBeg,tEnd;
  //   tBeg.set();
 	//gamutmap(lab);
@@ -64,7 +64,8 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
         // cmsDoTransform is relatively expensive
         #pragma omp parallel for
 		for (int i=0; i<lab->H; i++) {
-            float buffer[3*lab->W];
+            // pre-conversion to integer, since the output is 8 bit anyway, but LCMS is MUCH faster not converting from float
+            unsigned short buffer[3*lab->W];
 
             const int ix = i * 3 * lab->W;
             int iy = 0;
@@ -85,9 +86,9 @@ void ImProcFunctions::lab2rgb (LabImage* lab, Image8* image) {
 				y_ = f2xyz(fy);
 				z_ = f2xyz(fz)*D50z;
 
-                buffer[iy++] = CLIP01(x_);
-                buffer[iy++] = CLIP01(y_);
-                buffer[iy++] = CLIP01(z_);
+                buffer[iy++] = (unsigned short)CLIP(x_* CMAXVAL+0.5);
+                buffer[iy++] = (unsigned short)CLIP(y_* CMAXVAL+0.5);
+                buffer[iy++] = (unsigned short)CLIP(z_* CMAXVAL+0.5);
 			}
 
             cmsDoTransform (monitorTransform, buffer, image->data + ix, lab->W);
@@ -174,9 +175,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float y_ = 65535.0 * f2xyz(fy);
 				float z_ = 65535.0 * f2xyz(fz)*D50z;
 
-                buffer[iy++] = CLIP((int)x_);
-                buffer[iy++] = CLIP((int)y_);
-                buffer[iy++] = CLIP((int)z_);
+                buffer[iy++] = CLIP((int)(x_+0.5));
+                buffer[iy++] = CLIP((int)(y_+0.5));
+                buffer[iy++] = CLIP((int)(z_+0.5));
             }
 
             cmsDoTransform (hTransform, buffer, image->data + ix, cw);
@@ -258,9 +259,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float y_ = 65535.0 * f2xyz(fy);
 				float z_ = 65535.0 * f2xyz(fz)*D50z;
 
-				xa[j-cx] = CLIP((int)x_);
-				ya[j-cx] = CLIP((int)y_);
-				za[j-cx] = CLIP((int)z_);
+				xa[j-cx] = CLIP((int)(x_+0.5));
+				ya[j-cx] = CLIP((int)(y_+0.5));
+				za[j-cx] = CLIP((int)(z_+0.5));
 			}
 		}
 
