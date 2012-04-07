@@ -138,7 +138,7 @@ namespace rtengine {
 		
 		const float gain = pow (2.0, dnparams.expcomp);
 		
-		float noisevar_Ldetail = SQR((100-dnparams.Ldetail) * TS * 100.0f);
+		float noisevar_Ldetail = SQR((SQR(100-dnparams.Ldetail) + 50*(100-dnparams.Ldetail)) * TS * 0.5f);
 		
 		
 		array2D<float> tilemask_in(TS,TS);
@@ -215,7 +215,7 @@ namespace rtengine {
 				//pixel weight
 				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
 
-				//fill tile from image
+				//fill tile from image; convert RGB to "luma/chroma"
 				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) 
 					for (int j=tileleft, j1=0; j<tileright; j++, j1++) {
 						
@@ -277,8 +277,8 @@ namespace rtengine {
 				
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-				// now do detail recovery using block DCT to detect patterns 
-				// missed by wavelet denoise
+				// now do detail recovery using block DCT to detect  
+				// patterns missed by wavelet denoise
 				// blocks are not the same thing as tiles!
 				
 				
@@ -389,9 +389,11 @@ namespace rtengine {
 				fftwf_destroy_plan( plan_forward_blox );
 				//#pragma omp single nowait
 				fftwf_destroy_plan( plan_backward_blox );
-				
+								
 				fftwf_free ( Lblox);
 				fftwf_free ( fLblox);
+				
+				fftwf_cleanup();
 				
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				
@@ -426,7 +428,7 @@ namespace rtengine {
 					if (tileright<imwidth) Hmask[width-1-i] = mask;
 				}
 
-				
+				//convert back to RGB and write to destination array
 				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) {
 					float X,Y,Z;
 					for (int j=tileleft, j1=0; j<tileright; j++, j1++) {
