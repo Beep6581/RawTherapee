@@ -446,7 +446,7 @@ DCPProfile* DCPStore::getProfile (Glib::ustring filename) {
 }
 
 DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName) {
-    std::map<Glib::ustring, Glib::ustring>::iterator r = fileStdProfiles.find (camShortName);
+    std::map<Glib::ustring, Glib::ustring>::iterator r = fileStdProfiles.find (camShortName.uppercase());
     if (r==fileStdProfiles.end()) return NULL;
 
     return getProfile(r->second);
