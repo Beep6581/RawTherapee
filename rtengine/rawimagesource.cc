@@ -932,9 +932,9 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     rml.ciffLength = ri->get_ciffLen();
     idata = new ImageData (fname, &rml);
 
-    green(W,H);// = allocArray<float>(W,H);
-    red(W,H);//   = allocArray<float>(W,H);
-    blue(W,H);//  = allocArray<float>(W,H);
+    green(W,H);
+    red(W,H);
+    blue(W,H);
     //hpmap = allocArray<char>(W, H);
 
     if (plistener) {
