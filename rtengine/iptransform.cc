@@ -23,21 +23,24 @@
 #endif
 #include "mytime.h"
 
+#include "rt_math.h"
+
+using namespace std;
+
 namespace rtengine {
 
 #undef CMAXVAL
-#undef MAX
-#undef MIN
+
+
 #undef CLIPTO
 #undef CLIPTOC
-#undef SQR
 
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
+
+
+
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 #define RT_PI 3.141592653589
-#define SQR(x) ((x)*(x))
 
 bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef) {
 

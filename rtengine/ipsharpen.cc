@@ -18,12 +18,15 @@
  */
 #include "rtengine.h"
 #include "improcfun.h"
+#include "gauss.h"
+#include "bilateral2.h"
+#include "rt_math.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include "minmax.h"
-#include "gauss.h"
-#include "bilateral2.h"
+
+using namespace std;
 
 namespace rtengine {
 
@@ -34,8 +37,8 @@ namespace rtengine {
 #define CMAXVAL 0xffff
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define ABS(a) ((a)<0?-(a):(a))
-#define LIM(x,min,max) MAX(min,MIN(x,max))
-#define CLIREF(x) LIM(x,-200000.0,200000.0) // avoid overflow : do not act directly on image[] or pix[]
+#define LIM(x,MIN,MAX) max(MIN,min(x,MAX))
+#define CLIREF(x) LIM(x,-200000.0f,200000.0f) // avoid overflow : do not act directly on image[] or pix[]
 
 
 extern const Settings* settings;
@@ -56,7 +59,7 @@ void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, i
 				continue;
 			}
 			float U = -(O * log(I/O) - I + O) * dampingFac;
-			U = MIN(U,1.0);
+			U = min(U,1.0f);
 			U = U*U*U*U*(5.0-U*4.0);
 			aI[i][j] = (O - I) / I * U + 1.0;
 		}
@@ -83,7 +86,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #endif
 	{
 
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
 	float damping = params->sharpening.deconvdamping / 5.0;
 	bool needdamp = params->sharpening.deconvdamping > 0;
 	for (int k=0; k<params->sharpening.deconviter; k++) {
@@ -124,7 +127,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #endif
 	for (int i=0; i<H; i++)
 		for (int j=0; j<W; j++)
-			lab->L[i][j] = lab->L[i][j]*p1 + MAX(tmpI[i][j],0)*p2;
+			lab->L[i][j] = lab->L[i][j]*p1 + max(tmpI[i][j],0.0f)*p2;
 
 	} // end parallel
 
@@ -157,7 +160,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 	{
 
 
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
 	if (params->sharpening.edgesonly==false) {
 
 		gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
@@ -203,7 +206,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 	float** nL = base;
 #pragma omp parallel for if (multiThread)
 	for (int i=2; i<H-2; i++) {
-		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min, max, labL;
+		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min_, max_, labL;
 		for (int j=2; j<W-2; j++) {
 			// compute 3 iterations, only forward
 			np1 = 2.f * (nL[i-2][j] + nL[i-2][j+1] + nL[i-2][j+2] + nL[i-1][j] + nL[i-1][j+1] + nL[i-1][j+2] + nL[i]  [j] + nL[i]  [j+1] + nL[i]  [j+2]) / 27.f + nL[i-1][j+1] / 3.f;
@@ -211,16 +214,17 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 			np3 = 2.f * (nL[i]  [j] + nL[i]  [j+1] + nL[i]  [j+2] + nL[i+1][j] + nL[i+1][j+1] + nL[i+1][j+2] + nL[i+2][j] + nL[i+2][j+1] + nL[i+2][j+2]) / 27.f + nL[i+1][j+1] / 3.f;
 
 			// Max/Min of all these deltas and the last two max/min
-			MINMAX3(np1,np2,np3,maxn,minn);
-			MAX3(max1,max2,maxn,max);
-			MIN3(min1,min2,minn,min);
+			maxn = max(np1,np2,np3);
+			minn = min(np1,np2,np3);
+			max_ = max(max1,max2,maxn);
+			min_ = min(min1,min2,minn);
 
 			// Shift the queue
 			max1 = max2; max2 = maxn;
 			min1 = min2; min2 = minn;
 			labL = lab->L[i][j];
-			if (max < labL) max = labL;
-			if (min > labL) min = labL;
+			if (max_ < labL) max_ = labL;
+			if (min_ > labL) min_ = labL;
 
 			// deviation from the environment as measurement
 			float diff = nL[i][j] - blurmap[i][j];
@@ -228,10 +232,10 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 			if (ABS(diff) > params->sharpening.threshold) {
 				float newL = labL + sharpFac * diff;
 				// applying halo control
-				if (newL > max)
-					newL = max + (newL-max) * scale;
-				else if (newL < min)
-					newL = min - (min-newL) * scale;
+				if (newL > max_)
+					newL = max_ + (newL-max_) * scale;
+				else if (newL < min_)
+					newL = min_ - (min_-newL) * scale;
 
 				lab->L[i][j] = newL;
 			}

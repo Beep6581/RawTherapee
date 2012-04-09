@@ -17,12 +17,14 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <glib/gstdio.h>
-#include "safegtk.h"
-#include "../rtgui/multilangmgr.h"
-#include "procparams.h"
 #include <glibmm.h>
 #include <sstream>
 #include <cstring>
+#include <algorithm>
+
+#include "safegtk.h"
+#include "../rtgui/multilangmgr.h"
+#include "procparams.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/mydiagonalcurve.h"
@@ -33,6 +35,8 @@
 #include "../rtgui/paramsedited.h"
 
 #define APPVERSION VERSION
+
+using namespace std;
 
 namespace rtengine {
 namespace procparams {
@@ -87,10 +91,10 @@ void WBParams::cleanup() {
 void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const {
     x1 = 0, x2 = resizedWidth, y1 = 0, y2 = resizedHeight;
     if (enabled) {
-        x1 = MIN(resizedWidth-1,  MAX(0, x / scale));
-        y1 = MIN(resizedHeight-1, MAX(0, y / scale));   
-        x2 = MIN(resizedWidth,    MAX(0, (x+w) / scale)); 
-        y2 = MIN(resizedHeight,   MAX(0, (y+h) / scale));
+        x1 = min(resizedWidth-1,  max(0, x / scale));
+        y1 = min(resizedHeight-1, max(0, y / scale));
+        x2 = min(resizedWidth,    max(0, (x+w) / scale));
+        y2 = min(resizedHeight,   max(0, (y+h) / scale));
     }
 }
 

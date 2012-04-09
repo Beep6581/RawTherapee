@@ -87,7 +87,7 @@ class RawImageSource : public ImageSource {
         //char** hpmap;
         float** hrmap[3];   // for color propagation
         char** needhr;      // for color propagation
-        int max[3];
+        int max_3[3];
         float chmax[4],hlmax[4];
         double initialGain; // initial gain calculated after scale_colors
         double defGain;

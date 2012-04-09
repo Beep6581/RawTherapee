@@ -25,7 +25,7 @@
 #include "improcfun.h"
 #include "colortemp.h" 
 #include "mytime.h"
-#include "../rtengine/utils.h"
+#include "utils.h"
 #include "iccstore.h"
 #include "iccmatrices.h"
 #include "rawimagesource.h"
@@ -273,7 +273,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	tpp->camwbRed = tpp->redMultiplier / ri->get_pre_mul(0);
 	tpp->camwbGreen = tpp->greenMultiplier / ri->get_pre_mul(1);
 	tpp->camwbBlue = tpp->blueMultiplier / ri->get_pre_mul(2);
-	tpp->defGain= 1.0/ MIN(MIN(ri->get_pre_mul(0),ri->get_pre_mul(1)),ri->get_pre_mul(2));
+	tpp->defGain= 1.0/ min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
 	tpp->gammaCorrected = true;
 
 	unsigned filter = ri->get_filters();
@@ -410,7 +410,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		if (ri->get_FujiWidth() != 0) {
 			int fw = ri->get_FujiWidth();
 			start = ABS(fw-i) + 8;
-			end = MIN( height + width-fw-i, fw+i) - 8;
+			end = min(height + width-fw-i, fw+i) - 8;
 		} else {
 			start = 8;
 			end = width - 8;
@@ -435,7 +435,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		if (ri->get_FujiWidth() != 0) {
 			int fw = ri->get_FujiWidth();
 			start = ABS(fw-i) + 32;
-			end = MIN( height + width-fw-i, fw+i) - 32;
+			end = min(height + width-fw-i, fw+i) - 32;
 		} else {
 			start = 32;
 			end = width - 32;
@@ -973,20 +973,21 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
         // Go down till we cut off that many pixels
         unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
 
-        int max; unsigned long sum=0;
-        for (max=65535; max>16384 && sum<cutoff; max--) sum+=hist16[max];
+        int max_;
+	unsigned long sum=0;
+        for (max_=65535; max_>16384 && sum<cutoff; max_--) sum+=hist16[max_];
 
         delete[] hist16;
 
-        scaleForSave = 65535*8192 / max;
+        scaleForSave = 65535*8192 / max_;
 
         // Correction and gamma to 8 Bit
         for (int i=0; i<thumbImg->height; i++)
             for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
-                int r= gammatab[MIN(thumbImg->r[i][j],max) * scaleForSave >> 13];
-                int g= gammatab[MIN(thumbImg->g[i][j],max) * scaleForSave >> 13];
-                int b= gammatab[MIN(thumbImg->b[i][j],max) * scaleForSave >> 13];
-                tmpdata[ix++] = r*19595+g*38469+b*7472 >> 16;
+                int r= gammatab[min(thumbImg->r[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+		int g= gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+		int b= gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                tmpdata[ix++] = (r*19595+g*38469+b*7472) >> 16;
             }
     }
     else {
@@ -1068,19 +1069,19 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
             // Go down till we cut off that many pixels
             unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
 
-            int max; unsigned long sum=0;
-            for (max=65535; max>16384 && sum<cutoff; max--) sum+=hist16[max];
+            int max_; unsigned long sum=0;
+            for (max_=65535; max_>16384 && sum<cutoff; max_--) sum+=hist16[max_];
 
             delete[] hist16;
 
-            scaleForSave = 65535*8192 / max;
+            scaleForSave = 65535*8192 / max_;
 
             // Correction and gamma to 8 Bit
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=0; j<thumbImg->width; j++) {
-                    tmpdata[ix++] = gammatab[MIN(thumbImg->r[i][j],max) * scaleForSave >> 13];
-                    tmpdata[ix++] = gammatab[MIN(thumbImg->g[i][j],max) * scaleForSave >> 13];
-                    tmpdata[ix++] = gammatab[MIN(thumbImg->b[i][j],max) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[min(thumbImg->r[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+		    tmpdata[ix++] = gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+		    tmpdata[ix++] = gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                 }
         }
         else {

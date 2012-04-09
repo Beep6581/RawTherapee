@@ -16,24 +16,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <cmath>
+#include <glib.h>
+#include <glibmm.h>
+
 #include "rtengine.h"
 #include "improcfun.h"
 #include "curves.h"
-#include <cmath>
 #include "colorclip.h"
 #include "gauss.h"
 #include "bilateral2.h"
-#include "minmax.h"
 #include "mytime.h"
-#include <glib.h>
-#include <glibmm.h>
 #include "iccstore.h"
 #include "impulse_denoise.h"
 #include "imagesource.h"
 #include "rtthumbnail.h"
-#include "../rtengine/utils.h"
+#include "utils.h"
 #include "iccmatrices.h"
 #include "calc_distort.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -46,8 +47,8 @@ namespace rtengine {
 #undef MAXVAL
 #undef CMAXVAL
 #undef MAXL
-#undef MAX
-#undef MIN
+
+
 #undef ABS
 #undef CLIP
 #undef CLIPS
@@ -57,8 +58,8 @@ namespace rtengine {
 #define MAXVAL  0xffff
 #define CMAXVAL 0xffff
 #define MAXL 	0xffff
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
+
+
 #define ABS(a) ((a)<0?-(a):(a))
 #define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPS(a) ((a)>-32768?((a)<32767?(a):32767):-32768)
@@ -212,8 +213,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
     int h_th, s_th;
     if (shmap) {
-        h_th = shmap->max - params->sh.htonalwidth * (shmap->max - shmap->avg) / 100;
-        s_th = params->sh.stonalwidth * (shmap->avg - shmap->min) / 100;
+        h_th = shmap->max_f - params->sh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
+        s_th = params->sh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
     }
 
     bool processSH  = params->sh.enabled && shmap!=NULL && (params->sh.highlights>0 || params->sh.shadows>0);
@@ -222,7 +223,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
     TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
 
-	float toxyz[3][3] = {
+    double toxyz[3][3] = {
         {
         	( wprof[0][0] / D50x),
         	( wprof[0][1] / D50x),
@@ -268,8 +269,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
 	
 	const float exp_scale = pow (2.0, params->toneCurve.expcomp);
-	const float comp = (MAX(0,params->toneCurve.expcomp) + 1.0)*params->toneCurve.hlcompr/100.0;
-	const float shoulder = ((65536.0/MAX(1,exp_scale))*(params->toneCurve.hlcomprthresh/200.0))+0.1;
+	const float comp = (max(0.0, params->toneCurve.expcomp) + 1.0)*params->toneCurve.hlcompr/100.0;
+	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(params->toneCurve.hlcomprthresh/200.0))+0.1;
 	const float hlrange = 65536.0-shoulder;
 	
 	
@@ -347,7 +348,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 				float h,s,v;
 				rgb2hsv(r,g,b,h,s,v);
 				if (sat > 0.5) {
-					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-MIN(s,1))));
+					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-min(s,1.0f))));
 					if (s<0) s=0;
 				} else {
 					if (sat < -0.5)
@@ -365,7 +366,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					//shift saturation
 					float satparam = (sCurve->getVal((double)h)-0.5) * 2;
 					if (satparam > 0.00001) {
-						s = (1-satparam)*s+satparam*(1-SQR(1-MIN(s,1)));
+						s = (1-satparam)*s+satparam*(1-SQR(1-min(s,1.0f)));
 						if (s<0) s=0;
 					} else {
 						if (satparam < -0.00001)
@@ -378,7 +379,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					float valparam = vCurve->getVal((double)h)-0.5;
 					valparam *= (1-SQR(SQR(1-s)));
 					if (valparam > 0.00001) {
-						v = (1-valparam)*v+valparam*(1-SQR(1-MIN(v,1)));
+						v = (1-valparam)*v+valparam*(1-SQR(1-min(v,1.0f)));
 						if (v<0) v=0;
 					} else {
 						if (valparam < -0.00001)
@@ -703,7 +704,7 @@ fclose(f);*/
 				octile[count] += histogram[i];
 				if (octile[count]>sum/8 || (count==7 && octile[count]>sum/16)) {
 					octile[count]=log(1+i)/log(2);
-					count++;// = MIN(count+1,7);
+					count++;// = min(count+1,7);
 				}
 			}
 			if (i<ave) {
@@ -725,7 +726,7 @@ fclose(f);*/
 		// compute weighted average separation of octiles
 		// for future use in contrast setting
 		for (int i=1; i<6; i++) {
-			ospread += (octile[i+1]-octile[i])/MAX(0.5,(i>2 ? (octile[i+1]-octile[3]) : (octile[3]-octile[i])));
+			ospread += (octile[i+1]-octile[i])/max(0.5f,(i>2 ? (octile[i+1]-octile[3]) : (octile[3]-octile[i])));
 		}
 		ospread /= 5;
 		
@@ -774,7 +775,7 @@ fclose(f);*/
 
 		/*expcomp = (expcomp1*fabs(expcomp2)+expcomp2*fabs(expcomp1))/(fabs(expcomp1)+fabs(expcomp2));
 		if (expcomp<0) {
-			MIN(0.0f,MAX(expcomp1,expcomp2));
+			min(0.0f,max(expcomp1,expcomp2));
 		}*/
 		expcomp = 0.5 * (expcomp1 + expcomp2);
 		float gain = exp(expcomp*log(2));
@@ -791,8 +792,8 @@ fclose(f);*/
 		//this is a series approximation of the actual formula for comp,
 		//which is a transcendental equation
 		float comp = (gain*((float)whiteclip)/scale - 1)*2;//*(1-shoulder/scale);
-		hlcompr=(int)(100*comp/(MAX(0,expcomp) + 1.0));
-		hlcompr = MAX(0,MIN(100,hlcompr));
+		hlcompr=(int)(100*comp/(max(0.0,expcomp) + 1.0));
+		hlcompr = max(0,min(100,hlcompr));
 		
 		//now find brightness if gain didn't bring ave to midgray using
 		//the envelope of the actual 'control cage' brightness curve for simplicity
@@ -803,11 +804,11 @@ fclose(f);*/
 			bright = (midgray-midtmp)*15.0/(0.10833-0.0833*midtmp);
 		}
 		
-		bright = 0.25*/*(median/ave)*(hidev/lodev)*/MAX(0,bright);
+		bright = 0.25*/*(median/ave)*(hidev/lodev)*/max(0,bright);
 		
 		//compute contrast that spreads the average spacing of octiles
 		contr = 50.0*(1.1-ospread);
-		contr = MAX(0,MIN(100,contr));
+		contr = max(0,min(100,contr));
 		
 		//diagnostics
 		//printf ("**************** AUTO LEVELS ****************\n");
@@ -918,8 +919,8 @@ fclose(f);*/
 		double var_G = g / 65535.0;
 		double var_B = b / 65535.0;
 		
-		double var_Min = MIN(MIN(var_R,var_G),var_B);
-		double var_Max = MAX(MAX(var_R,var_G),var_B);
+		double var_Min = min(var_R,var_G,var_B);
+		double var_Max = max(var_R,var_G,var_B);
 		double del_Max = var_Max - var_Min;
 		v = var_Max;
 		if (fabs(del_Max)<0.00001) {
@@ -989,7 +990,7 @@ fclose(f);*/
 	}
 	
 	
-	void ImProcFunctions::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]) {
+	void ImProcFunctions::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]) {
 		
 		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
 		//Note that it is only at this point that we should have need of clipping color data

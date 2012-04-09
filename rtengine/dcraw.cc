@@ -3,6 +3,8 @@
 /*RT*/#undef MAX
 /*RT*/#undef MIN
 /*RT*/#undef ABS
+/*RT*/#include <algorithm>
+/*RT*/#include "rt_math.h"
 /*RT*/#define NO_LCMS
 /*RT*/#define NO_JPEG
 /*RT*/#define NO_JASPER
@@ -178,13 +180,15 @@ struct ph1 {
 #define FORC4 FORC(4)
 #define FORCC FORC(colors)
 
-#define SQR(x) ((x)*(x))
+#define SQR(x) rtengine::SQR(x)
 #define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) rtengine::min(a,b)
+#define MAX(a,b) rtengine::max(a,b)
 #define LIM(x,min,max) MAX(min,MIN(x,max))
 #define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 #define CLIP(x) LIM(x,0,65535)
+#define CLIPD(x) LIM(x,0.0,65535.0)
+#define CLIPF(x) LIM(x,0.0f,65535.0f)
 #define SWAP(a,b) { a=a+b; b=a-b; a=a-b; }
 
 /*
@@ -1181,7 +1185,7 @@ void CLASS nikon_compressed_load_raw()
       else	   hpred[col & 1] += diff;
       if ((ushort)(hpred[col & 1] + min) >= max) derror();
       if ((unsigned) (col-left_margin) < width)
-	BAYER(row,col-left_margin) = curve[LIM((short)hpred[col & 1],0,0x3fff)];
+	BAYER(row,col-left_margin) = curve[LIM((short)hpred[col & 1],(short)0,(short)0x3fff)];
     }
   }
   free (huff);
@@ -1417,7 +1421,7 @@ void CLASS phase_one_flat_field (int is_float, int nc)
 	  c = nc > 2 ? FC(row,col) : 0;
 	  if (!(c & 1)) {
 	    c = BAYER(row,col) * mult[c];
-	    BAYER(row,col) = LIM(c,0,65535);
+	    BAYER(row,col) = LIM(c,0u,65535u);
 	  }
 	  for (c=0; c < nc; c+=2)
 	    mult[c] += mult[c+1];
@@ -1461,7 +1465,7 @@ void CLASS phase_one_correct()
       poly[3] += (ph1.tag_210 - poly[7]) * poly[6] + 1;
       for (i=0; i < 0x10000; i++) {
 	num = (poly[5]*i + poly[3])*i + poly[1];
-	curve[i] = LIM(num,0,65535);
+	curve[i] = CLIPF(num);
       } goto apply;				/* apply to right half */
     } else if (tag == 0x41a) {			/* Polynomial curve */
       for (i=0; i < 4; i++)
@@ -1469,7 +1473,7 @@ void CLASS phase_one_correct()
       for (i=0; i < 0x10000; i++) {
 	for (num=0, j=4; j--; )
 	  num = num * i + poly[j];
-	curve[i] = LIM(num+i,0,65535);
+	curve[i] = CLIPF(num+i);
       } apply:					/* apply to whole image */
       for (row=0; row < height; row++)
 	for (col = (tag & 1)*ph1.split_col; col < width; col++)
@@ -3680,7 +3684,7 @@ void CLASS wavelet_denoise()
       hpass = lpass;
     }
     for (i=0; i < size; i++)
-      image[i][c] = CLIP(SQR(fimg[i]+fimg[lpass+i])/0x10000);
+      image[i][c] = CLIPF(SQR(fimg[i]+fimg[lpass+i])/0x10000);
   }
   if (filters && colors == 3) {  /* pull G1 and G3 closer together */
     for (row=0; row < 2; row++) {
@@ -3706,7 +3710,7 @@ void CLASS wavelet_denoise()
 	if      (diff < -thold) diff += thold;
 	else if (diff >  thold) diff -= thold;
 	else diff = 0;
-	BAYER(row,col) = CLIP(SQR(avg+diff) + 0.5);
+	BAYER(row,col) = CLIPD(SQR(avg+diff) + 0.5);
       }
     }
   }
@@ -3726,8 +3730,8 @@ void CLASS scale_colors()
     memcpy (pre_mul, user_mul, sizeof pre_mul);
   if (use_auto_wb || (use_camera_wb && cam_mul[0] == -1)) {
     memset (dsum, 0, sizeof dsum);
-    bottom = MIN (greybox[1]+greybox[3], height);
-    right  = MIN (greybox[0]+greybox[2], width);
+    bottom = MIN (greybox[1]+greybox[3], static_cast<unsigned int>(height));
+    right  = MIN (greybox[0]+greybox[2], static_cast<unsigned int>(width));
     for (row=greybox[1]; row < bottom; row += 8)
       for (col=greybox[0]; col < right; col += 8) {
 	memset (sum, 0, sizeof sum);
@@ -3931,7 +3935,7 @@ void CLASS lin_interpolate()
  */
 void CLASS vng_interpolate()
 {
-  static const signed char *cp, terms[] = {
+  static const signed short int *cp, terms[] = {
     -2,-2,+0,-1,0,0x01, -2,-2,+0,+0,1,0x01, -2,-1,-1,+0,0,0x01,
     -2,-1,+0,-1,0,0x02, -2,-1,+0,+0,0,0x03, -2,-1,+0,+1,1,0x01,
     -2,+0,+0,-1,0,0x06, -2,+0,+0,+0,1,0x02, -2,+0,+0,+1,0,0x03,
@@ -4081,7 +4085,7 @@ void CLASS ppg_interpolate()
 		    ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
       }
       d = dir[i = diff[0] > diff[1]];
-      pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
+      pix[0][1] = ULIM(guess[i] >> 2, static_cast<int>(pix[d][1]), static_cast<int>(pix[-d][1]));
     }
 /*  Calculate red and blue for each green pixel:		*/
   for (row=1; row < height-1; row++)
@@ -4154,10 +4158,10 @@ void CLASS ahd_interpolate()
 	  pix = image + row*width+col;
 	  val = ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
 		- pix[-2][c] - pix[2][c]) >> 2;
-	  rgb[0][row-top][col-left][1] = ULIM(val,pix[-1][1],pix[1][1]);
+	  rgb[0][row-top][col-left][1] = ULIM(val,static_cast<int>(pix[-1][1]),static_cast<int>(pix[1][1]));
 	  val = ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
 		- pix[-2*width][c] - pix[2*width][c]) >> 2;
-	  rgb[1][row-top][col-left][1] = ULIM(val,pix[-width][1],pix[width][1]);
+	  rgb[1][row-top][col-left][1] = ULIM(val,static_cast<int>(pix[-width][1]),static_cast<int>(pix[width][1]));
 	}
       }
 /*  Interpolate red and blue, and convert to CIELab:		*/
@@ -4288,7 +4292,7 @@ void CLASS blend_highlights()
       if (c == colors) continue;
       FORCC {
 	cam[0][c] = image[row*width+col][c];
-	cam[1][c] = MIN(cam[0][c],clip);
+	cam[1][c] = MIN(cam[0][c],static_cast<float>(clip));
       }
       for (i=0; i < 2; i++) {
 	FORCC for (lab[i][c]=j=0; j < colors; j++)
@@ -4787,7 +4791,7 @@ void CLASS parse_gps (int base)
       case 6:
 	FORC(2) gpsdata[18+c] = get4();			break;
       case 18: case 29:
-	fgets ((char *) (gpsdata+14+tag/3), MIN(len,12), ifp);
+	fgets ((char *) (gpsdata+14+tag/3), MIN(len,12u), ifp);
     }
     fseek (ifp, save, SEEK_SET);
   }
@@ -6186,7 +6190,9 @@ void CLASS adobe_coeff (const char *make, const char *model)
 {
   static const struct {
     const char *prefix;
-    short black, maximum, trans[12];
+    short black;
+    int maximum;
+    short trans[12];
   } table[] = {
     { "AGFAPHOTO DC-833m", 0, 0,	/* DJC */
 	{ 11438,-3762,-1115,-2409,9914,2497,-1227,2295,5300 } },
@@ -8806,7 +8812,7 @@ void CLASS tiff_head (struct tiff_hdr *th, int full)
   strncpy (th->desc, desc, 512);
   strncpy (th->make, make, 64);
   strncpy (th->model, model, 64);
-  strcpy (th->soft, "dcraw v"DCRAW_VERSION);
+  sprintf (th->soft, "dcraw v%s", DCRAW_VERSION);
   t = localtime (&timestamp);
   sprintf (th->date, "%04d:%02d:%02d %02d:%02d:%02d",
       t->tm_year+1900,t->tm_mon+1,t->tm_mday,t->tm_hour,t->tm_min,t->tm_sec);
@@ -9262,3 +9268,6 @@ cleanup:
   return status;
 }
 */
+/*RT*/#undef MAX
+/*RT*/#undef MIN
+/*RT*/#undef ABS

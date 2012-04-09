@@ -186,7 +186,7 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
         cmsDeleteTransform(hTransform);
     } else {
 		
-		float rgb_xyz[3][3];
+		double rgb_xyz[3][3];
 		
 		for (int i=0; i<numprof; i++) {
 			if (profile==wprofnames[i]) {

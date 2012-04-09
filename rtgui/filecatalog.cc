@@ -17,21 +17,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <glib/gstdio.h>
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
+
 #include "filecatalog.h"
 #include "filepanel.h"
 #include "options.h"
 #include "cachemanager.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
-#include <glib/gstdio.h>
-#include <iostream>
-#include <iomanip>
 #include "renamedlg.h"
 #include "thumbimageupdater.h"
 #include "../rtengine/safegtk.h"
 #include "batchqueue.h"
 #include "rtimage.h"
 
+using namespace std;
 
 #define CHECKTIME 2000
 
@@ -1120,8 +1123,8 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 					toggled_stars_count = 1;
 				}
 				if (toggled_stars_count == 1) {
-					int current_star=MIN(start_star,toggled_button);
-					int last_star   =MAX(start_star,toggled_button);
+					int current_star=min(start_star,toggled_button);
+					int last_star   =max(start_star,toggled_button);
 					//we permute the start and the end star for the next loop
 					for (; current_star <= last_star; current_star++) {
 						//we toggle on all the star in the range

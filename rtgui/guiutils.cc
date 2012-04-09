@@ -15,10 +15,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <algorithm>
+
 #include "guiutils.h"
 #include "options.h"
 #include "../rtengine/utils.h"
 #include "rtimage.h"
+
+using namespace std;
 
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference) {
 
@@ -203,7 +207,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         else {
             int corners_from[4][2];
             int corners_to[4][2];
-            int mindim = MIN (rectx2-rectx1+1, recty2-recty1+1);
+            int mindim = min(rectx2-rectx1+1, recty2-recty1+1);
             corners_from[0][0] = rectx1;
             corners_from[0][1] = recty1;
             corners_to[0][0]   = rectx1 + mindim;

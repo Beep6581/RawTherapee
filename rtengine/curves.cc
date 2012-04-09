@@ -18,14 +18,17 @@
  */
 #include <glib.h>
 #include <glib/gstdio.h>
-#include "curves.h"
 #include <cmath>
 #include <vector>
-#include "mytime.h"
 #include <cstring>
+#include <algorithm>
 
+#include "rt_math.h"
+
+#include "mytime.h"
 #include "array2D.h"
 #include "LUT.h"
+#include "curves.h"
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
@@ -311,9 +314,9 @@ namespace rtengine {
 				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
 
 				brightcurvePoints.push_back(0.7); //shoulder point
-				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7+br/300.0)); //value at shoulder point
 			} else {
-				brightcurvePoints.push_back(MAX(0.0,0.1-br/150.0)); //toe point
+				brightcurvePoints.push_back(max(0.0,0.1-br/150.0)); //toe point
 				brightcurvePoints.push_back(0.1); //value at toe point
 
 				brightcurvePoints.push_back(0.7-br/300.0); //shoulder point
@@ -328,8 +331,8 @@ namespace rtengine {
 
 		float exp_scale = a;
 		float scale = 65536.0;
-		float comp = (MAX(0,ecomp) + 1.0)*hlcompr/100.0;
-		float shoulder = ((scale/MAX(1,exp_scale))*(hlcomprthresh/200.0))+0.1;
+		float comp = (max(0.0,ecomp) + 1.0)*hlcompr/100.0;
+		float shoulder = ((scale/max(1.0f,exp_scale))*(hlcomprthresh/200.0))+0.1;
 		//printf("shoulder = %e\n",shoulder);
 		//printf ("exp_scale= %f comp= %f def_mul=%f a= %f \n",exp_scale,comp,def_mul,a);
 		
@@ -513,12 +516,12 @@ namespace rtengine {
 				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
 
 				brightcurvePoints.push_back(0.7); // shoulder point
-				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7+br/300.0)); //value at shoulder point
 			} else {
 				brightcurvePoints.push_back(0.1-br/150.0); // toe point
 				brightcurvePoints.push_back(0.1); // value at toe point
 
-				brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); // shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7-br/300.0)); // shoulder point
 				brightcurvePoints.push_back(0.7); // value at shoulder point
 			}
 			brightcurvePoints.push_back(1.); // white point

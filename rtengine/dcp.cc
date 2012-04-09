@@ -16,15 +16,16 @@
 *  You should have received a copy of the GNU General Public License
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <cstring>
 
 #include "dcp.h"
-#include <cstring>
 #include "safegtk.h"
 #include "iccmatrices.h"
 #include "iccstore.h"
 #include "rawimagesource.h"
 #include "improcfun.h"
 
+using namespace std;
 using namespace rtengine;
 using namespace rtexif;
 
@@ -402,7 +403,7 @@ void DCPStore::init (Glib::ustring rtProfileDir) {
 
         qDirs.push_front(rootDirName);
 
-        while (qDirs.size()) {
+        while (!qDirs.empty()) {
             // process directory
             Glib::ustring dirname = qDirs.back();
             qDirs.pop_back();

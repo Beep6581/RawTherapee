@@ -14,11 +14,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "thumbbrowserbase.h"
 #include <glibmm.h>
+#include <algorithm>
+
+#include "thumbbrowserbase.h"
 #include "multilangmgr.h"
 #include "options.h"
 #include "../rtengine/mytime.h"
+
+using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase () 
     : lastClicked(NULL), previewHeight(options.thumbSize) {
@@ -566,11 +570,11 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
     // Tab mode is horizontal, file browser is vertical
     if (!selected.empty()) {
         if (inTabMode) {
-            int h=selected[0]->getStartX();
-            hscroll.set_value (MIN(h, hscroll.get_adjustment()->get_upper()));
+            double h=selected[0]->getStartX();
+            hscroll.set_value (min(h, hscroll.get_adjustment()->get_upper()));
         } else {
-            int v=selected[0]->getStartY();
-            vscroll.set_value (MIN(v, vscroll.get_adjustment()->get_upper()));
+            double v=selected[0]->getStartY();
+            vscroll.set_value (min(v, vscroll.get_adjustment()->get_upper()));
         }
     }
 

@@ -217,7 +217,7 @@ void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std:
 
         qDirs.push_front(rootDirName);
 
-        while (qDirs.size()) {
+        while (!qDirs.empty()) {
         // process directory
             Glib::ustring dirname = qDirs.back();
             qDirs.pop_back();

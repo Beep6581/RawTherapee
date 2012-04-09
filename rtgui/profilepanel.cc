@@ -72,7 +72,6 @@ ProfilePanel::ProfilePanel (bool readOnly) {
     paste->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::paste_clicked) );
 
     custom = NULL;
-    lastphoto = NULL;
     lastsaved = NULL;
     dontupdate = false;
 
@@ -94,7 +93,6 @@ ProfilePanel::~ProfilePanel () {
 
     if (custom)    { custom->deleteInstance();    delete custom;    }
     if (lastsaved) { lastsaved->deleteInstance(); delete lastsaved; }
-    if (lastphoto) { lastphoto->deleteInstance(); delete lastphoto; }
 }
 
 void ProfilePanel::refreshProfileList () {
@@ -116,8 +114,6 @@ void ProfilePanel::refreshProfileList () {
         profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
     if (lastsaved)
         profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")");
-    if (lastphoto)
-        profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")");
 
     profiles->set_active_text (oldsel);
     changeconn.block (false);
@@ -194,8 +190,6 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
                 toSave = custom;
             else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")")
                 toSave = lastsaved;
-            else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")")
-                toSave = lastphoto;
             else
                 toSave = profileStore.getProfile (profiles->get_active_text());
 
@@ -239,8 +233,6 @@ void ProfilePanel::copy_clicked (GdkEventButton* event) {
         toSave = custom;
     else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")") 
         toSave = lastsaved; 
-    else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")") 
-        toSave = lastphoto; 
     else
         toSave = profileStore.getProfile (profiles->get_active_text());
 
@@ -413,8 +405,6 @@ void ProfilePanel::selection_changed () {
     }
     else if (profiles->get_active_text() == (entry = Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")"))
             changeTo (lastsaved, entry);
-    else if (profiles->get_active_text() == (entry = Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")"))
-            changeTo (lastphoto, entry);
     else {
     	PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
         if (s)
@@ -444,10 +434,7 @@ void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rteng
     *custom->pparams = *p;
 }
 
-/*
- * TODO: "lastPhoto" is not used anymore, a code cleanup should delete everything related to it
- */
-void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastSaved, ProcParams* lastPhoto) {
+void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastSaved) {
 
     changeconn.block (true);
 
@@ -473,21 +460,8 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
         lastsaved = new PartialProfile(lastSaved, pe);
     }
 
-    if (lastphoto) {
-        lastphoto->deleteInstance();
-        delete lastphoto; lastphoto = NULL;
-    }
-    if (lastPhoto) {
-    	ParamsEdited* pe = new ParamsEdited();
-        pe->set(true);
-        lastphoto = new PartialProfile(lastPhoto, pe);
-    }
-
     Glib::ustring defline = profname;
     PartialProfile* defprofile = profileStore.getProfile (profname);
-
-    if (lastphoto) 
-        profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")");  
 
     if (lastsaved) {
         defline = Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")";

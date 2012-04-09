@@ -18,19 +18,18 @@
  *    
  */
 
-//#include "rtengine.h"
 #include <cstddef>
 #include <cmath>
 #include "curves.h"
 #include "labimage.h"
 #include "improcfun.h"
 #include "array2D.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#define SQR(x) ((x)*(x))
 #define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
 #define CLIP(a) (CLIPTO(a,0,65535))
@@ -103,7 +102,7 @@ namespace rtengine {
 	void ImProcFunctions :: dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams )
 	{
 		float gam = dnparams.gamma/3.0;
-		//float gam = 2.0;//MIN(3.0, 0.1*fabs(c[4])/3.0+0.001);
+		//float gam = 2.0;//min(3.0, 0.1*fabs(c[4])/3.0+0.001);
 		float gamthresh = 0.03;
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
 		
@@ -300,7 +299,7 @@ namespace rtengine {
 		int height = data_fine->H;
 		
 		//generate domain kernel 
-		int halfwin = 3;//MIN(ceil(2*sig),3);
+		int halfwin = 3;//min(ceil(2*sig),3);
 		int scalewin = halfwin*scale;
 		
 #ifdef _OPENMP
@@ -455,8 +454,8 @@ namespace rtengine {
 				float nrfctrave=0;
 				norm_l = 0;//if we do want to include the input pixel in the sum
 				
-				for(int inbr=MAX(0,i-1); inbr<=MIN(height-1,i+1); inbr++) {
-					for (int jnbr=MAX(0,j-1); jnbr<=MIN(width-1,j+1); jnbr++) {
+				for(int inbr=max(0,i-1); inbr<=min(height-1,i+1); inbr++) {
+					for (int jnbr=max(0,j-1); jnbr<=min(width-1,j+1); jnbr++) {
 						dirwt_l = DIRWT_L(inbr, jnbr, i, j);
 						nrfctrave += dirwt_l*nrfactorL[inbr][jnbr];
 						norm_l += dirwt_l;
@@ -534,8 +533,8 @@ namespace rtengine {
 					//do midpoint first
 					double norm=0.0,wtdsum[3]={0.0,0.0,0.0};
 					//wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
-					for(int ix=i; ix<MIN(height,i+3); ix+=2)
-						for (int jx=j; jx<MIN(width,j+3); jx+=2) {
+					for(int ix=i; ix<min(height,i+3); ix+=2)
+						for (int jx=j; jx<min(width,j+3); jx+=2) {
 							wtdsum[0] += smooth->L[ix][jx];
 							wtdsum[1] += smooth->a[ix][jx];
 							wtdsum[2] += smooth->b[ix][jx];
@@ -556,13 +555,13 @@ namespace rtengine {
 					if (j+1==width) continue;
 					double norm=0.0,wtdsum[3]={0.0,0.0,0.0};
 
-					for (int jx=j; jx<MIN(width,j+3); jx+=2) {
+					for (int jx=j; jx<min(width,j+3); jx+=2) {
 						wtdsum[0] += smooth->L[i][jx];
 						wtdsum[1] += smooth->a[i][jx];
 						wtdsum[2] += smooth->b[i][jx];
 						norm++;
 					}
-					for (int ix=MAX(0,i-1); ix<MIN(height,i+2); ix+=2) {
+					for (int ix=max(0,i-1); ix<min(height,i+2); ix+=2) {
 						wtdsum[0] += smooth->L[ix][j+1];
 						wtdsum[1] += smooth->a[ix][j+1];
 						wtdsum[2] += smooth->b[ix][j+1];
@@ -576,13 +575,13 @@ namespace rtengine {
 					//now down neighbor
 					if (i+1==height) continue;
 					norm=0.0;wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
-					for (int ix=i; ix<MIN(height,i+3); ix+=2) {
+					for (int ix=i; ix<min(height,i+3); ix+=2) {
 						wtdsum[0] += smooth->L[ix][j];
 						wtdsum[1] += smooth->a[ix][j];
 						wtdsum[2] += smooth->b[ix][j];
 						norm++;
 					}
-					for (int jx=MAX(0,j-1); jx<MIN(width,j+2); jx+=2) {
+					for (int jx=max(0,j-1); jx<min(width,j+2); jx+=2) {
 						wtdsum[0] += smooth->L[i+1][jx];
 						wtdsum[1] += smooth->a[i+1][jx];
 						wtdsum[2] += smooth->b[i+1][jx];

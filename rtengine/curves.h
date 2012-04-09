@@ -31,9 +31,11 @@
 
 #define CURVES_MIN_POLY_POINTS  1000
 
-#define SQR(x) ((x)*(x))
+#include "rt_math.h"
 
 #define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
+
+using namespace std;
 
 namespace rtengine {
 
