@@ -22,6 +22,14 @@
 //
 ////////////////////////////////////////////////////////////////
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#include "rtengine.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
+
+using namespace std;
+using namespace rtengine;
+
 int RawImageSource::LinEqSolve(int nDim, float* pfMatr, float* pfVect, float* pfSolution) 
 {
 //==============================================================================
@@ -101,7 +109,6 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 //#define border2	16
 	
 	#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-	#define SQR(x) ((x)*(x))
 
 	// local variables
 	int width=W, height=H;
@@ -236,8 +243,8 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 		vctr++;
 		for (left=-border, hblock=1; left < width; left += TS-border2, hblock++) {
 			hctr++;
-			int bottom = MIN( top+TS,height+border);
-			int right  = MIN(left+TS, width+border);
+			int bottom = min(top+TS,height+border);
+			int right  = min(left+TS, width+border);
 			int rr1 = bottom - top;
 			int cc1 = right - left;
 			//t1_init = clock();
@@ -629,7 +636,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 			}//c
 		}//blocks
 	
-	numblox[1]=MIN(numblox[0],numblox[2]);
+	numblox[1]=min(numblox[0],numblox[2]);
 	//if too few data points, restrict the order of the fit to linear
 	if (numblox[1]<32) {
 		polyord=2; numpar=4;
@@ -659,8 +666,8 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 	//#pragma omp parallel for shared(image,height,width) private(top,left,indx,indx1) schedule(dynamic)
 	for (top=-border, vblock=1; top < height; top += TS-border2, vblock++)
 		for (left=-border, hblock=1; left < width; left += TS-border2, hblock++) {
-			int bottom = MIN( top+TS,height+border);
-			int right  = MIN(left+TS, width+border);
+			int bottom = min(top+TS,height+border);
+			int right  = min(left+TS, width+border);
 			int rr1 = bottom - top;
 			int cc1 = right - left;
 			//t1_init = clock();
@@ -926,8 +933,6 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 //#undef border
 //#undef border2
 #undef PIX_SORT
-#undef SQR
-
 }
 
 

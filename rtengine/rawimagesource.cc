@@ -16,11 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <cmath>
+#include <iostream>
+#include <algorithm>
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "median.h"
 #include "rawimage.h"
-#include <cmath>
 #include "mytime.h"
 #include "iccmatrices.h"
 #include "iccstore.h"
@@ -29,10 +31,9 @@
 #include "dfmanager.h"
 #include "ffmanager.h"
 #include "slicer.h"
-#include <iostream>
 #include "../rtgui/options.h"
 #include "dcp.h"
-
+#include "rt_math.h"
 
 
 #include "improcfun.h"
@@ -44,14 +45,10 @@ namespace rtengine {
 
 extern const Settings* settings;
 #undef ABS
-#undef MAX
-#undef MIN
 #undef DIST
 #undef CLIP
 
 #define ABS(a) ((a)<0?-(a):(a))
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
 #define DIST(a,b) (ABS(a-b))
 #define MAXVAL 0xffff
 #define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
@@ -522,10 +519,10 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 			//evaluate pixel for heat/death
 			float pixdev = fabs(rawData[rr][cc]-cfablur[rr*W+cc]);
 			float hfnbrave=0;
-			int top=MAX(0,rr-2);
-			int bottom=MIN(H-1,rr+2);
-			int left=MAX(0,cc-2);
-			int right=MIN(W-1,cc+2);
+			int top=max(0,rr-2);
+			int bottom=min(H-1,rr+2);
+			int left=max(0,cc-2);
+			int right=min(W-1,cc+2);
 			for (int mm=top; mm<=bottom; mm++)
 				for (int nn=left; nn<=right; nn++) {
 					hfnbrave += fabs(rawData[mm][nn]-cfablur[mm*W+nn]);
@@ -576,7 +573,7 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
       int h = (imheight - fw)*2 + 1;
 
       if ((tran & TR_ROT) == TR_R180) {
-          int end = MIN(h+fw-i, w-fw+i);
+          int end = min(h+fw-i, w-fw+i);
           for (int j=start; j<end; j++) {
             int y = i+j-fw;
             int x = fw-i+j;
@@ -588,7 +585,7 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
           }
       }
       else if ((tran & TR_ROT) == TR_R270) {
-          int end = MIN(h+fw-i, w-fw+i);
+          int end = min(h+fw-i, w-fw+i);
           for (int j=start; j<end; j++) {
             int y = i+j-fw;
             int x = fw-i+j;
@@ -600,7 +597,7 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
           }
       }
       else if ((tran & TR_ROT) == TR_R90) {
-          int end = MIN(h+fw-i, w-fw+i);
+          int end = min(h+fw-i, w-fw+i);
           for (int j=start; j<end; j++) {
             int y = i+j-fw;
             int x = fw-i+j;
@@ -612,7 +609,7 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
           }
       }
       else {
-        int end = MIN(h+fw-i, w-fw+i);
+        int end = min(h+fw-i, w-fw+i);
         for (int j=start; j<end; j++) {
             int y = i+j-fw;
             int x = fw-i+j;
@@ -924,7 +921,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 	camwb_red = ri->get_pre_mul(0) / pre_mul[0];
 	camwb_green = ri->get_pre_mul(1) / pre_mul[1];
 	camwb_blue = ri->get_pre_mul(2) / pre_mul[2];
-	initialGain = 1.0 / MIN(MIN(pre_mul[0],pre_mul[1]),pre_mul[2]);
+	initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
 
     double cam_r = rgb_cam[0][0]*camwb_red + rgb_cam[0][1]*camwb_green + rgb_cam[0][2]*camwb_blue;
     double cam_g = rgb_cam[1][0]*camwb_red + rgb_cam[1][1]*camwb_green + rgb_cam[1][2]*camwb_blue;
@@ -1191,7 +1188,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
-					rawData[row][col]	= MAX (src->data[row][col]+ri->get_black() - riDark->data[row][col], 0);
+					rawData[row][col]	= max(src->data[row][col]+ri->get_black() - riDark->data[row][col], 0);
 				}
 			}
 		}else{
@@ -1227,14 +1224,14 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			//find center ave values by channel
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
-					refcolor[m][n] = MAX(0,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - ri->get_black());
+					refcolor[m][n] = max(0.0f,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - ri->get_black());
 				}
 			
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
 					for (int row = 0; row+m < H; row+=2) 
 						for (int col = 0; col+n < W; col+=2) {
-							vignettecorr = ( refcolor[m][n]/MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black()) );
+							vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black()) );
 							rawData[row+m][col+n] = (rawData[row+m][col+n]-ri->get_black()) * vignettecorr + ri->get_black(); 	
 						}
 				}
@@ -1254,8 +1251,8 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 					for (int n=0; n<2; n++) {
 						for (int row = 0; row+m < H; row+=2) 
 							for (int col = 0; col+n < W; col+=2) {
-								hlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
-								vlinecorr = ( MAX(1e-5,cfablur[(row+m)*W+col+n]-ri->get_black())/MAX(1e-5,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
+								hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black())/max(1e-5f,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
+								vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black())/max(1e-5f,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
 								rawData[row+m][col+n] = ((rawData[row+m][col+n]-ri->get_black()) * hlinecorr * vlinecorr + ri->get_black()); 
 							}
 					}
@@ -1277,9 +1274,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
-					rawData[row][3*col+0] = MAX (src->data[row][3*col+0]+ri->get_black() - riDark->data[row][3*col+0], 0);
-					rawData[row][3*col+1] = MAX (src->data[row][3*col+1]+ri->get_black() - riDark->data[row][3*col+1], 0);
-					rawData[row][3*col+2] = MAX (src->data[row][3*col+2]+ri->get_black() - riDark->data[row][3*col+2], 0);
+					rawData[row][3*col+0] = max(src->data[row][3*col+0]+ri->get_black() - riDark->data[row][3*col+0], 0);
+					rawData[row][3*col+1] = max(src->data[row][3*col+1]+ri->get_black() - riDark->data[row][3*col+1], 0);
+					rawData[row][3*col+2] = max(src->data[row][3*col+2]+ri->get_black() - riDark->data[row][3*col+2], 0);
 				}
 			}
 		} else {
@@ -1441,7 +1438,7 @@ black_lev[3]= raw.blackzero;
 				val*=scale_mul[2];}	
 				
 				rawData[row][col] = (val);
-				chmax[c] = MAX(chmax[c],val);
+				chmax[c] = max(chmax[c],val);
 			}
 		}
 	}else{
@@ -1453,21 +1450,21 @@ black_lev[3]= raw.blackzero;
 					val -= cblack[0];
 					val *= scale_mul[0];
 					rawData[row][3*col+0] = (val);
-					chmax[0] = MAX(chmax[0],val);
+					chmax[0] = max(chmax[0],val);
 				}
 				val = rawData[row][3*col+1];
 				if (val){
 					val -= cblack[1];
 					val *= scale_mul[1];
 					rawData[row][3*col+1] = (val);
-					chmax[1] = MAX(chmax[1],val);
+					chmax[1] = max(chmax[1],val);
 				}
 				val = rawData[row][3*col+2];
 				if (val){
 					val -= cblack[2];
 					val *= scale_mul[2];
 					rawData[row][3*col+2] = (val);
-					chmax[2] = MAX(chmax[2],val);
+					chmax[2] = max(chmax[2],val);
 				}
 			}
 		}
@@ -1737,9 +1734,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
             #pragma omp parallel for
 		    for ( int h = 0; h < im->height; ++h )
 			    for ( int w = 0; w < im->width; ++w ) {
-				    im->r[h][w] = pow (MAX(im->r[h][w],0), gammaFac);
-				    im->g[h][w] = pow (MAX(im->g[h][w],0), gammaFac);
-				    im->b[h][w] = pow (MAX(im->b[h][w],0), gammaFac);
+				    im->r[h][w] = pow (max(im->r[h][w],0.0f), gammaFac);
+				    im->g[h][w] = pow (max(im->g[h][w],0.0f), gammaFac);
+				    im->b[h][w] = pow (max(im->b[h][w],0.0f), gammaFac);
 			    }
         }
 
@@ -1754,7 +1751,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         cmsHPROFILE out = iccStore->workingSpace (profi);//Prophoto	
 	TMatrix wprof = iccStore->workingSpaceMatrix (profi);
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (cmp.working);//sRGB .. Adobe...Wide...
-	float toxyz[3][3] = {
+	double toxyz[3][3] = {
         {
         	( wprof[0][0]),
         	( wprof[0][1]),
@@ -1944,9 +1941,9 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
             #pragma omp parallel for
 		    for ( int h = 0; h < im->height; ++h )
 			    for ( int w = 0; w < im->width; ++w ) {
-				    im->r[h][w]=  (int) (pow (im->r[h][w] / 65535.0, gammaFac) * 65535.0);
-				    im->g[h][w]=  (int) (pow (im->g[h][w] / 65535.0, gammaFac) * 65535.0);
-				    im->b[h][w]=  (int) (pow (im->b[h][w] / 65535.0, gammaFac) * 65535.0);
+				    im->r[h][w]=  (int) (pow ((double)(im->r[h][w] / 65535.0), (double)gammaFac) * 65535.0);
+				    im->g[h][w]=  (int) (pow ((double)(im->g[h][w] / 65535.0), (double)gammaFac) * 65535.0);
+				    im->b[h][w]=  (int) (pow ((double)(im->b[h][w] / 65535.0), (double)gammaFac) * 65535.0);
 			    }
         }
 
@@ -2029,11 +2026,11 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 			{ { 1,1,1 }, { 1,-1,1 }, { 1,1,-1 } } };
 		
 #define FOREACHCOLOR for (int c=0; c < ColorCount; c++)
-#define SQR(x) ((x)*(x))
+#include "rt_math.h"
 		
 		
-		float minpt=MIN(MIN(hlmax[0],hlmax[1]),hlmax[2]);//min of the raw clip points
-		//float maxpt=MAX(MAX(hlmax[0],hlmax[1]),hlmax[2]);//max of the raw clip points
+		float minpt=min(hlmax[0],hlmax[1],hlmax[2]);//min of the raw clip points
+		//float maxpt=max(hlmax[0],hlmax[1],hlmax[2]);//max of the raw clip points
 		//float medpt=hlmax[0]+hlmax[1]+hlmax[2]-minpt-maxpt;//median of the raw clip points
 		float maxave=(hlmax[0]+hlmax[1]+hlmax[2])/3;//ave of the raw clip points
 		//some thresholds:
@@ -2042,7 +2039,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 		const float satthresh = 0.5;
 
 		float clip[3];
-		FOREACHCOLOR clip[c]=MIN(maxave,hlmax[c]);
+		FOREACHCOLOR clip[c]=min(maxave,hlmax[c]);
 		
 		// Determine the maximum level (clip) of all channels
 		const float clippt = clipthresh*maxval;
@@ -2064,13 +2061,13 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 			if (c == ColorCount) continue;
 			
 			float clipfrac[3];
-			FOREACHCOLOR clipfrac[c] = MIN(1,rgb[c]/maxave);
+			FOREACHCOLOR clipfrac[c] = min(1.0f,rgb[c]/maxave);
 			
 			// Initialize cam with raw input [0] and potentially clipped input [1]
 			FOREACHCOLOR {
-				lratio += MIN(rgb[c],clip[c]);
+				lratio += min(rgb[c],clip[c]);
 				cam[0][c] = rgb[c];
-				cam[1][c] = MIN(cam[0][c],maxval);
+				cam[1][c] = min(cam[0][c],maxval);
 			}
 			
 			// Calculate the lightness correction ratio (chratio)
@@ -2102,16 +2099,16 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 
 			// Copy converted pixel back			
 			if (rin[col] > fixpt) {
-				float rfrac = SQR((MIN(clip[0],rin[col])-fixpt)/(clip[0]-fixpt));
-				rin[col]= MIN(maxave,rfrac*rgb[0]+(1-rfrac)*rin[col]);
+				float rfrac = SQR((min(clip[0],rin[col])-fixpt)/(clip[0]-fixpt));
+				rin[col]= min(maxave,rfrac*rgb[0]+(1-rfrac)*rin[col]);
 			}
 			if (gin[col] > fixpt) {
-				float gfrac = SQR((MIN(clip[1],gin[col])-fixpt)/(clip[1]-fixpt));
-				gin[col]= MIN(maxave,gfrac*rgb[1]+(1-gfrac)*gin[col]); 
+				float gfrac = SQR((min(clip[1],gin[col])-fixpt)/(clip[1]-fixpt));
+				gin[col]= min(maxave,gfrac*rgb[1]+(1-gfrac)*gin[col]);
 			}
 			if (bin[col] > fixpt) {
-				float bfrac = SQR((MIN(clip[2],bin[col])-fixpt)/(clip[2]-fixpt));
-				bin[col]= MIN(maxave,bfrac*rgb[2]+(1-bfrac)*bin[col]);
+				float bfrac = SQR((min(clip[2],bin[col])-fixpt)/(clip[2]-fixpt));
+				bin[col]= min(maxave,bfrac*rgb[2]+(1-bfrac)*bin[col]);
 			}
 			
 			lratio /= (rin[col]+gin[col]+bin[col]);
@@ -2123,7 +2120,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 			bin[col] = L + H / 3.0;
 			
 			if ((L=(rin[col]+gin[col]+bin[col])/3) > desatpt) {
-				Lfrac = MAX(0,(maxave-L)/(maxave-desatpt));
+				Lfrac = max(0.0f,(maxave-L)/(maxave-desatpt));
 				C = Lfrac * 1.732050808 * (rin[col] - gin[col]);
 				H = Lfrac * (2 * bin[col] - rin[col] - gin[col]);
 				rin[col] = L - H / 6.0 + C / 3.464101615;
@@ -2138,9 +2135,9 @@ void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, f
     for (int i=0; i<width; i++) {
         float r = rin[i], g = gin[i], b = bin[i];
 		if (r>maxval || g>maxval || b>maxval) {
-		    float ro = MIN (r, maxval);
-		    float go = MIN (g, maxval);
-		    float bo = MIN (b, maxval);
+		    float ro = min(r, maxval);
+		    float go = min(g, maxval);
+		    float bo = min(b, maxval);
             double L = r + g + b;
             double C = 1.732050808 * (r - g);
             double H = 2 * b - r - g;
@@ -2185,9 +2182,9 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
     for (int i=0; i<width; i++) {
         float r = rin[i], g = gin[i], b = bin[i];
 		if (r>maxval || g>maxval || b>maxval) {
-		    float ro = MIN (r, maxval);
-		    float go = MIN (g, maxval);
-		    float bo = MIN (b, maxval);
+		    float ro = min(r, maxval);
+		    float go = min(g, maxval);
+		    float bo = min(b, maxval);
             float yy = xyz_cam[1][0]*r + xyz_cam[1][1]*g + xyz_cam[1][2]*b;
             float fy = (yy<65535.0 ? ImProcFunctions::cachef[yy]/327.68 : (exp(log(yy/MAXVAL)/3.0 )));
             // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
@@ -2323,7 +2320,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
     if (fuji) {
         int fw = ri->get_FujiWidth();
         start = ABS(fw-x) + border;
-        end = MIN( H+ W-fw-x, fw+x) - border;
+        end = min(H+ W-fw-x, fw+x) - border;
     }
     else {
         start = border;
@@ -2343,7 +2340,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 			for (int i=32; i<H-32; i++) {
 				int fw = ri->get_FujiWidth();
 				int start = ABS(fw-i) + 32;
-				int end = MIN(H+W-fw-i, fw+i) - 32;
+				int end = min(H+W-fw-i, fw+i) - 32;
 				for (int j=start; j<end; j++) {
 					if (!ri->isBayer()) {
 						double d = CLIP(initialGain*(rawData[i][3*j]));
@@ -2455,10 +2452,10 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 				if (initialGain*(rawData[yr][3*xr]  )>52500 ||      
 					initialGain*(rawData[yg][3*xg+1])>52500 ||        
 					initialGain*(rawData[yb][3*xb+2])>52500) continue;
-				xmin = MIN(xr,MIN(xg,xb));
-				xmax = MAX(xr,MAX(xg,xb));
-				ymin = MIN(yr,MIN(yg,yb));
-				ymax = MAX(yr,MAX(yg,yb));
+				xmin = min(xr,xg,xb);
+				xmax = max(xr,xg,xb);
+				ymin = min(yr,yg,yb);
+				ymax = max(yr,yg,yb);
 				if (xmin>=0 && ymin>=0 && xmax<W && ymax<H) {
 					reds	+= (rawData[yr][3*xr]  );  
 					greens	+= (rawData[yg][3*xg+1]);

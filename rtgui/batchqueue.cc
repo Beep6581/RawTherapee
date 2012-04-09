@@ -16,9 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "batchqueue.h"
 #include <glibmm.h>
 #include <glib/gstdio.h>
+#include <cstring>
+#include <algorithm>
+
+#include "batchqueue.h"
 #include "multilangmgr.h"
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"
@@ -26,8 +29,7 @@
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
-#include <cstring>
-
+using namespace std;
 using namespace rtengine;
 
 BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
@@ -66,7 +68,7 @@ BatchQueue::~BatchQueue ()
 // Reduce the max size of a thumb, since thumb is processed synchronously on adding to queue
 // leading to very long waiting when adding more images
 int BatchQueue::calcMaxThumbnailHeight() {
-    return MIN(options.maxThumbnailHeight, 200);
+    return min(options.maxThumbnailHeight, 200);
 }
 
 // Function for virtual override in thumbbrowser base
@@ -90,7 +92,7 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 
 	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
 		(*entry)->setParent (this);
-		(*entry)->resize (MIN(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
+		(*entry)->resize (min(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
 		Glib::ustring tempFile = getTempFilenameForParams( (*entry)->filename );
 
 		// recovery save

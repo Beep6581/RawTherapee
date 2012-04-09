@@ -29,7 +29,7 @@ class SHMap {
     public: 
         int W, H;
         float** map;
-        float   max, min, avg;
+        float   max_f, min_f, avg;
         bool multiThread;
         
      SHMap (int w, int h, bool multiThread);

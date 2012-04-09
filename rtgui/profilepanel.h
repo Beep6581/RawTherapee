@@ -40,7 +40,6 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     std::vector<Glib::ustring> pparams;
     rtengine::procparams::PartialProfile* custom;
     rtengine::procparams::PartialProfile* lastsaved;
-    rtengine::procparams::PartialProfile* lastphoto;
     Glib::ustring old;
     ProfileChangeListener* tpc;
     bool dontupdate;
@@ -60,7 +59,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     static void init ();
     static void cleanup ();
 
-    void initProfile (const Glib::ustring& profname, rtengine::procparams::ProcParams* lastSaved, rtengine::procparams::ProcParams* lastPhoto);
+    void initProfile (const Glib::ustring& profname, rtengine::procparams::ProcParams* lastSaved);
 
     // PParamsChangeListener interface
     void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);

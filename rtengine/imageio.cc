@@ -19,30 +19,32 @@
  */
 #include <png.h>
 #include <glib/gstdio.h>
-#include "imageio.h"
-#include "safegtk.h"
 #include <tiff.h>
 #include <tiffio.h>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
+#include <libiptcdata/iptc-jpeg.h>
+#include <algorithm>
+
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
-#include "iptcpairs.h"
-#include <libiptcdata/iptc-jpeg.h>
 
+#include "imageio.h"
+#include "safegtk.h"
+#include "iptcpairs.h"
 #include "iccjpeg.h"
 
 #include "jpeg.h"
 
-Glib::ustring safe_locale_to_utf8 (const std::string& src);
-
+using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+Glib::ustring safe_locale_to_utf8 (const std::string& src);
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
 
 // For only copying the raw input data
@@ -91,7 +93,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
                 std::string loc = safe_locale_to_utf8(i->second.at(j));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(64,loc.size()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(64), loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -102,7 +104,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
                 std::string loc = safe_locale_to_utf8(i->second.at(j));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(32,loc.size()), IPTC_DONT_VALIDATE);
+		iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(32), loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -113,7 +115,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
                 std::string loc = safe_locale_to_utf8(i->second.at(0));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(strTags[j].size,loc.size()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(strTags[j].size, loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }

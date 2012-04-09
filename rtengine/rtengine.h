@@ -28,7 +28,7 @@
 #include "../rtexif/rtexif.h"
 #include "rawmetadatalocation.h"
 #include "iimage.h"
-#include "../rtengine/utils.h"
+#include "utils.h"
 #include "settings.h"
 #include "LUT.h"
 /**

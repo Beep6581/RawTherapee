@@ -52,6 +52,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
     public:
         RTWindow ();
+        ~RTWindow();
 
         void addEditorPanel (EditorPanel* ep,const std::string &name);
         void remEditorPanel (EditorPanel* ep);

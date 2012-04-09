@@ -22,7 +22,7 @@
 
 struct IptcPair {
     IptcTag tag;
-    int size;
+    size_t size;
     Glib::ustring field;
 };
 

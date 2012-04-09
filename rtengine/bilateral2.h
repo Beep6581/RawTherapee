@@ -22,6 +22,8 @@
 #include <cmath>
 #include <cstring>
 #include <cstdio>
+#include <algorithm>
+
 #include "alignedbuffer.h"
 #include "mytime.h"
 #include "gauss.h"
@@ -29,6 +31,8 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+using namespace std;
 
 // This seems ugly, but way faster than any other solutions I tried
 #define ELEM(a,b) (src[i - a][j - b] * ec[src[i - a][j - b]-src[i][j]+65536.0f])
@@ -460,7 +464,7 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
    
     // calculate histogram at the beginning of the row
     rhist.clear();
-    for (int x = MAX(0,row_from-r-1); x<row_from+r; x++)
+    for (int x = max(0,row_from-r-1); x<row_from+r; x++)
         for (int y = 0; y<r; y++)
             rhist[((int)src[x][y])>>TRANSBIT]++;
 
@@ -481,10 +485,10 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
         
             // substract pixels at the left and add pixels at the right
             if (j>r)
-                for (int x=MAX(0,i-r); x<=MIN(i+r,H-1); x++) 
+                for (int x=max(0,i-r); x<=min(i+r,H-1); x++)
                     hist[(int)(src[x][j-r-1])>>TRANSBIT]--;
             if (j<W-r)
-                for (int x=MAX(0,i-r); x<=MIN(i+r,H-1); x++) 
+                for (int x=max(0,i-r); x<=min(i+r,H-1); x++)
                     hist[((int)src[x][j+r])>>TRANSBIT]++;
 
             // calculate pixel value

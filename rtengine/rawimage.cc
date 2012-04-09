@@ -7,7 +7,7 @@
 #include "rawimage.h"
 #include "settings.h"
 #include "colortemp.h"
-#include "../rtengine/utils.h"
+#include "utils.h"
 #ifdef WIN32
 #include <winsock2.h>
 #else

@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cstdlib>  /* malloc() */
 #include <cmath>		/* fabs() */
+#include <algorithm>
 
 /* Our includes */
 #include "base.h"
@@ -14,6 +15,7 @@
 #include "klt.h"
 #include "klt_util.h"
 
+using namespace std;
 
 /*********************************************************************/
 

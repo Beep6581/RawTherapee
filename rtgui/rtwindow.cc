@@ -205,6 +205,13 @@ RTWindow::RTWindow ()
     if (!isSingleTabMode()&& !simpleEditor) epanel->hide_all();
 }
 
+RTWindow::~RTWindow()
+{
+    if(!simpleEditor)
+        delete pldBridge;
+    pldBridge = NULL;
+}
+
 void RTWindow::findVerNumbers(int* numbers, Glib::ustring versionStr) {
 	numbers[0] = numbers[1] = numbers[2] = numbers[3] = 0;
 	int n=0;

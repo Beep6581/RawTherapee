@@ -407,7 +407,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     // initialize profile
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
-    profilep->initProfile (defProf, ldprof, NULL);
+    profilep->initProfile (defProf, ldprof);
 
     openThm->addThumbnailListener (this);
     info_toggled ();

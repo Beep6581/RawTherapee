@@ -28,7 +28,7 @@
 #include <ctime>
 
 
-#define SQR(x) ((x)*(x))
+#include "rt_math.h"
 
 
 //void green_equilibrate()//for dcraw implementation

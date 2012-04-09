@@ -18,6 +18,7 @@
  */
 
 #include "improcfun.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -55,7 +56,7 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
 {
     const float delta = 1.0f / scale;
     const float a = 3.0f;
-    const float sc = std::min(scale, 1.0f);
+    const float sc = min(scale, 1.0f);
     const int support = static_cast<int>(2.0f * a / sc) + 1;
     
     // storage for precomputed parameters for horisontal interpolation
@@ -81,8 +82,8 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
         // sum of weights used for normalization
         float ws = 0.0f;
 
-        jj0[j] = std::max(0, static_cast<int>(floorf(x0 - a / sc)) + 1);
-        jj1[j] = std::min(src->width, static_cast<int>(floorf(x0 + a / sc)) + 1);
+        jj0[j] = max(0, static_cast<int>(floorf(x0 - a / sc)) + 1);
+        jj1[j] = min(src->width, static_cast<int>(floorf(x0 + a / sc)) + 1);
 
         // calculate weights
         for (int jj = jj0[j]; jj < jj1[j]; jj++) {
@@ -111,8 +112,8 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
         // sum of weights used for normalization
         float ws= 0.0f;
 
-        int ii0 = std::max(0, static_cast<int>(floorf(y0 - a / sc)) + 1);
-        int ii1 = std::min(src->height, static_cast<int>(floorf(y0 + a / sc)) + 1);
+        int ii0 = max(0, static_cast<int>(floorf(y0 - a / sc)) + 1);
+        int ii1 = min(src->height, static_cast<int>(floorf(y0 + a / sc)) + 1);
         
         // calculate weights for vertical interpolation
         for (int ii = ii0; ii < ii1; ii++) {

@@ -169,10 +169,10 @@ void MyDiagonalCurve::draw (int handle) {
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
     for (int i = 0; i < 5; i++) { // + 0.5 to align well with f(x)=x so it will cut through the center
-        cr->move_to (RADIUS, MAX(0,i * (innerHeight + 0.5) / 4) + RADIUS);
-        cr->line_to (innerWidth + RADIUS, MAX(0,i * (innerHeight + 0.5) / 4) + RADIUS);
-        cr->move_to (MAX(0,i * innerWidth / 4) + RADIUS, RADIUS);
-        cr->line_to (MAX(0,i * innerWidth / 4) + RADIUS, innerHeight + RADIUS);
+        cr->move_to (RADIUS, max(0.0, i * (innerHeight + 0.5) / 4) + RADIUS);
+        cr->line_to (innerWidth + RADIUS, max(0.0,i * (innerHeight + 0.5) / 4) + RADIUS);
+        cr->move_to (max(0,i * innerWidth / 4) + RADIUS, RADIUS);
+        cr->line_to (max(0,i * innerWidth / 4) + RADIUS, innerHeight + RADIUS);
     }
     cr->stroke ();
 

@@ -22,7 +22,10 @@
 //
 ////////////////////////////////////////////////////////////////
 
-
+#include <cmath>
+#include "rawimagesource.h"
+using namespace std;
+using namespace rtengine;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -198,10 +201,10 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 					
 				} else {
 					//compute directional weights using image gradients
-					wtu=invGrad[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) >>2];
-					wtd=invGrad[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) >>2];
-					wtl=invGrad[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) >>2];
-					wtr=invGrad[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) >>2];
+					wtu=invGrad[(abs(rawData[i+1][j]-rawData[i-1][j])+abs(rawData[i][j]-rawData[i-2][j])+abs(rawData[i-1][j]-rawData[i-3][j])) /4];
+					wtd=invGrad[(abs(rawData[i-1][j]-rawData[i+1][j])+abs(rawData[i][j]-rawData[i+2][j])+abs(rawData[i+1][j]-rawData[i+3][j])) /4];
+					wtl=invGrad[(abs(rawData[i][j+1]-rawData[i][j-1])+abs(rawData[i][j]-rawData[i][j-2])+abs(rawData[i][j-1]-rawData[i][j-3])) /4];
+					wtr=invGrad[(abs(rawData[i][j-1]-rawData[i][j+1])+abs(rawData[i][j]-rawData[i][j+2])+abs(rawData[i][j+1]-rawData[i][j+3])) /4];
 
 					//store in rgb array the interpolated G value at R/B grid points using directional weighted average
 					green[i][j]=(wtu*rawData[i-1][j]+wtd*rawData[i+1][j]+wtl*rawData[i][j-1]+wtr*rawData[i][j+1]) / (wtu+wtd+wtl+wtr);
@@ -226,10 +229,10 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 				if (c==0) {//R site
 					red[i][j] = rawData[i][j];
 					blue[i][j] = green[i][j] - 0.25f*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) -
-																 MIN(clip_pt,rawData[i-1][j-1]+rawData[i-1][j+1]+rawData[i+1][j+1]+rawData[i+1][j-1]));
+																 min(static_cast<float>(clip_pt),rawData[i-1][j-1]+rawData[i-1][j+1]+rawData[i+1][j+1]+rawData[i+1][j-1]));
 				} else {//B site
 					red[i][j] = green[i][j] - 0.25f*((green[i-1][j-1]+green[i-1][j+1]+green[i+1][j+1]+green[i+1][j-1]) -
-															   MIN(clip_pt,rawData[i-1][j-1]+rawData[i-1][j+1]+rawData[i+1][j+1]+rawData[i+1][j-1]));
+					min(static_cast<float>(clip_pt),rawData[i-1][j-1]+rawData[i-1][j+1]+rawData[i+1][j+1]+rawData[i+1][j-1]));
 					blue[i][j] = rawData[i][j];
 				}
 			}

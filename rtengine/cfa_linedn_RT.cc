@@ -22,36 +22,20 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#include <cmath>
+
+#include "rtengine.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
 
 #define TS 512		// Tile size
 
 #define CLASS
 
-/*
-#include <cctype>
-#include <cerrno>
-#include <fcntl.h>
-#include <cfloat>
-#include <climits>
-#include <csetjmp>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>*/
-#include <cmath>
-
-
-//#include "shrtdct_float.c"
-
-
-#define SQR(x) ((x)*(x))
-//#define MIN(a,b) ((a) < (b) ? (a) : (b))
-//#define MAX(a,b) ((a) > (b) ? (a) : (b))
-//#define LIM(x,min,max) MAX(min,MIN(x,max))
-//#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
-//#define CLIP(x) LIM(x,0,65535)
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+using namespace std;
+using namespace rtengine;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -115,8 +99,8 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	for (int top=0; top < height-16; top += TS-32)
 		for (int left=0; left < width-16; left += TS-32) {
 	
-			int bottom = MIN( top+TS,height);
-			int right  = MIN(left+TS, width);
+			int bottom = min(top+TS,height);
+			int right  = min(left+TS, width);
 			int numrows = bottom - top;
 			int numcols = right - left;
 			int indx1;
