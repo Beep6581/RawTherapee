@@ -49,6 +49,7 @@ DCPProfile::DCPProfile(Glib::ustring fname) {
     // We don't mix the profiles as adobe does, since with more and more non-tungsten light
     // it makes no sense. Take the daylight reference light
     Tag* tag = tagDir->getTag(TagCalibrationIlluminant2);
+    bool hasSecondHueSat = tagDir->getTag(TagProfileHueSatMapData2)!=NULL;  // some profiles have two matrices but just one huesat
     bool use2nd = (tag!=NULL && tag->toInt(0,SHORT)>=20 && tag->toInt(0,SHORT)<=23);
 
     // Color Matrix
@@ -72,7 +73,7 @@ DCPProfile::DCPProfile(Glib::ustring fname) {
         iHueDivisions=tag->toInt(0); iSatDivisions=tag->toInt(4); iValDivisions=tag->toInt(8);
 
         // Saturation maps. Need to be unwinded.
-        tag = tagDir->getTag(useSimpleLookup ? TagProfileLookTableData : ( use2nd ? TagProfileHueSatMapData2 : TagProfileHueSatMapData1));
+        tag = tagDir->getTag(useSimpleLookup ? TagProfileLookTableData : ( use2nd && hasSecondHueSat ? TagProfileHueSatMapData2 : TagProfileHueSatMapData1));
         iArrayCount = tag->getCount()/3;
 
         aDeltas=new HSBModify[iArrayCount];
@@ -200,10 +201,8 @@ void DCPProfile::Apply(Imagefloat *pImg, Glib::ustring workingSpace) const {
                     float hScaled = h * hScale;
                     float sScaled = s * sScale;
 
-                    int hIndex0 = (int) hScaled;
-                    int sIndex0 = (int) sScaled;
-
-                    sIndex0 = MIN (sIndex0, maxSatIndex0);
+                    int hIndex0 = max((int)hScaled, 0);
+                    int sIndex0 = max(min((int)sScaled,maxSatIndex0),0);
 
                     int hIndex1 = hIndex0 + 1;
 
@@ -256,11 +255,8 @@ void DCPProfile::Apply(Imagefloat *pImg, Glib::ustring workingSpace) const {
                     float vScaled = v * vScale;
 
                     int hIndex0 = (int) hScaled;
-                    int sIndex0 = (int) sScaled;
-                    int vIndex0 = (int) vScaled;
-
-                    sIndex0 = MIN (sIndex0, maxSatIndex0);
-                    vIndex0 = MIN (vIndex0, maxValIndex0);
+                    int sIndex0 = max(min((int)sScaled,maxSatIndex0),0);
+                    int vIndex0 = max(min((int)vScaled,maxValIndex0),0);
 
                     int hIndex1 = hIndex0 + 1;
 
