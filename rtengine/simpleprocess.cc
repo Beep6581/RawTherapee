@@ -494,12 +494,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         Glib::ustring outputProfile;
         if (params.icm.output!="" && params.icm.output!=ColorManagementParams::NoICMString) {
             outputProfile = params.icm.output;
-        }
+
+            /*  if we'd wanted the RT_sRGB profile we would have selected it
         else {
             // use RT_sRGB.icm profile if present, otherwise use LCMS2 profile generate by lab2rgb16b
             if (settings->verbose) printf("No output profiles set ; looking for the default sRGB profile (\"%s\")...\n", options.rtSettings.srgb.c_str());
             outputProfile = options.rtSettings.srgb;
-        }
+            }*/
 
         // if iccStore->getProfile send back an object, then iccStore->getContent will do too
         cmsHPROFILE jprof = iccStore->getProfile(outputProfile); //get outProfile
@@ -510,6 +511,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             if (settings->verbose) printf("Using \"%s\" output profile\n", outputProfile.c_str());
             ProfileContent pc = iccStore->getContent (outputProfile);
             readyImg->setOutputProfile (pc.data, pc.length);
+        }
+        } else {
+            // No ICM
+             readyImg->setOutputProfile (NULL,0);
         }
     }
 
