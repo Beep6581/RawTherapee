@@ -1504,7 +1504,8 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
 
     defTags[0]->setInt (W, 0, LONG);
     defTags[1]->setInt (H, 0, LONG);
-    defTags[8]->setInt (bps, 0, SHORT);
+    defTags[8]->initInt(0, SHORT, 3);
+    for (int i=0;i<3;i++) defTags[8]->setInt(bps, i*2, SHORT);
  
     for (int i=defTags.size()-1; i>=0; i--) 
         cl->replaceTag (defTags[i]->clone (cl));
