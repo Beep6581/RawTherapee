@@ -20,12 +20,14 @@
 #define _FILEBROWSER_
 
 #include <gtkmm.h>
+#include <map>
 #include "thumbbrowserbase.h"
 #include "exiffiltersettings.h"
 #include "filebrowserentry.h"
 #include "browserfilter.h"
 #include "partialpastedlg.h"
 #include "exportpanel.h"
+#include "extprog.h"
 
 class FileBrowser;
 class FileBrowserEntry;
@@ -76,6 +78,11 @@ class FileBrowser  : public ThumbBrowserBase,
     Gtk::MenuItem* menuLabel;
     Gtk::MenuItem* menuFileOperations;
     Gtk::ImageMenuItem* menuProfileOperations;
+    Gtk::MenuItem* menuExtProg;
+    Gtk::MenuItem** amiExtProg;
+    Gtk::MenuItem* miOpenDefaultViewer;
+    std::map<Glib::ustring, ExtProgAction*> mMenuExtProgs;  // key is menuitem label
+
     Gtk::MenuItem* menuDF;
     Gtk::MenuItem* selectDF;
     Gtk::MenuItem* thisIsDF;

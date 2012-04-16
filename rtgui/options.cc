@@ -162,6 +162,7 @@ void Options::setDefaults () {
     menuGroupLabel = true;
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
+    menuGroupExtProg = true;
 
     fastexport_bypass_sharpening         = true;
     fastexport_bypass_sharpenEdge        = true;
@@ -405,6 +406,7 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "menuGroupLabel")) menuGroupLabel = keyFile.get_boolean ("File Browser", "menuGroupLabel");
     if (keyFile.has_key ("File Browser", "menuGroupFileOperations")) menuGroupFileOperations = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
     if (keyFile.has_key ("File Browser", "menuGroupProfileOperations")) menuGroupProfileOperations = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
+    if (keyFile.has_key ("File Browser", "menuGroupExtProg")) menuGroupExtProg = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -594,6 +596,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "menuGroupLabel", menuGroupLabel);
     keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
     keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
+    keyFile.set_boolean ("File Browser", "menuGroupExtProg", menuGroupExtProg);
    
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);

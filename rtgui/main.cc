@@ -34,6 +34,7 @@
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
+#include "extprog.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -106,7 +107,7 @@ int main(int argc, char **argv)
    Gio::init ();
 
    Options::load ();
-
+   extProgStore->init();
    SoundManager::init();
 
    if (argc>1){

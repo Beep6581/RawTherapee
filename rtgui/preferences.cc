@@ -773,6 +773,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     ckbmenuGroupLabel = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPLABEL")) );
     ckbmenuGroupFileOperations = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPFILEOPERATIONS")) );
     ckbmenuGroupProfileOperations = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPPROFILEOPERATIONS")) );
+    ckbmenuGroupExtProg = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPEXTPROGS")) );
     Gtk::VBox* vbmnu = Gtk::manage( new Gtk::VBox () );
 
     vbmnu->set_border_width (4);
@@ -780,6 +781,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     vbmnu->pack_start (*ckbmenuGroupLabel, Gtk::PACK_SHRINK, 0);
     vbmnu->pack_start (*ckbmenuGroupFileOperations, Gtk::PACK_SHRINK, 0);
     vbmnu->pack_start (*ckbmenuGroupProfileOperations, Gtk::PACK_SHRINK, 0);
+    vbmnu->pack_start (*ckbmenuGroupExtProg, Gtk::PACK_SHRINK, 0);
 
 	frmnu->add (*vbmnu);
 
@@ -974,6 +976,7 @@ void Preferences::storePreferences () {
     moptions.menuGroupLabel             = ckbmenuGroupLabel->get_active();
     moptions.menuGroupFileOperations    = ckbmenuGroupFileOperations->get_active();
     moptions.menuGroupProfileOperations = ckbmenuGroupProfileOperations->get_active();
+    moptions.menuGroupExtProg           = ckbmenuGroupExtProg->get_active();
     moptions.blinkClipped    = blinkClipped->get_active ();
     moptions.highlightThreshold = (int)hlThresh->get_value ();
     moptions.shadowThreshold = (int)shThresh->get_value ();
@@ -1120,6 +1123,8 @@ void Preferences::fillPreferences () {
     ckbmenuGroupLabel->set_active(moptions.menuGroupLabel);
     ckbmenuGroupFileOperations->set_active(moptions.menuGroupFileOperations);
     ckbmenuGroupProfileOperations->set_active(moptions.menuGroupProfileOperations);
+    ckbmenuGroupExtProg->set_active(moptions.menuGroupExtProg);
+
     blinkClipped->set_active (moptions.blinkClipped);
     hlThresh->set_value (moptions.highlightThreshold);
     shThresh->set_value (moptions.shadowThreshold);

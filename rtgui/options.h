@@ -163,6 +163,7 @@ class Options {
     bool menuGroupLabel;
     bool menuGroupFileOperations;
     bool menuGroupProfileOperations;
+    bool menuGroupExtProg;
 
     // fast export options
     bool fastexport_bypass_sharpening;
