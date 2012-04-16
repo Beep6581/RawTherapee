@@ -25,6 +25,7 @@
 #include "clipboard.h"
 #include "profilestore.h"
 #include "procparamchangers.h"
+#include "batchqueue.h"
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "rtimage.h"
@@ -100,6 +101,55 @@ FileBrowser::FileBrowser ()
     }
         
     pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+
+    /***********************
+     * external programs
+     * *********************/
+#ifdef WIN32
+    Gtk::manage(miOpenDefaultViewer=new Gtk::MenuItem (M("FILEBROWSER_OPENDEFAULTVIEWER")));
+#else
+    miOpenDefaultViewer=NULL;
+#endif
+
+    // Build a list of menu items
+    mMenuExtProgs.clear(); amiExtProg=NULL;
+    for (std::list<ExtProgAction*>::iterator it=extProgStore->lActions.begin();it!=extProgStore->lActions.end();it++) {
+        ExtProgAction* pAct=*it;
+
+        if (pAct->target==1 || pAct->target==2) mMenuExtProgs[pAct->GetFullName()]=pAct;
+    }
+
+    // Attach them to menu
+    if (!mMenuExtProgs.empty() || miOpenDefaultViewer!=NULL) {
+        amiExtProg=new Gtk::MenuItem*[mMenuExtProgs.size()];
+        int itemNo=0;
+
+        if (options.menuGroupExtProg) {
+    	    pmenu->attach (*Gtk::manage(menuExtProg = new Gtk::MenuItem (M("FILEBROWSER_EXTPROGMENU"))), 0, 1, p, p+1); p++;
+    	    Gtk::Menu* submenuExtProg = Gtk::manage (new Gtk::Menu());
+            
+            if (miOpenDefaultViewer!=NULL) {
+                submenuExtProg->attach (*miOpenDefaultViewer, 0, 1, p, p+1); p++;
+            }
+
+            for (std::map<Glib::ustring, ExtProgAction*>::iterator it=mMenuExtProgs.begin();it!=mMenuExtProgs.end();it++,itemNo++) {
+                submenuExtProg->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p+1); p++;
+            }
+
+            submenuExtProg->show_all ();
+		    menuExtProg->set_submenu (*submenuExtProg);
+        } else {
+            if (miOpenDefaultViewer!=NULL) {
+                pmenu->attach (*miOpenDefaultViewer, 0, 1, p, p+1); p++;
+            }
+
+            for (std::map<Glib::ustring, ExtProgAction*>::iterator it=mMenuExtProgs.begin();it!=mMenuExtProgs.end();it++,itemNo++) {
+                pmenu->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p+1); p++;
+            }
+        }
+
+        pmenu->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p+1); p++;
+    }
 
     /***********************
      * File Operations
@@ -188,11 +238,19 @@ FileBrowser::FileBrowser ()
     pasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     partpasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
 
+    // Bind to event handlers
     open->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), open));    
     for (int i=0; i<6; i++)
         rank[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rank[i]));
     for (int i=0; i<6; i++)
     	colorlabel[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), colorlabel[i]));
+
+    for (int i=0; i<mMenuExtProgs.size(); i++)
+    	amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
+
+    if (miOpenDefaultViewer!=NULL) {
+        miOpenDefaultViewer->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), miOpenDefaultViewer));
+    }
 
     trash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), trash));    
     untrash->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), untrash));    
@@ -217,6 +275,7 @@ FileBrowser::FileBrowser ()
 FileBrowser::~FileBrowser ()
 {
     delete pmenu;
+    delete[] amiExtProg;
 }
 
 void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
@@ -461,6 +520,27 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
             colorlabelRequested (mselected, i);
             return;
         }
+
+    for (int j=0; j<mMenuExtProgs.size(); j++) {
+        if (m==amiExtProg[j]) {
+            ExtProgAction* pAct = mMenuExtProgs[m->get_label()];
+
+            // Build vector of all file names
+            std::vector<Glib::ustring> selFileNames;
+            for (int i=0; i<selected.size(); i++) {
+                Glib::ustring fn=selected[i]->thumbnail->getFileName();
+
+                // Maybe batch processed version
+                if (pAct->target==2) fn = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fn), options.saveFormatBatch.format);
+
+                selFileNames.push_back(fn);
+            }
+
+            pAct->Execute(selFileNames);
+            return;
+        }
+    }
+
     if (m==open) {
         std::vector<Thumbnail*> entries;
         for (int i=0; i<mselected.size(); i++)
@@ -616,6 +696,8 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 		for (int i=0; i<mselected.size(); i++)
 			tbl->clearFromCacheRequested (mselected, true);
 		//queue_draw ();
+    } else if (miOpenDefaultViewer!=NULL && m==miOpenDefaultViewer) {
+        openDefaultViewer(1);
     }
 }
 
@@ -684,8 +766,14 @@ void FileBrowser::partPasteProfile () {
 }
 
 void FileBrowser::openDefaultViewer (int destination) {
+    bool success=true;
     if (selected.size()==1)
-      (static_cast<FileBrowserEntry*>(selected[0]))->thumbnail->openDefaultViewer(destination);
+      success=(static_cast<FileBrowserEntry*>(selected[0]))->thumbnail->openDefaultViewer(destination);
+    
+    if (!success) {
+        Gtk::MessageDialog msgd (M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+    }
 }
 
 bool FileBrowser::keyPressed (GdkEventKey* event) {

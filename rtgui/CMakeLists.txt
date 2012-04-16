@@ -13,7 +13,7 @@ set (BASESOURCEFILES
     whitebalance.cc   vignetting.cc rotate.cc distortion.cc
     crophandler.cc dirbrowser.cc
     curveeditor.cc curveeditorgroup.cc diagonalcurveeditorsubgroup.cc flatcurveeditorsubgroup.cc
-    filecatalog.cc
+    filecatalog.cc extprog.cc
     previewloader.cc rtimage.cc
     histogrampanel.cc history.cc  imagearea.cc
     imageareapanel.cc iptcpanel.cc labcurve.cc main.cc

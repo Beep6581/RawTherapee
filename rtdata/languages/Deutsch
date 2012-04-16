@@ -51,6 +51,8 @@ EXIFPANEL_RESETALL;Alle zurücksetzen
 EXIFPANEL_RESETHINT;Gewählte Attribute zu den ursprünglichen Werten zurücksetzen
 EXIFPANEL_RESET;Zurücksetzen
 EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
+EXTPROGTARGET_1;Raw
+EXTPROGTARGET_2;stapelverarbeitet
 FILEBROWSER_ADDDELTEMPLATE;Vorlagen hinzu/entfernen...
 FILEBROWSER_APPLYPROFILE;Profil anwenden
 FILEBROWSER_APPLYPROFILE_PARTIAL;Profil selektiv anwenden
@@ -77,10 +79,12 @@ FILEBROWSER_EXIFFILTERAPPLY;Anwenden
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändern der Einstellungen des Exif Filters
 FILEBROWSER_EXIFFILTERSETTINGS;Einstellungen
+FILEBROWSER_EXTPROGMENU;Öffnen mit
 FILEBROWSER_FLATFIELD;Weißbild
 FILEBROWSER_MOVETODARKFDIR;In Dunkelbild-Verzeichnis verschieben
 FILEBROWSER_MOVETOFLATFIELDDIR;In Weißbild-Verzeichnis verschieben
 FILEBROWSER_NEW_NAME;Neuer Name:
+FILEBROWSER_OPENDEFAULTVIEWER;Windows Standard Betracher (stapelverarbeitet) 
 FILEBROWSER_PARTIALPASTEPROFILE;Profil selektiv einfügen
 FILEBROWSER_PASTEPROFILE;Profil einfügen
 FILEBROWSER_POPUPCANCELJOB;Job abbrechen
@@ -446,6 +450,7 @@ MAIN_MSG_EMPTYFILENAME;Dateiname fehlt!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Fehler beim Speichern des Bildes
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unverarbeitete Bilder in der Warteschlange gehen beim Verlassen der Anwendung verloren.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Wollen Sie die Anwendung wirklich schließen? Es sind noch unverarbeitete Bilder in der Warteschlange.
+MAIN_MSG_IMAGEUNPROCESSED;Für diese Funktion müssen erst alle Bilder stapelverarbeitet sein.
 MAIN_MSG_JOBSINQUEUE;Job in Bearbeitung
 MAIN_MSG_NAVIGATOR;Navigator
 MAIN_MSG_PLACES;Orte
@@ -638,6 +643,7 @@ PREFERENCES_INTENT_SATURATION;Sättigung
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Voransicht aus RAW, wenn noch nicht editiert
 PREFERENCES_LANGAUTODETECT;Betriebssystem-Einstellung verwenden
 PREFERENCES_LIVETHUMBNAILS;Live Voransichten (langsamer)
+PREFERENCES_MENUGROUPEXTPROGS;Untermenü "Öffnen mit"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Untermenü Dateioperationen
 PREFERENCES_MENUGROUPLABEL;Untermenü Farbmarkierung
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Untermenü Profiloperationen
