@@ -443,10 +443,13 @@ DCPProfile* DCPStore::getProfile (Glib::ustring filename) {
 }
 
 DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName) {
-    std::map<Glib::ustring, Glib::ustring>::iterator r = fileStdProfiles.find (camShortName.uppercase());
-    if (r==fileStdProfiles.end()) return NULL;
+    Glib::ustring name2=camShortName.uppercase();
 
-    return getProfile(r->second);
+    // Warning: do NOT use map.find(), since it does not seem to work reliably here
+    for (std::map<Glib::ustring, Glib::ustring>::iterator i=fileStdProfiles.begin();i!=fileStdProfiles.end();i++)
+        if (name2==(*i).first) return getProfile((*i).second);
+
+    return NULL;
 }
 
 bool DCPStore::isValidDCPFileName(Glib::ustring filename) const {
