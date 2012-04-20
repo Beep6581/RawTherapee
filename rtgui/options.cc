@@ -29,6 +29,10 @@
 
 #ifdef WIN32
 #include <windows.h>
+// for GCC32
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0600
+#endif
 #include <Shlobj.h>
 #endif
 
@@ -753,37 +757,18 @@ void Options::load () {
 	// Find the application data path
 
 #ifdef WIN32
-	/*
-	 * If LOCALAPPDATA exists, RT run on a WinVista/7 system, so we use LOCALAPPDATA as is
-	 * otherwise RT run on a Win2000/XP system, so we rebuild the path like this: %USERPROFILE%\Local Settings\Application Data
-	 *
-	 * Folder redirection is then fully supported on WinVista/7, but not on Win2000/XP
-	 */
 	const gchar* dataPath;
 	Glib::ustring dPath;
-
-	// ->ODUIS: How to make that commented out code work ?
-
-	/*WCHAR path[MAX_PATH] = {0};
-	if (SHGetSpecialFolderPathW(NULL, path, CSIDL_LOCAL_APPDATA, false)) {
-		dPath = path;
-		printf("SHGetSpecialFolderPathW: \"%s\"\n", dPath.c_str());
-	}
-	else {
-		printf("SHGetSpecialFolderPathW: Fail!\n");
-	}*/
 
 	dataPath = g_getenv("RT_CACHE");
 	if (dataPath != NULL)
 		rtdir = Glib::ustring(dataPath);
 	else {
-		dataPath = g_getenv("LOCALAPPDATA");
-		if (dataPath != NULL)
-			rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
-		else {
-			dataPath = g_getenv("USERPROFILE");
-			if (dataPath != NULL)
-				rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
+        WCHAR pathW[MAX_PATH]={0}; char pathA[MAX_PATH];
+
+        if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_LOCAL_APPDATA,false)) {
+            WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
+            rtdir = Glib::ustring(pathA) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
 		}
 	}
 #else

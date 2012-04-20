@@ -23,6 +23,10 @@
 #include "../rtengine/safegtk.h"
 #ifdef WIN32
 #include <windows.h>
+// for GCC32
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0600
+#endif
 #include <shlobj.h>
 #endif
 using namespace std;
