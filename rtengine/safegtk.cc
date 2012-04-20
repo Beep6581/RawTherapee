@@ -25,6 +25,10 @@
 #include <fcntl.h>
 #ifdef WIN32
 #include <windows.h>
+// for GCC32
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0600
+#endif
 #include <shlobj.h>
 #else
 #include <cstdio>
@@ -344,9 +348,7 @@ int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
 }
 
 Glib::ustring safe_get_user_picture_dir() {
-    // TODO: MINGW32 has a problem with header files
-    #ifdef __MINGW64_VERSION_MAJOR
-
+    #ifdef WIN32
     // get_user_special_dir/pictures crashes on some Windows configurations.
     // so we use the safe native functions here
     WCHAR pathW[MAX_PATH]={0};
