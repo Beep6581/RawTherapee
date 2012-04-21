@@ -91,7 +91,7 @@ class Imagefloat : public ImageIO, public IImagefloat {
 
         void calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
 
-        void ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe);
+        void ExecCMSTransform(cmsHTRANSFORM hTransform);
     };
 };
 #endif

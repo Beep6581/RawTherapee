@@ -270,7 +270,6 @@ void Options::setDefaults () {
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
     rtSettings.autoMonitorProfile = false;
-    rtSettings.LCMSSafeMode = true;
     rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"
     rtSettings.prophoto10 = "RT_Large_g10"; // these names appear in the menu "output profile"
@@ -482,9 +481,6 @@ if (keyFile.has_group ("Color Management")) {
     if( keyFile.has_key ("Color Management", "Beta"))           rtSettings.beta                 = keyFile.get_string("Color Management", "Beta");
     if( keyFile.has_key ("Color Management", "Best"))           rtSettings.best                 = keyFile.get_string("Color Management", "Best");
     if( keyFile.has_key ("Color Management", "Bruce"))          rtSettings.bruce                = keyFile.get_string("Color Management", "Bruce");
-
-    // Disabled (default is true) till issues are sorted out
-    //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -685,7 +681,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
 	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
-    keyFile.set_boolean ("Color Management", "LCMSSafeMode", rtSettings.LCMSSafeMode);
     keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
     keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);
     keyFile.set_string  ("Color Management", "ProPhoto10", rtSettings.prophoto10);
