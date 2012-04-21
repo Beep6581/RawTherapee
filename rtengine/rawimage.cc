@@ -156,6 +156,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
      this->rotate_deg = 180;
   else if (flip==6)
      this->rotate_deg = 90;
+  else if (flip % 90 == 0 && flip < 360)
+     this->rotate_deg = flip;
   else
      this->rotate_deg = 0;
 
