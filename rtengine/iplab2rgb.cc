@@ -267,10 +267,11 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprof, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
+		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprof, TYPE_RGB_16, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
         lcmsMutex->unlock ();
 
-		cmsDoTransform (hTransform, image->data, image->data, image->planestride);
+        image->ExecCMSTransform(hTransform);
+
 		cmsDeleteTransform(hTransform);
 	} else {
 		#pragma omp parallel for if (multiThread)
@@ -406,10 +407,10 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 
         cmsHPROFILE iprof = iccStore->getXYZProfile ();
         lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16_PLANAR, oprofdef, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
+		cmsHTRANSFORM hTransform = cmsCreateTransform (iprof, TYPE_RGB_16, oprofdef, TYPE_RGB_16, settings->colorimetricIntent, cmsFLAGS_NOOPTIMIZE);
         lcmsMutex->unlock ();
 
-		cmsDoTransform (hTransform, image->data, image->data, image->planestride);
+        image->ExecCMSTransform(hTransform);
 		cmsDeleteTransform(hTransform);
 	} else {
 	// 

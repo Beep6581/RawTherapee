@@ -270,12 +270,23 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
 }
 
 // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
-void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe) {
-    if (safe) {
-        cmsDoTransform(hTransform, data, data, planestride);
-    } else {
+void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform) {
+    // LittleCMS cannot parallize planar setups
+    // so build temporary buffers to allow multi processor execution
         #pragma omp parallel for
-        for (int i=0; i<height; i++)
-            cmsDoTransform(hTransform, data + 3*i*rowstride, data + 3*i*rowstride, rowstride);
+    for (int y=0; y<height; y++) {
+        float buffer[width*3];
+        float *p=buffer, *pR=r[y], *pG=g[y], *pB=b[y];
+
+        for (int x=0; x<width; x++) {
+            *(p++) = *(pR++); *(p++) = *(pG++); *(p++) = *(pB++);
+    }
+
+        cmsDoTransform (hTransform, buffer, buffer, width);
+
+        p=buffer; pR=r[y]; pG=g[y]; pB=b[y];
+        for (int x=0; x<width; x++) {
+            *(pR++) = *(p++); *(pG++) = *(p++); *(pB++) = *(p++);
+}
     }
 }
