@@ -306,10 +306,39 @@ void fclose (IMFILE* f) {
 }
 
 int fscanf (IMFILE* f, const char* s ...) {
-
+        // fscanf not easily wrapped since we have no terminating \0 at end
+        // of file data and vsscanf() won't tell us how many characters that
+        // were parsed. However, only dcraw.cc code use it and only for "%f" and
+        // "%d", so we make a dummy fscanf here just to support dcraw case.
+        char buf[50], *endptr;
+        int copy_sz = f->size - f->pos;
+        if (copy_sz > sizeof(buf)) {
+            copy_sz = sizeof(buf) - 1;
+        }
+        memcpy(buf, &f->data[f->pos], copy_sz);
+        buf[copy_sz] = '\0';
 	va_list ap;
-	return sscanf (f->data, s, ap);
+        va_start (ap, s);
+        if (strcmp(s, "%d") == 0) {
+            int i = strtol(buf, &endptr, 10);
+            if (endptr == buf) {
+                return 0;
+            }
+            int *pi = va_arg(ap, int*);
+            *pi = i;
+        } else if (strcmp(s, "%f") == 0) {
+            float f = strtof(buf, &endptr);
+            if (endptr == buf) {
+                return 0;
+            }
+            float *pf = va_arg(ap, float*);
+            *pf = f;
+        }
+        va_end (ap);
+        f->pos += endptr - buf;
+        return 1;
 }
+
 
 char* fgets (char* s, int n, IMFILE* f) {
 
