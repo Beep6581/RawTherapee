@@ -22,8 +22,6 @@
 #include "refreshmap.h"
 #include "simpleprocess.h"
 #include "../rtgui/ppversion.h"
-#define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
-#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 
 namespace rtengine {
 
@@ -79,7 +77,7 @@ ImProcCoordinator::~ImProcCoordinator () {
     freeAll ();
 
     std::vector<Crop*> toDel = crops;
-    for (int i=0; i<toDel.size(); i++)
+    for (size_t i=0; i<toDel.size(); i++)
         delete toDel[i];
 
     imgsrc->decreaseRef ();
@@ -105,7 +103,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	// Check if any detail crops need high detail. If not, take a fast path short cut
     bool highDetailNeeded = (todo & M_HIGHQUAL);
     if (!highDetailNeeded) {
-	for (int i=0; i<crops.size(); i++)
+	for (size_t i=0; i<crops.size(); i++)
 		    if (crops[i]->get_skip() == 1 ) {  // skip=1 -> full resolution
 			highDetailNeeded=true;
 			break;
@@ -326,7 +324,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     // process crop, if needed
-    for (int i=0; i<crops.size(); i++)
+    for (size_t i=0; i<crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] )
             crops[i]->update (todo);  // may call outselves
 
@@ -435,7 +433,7 @@ if (settings->verbose) printf ("setscale before lock\n");
     fullh = fh;
     if (settings->verbose) printf ("setscale ends\n");
     if (!sizeListeners.empty())
-        for (int i=0; i<sizeListeners.size(); i++)
+        for (size_t i=0; i<sizeListeners.size(); i++)
             sizeListeners[i]->sizeChanged (fullw, fullh, fw, fh);
     if (settings->verbose) printf ("setscale ends2\n");
 

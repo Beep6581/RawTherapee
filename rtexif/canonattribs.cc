@@ -1454,6 +1454,6 @@ const TagAttrib canonAttribs[] = {
  {1, 1, 0, 0, 0x4008, "BlackLevel", &stdInterpreter},
  {1, 1, 0, canonMicroAdjustAttrib, 0x4013, "AFMicroAdj", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
-};
+}
 #endif
 

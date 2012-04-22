@@ -30,14 +30,9 @@ using namespace std;
 
 namespace rtengine {
 
-#undef CLIP
-#undef CMAXVAL
 #undef ABS
 
-#define CMAXVAL 0xffff
-#define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define ABS(a) ((a)<0?-(a):(a))
-#define LIM(x,MIN,MAX) max(MIN,min(x,MAX))
 #define CLIREF(x) LIM(x,-200000.0f,200000.0f) // avoid overflow : do not act directly on image[] or pix[]
 
 
@@ -433,7 +428,7 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 	int k;
 	if (params->sharpenMicro.matrix == false) k=2; else k=1;
 	// k=2 matrix 5x5  k=1 matrix 3x3
-	int offset,offset2,c,i,j,col,row,n;
+	int offset,offset2,i,j,col,row,n;
 	float temp,temp2,temp3,temp4,tempL;
 	float *LM,v,s,contrast;
 	int signs[25];
@@ -473,7 +468,6 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 
 	float chmax=8.0f;
 	LM = new float[width*height];//allocation for Luminance
-	c=0;
 #pragma omp parallel for private(offset, i,j) shared(LM)
 	for(j=0; j<height; j++)
 		for(i=0,offset=j*width+i; i<width; i++,offset++) {

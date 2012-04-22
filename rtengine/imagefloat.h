@@ -93,5 +93,5 @@ class Imagefloat : public ImageIO, public IImagefloat {
 
         void ExecCMSTransform(cmsHTRANSFORM hTransform);
     };
-};
+}
 #endif

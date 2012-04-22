@@ -24,14 +24,11 @@
 #include "iccstore.h"
 #include "rawimagesource.h"
 #include "improcfun.h"
+#include "rt_math.h"
 
 using namespace std;
 using namespace rtengine;
 using namespace rtexif;
-
-#undef CLIP
-#define MAXVAL 0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 
 DCPProfile::DCPProfile(Glib::ustring fname) {
     const int TagColorMatrix1=50721, TagColorMatrix2=50722, TagProfileHueSatMapDims=50937;
@@ -418,8 +415,8 @@ void DCPStore::init (Glib::ustring rtProfileDir) {
                 Glib::ustring sname = *i;
                 // ignore directories
                 if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
-                    int lastdot = sname.find_last_of ('.');
-                    if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".dcp"))) {
+                    size_t lastdot = sname.find_last_of ('.');
+                    if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".dcp"))) {
                         Glib::ustring camShortName = sname.substr(0,lastdot).uppercase();
                         fileStdProfiles[camShortName]=fname;  // they will be loaded and cached on demand
                     }
@@ -454,6 +451,6 @@ DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName) {
 
 bool DCPStore::isValidDCPFileName(Glib::ustring filename) const {
     if (!safe_file_test (filename, Glib::FILE_TEST_EXISTS) || safe_file_test (filename, Glib::FILE_TEST_IS_DIR)) return false;
-    int pos=filename.find_last_of ('.');
+    size_t pos=filename.find_last_of ('.');
     return pos>0 && !filename.casefold().compare (pos, 4, ".dcp");
 }

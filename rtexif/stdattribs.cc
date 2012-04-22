@@ -555,7 +555,6 @@ const TagAttrib iopAttribs[] = {
  {0, 0, 0, 0, 0xc761, "NoiseProfile", &stdInterpreter},
  {0, 2, 0, 0, 0x00fe, "NewSubFileType", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
-
-};
+}
 
 #endif

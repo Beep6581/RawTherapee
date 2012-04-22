@@ -29,7 +29,7 @@ PreviewHandler::PreviewHandler () : image(NULL) {
     pih->phandler = this;
     pih->destroyed = false;
     pih->pending = 0;
-};
+}
 
 PreviewHandler::~PreviewHandler () {
 
@@ -37,7 +37,7 @@ PreviewHandler::~PreviewHandler () {
         pih->destroyed = true;
     else
         delete pih;
-};
+}
 
 //----------------previewimagelistener functions--------------------
 
@@ -49,7 +49,7 @@ struct iaimgpar {
 };
 
 int setImageUI (void* data) {
-    iaimgpar* iap = (iaimgpar*)data;
+    iaimgpar* iap = static_cast<iaimgpar*>(data);
     PreviewHandlerIdleHelper* pih = iap->pih;
 
     if (pih->destroyed) {
@@ -95,7 +95,7 @@ void PreviewHandler::setImage (rtengine::IImage8* i, double scale, rtengine::pro
 
 int delImageUI (void* data) {
 
-    iaimgpar* iap = (iaimgpar*)data;
+    iaimgpar* iap = static_cast<iaimgpar*>(data);
     PreviewHandlerIdleHelper* pih = iap->pih;
 
     if (pih->destroyed) {
@@ -138,7 +138,7 @@ void PreviewHandler::delImage (IImage8* i) {
 
 int imageReadyUI (void* data) {
     
-    iaimgpar* iap = (iaimgpar*)data;
+    iaimgpar* iap = static_cast<iaimgpar*>(data);
     PreviewHandlerIdleHelper* pih = iap->pih;
     
     if (pih->destroyed) {

@@ -65,6 +65,7 @@ if (APPLE)
 endif (APPLE)
 
 option(USE_CLANG "Build rawtherapee with clang" OFF)
+option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
 option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
 
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
@@ -309,6 +310,11 @@ if (OPTION_OMP)
     endif (OPENMP_FOUND)
 endif (OPTION_OMP)
 
+if(USE_EXPERIMENTAL_LANG_VERSIONS)
+	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
+	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
+endif (USE_EXPERIMENTAL_LANG_VERSIONS)
+
 if(USE_CLANG)
     find_file(CLANG_CMD clang)
     find_file(CLANGPP_CMD clang++)
@@ -320,14 +326,14 @@ if(USE_CLANG)
       message(STATUS "clang++ found: ${CLANGPP_CMD}")
 
       SET (CMAKE_C_COMPILER             ${CLANG_CMD})
-      SET (CMAKE_C_FLAGS                "") #-Wall
+      SET (CMAKE_C_FLAGS                "${CMAKE_C_FLAGS} ") #-Wall
       SET (CMAKE_C_FLAGS_DEBUG          "-O0 -g")
       SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
       SET (CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
       SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
 
       SET (CMAKE_CXX_COMPILER             ${CLANGPP_CMD})
-      SET (CMAKE_CXX_FLAGS                "") #-Wall
+      SET (CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS} ") #-Wall
       SET (CMAKE_CXX_FLAGS_DEBUG          "-O0 -g")
       SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
       SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")

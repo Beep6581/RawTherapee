@@ -8,7 +8,7 @@
 #include <cassert>
 #include <cmath>    /* logf() */
 #include <cstdlib>  /* malloc() */
-#include <algorithm>
+#include "../rt_math.h"
 
 /* Our includes */
 #include "base.h"

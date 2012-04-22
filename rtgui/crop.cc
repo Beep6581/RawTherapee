@@ -660,7 +660,7 @@ struct setdimparams {
 };
 
 int sizeChangedUI (void* data) {
-    setdimparams* params = (setdimparams*)data;
+    setdimparams* params = static_cast<setdimparams*>(data);
     params->crop->setDimensions (params->x, params->y);
     delete params;
     return 0;

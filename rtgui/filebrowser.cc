@@ -282,12 +282,12 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
 
     trash->set_sensitive (false);
     untrash->set_sensitive (false);
-    for (int i=0; i<selected.size(); i++) 
+    for (size_t i=0; i<selected.size(); i++)
       if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()==1) {
             untrash->set_sensitive (true);
             break;
         }
-    for (int i=0; i<selected.size(); i++) 
+        for (size_t i=0; i<selected.size(); i++)
       if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()==0) {
             trash->set_sensitive (true);
             break;
@@ -302,7 +302,7 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
     int p = 0;
     Gtk::Menu* applmenu = Gtk::manage (new Gtk::Menu ());
     std::vector<Glib::ustring> profnames = profileStore.getProfileNames ();
-    for (int i=0; i<profnames.size(); i++) {
+    for (size_t i=0; i<profnames.size(); i++) {
         Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (profnames[i]));
         applmenu->attach (*mi, 0, 1, p, p+1); p++;
         mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyMenuItemActivated), profnames[i]));    
@@ -314,7 +314,7 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
     p = 0;
     Gtk::Menu* applpartmenu = Gtk::manage (new Gtk::Menu ());
     //std::vector<Glib::ustring> profnames = profileStore.getProfileNames (); // this is already created for submenu applmenu above
-    for (int i=0; i<profnames.size(); i++) {
+    for (size_t i=0; i<profnames.size(); i++) {
 	    Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (profnames[i]));
 	    applpartmenu->attach (*mi, 0, 1, p, p+1); p++;
 	    mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyPartialMenuItemActivated), profnames[i]));
@@ -375,7 +375,7 @@ struct addparams {
 
 int AddEntryUIThread (void* data) {
     
-    addparams* ap = (addparams*) data;
+    addparams* ap = static_cast<addparams*>(data);
     FileBrowserIdleHelper* fbih = ap->fbih;
 
     if (fbih->destroyed) {
@@ -491,7 +491,7 @@ void FileBrowser::close () {
 		notifySelectionListener ();
 
         // The listener merges parameters with old values, so delete afterwards
-        for (int i=0; i<fd.size(); i++)
+		for (size_t i=0; i<fd.size(); i++)
         {
             delete fd[i];
         }
@@ -504,7 +504,7 @@ void FileBrowser::close () {
 void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 
     std::vector<FileBrowserEntry*> mselected;
-    for (int i=0; i<selected.size(); i++)
+    for (size_t i=0; i<selected.size(); i++)
       mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
 
     if (!tbl || (m!=selall && mselected.empty()) )
@@ -543,7 +543,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 
     if (m==open) {
         std::vector<Thumbnail*> entries;
-        for (int i=0; i<mselected.size(); i++)
+	for (size_t i=0; i<mselected.size(); i++)
             entries.push_back (mselected[i]->thumbnail);
         tbl->openRequested (entries);
      }
@@ -572,7 +572,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 			#endif
 
             selected.clear ();
-            for (int i=0; i<fd.size(); i++)
+	    for (size_t i=0; i<fd.size(); i++)
                 if (checkFilter (fd[i])) {
                     fd[i]->selected = true;
                     selected.push_back (fd[i]);
@@ -590,7 +590,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     }
 
     else if (m==autoDF){
-		for (int i=0; i<mselected.size(); i++){
+	    for (size_t i=0; i<mselected.size(); i++){
 			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
 			pp.raw.df_autoselect= true;
 			pp.raw.dark_frame.clear();
@@ -607,7 +607,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     		else
     		   fc.set_filename( pp.raw.dark_frame );
     		if( fc.run() == Gtk::RESPONSE_APPLY ){
-    			for (int i=0; i<mselected.size(); i++){
+			for (size_t i=0; i<mselected.size(); i++){
     				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
 					pp.raw.dark_frame= fc.get_filename();
 					pp.raw.df_autoselect= false;
@@ -617,7 +617,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     	}
     }else if( m==thisIsDF){
     	if( !options.rtSettings.darkFramesPath.empty() && Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
-			for (int i=0; i<mselected.size(); i++){
+		for (size_t i=0; i<mselected.size(); i++){
 				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
 				if( !file )continue;
 				Glib::ustring destName = options.rtSettings.darkFramesPath+ "/" + file->get_basename();
@@ -629,7 +629,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     	}
     }
     else if (m==autoFF){
-		for (int i=0; i<mselected.size(); i++){
+	    for (size_t i=0; i<mselected.size(); i++){
 			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
 			pp.raw.ff_AutoSelect= true;
 			pp.raw.ff_file.clear();
@@ -647,7 +647,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     		else
     		   fc.set_filename( pp.raw.ff_file );
     		if( fc.run() == Gtk::RESPONSE_APPLY ){
-    			for (int i=0; i<mselected.size(); i++){
+			for (size_t i=0; i<mselected.size(); i++){
     				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
 					pp.raw.ff_file= fc.get_filename();
 					pp.raw.ff_AutoSelect= false;
@@ -658,7 +658,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     }
     else if( m==thisIsFF){
     	if( !options.rtSettings.flatFieldsPath.empty() && Gio::File::create_for_path(options.rtSettings.flatFieldsPath)->query_exists() ){
-			for (int i=0; i<mselected.size(); i++){
+		for (size_t i=0; i<mselected.size(); i++){
 				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
 				if( !file )continue;
 				Glib::ustring destName = options.rtSettings.flatFieldsPath+ "/" + file->get_basename();
@@ -676,11 +676,11 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     else if (m==partpasteprof) 
         partPasteProfile ();
     else if (m==clearprof) {
-        for (int i=0; i<mselected.size(); i++) 
+	    for (size_t i=0; i<mselected.size(); i++)
             mselected[i]->thumbnail->clearProcParams (FILEBROWSER);
         queue_draw ();
     } else if (m==execcustprof) {
-        for (int i=0; i<mselected.size(); i++)  {
+	    for (size_t i=0; i<mselected.size(); i++)  {
             mselected[i]->thumbnail->createProcParamsForUpdate (false, true);
 
             // Empty run to update the thumb
@@ -688,12 +688,12 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
             mselected[i]->thumbnail->setProcParams (params, NULL, FILEBROWSER);
     }
     } else if (m==clearFromCache) {
-		for (int i=0; i<mselected.size(); i++)
+	    for (size_t i=0; i<mselected.size(); i++)
 			tbl->clearFromCacheRequested (mselected, false);
 		//queue_draw ();
     }
 	else if (m==clearFromCacheFull) {
-		for (int i=0; i<mselected.size(); i++)
+		for (size_t i=0; i<mselected.size(); i++)
 			tbl->clearFromCacheRequested (mselected, true);
 		//queue_draw ();
     } else if (miOpenDefaultViewer!=NULL && m==miOpenDefaultViewer) {
@@ -836,7 +836,7 @@ void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
 
     rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (ppname);
     if (partProfile->pparams && !selected.empty()) {
-        for (int i=0; i<selected.size(); i++)
+	    for (size_t i=0; i<selected.size(); i++)
             (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*partProfile->pparams, partProfile->pedited, FILEBROWSER);
         queue_draw ();
     }
@@ -852,7 +852,7 @@ void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 	if (srcProfiles->pparams) {
 		if (partialPasteDlg.run()==Gtk::RESPONSE_OK) {
 
-			for (int i=0; i<selected.size(); i++) {
+			for (size_t i=0; i<selected.size(); i++) {
 				selected[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
 				rtengine::procparams::PartialProfile dstProfile(true);
@@ -881,7 +881,7 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
 		Glib::RWLock::ReaderLock l(entryRW);  // Don't make this a writer lock!
 		#endif
 
-        for (int i=0; i<fd.size(); i++) {
+		for (size_t i=0; i<fd.size(); i++) {
     	    if (checkFilter (fd[i]))
     		    numFiltered++;
     	    else if (fd[i]->selected ) {
@@ -957,7 +957,7 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
 
 void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
-    for (int i=0; i<tbe.size(); i++) {
+	for (size_t i=0; i<tbe.size(); i++) {
     	// try to load the last saved parameters from the cache or from the paramfile file
     	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
@@ -979,7 +979,7 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
 void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
-    for (int i=0; i<tbe.size(); i++) {
+	for (size_t i=0; i<tbe.size(); i++) {
     	// if thumbnail was marked inTrash=true then param file must be there, no need to run customprofilebuilder
 
         if (tbe[i]->thumbnail->getStage()==0)
@@ -998,7 +998,7 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
 void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank) {
 
-    for (int i=0; i<tbe.size(); i++) {
+	for (size_t i=0; i<tbe.size(); i++) {
     	// try to load the last saved parameters from the cache or from the paramfile file
     	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
@@ -1017,7 +1017,7 @@ void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank
 
 void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int colorlabel) {
 
-    for (int i=0; i<tbe.size(); i++) {
+	for (size_t i=0; i<tbe.size(); i++) {
     	// try to load the last saved parameters from the cache or from the paramfile file
     	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
@@ -1063,7 +1063,7 @@ void FileBrowser::openNextImage () {
 	#endif
 
     if (!fd.empty()) {
-        for (int i=fd.size()-1; i>=0; i--)
+	    for (size_t i=fd.size()-1; i>0; i--)
             if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
                 if (i<fd.size()-1 && tbl) {
                     std::vector<Thumbnail*> entries;
@@ -1086,7 +1086,7 @@ void FileBrowser::openPrevImage () {
 	#endif
 
     if (!fd.empty()) {
-        for (int i=0; i<fd.size(); i++)
+	    for (size_t i=0; i<fd.size(); i++)
             if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
                 if (i>0 && tbl) {
                     std::vector<Thumbnail*> entries;
@@ -1124,7 +1124,7 @@ void FileBrowser::notifySelectionListener () {
 
     if (tbl) {
         std::vector<Thumbnail*> thm;
-        for (int i=0; i<selected.size(); i++)
+	for (size_t i=0; i<selected.size(); i++)
 	  thm.push_back ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail);
         tbl->selectionChanged (thm);
     }    

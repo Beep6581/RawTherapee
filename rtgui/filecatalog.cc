@@ -20,7 +20,7 @@
 #include <glib/gstdio.h>
 #include <iostream>
 #include <iomanip>
-#include <algorithm>
+#include "../rtengine/rt_math.h"
 
 #include "filecatalog.h"
 #include "filepanel.h"
@@ -699,7 +699,7 @@ struct FCOIParams {
 };
 
 int openRequestedUI (void* p) {
-    FCOIParams* params = (FCOIParams*)p;
+    FCOIParams* params = static_cast<FCOIParams*>(p);
     params->catalog->_openImage (params->tmb);
     delete params;
 
@@ -1020,7 +1020,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
                 continue;
             // if no extension is given, concatenate the extension of the original file
             if (nBaseName.find ('.')==nBaseName.npos) {
-                int lastdot = baseName.find_last_of ('.');
+		size_t lastdot = baseName.find_last_of ('.');
                 nBaseName += "." + (lastdot!=Glib::ustring::npos ? baseName.substr (lastdot+1) : "");
             }
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
@@ -1339,7 +1339,7 @@ void FileCatalog::reparseDirectory () {
 	// check if a new file has been added
 	for (size_t i=0; i<nfileNameList.size(); i++) {
 		bool found = false;
-		for (int j=0; j<fileNameList.size(); j++)
+		for (size_t j=0; j<fileNameList.size(); j++)
 			if (nfileNameList[i]==fileNameList[j]) {
 				found = true;
 				break;
@@ -1389,8 +1389,8 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     	return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        int lastdot = info->get_name().find_last_of ('.');
-        if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+	size_t lastdot = info->get_name().find_last_of ('.');
+        if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
 						previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
             previewsToLoad++;
 				}
@@ -1407,8 +1407,8 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if( !info )
     	return;
-    int lastdot = info->get_name().find_last_of ('.');
-    if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+    size_t lastdot = info->get_name().find_last_of ('.');
+    if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         // if supported, load thumbnail first
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {

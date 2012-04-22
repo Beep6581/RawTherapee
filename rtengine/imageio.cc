@@ -25,7 +25,7 @@
 #include <cstring>
 #include <fcntl.h>
 #include <libiptcdata/iptc-jpeg.h>
-#include <algorithm>
+#include "rt_math.h"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -282,7 +282,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jpeg_create_decompress(&cinfo);
 
     jpeg_memory_src (&cinfo,(const JOCTET*)buffer,bufsize);
-    if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+    if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
     {
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
@@ -307,8 +307,8 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
         jpeg_start_decompress(&cinfo);
 
-        int width = cinfo.output_width;
-        int height = cinfo.output_height;
+	unsigned int width = cinfo.output_width;
+        unsigned int height = cinfo.output_height;
 
         allocate (width, height);
 
@@ -353,7 +353,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     jpeg_create_decompress(&cinfo);
 
     my_jpeg_stdio_src (&cinfo,file);
-    if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+    if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
     {
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
@@ -382,8 +382,8 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
 
         jpeg_start_decompress(&cinfo);
 
-        int width = cinfo.output_width;
-        int height = cinfo.output_height;
+	unsigned int width = cinfo.output_width;
+	unsigned int height = cinfo.output_height;
 
         allocate (width, height);
 
@@ -897,7 +897,7 @@ void png_flush(png_structp png_ptr) {
 
 int ImageIO::load (Glib::ustring fname) {
 
-  unsigned int lastdot = fname.find_last_of ('.');
+  size_t lastdot = fname.find_last_of ('.');
   if( Glib::ustring::npos == lastdot )
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
@@ -911,7 +911,7 @@ int ImageIO::load (Glib::ustring fname) {
 
 int ImageIO::save (Glib::ustring fname) {
 
-  unsigned int lastdot = fname.find_last_of ('.');
+  size_t lastdot = fname.find_last_of ('.');
   if( Glib::ustring::npos == lastdot )
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))

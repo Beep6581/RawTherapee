@@ -236,8 +236,8 @@ void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std:
             Glib::ustring sname = *i;
             // ignore directories
             if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
-                int lastdot = sname.find_last_of ('.');
-                if (lastdot!=Glib::ustring::npos && lastdot<=(int)sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
+		size_t lastdot = sname.find_last_of ('.');
+                if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
                     Glib::ustring name = nameUpper ? sname.substr(0,lastdot).uppercase() : sname.substr(0,lastdot);
                     ProfileContent pc (fname);
                     if (pc.data) {
@@ -393,7 +393,7 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
     // constructing tag directory (pointers inside the file), and types
     // 0x74657874 : text
     // 0x64657363 : description tag
-    for (int i=0; i < pbody[0]; i++) {
+    for (unsigned int i=0; i < pbody[0]; i++) {
       oprof[oprof[0]/4] = i ? (i > 1 ? 0x58595a20 : 0x64657363) : 0x74657874;
       pbody[i*3+2] = oprof[0];
       oprof[0] += (pbody[i*3+3] + 3) & -4;
@@ -417,7 +417,7 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
       }
 
     // convert to network byte order
-    for (int i=0; i < phead[0]/4; i++)
+    for (unsigned int i=0; i < phead[0]/4; i++)
       oprof[i] = htonl(oprof[i]);
       
     // cprt

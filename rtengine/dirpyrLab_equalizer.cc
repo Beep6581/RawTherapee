@@ -30,12 +30,7 @@
 #include <omp.h>
 #endif
 
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIP(a) (CLIPTO(a,0,65535))
-
-
-
 
 #define DIRWT(i1,j1,i,j) (rangefn[abs((int)data_fine->L[i1][j1]-data_fine->L[i][j])+abs((int)data_fine->a[i1][j1]-data_fine->a[i][j])+abs((int)data_fine->b[i1][j1]-data_fine->b[i][j])] )
 
@@ -225,7 +220,7 @@ namespace rtengine {
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	};
+	}
 	
 	void ImProcFunctions::dirpyr_eq(LabImage* data_fine, LabImage* data_coarse, LUTf & rangefn, int level, int pitch, int scale, const double * mult  )
 	{
@@ -282,7 +277,7 @@ namespace rtengine {
 		
 		
 		
-	};
+	}
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
@@ -483,7 +478,7 @@ namespace rtengine {
 			delete smooth;
 			
 		}
-	};
+	}
 	
 	
 #undef DIRWT_L

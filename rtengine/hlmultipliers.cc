@@ -22,9 +22,6 @@
 #include "rawimagesource_i.h"
 #include "../rtgui/options.h"
 
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
-
 namespace rtengine {
 
 // computes highlight recovery multipliers. Needs a possibly downscaled image where

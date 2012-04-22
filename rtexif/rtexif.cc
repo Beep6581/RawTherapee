@@ -22,7 +22,6 @@
 #include <cmath>
 #include <cstring>
 #include <ctime>
-#include <algorithm>
 #include <sstream>
 #include <stdint.h>
 
@@ -86,7 +85,7 @@ TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib*
  
 TagDirectory::~TagDirectory () {
 
-  for (int i=0; i<tags.size(); i++) 
+  for (size_t i=0; i<tags.size(); i++)
     delete tags[i];
 }
 
@@ -100,7 +99,7 @@ public:
 void TagDirectory::sort () {
 
     std::sort (tags.begin(), tags.end(), CompareTags());
-    for (int i=0; i<tags.size(); i++) 
+    for (size_t i=0; i<tags.size(); i++)
         if (tags[i]->isDirectory())
             for (int j=0; tags[i]->getDirectory(j); j++)
                 tags[i]->getDirectory(j)->sort ();
@@ -133,7 +132,7 @@ const TagAttrib* TagDirectory::getAttrib (const char* name) {
 
 void TagDirectory::printAll () const {
   
-  for (int i=0; i<tags.size(); i++) {
+  for (size_t i=0; i<tags.size(); i++) {
     std::string name = tags[i]->nameToString ();
     if (tags[i]->isDirectory())
         for (int j=0; tags[i]->getDirectory(j); j++) {
@@ -169,7 +168,7 @@ void TagDirectory::addTagFront (Tag* tag) {
 void TagDirectory::replaceTag (Tag* tag) {
 
   // look up if it already exists:
-  for (int i=0; i<tags.size(); i++) 
+  for (size_t i=0; i<tags.size(); i++)
     if (tags[i]->getID()==tag->getID()) {
       delete tags[i];
       tags[i] = tag;
@@ -180,7 +179,7 @@ void TagDirectory::replaceTag (Tag* tag) {
 
 Tag* TagDirectory::getTag (int ID) const {
 
-  for (int i=0; i<tags.size(); i++) 
+  for (size_t i=0; i<tags.size(); i++)
     if (tags[i]->getID()==ID)
       return tags[i];
   return NULL;
@@ -205,7 +204,7 @@ Tag* TagDirectory::findTag (const char* name) const {
 				else break;
 			}
 	  }
-	  for (int i=0; i<tags.size(); i++)
+	  for (size_t i=0; i<tags.size(); i++)
 	     if(tags[i]->isDirectory()){
 	    	 TagDirectory *dir = tags[i]->getDirectory();
 	    	 Tag* t=dir->findTag(name);
@@ -215,14 +214,14 @@ Tag* TagDirectory::findTag (const char* name) const {
 }
 
 void TagDirectory::keepTag (int ID) {
-    for (int i=0; i<tags.size(); i++) 
+    for (size_t i=0; i<tags.size(); i++)
         if (tags[i]->getID()==ID) tags[i]->setKeep(true);
 }
 
 int TagDirectory::calculateSize () {
 
   int size = 2; // space to store the number of tags
-  for (int i=0; i<tags.size(); i++) 
+  for (size_t i=0; i<tags.size(); i++)
     if (tags[i]->getKeep()) 
         size += 12 + tags[i]->calculateSize ();
     
@@ -233,7 +232,7 @@ int TagDirectory::calculateSize () {
 TagDirectory* TagDirectory::clone (TagDirectory* parent) {
     
     TagDirectory* td = new TagDirectory (parent, attribs, order);
-    for (int i=0; i<tags.size(); i++)
+    for (size_t i=0; i<tags.size(); i++)
         td->tags.push_back (tags[i]->clone (td));
     return td;
 }
@@ -243,7 +242,7 @@ int TagDirectory::write (int start, unsigned char* buffer) {
     int size = calculateSize ();
     int tagnum = 0;
     int nondirspace = 0;
-    for (int i=0; i<tags.size(); i++)
+    for (size_t i=0; i<tags.size(); i++)
         if (tags[i]->getKeep()) {
             tagnum++;
             if (!tags[i]->isDirectory())
@@ -255,7 +254,7 @@ int TagDirectory::write (int start, unsigned char* buffer) {
     sset2 (tagnum, buffer+start, order);
     pos += 2;
     int maxPos = start + size;
-    for (int i=0; i<tags.size(); i++) {
+    for (size_t i=0; i<tags.size(); i++) {
         if (tags[i]->getKeep()) {
             if (!tags[i]->isDirectory())
                 nextValOffs = tags[i]->write (pos, nextValOffs, buffer);  // pos: where to put the tag, dataoffset: the place where the value can be put. return: next data offset
@@ -277,7 +276,7 @@ void TagDirectory::applyChange (std::string name, std::string value) {
     if (dp==std::string::npos) {
 
         Tag* t = NULL;
-        for (int i=0; i<tags.size(); i++)
+        for (size_t i=0; i<tags.size(); i++)
             if (tags[i]->nameToString()==fseg) {
                 t = tags[i];
                 break;
@@ -310,7 +309,7 @@ void TagDirectory::applyChange (std::string name, std::string value) {
         std::string basename = fseg.substr (0,dp1);
         Tag* t = NULL;
         int dirnum = -1;
-        for (int i=0; i<tags.size(); i++)
+        for (size_t i=0; i<tags.size(); i++)
             if (tags[i]->isDirectory()) {
                 for (int j=0; tags[i]->getDirectory(j); j++) {
                     if (tags[i]->nameToString(j) == fseg) {
@@ -652,7 +651,7 @@ defsubdirs:
               // allocate space
               directory = new TagDirectory*[sdcount+1];
               // load directories
-              for (int j=0,i=0; j<count; j++,i++) {
+              for (size_t j=0,i=0; j<count; j++,i++) {
                   int newpos = base + toInt(j*4, LONG);
                   fseek (f, newpos, SEEK_SET);
                   directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
@@ -833,12 +832,12 @@ void Tag::toString (char* buffer, int ofs) {
     return; 
   }
 
-  int maxcount = 4;
+  size_t maxcount = 4;
   if (count<4)
     maxcount = count;
   
   strcpy (buffer, "");
-  for (int i=0; i<maxcount; i++) {
+  for (size_t i=0; i<maxcount; i++) {
     if (i>0)
         strcat (buffer, ", ");
     char* b = buffer + strlen(buffer);
@@ -1390,7 +1389,7 @@ std::vector<Tag*> ExifManager::defTags;
 // forthis: the byte order will be taken from directory "forthis"
 const std::vector<Tag*>& ExifManager::getDefaultTIFFTags (TagDirectory* forthis) {
 
-    for (int i=0; i<defTags.size(); i++)
+    for (size_t i=0; i<defTags.size(); i++)
         delete defTags[i];
     defTags.clear ();
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs,"ImageWidth"), 0, LONG));
@@ -1425,8 +1424,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
 
   TagDirectory* cl;
   if (root)
-    //FIXME: static_cast needed here
-    cl = ((TagDirectory*)root)->clone (NULL);
+    cl = (const_cast<TagDirectory*>(root))->clone (NULL);
   else
     cl = new TagDirectory (NULL, ifdAttribs, INTEL);
 
@@ -1462,8 +1460,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
 
     TagDirectory* cl;
     if (root)
-	//FIXME: static_cast needed here
-        cl = ((TagDirectory*)root)->clone (NULL);
+	cl = (const_cast<TagDirectory*>(root))->clone (NULL);
     else
         cl = new TagDirectory (NULL, ifdAttribs, INTEL);
 

@@ -235,5 +235,5 @@ class RawImageSource : public ImageSource {
         void    vflip       (Imagefloat* im);
 
 };
-};
+}
 #endif

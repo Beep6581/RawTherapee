@@ -72,5 +72,5 @@ namespace rtengine {
     };
 
     #define dcpStore DCPStore::getInstance()
-};
+}
 #endif

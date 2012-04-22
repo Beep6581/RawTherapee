@@ -130,14 +130,14 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustri
 			// convert the current filename to lowercase in a new ustring
 			Glib::ustring fname = Glib::ustring(info->get_name()).lowercase();
 
-			int pos = fname.find_last_of('.');
-			if (pos > -1 && pos < (fname.length()-1)) {
+			size_t pos = fname.find_last_of('.');
+			if (pos < (fname.length()-1)) {
 				// there is an extension to the filename
 
 				Glib::ustring lcFileExt = fname.substr(pos+1).lowercase();
 
 				// look out if it has one of the retained extensions
-				for (unsigned int i=0; i<lcExtensions.size(); i++) {
+				for (size_t i=0; i<lcExtensions.size(); i++) {
 					if (lcFileExt == lcExtensions[i]) {
 						names.push_back (Glib::build_filename (directory, info->get_name()));
 						break;

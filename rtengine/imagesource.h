@@ -109,5 +109,5 @@ class ImageSource : public InitialImage {
         virtual const ImageMetaData* getMetaData () { return idata; }
         virtual ImageSource* getImageSource ()      { return this; }
 };
-};
+}
 #endif

@@ -20,7 +20,7 @@
 #include <glibmm.h>
 #include <sstream>
 #include <cstring>
-#include <algorithm>
+#include "rt_math.h"
 
 #include "safegtk.h"
 #include "../rtgui/multilangmgr.h"
@@ -1325,7 +1325,7 @@ PartialProfile::PartialProfile(ProcParams* pp, ParamsEdited* pe, bool fullCopy) 
     }
     else
         pedited = pe;
-};
+}
 
 PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe) {
     if (pp) {
@@ -1339,7 +1339,7 @@ PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe) {
     }
     else
         pedited = NULL;
-};
+}
 
 int PartialProfile::load (Glib::ustring fName) {
     if (!pparams) pparams = new ProcParams();
@@ -1379,7 +1379,7 @@ void PartialProfile::applyTo(ProcParams *destParams) const {
 
 void PartialProfile::set(bool v) {
     if (pedited) pedited->set(v);
-};
+}
 
 }
 }

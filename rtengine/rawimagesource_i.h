@@ -24,12 +24,6 @@
 
 #include "curves.h"
 
-#undef MAXVAL
-#undef CLIP
-
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
-
 namespace rtengine {
 
 inline void RawImageSource::convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) {
@@ -330,6 +324,6 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
   }
 }
 
-};
+}
 
 #endif

@@ -163,12 +163,11 @@ void RawImageSource::eahd_demosaic () {
       homh[ipx][j] = 0;
       homv[ipx][j] = 0;
     }
-    int sh, sv, idx, idx2;
+    int sh, sv, idx;
     for (int j=1; j<W-1; j++) {
       int dmi = 0;
       for (int x=-1; x<=1; x++) {
         idx = (i+x)%3;
-        idx2 = (i+x)%2;
         for (int y=-1; y<=1; y++) {
           // compute distance in a, b, and L
           if (dmi<4) {
@@ -749,8 +748,6 @@ void RawImageSource::vng4_demosaic () {
 #undef fc
 #define fc(row,col) \
 	(ri->get_filters() >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)
-#define LIM(x,MIN,MAX) max(MIN,min(x,MAX))
-#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 
 /*
    Patterned Pixel Grouping Interpolation by Alain Desbiolles
@@ -847,8 +844,8 @@ void RawImageSource::ppg_demosaic()
 void RawImageSource::border_interpolate(int border, float (*image)[4], int start, int end)
 {
   unsigned row, col, y, x, f, c, sum[8];
-  int width=W, height=H;
-  int colors = 3;
+  unsigned int width=W, height=H;
+  unsigned int colors = 3;
 
   if (end == 0 )end = H;
   for (row=start; row < end; row++)
@@ -1283,7 +1280,7 @@ void RawImageSource::fill_border( float (*cache )[4], int border, int x0, int y0
 {
 	unsigned row, col, y, x, f, c;
     float sum[8];
-	const int colors = 3;  // used in FORCC
+	const unsigned int colors = 3;  // used in FORCC
 
 	for (row = y0; row < y0+TILESIZE+TILEBORDER && row<H; row++){
 		for (col = x0; col < x0+TILESIZE+TILEBORDER && col<W; col++) {

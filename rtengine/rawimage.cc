@@ -42,7 +42,7 @@ RawImage::~RawImage()
 /* Similar to dcraw scale_colors for coeff. calculation, but without actual pixels scaling.
  * need pixels in data[][] available
  */
-int RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_)
+void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_)
 
 {
 	unsigned  row, col, x, y, c, sum[8];
@@ -193,7 +193,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  }
 
 	  // Setting the black and cblack
-	  int i = cblack[3];
+	  unsigned int i = cblack[3];
 	  for (int c=0; c <3; c++)
 		  if (i > cblack[c])
 			  i = cblack[c];
@@ -264,4 +264,4 @@ RawImage::get_thumbSwap() const
     return ((order == 0x4949) == (ntohs(0x1234) == 0x1234)) ? true : false; 
 }
 
-}; //namespace rtengine
+} //namespace rtengine

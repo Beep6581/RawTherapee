@@ -29,10 +29,6 @@
 #include "rawimagesource.h"
 #include "../rtgui/ppversion.h"
 #undef THREAD_PRIORITY_NORMAL
-#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
-
-
-
 
 namespace rtengine {
 extern const Settings* settings;

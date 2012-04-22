@@ -23,9 +23,6 @@
 
 #include "gauss.h"
 
-#define MAXVAL  65535.0
-#define CLIP(a) ((a)>0.0?((a)<MAXVAL?(a):MAXVAL):0.0)
-
 #define ELEM(a,b) (src[i-a][j-b] * ec[(((src[i-a][j-b]>>8)+1)<<8) / ((src[i][j]>>8)+1)])
 //#define ELEM(a,b) (src[i-a][j-b] * ec[src[i-a][j-b]-src[i][j]+0x10000])
 //#define SULY(a,b) (ec[src[i-a][j-b]-src[i][j]+0x10000])

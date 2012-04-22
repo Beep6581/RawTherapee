@@ -31,8 +31,6 @@
 using namespace rtengine;
 
 void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {  
-#define LIM(x,MIN,MAX) max(MIN,min(x,MAX))
-#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 #define HCLIP(x) x //is this still necessary???
 	//min(clip_pt,x)
 

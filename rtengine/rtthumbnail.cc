@@ -38,9 +38,6 @@
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
 
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
-
 namespace rtengine {
 
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, int deg) {
@@ -873,13 +870,10 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     if (params.coarse.vflip)       tr |= TR_VFLIP;
 
     // calculate spot wb (copy & pasted from stdimagesource)
-    unsigned short igammatab[256];
-    for (int i=0; i<256; i++)
-        igammatab[i] = (unsigned short)(255.0*pow(i/255.0,CurveFactory::sRGBGamma));
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
-    for (int i=0; i<red.size(); i++) {
+    for (size_t i=0; i<red.size(); i++) {
         transformPixel (red[i].x, red[i].y, tr, x, y);
         if (x>=0 && y>=0 && x<thumbImg->width && y<thumbImg->height) {
             reds += thumbImg->r[y][x];
@@ -1255,7 +1249,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         cinfo.err = my_jpeg_std_error (&jerr);
         jpeg_create_decompress (&cinfo);
         my_jpeg_stdio_src (&cinfo,f);
-		if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+		if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
         {
             jpeg_read_header (&cinfo, TRUE);
             int width, height;

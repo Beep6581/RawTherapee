@@ -128,7 +128,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     if (!bbIcons.empty()) {
         int iwidth = igap;
         int iheight = 0;
-        for (int i=0; i<bbIcons.size(); i++) {
+	for (size_t i=0; i<bbIcons.size(); i++) {
             iwidth += bbIcons[i]->get_width() + igap;
             if (bbIcons[i]->get_height() > iheight)
                 iheight = bbIcons[i]->get_height();
@@ -140,7 +140,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
             cr->set_source_rgba (0, 0, 0, 0.75);
             cr->fill ();
         }
-        for (int i=0; i<bbIcons.size(); i++) {
+        for (size_t i=0; i<bbIcons.size(); i++) {
             backBuffer->draw_pixbuf (gc_, bbIcons[i], 0, 0, istartx, istarty, bbIcons[i]->get_width(), bbIcons[i]->get_height(), Gdk::RGB_DITHER_NONE, 0, 0);
             istartx += bbIcons[i]->get_width() + igap;
         }

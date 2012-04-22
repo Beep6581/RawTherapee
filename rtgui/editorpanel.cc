@@ -507,7 +507,7 @@ struct spsparams {
 
 int setProgressStateUIThread (void* data) {
 
-    spsparams* p = (spsparams*)data;
+    spsparams* p = static_cast<spsparams*>(data);
 
     if (p->epih->destroyed) {
         if (p->epih->pending == 1)
@@ -544,7 +544,7 @@ struct spparams {
 
 int setprogressStrUI( void *p )
 {
-	spparams *s= (spparams*)p;
+	spparams *s= static_cast<spparams*>(p);
 
 	if( ! s->str.empty() )
 	   s->pProgress->set_text( M(s->str) );
@@ -635,7 +635,7 @@ void EditorPanel::displayError (Glib::ustring descr) {
 }
 
 int disperrorUI (void* data) {
-    errparams* p = (errparams*)data;
+    errparams* p = static_cast<errparams*>(data);
 
     if (p->epih->destroyed) {
         if (p->epih->pending == 1)

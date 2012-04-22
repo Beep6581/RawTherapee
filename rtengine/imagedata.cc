@@ -36,7 +36,7 @@ ImageMetaData* ImageMetaData::fromFile (const Glib::ustring& fname, RawMetaDataL
 
 ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
 
-    int dotpos = fname.find_last_of ('.');
+    size_t dotpos = fname.find_last_of ('.');
     root = NULL;
     iptc = NULL;
                 
@@ -57,7 +57,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             extractInfo ();
         }
     }    
-    else if (dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
+    else if (dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseJPEG (f);
@@ -68,7 +68,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             fclose (ff);
         }
     }    
-    else if ((dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
+    else if ((dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseTIFF (f);
@@ -120,7 +120,7 @@ void ImageData::extractInfo () {
        { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
          "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
          "SAMSUNG", "Mamiya", "MOTOROLA" };
-     for (int i=0; i < sizeof corp / sizeof *corp; i++)
+     for (size_t i=0; i < (sizeof(corp)/sizeof(*corp)); i++)
        if ( make.find( corp[i] ) != std::string::npos ){		/* Simplify company names */
    	     make = corp[i];
    	     break;
@@ -203,7 +203,7 @@ void ImageData::extractInfo () {
             }
             if (!lensOk && mnote->getTag ("Lens")) {
                 std::string ldata = mnote->getTag ("Lens")->valueToString ();
-                int i=0, j=0; 
+                size_t i=0, j=0;
                 double n[4];
                 for (int m=0; m<4; m++) {
                     while (i<ldata.size() && ldata[i]!='/') i++;
@@ -352,7 +352,7 @@ std::string ImageMetaData::expcompToString (double expcomp, bool maskZeroexpcomp
 
 double ImageMetaData::shutterFromString (std::string s) {
 
-    int i = s.find_first_of ('/');
+    size_t i = s.find_first_of ('/');
     if (i==std::string::npos)
         return atof (s.c_str());
     else 

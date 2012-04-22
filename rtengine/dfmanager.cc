@@ -213,8 +213,8 @@ void DFManager::init( Glib::ustring pathname )
 	
 	dfList.clear();
 	bpList.clear();
-    for (int i=0; i<names.size(); i++) {
-        int lastdot = names[i].find_last_of ('.');
+    for (size_t i=0; i<names.size(); i++) {
+        size_t lastdot = names[i].find_last_of ('.');
         if (lastdot != Glib::ustring::npos && names[i].substr(lastdot) == ".badpixels" ){
         	int n = scanBadPixelsFile( names[i] );
         	if( n>0 && settings->verbose)
@@ -256,7 +256,7 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename ,bool pool )
     	return false;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        int lastdot = info->get_name().find_last_of ('.');
+	size_t lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot
@@ -397,9 +397,9 @@ int DFManager::scanBadPixelsFile( Glib::ustring filename )
 {
 	FILE *file = fopen( filename.c_str(),"r" );
 	if( !file ) return false;
-	int lastdot = filename.find_last_of ('.');
-	int dirpos1 = filename.find_last_of ('/');
-	int dirpos2 = filename.find_last_of ('\\');
+	size_t lastdot = filename.find_last_of ('.');
+	size_t dirpos1 = filename.find_last_of ('/');
+	size_t dirpos2 = filename.find_last_of ('\\');
 	if( dirpos1 == Glib::ustring::npos && dirpos2== Glib::ustring::npos )
 		dirpos1 =0;
 	else

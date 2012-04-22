@@ -98,7 +98,7 @@ IMFILE* fopen (const char* fname)
 	{
 	  bool bzip = false;
 	  Glib::ustring bname = Glib::path_get_basename(fname);
-	  int lastdot = bname.find_last_of ('.');
+	  size_t lastdot = bname.find_last_of ('.');
 	  if (lastdot!=bname.npos)
 	    bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
       
@@ -211,7 +211,7 @@ IMFILE* gfopen (const char* fname) {
     {
       bool bzip = false;
       Glib::ustring bname = Glib::path_get_basename(fname);
-      int lastdot = bname.find_last_of ('.');
+      size_t lastdot = bname.find_last_of ('.');
       if (lastdot!=bname.npos)
         bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
       

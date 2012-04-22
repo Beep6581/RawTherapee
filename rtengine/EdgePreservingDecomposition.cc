@@ -1,5 +1,5 @@
 #include <cmath>
-#include <algorithm>
+#include "rt_math.h"
 
 #include "EdgePreservingDecomposition.h"
 

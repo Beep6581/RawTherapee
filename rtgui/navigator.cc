@@ -23,9 +23,6 @@
 #include "../rtengine/curves.h"
 #include "../rtengine/rt_math.h"
 
-#define D50x 0.96422
-#define D50z 0.82521
-
 Navigator::Navigator () {
 
 	set_label (M("MAIN_MSG_NAVIGATOR"));

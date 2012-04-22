@@ -29,5 +29,5 @@ class Coord2D {
         Coord2D () {}
         void set (double x_, double y_) { x = x_; y = y_; }
 };
-};
+}
 #endif

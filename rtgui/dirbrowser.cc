@@ -209,7 +209,7 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
 	else {
 	
 			std::sort (subDirs.begin(), subDirs.end());
-			for (int i=0; i<subDirs.size(); i++) 
+			for (size_t i=0; i<subDirs.size(); i++)
 					addDir (iter, subDirs[i]);
 
 			for (int i=0; i<todel; i++)
@@ -273,7 +273,7 @@ void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewC
 
     Glib::ustring dname = dirTreeModel->get_iter (path)->get_value (dtColumns.dirname);
     if (safe_file_test (dname, Glib::FILE_TEST_IS_DIR)) 
-        for (int i=0; i<dllisteners.size(); i++)
+	    for (size_t i=0; i<dllisteners.size(); i++)
             dllisteners[i]->dirSelected (dname);
 }
 
@@ -344,7 +344,7 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
     Gtk::TreePath path = expandToDir (absDirPath);
 	dirtree->scroll_to_row (path);
 	dirtree->get_selection()->select (path);
-	for (int i=0; i<dllisteners.size(); i++)
+	for (size_t i=0; i<dllisteners.size(); i++)
 		dllisteners[i]->dirSelected (absDirPath, Glib::build_filename (absDirPath, fileName));
 }
 
