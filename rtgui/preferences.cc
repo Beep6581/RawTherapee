@@ -362,7 +362,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     if (options.multiUser)
         parseDir (Options::rtdir + "/" + options.profilePath, pnames, paramFileExtension);
     parseDir (argv0 + "/" + options.profilePath, pnames, paramFileExtension);
-    for (int i=0; i<pnames.size(); i++) {
+    for (size_t i=0; i<pnames.size(); i++) {
         rprofiles->append_text (pnames[i]);
         iprofiles->append_text (pnames[i]);
     }
@@ -481,7 +481,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
-    for (int i=0; i<langs.size(); i++) {
+    for (size_t i=0; i<langs.size(); i++) {
 	if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
   	    languages->append_text (langs[i]);
 	}
@@ -525,7 +525,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     theme->set_active (0);
     std::vector<Glib::ustring> themes;
     parseDir (argv0 + "/themes", themes, ".gtkrc");
-    for (int i=0; i<themes.size(); i++) 
+    for (size_t i=0; i<themes.size(); i++)
         theme->append_text (themes[i]);
 
     Gtk::Label* fontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT")+":") );
@@ -1033,7 +1033,7 @@ void Preferences::storePreferences () {
     moptions.parseExtensions.clear ();
     moptions.parseExtensionsEnabled.clear ();
     Gtk::TreeNodeChildren c = extensionModel->children ();
-    for (int i=0; i<c.size(); i++) {
+    for (size_t i=0; i<c.size(); i++) {
         moptions.parseExtensions.push_back (c[i][extensionColumns.ext]);
         moptions.parseExtensionsEnabled.push_back (c[i][extensionColumns.enabled]);
     }
@@ -1158,7 +1158,7 @@ void Preferences::fillPreferences () {
     }
     
     extensionModel->clear ();
-    for (int i=0; i<moptions.parseExtensions.size(); i++) {
+    for (size_t i=0; i<moptions.parseExtensions.size(); i++) {
         Gtk::TreeRow row = *(extensionModel->append());
         row[extensionColumns.enabled] = moptions.parseExtensionsEnabled[i];
         row[extensionColumns.ext]     = moptions.parseExtensions[i];
@@ -1207,7 +1207,7 @@ void Preferences::fillPreferences () {
     addc.block (true);
     setc.block (true);
     if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-		for (int i=0; i<moptions.baBehav.size(); i++) 
+		for (size_t i=0; i<moptions.baBehav.size(); i++)
 			for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++) 
 				for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
 					if (adjs->get_value (behavColumns.addsetid) == i) {
@@ -1420,7 +1420,7 @@ void Preferences::useThemeChanged(){
 void Preferences::addExtPressed () {
 
   Gtk::TreeNodeChildren c = extensionModel->children ();
-  for (int i=0; i<c.size(); i++)
+  for (size_t i=0; i<c.size(); i++)
     if (c[i][extensionColumns.ext] == extension->get_text ())
         return;
 

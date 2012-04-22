@@ -211,7 +211,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 }
 
 void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt){
-	for (int i=0; i<listeners.size(); i++)
+	for (size_t i=0; i<listeners.size(); i++)
 		listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
@@ -311,7 +311,7 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
             safe_g_remove (fname_);
     }
 
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoClearedIt);
 }
 
@@ -351,7 +351,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     if (updateCacheNow)
         updateCache ();
 
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
@@ -517,7 +517,7 @@ void Thumbnail::generateExifDateTimeStrings () {
     std::string dateFormat = options.dateFormat;
     std::ostringstream ostr;
     bool spec = false;
-    for (int i=0; i<dateFormat.size(); i++)
+    for (size_t i=0; i<dateFormat.size(); i++)
         if (spec && dateFormat[i]=='y') {
             ostr << cfs.year;
             spec = false;

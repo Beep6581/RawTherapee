@@ -23,9 +23,7 @@
 #include "rt_math.h"
 #include "rawimagesource.h"
 
-#undef MAXVAL
 #undef THREAD_PRIORITY_NORMAL
-#define MAXVAL  0xffff
 
 namespace rtengine {
 

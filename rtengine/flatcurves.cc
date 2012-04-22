@@ -277,7 +277,7 @@ void FlatCurve::CtrlPoints_set () {
 	else {
 			nbr_points = (int)(((double)(ppn) * sc_length[i] )/ total_length);
 			if (nbr_points<0){
-				for(unsigned int it=0;it < sc_x.size(); it+=3) printf("sc_length[%d/3]=%f \n",it,sc_length[it/3]);
+				for(size_t it=0;it < sc_x.size(); it+=3) printf("sc_length[%zd/3]=%f \n",it,sc_length[it/3]);
 				printf("Flat curve: error detected!\n i=%d periodic=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,periodic,nbr_points,ppn,N,sc_length[i/3],total_length);
 				exit(0);
 			}

@@ -18,7 +18,8 @@
  */
 #include <cmath>
 #include <iostream>
-#include <algorithm>
+
+#include "rtengine.h"
 #include "rawimagesource.h"
 #include "rawimagesource_i.h"
 #include "median.h"
@@ -34,9 +35,8 @@
 #include "../rtgui/options.h"
 #include "dcp.h"
 #include "rt_math.h"
-
-
 #include "improcfun.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -46,12 +46,9 @@ namespace rtengine {
 extern const Settings* settings;
 #undef ABS
 #undef DIST
-#undef CLIP
 
 #define ABS(a) ((a)<0?-(a):(a))
 #define DIST(a,b) (ABS(a-b))
-#define MAXVAL 0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 	
 #define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 	
@@ -1529,7 +1526,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
   float middle_Q[6];
   float* tmp;
 
-  int ppx=0, px=(row_from-1)%3, cx=row_from%3, nx=0;
+  int ppx, px=(row_from-1)%3, cx=row_from%3, nx=0;
   
     convert_row_to_YIQ (im->r[row_from-1], im->g[row_from-1], im->b[row_from-1], rbconv_Y[px], rbconv_I[px], rbconv_Q[px], W);
     convert_row_to_YIQ (im->r[row_from], im->g[row_from], im->b[row_from], rbconv_Y[cx], rbconv_I[cx], rbconv_Q[cx], W);
@@ -2026,8 +2023,6 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 			{ { 1,1,1 }, { 1,-1,1 }, { 1,1,-1 } } };
 		
 #define FOREACHCOLOR for (int c=0; c < ColorCount; c++)
-#include "rt_math.h"
-		
 		
 		float minpt=min(hlmax[0],hlmax[1],hlmax[2]);//min of the raw clip points
 		//float maxpt=max(hlmax[0],hlmax[1],hlmax[2]);//max of the raw clip points
@@ -2445,7 +2440,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 		if (!ri->isBayer()) {
 			int xmin, xmax, ymin, ymax;
 			int xr, xg, xb, yr, yg, yb;
-			for (int i=0; i<red.size(); i++) {
+			for (size_t i=0; i<red.size(); i++) {
 				transformPosition (red[i].x, red[i].y, tran, xr, yr);
 				transformPosition (green[i].x, green[i].y, tran, xg, yg);
 				transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
@@ -2468,7 +2463,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 			
 			int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
 			int rloc, gloc, bloc, rnbrs, gnbrs, bnbrs;
-			for (int i=0; i<red.size(); i++) {
+			for (size_t i=0; i<red.size(); i++) {
 				transformPosition (red[i].x, red[i].y, tran, x, y);
 				rloc=gloc=bloc=rnbrs=gnbrs=bnbrs=0;
 				for (int k=0; k<9; k++) {

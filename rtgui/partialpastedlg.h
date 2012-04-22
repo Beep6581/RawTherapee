@@ -104,7 +104,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* ff_BlurRadius;
         Gtk::CheckButton* ff_BlurType;
 
-        sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;;
+        sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;
 
         sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn;
         sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn;

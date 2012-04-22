@@ -32,14 +32,6 @@
 
 namespace rtengine {
 
-#undef CLIP
-#undef CLIPTO
-#undef CMAXVAL
-
-#define CMAXVAL 0xffff
-#define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
-
 static inline float Lanc(float x, float a)
 {
     if (x * x < 1e-6f)
@@ -236,8 +228,8 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
                     dst->b[i][j] = CLIP(b);
                 }
                 else {
-                    xc = CLIPTO(xc, 0, src->width-1);
-                    yc = CLIPTO(yc, 0, src->height-1);
+                    xc = LIM(xc, 0, src->width-1);
+                    yc = LIM(yc, 0, src->height-1);
                     int nx = xc + 1;
                     if (nx >= src->width)
                         nx = xc;
@@ -255,14 +247,14 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
             int sy = i/dScale;
-            sy = CLIPTO(sy, 0, src->height-1);
+            sy = LIM(sy, 0, src->height-1);
             float dy = i/dScale - sy;
             int ny = sy+1;
             if (ny>=src->height)
                 ny = sy;
             for (int j=0; j<dst->width; j++) {
                 int sx = j/dScale;
-                sx = CLIPTO(sx, 0, src->width-1);
+                sx = LIM(sx, 0, src->width-1);
                 float dx = j/dScale - sx;
                 int nx = sx+1;
                 if (nx>=src->width)
@@ -278,10 +270,10 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
             int sy = i/dScale;
-            sy = CLIPTO(sy, 0, src->height-1);
+            sy = LIM(sy, 0, src->height-1);
             for (int j=0; j<dst->width; j++) {
                 int sx = j/dScale;
-                sx = CLIPTO(sx, 0, src->width-1);
+                sx = LIM(sx, 0, src->width-1);
                 dst->r[i][j] = src->r[sy][sx];
                 dst->g[i][j] = src->g[sy][sx];
                 dst->b[i][j] = src->b[sy][sx];

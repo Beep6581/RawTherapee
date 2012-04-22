@@ -90,5 +90,5 @@ class ColorTemp {
 
         static void spectrum_to_xyz          (double (*spec_intens)(double wavelength, double m1, double m2, double temp), double _m1, double _m2, double _temp, double &x, double &y, double &z);
 };
-};
+}
 #endif

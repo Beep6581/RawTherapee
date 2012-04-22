@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <algorithm>
+#include "../rtengine/rt_math.h"
 
 #include "guiutils.h"
 #include "options.h"
@@ -50,7 +50,7 @@ void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, 
 Glib::ustring removeExtension (const Glib::ustring& filename) {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
-    int lastdot = bname.find_last_of ('.');
+    size_t lastdot = bname.find_last_of ('.');
     if (lastdot!=bname.npos)
         return filename.substr (0, filename.size()-(bname.size()-lastdot));
     else
@@ -60,7 +60,7 @@ Glib::ustring removeExtension (const Glib::ustring& filename) {
 Glib::ustring getExtension (const Glib::ustring& filename) {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
-    int lastdot = bname.find_last_of ('.');
+    size_t lastdot = bname.find_last_of ('.');
     if (lastdot!=bname.npos)
         return filename.substr (filename.size()-(bname.size()-lastdot)+1, filename.npos);
     else
@@ -172,7 +172,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             }
 
             // Horizontals
-            for (int i=0; i<horiz_ratios.size(); i++) {
+            for (size_t i=0; i<horiz_ratios.size(); i++) {
                 cr->set_source_rgb (1.0, 1.0, 1.0);
                 cr->move_to (rectx1, recty1 + (recty2-recty1) * horiz_ratios[i]);
                 cr->line_to (rectx2, recty1 + (recty2-recty1) * horiz_ratios[i]);
@@ -188,7 +188,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 cr->set_dash (ds, 0);
             }
             // Verticals
-            for (int i=0; i<vert_ratios.size(); i++) {
+            for (size_t i=0; i<vert_ratios.size(); i++) {
                 cr->set_source_rgb (1.0, 1.0, 1.0);
                 cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
                 cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
@@ -388,7 +388,7 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event) {
 
 MyFileChooserButton::MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action) : Gtk::FileChooserButton(title, action) {
 	set_size_request(20, -1);
-};
+}
 
 // For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
 bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event) {

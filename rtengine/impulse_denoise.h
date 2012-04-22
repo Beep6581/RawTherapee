@@ -18,7 +18,7 @@
  *    
  */
 #include <cstddef>
-#include <algorithm>
+#include "rt_math.h"
 
 #include "rt_math.h"
 #include "labimage.h"

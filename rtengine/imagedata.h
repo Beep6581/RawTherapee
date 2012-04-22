@@ -73,5 +73,5 @@ class ImageData : public ImageMetaData {
     std::string getSerialNumber () const { return serial;}
     std::string getOrientation () const { return orientation; }
 };
-};
+}
 #endif

@@ -107,7 +107,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     pack_start (*onames, Gtk::PACK_SHRINK, 4);
 
     std::vector<std::string> wpnames = rtengine::getWorkingProfiles ();
-    for (int i=0; i<wpnames.size(); i++)
+    for (size_t i=0; i<wpnames.size(); i++)
         wnames->append_text (wpnames[i]);
   
  
@@ -145,14 +145,14 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 		
 		
     std::vector<std::string> wpgamma = rtengine::getGamma ();
-    for (int i=0; i<wpgamma.size(); i++)
+    for (size_t i=0; i<wpgamma.size(); i++)
         wgamma->append_text (wpgamma[i]);
 
     onames->append_text (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
     std::vector<std::string> opnames = iccStore->getOutputProfiles ();
-    for (int i=0; i<opnames.size(); i++)
+    for (size_t i=0; i<opnames.size(); i++)
         onames->append_text (opnames[i]);
 
     wnames->set_active (0);

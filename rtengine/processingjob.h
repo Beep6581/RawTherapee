@@ -40,6 +40,6 @@ class ProcessingJobImpl : public ProcessingJob {
         ~ProcessingJobImpl () { if (initialImage) initialImage->decreaseRef(); }
 };
 
-};
+}
 
 #endif

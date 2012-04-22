@@ -218,7 +218,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         return;
 
     const ProcParams& p = src[0];
-    for (int i=1; i<src.size(); i++) {
+    for (size_t i=1; i<src.size(); i++) {
         const ProcParams& other = src[i];
         toneCurve.curve = toneCurve.curve && p.toneCurve.curve == other.toneCurve.curve;
         toneCurve.brightness = toneCurve.brightness && p.toneCurve.brightness == other.toneCurve.brightness;

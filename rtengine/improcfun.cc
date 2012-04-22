@@ -44,32 +44,16 @@ namespace rtengine {
 	
 	using namespace procparams;
 	
-#undef MAXVAL
-#undef CMAXVAL
-#undef MAXL
-
-
 #undef ABS
-#undef CLIP
 #undef CLIPS
 #undef CLIPC
-#undef CLIPTO
-	
-#define MAXVAL  0xffff
-#define CMAXVAL 0xffff
-#define MAXL 	0xffff
-
 
 #define ABS(a) ((a)<0?-(a):(a))
-#define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPS(a) ((a)>-32768?((a)<32767?(a):32767):-32768)
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIP2(a) ((a)<MAXVAL ? a : MAXVAL )
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
 	
-#define D50x 0.96422
-#define D50z 0.82521
 #define u0 4.0*D50x/(D50x+15+3*D50z)
 #define v0 9.0/(D50x+15+3*D50z)
 	
@@ -581,8 +565,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
             
             float nna = ((oa[i][j]+shift_a) * real_c * amul);
             float nnb = ((ob[i][j]+shift_b) * real_c * bmul);
-            lnew->a[i][j] = CLIPTO(nna,-32000.0f,32000.0f);
-            lnew->b[i][j] = CLIPTO(nnb,-32000.0f,32000.0f);
+            lnew->a[i][j] = LIM(nna,-32000.0f,32000.0f);
+            lnew->b[i][j] = LIM(nnb,-32000.0f,32000.0f);
         }
 */
     //delete [] cmultiplier;

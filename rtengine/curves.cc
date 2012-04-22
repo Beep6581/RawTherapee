@@ -32,8 +32,8 @@
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
-#define CLIP(a) ((a)<65535 ? (a) : (65535))
 
+using namespace std;
 
 namespace rtengine {
 
@@ -102,7 +102,7 @@ namespace rtengine {
 			}
 			fclose (f);
 			f = fopen ("poly_x.txt", "wt");
-			for (unsigned int i=0; i<poly_x.size();i++) {
+			for (size_t i=0; i<poly_x.size();i++) {
 				fprintf (f, "%d: %.5f, %.5f\n", i, poly_x[i], poly_y[i]);
 			}
 			fclose (f);

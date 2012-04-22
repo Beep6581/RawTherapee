@@ -125,7 +125,7 @@ void PlacesBrowser::refreshPlacesList () {
     
     // scan all drives
     std::vector<Glib::RefPtr<Gio::Drive> > drives = vm->get_connected_drives ();
-    for (int j=0; j<drives.size (); j++) {
+    for (size_t j=0; j<drives.size (); j++) {
         std::vector<Glib::RefPtr<Gio::Volume> > volumes = drives[j]->get_volumes ();
         if (volumes.empty()) {
             Gtk::TreeModel::Row newrow = *(placesModel->append());
@@ -135,7 +135,7 @@ void PlacesBrowser::refreshPlacesList () {
             newrow[placesColumns.type]  = 3;
             newrow[placesColumns.rowSeparator] = false;
         }
-        for (int i=0; i<volumes.size (); i++) {
+        for (size_t i=0; i<volumes.size (); i++) {
             Glib::RefPtr<Gio::Mount> mount = volumes[i]->get_mount ();
             if (mount) { // placesed volumes
                 Gtk::TreeModel::Row newrow = *(placesModel->append());
@@ -158,7 +158,7 @@ void PlacesBrowser::refreshPlacesList () {
     
     // volumes not belonging to drives
     std::vector<Glib::RefPtr<Gio::Volume> > volumes = vm->get_volumes ();
-    for (int i=0; i<volumes.size (); i++) {
+    for (size_t i=0; i<volumes.size (); i++) {
         if (!volumes[i]->get_drive ()) {
             Glib::RefPtr<Gio::Mount> mount = volumes[i]->get_mount ();
             if (mount) { // placesed volumes
@@ -189,7 +189,7 @@ void PlacesBrowser::refreshPlacesList () {
     std::sort (mounts.begin(), mounts.end(), compareMountByRoot); 
 #endif
 
-    for (int i=0; i<mounts.size (); i++) {
+    for (size_t i=0; i<mounts.size (); i++) {
         if (!mounts[i]->get_volume ()) {
             Gtk::TreeModel::Row newrow = *(placesModel->append());
             newrow[placesColumns.label] = mounts[i]->get_name ();
@@ -204,7 +204,7 @@ void PlacesBrowser::refreshPlacesList () {
             Gtk::TreeModel::Row newrow = *(placesModel->append());
             newrow[placesColumns.rowSeparator] = true;
     }
-    for (int i=0; i<options.favoriteDirs.size(); i++) {
+    for (size_t i=0; i<options.favoriteDirs.size(); i++) {
         Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (options.favoriteDirs[i]);
         if (hfile && hfile->query_exists()) {
             Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);
@@ -247,7 +247,7 @@ void PlacesBrowser::selectionChanged () {
     if (iter) {
         if (iter->get_value (placesColumns.type)==2) {
             std::vector<Glib::RefPtr<Gio::Volume> > volumes = vm->get_volumes ();
-            for (int i=0; i<volumes.size(); i++)
+	    for (size_t i=0; i<volumes.size(); i++)
                 if (volumes[i]->get_name () == iter->get_value (placesColumns.label)) {
                     volumes[i]->mount ();
                     break;
@@ -255,7 +255,7 @@ void PlacesBrowser::selectionChanged () {
         }
         else if (iter->get_value (placesColumns.type)==3) {
             std::vector<Glib::RefPtr<Gio::Drive> > drives = vm->get_connected_drives ();
-            for (int i=0; i<drives.size(); i++)
+	    for (size_t i=0; i<drives.size(); i++)
                 if (drives[i]->get_name () == iter->get_value (placesColumns.label)) {
                     drives[i]->poll_for_media ();
                     break;
@@ -277,7 +277,7 @@ void PlacesBrowser::addPressed () {
         return;
 
     // check if the dirname is already in the list. If yes, return.
-    for (int i=0; i<options.favoriteDirs.size(); i++)
+	for (size_t i=0; i<options.favoriteDirs.size(); i++)
         if (options.favoriteDirs[i] == lastSelectedDir)
             return;
 

@@ -90,5 +90,5 @@ class Image16 : public ImageIO, public IImage16 {
 
         void ExecCMSTransform(cmsHTRANSFORM hTransform);
     };
-};
+}
 #endif

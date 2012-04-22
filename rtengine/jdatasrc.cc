@@ -236,7 +236,8 @@ my_error_exit (j_common_ptr cinfo)
   //jpeg_destroy(cinfo);
 
   j_decompress_ptr dinfo = (j_decompress_ptr)cinfo;
-  longjmp (((rt_jpeg_error_mgr*)(dinfo->src))->error_jmp_buf, 1);
+//  longjmp (((rt_jpeg_error_mgr*)(dinfo->src))->error_jmp_buf, 1);
+  longjmp ((reinterpret_cast<rt_jpeg_error_mgr*>(dinfo->src))  ->error_jmp_buf, 1);
 }
 
 

@@ -74,7 +74,7 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
       Glib::ustring sname = *i;
       // ignore directories
       if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
-        int lastdot = sname.find_last_of ('.');
+	size_t lastdot = sname.find_last_of ('.');
         if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && !sname.casefold().compare (lastdot, 4, paramFileExtension)) {
           if( options.rtSettings.verbose )
             printf ("Processing file %s...\n", fname.c_str());

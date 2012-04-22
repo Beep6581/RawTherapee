@@ -19,7 +19,7 @@
 
 #include <cmath>
 #include <gtkmm.h>
-#include <algorithm>
+#include "rt_math.h"
 
 #include "slicer.h"
 

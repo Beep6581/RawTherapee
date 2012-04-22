@@ -382,13 +382,12 @@ void _KLTSelectGoodFeatures(
     int borderx = tc->borderx;	/* Must not touch cols */
     int bordery = tc->bordery;	/* lost by convolution */
     int x, y;
-    int i;
 	
     if (borderx < window_hw)  borderx = window_hw;
     if (bordery < window_hh)  bordery = window_hh;
 
     /* Find largest value of an int */
-    for (i = 0 ; i < sizeof(int) ; i++)  limit *= 256;
+    for (size_t i = 0 ; i < sizeof(int) ; i++)  limit *= 256;
     limit = limit/2 - 1;
 		
     /* For most of the pixels in the image, do ... */

@@ -18,7 +18,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <algorithm>
+#include "rt_math.h"
 
 #include "rtengine.h"
 #include "improcfun.h"
@@ -37,9 +37,6 @@ namespace rtengine {
 using namespace procparams;
 
 #define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
-
-#define D50x 0.96422
-#define D50z 0.82521
 
 extern const Settings* settings;
 

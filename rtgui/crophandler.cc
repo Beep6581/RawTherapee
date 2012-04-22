@@ -168,7 +168,7 @@ int createpixbufs (void* data) {
 
     GThreadLock lock;
 
-    CropHandlerIdleHelper* chi = (CropHandlerIdleHelper*) data;
+    CropHandlerIdleHelper* chi = static_cast<CropHandlerIdleHelper*>(data);
     if (chi->destroyed) {
         if (chi->pending == 1)
             delete chi;

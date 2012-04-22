@@ -18,7 +18,6 @@
  *    
  */
 
-//#include "rtengine.h"
 #include <cstddef>
 #include <cmath>
 #include "curves.h"
@@ -26,18 +25,13 @@
 #include "improcfun.h"
 #include "rawimagesource.h"
 #include "array2D.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#include "rt_math.h"
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIP(a) (CLIPTO(a,0,65535))
-
-
-
 #define DIRWT(i1,j1,i,j) ( domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] * rangefn[abs((int)data_fine[i1][j1]-data_fine[i][j])] )
 
 namespace rtengine {

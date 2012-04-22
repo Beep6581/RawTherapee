@@ -20,8 +20,8 @@
 #include "curves.h"
 #include "mytime.h"
 #include "refreshmap.h"
-#define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
-#define CLIP(a) ((a)<65535 ? (a) : (65535));
+#include "rt_math.h"
+
 #define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 
 namespace rtengine {
@@ -283,12 +283,12 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     rqcroph = rch;
 
     // store and set requested crop size
-    int rqx1 = CLIPTO(rqcropx,0,parent->fullw-1);
-    int rqy1 = CLIPTO(rqcropy,0,parent->fullh-1);
+    int rqx1 = LIM(rqcropx,0,parent->fullw-1);
+    int rqy1 = LIM(rqcropy,0,parent->fullh-1);
     int rqx2 = rqx1 + rqcropw - 1;
     int rqy2 = rqy1 + rqcroph - 1;
-    rqx2 = CLIPTO(rqx2,0,parent->fullw-1);
-    rqy2 = CLIPTO(rqy2,0,parent->fullh-1);
+    rqx2 = LIM(rqx2,0,parent->fullw-1);
+    rqy2 = LIM(rqy2,0,parent->fullh-1);
 
     this->skip = skip;
     
@@ -298,10 +298,10 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     int bx2 = rqx2 + skip*borderRequested;
     int by2 = rqy2 + skip*borderRequested;
     // clip it to fit into image area
-    bx1 = CLIPTO(bx1,0,parent->fullw-1);
-    by1 = CLIPTO(by1,0,parent->fullh-1);
-    bx2 = CLIPTO(bx2,0,parent->fullw-1);
-    by2 = CLIPTO(by2,0,parent->fullh-1);
+    bx1 = LIM(bx1,0,parent->fullw-1);
+    by1 = LIM(by1,0,parent->fullh-1);
+    bx2 = LIM(bx2,0,parent->fullw-1);
+    by2 = LIM(by2,0,parent->fullh-1);
     int bw = bx2 - bx1 + 1;
     int bh = by2 - by1 + 1;
     

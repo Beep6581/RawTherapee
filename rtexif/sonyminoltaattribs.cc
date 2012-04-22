@@ -864,8 +864,7 @@ const TagAttrib sonyCameraSettingsAttribs2[]={
  {0, 1, 0, 0, 63, "Rotation",&saRotation},
  {0, 1, 0, 0, 84, "SonyImageSize",&saSonyImageSize},
  {-1, 0, 0,  0, 0, "", NULL}};
-
-};
+}
 #endif
 
 

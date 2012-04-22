@@ -34,19 +34,8 @@
 
 namespace rtengine {
 
-#undef CLIP
-#undef CLIPTO
-#undef CMAXVAL
-
-#define CMAXVAL 0xffff
-#define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 	
-	
-#define D50x 0.96422
-#define D50z 0.82521
-
 extern const Settings* settings;
 	
 const double (*wprof[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best};
@@ -86,9 +75,9 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 				y_ = f2xyz(fy);
 				z_ = f2xyz(fz)*D50z;
 
-                buffer[iy++] = (unsigned short)CLIP(x_* CMAXVAL+0.5);
-                buffer[iy++] = (unsigned short)CLIP(y_* CMAXVAL+0.5);
-                buffer[iy++] = (unsigned short)CLIP(z_* CMAXVAL+0.5);
+                buffer[iy++] = (unsigned short)CLIP(x_* MAXVAL+0.5);
+                buffer[iy++] = (unsigned short)CLIP(y_* MAXVAL+0.5);
+                buffer[iy++] = (unsigned short)CLIP(z_* MAXVAL+0.5);
 			}
 
             cmsDoTransform (monitorTransform, buffer, image->data + ix, lab->W);

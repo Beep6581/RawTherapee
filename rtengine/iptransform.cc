@@ -28,17 +28,8 @@
 using namespace std;
 
 namespace rtengine {
-
-#undef CMAXVAL
-
-
-#undef CLIPTO
 #undef CLIPTOC
 
-
-
-
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 #define RT_PI 3.141592653589
 
@@ -53,7 +44,7 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
 
     if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective()) {
         if (clipresize) {
-                for (int i=0; i<src.size(); i++) {
+                for (size_t i=0; i<src.size(); i++) {
                     red.push_back   (Coord2D (src[i].x, src[i].y));
                     green.push_back (Coord2D (src[i].x, src[i].y));
                     blue.push_back  (Coord2D (src[i].x, src[i].y));
@@ -81,7 +72,7 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
 
 	double ascale = ascaleDef>0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0);
 
-	for (int i=0; i<src.size(); i++) {
+	for (size_t i=0; i<src.size(); i++) {
 
 		double y_d = ascale * (src[i].y - h2);
 		double x_d = ascale * (src[i].x - w2);
@@ -104,7 +95,7 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
 	}
 
 	if (clipresize) {
-        for (int i=0; i<src.size(); i++) {
+        for (size_t i=0; i<src.size(); i++) {
             red[i].x = CLIPTOC(red[i].x,0,W-1,clipped);
             red[i].y = CLIPTOC(red[i].y,0,H-1,clipped);
             green[i].x = CLIPTOC(green[i].x,0,W-1,clipped);
@@ -154,25 +145,25 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
     transCorners.insert (transCorners.end(), b.begin(), b.end());
 
     double x1d = transCorners[0].x;
-    for (int i=1; i<transCorners.size(); i++)
+    for (size_t i=1; i<transCorners.size(); i++)
         if (transCorners[i].x<x1d)
             x1d = transCorners[i].x;
    int x1v = (int)(x1d);
 
     double y1d = transCorners[0].y;
-    for (int i=1; i<transCorners.size(); i++)
+    for (size_t i=1; i<transCorners.size(); i++)
         if (transCorners[i].y<y1d)
             y1d = transCorners[i].y;
     int y1v = (int)(y1d);
 
     double x2d = transCorners[0].x;
-    for (int i=1; i<transCorners.size(); i++)
+    for (size_t i=1; i<transCorners.size(); i++)
         if (transCorners[i].x>x2d)
             x2d = transCorners[i].x;
     int x2v = (int)ceil(x2d);
 
     double y2d = transCorners[0].y;
-    for (int i=1; i<transCorners.size(); i++)
+    for (size_t i=1; i<transCorners.size(); i++)
         if (transCorners[i].y>y2d)
             y2d = transCorners[i].y;
     int y2v = (int)ceil(y2d);
@@ -328,10 +319,10 @@ void ImProcFunctions::transformNonSep (Imagefloat* original, Imagefloat* transfo
                 if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
                     cubint (original, xc-1, yc-1, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]), vignmul);
                 else { // edge pixels
-                	int y1 = CLIPTO(yc,   0, original->height-1);
-                	int y2 = CLIPTO(yc+1, 0, original->height-1);
-                	int x1 = CLIPTO(xc,   0, original->width-1);
-                	int x2 = CLIPTO(xc+1, 0, original->width-1);
+                	int y1 = LIM(yc,   0, original->height-1);
+                	int y2 = LIM(yc+1, 0, original->height-1);
+                	int x1 = LIM(xc,   0, original->width-1);
+                	int x2 = LIM(xc+1, 0, original->width-1);
                     transformed->r[y][x] = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
                     transformed->g[y][x] = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
                     transformed->b[y][x] = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
@@ -453,10 +444,10 @@ void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transforme
 					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
                         cubintch (chorig[c], xc-1, yc-1, Dx, Dy, &(chtrans[c][y][x]), vignmul);
 					else { // edge pixels
-						int y1 = CLIPTO(yc,   0, original->height-1);
-						int y2 = CLIPTO(yc+1, 0, original->height-1);
-						int x1 = CLIPTO(xc,   0, original->width-1);
-						int x2 = CLIPTO(xc+1, 0, original->width-1);
+						int y1 = LIM(yc,   0, original->height-1);
+						int y2 = LIM(yc+1, 0, original->height-1);
+						int x1 = LIM(xc,   0, original->width-1);
+						int x2 = LIM(xc+1, 0, original->width-1);
                         chtrans[c][y][x] = vignmul*(chorig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chorig[c][y1][x2]*Dx*(1.0-Dy) + chorig[c][y2][x1]*(1.0-Dx)*Dy + chorig[c][y2][x2]*Dx*Dy);
 					}
 				}
@@ -557,10 +548,10 @@ void ImProcFunctions::simpltransform (Imagefloat* original, Imagefloat* transfor
                     transformed->b[y][x] = vignmul*(original->b[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->b[yc][xc+1]*Dx*(1.0-Dy) + original->b[yc+1][xc]*(1.0-Dx)*Dy + original->b[yc+1][xc+1]*Dx*Dy);
                 }
                 else { // edge pixels
-                	int y1 = CLIPTO(yc,   0, original->height-1);
-                	int y2 = CLIPTO(yc+1, 0, original->height-1);
-                	int x1 = CLIPTO(xc,   0, original->width-1);
-                	int x2 = CLIPTO(xc+1, 0, original->width-1);
+                	int y1 = LIM(yc,   0, original->height-1);
+                	int y2 = LIM(yc+1, 0, original->height-1);
+                	int x1 = LIM(xc,   0, original->width-1);
+                	int x2 = LIM(xc+1, 0, original->width-1);
                     transformed->r[y][x] = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
                     transformed->g[y][x] = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
                     transformed->b[y][x] = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);

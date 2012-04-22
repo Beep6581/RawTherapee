@@ -25,8 +25,6 @@
 	
 #include "rt_math.h"
 
-#define D50x 0.96422
-#define D50z 0.82521
 #define u0 4.0*D50x/(D50x+15+3*D50z)
 #define v0 9.0/(D50x+15+3*D50z)
 

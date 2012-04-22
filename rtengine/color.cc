@@ -25,9 +25,6 @@ using namespace std;
 
 namespace rtengine {
 
-#undef MAXVAL
-#define MAXVAL  0xffff
-
 #define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
 #define kappa	903.29630 //24389.0/27.0;
 

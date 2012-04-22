@@ -163,13 +163,13 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
             options.loadSaveProfilePath = Glib::path_get_dirname(fname);
 
             bool hasext = true;
-            int dotpos = fname.find_last_of ('.');
+	    size_t dotpos = fname.find_last_of ('.');
             if (dotpos==Glib::ustring::npos)
                 hasext = false;
-            int dirpos1 = fname.find_last_of ('/');
+	    size_t dirpos1 = fname.find_last_of ('/');
             if (dirpos1!=Glib::ustring::npos && dirpos1>dotpos)
                 hasext = false;
-            int dirpos2 = fname.find_last_of ('\\');
+	    size_t dirpos2 = fname.find_last_of ('\\');
             if (dirpos2!=Glib::ustring::npos && dirpos2>dotpos)
                 hasext = false;
 

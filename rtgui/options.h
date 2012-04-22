@@ -118,7 +118,7 @@ class Options {
     Glib::ustring customProfileBuilder;
     int editorToSendTo;   
     int maxThumbnailHeight;
-    int maxCacheEntries;
+    std::size_t maxCacheEntries;
     ThFileType thumbnailFormat;
     int thumbInterp; // 0: nearest, 1: bilinear
     bool liveThumbnails;

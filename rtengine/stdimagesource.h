@@ -69,5 +69,5 @@ class StdImageSource : public ImageSource {
         void    hflip       (Imagefloat* im);
         void    vflip       (Imagefloat* im);
 };
-};
+}
 #endif

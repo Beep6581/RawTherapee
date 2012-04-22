@@ -19,8 +19,6 @@
 #include "stdimagesource.h"
 #include "mytime.h"
 #include "iccstore.h"
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 #include "curves.h"
 
 #undef THREAD_PRIORITY_NORMAL
@@ -508,7 +506,7 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
-    for (int i=0; i<red.size(); i++) {
+    for (size_t i=0; i<red.size(); i++) {
         transformPixel (red[i].x, red[i].y, tran, x, y);
         if (x>=0 && y>=0 && x<img->width && y<img->height) {
             reds += img->r[y][x];

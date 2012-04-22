@@ -3,7 +3,6 @@
 /*RT*/#undef MAX
 /*RT*/#undef MIN
 /*RT*/#undef ABS
-/*RT*/#include <algorithm>
 /*RT*/#include "rt_math.h"
 /*RT*/#define NO_LCMS
 /*RT*/#define NO_JPEG
@@ -182,13 +181,11 @@ struct ph1 {
 
 #define SQR(x) rtengine::SQR(x)
 #define ABS(x) (((int)(x) ^ ((int)(x) >> 31)) - ((int)(x) >> 31))
-#define MIN(a,b) rtengine::min(a,b)
-#define MAX(a,b) rtengine::max(a,b)
-#define LIM(x,min,max) MAX(min,MIN(x,max))
-#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
-#define CLIP(x) LIM(x,0,65535)
-#define CLIPD(x) LIM(x,0.0,65535.0)
-#define CLIPF(x) LIM(x,0.0f,65535.0f)
+#define MIN(a,b) rtengine::min(a,static_cast<typeof(a)>(b))
+#define MAX(a,b) rtengine::max(a,static_cast<typeof(a)>(b))
+#define LIM(x,min,max) rtengine::LIM(x,static_cast<typeof(x)>(min),static_cast<typeof(x)>(max))
+#define ULIM(x,y,z) rtengine::ULIM(x,static_cast<typeof(x)>(y),static_cast<typeof(x)>(z))
+#define CLIP(x) rtengine::CLIP(x)
 #define SWAP(a,b) { a=a+b; b=a-b; a=a-b; }
 
 /*
@@ -1185,7 +1182,7 @@ void CLASS nikon_compressed_load_raw()
       else	   hpred[col & 1] += diff;
       if ((ushort)(hpred[col & 1] + min) >= max) derror();
       if ((unsigned) (col-left_margin) < width)
-	BAYER(row,col-left_margin) = curve[LIM((short)hpred[col & 1],(short)0,(short)0x3fff)];
+	BAYER(row,col-left_margin) = curve[LIM((short)hpred[col & 1],0,0x3fff)];
     }
   }
   free (huff);
@@ -1421,7 +1418,7 @@ void CLASS phase_one_flat_field (int is_float, int nc)
 	  c = nc > 2 ? FC(row,col) : 0;
 	  if (!(c & 1)) {
 	    c = BAYER(row,col) * mult[c];
-	    BAYER(row,col) = LIM(c,0u,65535u);
+	    BAYER(row,col) = LIM(c,0,65535);
 	  }
 	  for (c=0; c < nc; c+=2)
 	    mult[c] += mult[c+1];
@@ -1465,7 +1462,7 @@ void CLASS phase_one_correct()
       poly[3] += (ph1.tag_210 - poly[7]) * poly[6] + 1;
       for (i=0; i < 0x10000; i++) {
 	num = (poly[5]*i + poly[3])*i + poly[1];
-	curve[i] = CLIPF(num);
+	curve[i] = LIM(num,0,65535);
       } goto apply;				/* apply to right half */
     } else if (tag == 0x41a) {			/* Polynomial curve */
       for (i=0; i < 4; i++)
@@ -1473,7 +1470,7 @@ void CLASS phase_one_correct()
       for (i=0; i < 0x10000; i++) {
 	for (num=0, j=4; j--; )
 	  num = num * i + poly[j];
-	curve[i] = CLIPF(num+i);
+	curve[i] = LIM(num+i,0,65535);
       } apply:					/* apply to whole image */
       for (row=0; row < height; row++)
 	for (col = (tag & 1)*ph1.split_col; col < width; col++)
@@ -3684,7 +3681,7 @@ void CLASS wavelet_denoise()
       hpass = lpass;
     }
     for (i=0; i < size; i++)
-      image[i][c] = CLIPF(SQR(fimg[i]+fimg[lpass+i])/0x10000);
+      image[i][c] = CLIP(SQR(fimg[i]+fimg[lpass+i])/0x10000);
   }
   if (filters && colors == 3) {  /* pull G1 and G3 closer together */
     for (row=0; row < 2; row++) {
@@ -3710,7 +3707,7 @@ void CLASS wavelet_denoise()
 	if      (diff < -thold) diff += thold;
 	else if (diff >  thold) diff -= thold;
 	else diff = 0;
-	BAYER(row,col) = CLIPD(SQR(avg+diff) + 0.5);
+	BAYER(row,col) = CLIP(SQR(avg+diff) + 0.5);
       }
     }
   }
@@ -3730,8 +3727,8 @@ void CLASS scale_colors()
     memcpy (pre_mul, user_mul, sizeof pre_mul);
   if (use_auto_wb || (use_camera_wb && cam_mul[0] == -1)) {
     memset (dsum, 0, sizeof dsum);
-    bottom = MIN (greybox[1]+greybox[3], static_cast<unsigned int>(height));
-    right  = MIN (greybox[0]+greybox[2], static_cast<unsigned int>(width));
+    bottom = MIN (greybox[1]+greybox[3], height);
+    right  = MIN (greybox[0]+greybox[2], width);
     for (row=greybox[1]; row < bottom; row += 8)
       for (col=greybox[0]; col < right; col += 8) {
 	memset (sum, 0, sizeof sum);
@@ -4085,7 +4082,7 @@ void CLASS ppg_interpolate()
 		    ABS(pix[-3*d][1] - pix[-d][1]) ) * 2;
       }
       d = dir[i = diff[0] > diff[1]];
-      pix[0][1] = ULIM(guess[i] >> 2, static_cast<int>(pix[d][1]), static_cast<int>(pix[-d][1]));
+      pix[0][1] = ULIM(guess[i] >> 2, pix[d][1], pix[-d][1]);
     }
 /*  Calculate red and blue for each green pixel:		*/
   for (row=1; row < height-1; row++)
@@ -4158,10 +4155,10 @@ void CLASS ahd_interpolate()
 	  pix = image + row*width+col;
 	  val = ((pix[-1][1] + pix[0][c] + pix[1][1]) * 2
 		- pix[-2][c] - pix[2][c]) >> 2;
-	  rgb[0][row-top][col-left][1] = ULIM(val,static_cast<int>(pix[-1][1]),static_cast<int>(pix[1][1]));
+	  rgb[0][row-top][col-left][1] = ULIM(val,pix[-1][1],pix[1][1]);
 	  val = ((pix[-width][1] + pix[0][c] + pix[width][1]) * 2
 		- pix[-2*width][c] - pix[2*width][c]) >> 2;
-	  rgb[1][row-top][col-left][1] = ULIM(val,static_cast<int>(pix[-width][1]),static_cast<int>(pix[width][1]));
+	  rgb[1][row-top][col-left][1] = ULIM(val,pix[-width][1],pix[width][1]);
 	}
       }
 /*  Interpolate red and blue, and convert to CIELab:		*/
@@ -4292,7 +4289,7 @@ void CLASS blend_highlights()
       if (c == colors) continue;
       FORCC {
 	cam[0][c] = image[row*width+col][c];
-	cam[1][c] = MIN(cam[0][c],static_cast<float>(clip));
+	cam[1][c] = MIN(cam[0][c],clip);
       }
       for (i=0; i < 2; i++) {
 	FORCC for (lab[i][c]=j=0; j < colors; j++)
@@ -4791,7 +4788,7 @@ void CLASS parse_gps (int base)
       case 6:
 	FORC(2) gpsdata[18+c] = get4();			break;
       case 18: case 29:
-	fgets ((char *) (gpsdata+14+tag/3), MIN(len,12u), ifp);
+	fgets ((char *) (gpsdata+14+tag/3), MIN(len,12), ifp);
     }
     fseek (ifp, save, SEEK_SET);
   }
@@ -6822,16 +6819,16 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 5413,-1162,-365,-5665,13098,2866,-608,1179,8440 } },
     { "SONY DSLR-A900", 128, 0, /* RT */
 	{ 5715,-1433,-410,-5603,12937,2989,-644,1247,8372 } },
+    { "SONY NEX-5N", 138, 0, /* RT - Colin Walker */
+	{ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
+    { "SONY NEX-C3", 128, 0,  /* RT - Colin Walker */
+	{ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
     { "SONY NEX-3", 128, 0, /* RT - Colin Walker */
 	{ 5145,-741,-123,-4915,12310,2945,-794,1489,6906 } },
     { "SONY NEX-5", 128, 0, /* RT - Colin Walker */
 	{ 5154,-716,-115,-5065,12506,2882,-988,1715,6800 } },
     { "SONY NEX-7", 128, 0,
 	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
-    { "SONY NEX-C3", 128, 0,  /* RT - Colin Walker */
-	{ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
-    { "SONY NEX-5N", 138, 0, /* RT - Colin Walker */
-	{ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
     { "SONY SLT-A33", 128, 0,
 	{ 6069,-1221,-366,-5221,12779,2734,-1024,2066,6834 } },
     { "SONY SLT-A35", 128, 0,
@@ -7189,7 +7186,8 @@ void CLASS identify()
     parse_redcine();
     load_raw = &CLASS redcine_load_raw;
     gamma_curve (1/2.4, 12.92, 1, 4095);
-    filters = 0x49494949;  } else if (!memcmp (head,"DSC-Image",9))
+    filters = 0x49494949;
+  } else if (!memcmp (head,"DSC-Image",9))
     parse_rollei();
   else if (!memcmp (head,"PWAD",4))
     parse_sinar_ia();
@@ -9268,6 +9266,10 @@ cleanup:
   return status;
 }
 */
+/*RT*/#undef SQR
 /*RT*/#undef MAX
 /*RT*/#undef MIN
 /*RT*/#undef ABS
+/*RT*/#undef LIM
+/*RT*/#undef ULIM
+/*RT*/#undef CLIP

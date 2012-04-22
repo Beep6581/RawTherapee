@@ -364,5 +364,5 @@ extern const TagAttrib sonyAttribs[];
 extern const TagAttrib sonyCameraSettingsAttribs[];
 extern const TagAttrib sonyCameraSettingsAttribs2[];
 extern const TagAttrib olympusAttribs[];
-};
+}
 #endif

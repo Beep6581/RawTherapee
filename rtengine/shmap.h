@@ -40,5 +40,5 @@ class SHMap {
 	void dirpyr_shmap       (float ** data_fine, float ** data_coarse, 
 							 int width, int height, LUTf & rangefn, int level, int scale);
 };
-};
+}
 #endif

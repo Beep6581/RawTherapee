@@ -255,6 +255,6 @@ const TagAttrib fujiAttribs[] = {
  {0, 1, 0, 0, 0x8002, "OrderNumber", &stdInterpreter},
  {0, 1, 0, 0, 0x8003, "FrameNumber", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
-};
+}
 #endif
 

@@ -19,7 +19,7 @@
 #include <cmath>
 #include <cstring>
 #include <cstdio>
-#include <algorithm>
+#include "rt_math.h"
 
 #include "utils.h"
 #include "rt_math.h"
