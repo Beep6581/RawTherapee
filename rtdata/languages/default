@@ -478,7 +478,7 @@ MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
-MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue process first.
+MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 MAIN_MSG_JOBSINQUEUE;job(s) in the queue
 MAIN_MSG_NAVIGATOR;Navigator
 MAIN_MSG_PLACES;Places
@@ -940,6 +940,11 @@ TP_ICM_LABEL;Color Management
 TP_ICM_NOICM;No ICM: sRGB output
 TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
 TP_ICM_OUTPUTPROFILE;Output Profile
+TP_ICM_PREFERREDPROFILE;Preferred DCP profile
+TP_ICM_PREFERREDPROFILE_1;Daylight
+TP_ICM_PREFERREDPROFILE_2;Tungsten
+TP_ICM_PREFERREDPROFILE_3;Fluorescent
+TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Save reference image for profiling
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction

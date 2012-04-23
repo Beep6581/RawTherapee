@@ -26,6 +26,9 @@
 #include <string>
 
 namespace rtengine {
+    enum DCPLightType {
+        Daylight=1, Tungsten=2, Fluorescent=3, Flash=4
+    };
 
     class DCPProfile {
         struct HSBModify
@@ -35,20 +38,27 @@ namespace rtengine {
             float fValScale;
         };
 
-        double mColorMatrix[3][3];
-        double mXYZCAM[3][3];  // compatible to RTs xyz_cam 
-        HSBModify *aDeltas;
+        double mColorMatrix1[3][3],mColorMatrix2[3][3];
+        double mXYZCAM1[3][3],mXYZCAM2[3][3];  // compatible to RTs xyz_cam 
+        HSBModify *aDeltas1,*aDeltas2;
+        short iLightSource1,iLightSource2;
 
         int iHueDivisions, iSatDivisions, iValDivisions;
 
         int iHueStep, iValStep, iArrayCount;
 
+        void ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]);
+
+        const HSBModify* GetBestProfile(DCPLightType preferredProfile,  double (*mXYZCAM)[3]) const;
+
+        DCPLightType GetLightType(short iLightSource) const;
+
     public:
         DCPProfile(Glib::ustring fname);
         ~DCPProfile();
 
-        void Apply(Imagefloat *pImg, Glib::ustring workingSpace) const;
-        void Apply(Image16 *pImg, Glib::ustring workingSpace) const;
+        void Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const;
+        void Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const;
     };
 
     class DCPStore {
