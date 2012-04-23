@@ -165,6 +165,7 @@ void ParamsEdited::set (bool v) {
 	resize.enabled   = v;
 	icm.input        = v;
     icm.blendCMSMatrix = v;
+    icm.preferredProfile = v;
 	icm.working      = v;
 	icm.output       = v;
 	icm.gamma		= v;
@@ -357,6 +358,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         icm.input = icm.input && p.icm.input == other.icm.input;
         icm.blendCMSMatrix = icm.blendCMSMatrix && p.icm.blendCMSMatrix == other.icm.blendCMSMatrix;
+        icm.preferredProfile = icm.preferredProfile && p.icm.preferredProfile == other.icm.preferredProfile;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
         icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
@@ -544,6 +546,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (resize.enabled)	    toEdit.resize.enabled 	= mods.resize.enabled;
 	if (icm.input)		    toEdit.icm.input 	    = mods.icm.input;
     if (icm.blendCMSMatrix)	toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
+    if (icm.preferredProfile) toEdit.icm.preferredProfile = mods.icm.preferredProfile;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output       = mods.icm.output;
 	//if (icm.gampos)		    toEdit.icm.gampos       = mods.icm.gampos;

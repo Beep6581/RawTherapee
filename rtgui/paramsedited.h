@@ -303,6 +303,7 @@ class ColorManagementParamsEdited {
     public:
         bool input;
         bool blendCMSMatrix;
+        bool preferredProfile;
         bool working;
         bool output;
 		bool gamma;

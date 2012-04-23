@@ -31,32 +31,32 @@ using namespace rtengine;
 using namespace rtexif;
 
 DCPProfile::DCPProfile(Glib::ustring fname) {
+    const int TIFFFloatSize=4;
     const int TagColorMatrix1=50721, TagColorMatrix2=50722, TagProfileHueSatMapDims=50937;
     const int TagProfileHueSatMapData1=50938, TagProfileHueSatMapData2=50939;
     const int TagCalibrationIlluminant1=50778, TagCalibrationIlluminant2=50779;
     const int TagProfileLookTableData=50982, TagProfileLookTableDims=50981;  // ProfileLookup is the low quality variant
 
-    aDeltas=NULL; iHueDivisions=iSatDivisions=iValDivisions=iArrayCount=0;
+    aDeltas1=aDeltas2=NULL; iHueDivisions=iSatDivisions=iValDivisions=iArrayCount=0;
 
     FILE *pFile = safe_g_fopen(fname, "rb");
 
     TagDirectory *tagDir=ExifManager::parseTIFF(pFile, false);
 
-    // If there are two profiles, check what is the best target to take
-    // We don't mix the profiles as adobe does, since with more and more non-tungsten light
-    // it makes no sense. Take the daylight reference light
-    Tag* tag = tagDir->getTag(TagCalibrationIlluminant2);
-    bool hasSecondHueSat = tagDir->getTag(TagProfileHueSatMapData2)!=NULL;  // some profiles have two matrices but just one huesat
-    bool use2nd = (tag!=NULL && tag->toInt(0,SHORT)>=20 && tag->toInt(0,SHORT)<=23);
+    Tag* tag = tagDir->getTag(TagCalibrationIlluminant1); iLightSource1 = (tag!=NULL ? tag->toInt(0,SHORT) : -1);  
+    tag = tagDir->getTag(TagCalibrationIlluminant2); iLightSource2 = (tag!=NULL ? tag->toInt(0,SHORT) : -1);
 
-    // Color Matrix
-    tag = tagDir->getTag( use2nd ? TagColorMatrix2 : TagColorMatrix1);
+    bool hasSecondHueSat = tagDir->getTag(TagProfileHueSatMapData2)!=NULL;  // some profiles have two matrices, but just one huesat
+
+    // Color Matrix (1 is always there)
+    tag = tagDir->getTag(TagColorMatrix1);
 
     for (int row=0;row<3;row++) { 
         for (int col=0;col<3;col++) {
-            mColorMatrix[col][row]=(float)tag->toDouble((col+row*3)*8);
+            mColorMatrix1[col][row]=(float)tag->toDouble((col+row*3)*8);
         }
     }
+    ConvertDNGMatrix2XYZCAM(mColorMatrix1,mXYZCAM1);
 
     // LUT profile? Divisions counts
     bool useSimpleLookup=false;
@@ -70,24 +70,61 @@ DCPProfile::DCPProfile(Glib::ustring fname) {
         iHueDivisions=tag->toInt(0); iSatDivisions=tag->toInt(4); iValDivisions=tag->toInt(8);
 
         // Saturation maps. Need to be unwinded.
-        tag = tagDir->getTag(useSimpleLookup ? TagProfileLookTableData : ( use2nd && hasSecondHueSat ? TagProfileHueSatMapData2 : TagProfileHueSatMapData1));
+        tag = tagDir->getTag(useSimpleLookup ? TagProfileLookTableData : TagProfileHueSatMapData1);
         iArrayCount = tag->getCount()/3;
 
-        aDeltas=new HSBModify[iArrayCount];
+        aDeltas1=new HSBModify[iArrayCount];
 
-        const int TIFFFloatSize=4;
         for (int i=0;i<iArrayCount;i++) {
-            aDeltas[i].fHueShift=tag->toDouble((i*3)*TIFFFloatSize);
-            aDeltas[i].fSatScale=tag->toDouble((i*3+1)*TIFFFloatSize);
-            aDeltas[i].fValScale=tag->toDouble((i*3+2)*TIFFFloatSize);
+            aDeltas1[i].fHueShift=tag->toDouble((i*3)*TIFFFloatSize);
+            aDeltas1[i].fSatScale=tag->toDouble((i*3+1)*TIFFFloatSize);
+            aDeltas1[i].fValScale=tag->toDouble((i*3+2)*TIFFFloatSize);
+        }
+    }
+
+    // For second profile, copy everything from first profile is no better data is available
+    if (iLightSource2!=-1) {
+        // Second matrix
+        tag = tagDir->getTag(TagColorMatrix2);
+
+        for (int row=0;row<3;row++) { 
+            for (int col=0;col<3;col++) {
+                mColorMatrix2[col][row]= (tag!=NULL ? (float)tag->toDouble((col+row*3)*8) : mColorMatrix1[col][row]);
+            }
+        }
+
+        ConvertDNGMatrix2XYZCAM(mColorMatrix2,mXYZCAM2);
+
+        // Second huesatmap, or copy of first
+        if (hasSecondHueSat) {
+            aDeltas2=new HSBModify[iArrayCount];
+
+            // Saturation maps. Need to be unwinded.
+            tag = tagDir->getTag(TagProfileHueSatMapData2);
+
+            for (int i=0;i<iArrayCount;i++) {
+                aDeltas2[i].fHueShift=tag->toDouble((i*3)*TIFFFloatSize);
+                aDeltas2[i].fSatScale=tag->toDouble((i*3+1)*TIFFFloatSize);
+                aDeltas2[i].fValScale=tag->toDouble((i*3+2)*TIFFFloatSize);
+            }
+        } else {
+            if (aDeltas1!=NULL) {
+                aDeltas2=new HSBModify[iArrayCount];
+                for (int i=0;i<iArrayCount;i++) aDeltas2[i]=aDeltas1[i];
+            }
         }
     }
 
     if (pFile!=NULL) fclose(pFile);
     delete tagDir;
+}
 
-    if (iArrayCount>0) {
+DCPProfile::~DCPProfile() {
+    delete[] aDeltas1; delete[] aDeltas2;
+}
+
         // Convert DNG color matrix to xyz_cam compatible matrix
+void DCPProfile::ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]) {
         int i,j,k;
 
         double cam_xyz[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -114,20 +151,65 @@ DCPProfile::DCPProfile(Glib::ustring fname) {
         double rgb_cam[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         RawImageSource::inverse33 (cam_rgb, rgb_cam);
 
-        memset(mXYZCAM,0,sizeof(mXYZCAM));
+    for (i=0; i<3; i++)
+        for (j=0; j<3; j++) mXYZCAM[i][j]=0;
+
         for (i=0; i<3; i++)
             for (j=0; j<3; j++)
                 for (k=0; k<3; k++)
                     mXYZCAM[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
     }
+
+
+const DCPProfile::HSBModify* DCPProfile::GetBestProfile(DCPLightType preferredProfile, double (*mXYZCAM)[3]) const {
+    bool use2=false;
+
+    if (iLightSource2!=-1) {
+        DCPLightType t1=GetLightType(iLightSource1); DCPLightType t2=GetLightType(iLightSource2);
+
+        // usually second is the daylight (default if nothing else found)
+        if (t2==Daylight) use2=true;
+
+        switch (preferredProfile) {
+            case Tungsten:
+                if (t1==Tungsten) use2=false; else if (t2==Tungsten) use2=true;
+                break;
+
+            case Fluorescent:
+                if (t1==Fluorescent) use2=false; else if (t2==Fluorescent) use2=true;
+                break;
+
+            case Flash:
+                if (t1==Flash) use2=false; else if (t2==Flash) use2=true;
+                break;
+
+            default: break;  // e.g. Daylight
+        }
 }
 
-DCPProfile::~DCPProfile() {
-    delete[] aDeltas;
+    // printf("DCP using LightSource %i: %i for requested %i\n", use2?2:1, use2?iLightSource2:iLightSource1, (int)preferredProfile);
+
+    for (int row=0;row<3;row++) { 
+        for (int col=0;col<3;col++) {
+            mXYZCAM[col][row]= (use2 ? mXYZCAM2[col][row] : mXYZCAM1[col][row]);
+        }
 }
 
-void DCPProfile::Apply(Imagefloat *pImg, Glib::ustring workingSpace) const {
+    return use2?aDeltas2:aDeltas1;
+}
+
+DCPLightType DCPProfile::GetLightType(short iLightSource) const {
+    if (iLightSource==3 ||  iLightSource==17 || iLightSource==24) return Tungsten;
+    if (iLightSource==2 || (iLightSource>=12 && iLightSource<=15)) return Fluorescent;
+    if (iLightSource==4) return Flash;
+    return Daylight;
+}
+
+void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const {
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
+
+    double mXYZCAM[3][3]; 
+    const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
 
     if (iArrayCount==0) {
         //===== No LUT- Calculate matrix for direct conversion raw>working space
@@ -172,8 +254,6 @@ void DCPProfile::Apply(Imagefloat *pImg, Glib::ustring workingSpace) const {
         int maxHueIndex0 = iHueDivisions - 1;
         int maxSatIndex0 = iSatDivisions - 2;
         int maxValIndex0 = iValDivisions - 2;
-
-        const HSBModify *tableBase = aDeltas;
 
         int hueStep = iSatDivisions;
         int valStep = iHueDivisions * hueStep;
@@ -342,8 +422,11 @@ void DCPProfile::Apply(Imagefloat *pImg, Glib::ustring workingSpace) const {
 
 
 // Integer variant is legacy, only used for thumbs. Simply take the matrix here
-void DCPProfile::Apply(Image16 *pImg, Glib::ustring workingSpace) const {
+void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const {
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
+
+    double mXYZCAM[3][3]; 
+    const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
 
     // Calculate matrix for direct conversion raw>working space
     double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
