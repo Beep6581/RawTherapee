@@ -13,13 +13,13 @@ Auto=true
 Clip=0.0000
 Compensation=0
 Brightness=0
-Contrast=20
+Contrast=0
 Saturation=5
 Black=0
 HighlightCompr=0
 HighlightComprThreshold=33
 ShadowCompr=50
-Curve=1;0;0;0.45754265471370759;0.57906737998843294;1;1;
+Curve=0;
 
 [Channel Mixer]
 Red=100;0;0;
@@ -33,7 +33,7 @@ Saturation=5
 AvoidColorClipping=false
 SaturationLimiter=false
 SaturationLimit=50
-LCurve=3;0;0;0.84892086330935235;0.69064748201438808;1;1;
+LCurve=0;
 aCurve=0;
 bCurve=0;
 
