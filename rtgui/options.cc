@@ -73,8 +73,8 @@ void Options::setDefaults () {
     savePathTemplate = "%p1/converted/%f";
     savePathFolder = "";
     saveUsePathTemplate = true;
-    defProfRaw = "default";
-    defProfImg = "neutral";
+    defProfRaw = "Default";
+    defProfImg = "Neutral";
     dateFormat = "%y-%m-%d";
     adjusterDelay = 0;
     startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)

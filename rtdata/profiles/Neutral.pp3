@@ -10,7 +10,7 @@ InTrash=false
 
 [Exposure]
 Auto=false
-Clip=0.0000
+Clip=0
 Compensation=0
 Brightness=0
 Contrast=0
@@ -169,7 +169,7 @@ Height=900
 InputProfile=(cameraICC)
 BlendCMSMatrix=true
 WorkingProfile=sRGB
-OutputProfile=RT_sRGB
+OutputProfile=No ICM: sRGB output
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
@@ -207,7 +207,7 @@ HotDeadPixels=false
 HotDeadPixelThresh=40
 LineDenoise=0
 GreenEqThreshold=0
-CcSteps=1
+CcSteps=0
 Method=amaze
 DCBIterations=2
 DCBEnhance=false
