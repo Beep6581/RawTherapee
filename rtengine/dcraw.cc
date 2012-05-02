@@ -7616,6 +7616,11 @@ canon_cr2:
     width  = 5640;
     top_margin  = 20;
     left_margin = 62;
+  } else if (is_canon && raw_width == 5920) {
+    height = 3870;
+    width  = 5796;
+    top_margin  =  80;
+    left_margin = 122;
   } else if (!strcmp(model,"D1")) {
     cam_mul[0] *= 256/527.0;
     cam_mul[2] *= 256/317.0;
