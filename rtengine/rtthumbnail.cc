@@ -218,9 +218,12 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     tpp->autowbGreen=1.0;
 
     if (rotate && ri->get_rotateDegree() > 0) {
-        Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
-        delete tpp->thumbImg;
-        tpp->thumbImg = rot;
+    	// Leaf .mos, Mamiya .mef and Phase One files have thumbnails already rotated.
+    	if (ri->get_maker() != "Leaf" && ri->get_maker() != "Mamiya" && ri->get_maker() != "Phase One")  {
+            Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
+            delete tpp->thumbImg;
+            tpp->thumbImg = rot;
+    	}
     }
 
     tpp->init ();
