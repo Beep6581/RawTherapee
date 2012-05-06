@@ -673,10 +673,19 @@ fclose(f);*/
 		ave /= (sum);
 		
 		//find median of luminance
-		int median=0, count=0;
+		int median=0, count=histogram[0];
 		while (count<sum/2) {
 			median++;
 			count += histogram[median];
+		}
+		if (median==0) {//probably the image is a blackframe
+			expcomp=0;
+			black=0;
+			bright=0;
+			contr=0;
+			hlcompr=0;
+			hlcomprthresh=0;
+			return;
 		}
 		
 		// compute std dev on the high and low side of median 
@@ -702,6 +711,15 @@ fclose(f);*/
 			}
 			
 		}
+		if (losum==0 || hisum==0) {//probably the image is a blackframe
+			expcomp=0;
+			black=0;
+			bright=0;
+			contr=0;
+			hlcompr=0;
+			hlcomprthresh=0;
+			return;
+		}
 		lodev = (lodev/(log(2)*losum));
 		hidev = (hidev/(log(2)*hisum));
 		if (octile[7]>log(imax+1)/log2(2)) {
@@ -713,6 +731,16 @@ fclose(f);*/
 			ospread += (octile[i+1]-octile[i])/max(0.5f,(i>2 ? (octile[i+1]-octile[3]) : (octile[3]-octile[i])));
 		}
 		ospread /= 5;
+		if (ospread<=0) {//probably the image is a blackframe
+			expcomp=0;
+			black=0;
+			bright=0;
+			contr=0;
+			hlcompr=0;
+			hlcomprthresh=0;
+			return;
+		}
+		
 		
 		// compute clipping points based on the original histograms (linear, without exp comp.)
 		int clipped = 0;
@@ -747,7 +775,7 @@ fclose(f);*/
 		shc <<= histcompr;
 		
 		//prevent division by 0
-		if (ave==0) ave=1;
+		if (ave<1) return;
 		if (lodev==0) lodev=1;
 		
 		//compute exposure compensation as geometric mean of the amount that
