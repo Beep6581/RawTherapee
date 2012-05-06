@@ -52,7 +52,7 @@ public:
 
 	struct JobCompare
 	{
-		bool operator()(const Job& lhs, const Job& rhs)
+		bool operator()(const Job& lhs, const Job& rhs) const
 		{
 			if ( lhs.dir_id_ == rhs.dir_id_ )
 			{

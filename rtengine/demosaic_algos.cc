@@ -1253,7 +1253,7 @@ void RawImageSource::refinement_lassus()
 #define TILEBORDER 10
 #define CACHESIZE (TILESIZE+2*TILEBORDER)
 
-inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border)
+inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border) const
 {
 	rowMin = border;
 	colMin = border;
@@ -1305,7 +1305,7 @@ void RawImageSource::fill_border( float (*cache )[4], int border, int x0, int y0
 	}
 }
 // saves red and blue
-void RawImageSource::copy_to_buffer( float (*buffer)[3], float (*image)[4])
+void RawImageSource::copy_to_buffer( float (*buffer)[3], float (*image)[4]) const
 {
 	for (int indx=0; indx < CACHESIZE*CACHESIZE; indx++) {
 		buffer[indx][0]=image[indx][0]; //R
@@ -1314,7 +1314,7 @@ void RawImageSource::copy_to_buffer( float (*buffer)[3], float (*image)[4])
 }
 
 // restores red and blue
-void RawImageSource::restore_from_buffer(float (*image)[4], float (*buffer)[3])
+void RawImageSource::restore_from_buffer(float (*image)[4], float (*buffer)[3]) const
 {
 	for (int indx=0; indx < CACHESIZE*CACHESIZE; indx++) {
 		image[indx][0]=buffer[indx][0]; //R

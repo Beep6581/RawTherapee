@@ -261,7 +261,7 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
             ttip = parent->fd[i]->getToolTip (x, y);
             break;
         }
-    if (ttip!="") {
+    if (!ttip.empty()) {
         tooltip->set_text (ttip);
         return true;
     }

@@ -52,7 +52,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot) {
     if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
     
     if (eroot) {
-        rtexif::TagDirectory* td = ((rtexif::TagDirectory*)eroot)->clone (NULL);
+        rtexif::TagDirectory* td = (const_cast<rtexif::TagDirectory*>(eroot))->clone (NULL);
 
         // make IPTC and XMP pass through
         td->keepTag(0x83bb);  // IPTC
@@ -78,7 +78,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
     if (exifRoot!=NULL) { delete exifRoot; exifRoot = NULL; }
     
     if (eroot)
-        exifRoot = ((rtexif::TagDirectory*)eroot)->clone (NULL);
+        exifRoot = (const_cast<rtexif::TagDirectory*>(eroot))->clone (NULL);
 
     if (iptc!=NULL) { iptc_data_free (iptc); iptc = NULL; }
     
@@ -89,7 +89,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
     iptc = iptc_data_new ();
     for (rtengine::procparams::IPTCPairs::const_iterator i=iptcc.begin(); i!=iptcc.end(); i++) {
         if (i->first == "Keywords" && !(i->second.empty())) {
-            for (unsigned int j=0; j<i->second.size(); j++) {
+            for (size_t j=0; j<i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
                 std::string loc = safe_locale_to_utf8(i->second.at(j));
@@ -100,7 +100,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
             continue;
         }
         else if (i->first == "SupplementalCategories" && !(i->second.empty())) {
-            for (unsigned int j=0; j<i->second.size(); j++) {
+            for (size_t j=0; j<i->second.size(); j++) {
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
                 std::string loc = safe_locale_to_utf8(i->second.at(j));
@@ -745,7 +745,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         if (iptcdata) 
             iptc_data_free_buf (iptc, iptcdata);
 
-        // The maximum lenght is strangely not the same than for the JPEG file...
+	// The maximum length is strangely not the same than for the JPEG file...
         // Which maximum length is the good one ?
         if (size>0 && size<165530)
             fwrite (buffer, size, 1, file);

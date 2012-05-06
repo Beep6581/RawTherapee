@@ -382,7 +382,7 @@ public:
 	}
     virtual std::string toString (Tag* t) {
     	int c = 256*t->toInt(0,BYTE) + t->toInt(1,BYTE);
-        std::map<int,std::string>::iterator r = choices.find (c);
+        std::map<int,std::string>::const_iterator r = choices.find (c);
         if (r!=choices.end()){
         	std::ostringstream s;
         	s << r->second;
@@ -423,10 +423,10 @@ public:
 		choices3[255] = "Video";
 	}
     virtual std::string toString (Tag* t) {
-        std::map<int,std::string>::iterator r  = choices.find (t->toInt(0,BYTE));
-        std::map<int,std::string>::iterator r1 = choices1.find (t->toInt(1,BYTE));
-        std::map<int,std::string>::iterator r2 = choices2.find (t->toInt(2,BYTE));
-        std::map<int,std::string>::iterator r3 = choices3.find (t->toInt(3,BYTE));
+        std::map<int,std::string>::const_iterator r  = choices.find (t->toInt(0,BYTE));
+		std::map<int,std::string>::const_iterator r1 = choices1.find (t->toInt(1,BYTE));
+		std::map<int,std::string>::const_iterator r2 = choices2.find (t->toInt(2,BYTE));
+		std::map<int,std::string>::const_iterator r3 = choices3.find (t->toInt(3,BYTE));
         std::ostringstream s;
         s << ((r !=choices.end())? r->second : "");
         s << ((r1!=choices1.end())? r1->second : "")<<" ";
@@ -888,7 +888,7 @@ public:
 		choices[0xa] = "Trailing-curtain Sync";
 	}
 	virtual std::string toString (Tag* t) {
-		std::map<int,std::string>::iterator r = choices.find (t->toInt(0,BYTE) >>4);
+		std::map<int,std::string>::const_iterator r = choices.find (t->toInt(0,BYTE) >>4);
 		if (r!=choices.end())
 			return r->second;
 		else {

@@ -107,7 +107,7 @@ void ProfilePanel::refreshProfileList () {
     // re-parse profile directories (deletes old ones)
     profileStore.parseProfiles ();
     pparams = profileStore.getProfileNames ();
-    for (unsigned int i=0; i<pparams.size(); i++)
+    for (size_t i=0; i<pparams.size(); i++)
         profiles->append_text (pparams[i]);
 
     if (custom)
@@ -125,7 +125,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
         return;
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    if (options.loadSaveProfilePath.length())
+    if (!options.loadSaveProfilePath.empty())
     dialog.set_current_folder (options.loadSaveProfilePath);
     else if (options.multiUser)
     dialog.set_current_folder (Options::rtdir + "/" + options.profilePath);
@@ -267,7 +267,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
         return;
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
-    if (options.loadSaveProfilePath.length())
+    if (!options.loadSaveProfilePath.empty())
         dialog.set_current_folder (options.loadSaveProfilePath);
     else if (options.multiUser)
     dialog.set_current_folder (Options::rtdir + "/" + options.profilePath);
@@ -442,7 +442,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
     pparams.clear ();
 
     pparams = profileStore.getProfileNames ();
-    for (unsigned int i=0; i<pparams.size(); i++)
+    for (size_t i=0; i<pparams.size(); i++)
         profiles->append_text (pparams[i]);
 
     if (custom) {

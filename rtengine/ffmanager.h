@@ -69,7 +69,7 @@ class FFManager
 {
 public:
 	void init( Glib::ustring pathname );
-	Glib::ustring getPathname(){ return currentPath; };
+	Glib::ustring getPathname() const { return currentPath; };
 	void getStat( int &totFiles, int &totTemplate);
 	RawImage *searchFlatField( const std::string &mak, const std::string &mod, const std::string &len, double focallength, double apert, time_t t );
 	RawImage *searchFlatField( const Glib::ustring filename );

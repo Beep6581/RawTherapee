@@ -57,7 +57,7 @@ std::vector<double> MyDiagonalCurve::get_vector (int veclen) {
         double prev =- 1.0;
         int active = 0;
         int firstact = -1;
-        for (int i = 0; i < (int)curve.x.size(); ++i)
+	for (size_t i = 0; i < curve.x.size(); ++i)
             if (curve.x[i] > prev) {
                 if (firstact < 0)
                   firstact = i;
@@ -125,7 +125,7 @@ void MyDiagonalCurve::draw (int handle) {
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevInnerHeight != innerHeight || (int)point.size() != innerWidth)
+    if (prevInnerHeight != innerHeight || point.size() != innerWidth)
         interpolate ();
 
     Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
@@ -198,10 +198,10 @@ void MyDiagonalCurve::draw (int handle) {
     if (curve.type==DCT_Parametric && activeParam>0 && lpoint.size()>1 && upoint.size()>1) {
         cr->set_source_rgba (0.0, 0.0, 0.0, 0.15);
         cr->move_to (upoint[0].get_x(), upoint[0].get_y());
-        for (int i=1; i<(int)upoint.size(); i++)
+	for (size_t i=1; i<upoint.size(); i++)
             cr->line_to (upoint[i].get_x(), upoint[i].get_y());
         cr->line_to (lpoint[lpoint.size()-1].get_x(), lpoint[lpoint.size()-1].get_y());
-        for (int i=(int)lpoint.size()-2; i>=0; i--)
+	for (size_t i=lpoint.size()-2; i>=0; i--)
             cr->line_to (lpoint[i].get_x(), lpoint[i].get_y());
         cr->line_to (upoint[0].get_x(), upoint[0].get_y());
         cr->fill ();
@@ -209,13 +209,13 @@ void MyDiagonalCurve::draw (int handle) {
 
     // draw the cage of the NURBS curve
     if (curve.type==DCT_NURBS) {
-    	unsigned int nbPoints;
+	size_t nbPoints;
         std::valarray<double> ch_ds (1);
         ch_ds[0] = 2;
         cr->set_dash (ch_ds, 0);
         cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
         std::vector<double> points = getPoints();
-        nbPoints = ((int)points.size()-1)/2;
+        nbPoints = (points.size()-1)/2;
         for (unsigned int i = 1; i < nbPoints; i++) {
             int pos = i*2+1;
 
@@ -239,13 +239,13 @@ void MyDiagonalCurve::draw (int handle) {
     // draw curve
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->move_to (point[0].get_x(), point[0].get_y());
-    for (int i=1; i<(int)point.size(); i++)
+    for (size_t i=1; i<point.size(); i++)
         cr->line_to (point[i].get_x(), point[i].get_y());
     cr->stroke ();
 
     // draw bullets
     if (curve.type!=DCT_Parametric)
-        for (int i = 0; i < (int)curve.x.size(); ++i) {
+        for (size_t i = 0; i < curve.x.size(); ++i) {
             if (curve.x[i] == -1) continue;
             if (snapToElmt >= 1000) {
                 int pt = snapToElmt-1000;
@@ -285,7 +285,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 	std::vector<double>::iterator itx, ity;
 
 	bool retval = false;
-	int num = (int)curve.x.size();
+	size_t num = curve.x.size();
 
 	/* innerWidth and innerHeight are the size of the graph */
 	innerWidth = get_allocation().get_width() - RADIUS * 2;
@@ -344,7 +344,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 					}
 					itx = curve.x.begin();
 					ity = curve.y.begin();
-					for (int i=0; i<closest_point; i++) { itx++; ity++; }
+					for (int i=0; i<closest_point; i++) { ++itx; ++ity; }
 					curve.x.insert (itx, 0);
 					curve.y.insert (ity, 0);
 					num++;
@@ -619,7 +619,7 @@ void MyDiagonalCurve::findClosestPoint() {
     closest_point = -1;
 
     if (curve.type!=DCT_Parametric) {
-        for (int i = 0; i < (int)curve.x.size(); i++) {
+        for (size_t i = 0; i < curve.x.size(); i++) {
             double dX = curve.x[i] - clampedX;
             double dY = curve.y[i] - clampedY;
             double currDistX = dX < 0. ? -dX : dX; //abs (dX);
@@ -642,7 +642,7 @@ std::vector<double> MyDiagonalCurve::getPoints () {
     std::vector<double> result;
     if (curve.type==DCT_Parametric) {
         result.push_back ((double)(DCT_Parametric));
-        for (int i=0; i<(int)curve.x.size(); i++) {
+	for (size_t i=0; i<curve.x.size(); i++) {
             result.push_back (curve.x[i]);
         }
     }
@@ -655,7 +655,7 @@ std::vector<double> MyDiagonalCurve::getPoints () {
         else if (curve.type==DCT_NURBS)
             result.push_back ((double)(DCT_NURBS));
         // then we push all the points coordinate
-        for (int i=0; i<(int)curve.x.size(); i++) {
+        for (size_t i=0; i<curve.x.size(); i++) {
             if (curve.x[i]>=0) {
                 result.push_back (curve.x[i]);
                 result.push_back (curve.y[i]);
@@ -672,13 +672,13 @@ void MyDiagonalCurve::setPoints (const std::vector<double>& p) {
     if (t==DCT_Parametric) {
         curve.x.clear ();
         curve.y.clear ();
-        for (int i=1; i<(int)p.size(); i++)
+	for (size_t i=1; i<p.size(); i++)
             curve.x.push_back (p[ix++]);
     }
     else {
         curve.x.clear ();
         curve.y.clear ();
-        for (int i=0; i<(int)p.size()/2; i++) {
+	for (size_t i=0; i<p.size()/2; i++) {
             curve.x.push_back (p[ix++]);
             curve.y.push_back (p[ix++]);
         }

@@ -51,11 +51,11 @@ class ImProcFunctions {
 		void firstAnalysisThread(Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
 		void dcdamping          (float** aI, float** aO, float damping, int W, int H);
 
-		bool needsCA            ();
-		bool needsDistortion    ();
-		bool needsRotation      ();
-		bool needsPerspective   ();
-		bool needsVignetting    ();
+		bool needsCA            () const;
+		bool needsDistortion    () const;
+		bool needsRotation      () const;
+		bool needsPerspective   () const;
+		bool needsVignetting    () const;
  //   static cmsUInt8Number* Mempro = NULL;		
 
 
@@ -108,7 +108,7 @@ class ImProcFunctions {
 
 		void setScale         (double iscale);
 
-		bool needsTransform   ();
+		bool needsTransform   () const;
 
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
@@ -116,8 +116,8 @@ class ImProcFunctions {
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
-		void skinsat 		  (float lum, float hue, float chrom, float &satreduc);//jacques Skin color
-		void MunsellLch 	  (float lum, float hue, float chrom, float memChprov, float &correction, int zone);//jacques:  Munsell correction
+		void skinsat 		  (float lum, float hue, float chrom, float &satreduc) const;//jacques Skin color
+		void MunsellLch 	  (float lum, float hue, float chrom, float memChprov, float &correction, int zone) const;//jacques:  Munsell correction
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
@@ -173,7 +173,7 @@ class ImProcFunctions {
 		void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
 
 		//void gamutmap(LabImage* );
-		void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
+		void gamutmap(float &X, float &Y, float &Z, const double p[3][3]) const;
 
 		static inline float f2xyz(float f) {
 			const float epsilonExpInv3 = 6.0/29.0;

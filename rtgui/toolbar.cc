@@ -92,7 +92,7 @@ void ToolBar::setTool (ToolMode tool) {
 
   if (tool==TMHand){
     handTool->set_active (true);
-    handTool->grab_focus();; // switch focus to the handTool button
+    handTool->grab_focus(); // switch focus to the handTool button
   }
   else if (tool==TMSpotWB)
     wbTool->set_active (true);

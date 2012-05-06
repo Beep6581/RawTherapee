@@ -89,7 +89,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         void drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr);
         void drawSpotWBRectangle (Cairo::RefPtr<Cairo::Context> cr);
         void drawObservedFrame   (Cairo::RefPtr<Cairo::Context> cr, int rw=0, int rh=0);
-        void translateCoord      (int phyx, int phyy, int& imgx, int& imgy);
+        void translateCoord      (int phyx, int phyy, int& imgx, int& imgy) const;
         void changeZoom          (int zoom, bool notify=true, int centerx=-1, int centery=-1);
         void getObservedFrameArea(int& x, int& y, int& w, int& h, int rw=0, int rh=0);
 
@@ -103,22 +103,22 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         void setObservedCropWin (CropWindow* cw)    { observedCropWin = cw; }
 
         void setPosition (int x, int y);
-        void getPosition (int& x, int& y);
+	void getPosition (int& x, int& y) const;
         void setSize     (int w, int h, bool norefresh=false);
-        void getSize     (int& w, int& h);
+	void getSize     (int& w, int& h) const;
 
         // zoomlistener interface
         void zoomIn      (bool toCursor=false, int cursorX=-1, int cursorY=-1);
         void zoomOut     (bool toCursor=false, int cursorX=-1, int cursorY=-1);
         void zoom11      ();
         void zoomFit     ();
-        double getZoom   ();
-        bool isMinZoom   ();
-        bool isMaxZoom   ();
+	double getZoom   () const;
+	bool isMinZoom   () const;
+	bool isMaxZoom   () const;
         void setZoom     (double zoom);
 
         void findCenter  (int deltaZoom, int& x, int& y);
-        bool isInside    (int x, int y);
+	bool isInside    (int x, int y) const;
 
 
         void buttonPress   (int button, int num, int state, int x, int y);
@@ -133,9 +133,9 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
 
         // crop handling
         void getCropRectangle (int& x, int& y, int& w, int& h);
-        void getCropPosition  (int& x, int& y);
+	void getCropPosition  (int& x, int& y) const;
         void setCropPosition  (int x, int y);
-        void getCropSize      (int& w, int& h);
+	void getCropSize      (int& w, int& h) const;
 
         // listeners
         void setCropGUIListener 	  (CropGUIListener* cgl) { cropgl = cgl; }

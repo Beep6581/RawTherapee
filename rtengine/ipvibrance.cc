@@ -1665,7 +1665,7 @@ _5GY80(maxInd);
 
 
 
-void ImProcFunctions::MunsellLch (float lum, float hue, float chrom, float memChprov, float &correction, int zone) {
+void ImProcFunctions::MunsellLch (float lum, float hue, float chrom, float memChprov, float &correction, int zone) const {
 	int x=(int) memChprov;
 	int y=(int) chrom;
 
@@ -1943,7 +1943,7 @@ void ImProcFunctions::MunsellLch (float lum, float hue, float chrom, float memCh
  * pay attention to white balance, and do not change hue and saturation, upstream of the modification
  *
  */
-void ImProcFunctions::skinsat (float lum, float hue, float chrom, float &satreduc) {
+void ImProcFunctions::skinsat (float lum, float hue, float chrom, float &satreduc) const {
 
 	float reduction=0.3;// to be adapted...by tests
 	float extendedreduction=0.4;

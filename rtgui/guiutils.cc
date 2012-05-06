@@ -27,8 +27,8 @@ using namespace std;
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference) {
 
     Glib::ListHandle<Gtk::Widget*> list = cont->get_children ();
-    Glib::ListHandle<Gtk::Widget*>::iterator i = list.begin ();
-    for (; i!=list.end() && *i!=w; i++);
+	Glib::ListHandle<Gtk::Widget*>::const_iterator i = list.begin ();
+    for (; i!=list.end() && *i!=w; ++i);
     if (i!=list.end()) {
         if (increference)
             w->reference ();

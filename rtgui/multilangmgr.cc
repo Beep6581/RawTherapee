@@ -85,8 +85,8 @@ bool MultiLangMgr::save (Glib::ustring fname) {
     if (f==NULL)
         return false;
 
-    std::map<std::string, Glib::ustring>::iterator r;
-    for (r=transTable.begin (); r!=transTable.end(); r++)
+	std::map<std::string, Glib::ustring>::const_iterator r;
+    for (r=transTable.begin (); r!=transTable.end(); ++r)
         fprintf (f, "%s;%s\n", r->first.c_str(), safe_locale_from_utf8(r->second).c_str());
 
     fclose (f);
@@ -94,7 +94,7 @@ bool MultiLangMgr::save (Glib::ustring fname) {
 }
         
 
-bool MultiLangMgr::isOSLanguageDetectSupported() {
+bool MultiLangMgr::isOSLanguageDetectSupported() const {
 #ifdef WIN32
     #ifdef __MINGW64_VERSION_MAJOR
     // Only on Vista or above
@@ -175,7 +175,7 @@ Glib::ustring MultiLangMgr::TranslateRFC2Language(Glib::ustring rfcName) {
 
 Glib::ustring MultiLangMgr::getStr (std::string key) {
 
-    std::map<std::string, Glib::ustring>::iterator r = transTable.find (key);
+	std::map<std::string, Glib::ustring>::const_iterator r = transTable.find (key);
     if (r!=transTable.end()) 
         return r->second;
     else if (fallBack)

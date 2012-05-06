@@ -111,7 +111,7 @@ void dfInfo::updateRawImage()
 {
 	typedef unsigned int acc_t;
 	if( !pathNames.empty() ){
-		std::list<Glib::ustring>::iterator iName = pathNames.begin();
+		std::list<Glib::ustring>::const_iterator iName = pathNames.begin();
 		ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
 		if( ri->loadRaw(true)){
 			delete ri;
@@ -131,7 +131,7 @@ void dfInfo::updateRawImage()
 					acc[row][col] = ri->data[row][col];
 			int nFiles = 1; // First file data already loaded
 
-			for( iName++; iName != pathNames.end(); iName++){
+			for(++iName; iName != pathNames.end(); ++iName){
 				RawImage* temp = new RawImage(*iName);
 				if( !temp->loadRaw(true)){
 					temp->compress_image();		//\ TODO would be better working on original, because is temporary
@@ -226,7 +226,7 @@ void DFManager::init( Glib::ustring pathname )
         }catch( std::exception& e ){}
     }
     // Where multiple shots exist for same group, move filename to list
-    for( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
+    for(dfList_t::iterator iter = dfList.begin(); iter != dfList.end(); ++iter){
     	dfInfo &i = iter->second;
     	if( !i.pathNames.empty() && !i.pathname.empty() ){
     		i.pathNames.push_back( i.pathname );
@@ -237,7 +237,7 @@ void DFManager::init( Glib::ustring pathname )
 			   printf( "%s:  %s\n",i.key().c_str(),i.pathname.c_str());
 			else{
 				printf( "%s: MEAN of \n    ",i.key().c_str());
-				for( std::list<Glib::ustring>::iterator iter = i.pathNames.begin(); iter != i.pathNames.end();iter++  )
+				for(std::list<Glib::ustring>::const_iterator iter = i.pathNames.begin(); iter != i.pathNames.end(); ++iter)
 					printf( "%s, ", iter->c_str() );
 				printf("\n");
 			}
@@ -280,7 +280,7 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename ,bool pool )
 				   iter = dfList.insert(std::pair< std::string,dfInfo>( key,n ) );
         	   }else{
         		   while( iter != dfList.end() && iter->second.key() == key && ABS(iter->second.timestamp - idata.getDateTimeAsTS()) >60*60*6 ) // 6 hour difference
-        			   iter++;
+        			   ++iter;
 
         		   if( iter != dfList.end() )
         		      iter->second.pathNames.push_back( filename );
@@ -300,14 +300,15 @@ void DFManager::getStat( int &totFiles, int &totTemplates)
 {
 	totFiles=0;
 	totTemplates=0;
-    for( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
+	for(dfList_t::iterator iter = dfList.begin(); iter != dfList.end(); ++iter) {
     	dfInfo &i = iter->second;
     	if( i.pathname.empty() ){
     		totTemplates++;
     		totFiles += i.pathNames.size();
-    	}else
+		} else {
     		totFiles++;
     }
+}
 }
 
 /*  The search for the best match is twofold:
@@ -324,7 +325,7 @@ dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int iso
 	if(  iter != dfList.end() ){
 		dfList_t::iterator bestMatch = iter;
 		time_t bestDeltaTime = ABS(iter->second.timestamp - t);
-		for(iter++; iter != dfList.end() && !key.compare( iter->second.key() ); iter++ ){
+		for(++iter; iter != dfList.end() && !key.compare( iter->second.key()); ++iter){
 			time_t d = ABS(iter->second.timestamp - t );
 			if( d< bestDeltaTime ){
 				bestMatch = iter;
@@ -336,7 +337,7 @@ dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int iso
 		iter = dfList.begin();
 		dfList_t::iterator bestMatch = iter;
 		double bestD = iter->second.distance(  mak, mod, isospeed, shut );
-		for( iter++; iter != dfList.end();iter++ ){
+		for(++iter; iter != dfList.end(); ++iter){
            double d = iter->second.distance(  mak, mod, isospeed, shut );
            if( d < bestD ){
         	   bestD = d;
@@ -358,7 +359,7 @@ RawImage* DFManager::searchDarkFrame( const std::string &mak, const std::string 
 
 RawImage* DFManager::searchDarkFrame( const Glib::ustring filename )
 {
-	for ( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
+	for (dfList_t::iterator iter = dfList.begin(); iter != dfList.end(); ++iter){
 		if( iter->second.pathname.compare( filename )==0  )
 			return iter->second.getRawImage();
 	}
@@ -369,7 +370,7 @@ RawImage* DFManager::searchDarkFrame( const Glib::ustring filename )
 }
 std::list<badPix> *DFManager::getHotPixels ( const Glib::ustring filename )
 {
-	for ( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
+	for (dfList_t::iterator iter = dfList.begin(); iter != dfList.end(); ++iter){
 		if( iter->second.pathname.compare( filename )==0  )
 			return &iter->second.getHotPixels();
 	}

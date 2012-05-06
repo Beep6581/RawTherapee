@@ -33,7 +33,7 @@ void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQ
     qMutex->lock ();
     // look up if an older version is in the queue
     std::list<Job>::iterator i;
-    for (i=jqueue.begin(); i!=jqueue.end(); i++)
+    for (i=jqueue.begin(); i!=jqueue.end(); ++i)
         if (i->oimg==oimg && i->listener==listener) {
             i->ow = ow;
             i->oh = oh;
@@ -99,7 +99,7 @@ void BatchQueueEntryUpdater::removeJobs (BQEntryUpdateListener* listener) {
     while (!ready) {
         ready = true;
         std::list<Job>::iterator i;
-        for (i=jqueue.begin(); i!=jqueue.end(); i++)
+        for (i=jqueue.begin(); i!=jqueue.end(); ++i)
             if (i->listener == listener) {
                 jqueue.erase (i);
                 ready = false;

@@ -221,7 +221,7 @@ void ExifPanel::exifSelectionChanged () {
         reset->set_sensitive (1);
     }
     else if (sel.size()==1) {
-        Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (sel[0]);
+		Gtk::TreeModel::const_iterator iter = exifTreeModel->get_iter (sel[0]);
         if (iter->get_value (exifColumns.action)==SYSTEM) {
             remove->set_sensitive (0);
             keep->set_sensitive (0);
@@ -258,7 +258,7 @@ void ExifPanel::delIt (Gtk::TreeModel::iterator iter) {
     if (iter->get_value (exifColumns.action) != SYSTEM)
         iter->set_value (exifColumns.icon, delicon);
     if (recursiveOp)
-        for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); i++)
+        for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); ++i)
             delIt (i);
 }
 
@@ -281,7 +281,7 @@ void ExifPanel::keepIt (Gtk::TreeModel::iterator iter) {
     if (iter->get_value (exifColumns.action) != SYSTEM)
         iter->set_value (exifColumns.icon, iter->get_value (exifColumns.edited) ? editicon : keepicon);
     if (recursiveOp)
-        for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); i++)
+        for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); ++i)
             keepIt (i);
 }
 
@@ -360,7 +360,7 @@ void ExifPanel::resetAllPressed () {
 
 void ExifPanel::addPressed () {
 
-    Gtk::Dialog* dialog = new Gtk::Dialog (M("EXIFPANEL_ADDTAGDLG_TITLE"), *((Gtk::Window*)get_toplevel()), true, true);
+    Gtk::Dialog* dialog = new Gtk::Dialog (M("EXIFPANEL_ADDTAGDLG_TITLE"), *(static_cast<Gtk::Window*>(get_toplevel())), true, true);
     dialog->add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);   
     dialog->add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
     
@@ -384,7 +384,7 @@ void ExifPanel::addPressed () {
     hb2->pack_start (*ventry);
 
     Glib::ustring sel = getSelection (true);
-    if (sel=="")
+    if (sel.empty())
         tcombo->set_active_text ("Exif.UserComment");
     else {
         tcombo->set_active_text (sel);
@@ -426,8 +426,8 @@ void ExifPanel::editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib
     Glib::ustring::size_type dp = name.find_first_of ('.');
     Glib::ustring fseg = name.substr (0,dp);
     // look up first segment of the path
-    Gtk::TreeModel::iterator iter;
-    for (iter = root.begin(); iter!=root.end(); iter++) 
+	Gtk::TreeModel::const_iterator iter;
+    for (iter = root.begin(); iter!=root.end(); ++iter)
         if (iter->get_value (exifColumns.field_nopango) == fseg)
             break;
     
@@ -475,7 +475,7 @@ Glib::ustring ExifPanel::getSelectedValue () {
     std::vector<Gtk::TreeModel::Path> rows = selection->get_selected_rows(); 
     if (rows.size()!=1)
         return "";   
-    Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (rows[0]);
+	Gtk::TreeModel::const_iterator iter = exifTreeModel->get_iter (rows[0]);
     if (iter) 
         return iter->get_value (exifColumns.value_nopango);
     return "";
@@ -488,7 +488,7 @@ Glib::ustring ExifPanel::getSelection (bool onlyeditable) {
 
     if (rows.size()!=1)
         return "";   
-    Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (rows[0]);
+	Gtk::TreeModel::const_iterator iter = exifTreeModel->get_iter (rows[0]);
 
     Glib::ustring ret = "";
     bool first = true;
@@ -509,11 +509,11 @@ Glib::ustring ExifPanel::getSelection (bool onlyeditable) {
 
 void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string prefix) {
 
-    if (prefix!="")
+    if (!prefix.empty())
         prefix = prefix + ".";
 
-    Gtk::TreeModel::iterator iter;
-    for (iter = root.begin(); iter!=root.end(); iter++)  {
+	Gtk::TreeModel::const_iterator iter;
+    for (iter = root.begin(); iter!=root.end(); ++iter)  {
         if (iter->get_value (exifColumns.edited) == true)
             changeList[ prefix+iter->get_value (exifColumns.field_nopango) ] = iter->get_value (exifColumns.value_nopango);
         else if (iter->get_value (exifColumns.action) == WRITE && iter->get_value (exifColumns.icon) == delicon)
@@ -539,7 +539,7 @@ void ExifPanel::applyChangeList () {
 
 void ExifPanel::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column) {
 
-    Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (path);
+	Gtk::TreeModel::const_iterator iter = exifTreeModel->get_iter (path);
     if (iter) {
         if (!iter->children().empty())
             if (exifTree->row_expanded (path))

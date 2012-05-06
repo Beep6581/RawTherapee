@@ -38,7 +38,7 @@ RecentBrowser::RecentBrowser () : listener (NULL) {
 void RecentBrowser::selectionChanged () {
 
     Glib::ustring sel = recentDirs->get_active_text ();
-    if (sel!="" && listener)
+    if (!sel.empty() && listener)
         listener->selectDir (sel);
 }
 

@@ -38,7 +38,7 @@ class MultiLangMgr {
         bool load (Glib::ustring fname, MultiLangMgr* fb = NULL);
 	bool save (Glib::ustring fname);
         
-    bool isOSLanguageDetectSupported();
+    bool isOSLanguageDetectSupported() const ;
     Glib::ustring getOSUserLanguage();
 
         Glib::ustring getStr (std::string key);

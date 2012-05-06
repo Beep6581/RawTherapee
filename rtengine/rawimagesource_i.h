@@ -26,7 +26,7 @@
 
 namespace rtengine {
 
-inline void RawImageSource::convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) {
+inline void RawImageSource::convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) const {
   for (int j=0; j<W; j++) {
     Y[j] = .299 * r[j] + .587 * g[j] + .114 * b[j];
     I[j] = .596 * r[j] - .275 * g[j] - .321 * b[j];
@@ -34,7 +34,7 @@ inline void RawImageSource::convert_row_to_YIQ (float* r, float* g, float* b, fl
   }
 }
 
-inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) {
+inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) const {
   for (int j=1; j<W-1; j++) {
     r[j] = Y[j] + 0.956*I[j] + 0.621*Q[j];
     g[j] = Y[j] - 0.272*I[j] - 0.647*Q[j];
@@ -42,7 +42,7 @@ inline void RawImageSource::convert_row_to_RGB (float* r, float* g, float* b, fl
   }
 }
 
-inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob) {
+inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob) const {
 
   for (int j=0; j<W; j++) {
     double r = ar[j];

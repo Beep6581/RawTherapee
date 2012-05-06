@@ -90,7 +90,7 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
         Glib::RWLock::WriterLock l(entryRW);
 		#endif
 
-	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
+	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end(); ++entry){
 		(*entry)->setParent (this);
 		(*entry)->resize (std::min(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
 		Glib::ustring tempFile = getTempFilenameForParams( (*entry)->filename );
@@ -104,7 +104,7 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 			fd.push_back (*entry);
 		else {
 			std::vector<ThumbBrowserEntryBase*>::iterator pos;
-			for (pos=fd.begin(); pos!=fd.end(); pos++)
+			for (pos=fd.begin(); pos!=fd.end(); ++pos)
 				if (!(*pos)->processing) {
 					fd.insert (pos, *entry);
 					break;
@@ -136,7 +136,7 @@ bool BatchQueue::saveBatchQueue( )
         return false;
 
 	// method is already running with entryLock, so no need to lock again
-    for (std::vector<ThumbBrowserEntryBase*>::iterator pos=fd.begin(); pos!=fd.end(); pos++){
+    for (std::vector<ThumbBrowserEntryBase*>::const_iterator pos=fd.begin(); pos!=fd.end(); ++pos){
     	BatchQueueEntry* bqe = reinterpret_cast<BatchQueueEntry*>(*pos);
     	fprintf(f,"%s;%s\n", bqe->filename.c_str(),bqe->savedParamsFile.c_str() );
     }
@@ -244,7 +244,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
 #endif
 
 	for (size_t i=0; i<items->size(); i++) {
-            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+            BatchQueueEntry* entry = static_cast<BatchQueueEntry*>((*items)[i]);
             if (entry->processing)
                 continue;
             std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
@@ -274,15 +274,15 @@ void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items) {
 #ifdef WIN32
         Glib::RWLock::WriterLock l(entryRW);
 #endif
-        for (int i=items->size()-1; i>=0; i--) {
-            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+        for (size_t i=items->size()-1; i>0; i--) {
+            BatchQueueEntry* entry = static_cast<BatchQueueEntry*>((*items)[i]);
             if (entry->processing)
                 continue;
             std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
             if (pos!=fd.end() && pos!=fd.begin()) {
                 fd.erase (pos);
                 // find the first item that is not under processing
-                for (pos=fd.begin(); pos!=fd.end(); pos++) 
+                for (pos=fd.begin(); pos!=fd.end(); ++pos)
                     if (!(*pos)->processing) {
                         fd.insert (pos, entry);
                         break;
@@ -302,7 +302,7 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
         Glib::RWLock::WriterLock l(entryRW);
 #endif
 	for (size_t i=0; i<items->size(); i++) {
-            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+            BatchQueueEntry* entry = static_cast<BatchQueueEntry*>((*items)[i]);
             if (entry->processing)
                 continue;
             std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
@@ -373,7 +373,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     // save image img
     Glib::ustring fname;
     SaveFormat saveFormat;
-    if (processing->outFileName=="") {   // auto file name
+    if (processing->outFileName.empty()) {   // auto file name
         Glib::ustring s = calcAutoFileNameBase (processing->filename);
         saveFormat = options.saveFormatBatch;
         fname = autoCompleteFileName (s, saveFormat.format);
@@ -384,7 +384,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     }
     //printf ("fname=%s, %s\n", fname.c_str(), removeExtension(fname).c_str());
 
-    if (img && fname!="") {
+    if (img && !fname.empty()) {
         int err = 0;
         if (saveFormat.format=="tif")
             err = img->saveAsTIFF (fname, saveFormat.tiffBits,saveFormat.tiffUncompressed);
@@ -449,7 +449,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
                 Glib::ustring batchdir = options.rtdir+"/batch/";
                 Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
                 safe_build_file_list (dir, names, batchdir);
-                for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
+				for(std::vector<Glib::ustring>::const_iterator iter=names.begin(); iter != names.end(); ++iter)
                     safe_g_remove( *iter );
             }
         }
@@ -487,9 +487,9 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
     for (size_t i=1; i<da.size(); i++)
         pa.push_back (pa[i-1] + "/" + da[i]);
 
-//    for (int i=0; i<da.size(); i++)
+//    for (size_t i=0; i<da.size(); i++)
 //        printf ("da: %s\n", da[i].c_str());
-//    for (int i=0; i<pa.size(); i++)
+//    for (size_t i=0; i<pa.size(); i++)
 //        printf ("pa: %s\n", pa[i].c_str());
 
     // extracting filebase

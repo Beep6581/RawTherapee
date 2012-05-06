@@ -113,7 +113,7 @@ FileBrowser::FileBrowser ()
 
     // Build a list of menu items
     mMenuExtProgs.clear(); amiExtProg=NULL;
-    for (std::list<ExtProgAction*>::iterator it=extProgStore->lActions.begin();it!=extProgStore->lActions.end();it++) {
+	for (std::list<ExtProgAction*>::const_iterator it=extProgStore->lActions.begin();it!=extProgStore->lActions.end(); ++it) {
         ExtProgAction* pAct=*it;
 
         if (pAct->target==1 || pAct->target==2) mMenuExtProgs[pAct->GetFullName()]=pAct;
@@ -132,7 +132,7 @@ FileBrowser::FileBrowser ()
                 submenuExtProg->attach (*miOpenDefaultViewer, 0, 1, p, p+1); p++;
             }
 
-            for (std::map<Glib::ustring, ExtProgAction*>::iterator it=mMenuExtProgs.begin();it!=mMenuExtProgs.end();it++,itemNo++) {
+            for (std::map<Glib::ustring, ExtProgAction*>::const_iterator it=mMenuExtProgs.begin();it!=mMenuExtProgs.end();++it,++itemNo) {
                 submenuExtProg->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p+1); p++;
             }
 
@@ -143,7 +143,7 @@ FileBrowser::FileBrowser ()
                 pmenu->attach (*miOpenDefaultViewer, 0, 1, p, p+1); p++;
             }
 
-            for (std::map<Glib::ustring, ExtProgAction*>::iterator it=mMenuExtProgs.begin();it!=mMenuExtProgs.end();it++,itemNo++) {
+            for (std::map<Glib::ustring, ExtProgAction*>::const_iterator it=mMenuExtProgs.begin();it!=mMenuExtProgs.end();++it,++itemNo) {
                 pmenu->attach (*Gtk::manage(amiExtProg[itemNo] = new Gtk::MenuItem ((*it).first)), 0, 1, p, p+1); p++;
             }
         }
@@ -245,7 +245,7 @@ FileBrowser::FileBrowser ()
     for (int i=0; i<6; i++)
     	colorlabel[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), colorlabel[i]));
 
-    for (int i=0; i<mMenuExtProgs.size(); i++)
+    for (size_t i=0; i<mMenuExtProgs.size(); i++)
     	amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
 
     if (miOpenDefaultViewer!=NULL) {
@@ -428,8 +428,8 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
 		#endif
 
         std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
-        while (i!=fd.end() && *entry < *((FileBrowserEntry*)*i))
-            i++;
+	while (i!=fd.end() && *entry < *(static_cast<FileBrowserEntry*>(*i)))
+            ++i;
         
         fd.insert (i, entry);
 
@@ -444,7 +444,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
 	Glib::RWLock::WriterLock l(entryRW);
 	#endif
 
-    for (std::vector<ThumbBrowserEntryBase*>::iterator i=fd.begin(); i!=fd.end(); i++) 
+    for (std::vector<ThumbBrowserEntryBase*>::iterator i=fd.begin(); i!=fd.end(); ++i)
         if ((*i)->filename==fname) {
             ThumbBrowserEntryBase* entry = *i;
             entry->selected = false;
@@ -521,13 +521,13 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
             return;
         }
 
-    for (int j=0; j<mMenuExtProgs.size(); j++) {
+    for (size_t j=0; j<mMenuExtProgs.size(); j++) {
         if (m==amiExtProg[j]) {
             ExtProgAction* pAct = mMenuExtProgs[m->get_label()];
 
             // Build vector of all file names
             std::vector<Glib::ustring> selFileNames;
-            for (int i=0; i<selected.size(); i++) {
+	    for (size_t i=0; i<selected.size(); i++) {
                 Glib::ustring fn=selected[i]->thumbnail->getFileName();
 
                 // Maybe batch processed version
@@ -711,13 +711,13 @@ void FileBrowser::pasteProfile () {
 
     if (clipboard.hasProcParams()) {
         std::vector<FileBrowserEntry*> mselected;
-        for (unsigned int i=0; i<selected.size(); i++)
+	for (size_t i=0; i<selected.size(); i++)
             mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
 
         if (!tbl || mselected.empty())
             return;
 
-        for (unsigned int i=0; i<mselected.size(); i++) {
+	for (size_t i=0; i<mselected.size(); i++) {
             // copying read only clipboard PartialProfile to a temporary one
             rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
             rtengine::procparams::PartialProfile pastedPartProf(cbPartProf.pparams, cbPartProf.pedited, true);
@@ -736,7 +736,7 @@ void FileBrowser::partPasteProfile () {
     if (clipboard.hasProcParams()) {
 
         std::vector<FileBrowserEntry*> mselected;
-        for (unsigned int i=0; i<selected.size(); i++)
+	for (size_t i=0; i<selected.size(); i++)
             mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
 
         if (!tbl || mselected.empty())
@@ -745,7 +745,7 @@ void FileBrowser::partPasteProfile () {
         int i = partialPasteDlg.run ();
         if (i == Gtk::RESPONSE_OK) {
 
-            for (unsigned int i=0; i<mselected.size(); i++) {
+            for (size_t i=0; i<mselected.size(); i++) {
                 // copying read only clipboard PartialProfile to a temporary one, initialized to the thumb's ProcParams
                 mselected[i]->thumbnail->createProcParamsForUpdate(false,false);  // this can execute customprofilebuilder to generate param file
                 rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
@@ -904,8 +904,8 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
     
     FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(entryb);
     // return false if basic filter settings are not satisfied
-    if ((filter.showRanked[entry->thumbnail->getRank()]==false ) ||
-        (filter.showCLabeled[entry->thumbnail->getColorLabel()]==false ) ||
+    if ((!filter.showRanked[entry->thumbnail->getRank()]) ||
+        (!filter.showCLabeled[entry->thumbnail->getColorLabel()]) ||
 
         ((entry->thumbnail->hasProcParams() && filter.showEdited[0]) && !filter.showEdited[1]) ||
         ((!entry->thumbnail->hasProcParams() && filter.showEdited[1])&& !filter.showEdited[0]) ||

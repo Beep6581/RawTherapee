@@ -50,13 +50,13 @@ class LWButton {
     public:
         LWButton (Cairo::RefPtr<Cairo::ImageSurface> i, int aCode, void* aData, Alignment ha=Left, Alignment va=Center, Glib::ustring tooltip="");
     
-        void    getSize             (int& minw, int& minh);
-        void    getAlignment        (Alignment& ha, Alignment& va);
+        void    getSize             (int& minw, int& minh) const;
+        void    getAlignment        (Alignment& ha, Alignment& va) const;
         void    setPosition         (int x, int y);
-        void    getPosition         (int& x, int& y);
-        bool    inside              (int x, int y);
+        void    getPosition         (int& x, int& y) const;
+        bool    inside              (int x, int y) const;
         void    setIcon             (Cairo::RefPtr<Cairo::ImageSurface> i);
-        Cairo::RefPtr<Cairo::ImageSurface> getIcon ();
+        Cairo::RefPtr<Cairo::ImageSurface> getIcon () const;
         void    setColors           (const Gdk::Color& bg, const Gdk::Color& fg);
         void    setToolTip          (const Glib::ustring& tooltip);    
     
@@ -64,7 +64,7 @@ class LWButton {
         bool    pressNotify         (int x, int y);
         bool    releaseNotify       (int x, int y);
 
-        Glib::ustring getToolTip (int x, int y);
+        Glib::ustring getToolTip (int x, int y) const;
         
         void    setButtonListener   (LWButtonListener* bl) { listener = bl; }
 

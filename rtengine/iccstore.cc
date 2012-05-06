@@ -65,7 +65,7 @@ std::vector<std::string> ICCStore::getOutputProfiles () {
 	Glib::Mutex::Lock lock(mutex_);
 
     std::vector<std::string> res;
-    for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++){
+    for (std::map<std::string, cmsHPROFILE>::const_iterator i=fileProfiles.begin(); i!=fileProfiles.end(); ++i){
     	std::string name(i->first);
     	std::string::size_type  i2 = name.find_last_of('/');
     	if( i2 == std::string::npos )
@@ -110,14 +110,14 @@ ICCStore::ICCStore ()
     srgb = cmsCreate_sRGBProfile ();
 }
 
-int ICCStore::numOfWProfiles () {
+int ICCStore::numOfWProfiles () const {
 
     return sizeof(wpnames)/sizeof(wpnames[0]);
 }
 
 TMatrix ICCStore::workingSpaceMatrix (Glib::ustring name) {
 
-    std::map<std::string, TMatrix>::iterator r = wMatrices.find (name);
+    std::map<std::string, TMatrix>::const_iterator r = wMatrices.find (name);
     if (r!=wMatrices.end()) 
         return r->second;
     else
@@ -126,7 +126,7 @@ TMatrix ICCStore::workingSpaceMatrix (Glib::ustring name) {
 
 TMatrix ICCStore::workingSpaceInverseMatrix (Glib::ustring name) {
 
-    std::map<std::string, TMatrix>::iterator r = iwMatrices.find (name);
+	std::map<std::string, TMatrix>::const_iterator r = iwMatrices.find (name);
     if (r!=iwMatrices.end()) 
         return r->second;
     else 
@@ -135,7 +135,7 @@ TMatrix ICCStore::workingSpaceInverseMatrix (Glib::ustring name) {
 
 cmsHPROFILE ICCStore::workingSpace (Glib::ustring name) {
 
-    std::map<std::string, cmsHPROFILE>::iterator r = wProfiles.find (name);
+	std::map<std::string, cmsHPROFILE>::const_iterator r = wProfiles.find (name);
     if (r!=wProfiles.end()) 
         return r->second;
     else
@@ -144,7 +144,7 @@ cmsHPROFILE ICCStore::workingSpace (Glib::ustring name) {
 
 cmsHPROFILE ICCStore::workingSpaceGamma (Glib::ustring name) {
 
-    std::map<std::string, cmsHPROFILE>::iterator r = wProfilesGamma.find (name);
+	std::map<std::string, cmsHPROFILE>::const_iterator r = wProfilesGamma.find (name);
     if (r!=wProfilesGamma.end()) 
         return r->second;
     else
@@ -155,7 +155,7 @@ cmsHPROFILE ICCStore::getProfile (Glib::ustring name) {
 
 	Glib::Mutex::Lock lock(mutex_);
 
-    std::map<std::string, cmsHPROFILE>::iterator r = fileProfiles.find (name);
+	std::map<std::string, cmsHPROFILE>::const_iterator r = fileProfiles.find (name);
     if (r!=fileProfiles.end()) 
         return r->second;
     else {
@@ -179,7 +179,7 @@ cmsHPROFILE ICCStore::getStdProfile (Glib::ustring name) {
 	Glib::Mutex::Lock lock(mutex_);
 
 
-    std::map<std::string, cmsHPROFILE>::iterator r = fileStdProfiles.find (name.uppercase());
+	std::map<std::string, cmsHPROFILE>::const_iterator r = fileStdProfiles.find (name.uppercase());
     if (r==fileStdProfiles.end()) return NULL;
     
     return r->second;
@@ -212,7 +212,7 @@ void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring rtICCDir) {
 }
 
 void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents) {
-    if (rootDirName!="") {
+    if (!rootDirName.empty()) {
         std::deque<Glib::ustring> qDirs;
 
         qDirs.push_front(rootDirName);

@@ -291,7 +291,7 @@ Options* Options::copyFrom (Options* other) {
 
 void Options::filterOutParsedExtensions () {
 	parsedExtensions.clear();
-	for (unsigned int i=0; i<parseExtensions.size(); i++)
+	for (size_t i=0; i<parseExtensions.size(); i++)
 		if (parseExtensionsEnabled[i]) parsedExtensions.push_back(parseExtensions[i].lowercase());
 }
 
@@ -835,7 +835,7 @@ void Options::load () {
 
 void Options::save () {
 
-    if (options.multiUser==false) {
+    if (!options.multiUser) {
         options.saveToFile (argv0+"/options");
     }
     else {
@@ -850,11 +850,11 @@ bool Options::has_retained_extention (Glib::ustring fname) {
 
 	Glib::ustring ext = getExtension(fname).lowercase();
 
-	if (ext.length()) {
+	if (!ext.empty()) {
 		// there is an extension to the filename
 
 		// look out if it has one of the retained extensions
-		for (unsigned int i=0; i<parsedExtensions.size(); i++) {
+		for (size_t i=0; i<parsedExtensions.size(); i++) {
 			if (ext == parsedExtensions[i]) {
 				return true;
 			}
@@ -867,8 +867,8 @@ bool Options::has_retained_extention (Glib::ustring fname) {
  * return true if ext is an enabled extension
  */
 bool Options::is_extention_enabled (Glib::ustring ext) {
-		for (int j=0; j<(int)parseExtensions.size(); j++)
+	for (size_t j=0; j<parseExtensions.size(); j++)
       if (parseExtensions[j].casefold() == ext.casefold())
-				return j>=(int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
+				return j>=parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
 		return false;
 }

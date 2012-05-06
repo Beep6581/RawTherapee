@@ -70,7 +70,7 @@ class PreviewHandler : public rtengine::PreviewImageListener {
         // with this function it is possible to ask for a rough approximation of a (possibly zoomed) crop of the image
         Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int x, int y, int w, int h, double zoom);
         Glib::RefPtr<Gdk::Pixbuf>           getRoughImage (int desiredW, int desiredH, double& zoom);
-        rtengine::procparams::CropParams    getCropParams () { return cropParams; }
+        rtengine::procparams::CropParams    getCropParams () const { return cropParams; }
 };
 
 #endif

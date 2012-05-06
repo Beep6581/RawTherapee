@@ -160,7 +160,7 @@ KLT_FeatureList KLTCreateFeatureList(
   fl->nFeatures = nFeatures; 
 
   /* Set pointers */
-  fl->feature = (KLT_Feature *) (fl + 1);
+  fl->feature = reinterpret_cast<KLT_Feature *>(fl + 1);
   first = (KLT_Feature) (fl->feature + nFeatures);
   for (i = 0 ; i < nFeatures ; i++) {
     fl->feature[i] = first + i;
@@ -195,7 +195,7 @@ KLT_FeatureHistory KLTCreateFeatureHistory(
   fh->nFrames = nFrames; 
 	
   /* Set pointers */
-  fh->feature = (KLT_Feature *) (fh + 1);
+  fh->feature = reinterpret_cast<KLT_Feature *>(fh + 1);
   first = (KLT_Feature) (fh->feature + nFrames);
   for (i = 0 ; i < nFrames ; i++)
     fh->feature[i] = first + i;

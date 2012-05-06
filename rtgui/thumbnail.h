@@ -80,7 +80,7 @@ class Thumbnail {
         Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
         ~Thumbnail ();
         
-        bool              hasProcParams ();
+	bool              hasProcParams () const ;
         const rtengine::procparams::ProcParams& getProcParams ();
 
         // Use this to create params on demand for update
@@ -92,13 +92,13 @@ class Thumbnail {
 
         void              notifylisterners_procParamsChanged(int whoChangedIt);
 
-		bool              isQuick() { return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL; }
-		bool              isPParamsValid() { return pparamsValid; }
-        bool              isRecentlySaved ();
+	bool              isQuick() const { return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL; }
+	bool              isPParamsValid() const { return pparamsValid; }
+	bool              isRecentlySaved () const;
         void              imageDeveloped ();
         void              imageEnqueued ();
         void              imageRemovedFromQueue ();
-        bool              isEnqueued ();
+	bool              isEnqueued () const;
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
         rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
@@ -106,29 +106,29 @@ class Thumbnail {
         void            getThumbnailSize        (int &w, int &h);
         void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
 
-        const Glib::ustring&  getExifString ();
-        const Glib::ustring&  getDateTimeString ();
+	const Glib::ustring&  getExifString () const;
+	const Glib::ustring&  getDateTimeString () const;
         void                  getCamWB (double& temp, double& green) { if (tpp) tpp->getCamWB (temp, green); }
         void                  getAutoWB (double& temp, double& green) { if (tpp) tpp->getAutoWB (temp, green); }
         void                  getSpotWB (int x, int y, int rect, double& temp, double& green) { if (tpp) tpp->getSpotWB (getProcParams(), x, y, rect, temp, green); }
         void                  applyAutoExp (rtengine::procparams::ProcParams& pparams) { if (tpp) tpp->applyAutoExp (pparams); }
         
-        ThFileType      getType ();
-        Glib::ustring   getFileName () { return fname; }
+        ThFileType      getType () const;
+        Glib::ustring   getFileName () const { return fname; }
         void            setFileName (const Glib::ustring fn);
 
-        bool            isSupported ();
+	bool            isSupported () const;
 
-        const CacheImageData* getCacheImageData() { return &cfs; }
-        std::string     getMD5   () { return cfs.md5; }
+        const CacheImageData* getCacheImageData() const { return &cfs; }
+        std::string     getMD5   () const { return cfs.md5; }
 
-        int             getRank  () { return pparams.rank; }
+        int             getRank  () const { return pparams.rank; }
         void            setRank  (int rank) { if (pparams.rank != rank) { pparams.rank = rank; pparamsValid = true; } }
 
-        int             getColorLabel  () { return pparams.colorlabel; }
+        int             getColorLabel  () const { return pparams.colorlabel; }
         void            setColorLabel  (int colorlabel) { if (pparams.colorlabel != colorlabel) { pparams.colorlabel = colorlabel; pparamsValid = true; } }
 
-        int             getStage () { return pparams.inTrash; }
+        int             getStage () const { return pparams.inTrash; }
         void            setStage (int stage) { if (pparams.inTrash != stage) { pparams.inTrash = stage; pparamsValid = true; } }
 
         void            addThumbnailListener (ThumbnailListener* tnl);
