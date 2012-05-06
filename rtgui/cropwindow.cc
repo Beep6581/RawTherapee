@@ -119,13 +119,13 @@ void CropWindow::setPosition (int x, int y) {
         buttonSet.arrangeButtons (xpos + sideBorderWidth, ypos + upperBorderWidth, width - 2*sideBorderWidth, titleHeight);
 }
 
-void CropWindow::getPosition (int& x, int& y) const {
+void CropWindow::getPosition (int& x, int& y) {
     
     x = xpos;
     y = ypos;
 }
 
-void CropWindow::getCropPosition (int& x, int& y) const {
+void CropWindow::getCropPosition (int& x, int& y) {
     
     int cropX, cropY;
     cropHandler.getPosition (cropX, cropY);
@@ -166,7 +166,7 @@ void CropWindow::getCropRectangle (int& x, int& y, int& w, int& h) {
 void CropWindow::setCropPosition (int x, int y) {
     
     cropHandler.setPosition (x, y);
-	for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+    for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
         (*i)->cropPositionChanged (this);
 }
 
@@ -202,19 +202,19 @@ void CropWindow::setSize (int w, int h, bool norefresh) {
     //iarea->redraw ();
 }
 
-void CropWindow::getSize (int& w, int& h) const {
+void CropWindow::getSize (int& w, int& h) {
     
     w = width;
     h = height;
 }
 
-void CropWindow::getCropSize (int& w, int& h) const {
+void CropWindow::getCropSize (int& w, int& h) {
     
     w = imgAreaW;
     h = imgAreaH;
 }
 
-bool CropWindow::isInside (int x, int y) const {
+bool CropWindow::isInside (int x, int y) {
     
     return x>=xpos && x<xpos+width && y>=ypos && y<ypos+height;
 }
@@ -335,7 +335,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
     if (state==SCropWinResize) {
         setSize (press_x + x - action_x, press_y + y - action_y);
         state = SNormal;
-		for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+        for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropWindowSizeChanged (this);
     }
     else if (state==SCropImgMove) {
@@ -344,7 +344,7 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y) {
         cropHandler.setPosition (cropX + action_x, cropY + action_y);
         cropHandler.getPosition (cropX, cropY);
         state = SNormal;
-		for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+        for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropPositionChanged (this);
     }
     else if (state==SRotateSelecting) {
@@ -379,7 +379,7 @@ void CropWindow::pointerMoved (int x, int y) {
     }
     else if (state==SCropWinResize) {
         setSize (press_x + x - action_x, press_y + y - action_y, true);
-		for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+        for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropWindowSizeChanged (this);
         iarea->redraw ();
     }
@@ -391,7 +391,7 @@ void CropWindow::pointerMoved (int x, int y) {
         	factor = 1.0;
         action_x =  (press_x - x) / zoomSteps[cropZoom].zoom * factor;
         action_y =  (press_y - y) / zoomSteps[cropZoom].zoom * factor;
-		for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+        for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropPositionChanged (this);
         iarea->redraw ();
     }
@@ -743,7 +743,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 
 
                             //TODO: dynamically determine appropriate values based on image analysis
-                            blur_radius=4;
+                            blur_radius=4;;
                             focus_thresh=80;
 
                             blur_radius2 = blur_radius/4;     // Band2
@@ -989,16 +989,16 @@ void CropWindow::zoom11 () {
     fitZoom = false;
 }
 
-double CropWindow::getZoom () const {
+double CropWindow::getZoom () {
 
     return zoomSteps[cropZoom].zoom;
 }
 
-bool CropWindow::isMinZoom () const {
+bool CropWindow::isMinZoom () {
     return cropZoom <= 0;
 }
 
-bool CropWindow::isMaxZoom () const {
+bool CropWindow::isMaxZoom () {
     return cropZoom >= MAXZOOMSTEPS;
 }
 
@@ -1067,12 +1067,12 @@ void CropWindow::changeZoom  (int zoom, bool notify, int centerx, int centery) {
     cropLabel = zoomSteps[cropZoom].label;
     cropHandler.setZoom (zoomSteps[cropZoom].czoom, centerx, centery);
     if (notify)
-		for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+        for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
             (*i)->cropZoomChanged (this);
     iarea->redraw ();
 }
 
-void CropWindow::translateCoord (int phyx, int phyy, int& imgx, int& imgy) const {
+void CropWindow::translateCoord (int phyx, int phyy, int& imgx, int& imgy) {
 
     int cropX, cropY;
     cropHandler.getPosition (cropX, cropY);
@@ -1283,7 +1283,7 @@ void CropWindow::cropWindowChanged () {
 
 void CropWindow::initialImageArrived () {
 
-	for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+    for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
         (*i)->initialImageArrived (this);
 }
 
@@ -1293,7 +1293,7 @@ void CropWindow::remoteMove (int deltaX, int deltaY) {
     state = SCropImgMove;
     action_x =  deltaX;
     action_y =  deltaY;
-	for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+    for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
         (*i)->cropPositionChanged (this);
 }
 
@@ -1304,7 +1304,7 @@ void CropWindow::remoteMoveReady () {
     cropHandler.setPosition (cropX + action_x, cropY + action_y);
     cropHandler.getPosition (cropX, cropY);
     state = SNormal;
-	for (std::list<CropWindowListener*>::const_iterator i=listeners.begin(); i!=listeners.end(); ++i)
+    for (std::list<CropWindowListener*>::iterator i=listeners.begin(); i!=listeners.end(); i++)
         (*i)->cropPositionChanged (this);
 }
 
@@ -1315,5 +1315,5 @@ void CropWindow::delCropWindowListener (CropWindowListener* l) {
         if (*i==l)
             i = listeners.erase (i);
         else
-            ++i;
+            i++;
 }

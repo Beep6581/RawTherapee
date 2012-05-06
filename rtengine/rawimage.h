@@ -53,7 +53,7 @@ public:
 	int height() const { return h; }
 
 	// if a pixel is set returns true
-	bool get(int x, int y) const
+	bool get(int x, int y)
 	{
 		return (pm[y*w+ x/(base_t_size*8) ] & (base_t)1<<(x%(base_t_size*8)) )!=0;
 	}
@@ -68,7 +68,7 @@ public:
 	int set( std::list<badPix> &bp)
 	{
 		int totSet=0;
-		for(std::list<badPix>::iterator iter = bp.begin(); iter != bp.end(); ++iter,++totSet)
+		for(std::list<badPix>::iterator iter = bp.begin(); iter != bp.end(); iter++,totSet++)
 			set( iter->x,iter->y);
 		return totSet;
 	}
@@ -77,7 +77,7 @@ public:
 		memset(pm,0,h * w *base_t_size );
 	}
 	// return 0 if at least one pixel in the word(base_t) is set, otherwise return the number of pixels to skip to the next word base_t
-	int skipIfZero(int x, int y) const {
+	int skipIfZero(int x, int y){
 		return pm[y*w+ x/(base_t_size*8) ]==0 ? base_t_size*8 -x%(base_t_size*8):0;
 	}
 };
@@ -97,7 +97,7 @@ public:
   	     filters &= ~((filters & 0x55555555) << 1);
       }
   }
-  dcrawImage_t get_image() const { return image; }
+  dcrawImage_t get_image() { return image; }
   unsigned short** compress_image(); // revert to compressed pixels format and release image data
   unsigned short** data;             // holds pixel values, data[i][j] corresponds to the ith row and jth column
   unsigned prefilters;               // original filters saved ( used for 4 color processing )
@@ -141,12 +141,12 @@ public:
   char* get_profile() const { return profile_data;}
   IMFILE *get_file() { return ifp; }
   bool is_supportedThumb() const ;
-  int get_thumbOffset() const { return int(thumb_offset);}
-  int get_thumbWidth() const { return int(thumb_width);}
-  int get_thumbHeight() const { return int(thumb_height);}
-  int get_thumbBPS() const { return thumb_load_raw ? 16 : 8; }
+  int get_thumbOffset(){ return int(thumb_offset);}
+  int get_thumbWidth(){ return int(thumb_width);}
+  int get_thumbHeight(){ return int(thumb_height);}
+  int get_thumbBPS(){ return thumb_load_raw ? 16 : 8; }
   bool get_thumbSwap() const;
-  unsigned get_thumbLength() const {return thumb_length;}
+  unsigned get_thumbLength(){ return thumb_length;}
 public:
   // dcraw functions
   void scale_colors(){ DCraw::scale_colors(); }

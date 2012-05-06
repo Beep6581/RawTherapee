@@ -301,7 +301,7 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 void DiagonalCurveEditorSubGroup::savePressed () {
 
 	Glib::ustring fname = outputFile();
-	if (!fname.empty()) {
+	if (fname.size()) {
 		std::ofstream f (fname.c_str());
 		std::vector<double> p;
 		//std::vector<double> p = customCurve->getPoints ();
@@ -331,12 +331,12 @@ void DiagonalCurveEditorSubGroup::savePressed () {
 			f << "Parametric\n";
 		if (p[ix]==(double)(DCT_Parametric)) {
 		  ix++;
-		  for (size_t i=0; i<p.size()-1; i++, ix++)
+		  for (unsigned int i=0; i<p.size()-1; i++, ix++)
                         f << p[ix] << std::endl;
 	        }
 		else {	
 		   ix++;
-		   for (size_t i=0; i<p.size()/2; i++, ix+=2)
+		   for (unsigned int i=0; i<p.size()/2; i++, ix+=2)
 			f << p[ix] << ' ' << p[ix+1] << std::endl;
 		}
 
@@ -347,7 +347,7 @@ void DiagonalCurveEditorSubGroup::savePressed () {
 void DiagonalCurveEditorSubGroup::loadPressed () {
 
 	Glib::ustring fname = inputFile();
-	if (!fname.empty()) {
+	if (fname.size()) {
 		std::ifstream f (fname.c_str());
 		if (f) {
 			std::vector<double> p;
@@ -503,7 +503,7 @@ void DiagonalCurveEditorSubGroup::restoreDisplayedHistogram() {
 void DiagonalCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {
 	if (!p.empty()) {
 		DiagonalCurveType t = (DiagonalCurveType)p[0];
-		for (size_t i=0; i<p.size(); i++)
+		for (int i=0; i<(int)p.size(); i++)
 
 		switch (t) {
 		case (DCT_Spline):

@@ -34,8 +34,8 @@ class StdImageSource : public ImageSource {
 		char** needhr;
         int max[3];
 
-        void transform           (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2) const;
-        void transformPixel      (int x, int y, int tran, int& tx, int& ty) const;
+        void transform           (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
+        void transformPixel      (int x, int y, int tran, int& tx, int& ty);
         bool rgbSourceModified;
     public:
         StdImageSource ();
@@ -67,7 +67,7 @@ class StdImageSource : public ImageSource {
     protected:
         void    getImage_   (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp);
         void    hflip       (Imagefloat* im);
-        void    vflip       (Imagefloat* im) const;
+        void    vflip       (Imagefloat* im);
 };
 }
 #endif

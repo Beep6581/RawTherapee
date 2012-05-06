@@ -134,7 +134,7 @@ class OLLensTypeInterpreter : public Interpreter {
             lid << std::setw(2) << std::setfill('0') << t->toInt(2)<< ' '; //model
             lid << std::setw(2) << std::setfill('0') << t->toInt(3); // submodel
 
-			std::map<std::string,std::string>::const_iterator r = lenses.find (lid.str());
+            std::map<std::string,std::string>::iterator r = lenses.find (lid.str());
             if (r!=lenses.end())
                 return r->second;
             else

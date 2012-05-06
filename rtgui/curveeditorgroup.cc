@@ -41,7 +41,7 @@ CurveEditorGroup::CurveEditorGroup (Glib::ustring groupLabel) : cl(NULL), cp(NUL
 }
 
 CurveEditorGroup::~CurveEditorGroup() {
-	for (std::vector<CurveEditor*>::const_iterator i = curveEditors.begin(); i != curveEditors.end(); ++i)
+    for (std::vector<CurveEditor*>::iterator i = curveEditors.begin(); i != curveEditors.end(); ++i)
     {
         delete *i;
     }
@@ -100,8 +100,8 @@ void CurveEditorGroup::newLine() {
 			headerBox->pack_end (*curve_reset, Gtk::PACK_SHRINK, 0);
 		}
 
-		size_t j = numberOfPackedCurve;
-		for (size_t i = curveEditors.size()-1; i > j; i--)
+		int j = numberOfPackedCurve;
+		for (int i = (int)(curveEditors.size())-1; i >= j; i--)
 		{
 			headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, Gtk::PACK_EXPAND_WIDGET, 2);
 			numberOfPackedCurve++;
@@ -268,7 +268,7 @@ void CurveEditorGroup::curveResetPressed () {
 }
 
 void CurveEditorGroup::setBatchMode (bool batchMode) {
-	for (std::vector<CurveEditor*>::const_iterator i = curveEditors.begin(); i != curveEditors.end(); ++i) {
+	for (std::vector<CurveEditor*>::iterator i = curveEditors.begin(); i != curveEditors.end(); ++i) {
 		(*i)->curveType->addEntry("curveType-unchanged.png", M("GENERAL_UNCHANGED"));
 		(*i)->curveType->show();
 	}

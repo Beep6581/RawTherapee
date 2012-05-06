@@ -117,7 +117,7 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
     return 0;
 }
 
-void StdImageSource::transform (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2) const {
+void StdImageSource::transform (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2) {
 
     int W = img->width;
     int H = img->height;
@@ -313,7 +313,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 	
 	cmsHPROFILE in;
 	cmsHPROFILE out = iccStore->workingSpace (cmp.working);
-	if (cmp.input=="(embedded)" || cmp.input.empty() || cmp.input=="(camera)") {
+	if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
 		if (embedded)
 			in = embedded;
 		else
@@ -345,7 +345,7 @@ void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 
     cmsHPROFILE in;
     cmsHPROFILE out = iccStore->workingSpace (cmp.working);
-    if (cmp.input=="(embedded)" || cmp.input.empty() || cmp.input=="(camera)") {
+    if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
         if (embedded)
             in = embedded;
         else
@@ -409,7 +409,7 @@ void StdImageSource::hflip (Imagefloat* image) {
     delete [] rowb;
 }
 
-void StdImageSource::vflip (Imagefloat* image) const {
+void StdImageSource::vflip (Imagefloat* image) {
     int width  = image->width;
     int height = image->height;
 
@@ -468,7 +468,7 @@ ColorTemp StdImageSource::getAutoWB () {
     //return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
 }
 
-void StdImageSource::transformPixel (int x, int y, int tran, int& tx, int& ty) const {
+void StdImageSource::transformPixel (int x, int y, int tran, int& tx, int& ty) {
     
     int W = img->width;
     int H = img->height;

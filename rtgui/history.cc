@@ -138,7 +138,7 @@ void History::clearParamChanges () {
 void History::historySelectionChanged () {
 
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
     if (iter) {
         Gtk::TreeModel::Row row = *iter;
         if (row) 
@@ -151,7 +151,7 @@ void History::historySelectionChanged () {
             ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
             tpc->profileChange (&pp, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
         }
-        if (blistener && !blistenerLock) {
+        if (blistener && blistenerLock==false) {
             Gtk::TreeModel::Path path = historyModel->get_path (iter);
             path.prev ();
             iter = historyModel->get_iter (path);
@@ -164,7 +164,7 @@ void History::historySelectionChanged () {
 void History::bookmarkSelectionChanged () {
 
     Glib::RefPtr<Gtk::TreeSelection> selection = bTreeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
     if (iter) {
         Gtk::TreeModel::Row row = *iter;
         if (row) 
@@ -194,10 +194,10 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     Glib::ustring text = Glib::ustring::compose ("<b>%1</b>", eventDescrArray[ev]);
 
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
     // remove all rows after the selection
     if (iter) {
-        ++iter;
+        iter++;
         while (iter)
             iter = historyModel->erase (iter);
     }
@@ -217,9 +217,9 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
         newrow[historyColumns.paramsEdited] = paramsEdited ? *paramsEdited : defParamsEdited;
         if (ev!=EvBookmarkSelected)
             selection->select (newrow);
-        if (blistener && row && !blistenerLock)
+        if (blistener && row && blistenerLock==false)
             blistener->historyBeforeLineChanged (row[historyColumns.params]);
-        else if (blistener && size==0 && !blistenerLock)
+        else if (blistener && size==0 && blistenerLock==false)
             blistener->historyBeforeLineChanged (newrow[historyColumns.params]);
     }
     // else just update it
@@ -248,7 +248,7 @@ void History::addBookmarkWithText (Glib::ustring text) {
 
     // lookup the selected item in the history
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
     Gtk::TreeModel::Row row = *iter;
 
     if (!row) {
@@ -274,7 +274,7 @@ void History::delBookmarkPressed () {
 
     // lookup the selected item in the bookmark
     Glib::RefPtr<Gtk::TreeSelection> selection = bTreeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
 
     if (!iter) {
         return;
@@ -290,7 +290,7 @@ void History::delBookmarkPressed () {
 void History::undo () {
 
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
 
     if (iter && iter!=historyModel->children().begin()) 
         selection->select (--iter);
@@ -304,10 +304,10 @@ void History::undo () {
 void History::redo () {
 
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
 
     if (iter) {
-        ++iter;
+        iter++;
         if (iter!=historyModel->children().end())
             selection->select (iter);
     }

@@ -32,7 +32,7 @@ void LWButtonSet::add (LWButton* b) {
     buttons.push_back (b);
 }
         
-void LWButtonSet::getMinimalDimensions (int& w, int& h) const {
+void LWButtonSet::getMinimalDimensions (int& w, int& h) {
 
     w=0; h=0;
     for (size_t i=0; i<buttons.size(); i++) {
@@ -146,7 +146,7 @@ void LWButtonSet::setButtonListener (LWButtonListener* bl) {
         buttons[i]->setButtonListener (bl);
 }
 
-void LWButtonSet::getAllocatedDimensions (int& w, int& h) const {
+void LWButtonSet::getAllocatedDimensions (int& w, int& h) {
 
     w = aw;
     h = ah;
@@ -162,7 +162,7 @@ Glib::ustring LWButtonSet::getToolTip (int x, int y) {
 
 	for (size_t i=0; i<buttons.size(); i++) {
         Glib::ustring ttip = buttons[i]->getToolTip (x, y);
-        if (!ttip.empty())
+        if (ttip!="")
             return ttip;
     }
     return "";

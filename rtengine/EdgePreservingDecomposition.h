@@ -73,7 +73,7 @@ public:
 	unsigned int *StartRows;
 	bool CreateDiagonal(unsigned int index, unsigned int StartRow);
 	unsigned int n, m;	//The matrix is n x n, with m diagonals on the lower triangle. Don't change these. They should be private but aren't for convenience.
-	inline unsigned int DiagonalLength(unsigned int StartRow) const {	//Gives number of elements in a diagonal.
+	inline unsigned int DiagonalLength(unsigned int StartRow){	//Gives number of elements in a diagonal.
 		return n - StartRow;
 	};
 
@@ -84,7 +84,7 @@ public:
 	void VectorProduct(float *Product, float *x);
 
 	//Given the start row, attempts to find the corresponding index, or -1 if the StartRow doesn't exist.
-	int FindIndex(unsigned int StartRow) const;
+	int FindIndex(unsigned int StartRow);
 
 	//This is the same as above, but designed to take this class as a pass through variable. By this way you can feed
 	//the meat of this class into an independent function, such as SparseConjugateGradient.
@@ -98,7 +98,7 @@ public:
 	Note that VectorProduct is nonsense. More useful to you is CholeskyBackSolve which fills x, where LDLt x = b. */
 	bool CreateIncompleteCholeskyFactorization(unsigned int MaxFillAbove = 0);
 	void KillIncompleteCholeskyFactorization(void);
-	void CholeskyBackSolve(float *x, float *b) const;
+	void CholeskyBackSolve(float *x, float *b);
 	MultiDiagonalSymmetricMatrix *IncompleteCholeskyFactorization;
 
 	static void PassThroughCholeskyBackSolve(float *Product, float *x, void *Pass){

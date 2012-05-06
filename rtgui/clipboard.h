@@ -36,19 +36,19 @@ class Clipboard {
 
     public:
         void                                               setIPTC (const rtengine::procparams::IPTCPairs& iptcc) { iptc = iptcc; _hasIPTC = true;}
-        const rtengine::procparams::IPTCPairs&             getIPTC () const { return iptc;  }
-        bool                                               hasIPTC () const { return _hasIPTC; }
+        const rtengine::procparams::IPTCPairs&             getIPTC ()                                            { return iptc;  }
+        bool                                               hasIPTC () { return _hasIPTC; }
 
         void                                               setPartialProfile   (const rtengine::procparams::PartialProfile& pprofile);
-        const rtengine::procparams::PartialProfile&        getPartialProfile   () const { return partProfile; };
+        const rtengine::procparams::PartialProfile&        getPartialProfile   () { return partProfile; };
         void                                               setProcParams       (const rtengine::procparams::ProcParams& pparams);
-	const rtengine::procparams::ProcParams&            getProcParams       () const { return *partProfile.pparams; }
-        bool                                               hasProcParams       () const { return partProfile.pparams; }
-        bool                                               hasPEdited          () const { return partProfile.pedited; }
+        const rtengine::procparams::ProcParams&            getProcParams       () { return *partProfile.pparams; }
+        bool                                               hasProcParams       () { return partProfile.pparams; }
+        bool                                               hasPEdited          () { return partProfile.pedited; }
 
         void                                               setCurveData (std::vector<double>& p, DiagonalCurveType type ) { curve = p;  hasCurveDataType = type; return; }
-        const std::vector<double> &                        getCurveData () const { return curve; }
-        DiagonalCurveType                                  hasCurveData () const { return hasCurveDataType; }
+        const std::vector<double> &                        getCurveData ()                       { return curve; }
+        DiagonalCurveType                                  hasCurveData ()                       { return hasCurveDataType; }
 
         Clipboard ();
         ~Clipboard ();

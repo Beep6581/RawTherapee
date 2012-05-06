@@ -33,7 +33,7 @@ std::vector<RTImage*>       imagesList;			// List of images in order to live upd
  */
 RTImage::RTImage(Glib::ustring fileName, Glib::ustring rtlFileName) : Gtk::Image() {
 	Glib::ustring path;
-	if (!rtlFileName.empty()) {
+	if (rtlFileName.length()) {
 		const Gtk::TextDirection dir = get_direction();
 		if (dir == Gtk::TEXT_DIR_RTL)
 			path = findIconAbsolutePath(rtlFileName);
@@ -55,7 +55,7 @@ RTImage::~RTImage() {
 }
 
 void RTImage::updateImages() {
-	for (size_t i=0; i<imagesList.size(); i++) {
+	for (unsigned int i=0; i<imagesList.size(); i++) {
 		Glib::ustring oldPath = imagesList[i]->property_file();
 		Glib::ustring fileName = Glib::path_get_basename(oldPath);
 		imagesList[i]->clear();
@@ -73,7 +73,7 @@ void RTImage::changeImage(Glib::ustring &newImage) {
 
 Glib::ustring RTImage::findIconAbsolutePath(const Glib::ustring &iconFName) {
 	Glib::ustring path;
-	for (size_t i=0; i<imagesPaths.size(); i++) {
+	for (unsigned int i=0; i<imagesPaths.size(); i++) {
 		path = Glib::build_filename(imagesPaths[i], iconFName);
 		//printf("\"%s\" \n", path.c_str());
 		if (safe_file_test(path, Glib::FILE_TEST_EXISTS)) {
@@ -113,7 +113,7 @@ void RTImage::setPaths(Options &opt) {
 
 		if (keyFile.has_key ("General", "Iconset"))
 			iSet = keyFile.get_string ("General", "Iconset");
-		if (!iSet.empty()) {
+		if (iSet.length()) {
 			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "actions"))));
 			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", iSet)));
 			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "devices"))));
@@ -123,7 +123,7 @@ void RTImage::setPaths(Options &opt) {
 		iSet.clear();
 		if (keyFile.has_key ("General", "FallbackIconset"))
 			iSet = keyFile.get_string ("General", "FallbackIconset");
-		if (!iSet.empty()) {
+		if (iSet.length()) {
 			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "actions"))));
 			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", iSet)));
 			imagesPaths.push_back (Glib::build_filename(argv0, Glib::build_filename("images", Glib::build_filename(iSet, "devices"))));

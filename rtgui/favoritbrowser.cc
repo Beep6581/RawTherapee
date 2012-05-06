@@ -67,7 +67,7 @@ FavoritBrowser::FavoritBrowser () : listener (NULL), lastSelectedDir ("") {
 void FavoritBrowser::selectionChanged () {
 
     Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
     if (iter && listener) 
         listener->selectDir (iter->get_value (favoritColumns.fulldir));
 }
@@ -79,15 +79,15 @@ void FavoritBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustr
 
 void FavoritBrowser::addPressed () {
 
-    if (lastSelectedDir.empty())
+    if (lastSelectedDir=="")
         return;
 
     // check if the dirname is already in the list. If yes, return.
-    Gtk::TreeModel::const_iterator iter = favoritModel->children ().begin();
+    Gtk::TreeModel::iterator iter = favoritModel->children ().begin();
     while (iter != favoritModel->children().end()) {
         if (iter->get_value (favoritColumns.fulldir) == lastSelectedDir) 
             return;
-        ++iter;
+        iter++;
     }
 
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_parse_name (lastSelectedDir);

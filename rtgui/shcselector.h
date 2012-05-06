@@ -45,7 +45,7 @@ class SHCSelector : public Gtk::DrawingArea {
          
     SHCSelector();
 
-    void setSHCListener (SHCListener* l) { cl = l; }
+    void setSHCListener (SHCListener* l) { cl = l;; }
 
     void setPositions (double spos, double cpos, double hpos);
     void getPositions (double& spos, double& cpos, double& hpos);

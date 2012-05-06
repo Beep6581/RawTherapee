@@ -141,7 +141,7 @@ void CropHandler::setWSize (int w, int h) {
         update ();   
 }
 
-void CropHandler::getWSize (int& w, int &h) const {
+void CropHandler::getWSize (int& w, int &h) {
 
     w = ww;
     h = wh;
@@ -157,7 +157,7 @@ void CropHandler::setPosition (int x, int y, bool update_) {
         update ();   
 }
 
-void CropHandler::getPosition (int& x, int& y) const {
+void CropHandler::getPosition (int& x, int& y) {
 
     x = cropX;
     y = cropY;
@@ -322,12 +322,12 @@ void CropHandler::setEnabled (bool e) {
         update ();
 }
 
-bool CropHandler::getEnabled () const {
+bool CropHandler::getEnabled () {
 
     return enabled;
 }
 
-void CropHandler::getSize (int& w, int& h) const {
+void CropHandler::getSize (int& w, int& h) {
     
     w = cropW;
     h = cropH;

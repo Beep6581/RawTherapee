@@ -55,7 +55,7 @@ class Slicer {
 		unsigned int blockNumber;		// number of block for the sub-region
 		unsigned int maxPixelNumber;	// number of pixel of the biggest block (for memory allocation purpose)
 		Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegion, unsigned int pixels);
-		void get_block(unsigned int blockId, Block *block) const;
+		void get_block(unsigned int blockId, Block *block);
 };
 
 #endif

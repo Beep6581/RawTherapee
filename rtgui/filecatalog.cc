@@ -486,7 +486,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         previewsToLoad = 0;
         previewsLoaded = 0;
         // if openfile exists, we have to open it first (it is a command line argument)
-        if (!openfile.empty())
+        if (openfile!="") 
             addAndOpenFile (openfile);
 
 		selectedDirectory = dir->get_parse_name();
@@ -495,7 +495,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 		buttonBrowsePath->set_image (*iRefreshWhite);
         fileNameList = getFileList ();
 
-	for (size_t i=0; i<fileNameList.size(); i++) {
+        for (unsigned int i=0; i<fileNameList.size(); i++) {
             Glib::RefPtr<Gio::File> f = Gio::File::create_for_path(fileNameList[i]);
             if (f->get_parse_name() != openfile) // if we opened a file at the beginning don't add it again
                 checkAndAddFile (f);
@@ -531,7 +531,7 @@ void FileCatalog::_refreshProgressBar () {
     // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
     if (!inTabMode) {
-    	Gtk::Notebook *nb = static_cast<Gtk::Notebook *>(filepanel->get_parent());
+    	Gtk::Notebook *nb =(Gtk::Notebook *)(filepanel->get_parent());
     	Gtk::Box* hbb=NULL;
     	Gtk::Label *label=NULL;
     	if( options.mainNBVertical )
@@ -725,7 +725,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
     msd.set_secondary_text(Glib::ustring::compose ( inclBatchProcessed ? M("FILEBROWSER_DELETEDLGMSGINCLPROC") : M("FILEBROWSER_DELETEDLGMSG"), tbe.size()));
 
     if (msd.run()==Gtk::RESPONSE_YES) {
-        for (size_t i=0; i<tbe.size(); i++) {
+        for (unsigned int i=0; i<tbe.size(); i++) {
             Glib::ustring fname = tbe[i]->filename;
             // remove from browser
             FileBrowserEntry* t = fileBrowser->delEntry (fname);
@@ -779,7 +779,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 		Glib::ustring dest_Dir = fc.get_current_folder();
 
 		// iterate through selected files
-		for (size_t i=0; i<tbe.size(); i++) {
+		for (unsigned int i=0; i<tbe.size(); i++) {
 			Glib::ustring src_fPath = tbe[i]->filename;
 			Glib::ustring src_Dir = Glib::path_get_dirname(src_fPath);
 			Glib::RefPtr<Gio::File> src_file = Gio::File::create_for_path ( src_fPath );
@@ -944,7 +944,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 
 	bool success;
 
-    RenameDialog* renameDlg = new RenameDialog (static_cast<Gtk::Window *>(get_toplevel()));
+    RenameDialog* renameDlg = new RenameDialog ((Gtk::Window*)get_toplevel());
 
     for (size_t i=0; i<tbe.size(); i++) {
     	renameDlg->initName (Glib::path_get_basename (tbe[i]->filename), tbe[i]->thumbnail->getCacheImageData());
@@ -962,7 +962,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 					continue;
 				// if no extension is given, concatenate the extension of the original file
 				Glib::ustring ext = getExtension (nBaseName);
-				if (ext.empty())
+				if (ext=="")
 					nBaseName += "." + getExtension (baseName);
 				Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
 
@@ -987,7 +987,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
     }
     delete renameDlg;
 /*    // ask for new file name
-    Gtk::Dialog dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *(static_cast<Gtk::Window*>(get_toplevel())), true, true);
+    Gtk::Dialog dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *((Gtk::Window*)get_toplevel()), true, true);
     
     dialog.add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
     dialog.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
@@ -1003,7 +1003,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
     nfentry.set_activates_default (true);
     dialog.set_default_response (Gtk::RESPONSE_OK);
 
-    for (size_t i=0; i<tbe.size(); i++) {
+    for (int i=0; i<tbe.size(); i++) {
 
         Glib::ustring ofname = tbe[i]->filename;
         Glib::ustring dirName = Glib::path_get_dirname (tbe[i]->filename);
@@ -1040,7 +1040,7 @@ void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, 
 	 if (tbe.empty())
 	        return;
 
-	 for (size_t i=0; i<tbe.size(); i++) {
+	 for (unsigned int i=0; i<tbe.size(); i++) {
 		 Glib::ustring fname = tbe[i]->filename;
 		 // remove from cache
 		 cacheMgr->clearFromCache (fname,leavenotrace);
@@ -1315,7 +1315,7 @@ void FileCatalog::filterChanged () {
 
 void FileCatalog::reparseDirectory () {
 
-    if (selectedDirectory.empty())
+    if (selectedDirectory=="")
         return;
 
     if (!safe_file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
@@ -1540,7 +1540,7 @@ void FileCatalog::buttonBrowsePathPressed () {
 		DecodedPathPrefix = safe_get_user_picture_dir();
 	}
 
-	if (!DecodedPathPrefix.empty()){
+	if (DecodedPathPrefix!=""){
 		BrowsePathValue = Glib::ustring::compose ("%1%2",DecodedPathPrefix,BrowsePathValue.substr (1,BrowsePath->get_text_length()-1));
 		BrowsePath->set_text(BrowsePathValue);
 	}
@@ -1590,7 +1590,7 @@ void FileCatalog::tbRightPanel_1_toggled () {
 }
 
 bool FileCatalog::CheckSidePanelsVisibility(){
-	if(!tbLeftPanel_1->get_active() && !tbRightPanel_1->get_active())
+	if(tbLeftPanel_1->get_active()==false && tbRightPanel_1->get_active()==false)
 		return false;
 	else
 		return true;

@@ -194,7 +194,7 @@ void ImageData::extractInfo () {
             bool lensOk = false;
             if (mnote->getTag ("LensData")) {
                 std::string ldata = mnote->getTag ("LensData")->valueToString ();
-                size_t pos;
+                int pos;
                 if (ldata.size()>10 && (pos=ldata.find ("Lens = "))!=Glib::ustring::npos) {
                     lens = ldata.substr (pos + 7);
                     if (lens.compare (0, 7, "Unknown"))
@@ -336,7 +336,7 @@ std::string ImageMetaData::shutterToString (double shutter) {
 std::string ImageMetaData::expcompToString (double expcomp, bool maskZeroexpcomp) {
 
     char buffer[256];
-    if (maskZeroexpcomp){
+    if (maskZeroexpcomp==true){
         if (expcomp!=0.0){
     	    sprintf (buffer, "%0.2f", expcomp);
     	    return buffer;

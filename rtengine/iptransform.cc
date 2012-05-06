@@ -585,27 +585,27 @@ double ImProcFunctions::getTransformAutoFill (int oW, int oH) {
 	return scaleL;
 }
 
-bool ImProcFunctions::needsCA () const {
+bool ImProcFunctions::needsCA () {
 	return fabs (params->cacorrection.red) > 1e-15 || fabs (params->cacorrection.blue) > 1e-15;
 }
 
-bool ImProcFunctions::needsDistortion () const {
+bool ImProcFunctions::needsDistortion () {
 	return fabs (params->distortion.amount) > 1e-15;
 }
 
-bool ImProcFunctions::needsRotation	() const {
+bool ImProcFunctions::needsRotation	() {
 	return fabs (params->rotate.degree) > 1e-15;
 }
 
-bool ImProcFunctions::needsPerspective () const {
+bool ImProcFunctions::needsPerspective () {
 	return params->perspective.horizontal || params->perspective.vertical;
 }
 
-bool ImProcFunctions::needsVignetting () const {
+bool ImProcFunctions::needsVignetting () {
 	return params->vignetting.amount;
 }
 
-bool ImProcFunctions::needsTransform () const {
+bool ImProcFunctions::needsTransform () {
 	return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsVignetting ();
 }
 

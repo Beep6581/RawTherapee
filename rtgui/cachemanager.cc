@@ -73,7 +73,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
 	{
         Glib::Mutex::Lock lock(mutex_);
 
-		string_thumb_map::const_iterator r = openEntries.find (fname);
+		string_thumb_map::iterator r = openEntries.find (fname);
 		// if it is open, return it
 		if (r!=openEntries.end()) {
 			r->second->increaseRef ();
@@ -83,7 +83,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
 
     // compute the md5
     std::string md5 = getMD5 (fname);
-    if (md5.empty())
+    if (md5=="")
         return NULL;
 
     // build path name
@@ -93,7 +93,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
     if (safe_file_test (cfname, Glib::FILE_TEST_EXISTS)) {
         CacheImageData* cfs = new CacheImageData ();
         int e = cfs->load (cfname);
-        if (!e && cfs->supported)
+        if (!e && cfs->supported==true) 
             res = new Thumbnail (this, fname, cfs);
         if (res && !res->isSupported ()) {
             delete res;
@@ -117,7 +117,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
 	{
 		Glib::Mutex::Lock lock(mutex_);
 
-		string_thumb_map::const_iterator r = openEntries.find (fname);
+		string_thumb_map::iterator r = openEntries.find (fname);
 		if (r!=openEntries.end()) {
 			delete res;
 			r->second->increaseRef ();
@@ -137,7 +137,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
     Glib::Mutex::Lock lock(mutex_);
 
     // check if it is opened
-	string_thumb_map::const_iterator r = openEntries.find (fname);
+    string_thumb_map::iterator r = openEntries.find (fname);
     // if it is open, dont delete it
     if (r!=openEntries.end()) {
 		std::string md5 = r->second->getMD5 ();
@@ -152,7 +152,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 
 		// if in the editor, the thumbnail still exists. If not, delete it:
 		r = openEntries.find (fname);
-	    if (r==openEntries.end() && !md5.empty()) {
+	    if (r==openEntries.end() && md5!="") {
 			safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
 			safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
 			safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
@@ -164,7 +164,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 	}
 	else {
 	    std::string md5 = getMD5 (fname);
-	    if (!md5.empty()) {
+	    if (md5!="") {
 	        safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
 	        safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
 	        safe_g_remove (getCacheFileName ("images", fname, md5) + ".cust16");
@@ -178,7 +178,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname) {
 
 void CacheManager::clearFromCache (const Glib::ustring& fname, bool leavenotrace) {
 	std::string md5 = getMD5 (fname);
-	if (!md5.empty()) {
+	if (md5!="") {
 		if (leavenotrace){
 			safe_g_remove (getCacheFileName ("data", fname, md5) + ".txt");
 			safe_g_remove (getCacheFileName ("profiles", fname, md5) + paramFileExtension);
@@ -247,8 +247,8 @@ void CacheManager::clearAll () {
     deleteDir ("data");
     
     // re-generate thumbnail images and clear profiles of open thumbnails
-    //string_thumb_map::const_iterator i;
-    //for (i=openEntries.begin(); i!=openEntries.end(); ++i) {
+    //string_thumb_map::iterator i;
+    //for (i=openEntries.begin(); i!=openEntries.end(); i++) {
     //    i->second->clearProcParams (CACHEMGR);
     //    i->second->generateThumbnailImage ();
     //    i->second->updateCache ();

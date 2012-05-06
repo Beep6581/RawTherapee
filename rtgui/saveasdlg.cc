@@ -126,7 +126,7 @@ bool SaveAsDialog::getToTailOfQueue () {
 Glib::ustring SaveAsDialog::getFileName () {
 
 	// fname is empty if the dialog has been cancelled
-	if (!fname.empty())
+	if (fname.length())
 		return removeExtension(fname) + Glib::ustring(".") + formatOpts->getFormat().format;
 	else
 		return "";
@@ -149,7 +149,7 @@ void SaveAsDialog::okPressed () {
     // checking if the filename field is empty. The user have to click Cancel if he don't want to specify a filename
     // NB: There seem to be a bug in Gtkmm2.22 / FileChooserWidget : if you suppress the filename entry and
     //     click on a folder in the list, the filename field is empty but get_filename will return the folder's path :/
-    if (fname.empty() || safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
+    if (!fname.length() || safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
         Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_EMPTYFILENAME") + "</b>";
         Gtk::MessageDialog msgd (*this, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
         msgd.run ();

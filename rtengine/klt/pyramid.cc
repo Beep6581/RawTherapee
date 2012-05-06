@@ -51,7 +51,7 @@ _KLT_Pyramid _KLTCreatePyramid(
   /* Set parameters */
   pyramid->subsampling = subsampling;
   pyramid->nLevels = nlevels;
-  pyramid->img = reinterpret_cast<_KLT_FloatImage *> (pyramid + 1);
+  pyramid->img = (_KLT_FloatImage *) (pyramid + 1);
   pyramid->ncols = (int *) (pyramid->img + nlevels);
   pyramid->nrows = (int *) (pyramid->ncols + nlevels);
 

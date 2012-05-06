@@ -243,7 +243,7 @@ void PlacesBrowser::driveChanged (const Glib::RefPtr<Gio::Drive>& m) {
 void PlacesBrowser::selectionChanged () {
 
     Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
     if (iter) {
         if (iter->get_value (placesColumns.type)==2) {
             std::vector<Glib::RefPtr<Gio::Volume> > volumes = vm->get_volumes ();
@@ -273,7 +273,7 @@ void PlacesBrowser::dirSelected (const Glib::ustring& dirname, const Glib::ustri
 
 void PlacesBrowser::addPressed () {
 
-    if (lastSelectedDir.empty())
+    if (lastSelectedDir=="")
         return;
 
     // check if the dirname is already in the list. If yes, return.
@@ -296,7 +296,7 @@ void PlacesBrowser::delPressed () {
 
     // lookup the selected item in the bookmark
     Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
-	Gtk::TreeModel::const_iterator iter = selection->get_selected();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
 
     if (iter && iter->get_value (placesColumns.type)==5) {
         std::vector<Glib::ustring>::iterator i = std::find (options.favoriteDirs.begin(), options.favoriteDirs.end(), iter->get_value (placesColumns.root));

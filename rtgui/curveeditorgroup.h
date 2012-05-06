@@ -57,7 +57,7 @@ protected:
 	CurveListener* cl;
 	ColorProvider* cp;
 
-	size_t numberOfPackedCurve;
+	unsigned int numberOfPackedCurve;
 
 public:
 	CurveEditorGroup(Glib::ustring groupLabel = "");
@@ -94,8 +94,8 @@ protected:
 	CurveEditorGroup *parent;
 
 public:
-	int getValUnchanged() const { return valUnchanged; }
-	int getValLinear() const { return valLinear; }
+	int getValUnchanged() { return valUnchanged; }
+    int getValLinear() { return valLinear; }
 	virtual void updateBackgroundHistogram (CurveEditor* ce) {}
 	virtual void setColorProvider (ColorProvider* p) = 0;
 

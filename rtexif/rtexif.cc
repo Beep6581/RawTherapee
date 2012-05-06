@@ -110,7 +110,7 @@ TagDirectory*  TagDirectory::getRoot()
 	else return this;
 }
 
-const TagAttrib* TagDirectory::getAttrib (int id) const {
+const TagAttrib* TagDirectory::getAttrib (int id) {
 
     if (attribs)
         for (int i=0; attribs[i].ignore!=-1; i++)
@@ -1428,7 +1428,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
   else
     cl = new TagDirectory (NULL, ifdAttribs, INTEL);
 
-  for (rtengine::procparams::ExifPairs::const_iterator i=changeList.begin(); i!=changeList.end(); ++i)
+  for (rtengine::procparams::ExifPairs::const_iterator i=changeList.begin(); i!=changeList.end(); i++)
      cl->applyChange (i->first, i->second);
   
    getDefaultTIFFTags (cl);
@@ -1437,7 +1437,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
   defTags[1]->setInt (H, 0, LONG);
   defTags[8]->setInt (8, 0, SHORT);
   
-  for (size_t i=defTags.size()-1; i>0; i--)
+  for (int i=defTags.size()-1; i>=0; i--) 
     cl->replaceTag (defTags[i]->clone (cl));
   cl->sort ();
   int size = cl->write (8, buffer+6);
@@ -1493,7 +1493,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     }
     
 // apply list of changes
-    for (rtengine::procparams::ExifPairs::const_iterator i=changeList.begin(); i!=changeList.end(); ++i)
+    for (rtengine::procparams::ExifPairs::const_iterator i=changeList.begin(); i!=changeList.end(); i++)
         cl->applyChange (i->first, i->second);
   
   // append default properties   
@@ -1504,7 +1504,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
     defTags[8]->initInt(0, SHORT, 3);
     for (int i=0;i<3;i++) defTags[8]->setInt(bps, i*2, SHORT);
  
-    for (size_t i=defTags.size()-1; i>0; i--)
+    for (int i=defTags.size()-1; i>=0; i--) 
         cl->replaceTag (defTags[i]->clone (cl));
    
 // calculate strip offsets  

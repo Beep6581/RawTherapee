@@ -474,7 +474,7 @@ void DCPStore::init (Glib::ustring rtProfileDir) {
 
     Glib::ustring rootDirName=rtProfileDir;
 
-    if (!rootDirName.empty()) {
+    if (rootDirName!="") {
         std::deque<Glib::ustring> qDirs;
 
         qDirs.push_front(rootDirName);
@@ -526,7 +526,7 @@ DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName) {
     Glib::ustring name2=camShortName.uppercase();
 
     // Warning: do NOT use map.find(), since it does not seem to work reliably here
-    for (std::map<Glib::ustring, Glib::ustring>::const_iterator i=fileStdProfiles.begin();i!=fileStdProfiles.end(); ++i)
+    for (std::map<Glib::ustring, Glib::ustring>::iterator i=fileStdProfiles.begin();i!=fileStdProfiles.end();i++)
         if (name2==(*i).first) return getProfile((*i).second);
 
     return NULL;
