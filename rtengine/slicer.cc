@@ -95,7 +95,7 @@ Slicer::Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegi
 }
 
 // return the absolute position and size of the requested block
-void Slicer::get_block(unsigned int numBlock, Block *block) const {
+void Slicer::get_block(unsigned int numBlock, Block *block) {
 	double roundingTradeOff = (hBlockNumber - (double)((int)hBlockNumber)) == 0.5 ? 2.1 : 2.0;
 	unsigned int alreadyCompletedLineNbr = (unsigned int)((double)(numBlock) * blockWidth + (blockWidth/roundingTradeOff));
 

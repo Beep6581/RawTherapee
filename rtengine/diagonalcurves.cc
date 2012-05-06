@@ -319,7 +319,7 @@ double DiagonalCurve::getVal (double t) {
 void DiagonalCurve::getVal (const std::vector<double>& t, std::vector<double>& res) {
 
     res.resize (t.size());
-    for (size_t i=0; i<t.size(); i++)
+    for (unsigned int i=0; i<t.size(); i++)
         res[i] = getVal(t[i]);
 }
 

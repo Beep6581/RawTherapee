@@ -803,7 +803,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     return readyImg;
 }
 
-int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight, float &ratio) const {
+int Thumbnail::getImageWidth (const procparams::ProcParams& params, int rheight, float &ratio) {
 	if (thumbImg==NULL) return 0;  // Can happen if thumb is just building and GUI comes in with resize wishes
 
     int rwidth;
@@ -836,7 +836,7 @@ void Thumbnail::getCamWB (double& temp, double& green) {
     green = currWB.getGreen ();
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green) const {
+void Thumbnail::getAutoWB (double& temp, double& green) {
     
     temp = autowbTemp;
     green = autowbGreen;
@@ -905,7 +905,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     rtemp = ct.getTemp ();
     rgreen = ct.getGreen ();
 }
-void Thumbnail::transformPixel (int x, int y, int tran, int& tx, int& ty) const {
+void Thumbnail::transformPixel (int x, int y, int tran, int& tx, int& ty) {
     
     int W = thumbImg->width;
     int H = thumbImg->height;

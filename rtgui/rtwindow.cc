@@ -366,7 +366,7 @@ bool RTWindow::selectEditorPanel(const std::string &name) {
         EditWindow * wndEdit = EditWindow::getInstance(this);
         if (wndEdit->selectEditorPanel(name)) return true;
     } else {
-		std::map<Glib::ustring, EditorPanel*>::const_iterator iep = epanels.find(name);
+        std::map<Glib::ustring, EditorPanel*>::iterator iep = epanels.find(name);
 
         if (iep!=epanels.end()) {
             mainNB->set_current_page (mainNB->page_num (*iep->second));

@@ -33,7 +33,7 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label) {
 	button->set_relief (Gtk::RELIEF_NORMAL);
 	button->set_border_width (0);
 	button->add(*imageContainer);
-	if (!label.empty()) {
+	if (label.size()) {
 		Gtk::Label* buttonLabel = Gtk::manage ( new Gtk::Label(label + " ") );
 		imageContainer->pack_start(*buttonLabel, Gtk::PACK_SHRINK, 0);
 	}
@@ -52,11 +52,11 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label) {
 }
 
 PopUpCommon::~PopUpCommon () {
-	for (std::vector<RTImage*>::const_iterator i = images.begin(); i != images.end(); ++i)
+    for (std::vector<RTImage*>::iterator i = images.begin(); i != images.end(); ++i)
     {
         delete *i;
     }
-    for (std::vector<Gtk::ImageMenuItem*>::const_iterator i = items.begin(); i != items.end(); ++i)
+    for (std::vector<Gtk::ImageMenuItem*>::iterator i = items.begin(); i != items.end(); ++i)
     {
         delete *i;
     }
@@ -65,19 +65,19 @@ PopUpCommon::~PopUpCommon () {
     delete buttonGroup;
 }
 
-PopUpCommon::type_signal_changed PopUpCommon::signal_changed() const {
+PopUpCommon::type_signal_changed PopUpCommon::signal_changed() {
 	return message;
 }
 
 bool PopUpCommon::addEntry (Glib::ustring fileName, Glib::ustring label) {
 	bool added = false;
-	if (!label.empty()) {
+	if ( label.size() ) {
 		imageFilenames.push_back(fileName);
 		sItems.push_back(label);
 		// Create the image
 		RTImage* newImage = new RTImage(fileName);
 		images.push_back(newImage);
-		size_t currPos = images.size();
+		int currPos = (int)images.size();
 		// Create the menu item
 		Gtk::ImageMenuItem* newItem = new Gtk::ImageMenuItem (*newImage, label);
 		items.push_back(newItem);
@@ -121,7 +121,7 @@ void PopUpCommon::entrySelected (int i) {
  * Set the button image with the selected item
  */
 bool PopUpCommon::setSelected (int entryNum) {
-	if (entryNum < 0 || entryNum > (images.size()-1) || entryNum == selected)
+	if (entryNum < 0 || entryNum > ((int)images.size()-1) || (int)entryNum == selected)
 		return false;
 	else {
 		// Maybe we could do something better than loading the image file each time the selection is changed !?

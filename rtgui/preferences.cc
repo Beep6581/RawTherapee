@@ -139,7 +139,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     behTreeView->get_column (2)->set_fixed_width (50);
 
     // fill model
-	Gtk::TreeModel::const_iterator mi, ci;
+    Gtk::TreeModel::iterator mi, ci;
 
     /*
      *   The TRUE/FALSE values of appendBehavList are replaced by the one defined in options.cc,
@@ -256,7 +256,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
 
 void Preferences::appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set) {
 
-	Gtk::TreeModel::const_iterator ci = behModel->append (parent->children());
+    Gtk::TreeModel::iterator ci = behModel->append (parent->children());
     ci->set_value (behavColumns.label, label);
     ci->set_value (behavColumns.visible, true);
     ci->set_value (behavColumns.badd, !set);
@@ -266,7 +266,7 @@ void Preferences::appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustri
 
 void Preferences::behAddRadioToggled (const Glib::ustring& path) {
 
-	Gtk::TreeModel::const_iterator iter = behModel->get_iter (path);
+    Gtk::TreeModel::iterator iter = behModel->get_iter (path);
     //bool set = iter->get_value (behavColumns.bset);
     iter->set_value (behavColumns.bset, false);
     iter->set_value (behavColumns.badd, true);
@@ -274,7 +274,7 @@ void Preferences::behAddRadioToggled (const Glib::ustring& path) {
 
 void Preferences::behSetRadioToggled (const Glib::ustring& path) {
 
-	Gtk::TreeModel::const_iterator iter = behModel->get_iter (path);
+    Gtk::TreeModel::iterator iter = behModel->get_iter (path);
     //bool add = iter->get_value (behavColumns.badd);
     iter->set_value (behavColumns.bset, true);
     iter->set_value (behavColumns.badd, false);
@@ -1360,7 +1360,7 @@ void Preferences::switchThemeTo(Glib::ustring newTheme, bool slimInterface) {
 
    Gtk::RC::reparse_all (Gtk::Settings::get_default());
    GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
-   gdk_event_send_clientmessage_toall (reinterpret_cast<GdkEvent*>(&event));
+   gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
 }
 
 void Preferences::workflowUpdate (){
@@ -1402,7 +1402,7 @@ void Preferences::switchFontTo(Glib::ustring newFont) {
 			"style \"clearlooks-default\" { font_name = \"%1\" }", newFont));
 	Gtk::RC::reparse_all (Gtk::Settings::get_default());
 	GdkEventClient event = { GDK_CLIENT_EVENT, NULL, TRUE, gdk_atom_intern("_GTK_READ_RCFILES", FALSE), 8 };
-	gdk_event_send_clientmessage_toall (reinterpret_cast<GdkEvent*>(&event));
+	gdk_event_send_clientmessage_toall ((GdkEvent*)&event);
 }
 
 void Preferences::useThemeChanged(){

@@ -217,7 +217,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         inone->set_active (true); prefprof->set_sensitive (false);
         ckbBlendCMSMatrix->set_sensitive (false);
     }
-    else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input.empty()) && icamera->get_state()==Gtk::STATE_INSENSITIVE)) {
+    else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()==Gtk::STATE_INSENSITIVE)) {
         iembedded->set_active (true); prefprof->set_sensitive (false);
         ckbBlendCMSMatrix->set_sensitive (false);
     }
@@ -232,7 +232,7 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         prefprof->set_sensitive (false);  // RT's own are always single-illuminant
     	ckbBlendCMSMatrix->set_sensitive (false);
     }
-    else if ((pp->icm.input == "(camera)" || pp->icm.input.empty()) && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
+    else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);  prefprof->set_sensitive (false);
     }
@@ -478,7 +478,7 @@ void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta) {
 
 void ICMPanel::ipSelectionChanged () {
 
-    if (ipDialog->get_filename().empty())
+    if (ipDialog->get_filename () == "")
         return;
 
         ipChanged ();

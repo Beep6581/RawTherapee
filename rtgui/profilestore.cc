@@ -29,7 +29,7 @@ using namespace rtengine::procparams;
 extern Glib::ustring argv0;
 
 ProfileStore::~ProfileStore () {
-	for (std::map<Glib::ustring,PartialProfile*>::const_iterator i = partProfiles.begin(); i!=partProfiles.end(); ++i) {
+    for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++) {
         if (i->second->pparams) delete i->second->pparams;
         if (i->second->pedited) delete i->second->pedited;
         delete i->second;
@@ -39,7 +39,7 @@ ProfileStore::~ProfileStore () {
 void ProfileStore::parseProfiles () {
 
     // clear loaded profiles
-    for (std::map<Glib::ustring,PartialProfile*>::const_iterator i = partProfiles.begin(); i!=partProfiles.end(); ++i) {
+    for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++) {
         delete i->second->pparams;
         delete i->second->pedited;
         delete i->second;
@@ -58,7 +58,7 @@ void ProfileStore::parseProfiles () {
 void ProfileStore::parseDir (const Glib::ustring& pdir) {
 
   // reload the available profiles from the profile dir
-  if (!pdir.empty()) {
+  if (pdir!="") {
     // process directory
     Glib::ustring dirname = pdir;
     Glib::Dir* dir = NULL;
@@ -103,7 +103,7 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
 
 PartialProfile* ProfileStore::getProfile (const Glib::ustring& profname) {
 
-	std::map<Glib::ustring, PartialProfile*>::const_iterator prof = partProfiles.find(profname);
+    std::map<Glib::ustring, PartialProfile*>::iterator prof = partProfiles.find(profname);
     if (prof != partProfiles.end())
         return partProfiles[profname];
     else
@@ -113,7 +113,7 @@ PartialProfile* ProfileStore::getProfile (const Glib::ustring& profname) {
 std::vector<Glib::ustring> ProfileStore::getProfileNames () {
 
     std::vector<Glib::ustring> ret;
-	for (std::map<Glib::ustring,PartialProfile*>::const_iterator i = partProfiles.begin(); i!=partProfiles.end(); ++i)
+    for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++)
         ret.push_back (i->first);
     return ret;
 }

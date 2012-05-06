@@ -29,7 +29,7 @@ LWButton::LWButton (Cairo::RefPtr<Cairo::ImageSurface> i, int aCode, void* aData
 			w = h = 2;
 }
 
-void LWButton::getSize (int& minw, int& minh) const {
+void LWButton::getSize (int& minw, int& minh) {
 
     minw = w;
     minh = h;
@@ -41,7 +41,7 @@ void LWButton::setPosition (int x, int y) {
     ypos = y;
 }
 
-void LWButton::getPosition (int& x, int& y) const {
+void LWButton::getPosition (int& x, int& y) {
 
     x = xpos;
     y = ypos;
@@ -58,7 +58,7 @@ void LWButton::setIcon (Cairo::RefPtr<Cairo::ImageSurface> i) {
 			w = h = 2;
 }
 
-Cairo::RefPtr<Cairo::ImageSurface> LWButton::getIcon () const {
+Cairo::RefPtr<Cairo::ImageSurface> LWButton::getIcon () {
 
     return icon;
 }
@@ -73,7 +73,7 @@ void LWButton::setColors (const Gdk::Color& bg, const Gdk::Color& fg) {
     fgb = fg.get_blue_p ();
 }
 
-bool LWButton::inside (int x, int y) const {
+bool LWButton::inside (int x, int y) {
 
     return x>xpos && x<xpos+w && y>ypos && y<ypos+h;
 }
@@ -168,13 +168,13 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context) {
 		}
 }
 
-void LWButton::getAlignment (Alignment& ha, Alignment& va) const {
+void LWButton::getAlignment (Alignment& ha, Alignment& va) {
 
     ha = halign;
     va = valign;
 }
 
-Glib::ustring LWButton::getToolTip (int x, int y) const {
+Glib::ustring LWButton::getToolTip (int x, int y) {
 
     if (inside (x, y))
         return toolTip;

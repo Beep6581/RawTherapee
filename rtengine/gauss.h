@@ -81,7 +81,7 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBuffer<double>*
         double csum = 2.0 * c1 + 1.0;
         c1 /= csum;
         double c0 = 1.0 / csum;
-	gaussHorizontal3<T> (src, dst, reinterpret_cast<T*>(buffer->data), W, H, c0, c1, multiThread);
+        gaussHorizontal3<T> (src, dst, (T*)(buffer->data), W, H, c0, c1, multiThread);
         return;
     }
 
@@ -156,7 +156,7 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
         double csum = 2.0 * c1 + 1.0;
         c1 /= csum;
         double c0 = 1.0 / csum;
-	gaussVertical3<T> (src, dst, reinterpret_cast<T*>(buffer->data), W, H, c0, c1, multiThread);
+        gaussVertical3<T> (src, dst, (T*)(buffer->data), W, H, c0, c1, multiThread);
         return;
     }
 

@@ -583,8 +583,8 @@ class ProcParams {
         static void init ();
         static void cleanup ();
 
-        bool operator== (const ProcParams& other) const;
-        bool operator!= (const ProcParams& other) const;
+        bool operator== (const ProcParams& other);
+        bool operator!= (const ProcParams& other);
 
     private:
         /** Write the ProcParams's text in the file of the given name.

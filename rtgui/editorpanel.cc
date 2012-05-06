@@ -685,7 +685,7 @@ void EditorPanel::info_toggled () {
 				idata->getFocalLen());
 
         expcomp = Glib::ustring(idata->expcompToString(idata->getExpComp(),true)); // maskZeroexpcomp
-        if (!expcomp.empty()){
+        if (expcomp!=""){
         		infoString2 = Glib::ustring::compose("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
         				infoString2,
         				expcomp /*Glib::ustring(idata->expcompToString(idata->getExpComp()))*/);
@@ -1339,7 +1339,7 @@ void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & his
 }
 
 bool EditorPanel::CheckSidePanelsVisibility() {
-	if(!tbTopPanel_1->get_active() && !tbRightPanel_1->get_active() && !hidehp->get_active())
+	if(tbTopPanel_1->get_active()==false && tbRightPanel_1->get_active()==false && hidehp->get_active()==false)
 		return false;
 	else
 		return true;
@@ -1354,7 +1354,7 @@ void EditorPanel::toggleSidePanels(){
 	tbTopPanel_1->set_active (!bAllSidePanelsVisible);
 	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
 	hidehp->set_active (!bAllSidePanelsVisible);
-	if (!bAllSidePanelsVisible)
+	if (bAllSidePanelsVisible == false)
 	  tbShowHideSidePanels->set_image (*iShowHideSidePanels);
 	else
 	  tbShowHideSidePanels->set_image (*iShowHideSidePanels_exit);

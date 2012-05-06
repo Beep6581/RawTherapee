@@ -424,7 +424,7 @@ bool FileBrowserEntry::releaseNotify (int button, int type, int bstate, int x, i
     return b;
 }
 
-bool FileBrowserEntry::onArea (CursorArea a, int x, int y) const {
+bool FileBrowserEntry::onArea (CursorArea a, int x, int y) {
 
     if (!drawable || !preview)
         return false;

@@ -323,7 +323,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 #define W8_4R   0.70710678118654752440
 
 
-void RawImageSource::ddct8x8s(int isgn, float **a) const
+void RawImageSource::ddct8x8s(int isgn, float **a)
 {
     int j;
     float x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;

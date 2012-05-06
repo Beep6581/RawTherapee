@@ -79,8 +79,8 @@ class ImageIO {
         int saveJPEG (Glib::ustring fname, int quality = 100);
         int saveTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false);
 
-        cmsHPROFILE getEmbeddedProfile () const { return embProfile; }
-        void        getEmbeddedProfileData (int& length, unsigned char*& pdata) const { length = loadedProfileLength; pdata = (unsigned char*)loadedProfileData; }
+        cmsHPROFILE getEmbeddedProfile () { return embProfile; }
+        void        getEmbeddedProfileData (int& length, unsigned char*& pdata) { length = loadedProfileLength; pdata = (unsigned char*)loadedProfileData; }
 
         void setMetadata (const rtexif::TagDirectory* eroot);
         void setMetadata (const rtexif::TagDirectory* eroot, const rtengine::procparams::ExifPairs& exif, const rtengine::procparams::IPTCPairs& iptcc);

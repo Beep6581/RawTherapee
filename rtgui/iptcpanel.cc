@@ -378,20 +378,20 @@ void IPTCPanel::addKeyWord () {
 
     keyword->get_entry()->select_region (0, keyword->get_entry()->get_text().size());
 
-    for (size_t i=0; i<keywords->size(); i++)
+    for (unsigned int i=0; i<keywords->size(); i++)
         if (keywords->get_text (i) == keyword->get_entry()->get_text()) 
             return;
         
     keywords->append_text (keyword->get_entry()->get_text());
     keyword->prepend_text (keyword->get_entry()->get_text());
     std::vector<Glib::ustring> items;
-	for (Gtk::TreeModel::const_iterator i = keyword->get_model()->children().begin(); i!=keyword->get_model()->children().end(); ++i) {
+    for (Gtk::TreeModel::iterator i = keyword->get_model()->children().begin(); i!=keyword->get_model()->children().end(); i++) {
         Glib::ustring s;
         i->get_value (0, s);
         items.push_back (s);
     }
     keyword->clear_items ();
-    for (size_t i=0; i<10 && i<items.size(); i++)
+    for (unsigned int i=0; i<10 && i<items.size(); i++)
         keyword->append_text (items[i]);
     keywords->scroll_to_row (keywords->get_model()->get_path(--keywords->get_model()->children().end()));
     
@@ -403,11 +403,11 @@ void IPTCPanel::delKeyWord () {
     std::vector<int> selection = keywords->get_selected ();
     if (!selection.empty()) {
         std::vector<Glib::ustring> keep;
-	for (size_t i=0; i<keywords->size(); i++)
+        for (unsigned int i=0; i<keywords->size(); i++)
             if (std::find (selection.begin(), selection.end(), i) == selection.end())
                 keep.push_back (keywords->get_text (i));
         keywords->clear_items ();
-	for (size_t i=0; i<keep.size(); i++)
+        for (unsigned int i=0; i<keep.size(); i++)
             keywords->append_text (keep[i]);
     }
 
@@ -416,20 +416,20 @@ void IPTCPanel::delKeyWord () {
 
 void IPTCPanel::addSuppCategory () {
 
-    for (size_t i=0; i<suppCategories->size(); i++)
+    for (unsigned int i=0; i<suppCategories->size(); i++)
         if (suppCategories->get_text (i) == suppCategory->get_entry()->get_text())
             return;
 
     suppCategories->append_text (suppCategory->get_entry()->get_text());
     suppCategory->prepend_text (suppCategory->get_entry()->get_text());
     std::vector<Glib::ustring> items;
-	for (Gtk::TreeModel::const_iterator i = suppCategory->get_model()->children().begin(); i!=suppCategory->get_model()->children().end(); ++i) {
+    for (Gtk::TreeModel::iterator i = suppCategory->get_model()->children().begin(); i!=suppCategory->get_model()->children().end(); i++) {
         Glib::ustring s;
         i->get_value (0, s);
         items.push_back (s);
     }
     suppCategory->clear_items ();
-    for (size_t i=0; i<10 && i<items.size(); i++)
+    for (unsigned int i=0; i<10 && i<items.size(); i++)
         suppCategory->append_text (items[i]);
     suppCategories->scroll_to_row (suppCategories->get_model()->get_path(--suppCategories->get_model()->children().end()));
     suppCategory->get_entry()->select_region (0, suppCategory->get_entry()->get_text().size());
@@ -442,11 +442,11 @@ void IPTCPanel::delSuppCategory () {
     std::vector<int> selection = suppCategories->get_selected ();
     if (!selection.empty()) {
         std::vector<Glib::ustring> keep;
-	for (size_t i=0; i<suppCategories->size(); i++)
+        for (unsigned int i=0; i<suppCategories->size(); i++)
             if (std::find (selection.begin(), selection.end(), i) == selection.end())
                 keep.push_back (suppCategories->get_text (i));
         suppCategories->clear_items ();
-	for (size_t i=0; i<keep.size(); i++)
+        for (unsigned int i=0; i<keep.size(); i++)
             suppCategories->append_text (keep[i]);
     }
 
@@ -461,12 +461,12 @@ void IPTCPanel::updateChangeList () {
     changeList["Headline"       ].push_back (headline->get_text ());
     changeList["Instructions"   ].push_back (instructions->get_text ());
 
-    for (size_t i=0; i<keywords->size(); i++)
+    for (unsigned int i=0; i<keywords->size(); i++)
     changeList["Keywords"       ].push_back (keywords->get_text (i));
 
     changeList["Category"       ].push_back (category->get_entry()->get_text ());
 
-    for (size_t i=0; i<suppCategories->size(); i++)
+    for (unsigned int i=0; i<suppCategories->size(); i++)
     changeList["SupplementalCategories"].push_back (suppCategories->get_text (i));
 
     changeList["Author"         ].push_back (author->get_text ());
@@ -510,7 +510,7 @@ void IPTCPanel::applyChangeList () {
     keyword->get_entry()->set_text ("");
     suppCategory->get_entry()->set_text ("");
     
-	for (rtengine::procparams::IPTCPairs::const_iterator i=changeList.begin(); i!=changeList.end(); i++) {
+    for (rtengine::procparams::IPTCPairs::iterator i=changeList.begin(); i!=changeList.end(); i++) {
         if (i->first == "Caption" && !i->second.empty())
             captionText->set_text (i->second.at(0));
         else if (i->first == "CaptionWriter" && !i->second.empty())
@@ -520,12 +520,12 @@ void IPTCPanel::applyChangeList () {
         else if (i->first == "Instructions" && !i->second.empty())
             instructions->set_text (i->second.at(0));
         else if (i->first == "Keywords")
-            for (size_t j=0; j<i->second.size(); j++)
+            for (unsigned int j=0; j<i->second.size(); j++)
                 keywords->append_text (i->second.at(j));
         else if (i->first == "Category" && !i->second.empty())
             category->get_entry()->set_text (i->second.at(0));
         else if (i->first == "SupplementalCategories")
-		for (size_t j=0; j<i->second.size(); j++)
+            for (unsigned int j=0; j<i->second.size(); j++)
                 suppCategories->append_text (i->second.at(j));
         else if (i->first == "Author" && !i->second.empty())
             author->set_text (i->second.at(0));

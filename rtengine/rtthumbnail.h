@@ -34,7 +34,7 @@ namespace rtengine {
             double cam2xyz[3][3];
 
 
-            void transformPixel (int x, int y, int tran, int& tx, int& ty) const;
+            void transformPixel (int x, int y, int tran, int& tx, int& ty);
 
             static unsigned short *igammatab;
             static unsigned char *gammatab;
@@ -72,7 +72,7 @@ namespace rtengine {
             
             IImage8* processImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, std::string camName, double& scale);
             IImage8* quickProcessImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
-            int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio) const;
+            int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
             void     getDimensions  (int& w, int& h, double& scaleFac);
             
             static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);
@@ -80,7 +80,7 @@ namespace rtengine {
             static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, int deg=0);           
             
             void getCamWB     (double& temp, double& green);
-            void getAutoWB    (double& temp, double& green) const;
+            void getAutoWB    (double& temp, double& green);
             void getSpotWB    (const procparams::ProcParams& params, int x, int y, int rect, double& temp, double& green);
             void applyAutoExp (procparams::ProcParams& pparams);
             

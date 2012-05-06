@@ -161,7 +161,7 @@ void EditWindow::remEditorPanel (EditorPanel* ep) {
 }
 
 bool EditWindow::selectEditorPanel(const std::string &name) {
-	std::map<Glib::ustring, EditorPanel*>::const_iterator iep = epanels.find(name);
+    std::map<Glib::ustring, EditorPanel*>::iterator iep = epanels.find(name);
 
     if (iep!=epanels.end()) {
         mainNB->set_current_page (mainNB->page_num (*iep->second));
@@ -189,14 +189,14 @@ bool EditWindow::on_delete_event(GdkEventAny* event) {
     // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
     bool isProcessing=false;
 
-	for ( std::set <Glib::ustring>::const_iterator iter = filesEdited.begin(); iter != filesEdited.end() && !isProcessing; ++iter ) {
+    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end() && !isProcessing; iter++ ) {
         if (epanels[*iter]->getIsProcessing()) isProcessing=true;
     }
 
     if (isProcessing) return false;
 
 
-	for ( std::set <Glib::ustring>::const_iterator iter = filesEdited.begin(); iter != filesEdited.end(); ++iter )
+    for ( std::set <Glib::ustring>::iterator iter = filesEdited.begin(); iter != filesEdited.end(); iter++ )
         mainNB->remove_page (*epanels[*iter]);
 
     epanels.clear();

@@ -106,16 +106,16 @@ protected:
     virtual void draw       ();
     
     void addButtonSet       (LWButtonSet* bs);
-    int getMinimalHeight    () const { return height; }
-    int getMinimalWidth     () const { return width; }
+    int getMinimalHeight    () { return height; }
+    int getMinimalWidth     () { return width; }
 
     int getEffectiveHeight  () const { return exp_height; }
     int getPreviewHeight    () const { return preh; }
     int getStartX           () const { return startx; }
     int getStartY           () const { return starty; }
 
-    bool inside             (int x, int y) const;
-    bool insideWindow       (int x, int y, int w, int h) const;
+    bool inside             (int x, int y);
+    bool insideWindow       (int x, int y, int w, int h);
     void setPosition        (int x, int y, int w, int h);
     void setOffset (int x, int y);
 

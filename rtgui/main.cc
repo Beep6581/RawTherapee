@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 }
 
 void deleteProcParams(std::vector<rtengine::procparams::PartialProfile*> &pparams) {
-	for (size_t i=0; i<pparams.size(); i++) {
+	for (unsigned int i=0; i<pparams.size(); i++) {
 		pparams[i]->deleteInstance();
 		delete pparams[i];
 		pparams[i] = NULL;
@@ -326,7 +326,7 @@ int processLineParams( int argc, char **argv )
 			}
 			else {
 				options.saveUsePathTemplate = true;
-				if (options.savePathTemplate.empty())
+				if (!options.savePathTemplate.length())
 					// If the save path template is empty, we use its default value
 					options.savePathTemplate = "%p1/converted/%f";
 			}

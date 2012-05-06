@@ -138,7 +138,7 @@ BatchQueuePanel::BatchQueuePanel () {
 
 void BatchQueuePanel::updateTab (int qsize)
 {
-    Gtk::Notebook *nb = static_cast<Gtk::Notebook *>(this->get_parent());
+    Gtk::Notebook *nb =(Gtk::Notebook *)(this->get_parent());
 
     if (options.mainNBVertical) {
         Gtk::VBox* vbb = Gtk::manage (new Gtk::VBox ());

@@ -65,7 +65,7 @@ class Crop : public DetailedCrop {
              Crop        (ImProcCoordinator* parent);
             virtual ~Crop        ();
     
-        bool hasListener () const { return cropImageListener; }
+        bool hasListener () { return cropImageListener; }
         void update      (int todo);
         void setWindow   (int cx, int cy, int cw, int ch, int skip) { setCropSizes (cx, cy, cw, ch, skip, false); }
 		
@@ -74,7 +74,7 @@ class Crop : public DetailedCrop {
 	
         void setListener (DetailedCropListener* il);
         void destroy     () {}
-        int  get_skip    () const { return skip;}
+        int  get_skip    () { return skip;}
 };
 }
 #endif

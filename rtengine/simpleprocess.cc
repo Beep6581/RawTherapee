@@ -281,7 +281,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             else if(j==7) chpro=options.rtSettings.srgb10;//gamma 1.0
             else if(j==8) chpro=options.rtSettings.prophoto10;//gamma 1.0
 
-            for (size_t i=0; i<opnames.size(); i++) {
+            for (unsigned int i=0; i<opnames.size(); i++) {
                 if(chpro.compare(opnames[i]) ==0) present_space[j]=true;
             }
             if (!present_space[j] && settings->verbose) printf("Missing file: %s\n", chpro.c_str());
@@ -488,7 +488,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     else {
         // use RT_sRGB.icm profile if present, otherwise use LCMS2 profile generate by lab2rgb16b
         Glib::ustring outputProfile;
-        if (!params.icm.output.empty() && params.icm.output!=ColorManagementParams::NoICMString) {
+        if (params.icm.output!="" && params.icm.output!=ColorManagementParams::NoICMString) {
             outputProfile = params.icm.output;
 
             /*  if we'd wanted the RT_sRGB profile we would have selected it

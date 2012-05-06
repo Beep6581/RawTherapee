@@ -604,15 +604,15 @@ void Crop::refreshSize () {
 
         std::ostringstream ostrin;
         ostrin.precision (3);
-    //    ostrin << h->get_value()/ppi->get_value() << " in x " << w->get_value()/ppi->get_value() << " in";
-        ostrin << nh/ppi->get_value() << " in x " << nw/ppi->get_value() << " in";
+    //    ostrin << h->get_value()/ppi->get_value() << " in x " << w->get_value()/ppi->get_value() << " in";;
+        ostrin << nh/ppi->get_value() << " in x " << nw/ppi->get_value() << " in";;
 
         sizein->set_text (ostrin.str ());
 
         std::ostringstream ostrcm;
         ostrcm.precision (3);
-    //    ostrcm << h->get_value()/ppi->get_value()*2.54 << " cm x " << w->get_value()/ppi->get_value()*2.54 << " cm";
-        ostrcm << nh/ppi->get_value()*2.54 << " cm x " << nw/ppi->get_value()*2.54 << " cm";
+    //    ostrcm << h->get_value()/ppi->get_value()*2.54 << " cm x " << w->get_value()/ppi->get_value()*2.54 << " cm";;
+        ostrcm << nh/ppi->get_value()*2.54 << " cm x " << nw/ppi->get_value()*2.54 << " cm";;
 
         sizecm->set_text (ostrcm.str ());
     }
@@ -642,7 +642,7 @@ void Crop::setDimensions (int mw, int mh) {
   if (!wconnWasBlocked) wconn.block (false);
   if (!hconnWasBlocked) hconn.block (false);
 
-  if (!enabled->get_active()) {
+  if (enabled->get_active()==false) {
     nx = 0;
     ny = 0;
     nw = mw;
@@ -962,7 +962,7 @@ void Crop::cropManipReady () {
 double Crop::getRatio () {
 
   double r = -1.0;
-  if (!fixr->get_active())
+  if (fixr->get_active()==false)
     return r;
 
   r = cropratio[ratio->get_active_row_number()].value;

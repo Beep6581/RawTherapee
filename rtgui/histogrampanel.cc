@@ -164,7 +164,7 @@ void HistogramPanel::resized (Gtk::Allocation& req) {
     histogramArea->renderHistogram ();
     histogramArea->queue_draw ();
 
-    if (histogramRGBArea->getFreeze()) {
+    if (histogramRGBArea->getFreeze()==true) {
         histogramRGBArea->updateFreeze(false);
         // set histogramRGBArea invalid;
         histogramRGBArea->renderRGBMarks(-1, -1, -1);
@@ -231,10 +231,10 @@ void HistogramPanel::setHistRGBInvalid () {
 
 // "Freeze" is not a button, but a RMB-click, so this is not in the RGBV-Toggle method 
 void HistogramPanel::toggleFreeze () {
-    if (histogramRGBArea->getFreeze()) {
+    if (histogramRGBArea->getFreeze()==true) {
         histogramRGBArea->updateFreeze(false);
     }
-    else if (histogramRGBArea->getShow()) {
+    else if (histogramRGBArea->getShow()==true) {
         histogramRGBArea->updateFreeze(true);
     }
     return;

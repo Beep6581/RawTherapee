@@ -83,7 +83,7 @@ void WBParams::init() {
 }
 
 void WBParams::cleanup() {
-    for (size_t i=0; i<wbEntries.size(); i++) {
+    for (unsigned int i=0; i<wbEntries.size(); i++) {
         delete wbEntries[i];
     }
 }
@@ -328,7 +328,7 @@ void ProcParams::setDefaults () {
     raw.linenoise = 0;
     raw.greenthresh = 0;
     raw.ccSteps = 1;
-    raw.dmethod = RAWParams::methodstring[RAWParams::hphd];
+    raw.dmethod = RAWParams::methodstring[RAWParams::hphd];;
     raw.dcb_iterations=2;
     raw.dcb_enhance=false;
     raw.all_enhance=false;
@@ -353,7 +353,7 @@ void ProcParams::setDefaults () {
 
 int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* pedited) const {
 
-   if (fname.empty() && fname2.empty())
+    if (!fname.length() && !fname2.length())
         return 0;
 
     SafeKeyFile keyFile;
@@ -361,305 +361,303 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     keyFile.set_string  ("Version", "AppVersion", APPVERSION);
     keyFile.set_integer ("Version", "Version",    PPVERSION);
 
-   if (pedited) {
-    if (pedited->general.rank)       keyFile.set_integer ("General", "Rank",       rank);
-    if (pedited->general.colorlabel) keyFile.set_integer ("General", "ColorLabel", colorlabel);
-    if (pedited->general.intrash)    keyFile.set_boolean ("General", "InTrash",    inTrash);
+    if (!pedited || pedited->general.rank)       keyFile.set_integer ("General", "Rank",       rank);
+    if (!pedited || pedited->general.colorlabel) keyFile.set_integer ("General", "ColorLabel", colorlabel);
+    if (!pedited || pedited->general.intrash)    keyFile.set_boolean ("General", "InTrash",    inTrash);
 
     // save tonecurve:
-    if (pedited->toneCurve.autoexp)    keyFile.set_boolean ("Exposure", "Auto",           toneCurve.autoexp);
-    if (pedited->toneCurve.clip)       keyFile.set_double  ("Exposure", "Clip",           toneCurve.clip);
-    if (pedited->toneCurve.expcomp)    keyFile.set_double  ("Exposure", "Compensation",   toneCurve.expcomp);
-    if (pedited->toneCurve.brightness) keyFile.set_integer ("Exposure", "Brightness",     toneCurve.brightness);
-    if (pedited->toneCurve.contrast)   keyFile.set_integer ("Exposure", "Contrast",       toneCurve.contrast);
-    if (pedited->toneCurve.saturation) keyFile.set_integer ("Exposure", "Saturation",     toneCurve.saturation);
-    if (pedited->toneCurve.black)      keyFile.set_integer ("Exposure", "Black",          toneCurve.black);
-    if (pedited->toneCurve.hlcompr)    keyFile.set_integer ("Exposure", "HighlightCompr", toneCurve.hlcompr);
-    if (pedited->toneCurve.hlcomprthresh) keyFile.set_integer ("Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh);
-    if (pedited->toneCurve.shcompr)       keyFile.set_integer ("Exposure", "ShadowCompr",             toneCurve.shcompr);
-    if (pedited->toneCurve.curve) {
+    if (!pedited || pedited->toneCurve.autoexp)    keyFile.set_boolean ("Exposure", "Auto",           toneCurve.autoexp);
+    if (!pedited || pedited->toneCurve.clip)       keyFile.set_double  ("Exposure", "Clip",           toneCurve.clip);
+    if (!pedited || pedited->toneCurve.expcomp)    keyFile.set_double  ("Exposure", "Compensation",   toneCurve.expcomp);
+    if (!pedited || pedited->toneCurve.brightness) keyFile.set_integer ("Exposure", "Brightness",     toneCurve.brightness);
+    if (!pedited || pedited->toneCurve.contrast)   keyFile.set_integer ("Exposure", "Contrast",       toneCurve.contrast);
+    if (!pedited || pedited->toneCurve.saturation) keyFile.set_integer ("Exposure", "Saturation",     toneCurve.saturation);
+    if (!pedited || pedited->toneCurve.black)      keyFile.set_integer ("Exposure", "Black",          toneCurve.black);
+    if (!pedited || pedited->toneCurve.hlcompr)    keyFile.set_integer ("Exposure", "HighlightCompr", toneCurve.hlcompr);
+    if (!pedited || pedited->toneCurve.hlcomprthresh) keyFile.set_integer ("Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh);
+    if (!pedited || pedited->toneCurve.shcompr)       keyFile.set_integer ("Exposure", "ShadowCompr",             toneCurve.shcompr);
+    if (!pedited || pedited->toneCurve.curve) {
         Glib::ArrayHandle<double> tcurve = toneCurve.curve;
         keyFile.set_double_list("Exposure", "Curve", tcurve);
     }
 
     // save channel mixer
-    if (pedited->chmixer.red[0] || pedited->chmixer.red[1] || pedited->chmixer.red[2]) {
+    if (!pedited || pedited->chmixer.red[0] || pedited->chmixer.red[1] || pedited->chmixer.red[2]) {
         Glib::ArrayHandle<int> rmix (chmixer.red, 3, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Channel Mixer", "Red",   rmix);
     }
-    if (pedited->chmixer.green[0] || pedited->chmixer.green[1] || pedited->chmixer.green[2]) {
+    if (!pedited || pedited->chmixer.green[0] || pedited->chmixer.green[1] || pedited->chmixer.green[2]) {
         Glib::ArrayHandle<int> gmix (chmixer.green, 3, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Channel Mixer", "Green", gmix);
     }
-    if (pedited->chmixer.blue[0] || pedited->chmixer.blue[1] || pedited->chmixer.blue[2]) {
+    if (!pedited || pedited->chmixer.blue[0] || pedited->chmixer.blue[1] || pedited->chmixer.blue[2]) {
         Glib::ArrayHandle<int> bmix (chmixer.blue, 3, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
     }
 
     // save luma curve
-    if (pedited->labCurve.brightness)      keyFile.set_integer ("Luminance Curve", "Brightness",          labCurve.brightness);
-    if (pedited->labCurve.contrast)        keyFile.set_integer ("Luminance Curve", "Contrast",            labCurve.contrast);
-    if (pedited->labCurve.saturation)      keyFile.set_integer ("Luminance Curve", "Saturation",          labCurve.saturation);
-    if (pedited->labCurve.avoidclip)       keyFile.set_boolean ("Luminance Curve", "AvoidColorClipping",  labCurve.avoidclip);
-    if (pedited->labCurve.enable_saturationlimiter) keyFile.set_boolean ("Luminance Curve", "SaturationLimiter", labCurve.enable_saturationlimiter);
-    if (pedited->labCurve.saturationlimit) keyFile.set_double  ("Luminance Curve", "SaturationLimit",     labCurve.saturationlimit);
-    if (pedited->labCurve.lcurve)  {
+    if (!pedited || pedited->labCurve.brightness)      keyFile.set_integer ("Luminance Curve", "Brightness",          labCurve.brightness);
+    if (!pedited || pedited->labCurve.contrast)        keyFile.set_integer ("Luminance Curve", "Contrast",            labCurve.contrast);
+    if (!pedited || pedited->labCurve.saturation)      keyFile.set_integer ("Luminance Curve", "Saturation",          labCurve.saturation);
+    if (!pedited || pedited->labCurve.avoidclip)       keyFile.set_boolean ("Luminance Curve", "AvoidColorClipping",  labCurve.avoidclip);
+    if (!pedited || pedited->labCurve.enable_saturationlimiter) keyFile.set_boolean ("Luminance Curve", "SaturationLimiter", labCurve.enable_saturationlimiter);
+    if (!pedited || pedited->labCurve.saturationlimit) keyFile.set_double  ("Luminance Curve", "SaturationLimit",     labCurve.saturationlimit);
+    if (!pedited || pedited->labCurve.lcurve)  {
         Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
         keyFile.set_double_list("Luminance Curve", "LCurve", lcurve);
     }
-    if (pedited->labCurve.acurve)  {
+    if (!pedited || pedited->labCurve.acurve)  {
         Glib::ArrayHandle<double> acurve = labCurve.acurve;
         keyFile.set_double_list("Luminance Curve", "aCurve", acurve);
     }
-    if (pedited->labCurve.bcurve)  {
+    if (!pedited || pedited->labCurve.bcurve)  {
         Glib::ArrayHandle<double> bcurve = labCurve.bcurve;
         keyFile.set_double_list("Luminance Curve", "bCurve", bcurve);
     }
 
     // save sharpening
-    if (pedited->sharpening.enabled)            keyFile.set_boolean ("Sharpening", "Enabled",             sharpening.enabled);
-    if (pedited->sharpening.method)             keyFile.set_string  ("Sharpening", "Method",              sharpening.method);
-    if (pedited->sharpening.radius)             keyFile.set_double  ("Sharpening", "Radius",              sharpening.radius);
-    if (pedited->sharpening.amount)             keyFile.set_integer ("Sharpening", "Amount",              sharpening.amount);
-    if (pedited->sharpening.threshold)          keyFile.set_integer ("Sharpening", "Threshold",           sharpening.threshold);
-    if (pedited->sharpening.edgesonly)          keyFile.set_boolean ("Sharpening", "OnlyEdges",           sharpening.edgesonly);
-    if (pedited->sharpening.edges_radius)       keyFile.set_double  ("Sharpening", "EdgedetectionRadius", sharpening.edges_radius);
-    if (pedited->sharpening.edges_tolerance)    keyFile.set_integer ("Sharpening", "EdgeTolerance",       sharpening.edges_tolerance);
-    if (pedited->sharpening.halocontrol)        keyFile.set_boolean ("Sharpening", "HalocontrolEnabled",  sharpening.halocontrol);
-    if (pedited->sharpening.halocontrol_amount) keyFile.set_integer ("Sharpening", "HalocontrolAmount",   sharpening.halocontrol_amount);
-    if (pedited->sharpening.deconvradius)       keyFile.set_double  ("Sharpening", "DeconvRadius",        sharpening.deconvradius);
-    if (pedited->sharpening.deconvamount)       keyFile.set_integer ("Sharpening", "DeconvAmount",        sharpening.deconvamount);
-    if (pedited->sharpening.deconvdamping)      keyFile.set_integer ("Sharpening", "DeconvDamping",       sharpening.deconvdamping);
-    if (pedited->sharpening.deconviter)         keyFile.set_integer ("Sharpening", "DeconvIterations",    sharpening.deconviter);
+    if (!pedited || pedited->sharpening.enabled)            keyFile.set_boolean ("Sharpening", "Enabled",             sharpening.enabled);
+    if (!pedited || pedited->sharpening.method)             keyFile.set_string  ("Sharpening", "Method",              sharpening.method);
+    if (!pedited || pedited->sharpening.radius)             keyFile.set_double  ("Sharpening", "Radius",              sharpening.radius);
+    if (!pedited || pedited->sharpening.amount)             keyFile.set_integer ("Sharpening", "Amount",              sharpening.amount);
+    if (!pedited || pedited->sharpening.threshold)          keyFile.set_integer ("Sharpening", "Threshold",           sharpening.threshold);
+    if (!pedited || pedited->sharpening.edgesonly)          keyFile.set_boolean ("Sharpening", "OnlyEdges",           sharpening.edgesonly);
+    if (!pedited || pedited->sharpening.edges_radius)       keyFile.set_double  ("Sharpening", "EdgedetectionRadius", sharpening.edges_radius);
+    if (!pedited || pedited->sharpening.edges_tolerance)    keyFile.set_integer ("Sharpening", "EdgeTolerance",       sharpening.edges_tolerance);
+    if (!pedited || pedited->sharpening.halocontrol)        keyFile.set_boolean ("Sharpening", "HalocontrolEnabled",  sharpening.halocontrol);
+    if (!pedited || pedited->sharpening.halocontrol_amount) keyFile.set_integer ("Sharpening", "HalocontrolAmount",   sharpening.halocontrol_amount);
+    if (!pedited || pedited->sharpening.deconvradius)       keyFile.set_double  ("Sharpening", "DeconvRadius",        sharpening.deconvradius);
+    if (!pedited || pedited->sharpening.deconvamount)       keyFile.set_integer ("Sharpening", "DeconvAmount",        sharpening.deconvamount);
+    if (!pedited || pedited->sharpening.deconvdamping)      keyFile.set_integer ("Sharpening", "DeconvDamping",       sharpening.deconvdamping);
+    if (!pedited || pedited->sharpening.deconviter)         keyFile.set_integer ("Sharpening", "DeconvIterations",    sharpening.deconviter);
 
     // save vibrance
-    if (pedited->vibrance.enabled)          keyFile.set_boolean ("Vibrance", "Enabled",         vibrance.enabled);
-    if (pedited->vibrance.pastels)          keyFile.set_integer ("Vibrance", "Pastels",         vibrance.pastels);
-    if (pedited->vibrance.saturated)        keyFile.set_integer ("Vibrance", "Saturated",       vibrance.saturated);
-    if (pedited->vibrance.psthreshold)      keyFile.set_integer ("Vibrance", "PSThreshold",     vibrance.psthreshold);
-    if (pedited->vibrance.protectskins)     keyFile.set_boolean ("Vibrance", "ProtectSkins",    vibrance.protectskins);
-    if (pedited->vibrance.avoidcolorshift)  keyFile.set_boolean ("Vibrance", "AvoidColorShift", vibrance.avoidcolorshift);
-    if (pedited->vibrance.pastsattog)       keyFile.set_boolean ("Vibrance", "PastSatTog",      vibrance.pastsattog);
+    if (!pedited || pedited->vibrance.enabled)          keyFile.set_boolean ("Vibrance", "Enabled",         vibrance.enabled);
+    if (!pedited || pedited->vibrance.pastels)          keyFile.set_integer ("Vibrance", "Pastels",         vibrance.pastels);
+    if (!pedited || pedited->vibrance.saturated)        keyFile.set_integer ("Vibrance", "Saturated",       vibrance.saturated);
+    if (!pedited || pedited->vibrance.psthreshold)      keyFile.set_integer ("Vibrance", "PSThreshold",     vibrance.psthreshold);
+    if (!pedited || pedited->vibrance.protectskins)     keyFile.set_boolean ("Vibrance", "ProtectSkins",    vibrance.protectskins);
+    if (!pedited || pedited->vibrance.avoidcolorshift)  keyFile.set_boolean ("Vibrance", "AvoidColorShift", vibrance.avoidcolorshift);
+    if (!pedited || pedited->vibrance.pastsattog)       keyFile.set_boolean ("Vibrance", "PastSatTog",      vibrance.pastsattog);
 
     //save edge sharpening
-    if (pedited->sharpenEdge.enabled)       keyFile.set_boolean ("SharpenEdge", "Enabled",       sharpenEdge.enabled);
-    if (pedited->sharpenEdge.passes)        keyFile.set_integer ("SharpenEdge", "Passes",        sharpenEdge.passes);
-    if (pedited->sharpenEdge.amount)        keyFile.set_double  ("SharpenEdge", "Strength",      sharpenEdge.amount);
-    if (pedited->sharpenEdge.threechannels) keyFile.set_boolean ("SharpenEdge", "ThreeChannels", sharpenEdge.threechannels);
+    if (!pedited || pedited->sharpenEdge.enabled)       keyFile.set_boolean ("SharpenEdge", "Enabled",       sharpenEdge.enabled);
+    if (!pedited || pedited->sharpenEdge.passes)        keyFile.set_integer ("SharpenEdge", "Passes",        sharpenEdge.passes);
+    if (!pedited || pedited->sharpenEdge.amount)        keyFile.set_double  ("SharpenEdge", "Strength",      sharpenEdge.amount);
+    if (!pedited || pedited->sharpenEdge.threechannels) keyFile.set_boolean ("SharpenEdge", "ThreeChannels", sharpenEdge.threechannels);
 
     //save micro-contrast sharpening
-    if (pedited->sharpenMicro.enabled)      keyFile.set_boolean ("SharpenMicro", "Enabled",    sharpenMicro.enabled);
-    if (pedited->sharpenMicro.matrix)       keyFile.set_boolean ("SharpenMicro", "Matrix",     sharpenMicro.matrix);
-    if (pedited->sharpenMicro.amount)       keyFile.set_double  ("SharpenMicro", "Strength",   sharpenMicro.amount);
-    if (pedited->sharpenMicro.uniformity)   keyFile.set_double  ("SharpenMicro", "Uniformity", sharpenMicro.uniformity);
+    if (!pedited || pedited->sharpenMicro.enabled)      keyFile.set_boolean ("SharpenMicro", "Enabled",    sharpenMicro.enabled);
+    if (!pedited || pedited->sharpenMicro.matrix)       keyFile.set_boolean ("SharpenMicro", "Matrix",     sharpenMicro.matrix);
+    if (!pedited || pedited->sharpenMicro.amount)       keyFile.set_double  ("SharpenMicro", "Strength",   sharpenMicro.amount);
+    if (!pedited || pedited->sharpenMicro.uniformity)   keyFile.set_double  ("SharpenMicro", "Uniformity", sharpenMicro.uniformity);
 
 /*
     // save colorBoost
-    if (pedited->colorBoost.amount)                   keyFile.set_integer ("Color Boost", "Amount",             colorBoost.amount);
-    if (pedited->colorBoost.avoidclip)                keyFile.set_boolean ("Color Boost", "AvoidColorClipping", colorBoost.avoidclip);
-    if (pedited->colorBoost.enable_saturationlimiter) keyFile.set_boolean ("Color Boost", "SaturationLimiter",  colorBoost.enable_saturationlimiter);
-    if (pedited->colorBoost.saturationlimit)          keyFile.set_double  ("Color Boost", "SaturationLimit",    colorBoost.saturationlimit);
+    if (!pedited || pedited->colorBoost.amount)                   keyFile.set_integer ("Color Boost", "Amount",             colorBoost.amount);
+    if (!pedited || pedited->colorBoost.avoidclip)                keyFile.set_boolean ("Color Boost", "AvoidColorClipping", colorBoost.avoidclip);
+    if (!pedited || pedited->colorBoost.enable_saturationlimiter) keyFile.set_boolean ("Color Boost", "SaturationLimiter",  colorBoost.enable_saturationlimiter);
+    if (!pedited || pedited->colorBoost.saturationlimit)          keyFile.set_double  ("Color Boost", "SaturationLimit",    colorBoost.saturationlimit);
 */
 
     // save wb
-    if (pedited->wb.method)      keyFile.set_string  ("White Balance", "Setting",     wb.method);
-    if (pedited->wb.temperature) keyFile.set_integer ("White Balance", "Temperature", wb.temperature);
-    if (pedited->wb.green)       keyFile.set_double  ("White Balance", "Green",       wb.green);
+    if (!pedited || pedited->wb.method)      keyFile.set_string  ("White Balance", "Setting",     wb.method);
+    if (!pedited || pedited->wb.temperature) keyFile.set_integer ("White Balance", "Temperature", wb.temperature);
+    if (!pedited || pedited->wb.green)       keyFile.set_double  ("White Balance", "Green",       wb.green);
 
 /*
     // save colorShift
-    if (pedited->colorShift.a)   keyFile.set_double ("Color Shift", "ChannelA", colorShift.a);
-    if (pedited->colorShift.b)   keyFile.set_double ("Color Shift", "ChannelB", colorShift.b);
+    if (!pedited || pedited->colorShift.a)   keyFile.set_double ("Color Shift", "ChannelA", colorShift.a);
+    if (!pedited || pedited->colorShift.b)   keyFile.set_double ("Color Shift", "ChannelB", colorShift.b);
 */
 
     // save impulseDenoise
-    if (pedited->impulseDenoise.enabled) keyFile.set_boolean ("Impulse Denoising", "Enabled",   impulseDenoise.enabled);
-    if (pedited->impulseDenoise.thresh)  keyFile.set_integer ("Impulse Denoising", "Threshold", impulseDenoise.thresh);
+    if (!pedited || pedited->impulseDenoise.enabled) keyFile.set_boolean ("Impulse Denoising", "Enabled",   impulseDenoise.enabled);
+    if (!pedited || pedited->impulseDenoise.thresh)  keyFile.set_integer ("Impulse Denoising", "Threshold", impulseDenoise.thresh);
 
     // save defringe
-    if (pedited->defringe.enabled)       keyFile.set_boolean ("Defringing", "Enabled",   defringe.enabled);
-    if (pedited->defringe.radius)        keyFile.set_double  ("Defringing", "Radius",    defringe.radius);
-    if (pedited->defringe.threshold)     keyFile.set_integer ("Defringing", "Threshold", defringe.threshold);
+    if (!pedited || pedited->defringe.enabled)       keyFile.set_boolean ("Defringing", "Enabled",   defringe.enabled);
+    if (!pedited || pedited->defringe.radius)        keyFile.set_double  ("Defringing", "Radius",    defringe.radius);
+    if (!pedited || pedited->defringe.threshold)     keyFile.set_integer ("Defringing", "Threshold", defringe.threshold);
 
     // save dirpyrDenoise
-    if (pedited->dirpyrDenoise.enabled) keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
-    if (pedited->dirpyrDenoise.luma)    keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
-    if (pedited->dirpyrDenoise.chroma)  keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
-    if (pedited->dirpyrDenoise.gamma)   keyFile.set_double  ("Directional Pyramid Denoising", "Gamma",   dirpyrDenoise.gamma);
+    if (!pedited || pedited->dirpyrDenoise.enabled) keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
+    if (!pedited || pedited->dirpyrDenoise.luma)    keyFile.set_integer ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
+    if (!pedited || pedited->dirpyrDenoise.chroma)  keyFile.set_integer ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
+    if (!pedited || pedited->dirpyrDenoise.gamma)   keyFile.set_double  ("Directional Pyramid Denoising", "Gamma",   dirpyrDenoise.gamma);
 
     //Save edgePreservingDecompositionUI.
-    if (pedited->edgePreservingDecompositionUI.enabled)             keyFile.set_boolean ("EPD", "Enabled", edgePreservingDecompositionUI.enabled);
-    if (pedited->edgePreservingDecompositionUI.Strength)            keyFile.set_double  ("EPD", "Strength", edgePreservingDecompositionUI.Strength);
-    if (pedited->edgePreservingDecompositionUI.EdgeStopping)        keyFile.set_double  ("EPD", "EdgeStopping", edgePreservingDecompositionUI.EdgeStopping);
-    if (pedited->edgePreservingDecompositionUI.Scale)               keyFile.set_double  ("EPD", "Scale", edgePreservingDecompositionUI.Scale);
-    if (pedited->edgePreservingDecompositionUI.ReweightingIterates) keyFile.set_integer ("EPD", "ReweightingIterates", edgePreservingDecompositionUI.ReweightingIterates);
+    if (!pedited || pedited->edgePreservingDecompositionUI.enabled)             keyFile.set_boolean ("EPD", "Enabled", edgePreservingDecompositionUI.enabled);
+    if (!pedited || pedited->edgePreservingDecompositionUI.Strength)            keyFile.set_double  ("EPD", "Strength", edgePreservingDecompositionUI.Strength);
+    if (!pedited || pedited->edgePreservingDecompositionUI.EdgeStopping)        keyFile.set_double  ("EPD", "EdgeStopping", edgePreservingDecompositionUI.EdgeStopping);
+    if (!pedited || pedited->edgePreservingDecompositionUI.Scale)               keyFile.set_double  ("EPD", "Scale", edgePreservingDecompositionUI.Scale);
+    if (!pedited || pedited->edgePreservingDecompositionUI.ReweightingIterates) keyFile.set_integer ("EPD", "ReweightingIterates", edgePreservingDecompositionUI.ReweightingIterates);
 
 /*
     // save lumaDenoise
-    if (pedited->lumaDenoise.enabled)       keyFile.set_boolean ("Luminance Denoising", "Enabled",       lumaDenoise.enabled);
-    if (pedited->lumaDenoise.radius)        keyFile.set_double  ("Luminance Denoising", "Radius",        lumaDenoise.radius);
-    if (pedited->lumaDenoise.edgetolerance) keyFile.set_integer ("Luminance Denoising", "EdgeTolerance", lumaDenoise.edgetolerance);
+    if (!pedited || pedited->lumaDenoise.enabled)       keyFile.set_boolean ("Luminance Denoising", "Enabled",       lumaDenoise.enabled);
+    if (!pedited || pedited->lumaDenoise.radius)        keyFile.set_double  ("Luminance Denoising", "Radius",        lumaDenoise.radius);
+    if (!pedited || pedited->lumaDenoise.edgetolerance) keyFile.set_integer ("Luminance Denoising", "EdgeTolerance", lumaDenoise.edgetolerance);
 */
 
 /*
     // save colorDenoise
-    //if (pedited->colorDenoise.enabled)      keyFile.set_boolean ("Chrominance Denoising", "Enabled", colorDenoise.enabled);
-    if (pedited->colorDenoise.amount)       keyFile.set_integer ("Chrominance Denoising", "Amount",  colorDenoise.amount);
+    //if (!pedited || pedited->colorDenoise.enabled)      keyFile.set_boolean ("Chrominance Denoising", "Enabled", colorDenoise.enabled);
+    if (!pedited || pedited->colorDenoise.amount)       keyFile.set_integer ("Chrominance Denoising", "Amount",  colorDenoise.amount);
 */
 
     // save sh
-    if (pedited->sh.enabled)       keyFile.set_boolean ("Shadows & Highlights", "Enabled",             sh.enabled);
-    if (pedited->sh.hq)            keyFile.set_boolean ("Shadows & Highlights", "HighQuality",         sh.hq);
-    if (pedited->sh.highlights)    keyFile.set_integer ("Shadows & Highlights", "Highlights",          sh.highlights);
-    if (pedited->sh.htonalwidth)   keyFile.set_integer ("Shadows & Highlights", "HighlightTonalWidth", sh.htonalwidth);
-    if (pedited->sh.shadows)       keyFile.set_integer ("Shadows & Highlights", "Shadows",             sh.shadows);
-    if (pedited->sh.stonalwidth)   keyFile.set_integer ("Shadows & Highlights", "ShadowTonalWidth",    sh.stonalwidth);
-    if (pedited->sh.localcontrast) keyFile.set_integer ("Shadows & Highlights", "LocalContrast",       sh.localcontrast);
-    if (pedited->sh.radius)        keyFile.set_integer ("Shadows & Highlights", "Radius",              sh.radius);
+    if (!pedited || pedited->sh.enabled)       keyFile.set_boolean ("Shadows & Highlights", "Enabled",             sh.enabled);
+    if (!pedited || pedited->sh.hq)            keyFile.set_boolean ("Shadows & Highlights", "HighQuality",         sh.hq);
+    if (!pedited || pedited->sh.highlights)    keyFile.set_integer ("Shadows & Highlights", "Highlights",          sh.highlights);
+    if (!pedited || pedited->sh.htonalwidth)   keyFile.set_integer ("Shadows & Highlights", "HighlightTonalWidth", sh.htonalwidth);
+    if (!pedited || pedited->sh.shadows)       keyFile.set_integer ("Shadows & Highlights", "Shadows",             sh.shadows);
+    if (!pedited || pedited->sh.stonalwidth)   keyFile.set_integer ("Shadows & Highlights", "ShadowTonalWidth",    sh.stonalwidth);
+    if (!pedited || pedited->sh.localcontrast) keyFile.set_integer ("Shadows & Highlights", "LocalContrast",       sh.localcontrast);
+    if (!pedited || pedited->sh.radius)        keyFile.set_integer ("Shadows & Highlights", "Radius",              sh.radius);
 
     // save crop
-    if (pedited->crop.enabled)     keyFile.set_boolean ("Crop", "Enabled",     crop.enabled);
-    if (pedited->crop.x)           keyFile.set_integer ("Crop", "X",           crop.x);
-    if (pedited->crop.y)           keyFile.set_integer ("Crop", "Y",           crop.y);
-    if (pedited->crop.w)           keyFile.set_integer ("Crop", "W",           crop.w);
-    if (pedited->crop.h)           keyFile.set_integer ("Crop", "H",           crop.h);
-    if (pedited->crop.fixratio)    keyFile.set_boolean ("Crop", "FixedRatio",  crop.fixratio);
-    if (pedited->crop.ratio)       keyFile.set_string  ("Crop", "Ratio",       crop.ratio);
-    if (pedited->crop.orientation) keyFile.set_string  ("Crop", "Orientation", crop.orientation);
-    if (pedited->crop.guide)       keyFile.set_string  ("Crop", "Guide",       crop.guide);
+    if (!pedited || pedited->crop.enabled)     keyFile.set_boolean ("Crop", "Enabled",     crop.enabled);
+    if (!pedited || pedited->crop.x)           keyFile.set_integer ("Crop", "X",           crop.x);
+    if (!pedited || pedited->crop.y)           keyFile.set_integer ("Crop", "Y",           crop.y);
+    if (!pedited || pedited->crop.w)           keyFile.set_integer ("Crop", "W",           crop.w);
+    if (!pedited || pedited->crop.h)           keyFile.set_integer ("Crop", "H",           crop.h);
+    if (!pedited || pedited->crop.fixratio)    keyFile.set_boolean ("Crop", "FixedRatio",  crop.fixratio);
+    if (!pedited || pedited->crop.ratio)       keyFile.set_string  ("Crop", "Ratio",       crop.ratio);
+    if (!pedited || pedited->crop.orientation) keyFile.set_string  ("Crop", "Orientation", crop.orientation);
+    if (!pedited || pedited->crop.guide)       keyFile.set_string  ("Crop", "Guide",       crop.guide);
     
     // save coarse
-    if (pedited->coarse.rotate)    keyFile.set_integer ("Coarse Transformation", "Rotate",         coarse.rotate);
-    if (pedited->coarse.hflip)     keyFile.set_boolean ("Coarse Transformation", "HorizontalFlip", coarse.hflip);
-    if (pedited->coarse.vflip)     keyFile.set_boolean ("Coarse Transformation", "VerticalFlip",   coarse.vflip);
+    if (!pedited || pedited->coarse.rotate)    keyFile.set_integer ("Coarse Transformation", "Rotate",         coarse.rotate);
+    if (!pedited || pedited->coarse.hflip)     keyFile.set_boolean ("Coarse Transformation", "HorizontalFlip", coarse.hflip);
+    if (!pedited || pedited->coarse.vflip)     keyFile.set_boolean ("Coarse Transformation", "VerticalFlip",   coarse.vflip);
     
     // save commonTrans
-    if (pedited->commonTrans.autofill)   keyFile.set_boolean ("Common Properties for Transformations", "AutoFill", commonTrans.autofill);
+    if (!pedited || pedited->commonTrans.autofill)   keyFile.set_boolean ("Common Properties for Transformations", "AutoFill", commonTrans.autofill);
 
     // save rotate
-    if (pedited->rotate.degree)          keyFile.set_double  ("Rotation", "Degree", rotate.degree);
+    if (!pedited || pedited->rotate.degree)          keyFile.set_double  ("Rotation", "Degree", rotate.degree);
 
     // save distortion
-    if (pedited->distortion.amount)      keyFile.set_double  ("Distortion", "Amount", distortion.amount);
-    if (pedited->distortion.uselensfun)  keyFile.set_boolean ("Distortion", "UseLensFun", distortion.uselensfun);
+    if (!pedited || pedited->distortion.amount)      keyFile.set_double  ("Distortion", "Amount", distortion.amount);
+    if (!pedited || pedited->distortion.uselensfun)  keyFile.set_boolean ("Distortion", "UseLensFun", distortion.uselensfun);
 
     // save perspective correction
-    if (pedited->perspective.horizontal) keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
-    if (pedited->perspective.vertical)   keyFile.set_integer  ("Perspective", "Vertical",   perspective.vertical);
+    if (!pedited || pedited->perspective.horizontal) keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
+    if (!pedited || pedited->perspective.vertical)   keyFile.set_integer  ("Perspective", "Vertical",   perspective.vertical);
 
     // save C/A correction
-    if (pedited->cacorrection.red)       keyFile.set_double  ("CACorrection", "Red",  cacorrection.red);
-    if (pedited->cacorrection.blue)      keyFile.set_double  ("CACorrection", "Blue", cacorrection.blue);
+    if (!pedited || pedited->cacorrection.red)       keyFile.set_double  ("CACorrection", "Red",  cacorrection.red);
+    if (!pedited || pedited->cacorrection.blue)      keyFile.set_double  ("CACorrection", "Blue", cacorrection.blue);
 
     // save vignetting correction
-    if (pedited->vignetting.amount)      keyFile.set_integer ("Vignetting Correction", "Amount", vignetting.amount);
-    if (pedited->vignetting.radius)      keyFile.set_integer ("Vignetting Correction", "Radius", vignetting.radius);
-    if (pedited->vignetting.strength)    keyFile.set_integer ("Vignetting Correction", "Strength", vignetting.strength);
-    if (pedited->vignetting.centerX)     keyFile.set_integer ("Vignetting Correction", "CenterX", vignetting.centerX);
-    if (pedited->vignetting.centerY)     keyFile.set_integer ("Vignetting Correction", "CenterY", vignetting.centerY);
+    if (!pedited || pedited->vignetting.amount)      keyFile.set_integer ("Vignetting Correction", "Amount", vignetting.amount);
+    if (!pedited || pedited->vignetting.radius)      keyFile.set_integer ("Vignetting Correction", "Radius", vignetting.radius);
+    if (!pedited || pedited->vignetting.strength)    keyFile.set_integer ("Vignetting Correction", "Strength", vignetting.strength);
+    if (!pedited || pedited->vignetting.centerX)     keyFile.set_integer ("Vignetting Correction", "CenterX", vignetting.centerX);
+    if (!pedited || pedited->vignetting.centerY)     keyFile.set_integer ("Vignetting Correction", "CenterY", vignetting.centerY);
 
     // save highlight recovery settings
-    if (pedited->hlrecovery.enabled)     keyFile.set_boolean ("HLRecovery", "Enabled",  hlrecovery.enabled);
-    if (pedited->hlrecovery.method)      keyFile.set_string  ("HLRecovery", "Method",   hlrecovery.method);
+    if (!pedited || pedited->hlrecovery.enabled)     keyFile.set_boolean ("HLRecovery", "Enabled",  hlrecovery.enabled);
+    if (!pedited || pedited->hlrecovery.method)      keyFile.set_string  ("HLRecovery", "Method",   hlrecovery.method);
 
-    if (pedited->resize.enabled)         keyFile.set_boolean ("Resize", "Enabled",resize.enabled);
-    if (pedited->resize.scale)           keyFile.set_double  ("Resize", "Scale",  resize.scale);
-    if (pedited->resize.appliesTo)       keyFile.set_string  ("Resize", "AppliesTo", resize.appliesTo);
-    if (pedited->resize.method)          keyFile.set_string  ("Resize", "Method", resize.method);
-    if (pedited->resize.dataspec)        keyFile.set_integer ("Resize", "DataSpecified",  resize.dataspec);
-    if (pedited->resize.width)           keyFile.set_integer ("Resize", "Width",  resize.width);
-    if (pedited->resize.height)          keyFile.set_integer ("Resize", "Height", resize.height);
+    if (!pedited || pedited->resize.enabled)         keyFile.set_boolean ("Resize", "Enabled",resize.enabled);
+    if (!pedited || pedited->resize.scale)           keyFile.set_double  ("Resize", "Scale",  resize.scale);
+    if (!pedited || pedited->resize.appliesTo)       keyFile.set_string  ("Resize", "AppliesTo", resize.appliesTo);
+    if (!pedited || pedited->resize.method)          keyFile.set_string  ("Resize", "Method", resize.method);
+    if (!pedited || pedited->resize.dataspec)        keyFile.set_integer ("Resize", "DataSpecified",  resize.dataspec);
+    if (!pedited || pedited->resize.width)           keyFile.set_integer ("Resize", "Width",  resize.width);
+    if (!pedited || pedited->resize.height)          keyFile.set_integer ("Resize", "Height", resize.height);
 
     // save color management settings
-    if (pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   icm.input);
-    if (pedited->icm.blendCMSMatrix)     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
-    if (pedited->icm.preferredProfile)   keyFile.set_boolean ("Color Management", "PreferredProfile",   icm.preferredProfile);
-    if (pedited->icm.working)            keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
-    if (pedited->icm.output)             keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
-    if (pedited->icm.gamma)              keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
-    if (pedited->icm.freegamma)          keyFile.set_boolean  ("Color Management", "Freegamma",  icm.freegamma);
-    if (pedited->icm.gampos)             keyFile.set_double  ("Color Management", "GammaValue",  icm.gampos);
-    if (pedited->icm.slpos)              keyFile.set_double  ("Color Management", "GammaSlope",  icm.slpos);
+    if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   icm.input);
+    if (!pedited || pedited->icm.blendCMSMatrix)     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
+    if (!pedited || pedited->icm.preferredProfile)   keyFile.set_boolean ("Color Management", "PreferredProfile",   icm.preferredProfile);
+    if (!pedited || pedited->icm.working)            keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
+    if (!pedited || pedited->icm.output)             keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
+    if (!pedited || pedited->icm.gamma)              keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
+    if (!pedited || pedited->icm.freegamma)          keyFile.set_boolean  ("Color Management", "Freegamma",  icm.freegamma);
+    if (!pedited || pedited->icm.gampos)             keyFile.set_double  ("Color Management", "GammaValue",  icm.gampos);
+    if (!pedited || pedited->icm.slpos)              keyFile.set_double  ("Color Management", "GammaSlope",  icm.slpos);
     
     // save directional pyramid equalizer parameters
-    if (pedited->dirpyrequalizer.enabled) keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
+    if (!pedited || pedited->dirpyrequalizer.enabled) keyFile.set_boolean ("Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled);
     for(int i = 0; i < 5; i++)
     {
         std::stringstream ss;
         ss << "Mult" << i;
-        if (pedited->dirpyrequalizer.mult[i]) keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
+        if (!pedited || pedited->dirpyrequalizer.mult[i]) keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
     }
 
     // save hsv equalizer parameters
-    if (pedited->hsvequalizer.hcurve) {
+    if (!pedited || pedited->hsvequalizer.hcurve) {
         Glib::ArrayHandle<double> hcurve = hsvequalizer.hcurve;
         keyFile.set_double_list("HSV Equalizer", "HCurve", hcurve);
     }
-    if (pedited->hsvequalizer.scurve) {
+    if (!pedited || pedited->hsvequalizer.scurve) {
         Glib::ArrayHandle<double> scurve = hsvequalizer.scurve;
         keyFile.set_double_list("HSV Equalizer", "SCurve", scurve);
     }
-    if (pedited->hsvequalizer.vcurve) {
+    if (!pedited || pedited->hsvequalizer.vcurve) {
         Glib::ArrayHandle<double> vcurve = hsvequalizer.vcurve;
         keyFile.set_double_list("HSV Equalizer", "VCurve", vcurve);
     }
 
-    if (pedited->rgbCurves.rcurve) {
+    if (!pedited || pedited->rgbCurves.rcurve) {
         Glib::ArrayHandle<double> RGBrcurve = rgbCurves.rcurve;
         keyFile.set_double_list("RGB Curves", "rCurve", RGBrcurve);
     }
-    if (pedited->rgbCurves.gcurve) {
+    if (!pedited || pedited->rgbCurves.gcurve) {
         Glib::ArrayHandle<double> RGBgcurve = rgbCurves.gcurve;
         keyFile.set_double_list("RGB Curves", "gCurve", RGBgcurve);
     }
-    if (pedited->rgbCurves.bcurve) {
+    if (!pedited || pedited->rgbCurves.bcurve) {
         Glib::ArrayHandle<double> RGBbcurve = rgbCurves.bcurve;
         keyFile.set_double_list("RGB Curves", "bCurve", RGBbcurve);
     }
 
     // save raw parameters
-    if (pedited->raw.darkFrame)          keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
-    if (pedited->raw.dfAuto)             keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
-    if (pedited->raw.ff_file)            keyFile.set_string  ("RAW", "FlatFieldFile", raw.ff_file );
-    if (pedited->raw.ff_AutoSelect)      keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
-    if (pedited->raw.ff_BlurRadius)      keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
-    if (pedited->raw.ff_BlurType)        keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );
-    if (pedited->raw.caCorrection)       keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
-    if (pedited->raw.caRed)              keyFile.set_double  ("RAW", "CARed", raw.cared );
-    if (pedited->raw.caBlue)             keyFile.set_double  ("RAW", "CABlue", raw.cablue );
-    if (pedited->raw.hotDeadPixelFilter) keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
-    if (pedited->raw.hotDeadPixelThresh) keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
-    if (pedited->raw.linenoise)          keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
-    if (pedited->raw.greenEq)            keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
-    if (pedited->raw.ccSteps)            keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
-    if (pedited->raw.dmethod)            keyFile.set_string  ("RAW", "Method", raw.dmethod );
-    if (pedited->raw.dcbIterations)      keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
-    if (pedited->raw.dcbEnhance)         keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
-    if (pedited->raw.allEnhance)         keyFile.set_boolean ("RAW", "ALLEnhance", raw.all_enhance );
+    if (!pedited || pedited->raw.darkFrame)          keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
+    if (!pedited || pedited->raw.dfAuto)             keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
+    if (!pedited || pedited->raw.ff_file)            keyFile.set_string  ("RAW", "FlatFieldFile", raw.ff_file );
+    if (!pedited || pedited->raw.ff_AutoSelect)      keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
+    if (!pedited || pedited->raw.ff_BlurRadius)      keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
+    if (!pedited || pedited->raw.ff_BlurType)        keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );
+    if (!pedited || pedited->raw.caCorrection)       keyFile.set_boolean ("RAW", "CA", raw.ca_autocorrect );
+    if (!pedited || pedited->raw.caRed)              keyFile.set_double  ("RAW", "CARed", raw.cared );
+    if (!pedited || pedited->raw.caBlue)             keyFile.set_double  ("RAW", "CABlue", raw.cablue );
+    if (!pedited || pedited->raw.hotDeadPixelFilter) keyFile.set_boolean ("RAW", "HotDeadPixels", raw.hotdeadpix_filt );
+    if (!pedited || pedited->raw.hotDeadPixelThresh) keyFile.set_integer ("RAW", "HotDeadPixelThresh", raw.hotdeadpix_thresh );
+    if (!pedited || pedited->raw.linenoise)          keyFile.set_integer ("RAW", "LineDenoise", raw.linenoise);
+    if (!pedited || pedited->raw.greenEq)            keyFile.set_integer ("RAW", "GreenEqThreshold", raw.greenthresh);
+    if (!pedited || pedited->raw.ccSteps)            keyFile.set_integer ("RAW", "CcSteps", raw.ccSteps);
+    if (!pedited || pedited->raw.dmethod)            keyFile.set_string  ("RAW", "Method", raw.dmethod );
+    if (!pedited || pedited->raw.dcbIterations)      keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
+    if (!pedited || pedited->raw.dcbEnhance)         keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
+    if (!pedited || pedited->raw.allEnhance)         keyFile.set_boolean ("RAW", "ALLEnhance", raw.all_enhance );
 
     // save raw exposition
-    if (pedited->raw.exPos)              keyFile.set_double  ("RAW", "PreExposure", raw.expos );
-    if (pedited->raw.exPreser)           keyFile.set_double  ("RAW", "PrePreserv", raw.preser );
-    if (pedited->raw.exBlackzero)        keyFile.set_double  ("RAW", "PreBlackzero", raw.blackzero );
-    if (pedited->raw.exBlackone)         keyFile.set_double  ("RAW", "PreBlackone", raw.blackone );
-    if (pedited->raw.exBlacktwo)         keyFile.set_double  ("RAW", "PreBlacktwo", raw.blacktwo );
-    if (pedited->raw.exBlackthree)       keyFile.set_double  ("RAW", "PreBlackthree", raw.blackthree );
-    if (pedited->raw.exTwoGreen)         keyFile.set_boolean ("RAW", "PreTwoGreen", raw.twogreen );
+    if (!pedited || pedited->raw.exPos)              keyFile.set_double  ("RAW", "PreExposure", raw.expos );
+    if (!pedited || pedited->raw.exPreser)           keyFile.set_double  ("RAW", "PrePreserv", raw.preser );
+    if (!pedited || pedited->raw.exBlackzero)        keyFile.set_double  ("RAW", "PreBlackzero", raw.blackzero );
+    if (!pedited || pedited->raw.exBlackone)         keyFile.set_double  ("RAW", "PreBlackone", raw.blackone );
+    if (!pedited || pedited->raw.exBlacktwo)         keyFile.set_double  ("RAW", "PreBlacktwo", raw.blacktwo );
+    if (!pedited || pedited->raw.exBlackthree)       keyFile.set_double  ("RAW", "PreBlackthree", raw.blackthree );
+    if (!pedited || pedited->raw.exTwoGreen)         keyFile.set_boolean ("RAW", "PreTwoGreen", raw.twogreen );
 
     // save exif change list
-    if (pedited->exif) {
-        for (ExifPairs::const_iterator i=exif.begin(); i!=exif.end(); ++i)
+    if (!pedited || pedited->exif) {
+        for (ExifPairs::const_iterator i=exif.begin(); i!=exif.end(); i++)
             keyFile.set_string ("Exif", i->first, i->second);
     }
 
     // save iptc change list
-    if (pedited->iptc) {
-        for (IPTCPairs::const_iterator i=iptc.begin(); i!=iptc.end(); ++i) {
+    if (!pedited || pedited->iptc) {
+        for (IPTCPairs::const_iterator i=iptc.begin(); i!=iptc.end(); i++) {
             Glib::ArrayHandle<Glib::ustring> values = i->second;
             keyFile.set_string_list ("IPTC", i->first, values);
         }
     }
-   }
     
     Glib::ustring sPParams = keyFile.to_data();
 
@@ -672,7 +670,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
 int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const {
 
     int error = 0;
-    if (!fname.empty()) {
+    if (fname.length()) {
         FILE *f;
         f = safe_g_fopen (fname, "wt");
 
@@ -1055,7 +1053,7 @@ if (keyFile.has_group ("RAW")) {
     // load exif change settings
 if (keyFile.has_group ("Exif")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("Exif");
-    for (size_t i=0; i<keys.size(); i++) {
+    for (int i=0; i<(int)keys.size(); i++) {
         Glib::ustring tmpStr = keyFile.get_string ("Exif", keys[i]);
         exif[keys[i]] = keyFile.get_string ("Exif", keys[i]);
         if (pedited) pedited->exif = true;
@@ -1077,7 +1075,7 @@ if (keyFile.has_group ("Exif")) {
 if (keyFile.has_group ("IPTC")) {
     std::vector<Glib::ustring> keys = keyFile.get_keys ("IPTC");
     IPTCPairs::iterator element;
-    for (size_t i=0; i<keys.size(); i++) {
+    for (unsigned int i=0; i<keys.size(); i++) {
         // does this key already exist?
         element = iptc.find(keys[i]);
         if (element != iptc.end()) {
@@ -1088,9 +1086,9 @@ if (keyFile.has_group ("IPTC")) {
         // TODO: look out if merging Keywords and SupplementalCategories from the procparams chain would be interesting
         std::vector<Glib::ustring> currIptc = keyFile.get_string_list ("IPTC", keys[i]);
         for (
-			std::vector<Glib::ustring>::const_iterator currLoadedTagValue=currIptc.begin();
+            std::vector<Glib::ustring>::iterator currLoadedTagValue=currIptc.begin();
             currLoadedTagValue!=currIptc.end();
-            ++currLoadedTagValue)
+            currLoadedTagValue++)
         {
             iptc[keys[i]].push_back(currLoadedTagValue->data());
         }
@@ -1133,7 +1131,7 @@ bool operator==(const IPTCPairs& a, const IPTCPairs& b) {
 
     return a.field == b.field && a.values == b.values;
 }*/
-bool ProcParams::operator== (const ProcParams& other) const {
+bool ProcParams::operator== (const ProcParams& other) {
 
 	return
 		toneCurve.curve == other.toneCurve.curve
@@ -1304,7 +1302,7 @@ bool ProcParams::operator== (const ProcParams& other) const {
 	
 }
 
-bool ProcParams::operator!= (const ProcParams& other) const {
+bool ProcParams::operator!= (const ProcParams& other) {
 
     return !(*this==other);
 }

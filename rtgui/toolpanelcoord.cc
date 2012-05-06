@@ -304,12 +304,12 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
     if (params->coarse.rotate==270) tr |= TR_R270;
 
     // trimming overflowing cropped area
-    rtengine::ImageSource *ii = static_cast<rtengine::ImageSource*>(ipc->getInitialImage());
+    rtengine::ImageSource *ii = (rtengine::ImageSource*)ipc->getInitialImage();
     ii->getFullSize (fw, fh, tr);
     crop->trim(params, fw, fh);
 
     // updating the GUI with updated values
-    for (size_t i=0; i<toolPanels.size(); i++)
+    for (unsigned int i=0; i<toolPanels.size(); i++)
         toolPanels[i]->read (params);
 
     // start the IPC processing
@@ -353,7 +353,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (resize);
     }
 
-    icm->setRawMeta (raw, static_cast<const rtengine::ImageData*>(pMetaData));
+    icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData); 
     hlrecovery->setRaw (raw);
     hasChanged = true;
 }

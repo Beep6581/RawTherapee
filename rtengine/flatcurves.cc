@@ -298,11 +298,11 @@ void FlatCurve::CtrlPoints_set () {
     // Checking the values
     Glib::ustring fname = "Curve.xyz"; // TopSolid'Design "plot" file format
 	std::ofstream f (fname.c_str());
-	f << "$" << std::endl;
-	for (size_t iter = 0; iter < poly_x.size(); iter++) {
-		f << poly_x[iter] << ", " << poly_y[iter] << ", 0." << std::endl;
+	f << "$" << std::endl;;
+	for (unsigned int iter = 0; iter < poly_x.size(); iter++) {
+		f << poly_x[iter] << ", " << poly_y[iter] << ", 0." << std::endl;;
 	}
-	f << "$" << std::endl;
+	f << "$" << std::endl;;
 	f.close ();
 	*/
 }
@@ -351,7 +351,7 @@ double FlatCurve::getVal (double t) {
 void FlatCurve::getVal (const std::vector<double>& t, std::vector<double>& res) {
 
     res.resize (t.size());
-    for (size_t i=0; i<t.size(); i++)
+    for (unsigned int i=0; i<t.size(); i++)
         res[i] = getVal(t[i]);
 }
 

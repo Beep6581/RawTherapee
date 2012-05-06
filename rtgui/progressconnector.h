@@ -67,7 +67,7 @@ class ProgressConnector {
 
 		static int emitEndSignalUI (void* data) {
 
-			sigc::signal0<bool>* opEnd = static_cast<sigc::signal0<bool>*>(data);
+			sigc::signal0<bool>* opEnd = (sigc::signal0<bool>*) data;
 			int r = opEnd->emit ();
 			delete opEnd;
 
@@ -92,7 +92,7 @@ class ProgressConnector {
         	}
         }
 
-        T returnValue() const {
+        T returnValue(){
         	return retval;
         }
 };

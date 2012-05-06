@@ -174,7 +174,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ToolPanelCoordinator ();
         virtual ~ToolPanelCoordinator ();
 
-        bool getChangedState                () const { return hasChanged; }
+        bool getChangedState                ()                                      { return hasChanged; }
 		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
         void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 

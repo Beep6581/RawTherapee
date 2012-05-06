@@ -77,9 +77,9 @@ class TagDirectory {
     TagDirectory*    getParent     () { return parent; }
     TagDirectory*    getRoot       ();
     inline int       getCount      () const { return tags.size (); }
-    const TagAttrib* getAttrib     (int id) const;
+    const TagAttrib* getAttrib     (int id);
     const TagAttrib* getAttrib     (const char* name);
-    const TagAttrib* getAttribTable() const { return attribs; }
+    const TagAttrib* getAttribTable() { return attribs; }
     virtual Tag*     getTag        (const char* name) const;
     virtual Tag*     getTag        (int ID) const;
     virtual Tag*     findTag       (const char* name) const;
@@ -181,14 +181,14 @@ class Tag {
     Tag* clone         (TagDirectory* parent);
 
     // to control if the tag shall be written 
-    bool getKeep () const { return keep; }
+    bool getKeep ()       { return keep; }
     void setKeep (bool k) { keep = k; }   
    
     // get subdirectory (there can be several, the last is NULL)
-    bool           isDirectory  () const  { return directory!=NULL; }
+    bool           isDirectory  ()        { return directory!=NULL; }
     TagDirectory*  getDirectory (int i=0) { return directory[i]; }
 
-    MNKind getMakerNoteFormat () const { return makerNoteKind; }
+    MNKind getMakerNoteFormat () { return makerNoteKind; }
  };
 
 class ExifManager {

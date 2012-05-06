@@ -30,7 +30,7 @@ template <class T> class AlignedBuffer {
 
         AlignedBuffer (size_t size, size_t align=16) {
             real = new T[size+2*align];
-	    data = reinterpret_cast<T*>((uintptr_t)real + (align-((uintptr_t)real)%align));
+            data = (T*)((uintptr_t)real + (align-((uintptr_t)real)%align));
         }
 
         ~AlignedBuffer () {

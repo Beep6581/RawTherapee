@@ -132,7 +132,7 @@ public:
 	    return *this;
 	  }
 	// use with integer indices
-	T& operator[](int index) const {
+	T& operator[](int index) {
 		if (((unsigned int)index)<size) return data[index];
 		else
 		{
@@ -144,7 +144,7 @@ public:
 		
 	}
 	// use with float indices
-	T operator[](float index) const {
+	T operator[](float index) {
 		int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
 		if (((unsigned int)idx) > maxs) {
 			if (idx<0)
@@ -166,7 +166,7 @@ public:
 		return (p1 + p2*diff);
 	}
 
-	operator bool (void) const
+	operator bool (void)
 		{
 			return size>0;
 		}

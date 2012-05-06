@@ -77,7 +77,7 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
   enum WBTypes oldType = WBParams::wbEntries[0]->type;
   enum WBTypes currType;
   Gtk::TreeModel::Row row, childrow;
-  for (size_t i=0; i<WBParams::wbEntries.size(); i++) {
+  for (unsigned int i=0; i<WBParams::wbEntries.size(); i++) {
       if (oldType != (currType = WBParams::wbEntries[i]->type)) {
           // New entry type
           if (currType == WBT_FLUORESCENT) {
@@ -529,7 +529,7 @@ void WhiteBalance::cache_customWB(int temp, double green) {
 }
 
 int WhiteBalance::findWBEntryId (Glib::ustring label, enum WB_LabelType lblType) {
-    for (size_t i=0; i<WBParams::wbEntries.size(); i++) {
+    for (unsigned int i=0; i<WBParams::wbEntries.size(); i++) {
         if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i]->GUILabel : WBParams::wbEntries[i]->ppLabel))
             return i;
     }
@@ -537,7 +537,7 @@ int WhiteBalance::findWBEntryId (Glib::ustring label, enum WB_LabelType lblType)
 }
 
 WBEntry* WhiteBalance::findWBEntry (Glib::ustring label, enum WB_LabelType lblType) {
-    for (size_t i=0; i<WBParams::wbEntries.size(); i++) {
+    for (unsigned int i=0; i<WBParams::wbEntries.size(); i++) {
         if (label == (lblType == WBLT_GUI ? WBParams::wbEntries[i]->GUILabel : WBParams::wbEntries[i]->ppLabel))
             return WBParams::wbEntries[i];
     }
@@ -546,7 +546,7 @@ WBEntry* WhiteBalance::findWBEntry (Glib::ustring label, enum WB_LabelType lblTy
 
 int WhiteBalance::_setActiveMethod(Glib::ustring &label, Gtk::TreeModel::Children &children) {
     int found = -1;
-    for(Gtk::TreeModel::Children::const_iterator iter = children.begin(); iter != children.end() && found==-1; ++iter) {
+    for(Gtk::TreeModel::Children::iterator iter = children.begin(); iter != children.end() && found==-1; ++iter) {
       Gtk::TreeModel::Row row = *iter;
       if (row[methodColumns.colLabel] == label) {
           method->set_active(iter);
@@ -556,7 +556,7 @@ int WhiteBalance::_setActiveMethod(Glib::ustring &label, Gtk::TreeModel::Childre
           return found;
 
       Gtk::TreeModel::Children childs = row.children();
-      if (!childs.empty()) {
+      if (childs.size()) {
           found = _setActiveMethod(label, childs);
           if (found !=-1)
               return found;

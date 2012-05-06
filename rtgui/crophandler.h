@@ -82,13 +82,13 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         void    setZoom     (int z, int centerx=-1, int centery=-1);
         double  getFitZoom  ();
         void    setWSize    (int w, int h);
-        void    getWSize    (int& w, int &h) const;
+        void    getWSize    (int& w, int &h);
         void    setPosition (int x, int y, bool update=true);
-        void    getPosition (int& x, int& y) const;
-        void    getSize     (int& w, int& h) const;
+        void    getPosition (int& x, int& y);
+        void    getSize     (int& w, int& h);
 
         void    setEnabled (bool e);
-        bool    getEnabled () const;
+        bool    getEnabled ();
 
         // DetailedCropListener interface
         void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking,rtengine::procparams::ColorManagementParams cmp,
