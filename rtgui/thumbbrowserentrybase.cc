@@ -189,7 +189,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
 
 		// draw date/time label
 		int tpos = fnlabh;
-		if (options.fbShowDateTime && datetimeline!="") {
+		if (options.fbShowDateTime && !datetimeline.empty()) {
 			fn = w->create_pango_layout (datetimeline);
 			fn->set_width (textw*Pango::SCALE);
 			fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
@@ -197,7 +197,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
 			tpos += dtlabh;
 		}
 		// draw basic exif info
-		if (options.fbShowBasicExif && exifline!="") {
+		if (options.fbShowBasicExif && !exifline.empty()) {
 			fn = w->create_pango_layout (exifline);
 			fn->set_width (textw*Pango::SCALE);
 			fn->set_ellipsize (Pango::ELLIPSIZE_MIDDLE);
@@ -397,12 +397,12 @@ void ThumbBrowserEntryBase::setOffset (int x, int y) {
         buttonSet->move (ofsX+startx+sideMargin, ofsY+starty+upperMargin);
 }
 
-bool ThumbBrowserEntryBase::inside (int x, int y) {
+bool ThumbBrowserEntryBase::inside (int x, int y) const {
 
     return x>ofsX+startx && x<ofsX+startx+exp_width && y>ofsY+starty && y<ofsY+starty+exp_height; 
 } 
 
-bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h) {
+bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h) const {
 
     return !(ofsX+startx>x+w || ofsX+startx+exp_width<x || ofsY+starty>y+h || ofsY+starty+exp_height<y); 
 } 
@@ -430,8 +430,8 @@ Glib::ustring ThumbBrowserEntryBase::getToolTip (int x, int y) {
     // if the fileinfo is not shown anyway, make a tooltip with the info
     if (!options.showFileNames && inside(x,y) && tooltip.empty()) {
         tooltip = dispname;
-        if (options.fbShowDateTime && datetimeline!="") tooltip += Glib::ustring("\n") + datetimeline;
-        if (options.fbShowBasicExif && exifline!="") tooltip += Glib::ustring("\n") + exifline;
+        if (options.fbShowDateTime && !datetimeline.empty()) tooltip += Glib::ustring("\n") + datetimeline;
+        if (options.fbShowBasicExif && !exifline.empty()) tooltip += Glib::ustring("\n") + exifline;
     }
 
     return tooltip;

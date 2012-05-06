@@ -41,7 +41,7 @@ Glib::RefPtr<Gdk::Pixbuf> safe_create_from_file(const Glib::ustring& filename)
 {
 	Glib::RefPtr<Gdk::Pixbuf> res;
 	Glib::ustring path = RTImage::findIconAbsolutePath(filename);
-	if (path.length()) {
+	if (!path.empty()) {
 		try {
 			res = Gdk::Pixbuf::create_from_file (path);
 		}
@@ -56,7 +56,7 @@ Cairo::RefPtr<Cairo::ImageSurface> safe_create_from_png(const Glib::ustring& fil
 {
 	Cairo::RefPtr<Cairo::ImageSurface> res;
 	Glib::ustring path = RTImage::findIconAbsolutePath(filename);
-	if (path.length()) {
+	if (!path.empty()) {
 		// files_test need a std::string which (as stated in its proto) but will only work if
 		// we use the Glib::ustring filename !?
 		try {

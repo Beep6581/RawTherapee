@@ -162,12 +162,12 @@ public:
 	}
 
 	// use as pointer to T**
-	operator T**() {
+	operator T**() const {
 		return ptr;
 	}
 
 	// use as pointer to data
-	operator T*() {
+	operator T*() const {
 		// only if owner this will return a valid pointer
 		return data;
 	}
@@ -210,14 +210,14 @@ public:
 		ar_realloc(w,h);
 		memcpy(data, copy, w * h * sizeof(T));
 	}
-	int width() {
+	int width() const {
 		return x;
 	}
-	int height() {
+	int height() const {
 		return y;
 	}
 
-	operator bool() {
+	operator bool() const {
 		return (x > 0 && y > 0);
 	}
 

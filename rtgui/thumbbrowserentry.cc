@@ -54,5 +54,5 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntry::getIconsOnImageArea (
 
 ThumbnailButtonSet* ThumbBrowserEntry::getThumbButtonSet () {
 
-    return (ThumbnailButtonSet*)buttonSet;
+    return static_cast<ThumbnailButtonSet*>(buttonSet);
 }

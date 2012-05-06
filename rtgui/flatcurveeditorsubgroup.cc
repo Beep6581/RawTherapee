@@ -117,7 +117,7 @@ void FlatCurveEditorSubGroup::switchGUI() {
 void FlatCurveEditorSubGroup::savePressed () {
 
 	Glib::ustring fname = outputFile();
-	if (fname.size()) {
+	if (!fname.empty()) {
 		std::ofstream f (fname.c_str());
 		std::vector<double> p;
 		//std::vector<double> p = customCurve->getPoints ();
@@ -136,7 +136,7 @@ void FlatCurveEditorSubGroup::savePressed () {
 		else if (p[ix]==(double)(FCT_MinMaxCPoints))
 			f << "ControlPoints\n";
 		ix++;
-		for (unsigned int i=0; i<p.size()/2; i++, ix+=2)
+		for (size_t i=0; i<p.size()/2; i++, ix+=2)
 			f << p[ix] << ' ' << p[ix+1] << std::endl;
 		f.close ();
 	}
@@ -145,7 +145,7 @@ void FlatCurveEditorSubGroup::savePressed () {
 void FlatCurveEditorSubGroup::loadPressed () {
 
 	Glib::ustring fname = inputFile();
-	if (fname.size()) {
+	if (!fname.empty()) {
 		std::ifstream f (fname.c_str());
 		if (f) {
 			std::vector<double> p;
@@ -203,7 +203,7 @@ void FlatCurveEditorSubGroup::restoreDisplayedHistogram() {
 void FlatCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {
 	if (!p.empty()) {
 		FlatCurveType t = static_cast<FlatCurveType>(p[0]);
-		for (int i=0; i<(int)p.size(); i++)
+		for (size_t i=0; i<p.size(); i++)
 
 		switch (t) {
 		case (FCT_MinMaxCPoints):
@@ -264,7 +264,7 @@ void FlatCurveEditorSubGroup::setColorProvider (ColorProvider* p) {
 }
 
 /*void FlatCurveEditorSubGroup::updateBackgroundHistogram (CurveEditor* ce) {
-	CurveEditor* fce = (CurveEditor*)ce;
+	CurveEditor* fce = static_cast<CurveEditor*>(ce);
 	if (fce==displayedCurve) {
 		paramCurve->updateBackgroundHistogram (fce->bgHistValid ? fce->histogram : NULL);
 		customCurve->updateBackgroundHistogram (fce->bgHistValid ? fce->histogram : NULL);

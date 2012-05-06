@@ -29,7 +29,7 @@ class CurveListener {
         virtual void curveChanged () {}
         virtual void curveChanged (CurveEditor* ce) {}
         void setMulti(bool value) { multi = value; }
-        bool isMulti() { return multi; }
+        bool isMulti() const { return multi; }
         CurveListener() : multi(false) {}
 };
 

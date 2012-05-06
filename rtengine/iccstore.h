@@ -73,7 +73,7 @@ class ICCStore {
         Glib::ustring defaultMonitorProfile;  // Main monitors standard profile name, from OS
         void findDefaultMonitorProfile();
 
-        int     numOfWProfiles ();
+        int     numOfWProfiles () const;
         cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma=false, Glib::ustring name="");
         cmsHPROFILE workingSpace (Glib::ustring name);
         cmsHPROFILE workingSpaceGamma (Glib::ustring name);
@@ -86,8 +86,8 @@ class ICCStore {
         void             init         (Glib::ustring usrICCDir, Glib::ustring stdICCDir);
         ProfileContent           getContent   (Glib::ustring name);
 
-        cmsHPROFILE getXYZProfile ()  { return xyz;  }
-        cmsHPROFILE getsRGBProfile () { return srgb; }
+        cmsHPROFILE getXYZProfile () const { return xyz;  }
+        cmsHPROFILE getsRGBProfile () const { return srgb; }
         std::vector<std::string> getOutputProfiles ();
 };
 

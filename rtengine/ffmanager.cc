@@ -127,7 +127,7 @@ void ffInfo::updateRawImage()
 					acc[row][col] = ri->data[row][col];
 			int nFiles = 1; // First file data already loaded
 
-			for( iName++; iName != pathNames.end(); iName++){
+			for(++iName; iName != pathNames.end(); ++iName){
 				RawImage* temp = new RawImage(*iName);
 				if( !temp->loadRaw(true)){
 					temp->compress_image();		//\ TODO would be better working on original, because is temporary
@@ -184,7 +184,7 @@ void FFManager::init( Glib::ustring pathname )
         }catch( std::exception& e ){}
     }
     // Where multiple shots exist for same group, move filename to list
-    for( ffList_t::iterator iter = ffList.begin(); iter != ffList.end();iter++ ){
+    for(ffList_t::iterator iter = ffList.begin(); iter != ffList.end(); ++iter){
     	ffInfo &i = iter->second;
     	if( !i.pathNames.empty() && !i.pathname.empty() ){
     		i.pathNames.push_back( i.pathname );
@@ -195,7 +195,7 @@ void FFManager::init( Glib::ustring pathname )
 			   printf( "%s:  %s\n",i.key().c_str(),i.pathname.c_str());
 			else{
 				printf( "%s: MEAN of \n    ",i.key().c_str());
-				for( std::list<Glib::ustring>::iterator iter = i.pathNames.begin(); iter != i.pathNames.end();iter++  )
+				for(std::list<Glib::ustring>::const_iterator iter = i.pathNames.begin(); iter != i.pathNames.end(); ++iter)
 					printf( "%s, ", iter->c_str() );
 				printf("\n");
 			}
@@ -238,7 +238,7 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
 				   iter = ffList.insert(std::pair< std::string,ffInfo>( key,n ) );
         	   }else{
         		   while( iter != ffList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) >60*60*6 ) // 6 hour difference
-        			   iter++;
+        			   ++iter;
 
         		   if( iter != ffList.end() )
         		      iter->second.pathNames.push_back( filename );
@@ -258,7 +258,7 @@ void FFManager::getStat( int &totFiles, int &totTemplates)
 {
 	totFiles=0;
 	totTemplates=0;
-    for( ffList_t::iterator iter = ffList.begin(); iter != ffList.end();iter++ ){
+    for(ffList_t::iterator iter = ffList.begin(); iter != ffList.end(); ++iter){
     	ffInfo &i = iter->second;
     	if( i.pathname.empty() ){
     		totTemplates++;
@@ -282,7 +282,7 @@ ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const s
 	if(  iter != ffList.end() ){
 		ffList_t::iterator bestMatch = iter;
 		time_t bestDeltaTime = ABS(iter->second.timestamp - t);
-		for(iter++; iter != ffList.end() && !key.compare( iter->second.key() ); iter++ ){
+		for(++iter; iter != ffList.end() && !key.compare( iter->second.key() ); ++iter){
 			time_t d = ABS(iter->second.timestamp - t );
 			if( d< bestDeltaTime ){
 				bestMatch = iter;
@@ -294,7 +294,7 @@ ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const s
 		iter = ffList.begin();
 		ffList_t::iterator bestMatch = iter;
 		double bestD = iter->second.distance(  mak, mod, len, focal, apert );
-		for( iter++; iter != ffList.end();iter++ ){
+		for(++iter; iter != ffList.end(); ++iter){
            double d = iter->second.distance(  mak, mod, len, focal, apert );
            if( d < bestD ){
         	   bestD = d;
@@ -316,7 +316,7 @@ RawImage* FFManager::searchFlatField( const std::string &mak, const std::string 
 
 RawImage* FFManager::searchFlatField( const Glib::ustring filename )
 {
-	for ( ffList_t::iterator iter = ffList.begin(); iter != ffList.end();iter++ ){
+	for (ffList_t::iterator iter = ffList.begin(); iter != ffList.end(); ++iter){
 		if( iter->second.pathname.compare( filename )==0  )
 			return iter->second.getRawImage();
 	}

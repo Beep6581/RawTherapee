@@ -479,7 +479,7 @@ void ImProcCoordinator::updateLRGBHistograms () {
 }
 
 void ImProcCoordinator::progress (Glib::ustring str, int pr) {
-
+// TODO: why is it empty?
 /*  if (plistener) {
     plistener->setProgressStr (str);
     plistener->setProgress ((double)pr / 100.0);

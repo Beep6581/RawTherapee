@@ -255,7 +255,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 
 
 
-	//if (hrp.enabled==true && hrp.method=="Color" && hrmap[0]==NULL) 
+	//if (hrp.enabled && hrp.method=="Color" && hrmap[0]==NULL)
     //    updateHLRecoveryMap_ColorPropagation ();
 
     // compute image area to render in order to provide the requested part of the image
@@ -541,7 +541,7 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 	return counter;
 }
 
-void RawImageSource::rotateLine (float* line, float** channel, int tran, int i, int w, int h) {
+void RawImageSource::rotateLine (float* line, float** channel, int tran, int i, int w, int h) const {
 
     if ((tran & TR_ROT) == TR_R180) 
         for (int j=0; j<w; j++) 
@@ -845,7 +845,7 @@ void RawImageSource::hflip (Imagefloat* image) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::vflip (Imagefloat* image) {
+void RawImageSource::vflip (Imagefloat* image) const {
     int width  = image->width;
     int height = image->height;
 
@@ -1994,7 +1994,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         // DCPs have higher quality, so use them first
         *dcpProf=dcpStore->getStdProfile(camName);
         if (*dcpProf==NULL)  in = iccStore->getStdProfile(camName);
-    } else if (inProfile!="(camera)" && inProfile!="") {
+    } else if (inProfile!="(camera)" && !inProfile.empty()) {
         Glib::ustring normalName=inProfile;
         if (!inProfile.compare (0, 5, "file:")) normalName=inProfile.substr(5);
 
@@ -2435,7 +2435,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 		
 		int x; int y;
 		double reds = 0, greens = 0, blues = 0;
-		int rn = 0;
+		unsigned int rn = 0;
 		
 		if (!ri->isBayer()) {
 			int xmin, xmax, ymin, ymax;

@@ -74,7 +74,7 @@ void BatchToolPanelCoordinator::closeSession (bool save) {
             pparamsEdited.combine (newParams, pparams, selected.size()==1);
 
     		// trim new adjuster's values to the adjuster's limits
-    		for (unsigned int j=0; j<toolPanels.size(); j++)
+    		for (size_t j=0; j<toolPanels.size(); j++)
     			toolPanels[j]->trimValues (&newParams);
 
     		selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, true);
@@ -102,11 +102,11 @@ void BatchToolPanelCoordinator::initSession () {
 
 /*    if (!selected.empty()) {
         pparams = selected[0]->getProcParams ();
-        for (int i=0; i<toolPanels.size(); i++) {
+        for (size_t i=0; i<toolPanels.size(); i++) {
             toolPanels[i]->setDefaults (&pparams, &pparamsEdited);
             toolPanels[i]->read (&pparams, &pparamsEdited);
         }
-        for (int i=0; i<paramcListeners.size(); i++)
+        for (size_t i=0; i<paramcListeners.size(); i++)
             paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, "batch processing", &pparamsEdited);
     }
 */
@@ -270,7 +270,7 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
         pparamsEdited.combine (newParams, pparams, selected.size()==1);
 
 		// trim new adjuster's values to the adjuster's limits
-		for (unsigned int j=0; j<toolPanels.size(); j++)
+		for (size_t j=0; j<toolPanels.size(); j++)
 			toolPanels[j]->trimValues (&newParams);
 
         selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, false);

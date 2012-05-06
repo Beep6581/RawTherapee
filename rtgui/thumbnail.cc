@@ -89,7 +89,7 @@ void Thumbnail::_generateThumbnailImage () {
 
 	// generate thumbnail image
 	Glib::ustring ext = getExtension (fname);
-	if (ext=="") 
+	if (ext.empty())
 		return;
 	cfs.supported = false;
 	cfs.exifValid = false;
@@ -146,7 +146,7 @@ void Thumbnail::_generateThumbnailImage () {
     }
 }
 
-bool Thumbnail::isSupported () {
+bool Thumbnail::isSupported () const {
     return cfs.supported;
 }
 
@@ -315,7 +315,7 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
         listeners[i]->procParamsChanged (this, whoClearedIt);
 }
 
-bool Thumbnail::hasProcParams () {
+bool Thumbnail::hasProcParams () const {
     
     return pparamsValid;
 }
@@ -355,7 +355,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
-bool Thumbnail::isRecentlySaved () {
+bool Thumbnail::isRecentlySaved () const {
     
     return cfs.recentlySaved;
 }
@@ -377,7 +377,7 @@ void Thumbnail::imageRemovedFromQueue () {
     enqueueNumber--;
 }
 
-bool Thumbnail::isEnqueued () {
+bool Thumbnail::isEnqueued () const {
     
     return enqueueNumber > 0;
 }
@@ -511,7 +511,7 @@ void Thumbnail::generateExifDateTimeStrings () {
 
     exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm", Glib::ustring(rtengine::ImageData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::ImageData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso, cfs.focalLen);
 
-    if (options.fbShowExpComp && cfs.expcomp!="0.00" && cfs.expcomp!="") // don't show exposure compensation if it is 0.00EV;old cache iles do not have ExpComp, so value will not be displayed. 
+    if (options.fbShowExpComp && cfs.expcomp!="0.00" && !cfs.expcomp.empty()) // don't show exposure compensation if it is 0.00EV;old cache iles do not have ExpComp, so value will not be displayed.
     	exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp); // append exposure compensation to exifString
 
     std::string dateFormat = options.dateFormat;
@@ -544,17 +544,17 @@ void Thumbnail::generateExifDateTimeStrings () {
     dateTimeString = ostr.str ();
 }
 
-const Glib::ustring& Thumbnail::getExifString () {
+const Glib::ustring& Thumbnail::getExifString () const {
 
     return exifString;
 }
 
-const Glib::ustring& Thumbnail::getDateTimeString () {
+const Glib::ustring& Thumbnail::getDateTimeString () const {
 
     return dateTimeString;
 }
 
-ThFileType Thumbnail::getType () {
+ThFileType Thumbnail::getType () const {
 
     return (ThFileType) cfs.format;
 }

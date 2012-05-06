@@ -131,37 +131,37 @@ class NAAFInfoInterpreter : public Interpreter {
 
             std::ostringstream af;
             if (aff&1)
-                if (af.str()=="") af << "Center";
+                if (af.str().empty()) af << "Center";
                 else af << ", Center";
             else if (aff&2)
-                if (af.str()=="") af << "Top";
+                if (af.str().empty()) af << "Top";
                 else af << ", Top";
             else if (aff&4)
-                if (af.str()=="") af << "Bottom";
+                if (af.str().empty()) af << "Bottom";
                 else af << ", Bottom";
             else if (aff&8)
-                if (af.str()=="") af << "Left";
+                if (af.str().empty()) af << "Left";
                 else af << ", Left";
             else if (aff&16)
-                if (af.str()=="") af << "Right";
+                if (af.str().empty()) af << "Right";
                 else af << ", Right";
             else if (aff&32)
-                if (af.str()=="") af << "Upper-left";
+                if (af.str().empty()) af << "Upper-left";
                 else af << ", Upper-left";
             else if (aff&64)
-                if (af.str()=="") af << "Upper-right";
+                if (af.str().empty()) af << "Upper-right";
                 else af << ", Upper-right";
             else if (aff&128)
-                if (af.str()=="") af << " Lower-left";
+                if (af.str().empty()) af << " Lower-left";
                 else af << ",  Lower-left";
             else if (aff&256)
-                if (af.str()=="") af << "Lower-right";
+                if (af.str().empty()) af << "Lower-right";
                 else af << ", Lower-right";
             else if (aff&512)
-                if (af.str()=="") af << "Far Left";
+                if (af.str().empty()) af << "Far Left";
                 else af << ", Far Left";
             else if (aff&1024) {
-                if (af.str()=="") af << "Far Right";
+                if (af.str().empty()) af << "Far Right";
                 else af << ", Far Right";
             }
 
@@ -688,7 +688,7 @@ class NALensDataInterpreter : public Interpreter {
                  lid << std::setw(2) << std::setfill('0') << (int)buffer[lidoffs+i] << ' ';
             lid << std::setw(2) << std::setfill('0') << lenstype;            
             
-            std::map<std::string,std::string>::iterator r = lenses.find (lid.str());
+			std::map<std::string,std::string>::const_iterator r = lenses.find (lid.str());
             if (r!=lenses.end()) 
                 ld << "Lens = " << r->second;
             else

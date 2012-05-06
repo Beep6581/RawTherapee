@@ -62,7 +62,7 @@ void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, i
 
 void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 
-	if (params->sharpening.enabled==false || params->sharpening.deconvamount<1)
+	if (!params->sharpening.enabled || params->sharpening.deconvamount<1)
 		return;
 
 	int W = lab->W, H = lab->H;
@@ -139,7 +139,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 	}
 
 	// Rest is UNSHARP MASK
-	if (params->sharpening.enabled==false || params->sharpening.amount<1 || lab->W<8 || lab->H<8)
+	if (!params->sharpening.enabled || params->sharpening.amount<1 || lab->W<8 || lab->H<8)
 		return;
 
 	int W = lab->W, H = lab->H;
@@ -156,7 +156,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 
 
 	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
-	if (params->sharpening.edgesonly==false) {
+	if (!params->sharpening.edgesonly) {
 
 		gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
 		gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
@@ -172,7 +172,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 	if (params->sharpening.edgesonly)
 		base = b3;
 
-	if (params->sharpening.halocontrol==false) {
+	if (!params->sharpening.halocontrol) {
 		#pragma omp for
 		for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++) {
@@ -246,7 +246,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 void ImProcFunctions::MLsharpen (LabImage* lab) {
 	// JD: this algorithm maximize clarity of images; it does not play on accutance. It can remove (partialy) the effects of the AA filter)
 	// I think we can use this algorithm alone in most cases, or first to clarify image and if you want a very little USM (unsharp mask sharpening) after...
-	if (params->sharpenEdge.enabled==false)
+	if (!params->sharpenEdge.enabled)
 		return;
 	MyTime t1e,t2e;
 	t1e.set();
@@ -421,12 +421,12 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 // http://creativecommons.org/publicdomain/zero/1.0/
 // addition from JD : pyramid  + ponderated contrast with matrix 5x5
 void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
-	if (params->sharpenMicro.enabled==false)
+	if (!params->sharpenMicro.enabled)
 		return;
 	MyTime t1e,t2e;
 	t1e.set();
 	int k;
-	if (params->sharpenMicro.matrix == false) k=2; else k=1;
+	if (!params->sharpenMicro.matrix) k=2; else k=1;
 	// k=2 matrix 5x5  k=1 matrix 3x3
 	int offset,offset2,i,j,col,row,n;
 	float temp,temp2,temp3,temp4,tempL;

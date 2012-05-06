@@ -59,7 +59,7 @@ class MyTime {
 #endif 	
 }
 
-	int etime (MyTime a) {
+	int etime (MyTime a) const {
 #ifndef WIN32
 		return (t.tv_sec-a.t.tv_sec)*1000000 + (t.tv_nsec-a.t.tv_nsec)/1000;
 #else

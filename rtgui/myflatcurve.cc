@@ -103,7 +103,7 @@ void MyFlatCurve::draw () {
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevInnerHeight != innerHeight || (int)point.size() != (innerWidth+1)) {
+    if (prevInnerHeight != innerHeight || point.size() != (innerWidth+1)) {
         interpolate ();
 
     }
@@ -192,7 +192,7 @@ void MyFlatCurve::draw () {
     if (colorProvider) {
 
         //if (curve.type!=FCT_Parametric)
-            for (int i=0; i<(int)curve.x.size(); ++i) {
+            for (size_t i=0; i<curve.x.size(); ++i) {
 
                 if (curve.x[i] != -1.) {
 
@@ -341,13 +341,13 @@ void MyFlatCurve::draw () {
     // draw curve
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->move_to (point[0].get_x(), point[0].get_y());
-    for (int i=1; i<(int)point.size(); i++)
+    for (size_t i=1; i<point.size(); i++)
         cr->line_to (point[i].get_x(), point[i].get_y());
     cr->stroke ();
 
     // draw bullets
     //if (curve.type!=FCT_Parametric)
-        for (int i = 0; i < (int)curve.x.size(); ++i) {
+        for (size_t i = 0; i < curve.x.size(); ++i) {
             if (curve.x[i] != -1.) {
                 if (i == lit_point) {
                 	if (colorProvider) {
@@ -422,7 +422,7 @@ void MyFlatCurve::draw () {
  * Return the X1, X2, Y position of the tangential handles.
  */
 bool MyFlatCurve::getHandles(int n) {
-	int N = curve.x.size();
+	size_t N = curve.x.size();
 	double prevX, nextX;
 	double prevY, nextY;
 	double prevTan, nextTan;
@@ -488,7 +488,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 	snapToElmt = -100;
 	bool retval = false;
-	int num = (int)curve.x.size();
+	size_t num = curve.x.size();
 
 	/* innerWidth and innerHeight are the size of the graph */
 	innerWidth = get_allocation().get_width() - 2*RADIUS - 1;
@@ -555,7 +555,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					ity = curve.y.begin();
 					itlt = curve.leftTangent.begin();
 					itrt = curve.rightTangent.begin();
-					for (int i=0; i<closest_point; i++) { itx++; ity++; itlt++; itrt++; }
+					for (int i=0; i<closest_point; i++) { ++itx; ++ity; ++itlt; ++itrt; }
 					curve.x.insert (itx, 0);
 					curve.y.insert (ity, 0);
 					curve.leftTangent.insert (itlt, 0);
@@ -931,7 +931,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 	double prevPosX = curve.x[lit_point];
 	double prevPosY = curve.y[lit_point];
 
-	int nbPoints = (int)curve.x.size();
+	size_t nbPoints = curve.x.size();
 
 	// left and right bound rely on curve periodicity
 	leftBound         = (lit_point == 0         ) ? (periodic ? curve.x[nbPoints-1]-1. : 0.) : curve.x[lit_point-1];
@@ -1037,7 +1037,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 			ugpY = CLAMP(ugpY, 0.0, 1.0);
 
 			if (lit_point == 0) {
-				int prevP = curve.y.size()-1;
+				size_t prevP = curve.y.size()-1;
 				if (snapCoordinate(curve.y[prevP], ugpY)) snapToElmt = prevP;
 			}
 			else {
@@ -1191,7 +1191,7 @@ void MyFlatCurve::getMouseOverArea () {
 		closest_point = 0;
 		lit_point = -1;
 
-		for (int i = 0; i < (int)curve.x.size(); i++) {
+		for (size_t i = 0; i < curve.x.size(); i++) {
 			if (curve.x[i] != -1) {
 				dX = curve.x[i] - preciseCursorX;
 				absDX = dX>0 ? dX : -dX;
@@ -1230,7 +1230,7 @@ std::vector<double> MyFlatCurve::getPoints () {
     std::vector<double> result;
     /*if (curve.type==FCT_Parametric) {
         result.push_back ((double)(Parametric));
-        for (int i=0; i<(int)curve.x.size(); i++) {
+        for (size_t i=0; i<curve.x.size(); i++) {
             result.push_back (curve.x[i]);
         }
     }
@@ -1241,7 +1241,7 @@ std::vector<double> MyFlatCurve::getPoints () {
         else if (curve.type==FCT_MinMaxCPoints)
             result.push_back ((double)(FCT_MinMaxCPoints));
         // then we push all the points coordinate
-        for (int i=0; i<(int)curve.x.size(); i++) {
+        for (size_t i=0; i<curve.x.size(); i++) {
             if (curve.x[i]>=0) {
                 result.push_back (curve.x[i]);
                 result.push_back (curve.y[i]);
@@ -1262,7 +1262,7 @@ void MyFlatCurve::setPoints (const std::vector<double>& p) {
         curve.y.clear ();
         curve.leftTangent.clear();
         curve.rightTangent.clear();
-        for (int i=0; i<(int)p.size()/4; i++) {
+	for (size_t i=0; i<p.size()/4; i++) {
             curve.x.push_back (p[ix++]);
             curve.y.push_back (p[ix++]);
             curve.leftTangent.push_back (p[ix++]);

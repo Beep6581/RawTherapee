@@ -119,13 +119,13 @@ void RenameDialog::useTemplToggled () {
 
 bool RenameDialog::isTemplSelected () {
 
-    Gtk::TreeModel::iterator iter = templates->get_active();
+	Gtk::TreeModel::const_iterator iter = templates->get_active();
     return iter && iter->get_value (templateColumns.tmplName)!=M("FILEBROWSER_ADDDELTEMPLATE");
 }
 
 Glib::ustring RenameDialog::getActiveTemplate () {
 
-    Gtk::TreeModel::iterator iter = templates->get_active();
+	Gtk::TreeModel::const_iterator iter = templates->get_active();
     if (iter && iter->get_value (templateColumns.tmplName)!=M("FILEBROWSER_ADDDELTEMPLATE"))
         return iter->get_value (templateColumns.tmplName);
     else
@@ -134,7 +134,7 @@ Glib::ustring RenameDialog::getActiveTemplate () {
 
 void RenameDialog::tmplSelectionChanged () {
 
-    Gtk::TreeModel::iterator iter = templates->get_active();
+	Gtk::TreeModel::const_iterator iter = templates->get_active();
     if (iter && iter->get_value (templateColumns.tmplName)==M("FILEBROWSER_ADDDELTEMPLATE")) {
         RenameTemplateEditor* rte = new RenameTemplateEditor (p);
         if (rte->run()==Gtk::RESPONSE_OK) {
@@ -188,7 +188,7 @@ void RenameTemplateEditor::refreshTemplateList () {
 
 void RenameTemplateEditor::addPressed () {
 
-    if (templ->get_text()!="") {
+    if (!templ->get_text().empty()) {
         options.renameTemplates.push_back (templ->get_text ());
         refreshTemplateList ();
         templ->set_text("");

@@ -31,14 +31,14 @@ class PopUpCommon {
 
 public:
 	typedef sigc::signal<void, int> type_signal_changed;
-	type_signal_changed signal_changed();
+	type_signal_changed signal_changed() const;
 	Gtk::HBox* buttonGroup;		// this is the widget to be packed
 
 	PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
 	virtual ~PopUpCommon ();
 	bool addEntry (Glib::ustring fileName, Glib::ustring label);
 	bool setSelected (int entryNum);
-	int  getSelected () { return selected; }
+	int  getSelected () const { return selected; }
 	void setButtonHint();
 	void show ();
 	void set_tooltip_text (const Glib::ustring &text);

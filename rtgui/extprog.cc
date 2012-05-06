@@ -45,7 +45,7 @@ bool ExtProgAction::Execute(std::vector<Glib::ustring> fileNames) {
     if (fileNames.empty()) return false;
 
     // Check if they all exists (maybe not precessed yet)
-    for (int i=0;i<fileNames.size();i++) {
+    for (size_t i=0;i<fileNames.size();i++) {
         if (!safe_file_test(fileNames[i], Glib::FILE_TEST_EXISTS)) {
             Gtk::MessageDialog msgd (M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
@@ -54,9 +54,9 @@ bool ExtProgAction::Execute(std::vector<Glib::ustring> fileNames) {
     }
 
     Glib::ustring cmdLine="\"" + filePathEXE + "\"";
-    if (preparams.length()>0) cmdLine += " " + preparams;
+    if (!preparams.empty()) cmdLine += " " + preparams;
 
-    for (int i=0;i<fileNames.size();i++) cmdLine += " \"" + fileNames[i] + "\"";
+    for (size_t i=0;i<fileNames.size();i++) cmdLine += " \"" + fileNames[i] + "\"";
 
     return safe_spawn_command_line_async (cmdLine);
 }
@@ -79,7 +79,7 @@ ExtProgStore* ExtProgStore::getInstance()
 }
 
 ExtProgStore::~ExtProgStore() {
-    for (list<ExtProgAction*>::iterator it=lActions.begin();it!=lActions.end();it++) delete *it;
+	for (list<ExtProgAction*>::const_iterator it=lActions.begin();it!=lActions.end();++it) delete *it;
 }
 
 // Reads all profiles from the given profiles dir
@@ -157,7 +157,7 @@ bool ExtProgStore::SearchProg(Glib::ustring name, Glib::ustring exePath, Glib::u
         }
     }
 
-    if (pAct->filePathEXE.length()>0){
+    if (!(pAct->filePathEXE.empty())){
         lActions.push_back(pAct);
 
         // Copy for second target

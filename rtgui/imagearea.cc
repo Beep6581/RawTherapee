@@ -54,7 +54,7 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 
 ImageArea::~ImageArea () {
 
-    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+	for (std::list<CropWindow*>::const_iterator i=cropWins.begin(); i!=cropWins.end(); ++i)
         delete *i;
     cropWins.clear ();
 
@@ -96,12 +96,12 @@ void ImageArea::on_resized (Gtk::Allocation& req) {
 void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_) {
     if( !ipc_ ){
         focusGrabber = NULL;
-        std::list<CropWindow*>::iterator i = cropWins.begin();
+		std::list<CropWindow*>::const_iterator i = cropWins.begin();
         if( i!=cropWins.end() ){
             (*i)->getPosition (lastClosedX, lastClosedY);
             (*i)->getSize (lastClosedW, lastClosedH);
         }
-        for( ;i!=cropWins.end();i++ ){
+        for( ;i!=cropWins.end();++i ){
         	delete *i;
         }
         cropWins.clear();
@@ -151,7 +151,7 @@ void ImageArea::infoEnabled (bool e) {
 CropWindow* ImageArea::getCropWindow (int x, int y) {
     
     CropWindow* cw = mainCropWindow;
-    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+	for (std::list<CropWindow*>::const_iterator i=cropWins.begin(); i!=cropWins.end(); ++i)
         if ((*i)->isInside (x, y))
             return *i;
     return cw;
@@ -178,7 +178,7 @@ bool ImageArea::on_expose_event(GdkEventExpose* event) {
     if (mainCropWindow)
         mainCropWindow->expose (cr);
 
-    if (options.showInfo==true && infotext!="") {
+    if (options.showInfo && !infotext.empty()) {
         int fnw, fnh;
         ilayout->get_pixel_size (fnw, fnh);
         window->draw_pixbuf (get_style()->get_base_gc (Gtk::STATE_NORMAL), ipixbuf, 0, 0, 4, 4, fnw+8, fnh+8, Gdk::RGB_DITHER_NONE, 0, 0);  
@@ -188,7 +188,7 @@ bool ImageArea::on_expose_event(GdkEventExpose* event) {
         cr->fill ();
     }
 
-    for (std::list<CropWindow*>::reverse_iterator i=cropWins.rbegin(); i!=cropWins.rend(); i++)
+    for (std::list<CropWindow*>::reverse_iterator i=cropWins.rbegin(); i!=cropWins.rend(); ++i)
         (*i)->expose (cr);
 
     return true;
@@ -429,7 +429,7 @@ void ImageArea::syncBeforeAfterViews () {
 void ImageArea::setCropGUIListener (CropGUIListener* l) { 
     
     cropgl = l; 
-    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+	for (std::list<CropWindow*>::const_iterator i=cropWins.begin(); i!=cropWins.end(); ++i)
         (*i)->setCropGUIListener (cropgl);
     if (mainCropWindow)
         mainCropWindow->setCropGUIListener (cropgl);
@@ -438,7 +438,7 @@ void ImageArea::setCropGUIListener (CropGUIListener* l) {
 void ImageArea::setPointerMotionListener (PointerMotionListener* pml) {
 
     pmlistener = pml; 
-    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+	for (std::list<CropWindow*>::const_iterator i=cropWins.begin(); i!=cropWins.end(); ++i)
         (*i)->setPointerMotionListener (pml);
     if (mainCropWindow)
         mainCropWindow->setPointerMotionListener (pml);
@@ -447,7 +447,7 @@ void ImageArea::setPointerMotionListener (PointerMotionListener* pml) {
 void ImageArea::setPointerMotionHListener (PointerMotionListener* pml) {
 
     pmhlistener = pml; 
-    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+	for (std::list<CropWindow*>::const_iterator i=cropWins.begin(); i!=cropWins.end(); ++i)
         (*i)->setPointerMotionHListener (pml);
     if (mainCropWindow)
         mainCropWindow->setPointerMotionHListener (pml);

@@ -45,8 +45,8 @@ class ColorTemp {
         ColorTemp (double t, double g, Glib::ustring m);
         ColorTemp (double mulr, double mulg, double mulb);
 
-        inline double getTemp ()    { return temp;  }
-        inline double getGreen ()   { return green; }
+        inline double getTemp () const  { return temp;  }
+        inline double getGreen () const { return green; }
 
         void   getMultipliers (double &mulr, double &mulg, double &mulb) { temp2mul (temp, green, mulr, mulg, mulb); }
 
@@ -54,8 +54,8 @@ class ColorTemp {
         void temp2mul (double temp, double green, double& rmul, double& gmul, double& bmul);
         //void temp2mul (double& rmul, double& gmul, double& bmul);
 
-        bool operator== (const ColorTemp& other) { return fabs(temp-other.temp)<1e-10 && fabs(green-other.green)<1e-10; }
-        bool operator!= (const ColorTemp& other) { return !(*this==other); }
+	bool operator== (const ColorTemp& other) const { return fabs(temp-other.temp)<1e-10 && fabs(green-other.green)<1e-10; }
+        bool operator!= (const ColorTemp& other) const { return !(*this==other); }
 
         static double blackbody_spect        (double wavelength, double m1, double m2, double temp);
         static double daylight_spect         (double wavelength, double m1, double m2, double temp);

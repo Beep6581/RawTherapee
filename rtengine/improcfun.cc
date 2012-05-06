@@ -494,7 +494,7 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
 //#include "cubic.cc"
 
 void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
-
+// TODO: remove commented code?
 /*    LUT<double> cmultiplier(181021);
 
     double boost_a = ((float)params->colorBoost.amount + 100.0) / 100.0;
@@ -871,7 +871,7 @@ fclose(f);*/
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 	double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size) {
-		if (fname != "") {
+		if (!fname.empty()) {
 			rtengine::RawMetaDataLocation ri;
 			int w_raw=-1, h_raw=thumb_size;
 			int w_thumb=-1, h_thumb=thumb_size;

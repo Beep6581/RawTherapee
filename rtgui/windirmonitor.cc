@@ -23,7 +23,7 @@ static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nByt
     DWORD dwOffset = 0;
     FILE_NOTIFY_INFORMATION* pInfo = NULL;
 
-    WinDirMonitor::MonitorData* monData = (WinDirMonitor::MonitorData*)lpOverlapped;
+    WinDirMonitor::MonitorData* monData = reinterpret_cast<WinDirMonitor::MonitorData*>(lpOverlapped);
     if (!nBytes) {
         delete monData;
         return;
@@ -33,7 +33,7 @@ static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nByt
     // Analysis of the modifications. Let only parsed file extensions emit a notify, not PP3 changes
     do {
         // Get a pointer to the first change record...
-        pInfo = (FILE_NOTIFY_INFORMATION*) &monData->file_notify_buffer[dwOffset];
+        pInfo = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&monData->file_notify_buffer[dwOffset]);
 
         char fnameC[(MAX_PATH+1)*2] = {0};
         int strLen = WideCharToMultiByte(CP_UTF8,0,pInfo->FileName,pInfo->FileNameLength/sizeof(WCHAR),fnameC,sizeof(fnameC),0,0);

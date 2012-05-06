@@ -69,7 +69,7 @@ class DFManager
 {
 public:
 	void init( Glib::ustring pathname );
-	Glib::ustring getPathname(){ return currentPath; };
+	Glib::ustring getPathname() const { return currentPath; };
 	void getStat( int &totFiles, int &totTemplate);
 	RawImage *searchDarkFrame( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
 	RawImage *searchDarkFrame( const Glib::ustring filename );

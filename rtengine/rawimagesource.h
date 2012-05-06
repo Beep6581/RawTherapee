@@ -119,7 +119,7 @@ class RawImageSource : public ImageSource {
         void processFalseColorCorrectionThread (Imagefloat* im, int row_from, int row_to);
         void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw, float* hlmax);
         int  defTransform        (int tran);
-        void rotateLine          (float* line, float** channel, int tran, int i, int w, int h);
+        void rotateLine          (float* line, float** channel, int tran, int i, int w, int h) const;
         void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
         void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
@@ -185,17 +185,17 @@ class RawImageSource : public ImageSource {
     protected:
         typedef unsigned short ushort;
                 void processFalseColorCorrection (Imagefloat* i, int steps);
-        inline  void convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W);
-        inline  void convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W);
+        inline  void convert_row_to_YIQ (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) const;
+	inline  void convert_row_to_RGB (float* r, float* g, float* b, float* Y, float* I, float* Q, int W) const;
 
-        inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob);
+	inline  void convert_to_cielab_row  (float* ar, float* ag, float* ab, float* oL, float* oa, float* ob) const;
         inline  void interpolate_row_g      (float* agh, float* agv, int i);
         inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
         inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
         int  LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
         void CA_correct_RT	(double cared, double cablue);
-        void ddct8x8s(int isgn, float **a);
+        void ddct8x8s(int isgn, float **a) const;
         void processRawWhitepoint (float expos, float preser);  // exposure before interpolation
 
         int  cfaCleanFromMap( PixelsMap &bitmapBads );
@@ -215,10 +215,10 @@ class RawImageSource : public ImageSource {
         void dcb_demosaic(int iterations, bool dcb_enhance);
         void ahd_demosaic(int winx, int winy, int winw, int winh);
         void border_interpolate(int border, float (*image)[4], int start = 0, int end = 0);
-        void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
+        void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border) const;
         void fill_raw( float (*cache )[4], int x0, int y0, float** rawData);
         void fill_border( float (*cache )[4], int border, int x0, int y0);
-        void copy_to_buffer(float (*image2)[3], float (*image)[4]);
+        void copy_to_buffer(float (*image2)[3], float (*image)[4]) const;
         void dcb_hid(float (*image)[4], float (*bufferH)[3], float (*bufferV)[3], int x0, int y0);
         void dcb_color(float (*image)[4], int x0, int y0);
         void dcb_hid2(float (*image)[4], int x0, int y0);
@@ -226,13 +226,13 @@ class RawImageSource : public ImageSource {
         void dcb_correction(float (*image)[4], int x0, int y0);
         void dcb_pp(float (*image)[4], int x0, int y0);
         void dcb_correction2(float (*image)[4], int x0, int y0);
-        void restore_from_buffer(float (*image)[4], float (*image2)[3]);
+        void restore_from_buffer(float (*image)[4], float (*image2)[3]) const;
         void dcb_refinement(float (*image)[4], int x0, int y0);
         void dcb_color_full(float (*image)[4], int x0, int y0, float (*chroma)[2]);
 
         void    transLine   (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imw, int imh, int fw);
         void    hflip       (Imagefloat* im);
-        void    vflip       (Imagefloat* im);
+        void    vflip       (Imagefloat* im) const;
 
 };
 }

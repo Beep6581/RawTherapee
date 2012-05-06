@@ -126,7 +126,7 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(unsigned int index, unsigned i
 	return true;
 }
 
-int MultiDiagonalSymmetricMatrix::FindIndex(unsigned int StartRow){
+int MultiDiagonalSymmetricMatrix::FindIndex(unsigned int StartRow) const {
 	//There's GOT to be a better way to do this. "Bidirectional map?"
 	for(unsigned int i = 0; i != m; i++)
 		if(StartRows[i] == StartRow)
@@ -274,7 +274,7 @@ void MultiDiagonalSymmetricMatrix::KillIncompleteCholeskyFactorization(void){
 	delete IncompleteCholeskyFactorization;
 }
 
-void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float *x, float *b){
+void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float *x, float *b) const {
 	//We want to solve L D Lt x = b where D is a diagonal matrix described by Diagonals[0] and L is a unit lower triagular matrix described by the rest of the diagonals.
 	//Let D Lt x = y. Then, first solve L y = b.
 	float *y = new float[n];

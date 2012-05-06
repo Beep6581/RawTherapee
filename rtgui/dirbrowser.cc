@@ -93,7 +93,7 @@ void DirBrowser::addRoot (char letter) {
     volume[0] = letter;
     strcpy (volume+1, ":\\");
 
-    Gtk::TreeModel::iterator root = dirTreeModel->append();
+	Gtk::TreeModel::const_iterator root = dirTreeModel->append();
     root->set_value (dtColumns.filename, Glib::ustring(volume));
     root->set_value (dtColumns.dirname, Glib::ustring(volume));
 
@@ -121,13 +121,13 @@ void DirBrowser::addRoot (char letter) {
         root->set_value (1, ihdd);
     }
 
-    Gtk::TreeModel::iterator child = dirTreeModel->append (root->children());
+    Gtk::TreeModel::const_iterator child = dirTreeModel->append (root->children());
     child->set_value (dtColumns.filename, Glib::ustring("foo"));
 }
 
 void DirBrowser::updateDirTreeRoot () {
 
-    for (Gtk::TreeModel::iterator i=dirTreeModel->children().begin(); i!=dirTreeModel->children().end(); i++)
+    for (Gtk::TreeModel::iterator i=dirTreeModel->children().begin(); i!=dirTreeModel->children().end(); ++i)
 		updateDirTree (i);
 }
 
@@ -135,7 +135,7 @@ void DirBrowser::updateDirTree (const Gtk::TreeModel::iterator& iter) {
 	
 	if (dirtree->row_expanded (dirTreeModel->get_path (iter))) {
 		updateDir (iter);
-		for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); i++)
+		for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); ++i)
 			updateDirTree (i);
 	}
 }
@@ -148,7 +148,7 @@ void DirBrowser::updateVolumes () {
 
         for (int i=0; i<32; i++) 
             if (((volumes >> i) & 1) && !((nvolumes >> i) & 1)) { // volume i has been deleted
-                for (Gtk::TreeModel::iterator iter = dirTreeModel->children().begin(); iter!=dirTreeModel->children().end(); iter++) 
+                for (Gtk::TreeModel::iterator iter = dirTreeModel->children().begin(); iter!=dirTreeModel->children().end(); ++iter)
                     if (iter->get_value (dtColumns.filename).c_str()[0]-'A' == i) {
                         dirTreeModel->erase (iter);
                         break;
@@ -234,7 +234,7 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter) {
     bool change = true;
     while (change) {
         change = false;
-        for (Gtk::TreeModel::iterator it=iter->children().begin(); it!=iter->children().end(); it++)
+		for (Gtk::TreeModel::const_iterator it=iter->children().begin(); it!=iter->children().end(); ++it)
             if (!safe_file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_EXISTS) 
              || !safe_file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_IS_DIR)) {
                 dirTreeModel->erase (it);
@@ -247,9 +247,9 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter) {
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
 		safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
 
-    for (int i=0; i<subDirs.size(); i++) {
+    for (size_t i=0; i<subDirs.size(); i++) {
         bool found = false;
-        for (Gtk::TreeModel::iterator it=iter->children().begin(); it!=iter->children().end() && !found ; it++) 
+		for (Gtk::TreeModel::const_iterator it=iter->children().begin(); it!=iter->children().end() && !found ; ++it)
             found = (it->get_value (dtColumns.filename)==subDirs[i]);
 
         if (!found)
@@ -259,13 +259,13 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter) {
 
 void DirBrowser::addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirname) {
 
-    Gtk::TreeModel::iterator child = dirTreeModel->append(iter->children());
+	Gtk::TreeModel::const_iterator child = dirTreeModel->append(iter->children());
     child->set_value (dtColumns.filename, dirname);
     child->set_value (0, openfolder);
     child->set_value (1, closedfolder);
     Glib::ustring fullname = Glib::build_filename (iter->get_value (dtColumns.dirname), dirname);
     child->set_value (dtColumns.dirname, fullname);
-    Gtk::TreeModel::iterator fooRow = dirTreeModel->append(child->children());
+	Gtk::TreeModel::const_iterator fooRow = dirTreeModel->append(child->children());
     fooRow->set_value (dtColumns.filename, Glib::ustring("foo"));
 }
 
@@ -288,7 +288,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
     expandSuccess = true;
 
 #ifndef WIN32
-    Gtk::TreeModel::iterator j = dirTreeModel->get_iter (path);
+	Gtk::TreeModel::const_iterator j = dirTreeModel->get_iter (path);
     path.up ();
     path.append_index (0);
     row_expanded(j, path);
@@ -301,7 +301,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
         if (count==0)
             dirstr = dirstr + "\\";
 #endif
-        Gtk::TreeModel::iterator i = dirTreeModel->get_iter (path);
+        Gtk::TreeModel::const_iterator i = dirTreeModel->get_iter (path);
         int ix = 0;
         while (i && expandSuccess) {
             Gtk::TreeModel::Row crow = *i;
@@ -318,7 +318,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
                 break;
             }
             ix++;
-            i++;
+            ++i;
         }
         count++;
         dir = strtok(NULL, "/\\");
