@@ -678,7 +678,7 @@ fclose(f);*/
 			median++;
 			count += histogram[median];
 		}
-		if (median==0) {//probably the image is a blackframe
+		if (median==0 || ave<1) {//probably the image is a blackframe
 			expcomp=0;
 			black=0;
 			bright=0;
@@ -775,7 +775,6 @@ fclose(f);*/
 		shc <<= histcompr;
 		
 		//prevent division by 0
-		if (ave<1) return;
 		if (lodev==0) lodev=1;
 		
 		//compute exposure compensation as geometric mean of the amount that
