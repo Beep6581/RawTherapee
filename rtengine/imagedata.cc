@@ -119,7 +119,7 @@ void ImageData::extractInfo () {
      static const char *corp[] =
        { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
          "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
-         "SAMSUNG", "Mamiya", "MOTOROLA" };
+         "SAMSUNG", "Mamiya", "MOTOROLA", "Leaf" };
      for (size_t i=0; i < (sizeof(corp)/sizeof(*corp)); i++)
        if ( make.find( corp[i] ) != std::string::npos ){		/* Simplify company names */
    	     make = corp[i];
@@ -175,6 +175,7 @@ void ImageData::extractInfo () {
         if (sscanf ((const char*)exif->getTag("DateTimeOriginal")->getValue(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
             time.tm_year -= 1900;
             time.tm_mon -= 1;
+            time.tm_isdst = -1;
             timeStamp = mktime(&time);
         }
     }
