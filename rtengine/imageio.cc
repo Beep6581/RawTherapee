@@ -644,7 +644,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	jpeg_start_compress(&cinfo, TRUE);
 
     // buffer for exif and iptc markers
-	unsigned char* buffer = new unsigned char[165535];	//TODO: Is it really 165535... or 65535 ?
+	unsigned char* buffer = new unsigned char[165535]; //FIXME: no buffer size check so it can be overflowed in createJPEGMarker() for large tags, and then software will crash
     unsigned int size;
     // assemble and write exif marker
    if (exifRoot) {
