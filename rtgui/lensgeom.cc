@@ -54,6 +54,7 @@ void LensGeometry::read (const ProcParams* pp, const ParamsEdited* pedited) {
     fillConn.block (true);
     fill->set_active (pp->commonTrans.autofill);
     fillConn.block (false);
+	autoCrop->set_sensitive (!pp->commonTrans.autofill);
 
     lastFill = pp->commonTrans.autofill;
 
