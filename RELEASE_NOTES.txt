@@ -4,27 +4,11 @@ RAWTHERAPEE 4.0.8 RELEASE NOTES
 
 NEW FEATURES
 ------------
-- Support for loading, saving, copying and pasting partial profiles
-- Support for using clipless DCP input profiles (see the manual,
-  Color Management section)
-- Subdirectory support for ICC and DCP profiles
-- Support for RGBLF preview modes in the Before|After view
-- Automatic support for CaptureOne and hacked Nikon ICC profiles
-- New input color profiles (DCP and/or ICC) for the following cameras:
-  - Canon EOS 7D
-  - Canon EOS 60D
-  - Canon EOS 40D
-  - Canon EOS 400D
-  - Canon EOS 550D
-  - Canon Powershot G12
-  - Nikon D50
-  - Nikon D300
-  - Nikon D3000
-  - Olympus E-1
-  - Pentax K10D
-  - Sony A900
+- Program plugger for Windows, to automatically find and be able to
+  open right-clicked photos with popular photography programs.
+- Dual illuminant support in DCP profiles
 
-In addition to these new features, as usual there were numerous bug-fixes, and speed and stability improvements.
+Most commits focused on squashing bugs and speeding up processing.
 
 CAVEATS
 -------
@@ -33,10 +17,6 @@ Please read http://rawtherapee.com/blog/maximizing-memory-efficiency
 
 - Differences between the preview and the output image
 The color-managed preview in RawTherapee is (and has always been) based on image data in the Working Space profile. Although the actual preview is rendered using a monitor profile (or sRGB profile, if the monitor profile is not specified), it does not reflect the Output Profile & Output Gamma settings. This can lead to a slightly different output rendering when Working Space profile and Output Space profiles are not the same. A workaround is to set them to the same values to ensure the preview accurately reflects the final rendered output. 
-
-For generic use in an sRGB workflow when the output target is web-based image display, it is recommended to use the default values of the Color/ICM toolset (Working Profile = sRGB, Output Profile = RT_sRGB). 
-
-Future releases of RawTherapee are planned to support a more comprehensive color-managed preview that will allow proofing with accurate visualization of the final output render based not only on the working space and monitor profiles, but also on the user-selected Output Profile and Output Gamma.
 
 DOCUMENTATION
 -------------
@@ -62,162 +42,119 @@ REVISION HISTORY
 The complete change log is available at
 http://code.google.com/p/rawtherapee/source/list
 
-Changes since version 4.0.7:
+Changes since version 4.0.8:
 
-  DATE      	| CHANGESET 	| COMMITTER 	
-  --------------|---------------|-------------------------------------
-> 2012-04-02	| ac1465f8b717	| DrSlony
-  Updated PDF manual to 4.0.8. Ready to tag.
+  DATE        | CHANGESET     | COMMITTER 
+--------------|---------------|-------------------------------------
+> 2012-05-14	| 6115629f57e4	| Hombre
+  Solving issue 607: Auto Crop disabled if Auto Fill off
 
-> 2012-04-02	| 8a9b5ff61ef3	| DrSlony
-  Replaced old 'neutral.pp3' with 'full neutral.pp3' plus some minor
-  changes.
+> 2012-05-12	| a42648a2f87f	| Michael Ezra
+  Enhancements: parsing for Leaf exif data & Phase One orientation;
+  Fix for Time in reading exif:DateTimeOriginal - REQUIRES CLEARING
+  CACHE to take an effect on images prviously viewed in RT;
+  - on behalf of Torger (issue 766)
 
-> 2012-04-02	| 3972a7b537b9	| DrSlony
-  Updated default lanuage file, and regenerated all language files
-  accordingly.\nRemoved UK and US files as they were unmaintained and
-  unnecessary.
+> 2012-05-08	| 9925deee5045	| Emil Martinec
+  Minor bugfix for AutoExposure
 
-> 2012-04-02	| adcd07022a5c	| DrSlony
-  Fixed generateTranslationDiffs to preserve all newline characters
+> 2012-05-06	| 099cdb136980	| Oliver Duis
+  Backed out changeset: 159f9e7014f8
 
-> 2012-04-02	| f9a4c496f6f2	| Oliver Duis
-  6 new camera profiles
+> 2012-05-06	| 159f9e7014f8	| Oliver Duis
+  Code cleanups on behalf of Lebedev, see issue 1355
 
-> 2012-04-02	| 637f0e82292e	| Oliver Duis
-  New camera color profile: Pentax K10D see issue 1299
+> 2012-05-05	| eea2f14d863f	| Emil Martinec
+  Bugfix for autoexposure on blackframes.
 
-> 2012-04-02	| ad7b16f25b88	| DrSlony
-  Updated Polish language files, and regenerated all language files
+> 2012-05-05	| 957c5df1ac24	| Michael Ezra
+  Fix for thumbnail rotation for Leaf, Mamiya and Phase One (Thanks
+  Torger!); issue 766
 
-> 2012-04-01	| 4f617eb31e6c	| Oliver Duis
-  Fixed crash on selecting a Custom input color profile see issue 1298
+> 2012-05-04	| d22bf9288e6c	| DrSlony
+  Updates and fixes to benchmarkRT
 
-> 2012-04-01	| fac0e06efbc6	| Hombre
-  Updated french translation
+> 2012-05-02	| 8f7f3036f427	| Oliver Duis
+  Fix for Canon 5D Mark III on behalf Lebedev, issue 1347
 
-> 2012-03-31	| 10b574c06b11	| DrSlony
-  Updated buildRT script
+> 2012-05-01	| bfffc520de3e	| DrSlony
+  PP3 files updated (full) and changes to options.cc, issue 1341
 
-> 2012-03-31	| 1966e55e725a	| DrSlony
-  Committed Canon EOS 550D DCP profile from issue 1100 by lebedev.ri
+> 2012-04-29	| 08ef56d5b65d	| DrSlony
+  Updated Czech language file on behalf of mkyral, issue 1344.
 
-> 2012-03-31	| 391c14fd50c2	| Oliver Duis
-  Clipless and fast DCP color profile engine see issue #1295
+> 2012-04-29	| 207d8d272a91	| DrSlony
+  Updated German language file on behalf of maweso, issue 1348.
 
-> 2012-03-27	| 92d0e1a9fdd9	| Oliver Duis
-  New camera color profiles: Nikon D3000, Sony A900, (Sony A55) see
-  issue #1292
+> 2012-04-26	| 62cefcb38a24	| Oliver Duis
+  Nikon D7000 camera color profile in DCP format
 
-> 2012-03-25	| e745261fa4de	| Michael Ezra
-  Fix for Lab Brightness precision in the UI
+> 2012-04-23	| c13a7add87ba	| Oliver Duis
+  DCP dual illuminant support see issue 1336
 
-> 2012-03-22	| 94ed75a6e7d7	| Oliver Duis
-  Support for ICC profiles in subdirectories see issue #1286
+> 2012-04-22	| 4ee4f75e86ac	| Oliver Duis
+  Code cleanups on behalf of Lebedev, see issue 1332
 
-> 2012-03-18	| c9be10114ec3	| Hombre
-  Solving issue 1276: "Segfault on going back in history after pasting
-  profile"
+> 2012-04-21	| 8a8a15242c21	| Hombre
+  The "Blend" HL recovery method was not remembered when modified in
+  the Batch Tool Panel editor
 
-> 2012-03-17	| fdbe27ac174b	| Oliver Duis
-  New camera color profile: Canon Powershot G12 see issue 1281
+> 2012-04-21	| cc18bd2e902b	| Oliver Duis
+  Fixed Leaf .mos files wrong orientation and colors on behalf of
+  Torger, see issue 1327
 
-> 2012-03-16	| 34312be3f4e0	| Oliver Duis
-  Code cleanups on behalf of Lebedev, see issue 1279
+> 2012-04-21	| 2b0fe3871615	| Oliver Duis
+  ICC camera and output profile speedups, cleanup see issue 1329
 
-> 2012-03-16	| f673947d5cc3	| Oliver Duis
-  New camera color profile: Canon 40D see issue 1280
+> 2012-04-20	| 704069c8877c	| Oliver Duis
+  Fixed compilation on 32bit Windows, cleanups see issue 1333
 
-> 2012-03-15	| bcad0553952a	| Oliver Duis
-  Automatic support for CaptureOne and hacked Nikon ICC profiles see
-  issue #1274
+> 2012-04-19	| 2db6dae32b17	| Oliver Duis
+  Fixed auto profile detection in some cases see issue 1312
 
-> 2012-03-09	| 91de72965622	| DrSlony
-  Updates to buildRT script
+> 2012-04-16	| ca7c7f52ff04	| Oliver Duis
+  Forgot to commit the added files (sorry)
 
-> 2012-03-09	| a225b22e812b	| DrSlony
-  Removed verbosity of clean script
+> 2012-04-16	| 9cab197f142f	| Oliver Duis
+  External programs plugger see issue 1323
 
-> 2012-03-08	| da1745fc39a4	| Emil Martinec
-  Restoring a file inexplicably lost during the merge.
+> 2012-04-16	| 8e448d936bd7	| Oliver Duis
+  Fixed BitsPerSample tag in TIFF output header see issue 1311
 
-> 2012-03-08	| 06503f79e327	| Hombre
-  Debug message removed, related to IPTC
+> 2012-04-14	| 545f45f0e12b	| Jacques Desmis
+  Fix bug output gamma
 
-> 2012-03-03	| c0f377b64d62	| Hombre
-  Correction of an assertion in array2D.h which had became uneffective
-  due to the last change.
+> 2012-04-13	| 0a2016c66e5b	| Oliver Duis
+  Fixed NoICM would generate incompatible output image see issue 1320
 
-> 2012-02-28	| 82465d3aaa4a	| Michael Ezra
-  Fix - adding '.out' to the pp3 filename next to output file when
-  image is saved via queue
+> 2012-04-10	| 5569030d30b2	| Oliver Duis
+  Fixed two crashes in DCP color engine see issue 1317
 
-> 2012-02-27	| afadc6c3eae4	| Oliver Duis
-  Fixed international characters in RT profile builder sample
+> 2012-04-09	| 2493dd00b9f3	| Emil Martinec
+  Code cleanup for min/max functions. Committed on behalf of
+  lebedev.ri (thanks!).
 
-> 2012-02-26	| 2ab4cc2fcf38	| Hombre
-  Committing patch from issue 1240: "Partial profile handling"
+> 2012-04-07	| 952a99e79816	| Oliver Duis
+  Fixed auto DCP detection did not work with some camera makers see
+  issue 1312
 
-> 2012-02-26	| 4b5ae9eb4000	| Hombre
-  Suppressing loads of GCC warning about automatic typecasting
-  ambiguity
+> 2012-04-07	| 766e816228fc	| Oliver Duis
+  Performance improvements, espc. using monitor profiles see issue
+  1310
 
-> 2012-02-25	| 570305c75b9c	| Hombre
-  Solving issue 1241 on behalf of skraft61: "CropHandler::update is
-  called too often". It also remove the main preview's scrollbars.
+> 2012-04-04	| 273d4edbff73	| Oliver Duis
+  Updated Japanese translation on behalf of a3novy, see issue 1302
 
-> 2012-02-25	| 7412a57cb33e	| Hombre
-  Applying patch from issue 1257: "Code cleanup: removal of
-  unnessesary variables, fixed C-style pointer casting" on behalf of
-  lebedev
+> 2012-04-03	| 03d965613b60	| Michael Ezra
+  Fixes for packahed profiles. Addition of neutral-UnchangedTransforms
+  profile.
 
-> 2012-02-21	| 804f7481cf0f	| DrSlony
-  Biometric passport (ePassport) crop ratio and guides. Issue 1259
+> 2012-04-03	| be07005cd8ac	| Oliver Duis
+  Added renamed color profiles (US specific name)
 
-> 2012-02-20	| fa58a1e9c598	| DrSlony
-  Updated the desktop file and mime-types. Removed old rtinstaller.nsi
-  from root
+> 2012-04-02	| 08422f013749	| DrSlony
+  Added tag 4.0.8 for changeset 4072ea5c0abd
 
-> 2012-02-18	| c7865e89df0a	| Hombre
-  Small bugfix of the main cmakelist, to properly handle
-  PROC_TARGET_NUMBER=2
+> 2012-04-02	| 4072ea5c0abd	| DrSlony
+  RELEASE_NOTES.txt for RawTherapee-4.0.8
 
-> 2012-02-15	| 4b77e468343e	| DrSlony
-  Updated and renamed the buildRT and benchmarkRT scripts.
-
-> 2012-02-12	| 8046d7862f5f	| Joker
-  Fix for Auto White Balance when photo is in queue (rawData was null)
-  Thanks to marco42
-
-> 2012-02-11	| c0f0396030bf	| DrSlony
-  Updated Japanese translation of behalf of a3novy, issue 1247
-
-> 2012-02-11	| 6aef65d75751	| DrSlony
-  Removed printf "silpleprocess calling autoexp\n" from
-  simpleprocess.cc. See issue 1238
-
-> 2012-02-10	| ab2ebe4db0b7	| DrSlony
-  Added the buildrt Bash script to tools. Removed the .sh extensions
-  from the other Bash scripts as Bash scripts should not have .sh
-  extensions. Updated rtdata/languages/README accordingly.
-
-> 2012-02-06	| 39526ee59f9b	| DrSlony
-  Fixes to benchmark_rt.sh
-
-> 2012-02-06	| 970f49e29a74	| DrSlony
-  Added a Bash script for benchmarking RT processing speed in
-  /tools/benchmark_rt.sh
-
-> 2012-02-03	| c39bd7949069	| Michael Ezra
-  Adding RGBLF preview modes support for Before/After views (issue
-  1234)
-
-> 2012-01-31	| 6deebb547be6	| DrSlony
-  Added tag 4.0.7 for changeset 185235a4e79a
-
-> 2012-01-31	| 185235a4e79a	| DrSlony
-  Updated Polish translations and regenerated all
-  translations.\nUnified line endings of Windows text files to CRLF
-  and non-Windows text files to LF (just the language and txt
-  ones).\nAdded 4.0.7 PDF manual.\nFinal update to RELEASE_NOTES.txt.
-  Ready to tag 4.0.7
