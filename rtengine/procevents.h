@@ -106,7 +106,7 @@ enum ProcEvent {
     EvProfileChangeNotification=81,
     EvSHHighQuality=82,
     EvPerspCorr=83,
-    EvEqualizer=84, // obsolete
+    EvLCPFile=84,
     EvEqlEnabled=85,// obsolete
     EvIDNEnabled=86,
     EvIDNThresh=87,

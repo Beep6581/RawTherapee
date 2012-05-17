@@ -326,8 +326,14 @@ class RotateParams {
 class DistortionParams {
 
     public:
-		bool    uselensfun;
         double  amount;
+};
+
+// Lens profile correction parameters
+class LensProfParams {
+    
+public:
+    Glib::ustring lcpFile;
 };
 
 /**
@@ -527,6 +533,7 @@ class ProcParams {
         CommonTransformParams	commonTrans;     ///< Common transformation parameters (autofill)
         RotateParams            rotate;          ///< Rotation parameters
         DistortionParams        distortion;      ///< Lens distortion correction parameters
+        LensProfParams          lensProf;        ///< Lens correction profile parameters
         PerspectiveParams       perspective;     ///< Perspective correction parameters
         CACorrParams            cacorrection;    ///< Lens c/a correction parameters
         VignettingParams        vignetting;      ///< Lens vignetting correction parameters

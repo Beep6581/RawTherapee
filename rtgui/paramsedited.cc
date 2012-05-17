@@ -134,8 +134,8 @@ void ParamsEdited::set (bool v) {
 	coarse.vflip = v;
 	commonTrans.autofill = v;
 	rotate.degree = v;
-	distortion.uselensfun = v;
 	distortion.amount = v;
+    lensProf.lcpFile = v;
 	perspective.horizontal = v;
 	perspective.vertical = v;
 	cacorrection.red = v;
@@ -327,8 +327,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
         commonTrans.autofill = commonTrans.autofill && p.commonTrans.autofill == other.commonTrans.autofill;
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
-        distortion.uselensfun = distortion.uselensfun && p.distortion.uselensfun == other.distortion.uselensfun;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
+        lensProf.lcpFile = lensProf.lcpFile && p.lensProf.lcpFile == other.lensProf.lcpFile;
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
         cacorrection.red = cacorrection.red && p.cacorrection.red == other.cacorrection.red;
@@ -519,8 +519,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (coarse.vflip)						toEdit.coarse.vflip 	= mods.coarse.vflip ? !toEdit.coarse.vflip : toEdit.coarse.vflip;
 	if (commonTrans.autofill)				toEdit.commonTrans.autofill		= mods.commonTrans.autofill;
 	if (rotate.degree)						toEdit.rotate.degree 			= dontforceSet && options.baBehav[ADDSET_ROTATE_DEGREE] ? toEdit.rotate.degree + mods.rotate.degree : mods.rotate.degree;
-	if (distortion.uselensfun)				toEdit.distortion.uselensfun	= mods.distortion.uselensfun;
 	if (distortion.amount)					toEdit.distortion.amount 		= dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
+	if (lensProf.lcpFile)                   toEdit.lensProf.lcpFile         = mods.lensProf.lcpFile;
 	if (perspective.horizontal)				toEdit.perspective.horizontal 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
 	if (perspective.vertical)				toEdit.perspective.vertical 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vertical + mods.perspective.vertical : mods.perspective.vertical;
 	if (cacorrection.red)					toEdit.cacorrection.red 	= dontforceSet && options.baBehav[ADDSET_CA] ? toEdit.cacorrection.red + mods.cacorrection.red : mods.cacorrection.red;

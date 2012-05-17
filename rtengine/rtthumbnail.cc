@@ -576,7 +576,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, double& myscale) {
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, double focalLen, double& myscale) {
 
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
@@ -698,7 +698,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // perform transform
     if (ipf.needsTransform()) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
-        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
+        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, focalLen, 0);  // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
     }

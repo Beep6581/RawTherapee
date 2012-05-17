@@ -122,7 +122,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
     if ( todo & M_PREPROC) {
-    	imgsrc->preprocess( rp );
+    	imgsrc->preprocess( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
     }
 
@@ -193,7 +193,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (needstransform && orig_prev==oprevi)
         oprevi = new Imagefloat (pW, pH);
     if ((todo & M_TRANSFORM) && needstransform)
-    	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH);
+    	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, imgsrc->getMetaData()->getFocalLen(), imgsrc->getRotateDegree());
 
     readyphase++;
 
@@ -579,7 +579,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	ppar.icm.input = "(none)";
 	Imagefloat* im = new Imagefloat (fW, fH);
 	Image16* im16 = new Image16 (fW, fH);
-	imgsrc->preprocess( ppar.raw );
+	imgsrc->preprocess( ppar.raw, ppar.lensProf, ppar.coarse );
 	imgsrc->demosaic(ppar.raw );
 	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
 	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);

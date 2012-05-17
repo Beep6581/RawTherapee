@@ -953,7 +953,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::preprocess  (const RAWParams &raw)
+void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse)
 {
 	MyTime t1,t2;
 	t1.set();
@@ -979,7 +979,9 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 	} else {
 		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getLens(),idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
 	}
-	if( rif && settings->verbose) {
+
+    bool hasFlatField = (rif!=NULL);
+	if( hasFlatField && settings->verbose) {
 		printf( "Flat Field Correction:%s\n",rif->get_filename().c_str());
 	}
 	copyOriginalPixels(raw, ri, rid, rif);
@@ -1011,6 +1013,22 @@ void RawImageSource::preprocess  (const RAWParams &raw)
 			std::cout << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
 		}
 	}
+
+    // Correct vignetting of lens profile
+    if (!hasFlatField) {
+        LCPProfile *pLCPProf=lcpStore->getProfile(lensProf.lcpFile);
+
+        if (pLCPProf) {
+            LCPMapper *pLCPMap=new LCPMapper(pLCPProf, idata->getFocalLen(), true, W, H, coarse, ri->get_rotateDegree());
+        
+            #pragma omp parallel
+            for (int y=0; y<H; y++) {
+                for (int x=0; x<W; x++) {
+                    rawData[y][x]*=pLCPMap->correctVignette(x,y);
+                }
+            }
+        }
+    }
 
     scaleColors( 0,0, W, H, raw);//+ + raw parameters for black level(raw.blackxx)
 

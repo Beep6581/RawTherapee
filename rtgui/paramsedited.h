@@ -243,8 +243,12 @@ class RotateParamsEdited {
 class DistortionParamsEdited {
 
     public:
-		bool uselensfun;
         bool amount;
+};
+
+class LensProfParamsEdited {
+    public:
+        bool lcpFile; 
 };
 
 class PerspectiveParamsEdited {
@@ -386,6 +390,7 @@ class ParamsEdited {
         CommonTransformParamsEdited   commonTrans;
         RotateParamsEdited            rotate;
         DistortionParamsEdited        distortion;
+        LensProfParamsEdited          lensProf;
         PerspectiveParamsEdited       perspective;
         CACorrParamsEdited            cacorrection;
         VignettingParamsEdited        vignetting;
