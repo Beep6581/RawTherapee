@@ -468,7 +468,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 	else
 	{
 		// Full thumbnail: apply profile
- 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, scale );
+ 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, scale );
 	}
  
     tpp->getDimensions(lastW,lastH,lastScale);
@@ -493,7 +493,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
  		return 0;
  	}
  
- 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, scale );
+ 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, scale );
     tpp->getDimensions(lastW,lastH,lastScale);
  
  	delete tpp;

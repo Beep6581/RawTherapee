@@ -259,7 +259,6 @@ void ProcParams::setDefaults () {
     rotate.degree       = 0;
 
     distortion.amount     = 0;
-    distortion.uselensfun = false;
     
     perspective.horizontal = 0;
     perspective.vertical   = 0;
@@ -540,7 +539,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
 
     // save distortion
     if (!pedited || pedited->distortion.amount)      keyFile.set_double  ("Distortion", "Amount", distortion.amount);
-    if (!pedited || pedited->distortion.uselensfun)  keyFile.set_boolean ("Distortion", "UseLensFun", distortion.uselensfun);
+
+    // lens profile
+    if (!pedited || pedited->lensProf.lcpFile)       keyFile.set_string  ("LensProfile", "LCPFile", lensProf.lcpFile);
 
     // save perspective correction
     if (!pedited || pedited->perspective.horizontal) keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
@@ -939,7 +940,11 @@ if (keyFile.has_group ("Common Properties for Transformations")) {
     // load distortion
 if (keyFile.has_group ("Distortion")) {
     if (keyFile.has_key ("Distortion", "Amount"))     { distortion.amount     = keyFile.get_double  ("Distortion", "Amount"); if (pedited) pedited->distortion.amount = true; }
-    if (keyFile.has_key ("Distortion", "UseLensFun")) { distortion.uselensfun = keyFile.get_boolean ("Distortion", "UseLensFun"); if (pedited) pedited->distortion.uselensfun = true; }
+}
+
+    // lens profile
+if (keyFile.has_group ("LensProfile")) {
+    if (keyFile.has_key ("LensProfile", "LCPFile")) { lensProf.lcpFile = keyFile.get_string ("LensProfile", "LCPFile"); if (pedited) pedited->lensProf.lcpFile = true; }
 }
     
     // load perspective correction
@@ -1234,8 +1239,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& coarse.vflip == other.coarse.vflip
 		&& rotate.degree == other.rotate.degree
 		&& commonTrans.autofill == other.commonTrans.autofill
-		&& distortion.uselensfun == other.distortion.uselensfun
 		&& distortion.amount == other.distortion.amount
+        && lensProf.lcpFile == other.lensProf.lcpFile
 		&& perspective.horizontal == other.perspective.horizontal
 		&& perspective.vertical == other.perspective.vertical
 		&& cacorrection.red == other.cacorrection.red

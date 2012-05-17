@@ -70,6 +70,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     distortion  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DISTORTION")));
     cacorr      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CACORRECTION")));
     vignetting  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIGNETTING")));
+    lcp         = Gtk::manage (new Gtk::CheckButton (M("TP_LENSPROFILE_LABEL")));
 
     // options in composition:
     coarserot   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COARSETRANS")));
@@ -149,6 +150,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[3]->pack_start (*distortion, Gtk::PACK_SHRINK, 2);
     vboxes[3]->pack_start (*cacorr, Gtk::PACK_SHRINK, 2);
     vboxes[3]->pack_start (*vignetting, Gtk::PACK_SHRINK, 2);
+    vboxes[3]->pack_start (*lcp, Gtk::PACK_SHRINK, 2);
 
     vboxes[4]->pack_start (*composition, Gtk::PACK_SHRINK, 2);
     vboxes[4]->pack_start (*hseps[4], Gtk::PACK_SHRINK, 2);
@@ -260,6 +262,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     distortionConn  = distortion->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
     cacorrConn      = cacorr->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
     vignettingConn  = vignetting->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
+    lcpConn         = lcp->signal_toggled().connect (sigc::bind (sigc::mem_fun(*lens, &Gtk::CheckButton::set_inconsistent), true));    
 
     coarserotConn   = coarserot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));    
     finerotConn     = finerot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));    
@@ -495,16 +498,19 @@ void PartialPasteDlg::lensToggled () {
     distortionConn.block (true);
     cacorrConn.block (true);
     vignettingConn.block (true);
+    lcpConn.block (true);
 
     lens->set_inconsistent (false);
 
     distortion->set_active (lens->get_active ());
     cacorr->set_active (lens->get_active ());
     vignetting->set_active (lens->get_active ());
+    lcp->set_active (lens->get_active ());
 
     distortionConn.block (false);
     cacorrConn.block (false);
     vignettingConn.block (false);
+    lcpConn.block (false);
 }
 
 void PartialPasteDlg::compositionToggled () {
@@ -600,6 +606,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!distortion->get_active ())  filterPE.distortion   = falsePE.distortion;
     if (!cacorr->get_active ())      filterPE.cacorrection = falsePE.cacorrection;
     if (!vignetting->get_active ())  filterPE.vignetting   = falsePE.vignetting;
+    if (!lcp->get_active ())         filterPE.lensProf     = falsePE.lensProf;
 
     if (!coarserot->get_active ())   filterPE.coarse      = falsePE.coarse;
     if (!finerot->get_active ())     filterPE.rotate      = falsePE.rotate;

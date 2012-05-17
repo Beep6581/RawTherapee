@@ -52,6 +52,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     lcurve              = Gtk::manage (new LCurve ());
     rgbcurves           = Gtk::manage (new RGBCurves ());
     lensgeom            = Gtk::manage (new LensGeometry ());
+    lensProf            = Gtk::manage (new LensProfilePanel ());
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     vibrance            = Gtk::manage (new Vibrance ());
@@ -97,6 +98,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (transformPanel, lensgeom,         M("TP_LENSGEOM_LABEL"));       toolPanels.push_back (lensgeom);
     addPanel (lensgeom->getPackBox(), rotate,       M("TP_ROTATE_LABEL"));       toolPanels.push_back (rotate);
     addPanel (lensgeom->getPackBox(), perspective,  M("TP_PERSPECTIVE_LABEL"));  toolPanels.push_back (perspective);
+    addPanel (lensgeom->getPackBox(), lensProf,     M("TP_LENSPROFILE_LABEL"));  toolPanels.push_back (lensProf);
     addPanel (lensgeom->getPackBox(), distortion,   M("TP_DISTORTION_LABEL"));   toolPanels.push_back (distortion);
     addPanel (lensgeom->getPackBox(), cacorrection, M("TP_CACORRECTION_LABEL")); toolPanels.push_back (cacorrection);
     addPanel (lensgeom->getPackBox(), vignetting,   M("TP_VIGNETTING_LABEL"));   toolPanels.push_back (vignetting);

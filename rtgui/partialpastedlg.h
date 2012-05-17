@@ -66,6 +66,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* distortion;
         Gtk::CheckButton* cacorr;
         Gtk::CheckButton* vignetting;
+        Gtk::CheckButton* lcp;
 
         // options in composition:
         Gtk::CheckButton* coarserot;
@@ -109,7 +110,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn;
         sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn;
         sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn;
-        sigc::connection distortionConn, cacorrConn, vignettingConn;
+        sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
         sigc::connection exifchConn, iptcConn, icmConn, gamcsconn;
         sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;

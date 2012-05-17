@@ -27,6 +27,7 @@
 #include "coord2d.h"
 #include "labimage.h"
 #include "LUT.h"
+#include "lcp.h"
 
 namespace rtengine {
 
@@ -43,10 +44,10 @@ class ImProcFunctions {
 		bool multiThread;
 		float g;
 
-		void simpltransform     (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+		void simpltransform     (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap);
 		void vignetting         (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH);
-		void transformNonSep    (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
-		void transformSep       (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+		void transformNonSep    (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap);
+		void transformSep       (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap);
 		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
 		void firstAnalysisThread(Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
 		void dcdamping          (float** aI, float** aO, float damping, int W, int H);
@@ -56,6 +57,7 @@ class ImProcFunctions {
 		bool needsRotation      ();
 		bool needsPerspective   ();
 		bool needsVignetting    ();
+        bool needsLCP           ();
  //   static cmsUInt8Number* Mempro = NULL;		
 
 
@@ -120,7 +122,8 @@ class ImProcFunctions {
 		void MunsellLch 	  (float lum, float hue, float chrom, float memChprov, float &correction, int zone);//jacques:  Munsell correction
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
-		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
+		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH,
+                               double focalLen, int rawRotationDeg);
 		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
 		void deconvsharpening (LabImage* lab, float** buffer);

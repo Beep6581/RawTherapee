@@ -104,7 +104,7 @@ RESIZE,           // EvResizeEnabled
 ALL,              // EvProfileChangeNotification
 RETINEX,          // EvShrHighQuality
 TRANSFORM,        // EvPerspCorr
-0,                // EvEqualizer: obsolete
+DARKFRAME,        // EvLCPFile
 0,                // EvEqlEnabled:obsolete
 IMPULSEDENOISE,   // EvIDNEnabled,
 IMPULSEDENOISE,   // EvIDNThresh,

@@ -135,7 +135,7 @@ class RawImageSource : public ImageSource {
         ~RawImageSource ();
 
         int         load        (Glib::ustring fname, bool batch = false);
-        void        preprocess  (const RAWParams &raw);
+        void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
         void        demosaic    (const RAWParams &raw);
         void        flushRawData      ();
         void        flushRGB          ();
@@ -160,6 +160,7 @@ class RawImageSource : public ImageSource {
 
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
+        int         getRotateDegree() const { return ri->get_rotateDegree(); }
 
         ImageData*  getImageData () { return idata; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }

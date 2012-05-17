@@ -68,7 +68,7 @@ class ImageSource : public InitialImage {
 
         virtual ~ImageSource            () {}
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
-        virtual void        preprocess  (const RAWParams &raw){};
+        virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse){};
         virtual void        demosaic    (const RAWParams &raw){};
         virtual void        flushRawData       (){};
         virtual void        flushRGB           (){};
@@ -91,6 +91,7 @@ class ImageSource : public InitialImage {
 
         virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
         virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
+        virtual int         getRotateDegree() const { return 0; }
 
         virtual ImageData*  getImageData () =0;
         virtual void        setProgressListener (ProgressListener* pl) {}
