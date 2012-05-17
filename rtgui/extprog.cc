@@ -102,8 +102,6 @@ void ExtProgStore::init () {
         SearchProg("Autopano Pro", "Kolor\\Autopano Pro 2.%1\\AutopanoPro_x64.exe", "Kolor\\Autopano Pro 2.%1\\AutopanoPro.exe", 15, true, true);
 
     // DO NOT add obscure little tools here, only widely used programs with proper setup program to have a standard path
-#else
-    printf("Sorry, external programs are currently only configured on Windows\n");
 #endif
 
 }
