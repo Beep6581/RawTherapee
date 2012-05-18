@@ -206,7 +206,7 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
     LCPProfile *pProf=static_cast<LCPProfile*>(pLCPProfile);
 
     // clean up tagname
-    char* src=strrchr(el,':');
+    const char* src=strrchr(el,':');
     if (src==NULL) src=const_cast<char*>(el); else src++;
 
     strcpy(pProf->lastTag,src);
