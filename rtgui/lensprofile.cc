@@ -68,6 +68,8 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     if (pp->lensProf.lcpFile.length()>0 && lcpStore->isValidLCPFileName(pp->lensProf.lcpFile))
         fcbLCPFile->set_filename (pp->lensProf.lcpFile);
+    else
+        fcbLCPFile->unselect_filename(fcbLCPFile->get_filename());
 
     lcpFileChanged = false;
 
