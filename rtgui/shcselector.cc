@@ -55,7 +55,7 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
     
     Cairo::RefPtr<Cairo::Context> cr = get_window()->create_cairo_context();
 
-    int w = get_width ();
+    int w = get_width () - RADIUS*2;
     int h = get_height ();
 
     wslider = h *2.0 / 5.0;
@@ -75,7 +75,7 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
 
     cr->set_line_width (1.0);
     cr->set_source (bggradient);
-    cr->rectangle (0.5, h*2.0/7.0 + 0.5, w-0.5, h*3.0/7.0-0.5);
+    cr->rectangle (0.5+RADIUS, h*2.0/7.0 + 0.5, w-0.5, h*3.0/7.0-0.5);
     cr->fill_preserve();
     cr->set_source_rgb (fgc.get_red_p(), fgc.get_green_p(), fgc.get_blue_p());
     cr->stroke ();
@@ -83,12 +83,12 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
     // draw sliders
     cr->set_line_width (1.0);
     for (int i=0; i<3; i++) {
-        cr->move_to (w*positions[i]-wslider/2+0.5, h-0.5);
-        cr->line_to (w*positions[i]-wslider/2+0.5, wslider/2 + 0.5);
-        cr->line_to (w*positions[i], 0.5);
-        cr->line_to (w*positions[i]+wslider/2-0.5, wslider/2 + 0.5);
-        cr->line_to (w*positions[i]+wslider/2-0.5, h-0.5);
-        cr->line_to (w*positions[i]-wslider/2+0.5, h-0.5);
+        cr->move_to (RADIUS+w*positions[i]-wslider/2+0.5, h-0.5);
+        cr->line_to (RADIUS+w*positions[i]-wslider/2+0.5, wslider/2 + 0.5);
+        cr->line_to (RADIUS+w*positions[i], 0.5);
+        cr->line_to (RADIUS+w*positions[i]+wslider/2-0.5, wslider/2 + 0.5);
+        cr->line_to (RADIUS+w*positions[i]+wslider/2-0.5, h-0.5);
+        cr->line_to (RADIUS+w*positions[i]-wslider/2+0.5, h-0.5);
         cr->set_source_rgb (bgc.get_red_p(), bgc.get_green_p(), bgc.get_blue_p());
         cr->fill_preserve ();
         cr->set_source_rgb (fgc.get_red_p(), fgc.get_green_p(), fgc.get_blue_p());
@@ -105,17 +105,17 @@ bool SHCSelector::on_expose_event(GdkEventExpose* event) {
         Glib::RefPtr<Pango::Layout> layout = create_pango_layout(Glib::ustring::format(std::setprecision(2), positions[i]));
         layout->get_pixel_size(layout_width, layout_height);
         offset = positions[i] > 0.5 ? -layout_width-1-wslider/2 : 1+wslider/2;
-        cr->move_to (w*positions[i]+offset-0.5, 0);
+        cr->move_to (RADIUS+w*positions[i]+offset-0.5, 0);
         cr->set_source_rgb (bgc.get_red_p(), bgc.get_green_p(), bgc.get_blue_p());
         layout->add_to_cairo_context (cr);
         cr->fill_preserve ();
         cr->stroke ();
-        cr->move_to (w*positions[i]+offset+0.5, 1);
+        cr->move_to (RADIUS+w*positions[i]+offset+0.5, 1);
         layout->add_to_cairo_context (cr);
         cr->fill_preserve ();
         cr->stroke ();
         cr->set_source_rgb (fgc.get_red_p(), fgc.get_green_p(), fgc.get_blue_p());
-        cr->move_to (w*positions[i]+offset, 0.5);
+        cr->move_to (RADIUS+w*positions[i]+offset, 0.5);
         layout->add_to_cairo_context (cr);
         cr->fill_preserve ();
         cr->stroke ();
