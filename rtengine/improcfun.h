@@ -123,7 +123,7 @@ class ImProcFunctions {
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH,
-                               double focalLen, int rawRotationDeg);
+                               double focalLen, double focalLen35mm, int rawRotationDeg);
 		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
 		void deconvsharpening (LabImage* lab, float** buffer);

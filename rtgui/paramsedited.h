@@ -249,6 +249,8 @@ class DistortionParamsEdited {
 class LensProfParamsEdited {
     public:
         bool lcpFile; 
+
+        bool isUnchanged() const;
 };
 
 class PerspectiveParamsEdited {

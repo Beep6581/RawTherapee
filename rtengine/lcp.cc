@@ -48,7 +48,7 @@ LCPModelCommon::LCPModelCommon() {
 }
 
 bool LCPModelCommon::empty() const {
-    return focLenX<0 && focLenY<0;
+    return param[0]==0 && param[1]==0 && param[2]==0;
 }
 
 void LCPModelCommon::print() const {
@@ -71,43 +71,53 @@ void LCPPersModel::print() const {
 }
 
 // if !vignette then geometric
-LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, bool vignette, int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg)
+LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float aperture, bool vignette, int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg)
 {
     if (pProf==NULL) return;
 
-    pProf-> calcBasePerspectiveParams(focalLength, vignette, mc);
-    
+    pProf-> calcParams(focalLength, aperture, vignette, mc);
+
     // determine in what the image with the RAW landscape in comparison (calibration target)
     int rot = (coarse.rotate+rawRotationDeg) % 360;
 
-    swapXY  = (rot==90  || rot==270);
-    mirrorX = (rot==90  || rot==180);
-    mirrorY = (rot==180 || rot==270);
+    bool swapXY  = (rot==90  || rot==270);
+    bool mirrorX = (rot==90  || rot==180);
+    bool mirrorY = (rot==180 || rot==270);
 
     // Mention that the Adobe technical paper has a bug here, the DMAX is handled differently for focLen and imgCenter
     int Dmax=fullWidth; if (fullHeight>fullWidth) Dmax=fullHeight;
-    
+
+    // correct focLens
+    float focLenX=mc.focLenX; float focLenY=mc.focLenY;
+    if (focLenX<0) {  // they may not be given
+        // and 35mm may not be given either
+        if (focalLength35mm<1) focalLength35mm = focalLength*pProf->sensorFormatFactor;
+
+        focLenX=focLenY=focalLength / ( 35*focalLength/focalLength35mm);  // focLen must be calculated in pixels
+    }
+
     if (swapXY) {
         x0 = (mirrorX ? 1-mc.imgYCenter : mc.imgYCenter) * fullWidth;
         y0 = (mirrorY ? 1-mc.imgXCenter : mc.imgXCenter) * fullHeight;
-        fx = mc.focLenY * Dmax;
-        fy = mc.focLenX * Dmax;
+        fx = focLenY * Dmax;
+        fy = focLenX * Dmax;
     } else {
         x0 = (mirrorX ? 1-mc.imgXCenter : mc.imgXCenter) * fullWidth; 
         y0 = (mirrorY ? 1-mc.imgYCenter : mc.imgYCenter) * fullHeight;
-        fx = mc.focLenX * Dmax; 
-        fy = mc.focLenY * Dmax;
+        fx = focLenX * Dmax; 
+        fy = focLenY * Dmax;
     }
-}
 
+    //printf("\nMapping Dmax=%i f=%g/f35=%g vignette=%i using\n",Dmax, focalLength, focalLength35mm, vignette);
+    //mc.print();
+}
 
 void LCPMapper::correctDistortion(double& x, double& y) const {
     double xd=(x-x0)/fx, yd=(y-y0)/fy;
 
     double rsqr      = xd*xd+yd*yd;
-    double rsqrrsqr  = rsqr*rsqr; // speed
-    double commonFac = (mc.param[2]*rsqrrsqr*rsqr + mc.param[1]*rsqrrsqr + mc.param[0]*rsqr + 1.)
-                       + 2 * (mc.param[3] * yd + mc.param[4] * xd);
+    double commonFac = (((mc.param[2]*rsqr + mc.param[1])*rsqr + mc.param[0])*rsqr + 1.)
+        + 2. * (mc.param[3] * yd + mc.param[4] * xd);
 
     double xnew = xd * commonFac + mc.param[4] * rsqr;
     double ynew = yd * commonFac + mc.param[3] * rsqr;
@@ -116,19 +126,17 @@ void LCPMapper::correctDistortion(double& x, double& y) const {
     y = ynew * fy + y0;
 }
 
-float LCPMapper::correctVignette(double x, double y) const {
-    double xd=(x-x0)/fx, yd=(y-y0)/fy;
+float LCPMapper::correctVignette(int x, int y) const {
+    double xd=((double)x-x0)/fx, yd=((double)y-y0)/fy;
 
     double rsqr      = xd*xd+yd*yd;
-    double rsqrrsqr  = rsqr*rsqr; // speed
     double param0Sqr = mc.param[0]*mc.param[0];
 
-    return 1. - mc.param[0]*rsqr + (param0Sqr - mc.param[1]) *rsqrrsqr
-        - (param0Sqr*mc.param[0] - 2*mc.param[0]*mc.param[1] + mc.param[2]) *rsqrrsqr*rsqr
+    return 1. + rsqr * (-mc.param[0] + rsqr * ((param0Sqr - mc.param[1])
+        - (param0Sqr*mc.param[0] - 2.*mc.param[0]*mc.param[1] + mc.param[2]) *rsqr
         + (param0Sqr*param0Sqr + mc.param[1]*mc.param[1]
-           + 2*mc.param[0]*mc.param[2] - 3*mc.param[0]*mc.param[0]*mc.param[1]) *rsqrrsqr*rsqrrsqr;
+    + 2.*mc.param[0]*mc.param[2] - 3.*param0Sqr*mc.param[1]) *rsqr*rsqr));
 }
-
 
 LCPProfile::LCPProfile(Glib::ustring fname) {
     const int BufferSize=8192;
@@ -142,7 +150,10 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
     XML_SetUserData(parser, (void *)this);
 
 
-    isFisheye=inCamProfiles=firstLIDone=inPerspect=false;
+    isFisheye=inCamProfiles=firstLIDone=inPerspect=inAlternateLensID=false;
+    sensorFormatFactor=1;
+    for (int i=0;i<2000;i++) aPersModel[i]=NULL;
+    persModelCount=0;
 
     FILE *pFile = safe_g_fopen(fname, "rb");
 
@@ -157,53 +168,92 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
     XML_ParserFree(parser);
 }
 
-
-void LCPProfile::calcBasePerspectiveParams(float focalLength, bool vignette, LCPModelCommon& corr) {
+void LCPProfile::calcParams(float focalLength, float aperture, bool vignette, LCPModelCommon& corr) const {
     // find the frames with the least distance, focal length wise
     LCPPersModel *pLow=NULL, *pHigh=NULL;
 
-    std::list<LCPPersModel*>::const_iterator it;
-    for (it=persModels.begin(); it!=persModels.end(); ++it) {
-        float f=(*it)->focLen;
+    float focalLengthLog=log(focalLength), apertureLog=aperture>0 ? log(aperture) : 0;
 
-        if ((!vignette && !(*it)->base.empty()) || (vignette && !(*it)->vignette.empty())) {
-            if (f <= focalLength && (pLow ==NULL || f > pLow->focLen))  pLow= (*it);
-            if (f >= focalLength && (pHigh==NULL || f < pHigh->focLen)) pHigh=(*it);
+    // Pass 1: determining best focal length, if possible different apertures
+    for (int pm=0;pm<persModelCount;pm++) {
+        float f=aPersModel[pm]->focLen;
+
+        if ((!vignette && !aPersModel[pm]->base.empty()) || (vignette && !aPersModel[pm]->vignette.empty())) {
+            if (f <= focalLength && (pLow==NULL || f > pLow->focLen || (f==pLow->focLen && pLow->aperture>aPersModel[pm]->aperture))) {
+                pLow=aPersModel[pm];
+            }
+            if (f >= focalLength && (pHigh==NULL || f < pHigh->focLen || (f==pHigh->focLen && pHigh->aperture<aPersModel[pm]->aperture))) {
+                pHigh=aPersModel[pm];
+            }
         }
     }
 
-    if (!pLow) pLow=pHigh; if (!pHigh) pHigh=pLow;
+    if (!pLow) 
+        pLow=pHigh;
+    else if (!pHigh) 
+        pHigh=pLow;
+    else if (vignette) {
+        // We have some, so take the best aperture for vignette (unimportant for distortion)
+        float bestFocLenLow=pLow->focLen, bestFocLenHigh=pHigh->focLen;
 
-    // average out the factors, linear interpolation
-    float facLow = 0, facHigh=0;
-    if (pLow && pHigh && pLow->focLen < pHigh->focLen) {
-        facLow  = (pHigh->focLen-focalLength) / (pHigh->focLen-pLow->focLen);
-        facHigh = (focalLength-pLow->focLen) / (pHigh->focLen-pLow->focLen);
-    } else {
-        facLow=pHigh?0:1; facHigh=pHigh?1:0;
+        for (int pm=0;pm<persModelCount;pm++) {
+            float aperLog=log(aPersModel[pm]->aperture);
+
+            if ((!vignette && !aPersModel[pm]->base.empty()) || (vignette && !aPersModel[pm]->vignette.empty())) {
+                if (fabs(aPersModel[pm]->focLen-bestFocLenLow)<0.01 && ((aperLog<=apertureLog && pLow->aperture>aperture)
+                     || (aperLog<=apertureLog && fabs(apertureLog-aperLog)<fabs(apertureLog - log(pLow->aperture))))) {
+                    pLow=aPersModel[pm];
+                }
+                if (fabs(aPersModel[pm]->focLen-bestFocLenHigh)<0.01 && ((aperLog>=apertureLog && pHigh->aperture<aperture)
+                     || (aperLog>=apertureLog && fabs(apertureLog-aperLog)<fabs(apertureLog - log(pHigh->aperture))))) {
+                    pHigh=aPersModel[pm];
+                }
+            }
+        }
     }
 
-    LCPModelCommon& mLow =(vignette?pLow->vignette :pLow->base);
-    LCPModelCommon& mHigh=(vignette?pHigh->vignette:pHigh->base);
+    if (pLow!=NULL && pHigh!=NULL) {
+        // average out the factors, linear interpolation in logarithmic scale
+        float facLow=0, facHigh=0;
 
-    corr.focLenX    = facLow * mLow.focLenX    + facHigh * mHigh.focLenX;
-    corr.focLenY    = facLow * mLow.focLenY    + facHigh * mHigh.focLenY;
-    corr.imgXCenter = facLow * mLow.imgXCenter + facHigh * mHigh.imgXCenter;
-    corr.imgYCenter = facLow * mLow.imgYCenter + facHigh * mHigh.imgYCenter;
-    corr.scaleFac   = facLow * mLow.scaleFac   + facHigh * mHigh.scaleFac;
+        // There is as foclen range, take that as basis
+        if (pLow->focLen < pHigh->focLen) {
+            float diff = log(pHigh->focLen) - log(pLow->focLen);
+            facLow  = (log(pHigh->focLen)-focalLengthLog) / diff;
+            facHigh = (focalLengthLog-log(pLow->focLen))  / diff;
+        } else if (pLow->aperture < aperture && pHigh->aperture > aperture) {
+            // FocLen is the same, take aperture (espc. used for vignetting)
+            float diff = log(pHigh->aperture) - log(pLow->aperture);
+            facLow  = (log(pHigh->aperture)-apertureLog) / diff;
+            facHigh = (apertureLog-log(pLow->aperture))  / diff;
+        } else {
+            facLow=facHigh=0.5;
+        }
+        
+        LCPModelCommon& mLow =(vignette?pLow->vignette :pLow->base);
+        LCPModelCommon& mHigh=(vignette?pHigh->vignette:pHigh->base);
 
-    for (int i=0;i<5;i++) corr.param[i]= facLow * mLow.param[i] + facHigh * mHigh.param[i];
+        corr.focLenX    = facLow * mLow.focLenX    + facHigh * mHigh.focLenX;
+        corr.focLenY    = facLow * mLow.focLenY    + facHigh * mHigh.focLenY;
+        corr.imgXCenter = facLow * mLow.imgXCenter + facHigh * mHigh.imgXCenter;
+        corr.imgYCenter = facLow * mLow.imgYCenter + facHigh * mHigh.imgYCenter;
+        corr.scaleFac   = facLow * mLow.scaleFac   + facHigh * mHigh.scaleFac;
+
+        for (int i=0;i<5;i++) corr.param[i]= facLow * mLow.param[i] + facHigh * mHigh.param[i];
+
+        //printf("LCP ( %i frames) vignette=%i for Fno %g - %g; FocLen %g - %g with fac %g - %g:\n", persModelCount, vignette, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, facLow, facHigh); 
+    } else printf("Error: LCP file contained no parameters\n");
 }
 
 void LCPProfile::print() const {
     printf("=== Profile %s\n", profileName.c_str());
-    printf("RAW: %i; Fisheye: %i\n",isRaw,isFisheye);
-    std::list<LCPPersModel*>::const_iterator it;
-    for (it=persModels.begin(); it!=persModels.end(); ++it) (*it)->print();
+    printf("Frames: %i, RAW: %i; Fisheye: %i; Sensorformat: %f\n",persModelCount,isRaw,isFisheye,sensorFormatFactor);
+    for (int pm=0;pm<persModelCount;pm++) aPersModel[pm]->print();
 }
 
 void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, const char **attr) {
     LCPProfile *pProf=static_cast<LCPProfile*>(pLCPProfile);
+    bool parseAttr=false;
 
     // clean up tagname
     const char* src=strrchr(el,':');
@@ -212,7 +262,8 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
     strcpy(pProf->lastTag,src);
 
     if (!strcmp("CameraProfiles",src)) pProf->inCamProfiles=true;
-    if (!pProf->inCamProfiles) return;
+    if (!strcmp("AlternateLensIDs",src)) pProf->inAlternateLensID=true;
+    if (!pProf->inCamProfiles || pProf->inAlternateLensID) return;
 
     if (!strcmp("li",src)) {
         pProf->pCurPersModel=new LCPPersModel();
@@ -227,25 +278,42 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
         pProf->firstLIDone=true; pProf->inPerspect=true;
         pProf->isFisheye=true;  // just misses third param, and different path, rest is the same
         return;
-    }
+    } else if (!strcmp("Description",src)) parseAttr=true;
 
     // Move pointer to general section
     if (pProf->inPerspect) {
-        if (!strcmp("ChromaticRedGreenModel",src)) 
+        if (!strcmp("ChromaticRedGreenModel",src)) {
             pProf->pCurCommon=&pProf->pCurPersModel->chromRG;
-        else if (!strcmp("ChromaticGreenModel",src)) 
+            parseAttr=true;
+        } else if (!strcmp("ChromaticGreenModel",src)) {
             pProf->pCurCommon=&pProf->pCurPersModel->chromG;
-        else if (!strcmp("ChromaticBlueGreenModel",src)) 
+            parseAttr=true;
+        } else if (!strcmp("ChromaticBlueGreenModel",src)) {
             pProf->pCurCommon=&pProf->pCurPersModel->chromBG;
-        else if (!strcmp("VignetteModel",src)) 
+            parseAttr=true;
+        } else if (!strcmp("VignetteModel",src)) {
             pProf->pCurCommon=&pProf->pCurPersModel->vignette;
+            parseAttr=true;
+        }
+    }
+
+    // some profiles (espc. Pentax) have a different structure that is attributes based
+    // simulate tags by feeding them in
+    if (parseAttr && attr!=NULL) {
+        for (int i = 0; attr[i]; i += 2) {
+            const char* nameStart=strrchr(attr[i],':');
+            if (nameStart==NULL) nameStart=const_cast<char*>(attr[i]); else nameStart++;
+
+            strcpy(pProf->lastTag, nameStart);
+            XmlTextHandler(pLCPProfile, attr[i+1], strlen(attr[i+1]));
+        }
     }
 }
 
 void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, int len) {
     LCPProfile *pProf=static_cast<LCPProfile*>(pLCPProfile);
 
-    if (!pProf->inCamProfiles) return;
+    if (!pProf->inCamProfiles || pProf->inAlternateLensID) return;
 
     // Check if it contains non-whitespaces (there are several calls to this for one tag unfortunately)
     bool onlyWhiteSpace=true;
@@ -277,12 +345,19 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     }
 
     // --- Now all floating points. Must replace local dot characters
-    struct lconv * lc=localeconv();
+    // WARNING: called by different threads, that may run on different local settings,
+    // so don't use system params
+    if (atof("1,2345")==1.2345) {
+        char* p=raw;
+        while (*p) { 
+            if (*p=='.') *p=',';
+            p++;
+        }
+    }
 
-    char* p=raw;
-    while (*p) { 
-        if (*p=='.') *p=lc->decimal_point[0];
-        p++;
+    if (!pProf->firstLIDone) {
+        if (!strcmp("SensorFormatFactor",tag)) 
+            pProf->sensorFormatFactor=atof(raw);   
     }
 
     // Perspective model base data
@@ -320,14 +395,16 @@ void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el) {
     LCPProfile *pProf=static_cast<LCPProfile*>(pLCPProfile);
 
     if (strstr(el,":CameraProfiles")) pProf->inCamProfiles=false;
+    if (strstr(el,":AlternateLensIDs")) pProf->inAlternateLensID=false;
 
-    if (!pProf->inCamProfiles) return;
+    if (!pProf->inCamProfiles || pProf->inAlternateLensID) return;
 
     if (strstr(el,":PerspectiveModel") || strstr(el,":FisheyeModel"))
         pProf->inPerspect=false;
     else if (strstr(el, ":li")) {
-        pProf->persModels.push_back(pProf->pCurPersModel);
+        pProf->aPersModel[pProf->persModelCount]=pProf->pCurPersModel;
         pProf->pCurPersModel=NULL;
+        pProf->persModelCount++;
     }
 }
 
@@ -348,26 +425,24 @@ LCPStore* LCPStore::getInstance()
 }
 
 LCPProfile* LCPStore::getProfile (Glib::ustring filename) {
-    if (filename.length()==0) return NULL;
+    if (filename.length()==0 || !isValidLCPFileName(filename)) return NULL;
 
     Glib::Mutex::Lock lock(mtx);
 
     std::map<Glib::ustring, LCPProfile*>::iterator r = profileCache.find (filename);
     if (r!=profileCache.end()) return r->second;
 
-    // Add profile
+    // Add profile (if exists)
     profileCache[filename]=new LCPProfile(filename);
     //profileCache[filename]->print();
     return profileCache[filename];
 }
-
 
 bool LCPStore::isValidLCPFileName(Glib::ustring filename) const {
     if (!safe_file_test (filename, Glib::FILE_TEST_EXISTS) || safe_file_test (filename, Glib::FILE_TEST_IS_DIR)) return false;
     size_t pos=filename.find_last_of ('.');
     return pos>0 && !filename.casefold().compare (pos, 4, ".lcp");
 }
-
 
 Glib::ustring LCPStore::getDefaultCommonDirectory() const {
     Glib::ustring dir;
@@ -381,9 +456,9 @@ Glib::ustring LCPStore::getDefaultCommonDirectory() const {
         Glib::ustring fullDir=Glib::ustring(pathA)+Glib::ustring("\\Adobe\\CameraRaw\\LensProfiles\\1.0");
         if (safe_file_test(fullDir, Glib::FILE_TEST_IS_DIR)) dir=fullDir;
     }
-#else
-    printf("Sorry, default LCP directory are currently only configured on Windows\n");
 #endif
+
+    // TODO: Add Mac paths here
 
     return dir;
 }

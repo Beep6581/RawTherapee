@@ -115,7 +115,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // perform transform (excepted resizing)
     if (ipf.needsTransform()) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
-        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, imgsrc->getMetaData()->getFocalLen(), imgsrc->getRotateDegree());
+        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getRotateDegree());
         delete baseImg;
         baseImg = trImg;
     }

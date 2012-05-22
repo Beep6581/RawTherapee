@@ -610,3 +610,7 @@ bool RAWParamsEdited::isUnchanged() const {
         && hotDeadPixelFilter && hotDeadPixelThresh && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
 	    && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
 }
+
+bool LensProfParamsEdited::isUnchanged() const {
+    return lcpFile;
+}

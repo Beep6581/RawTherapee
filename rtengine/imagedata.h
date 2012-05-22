@@ -40,7 +40,7 @@ class ImageData : public ImageMetaData {
     time_t timeStamp;
     int iso_speed;
     double aperture;
-    double focal_len;
+    double focal_len, focal_len35mm;
     double shutter;
     double expcomp;
     std::string make, model, serial;
@@ -65,6 +65,7 @@ class ImageData : public ImageMetaData {
     int         getISOSpeed () const { return iso_speed; }
     double      getFNumber  () const { return aperture;  }
     double      getFocalLen () const { return focal_len;   }
+    double      getFocalLen35mm () const { return focal_len35mm;   }
     double      getShutterSpeed () const { return shutter;   }
     double      getExpComp  () const { return expcomp;   }
     std::string getMake     () const { return make;      }

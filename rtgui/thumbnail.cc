@@ -468,7 +468,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 	else
 	{
 		// Full thumbnail: apply profile
- 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, scale );
+ 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, scale );
 	}
  
     tpp->getDimensions(lastW,lastH,lastScale);
@@ -493,7 +493,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
  		return 0;
  	}
  
- 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, scale );
+ 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, scale );
     tpp->getDimensions(lastW,lastH,lastScale);
  
  	delete tpp;
@@ -572,6 +572,7 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
         cfs.shutter  = idata->getShutterSpeed ();
         cfs.fnumber  = idata->getFNumber ();
         cfs.focalLen = idata->getFocalLen ();
+        cfs.focalLen35mm = idata->getFocalLen35mm ();
         cfs.iso      = idata->getISOSpeed ();
         cfs.expcomp  = idata->expcompToString (idata->getExpComp(), false); // do not mask Zero expcomp
         cfs.year     = 1900 + idata->getDateTime().tm_year;

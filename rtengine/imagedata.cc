@@ -108,7 +108,7 @@ void ImageData::extractInfo () {
   expcomp = 0;
   shutter = 0;
   aperture = 0;
-  focal_len = 0;
+  focal_len = focal_len35mm = 0;
   iso_speed = 0;
   memset (&time, 0, sizeof(time));
   timeStamp = 0;
@@ -169,6 +169,8 @@ void ImageData::extractInfo () {
         expcomp = exif->getTag ("ExposureBiasValue")->toDouble ();
     if (exif->getTag ("FocalLength"))
         focal_len = exif->getTag ("FocalLength")->toDouble ();
+    if (exif->getTag ("FocalLengthIn35mmFilm"))
+        focal_len35mm = exif->getTag ("FocalLengthIn35mmFilm")->toDouble ();
     if (exif->getTag ("ISOSpeedRatings"))
         iso_speed = exif->getTag ("ISOSpeedRatings")->toDouble ();
     if (exif->getTag ("DateTimeOriginal")) {
