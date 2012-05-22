@@ -112,7 +112,7 @@ void Crop::update (int todo) {
         transCrop = new Imagefloat (cropw, croph);
     if ((todo & M_TRANSFORM) && needstransform)
     	parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip),
-            parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getRotateDegree());
+            parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getMetaData()->getFocalLen35mm(), parent->imgsrc->getRotateDegree());
     if (transCrop)
         baseCrop = transCrop;
 

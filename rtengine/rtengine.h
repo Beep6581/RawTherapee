@@ -69,6 +69,8 @@ namespace rtengine {
             virtual double      getFNumber  () const =0;
           /** @return the focal length used at the exposure */
             virtual double      getFocalLen () const =0;
+          /** @return the focal length in 35mm used at the exposure */
+            virtual double      getFocalLen35mm () const =0;
           /** @return the shutter speed */
             virtual double      getShutterSpeed () const =0;
           /** @return the exposure compensation */

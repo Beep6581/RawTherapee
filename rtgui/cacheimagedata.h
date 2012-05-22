@@ -49,7 +49,7 @@ class CacheImageData {
         bool  exifValid;
         double fnumber;
         double shutter;
-        double focalLen;
+        double focalLen,focalLen35mm;
         unsigned iso;
         Glib::ustring lens;
         Glib::ustring camera;

@@ -55,7 +55,7 @@ namespace rtengine {
 
     class LCPProfile {
         // Temporary data for parsing
-        bool inCamProfiles,firstLIDone,inPerspect;
+        bool inCamProfiles,firstLIDone,inPerspect,inAlternateLensID;
         char lastTag[256];
         LCPPersModel* pCurPersModel;
         LCPModelCommon* pCurCommon;
@@ -68,20 +68,21 @@ namespace rtengine {
         // Common data
         Glib::ustring profileName, lensPrettyName, cameraPrettyName, lens, camera;  // lens/camera(=model) can be auto-matched with DNG
         bool isRaw,isFisheye;
+        float sensorFormatFactor;
+        int persModelCount;
 
         // The correction frames
-        std::list<LCPPersModel*> persModels;
+        LCPPersModel* aPersModel[2000];  // Do NOT use std::list or something, it's buggy in GCC!
 
         LCPProfile(Glib::ustring fname);
 
-        void calcBasePerspectiveParams(float focalLength, bool vignette, LCPModelCommon& corr);  // Interpolates between the persModels frames
+        void calcParams(float focalLength, float aperture, bool vignette, LCPModelCommon& corr) const;  // Interpolates between the persModels frames
 
         void print() const;
     };
 
     class LCPStore {
         Glib::Mutex mtx;
-
 
         // Maps file name to profile as cache
         std::map<Glib::ustring, LCPProfile*> profileCache;
@@ -101,16 +102,14 @@ namespace rtengine {
     class LCPMapper {
         double x0,y0,fx,fy;
         LCPModelCommon mc;
-        bool swapXY;
-        bool mirrorX, mirrorY;
 
     public:
         // precalculates the mapper.
-        LCPMapper(LCPProfile* pProf, float focalLength, bool vignette, int fullWidth, int fullHeight,
+        LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float aperture, bool vignette, int fullWidth, int fullHeight,
             const CoarseTransformParams& coarse, int rawRotationDeg);
 
         void  correctDistortion(double& x, double& y) const;  // MUST be the first stage
-        float correctVignette  (double x, double y)   const;  // MUST be in RAW
+        float correctVignette  (int x, int y) const;  // MUST be in RAW
     };
 }
 #endif

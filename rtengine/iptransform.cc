@@ -177,11 +177,11 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
 }
 
 void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, 
-    double focalLen, int rawRotationDeg) {
+    double focalLen, double focalLen35mm, int rawRotationDeg) {
     LCPMapper *pLCPMap=NULL;
     if (needsLCP() && focalLen>0) {
         LCPProfile *pLCPProf=lcpStore->getProfile(params->lensProf.lcpFile);
-        if (pLCPProf) pLCPMap=new LCPMapper(pLCPProf, focalLen, false, original->width, original->height, params->coarse, rawRotationDeg);
+        if (pLCPProf) pLCPMap=new LCPMapper(pLCPProf, focalLen, focalLen35mm, 0, false, original->width, original->height, params->coarse, rawRotationDeg);
     }
 
 	if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && needsVignetting())
@@ -194,6 +194,8 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
 	}
 	else
 		transformSep (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap);
+
+    if (pLCPMap) delete pLCPMap;
 }
 
 void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul)
