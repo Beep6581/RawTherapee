@@ -359,9 +359,8 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     ffconn = flatFieldDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
 	
     std::vector<Glib::ustring> pnames;
-    if (options.multiUser)
-        parseDir (Options::rtdir + "/" + options.profilePath, pnames, paramFileExtension);
-    parseDir (argv0 + "/" + options.profilePath, pnames, paramFileExtension);
+    parseDir (options.getUserProfilePath(), pnames, paramFileExtension);
+    parseDir (options.getGlobalProfilePath(), pnames, paramFileExtension);
     for (size_t i=0; i<pnames.size(); i++) {
         rprofiles->append_text (pnames[i]);
         iprofiles->append_text (pnames[i]);
@@ -944,6 +943,9 @@ Gtk::Widget* Preferences::getSoundPanel () {
 
 void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext) {
 
+    if (dirname.empty())
+        return;
+
     // process directory
     Glib::Dir* dir = NULL;
     try {
@@ -952,9 +954,8 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     catch (const Glib::FileError& fe) {
         return;
     }
-    dirname = dirname + "/";
     for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) {
-      Glib::ustring fname = dirname + *i;
+      Glib::ustring fname = Glib::build_filename(dirname, *i);
       Glib::ustring sname = *i;
       // ignore directories
       if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
@@ -966,7 +967,9 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
 void Preferences::storePreferences () {
 
     moptions.defProfRaw          = rprofiles->get_active_text();
+    if (moptions.defProfRaw.empty()) moptions.defProfRaw = DEFPROFILE_RAW;
     moptions.defProfImg          = iprofiles->get_active_text();
+    if (moptions.defProfImg.empty()) moptions.defProfImg = DEFPROFILE_IMG;
     moptions.dateFormat          = dateformat->get_text();
     moptions.panAccelFactor      = (int)panFactor->get_value();
     moptions.fbShowDateTime  = showDateTime->get_active ();

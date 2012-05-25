@@ -42,10 +42,129 @@ Glib::ustring paramFileExtension = ".pp3";
 
 Options::Options () {
 
+    defProfRawMissing = false;
+    defProfImgMissing = false;
     setDefaults ();
 }
 
 const char *DefaultLanguage = "English (US)";
+
+inline bool Options::checkProfilePath(Glib::ustring &path) {
+    if (path.empty())
+        return false;
+
+    Glib::ustring p = getUserProfilePath();
+    if (!p.empty() && safe_file_test (path+paramFileExtension, Glib::FILE_TEST_EXISTS))
+        return true;
+
+    p = getGlobalProfilePath();
+    if (!p.empty() && safe_file_test (path+paramFileExtension, Glib::FILE_TEST_EXISTS))
+        return true;
+    else
+    	return false;
+}
+
+bool Options::checkDirPath(Glib::ustring &path, Glib::ustring errString) {
+    if (safe_file_test (path, Glib::FILE_TEST_EXISTS) && safe_file_test (path, Glib::FILE_TEST_IS_DIR))
+        return true;
+    else {
+        if (!errString.empty()) printf("%s\n", errString.c_str());
+        return false;
+    }
+}
+
+void Options::updatePaths() {
+
+    Glib::ustring tmpPath;
+
+    userProfilePath = "";
+    globalProfilePath = "";
+
+    if (Glib::path_is_absolute(profilePath)) {
+        // absolute path
+        if (!checkDirPath (profilePath, "")) {
+            int retVal = safe_g_mkdir_with_parents (profilePath, 511);
+            if (!retVal)
+            	printf("Error: user's profiles' directory \"%s\" creation failed\n", profilePath.c_str());
+        }
+        if (checkDirPath (profilePath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+            if (multiUser) {
+                userProfilePath = profilePath;
+                if (useBundledProfiles) {
+                    tmpPath = Glib::build_filename(argv0, "profiles");
+                    if(checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+                        if (userProfilePath != tmpPath)
+                            globalProfilePath = tmpPath;
+                    }
+                }
+            }
+            else {
+                globalProfilePath = profilePath;
+            }
+        }
+        else {
+            tmpPath = Glib::build_filename(argv0, "profiles");
+            if(checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+                globalProfilePath = tmpPath;
+            }
+        }
+    }
+    else {
+        // relative paths
+        if (multiUser) {
+            tmpPath = Glib::build_filename(rtdir, profilePath);
+            if (!checkDirPath (tmpPath, "")) {
+                int retVal = safe_g_mkdir_with_parents (tmpPath, 511);
+                if (!retVal)
+                	printf("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
+            }
+            if(checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory!\n")) {
+               	userProfilePath = tmpPath;
+            }
+            if (useBundledProfiles) {
+                tmpPath = Glib::build_filename(argv0, "profiles");
+                if(checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+                    globalProfilePath = tmpPath;
+                }
+            }
+        }
+        else {
+            // common directory
+            // directory name set in options is ignored, we use the default directory name
+            tmpPath = Glib::build_filename(argv0, "profiles");
+            if(checkDirPath (tmpPath, "Error: no global profiles' directory found!\n")) {
+                globalProfilePath = tmpPath;
+            }
+    	}
+    }
+}
+
+Glib::ustring Options::getPreferredProfilePath() {
+	if (!userProfilePath.empty())
+		return userProfilePath;
+	else if (!globalProfilePath.empty())
+		return globalProfilePath;
+	else
+		return "";
+}
+
+Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
+    if (profName.empty())
+        return "";
+
+    Glib::ustring p = getUserProfilePath();
+    Glib::ustring fullPath = Glib::build_filename(p, profName + paramFileExtension);
+    if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
+        return p;
+
+    p = getGlobalProfilePath();
+    fullPath = Glib::build_filename(p, profName + paramFileExtension);
+    if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
+        return p;
+    else
+    	return "";
+
+}
 
 void Options::setDefaults () {
 
@@ -73,13 +192,14 @@ void Options::setDefaults () {
     savePathTemplate = "%p1/converted/%f";
     savePathFolder = "";
     saveUsePathTemplate = true;
-    defProfRaw = "Default";
-    defProfImg = "Neutral";
+    defProfRaw = DEFPROFILE_RAW;
+    defProfImg = DEFPROFILE_IMG;
     dateFormat = "%y-%m-%d";
     adjusterDelay = 0;
     startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)
     startupPath = "";
     profilePath = "profiles";
+    useBundledProfiles = true;
     loadSaveProfilePath = "";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
@@ -372,10 +492,11 @@ if (keyFile.has_group ("Output")) {
 }
 
 if (keyFile.has_group ("Profiles")) { 
-    if (keyFile.has_key ("Profiles", "Directory"))              profilePath          = keyFile.get_string ("Profiles", "Directory");
-    if (keyFile.has_key ("Profiles", "LoadSaveProfilePath"))    loadSaveProfilePath  = keyFile.get_string ("Profiles", "LoadSaveProfilePath");
-    if (keyFile.has_key ("Profiles", "RawDefault"))             defProfRaw           = keyFile.get_string ("Profiles", "RawDefault");
-    if (keyFile.has_key ("Profiles", "ImgDefault"))             defProfImg           = keyFile.get_string ("Profiles", "ImgDefault");
+    if (keyFile.has_key ("Profiles", "Directory"))              profilePath          = keyFile.get_string  ("Profiles", "Directory");
+    if (keyFile.has_key ("Profiles", "UseBundledProfiles"))     useBundledProfiles   = keyFile.get_boolean ("Profiles", "UseBundledProfiles");
+    if (keyFile.has_key ("Profiles", "LoadSaveProfilePath"))    loadSaveProfilePath  = keyFile.get_string  ("Profiles", "LoadSaveProfilePath");
+    if (keyFile.has_key ("Profiles", "RawDefault"))             defProfRaw           = keyFile.get_string  ("Profiles", "RawDefault");
+    if (keyFile.has_key ("Profiles", "ImgDefault"))             defProfImg           = keyFile.get_string  ("Profiles", "ImgDefault");
     if (keyFile.has_key ("Profiles", "SaveParamsWithFile"))     saveParamsFile       = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
     if (keyFile.has_key ("Profiles", "SaveParamsToCache"))      saveParamsCache      = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
     if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation   = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
@@ -384,7 +505,7 @@ if (keyFile.has_group ("Profiles")) {
 
 if (keyFile.has_group ("File Browser")) { 
     if (keyFile.has_key ("File Browser", "ThumbnailSize"))      thumbSize          = keyFile.get_integer ("File Browser", "ThumbnailSize");
-    if (keyFile.has_key ("File Browser", "ThumbnailSizeTab"))      thumbSizeTab    = keyFile.get_integer ("File Browser", "ThumbnailSizeTab");
+    if (keyFile.has_key ("File Browser", "ThumbnailSizeTab"))   thumbSizeTab       = keyFile.get_integer ("File Browser", "ThumbnailSizeTab");
     if (keyFile.has_key ("File Browser", "BrowseOnlyRaw"))      fbOnlyRaw          = keyFile.get_boolean ("File Browser", "BrowseOnlyRaw");
     if (keyFile.has_key ("File Browser", "BrowserShowsDate"))   fbShowDateTime     = keyFile.get_boolean ("File Browser", "BrowserShowsDate");
     if (keyFile.has_key ("File Browser", "BrowserShowsExif"))   fbShowBasicExif    = keyFile.get_boolean ("File Browser", "BrowserShowsExif");
@@ -627,6 +748,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
+    keyFile.set_boolean ("Profiles", "UseBundledProfiles", useBundledProfiles);
     keyFile.set_string  ("Profiles", "LoadSaveProfilePath", loadSaveProfilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
     keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
@@ -744,7 +866,9 @@ int Options::saveToFile (Glib::ustring fname) {
     }
 }
 
+// User's settings directory, including images' profiles if used
 Glib::ustring Options::rtdir;
+// User's cached datas' directory
 Glib::ustring Options::cacheBaseDir;
 
 void Options::load () {
@@ -779,15 +903,12 @@ void Options::load () {
     // Check if RT is installed in Multi-User mode
     if (options.multiUser) {
         // Read the user option file (the one located somewhere in the user's home folder)
-    	// Those values supersets those of the global option file
+        // Those values supersets those of the global option file
         int r = options.readFromFile (rtdir + "/options");
         // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
         if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
-        	// Recreate the user's profile folder
-            Glib::ustring profdir = rtdir + "/profiles";
-            safe_g_mkdir_with_parents (profdir, 511);
             // Save the option file
-            options.saveToFile (rtdir + "/options");
+        	options.saveToFile (rtdir + "/options");
         }
         // Modify the path of the cache folder to the user's personal folder
 #ifdef WIN32
@@ -795,6 +916,38 @@ void Options::load () {
 #else
         cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
 #endif
+    }
+
+    // Update profile's path and recreate it if necessary
+    options.updatePaths();
+
+    // Check default Raw and Img procparams existence
+    if (!options.defProfRaw.length())
+    	options.defProfRaw = DEFPROFILE_INTERNAL;
+    else {
+        Glib::ustring tmpFName = options.findProfilePath(options.defProfRaw);
+        if (!tmpFName.empty()) {
+            if (options.rtSettings.verbose) printf("Raws' default profile \"%s\" found\n", options.defProfRaw.c_str());
+        }
+        else {
+            if (options.rtSettings.verbose) printf("Raws' default profile \"%s\" not found or not set -> using Internal values\n", options.defProfRaw.c_str());
+            options.defProfRaw = DEFPROFILE_INTERNAL;
+            options.defProfRawMissing = true;
+        }
+    }
+
+    if (!options.defProfImg.length())
+    	options.defProfImg = DEFPROFILE_INTERNAL;
+    else {
+        Glib::ustring tmpFName = options.findProfilePath(options.defProfImg);
+        if (!tmpFName.empty()) {
+            if (options.rtSettings.verbose) printf("Images' default profile \"%s\" found\n", options.defProfImg.c_str());
+        }
+        else {
+            if (options.rtSettings.verbose) printf("Images' default profile \"%s\" not found or not set -> using Internal values\n", options.defProfImg.c_str());
+            options.defProfImg = DEFPROFILE_INTERNAL;
+            options.defProfImgMissing = true;
+        }
     }
 
 	//We handle languages using a hierarchy of translations.  The top of the hierarchy is default.  This includes a default translation for all items

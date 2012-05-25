@@ -126,11 +126,9 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     if (options.loadSaveProfilePath.length())
-    dialog.set_current_folder (options.loadSaveProfilePath);
-    else if (options.multiUser)
-    dialog.set_current_folder (Options::rtdir + "/" + options.profilePath);
+        dialog.set_current_folder (options.loadSaveProfilePath);
     else
-    dialog.set_current_folder (argv0 + "/" + options.profilePath);
+        dialog.set_current_folder (options.getPreferredProfilePath());
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -269,10 +267,8 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
     if (options.loadSaveProfilePath.length())
         dialog.set_current_folder (options.loadSaveProfilePath);
-    else if (options.multiUser)
-    dialog.set_current_folder (Options::rtdir + "/" + options.profilePath);
     else
-    dialog.set_current_folder (argv0 + "/" + options.profilePath);
+        dialog.set_current_folder (options.getPreferredProfilePath());
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -489,13 +485,19 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
         profiles->set_active (0);
         PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
         if (!s) {
+            changeconn.block (false);
             s = new PartialProfile (true);
             s->set(true);
             dels = true;  // we've created a temporary PartialProfile, so we set a flag to destroy it
+            if (tpc)
+                tpc->profileChange (s, EvPhotoLoaded, DEFPROFILE_INTERNAL);
         }
-        changeconn.block (false);
-        if (tpc)
-            tpc->profileChange (s, EvPhotoLoaded, profiles->get_active_text());  
+        else {
+            Glib::ustring cProfile = profiles->get_active_text();
+            changeconn.block (false);
+            if (tpc)
+                tpc->profileChange (s, EvPhotoLoaded, cProfile);
+        }
 
         if (dels) {
             s->deleteInstance();

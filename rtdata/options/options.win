@@ -13,6 +13,7 @@ MultiUser=true
 UseSystemTheme=false
 
 [File Browser]
+# Image filename extensions to be looked for, and their corresponding search state (0/1 -> skip/include)
 ParseExtensions=arw;cr2;crf;crw;dng;jpg;kdc;mef;mrw;nef;nrw;orf;pef;png;raf;raw;rw2;rwz;sr2;srw;tif;tiff;
 ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;
 
@@ -23,3 +24,17 @@ PathTemplate=%p1/converted/%f
 # if this is set to a path of a custom program, it will receive the EXIFs as parameters and must generate a PP3 preset file for the given RAW/JPG
 # Parameters: <Path to RAW/JPG> <Path to default profile> <fNumber> <expose in seconds> <focal length in mm> <ISO> <Lens> <Camera>
 CustomProfileBuilder=
+
+# Set here an absolute or relative path (to the rawtherapee.exe file) to the directory containing your own profiles.
+# If MultiUser=true, each user will have their own "options" file, and can set a common or different absolu path
+#Directory=profiles
+
+# Uncomment and set UseBundledProfiles to false if you don't want to be polluted by RawTherapee's bundled profiles
+# Warning: if you don't set RawDefault and ImgDefault to one of your own profile, Internal values will be used instead
+#UseBundledProfiles=true
+
+# Default profile name (without extension) to use for raw images
+#RawDefault=Default
+
+# Default profile name (without extension) to use for standard (8bits) images
+#ImgDefault=Neutral

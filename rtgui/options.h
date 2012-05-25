@@ -27,6 +27,13 @@
 #define STARTUPDIR_CUSTOM  2
 #define STARTUPDIR_LAST    3
 
+// Default bundled profile name to use for Raw images
+#define DEFPROFILE_RAW      "Default"
+// Default bundled profile name to use for Standard images
+#define DEFPROFILE_IMG      "Neutral"
+// Profile name to use for internal values' profile
+#define DEFPROFILE_INTERNAL "Internal"
+
 class SaveFormat {
 
     public:
@@ -45,8 +52,15 @@ enum PPLoadLocation {PLL_Cache=0, PLL_Input=1};
 class Options {
 
   private:
+    bool defProfRawMissing;
+    bool defProfImgMissing;
+    Glib::ustring userProfilePath;
+    Glib::ustring globalProfilePath;
+    bool checkProfilePath(Glib::ustring &path);
+    bool checkDirPath(Glib::ustring &path, Glib::ustring errString);
+    void updatePaths();
     int getString (const char* src, char* dst);
-    void error (int line); 
+    void error (int line);
 
   public:
     bool savesParamsAtExit;
@@ -60,7 +74,8 @@ class Options {
     int adjusterDelay;
     int  startupDir;
     Glib::ustring startupPath;
-    Glib::ustring profilePath;
+    Glib::ustring profilePath; // can be an absolute or relative path; depending on this value, bundled profiles may not be found
+    bool useBundledProfiles;   // only used if multiUser == true
     Glib::ustring loadSaveProfilePath;
     Glib::ustring lastSaveAsPath;
     int saveAsDialogWidth;
@@ -207,8 +222,15 @@ class Options {
     static void load            ();
     static void save            ();
 
+    // if multiUser=false, send back the global profile path
+    Glib::ustring getPreferredProfilePath();
+    Glib::ustring getUserProfilePath() { return userProfilePath; }
+    Glib::ustring getGlobalProfilePath() { return globalProfilePath; }
+    Glib::ustring findProfilePath(Glib::ustring &profName);
     bool        has_retained_extention (Glib::ustring fname);
     bool        is_extention_enabled(Glib::ustring ext);
+    bool        is_defProfRawMissing() { return defProfRawMissing; }
+    bool        is_defProfImgMissing() { return defProfImgMissing; }
 };
 
 extern Options options;
