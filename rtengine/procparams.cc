@@ -687,6 +687,9 @@ int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const {
 
 int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited) {
 
+    if (fname.empty())
+        return 1;
+
     SafeKeyFile keyFile;
     try {
         //setDefaults ();

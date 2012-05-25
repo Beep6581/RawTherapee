@@ -395,7 +395,7 @@ namespace rtengine {
    * @param tunnelMetaData tunnels IPTC and XMP to output without change */  
     void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
 
-    
+
     extern Glib::Mutex* lcmsMutex;
 }
 

@@ -25,6 +25,7 @@
 #include "dfmanager.h"
 #include "ffmanager.h"
 #include "rtthumbnail.h"
+#include "../rtgui/profilestore.h"
 
 namespace rtengine {
 
@@ -40,6 +41,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 
     dcpStore->init (baseDir + "/dcpprofiles");
 
+    profileStore.init ();
     ProcParams::init ();
     CurveFactory::init ();
     ImProcFunctions::initMunsell();
