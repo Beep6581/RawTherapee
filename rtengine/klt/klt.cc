@@ -234,7 +234,7 @@ KLT_FeatureTable KLTCreateFeatureTable(
     for (i = 0 ; i < nFrames ; i++)
       ft->feature[j][i] = first + j*nFrames + i;
 
-  free(first);
+  //free(first);
   /* Return feature table */
   return(ft);
 }
