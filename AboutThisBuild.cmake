@@ -1,8 +1,16 @@
 # cmakefile executed within a makefile target
 
 # we look for the hg command in this paths by order of preference
-find_file(HG_CMD hg PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
-find_file(HG_CMD hg)
+if (WIN32)
+  find_file(HG_CMD hg.exe HINTS ENV Path PATH_SUFFIXES ../)
+elseif (APPLE)
+  find_file(HG_CMD hg PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
+  find_file(HG_CMD hg)
+  set (SHELL "/bin/bash")
+else (WIN32) # Linux
+  find_file(HG_CMD hg)
+  set (SHELL "/bin/bash")
+endif (WIN32)
 
 # the hg command is looked for again, at build time
 if (HG_CMD STREQUAL HG_CMD-NOTFOUND)
@@ -12,7 +20,6 @@ else (HG_CMD STREQUAL HG_CMD-NOTFOUND)
 endif (HG_CMD STREQUAL HG_CMD-NOTFOUND)
 
 set (OUT_FILE "${SRC_DIR}/AboutThisBuild.txt")
-set (SHELL "/bin/bash")
 # there should be a better way of getting the compiler + compiler version, not restrained to Gcc
 execute_process(COMMAND gcc -dumpversion OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND ${HG_CMD} -R ${SRC_DIR} branch OUTPUT_VARIABLE HG_BRANCH OUTPUT_STRIP_TRAILING_WHITESPACE)

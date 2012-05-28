@@ -231,7 +231,7 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=\"${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Windows.cmake
+              -P ${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.cmake
       COMMENT "Creating the about file"
     )
     find_file(HG_CMD hg.exe HINTS ENV Path PATH_SUFFIXES ../)
@@ -251,7 +251,7 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Apple.cmake
+              -P ${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.cmake
       COMMENT "Creating the about file"
     )
     find_file(HG_CMD hg PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
@@ -272,7 +272,7 @@ else (AUTOMATED_BUILD_SYSTEM)
               -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
               -DOPTION_OMP:STRING=${OPTION_OMP}
               -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Linux.cmake
+              -P ${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.cmake
       COMMENT "Creating the about file"
     )
     find_file(HG_CMD hg)
