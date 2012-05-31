@@ -53,9 +53,9 @@ SHARPENING,       // EvShrDRadius,
 SHARPENING,       // EvShrDAmount,
 SHARPENING,       // EvShrDDamping,
 SHARPENING,       // EvShrDIterations,
-0,                // EvCBAvoidClip: obsolete
-0,                // EvCBSatLimiter: obsolete
-0,                // EvCBSatLimit: obsolete
+TRANSFORM,        // EvLCPUseDist,
+DARKFRAME,        // EvLCPUseVign,
+TRANSFORM,        // EvLCPUseCA,
 0,                // EvCBBoost: obsolete
 WHITEBALANCE,     // EvWBMethod,
 WHITEBALANCE,     // EvWBTemp,

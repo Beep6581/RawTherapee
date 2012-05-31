@@ -43,6 +43,7 @@ using namespace rtexif;
 
 LCPModelCommon::LCPModelCommon() {
     focLenX=focLenY=-1; imgXCenter=imgYCenter=0.5;
+    x0=y0=fx=fy=0;
     for (int i=0;i<5;i++) param[i]=0;
     scaleFac=1;
 }
@@ -53,11 +54,57 @@ bool LCPModelCommon::empty() const {
 
 void LCPModelCommon::print() const {
     printf("focLen %g/%g; imgCenter %g/%g; scale %g\n",focLenX,focLenY,imgXCenter,imgYCenter,scaleFac);
+    printf("xy0 %g/%g  fxy %g/%g\n",x0,y0,fx,fy);
     printf("param: %g/%g/%g/%g/%g\n",param[0],param[1],param[2],param[3],param[4]);
+}
+
+// weightened merge two parameters
+void LCPModelCommon::merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA) {
+    float facB=1-facA;
+        
+    focLenX    = facA * a.focLenX    + facB * b.focLenX;
+    focLenY    = facA * a.focLenY    + facB * b.focLenY;
+    imgXCenter = facA * a.imgXCenter + facB * b.imgXCenter;
+    imgYCenter = facA * a.imgYCenter + facB * b.imgYCenter;
+    scaleFac   = facA * a.scaleFac   + facB * b.scaleFac;
+
+    for (int i=0;i<5;i++) param[i]= facA * a.param[i] + facB * b.param[i];
+}
+
+void LCPModelCommon::prepareParams(int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY) {
+    // Mention that the Adobe technical paper has a bug here, the DMAX is handled differently for focLen and imgCenter
+    int Dmax=fullWidth; if (fullHeight>fullWidth) Dmax=fullHeight;
+
+    // correct focLens
+    if (focLenX<0) {  // they may not be given
+        // and 35mm may not be given either
+        if (focalLength35mm<1) focalLength35mm = focalLength*sensorFormatFactor;
+
+        focLenX=focLenY=focalLength / ( 35*focalLength/focalLength35mm);  // focLen must be calculated in pixels
+    }
+
+    if (swapXY) {
+        x0 = (mirrorX ? 1.-imgYCenter : imgYCenter) * fullWidth;
+        y0 = (mirrorY ? 1.-imgXCenter : imgXCenter) * fullHeight;
+        fx = focLenY * Dmax;
+        fy = focLenX * Dmax;
+    } else {
+        x0 = (mirrorX ? 1.-imgXCenter : imgXCenter) * fullWidth; 
+        y0 = (mirrorY ? 1.-imgYCenter : imgYCenter) * fullHeight;
+        fx = focLenX * Dmax; 
+        fy = focLenY * Dmax;
+    }
+    //printf("FW %i /X0 %g   FH %i /Y0 %g  %g\n",fullWidth,x0,fullHeight,y0, imgYCenter);
 }
 
 LCPPersModel::LCPPersModel() {
     focLen=focDist=aperture=0;
+}
+
+// mode: 0=distortion, 1=vignette, 2=CA
+bool LCPPersModel::hasModeData(int mode) const {
+    return (mode==0 && !vignette.empty()) || (mode==1 && !base.empty())
+        || (mode==2 && !chromRG.empty() && !chromG.empty() && !chromBG.empty());
 }
 
 void LCPPersModel::print() const {
@@ -70,72 +117,102 @@ void LCPPersModel::print() const {
     printf("\n");
 }
 
-// if !vignette then geometric
-LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float aperture, bool vignette, int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg)
+// if !vignette then geometric and CA
+LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, 
+    int fullWidth, int fullHeight, const CoarseTransformParams& coarse, int rawRotationDeg)
 {
     if (pProf==NULL) return;
 
-    pProf-> calcParams(focalLength, aperture, vignette, mc);
+    useCADist=useCADistP;
 
     // determine in what the image with the RAW landscape in comparison (calibration target)
-    int rot = (coarse.rotate+rawRotationDeg) % 360;
+    // in vignetting, the rotation has not taken place yet
+    int rot = 0;
+    if (rawRotationDeg>=0) rot=(coarse.rotate+rawRotationDeg) % 360;
 
-    bool swapXY  = (rot==90  || rot==270);
+    swapXY  = (rot==90  || rot==270);
     bool mirrorX = (rot==90  || rot==180);
     bool mirrorY = (rot==180 || rot==270);
-
-    // Mention that the Adobe technical paper has a bug here, the DMAX is handled differently for focLen and imgCenter
-    int Dmax=fullWidth; if (fullHeight>fullWidth) Dmax=fullHeight;
-
-    // correct focLens
-    float focLenX=mc.focLenX; float focLenY=mc.focLenY;
-    if (focLenX<0) {  // they may not be given
-        // and 35mm may not be given either
-        if (focalLength35mm<1) focalLength35mm = focalLength*pProf->sensorFormatFactor;
-
-        focLenX=focLenY=focalLength / ( 35*focalLength/focalLength35mm);  // focLen must be calculated in pixels
+    //printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+    
+    pProf->calcParams(vignette?0:1, focalLength, focusDist, aperture, &mc, NULL, NULL);
+    mc.prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
+    
+    if (!vignette) {
+        pProf->calcParams(2, focalLength, focusDist, aperture, &chrom[0], &chrom[1], &chrom[2]);
+        for (int i=0;i<3;i++) chrom[i].prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
     }
-
-    if (swapXY) {
-        x0 = (mirrorX ? 1-mc.imgYCenter : mc.imgYCenter) * fullWidth;
-        y0 = (mirrorY ? 1-mc.imgXCenter : mc.imgXCenter) * fullHeight;
-        fx = focLenY * Dmax;
-        fy = focLenX * Dmax;
-    } else {
-        x0 = (mirrorX ? 1-mc.imgXCenter : mc.imgXCenter) * fullWidth; 
-        y0 = (mirrorY ? 1-mc.imgYCenter : mc.imgYCenter) * fullHeight;
-        fx = focLenX * Dmax; 
-        fy = focLenY * Dmax;
-    }
-
-    //printf("\nMapping Dmax=%i f=%g/f35=%g vignette=%i using\n",Dmax, focalLength, focalLength35mm, vignette);
-    //mc.print();
 }
 
 void LCPMapper::correctDistortion(double& x, double& y) const {
-    double xd=(x-x0)/fx, yd=(y-y0)/fy;
+    double xd=(x-mc.x0)/mc.fx, yd=(y-mc.y0)/mc.fy;
 
+    const float* aDist = mc.param;
     double rsqr      = xd*xd+yd*yd;
-    double commonFac = (((mc.param[2]*rsqr + mc.param[1])*rsqr + mc.param[0])*rsqr + 1.)
-        + 2. * (mc.param[3] * yd + mc.param[4] * xd);
+    double xfac=aDist[swapXY?3:4], yfac=aDist[swapXY?4:3];
 
-    double xnew = xd * commonFac + mc.param[4] * rsqr;
-    double ynew = yd * commonFac + mc.param[3] * rsqr;
+    double commonFac = (((aDist[2]*rsqr + aDist[1])*rsqr + aDist[0])*rsqr + 1.)
+        + 2. * (yfac * yd + xfac * xd);
 
-    x = xnew * fx + x0;
-    y = ynew * fy + y0;
+    double xnew = xd * commonFac + xfac * rsqr;
+    double ynew = yd * commonFac + yfac * rsqr;
+
+    x = xnew * mc.fx + mc.x0;
+    y = ynew * mc.fy + mc.y0;
 }
 
-float LCPMapper::correctVignette(int x, int y) const {
-    double xd=((double)x-x0)/fx, yd=((double)y-y0)/fy;
+void LCPMapper::correctCA(double& x, double& y, int channel) const {
+    double rsqr, xgreen, ygreen;
 
+    // First calc the green channel like normal distortion
+    // the other are just deviations from it
+    double xd=(x-chrom[1].x0)/chrom[1].fx, yd=(y-chrom[1].y0)/chrom[1].fy;
+
+    // Green contains main distortion, just like base
+    if (useCADist) {
+        const float* aDist = chrom[1].param;
     double rsqr      = xd*xd+yd*yd;
-    double param0Sqr = mc.param[0]*mc.param[0];
+        double xfac=aDist[swapXY?3:4], yfac=aDist[swapXY?4:3];
 
-    return 1. + rsqr * (-mc.param[0] + rsqr * ((param0Sqr - mc.param[1])
-        - (param0Sqr*mc.param[0] - 2.*mc.param[0]*mc.param[1] + mc.param[2]) *rsqr
-        + (param0Sqr*param0Sqr + mc.param[1]*mc.param[1]
-    + 2.*mc.param[0]*mc.param[2] - 3.*param0Sqr*mc.param[1]) *rsqr*rsqr));
+        double commonFac = (((aDist[2]*rsqr + aDist[1])*rsqr + aDist[0])*rsqr + 1.)
+            + 2. * (yfac * yd + xfac * xd);
+
+        xgreen = xd * commonFac + aDist[4] * rsqr;
+        ygreen = yd * commonFac + aDist[3] * rsqr;
+    } else {
+        xgreen=xd; ygreen=yd;
+    }
+
+    if (channel==1) {
+        // green goes directly
+        x = xgreen * chrom[1].fx + chrom[1].x0;
+        y = ygreen * chrom[1].fy + chrom[1].y0;
+    } else {
+        // others are diffs from green
+        xd=xgreen; yd=ygreen;
+        rsqr=xd*xd+yd*yd;
+
+        const float* aCA =chrom[channel].param;
+        double xfac=aCA[swapXY?3:4], yfac=aCA[swapXY?4:3];
+        double commonSum = 1. + rsqr * (aCA[0] + rsqr * (aCA[1] + aCA[2]*rsqr)) + 2. * (yfac*yd + xfac*xd);
+
+        x = (chrom[channel].scaleFac * ( xd * commonSum + xfac*rsqr )) * chrom[channel].fx + chrom[channel].x0;
+        y = (chrom[channel].scaleFac * ( yd * commonSum + yfac*rsqr )) * chrom[channel].fy + chrom[channel].y0;
+    }
+}
+
+float LCPMapper::calcVignetteFac(int x, int y) const {
+    // No need for swapXY, since vignette is in RAW and always before rotation
+    double xd=((double)x-mc.x0)/mc.fx, yd=((double)y-mc.y0)/mc.fy;
+
+    const float* aVig= mc.param;
+    double rsqr      = xd*xd+yd*yd;
+    double param0Sqr = aVig[0]*aVig[0];
+
+    return 1. + rsqr * (-aVig[0] + rsqr * ((param0Sqr - aVig[1])
+        - (param0Sqr*aVig[0] - 2.*aVig[0]*aVig[1] + aVig[2]) *rsqr
+        + (param0Sqr*param0Sqr + aVig[1]*aVig[1]
+        + 2.*aVig[0]*aVig[2] - 3.*param0Sqr*aVig[1]) *rsqr*rsqr));
 }
 
 LCPProfile::LCPProfile(Glib::ustring fname) {
@@ -165,24 +242,31 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
             throw "Invalid XML in LCP file";
     } while (!done);
 
+    fclose(pFile);
+
     XML_ParserFree(parser);
 }
 
-void LCPProfile::calcParams(float focalLength, float aperture, bool vignette, LCPModelCommon& corr) const {
+
+// mode: 0=vignette, 1=distortion, 2=CA
+void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const {
+    float euler=exp(1.0);
+
     // find the frames with the least distance, focal length wise
     LCPPersModel *pLow=NULL, *pHigh=NULL;
 
-    float focalLengthLog=log(focalLength), apertureLog=aperture>0 ? log(aperture) : 0;
+    float focalLengthLog=log(focalLength); //, apertureLog=aperture>0 ? log(aperture) : 0;
+    float focusDistLog=focusDist>0? log(focusDist)+euler : 0;
 
-    // Pass 1: determining best focal length, if possible different apertures
+    // Pass 1: determining best focal length, if possible different focusDistances (for the focDist is not given case)
     for (int pm=0;pm<persModelCount;pm++) {
         float f=aPersModel[pm]->focLen;
 
-        if ((!vignette && !aPersModel[pm]->base.empty()) || (vignette && !aPersModel[pm]->vignette.empty())) {
-            if (f <= focalLength && (pLow==NULL || f > pLow->focLen || (f==pLow->focLen && pLow->aperture>aPersModel[pm]->aperture))) {
+        if (aPersModel[pm]->hasModeData(mode)) {
+            if (f <= focalLength && (pLow==NULL || f > pLow->focLen || (focusDist==0 && f==pLow->focLen && pLow->focDist>aPersModel[pm]->focDist))) {
                 pLow=aPersModel[pm];
             }
-            if (f >= focalLength && (pHigh==NULL || f < pHigh->focLen || (f==pHigh->focLen && pHigh->aperture<aPersModel[pm]->aperture))) {
+            if (f >= focalLength && (pHigh==NULL || f < pHigh->focLen || (focusDist==0 && f==pHigh->focLen && pHigh->focDist<aPersModel[pm]->focDist))) {
                 pHigh=aPersModel[pm];
             }
         }
@@ -192,21 +276,38 @@ void LCPProfile::calcParams(float focalLength, float aperture, bool vignette, LC
         pLow=pHigh;
     else if (!pHigh) 
         pHigh=pLow;
-    else if (vignette) {
-        // We have some, so take the best aperture for vignette (unimportant for distortion)
+    else if (mode==0 || focusDist>0) {
+        // Pass 2: We have some, so take the best aperture for vignette and best focus for CA and distortion
+        // there are usually several frame per focal length. In the end pLow will have both flen and apterure/focdis below the target,
+        // and vice versa pHigh
         float bestFocLenLow=pLow->focLen, bestFocLenHigh=pHigh->focLen;
 
         for (int pm=0;pm<persModelCount;pm++) {
-            float aperLog=log(aPersModel[pm]->aperture);
+            float aper=aPersModel[pm]->aperture; // float aperLog=log(aper);
+            float focDist=aPersModel[pm]->focDist; float focDistLog=log(focDist)+euler;
 
-            if ((!vignette && !aPersModel[pm]->base.empty()) || (vignette && !aPersModel[pm]->vignette.empty())) {
-                if (fabs(aPersModel[pm]->focLen-bestFocLenLow)<0.01 && ((aperLog<=apertureLog && pLow->aperture>aperture)
-                     || (aperLog<=apertureLog && fabs(apertureLog-aperLog)<fabs(apertureLog - log(pLow->aperture))))) {
+            if (aPersModel[pm]->hasModeData(mode)) {
+                if (mode==0) {
+                    // by aperture, and max out focus distance
+                    // tests showed doing this by log(aperture) is not as advisable
+                    if (aPersModel[pm]->focLen==bestFocLenLow && ((aper>=aperture && aper<pLow->aperture && pLow->aperture > aperture)
+                            || (aper<=aperture && (pLow->aperture>aperture || fabs(aperture-aper)<fabs(aperture - pLow->aperture))))) {
                     pLow=aPersModel[pm];
                 }
-                if (fabs(aPersModel[pm]->focLen-bestFocLenHigh)<0.01 && ((aperLog>=apertureLog && pHigh->aperture<aperture)
-                     || (aperLog>=apertureLog && fabs(apertureLog-aperLog)<fabs(apertureLog - log(pHigh->aperture))))) {
+                    if (aPersModel[pm]->focLen==bestFocLenHigh && ((aper<=aperture && aper>pHigh->aperture && pHigh->aperture < aperture)
+                            || (aper>=aperture && (pHigh->aperture<aperture || fabs(aperture-aper)<fabs(aperture - pHigh->aperture))))) {
                     pHigh=aPersModel[pm];
+                }
+                } else {
+                    // by focus distance
+                    if (aPersModel[pm]->focLen==bestFocLenLow && ((focDist>=focusDist && focDist<pLow->focDist && pLow->focDist > focusDist)
+                         || (focDist<=focusDist && (pLow->focDist>focusDist || fabs(focusDistLog-focDistLog)<fabs(focusDistLog - (log(pLow->focDist)+euler)))))) {
+                        pLow=aPersModel[pm];
+                    }
+                    if (aPersModel[pm]->focLen==bestFocLenHigh && ((focDist<=focusDist && focDist>pHigh->focDist && pHigh->focDist < focusDist)
+                         || (focDist>=focusDist && (pHigh->focDist<focusDist || fabs(focusDistLog-focDistLog)<fabs(focusDistLog - (log(pHigh->focDist)+euler)))))) {
+                        pHigh=aPersModel[pm];
+                    }
                 }
             }
         }
@@ -214,34 +315,44 @@ void LCPProfile::calcParams(float focalLength, float aperture, bool vignette, LC
 
     if (pLow!=NULL && pHigh!=NULL) {
         // average out the factors, linear interpolation in logarithmic scale
-        float facLow=0, facHigh=0;
+        float facLow=0.5;
+        bool focLenOnSpot=false;  // pretty often, since max/min are often as frames in LCP
 
         // There is as foclen range, take that as basis
         if (pLow->focLen < pHigh->focLen) {
-            float diff = log(pHigh->focLen) - log(pLow->focLen);
-            facLow  = (log(pHigh->focLen)-focalLengthLog) / diff;
-            facHigh = (focalLengthLog-log(pLow->focLen))  / diff;
-        } else if (pLow->aperture < aperture && pHigh->aperture > aperture) {
-            // FocLen is the same, take aperture (espc. used for vignetting)
-            float diff = log(pHigh->aperture) - log(pLow->aperture);
-            facLow  = (log(pHigh->aperture)-apertureLog) / diff;
-            facHigh = (apertureLog-log(pLow->aperture))  / diff;
+            facLow = (log(pHigh->focLen)-focalLengthLog) / (log(pHigh->focLen) - log(pLow->focLen));
         } else {
-            facLow=facHigh=0.5;
+            focLenOnSpot=pLow->focLen==pHigh->focLen && pLow->focLen==focalLength;
         }
         
-        LCPModelCommon& mLow =(vignette?pLow->vignette :pLow->base);
-        LCPModelCommon& mHigh=(vignette?pHigh->vignette:pHigh->base);
+        // and average the other factor if available
+        if (mode==0 && pLow->aperture < aperture && pHigh->aperture > aperture) {
+            // Mix in aperture
+            float facAperLow = (pHigh->aperture - aperture) / (pHigh->aperture - pLow->aperture);
+            facLow = focLenOnSpot ? facAperLow : (0.5*facLow + 0.5*facAperLow);
+        } else if (mode!=0 && focusDist>0 && pLow->focDist < focusDist && pHigh->focDist > focusDist) {
+            // focus distance for all else (if focus distance is given)
+            float facDistLow = (log(pHigh->focDist)+euler - focusDistLog) / (log(pHigh->focDist) - log(pLow->focDist));
+            facLow = focLenOnSpot ? facDistLow : (0.8*facLow + 0.2*facDistLow);
+        }
 
-        corr.focLenX    = facLow * mLow.focLenX    + facHigh * mHigh.focLenX;
-        corr.focLenY    = facLow * mLow.focLenY    + facHigh * mHigh.focLenY;
-        corr.imgXCenter = facLow * mLow.imgXCenter + facHigh * mHigh.imgXCenter;
-        corr.imgYCenter = facLow * mLow.imgYCenter + facHigh * mHigh.imgYCenter;
-        corr.scaleFac   = facLow * mLow.scaleFac   + facHigh * mHigh.scaleFac;
+        switch (mode) {
+        case 0:  // vignette
+            pCorr1->merge(pLow->vignette, pHigh->vignette, facLow);
+            break;
 
-        for (int i=0;i<5;i++) corr.param[i]= facLow * mLow.param[i] + facHigh * mHigh.param[i];
+        case 1:  // distortion
+            pCorr1->merge(pLow->base, pHigh->base, facLow);
+            break;
 
-        //printf("LCP ( %i frames) vignette=%i for Fno %g - %g; FocLen %g - %g with fac %g - %g:\n", persModelCount, vignette, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, facLow, facHigh); 
+        case 2:  // CA
+            pCorr1->merge(pLow->chromRG, pHigh->chromRG, facLow);
+            pCorr2->merge(pLow->chromG,  pHigh->chromG,  facLow);
+            pCorr3->merge(pLow->chromBG, pHigh->chromBG, facLow);
+            break;
+        }
+
+        //printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow); 
     } else printf("Error: LCP file contained no parameters\n");
 }
 
@@ -325,8 +436,6 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     char raw[len+1]; memcpy(raw,s,len); raw[len]=0;
     char* tag=pProf->lastTag;
 
-    //printf("%s : %s\n",tag,raw);
-
     // Common data section
     if (!pProf->firstLIDone) {
         // Generic tags are the same for all
@@ -363,8 +472,10 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
     // Perspective model base data
     if (!strcmp("FocalLength",tag)) 
         pProf->pCurPersModel->focLen=atof(raw);
-    else if (!strcmp("FocusDistance",tag)) 
-        pProf->pCurPersModel->focDist=atof(raw);
+    else if (!strcmp("FocusDistance",tag)) {
+        double focDist=atof(raw);
+        pProf->pCurPersModel->focDist=focDist<10000?focDist:10000;
+    }
     else if (!strcmp("ApertureValue",tag)) 
         pProf->pCurPersModel->aperture=atof(raw);
 
@@ -383,12 +494,14 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
         pProf->pCurCommon->param[0]=atof(raw);
     else if (!strcmp("RadialDistortParam2",tag) || !strcmp("VignetteModelParam2",tag)) 
         pProf->pCurCommon->param[1]=atof(raw);
-    else if (!strcmp("RadialDistortParam3",tag) || !strcmp("VignetteModelParam3",tag)) 
+    else if (!strcmp("RadialDistortParam3",tag) || !strcmp("VignetteModelParam3",tag))
         pProf->pCurCommon->param[2]=atof(raw);
-    else if (!strcmp("TangentialDistortParam1",tag)) 
+    else if (!strcmp("RadialDistortParam4",tag) || !strcmp("TangentialDistortParam1",tag)) 
         pProf->pCurCommon->param[3]=atof(raw);
-    else if (!strcmp("TangentialDistortParam2",tag)) 
+    else if (!strcmp("RadialDistortParam5",tag) || !strcmp("TangentialDistortParam2",tag)) 
         pProf->pCurCommon->param[4]=atof(raw);    
+    else if (!strcmp("RadialDistortParam6",tag) || !strcmp("TangentialDistortParam3",tag)) 
+        pProf->pCurCommon->param[5]=atof(raw);    
 }
 
 void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el) {

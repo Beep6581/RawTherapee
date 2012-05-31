@@ -334,6 +334,7 @@ class LensProfParams {
     
 public:
     Glib::ustring lcpFile;
+    bool useDist, useVign, useCA;
 };
 
 /**

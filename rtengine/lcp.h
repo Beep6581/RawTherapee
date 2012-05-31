@@ -32,12 +32,16 @@ namespace rtengine {
     class LCPModelCommon {
     public:
        float focLenX, focLenY, imgXCenter, imgYCenter;
-       float param[5];  // k1..k5
-       float scaleFac;
+       float param[5];  // k1..k5, resp. alpha1..5
+       float scaleFac;  // alpha0
+
+       double x0,y0,fx,fy;  // prepared params
 
        LCPModelCommon();
-       bool empty() const;  // is it empty?
+       bool empty() const;  // is it empty
        void print() const;  // printf all values
+       void merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA);
+       void prepareParams(int fullWidth, int fullHeight, float focalLength, float focalLength35mm, float sensorFormatFactor, bool swapXY, bool mirrorX, bool mirrorY);
     };
 
     class LCPPersModel {
@@ -49,6 +53,7 @@ namespace rtengine {
         LCPModelCommon vignette;  // vignette (may be empty)
 
         LCPPersModel();
+        bool hasModeData(int mode) const;
         void print() const;
     };
 
@@ -76,7 +81,7 @@ namespace rtengine {
 
         LCPProfile(Glib::ustring fname);
 
-        void calcParams(float focalLength, float aperture, bool vignette, LCPModelCommon& corr) const;  // Interpolates between the persModels frames
+        void calcParams(int mode, float focalLength, float focusDist, float aperture, LCPModelCommon *pCorr1, LCPModelCommon *pCorr2, LCPModelCommon *pCorr3) const;  // Interpolates between the persModels frames
 
         void print() const;
     };
@@ -100,16 +105,20 @@ namespace rtengine {
 
     // Once precalculated class to correct a point
     class LCPMapper {
-        double x0,y0,fx,fy;
+
+        bool useCADist;  // should the distortion in the CA info be used?
+        bool swapXY;
         LCPModelCommon mc;
+        LCPModelCommon chrom[3];  // in order RedGreen/Green/BlueGreen
 
     public:
         // precalculates the mapper.
-        LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float aperture, bool vignette, int fullWidth, int fullHeight,
+        LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, int fullWidth, int fullHeight,
             const CoarseTransformParams& coarse, int rawRotationDeg);
 
         void  correctDistortion(double& x, double& y) const;  // MUST be the first stage
-        float correctVignette  (int x, int y) const;  // MUST be in RAW
+        void  correctCA(double& x, double& y, int channel) const;
+        float calcVignetteFac  (int x, int y) const;  // MUST be in RAW
     };
 }
 #endif

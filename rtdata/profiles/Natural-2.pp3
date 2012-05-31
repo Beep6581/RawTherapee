@@ -135,7 +135,12 @@ Degree=0
 
 [Distortion]
 Amount=0
-UseLensFun=false
+
+[LensProfile]
+LCPFile=
+UseDistortion=true
+UseVignette=true
+UseCA=false
 
 [Perspective]
 Horizontal=0

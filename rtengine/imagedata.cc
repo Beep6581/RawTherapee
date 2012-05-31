@@ -109,6 +109,7 @@ void ImageData::extractInfo () {
   shutter = 0;
   aperture = 0;
   focal_len = focal_len35mm = 0;
+  focus_dist = 0;
   iso_speed = 0;
   memset (&time, 0, sizeof(time));
   timeStamp = 0;
@@ -171,6 +172,17 @@ void ImageData::extractInfo () {
         focal_len = exif->getTag ("FocalLength")->toDouble ();
     if (exif->getTag ("FocalLengthIn35mmFilm"))
         focal_len35mm = exif->getTag ("FocalLengthIn35mmFilm")->toDouble ();
+    rtexif::Tag* pDst=exif->getTag("SubjectDistance");  // EXIF, set by Adobe. MakerNote ones are scattered and partly encrypted
+    if (pDst) {
+        int num, denom;
+        pDst->toRational(num,denom);
+        if ((denom==1 && num>=10000) || num<0 || denom<0) 
+            focus_dist=10000;  // infinity
+        else if (denom>0) {
+            focus_dist=(float)num/denom;
+        }
+    }
+
     if (exif->getTag ("ISOSpeedRatings"))
         iso_speed = exif->getTag ("ISOSpeedRatings")->toDouble ();
     if (exif->getTag ("DateTimeOriginal")) {

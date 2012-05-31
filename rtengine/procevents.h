@@ -55,9 +55,9 @@ enum ProcEvent {
     EvShrDAmount=30,
     EvShrDDamping=31,
     EvShrDIterations=32,
-    EvCBAvoidClip=33, // obsolete
-    EvCBSatLimiter=34,// obsolete
-    EvCBSatLimit=35,  // obsolete
+    EvLCPUseDist=33,
+    EvLCPUseVign=34,
+    EvLCPUseCA=35,
     EvCBBoost=36,     // obsolete
     EvWBMethod=37,
     EvWBTemp=38,

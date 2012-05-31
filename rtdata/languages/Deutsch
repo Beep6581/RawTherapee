@@ -254,9 +254,9 @@ HISTORY_MSG_30;Dekonvolution Radius
 HISTORY_MSG_31;Dekonvolution Stärke
 HISTORY_MSG_32;Dekonvolution\nDämpfung
 HISTORY_MSG_33;Dekonvolution\nIterationen
-HISTORY_MSG_34;Farbbeschneidungen\nverhindern
-HISTORY_MSG_35;Sättigung begrenzen
-HISTORY_MSG_36;Sättigungsgrenzwert
+HISTORY_MSG_34;LCP Verzerrung
+HISTORY_MSG_35;LCP Vignettierung
+HISTORY_MSG_36;LCP CA
 HISTORY_MSG_37;Farbverstärkung
 HISTORY_MSG_38;Weißabgleich Methode
 HISTORY_MSG_39;Weißabgleich Farbtemp.
@@ -962,6 +962,9 @@ TP_LENSGEOM_FILL;Auto-Füllen
 TP_LENSGEOM_LABEL;Objektivkorrekturen
 TP_LENSPROFILE_FILEDLGFILTERLCP;Linsen-Korrekturdateien
 TP_LENSPROFILE_LABEL;Linsen-Korrekturprofil
+TP_LENSPROFILE_USECA;CA korrigieren
+TP_LENSPROFILE_USEDIST;Verzerrung korrigieren
+TP_LENSPROFILE_USEVIGN;Vignettierung korrigieren
 TP_LUMADENOISE_EDGETOLERANCE;Kantentoleranz
 TP_LUMADENOISE_LABEL;Luminanz-Rauschfilter
 TP_LUMADENOISE_RADIUS;Radius

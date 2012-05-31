@@ -1017,16 +1017,16 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     scaleColors( 0,0, W, H, raw);//+ + raw parameters for black level(raw.blackxx)
 
     // Correct vignetting of lens profile
-    if (!hasFlatField) {
+    if (!hasFlatField && lensProf.useVign) {
         LCPProfile *pLCPProf=lcpStore->getProfile(lensProf.lcpFile);
 
         if (pLCPProf) {
-            LCPMapper map(pLCPProf, idata->getFocalLen(), idata->getFocalLen35mm(), idata->getFNumber(), true, W, H, coarse, ri->get_rotateDegree());
+            LCPMapper map(pLCPProf, idata->getFocalLen(), idata->getFocalLen35mm(), idata->getFocusDist(), idata->getFNumber(), true, false, W, H, coarse, -1);
         
             #pragma omp parallel for
             for (int y=0; y<H; y++) {
                 for (int x=0; x<W; x++) {
-                    if (rawData[y][x]>0) rawData[y][x]*=map.correctVignette(x,y);
+                    if (rawData[y][x]>0) rawData[y][x] *= map.calcVignetteFac(x,y);
                 }
             }
         }

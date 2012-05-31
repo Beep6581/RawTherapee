@@ -356,6 +356,8 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     }
 
     icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData); 
+    lensProf->setRawMeta (raw, pMetaData); 
+
     hlrecovery->setRaw (raw);
     hasChanged = true;
 }
