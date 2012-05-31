@@ -275,6 +275,10 @@ void ProcParams::setDefaults () {
     vignetting.centerX = 0;
     vignetting.centerY = 0;
     
+    lensProf.lcpFile="";
+    lensProf.useDist=lensProf.useVign=true;
+    lensProf.useCA=false;
+
     chmixer.red[0] = 100;
     chmixer.red[1] = 0;
     chmixer.red[2] = 0;
@@ -542,6 +546,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
 
     // lens profile
     if (!pedited || pedited->lensProf.lcpFile)       keyFile.set_string  ("LensProfile", "LCPFile", lensProf.lcpFile);
+    if (!pedited || pedited->lensProf.useDist)       keyFile.set_boolean  ("LensProfile", "UseDistortion", lensProf.useDist);
+    if (!pedited || pedited->lensProf.useVign)       keyFile.set_boolean  ("LensProfile", "UseVignette", lensProf.useDist);
+    if (!pedited || pedited->lensProf.useCA)         keyFile.set_boolean  ("LensProfile", "UseCA", lensProf.useDist);
 
     // save perspective correction
     if (!pedited || pedited->perspective.horizontal) keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
@@ -948,6 +955,9 @@ if (keyFile.has_group ("Distortion")) {
     // lens profile
 if (keyFile.has_group ("LensProfile")) {
     if (keyFile.has_key ("LensProfile", "LCPFile")) { lensProf.lcpFile = keyFile.get_string ("LensProfile", "LCPFile"); if (pedited) pedited->lensProf.lcpFile = true; }
+    if (keyFile.has_key ("LensProfile", "UseDistortion")) { lensProf.useDist = keyFile.get_boolean ("LensProfile", "UseDistortion"); if (pedited) pedited->lensProf.useDist = true; }
+    if (keyFile.has_key ("LensProfile", "UseVignette")) { lensProf.useVign = keyFile.get_boolean ("LensProfile", "UseVignette"); if (pedited) pedited->lensProf.useVign = true; }
+    if (keyFile.has_key ("LensProfile", "UseCA")) { lensProf.useCA = keyFile.get_boolean ("LensProfile", "UseCA"); if (pedited) pedited->lensProf.useCA = true; }
 }
     
     // load perspective correction
@@ -1244,6 +1254,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& commonTrans.autofill == other.commonTrans.autofill
 		&& distortion.amount == other.distortion.amount
         && lensProf.lcpFile == other.lensProf.lcpFile
+        && lensProf.useDist == other.lensProf.useDist
+        && lensProf.useVign == other.lensProf.useVign
+        && lensProf.useCA == other.lensProf.useCA
 		&& perspective.horizontal == other.perspective.horizontal
 		&& perspective.vertical == other.perspective.vertical
 		&& cacorrection.red == other.cacorrection.red

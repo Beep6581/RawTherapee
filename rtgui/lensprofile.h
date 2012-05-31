@@ -1,7 +1,7 @@
 /*
 *  This file is part of RawTherapee.
 *
-*  Copyright (c) 2011 Oliver Duis <oduis@oliverduis.de>
+*  Copyright (c) 2012 Oliver Duis <oduis@oliverduis.de>
 *
 *  RawTherapee is free software: you can redistribute it and/or modify
 *  it under the terms of the GNU General Public License as published by
@@ -28,11 +28,14 @@ class LensProfilePanel : public Gtk::VBox, public FoldableToolPanel {
 protected:
 
     MyFileChooserButton *fcbLCPFile;
+    Gtk::CheckButton *ckbUseDist, *ckbUseVign, *ckbUseCA;
     Gtk::HBox *hbLCPFile;
     Gtk::Button *btnReset;
     Gtk::Label *lLCPFileHead;
-    bool lcpFileChanged;
-    sigc::connection conLCPFile;
+    bool lcpFileChanged,useDistChanged,useVignChanged,useCAChanged;
+    sigc::connection conLCPFile, conUseDist, conUseVign, conUseCA;
+    void updateDisabled(bool enable);
+    bool allowFocusDep;
 
 public:
 
@@ -40,9 +43,13 @@ public:
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void setRawMeta     (bool raw, const rtengine::ImageMetaData* pMeta);
 
     void onLCPFileChanged ();
     void onLCPFileReset   ();
+    void onUseDistChanged();
+    void onUseVignChanged();
+    void onUseCAChanged();
 };
 
 #endif

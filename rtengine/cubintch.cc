@@ -17,12 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline void cubintch (float** src, int xs, int ys, double Dx, double Dy, float *r, double mul) {
+inline void interpolateTransformChannelsCubic (float** src, int xs, int ys, double Dx, double Dy, float *r, double mul) {
+  const double A=-0.85;
 
   double w[4];
 
   {
-      register double t1, t2;
+    double t1, t2;
       t1 = -A*(Dx-1.0)*Dx;
       t2 = (3.0-2.0*Dx)*Dx*Dx;
       w[3] = t1*Dx;

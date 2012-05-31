@@ -70,6 +70,8 @@ int CacheImageData::load (const Glib::ustring& fname) {
 				if (keyFile.has_key ("ExifInfo", "FocalLen"))   focalLen    = keyFile.get_double ("ExifInfo", "FocalLen");
                 if (keyFile.has_key ("ExifInfo", "FocalLen35mm"))   focalLen35mm = keyFile.get_double ("ExifInfo", "FocalLen35mm");
                 else focalLen35mm=focalLen;  // prevent crashes on old files
+                if (keyFile.has_key ("ExifInfo", "FocusDist"))   focusDist = keyFile.get_double ("ExifInfo", "FocusDist");
+                else focusDist=0;
 				if (keyFile.has_key ("ExifInfo", "ISO"))        iso         = keyFile.get_integer ("ExifInfo", "ISO");
 				if (keyFile.has_key ("ExifInfo", "ExpComp"))    expcomp     = keyFile.get_string ("ExifInfo", "ExpComp");
 			}
@@ -129,6 +131,7 @@ int CacheImageData::save (const Glib::ustring& fname) {
         keyFile.set_double  ("ExifInfo", "Shutter", shutter);
         keyFile.set_double  ("ExifInfo", "FocalLen", focalLen);
         keyFile.set_double  ("ExifInfo", "FocalLen35mm", focalLen35mm);
+        keyFile.set_double  ("ExifInfo", "FocusDist", focusDist);
         keyFile.set_integer ("ExifInfo", "ISO", iso);
         keyFile.set_string  ("ExifInfo", "ExpComp", expcomp);
     }

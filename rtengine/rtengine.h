@@ -71,6 +71,8 @@ namespace rtengine {
             virtual double      getFocalLen () const =0;
           /** @return the focal length in 35mm used at the exposure */
             virtual double      getFocalLen35mm () const =0;
+          /** @return the focus distance in meters, 0=unknown, 10000=infinity */
+            virtual float       getFocusDist () const =0;
           /** @return the shutter speed */
             virtual double      getShutterSpeed () const =0;
           /** @return the exposure compensation */

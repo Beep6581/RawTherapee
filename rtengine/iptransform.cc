@@ -177,28 +177,27 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
 }
 
 void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, 
-    double focalLen, double focalLen35mm, int rawRotationDeg) {
+    double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage) {
+
     LCPMapper *pLCPMap=NULL;
     if (needsLCP() && focalLen>0) {
         LCPProfile *pLCPProf=lcpStore->getProfile(params->lensProf.lcpFile);
-        if (pLCPProf) pLCPMap=new LCPMapper(pLCPProf, focalLen, focalLen35mm, 0, false, original->width, original->height, params->coarse, rawRotationDeg);
+        if (pLCPProf) pLCPMap=new LCPMapper(pLCPProf, focalLen, focalLen35mm, focusDist, 0, false, params->lensProf.useDist,
+            original->width, original->height, params->coarse, rawRotationDeg);
     }
 
 	if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && needsVignetting())
-		vignetting (original, transformed, cx, cy, oW, oH);
-	else if (!needsCA()) {
-		if (scale==1)
-			transformNonSep (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap);
+		transformVignetteOnly (original, transformed, cx, cy, oW, oH);
+	else if (!needsCA() && scale!=1)
+		transformPreview (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap);
 		else
-			simpltransform (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap);
-	}
-	else
-		transformSep (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap);
+		transformHighQuality (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap, fullImage);
 
     if (pLCPMap) delete pLCPMap;
 }
 
-void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul)
+// helper function
+void ImProcFunctions::calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul)
 {
 	// vignette center is a point with coordinates between -1 and +1
 	double x = vignetting.centerX / 100.0;
@@ -218,14 +217,9 @@ void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, do
 }
 
 // Transform vignetting only
-void ImProcFunctions::vignetting (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH) {
+void ImProcFunctions::transformVignetteOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH) {
 
-	double vig_w2;
-	double vig_h2;
-	double maxRadius;
-	double v;
-	double b;
-	double mul;
+	double vig_w2, vig_h2, maxRadius, v, b, mul;
 	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
 	#pragma omp parallel for if (multiThread)
@@ -242,149 +236,36 @@ void ImProcFunctions::vignetting (Imagefloat* original, Imagefloat* transformed,
 	}
 }
 
-#include "cubint.cc"
-// Transform WITHOUT scaling or CA, cubic interpolation
-void ImProcFunctions::transformNonSep (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap) {
-	double w2 = (double) oW  / 2.0 - 0.5;
-	double h2 = (double) oH  / 2.0 - 0.5;
-
-	double vig_w2;
-	double vig_h2;
-	double maxRadius;
-	double v;
-	double b;
-	double mul;
-	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
-
-	// auxiliary variables for distortion correction
-    bool needsDist = needsDistortion();  // for performance
-	double a = params->distortion.amount;
-
-	// auxiliary variables for rotation
-	double cost = cos(params->rotate.degree * RT_PI/180.0);
-	double sint = sin(params->rotate.degree * RT_PI/180.0);
-
-	// auxiliary variables for vertical perspective correction
-    double vpdeg = params->perspective.vertical / 100.0 * 45.0;
-    double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
-    double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
-    double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
-
-	// auxiliary variables for horizontal perspective correction
-    double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
-    double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
-    double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
-    double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
-
-	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
-
-	// main cycle
-	#pragma omp parallel for if (multiThread)
-    for (int y=0; y<transformed->height; y++) {
-        for (int x=0; x<transformed->width; x++) {
-            double x_d=x,y_d=y;
-            if (pLCPMap) pLCPMap->correctDistortion(x_d,y_d);  // must be first transform
-
-            x_d = ascale * (x_d + cx - w2);		// centering x coord & scale
-            y_d = ascale * (y_d + cy - h2);		// centering y coord & scale
-            double vig_x_d = ascale * (x + cx - vig_w2);		// centering x coord & scale
-            double vig_y_d = ascale * (y + cy - vig_h2);		// centering y coord & scale
-
-            // horizontal perspective transformation
-            y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
-            x_d = x_d * maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
-
-            // vertical perspective transformation
-            x_d = x_d * maxRadius / (maxRadius - y_d*vptanpt);
-            y_d = y_d * maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
-
-			// rotate
-            double Dx = x_d * cost - y_d * sint;
-            double Dy = x_d * sint + y_d * cost;
-
-            // distortion correction
-            double s = 1;
-            if (needsDist) {
-                double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;  // sqrt is slow
-                s = 1.0 - a + a * r ;
-	        Dx *= s;
-            Dy *= s;
-            }
-
-            double vig_Dx = vig_x_d * cost - vig_y_d * sint;
-            double vig_Dy = vig_x_d * sint + vig_y_d * cost;
-            
-            double r2 = needsVignetting() ? sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy) : 0;  
-
-            // de-center
-            Dx += w2;
-            Dy += h2;
-
-            // Extract integer and fractions of source screen coordinates
-            int xc = (int)Dx; Dx -= (double)xc; xc -= sx;
-            int yc = (int)Dy; Dy -= (double)yc; yc -= sy;
-
-            // Convert only valid pixels
-            if (yc>=0 && yc<original->height && xc>=0 && xc<original->width) {
-
-                // multiplier for vignetting correction
-            	double vignmul = 1.0;
-                if (needsVignetting())
-                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
-
-                if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
-                    cubint (original, xc-1, yc-1, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]), vignmul);
-                else { // edge pixels
-                	int y1 = LIM(yc,   0, original->height-1);
-                	int y2 = LIM(yc+1, 0, original->height-1);
-                	int x1 = LIM(xc,   0, original->width-1);
-                	int x2 = LIM(xc+1, 0, original->width-1);
-                    transformed->r[y][x] = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
-                    transformed->g[y][x] = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
-                    transformed->b[y][x] = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
-                }
-            }
-            else {
-                // not valid (source pixel x,y not inside source image, etc.)
-                transformed->r[y][x] = 0;
-                transformed->g[y][x] = 0;
-                transformed->b[y][x] = 0;
-            }
-        }
-    }
-}
-
 // Transform WITH scaling (opt.) and CA, cubic interpolation
 #include "cubintch.cc"
-void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap) {
+void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, 
+    const LCPMapper *pLCPMap, bool fullImage) {
+
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
 
-	double vig_w2;
-	double vig_h2;
-	double maxRadius;
-	double v;
-	double b;
-	double mul;
+	double vig_w2,vig_h2,maxRadius,v,b,mul;
 	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
-	// auxiliary variables for c/a correction
-    double cdist[3];
-    cdist[0] = params->cacorrection.red;
-    cdist[1] = 0.0;
-    cdist[2] = params->cacorrection.blue;
-    float** chorig[3];
-    chorig[0] = original->r;
-    chorig[1] = original->g;
-    chorig[2] = original->b;
-    float** chtrans[3];
-    chtrans[0] = transformed->r;
-    chtrans[1] = transformed->g;
-    chtrans[2] = transformed->b;
+    float** chOrig[3];
+    chOrig[0] = original->r;
+    chOrig[1] = original->g;
+    chOrig[2] = original->b;
+
+    float** chTrans[3];
+    chTrans[0] = transformed->r;
+    chTrans[1] = transformed->g;
+    chTrans[2] = transformed->b;
+
+    // auxiliary variables for c/a correction
+    double chDist[3];
+    chDist[0] = params->cacorrection.red;
+    chDist[1] = 0.0;
+    chDist[2] = params->cacorrection.blue;
 
 	// auxiliary variables for distortion correction
     bool needsDist = needsDistortion();  // for performance
-	double a = params->distortion.amount;
+	double distAmount = params->distortion.amount;
 
 	// auxiliary variables for rotation
 	double cost = cos(params->rotate.degree * RT_PI/180.0);
@@ -406,25 +287,36 @@ void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transforme
 
 	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
 
+    // smaller crop images are a problem, so only when processing fully
+    bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage; 
+    bool enableLCPDist = pLCPMap && params->lensProf.useDist && fullImage;
+    if (enableLCPCA) enableLCPDist=false;
+
 	// main cycle
 	#pragma omp parallel for if (multiThread)
     for (int y=0; y<transformed->height; y++) {
         for (int x=0; x<transformed->width; x++) {
             double x_d=x,y_d=y;
-            if (pLCPMap) pLCPMap->correctDistortion(x_d,y_d);  // must be first transform
+            if (enableLCPDist) pLCPMap->correctDistortion(x_d,y_d);  // must be first transform
 
             x_d = ascale * (x_d + cx - w2);		// centering x coord & scale
             y_d = ascale * (y_d + cy - h2);		// centering y coord & scale
-            double vig_x_d = ascale * (x + cx - vig_w2);		// centering x coord & scale
-            double vig_y_d = ascale * (y + cy - vig_h2);		// centering y coord & scale
 
+            double vig_x_d, vig_y_d;
+            if (needsVignetting()) {
+                vig_x_d = ascale * (x + cx - vig_w2);		// centering x coord & scale
+                vig_y_d = ascale * (y + cy - vig_h2);		// centering y coord & scale
+            }
+
+            if (needsPerspective()) {
             // horizontal perspective transformation
-            y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
-            x_d = x_d * maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
+                y_d *= maxRadius / (maxRadius + x_d*hptanpt);
+                x_d *= maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
 
             // vertical perspective transformation
-            x_d = x_d * maxRadius / (maxRadius - y_d*vptanpt);
-            y_d = y_d * maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
+                x_d *= maxRadius / (maxRadius - y_d*vptanpt);
+                y_d *= maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
+            }
 
             // rotate
             double Dxc = x_d * cost - y_d * sint;
@@ -434,21 +326,25 @@ void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transforme
             double s = 1;
             if (needsDist) {
                 double r = sqrt(Dxc*Dxc + Dyc*Dyc) / maxRadius;  // sqrt is slow
-                s = 1.0 - a + a * r ;
+                s = 1.0 - distAmount + distAmount * r ;
             }
 
+            double r2;
+            if (needsVignetting()) {  
             double vig_Dx = vig_x_d * cost - vig_y_d * sint;
             double vig_Dy = vig_x_d * sint + vig_y_d * cost;
-            double r2 = needsVignetting() ? sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy) : 0;  
+                r2=sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy);
+            }
 
             for (int c=0; c<3; c++) {
-
-                double Dx = Dxc * (s + cdist[c]);
-                double Dy = Dyc * (s + cdist[c]);
+                double Dx = Dxc * (s + chDist[c]);
+                double Dy = Dyc * (s + chDist[c]);
 
                 // de-center
-                Dx += w2;
-                Dy += h2;
+                Dx += w2; Dy += h2;
+
+                // LCP CA
+                if (enableLCPCA) pLCPMap->correctCA(Dx,Dy,c);
 
 				// Extract integer and fractions of source screen coordinates
 				int xc = (int)Dx; Dx -= (double)xc; xc -= sx;
@@ -462,40 +358,38 @@ void ImProcFunctions::transformSep (Imagefloat* original, Imagefloat* transforme
 					if (needsVignetting())
 						vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
-					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2)   // all interpolation pixels inside image
-                        cubintch (chorig[c], xc-1, yc-1, Dx, Dy, &(chtrans[c][y][x]), vignmul);
-					else { // edge pixels
+					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2) {
+                        // all interpolation pixels inside image
+                        interpolateTransformChannelsCubic (chOrig[c], xc-1, yc-1, Dx, Dy, &(chTrans[c][y][x]), vignmul);
+                    } else { 
+                        // edge pixels
 						int y1 = LIM(yc,   0, original->height-1);
 						int y2 = LIM(yc+1, 0, original->height-1);
 						int x1 = LIM(xc,   0, original->width-1);
 						int x2 = LIM(xc+1, 0, original->width-1);
-                        chtrans[c][y][x] = vignmul*(chorig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chorig[c][y1][x2]*Dx*(1.0-Dy) + chorig[c][y2][x1]*(1.0-Dx)*Dy + chorig[c][y2][x2]*Dx*Dy);
+                        chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chOrig[c][y1][x2]*Dx*(1.0-Dy) + chOrig[c][y2][x1]*(1.0-Dx)*Dy + chOrig[c][y2][x2]*Dx*Dy);
 					}
 				}
 				else
 					// not valid (source pixel x,y not inside source image, etc.)
-					chtrans[c][y][x] = 0;
+					chTrans[c][y][x] = 0;
 			}
         }
     }
 }
 
 // Transform WITH scaling, WITHOUT CA, simple (and fast) interpolation. Used for preview
-void ImProcFunctions::simpltransform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap) {
+void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap) {
+
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
 
-	double vig_w2;
-	double vig_h2;
-	double maxRadius;
-	double v;
-	double b;
-	double mul;
+	double vig_w2, vig_h2, maxRadius, v, b, mul;
 	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
 	// auxiliary variables for distortion correction
     bool needsDist = needsDistortion();  // for performance
-	double a = params->distortion.amount;
+	double distAmount = params->distortion.amount;
 
 	// auxiliary variables for rotation
 	double cost = cos(params->rotate.degree * RT_PI/180.0);
@@ -520,20 +414,26 @@ void ImProcFunctions::simpltransform (Imagefloat* original, Imagefloat* transfor
     for (int y=0; y<transformed->height; y++) {
         for (int x=0; x<transformed->width; x++) {
             double x_d=x,y_d=y;
-            if (pLCPMap) pLCPMap->correctDistortion(x_d,y_d);  // must be first transform
+            if (pLCPMap && params->lensProf.useDist) pLCPMap->correctDistortion(x_d,y_d);  // must be first transform
 
             y_d = ascale * (y_d + cy - h2);		// centering y coord & scale
             x_d = ascale * (x_d + cx - w2);		// centering x coord & scale
-            double vig_x_d = ascale * (x + cx - vig_w2);		// centering x coord & scale
-            double vig_y_d = ascale * (y + cy - vig_h2);		// centering y coord & scale
 
+            double vig_x_d, vig_y_d;
+            if (needsVignetting()) {
+                vig_x_d = ascale * (x + cx - vig_w2);		// centering x coord & scale
+                vig_y_d = ascale * (y + cy - vig_h2);		// centering y coord & scale
+            }
+
+            if (needsPerspective()) {
             // horizontal perspective transformation
-            y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
-            x_d = x_d * maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
+                y_d *= maxRadius / (maxRadius + x_d*hptanpt);
+                x_d *= maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
 
             // vertical perspective transformation
-            x_d = x_d * maxRadius / (maxRadius - y_d*vptanpt);
-            y_d = y_d * maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
+                x_d *= maxRadius / (maxRadius - y_d*vptanpt);
+                y_d *= maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
+            }
 
 			// rotate
             double Dx = x_d * cost - y_d * sint;
@@ -543,18 +443,20 @@ void ImProcFunctions::simpltransform (Imagefloat* original, Imagefloat* transfor
             double s = 1;
             if (needsDist) {
                 double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;  // sqrt is slow
-                s = 1.0 - a + a * r ;
+                s = 1.0 - distAmount + distAmount * r ;
 	        Dx *= s;
             Dy *= s;
             }
 
+            double r2;
+            if (needsVignetting()) {  
             double vig_Dx = vig_x_d * cost - vig_y_d * sint;
             double vig_Dy = vig_x_d * sint + vig_y_d * cost;
-            double r2 = needsVignetting() ? sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy) : 0;  
+                r2=sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy);
+            }
 
             // de-center
-            Dx += w2;
-            Dy += h2;
+            Dx += w2; Dy += h2;
 
             // Extract integer and fractions of source screen coordinates
             int xc = (int)Dx; Dx -= (double)xc; xc -= sx;
@@ -568,12 +470,14 @@ void ImProcFunctions::simpltransform (Imagefloat* original, Imagefloat* transfor
                 if (needsVignetting())
                 	vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
 
-                if (yc < original->height-1 && xc < original->width-1) {  // all interpolation pixels inside image
+                if (yc < original->height-1 && xc < original->width-1) {  
+                    // all interpolation pixels inside image
                     transformed->r[y][x] = vignmul*(original->r[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->r[yc][xc+1]*Dx*(1.0-Dy) + original->r[yc+1][xc]*(1.0-Dx)*Dy + original->r[yc+1][xc+1]*Dx*Dy);
                     transformed->g[y][x] = vignmul*(original->g[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->g[yc][xc+1]*Dx*(1.0-Dy) + original->g[yc+1][xc]*(1.0-Dx)*Dy + original->g[yc+1][xc+1]*Dx*Dy);
                     transformed->b[y][x] = vignmul*(original->b[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->b[yc][xc+1]*Dx*(1.0-Dy) + original->b[yc+1][xc]*(1.0-Dx)*Dy + original->b[yc+1][xc+1]*Dx*Dy);
                 }
-                else { // edge pixels
+                else { 
+                    // edge pixels
                 	int y1 = LIM(yc,   0, original->height-1);
                 	int y2 = LIM(yc+1, 0, original->height-1);
                 	int x1 = LIM(xc,   0, original->width-1);

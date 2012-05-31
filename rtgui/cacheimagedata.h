@@ -50,6 +50,7 @@ class CacheImageData {
         double fnumber;
         double shutter;
         double focalLen,focalLen35mm;
+        float focusDist;
         unsigned iso;
         Glib::ustring lens;
         Glib::ustring camera;

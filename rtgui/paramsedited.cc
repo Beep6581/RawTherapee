@@ -136,6 +136,9 @@ void ParamsEdited::set (bool v) {
 	rotate.degree = v;
 	distortion.amount = v;
     lensProf.lcpFile = v;
+    lensProf.useDist = v;
+    lensProf.useVign = v;
+    lensProf.useCA = v;
 	perspective.horizontal = v;
 	perspective.vertical = v;
 	cacorrection.red = v;
@@ -329,6 +332,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
         lensProf.lcpFile = lensProf.lcpFile && p.lensProf.lcpFile == other.lensProf.lcpFile;
+        lensProf.useDist = lensProf.useDist && p.lensProf.useDist == other.lensProf.useDist;
+        lensProf.useVign = lensProf.useVign && p.lensProf.useVign == other.lensProf.useVign;
+        lensProf.useCA = lensProf.useCA && p.lensProf.useCA == other.lensProf.useCA;
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
         cacorrection.red = cacorrection.red && p.cacorrection.red == other.cacorrection.red;
@@ -521,6 +527,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (rotate.degree)						toEdit.rotate.degree 			= dontforceSet && options.baBehav[ADDSET_ROTATE_DEGREE] ? toEdit.rotate.degree + mods.rotate.degree : mods.rotate.degree;
 	if (distortion.amount)					toEdit.distortion.amount 		= dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
 	if (lensProf.lcpFile)                   toEdit.lensProf.lcpFile         = mods.lensProf.lcpFile;
+    if (lensProf.useDist)                   toEdit.lensProf.useDist         = mods.lensProf.useDist;
+    if (lensProf.useVign)                   toEdit.lensProf.useVign         = mods.lensProf.useVign;
+    if (lensProf.useCA)                     toEdit.lensProf.useCA           = mods.lensProf.useCA;
+
 	if (perspective.horizontal)				toEdit.perspective.horizontal 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
 	if (perspective.vertical)				toEdit.perspective.vertical 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vertical + mods.perspective.vertical : mods.perspective.vertical;
 	if (cacorrection.red)					toEdit.cacorrection.red 	= dontforceSet && options.baBehav[ADDSET_CA] ? toEdit.cacorrection.red + mods.cacorrection.red : mods.cacorrection.red;

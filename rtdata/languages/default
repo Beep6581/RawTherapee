@@ -254,9 +254,9 @@ HISTORY_MSG_30;Deconvolution Radius
 HISTORY_MSG_31;Deconvolution Amount
 HISTORY_MSG_32;Deconvolution Damping
 HISTORY_MSG_33;Deconvolution Iterations
-HISTORY_MSG_34;Avoid Color Clipping
-HISTORY_MSG_35;Saturation Limiter
-HISTORY_MSG_36;Saturation Limit
+HISTORY_MSG_34;LCP use disortion
+HISTORY_MSG_35;LCP use vignette
+HISTORY_MSG_36;LCP use CA
 HISTORY_MSG_37;Color Boost
 HISTORY_MSG_38;White Balance Method
 HISTORY_MSG_39;Color Temperature
@@ -964,6 +964,9 @@ TP_LENSGEOM_FILL;Auto Fill
 TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
 TP_LENSPROFILE_LABEL;Lens Correction Profile
+TP_LENSPROFILE_USECA;Use CA correction
+TP_LENSPROFILE_USEDIST;Use distortion correction
+TP_LENSPROFILE_USEVIGN;Use vignette correction
 TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
 TP_LUMADENOISE_LABEL;Luminance Noise Reduction
 TP_LUMADENOISE_RADIUS;Radius

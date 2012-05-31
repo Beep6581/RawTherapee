@@ -193,7 +193,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (needstransform && orig_prev==oprevi)
         oprevi = new Imagefloat (pW, pH);
     if ((todo & M_TRANSFORM) && needstransform)
-    	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getRotateDegree());
+    	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, imgsrc->getMetaData()->getFocalLen(), 
+            imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
 
     readyphase++;
 
