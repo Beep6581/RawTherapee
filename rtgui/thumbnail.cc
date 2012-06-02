@@ -232,8 +232,8 @@ void Thumbnail::loadProcParams () {
 
     pparamsValid = false;
     pparams.setDefaults();
-    // WARNING: loading the default Raw or Img pp3 file at each thumbnail may be a performance bottleneck
-    pparams.load(options.profilePath+"/" + (getType()==FT_Raw?options.defProfRaw:options.defProfImg) + paramFileExtension);
+    PartialProfile *defaultPP = profileStore.getDefaultPartialProfile(getType()==FT_Raw);
+    defaultPP->applyTo(&pparams);
 
     if (options.paramsLoadLocation==PLL_Input) {
         // try to load it from params file next to the image file
