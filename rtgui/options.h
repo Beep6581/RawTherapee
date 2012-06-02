@@ -49,6 +49,10 @@ class SaveFormat {
 enum ThFileType {FT_Invalid=-1, FT_None=0, FT_Raw=1, FT_Jpeg=2, FT_Tiff=3, FT_Png=4, FT_Custom=5, FT_Tiff16=6, FT_Png16=7, FT_Custom16=8}; 
 enum PPLoadLocation {PLL_Cache=0, PLL_Input=1};
 
+namespace rtengine {
+	class SafeKeyFile;
+}
+
 class Options {
 
   private:
@@ -61,6 +65,19 @@ class Options {
     void updatePaths();
     int getString (const char* src, char* dst);
     void error (int line);
+    /**
+     * Safely reads a directory from the configuration file and only applies it
+     * to the provided destination variable if there is a non-empty string in
+     * the configuration.
+     *
+     * @param keyFile file to read configuration from
+     * @param section name of the section in the configuration file
+     * @param entryName name of the entry in the configuration file
+     * @param destination destination variable to store to
+     * @return @c true if @p destination was changed
+     */
+    bool safeDirGet(const rtengine::SafeKeyFile& keyFile, const Glib::ustring& section,
+            const Glib::ustring& entryName, Glib::ustring& destination);
 
   public:
     bool savesParamsAtExit;
@@ -211,6 +228,16 @@ class Options {
     int           fastexport_resize_dataspec;
     int           fastexport_resize_width;
     int           fastexport_resize_height;
+
+    // Dialog settings
+    Glib::ustring lastIccDir;
+    Glib::ustring lastDarkframeDir;
+    Glib::ustring lastFlatfieldDir;
+    Glib::ustring lastRgbCurvesDir;
+    Glib::ustring lastLabCurvesDir;
+    Glib::ustring lastHsvCurvesDir;
+    Glib::ustring lastToneCurvesDir;
+    Glib::ustring lastProfilingReferenceDir;
 
     Options ();
 

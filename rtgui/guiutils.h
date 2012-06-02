@@ -138,6 +138,40 @@ public:
 	MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
 };
 
+/**
+ * A class which maintains the last folder for a FileChooserDialog or Button by
+ * caching it in a a variable (which can be persisted externally).
+ * Each time the user selects a file or folder, the provided variable is updated
+ * with the associated folder. The path found in the variable is set in the
+ * dialog instance at constructions time of this object.
+ */
+class FileChooserLastFolderPersister: public Glib::Object {
+public:
+
+	/**
+	 * Installs this persister on the provided GtkFileChooser instance and
+	 * applies the current folder found in @p folderVariable for the dialog.
+	 *
+	 * @param chooser file chooser to maintain
+	 * @param folderVariable variable storage to use for this dialog
+	 */
+	FileChooserLastFolderPersister(Gtk::FileChooser* chooser, Glib::ustring& folderVariable);
+
+	virtual ~FileChooserLastFolderPersister();
+
+private:
+
+	/**
+	 * Signal handler for the GtkFileChooser selection action.
+	 */
+	void selectionChanged();
+
+	Gtk::FileChooser* chooser;
+	Glib::ustring& folderVariable;
+	sigc::connection selectionChangedConnetion;
+
+};
+
 enum TOITypes {
 	TOI_TEXT,
 	TOI_ICON

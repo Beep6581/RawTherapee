@@ -125,10 +125,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
         return;
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    if (options.loadSaveProfilePath.length())
-        dialog.set_current_folder (options.loadSaveProfilePath);
-    else
-        dialog.set_current_folder (options.getPreferredProfilePath());
+    FileChooserLastFolderPersister persister( &dialog, options.loadSaveProfilePath );
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -158,7 +155,6 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
         if (result==Gtk::RESPONSE_OK) {
 
             std::string fname = dialog.get_filename();
-            options.loadSaveProfilePath = Glib::path_get_dirname(fname);
 
             bool hasext = true;
 	    size_t dotpos = fname.find_last_of ('.');
@@ -265,10 +261,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
         return;
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
-    if (options.loadSaveProfilePath.length())
-        dialog.set_current_folder (options.loadSaveProfilePath);
-    else
-        dialog.set_current_folder (options.getPreferredProfilePath());
+    FileChooserLastFolderPersister persister( &dialog, options.loadSaveProfilePath );
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -291,7 +284,6 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
 
     if (result==Gtk::RESPONSE_OK) {
         Glib::ustring fname = dialog.get_filename();
-        options.loadSaveProfilePath = Glib::path_get_dirname(fname);
 
         if (event->state & Gdk::CONTROL_MASK) {
             // opening the partial paste dialog window

@@ -67,7 +67,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	hsep3->show ();
 	pack_start (*hsep3);
 
-	curveEditorG = new CurveEditorGroup ();
+	curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 

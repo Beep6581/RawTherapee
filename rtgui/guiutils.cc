@@ -22,6 +22,8 @@
 #include "../rtengine/utils.h"
 #include "rtimage.h"
 
+#include <assert.h>
+
 using namespace std;
 
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference) {
@@ -400,6 +402,33 @@ bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event) {
 	}
 	// ... otherwise the scroll event is sent back to an upper level
 	return false;
+}
+
+FileChooserLastFolderPersister::FileChooserLastFolderPersister(
+		Gtk::FileChooser* chooser, Glib::ustring& folderVariable) :
+		chooser(chooser), folderVariable(folderVariable) {
+	assert(chooser != NULL);
+
+	selectionChangedConnetion = chooser->signal_selection_changed().connect(
+			sigc::mem_fun(*this,
+					&FileChooserLastFolderPersister::selectionChanged));
+
+	if (!folderVariable.empty()) {
+		chooser->set_current_folder(folderVariable);
+	}
+
+}
+
+FileChooserLastFolderPersister::~FileChooserLastFolderPersister() {
+
+}
+
+void FileChooserLastFolderPersister::selectionChanged() {
+
+	if (!chooser->get_current_folder().empty()) {
+		folderVariable = chooser->get_current_folder();
+	}
+
 }
 
 TextOrIcon::TextOrIcon (Glib::ustring fname, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type) {
