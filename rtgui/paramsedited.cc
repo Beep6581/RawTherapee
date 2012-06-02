@@ -520,9 +520,9 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (crop.ratio)		    				toEdit.crop.ratio 	    = mods.crop.ratio;
 	if (crop.orientation)					toEdit.crop.orientation = mods.crop.orientation;
 	if (crop.guide)		    				toEdit.crop.guide 	    = mods.crop.guide;
-	if (coarse.rotate)						toEdit.coarse.rotate 	= (toEdit.coarse.rotate + mods.coarse.rotate) % 360;
-	if (coarse.hflip)						toEdit.coarse.hflip 	= mods.coarse.hflip ? !toEdit.coarse.hflip : toEdit.coarse.hflip;
-	if (coarse.vflip)						toEdit.coarse.vflip 	= mods.coarse.vflip ? !toEdit.coarse.vflip : toEdit.coarse.vflip;
+	if (coarse.rotate)						toEdit.coarse.rotate 	= mods.coarse.rotate;
+	if (coarse.hflip)						toEdit.coarse.hflip 	= mods.coarse.hflip;
+	if (coarse.vflip)						toEdit.coarse.vflip 	= mods.coarse.vflip;
 	if (commonTrans.autofill)				toEdit.commonTrans.autofill		= mods.commonTrans.autofill;
 	if (rotate.degree)						toEdit.rotate.degree 			= dontforceSet && options.baBehav[ADDSET_ROTATE_DEGREE] ? toEdit.rotate.degree + mods.rotate.degree : mods.rotate.degree;
 	if (distortion.amount)					toEdit.distortion.amount 		= dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
