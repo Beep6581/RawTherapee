@@ -1392,13 +1392,6 @@ void PartialProfile::clearGeneral () {
 
 void PartialProfile::applyTo(ProcParams *destParams) const {
     if (destParams && pparams && pedited) {
-        if (pedited->coarse.rotate)
-            destParams->coarse.rotate = 0;
-        if (pedited->coarse.hflip)
-            destParams->coarse.hflip = false;
-        if (pedited->coarse.vflip)
-            destParams->coarse.vflip = false;
-
         pedited->combine(*destParams, *pparams, true);
     }
 }
