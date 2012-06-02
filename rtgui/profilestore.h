@@ -28,10 +28,10 @@
 class ProfileStore {
 
         typedef enum {
-        	STORESTATE_NOTINITIALIZED,
-        	STORESTATE_BEINGINITIALIZED,
-        	STORESTATE_INITIALIZED,
-        	STORESTATE_DELETED
+            STORESTATE_NOTINITIALIZED,
+            STORESTATE_BEINGINITIALIZED,
+            STORESTATE_INITIALIZED,
+            STORESTATE_DELETED
         } StoreState;
 
         Glib::Mutex *parseMutex;
@@ -49,6 +49,7 @@ class ProfileStore {
         rtengine::procparams::PartialProfile* getProfile (const Glib::ustring& profname);
         std::vector<Glib::ustring>            getProfileNames ();
         rtengine::procparams::ProcParams*     getDefaultProcParams (bool isRaw);
+        rtengine::procparams::PartialProfile* getDefaultPartialProfile (bool isRaw);
 };
 
 extern ProfileStore profileStore;

@@ -185,12 +185,24 @@ ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
     //Note: the mutex is locked in getProfile, called below
 
     PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
-    // NOTE: pProf should not be NULL anymore, since init() should have created the default profiles already, but the code is left as is
-    if (!pProf) {
-        pProf = new PartialProfile (true);
-        pProf->set(true);
-        partProfiles[DEFPROFILE_INTERNAL] = pProf;
-    }
+    // NOTE: pProf should not be NULL anymore, since init() should have created the default profiles already
     return pProf->pparams;
+}
+
+/*
+ * Send back a pointer to the default partial profile for raw or standard images.
+ * If it doesn't already exist in the profile list, it will add it with default internal values,
+ * so this method will never fails
+ */
+PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw) {
+
+    if (!init())
+        // I don't even know if this situation can occur
+        return NULL;
+    //Note: the mutex is locked in getProfile, called below
+
+    PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
+    // NOTE: pProf should not be NULL anymore, since init() should have created the default profiles already
+    return pProf;
 }
 
