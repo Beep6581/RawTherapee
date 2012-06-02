@@ -339,7 +339,7 @@ int processLineParams( int argc, char **argv )
 			}
 			else {
 				options.saveUsePathTemplate = true;
-				if (!options.savePathTemplate.length())
+				if (options.savePathTemplate.empty())
 					// If the save path template is empty, we use its default value
 					options.savePathTemplate = "%p1/converted/%f";
 			}

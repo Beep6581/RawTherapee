@@ -36,6 +36,9 @@
 #include <Shlobj.h>
 #endif
 
+Glib::ustring Options::rtdir;
+Glib::ustring Options::cacheBaseDir;
+
 Options options;
 Glib::ustring versionString      = VERSION;
 Glib::ustring paramFileExtension = ".pp3";
@@ -135,17 +138,30 @@ void Options::updatePaths() {
             if(checkDirPath (tmpPath, "Error: no global profiles' directory found!\n")) {
                 globalProfilePath = tmpPath;
             }
-    	}
+        }
     }
+
+    Glib::ustring preferredPath = getPreferredProfilePath();
+    // Paths are updated only if the user or global profile path is set
+    if (lastRgbCurvesDir.empty() || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastRgbCurvesDir = preferredPath;
+    if (lastLabCurvesDir.empty() || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastLabCurvesDir = preferredPath;
+    if (lastHsvCurvesDir.empty() || !safe_file_test (lastHsvCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastHsvCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastHsvCurvesDir = preferredPath;
+    if (lastToneCurvesDir.empty() || !safe_file_test (lastToneCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastToneCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastToneCurvesDir = preferredPath;
+    if (lastProfilingReferenceDir.empty() || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_IS_DIR))
+        lastProfilingReferenceDir = preferredPath;
 }
 
 Glib::ustring Options::getPreferredProfilePath() {
-	if (!userProfilePath.empty())
-		return userProfilePath;
-	else if (!globalProfilePath.empty())
-		return globalProfilePath;
-	else
-		return "";
+    if (!userProfilePath.empty())
+        return userProfilePath;
+    else if (!globalProfilePath.empty())
+        return globalProfilePath;
+    else
+        return "";
 }
 
 Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
@@ -198,9 +214,7 @@ void Options::setDefaults () {
     adjusterDelay = 0;
     startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)
     startupPath = "";
-    profilePath = "profiles";
     useBundledProfiles = true;
-    loadSaveProfilePath = "";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
     preferencesWidth = 0;
@@ -219,6 +233,8 @@ void Options::setDefaults () {
     fbShowHidden = false;
     fbArrangement = 2;					// was 0
     multiUser = true;
+    profilePath = "profiles";
+    loadSaveProfilePath = "";			// will be corrected in load as otherwise construction fails
     version = "0.0.0.0";				// temporary value; will be correctly set in RTWindow::on_realize
     thumbSize = 240;					// was 80
     thumbSizeTab = 80;
@@ -401,6 +417,21 @@ void Options::setDefaults () {
     rtSettings.best = "BestRGB";
     rtSettings.verbose = false;
 	rtSettings.gamutICC = true;
+
+	lastIccDir = rtSettings.iccDirectory;
+	lastDarkframeDir = rtSettings.darkFramesPath;
+	lastFlatfieldDir = rtSettings.flatFieldsPath;
+
+	// There is no reasonable default for curves. We can still suppose that they will take place
+	// in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
+	// of the one pointed to by the "profile" field.
+	// The following fields will then be initialized when "profile" will have its final value,
+	// at the end of the "updatePaths" method.
+	lastRgbCurvesDir = "";
+	lastLabCurvesDir = "";
+	lastHsvCurvesDir = "";
+	lastToneCurvesDir = "";
+	lastProfilingReferenceDir = "";
 }
 
 Options* Options::copyFrom (Options* other) {
@@ -647,9 +678,31 @@ if (keyFile.has_group ("Fast Export")) {
     if (keyFile.has_key ("Fast Export", "fastexport_resize_width"             ))  fastexport_resize_width               = keyFile.get_integer ("Fast Export", "fastexport_resize_width"             );
     if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            ))  fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
 }
+
+if (keyFile.has_group ("Dialogs")) {
+    safeDirGet(keyFile, "Dialogs", "LastIccDir", lastIccDir);
+    safeDirGet(keyFile, "Dialogs", "LastDarkframeDir", lastDarkframeDir);
+    safeDirGet(keyFile, "Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+    safeDirGet(keyFile, "Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
+}
+
         filterOutParsedExtensions ();
 
         return 0;
+}
+
+bool Options::safeDirGet(const rtengine::SafeKeyFile& keyFile, const Glib::ustring& section,
+                         const Glib::ustring& entryName, Glib::ustring& destination)
+{
+    if (keyFile.has_key(section, entryName) && !keyFile.get_string(section, entryName).empty()) {
+        destination = keyFile.get_string(section, entryName);
+        return true;
+    }
+    return false;
 }
 
 int Options::saveToFile (Glib::ustring fname) {
@@ -855,6 +908,14 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Fast Export", "fastexport_resize_width"              , fastexport_resize_width             );
     keyFile.set_integer ("Fast Export", "fastexport_resize_height"             , fastexport_resize_height            );
 
+    keyFile.set_string ("Dialogs", "LastIccDir", lastIccDir);
+    keyFile.set_string ("Dialogs", "LastDarkframeDir", lastDarkframeDir);
+    keyFile.set_string ("Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+    keyFile.set_string ("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
+    keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+    keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
+    keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+    keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 
     FILE *f = safe_g_fopen (fname, "wt");
     if (f==NULL)
@@ -865,11 +926,6 @@ int Options::saveToFile (Glib::ustring fname) {
         return 0;
     }
 }
-
-// User's settings directory, including images' profiles if used
-Glib::ustring Options::rtdir;
-// User's cached datas' directory
-Glib::ustring Options::cacheBaseDir;
 
 void Options::load () {
 
@@ -922,7 +978,7 @@ void Options::load () {
     options.updatePaths();
 
     // Check default Raw and Img procparams existence
-    if (!options.defProfRaw.length())
+    if (options.defProfRaw.empty())
     	options.defProfRaw = DEFPROFILE_INTERNAL;
     else {
         Glib::ustring tmpFName = options.findProfilePath(options.defProfRaw);
@@ -936,7 +992,7 @@ void Options::load () {
         }
     }
 
-    if (!options.defProfImg.length())
+    if (options.defProfImg.empty())
     	options.defProfImg = DEFPROFILE_INTERNAL;
     else {
         Glib::ustring tmpFName = options.findProfilePath(options.defProfImg);
@@ -1003,7 +1059,7 @@ bool Options::has_retained_extention (Glib::ustring fname) {
 
 	Glib::ustring ext = getExtension(fname).lowercase();
 
-	if (ext.length()) {
+	if (!ext.empty()) {
 		// there is an extension to the filename
 
 		// look out if it has one of the retained extensions

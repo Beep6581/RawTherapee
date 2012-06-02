@@ -19,6 +19,7 @@
 #ifndef _DARKFRAME_H_
 #define _DARKFRAME_H_
 
+#include <auto_ptr.h>
 #include <gtkmm.h>
 #include "toolpanel.h"
 #include "../rtengine/rawimage.h"
@@ -35,6 +36,7 @@ class DarkFrame : public Gtk::VBox, public FoldableToolPanel {
 protected:
 
 	MyFileChooserButton *darkFrameFile;
+	std::auto_ptr<FileChooserLastFolderPersister> darkFrameFilePersister;
     Gtk::HBox *hbdf;
     Gtk::Button *btnReset;
     Gtk::Label *dfLabel;

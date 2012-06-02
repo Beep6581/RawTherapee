@@ -30,6 +30,7 @@ FlatField::FlatField () : Gtk::VBox(), FoldableToolPanel(this)
 {
 	hbff = Gtk::manage(new Gtk::HBox());
 	flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+	flatFieldFilePersister.reset(new FileChooserLastFolderPersister(flatFieldFile, options.lastFlatfieldDir));
 	ffLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
 	flatFieldFileReset = Gtk::manage(new Gtk::Button());
 	flatFieldFileReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
@@ -80,8 +81,6 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	}
 	if (safe_file_test (pp->raw.ff_file, Glib::FILE_TEST_EXISTS))
 		flatFieldFile->set_filename (pp->raw.ff_file);
-	else if( !options.rtSettings.flatFieldsPath.empty() )
-		flatFieldFile->set_current_folder( options.rtSettings.flatFieldsPath );
 	hbff->set_sensitive( !pp->raw.ff_AutoSelect );
 
 	lastFFAutoSelect = pp->raw.ff_AutoSelect;
@@ -176,8 +175,8 @@ void FlatField::flatFieldFile_Reset()
 	//flatFieldFile->set_current_name("");
 	flatFieldFile->set_filename ("");
 
-		if( !options.rtSettings.flatFieldsPath.empty() )
-	  	flatFieldFile->set_current_folder( options.rtSettings.flatFieldsPath );
+	if (!options.lastFlatfieldDir.empty())
+		flatFieldFile->set_current_folder(options.lastFlatfieldDir);
 
 	ffInfo->set_text("");
     if (listener)

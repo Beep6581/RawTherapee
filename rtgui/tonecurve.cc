@@ -85,7 +85,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 //----------- Curve ------------------------------
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  curveEditorG = new CurveEditorGroup (M("TP_EXPOSURE_CURVEEDITOR"));
+  curveEditorG = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_EXPOSURE_CURVEEDITOR"));
   curveEditorG->setCurveListener (this);
 
   shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));

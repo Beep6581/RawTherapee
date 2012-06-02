@@ -27,7 +27,7 @@ using namespace rtengine::procparams;
 
 HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	
-	curveEditorG = new CurveEditorGroup (M("TP_HSVEQUALIZER_CHANNEL"));
+	curveEditorG = new CurveEditorGroup (options.lastHsvCurvesDir, M("TP_HSVEQUALIZER_CHANNEL"));
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 

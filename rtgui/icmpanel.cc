@@ -30,14 +30,13 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-Glib::ustring ICMPanel::lastICCWorkDir;
-
 ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL) {
 
 //    set_border_width (4);
 
     ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     ipDialog->set_tooltip_text (M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
+    ipDialogPersister.reset(new FileChooserLastFolderPersister(ipDialog, options.lastIccDir));
 
     Gtk::Label* ilab = Gtk::manage (new Gtk::Label ());
     ilab->set_alignment (0.0, 0.5);
@@ -188,8 +187,6 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     ipDialog->add_filter (filter_icc);
     ipDialog->add_filter (filter_any);
 
-    ipDialog->set_current_folder ( lastICCWorkDir.empty() ? options.rtSettings.iccDirectory : lastICCWorkDir);
-
     oldip = "";
 
     wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
@@ -309,9 +306,6 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
             pp->icm.input = "";  // just a directory
 
         Glib::ustring p=Glib::path_get_dirname(ipDialog->get_filename ());
-        if (p!=options.rtSettings.iccDirectory) {
-            lastICCWorkDir=p;
-        }
      }
 
     pp->icm.working = wnames->get_active_text ();
@@ -476,12 +470,12 @@ void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta) {
     enableListener ();
 }
 
-void ICMPanel::ipSelectionChanged () {
+void ICMPanel::ipSelectionChanged() {
 
-    if (ipDialog->get_filename () == "")
-        return;
+	if (ipDialog->get_filename() == "")
+		return;
 
-        ipChanged ();
+	ipChanged();
 }
 
 void ICMPanel::saveReferencePressed () {
@@ -489,6 +483,7 @@ void ICMPanel::saveReferencePressed () {
     if (!icmplistener)
         return;
     Gtk::FileChooserDialog dialog(M("TP_ICM_SAVEREFERENCEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    FileChooserLastFolderPersister persister(&dialog, options.lastProfilingReferenceDir);
 
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);

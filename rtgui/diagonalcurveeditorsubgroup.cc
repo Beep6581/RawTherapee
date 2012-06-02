@@ -31,7 +31,7 @@
 #include "curveeditor.h"
 #include "diagonalcurveeditorsubgroup.h"
 
-DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt) {
+DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir) {
 
 	valLinear = (int)DCT_Linear;
 	valUnchanged = (int)DCT_Unchanged;

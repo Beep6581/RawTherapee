@@ -46,6 +46,9 @@ class CurveEditorGroup : public Gtk::VBox, public CurveListener {
 	friend class DiagonalCurveEditorSubGroup;
 	friend class FlatCurveEditorSubGroup;
 
+private:
+	Glib::ustring& curveDir;
+
 protected:
 	Gtk::Label* curveGroupLabel;
 	Gtk::Button* curve_reset;
@@ -60,7 +63,12 @@ protected:
 	unsigned int numberOfPackedCurve;
 
 public:
-	CurveEditorGroup(Glib::ustring groupLabel = "");
+	/**
+	 * @param curveDir The folder used by load and save dialogs for the curve.
+	 *                 This variable will be updated with actions in the
+	 *                 dialogs.
+	 */
+	CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
 	~CurveEditorGroup();
 	void newLine();
 	void curveListComplete();
@@ -88,6 +96,9 @@ class CurveEditorSubGroup {
 
 	friend class CurveEditorGroup;
 
+private:
+	Glib::ustring& curveDir;
+
 protected:
 	int valLinear;
 	int valUnchanged;
@@ -100,6 +111,14 @@ public:
 	virtual void setColorProvider (ColorProvider* p) = 0;
 
 protected:
+
+	/**
+	 * @param curveDir The folder used by load and save dialogs for the curve.
+	 *                 This variable will be updated with actions in the
+	 *                 dialogs.
+	 */
+	CurveEditorSubGroup(Glib::ustring& curveDir);
+
 	Glib::ustring outputFile ();
 	Glib::ustring inputFile ();
 

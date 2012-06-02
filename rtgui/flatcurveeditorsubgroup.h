@@ -37,7 +37,7 @@ protected:
 	Gtk::Button* loadCPoints;
 
 public:
-	FlatCurveEditorSubGroup(CurveEditorGroup* prt);
+	FlatCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
 	virtual ~FlatCurveEditorSubGroup();
 
 	FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
