@@ -162,11 +162,11 @@ int main(int argc, char **argv)
 
    // alerting users if the default raw and image profiles are missing
    if (options.is_defProfRawMissing()) {
-       Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+       Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
        msgd.run ();
    }
    if (options.is_defProfImgMissing()) {
-       Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFIMG_MISSING"), options.defProfImg), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+       Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
        msgd.run ();
    }
 
