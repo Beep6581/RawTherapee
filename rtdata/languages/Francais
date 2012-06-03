@@ -1,3 +1,6 @@
+#00 Français
+#01 1.3.2008: Initial translation by Hombre
+
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
@@ -1117,27 +1120,19 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-#00 Français
-#01 1.3.2008: Initial translation by Hombre
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!EXTPROGTARGET_1;raw
-!EXTPROGTARGET_2;queue-processed
-!FILEBROWSER_EXTPROGMENU;Open with
-!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed) 
-!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
-!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
-!TP_ICM_PREFERREDPROFILE;Preferred DCP profile
-!TP_ICM_PREFERREDPROFILE_1;Daylight
-!TP_ICM_PREFERREDPROFILE_2;Tungsten
-!TP_ICM_PREFERREDPROFILE_3;Fluorescent
-!TP_ICM_PREFERREDPROFILE_4;Flash
-!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
-!TP_LENSPROFILE_LABEL;Lens Correction Profile
-!TP_LENSPROFILE_USECA;Use CA correction
-!TP_LENSPROFILE_USEDIST;Use distortion correction
-!TP_LENSPROFILE_USEVIGN;Use vignette correction
+EXTPROGTARGET_1;raw
+EXTPROGTARGET_2;file de traitement
+FILEBROWSER_EXTPROGMENU;Ouvrir avec
+FILEBROWSER_OPENDEFAULTVIEWER;Visualiseur par défaut de Windows (image déjà traitée) 
+MAIN_MSG_IMAGEUNPROCESSED;Cette commande nécessite que toutes les images sélectionnées aient été préalablement traité.
+PREFERENCES_MENUGROUPEXTPROGS;Groupe "Ouvrir avec"
+TP_ICM_PREFERREDPROFILE;Profil DCP préféré
+TP_ICM_PREFERREDPROFILE_1;Lumière du jour (ensoleillé)
+TP_ICM_PREFERREDPROFILE_2;Tungstène
+TP_ICM_PREFERREDPROFILE_3;Fluorescent
+TP_ICM_PREFERREDPROFILE_4;Flash
+TP_LENSPROFILE_FILEDLGFILTERLCP;Fichiers de correction d'objectif
+TP_LENSPROFILE_LABEL;Profil de correction d'objectif
+TP_LENSPROFILE_USECA;Appliquer la correction de l'aberration chromatique
+TP_LENSPROFILE_USEDIST;Appliquer la correction de la distortion
+TP_LENSPROFILE_USEVIGN;Appliquer la correction du vignettage
