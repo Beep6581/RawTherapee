@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;ヴァージョン
 ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
@@ -1150,3 +1149,21 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!EXTPROGTARGET_1;raw
+!EXTPROGTARGET_2;queue-processed
+!FILEBROWSER_EXTPROGMENU;Open with
+!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed) 
+!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
+!TP_ICM_PREFERREDPROFILE;Preferred DCP profile
+!TP_ICM_PREFERREDPROFILE_1;Daylight
+!TP_ICM_PREFERREDPROFILE_2;Tungsten
+!TP_ICM_PREFERREDPROFILE_3;Fluorescent
+!TP_ICM_PREFERREDPROFILE_4;Flash
+!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
+!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_USECA;Use CA correction
+!TP_LENSPROFILE_USEDIST;Use distortion correction
+!TP_LENSPROFILE_USEVIGN;Use vignette correction

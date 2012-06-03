@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;Versie
 ABOUT_TAB_CREDITS;Credits
 ABOUT_TAB_LICENSE;Licentie
@@ -1162,10 +1161,10 @@ ZOOMPANEL_ZOOMOUT;Zoom uit
 
 !EXTPROGTARGET_1;raw
 !EXTPROGTARGET_2;queue-processed
-!FILEBROWSER_OPENDEFAULTVIEWER;Windows Default Viewer (queue-processed) 
+!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed) 
 !MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
-!OPTIONS_DEFIMG_MISSING;The default profile for standard images could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for raw images could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
 !TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
 !TP_LENSPROFILE_LABEL;Lens Correction Profile
