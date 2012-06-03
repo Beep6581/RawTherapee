@@ -81,10 +81,10 @@ ProfilePanel::ProfilePanel (bool readOnly) {
     old = profiles->get_active_text();
     changeconn = profiles->signal_changed().connect( sigc::mem_fun(*this, &ProfilePanel::selection_changed) );
 
-    load->set_tooltip_text (M("PROFILEPANEL_TOOLTIPLOAD"));
-    if (!readOnly) save->set_tooltip_text (M("PROFILEPANEL_TOOLTIPSAVE"));
-    if (!readOnly) copy->set_tooltip_text (M("PROFILEPANEL_TOOLTIPCOPY"));
-    paste->set_tooltip_text (M("PROFILEPANEL_TOOLTIPPASTE"));
+    load->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPLOAD"));
+    if (!readOnly) save->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPSAVE"));
+    if (!readOnly) copy->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPCOPY"));
+    paste->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPPASTE"));
     
     show_all_children ();
 }
