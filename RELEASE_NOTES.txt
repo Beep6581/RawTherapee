@@ -1,22 +1,38 @@
-
-RAWTHERAPEE 4.0.8 RELEASE NOTES
+RAWTHERAPEE 4.0.9 RELEASE NOTES
 -------------------------------
 
 NEW FEATURES
 ------------
+- Support for Adobe LCP lens correction profiles 
 - Program plugger for Windows, to automatically find and be able to
   open right-clicked photos with popular photography programs.
-- Dual illuminant support in DCP profiles
+- Support of Dual illuminant DCP profiles
+- Support for new cameras in addition to those already supported by dcraw:
+  - Nikon D800
+  - Canon EOS 5D Mark III
+- New camera DCP profiles:
+  - Nikon D5100
+  - Nikon D7000
 
 Most commits focused on squashing bugs and speeding up processing.
 
+
 CAVEATS
 -------
+- Risk of PP3 data loss - beware when running multiple RT versions
+RawTherapee cleans up obsolete or invalid tags from active PP3 files. This process is run in three situations:
+1- When you affect the PP3 file in any way, e.g. by tagging a photo,
+2- When you select another folder in the File Browser tab
+3- When you exit RawTherapee (equivalent to leaving the open album)
+This means that a more recent version of RawTherapee will delete obsolete tags which may have been used by an older version, and vice versa - if you use an old version of RawTherapee to browse photos edited with a newer version, it will delete the tags introduced in the new version. This issue is being worked on, and future versions of RawTherapee will support XMP sidecar files with concurrent embedded profile versions.
+http://code.google.com/p/rawtherapee/issues/detail?id=1335
+
 - Memory requirements
 Please read http://rawtherapee.com/blog/maximizing-memory-efficiency
 
 - Differences between the preview and the output image
 The color-managed preview in RawTherapee is (and has always been) based on image data in the Working Space profile. Although the actual preview is rendered using a monitor profile (or sRGB profile, if the monitor profile is not specified), it does not reflect the Output Profile & Output Gamma settings. This can lead to a slightly different output rendering when Working Space profile and Output Space profiles are not the same. A workaround is to set them to the same values to ensure the preview accurately reflects the final rendered output. 
+
 
 DOCUMENTATION
 -------------
@@ -42,119 +58,218 @@ REVISION HISTORY
 The complete change log is available at
 http://code.google.com/p/rawtherapee/source/list
 
-Changes since version 4.0.8:
 
-  DATE        | CHANGESET     | COMMITTER 
---------------|---------------|-------------------------------------
-> 2012-05-14	| 6115629f57e4	| Hombre
-  Solving issue 607: Auto Crop disabled if Auto Fill off
+CHANGELOG for 4.0.9
+-------------------
 
-> 2012-05-12	| a42648a2f87f	| Michael Ezra
-  Enhancements: parsing for Leaf exif data & Phase One orientation;
-  Fix for Time in reading exif:DateTimeOriginal - REQUIRES CLEARING
-  CACHE to take an effect on images prviously viewed in RT;
-  - on behalf of Torger (issue 766)
+  DATE          | CHANGESET     | COMMITTER 
+  --------------|---------------|-------------------------------------
+> 2012-06-03    | 599d1e925de0  | Hombre
+  Updated French strings
 
-> 2012-05-08	| 9925deee5045	| Emil Martinec
-  Minor bugfix for AutoExposure
+> 2012-06-03    | 2be4bff3f09b  | DrSlony
+  Updated PDF manual to 4.0.9
 
-> 2012-05-06	| 099cdb136980	| Oliver Duis
-  Backed out changeset: 159f9e7014f8
+> 2012-06-03    | 687bf6272b3a  | DrSlony
+  One more markup fix, this one's in the file deletion dialog,
+  rtgui/filecatalog.cc +724-5
 
-> 2012-05-06	| 159f9e7014f8	| Oliver Duis
-  Code cleanups on behalf of Lebedev, see issue 1355
+> 2012-06-03    | 7660fe581dee  | DrSlony
+  Final update and consistency check of language files and processing
+  profiles for 4.0.9
 
-> 2012-05-05	| eea2f14d863f	| Emil Martinec
-  Bugfix for autoexposure on blackframes.
+> 2012-06-03    | cc280dac0c73  | DrSlony
+  Added markup to popups when default raw and non-raw profiles are not
+  found
 
-> 2012-05-05	| 957c5df1ac24	| Michael Ezra
-  Fix for thumbnail rotation for Leaf, Mamiya and Phase One (Thanks
-  Torger!); issue 766
+> 2012-06-03    | f64a4ff5432f  | DrSlony
+  Fixes markup in Load/save/copy/paste Profile button tooltips, issue
+  1388
 
-> 2012-05-04	| d22bf9288e6c	| DrSlony
-  Updates and fixes to benchmarkRT
+> 2012-06-02    | 99de92c3b1f5  | DrSlony
+  Absolute paste of rotation value when using partial paste, issue
+  1386 committed on behalf of Dr.Hombre
 
-> 2012-05-02	| 8f7f3036f427	| Oliver Duis
-  Fix for Canon 5D Mark III on behalf Lebedev, issue 1347
+> 2012-06-02    | dbf84afb54af  | Hombre
+  Solving issue 872: "RT file-open/save windows should remember last
+  used dir", on behalf of Johannes Wienke
 
-> 2012-05-01	| bfffc520de3e	| DrSlony
-  PP3 files updated (full) and changes to options.cc, issue 1341
+> 2012-06-02    | df7d6e0cee30  | Hombre
+  Patch from issue 1384: "Speedup enhancement of the thumbnails'
+  browser"
 
-> 2012-04-29	| 08ef56d5b65d	| DrSlony
-  Updated Czech language file on behalf of mkyral, issue 1344.
+> 2012-06-01    | 758d8788f668  | Gyurkó M. 'Dualon' Dávid
+  Updated Hungarian translation: enabling it + some minor
+  enhancements.
 
-> 2012-04-29	| 207d8d272a91	| DrSlony
-  Updated German language file on behalf of maweso, issue 1348.
+> 2012-06-01    | f83f1f2d4d11  | Gyurkó M. 'Dualon' Dávid
+  Update of Hungarian translation.
 
-> 2012-04-26	| 62cefcb38a24	| Oliver Duis
-  Nikon D7000 camera color profile in DCP format
+> 2012-06-01    | f34c9eaf01d9  | DrSlony
+  Updated the default language file and merged in the corrections,
+  then ran generateTranslationDiffs to get the English file and ran
+  both through unix2dos to unify line endings. Issue 920
 
-> 2012-04-23	| c13a7add87ba	| Oliver Duis
-  DCP dual illuminant support see issue 1336
+> 2012-05-31    | 9388f97ec767  | DrSlony
+  Committed Dutch language file on behalf of Willem Termeer and Paul
+  Matthijsse, issue 1367
 
-> 2012-04-22	| 4ee4f75e86ac	| Oliver Duis
-  Code cleanups on behalf of Lebedev, see issue 1332
+> 2012-05-31    | fdaf908f66a8  | Oliver Duis
+  LCP engine v3 see issue 1375
 
-> 2012-04-21	| 8a8a15242c21	| Hombre
-  The "Blend" HL recovery method was not remembered when modified in
-  the Batch Tool Panel editor
+> 2012-05-29    | 28e942b60ba2  | Joker
+  Updated Sony EXIF metadata (added new lenses)
 
-> 2012-04-21	| cc18bd2e902b	| Oliver Duis
-  Fixed Leaf .mos files wrong orientation and colors on behalf of
-  Torger, see issue 1327
+> 2012-05-28    | 15d96aaa0ed2  | Oliver Duis
+  Base color profiles for Nikon D800 and Canon 5D Mark III see issue
+  1378
 
-> 2012-04-21	| 2b0fe3871615	| Oliver Duis
-  ICC camera and output profile speedups, cleanup see issue 1329
+> 2012-05-28    | 9404032dd479  | Philip Rinn
+  Unify generation of AboutThisBuild.txt and rtgui/version.h. See
+  issue 1377.
 
-> 2012-04-20	| 704069c8877c	| Oliver Duis
-  Fixed compilation on 32bit Windows, cleanups see issue 1333
+> 2012-05-26    | fe160aa7d0a6  | Michael Ezra
+  Fix for crash when using "Auto distortion correction" (on behalf of
+  lebedev, see issue 1338)
 
-> 2012-04-19	| 2db6dae32b17	| Oliver Duis
-  Fixed auto profile detection in some cases see issue 1312
+> 2012-05-25    | 94c0419149e1  | Hombre
+  Solving bug reported in issue 1341: "PP3 file cleanup"
+  ...application's crash if the default raw or image profile didn't
+  exist
 
-> 2012-04-16	| ca7c7f52ff04	| Oliver Duis
-  Forgot to commit the added files (sorry)
+> 2012-05-23    | ea7275d3e647  | Oliver Duis
+  LCP engine v2 see issue 1343
 
-> 2012-04-16	| 9cab197f142f	| Oliver Duis
-  External programs plugger see issue 1323
+> 2012-05-20    | 506dd02c3789  | Michael Ezra
+  Enhancement: Placement of buttons below the curves (on behalf of
+  Wolfgang) see issue 227 (# 47)
 
-> 2012-04-16	| 8e448d936bd7	| Oliver Duis
-  Fixed BitsPerSample tag in TIFF output header see issue 1311
+> 2012-05-18    | be1e798c7530  | Oliver Duis
+  DCP profile for Nikon D5100 thanks Glacort!
 
-> 2012-04-14	| 545f45f0e12b	| Jacques Desmis
-  Fix bug output gamma
+> 2012-05-18    | c52ab1597ab4  | Oliver Duis
+  Fixed compilation issues on Ubuntu Linux see issue 1343
 
-> 2012-04-13	| 0a2016c66e5b	| Oliver Duis
-  Fixed NoICM would generate incompatible output image see issue 1320
+> 2012-05-18    | 9c4e2b7c4273  | Oliver Duis
+  Two files missing from last commit
 
-> 2012-04-10	| 5569030d30b2	| Oliver Duis
-  Fixed two crashes in DCP color engine see issue 1317
+> 2012-05-17    | 0a86d2537c55  | Oliver Duis
+  LCP (Lens Correction Profile) support see issue 1343
 
-> 2012-04-09	| 2493dd00b9f3	| Emil Martinec
-  Code cleanup for min/max functions. Committed on behalf of
-  lebedev.ri (thanks!).
+> 2012-05-17    | 6a0b40e2223f  | Oliver Duis
+  Removed warning for external program support see issue 1365
 
-> 2012-04-07	| 952a99e79816	| Oliver Duis
-  Fixed auto DCP detection did not work with some camera makers see
-  issue 1312
+> 2012-05-14    | b30fcbdfaa69  | DrSlony
+  Updated the RELEASE_NOTES.txt
 
-> 2012-04-07	| 766e816228fc	| Oliver Duis
-  Performance improvements, espc. using monitor profiles see issue
-  1310
+> 2012-05-14    | 6115629f57e4  | Hombre
+  Solving issue 607: Auto Crop disabled if Auto Fill off
 
-> 2012-04-04	| 273d4edbff73	| Oliver Duis
-  Updated Japanese translation on behalf of a3novy, see issue 1302
+> 2012-05-12    | a42648a2f87f  | Michael Ezra
+  Enhancements: parsing for Leaf exif data & Phase One orientation;
+  Fix for Time in reading exif:DateTimeOriginal - REQUIRES CLEARING
+  CACHE to take an effect on images prviously viewed in RT;
+ - on behalf of Torger (issue 766)
 
-> 2012-04-03	| 03d965613b60	| Michael Ezra
-  Fixes for packahed profiles. Addition of neutral-UnchangedTransforms
-  profile.
+> 2012-05-08    | 9925deee5045  | Emil Martinec
+  Minor bugfix for AutoExposure
 
-> 2012-04-03	| be07005cd8ac	| Oliver Duis
-  Added renamed color profiles (US specific name)
+> 2012-05-06    | 099cdb136980  | Oliver Duis
+  Backed out changeset: 159f9e7014f8
 
-> 2012-04-02	| 08422f013749	| DrSlony
-  Added tag 4.0.8 for changeset 4072ea5c0abd
+> 2012-05-06    | 159f9e7014f8  | Oliver Duis
+  Code cleanups on behalf of Lebedev, see issue 1355
 
-> 2012-04-02	| 4072ea5c0abd	| DrSlony
-  RELEASE_NOTES.txt for RawTherapee-4.0.8
+> 2012-05-05    | eea2f14d863f  | Emil Martinec
+  Bugfix for autoexposure on blackframes.
 
+> 2012-05-05    | 957c5df1ac24  | Michael Ezra
+  Fix for thumbnail rotation for Leaf, Mamiya and Phase One (Thanks
+  Torger!); issue 766
+
+> 2012-05-04    | d22bf9288e6c  | DrSlony
+  Updates and fixes to benchmarkRT
+
+> 2012-05-02    | 8f7f3036f427  | Oliver Duis
+  Fix for Canon 5D Mark III on behalf Lebedev, issue 1347
+
+> 2012-05-01    | bfffc520de3e  | DrSlony
+  PP3 files updated (full) and changes to options.cc, issue 1341
+
+> 2012-04-29    | 08ef56d5b65d  | DrSlony
+  Updated Czech language file on behalf of mkyral, issue 1344.
+
+> 2012-04-29    | 207d8d272a91  | DrSlony
+  Updated German language file on behalf of maweso, issue 1348.
+
+> 2012-04-26    | 62cefcb38a24  | Oliver Duis
+  Nikon D7000 camera color profile in DCP format
+
+> 2012-04-23    | c13a7add87ba  | Oliver Duis
+  DCP dual illuminant support see issue 1336
+
+> 2012-04-22    | 4ee4f75e86ac  | Oliver Duis
+  Code cleanups on behalf of Lebedev, see issue 1332
+
+> 2012-04-21    | 8a8a15242c21  | Hombre
+  The "Blend" HL recovery method was not remembered when modified in
+  the Batch Tool Panel editor
+
+> 2012-04-21    | cc18bd2e902b  | Oliver Duis
+  Fixed Leaf .mos files wrong orientation and colors on behalf of
+  Torger, see issue 1327
+
+> 2012-04-21    | 2b0fe3871615  | Oliver Duis
+  ICC camera and output profile speedups, cleanup see issue 1329
+
+> 2012-04-20    | 704069c8877c  | Oliver Duis
+  Fixed compilation on 32bit Windows, cleanups see issue 1333
+
+> 2012-04-19    | 2db6dae32b17  | Oliver Duis
+  Fixed auto profile detection in some cases see issue 1312
+
+> 2012-04-16    | ca7c7f52ff04  | Oliver Duis
+  Forgot to commit the added files (sorry)
+
+> 2012-04-16    | 9cab197f142f  | Oliver Duis
+  External programs plugger see issue 1323
+
+> 2012-04-16    | 8e448d936bd7  | Oliver Duis
+  Fixed BitsPerSample tag in TIFF output header see issue 1311
+
+> 2012-04-14    | 545f45f0e12b  | Jacques Desmis
+  Fix bug output gamma
+
+> 2012-04-13    | 0a2016c66e5b  | Oliver Duis
+  Fixed NoICM would generate incompatible output image see issue 1320
+
+> 2012-04-10    | 5569030d30b2  | Oliver Duis
+  Fixed two crashes in DCP color engine see issue 1317
+
+> 2012-04-09    | 2493dd00b9f3  | Emil Martinec
+  Code cleanup for min/max functions. Committed on behalf of
+  lebedev.ri (thanks!).
+
+> 2012-04-07    | 952a99e79816  | Oliver Duis
+  Fixed auto DCP detection did not work with some camera makers see
+  issue 1312
+
+> 2012-04-07    | 766e816228fc  | Oliver Duis
+  Performance improvements, espc. using monitor profiles see issue
+  1310
+
+> 2012-04-04    | 273d4edbff73  | Oliver Duis
+  Updated Japanese translation on behalf of a3novy, see issue 1302
+
+> 2012-04-03    | 03d965613b60  | Michael Ezra
+  Fixes for packahed profiles. Addition of neutral-UnchangedTransforms
+  profile.
+
+> 2012-04-03    | be07005cd8ac  | Oliver Duis
+  Added renamed color profiles (US specific name)
+
+> 2012-04-02    | 08422f013749  | DrSlony
+  Added tag 4.0.8 for changeset 4072ea5c0abd
+
+> 2012-04-02    | 4072ea5c0abd  | DrSlony
+  RELEASE_NOTES.txt for RawTherapee-4.0.8
