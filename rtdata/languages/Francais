@@ -537,8 +537,8 @@ NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_NA;V = n/d
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
-OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
 OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
+OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
 PARTIALPASTE_CHANNELMIXER;Mixage des canaux
@@ -1125,3 +1125,19 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!EXTPROGTARGET_1;raw
+!EXTPROGTARGET_2;queue-processed
+!FILEBROWSER_EXTPROGMENU;Open with
+!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed) 
+!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
+!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
+!TP_ICM_PREFERREDPROFILE;Preferred DCP profile
+!TP_ICM_PREFERREDPROFILE_1;Daylight
+!TP_ICM_PREFERREDPROFILE_2;Tungsten
+!TP_ICM_PREFERREDPROFILE_3;Fluorescent
+!TP_ICM_PREFERREDPROFILE_4;Flash
+!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
+!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_USECA;Use CA correction
+!TP_LENSPROFILE_USEDIST;Use distortion correction
+!TP_LENSPROFILE_USEVIGN;Use vignette correction
