@@ -367,7 +367,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
         jpeg_read_header(&cinfo, TRUE);
 
 	//if JPEG is CMYK, then abort reading
-	if (cinfo.jpeg_color_space == JCS_CMYK || cinfo.jpeg_color_space == JCS_YCCK) {
+	    if (cinfo.jpeg_color_space == JCS_CMYK || cinfo.jpeg_color_space == JCS_YCCK || cinfo.jpeg_color_space == JCS_GRAYSCALE) {
 	    jpeg_destroy_decompress(&cinfo);
     	    return IMIO_READERROR;
     	}
@@ -438,12 +438,14 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 	TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &width);
 	TIFFGetField(in, TIFFTAG_IMAGELENGTH, &height);
 
-    uint16 bitspersample, samplesperpixel;
+    uint16 bitspersample, samplesperpixel, sampleformat;
 	TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
 	TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
+    TIFFGetField(in, TIFFTAG_SAMPLEFORMAT, &sampleformat);
+
     uint16 photometric;
 	if (!TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric) ||
-	    photometric != PHOTOMETRIC_RGB || samplesperpixel < 3) {
+	    photometric != PHOTOMETRIC_RGB || samplesperpixel < 3 || (bitspersample!=8 && bitspersample!=16) || sampleformat>2) {
         TIFFClose(in);
 		return IMIO_VARIANTNOTSUPPORTED;
 	}
