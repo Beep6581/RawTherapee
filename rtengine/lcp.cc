@@ -43,7 +43,7 @@ using namespace rtexif;
 
 LCPModelCommon::LCPModelCommon() {
     focLenX=focLenY=-1; imgXCenter=imgYCenter=0.5;
-    x0=y0=fx=fy=0;
+    x0=y0=fx=fy=meanErr=0; badErr=false;
     for (int i=0;i<5;i++) param[i]=0;
     scaleFac=1;
 }
@@ -53,7 +53,7 @@ bool LCPModelCommon::empty() const {
 }
 
 void LCPModelCommon::print() const {
-    printf("focLen %g/%g; imgCenter %g/%g; scale %g\n",focLenX,focLenY,imgXCenter,imgYCenter,scaleFac);
+    printf("focLen %g/%g; imgCenter %g/%g; scale %g; err %g\n",focLenX,focLenY,imgXCenter,imgYCenter,scaleFac,meanErr);
     printf("xy0 %g/%g  fxy %g/%g\n",x0,y0,fx,fy);
     printf("param: %g/%g/%g/%g/%g\n",param[0],param[1],param[2],param[3],param[4]);
 }
@@ -67,6 +67,7 @@ void LCPModelCommon::merge(const LCPModelCommon& a, const LCPModelCommon& b, flo
     imgXCenter = facA * a.imgXCenter + facB * b.imgXCenter;
     imgYCenter = facA * a.imgYCenter + facB * b.imgYCenter;
     scaleFac   = facA * a.scaleFac   + facB * b.scaleFac;
+    meanErr    = facA * a.meanErr    + facB * b.meanErr;
 
     for (int i=0;i<5;i++) param[i]= facA * a.param[i] + facB * b.param[i];
 }
@@ -103,8 +104,9 @@ LCPPersModel::LCPPersModel() {
 
 // mode: 0=distortion, 1=vignette, 2=CA
 bool LCPPersModel::hasModeData(int mode) const {
-    return (mode==0 && !vignette.empty()) || (mode==1 && !base.empty())
-        || (mode==2 && !chromRG.empty() && !chromG.empty() && !chromBG.empty());
+    return (mode==0 && !vignette.empty() && !vignette.badErr) || (mode==1 && !base.empty() && !base.badErr)
+        || (mode==2 && !chromRG.empty() && !chromG.empty() && !chromBG.empty() &&
+            !chromRG.badErr && !chromG.badErr && !chromBG.badErr);
 }
 
 void LCPPersModel::print() const {
@@ -171,7 +173,7 @@ void LCPMapper::correctCA(double& x, double& y, int channel) const {
     // Green contains main distortion, just like base
     if (useCADist) {
         const float* aDist = chrom[1].param;
-    double rsqr      = xd*xd+yd*yd;
+        double rsqr      = xd*xd+yd*yd;
         double xfac=aDist[swapXY?3:4], yfac=aDist[swapXY?4:3];
 
         double commonFac = (((aDist[2]*rsqr + aDist[1])*rsqr + aDist[0])*rsqr + 1.)
@@ -245,6 +247,57 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
     fclose(pFile);
 
     XML_ParserFree(parser);
+
+    // take average error per type, then calculated the maximum deviation allowed
+    double errBase=0, errChrom=0, errVignette=0;
+    int baseCount=0, chromCount=0, vignetteCount=0;
+    for (int pm=0;pm<2000 && aPersModel[pm];pm++) {
+        if (aPersModel[pm]->hasModeData(0)) {
+            errVignette+=aPersModel[pm]->vignette.meanErr;
+            vignetteCount++;
+        }
+
+        if (aPersModel[pm]->hasModeData(1)) {
+            errBase+=aPersModel[pm]->base.meanErr;
+            baseCount++;
+        }
+
+        if (aPersModel[pm]->hasModeData(2)) {
+            errChrom+=std::max(std::max(aPersModel[pm]->chromRG.meanErr,aPersModel[pm]->chromG.meanErr),aPersModel[pm]->chromBG.meanErr);
+            chromCount++;
+        }
+    }
+
+    // Only if we have enough frames, filter out errors
+    if (baseCount+chromCount+vignetteCount>=100) {
+        if (baseCount>0) errBase/=(double)baseCount;
+        if (chromCount>0) errChrom/=(double)chromCount;
+        if (vignetteCount>0) errVignette/=(double)vignetteCount;
+
+        // Now mark all the bad ones as bad, and hasModeData will return false;
+        const double MaxDeviation=2;
+        int filtered=0;
+        for (int pm=0;pm<2000 && aPersModel[pm];pm++) {
+            if (aPersModel[pm]->hasModeData(0) && aPersModel[pm]->vignette.meanErr > MaxDeviation * errVignette) {
+                aPersModel[pm]->vignette.badErr=true;
+                filtered++;
+            }
+
+            if (aPersModel[pm]->hasModeData(1) && aPersModel[pm]->base.meanErr > MaxDeviation * errBase) {
+                aPersModel[pm]->base.badErr=true;
+                filtered++;
+            }
+
+            if (aPersModel[pm]->hasModeData(2) && 
+                (aPersModel[pm]->chromRG.meanErr > MaxDeviation * errChrom || aPersModel[pm]->chromG.meanErr > MaxDeviation * errChrom || aPersModel[pm]->chromBG.meanErr > MaxDeviation * errChrom)) {
+                aPersModel[pm]->chromRG.badErr=aPersModel[pm]->chromG.badErr=aPersModel[pm]->chromBG.badErr=true;
+                filtered++;
+            }
+        }
+
+        //printf("Filtered %i frames from %i profile %s\n", filtered, baseCount+chromCount+vignetteCount, fname.c_str());
+    }
+
 }
 
 
@@ -490,6 +543,8 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
         pProf->pCurCommon->imgYCenter=atof(raw);
     else if (!strcmp("ScaleFactor",tag)) 
         pProf->pCurCommon->scaleFac=atof(raw);
+    else if (!strcmp("ResidualMeanError",tag)) 
+        pProf->pCurCommon->meanErr=atof(raw);
     else if (!strcmp("RadialDistortParam1",tag) || !strcmp("VignetteModelParam1",tag)) 
         pProf->pCurCommon->param[0]=atof(raw);
     else if (!strcmp("RadialDistortParam2",tag) || !strcmp("VignetteModelParam2",tag)) 
