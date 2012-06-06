@@ -34,6 +34,8 @@ namespace rtengine {
        float focLenX, focLenY, imgXCenter, imgYCenter;
        float param[5];  // k1..k5, resp. alpha1..5
        float scaleFac;  // alpha0
+       double meanErr;
+       bool badErr;
 
        double x0,y0,fx,fy;  // prepared params
 
