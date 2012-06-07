@@ -80,7 +80,14 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     double c2x = (cparams.x+cparams.w-1-startx)*scale;
     double c2y = (cparams.y+cparams.h-1-starty)*scale;
 
+    // crop overlay color, linked with crop windows background
+    if (options.bgcolor==0)
     cr->set_source_rgba (options.cutOverlayBrush[0], options.cutOverlayBrush[1], options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
+    else if (options.bgcolor==1)
+        cr->set_source_rgb (0,0,0);
+    else if (options.bgcolor==2)
+        cr->set_source_rgb (1,1,1);
+    
 
     cr->rectangle (imx, imy, imw, c1y);
     cr->rectangle (imx, imy+c2y, imw, imh-c2y);
