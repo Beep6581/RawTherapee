@@ -33,16 +33,14 @@ namespace rtengine {
 #define CLIPTOC(a,b,c,d) ((a)>=(b)?((a)<=(c)?(a):(d=true,(c))):(d=true,(b)))
 #define RT_PI 3.141592653589
 
-bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef) {
+bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef,
+    const LCPMapper *pLCPMap) {
 
-    bool clipresize = true;
-    bool clipped = false;
+    bool clipresize = true, clipped = false;
 
-    red.clear ();
-    green.clear ();
-    blue.clear ();
+    red.clear (); green.clear (); blue.clear ();
 
-    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective()) {
+    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap==NULL)) {
         if (clipresize) {
                 for (size_t i=0; i<src.size(); i++) {
                     red.push_back   (Coord2D (src[i].x, src[i].y));
@@ -53,41 +51,62 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
         return clipped;
     }
 
-    double oW = W;
-    double oH = H;
+    double oW = W, oH = H;
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
-	double a = params->distortion.amount;
+    double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+
+    // auxiliary variables for distortion correction
+    bool needsDist = needsDistortion();  // for performance
+	double distAmount = params->distortion.amount;
+
+    // auxiliary variables for rotation
 	double cost = cos(params->rotate.degree * RT_PI/180.0);
 	double sint = sin(params->rotate.degree * RT_PI/180.0);
-	double maxRadius = sqrt( (double)( oW*oW + oH*oH ) ) / 2;
+
+    // auxiliary variables for vertical perspective correction
     double vpdeg = params->perspective.vertical / 100.0 * 45.0;
     double vpalpha = (90.0 - vpdeg) / 180.0 * RT_PI;
     double vpteta  = fabs(vpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((vpdeg>0 ? 1.0 : -1.0) * sqrt((-oW*oW*tan(vpalpha)*tan(vpalpha) + (vpdeg>0 ? 1.0 : -1.0) * oW*tan(vpalpha)*sqrt(16*maxRadius*maxRadius+oW*oW*tan(vpalpha)*tan(vpalpha)))/(maxRadius*maxRadius*8)));
     double vpcospt = (vpdeg>=0 ? 1.0 : -1.0) * cos (vpteta), vptanpt = tan (vpteta);
+
+    // auxiliary variables for horizontal perspective correction
     double hpdeg = params->perspective.horizontal / 100.0 * 45.0;
     double hpalpha = (90.0 - hpdeg) / 180.0 * RT_PI;
     double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-	double ascale = ascaleDef>0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0);
+	double ascale = ascaleDef>0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
 
 	for (size_t i=0; i<src.size(); i++) {
+        double x_d=src[i].x, y_d=src[i].y;
+        if (pLCPMap && params->lensProf.useDist) pLCPMap->correctDistortion(x_d,y_d);  // must be first transform
 
-		double y_d = ascale * (src[i].y - h2);
-		double x_d = ascale * (src[i].x - w2);
+		y_d = ascale * (y_d - h2);
+		x_d = ascale * (x_d - w2);
 
-        y_d = y_d * maxRadius / (maxRadius + x_d*hptanpt);
-        x_d = x_d * maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
+        if (needsPerspective()) {
+            // horizontal perspective transformation
+            y_d *= maxRadius / (maxRadius + x_d*hptanpt);
+            x_d *= maxRadius * hpcospt / (maxRadius + x_d*hptanpt);
 
-        x_d = x_d * maxRadius / (maxRadius - y_d*vptanpt);
-        y_d = y_d * maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
+            // vertical perspective transformation
+            x_d *= maxRadius / (maxRadius - y_d*vptanpt);
+            y_d *= maxRadius * vpcospt / (maxRadius - y_d*vptanpt);
+        }
 
+        // rotate
 		double Dx = x_d * cost - y_d * sint;
 		double Dy = x_d * sint + y_d * cost;
 
-		double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;
-		double s = 1.0 - a + a * r ;
+        // distortion correction
+        double s = 1;
+        if (needsDist) {
+            double r = sqrt(Dx*Dx + Dy*Dy) / maxRadius;  // sqrt is slow
+            s = 1.0 - distAmount + distAmount * r ;
+        }
+
+        // LCP CA is not reflected in preview (and very small), so don't add it here
 
 		red.push_back (Coord2D(Dx*(s+params->cacorrection.red)+w2, Dy*(s+params->cacorrection.red)+h2));
 		green.push_back (Coord2D(Dx*s+w2, Dy*s+h2));
@@ -107,12 +126,14 @@ bool ImProcFunctions::transCoord (int W, int H, std::vector<Coord2D> &src, std::
     return clipped;
 }
 
-bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef) {
+// Transform all corners and critical sidelines of an image
+bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef, const LCPMapper *pLCPMap) {
 
     int x1 = x, y1 = y;
     int x2 = x1 + w - 1;
     int y2 = y1 + h - 1;
 
+    // Build all edge points and half-way points
     std::vector<Coord2D> corners (8);
     corners[0].set (x1, y1);
     corners[1].set (x1, y2);
@@ -122,13 +143,15 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
     corners[5].set ((x1+x2)/2, y2);
     corners[6].set (x1, (y1+y2)/2);
     corners[7].set (x2, (y1+y2)/2);
-    int xstep = (x2-x1)/16;
+
+    // Add several steps inbetween
+    int xstep = (x2-x1)/32;
     if (xstep<1) xstep = 1;
     for (int i=x1+xstep; i<=x2-xstep; i+=xstep) {
         corners.push_back (Coord2D (i, y1));
         corners.push_back (Coord2D (i, y2));
     }
-    int ystep = (y2-y1)/16;
+    int ystep = (y2-y1)/32;
     if (ystep<1) ystep = 1;
     for (int i=y1+ystep; i<=y2-ystep; i+=ystep) {
         corners.push_back (Coord2D (x1, i));
@@ -137,13 +160,15 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
 
     std::vector<Coord2D> r, g, b;
 
-    bool result = transCoord (W, H, corners, r, g, b, ascaleDef);
+    bool clipped = transCoord (W, H, corners, r, g, b, ascaleDef, pLCPMap);
 
+    // Merge all R G Bs into one X/Y pool
     std::vector<Coord2D> transCorners;
     transCorners.insert (transCorners.end(), r.begin(), r.end());
     transCorners.insert (transCorners.end(), g.begin(), g.end());
     transCorners.insert (transCorners.end(), b.begin(), b.end());
 
+    // find the min/max of all coordinates, so the borders
     double x1d = transCorners[0].x;
     for (size_t i=1; i<transCorners.size(); i++)
         if (transCorners[i].x<x1d)
@@ -173,7 +198,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
     wv = x2v - x1v + 1;
     hv = y2v - y1v + 1;
 
-    return result;
+    return clipped;
 }
 
 void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, 
@@ -285,7 +310,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 																oH*tan(hpalpha)*sqrt(SQR(4*maxRadius)+SQR(oH*tan(hpalpha))))/(SQR(maxRadius)*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
+	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, fullImage ? pLCPMap : NULL) : 1.0;
 
     // smaller crop images are a problem, so only when processing fully
     bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage; 
@@ -407,7 +432,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
     double hpteta  = fabs(hpalpha-RT_PI/2)<1e-3 ? 0.0 : acos ((hpdeg>0 ? 1.0 : -1.0) * sqrt((-oH*oH*tan(hpalpha)*tan(hpalpha) + (hpdeg>0 ? 1.0 : -1.0) * oH*tan(hpalpha)*sqrt(16*maxRadius*maxRadius+oH*oH*tan(hpalpha)*tan(hpalpha)))/(maxRadius*maxRadius*8)));
     double hpcospt = (hpdeg>=0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
 
-	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH) : 1.0;
+	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0;
 
     // main cycle
 	#pragma omp parallel for if (multiThread)
@@ -497,7 +522,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
     }
 }
 
-double ImProcFunctions::getTransformAutoFill (int oW, int oH) {
+double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap) {
 
 	double scaleU = 1.0;
 	double scaleL = 0.001;
@@ -505,7 +530,7 @@ double ImProcFunctions::getTransformAutoFill (int oW, int oH) {
 		double scale = (scaleU + scaleL) / 2.0;
 
         int orx, ory, orw, orh;
-        bool clipped = transCoord (oW, oH, 0, 0, oW, oH, orx, ory, orw, orh, scale);
+        bool clipped = transCoord (oW, oH, 0, 0, oW, oH, orx, ory, orw, orh, scale, pLCPMap);
 
         if (clipped)
         	scaleU = scale;

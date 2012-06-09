@@ -548,7 +548,14 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
 
     mProcessing.lock ();
 
-    double fillscale = ipf.getTransformAutoFill (fullw, fullh);
+    LCPMapper *pLCPMap=NULL;
+    if (params.lensProf.lcpFile.length() && imgsrc->getMetaData()->getFocalLen()>0) {
+        LCPProfile *pLCPProf=lcpStore->getProfile(params.lensProf.lcpFile);
+        if (pLCPProf) pLCPMap=new LCPMapper(pLCPProf, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(),
+            0, false, params.lensProf.useDist, fullw, fullh, params.coarse, imgsrc->getRotateDegree());
+    }
+
+    double fillscale = ipf.getTransformAutoFill (fullw, fullh, pLCPMap);
     if (ratio>0) {
         w = fullw * fillscale;
     	h = w / ratio;
