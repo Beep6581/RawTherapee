@@ -842,6 +842,16 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
                     iareapanel->imageArea->zoomPanel->zoom11Clicked();
 					return true;
 
+				case GDK_8: //background color of the preview 0
+				    iareapanel->imageArea->previewModePanel->togglebackColor0();
+				    return true;
+				case GDK_9: //background color of the preview 1
+					iareapanel->imageArea->previewModePanel->togglebackColor1();
+					return true;
+				case GDK_0: //background color of the preview 2
+					iareapanel->imageArea->previewModePanel->togglebackColor2();
+					return true;
+
 				case GDK_r: //preview mode Red
                     iareapanel->imageArea->previewModePanel->toggleR();
 					return true;
