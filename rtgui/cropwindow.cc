@@ -236,10 +236,11 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
             zoom11 ();
         state = SNormal;
     }
-    else if (button==1 && type==GDK_2BUTTON_PRESS && onArea (CropBorder, x, y)) {
+  //below code is no longer working/needed after adding buttons for each of the backColor values
+  /*else if (button==1 && type==GDK_2BUTTON_PRESS && onArea (CropBorder, x, y)) {
         backColor = (backColor+1) % 3;
         options.bgcolor = backColor;
-    }
+    }*/
     else if (button==1 && type==GDK_BUTTON_PRESS && state==SNormal && onArea (CropToolBar, x, y)) {
         if (!decorated || !buttonSet.pressNotify (x, y)) {
             state = SCropWinMove;
@@ -638,6 +639,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     int x = xpos, y = ypos, h = height, w = width;
  
     // draw the background
+    backColor = iarea->previewModePanel->GetbackColor();
+    options.bgcolor = backColor;
     if (backColor==0) {
         Gdk::Color cback = iarea->get_style()->get_bg(Gtk::STATE_NORMAL);
         cr->set_source_rgb (cback.get_red_p(), cback.get_green_p(), cback.get_blue_p());

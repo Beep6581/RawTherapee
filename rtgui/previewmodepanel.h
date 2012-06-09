@@ -30,6 +30,10 @@ class PreviewModePanel : public Gtk::HBox {
         Gtk::ToggleButton* previewB;
         Gtk::ToggleButton* previewL;
         Gtk::ToggleButton* previewFocusMask;
+        Gtk::ToggleButton* backColor0;
+        Gtk::ToggleButton* backColor1;
+        Gtk::ToggleButton* backColor2;
+		Gtk::VBox* vbbackColor;
 		ImageArea* imageArea;
 
 		Gtk::Image* iR, *igR;
@@ -37,6 +41,9 @@ class PreviewModePanel : public Gtk::HBox {
 		Gtk::Image* iB, *igB;
 		Gtk::Image* iL, *igL;
 		Gtk::Image* iF, *igF;
+		Gtk::Image* iBC0, *igBC0;
+		Gtk::Image* iBC1, *igBC1;
+		Gtk::Image* iBC2, *igBC2;
 
 	public:
 		PreviewModePanel (ImageArea* ia);
@@ -47,16 +54,21 @@ class PreviewModePanel : public Gtk::HBox {
 		void toggleB ();
 		void toggleL ();
 		void toggleFocusMask ();
+		void togglebackColor0();
+		void togglebackColor1();
+		void togglebackColor2();
 
-		sigc::connection connR, connB, connG, connL, connFocusMask;
+		sigc::connection connR, connB, connG, connL, connFocusMask, connbackColor0, connbackColor1, connbackColor2;
 
 		void buttonToggled(Gtk::ToggleButton* tbpreview);
+		void buttonToggled_backColor(Gtk::ToggleButton* tbbackColor);
 
 		bool showR         () { return previewR->get_active (); }
 		bool showG         () { return previewG->get_active (); }
 		bool showB         () { return previewB->get_active (); }
 		bool showL         () { return previewL->get_active (); }
 		bool showFocusMask () { return previewFocusMask->get_active (); }
+		int GetbackColor();
 
 };
 
