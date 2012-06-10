@@ -934,7 +934,7 @@ fclose(f);*/
 		double var_Max = max(var_R,var_G,var_B);
 		double del_Max = var_Max - var_Min;
 		v = var_Max;
-		if (fabs(del_Max)<0.00001) {
+		if (del_Max<0.00001 && del_Max>-0.00001) {  // no fabs, slow!
 			h = 0;
 			s = 0;
 		}
