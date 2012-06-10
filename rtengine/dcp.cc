@@ -267,6 +267,8 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
                 newg = m2ProPhoto[1][0]*pImg->r[y][x] + m2ProPhoto[1][1]*pImg->g[y][x] + m2ProPhoto[1][2]*pImg->b[y][x];
                 newb = m2ProPhoto[2][0]*pImg->r[y][x] + m2ProPhoto[2][1]*pImg->g[y][x] + m2ProPhoto[2][2]*pImg->b[y][x];
 
+                // if point is in negative area, just the matrix, but not the LUT
+                if (newr>=0 && newg>=0 && newb>=0) {
                 ImProcFunctions::rgb2hsv(newr, newg, newb, h , s, v);
                 h*=6.f;  // RT calculates in [0,1]
 
@@ -411,6 +413,7 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
                 if (h >= 6.0f) h -= 6.0f;
                 h/=6.f;  
                 ImProcFunctions::hsv2rgb( h, s, v, newr, newg, newb);
+                }
 
                 pImg->r[y][x] = m2Work[0][0]*newr + m2Work[0][1]*newg + m2Work[0][2]*newb;
                 pImg->g[y][x] = m2Work[1][0]*newr + m2Work[1][1]*newg + m2Work[1][2]*newb;
