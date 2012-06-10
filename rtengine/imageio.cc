@@ -439,9 +439,16 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 	TIFFGetField(in, TIFFTAG_IMAGELENGTH, &height);
 
     uint16 bitspersample, samplesperpixel, sampleformat;
-	TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
-	TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
-    TIFFGetField(in, TIFFTAG_SAMPLEFORMAT, &sampleformat);
+	int hasTag = TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
+	hasTag &= TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
+    if (!hasTag) {
+        // These are needed
+        TIFFClose(in);
+		return IMIO_VARIANTNOTSUPPORTED;
+    }
+
+    hasTag=TIFFGetField(in, TIFFTAG_SAMPLEFORMAT, &sampleformat);
+    if (!hasTag) sampleformat=0;
 
     uint16 photometric;
 	if (!TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric) ||
