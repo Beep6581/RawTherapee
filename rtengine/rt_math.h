@@ -29,18 +29,18 @@ namespace rtengine {
 
 
 	template<typename _Tp>
-	inline const _Tp& LIM(const _Tp& a, const _Tp& b, const _Tp& c) {
+	inline const _Tp LIM(const _Tp& a, const _Tp& b, const _Tp& c) {
 		return std::max(b,std::min(a,c));
 	}
 
 	template<typename _Tp>
-	inline const _Tp& ULIM(const _Tp& a, const _Tp& b, const _Tp& c) {
+	inline const _Tp ULIM(const _Tp& a, const _Tp& b, const _Tp& c) {
 		return ((b < c) ? LIM(a,b,c) : LIM(a,c,b));
 	}
 
 	template<typename _Tp>
-	inline const _Tp& CLIP(const _Tp& a) {
-		return LIM(a, static_cast<typeof(a)>(0), static_cast<typeof(a)>(MAXVAL));
+	inline const _Tp CLIP(const _Tp& a) {
+		return LIM(a, static_cast<_Tp>(0), static_cast<_Tp>(MAXVAL));
 		//return ((a)>0.0? ((a)<MAXVAL?(a):MAXVAL):0.0);
 	}
 
