@@ -135,7 +135,7 @@ void ProcParams::setDefaults () {
     toneCurve.black         = 0;
     toneCurve.hlcompr       = 70;
     toneCurve.hlcomprthresh = 0;
-    toneCurve.shcompr       = 25;
+    toneCurve.shcompr       = 50;
     toneCurve.curve.clear ();
     toneCurve.curve.push_back(DCT_Linear);
     
