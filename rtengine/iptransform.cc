@@ -263,6 +263,8 @@ void ImProcFunctions::transformVignetteOnly (Imagefloat* original, Imagefloat* t
 
 // Transform WITH scaling (opt.) and CA, cubic interpolation
 #include "cubintch.cc"
+#include "cubint.cc"
+
 void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, 
     const LCPMapper *pLCPMap, bool fullImage) {
 
@@ -313,9 +315,10 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 	double ascale = params->commonTrans.autofill ? getTransformAutoFill (oW, oH, fullImage ? pLCPMap : NULL) : 1.0;
 
     // smaller crop images are a problem, so only when processing fully
-    bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage; 
+            bool enableLCPCA   = pLCPMap && params->lensProf.useCA && fullImage && pLCPMap->enableCA; 
     bool enableLCPDist = pLCPMap && params->lensProf.useDist && fullImage;
     if (enableLCPCA) enableLCPDist=false;
+            bool enableCA = enableLCPCA || needsCA();
 
 	// main cycle
 	#pragma omp parallel for if (multiThread)
@@ -361,7 +364,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                 r2=sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy);
             }
 
-            for (int c=0; c<3; c++) {
+                    for (int c=0; c < (enableCA ? 3 : 1); c++) {
                 double Dx = Dxc * (s + chDist[c]);
                 double Dy = Dyc * (s + chDist[c]);
 
@@ -385,19 +388,36 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 
 					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2) {
                         // all interpolation pixels inside image
+                                if (enableCA) 
                         interpolateTransformChannelsCubic (chOrig[c], xc-1, yc-1, Dx, Dy, &(chTrans[c][y][x]), vignmul);
+                                else
+                                    interpolateTransformCubic (original, xc-1, yc-1, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]), vignmul);
                     } else { 
                         // edge pixels
 						int y1 = LIM(yc,   0, original->height-1);
 						int y2 = LIM(yc+1, 0, original->height-1);
 						int x1 = LIM(xc,   0, original->width-1);
 						int x2 = LIM(xc+1, 0, original->width-1);
+
+                                if (enableCA) {
                         chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chOrig[c][y1][x2]*Dx*(1.0-Dy) + chOrig[c][y2][x1]*(1.0-Dx)*Dy + chOrig[c][y2][x2]*Dx*Dy);
+                                } else {
+                                    transformed->r[y][x] = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
+                                    transformed->g[y][x] = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
+                                    transformed->b[y][x] = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
 					}
 				}
-				else
+                        }
+                        else {
+                            if (enableCA) {
 					// not valid (source pixel x,y not inside source image, etc.)
 					chTrans[c][y][x] = 0;
+                            } else {
+                                transformed->r[y][x] = 0;
+                                transformed->g[y][x] = 0;
+                                transformed->b[y][x] = 0;
+                            }
+                        }
 			}
         }
     }
