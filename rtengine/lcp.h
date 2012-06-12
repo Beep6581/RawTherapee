@@ -71,6 +71,8 @@ namespace rtengine {
         static void XMLCALL XmlTextHandler (void *pLCPProfile, const XML_Char *s, int len);
         static void XMLCALL XmlEndHandler  (void *pLCPProfile, const char *el);
 
+        int filterBadFrames(double maxAvgDevFac, int minFramesLeft);
+
     public:
         // Common data
         Glib::ustring profileName, lensPrettyName, cameraPrettyName, lens, camera;  // lens/camera(=model) can be auto-matched with DNG
@@ -79,7 +81,8 @@ namespace rtengine {
         int persModelCount;
 
         // The correction frames
-        LCPPersModel* aPersModel[2000];  // Do NOT use std::list or something, it's buggy in GCC!
+        static const int MaxPersModelCount=3000;
+        LCPPersModel* aPersModel[MaxPersModelCount];  // Do NOT use std::list or something, it's buggy in GCC!
 
         LCPProfile(Glib::ustring fname);
 

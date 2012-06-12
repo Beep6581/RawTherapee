@@ -235,7 +235,7 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
 
     isFisheye=inCamProfiles=firstLIDone=inPerspect=inAlternateLensID=false;
     sensorFormatFactor=1;
-    for (int i=0;i<2000;i++) aPersModel[i]=NULL;
+    for (int i=0;i<MaxPersModelCount;i++) aPersModel[i]=NULL;
     persModelCount=0;
 
     FILE *pFile = safe_g_fopen(fname, "rb");
@@ -252,10 +252,20 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
 
     XML_ParserFree(parser);
 
+    //printf("Parsing %s\n", fname.c_str());
+    // Two phase filter: first filter out the very rough ones, that distord the average a lot
+    // force it, even if there are few frames (community profiles)
+    filterBadFrames(2.0, 0);
+    // from the non-distorded, filter again on new average basis, but only if there are enough frames left
+    filterBadFrames(1.5, 100);
+}
+
+// from all frames not marked as bad already, take average and filter out frames with higher deviation than this if there are enough values
+int LCPProfile::filterBadFrames(double maxAvgDevFac, int minFramesLeft) {
     // take average error per type, then calculated the maximum deviation allowed
     double errBase=0, errChrom=0, errVignette=0;
     int baseCount=0, chromCount=0, vignetteCount=0;
-    for (int pm=0;pm<2000 && aPersModel[pm];pm++) {
+    for (int pm=0;pm<MaxPersModelCount && aPersModel[pm];pm++) {
         if (aPersModel[pm]->hasModeData(0)) {
             errVignette+=aPersModel[pm]->vignette.meanErr;
             vignetteCount++;
@@ -273,35 +283,37 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
     }
 
     // Only if we have enough frames, filter out errors
-    if (baseCount+chromCount+vignetteCount>=100) {
+    int filtered=0;
+
+    if (baseCount+chromCount+vignetteCount>=minFramesLeft) {
         if (baseCount>0) errBase/=(double)baseCount;
         if (chromCount>0) errChrom/=(double)chromCount;
         if (vignetteCount>0) errVignette/=(double)vignetteCount;
 
         // Now mark all the bad ones as bad, and hasModeData will return false;
-        const double MaxDeviation=2;
-        int filtered=0;
-        for (int pm=0;pm<2000 && aPersModel[pm];pm++) {
-            if (aPersModel[pm]->hasModeData(0) && aPersModel[pm]->vignette.meanErr > MaxDeviation * errVignette) {
+        for (int pm=0;pm<MaxPersModelCount && aPersModel[pm];pm++) {
+            if (aPersModel[pm]->hasModeData(0) && aPersModel[pm]->vignette.meanErr > maxAvgDevFac * errVignette) {
                 aPersModel[pm]->vignette.badErr=true;
                 filtered++;
             }
 
-            if (aPersModel[pm]->hasModeData(1) && aPersModel[pm]->base.meanErr > MaxDeviation * errBase) {
+            if (aPersModel[pm]->hasModeData(1) && aPersModel[pm]->base.meanErr > maxAvgDevFac * errBase) {
                 aPersModel[pm]->base.badErr=true;
                 filtered++;
             }
 
             if (aPersModel[pm]->hasModeData(2) && 
-                (aPersModel[pm]->chromRG.meanErr > MaxDeviation * errChrom || aPersModel[pm]->chromG.meanErr > MaxDeviation * errChrom || aPersModel[pm]->chromBG.meanErr > MaxDeviation * errChrom)) {
+                (aPersModel[pm]->chromRG.meanErr > maxAvgDevFac * errChrom || aPersModel[pm]->chromG.meanErr > maxAvgDevFac * errChrom 
+                 || aPersModel[pm]->chromBG.meanErr > maxAvgDevFac * errChrom)) {
                 aPersModel[pm]->chromRG.badErr=aPersModel[pm]->chromG.badErr=aPersModel[pm]->chromBG.badErr=true;
                 filtered++;
             }
         }
 
-        //printf("Filtered %i frames from %i profile %s\n", filtered, baseCount+chromCount+vignetteCount, fname.c_str());
+        //printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered*100./(baseCount+chromCount+vignetteCount), maxAvgDevFac, baseCount+chromCount+vignetteCount-filtered);
     }
 
+    return filtered;
 }
 
 
@@ -333,7 +345,7 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
         pLow=pHigh;
     else if (!pHigh) 
         pHigh=pLow;
-    else if (mode==0 || focusDist>0) {
+    else {
         // Pass 2: We have some, so take the best aperture for vignette and best focus for CA and distortion
         // there are usually several frame per focal length. In the end pLow will have both flen and apterure/focdis below the target,
         // and vice versa pHigh
@@ -342,28 +354,51 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
         for (int pm=0;pm<persModelCount;pm++) {
             float aper=aPersModel[pm]->aperture; // float aperLog=log(aper);
             float focDist=aPersModel[pm]->focDist; float focDistLog=log(focDist)+euler;
+            double meanErr;
 
             if (aPersModel[pm]->hasModeData(mode)) {
                 if (mode==0) {
-                    // by aperture, and max out focus distance
+                    meanErr=aPersModel[pm]->vignette.meanErr;
+
+                    // by aperture (vignette), and max out focus distance
                     // tests showed doing this by log(aperture) is not as advisable
-                    if (aPersModel[pm]->focLen==bestFocLenLow && ((aper>=aperture && aper<pLow->aperture && pLow->aperture > aperture)
+                    if (aPersModel[pm]->focLen==bestFocLenLow && (
+                        (aper==aperture && pLow->vignette.meanErr>meanErr)
+                        || (aper>=aperture && aper<pLow->aperture && pLow->aperture > aperture)
                             || (aper<=aperture && (pLow->aperture>aperture || fabs(aperture-aper)<fabs(aperture - pLow->aperture))))) {
                     pLow=aPersModel[pm];
                 }
-                    if (aPersModel[pm]->focLen==bestFocLenHigh && ((aper<=aperture && aper>pHigh->aperture && pHigh->aperture < aperture)
+                    if (aPersModel[pm]->focLen==bestFocLenHigh && (
+                        (aper==aperture && pHigh->vignette.meanErr>meanErr)
+                        || (aper<=aperture && aper>pHigh->aperture && pHigh->aperture < aperture)
                             || (aper>=aperture && (pHigh->aperture<aperture || fabs(aperture-aper)<fabs(aperture - pHigh->aperture))))) {
                     pHigh=aPersModel[pm];
                 }
                 } else {
+                    meanErr = (mode==1 ? aPersModel[pm]->base.meanErr : aPersModel[pm]->chromG.meanErr);
+
+                    if (focusDist>0) {
                     // by focus distance
-                    if (aPersModel[pm]->focLen==bestFocLenLow && ((focDist>=focusDist && focDist<pLow->focDist && pLow->focDist > focusDist)
+                        if (aPersModel[pm]->focLen==bestFocLenLow && (
+                            (focDist==focusDist && (mode==1 ? pLow->base.meanErr : pLow->chromG.meanErr)>meanErr)
+                            || (focDist>=focusDist && focDist<pLow->focDist && pLow->focDist > focusDist)
                          || (focDist<=focusDist && (pLow->focDist>focusDist || fabs(focusDistLog-focDistLog)<fabs(focusDistLog - (log(pLow->focDist)+euler)))))) {
                         pLow=aPersModel[pm];
                     }
-                    if (aPersModel[pm]->focLen==bestFocLenHigh && ((focDist<=focusDist && focDist>pHigh->focDist && pHigh->focDist < focusDist)
+                        if (aPersModel[pm]->focLen==bestFocLenHigh && (
+                            (focDist==focusDist && (mode==1 ? pHigh->base.meanErr : pHigh->chromG.meanErr)>meanErr)
+                            || (focDist<=focusDist && focDist>pHigh->focDist && pHigh->focDist < focusDist)
                          || (focDist>=focusDist && (pHigh->focDist<focusDist || fabs(focusDistLog-focDistLog)<fabs(focusDistLog - (log(pHigh->focDist)+euler)))))) {
                         pHigh=aPersModel[pm];
+                    }
+                    } else {
+                        // no focus distance available, just error
+                        if (aPersModel[pm]->focLen==bestFocLenLow && (mode==1 ? pLow->base.meanErr : pLow->chromG.meanErr)>meanErr) {
+                            pLow=aPersModel[pm];
+                        }
+                        if (aPersModel[pm]->focLen==bestFocLenHigh && (mode==1 ? pHigh->base.meanErr : pHigh->chromG.meanErr)>meanErr) {
+                            pHigh=aPersModel[pm];
+                        }
                     }
                 }
             }
