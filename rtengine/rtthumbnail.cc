@@ -874,6 +874,9 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     if (params.coarse.vflip)       tr |= TR_VFLIP;
 
     // calculate spot wb (copy & pasted from stdimagesource)
+	unsigned short igammatab[256];
+	for (int i=0; i<256; i++)
+	    igammatab[i] = (unsigned short)(255.0*pow(i/255.0,CurveFactory::sRGBGamma));
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
