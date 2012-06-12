@@ -144,6 +144,8 @@ LCPMapper::LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm
         pProf->calcParams(2, focalLength, focusDist, aperture, &chrom[0], &chrom[1], &chrom[2]);
         for (int i=0;i<3;i++) chrom[i].prepareParams(fullWidth, fullHeight, focalLength, focalLength35mm, pProf->sensorFormatFactor, swapXY, mirrorX, mirrorY);
     }
+
+    enableCA = !vignette && focusDist>0;
 }
 
 void LCPMapper::correctDistortion(double& x, double& y) const {
@@ -164,6 +166,8 @@ void LCPMapper::correctDistortion(double& x, double& y) const {
 }
 
 void LCPMapper::correctCA(double& x, double& y, int channel) const {
+    if (!enableCA) return;
+
     double rsqr, xgreen, ygreen;
 
     // First calc the green channel like normal distortion

@@ -114,6 +114,8 @@ namespace rtengine {
         LCPModelCommon chrom[3];  // in order RedGreen/Green/BlueGreen
 
     public:
+        bool enableCA;  // is the mapper capable if CA correction?
+
         // precalculates the mapper.
         LCPMapper(LCPProfile* pProf, float focalLength, float focalLength35mm, float focusDist, float aperture, bool vignette, bool useCADistP, int fullWidth, int fullHeight,
             const CoarseTransformParams& coarse, int rawRotationDeg);
