@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <hlrec.h>
+#include "hlrec.h"
 #include <sstream>
 
 using namespace rtengine;
@@ -77,7 +77,7 @@ void HLRecovery::read (const ProcParams* pp, const ParamsEdited* pedited) {
 void HLRecovery::write (ProcParams* pp, ParamsEdited* pedited) {
 
     if (pedited) {
-        pedited->hlrecovery.method    = method->get_active_row_number()!=3;
+        pedited->hlrecovery.method    = method->get_active_row_number()!=4;
         pedited->hlrecovery.enabled   = !enabled->get_inconsistent();
     }
 

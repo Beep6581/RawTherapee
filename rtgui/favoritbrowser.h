@@ -20,8 +20,8 @@
 #define _FAVORITBROWSER_
 
 #include <gtkmm.h>
-#include <dirbrowserremoteinterface.h>
-#include <dirselectionlistener.h>
+#include "dirbrowserremoteinterface.h"
+#include "dirselectionlistener.h"
 
 class FavoritBrowser : public Gtk::VBox, public DirSelectionListener {
 

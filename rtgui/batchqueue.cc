@@ -16,18 +16,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <batchqueue.h>
 #include <glibmm.h>
 #include <glib/gstdio.h>
-#include <multilangmgr.h>
-#include <filecatalog.h>
-#include <batchqueuebuttonset.h>
-#include <guiutils.h>
-#include <safegtk.h>
-#include <processingjob.h>
-#include <rtimage.h>
 #include <cstring>
+#include "../rtengine/rt_math.h"
 
+#include "batchqueue.h"
+#include "multilangmgr.h"
+#include "filecatalog.h"
+#include "batchqueuebuttonset.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
+#include "processingjob.h"
+#include "rtimage.h"
+
+using namespace std;
 using namespace rtengine;
 
 BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
@@ -66,7 +69,7 @@ BatchQueue::~BatchQueue ()
 // Reduce the max size of a thumb, since thumb is processed synchronously on adding to queue
 // leading to very long waiting when adding more images
 int BatchQueue::calcMaxThumbnailHeight() {
-    return MIN(options.maxThumbnailHeight, 200);
+    return std::min(options.maxThumbnailHeight, 200);
 }
 
 // Function for virtual override in thumbbrowser base
@@ -90,7 +93,7 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 
 	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
 		(*entry)->setParent (this);
-		(*entry)->resize (MIN(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
+		(*entry)->resize (std::min(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
 
 	    // Is not and already present snapshot, so we create a new one
 		if( (*entry)->currentSnapshoId <0 ){
@@ -105,7 +108,6 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 			(*entry)->currentSnapshoId = id;
 		}else
 			(*entry)->thumbnail->setQueued((*entry)->currentSnapshoId,true );
-
 
 		(*entry)->selected = false;
 		if (!head)
@@ -222,7 +224,8 @@ void BatchQueue::loadBatchQueue( )
 
 int cancelItemUI (void* data)
 {
-    delete (BatchQueueEntry*)data;
+    //safe_g_remove( (static_cast<BatchQueueEntry*>(data))->savedParamsFile );
+    delete static_cast<BatchQueueEntry*>(data);
     return 0;
 }
 
@@ -233,7 +236,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
         Glib::RWLock::WriterLock l(entryRW);
 #endif
 
-        for (int i=0; i<items->size(); i++) {
+        for (size_t i=0; i<items->size(); i++) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
             if (entry->processing)
                 continue;
@@ -246,7 +249,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
                 g_idle_add (cancelItemUI, entry);
             }
         }
-        for (int i=0; i<fd.size(); i++) 
+        for (size_t i=0; i<fd.size(); i++)
             fd[i]->selected = false;
         lastClicked = NULL;
         selected.clear ();
@@ -291,7 +294,7 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
 #ifdef WIN32
         Glib::RWLock::WriterLock l(entryRW);
 #endif
-        for (int i=0; i<items->size(); i++) {
+        for (size_t i=0; i<items->size(); i++) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
             if (entry->processing)
                 continue;
@@ -316,7 +319,7 @@ void BatchQueue::selectAll () {
 
         lastClicked = NULL;
         selected.clear ();
-        for (int i=0; i<fd.size(); i++) {
+        for (size_t i=0; i<fd.size(); i++) {
             if (fd[i]->processing)
                 continue;
             fd[i]->selected = true;
@@ -327,7 +330,7 @@ void BatchQueue::selectAll () {
 }
 
 void BatchQueue::startProcessing () {
-    if (!processing && fd.size()>0) {
+    if (!processing && !fd.empty()) {
         BatchQueueEntry* next;
 
         {
@@ -336,7 +339,7 @@ void BatchQueue::startProcessing () {
 	        Glib::RWLock::WriterLock l(entryRW);
 	        #endif
 
-            next = (BatchQueueEntry*)fd[0];
+	        next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as processing        
             next->processing = true;
             processing = next;
@@ -406,11 +409,11 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         fd.erase (fd.begin());
 
         // return next job
-        if (fd.size()==0) {
+        if (fd.empty()) {
             queueEmptied=true;
         }
         else if (listener && listener->canStartNext ()) {
-            BatchQueueEntry* next = (BatchQueueEntry*)fd[0];
+            BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as selected        
             next->processing = true;
             processing = next;
@@ -427,7 +430,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         if (saveBatchQueue( )) {
             //safe_g_remove( processedParams );
             // Delete all files in directory \batch when finished, just to be sure to remove zombies
-            /*if( fd.size()==0 ){
+            /*if( fd.empty() ){
                 std::vector<Glib::ustring> names;
                 Glib::ustring batchdir = options.rtdir+"/batch/";
                 Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
@@ -452,7 +455,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase ( ::Thumbnail *thumb ) {
     std::vector<Glib::ustring> da;
     Glib::ustring origFileName( thumb->getFileName() );
 
-    for (int i=0; i<origFileName.size(); i++) {
+    for (size_t i=0; i<origFileName.size(); i++) {
         while ((i<origFileName.size()) && (origFileName[i]=='\\' || origFileName[i]=='/'))
             i++;
         if (i>=origFileName.size())
@@ -468,7 +471,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase ( ::Thumbnail *thumb ) {
     else
         pa.push_back (da[0]);
         
-    for (int i=1; i<da.size(); i++)
+    for (size_t i=1; i<da.size(); i++)
         pa.push_back (pa[i-1] + "/" + da[i]);
 
 //    for (int i=0; i<da.size(); i++)
@@ -524,7 +527,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase ( ::Thumbnail *thumb ) {
 					}
 					else
 						rank = '0'; // if param file not loaded (e.g. does not exist), default to rank=0
-						*/
+					*/
 
 					path += rank;
                 }
@@ -578,7 +581,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 }
 
 int setProgressUI (void* p) {
-    ((BatchQueue*)p)->redraw();
+    (static_cast<BatchQueue*>(p))->redraw();
     return 0;
 }
 
@@ -593,7 +596,7 @@ void BatchQueue::setProgress (double p) {
 void BatchQueue::buttonPressed (LWButton* button, int actionCode, void* actionData) {
     
     std::vector<ThumbBrowserEntryBase*> bqe;
-    bqe.push_back ((BatchQueueEntry*)actionData);
+    bqe.push_back (static_cast<BatchQueueEntry*>(actionData));
 
     if (actionCode==10)  // cancel
         cancelItems (&bqe);
@@ -610,7 +613,7 @@ struct NLParams {
 };
 
 int bqnotifylistenerUI (void* data) {
-    NLParams* params = (NLParams*)data;
+    NLParams* params = static_cast<NLParams*>(data);
     params->listener->queueSizeChanged (params->qsize, params->queueEmptied);
     delete params;
     return 0;

@@ -19,17 +19,21 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <safegtk.h>
-#include <guiutils.h>
+#include "safegtk.h"
+#include "../rtgui/guiutils.h"
 #include <glib/gstdio.h>
 #include <fcntl.h>
 #ifdef WIN32
 #include <windows.h>
+// for GCC32
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0600
+#endif
 #include <shlobj.h>
 #else
-#include <stdio.h>
+#include <cstdio>
 #endif
-#include <rtimage.h>
+#include "../rtgui/rtimage.h"
 #include <memory>
 
 
@@ -126,14 +130,14 @@ void safe_build_file_list (Glib::RefPtr<Gio::File> &dir, std::vector<Glib::ustri
 			// convert the current filename to lowercase in a new ustring
 			Glib::ustring fname = Glib::ustring(info->get_name()).lowercase();
 
-			int pos = fname.find_last_of('.');
-			if (pos > -1 && pos < (fname.length()-1)) {
+			size_t pos = fname.find_last_of('.');
+			if (pos < (fname.length()-1)) {
 				// there is an extension to the filename
 
 				Glib::ustring lcFileExt = fname.substr(pos+1).lowercase();
 
 				// look out if it has one of the retained extensions
-				for (unsigned int i=0; i<lcExtensions.size(); i++) {
+				for (size_t i=0; i<lcExtensions.size(); i++) {
 					if (lcFileExt == lcExtensions[i]) {
 						names.push_back (Glib::build_filename (directory, info->get_name()));
 						break;
@@ -262,12 +266,6 @@ bool safe_spawn_command_line_async (const Glib::ustring& cmd_utf8)
 
 bool safe_spawn_command_line_sync (const Glib::ustring& cmd_utf8)
 {
-	std::string cmd;
-	std::string stdOut;
-	std::string stdErr;
-
-	//bool success = false;  // unused
-
 	int exitStatus=-1;
 	try {
 		//cmd = Glib::filename_from_utf8(cmd_utf8);
@@ -350,9 +348,7 @@ int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode)
 }
 
 Glib::ustring safe_get_user_picture_dir() {
-    // TODO: MINGW32 has a problem with header files
-    #ifdef __MINGW64_VERSION_MAJOR
-
+    #ifdef WIN32
     // get_user_special_dir/pictures crashes on some Windows configurations.
     // so we use the safe native functions here
     WCHAR pathW[MAX_PATH]={0};

@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <multilangmgr.h>
-#include <batchtoolpanelcoord.h>
-#include <options.h>
-#include <filepanel.h>
-#include <procparamchangers.h>
-#include <addsetids.h>
+#include "multilangmgr.h"
+#include "batchtoolpanelcoord.h"
+#include "options.h"
+#include "filepanel.h"
+#include "procparamchangers.h"
+#include "addsetids.h"
 
 using namespace rtengine::procparams;
 
@@ -41,7 +41,7 @@ BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolP
 	toiM = 0;
 	toiX = 0;
 
-    for (int i=0; i<toolPanels.size(); i++)
+    for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->setBatchMode (true);
 }
 
@@ -51,7 +51,7 @@ void BatchToolPanelCoordinator::selectionChanged (const std::vector<Thumbnail*>&
         closeSession ();
         this->selected = selected;
         selFileNames.clear ();
-        for (int i=0; i<selected.size(); i++)
+        for (size_t i=0; i<selected.size(); i++)
             selFileNames.push_back (selected[i]->getFileName ());
         initSession ();
     }
@@ -61,18 +61,18 @@ void BatchToolPanelCoordinator::closeSession (bool save) {
 
     pparamsEdited.set (false);        
 
-    for (int i=0; i<selected.size(); i++)
+    for (size_t i=0; i<selected.size(); i++)
         selected[i]->removeThumbnailListener (this);
 
     if (somethingChanged && save) {
         
         // read new values from the gui
-        for (int i=0; i<toolPanels.size(); i++)
+        for (size_t i=0; i<toolPanels.size(); i++)
             toolPanels[i]->write (&pparams, &pparamsEdited);
 
         // combine with initial parameters and set
         ProcParams newParams;
-        for (int i=0; i<selected.size(); i++) {
+        for (size_t i=0; i<selected.size(); i++) {
             newParams = initialPP[i];
             pparamsEdited.combine (newParams, pparams, selected.size()==1);
 
@@ -80,10 +80,10 @@ void BatchToolPanelCoordinator::closeSession (bool save) {
     		for (unsigned int j=0; j<toolPanels.size(); j++)
     			toolPanels[j]->trimValues (&newParams);
 
-    		selected[i]->setProcParams (newParams, BATCHEDITOR, true);
+    		selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, true);
         }
     }
-    for (int i=0; i<paramcListeners.size(); i++)
+    for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->clearParamChanges ();
 }
 
@@ -92,17 +92,18 @@ void BatchToolPanelCoordinator::initSession () {
     somethingChanged = false;
 
     initialPP.resize (selected.size());
-    for (int i=0; i<selected.size(); i++) {
+    for (size_t i=0; i<selected.size(); i++) {
         initialPP[i] = selected[i]->getProcParams ();
         selected[i]->applyAutoExp (initialPP[i]);
         selected[i]->addThumbnailListener (this);
     }
 
+    // compare all the ProcParams and describe which parameters has different (i.e. inconsistent) values in pparamsEdited
     pparamsEdited.initFrom (initialPP);
 
     crop->setDimensions (100000, 100000);
 
-/*    if (selected.size()>0) {
+/*    if (!selected.empty()) {
         pparams = selected[0]->getProcParams ();
         for (int i=0; i<toolPanels.size(); i++) {
             toolPanels[i]->setDefaults (&pparams, &pparamsEdited);
@@ -113,7 +114,7 @@ void BatchToolPanelCoordinator::initSession () {
     }
 */
 
-    if (selected.size()>0) {
+    if (!selected.empty()) {
 
 		// The first selected image (in the thumbnail list, not the click list) is used to populate the EditorPanel and set the default values
 		pparams = selected[0]->getProcParams ();
@@ -191,7 +192,7 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY])  pparams.sharpenMicro.uniformity = 0;
 
 			if (options.baBehav[ADDSET_CHMIXER]) for (int i=0; i<3; i++) pparams.chmixer.red[i] = pparams.chmixer.green[i] = pparams.chmixer.blue[i] = 0;
-			if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
+			//if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
 
 			if (options.baBehav[ADDSET_WB_TEMPERATURE])  pparams.wb.temperature = 0;
 			if (options.baBehav[ADDSET_WB_GREEN])  pparams.wb.green = 0;
@@ -202,10 +203,10 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_FREE_OUPUT_GAMMA])  pparams.icm.gampos = 0;
 			if (options.baBehav[ADDSET_FREE_OUTPUT_SLOPE])  pparams.icm.slpos = 0;
 			
-			if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
+			//if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
 
-			if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
-			if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
+			//if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
+			//if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
 
 			if (options.baBehav[ADDSET_ROTATE_DEGREE])  pparams.rotate.degree = 0;
 			if (options.baBehav[ADDSET_DIST_AMOUNT])  pparams.distortion.amount = 0;
@@ -226,45 +227,46 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_RAWEXPOS_BLACKS])  pparams.raw.blackzero = pparams.raw.blackone = pparams.raw.blacktwo = pparams.raw.blackthree = 0;
 		}
 
-		for (int i=0; i<toolPanels.size(); i++) {
+		for (size_t i=0; i<toolPanels.size(); i++) {
 			toolPanels[i]->setDefaults (&pparams, &pparamsEdited);
 			toolPanels[i]->read (&pparams, &pparamsEdited);
 		}
-		for (int i=0; i<paramcListeners.size(); i++)
+		for (size_t i=0; i<paramcListeners.size(); i++)
+			// send this initial state to the History
 			paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M("BATCH_PROCESSING"), &pparamsEdited);
 	}
 }
 
 void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::ustring& descr) {
 
-    if (selected.size()==0)
+    if (selected.empty())
         return;
 
     somethingChanged = true;
 
     pparamsEdited.set (false);        
     // read new values from the gui
-    for (int i=0; i<toolPanels.size(); i++)
+    for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (&pparams, &pparamsEdited);
 
     // TODO: We may update the crop on coarse rotate events here, like in ToolPanelCoordinator::panelChanged
 
     if (event==rtengine::EvAutoExp || event==rtengine::EvClip) 
-        for (int i=0; i<selected.size(); i++) {
+        for (size_t i=0; i<selected.size(); i++) {
             initialPP[i].toneCurve.autoexp = pparams.toneCurve.autoexp;
             initialPP[i].toneCurve.clip = pparams.toneCurve.clip;
             selected[i]->applyAutoExp (initialPP[i]);
         }
 
     if (event==rtengine::EvAutoDIST) {
-        for (int i=0; i<selected.size(); i++) {
+        for (size_t i=0; i<selected.size(); i++) {
             initialPP[i].distortion.amount = pparams.distortion.amount;
         }
     }
 
     // combine with initial parameters and set
     ProcParams newParams;
-    for (int i=0; i<selected.size(); i++) {
+    for (size_t i=0; i<selected.size(); i++) {
         newParams = initialPP[i];
         // If only one file is selected, slider's addMode has been set to false, and hence the behave
         // like in SET mode like in an editor ; that's why we force the combination to the SET mode too
@@ -274,22 +276,22 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
 		for (unsigned int j=0; j<toolPanels.size(); j++)
 			toolPanels[j]->trimValues (&newParams);
 
-        selected[i]->setProcParams (newParams, BATCHEDITOR, false);
+        selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, false);
     }
 
-    for (int i=0; i<paramcListeners.size(); i++)
+    for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->procParamsChanged (&pparams, event, descr, &pparamsEdited);
 }
 
 void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green) {
 
-    if (selected.size()>0)
+    if (!selected.empty())
         selected[0]->getAutoWB (temp, green);       
 }
 
 void BatchToolPanelCoordinator::getCamWB (double& temp, double& green) {
     
-    if (selected.size()>0)
+    if (!selected.empty())
         selected[0]->getCamWB (temp, green);
 }    
 
@@ -307,30 +309,43 @@ void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChange
     }
 }
 
-void BatchToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
+/*
+ * WARNING: profileChange is actually called by the History only.
+ *          Using aProfile panel in the batch tool panel editor is actually
+ *          not supported by BatchToolPanelCoordinator::profileChange!
+ */
+void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
 
-    pparams = *nparams;
+    if (event==rtengine::EvProfileChanged) {
+    	// a profile has been selected in a hypothetical Profile panel
+    	// -> ACTUALLY NOT SUPPORTED
+    	return;
+    }
+
+    pparams = *(nparams->pparams);
     if (paramsEdited)
         pparamsEdited = *paramsEdited;
 
-    for (int i=0; i<toolPanels.size(); i++) 
+
+    for (size_t i=0; i<toolPanels.size(); i++)
+    	// writing the values to the GUI
         toolPanels[i]->read (&pparams, &pparamsEdited);
 
     somethingChanged = true;
 
     // read new values from the gui
-    for (int i=0; i<toolPanels.size(); i++)
+    for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (&pparams, &pparamsEdited);
 
-    // combine with initial parameters and set
+    // combine with initial parameters of each image and set
     ProcParams newParams;
-    for (int i=0; i<selected.size(); i++) {
+    for (size_t i=0; i<selected.size(); i++) {
         newParams = initialPP[i];
         pparamsEdited.combine (newParams, pparams, true);
-        selected[i]->setProcParams (newParams, BATCHEDITOR, false);
+        selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, false);
     }
 
-    for (int i=0; i<paramcListeners.size(); i++)
+    for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->procParamsChanged (&pparams, event, descr, &pparamsEdited);
 }
 
@@ -360,7 +375,7 @@ void BatchToolPanelCoordinator::spotWBselected (int x, int y, Thumbnail* thm) {
 
 //    toolBar->setTool (TOOL_HAND);
     if (x>0 && y>0 && thm) {
-        for (int i=0; i<selected.size(); i++)
+        for (size_t i=0; i<selected.size(); i++)
             if (selected[i]==thm) {
                 double temp;
                 double green;

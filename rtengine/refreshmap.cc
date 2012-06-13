@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <refreshmap.h>
-#include <procevents.h>
+#include "refreshmap.h"
+#include "procevents.h"
 
 int refreshmap[rtengine::NUMOFEVENTS] = {
 ALL,              // EvPhotoLoaded,
@@ -68,7 +68,7 @@ WHITEBALANCE,     // EvWBGreen,
 0,                // EvCDNEnabled:obsolete,
 0,                // EvCDNRadius: obsolete,
 0,                // EvCDNEdgeTolerance: obsolete,
-0,                // EvCDNEdgeSensitive: obsolete,
+ALL,              // EvPrefProfile,
 RETINEX,          // EvSHEnabled,
 RGBCURVE,         // EvSHHighlights,
 RGBCURVE,         // EvSHShadows,
@@ -89,7 +89,7 @@ ALLNORAW,         // EvHREnabled,
 ALLNORAW,         // EvHRAmount,
 ALLNORAW,         // EvHRMethod,
 ALL,              // EvWProfile,
-ALL,              // EvOProfile,
+OUTPUTPROFIL,     // EvOProfile,
 ALL,              // EvIProfile,
 TRANSFORM,        // EvVignetting,
 RGBCURVE,         // EvChMixer,
@@ -152,10 +152,10 @@ FLATFIELD,        // EvFlatFieldBlurType,
 TRANSFORM,        // EvAutoDIST,
 DIRPYRDENOISE,    // EvDPDNLumCurve,
 DIRPYRDENOISE,    // EvDPDNChromCurve,
-ALL,              // EvGAMMA
-ALL,              // EvGAMPOS
-ALL,              // EvGAMFREE
-ALL,              // EvSLPOS
+GAMMA,            // EvGAMMA
+GAMMA,            // EvGAMPOS
+GAMMA,            // EvGAMFREE
+GAMMA,            // EvSLPOS
 DARKFRAME,        // EvPreProcessExpBlackzero
 DARKFRAME,        // EvPreProcessExpBlackone
 DARKFRAME,        // EvPreProcessExpBlacktwo
@@ -181,7 +181,11 @@ SHARPENING,       // EvEPDStrength
 SHARPENING,       // EvEPDEdgeStopping
 SHARPENING,       // EvEPDScale
 SHARPENING,       // EvEPDReweightingIterates
-SHARPENING        // EvEPDEnabled
-
+SHARPENING,       // EvEPDEnabled
+RGBCURVE,         // EvRGBrCurve
+RGBCURVE,         // EvRGBgCurve
+RGBCURVE,         // EvRGBbCurve
+RGBCURVE          // EvNeutralExp
+	
 };
 

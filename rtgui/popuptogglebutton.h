@@ -21,8 +21,8 @@
 #ifndef _POPUPTOGGLEBUTTON_
 #define _POPUPTOGGLEBUTTON_
 
-#include <popupbutton.h>
-#include <popupcommon.h>
+#include "popupbutton.h"
+#include "popupcommon.h"
 
 class PopUpToggleButton : public Gtk::ToggleButton, public PopUpCommon {
 

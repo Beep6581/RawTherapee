@@ -19,13 +19,13 @@
 #ifndef _CROP_H_
 #define _CROP_H_
 
-#include <improccoordinator.h>
-#include <rtengine.h>
-#include <improcfun.h>
-#include <image8.h>
-#include <image16.h>
-#include <imagesource.h>
-#include <procevents.h>
+#include "improccoordinator.h"
+#include "rtengine.h"
+#include "improcfun.h"
+#include "image8.h"
+#include "image16.h"
+#include "imagesource.h"
+#include "procevents.h"
 
 namespace rtengine {
 
@@ -63,7 +63,7 @@ class Crop : public DetailedCrop {
         
     public:
              Crop        (ImProcCoordinator* parent);
-            ~Crop        ();
+            virtual ~Crop        ();
     
         bool hasListener () { return cropImageListener; }
         void update      (int todo);
@@ -73,7 +73,7 @@ class Crop : public DetailedCrop {
 		void fullUpdate  ();  // called via thread
 	
         void setListener (DetailedCropListener* il);
-        void destroy     () { delete this; }
+        void destroy     () {}
         int  get_skip    () { return skip;}
 };
 }

@@ -1,4 +1,4 @@
-#include <labimage.h>
+#include "labimage.h"
 #include <memory.h>
 namespace rtengine {
 

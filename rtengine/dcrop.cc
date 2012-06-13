@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <dcrop.h>
-#include <curves.h>
-#include <mytime.h>
-#include <refreshmap.h>
-#define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
-#define CLIP(a) ((a)<65535 ? (a) : (65535));
+#include "dcrop.h"
+#include "curves.h"
+#include "mytime.h"
+#include "refreshmap.h"
+#include "rt_math.h"
+
 #define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 
 namespace rtengine {
@@ -30,9 +30,9 @@ extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent)
     : resizeCrop(NULL), transCrop(NULL), updating(false),
-    cropw(-1), croph(-1), trafw(-1), trafh(-1),
+    skip(10),cropw(-1), croph(-1), trafw(-1), trafh(-1),
     borderRequested(32), cropAllocated(false),
-    cropImageListener(NULL), parent(parent),skip(10)
+    cropImageListener(NULL), parent(parent)
 {
     parent->crops.push_back (this);
 }
@@ -60,9 +60,6 @@ void Crop::setListener (DetailedCropListener* il) {
 
 void Crop::update (int todo) {
 	Glib::Mutex::Lock lock(cropMutex);
-
-	//flag for testing color accuracy
-	bool colortest = false;
 
     ProcParams& params = parent->params;
 
@@ -124,40 +121,41 @@ void Crop::update (int todo) {
 		double shradius = params.sh.radius;
 		if (!params.sh.hq) shradius *= radius / 1800.0;        
 		cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
-        cshmap->forceStat (parent->shmap->max, parent->shmap->min, parent->shmap->avg);
+        cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
     }
 
     // shadows & highlights & tone curve & convert to cielab
-	int xref,yref;
+	/*int xref,yref;
 	xref=000;yref=000;
 	if (colortest && cropw>115 && croph>115) 
 		for(int j=1;j<5;j++){	
 			xref+=j*30;yref+=j*30;
-			if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip, \
-				   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
-				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
+			if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip,
+				   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
+				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
 				   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
 				   parent->imgsrc->getGamma());
-		}
+		}*/
 	
     if (todo & M_RGBCURVE)
-        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap, params.toneCurve.saturation);
+        parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
+							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve );
 
-	xref=000;yref=000;
+	/*xref=000;yref=000;
 	if (colortest && cropw>115 && croph>115) 
 	for(int j=1;j<5;j++){	
 		xref+=j*30;yref+=j*30;
 		if (settings->verbose) {
-            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip, \
-			       baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,\
-			       baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256, \
+            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
+			       baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
+			       baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
 			       baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
 		    printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, 
-			       laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327, \
-			       laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
+			       laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
+			       laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
 			       laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
         }
-	}
+	}*/
 	
 	// apply luminance operations
 	if (todo & (M_LUMINANCE+M_COLOR)) {
@@ -184,9 +182,9 @@ void Crop::update (int todo) {
 	}
 
     // switch back to rgb
-    parent->ipf.lab2rgb (labnCrop, cropImg);
+    parent->ipf.lab2monitorRgb (labnCrop, cropImg);
 	
-	//parent->ipf.lab2rgb (laboCrop, cropImg);
+	//parent->ipf.lab2monitorRgb (laboCrop, cropImg);
 	
 	//cropImg = baseCrop->to8();
 	/*
@@ -199,24 +197,24 @@ void Crop::update (int todo) {
 		int glin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1]/255.0) * 255.0);
 		int blin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2]/255.0) * 255.0);
 
-		printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip, \
+		printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip,
 			   rlin,glin,blin);
-			   //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))], \
-			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)], \
+			   //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))],
+			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)],
 			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2)]);
 		//printf("after lab2rgb Lab lab2 Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-		printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, \
-			   labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327, \
-			   labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327, \
-			   labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+		printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
+			   labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
+			   labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
+			   labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327)q;
 	}
 	*/
 	/*
 	if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
 		xref=000;yref=000;
-		printf("dcrop final R= %d  G= %d  B= %d  \n", \
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)], \
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+1], \
+		printf("dcrop final R= %d  G= %d  B= %d  \n",
+			   cropImg->data[3*xref/(skip)*(cropImg->width+1)],
+			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+1],
 			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
 	}
 	*/
@@ -285,12 +283,12 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     rqcroph = rch;
 
     // store and set requested crop size
-    int rqx1 = CLIPTO(rqcropx,0,parent->fullw-1);
-    int rqy1 = CLIPTO(rqcropy,0,parent->fullh-1);
+    int rqx1 = LIM(rqcropx,0,parent->fullw-1);
+    int rqy1 = LIM(rqcropy,0,parent->fullh-1);
     int rqx2 = rqx1 + rqcropw - 1;
     int rqy2 = rqy1 + rqcroph - 1;
-    rqx2 = CLIPTO(rqx2,0,parent->fullw-1);
-    rqy2 = CLIPTO(rqy2,0,parent->fullh-1);
+    rqx2 = LIM(rqx2,0,parent->fullw-1);
+    rqy2 = LIM(rqy2,0,parent->fullh-1);
 
     this->skip = skip;
     
@@ -300,10 +298,10 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     int bx2 = rqx2 + skip*borderRequested;
     int by2 = rqy2 + skip*borderRequested;
     // clip it to fit into image area
-    bx1 = CLIPTO(bx1,0,parent->fullw-1);
-    by1 = CLIPTO(by1,0,parent->fullh-1);
-    bx2 = CLIPTO(bx2,0,parent->fullw-1);
-    by2 = CLIPTO(by2,0,parent->fullh-1);
+    bx1 = LIM(bx1,0,parent->fullw-1);
+    by1 = LIM(by1,0,parent->fullh-1);
+    bx2 = LIM(bx2,0,parent->fullw-1);
+    by2 = LIM(by2,0,parent->fullh-1);
     int bw = bx2 - bx1 + 1;
     int bh = by2 - by1 + 1;
     

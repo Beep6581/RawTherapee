@@ -1,0 +1,261 @@
+#!/usr/bin/env bash
+# Written by DrSlony
+# Version 2.2, 2012-03-31
+# Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
+# www.seeitmyway.org
+# www.rawtherapee.com
+
+checkDeps () {
+  hash hg 2>/dev/null || { echo >&2 "Mercurial not found, install Mercurial first and then re-run this script."; exit 1; }
+  hash curl 2>/dev/null || { echo >&2 "Curl not found, install curl first and then re-run this script."; exit 1; }
+}
+
+getBranches () {
+  branches=()
+  while read branch _; do
+    branches+=("$branch")
+  done < <(curl -s 'https://rawtherapee.googlecode.com/hg/?cmd=branchmap'; echo)
+}
+
+hgClone () {
+  [[ -d "${repo}" ]] || { echo "${repo} not found, cloning from GoogleCode"; hg clone https://rawtherapee.googlecode.com/hg/ "${repo}"; }
+  cd "${repo}" || exit 1
+}
+
+menu () {
+  num="1"
+  # list[0] is manually set to clone to avoid columns, so we make a bogus one and hide it so that the index will match the list entries
+  list[0]="im hungry omnonom"
+  buildTypes=("release" "debug")
+  for branch in "${branches[@]}"; do
+    for buildType in "${buildTypes[@]}"; do
+      list+=("$num - ${branch} - ${buildType}")
+      ((num++))
+    done
+  done
+  ((num--)) # cause of num++ in the for loop increasing a number after the last list item
+
+  printf "%s\n------------------------------------------\n#   -  branch            -  build type\n------------------------------------------\n"
+  printf "%s\n" "0   -  only clone the repository and exit"
+  printf "%s\n" "${list[@]:1}" | column -t
+  printf "%s\n" "------------------------------------------" "" "If you don't know which option to choose, then choose the \"default\" branch, \"release\" build type. Enter your choices, each number separated by a single space, e.g. 7 8" "" | fold -s
+  read -p "Your choices: " -a choiceNumbers
+
+  #sanitize
+  choiceNumbers=${choiceNumbers//[^0-9 ]/}
+  echo
+}
+
+compile () {
+  for choiceNumber in ${choiceNumbers[@]}
+    do
+      [[ $choiceNumber = 0 ]] && {
+        printf "%s\n" "Repository cloned."
+        hg parents --template 'RawTherapee-{latesttag}.{latesttagdistance} Latest tag: {latesttag}, Latest tag distance: {latesttagdistance}, Changeset: {rev}:{node|short}\n'
+        exit 0;
+        }
+
+      read _ _ branch _ buildType < <( echo ${list[$choiceNumber]} )
+      echo
+      printf "%-15b %b\n" "About to compile:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "" ""
+
+      [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Found old build directory \"$buildType\" in your repository. Removing it."; rm -rf "${repo}/${buildType}"; }
+      [[ -d "${repo}/rawtherapee" ]] && { printf "%s\n" "Found old build directory \"rawtherapee\" in your repository. Removing it."; rm -rf "${repo}/rawtherapee"; }
+      [[ -d "${HOME}/rt_${branch}_${buildType}" ]] && {
+        printf "%s\n" "Found old build directory ${HOME}/rt_${branch}_${buildType}" "It must be removed to proceed."
+        read -p "Do you want to remove it and proceed? y/n: " YN
+        [[ "$YN" = y ]] && rm -rf "${HOME}/rt_${branch}_${buildType}" || exit 1
+      }
+
+      cd "$repo" || exit 1
+      echo
+      printf "%s\n" "Cleaning out old CMake files"
+      make clean
+      ./clean.sh
+      echo
+
+      # print current line in script:
+      # printf "%s\n" "LINENO is \"$LINENO\", BASH_LINENO[i] is \"${BASH_LINENO[$i]}\". Patched is $patched"
+
+      # if you manually applied a patch, this check avoids having it undone or broken by a hg update
+      if [[ ! $patched = b ]]; then
+        printf "%s\n" "Updating the local repository."
+        hg pull
+        hg update ${branch}
+      else
+        printf "%s\n" "You ran this script with the \"b\" option (\"build-only\")." "Skipping repository update and binary zip creation."
+      fi
+
+      printf "%s\n" "" "Starting compilation:"
+      verLatesttag="`hg parents --template '{latesttag}'`"
+      verLatesttagdistance="`hg parents --template '{latesttagdistance}'`"
+      verMajor=${verLatesttag%%.*}
+
+      cmake -DCMAKE_BUILD_TYPE="$buildType" -DPROC_TARGET_NUMBER="$procTarget" -DCMAKE_C_FLAGS="-pipe" -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS" "$noomp" -DCMAKE_INSTALL_PREFIX="rawtherapee" -DBUILD_BUNDLE="ON" -DBINDIR="." -DDATADIR="." -DCACHE_NAME_SUFFIX="$verMajor" || { echo "Error during cmake, exiting." >&2; exit 1; }
+
+      time { make -j${cpuCount} install; } || { printf "%s\n" "" "Error during make, exiting."; exit 1; }
+      printf "%-15b %b\n" "" "" "Rawtherapee compiled:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "" ""
+
+      if [[ -d "${repo}/${buildType}" ]]; then
+        printf "%s\n" "Moving \"${repo}/${buildType}\" to \"${repo}/rawtherapee\""
+        mv "${repo}/${buildType}" "${repo}/rawtherapee"
+      elif [[ ! -d "${repo}/rawtherapee" ]]; then
+        { printf "%s\n" "Could not find the directory containing the compiled RawTherapee in ${repo}" "Please notify DrSlony in the forum:" "http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" "" "Exiting"; exit 1; }
+      fi
+
+      echo
+      cat AboutThisBuild.txt || { printf "%s\n" "${repo}/AboutThisBuild.txt not found, exiting."; exit 1; }
+      # AboutThisBuild.txt has a blank line at the end - 4.0.7
+
+      if [[ ! $patched = b ]]; then
+        printf "%s\n" "Zipping the compiled RawTherapee dir \"${repo}/rawtherapee\" and putting it in \"/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip\""
+        [[ -e "/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip" ]] && { rm "/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip" || exit 1; }
+        zip -Xrq "/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip" AboutThisBuild.txt rawtherapee
+      fi
+
+      printf "%s\n" "" "Moving \"${repo}/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}\""
+      mv "${repo}/rawtherapee" "${HOME}/rt_${branch}_${buildType}" || { printf "%s\n" "" "Could not move \"${repo}/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}\", exiting."; exit 1; }
+
+      printf "%-15b %b\n" "" "" "Build ready:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget"
+      printf "%s\n" "" "To run RawTherapee, fire up a terminal and type:" "~/rt_${branch}_${buildType}/rawtherapee" "" "------------------------------------------"
+      alert "RawTherapee-${verLatesttag}.${verLatesttagdistance} ready.\nChoice number ${choiceNumber}, branch: ${branch}, type: ${buildType}, target: ${procTarget}"
+      done
+}
+
+checkDistro () {
+  # list from http://linuxmafia.com/faq/Admin/release-files.html
+
+  distributions=(
+  "Annvix /etc/annvix-release"
+  "Arch /etc/arch-release"
+  "Arklinux /etc/arklinux-release"
+  "Aurox /etc/aurox-release"
+  "BlackCat /etc/blackcat-release"
+  "Cobalt /etc/cobalt-release"
+  "Conectiva /etc/conectiva-release"
+  "Debian /etc/debian_version"
+  "Fedora /etc/fedora-release"
+  "Gentoo /etc/gentoo-release"
+  "Immunix /etc/immunix-release"
+  "Knoppix knoppix_version"
+  "Linux-From-Scratch /etc/lfs-release"
+  "Linux-PPC /etc/linuxppc-release"
+  "Mandrake /etc/mandrake-release"
+  "Mandriva_Mandrake /etc/mandriva-release /etc/mandrake-release /etc/mandrakelinux-release"
+  "Mint /etc/linuxmint/info"
+  "MkLinux /etc/mklinux-release"
+  "Novell /etc/nld-release"
+  "PLD /etc/pld-release"
+  "RedHat /etc/redhat-release"
+  "CentOS /etc/centos-release"
+  "Slackware /etc/slackware-version"
+  "SME /etc/e-smith-release"
+  "Solaris /etc/release"
+  "SunJDS /etc/sun-release"
+  "SUSE /etc/SuSE-release"
+  "TinySofa /etc/tinysofa-release"
+  "TurboLinux /etc/turbolinux-release"
+  "Ubuntu /etc/lsb-release"
+  "UltraPenguin /etc/ultrapenguin-release"
+  "United /etc/UnitedLinux-release"
+  "VA-Linux /etc/va-release"
+  "YellowDog /etc/yellowdog-release"
+  )
+
+  for element in "${distributions[@]}"; do
+    read distro loc1 loc2 loc3 <<< "$element"
+    for loc in $loc1 $loc2 $loc3
+      do
+        # distribution=${distro} because if none of the elements match, distro will =YellowDog (last item in the list)
+        # add "break 2;" to the end if we really want to, but Ubuntu gets detected as Debian first, then as Ubuntu,
+        # so we might want to not break the loop.
+        [[ -e "$loc" ]] && { distribution=${distro}; echo "Distribution detected as ${distribution}"; } 
+    done
+  done
+
+  if [[ -z ${distribution} ]]
+    then
+      echo -e "\nCould not automatically detect your distribution.\nPlease enter it below followed immediately by the version\nwithout any spaces or punctuation marks and hit enter,\n.e.g. \"Ubuntu1104\", \"Mint11\" or \"Musix20\""
+      read distribution
+
+      #sanitize
+      distribution=${distribution//[^a-zA-Z0-9]/}
+
+      echo "Distribution entered manually: ${distribution}"
+  fi
+}
+
+checkBits () {
+  bits=`uname -m` || { echo -e "Is your system a 32 or 64 bit one?\nEnter 32 or 64 and hit enter."; read bits; bits=${bits//[^0-9]/}; echo "bits entered manually: ${bits}"; }
+  if [[ $bits = *64* ]]
+    then
+      bits=64
+      echo "Bits detected as ${bits}"
+    else
+      bits=32
+      echo "Bits detected as ${bits}"
+  fi
+
+  [[ $bits != 32 ]] && [[ $bits != 64 ]] && checkBits
+}
+
+setVars () {
+  unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
+  checkDistro
+  checkBits
+  repo="${HOME}/rawtherapee" && echo "Repository is set to ${repo}"
+  cpuCount="`grep -c 'processor' /proc/cpuinfo`"
+  if (( "$cpuCount" >= 1 && "$cpuCount" <= 8 )); then echo "CPU count detected as ${cpuCount}"; else cpuCount="1"; echo "CPU count set to ${cpuCount}"; fi
+  procTarget="2" && echo "procTarget set to ${procTarget}"
+
+  if hash notify-send 2>/dev/null; then alert_type="notify-send"
+    elif hash kdialog 2>/dev/null; then alert_type="kdialog"
+    elif hash zenity 2>/dev/null; then alert_type="zenity"
+    elif hash xmessage 2>/dev/null; then alert_type="xmessage"
+    else alert_type="none"
+  fi
+}
+
+alert () {
+  case "$alert_type" in
+  notify-send) notify-send "RawTherapee" "$1";;
+      kdialog) kdialog --title "RawTherapee" --passivepopup "`printf "$1"`";;
+       zenity) zenity --notification --text="`printf "$1"`" &;;
+     xmessage) xmessage -nearmouse "`printf "$1"`" &;;
+         none) printf "%b\n" "" "Compilation complete:" "$1";;
+  esac
+}
+
+finishUp () {
+  # builds=( /tmp/RawTherapee* ); for f in ${builds[@]}; do echo ${f#/tmp/}; done
+  if [[ $patched != b ]]; then
+    printf "%s\n" "RawTherapee zipped builds ready in /tmp"
+    ls -lh /tmp/RawTherapee*
+  fi
+  printf "%s\n" "" "Finished building all chosen versions of RawTherapee"
+}
+
+# PROGRAM START
+printf "%s\n\n" "Running the RawTherapee build script."
+
+while getopts "bh?-nh" opt; do
+  case $opt in
+    b)    patched="b"
+          printf "%s\n" "Buildonly flag detected, will not hg pull or update";;
+    n)    noomp="-DOPTION_OMP=OFF"
+          printf "%s\n" "OpenMP disabled";;
+    h|\?|\-) printf "%s\n\n" "Usage: $0 [-b] [-n]" "-b stands for \"buildonly mode\", which skips hg pull && hg update, so that you can use this script to easily compile RawTherapee with whatever patches you manually applied." "-n disables OpenMP." | fold -s
+          exit 0;;
+  esac
+done
+
+shift $((OPTIND-1))
+[ "$1" = "--" ] && shift
+
+setVars
+checkDeps
+getBranches
+menu
+hgClone
+compile
+finishUp

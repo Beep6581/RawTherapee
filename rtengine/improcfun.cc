@@ -16,24 +16,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <improcfun.h>
-#include <curves.h>
-#include <math.h>
-#include <colorclip.h>
-#include <gauss.h>
-#include <bilateral2.h>
-#include <minmax.h>
-#include <mytime.h>
+#include <cmath>
 #include <glib.h>
 #include <glibmm.h>
-#include <iccstore.h>
-#include <impulse_denoise.h>
-#include <imagesource.h>
-#include <rtthumbnail.h>
-#include <utils.h>
-#include <iccmatrices.h>
 
+#include "rtengine.h"
+#include "improcfun.h"
+#include "curves.h"
+#include "colorclip.h"
+#include "gauss.h"
+#include "bilateral2.h"
+#include "mytime.h"
+#include "iccstore.h"
+#include "impulse_denoise.h"
+#include "imagesource.h"
+#include "rtthumbnail.h"
+#include "utils.h"
+#include "iccmatrices.h"
+#include "calc_distort.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -43,32 +44,16 @@ namespace rtengine {
 	
 	using namespace procparams;
 	
-#undef MAXVAL
-#undef CMAXVAL
-#undef MAXL
-#undef MAX
-#undef MIN
 #undef ABS
-#undef CLIP
 #undef CLIPS
 #undef CLIPC
-#undef CLIPTO
-	
-#define MAXVAL  0xffff
-#define CMAXVAL 0xffff
-#define MAXL 	0xffff
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
+
 #define ABS(a) ((a)<0?-(a):(a))
-#define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define CLIPS(a) ((a)>-32768?((a)<32767?(a):32767):-32768)
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIP2(a) ((a)<MAXVAL ? a : MAXVAL )
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
 	
-#define D50x 0.96422
-#define D50z 0.82521
 #define u0 4.0*D50x/(D50x+15+3*D50z)
 #define v0 9.0/(D50x+15+3*D50z)
 	
@@ -157,8 +142,8 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 	if (monitor) {
         cmsHPROFILE iprof = iccStore->getXYZProfile ();       
         lcmsMutex->lock ();
-		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_FLT, monitor, TYPE_RGB_8, settings->colorimetricIntent,
-            cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
+		monitorTransform = cmsCreateTransform (iprof, TYPE_RGB_16, monitor, TYPE_RGB_8, settings->colorimetricIntent,
+            cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
         lcmsMutex->unlock ();
 	}
 	
@@ -178,10 +163,10 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 		memset (hist[i], 0, 65536*sizeof(int));
     }
 
-    int H = original->height;
 #ifdef _OPENMP
 	#pragma omp parallel if (multiThread)
     {
+	        int H = original->height;
 		int tid = omp_get_thread_num();
 		int nthreads = omp_get_num_threads();
 		int blk = H/nthreads;
@@ -207,12 +192,13 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 }
 
 // Process RGB image and convert to LAB space
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, SHMap* shmap, int sat) {
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve) {
 
     int h_th, s_th;
     if (shmap) {
-        h_th = shmap->max - params->sh.htonalwidth * (shmap->max - shmap->avg) / 100;
-        s_th = params->sh.stonalwidth * (shmap->avg - shmap->min) / 100;
+        h_th = shmap->max_f - params->sh.htonalwidth * (shmap->max_f - shmap->avg) / 100;
+        s_th = params->sh.stonalwidth * (shmap->avg - shmap->min_f) / 100;
     }
 
     bool processSH  = params->sh.enabled && shmap!=NULL && (params->sh.highlights>0 || params->sh.shadows>0);
@@ -221,7 +207,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
     TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
 
-	float toxyz[3][3] = {
+    double toxyz[3][3] = {
         {
         	( wprof[0][0] / D50x),
         	( wprof[0][1] / D50x),
@@ -238,8 +224,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     };
 
 
-    bool mixchannels = (params->chmixer.red[0]!=100	|| params->chmixer.red[1]!=0     || params->chmixer.red[2]!=0   || \
-						params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 || \
+    bool mixchannels = (params->chmixer.red[0]!=100	|| params->chmixer.red[1]!=0     || params->chmixer.red[2]!=0   ||
+						params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 ||
 						params->chmixer.blue[0]!=0	|| params->chmixer.blue[1]!=0    || params->chmixer.blue[2]!=100);
 
     int tW = working->width;
@@ -267,8 +253,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
 	
 	const float exp_scale = pow (2.0, params->toneCurve.expcomp);
-	const float comp = (MAX(0,params->toneCurve.expcomp) + 1.0)*params->toneCurve.hlcompr/100.0;
-	const float shoulder = ((65536.0/MAX(1,exp_scale))*(params->toneCurve.hlcomprthresh/200.0))+0.1;
+	const float comp = (max(0.0, params->toneCurve.expcomp) + 1.0)*params->toneCurve.hlcompr/100.0;
+	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(params->toneCurve.hlcomprthresh/200.0))+0.1;
 	const float hlrange = 65536.0-shoulder;
 	
 	
@@ -318,8 +304,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 			//TODO: proper treatment of out-of-gamut colors
 			//float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
-			float tonefactor=((r<MAXVAL ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) + \
-							  (g<MAXVAL ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) + \
+			float tonefactor=((r<MAXVAL ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
+							  (g<MAXVAL ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
 							  (b<MAXVAL ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
 			
 			r = (r*tonefactor);
@@ -334,9 +320,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			b *= tonefactor;
 			
 			//brightness/contrast and user tone curve
-			r = tonecurve[r];
-			g = tonecurve[g];
-			b = tonecurve[b];
+			r = rCurve[tonecurve[r]];
+			g = gCurve[tonecurve[g]];
+			b = bCurve[tonecurve[b]];
 			
 			//if (r<0 || g<0 || b<0) {
 			//	printf("negative values row=%d col=%d  r=%f  g=%f  b=%f  \n", i,j,r,g,b);
@@ -346,7 +332,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 				float h,s,v;
 				rgb2hsv(r,g,b,h,s,v);
 				if (sat > 0.5) {
-					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-MIN(s,1))));
+					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-min(s,1.0f))));
 					if (s<0) s=0;
 				} else {
 					if (sat < -0.5)
@@ -364,7 +350,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					//shift saturation
 					float satparam = (sCurve->getVal((double)h)-0.5) * 2;
 					if (satparam > 0.00001) {
-						s = (1-satparam)*s+satparam*(1-SQR(1-MIN(s,1)));
+						s = (1-satparam)*s+satparam*(1-SQR(1-min(s,1.0f)));
 						if (s<0) s=0;
 					} else {
 						if (satparam < -0.00001)
@@ -377,7 +363,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					float valparam = vCurve->getVal((double)h)-0.5;
 					valparam *= (1-SQR(SQR(1-s)));
 					if (valparam > 0.00001) {
-						v = (1-valparam)*v+valparam*(1-SQR(1-MIN(v,1)));
+						v = (1-valparam)*v+valparam*(1-SQR(1-min(v,1.0f)));
 						if (v<0) v=0;
 					} else {
 						if (valparam < -0.00001)
@@ -505,7 +491,7 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
 	}
 	
 
-#include "cubic.cc"
+//#include "cubic.cc"
 
 void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 
@@ -579,8 +565,8 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
             
             float nna = ((oa[i][j]+shift_a) * real_c * amul);
             float nnb = ((ob[i][j]+shift_b) * real_c * bmul);
-            lnew->a[i][j] = CLIPTO(nna,-32000.0f,32000.0f);
-            lnew->b[i][j] = CLIPTO(nnb,-32000.0f,32000.0f);
+            lnew->a[i][j] = LIM(nna,-32000.0f,32000.0f);
+            lnew->b[i][j] = LIM(nnb,-32000.0f,32000.0f);
         }
 */
     //delete [] cmultiplier;
@@ -669,10 +655,9 @@ fclose(f);*/
 }
 
 	
-	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double defgain, double clip, \
+	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double defgain, double clip,
 									   double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh) {
 		
-		double corr = 1;//pow(2.0, defgain);//defgain may be redundant legacy of superceded code???
 		float scale = 65536.0;
 		float midgray=0.15;//0.18445f;//middle gray in linear gamma = 0.18445*65535
 		
@@ -688,10 +673,19 @@ fclose(f);*/
 		ave /= (sum);
 		
 		//find median of luminance
-		int median=0, count=0;
+		int median=0, count=histogram[0];
 		while (count<sum/2) {
 			median++;
 			count += histogram[median];
+		}
+		if (median==0) {//probably the image is a blackframe
+			expcomp=0;
+			black=0;
+			bright=0;
+			contr=0;
+			hlcompr=0;
+			hlcomprthresh=0;
+			return;
 		}
 		
 		// compute std dev on the high and low side of median 
@@ -703,7 +697,7 @@ fclose(f);*/
 				octile[count] += histogram[i];
 				if (octile[count]>sum/8 || (count==7 && octile[count]>sum/16)) {
 					octile[count]=log(1+i)/log(2);
-					count++;// = MIN(count+1,7);
+					count++;// = min(count+1,7);
 				}
 			}
 			if (i<ave) {
@@ -717,6 +711,15 @@ fclose(f);*/
 			}
 			
 		}
+		if (losum==0 || hisum==0) {//probably the image is a blackframe
+			expcomp=0;
+			black=0;
+			bright=0;
+			contr=0;
+			hlcompr=0;
+			hlcomprthresh=0;
+			return;
+		}
 		lodev = (lodev/(log(2)*losum));
 		hidev = (hidev/(log(2)*hisum));
 		if (octile[7]>log(imax+1)/log2(2)) {
@@ -725,9 +728,19 @@ fclose(f);*/
 		// compute weighted average separation of octiles
 		// for future use in contrast setting
 		for (int i=1; i<6; i++) {
-			ospread += (octile[i+1]-octile[i])/MAX(0.5,(i>2 ? (octile[i+1]-octile[3]) : (octile[3]-octile[i])));
+			ospread += (octile[i+1]-octile[i])/max(0.5f,(i>2 ? (octile[i+1]-octile[3]) : (octile[3]-octile[i])));
 		}
 		ospread /= 5;
+		if (ospread<=0) {//probably the image is a blackframe
+			expcomp=0;
+			black=0;
+			bright=0;
+			contr=0;
+			hlcompr=0;
+			hlcomprthresh=0;
+			return;
+		}
+		
 		
 		// compute clipping points based on the original histograms (linear, without exp comp.)
 		int clipped = 0;
@@ -762,7 +775,7 @@ fclose(f);*/
 		shc <<= histcompr;
 		
 		//prevent division by 0
-		if (ave==0) ave=1;
+		if (ave<1) return;
 		if (lodev==0) lodev=1;
 		
 		//compute exposure compensation as geometric mean of the amount that
@@ -774,7 +787,7 @@ fclose(f);*/
 
 		/*expcomp = (expcomp1*fabs(expcomp2)+expcomp2*fabs(expcomp1))/(fabs(expcomp1)+fabs(expcomp2));
 		if (expcomp<0) {
-			MIN(0.0f,MAX(expcomp1,expcomp2));
+			min(0.0f,max(expcomp1,expcomp2));
 		}*/
 		expcomp = 0.5 * (expcomp1 + expcomp2);
 		float gain = exp(expcomp*log(2));
@@ -788,12 +801,11 @@ fclose(f);*/
 		
 		//now tune hlcompr to bring back rawmax to 65535
 		hlcomprthresh = 33;
-		float shoulder = ((scale/MAX(1,gain))*(hlcomprthresh/200.0))+0.1;
 		//this is a series approximation of the actual formula for comp,
 		//which is a transcendental equation
 		float comp = (gain*((float)whiteclip)/scale - 1)*2;//*(1-shoulder/scale);
-		hlcompr=(int)(100*comp/(MAX(0,expcomp) + 1.0));
-		hlcompr = MAX(0,MIN(100,hlcompr));
+		hlcompr=(int)(100*comp/(max(0.0,expcomp) + 1.0));
+		hlcompr = max(0,min(100,hlcompr));
 		
 		//now find brightness if gain didn't bring ave to midgray using
 		//the envelope of the actual 'control cage' brightness curve for simplicity
@@ -804,25 +816,25 @@ fclose(f);*/
 			bright = (midgray-midtmp)*15.0/(0.10833-0.0833*midtmp);
 		}
 		
-		bright = 0.25*/*(median/ave)*(hidev/lodev)*/MAX(0,bright);
+		bright = 0.25*/*(median/ave)*(hidev/lodev)*/max(0,bright);
 		
 		//compute contrast that spreads the average spacing of octiles
 		contr = 50.0*(1.1-ospread);
-		contr = MAX(0,MIN(100,contr));
+		contr = max(0,min(100,contr));
 		
 		//diagnostics
-		printf ("**************** AUTO LEVELS ****************\n");
-		printf ("gain1= %f   gain2= %f		gain= %f\n",expcomp1,expcomp2,gain);
-		printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
+		//printf ("**************** AUTO LEVELS ****************\n");
+		//printf ("gain1= %f   gain2= %f		gain= %f\n",expcomp1,expcomp2,gain);
+		//printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
 		//printf ("average: %f\n",ave);
 		//printf ("median/average: %f\n",median/ave);
-		printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
+		//printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
 		//printf ("lodev: %f\n",lodev);
 		//printf ("hidev: %f\n",hidev);
-		printf ("rawmax= %d  whiteclip= %d  gain= %f\n",rawmax,whiteclip,gain);
+		//printf ("rawmax= %d  whiteclip= %d  gain= %f\n",rawmax,whiteclip,gain);
 		
-		printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);    
-		printf ("ospread= %f\n",ospread);
+		//printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);    
+		//printf ("ospread= %f\n",ospread);
 		
 		
 		/*
@@ -858,8 +870,6 @@ fclose(f);*/
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-	 #include "calc_distort.h"
-	 
 	double ImProcFunctions::getAutoDistor  (const Glib::ustring &fname, int thumb_size) {
 		if (fname != "") {
 			rtengine::RawMetaDataLocation ri;
@@ -921,8 +931,8 @@ fclose(f);*/
 		double var_G = g / 65535.0;
 		double var_B = b / 65535.0;
 		
-		double var_Min = MIN(MIN(var_R,var_G),var_B);
-		double var_Max = MAX(MAX(var_R,var_G),var_B);
+		double var_Min = min(var_R,var_G,var_B);
+		double var_Max = max(var_R,var_G,var_B);
 		double del_Max = var_Max - var_Min;
 		v = var_Max;
 		if (fabs(del_Max)<0.00001) {
@@ -947,7 +957,7 @@ fclose(f);*/
 	void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 		
 		float h1 = h*6; // sector 0 to 5
-		int i = floor( h1 );
+		int i = (int)h1;  // floor() is very slow, and h1 is always >0
 		float f = h1 - i; // fractional part of h
 		
 		float p = v * ( 1 - s );
@@ -992,7 +1002,7 @@ fclose(f);*/
 	}
 	
 	
-	void ImProcFunctions::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]) {
+	void ImProcFunctions::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]) {
 		
 		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
 		//Note that it is only at this point that we should have need of clipping color data
@@ -1020,7 +1030,7 @@ fclose(f);*/
 void ImProcFunctions::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {
 {//from Dcraw (D.Coffin)
   int i;
-  double g[6], bnd[2]={0,0}, r;
+  double g[6], bnd[2]={0,0};
 
   g[0] = pwr;
   g[1] = ts;

@@ -16,19 +16,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <options.h>
-#include <stdio.h>
+#include "options.h"
+#include <cstdio>
 #include <glib/gstdio.h>
 #include <sstream>
-#include <multilangmgr.h>
-#include <safekeyfile.h>
-#include <addsetids.h>
-#include <guiutils.h>
-#include <safegtk.h>
+#include "multilangmgr.h"
+#include "../rtengine/safekeyfile.h"
+#include "addsetids.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
 #include "version.h"
 
 #ifdef WIN32
 #include <windows.h>
+// for GCC32
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0600
+#endif
 #include <Shlobj.h>
 #endif
 
@@ -49,7 +53,6 @@ void Options::setDefaults () {
     windowWidth = 900;
     windowHeight = 560;
     windowMaximized = false;
-    firstRun = true;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
     saveFormat.jpegQuality = 100;
@@ -68,17 +71,18 @@ void Options::setDefaults () {
     savePathTemplate = "%p1/converted/%f";
     savePathFolder = "";
     saveUsePathTemplate = true;
-    defProfRaw = "default";
-    defProfImg = "neutral";
+    defProfRaw = "Default";
+    defProfImg = "Neutral";
     dateFormat = "%y-%m-%d";
     adjusterDelay = 0;
     startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)
     startupPath = "";
     profilePath = "profiles";
+    loadSaveProfilePath = "";
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
-	preferencesWidth = 0;
-	preferencesHeight = 0;
+    preferencesWidth = 0;
+    preferencesHeight = 0;
     toolPanelWidth = 300;
     browserToolPanelWidth = 300;
     browserToolPanelHeight = 300;
@@ -93,7 +97,7 @@ void Options::setDefaults () {
     fbShowHidden = false;
     fbArrangement = 2;					// was 0
     multiUser = true;
-    version = VERSION;
+    version = "0.0.0.0";				// temporary value; will be correctly set in RTWindow::on_realize
     thumbSize = 240;					// was 80
     thumbSizeTab = 80;
     showHistory = true;
@@ -170,6 +174,38 @@ void Options::setDefaults () {
     menuGroupLabel = true;
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
+    menuGroupExtProg = true;
+
+    fastexport_bypass_sharpening         = true;
+    fastexport_bypass_sharpenEdge        = true;
+    fastexport_bypass_sharpenMicro       = true;
+    //fastexport_bypass_lumaDenoise        = true;
+    //fastexport_bypass_colorDenoise       = true;
+    fastexport_bypass_defringe           = true;
+    fastexport_bypass_dirpyrDenoise      = true;
+    fastexport_bypass_sh_hq              = true;
+    fastexport_bypass_dirpyrequalizer    = true;
+    fastexport_bypass_raw_all_enhance    = true;
+    fastexport_bypass_raw_ccSteps        = true;
+    fastexport_bypass_raw_dcb_iterations = true;
+    fastexport_bypass_raw_dcb_enhance    = true;
+    fastexport_bypass_raw_ca             = true;
+    fastexport_bypass_raw_linenoise      = true;
+    fastexport_bypass_raw_greenthresh    = true;
+    fastexport_bypass_raw_df             = true;
+    fastexport_bypass_raw_ff             = true;
+    fastexport_raw_dmethod               = "fast";
+    fastexport_icm_input                 = "(camera)";
+    fastexport_icm_working               = "sRGB";
+    fastexport_icm_output                = "RT_sRGB";
+    fastexport_icm_gamma                 = "default";
+    fastexport_resize_enabled            = true;
+    fastexport_resize_scale              = 1;
+    fastexport_resize_appliesTo          = "Cropped area";
+    fastexport_resize_method             = "Lanczos";
+    fastexport_resize_dataspec           = 3;
+    fastexport_resize_width              = 1000;
+    fastexport_resize_height             = 1000;
 
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p
@@ -179,48 +215,48 @@ void Options::setDefaults () {
 
     // Reminder: 0 = SET mode, 1 = ADD mode
     int babehav[] = {
-			1,  // ADDSET_TC_EXPCOMP
-			1,  // ADDSET_TC_BRIGHTNESS
-			1,  // ADDSET_TC_BLACKLEVEL
-			1,  // ADDSET_TC_CONTRAST
-			1,  // ADDSET_SH_HIGHLIGHTS
-			1,  // ADDSET_SH_SHADOWS
-			1,  // ADDSET_SH_LOCALCONTRAST
-			1,  // ADDSET_LC_BRIGHTNESS
-			1,  // ADDSET_LC_CONTRAST
+			0,  // ADDSET_TC_EXPCOMP
+			0,  // ADDSET_TC_BRIGHTNESS
+			0,  // ADDSET_TC_BLACKLEVEL
+			0,  // ADDSET_TC_CONTRAST
+			0,  // ADDSET_SH_HIGHLIGHTS
+			0,  // ADDSET_SH_SHADOWS
+			0,  // ADDSET_SH_LOCALCONTRAST
+			0,  // ADDSET_LC_BRIGHTNESS
+			0,  // ADDSET_LC_CONTRAST
 			0,  // ADDSET_SHARP_AMOUNT
-			0,  // ADDSET_LD_EDGETOLERANCE
-			1,  // ADDSET_WB_TEMPERATURE
-			1,  // ADDSET_WB_GREEN
-			0,  // ADDSET_CBOOST_AMOUNT
-			0,  // ADDSET_CS_BLUEYELLOW
-			0,  // ADDSET_CS_GREENMAGENTA
+			//0,  // ADDSET_LD_EDGETOLERANCE -- From obsolete and removed tool
+			0,  // ADDSET_WB_TEMPERATURE
+			0,  // ADDSET_WB_GREEN
+			//0,  // ADDSET_CBOOST_AMOUNT -- From obsolete and removed tool
+			//0,  // ADDSET_CS_BLUEYELLOW -- From obsolete and removed tool
+			//0,  // ADDSET_CS_GREENMAGENTA -- From obsolete and removed tool
 			0,  // ADDSET_ROTATE_DEGREE
 			0,  // ADDSET_DIST_AMOUNT
 			0,  // ADDSET_PERSPECTIVE
 			0,  // ADDSET_CA
-			1,  // ADDSET_VIGN_AMOUNT
-			1,  // ADDSET_LC_SATURATION
-			1,  // ADDSET_TC_SATURATION
-			1,  // ADDSET_TC_HLCOMPAMOUNT
+			0,  // ADDSET_VIGN_AMOUNT
+			0,  // ADDSET_LC_SATURATION
+			0,  // ADDSET_TC_SATURATION
+			0,  // ADDSET_TC_HLCOMPAMOUNT
 			0,  // ADDSET_TC_HLCOMPTHRESH
-			1,  // ADDSET_TC_SHCOMP
-			1,  // ADDSET_DIRPYREQ
+			0,  // ADDSET_TC_SHCOMP
+			0,  // ADDSET_DIRPYREQ
 			0,  // ADDSET_DIRPYRDN_CHLUM
 			0,  // ADDSET_DIRPYRDN_GAMMA
-			1,  // ADDSET_CHMIXER
-			1,  // ADDSET_PREPROCESS_GREENEQUIL
+			0,  // ADDSET_CHMIXER
+			0,  // ADDSET_PREPROCESS_GREENEQUIL
 			0,  // ADDSET_PREPROCESS_LINEDENOISE
 			0,  // ADDSET_RAWCACORR
-			1,  // ADDSET_RAWEXPOS_LINEAR
-			1,  // ADDSET_RAWEXPOS_PRESER
-			1,  // ADDSET_RAWEXPOS_BLACKS
+			0,  // ADDSET_RAWEXPOS_LINEAR
+			0,  // ADDSET_RAWEXPOS_PRESER
+			0,  // ADDSET_RAWEXPOS_BLACKS
 			0,  // ADDSET_SHARPENEDGE_AMOUNT
 			0,  // ADDSET_SHARPENMICRO_AMOUNT
 			0,  // ADDSET_SHARPENEDGE_PASS
 			0,  // ADDSET_SHARPENMICRO_UNIFORMITY
-			1,  // ADDSET_VIBRANCE_PASTELS
-			1,  // ADDSET_VIBRANCE_SATURATED
+			0,  // ADDSET_VIBRANCE_PASTELS
+			0,  // ADDSET_VIBRANCE_SATURATED
 			0,   // ADDSET_VIBRANCE_PSTHRESHOLD
 			0,   // ADDSET_FREE_OUPUT_GAMMA
 			0,   // ADDSET_FREE_OUTPUT_SLOPE
@@ -241,14 +277,13 @@ void Options::setDefaults () {
 #endif
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
-	rtSettings.autoMonitorProfile = false;
-    rtSettings.LCMSSafeMode = true;
-    rtSettings.adobe = "RT_Middle_gsRGB"; // put the name of yours profiles (here windows)
+    rtSettings.autoMonitorProfile = false;
+    rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"
     rtSettings.prophoto10 = "RT_Large_g10"; // these names appear in the menu "output profile"
     rtSettings.srgb10 = "RT_sRGB_g10";
     rtSettings.widegamut = "WideGamutRGB";
-    rtSettings.srgb = "RT_sRGB_gBT709";
+    rtSettings.srgb = "RT_sRGB";
     rtSettings.bruce = "Bruce";
     rtSettings.beta = "BetaRGB";
     rtSettings.best = "BestRGB";
@@ -304,7 +339,6 @@ if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "Theme"))            theme           = keyFile.get_string ("General", "Theme");
     if (keyFile.has_key ("General", "SlimUI"))           slimUI          = keyFile.get_boolean ("General", "SlimUI");
     if (keyFile.has_key ("General", "UseSystemTheme"))   useSystemTheme  = keyFile.get_boolean ("General", "UseSystemTheme");
-    if (keyFile.has_key ("General", "FirstRun"))         firstRun        = keyFile.get_boolean ("General", "FirstRun");
     if( keyFile.has_key ("General", "DarkFramesPath"))   rtSettings.darkFramesPath = keyFile.get_string("General", "DarkFramesPath");
     if( keyFile.has_key ("General", "FlatFieldsPath"))   rtSettings.flatFieldsPath = keyFile.get_string("General", "FlatFieldsPath");
     if( keyFile.has_key ("General", "Verbose"))          rtSettings.verbose = keyFile.get_boolean ( "General", "Verbose");
@@ -339,20 +373,21 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
 	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
-	if (keyFile.has_key ("Output", "WriteMetaData"))   outputMetaData             = keyFile.get_boolean("Output", "WriteMetaData");
+	if (keyFile.has_key ("Output", "WriteMetaData"))    outputMetaData             = keyFile.get_boolean("Output", "WriteMetaData");
 }
 
 if (keyFile.has_group ("Profiles")) { 
-    if (keyFile.has_key ("Profiles", "Directory"))      profilePath     = keyFile.get_string ("Profiles", "Directory");
-    if (keyFile.has_key ("Profiles", "RawDefault"))     defProfRaw      = keyFile.get_string ("Profiles", "RawDefault");
-    if (keyFile.has_key ("Profiles", "ImgDefault"))     defProfImg      = keyFile.get_string ("Profiles", "ImgDefault");
-    if (keyFile.has_key ("Profiles", "MetaDefault"))    defMetadata     = keyFile.get_string ("Profiles", "MetaDefault");
-    if (keyFile.has_key ("Profiles", "SaveXmpInsideDng"))   embedXmpIntoDNG = keyFile.get_boolean ("Profiles", "SaveXmpInsideDng");
-    if (keyFile.has_key ("Profiles", "SaveXmpInsideJpeg"))  embedXmpIntoJPG = keyFile.get_boolean ("Profiles", "SaveXmpInsideJpeg");
-    if (keyFile.has_key ("Profiles", "SaveXmpInsidePng"))   embedXmpIntoPNG = keyFile.get_boolean ("Profiles", "SaveXmpInsidePng");
-    if (keyFile.has_key ("Profiles", "SaveXmpInsideTiff"))  embedXmpIntoTIFF = keyFile.get_boolean ("Profiles", "SaveXmpInsideTiff");
-    if (keyFile.has_key ("Profiles", "SaveParamsToCache"))  saveParamsCache = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
-    //if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
+    if (keyFile.has_key ("Profiles", "Directory"))              profilePath          = keyFile.get_string ("Profiles", "Directory");
+    if (keyFile.has_key ("Profiles", "LoadSaveProfilePath"))    loadSaveProfilePath  = keyFile.get_string ("Profiles", "LoadSaveProfilePath");
+    if (keyFile.has_key ("Profiles", "RawDefault"))             defProfRaw           = keyFile.get_string ("Profiles", "RawDefault");
+    if (keyFile.has_key ("Profiles", "ImgDefault"))             defProfImg           = keyFile.get_string ("Profiles", "ImgDefault");
+    if (keyFile.has_key ("Profiles", "MetaDefault"))            defMetadata          = keyFile.get_string ("Profiles", "MetaDefault");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideDng"))       embedXmpIntoDNG      = keyFile.get_boolean ("Profiles", "SaveXmpInsideDng");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideJpeg"))      embedXmpIntoJPG      = keyFile.get_boolean ("Profiles", "SaveXmpInsideJpeg");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsidePng"))       embedXmpIntoPNG      = keyFile.get_boolean ("Profiles", "SaveXmpInsidePng");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideTiff"))      embedXmpIntoTIFF     = keyFile.get_boolean ("Profiles", "SaveXmpInsideTiff");
+    if (keyFile.has_key ("Profiles", "SaveParamsToCache"))      saveParamsCache      = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
+    //if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation   = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
     if (keyFile.has_key ("Profiles", "CustomProfileBuilder"))   customProfileBuilder = keyFile.get_string  ("Profiles", "CustomProfileBuilder");
 }
 
@@ -383,6 +418,7 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "menuGroupLabel")) menuGroupLabel = keyFile.get_boolean ("File Browser", "menuGroupLabel");
     if (keyFile.has_key ("File Browser", "menuGroupFileOperations")) menuGroupFileOperations = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
     if (keyFile.has_key ("File Browser", "menuGroupProfileOperations")) menuGroupProfileOperations = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
+    if (keyFile.has_key ("File Browser", "menuGroupExtProg")) menuGroupExtProg = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
     if (keyFile.has_key ("File Browser", "colorLabels")) colorLabels = keyFile.get_string_list ("File Browser","colorLabels");
 }
 
@@ -445,21 +481,16 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
-    if( keyFile.has_key ("Color Management", "GamutICC"))        rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
-    if( keyFile.has_key ("Color Management", "RT_Adobe_RGB"))       rtSettings.adobe            = keyFile.get_string("Color Management", "RT_Adobe_RGB");
-    if( keyFile.has_key ("Color Management", "RT_Pro_Photo"))       rtSettings.prophoto            = keyFile.get_string("Color Management","RT_Pro_Photo");
-    if( keyFile.has_key ("Color Management", "RT_Pro_Photo10"))       rtSettings.prophoto10            = keyFile.get_string("Color Management","RT_Pro_Photo10");
-	
-    if( keyFile.has_key ("Color Management", "Wide_Gamut"))      rtSettings.widegamut            = keyFile.get_string("Color Management","Wide_Gamut");
-    if( keyFile.has_key ("Color Management", "RT_S_rgb"))      	 rtSettings.srgb            = keyFile.get_string("Color Management","RT_S_rgb");
-    if( keyFile.has_key ("Color Management", "RT_S_rgb10"))      	 rtSettings.srgb10            = keyFile.get_string("Color Management","RT_S_rgb10");
-	
-    if( keyFile.has_key ("Color Management", "B_eta"))      	 rtSettings.beta            = keyFile.get_string("Color Management","B_eta");
-    if( keyFile.has_key ("Color Management", "B_est"))      	 rtSettings.best            = keyFile.get_string("Color Management","B_est");
-    if( keyFile.has_key ("Color Management", "B_ruce"))      	 rtSettings.bruce            = keyFile.get_string("Color Management","B_ruce");
-
-    // Disabled (default is true) till issues are sorted out
-    //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
+    if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
+    if( keyFile.has_key ("Color Management", "AdobeRGB"))       rtSettings.adobe                = keyFile.get_string("Color Management", "AdobeRGB");
+    if( keyFile.has_key ("Color Management", "ProPhoto"))       rtSettings.prophoto             = keyFile.get_string("Color Management", "ProPhoto");
+    if( keyFile.has_key ("Color Management", "ProPhoto10"))     rtSettings.prophoto10           = keyFile.get_string("Color Management", "ProPhoto10");
+    if( keyFile.has_key ("Color Management", "WideGamut"))      rtSettings.widegamut            = keyFile.get_string("Color Management", "WideGamut");
+    if( keyFile.has_key ("Color Management", "sRGB"))           rtSettings.srgb                 = keyFile.get_string("Color Management", "sRGB");
+    if( keyFile.has_key ("Color Management", "sRGB10"))         rtSettings.srgb10               = keyFile.get_string("Color Management", "sRGB10");
+    if( keyFile.has_key ("Color Management", "Beta"))           rtSettings.beta                 = keyFile.get_string("Color Management", "Beta");
+    if( keyFile.has_key ("Color Management", "Best"))           rtSettings.best                 = keyFile.get_string("Color Management", "Best");
+    if( keyFile.has_key ("Color Management", "Bruce"))          rtSettings.bruce                = keyFile.get_string("Color Management", "Bruce");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -473,6 +504,38 @@ if (keyFile.has_group ("Sounds")) {
     if (keyFile.has_key ("Sounds", "LngEditProcDoneSecs")) sndLngEditProcDoneSecs = keyFile.get_double ("Sounds", "LngEditProcDoneSecs");
 }
 
+if (keyFile.has_group ("Fast Export")) {
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpening"        ))  fastexport_bypass_sharpening          = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpening"        );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenEdge"       ))  fastexport_bypass_sharpenEdge         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"       );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_sharpenMicro"      ))  fastexport_bypass_sharpenMicro        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"      );
+    //if (keyFile.has_key ("Fast Export", "fastexport_bypass_lumaDenoise"       ))  fastexport_bypass_lumaDenoise         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"       );
+    //if (keyFile.has_key ("Fast Export", "fastexport_bypass_colorDenoise"      ))  fastexport_bypass_colorDenoise        = keyFile.get_boolean ("Fast Export", "fastexport_bypass_colorDenoise"      );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_defringe"          ))  fastexport_bypass_defringe            = keyFile.get_boolean ("Fast Export", "fastexport_bypass_defringe"          );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrDenoise"     ))  fastexport_bypass_dirpyrDenoise       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"     );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_sh_hq"             ))  fastexport_bypass_sh_hq               = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sh_hq"             );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrequalizer"   ))  fastexport_bypass_dirpyrequalizer     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_all_enhance"   ))  fastexport_bypass_raw_all_enhance     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ccSteps"       ))  fastexport_bypass_raw_ccSteps         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"       );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_iterations"))  fastexport_bypass_raw_dcb_iterations  = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_iterations");
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_enhance"   ))  fastexport_bypass_raw_dcb_enhance     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_enhance"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ca"            ))  fastexport_bypass_raw_ca              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ca"            );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_linenoise"     ))  fastexport_bypass_raw_linenoise       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_linenoise"     );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_greenthresh"   ))  fastexport_bypass_raw_greenthresh     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_greenthresh"   );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_df"            ))  fastexport_bypass_raw_df              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_df"            );
+    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ff"            ))  fastexport_bypass_raw_ff              = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ff"            );
+    if (keyFile.has_key ("Fast Export", "fastexport_raw_dmethod"              ))  fastexport_raw_dmethod                = keyFile.get_string  ("Fast Export", "fastexport_raw_dmethod"              );
+    if (keyFile.has_key ("Fast Export", "fastexport_icm_input"                ))  fastexport_icm_input                  = keyFile.get_string  ("Fast Export", "fastexport_icm_input"                );
+    if (keyFile.has_key ("Fast Export", "fastexport_icm_working"              ))  fastexport_icm_working                = keyFile.get_string  ("Fast Export", "fastexport_icm_working"              );
+    if (keyFile.has_key ("Fast Export", "fastexport_icm_output"               ))  fastexport_icm_output                 = keyFile.get_string  ("Fast Export", "fastexport_icm_output"               );
+    if (keyFile.has_key ("Fast Export", "fastexport_icm_gamma"                ))  fastexport_icm_gamma                  = keyFile.get_string  ("Fast Export", "fastexport_icm_gamma"                );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_enabled"           ))  fastexport_resize_enabled             = keyFile.get_boolean ("Fast Export", "fastexport_resize_enabled"           );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_scale"             ))  fastexport_resize_scale               = keyFile.get_double  ("Fast Export", "fastexport_resize_scale"             );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_appliesTo"         ))  fastexport_resize_appliesTo           = keyFile.get_string  ("Fast Export", "fastexport_resize_appliesTo"         );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_method"            ))  fastexport_resize_method              = keyFile.get_string  ("Fast Export", "fastexport_resize_method"            );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_dataspec"          ))  fastexport_resize_dataspec            = keyFile.get_integer ("Fast Export", "fastexport_resize_dataspec"          );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_width"             ))  fastexport_resize_width               = keyFile.get_integer ("Fast Export", "fastexport_resize_width"             );
+    if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            ))  fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
+}
         filterOutParsedExtensions ();
 
         return 0;
@@ -502,7 +565,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("General", "SlimUI", slimUI);
     keyFile.set_boolean ("General", "UseSystemTheme", useSystemTheme);
     keyFile.set_string  ("General", "Version", VERSION);
-    keyFile.set_boolean ("General", "FirstRun", false);
     keyFile.set_string  ("General", "DarkFramesPath", rtSettings.darkFramesPath);
     keyFile.set_string  ("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
     keyFile.set_boolean ("General", "Verbose", rtSettings.verbose);
@@ -544,6 +606,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "menuGroupLabel", menuGroupLabel);
     keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
     keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
+    keyFile.set_boolean ("File Browser", "menuGroupExtProg", menuGroupExtProg);
     keyFile.set_string_list ("File Browser","colorLabels",colorLabels);
    
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
@@ -573,6 +636,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "WriteMetaData", outputMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
+    keyFile.set_string  ("Profiles", "LoadSaveProfilePath", loadSaveProfilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
     keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
     keyFile.set_string  ("Profiles", "MetaDefault",defMetadata);
@@ -627,22 +691,19 @@ int Options::saveToFile (Glib::ustring fname) {
 
     keyFile.set_integer ("Crop Settings", "PPI", cropPPI);
 
-    keyFile.set_string  ("Color Management", "ICCDirectory",   rtSettings.iccDirectory);
+    keyFile.set_string  ("Color Management", "ICCDirectory", rtSettings.iccDirectory);
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
 	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
-    keyFile.set_integer ("Color Management", "Intent",         rtSettings.colorimetricIntent);
-    keyFile.set_boolean ("Color Management", "LCMSSafeMode", rtSettings.LCMSSafeMode);
-    keyFile.set_string  ("Color Management", "RT_Adobe_RGB", rtSettings.adobe);
-    keyFile.set_string  ("Color Management", "RT_Pro_Photo", rtSettings.prophoto);
-    keyFile.set_string  ("Color Management", "RT_Pro_Photo10", rtSettings.prophoto10);
-	
-    keyFile.set_string  ("Color Management", "Wide_Gamut", rtSettings.widegamut);
-    keyFile.set_string  ("Color Management", "RT_S_rgb", rtSettings.srgb);
-    keyFile.set_string  ("Color Management", "RT_S_rgb10", rtSettings.srgb10);
-	
-    keyFile.set_string  ("Color Management", "B_eta", rtSettings.beta);
-    keyFile.set_string  ("Color Management", "B_est", rtSettings.best);
-    keyFile.set_string  ("Color Management", "B_ruce", rtSettings.bruce);
+    keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
+    keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
+    keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);
+    keyFile.set_string  ("Color Management", "ProPhoto10", rtSettings.prophoto10);
+    keyFile.set_string  ("Color Management", "WideGamut", rtSettings.widegamut);
+    keyFile.set_string  ("Color Management", "sRGB", rtSettings.srgb);
+    keyFile.set_string  ("Color Management", "sRGB10", rtSettings.srgb10);
+    keyFile.set_string  ("Color Management", "Beta", rtSettings.beta);
+    keyFile.set_string  ("Color Management", "Best", rtSettings.best);
+    keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
     keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
     keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
 
@@ -653,6 +714,38 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Sounds", "BatchQueueDone", sndBatchQueueDone);
     keyFile.set_string  ("Sounds", "LngEditProcDone", sndLngEditProcDone);
     keyFile.set_double  ("Sounds", "LngEditProcDoneSecs", sndLngEditProcDoneSecs);
+
+
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpening"         , fastexport_bypass_sharpening        );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenEdge"        , fastexport_bypass_sharpenEdge       );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sharpenMicro"       , fastexport_bypass_sharpenMicro      );
+    //keyFile.set_boolean ("Fast Export", "fastexport_bypass_lumaDenoise"        , fastexport_bypass_lumaDenoise       );
+    //keyFile.set_boolean ("Fast Export", "fastexport_bypass_colorDenoise"       , fastexport_bypass_colorDenoise      );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_defringe"           , fastexport_bypass_defringe          );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"      , fastexport_bypass_dirpyrDenoise     );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq"              , fastexport_bypass_sh_hq             );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"    , fastexport_bypass_dirpyrequalizer   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"    , fastexport_bypass_raw_all_enhance   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"        , fastexport_bypass_raw_ccSteps       );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_dcb_iterations" , fastexport_bypass_raw_dcb_iterations);
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_dcb_enhance"    , fastexport_bypass_raw_dcb_enhance   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ca"             , fastexport_bypass_raw_ca            );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_linenoise"      , fastexport_bypass_raw_linenoise     );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_greenthresh"    , fastexport_bypass_raw_greenthresh   );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_df"             , fastexport_bypass_raw_df            );
+    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ff"             , fastexport_bypass_raw_ff            );
+    keyFile.set_string  ("Fast Export", "fastexport_raw_dmethod"               , fastexport_raw_dmethod              );
+    keyFile.set_string  ("Fast Export", "fastexport_icm_input"                 , fastexport_icm_input                );
+    keyFile.set_string  ("Fast Export", "fastexport_icm_working"               , fastexport_icm_working              );
+    keyFile.set_string  ("Fast Export", "fastexport_icm_output"                , fastexport_icm_output               );
+    keyFile.set_string  ("Fast Export", "fastexport_icm_gamma"                 , fastexport_icm_gamma                );
+    keyFile.set_boolean ("Fast Export", "fastexport_resize_enabled"            , fastexport_resize_enabled           );
+    keyFile.set_double  ("Fast Export", "fastexport_resize_scale"              , fastexport_resize_scale             );
+    keyFile.set_string  ("Fast Export", "fastexport_resize_appliesTo"          , fastexport_resize_appliesTo         );
+    keyFile.set_string  ("Fast Export", "fastexport_resize_method"             , fastexport_resize_method            );
+    keyFile.set_integer ("Fast Export", "fastexport_resize_dataspec"           , fastexport_resize_dataspec          );
+    keyFile.set_integer ("Fast Export", "fastexport_resize_width"              , fastexport_resize_width             );
+    keyFile.set_integer ("Fast Export", "fastexport_resize_height"             , fastexport_resize_height            );
 
 
     FILE *f = safe_g_fopen (fname, "wt");
@@ -673,37 +766,18 @@ void Options::load () {
 	// Find the application data path
 
 #ifdef WIN32
-	/*
-	 * If LOCALAPPDATA exists, RT run on a WinVista/7 system, so we use LOCALAPPDATA as is
-	 * otherwise RT run on a Win2000/XP system, so we rebuild the path like this: %USERPROFILE%\Local Settings\Application Data
-	 *
-	 * Folder redirection is then fully supported on WinVista/7, but not on Win2000/XP
-	 */
 	const gchar* dataPath;
 	Glib::ustring dPath;
-
-	// ->ODUIS: How to make that commented out code work ?
-
-	/*WCHAR path[MAX_PATH] = {0};
-	if (SHGetSpecialFolderPathW(NULL, path, CSIDL_LOCAL_APPDATA, false)) {
-		dPath = path;
-		printf("SHGetSpecialFolderPathW: \"%s\"\n", dPath.c_str());
-	}
-	else {
-		printf("SHGetSpecialFolderPathW: Fail!\n");
-	}*/
 
 	dataPath = g_getenv("RT_CACHE");
 	if (dataPath != NULL)
 		rtdir = Glib::ustring(dataPath);
 	else {
-		dataPath = g_getenv("LOCALAPPDATA");
-		if (dataPath != NULL)
-			rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
-		else {
-			dataPath = g_getenv("USERPROFILE");
-			if (dataPath != NULL)
-				rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
+        WCHAR pathW[MAX_PATH]={0}; char pathA[MAX_PATH];
+
+        if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_LOCAL_APPDATA,false)) {
+            WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
+            rtdir = Glib::ustring(pathA) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
 		}
 	}
 #else
@@ -769,6 +843,7 @@ void Options::load () {
 	}
 
 	// create iptc templates directory if it doesn't exist
+	Revoir ca!
 	Glib::ustring iptcDir = argv0 + "/iptc";
 	if (options.multiUser)
 		iptcDir = rtdir + "/iptc";

@@ -19,7 +19,7 @@
 #ifndef _FILESELECTIONCHANGELISTENER_
 #define _FILESELECTIONCHANGELISTENER_
 
-#include <thumbnail.h>
+#include "thumbnail.h"
 
 class FileSelectionChangeListener {
 

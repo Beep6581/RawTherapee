@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <sharpening.h>
+#include "sharpening.h"
 #include <iomanip>
-#include <math.h>
-#include <guiutils.h>
+#include <cmath>
+#include "guiutils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

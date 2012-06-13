@@ -5,9 +5,10 @@
  *********************************************************************/
 
 /* Standard includes */
-#include <assert.h>
-#include <math.h>    /* logf() */
-#include <stdlib.h>  /* malloc() */
+#include <cassert>
+#include <cmath>    /* logf() */
+#include <cstdlib>  /* malloc() */
+#include "../rt_math.h"
 
 /* Our includes */
 #include "base.h"
@@ -16,6 +17,7 @@
 #include "klt.h"
 #include "pyramid.h"
 
+using namespace std;
 
 static const int mindist = 10;
 static const int window_size = 7;
@@ -71,9 +73,10 @@ static void** _createArray2D(int ncols, int nrows, int nbytes)
 
   tt = (char **) malloc(nrows * sizeof(void *) +
                         ncols * nrows * nbytes);
-  if (tt == NULL)
+  if (tt == NULL) {
     KLTError("(createArray2D) Out of memory");
-
+    exit(1);
+  }
   for (i = 0 ; i < nrows ; i++)
     tt[i] = ((char *) tt) + (nrows * sizeof(void *) +
                              i * ncols * nbytes);
@@ -231,6 +234,7 @@ KLT_FeatureTable KLTCreateFeatureTable(
     for (i = 0 ; i < nFrames ; i++)
       ft->feature[j][i] = first + j*nFrames + i;
 
+  free(first);
   /* Return feature table */
   return(ft);
 }

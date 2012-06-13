@@ -16,12 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <stdimagesource.h>
-#include <mytime.h>
-#include <iccstore.h>
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
-#include <curves.h>
+#include "stdimagesource.h"
+#include "mytime.h"
+#include "iccstore.h"
+#include "curves.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -331,11 +329,11 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 	
 	if (cmp.input!="(none)") {
 		lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 
-            settings->LCMSSafeMode ? cmsFLAGS_NOOPTIMIZE : cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 
+            cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
 		lcmsMutex->unlock ();
 		
-        im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+        im->ExecCMSTransform(hTransform);
 		
         cmsDeleteTransform(hTransform);
 	}
@@ -362,11 +360,11 @@ void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 
     if (cmp.input!="(none)") {
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 
-            settings->LCMSSafeMode ? 0 : cmsFLAGS_NOCACHE);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16, out, TYPE_RGB_16, settings->colorimetricIntent, 
+            cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
         
-        im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+        im->ExecCMSTransform(hTransform);
         
         cmsDeleteTransform(hTransform);
     }
@@ -507,7 +505,7 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
-    for (int i=0; i<red.size(); i++) {
+    for (size_t i=0; i<red.size(); i++) {
         transformPixel (red[i].x, red[i].y, tran, x, y);
         if (x>=0 && y>=0 && x<img->width && y<img->height) {
             reds += img->r[y][x];

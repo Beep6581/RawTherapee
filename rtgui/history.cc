@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <history.h>
-#include <multilangmgr.h>
-#include <rtimage.h>
-#include <safegtk.h>
+#include "history.h"
+#include "multilangmgr.h"
+#include "rtimage.h"
+#include "safegtk.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -241,9 +241,12 @@ void History::historySelectionChanged () {
         if (row) 
             bTreeView->get_selection()->unselect_all ();
         if (row && tpc) {
-            ProcParams params = row[historyColumns.params];
+        	ProcParams pparams = row[historyColumns.params];
+            ParamsEdited pe;
+            pe.set(true);
+        	PartialProfile pp(&pparams, &pe);
             ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
-            tpc->profileChange (&params, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
+            tpc->profileChange (&pp, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
         }
         if (blistener && blistenerLock==false) {
             Gtk::TreeModel::Path path = historyModel->get_path (iter);
@@ -264,10 +267,12 @@ void History::bookmarkSelectionChanged () {
         if (row) 
             hTreeView->get_selection()->unselect_all ();
         if (row && tpc) {
-        	int id = row[bookmarkColumns.id];
-            ProcParams params = row[bookmarkColumns.params];
+        	ProcParams pparams = row[bookmarkColumns.params];
+            ParamsEdited pe;
+            pe.set(true);
+        	PartialProfile pp(&pparams, &pe);
             ParamsEdited paramsEdited = row[bookmarkColumns.paramsEdited];
-            tpc->profileChange (&params, EvBookmarkSelected, row[bookmarkColumns.name], &paramsEdited);
+            tpc->profileChange (&pp, EvBookmarkSelected, row[bookmarkColumns.text], &paramsEdited);
         }
     }
 }
@@ -299,7 +304,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     if (size>0)
         row = historyModel->children()[size-1];
     // if there is no last item or its chev!=ev, create a new one
-    if (size==0 || !row || row[historyColumns.chev]!=ev) {
+    if (size==0 || !row || row[historyColumns.chev]!=ev || ev==EvProfileChanged) {
         Gtk::TreeModel::Row newrow = *(historyModel->append());
         newrow[historyColumns.realText] = eventDescrArray[ev];
         newrow[historyColumns.text] = text;

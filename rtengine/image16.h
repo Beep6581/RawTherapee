@@ -22,9 +22,9 @@
 #ifndef _IMAGE16_
 #define _IMAGE16_
 
-#include <imageio.h>
-#include <rtengine.h>
-#include <imagefloat.h>
+#include "imageio.h"
+#include "rtengine.h"
+#include "imagefloat.h"
 
 namespace rtengine {
 
@@ -88,7 +88,7 @@ class Image16 : public ImageIO, public IImage16 {
         virtual unsigned short** getGPlane () { return g; }
         virtual unsigned short** getBPlane () { return b; }
 
-        void ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe);
+        void ExecCMSTransform(cmsHTRANSFORM hTransform);
     };
-};
+}
 #endif

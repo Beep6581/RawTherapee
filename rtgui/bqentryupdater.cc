@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <bqentryupdater.h>
+#include "bqentryupdater.h"
 #include <gtkmm.h>
-#include <guiutils.h>
+#include "guiutils.h"
 
 BatchQueueEntryUpdater batchQueueEntryUpdater;
 

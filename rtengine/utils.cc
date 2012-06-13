@@ -16,16 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <utils.h>
-#include <math.h>
-#include <string.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstring>
+#include <cstdio>
+#include "rt_math.h"
 
-#undef MAX
-#undef MIN
+#include "utils.h"
+#include "rt_math.h"
 
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
+using namespace std;
 
 namespace rtengine {
 
@@ -152,8 +151,8 @@ void rgb2hsv (int r, int g, int b, float &h, float &s, float &v) {
 	double var_G = g / 65535.0;
 	double var_B = b / 65535.0;
 
-	double var_Min = MIN(MIN(var_R,var_G),var_B);
-	double var_Max = MAX(MAX(var_R,var_G),var_B);
+	double var_Min = min(var_R,var_G,var_B);
+	double var_Max = max(var_R,var_G,var_B);
 	double del_Max = var_Max - var_Min;
 	v = var_Max;
 	if (fabs(del_Max)<0.00001) {

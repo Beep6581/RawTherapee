@@ -20,9 +20,9 @@
 #define _BATCHQUEUEPANEL_
 
 #include <gtkmm.h>
-#include <batchqueue.h>
-#include <saveformatpanel.h>
-#include <guiutils.h>
+#include "batchqueue.h"
+#include "saveformatpanel.h"
+#include "guiutils.h"
 
 class RTWindow;
 class BatchQueuePanel : public Gtk::VBox,

@@ -17,19 +17,19 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <clipboard.h>
+#include "clipboard.h"
 #include <gtkmm.h>
 #include <fstream>
 #include <string>
-#include <guiutils.h>
-#include <multilangmgr.h>
-#include <guiutils.h>
-#include <mycurve.h>
-#include <shcselector.h>
-#include <adjuster.h>
-#include <mycurve.h>
-#include <curveeditor.h>
-#include <diagonalcurveeditorsubgroup.h>
+#include "guiutils.h"
+#include "multilangmgr.h"
+#include "guiutils.h"
+#include "mycurve.h"
+#include "shcselector.h"
+#include "adjuster.h"
+#include "mycurve.h"
+#include "curveeditor.h"
+#include "diagonalcurveeditorsubgroup.h"
 
 DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt) {
 
@@ -254,7 +254,7 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 
 	removeEditor();
 
-	DiagonalCurveEditor* dCurve = (DiagonalCurveEditor*)(parent->displayedCurve);
+	DiagonalCurveEditor* dCurve = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
 
 	if (dCurve) {
 
@@ -501,19 +501,19 @@ void DiagonalCurveEditorSubGroup::restoreDisplayedHistogram() {
 }
 
 void DiagonalCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {
-	if (p.size()) {
+	if (!p.empty()) {
 		DiagonalCurveType t = (DiagonalCurveType)p[0];
 		for (int i=0; i<(int)p.size(); i++)
 
 		switch (t) {
 		case (DCT_Spline):
-			((DiagonalCurveEditor*)ce)->customCurveEd = p;
+			(static_cast<DiagonalCurveEditor*>(ce))->customCurveEd = p;
 			break;
 		case (DCT_Parametric):
-			((DiagonalCurveEditor*)ce)->paramCurveEd = p;
+			(static_cast<DiagonalCurveEditor*>(ce))->paramCurveEd = p;
 			break;
 		case (DCT_NURBS):
-			((DiagonalCurveEditor*)ce)->NURBSCurveEd = p;
+			(static_cast<DiagonalCurveEditor*>(ce))->NURBSCurveEd = p;
 			break;
 		default:
 			break;

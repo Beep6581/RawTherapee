@@ -57,8 +57,6 @@
 #ifndef LUT_H_
 #define LUT_H_
 
-#include <cmath>
-
 // bit representations of flags
 #define LUT_CLIP_BELOW 1
 #define LUT_CLIP_ABOVE 2
@@ -66,6 +64,9 @@
 #define LUTf LUT<float>
 #define LUTi LUT<int>
 #define LUTu LUT<unsigned int>
+
+#include <cmath>
+#include <cstring>
 
 template<typename T>
 class LUT {
@@ -145,7 +146,7 @@ public:
 	}
 	// use with float indices
 	T operator[](float index) {
-		int idx = floor(index);
+		int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
 		if (((unsigned int)idx) > maxs) {
 			if (idx<0)
 			{

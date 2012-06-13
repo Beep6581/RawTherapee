@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 #include <vector>
-#include <curvelistener.h>
-#include <cursormanager.h>
-#include <colorprovider.h>
-#include <LUT.h>
+#include "curvelistener.h"
+#include "cursormanager.h"
+#include "colorprovider.h"
+#include "../rtengine/LUT.h"
 
 #define RADIUS			3	/* radius of the control points */
 #define SQUARE			2	/* half length of the square shape of the tangent handles */

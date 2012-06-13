@@ -16,15 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <ffmanager.h>
-#include <options.h>
+#include "ffmanager.h"
+#include "../rtgui/options.h"
 #include <giomm.h>
-#include <guiutils.h>
-#include <safegtk.h>
-#include <rawimage.h>
+#include "../rtgui/guiutils.h"
+#include "safegtk.h"
+#include "rawimage.h"
 #include <sstream>
-#include <stdio.h>
-#include <imagedata.h>
+#include <cstdio>
+#include "imagedata.h"
 
 namespace rtengine{
 
@@ -106,7 +106,7 @@ void ffInfo::updateRawImage()
 	typedef unsigned int acc_t;
 	// averaging of flatfields if more than one is found matching the same key.
 	// this may not be necessary, as flatfield is further blurred before being applied to the processed image.
-	if( pathNames.size() >0 ){
+	if( !pathNames.empty() ){
 		std::list<Glib::ustring>::iterator iName = pathNames.begin();
 		ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
 		if( ri->loadRaw(true)){
@@ -180,16 +180,15 @@ void FFManager::init( Glib::ustring pathname )
 	safe_build_file_list (dir, names, pathname);
 	
 	ffList.clear();
-    for (int i=0; i<names.size(); i++) {
-        int lastdot = names[i].find_last_of ('.');
+    for (size_t i=0; i<names.size(); i++) {
         try{
             addFileInfo(names[i]);
-        }catch( std::exception e ){}
+        }catch( std::exception& e ){}
     }
     // Where multiple shots exist for same group, move filename to list
     for( ffList_t::iterator iter = ffList.begin(); iter != ffList.end();iter++ ){
     	ffInfo &i = iter->second;
-    	if( i.pathNames.size()>0 && !i.pathname.empty() ){
+    	if( !i.pathNames.empty() && !i.pathname.empty() ){
     		i.pathNames.push_back( i.pathname );
     		i.pathname.clear();
     	}
@@ -217,7 +216,7 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
     	return false;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        int lastdot = info->get_name().find_last_of ('.');
+        size_t lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot
@@ -277,7 +276,7 @@ void FFManager::getStat( int &totFiles, int &totTemplates)
  */
 ffInfo* FFManager::find( const std::string &mak, const std::string &mod, const std::string &len, double focal, double apert, time_t t )
 {
-	if( ffList.size() == 0 )
+	if( ffList.empty() )
 		return 0;
 	std::string key( ffInfo::key(mak,mod,len,focal,apert) );
 	ffList_t::iterator iter = ffList.find( key );

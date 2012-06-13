@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <myflatcurve.h>
-#include <curves.h>
-#include <string.h>
+#include "myflatcurve.h"
+#include "../rtengine/curves.h"
+#include <cstring>
 #include <gdkmm/types.h>
 
 MyFlatCurve::MyFlatCurve () {
@@ -651,7 +651,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 						curve.y.erase (ity, curve.y.end());
 						curve.leftTangent.erase (itlt, curve.leftTangent.end());
 						curve.rightTangent.erase (itrt, curve.rightTangent.end());
-						if (!curve.x.size()) {
+						if (curve.x.empty()) {
 							curve.x.push_back (0.5);
 							curve.y.push_back (0.5);
 							curve.leftTangent.push_back (0.3);

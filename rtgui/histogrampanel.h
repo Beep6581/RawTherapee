@@ -22,9 +22,9 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
-#include <LUT.h>
+#include "../rtengine/LUT.h"
 
-#include <pointermotionlistener.h>
+#include "pointermotionlistener.h"
 
 class HistogramArea;
 struct HistogramAreaIdleHelper {

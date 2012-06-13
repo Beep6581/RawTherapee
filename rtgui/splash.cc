@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <splash.h>
-#include <multilangmgr.h>
+#include "splash.h"
+#include "multilangmgr.h"
 #include <glib/gstdio.h>
-#include <safegtk.h>
+#include "../rtengine/safegtk.h"
 
 extern Glib::ustring argv0;
 extern Glib::ustring creditsPath;
@@ -70,16 +70,17 @@ bool SplashImage::on_expose_event (GdkEventExpose* event) {
     return true;
 }
 
-Splash::Splash () {
+Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true) {
 
-    set_title (M("GENERAL_ABOUT"));
     set_border_width (4);
 
-    Gtk::Notebook* nb = Gtk::manage (new Gtk::Notebook ());
+    releaseNotesSW = NULL;
+
+    nb = Gtk::manage (new Gtk::Notebook ());
     get_vbox()->pack_start (*nb);
 
     // Tab 1: the image
-    splashImage = new SplashImage ();
+    splashImage = Gtk::manage(new SplashImage ());
     nb->append_page (*splashImage,  M("ABOUT_TAB_SPLASH"));
     splashImage->show ();
 
@@ -101,6 +102,8 @@ Splash::Splash () {
 	        Gtk::ScrolledWindow *buildSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *buildTV = Gtk::manage (new Gtk::TextView (textBuffer));
 			buildTV->set_editable(false);
+			buildTV->set_left_margin (10);
+			buildTV->set_right_margin (5);
 			buildSW->add(*buildTV);
 		    nb->append_page (*buildSW, M("ABOUT_TAB_BUILD"));
 	    }
@@ -123,6 +126,9 @@ Splash::Splash () {
 
 	        Gtk::ScrolledWindow *creditsSW = Gtk::manage (new Gtk::ScrolledWindow());
 			Gtk::TextView *creditsTV = Gtk::manage (new Gtk::TextView (textBuffer));
+			creditsTV->set_left_margin (10);
+			creditsTV->set_right_margin (5);
+			creditsTV->set_wrap_mode(Gtk::WRAP_WORD);
 			creditsTV->set_editable(false);
 			creditsSW->add(*creditsTV);
 		    nb->append_page (*creditsSW, M("ABOUT_TAB_CREDITS"));
@@ -145,10 +151,53 @@ Splash::Splash () {
 	        textBuffer->set_text((Glib::ustring)(ostr.str()));
 
 	        Gtk::ScrolledWindow *licenseSW = Gtk::manage (new Gtk::ScrolledWindow());
-			Gtk::TextView *creditsTV = Gtk::manage (new Gtk::TextView (textBuffer));
-			creditsTV->set_editable(false);
-			licenseSW->add(*creditsTV);
+			Gtk::TextView *licenseTV = Gtk::manage (new Gtk::TextView (textBuffer));
+
+	        // set monospace font to enhance readability of formatted text
+			Pango::FontDescription fdescLicense;
+			fdescLicense.set_family("monospace");
+			fdescLicense.set_absolute_size (11*Pango::SCALE);
+			licenseTV->modify_font(fdescLicense);
+
+			licenseTV->set_left_margin (10);
+			licenseTV->set_right_margin (5);
+			licenseTV->set_editable(false);
+			licenseSW->add(*licenseTV);
 		    nb->append_page (*licenseSW, M("ABOUT_TAB_LICENSE"));
+	    }
+	}
+
+    // Tab 5: the Release Notes
+	std::string releaseNotesFileName = Glib::build_filename (creditsPath, "RELEASE_NOTES.txt");
+	if ( safe_file_test(releaseNotesFileName, (Glib::FILE_TEST_EXISTS)) ) {
+	    FILE *f = safe_g_fopen (releaseNotesFileName, "rt");
+	    if (f != NULL) {
+	        char* buffer = new char[1024];
+	        std::ostringstream ostr;
+	        while (fgets (buffer, 1024, f))
+	            ostr << buffer;
+	        delete [] buffer;
+	        fclose (f);
+
+	        Glib::RefPtr<Gtk::TextBuffer> textBuffer = Gtk::TextBuffer::create();
+	        textBuffer->set_text((Glib::ustring)(ostr.str()));
+
+	        releaseNotesSW = Gtk::manage (new Gtk::ScrolledWindow());
+			Gtk::TextView *releaseNotesTV = Gtk::manage (new Gtk::TextView (textBuffer));
+
+	        // set monospace font to enhance readability of formatted text
+			Pango::FontDescription fdescReleaseNotes;
+			fdescReleaseNotes.set_family("monospace");
+			fdescReleaseNotes.set_absolute_size (11*Pango::SCALE);
+	        releaseNotesTV->modify_font(fdescReleaseNotes);
+
+
+			releaseNotesTV->set_left_margin (10);
+			releaseNotesTV->set_right_margin (3);
+			releaseNotesTV->set_editable(false);
+			releaseNotesTV->set_wrap_mode(Gtk::WRAP_WORD);
+			releaseNotesSW->add(*releaseNotesTV);
+		    nb->append_page (*releaseNotesSW, M("ABOUT_TAB_RELEASENOTES"));
 	    }
 	}
 
@@ -160,15 +209,12 @@ Splash::Splash () {
     nb->set_current_page (0);
 
     show_all_children ();
-    set_modal (true);
     set_keep_above (true);
 }
 
-Splash::Splash (int maxtime) {
+Splash::Splash (Gtk::Window& parent, int maxtime) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, true) {
 
-    set_title (M("GENERAL_ABOUT"));
-
-    splashImage = new SplashImage ();
+    splashImage = Gtk::manage(new SplashImage ());
 //    add (*splashImage);
     get_vbox()->pack_start (*splashImage);
     splashImage->show ();
@@ -190,8 +236,16 @@ bool Splash::on_timer () {
     return false;
 }
 
+/*
+ * removed as it seem to be too sensitive in some OS
 bool Splash::on_button_release_event (GdkEventButton* event) {
 
     hide ();
     return true;
+}
+*/
+
+void Splash::showReleaseNotes() {
+	if (releaseNotesSW)
+		nb->set_current_page(nb->page_num(*releaseNotesSW));
 }

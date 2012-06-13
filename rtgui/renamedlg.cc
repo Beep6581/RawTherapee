@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <renamedlg.h>
-#include <multilangmgr.h>
-#include <options.h>
-#include <rtimage.h>
+#include "renamedlg.h"
+#include "multilangmgr.h"
+#include "options.h"
+#include "rtimage.h"
 
 RenameDialog::RenameDialog (Gtk::Window* parent) 
     : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true, true), p(parent), imageData(NULL) {
@@ -86,7 +86,7 @@ void RenameDialog::fillTemplateList () {
 
     templateModel->clear ();
 
-    for (int i=0; i<options.renameTemplates.size(); i++) {
+    for (size_t i=0; i<options.renameTemplates.size(); i++) {
         Gtk::TreeModel::iterator iter = templateModel->append ();
         iter->set_value (templateColumns.tmplName, options.renameTemplates[i]);
         iter->set_value (templateColumns.rowSeparator, false);
@@ -182,7 +182,7 @@ void RenameTemplateEditor::refreshTemplateList () {
 
     list->clear_items ();
 
-    for (int i=0; i<options.renameTemplates.size(); i++) 
+    for (size_t i=0; i<options.renameTemplates.size(); i++)
         list->append_text (options.renameTemplates[i]);
 }
 
@@ -198,7 +198,7 @@ void RenameTemplateEditor::addPressed () {
 void RenameTemplateEditor::delPressed () {
 
     std::vector<int> sel = list->get_selected ();
-    for (int i=0; i<sel.size(); i++) {
+    for (size_t i=0; i<sel.size(); i++) {
         Glib::ustring toDel = list->get_text (sel[i]);
         std::vector<Glib::ustring>::iterator f = std::find (options.renameTemplates.begin(), options.renameTemplates.end(), toDel);
         if (f!=options.renameTemplates.end())

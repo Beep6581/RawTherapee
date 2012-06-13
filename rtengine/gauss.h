@@ -19,10 +19,10 @@
 #ifndef _GAUSS_H_
 #define _GAUSS_H_
 
-#include <stdlib.h>
-#include <string.h> 
-#include <math.h>
-#include <alignedbuffer.h>
+#include <cstdlib>
+#include <cstring> 
+#include <cmath>
+#include "alignedbuffer.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif

@@ -16,14 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <navigator.h>
-#include <toolpanel.h>
-#include <iccmatrices.h> // from rtengine
-#include <iccstore.h>
-#include <curves.h>
-
-#define D50x 0.96422
-#define D50z 0.82521
+#include "navigator.h"
+#include "toolpanel.h"
+#include "../rtengine/iccmatrices.h"
+#include "../rtengine/iccstore.h"
+#include "../rtengine/curves.h"
+#include "../rtengine/rt_math.h"
 
 Navigator::Navigator () {
 
@@ -109,8 +107,8 @@ void Navigator::rgb2hsv (int r, int g, int b, int &h, int &s, int &v) {
 	volatile double var_G = g / 255.0;
 	volatile double var_B = b / 255.0;
 
-	/*volatile double var_Min = MIN(MIN(var_R,var_G),var_B);
-	volatile double var_Max = MAX(MAX(var_R,var_G),var_B);
+	/*volatile double var_Min = min(var_R,var_G,var_B);
+	volatile double var_Max = max(var_R,var_G,var_B);
 	double del_Max = var_Max - var_Min;
     double	V = (var_Max + var_Min) / 2;
     double H, S;
@@ -133,8 +131,8 @@ void Navigator::rgb2hsv (int r, int g, int b, int &h, int &s, int &v) {
 		if ( H > 1 )  H -= 1;
 	}*/
 	
-	double var_Min = MIN(MIN(var_R,var_G),var_B);
-	double var_Max = MAX(MAX(var_R,var_G),var_B);
+	double var_Min = rtengine::min(var_R,var_G,var_B);
+	double var_Max = rtengine::max(var_R,var_G,var_B);
 	double del_Max = var_Max - var_Min;
 	double V = var_Max;
 	double H, S;

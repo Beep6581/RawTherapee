@@ -20,8 +20,8 @@
 #define _THUMBIMAGEUPDATER_
 
 #include <glibmm.h>
-#include <rtengine.h>
-#include <thumbbrowserentrybase.h>
+#include "../rtengine/rtengine.h"
+#include "thumbbrowserentrybase.h"
 #include <glib.h>
 
 class ThumbImageUpdateListener {

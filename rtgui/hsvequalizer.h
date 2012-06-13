@@ -21,12 +21,12 @@
 #define HSVEQUALIZER_H_INCLUDED
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
-#include <guiutils.h>
-#include <curveeditor.h>
-#include <curveeditorgroup.h>
-#include <colorprovider.h>
+#include "adjuster.h"
+#include "toolpanel.h"
+#include "guiutils.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "colorprovider.h"
 
 
 class HSVEqualizer : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider

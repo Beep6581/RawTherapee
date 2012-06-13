@@ -18,9 +18,9 @@
  */
 
 #include <set>
-#include <previewloader.h>
-#include <guiutils.h>
-#include <safegtk.h>
+#include "previewloader.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
 
 #ifdef _OPENMP
 #include <omp.h>

@@ -3,9 +3,11 @@
  *********************************************************************/
 
 /* Standard includes */
-#include <assert.h>
-#include <stdlib.h>  /* malloc() */
-#include <math.h>		/* fabs() */
+#include <cassert>
+#include <cstdlib>  /* malloc() */
+#include <cmath>		/* fabs() */
+
+#include "../rt_math.h"
 
 /* Our includes */
 #include "base.h"
@@ -14,6 +16,7 @@
 #include "klt.h"
 #include "klt_util.h"
 
+using namespace std;
 
 /*********************************************************************/
 
@@ -37,8 +40,10 @@ _KLT_FloatImage _KLTCreateFloatImage(
     ncols * nrows * sizeof(float);
 
   floatimg = (_KLT_FloatImage)  malloc(nbytes);
-  if (floatimg == NULL)
+  if (floatimg == NULL) {
     KLTError("(_KLTCreateFloatImage)  Out of memory");
+    exit(1);
+  }
   floatimg->ncols = ncols;
   floatimg->nrows = nrows;
   floatimg->data = (float *)  (floatimg + 1);
@@ -94,7 +99,7 @@ void _KLTPrintSubFloatImage(
 
 void _KLTWriteFloatImageToPGM(
   _KLT_FloatImage img,
-  char *filename)
+  const char *filename)
 {
   int npixs = img->ncols * img->nrows;
   float mmax = -999999.9f, mmin = 999999.9f;
@@ -135,7 +140,7 @@ void _KLTWriteFloatImageToPGM(
 
 void _KLTWriteAbsFloatImageToPGM(
   _KLT_FloatImage img,
-  char *filename,float scale)
+  const char *filename,float scale)
 {
   int npixs = img->ncols * img->nrows;
   float fact;

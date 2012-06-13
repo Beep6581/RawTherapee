@@ -20,10 +20,10 @@
 #define _FLATFIELD_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
-#include <rawimage.h>
-#include <guiutils.h>
+#include "adjuster.h"
+#include "toolpanel.h"
+#include "../rtengine/rawimage.h"
+#include "guiutils.h"
 
 class FFProvider {
   public:

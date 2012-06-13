@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <toolpanel.h>
-#include <toolpanelcoord.h>
+#include "toolpanel.h"
+#include "toolpanelcoord.h"
 
 using namespace rtengine::procparams;
 
@@ -52,8 +52,8 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content) : ToolPanel(), parentCon
 void FoldableToolPanel::foldThemAll (GdkEventButton* event) {
 	if (event->button == 3)	{
 		if (listener)
-			((ToolPanelCoordinator*)listener)->foldAllButOne( parentContainer, this);
+		  (static_cast<ToolPanelCoordinator*>(listener))->foldAllButOne( parentContainer, this);
 		else
-			((ToolPanelCoordinator*)tmp)->foldAllButOne( parentContainer, this);
+		  (static_cast<ToolPanelCoordinator*>(tmp))->foldAllButOne( parentContainer, this);
 	}
 }

@@ -20,7 +20,7 @@
 #define __COARSEPANEL__
 
 #include <gtkmm.h>
-#include <toolpanel.h>
+#include "toolpanel.h"
 
 class CoarsePanel : public Gtk::HBox, public ToolPanel {
 

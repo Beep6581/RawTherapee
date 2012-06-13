@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <preprocess.h>
-#include <guiutils.h>
-#include <safegtk.h>
+#include "preprocess.h"
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
 #include <sstream>
 
 using namespace rtengine;
@@ -57,7 +57,7 @@ void PreProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	hdpixelconn.block (true);
 
 	if(pedited ){
-		hotDeadPixel->set_inconsistent (!pedited->raw.hotDeadPixel);
+		hotDeadPixel->set_inconsistent (!pedited->raw.hotDeadPixelFilter);
 		lineDenoise->setEditedState( pedited->raw.linenoise ? Edited : UnEdited );
 		greenEqThreshold->setEditedState( pedited->raw.greenEq ? Edited : UnEdited );
 	}
@@ -81,7 +81,7 @@ void PreProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 	if (pedited) {
 		pedited->raw.linenoise = lineDenoise->getEditedState ();
 		pedited->raw.greenEq= greenEqThreshold->getEditedState ();
-		pedited->raw.hotDeadPixel = !hotDeadPixel->get_inconsistent();
+		pedited->raw.hotDeadPixelFilter = !hotDeadPixel->get_inconsistent();
 	}
 }
 

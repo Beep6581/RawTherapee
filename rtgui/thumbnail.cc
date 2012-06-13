@@ -15,27 +15,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <multilangmgr.h>
-#include <thumbnail.h>
+#include "multilangmgr.h"
+#include "thumbnail.h"
 #include <sstream>
 #include <iomanip>
-#include <options.h>
-#include <mytime.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "options.h"
+#include "../rtengine/mytime.h"
+#include <cstdio>
+#include <cstdlib>
 #include <glibmm.h>
-#include <imagedata.h>
+#include "../rtengine/imagedata.h"
 #include <glib/gstdio.h>
-#include <guiutils.h>
-#include <profilestore.h>
-#include <batchqueue.h>
-#include <safegtk.h>
+#include "guiutils.h"
+#include "profilestore.h"
+#include "batchqueue.h"
+#include "../rtengine/safegtk.h"
 #include "version.h"
 
 using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
-    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), tpp(NULL),
+    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
 		initial_(false), lastW(0), lastH(0), lastScale(0),pparamsId(-1),idata(NULL) {
 
@@ -50,7 +50,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 }
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
-    : fname(fname), cachemgr(cm), ref(1), tpp(NULL), pparamsValid(false),
+    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
       needsReProcessing(true),imageLoading(false), lastImg(NULL),
 		initial_(true),pparamsId(-1),idata(NULL) {
 
@@ -165,7 +165,10 @@ const ProcParams& Thumbnail::getProcParams () {
     return pparams; // there is no valid pp to return, but we have to return something
 }
 
-// Create default params on demand and returns a new updatable object
+/*
+ *  Create default params on demand and returns a new updatable object
+ *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
+ */
 rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB) {
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = NULL;
@@ -186,7 +189,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
  
         bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
 
-        // Now they SHOULD be there, so try to load them
+        // Now they SHOULD be there (and potentially "partial"), so try to load them and store it as a full procparam
         if (success) loadInfoFromImage();
     }
 
@@ -199,7 +202,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 }
 
 void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt){
-	for (int i=0; i<listeners.size(); i++)
+	for (size_t i=0; i<listeners.size(); i++)
 		listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
@@ -222,7 +225,7 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
 
     idata->deleteAllSnapshots();
 
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoClearedIt);
 }
 
@@ -231,7 +234,7 @@ bool Thumbnail::hasProcParams () {
     return pparamsValid;
 }
 
-void Thumbnail::setProcParams (const ProcParams& pp, int whoChangedIt, bool updateCacheNow) {
+void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow) {
 	// TODO: Check for Linux
 	#ifdef WIN32
 	Glib::Mutex::Lock lock(mutex);
@@ -241,7 +244,13 @@ void Thumbnail::setProcParams (const ProcParams& pp, int whoChangedIt, bool upda
         cfs.recentlySaved = false;
 
 
-    pparams = pp;
+    if (pe) {
+    	// coarse.rotate works in ADD mode only, so we set it to 0 first
+    	if (pe->coarse.rotate)
+    		pparams.coarse.rotate = 0;
+    	pe->combine(pparams, pp, true);
+    }
+    else pparams = pp;
     pparamsValid = true;
     needsReProcessing = true;
 
@@ -249,7 +258,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, int whoChangedIt, bool upda
     if (updateCacheNow)
         updateCache ();
 
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
@@ -262,6 +271,21 @@ void Thumbnail::imageDeveloped () {
         
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data")+".txt");
+}
+
+void Thumbnail::imageEnqueued () {
+
+    enqueueNumber++;
+}
+
+void Thumbnail::imageRemovedFromQueue () {
+
+    enqueueNumber--;
+}
+
+bool Thumbnail::isEnqueued () {
+    
+    return enqueueNumber > 0;
 }
 
 void Thumbnail::increaseRef ()
@@ -403,7 +427,7 @@ void Thumbnail::generateExifDateTimeStrings () {
     std::string dateFormat = options.dateFormat;
     std::ostringstream ostr;
     bool spec = false;
-    for (int i=0; i<dateFormat.size(); i++)
+    for (size_t i=0; i<dateFormat.size(); i++)
         if (spec && dateFormat[i]=='y') {
             ostr << cfs.year;
             spec = false;
@@ -617,6 +641,7 @@ Thumbnail::~Thumbnail () {
     delete tpp;
 }
 
+// Glib::ustring Thumbnail::getCacheFileName (Glib::ustring subdir) {
 Glib::ustring Thumbnail::getCacheFileName (const Glib::ustring &subdir) const
 {
 
@@ -654,7 +679,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
     Glib::ustring openFName;
   
     if (destination==1) {
-            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(this), options.saveFormatBatch.format);
+            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname /* Merge uncertainty: was "this" */), options.saveFormatBatch.format);
             if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
               wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (openFName.c_str(), -1, NULL, NULL, NULL);
               ShellExecuteW(NULL, L"open", wfilename, NULL, NULL, SW_SHOWMAXIMIZED );
@@ -665,7 +690,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
             }
     } else {
         openFName = destination == 3 ? fname
-            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(this), options.saveFormatBatch.format);
+            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname /* Merge uncertainty: was "this" */), options.saveFormatBatch.format);
 
         printf("Opening %s\n", openFName.c_str());
 

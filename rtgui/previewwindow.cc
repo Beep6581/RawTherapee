@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <previewwindow.h>
-#include <guiutils.h>
-#include <imagearea.h>
-#include <cursormanager.h>
+#include "previewwindow.h"
+#include "guiutils.h"
+#include "imagearea.h"
+#include "cursormanager.h"
 
-PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), isMoving(false), imageArea(NULL) {
+PreviewWindow::PreviewWindow () : previewHandler(NULL), mainCropWin(NULL), imageArea(NULL), isMoving(false) {
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &PreviewWindow::on_resized) );
 }

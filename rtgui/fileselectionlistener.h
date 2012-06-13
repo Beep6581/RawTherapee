@@ -19,8 +19,8 @@
 #ifndef _FILESELECTIONLISTENER_
 #define _FILESELECTIONLISTENER_
 
-#include <thumbnail.h>
-#include <batchqueueentry.h>
+#include "thumbnail.h"
+#include "batchqueueentry.h"
 
 class FileSelectionListener {
 

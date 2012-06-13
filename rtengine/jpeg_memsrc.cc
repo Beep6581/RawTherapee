@@ -19,7 +19,7 @@
 //#include "jmorecfg.h"
 //#include "jpeglib.h"
 //#include "jerror.h"
-#include <stdio.h>
+#include <cstdio>
 #include <jpeglib.h>
 #include <jerror.h>
 #include "jpeg.h"
@@ -65,7 +65,7 @@ init_source (j_decompress_ptr cinfo)
  * some sort of output image, no matter how corrupted.
  */
 
-static int
+static boolean
 fill_input_buffer(j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;

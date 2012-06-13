@@ -32,7 +32,6 @@ namespace rtengine {
             bool            verbose;
             Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
             Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
-            bool            LCMSSafeMode;           // If true, not OMP
 			Glib::ustring   adobe;					// default name of AdobeRGB1998
 			Glib::ustring   prophoto;				// default name of Prophoto
 			Glib::ustring   prophoto10;				// default name of Prophoto

@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <mydiagonalcurve.h>
-#include <curves.h>
-#include <string.h>
+#include "mydiagonalcurve.h"
+#include "../rtengine/curves.h"
+#include <cstring>
 #include <gdkmm/types.h>
 
 MyDiagonalCurve::MyDiagonalCurve () : activeParam(-1), bghistvalid(false) {
@@ -169,10 +169,10 @@ void MyDiagonalCurve::draw (int handle) {
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
     for (int i = 0; i < 5; i++) { // + 0.5 to align well with f(x)=x so it will cut through the center
-        cr->move_to (RADIUS, MAX(0,i * (innerHeight + 0.5) / 4) + RADIUS);
-        cr->line_to (innerWidth + RADIUS, MAX(0,i * (innerHeight + 0.5) / 4) + RADIUS);
-        cr->move_to (MAX(0,i * innerWidth / 4) + RADIUS, RADIUS);
-        cr->line_to (MAX(0,i * innerWidth / 4) + RADIUS, innerHeight + RADIUS);
+        cr->move_to (RADIUS, max(0.0, i * (innerHeight + 0.5) / 4) + RADIUS);
+        cr->line_to (innerWidth + RADIUS, max(0.0,i * (innerHeight + 0.5) / 4) + RADIUS);
+        cr->move_to (max(0,i * innerWidth / 4) + RADIUS, RADIUS);
+        cr->line_to (max(0,i * innerWidth / 4) + RADIUS, innerHeight + RADIUS);
     }
     cr->stroke ();
 
@@ -391,7 +391,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				if (dst < src) {
 					curve.x.erase (itx, curve.x.end());
 					curve.y.erase (ity, curve.y.end());
-					if (!curve.x.size()) {
+					if (curve.x.empty()) {
 						curve.x.push_back (0);
 						curve.y.push_back (0);
 						interpolate ();
@@ -703,7 +703,7 @@ void MyDiagonalCurve::setActiveParam (int ac) {
 
 int diagonalmchistupdateUI (void* data) {
 
-    MyCurveIdleHelper* mcih = (MyCurveIdleHelper*)data;
+    MyCurveIdleHelper* mcih = static_cast<MyCurveIdleHelper*>(data);
 
     if (mcih->destroyed) {
         if (mcih->pending == 1)

@@ -16,11 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <math.h>
-#include <string.h>
-#include <stdio.h>
-#define MAXVAL  65535.0
-#define CLIP(a) ((a)>0.0?((a)<MAXVAL?(a):MAXVAL):0.0)
+#include <cmath>
+#include <cstring>
+#include <cstdio>
+#include <ctime>
+
+#include "gauss.h"
 
 #define ELEM(a,b) (src[i-a][j-b] * ec[(((src[i-a][j-b]>>8)+1)<<8) / ((src[i][j]>>8)+1)])
 //#define ELEM(a,b) (src[i-a][j-b] * ec[src[i-a][j-b]-src[i][j]+0x10000])

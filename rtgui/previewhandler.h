@@ -19,7 +19,7 @@
 #ifndef _PREVIEWHANDLER_
 #define _PREVIEWHANDLER_
 
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 #include <gtkmm.h>
 #include <list>
 
@@ -55,7 +55,7 @@ class PreviewHandler : public rtengine::PreviewImageListener {
     public:
 
         PreviewHandler ();    
-        ~PreviewHandler ();
+        virtual ~PreviewHandler ();
 
         void addPreviewImageListener (PreviewListener* l) { listeners.push_back (l); }
 

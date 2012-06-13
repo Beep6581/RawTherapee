@@ -27,9 +27,9 @@
 #define IMIO_VARIANTNOTSUPPORTED   5
 #define IMIO_FILETYPENOTSUPPORTED  6
 
-#include <rtengine.h>
+#include "rtengine.h"
 #include <glibmm.h>
-#include <procparams.h>
+#include "procparams.h"
 
 namespace rtengine {
 
@@ -43,21 +43,21 @@ class ImageIO {
         char* loadedProfileData;
         int loadedProfileLength;
 
-		ImageMetaData *idata;
+        ImageMetaData *idata;
         Glib::Mutex imutex;
 
     public:
         static Glib::ustring errorMsg[6];
-    	
+
         ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), loadedProfileData(NULL), loadedProfileLength(0), idata(NULL) {}
-        
+
         virtual ~ImageIO ();
 
         void setProgressListener (ProgressListener* l) { pl = l; }
 
         virtual int     getW            () =0;
-		virtual int     getH            () =0;
-		virtual void    allocate        (int width, int height) =0;
+        virtual int     getH            () =0;
+        virtual void    allocate        (int width, int height) =0;
         virtual int     getBPS          () =0;
         virtual void    getScanline     (int row, unsigned char* buffer, int bps) {}
         virtual void    setScanline     (int row, unsigned char* buffer, int bps) {}
@@ -75,7 +75,7 @@ class ImageIO {
         int savePNG  (Glib::ustring fname, int compression = -1, volatile int bps = -1);
         int saveJPEG (Glib::ustring fname, int quality = 100);
         int saveTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false);
-        
+
         cmsHPROFILE getEmbeddedProfile () { return embProfile; }
         void        getEmbeddedProfileData (int& length, unsigned char*& pdata) { length = loadedProfileLength; pdata = (unsigned char*)loadedProfileData; }
 
@@ -84,5 +84,5 @@ class ImageIO {
         Glib::Mutex& mutex () { return imutex; }
 };
 
-};
+}
 #endif

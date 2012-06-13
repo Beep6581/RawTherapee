@@ -17,14 +17,14 @@
  *  2010 Emil Martinec <ejmartin@uchicago.edu>
  *    
  */
-
-#define SQR(x) ((x)*(x))
-
 #include <cstddef>
-#include <algorithm>
-#include <labimage.h>
-#include <improcfun.h>
+#include "rt_math.h"
 
+#include "rt_math.h"
+#include "labimage.h"
+#include "improcfun.h"
+
+using namespace std;
 
 namespace rtengine {
 
@@ -63,25 +63,25 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 	
 	//rangeblur<unsigned short, unsigned int> (lab->L, lpf, impish /*used as buffer here*/, width, height, thresh, false);
 	
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(width,height));
+	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(width,height));
 
-	gaussHorizontal<float> (lab->L, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false /*multiThread*/);
-	gaussVertical<float>   (lpf, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false);
+	gaussHorizontal<float> (lab->L, lpf, buffer, width, height, max(2.0,thresh-1.0), false /*multiThread*/);
+	gaussVertical<float>   (lpf, lpf, buffer, width, height, max(2.0,thresh-1.0), false);
 
 	delete buffer;
 
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	float impthr = MAX(1.0,5.5-thresh);
+	float impthr = max(1.0,5.5-thresh);
 	
 	for (int i=0; i < height; i++)
 		for (int j=0; j < width; j++) {
 			
 			hpfabs = fabs(lab->L[i][j]-lpf[i][j]);
 			//block average of high pass data
-			for (i1=MAX(0,i-2), hfnbrave=0; i1<=MIN(i+2,height-1); i1++ )
-				for (j1=MAX(0,j-2); j1<=MIN(j+2,width-1); j1++ ) {
+			for (i1=max(0,i-2), hfnbrave=0; i1<=min(i+2,height-1); i1++ )
+				for (j1=max(0,j-2); j1<=min(j+2,width-1); j1++ ) {
 					hfnbrave += fabs(lab->L[i1][j1]-lpf[i1][j1]);
 				}
 			hfnbrave = (hfnbrave-hpfabs)/24;
@@ -94,8 +94,8 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 			if (!impish[i][j]) continue;
 			norm=0.0;
 			wtdsum[0]=wtdsum[1]=wtdsum[2]=0.0;
-			for (i1=MAX(0,i-2), hfnbrave=0; i1<=MIN(i+2,height-1); i1++ )
-				for (j1=MAX(0,j-2); j1<=MIN(j+2,width-1); j1++ ) {
+			for (i1=max(0,i-2), hfnbrave=0; i1<=min(i+2,height-1); i1++ )
+				for (j1=max(0,j-2); j1<=min(j+2,width-1); j1++ ) {
 					if (i1==i && j1==j) continue;
 					if (impish[i1][j1]) continue;
 					dirwt = 1/(SQR(lab->L[i1][j1]-lab->L[i][j])+eps);//use more sophisticated rangefn???

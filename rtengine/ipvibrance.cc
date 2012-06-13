@@ -17,26 +17,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <improcfun.h>
-#include <iccstore.h>
-#include <mytime.h>
+
+#include "rt_math.h"
+#include "rtengine.h"
+#include "improcfun.h"
+#include "iccstore.h"
+#include "mytime.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
+using namespace std;
+
 namespace rtengine {
 
 using namespace procparams;
 
-#define MAXX3(a,b,c) MAX(a,MAX(b,c))
-#define MINN3(a,b,c) MIN(a,MIN(b,c))
-
-#define SAT(a,b,c) ((float)MAXX3(a,b,c)-(float)MINN3(a,b,c))/(float)MAXX3(a,b,c)
-
-#define D50x 0.96422
-#define D50z 0.82521
+#define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
 
 extern const Settings* settings;
 
@@ -2020,7 +2018,7 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 	float chromaSatur = (float) params->vibrance.saturated / 100.0f;//
 	bool highlight = params->hlrecovery.enabled;//Get the value if "highlight reconstruction" is activated
 	//inverse matrix user select
-	float wip[3][3] = {
+	double wip[3][3] = {
 		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
 		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
 		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}

@@ -20,20 +20,18 @@
 #define _HISTORY_
 
 #include <gtkmm.h>
-#include <rtengine.h>
-#include <pparamschangelistener.h>
-#include <profilechangelistener.h>
-#include <paramsedited.h>
-#include <thumbnail.h>
-#include <imagedata.h>
+#include "../rtengine/rtengine.h"
+#include "pparamschangelistener.h"
+#include "profilechangelistener.h"
+#include "paramsedited.h"
+#include "thumbnail.h"
+#include "imagedata.h"
 
 class HistoryBeforeLineListener {
 
     public:
         virtual void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {}
 };
-
-
 
 class History : public Gtk::VBox, public PParamsChangeListener {
 
@@ -70,10 +68,10 @@ class History : public Gtk::VBox, public PParamsChangeListener {
         Gtk::ScrolledWindow*    bscrollw;
         Gtk::TreeView*          bTreeView;
         Glib::RefPtr<Gtk::ListStore> bookmarkModel;
-        Gtk::CellRendererText m_cellrenderer_validated;
-        Gtk::TreeView::Column m_treeviewcolumn_validated;
-        bool m_validate_retry;
-        Glib::ustring m_invalid_text_for_retry;
+        Gtk::CellRendererText   m_cellrenderer_validated;
+        Gtk::TreeView::Column   m_treeviewcolumn_validated;
+        bool                    m_validate_retry;
+        Glib::ustring           m_invalid_text_for_retry;
 
 
         Gtk::Button*            addBookmark;

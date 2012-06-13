@@ -20,10 +20,10 @@
 #define _BATCHQUEUEENTRY_
 
 #include <gtkmm.h>
-#include <rtengine.h>
-#include <thumbbrowserentrybase.h>
-#include <thumbnail.h>
-#include <bqentryupdater.h>
+#include "../rtengine/rtengine.h"
+#include "thumbbrowserentrybase.h"
+#include "thumbnail.h"
+#include "bqentryupdater.h"
 
 class BatchQueueEntry;
 struct BatchQueueEntryIdleHelper {

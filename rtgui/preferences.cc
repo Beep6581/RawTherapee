@@ -18,21 +18,23 @@
  */
 #include <sigc++/class_slot.h>
 #include "preferences.h"
-#include <multilangmgr.h>
-#include <splash.h>
-#include <cachemanager.h>
-#include <addsetids.h>
-#include <dfmanager.h>
-#include <ffmanager.h>
+#include "multilangmgr.h"
+#include "splash.h"
+#include "cachemanager.h"
+#include "addsetids.h"
+#include "../rtengine/dfmanager.h"
+#include "../rtengine/ffmanager.h"
 #include <sstream>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 extern Options options;
 extern Glib::ustring argv0;
 
 Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
   
+	splash = NULL;
+
     set_title (M("MAIN_BUTTON_PREFERENCES"));
 
     moptions.copyFrom (&options);
@@ -367,7 +369,7 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     if (options.multiUser)
         parseDir (Options::rtdir + "/" + options.profilePath, pnames, paramFileExtension);
     parseDir (argv0 + "/" + options.profilePath, pnames, paramFileExtension);
-    for (int i=0; i<pnames.size(); i++) {
+    for (size_t i=0; i<pnames.size(); i++) {
         rprofiles->append_text (pnames[i]);
         iprofiles->append_text (pnames[i]);
     }
@@ -493,7 +495,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
-    for (int i=0; i<langs.size(); i++) {
+    for (size_t i=0; i<langs.size(); i++) {
 	if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
   	    languages->append_text (langs[i]);
 	}
@@ -537,7 +539,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     theme->set_active (0);
     std::vector<Glib::ustring> themes;
     parseDir (argv0 + "/themes", themes, ".gtkrc");
-    for (int i=0; i<themes.size(); i++) 
+    for (size_t i=0; i<themes.size(); i++)
         theme->append_text (themes[i]);
 
     Gtk::Label* fontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT")+":") );
@@ -785,6 +787,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     ckbmenuGroupLabel = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPLABEL")) );
     ckbmenuGroupFileOperations = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPFILEOPERATIONS")) );
     ckbmenuGroupProfileOperations = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPPROFILEOPERATIONS")) );
+    ckbmenuGroupExtProg = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPEXTPROGS")) );
     Gtk::VBox* vbmnu = Gtk::manage( new Gtk::VBox () );
 
     vbmnu->set_border_width (4);
@@ -792,6 +795,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     vbmnu->pack_start (*ckbmenuGroupLabel, Gtk::PACK_SHRINK, 0);
     vbmnu->pack_start (*ckbmenuGroupFileOperations, Gtk::PACK_SHRINK, 0);
     vbmnu->pack_start (*ckbmenuGroupProfileOperations, Gtk::PACK_SHRINK, 0);
+    vbmnu->pack_start (*ckbmenuGroupExtProg, Gtk::PACK_SHRINK, 0);
 
 	frmnu->add (*vbmnu);
 
@@ -986,6 +990,7 @@ void Preferences::storePreferences () {
     moptions.menuGroupLabel             = ckbmenuGroupLabel->get_active();
     moptions.menuGroupFileOperations    = ckbmenuGroupFileOperations->get_active();
     moptions.menuGroupProfileOperations = ckbmenuGroupProfileOperations->get_active();
+    moptions.menuGroupExtProg           = ckbmenuGroupExtProg->get_active();
     moptions.blinkClipped    = blinkClipped->get_active ();
     moptions.highlightThreshold = (int)hlThresh->get_value ();
     moptions.shadowThreshold = (int)shThresh->get_value ();
@@ -1042,7 +1047,7 @@ void Preferences::storePreferences () {
     moptions.parseExtensions.clear ();
     moptions.parseExtensionsEnabled.clear ();
     Gtk::TreeNodeChildren c = extensionModel->children ();
-    for (int i=0; i<c.size(); i++) {
+    for (size_t i=0; i<c.size(); i++) {
         moptions.parseExtensions.push_back (c[i][extensionColumns.ext]);
         moptions.parseExtensionsEnabled.push_back (c[i][extensionColumns.enabled]);
     }
@@ -1136,6 +1141,8 @@ void Preferences::fillPreferences () {
     ckbmenuGroupLabel->set_active(moptions.menuGroupLabel);
     ckbmenuGroupFileOperations->set_active(moptions.menuGroupFileOperations);
     ckbmenuGroupProfileOperations->set_active(moptions.menuGroupProfileOperations);
+    ckbmenuGroupExtProg->set_active(moptions.menuGroupExtProg);
+
     blinkClipped->set_active (moptions.blinkClipped);
     hlThresh->set_value (moptions.highlightThreshold);
     shThresh->set_value (moptions.shadowThreshold);
@@ -1169,7 +1176,7 @@ void Preferences::fillPreferences () {
     }
     
     extensionModel->clear ();
-    for (int i=0; i<moptions.parseExtensions.size(); i++) {
+    for (size_t i=0; i<moptions.parseExtensions.size(); i++) {
         Gtk::TreeRow row = *(extensionModel->append());
         row[extensionColumns.enabled] = moptions.parseExtensionsEnabled[i];
         row[extensionColumns.ext]     = moptions.parseExtensions[i];
@@ -1230,7 +1237,7 @@ void Preferences::fillPreferences () {
     addc.block (true);
     setc.block (true);
     if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-		for (int i=0; i<moptions.baBehav.size(); i++) 
+		for (size_t i=0; i<moptions.baBehav.size(); i++)
 			for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++) 
 				for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
 					if (adjs->get_value (behavColumns.addsetid) == i) {
@@ -1326,9 +1333,9 @@ void Preferences::selectStartupDir () {
 
 void Preferences::aboutPressed () {
 
-    Splash* splash = new Splash ();
+    splash = new Splash (*this);
     splash->set_transient_for (*this);
-    splash->set_modal (true);   
+    splash->signal_delete_event().connect( sigc::mem_fun(*this, &Preferences::splashClosed) );
     splash->show ();
 }
 
@@ -1443,7 +1450,7 @@ void Preferences::useThemeChanged(){
 void Preferences::addExtPressed () {
 
   Gtk::TreeNodeChildren c = extensionModel->children ();
-  for (int i=0; i<c.size(); i++)
+  for (size_t i=0; i<c.size(); i++)
     if (c[i][extensionColumns.ext] == extension->get_text ())
         return;
 
@@ -1507,4 +1514,10 @@ void Preferences::updateFFinfos()
     rtengine::ffm.getStat(t1,t2);
     Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_FLATFIELDFOUND"), t1, M("PREFERENCES_FLATFIELDSHOTS"), t2, M("PREFERENCES_FLATFIELDTEMPLATES"));
     ffLabel->set_text(s);
+}
+
+bool Preferences::splashClosed(GdkEventAny* event) {
+	delete splash;
+	splash = NULL;
+	return true;
 }

@@ -17,8 +17,8 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "toolbar.h"
-#include <multilangmgr.h>
-#include <rtimage.h>
+#include "multilangmgr.h"
+#include "rtimage.h"
 
 extern Glib::ustring argv0;
 

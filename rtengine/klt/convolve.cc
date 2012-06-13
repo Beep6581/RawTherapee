@@ -3,9 +3,9 @@
  *********************************************************************/
 
 /* Standard includes */
-#include <assert.h>
-#include <math.h>
-#include <stdlib.h>   /* malloc(), realloc() */
+#include <cassert>
+#include <cmath>
+#include <cstdlib>   /* malloc(), realloc() */
 
 /* Our includes */
 #include "base.h"
@@ -87,9 +87,11 @@ static void _computeKernels(
     for (i = -hw ; fabs(gaussderiv->data[i+hw] / max_gaussderiv) < factor ; 
          i++, gaussderiv->width -= 2);
     if (gauss->width == MAX_KERNEL_WIDTH || 
-        gaussderiv->width == MAX_KERNEL_WIDTH)
+        gaussderiv->width == MAX_KERNEL_WIDTH) {
       KLTError("(_computeKernels) MAX_KERNEL_WIDTH %d is too small for "
                "a sigma of %f", MAX_KERNEL_WIDTH, sigma);
+      exit(1);
+    }
   }
 
   /* Shift if width less than MAX_KERNEL_WIDTH */

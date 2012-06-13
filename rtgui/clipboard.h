@@ -20,32 +20,40 @@
 #define _CLIPBOARD_
 
 #include <vector>
-#include <rtengine.h>
-#include <mydiagonalcurve.h>
+#include "../rtengine/rtengine.h"
+#include "../rtengine/procparams.h"
+#include "paramsedited.h"
+#include "mydiagonalcurve.h"
 
 class Clipboard {
-    
+
     bool _hasIPTC;
-    rtengine::MetadataList iptc;
-    bool _hasProcParams;
-    rtengine::procparams::ProcParams procParams;
+    //rtengine::MetadataList iptc;
+    rtengine::procparams::IPTCPairs iptc;
+    rtengine::procparams::PartialProfile partProfile;
     DiagonalCurveType hasCurveDataType;
     std::vector<double> curve;
 
 
     public:
-        void                                               setIPTC (const rtengine::MetadataList& iptcc) { iptc = iptcc; _hasIPTC = true;}
-        const rtengine::MetadataList&                      getIPTC () { return iptc;  }
+        void                                               setIPTC (const rtengine::procparams::IPTCPairs& iptcc) { iptc = iptcc; _hasIPTC = true;}
+        const rtengine::procparams::IPTCPairs&             getIPTC ()                                            { return iptc;  }
+        //const rtengine::MetadataList&                      getIPTC () { return iptc;  }
         bool                                               hasIPTC () { return _hasIPTC; }
-        
-        void                                               setProcParams (const rtengine::procparams::ProcParams& pparams) { procParams = pparams; _hasProcParams = true; }
-        const rtengine::procparams::ProcParams&            getProcParams ()                                                { return procParams; }
-        bool                                               hasProcParams () { return _hasProcParams; }
+
+        void                                               setPartialProfile   (const rtengine::procparams::PartialProfile& pprofile);
+        const rtengine::procparams::PartialProfile&        getPartialProfile   () { return partProfile; };
+        void                                               setProcParams       (const rtengine::procparams::ProcParams& pparams);
+        const rtengine::procparams::ProcParams&            getProcParams       () { return *partProfile.pparams; }
+        bool                                               hasProcParams       () { return partProfile.pparams; }
+        bool                                               hasPEdited          () { return partProfile.pedited; }
 
         void                                               setCurveData (std::vector<double>& p, DiagonalCurveType type ) { curve = p;  hasCurveDataType = type; return; }
         const std::vector<double> &                        getCurveData ()                       { return curve; }
         DiagonalCurveType                                  hasCurveData ()                       { return hasCurveDataType; }
 
+        Clipboard ();
+        ~Clipboard ();
 
 };
 

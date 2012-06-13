@@ -17,9 +17,9 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <glib/gstdio.h>
-#include <multilangmgr.h>
-#include <string.h>
-#include <safegtk.h>
+#include "multilangmgr.h"
+#include <cstring>
+#include "../rtengine/safegtk.h"
 #ifdef WIN32
 // Desired auto detect function is Vista+
 #define _WIN32_WINNT 0x0600

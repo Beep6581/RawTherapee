@@ -19,39 +19,76 @@
 #ifndef _COLORTEMP_
 #define _COLORTEMP_
 
-#include <math.h>
+#include <gtkmm.h>
+#include <cmath>
 
 namespace rtengine {
 
-#define MINTEMP 1200
-#define MAXTEMP 12000
+#define MINTEMP 2000
+#define MAXTEMP 25000
 #define MINGREEN 0.02
 #define MAXGREEN 5.0
+#define INITIALBLACKBODY 4000
 
 class ColorTemp {
 
     private:
         double temp;
         double green;
+        Glib::ustring method;
 
         static void clip (double &temp, double &green);
-        
+
     public:
-    
-        ColorTemp () : temp(-1), green(-1) {}
-        ColorTemp (double t, double g);
-        ColorTemp (double mulr, double mulg, double mulb) { mul2temp (mulr, mulg, mulb, temp, green); }
-        
+
+        ColorTemp () : temp(-1), green(-1), method("Custom") {}
+        ColorTemp (double t, double g, Glib::ustring m);
+        ColorTemp (double mulr, double mulg, double mulb);
+
         inline double getTemp ()    { return temp;  }
         inline double getGreen ()   { return green; }
-        
+
         void   getMultipliers (double &mulr, double &mulg, double &mulb) { temp2mul (temp, green, mulr, mulg, mulb); }
 
-  static void mul2temp (double rmul, double gmul, double bmul, double& temp, double& green);
-  static void temp2mul (double temp, double green, double& rmul, double& gmul, double& bmul);
+        void mul2temp (double rmul, double gmul, double bmul, double& temp, double& green);
+        void temp2mul (double temp, double green, double& rmul, double& gmul, double& bmul);
+        //void temp2mul (double& rmul, double& gmul, double& bmul);
 
         bool operator== (const ColorTemp& other) { return fabs(temp-other.temp)<1e-10 && fabs(green-other.green)<1e-10; }
         bool operator!= (const ColorTemp& other) { return !(*this==other); }
+
+        static double blackbody_spect        (double wavelength, double m1, double m2, double temp);
+        static double daylight_spect         (double wavelength, double m1, double m2, double temp);
+        static double Cloudy6200_spect       (double wavelength, double m1, double m2, double temp);
+        static double Daylight5300_spect     (double wavelength, double m1, double m2, double temp);
+        static double Shade7600_spect        (double wavelength, double m1, double m2, double temp);
+        static double A2856_spect            (double wavelength, double m1, double m2, double temp);
+        static double FluoF1_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF2_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF3_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF4_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF5_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF6_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF7_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF8_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF9_spect           (double wavelength, double m1, double m2, double temp);
+        static double FluoF10_spect          (double wavelength, double m1, double m2, double temp);
+        static double FluoF11_spect          (double wavelength, double m1, double m2, double temp);
+        static double FluoF12_spect          (double wavelength, double m1, double m2, double temp);
+        static double HMI_spect              (double wavelength, double m1, double m2, double temp);
+        static double GTI_spect              (double wavelength, double m1, double m2, double temp);
+        static double JudgeIII_spect         (double wavelength, double m1, double m2, double temp);
+        static double Solux3500_spect        (double wavelength, double m1, double m2, double temp);
+        static double Solux4100_spect        (double wavelength, double m1, double m2, double temp);
+        static double Solux4700_spect        (double wavelength, double m1, double m2, double temp);
+        static double NG_Solux4700_spect     (double wavelength, double m1, double m2, double temp);
+        static double NG_LEDLSI2040_spect    (double wavelength, double m1, double m2, double temp);
+        static double NG_CRSSP12WWMR16_spect (double wavelength, double m1, double m2, double temp);
+        static double Flash5500_spect        (double wavelength, double m1, double m2, double temp);
+        static double Flash6000_spect        (double wavelength, double m1, double m2, double temp);
+        static double Flash6500_spect        (double wavelength, double m1, double m2, double temp);
+
+        static void spectrum_to_xyz          (double (*spec_intens)(double wavelength, double m1, double m2, double temp), double _m1, double _m2, double _temp, double &x, double &y, double &z);
 };
-};
+}
 #endif

@@ -16,15 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <imagearea.h>
-#include <time.h>
-#include <math.h>
-#include <options.h>
-#include <multilangmgr.h>
+#include "imagearea.h"
+#include <ctime>
+#include <cmath>
+#include "options.h"
+#include "multilangmgr.h"
 #include <iomanip>
-#include <cropwindow.h>
-#include <refreshmap.h>
-#include <options.h>
+#include "cropwindow.h"
+#include "../rtengine/refreshmap.h"
+#include "options.h"
 
 ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 
@@ -42,12 +42,14 @@ ImageArea::ImageArea (ImageAreaPanel* p) : parent(p) {
 	
     zoomPanel = Gtk::manage (new ZoomPanel (this));
     indClippedPanel = Gtk::manage (new IndicateClippedPanel (this));
+    previewModePanel =  Gtk::manage (new PreviewModePanel (this));
 
     signal_style_changed().connect( sigc::mem_fun(*this, &ImageArea::styleChanged) );
     signal_size_allocate().connect( sigc::mem_fun(*this, &ImageArea::on_resized) );
 
     dirty = false;
     ipc = NULL;
+    iLinkedImageArea = NULL;
 }
 
 ImageArea::~ImageArea () {
@@ -87,7 +89,8 @@ void ImageArea::on_resized (Gtk::Allocation& req) {
 		else {
 			mainCropWindow->setSize (get_width(), get_height());
 		}
-	}
+        parent->syncBeforeAfterViews();
+	}    
 }
 
 void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_) {
@@ -380,19 +383,19 @@ void ImageArea::setScrollPosition (int x, int y) {
 
 void ImageArea::cropPositionChanged (CropWindow* cw) { 
 
-    updateScrollbars ();
+    syncBeforeAfterViews ();
 }
 
 void ImageArea::cropWindowSizeChanged (CropWindow* cw) {
 
-    updateScrollbars ();
+    syncBeforeAfterViews ();
 }
 
 void ImageArea::cropZoomChanged (CropWindow* cw) {
 
     if (cw==mainCropWindow) {
         parent->zoomChanged ();
-        updateScrollbars ();
+        syncBeforeAfterViews ();
         zoomPanel->refreshZoomLabel ();
     }
 }
@@ -419,8 +422,8 @@ void ImageArea::initialImageArrived (CropWindow* cw) {
         mainCropWindow->zoomFit ();
 }
 
-void ImageArea::updateScrollbars () {
-    parent->refreshScrollBars (); 
+void ImageArea::syncBeforeAfterViews () {
+    parent->syncBeforeAfterViews ();
 }
 
 void ImageArea::setCropGUIListener (CropGUIListener* l) { 

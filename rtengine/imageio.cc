@@ -19,18 +19,23 @@
  */
 #include <png.h>
 #include <glib/gstdio.h>
-#include <imageio.h>
-#include <safegtk.h>
 #include <tiff.h>
 #include <tiffio.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <fcntl.h>
+#include "rt_math.h"
+
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
+
+#include "imageio.h"
+#include "safegtk.h"
+//#include "iptcpairs.h"
+#include "iccjpeg.h"
 
 
 extern "C" {
@@ -40,6 +45,7 @@ extern "C" {
 
 Glib::ustring safe_locale_to_utf8 (const std::string& src);
 
+using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -147,9 +153,7 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
 	else
 		png_set_gamma(png,2.0, 0.45455);
 
-    int bps = getBPS ();
-
-
+//  int bps = getBPS ();
 //	if (bps==8 && bit_depth==16) png_set_strip_16(png);
 
 	//updating png info struct
@@ -174,7 +178,7 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
   	    png_read_row (png, (png_byte*)row, NULL);
   	    if (bit_depth==16) {  // convert scanline to host byte order
   	        unsigned short* srow = (unsigned short*)row;
-  	        for (int j=0; j<width*3; j++)
+  	        for (unsigned int j=0; j<width*3; j++)
   	            srow[j] = ntohs (srow[j]);
   	    }
         setScanline (i, row, bit_depth);
@@ -208,7 +212,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jpeg_create_decompress(&cinfo);
 
     jpeg_memory_src (&cinfo,(const JOCTET*)buffer,bufsize);
-    if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+    if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
     {
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
@@ -221,7 +225,6 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
         //jpeg_memory_src (&cinfo,buffer,bufsize);
         jpeg_read_header(&cinfo, TRUE);
 
-        unsigned int proflen;
         if( loadedProfileData ){
            delete [] loadedProfileData;
            loadedProfileData = NULL;
@@ -234,8 +237,8 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
         jpeg_start_decompress(&cinfo);
 
-        int width = cinfo.output_width;
-        int height = cinfo.output_height;
+        unsigned int width = cinfo.output_width;
+        unsigned int height = cinfo.output_height;
 
         allocate (width, height);
 
@@ -280,7 +283,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     jpeg_create_decompress(&cinfo);
 
     my_jpeg_stdio_src (&cinfo,file);
-    if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+    if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
     {
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
@@ -299,7 +302,6 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     	    return IMIO_READERROR;
     	}
 
-        unsigned int proflen;    	
         delete loadedProfileData;
         loadedProfileData = NULL;
         bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
@@ -310,8 +312,8 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
 
         jpeg_start_decompress(&cinfo);
 
-        int width = cinfo.output_width;
-        int height = cinfo.output_height;
+        unsigned int width = cinfo.output_width;
+        unsigned int height = cinfo.output_height;
 
         allocate (width, height);
 
@@ -637,8 +639,10 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         #else
         TIFF* out = TIFFOpen(fname.c_str(), mode);
         #endif
-        if (!out) 
+        if (!out) {
+            delete [] linebuffer;
             return IMIO_CANNOTREADFILE;
+        }
 
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_SAVETIFF");
@@ -651,7 +655,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         TIFFSetField (out, TIFFTAG_IMAGELENGTH, height);
         TIFFSetField (out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
         TIFFSetField (out, TIFFTAG_SAMPLESPERPIXEL, 3);
-        TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, height);
+        TIFFSetField (out, TIFFTAG_ROWSPERSTRIP, height);
         TIFFSetField (out, TIFFTAG_BITSPERSAMPLE, bps);
         TIFFSetField (out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
         TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
@@ -666,7 +670,7 @@ int ImageIO::saveTIFF (Glib::ustring fname, int bps, bool uncompressed) {
         for (int row = 0; row < height; row++) {
             getScanline (row, linebuffer, bps);
             if (needsReverse)
-                for (int i=0; i<lineWidth; i+=2) {
+                for (unsigned int i=0; i<lineWidth; i+=2) {
                     char c = linebuffer[i];
                     linebuffer[i] = linebuffer[i+1];
                     linebuffer[i+1] = c;
@@ -730,7 +734,7 @@ void png_flush(png_structp png_ptr) {
 
 int ImageIO::load (Glib::ustring fname) {
 
-  int lastdot = fname.find_last_of ('.');
+  size_t lastdot = fname.find_last_of ('.');
   if( Glib::ustring::npos == lastdot )
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
@@ -744,7 +748,7 @@ int ImageIO::load (Glib::ustring fname) {
 
 int ImageIO::save (Glib::ustring fname) {
 
-  int lastdot = fname.find_last_of ('.');
+  size_t lastdot = fname.find_last_of ('.');
   if( Glib::ustring::npos == lastdot )
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))

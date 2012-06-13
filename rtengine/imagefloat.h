@@ -22,8 +22,8 @@
 #ifndef _IMAGEFLOAT_
 #define _IMAGEFLOAT_
 
-#include <imageio.h>
-#include <rtengine.h>
+#include "imageio.h"
+#include "rtengine.h"
 
 namespace rtengine {
     using namespace procparams;
@@ -91,7 +91,7 @@ class Imagefloat : public ImageIO, public IImagefloat {
 
         void calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
 
-        void ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe);
+        void ExecCMSTransform(cmsHTRANSFORM hTransform);
     };
-};
+}
 #endif

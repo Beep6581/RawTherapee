@@ -20,9 +20,9 @@
 #define _CROP_H_
 
 #include <gtkmm.h>
-#include <cropguilistener.h>
-#include <toolpanel.h>
-#include <guiutils.h>
+#include "cropguilistener.h"
+#include "toolpanel.h"
+#include "guiutils.h"
 #include <vector>
 
 class CropPanelListener {

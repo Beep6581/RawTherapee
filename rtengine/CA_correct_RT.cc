@@ -22,6 +22,14 @@
 //
 ////////////////////////////////////////////////////////////////
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#include "rtengine.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
+
+using namespace std;
+using namespace rtengine;
+
 int RawImageSource::LinEqSolve(int nDim, float* pfMatr, float* pfVect, float* pfSolution) 
 {
 //==============================================================================
@@ -101,10 +109,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 //#define border2	16
 	
 	#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-	#define SQR(x) ((x)*(x))
 
-	const float clip_pt = initialGain;
-		
 	// local variables
 	int width=W, height=H;
 	//temporary array to store simple interpolation of G
@@ -238,8 +243,8 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 		vctr++;
 		for (left=-border, hblock=1; left < width; left += TS-border2, hblock++) {
 			hctr++;
-			int bottom = MIN( top+TS,height+border);
-			int right  = MIN(left+TS, width+border);
+			int bottom = min(top+TS,height+border);
+			int right  = min(left+TS, width+border);
 			int rr1 = bottom - top;
 			int cc1 = right - left;
 			//t1_init = clock();
@@ -365,20 +370,20 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 				for (cc=4+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-4; cc+=2, indx+=2) {
 					
 					
-					rbhpfv[indx] = fabs(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])) + \
-										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx][1]-rgb[indx][c])) - \
+					rbhpfv[indx] = fabs(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])) +
+										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx][1]-rgb[indx][c])) -
 										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])));
-					rbhpfh[indx] = fabs(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+4][1]-rgb[indx+4][c])) + \
-										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx][1]-rgb[indx][c])) - \
+					rbhpfh[indx] = fabs(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+4][1]-rgb[indx+4][c])) +
+										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx][1]-rgb[indx][c])) -
 										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx+4][1]-rgb[indx+4][c])));
 					
-					/*ghpfv = fabs(fabs(rgb[indx][1]-rgb[indx+v4][1])+fabs(rgb[indx][1]-rgb[indx-v4][1]) - \
+					/*ghpfv = fabs(fabs(rgb[indx][1]-rgb[indx+v4][1])+fabs(rgb[indx][1]-rgb[indx-v4][1]) -
 					 fabs(rgb[indx+v4][1]-rgb[indx-v4][1]));
-					 ghpfh = fabs(fabs(rgb[indx][1]-rgb[indx+4][1])+fabs(rgb[indx][1]-rgb[indx-4][1]) - \
+					 ghpfh = fabs(fabs(rgb[indx][1]-rgb[indx+4][1])+fabs(rgb[indx][1]-rgb[indx-4][1]) -
 					 fabs(rgb[indx+4][1]-rgb[indx-4][1]));
-					 rbhpfv[indx] = fabs(ghpfv - fabs(fabs(rgb[indx][c]-rgb[indx+v4][c])+fabs(rgb[indx][c]-rgb[indx-v4][c]) - \
+					 rbhpfv[indx] = fabs(ghpfv - fabs(fabs(rgb[indx][c]-rgb[indx+v4][c])+fabs(rgb[indx][c]-rgb[indx-v4][c]) -
 					 fabs(rgb[indx+v4][c]-rgb[indx-v4][c])));
-					 rbhpfh[indx] = fabs(ghpfh - fabs(fabs(rgb[indx][c]-rgb[indx+4][c])+fabs(rgb[indx][c]-rgb[indx-4][c]) - \
+					 rbhpfh[indx] = fabs(ghpfh - fabs(fabs(rgb[indx][c]-rgb[indx+4][c])+fabs(rgb[indx][c]-rgb[indx-4][c]) -
 					 fabs(rgb[indx+4][c]-rgb[indx-4][c])));*/
 					
 					glpfv = 0.25*(2*rgb[indx][1]+rgb[indx+v2][1]+rgb[indx-v2][1]);
@@ -435,11 +440,11 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 				for (cc=4+(FC(rr,2)&1), indx=rr*TS+cc, c = FC(rr,cc); cc < cc1-4; cc+=2, indx+=2) {
 					
 
-					rbhpfv[indx] = SQR(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])) + \
-										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx][1]-rgb[indx][c])) - \
+					rbhpfv[indx] = SQR(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])) +
+										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx][1]-rgb[indx][c])) -
 										fabs((rgb[indx-v4][1]-rgb[indx-v4][c])-(rgb[indx+v4][1]-rgb[indx+v4][c])));
-					rbhpfh[indx] = SQR(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+4][1]-rgb[indx+4][c])) + \
-										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx][1]-rgb[indx][c])) - \
+					rbhpfh[indx] = SQR(fabs((rgb[indx][1]-rgb[indx][c])-(rgb[indx+4][1]-rgb[indx+4][c])) +
+										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx][1]-rgb[indx][c])) -
 										fabs((rgb[indx-4][1]-rgb[indx-4][c])-(rgb[indx+4][1]-rgb[indx+4][c])));
 					
 					
@@ -467,7 +472,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 					gdiff=0.3125*(rgb[indx+TS][1]-rgb[indx-TS][1])+0.09375*(rgb[indx+TS+1][1]-rgb[indx-TS+1][1]+rgb[indx+TS-1][1]-rgb[indx-TS-1][1]);
 					deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-v4][c]-rgb[indx-v4][1])+(rgb[indx+v4][c]-rgb[indx+v4][1]));
 					
-					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) );//*(grblpfv[indx-v2]+grblpfv[indx+v2])/(eps+0.1*grblpfv[indx-v2]+rblpfv[indx-v2]+0.1*grblpfv[indx+v2]+rblpfv[indx+v2]);
+					gradwt=fabs(0.25*rbhpfv[indx]+0.125*(rbhpfv[indx+2]+rbhpfv[indx-2]) );// *(grblpfv[indx-v2]+grblpfv[indx+v2])/(eps+0.1*grblpfv[indx-v2]+rblpfv[indx-v2]+0.1*grblpfv[indx+v2]+rblpfv[indx+v2]);
 					if (gradwt>eps) {
 					coeff[0][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[0][1][c] += gradwt*gdiff*deltgrb;
@@ -479,7 +484,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 					gdiff=0.3125*(rgb[indx+1][1]-rgb[indx-1][1])+0.09375*(rgb[indx+1+TS][1]-rgb[indx-1+TS][1]+rgb[indx+1-TS][1]-rgb[indx-1-TS][1]);
 					deltgrb=(rgb[indx][c]-rgb[indx][1])-0.5*((rgb[indx-4][c]-rgb[indx-4][1])+(rgb[indx+4][c]-rgb[indx+4][1]));
 					
-					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) );//*(grblpfh[indx-2]+grblpfh[indx+2])/(eps+0.1*grblpfh[indx-2]+rblpfh[indx-2]+0.1*grblpfh[indx+2]+rblpfh[indx+2]);
+					gradwt=fabs(0.25*rbhpfh[indx]+0.125*(rbhpfh[indx+v2]+rbhpfh[indx-v2]) );// *(grblpfh[indx-2]+grblpfh[indx+2])/(eps+0.1*grblpfh[indx-2]+rblpfh[indx-2]+0.1*grblpfh[indx+2]+rblpfh[indx+2]);
 					if (gradwt>eps) {
 					coeff[1][0][c] += gradwt*deltgrb*deltgrb;
 					coeff[1][1][c] += gradwt*gdiff*deltgrb;
@@ -549,6 +554,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 				blockvar[j][c] = blocksqave[j][c]/blockdenom[j][c]-SQR(blockave[j][c]/blockdenom[j][c]);
 			} else {
 				printf ("blockdenom vanishes \n");
+                                free(buffer1);
 				return;
 			}
 		}
@@ -630,12 +636,13 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 			}//c
 		}//blocks
 	
-	numblox[1]=MIN(numblox[0],numblox[2]);
+	numblox[1]=min(numblox[0],numblox[2]);
 	//if too few data points, restrict the order of the fit to linear
 	if (numblox[1]<32) {
 		polyord=2; numpar=4;
 		if (numblox[1]< 10) {
 			printf ("numblox = %d \n",numblox[1]);
+                        free(buffer1);
 			return;
 		}
 	}
@@ -646,6 +653,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 			res = LinEqSolve(numpar, polymat[c][dir], shiftmat[c][dir], fitparams[c][dir]);
 			if (res) {
 				printf ("CA correction pass failed -- can't solve linear equations for color %d direction %d...\n",c,dir);
+                                free(buffer1);
 				return;
 			}
 		}
@@ -658,8 +666,8 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 	//#pragma omp parallel for shared(image,height,width) private(top,left,indx,indx1) schedule(dynamic)
 	for (top=-border, vblock=1; top < height; top += TS-border2, vblock++)
 		for (left=-border, hblock=1; left < width; left += TS-border2, hblock++) {
-			int bottom = MIN( top+TS,height+border);
-			int right  = MIN(left+TS, width+border);
+			int bottom = min(top+TS,height+border);
+			int right  = min(left+TS, width+border);
 			int rr1 = bottom - top;
 			int cc1 = right - left;
 			//t1_init = clock();
@@ -883,7 +891,7 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 						p[2]=1/(eps+fabs(rgb[indx][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc]));
 						p[3]=1/(eps+fabs(rgb[indx][1]-gshift[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]]));
 						
-						grbdiffint = (p[0]*grbdiff[indx]+p[1]*grbdiff[indx-2*GRBdir[1][c]]+ \
+						grbdiffint = (p[0]*grbdiff[indx]+p[1]*grbdiff[indx-2*GRBdir[1][c]]+
 									  p[2]*grbdiff[(rr-2*GRBdir[0][c])*TS+cc]+p[3]*grbdiff[(rr-2*GRBdir[0][c])*TS+cc-2*GRBdir[1][c]])/(p[0]+p[1]+p[2]+p[3]);
 						
 						//now determine R/B at grid points using interpolated color differences and interpolated G value at grid point
@@ -925,8 +933,6 @@ void RawImageSource::CA_correct_RT(double cared, double cablue) {
 //#undef border
 //#undef border2
 #undef PIX_SORT
-#undef SQR
-
 }
 
 

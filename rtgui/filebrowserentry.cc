@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filebrowserentry.h>
-#include <thumbbrowserbase.h>
-#include <cursormanager.h>
+#include "filebrowserentry.h"
+#include "thumbbrowserbase.h"
+#include "cursormanager.h"
 #include <iomanip>
-#include <guiutils.h>
-#include <safegtk.h>
+#include "guiutils.h"
+#include "../rtengine/safegtk.h"
 
 #include <cstring>
 
@@ -137,7 +137,7 @@ void FileBrowserEntry::getIconSize (int& w, int& h) {
 
 FileThumbnailButtonSet* FileBrowserEntry::getThumbButtonSet () {
 
-    return (FileThumbnailButtonSet*)buttonSet;
+  return (static_cast<FileThumbnailButtonSet*>(buttonSet));
 }
 
 void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
@@ -161,7 +161,7 @@ struct tiupdate {
 
 int updateImageUI (void* data) {
     
-    tiupdate* params = (tiupdate*)data;
+    tiupdate* params = static_cast<tiupdate*>(data);
     FileBrowserEntryIdleHelper* feih = params->feih;
 
     if (feih->destroyed) {

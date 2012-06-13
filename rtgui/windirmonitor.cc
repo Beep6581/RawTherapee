@@ -16,8 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <windirmonitor.h>
-#include <options.h>
+#include "windirmonitor.h"
+#include "options.h"
 
 static void CALLBACK current_directory_monitor_callback (DWORD error, DWORD nBytes, LPOVERLAPPED lpOverlapped) {
     DWORD dwOffset = 0;

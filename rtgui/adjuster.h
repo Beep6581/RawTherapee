@@ -20,8 +20,8 @@
 #define _ADJUSTER_H_
 
 #include <gtkmm.h>
-#include <editedstate.h>
-#include <guiutils.h>
+#include "editedstate.h"
+#include "guiutils.h"
 
 class Adjuster;
 class AdjusterListener {

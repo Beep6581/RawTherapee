@@ -21,7 +21,7 @@ inline double tightestroot (double L, double a, double b, double r1, double r2, 
 #ifndef __COLORCLIP__
 #define __COLORCLIP__
 
-#include <math.h>
+#include <cmath>
 #include "median.h"
 
 // gives back the tightest >0 amplification by which color clipping occures

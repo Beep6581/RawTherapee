@@ -19,12 +19,13 @@
 #ifndef __IMAGEDATA_H__
 #define __IMAGEDATA_H__
 
-#include <stdio.h>
-#include <rawimage.h>
+#include <cstdio>
+#include "rawimage.h"
 #include <string>
 #include <glibmm.h>
-#include <procparams.h>
-#include <rtXmp.h>
+#include "procparams.h"
+#include "rtXmp.h"
+#include "rtengine.h"
 #include <map>
 
 namespace rtengine {
@@ -101,7 +102,7 @@ class ImageMetaData {
 
     ImageMetaData (const Glib::ustring &fname, const Glib::ustring &fnameMeta, const Glib::ustring &fnameMeta2="" );
     ImageMetaData ( const ImageMetaData &v);
-    ~ImageMetaData ();
+    virtual ~ImageMetaData ();
 
     /** Prepare metadata for writing */
     void            merge( bool syncExif=true, bool syncIPTC=true, bool removeProcessing=true );
@@ -243,6 +244,5 @@ class ImageMetaData {
       * @return The metadata */
       static ImageMetaData* fromFile (const Glib::ustring& fname, const Glib::ustring &fnameMeta, const Glib::ustring &fnameMeta2="", bool embed=false);
 };
-
-};
+}
 #endif

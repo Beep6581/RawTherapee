@@ -19,7 +19,7 @@
 #ifndef _PROCESSINGJOB_
 #define _PROCESSINGJOB_
 
-#include <rtengine.h>
+#include "rtengine.h"
 
 namespace rtengine {
 
@@ -42,6 +42,6 @@ class ProcessingJobImpl : public ProcessingJob {
         ~ProcessingJobImpl () { if (initialImage) initialImage->decreaseRef();  }
 };
 
-};
+}
 
 #endif

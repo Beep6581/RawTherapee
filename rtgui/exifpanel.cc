@@ -16,14 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <exifpanel.h>
-#include <safegtk.h>
-#include <guiutils.h>
-#include <rtimage.h>
+#include "exifpanel.h"
+#include "../rtengine/safegtk.h"
+#include "guiutils.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
-
+using namespace rtexif;
 extern Glib::ustring argv0;
 
 ExifPanel::ExifPanel () : idata(NULL) {

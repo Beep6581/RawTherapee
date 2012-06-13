@@ -19,9 +19,9 @@
 #ifndef __RAWIMAGE_H
 #define __RAWIMAGE_H
 
-#include <time.h>
+#include <ctime>
 #include <glibmm.h>
-#include <dcraw.h>
+#include "dcraw.h"
 
 namespace rtengine {
 
@@ -90,7 +90,7 @@ public:
   ~RawImage();
 
   int loadRaw (bool loadData=true, bool closeFile=true);
-  int get_colorsCoeff( float *pre_mul, float *scale_mul, float *cblack  );
+  	void get_colorsCoeff( float* pre_mul_, float* scale_mul_, float* cblack_  );
   void set_prefilters(){
       if (isBayer() && get_colors() == 3) {
          prefilters = filters;

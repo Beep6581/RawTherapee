@@ -20,11 +20,11 @@
 #define _LABCURVE_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
-#include <curveeditor.h>
-#include <curveeditorgroup.h>
-#include <colorprovider.h>
+#include "adjuster.h"
+#include "toolpanel.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "colorprovider.h"
 
 class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 
@@ -62,7 +62,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void adjusterChanged (Adjuster* a, double newval);
 	void avoidclip_toggled ();
     void enablelimiter_toggled ();
-    void updateCurveBackgroundHistogram (LUTu & hist);
+    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
     virtual void colorForValue (double valX, double valY);
 };

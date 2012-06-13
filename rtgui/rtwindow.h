@@ -19,12 +19,13 @@
 #define _RTWINDOW_
 
 #include <gtkmm.h>
-#include <filepanel.h>
-#include <editorpanel.h>
-#include <batchqueuepanel.h>
+#include "filepanel.h"
+#include "editorpanel.h"
+#include "batchqueuepanel.h"
 #include <set>
-#include <progressconnector.h>
-#include <editwindow.h>
+#include "progressconnector.h"
+#include "editwindow.h"
+#include "splash.h"
 
 class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
@@ -34,6 +35,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         std::set<Glib::ustring> filesEdited;
         std::map<Glib::ustring, EditorPanel*> epanels;
 
+        Splash* splash;
         Gtk::ProgressBar prProgBar;
         PLDBridge* pldBridge;
         bool is_fullscreen;
@@ -42,12 +44,15 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         Gtk::Image *iFullscreen, *iFullscreen_exit;
 
         bool isSingleTabMode() { return !options.tabbedUI && !EditWindow::isMultiDisplayEnabled(); };
+        void findVerNumbers(int* numbers, Glib::ustring versionStr);
 
         bool on_expose_event_epanel(GdkEventExpose* event);
         bool on_expose_event_fpanel(GdkEventExpose* event);
+        bool splashClosed(GdkEventAny* event);
 
     public:
         RTWindow ();
+        ~RTWindow();
 
         void addEditorPanel (EditorPanel* ep,const std::string &name);
         void remEditorPanel (EditorPanel* ep);

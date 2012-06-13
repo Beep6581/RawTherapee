@@ -24,7 +24,7 @@
 #elif defined __APPLE__
 #include <sys/time.h>
 #else
-#include <time.h>
+#include <ctime>
 #endif 
 
 class MyTime {

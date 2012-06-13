@@ -17,7 +17,6 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #define	A	(-0.85)
-//#define CLIP(a)  ((a>CMAXVAL)?a=CMAXVAL:((a<0)?0:a))
 
 inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul) {
 

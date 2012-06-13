@@ -21,7 +21,9 @@
 
 #include <glibmm.h>
 #include <vector>
-#include <rtXmp.h>
+#include "rtXmp.h"
+
+class ParamsEdited;
 
 namespace rtengine {
 namespace procparams {
@@ -60,6 +62,17 @@ class LCurveParams {
         bool    avoidclip;
         bool    enable_saturationlimiter;
         double  saturationlimit;
+};
+
+/**
+  * Parameters of the RGB curves
+  */
+class RGBCurvesParams {
+
+    public:
+        std::vector<double>   rcurve;
+        std::vector<double>   gcurve;
+        std::vector<double>   bcurve;
 };
 
 /**
@@ -116,59 +129,88 @@ class VibranceParams {
 /**
   * Parameters of the color boost
   */
-class ColorBoostParams {
+/*class ColorBoostParams {
 
     public: 
         int     amount;
         bool    avoidclip;
         bool    enable_saturationlimiter;
         double  saturationlimit;
-};
+};*/
 
 /**
   * Parameters of the white balance adjustments
   */
+
+enum WBTypes {
+    WBT_CAMERA,
+    WBT_AUTO,
+    WBT_DAYLIGHT,
+    WBT_CLOUDY,
+    WBT_SHADE,
+    WBT_TUNGSTEN,
+    WBT_FLUORESCENT,
+    WBT_LAMP,
+    WBT_FLASH,
+    WBT_LED,
+    // WBT_CUSTOM one must remain the last one!
+    WBT_CUSTOM
+};
+
+class WBEntry {
+public:
+    Glib::ustring ppLabel;
+    enum WBTypes type;
+    Glib::ustring GUILabel;
+    int temperature;
+
+    WBEntry(Glib::ustring p, enum WBTypes t, Glib::ustring l, int temp) : ppLabel(p), type(t), GUILabel(l), temperature(temp) {};
+};
+
 class WBParams {
 
     public:
+	    static std::vector<WBEntry*> wbEntries;
         Glib::ustring   method;
         int             temperature;
         double          green;
+
+        static void     init();
+        static void     cleanup();
 };
 
 /**
   * Parameters of the color shift
   */
-class ColorShiftParams {
+/*class ColorShiftParams {
 
     public:
         double  a;
         double  b;
-};
+};*/
 
 /**
   * Parameters of the luminance denoising
   */
-class LumaDenoiseParams {
+/*class LumaDenoiseParams {
 
     public:
         bool    enabled;
         double  radius;
         int     edgetolerance;
-};
+};*/
 
 /**
   * Parameters of the color denoising
   */
-class ColorDenoiseParams {
+/*class ColorDenoiseParams {
 
     public:
         bool    enabled;
-        double  radius;
         int     edgetolerance;
         bool    edgesensitive;
         int		amount;
-};
+};*/
 	
 	/**
 	 * Parameters of defringing
@@ -202,9 +244,7 @@ class ColorDenoiseParams {
         bool    enabled;
         int		luma;
         int     chroma;
-		double	gamma;
-		std::vector<double>   lumcurve;
-		std::vector<double>   chromcurve;
+		float	gamma;
 	};
 
 //EPD related parameters.
@@ -368,6 +408,7 @@ class ColorManagementParams {
     public:
         Glib::ustring input;
         bool          blendCMSMatrix;
+        short         preferredProfile;
         Glib::ustring working;
         Glib::ustring output;
         static const Glib::ustring NoICMString;      
@@ -378,6 +419,16 @@ class ColorManagementParams {
 		bool freegamma;
 		
 };
+
+/**
+  * Typedef for representing a key/value for the exif metadata information
+typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
+  */
+
+/**
+  * The IPTC key/value pairs
+typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
+  */
 
 /**
 * Directional pyramid equalizer params
@@ -457,19 +508,20 @@ class ProcParams {
     public:
         ToneCurveParams         toneCurve;       ///< Tone curve parameters
         LCurveParams            labCurve;        ///< CIELAB luminance curve parameters
+        RGBCurvesParams         rgbCurves;       ///< RGB curves parameters
         SharpeningParams        sharpening;      ///< Sharpening parameters
         SharpenEdgeParams       sharpenEdge;     ///< Sharpen edge parameters
         SharpenMicroParams      sharpenMicro;    ///< Sharpen microcontrast parameters
         VibranceParams          vibrance;        ///< Vibrance parameters
-        ColorBoostParams        colorBoost;      ///< Color boost parameters
+        //ColorBoostParams        colorBoost;      ///< Color boost parameters
         WBParams                wb;              ///< White balance parameters
-        ColorShiftParams        colorShift;      ///< Color shift parameters
-        LumaDenoiseParams       lumaDenoise;     ///< Luminance denoising parameters
-        ColorDenoiseParams      colorDenoise;    ///< Color denoising parameters
+        //ColorShiftParams        colorShift;      ///< Color shift parameters
+        //LumaDenoiseParams       lumaDenoise;     ///< Luminance denoising parameters
+        //ColorDenoiseParams      colorDenoise;    ///< Color denoising parameters
         DefringeParams          defringe;        ///< Defringing parameters
         ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
         DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
-        EPDParams					  edgePreservingDecompositionUI;
+        EPDParams               edgePreservingDecompositionUI;
         SHParams                sh;              ///< Shadow/highlight enhancement parameters
         CropParams              crop;            ///< Crop parameters
         CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
@@ -483,38 +535,49 @@ class ProcParams {
         HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
-        ColorManagementParams   gam;             ///< profiles/color spaces used during the image processing
 		
         RAWParams               raw;             ///< RAW parameters before demosaicing
         DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
 
-        Glib::ustring appVersion;                ///< Version of the application that generated the parameters
-        int ppVersion;                           ///< Version of the PP file from which the parameters have been read
+        Glib::ustring           appVersion;      ///< Version of the application that generated the parameters
+        int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
+
 
       /**
         * The constructor only sets the hand-wired defaults.
         */
-        ProcParams          ();
+        ProcParams ();
       /**
         * Sets the hand-wired defaults parameters.
         */
-        void    setDefaults ();
+        void setDefaults ();
 
       /**
         * Loads the parameters from a file.
         * @param fname the name of the file
         * @return Error code (=0 if no error)
         */
-        int     load        (Glib::ustring fname, int *rank=NULL);
+        int load        (Glib::ustring fname, int *rank=NULL);
+
+        int saveIntoXMP (Exiv2::XmpData &xmpData, const std::string& baseKey) const;
+        int loadFromXMP (Exiv2::XmpData &xmpData, const std::string& baseKey);
+        int saveParams  (Glib::ustring fname) const;
+        int loadParams  (Glib::ustring fname);
+
+      /** Creates a new instance of ProcParams.
+        * @return a pointer to the new ProcParams instance. */
+        static ProcParams* create  ();
+
+      /** Destroys an instance of ProcParams.
+        * @param pp a pointer to the ProcParams instance to destroy. */
+        static void        destroy (ProcParams* pp);
+
+        static void init ();
+        static void cleanup ();
 
         bool operator== (const ProcParams& other);
         bool operator!= (const ProcParams& other);
-
-        int saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey ) const;
-        int loadFromXMP(Exiv2::XmpData &xmpData, const std::string& baseKey );
-        int saveParams( Glib::ustring fname ) const;
-        int loadParams( Glib::ustring fname );
 
     private:
         /** Write the ProcParams's text in the file of the given name.
@@ -525,6 +588,32 @@ class ProcParams {
         int write (Glib::ustring &fname, Glib::ustring &content) const;
 
 };
+
+/**
+  * This class associate a ProcParams object and a ParamEdited object through a pointer
+  * to instance of each type in order to handle partial pp3 file loading (and later maybe
+  * saving too)
+  *
+  * PartialProfile is not responsible of ProcParams and ParamsEdited object creation
+  * and hence is not responsible of their destructions. The function that instanciate
+  * PartialProfile object has to handle all this itself.
+  */
+class PartialProfile {
+    public:
+        rtengine::procparams::ProcParams* pparams;
+        ParamsEdited* pedited;
+        PartialProfile& operator=(PartialProfile& rhs) { pparams=rhs.pparams; pedited=rhs.pedited; return *this; };
+
+        PartialProfile      (bool createInstance=false);
+        PartialProfile      (ProcParams* pp, ParamsEdited* pe=NULL, bool fullCopy=false);
+        PartialProfile      (const ProcParams* pp, const ParamsEdited* pe=NULL);
+        void deleteInstance ();
+        void clearGeneral   ();
+        int  load           (Glib::ustring fName);
+        void set            (bool v);
+        void applyTo        (ProcParams *destParams) const ;
+};
+
 }
 }
 #endif

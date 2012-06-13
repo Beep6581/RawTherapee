@@ -18,26 +18,20 @@
  *    
  */
 
-//#include <rtengine.h>
 #include <cstddef>
-#include <math.h>
-#include <curves.h>
-#include <labimage.h>
-#include <improcfun.h>
-#include <rawimagesource.h>
-#include <array2D.h>
+#include <cmath>
+#include "curves.h"
+#include "labimage.h"
+#include "improcfun.h"
+#include "rawimagesource.h"
+#include "array2D.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#define SQR(x) ((x)*(x))
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIP(a) (CLIPTO(a,0,65535))
-
-
-
 #define DIRWT(i1,j1,i,j) ( domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] * rangefn[abs((int)data_fine[i1][j1]-data_fine[i][j])] )
 
 namespace rtengine {
@@ -182,8 +176,8 @@ namespace rtengine {
 				float val=0;
 				float norm=0;
 				
-				for(int inbr=MAX(0,i-scalewin); inbr<=MIN(height-1,i+scalewin); inbr+=scale) {
-					for (int jnbr=MAX(0,j-scalewin); jnbr<=MIN(width-1,j+scalewin); jnbr+=scale) {
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=max(0,j-scalewin); jnbr<=min(width-1,j+scalewin); jnbr+=scale) {
 						float dirwt = DIRWT(inbr, jnbr, i, j);
 						val += dirwt*data_fine[inbr][jnbr];
 						norm += dirwt;
@@ -202,7 +196,7 @@ namespace rtengine {
 	
 	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult )
 	{
-		float noisehi = 1.33*noise*mult[4]/pow(3,level), noiselo = 0.66*noise*mult[4]/pow(3,level);
+		float noisehi = 1.33*noise*mult[4]/expf(level*log(3.0)), noiselo = 0.66*noise*mult[4]/expf(level*log(3.0));
 		LUTf irangefn (0x20000);
 
 		for (int i=0; i<0x20000; i++) {

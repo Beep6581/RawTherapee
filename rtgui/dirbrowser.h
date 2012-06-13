@@ -22,10 +22,10 @@
 #include <gtkmm.h>
 #include <giomm.h>
 #ifdef WIN32
-#include <windirmonitor.h>
+#include "windirmonitor.h"
 #endif
-#include <dirselectionlistener.h>
-#include <dirbrowserremoteinterface.h>
+#include "dirselectionlistener.h"
+#include "dirbrowserremoteinterface.h"
 
 class DirBrowser : public Gtk::VBox, public DirBrowserRemoteInterface
 #ifdef WIN32

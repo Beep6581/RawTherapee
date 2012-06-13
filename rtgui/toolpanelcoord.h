@@ -19,49 +19,51 @@
 #ifndef __TOOLPANELCCORD__
 #define __TOOLPANELCCORD__
 
-#include <rtengine.h>
-#include <toolpanel.h>
+#include "../rtengine/rtengine.h"
+#include "toolpanel.h"
 #include <vector>
-#include <pparamschangelistener.h>
-#include <profilechangelistener.h>
-#include <imageareatoollistener.h>
+#include "pparamschangelistener.h"
+#include "profilechangelistener.h"
+#include "imageareatoollistener.h"
 #include <gtkmm.h>
-#include <whitebalance.h>
-#include <coarsepanel.h>
-#include <tonecurve.h>
-#include <vibrance.h>
-#include <shadowshighlights.h>
-#include <impulsedenoise.h>
-#include <defringe.h>
-#include <dirpyrdenoise.h>
-#include <epd.h>
-#include <sharpening.h>
-#include <labcurve.h>
-#include <exifpanel.h>
-#include <iptcpanel.h>
-#include <crop.h>
-#include <icmpanel.h>
-#include <resize.h>
-#include <chmixer.h>
-#include <hlrec.h>
-#include <cacorrection.h>
-#include <distortion.h>
-#include <perspective.h>
-#include <rotate.h>
-#include <vignetting.h>
-#include <toolbar.h>
-#include <lensgeom.h>
-#include <lensgeomlistener.h>
-#include <dirpyrequalizer.h>
-#include <hsvequalizer.h>
-#include <rawprocess.h>
-#include <preprocess.h>
-#include <darkframe.h>
-#include <flatfield.h>
-#include <rawcacorrection.h>
-#include <rawexposure.h>
-#include <sharpenmicro.h>
-#include <sharpenedge.h>
+#include "whitebalance.h"
+#include "coarsepanel.h"
+#include "tonecurve.h"
+#include "vibrance.h"
+#include "shadowshighlights.h"
+#include "impulsedenoise.h"
+#include "defringe.h"
+#include "dirpyrdenoise.h"
+#include "epd.h"
+#include "sharpening.h"
+#include "labcurve.h"
+#include "exifpanel.h"
+#include "iptcpanel.h"
+#include "crop.h"
+#include "icmpanel.h"
+#include "resize.h"
+#include "chmixer.h"
+#include "hlrec.h"
+#include "cacorrection.h"
+#include "distortion.h"
+#include "perspective.h"
+#include "rotate.h"
+#include "vignetting.h"
+#include "toolbar.h"
+#include "lensgeom.h"
+#include "lensgeomlistener.h"
+#include "dirpyrequalizer.h"
+#include "hsvequalizer.h"
+#include "rawprocess.h"
+#include "preprocess.h"
+#include "darkframe.h"
+#include "flatfield.h"
+#include "rawcacorrection.h"
+#include "rawexposure.h"
+#include "sharpenmicro.h"
+#include "sharpenedge.h"
+#include "rgbcurves.h"
+
 class ImageEditorCoordinator;
 
 class ToolPanelCoordinator :    public ToolPanelListener, 
@@ -101,6 +103,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         SharpenEdge* sharpenEdge;
         SharpenMicro* sharpenMicro;
         LCurve* lcurve;
+        RGBCurves* rgbcurves;
         DirPyrEqualizer * dirpyrequalizer;
         HSVEqualizer * hsvequalizer;
         RawProcess* rawprocess;
@@ -170,10 +173,10 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Gtk::Notebook* toolPanelNotebook;
 
         ToolPanelCoordinator ();
-        ~ToolPanelCoordinator ();
+        virtual ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
-		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurves);
+		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
         void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
@@ -183,7 +186,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
         // profilechangelistener interface
-        void profileChange  (const rtengine::procparams::ProcParams* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);    
+        void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);
         void setDefaults    (rtengine::procparams::ProcParams* defparams);
 
         // to support the GUI:

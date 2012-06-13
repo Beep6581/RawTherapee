@@ -25,8 +25,8 @@
 #define _SHARPENEDGE_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
+#include "adjuster.h"
+#include "toolpanel.h"
 
 class SharpenEdge : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 

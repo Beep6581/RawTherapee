@@ -20,10 +20,10 @@
 #define _RESIZE_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <guiutils.h>
-#include <toolpanel.h>
-#include <guiutils.h>
+#include "adjuster.h"
+#include "guiutils.h"
+#include "toolpanel.h"
+#include "guiutils.h"
 
 class Resize : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::SizeListener {
 

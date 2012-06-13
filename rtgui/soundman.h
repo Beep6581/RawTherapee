@@ -21,7 +21,7 @@
 #ifndef _SOUNDMAN_
 #define _SOUNDMAN_
 
-#include <safegtk.h>
+#include "../rtengine/safegtk.h"
 
 class SoundManager {
 public:

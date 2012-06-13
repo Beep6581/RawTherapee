@@ -7,7 +7,7 @@ and prints the features to the screen.
 
 #include "klt/pnmio.h"
 #include "klt/klt.h"
-#include "math.h"
+#include <cmath>
 
 #define N_FEATURES 100
 #define DELTA_1 0.05
@@ -35,7 +35,6 @@ double calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int n
     KLT_TrackingContext tc;
     KLT_FeatureList fl;
     KLT_FeatureTable ft;
-    int nFeatures = N_FEATURES;
     int i,n;
     double radius, wc, hc;
 

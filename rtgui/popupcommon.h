@@ -24,7 +24,7 @@
 
 #include <gtkmm.h>
 #include <sigc++/sigc++.h>
-#include <rtimage.h>
+#include "rtimage.h"
 
 
 class PopUpCommon {

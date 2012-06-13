@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <myfile.h>
+#include "myfile.h"
 #include <cstdarg>
 #include <glibmm.h>
-#include <safegtk.h>
+#include "safegtk.h"
 #ifdef BZIP_SUPPORT
 #include <bzlib.h>
 #endif
@@ -98,7 +98,7 @@ IMFILE* fopen (const char* fname)
 	{
 	  bool bzip = false;
 	  Glib::ustring bname = Glib::path_get_basename(fname);
-	  int lastdot = bname.find_last_of ('.');
+	  size_t lastdot = bname.find_last_of ('.');
 	  if (lastdot!=bname.npos)
 	    bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
       
@@ -126,6 +126,7 @@ IMFILE* fopen (const char* fname)
 
 	      while (ret == BZ_OK) {
 		buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
+		if (!buffer) free(buffer);
 
 		stream.next_out = buffer + buffer_out_count; // output data adress
 		stream.avail_out = buffer_size - buffer_out_count;
@@ -210,7 +211,7 @@ IMFILE* gfopen (const char* fname) {
     {
       bool bzip = false;
       Glib::ustring bname = Glib::path_get_basename(fname);
-      int lastdot = bname.find_last_of ('.');
+      size_t lastdot = bname.find_last_of ('.');
       if (lastdot!=bname.npos)
         bzip = bname.substr (lastdot).casefold() == Glib::ustring(".bz2").casefold();
       
@@ -238,6 +239,7 @@ IMFILE* gfopen (const char* fname) {
 
 	  while (ret == BZ_OK) {
 	    buffer = static_cast<char*>( realloc(buffer, buffer_size)); // allocate/resize buffer
+	    if (!buffer) free(buffer);
 
 	    stream.next_out = buffer + buffer_out_count; // output data adress
 	    stream.avail_out = buffer_size - buffer_out_count;
@@ -304,10 +306,39 @@ void fclose (IMFILE* f) {
 }
 
 int fscanf (IMFILE* f, const char* s ...) {
-
+        // fscanf not easily wrapped since we have no terminating \0 at end
+        // of file data and vsscanf() won't tell us how many characters that
+        // were parsed. However, only dcraw.cc code use it and only for "%f" and
+        // "%d", so we make a dummy fscanf here just to support dcraw case.
+        char buf[50], *endptr;
+        int copy_sz = f->size - f->pos;
+        if (copy_sz > sizeof(buf)) {
+            copy_sz = sizeof(buf) - 1;
+        }
+        memcpy(buf, &f->data[f->pos], copy_sz);
+        buf[copy_sz] = '\0';
 	va_list ap;
-	return sscanf (f->data, s, ap);
+        va_start (ap, s);
+        if (strcmp(s, "%d") == 0) {
+            int i = strtol(buf, &endptr, 10);
+            if (endptr == buf) {
+                return 0;
+            }
+            int *pi = va_arg(ap, int*);
+            *pi = i;
+        } else if (strcmp(s, "%f") == 0) {
+            float f = strtof(buf, &endptr);
+            if (endptr == buf) {
+                return 0;
+            }
+            float *pf = va_arg(ap, float*);
+            *pf = f;
+        }
+        va_end (ap);
+        f->pos += endptr - buf;
+        return 1;
 }
+
 
 char* fgets (char* s, int n, IMFILE* f) {
 

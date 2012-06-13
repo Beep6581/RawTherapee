@@ -16,16 +16,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <dfmanager.h>
-#include <options.h>
+#include "dfmanager.h"
+#include "../rtgui/options.h"
 #include <giomm.h>
-#include <guiutils.h>
-#include <safegtk.h>
-#include <rawimage.h>
+#include "../rtgui/guiutils.h"
+#include "safegtk.h"
+#include "rawimage.h"
 #include <sstream>
 #include <iostream>
-#include <stdio.h>
-#include <imagedata.h>
+#include <cstdio>
+#include "imagedata.h"
 
 namespace rtengine{
 
@@ -110,7 +110,7 @@ std::list<badPix>& dfInfo::getHotPixels()
 void dfInfo::updateRawImage()
 {
 	typedef unsigned int acc_t;
-	if( pathNames.size() >0 ){
+	if( !pathNames.empty() ){
 		std::list<Glib::ustring>::iterator iName = pathNames.begin();
 		ri = new RawImage(*iName); // First file used also for extra pixels informations (width,height, shutter, filters etc.. )
 		if( ri->loadRaw(true)){
@@ -215,8 +215,8 @@ void DFManager::init( Glib::ustring pathname )
 	
 	dfList.clear();
 	bpList.clear();
-    for (int i=0; i<names.size(); i++) {
-        int lastdot = names[i].find_last_of ('.');
+    for (size_t i=0; i<names.size(); i++) {
+        size_t lastdot = names[i].find_last_of ('.');
         if (lastdot != Glib::ustring::npos && names[i].substr(lastdot) == ".badpixels" ){
         	int n = scanBadPixelsFile( names[i] );
         	if( n>0 && settings->verbose)
@@ -225,12 +225,12 @@ void DFManager::init( Glib::ustring pathname )
         }
         try{
             addFileInfo(names[i]);
-        }catch( std::exception e ){}
+        }catch( std::exception& e ){}
     }
     // Where multiple shots exist for same group, move filename to list
     for( dfList_t::iterator iter = dfList.begin(); iter != dfList.end();iter++ ){
     	dfInfo &i = iter->second;
-    	if( i.pathNames.size()>0 && !i.pathname.empty() ){
+    	if( !i.pathNames.empty() && !i.pathname.empty() ){
     		i.pathNames.push_back( i.pathname );
     		i.pathname.clear();
     	}
@@ -258,7 +258,7 @@ dfInfo *DFManager::addFileInfo(const Glib::ustring &filename ,bool pool )
     	return false;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        int lastdot = info->get_name().find_last_of ('.');
+        size_t lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot
@@ -318,7 +318,7 @@ void DFManager::getStat( int &totFiles, int &totTemplates)
  */
 dfInfo* DFManager::find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t )
 {
-	if( dfList.size() == 0 )
+	if( dfList.empty() )
 		return 0;
 	std::string key( dfInfo::key(mak,mod,isospeed,shut) );
 	dfList_t::iterator iter = dfList.find( key );
@@ -381,11 +381,15 @@ std::list<badPix> *DFManager::getHotPixels ( const std::string &mak, const std::
 {
    dfInfo *df = find( mak, mod, iso, shut, t );
    if( df ){
-	   if( settings->verbose )
-		   if( df->pathname.size() >0 )
+	   if( settings->verbose ) {
+		   if( !df->pathname.empty() ) {
 		      printf( "Searched hotpixels from %s\n",df->pathname.c_str());
-		   else if( df->pathNames.size() >0 )
+		   } else {
+			if( !df->pathNames.empty() ) {
 			  printf( "Searched hotpixels from template (first %s)\n",df->pathNames.begin()->c_str());
+		   	}
+		   }
+	   }
 	   return &df->getHotPixels();
    }else
 	   return 0;
@@ -395,9 +399,9 @@ int DFManager::scanBadPixelsFile( Glib::ustring filename )
 {
 	FILE *file = fopen( filename.c_str(),"r" );
 	if( !file ) return false;
-	int lastdot = filename.find_last_of ('.');
-	int dirpos1 = filename.find_last_of ('/');
-	int dirpos2 = filename.find_last_of ('\\');
+	size_t lastdot = filename.find_last_of ('.');
+	size_t dirpos1 = filename.find_last_of ('/');
+	size_t dirpos2 = filename.find_last_of ('\\');
 	if( dirpos1 == Glib::ustring::npos && dirpos2== Glib::ustring::npos )
 		dirpos1 =0;
 	else
@@ -421,7 +425,7 @@ std::list<badPix> *DFManager::getBadPixels ( const std::string &mak, const std::
 {
 	std::ostringstream s;
 	s << mak << " " <<mod;
-	if( serial.size()>0)
+	if( !serial.empty())
 	   s << " " << serial;
 	bpList_t::iterator iter = bpList.find( s.str() );
 	if( iter != bpList.end() ){
