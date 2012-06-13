@@ -892,7 +892,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AMOUNT;Amount
-!TP_DISTORTION_AUTO;    Auto distortion correction
+!TP_DISTORTION_AUTO;    Auto Distortion Correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.)
 !TP_DISTORTION_LABEL;Distortion
 !TP_EPD_EDGESTOPPING;Edge stopping
