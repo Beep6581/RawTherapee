@@ -20,8 +20,8 @@
 #define __PREFERENCES_H__
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <options.h>
+#include "adjuster.h"
+#include "options.h"
 #include <vector>
 #include "rtwindow.h"
 
@@ -51,6 +51,7 @@ class Preferences : public Gtk::Dialog {
 
 
   protected:
+    Splash* splash;
     Gtk::ComboBoxText* rprofiles;
     Gtk::ComboBoxText* iprofiles;
     Gtk::ComboBoxText* languages;
@@ -111,6 +112,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbmenuGroupLabel;
     Gtk::CheckButton* ckbmenuGroupFileOperations;
     Gtk::CheckButton* ckbmenuGroupProfileOperations;
+    Gtk::CheckButton* ckbmenuGroupExtProg;
 
     Gtk::CheckButton* chOverwriteOutputFile;
     Gtk::FileChooserButton *fcDefMetadata;
@@ -163,6 +165,7 @@ class Preferences : public Gtk::Dialog {
     void cacheFormatComboChanged ();
     void switchThemeTo (Glib::ustring newTheme, bool slimInterface);
     void switchFontTo  (Glib::ustring newFont);
+    bool splashClosed(GdkEventAny* event);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 

@@ -16,9 +16,9 @@ The repository tools/source_icons contains source icons (in svg format) and the 
 =================================
 === tools/source_icons/script ===
 =================================
-- the main script to create the icons in make_all_icon_theme.bash
+- the main script which creates the icons is make_all_icon_theme.bash
 - launch make_all_icon_theme.bash tools/source_icons/scalable /tmp/png
-- the icons and an archive will be created in /tmp/png
+- an archive with all the icons will be created in /tmp/png
 
 ================================
 === guidelines for icon name ===

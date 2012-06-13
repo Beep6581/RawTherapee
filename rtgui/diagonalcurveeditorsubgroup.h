@@ -20,7 +20,7 @@
 #define _DIAGONALCURVEEDITORSUBGROUP_
 
 #include <gtkmm.h>
-#include <curveeditorgroup.h>
+#include "curveeditorgroup.h"
 
 class DiagonalCurveEditor;
 
@@ -61,7 +61,7 @@ protected:
 
 public:
 	DiagonalCurveEditorSubGroup(CurveEditorGroup* prt);
-	~DiagonalCurveEditorSubGroup();
+	virtual ~DiagonalCurveEditorSubGroup();
 
 	DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = "");
 	virtual void updateBackgroundHistogram (CurveEditor* ce);

@@ -16,26 +16,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <improcfun.h>
+#include "rtengine.h"
+#include "improcfun.h"
+#include "gauss.h"
+#include "bilateral2.h"
+#include "rt_math.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <minmax.h>
-#include <gauss.h>
-#include <bilateral2.h>
+
+using namespace std;
 
 namespace rtengine {
 
-#undef CLIP
-#undef CMAXVAL
 #undef ABS
 
-#define CMAXVAL 0xffff
-#define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
 #define ABS(a) ((a)<0?-(a):(a))
-#define LIM(x,min,max) MAX(min,MIN(x,max))
-#define CLIREF(x) LIM(x,-200000.0,200000.0) // avoid overflow : do not act directly on image[] or pix[]
+#define CLIREF(x) LIM(x,-200000.0f,200000.0f) // avoid overflow : do not act directly on image[] or pix[]
 
 
 extern const Settings* settings;
@@ -56,7 +54,7 @@ void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, i
 				continue;
 			}
 			float U = -(O * log(I/O) - I + O) * dampingFac;
-			U = MIN(U,1.0);
+			U = min(U,1.0f);
 			U = U*U*U*U*(5.0-U*4.0);
 			aI[i][j] = (O - I) / I * U + 1.0;
 		}
@@ -83,7 +81,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #endif
 	{
 
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
 	float damping = params->sharpening.deconvdamping / 5.0;
 	bool needdamp = params->sharpening.deconvdamping > 0;
 	for (int k=0; k<params->sharpening.deconviter; k++) {
@@ -124,7 +122,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #endif
 	for (int i=0; i<H; i++)
 		for (int j=0; j<W; j++)
-			lab->L[i][j] = lab->L[i][j]*p1 + MAX(tmpI[i][j],0)*p2;
+			lab->L[i][j] = lab->L[i][j]*p1 + max(tmpI[i][j],0.0f)*p2;
 
 	} // end parallel
 
@@ -157,7 +155,7 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 	{
 
 
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
 	if (params->sharpening.edgesonly==false) {
 
 		gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
@@ -203,7 +201,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 	float** nL = base;
 #pragma omp parallel for if (multiThread)
 	for (int i=2; i<H-2; i++) {
-		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min, max, labL;
+		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min_, max_, labL;
 		for (int j=2; j<W-2; j++) {
 			// compute 3 iterations, only forward
 			np1 = 2.f * (nL[i-2][j] + nL[i-2][j+1] + nL[i-2][j+2] + nL[i-1][j] + nL[i-1][j+1] + nL[i-1][j+2] + nL[i]  [j] + nL[i]  [j+1] + nL[i]  [j+2]) / 27.f + nL[i-1][j+1] / 3.f;
@@ -211,16 +209,17 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 			np3 = 2.f * (nL[i]  [j] + nL[i]  [j+1] + nL[i]  [j+2] + nL[i+1][j] + nL[i+1][j+1] + nL[i+1][j+2] + nL[i+2][j] + nL[i+2][j+1] + nL[i+2][j+2]) / 27.f + nL[i+1][j+1] / 3.f;
 
 			// Max/Min of all these deltas and the last two max/min
-			MINMAX3(np1,np2,np3,maxn,minn);
-			MAX3(max1,max2,maxn,max);
-			MIN3(min1,min2,minn,min);
+			maxn = max(np1,np2,np3);
+			minn = min(np1,np2,np3);
+			max_ = max(max1,max2,maxn);
+			min_ = min(min1,min2,minn);
 
 			// Shift the queue
 			max1 = max2; max2 = maxn;
 			min1 = min2; min2 = minn;
 			labL = lab->L[i][j];
-			if (max < labL) max = labL;
-			if (min > labL) min = labL;
+			if (max_ < labL) max_ = labL;
+			if (min_ > labL) min_ = labL;
 
 			// deviation from the environment as measurement
 			float diff = nL[i][j] - blurmap[i][j];
@@ -228,10 +227,10 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 			if (ABS(diff) > params->sharpening.threshold) {
 				float newL = labL + sharpFac * diff;
 				// applying halo control
-				if (newL > max)
-					newL = max + (newL-max) * scale;
-				else if (newL < min)
-					newL = min - (min-newL) * scale;
+				if (newL > max_)
+					newL = max_ + (newL-max_) * scale;
+				else if (newL < min_)
+					newL = min_ - (min_-newL) * scale;
 
 				lab->L[i][j] = newL;
 			}
@@ -254,7 +253,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 
 	int offset,c,i,j,p,width2;
 	int width = lab->W, height = lab->H;
-	float *L,lumH,lumV,lumD1,lumD2,v,contrast,med,s;
+	float *L,lumH,lumV,lumD1,lumD2,v,contrast,s;
 	float difL,difR,difT,difB,difLT,difRB,difLB,difRT,wH,wV,wD1,wD2,chmax[3];
 	float f1,f2,f3,f4;
 	float templab;
@@ -322,7 +321,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						contrast=1.0;
 
 					// new possible values
-					if ((L[offset]<L[offset-1])&&(L[offset]>L[offset+1])||(L[offset]>L[offset-1])&&(L[offset]<L[offset+1])){
+					if (((L[offset]<L[offset-1])&&(L[offset]>L[offset+1])) || ((L[offset]>L[offset-1])&&(L[offset]<L[offset+1]))){
 						f1 = fabs(L[offset-2]-L[offset-1]);
 						f2 = fabs(L[offset-1]-L[offset]);
 						f3 = fabs(L[offset-1]-L[offset-width])*fabs(L[offset-1]-L[offset+width]);
@@ -339,7 +338,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset-width])&&(L[offset]>L[offset+width])||(L[offset]>L[offset-width])&&(L[offset]<L[offset+width])) {
+					if (((L[offset]<L[offset-width])&&(L[offset]>L[offset+width])) || ((L[offset]>L[offset-width])&&(L[offset]<L[offset+width]))) {
 						f1 = fabs(L[offset-width2]-L[offset-width]);
 						f2 = fabs(L[offset-width]-L[offset]);
 						f3 = fabs(L[offset-width]-L[offset-1])*fabs(L[offset-width]-L[offset+1]);
@@ -356,7 +355,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset-1-width])&&(L[offset]>L[offset+1+width])||(L[offset]>L[offset-1-width])&&(L[offset]<L[offset+1+width])) {
+					if (((L[offset]<L[offset-1-width])&&(L[offset]>L[offset+1+width])) || ((L[offset]>L[offset-1-width])&&(L[offset]<L[offset+1+width]))) {
 						f1 = fabs(L[offset-2-width2]-L[offset-1-width]);
 						f2 = fabs(L[offset-1-width]-L[offset]);
 						f3 = fabs(L[offset-1-width]-L[offset-width+1])*fabs(L[offset-1-width]-L[offset+width-1]);
@@ -373,7 +372,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						}
 					}
 
-					if ((L[offset]<L[offset+1-width])&&(L[offset]>L[offset-1+width])||(L[offset]>L[offset+1-width])&&(L[offset]<L[offset-1+width])) {
+					if (((L[offset]<L[offset+1-width])&&(L[offset]>L[offset-1+width])) || ((L[offset]>L[offset+1-width])&&(L[offset]<L[offset-1+width]))) {
 						f1 = fabs(L[offset-2+width2]-L[offset-1+width]);
 						f2 = fabs(L[offset-1+width]-L[offset]);
 						f3 = fabs(L[offset-1+width]-L[offset-width-1])*fabs(L[offset-1+width]-L[offset+width+1]);
@@ -429,9 +428,9 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 	int k;
 	if (params->sharpenMicro.matrix == false) k=2; else k=1;
 	// k=2 matrix 5x5  k=1 matrix 3x3
-	int offset,offset2,c,i,j,col,row,n;
+	int offset,offset2,i,j,col,row,n;
 	float temp,temp2,temp3,temp4,tempL;
-	float *LM,v,s,contrast,w;
+	float *LM,v,s,contrast;
 	int signs[25];
 	int width = lab->W, height = lab->H;
 	float uniform = params->sharpenMicro.uniformity;//between 0 to 100
@@ -469,14 +468,13 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 
 	float chmax=8.0f;
 	LM = new float[width*height];//allocation for Luminance
-	c=0;
 #pragma omp parallel for private(offset, i,j) shared(LM)
 	for(j=0; j<height; j++)
 		for(i=0,offset=j*width+i; i<width; i++,offset++) {
 			LM[offset] = lab->L[j][i]/327.68f;// adjust to 0.100 and to RT variables
 		}
 
-#pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,w,temp2,temp3,tempL,temp4) shared(lab,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
+#pragma omp parallel for private(j,i,offset,s,signs,v,n,row,col,offset2,contrast,temp,temp2,temp3,tempL,temp4) shared(lab,LM,amount,chmax,unif,k,L98,L95,L92,L90,L87,L83,L80,L75,L70,L63,L58,Cont0,Cont1,Cont2,Cont3,Cont4,Cont5)
 	for(j=k; j<height-k; j++)
 		for(i=k,offset=j*width+i; i<width-k; i++,offset++) {
 			s=amount;
@@ -490,7 +488,7 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 					n++;
 				}
 			if      (k==1) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width]))/chmax; //for 3x3
-			else if (k==2) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])\
+			else if (k==2) contrast = sqrt(fabs(LM[offset+1]-LM[offset-1])*fabs(LM[offset+1]-LM[offset-1])+fabs(LM[offset+width]-LM[offset-width])*fabs(LM[offset+width]-LM[offset-width])
 									      +fabs(LM[offset+2]-LM[offset-2])*fabs(LM[offset+2]-LM[offset-2])+fabs(LM[offset+2*width]-LM[offset-2*width])*fabs(LM[offset+2*width]-LM[offset-2*width]))/(2*chmax);  //for 5x5
 
 			if (contrast>1.0f)

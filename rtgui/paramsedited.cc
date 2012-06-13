@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <paramsedited.h>
-#include <string.h>
-#include <options.h>
-#include <addsetids.h>
+#include "paramsedited.h"
+#include <cstring>
+#include "options.h"
+#include "addsetids.h"
 
 ParamsEdited::ParamsEdited () {
 
@@ -28,7 +28,11 @@ ParamsEdited::ParamsEdited () {
 
 void ParamsEdited::set (bool v) {
 
-	toneCurve.curve = v;
+	general.rank         = v;
+	general.colorlabel   = v;
+	general.intrash      = v;
+
+	toneCurve.curve      = v;
 	toneCurve.brightness = v;
 	toneCurve.black      = v;
 	toneCurve.contrast   = v;
@@ -48,6 +52,9 @@ void ParamsEdited::set (bool v) {
 	labCurve.avoidclip   = v;
 	labCurve.enable_saturationlimiter = v;
 	labCurve.saturationlimit      = v;
+	rgbCurves.rcurve      = v;
+	rgbCurves.gcurve      = v;
+	rgbCurves.bcurve      = v;
 	sharpening.enabled            = v;
 	sharpening.radius             = v;
 	sharpening.amount             = v;
@@ -77,20 +84,20 @@ void ParamsEdited::set (bool v) {
 	vibrance.protectskins     = v;
 	vibrance.avoidcolorshift  = v;
 	vibrance.pastsattog       = v;
-	colorBoost.amount         = v;
-	colorBoost.avoidclip      = v;
-	colorBoost.enable_saturationlimiter = v;
-	colorBoost.saturationlimit = v;
+	//colorBoost.amount         = v;
+	//colorBoost.avoidclip      = v;
+	//colorBoost.enable_saturationlimiter = v;
+	//colorBoost.saturationlimit = v;
 	wb.method                  = v;
 	wb.green                   = v;
 	wb.temperature             = v;
-	colorShift.a               = v;
-	colorShift.b               = v;
-	lumaDenoise.enabled        = v;
-	lumaDenoise.radius         = v;
-	lumaDenoise.edgetolerance  = v;
-	colorDenoise.enabled       = v;
-	colorDenoise.amount        = v;
+	//colorShift.a               = v;
+	//colorShift.b               = v;
+	//lumaDenoise.enabled        = v;
+	//lumaDenoise.radius         = v;
+	//lumaDenoise.edgetolerance  = v;
+	//colorDenoise.enabled       = v;
+	//colorDenoise.amount        = v;
 	defringe.enabled           = v;
 	defringe.radius            = v;
 	defringe.threshold         = v;
@@ -158,6 +165,7 @@ void ParamsEdited::set (bool v) {
 	resize.enabled   = v;
 	icm.input        = v;
     icm.blendCMSMatrix = v;
+    icm.preferredProfile = v;
 	icm.working      = v;
 	icm.output       = v;
 	icm.gamma		= v;
@@ -173,7 +181,8 @@ void ParamsEdited::set (bool v) {
 	raw.caBlue  = v;
 	raw.caRed   = v;
 	raw.greenEq = v;
-	raw.hotDeadPixel = v;
+	raw.hotDeadPixelFilter = v;
+	raw.hotDeadPixelThresh = v;
 	raw.linenoise = v;
 	raw.darkFrame = v;
     raw.dfAuto = v;
@@ -196,6 +205,8 @@ void ParamsEdited::set (bool v) {
 	hsvequalizer.hcurve = v;
 	hsvequalizer.scurve = v;
 	hsvequalizer.vcurve = v;
+	exif = v;
+	iptc = v;
 }
 
 using namespace rtengine;
@@ -204,11 +215,11 @@ using namespace rtengine::procparams;
 void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>& src) {
 
     set (true);
-    if (src.size()==0)
+    if (src.empty())
         return;
 
     const ProcParams& p = src[0];
-    for (int i=1; i<src.size(); i++) {
+    for (size_t i=1; i<src.size(); i++) {
         const ProcParams& other = src[i];
         toneCurve.curve = toneCurve.curve && p.toneCurve.curve == other.toneCurve.curve;
         toneCurve.brightness = toneCurve.brightness && p.toneCurve.brightness == other.toneCurve.brightness;
@@ -229,7 +240,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.saturation = labCurve.saturation && p.labCurve.saturation == other.labCurve.saturation;
         labCurve.avoidclip = labCurve.avoidclip && p.labCurve.avoidclip == other.labCurve.avoidclip;
         labCurve.enable_saturationlimiter = labCurve.enable_saturationlimiter && p.labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter;
-        labCurve.saturationlimit = labCurve.saturationlimit && p.labCurve.saturationlimit == other.labCurve.saturationlimit;		
+        labCurve.saturationlimit = labCurve.saturationlimit && p.labCurve.saturationlimit == other.labCurve.saturationlimit;
+        rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
+        rgbCurves.gcurve = rgbCurves.gcurve && p.rgbCurves.gcurve == other.rgbCurves.gcurve;
+        rgbCurves.bcurve = rgbCurves.bcurve && p.rgbCurves.bcurve == other.rgbCurves.bcurve;
         sharpenEdge.enabled = sharpenEdge.enabled && p.sharpenEdge.enabled == other.sharpenEdge.enabled;
         sharpenEdge.passes = sharpenEdge.passes && p.sharpenEdge.passes == other.sharpenEdge.passes;
         sharpenEdge.amount = sharpenEdge.amount && p.sharpenEdge.amount == other.sharpenEdge.amount;
@@ -259,20 +273,20 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         vibrance.protectskins = vibrance.protectskins && p.vibrance.protectskins == other.vibrance.protectskins;
         vibrance.avoidcolorshift = vibrance.avoidcolorshift && p.vibrance.avoidcolorshift == other.vibrance.avoidcolorshift;
         vibrance.pastsattog = vibrance.pastsattog && p.vibrance.pastsattog == other.vibrance.pastsattog;
-        colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
-        colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
-        colorBoost.enable_saturationlimiter = colorBoost.enable_saturationlimiter && p.colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter;
-        colorBoost.saturationlimit = colorBoost.saturationlimit && p.colorBoost.saturationlimit == other.colorBoost.saturationlimit;
+        //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
+        //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
+        //colorBoost.enable_saturationlimiter = colorBoost.enable_saturationlimiter && p.colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter;
+        //colorBoost.saturationlimit = colorBoost.saturationlimit && p.colorBoost.saturationlimit == other.colorBoost.saturationlimit;
         wb.method = wb.method && p.wb.method == other.wb.method;
         wb.green = wb.green && p.wb.green == other.wb.green;
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
-        colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
-        colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
-        lumaDenoise.enabled = lumaDenoise.enabled && p.lumaDenoise.enabled == other.lumaDenoise.enabled;
-        lumaDenoise.radius = lumaDenoise.radius && p.lumaDenoise.radius == other.lumaDenoise.radius;
-        lumaDenoise.edgetolerance = lumaDenoise.edgetolerance && p.lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance;
-        colorDenoise.enabled = colorDenoise.enabled && p.colorDenoise.enabled == other.colorDenoise.enabled;
-        colorDenoise.amount = colorDenoise.amount && p.colorDenoise.amount == other.colorDenoise.amount;
+        //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
+        //colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
+        //lumaDenoise.enabled = lumaDenoise.enabled && p.lumaDenoise.enabled == other.lumaDenoise.enabled;
+        //lumaDenoise.radius = lumaDenoise.radius && p.lumaDenoise.radius == other.lumaDenoise.radius;
+        //lumaDenoise.edgetolerance = lumaDenoise.edgetolerance && p.lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance;
+        //colorDenoise.enabled = colorDenoise.enabled && p.colorDenoise.enabled == other.colorDenoise.enabled;
+        //colorDenoise.amount = colorDenoise.amount && p.colorDenoise.amount == other.colorDenoise.amount;
         defringe.enabled = defringe.enabled && p.defringe.enabled == other.defringe.enabled;
         defringe.radius = defringe.radius && p.defringe.radius == other.defringe.radius;
         defringe.threshold = defringe.threshold && p.defringe.threshold == other.defringe.threshold;
@@ -344,6 +358,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         icm.input = icm.input && p.icm.input == other.icm.input;
         icm.blendCMSMatrix = icm.blendCMSMatrix && p.icm.blendCMSMatrix == other.icm.blendCMSMatrix;
+        icm.preferredProfile = icm.preferredProfile && p.icm.preferredProfile == other.icm.preferredProfile;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
         icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
@@ -356,24 +371,25 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
         raw.allEnhance = raw.allEnhance && p.raw.all_enhance == other.raw.all_enhance;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
-		raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
+        raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
         raw.greenEq = raw.greenEq && p.raw.greenthresh == other.raw.greenthresh;
-        raw.hotDeadPixel = raw.hotDeadPixel && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
+        raw.hotDeadPixelFilter = raw.hotDeadPixelFilter && p.raw.hotdeadpix_filt == other.raw.hotdeadpix_filt;
+        raw.hotDeadPixelThresh = raw.hotDeadPixelThresh && p.raw.hotdeadpix_thresh == other.raw.hotdeadpix_thresh;
         raw.linenoise = raw.linenoise && p.raw.linenoise == other.raw.linenoise;
         raw.darkFrame = raw.darkFrame && p.raw.dark_frame == other.raw.dark_frame;
         raw.dfAuto = raw.dfAuto && p.raw.df_autoselect == other.raw.df_autoselect;
-        raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;                        
+        raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;
         raw.ff_AutoSelect = raw.ff_AutoSelect && p.raw.ff_AutoSelect == other.raw.ff_AutoSelect;
         raw.ff_BlurRadius = raw.ff_BlurRadius && p.raw.ff_BlurRadius == other.raw.ff_BlurRadius;
-        raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;        
-		raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
-		raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser;
- 		raw.exBlackzero = raw.exBlackzero && p.raw.blackzero == other.raw.blackzero;
-		raw.exBlackone = raw.exBlackone && p.raw.blackone == other.raw.blackone;
-		raw.exBlacktwo = p.raw.blacktwo == other.raw.blacktwo;
-		raw.exBlackthree = p.raw.blackthree == other.raw.blackthree;
-		raw.exTwoGreen = p.raw.twogreen == other.raw.twogreen;		
+        raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;
+        raw.exPos = raw.exPos && p.raw.expos == other.raw.expos;
+        raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser;
+        raw.exBlackzero = raw.exBlackzero && p.raw.blackzero == other.raw.blackzero;
+        raw.exBlackone = raw.exBlackone && p.raw.blackone == other.raw.blackone;
+        raw.exBlacktwo = p.raw.blacktwo == other.raw.blacktwo;
+        raw.exBlackthree = p.raw.blackthree == other.raw.blackthree;
+        raw.exTwoGreen = p.raw.twogreen == other.raw.twogreen;
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
         for(int i = 0; i < 8; i++) {
@@ -382,6 +398,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         hsvequalizer.hcurve = hsvequalizer.hcurve && p.hsvequalizer.hcurve == other.hsvequalizer.hcurve;
         hsvequalizer.scurve = hsvequalizer.scurve && p.hsvequalizer.scurve == other.hsvequalizer.scurve;
         hsvequalizer.vcurve = hsvequalizer.vcurve && p.hsvequalizer.vcurve == other.hsvequalizer.vcurve;
+
+//      How the hell can we handle that???
+//      exif = exif && p.exif==other.exif
+//      iptc = other.iptc;
     }
 }
 
@@ -409,6 +429,11 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.avoidclip)					toEdit.labCurve.avoidclip 	= mods.labCurve.avoidclip;
 	if (labCurve.enable_saturationlimiter)	toEdit.labCurve.enable_saturationlimiter 	= mods.labCurve.enable_saturationlimiter;
 	if (labCurve.saturationlimit)			toEdit.labCurve.saturationlimit 	= mods.labCurve.saturationlimit;	
+
+	if (rgbCurves.rcurve)		            toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
+	if (rgbCurves.gcurve)		            toEdit.rgbCurves.gcurve     = mods.rgbCurves.gcurve;
+	if (rgbCurves.bcurve)		            toEdit.rgbCurves.bcurve     = mods.rgbCurves.bcurve;
+
 	if (sharpenEdge.enabled)				toEdit.sharpenEdge.enabled 	= mods.sharpenEdge.enabled;
 	if (sharpenEdge.passes)					toEdit.sharpenEdge.passes	= dontforceSet && options.baBehav[ADDSET_SHARPENEDGE_PASS] ? toEdit.sharpenEdge.passes + mods.sharpenEdge.passes : mods.sharpenEdge.passes;
 	if (sharpenEdge.amount)					toEdit.sharpenEdge.amount	= dontforceSet && options.baBehav[ADDSET_SHARPENEDGE_AMOUNT] ? toEdit.sharpenEdge.amount + mods.sharpenEdge.amount : mods.sharpenEdge.amount;
@@ -438,25 +463,21 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (vibrance.protectskins)				toEdit.vibrance.protectskins	= mods.vibrance.protectskins;
 	if (vibrance.avoidcolorshift)			toEdit.vibrance.avoidcolorshift	= mods.vibrance.avoidcolorshift;
 	if (vibrance.pastsattog)				toEdit.vibrance.pastsattog	    = mods.vibrance.pastsattog;
-	
-	
-	
-	
-	
-	if (colorBoost.amount)					toEdit.colorBoost.amount		= dontforceSet && options.baBehav[ADDSET_CBOOST_AMOUNT] ? toEdit.colorBoost.amount + mods.colorBoost.amount : mods.colorBoost.amount;
-	if (colorBoost.avoidclip)				toEdit.colorBoost.avoidclip 	= mods.colorBoost.avoidclip;
-	if (colorBoost.enable_saturationlimiter)toEdit.colorBoost.enable_saturationlimiter 	= mods.colorBoost.enable_saturationlimiter;
-	if (colorBoost.saturationlimit)			toEdit.colorBoost.saturationlimit 	= mods.colorBoost.saturationlimit;
+
+	//if (colorBoost.amount)					toEdit.colorBoost.amount		= dontforceSet && options.baBehav[ADDSET_CBOOST_AMOUNT] ? toEdit.colorBoost.amount + mods.colorBoost.amount : mods.colorBoost.amount;
+	//if (colorBoost.avoidclip)				toEdit.colorBoost.avoidclip 	= mods.colorBoost.avoidclip;
+	//if (colorBoost.enable_saturationlimiter)toEdit.colorBoost.enable_saturationlimiter 	= mods.colorBoost.enable_saturationlimiter;
+	//if (colorBoost.saturationlimit)			toEdit.colorBoost.saturationlimit 	= mods.colorBoost.saturationlimit;
 	if (wb.method)							toEdit.wb.method 	= mods.wb.method;
 	if (wb.green)							toEdit.wb.green 	= dontforceSet && options.baBehav[ADDSET_WB_GREEN] ? toEdit.wb.green + mods.wb.green : mods.wb.green;
 	if (wb.temperature)						toEdit.wb.temperature 	= dontforceSet && options.baBehav[ADDSET_WB_TEMPERATURE] ? toEdit.wb.temperature + mods.wb.temperature : mods.wb.temperature;
-	if (colorShift.a)						toEdit.colorShift.a 	= dontforceSet && options.baBehav[ADDSET_CS_BLUEYELLOW] ? toEdit.colorShift.a + mods.colorShift.a : mods.colorShift.a;
-	if (colorShift.b)						toEdit.colorShift.b 	= dontforceSet && options.baBehav[ADDSET_CS_GREENMAGENTA] ? toEdit.colorShift.b + mods.colorShift.b : mods.colorShift.b;
-	if (lumaDenoise.enabled)				toEdit.lumaDenoise.enabled 	= mods.lumaDenoise.enabled;
-	if (lumaDenoise.radius)					toEdit.lumaDenoise.radius 	= mods.lumaDenoise.radius;
-	if (lumaDenoise.edgetolerance)			toEdit.lumaDenoise.edgetolerance 	= dontforceSet && options.baBehav[ADDSET_LD_EDGETOLERANCE] ? toEdit.lumaDenoise.edgetolerance + mods.lumaDenoise.edgetolerance : mods.lumaDenoise.edgetolerance;
-	if (colorDenoise.enabled)				toEdit.colorDenoise.enabled 	= mods.colorDenoise.enabled;
-	if (colorDenoise.amount)				toEdit.colorDenoise.amount 	= mods.colorDenoise.amount;
+	//if (colorShift.a)						toEdit.colorShift.a 	= dontforceSet && options.baBehav[ADDSET_CS_BLUEYELLOW] ? toEdit.colorShift.a + mods.colorShift.a : mods.colorShift.a;
+	//if (colorShift.b)						toEdit.colorShift.b 	= dontforceSet && options.baBehav[ADDSET_CS_GREENMAGENTA] ? toEdit.colorShift.b + mods.colorShift.b : mods.colorShift.b;
+	//if (lumaDenoise.enabled)				toEdit.lumaDenoise.enabled 	= mods.lumaDenoise.enabled;
+	//if (lumaDenoise.radius)					toEdit.lumaDenoise.radius 	= mods.lumaDenoise.radius;
+	//if (lumaDenoise.edgetolerance)			toEdit.lumaDenoise.edgetolerance 	= dontforceSet && options.baBehav[ADDSET_LD_EDGETOLERANCE] ? toEdit.lumaDenoise.edgetolerance + mods.lumaDenoise.edgetolerance : mods.lumaDenoise.edgetolerance;
+	//if (colorDenoise.enabled)				toEdit.colorDenoise.enabled 	= mods.colorDenoise.enabled;
+	//if (colorDenoise.amount)				toEdit.colorDenoise.amount 	= mods.colorDenoise.amount;
 	
 	if (defringe.enabled)					toEdit.defringe.enabled 	= mods.defringe.enabled;
 	if (defringe.radius)					toEdit.defringe.radius 	= mods.defringe.radius;	
@@ -497,7 +518,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (coarse.hflip)						toEdit.coarse.hflip 	= mods.coarse.hflip ? !toEdit.coarse.hflip : toEdit.coarse.hflip;
 	if (coarse.vflip)						toEdit.coarse.vflip 	= mods.coarse.vflip ? !toEdit.coarse.vflip : toEdit.coarse.vflip;
 	if (commonTrans.autofill)				toEdit.commonTrans.autofill		= mods.commonTrans.autofill;
-	if (rotate.degree)						toEdit.rotate.degree 			= dontforceSet && options.baBehav[17] ? toEdit.rotate.degree + mods.rotate.degree : mods.rotate.degree;
+	if (rotate.degree)						toEdit.rotate.degree 			= dontforceSet && options.baBehav[ADDSET_ROTATE_DEGREE] ? toEdit.rotate.degree + mods.rotate.degree : mods.rotate.degree;
 	if (distortion.uselensfun)				toEdit.distortion.uselensfun	= mods.distortion.uselensfun;
 	if (distortion.amount)					toEdit.distortion.amount 		= dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
 	if (perspective.horizontal)				toEdit.perspective.horizontal 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
@@ -525,6 +546,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (resize.enabled)	    toEdit.resize.enabled 	= mods.resize.enabled;
 	if (icm.input)		    toEdit.icm.input 	    = mods.icm.input;
     if (icm.blendCMSMatrix)	toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
+    if (icm.preferredProfile) toEdit.icm.preferredProfile = mods.icm.preferredProfile;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output       = mods.icm.output;
 	//if (icm.gampos)		    toEdit.icm.gampos       = mods.icm.gampos;
@@ -532,7 +554,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.gampos)			toEdit.icm.gampos		= dontforceSet && options.baBehav[ADDSET_FREE_OUPUT_GAMMA] ? toEdit.icm.gampos + mods.icm.gampos : mods.icm.gampos;
 	if (icm.slpos)			toEdit.icm.slpos		= dontforceSet && options.baBehav[ADDSET_FREE_OUTPUT_SLOPE] ? toEdit.icm.slpos + mods.icm.slpos : mods.icm.slpos;	
 	if (icm.gamma)		    toEdit.icm.gamma        = mods.icm.gamma;
-	if (icm.freegamma)		toEdit.icm.freegamma    = mods.icm.freegamma;	
+	if (icm.freegamma)		toEdit.icm.freegamma    = mods.icm.freegamma;
     if (raw.ccSteps)        toEdit.raw.ccSteps      = mods.raw.ccSteps;
     if (raw.dmethod)        toEdit.raw.dmethod      = mods.raw.dmethod;
     if (raw.dcbIterations)  toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
@@ -550,11 +572,12 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (raw.exBlackthree)   toEdit.raw.blackthree      = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.blackthree + mods.raw.blackthree : mods.raw.blackthree;
 	if (raw.exTwoGreen)		toEdit.raw.twogreen        = mods.raw.twogreen;	
 
-    if (raw.greenEq)        toEdit.raw.greenthresh     = dontforceSet && options.baBehav[ADDSET_PREPROCESS_GREENEQUIL] ? toEdit.raw.greenthresh + mods.raw.greenthresh : mods.raw.greenthresh;
-    if (raw.hotDeadPixel)   toEdit.raw.hotdeadpix_filt = mods.raw.hotdeadpix_filt;
-    if (raw.linenoise)      toEdit.raw.linenoise       = dontforceSet && options.baBehav[ADDSET_PREPROCESS_LINEDENOISE] ? toEdit.raw.linenoise + mods.raw.linenoise : mods.raw.linenoise;
-    if (raw.darkFrame)      toEdit.raw.dark_frame      = mods.raw.dark_frame;
-    if (raw.dfAuto)         toEdit.raw.df_autoselect   = mods.raw.df_autoselect;
+    if (raw.greenEq)            toEdit.raw.greenthresh       = dontforceSet && options.baBehav[ADDSET_PREPROCESS_GREENEQUIL] ? toEdit.raw.greenthresh + mods.raw.greenthresh : mods.raw.greenthresh;
+    if (raw.hotDeadPixelFilter) toEdit.raw.hotdeadpix_filt   = mods.raw.hotdeadpix_filt;
+    if (raw.hotDeadPixelThresh) toEdit.raw.hotdeadpix_thresh = mods.raw.hotdeadpix_thresh;
+    if (raw.linenoise)          toEdit.raw.linenoise         = dontforceSet && options.baBehav[ADDSET_PREPROCESS_LINEDENOISE] ? toEdit.raw.linenoise + mods.raw.linenoise : mods.raw.linenoise;
+    if (raw.darkFrame)          toEdit.raw.dark_frame        = mods.raw.dark_frame;
+    if (raw.dfAuto)             toEdit.raw.df_autoselect     = mods.raw.df_autoselect;
 
     if (raw.ff_file)        toEdit.raw.ff_file         = mods.raw.ff_file;         
     if (raw.ff_AutoSelect)  toEdit.raw.ff_AutoSelect   = mods.raw.ff_AutoSelect;
@@ -569,10 +592,21 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (hsvequalizer.scurve)		toEdit.hsvequalizer.scurve		= mods.hsvequalizer.scurve;
 	if (hsvequalizer.vcurve)		toEdit.hsvequalizer.vcurve		= mods.hsvequalizer.vcurve;
 
+	// Exif changes are added to the existing ones
+	if (exif)
+		for (procparams::ExifPairs::const_iterator i=mods.exif.begin(); i!=mods.exif.end(); i++) {
+			toEdit.exif[i->first] = i->second;
+		}
+
+	// IPTC changes are added to the existing ones
+	if (iptc)
+		for (procparams::IPTCPairs::const_iterator i=mods.iptc.begin(); i!=mods.iptc.end(); i++) {
+			toEdit.iptc[i->first] = i->second;
+		}
 }
 
 bool RAWParamsEdited::isUnchanged() const {
     return ccSteps && dmethod && dcbIterations && dcbEnhance && allEnhance && caCorrection && caRed && caBlue && greenEq
-        && hotDeadPixel && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
+        && hotDeadPixelFilter && hotDeadPixelThresh && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
 	    && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
 }

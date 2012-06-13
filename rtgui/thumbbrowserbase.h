@@ -20,9 +20,9 @@
 #define _THUMBNAILBROWSERBASE_
 
 #include <gtkmm.h>
-#include <thumbbrowserentrybase.h>
+#include "thumbbrowserentrybase.h"
 #include <set>
-#include <options.h>
+#include "options.h"
 
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space

@@ -16,16 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <rtengine.h>
-#include <iccstore.h>
-#include <improcfun.h>
-#include <improccoordinator.h>
-#include <curves.h>
-#include <dfmanager.h>
-#include <ffmanager.h>
-#include <rtthumbnail.h>
+#include "rtengine.h"
+#include "iccstore.h"
+#include "dcp.h"
+#include "improcfun.h"
+#include "improccoordinator.h"
+#include "curves.h"
+#include "dfmanager.h"
+#include "ffmanager.h"
+#include "rtthumbnail.h"
 #include <exiv2/exiv2.hpp>
-#include <imagedata.h>
+#include "imagedata.h"
 
 namespace rtengine {
 
@@ -40,6 +41,9 @@ int init (const Settings* s, Glib::ustring baseDir) {
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
 	iccStore->findDefaultMonitorProfile();
 
+    dcpStore->init (baseDir + "/dcpprofiles");
+
+    ProcParams::init ();
     CurveFactory::init ();
     ImProcFunctions::initMunsell();
     ImProcFunctions::initCache ();
@@ -69,6 +73,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 
 void cleanup () {
 	Exiv2::XmpParser::terminate();
+    ProcParams::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }

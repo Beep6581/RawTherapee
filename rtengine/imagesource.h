@@ -19,15 +19,15 @@
 #ifndef _IMAGESOURCE_
 #define _IMAGESOURCE_
 
-#include <rtengine.h>
-#include <colortemp.h>
+#include "rtengine.h"
+#include "colortemp.h"
 #include <glibmm.h>
-#include <image16.h>
-#include <imagefloat.h>
-#include <procparams.h>
-#include <coord2d.h>
+#include "image16.h"
+#include "imagefloat.h"
+#include "procparams.h"
+#include "coord2d.h"
 #include <vector>
-#include <imagedata.h>
+#include "imagedata.h"
 #include "LUT.h"
 
 namespace rtengine {
@@ -77,7 +77,10 @@ class ImageSource : public InitialImage {
 
         virtual bool        IsrgbSourceModified() =0; // tracks whether cached rgb output of demosaic has been modified
 
+        // use the right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
         virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
+        // true if ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
+        virtual bool        isWBProviderReady () =0;
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;
         virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) =0;
@@ -105,5 +108,5 @@ class ImageSource : public InitialImage {
         virtual ImageMetaData* getMetaData ()       { return idata; }
         virtual ImageSource* getImageSource ()      { return this; }
 };
-};
+}
 #endif

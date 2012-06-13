@@ -16,17 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <dirbrowser.h>
+#include "dirbrowser.h"
 #ifdef WIN32
 #define _WIN32_WINNT 0x0600
 #include <windows.h>
 #endif
-#include <options.h>
-#include <safegtk.h>
+#include "options.h"
+#include "../rtengine/safegtk.h"
 
 #include <cstring>
-#include <guiutils.h>
-#include <rtimage.h>
+#include "guiutils.h"
+#include "rtimage.h"
 
 #define CHECKTIME 5000
 extern Glib::ustring argv0;
@@ -161,11 +161,11 @@ void DirBrowser::updateVolumes () {
 }
 
 int updateVolumesUI (void* br) {
-    ((DirBrowser*)br)->updateVolumes ();
+    (static_cast<DirBrowser*>(br))->updateVolumes ();
     return 1;
 }
 int updateDirTreeUI (void* br) {
-    ((DirBrowser*)br)->updateDirTreeRoot ();
+    (static_cast<DirBrowser*>(br))->updateDirTreeRoot ();
     return 0;
 }
 
@@ -204,12 +204,12 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
     
   safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
 
-	if (subDirs.size() == 0)
+	if (subDirs.empty())
 			dirtree->collapse_row (path);
 	else {
 	
 			std::sort (subDirs.begin(), subDirs.end());
-			for (int i=0; i<subDirs.size(); i++) 
+			for (size_t i=0; i<subDirs.size(); i++)
 					addDir (iter, subDirs[i]);
 
 			for (int i=0; i<todel; i++)
@@ -273,7 +273,7 @@ void DirBrowser::row_activated (const Gtk::TreeModel::Path& path, Gtk::TreeViewC
 
     Glib::ustring dname = dirTreeModel->get_iter (path)->get_value (dtColumns.dirname);
     if (safe_file_test (dname, Glib::FILE_TEST_IS_DIR)) 
-        for (int i=0; i<dllisteners.size(); i++)
+	    for (size_t i=0; i<dllisteners.size(); i++)
             dllisteners[i]->dirSelected (dname);
 }
 
@@ -282,8 +282,6 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath) {
     Gtk::TreeModel::Path path;
     path.append_index(0);
 
-    int end = 0;
-    int beg = 0;
     char* dcpy = strdup (absDirPath.c_str());
     char* dir = strtok (dcpy, "/\\");
     int count = 0;
@@ -346,7 +344,7 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
     Gtk::TreePath path = expandToDir (absDirPath);
 	dirtree->scroll_to_row (path);
 	dirtree->get_selection()->select (path);
-	for (int i=0; i<dllisteners.size(); i++)
+	for (size_t i=0; i<dllisteners.size(); i++)
 		dllisteners[i]->dirSelected (absDirPath, Glib::build_filename (absDirPath, fileName));
 }
 

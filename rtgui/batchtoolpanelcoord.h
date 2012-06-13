@@ -19,12 +19,12 @@
 #ifndef __BATCHTOOLPANELCCORD__
 #define __BATCHTOOLPANELCCORD__
 
-#include <thumbnail.h>
-#include <toolpanelcoord.h>
-#include <fileselectionchangelistener.h>
-#include <rtengine.h>
-#include <paramsedited.h>
-#include <thumbnaillistener.h>
+#include "thumbnail.h"
+#include "toolpanelcoord.h"
+#include "fileselectionchangelistener.h"
+#include "../rtengine/rtengine.h"
+#include "paramsedited.h"
+#include "thumbnaillistener.h"
 
 class FilePanel;
 class BatchToolPanelCoordinator : 
@@ -55,7 +55,7 @@ class BatchToolPanelCoordinator :
         void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr);
 
         // profilechangelistener interface
-        void profileChange  (const rtengine::procparams::ProcParams* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);    
+        void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);
 
         // wbprovider interface
         void getAutoWB (double& temp, double& green);

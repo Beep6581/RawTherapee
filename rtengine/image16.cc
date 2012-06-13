@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <image16.h>
-#include <imagefloat.h>
-#include <image8.h>
-#include <string.h>
-#include <stdio.h>
-#include <rtengine.h>
+#include "image16.h"
+#include "imagefloat.h"
+#include "image8.h"
+#include <cstring>
+#include <cstdio>
+#include "rtengine.h"
 
 using namespace rtengine;
 
@@ -273,12 +273,25 @@ Image16::tofloat() const
 }
 
 // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
-void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform, bool safe) {
-    if (safe) {
-        cmsDoTransform(hTransform, data, data, planestride);
-    } else {
+void Image16::ExecCMSTransform(cmsHTRANSFORM hTransform) {
+    //cmsDoTransform(hTransform, data, data, planestride);
+
+    // LittleCMS cannot parallize planar setups
+    // so build temporary buffers to allow multi processor execution
         #pragma omp parallel for
-        for (int i=0; i<height; i++)
-            cmsDoTransform(hTransform, data + 3*i*rowstride, data + 3*i*rowstride, rowstride);
+    for (int y=0; y<height; y++) {
+        unsigned short buffer[width*3];
+        unsigned short *p=buffer, *pR=r[y], *pG=g[y], *pB=b[y];
+
+        for (int x=0; x<width; x++) {
+            *(p++) = *(pR++); *(p++) = *(pG++); *(p++) = *(pB++);
+        }
+
+        cmsDoTransform (hTransform, buffer, buffer, width);
+
+        p=buffer; pR=r[y]; pG=g[y]; pB=b[y];
+        for (int x=0; x<width; x++) {
+            *(pR++) = *(p++); *(pG++) = *(p++); *(pB++) = *(p++);
+        }
     }
 }

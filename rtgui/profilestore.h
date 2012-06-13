@@ -21,20 +21,22 @@
 
 #include <map>
 #include <vector>
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
+#include "paramsedited.h"
 #include <glibmm.h>
 
 class ProfileStore {
 
-        std::map<Glib::ustring,rtengine::procparams::ProcParams*> pparams;
+        std::map<Glib::ustring, rtengine::procparams::PartialProfile*> partProfiles;
         void parseDir (const Glib::ustring& pdir);
 
     public:
-        
+
+        ~ProfileStore();
         void parseProfiles ();
-        rtengine::procparams::ProcParams* getProfile (const Glib::ustring& profname);
-        std::vector<Glib::ustring>        getProfileNames ();
-        rtengine::procparams::ProcParams* getDefaultProcParams (bool isRaw);
+        rtengine::procparams::PartialProfile* getProfile (const Glib::ustring& profname);
+        std::vector<Glib::ustring>            getProfileNames ();
+        rtengine::procparams::ProcParams*     getDefaultProcParams (bool isRaw);
 };
 
 extern ProfileStore profileStore;

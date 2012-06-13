@@ -16,14 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <lwbuttonset.h>
+#include "lwbuttonset.h"
 
 LWButtonSet::LWButtonSet () : aw(0), ah(0) {
 }
 
 LWButtonSet::~LWButtonSet () {
 
-    for (int i=0; i<buttons.size(); i++)
+    for (size_t i=0; i<buttons.size(); i++)
         delete buttons[i];
 }
 
@@ -35,7 +35,7 @@ void LWButtonSet::add (LWButton* b) {
 void LWButtonSet::getMinimalDimensions (int& w, int& h) {
 
     w=0; h=0;
-    for (int i=0; i<buttons.size(); i++) {
+    for (size_t i=0; i<buttons.size(); i++) {
         int bw, bh;
         buttons[i]->getSize (bw, bh);
         w+= bw;
@@ -56,7 +56,7 @@ void LWButtonSet::arrangeButtons (int x, int y, int w, int h) {
 
     int begx = x; 
     int endx = x+w-1;
-    for (int i=0; i<buttons.size(); i++) {
+    for (size_t i=0; i<buttons.size(); i++) {
         LWButton::Alignment halign, valign;
         int bx, by, bw, bh;
         buttons[i]->getSize (bw, bh);
@@ -85,7 +85,7 @@ void LWButtonSet::arrangeButtons (int x, int y, int w, int h) {
 
 void LWButtonSet::move (int nx, int ny) {
 
-    for (int i=0; i<buttons.size(); i++) {
+	for (size_t i=0; i<buttons.size(); i++) {
         int x, y;
         buttons[i]->getPosition (x, y);
         buttons[i]->setPosition (x+nx-ax, y+ny-ay);
@@ -97,14 +97,14 @@ void LWButtonSet::move (int nx, int ny) {
 
 void LWButtonSet::redraw (Cairo::RefPtr<Cairo::Context> context) {
 
-    for (int i=0; i<buttons.size(); i++)
+	for (size_t i=0; i<buttons.size(); i++)
         buttons[i]->redraw (context);
 }
 
 bool LWButtonSet::motionNotify (int x, int y) {
 
     bool res = false;
-    for (int i=0; i<buttons.size(); i++) {
+    for (size_t i=0; i<buttons.size(); i++) {
         bool handled = buttons[i]->motionNotify (x, y);
         res = res || handled;
     }
@@ -115,7 +115,7 @@ bool LWButtonSet::motionNotify (int x, int y) {
 bool LWButtonSet::pressNotify (int x, int y) {
 
     bool res = false;
-    for (int i=0; i<buttons.size(); i++) {
+    for (size_t i=0; i<buttons.size(); i++) {
         bool handled = buttons[i]->pressNotify (x, y);
         res = res || handled;
     }
@@ -125,7 +125,7 @@ bool LWButtonSet::pressNotify (int x, int y) {
 bool LWButtonSet::releaseNotify (int x, int y) {
 
     bool res = false;
-    for (int i=0; i<buttons.size(); i++) {
+    for (size_t i=0; i<buttons.size(); i++) {
         bool handled = buttons[i]->releaseNotify (x, y);
         res = res || handled;
     }
@@ -134,7 +134,7 @@ bool LWButtonSet::releaseNotify (int x, int y) {
 
 bool LWButtonSet::inside (int x, int y) {
 
-    for (int i=0; i<buttons.size(); i++) 
+	for (size_t i=0; i<buttons.size(); i++)
         if (buttons[i]->inside (x, y))
             return true;
     return false;
@@ -142,7 +142,7 @@ bool LWButtonSet::inside (int x, int y) {
 
 void LWButtonSet::setButtonListener (LWButtonListener* bl) {
 
-    for (int i=0; i<buttons.size(); i++)
+	for (size_t i=0; i<buttons.size(); i++)
         buttons[i]->setButtonListener (bl);
 }
 
@@ -154,13 +154,13 @@ void LWButtonSet::getAllocatedDimensions (int& w, int& h) {
 
 void LWButtonSet::setColors (const Gdk::Color& bg, const Gdk::Color& fg) {
 
-    for (int i=0; i<buttons.size(); i++)
+	for (size_t i=0; i<buttons.size(); i++)
         buttons[i]->setColors (bg, fg);
 }
 
 Glib::ustring LWButtonSet::getToolTip (int x, int y) {
 
-    for (int i=0; i<buttons.size(); i++) {
+	for (size_t i=0; i<buttons.size(); i++) {
         Glib::ustring ttip = buttons[i]->getToolTip (x, y);
         if (ttip!="")
             return ttip;

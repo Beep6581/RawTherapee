@@ -16,24 +16,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <improccoordinator.h>
-#include <curves.h>
-#include <mytime.h>
-#include <refreshmap.h>
-#include <simpleprocess.h>
-#include "ppversion.h"
-#define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
-#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
+#include "improccoordinator.h"
+#include "curves.h"
+#include "mytime.h"
+#include "refreshmap.h"
+#include "simpleprocess.h"
+#include "../rtgui/ppversion.h"
 
 namespace rtengine {
 
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : awbComputed(false), ipf(&params, true), scale(10), allocated(false),
-    pW(-1), pH(-1), plistener(NULL), lastHighDetail(false),
+    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), lastHighDetail(false), allocated(false),
+    pW(-1), pH(-1), plistener(NULL),
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
-    changeSinceLast(0), updaterRunning(false), destroying(false), workimg(NULL) {
+    changeSinceLast(0), updaterRunning(false), destroying(false) {
 
     hltonecurve(65536,0);
     shtonecurve(65536,2);//clip above
@@ -55,7 +53,13 @@ ImProcCoordinator::ImProcCoordinator ()
     histToneCurve(256);
     histLCurve(256);
     bcabhist(256);
-
+		
+    rCurve(65536,0);
+    rcurvehist(256); rcurvehistCropped(256); rbeforehist(256);
+    gCurve(65536,0);
+    gcurvehist(256); gcurvehistCropped(256); gbeforehist(256);		
+    bCurve(65536,0);
+    bcurvehist(256); bcurvehistCropped(256); bbeforehist(256);
 }
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {
@@ -73,7 +77,7 @@ ImProcCoordinator::~ImProcCoordinator () {
     freeAll ();
 
     std::vector<Crop*> toDel = crops;
-    for (int i=0; i<toDel.size(); i++)
+    for (size_t i=0; i<toDel.size(); i++)
         delete toDel[i];
 
     imgsrc->decreaseRef ();
@@ -99,7 +103,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	// Check if any detail crops need high detail. If not, take a fast path short cut
     bool highDetailNeeded = (todo & M_HIGHQUAL);
     if (!highDetailNeeded) {
-	for (int i=0; i<crops.size(); i++)
+	for (size_t i=0; i<crops.size(); i++)
 		    if (crops[i]->get_skip() == 1 ) {  // skip=1 -> full resolution
 			highDetailNeeded=true;
 			break;
@@ -150,7 +154,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         imgsrc->HLRecovery_Global( params.hlrecovery ); // this handles Color HLRecovery
 
         if (settings->verbose) printf ("Applying white balance, color correction & sRBG conversion...\n");
-        currWB = ColorTemp (params.wb.temperature, params.wb.green);
+        currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
         if (params.wb.method=="Camera")
             currWB = imgsrc->getWB ();
         else if (params.wb.method=="Auto") {
@@ -210,7 +214,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, 
 							params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
 			if (aeListener)
-				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, \
+				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
 											params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
         }
     }
@@ -220,15 +224,20 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
         // complexCurve also calculated pre-curves histogram dependend on crop
-        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0, \
-									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, \
-									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast, \
-									imgsrc->getGamma(), true, params.toneCurve.curve, \
+        CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0,
+									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
+									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
+									imgsrc->getGamma(), true, params.toneCurve.curve,
 									vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, scale==1 ? 1 : 1);
-        
+
+        CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale==1 ? 1 : 1);
+        CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale==1 ? 1 : 1);
+        CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale==1 ? 1 : 1);
+
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=CROP ) {
-            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation);
+            ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
+                         rCurve, gCurve, bCurve);
         }
 
         // compute L channel histogram
@@ -254,7 +263,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     if (todo & M_LUMACURVE) {
-		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit, \
+		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
 									   params.labCurve.acurve, params.labCurve.bcurve, chroma_acurve, chroma_bcurve, satcurve, scale==1 ? 1 : 16);
 	}
 	
@@ -315,7 +324,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     // process crop, if needed
-    for (int i=0; i<crops.size(); i++)
+    for (size_t i=0; i<crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] )
             crops[i]->update (todo);  // may call outselves
 
@@ -324,7 +333,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         previmg->getMutex().lock();
         try
         {
-            ipf.lab2rgb (nprevl, previmg);
+            ipf.lab2monitorRgb (nprevl, previmg);
             delete workimg;
 			workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);        
         }
@@ -343,6 +352,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             imageListener->setImage (previmg, scale, params.crop);
     }
     if (imageListener)
+    	// TODO: The WB tool should be advertised too in order to get the AutoWB's temp and green values
         imageListener->imageReady (params.crop);
 
     readyphase++;
@@ -422,8 +432,8 @@ if (settings->verbose) printf ("setscale before lock\n");
     fullw = fw;
     fullh = fh;
     if (settings->verbose) printf ("setscale ends\n");
-    if (sizeListeners.size()>0)
-        for (int i=0; i<sizeListeners.size(); i++)
+    if (!sizeListeners.empty())
+        for (size_t i=0; i<sizeListeners.size(); i++)
             sizeListeners[i]->sizeChanged (fullw, fullh, fw, fh);
     if (settings->verbose) printf ("setscale ends2\n");
 
@@ -476,9 +486,9 @@ void ImProcCoordinator::progress (Glib::ustring str, int pr) {
   }*/
 }
 
-void ImProcCoordinator::getAutoWB (double& temp, double& green) {
+bool ImProcCoordinator::getAutoWB (double& temp, double& green) {
 
-    if (imgsrc) {
+    if (imgsrc && imgsrc->isWBProviderReady()) {
         if (!awbComputed) {
             minit.lock ();
             autoWB = imgsrc->getAutoWB ();
@@ -487,6 +497,12 @@ void ImProcCoordinator::getAutoWB (double& temp, double& green) {
         }
         temp = autoWB.getTemp ();
         green = autoWB.getGreen ();
+        return true;
+    }
+    else {
+        temp = -1.0;
+        green = -1.0;
+        return false;
     }
 }
 
@@ -515,7 +531,7 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
     if (params.coarse.vflip)       tr |= TR_VFLIP;
     
     ColorTemp ret = imgsrc->getSpotWB (red, green, blue, tr);
-	currWB = ColorTemp (params.wb.temperature, params.wb.green);
+	currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
     mProcessing.unlock ();
 
 	if (ret.getTemp() > 0) {
@@ -566,7 +582,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	imgsrc->preprocess( ppar.raw );
 	imgsrc->demosaic(ppar.raw );
 	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
-	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green);
+	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
 	if (params.wb.method=="Camera")
 		currWB = imgsrc->getWB ();
 	else if (params.wb.method=="Auto") {

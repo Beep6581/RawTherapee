@@ -20,7 +20,7 @@
 #define __TOOLBAR_H__
 
 #include <gtkmm.h>
-#include <toolenum.h>
+#include "toolenum.h"
 
 class ToolBarListener {
 

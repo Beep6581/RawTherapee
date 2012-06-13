@@ -16,10 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <thumbbrowserentrybase.h>
-#include <thumbbrowserbase.h>
-#include <options.h>
-#include <mytime.h>
+#include "thumbbrowserentrybase.h"
+#include "thumbbrowserbase.h"
+#include "options.h"
+#include "../rtengine/mytime.h"
 
 ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) 
     : preh(0), preview(NULL), buttonSet(NULL), exp_width(0), exp_height(0), redrawRequests(0),
@@ -125,10 +125,10 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     istartx += iofs_x;
     istarty += iofs_y;
     
-    if (bbIcons.size()>0) {
+    if (!bbIcons.empty()) {
         int iwidth = igap;
         int iheight = 0;
-        for (int i=0; i<bbIcons.size(); i++) {
+        for (size_t i=0; i<bbIcons.size(); i++) {
             iwidth += bbIcons[i]->get_width() + igap;
             if (bbIcons[i]->get_height() > iheight)
                 iheight = bbIcons[i]->get_height();
@@ -140,7 +140,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
             cr->set_source_rgba (0, 0, 0, 0.75);
             cr->fill ();
         }
-        for (int i=0; i<bbIcons.size(); i++) {
+        for (size_t i=0; i<bbIcons.size(); i++) {
             backBuffer->draw_pixbuf (gc_, bbIcons[i], 0, 0, istartx, istarty, bbIcons[i]->get_width(), bbIcons[i]->get_height(), Gdk::RGB_DITHER_NONE, 0, 0);
             istartx += bbIcons[i]->get_width() + igap;
         }

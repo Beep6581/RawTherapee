@@ -19,9 +19,9 @@
 #ifndef _FILETHUMBNAILBUTTONSET_
 #define _FILETHUMBNAILBUTTONSET_
 
-#include <lwbuttonset.h>
+#include "lwbuttonset.h"
 #include <gtkmm.h>
-#include <filebrowserentry.h>
+#include "filebrowserentry.h"
 
 class FileBrowserEntry;
 class FileThumbnailButtonSet : public LWButtonSet {

@@ -16,14 +16,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <batchqueuepanel.h>
-#include <options.h>
-#include <preferences.h>
-#include <multilangmgr.h>
-#include <rtwindow.h>
-#include <soundman.h>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "batchqueuepanel.h"
+#include "options.h"
+#include "preferences.h"
+#include "multilangmgr.h"
+#include "rtwindow.h"
+#include "soundman.h"
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 
 BatchQueuePanel::BatchQueuePanel () {

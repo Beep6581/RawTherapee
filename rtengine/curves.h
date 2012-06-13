@@ -22,18 +22,20 @@
 #include <glibmm.h>
 #include <map>
 #include <string>
-#include <math.h>
-#include <mycurve.h>
-#include <myflatcurve.h>
-#include <mydiagonalcurve.h>
+#include <cmath>
+#include "../rtgui/mycurve.h"
+#include "../rtgui/myflatcurve.h"
+#include "../rtgui/mydiagonalcurve.h"
 
 #include "LUT.h"
 
 #define CURVES_MIN_POLY_POINTS  1000
 
-#define SQR(x) ((x)*(x))
+#include "rt_math.h"
 
 #define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
+
+using namespace std;
 
 namespace rtengine {
 
@@ -193,16 +195,23 @@ class CurveFactory {
 	}
 
   public:
-    static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr, double gamma_, bool igamma_, const std::vector<double>& curvePoints,
-        LUTu & histogram, LUTu & histogramCropped, LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip=1);
-	static void complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& acurvePoints, \
+    static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
+							  double gamma_, bool igamma_, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+							  LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip=1);
+	static void complexsgnCurve (double saturation, bool satlimit, double satlimthresh, const std::vector<double>& acurvePoints,
 								 const std::vector<double>& bcurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, int skip=1);
 	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
-        LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip); 
+							   LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip); 
+	static void RGBCurve (const std::vector<double>& curvePoints, LUTf & outCurve, int skip);
 };
 
 class Curve {
 
+    class HashEntry {
+    public:
+        unsigned short smallerValue;
+        unsigned short higherValue;
+    };
   protected:
     int N;
     int ppn;			// targeted polyline point number
@@ -210,10 +219,10 @@ class Curve {
     double* y;
     std::vector<double> poly_x;		// X points of the faceted curve
     std::vector<double> poly_y;		// Y points of the faceted curve
-	unsigned short int* hash;
-	unsigned int hashSize;		// hash table's size, between [10, 100, 1000]
+    std::vector<HashEntry> hash;
+    unsigned short hashSize;		// hash table's size, between [10, 100, 1000]
 
-	double* ypp;
+    double* ypp;
 
     // Fields for the elementary curve polygonisation
     double x1, y1, x2, y2, x3, y3;
@@ -231,7 +240,6 @@ class Curve {
 
   public:
     Curve ();
-    ~Curve ();
     void AddPolygons ();
     virtual double getVal (double t) = 0;
     virtual void   getVal (const std::vector<double>& t, std::vector<double>& res) = 0;
@@ -253,7 +261,7 @@ class DiagonalCurve : public Curve {
 
   public:
     DiagonalCurve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
-   ~DiagonalCurve ();
+    virtual ~DiagonalCurve ();
 
     double getVal     (double t);
     void   getVal     (const std::vector<double>& t, std::vector<double>& res);
@@ -273,7 +281,7 @@ class FlatCurve : public Curve {
   public:
 
     FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn=CURVES_MIN_POLY_POINTS);
-   ~FlatCurve ();
+    virtual ~FlatCurve ();
 
     double getVal     (double t);
     void   getVal     (const std::vector<double>& t, std::vector<double>& res);

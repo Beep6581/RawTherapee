@@ -23,17 +23,18 @@
 
 // This file is for your program, I won't touch it again!
 
-#include <config.h>
+#include "config.h"
 #include <gtkmm.h>
 #include <giomm.h>
 #include <iostream>
-#include <rtwindow.h>
-#include <string.h>
-#include <stdlib.h>
-#include <options.h>
-#include <soundman.h>
-#include <rtimage.h>
+#include "rtwindow.h"
+#include <cstring>
+#include <cstdlib>
+#include "options.h"
+#include "soundman.h"
+#include "rtimage.h"
 #include "version.h"
+#include "extprog.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -41,7 +42,7 @@
 #include <glib/gstdio.h>
 #endif
 
-#include <safegtk.h>
+#include "../rtengine/safegtk.h"
 
 extern Options options;
 
@@ -58,7 +59,8 @@ bool simpleEditor;
  *  1 to start GUI (with a dir or file option)
  *  2 to start GUI because no files found
  *  -1 if there is an error in parameters
- *  -2 if an error occurred during processing */
+ *  -2 if an error occurred during processing
+ *  -3 if at least one required procparam file was not found */
 int processLineParams( int argc, char **argv );
 
 int main(int argc, char **argv)
@@ -105,7 +107,7 @@ int main(int argc, char **argv)
    Gio::init ();
 
    Options::load ();
-
+   extProgStore->init();
    SoundManager::init();
 
    if (argc>1){
@@ -210,24 +212,37 @@ public:
     }
 };
 
+void deleteProcParams(std::vector<rtengine::procparams::PartialProfile*> &pparams) {
+	for (unsigned int i=0; i<pparams.size(); i++) {
+		pparams[i]->deleteInstance();
+		delete pparams[i];
+		pparams[i] = NULL;
+	}
+	return;
+}
+
 int processLineParams( int argc, char **argv )
 {
+	rtengine::procparams::PartialProfile *rawParams=NULL, *imgParams=NULL;
 	std::vector<Glib::ustring> inputFiles;
 	Glib::ustring outputPath = "";
+	std::vector<rtengine::procparams::PartialProfile*> processingParams;
 	Glib::ustring processingParams = "";
 	Glib::ustring snapshotName = rtengine::SnapshotInfo::kCurrentSnapshotName;
 	bool isDirectory=false;
 	bool outputDirectory=false;
 	bool overwriteFiles=false;
 	bool sideProcParams=false;
-	bool useDefaultIfAbsent=true;
+	bool skipIfNoSidecar=false;
+	bool useDefault=false;
+	unsigned int sideCarFilePos = 0;
 	int compression=100;
 	int bits=-1;
 	std::string outputType = "";
 	unsigned errors=0;
 	for( int iArg=1; iArg<argc; iArg++){
 		if( argv[iArg][0]=='-' || argv[iArg][0]=='/' ){
-			switch( argv[iArg][1]){
+			switch( argv[iArg][1] ){
 			case 'o': // outputfile or dir
 				if( iArg+1 <argc ){
 					iArg++;
@@ -236,22 +251,41 @@ int processLineParams( int argc, char **argv )
 						outputDirectory=true;
 				}
 				break;
-			case 'p': // processing parameters for all inputs
+			case 'p': // processing parameters for all inputs; all set procparams are required, so
+				      // RT stop if any of them can't be loaded for any reason.
 				if( iArg+1 <argc ){
 					iArg++;
-					processingParams = safe_filename_to_utf8 ( argv[iArg] );
+					Glib::ustring fname = safe_filename_to_utf8 ( argv[iArg] );
+					if (fname.at(0) == '-') {
+						std::cerr << "Error: filename missing next to the -p switch" << std::endl;
+						deleteProcParams(processingParams);
+						return -3;
+					}
+					rtengine::procparams::PartialProfile* currentParams = new rtengine::procparams::PartialProfile(true);
+					if (!(currentParams->load ( fname ))) {
+						processingParams.push_back(currentParams);
+					}
+					else {
+						std::cerr << "Error: \""<< fname <<"\" not found" << std::endl;
+						deleteProcParams(processingParams);
+						return -3;
+					}
 				}
 				break;
 			case 'S':
-				useDefaultIfAbsent=false;
+				skipIfNoSidecar=true;
 			case 's': // Processing params next to file (.xmp appended)
 				sideProcParams = true;
-				if( iArg+1 <argc ){
+				sideCarFilePos = processingParams.size();
+				if( iArg+1 < argc ){
 				   if( argv[iArg+1][0]!= '-' && argv[iArg+1][0]!='/'){
 					   iArg++;
 					   snapshotName = argv[iArg];
 				   }
 				}
+				break;
+			case 'd':
+				useDefault = true;
 				break;
 			case 'Y':
 				overwriteFiles =true;
@@ -300,26 +334,40 @@ int processLineParams( int argc, char **argv )
 			case 'h':
 			case '?':
 			default:
-				std::cerr << "RawTherapee, " << VERSION << std::endl;
-				std::cerr << "Copyright (c)2004-2011 Gabor Horvath <hgabor@rawtherapee.com>"<< std::endl << std::endl;
+			{
+				Glib::ustring pparamsExt = paramFileExtension.substr(1);
+				std::cerr << "RawTherapee, V" << VERSION << std::endl;
+				std::cerr << "Copyright (c)2004-2012 Gabor Horvath <hgabor@rawtherapee.com>"<< std::endl << std::endl;
 				std::cerr << "Usage:"<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) << " [<selected dir>] : start RT GUI browser inside dir."<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) << " <file> : start GUI editor with file."<< std::endl;
 				std::cerr << Glib::path_get_basename(argv[0]) << " -c <inputDir>|<file list> : convert files in batch with default parameters."<< std::endl<< std::endl;
 				std::cerr << "Other options used with -c (that must be last option) "<< std::endl;
-				std::cerr << Glib::path_get_basename(argv[0]) <<" [-o <output>] [-s [<snapshot>]| -S [<snapshot>]| -p <file>] [-j[1-100]|-t|-n] -Y -c <input>"<< std::endl;
+				std::cerr << Glib::path_get_basename(argv[0]) <<" [-o <output>] [-s [<snapshot>]| -S [<snapshot>]] [-p <file>] [-d] [-j[1-100]|-t|-n] -Y -c <input>"<< std::endl;
 				std::cerr << " -o <outputFile>|<outputDir> : select output directory."<< std::endl;
-				std::cerr << " -s : select parameters inside xmp: sidecar file next to input file (with same name) or embedded packet"<< std::endl;
-				std::cerr << "      ex: for IMG001.NEF there should be IMG001.xmp in the same dir" << std::endl;
+				std::cerr << " -s : select parameters inside " << pparamsExt << ": sidecar file next to input file (with same name) or embedded packet"<< std::endl;
+				std::cerr << "      ex: for IMG001.NEF there should be IMG001." << pparamsExt << " in the same dir" << std::endl;
 				std::cerr << "      if xmp is absent use default profiles (see preferences)" << std::endl;
-				std::cerr << "      if snapshot name is not specified, last processing parameters used are applied." << std::endl;
-				std::cerr << " -S : like -s but skip file if xmp is not found." << std::endl;
-				std::cerr << " -p <file.xmp> : specify xmp file to be used for all conversions."<< std::endl;
+				std::cerr << "      if the snapshot name is not specified, the last used processing parameters are applied." << std::endl;
+				std::cerr << " -S : like -s but skip if the " << pparamsExt << " file is not found." << std::endl;
+				std::cerr << " -p <file." << pparamsExt << "> : specify " << pparamsExt << " file to be used for all conversions."<< std::endl;
+				std::cerr << "                 you can specify as much -p option as you want (see the note below)."<< std::endl;
+				std::cerr << " -d : use the default Raw or Image " << pparamsExt << " file to build the image's parameters."<< std::endl;
 				std::cerr << " -j[compression] : specify output to be jpeg.(default)"<< std::endl;
-				std::cerr << " -t : specify output to be tif."<< std::endl;
+				std::cerr << " -t : specify output to be uncompressed tiff."<< std::endl;
+				std::cerr << " -t1: specify output to be compressed tiff."<< std::endl;
 				std::cerr << " -n : specify output to be png."<< std::endl;
-				std::cerr << " -Y : overwrite output if present."<< std::endl;
+				std::cerr << " -Y : overwrite output if present."<< std::endl<<std::endl;
+				std::cerr << "NOTE: Your " << pparamsExt << " files can be incomplete, RawTherapee will set the values like that:"<< std::endl;
+				std::cerr << "   - the " << pparamsExt << " file is built with internal default values;"<< std::endl;
+				std::cerr << "   - then overrided by those found in the default Raw or Image " << pparamsExt << " file (if -d has been set);"<< std::endl;
+				std::cerr << "   - then overrided by those found in the " << pparamsExt << " files provided by -p,"<< std::endl;
+				std::cerr << "     each one overriding the previous values;" << std::endl;
+				std::cerr << "   * then overrided by the sidecar file if -s is set and if the file exists;"<< std::endl;
+				std::cerr << "     the time where the sidecar file is used depend of the position of the -s switch"<< std::endl;
+				std::cerr << "     in the command line regarding to the -p parameters (e.g. \"-p first." << pparamsExt << " -p second." << pparamsExt << " -s -p fourth." << pparamsExt << "\")"<< std::endl;
 				return -1;
+			}
 			}
 		}else{
 			argv1 = safe_filename_to_utf8 ( argv[iArg] );
@@ -346,39 +394,40 @@ int processLineParams( int argc, char **argv )
 	}
 	if( !argv1.empty() )
 		return 1;
-	if( !inputFiles.size() )
+	if( inputFiles.empty() )
 		return 2;
 
-	rtengine::procparams::ProcParams params,paramsRaw,paramsImg, *currentParams;
-	if( !sideProcParams || useDefaultIfAbsent ){
-		if( processingParams.length()>0 ){
-			if( getExtension(processingParams).size()==0 )
-				processingParams = processingParams + paramFileExtension;
-			if( Glib::path_get_dirname( processingParams ).compare(".")==0 )
-				processingParams = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+processingParams ;
-			if( params.loadParams ( processingParams )){
-				std::cerr << "Error loading "<< processingParams << std::endl;
-				return 3;
-			}
-		}else{
-			Glib::ustring fname = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+options.defProfRaw+paramFileExtension;
-			if( paramsRaw.loadParams(fname ) ){
-				std::cerr << "Error loading "<< fname << std::endl;
-				return 3;
-			}
-			fname = Glib::path_get_dirname(argv[0])+"/"+options.profilePath+"/"+options.defProfImg+paramFileExtension;
-			if( paramsImg.loadParams(fname) ){
-				std::cerr << "Error loading "<< fname << std::endl;
-				return 3;
-			}
+	if (useDefault) {
+		rawParams = new rtengine::procparams::PartialProfile(true);
+		if (rawParams->load(options.profilePath+"/" + options.defProfRaw + paramFileExtension)) {
+			std::cerr << "Error: default Raw procparams file \""<< (options.profilePath+"/" + options.defProfRaw + paramFileExtension) << "\" not found" << std::endl;
+			rawParams->deleteInstance();
+			delete rawParams;
+			deleteProcParams(processingParams);
+			return -3;
+		}
+		imgParams = new rtengine::procparams::PartialProfile(true);
+		if (imgParams->load(options.profilePath+"/" + options.defProfImg + paramFileExtension)) {
+			std::cerr << "Error: default Image procparams file \""<< (options.profilePath+"/" + options.defProfImg + paramFileExtension) << "\" not found" << std::endl;
+			imgParams->deleteInstance();
+			delete imgParams;
+			rawParams->deleteInstance();
+			delete rawParams;
+			deleteProcParams(processingParams);
+			return -3;
 		}
 	}
 
 	stdProgress progList('.',20);
 
+	ParamsEdited paramsEdited;
 	for( size_t iFile=0; iFile< inputFiles.size(); iFile++){
+
+		// Has to be reinstanciated at each profile to have a ProcParams object with default values
+		rtengine::procparams::ProcParams currentParams;
+
 		Glib::ustring inputFile = inputFiles[iFile];
-		std::cerr << inputFile << ": ";
+		std::cout << "Processing: " << inputFile << std::endl;
 
 		rtengine::InitialImage* ii=NULL;
 		rtengine::ProcessingJob* job =NULL;
@@ -428,7 +477,10 @@ int processLineParams( int argc, char **argv )
 			std::cerr << "Error loading! Skipped."<< std::endl;
 			continue;
 		}
-		if( sideProcParams ){
+		
+		// ---------------------------------------------------------------------
+		
+		/*if( sideProcParams ){
 		    int snapshotId = idata->getSnapshotId( snapshotName );
 		    if( snapshotId >=0 ){
 		    	rtengine::SnapshotInfo si = idata->getSnapshot( snapshotId );
@@ -449,8 +501,59 @@ int processLineParams( int argc, char **argv )
 			currentParams = &paramsRaw;
 		}else{
 			currentParams = &paramsImg;
+		}*/
+		// ---------------------------------------------------------------------
+		
+		
+		
+		if (useDefault) {
+			if (isRaw) {
+				std::cout << "  Merging default Raw profile" << std::endl;
+				rawParams->applyTo(&currentParams);
+			}
+			else {
+				std::cout << "  Merging default Image profile" << std::endl;
+				imgParams->applyTo(&currentParams);
+			}
 		}
-		job = rtengine::ProcessingJob::create (ii, *currentParams,ii->getMetaData(),options.outputMetaData);
+
+		bool sideCarFound = false;
+		unsigned int i=0;
+		// Iterate the procparams file list in order to build the final ProcParams
+		do {
+			if (sideProcParams && i==sideCarFilePos) {
+			    int snapshotId = idata->getSnapshotId( snapshotName );
+			    if( snapshotId >=0 ){
+			    	rtengine::SnapshotInfo si = idata->getSnapshot( snapshotId );
+			    	params = si.params;
+			    	currentParams = &params;
+				}
+
+				// using the sidecar file
+				Glib::ustring sideProcessingParams = inputFile + paramFileExtension;
+				// the "load" method don't reset the procparams values anymore, so values found in the procparam file override the one of currentParams
+				if( !safe_file_test( sideProcessingParams, Glib::FILE_TEST_EXISTS ) || currentParams.load ( sideProcessingParams ))
+					std::cerr << "Warning: sidecar file requested but not found for: "<< sideProcessingParams << std::endl;
+				else {
+					sideCarFound = true;
+					std::cout << "  Merging sidecar procparams" << std::endl;
+				}
+			}
+			if( processingParams.size()>i  ) {
+				std::cout << "  Merging procparams #" << i << std::endl;
+				processingParams[i]->applyTo(&currentParams);
+			}
+			i++;
+		} while (i < processingParams.size()+(sideProcParams?1:0));
+
+		if( sideProcParams && !sideCarFound && skipIfNoSidecar ){
+			delete ii;
+			errors++;
+			std::cerr << "Error: no sidecar procparams found for: "<< inputFile << std::endl;
+			continue;
+		}
+
+		job = rtengine::ProcessingJob::create (ii, currentParams, ii->getMetaData(), options.outputMetaData);
 		if( !job ){
 			errors++;
 			std::cerr << "Error creating job! Skipped."<< std::endl;
@@ -487,5 +590,10 @@ int processLineParams( int argc, char **argv )
 		ii->decreaseRef();
 		resultImage->free();
 	}
+
+	if (imgParams) { imgParams->deleteInstance(); delete imgParams; }
+	if (rawParams) { rawParams->deleteInstance(); delete rawParams; }
+	deleteProcParams(processingParams);
+
 	return errors>0?-2:0;
 }

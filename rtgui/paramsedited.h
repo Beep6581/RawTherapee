@@ -21,8 +21,16 @@
 
 #include <glibmm.h>
 #include <vector>
-#include <rtengine.h>
-#include <procparams.h>
+#include "../rtengine/procparams.h"
+#include "../rtengine/rtengine.h"
+
+class GeneralParamsEdited {
+
+    public:
+        bool rank;
+        bool colorlabel;
+        bool intrash;
+};
 
 class ToneCurveParamsEdited {
 
@@ -51,6 +59,14 @@ class LCurveParamsEdited {
         bool saturationlimit;
         bool lcurve;
         bool acurve;
+        bool bcurve;
+};
+
+class RGBCurvesParamsEdited {
+
+    public:
+        bool rcurve;
+        bool gcurve;
         bool bcurve;
 };
 
@@ -103,14 +119,14 @@ class VibranceParamsEdited {
         bool pastsattog;
 };
 
-class ColorBoostParamsEdited {
+/*class ColorBoostParamsEdited {
 
     public: 
         bool amount;
         bool avoidclip;
         bool enable_saturationlimiter;
         bool saturationlimit;
-};
+};*/
 
 class WBParamsEdited {
 
@@ -120,27 +136,27 @@ class WBParamsEdited {
         bool green;
 };
 
-class ColorShiftParamsEdited {
+/*class ColorShiftParamsEdited {
 
     public:
         bool a;
         bool b;
-};
+};*/
 
-class LumaDenoiseParamsEdited {
+/*class LumaDenoiseParamsEdited {
 
     public:
         bool enabled;
         bool radius;
         bool edgetolerance;
-};
+};*/
 
-class ColorDenoiseParamsEdited {
+/*class ColorDenoiseParamsEdited {
 
     public:
         bool enabled;
         bool amount;
-};
+};*/
 
 class DefringeParamsEdited {
 	
@@ -287,6 +303,7 @@ class ColorManagementParamsEdited {
     public:
         bool input;
         bool blendCMSMatrix;
+        bool preferredProfile;
         bool working;
         bool output;
 		bool gamma;
@@ -318,56 +335,58 @@ class RAWParamsEdited {
         bool dmethod;
         bool dcbIterations;
         bool dcbEnhance;
-        bool allEnhance;	
+        bool allEnhance;
         bool caCorrection;
-		bool caRed;
-		bool caBlue;
+        bool caRed;
+        bool caBlue;
         bool greenEq;
-        bool hotDeadPixel;
+        bool hotDeadPixelFilter;
+        bool hotDeadPixelThresh;
         bool linenoise;
         bool darkFrame;
         bool dfAuto;
-		bool ff_file;
-		bool ff_AutoSelect;
-		bool ff_BlurRadius;
-		bool ff_BlurType;
-		bool exPos;
-		bool exPreser;
-		bool exBlackzero;
-		bool exBlackone;
-		bool exBlacktwo;
-		bool exBlackthree;
-		bool exTwoGreen;
+        bool ff_file;
+        bool ff_AutoSelect;
+        bool ff_BlurRadius;
+        bool ff_BlurType;
+        bool exPos;
+        bool exPreser;
+        bool exBlackzero;
+        bool exBlackone;
+        bool exBlacktwo;
+        bool exBlackthree;
+        bool exTwoGreen;
 
         bool isUnchanged() const;
 };
 
-
 class ParamsEdited {
 
     public:
+        GeneralParamsEdited           general;
         ToneCurveParamsEdited         toneCurve;
         LCurveParamsEdited            labCurve;
+        RGBCurvesParamsEdited         rgbCurves;
         SharpeningParamsEdited        sharpening;
         SharpenEdgeParamsEdited       sharpenEdge;
         SharpenMicroParamsEdited      sharpenMicro;
         VibranceParamsEdited          vibrance;
-        ColorBoostParamsEdited        colorBoost;
+        //ColorBoostParamsEdited        colorBoost;
         WBParamsEdited                wb;
-        ColorShiftParamsEdited        colorShift;
-        LumaDenoiseParamsEdited       lumaDenoise;
-        ColorDenoiseParamsEdited      colorDenoise;
+        //ColorShiftParamsEdited        colorShift;
+        //LumaDenoiseParamsEdited       lumaDenoise;
+        //ColorDenoiseParamsEdited      colorDenoise;
         DefringeParamsEdited          defringe;
         DirPyrDenoiseParamsEdited     dirpyrDenoise;
-        EPDParamsEdited					  edgePreservingDecompositionUI;
+        EPDParamsEdited               edgePreservingDecompositionUI;
         ImpulseDenoiseParamsEdited    impulseDenoise;
         SHParamsEdited                sh;
         CropParamsEdited              crop;
         CoarseTransformParamsEdited   coarse;
-        CommonTransformParamsEdited	  commonTrans;
+        CommonTransformParamsEdited   commonTrans;
         RotateParamsEdited            rotate;
         DistortionParamsEdited        distortion;
-        PerspectiveParamsEdited		  perspective;
+        PerspectiveParamsEdited       perspective;
         CACorrParamsEdited            cacorrection;
         VignettingParamsEdited        vignetting;
         ChannelMixerParamsEdited      chmixer;
@@ -377,6 +396,8 @@ class ParamsEdited {
         RAWParamsEdited               raw;
         DirPyrEqualizerParamsEdited   dirpyrequalizer;
         HSVEqualizerParamsEdited      hsvequalizer;
+        bool                          exif;
+        bool                          iptc;
 
         ParamsEdited ();
 

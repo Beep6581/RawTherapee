@@ -18,11 +18,11 @@
  */
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <curves.h>
-#include <math.h>
+#include "curves.h"
+#include <cmath>
 #include <vector>
-#include <mytime.h>
-#include <string.h>
+#include "mytime.h"
+#include <cstring>
 
 #define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
 
@@ -30,11 +30,11 @@ namespace rtengine {
 
 DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn) {
 
-    ppn = poly_pn;
+    ppn = poly_pn > 65500 ? 65500 : poly_pn;
     bool identity = true;
 
-    if (ppn < 500) hashSize = 100;  // Arbitrary cut-off value
-    if (ppn < 50) hashSize = 10;  	// Arbitrary cut-off value
+    if (ppn < 500) hashSize = 100;  // Arbitrary cut-off value, but mutliple of 10
+    if (ppn < 50) hashSize = 10;  	// Arbitrary cut-off value, but mutliple of 10
 
     if (p.size()<3) {
         kind = DCT_Empty;
@@ -196,7 +196,7 @@ void DiagonalCurve::NURBS_set () {
         // TODO: Speeding-up the interface by caching the polyline, instead of rebuilding it at each action on sliders !!!
         nbr_points = (int)(((double)(ppn+N-2) * sc_length[i/3] )/ total_length);
         if (nbr_points<0){
-            for(int it=0;it < sc_x.size(); it+=3) printf("sc_length[%d/3]=%f \n",it,sc_length[it/3]);
+            for(size_t it=0;it < sc_x.size(); it+=3) printf("sc_length[%zu/3]=%f \n",it,sc_length[it/3]);
             printf("NURBS diagonal curve: error detected!\n i=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,nbr_points,ppn,N,sc_length[i/3],total_length);
             exit(0);
         }
@@ -210,7 +210,7 @@ void DiagonalCurve::NURBS_set () {
     }
 
     // adding the final horizontal segment, always (see under)
-   	poly_x.push_back(1.1);		// 1.1 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
+   	poly_x.push_back(3.0);		// 3.0 is a hack for optimization purpose of the getVal method (the last value has to be beyond the normal range)
    	poly_y.push_back(y[N-1]);
 }
 
@@ -282,7 +282,7 @@ double DiagonalCurve::getVal (double t) {
     	unsigned short int i = (unsigned short int)(t*hashSize);
 
     	if (i > (hashSize+1)) {
-    		//printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f, corresponding polygon's point #%d (out of %d point) x value: %.8f\n\n", i, t, hash[i], poly_x.size(), poly_x[hash[i]]);
+    		//printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f, corresponding polygon's point #%d (out of %d point) x value: %.8f\n\n", i, t, hash.at(i), poly_x.size(), poly_x[hash.at(i)]);
     		printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f\n\n", i, t);
     		return t;
     	}
@@ -290,8 +290,8 @@ double DiagonalCurve::getVal (double t) {
     	unsigned int k_lo = 0;
     	unsigned int k_hi = 0;
 
-		k_lo = hash[i];
-		k_hi = hash[i+1];
+		k_lo = hash.at(i).smallerValue;
+		k_hi = hash.at(i).higherValue;
 
 		// do a binary search for the right interval :
 		while (k_hi - k_lo > 1){

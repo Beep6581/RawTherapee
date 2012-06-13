@@ -21,9 +21,9 @@
 
 #include <gtkmm.h>
 #include <vector>
-#include <curvelistener.h>
-#include <cursormanager.h>
-#include <mycurve.h>
+#include "curvelistener.h"
+#include "cursormanager.h"
+#include "mycurve.h"
 
 // For compatibility and simplicity reason, order shouldn't change, and must be identical to the order specified in the curveType widget
 enum FlatCurveType {

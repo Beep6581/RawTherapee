@@ -20,9 +20,9 @@
 #define _ROTATE_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
-#include <lensgeomlistener.h>
+#include "adjuster.h"
+#include "toolpanel.h"
+#include "lensgeomlistener.h"
 
 class Rotate : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 

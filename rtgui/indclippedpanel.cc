@@ -15,11 +15,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <indclippedpanel.h>
-#include <options.h>
-#include <multilangmgr.h>
-#include <imagearea.h>
-#include <rtimage.h>
+#include "indclippedpanel.h"
+#include "options.h"
+#include "multilangmgr.h"
+#include "imagearea.h"
+#include "rtimage.h"
 
 IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia) {
 
@@ -28,14 +28,14 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia) {
     indclippedh = Gtk::manage (new Gtk::ToggleButton ());
     indclippedh->set_relief(Gtk::RELIEF_NONE);
     indclippedh->add (*Gtk::manage (new RTImage ("warnhl.png")));   
-    tt = M("MAIN_TOOLTIP_INDCLIPPEDH");
+    tt = Glib::ustring::compose("%1\n%2 = %3",M("MAIN_TOOLTIP_INDCLIPPEDH"),M("MAIN_TOOLTIP_THRESHOLD"),options.highlightThreshold);
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) indclippedh->set_tooltip_text (tt);
         else indclippedh->set_tooltip_markup (tt);
 
     indclippeds = Gtk::manage (new Gtk::ToggleButton ());
     indclippeds->set_relief(Gtk::RELIEF_NONE);
-    indclippeds->add (*Gtk::manage (new RTImage ("warnsh.png")));   
-    tt = M("MAIN_TOOLTIP_INDCLIPPEDS");
+    indclippeds->add (*Gtk::manage (new RTImage ("warnsh.png")));
+    tt = Glib::ustring::compose("%1\n%2 = %3",M("MAIN_TOOLTIP_INDCLIPPEDS"),M("MAIN_TOOLTIP_THRESHOLD"),options.shadowThreshold);
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) indclippeds->set_tooltip_text (tt);
         else indclippeds->set_tooltip_markup (tt);
 
@@ -61,4 +61,9 @@ void IndicateClippedPanel::toggleClipped (bool highlights) {
 
 void IndicateClippedPanel::buttonToggled () {
 	imageArea->queue_draw ();
+
+	// this will redraw the linked Before image area
+	// which is set when before/after view is enabled
+	if (imageArea->iLinkedImageArea!=NULL)
+		imageArea->iLinkedImageArea->queue_draw ();
 }

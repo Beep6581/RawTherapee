@@ -16,20 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <limits.h>
-#include <stdio.h>
-#include <rawimagesource.h>
-#include <rawimagesource_i.h>
-#include <options.h>
-
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
+#include <climits>
+#include <cstdio>
+#include "rawimagesource.h"
+#include "rawimagesource_i.h"
+#include "../rtgui/options.h"
 
 namespace rtengine {
 
 // computes highlight recovery multipliers. Needs a possibly downscaled image where
 // the highlights are indicated by INT_MAX
-void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
+void hlmultipliers (int** rec[3], int max_3[3], int dh, int dw) {
 
     // STEP I. recover color with two-color information
     int phase = -1;
@@ -72,7 +69,7 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
                                 // average m/c color ratios in the surrounding pixels
                                 if (rec[co][i+x][j+y]>=0 && rec[co][i+x][j+y]!=INT_MAX && rec[c1][i+x][j+y]>=0 && rec[c1][i+x][j+y]!=INT_MAX && rec[c2][i+x][j+y]>0 && rec[c2][i+x][j+y]!=INT_MAX) {
                                     double ratt = (double)rec[c1][i+x][j+y] / rec[c2][i+x][j+y];
-                                    if (ratt > rato*1.2 || ratt < rato / 1.2 || rec[co][i+x][j+y]<max[co]*1/2)
+                                    if (ratt > rato*1.2 || ratt < rato / 1.2 || rec[co][i+x][j+y]<max_3[co]*1/2)
                                         continue;
                                     ratio[0] += (double)rec[c1][i+x][j+y] / rec[co][i+x][j+y];
                                     ratio[1] += (double)rec[c2][i+x][j+y] / rec[co][i+x][j+y];
@@ -86,7 +83,7 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
                                 // average m/c color ratios in the surrounding pixels
                                 if (rec[co][i+x][j+y]>=0 && rec[co][i+x][j+y]!=INT_MAX && rec[c1][i+x][j+y]>=0 && rec[c1][i+x][j+y]!=INT_MAX && rec[c2][i+x][j+y]>0 && rec[c2][i+x][j+y]!=INT_MAX) {
                                     double ratt = (double)rec[c1][i+x][j+y] / rec[c2][i+x][j+y];
-                                    if (ratt > rato*1.05 || ratt < rato / 1.05 || rec[co][i+x][j+y]<max[co]*4/5)
+                                    if (ratt > rato*1.05 || ratt < rato / 1.05 || rec[co][i+x][j+y]<max_3[co]*4/5)
                                         continue;
                                     arato += ratt;
                                     ratio[0] += (double)rec[c1][i+x][j+y] / rec[co][i+x][j+y];
@@ -102,7 +99,7 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
                                 // average m/c color ratios in the surrounding pixels
                                 if (rec[co][i+x][j+y]>=0 && rec[co][i+x][j+y]!=INT_MAX && rec[c1][i+x][j+y]>=0 && rec[c1][i+x][j+y]!=INT_MAX && rec[c2][i+x][j+y]>0 && rec[c2][i+x][j+y]!=INT_MAX) {
                                     double ratt = (double)rec[c1][i+x][j+y] / rec[c2][i+x][j+y];
-                                    if (ratt > rato*1.1 || ratt < rato / 1.1 || rec[co][i+x][j+y]<max[co]*3/4)
+                                    if (ratt > rato*1.1 || ratt < rato / 1.1 || rec[co][i+x][j+y]<max_3[co]*3/4)
                                         continue;
                                     arato += ratt;
                                     ratio[0] += (double)rec[c1][i+x][j+y] / rec[co][i+x][j+y];
@@ -139,18 +136,17 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
 
                     double ratio[2] = {0.0, 0.0};
                     int count[2] = {0, 0};
-                    int ix = 0;
                     for (int x=-1; x<=1; x++)
                         for (int y=-1; y<=1; y++) {
                             // average m/c color ratios in the surrounding pixels
                             if (rec[co][i+x][j+y]>=0 && rec[co][i+x][j+y]!=INT_MAX && rec[c1][i+x][j+y]>0 && rec[c1][i+x][j+y]!=INT_MAX) {
-                                if ((phase==1 && rec[c1][i+x][j+y]<max[c1]*3/4) || (phase==3 && rec[c1][i+x][j+y]<max[c1]*1/2))
+                                if ((phase==1 && rec[c1][i+x][j+y]<max_3[c1]*3/4) || (phase==3 && rec[c1][i+x][j+y]<max_3[c1]*1/2))
                                     continue;
                                 ratio[0] += (double)rec[co][i+x][j+y] / rec[c1][i+x][j+y];
                                 count[0] ++;
                             }
                             if (rec[co][i+x][j+y]>=0 && rec[co][i+x][j+y]!=INT_MAX && rec[c2][i+x][j+y]>0 && rec[c2][i+x][j+y]!=INT_MAX) {
-                                if ((phase==1 && rec[c2][i+x][j+y]<max[c2]*3/4) || (phase==3 && rec[c2][i+x][j+y]<max[c2]*1/2))
+                                if ((phase==1 && rec[c2][i+x][j+y]<max_3[c2]*3/4) || (phase==3 && rec[c2][i+x][j+y]<max_3[c2]*1/2))
 //                                if (/*phase!=3 && */rec[c2][i+x][j+y]<max[c2]*3/4)
                                     continue;
                                 ratio[1] += (double)rec[co][i+x][j+y] / rec[c2][i+x][j+y];
@@ -158,7 +154,6 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
                             }
                         }
                     // compute new pixel values from the surrounding color ratios
-                    int nc = 0;
                     if ((phase==1 && count[0]>2) || (phase==3 && count[0]>1)) {
                         rec[c1][i][j] = - (int) ((double)rec[co][i][j] / ratio[0] * count[0]);
                         changed++;
@@ -207,7 +202,7 @@ void hlmultipliers (int** rec[3], int max[3], int dh, int dw) {
     if( options.rtSettings.verbose )
     printf ("Highlight recovery ends in %d iterations\n", k);
 
-    int maxval = MAX(MAX(max[0], max[1]), max[2]);    
+    int maxval = max(max_3[0], max_3[1], max_3[2]);
     for (int i=0; i<dh; i++)
         for (int j=0; j<dw; j++) 
             if (rec[0][i][j]==INT_MAX || rec[1][i][j]==INT_MAX || rec[2][i][j]==INT_MAX) {
@@ -224,7 +219,6 @@ void RawImageSource::HLRecovery_ColorPropagation (float* red, float* green, floa
     if (blr<0 || blr>=H/HR_SCALE-2)
         return;
     double mr1 = 1.0 - ((double)((i+HR_SCALE/2) % HR_SCALE) / HR_SCALE + 0.5 / HR_SCALE);
-    int jx = 0;
     int maxcol = W/HR_SCALE-2;
     for (int j=sx1, jx=0; jx<width; j+=skip, jx++) {
 		if (needhr[i][j]) {
@@ -266,9 +260,9 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation () {
     maxr = maxr * 19 / 20;
     maxg = maxg * 19 / 20;
     maxb = maxb * 19 / 20;
-    max[0] = maxr;
-    max[1] = maxg;
-    max[2] = maxb;
+    max_3[0] = maxr;
+    max_3[1] = maxg;
+    max_3[2] = maxb;
 
     // downscale image
     int dw = W/HR_SCALE;
@@ -295,7 +289,7 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation () {
 		for (int j=0; j<HR_SCALE; j++) {
             interpolate_row_rb (reds[j], blues[j], green[HR_SCALE*i+j-1], green[HR_SCALE*i+j], green[HR_SCALE*i+j+1], HR_SCALE*i+j);
 			for (int k=0; k<W; k++)
-				if (reds[j][k]>=max[0] || green[HR_SCALE*i+j][k]>=max[1] || blues[j][k]>=max[2])
+				if (reds[j][k]>=max_3[0] || green[HR_SCALE*i+j][k]>=max_3[1] || blues[j][k]>=max_3[2])
 					needhr[HR_SCALE*i+j][k] = 1;
 				else
 					needhr[HR_SCALE*i+j][k] = 0;
@@ -328,7 +322,7 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation () {
         delete [] blues[i];
     }
 
-    hlmultipliers (rec, max, dh, dw);
+    hlmultipliers (rec, max_3, dh, dw);
 
     if (hrmap[0]!=NULL) {
         freeArray<float> (hrmap[0], dh);

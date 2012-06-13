@@ -20,8 +20,8 @@
 #define _HLREC_H_
 
 #include <gtkmm.h>
-#include <toolpanel.h>
-#include <guiutils.h>
+#include "toolpanel.h"
+#include "guiutils.h"
 
 class HLRecovery : public Gtk::VBox, public FoldableToolPanel {
 

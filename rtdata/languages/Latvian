@@ -1,12 +1,12 @@
 ADJUSTER_RESET_TO_DEFAULT;Atmest uz noklusēto
 CURVEEDITOR_FILEDLGFILTERANY;Visi faili
 CURVEEDITOR_FILEDLGFILTERCURVE;Līkņu faili
-CURVEEDITOR_LINEAR;Lineāri
-CURVEEDITOR_LOADDLGLABEL;Ielādēt līkni...
-CURVEEDITOR_SAVEDLGLABEL;Saglabāt līkni...
+CURVEEDITOR_LINEAR;Line�?ri
+CURVEEDITOR_LOADDLGLABEL;Iel�?dēt līkni...
+CURVEEDITOR_SAVEDLGLABEL;Saglab�?t līkni...
 CURVEEDITOR_TOOLTIPLINEAR;Iztaisnot līkni
-CURVEEDITOR_TOOLTIPLOAD;Ielādēt līkni no faila
-CURVEEDITOR_TOOLTIPSAVE;Saglabāt esošo līkni
+CURVEEDITOR_TOOLTIPLOAD;Iel�?dēt līkni no faila
+CURVEEDITOR_TOOLTIPSAVE;Saglab�?t esošo līkni
 EXIFFILTER_APERTURE;Atvērums
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_DIALOGLABEL;Exif Filtrs
@@ -19,66 +19,66 @@ EXIFPANEL_ADDEDIT;Pielikt/Labot
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Ievadiet vērtību
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Izvēlēt birku
 EXIFPANEL_ADDTAGDLG_TITLE;Pielikt/Labot birku
-EXIFPANEL_KEEPHINT;Atstāt izvēlētās birkas kad raksta izvades failu
-EXIFPANEL_KEEP;Atstāt
-EXIFPANEL_REMOVEHINT;Noņemt izvēlētās birkas kad raksta izvades failu
+EXIFPANEL_KEEPHINT;Atst�?t izvēlēt�?s birkas kad raksta izvades failu
+EXIFPANEL_KEEP;Atst�?t
+EXIFPANEL_REMOVEHINT;Noņemt izvēlēt�?s birkas kad raksta izvades failu
 EXIFPANEL_REMOVE;Noņemt
-EXIFPANEL_RESETALLHINT;Atmest visas birkas uz to noklusētajām vērtībām
+EXIFPANEL_RESETALLHINT;Atmest visas birkas uz to noklusētaj�?m vērtīb�?m
 EXIFPANEL_RESETALL;Atmest visu
-EXIFPANEL_RESETHINT;Atmest izvēlētās birkas uz to noklusētajām vērtībām
+EXIFPANEL_RESETHINT;Atmest izvēlēt�?s birkas uz to noklusētaj�?m vērtīb�?m
 EXIFPANEL_RESET;Atmest
 EXIFPANEL_SUBDIRECTORY;Subdirektorijs
 FILEBROWSER_APPLYPROFILE;Lietot profilu
-FILEBROWSER_ARRANGEMENTHINT;Pārslēgt sīktēlu izvietojumu vertikāli/horizontāli
+FILEBROWSER_ARRANGEMENTHINT;P�?rslēgt sīktēlu izvietojumu vertik�?li/horizont�?li
 FILEBROWSER_CLEARPROFILE;Notīrīt profilu
 FILEBROWSER_COPYPROFILE;Kopēt profilu
-FILEBROWSER_DELETEDLGLABEL;Faila dzēšanas apstiprinājums
-FILEBROWSER_DELETEDLGMSG;Vai tiešām dzēst %1 atzīmētos filus?
+FILEBROWSER_DELETEDLGLABEL;Faila dzēšanas apstiprin�?jums
+FILEBROWSER_DELETEDLGMSG;Vai tieš�?m dzēst %1 atzīmētos filus?
 FILEBROWSER_EMPTYTRASHHINT;Galīgi izdzēst atkritnes failus
 FILEBROWSER_EMPTYTRASH;Izmest atkritumus
-FILEBROWSER_EXIFFILTERAPPLYHINT;Pārslēgt failu pārlūka exif filtru
+FILEBROWSER_EXIFFILTERAPPLYHINT;P�?rslēgt failu p�?rlūka exif filtru
 FILEBROWSER_EXIFFILTERAPPLY;Lietot
 FILEBROWSER_EXIFFILTERLABEL;Exif filtrs
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Mainīt exif filtra uzstādījumus
-FILEBROWSER_EXIFFILTERSETTINGS;Uzstādījumi
+FILEBROWSER_EXIFFILTERSETTINGSHINT;Mainīt exif filtra uzst�?dījumus
+FILEBROWSER_EXIFFILTERSETTINGS;Uzst�?dījumi
 FILEBROWSER_PARTIALPASTEPROFILE;Daļēja ielīmēšana
 FILEBROWSER_PASTEPROFILE;Ielīmēt profilu
 FILEBROWSER_POPUPCANCELJOB;Atcelt darbu
-FILEBROWSER_POPUPMOVEEND;Pārvietot uz rindas beigām
-FILEBROWSER_POPUPMOVEHEAD;Pārvietot uz rindas sākumu
+FILEBROWSER_POPUPMOVEEND;P�?rvietot uz rindas beig�?m
+FILEBROWSER_POPUPMOVEHEAD;P�?rvietot uz rindas s�?kumu
 FILEBROWSER_POPUPOPEN;Atvērt
-FILEBROWSER_POPUPPROCESS;Ielikt apstrādes rindā
+FILEBROWSER_POPUPPROCESS;Ielikt apstr�?des rind�?
 FILEBROWSER_POPUPRANK1;Vērtēt 1
 FILEBROWSER_POPUPRANK2;Vērtēt 2
 FILEBROWSER_POPUPRANK3;Vērtēt 3
 FILEBROWSER_POPUPRANK4;Vērtēt 4
 FILEBROWSER_POPUPRANK5;Vērtēt 5
 FILEBROWSER_POPUPREMOVE;Dzēst no failu sistēmas
-FILEBROWSER_POPUPRENAME;Pārsaukt
+FILEBROWSER_POPUPRENAME;P�?rsaukt
 FILEBROWSER_POPUPSELECTALL;Atzīmēt visu
 FILEBROWSER_POPUPTRASH;Izmest atkritnē
 FILEBROWSER_POPUPUNRANK;Nevērtēt
 FILEBROWSER_POPUPUNTRASH;Izņemt no atkritnes
-FILEBROWSER_PROCESSINGSETTINGSHINT;Uzstādīt failu formātu un izvades direktoriju
-FILEBROWSER_PROCESSINGSETTINGS;Uzstādījumi
-FILEBROWSER_RENAMEDLGLABEL;Pārsaukt failu
-FILEBROWSER_RENAMEDLGMSG;Pārsaukt failu "%1" uz:
-FILEBROWSER_SHOWDIRHINT;Rādīt visus direktorija attēlus
-FILEBROWSER_SHOWQUEUEHINT;Rādīt apstrādes rindu
-FILEBROWSER_SHOWRANK1HINT;Rādīt attēlus ar 1 zvaigzni
-FILEBROWSER_SHOWRANK2HINT;Rādīt attēlus ar 2 zvaigznēm
-FILEBROWSER_SHOWRANK3HINT;Rādīt attēlus ar 3 zvaigznēm
-FILEBROWSER_SHOWRANK4HINT;Rādīt attēlus ar 4 zvaigznēm
-FILEBROWSER_SHOWRANK5HINT;Rādīt attēlus ar 5 zvaigznēm
-FILEBROWSER_SHOWTRASHHINT;Rādīt atkritni
-FILEBROWSER_SHOWUNRANKHINT;Rādīt nevērtētus attēlus
-FILEBROWSER_STARTPROCESSINGHINT;Sākt attēlu rindas apstrādi/saglabāšanu
-FILEBROWSER_STARTPROCESSING;Sākt apstrādi
-FILEBROWSER_STOPPROCESSINGHINT;Apturēt attēlu apstrādi
-FILEBROWSER_STOPPROCESSING;Apturēt apstrādi
+FILEBROWSER_PROCESSINGSETTINGSHINT;Uzst�?dīt failu form�?tu un izvades direktoriju
+FILEBROWSER_PROCESSINGSETTINGS;Uzst�?dījumi
+FILEBROWSER_RENAMEDLGLABEL;P�?rsaukt failu
+FILEBROWSER_RENAMEDLGMSG;P�?rsaukt failu "%1" uz:
+FILEBROWSER_SHOWDIRHINT;R�?dīt visus direktorija attēlus
+FILEBROWSER_SHOWQUEUEHINT;R�?dīt apstr�?des rindu
+FILEBROWSER_SHOWRANK1HINT;R�?dīt attēlus ar 1 zvaigzni
+FILEBROWSER_SHOWRANK2HINT;R�?dīt attēlus ar 2 zvaigznēm
+FILEBROWSER_SHOWRANK3HINT;R�?dīt attēlus ar 3 zvaigznēm
+FILEBROWSER_SHOWRANK4HINT;R�?dīt attēlus ar 4 zvaigznēm
+FILEBROWSER_SHOWRANK5HINT;R�?dīt attēlus ar 5 zvaigznēm
+FILEBROWSER_SHOWTRASHHINT;R�?dīt atkritni
+FILEBROWSER_SHOWUNRANKHINT;R�?dīt nevērtētus attēlus
+FILEBROWSER_STARTPROCESSINGHINT;S�?kt attēlu rindas apstr�?di/saglab�?šanu
+FILEBROWSER_STARTPROCESSING;S�?kt apstr�?di
+FILEBROWSER_STOPPROCESSINGHINT;Apturēt attēlu apstr�?di
+FILEBROWSER_STOPPROCESSING;Apturēt apstr�?di
 FILEBROWSER_THUMBSIZE;Sīktēlu izmērs
-FILEBROWSER_ZOOMINHINT;Palielināt sīktēlus
-FILEBROWSER_ZOOMOUTHINT;Samazināt sīktēlus
+FILEBROWSER_ZOOMINHINT;Palielin�?t sīktēlus
+FILEBROWSER_ZOOMOUTHINT;Samazin�?t sīktēlus
 GENERAL_ABOUT;Par
 GENERAL_CANCEL;Atcelt
 GENERAL_DISABLED;Atslēgts
@@ -86,27 +86,27 @@ GENERAL_DISABLE;Atslēgt
 GENERAL_ENABLED;Ieslēgts
 GENERAL_ENABLE;Ieslēgt
 GENERAL_LANDSCAPE;Ainava
-GENERAL_LOAD;Ielādēt
+GENERAL_LOAD;Iel�?dēt
 GENERAL_NA;n/a
 GENERAL_NO;Nē
 GENERAL_OK;Labi
 GENERAL_PORTRAIT;Portrets
-GENERAL_SAVE;Saglabāt
-GENERAL_YES;Jā
+GENERAL_SAVE;Saglab�?t
+GENERAL_YES;J�?
 HISTOGRAM_LABEL;Histogramma
-HISTOGRAM_TOOLTIP_B;Rādīt/Slēpt Zilā histogrammu
-HISTOGRAM_TOOLTIP_G;Rādīt/Slēpt Zaļā histogrammu
-HISTOGRAM_TOOLTIP_L;Rādīt/Slēpt CIELAB Spīduma histogrammu
-HISTOGRAM_TOOLTIP_R;Rādīt/Slēpt Sarkanā histogrammu
+HISTOGRAM_TOOLTIP_B;R�?dīt/Slēpt Zil�? histogrammu
+HISTOGRAM_TOOLTIP_G;R�?dīt/Slēpt Zaļ�? histogrammu
+HISTOGRAM_TOOLTIP_L;R�?dīt/Slēpt CIELAB Spīduma histogrammu
+HISTOGRAM_TOOLTIP_R;R�?dīt/Slēpt Sarkan�? histogrammu
 HISTORY_CHANGED;Mainīts
-HISTORY_CUSTOMCURVE;Pielāgota līkne
-HISTORY_DELSNAPSHOT;Noņemt grāmtzīmi
+HISTORY_CUSTOMCURVE;Piel�?gota līkne
+HISTORY_DELSNAPSHOT;Noņemt gr�?mtzīmi
 HISTORY_FROMCLIPBOARD;No starplikas
 HISTORY_LABEL;Vēsture
-HISTORY_MSG_1;Attēls ielādēts
-HISTORY_MSG_2;Profils ielādēts
+HISTORY_MSG_1;Attēls iel�?dēts
+HISTORY_MSG_2;Profils iel�?dēts
 HISTORY_MSG_3;Profils izmainīts
-HISTORY_MSG_4;Vēstures pārlūkošana
+HISTORY_MSG_4;Vēstures p�?rlūkošana
 HISTORY_MSG_5;Gaišums
 HISTORY_MSG_6;Kontrasts
 HISTORY_MSG_7;Melnais
@@ -122,136 +122,136 @@ HISTORY_MSG_16;Spīduma Melnais
 HISTORY_MSG_17;Spīduma Izgaismojumu spiešana
 HISTORY_MSG_18;Spīduma Ēnu spiešana
 HISTORY_MSG_19;Spīduma Līkne
-HISTORY_MSG_20;Asināšana
-HISTORY_MSG_21;Asināšanas radiuss
-HISTORY_MSG_22;Asināšanas apjoms
-HISTORY_MSG_23;Asināšanas slieksnis
-HISTORY_MSG_24;Asināt tikai malas
-HISTORY_MSG_25;Asināšanas malu meklēšanas radiuss
-HISTORY_MSG_26;Asināšanas malu iecietība
-HISTORY_MSG_27;Asināšanas caurumu kontrole
+HISTORY_MSG_20;Asin�?šana
+HISTORY_MSG_21;Asin�?šanas radiuss
+HISTORY_MSG_22;Asin�?šanas apjoms
+HISTORY_MSG_23;Asin�?šanas slieksnis
+HISTORY_MSG_24;Asin�?t tikai malas
+HISTORY_MSG_25;Asin�?šanas malu meklēšanas radiuss
+HISTORY_MSG_26;Asin�?šanas malu iecietība
+HISTORY_MSG_27;Asin�?šanas caurumu kontrole
 HISTORY_MSG_28;Caurumu kontroles apjoms
-HISTORY_MSG_29;Asināšanas metode
-HISTORY_MSG_30;Atritināšanas radiuss
-HISTORY_MSG_31;Atritināšanas apjoms
-HISTORY_MSG_32;Atritināšanas slāpēšana
-HISTORY_MSG_33;Atritināšanas soļi
-HISTORY_MSG_34;Izvairīties no krāsu cirpšanas
-HISTORY_MSG_35;Piesātinājuma ierobežojums
-HISTORY_MSG_36;Piesātinājuma robeža
-HISTORY_MSG_37;Krāsu pastiprināšana
-HISTORY_MSG_38;Baltā līdzsvara metode
-HISTORY_MSG_39;Krāsu temperatūra
-HISTORY_MSG_40;Baltā līdzsvara nokrāsa
-HISTORY_MSG_41;Krāsu nobīde "A"
-HISTORY_MSG_42;Krāsu nobīde "B"
-HISTORY_MSG_43;Spīduma trokšņu slāpēšana
-HISTORY_MSG_44;Spož. trokšņu slāpēšanas radiuss
-HISTORY_MSG_45;Spož. trokšņu slāpēšanas malu iecietība
-HISTORY_MSG_46;Krāsu trokšņu slāpēšana
-HISTORY_MSG_47;Krāsu trokšņu slāpēšanas radiuss
-HISTORY_MSG_48;Krāsu trokšņu slāpēšanas malu iecietība
-HISTORY_MSG_49;Krāsu trokšņu slāpēšanas malu jutīgums
+HISTORY_MSG_29;Asin�?šanas metode
+HISTORY_MSG_30;Atritin�?šanas radiuss
+HISTORY_MSG_31;Atritin�?šanas apjoms
+HISTORY_MSG_32;Atritin�?šanas sl�?pēšana
+HISTORY_MSG_33;Atritin�?šanas soļi
+HISTORY_MSG_34;Izvairīties no kr�?su cirpšanas
+HISTORY_MSG_35;Pies�?tin�?juma ierobežojums
+HISTORY_MSG_36;Pies�?tin�?juma robeža
+HISTORY_MSG_37;Kr�?su pastiprin�?šana
+HISTORY_MSG_38;Balt�? līdzsvara metode
+HISTORY_MSG_39;Kr�?su temperatūra
+HISTORY_MSG_40;Balt�? līdzsvara nokr�?sa
+HISTORY_MSG_41;Kr�?su nobīde "A"
+HISTORY_MSG_42;Kr�?su nobīde "B"
+HISTORY_MSG_43;Spīduma trokšņu sl�?pēšana
+HISTORY_MSG_44;Spož. trokšņu sl�?pēšanas radiuss
+HISTORY_MSG_45;Spož. trokšņu sl�?pēšanas malu iecietība
+HISTORY_MSG_46;Kr�?su trokšņu sl�?pēšana
+HISTORY_MSG_47;Kr�?su trokšņu sl�?pēšanas radiuss
+HISTORY_MSG_48;Kr�?su trokšņu sl�?pēšanas malu iecietība
+HISTORY_MSG_49;Kr�?su trokšņu sl�?pēšanas malu jutīgums
 HISTORY_MSG_50;Ēnu/Izgaismojumu rīks
-HISTORY_MSG_51;Izgaismojumu pastiprināšana
-HISTORY_MSG_52;Ēnu pastiprināšana
+HISTORY_MSG_51;Izgaismojumu pastiprin�?šana
+HISTORY_MSG_52;Ēnu pastiprin�?šana
 HISTORY_MSG_53;Izgaismojumu toņa platums
 HISTORY_MSG_54;Ēnu toņa platums
 HISTORY_MSG_55;Vietējais kontrasts
 HISTORY_MSG_56;Ēnu/Izgaismojumu radiuss
 HISTORY_MSG_57;Raupja pagriešana
-HISTORY_MSG_58;Horizontāla apmešana
-HISTORY_MSG_59;Vertikāla apmešana
+HISTORY_MSG_58;Horizont�?la apmešana
+HISTORY_MSG_59;Vertik�?la apmešana
 HISTORY_MSG_60;Pagriešana
 HISTORY_MSG_61;Pagriešana
 HISTORY_MSG_62;Lēcu kropļojumu labošana
-HISTORY_MSG_63;Grāmatzīme izvēlēta
+HISTORY_MSG_63;Gr�?matzīme izvēlēta
 HISTORY_MSG_64;Kadrējums
-HISTORY_MSG_65;Krāsu nobīdes labošana
+HISTORY_MSG_65;Kr�?su nobīdes labošana
 HISTORY_MSG_66;Izgaismojumu atgūšana
 HISTORY_MSG_67;Izgaismojumu atgūšanas apjoms
 HISTORY_MSG_68;Izgaismojumu atgūšanas metode
-HISTORY_MSG_69;Krāsu telpa darbam
-HISTORY_MSG_70;Krāsu telpa izvadei
-HISTORY_MSG_71;Ievades krāsu telpa
+HISTORY_MSG_69;Kr�?su telpa darbam
+HISTORY_MSG_70;Kr�?su telpa izvadei
+HISTORY_MSG_71;Ievades kr�?su telpa
 HISTORY_MSG_72;Vinjetes labošana
-HISTORY_MSG_73;Kanālu jaucējs
+HISTORY_MSG_73;Kan�?lu jaucējs
 HISTORY_MSG_74;Izmēra mērogs
 HISTORY_MSG_75;Izmērmaiņas metode
 HISTORY_MSG_76;Exif metadati
 HISTORY_MSG_77;IPTC metadati
-HISTORY_MSG_78;Norādīti izmērmaiņas dati
+HISTORY_MSG_78;Nor�?dīti izmērmaiņas dati
 HISTORY_MSG_79;Izmērmaiņas platums
 HISTORY_MSG_80;Izmērmaiņas augstums
 HISTORY_MSG_81;Izmērmaiņa ieslēgta
-HISTORY_NEWSNAPSHOTAS;Kā...
-HISTORY_NEWSNAPSHOT;Jauna grāmtzīme
-HISTORY_NEWSSDIALOGLABEL;Grāmtzīmes nosaukums:
-HISTORY_NEWSSDIALOGTITLE;Pielikt grāmtzīmi
+HISTORY_NEWSNAPSHOTAS;K�?...
+HISTORY_NEWSNAPSHOT;Jauna gr�?mtzīme
+HISTORY_NEWSSDIALOGLABEL;Gr�?mtzīmes nosaukums:
+HISTORY_NEWSSDIALOGTITLE;Pielikt gr�?mtzīmi
 HISTORY_SETTO;Iestatīts uz
-HISTORY_SNAPSHOTS;Grāmtzīmes
-HISTORY_SNAPSHOT;Grāmtzīme
+HISTORY_SNAPSHOTS;Gr�?mtzīmes
+HISTORY_SNAPSHOT;Gr�?mtzīme
 ICMPANEL_FILEDLGFILTERANY;Visi faili
 ICMPANEL_FILEDLGFILTERICM;ICC Profilu faili
 ICMPANEL_GAMMABEFOREINPUT;Uzlikta Gammu pirms Ievades profila
 ICMPANEL_INPUTCAMERA;Kameras noklusētais
-ICMPANEL_INPUTCUSTOM;Pielāgots
+ICMPANEL_INPUTCUSTOM;Piel�?gots
 ICMPANEL_INPUTDLGLABEL;Izvēlies Ievades ICC Profilu...
 ICMPANEL_INPUTEMBEDDED;Lietot iegulto, ja var
 ICMPANEL_INPUTPROFILE;Ievades profils
 ICMPANEL_NOICM;Bez ICM: sRGB izvade
 ICMPANEL_OUTPUTDLGLABEL;Izvēlies Izvades ICC Profilu...
 ICMPANEL_OUTPUTPROFILE;Izvades profils
-ICMPANEL_SAVEREFERENCE;Saglabāt atsauces attēlu profila izveidei
+ICMPANEL_SAVEREFERENCE;Saglab�?t atsauces attēlu profila izveidei
 ICMPANEL_WORKINGPROFILE;Darba profils
 IMAGEAREA_DETAILVIEW;Tuvskats
-IPTCPANEL_AUTHORHINT;Objekta radītājs vārds, t.i. rakstnieks, fotogrāfs vai mākslinieks (By-line).
-IPTCPANEL_AUTHORSPOSITIONHINT;Objekta radītāja amapts (By-line Title).
+IPTCPANEL_AUTHORHINT;Objekta radīt�?js v�?rds, t.i. rakstnieks, fotogr�?fs vai m�?kslinieks (By-line).
+IPTCPANEL_AUTHORSPOSITIONHINT;Objekta radīt�?ja amapts (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Autora amats
 IPTCPANEL_AUTHOR;Autors
 IPTCPANEL_CAPTIONHINT;Datu tekstveida apraksts (Caption - Abstract)
-IPTCPANEL_CAPTIONWRITERHINT;Personas vārfds, kura ir iesaistīta attēla, virsraksta vai kopsavilkuma rakstīšanā, rediģēšanā vai labošānā (Writer - Editor)
+IPTCPANEL_CAPTIONWRITERHINT;Personas v�?rfds, kura ir iesaistīta attēla, virsraksta vai kopsavilkuma rakstīšan�?, rediģēšan�? vai laboš�?n�? (Writer - Editor)
 IPTCPANEL_CAPTIONWRITER;Virsraksta autors
 IPTCPANEL_CAPTION;Virsraksts
-IPTCPANEL_CATEGORYHINT;Attēla radītājs identificē attēla subjektu (Category).
+IPTCPANEL_CATEGORYHINT;Attēla radīt�?js identificē attēla subjektu (Category).
 IPTCPANEL_CATEGORY;Kategorija
 IPTCPANEL_CITYHINT;Attēla izcelsmes pilsēta (City).
 IPTCPANEL_CITY;Pilsēta
 IPTCPANEL_COPYHINT;Kopēt IPTC iestatījumus uz starpliku
-IPTCPANEL_COPYRIGHTHINT;Jebkāds nepieciešamais brīdinājums par autortiesībām (Copyright Notice).
+IPTCPANEL_COPYRIGHTHINT;Jebk�?ds nepieciešamais brīdin�?jums par autortiesīb�?m (Copyright Notice).
 IPTCPANEL_COPYRIGHT;Autortiesības
-IPTCPANEL_COUNTRYHINT;Attēla sākotnējās izveidošanas valsts (Country - Primary Location Name).
+IPTCPANEL_COUNTRYHINT;Attēla s�?kotnēj�?s izveidošanas valsts (Country - Primary Location Name).
 IPTCPANEL_COUNTRY;Valsts
-IPTCPANEL_CREDITHINT;Identificē attēla sniedzēju, nav obligāti radītājs vai īpašnieks (Credit).
+IPTCPANEL_CREDITHINT;Identificē attēla sniedzēju, nav oblig�?ti radīt�?js vai īpašnieks (Credit).
 IPTCPANEL_CREDIT;Pateicība
-IPTCPANEL_DATECREATEDHINT;Attēla intelektuālā satura radīšanas datums; Formāts: ggggmmdd (Date Created).
+IPTCPANEL_DATECREATEDHINT;Attēla intelektu�?l�? satura radīšanas datums; Form�?ts: ggggmmdd (Date Created).
 IPTCPANEL_DATECREATED;Izveidošanas datums
 IPTCPANEL_EMBEDDEDHINT;Attiestatīt uz attēla iegultajiem IPTC datiem
 IPTCPANEL_EMBEDDED;Iegultais
 IPTCPANEL_HEADLINEHINT;Publicējams raksts, kas satur attēla konspektu (Headline).
 IPTCPANEL_HEADLINE;Konspekts
-IPTCPANEL_INSTRUCTIONSHINT;Citi redaktora norādījumi par attēla lietošanu (Special Instructions).
-IPTCPANEL_INSTRUCTIONS;Norādījumi
-IPTCPANEL_KEYWORDSHINT;Norāda vārdus specifiskas informācijas iegūšanai (Keywords).
-IPTCPANEL_KEYWORDS;Atslēgvārdi
+IPTCPANEL_INSTRUCTIONSHINT;Citi redaktora nor�?dījumi par attēla lietošanu (Special Instructions).
+IPTCPANEL_INSTRUCTIONS;Nor�?dījumi
+IPTCPANEL_KEYWORDSHINT;Nor�?da v�?rdus specifiskas inform�?cijas iegūšanai (Keywords).
+IPTCPANEL_KEYWORDS;Atslēgv�?rdi
 IPTCPANEL_PASTEHINT;Ielīmēt IPTC iestatījumus no starplikas
 IPTCPANEL_PROVINCEHINT;Attēla izcelsmes valsts vai province (Province-State).
 IPTCPANEL_PROVINCE;Province
 IPTCPANEL_RESETHINT;Atiestatīt uz profila noklusējumu
 IPTCPANEL_RESET;Atiestate
-IPTCPANEL_SOURCEHINT;Attēla intelektuālā īpašuma īpašnieks (Source).
+IPTCPANEL_SOURCEHINT;Attēla intelektu�?l�? īpašuma īpašnieks (Source).
 IPTCPANEL_SOURCE;Avots
 IPTCPANEL_SUPPCATEGORIESHINT;Precizē attēla subjektu (Supplemental Categories).
 IPTCPANEL_SUPPCATEGORIES;Apakškategorija
-IPTCPANEL_TITLEHINT;Attēla saīsināts nosaukums (Object Name).
+IPTCPANEL_TITLEHINT;Attēla saīsin�?ts nosaukums (Object Name).
 IPTCPANEL_TITLE;Nosaukums
-IPTCPANEL_TRANSREFERENCEHINT;Kods, kas norāda uz attēla sākotnējas pārneses vietu (Original Transmission Reference).
-IPTCPANEL_TRANSREFERENCE;Pārneses atsauce
+IPTCPANEL_TRANSREFERENCEHINT;Kods, kas nor�?da uz attēla s�?kotnējas p�?rneses vietu (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;P�?rneses atsauce
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Iestatījumi
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;Kā...
-MAIN_BUTTON_SAVE;Saglabāt attēlu
+MAIN_BUTTON_SAVEAS;K�?...
+MAIN_BUTTON_SAVE;Saglab�?t attēlu
 MAIN_BUTTON_SENDTOEDITOR;Sūtīt uz redaktoru
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
@@ -260,16 +260,16 @@ MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
 MAIN_FRAME_RECENT;Recent Folders 
 MAIN_MSG_ALREADYEXISTS;Fails jau ir.
-MAIN_MSG_CANNOTLOAD;Nevaru ielādēt attēlu
-MAIN_MSG_CANNOTSAVE;Faila saglabāšanas kļūda
-MAIN_MSG_CANNOTSTARTEDITOR;Nevar uzsākt redaktoru.
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Lūdzu ievadiet pareizu ceļu dialogā "Uzstādījumi".
-MAIN_MSG_EXITJOBSINQUEUEINFO;Beidzot neapstrādātie attēli no rindas pazudīs.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Vai tiešām beigt? Apstrādes rindā ir neapstrādāti attēli.
-MAIN_MSG_JOBSINQUEUE;darbs(i) rindā
-MAIN_MSG_QOVERWRITE;Vai pārrakstīt to?
+MAIN_MSG_CANNOTLOAD;Nevaru iel�?dēt attēlu
+MAIN_MSG_CANNOTSAVE;Faila saglab�?šanas kļūda
+MAIN_MSG_CANNOTSTARTEDITOR;Nevar uzs�?kt redaktoru.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Lūdzu ievadiet pareizu ceļu dialog�? "Uzst�?dījumi".
+MAIN_MSG_EXITJOBSINQUEUEINFO;Beidzot neapstr�?d�?tie attēli no rindas pazudīs.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Vai tieš�?m beigt? Apstr�?des rind�? ir neapstr�?d�?ti attēli.
+MAIN_MSG_JOBSINQUEUE;darbs(i) rind�?
+MAIN_MSG_QOVERWRITE;Vai p�?rrakstīt to?
 MAIN_TAB_BASIC;Pamats
-MAIN_TAB_COLOR;Krāsa
+MAIN_TAB_COLOR;Kr�?sa
 MAIN_TAB_DETAIL;Detaļas
 MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
@@ -279,210 +279,210 @@ MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadati
 MAIN_TAB_TAGGING;Tagging
-MAIN_TAB_TRANSFORM;Pārveidot
-MAIN_TOOLTIP_HIDEFP;Rādīt/slēpt apakšējo ielaidumu (mapju un failu pārlūks, saīsne: F))
-MAIN_TOOLTIP_HIDEHP;Rādīt/slēpt kreiso ielaidumu (ieskaitot vēsturi, saīsne: H)
+MAIN_TAB_TRANSFORM;P�?rveidot
+MAIN_TOOLTIP_HIDEFP;R�?dīt/slēpt apakšējo ielaidumu (mapju un failu p�?rlūks, saīsne: F))
+MAIN_TOOLTIP_HIDEHP;R�?dīt/slēpt kreiso ielaidumu (ieskaitot vēsturi, saīsne: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Izgaismojumu cirpšanas pazīme
 MAIN_TOOLTIP_INDCLIPPEDS;Ēnu cirpšanas pazīme
 MAIN_TOOLTIP_PREFERENCES;Mainīt iestatījumus
-MAIN_TOOLTIP_QINFO;Ātrā info uz attēla
-MAIN_TOOLTIP_SAVEAS;Saglabāt attēlu izvēlētajā mapē
-MAIN_TOOLTIP_SAVE;Saglabāt attēlu noklusētajā mapē
-PARTIALPASTE_BASICGROUP;Pamata uzstādījumi
-PARTIALPASTE_CACORRECTION;Krāsu novirzes labošana
-PARTIALPASTE_COARSETRANS;90 grādu rotēšana / apmešana
-PARTIALPASTE_COLORBOOST;Krāsu pastiprināšana
-PARTIALPASTE_COLORDENOISE;Krāsu attīrīšana
-PARTIALPASTE_COLORGROUP;Krāsu uzstādījumi
-PARTIALPASTE_COLORMIXER;Krāsu jaucējs
-PARTIALPASTE_COLORSHIFT;Krāsu nobīde
-PARTIALPASTE_COMPOSITIONGROUP;Kompozīcijas uzstādījumi
+MAIN_TOOLTIP_QINFO;Ātr�? info uz attēla
+MAIN_TOOLTIP_SAVEAS;Saglab�?t attēlu izvēlētaj�? mapē
+MAIN_TOOLTIP_SAVE;Saglab�?t attēlu noklusētaj�? mapē
+PARTIALPASTE_BASICGROUP;Pamata uzst�?dījumi
+PARTIALPASTE_CACORRECTION;Kr�?su novirzes labošana
+PARTIALPASTE_COARSETRANS;90 gr�?du rotēšana / apmešana
+PARTIALPASTE_COLORBOOST;Kr�?su pastiprin�?šana
+PARTIALPASTE_COLORDENOISE;Kr�?su attīrīšana
+PARTIALPASTE_COLORGROUP;Kr�?su uzst�?dījumi
+PARTIALPASTE_COLORMIXER;Kr�?su jaucējs
+PARTIALPASTE_COLORSHIFT;Kr�?su nobīde
+PARTIALPASTE_COMPOSITIONGROUP;Kompozīcijas uzst�?dījumi
 PARTIALPASTE_CROP;Apcirpt
-PARTIALPASTE_DIALOGLABEL;Daļēji ielīmēt apstrādes profilu
+PARTIALPASTE_DIALOGLABEL;Daļēji ielīmēt apstr�?des profilu
 PARTIALPASTE_DISTORTION;Kropļojumu labošana
 PARTIALPASTE_EXIFCHANGES;exif datu izmaiņas
 PARTIALPASTE_EXPOSURE;Ekspozīcija
 PARTIALPASTE_HLRECOVERY;Izgaismojumu atgūšana
-PARTIALPASTE_ICMSETTINGS;ICM uzstādījumi
+PARTIALPASTE_ICMSETTINGS;ICM uzst�?dījumi
 PARTIALPASTE_IPTCINFO;IPTC info
-PARTIALPASTE_LENSGROUP;Lēcas uzstādījumi
+PARTIALPASTE_LENSGROUP;Lēcas uzst�?dījumi
 PARTIALPASTE_LUMACURVE;Spīduma līkne
-PARTIALPASTE_LUMADENOISE;Spīduma trokšņu slāpēšana
-PARTIALPASTE_LUMINANCEGROUP;Spīduma uzstādījumi
-PARTIALPASTE_METAICMGROUP;Metadati/ICM uzstādījumi
+PARTIALPASTE_LUMADENOISE;Spīduma trokšņu sl�?pēšana
+PARTIALPASTE_LUMINANCEGROUP;Spīduma uzst�?dījumi
+PARTIALPASTE_METAICMGROUP;Metadati/ICM uzst�?dījumi
 PARTIALPASTE_RESIZE;Izmērmaiņa
-PARTIALPASTE_ROTATION;Rotācija
+PARTIALPASTE_ROTATION;Rot�?cija
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ēnas/izgaismojumi
-PARTIALPASTE_SHARPENING;Asināšana
+PARTIALPASTE_SHARPENING;Asin�?šana
 PARTIALPASTE_VIGNETTING;Vinjetes labošana
-PARTIALPASTE_WHITEBALANCE;Baltā līdzsvarss
-PREFERENCES_APPLNEXTSTARTUP;lietos nākamā reizē
+PARTIALPASTE_WHITEBALANCE;Balt�? līdzsvarss
+PREFERENCES_APPLNEXTSTARTUP;lietos n�?kam�? reizē
 PREFERENCES_BLINKCLIPPED;Mirgot cirptos laukumus
 PREFERENCES_CACHECLEARALL;Attīrīt visu
 PREFERENCES_CACHECLEARPROFILES;Attīrīt Profilus
 PREFERENCES_CACHECLEARTHUMBS;Attīrīt sīktēlus
-PREFERENCES_CACHEFORMAT1;Savs (ātrāks un kvalitatīvāks)
-PREFERENCES_CACHEFORMAT2;JPEG (mazāka diska vieta)
-PREFERENCES_CACHEMAXENTRIES;Maksimālais keša ierakstu skaits
+PREFERENCES_CACHEFORMAT1;Savs (�?tr�?ks un kvalitatīv�?ks)
+PREFERENCES_CACHEFORMAT2;JPEG (maz�?ka diska vieta)
+PREFERENCES_CACHEMAXENTRIES;Maksim�?lais keša ierakstu skaits
 PREFERENCES_CACHEOPTS;Keša opcijas
-PREFERENCES_CACHESTRAT1;Priekšroka ātrumam pret mazu atmiņas patēriņu
-PREFERENCES_CACHESTRAT2;Priekšroka mazam atmiņas patēriņam pret ātrumu
+PREFERENCES_CACHESTRAT1;Priekšroka �?trumam pret mazu atmiņas patēriņu
+PREFERENCES_CACHESTRAT2;Priekšroka mazam atmiņas patēriņam pret �?trumu
 PREFERENCES_CACHESTRAT;Keša stratēģija
-PREFERENCES_CACHETHUMBFORM;Keša sīktēlu formāts
-PREFERENCES_CACHETHUMBHEIGHT;Keša maksimālais sīktēla augstums
+PREFERENCES_CACHETHUMBFORM;Keša sīktēlu form�?ts
+PREFERENCES_CACHETHUMBHEIGHT;Keša maksim�?lais sīktēla augstums
 PREFERENCES_CLEARDLG_LINE1;Attīrīt kešu
 PREFERENCES_CLEARDLG_LINE2;Tas var aizņemt dažas sekundes.
 PREFERENCES_CLEARDLG_TITLE;Lūdzu uzgaidiet
 PREFERENCES_CLIPPINGIND;Cirpšanas pazīme
 PREFERENCES_CMETRICINTENT;Kolorimetrijas nolūks
-PREFERENCES_DATEFORMATHINT;Jūs varat lietot šāduas formatēšanas parametrus:\n%y : gads\n%m : mēnesis\n%d : diena\n\nPiemēram, ungāru datuma formāts ir:\n%y/%m/%d
-PREFERENCES_DATEFORMAT;Datuma formāts
-PREFERENCES_DEFAULTLANG;Noklusētā valoda
-PREFERENCES_DEFAULTTHEME;Noklusētā tēma
-PREFERENCES_DEMOSAICINGALGO;Mozaīkas interpolācijas algoritms
-PREFERENCES_DIRHOME;Mājas mape
-PREFERENCES_DIRLAST;Pēdējā lietotā mape
+PREFERENCES_DATEFORMATHINT;Jūs varat lietot š�?duas formatēšanas parametrus:\n%y : gads\n%m : mēnesis\n%d : diena\n\nPiemēram, ung�?ru datuma form�?ts ir:\n%y/%m/%d
+PREFERENCES_DATEFORMAT;Datuma form�?ts
+PREFERENCES_DEFAULTLANG;Noklusēt�? valoda
+PREFERENCES_DEFAULTTHEME;Noklusēt�? tēma
+PREFERENCES_DEMOSAICINGALGO;Mozaīkas interpol�?cijas algoritms
+PREFERENCES_DIRHOME;M�?jas mape
+PREFERENCES_DIRLAST;Pēdēj�? lietot�? mape
 PREFERENCES_DIROTHER;Cita
-PREFERENCES_DIRSELECTDLG;Izvēlies attēlu mapi sākumam...
-PREFERENCES_DIRSOFTWARE;Uzstādīšanas mape
+PREFERENCES_DIRSELECTDLG;Izvēlies attēlu mapi s�?kumam...
+PREFERENCES_DIRSOFTWARE;Uzst�?dīšanas mape
 PREFERENCES_EDITORCMDLINE;Cita komandrinda
 PREFERENCES_EXTERNALEDITOR;Ārējais redaktors
-PREFERENCES_FBROWSEROPTS;Failu pārlūka iespējas
-PREFERENCES_FILEFORMAT;Faila formāts
+PREFERENCES_FBROWSEROPTS;Failu p�?rlūka iespējas
+PREFERENCES_FILEFORMAT;Faila form�?ts
 PREFERENCES_FORIMAGE;Attēlu failiem
 PREFERENCES_FORRAW;RAW failiem
-PREFERENCES_GIMPPATH;GIMP instalācijas direktorijs
-PREFERENCES_GTKTHEME;GTK noklusētā
-PREFERENCES_HINT;Mājiens
+PREFERENCES_GIMPPATH;GIMP instal�?cijas direktorijs
+PREFERENCES_GTKTHEME;GTK noklusēt�?
+PREFERENCES_HINT;M�?jiens
 PREFERENCES_HLTHRESHOLD;Cirpto izgaismojumu slieksnis
 PREFERENCES_ICCDIR;ICC profilu mape
-PREFERENCES_IMPROCPARAMS;Noklusētie attēla apstrādes parametri
-PREFERENCES_INTENT_ABSOLUTE;Absolūtā kolorimetrija
+PREFERENCES_IMPROCPARAMS;Noklusētie attēla apstr�?des parametri
+PREFERENCES_INTENT_ABSOLUTE;Absolūt�? kolorimetrija
 PREFERENCES_INTENT_PERCEPTUAL;Uztverams
-PREFERENCES_INTENT_RELATIVE;Relatīvā kolorimetrija
-PREFERENCES_INTENT_SATURATION;Piesātinājums
-PREFERENCES_LIVETHUMBNAILS;Dzīvie sīktēli (lēnāk)
+PREFERENCES_INTENT_RELATIVE;Relatīv�? kolorimetrija
+PREFERENCES_INTENT_SATURATION;Pies�?tin�?jums
+PREFERENCES_LIVETHUMBNAILS;Dzīvie sīktēli (lēn�?k)
 PREFERENCES_MONITORICC;Monitora Profils
-PREFERENCES_OUTDIRFOLDERHINT;Likt saglabātos attēlus norādītajā mapē
-PREFERENCES_OUTDIRFOLDER;Saglabāt mapē
-PREFERENCES_OUTDIRHINT;Jūs varat lietot šāduas formatēšanas parametrus:\n%f, %d1, %d2, ..., %p1, %p2, ...\n\nŠie formatēšanas parametri attiecas uz raw faila direktoriju un apakšceļiem.\n\nPiemēram, ja  /home/tom/image/02-09-2006/dsc0012.nef ir atvērts, formatēšanas parametri nozīmē:\n%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n\nJa Jūs vēlaties saglabāt rezultātu tur pat kur ir oriģināls, rakstiet:\n%p1/%f\n\nJa Jūs vēlaties saglabāt rezultātu direktorijā 'converted', kas novietota oriģināla direktorijā, rakstiet:\n%p1/converted/%f\n\nJa Jūs vēlaties saglabāt rezultātu '/home/tom/converted' paturot tādu pašu apakšdirektoriju datumu struktūru, rakstiet:\n%p2/converted/%d1/%f
-PREFERENCES_OUTDIRTEMPLATEHINT;Jūs varat lietot šādas formatēšanas virknes:\n%f, %d1, %d2, ..., %p1, %p2, ...\n\nŠīs formatēšanas virknes attiecas uz direktorijiem un RAW faila apakšceļiem.\n\nPiemēram, ja ir atvērts /home/tom/image/02-09-2006/dsc0012.nef, formatējuma virkņu nozīme ir:\n%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n\nJa vēlaties rezultātu saglabāt turpat pie oriģināla, rakstiet:\n%p1/%f\n\nJa vēlaties rezultātu saglabāt direktorijā 'converted' pie oriģināla, rakstiet:\n%p1/converted/%f\n\nJa vēlaties rezultātu saglabāt direktorijā '/home/tom/converted' paturot to pašu datumu apakšdirektoriju, rakstiet:\n%p2/converted/%d1/%f
+PREFERENCES_OUTDIRFOLDERHINT;Likt saglab�?tos attēlus nor�?dītaj�? mapē
+PREFERENCES_OUTDIRFOLDER;Saglab�?t mapē
+PREFERENCES_OUTDIRHINT;Jūs varat lietot š�?duas formatēšanas parametrus:\n%f, %d1, %d2, ..., %p1, %p2, ...\n\nŠie formatēšanas parametri attiecas uz raw faila direktoriju un apakšceļiem.\n\nPiemēram, ja  /home/tom/image/02-09-2006/dsc0012.nef ir atvērts, formatēšanas parametri nozīmē:\n%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n\nJa Jūs vēlaties saglab�?t rezult�?tu tur pat kur ir oriģin�?ls, rakstiet:\n%p1/%f\n\nJa Jūs vēlaties saglab�?t rezult�?tu direktorij�? 'converted', kas novietota oriģin�?la direktorij�?, rakstiet:\n%p1/converted/%f\n\nJa Jūs vēlaties saglab�?t rezult�?tu '/home/tom/converted' paturot t�?du pašu apakšdirektoriju datumu struktūru, rakstiet:\n%p2/converted/%d1/%f
+PREFERENCES_OUTDIRTEMPLATEHINT;Jūs varat lietot š�?das formatēšanas virknes:\n%f, %d1, %d2, ..., %p1, %p2, ...\n\nŠīs formatēšanas virknes attiecas uz direktorijiem un RAW faila apakšceļiem.\n\nPiemēram, ja ir atvērts /home/tom/image/02-09-2006/dsc0012.nef, formatējuma virkņu nozīme ir:\n%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n\nJa vēlaties rezult�?tu saglab�?t turpat pie oriģin�?la, rakstiet:\n%p1/%f\n\nJa vēlaties rezult�?tu saglab�?t direktorij�? 'converted' pie oriģin�?la, rakstiet:\n%p1/converted/%f\n\nJa vēlaties rezult�?tu saglab�?t direktorij�? '/home/tom/converted' paturot to pašu datumu apakšdirektoriju, rakstiet:\n%p2/converted/%d1/%f
 PREFERENCES_OUTDIRTEMPLATE;Lietot veidni
 PREFERENCES_OUTDIR;Izvades mape
-PREFERENCES_PARSEDEXTADDHINT;Ierakstiet paplašinājumu un nospiediet šo pogu lai pievienotu sarakstam
-PREFERENCES_PARSEDEXTADD;Pielikt paplašinājumu
-PREFERENCES_PARSEDEXTDELHINT;Dzēst atzīmēto paplašinājumu no saraksta
-PREFERENCES_PARSEDEXT;Parsētie paplašīnājumi
-PREFERENCES_PROFILEHANDLING;Apstrādes profilu politika
-PREFERENCES_PROFILELOADPR;Profilu ielādes prioritāte
-PREFERENCES_PROFILEPRCACHE;Profils kešā
+PREFERENCES_PARSEDEXTADDHINT;Ierakstiet paplašin�?jumu un nospiediet šo pogu lai pievienotu sarakstam
+PREFERENCES_PARSEDEXTADD;Pielikt paplašin�?jumu
+PREFERENCES_PARSEDEXTDELHINT;Dzēst atzīmēto paplašin�?jumu no saraksta
+PREFERENCES_PARSEDEXT;Parsētie paplašīn�?jumi
+PREFERENCES_PROFILEHANDLING;Apstr�?des profilu politika
+PREFERENCES_PROFILELOADPR;Profilu iel�?des priorit�?te
+PREFERENCES_PROFILEPRCACHE;Profils keš�?
 PREFERENCES_PROFILEPRFILE;Profils pie ievades faila
-PREFERENCES_PROFILESAVECACHE;Saglabāt apstrādes profilu kešā
-PREFERENCES_PROFILESAVEINPUT;Saglabāt apstrādes profilu pie ievades faila
-PREFERENCES_PSPATH;Adobe Photoshop instalācijas direktorijs
+PREFERENCES_PROFILESAVECACHE;Saglab�?t apstr�?des profilu keš�?
+PREFERENCES_PROFILESAVEINPUT;Saglab�?t apstr�?des profilu pie ievades faila
+PREFERENCES_PSPATH;Adobe Photoshop instal�?cijas direktorijs
 PREFERENCES_SELECTICCDIRDLG;Izvēlies ICC Profilu mapi...
 PREFERENCES_SELECTLANG;Izvēlies valodu
 PREFERENCES_SELECTMONITORPROFDLG;Izvēlies displeja ICC profilu...
 PREFERENCES_SELECTTHEME;Izvēlieties tēmu
-PREFERENCES_SHOWBASICEXIF;Rādīt Exif pamatdatus
-PREFERENCES_SHOWDATETIME;Rādīt datumu un laiku
-PREFERENCES_SHOWONLYRAW;Rādīt tikai RAW failus
+PREFERENCES_SHOWBASICEXIF;R�?dīt Exif pamatdatus
+PREFERENCES_SHOWDATETIME;R�?dīt datumu un laiku
+PREFERENCES_SHOWONLYRAW;R�?dīt tikai RAW failus
 PREFERENCES_SHTHRESHOLD;Cirpto ēnu slieksnis
-PREFERENCES_STARTUPIMDIR;Attēlu mape sākumā
-PREFERENCES_TAB_BROWSER;Failu pārlūks
-PREFERENCES_TAB_COLORMGR;Krāsu pārvaldība
-PREFERENCES_TAB_GENERAL;Vispārīgi
-PREFERENCES_TAB_IMPROC;Attēlu apstrāde
+PREFERENCES_STARTUPIMDIR;Attēlu mape s�?kum�?
+PREFERENCES_TAB_BROWSER;Failu p�?rlūks
+PREFERENCES_TAB_COLORMGR;Kr�?su p�?rvaldība
+PREFERENCES_TAB_GENERAL;Visp�?rīgi
+PREFERENCES_TAB_IMPROC;Attēlu apstr�?de
 PREFERENCES_TAB_OUTPUT;Izvades iespējas
 PREFERENCES_THUMBSIZE;Sīktēla izmērs
 PROFILEPANEL_FILEDLGFILTERANY;Visus failus
-PROFILEPANEL_FILEDLGFILTERPP;Apstrādes profili
-PROFILEPANEL_LABEL;Apstrādes profili
-PROFILEPANEL_LOADDLGLABEL;Ielādēt apstrādes profilu...
-PROFILEPANEL_PCUSTOM;Pielāgots
+PROFILEPANEL_FILEDLGFILTERPP;Apstr�?des profili
+PROFILEPANEL_LABEL;Apstr�?des profili
+PROFILEPANEL_LOADDLGLABEL;Iel�?dēt apstr�?des profilu...
+PROFILEPANEL_PCUSTOM;Piel�?gots
 PROFILEPANEL_PFILE;No faila
 PROFILEPANEL_PLASTPHOTO;Iepriekšējais attēls
-PROFILEPANEL_PLASTSAVED;Pēdējais saglabātais
+PROFILEPANEL_PLASTSAVED;Pēdējais saglab�?tais
 PROFILEPANEL_PROFILE;Profils
-PROFILEPANEL_SAVEDLGLABEL;Saglabāt apstrādes profilu...
+PROFILEPANEL_SAVEDLGLABEL;Saglab�?t apstr�?des profilu...
 PROFILEPANEL_TOOLTIPCOPY;Kopēt esošo profilu uz starpliku
-PROFILEPANEL_TOOLTIPLOAD;Ielādēt profilu no faila
+PROFILEPANEL_TOOLTIPLOAD;Iel�?dēt profilu no faila
 PROFILEPANEL_TOOLTIPPASTE;Ielīmēt profilu no starplikas
-PROFILEPANEL_TOOLTIPSAVE;Saglabāt šībrīža profilu
+PROFILEPANEL_TOOLTIPSAVE;Saglab�?t šībrīža profilu
 PROGRESSBAR_DECODING;Dekodēju raw failu...
-PROGRESSBAR_DEMOSAICING;Mozaīkas interpolācija...
-PROGRESSBAR_LOADING;Attēla ielāde...
-PROGRESSBAR_LOADJPEG;Ielādēju JPEG failu...
-PROGRESSBAR_LOADPNG;Ielādēju PNG failu...
-PROGRESSBAR_LOADTIFF;Ielādēju TIFF failu...
-PROGRESSBAR_PROCESSING;Attēla apstrāde...
+PROGRESSBAR_DEMOSAICING;Mozaīkas interpol�?cija...
+PROGRESSBAR_LOADING;Attēla iel�?de...
+PROGRESSBAR_LOADJPEG;Iel�?dēju JPEG failu...
+PROGRESSBAR_LOADPNG;Iel�?dēju PNG failu...
+PROGRESSBAR_LOADTIFF;Iel�?dēju TIFF failu...
+PROGRESSBAR_PROCESSING;Attēla apstr�?de...
 PROGRESSBAR_READY;Gatavs.
-PROGRESSBAR_SAVEJPEG;Saglabāju JPEG failu...
-PROGRESSBAR_SAVEPNG;Saglabāju PNG failu...
-PROGRESSBAR_SAVETIFF;Saglabāju TIFF failu...
-PROGRESSDLG_LOADING;Ielādēju failu...
-PROGRESSDLG_PROCESSING;Apstrādāju attēlu...
-PROGRESSDLG_SAVING;Saglabāju failu...
+PROGRESSBAR_SAVEJPEG;Saglab�?ju JPEG failu...
+PROGRESSBAR_SAVEPNG;Saglab�?ju PNG failu...
+PROGRESSBAR_SAVETIFF;Saglab�?ju TIFF failu...
+PROGRESSDLG_LOADING;Iel�?dēju failu...
+PROGRESSDLG_PROCESSING;Apstr�?d�?ju attēlu...
+PROGRESSDLG_SAVING;Saglab�?ju failu...
 QINFO_FOCALLENGTH;Fokusa garums
 QINFO_ISO;ISO
 QINFO_LENS;Lēca
 QINFO_NOEXIF;Exif dati nav pieejami.
-SAVEDLG_FILEFORMAT;Faila formāts
-SAVEDLG_JPEGQUAL;JPEG Kvalitāte
+SAVEDLG_FILEFORMAT;Faila form�?ts
+SAVEDLG_JPEGQUAL;JPEG Kvalit�?te
 SAVEDLG_JPGFILTER;JPEG faili
 SAVEDLG_PNGCOMPR;PNG Spiešana
 SAVEDLG_PNGFILTER;PNG faili
-SAVEDLG_PUTTOQUEUEHEAD;Likt apstrādes rindas sākumā
-SAVEDLG_PUTTOQUEUETAIL;Likt apstrādes rindas beigās
-SAVEDLG_PUTTOQUEUE;Likt apstrādes rindā
-SAVEDLG_SAVEIMMEDIATELY;Saglabāt tūlīt
-SAVEDLG_SAVESPP;Saglabāt apstrādes profilu ar attēlu
+SAVEDLG_PUTTOQUEUEHEAD;Likt apstr�?des rindas s�?kum�?
+SAVEDLG_PUTTOQUEUETAIL;Likt apstr�?des rindas beig�?s
+SAVEDLG_PUTTOQUEUE;Likt apstr�?des rind�?
+SAVEDLG_SAVEIMMEDIATELY;Saglab�?t tūlīt
+SAVEDLG_SAVESPP;Saglab�?t apstr�?des profilu ar attēlu
 SAVEDLG_TIFFFILTER;TIFF faili
 TOOLBAR_TOOLTIP_CROP;Kadrēšanas rīks (saīsne: C)
 TOOLBAR_TOOLTIP_HAND;Plaukstas rīks (saīsne: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;Līmeņošanas rīks (saīsne: S)
-TOOLBAR_TOOLTIP_WB;Punkta baltā līdzsvara rīks (saīsne: W)
+TOOLBAR_TOOLTIP_WB;Punkta balt�? līdzsvara rīks (saīsne: W)
 TP_CACORRECTION_BLUE;Zils
-TP_CACORRECTION_LABEL;Lēcas krāsu nobīdes
+TP_CACORRECTION_LABEL;Lēcas kr�?su nobīdes
 TP_CACORRECTION_RED;Sarkans
 TP_CHMIXER_BLUE;Zils
 TP_CHMIXER_GREEN;Zaļš
-TP_CHMIXER_LABEL;Kanālu jaucējs
+TP_CHMIXER_LABEL;Kan�?lu jaucējs
 TP_CHMIXER_RED;Sarkans
-TP_COARSETRAF_DEGREE;grādi:
-TP_COARSETRAF_TOOLTIP_HFLIP;Apmest horizontāli
+TP_COARSETRAF_DEGREE;gr�?di:
+TP_COARSETRAF_TOOLTIP_HFLIP;Apmest horizont�?li
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Pagriezt pa kreisi
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Pagriezt pa labi
-TP_COARSETRAF_TOOLTIP_VFLIP;Apmest vertikāli
-TP_COLORBOOST_ACHANNEL;kanāls "a"
+TP_COARSETRAF_TOOLTIP_VFLIP;Apmest vertik�?li
+TP_COLORBOOST_ACHANNEL;kan�?ls "a"
 TP_COLORBOOST_AMOUNT;Apjoms
-TP_COLORBOOST_AVOIDCOLORCLIP;Izvairīties no krāsu cirpšanas
-TP_COLORBOOST_BCHANNEL;kanāls "b"
-TP_COLORBOOST_CHANNEL;Kanāls
+TP_COLORBOOST_AVOIDCOLORCLIP;Izvairīties no kr�?su cirpšanas
+TP_COLORBOOST_BCHANNEL;kan�?ls "b"
+TP_COLORBOOST_CHANNEL;Kan�?ls
 TP_COLORBOOST_CHSEPARATE;atsevišķi
-TP_COLORBOOST_ENABLESATLIMITER;Ierobežot piesātinājumu
-TP_COLORBOOST_LABEL;Krāsu pastiprināšana
-TP_COLORBOOST_SATLIMIT;Piesātinājuma robeža
-TP_COLORDENOISE_EDGESENSITIVE;Jutīgs uz malām
-TP_COLORDENOISE_EDGETOLERANCE;Iecietība pret malām
-TP_COLORDENOISE_LABEL;Krāsu trokšņu slāpēšana
+TP_COLORBOOST_ENABLESATLIMITER;Ierobežot pies�?tin�?jumu
+TP_COLORBOOST_LABEL;Kr�?su pastiprin�?šana
+TP_COLORBOOST_SATLIMIT;Pies�?tin�?juma robeža
+TP_COLORDENOISE_EDGESENSITIVE;Jutīgs uz mal�?m
+TP_COLORDENOISE_EDGETOLERANCE;Iecietība pret mal�?m
+TP_COLORDENOISE_LABEL;Kr�?su trokšņu sl�?pēšana
 TP_COLORDENOISE_RADIUS;Radius
 TP_COLORSHIFT_BLUEYELLOW;Zils-Dzeltens
 TP_COLORSHIFT_GREENMAGENTA;Zaļš-Fuksīns
-TP_COLORSHIFT_LABEL;Krāsu nobīde
+TP_COLORSHIFT_LABEL;Kr�?su nobīde
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Attiecība:
-TP_CROP_GTDIAGONALS;Diagonāles
+TP_CROP_GTDIAGONALS;Diagon�?les
 TP_CROP_GTHARMMEANS1;Harmon. vidējais 1
 TP_CROP_GTHARMMEANS2;Harmon. vidējais 2
 TP_CROP_GTHARMMEANS3;Harmon. vidējais 3
 TP_CROP_GTHARMMEANS4;Harmon. vidējais 4
-TP_CROP_GTNONE;Nekādas
+TP_CROP_GTNONE;Nek�?das
 TP_CROP_GTRULETHIRDS;Trešdaļas
 TP_CROP_GUIDETYPE;Vadlīnijas:
 TP_CROP_H;A
 TP_CROP_LABEL;Kadrējums
-TP_CROP_SELECTCROP;    Norādīt kadrējumu
+TP_CROP_SELECTCROP;    Nor�?dīt kadrējumu
 TP_CROP_W;P
 TP_CROP_X;x
 TP_CROP_Y;y
@@ -499,7 +499,7 @@ TP_EXPOSURE_CURVEEDITOR;Toņa līkne
 TP_EXPOSURE_EXPCOMP;Eksp. nobīde
 TP_EXPOSURE_LABEL;Ekspozīcija
 TP_HLREC_CIELAB;CIELab maisījums
-TP_HLREC_COLOR;Krāsu pavairošana
+TP_HLREC_COLOR;Kr�?su pavairošana
 TP_HLREC_LABEL;Izgaismojumu atgūšana
 TP_HLREC_LUMINANCE;Spīduma atgūšana
 TP_HLREC_METHOD;Metode:
@@ -507,7 +507,7 @@ TP_ICM_FILEDLGFILTERANY;Visi faili
 TP_ICM_FILEDLGFILTERICM;ICC Profilu faili
 TP_ICM_GAMMABEFOREINPUT;Uzlikta Gammu pirms Ievades profila
 TP_ICM_INPUTCAMERA;Kameras noklusētais
-TP_ICM_INPUTCUSTOM;Pielāgots
+TP_ICM_INPUTCUSTOM;Piel�?gots
 TP_ICM_INPUTDLGLABEL;Izvēlies Ievades ICC Profilu...
 TP_ICM_INPUTEMBEDDED;Lietot iegulto, ja var
 TP_ICM_INPUTPROFILE;Ievades profils
@@ -515,7 +515,7 @@ TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Bez ICM: sRGB izvade
 TP_ICM_OUTPUTDLGLABEL;Izvēlies Izvades ICC Profilu...
 TP_ICM_OUTPUTPROFILE;Izvades profils
-TP_ICM_SAVEREFERENCE;Saglabāt atsauces attēlu profila izveidei
+TP_ICM_SAVEREFERENCE;Saglab�?t atsauces attēlu profila izveidei
 TP_ICM_WORKINGPROFILE;Darba profils
 TP_LUMACURVE_BLACKLEVEL;Melnais
 TP_LUMACURVE_BRIGHTNESS;Gaišums
@@ -524,27 +524,27 @@ TP_LUMACURVE_COMPRSHADOWS;Ēnu spiešana
 TP_LUMACURVE_CONTRAST;Kontrasts
 TP_LUMACURVE_CURVEEDITOR;Spīduma līkne
 TP_LUMACURVE_LABEL;Spīduma līkne
-TP_LUMADENOISE_EDGETOLERANCE;Iecietība pret malām
-TP_LUMADENOISE_LABEL;Spīduma trokšņu slāpēšana
+TP_LUMADENOISE_EDGETOLERANCE;Iecietība pret mal�?m
+TP_LUMADENOISE_LABEL;Spīduma trokšņu sl�?pēšana
 TP_LUMADENOISE_RADIUS;Radiuss
 TP_RAW_DMETHOD;Metode
-TP_RAW_FALSECOLOR;Neīsto krāsu slāpēšanas soļi
-TP_RESIZE_BICUBICSF;Bikubiski (Mīkstāk)
-TP_RESIZE_BICUBICSH;Bikubiski (Asāk)
+TP_RAW_FALSECOLOR;Neīsto kr�?su sl�?pēšanas soļi
+TP_RESIZE_BICUBICSF;Bikubiski (Mīkst�?k)
+TP_RESIZE_BICUBICSH;Bikubiski (As�?k)
 TP_RESIZE_BICUBIC;Bikubiski
-TP_RESIZE_BILINEAR;Bilineāri
+TP_RESIZE_BILINEAR;Biline�?ri
 TP_RESIZE_FULLSIZE;Pilns attēla izmērs:
 TP_RESIZE_H;A:
 TP_RESIZE_LABEL;Izmērmaiņa
 TP_RESIZE_METHOD;Metode:
-TP_RESIZE_NEAREST;Tuvākais
+TP_RESIZE_NEAREST;Tuv�?kais
 TP_RESIZE_SCALE;Mērogs
 TP_RESIZE_W;P:
 TP_ROTATE_AUTOCROP;Auto Kardēšana
-TP_ROTATE_DEGREE;Grādi
+TP_ROTATE_DEGREE;Gr�?di
 TP_ROTATE_FILL;Aizpildīt
 TP_ROTATE_LABEL;Pagriezt
-TP_ROTATE_SELECTLINE;    Norādīt līmeni
+TP_ROTATE_SELECTLINE;    Nor�?dīt līmeni
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Izgaismojumi
 TP_SHADOWSHLIGHTS_HLTONALW;Toņa platums
 TP_SHADOWSHLIGHTS_LABEL;Ēnas/Izgaismojumi
@@ -554,27 +554,27 @@ TP_SHADOWSHLIGHTS_SHADOWS;Ēnas
 TP_SHADOWSHLIGHTS_SHTONALW;Toņa platums
 TP_SHARPENING_AMOUNT;Apjoms
 TP_SHARPENING_EDRADIUS;Radiuss
-TP_SHARPENING_EDTOLERANCE;Iecietība pret malām
+TP_SHARPENING_EDTOLERANCE;Iecietība pret mal�?m
 TP_SHARPENING_HALOCONTROL;Caurumu kontole
 TP_SHARPENING_HCAMOUNT;Apjoms
-TP_SHARPENING_LABEL;Asināšana
+TP_SHARPENING_LABEL;Asin�?šana
 TP_SHARPENING_METHOD;Metode
-TP_SHARPENING_ONLYEDGES;Asināt tikai malas
+TP_SHARPENING_ONLYEDGES;Asin�?t tikai malas
 TP_SHARPENING_RADIUS;Radiuss
-TP_SHARPENING_RLD;RL atritināšana
+TP_SHARPENING_RLD;RL atritin�?šana
 TP_SHARPENING_RLD_AMOUNT;Apjoms
-TP_SHARPENING_RLD_DAMPING;Slāpēšana
+TP_SHARPENING_RLD_DAMPING;Sl�?pēšana
 TP_SHARPENING_RLD_ITERATIONS;Soļi
 TP_SHARPENING_THRESHOLD;Slieksnis
-TP_SHARPENING_USM;Neasā maska
+TP_SHARPENING_USM;Neas�? maska
 TP_VIGNETTING_AMOUNT;Apjoms
 TP_VIGNETTING_LABEL;Vinjetes Labošana
 TP_VIGNETTING_RADIUS;Radiuss
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Kamera
-TP_WBALANCE_CUSTOM;Pielāgots
-TP_WBALANCE_GREEN;Nokrāsa
-TP_WBALANCE_LABEL;Baltā līdzsvars
+TP_WBALANCE_CUSTOM;Piel�?gots
+TP_WBALANCE_GREEN;Nokr�?sa
+TP_WBALANCE_LABEL;Balt�? līdzsvars
 TP_WBALANCE_METHOD;Metode
 TP_WBALANCE_SIZE;izmērs:
 TP_WBALANCE_SPOTWB;Punkta BL
@@ -582,7 +582,7 @@ TP_WBALANCE_TEMPERATURE;Temperatūra
 ZOOMBAR_DETAIL;Tuvskats
 ZOOMBAR_HUGE;Milzīgs
 ZOOMBAR_LARGE;Liels
-ZOOMBAR_NORMAL;Normāls
+ZOOMBAR_NORMAL;Norm�?ls
 ZOOMBAR_PREVIEW;Pirmsskats
 ZOOMBAR_SCALE;Mērogs
 ZOOMBAR_SMALL;Mazs
@@ -590,15 +590,14 @@ ZOOMBAR_SMALL;Mazs
 #00 Latvian
 ﻿#
 
-
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-
 !ABOUT_TAB_BUILD;Version
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
+!ABOUT_TAB_RELEASENOTES;Release Notes
 !ABOUT_TAB_SPLASH;Splash
 !BATCHQUEUE_AUTOSTART;Auto start
 !BATCH_PROCESSING;Batch processing
@@ -609,29 +608,56 @@ ZOOMBAR_SMALL;Mazs
 !CURVEEDITOR_HIGHLIGHTS;Highlights
 !CURVEEDITOR_LIGHTS;Lights
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
-!CURVEEDITOR_NURBS;Control cage
+!CURVEEDITOR_NURBS;Control Cage
 !CURVEEDITOR_PARAMETRIC;Parametric
 !CURVEEDITOR_SHADOWS;Shadows
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
 !CURVEEDITOR_TYPE;Type:
 !EDITWINDOW_TITLE;Image Edit
+!EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)
 !EXIFFILTER_FILETYPE;File Type
 !EXIFFILTER_METADATAFILTER;Enable Metadata Filters
+!EXPORT_BYPASS_ALL;Select / Unselect All
+!EXPORT_BYPASS_COLORDENOISE;Bypass Color denoise
+!EXPORT_BYPASS_DEFRINGE;Bypass Defringe
+!EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
+!EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by Detail Levels
+!EXPORT_BYPASS_LUMADENOISE;Bypass Luma denoise
+!EXPORT_BYPASS_RAW_ALL_ENHANCE;Bypass Post Demosaic Artifact/Noise Reduction
+!EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration Correction
+!EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
+!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
+!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
+!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
+!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
+!EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
+!EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
+!EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
+!EXPORT_BYPASS_SHARPENING;Bypass Sharpening
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+!EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
+!EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
+!EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
+!EXPORT_MAXHEIGHT;Maximum Height: 
+!EXPORT_MAXWIDTH;Maximum Width:  
+!EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
+!EXPORT_RAW_DMETHOD;Demosaic Method
+!EXPORT_RESIZEMETHOD;Resize Method
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
 !FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
-!FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_AUTOFLATFIELD;Auto flat field
+!FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
+!FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
+!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> (in the File Browser) to browse there;\n\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
-!FILEBROWSER_EXEC_CPB;Run custom profile builder
-!FILEBROWSER_FLATFIELD;Flat field
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a queue-processed version?
+!FILEBROWSER_EXEC_CPB;Run Custom Profile Builder
+!FILEBROWSER_FLATFIELD;Flat Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
@@ -645,25 +671,26 @@ ZOOMBAR_SMALL;Mazs
 !FILEBROWSER_POPUPCOPYTO;Copy to...
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
+!FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 !FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-!FILEBROWSER_QUERYHINT;Type a part of filename to search by n<b>Ctrl-f</b> set focus (in File Browser);n<b>Enter</b> to find
+!FILEBROWSER_QUERYHINT;Type a partial filename to search for.\n<b>Ctrl-F</b> to focus the Find text box (in the File Browser).\n<b>Enter</b> to commence search.
 !FILEBROWSER_QUERYLABEL; Find:
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
-!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
-!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
-!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
-!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
-!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
-!FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
-!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
-!FILEBROWSER_SHOWEXIFINFO;Show EXIF info <b>i</b>
-!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
-!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
-!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
+!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
+!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yellow.\nShortcut: <b>Alt-2</b>
+!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green.\nShortcut: <b>Alt-3</b>
+!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue.\nShortcut: <b>Alt-4</b>
+!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
+!FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
+!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
+!FILEBROWSER_SHOWEXIFINFO;Show EXIF info.\nShortcut: <b>i</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved.\nShortcut: <b>Alt-7</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved.\nShortcut: <b>Alt-6</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 !FILEBROWSER_USETEMPLATE;Use template:
 !GENERAL_AFTER;After
@@ -678,27 +705,27 @@ ZOOMBAR_SMALL;Mazs
 !HISTOGRAM_BUTTON_L;L
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_BUTTON_R;R
-!HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 !HISTORY_MSG_82;Profile Changed
-!HISTORY_MSG_83;High quality shadows/highlights
-!HISTORY_MSG_84;Perspective correction
-!HISTORY_MSG_85;Wavelet coefficients
-!HISTORY_MSG_86;Wavelet equalizer
-!HISTORY_MSG_87;Impulse noise reduction
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_89;Noise reduction
-!HISTORY_MSG_90;NR - luminance
-!HISTORY_MSG_91;NR - chrominance
-!HISTORY_MSG_92;NR - gamma
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_83;High Quality Shadows/Highlights
+!HISTORY_MSG_84;Perspective Correction
+!HISTORY_MSG_85;Wavelet Coefficients
+!HISTORY_MSG_86;Wavelet Equalizer
+!HISTORY_MSG_87;Impulse Noise Reduction
+!HISTORY_MSG_88;Impulse NR Threshold
+!HISTORY_MSG_89;Noise Reduction
+!HISTORY_MSG_90;NR - Luminance
+!HISTORY_MSG_91;NR - Chrominance
+!HISTORY_MSG_92;NR - Gamma
+!HISTORY_MSG_93;Contrast by Detail Levels Value
+!HISTORY_MSG_94;Contrast by Detail Levels
 !HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing method
-!HISTORY_MSG_99;Hot/dead pixel filtering
-!HISTORY_MSG_100;RGB saturation
+!HISTORY_MSG_96;'a' Curve
+!HISTORY_MSG_97;'b' Curve
+!HISTORY_MSG_98;Demosaicing Method
+!HISTORY_MSG_99;Hot/Dead Pixel Filter
+!HISTORY_MSG_100;RGB Saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
@@ -707,23 +734,23 @@ ZOOMBAR_SMALL;Mazs
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_109;Resize bounding box
-!HISTORY_MSG_110;Resizing applies to  
+!HISTORY_MSG_109;Resize Bounding Box
+!HISTORY_MSG_110;Resizing applies o  
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
 !HISTORY_MSG_114;DCB Iterations
-!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_115;False Color Iterations
 !HISTORY_MSG_116;Enhanced DCB
-!HISTORY_MSG_117;Red CA correction
-!HISTORY_MSG_118;Blue CA correction
-!HISTORY_MSG_119;Line denoise
-!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_117;Red CA Correction
+!HISTORY_MSG_118;Blue CA Correction
+!HISTORY_MSG_119;Line Denoise
+!HISTORY_MSG_120;Green Equil. Threshold
 !HISTORY_MSG_121;Auto CA
 !HISTORY_MSG_122;Auto Dark Frame
 !HISTORY_MSG_123;Dark Frame File
-!HISTORY_MSG_124;Linear exp. correction
-!HISTORY_MSG_125;Expo. correction preserving HL
+!HISTORY_MSG_124;Linear Exp. Correction
+!HISTORY_MSG_125;Exp. Correction Preserving HL
 !HISTORY_MSG_126;Flat Field File
 !HISTORY_MSG_127;Flat Field Auto Select
 !HISTORY_MSG_128;Flat Field Blur Radius
@@ -735,20 +762,20 @@ ZOOMBAR_SMALL;Mazs
 !HISTORY_MSG_134;Gamma Position
 !HISTORY_MSG_135;Gamma Free
 !HISTORY_MSG_136;Gamma Slope
-!HISTORY_MSG_137;Black level green 1
-!HISTORY_MSG_138;Black level red
-!HISTORY_MSG_139;Black level blue
-!HISTORY_MSG_140;Black level green 2
-!HISTORY_MSG_141;Black level green together
-!HISTORY_MSG_142;Edges sharpening - iterations
-!HISTORY_MSG_143;Edges sharpening - quantity
-!HISTORY_MSG_144;Microcontrast - quantity
-!HISTORY_MSG_145;Microcontrast - uniformity
+!HISTORY_MSG_137;Black Level Green 1
+!HISTORY_MSG_138;Black Level Red
+!HISTORY_MSG_139;Black Level Blue
+!HISTORY_MSG_140;Black Level Green 2
+!HISTORY_MSG_141;Black Level Green Together
+!HISTORY_MSG_142;Edges Sharpening - Iterations
+!HISTORY_MSG_143;Edges Sharpening - Quantity
+!HISTORY_MSG_144;Microcontrast - Quantity
+!HISTORY_MSG_145;Microcontrast - Uniformity
 !HISTORY_MSG_146;Edges Sharpening
-!HISTORY_MSG_147;Edges sharpening - luminance only
+!HISTORY_MSG_147;Edges Sharpening - Luminance Only
 !HISTORY_MSG_148;Microcontrast
-!HISTORY_MSG_149;Microcontrast - 3x3 matrix
-!HISTORY_MSG_150;Post demosaic artifact/noise reduction
+!HISTORY_MSG_149;Microcontrast - 3x3 Matrix
+!HISTORY_MSG_150;Post Demosaic Artifact/Noise Reduction
 !HISTORY_MSG_151;Vibrance
 !HISTORY_MSG_152;Vibrance - Pastel tones
 !HISTORY_MSG_153;Vibrance - Saturated tones
@@ -757,37 +784,48 @@ ZOOMBAR_SMALL;Mazs
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
 !HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_159;Edge Stopping
 !HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_161;Reweighting Iterates
 !HISTORY_MSG_162;Tone Mapping
+!HISTORY_MSG_163;RGB Curves - R
+!HISTORY_MSG_164;RGB Curves - G
+!HISTORY_MSG_165;RGB Curves - B
+!HISTORY_MSG_166;Neutral Levels
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
-!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue <b>Ctrl+Q</b>
-!MAIN_BUTTON_SAVE_TOOLTIP;Save current image <b>Ctrl+S</b>
-!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor <b>Ctrl+E</b>
-!MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
-!MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+Q</b>
+!MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+S</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
+!MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
+!MAIN_BUTTON_UNFULLSCREEN;Exit Fullscreen
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR;Editor 
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b> 
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b> 
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
-!MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
-!MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
-!MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
-!MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
+!MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
+!MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
+!MAIN_TAB_EXPORT; Export 
+!MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
+!MAIN_TAB_METADATA_TOOLTIP;Shortcut: <b>Alt-M</b>
 !MAIN_TAB_RAW;Raw
-!MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
-!MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+!MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-R</b>
+!MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-T</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
-!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
-!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
-!MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
-!MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
-!MAIN_TOOLTIP_TOGGLE;Toggle <b>before</b>/<b>after</b> view <b>B</b>
+!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
+!MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
+!MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
+!MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
+!MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
+!MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
+!MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-L</b>
+!MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-L</b>
+!MAIN_TOOLTIP_THRESHOLD;Threshold
+!MAIN_TOOLTIP_TOGGLE;Toggle the <b>Before</b>/<b>After</b> view.\nShortcut: <b>Shift-B</b>
 !NAVIGATOR_B_NA;B = n/a
 !NAVIGATOR_B_VALUE;B = %1
 !NAVIGATOR_G_NA;G = n/a
@@ -844,6 +882,7 @@ ZOOMBAR_SMALL;Mazs
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
+!PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
@@ -852,7 +891,7 @@ ZOOMBAR_SMALL;Mazs
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path raw/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
 !PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
@@ -887,6 +926,7 @@ ZOOMBAR_SMALL;Mazs
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
+!PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 !PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_SINGLETAB;Single tab mode
@@ -903,6 +943,10 @@ ZOOMBAR_SMALL;Mazs
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 !PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Layout
+!PROFILEPANEL_COPYPPASTE;Parameters to copy
+!PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
 !PROGRESSBAR_DARKFRAME;Darkframe... 
@@ -913,6 +957,7 @@ ZOOMBAR_SMALL;Mazs
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
+!TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTGRID;Grid
 !TP_CROP_PPI;PPI=
 !TP_DARKFRAME_AUTOSELECT;Auto selection
@@ -946,6 +991,8 @@ ZOOMBAR_SMALL;Mazs
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
 !TP_EXPOSCORR_LABEL;Raw white-black point
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
+!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_EXPO_AFTER; After interpolation (before RGB conversion)
@@ -962,14 +1009,6 @@ ZOOMBAR_SMALL;Mazs
 !TP_GAMMA_OUTPUT;Output gamma
 !TP_GAMMA_SLOP;slope (linear)
 !TP_HLREC_BLEND;Blend
-!TP_HSVEQUALIZER1;Red
-!TP_HSVEQUALIZER2;Yellow
-!TP_HSVEQUALIZER3;Lime
-!TP_HSVEQUALIZER4;Green
-!TP_HSVEQUALIZER5;Aqua
-!TP_HSVEQUALIZER6;Blue
-!TP_HSVEQUALIZER7;Purple
-!TP_HSVEQUALIZER8;Magenta
 !TP_HSVEQUALIZER_CHANNEL;HSV Channel
 !TP_HSVEQUALIZER_HUE;H
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
@@ -978,13 +1017,13 @@ ZOOMBAR_SMALL;Mazs
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
-!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
-!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
-!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific profile
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by dcraw, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera
 !TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
-!TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
+!TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
@@ -998,11 +1037,14 @@ ZOOMBAR_SMALL;Mazs
 !TP_LENSGEOM_AUTOCROP;    Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_NEUTRAL;Neutral
+!TP_NEUTRAL_TIP;Reset exposure controls to neutral values
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
 !TP_PERSPECTIVE_LABEL;Perspective
 !TP_PERSPECTIVE_VERTICAL;Vertical
 !TP_PREPROCESS_GREENEQUIL;Green equilibration
 !TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
+!TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_LINEDENOISE;Line noise filter
 !TP_PREPROCESS_NO_FOUND;None found
@@ -1029,6 +1071,11 @@ ZOOMBAR_SMALL;Mazs
 !TP_RESIZE_LANCZOS;Lanczos
 !TP_RESIZE_SPECIFY;Specify:
 !TP_RESIZE_WIDTH;Width
+!TP_RGBCURVES_BLUE;B
+!TP_RGBCURVES_CHANNEL;Channel
+!TP_RGBCURVES_GREEN;G
+!TP_RGBCURVES_LABEL;RGB Curves
+!TP_RGBCURVES_RED;R
 !TP_SHARPENEDGE_AMOUNT;Quantity
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations
@@ -1048,6 +1095,38 @@ ZOOMBAR_SMALL;Mazs
 !TP_VIGNETTING_CENTER_X;Center X
 !TP_VIGNETTING_CENTER_Y;Center Y
 !TP_VIGNETTING_STRENGTH;Strength
+!TP_WBALANCE_CLOUDY;Cloudy
+!TP_WBALANCE_DAYLIGHT;Daylight (sunny)
+!TP_WBALANCE_FLASH55;Leica
+!TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
+!TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+!TP_WBALANCE_FLASH_HEADER;Flash
+!TP_WBALANCE_FLUO1;F1 - Daylight
+!TP_WBALANCE_FLUO2;F2 - Cool white
+!TP_WBALANCE_FLUO3;F3 - White
+!TP_WBALANCE_FLUO4;F4 - Warm white
+!TP_WBALANCE_FLUO5;F5 - Daylight
+!TP_WBALANCE_FLUO6;F6 - Lite white
+!TP_WBALANCE_FLUO7;F7 - D65 Daylight simulator
+!TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
+!TP_WBALANCE_FLUO9;F9 - Cool white deluxe
+!TP_WBALANCE_FLUO10;F10 - Philips TL85
+!TP_WBALANCE_FLUO11;F11 - Philips TL84
+!TP_WBALANCE_FLUO12;F12 - Philips TL83
+!TP_WBALANCE_FLUO_HEADER;Fluorescent
+!TP_WBALANCE_GTI;GTI
+!TP_WBALANCE_HMI;HMI
+!TP_WBALANCE_JUDGEIII;JudgeIII
+!TP_WBALANCE_LAMP_HEADER;Lamp
+!TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+!TP_WBALANCE_LED_HEADER;LED
+!TP_WBALANCE_LED_LSI;LSI Lumelex 2040
+!TP_WBALANCE_SHADE;Shade
+!TP_WBALANCE_SOLUX35;Solux 3500K
+!TP_WBALANCE_SOLUX41;Solux 4100K
+!TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+!TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
+!TP_WBALANCE_TUNGSTEN;Tungsten
 !ZOOMPANEL_100;(100%)
 !ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
 !ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>

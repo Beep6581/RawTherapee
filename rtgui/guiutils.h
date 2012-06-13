@@ -20,7 +20,7 @@
 #define __GUI_UTILS_
 
 #include <gtkmm.h>
-#include <rtengine.h>
+#include "../rtengine/rtengine.h"
 
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference=true);
 void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh);

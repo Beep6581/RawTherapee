@@ -20,9 +20,9 @@
 #define __SAVEFORMATPANEL_H__
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <guiutils.h>
-#include <options.h>
+#include "adjuster.h"
+#include "guiutils.h"
+#include "options.h"
 
 class FormatChangeListener {
 

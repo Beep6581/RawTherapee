@@ -117,7 +117,7 @@ struct BQUpdateParam {
 
 int updateImageUIThread (void* data) {
 
-    BQUpdateParam* params = (BQUpdateParam*)data;
+    BQUpdateParam* params = static_cast<BQUpdateParam*>(data);
 
     BatchQueueEntryIdleHelper* bqih = params->bqih;
 

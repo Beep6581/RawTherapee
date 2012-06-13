@@ -18,9 +18,9 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <rtimage.h>
-#include <safegtk.h>
-#include <safekeyfile.h>
+#include "rtimage.h"
+#include "../rtengine/safegtk.h"
+#include "../rtengine/safekeyfile.h"
 
 extern Glib::ustring argv0;
 extern Options options;

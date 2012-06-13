@@ -20,7 +20,7 @@
 #define _CACHEIMAGEDATA_
 
 #include <glibmm.h>
-#include <options.h>
+#include "options.h"
 
 class CacheImageData {
 
@@ -62,7 +62,7 @@ class CacheImageData {
 		enum
 		{
 			FULL_THUMBNAIL = 0,  // was the thumbnail generated from whole file
-			QUICK_THUMBNAIL = 1, // was rhe thumbnail generated from embedded jpeg
+			QUICK_THUMBNAIL = 1 // was rhe thumbnail generated from embedded jpeg
 		};
 
         CacheImageData ();

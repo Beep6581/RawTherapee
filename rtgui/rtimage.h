@@ -20,7 +20,7 @@
 #define _RTIMAGE_
 
 #include <gtkmm.h>
-#include <options.h>
+#include "options.h"
 
 class RTImage : public Gtk::Image {
 public:

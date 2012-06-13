@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <lwbutton.h>
+#include "lwbutton.h"
 
 LWButton::LWButton (Cairo::RefPtr<Cairo::ImageSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring tooltip) 
     : halign(ha), valign(va), icon(i), state(Normal), listener(NULL), actionCode(aCode), actionData(aData), toolTip(tooltip) {

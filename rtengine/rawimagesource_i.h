@@ -20,15 +20,9 @@
 #ifndef RAWIMAGESOURCE_I_H_INCLUDED
 #define RAWIMAGESOURCE_I_H_INCLUDED
 
-#include <rawimagesource.h>
+#include "rawimagesource.h"
 
-#include <curves.h>
-
-#undef MAXVAL
-#undef CLIP
-
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
+#include "curves.h"
 
 namespace rtengine {
 
@@ -81,8 +75,8 @@ inline void RawImageSource::interpolate_row_g (float* agh, float* agv, int i) {
       int gv=0;
       if (j>1 && j<W-2) {
         gh = (-rawData[i][j-2] + 2*rawData[i][j-1] + 2*rawData[i][j] + 2*rawData[i][j+1] -rawData[i][j+2]) / 4;
-        int maxgh = MAX(rawData[i][j-1], rawData[i][j+1]);
-        int mingh = MIN(rawData[i][j-1], rawData[i][j+1]);
+        int maxgh = max(rawData[i][j-1], rawData[i][j+1]);
+        int mingh = min(rawData[i][j-1], rawData[i][j+1]);
         if (gh>maxgh)
             gh = maxgh;
         else if (gh<mingh)
@@ -99,8 +93,8 @@ inline void RawImageSource::interpolate_row_g (float* agh, float* agv, int i) {
  
      if (i>1 && i<H-2) {
         gv = (-rawData[i-2][j] + 2*rawData[i-1][j] + 2*rawData[i][j] + 2*rawData[i+1][j] - rawData[i+2][j]) / 4;
-        int maxgv = MAX(rawData[i-1][j], rawData[i+1][j]);
-        int mingv = MIN(rawData[i-1][j], rawData[i+1][j]);
+        int maxgv = max(rawData[i-1][j], rawData[i+1][j]);
+        int mingv = min(rawData[i-1][j], rawData[i+1][j]);
         if (gv>maxgv)
           gv = maxgv;
         else if (gv<mingv)
@@ -330,6 +324,6 @@ inline void RawImageSource::interpolate_row_rb_mul_pp (float* ar, float* ab, flo
   }
 }
 
-};
+}
 
 #endif

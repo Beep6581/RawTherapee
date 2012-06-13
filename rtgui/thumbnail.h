@@ -21,13 +21,13 @@
 
 #include <string>
 #include <glibmm.h>
-#include <cachemanager.h>
-#include <options.h>
-#include <rtengine.h>
-#include <rtthumbnail.h>
-#include <cacheimagedata.h>
-#include <thumbnaillistener.h>
-#include <rtXmp.h>
+#include "cachemanager.h"
+#include "options.h"
+#include "../rtengine/rtengine.h"
+#include "../rtengine/rtthumbnail.h"
+#include "cacheimagedata.h"
+#include "thumbnaillistener.h"
+#include "rtXmp.h"
 
 
 class SnapshotListener {
@@ -101,7 +101,7 @@ class Thumbnail :public SnapshotListener{
         // Use this to create params on demand for update
         rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB);
 
-        void              setProcParams (const rtengine::procparams::ProcParams& pp, int whoChangedIt=-1, bool updateCacheNow=true);
+        void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe=NULL, int whoChangedIt=-1, bool updateCacheNow=true);
         void              clearProcParams (int whoClearedIt=-1);
 
         void              notifylisterners_procParamsChanged(int whoChangedIt);

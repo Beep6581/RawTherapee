@@ -19,7 +19,7 @@
 #ifndef _THUMBNAILLISTENER_
 #define _THUMBNAILLISTENER_
 
-#include <thumbnail.h>
+#include "thumbnail.h"
 
 class Thumbnail;
 class ThumbnailListener {

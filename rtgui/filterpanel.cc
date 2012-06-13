@@ -16,9 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filterpanel.h>
-#include <multilangmgr.h>
-#include <rtengine.h>
+#include "filterpanel.h"
+#include "multilangmgr.h"
+#include "../rtengine/rtengine.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 
@@ -121,6 +122,14 @@ FilterPanel::FilterPanel () : listener (NULL) {
 	sfiletype->add(*filetype);
 	ftvb->pack_start (*sfiletype, Gtk::PACK_SHRINK, 0);
 	pack_start (*ftvb, Gtk::PACK_SHRINK, 4);
+
+    // add panel ending
+    Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
+    Gtk::HSeparator* hseptpe = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Image* peImg = Gtk::manage (new RTImage("PanelEnding.png"));
+    vboxpe->pack_start(*hseptpe, Gtk::PACK_SHRINK, 4);
+    vboxpe->pack_start(*peImg);
+    pack_start(*vboxpe, Gtk::PACK_SHRINK, 0);
 
 	conns = 0;
     sChange[conns++] = fnumberFrom->signal_changed().connect (sigc::mem_fun(*this, &FilterPanel::valueChanged));
@@ -291,19 +300,19 @@ ExifFilterSettings FilterPanel::getFilter () {
 	efs.filterFiletype = enaFiletype->get_active ();
 	
     std::vector<int> sel = camera->get_selected ();
-    for (int i=0; i<sel.size(); i++) 
+    for (size_t i=0; i<sel.size(); i++)
         efs.cameras.insert (camera->get_text (sel[i]));
 
     sel = expcomp->get_selected ();
-    for (int i=0; i<sel.size(); i++)
+    for (size_t i=0; i<sel.size(); i++)
         efs.expcomp.insert (expcomp->get_text (sel[i]));
 
     sel = lens->get_selected ();
-    for (int i=0; i<sel.size(); i++)
+    for (size_t i=0; i<sel.size(); i++)
         efs.lenses.insert (lens->get_text (sel[i]));
 
     sel = filetype->get_selected ();
-    for (int i=0; i<sel.size(); i++)
+    for (size_t i=0; i<sel.size(); i++)
         efs.filetypes.insert (filetype->get_text (sel[i]));
 
     return efs;

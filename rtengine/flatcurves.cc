@@ -18,11 +18,11 @@
  */
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <curves.h>
-#include <math.h>
+#include "curves.h"
+#include <cmath>
 #include <vector>
-#include <mytime.h>
-#include <string.h>
+#include "mytime.h"
+#include <cstring>
 
 #include <gtkmm.h>
 #include <fstream>
@@ -31,7 +31,7 @@ namespace rtengine {
 
 FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn) : leftTangent(NULL), rightTangent(NULL) {
 
-    ppn = poly_pn;
+    ppn = poly_pn > 65500 ? 65500 : poly_pn;
     poly_x.clear();
     poly_y.clear();
 
@@ -277,7 +277,7 @@ void FlatCurve::CtrlPoints_set () {
 	else {
 			nbr_points = (int)(((double)(ppn) * sc_length[i] )/ total_length);
 			if (nbr_points<0){
-				for(unsigned int it=0;it < sc_x.size(); it+=3) printf("sc_length[%d/3]=%f \n",it,sc_length[it/3]);
+				for(size_t it=0;it < sc_x.size(); it+=3) printf("sc_length[%zd/3]=%f \n",it,sc_length[it/3]);
 				printf("Flat curve: error detected!\n i=%d periodic=%d nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f",i,periodic,nbr_points,ppn,N,sc_length[i/3],total_length);
 				exit(0);
 			}

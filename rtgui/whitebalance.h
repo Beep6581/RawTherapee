@@ -20,10 +20,11 @@
 #define _WB_H_
 
 #include <gtkmm.h>
-#include <toolpanel.h>
-#include <adjuster.h>
-#include <guiutils.h>
-#include <wbprovider.h>
+#include "toolpanel.h"
+#include "adjuster.h"
+#include "guiutils.h"
+#include "wbprovider.h"
+#include "../rtengine/procparams.h"
 
 class SpotWBListener {
 
@@ -33,8 +34,24 @@ class SpotWBListener {
 
 class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
+    enum WB_LabelType {
+        WBLT_GUI,
+        WBLT_PP
+    };
+
   protected:
-    MyComboBoxText* method;
+    class MethodColumns : public Gtk::TreeModel::ColumnRecord {
+      public:
+        Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > colIcon;
+        Gtk::TreeModelColumn<Glib::ustring> colLabel;
+        Gtk::TreeModelColumn<int> colId;
+        MethodColumns() { add(colIcon); add(colLabel); add(colId); }
+    };
+
+    static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::procparams::WBT_CUSTOM+1];
+    Glib::RefPtr<Gtk::TreeStore> refTreeModel;
+    MethodColumns methodColumns;
+    MyComboBox* method;
     MyComboBoxText* spotsize;
     Adjuster* temp;
     Adjuster* green;
@@ -46,13 +63,24 @@ class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableT
     SpotWBListener* wblistener;
     sigc::connection methconn;
     int custom_temp;
-    double custom_green;
-    void cache_customWB(int temp, double green){custom_temp = temp; custom_green=green;}; //cache custom WB setting to allow its recall
+    double* custom_green;
+    void cache_customWB    (int temp, double green); //cache custom WB setting to allow its recall
+    void cache_customTemp  (int temp);               //cache Temperature only to allow its recall
+    void cache_customGreen (double green);           //cache Green only to allow its recall
+    int  setActiveMethod   (Glib::ustring label);
+    int _setActiveMethod   (Glib::ustring &label, Gtk::TreeModel::Children &children);
+
+    Gtk::TreeModel::Row            getActiveMethod ();
+    int                            findWBEntryId   (Glib::ustring label, enum WB_LabelType lblType=WBLT_GUI);
+    rtengine::procparams::WBEntry* findWBEntry     (Glib::ustring label, enum WB_LabelType lblType=WBLT_GUI);
 
   public:
 
     WhiteBalance ();
+    ~WhiteBalance ();
 
+    static void init    ();
+    static void cleanup ();
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);

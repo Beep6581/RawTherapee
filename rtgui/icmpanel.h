@@ -20,11 +20,11 @@
 #define _ICMPANEL_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <guiutils.h>
+#include "adjuster.h"
+#include "guiutils.h"
 
-#include <toolpanel.h>
-#include <imagedata.h>
+#include "toolpanel.h"
+#include "../rtengine/imagedata.h"
 
 class ICMPanelListener {
 
@@ -48,6 +48,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Gtk::RadioButton*  icamera;
         Gtk::RadioButton*  icameraICC;
         Gtk::RadioButton*  ifromfile;
+        MyComboBoxText*    prefprof;
         Gtk::CheckButton*  ckbBlendCMSMatrix;
         MyComboBoxText*    wnames;
         MyComboBoxText*    wgamma;
@@ -83,8 +84,9 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
 		void GamChanged ();
         void ipSelectionChanged ();
         void iccTogglesChanged();
+        void prefProfChanged();
 
-        void setRawMeta (bool raw, rtengine::ImageMetaData* pMeta);
+        void setRawMeta (bool raw, const rtengine::ImageMetaData* pMeta);
         void saveReferencePressed ();
 
         void setICMPanelListener (ICMPanelListener* ipl) { icmplistener = ipl; }

@@ -17,38 +17,41 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filecatalog.h>
-#include <filepanel.h>
-#include <options.h>
-#include <cachemanager.h>
-#include <multilangmgr.h>
-#include <guiutils.h>
 #include <glib/gstdio.h>
 #include <iostream>
 #include <iomanip>
-#include <renamedlg.h>
-#include <thumbimageupdater.h>
-#include <safegtk.h>
-#include <batchqueue.h>
-#include <rtimage.h>
+#include "../rtengine/rt_math.h"
 
+#include "filecatalog.h"
+#include "filepanel.h"
+#include "options.h"
+#include "cachemanager.h"
+#include "multilangmgr.h"
+#include "guiutils.h"
+#include "renamedlg.h"
+#include "thumbimageupdater.h"
+#include "../rtengine/safegtk.h"
+#include "batchqueue.h"
+#include "rtimage.h"
+
+using namespace std;
 
 #define CHECKTIME 2000
 
 extern Glib::ustring argv0;
 
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
+		filepanel(filepanel),
 		selectedDirectoryId(1),
 		listener(NULL),
 		fslistener(NULL),
 		dirlistener(NULL),
 		hasValidCurrentEFS(false),
 		filterPanel(NULL),
-		coarsePanel(cp),
-		toolBar(tb),
-		filepanel(filepanel),
 		previewsToLoad(0),
-		previewsLoaded(0)
+		previewsLoaded(0),
+		coarsePanel(cp),
+		toolBar(tb)
 		{
 
     inTabMode=false;
@@ -431,6 +434,9 @@ void FileCatalog::closeDir () {
 
 	if (filterPanel)
 		filterPanel->set_sensitive (false);
+		
+	if (exportPanel)
+		exportPanel->set_sensitive (false);
 
 #ifndef WIN32
     if (dirMonitor)
@@ -556,7 +562,7 @@ void FileCatalog::_refreshProgressBar () {
 }
 
 int refreshProgressBarUI (void* data) {
-    ((FileCatalog*)data)->_refreshProgressBar ();
+    (static_cast<FileCatalog*>(data))->_refreshProgressBar ();
     return 0;
 }
 
@@ -608,7 +614,7 @@ void FileCatalog::previewReadyUI (int dir_id, FileBrowserEntry* fdn) {
 
 int prevfinished (void* data) {
  	GThreadLock lock;
-    ((FileCatalog*)data)->previewsFinishedUI ();
+    (static_cast<FileCatalog*>(data))->previewsFinishedUI ();
     return 0;
 }
 
@@ -627,6 +633,10 @@ void FileCatalog::previewsFinishedUI () {
 		    filterPanel->setFilter ( currentEFS,false );
 	    }
 	}
+	
+	if (exportPanel)
+		exportPanel->set_sensitive (true);
+
  	// restart anything that might have been loaded low quality
  	fileBrowser->refreshQuickThumbImages();
  	fileBrowser->applyFilter (getFilter());  // refresh total image count
@@ -689,7 +699,7 @@ struct FCOIParams {
 };
 
 int openRequestedUI (void* p) {
-    FCOIParams* params = (FCOIParams*)p;
+    FCOIParams* params = static_cast<FCOIParams*>(p);
     params->catalog->_openImage (params->tmb);
     delete params;
 
@@ -708,7 +718,7 @@ void FileCatalog::openRequested  (std::vector<Thumbnail*> tmb) {
 
 void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inclBatchProcessed) {
 
-    if (tbe.size()==0)
+    if (tbe.empty())
         return;
 
     Gtk::MessageDialog msd (M("FILEBROWSER_DELETEDLGLABEL"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
@@ -749,7 +759,7 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
 
 void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool moveRequested) {
 
-    if (tbe.size()==0)
+    if (tbe.empty())
         return;
 
 
@@ -803,7 +813,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 						// re-attach cache files
 						cacheMgr->renameEntry (src_fPath, tbe[i]->thumbnail->getMD5(), dest_fPath);
 						// remove from browser
-						FileBrowserEntry* t = fileBrowser->delEntry (src_fPath);
+						fileBrowser->delEntry (src_fPath);
 
                         previewsLoaded--;
 					}
@@ -846,7 +856,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
         _refreshProgressBar();
 	} // Gtk::RESPONSE_OK
 }
-void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
+void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fastmode) {
 
     if (listener) {
     	std::vector<BatchQueueEntry*> entries;
@@ -854,6 +864,44 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
         #pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
             rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
+
+            // if fast mode is selected, override (disable) prams
+            // controlling time and resource consuming tasks
+            // and also those which effect is not pronounced after reducing the image size
+            // TODO!!! could expose selections below via preferences
+            if (fastmode){
+				if (options.fastexport_bypass_sharpening         ) params.sharpening.enabled          = false;
+				if (options.fastexport_bypass_sharpenEdge        ) params.sharpenEdge.enabled         = false;
+				if (options.fastexport_bypass_sharpenMicro       ) params.sharpenMicro.enabled        = false;
+				//if (options.fastexport_bypass_lumaDenoise        ) params.lumaDenoise.enabled         = false;
+				//if (options.fastexport_bypass_colorDenoise       ) params.colorDenoise.enabled        = false;
+				if (options.fastexport_bypass_defringe           ) params.defringe.enabled            = false;
+				if (options.fastexport_bypass_dirpyrDenoise      ) params.dirpyrDenoise.enabled       = false;
+				if (options.fastexport_bypass_sh_hq              ) params.sh.hq                       = false;
+				if (options.fastexport_bypass_dirpyrequalizer    ) params.dirpyrequalizer.enabled     = false;
+				if (options.fastexport_bypass_raw_all_enhance    ) params.raw.all_enhance             = false;
+				if (options.fastexport_bypass_raw_ccSteps        ) params.raw.ccSteps                 = 0;
+				if (options.fastexport_bypass_raw_dcb_iterations ) params.raw.dcb_iterations          = 0;
+				if (options.fastexport_bypass_raw_dcb_enhance    ) params.raw.dcb_enhance             = false;
+				if (options.fastexport_bypass_raw_ca             ) {params.raw.ca_autocorrect =false; params.raw.cared=0; params.raw.cablue=0;}
+				if (options.fastexport_bypass_raw_linenoise      ) params.raw.linenoise               = 0;
+				if (options.fastexport_bypass_raw_greenthresh    ) params.raw.greenthresh             = 0;
+				if (options.fastexport_bypass_raw_df             ) {params.raw.df_autoselect = false; params.raw.dark_frame="";}
+				if (options.fastexport_bypass_raw_ff             ) {params.raw.ff_AutoSelect = false; params.raw.ff_file="";}
+				params.raw.dmethod       = options.fastexport_raw_dmethod     ;
+				params.icm.input         = options.fastexport_icm_input       ;
+				params.icm.working       = options.fastexport_icm_working     ;
+				params.icm.output        = options.fastexport_icm_output      ;
+				params.icm.gamma         = options.fastexport_icm_gamma       ;
+				params.resize.enabled    = options.fastexport_resize_enabled  ;
+				params.resize.scale      = options.fastexport_resize_scale    ;
+				params.resize.appliesTo  = options.fastexport_resize_appliesTo;
+				params.resize.method     = options.fastexport_resize_method   ;
+				params.resize.dataspec   = options.fastexport_resize_dataspec ;
+				params.resize.width      = options.fastexport_resize_width    ;
+				params.resize.height     = options.fastexport_resize_height   ;
+            }
+
             rtengine::ImageMetaData* idata = tbe[i]->thumbnail->getMetadata();
             if( idata ){
             	if( !idata->getIPTCDataChanged() && !options.defMetadata.empty() ){
@@ -892,6 +940,18 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe) {
 
         listener->addBatchQueueJobs( entries );
     }
+}
+
+void FileCatalog::exportRequested (){
+
+}
+
+void FileCatalog::setExportPanel (ExportPanel* expanel) {
+
+	exportPanel = expanel;
+	exportPanel->set_sensitive (false);
+	exportPanel->setExportPanelListener (this);
+	fileBrowser->setExportPanel(expanel);
 }
 
 void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
@@ -974,7 +1034,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
                 continue;
             // if no extension is given, concatenate the extension of the original file
             if (nBaseName.find ('.')==nBaseName.npos) {
-                int lastdot = baseName.find_last_of ('.');
+                size_t lastdot = baseName.find_last_of ('.');
                 nBaseName += "." + (lastdot!=Glib::ustring::npos ? baseName.substr (lastdot+1) : "");
             }
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
@@ -991,7 +1051,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 
 void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, bool leavenotrace) {
 
-	 if (tbe.size()==0)
+	 if (tbe.empty())
 	        return;
 
 	 for (unsigned int i=0; i<tbe.size(); i++) {
@@ -1077,8 +1137,8 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 					toggled_stars_count = 1;
 				}
 				if (toggled_stars_count == 1) {
-					int current_star=MIN(start_star,toggled_button);
-					int last_star   =MAX(start_star,toggled_button);
+					int current_star=min(start_star,toggled_button);
+					int last_star   =max(start_star,toggled_button);
 					//we permute the start and the end star for the next loop
 					for (; current_star <= last_star; current_star++) {
 						//we toggle on all the star in the range
@@ -1166,25 +1226,25 @@ BrowserFilter FileCatalog::getFilter () {
 	 * filter is setup in 2 steps
 	 * Step 1: handle individual filters
 	*/
-    filter.showRanked[0] = bFilterClear->get_active() || bUnRanked->get_active () || bTrash->get_active () || \
+    filter.showRanked[0] = bFilterClear->get_active() || bUnRanked->get_active () || bTrash->get_active () ||
                            anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
-    filter.showCLabeled[0] = bFilterClear->get_active() || bUnCLabeled->get_active () || bTrash->get_active ()  || \
+    filter.showCLabeled[0] = bFilterClear->get_active() || bUnCLabeled->get_active () || bTrash->get_active ()  ||
         		             anyRankFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
     for (int i=1; i<=5; i++){
-        filter.showRanked[i] = bFilterClear->get_active() || bRank[i-1]->get_active () || bTrash->get_active () || \
+        filter.showRanked[i] = bFilterClear->get_active() || bRank[i-1]->get_active () || bTrash->get_active () ||
                                anyCLabelFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
 
-        filter.showCLabeled[i] = bFilterClear->get_active() || bCLabel[i-1]->get_active () || bTrash->get_active ()  || \
+        filter.showCLabeled[i] = bFilterClear->get_active() || bCLabel[i-1]->get_active () || bTrash->get_active ()  ||
                                  anyRankFilterActive || anyEditedFilterActive || anyRecentlySavedFilterActive;
     }
 
     for (int i=0; i<2; i++){
-    	filter.showEdited[i] = bFilterClear->get_active() || bEdited[i]->get_active () || bTrash->get_active ()  || \
+    	filter.showEdited[i] = bFilterClear->get_active() || bEdited[i]->get_active () || bTrash->get_active ()  ||
                                anyRankFilterActive || anyCLabelFilterActive || anyRecentlySavedFilterActive;
 
-    	filter.showRecentlySaved[i] = bFilterClear->get_active() || bRecentlySaved[i]->get_active () || bTrash->get_active ()  || \
+    	filter.showRecentlySaved[i] = bFilterClear->get_active() || bRecentlySaved[i]->get_active () || bTrash->get_active ()  ||
     	                          anyRankFilterActive || anyCLabelFilterActive || anyEditedFilterActive;
     }
     if( options.rtSettings.verbose ){
@@ -1202,11 +1262,11 @@ BrowserFilter FileCatalog::getFilter () {
 	 * if no filters in a group are active, filter.show for each member of that group will be set to true
 	 * otherwise they are set based on UI input
 	 */
-    if ((anyRankFilterActive && anyCLabelFilterActive ) || \
-    	(anyRankFilterActive && anyEditedFilterActive ) || \
-    	(anyRankFilterActive && anyRecentlySavedFilterActive ) || \
-    	(anyCLabelFilterActive && anyEditedFilterActive ) || \
-    	(anyCLabelFilterActive && anyRecentlySavedFilterActive ) || \
+    if ((anyRankFilterActive && anyCLabelFilterActive ) ||
+    	(anyRankFilterActive && anyEditedFilterActive ) ||
+    	(anyRankFilterActive && anyRecentlySavedFilterActive ) ||
+    	(anyCLabelFilterActive && anyEditedFilterActive ) ||
+    	(anyCLabelFilterActive && anyRecentlySavedFilterActive ) ||
         (anyEditedFilterActive && anyRecentlySavedFilterActive)){
 
     	filter.multiselect = true;
@@ -1293,7 +1353,7 @@ void FileCatalog::reparseDirectory () {
 	// check if a new file has been added
 	for (size_t i=0; i<nfileNameList.size(); i++) {
 		bool found = false;
-		for (int j=0; j<fileNameList.size(); j++)
+		for (size_t j=0; j<fileNameList.size(); j++)
 			if (nfileNameList[i]==fileNameList[j]) {
 				found = true;
 				break;
@@ -1309,7 +1369,7 @@ void FileCatalog::reparseDirectory () {
 
 #ifdef WIN32
 int winDirChangedUITread (void* cat) {
-    ((FileCatalog*)cat)->reparseDirectory ();
+    (static_cast<FileCatalog*>(cat))->reparseDirectory ();
     return 0;
 }
 
@@ -1343,8 +1403,8 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     	return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        int lastdot = info->get_name().find_last_of ('.');
-        if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+        size_t lastdot = info->get_name().find_last_of ('.');
+        if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
 						previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
             previewsToLoad++;
 				}
@@ -1361,8 +1421,8 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if( !info )
     	return;
-    int lastdot = info->get_name().find_last_of ('.');
-    if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+    size_t lastdot = info->get_name().find_last_of ('.');
+    if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         // if supported, load thumbnail first
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
@@ -1383,8 +1443,8 @@ void FileCatalog::emptyTrash () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     std::vector<FileBrowserEntry*> toDel;
     for (size_t i=0; i<t.size(); i++)
-        if (((FileBrowserEntry*)t[i])->thumbnail->getRank()==-1)
-            toDel.push_back (((FileBrowserEntry*)t[i]));
+        if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getRank()==-1)
+            toDel.push_back (static_cast<FileBrowserEntry*>(t[i]));
     deleteRequested (toDel, false);
     trashChanged();
 }
@@ -1392,7 +1452,7 @@ void FileCatalog::emptyTrash () {
 bool FileCatalog::trashIsEmpty () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     for (size_t i=0; i<t.size(); i++)
-        if (((FileBrowserEntry*)t[i])->thumbnail->getRank()==-1)
+        if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getRank()==-1)
             return false;
 
     return true;

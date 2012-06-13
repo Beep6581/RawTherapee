@@ -18,19 +18,22 @@
  */
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <curves.h>
-#include <math.h>
+#include <cmath>
 #include <vector>
-#include <mytime.h>
-#include <string.h>
+#include <cstring>
+#include <algorithm>
 
+#include "rt_math.h"
+
+#include "mytime.h"
 #include "array2D.h"
 #include "LUT.h"
+#include "curves.h"
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
-#define CLIP(a) ((a)<65535 ? (a) : (65535))
 
+using namespace std;
 
 namespace rtengine {
 
@@ -38,15 +41,9 @@ namespace rtengine {
 		x = 0;
 		y = 0;
 		ypp = 0;
-	    hash = NULL;
-	    hashSize = 1000;  // has to be initiallised to the maximum value
+		hashSize = 1000;  // has to be initiallised to the maximum value
 	}
 	
-	Curve::~Curve () {
-		if (hash)
-			delete [] hash;
-	}
-
 	void Curve::AddPolygons ()
 	{
 		if (firstPointIncluded) {
@@ -68,29 +65,50 @@ namespace rtengine {
 		poly_x.push_back(x3);
 		poly_y.push_back(y3);
 	}
-	
+
 	void Curve::fillHash() {
-    	hash = new unsigned short int[hashSize+2];
+    	hash.resize(hashSize+2);
 
     	unsigned int polyIter = 0;
     	double const increment = 1./hashSize;
     	double milestone = 0.;
 
-    	for (unsigned int i=0; i<(hashSize+1);) {
+		for (unsigned short i=0; i<(hashSize+1);) {
     		while(poly_x[polyIter] <= milestone) ++polyIter;
-    		hash[i] = polyIter-1;
-    		milestone = (++i)*increment;
+    		hash.at(i).smallerValue = polyIter-1;
+    		++i;
+    		milestone = i*increment;
     	}
-    	hash[hashSize+1] = poly_x.size()-1;
+		milestone = 0.;
+		polyIter = 0;
+		for (unsigned int i=0; i<(hashSize+1);) {
+    		while(poly_x[polyIter] < (milestone+increment)) ++polyIter;
+    		hash.at(i).higherValue = polyIter;
+    		++i;
+    		milestone = i*increment;
+    	}
+    	hash.at(hashSize+1).smallerValue = poly_x.size()-1;
+    	hash.at(hashSize+1).higherValue = poly_x.size();
 
-		/*
-		// Debug output to file
-		FILE* f = fopen ("hash.txt", "wt");
-		for (int i=0; i<(hashSize+2); i++)
-			fprintf (f, "%d: %d   >   %.6f, %.6f\n", i, hash[i], poly_x[hash[i]], poly_y[hash[i]]);
-		fprintf (f, "\nppn: %d\npoly_x: %d\n", ppn, poly_x.size());
-		fclose (f);
-		*/
+    	/*
+    	 * Uncoment the code below to dump the polygon points and the hash table in files
+    	if (poly_x.size() > 500) {
+    		printf("Files generated (%d points)\n", poly_x.size());
+			FILE* f = fopen ("hash.txt", "wt");
+			for (unsigned int i=0; i<hashSize;i++) {
+				unsigned short s = hash.at(i).smallerValue;
+				unsigned short h = hash.at(i).higherValue;
+				fprintf (f, "%d: %d<%d (%.5f<%.5f)\n", i, s, h, poly_x[s], poly_x[h]);
+			}
+			fclose (f);
+			f = fopen ("poly_x.txt", "wt");
+			for (size_t i=0; i<poly_x.size();i++) {
+				fprintf (f, "%d: %.5f, %.5f\n", i, poly_x[i], poly_y[i]);
+			}
+			fclose (f);
+    	}
+    	*/
+
 	}
 
     // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
@@ -136,8 +154,8 @@ namespace rtengine {
 	}
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh, \
-										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints, \
+	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh,
+										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,
 										LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, int skip) {
 		
 		//colormult = chroma_scale for Lab manipulations
@@ -209,7 +227,7 @@ namespace rtengine {
 
 		needed = false;
 		// create a curve if needed
-		if (acurvePoints.size()>0 && acurvePoints[0]!=0) {
+		if (!acurvePoints.empty() && acurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (acurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (dCurve && !dCurve->isIdentity())
 				needed = true;
@@ -223,7 +241,7 @@ namespace rtengine {
 		//-----------------------------------------------------
 
 		needed = false;
-		if (bcurvePoints.size()>0 && bcurvePoints[0]!=0) {
+		if (!bcurvePoints.empty() && bcurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (bcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (dCurve && !dCurve->isIdentity())
 				needed = true;
@@ -239,16 +257,16 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, \
-									 double shcompr, double br, double contr, double gamma_, bool igamma_, \
-									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped, \
-									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, \
+	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
+									 double shcompr, double br, double contr, double gamma_, bool igamma_,
+									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
 									 LUTu & outBeforeCCurveHistogram, int skip) {
 		
 		
 		//double def_mul = pow (2.0, defmul);
 		
-		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f  \
+		/*printf ("def_mul= %f ecomp= %f black= %f  hlcompr= %f shcompr= %f br= %f contr= %f defmul= %f
 				gamma= %f, skip= %d \n",def_mul,ecomp,black,hlcompr,shcompr,br,contr,defmul,gamma_,skip);*/
 		
 		// compute parameters of the gamma curve
@@ -296,9 +314,9 @@ namespace rtengine {
 				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
 
 				brightcurvePoints.push_back(0.7); //shoulder point
-				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7+br/300.0)); //value at shoulder point
 			} else {
-				brightcurvePoints.push_back(MAX(0.0,0.1-br/150.0)); //toe point
+				brightcurvePoints.push_back(max(0.0,0.1-br/150.0)); //toe point
 				brightcurvePoints.push_back(0.1); //value at toe point
 
 				brightcurvePoints.push_back(0.7-br/300.0); //shoulder point
@@ -313,8 +331,8 @@ namespace rtengine {
 
 		float exp_scale = a;
 		float scale = 65536.0;
-		float comp = (MAX(0,ecomp) + 1.0)*hlcompr/100.0;
-		float shoulder = ((scale/MAX(1,exp_scale))*(hlcomprthresh/200.0))+0.1;
+		float comp = (max(0.0,ecomp) + 1.0)*hlcompr/100.0;
+		float shoulder = ((scale/max(1.0f,exp_scale))*(hlcomprthresh/200.0))+0.1;
 		//printf("shoulder = %e\n",shoulder);
 		//printf ("exp_scale= %f comp= %f def_mul=%f a= %f \n",exp_scale,comp,def_mul,a);
 		
@@ -419,9 +437,9 @@ namespace rtengine {
 		// create a curve if needed
 		bool histNeeded = false;
 		DiagonalCurve* tcurve = NULL;
-		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
-			if (outBeforeCCurveHistogram && histogramCropped)
+			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
 		}
 		if (tcurve && tcurve->isIdentity()) {
@@ -434,11 +452,12 @@ namespace rtengine {
 
 			if (histNeeded) {
 				float fi=i;
-				float hval = dcurve[shCurve[hlCurve[i]*fi]*fi];
+				float hval = hlCurve[i]*fi;
+				hval = dcurve[shCurve[hval]*hval];
 				//if (needigamma)
 				//	hval = igamma2 (hval);
 				int hi = (int)(255.0*(hval));
-				outBeforeCCurveHistogram[hi] += histogramCropped[i] ;
+				outBeforeCCurveHistogram[hi] += histogram/*Cropped*/[i] ;
 			}
 
 			// apply custom/parametric/NURBS curve, if any
@@ -468,8 +487,8 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints, \
-									 LUTu & histogram, LUTu & histogramCropped, LUTf & outCurve, \
+	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints,
+									 LUTu & histogram, LUTu & histogramCropped, LUTf & outCurve,
 									 LUTu & outBeforeCCurveHistogram, int skip) {
 		
 		// curve without contrast
@@ -497,12 +516,12 @@ namespace rtengine {
 				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
 
 				brightcurvePoints.push_back(0.7); // shoulder point
-				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7+br/300.0)); //value at shoulder point
 			} else {
 				brightcurvePoints.push_back(0.1-br/150.0); // toe point
 				brightcurvePoints.push_back(0.1); // value at toe point
 
-				brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); // shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7-br/300.0)); // shoulder point
 				brightcurvePoints.push_back(0.7); // value at shoulder point
 			}
 			brightcurvePoints.push_back(1.); // white point
@@ -583,9 +602,9 @@ namespace rtengine {
 		// create a curve if needed
 		DiagonalCurve* tcurve = NULL;
 		bool histNeeded = false;
-		if (curvePoints.size()>0 && curvePoints[0]!=0) {
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
-			if (outBeforeCCurveHistogram && histogramCropped)
+			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
 		}
 		if (tcurve && tcurve->isIdentity()) {
@@ -601,7 +620,7 @@ namespace rtengine {
 				if (histNeeded) {
 					float hval = dcurve[i];
 					int hi = (int)(255.0*CLIPD(hval));
-					outBeforeCCurveHistogram[hi]+=histogramCropped[i] ;
+					outBeforeCCurveHistogram[hi]+=histogram/*Cropped*/[i] ;
 				}
 
 				// apply custom/parametric/NURBS curve, if any
@@ -617,7 +636,7 @@ namespace rtengine {
 				if (histNeeded) {
 					float hval = dcurve[i];
 					int hi = (int)(255.0*CLIPD(hval));
-					outBeforeCCurveHistogram[hi]+=histogramCropped[i] ;
+					outBeforeCCurveHistogram[hi]+=histogram/*Cropped*/[i] ;
 				}
 
 				outCurve[i] = 32767.0*dcurve[i];
@@ -636,7 +655,46 @@ namespace rtengine {
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	void CurveFactory::RGBCurve (const std::vector<double>& curvePoints, LUTf & outCurve, int skip) {
+		
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+						
+		// create a curve if needed
+		DiagonalCurve* tcurve = NULL;
+		if (!curvePoints.empty() && curvePoints[0]!=0) {
+			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
+		}
+		if (tcurve && tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+		
+		if (tcurve) {
+			for (int i=0; i<65536; i++) {				
+				// apply custom/parametric/NURBS curve, if any
+				float val = tcurve->getVal ((float)i/65536.0f);
+				outCurve[i] = (65536.0f * val);
+			}
+		}
+		else {
+			// Skip the slow getval method if no curve is used (or an identity curve)
+			for (int i=0; i<65536; i++) {
+				outCurve[i] = i;
+			}
+		}
+		
+		if (tcurve)
+			delete tcurve;
 
+	}
+	
+	
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	
 
 LUTf CurveFactory::gammatab;
 LUTf CurveFactory::igammatab_srgb;

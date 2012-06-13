@@ -18,25 +18,19 @@
  *    
  */
 
-//#include <rtengine.h>
 #include <cstddef>
-#include <math.h>
-#include <curves.h>
-#include <labimage.h>
-#include <improcfun.h>
-#include <rawimagesource.h>
+#include <cmath>
+#include "curves.h"
+#include "labimage.h"
+#include "improcfun.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#define SQR(x) ((x)*(x))
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define CLIP(a) (CLIPTO(a,0,65535))
-
-
-
 
 #define DIRWT(i1,j1,i,j) (rangefn[abs((int)data_fine->L[i1][j1]-data_fine->L[i][j])+abs((int)data_fine->a[i1][j1]-data_fine->a[i][j])+abs((int)data_fine->b[i1][j1]-data_fine->b[i][j])] )
 
@@ -226,7 +220,7 @@ namespace rtengine {
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	};
+	}
 	
 	void ImProcFunctions::dirpyr_eq(LabImage* data_fine, LabImage* data_coarse, LUTf & rangefn, int level, int pitch, int scale, const double * mult  )
 	{
@@ -248,7 +242,7 @@ namespace rtengine {
 
 		
 		//generate domain kernel 
-		int halfwin = 1;//MIN(ceil(2*sig),3);
+		int halfwin = 1;//min(ceil(2*sig),3);
 		int scalewin = halfwin*scale;
 		
 
@@ -265,8 +259,8 @@ namespace rtengine {
 				aout = 0;
 				bout = 0;
 				
-				for(int inbr=MAX(0,i-scalewin); inbr<=MIN(height-1,i+scalewin); inbr+=scale) {
-					for (int jnbr=MAX(0,j-scalewin); jnbr<=MIN(width-1,j+scalewin); jnbr+=scale) {
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=max(0,j-scalewin); jnbr<=min(width-1,j+scalewin); jnbr+=scale) {
 						float dirwt = DIRWT(inbr, jnbr, i, j);
 						Lout += dirwt*data_fine->L[inbr][jnbr];
 						aout += dirwt*data_fine->a[inbr][jnbr];
@@ -283,7 +277,7 @@ namespace rtengine {
 		
 		
 		
-	};
+	}
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
@@ -372,8 +366,8 @@ namespace rtengine {
 					//do midpoint first
 					norm=dirwt=0;
 					wtdsum[0]=wtdsum[1]=wtdsum[2]=wtdsum[3]=wtdsum[4]=wtdsum[5]=0.0;
-					for(i1=i; i1<MIN(height,i+3); i1+=2)
-						for (j1=j; j1<MIN(width,j+3); j1+=2) {
+					for(i1=i; i1<min(height,i+3); i1+=2)
+						for (j1=j; j1<min(width,j+3); j1+=2) {
 							dirwt = 1;//IDIRWT(i1, j1, i, j);
 							wtdsum[0] += dirwt*smooth->L[i1][j1];
 							wtdsum[1] += dirwt*smooth->a[i1][j1];
@@ -400,7 +394,7 @@ namespace rtengine {
 					if (j+1==width) continue;
 					norm=dirwt=0;
 					wtdsum[0]=wtdsum[1]=wtdsum[2]=wtdsum[3]=wtdsum[4]=wtdsum[5]=0.0;
-					for (j1=j; j1<MIN(width,j+3); j1+=2) {
+					for (j1=j; j1<min(width,j+3); j1+=2) {
 						dirwt = 1;//IDIRWT(i, j1, i, j);
 						wtdsum[0] += dirwt*smooth->L[i][j1];
 						wtdsum[1] += dirwt*smooth->a[i][j1];
@@ -410,7 +404,7 @@ namespace rtengine {
 						wtdsum[5] += dirwt*buffer[2][i*scale][j1*scale];
 						norm+=dirwt;
 					}
-					for (i1=MAX(0,i-1); i1<MIN(height,i+2); i1+=2) {
+					for (i1=max(0,i-1); i1<min(height,i+2); i1+=2) {
 						dirwt = 1;//IDIRWT(i1, j+1, i, j);
 						wtdsum[0] += dirwt*smooth->L[i1][j+1];
 						wtdsum[1] += dirwt*smooth->a[i1][j+1];
@@ -432,7 +426,7 @@ namespace rtengine {
 					if (i+1==height) continue;
 					norm=0;
 					wtdsum[0]=wtdsum[1]=wtdsum[2]=wtdsum[3]=wtdsum[4]=wtdsum[5]=0.0;
-					for (i1=i; i1<MIN(height,i+3); i1+=2) {
+					for (i1=i; i1<min(height,i+3); i1+=2) {
 						dirwt = 1;//IDIRWT(i1, j, i, j);
 						wtdsum[0] += dirwt*smooth->L[i1][j];
 						wtdsum[1] += dirwt*smooth->a[i1][j];
@@ -442,7 +436,7 @@ namespace rtengine {
 						wtdsum[5] += dirwt*buffer[2][i1*scale][j*scale];
 						norm+=dirwt;
 					}
-					for (j1=MAX(0,j-1); j1<MIN(width,j+2); j1+=2) {
+					for (j1=max(0,j-1); j1<min(width,j+2); j1+=2) {
 						dirwt = 1;//IDIRWT(i+1, j1, i, j);
 						wtdsum[0] += dirwt*smooth->L[i+1][j1];
 						wtdsum[1] += dirwt*smooth->a[i+1][j1];
@@ -484,7 +478,7 @@ namespace rtengine {
 			delete smooth;
 			
 		}
-	};
+	}
 	
 	
 #undef DIRWT_L

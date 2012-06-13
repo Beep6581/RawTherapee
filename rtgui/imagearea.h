@@ -20,15 +20,16 @@
 #define __IMAGEAREA_H__
 
 #include <gtkmm.h>
-#include <cropguilistener.h>
-#include <imageareapanel.h>
-#include <editenums.h>
-#include <toolbar.h>
-#include <previewhandler.h>
-#include <imageareatoollistener.h>
-#include <cropwindow.h>
-#include <zoompanel.h>
-#include <indclippedpanel.h>
+#include "cropguilistener.h"
+#include "imageareapanel.h"
+#include "editenums.h"
+#include "toolbar.h"
+#include "previewhandler.h"
+#include "imageareatoollistener.h"
+#include "cropwindow.h"
+#include "zoompanel.h"
+#include "indclippedpanel.h"
+#include "previewmodepanel.h"
 
 class ImageAreaPanel;
 class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
@@ -64,11 +65,15 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     CropWindow* mainCropWindow;
     ZoomPanel* zoomPanel;
 	IndicateClippedPanel* indClippedPanel;
+	PreviewModePanel* previewModePanel;
+	ImageArea* iLinkedImageArea; // used to set a reference to the Before image area, which is set when before/after view is enabled
 
     ImageArea (ImageAreaPanel* p);
     ~ImageArea ();
     
     void setImProcCoordinator (rtengine::StagedImageProcessor* ipc_);
+    void setPreviewModePanel(PreviewModePanel* previewModePanel_){previewModePanel = previewModePanel_;};
+    void setIndicateClippedPanel(IndicateClippedPanel* indClippedPanel_){indClippedPanel = indClippedPanel_;};
     
     void getScrollImageSize (int& w, int& h);
     void getScrollPosition  (int& x, int& y);
@@ -87,7 +92,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     bool on_scroll_event        (GdkEventScroll* event);
     void on_resized             (Gtk::Allocation& req);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
-    void updateScrollbars       ();
+    void syncBeforeAfterViews       ();
 
     void            setCropGUIListener       (CropGUIListener* l);
     void            setPointerMotionListener  (PointerMotionListener* pml);

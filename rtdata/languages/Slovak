@@ -8,14 +8,14 @@ CURVEEDITOR_FILEDLGFILTERCURVE;Súbory kriviek
 CURVEEDITOR_HIGHLIGHTS;Najvyššie svetlá
 CURVEEDITOR_LIGHTS;Svetlá
 CURVEEDITOR_LINEAR;Lineárna
-CURVEEDITOR_LOADDLGLABEL;Načítať krivku...
+CURVEEDITOR_LOADDLGLABEL;Na�?ítať krivku...
 CURVEEDITOR_NURBS;Kontrolná klietka
 CURVEEDITOR_PARAMETRIC;Parametricky
 CURVEEDITOR_SAVEDLGLABEL;Uložiť krivku...
 CURVEEDITOR_SHADOWS;Hlboké tiene
 CURVEEDITOR_TOOLTIPLINEAR;Resetovať krivku na lineárnu
-CURVEEDITOR_TOOLTIPLOAD;Načítať krivku zo súboru
-CURVEEDITOR_TOOLTIPSAVE;Uložiť súčasnú krivku
+CURVEEDITOR_TOOLTIPLOAD;Na�?ítať krivku zo súboru
+CURVEEDITOR_TOOLTIPSAVE;Uložiť sú�?asnú krivku
 CURVEEDITOR_TYPE;Typ:
 EXIFFILTER_APERTURE;Clona
 EXIFFILTER_CAMERA;Fotoaparát
@@ -25,41 +25,41 @@ EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektív
 EXIFFILTER_METADATAFILTER;Povoliť filtre meta údajov
 EXIFFILTER_SHUTTER;Uzávierka
-EXIFPANEL_ADDEDITHINT;Pridať novú značku alebo upraviť značku
+EXIFPANEL_ADDEDITHINT;Pridať novú zna�?ku alebo upraviť zna�?ku
 EXIFPANEL_ADDEDIT;Pridať/Upraviť
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Vložiť hodnotu
-EXIFPANEL_ADDTAGDLG_SELECTTAG;Vybrať značku
-EXIFPANEL_ADDTAGDLG_TITLE;Pridať/Upraviť značku
-EXIFPANEL_KEEPHINT;Ponechať vybrané značky pri písaní výstupného súboru
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Vybrať zna�?ku
+EXIFPANEL_ADDTAGDLG_TITLE;Pridať/Upraviť zna�?ku
+EXIFPANEL_KEEPHINT;Ponechať vybrané zna�?ky pri písaní výstupného súboru
 EXIFPANEL_KEEP;Ponechať
-EXIFPANEL_REMOVEHINT;Odstrániť vybrané značky pri písaní výstupného súboru
+EXIFPANEL_REMOVEHINT;Odstrániť vybrané zna�?ky pri písaní výstupného súboru
 EXIFPANEL_REMOVE;Odstrániť
-EXIFPANEL_RESETALLHINT;Resetovať všetky značky na ich pôvodné hodnoty
+EXIFPANEL_RESETALLHINT;Resetovať všetky zna�?ky na ich pôvodné hodnoty
 EXIFPANEL_RESETALL;Resetovať všetky
-EXIFPANEL_RESETHINT;Resetovať vybrané značky na ich pôvodné hodnoty
+EXIFPANEL_RESETHINT;Resetovať vybrané zna�?ky na ich pôvodné hodnoty
 EXIFPANEL_RESET;Resetovať
 EXIFPANEL_SUBDIRECTORY;Podadresár
 FILEBROWSER_ADDDELTEMPLATE;Pridať/Odstrániť šablóny...
 FILEBROWSER_APPLYPROFILE;Použiť profil
 FILEBROWSER_ARRANGEMENTHINT;Zmeniť medzi vertikálnym/horizontálnym zarovnaním zmenšenín
-FILEBROWSER_CLEARPROFILE;Vyčistiť profil
+FILEBROWSER_CLEARPROFILE;Vy�?istiť profil
 FILEBROWSER_COPYPROFILE;Kopírovať profil
-FILEBROWSER_CURRENT_NAME;Súčasný názov:
+FILEBROWSER_CURRENT_NAME;Sú�?asný názov:
 FILEBROWSER_DELETEDLGLABEL;Potvrdenie odstránenia súboru
 FILEBROWSER_DELETEDLGMSG;Ste si istí, že chcete odstrániť vybrané %1 súbory?
 FILEBROWSER_EMPTYTRASHHINT;Permanentne odstrániť súbory z koša
 FILEBROWSER_EMPTYTRASH;Vyprázdniť kôš
-FILEBROWSER_EXIFFILTERAPPLYHINT;Zapnúť/vypnúť EXIF filter prehliadača súborov
+FILEBROWSER_EXIFFILTERAPPLYHINT;Zapnúť/vypnúť EXIF filter prehliada�?a súborov
 FILEBROWSER_EXIFFILTERAPPLY;Použiť
 FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Zmeňte nastavenia EXIF filtra
 FILEBROWSER_EXIFFILTERSETTINGS;Nastavenia
 FILEBROWSER_NEW_NAME;Nový názov:
-FILEBROWSER_PARTIALPASTEPROFILE;Čiastočné vloženie
+FILEBROWSER_PARTIALPASTEPROFILE;Čiasto�?né vloženie
 FILEBROWSER_PASTEPROFILE;Vložiť profil
 FILEBROWSER_POPUPCANCELJOB;Zrušiť úlohu
 FILEBROWSER_POPUPMOVEEND;Presunúť na koniec radu
-FILEBROWSER_POPUPMOVEHEAD;Presunúť na začiatok radu
+FILEBROWSER_POPUPMOVEHEAD;Presunúť na za�?iatok radu
 FILEBROWSER_POPUPOPEN;Otvoriť
 FILEBROWSER_POPUPPROCESS;Vložiť do radu na spracovanie
 FILEBROWSER_POPUPRANK1;Trieda 1
@@ -87,14 +87,14 @@ FILEBROWSER_SHOWRANK4HINT;Ukázať obrázky triedy 4 hviezda
 FILEBROWSER_SHOWRANK5HINT;Ukázať obrázky triedy 5 hviezda
 FILEBROWSER_SHOWTRASHHINT;Zobraziť obsah koša
 FILEBROWSER_SHOWUNRANKHINT;Zobraziť obrázky bez triedy
-FILEBROWSER_STARTPROCESSINGHINT;Začať spracovanie/ukladanie obrázkov v rade
-FILEBROWSER_STARTPROCESSING;Začať spracovanie
+FILEBROWSER_STARTPROCESSINGHINT;Za�?ať spracovanie/ukladanie obrázkov v rade
+FILEBROWSER_STARTPROCESSING;Za�?ať spracovanie
 FILEBROWSER_STOPPROCESSINGHINT;Zastaviť spracovanie obrázkov
 FILEBROWSER_STOPPROCESSING;Zastaviť spracovanie
 FILEBROWSER_THUMBSIZE;Veľkosť zmenšenín
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Začať spracovanie automaticky, keď príde nová úloha
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Za�?ať spracovanie automaticky, ke�? príde nová úloha
 FILEBROWSER_USETEMPLATE;Použiť šablónu:
-FILEBROWSER_ZOOMINHINT;Zväčšiť veľkosť zmenšenín
+FILEBROWSER_ZOOMINHINT;Zvä�?šiť veľkosť zmenšenín
 FILEBROWSER_ZOOMOUTHINT;Zmenšiť veľkosť zmenšenín
 GENERAL_ABOUT;O programe
 GENERAL_AFTER;Potom
@@ -106,30 +106,30 @@ GENERAL_ENABLED;Povolené
 GENERAL_ENABLE;Povoliť
 GENERAL_HIGH_QUALITY;Vysoká kvalita
 GENERAL_LANDSCAPE;Krajina
-GENERAL_LOAD;Načítať
+GENERAL_LOAD;Na�?ítať
 GENERAL_NA;n/a
 GENERAL_NO;Nie
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Portrét
 GENERAL_SAVE;Uložiť
 GENERAL_UNCHANGED;(Nezmenené)
-GENERAL_YES;Áno
+GENERAL_YES;�?no
 HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
-HISTOGRAM_TOOLTIP_B;Zobraziť/Schovať MODRÝ histogram
-HISTOGRAM_TOOLTIP_G;Zobraziť/Schovať ZELENÝ histogram
+HISTOGRAM_TOOLTIP_B;Zobraziť/Schovať MODR�? histogram
+HISTOGRAM_TOOLTIP_G;Zobraziť/Schovať ZELEN�? histogram
 HISTOGRAM_TOOLTIP_L;Zobraziť/Schovať histogram CIELAB svietivosti
-HISTOGRAM_TOOLTIP_R;Zobraziť/Schovať ČERVENÝ histogram
+HISTOGRAM_TOOLTIP_R;Zobraziť/Schovať ČERVEN�? histogram
 HISTORY_CHANGED;Zmenené
 HISTORY_CUSTOMCURVE;Vlastná krivka
 HISTORY_DELSNAPSHOT;Odstrániť Snímok
 HISTORY_FROMCLIPBOARD;Zo schránky
 HISTORY_LABEL;História
-HISTORY_MSG_1;Fotka načítaná
-HISTORY_MSG_2;Profil načítaný
+HISTORY_MSG_1;Fotka na�?ítaná
+HISTORY_MSG_2;Profil na�?ítaný
 HISTORY_MSG_3;Profil zmenený
 HISTORY_MSG_4;História prehliadania
 HISTORY_MSG_5;Jas
@@ -162,7 +162,7 @@ HISTORY_MSG_31;Množstvo dekonvolúcie
 HISTORY_MSG_32;Tlmenie dekonvolúcie
 HISTORY_MSG_33;Iterácie dekonvolúcie
 HISTORY_MSG_34;Vyhnúť sa orezaniu farieb
-HISTORY_MSG_35;Obmedzovač sýtosti
+HISTORY_MSG_35;Obmedzova�? sýtosti
 HISTORY_MSG_36;Hranica sýtosti
 HISTORY_MSG_37;Zosilnenie farieb
 HISTORY_MSG_38;Metóda vyváženia bielej
@@ -184,11 +184,11 @@ HISTORY_MSG_53;Tonálna šírka najvyšších svetiel
 HISTORY_MSG_54;Tonálna šírka tieňov
 HISTORY_MSG_55;Miestny kontrast
 HISTORY_MSG_56;Polomer Tiene/Najvyššie svetlá
-HISTORY_MSG_57;Hrubé otočenie
+HISTORY_MSG_57;Hrubé oto�?enie
 HISTORY_MSG_58;Horizontálne preklápanie
 HISTORY_MSG_59;Vertikálne preklápanie
-HISTORY_MSG_60;Otočenie
-HISTORY_MSG_61;Otočenie
+HISTORY_MSG_60;Oto�?enie
+HISTORY_MSG_61;Oto�?enie
 HISTORY_MSG_62;Korekcia zakrivenia objektívu
 HISTORY_MSG_63;Záložka vybraná
 HISTORY_MSG_64;Orezanie fotky
@@ -213,7 +213,7 @@ HISTORY_MSG_82;Profil zmenený
 HISTORY_MSG_83;Tiene/najvyšie svetlá vyskokej kvality
 HISTORY_MSG_84;Náprava perspektívy
 HISTORY_MSG_85;Koeficienty vlnky
-HISTORY_MSG_86;Vyrovnávač vlnky
+HISTORY_MSG_86;Vyrovnáva�? vlnky
 HISTORY_MSG_87;Impulzná redukcia šumu
 HISTORY_MSG_89;Smerová pyramída
 HISTORY_MSG_90;Svietivosť smerovej pyramídy
@@ -237,7 +237,7 @@ ICMPANEL_INPUTPROFILE;Vstupný profil
 ICMPANEL_NOICM;Bez správy farieb: sRGB výstup
 ICMPANEL_OUTPUTDLGLABEL;Vybrať výstupný ICC profil...
 ICMPANEL_OUTPUTPROFILE;Výstupný profil
-ICMPANEL_SAVEREFERENCE;Uložiť referenčný obrázok pre tvorbu profilu
+ICMPANEL_SAVEREFERENCE;Uložiť referen�?ný obrázok pre tvorbu profilu
 ICMPANEL_WORKINGPROFILE;Pracovný profil
 IMAGEAREA_DETAILVIEW;Zobrazenie detailov
 IPTCPANEL_AUTHORHINT;Meno tvorcu objektu, napr. pisateľa, fotografa alebo grafika (Meno autora).
@@ -267,8 +267,8 @@ IPTCPANEL_HEADLINEHINT;Publikovateľný vstup poskytujúci zhrnutie obsahu obrá
 IPTCPANEL_HEADLINE;Nadpis
 IPTCPANEL_INSTRUCTIONSHINT;Iné pokyny ohľadne použitia obrázka (Špeciálne pokyny).
 IPTCPANEL_INSTRUCTIONS;Pokyny
-IPTCPANEL_KEYWORDSHINT;Používa sa na indikáciu kľúčových slov.
-IPTCPANEL_KEYWORDS;Kľúčové slová
+IPTCPANEL_KEYWORDSHINT;Používa sa na indikáciu kľú�?ových slov.
+IPTCPANEL_KEYWORDS;Kľú�?ové slová
 IPTCPANEL_PASTEHINT;Prilepiť IPTC nastavenia zo schránky
 IPTCPANEL_PROVINCEHINT;Provincia/štát pôvodu obrázka (Provincia-štát).
 IPTCPANEL_PROVINCE;Provincia/štát
@@ -276,38 +276,38 @@ IPTCPANEL_RESETHINT;Resetovať na predvolené profilom
 IPTCPANEL_RESET;Resetovať
 IPTCPANEL_SOURCEHINT;Pôvodný vlastník intektuálneho obsahu obrázka (Zdroj).
 IPTCPANEL_SOURCE;Zdroj
-IPTCPANEL_SUPPCATEGORIESHINT;Ďalej upresňuje subjekt obrázka (Dodatočné kategórie).
-IPTCPANEL_SUPPCATEGORIES;Dodatočné kategórie
+IPTCPANEL_SUPPCATEGORIESHINT;Ďalej upresňuje subjekt obrázka (Dodato�?né kategórie).
+IPTCPANEL_SUPPCATEGORIES;Dodato�?né kategórie
 IPTCPANEL_TITLEHINT;Krátka referencia pre obrázok (Meno objektu).
 IPTCPANEL_TITLE;Názov
 IPTCPANEL_TRANSREFERENCEHINT;Kód reprezentujúci miesto pôvodného prenosu (Pôvodná referencia prenosu).
 IPTCPANEL_TRANSREFERENCE;Referencia prenosu
-MAIN_BUTTON_EXIT;Ukončiť
+MAIN_BUTTON_EXIT;Ukon�?iť
 MAIN_BUTTON_FULLSCREEN;Celá obrazovka
 MAIN_BUTTON_PREFERENCES;Predvoľby
 MAIN_BUTTON_PUTTOQUEUE;Vložiť do radu
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Pridať súčasný obrázok do radu na spracovanie <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Pridať sú�?asný obrázok do radu na spracovanie <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Vložiť do radu
 MAIN_BUTTON_SAVEAS;Ako...
 MAIN_BUTTON_SAVE;Uložiť obrázok
-MAIN_BUTTON_SAVE_TOOLTIP;Uložiť súčasný obrázok <b>Ctrl+S</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Uložiť sú�?asný obrázok <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Odoslať do editora
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Upraviť súčasný obrázok v externom editore <b>Ctrl+E</b>
-MAIN_BUTTON_UNFULLSCREEN;Ukončiť zobrazenie na celú obrazovku
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Upraviť sú�?asný obrázok v externom editore <b>Ctrl+E</b>
+MAIN_BUTTON_UNFULLSCREEN;Ukon�?iť zobrazenie na celú obrazovku
 MAIN_FRAME_BATCHQUEUE;Dávkový rad 
-MAIN_FRAME_FILEBROWSER;Prehliadač súborov 
+MAIN_FRAME_FILEBROWSER;Prehliada�? súborov 
 MAIN_FRAME_PLACES;Miesta
 MAIN_FRAME_PLACES_ADD;Pridať
 MAIN_FRAME_PLACES_DEL;Odstrániť
-MAIN_FRAME_RECENT;Nedávne priečinky 
+MAIN_FRAME_RECENT;Nedávne prie�?inky 
 MAIN_MSG_ALREADYEXISTS;Súbor už existuje.
-MAIN_MSG_CANNOTLOAD;Nemôžem načítať obrázok
+MAIN_MSG_CANNOTLOAD;Nemôžem na�?ítať obrázok
 MAIN_MSG_CANNOTSAVE;Chyba pri ukladaní súboru
 MAIN_MSG_CANNOTSTARTEDITOR;Nebolo možné spustiť editor.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Prosím, nastavte správnu cestu v dialógu "Predvoľby".
 MAIN_MSG_ERRORDURINGIMAGESAVING;Chyba pri ukladaní obrázka
-MAIN_MSG_EXITJOBSINQUEUEINFO;Nespracované obrázky v rade budú pri ukončení programu stratené.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Ste si istí, že chcete ukončiť program? V rade sú nespracované obrázky.
+MAIN_MSG_EXITJOBSINQUEUEINFO;Nespracované obrázky v rade budú pri ukon�?ení programu stratené.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;Ste si istí, že chcete ukon�?iť program? V rade sú nespracované obrázky.
 MAIN_MSG_JOBSINQUEUE;Úlohy v rade
 MAIN_MSG_NAVIGATOR;Navigátor
 MAIN_MSG_PLACES;Miesta
@@ -325,7 +325,7 @@ MAIN_TAB_METADATA;Metadáta
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transformácie
 MAIN_TOGGLE_BEFORE_AFTER;B|A
-MAIN_TOOLTIP_HIDEFP;Zobraziť/ukázať panel tlačidiel (prehliadač adresárov a súborov, shortcut key: F)
+MAIN_TOOLTIP_HIDEFP;Zobraziť/ukázať panel tla�?idiel (prehliada�? adresárov a súborov, shortcut key: F)
 MAIN_TOOLTIP_HIDEHP;Zobraziť/ukázať ľavý panel (vrátane histórie, shortcut key: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Indikácia orezania najvyšších svetiel
 MAIN_TOOLTIP_INDCLIPPEDS;Indikácia orezania tieňov
@@ -349,7 +349,7 @@ NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 PARTIALPASTE_BASICGROUP;Základné nastavenia
 PARTIALPASTE_CACORRECTION;Korekcia C/A
-PARTIALPASTE_COARSETRANS;90° otočenie/preklopenie
+PARTIALPASTE_COARSETRANS;90° oto�?enie/preklopenie
 PARTIALPASTE_COLORBOOST;Zosilnenie farieb
 PARTIALPASTE_COLORDENOISE;Farebné odšumenie
 PARTIALPASTE_COLORGROUP;Nastavenia súvisiace s farbou
@@ -357,7 +357,7 @@ PARTIALPASTE_COLORMIXER;Mixér farieb
 PARTIALPASTE_COLORSHIFT;Farebný posun
 PARTIALPASTE_COMPOSITIONGROUP;Nastavenia kompozície
 PARTIALPASTE_CROP;Orez
-PARTIALPASTE_DIALOGLABEL;Profil spracovania čiastočného vloženia
+PARTIALPASTE_DIALOGLABEL;Profil spracovania �?iasto�?ného vloženia
 PARTIALPASTE_DISTORTION;Korekcia skreslenia
 PARTIALPASTE_EXIFCHANGES;Zmeny v EXIF údajochChanges to exif data
 PARTIALPASTE_EXPOSURE;Expozícia
@@ -371,22 +371,22 @@ PARTIALPASTE_LUMADENOISE;Redukcia šumu v oblasti svietivosti
 PARTIALPASTE_LUMINANCEGROUP;Nastavenia súvisiace so svietivosťou
 PARTIALPASTE_METAICMGROUP;Nastavenia metadát/ICM
 PARTIALPASTE_RESIZE;Zmeniť veľkosť
-PARTIALPASTE_ROTATION;Otočenie
+PARTIALPASTE_ROTATION;Oto�?enie
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Tiene/Najvyššie svetlá
 PARTIALPASTE_SHARPENING;Doostrenie
 PARTIALPASTE_VIGNETTING;Korekcia vignetácie
 PARTIALPASTE_WHITEBALANCE;Vyváženie bielej
 PREFERENCES_ADD;Pridať
-PREFERENCES_APPLNEXTSTARTUP;Aplikovaný pri ďalšom spustení
+PREFERENCES_APPLNEXTSTARTUP;Aplikovaný pri �?alšom spustení
 PREFERENCES_BATCH_PROCESSING;dávkové spracovanie
 PREFERENCES_BEHAVIOR;Správanie sa
 PREFERENCES_BLINKCLIPPED;Blikať orezanými miestami
-PREFERENCES_CACHECLEARALL;Vyčistiť všetko
-PREFERENCES_CACHECLEARPROFILES;Vyčistiť profily
-PREFERENCES_CACHECLEARTHUMBS;Vyčistiť zmenšeniny
+PREFERENCES_CACHECLEARALL;Vy�?istiť všetko
+PREFERENCES_CACHECLEARPROFILES;Vy�?istiť profily
+PREFERENCES_CACHECLEARTHUMBS;Vy�?istiť zmenšeniny
 PREFERENCES_CACHEFORMAT1;Vlastné (rýchlejšie a kvalitnejšie)
 PREFERENCES_CACHEFORMAT2;JPEG (menšia veľkosť na disku)
-PREFERENCES_CACHEMAXENTRIES;Maximálny počet vstupov v cache
+PREFERENCES_CACHEMAXENTRIES;Maximálny po�?et vstupov v cache
 PREFERENCES_CACHEOPTS;Možnosti cache
 PREFERENCES_CACHESTRAT1;Uprednostniť rýchlosť pred malou spotrebou pamäte
 PREFERENCES_CACHESTRAT2;Uprednostniť malú spotrebu pamäte pred rýchlosťou
@@ -395,7 +395,7 @@ PREFERENCES_CACHETHUMBFORM;Formát zmenšenín pre cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximálna výška zmenšenín
 PREFERENCES_CLEARDLG_LINE1;Čistím cache
 PREFERENCES_CLEARDLG_LINE2;Môže to pár sekúnd trvať.
-PREFERENCES_CLEARDLG_TITLE;Prosím, čakajte.
+PREFERENCES_CLEARDLG_TITLE;Prosím, �?akajte.
 PREFERENCES_CLIPPINGIND;Indikácia orezu
 PREFERENCES_CMETRICINTENT;Kolorimetrický zámer
 PREFERENCES_DATEFORMATHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%y</b><i> : rok</i>\n<b>%m</b><i> : mesiac</i>\n<b>%d</b><i> : deň</i>\n<i>\nNapríklad, slovenský formát je:</i>\n<b>%d.%m.%y</b>
@@ -407,15 +407,15 @@ PREFERENCES_DIRHOME;Domovský adresár
 PREFERENCES_DIRLAST;Posledný navštívený adresár
 PREFERENCES_DIROTHER;Iný
 PREFERENCES_DIRSELECTDLG;Vybrať adresár s obrázkami pri spustení...
-PREFERENCES_DIRSOFTWARE;Inštalačný adresár
+PREFERENCES_DIRSOFTWARE;Inštala�?ný adresár
 PREFERENCES_EDITORCMDLINE;Iný príkazový riadok
 PREFERENCES_EDITORLAYOUT;Rozloženie editora
 PREFERENCES_EXTERNALEDITOR;Externý editor
-PREFERENCES_FBROWSEROPTS;Voľby prehliadača súborov
+PREFERENCES_FBROWSEROPTS;Voľby prehliada�?a súborov
 PREFERENCES_FILEFORMAT;Formát súborov
 PREFERENCES_FORIMAGE;Pre obrazové súbory
 PREFERENCES_FORRAW;Pre RAW súbory
-PREFERENCES_GIMPPATH;Inštalačný adresár GIMPu
+PREFERENCES_GIMPPATH;Inštala�?ný adresár GIMPu
 PREFERENCES_GTKTHEME;GTK predvolený
 PREFERENCES_HINT;Tip
 PREFERENCES_HLTHRESHOLD;Prah pre orezanie najvyšších svetiel
@@ -430,23 +430,23 @@ PREFERENCES_MONITORICC;Profil monitora
 PREFERENCES_MULTITAB;Režim viacerých kariet
 PREFERENCES_OUTDIRFOLDERHINT;Uložiť obrázky do vybraného adresára
 PREFERENCES_OUTDIRFOLDER;Uložiť do adresára
-PREFERENCES_OUTDIRHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nTieto formátovacie reťazce odkazujú na adresáre a časti cesty k raw súboru.\n\nNapríklad, ak bol </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>otvorený, význam formátovacích reťazcov je:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nAk chcete uložiť výstupný obraz tam, kde je originál, napíšte:\n</i><b>%p1/%f\n</b><i>\nAk chcete uložiť výstupný obraz v adresári 'converted' nachádzajúcom sa v adresári s originálom, napíšte:\n</i><b>%p1/converted/%f\n</b><i>\nAk chcete uložiť výstupný obraz v adresári '/home/tom/converted' pri zachovaní toho istého podadresára s dátumami, napíšte:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nTieto formátovacie reťazce odkazujú na adresáre a časti cesty k raw súboru.\n\nNapríklad, ak bol </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>otvorený, význam formátovacích reťazcov je:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nAk chcete uložiť výstupný obraz tam, kde je originál, napíšte:\n</i><b>%p1/%f\n</b><i>\nAk chcete uložiť výstupný obraz v adresári 'converted' nachádzajúcom sa v adresári s originálom, napíšte:\n</i><b>%p1/converted/%f\n</b><i>\nAk chcete uložiť výstupný obraz v adresári '/home/tom/converted' pri zachovaní toho istého podadresára s dátumami, napíšte:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nTieto formátovacie reťazce odkazujú na adresáre a �?asti cesty k raw súboru.\n\nNapríklad, ak bol </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>otvorený, význam formátovacích reťazcov je:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nAk chcete uložiť výstupný obraz tam, kde je originál, napíšte:\n</i><b>%p1/%f\n</b><i>\nAk chcete uložiť výstupný obraz v adresári 'converted' nachádzajúcom sa v adresári s originálom, napíšte:\n</i><b>%p1/converted/%f\n</b><i>\nAk chcete uložiť výstupný obraz v adresári '/home/tom/converted' pri zachovaní toho istého podadresára s dátumami, napíšte:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Môžete použiť nasledujúce formátovacie reťazce:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nTieto formátovacie reťazce odkazujú na adresáre a �?asti cesty k raw súboru.\n\nNapríklad, ak bol </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>otvorený, význam formátovacích reťazcov je:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nAk chcete uložiť výstupný obraz tam, kde je originál, napíšte:\n</i><b>%p1/%f\n</b><i>\nAk chcete uložiť výstupný obraz v adresári 'converted' nachádzajúcom sa v adresári s originálom, napíšte:\n</i><b>%p1/converted/%f\n</b><i>\nAk chcete uložiť výstupný obraz v adresári '/home/tom/converted' pri zachovaní toho istého podadresára s dátumami, napíšte:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Použiť šablónu
 PREFERENCES_OUTDIR;Výstupný adresár
 PREFERENCES_OVERLAY_FILENAMES;Prekryť mená súborov cez zmenšeniny
-PREFERENCES_PARSEDEXTADDHINT;Napíšte príponu a stlačte tento gombík pre pripojenie k zoznamu
+PREFERENCES_PARSEDEXTADDHINT;Napíšte príponu a stla�?te tento gombík pre pripojenie k zoznamu
 PREFERENCES_PARSEDEXTADD;Pridať príponu
 PREFERENCES_PARSEDEXTDELHINT;Odstrániť vybranú príponu zo zoznamu
 PREFERENCES_PARSEDEXT;Spracúvané prípony
 PREFERENCES_PROFILEHANDLING;Zaobchádzanie s profilom spracovania
-PREFERENCES_PROFILELOADPR;Priorita načítavania profilu
+PREFERENCES_PROFILELOADPR;Priorita na�?ítavania profilu
 PREFERENCES_PROFILEPRCACHE;Profil v cache
 PREFERENCES_PROFILEPRFILE;Profil pri vstupnom súbore
 PREFERENCES_PROFILESAVECACHE;Uložiť parametre spracovania do cache
 PREFERENCES_PROFILESAVEINPUT;Uložiť parametre spracovania k vstupnému súboru
 PREFERENCES_PROPERTY;Vlastnosť
-PREFERENCES_PSPATH;Inštalačný adresár Adobe Photoshop
+PREFERENCES_PSPATH;Inštala�?ný adresár Adobe Photoshop
 PREFERENCES_SELECTFONT;Vybrať písmo
 PREFERENCES_SELECTICCDIRDLG;Vybrať adresár s ICC profilmi...
 PREFERENCES_SELECTLANG;Vybrať si jazyk
@@ -454,12 +454,12 @@ PREFERENCES_SELECTMONITORPROFDLG;Vybrať ICC profil monitora...
 PREFERENCES_SELECTTHEME;Vybrať vzhľad
 PREFERENCES_SET;Nastaviť
 PREFERENCES_SHOWBASICEXIF;Zobrazovať základné EXIF informácie
-PREFERENCES_SHOWDATETIME;Ukázovať dátum a čas
+PREFERENCES_SHOWDATETIME;Ukázovať dátum a �?as
 PREFERENCES_SHOWONLYRAW;Ukazovať len RAW súbory
 PREFERENCES_SHTHRESHOLD;Prah pre orezané tiene
 PREFERENCES_SINGLETAB;Režim jednej karty
 PREFERENCES_STARTUPIMDIR;Adresár s obrázkami pri spustení
-PREFERENCES_TAB_BROWSER;Prehliadač súborov
+PREFERENCES_TAB_BROWSER;Prehliada�? súborov
 PREFERENCES_TAB_COLORMGR;Správa farieb
 PREFERENCES_TAB_GENERAL;Všeobecné
 PREFERENCES_TAB_IMPROC;Spracovanie obrazu
@@ -470,20 +470,20 @@ PREFERENCES_WORKFLOW;Tok práce
 PROFILEPANEL_FILEDLGFILTERANY;Všetky súbory
 PROFILEPANEL_FILEDLGFILTERPP;Profily spracovania
 PROFILEPANEL_LABEL;Profily spracovania
-PROFILEPANEL_LOADDLGLABEL;Načítať parametre spracovania...
+PROFILEPANEL_LOADDLGLABEL;Na�?ítať parametre spracovania...
 PROFILEPANEL_PCUSTOM;Vlastné
 PROFILEPANEL_PFILE;Zo súboru
 PROFILEPANEL_PLASTPHOTO;Posledná fotka
 PROFILEPANEL_PLASTSAVED;Posledné uložené
 PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Uložiť parametre spracovania...
-PROFILEPANEL_TOOLTIPCOPY;Kopírovať súčasný profil do schránky
-PROFILEPANEL_TOOLTIPLOAD;Načítať profil zo súboru
+PROFILEPANEL_TOOLTIPCOPY;Kopírovať sú�?asný profil do schránky
+PROFILEPANEL_TOOLTIPLOAD;Na�?ítať profil zo súboru
 PROFILEPANEL_TOOLTIPPASTE;Vložiť profil zo schránky
-PROFILEPANEL_TOOLTIPSAVE;Uložiť súčasný profil
+PROFILEPANEL_TOOLTIPSAVE;Uložiť sú�?asný profil
 PROGRESSBAR_DECODING;Dekódujem raw súbor...
 PROGRESSBAR_DEMOSAICING;Demozaikujem...
-PROGRESSBAR_LOADING;Načítavam obrázok...
+PROGRESSBAR_LOADING;Na�?ítavam obrázok...
 PROGRESSBAR_LOADJPEG;Ukladám JPEG súbor...
 PROGRESSBAR_LOADPNG;Ukladám PNG súbor...
 PROGRESSBAR_LOADTIFF;Ukladám TIFF súbor...
@@ -492,9 +492,9 @@ PROGRESSBAR_READY;Pripravený.
 PROGRESSBAR_SAVEJPEG;Ukladám JPEG súbor...
 PROGRESSBAR_SAVEPNG;Ukladám PNG súbor...
 PROGRESSBAR_SAVETIFF;Ukladám TIFF súbor...
-PROGRESSDLG_LOADING;Načítava sa súbor...
+PROGRESSDLG_LOADING;Na�?ítava sa súbor...
 PROGRESSDLG_PROCESSING;Spracúva sa obrázok...
-PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil zmenený v prehliadači
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil zmenený v prehliada�?i
 PROGRESSDLG_SAVING;Ukladá sa súbor...
 QINFO_FOCALLENGTH;Ohnisková vzdialenosť
 QINFO_ISO;ISO
@@ -506,7 +506,7 @@ SAVEDLG_JPEGQUAL;JPEG Kvalita
 SAVEDLG_JPGFILTER;JPEG súbory
 SAVEDLG_PNGCOMPR;PNG Kompresia
 SAVEDLG_PNGFILTER;PNG súbory
-SAVEDLG_PUTTOQUEUEHEAD;Presunúť na čelo radu na spracovanie
+SAVEDLG_PUTTOQUEUEHEAD;Presunúť na �?elo radu na spracovanie
 SAVEDLG_PUTTOQUEUETAIL;Presunúť na koniec radu na spracovanie
 SAVEDLG_PUTTOQUEUE;Vložiť do radu na spracovanie
 SAVEDLG_SAVEIMMEDIATELY;Uložiť okamžite
@@ -515,7 +515,7 @@ SAVEDLG_TIFFFILTER;TIFF súbory
 SAVEDLG_TIFFUNCOMPRESSED;Nekomprimovaný TIFF
 TOOLBAR_TOOLTIP_CROP;Orezanie výberu (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;Nástroj ruka (shortcut key: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Výber rovnej čiary (shortcut key: S)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Výber rovnej �?iary (shortcut key: S)
 TOOLBAR_TOOLTIP_WB;Bodové vyváženie bielej (shortcut key: W)
 TP_CACORRECTION_BLUE;Modrá
 TP_CACORRECTION_LABEL;Korekcia chromatickej aberácie
@@ -526,8 +526,8 @@ TP_CHMIXER_LABEL;Mixér kanálov
 TP_CHMIXER_RED;Červená
 TP_COARSETRAF_DEGREE;stupeň:
 TP_COARSETRAF_TOOLTIP_HFLIP;Prevrátiť horizontálne
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočiť doľava
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Otočiť doprava
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Oto�?iť doľava
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Oto�?iť doprava
 TP_COARSETRAF_TOOLTIP_VFLIP;Prevrátiť vertikálne
 TP_COLORBOOST_ACHANNEL;Kanál "a"
 TP_COLORBOOST_AMOUNT;Množstvo
@@ -566,7 +566,7 @@ TP_DIRPYRDENOISE_CHROMA;Farebnosť
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Redukcia šumu pomocou smerovej pyramídy
 TP_DIRPYRDENOISE_LUMA;Svietivosť
-TP_DIRPYREQUALIZER_LABEL;Vyrovnávač smerovej pyramídy
+TP_DIRPYREQUALIZER_LABEL;Vyrovnáva�? smerovej pyramídy
 TP_DIRPYREQUALIZER_LUMACOARSEST;Najhrubšie
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+
@@ -578,7 +578,7 @@ TP_DISTORTION_LABEL;Zakrivenie
 TP_EQUALIZER_CONTRAST_MINUS;Kontrast-
 TP_EQUALIZER_CONTRAST_PLUS;Kontrast+
 TP_EQUALIZER_FINEST;najjemnejšie
-TP_EQUALIZER_LABEL;Vyrovnávač vlnky
+TP_EQUALIZER_LABEL;Vyrovnáva�? vlnky
 TP_EQUALIZER_LARGEST;najhrubšie
 TP_EQUALIZER_NEUTRAL;Neutrálne
 TP_EXPOSURE_AUTOLEVELS;Auto úrovne
@@ -608,7 +608,7 @@ TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Bez správy farieb: sRGB výstup
 TP_ICM_OUTPUTDLGLABEL;Vybrať výstupný ICC profil...
 TP_ICM_OUTPUTPROFILE;Výstupný profil
-TP_ICM_SAVEREFERENCE;Uložiť referenčný obrázok pre tvorbu profilu
+TP_ICM_SAVEREFERENCE;Uložiť referen�?ný obrázok pre tvorbu profilu
 TP_ICM_WORKINGPROFILE;Pracovný profil
 TP_IMPULSEDENOISE_LABEL;Impulzná redukcia šumu
 TP_IMPULSEDENOISE_THRESH;Prah
@@ -638,10 +638,10 @@ TP_PREPROCESS_HOTDEADPIXFILT;Použiť filter na horúce/mŕtve pixely
 TP_PREPROCESS_LINEDENOISE;Filter šumu vedenia
 TP_RAWCACORR_AUTO;Použiť automatickú úpravu CA
 TP_RAW_DCBENHANCE;Použiť vylepšovací krok DCB
-TP_RAW_DCBITERATIONS;Počet iterácií DCB
+TP_RAW_DCBITERATIONS;Po�?et iterácií DCB
 TP_RAW_DMETHODBATCH;Dávka
 TP_RAW_DMETHOD;Metóda
-TP_RAW_FALSECOLOR;Kroky potlačenia chybných farieb
+TP_RAW_FALSECOLOR;Kroky potla�?enia chybných farieb
 TP_RESIZE_BICUBICSF;Bikubická (Mäkšia)
 TP_RESIZE_BICUBICSH;Bikubická (Ostrejšia)
 TP_RESIZE_BICUBIC;Bikubická
@@ -661,8 +661,8 @@ TP_RESIZE_W;Š:
 TP_ROTATE_AUTOCROP;Automatické orezanie
 TP_ROTATE_DEGREE;Stupeň
 TP_ROTATE_FILL;Výplň
-TP_ROTATE_LABEL;Otočiť
-TP_ROTATE_SELECTLINE;Vybrať rovnú čiaru
+TP_ROTATE_LABEL;Oto�?iť
+TP_ROTATE_SELECTLINE;Vybrať rovnú �?iaru
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Najvyššie svetlá
 TP_SHADOWSHLIGHTS_HLTONALW;Tonálna šírka
 TP_SHADOWSHLIGHTS_LABEL;Tiene/Najvyššie svetlá
@@ -711,21 +711,20 @@ ZOOMPANEL_ZOOMFITSCREEN;Prispôsobiť obrazovke <b>F</b>
 ZOOMPANEL_ZOOMIN;Priblížiť <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 
-#00 Slovenčina
+#00 Sloven�?ina
 #01 08.05.2008
 #02 01.02.2009
 #03 23.10.2010
 #04 (Slapo)
 
-
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-
 !ABOUT_TAB_BUILD;Version
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
+!ABOUT_TAB_RELEASENOTES;Release Notes
 !ABOUT_TAB_SPLASH;Splash
 !CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_CURVE;Curve
@@ -733,19 +732,46 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !CURVEEDITOR_TOOLTIPCOPY;Copy current curve to clipboard
 !CURVEEDITOR_TOOLTIPPASTE;Paste curve from clipboard
 !EDITWINDOW_TITLE;Image Edit
+!EXIFFILTER_EXPOSURECOMPENSATION;Exposure Compensation (EV)
 !EXIFFILTER_FILETYPE;File Type
+!EXPORT_BYPASS_ALL;Select / Unselect All
+!EXPORT_BYPASS_COLORDENOISE;Bypass Color denoise
+!EXPORT_BYPASS_DEFRINGE;Bypass Defringe
+!EXPORT_BYPASS_DIRPYRDENOISE;Bypass Noise Reduction
+!EXPORT_BYPASS_DIRPYREQUALIZER;Bypass Contrast by Detail Levels
+!EXPORT_BYPASS_LUMADENOISE;Bypass Luma denoise
+!EXPORT_BYPASS_RAW_ALL_ENHANCE;Bypass Post Demosaic Artifact/Noise Reduction
+!EXPORT_BYPASS_RAW_CA;Bypass [raw] Chromatic Aberration Correction
+!EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
+!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
+!EXPORT_BYPASS_RAW_DCB_ITERATIONS;Bypass [raw] DCB Iterations
+!EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
+!EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
+!EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
+!EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
+!EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
+!EXPORT_BYPASS_SHARPENING;Bypass Sharpening
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+!EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
+!EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
+!EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
+!EXPORT_MAXHEIGHT;Maximum Height: 
+!EXPORT_MAXWIDTH;Maximum Width:  
+!EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
+!EXPORT_RAW_DMETHOD;Demosaic Method
+!EXPORT_RESIZEMETHOD;Resize Method
 !FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
-!FILEBROWSER_AUTODARKFRAME;Auto dark frame
-!FILEBROWSER_AUTOFLATFIELD;Auto flat field
+!FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
+!FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type path to browsen<b>Ctrl-o</b> set focusn<b>Enter</b>, <b>Ctrl-Enter</b> (in File Browser) to browse;nPath shortcuts:n  <b>~</b> - user's home directoryn  <b>!</b> - user's pictures directory
+!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> (in the File Browser) to browse there;\n\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_DARKFRAME;Dark frame
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a Queue processed version?
-!FILEBROWSER_EXEC_CPB;Run custom profile builder
-!FILEBROWSER_FLATFIELD;Flat field
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a queue-processed version?
+!FILEBROWSER_EXEC_CPB;Run Custom Profile Builder
+!FILEBROWSER_FLATFIELD;Flat Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
@@ -758,39 +784,40 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !FILEBROWSER_POPUPCOPYTO;Copy to...
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
+!FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 !FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-!FILEBROWSER_QUERYHINT;Type a part of filename to search by n<b>Ctrl-f</b> set focus (in File Browser);n<b>Enter</b> to find
+!FILEBROWSER_QUERYHINT;Type a partial filename to search for.\n<b>Ctrl-F</b> to focus the Find text box (in the File Browser).\n<b>Enter</b> to commence search.
 !FILEBROWSER_QUERYLABEL; Find:
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
-!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red <b>Alt-1</b>
-!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yelow <b>Alt-2</b>
-!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green <b>Alt-3</b>
-!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue <b>Alt-4</b>
-!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple <b>Alt-5</b>
-!FILEBROWSER_SHOWEDITEDHINT;Show edited images <b>7</b>
-!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images <b>6</b>
-!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved  <b>Alt-7</b>
-!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved <b>Alt-6</b>
-!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label <b>Alt-`</b>
+!FILEBROWSER_SHOWCOLORLABEL1HINT;Show images labeled Red.\nShortcut: <b>Alt-1</b>
+!FILEBROWSER_SHOWCOLORLABEL2HINT;Show images labeled Yellow.\nShortcut: <b>Alt-2</b>
+!FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green.\nShortcut: <b>Alt-3</b>
+!FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue.\nShortcut: <b>Alt-4</b>
+!FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
+!FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
+!FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved.\nShortcut: <b>Alt-7</b>
+!FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved.\nShortcut: <b>Alt-6</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
 !GENERAL_FILE;File
 !GENERAL_NONE;None
 !HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_RAW;Raw
-!HISTOGRAM_TOOLTIP_BAR;Show/Hide RBG indicator barnClick right mouse button on image preview to freeze/unfreeze
+!HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
-!HISTORY_MSG_88;Impulse NR threshold
-!HISTORY_MSG_93;Contrast by detail levels value
-!HISTORY_MSG_94;Contrast by detail levels
+!HISTORY_MSG_88;Impulse NR Threshold
+!HISTORY_MSG_93;Contrast by Detail Levels Value
+!HISTORY_MSG_94;Contrast by Detail Levels
 !HISTORY_MSG_95;Saturation
-!HISTORY_MSG_96;'a' curve
-!HISTORY_MSG_97;'b' curve
-!HISTORY_MSG_98;Demosaicing method
-!HISTORY_MSG_99;Hot/dead pixel filtering
-!HISTORY_MSG_100;RGB saturation
+!HISTORY_MSG_96;'a' Curve
+!HISTORY_MSG_97;'b' Curve
+!HISTORY_MSG_98;Demosaicing Method
+!HISTORY_MSG_99;Hot/Dead Pixel Filter
+!HISTORY_MSG_100;RGB Saturation
 !HISTORY_MSG_101;HSV EQ -- Hue
 !HISTORY_MSG_102;HSV EQ -- Saturation
 !HISTORY_MSG_103;HSV EQ -- Value
@@ -799,23 +826,23 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_106;Defringing Radius
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
-!HISTORY_MSG_109;Resize bounding box
-!HISTORY_MSG_110;Resizing applies to  
+!HISTORY_MSG_109;Resize Bounding Box
+!HISTORY_MSG_110;Resizing applies o  
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
 !HISTORY_MSG_114;DCB Iterations
-!HISTORY_MSG_115;False color iterations
+!HISTORY_MSG_115;False Color Iterations
 !HISTORY_MSG_116;Enhanced DCB
-!HISTORY_MSG_117;Red CA correction
-!HISTORY_MSG_118;Blue CA correction
-!HISTORY_MSG_119;Line denoise
-!HISTORY_MSG_120;Green equil. threshold
+!HISTORY_MSG_117;Red CA Correction
+!HISTORY_MSG_118;Blue CA Correction
+!HISTORY_MSG_119;Line Denoise
+!HISTORY_MSG_120;Green Equil. Threshold
 !HISTORY_MSG_121;Auto CA
 !HISTORY_MSG_122;Auto Dark Frame
 !HISTORY_MSG_123;Dark Frame File
-!HISTORY_MSG_124;Linear exp. correction
-!HISTORY_MSG_125;Expo. correction preserving HL
+!HISTORY_MSG_124;Linear Exp. Correction
+!HISTORY_MSG_125;Exp. Correction Preserving HL
 !HISTORY_MSG_126;Flat Field File
 !HISTORY_MSG_127;Flat Field Auto Select
 !HISTORY_MSG_128;Flat Field Blur Radius
@@ -827,20 +854,20 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_134;Gamma Position
 !HISTORY_MSG_135;Gamma Free
 !HISTORY_MSG_136;Gamma Slope
-!HISTORY_MSG_137;Black level green 1
-!HISTORY_MSG_138;Black level red
-!HISTORY_MSG_139;Black level blue
-!HISTORY_MSG_140;Black level green 2
-!HISTORY_MSG_141;Black level green together
-!HISTORY_MSG_142;Edges sharpening - iterations
-!HISTORY_MSG_143;Edges sharpening - quantity
-!HISTORY_MSG_144;Microcontrast - quantity
-!HISTORY_MSG_145;Microcontrast - uniformity
+!HISTORY_MSG_137;Black Level Green 1
+!HISTORY_MSG_138;Black Level Red
+!HISTORY_MSG_139;Black Level Blue
+!HISTORY_MSG_140;Black Level Green 2
+!HISTORY_MSG_141;Black Level Green Together
+!HISTORY_MSG_142;Edges Sharpening - Iterations
+!HISTORY_MSG_143;Edges Sharpening - Quantity
+!HISTORY_MSG_144;Microcontrast - Quantity
+!HISTORY_MSG_145;Microcontrast - Uniformity
 !HISTORY_MSG_146;Edges Sharpening
-!HISTORY_MSG_147;Edges sharpening - luminance only
+!HISTORY_MSG_147;Edges Sharpening - Luminance Only
 !HISTORY_MSG_148;Microcontrast
-!HISTORY_MSG_149;Microcontrast - 3x3 matrix
-!HISTORY_MSG_150;Post demosaic artifact/noise reduction
+!HISTORY_MSG_149;Microcontrast - 3x3 Matrix
+!HISTORY_MSG_150;Post Demosaic Artifact/Noise Reduction
 !HISTORY_MSG_151;Vibrance
 !HISTORY_MSG_152;Vibrance - Pastel tones
 !HISTORY_MSG_153;Vibrance - Saturated tones
@@ -849,27 +876,38 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 !HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
 !HISTORY_MSG_158;Strength
-!HISTORY_MSG_159;Edge stopping
+!HISTORY_MSG_159;Edge Stopping
 !HISTORY_MSG_160;Scale
-!HISTORY_MSG_161;Reweighting iterates
+!HISTORY_MSG_161;Reweighting Iterates
 !HISTORY_MSG_162;Tone Mapping
-!MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels <b>m</b>
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue  <b>Ctrl-F3</b> 
+!HISTORY_MSG_163;RGB Curves - R
+!HISTORY_MSG_164;RGB Curves - G
+!HISTORY_MSG_165;RGB Curves - B
+!HISTORY_MSG_166;Neutral Levels
+!MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b> 
 !MAIN_FRAME_EDITOR;Editor 
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b> 
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser  <b>Ctrl-F2</b> 
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b> 
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b> 
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
-!MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
-!MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
-!MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
-!MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
+!MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
+!MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
+!MAIN_TAB_EXPORT; Export 
+!MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
+!MAIN_TAB_METADATA_TOOLTIP;Shortcut: <b>Alt-M</b>
 !MAIN_TAB_RAW;Raw
-!MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
-!MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
-!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> viewnn<b>Lock</b>: keep the <b>Before</b> view unchanged - nuseful to evaluate the cumulative effect of multiple tools.nAdditionally, comparison can be made to any state in the Historynn<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view 1 step behind, showing image before the effect of the currently used tool
-!MAIN_TOOLTIP_SHOWHIDELP1;Show/hide the left panel <b>l</b>
-!MAIN_TOOLTIP_SHOWHIDERP1;Show/hide the right panel <b>Alt-l</b>
-!MAIN_TOOLTIP_SHOWHIDETP1;Show/hide the top panel <b>Shift-l</b>
+!MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-R</b>
+!MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-T</b>
+!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
+!MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
+!MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
+!MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
+!MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
+!MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
+!MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-L</b>
+!MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-L</b>
+!MAIN_TOOLTIP_THRESHOLD;Threshold
 !NAVIGATOR_LAB_A_NA;A = n/a
 !NAVIGATOR_LAB_A_VALUE;A = %1
 !NAVIGATOR_LAB_B_NA;B = n/a
@@ -912,12 +950,13 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic Method
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
+!PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.nReceives command line params to allow a rules based .pp3 generation:n[Path RAW/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path raw/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
 !PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
@@ -946,6 +985,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 !PREFERENCES_PANFACTORFRAME;Pan rate amplification
 !PREFERENCES_PANFACTORLABEL;Factor
+!PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 !PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
 !PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
 !PREFERENCES_SLIMUI;Slim interface
@@ -959,6 +999,10 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
+!PROFILEPANEL_COPYPPASTE;Parameters to copy
+!PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
 !PROGRESSBAR_DARKFRAME;Darkframe... 
@@ -966,6 +1010,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
+!TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTGRID;Grid
 !TP_CROP_PPI;PPI=
 !TP_DARKFRAME_AUTOSELECT;Auto selection
@@ -981,6 +1026,8 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_EPD_SCALE;Scale
 !TP_EPD_STRENGTH;Strength
 !TP_EXPOSCORR_LABEL;Raw white-black point
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
+!TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
 !TP_EXPO_AFTER; After interpolation (before RGB conversion)
@@ -997,14 +1044,6 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_GAMMA_OUTPUT;Output gamma
 !TP_GAMMA_SLOP;slope (linear)
 !TP_HLREC_BLEND;Blend
-!TP_HSVEQUALIZER1;Red
-!TP_HSVEQUALIZER2;Yellow
-!TP_HSVEQUALIZER3;Lime
-!TP_HSVEQUALIZER4;Green
-!TP_HSVEQUALIZER5;Aqua
-!TP_HSVEQUALIZER6;Blue
-!TP_HSVEQUALIZER7;Purple
-!TP_HSVEQUALIZER8;Magenta
 !TP_HSVEQUALIZER_CHANNEL;HSV Channel
 !TP_HSVEQUALIZER_HUE;H
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
@@ -1013,16 +1052,19 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
-!TP_ICM_INPUTCAMERAICC;Camera standard or ICC
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapees default ICC color profile. More precise than simple matrix, but only available for some cameras.
-!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple default color matrix by DCRAW or embedded in DNG
-!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own ICC color profile file for the camera
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific profile
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
+!TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by dcraw, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
+!TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera
 !TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
-!TP_ICM_INPUTNONE_TOOLTIP;Use no color profile at all. Use only in special cases.
+!TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
 !TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 !TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
 !TP_LABCURVE_SATLIMIT;Saturation limit
+!TP_NEUTRAL;Neutral
+!TP_NEUTRAL_TIP;Reset exposure controls to neutral values
+!TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
 !TP_PREPROCESS_LABEL;Preprocessing
 !TP_PREPROCESS_NO_FOUND;None found
 !TP_RAWCACORR_CABLUE;Blue
@@ -1042,6 +1084,11 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RESIZE_FITBOX;Bounding box
 !TP_RESIZE_FULLIMAGE;Full image
 !TP_RESIZE_LANCZOS;Lanczos
+!TP_RGBCURVES_BLUE;B
+!TP_RGBCURVES_CHANNEL;Channel
+!TP_RGBCURVES_GREEN;G
+!TP_RGBCURVES_LABEL;RGB Curves
+!TP_RGBCURVES_RED;R
 !TP_SHARPENEDGE_AMOUNT;Quantity
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations
@@ -1061,3 +1108,35 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_VIGNETTING_CENTER_X;Center X
 !TP_VIGNETTING_CENTER_Y;Center Y
 !TP_VIGNETTING_STRENGTH;Strength
+!TP_WBALANCE_CLOUDY;Cloudy
+!TP_WBALANCE_DAYLIGHT;Daylight (sunny)
+!TP_WBALANCE_FLASH55;Leica
+!TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
+!TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+!TP_WBALANCE_FLASH_HEADER;Flash
+!TP_WBALANCE_FLUO1;F1 - Daylight
+!TP_WBALANCE_FLUO2;F2 - Cool white
+!TP_WBALANCE_FLUO3;F3 - White
+!TP_WBALANCE_FLUO4;F4 - Warm white
+!TP_WBALANCE_FLUO5;F5 - Daylight
+!TP_WBALANCE_FLUO6;F6 - Lite white
+!TP_WBALANCE_FLUO7;F7 - D65 Daylight simulator
+!TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
+!TP_WBALANCE_FLUO9;F9 - Cool white deluxe
+!TP_WBALANCE_FLUO10;F10 - Philips TL85
+!TP_WBALANCE_FLUO11;F11 - Philips TL84
+!TP_WBALANCE_FLUO12;F12 - Philips TL83
+!TP_WBALANCE_FLUO_HEADER;Fluorescent
+!TP_WBALANCE_GTI;GTI
+!TP_WBALANCE_HMI;HMI
+!TP_WBALANCE_JUDGEIII;JudgeIII
+!TP_WBALANCE_LAMP_HEADER;Lamp
+!TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+!TP_WBALANCE_LED_HEADER;LED
+!TP_WBALANCE_LED_LSI;LSI Lumelex 2040
+!TP_WBALANCE_SHADE;Shade
+!TP_WBALANCE_SOLUX35;Solux 3500K
+!TP_WBALANCE_SOLUX41;Solux 4100K
+!TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+!TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
+!TP_WBALANCE_TUNGSTEN;Tungsten

@@ -16,9 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <filethumbnailbuttonset.h>
-#include <multilangmgr.h>
-#include <safegtk.h>
+#include "filethumbnailbuttonset.h"
+#include "multilangmgr.h"
+#include "../rtengine/safegtk.h"
 
 extern Glib::ustring argv0;
 
@@ -85,7 +85,7 @@ void FileThumbnailButtonSet::setColorLabel (int colorLabel) {
 	if (colorLabel==3) buttons[8]->setIcon (colorLabelIcon_3);
 	if (colorLabel==4) buttons[8]->setIcon (colorLabelIcon_4);
 	if (colorLabel==5) buttons[8]->setIcon (colorLabelIcon_5);
-	if(colorLabel<options.colorLabels.size() )
+	if (colorLabel<options.colorLabels.size() )
 	   buttons[8]->setToolTip( options.colorLabels[colorLabel] );
 }
 

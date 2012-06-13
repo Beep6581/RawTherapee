@@ -16,13 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <cachemanager.h>
-#include <options.h>
+#include "cachemanager.h"
+#include "options.h"
 #include <glib/gstdio.h>
 #include <giomm.h>
-#include <guiutils.h>
-#include <procparamchangers.h>
-#include <safegtk.h>
+#include "guiutils.h"
+#include "procparamchangers.h"
+#include "../rtengine/safegtk.h"
 #ifdef WIN32
 #include <windows.h>
 #endif

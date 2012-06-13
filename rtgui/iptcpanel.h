@@ -20,9 +20,9 @@
 #define _IPTCPANEL_
 
 #include <gtkmm.h>
-#include <toolpanel.h>
-#include <guiutils.h>
-#include <iptcmeta.h>
+#include "toolpanel.h"
+#include "guiutils.h"
+#include "iptcmeta.h"
 
 /*class IPTCSectionTitle{
 
@@ -117,6 +117,11 @@ public:
 class IPTCPanel : public Gtk::VBox, public ToolPanel {
 
     private:
+    /*
+        rtengine::procparams::IPTCPairs changeList;
+        rtengine::procparams::IPTCPairs defChangeList;
+        rtengine::procparams::IPTCPairs embeddedData;
+     */
 	    const rtengine::ImageMetaData* idata;
         rtengine::MetadataList chgList;
         

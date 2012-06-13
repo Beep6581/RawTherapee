@@ -23,12 +23,12 @@
 ////////////////////////////////////////////////////////////////
 #define TS 256	 // Tile size
 
-#include <math.h>
-#include <stdlib.h>
-#include <time.h>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 
-#define SQR(x) ((x)*(x))
+#include "rt_math.h"
 
 
 //void green_equilibrate()//for dcraw implementation
@@ -47,9 +47,6 @@ void RawImageSource::green_equilibrate(float thresh)
 	//int verbose=1;
 	
 	static const float eps=1.0;	//tolerance to avoid dividing by zero
-	
-	static const float diffthresh=0.25; //threshold for texture, not to be equilibrated
-	
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	

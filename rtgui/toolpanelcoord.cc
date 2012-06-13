@@ -16,18 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <multilangmgr.h>
-#include <toolpanelcoord.h>
-#include <ilabel.h>
-#include <options.h>
-#include <imagesource.h>
-#include <dfmanager.h>
-#include <ffmanager.h>
-#include <improcfun.h>
-#include <procevents.h>
-#include <refreshmap.h>
-#include <guiutils.h>
-#include <rtimage.h>
+#include "multilangmgr.h"
+#include "toolpanelcoord.h"
+#include "ilabel.h"
+#include "options.h"
+#include "../rtengine/imagesource.h"
+#include "../rtengine/dfmanager.h"
+#include "../rtengine/ffmanager.h"
+#include "../rtengine/improcfun.h"
+#include "../rtengine/procevents.h"
+#include "../rtengine/refreshmap.h"
+#include "guiutils.h"
+#include "rtimage.h"
 
 using namespace rtengine::procparams;
 
@@ -50,6 +50,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     sharpenEdge         = Gtk::manage (new SharpenEdge ());
     sharpenMicro        = Gtk::manage (new SharpenMicro ());
     lcurve              = Gtk::manage (new LCurve ());
+    rgbcurves           = Gtk::manage (new RGBCurves ());
     lensgeom            = Gtk::manage (new LensGeometry ());
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
@@ -84,6 +85,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (detailsPanel, sharpenEdge,        M("TP_SHARPENEDGE_LABEL"));    toolPanels.push_back (sharpenEdge);
     addPanel (detailsPanel, sharpenMicro,       M("TP_SHARPENMICRO_LABEL"));   toolPanels.push_back (sharpenMicro);
     addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
+    addPanel (colorPanel, rgbcurves,            M("TP_RGBCURVES_LABEL"));      toolPanels.push_back (rgbcurves);
     addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));  toolPanels.push_back (edgePreservingDecompositionUI);
     addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
     addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
@@ -181,7 +183,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 	toolPanelNotebook->show_all ();
     toolPanelNotebook->set_current_page (0);
 
-    for (int i=0; i<toolPanels.size(); i++)
+    for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->setListener (this);
 
     whitebalance->setWBProvider (this);
@@ -228,7 +230,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
     int changeFlags=refreshmap[(int)event];
 
     ProcParams* params = ipc->beginUpdateParams ();
-    for (int i=0; i<toolPanels.size(); i++)
+    for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (params);
 
     // Compensate rotation on flip
@@ -264,30 +266,44 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
 
     hasChanged = true;
 
-    for (int i=0; i<paramcListeners.size(); i++)
+    for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->procParamsChanged (params, event, descr);
 }
 
-void ToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
+void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
 
 	int fw, fh, tr;
 
     if (!ipc) return;
     ProcParams *params = ipc->beginUpdateParams ();
+    ProcParams *mergedParams = new ProcParams();
+
+    // Copy the current params as default values for the fusion
+    *mergedParams = *params;
+
+    // Reset IPTC values when switching procparams from the History
+    if (event == rtengine::EvHistoryBrowsed) {
+        mergedParams->iptc.clear();
+        mergedParams->exif.clear();
+    }
+
+    // And apply the partial profile nparams to mergedParams
+    nparams->applyTo(mergedParams);
 
     // Derive the effective changes, if it's a profile change, to prevent slow RAW rerendering if not necessary
     bool filterRawRefresh=false;
     if (event!=rtengine::EvPhotoLoaded) {
         ParamsEdited pe;
         std::vector<rtengine::procparams::ProcParams> lParams(2);
-        lParams[0]=*params; lParams[1]=*nparams;
+        lParams[0]=*params; lParams[1]=*mergedParams;
         pe.set(true);
         pe.initFrom (lParams);
 
         filterRawRefresh=pe.raw.isUnchanged();
     }
 
-    *params = *nparams;
+    *params = *mergedParams;
+    delete mergedParams;
 
     tr = TR_NONE;
     if (params->coarse.rotate==90)  tr |= TR_R90;
@@ -311,14 +327,14 @@ void ToolPanelCoordinator::profileChange  (const ProcParams *nparams, rtengine::
 
     hasChanged = event != rtengine::EvProfileChangeNotification;
 
-    for (int i=0; i<paramcListeners.size(); i++)
+    for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->procParamsChanged (params, event, descr);
 }
 
 void ToolPanelCoordinator::setDefaults (ProcParams* defparams) {
 
     if (defparams)
-        for (int i=0; i<toolPanels.size(); i++) 
+	    for (size_t i=0; i<toolPanels.size(); i++)
             toolPanels[i]->setDefaults (defparams);
 }
 
@@ -379,7 +395,7 @@ void ToolPanelCoordinator::closeImage () {
 void ToolPanelCoordinator::readOptions () {
 
     crop->readOptions (); 
-    for (int i=0; i<options.tpOpen.size(); i++)
+    for (size_t i=0; i<options.tpOpen.size(); i++)
         if (i<expList.size())
             expList[i]->set_expanded (options.tpOpen[i]);
 }
@@ -388,7 +404,7 @@ void ToolPanelCoordinator::writeOptions () {
 
     crop->writeOptions (); 
     options.tpOpen.clear ();
-    for (int i=0; i<expList.size(); i++)
+    for (size_t i=0; i<expList.size(); i++)
         options.tpOpen.push_back (expList[i]->get_expanded ());
 }
 
@@ -444,7 +460,7 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
 {
     if (!ipc)
         return NULL;
-    rtengine::ImageMetaData *imd = const_cast<rtengine::ImageMetaData *>(ipc->getInitialImage()->getMetaData());
+    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
     if(imd){
       int iso = imd->getISOSpeed();
       double shutter = imd->getShutterSpeed();
@@ -461,7 +477,7 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
 {
     if (!ipc)
         return NULL;
-    rtengine::ImageMetaData *imd = const_cast<rtengine::ImageMetaData *>(ipc->getInitialImage()->getMetaData());
+    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
     if(imd){
       // int iso = imd->getISOSpeed();              temporarilly removed because unused
       // double shutter = imd->getShutterSpeed();   temporarilly removed because unused
@@ -517,18 +533,19 @@ int ToolPanelCoordinator::getSpotWBRectSize () {
     return whitebalance->getSize ();
 }
 
-void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu &histToneCurve, LUTu &histLCurve) {
+void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {
 
-    toneCurve->updateCurveBackgroundHistogram (histToneCurve);
-    lcurve->updateCurveBackgroundHistogram (histLCurve);
+    toneCurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histRed, histGreen, histBlue, histLuma);
+    rgbcurves->updateCurveBackgroundHistogram(histToneCurve, histLCurve,histRed,histGreen, histBlue, histLuma);
+    lcurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histRed, histGreen, histBlue, histLuma);
 }
 
 void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection) {
 
 	FoldableToolPanel* currentTP;
 
-    for (int i=0; i<toolPanels.size(); i++) {
-        currentTP = (FoldableToolPanel*)toolPanels[i];
+	for (size_t i=0; i<toolPanels.size(); i++) {
+	currentTP = static_cast<FoldableToolPanel*>(toolPanels[i]);
         if (currentTP->getParent() == parent) {
             // Section in the same tab, we unfold it if it's not the one that has been clicked
             if (currentTP != openedSection) {

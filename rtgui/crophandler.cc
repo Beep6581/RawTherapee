@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <crophandler.h>
+#include "crophandler.h"
 #undef THREAD_PRIORITY_NORMAL
 
 #include <cstring>
-#include <guiutils.h>
-#include <refreshmap.h>
+#include "guiutils.h"
+#include "../rtengine/refreshmap.h"
 
 using namespace rtengine;
 
@@ -168,7 +168,7 @@ int createpixbufs (void* data) {
 
     GThreadLock lock;
 
-    CropHandlerIdleHelper* chi = (CropHandlerIdleHelper*) data;
+    CropHandlerIdleHelper* chi = static_cast<CropHandlerIdleHelper*>(data);
     if (chi->destroyed) {
         if (chi->pending == 1)
             delete chi;
@@ -232,7 +232,7 @@ int createpixbufs (void* data) {
     return 0;
 }
 
-void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procparams::ColorManagementParams cmp, \
+void CropHandler::setDetailedCrop (IImage8* im, IImage8* imtrue, rtengine::procparams::ColorManagementParams cmp,
 								   rtengine::procparams::CropParams cp, int ax, int ay, int aw, int ah, int askip) {
 
    if (!enabled)
@@ -297,7 +297,7 @@ void CropHandler::update () {
 		// To save threads, try to mark "needUpdate" without a thread first
 		if (crop->tryUpdate()) {
 			if (isLowUpdatePriority)
-        Glib::Thread::create(sigc::mem_fun(*crop, &DetailedCrop::fullUpdate), 0, false, true, Glib::THREAD_PRIORITY_LOW);
+                Glib::Thread::create(sigc::mem_fun(*crop, &DetailedCrop::fullUpdate), 0, false, true, Glib::THREAD_PRIORITY_LOW);
 			else
 				Glib::Thread::create(sigc::mem_fun(*crop, &DetailedCrop::fullUpdate), false );
 		}

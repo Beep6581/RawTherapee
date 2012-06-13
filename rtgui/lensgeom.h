@@ -20,8 +20,8 @@
 #define _LENSGEOM_H_
 
 #include <gtkmm.h>
-#include <toolpanel.h>
-#include <lensgeomlistener.h>
+#include "toolpanel.h"
+#include "lensgeomlistener.h"
 
 class LensGeometry : public Gtk::VBox, public FoldableToolPanel {
 

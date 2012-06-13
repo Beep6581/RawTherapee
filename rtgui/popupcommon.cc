@@ -19,10 +19,10 @@
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
 
-#include <multilangmgr.h>
-#include <popupcommon.h>
-#include <safegtk.h>
-#include <rtimage.h>
+#include "multilangmgr.h"
+#include "popupcommon.h"
+#include "../rtengine/safegtk.h"
+#include "rtimage.h"
 
 extern Glib::ustring argv0;
 
@@ -121,7 +121,7 @@ void PopUpCommon::entrySelected (int i) {
  * Set the button image with the selected item
  */
 bool PopUpCommon::setSelected (int entryNum) {
-	if (entryNum < 0 || entryNum > (int)images.size()-1 || (int)entryNum == selected)
+	if (entryNum < 0 || entryNum > ((int)images.size()-1) || (int)entryNum == selected)
 		return false;
 	else {
 		// Maybe we could do something better than loading the image file each time the selection is changed !?

@@ -1,11 +1,7 @@
+#include <cmath>
+#include "rt_math.h"
+
 #include "EdgePreservingDecomposition.h"
-
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#endif
-
-
-
 
 /* Solves A x = b by the conjugate gradient method, where instead of feeding it the matrix A you feed it a function which
 calculates A x where x is some vector. Stops when rms residual < RMSResidual or when maximum iterates is reached.

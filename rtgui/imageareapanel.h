@@ -19,21 +19,16 @@
 #ifndef _IMAGEAREAPANEL_
 #define _IMAGEAREAPANEL_
 
-#include <imagearea.h>
+#include "imagearea.h"
 
 class ImageArea;
 class ImageAreaPanel : public Gtk::VBox {
 
     protected:
-        Gtk::HScrollbar* hscroll;
-        Gtk::VScrollbar* vscroll;
-        sigc::connection hscrollconn;
-        sigc::connection vscrollconn;
+
+        ImageAreaPanel *before, *after;
 
         void synchronize ();
-        void configScrollBars ();
-   
-        ImageAreaPanel *before, *after;
    
     public:
         ImageArea*   imageArea;
@@ -41,13 +36,10 @@ class ImageAreaPanel : public Gtk::VBox {
         ImageAreaPanel  ();
         ~ImageAreaPanel ();
 
-        void scrollChanged      ();
-        void imageAreaResized   (Gtk::Allocation& req);
-        
-        void refreshScrollBars  ();
         void zoomChanged        ();
         
         void setBeforeAfterViews (ImageAreaPanel* bef, ImageAreaPanel* aft);
+        void syncBeforeAfterViews();
 };
 
 #endif

@@ -19,13 +19,13 @@
 #ifndef _IMPROCFUN_H_
 #define _IMPROCFUN_H_
 
-#include <imagefloat.h>
-#include <image16.h>
-#include <image8.h>
-#include <procparams.h>
-#include <shmap.h>
-#include <coord2d.h>
-#include <labimage.h>
+#include "imagefloat.h"
+#include "image16.h"
+#include "image8.h"
+#include "procparams.h"
+#include "shmap.h"
+#include "coord2d.h"
+#include "labimage.h"
 #include "LUT.h"
 
 namespace rtengine {
@@ -111,7 +111,8 @@ class ImProcFunctions {
 		bool needsTransform   ();
 
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
-		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve, SHMap* shmap, int sat);
+		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
@@ -120,7 +121,7 @@ class ImProcFunctions {
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH);
-		void lab2rgb          (LabImage* lab, Image8* image);
+		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
 		void deconvsharpening (LabImage* lab, float** buffer);
 		void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
@@ -135,9 +136,9 @@ class ImProcFunctions {
 		
 		procparams::DirPyrDenoiseParams dnparams;
 		void dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams );//Emil's directional pyramid denoise
-		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab, \
+		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab,
 							   int pitch, int scale, const int luma, int chroma );
-		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab, \
+		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
 							   int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ );
 
 		void dirpyrLab_equalizer (LabImage * src, LabImage * dst, const double * mult );//Emil's directional pyramid equalizer
@@ -161,10 +162,10 @@ class ImProcFunctions {
 		static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);	
 		double getTransformAutoFill (int oW, int oH);
 
-		void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
-		void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
+		static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
+		static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 		void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
-		void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
+		void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]);
 		void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
 		void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
 		void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);

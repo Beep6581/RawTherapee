@@ -4,27 +4,27 @@
  *  Created on: 20/nov/2010
  */
 
-#include <rawimage.h>
-#include <settings.h>
-#include <colortemp.h>
-#include <utils.h>
+#include "rawimage.h"
+#include "settings.h"
+#include "colortemp.h"
+#include "utils.h"
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
-#include <safegtk.h>
+#include "safegtk.h"
 
 namespace rtengine{
 
 extern const Settings* settings;
 
 RawImage::RawImage(  const Glib::ustring name )
-:allocation(NULL)
-,data(NULL)
-,profile_data(NULL)
-,filename(name)
+:data(NULL)
 ,prefilters(0)
+,filename(name)
+,profile_data(NULL)
+,allocation(NULL)
 {
 }
 
@@ -42,10 +42,10 @@ RawImage::~RawImage()
 /* Similar to dcraw scale_colors for coeff. calculation, but without actual pixels scaling.
  * need pixels in data[][] available
  */
-int RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_)
+void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_)
 
 {
-	unsigned  row, col, ur, uc, i, x, y, c, sum[8];
+	unsigned  row, col, x, y, c, sum[8];
 	unsigned  W = this->get_width();
 	unsigned  H = this->get_height();
 	int val, dark, sat;
@@ -156,6 +156,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
      this->rotate_deg = 180;
   else if (flip==6)
      this->rotate_deg = 90;
+  else if (flip % 90 == 0 && flip < 360)
+     this->rotate_deg = flip;
   else
      this->rotate_deg = 0;
 
@@ -191,7 +193,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  }
 
 	  // Setting the black and cblack
-	  int i = cblack[3];
+	  unsigned int i = cblack[3];
 	  for (int c=0; c <3; c++)
 		  if (i > cblack[c])
 			  i = cblack[c];
@@ -262,4 +264,4 @@ RawImage::get_thumbSwap() const
     return ((order == 0x4949) == (ntohs(0x1234) == 0x1234)) ? true : false; 
 }
 
-}; //namespace rtengine
+} //namespace rtengine

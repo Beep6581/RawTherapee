@@ -5,17 +5,19 @@
  */
 
 /* Standard includes */
-#include <assert.h>
-#include <ctype.h>		/* isdigit() */
-#include <stdio.h>		/* sprintf(), fprintf(), sscanf(), fscanf() */
-#include <stdlib.h>		/* malloc() */
-#include <string.h>		/* memcpy(), strcmp() */
+#include <cassert>
+#include <cctype>		/* isdigit() */
+#include <cstdio>		/* sprintf(), fprintf(), sscanf(), fscanf() */
+#include <cstdlib>		/* malloc() */
+#include <cstring>		/* memcpy(), strcmp() */
 
 /* Our includes */
 #include "base.h"
 #include "error.h"
 #include "pnmio.h"		/* ppmWriteFileRGB() */
 #include "klt.h"
+
+using namespace std;
 
 #define BINHEADERLENGTH	6
 
@@ -38,7 +40,7 @@ void KLTWriteFeatureListToPPM(
   KLT_PixelType *greyimg,
   int ncols,
   int nrows,
-  char *filename)
+  const char *filename)
 {
   int nbytes = ncols * nrows * sizeof(char);
   uchar *redimg, *grnimg, *bluimg;
@@ -54,8 +56,10 @@ void KLTWriteFeatureListToPPM(
   redimg = (uchar *)  malloc(nbytes);
   grnimg = (uchar *)  malloc(nbytes);
   bluimg = (uchar *)  malloc(nbytes);
-  if (redimg == NULL || grnimg == NULL || bluimg == NULL)
+  if (redimg == NULL || grnimg == NULL || bluimg == NULL) {
     KLTError("(KLTWriteFeaturesToPPM)  Out of memory\n");
+    exit(1);
+  }
 
   /* Copy grey image to component images */
   if (sizeof(KLT_PixelType) != 1)
@@ -90,8 +94,8 @@ void KLTWriteFeatureListToPPM(
 
 
 static FILE* _printSetupTxt(
-  char *fname, 	/* Input: filename, or NULL for stderr */
-  char *fmt,	/* Input: format (e.g., %5.1f or %3d) */
+  const char *fname, 	/* Input: filename, or NULL for stderr */
+  const char *fmt,	/* Input: format (e.g., %5.1f or %3d) */
   char *format,	/* Output: format (e.g., (%5.1f,%5.1f)=%3d) */
   char *type)	/* Output: either 'f' or 'd', based on input format */
 {
@@ -102,16 +106,22 @@ static FILE* _printSetupTxt(
   /* Either open file or use stderr */
   if (fname == NULL)  fp = stderr;
   else  fp = fopen(fname, "wb");
-  if (fp == NULL)
+  if (fp == NULL) {
     KLTError("(KLTWriteFeatures) "
              "Can't open file '%s' for writing\n", fname);
+    exit(1);
+  }
 
   /* Parse format */
-  if (fmt[0] != '%')
+  if (fmt[0] != '%') {
     KLTError("(KLTWriteFeatures) Bad Format: %s\n", fmt);
+    exit(1);
+  }
   i = 0;  while (fmt[i] != '\0') i++;  *type = fmt[i-1];
-  if (*type != 'f' && *type != 'd')
+  if (*type != 'f' && *type != 'd') {
     KLTError("(KLTWriteFeatures) Format must end in 'f' or 'd'.");
+    exit(1);
+  }
 
   /* Construct feature format */
   sprintf(format, "(%s,%s)=%%%dd ", fmt, fmt, val_width);
@@ -121,15 +131,19 @@ static FILE* _printSetupTxt(
 
 
 static FILE* _printSetupBin(
-  char *fname) 	/* Input: filename */
+  const char *fname) 	/* Input: filename */
 {
   FILE *fp;
-  if (fname == NULL) 
+  if (fname == NULL) {
     KLTError("(KLTWriteFeatures) Can't write binary data to stderr");
+    exit(1);
+  }
   fp = fopen(fname, "wb");
-  if (fp == NULL)
+  if (fp == NULL) {
     KLTError("(KLTWriteFeatures) "
              "Can't open file '%s' for writing", fname);
+    exit(1);
+  }
   return fp;
 }
 
@@ -155,8 +169,8 @@ static void _printInteger(
 
 
 static KLT_BOOL _isCharInString(
-  char c,
-  char *str)
+  const char c,
+  const char *str)
 {
   int width = strlen(str);
   int i;
@@ -177,7 +191,7 @@ static KLT_BOOL _isCharInString(
  */
 
 static int _findStringWidth(
-  char *str)
+  const char *str)
 {
   int width = 0;
   int add;
@@ -193,17 +207,21 @@ static int _findStringWidth(
         i += 2;
         while (!_isCharInString(str[i], "diouxefgn"))  {
           i++;
-          if (i > maxi)
+          if (i > maxi) {
             KLTError("(_findStringWidth) Can't determine length "
                      "of string '%s'", str);
+            exit(1);
+          }
         }
         i++;
       } else if (str[i+1] == 'c')  {
         width++;
         i += 2;
-      } else 
+      } else {
         KLTError("(_findStringWidth) Can't determine length "
                  "of string '%s'", str);
+        exit(1);
+      }
     } else  {
       i++;
       width++;
@@ -216,7 +234,7 @@ static int _findStringWidth(
 
 static void _printHeader(
   FILE *fp,
-  char *format,
+  const char *format,
   structureType id,
   int nFrames,
   int nFeatures)
@@ -272,8 +290,8 @@ static void _printHeader(
 static void _printFeatureTxt(
   FILE *fp,
   KLT_Feature feat,
-  char *format,
-  char type)
+  const char *format,
+  const char type)
 {
   assert(type == 'f' || type == 'd');
 
@@ -325,8 +343,8 @@ static void _printShutdown(
 
 void KLTWriteFeatureList(
   KLT_FeatureList fl,
-  char *fname, 
-  char *fmt)
+  const char *fname,
+  const char *fmt)
 {
   FILE *fp;
   char format[100];
@@ -363,8 +381,8 @@ void KLTWriteFeatureList(
 
 void KLTWriteFeatureHistory(
   KLT_FeatureHistory fh,
-  char *fname, 
-  char *fmt)
+  const char *fname,
+  const char *fmt)
 {
   FILE *fp;
   char format[100];
@@ -402,8 +420,8 @@ void KLTWriteFeatureHistory(
 
 void KLTWriteFeatureTable(
   KLT_FeatureTable ft,
-  char *fname, 
-  char *fmt)
+  const char *fname,
+  const char *fmt)
 {
   FILE *fp;
   char format[100];
@@ -483,9 +501,11 @@ static structureType _readHeader(
   /* Skip comments until warning line */
   while (strcmp(line, warning_line) != 0)  {
     fgets(line, LINELENGTH, fp);
-    if (feof(fp))
+    if (feof(fp)) {
       KLTError("(_readFeatures) File is corrupted -- Couldn't find line:\n"
                "\t%s\n", warning_line);
+      exit(1);
+    }
   }
 
   /* Read 'Feature List', 'Feature History', or 'Feature Table' */
@@ -495,9 +515,11 @@ static structureType _readHeader(
   if (strcmp(line, "KLT Feature List\n") == 0) id = FEATURE_LIST;
   else if (strcmp(line, "KLT Feature History\n") == 0) id = FEATURE_HISTORY;
   else if (strcmp(line, "KLT Feature Table\n") == 0) id = FEATURE_TABLE;
-  else
+  else {
     KLTError("(_readFeatures) File is corrupted -- (Not 'KLT Feature List', "
              "'KLT Feature History', or 'KLT Feature Table')");
+    exit(1);
+  }
 
   /* If there's an incompatibility between the type of file */
   /* and the parameters passed, exit now before we attempt */
@@ -513,33 +535,45 @@ static structureType _readHeader(
   while (fgetc(fp) != '\n');
   fscanf(fp, "%s", line);
   if (id == FEATURE_LIST)  {
-    if (strcmp(line, "nFeatures") != 0)
+    if (strcmp(line, "nFeatures") != 0) {
       KLTError("(_readFeatures) File is corrupted -- "
                "(Expected 'nFeatures', found '%s' instead)", line);
-  } else if (strcmp(line, "nFrames") != 0)
+      exit(1);
+    }
+  } else if (strcmp(line, "nFrames") != 0) {
     KLTError("(_readFeatures) File is corrupted -- "
              "(Expected 'nFrames', found '%s' instead)", line);
+    exit(1);
+  }
   fscanf(fp, "%s", line);
-  if (strcmp(line, "=") != 0)
+  if (strcmp(line, "=") != 0) {
     KLTError("(_readFeatures) File is corrupted -- "
              "(Expected '=', found '%s' instead)", line);
+    exit(1);
+  }
   if (id == FEATURE_LIST) fscanf(fp, "%d", nFeatures);
   else fscanf(fp, "%d", nFrames);
 
   /* If 'Feature Table', then also get nFeatures */
   if (id == FEATURE_TABLE)  {
     fscanf(fp, "%s", line);
-    if (strcmp(line, ",") != 0)
+    if (strcmp(line, ",") != 0) {
       KLTError("(_readFeatures) File '%s' is corrupted -- "
                "(Expected 'comma', found '%s' instead)", line);
+      exit(1);
+    }
     fscanf(fp, "%s", line);
-    if (strcmp(line, "nFeatures") != 0)
+    if (strcmp(line, "nFeatures") != 0) {
       KLTError("(_readFeatures) File '%s' is corrupted -- "
                "(2 Expected 'nFeatures ', found '%s' instead)", line);
+      exit(1);
+    }
     fscanf(fp, "%s", line);
-    if (strcmp(line, "=") != 0)
+    if (strcmp(line, "=") != 0) {
       KLTError("(_readFeatures) File '%s' is corrupted -- "
                "(2 Expected '= ', found '%s' instead)", line);
+      exit(1);
+    }
     fscanf(fp, "%d", nFeatures);
   }
 
@@ -582,7 +616,7 @@ static void _readFeatureBin(
 
 KLT_FeatureList KLTReadFeatureList(
   KLT_FeatureList fl_in,
-  char *fname)
+  const char *fname)
 {
   FILE *fp;
   KLT_FeatureList fl;
@@ -593,14 +627,19 @@ KLT_FeatureList KLTReadFeatureList(
   int i;
 
   fp = fopen(fname, "rb");
-  if (fp == NULL)  KLTError("(KLTReadFeatureList) Can't open file '%s' "
+  if (fp == NULL) {
+        KLTError("(KLTReadFeatureList) Can't open file '%s' "
                             "for reading", fname);
+        exit(1);
+  }
   if (KLT_verbose >= 1) 
     fprintf(stderr,  "(KLT) Reading feature list from '%s'\n", fname);
   id = _readHeader(fp, NULL, &nFeatures, &binary);
-  if (id != FEATURE_LIST) 
+  if (id != FEATURE_LIST) {
     KLTError("(KLTReadFeatureList) File '%s' does not contain "
              "a FeatureList", fname);
+    exit(1);
+  }
 
   if (fl_in == NULL)  {
     fl = KLTCreateFeatureList(nFeatures);
@@ -608,17 +647,22 @@ KLT_FeatureList KLTReadFeatureList(
   }
   else  {
     fl = fl_in;
-    if (fl->nFeatures != nFeatures)
+    if (fl->nFeatures != nFeatures) {
       KLTError("(KLTReadFeatureList) The feature list passed "
                "does not contain the same number of features as "
                "the feature list in file '%s' ", fname);
+      exit(1);
+    }
   }
 
   if (!binary) {  /* text file */
     for (i = 0 ; i < fl->nFeatures ; i++)  {
       fscanf(fp, "%d |", &indx);
-      if (indx != i) KLTError("(KLTReadFeatureList) Bad index at i = %d"
+      if (indx != i) {
+        KLTError("(KLTReadFeatureList) Bad index at i = %d"
                               "-- %d", i, indx);
+        exit(1);
+      }
       _readFeatureTxt(fp, fl->feature[i]);
     }
   } else {  /* binary file */
@@ -635,7 +679,7 @@ KLT_FeatureList KLTReadFeatureList(
 
 KLT_FeatureHistory KLTReadFeatureHistory(
   KLT_FeatureHistory fh_in,
-  char *fname)
+  const char *fname)
 {
   FILE *fp;
   KLT_FeatureHistory fh;
@@ -646,12 +690,18 @@ KLT_FeatureHistory KLTReadFeatureHistory(
   int i;
 
   fp = fopen(fname, "rb");
-  if (fp == NULL)  KLTError("(KLTReadFeatureHistory) Can't open file '%s' "
+  if (fp == NULL) {
+        KLTError("(KLTReadFeatureHistory) Can't open file '%s' "
                             "for reading", fname);
+        exit(1);
+  }
   if (KLT_verbose >= 1) fprintf(stderr,  "(KLT) Reading feature history from '%s'\n", fname);
   id = _readHeader(fp, &nFrames, NULL, &binary);
-  if (id != FEATURE_HISTORY) KLTError("(KLTReadFeatureHistory) File '%s' does not contain "
+  if (id != FEATURE_HISTORY) {
+        KLTError("(KLTReadFeatureHistory) File '%s' does not contain "
                                       "a FeatureHistory", fname);
+        exit(1);
+  }
 
   if (fh_in == NULL)  {
     fh = KLTCreateFeatureHistory(nFrames);
@@ -659,18 +709,22 @@ KLT_FeatureHistory KLTReadFeatureHistory(
   }
   else  {
     fh = fh_in;
-    if (fh->nFrames != nFrames)
+    if (fh->nFrames != nFrames) {
       KLTError("(KLTReadFeatureHistory) The feature history passed "
                "does not contain the same number of frames as "
                "the feature history in file '%s' ", fname);
+      exit(1);
+    }
   }
 
   if (!binary) {  /* text file */
     for (i = 0 ; i < fh->nFrames ; i++)  {
       fscanf(fp, "%d |", &indx);
-      if (indx != i) 
+      if (indx != i) {
         KLTError("(KLTReadFeatureHistory) Bad index at i = %d"
                  "-- %d", i, indx);
+        exit(1);
+      }
       _readFeatureTxt(fp, fh->feature[i]);
     }
   } else {  /* binary file */
@@ -687,7 +741,7 @@ KLT_FeatureHistory KLTReadFeatureHistory(
 
 KLT_FeatureTable KLTReadFeatureTable(
   KLT_FeatureTable ft_in,
-  char *fname)
+  const char *fname)
 {
   FILE *fp;
   KLT_FeatureTable ft;
@@ -699,12 +753,18 @@ KLT_FeatureTable KLTReadFeatureTable(
   int i, j;
 
   fp = fopen(fname, "rb");
-  if (fp == NULL)  KLTError("(KLTReadFeatureTable) Can't open file '%s' "
+  if (fp == NULL) {
+        KLTError("(KLTReadFeatureTable) Can't open file '%s' "
                             "for reading", fname);
+        exit(1);
+  }
   if (KLT_verbose >= 1) fprintf(stderr,  "(KLT) Reading feature table from '%s'\n", fname);
   id = _readHeader(fp, &nFrames, &nFeatures, &binary);
-  if (id != FEATURE_TABLE) KLTError("(KLTReadFeatureTable) File '%s' does not contain "
+  if (id != FEATURE_TABLE) {
+        KLTError("(KLTReadFeatureTable) File '%s' does not contain "
                                     "a FeatureTable", fname);
+        exit(1);
+  }
 
   if (ft_in == NULL)  {
     ft = KLTCreateFeatureTable(nFrames, nFeatures);
@@ -714,18 +774,22 @@ KLT_FeatureTable KLTReadFeatureTable(
   else  {
     ft = ft_in;
 					
-    if (ft->nFrames != nFrames || ft->nFeatures != nFeatures)
+    if (ft->nFrames != nFrames || ft->nFeatures != nFeatures) {
       KLTError("(KLTReadFeatureTable) The feature table passed "
                "does not contain the same number of frames and "
                "features as the feature table in file '%s' ", fname);
+      exit(1);
+    }
   }
 
   if (!binary) {  /* text file */
     for (j = 0 ; j < ft->nFeatures ; j++)  {
       fscanf(fp, "%d |", &indx);
-      if (indx != j) 
+      if (indx != j) {
         KLTError("(KLTReadFeatureTable) Bad index at j = %d"
                  "-- %d", j, indx);
+        exit(1);
+      }
       for (i = 0 ; i < ft->nFrames ; i++)
         _readFeatureTxt(fp, ft->feature[j][i]);
     }

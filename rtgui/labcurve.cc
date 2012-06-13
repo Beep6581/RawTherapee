@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <labcurve.h>
+#include "labcurve.h"
 #include <iomanip>
 
 using namespace rtengine;
@@ -24,7 +24,7 @@ using namespace rtengine::procparams;
 
 LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
-	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
+	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 1, 0));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100, 100, 1, 0));
 	saturation   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SATURATION"), -100, 100, 1, 0));
 
@@ -71,9 +71,9 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 
-	lshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "L");
-	ashape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "a");
-	bshape = (DiagonalCurveEditor*)curveEditorG->addCurve(CT_Diagonal, "b");
+	lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L"));
+	ashape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "a"));
+	bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "b"));
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();
@@ -328,9 +328,9 @@ void LCurve::setBatchMode (bool batchMode) {
 }
 
 
-void LCurve::updateCurveBackgroundHistogram (LUTu & hist) {
+void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
 
-    lshape->updateBackgroundHistogram (hist);
+    lshape->updateBackgroundHistogram (histLCurve);
 }
 
 void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd) {

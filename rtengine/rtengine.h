@@ -19,18 +19,18 @@
 #ifndef _RTENGINE_
 #define _RTENGINE_
 
-#include <procparams.h>
-#include <procevents.h>
+#include "procparams.h"
+#include "procevents.h"
 #include <lcms2.h>
 #include <string>
 #include <glibmm.h>
-#include <time.h>
-#include <rawmetadatalocation.h>
-#include <iimage.h>
-#include <utils.h>
-#include <settings.h>
+#include <ctime>
+#include "rawmetadatalocation.h"
+#include "iimage.h"
+#include "utils.h"
+#include "settings.h"
 #include "LUT.h"
-#include <imagedata.h>
+#include "imagedata.h"
 
 /**
  * @file 
@@ -76,7 +76,7 @@ namespace rtengine {
             virtual cmsHPROFILE getEmbeddedProfile () =0;
           /** Returns a class providing access to the exif and iptc metadata tags of the image.
             * @return An instance of the ImageMetaData class */
-            virtual ImageMetaData* getMetaData () =0;
+            virtual const ImageMetaData* getMetaData () =0;
           /** This is a function used for internal purposes only. */
             virtual ImageSource* getImageSource () =0;
           /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */
@@ -85,6 +85,7 @@ namespace rtengine {
             * (the last one deletes the instance automatically). */
             virtual void decreaseRef () {}
 
+            virtual ~InitialImage () {}
 
           /** Loads an image into the memory.
             * @param fname the name of the file
@@ -127,7 +128,7 @@ namespace rtengine {
         public: 
             /** With this member function the staged processor notifies the listener that the detailed crop image has been updated.
               * @param img is a pointer to the detailed crop image */
-            virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp, \
+            virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp,
 										  procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
             virtual bool getWindow       (int& cx, int& cy, int& cw, int& ch, int& skip) { return false; }
     };
@@ -234,7 +235,7 @@ namespace rtengine {
             /** Creates and returns a Crop instance that acts as a window on the image */
             virtual DetailedCrop* createCrop  () =0;
 
-            virtual void        getAutoWB   (double& temp, double& green) =0;
+            virtual bool        getAutoWB   (double& temp, double& green) =0;
             virtual void        getCamWB    (double& temp, double& green) =0;
             virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) =0;
             virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) =0;

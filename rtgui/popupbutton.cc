@@ -19,7 +19,7 @@
  *  Class created by Jean-Christophe FRISCH, aka 'Hombre'
  */
 
-#include <popupbutton.h>
+#include "popupbutton.h"
 
 /*
  * PopUpButton::PopUpButton (const Glib::ustring& label, bool imgRight)

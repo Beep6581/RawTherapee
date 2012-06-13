@@ -16,18 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <imagedata.h>
+#include "imagedata.h"
 #include <glib/gstdio.h>
-#include <safegtk.h>
-#include <rtengine.h>
-#include <version.h>
-#include <iptcmeta.h>
+#include "safegtk.h"
+#include "rtengine.h"
+#include "version.h"
+#include "iptcmeta.h"
 
 #ifndef GLIBMM_EXCEPTIONS_ENABLED
 #include <memory>
 #endif
 
-namespace rtengine{
+using namespace rtengine;
 
 const char *SnapshotInfo::kCurrentSnapshotName="####";
 
@@ -522,7 +522,7 @@ std::string ImageMetaData::getCamera()
         "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
         "SAMSUNG", "Mamiya", "MOTOROLA" };
     if( !make.empty()){
-		for (int i = 0; i < sizeof corp / sizeof *corp; i++)
+		for (size_t i=0; i < (sizeof(corp)/sizeof(*corp)); i++)
 			if (make.find(corp[i]) != std::string::npos) { /* Simplify company names */
 				make = corp[i];
 				break;
@@ -610,7 +610,7 @@ std::string ImageMetaData::expcompToString (double expcomp, bool maskZeroexpcomp
 
 double ImageMetaData::shutterFromString (std::string s) {
 
-    int i = s.find_first_of ('/');
+    size_t i = s.find_first_of ('/');
     if (i==std::string::npos)
         return atof (s.c_str());
     else 

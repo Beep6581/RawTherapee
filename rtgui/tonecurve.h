@@ -20,12 +20,12 @@
 #define _TONECURVE_H_
 
 #include <gtkmm.h>
-#include <adjuster.h>
-#include <toolpanel.h>
-#include <curveeditor.h>
-#include <curveeditorgroup.h>
-#include <mycurve.h>
-#include <guiutils.h>
+#include "adjuster.h"
+#include "toolpanel.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "mycurve.h"
+#include "guiutils.h"
 
 class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public CurveListener {
 
@@ -33,6 +33,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     Gtk::HBox* abox;
     Gtk::ToggleButton* autolevels;
     MySpinButton* sclip;
+    Gtk::Button* neutral;
     Adjuster* expcomp;
     Adjuster* brightness;
     Adjuster* black;
@@ -43,7 +44,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
 	Adjuster* saturation;
 
     bool clipDirty, lastAuto;
-    sigc::connection autoconn;
+    sigc::connection autoconn, neutralconn;
     CurveEditorGroup* curveEditorG;
     DiagonalCurveEditor* shape;
 
@@ -68,6 +69,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
 
 
     void adjusterChanged (Adjuster* a, double newval);
+    void neutral_pressed ();
     void autolevels_toggled ();
     void clip_changed ();
     bool clip_changed_ ();
@@ -78,7 +80,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void curveChanged ();
     void expandCurve (bool isExpanded);
     bool isCurveExpanded ();
-    void updateCurveBackgroundHistogram (LUTu & hist);
+    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 };
 
 #endif

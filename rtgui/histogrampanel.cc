@@ -16,13 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <histogrampanel.h>
-#include <multilangmgr.h>
-#include <guiutils.h>
-#include <options.h>
-#include <string.h>
-#include <LUT.h>
-#include <rtimage.h>
+#include "histogrampanel.h"
+#include "multilangmgr.h"
+#include "guiutils.h"
+#include "options.h"
+#include <cstring>
+#include "../rtengine/LUT.h"
+#include "rtimage.h"
 
 extern Glib::ustring argv0;
 extern Options options;
@@ -371,7 +371,7 @@ int histrgbupdate (void* data) {
 
     gdk_threads_enter ();
 
-    HistogramRGBAreaIdleHelper* harih = (HistogramRGBAreaIdleHelper*)data;
+    HistogramRGBAreaIdleHelper* harih = static_cast<HistogramRGBAreaIdleHelper*>(data);
 
     if (harih->destroyed) {
         if (harih->pending == 1)
@@ -533,7 +533,7 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw) {
 
 int histupdateUI (void* data) {
 
-    HistogramAreaIdleHelper* haih = (HistogramAreaIdleHelper*)data;
+    HistogramAreaIdleHelper* haih = static_cast<HistogramAreaIdleHelper*>(data);
 
     if (haih->destroyed) {
         if (haih->pending == 1)

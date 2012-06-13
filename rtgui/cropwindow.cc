@@ -16,14 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <cropwindow.h>
-#include <options.h>
 #include <iomanip>
-#include <guiutils.h>
-#include <mytime.h>
-#include <imagearea.h>
-#include <cursormanager.h>
-#include <safegtk.h>
+
+#include "cropwindow.h"
+#include "options.h"
+#include "guiutils.h"
+#include "../rtengine/mytime.h"
+#include "imagearea.h"
+#include "cursormanager.h"
+#include "../rtengine/safegtk.h"
+#include "../rtengine/rt_math.h"
+
+using namespace rtengine;
 
 struct ZoomStep {   
     Glib::ustring label;
@@ -50,11 +54,11 @@ ZoomStep zoomSteps[] = {{" 10%",  0.1,     10},
 #define ZOOM11INDEX  7
 
 CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_) 
-    : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false),
+    : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_),
     backColor(options.bgcolor), decorated(true), titleHeight(30),
     sideBorderWidth(3), lowerBorderWidth(3), upperBorderWidth(1), sepWidth(2),
     xpos(30), ypos(30), imgX(0), imgY(0), imgW(1), imgH(1), iarea(parent),
-    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL), isLowUpdatePriority(isLowUpdatePriority_) {
+    cropZoom(0), cropgl(NULL), pmlistener(NULL), observedCropWin(NULL) {
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();       
@@ -677,6 +681,16 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     //t3.set ();
 			bool showcs = iarea->indClippedPanel->showClippedShadows();
 			bool showch = iarea->indClippedPanel->showClippedHighlights();
+			bool showR  = iarea->previewModePanel->showR();
+			bool showG  = iarea->previewModePanel->showG();
+			bool showB  = iarea->previewModePanel->showB();
+			bool showL  = iarea->previewModePanel->showL();
+			bool showFocusMask  = iarea->previewModePanel->showFocusMask();
+			// additional flags to control clipping indicators for individual channels and across all channels
+			bool showclippedAll = (!showR && !showG && !showB && !showL);
+			bool showclippedR = showR || showL || showclippedAll;
+			bool showclippedG = showG || showL || showclippedAll;
+			bool showclippedB = showB || showL || showclippedAll;
 
             // If ALT was pressed, auto-enable highlight and shadow
             // TODO: Add linux/MacOS specific functions for alternative
@@ -686,7 +700,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
             }
             #endif
 
-			if (showcs || showch) {
+			if (showcs || showch || showR || showG || showB || showL || showFocusMask) {
 				Glib::RefPtr<Gdk::Pixbuf> tmp = cropHandler.cropPixbuf->copy ();
 				guint8* pix = tmp->get_pixels();
                 guint8* pixWrkSpace = cropHandler.cropPixbuftrue->get_pixels();
@@ -700,40 +714,155 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                 #ifdef _OPENMP
                 #pragma omp parallel for
                 #endif
-				for (int i=0; i<tmp->get_height(); i++) {
+                for (int i=0; i<tmp->get_height(); i++) {
                     guint8* curr = pix + i*pixRowStride;
                     guint8* currWS = pixWrkSpace + i*pixWSRowStride;
 
-                    int delta; bool changed;
+                    int delta; bool changedHL; bool changedSH;
 
                     for (int j=0; j<tmp->get_width(); j++) {
-                        // we must compare clippings in working space, since the cropPixbuf is in sRGB, with mon profile
+                    
+                    
+                        if (showFocusMask){ // modulate preview to display focus mask
 
-                        if (showch) {
-                            delta=0; changed=false;
+                            //*************
+                        	// Copyright (c) 2011 Michael Ezra michael@michaelezra.com
+                            // determine if pixel is in the sharp area of the image using
+                            // standard deviation analysis on two different scales
+                            int blur_radius, blur_radius2;
+                            float curL;
+                            guint8* currIndex;
+                            float avg_L, avg_L2;
+                            float sum_L, sum_L2;
+                            float sumsq_L, sumsq_L2; //sum of deviations squared
+                            float stdDev_L, stdDev_L2;
+                            float focus_thresh, focus_thresh2;
+                            int kernel_size, kernel_size2;// count of pixels in the blur kernel
+                            float opacity = 0.9;//TODO: implement opacity
+                            //TODO: evaluate effects of altering sampling frequency
 
-                            if (currWS[0]>=options.highlightThreshold) { delta += 255-currWS[0]; changed=true; }
-                            if (currWS[1]>=options.highlightThreshold) { delta += 255-currWS[1]; changed=true; }
-                            if (currWS[2]>=options.highlightThreshold) { delta += 255-currWS[2]; changed=true; }
 
-                            if (changed) { 
-                                delta *= HighlightFac; 
-                                curr[0]=curr[1]=curr[2]=delta;
+                            //TODO: dynamically determine appropriate values based on image analysis
+                            blur_radius=4;;
+                            focus_thresh=80;
+
+                            blur_radius2 = blur_radius/4;     // Band2
+                            focus_thresh2 = focus_thresh/2;   // Band 2 threshold
+
+                            if (j>blur_radius && j<tmp->get_width()-blur_radius
+                             && i>blur_radius && i<tmp->get_height()-blur_radius){ //stay within image area
+                                // calculate average in +-blur_radius pixels area around the current pixel
+                            	// speed up: calculate sum of squares in the same loops
+
+                            	sum_L = 0; sum_L2=0;
+                            	sumsq_L = 0; sumsq_L2 = 0;
+                                for (int kh=-blur_radius; kh<=blur_radius;kh++){
+                                    for (int k=-blur_radius; k<=blur_radius;k++){
+                                        //1 pixel step is equivalent to 3-bytes step
+                                    	currIndex = currWS+3*k + kh*pixWSRowStride;
+                                    	curL = 0.299*(currIndex)[0]+0.587*(currIndex)[1]+0.114*(currIndex)[2];
+                                    	sum_L += curL;
+                                    	sumsq_L += SQR(curL);
+
+                                    	// Band2 @ blur_radius2
+                                    	if (kh>=-blur_radius2 && kh<=blur_radius2 && k>=-blur_radius2 && k<=blur_radius2){
+                                    		sum_L2 += curL;
+						sumsq_L2 += SQR(curL);
+                                    	}
+                                    }
+                                }
+                                //*************
+                                // averages
+                                kernel_size= SQR(2*blur_radius+1); // consider -1: Bessel's correction for the sample standard deviation (tried, did not make any visible difference)
+                                kernel_size2= SQR(2*blur_radius2+1);
+                                avg_L = sum_L/kernel_size;
+                                avg_L2 = sum_L2/kernel_size2;
+
+
+				stdDev_L = sqrt(sumsq_L/kernel_size - SQR(avg_L));
+				stdDev_L2 = sqrt(sumsq_L2/kernel_size2 - SQR(avg_L2));
+
+                                //TODO: try to normalize by average L of the entire (preview) image
+
+                                //detection method 1: detect focus in features
+                                //there is no strict condition between stdDev_L and stdDev_L2 themselves
+/*                                if (stdDev_L2>focus_thresh2
+                                && (stdDev_L <focus_thresh)){ // this excludes false positives due to high contrast edges
+
+                                	curr[1]=255;
+                                	curr[0]=0;
+                                	curr[2]=0;
+
+                                }*/
+
+                                //detection method 2: detect focus in texture
+                                // key point is std deviation on lower scale is higher than for the larger scale
+                                // plus some boundary conditions
+                                if (focus_thresh > stdDev_L2 //TODO: could vary this to bypass noise better
+                                                && stdDev_L2 > stdDev_L //this is the key to select fine detail within lower contrast on larger scale
+                                                            && stdDev_L > focus_thresh/10 //options.highlightThreshold
+                                 ){
+                                	curr[0]=0;
+                                	curr[1]=255;
+                                	curr[2]=0;
+                                }
                             }
                         }
-                        if (showcs) {
-                            delta=0; changed=false;
-
-                            if (currWS[0]<=options.shadowThreshold) { delta += currWS[0]; changed=true; }
-                            if (currWS[1]<=options.shadowThreshold) { delta += currWS[1]; changed=true; }
-                            if (currWS[2]<=options.shadowThreshold) { delta += currWS[2]; changed=true; }
-
-                                
-                            if (changed) {
-                                delta = 255 - (delta * ShawdowFac);
-                                curr[0]=curr[1]=curr[2]=delta; 
+                        
+                        else {  // !showFocusMask
+                                       
+                            // we must compare clippings in working space, since the cropPixbuf is in sRGB, with mon profile
+    
+                            changedHL=false;
+                            changedSH=false;
+    
+                            if (showch) {
+                                delta=0; changedHL=false;
+    
+                                if (currWS[0]>=options.highlightThreshold && showclippedR) { delta += 255-currWS[0]; changedHL=true; }
+                                if (currWS[1]>=options.highlightThreshold && showclippedG) { delta += 255-currWS[1]; changedHL=true; }
+                                if (currWS[2]>=options.highlightThreshold && showclippedB) { delta += 255-currWS[2]; changedHL=true; }
+    
+                                if (changedHL) { 
+                                    delta *= HighlightFac; 
+                                    if (showclippedAll) curr[0]=curr[1]=curr[2]=delta; // indicate clipped highlights in gray
+                                    else {curr[0]=255; curr[1]=curr[2]=delta;}         // indicate clipped highlights in red
+                                }
                             }
-                        }
+                            if (showcs) {
+                                delta=0; changedSH=false;
+    
+                                if (currWS[0]<=options.shadowThreshold && showclippedR) { delta += currWS[0]; changedSH=true; }
+                                if (currWS[1]<=options.shadowThreshold && showclippedG) { delta += currWS[1]; changedSH=true; }
+                                if (currWS[2]<=options.shadowThreshold && showclippedB) { delta += currWS[2]; changedSH=true; }
+                                    
+                                if (changedSH) {                            
+                                    if (showclippedAll) {
+                                        delta = 255 - (delta * ShawdowFac);
+                                        curr[0]=curr[1]=curr[2]=delta;      // indicate clipped shadows in gray
+                                    }
+                                    else {
+                                        delta *= ShawdowFac;
+                                        curr[2]=255; curr[0]=curr[1]=delta; // indicate clipped shadows in blue
+                                    }
+                                }
+                            } //if (showcs)
+                            
+                            // modulate the preview of channels & L;
+                            if (!changedHL && !changedSH){          //This condition allows clipping indicators for RGB channels to remain in color
+                                if (showR) curr[1]=curr[2]=curr[0]; //Red   channel in grayscale
+                                if (showG) curr[0]=curr[2]=curr[1]; //Green channel in grayscale
+                                if (showB) curr[0]=curr[1]=curr[2]; //Blue  channel in grayscale
+                                if (showL) {                        //Luminosity
+                                    // see http://en.wikipedia.org/wiki/HSL_and_HSV#Lightness for more info
+                                    //int L = (int)(0.212671*curr[0]+0.715160*curr[1]+0.072169*curr[2]);
+                                    int L = (int)(0.299*curr[0]+0.587*curr[1]+0.114*curr[2]); //Lightness - this matches Luminosity mode in Photoshop CS5
+                                    curr[0]=curr[1]=curr[2]=L; 
+                                }
+                            }
+                        } // else (!showFocusMask)
+
+
 
                         /*
 						    if (showch && (currWS[0]>=options.highlightThreshold || currWS[1]>=options.highlightThreshold || currWS[2]>=options.highlightThreshold))
@@ -749,7 +878,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                         curr+=3; currWS+=3;
 					}
                 }
-
+//printf("zoomSteps[cropZoom].zoom=%d\n",zoomSteps[cropZoom].zoom);
 				iarea->get_window()->draw_pixbuf (iarea->get_style()->get_base_gc(Gtk::STATE_NORMAL), tmp, 0, 0, x+imgX, y+imgY, -1, -1, Gdk::RGB_DITHER_NONE, 0, 0);
 			}
 			else
@@ -1148,7 +1277,7 @@ void CropWindow::cropImageUpdated () {
 void CropWindow::cropWindowChanged () {
 
     if (!decorated)
-        iarea->updateScrollbars ();
+        iarea->syncBeforeAfterViews ();
     iarea->redraw ();
 }
 

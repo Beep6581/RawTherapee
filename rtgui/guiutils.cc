@@ -15,10 +15,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <guiutils.h>
-#include <options.h>
-#include <utils.h>
-#include <rtimage.h>
+#include "../rtengine/rt_math.h"
+
+#include "guiutils.h"
+#include "options.h"
+#include "../rtengine/utils.h"
+#include "rtimage.h"
+
+using namespace std;
 
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference) {
 
@@ -46,7 +50,7 @@ void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, 
 Glib::ustring removeExtension (const Glib::ustring& filename) {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
-    int lastdot = bname.find_last_of ('.');
+    size_t lastdot = bname.find_last_of ('.');
     if (lastdot!=bname.npos)
         return filename.substr (0, filename.size()-(bname.size()-lastdot));
     else
@@ -56,7 +60,7 @@ Glib::ustring removeExtension (const Glib::ustring& filename) {
 Glib::ustring getExtension (const Glib::ustring& filename) {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
-    int lastdot = bname.find_last_of ('.');
+    size_t lastdot = bname.find_last_of ('.');
     if (lastdot!=bname.npos)
         return filename.substr (filename.size()-(bname.size()-lastdot)+1, filename.npos);
     else
@@ -155,9 +159,20 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                     }
                 }
             }   
+            else if (cparams.guide=="ePassport") {
+                /* Official measurements do not specify exact ratios, just min/max measurements within which the eyes and chin-crown distance must lie. I averaged those measurements to produce these guides.
+                 * The first horizontal guide is for the crown, the second is rougly for the nostrils, the third is for the chin.
+                 * http://www.homeoffice.gov.uk/agencies-public-bodies/ips/passports/information-photographers/
+                 * "(...) the measurement of the face from the bottom of the chin to the crown (ie the top of the head, not the top of the hair) is between 29mm and 34mm."
+                 */
+                horiz_ratios.push_back (7.0/45.0);
+                horiz_ratios.push_back (26.0/45.0);
+                horiz_ratios.push_back (37.0/45.0);
+                vert_ratios.push_back (0.5);
+            }
 
             // Horizontals
-            for (int i=0; i<horiz_ratios.size(); i++) {
+            for (size_t i=0; i<horiz_ratios.size(); i++) {
                 cr->set_source_rgb (1.0, 1.0, 1.0);
                 cr->move_to (rectx1, recty1 + (recty2-recty1) * horiz_ratios[i]);
                 cr->line_to (rectx2, recty1 + (recty2-recty1) * horiz_ratios[i]);
@@ -173,7 +188,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 cr->set_dash (ds, 0);
             }
             // Verticals
-            for (int i=0; i<vert_ratios.size(); i++) {
+            for (size_t i=0; i<vert_ratios.size(); i++) {
                 cr->set_source_rgb (1.0, 1.0, 1.0);
                 cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
                 cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
@@ -192,7 +207,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         else {
             int corners_from[4][2];
             int corners_to[4][2];
-            int mindim = MIN (rectx2-rectx1+1, recty2-recty1+1);
+            int mindim = min(rectx2-rectx1+1, recty2-recty1+1);
             corners_from[0][0] = rectx1;
             corners_from[0][1] = recty1;
             corners_to[0][0]   = rectx1 + mindim;
@@ -335,18 +350,22 @@ MySpinButton::MySpinButton () {
 void MySpinButton::updateSize() {
 	double vMin, vMax;
 	double step, page;
-	double maxAbs;
+	int maxAbs;
 	unsigned int digits, digits2;
 	unsigned int maxLen;
 
 	get_range(vMin, vMax);
 	get_increments (step, page);
 
-	maxAbs = fmax(fabs(vMin), fabs(vMax));
 	digits = get_digits();
-	for (digits2=0; maxAbs/pow(double(10),digits2)>=1.0; digits2++);
+	maxAbs = (int)(fmax(fabs(vMin), fabs(vMax))+0.000001);
+	if (maxAbs==0)
+		digits2 = 1;
+	else {
+		digits2 = (int)(log10(double(maxAbs))+0.000001);
+		digits2++;
+	}
 	maxLen = digits+digits2+(vMin<0?1:0)+(digits>0?1:0);
-
 	set_max_length(maxLen);
 	set_width_chars(maxLen);
 }
@@ -384,7 +403,7 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event) {
 
 MyFileChooserButton::MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action) : Gtk::FileChooserButton(title, action) {
 	set_size_request(20, -1);
-};
+}
 
 // For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
 bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event) {
