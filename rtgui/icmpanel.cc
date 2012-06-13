@@ -463,7 +463,7 @@ void ICMPanel::opChanged () {
         listener->panelChanged (EvOProfile, onames->get_active_text());
 }
 
-void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta) {
+void ICMPanel::setRawMeta (bool raw, const rtengine::ImageMetaData* pMeta) {
 
     disableListener ();
 

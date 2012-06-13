@@ -793,7 +793,7 @@ TP_RESIZE_BICUBICSF;Bicúbica (más suave)
 TP_RESIZE_BICUBICSH;Bicúbica (más enfocado)
 TP_RESIZE_BICUBIC;Bicúbica
 TP_RESIZE_BILINEAR;Bilineal
-TP_RESIZE_CROPPEDAREA;Área recortada
+TP_RESIZE_CROPPEDAREA;�?rea recortada
 TP_RESIZE_DOWNSCALEB;Reducir resolución (más calidad)
 TP_RESIZE_DOWNSCALEF;Reducir resolución (más velocidad)
 TP_RESIZE_FITBOX;Rectángulo límite

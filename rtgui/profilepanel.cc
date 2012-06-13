@@ -163,13 +163,13 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
             options.loadSaveProfilePath = Glib::path_get_dirname(fname);
 
             bool hasext = true;
-	    size_t dotpos = fname.find_last_of ('.');
+            size_t dotpos = fname.find_last_of ('.');
             if (dotpos==Glib::ustring::npos)
                 hasext = false;
-	    size_t dirpos1 = fname.find_last_of ('/');
+            size_t dirpos1 = fname.find_last_of ('/');
             if (dirpos1!=Glib::ustring::npos && dirpos1>dotpos)
                 hasext = false;
-	    size_t dirpos2 = fname.find_last_of ('\\');
+            size_t dirpos2 = fname.find_last_of ('\\');
             if (dirpos2!=Glib::ustring::npos && dirpos2>dotpos)
                 hasext = false;
 
@@ -284,6 +284,11 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     filter_pp.set_name(M("PROFILEPANEL_FILEDLGFILTERPP"));
     filter_pp.add_pattern("*"+paramFileExtension);
     dialog.add_filter(filter_pp);
+
+    Gtk::FileFilter filter_pp3;
+    filter_pp3.set_name(M("PROFILEPANEL_FILEDLGFILTERPP3"));
+    filter_pp3.add_pattern("*.pp3"); // For backward compatibility
+    dialog.add_filter(filter_pp3);
 
     Gtk::FileFilter filter_any;
     filter_any.set_name(M("PROFILEPANEL_FILEDLGFILTERANY"));

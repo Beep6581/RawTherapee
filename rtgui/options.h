@@ -36,7 +36,6 @@ class SaveFormat {
         int jpegQuality;
         int tiffBits;
         bool tiffUncompressed;
-        bool saveParams;
 };
 
 enum ThFileType {FT_Invalid=-1, FT_None=0, FT_Raw=1, FT_Jpeg=2, FT_Tiff=3, FT_Png=4, FT_Custom=5, FT_Tiff16=6, FT_Png16=7, FT_Custom16=8}; 
@@ -56,6 +55,7 @@ class Options {
     bool saveUsePathTemplate;
     Glib::ustring defProfRaw;
     Glib::ustring defProfImg;
+    Glib::ustring defMetadata;
     Glib::ustring dateFormat;
     int adjusterDelay;
     int  startupDir;
@@ -108,9 +108,12 @@ class Options {
     bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;
-    bool saveParamsFile;
+    bool embedXmpIntoDNG;
+    bool embedXmpIntoJPG;
+    bool embedXmpIntoPNG;
+    bool embedXmpIntoTIFF;
     bool saveParamsCache;
-    PPLoadLocation paramsLoadLocation;
+    //PPLoadLocation paramsLoadLocation;
     bool procQueueEnabled;
     Glib::ustring gimpDir;
     Glib::ustring psDir;
@@ -122,6 +125,7 @@ class Options {
     ThFileType thumbnailFormat;
     int thumbInterp; // 0: nearest, 1: bilinear
     bool liveThumbnails;
+    std::vector<Glib::ustring> colorLabels;       // Labels associations for colors
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
@@ -149,7 +153,7 @@ class Options {
     double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
     bool sndEnable;
 
-    bool tunnelMetaData;    // Pass through IPTC and XMP unchanged
+    bool outputMetaData;    // write EXIF IPTC and XMP to developed image
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramBar;
     bool showProfileSelector;
@@ -209,6 +213,7 @@ class Options {
 
     bool        has_retained_extention (Glib::ustring fname);
     bool        is_extention_enabled(Glib::ustring ext);
+    unsigned    getColorFromLabel( const Glib::ustring &label );
 };
 
 extern Options options;

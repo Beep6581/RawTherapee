@@ -27,6 +27,7 @@
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
 #include "../rtengine/safegtk.h"
+#include "processingjob.h"
 #include "rtimage.h"
 
 using namespace std;
@@ -93,11 +94,20 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
 		(*entry)->setParent (this);
 		(*entry)->resize (std::min(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
-		Glib::ustring tempFile = getTempFilenameForParams( (*entry)->filename );
 
-		// recovery save
-		if( !(*entry)->params.save( tempFile ) )
-		   (*entry)->savedParamsFile = tempFile;
+	    // Is not and already present snapshot, so we create a new one
+		if( (*entry)->currentSnapshoId <0 ){
+		    time_t rawtime;
+		    struct tm *timeinfo;
+		    char stringTimestamp [80];
+		    time ( &rawtime );
+		    timeinfo = localtime ( &rawtime );
+		    strftime (stringTimestamp,sizeof(stringTimestamp),"%Y-%m-%d %H:%M:%S",timeinfo);
+
+			int id = (*entry)->thumbnail->newSnapshot(stringTimestamp,(*entry)->params,true );
+			(*entry)->currentSnapshoId = id;
+		}else
+			(*entry)->thumbnail->setQueued((*entry)->currentSnapshoId,true );
 
 		(*entry)->selected = false;
 		if (!head)
@@ -112,8 +122,6 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 			if (pos==fd.end())
 				fd.push_back (*entry);
 		}
-		if ((*entry)->thumbnail)
-			(*entry)->thumbnail->imageEnqueued ();
 
 		BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (*entry);
 		bqbs->setButtonListener (this);
@@ -128,6 +136,10 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 
 bool BatchQueue::saveBatchQueue( )
 {
+    Glib::ustring savedParamPath;
+    savedParamPath = options.rtdir+"/batch/";
+    safe_g_mkdir_with_parents (savedParamPath, 0755);
+
     Glib::ustring savedQueueFile;
     savedQueueFile = options.rtdir+"/batch/queue";
     FILE *f = safe_g_fopen (savedQueueFile, "wt");
@@ -138,7 +150,7 @@ bool BatchQueue::saveBatchQueue( )
 	// method is already running with entryLock, so no need to lock again
     for (std::vector<ThumbBrowserEntryBase*>::iterator pos=fd.begin(); pos!=fd.end(); pos++){
     	BatchQueueEntry* bqe = reinterpret_cast<BatchQueueEntry*>(*pos);
-    	fprintf(f,"%s;%s\n", bqe->filename.c_str(),bqe->savedParamsFile.c_str() );
+    	fprintf(f,"%s;%d\n", bqe->filename.c_str(),bqe->currentSnapshoId );
     }
     fclose (f);
     return true;
@@ -162,26 +174,24 @@ void BatchQueue::loadBatchQueue( )
             while (fgets (buffer, 1024, f)){
                 char *p = strchr(buffer,';' );
                 if( p ){
-                    char *le = buffer + strlen(buffer);
-                    while( --le > buffer && (*le == '\n' || *le == '\r') );
                     std::string _source(buffer, p-buffer );
-                    std::string _paramsFile(p+1, (le +1)- (p+1) );
+                    int id=-1;
+                    sscanf(p+1,"%d",&id );
                     Glib::ustring source(_source);
-                    Glib::ustring paramsFile(_paramsFile);
-
-                    rtengine::procparams::ProcParams pparams;
-                    if( pparams.load( paramsFile ) )
-                        continue;
 
                     ::Thumbnail *thumb = cacheMgr->getEntry( source );
                     if( thumb ){
-                        rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
+                    	SnapshotInfo si = thumb->getSnapshot( id );
+                    	if( si.id != id ) // better checking for info returned
+                    		continue;
+                    	rtengine::ImageMetaData* md= new rtengine::ImageMetaData( *(thumb->getMetadata()) );
+                    	rtengine::ProcessingJobImpl* job = (rtengine::ProcessingJobImpl*)rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, si.params, md,options.outputMetaData);
 
                         int prevh = getMaxThumbnailHeight();
                         int prevw = prevh;
                         guint8* prev = NULL;
                         double tmpscale;
-                        rtengine::IImage8* img = thumb->processThumbImage(pparams, prevh, tmpscale);
+                        rtengine::IImage8* img = thumb->processThumbImage( si.params, prevh, tmpscale);
                         if (img) {
                             prevw = img->getWidth();
                             prevh = img->getHeight();
@@ -189,10 +199,10 @@ void BatchQueue::loadBatchQueue( )
                             memcpy(prev, img->getData(), prevw * prevh * 3);
                             img->free();
                         }
-                        BatchQueueEntry *entry = new BatchQueueEntry(job, pparams,source, prev, prevw, prevh, thumb);
+                        BatchQueueEntry *entry = new BatchQueueEntry(job, si.params, source, prev, prevw, prevh, thumb);
+                        entry->currentSnapshoId = id;
                         entry->setParent(this);
                         entry->resize(options.thumbSize);
-                        entry->savedParamsFile = paramsFile;
                         entry->selected = false;
                         fd.push_back(entry);
 
@@ -212,26 +222,9 @@ void BatchQueue::loadBatchQueue( )
     notifyListener(false);
 }
 
-Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename )
-{
-    time_t rawtime;
-    struct tm *timeinfo;
-    char stringTimestamp [80];
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-    strftime (stringTimestamp,sizeof(stringTimestamp),"_%Y%m%d%H%M%S_",timeinfo);
-    Glib::ustring savedParamPath;
-    savedParamPath = options.rtdir+"/batch/";
-    safe_g_mkdir_with_parents (savedParamPath, 0755);
-    savedParamPath += Glib::path_get_basename (filename);
-    savedParamPath += stringTimestamp;
-    savedParamPath += paramFileExtension;
-    return savedParamPath;
-}
-
 int cancelItemUI (void* data)
 {
-    safe_g_remove( (static_cast<BatchQueueEntry*>(data))->savedParamsFile );
+    //safe_g_remove( (static_cast<BatchQueueEntry*>(data))->savedParamsFile );
     delete static_cast<BatchQueueEntry*>(data);
     return 0;
 }
@@ -243,7 +236,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
         Glib::RWLock::WriterLock l(entryRW);
 #endif
 
-	for (size_t i=0; i<items->size(); i++) {
+        for (size_t i=0; i<items->size(); i++) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
             if (entry->processing)
                 continue;
@@ -252,7 +245,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
                 fd.erase (pos);
                 rtengine::ProcessingJob::destroy (entry->job);
                 if (entry->thumbnail)
-                    entry->thumbnail->imageRemovedFromQueue ();
+                    entry->thumbnail->setQueued( entry->currentSnapshoId,false );
                 g_idle_add (cancelItemUI, entry);
             }
         }
@@ -301,7 +294,7 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
 #ifdef WIN32
         Glib::RWLock::WriterLock l(entryRW);
 #endif
-	for (size_t i=0; i<items->size(); i++) {
+        for (size_t i=0; i<items->size(); i++) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
             if (entry->processing)
                 continue;
@@ -326,7 +319,7 @@ void BatchQueue::selectAll () {
 
         lastClicked = NULL;
         selected.clear ();
-	for (size_t i=0; i<fd.size(); i++) {
+        for (size_t i=0; i<fd.size(); i++) {
             if (fd[i]->processing)
                 continue;
             fd[i]->selected = true;
@@ -346,7 +339,7 @@ void BatchQueue::startProcessing () {
 	        Glib::RWLock::WriterLock l(entryRW);
 	        #endif
 
-	    next = static_cast<BatchQueueEntry*>(fd[0]);
+	        next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as processing        
             next->processing = true;
             processing = next;
@@ -363,7 +356,7 @@ void BatchQueue::startProcessing () {
         }
 
         // start batch processing
-        rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
+        rtengine::startBatchProcessing (next->job, this );
         queue_draw ();
     }
 }
@@ -374,7 +367,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     Glib::ustring fname;
     SaveFormat saveFormat;
     if (processing->outFileName=="") {   // auto file name
-        Glib::ustring s = calcAutoFileNameBase (processing->filename);
+        Glib::ustring s = calcAutoFileNameBase ( processing->thumbnail );
         saveFormat = options.saveFormatBatch;
         fname = autoCompleteFileName (s, saveFormat.format);
     }
@@ -396,20 +389,13 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 
 		if (err) throw "Unable to save output file";
 
-        if (saveFormat.saveParams) {
-			// We keep the extension to avoid overwriting the profile when we have
-			// the same output filename with different extension
-            //processing->params.save (removeExtension(fname) + paramFileExtension);
-            processing->params.save (fname + ".out" + paramFileExtension);
-        }
-
         if (processing->thumbnail) {
             processing->thumbnail->imageDeveloped ();
-            processing->thumbnail->imageRemovedFromQueue ();
+        	processing->thumbnail->setSaved(processing->currentSnapshoId,true, fname );
         }
     }
     // save temporary params file name: delete as last thing
-    Glib::ustring processedParams = processing->savedParamsFile;
+    //Glib::ustring processedParams = processing->savedParamsFile;
     
     // delete from the queue
     delete processing; processing = NULL;
@@ -427,7 +413,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             queueEmptied=true;
         }
         else if (listener && listener->canStartNext ()) {
-	    BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
+            BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
             // tag it as selected        
             next->processing = true;
             processing = next;
@@ -442,16 +428,16 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             next->removeButtonSet ();
         }
         if (saveBatchQueue( )) {
-            safe_g_remove( processedParams );
+            //safe_g_remove( processedParams );
             // Delete all files in directory \batch when finished, just to be sure to remove zombies
-            if( fd.empty() ){
+            /*if( fd.empty() ){
                 std::vector<Glib::ustring> names;
                 Glib::ustring batchdir = options.rtdir+"/batch/";
                 Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
                 safe_build_file_list (dir, names, batchdir);
                 for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
                     safe_g_remove( *iter );
-            }
+            }*/
         }
     }
 
@@ -463,10 +449,11 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 
 // Calculates automatic filename of processed batch entry, but just the base name
 // example output: "c:\out\converted\dsc0121"
-Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName) {
+Glib::ustring BatchQueue::calcAutoFileNameBase ( ::Thumbnail *thumb ) {
 
     std::vector<Glib::ustring> pa;
     std::vector<Glib::ustring> da;
+    Glib::ustring origFileName( thumb->getFileName() );
 
     for (size_t i=0; i<origFileName.size(); i++) {
         while ((i<origFileName.size()) && (origFileName[i]=='\\' || origFileName[i]=='/'))
@@ -528,8 +515,10 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     path = path + filename;
                 }
                 else if (options.savePathTemplate[ix]=='r') { // rank from pparams
-                    char rank;
-					rtengine::procparams::ProcParams pparams;
+
+                    int r = thumb->getRank();
+                    char rank = r>=0 ? '0'+r:'x';
+					/*rtengine::procparams::ProcParams pparams;
 					if( pparams.load(origFileName + paramFileExtension)==0 ){
 						if (!pparams.inTrash)
 							rank = pparams.rank + '0';
@@ -538,6 +527,8 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
 					}
 					else
 						rank = '0'; // if param file not loaded (e.g. does not exist), default to rank=0
+					*/
+
 					path += rank;
                 }
             }
@@ -590,7 +581,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 }
 
 int setProgressUI (void* p) {
-  (static_cast<BatchQueue*>(p))->redraw();
+    (static_cast<BatchQueue*>(p))->redraw();
     return 0;
 }
 

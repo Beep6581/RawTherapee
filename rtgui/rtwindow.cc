@@ -75,7 +75,8 @@ RTWindow::RTWindow ()
     	Thumbnail* thm= cm->getEntry( argv1 );
     	if(thm){
     		int error;
-    		rtengine::InitialImage *ii= rtengine::InitialImage::load(argv1,thm->getType() == FT_Raw,&error,NULL);
+    		Glib::ustring fname(argv1);
+    		rtengine::InitialImage *ii= rtengine::InitialImage::load(argv1, thm->getMetadata(), thm->getType() == FT_Raw,&error,NULL);
     		epanel->open( thm, ii );
     	}
 	} else {
@@ -409,7 +410,7 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
         return false;
     }
     else {
-      EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
+        EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
         return ep->handleShortcutKey (event);
     }
     return false;

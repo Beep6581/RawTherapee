@@ -390,7 +390,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     ipc->setProgressListener (this);
     ipc->setPreviewImageListener (previewHandler);
     ipc->setPreviewScale (10);  // Important
-    tpc->initImage (ipc, tmb->getType()==FT_Raw);
+    tpc->initImage (ipc, openThm->getType()==FT_Raw);
     ipc->setHistogramListener (this);
 
 //    iarea->fitZoom ();   // tell to the editorPanel that the next image has to be fitted to the screen
@@ -409,6 +409,11 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
     profilep->initProfile (defProf, ldprof);
 
+    rtengine::snapshotsList_t snapshots = openThm->getSnapshotsList();
+    for( rtengine::snapshotsList_t::iterator iter = snapshots.begin(); iter != snapshots.end(); iter++ ){
+    	history->addSnapshot( iter->second );
+    }
+    history->setSnapshotListener( openThm );
     openThm->addThumbnailListener (this);
     info_toggled ();
     
@@ -475,8 +480,8 @@ void EditorPanel::saveProfile () {
 
     // If the file was deleted, do not generate ghost entries
     if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
-    ProcParams params;
-    ipc->getParams (&params);
+        ProcParams params;
+        ipc->getParams (&params);
 
         // Will call updateCache, which will update both the cached and sidecar files if necessary
         openThm->setProcParams (params, NULL, EDITOR);
@@ -592,7 +597,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP) {
 			if (ipc && openThm && tpc->getChangedState()) {
         rtengine::procparams::ProcParams pparams;
         ipc->getParams (&pparams);
-            openThm->setProcParams (pparams, NULL, EDITOR, false);
+        openThm->setProcParams (pparams, NULL, EDITOR, false);
     }
 
 		// Ring a sound if it was a long event
@@ -917,6 +922,14 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
     }
 }
 
+void EditorPanel::snapshotChanged( Thumbnail* thm, int id )
+{
+	if( thm && id >=0 ){
+	   rtengine::SnapshotInfo info = thm->getSnapshot( id );
+	   history->updateSnapshot( info );
+	}
+}
+
 bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Glib::ustring fname, SaveFormat sf) {
 	rtengine::IImage16* img = pc->returnValue();
 	delete pc;
@@ -953,15 +966,18 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 
 	if (! pc->returnValue() ) {
 		openThm->imageDeveloped ();
-		// save processing parameters, if needed
-		if (sf.saveParams) {
-			rtengine::procparams::ProcParams pparams;
-			ipc->getParams (&pparams);
-			// We keep the extension to avoid overwriting the profile when we have
-			// the same output filename with different extension
-			//pparams.save (removeExtension (fname) + ".out" + paramFileExtension);
-			pparams.save (fname + ".out" + paramFileExtension);
-		}
+		rtengine::procparams::ProcParams pparams;
+		ipc->getParams (&pparams);
+
+		time_t rawtime;
+		struct tm *timeinfo;
+		char stringTimestamp [80];
+		time ( &rawtime );
+		timeinfo = localtime ( &rawtime );
+		strftime (stringTimestamp,sizeof(stringTimestamp),"%Y-%m-%d %H:%M:%S",timeinfo);
+		int id = openThm->newSnapshot(stringTimestamp, pparams);
+		openThm->setSaved(id ,true, fname );
+
 	} else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";
 		Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -984,8 +1000,9 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
 
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    //rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams);
+    tpc->saveIPTC();
+    rtengine::ImageMetaData* idata = openThm->getMetadata();
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams, idata,options.outputMetaData );
     int prevh = options.maxThumbnailHeight;
     int prevw = prevh;
     guint8* prev = NULL;//(guint8*) previewHandler->getImagePreview (prevw, prevh);
@@ -998,7 +1015,11 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
         memcpy (prev, img->getData (), prevw*prevh*3);
         img->free();
     }
-    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prev, prevw, prevh, openThm);
+
+    BatchQueueEntry *bqe = new BatchQueueEntry (job, pparams, openThm->getFileName(), prev, prevw, prevh, openThm);
+    if( bqe  )
+       bqe->currentSnapshoId = history->getSelectedSnapshot();
+    return bqe;
 }
 
 
@@ -1062,10 +1083,12 @@ void EditorPanel::saveAsPressed () {
 				// save image
 				rtengine::procparams::ProcParams pparams;
 				ipc->getParams (&pparams);
-				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
+				tpc->saveIPTC();
+	            rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
+				rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, idata,options.outputMetaData );
 
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
+				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
 							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf ));
 				saveimgas->set_sensitive(false);
 				sendtogimp->set_sensitive(false);
@@ -1094,9 +1117,10 @@ void EditorPanel::sendToGimpPressed () {
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
-    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
+    rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
+    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams, idata ,options.outputMetaData );
     ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
-    ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
+    ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
     		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_sendToGimp ),ld ));
     saveimgas->set_sensitive(false);
     sendtogimp->set_sensitive(false);
@@ -1116,7 +1140,6 @@ bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc){
         sf.format = "tif";
         sf.tiffBits = 16;
         sf.tiffUncompressed = true;
-        sf.saveParams = true;
 
         Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fname, sf.format);
 
@@ -1268,7 +1291,7 @@ void EditorPanel::beforeAfterToggled () {
 
     if (beforeAfter->get_active ()) {
         int errorCode=0;
-        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(),  openThm->getType()==FT_Raw , &errorCode, NULL);
+        rtengine::InitialImage *beforeImg = rtengine::InitialImage::load ( isrc->getImageSource ()->getFileName(), openThm->getMetadata(), openThm->getType()==FT_Raw , &errorCode, NULL);
         if( !beforeImg || errorCode )
         	return;
 

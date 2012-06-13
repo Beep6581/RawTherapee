@@ -86,7 +86,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         void iccTogglesChanged();
         void prefProfChanged();
 
-        void setRawMeta (bool raw, const rtengine::ImageData* pMeta);
+        void setRawMeta (bool raw, const rtengine::ImageMetaData* pMeta);
         void saveReferencePressed ();
 
         void setICMPanelListener (ICMPanelListener* ipl) { icmplistener = ipl; }

@@ -58,7 +58,7 @@ ThumbBrowserBase::ThumbBrowserBase ()
 }
 
 void ThumbBrowserBase::scrollChanged () {
-	for (size_t i=0; i<fd.size(); i++)
+    for (size_t i=0; i<fd.size(); i++)
         fd[i]->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
 
     internal.setPosition ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
@@ -314,7 +314,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
     bool handled = false;
 	
     {
-	    for (size_t i=0; i<fd.size(); i++)
+        for (size_t i=0; i<fd.size(); i++)
             if (fd[i]->drawable) {
                 if (fd[i]->inside (x, y) && fd[i]->insideWindow (clx, cly, clw, clh))            
                     fileDescr = fd[i];
@@ -363,7 +363,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
                     selected[i]->selected = false;
                 selected.clear ();
                 // select thumbnails in the interval
-		for (size_t i=startx; i<=endx; i++) {
+                for (size_t i=startx; i<=endx; i++) {
                     if (!fd[i]->filtered) {
                         fd[i]->selected = true;
                         selected.push_back (fd[i]);
@@ -386,7 +386,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
             selectionChanged ();
         }
         else {
-		for (size_t i=0; i<selected.size(); i++)
+            for (size_t i=0; i<selected.size(); i++)
                 selected[i]->selected = false;
             selected.clear ();
             if (fileDescr) {
@@ -399,7 +399,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
     }
     else if (fileDescr && button==3 && type==GDK_BUTTON_PRESS) {
         if (!fileDescr->selected) {
-		for (size_t i=0; i<selected.size(); i++)
+            for (size_t i=0; i<selected.size(); i++)
                 selected[i]->selected = false;
             selected.clear ();
             fileDescr->selected = true;
@@ -440,7 +440,7 @@ bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event)
     int w = get_width();
     int h = get_height();
 
-    for (size_t i=0; i<parent->fd.size(); i++)
+    for (size_t i=0; i<parent->fd.size(); i++) 
         if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) {
             parent->fd[i]->releaseNotify (event->button, event->type, event->state, (int)event->x, (int)event->y);
         }
@@ -451,7 +451,7 @@ bool ThumbBrowserBase::Internal::on_motion_notify_event (GdkEventMotion* event) 
     int w = get_width();
     int h = get_height();
 
-    for (size_t i=0; i<parent->fd.size(); i++)
+    for (size_t i=0; i<parent->fd.size(); i++) 
         if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) {
             #ifdef WIN32
 	        //l.release();  // motionNotify calls the queue, which locks
@@ -479,13 +479,13 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
     int newHeight=0;
     int optThumbSize=getCurrentThumbSize();
     if (zoomIn)
-	    for (size_t i=0; i<options.thumbnailZoomRatios.size(); i++) {
+        for (size_t i=0; i<options.thumbnailZoomRatios.size(); i++) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * getMaxThumbnailHeight());
             if (newHeight > optThumbSize)
                 break;
         }
     else
-	    for (size_t i=options.thumbnailZoomRatios.size()-1; i>0; i--) {
+        for (size_t i=options.thumbnailZoomRatios.size()-1; i>=0; i--) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * getMaxThumbnailHeight());
             if (newHeight < optThumbSize)
                 break;
@@ -518,7 +518,7 @@ void ThumbBrowserBase::refreshThumbImages () {
 		#endif
 
         int previewHeight = getCurrentThumbSize();
-	for (size_t i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
+        for (size_t i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
 	}
 
     redraw ();
@@ -530,7 +530,7 @@ void ThumbBrowserBase::refreshQuickThumbImages () {
 	Glib::RWLock::WriterLock l(entryRW);
 	#endif
 
-	for (size_t i=0; i<fd.size(); ++i) fd[i]->refreshQuickThumbnailImage ();
+    for (size_t i=0; i<fd.size(); ++i) fd[i]->refreshQuickThumbnailImage ();
 }
 
 void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles) {
@@ -559,7 +559,7 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
 		Glib::RWLock::WriterLock l(entryRW);
 		#endif
 
-		for (size_t i=0; i<fd.size(); i++)
+        for (size_t i=0; i<fd.size(); i++) 
             fd[i]->resize (getCurrentThumbSize());
     }
 
