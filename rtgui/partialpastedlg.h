@@ -130,5 +130,15 @@ class PartialPasteDlg : public Gtk::Dialog {
         void rawToggled ();
 };
 
+class PartialPasteIPTCDlg : public Gtk::Dialog {
+	rtengine::MetadataList iptc;
+	Gtk::Table* table;
+	std::map<std::string, Gtk::CheckButton *> chk;
+public:
+	PartialPasteIPTCDlg( const rtengine::MetadataList &iptc);
+	rtengine::MetadataList getIPTC();
+
+};
+
 #endif
 

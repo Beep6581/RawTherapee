@@ -13,7 +13,7 @@ CURVEEDITOR_LOADDLGLABEL;Görbe betöltése...
 CURVEEDITOR_NURBS;Húrkontroll
 CURVEEDITOR_PARAMETRIC;Parametrikus
 CURVEEDITOR_SAVEDLGLABEL;Görbe mentése...
-CURVEEDITOR_SHADOWS;Árnyékok
+CURVEEDITOR_SHADOWS;�?rnyékok
 CURVEEDITOR_TOOLTIPLINEAR;Lineáris görbe visszaállítása
 CURVEEDITOR_TOOLTIPLOAD;Görbe betöltése
 CURVEEDITOR_TOOLTIPSAVE;Görbe mentése
@@ -46,7 +46,7 @@ FILEBROWSER_ARRANGEMENTHINT;Váltás az előnézeti képek függőleges/vízszin
 FILEBROWSER_CLEARPROFILE;Feldolgozási paraméter törlése
 FILEBROWSER_COPYPROFILE;Feldolgozási paraméterek másolása
 FILEBROWSER_CURRENT_NAME;Aktuális név:
-FILEBROWSER_DELETEDLGLABEL;Állománytörlés megerősítése
+FILEBROWSER_DELETEDLGLABEL;�?llománytörlés megerősítése
 FILEBROWSER_DELETEDLGMSG;Biztosan törölni kívánja a kijelölt %1 képet?
 FILEBROWSER_EMPTYTRASHHINT;A kukában lévő képek végleges, állományrendszerből történő eltávolítása.
 FILEBROWSER_EMPTYTRASH;Kuka ürítése
@@ -70,7 +70,7 @@ FILEBROWSER_POPUPRANK3;Jelölés 3 csillaggal
 FILEBROWSER_POPUPRANK4;Jelölés 4 csillaggal
 FILEBROWSER_POPUPRANK5;Jelölés 5 csillaggal
 FILEBROWSER_POPUPREMOVE;Törlés (végleges)
-FILEBROWSER_POPUPRENAME;Átnevezés
+FILEBROWSER_POPUPRENAME;�?tnevezés
 FILEBROWSER_POPUPSELECTALL;Mindent kijelöl
 FILEBROWSER_POPUPTRASH;Kukába dobás
 FILEBROWSER_POPUPUNRANK;Jelölés megszüntetése
@@ -112,7 +112,7 @@ GENERAL_LOAD;Betöltés
 GENERAL_NA;n/a
 GENERAL_NO;Nem
 GENERAL_OK;OK
-GENERAL_PORTRAIT;Álló
+GENERAL_PORTRAIT;�?lló
 GENERAL_SAVE;Mentés
 GENERAL_UNCHANGED;(Változatlan)
 GENERAL_YES;Igen
@@ -178,13 +178,13 @@ HISTORY_MSG_46;Színzaj-csökkentés
 HISTORY_MSG_47;Színzaj-csökkentés sugara
 HISTORY_MSG_48;Színzaj-csökkentés éltoleranciája
 HISTORY_MSG_49;Élérzékeny színzaj-csökkentés
-HISTORY_MSG_50;Árnyékok/Fények korrekció
+HISTORY_MSG_50;�?rnyékok/Fények korrekció
 HISTORY_MSG_51;Fényes részek 
 HISTORY_MSG_52;Sötét részek 
 HISTORY_MSG_53;Világos tónustartomány
 HISTORY_MSG_54;Sötét tónustartomány
 HISTORY_MSG_55;Lokális kontraszt
-HISTORY_MSG_56;Árnyékok/Fények sugár
+HISTORY_MSG_56;�?rnyékok/Fények sugár
 HISTORY_MSG_57;Durva forgatás
 HISTORY_MSG_58;Vízszintes tükrözés
 HISTORY_MSG_59;Függőleges tükrözés
@@ -202,16 +202,16 @@ HISTORY_MSG_70;Kimeneti színprofil
 HISTORY_MSG_71;Bemeneti színprofil
 HISTORY_MSG_72;Peremsötétedés
 HISTORY_MSG_73;Színkeverő
-HISTORY_MSG_74;Átméretezés szorzója
-HISTORY_MSG_75;Átméretezés algoritmusa
+HISTORY_MSG_74;�?tméretezés szorzója
+HISTORY_MSG_75;�?tméretezés algoritmusa
 HISTORY_MSG_76;EXIF Metaadatok 
 HISTORY_MSG_77;IPTC Metaadatok
 HISTORY_MSG_78;Data specified for resize
-HISTORY_MSG_79;Átméretezés szélesség szerint
-HISTORY_MSG_80;Átméretezés magasság szerint
-HISTORY_MSG_81;Átméretezés engedélyezve
+HISTORY_MSG_79;�?tméretezés szélesség szerint
+HISTORY_MSG_80;�?tméretezés magasság szerint
+HISTORY_MSG_81;�?tméretezés engedélyezve
 HISTORY_MSG_82;Megváltozott profil
-HISTORY_MSG_83;Árnyékok/csúcsfények - kiváló minőség
+HISTORY_MSG_83;�?rnyékok/csúcsfények - kiváló minőség
 HISTORY_MSG_84;Perspektívakorrekció
 HISTORY_MSG_85;Wavelet együtthatók
 HISTORY_MSG_86;Wavelet equalizer
@@ -227,7 +227,7 @@ HISTORY_MSG_97;'b' görbe
 HISTORY_MSG_98;Bayer-deinterpoláció
 HISTORY_MSG_99;Előfeldolgozás
 HISTORY_MSG_100;RGB színtelítettség
-HISTORY_MSG_101;HSV EQ -- Árnyalat
+HISTORY_MSG_101;HSV EQ -- �?rnyalat
 HISTORY_MSG_102;HSV EQ -- Telítettség
 HISTORY_MSG_103;HSV EQ -- Színérték
 HISTORY_MSG_104;HSV Equalizer
@@ -258,7 +258,7 @@ IPTCPANEL_AUTHORSPOSITION;Szerző titulusa
 IPTCPANEL_AUTHOR;Szerző
 IPTCPANEL_CAPTIONHINT;A kép szöveges leírása (Caption - Abstract)
 IPTCPANEL_CAPTIONWRITERHINT;A leírást és az adatok rögzítését/szerkesztését/javítását végző személy neve (Writer - Editor)
-IPTCPANEL_CAPTIONWRITER;Író
+IPTCPANEL_CAPTIONWRITER;�?ró
 IPTCPANEL_CAPTION;Leírás
 IPTCPANEL_CATEGORYHINT;A kép témáját azonosítja (Category)
 IPTCPANEL_CATEGORY;Kategória
@@ -307,7 +307,7 @@ MAIN_BUTTON_SENDTOEDITOR;Megnyitás külső programmal
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Kiválasztott kép szerkesztése külső programmal <b>Ctrl+E</b>
 MAIN_BUTTON_UNFULLSCREEN;Teljes képernyő elhagyása
 MAIN_FRAME_BATCHQUEUE;Kötegelt feldolgozási sor
-MAIN_FRAME_FILEBROWSER;Állományböngésző
+MAIN_FRAME_FILEBROWSER;�?llományböngésző
 MAIN_FRAME_PLACES;Helyek 
 MAIN_FRAME_PLACES_ADD;Hozzáadás
 MAIN_FRAME_PLACES_DEL;Törlés
@@ -316,7 +316,7 @@ MAIN_MSG_ALREADYEXISTS;Ilyen nevű állomány már létezik!
 MAIN_MSG_CANNOTLOAD;A képet nem sikerült betölteni.
 MAIN_MSG_CANNOTSAVE;Hiba történt az állomány mentése közben!
 MAIN_MSG_CANNOTSTARTEDITOR;A megadott külső program nem indítható.
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Állítsa be a helyes elérési utat a "Beállítások" ablakban.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;�?llítsa be a helyes elérési utat a "Beállítások" ablakban.
 MAIN_MSG_ERRORDURINGIMAGESAVING;Hiba történt a kép mentése során!
 MAIN_MSG_EXITJOBSINQUEUEINFO;A sorban álló feldolgozatlan képek kilépéskor el fognak veszni.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Biztos, hogy ki akar lépni? Feldolgozatlan képek vannak a feldolgozási sorban.
@@ -368,9 +368,9 @@ PARTIALPASTE_LUMACURVE;Luminancia görbe
 PARTIALPASTE_LUMADENOISE;Luminanciazaj-csökkentés
 PARTIALPASTE_LUMINANCEGROUP;Luminanciát érintő beállítások
 PARTIALPASTE_METAICMGROUP;Metaadat/Színprofil beállítások
-PARTIALPASTE_RESIZE;Átméretezés
+PARTIALPASTE_RESIZE;�?tméretezés
 PARTIALPASTE_ROTATION;Forgatás
-PARTIALPASTE_SHADOWSHIGHLIGHTS;Árnyékos/Világos részek
+PARTIALPASTE_SHADOWSHIGHLIGHTS;�?rnyékos/Világos részek
 PARTIALPASTE_SHARPENING;Élesítés
 PARTIALPASTE_VIGNETTING;Peremsötétedés
 PARTIALPASTE_WHITEBALANCE;Fehéregyensúly
@@ -410,8 +410,8 @@ PREFERENCES_DIRSOFTWARE;Telepítés helye
 PREFERENCES_EDITORCMDLINE;Egyéb parancssor
 PREFERENCES_EDITORLAYOUT;Szerkesztési mód
 PREFERENCES_EXTERNALEDITOR;Külső képszerkesztő program
-PREFERENCES_FBROWSEROPTS;Állományböngésző beállításai
-PREFERENCES_FILEFORMAT;Állományformátum
+PREFERENCES_FBROWSEROPTS;�?llományböngésző beállításai
+PREFERENCES_FILEFORMAT;�?llományformátum
 PREFERENCES_FORIMAGE;Egyéb képekhez
 PREFERENCES_FORRAW;RAW állományokhoz
 PREFERENCES_GIMPPATH;GIMP telepítési könyvtára
@@ -433,7 +433,7 @@ PREFERENCES_OUTDIRHINT;<i>A következő jeleket lehet használni:</i>\n<b>%f, %d
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>A következő jeleket lehet használni:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEzek a jelek a megnyitott kép elérési útvonalának részeire vonatkoznak.\n\nPéldául, ha a </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> képet nyitjuk meg, ezek a jelek a következőket jelentik:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHa oda kívánja menteni a kész képet, ahol az eredeti volt, az alábbiakat kell beírni:\n</i><b>%p1/%f\n</b><i>\nHa a kész képet az eredeti könyvtárán belül egy "converted" alkönyvtárba kívánja menteni, az alábbiakat kell beírni:\n</i><b>%p1/converted/%f\n</b><i>\nHa a kész képeket  a '/home/tom/converted' könyvtárba kívánja menteni az eredeti, dátumot tartalmazó alkönyvtár megtartásával, írja ezt:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Sablon használata
 PREFERENCES_OUTDIR;Kimeneti alapértelmezett könyvtár
-PREFERENCES_OVERLAY_FILENAMES;Állománynevek megjelenítése az előnézeti képeken
+PREFERENCES_OVERLAY_FILENAMES;�?llománynevek megjelenítése az előnézeti képeken
 PREFERENCES_OVERWRITEOUTPUTFILE;A már létező kimeneti állományok felülírása
 PREFERENCES_PARSEDEXTADDHINT;A kiterjesztés beírása után ez a gomb felveszi a listára
 PREFERENCES_PARSEDEXTADD;Kiterjesztés hozzáadása
@@ -460,9 +460,9 @@ PREFERENCES_SINGLETAB;Egyetlen szerkesztőfül
 PREFERENCES_STARTUPIMDIR;Képek könyvtára induláskor
 PREFERENCES_TAB_BROWSER;Fájl böngésző
 PREFERENCES_TAB_COLORMGR;Színkezelés
-PREFERENCES_TAB_GENERAL;Általános
+PREFERENCES_TAB_GENERAL;�?ltalános
 PREFERENCES_TAB_IMPROC;Képfeldolgozás
-PREFERENCES_TAB_OUTPUT;Állománymentési beállítások
+PREFERENCES_TAB_OUTPUT;�?llománymentési beállítások
 PREFERENCES_THUMBSIZE;Képek mérete a böngészőben
 PREFERENCES_USESYSTEMTHEME;Rendszer megjelenésének használata
 PREFERENCES_WORKFLOW;Munkamenet
@@ -501,7 +501,7 @@ QINFO_LENS;Objektív
 QINFO_NOEXIF;EXIF adat nem áll rendelkezésre.
 RBATCHQUEUE_AUTOSTART;Autoindítás
 SAVEDLG_AUTOSUFFIX;Utótag hozzáadása automatikusan, ha az állomány már létezik
-SAVEDLG_FILEFORMAT;Állományformátum
+SAVEDLG_FILEFORMAT;�?llományformátum
 SAVEDLG_JPEGQUAL;JPEG Minőség
 SAVEDLG_JPGFILTER;JPEG fájlok
 SAVEDLG_PNGCOMPR;PNG Tömörítés
@@ -607,7 +607,7 @@ TP_HSVEQUALIZER6;Kék
 TP_HSVEQUALIZER7;Lila
 TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;HSV Csatorna
-TP_HSVEQUALIZER_HUE;Árnyalat
+TP_HSVEQUALIZER_HUE;�?rnyalat
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
 TP_HSVEQUALIZER_NEUTRAL;Semleges
 TP_HSVEQUALIZER_SAT;Színtelítettség
@@ -668,7 +668,7 @@ TP_RESIZE_DOWNSCALEF;Downscale (Gyorsabb)
 TP_RESIZE_FULLSIZE;Képméret:
 TP_RESIZE_HEIGHT;Magasság
 TP_RESIZE_H;M:
-TP_RESIZE_LABEL;Átméretezés
+TP_RESIZE_LABEL;�?tméretezés
 TP_RESIZE_LANCZOS;Lanczos
 TP_RESIZE_METHOD;Algoritmus: 
 TP_RESIZE_NEAREST;Legközelebbi szomszéd
@@ -682,11 +682,11 @@ TP_ROTATE_LABEL;Forgatás
 TP_ROTATE_SELECTLINE;    Vízszintes vonal kijelölése
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Csúcsfények
 TP_SHADOWSHLIGHTS_HLTONALW;Csúcsfények tónustartománya
-TP_SHADOWSHLIGHTS_LABEL;Árnyékok/Csúcsfények
+TP_SHADOWSHLIGHTS_LABEL;�?rnyékok/Csúcsfények
 TP_SHADOWSHLIGHTS_LOCALCONTR;Lokális kontraszt
 TP_SHADOWSHLIGHTS_RADIUS;Sugár
-TP_SHADOWSHLIGHTS_SHADOWS;Árnyékok
-TP_SHADOWSHLIGHTS_SHTONALW;Árnyékok tónustartománya
+TP_SHADOWSHLIGHTS_SHADOWS;�?rnyékok
+TP_SHADOWSHLIGHTS_SHTONALW;�?rnyékok tónustartománya
 TP_SHARPENING_AMOUNT;Erősség
 TP_SHARPENING_EDRADIUS;Sugár
 TP_SHARPENING_EDTOLERANCE;Éltolerancia
@@ -712,7 +712,7 @@ TP_VIGNETTING_STRENGTH;Erősség
 TP_WBALANCE_AUTO;Automatikus
 TP_WBALANCE_CAMERA;Tárolt
 TP_WBALANCE_CUSTOM;Egyedi
-TP_WBALANCE_GREEN;Árnyalat
+TP_WBALANCE_GREEN;�?rnyalat
 TP_WBALANCE_LABEL;Fehéregyensúly
 TP_WBALANCE_METHOD;Beállítás
 TP_WBALANCE_SIZE;Méret:

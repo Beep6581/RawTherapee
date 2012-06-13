@@ -30,30 +30,20 @@
 #include "profilestore.h"
 #include "batchqueue.h"
 #include "../rtengine/safegtk.h"
+#include "version.h"
 
 using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
-		lastW(0), lastH(0), lastScale(0), initial_(false) {
+		initial_(false), lastW(0), lastH(0), lastScale(0),pparamsId(-1),idata(NULL) {
 
     cfs.load (getCacheFileName ("data")+".txt");
-    loadProcParams ();
+    loadInfoFromImage ();
+    //loadProcParams ();
     _loadThumbnail ();
     generateExifDateTimeStrings ();
-
-    if (cfs.rankOld >= 0){
-        // rank and inTrash were found in cache (old style), move them over to pparams
-
-        // try to load the last saved parameters from the cache or from the paramfile file
-        createProcParamsForUpdate(false, false); // this can execute customprofilebuilder to generate param file
-
-        // TODO? should we call notifylisterners_procParamsChanged here?
-
-        setRank(cfs.rankOld);
-        setStage(cfs.inTrashOld);
-    }
 
  	delete tpp;
  	tpp = 0;
@@ -62,12 +52,12 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
       needsReProcessing(true),imageLoading(false), lastImg(NULL),
-		initial_(true) {
+		initial_(true),pparamsId(-1),idata(NULL) {
 
 
     cfs.md5 = md5;
     _generateThumbnailImage ();
-    loadProcParams ();
+    //loadProcParams ();
     cfs.recentlySaved = false;
 
 	initial_ = false;
@@ -96,17 +86,17 @@ void Thumbnail::_generateThumbnailImage () {
 	cfs.timeValid = false;
 
 	if (ext.lowercase()=="jpg") {
-			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
+			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, loadInfoFromImage () );
 			if (tpp)
 					cfs.format = FT_Jpeg;
 	}
 	else if (ext.lowercase()=="png") {
-			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
+			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, loadInfoFromImage ());
 			if (tpp)
 					cfs.format = FT_Png;
 	}
 	else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
+			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, loadInfoFromImage ());
 			if (tpp)
 					cfs.format = FT_Tiff;
 	}
@@ -130,7 +120,7 @@ void Thumbnail::_generateThumbnailImage () {
 		if (tpp) {
 			cfs.format = FT_Raw;
 			cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
-			infoFromImage (fname, &ri);
+			loadInfoFromImage ();
 		}
 	}
 
@@ -141,7 +131,8 @@ void Thumbnail::_generateThumbnailImage () {
         needsReProcessing = true;
 
         cfs.save (getCacheFileName ("data")+".txt");
-
+    	if( idata && !idata->isEmbedded() )
+    		idata->saveXMP();
         generateExifDateTimeStrings ();
     }
 }
@@ -199,7 +190,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
 
         // Now they SHOULD be there (and potentially "partial"), so try to load them and store it as a full procparam
-        if (success) loadProcParams();
+        if (success) loadInfoFromImage();
     }
 
     if (returnParams && hasProcParams()) {
@@ -215,65 +206,12 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt){
 		listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
-/*
- * Load the procparams from the cache or from the sidecar file (priority set in
- * the Preferences).
- *
- * The result is a complete ProcParams with default values merged with the values
- * from the default Raw or Image ProcParams, then with the values from the loaded
- * ProcParams (sidecar or cache file).
- */
-void Thumbnail::loadProcParams () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(mutex);
-	#endif
-
-    pparamsValid = false;
-    pparams.setDefaults();
-    // WARNING: loading the default Raw or Img pp3 file at each thumbnail may be a performance bottleneck
-    pparams.load(options.profilePath+"/" + (getType()==FT_Raw?options.defProfRaw:options.defProfImg) + paramFileExtension);
-
-    if (options.paramsLoadLocation==PLL_Input) {
-        // try to load it from params file next to the image file
-        int ppres = pparams.load (fname + paramFileExtension);
-        pparamsValid = !ppres && pparams.ppVersion>=220;
-        // if no success, try to load the cached version of the procparams
-        if (!pparamsValid) 
-            pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
-    }
-    else {
-        // try to load it from cache
-        pparamsValid = !pparams.load (getCacheFileName ("profiles")+paramFileExtension);
-        // if no success, try to load it from params file next to the image file
-        if (!pparamsValid) {
-            int ppres = pparams.load (fname + paramFileExtension);
-            pparamsValid = !ppres && pparams.ppVersion>=220;
-        }
-    }
-}
-
 void Thumbnail::clearProcParams (int whoClearedIt) {
-
-/*  Clarification on current "clear profile" functionality:
-    a. if rank/colorlabel/inTrash are NOT set, 
-    the "clear profile" will delete the pp3 file (as before).
-
-    b. if any of the rank/colorlabel/inTrash ARE set, 
-    the "clear profile" will lead to execution of ProcParams::setDefaults 
-    (the CPB is NOT called) to set the params values and will preserve 
-    rank/colorlabel/inTrash in the param file. */
     
 	// TODO: Check for Linux
 	#ifdef WIN32
 	Glib::Mutex::Lock lock(mutex);
 	#endif
-
-    // preserve rank, colorlabel and inTrash across clear
-    int rank = getRank();
-    int colorlabel = getColorLabel();
-    int inTrash = getStage();
-
 
     cfs.recentlySaved = false;
     pparamsValid = false;
@@ -285,31 +223,7 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
     // reset the params to defaults
     pparams.setDefaults();
 
-    // and restore rank and inTrash
-    setRank(rank);
-    setColorLabel(colorlabel);
-    setStage(inTrash);
-
-    // params could get validated by rank/inTrash values restored above
-    if (pparamsValid)
-    {
-        updateCache();
-    }
-    else
-    {
-        // remove param file from cache
-        Glib::ustring fname_ = getCacheFileName ("profiles")+paramFileExtension;
-        if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
-            safe_g_remove (fname_);
-        // remove param file located next to the file
-//        fname_ = removeExtension(fname) + paramFileExtension;
-        fname_ = fname + paramFileExtension;
-        if (safe_file_test(fname_, Glib::FILE_TEST_EXISTS))
-            safe_g_remove (fname_);
-        fname_ = removeExtension(fname) + paramFileExtension;
-        if (safe_file_test (fname_, Glib::FILE_TEST_EXISTS))
-            safe_g_remove (fname_);
-    }
+    idata->deleteAllSnapshots();
 
     for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoClearedIt);
@@ -329,10 +243,6 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     if (pparams!=pp) 
         cfs.recentlySaved = false;
 
-    // do not update rank, colorlabel and inTrash
-    int rank = getRank();
-    int colorlabel = getColorLabel();
-    int inTrash = getStage();
 
     if (pe) {
     	// coarse.rotate works in ADD mode only, so we set it to 0 first
@@ -344,9 +254,6 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     pparamsValid = true;
     needsReProcessing = true;
 
-    setRank(rank);
-    setColorLabel(colorlabel);
-    setStage(inTrash);
 
     if (updateCacheNow)
         updateCache ();
@@ -364,7 +271,6 @@ void Thumbnail::imageDeveloped () {
         
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data")+".txt");
-    pparams.save (getCacheFileName ("profiles")+paramFileExtension);
 }
 
 void Thumbnail::imageEnqueued () {
@@ -506,13 +412,17 @@ void Thumbnail::generateExifDateTimeStrings () {
     exifString = "";
     dateTimeString = "";
 
-    if (!cfs.exifValid)
-        return;
 
-    exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm", Glib::ustring(rtengine::ImageData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::ImageData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso, cfs.focalLen);
+    if( idata )
+    exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm",
+    		Glib::ustring(rtengine::ImageMetaData::apertureToString(idata->getFNumber())),
+    		Glib::ustring(rtengine::ImageMetaData::shutterToString(idata->getShutterSpeed())),
+    		M("QINFO_ISO"),
+    		idata->getISOSpeed(),
+    		idata->getFocalLen());
 
-    if (options.fbShowExpComp && cfs.expcomp!="0.00" && cfs.expcomp!="") // don't show exposure compensation if it is 0.00EV;old cache iles do not have ExpComp, so value will not be displayed. 
-    	exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp); // append exposure compensation to exifString
+    if (options.fbShowExpComp && idata->getExpComp() ) // don't show exposure compensation if it is 0.00EV;
+    	exifString = Glib::ustring::compose ("%1 %2EV", exifString, idata->expcompToString (idata->getExpComp(), false)); // append exposure compensation to exifString
 
     std::string dateFormat = options.dateFormat;
     std::ostringstream ostr;
@@ -559,53 +469,70 @@ ThFileType Thumbnail::getType () {
     return (ThFileType) cfs.format;
 }
 
-int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataLocation* rml) {
+int Thumbnail::loadInfoFromImage ( ) {
 
-    rtengine::ImageMetaData* idata = rtengine::ImageMetaData::fromFile (fname, rml);
+	Glib::ustring xmpfname = removeExtension(fname) + paramFileExtension;
+	Glib::ustring xmpfname2 = options.saveParamsCache? getCacheFileName ("profiles")+paramFileExtension :"";
+
+	if (idata)
+		delete idata;
+
+	if( getExtension(fname).lowercase().compare("dng")==0 && options.embedXmpIntoDNG )
+		idata = rtengine::ImageMetaData::fromFile (fname,"",xmpfname2,true);
+	else if( getExtension(fname).lowercase().compare("png")==0 && options.embedXmpIntoPNG )
+		idata = rtengine::ImageMetaData::fromFile (fname,"",xmpfname2,true);
+	else if( getExtension(fname).lowercase().compare("jpg")==0 && options.embedXmpIntoJPG )
+		idata = rtengine::ImageMetaData::fromFile (fname,"",xmpfname2,true);
+	else if( (getExtension(fname).lowercase().compare("tif")==0 || getExtension(fname).lowercase().compare("tiff")==0) && options.embedXmpIntoTIFF )
+		idata = rtengine::ImageMetaData::fromFile (fname,"",xmpfname2,true);
+	else
+       idata = rtengine::ImageMetaData::fromFile (fname,xmpfname,xmpfname2);
     if (!idata)
         return 0;
 
-    int deg = 0;
-    cfs.timeValid = false;
-    cfs.exifValid = false;
-    if (idata->hasExif()) {
-        cfs.shutter  = idata->getShutterSpeed ();
-        cfs.fnumber  = idata->getFNumber ();
-        cfs.focalLen = idata->getFocalLen ();
-        cfs.iso      = idata->getISOSpeed ();
-        cfs.expcomp  = idata->expcompToString (idata->getExpComp(), false); // do not mask Zero expcomp
-        cfs.year     = 1900 + idata->getDateTime().tm_year;
-        cfs.month    = idata->getDateTime().tm_mon + 1;
-        cfs.day      = idata->getDateTime().tm_mday;
-        cfs.hour     = idata->getDateTime().tm_hour;
-        cfs.min      = idata->getDateTime().tm_min;
-        cfs.sec      = idata->getDateTime().tm_sec;
-        cfs.timeValid = true;
-        cfs.exifValid = true;
-        cfs.lens     = idata->getLens();
-        cfs.camera   = idata->getCamera();
-
-        if (idata->getOrientation()=="Rotate 90 CW") {
-            deg = 90;
-        }
-        else if (idata->getOrientation()=="Rotate 180") {
-            deg = 180;
-        }
-        else if (idata->getOrientation()=="Rotate 270 CW") {
-            deg = 270;
-        }
+    int currentId = idata->getSnapshotId( );
+    if( currentId >=0 ){
+    	rtengine::SnapshotInfo si = idata->getSnapshot( currentId );
+		pparams = si.params;
+		pparamsId = currentId;
+		pparamsValid=true;
     }
-	else {
-        cfs.lens     = "Unknown";
-        cfs.camera   = "Unknown";
+
+    int deg = 0;
+
+    cfs.shutter = idata->getShutterSpeed();
+	cfs.fnumber = idata->getFNumber();
+	cfs.focalLen = idata->getFocalLen();
+	cfs.iso = idata->getISOSpeed();
+    cfs.expcomp  = idata->expcompToString (idata->getExpComp(), false); // do not mask Zero expcomp
+	cfs.year = 1900 + idata->getDateTime().tm_year;
+	cfs.month = idata->getDateTime().tm_mon + 1;
+	cfs.day = idata->getDateTime().tm_mday;
+	cfs.hour = idata->getDateTime().tm_hour;
+	cfs.min = idata->getDateTime().tm_min;
+	cfs.sec = idata->getDateTime().tm_sec;
+	cfs.timeValid = true;
+	cfs.exifValid = true;
+	cfs.lens = idata->getLens();
+	cfs.camera = idata->getCamera();
+
+	if (idata->getOrientation()	== rtengine::ImageMetaData::ePhotoOrientationRotate90) {
+		deg = 90;
+	} else if (idata->getOrientation() == rtengine::ImageMetaData::ePhotoOrientationRotate180) {
+		deg = 180;
+	} else if (idata->getOrientation() == rtengine::ImageMetaData::ePhotoOrientationRotate270) {
+		deg = 270;
 	}
+
 		// get image filetype
     std::string::size_type idx;
-    idx = fname.rfind('.');
-    if(idx != std::string::npos){cfs.filetype = fname.substr(idx+1);}
-    else {cfs.filetype="";}
+	idx = fname.rfind('.');
+	if (idx != std::string::npos) {
+		cfs.filetype = fname.substr(idx + 1);
+	} else {
+		cfs.filetype = "";
+	}
 	
-    delete idata;
     return deg;
 }
 
@@ -692,10 +619,13 @@ void Thumbnail::saveThumbnail ()
 void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData) {
 
     if (updatePParams && pparamsValid) {
-        pparams.save (
-            options.saveParamsCache ? getCacheFileName ("profiles")+paramFileExtension : "",
-            options.saveParamsFile  ? fname + paramFileExtension : ""
-        );
+        if( idata ){
+			int idSnapshot=idata->getSnapshotId();
+			if( idSnapshot<0 )
+				idata->newSnapshot( rtengine::SnapshotInfo::kCurrentSnapshotName , pparams);
+			else
+				idata->updateSnapshot(idSnapshot, pparams );
+        }
     }
     if (updateCacheImageData)
     cfs.save (getCacheFileName ("data")+".txt");
@@ -711,7 +641,9 @@ Thumbnail::~Thumbnail () {
     delete tpp;
 }
 
-Glib::ustring Thumbnail::getCacheFileName (Glib::ustring subdir) {
+// Glib::ustring Thumbnail::getCacheFileName (Glib::ustring subdir) {
+Glib::ustring Thumbnail::getCacheFileName (const Glib::ustring &subdir) const
+{
 
     return cachemgr->getCacheFileName (subdir, fname, cfs.md5);
 }
@@ -747,7 +679,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
     Glib::ustring openFName;
   
     if (destination==1) {
-            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
+            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname /* Merge uncertainty: was "this" */), options.saveFormatBatch.format);
             if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
               wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (openFName.c_str(), -1, NULL, NULL, NULL);
               ShellExecuteW(NULL, L"open", wfilename, NULL, NULL, SW_SHOWMAXIMIZED );
@@ -758,7 +690,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
             }
     } else {
         openFName = destination == 3 ? fname
-            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
+            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname /* Merge uncertainty: was "this" */), options.saveFormatBatch.format);
 
         printf("Opening %s\n", openFName.c_str());
 
@@ -810,4 +742,97 @@ bool Thumbnail::imageLoad(bool loading)
 	}else if( !loading )
 		imageLoading = false;
     return false;
+}
+
+
+/* Create a new snapshot with the given name and save inside it the procparams
+ * Append the processing parameters to the end of the list then save the xmp file
+ * Returns the id of the new snapshot
+ */
+int Thumbnail::newSnapshot(const Glib::ustring &newName, const rtengine::procparams::ProcParams& params, bool queued)
+{
+	int id =idata->newSnapshot( newName,params,queued);
+
+    for (int i=0; i<listeners.size(); i++)
+        listeners[i]->snapshotChanged(this,id);
+    return id;
+}
+
+/* Delete the snapshot with the given id
+ * then save the xmp file
+ */
+bool Thumbnail::deleteSnapshot( int id )
+{
+	return idata->deleteSnapshot(id );
+}
+
+/* Rename the snapshot with the given id
+ * then save the xmp file
+ */
+bool Thumbnail::renameSnapshot(int id, const Glib::ustring &newname )
+{
+   bool b= idata->renameSnapshot(id, newname);
+   for (int i=0; i<listeners.size(); i++)
+       listeners[i]->snapshotChanged(this,id);
+   return b;
+}
+
+/*
+ *  Read all the snapshots from the xmpData
+ */
+rtengine::snapshotsList_t Thumbnail::getSnapshotsList()
+{
+    return idata->getSnapshotsList();
+}
+
+int Thumbnail::getNumQueued()
+{
+    return idata->getNumQueued();
+}
+
+rtengine::SnapshotInfo Thumbnail::getSnapshot( int id )
+{
+	return idata->getSnapshot( id );
+}
+
+bool  Thumbnail::setQueued( int id, bool inqueue )
+{
+    bool b= idata->setQueuedSnapshot( id, inqueue );
+    for (int i=0; i<listeners.size(); i++)
+        listeners[i]->snapshotChanged(this,id);
+    return b;
+}
+
+int Thumbnail::getNumSaved()
+{
+    return idata->getSavedSnapshots();
+}
+
+bool Thumbnail::setSaved( int id, bool saved, const Glib::ustring &filename )
+{
+    bool b= idata->setSavedSnapshot( id, saved, filename );
+    for (int i=0; i<listeners.size(); i++)
+        listeners[i]->snapshotChanged(this,id);
+    return b;
+}
+
+void Thumbnail::setRank  (int rank)
+{
+	if( idata ) idata->setRank(rank);
+}
+int Thumbnail::getRank  ()
+{
+    if( idata ) return idata->getRank();
+    return 0;
+}
+
+void Thumbnail::setLabel( const Glib::ustring &colorlabel )
+{
+	if( idata ) idata->setLabel( colorlabel );
+}
+
+Glib::ustring Thumbnail::getLabel()
+{
+   if( idata ) return idata->getLabel();
+   return "";
 }

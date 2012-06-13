@@ -78,6 +78,7 @@ protected:
   public:
   
     Thumbnail* thumbnail;
+    int currentSnapshoId;
 
 // thumbnail preview properties:
     Glib::ustring filename;

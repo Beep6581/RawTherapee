@@ -1,5 +1,5 @@
 ADJUSTER_RESET_TO_DEFAULT;ברירת מחדל
-CURVEEDITOR_FILEDLGFILTERANY;קבצים כלשהם
+CURVEEDITOR_FILEDLGFILTERANY;קבצי�? כלשה�?
 CURVEEDITOR_FILEDLGFILTERCURVE;קבצי עקמות
 CURVEEDITOR_LINEAR;ישיר
 CURVEEDITOR_LOADDLGLABEL;הטען עקמה
@@ -79,7 +79,7 @@ FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
-GENERAL_ABOUT;אודות
+GENERAL_ABOUT;�?ודות
 GENERAL_CANCEL;בטל
 GENERAL_DISABLED;מבוטל
 GENERAL_DISABLE;בטל
@@ -87,23 +87,23 @@ GENERAL_ENABLED;מופעל
 GENERAL_ENABLE;הפעל
 GENERAL_LANDSCAPE;נוף
 GENERAL_LOAD;הטען
-GENERAL_NA;אין
-GENERAL_NO;לא
+GENERAL_NA;�?ין
+GENERAL_NO;ל�?
 GENERAL_OK;שמור
 GENERAL_PORTRAIT;דיוקן
 GENERAL_SAVE;שמור
 GENERAL_YES;כן
 HISTOGRAM_LABEL;Histogram
-HISTOGRAM_TOOLTIP_B;Show/הסתר היסטוגרם כחול
-HISTOGRAM_TOOLTIP_G;Show/הסתר היסטוגרם ירוק
-HISTOGRAM_TOOLTIP_L;Show/CIELAB הסתר היסטוגרם  
-HISTOGRAM_TOOLTIP_R;Show/הסתר היסטוגרם אדום
+HISTOGRAM_TOOLTIP_B;Show/הסתר היסטוגר�? כחול
+HISTOGRAM_TOOLTIP_G;Show/הסתר היסטוגר�? ירוק
+HISTOGRAM_TOOLTIP_L;Show/CIELAB הסתר היסטוגר�?  
+HISTOGRAM_TOOLTIP_R;Show/הסתר היסטוגר�? �?דו�?
 HISTORY_CHANGED;Changed
-HISTORY_CUSTOMCURVE;עקמה מותאמת
-HISTORY_DELSNAPSHOT;הסר תצלום
+HISTORY_CUSTOMCURVE;עקמה מות�?מת
+HISTORY_DELSNAPSHOT;הסר תצלו�?
 HISTORY_FROMCLIPBOARD;From clipboard
 HISTORY_LABEL;היסטוריה
-HISTORY_MSG_1;צילום טעון
+HISTORY_MSG_1;צילו�? טעון
 HISTORY_MSG_2;פרופיל טעון
 HISTORY_MSG_3;פרופיל הוחלף
 HISTORY_MSG_4;דיפדוף בהיסטוריה
@@ -111,17 +111,17 @@ HISTORY_MSG_5;בהירות
 HISTORY_MSG_6;ניגודיות
 HISTORY_MSG_7;שחור
 HISTORY_MSG_8;פיצוי חשיפה
-HISTORY_MSG_9;דחיסת גוונים בהירים
-HISTORY_MSG_10;דחיסת גוונים כהים
-HISTORY_MSG_11;עקמת גוונים
-HISTORY_MSG_12;חשיפה אוטומטית
+HISTORY_MSG_9;דחיסת גווני�? בהירי�?
+HISTORY_MSG_10;דחיסת גווני�? כהי�?
+HISTORY_MSG_11;עקמת גווני�?
+HISTORY_MSG_12;חשיפה �?וטומטית
 HISTORY_MSG_13;קיצוץ החסיפה
-HISTORY_MSG_14;הארה - בהירות
-HISTORY_MSG_15;הארה - ניגודיות
-HISTORY_MSG_16;הארה - שחור
-HISTORY_MSG_17;הארה - דחיסת גוונים בהירים
-HISTORY_MSG_18;הארה - דחיסת גוונים כהים
-HISTORY_MSG_19;הארה - עקמה
+HISTORY_MSG_14;ה�?רה - בהירות
+HISTORY_MSG_15;ה�?רה - ניגודיות
+HISTORY_MSG_16;ה�?רה - שחור
+HISTORY_MSG_17;ה�?רה - דחיסת גווני�? בהירי�?
+HISTORY_MSG_18;ה�?רה - דחיסת גווני�? כהי�?
+HISTORY_MSG_19;ה�?רה - עקמה
 HISTORY_MSG_20;חידוד
 HISTORY_MSG_21;חידוד - רדיוס
 HISTORY_MSG_22;חידוד - כמות
@@ -140,10 +140,10 @@ HISTORY_MSG_34;המנע מקיצוץ צבע
 HISTORY_MSG_35;הגבלת רויה
 HISTORY_MSG_36;גבול רויה
 HISTORY_MSG_37;הגברת צבע
-HISTORY_MSG_38;שיטת איזון לבן
-HISTORY_MSG_39;מידת חום
-HISTORY_MSG_40;גיוון איזון צבע
-HISTORY_MSG_41;העברת צבע א
+HISTORY_MSG_38;שיטת �?יזון לבן
+HISTORY_MSG_39;מידת חו�?
+HISTORY_MSG_40;גיוון �?יזון צבע
+HISTORY_MSG_41;העברת צבע �?
 HISTORY_MSG_42;העברת צבע ב
 HISTORY_MSG_43;הסרת רעש בהירות
 HISTORY_MSG_44;הסרת רעש בהירות רדיוס
@@ -152,30 +152,30 @@ HISTORY_MSG_46;הסרת רעש צבעוני
 HISTORY_MSG_47;הסרת רעש צבעוני רדיוס
 HISTORY_MSG_48;הסרת רעש צבעוני סבילות קצוות
 HISTORY_MSG_49;הסרת רעש צבעוני רגישות לקצוות
-HISTORY_MSG_50;כלי בהירים\כהים
-HISTORY_MSG_51;הגברת גוונים בהירים
-HISTORY_MSG_52;ההגברת גוונים כהים
-HISTORY_MSG_53;בהירים, רוחב גוונים
-HISTORY_MSG_54;כהים, רוחב גוונים
+HISTORY_MSG_50;כלי בהירי�?\כהי�?
+HISTORY_MSG_51;הגברת גווני�? בהירי�?
+HISTORY_MSG_52;ההגברת גווני�? כהי�?
+HISTORY_MSG_53;בהירי�?, רוחב גווני�?
+HISTORY_MSG_54;כהי�?, רוחב גווני�?
 HISTORY_MSG_55;ניגודיות מקומית
-HISTORY_MSG_56;בהירים\כהים רדיוס
+HISTORY_MSG_56;בהירי�?\כהי�? רדיוס
 HISTORY_MSG_57;סיבוב גס
-HISTORY_MSG_58;היפוך אופקי
-HISTORY_MSG_59;היפוך אנכי
+HISTORY_MSG_58;היפוך �?ופקי
+HISTORY_MSG_59;היפוך �?נכי
 HISTORY_MSG_60;סיבוב
 HISTORY_MSG_61;סיבוב
 HISTORY_MSG_62;תיקון עיוות בעדשה
 HISTORY_MSG_63;סימניה נבחרה
-HISTORY_MSG_64;גזירת תצלום
+HISTORY_MSG_64;גזירת תצלו�?
 HISTORY_MSG_65;C/A תיקון עיוות
-HISTORY_MSG_66;שחזור גוונים  בהירים
-HISTORY_MSG_67;שחזור גוונים  בהירים, כמות
-HISTORY_MSG_68;שחזור גוונים  בהירים, שיטה
+HISTORY_MSG_66;שחזור גווני�?  בהירי�?
+HISTORY_MSG_67;שחזור גווני�?  בהירי�?, כמות
+HISTORY_MSG_68;שחזור גווני�?  בהירי�?, שיטה
 HISTORY_MSG_69;מרחב צבע עבודה
-HISTORY_MSG_70;מרחב צבע ייצוא
-HISTORY_MSG_71;מרחב צבע ייבוא
+HISTORY_MSG_70;מרחב צבע ייצו�?
+HISTORY_MSG_71;מרחב צבע ייבו�?
 HISTORY_MSG_72;תיקון פינות כהות
-HISTORY_MSG_73;מערבב ערוצים
+HISTORY_MSG_73;מערבב ערוצי�?
 HISTORY_MSG_74;מידת שינוי גודל
 HISTORY_MSG_75;שיטת שינוי גודל
 HISTORY_MSG_76;Exif Metadata
@@ -184,27 +184,27 @@ HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Resize width
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
-HISTORY_NEWSNAPSHOTAS;בשם
-HISTORY_NEWSNAPSHOT;תצלום חדש
-HISTORY_NEWSSDIALOGLABEL;שם התצלום
-HISTORY_NEWSSDIALOGTITLE;הוסף תצלום חדש
-HISTORY_SETTO;העבר אל
-HISTORY_SNAPSHOTS;תצלומים
-HISTORY_SNAPSHOT;תצלום
-ICMPANEL_FILEDLGFILTERANY;קבצים כלשהם
+HISTORY_NEWSNAPSHOTAS;בש�?
+HISTORY_NEWSNAPSHOT;תצלו�? חדש
+HISTORY_NEWSSDIALOGLABEL;ש�? התצלו�?
+HISTORY_NEWSSDIALOGTITLE;הוסף תצלו�? חדש
+HISTORY_SETTO;העבר �?ל
+HISTORY_SNAPSHOTS;תצלומי�?
+HISTORY_SNAPSHOT;תצלו�?
+ICMPANEL_FILEDLGFILTERANY;קבצי�? כלשה�?
 ICMPANEL_FILEDLGFILTERICM;ICC קבצי צבע
 ICMPANEL_GAMMABEFOREINPUT;Profile applies Gamma
 ICMPANEL_INPUTCAMERA;ברירת מחדל המצלמה
-ICMPANEL_INPUTCUSTOM;מותאם
-ICMPANEL_INPUTDLGLABEL;בחר בפרופיל צבע ייבוא
-ICMPANEL_INPUTEMBEDDED;השתמש בפרופיל משובץ,אם אפשר
-ICMPANEL_INPUTPROFILE;פרופיל ייבוא
-ICMPANEL_NOICM;sRGBללא ניהול צבע - ייצוא ב
-ICMPANEL_OUTPUTDLGLABEL;בחר בפרופיל צבע ייצוא
-ICMPANEL_OUTPUTPROFILE;פרופיל ייצוא
+ICMPANEL_INPUTCUSTOM;מות�?�?
+ICMPANEL_INPUTDLGLABEL;בחר בפרופיל צבע ייבו�?
+ICMPANEL_INPUTEMBEDDED;השתמש בפרופיל משובץ,�?�? �?פשר
+ICMPANEL_INPUTPROFILE;פרופיל ייבו�?
+ICMPANEL_NOICM;sRGBלל�? ניהול צבע - ייצו�? ב
+ICMPANEL_OUTPUTDLGLABEL;בחר בפרופיל צבע ייצו�?
+ICMPANEL_OUTPUTPROFILE;פרופיל ייצו�?
 ICMPANEL_SAVEREFERENCE;Save reference image for profiling
 ICMPANEL_WORKINGPROFILE;פרופיל עבודה
-IMAGEAREA_DETAILVIEW;תצוגת פרטים
+IMAGEAREA_DETAILVIEW;תצוגת פרטי�?
 IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
 IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Author's position
@@ -250,8 +250,8 @@ IPTCPANEL_TRANSREFERENCE;Trans. Reference
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;העדפויות
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;שמור בשם
-MAIN_BUTTON_SAVE;שמור צילום
+MAIN_BUTTON_SAVEAS;שמור בש�?
+MAIN_BUTTON_SAVE;שמור צילו�?
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
@@ -259,15 +259,15 @@ MAIN_FRAME_PLACES;Places
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
 MAIN_FRAME_RECENT;Recent Folders 
-MAIN_MSG_ALREADYEXISTS;הקובץ כבר קיים
-MAIN_MSG_CANNOTLOAD;לא יכול להעלות את הקובץ
+MAIN_MSG_ALREADYEXISTS;הקובץ כבר קיי�?
+MAIN_MSG_CANNOTLOAD;ל�? יכול להעלות �?ת הקובץ
 MAIN_MSG_CANNOTSAVE;טעות בשמירת הקובץ
 MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
 MAIN_MSG_JOBSINQUEUE;עבודות בתור
-MAIN_MSG_QOVERWRITE;?רצונך לכתוב אותו מחדש?
+MAIN_MSG_QOVERWRITE;?רצונך לכתוב �?ותו מחדש?
 MAIN_TAB_BASIC;יסודות
 MAIN_TAB_COLOR;Color
 MAIN_TAB_DETAIL;Detail
@@ -281,11 +281,11 @@ MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;התמרות
 MAIN_TOOLTIP_HIDEFP;גלה\הסתר לוח תחתון - דפדפן (shortcut key: F)
-MAIN_TOOLTIP_HIDEHP;גלה\הסתר לוח שמאלי - היסטוריה (shortcut key: F)
-MAIN_TOOLTIP_INDCLIPPEDH;סימן לגוונים בהירים מקוצצים
-MAIN_TOOLTIP_INDCLIPPEDS;סימן לגוונים כהים מקוצצים
+MAIN_TOOLTIP_HIDEHP;גלה\הסתר לוח שמ�?לי - היסטוריה (shortcut key: F)
+MAIN_TOOLTIP_INDCLIPPEDH;סימן לגווני�? בהירי�? מקוצצי�?
+MAIN_TOOLTIP_INDCLIPPEDS;סימן לגווני�? כהי�? מקוצצי�?
 MAIN_TOOLTIP_PREFERENCES;קבע העדפויות
-MAIN_TOOLTIP_QINFO;מידע מהיר אודות הצילום
+MAIN_TOOLTIP_QINFO;מידע מהיר �?ודות הצילו�?
 MAIN_TOOLTIP_SAVEAS;שמור לתיק נבחר
 MAIN_TOOLTIP_SAVE;שמור לתיק ברירת המחדל
 PARTIALPASTE_BASICGROUP;Basic settings
@@ -316,8 +316,8 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
 PARTIALPASTE_SHARPENING;Sharpening
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WHITEBALANCE;White balance
-PREFERENCES_APPLNEXTSTARTUP;ייושם באתחול הבא
-PREFERENCES_BLINKCLIPPED;הבהוב באזור המקוצץ
+PREFERENCES_APPLNEXTSTARTUP;ייוש�? ב�?תחול הב�?
+PREFERENCES_BLINKCLIPPED;הבהוב ב�?זור המקוצץ
 PREFERENCES_CACHECLEARALL;Clear All
 PREFERENCES_CACHECLEARPROFILES;Clear Profiles
 PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
@@ -336,20 +336,20 @@ PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;סימון קיצוץ
 PREFERENCES_CMETRICINTENT;כוונה קולורמטרית
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DATEFORMAT;צורת תאריך
+PREFERENCES_DATEFORMAT;צורת ת�?ריך
 PREFERENCES_DEFAULTLANG;שפה ברירת המחדל
 PREFERENCES_DEFAULTTHEME;Default theme
-PREFERENCES_DEMOSAICINGALGO;אלגוריתם דימוזאיק
+PREFERENCES_DEMOSAICINGALGO;�?לגורית�? דימוז�?יק
 PREFERENCES_DIRHOME;תיקיית הבית
-PREFERENCES_DIRLAST;תיקיה האחרונה שביקרתי בה
-PREFERENCES_DIROTHER;אחר
-PREFERENCES_DIRSELECTDLG;בחר תיקיית צילומים לאתחול
+PREFERENCES_DIRLAST;תיקיה ה�?חרונה שביקרתי בה
+PREFERENCES_DIROTHER;�?חר
+PREFERENCES_DIRSELECTDLG;בחר תיקיית צילומי�? ל�?תחול
 PREFERENCES_DIRSOFTWARE;תיקיית התקנה
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EXTERNALEDITOR;External editor
 PREFERENCES_FBROWSEROPTS;ברירות דפדפן
 PREFERENCES_FILEFORMAT;תצורת קובץ
-PREFERENCES_FORIMAGE;עבור קבצי צילום
+PREFERENCES_FORIMAGE;עבור קבצי צילו�?
 PREFERENCES_FORRAW;RAW עבור קבצי
 PREFERENCES_GIMPPATH;GIMP installation directory
 PREFERENCES_GTKTHEME;GTK default
@@ -368,7 +368,7 @@ PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
-PREFERENCES_OUTDIR;תיקיית ייצוא
+PREFERENCES_OUTDIR;תיקיית ייצו�?
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
@@ -384,25 +384,25 @@ PREFERENCES_SELECTICCDIRDLG;ICC בחר תיקיית פרופילי צבע
 PREFERENCES_SELECTLANG;בחר שפה
 PREFERENCES_SELECTMONITORPROFDLG;של התצוגה ICC בחר פרופיל
 PREFERENCES_SELECTTHEME;Select theme
-PREFERENCES_SHOWBASICEXIF;Exif הראה מידע
-PREFERENCES_SHOWDATETIME;הראה תאריך ושעה
-PREFERENCES_SHOWONLYRAW;RAW הראה רק קבצי 
+PREFERENCES_SHOWBASICEXIF;Exif הר�?ה מידע
+PREFERENCES_SHOWDATETIME;הר�?ה ת�?ריך ושעה
+PREFERENCES_SHOWONLYRAW;RAW הר�?ה רק קבצי 
 PREFERENCES_SHTHRESHOLD;סף קיצוץ תחתון
-PREFERENCES_STARTUPIMDIR;תיקיית צילומים באתחול
-PREFERENCES_TAB_BROWSER;דפדפן קבצים
-PREFERENCES_TAB_COLORMGR;ניהול צבעים
+PREFERENCES_STARTUPIMDIR;תיקיית צילומי�? ב�?תחול
+PREFERENCES_TAB_BROWSER;דפדפן קבצי�?
+PREFERENCES_TAB_COLORMGR;ניהול צבעי�?
 PREFERENCES_TAB_GENERAL;כללי
-PREFERENCES_TAB_IMPROC;עיבוד צילום
-PREFERENCES_TAB_OUTPUT;אפשרויות ייצוא
+PREFERENCES_TAB_IMPROC;עיבוד צילו�?
+PREFERENCES_TAB_OUTPUT;�?פשרויות ייצו�?
 PREFERENCES_THUMBSIZE;גודל תמונות ממוזערות
-PROFILEPANEL_FILEDLGFILTERANY;קבצים כלשהם
+PROFILEPANEL_FILEDLGFILTERANY;קבצי�? כלשה�?
 PROFILEPANEL_FILEDLGFILTERPP;פרופילי עיבוד
 PROFILEPANEL_LABEL;פרופילי עיבוד
 PROFILEPANEL_LOADDLGLABEL;הטען נתוני עיבוד
-PROFILEPANEL_PCUSTOM;מותאם
+PROFILEPANEL_PCUSTOM;מות�?�?
 PROFILEPANEL_PFILE;מקובץ
-PROFILEPANEL_PLASTPHOTO;צילום אחרון
-PROFILEPANEL_PLASTSAVED;נשמר אחרון
+PROFILEPANEL_PLASTPHOTO;צילו�? �?חרון
+PROFILEPANEL_PLASTSAVED;נשמר �?חרון
 PROFILEPANEL_PROFILE;פרופיל
 PROFILEPANEL_SAVEDLGLABEL;שמור נתוני עיבוד
 PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
@@ -410,12 +410,12 @@ PROFILEPANEL_TOOLTIPLOAD;הטען פרופיל מקובץ
 PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
 PROFILEPANEL_TOOLTIPSAVE;שמור פרופיל נוכחי
 PROGRESSBAR_DECODING;מפענח קובץ
-PROGRESSBAR_DEMOSAICING;מעבד צילום
-PROGRESSBAR_LOADING;מטעין צילום
+PROGRESSBAR_DEMOSAICING;מעבד צילו�?
+PROGRESSBAR_LOADING;מטעין צילו�?
 PROGRESSBAR_LOADJPEG;JPG מטעין קובץ
 PROGRESSBAR_LOADPNG;PNG מטעין קובץ
 PROGRESSBAR_LOADTIFF;TIFF מטעין קובץ
-PROGRESSBAR_PROCESSING;מעבד צילום
+PROGRESSBAR_PROCESSING;מעבד צילו�?
 PROGRESSBAR_READY;מוכן
 PROGRESSBAR_SAVEJPEG;JPG שומר קובץ
 PROGRESSBAR_SAVEPNG;PNG שומר קובץ
@@ -423,12 +423,12 @@ PROGRESSBAR_SAVETIFF;TIFF שומר קובץ
 PROGRESSDLG_LOADING;Loading file...
 PROGRESSDLG_PROCESSING;Processing image...
 PROGRESSDLG_SAVING;Saving file...
-QINFO_FOCALLENGTH;אורך מוקד
+QINFO_FOCALLENGTH;�?ורך מוקד
 QINFO_ISO;ISO
 QINFO_LENS;Lens
-QINFO_NOEXIF;המידע לא זמין
+QINFO_NOEXIF;המידע ל�? זמין
 SAVEDLG_FILEFORMAT;תצורת קובץ
-SAVEDLG_JPEGQUAL;JPEG איכות
+SAVEDLG_JPEGQUAL;JPEG �?יכות
 SAVEDLG_JPGFILTER;JPEG קבצי
 SAVEDLG_PNGCOMPR;PNG דחיסת
 SAVEDLG_PNGFILTER;PNG קבצי
@@ -436,25 +436,25 @@ SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
-SAVEDLG_SAVESPP;שמור נתוני עיבוד עם הצילום
+SAVEDLG_SAVESPP;שמור נתוני עיבוד ע�? הצילו�?
 SAVEDLG_TIFFFILTER;TIFF קבצי
 TOOLBAR_TOOLTIP_CROP;בחירת גזירה (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;כלי יד (shortcut key: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;בחירת קו ישר (shortcut key: S)
-TOOLBAR_TOOLTIP_WB;איזון לבן נקודתי (shortcut key: W)
+TOOLBAR_TOOLTIP_WB;�?יזון לבן נקודתי (shortcut key: W)
 TP_CACORRECTION_BLUE;כחול
 TP_CACORRECTION_LABEL;C/A תיקון
-TP_CACORRECTION_RED;אדום
+TP_CACORRECTION_RED;�?דו�?
 TP_CHMIXER_BLUE;כחול
 TP_CHMIXER_GREEN;ירוק
-TP_CHMIXER_LABEL;מערבב ערוצים
-TP_CHMIXER_RED;אדום
+TP_CHMIXER_LABEL;מערבב ערוצי�?
+TP_CHMIXER_RED;�?דו�?
 TP_COARSETRAF_DEGREE;מעלות
-TP_COARSETRAF_TOOLTIP_HFLIP;הפוך אופקי
-TP_COARSETRAF_TOOLTIP_ROTLEFT;סובב שמאלה
+TP_COARSETRAF_TOOLTIP_HFLIP;הפוך �?ופקי
+TP_COARSETRAF_TOOLTIP_ROTLEFT;סובב שמ�?לה
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;סובב ימינה
-TP_COARSETRAF_TOOLTIP_VFLIP;הפוך אנכי
-TP_COLORBOOST_ACHANNEL;ערוץ א
+TP_COARSETRAF_TOOLTIP_VFLIP;הפוך �?נכי
+TP_COLORBOOST_ACHANNEL;ערוץ �?
 TP_COLORBOOST_AMOUNT;כמות
 TP_COLORBOOST_AVOIDCOLORCLIP;הימנע מקיצוץ צבע
 TP_COLORBOOST_BCHANNEL;ערוץ ב
@@ -472,12 +472,12 @@ TP_COLORSHIFT_GREENMAGENTA;מג'נטה-ירוק
 TP_COLORSHIFT_LABEL;העברת צבע
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;קבע יחס
-TP_CROP_GTDIAGONALS;כלל האלכסון
-TP_CROP_GTHARMMEANS1;ממוצא הרמוני 1
-TP_CROP_GTHARMMEANS2;ממוצא הרמוני 2
-TP_CROP_GTHARMMEANS3;ממוצא הרמוני 3
-TP_CROP_GTHARMMEANS4;ממוצא הרמוני 4
-TP_CROP_GTNONE;ללא
+TP_CROP_GTDIAGONALS;כלל ה�?לכסון
+TP_CROP_GTHARMMEANS1;ממוצ�? הרמוני 1
+TP_CROP_GTHARMMEANS2;ממוצ�? הרמוני 2
+TP_CROP_GTHARMMEANS3;ממוצ�? הרמוני 3
+TP_CROP_GTHARMMEANS4;ממוצ�? הרמוני 4
+TP_CROP_GTNONE;לל�?
 TP_CROP_GTRULETHIRDS;כלל השליש
 TP_CROP_GUIDETYPE;סוג מדריך
 TP_CROP_H;גובה
@@ -488,39 +488,39 @@ TP_CROP_X;x
 TP_CROP_Y;y
 TP_DISTORTION_AMOUNT;כמות
 TP_DISTORTION_LABEL;עיוות
-TP_EXPOSURE_AUTOLEVELS;מפלסים אוטומטים
+TP_EXPOSURE_AUTOLEVELS;מפלסי�? �?וטומטי�?
 TP_EXPOSURE_BLACKLEVEL;שחור
 TP_EXPOSURE_BRIGHTNESS;בהירות
 TP_EXPOSURE_CLIP;קצץ
-TP_EXPOSURE_COMPRHIGHLIGHTS;דחיסת גוונים בהירים
-TP_EXPOSURE_COMPRSHADOWS;דחיסת גוונים כהים
+TP_EXPOSURE_COMPRHIGHLIGHTS;דחיסת גווני�? בהירי�?
+TP_EXPOSURE_COMPRSHADOWS;דחיסת גווני�? כהי�?
 TP_EXPOSURE_CONTRAST;ניגודיות
-TP_EXPOSURE_CURVEEDITOR;עקמת גוונים
+TP_EXPOSURE_CURVEEDITOR;עקמת גווני�?
 TP_EXPOSURE_EXPCOMP;פיצוי חשיפה
 TP_EXPOSURE_LABEL;חשיפה
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;הפצת צבע
-TP_HLREC_LABEL;שחזור גוונים בהירים
+TP_HLREC_LABEL;שחזור גווני�? בהירי�?
 TP_HLREC_LUMINANCE;שחזור בהירות
 TP_HLREC_METHOD;שיטה
-TP_ICM_FILEDLGFILTERANY;קבצים כלשהם
+TP_ICM_FILEDLGFILTERANY;קבצי�? כלשה�?
 TP_ICM_FILEDLGFILTERICM;ICC קבצי צבע
 TP_ICM_GAMMABEFOREINPUT;Profile applies Gamma
 TP_ICM_INPUTCAMERA;ברירת מחדל המצלמה
-TP_ICM_INPUTCUSTOM;מותאם
-TP_ICM_INPUTDLGLABEL;בחר בפרופיל צבע ייבוא
-TP_ICM_INPUTEMBEDDED;השתמש בפרופיל משובץ,אם אפשר
-TP_ICM_INPUTPROFILE;פרופיל ייבוא
+TP_ICM_INPUTCUSTOM;מות�?�?
+TP_ICM_INPUTDLGLABEL;בחר בפרופיל צבע ייבו�?
+TP_ICM_INPUTEMBEDDED;השתמש בפרופיל משובץ,�?�? �?פשר
+TP_ICM_INPUTPROFILE;פרופיל ייבו�?
 TP_ICM_LABEL;ניהול צבע
-TP_ICM_NOICM;sRGBללא ניהול צבע - ייצוא ב
-TP_ICM_OUTPUTDLGLABEL;בחר בפרופיל צבע ייצוא
-TP_ICM_OUTPUTPROFILE;פרופיל ייצוא
+TP_ICM_NOICM;sRGBלל�? ניהול צבע - ייצו�? ב
+TP_ICM_OUTPUTDLGLABEL;בחר בפרופיל צבע ייצו�?
+TP_ICM_OUTPUTPROFILE;פרופיל ייצו�?
 TP_ICM_SAVEREFERENCE;Save reference image for profiling
 TP_ICM_WORKINGPROFILE;פרופיל עבודה
 TP_LUMACURVE_BLACKLEVEL;שחור
 TP_LUMACURVE_BRIGHTNESS;בהירות
-TP_LUMACURVE_COMPRHIGHLIGHTS;דחיסת גוונים בהירים
-TP_LUMACURVE_COMPRSHADOWS;דחיסת גוונים כהים
+TP_LUMACURVE_COMPRHIGHLIGHTS;דחיסת גווני�? בהירי�?
+TP_LUMACURVE_COMPRSHADOWS;דחיסת גווני�? כהי�?
 TP_LUMACURVE_CONTRAST;ניגודיות
 TP_LUMACURVE_CURVEEDITOR;עקמת בהירות
 TP_LUMACURVE_LABEL;עקמת בהירות
@@ -532,26 +532,26 @@ TP_RAW_FALSECOLOR;דחיית צבע מסולף
 TP_RESIZE_BICUBICSF;ביקובי חלק
 TP_RESIZE_BICUBICSH;ביקובי חד
 TP_RESIZE_BICUBIC;ביקובי
-TP_RESIZE_BILINEAR;בילינארי
-TP_RESIZE_FULLSIZE;גודל מלא
+TP_RESIZE_BILINEAR;בילינ�?רי
+TP_RESIZE_FULLSIZE;גודל מל�?
 TP_RESIZE_H;גובה
 TP_RESIZE_LABEL;החלף גודל
 TP_RESIZE_METHOD;שיטה
 TP_RESIZE_NEAREST;הקרוב
 TP_RESIZE_SCALE;מידה
 TP_RESIZE_W;רוחב
-TP_ROTATE_AUTOCROP;גזירה אוטומטי
+TP_ROTATE_AUTOCROP;גזירה �?וטומטי
 TP_ROTATE_DEGREE;מעלות
-TP_ROTATE_FILL;מלא
+TP_ROTATE_FILL;מל�?
 TP_ROTATE_LABEL;סובב
 TP_ROTATE_SELECTLINE;בחור קו ישר
-TP_SHADOWSHLIGHTS_HIGHLIGHTS;גוונים בהירים
-TP_SHADOWSHLIGHTS_HLTONALW;רוחב גוונים
-TP_SHADOWSHLIGHTS_LABEL;בהירים\כהים
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;גווני�? בהירי�?
+TP_SHADOWSHLIGHTS_HLTONALW;רוחב גווני�?
+TP_SHADOWSHLIGHTS_LABEL;בהירי�?\כהי�?
 TP_SHADOWSHLIGHTS_LOCALCONTR;ניגודיות מקומית
 TP_SHADOWSHLIGHTS_RADIUS;רדיוס
-TP_SHADOWSHLIGHTS_SHADOWS;גוונים כהים
-TP_SHADOWSHLIGHTS_SHTONALW;רוחב גוונים
+TP_SHADOWSHLIGHTS_SHADOWS;גווני�? כהי�?
+TP_SHADOWSHLIGHTS_SHTONALW;רוחב גווני�?
 TP_SHARPENING_AMOUNT;כמות
 TP_SHARPENING_EDRADIUS;רדיוס
 TP_SHARPENING_EDTOLERANCE;סבילות לקצוות
@@ -565,21 +565,21 @@ TP_SHARPENING_RLD;RL דיקונבולוציה
 TP_SHARPENING_RLD_AMOUNT;כמות
 TP_SHARPENING_RLD_DAMPING;ריסון
 TP_SHARPENING_RLD_ITERATIONS;חזרות
-TP_SHARPENING_THRESHOLD;םף
-TP_SHARPENING_USM;מיסוך אי-חדות
+TP_SHARPENING_THRESHOLD;�?ף
+TP_SHARPENING_USM;מיסוך �?י-חדות
 TP_VIGNETTING_AMOUNT;כמות
 TP_VIGNETTING_LABEL;תיקון פינות כהות
 TP_VIGNETTING_RADIUS;רדיוס
-TP_WBALANCE_AUTO;אוטומטי
+TP_WBALANCE_AUTO;�?וטומטי
 TP_WBALANCE_CAMERA;מצלמה
-TP_WBALANCE_CUSTOM;מותאם
+TP_WBALANCE_CUSTOM;מות�?�?
 TP_WBALANCE_GREEN;גיוון
-TP_WBALANCE_LABEL;איזון לבן
+TP_WBALANCE_LABEL;�?יזון לבן
 TP_WBALANCE_METHOD;שיטה
 TP_WBALANCE_SIZE;גודל
 TP_WBALANCE_SPOTWB;לפי נקודה
-TP_WBALANCE_TEMPERATURE;מידת חום
-ZOOMBAR_DETAIL;פרטים
+TP_WBALANCE_TEMPERATURE;מידת חו�?
+ZOOMBAR_DETAIL;פרטי�?
 ZOOMBAR_HUGE;ענק
 ZOOMBAR_LARGE;גדול
 ZOOMBAR_NORMAL;רגיל

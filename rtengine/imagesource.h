@@ -61,10 +61,10 @@ class ImageSource : public InitialImage {
     protected:
         cmsHPROFILE embProfile;
         Glib::ustring fileName;
-        ImageData* idata;
+        ImageMetaData* idata;
 
     public:
-                            ImageSource () : references (1), embProfile(NULL), idata(NULL) {}
+                    ImageSource ( ImageMetaData* meta=NULL) : references (1), embProfile(NULL), idata(meta) {}
 
         virtual ~ImageSource            () {}
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
@@ -79,7 +79,7 @@ class ImageSource : public InitialImage {
 
         // use the right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
         virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
-        // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
+        // true if ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
         virtual bool        isWBProviderReady () =0;
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;
@@ -92,7 +92,6 @@ class ImageSource : public InitialImage {
         virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
         virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
 
-        virtual ImageData*  getImageData () =0;
         virtual void        setProgressListener (ProgressListener* pl) {}
 
                 void        increaseRef () { references++; }
@@ -106,7 +105,7 @@ class ImageSource : public InitialImage {
         // functions inherited from the InitialImage interface
         virtual Glib::ustring getFileName ()        { return fileName; }
         virtual cmsHPROFILE getEmbeddedProfile ()   { return embProfile; }
-        virtual const ImageMetaData* getMetaData () { return idata; }
+        virtual ImageMetaData* getMetaData ()       { return idata; }
         virtual ImageSource* getImageSource ()      { return this; }
 };
 }
