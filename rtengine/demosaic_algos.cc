@@ -1080,6 +1080,7 @@ void RawImageSource::nodemosaic()
 // increases the signal to noise ratio (PSNR) # +1 to +2 dB : tested with Dcraw : eg: Lighthouse + AMaZE : whitout refinement:39.96dB, with refinement:41.86 dB
 // reduce color artifacts, improves the interpolation
 // but it's relatively slow
+/*  DISABLED: it actually decreases image quality by increases some image noise and generates blocky edges
 void RawImageSource::refinement_lassus()
 {  
     const int PassCount=2;  // two passes EECI refine, slow but best results...
@@ -1213,6 +1214,7 @@ void RawImageSource::refinement_lassus()
     t2e.set();
     if (settings->verbose) printf("Refinement %d usec\n", t2e.etime(t1e));
 }
+*/
 
 /*
  *      Redistribution and use in source and binary forms, with or without

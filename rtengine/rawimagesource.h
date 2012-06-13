@@ -140,7 +140,7 @@ class RawImageSource : public ImageSource {
         void        flushRawData      ();
         void        flushRGB          ();
         void        HLRecovery_Global (HRecParams hrp);
-        void        refinement_lassus ();
+        //void        refinement_lassus ();
 
         bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
 
