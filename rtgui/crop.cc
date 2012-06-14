@@ -186,6 +186,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   guide->append_text (M("TP_CROP_GTHARMMEANS4"));
   guide->append_text (M("TP_CROP_GTGRID"));
   guide->append_text (M("TP_CROP_GTEPASSPORT"));
+  guide->append_text (M("TP_CROP_GTFRAME"));
   guide->set_active (0);
 
   w->set_range (0, maxw);
@@ -294,6 +295,8 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited) {
         guide->set_active (7);
     else if (pp->crop.guide == "ePassport")
         guide->set_active (8);
+    else if (pp->crop.guide == "Frame")
+        guide->set_active (9);
 
     x->set_value (pp->crop.x);
     y->set_value (pp->crop.y);
@@ -376,12 +379,14 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->crop.guide = "Grid";
   else if (guide->get_active_row_number()==8)
     pp->crop.guide = "ePassport";
+  else if (guide->get_active_row_number()==9)
+    pp->crop.guide = "Frame";
 
     if (pedited) {
         pedited->crop.enabled       = !enabled->get_inconsistent();
-        pedited->crop.ratio         = ratio->get_active_row_number() != 8;
+        pedited->crop.ratio         = ratio->get_active_row_number() != 9;
         pedited->crop.orientation   = orientation->get_active_row_number() != 2;
-        pedited->crop.guide         = guide->get_active_row_number() != 8;
+        pedited->crop.guide         = guide->get_active_row_number() != 9;
         pedited->crop.fixratio      = !fixr->get_inconsistent();
         pedited->crop.w             = wDirty;
         pedited->crop.h             = hDirty;
