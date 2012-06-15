@@ -1,0 +1,81 @@
+.TH RAWTHERAPEE 1 "June 14, 2012"
+.SH NAME
+rawtherapee \- Free RAW converter and digital photo processing software
+.SH SYNOPSIS
+\fBrawtherapee\fP [directory|image\-file]
+.br
+\fBrawtherapee\fP [\-o|\-O <output>] [\-s|\-S] [\-p <file>] [\-d] 
+[\-j<1\-100>|\-t|\-t1|\-n] [\-Y] \-c <input>
+.SH DESCRIPTION
+\fBRawTherapee\fP is used to adjust some of the most often changed parameters
+when optimizing digital images. A normal user often just wants to adjust the
+white balance or brightness of a photo he took. Instead of using a big and
+expensive image editor you could use a small and fast (specialized) tool like
+\fBRawTherapee\fP.
+.br
+More and more cameras also support RAW formats. RAW files usually offer higher
+color depth than JPGs (JPG is limited to 8 Bit per color). So the adjustments are
+done with the high color depth and then afterwards converted to or saved as JPGs.
+RawTherapee supports JPG (8 bit), PNG (8 or 16 bit) and TIFF (8 or 16 bit). All
+image processing is done in 16 bit/channel mode.
+.br
+Different to other RAW converters it can use EAHD as demosaicing algorithm. The
+RAW loading engine of \fBRawTherapee\fP is based on dcraw.
+.SH OPTIONS
+.TP
+\-o <outputFile>|<outputDir>
+select output directory
+.TP
+\-O <outputFile>|<outputDir>
+ select output dir and copy pp3 file into it
+.TP
+\-s
+include the pp3 file next to the input file (with same name) to build the image's
+parameters, eg: for IMG001.NEF there should be IMG001.NEF.pp3 in the same dir if
+absent use default
+.TP
+\-S
+like \-s but skip if pp3 file not found
+.TP
+\-p
+specify pp3 file to be used for all conversions. You can specify as many \-p
+options as you like (see note below)
+.TP
+\-d
+use the default RAW or Image pp3 file to build the image's parameters
+.TP
+\-j<1\-100>
+specify output to be jpeg (default)
+.TP
+\-t
+ specify output to be uncompressed tiff
+.TP
+\-t1
+specify output to be compressed tiff.
+.TP
+\-n
+specify output to be png.
+.TP
+\-Y
+overwrite output if present.
+
+.P
+.B Note:
+.br
+Your pp3 files can be incomplete, \fBRawTherapee\fP will set the values like that:
+the pp3 file is built with internal default values; then overridden by those
+found in the default RAW or Image pp3 file (if \-d has been set); then overridden
+by those found in the pp3 files provided by \-p, each one overriding the previous
+values; then overridden by the sidecar file if \-s is set and if the file exists;
+the time where the sidecar file is used depend of the position of the \-s switch
+in the command line regarding to the \-p parameters
+(e.g. "\-p first.pp3 \-p second.pp3 -s \-p fourth.pp3").
+
+.SH SEE ALSO
+the included help
+.br
+http://www.rawtherapee.com
+.SH AUTHOR
+\fBRawTherapee\fP was written by Gabor Horvath and others.
+.PP
+This manual page was written by Philip Rinn <rinni@gmx.net>.
