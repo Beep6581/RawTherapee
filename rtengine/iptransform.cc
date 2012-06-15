@@ -36,18 +36,17 @@ namespace rtengine {
 bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef,
     const LCPMapper *pLCPMap) {
 
-    bool clipresize = true, clipped = false;
+    bool clipped = false;
 
     red.clear (); green.clear (); blue.clear ();
 
     if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap==NULL)) {
-        if (clipresize) {
                 for (size_t i=0; i<src.size(); i++) {
                     red.push_back   (Coord2D (src[i].x, src[i].y));
                     green.push_back (Coord2D (src[i].x, src[i].y));
                     blue.push_back  (Coord2D (src[i].x, src[i].y));
                 }
-        }
+
         return clipped;
     }
 
@@ -113,7 +112,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
 		blue.push_back (Coord2D(Dx*(s+params->cacorrection.blue)+w2, Dy*(s+params->cacorrection.blue)+h2));
 	}
 
-	if (clipresize) {
+    // Clip all points and track if they were any corrections
         for (size_t i=0; i<src.size(); i++) {
             red[i].x = CLIPTOC(red[i].x,0,W-1,clipped);
             red[i].y = CLIPTOC(red[i].y,0,H-1,clipped);
@@ -122,12 +121,13 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
             blue[i].x = CLIPTOC(blue[i].x,0,W-1,clipped);
             blue[i].y = CLIPTOC(blue[i].y,0,H-1,clipped);
         }
-    }
+
     return clipped;
 }
 
 // Transform all corners and critical sidelines of an image
 bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef, const LCPMapper *pLCPMap) {
+    const int DivisionsPerBorder=32;
 
     int x1 = x, y1 = y;
     int x2 = x1 + w - 1;
@@ -145,13 +145,13 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
     corners[7].set (x2, (y1+y2)/2);
 
     // Add several steps inbetween
-    int xstep = (x2-x1)/32;
+    int xstep = (x2-x1)/DivisionsPerBorder;
     if (xstep<1) xstep = 1;
     for (int i=x1+xstep; i<=x2-xstep; i+=xstep) {
         corners.push_back (Coord2D (i, y1));
         corners.push_back (Coord2D (i, y2));
     }
-    int ystep = (y2-y1)/32;
+    int ystep = (y2-y1)/DivisionsPerBorder;
     if (ystep<1) ystep = 1;
     for (int i=y1+ystep; i<=y2-ystep; i+=ystep) {
         corners.push_back (Coord2D (x1, i));
@@ -543,11 +543,13 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 }
 
 double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap) {
+    if (!needsCA() && !needsDistortion() && !needsRotation() && !needsPerspective() && (!params->lensProf.useDist || pLCPMap==NULL))
+        return 1;
 
-	double scaleU = 1.0;
-	double scaleL = 0.001;
-	while (scaleU - scaleL > 0.001) {
-		double scale = (scaleU + scaleL) / 2.0;
+	double scaleU = 2, scaleL = 0.001;  // upper and lower border, iterate inbetween
+
+	do {
+		double scale = (scaleU + scaleL) * 0.5;
 
         int orx, ory, orw, orh;
         bool clipped = transCoord (oW, oH, 0, 0, oW, oH, orx, ory, orw, orh, scale, pLCPMap);
@@ -556,7 +558,8 @@ double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LCPMapper *p
         	scaleU = scale;
         else
         	scaleL = scale;
-	}
+	} while (scaleU - scaleL > 0.001);
+
 	return scaleL;
 }
 
