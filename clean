@@ -18,6 +18,7 @@ rm ./Makefile
 rm ./rtengine/Makefile
 rm ./rtexif/Makefile
 rm ./rtgui/Makefile
+rm ./rtdata/Makefile
 
 rm ./rtengine/librtengine.so
 rm ./rtengine/librtengine.a
