@@ -427,7 +427,7 @@ IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image w
 IPTCPANEL_COUNTRY;Country
 IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
 IPTCPANEL_CREDIT;Credit
-IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
+IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMDD (Date Created).
 IPTCPANEL_DATECREATED;Date Created
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 IPTCPANEL_EMBEDDED;Embedded
