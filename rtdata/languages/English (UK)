@@ -1,7 +1,8 @@
-﻿EXPORT_BYPASS_COLORDENOISE;Bypass Colour denoise
+
+EXPORT_BYPASS_COLORDENOISE;Bypass Colour denoise
 EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Colour Suppression
-FILEBROWSER_SHOWUNCOLORHINT;Show images without Colour label.\nShortcut: <b>Alt-`</b>
 FILEBROWSER_POPUPCOLORLABEL;Colour label
+FILEBROWSER_SHOWUNCOLORHINT;Show images without Colour label.\nShortcut: <b>Alt-`</b>
 HISTORY_MSG_37;Colour Boost
 HISTORY_MSG_39;Colour Temperature
 HISTORY_MSG_41;Colour Shift "A"
@@ -23,7 +24,6 @@ ICMPANEL_INPUTPROFILE;Input Colour Profile
 ICMPANEL_OUTPUTDLGLABEL;Select Output Colour Profile...
 ICMPANEL_OUTPUTPROFILE;Output Colour Profile
 ICMPANEL_WORKINGPROFILE;Working Colour Profile
-IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMDD (Date Created).
 MAIN_TAB_COLOR;Colour
 PARTIALPASTE_COLORBOOST;Colour boost
 PARTIALPASTE_COLORDENOISE;Colour denoise
@@ -35,9 +35,9 @@ PARTIALPASTE_METAICMGROUP;Metadata/Colour Management settings
 PARTIALPASTE_RAW_FALSECOLOR;Demosaic False colour suppression steps
 PREFERENCES_AUTOMONPROFILE;Automatically use operating system's main monitor colour profile
 PREFERENCES_BEHAVIOR;Behaviour
-PREFERENCES_CUTOVERLAYBRUSH;Crop mask colour/transparency
 PREFERENCES_CACHEMAXENTRIES;Maximum Number of Cache Entries
 PREFERENCES_CACHETHUMBHEIGHT;Maximum Thumbnail Height
+PREFERENCES_CUTOVERLAYBRUSH;Crop mask colour/transparency
 PREFERENCES_ICCDIR;Directory containing colour profiles
 PREFERENCES_MENUGROUPLABEL;Group "Colour Label"
 PREFERENCES_MONITORICC;Monitor Colour Profile
@@ -60,13 +60,6 @@ TP_ICM_LABEL;Colour Management
 TP_LABCURVE_AVOIDCOLORCLIP;Avoid colour clipping
 TP_RAW_FALSECOLOR;False colour suppression steps
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
-
-
-
-
-
-
-
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -141,12 +134,12 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 !EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 !EXPORT_BYPASS_SHARPENING;Bypass Sharpening
-!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 !EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
 !EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
-!EXPORT_MAXHEIGHT;Maximum Height: 
-!EXPORT_MAXWIDTH;Maximum Width:  
+!EXPORT_MAXHEIGHT;Maximum Height:
+!EXPORT_MAXWIDTH;Maximum Width:
 !EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
 !EXPORT_RAW_DMETHOD;Demosaic Method
 !EXPORT_RESIZEMETHOD;Resize Method
@@ -183,7 +176,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
-!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed) 
+!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
 !FILEBROWSER_PARTIALPASTEPROFILE;Paste - partial
 !FILEBROWSER_PASTEPROFILE;Paste
 !FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -291,21 +284,14 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !HISTORY_DELSNAPSHOT;Del
 !HISTORY_FROMCLIPBOARD;From Clipboard
 !HISTORY_LABEL;History
-!HISTORY_MSG_1;Photo Loaded
 !HISTORY_MSG_2;PP3 Loaded
-!HISTORY_MSG_3;PP3 Changed
-!HISTORY_MSG_4;History Browsing
 !HISTORY_MSG_5;Brightness
-!HISTORY_MSG_6;Contrast
-!HISTORY_MSG_7;Black
 !HISTORY_MSG_8;Exposure Compensation
 !HISTORY_MSG_9;Highlight Compression
 !HISTORY_MSG_10;Shadow Compression
-!HISTORY_MSG_11;Tone Curve
 !HISTORY_MSG_12;Auto Exposure
 !HISTORY_MSG_13;Exposure Clipping
 !HISTORY_MSG_14;Luminance Brightness
-!HISTORY_MSG_15;Luminance Contrast
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
 !HISTORY_MSG_18;Luminance Shadow Compr.
@@ -389,7 +375,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize Bounding Box
-!HISTORY_MSG_110;Resizing applies o  
+!HISTORY_MSG_110;Resizing applies o
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
 !HISTORY_MSG_114;DCB Iterations
@@ -476,6 +462,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !IPTCPANEL_COUNTRY;Country
 !IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
 !IPTCPANEL_CREDIT;Credit
+!IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMDD (Date Created).
 !IPTCPANEL_DATECREATED;Date Created
 !IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 !IPTCPANEL_EMBEDDED;Embedded
@@ -507,16 +494,16 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit Fullscreen
-!MAIN_FRAME_BATCHQUEUE;Queue 
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b> 
-!MAIN_FRAME_EDITOR;Editor 
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b> 
-!MAIN_FRAME_FILEBROWSER;File Browser 
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b> 
-!MAIN_FRAME_PLACES;Places 
+!MAIN_FRAME_BATCHQUEUE;Queue
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b>
+!MAIN_FRAME_EDITOR;Editor
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER;File Browser
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b>
+!MAIN_FRAME_PLACES;Places
 !MAIN_FRAME_PLACES_ADD;Add
 !MAIN_FRAME_PLACES_DEL;Del
-!MAIN_FRAME_RECENT;Recent Folders 
+!MAIN_FRAME_RECENT;Recent Folders
 !MAIN_MSG_ALREADYEXISTS;File already exists.
 !MAIN_MSG_CANNOTLOAD;Cannot load image
 !MAIN_MSG_CANNOTSAVE;File saving error
@@ -535,12 +522,12 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
 !MAIN_TAB_DETAIL;Detail
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
-!MAIN_TAB_DEVELOP; Develop 
+!MAIN_TAB_DEVELOP; Develop
 !MAIN_TAB_EXIF;Exif
-!MAIN_TAB_EXPORT; Export 
+!MAIN_TAB_EXPORT; Export
 !MAIN_TAB_EXPOSURE;Exposure
 !MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
-!MAIN_TAB_FILTER; Filter 
+!MAIN_TAB_FILTER; Filter
 !MAIN_TAB_ICM;ICM
 !MAIN_TAB_IPTC;IPTC
 !MAIN_TAB_METADATA;Metadata
@@ -551,6 +538,9 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !MAIN_TAB_TRANSFORM;Transform
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-T</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
+!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
+!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_HIDEFP;Show/Hide the bottom panel (directory and file browser).\nShortcut: <b>F</b>
 !MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
@@ -558,7 +548,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&gt;</b>
 !MAIN_TOOLTIP_PREFERENCES;Set preferences
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on.
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -651,7 +641,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!PARTIALPASTE_WHITEBALANCE;White balance 
+!PARTIALPASTE_WHITEBALANCE;White balance
 !PREFERENCES_ADD;ADD
 !PREFERENCES_APPLNEXTSTARTUP;restart required
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
@@ -675,7 +665,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
 !PREFERENCES_DARKFRAME;Dark Frame
-!PREFERENCES_DATEFORMATFRAME;Date Format 
+!PREFERENCES_DATEFORMATFRAME;Date Format
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 !PREFERENCES_DATEFORMAT;Date format
 !PREFERENCES_DEFAULTLANG;Default Language
@@ -794,7 +784,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !PROFILEPANEL_TOOLTIPSAVE;Save current profile.\n<b>Ctrl-click</b> to select the parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe... 
+!PROGRESSBAR_DARKFRAME;Darkframe...
 !PROGRESSBAR_DECODING;Decoding raw file...
 !PROGRESSBAR_DEMOSAICING;Demosaicing...
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
@@ -859,6 +849,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !TP_CROP_FIXRATIO;Fix Ratio:
 !TP_CROP_GTDIAGONALS;Rule of diagonals
 !TP_CROP_GTEPASSPORT;Biometric Passport
+!TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
 !TP_CROP_GTHARMMEANS1;Harmonic means 1
 !TP_CROP_GTHARMMEANS2;Harmonic means 2
@@ -908,7 +899,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !TP_EQUALIZER_NEUTRAL;Neutral
 !TP_EXPOSCORR_LABEL;Raw white &amp; black points
 !TP_EXPOSURE_AUTOLEVELS;Auto Levels
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
 !TP_EXPOSURE_CLIP;Clip
@@ -938,7 +929,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !TP_HLREC_CIELAB;CIELab Blending
 !TP_HLREC_LABEL;Highlight Reconstruction
 !TP_HLREC_LUMINANCE;Luminance Recovery
-!TP_HLREC_METHOD;Method: 
+!TP_HLREC_METHOD;Method:
 !TP_HSVEQUALIZER_CHANNEL;HSV Channel
 !TP_HSVEQUALIZER_HUE;H
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
@@ -948,11 +939,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_FILEDLGFILTERANY;Any files
-!TP_ICM_INPUTCAMERA;Camera standard
-!TP_ICM_INPUTCUSTOM;Custom
 !TP_ICM_INPUTDLGLABEL;Select Input DCP/ICC Profile...
-!TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
-!TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTPROFILE;Input Profile
 !TP_ICM_NOICM;No ICM: sRGB output
 !TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
@@ -1024,7 +1011,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !TP_RESIZE_H;H:
 !TP_RESIZE_LABEL;Resize
 !TP_RESIZE_LANCZOS;Lanczos
-!TP_RESIZE_METHOD;Method: 
+!TP_RESIZE_METHOD;Method:
 !TP_RESIZE_NEAREST;Nearest
 !TP_RESIZE_SCALE;Scale
 !TP_RESIZE_SPECIFY;Specify:
