@@ -594,8 +594,6 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
         pProf->pCurCommon->param[3]=atof(raw);
     else if (!strcmp("RadialDistortParam5",tag) || !strcmp("TangentialDistortParam2",tag)) 
         pProf->pCurCommon->param[4]=atof(raw);    
-    else if (!strcmp("RadialDistortParam6",tag) || !strcmp("TangentialDistortParam3",tag)) 
-        pProf->pCurCommon->param[5]=atof(raw);    
 }
 
 void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el) {
