@@ -94,7 +94,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 		
 		for (int i=0; i<0x10000; i++) {
 			//rangefn[i] = (int)(((thresh)/((double)(i) + (thresh)))*intfactor);
-			rangefn[i] = static_cast<int>(exp(-(min(10.0f,(static_cast<float>(i*i)) / (thresh*thresh))))*intfactor);
+			rangefn[i] = static_cast<int>(exp(-(min(10.0f,(static_cast<float>(i)*i) / (thresh*thresh))))*intfactor);
 			//if (rangefn[i]<0 || rangefn[i]>intfactor) 
 				//printf("i=%d rangefn=%d arg=%f \n",i,rangefn[i], float(i*i) / (thresh*thresh));
 		}
