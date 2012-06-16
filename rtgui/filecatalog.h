@@ -210,7 +210,7 @@ class FileCatalog : public Gtk::VBox,
 				void setFilterPanel (FilterPanel* fpanel);
 				void setExportPanel (ExportPanel* expanel);
 				void exifInfoButtonToggled();
-                void categoryButtonToggled (Gtk::ToggleButton* b);
+                void categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick);
                 bool capture_event(GdkEventButton* event);
                 void filterChanged ();
                 void runFilterDialog ();
