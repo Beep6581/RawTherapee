@@ -433,6 +433,8 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
     int W = lold->W;
     int H = lold->H;
+
+#pragma omp parallel for if (multiThread)
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
 			float Lin=lold->L[i][j];
