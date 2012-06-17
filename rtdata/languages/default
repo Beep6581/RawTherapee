@@ -387,6 +387,7 @@ HISTORY_MSG_163;RGB Curves - R
 HISTORY_MSG_164;RGB Curves - G
 HISTORY_MSG_165;RGB Curves - B
 HISTORY_MSG_166;Neutral Levels
+HISTORY_MSG_167;BW Toning
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -957,6 +958,8 @@ TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
 TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
 TP_LABCURVE_BRIGHTNESS;Brightness
+TP_LABCURVE_BWTONING;BW Toning
+TP_LABCURVE_BWTONING_TIP;With <b>BT Toning</b> option enabled the Lab Saturation is not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves 
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminance Curve
 TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter

@@ -466,11 +466,19 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
 			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;
 			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;
 			
-			if (params->labCurve.saturation) {
+			// modulation of a and b curves with saturation
+			if (params->labCurve.saturation!=0 && !params->labCurve.bwtoning) {
 				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001);
 				float satfactor = (satcurve[chroma+32768.0f]-32768.0f)/chroma;
 				atmp *= satfactor;
 				btmp *= satfactor;
+			}
+
+			// labCurve.bwtoning option allows to decouple modulation of a & b curves by saturation
+			// with bwtoning enabled the net effect of a & b curves is visible
+			if (params->labCurve.bwtoning) {
+				atmp -= lold->a[i][j];
+				btmp -= lold->b[i][j];
 			}
 			
             if (params->labCurve.avoidclip) {

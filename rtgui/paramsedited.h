@@ -60,6 +60,7 @@ class LCurveParamsEdited {
         bool lcurve;
         bool acurve;
         bool bcurve;
+        bool bwtoning;
 };
 
 class RGBCurvesParamsEdited {
