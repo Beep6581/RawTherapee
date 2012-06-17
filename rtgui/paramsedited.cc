@@ -52,6 +52,7 @@ void ParamsEdited::set (bool v) {
 	labCurve.avoidclip   = v;
 	labCurve.enable_saturationlimiter = v;
 	labCurve.saturationlimit      = v;
+	labCurve.bwtoning    =v;
 	rgbCurves.rcurve      = v;
 	rgbCurves.gcurve      = v;
 	rgbCurves.bcurve      = v;
@@ -244,6 +245,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.avoidclip = labCurve.avoidclip && p.labCurve.avoidclip == other.labCurve.avoidclip;
         labCurve.enable_saturationlimiter = labCurve.enable_saturationlimiter && p.labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter;
         labCurve.saturationlimit = labCurve.saturationlimit && p.labCurve.saturationlimit == other.labCurve.saturationlimit;
+        labCurve.bwtoning = labCurve.bwtoning && p.labCurve.bwtoning == other.labCurve.bwtoning;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
         rgbCurves.gcurve = rgbCurves.gcurve && p.rgbCurves.gcurve == other.rgbCurves.gcurve;
         rgbCurves.bcurve = rgbCurves.bcurve && p.rgbCurves.bcurve == other.rgbCurves.bcurve;
@@ -432,9 +434,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.brightness)	toEdit.labCurve.brightness = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
 	if (labCurve.contrast)		toEdit.labCurve.contrast 	= dontforceSet && options.baBehav[ADDSET_LC_CONTRAST] ? toEdit.labCurve.contrast + mods.labCurve.contrast : mods.labCurve.contrast;
 	if (labCurve.saturation)	toEdit.labCurve.saturation = dontforceSet && options.baBehav[ADDSET_LC_SATURATION] ? toEdit.labCurve.saturation + mods.labCurve.saturation : mods.labCurve.saturation;
-	if (labCurve.avoidclip)					toEdit.labCurve.avoidclip 	= mods.labCurve.avoidclip;
+
 	if (labCurve.enable_saturationlimiter)	toEdit.labCurve.enable_saturationlimiter 	= mods.labCurve.enable_saturationlimiter;
 	if (labCurve.saturationlimit)			toEdit.labCurve.saturationlimit 	= mods.labCurve.saturationlimit;	
+	if (labCurve.bwtoning)					toEdit.labCurve.bwtoning 	= mods.labCurve.bwtoning;
 
 	if (rgbCurves.rcurve)		            toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
 	if (rgbCurves.gcurve)		            toEdit.rgbCurves.gcurve     = mods.rgbCurves.gcurve;

@@ -188,7 +188,8 @@ enum ProcEvent {
 	EvRGBgCurve=163,
 	EvRGBbCurve=164,
 	EvNeutralExp=165,
-	NUMOFEVENTS=166
+	EvLBWtoning=166,
+	NUMOFEVENTS=167
 };
 }    
 #endif    

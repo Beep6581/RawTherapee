@@ -61,6 +61,7 @@ class LCurveParams {
         bool    avoidclip;
         bool    enable_saturationlimiter;
         double  saturationlimit;
+        bool    bwtoning;
 };
 
 /**

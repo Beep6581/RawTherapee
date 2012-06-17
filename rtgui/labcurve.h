@@ -39,11 +39,12 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
 	
 	//%%%%%%%%%%%%%%%%
 	Gtk::CheckButton* avoidclip;  
-    Gtk::CheckButton* enablelimiter;  
+    Gtk::CheckButton* enablelimiter;
+    Gtk::CheckButton* bwtoning;
     Adjuster* saturationlimiter;
     bool cbAdd;
-    sigc::connection  acconn, elconn;
-    bool lastACVal, lastELVal;
+    sigc::connection  bwtconn, acconn, elconn;
+    bool lastBWTVal, lastACVal, lastELVal;
 	//%%%%%%%%%%%%%%%%
 
   public:
@@ -62,6 +63,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void adjusterChanged (Adjuster* a, double newval);
 	void avoidclip_toggled ();
     void enablelimiter_toggled ();
+    void bwtoning_toggled();
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
     virtual void colorForValue (double valX, double valY);
