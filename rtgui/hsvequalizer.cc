@@ -190,27 +190,27 @@ void HSVEqualizer::colorForValue (double valX, double valY) {
 
 	if (ce == hshape) {        // Hue = f(Hue)
 
-		float h = (float)((valY - 0.5) * 2. + valX);
-		if (h > 1.0)
-			h -= 1.0;
-		else if (h < 0.0)
-			h += 1.0;
-		ImProcFunctions::hsv2rgb(h, (float)0.5, (float)0.5, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		float h = float((valY - 0.5) * 2. + valX);
+		if (h > 1.0f)
+			h -= 1.0f;
+		else if (h < 0.0f)
+			h += 1.0f;
+		ImProcFunctions::hsv2rgb01(h, 0.5f, 0.5f, r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else if (ce == sshape) {   // Saturation = f(Hue)
-		ImProcFunctions::hsv2rgb((float)valX, (float)valY, (float)0.5, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		ImProcFunctions::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else if (ce == vshape) {   // Value = f(Hue)
-		ImProcFunctions::hsv2rgb((float)valX, (float)0.5, (float)valY, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		ImProcFunctions::hsv2rgb01(float(valX), 0.5f, float(valY), r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else {
 		printf("Error: no curve displayed!\n");
