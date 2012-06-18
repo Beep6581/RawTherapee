@@ -16,10 +16,19 @@ By default, no processor is specified, so Cmake/GCC will build RT for your proce
 download then have to set the processor label manually (set to 'undefined' by default) with the PROC_LABEL cmake's parameter (we assume that you know
 how to specify a cmake parameter).
 
-Note for developers that handle an automated build system : Mercurial is requested in order to produce the build information file, but you build system will
-certainly only use the source code without any access to a Mercurial repository. In this case, you have to first build RT like explained below to generates
-the build information files, then you can tell your build system to run cmake with the following additionnal parameter : -D AUTOMATED_BUILD_SYSTEM:BOOL=ON.
-Cmake will then pass the files creation step, but will check the presence of the requested files and stop if they're not there.
+Note for developers that handle an automated build system: 
+Mercurial is required in order to produce the build information file, but you 
+build system will certainly only use the source code without any access to a 
+Mercurial repository. To generate the neede information (they are stored in 
+ReleaseInfo.cmake) just run the sript tools/generateReleaseInfo. It will generate
+all information needed. After that you can delete .hg/ (and .hg*) and continue 
+with the normal compile instructions without the need of mercurial installed. 
+In short:
+1. check out the desired hg tag
+2. run tools/generateReleaseInfo (to generate ReleaseInfo.cmake)
+3. delete the mercurial stuff (.hg*)
+4. use it for your build system
+
 
 Windows
 -------
