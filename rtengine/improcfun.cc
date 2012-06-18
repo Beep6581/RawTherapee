@@ -962,6 +962,11 @@ fclose(f);*/
 	}
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//
+	// WARNING: rtengine/color.cc have similar functions. I guess that color.cc was mistakenly committed from the denoise branch
+	//          in changeset #2493dd00b9f3. Code cleanup about those methods will have to be made when the denoise branch will be merged
+	//
+	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 		
@@ -987,6 +992,26 @@ fclose(f);*/
 		b = ((b1)*65535.0);
 	}
 	
+	// Function copied for speed concerns
+	// Not exactly the same as above ; this one return a result in the [0.0 ; 1.0] range
+	void ImProcFunctions::hsv2rgb01 (float h, float s, float v, float &r, float &g, float &b) {
+
+		float h1 = h*6; // sector 0 to 5
+		int i = int(h1);
+		float f = h1 - i; // fractional part of h
+
+		float p = v * ( 1 - s );
+		float q = v * ( 1 - s * f );
+		float t = v * ( 1 - s * ( 1 - f ) );
+
+		if      (i==1)    {r = q;  g = v;  b = p;}
+		else if (i==2)    {r = p;  g = v;  b = t;}
+		else if (i==3)    {r = p;  g = q;  b = v;}
+		else if (i==4)    {r = t;  g = p;  b = v;}
+		else if (i==5)    {r = v;  g = p;  b = q;}
+		else /*(i==0|6)*/ {r = v;  g = t;  b = p;}
+	}
+
 	void ImProcFunctions::xyz2srgb (float x, float y, float z, float &r, float &g, float &b) {
 		
 		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
