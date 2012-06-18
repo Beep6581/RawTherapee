@@ -66,8 +66,6 @@ endif (APPLE)
 
 option(USE_CLANG "Build rawtherapee with clang" OFF)
 option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
-option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
-
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
@@ -190,105 +188,50 @@ find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
 
-if (AUTOMATED_BUILD_SYSTEM)
+## BEGIN: Generating AboutThisBuild.txt
+# set the bit number information of the platform
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+  set(PROC_BIT_DEPTH 32 bits)
+elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(PROC_BIT_DEPTH 64 bits)
+endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
-	message(WARNING "Automated build system mode! You have to make sure that AboutThisBuild.txt and rtgui/version.h are up-to-date by building RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF.")
+# Get c++ and linker flags
+set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
+set(LFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
 
-  # Checking for the presence of AboutThisBuild.txt
-  find_file(ABOUT_FILE AboutThisBuild.txt PATHS "${CMAKE_CURRENT_SOURCE_DIR}" NO_DEFAULT_PATH)
-  if (ABOUT_FILE STREQUAL ABOUT_FILE-NOTFOUND)
-	  message(FATAL_ERROR "AboutThisBuild.txt not found! You have to build RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF to generate this file.")
-  endif (ABOUT_FILE STREQUAL ABOUT_FILE-NOTFOUND)
+set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
+                            -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
+                            -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
+                            -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
+                            -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
+                            -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+                            -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+                            -DOPTION_OMP:STRING=${OPTION_OMP}
+                            -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
 
-  # Checking for the presence of version.h
-  find_file(VERSION_FILE version.h PATHS "${CMAKE_CURRENT_SOURCE_DIR}/rtgui" NO_DEFAULT_PATH)
-  if (VERSION_FILE STREQUAL VERSION_FILE-NOTFOUND)
-	  message(FATAL_ERROR "rtgui/version.h not found! You have to build RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF to generate this file.")
-  endif (VERSION_FILE STREQUAL VERSION_FILE-NOTFOUND)
+if (WIN32)
+  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
+                                      -DCXX_FLAGS:STRING=\"${CXX_FLAGS}\"
+                                      -DLFLAGS:STRING=\"${LFLAGS}\")
+elseif (APPLE)
+  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
+                                      -DCXX_FLAGS:STRING=${CXX_FLAGS}
+                                      -DLFLAGS:STRING=${LFLAGS})
+else (WIN32)
+  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
+                                      -DCXX_FLAGS:STRING=${CXX_FLAGS}
+                                      -DLFLAGS:STRING=${LFLAGS})
+endif (WIN32)
 
-else (AUTOMATED_BUILD_SYSTEM)
+list(APPEND ABOUT_COMMAND_WITH_ARGS -P ${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.cmake)
 
-  # set the bit number information of the platform
-  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(PROC_BIT_DEPTH 32 bits)
-  elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(PROC_BIT_DEPTH 64 bits)
-  endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+add_custom_target(AboutFile ALL
+    COMMAND ${ABOUT_COMMAND_WITH_ARGS}
+    COMMENT "Creating the about file")
 
-  #generating AboutThisBuild.txt
-  if (WIN32)
-
-    add_custom_target (AboutFile ALL
-      COMMAND ${CMAKE_COMMAND}
-              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
-              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-              -DSYSTEM:STRING=Windows
-              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
-              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
-              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
-              -DCXX_FLAGS:STRING=\"${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
-              -DLFLAGS:STRING=\"${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
-              -DOPTION_OMP:STRING=${OPTION_OMP}
-              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.cmake
-      COMMENT "Creating the about file"
-    )
-    find_file(HG_CMD hg.exe HINTS ENV Path PATH_SUFFIXES ../)
-
-  elseif (APPLE)
- 
-    add_custom_target (AboutFile ALL
-      COMMAND ${CMAKE_COMMAND}
-              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
-              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-              -DSYSTEM:STRING=Apple
-              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
-              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
-              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
-              -DCXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
-              -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
-              -DOPTION_OMP:STRING=${OPTION_OMP}
-              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.cmake
-      COMMENT "Creating the about file"
-    )
-    find_file(HG_CMD hg PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
-    find_file(HG_CMD hg)
-
-  else (WIN32)
- 
-    add_custom_target (AboutFile ALL
-      COMMAND ${CMAKE_COMMAND}
-              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
-              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-              -DSYSTEM:STRING=Linux
-              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
-              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
-              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
-              -DCXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
-              -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
-              -DOPTION_OMP:STRING=${OPTION_OMP}
-              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.cmake
-      COMMENT "Creating the about file"
-    )
-    find_file(HG_CMD hg)
-
-  endif (WIN32)
- 
-  add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
-
-  if (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-    message(FATAL_ERROR "hg command not found!")
-  else (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-    message(STATUS "hg command found: ${HG_CMD}")
-  endif (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-
-endif (AUTOMATED_BUILD_SYSTEM)
-
+add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
+## END: Generating AboutThisBuild.txt
 
 # link witz bzip
 if (WITH_BZIP)
