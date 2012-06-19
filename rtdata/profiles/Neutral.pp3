@@ -1,7 +1,7 @@
 
 [Version]
 AppVersion=4.0.9
-Version=301
+Version=302
 
 [General]
 Rank=0
@@ -42,7 +42,7 @@ Enabled=false
 Method=usm
 Radius=0.5
 Amount=125
-Threshold=512
+Threshold=20;80;2000;1200;
 OnlyEdges=false
 EdgedetectionRadius=1.9
 EdgeTolerance=1800
@@ -57,7 +57,7 @@ DeconvIterations=30
 Enabled=false
 Pastels=50
 Saturated=50
-PSThreshold=75
+PSThreshold=1;75;
 ProtectSkins=false
 AvoidColorShift=true
 PastSatTog=true

@@ -327,6 +327,11 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 	Glib::Mutex::Lock lock(mutex);
 	#endif
     
+	if (pparams.sharpening.threshold.isDouble() != pp.sharpening.threshold.isDouble())
+		printf("WARNING: Sharpening different!\n");
+	if (pparams.vibrance.psthreshold.isDouble() != pp.vibrance.psthreshold.isDouble())
+		printf("WARNING: Vibrance different!\n");
+
     if (pparams!=pp) 
         cfs.recentlySaved = false;
 

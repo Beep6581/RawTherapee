@@ -176,10 +176,13 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 		#pragma omp for
 		for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++) {
+				const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
 				float diff = base[i][j] - b2[i][j];
-				if (ABS(diff)>params->sharpening.threshold) {
-					lab->L[i][j] = lab->L[i][j] + params->sharpening.amount * diff / 100.f;
-				}
+				float delta = params->sharpening.threshold.multiply<float, float, float>(
+				              min(ABS(diff), upperBound),					// X axis value = absolute value of the difference, truncated to the max value of this field
+				              params->sharpening.amount * diff * 0.01f		// Y axis max value
+				              );
+				lab->L[i][j] = lab->L[i][j] + delta;
 			}
 	}
 	else
@@ -199,6 +202,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 	float scale = (100.f - params->sharpening.halocontrol_amount) * 0.01f;
 	float sharpFac = params->sharpening.amount * 0.01f;
 	float** nL = base;
+
 #pragma omp parallel for if (multiThread)
 	for (int i=2; i<H-2; i++) {
 		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min_, max_, labL;
@@ -224,16 +228,19 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 			// deviation from the environment as measurement
 			float diff = nL[i][j] - blurmap[i][j];
 
-			if (ABS(diff) > params->sharpening.threshold) {
-				float newL = labL + sharpFac * diff;
-				// applying halo control
-				if (newL > max_)
-					newL = max_ + (newL-max_) * scale;
-				else if (newL < min_)
-					newL = min_ - (min_-newL) * scale;
+			const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
+			float delta = params->sharpening.threshold.multiply<float, float, float>(
+			              min(ABS(diff), upperBound),	// X axis value = absolute value of the difference
+			              sharpFac * diff				// Y axis max value = sharpening.amount * signed difference
+			              );
+			float newL = labL + delta;
+			// applying halo control
+			if (newL > max_)
+				newL = max_ + (newL-max_) * scale;
+			else if (newL < min_)
+				newL = min_ - (min_-newL) * scale;
 
-				lab->L[i][j] = newL;
-			}
+			lab->L[i][j] = newL;
 		}
 	}
 }

@@ -803,6 +803,13 @@ SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Save processing parameters with image
 SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+THRESHOLDSELECTOR_B;Bottom
+THRESHOLDSELECTOR_BL;Bottom-left
+THRESHOLDSELECTOR_BR;Bottom-right
+THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+THRESHOLDSELECTOR_T;Top
+THRESHOLDSELECTOR_TL;Top-left
+THRESHOLDSELECTOR_TR;Top-right
 TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>
 TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
@@ -1067,7 +1074,7 @@ TP_VIBRANCE_LABEL;Vibrance
 TP_VIBRANCE_PASTELS;Pastel tones
 TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 TP_VIBRANCE_PROTECTSKINS;Protect skin tones
-TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone differential threshold
 TP_VIBRANCE_SATURATED;Saturated tones
 TP_VIGNETTING_AMOUNT;Amount
 TP_VIGNETTING_CENTER;Center

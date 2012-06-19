@@ -454,7 +454,15 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (sharpening.enabled)					toEdit.sharpening.enabled 	= mods.sharpening.enabled;
 	if (sharpening.radius)					toEdit.sharpening.radius 	= mods.sharpening.radius;
 	if (sharpening.amount)					toEdit.sharpening.amount 	= dontforceSet && options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.amount + mods.sharpening.amount : mods.sharpening.amount;
-	if (sharpening.threshold)				toEdit.sharpening.threshold 	= mods.sharpening.threshold;
+	if (sharpening.threshold)				toEdit.sharpening.threshold = mods.sharpening.threshold;
+
+	for (int i=0; i<3; i++) {
+		if (chmixer.red[i])		toEdit.chmixer.red[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.red[i] + mods.chmixer.red[i] : mods.chmixer.red[i];
+		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
+		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
+	}
+
+
 	if (sharpening.edgesonly)				toEdit.sharpening.edgesonly 	= mods.sharpening.edgesonly;
 	if (sharpening.edges_radius)			toEdit.sharpening.edges_radius 	= mods.sharpening.edges_radius;
 	if (sharpening.edges_tolerance)			toEdit.sharpening.edges_tolerance	 = mods.sharpening.edges_tolerance;
@@ -468,7 +476,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (vibrance.enabled)					toEdit.vibrance.enabled			= mods.vibrance.enabled;
 	if (vibrance.pastels)					toEdit.vibrance.pastels			= dontforceSet && options.baBehav[ADDSET_VIBRANCE_PASTELS] ? toEdit.vibrance.pastels + mods.vibrance.pastels : mods.vibrance.pastels;
 	if (vibrance.saturated)					toEdit.vibrance.saturated		= dontforceSet && options.baBehav[ADDSET_VIBRANCE_SATURATED] ? toEdit.vibrance.saturated + mods.vibrance.saturated : mods.vibrance.saturated;
-	if (vibrance.psthreshold)				toEdit.vibrance.psthreshold		= dontforceSet && options.baBehav[ADDSET_VIBRANCE_PSTHRESHOLD] ? toEdit.vibrance.psthreshold + mods.vibrance.psthreshold : mods.vibrance.psthreshold;
+	if (vibrance.psthreshold)				toEdit.vibrance.psthreshold		= mods.vibrance.psthreshold;
 	if (vibrance.protectskins)				toEdit.vibrance.protectskins	= mods.vibrance.protectskins;
 	if (vibrance.avoidcolorshift)			toEdit.vibrance.avoidcolorshift	= mods.vibrance.avoidcolorshift;
 	if (vibrance.pastsattog)				toEdit.vibrance.pastsattog	    = mods.vibrance.pastsattog;
