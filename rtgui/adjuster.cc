@@ -243,11 +243,6 @@ void Adjuster::setAddMode(bool addM) {
 	}
 }
 
-void Adjuster::setAdjusterListener (AdjusterListener* alistener) {
-
-  adjusterListener = alistener;  
-}
-
 void Adjuster::spinChanged () {
 
   sliderChange.block (true);
@@ -310,24 +305,6 @@ void Adjuster::setValue (double a) {
   sliderChange.block (false);
   spinChange.block (false);
   afterReset = false;
-}
-
-// return the value trimmed to the limits at construction time
-double Adjuster::getValue () {
-
-  return spin->get_value ();
-}
-
-// return the value trimmed to the limits at construction time
-int Adjuster::getIntValue () {
-
-  return spin->get_value_as_int ();
-}
-
-// method only used by the history manager
-Glib::ustring Adjuster::getTextValue () {
-
-  return spin->get_text ();
 }
 
 bool Adjuster::notifyListener () {

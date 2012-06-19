@@ -1,7 +1,7 @@
 
 [Version]
 AppVersion=4.0.9
-Version=301
+Version=302
 
 [General]
 Rank=0
@@ -19,7 +19,7 @@ Black=0
 HighlightCompr=0
 HighlightComprThreshold=33
 ShadowCompr=50
-Curve=2;0.10500000000000001;0.25;0.75;15;60;30;-70;
+Curve=2;0.105;0.25;0.75;15;60;30;-70;
 
 [Channel Mixer]
 Red=100;0;0;
@@ -42,7 +42,7 @@ Enabled=false
 Method=usm
 Radius=0.5
 Amount=125
-Threshold=512
+Threshold=20;80;2000;1200;
 OnlyEdges=false
 EdgedetectionRadius=1.9
 EdgeTolerance=1800
@@ -57,7 +57,7 @@ DeconvIterations=30
 Enabled=false
 Pastels=50
 Saturated=50
-PSThreshold=75
+PSThreshold=1;75;
 ProtectSkins=false
 AvoidColorShift=true
 PastSatTog=true

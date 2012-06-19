@@ -36,7 +36,9 @@
 #include <Shlobj.h>
 #endif
 
+// User's settings directory, including images' profiles if used
 Glib::ustring Options::rtdir;
+// User's cached datas' directory
 Glib::ustring Options::cacheBaseDir;
 
 Options options;
@@ -385,9 +387,8 @@ void Options::setDefaults () {
 			0,  // ADDSET_SHARPENMICRO_UNIFORMITY
 			0,  // ADDSET_VIBRANCE_PASTELS
 			0,  // ADDSET_VIBRANCE_SATURATED
-			0,   // ADDSET_VIBRANCE_PSTHRESHOLD
-			0,   // ADDSET_FREE_OUPUT_GAMMA
-			0,   // ADDSET_FREE_OUTPUT_SLOPE
+			0,  // ADDSET_FREE_OUPUT_GAMMA
+			0,  // ADDSET_FREE_OUTPUT_SLOPE
 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);

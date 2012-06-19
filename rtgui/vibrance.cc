@@ -23,6 +23,7 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
+
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
@@ -38,7 +39,7 @@ Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
 	//if (saturated->delay < 1000) saturated->delay = 1000;
 	pack_start( *saturated, Gtk::PACK_SHRINK, 0);
 
-	psThreshold = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PSTHRESHOLD"),0,100,5,75));
+	psThreshold = Gtk::manage (new ThresholdAdjuster (M("TP_VIBRANCE_PSTHRESHOLD"), 0., 100., 75., 75., 0, false));
 	psThreshold->setAdjusterListener (this);
 	psThreshold->set_sensitive(false);
 	//if (psThreshold->delay < 1000) psThreshold->delay = 1000;
@@ -98,7 +99,7 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 	lastPastSatTog = pp->vibrance.pastsattog;
 
 	pastels->setValue (pp->vibrance.pastels);
-	psThreshold->setValue (pp->vibrance.psthreshold);
+	psThreshold->setValue<int> (pp->vibrance.psthreshold);
 
 	if (lastPastSatTog) {
 		// Link both slider, so we set saturated and psThresholds unsensitive
@@ -120,7 +121,7 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
 	pp->vibrance.enabled         = enabled->get_active ();
 	pp->vibrance.pastels         = pastels->getIntValue();
 	pp->vibrance.saturated       = pastSatTog->get_active() ? pp->vibrance.pastels : saturated->getIntValue ();
-	pp->vibrance.psthreshold     = psThreshold->getIntValue ();
+	pp->vibrance.psthreshold     = psThreshold->getValue<int> ();
 	pp->vibrance.protectskins    = protectSkins->get_active ();
 	pp->vibrance.avoidcolorshift = avoidColorShift->get_active ();
 	pp->vibrance.pastsattog      = pastSatTog->get_active ();
@@ -249,11 +250,15 @@ void Vibrance::adjusterChanged (Adjuster* a, double newval) {
 			listener->panelChanged (EvVibrancePastels,  value );
 		else if (a == saturated && !pastSatTog->get_active())
 			listener->panelChanged (EvVibranceSaturated, value );
-		else if (a == psThreshold){
-			listener->panelChanged (EvVibrancePastSatThreshold, value );
-		}
 	}
 }
+
+void Vibrance::adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop) {
+    if (listener && enabled->get_active()) {
+        listener->panelChanged (EvVibrancePastSatThreshold, psThreshold->getHistoryString());
+    }
+}
+
 
 void Vibrance::setBatchMode(bool batchMode) {
 
@@ -267,7 +272,7 @@ void Vibrance::setBatchMode(bool batchMode) {
 void Vibrance::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited) {
 	pastels->setDefault (defParams->vibrance.pastels);
 	saturated->setDefault (defParams->vibrance.saturated);
-	psThreshold->setDefault (defParams->vibrance.psthreshold);
+	psThreshold->setDefault<int> (defParams->vibrance.psthreshold);
 
 	if (pedited) {
 		pastels->setDefaultEditedState     (pedited->vibrance.pastels ? Edited : UnEdited);
@@ -284,11 +289,9 @@ void Vibrance::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
 void Vibrance::setAdjusterBehavior (bool pastelsadd, bool saturatedadd, bool psthreshdadd) {
 	pastels->setAddMode (pastelsadd);
 	saturated->setAddMode (saturatedadd);
-	psThreshold->setAddMode (psthreshdadd);
 }
 
 void Vibrance::trimValues (ProcParams* pp) {
 	pastels->trimValue (pp->vibrance.pastels);
 	saturated->trimValue (pp->vibrance.saturated);
-	psThreshold->trimValue (pp->vibrance.psthreshold);
 }

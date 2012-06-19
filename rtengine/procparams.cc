@@ -163,18 +163,18 @@ void ProcParams::setDefaults () {
 
     sharpenEdge.enabled         = false;
     sharpenEdge.passes          = 2;
-    sharpenEdge.amount        = 50.0;
+    sharpenEdge.amount          = 50.0;
     sharpenEdge.threechannels   = false;
 
     sharpenMicro.enabled        = false;
-    sharpenMicro.amount       = 20.0;
+    sharpenMicro.amount         = 20.0;
     sharpenMicro.uniformity     = 50.0;
     sharpenMicro.matrix         = false;
 
     sharpening.enabled          = false;
     sharpening.radius           = 1.0;
     sharpening.amount           = 90;
-    sharpening.threshold        = 768;
+    sharpening.threshold.setValues(20, 80, 2000, 1200);
     sharpening.edgesonly        = false;
     sharpening.edges_radius     = 3;
     sharpening.edges_tolerance  = 1000;
@@ -189,7 +189,7 @@ void ProcParams::setDefaults () {
     vibrance.enabled            = false;
     vibrance.pastels            = 0;
     vibrance.saturated          = 0;
-    vibrance.psthreshold        = 75;
+    vibrance.psthreshold.setValues(1, 75);
     vibrance.protectskins       = false;
     vibrance.avoidcolorshift    = true;
     vibrance.pastsattog     	= true;
@@ -425,7 +425,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->sharpening.method)             keyFile.set_string  ("Sharpening", "Method",              sharpening.method);
     if (!pedited || pedited->sharpening.radius)             keyFile.set_double  ("Sharpening", "Radius",              sharpening.radius);
     if (!pedited || pedited->sharpening.amount)             keyFile.set_integer ("Sharpening", "Amount",              sharpening.amount);
-    if (!pedited || pedited->sharpening.threshold)          keyFile.set_integer ("Sharpening", "Threshold",           sharpening.threshold);
+    if (!pedited || pedited->sharpening.threshold) {
+        Glib::ArrayHandle<int> thresh (sharpening.threshold.value, 4, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("Sharpening",   "Threshold", thresh);
+    }
     if (!pedited || pedited->sharpening.edgesonly)          keyFile.set_boolean ("Sharpening", "OnlyEdges",           sharpening.edgesonly);
     if (!pedited || pedited->sharpening.edges_radius)       keyFile.set_double  ("Sharpening", "EdgedetectionRadius", sharpening.edges_radius);
     if (!pedited || pedited->sharpening.edges_tolerance)    keyFile.set_integer ("Sharpening", "EdgeTolerance",       sharpening.edges_tolerance);
@@ -440,7 +443,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->vibrance.enabled)          keyFile.set_boolean ("Vibrance", "Enabled",         vibrance.enabled);
     if (!pedited || pedited->vibrance.pastels)          keyFile.set_integer ("Vibrance", "Pastels",         vibrance.pastels);
     if (!pedited || pedited->vibrance.saturated)        keyFile.set_integer ("Vibrance", "Saturated",       vibrance.saturated);
-    if (!pedited || pedited->vibrance.psthreshold)      keyFile.set_integer ("Vibrance", "PSThreshold",     vibrance.psthreshold);
+    if (!pedited || pedited->vibrance.psthreshold) {
+        Glib::ArrayHandle<int> thresh (vibrance.psthreshold.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("Vibrance", "PSThreshold", thresh);
+    }
     if (!pedited || pedited->vibrance.protectskins)     keyFile.set_boolean ("Vibrance", "ProtectSkins",    vibrance.protectskins);
     if (!pedited || pedited->vibrance.avoidcolorshift)  keyFile.set_boolean ("Vibrance", "AvoidColorShift", vibrance.avoidcolorshift);
     if (!pedited || pedited->vibrance.pastsattog)       keyFile.set_boolean ("Vibrance", "PastSatTog",      vibrance.pastsattog);
@@ -789,7 +795,17 @@ if (keyFile.has_group ("Sharpening")) {
     if (keyFile.has_key ("Sharpening", "Enabled"))              { sharpening.enabled          = keyFile.get_boolean ("Sharpening", "Enabled"); if (pedited) pedited->sharpening.enabled = true; }
     if (keyFile.has_key ("Sharpening", "Radius"))               { sharpening.radius           = keyFile.get_double  ("Sharpening", "Radius"); if (pedited) pedited->sharpening.radius = true; }
     if (keyFile.has_key ("Sharpening", "Amount"))               { sharpening.amount           = keyFile.get_integer ("Sharpening", "Amount"); if (pedited) pedited->sharpening.amount = true; }
-    if (keyFile.has_key ("Sharpening", "Threshold"))            { sharpening.threshold        = keyFile.get_integer ("Sharpening", "Threshold"); if (pedited) pedited->sharpening.threshold = true; }
+    if (keyFile.has_key ("Sharpening", "Threshold"))            {
+        if (ppVersion < 302) {
+            int thresh = min(keyFile.get_integer ("Sharpening", "Threshold"), 2000);
+            sharpening.threshold.setValues(thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
+        }
+        else {
+            Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Sharpening", "Threshold");
+            sharpening.threshold.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 2000), min(thresh.data()[3], 2000));
+        }
+        if (pedited) pedited->sharpening.threshold = true;
+    }
     if (keyFile.has_key ("Sharpening", "OnlyEdges"))            { sharpening.edgesonly        = keyFile.get_boolean ("Sharpening", "OnlyEdges"); if (pedited) pedited->sharpening.edgesonly = true; }
     if (keyFile.has_key ("Sharpening", "EdgedetectionRadius"))  { sharpening.edges_radius     = keyFile.get_double  ("Sharpening", "EdgedetectionRadius"); if (pedited) pedited->sharpening.edges_radius = true; }
     if (keyFile.has_key ("Sharpening", "EdgeTolerance"))        { sharpening.edges_tolerance  = keyFile.get_integer ("Sharpening", "EdgeTolerance"); if (pedited) pedited->sharpening.edges_tolerance = true; }
@@ -823,7 +839,17 @@ if (keyFile.has_group ("Vibrance")) {
     if (keyFile.has_key ("Vibrance", "Enabled"))                { vibrance.enabled            = keyFile.get_boolean ("Vibrance", "Enabled"); if (pedited) pedited->vibrance.enabled = true; }
     if (keyFile.has_key ("Vibrance", "Pastels"))                { vibrance.pastels            = keyFile.get_integer ("Vibrance", "Pastels"); if (pedited) pedited->vibrance.pastels = true; }
     if (keyFile.has_key ("Vibrance", "Saturated"))              { vibrance.saturated          = keyFile.get_integer ("Vibrance", "Saturated"); if (pedited) pedited->vibrance.saturated = true; }
-    if (keyFile.has_key ("Vibrance", "PSThreshold"))            { vibrance.psthreshold        = keyFile.get_integer ("Vibrance", "PSThreshold"); if (pedited) pedited->vibrance.psthreshold = true; }
+    if (keyFile.has_key ("Vibrance", "PSThreshold"))            {
+        if (ppVersion < 302) {
+            int thresh = keyFile.get_integer ("Vibrance", "PSThreshold");
+            vibrance.psthreshold.setValues(thresh, thresh);
+        }
+        else {
+            Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Vibrance", "PSThreshold");
+            vibrance.psthreshold.setValues(thresh.data()[0], thresh.data()[1]);
+        }
+        if (pedited) pedited->vibrance.psthreshold = true;
+    }
     if (keyFile.has_key ("Vibrance", "ProtectSkins"))           { vibrance.protectskins       = keyFile.get_boolean ("Vibrance", "ProtectSkins"); if (pedited) pedited->vibrance.protectskins = true; }
     if (keyFile.has_key ("Vibrance", "AvoidColorShift"))        { vibrance.avoidcolorshift    = keyFile.get_boolean ("Vibrance", "AvoidColorShift"); if (pedited) pedited->vibrance.avoidcolorshift = true; }
     if (keyFile.has_key ("Vibrance", "PastSatTog"))             { vibrance.pastsattog         = keyFile.get_boolean ("Vibrance", "PastSatTog"); if (pedited) pedited->vibrance.pastsattog = true; }
@@ -1128,6 +1154,7 @@ if (keyFile.has_group ("IPTC")) {
         printf ("-->unknown exception!\n");
         return 1;
     }
+    return 0;
 }
 
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");

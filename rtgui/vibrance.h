@@ -21,16 +21,16 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
-//#include "guiutils.h"
+#include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Vibrance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class Vibrance : public Gtk::VBox, public AdjusterListener, public ThresholdAdjusterListener, public FoldableToolPanel {
 
 protected:
 	Gtk::CheckButton* enabled;
 	Adjuster* pastels;
 	Adjuster* saturated;
-	Adjuster* psThreshold;
+    ThresholdAdjuster* psThreshold;
 	Gtk::CheckButton* protectSkins;
 	Gtk::CheckButton* avoidColorShift;
 	Gtk::CheckButton* pastSatTog;
@@ -55,6 +55,7 @@ public:
 	void trimValues          (rtengine::procparams::ProcParams* pp);
 	void setAdjusterBehavior (bool amountadd, bool passadd, bool psthreshdadd);
 	void adjusterChanged     (Adjuster* a, double newval);
+	void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
 
 	void enabled_toggled         ();
 	void protectskins_toggled    ();

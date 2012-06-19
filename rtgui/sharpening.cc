@@ -26,6 +26,10 @@ using namespace rtengine::procparams;
 
 Sharpening::Sharpening () : Gtk::VBox(), FoldableToolPanel(this) {
 
+   std::vector<GradientMilestone> milestones;
+   milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
+   milestones.push_back( GradientMilestone(1.0, 1.0, 1.0, 1.0) );
+
    enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
    enabled->set_active (true);
    pack_start(*enabled);
@@ -69,7 +73,8 @@ Sharpening::Sharpening () : Gtk::VBox(), FoldableToolPanel(this) {
    Gtk::HSeparator *hsep6a = Gtk::manage (new  Gtk::HSeparator());
    amount = Gtk::manage (new Adjuster (M("TP_SHARPENING_AMOUNT"), 1, 1000, 1, 150));
    radius = Gtk::manage (new Adjuster (M("TP_SHARPENING_RADIUS"), 0.3, 3, 0.01, 0.8));
-   threshold = Gtk::manage (new Adjuster (M("TP_SHARPENING_THRESHOLD"), 0, 16384, 50, 1));
+   threshold = Gtk::manage (new ThresholdAdjuster (M("TP_SHARPENING_THRESHOLD"), 0., 2000., 20., 80., 2000., 1200., 0, false));
+   threshold->setBgGradient(milestones);
    pack_start(*hsep6a, Gtk::PACK_SHRINK, 2);
 
    pack_start (*usm);
@@ -186,7 +191,7 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     amount->setValue        (pp->sharpening.amount);
     radius->setValue        (pp->sharpening.radius);
-    threshold->setValue     (pp->sharpening.threshold);
+    threshold->setValue<int>(pp->sharpening.threshold);
     eradius->setValue       (pp->sharpening.edges_radius);
     etolerance->setValue    (pp->sharpening.edges_tolerance);
     hcamount->setValue      (pp->sharpening.halocontrol_amount);
@@ -221,7 +226,7 @@ void Sharpening::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->sharpening.amount           = (int)amount->getValue();
     pp->sharpening.enabled          = enabled->get_active ();
     pp->sharpening.radius           = radius->getValue ();
-    pp->sharpening.threshold        = (int)threshold->getValue ();
+    pp->sharpening.threshold        = threshold->getValue<int> ();
     pp->sharpening.edgesonly        = edgesonly->get_active ();
     pp->sharpening.edges_radius     = eradius->getValue ();
     pp->sharpening.edges_tolerance  = (int)etolerance->getValue ();
@@ -259,7 +264,7 @@ void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
     amount->setDefault (defParams->sharpening.amount);
     radius->setDefault (defParams->sharpening.radius);
-    threshold->setDefault (defParams->sharpening.threshold);
+    threshold->setDefault<int> (defParams->sharpening.threshold);
     eradius->setDefault (defParams->sharpening.edges_radius);
     etolerance->setDefault (defParams->sharpening.edges_tolerance);
     hcamount->setDefault (defParams->sharpening.halocontrol_amount);
@@ -310,8 +315,6 @@ void Sharpening::adjusterChanged (Adjuster* a, double newval) {
             listener->panelChanged (EvShrAmount, costr);
         else if (a==radius)
             listener->panelChanged (EvShrRadius, costr);
-        else if (a==threshold)
-            listener->panelChanged (EvShrThresh, costr);
         else if (a==eradius)
             listener->panelChanged (EvShrEdgeRadius, costr);
         else if (a==etolerance)
@@ -326,6 +329,13 @@ void Sharpening::adjusterChanged (Adjuster* a, double newval) {
             listener->panelChanged (EvShrDDamping, costr);
         else if (a==diter)
             listener->panelChanged (EvShrDIterations, costr);
+    }
+}
+
+//void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
+void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
+    if (listener && enabled->get_active()) {
+        listener->panelChanged (EvShrThresh, threshold->getHistoryString());
     }
 }
 

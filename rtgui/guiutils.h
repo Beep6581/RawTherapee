@@ -196,4 +196,20 @@ public:
 	void switchTo(TOITypes type);
 };
 
+/**
+ * @brief Define a gradient milestone
+ */
+class GradientMilestone {
+public:
+	double position;
+	double r;
+	double g;
+	double b;
+	double a;
+
+	GradientMilestone(double _p=0., double _r=0., double _g=0., double _b=0., double _a=0.) {
+		position = _p; r = _r; g = _g; b = _b; a = _a;
+	}
+};
+
 #endif

@@ -803,6 +803,13 @@ SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
 SAVEDLG_TIFFFILTER;Fichiers TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
+THRESHOLDSELECTOR_B;Bas
+THRESHOLDSELECTOR_BL;Bas-gauche
+THRESHOLDSELECTOR_BR;Bas-droite
+THRESHOLDSELECTOR_HINT;Maintenez la touche <b>Shift</b> appuyée pour déplacer les curseurs individuellement.
+THRESHOLDSELECTOR_T;Haut
+THRESHOLDSELECTOR_TL;Haut-Gauche
+THRESHOLDSELECTOR_TR;Haut-droite
 TOOLBAR_TOOLTIP_CROP;Sélection du recadrage <b>C</b>
 TOOLBAR_TOOLTIP_HAND;Outil de navigation <b>N</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon <b>S</b>
@@ -1057,7 +1064,7 @@ TP_VIBRANCE_LABEL;Vibrance
 TP_VIBRANCE_PASTELS;Tons pastels
 TP_VIBRANCE_PASTSATTOG;Lier Pastels et Saturés
 TP_VIBRANCE_PROTECTSKINS;Protéger les tons chairs
-TP_VIBRANCE_PSTHRESHOLD;Seuil entre Pastels/Saturés
+TP_VIBRANCE_PSTHRESHOLD;Seuil différentiel entre Pastels/Saturés
 TP_VIBRANCE_SATURATED;Tons saturés
 TP_VIGNETTING_AMOUNT;Quantité
 TP_VIGNETTING_CENTER;Centre
