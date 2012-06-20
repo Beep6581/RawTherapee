@@ -434,7 +434,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.brightness)	toEdit.labCurve.brightness = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
 	if (labCurve.contrast)		toEdit.labCurve.contrast 	= dontforceSet && options.baBehav[ADDSET_LC_CONTRAST] ? toEdit.labCurve.contrast + mods.labCurve.contrast : mods.labCurve.contrast;
 	if (labCurve.saturation)	toEdit.labCurve.saturation = dontforceSet && options.baBehav[ADDSET_LC_SATURATION] ? toEdit.labCurve.saturation + mods.labCurve.saturation : mods.labCurve.saturation;
-
+	if (labCurve.avoidclip)					toEdit.labCurve.avoidclip 	= mods.labCurve.avoidclip;
 	if (labCurve.enable_saturationlimiter)	toEdit.labCurve.enable_saturationlimiter 	= mods.labCurve.enable_saturationlimiter;
 	if (labCurve.saturationlimit)			toEdit.labCurve.saturationlimit 	= mods.labCurve.saturationlimit;	
 	if (labCurve.bwtoning)					toEdit.labCurve.bwtoning 	= mods.labCurve.bwtoning;
