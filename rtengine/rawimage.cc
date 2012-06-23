@@ -141,6 +141,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
   use_camera_wb = 0;
   highlight = 1;
   half_size = 0;
+  raw_image = 0;
 
   //***************** Read ALL raw file info
   identify ();
@@ -169,6 +170,11 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  iheight = height;
 	  iwidth  = width;
 
+      if (filters || colors == 1) {
+        raw_image = (ushort *) calloc ((raw_height+7)*raw_width, 2);
+        merror (raw_image, "main()");
+      }
+
 	  // dcraw needs this global variable to hold pixel data
 	  image = (dcrawImage_t)calloc (height*width*sizeof *image + meta_length, 1);
 	  meta_data = (char *) (image + height*width);
@@ -184,6 +190,11 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  // Load raw pixels data
 	  fseek (ifp, data_offset, SEEK_SET);
 	  (this->*load_raw)();
+
+      if (raw_image) {
+        crop_masked_pixels();
+        free (raw_image);
+      }
 
 	  // Load embedded profile
 	  if (profile_length) {
