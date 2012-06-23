@@ -81,17 +81,18 @@ protected:
     unsigned thumb_length, meta_length, profile_length;
     unsigned thumb_misc, *oprof, fuji_layout, shot_select, multi_out;
     unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
-    unsigned black, cblack[8], maximum, mix_green, raw_color, zero_is_bad;
+    unsigned black, cblack[4], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags;
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
-    int flip, tiff_flip, colors;
+    ushort *raw_image;
+    ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
+    int mask[8][4], flip, tiff_flip, colors;
     double pixel_aspect;
     double aber[4];
     double gamm[6];
     dcrawImage_t image;
-    ushort white[8][8], curve[0x10000], cr2_slice[3], sraw_mul[4];
     float bright, threshold, user_mul[4];
     
     int half_size, four_color_rgb, document_mode, highlight;
@@ -116,6 +117,7 @@ protected:
 
     struct tiff_ifd {
       int width, height, bps, comp, phint, offset, flip, samples, bytes;
+      int tile_width, tile_length;
     } tiff_ifd[10];
 
     struct ph1 {
@@ -151,7 +153,7 @@ protected:
     };    
 protected:
 
-int fc (int row, int col);
+int fcol (int row, int col);
 void merror (void *ptr, const char *where);
 void derror();
 ushort sget2 (uchar *s);
@@ -167,7 +169,7 @@ int canon_600_color (int ratio[2], int mar);
 void canon_600_auto_wb();
 void canon_600_coeff();
 void canon_600_load_raw();
-void remove_zeroes();
+void canon_600_correct();
 int canon_s2is();
 void redcine_load_raw();
 void parse_redcine();
@@ -195,7 +197,7 @@ ushort * make_decoder_ref (const uchar **source);
 ushort * make_decoder (const uchar *source);
 void crw_init_tables (unsigned table, ushort *huff[2]);
 int canon_has_lowbits();
-void canon_compressed_load_raw();
+void canon_load_raw();
 int ljpeg_start (struct jhead *jh, int info_only);
 void ljpeg_end (struct jhead *jh);
 int ljpeg_diff (ushort *huff);
@@ -203,22 +205,22 @@ ushort * ljpeg_row (int jrow, struct jhead *jh);
 void lossless_jpeg_load_raw();
 
 void canon_sraw_load_raw();
-void adobe_copy_pixel (int row, int col, ushort **rp);
-void adobe_dng_load_raw_lj();
-void adobe_dng_load_raw_nc();
+void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
+void lossless_dng_load_raw();
+void packed_dng_load_raw();
 void pentax_load_raw();
-void nikon_compressed_load_raw();
+void nikon_load_raw();
 int nikon_is_compressed();
 int nikon_e995();
 int nikon_e2100();
 void nikon_3700();
 int minolta_z2();
-void fuji_load_raw();
 void ppm_thumb();
+void ppm16_thumb();
 void layer_thumb();
 void rollei_thumb();
 void rollei_load_raw();
-int bayer (unsigned row, unsigned col);
+int raw (unsigned row, unsigned col);
 void phase_one_flat_field (int is_float, int nc);
 void phase_one_correct();
 void phase_one_load_raw();
@@ -269,6 +271,7 @@ void quicktake_100_load_raw();
 void kodak_radc_load_raw();
 
 void kodak_jpeg_load_raw();
+void lossy_dng_load_raw();
 void kodak_dc120_load_raw();
 void eight_bit_load_raw();
 void kodak_yrgb_load_raw();
@@ -300,8 +303,11 @@ void smal_v9_load_raw();
 
 void foveon_decoder (unsigned size, unsigned code);
 void foveon_thumb();
+void foveon_sd_load_raw();
 void foveon_load_camf();
 void foveon_load_raw();
+void foveon_huff (ushort *huff);
+void foveon_dp_load_raw();
 const char * foveon_camf_param (const char *block, const char *param);
 void *foveon_camf_matrix (unsigned dim[3], const char *name);
 int foveon_fixed (void *ptr, int size, const char *name);
@@ -311,6 +317,7 @@ void foveon_make_curves(short **curvep, float dq[3], float div[3], float filt);
 int foveon_apply_curve (short *curve, int i);
 void foveon_interpolate();
 
+void remove_zeroes();
 void bad_pixels (const char *cfname);
 void subtract (const char *fname);
 void gamma_curve (double pwr, double ts, int mode, int imax);
@@ -321,13 +328,10 @@ void wavelet_denoise();
 void scale_colors();
 void pre_interpolate();
 void border_interpolate (int border);
-void lin_interpolate();
-void vng_interpolate();
-void ppg_interpolate();
-void ahd_interpolate();
 void median_filter();
 void blend_highlights();
 void recover_highlights();
+void crop_masked_pixels();
 
 void tiff_get (unsigned base,	unsigned *tag, unsigned *type, unsigned *len, unsigned *save);
 void parse_thumb_note (int base, unsigned toff, unsigned tlen);
@@ -364,14 +368,7 @@ short guess_byte_order (int words);
 float find_green (int bps, int bite, int off0, int off1);
 void identify();
 void apply_profile (const char *input, const char *output);
-void convert_to_rgb();
-void fuji_rotate();
-void stretch();
-int  flip_index (int row, int col);
-void tiff_set (ushort *ntag,ushort tag, ushort type, int count, int val);
-void tiff_head (struct tiff_hdr *th, int full);
-void jpeg_thumb();
-void write_ppm_tiff();
+void jpeg_thumb() {}  // not needed
 
 };
 
