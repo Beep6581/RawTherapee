@@ -38,7 +38,8 @@ class Navigator : public Gtk::Frame, public PointerMotionListener {
 		//void rgb2lab (int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b);
 		void rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b);
 		
-		void setInvalid ();
+		void setInvalid (int fullWidth=-1, int fullHeight=-1);
+
 	public:
 		PreviewWindow* previewWindow;
 

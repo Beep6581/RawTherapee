@@ -61,9 +61,12 @@ Navigator::Navigator () {
 	show_all ();
 }
 
-void Navigator::setInvalid () {
-
+void Navigator::setInvalid (int fullWidth, int fullHeight) {
+    if (fullWidth>0 && fullHeight>0)
+        position->set_text (Glib::ustring::compose (M("NAVIGATOR_XY_FULL"),fullWidth,fullHeight));
+    else 
         position->set_text (M("NAVIGATOR_XY_NA"));
+
 	R->set_text (M("NAVIGATOR_R_NA"));
 	G->set_text (M("NAVIGATOR_G_NA"));
 	B->set_text (M("NAVIGATOR_B_NA"));
@@ -75,11 +78,11 @@ void Navigator::setInvalid () {
 	LAB_L->set_text (M("NAVIGATOR_LAB_L_NA"));
 }
 
-
+// if !validPos then x/y contain the full image size
 void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b) {
 
 	if (!validPos)
-		setInvalid ();
+		setInvalid (x,y);
 	else {
 		position->set_text (Glib::ustring::compose ("x = %1, y = %2", x, y));
 		R->set_text (Glib::ustring::compose (M("NAVIGATOR_R_VALUE"), r));
