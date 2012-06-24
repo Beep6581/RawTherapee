@@ -64,7 +64,6 @@ if (APPLE)
     SET (CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
 endif (APPLE)
 
-option(USE_CLANG "Build rawtherapee with clang" OFF)
 option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
@@ -258,40 +257,6 @@ if(USE_EXPERIMENTAL_LANG_VERSIONS)
 	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
 endif (USE_EXPERIMENTAL_LANG_VERSIONS)
-
-if(USE_CLANG)
-    find_file(CLANG_CMD clang)
-    find_file(CLANGPP_CMD clang++)
-
-    if ((CLANG_CMD STREQUAL CLANG_CMD-NOTFOUND) OR (CLANGPP_CMD STREQUAL CLANGPP_CMD-NOTFOUND))
-      message(FATAL_ERROR "clang not found! auto-disabling option USE_CLANG")
-    else ((CLANG_CMD STREQUAL CLANG_CMD-NOTFOUND) OR (CLANGPP_CMD STREQUAL CLANGPP_CMD-NOTFOUND))
-      message(STATUS "clang found: ${CLANG_CMD}")
-      message(STATUS "clang++ found: ${CLANGPP_CMD}")
-
-      SET (CMAKE_C_COMPILER             ${CLANG_CMD})
-      SET (CMAKE_C_FLAGS                "${CMAKE_C_FLAGS} ") #-Wall
-      SET (CMAKE_C_FLAGS_DEBUG          "-O0 -g")
-      SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-      SET (CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
-      SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
-
-      SET (CMAKE_CXX_COMPILER             ${CLANGPP_CMD})
-      SET (CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS} ") #-Wall
-      SET (CMAKE_CXX_FLAGS_DEBUG          "-O0 -g")
-      SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-      SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
-      SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-    endif ((CLANG_CMD STREQUAL CLANG_CMD-NOTFOUND) OR (CLANGPP_CMD STREQUAL CLANGPP_CMD-NOTFOUND))
-
-    find_file(LDGOLD_CMD ld.gold)
-    if (LDGOLD_CMD STREQUAL LDGOLD_CMD-NOTFOUND)
-      message(FATAL_ERROR "ld.gold not found! using standard linker")
-    else (LDGOLD_CMD STREQUAL LDGOLD_CMD-NOTFOUND)
-      message(STATUS "ld.gold found: ${LDGOLD_CMD}")
-    SET (CMAKE_LINKER  LDGOLD_CMD)
-    endif (LDGOLD_CMD STREQUAL LDGOLD_CMD-NOTFOUND)
-endif(USE_CLANG)
 
 install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
 install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
