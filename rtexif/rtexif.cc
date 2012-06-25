@@ -902,7 +902,7 @@ int Tag::calculateSize () {
       size += valuesize + (valuesize%2); // we align tags to even byte positions 
 
    if (makerNoteKind!=NOMK) 
-        count = directory[0]->calculateSize ();
+        count = directory[0]->calculateSize () / getTypeSize(type);
         
    if (makerNoteKind==NIKON3 || makerNoteKind==OLYMPUS2 || makerNoteKind==FUJI) 
         size += valuesize;
