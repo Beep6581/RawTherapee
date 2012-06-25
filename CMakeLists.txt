@@ -5,6 +5,8 @@ else (WIN32)
   cmake_minimum_required(VERSION 2.6)
 endif (WIN32)
 
+PROJECT(RawTherapee)
+
 # the default target is 'Debug'
 if (CMAKE_BUILD_TYPE STREQUAL "")
   set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
@@ -77,23 +79,23 @@ if (WIN32 OR APPLE)
 endif(WIN32 OR APPLE)
 
 if (NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
-    set (BUNDLE_BASE_INSTALL_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE})
+    set (BUNDLE_BASE_INSTALL_DIR "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 endif (NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
 
 if (BUILD_BUNDLE)
     set (BINDIR .)
-    set (CMAKE_INSTALL_PREFIX ${BUNDLE_BASE_INSTALL_DIR})
+    set (CMAKE_INSTALL_PREFIX "${BUNDLE_BASE_INSTALL_DIR}")
 endif (BUILD_BUNDLE)
 
 if (NOT DEFINED BINDIR)
-    set (BINDIR  ${CMAKE_INSTALL_PREFIX}/bin)
+    set (BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
 endif (NOT DEFINED BINDIR)
 
 if (NOT DEFINED DATADIR)
     if (BUILD_BUNDLE)
         set (DATADIR .)
     else (BUILD_BUNDLE)
-        set (DATADIR ${CMAKE_INSTALL_PREFIX}/share/rawtherapee)
+        set (DATADIR "${CMAKE_INSTALL_PREFIX}/share/rawtherapee")
     endif (BUILD_BUNDLE)
 endif (NOT DEFINED DATADIR)
 
@@ -103,13 +105,13 @@ if (NOT DEFINED LIBDIR)
     else (BUILD_BUNDLE)
         # Respect CMAKE_INSTALL_LIBDIR if set
         if (DEFINED CMAKE_INSTALL_LIBDIR)
-	    if (IS_ABSOLUTE ${LIBDIR})
-            	set (LIBDIR ${CMAKE_INSTALL_LIBDIR})
-	    else (IS_ABSOLUTE ${LIBDIR})
-		set (LIBDIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
-	    endif (IS_ABSOLUTE ${LIBDIR})
+	    if (IS_ABSOLUTE "${LIBDIR}")
+            	set (LIBDIR "${CMAKE_INSTALL_LIBDIR}")
+	    else (IS_ABSOLUTE "${LIBDIR}")
+		set (LIBDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+	    endif (IS_ABSOLUTE "${LIBDIR}")
         else (DEFINED CMAKE_INSTALL_LIBDIR)
-            set (LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+            set (LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
         endif (DEFINED CMAKE_INSTALL_LIBDIR)
     endif (BUILD_BUNDLE)
 endif (NOT DEFINED LIBDIR)
@@ -118,7 +120,7 @@ if (NOT DEFINED DOCDIR)
     if (BUILD_BUNDLE)
         set (DOCDIR ./doc)
     else (BUILD_BUNDLE)
-        set (DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee)
+        set (DOCDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
     endif (BUILD_BUNDLE)
 endif (NOT DEFINED DOCDIR)
 
@@ -126,7 +128,7 @@ if (NOT DEFINED CREDITSDIR)
     if (BUILD_BUNDLE)
         set (CREDITSDIR .)
     else (BUILD_BUNDLE)
-        set (CREDITSDIR ${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee)
+        set (CREDITSDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
     endif (BUILD_BUNDLE)
 endif (NOT DEFINED CREDITSDIR)
 
@@ -134,26 +136,26 @@ if (NOT DEFINED LICENCEDIR)
     if (BUILD_BUNDLE)
         set (LICENCEDIR .)
     else (BUILD_BUNDLE)
-        set (LICENCEDIR ${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee)
+        set (LICENCEDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
     endif (BUILD_BUNDLE)
 endif (NOT DEFINED LICENCEDIR)
 
 if (NOT DEFINED DESKTOPDIR)
     if (UNIX)
-        set (DESKTOPDIR ${CMAKE_INSTALL_PREFIX}/share/applications)
+        set (DESKTOPDIR "${CMAKE_INSTALL_PREFIX}/share/applications")
     endif (UNIX)
 endif (NOT DEFINED DESKTOPDIR)
 
 if (NOT DEFINED ICONSDIR)
     if (UNIX)
-        set (ICONSDIR ${CMAKE_INSTALL_PREFIX}/share/icons)
+        set (ICONSDIR "${CMAKE_INSTALL_PREFIX}/share/icons")
     endif (UNIX)
 endif (NOT DEFINED ICONSDIR)
 
 # non-bundle builds has to use absolute paths
 if (NOT BUILD_BUNDLE AND
-    NOT (IS_ABSOLUTE ${BINDIR} AND IS_ABSOLUTE ${DATADIR} AND IS_ABSOLUTE ${LIBDIR} AND
-    IS_ABSOLUTE ${DOCDIR} AND IS_ABSOLUTE ${CREDITSDIR} AND IS_ABSOLUTE ${LICENCEDIR}))
+    NOT (IS_ABSOLUTE "${BINDIR}" AND IS_ABSOLUTE "${DATADIR}" AND IS_ABSOLUTE "${LIBDIR}" AND
+    IS_ABSOLUTE "${DOCDIR}" AND IS_ABSOLUTE "${CREDITSDIR}" AND IS_ABSOLUTE "${LICENCEDIR}"))
     message (FATAL_ERROR "The paths has to be absolute or use -DBUILD_BUNDLE=ON")
 endif ()
 
@@ -200,10 +202,10 @@ set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
 set(LFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
 
 set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
-                            -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
+							-DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
                             -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-                            -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
-                            -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
+                            -DPROC_LABEL:STRING="${PROC_LABEL}"
+                            -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
                             -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
                             -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
                             -DOPTION_OMP:STRING=${OPTION_OMP}
@@ -211,8 +213,8 @@ set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
 
 if (WIN32)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
-                                      -DCXX_FLAGS:STRING=\"${CXX_FLAGS}\"
-                                      -DLFLAGS:STRING=\"${LFLAGS}\")
+                                      -DCXX_FLAGS:STRING="${CXX_FLAGS}"
+                                      -DLFLAGS:STRING="${LFLAGS}")
 elseif (APPLE)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
                                       -DCXX_FLAGS:STRING=${CXX_FLAGS}
@@ -223,7 +225,7 @@ else (WIN32)
                                       -DLFLAGS:STRING=${LFLAGS})
 endif (WIN32)
 
-list(APPEND ABOUT_COMMAND_WITH_ARGS -P ${CMAKE_CURRENT_SOURCE_DIR}/AboutThisBuild.cmake)
+list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/AboutThisBuild.cmake")
 
 add_custom_target(AboutFile ALL
     COMMAND ${ABOUT_COMMAND_WITH_ARGS}
@@ -258,12 +260,42 @@ if(USE_EXPERIMENTAL_LANG_VERSIONS)
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
 endif (USE_EXPERIMENTAL_LANG_VERSIONS)
 
-install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
-install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
-install (FILES AboutThisBuild.txt DESTINATION ${CREDITSDIR})
-install (FILES RELEASE_NOTES.txt DESTINATION ${CREDITSDIR} OPTIONAL)
+# find out whether we are building out of source
+get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)
+get_filename_component(ABS_BINARY_DIR "${CMAKE_BINARY_DIR}" ABSOLUTE)
+set (OUT_OF_SOURCE_BUILD TRUE)
+if (ABS_SOURCE_DIR STREQUAL ABS_BINARY_DIR)
+    set (OUT_OF_SOURCE_BUILD FALSE)
+    message (WARNING "You are performing an in-source build. This is discouraged. Please refer e.g. to http://www.cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F for advantages of o    ut of source builds.")
+endif ()
+
+# XXX remove files triggering the below check to prevent every developer from
+# needing manual manual work. We will remove this after some time to have a
+# clean build system without file modifications in the source tree again.
+set(OOSB_FILES "${PROJECT_SOURCE_DIR}/rtdata/rawtherapee.desktop" "${PROJECT_SOURCE_DIR}/rtgui/version.h" "${PROJECT_SOURCE_DIR}/rtgui/config.h" "${PROJECT_SOURCE_DIR}/AboutThisBuild.txt")
+if (OUT_OF_SOURCE_BUILD)
+    foreach(f ${OOSB_FILES})
+        file (REMOVE "${f}")
+    endforeach(f) 
+endif ()
+
+# check for generated files in the source tree which should not be there when
+# doing out of source builds. Without checking for this it might happen that old
+# versions are used for the compilation
+if (OUT_OF_SOURCE_BUILD)
+    foreach(f ${OOSB_FILES})
+        if (EXISTS "${f}")
+            message (SEND_ERROR "Generated \"${f}\" found inside the source tree. Please remove it as it is a relic of the old build system and prevents valid compilation now.")
+	endif ()
+    endforeach(f) 
+endif ()
+
+install (FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
+install (FILES LICENSE.txt DESTINATION "${LICENCEDIR}")
+install (FILES "${CMAKE_BINARY_DIR}/AboutThisBuild.txt" DESTINATION "${CREDITSDIR}")
+install (FILES RELEASE_NOTES.txt DESTINATION "${CREDITSDIR}" OPTIONAL)
 if (UNIX)
-  install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/doc/manpage/rawtherapee.1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1)
+  install (FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
 endif (UNIX)
 
 add_subdirectory (rtexif)

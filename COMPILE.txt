@@ -41,6 +41,21 @@ Preamble
   4. The repository is now ready to be made into a public tarball: hg archive
      "rawtherapee-4.0.10.tar" -X ".hg*" && xz -z -9e -T 8 "rawtherapee-4.0.10.tar"
 
+  The build system especially encourages to perform out-of-source builds. This
+  means that the CMake project is generated in a folder which is not in the
+  source tree of RawTherapee. This way the source tree stays clean all the time
+  and multiple different compilation settings can be maintained in parallel
+  using different binary folders. Further information about out-of-source builds
+  can be found here:
+    http://www.cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F
+
+  If an in-source build is performed, the CMake logic now warns about this but
+  does not fail. Especially important for clean out-of-source builds is that the
+  CMake code does not generate files inside the source tree, e.g. when using
+  configure_file. Please keep this in mind when altering the CMake files.
+
+
+
 Windows
 -------
 
@@ -242,10 +257,12 @@ Windows
 
       Compile:
         - Start an MSYS command line interface,
-        - Enter the root directory of the RawTherapee source tree:
+        - Enter a new empty folder outside RawTherapee's source directory:
             cd /C/Absolute/Path/To/RawTherapee_sourceTree
+            mkdir build
+            cd build
         - Type:
-            cmake -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -Ccmo.txt .
+            cmake -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -Ccmo.txt <path to the source directory, if done as above '..'>
         - Type:
             make install
         - You'll find the compiled program in the subdirectory named like the
@@ -260,8 +277,10 @@ Windows
       
       Compile:
         - Start a standard DOS command prompt (WIN+R > cmd),
-        - Enter the root directory of the RawTherapee source tree:
-            cd C:\Absolute\Path\To\RawTherapee_sourceTree
+        - Enter a new empty folder outside RawTherapee's source directory:
+            cd /C/Absolute/Path/To/RawTherapee_sourceTree
+            mkdir build
+            cd build
       
         If you want to upload a build, you should set some additional
         information about your processor. There are two possibilities:
@@ -306,12 +325,15 @@ Linux
     sudo apt-get install build-essential cmake libbz2-dev libexiv2-dev libexpat1-dev libglib2.0-dev libglibmm-2.4-dev libgtk2.0-dev libgtkmm-2.4-dev libiptcdata-dev libjpeg8-dev liblcms2-dev libpng-dev libsigc++-2.0-dev libtiff-dev mercurial zlib1g-dev
 
   Compile:
-    - Enter the root directory of the RawTherapee source tree
+    - Create and enter a new empty folder outside RawTherapee's source directory:
+        mkdir ~/rt-build
+        cd ~/rt-build
     - Type:
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. <path to source directory>
       Developers who want to provide a public build have to set the PROC_LABEL
       to their processor name, e.g.:
-        cmake -DPROC_LABEL:STRING=athlon64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=.
+        cmake -DPROC_LABEL:STRING=athlon64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. <path to source directory>
+
     - Type:
         make install
     - You'll find the compiled program in the subdirectory named like the value
@@ -333,9 +355,10 @@ Linux
     Enter this URL:
       https://rawtherapee.googlecode.com/hg
 
-    Enter the root directory of the RawTherapee source tree from a terminal
-    window.  Configure the source for Eclipse with:
-      cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. -DCMAKE_BUILD_TYPE=Release
+    Create and enter a new empty folder outside RawTherapee's source directory.
+    Configure the source for Eclipse with:
+      cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. -DCMAKE_BUILD_TYPE=Release <path to source directory>
+
         
     If you want to upload a build, you should set some additional information
     about your processor. There are two possibilities:
@@ -382,9 +405,9 @@ OS X
   Compile:
     - Enter the root directory of the RawTherapee source tree
     - To enable OpenMP, assuming you have installed gcc45), type:
-        cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5 .
+        cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5  <path to source directory>
       OR to disable OpenMP and use the default compiler, type:
-        cmake -D OPTION_OMP=false .
+        cmake -D OPTION_OMP=false <path to source directory>
   
     If you want to upload a build, you should set some additional information
     about your processor. There are two possibilities:
