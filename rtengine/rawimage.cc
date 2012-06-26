@@ -182,6 +182,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 
 	  if (setjmp (failure)) {
           if (image) { free (image); image=NULL; }
+          if (raw_image) { free(raw_image); raw_image=NULL; }
 		  fclose(ifp); ifp=NULL;
 		  return 100;
 	  }
@@ -193,6 +194,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
       if (raw_image) {
         crop_masked_pixels();
         free (raw_image);
+        raw_image=NULL;
       }
 
 	  // Load embedded profile
@@ -204,10 +206,10 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 
 	  // Setting the black and cblack
 	  unsigned int minBlack = cblack[3];
-	  for (int c=0; c <3; c++)
-		  if (minBlack > cblack[c])
-			  minBlack = cblack[c];
+	  for (int c=0; c < 3; c++)
+		  if (minBlack > cblack[c]) minBlack = cblack[c];
 	  for (int c=0; c < 4; c++) cblack[c] -= minBlack;
+
 	  black += minBlack;
       for (int c=0; c < 4; c++) cblack[c] += black;
       calcBlack=black;  // safe for compatibility with darkframe substraction
