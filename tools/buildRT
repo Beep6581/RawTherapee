@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.2, 2012-03-31
+# Version 2.3, 2012-06-26
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
-# www.seeitmyway.org
 # www.rawtherapee.com
+# www.londonlight.org
 
 checkDeps () {
   hash hg 2>/dev/null || { echo >&2 "Mercurial not found, install Mercurial first and then re-run this script."; exit 1; }
