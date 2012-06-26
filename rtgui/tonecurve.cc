@@ -274,7 +274,7 @@ void ToneCurve::neutral_pressed () {
     hlcomprthresh->setValue(0);
     brightness->setValue(0);
     black->setValue(0);
-    shcompr->setValue(0);
+    shcompr->setValue(50);
     if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     contrast->setValue(0);
     //saturation->setValue(0);
