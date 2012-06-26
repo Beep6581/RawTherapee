@@ -46,9 +46,10 @@ SHMap::~SHMap () {
 void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip) {
 
     // fill with luminance
+    #pragma omp parallel for
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
-            map[i][j] = fabs(lumi[0]*img->r[i][j]) + fabs(lumi[1]*img->g[i][j]) + fabs(lumi[2]*img->b[i][j]);
+            map[i][j] = lumi[0]*std::max(img->r[i][j],0.f) + lumi[1]*std::max(img->g[i][j],0.f) + lumi[2]*std::max(img->b[i][j],0.f);
 		}
 #ifdef _OPENMP
 #pragma omp parallel

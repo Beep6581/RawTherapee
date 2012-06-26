@@ -359,9 +359,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 				}
 				if (vCurveEnabled) {
+                    if (v<0) v=0;  // important
+
 					//shift value
 					float valparam = vCurve->getVal((double)h)-0.5;
-					valparam *= (1-SQR(SQR(1-s)));
+					valparam *= (1-SQR(SQR(1-min(s,1.0f))));
 					if (valparam > 0.00001) {
 						v = (1-valparam)*v+valparam*(1-SQR(1-min(v,1.0f)));
 						if (v<0) v=0;
@@ -374,13 +376,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 				hsv2rgb(h,s,v,r,g,b);
 			}
 			 
-			//r=FCLIP(r);
-			//g=FCLIP(g);
-			//b=FCLIP(b);
-			
-            float x = (toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b) ;
-            float y = (toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b) ;
-            float z = (toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b) ;
+            float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+            float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+            float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
 			
 			float fx,fy,fz;
 			
