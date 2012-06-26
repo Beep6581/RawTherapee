@@ -28,18 +28,18 @@ Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
 	enabled->set_active (false);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 
-	pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"),-100,100,5,0));
+	pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"),-100,100,5,50));
 	pastels->setAdjusterListener (this);
 	//if (pastels->delay < 1000) pastels->delay = 1000;
 	pack_start( *pastels, Gtk::PACK_SHRINK, 0);
 
-	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100,100,5,0));
+	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100,100,5,50));
 	saturated->setAdjusterListener (this);
 	saturated->set_sensitive(false);
 	//if (saturated->delay < 1000) saturated->delay = 1000;
 	pack_start( *saturated, Gtk::PACK_SHRINK, 0);
 
-	psThreshold = Gtk::manage (new ThresholdAdjuster (M("TP_VIBRANCE_PSTHRESHOLD"), 0., 100., 75., 75., 0, false));
+	psThreshold = Gtk::manage (new ThresholdAdjuster (M("TP_VIBRANCE_PSTHRESHOLD"), 0., 100., 1., 75., 0, false));
 	psThreshold->setAdjusterListener (this);
 	psThreshold->set_sensitive(false);
 	//if (psThreshold->delay < 1000) psThreshold->delay = 1000;

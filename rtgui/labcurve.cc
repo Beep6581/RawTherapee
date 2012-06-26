@@ -26,7 +26,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 1, 0));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100, 100, 1, 0));
-	saturation   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SATURATION"), -100, 100, 1, 0));
+	saturation   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SATURATION"), -100, 100, 1, 5));
 
 	pack_start (*brightness);
 	brightness->show ();
@@ -56,7 +56,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	enablelimiter = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_ENABLESATLIMITER")));
 	pack_start (*enablelimiter);
 	
-	saturationlimiter = Gtk::manage ( new Adjuster (M("TP_LABCURVE_SATLIMIT"), 0, 100, 1.0, 40) );
+	saturationlimiter = Gtk::manage ( new Adjuster (M("TP_LABCURVE_SATLIMIT"), 0, 100, 1.0, 50) );
 	pack_start (*saturationlimiter);
 	saturationlimiter->show ();
 	saturationlimiter->reference ();  

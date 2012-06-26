@@ -36,14 +36,14 @@ ShadowsHighlights::ShadowsHighlights () : Gtk::VBox(), FoldableToolPanel(this) {
   hqConn = hq->signal_toggled().connect( sigc::mem_fun(*this, &ShadowsHighlights::hqChanged) );
 
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
-  highlights   = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0));
+  highlights   = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 10));
   h_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 80));
   pack_start (*highlights);
   pack_start (*h_tonalwidth);
 
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  shadows      = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0));
+  shadows      = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 10));
   s_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 80));
   pack_start (*shadows);
   pack_start (*s_tonalwidth);
