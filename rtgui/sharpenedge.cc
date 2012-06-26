@@ -32,10 +32,10 @@ SharpenEdge::SharpenEdge () : Gtk::VBox(), FoldableToolPanel(this) {
 	enabled->set_active (true);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 
-	passes = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_PASSES"),1,4,1,1));
+	passes = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_PASSES"),1,4,1,2));
 	passes->setAdjusterListener (this);
 	if (passes->delay < 1000) passes->delay = 1000;
-	amount = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_AMOUNT"),0,100,1,40));
+	amount = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_AMOUNT"),0,100,1,50));
 	amount->setAdjusterListener (this);
 	if (amount->delay < 1000) amount->delay = 1000;
 

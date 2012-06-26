@@ -532,7 +532,7 @@ void ThresholdSelector::reset () {
 	positions[0] = defPos[0];
 	positions[1] = defPos[1];
 	positions[2] = defPos[2];
-	positions[2] = defPos[3];
+	positions[3] = defPos[3];
 	updateTooltip();
 	queue_draw ();
 }
