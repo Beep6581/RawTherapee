@@ -48,7 +48,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
 	unsigned  row, col, x, y, c, sum[8];
 	unsigned  W = this->get_width();
 	unsigned  H = this->get_height();
-	int val, dark, sat;
+	int val, sat;
 	double dsum[8], dmin, dmax;
 
 	for (int c = 0; c < 4; c++){
@@ -106,19 +106,18 @@ skip_block: ;
 	}
 	if (pre_mul_[3] == 0)
 		pre_mul_[3] = this->get_colors() < 4 ? pre_mul_[1] : 1;
-	dark = this->get_black();
-	sat = this->get_white();
-	sat -= this->get_black();
 	for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
 		if (dmin > pre_mul_[c])
 			dmin = pre_mul_[c];
 		if (dmax < pre_mul_[c])
 			dmax = pre_mul_[c];
 	}
+
+	sat = this->get_white() - this->get_black();
 	for (c = 0; c < 4; c++)
 		scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
 	if (settings->verbose) {
-		fprintf(stderr,"Scaling with darkness %d, saturation %d, and\nmultipliers", dark, sat);
+		fprintf(stderr,"Scaling with saturation %d, and\nmultipliers", sat);
 		for (c = 0; c < 4; c++)
 			fprintf(stderr, " %f", pre_mul[c]);
 		fputc('\n', stderr);
@@ -204,13 +203,15 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  }
 
 	  // Setting the black and cblack
-	  unsigned int i = cblack[3];
+	  unsigned int minBlack = cblack[3];
 	  for (int c=0; c <3; c++)
-		  if (i > cblack[c])
-			  i = cblack[c];
-	  for (int c=0; c < 4; c++)
-		  cblack[c] -= i;
-	  black += i;
+		  if (minBlack > cblack[c])
+			  minBlack = cblack[c];
+	  for (int c=0; c < 4; c++) cblack[c] -= minBlack;
+	  black += minBlack;
+      for (int c=0; c < 4; c++) cblack[c] += black;
+      calcBlack=black;  // safe for compatibility with darkframe substraction
+      black=0;  // since black is already reflected in cblack now, set it to zero
   }
 
   if ( closeFile ) {

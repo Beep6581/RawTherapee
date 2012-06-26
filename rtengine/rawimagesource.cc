@@ -1197,13 +1197,15 @@ void RawImageSource::HLRecovery_Global(HRecParams hrp )
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
 {
+    unsigned short black=ri->get_calcblack();
+
 	if (ri->isBayer()) {
 		if (!rawData)
 			rawData = allocArray<float>(W,H);
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
-					rawData[row][col]	= max(src->data[row][col]+ri->get_black() - riDark->data[row][col], 0);
+					rawData[row][col]	= max(src->data[row][col]+black - riDark->data[row][col], 0);
 				}
 			}
 		}else{
@@ -1239,15 +1241,15 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			//find center ave values by channel
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
-					refcolor[m][n] = max(0.0f,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - ri->get_black());
+					refcolor[m][n] = max(0.0f,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - black);
 				}
 			
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
 					for (int row = 0; row+m < H; row+=2) 
 						for (int col = 0; col+n < W; col+=2) {
-							vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black()) );
-							rawData[row+m][col+n] = (rawData[row+m][col+n]-ri->get_black()) * vignettecorr + ri->get_black(); 	
+							vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black) );
+							rawData[row+m][col+n] = (rawData[row+m][col+n]-black) * vignettecorr + black; 	
 						}
 				}
 			
@@ -1266,9 +1268,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 					for (int n=0; n<2; n++) {
 						for (int row = 0; row+m < H; row+=2) 
 							for (int col = 0; col+n < W; col+=2) {
-								hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black())/max(1e-5f,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
-								vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black())/max(1e-5f,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
-								rawData[row+m][col+n] = ((rawData[row+m][col+n]-ri->get_black()) * hlinecorr * vlinecorr + ri->get_black()); 
+								hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black)/max(1e-5f,cfablur1[(row+m)*W+col+n]-black) );
+								vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black)/max(1e-5f,cfablur2[(row+m)*W+col+n]-black) );
+								rawData[row+m][col+n] = ((rawData[row+m][col+n]-black) * hlinecorr * vlinecorr + black); 
 							}
 					}
 				free (cfablur1);
@@ -1289,9 +1291,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
-					rawData[row][3*col+0] = max(src->data[row][3*col+0]+ri->get_black() - riDark->data[row][3*col+0], 0);
-					rawData[row][3*col+1] = max(src->data[row][3*col+1]+ri->get_black() - riDark->data[row][3*col+1], 0);
-					rawData[row][3*col+2] = max(src->data[row][3*col+2]+ri->get_black() - riDark->data[row][3*col+2], 0);
+					rawData[row][3*col+0] = max(src->data[row][3*col+0]+black - riDark->data[row][3*col+0], 0);
+					rawData[row][3*col+1] = max(src->data[row][3*col+1]+black - riDark->data[row][3*col+1], 0);
+					rawData[row][3*col+2] = max(src->data[row][3*col+2]+black - riDark->data[row][3*col+2], 0);
 				}
 			}
 		} else {

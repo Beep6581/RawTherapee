@@ -253,9 +253,6 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	float medpt   = max_f[0]+max_f[1]+max_f[2]-whitept-clippt;
 	float blendpt = blendthresh*clippt;
 	
-	float sat = ri->get_white();
-	float black = ri->get_black();
-	sat -= black;
 	float camwb[4];
 	for (int c=0; c<4; c++) camwb[c]=ri->get_cam_mul(c);
 
