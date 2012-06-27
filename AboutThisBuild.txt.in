@@ -1,7 +1,7 @@
 Branch: ${HG_BRANCH}
 Version: ${HG_VERSION}
 Changeset: ${HG_CHANGESET}
-Compiler: GCC ${GCC_VERSION}
+Compiler: ${COMPILER_INFO}
 Processor: ${PROC_LABEL}
 System: ${SYSTEM}
 Bit depth: ${PROC_BIT_DEPTH}

@@ -1,6 +1,4 @@
 # cmakefile executed within a makefile target
-# there should be a better way of getting the compiler + compiler version, not restrained to Gcc
-execute_process(COMMAND gcc -dumpversion OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 # If we find ReleaseInfo.cmake we use the info from there and don't need Mercurial to be installed
 find_file(REL_INFO_FILE ReleaseInfo.cmake PATHS "${PROJECT_SOURCE_DIR}" NO_DEFAULT_PATH)

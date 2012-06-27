@@ -197,6 +197,16 @@ elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(PROC_BIT_DEPTH 64 bits)
 endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
+# Get comiler name and version
+# only cmake > 2.8.7 knows CMAKE_*_COMPILER_VERSION
+if (CMAKE_VERSION VERSION_GREATER 2.8.7)
+  get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
+  set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
+else ()
+  execute_process(COMMAND gcc -dumpversion OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+  set(COMPILER_INFO "gcc ${GCC_VERSION}")
+endif ()
+
 # Get c++ and linker flags
 set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
 set(LFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
@@ -214,15 +224,18 @@ set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
 if (WIN32)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
                                       -DCXX_FLAGS:STRING="${CXX_FLAGS}"
-                                      -DLFLAGS:STRING="${LFLAGS}")
+                                      -DLFLAGS:STRING="${LFLAGS}"
+                                      -DCOMPILER_INFO:STRING="${COMPILER_INFO}")
 elseif (APPLE)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
                                       -DCXX_FLAGS:STRING=${CXX_FLAGS}
-                                      -DLFLAGS:STRING=${LFLAGS})
+                                      -DLFLAGS:STRING=${LFLAGS}
+                                      -DCOMPILER_INFO:STRING=${COMPILER_INFO})
 else (WIN32)
   list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
                                       -DCXX_FLAGS:STRING=${CXX_FLAGS}
-                                      -DLFLAGS:STRING=${LFLAGS})
+                                      -DLFLAGS:STRING=${LFLAGS}
+                                      -DCOMPILER_INFO:STRING=${COMPILER_INFO})
 endif (WIN32)
 
 list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/AboutThisBuild.cmake")
