@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.3, 2012-06-26
+# Version 2.4, 2012-06-28
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -126,7 +126,12 @@ compile () {
 
       echo
       cd "${repo}/build"
-      # not sure if ${repo}/build/AboutThisBuild.txt is the same as ${repo}/build/rawtherapee/AboutThisBuild.txt
+      # ${repo}/build/AboutThisBuild.txt doesn't exist with older versions
+      # Put "AboutThisBuild.txt" alongside the "rawtherapee" dir for the zip so that the website can extract the needed info when uploading the build (no other reason)
+      if [[ ! -e AboutThisBuild.txt ]]; then
+        cp "rawtherapee/AboutThisBuild.txt" AboutThisBuild.txt || { printf "%s\n" "Could not copy ${repo}/build/rawtherapee/AboutThisBuild.txt to ${repo}/build/AboutThisBuild.txt, exiting."; exit 1; }
+      fi
+      
       cat AboutThisBuild.txt || { printf "%s\n" "${repo}/build/AboutThisBuild.txt not found, exiting."; exit 1; }
 
       if [[ ! $patched = b ]]; then
