@@ -186,7 +186,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
 
 void Options::setDefaults () {
 
-	font = "sans, 10";
+	font = "sans, 8";
     windowWidth = 900;
     windowHeight = 560;
     windowMaximized = false;
@@ -197,7 +197,7 @@ void Options::setDefaults () {
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 8;
     saveFormat.tiffUncompressed = true;
-    saveFormat.saveParams = true;		// was false
+    saveFormat.saveParams = true;
 
     saveFormatBatch.format = "jpg";
     saveFormatBatch.jpegQuality = 100;
@@ -205,7 +205,7 @@ void Options::setDefaults () {
     saveFormatBatch.pngBits = 8;
     saveFormatBatch.tiffBits = 8;
     saveFormatBatch.tiffUncompressed = true;
-    saveFormatBatch.saveParams = true;		// was false
+    saveFormatBatch.saveParams = true;
 
     savePathTemplate = "%p1/converted/%f";
     savePathFolder = "";
@@ -214,7 +214,7 @@ void Options::setDefaults () {
     defProfImg = DEFPROFILE_IMG;
     dateFormat = "%y-%m-%d";
     adjusterDelay = 0;
-    startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)
+    startupDir = STARTUPDIR_LAST;
     startupPath = "";
     useBundledProfiles = true;
     dirBrowserWidth = 200;
@@ -224,8 +224,8 @@ void Options::setDefaults () {
     toolPanelWidth = 300;
     browserToolPanelWidth = 300;
     browserToolPanelHeight = 300;
-    historyPanelWidth = 230;			// was 150
-    lastScale = 5;						// was 4
+    historyPanelWidth = 230;
+    lastScale = 5;
     panAccelFactor = 5;
     lastCropSize = 1;
     fbOnlyRaw = false;
@@ -238,34 +238,34 @@ void Options::setDefaults () {
     profilePath = "profiles";
     loadSaveProfilePath = "";			// will be corrected in load as otherwise construction fails
     version = "0.0.0.0";				// temporary value; will be correctly set in RTWindow::on_realize
-    thumbSize = 240;					// was 80
+    thumbSize = 240;
     thumbSizeTab = 80;
     showHistory = true;
     showFilePanelState = 0;				// Not used anymore ; was the thumb strip state
-    showInfo = true;					// was false
-    cropPPI = 600;						// was 300
+    showInfo = true;
+    cropPPI = 600;
     showClippedHighlights = false;
     showClippedShadows = false;
     highlightThreshold = 253;			// was 254
     shadowThreshold = 8;				// was 0
     bgcolor = 0;
-    blinkClipped = false;				// was true
+    blinkClipped = false;
     language = DefaultLanguage;
     languageAutoDetect= langMgr.isOSLanguageDetectSupported();
     lastSaveAsPath = "";
     overwriteOutputFile = false;		// if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
     theme = "25-Gray-Gray";
-    slimUI = false;		// TODO: Should this be TRUE for worst case screen resolution or FALSE for nicer interface by default ???
-    useSystemTheme = true;
+    slimUI = false;
+    useSystemTheme = false;
     maxThumbnailHeight = 400;
-    maxCacheEntries = 20000;			// was 10000
+    maxCacheEntries = 20000;
     thumbnailFormat = FT_Custom;		// was FT_Custom16
     thumbInterp = 1;
     autoSuffix = false;
     saveParamsFile = true;				// was false, but saving the procparams files next to the file make more sense when reorganizing file tree than in a cache
     saveParamsCache = false;			// there's no need to save the procparams files in a cache if saveParamsFile is true
     paramsLoadLocation = PLL_Input;		// was PLL_Cache
-    procQueueEnabled = false;			// was true
+    procQueueEnabled = false;
     gimpDir = "";
     psDir = "";
     customEditorProg = "";
@@ -289,13 +289,13 @@ void Options::setDefaults () {
     overlayedFileNames = true;
     internalThumbIfUntouched = true; 	// if TRUE, only fast, internal preview images are taken if the image is not edited yet
     showFileNames = true;
-    tabbedUI = true;					// was false;
+    tabbedUI = true;
     multiDisplayMode = 0;
     tunnelMetaData = false;
     histogramPosition = 2;
     histogramBar = true;
     showProfileSelector = true;
-    FileBrowserToolbarSingleRow = true;
+    FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     UseIconNoText = true;
     whiteBalanceSpotSize = 8;
