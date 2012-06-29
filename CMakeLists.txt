@@ -189,6 +189,62 @@ find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
 
+# link witz bzip
+if (WITH_BZIP)
+  find_package(BZip2)
+  if (BZIP2_FOUND)
+    add_definitions (-DBZIP_SUPPORT)
+    set (EXTRA_INCDIR ${EXTRA_LIB} ${BZIP2_INCLUDE_DIR})
+    set (EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
+  endif (BZIP2_FOUND)
+endif (WITH_BZIP)
+
+if (WITH_MYFILE_MMAP)
+	add_definitions (-DMYFILE_MMAP)
+endif (WITH_MYFILE_MMAP)
+
+if (OPTION_OMP)
+    find_package(OpenMP)
+    if (OPENMP_FOUND)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    endif (OPENMP_FOUND)
+endif (OPTION_OMP)
+
+if(USE_EXPERIMENTAL_LANG_VERSIONS)
+	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
+	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
+endif (USE_EXPERIMENTAL_LANG_VERSIONS)
+
+# find out whether we are building out of source
+get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)
+get_filename_component(ABS_BINARY_DIR "${CMAKE_BINARY_DIR}" ABSOLUTE)
+set (OUT_OF_SOURCE_BUILD TRUE)
+if (ABS_SOURCE_DIR STREQUAL ABS_BINARY_DIR)
+    set (OUT_OF_SOURCE_BUILD FALSE)
+    message (WARNING "You are performing an in-source build. This is discouraged. Please refer e.g. to http://www.cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F for advantages of o    ut of source builds.")
+endif ()
+
+# XXX remove files triggering the below check to prevent every developer from
+# needing manual manual work. We will remove this after some time to have a
+# clean build system without file modifications in the source tree again.
+set(OOSB_FILES "${PROJECT_SOURCE_DIR}/rtdata/rawtherapee.desktop" "${PROJECT_SOURCE_DIR}/rtgui/version.h" "${PROJECT_SOURCE_DIR}/rtgui/config.h" "${PROJECT_SOURCE_DIR}/AboutThisBuild.txt")
+if (OUT_OF_SOURCE_BUILD)
+    foreach(f ${OOSB_FILES})
+        file (REMOVE "${f}")
+    endforeach(f) 
+endif ()
+
+# check for generated files in the source tree which should not be there when
+# doing out of source builds. Without checking for this it might happen that old
+# versions are used for the compilation
+if (OUT_OF_SOURCE_BUILD)
+    foreach(f ${OOSB_FILES})
+        if (EXISTS "${f}")
+            message (SEND_ERROR "Generated \"${f}\" found inside the source tree. Please remove it as it is a relic of the old build system and prevents valid compilation now.")
+	endif ()
+    endforeach(f) 
+endif ()
+
 ## BEGIN: Generating AboutThisBuild.txt
 # set the bit number information of the platform
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)
@@ -246,62 +302,6 @@ add_custom_target(AboutFile ALL
 
 add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
 ## END: Generating AboutThisBuild.txt
-
-# link witz bzip
-if (WITH_BZIP)
-  find_package(BZip2)
-  if (BZIP2_FOUND)
-    add_definitions (-DBZIP_SUPPORT)
-    set (EXTRA_INCDIR ${EXTRA_LIB} ${BZIP2_INCLUDE_DIR})
-    set (EXTRA_LIB ${EXTRA_LIB} ${BZIP2_LIBRARIES})
-  endif (BZIP2_FOUND)
-endif (WITH_BZIP)
-
-if (WITH_MYFILE_MMAP)
-	add_definitions (-DMYFILE_MMAP)
-endif (WITH_MYFILE_MMAP)
-
-if (OPTION_OMP)
-    find_package(OpenMP)
-    if (OPENMP_FOUND)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    endif (OPENMP_FOUND)
-endif (OPTION_OMP)
-
-if(USE_EXPERIMENTAL_LANG_VERSIONS)
-	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
-	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
-endif (USE_EXPERIMENTAL_LANG_VERSIONS)
-
-# find out whether we are building out of source
-get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)
-get_filename_component(ABS_BINARY_DIR "${CMAKE_BINARY_DIR}" ABSOLUTE)
-set (OUT_OF_SOURCE_BUILD TRUE)
-if (ABS_SOURCE_DIR STREQUAL ABS_BINARY_DIR)
-    set (OUT_OF_SOURCE_BUILD FALSE)
-    message (WARNING "You are performing an in-source build. This is discouraged. Please refer e.g. to http://www.cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F for advantages of o    ut of source builds.")
-endif ()
-
-# XXX remove files triggering the below check to prevent every developer from
-# needing manual manual work. We will remove this after some time to have a
-# clean build system without file modifications in the source tree again.
-set(OOSB_FILES "${PROJECT_SOURCE_DIR}/rtdata/rawtherapee.desktop" "${PROJECT_SOURCE_DIR}/rtgui/version.h" "${PROJECT_SOURCE_DIR}/rtgui/config.h" "${PROJECT_SOURCE_DIR}/AboutThisBuild.txt")
-if (OUT_OF_SOURCE_BUILD)
-    foreach(f ${OOSB_FILES})
-        file (REMOVE "${f}")
-    endforeach(f) 
-endif ()
-
-# check for generated files in the source tree which should not be there when
-# doing out of source builds. Without checking for this it might happen that old
-# versions are used for the compilation
-if (OUT_OF_SOURCE_BUILD)
-    foreach(f ${OOSB_FILES})
-        if (EXISTS "${f}")
-            message (SEND_ERROR "Generated \"${f}\" found inside the source tree. Please remove it as it is a relic of the old build system and prevents valid compilation now.")
-	endif ()
-    endforeach(f) 
-endif ()
 
 install (FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
 install (FILES LICENSE.txt DESTINATION "${LICENCEDIR}")
