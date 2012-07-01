@@ -54,7 +54,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
     procparams::ProcParams& params = job->pparams;
 
-    // aquire image from imagesource
+    // acquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
 
     int tr = TR_NONE;
