@@ -26,45 +26,55 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include <windows.h>
+#include <stdio.h>
 
 // classical filtering if the support window is small:
 
-template<class T> void gaussHorizontal3 (T** src, T** dst, T* buffer, int W, int H, const float c0, const float c1, bool multiThread) {
-
+template<class T> void gaussHorizontal3 (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, const float c0, const float c1) {
 
 #ifdef _OPENMP
 #pragma omp for
 #endif
     for (int i=0; i<H; i++) {
-    	T* temp = buffer;
+    	AlignedBuffer<double>* pBuf = buffer.acquire();
+        T* temp=(T*)pBuf->data;
+
         for (int j=1; j<W-1; j++)
             temp[j] = (T)(c1 * (src[i][j-1] + src[i][j+1]) + c0 * src[i][j]);
         dst[i][0] = src[i][0];
         memcpy (dst[i]+1, temp+1, (W-2)*sizeof(T));
+
+        buffer.release(pBuf);
+
         dst[i][W-1] = src[i][W-1];
     }
 }
 
-template<class T> void gaussVertical3 (T** src, T** dst, T* buffer, int W, int H, const float c0, const float c1, bool multiThread) {
+template<class T> void gaussVertical3 (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, const float c0, const float c1) {
     
-	//#pragma omp parallel for if (multiThread)
 #ifdef _OPENMP
 #pragma omp for
 #endif
     for (int i=0; i<W; i++) {
-    	T* temp = buffer;
+        AlignedBuffer<double>* pBuf = buffer.acquire();
+    	T* temp = (T*)pBuf->data;
+
         for (int j = 1; j<H-1; j++) 
         	temp[j] = (T)(c1 * (src[j-1][i] + src[j+1][i]) + c0 * src[j][i]);
         dst[0][i] = src[0][i];
 	    for (int j=1; j<H-1; j++)
             dst[j][i] = temp[j];
+
+        buffer.release(pBuf);
+
         dst[H-1][i] = src[H-1][i];
     }
 }
 
 // fast gaussian approximation if the support window is large
 
-template<class T> void gaussHorizontal (T** src, T** dst, AlignedBuffer<double>* buffer, int W, int H, double sigma, bool multiThread) {
+template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, double sigma) {
 
     if (sigma<0.25) {
         // dont perform filtering
@@ -81,7 +91,7 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBuffer<double>*
         double csum = 2.0 * c1 + 1.0;
         c1 /= csum;
         double c0 = 1.0 / csum;
-        gaussHorizontal3<T> (src, dst, (T*)(buffer->data), W, H, c0, c1, multiThread);
+        gaussHorizontal3<T> (src, dst, buffer, W, H, c0, c1);
         return;
     }
 
@@ -113,10 +123,12 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBuffer<double>*
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
             M[i][j] /= (1.0+b1-b2+b3)*(1.0+b2+(b1-b3)*b3);
- //   if (multiThread)
+
 	#pragma omp for
     for (int i=0; i<H; i++) {
-        double* temp2 = buffer->data;
+        AlignedBuffer<double>* pBuf = buffer.acquire();
+        double* temp2 = pBuf->data;
+
         temp2[0] = B * src[i][0] + b1*src[i][0] + b2*src[i][0] + b3*src[i][0];
         temp2[1] = B * src[i][1] + b1*temp2[0]  + b2*src[i][0] + b3*src[i][0];
         temp2[2] = B * src[i][2] + b1*temp2[1]  + b2*temp2[0]  + b3*src[i][0];
@@ -136,10 +148,13 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBuffer<double>*
             temp2[j] = B * temp2[j] + b1*temp2[j+1] + b2*temp2[j+2] + b3*temp2[j+3];
         for (int j=0; j<W; j++)
             dst[i][j] = (T)temp2[j];
-    }
+
+        buffer.release(pBuf);
 }
 
-template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* buffer, int W, int H, double sigma, bool multiThread) {
+}
+
+template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, double sigma) {
 
     if (sigma<0.25) {
         // dont perform filtering
@@ -156,7 +171,7 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
         double csum = 2.0 * c1 + 1.0;
         c1 /= csum;
         double c0 = 1.0 / csum;
-        gaussVertical3<T> (src, dst, (T*)(buffer->data), W, H, c0, c1, multiThread);
+        gaussVertical3<T> (src, dst, buffer, W, H, c0, c1);
         return;
     }
 
@@ -192,7 +207,8 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
 #pragma omp for
 #endif
     for (int i=0; i<W; i++) {
-        double* temp2 = buffer->data;
+        AlignedBuffer<double>* pBuf = buffer.acquire();
+        double* temp2 = pBuf->data;
     	temp2[0] = B * src[0][i] + b1*src[0][i] + b2*src[0][i] + b3*src[0][i];
         temp2[1] = B * src[1][i] + b1*temp2[0]  + b2*src[0][i] + b3*src[0][i];
         temp2[2] = B * src[2][i] + b1*temp2[1]  + b2*temp2[0]  + b3*src[0][i];
@@ -213,15 +229,9 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
         
         for (int j=0; j<H; j++)
             dst[j][i] = (T)temp2[j];
+
+        buffer.release(pBuf);
     }
 }   
 
-/*
-void gaussHorizontal_unsigned (unsigned short** src, unsigned short** dst, AlignedBuffer<double>* buffer, int W, int row_from, int row_to, double sigma);
-void gaussVertical_unsigned (unsigned short** src, unsigned short** dst, AlignedBuffer<double>* buffer, int H, int col_from, int col_to, double sigma);
-void gaussHorizontal_signed (short** src, short** dst, AlignedBuffer<double>* buffer, int W, int row_from, int row_to, double sigma);
-void gaussVertical_signed (short** src, short** dst, AlignedBuffer<double>* buffer, int H, int col_from, int col_to, double sigma);
-void gaussHorizontal_float (float** src, float** dst, AlignedBuffer<double>* buffer, int W, int row_from, int row_to, double sigma);
-void gaussVertical_float (float** src, float** dst, AlignedBuffer<double>* buffer, int H, int col_from, int col_to, double sigma);
-*/
 #endif

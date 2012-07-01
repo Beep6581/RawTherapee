@@ -26,6 +26,7 @@
 #include "../rtgui/options.h"
 #include "settings.h"
 #include "curves.h"
+#include "alignedbuffer.h"
 
 
 #ifdef _OPENMP
@@ -49,12 +50,14 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 	//gamutmap(lab);
 
 	if (monitorTransform) {
+        AlignedBufferMP<unsigned short> bufferMP(3*lab->W);
         
         // cmsDoTransform is relatively expensive
         #pragma omp parallel for
 		for (int i=0; i<lab->H; i++) {
             // pre-conversion to integer, since the output is 8 bit anyway, but LCMS is MUCH faster not converting from float
-            unsigned short buffer[3*lab->W];
+            AlignedBuffer<unsigned short>* pBuf=bufferMP.acquire();
+            unsigned short * buffer=pBuf->data;
 
             const int ix = i * 3 * lab->W;
             int iy = 0;
@@ -81,6 +84,8 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 			}
 
             cmsDoTransform (monitorTransform, buffer, image->data + ix, lab->W);
+
+            bufferMP.release(pBuf);
 		}
         
 	} else {
