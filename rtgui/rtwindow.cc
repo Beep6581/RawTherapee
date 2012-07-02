@@ -114,6 +114,7 @@ RTWindow::RTWindow ()
 
 		// decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
         Gtk::Label* lbq = Gtk::manage ( new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")) );
+        lbq->set_angle(90);
 		mainNB->append_page (*bpanel, *lbq);
 
 		// epanel is only for single tab mode
