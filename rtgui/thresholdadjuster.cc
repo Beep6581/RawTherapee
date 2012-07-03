@@ -27,6 +27,21 @@
 
 #define MIN_RESET_BUTTON_HEIGHT 17
 
+ThresholdAdjuster::ThresholdAdjuster (Glib::ustring label,
+				double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
+				double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,
+				ThresholdCurveProvider* curveProvider, bool editedCheckBox)
+				: tSelector(minValueBottom, maxValueBottom, defBottom, labelBottom, precisionBottom, minValueTop, maxValueTop, defTop, labelTop, precisionTop, curveProvider)
+
+{
+	initialDefaultVal[ThresholdSelector::TS_BOTTOMLEFT] = defBottom;
+	initialDefaultVal[ThresholdSelector::TS_TOPLEFT] = defTop;
+	initialDefaultVal[ThresholdSelector::TS_BOTTOMRIGHT] = 0.; // unused
+	initialDefaultVal[ThresholdSelector::TS_TOPRIGHT] = 0.;    // unused
+
+	initObject (label, editedCheckBox);
+}
+
 ThresholdAdjuster::ThresholdAdjuster (Glib::ustring label, double minValue, double maxValue, double defBottom,
 		double defTop, unsigned int precision, bool startAtOne, bool editedCheckBox)
 		: tSelector(minValue, maxValue, defBottom, defTop, precision, startAtOne)
@@ -196,11 +211,11 @@ void ThresholdAdjuster::setValue (double bottomLeft, double topLeft, double bott
 	afterReset = false;
 }
 
-void ThresholdAdjuster::getValue (Glib::ustring& bottom, Glib::ustring& top) {
+inline void ThresholdAdjuster::getValue (Glib::ustring& bottom, Glib::ustring& top) {
 	tSelector.getPositions (bottom, top);
 }
 
-void ThresholdAdjuster::getValue (Glib::ustring& bottomLeft, Glib::ustring& topLeft, Glib::ustring& bottomRight, Glib::ustring& topRight) {
+inline void ThresholdAdjuster::getValue (Glib::ustring& bottomLeft, Glib::ustring& topLeft, Glib::ustring& bottomRight, Glib::ustring& topRight) {
 	tSelector.getPositions (bottomLeft, topLeft, bottomRight, topRight);
 }
 
@@ -212,6 +227,11 @@ bool ThresholdAdjuster::notifyListener () {
 	}
 	return false;
 }
+
+inline void ThresholdAdjuster::setBgCurveProvider (ThresholdCurveProvider* provider) {
+	tSelector.setBgCurveProvider(provider);
+}
+
 
 void ThresholdAdjuster::setEnabled (bool enabled) {
 
@@ -283,9 +303,19 @@ void ThresholdAdjuster::sendToListener () {
 	}
 }
 
+void ThresholdAdjuster::set_tooltip_markup(const Glib::ustring& markup) {
+	tSelector.set_tooltip_markup(markup);
+}
+
+void ThresholdAdjuster::set_tooltip_text(const Glib::ustring& text) {
+	tSelector.set_tooltip_text(text);
+}
+
 /* For better readability, this method create the history string of the parameter column,
  * so that the parameters list can be read in a more logical way (i.e. corresponding
  * to the startAtOne field)
+ *
+ * If separatedMode==true, the top slider is assumed to be the primary slider, then the bottom slider as the second one
  */
 Glib::ustring ThresholdAdjuster::getHistoryString () {
 	if (tSelector.isDouble()) {
@@ -296,6 +326,6 @@ Glib::ustring ThresholdAdjuster::getHistoryString () {
 	else {
 		Glib::ustring b, t;
 		tSelector.getPositions(b, t);
-		return Glib::ustring::compose(tSelector.isStartAtOne()?"%2, %1":"%1, %2", b, t);
+		return Glib::ustring::compose(tSelector.isStartAtOne()||separatedMode?"%2, %1":"%1, %2", b, t);
 	}
 }

@@ -20,16 +20,44 @@
 #include "thresholdselector.h"
 #include "multilangmgr.h"
 #include <cassert>
-#include <iomanip>
 #include "mycurve.h"
+
+ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
+	                                 double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,
+	                                 ThresholdCurveProvider* curveProvider) {
+	positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
+	positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
+	positions[TS_BOTTOMRIGHT] = defPos[TS_BOTTOMRIGHT] = 0;  // unused
+	positions[TS_TOPRIGHT]    = defPos[TS_TOPRIGHT]    = 0;  // unused
+	this->precisionTop = precisionTop;
+	this->precisionBottom = precisionBottom;
+	doubleThresh = false;
+
+	separatedLabelBottom = labelBottom;
+	separatedLabelTop = labelTop;
+
+	bgCurveProvider = curveProvider;
+	separatedSliders = true;
+	initalEq1 = false;  // unused
+	minValBottom = minValueBottom;
+	maxValBottom = maxValueBottom;
+	minValTop = minValueTop;
+	maxValTop = maxValueTop;
+
+	initValues ();
+}
 
 ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottom, double defTop, unsigned int precision, bool startAtOne) {
 	positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
 	positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
 	positions[TS_BOTTOMRIGHT] = defPos[TS_BOTTOMRIGHT] = maxValue;
 	positions[TS_TOPRIGHT]    = defPos[TS_TOPRIGHT]    = maxValue;
-	this->precision = precision;
+	this->precisionTop = precision;
+	this->precisionBottom = precision;
 	doubleThresh = false;
+
+	separatedLabelBottom = "";
+	separatedLabelTop = "";
 
 #ifndef NDEBUG
 	if (startAtOne) {
@@ -42,9 +70,17 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
 		assert (defBottom >= minValue);
 		assert (defTop <= maxValue);
 	}
+	assert(minValue < maxValue);
 #endif
 
-	initValues (minValue, maxValue, startAtOne);
+	bgCurveProvider = NULL;
+	separatedSliders = false;
+	initalEq1 = startAtOne;
+	minValTop = minValBottom = minValue;
+	maxValTop = maxValBottom = maxValue;
+
+	initValues ();
+
 }
 
 ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottomLeft, double defTopLeft, double defBottomRight, double defTopRight, unsigned int precision, bool startAtOne) {
@@ -52,8 +88,12 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
 	positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTopLeft;
 	positions[TS_BOTTOMRIGHT] = defPos[TS_BOTTOMRIGHT] = defBottomRight;
 	positions[TS_TOPRIGHT]    = defPos[TS_TOPRIGHT]    = defTopRight;
-	this->precision = precision;
+	this->precisionTop = precision;
+	this->precisionBottom = precision;
 	doubleThresh = true;
+
+	separatedLabelBottom = "";
+	separatedLabelTop = "";
 
 #ifndef NDEBUG
 	if (startAtOne) {
@@ -70,20 +110,25 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
 		assert (defTopRight <= defBottomRight);
 		assert (defBottomRight <= maxValue);
 	}
+	assert(minValue < maxValue);
 #endif
 
-	initValues (minValue, maxValue, startAtOne);
+	bgCurveProvider = NULL;
+	separatedSliders = false;
+	initalEq1 = startAtOne;
+	minValTop = minValBottom = minValue;
+	maxValTop = maxValBottom = maxValue;
+
+	initValues ();
 }
 
-void ThresholdSelector::initValues (double minValue, double maxValue, bool startAtOne) {
-	assert(minValue <= maxValue);
-	initalEq1 = startAtOne;
-	minVal = minValue;
-	maxVal = maxValue;
+void ThresholdSelector::initValues () {
+
+	additionalTTip = "";
 	oldLitCursor = litCursor = TS_UNDEFINED;
 	movedCursor = TS_UNDEFINED;
 	secondaryMovedCursor = TS_UNDEFINED;
-	set_size_request (-1, 20);
+	set_size_request (-1, 30);
 	add_events(Gdk::LEAVE_NOTIFY_MASK);
 	set_name("ThresholdSelector");
 	set_can_focus(false);
@@ -96,7 +141,7 @@ void ThresholdSelector::initValues (double minValue, double maxValue, bool start
  */
 void ThresholdSelector::setPositions (double bottom, double top) {
 
-	setPositions(bottom, top, maxVal, maxVal);
+	setPositions(bottom, top, maxValBottom, maxValTop);
 }
 
 /*
@@ -120,7 +165,7 @@ void ThresholdSelector::setPositions (double bottomLeft, double topLeft, double 
 
 void ThresholdSelector::setDefaults (double bottom, double top) {
 
-	setDefaults(bottom, top, maxVal, maxVal);
+	setDefaults(bottom, top, maxValBottom, maxValTop);
 }
 
 void ThresholdSelector::setDefaults (double bottomLeft, double topLeft, double bottomRight, double topRight) {
@@ -131,21 +176,6 @@ void ThresholdSelector::setDefaults (double bottomLeft, double topLeft, double b
 		defPos[TS_BOTTOMRIGHT] = bottomRight;
 		defPos[TS_TOPRIGHT]    = topRight;
 	}
-}
-
-void ThresholdSelector::getPositions (Glib::ustring& bottom, Glib::ustring& top) {
-
-
-	bottom = Glib::ustring::format(std::fixed, std::setprecision(precision),positions[TS_BOTTOMLEFT]);
-	top    = Glib::ustring::format(std::fixed, std::setprecision(precision),positions[TS_TOPLEFT]);
-}
-
-void ThresholdSelector::getPositions (Glib::ustring& bottomLeft, Glib::ustring& topLeft, Glib::ustring& bottomRight, Glib::ustring& topRight) {
-
-	bottomLeft  = Glib::ustring::format(std::fixed, std::setprecision(precision),positions[TS_BOTTOMLEFT]);
-	topLeft     = Glib::ustring::format(std::fixed, std::setprecision(precision),positions[TS_TOPLEFT]);
-	bottomRight = Glib::ustring::format(std::fixed, std::setprecision(precision),positions[TS_BOTTOMRIGHT]);
-	topRight    = Glib::ustring::format(std::fixed, std::setprecision(precision),positions[TS_TOPRIGHT]);
 }
 
 void ThresholdSelector::setBgGradient (const std::vector<GradientMilestone> &milestones) {
@@ -175,9 +205,10 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 
 	int iw = w-wslider-2*hb;  // inner width  (excluding padding for tabs)
 
-	for (int i=0; i<4; i++) {
-		positions01[i] = to01(positions[i]);
-	}
+	positions01[TS_BOTTOMLEFT]  = to01(TS_BOTTOMLEFT);
+	positions01[TS_TOPLEFT]     = to01(TS_TOPLEFT);
+	positions01[TS_BOTTOMRIGHT] = to01(TS_BOTTOMRIGHT);
+	positions01[TS_TOPRIGHT]    = to01(TS_TOPRIGHT);
 
 	Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
 	Glib::RefPtr<Gtk::Style> style = get_style();
@@ -208,24 +239,52 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 	}
 
 	// draw curve
-	double yStart = initalEq1 ? double(int(float(h)*1.5f/7.f))+1.5 : double(int(float(h)*5.5f/7.f))-0.5;
-	double yEnd   = initalEq1 ? double(int(float(h)*5.5f/7.f))-0.5 : double(int(float(h)*1.5f/7.f))+1.5;
-	ThreshCursorId p[4];
-	if (initalEq1) { p[0] = TS_TOPLEFT;    p[1] = TS_BOTTOMLEFT; p[2] = TS_BOTTOMRIGHT; p[3] = TS_TOPRIGHT; }
-	else           { p[0] = TS_BOTTOMLEFT; p[1] = TS_TOPLEFT;    p[2] = TS_TOPRIGHT;    p[3] = TS_BOTTOMRIGHT; }
-	if (positions[p[1]] > minVal)
-		cr->move_to (hb+hwslider, yStart);
-	else
-		cr->move_to (hb+hwslider, yEnd);
-	if (positions[p[0]] > minVal)
-		cr->line_to (hb+hwslider+iw*positions01[p[0]]+0.5, yStart);
-	if (positions[p[1]] > minVal)
-		cr->line_to (hb+hwslider+iw*positions01[p[1]]+0.5, yEnd);
-	cr->line_to (hb+hwslider+iw*positions01[p[2]]+0.5, yEnd);
-	if (doubleThresh && positions[p[2]] < maxVal) {
-		cr->line_to (hb+hwslider+iw*positions01[p[3]]+0.5, yStart);
-		if (positions[p[3]] < maxVal)
+
+	if (bgCurveProvider) {
+		double yStart = double(int(float(h)*5.5f/7.f))-0.5;
+		double yEnd   = double(int(float(h)*1.5f/7.f))+1.5;
+
+		std::vector<double> pts = bgCurveProvider->getCurvePoints(this);  // the values sent by the provider are not checked (assumed to be correct)
+		if (pts.size() >= 4) {
+			std::vector<double>::iterator i=pts.begin();
+			double x = *i; i++;
+			double y = *i; i++;
+			cr->move_to (hb+hwslider+iw*x+0.5, (yEnd-yStart)*y+yStart);
+
+			for (; i<pts.end(); ) {
+				x = *i; i++;
+				y = *i; i++;
+				cr->line_to (hb+hwslider+iw*x+0.5, (yEnd-yStart)*y+yStart);
+			}
+		}
+		else {
+			// Draw a straight line because not enough points has been sent
+			double yStart = double(int(float(h)*5.5f/7.f))-0.5;
+			cr->move_to (hb+hwslider+0.5, yStart);
 			cr->line_to (hb+hwslider+iw+0.5, yStart);
+		}
+
+	}
+	else {
+		double yStart = initalEq1 ? double(int(float(h)*1.5f/7.f))+1.5 : double(int(float(h)*5.5f/7.f))-0.5;
+		double yEnd   = initalEq1 ? double(int(float(h)*5.5f/7.f))-0.5 : double(int(float(h)*1.5f/7.f))+1.5;
+		ThreshCursorId p[4];
+		if (initalEq1) { p[0] = TS_TOPLEFT;    p[1] = TS_BOTTOMLEFT; p[2] = TS_BOTTOMRIGHT; p[3] = TS_TOPRIGHT; }
+		else           { p[0] = TS_BOTTOMLEFT; p[1] = TS_TOPLEFT;    p[2] = TS_TOPRIGHT;    p[3] = TS_BOTTOMRIGHT; }
+		if (positions[p[1]] > minValTop)  // we use minValTop since if this block is executed, it means that we are in a simple Threshold where both bottom and top range are the same
+			cr->move_to (hb+hwslider, yStart);
+		else
+			cr->move_to (hb+hwslider, yEnd);
+		if (positions[p[0]] > minValTop)
+			cr->line_to (hb+hwslider+iw*positions01[p[0]]+0.5, yStart);
+		if (positions[p[1]] > minValTop)
+			cr->line_to (hb+hwslider+iw*positions01[p[1]]+0.5, yEnd);
+		cr->line_to (hb+hwslider+iw*positions01[p[2]]+0.5, yEnd);
+		if (doubleThresh && positions[p[2]] < maxValTop) {
+			cr->line_to (hb+hwslider+iw*positions01[p[3]]+0.5, yStart);
+			if (positions[p[3]] < maxValTop)
+				cr->line_to (hb+hwslider+iw+0.5, yStart);
+		}
 	}
 	if (is_sensitive() && bgGradient.size()>1) {
 		// draw surrounding curve
@@ -371,14 +430,18 @@ bool ThresholdSelector::on_motion_notify_event (GdkEventMotion* event) {
 
 	if (movedCursor != TS_UNDEFINED) {
 		// user is moving a cursor or two
-		double minBound, maxBound;
+		double minBound, maxBound, dRange;
 
 		findSecondaryMovedCursor(event->state);
 
 		// computing the boundaries
 		findBoundaries(minBound, maxBound);
 
-		double dX = ( (event->x-tmpX)*(maxVal-minVal) )/( w-2*hb );
+		if (movedCursor==TS_BOTTOMLEFT || movedCursor==TS_BOTTOMRIGHT)
+			dRange = maxValBottom-minValBottom;
+		else
+			dRange = maxValTop-minValTop;
+		double dX = ( (event->x-tmpX)*dRange )/( w-2*hb );
 		// slow motion if CTRL is pressed
 		if (event->state & Gdk::CONTROL_MASK)
 			dX *= 0.05;
@@ -429,7 +492,8 @@ void ThresholdSelector::findLitCursor(int posX, int posY) {
 			litCursor = TS_TOPLEFT;
 
 			if (doubleThresh) {
-				double cursorX = (posX-hb)*(maxVal-minVal)/(w-2*hb)+minVal;
+				  // we use minValTop since if this block is executed, it means that we are in a simple Threshold where both bottom and top range are the same
+				double cursorX = (posX-hb)*(maxValTop-minValTop)/(w-2*hb)+minValTop;
 
 				if (cursorX>positions[TS_TOPRIGHT] || abs(cursorX-positions[TS_TOPRIGHT]) < abs(cursorX-positions[TS_TOPLEFT]))
 					litCursor = TS_TOPRIGHT;
@@ -440,7 +504,8 @@ void ThresholdSelector::findLitCursor(int posX, int posY) {
 		if (posX > 0 && posX < w) {
 			litCursor = TS_BOTTOMLEFT;
 			if (doubleThresh) {
-				double cursorX = (posX-hb)*(maxVal-minVal)/(w-2*hb)+minVal;
+				  // we use minValTop since if this block is executed, it means that we are in a simple Threshold where both bottom and top range are the same
+				double cursorX = (posX-hb)*(maxValTop-minValTop)/(w-2*hb)+minValTop;
 
 				if (cursorX>positions[TS_BOTTOMRIGHT] || abs(cursorX-positions[TS_BOTTOMRIGHT]) < abs(cursorX-positions[TS_BOTTOMLEFT]))
 					litCursor = TS_BOTTOMRIGHT;
@@ -453,55 +518,75 @@ void ThresholdSelector::findBoundaries(double &min, double &max) {
 
 	switch (movedCursor) {
 	case (TS_BOTTOMLEFT):
-		if (initalEq1) {
-			min = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_TOPLEFT] : minVal+(positions[TS_BOTTOMLEFT]-positions[TS_TOPLEFT]);
+		if (separatedSliders) {
+			if (movedCursor == TS_BOTTOMLEFT) {
+				min = minValBottom;
+				max = maxValBottom;
+			}
+			else if (movedCursor == TS_TOPLEFT) {
+				min = minValTop;
+				max = maxValTop;
+			}
+		}
+		else if (initalEq1) {
+			min = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_TOPLEFT] : minValTop+(positions[TS_BOTTOMLEFT]-positions[TS_TOPLEFT]);
 			max = positions[TS_BOTTOMRIGHT];
 		}
 		else {
-			min = minVal;
+			min = minValTop;
 			max = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_TOPLEFT] : positions[TS_TOPRIGHT]-(positions[TS_TOPLEFT]-positions[TS_BOTTOMLEFT]);
 		}
 		break;
 	case (TS_TOPLEFT):
-		if (initalEq1) {
-			min = minVal;
+		if (separatedSliders) {
+			if (movedCursor == TS_BOTTOMLEFT) {
+				min = minValBottom;
+				max = maxValBottom;
+			}
+			else if (movedCursor == TS_TOPLEFT) {
+				min = minValTop;
+				max = maxValTop;
+			}
+		}
+		else if (initalEq1) {
+			min = minValTop;
 			max = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_BOTTOMLEFT] : positions[TS_BOTTOMRIGHT]-(positions[TS_BOTTOMLEFT]-positions[TS_TOPLEFT]);
 		}
 		else {
-			min = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_BOTTOMLEFT] : minVal+(positions[TS_TOPLEFT]-positions[TS_BOTTOMLEFT]);
+			min = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_BOTTOMLEFT] : minValTop+(positions[TS_TOPLEFT]-positions[TS_BOTTOMLEFT]);
 			max = positions[TS_TOPRIGHT];
 		}
 		break;
 	case (TS_BOTTOMRIGHT):
 		if (initalEq1) {
 			min = positions[TS_BOTTOMLEFT];
-			max = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_TOPRIGHT] : maxVal-(positions[TS_TOPRIGHT]-positions[TS_BOTTOMRIGHT]);
+			max = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_TOPRIGHT] : maxValTop-(positions[TS_TOPRIGHT]-positions[TS_BOTTOMRIGHT]);
 		}
 		else {
 			min = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_TOPRIGHT] : positions[TS_TOPLEFT]+(positions[TS_BOTTOMRIGHT]-positions[TS_TOPRIGHT]);
-			max = maxVal;
+			max = maxValTop;
 		}
 		break;
 	case (TS_TOPRIGHT):
 		if (initalEq1) {
 			min = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_BOTTOMRIGHT] : positions[TS_BOTTOMLEFT]+(positions[TS_TOPRIGHT]-positions[TS_BOTTOMRIGHT]);
-			max = maxVal;
+			max = maxValTop;
 		}
 		else {
 			min = positions[TS_TOPLEFT];
-			max = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_BOTTOMRIGHT] : maxVal-(positions[TS_BOTTOMRIGHT]-positions[TS_TOPRIGHT]);
+			max = secondaryMovedCursor == TS_UNDEFINED ? positions[TS_BOTTOMRIGHT] : maxValTop-(positions[TS_BOTTOMRIGHT]-positions[TS_TOPRIGHT]);
 		}
 		break;
 	default:
-		min = minVal;
-		max = maxVal;
+		min = minValTop;
+		max = maxValTop;
 		break;
 	}
 }
 
 void ThresholdSelector::findSecondaryMovedCursor(guint state) {
 	secondaryMovedCursor = TS_UNDEFINED;
-	if (!(state & Gdk::SHIFT_MASK)) {
+	if (!separatedSliders && !(state & Gdk::SHIFT_MASK)) {
 		switch (movedCursor) {
 		case (TS_BOTTOMLEFT):
 			secondaryMovedCursor = TS_TOPLEFT;
@@ -537,34 +622,79 @@ void ThresholdSelector::reset () {
 	queue_draw ();
 }
 
-inline double ThresholdSelector::to01(double value) {
+inline double ThresholdSelector::to01(ThreshCursorId cursorId) {
 
-	double rVal = (value-minVal)/(maxVal-minVal);
+	double rVal;
+	if (cursorId==TS_BOTTOMLEFT || cursorId==TS_BOTTOMRIGHT)
+		rVal = (positions[cursorId]-minValBottom)/(maxValBottom-minValBottom);
+	else
+		rVal = (positions[cursorId]-minValTop)/(maxValTop-minValTop);
 	if (rVal < 0.) rVal = 0.;
 	else if (rVal > 1.) rVal = 1.;
 	return rVal;
 }
 
+inline void ThresholdSelector::setBgCurveProvider (ThresholdCurveProvider* provider) {
+	bgCurveProvider = provider;
+}
+
+inline void ThresholdSelector::setSeparatedSliders(bool separated) {
+	separatedSliders = separated;
+}
+
+inline bool ThresholdSelector::getSeparatedSliders() {
+	return separatedSliders;
+}
+
 void ThresholdSelector::updateTooltip() {
 
 	Glib::ustring tTip;
-	if (doubleThresh)
-		tTip  = Glib::ustring::compose("<b>%1:</b> %2     <b>%3:</b> %4\n<b>%5:</b> %6     <b>%7:</b> %8\n%9",
-										M("THRESHOLDSELECTOR_TL"), Glib::ustring::format(std::fixed, std::setprecision(precision), positions[TS_TOPLEFT]),
-										M("THRESHOLDSELECTOR_TR"), Glib::ustring::format(std::fixed, std::setprecision(precision), positions[TS_TOPRIGHT]),
-										M("THRESHOLDSELECTOR_BL"), Glib::ustring::format(std::fixed, std::setprecision(precision), positions[TS_BOTTOMLEFT]),
-										M("THRESHOLDSELECTOR_BR"), Glib::ustring::format(std::fixed, std::setprecision(precision), positions[TS_BOTTOMRIGHT]),
-										M("THRESHOLDSELECTOR_HINT")
+	if (doubleThresh) {
+		tTip  = Glib::ustring::compose("<b>%1:</b> %2     <b>%3:</b> %4\n<b>%5:</b> %6     <b>%7:</b> %8",
+										M("THRESHOLDSELECTOR_TL"), Glib::ustring::format(std::fixed, std::setprecision(precisionTop), positions[TS_TOPLEFT]),
+										M("THRESHOLDSELECTOR_TR"), Glib::ustring::format(std::fixed, std::setprecision(precisionTop), positions[TS_TOPRIGHT]),
+										M("THRESHOLDSELECTOR_BL"), Glib::ustring::format(std::fixed, std::setprecision(precisionBottom), positions[TS_BOTTOMLEFT]),
+										M("THRESHOLDSELECTOR_BR"), Glib::ustring::format(std::fixed, std::setprecision(precisionBottom), positions[TS_BOTTOMRIGHT])
 		);
-	else
-		tTip  = Glib::ustring::compose("<b>%1:</b> %2\n<b>%3:</b> %4\n%5",
-										M("THRESHOLDSELECTOR_T"), Glib::ustring::format(std::fixed, std::setprecision(precision), positions[TS_TOPLEFT]),
-										M("THRESHOLDSELECTOR_B"), Glib::ustring::format(std::fixed, std::setprecision(precision), positions[TS_BOTTOMLEFT]),
-										M("THRESHOLDSELECTOR_HINT")
+		if (!additionalTTip.empty())
+			tTip += Glib::ustring::compose("\n\n%1", additionalTTip);
+		tTip += Glib::ustring::compose("\n\n%1", M("THRESHOLDSELECTOR_HINT"));
+	}
+	else if (separatedSliders) {
+		tTip  = Glib::ustring::compose("<b>%1:</b> %2\n<b>%3:</b> %4",
+										separatedLabelTop,    Glib::ustring::format(std::fixed, std::setprecision(precisionTop),    positions[TS_TOPLEFT]),
+										separatedLabelBottom, Glib::ustring::format(std::fixed, std::setprecision(precisionBottom), positions[TS_BOTTOMLEFT])
 		);
-	set_tooltip_markup(tTip);
+		if (!additionalTTip.empty())
+			tTip += Glib::ustring::compose("\n\n%1", additionalTTip);
+	}
+	else {
+		tTip  = Glib::ustring::compose("<b>%1:</b> %2\n<b>%3:</b> %4",
+										M("THRESHOLDSELECTOR_T"), Glib::ustring::format(std::fixed, std::setprecision(precisionTop), positions[TS_TOPLEFT]),
+										M("THRESHOLDSELECTOR_B"), Glib::ustring::format(std::fixed, std::setprecision(precisionBottom), positions[TS_BOTTOMLEFT])
+		);
+		if (!additionalTTip.empty())
+			tTip += Glib::ustring::compose("\n\n%1", additionalTTip);
+		tTip += Glib::ustring::compose("\n\n%1", M("THRESHOLDSELECTOR_HINT"));
+	}
+	Gtk::Widget::set_tooltip_markup(tTip);
 }
 
 sigc::signal<void> ThresholdSelector::signal_value_changed() {
 	return sig_val_changed;
+}
+
+double ThresholdSelector::shapePositionValue (ThreshCursorId cursorId) {
+	unsigned int precision = (cursorId==TS_BOTTOMLEFT || cursorId==TS_BOTTOMRIGHT) ? precisionBottom : precisionTop;
+	return round(positions[cursorId]*pow(double(10), precision)) / pow(double(10), precision);
+}
+
+void ThresholdSelector::set_tooltip_markup(const Glib::ustring& markup) {
+	additionalTTip = markup;
+	updateTooltip();
+}
+
+void ThresholdSelector::set_tooltip_text(const Glib::ustring& text) {
+	additionalTTip = text;
+	updateTooltip();
 }
