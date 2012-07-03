@@ -60,7 +60,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         ImProcFunctions ipf;
 
         int scale;
-        bool lastHighDetail;  // was the last update running in high detail?
+        bool highDetailComputed;
         bool allocated;
 
         void freeAll ();
