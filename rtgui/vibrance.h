@@ -24,7 +24,7 @@
 #include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Vibrance : public Gtk::VBox, public AdjusterListener, public ThresholdAdjusterListener, public FoldableToolPanel {
+class Vibrance : public Gtk::VBox, public AdjusterListener, public ThresholdAdjusterListener, public FoldableToolPanel, public ThresholdCurveProvider {
 
 protected:
 	Gtk::CheckButton* enabled;
@@ -60,7 +60,8 @@ public:
 	void enabled_toggled         ();
 	void protectskins_toggled    ();
 	void avoidcolorshift_toggled ();
-	void pastsattog_toggled    ();
+	void pastsattog_toggled      ();
+	std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
 };
 
 

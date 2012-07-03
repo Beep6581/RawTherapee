@@ -2005,10 +2005,17 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 	HH = new float[width*height];
 	*/
 
+	float chromaPastel = float(params->vibrance.pastels)   / 100.0f;
+	float chromaSatur  = float(params->vibrance.saturated) / 100.0f;
+	float limitpastelsatur =    static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f;
+	float transitionweighting = static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
+
+	bool highlight = params->hlrecovery.enabled;//Get the value if "highlight reconstruction" is activated
+
 #ifdef _DEBUG
-#pragma omp parallel default(shared) reduction(+: negat, moreRGB, negsat ,moresat, Munspb, Munsry, Munsgy, Munsrp, depass) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(lab, width, chromaPastel, chromaSatur, highlight, limitpastelsatur, transitionweighting) reduction(+: negat, moreRGB, negsat ,moresat, Munspb, Munsry, Munsgy, Munsrp, depass) if (multiThread)
 #else
-#pragma omp parallel default(shared) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(lab, width, chromaPastel, chromaSatur, highlight, limitpastelsatur, transitionweighting) if (multiThread)
 #endif
 {
 
@@ -2017,9 +2024,6 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 	float fy,fx,fz,x_,y_,z_,Lprov,Lprov1,aprov1,bprov1,aprovn,bprovn,fxx,fyy,fzz,xx_,yy_,zz_;
 	float saturation;
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
-	float chromaPastel= (float) params->vibrance.pastels   / 100.0f;//
-	float chromaSatur = (float) params->vibrance.saturated / 100.0f;//
-	bool highlight = params->hlrecovery.enabled;//Get the value if "highlight reconstruction" is activated
 	//inverse matrix user select
 	double wip[3][3] = {
 		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
@@ -2030,26 +2034,16 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 	float satredu;//reduct sat in function of skin
 	float sathue[5],sathue2[4];// adjust sat in function of hue
 	float correctionHue; // Munsell's correction
-	float limitpastelsatur;
-	float limitpastelsaturbottom;//TS_TOPRIGHT
 	
 	int zone=0;
 	bool allwaysingamut=true;
 
-	// sur la ligne ci-dessous, on a acces aux valeurs du seuil via le champs 'value'
-	// psthreshold est un seuil simple commencant en bas, ce qui signifie que seuls TS_BOTTOMLEFT et TS_TOPLEFT
-	// sont exploitables
-	limitpastelsaturbottom=static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
-	limitpastelsatur=static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_TOPLEFT]) / 100.0f;
-	
-	if (limitpastelsatur < 0.07) limitpastelsatur=0.07;
-//	if (limitpastelsaturbottom < 0.07) limitpastelsaturbottom=0.07;
+	// Fitting limitpastelsatur into the real 0.07->1.0 range
+	limitpastelsatur = limitpastelsatur*0.93f + 0.07f;
 	
 	float p0,p1,p2;//adapt limit of pyramid to psThreshold
 	float s0,s1,s2;
 	float maxdp=(limitpastelsatur-0.07)/4.0;
-//	float maxdp=(limitpastelsaturbottom-0.07)/4.0;
-	
 	float maxds=(1.0-limitpastelsatur)/4.0;
 	p0=0.07+maxdp;
 	p1=0.07+2.0*maxdp;
@@ -2058,8 +2052,25 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 	s1=limitpastelsatur + 2.0*maxds;
 	s2=limitpastelsatur + 3.0*maxds;
 
+	float chromamean=0.;
+	if(chromaPastel != chromaSatur){
+		//if sliders pastels and saturated are different: transition with a double linear interpolation: between p2 and limitpastelsatur, and between limitpastelsatur and s0
+		//modify the "mean" point in function of double threshold  => differential transition
+		chromamean = maxdp * (chromaSatur-chromaPastel) / (s0-p2) + chromaPastel;
+		// move chromaMean up or down depending on transitionCtrl
+		if (transitionweighting > 0.0) {
+			float _chromamean = chromamean;
+			chromamean = (chromaSatur-chromamean) * transitionweighting + chromamean;
+		}
+		else if (transitionweighting < 0.0) {
+			float _chromamean = chromamean;
+			chromamean = (chromamean-chromaPastel)  * transitionweighting + chromamean;
+		}
+	}
+
 	if (settings->verbose) printf("vibrance:  p0=%1.2f  p1=%1.2f  p2=%1.2f  s0=%1.2f s1=%1.2f s2=%1.2f\n", p0,p1,p2,s0,s1,s2);
-	if (settings->verbose) printf("vibrance:  pastel=%f   satur=%f   limit= %1.2f\n",1.0+chromaPastel,1.0+chromaSatur, limitpastelsatur);
+	if (settings->verbose) printf("vibrance:  pastel=%f   satur=%f   limit= %1.2f   chromamean=%0.5f \n",1.0+chromaPastel,1.0+chromaSatur, limitpastelsatur, chromamean);
+
 
 #pragma omp for schedule(dynamic, 10)
 	for (int i=0; i<height; i++)
@@ -2214,21 +2225,21 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 					else 	                   { pa=(chs2- chs3)/(s2-s3);pb=chs2-pa*s2;   chmodsat = pa*saturation + pb; }  
 
 					if(chromaPastel != chromaSatur){
-						//if sliders pastels and saturated differents: tansition with linear interpolation between p2 and s0
-						float chromaPastel_a, chromaPastel_b, chromamean, chromaSatur_a, chromaSatur_b, newchromaPastel, newchromaSatur;
-						//modify the "mean" point in function of double threshold  => differential transition
-						chromamean = (chromaSatur*limitpastelsatur + chromaPastel*limitpastelsaturbottom)/(limitpastelsaturbottom+limitpastelsatur);
-						chromaPastel_a = (chromaPastel-chromamean)/(p2-limitpastelsatur);
-						chromaPastel_b = chromaPastel-chromaPastel_a*p2;
+
 						if(saturation > p2 && saturation < limitpastelsatur) {
-							newchromaPastel = chromaPastel_a*saturation + chromaPastel_b;
+							float chromaPastel_a = (chromaPastel-chromamean)/(p2-limitpastelsatur);
+							float chromaPastel_b = chromaPastel-chromaPastel_a*p2;
+							float newchromaPastel = chromaPastel_a*saturation + chromaPastel_b;
 							chmodpastel = newchromaPastel*satredu*sathue[3];
 						}
-						
-						chromaSatur_a=(chromaSatur-chromamean)/(s0-limitpastelsatur);
-						chromaSatur_b=chromaSatur-chromaSatur_a*s0;
-						if(saturation < s0 && saturation >=limitpastelsatur) {newchromaSatur=chromaSatur_a*saturation + chromaSatur_b; chmodsat = newchromaSatur*satredu*sathue2[0];}
-								}// end transition		
+
+						if(saturation < s0 && saturation >=limitpastelsatur) {
+							float chromaSatur_a=(chromaSatur-chromamean)/(s0-limitpastelsatur);
+							float chromaSatur_b=chromaSatur-chromaSatur_a*s0;
+							float newchromaSatur=chromaSatur_a*saturation + chromaSatur_b;
+							chmodsat = newchromaSatur*satredu*sathue2[0];
+						}
+					}// end transition
 					if (saturation <= limitpastelsatur) {
 						if(chmodpastel >  2.0 ) chmodpastel = 2.0;   //avoid too big values
 						if(chmodpastel < -0.93) chmodpastel =-0.93;  //avoid negative values
