@@ -80,7 +80,7 @@ Temperature=5745
 Green=1.0
 
 [Impulse Denoising]
-Enabled=true
+Enabled=false
 Threshold=50
 
 [Defringing]

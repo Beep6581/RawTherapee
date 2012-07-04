@@ -2,6 +2,10 @@
 #include "boxblur.h"
 #include <cstdlib>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 //#define MAX(a,b) ((a)<(b)?(b):(a))
 //#define MIN(a,b) ((a)>(b)?(b):(a))
 
@@ -62,9 +66,12 @@ float *EdgePreserveLab::CreateBlur(float *Source, float LScale, float abScale, f
 	float * var = new float[w*h];
 	rtengine::boxvar(g, var, 1, 1, w, h);
 
-	for(y = 0; y != h1; y++){
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+	for(y = 0; y < h1; y++){
 		float *rg = &g[w*y];
-		for(x = 0; x != w1; x++){
+		for(x = 0; x < w1; x++){
 			//Estimate the central difference gradient in the center of a four pixel square. (gx, gy) is actually 2*gradient.
 			/*float gx = (fabs((rg[x + 1] - rg[x]) + (rg[x + w + 1] - rg[x + w])));
 			float gy = (fabs((rg[x + w] - rg[x]) + (rg[x + w + 1] - rg[x + 1])));
@@ -103,6 +110,8 @@ float *EdgePreserveLab::CreateBlur(float *Source, float LScale, float abScale, f
 	memset(a_w1, 0, A->DiagonalLength(w - 1)*sizeof(float));
 	memset(a_w, 0, A->DiagonalLength(w)*sizeof(float));
 	memset(a_w_1, 0, A->DiagonalLength(w + 1)*sizeof(float));
+
+//TODO: OMP here?
 	for(i = y = 0; y != h; y++){
 		for(x = 0; x != w; x++, i++){
 			float ac;

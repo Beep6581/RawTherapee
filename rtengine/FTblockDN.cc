@@ -98,6 +98,9 @@ namespace rtengine {
 		const short int imheight=src->height, imwidth=src->width;
 		
 		if (dnparams.luma==0 && dnparams.chroma==0) {//nothing to do; copy src to dst
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 			for (int i=0; i<imheight; i++) {
 				for (int j=0; j<imwidth; j++) {
 					dst->r[i][j] = src->r[i][j];
@@ -144,7 +147,10 @@ namespace rtengine {
 		array2D<float> tilemask_out(TS,TS);
 		
 		const int border = MAX(2,TS/16);
-		
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 		for (int i=0; i<TS; i++) {
 			float i1 = abs((i>TS/2 ? i-TS+1 : i));
 			float vmask = (i1<border ? SQR(sin((M_PI*i1)/(2*border))) : 1.0f);
@@ -164,6 +170,9 @@ namespace rtengine {
 		
 		//output buffer
 		Imagefloat * dsttmp = new Imagefloat(imwidth,imheight);
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 		for (int n=0; n<3*imwidth*imheight; n++) {
 			dsttmp->data[n] = 0;
 		}
@@ -196,7 +205,6 @@ namespace rtengine {
 		//now we have tile dimensions, overlaps
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-		
 		for (int tiletop=0; tiletop<imheight; tiletop+=tileHskip) {
 			for (int tileleft=0; tileleft<imwidth; tileleft+=tileWskip) {
 				
@@ -214,6 +222,7 @@ namespace rtengine {
 				//pixel weight
 				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
 
+// OMP candidate?
 				//fill tile from image; convert RGB to "luma/chroma"
 				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) 
 					for (int j=tileleft, j1=0; j<tileright; j++, j1++) {
@@ -340,6 +349,9 @@ namespace rtengine {
 						}//now we have a padded data row
 						
 						//now fill this row of the blocks with Lab high pass data
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif							
 						for (int hblk=0; hblk<numblox_W; hblk++) {
 							int left = (hblk-blkrad)*offset;
 							int indx = (hblk)*TS;//index of block in malloc
@@ -361,6 +373,9 @@ namespace rtengine {
 					
 					//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 					// now process the vblk row of blocks for noise reduction
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif	
 					for (int hblk=0; hblk<numblox_W; hblk++) {
 						
 						RGBtile_denoise (fLblox, vblk, hblk, numblox_H, numblox_W, noisevar_Ldetail );
@@ -395,7 +410,9 @@ namespace rtengine {
 				fftwf_cleanup();
 				
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-				
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif					
 				for (int i=0; i<height; i++) {
 					for (int j=0; j<width; j++) {
 						//may want to include masking threshold for large hipass data to preserve edges/detail
@@ -427,6 +444,7 @@ namespace rtengine {
 					if (tileright<imwidth) Hmask[width-1-i] = mask;
 				}
 
+//TODO: OMP candidate?
 				//convert back to RGB and write to destination array
 				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) {
 					float X,Y,Z;
@@ -460,7 +478,7 @@ namespace rtengine {
 			}//end of tile row
 		}//end of tile loop
 		
-	
+//TODO: is memcpy multithreaded - should this be replaced with the OMP-ed for loop?	
 	//copy denoised image to output
 	memcpy (dst->data, dsttmp->data, 3*imwidth*imheight*sizeof(float));
 	
@@ -482,7 +500,10 @@ namespace rtengine {
 		int blkstart = hblproc*TS*TS;
 		
 		boxabsblur(fLblox+blkstart, nbrwt, 3, 3, TS, TS);//blur neighbor weights for more robust estimation	//for DCT
-		
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif			
 		for (int n=0; n<TS*TS; n++) {		//for DCT
 			fLblox[blkstart+n] *= (1-expf(-SQR(nbrwt[n])/noisevar_Ldetail));
 		}//output neighbor averaged result
@@ -502,7 +523,10 @@ namespace rtengine {
 	{
 		const int numblox_W = ceil(((float)(width))/(offset));
 		const float DCTnorm = 1.0f/(4*TS*TS); //for DCT
-		
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif			
 		//add row of tiles to output image
 		for (int hblk=0; hblk < numblox_W; hblk++) {
 			int left = (hblk-blkrad)*offset;
@@ -544,6 +568,9 @@ namespace rtengine {
 		for (int i=0; i<65536; i++) histo[i]=0;
 		
 		//calculate histogram of absolute values of HH wavelet coeffs
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif		
 		for (int i=0; i<datalen; i++) {
 			histo[MAX(0,MIN(65535,abs((int)DataList[i])))]++;
 		}
@@ -743,7 +770,10 @@ namespace rtengine {
 											wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab ) 
 	{
 		int maxlvl = WaveletCoeffs_L.maxlevel();
-		
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 		for (int lvl=0; lvl<maxlvl; lvl++) {
 			
 			int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
@@ -780,7 +810,9 @@ namespace rtengine {
 		int max;
 		
 		printf("\n level=%d  \n",level);
-		
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif			
 		for (int dir=1; dir<4; dir++) {
 			float madL = SQR(MadMax(WavCoeffs_L[dir], max, W_L*H_L));	
 			float mada = SQR(MadMax(WavCoeffs_a[dir], max, W_ab*H_ab));
@@ -794,7 +826,11 @@ namespace rtengine {
 			float mad_b = madb*noisevar_ab;
 			
 			if (noisevar_ab>0.01) {
-//OpenMP here				
+//OpenMP here
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif				
 				for (int i=0; i<H_ab; i++) {
 					for (int j=0; j<W_ab; j++) {
 						
@@ -818,6 +854,10 @@ namespace rtengine {
 				
 				boxblur(sfavea, sfavea, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
 				boxblur(sfaveb, sfaveb, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
+//MK
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 				for (int i=0; i<H_ab; i++) 
 					for (int j=0; j<W_ab; j++) {
 						
@@ -840,6 +880,9 @@ namespace rtengine {
 			
 			if (noisevar_L>0.01) {
 //OpenMP here				
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 				for (int i=0; i<W_L*H_L; i++) {
 
 					float mag = SQR(WavCoeffs_L[dir][i]);
@@ -850,6 +893,9 @@ namespace rtengine {
 				}
 //OpenMP here				
 				boxblur(sfave, sfave, level+2, level+2, W_L, H_L);//increase smoothness by locally averaging shrinkage
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 				for (int i=0; i<W_L*H_L; i++) {
 					
 					
