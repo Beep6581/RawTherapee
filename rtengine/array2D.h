@@ -99,7 +99,7 @@ public:
 	// use as empty declaration, resize before use!
 	// very useful as a member object
 	array2D() :
-		x(0), y(0), owner(0), ptr(NULL), data(NULL), lock(0) {
+		x(0), y(0), owner(0), ptr(NULL), data(NULL), lock(0), flags(0) {
 		//printf("got empty array2D init\n");
 	}
 
@@ -262,7 +262,7 @@ public:
 
 	array2D<T> & operator[](int index) {
 		if (static_cast<size_t>(index) >= num) {
-			printf("index %0u is out of range[0..%0lu]", index, num - 1);
+			printf("index %0u is out of range[0..%0u]", index, num - 1);
 			raise( SIGSEGV);
 		}
 		return list[index];

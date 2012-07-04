@@ -57,7 +57,9 @@ class StdImageSource : public ImageSource {
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 
         ImageData*  getImageData () { return idata; }
+        ImageMatrices* getImageMatrices () { return (ImageMatrices*)NULL; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
+        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp);
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 		static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 

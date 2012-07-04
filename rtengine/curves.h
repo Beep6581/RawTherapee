@@ -32,6 +32,7 @@
 #define CURVES_MIN_POLY_POINTS  1000
 
 #include "rt_math.h"
+//#define SQR(x) ((x)*(x))
 
 #define CLIPI(a) ((a)>0?((a)<65534?(a):65534):0)
 

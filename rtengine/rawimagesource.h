@@ -24,6 +24,8 @@
 #include "dcp.h"
 #include "array2D.h"
 #include "curves.h"
+#include <fftw3.h>
+#include "color.h"
 #include "../rtgui/cacheimagedata.h"
 
 #define HR_SCALE 2
@@ -103,14 +105,14 @@ class RawImageSource : public ImageSource {
         double* cache;
         int threshold;
 
-        float** rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
+        array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
 
         // the interpolated green plane:
-        float** green; 
+        array2D<float> green; 
         // the interpolated red plane:
-        float** red;
+        array2D<float> red;
         // the interpolated blue plane:
-        float** blue;
+        array2D<float> blue;
 
 
         void hphd_vertical       (float** hpmap, int col_from, int col_to);
@@ -156,17 +158,19 @@ class RawImageSource : public ImageSource {
 
         double      getDefGain  () { return defGain; }
 
-        double      getGamma    () { return CurveFactory::sRGBGamma; }
-
+        double      getGamma    () { return Color::sRGBGamma; }
+       
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
         int         getRotateDegree() const { return ri->get_rotateDegree(); }
 
-        ImageData*  getImageData () { return idata; }
-        void        setProgressListener (ProgressListener* pl) { plistener = pl; }
+        ImageData*     getImageData () { return idata; }
+        ImageMatrices* getImageMatrices () { return &imatrices; }
+        void           setProgressListener (ProgressListener* pl) { plistener = pl; }
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
+        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp);
         static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
@@ -203,6 +207,8 @@ class RawImageSource : public ImageSource {
         int  findHotDeadPixel( PixelsMap &bpMap, float thresh);
 
         void cfa_linedn (float linenoiselevel);//Emil's line denoise
+        void cfa_tile_denoise (fftwf_complex * fcfablox, int vblk, int hblk, int numblox_H, int numblox_W, float noisevar, float * rolloff );
+        void cfa_output_tile_row (float *cfabloxrow, float ** cfahipassdn, float ** tilemask_out, int height, int width, int top, int blkrad);
 
         void green_equilibrate (float greenthresh);//Emil's green equilibration
 

@@ -75,10 +75,10 @@ RawImageSource::RawImageSource ()
 ,border(4)
 ,ri(NULL)
 ,cache(NULL)
-,rawData(NULL)
-,green(NULL)
-,red(NULL)
-,blue(NULL)
+,rawData(0,0)
+,green(0,0)
+,red(0,0)
+,blue(0,0)
 {
     hrmap[0] = NULL;
     hrmap[1] = NULL;
@@ -99,14 +99,9 @@ RawImageSource::~RawImageSource () {
         delete ri;
     }
 
-    if (green)
-        freeArray<float>(green, H);
-    if (red)
-        freeArray<float>(red, H);
-    if (blue)
-        freeArray<float>(blue, H);
-    if(rawData)
-    	freeArray<float>(rawData, H);
+    flushRGB();
+    flushRawData();
+
     if( cache )
         delete [] cache;
     if (hrmap[0]!=NULL) {
@@ -218,9 +213,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     double r, g, b;
     float rm, gm, bm;
     ctemp.getMultipliers (r, g, b);
-    rm = cam_rgb[0][0]*r + cam_rgb[0][1]*g + cam_rgb[0][2]*b;
-    gm = cam_rgb[1][0]*r + cam_rgb[1][1]*g + cam_rgb[1][2]*b;
-    bm = cam_rgb[2][0]*r + cam_rgb[2][1]*g + cam_rgb[2][2]*b;
+    rm = imatrices.cam_rgb[0][0]*r + imatrices.cam_rgb[0][1]*g + imatrices.cam_rgb[0][2]*b;
+    gm = imatrices.cam_rgb[1][0]*r + imatrices.cam_rgb[1][1]*g + imatrices.cam_rgb[1][2]*b;
+    bm = imatrices.cam_rgb[2][0]*r + imatrices.cam_rgb[2][1]*g + imatrices.cam_rgb[2][2]*b;
     rm = camwb_red / rm;
     gm = camwb_green / gm;
     bm = camwb_blue / bm;
@@ -427,9 +422,14 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
-    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera(), defGain);
+    // *** colorSpaceConversion was here ***
+    //colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera(), defGain);
 }
-	
+
+void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp) {
+    colorSpaceConversion (image, cmp, embProfile, camProfile, imatrices.xyz_cam, ((const ImageData*)getMetaData())->getCamera(), defGain);
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* cfaCleanFromMap: correct raw pixels looking at the bitmap
@@ -892,10 +892,10 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     fuji = ri->get_FujiWidth()!=0;
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
-            rgb_cam[i][j] = ri->get_rgb_cam(i,j);
+        	imatrices.rgb_cam[i][j] = ri->get_rgb_cam(i,j);
     // compute inverse of the color transformation matrix
 	// first arg is matrix, second arg is inverse
-    inverse33 (rgb_cam, cam_rgb);
+    inverse33 (imatrices.rgb_cam, imatrices.cam_rgb);
 
     d1x  = ! ri->get_model().compare("D1X");
     if (d1x)
@@ -904,13 +904,13 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
         embProfile = cmsOpenProfileFromMem (ri->get_profile(), ri->get_profileLen());
 
     // create profile
-    memset (xyz_cam, 0, sizeof(xyz_cam));
+    memset (imatrices.xyz_cam, 0, sizeof(imatrices.xyz_cam));
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
-                xyz_cam[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j]; 
-    camProfile = iccStore->createFromMatrix (xyz_cam, false, "Camera");
-    inverse33 (xyz_cam, cam_xyz);
+            	imatrices.xyz_cam[i][j] += xyz_sRGB[i][k] * imatrices.rgb_cam[k][j];
+    camProfile = iccStore->createFromMatrix (imatrices.xyz_cam, false, "Camera");
+    inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
 
 	float pre_mul[4];
 	ri->get_colorsCoeff( pre_mul, scale_mu_l, c_black);//modify  for black level
@@ -920,9 +920,9 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 	camwb_blue = ri->get_pre_mul(2) / pre_mul[2];
 	initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
 
-    double cam_r = rgb_cam[0][0]*camwb_red + rgb_cam[0][1]*camwb_green + rgb_cam[0][2]*camwb_blue;
-    double cam_g = rgb_cam[1][0]*camwb_red + rgb_cam[1][1]*camwb_green + rgb_cam[1][2]*camwb_blue;
-    double cam_b = rgb_cam[2][0]*camwb_red + rgb_cam[2][1]*camwb_green + rgb_cam[2][2]*camwb_blue;
+    double cam_r = imatrices.rgb_cam[0][0]*camwb_red + imatrices.rgb_cam[0][1]*camwb_green + imatrices.rgb_cam[0][2]*camwb_blue;
+    double cam_g = imatrices.rgb_cam[1][0]*camwb_red + imatrices.rgb_cam[1][1]*camwb_green + imatrices.rgb_cam[1][2]*camwb_blue;
+    double cam_b = imatrices.rgb_cam[2][0]*camwb_red + imatrices.rgb_cam[2][1]*camwb_green + imatrices.rgb_cam[2][2]*camwb_blue;
 
     wb = ColorTemp (cam_r, cam_g, cam_b);
 
@@ -935,9 +935,9 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     rml.ciffLength = ri->get_ciffLen();
     idata = new ImageData (fname, &rml);
 
-    green = allocArray<float>(W,H);
-    red   = allocArray<float>(W,H);
-    blue  = allocArray<float>(W,H);
+    green(W,H);
+    red(W,H);
+    blue(W,H);
     //hpmap = allocArray<char>(W, H);
 
     if (plistener) {
@@ -1156,23 +1156,19 @@ void RawImageSource::flushRawData() {
         cache = 0;
     }
     if (rawData) {
-        freeArray<float>(rawData, H);
-        rawData = 0;
+        rawData(0,0);
     }
 }
 
 void RawImageSource::flushRGB() {
     if (green) {
-        freeArray<float>(green, H);
-        green = 0;
+        green(0,0);
     }
     if (red) {
-        freeArray<float>(red, H);
-        red = 0;
+        red(0,0);
     }
     if (blue) {
-        freeArray<float>(blue, H);
-        blue = 0;
+        blue(0,0);
     }
 }
 
@@ -1201,7 +1197,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 
 	if (ri->isBayer()) {
 		if (!rawData)
-			rawData = allocArray<float>(W,H);
+			rawData(W,H);
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
@@ -1286,7 +1282,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 	} else {
         // No bayer pattern
         // TODO: Is there a flat field correction possible?
-		if (!rawData) rawData = allocArray<float>(3*W,H);
+		if (!rawData) rawData(3*W,H);
 
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
@@ -1546,7 +1542,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
   float middle_Q[6];
   float* tmp;
 
-  int ppx, px=(row_from-1)%3, cx=row_from%3, nx=0;
+  int ppx=0, px=(row_from-1)%3, cx=row_from%3, nx=0;
   
     convert_row_to_YIQ (im->r[row_from-1], im->g[row_from-1], im->b[row_from-1], rbconv_Y[px], rbconv_I[px], rbconv_Q[px], W);
     convert_row_to_YIQ (im->r[row_from], im->g[row_from], im->b[row_from], rbconv_Y[cx], rbconv_I[cx], rbconv_Q[cx], W);
@@ -1708,7 +1704,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         for (int i=0; i<3; i++)
             for (int j=0; j<3; j++) 
                 for (int k=0; k<3; k++) 
-                    mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * xyz_cam
+                    mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * imatrices.xyz_cam
 
 
     if (in==NULL) {
@@ -1737,9 +1733,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         #pragma omp parallel for
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
-				im->r[h][w] /= 65535.0;
-				im->g[h][w] /= 65535.0;
-				im->b[h][w] /= 65535.0;
+				im->r[h][w] /= 65535.0f ;
+				im->g[h][w] /= 65535.0f ;
+				im->b[h][w] /= 65535.0f ;
 			}
 
 
@@ -1806,17 +1802,17 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 		if(choiceprofile!="ProPhoto") {
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
-		     x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
-             y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
-             z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
-			 //convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
-			im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
-			im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
-			im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;			
-			}	
+				x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
+				y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
+				z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
+				//convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
+				im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
+				im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
+				im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;
 			}
+		}
 			
-		        cmsDeleteTransform(hTransform);
+		cmsDeleteTransform(hTransform);
 	
 	}
      else {	
@@ -1933,7 +1929,7 @@ TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
 		for (int i=0; i<3; i++)
 			for (int j=0; j<3; j++) 
 				for (int k=0; k<3; k++) 
-					mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * xyz_cam
+					mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * imatrices.xyz_cam
 		
 #pragma omp parallel for
 		for (int i=0; i<im->height; i++)
@@ -2241,7 +2237,7 @@ void RawImageSource::hlRecovery (std::string method, float* red, float* green, f
     if (method=="Luminance")
         HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535.0);
     else if (method=="CIELab blending")
-        HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0, xyz_cam, cam_xyz);
+        HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0, imatrices.xyz_cam, imatrices.cam_xyz);
     /*else if (method=="Color")
         HLRecovery_ColorPropagation (red, green, blue, i, sx1, width, skip);*/
 	else if (method=="Blend")	// derived from Dcraw
@@ -2288,6 +2284,9 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 
     histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
 	float mult = 65535.0 / ri->get_white();
+
+	// WARNING: This parallelization is not thread-safe because it R/W in histRedRaw, histGreenRaw, histBlueRaw
+	// which are defined before the parallel section and must survive after it
     #pragma omp parallel for
     for (int i=border; i<H-border; i++) {
         int start, end, idx;
@@ -2297,29 +2296,29 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
                 if (ri->ISGREEN(i,j)) {
-                    if(i &1) idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[1]/*+black_lev[1]*/))));// green 1
+                    if(i &1) idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[1]/*+black_lev[1]*/))));// green 1
 					else 
-					idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[3]/*+black_lev[3]*/))));//green 2
+					idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[3]/*+black_lev[3]*/))));//green 2
                     histGreenRaw[idx>>8]++;
                 } else if (ri->ISRED(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[0]/*+black_lev[0]*/))));
+                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[0]/*+black_lev[0]*/))));
 					
                     histRedRaw[idx>>8]++;
                 } else if (ri->ISBLUE(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[2]/*+black_lev[2]*/))));
+                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[2]/*+black_lev[2]*/))));
 					
                     histBlueRaw[idx>>8]++;
     }
             }
         } else {
 			for (int j=start; j<3*end; j++) {
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[0])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-cblack[0])));
                 histRedRaw[idx>>8]++;
 
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j+1]-cblack[1])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j+1]-cblack[1])));
                 histGreenRaw[idx>>8]++;
 
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j+2]-cblack[2])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j+2]-cblack[2])));
                 histBlueRaw[idx>>8]++;
 			}
 		}
@@ -2441,9 +2440,9 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 		double greens = avg_g/gn * camwb_green;
 		double blues  = avg_b/bn * camwb_blue;
 		
-		double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
-		double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;
-		double bm = rgb_cam[2][0]*reds + rgb_cam[2][1]*greens + rgb_cam[2][2]*blues;
+		double rm = imatrices.rgb_cam[0][0]*reds + imatrices.rgb_cam[0][1]*greens + imatrices.rgb_cam[0][2]*blues;
+		double gm = imatrices.rgb_cam[1][0]*reds + imatrices.rgb_cam[1][1]*greens + imatrices.rgb_cam[1][2]*blues;
+		double bm = imatrices.rgb_cam[2][0]*reds + imatrices.rgb_cam[2][1]*greens + imatrices.rgb_cam[2][2]*blues;
 		
 		return ColorTemp (rm, gm, bm);
 	}
@@ -2522,9 +2521,9 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 			greens = greens/rn * camwb_green;
 			blues = blues/rn * camwb_blue;
 			
-			double rm = rgb_cam[0][0]*reds + rgb_cam[0][1]*greens + rgb_cam[0][2]*blues;
-			double gm = rgb_cam[1][0]*reds + rgb_cam[1][1]*greens + rgb_cam[1][2]*blues;
-			double bm = rgb_cam[2][0]*reds + rgb_cam[2][1]*greens + rgb_cam[2][2]*blues;
+			double rm = imatrices.rgb_cam[0][0]*reds + imatrices.rgb_cam[0][1]*greens + imatrices.rgb_cam[0][2]*blues;
+			double gm = imatrices.rgb_cam[1][0]*reds + imatrices.rgb_cam[1][1]*greens + imatrices.rgb_cam[1][2]*blues;
+			double bm = imatrices.rgb_cam[2][0]*reds + imatrices.rgb_cam[2][1]*greens + imatrices.rgb_cam[2][2]*blues;
 			
 			return ColorTemp (rm, gm, bm);
 		}
@@ -2589,7 +2588,7 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
         tty = ty;
     }
 }
-		
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::inverse33 (const double (*rgb_cam)[3], double (*cam_rgb)[3]) {

@@ -25,16 +25,19 @@
 #include "procparams.h"
 #include "shmap.h"
 #include "coord2d.h"
+#include "color.h"
 #include "labimage.h"
 #include "LUT.h"
 #include "lcp.h"
+#include <fftw3.h>
+#include "cplx_wavelet_dec.h"
 
 namespace rtengine {
-
-using namespace procparams;
-
-class ImProcFunctions {
-
+	
+	using namespace procparams;
+	
+	class ImProcFunctions : public Color {
+		
 		static LUTf gamma2curve;
 
 		cmsHTRANSFORM monitorTransform;
@@ -134,22 +137,40 @@ class ImProcFunctions {
 
 		void impulsedenoise   (LabImage* lab);//Emil's impulse denoise
 		void impulse_nr (LabImage* lab, double thresh);
-		void dirpyrdenoise    (LabImage* lab);//Emil's pyramid denoise
+		void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
 		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
-
+		
 		void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
 		
+		// pyramid denoise
 		procparams::DirPyrDenoiseParams dnparams;
 		void dirpyrLab_denoise(LabImage * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams );//Emil's directional pyramid denoise
 		void dirpyr           (LabImage* data_fine, LabImage* data_coarse, int level, LUTf &rangefn_L, LUTf &rangefn_ab,
 							   int pitch, int scale, const int luma, int chroma );
 		void idirpyr          (LabImage* data_coarse, LabImage* data_fine, int level, LUTf &rangefn_L, LUTf & nrwt_l, LUTf & nrwt_ab,
 							   int pitch, int scale, const int luma, const int chroma/*, LUTf & Lcurve, LUTf & abcurve*/ );
-
-		void dirpyrLab_equalizer (LabImage * src, LabImage * dst, const double * mult );//Emil's directional pyramid equalizer
-		void dirpyr_eq           (LabImage* data_coarse, LabImage* data_fine, LUTf & rangefn, int level, int pitch, int scale, const double * mult );
-		void idirpyr_eq          (LabImage* data_coarse, LabImage* data_fine, int *** buffer, int level, int pitch, int scale, const double * mult );
-
+		
+		// FT denoise
+		//void RGB_InputTransf(Imagefloat * src, LabImage * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
+		//void RGB_OutputTransf(LabImage * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams);
+		//void output_tile_row (float *Lbloxrow, float ** Lhipassdn, float ** tilemask, int height, int width, int top, int blkrad );
+		void RGB_denoise(Imagefloat * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe);
+		void RGBtile_denoise (float * fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_L );	//for DCT
+		void RGBoutput_tile_row (float *Lbloxrow, float ** Ldetail, float ** tilemask_out, int height, int width, int top );
+		//void WaveletDenoise(cplx_wavelet_decomposition &DualTreeCoeffs, float noisevar );
+		//void WaveletDenoise(wavelet_decomposition &WaveletCoeffs, float noisevar );
+		void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
+							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
+		void WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
+										wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
+		//void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, 
+		//			  int W, int H, int level, int padding, float noisevar);
+		//void Shrink(float ** WavCoeffs, int W, int H, int level, float noisevar);
+		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
+					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_ab);
+		float MadMax(float * HH_Coeffs, int &max, int datalen);
+		
+		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
 		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  );
 		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );

@@ -65,8 +65,8 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 	
 	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(width,height));
 
-	gaussHorizontal<float> (lab->L, lpf, buffer, width, height, max(2.0,thresh-1.0), false /*multiThread*/);
-	gaussVertical<float>   (lpf, lpf, buffer, width, height, max(2.0,thresh-1.0), false);
+	gaussHorizontal<float> (lab->L, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false /*multiThread*/);
+	gaussVertical<float>   (lpf, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false);
 
 	delete buffer;
 
