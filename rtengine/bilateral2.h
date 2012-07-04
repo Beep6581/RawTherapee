@@ -22,14 +22,20 @@
 #include <cmath>
 #include <cstring>
 #include <cstdio>
+#include <glibmm.h>
+
+#include "rtengine.h"
+#include "rt_math.h"
 #include "alignedbuffer.h"
 #include "mytime.h"
 #include "gauss.h"
-#include <glibmm.h>
+
 #include "array2D.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+using namespace rtengine;
 
 // This seems ugly, but way faster than any other solutions I tried
 #define ELEM(a,b) (src[i - a][j - b] * ec[src[i - a][j - b]-src[i][j]+65536.0f])

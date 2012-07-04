@@ -25,7 +25,7 @@
 #include "improcfun.h"
 #include "colortemp.h" 
 #include "mytime.h"
-#include "../rtengine/utils.h"
+#include "utils.h"
 #include "iccstore.h"
 #include "iccmatrices.h"
 #include "rawimagesource.h"
@@ -221,9 +221,12 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     tpp->autowbGreen=1.0;
 
     if (rotate && ri->get_rotateDegree() > 0) {
-        Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
-        delete tpp->thumbImg;
-        tpp->thumbImg = rot;
+    	// Leaf .mos, Mamiya .mef and Phase One files have thumbnails already rotated.
+    	if (ri->get_maker() != "Leaf" && ri->get_maker() != "Mamiya" && ri->get_maker() != "Phase One")  {
+            Image16* rot = tpp->thumbImg->rotate(ri->get_rotateDegree());
+            delete tpp->thumbImg;
+            tpp->thumbImg = rot;
+    	}
     }
 
     tpp->init ();
@@ -273,7 +276,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	tpp->camwbRed = tpp->redMultiplier / ri->get_pre_mul(0);
 	tpp->camwbGreen = tpp->greenMultiplier / ri->get_pre_mul(1);
 	tpp->camwbBlue = tpp->blueMultiplier / ri->get_pre_mul(2);
-	tpp->defGain= 1.0/ MIN(MIN(ri->get_pre_mul(0),ri->get_pre_mul(1)),ri->get_pre_mul(2));
+	tpp->defGain= 1.0/ min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
 	tpp->gammaCorrected = true;
 
 	unsigned filter = ri->get_filters();
@@ -410,7 +413,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		if (ri->get_FujiWidth() != 0) {
 			int fw = ri->get_FujiWidth();
 			start = ABS(fw-i) + 8;
-			end = MIN( height + width-fw-i, fw+i) - 8;
+			end = min(height + width-fw-i, fw+i) - 8;
 		} else {
 			start = 8;
 			end = width - 8;
@@ -435,7 +438,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		if (ri->get_FujiWidth() != 0) {
 			int fw = ri->get_FujiWidth();
 			start = ABS(fw-i) + 32;
-			end = MIN( height + width-fw-i, fw+i) - 32;
+			end = min(height + width-fw-i, fw+i) - 32;
 		} else {
 			start = 32;
 			end = width - 32;
@@ -576,7 +579,8 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 }
 
 // Full thumbnail processing, second stage if complete profile exists
-IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, double& myscale) {
+IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, 
+    double focalLen, double focalLen35mm, float focusDist, double& myscale) {
 
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
@@ -701,7 +705,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     // perform transform
     if (ipf.needsTransform()) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
-        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
+        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, focalLen, focalLen35mm, focusDist, 0, true);  // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
     }
@@ -725,7 +729,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	int		hlcomprthresh = params.toneCurve.hlcomprthresh;
 	
     if (params.toneCurve.autoexp && aeHistogram) {
-	    ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
+	    ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr, hlcomprthresh);
 	    //ipf.getAutoExp (aeHistogram, aeHistCompression, logDefGain, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr);
     }
 
@@ -778,7 +782,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // obtain final image
     Image8* readyImg = new Image8 (fw, fh);
-    ipf.lab2rgb (labView, readyImg);
+    ipf.lab2monitorRgb (labView, readyImg);
     delete labView;
     delete baseImg;
 
@@ -849,8 +853,8 @@ void Thumbnail::applyAutoExp (procparams::ProcParams& params) {
 
     if (params.toneCurve.autoexp && aeHistogram) {
         ImProcFunctions ipf (&params, false);
-        ipf.getAutoExp (aeHistogram, aeHistCompression, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, 
-						params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+        ipf.getAutoExp (aeHistogram, aeHistCompression, log(defGain)/log(2.0), params.toneCurve.clip, params.toneCurve.expcomp,
+						params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
     }
 }
 
@@ -876,13 +880,13 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     if (params.coarse.vflip)       tr |= TR_VFLIP;
 
     // calculate spot wb (copy & pasted from stdimagesource)
-    unsigned short igammatab[256];
-    for (int i=0; i<256; i++)
-        igammatab[i] = (unsigned short)(255.0*pow(i/255.0,Color::sRGBGamma));
+	unsigned short igammatab[256];
+	for (int i=0; i<256; i++)
+	    igammatab[i] = (unsigned short)(255.0*pow(i/255.0,Color::sRGBGamma));
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
-    for (int i=0; i<red.size(); i++) {
+    for (size_t i=0; i<red.size(); i++) {
         transformPixel (red[i].x, red[i].y, tr, x, y);
         if (x>=0 && y>=0 && x<thumbImg->width && y<thumbImg->height) {
             reds += thumbImg->r[y][x];
@@ -976,20 +980,21 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
         // Go down till we cut off that many pixels
         unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
 
-        int max; unsigned long sum=0;
-        for (max=65535; max>16384 && sum<cutoff; max--) sum+=hist16[max];
+        int max_;
+        unsigned long sum=0;
+        for (max_=65535; max_>16384 && sum<cutoff; max_--) sum+=hist16[max_];
 
         delete[] hist16;
 
-        scaleForSave = 65535*8192 / max;
+        scaleForSave = 65535*8192 / max_;
 
         // Correction and gamma to 8 Bit
         for (int i=0; i<thumbImg->height; i++)
             for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
-                int r= gammatab[MIN(thumbImg->r[i][j],max) * scaleForSave >> 13];
-                int g= gammatab[MIN(thumbImg->g[i][j],max) * scaleForSave >> 13];
-                int b= gammatab[MIN(thumbImg->b[i][j],max) * scaleForSave >> 13];
-                tmpdata[ix++] = r*19595+g*38469+b*7472 >> 16;
+                int r= gammatab[min(thumbImg->r[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                int g= gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                int b= gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                tmpdata[ix++] = (r*19595+g*38469+b*7472) >> 16;
             }
     }
     else {
@@ -1071,19 +1076,19 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
             // Go down till we cut off that many pixels
             unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
 
-            int max; unsigned long sum=0;
-            for (max=65535; max>16384 && sum<cutoff; max--) sum+=hist16[max];
+            int max_; unsigned long sum=0;
+            for (max_=65535; max_>16384 && sum<cutoff; max_--) sum+=hist16[max_];
 
             delete[] hist16;
 
-            scaleForSave = 65535*8192 / max;
+            scaleForSave = 65535*8192 / max_;
 
             // Correction and gamma to 8 Bit
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=0; j<thumbImg->width; j++) {
-                    tmpdata[ix++] = gammatab[MIN(thumbImg->r[i][j],max) * scaleForSave >> 13];
-                    tmpdata[ix++] = gammatab[MIN(thumbImg->g[i][j],max) * scaleForSave >> 13];
-                    tmpdata[ix++] = gammatab[MIN(thumbImg->b[i][j],max) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[min(thumbImg->r[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                 }
         }
         else {
@@ -1257,7 +1262,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         cinfo.err = my_jpeg_std_error (&jerr);
         jpeg_create_decompress (&cinfo);
         my_jpeg_stdio_src (&cinfo,f);
-		if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+		if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
         {
             jpeg_read_header (&cinfo, TRUE);
             int width, height;

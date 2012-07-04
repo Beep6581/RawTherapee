@@ -62,9 +62,15 @@ class SASceneModeInterpreter : public ChoiceInterpreter {
             choices[5]  = "Sports";
             choices[6]  = "Landscape";
             choices[8]  = "Macro";
-            choices[8]  = "Super Macro";
+            choices[9]  = "Super Macro";
             choices[16] = "Auto";
             choices[17] = "Night Portrait";
+            choices[18] = "Sweep Panorama";
+            choices[19] = "Handheld Night Shot";
+            choices[20] = "Anti Motion Blur";
+            choices[21] = "Cont.Priority AE";
+            choices[22] = "Auto+";
+            choices[23] = "3D Sweep Panorama";
         }
 };
 SASceneModeInterpreter saSceneModeInterpreter;
@@ -91,6 +97,11 @@ class SADynamicRangeOptimizerInterpreter : public ChoiceInterpreter {
             choices[10] = "Advanced Lv3";
             choices[11] = "Advanced Lv4";
             choices[12] = "Advanced Lv5";
+            choices[16] = "Lv1";
+            choices[17] = "Lv2";
+            choices[18] = "Lv3";
+            choices[19] = "Lv4";
+            choices[20] = "Lv5";
         }
 };
 SADynamicRangeOptimizerInterpreter saDynamicRangeOptimizerInterpreter;
@@ -107,6 +118,11 @@ class SAColorModeInterpreter : public ChoiceInterpreter {
             choices[6]  = "B&W";
             choices[7]  = "Adobe RGB";
             choices[12] = "Neutral";
+            choices[13] = "Clear";
+            choices[14] = "Deep";
+            choices[15] = "Light";
+            choices[16] = "Autumn";
+            choices[17] = "Sepia";
             choices[100]= "Neutral";
             choices[101]= "Clear";
             choices[102]= "Deep";
@@ -121,15 +137,31 @@ class SAExposureModeInterpreter : public ChoiceInterpreter {
     public:
         SAExposureModeInterpreter () {
             choices[0]  = "Auto";
+            choices[1]  = "Portrait";
+            choices[2]  = "Beach";
+            choices[4]  = "Snow";
             choices[5]  = "Landscape";
             choices[6]  = "Program";
             choices[7]  = "Aperture Priority";
             choices[8]  = "Shutter Priority";
             choices[9]  = "Night Scene";
+            choices[10] = "Hi-Speed Shutter";
+            choices[11] = "Twilight Portrait";
+            choices[12] = "Soft Snap";
+            choices[13] = "Fireworks";
+            choices[14] = "Smile Shutter";
             choices[15] = "Manual";
+            choices[18] = "High Sensitivity";
+            choices[19] = "Macro";
+            choices[20] = "Advanced Sports Shooting";
+            choices[29] = "Underwater";
+            choices[33] = "Gourmet";
             choices[34] = "Panorama";
             choices[35] = "Handheld Twilight";
             choices[36] = "Anti Motion Blur";
+            choices[37] = "Pet";
+            choices[38] = "Backlight Correction HDR";
+            choices[40] = "Background Defocus";
         }
 };
 SAExposureModeInterpreter saExposureModeInterpreter;
@@ -225,11 +257,15 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(55, "Sony DT 18-55mm f/3.5-5.6 SAM"));
             choices.insert(p_t(56, "Sony AF DT 55-200mm f/4-5.6 SAM"));
             choices.insert(p_t(57, "Sony AF DT 50mm f/1.8 SAM"));
+            choices.insert(p_t(57, "Tamron SP AF 60mm f/2 Di II LD [IF] Macro 1:1"));
+            choices.insert(p_t(57, "Tamron 18-270mm f/3.5-6.3 Di II PZD"));
             choices.insert(p_t(58, "Sony AF DT 30mm f/2.8 SAM Macro"));
             choices.insert(p_t(59, "Sony AF 28-75mm f/2.8 SAM"));
             choices.insert(p_t(60, "Carl Zeiss Distagon T* 24mm f/2 ZA SSM"));
             choices.insert(p_t(61, "Sony AF 85mm f/2.8 SAM"));
             choices.insert(p_t(62, "Sony DT 35mm f/1.8 SAM"));
+            choices.insert(p_t(63, "Sony DT 16-50mm f/2.8 SSM"));
+            choices.insert(p_t(64, "Sony 500mm f/4.0 G SSM"));
             choices.insert(p_t(128, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical (IF)"));
             choices.insert(p_t(128, "Tamron AF 28-300mm f/3.5-6.3"));
             choices.insert(p_t(128, "Tamron AF 28-200mm f/3.8-5.6 XR Di Aspherical (IF) Macro "));
@@ -237,6 +273,11 @@ class SALensIDInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(128, "Sigma AF 50-150mm f/2.8 EX DC APO HSM II"));
             choices.insert(p_t(128, "Sigma 10-20mm f/3.5 EX DC"));
             choices.insert(p_t(128, "Sigma 70-200mm f/2.8 II EX DG APO Macro"));
+            choices.insert(p_t(128, "Sigma 10mm f/2.8 EX DC HSM Fisheye"));
+            choices.insert(p_t(128, "Sigma 50mm f/1.4 EX DG HSM"));
+            choices.insert(p_t(128, "Sigma 85mm f/1.4 EX DG HSM"));
+            choices.insert(p_t(128, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
+            choices.insert(p_t(128, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
             choices.insert(p_t(129, "Tamron 200-400mm f/5.6 LD (IF)"));
             choices.insert(p_t(129, "Tamron 70-300mm f/4-5.6 LD"));
             choices.insert(p_t(131, "Tamron 20-40mm f/2.7-3.5 SP Aspherical IF"));
@@ -760,6 +801,34 @@ class SAImageStyleInterpreter: public ChoiceInterpreter {
 };
 SAImageStyleInterpreter saImageStyleInterpreter;
 
+class SAPictureEffectInterpreter: public ChoiceInterpreter {
+	public:
+	SAPictureEffectInterpreter(){
+		choices[0] = "Off";
+		choices[1] = "Toy Camera";
+		choices[2] = "Pop Color";
+		choices[3] = "Posterization";
+		choices[4] = "Posterization B/W";
+		choices[5] = "Retro Photo";
+		choices[6] = "Soft High Key";
+		choices[7] = "Partial Color Red";
+		choices[8] = "Partial Color Green";
+		choices[9] = "Partial Color Blue";
+		choices[10] = "Partial Color Yellow";
+		choices[13] = "High Contrast Monochrome";
+		choices[16] = "Toy Camera 2";
+		choices[33] = "Soft Focus";
+		choices[48] = "Miniature";
+		choices[50] = "Miniature 2";
+		choices[51] = "Miniature 3";
+		choices[65] = "HDR Painting";
+		choices[80] = "Rich-tone Monochrome";
+		choices[98] = "Water Color";
+		choices[114] = "Illustration";	
+	}
+};
+SAPictureEffectInterpreter saPictureEffectInterpreter;
+
 const TagAttrib minoltaAttribs[] = {
  {0, 1, 0, 0, 0x0000, "MakerNoteVersion", &stdInterpreter},
  {0, 1, 0, 0, 0x0001, "MinoltaCameraSettingsOld", &stdInterpreter},
@@ -794,9 +863,16 @@ const TagAttrib sonyAttribs[] = {
  {0, 1, 0, 0, 0x0115, "WhiteBalance",&saWhiteBalanceInterpreter},
  {1, 1, 0, 0, 0x0e00, "PrintIM", &stdInterpreter},
  {1, 1, 0, 0, 0x2001, "PreviewImage", &stdInterpreter},
+ {0, 1, 0, 0, 0x2009, "HighISONoiseReduction", &stdInterpreter},
  {0, 1, 0, 0, 0x200a, "AutoHDR", &stdInterpreter},
+ {0, 1, 0, 0, 0x200b, "MultiFrameNoiseReduction", &stdInterpreter},
+ {0, 1, 0, 0, 0x200e, "PictureEffect", &saPictureEffectInterpreter},
+ {0, 1, 0, 0, 0x2011, "VignettingCorrection", &stdInterpreter}, 
+ {0, 1, 0, 0, 0x2012, "LateralChromaticAberration", &stdInterpreter}, 
+ {0, 1, 0, 0, 0x2013, "DistortionCorrection", &stdInterpreter}, 
  {0, 1, 0, 0, 0xb020, "ColorReproduction", &stdInterpreter},
  {0, 1, 0, 0, 0xb021, "ColorTemperature", &stdInterpreter},
+ {0, 1, 0, 0, 0xb022, "ColorCompensationFilter", &stdInterpreter},
  {0, 1, 0, 0, 0xb023, "SceneMode", &saSceneModeInterpreter},
  {0, 1, 0, 0, 0xb024, "ZoneMatching", &saZoneMatchingInterpreter},
  {0, 1, 0, 0, 0xb025, "DynamicRangeOptimizer", &saDynamicRangeOptimizerInterpreter},
@@ -810,9 +886,13 @@ const TagAttrib sonyAttribs[] = {
  {0, 1, 0, 0, 0xb043, "AFMode", &saAFMode},
  {0, 1, 0, 0, 0xb044, "AFIlluminator", &saAFIlluminator},
  {0, 1, 0, 0, 0xb047, "Quality", &saQualityInterpreter},
+ {0, 1, 0, 0, 0xb048, "FlashLevel", &stdInterpreter},
  {0, 1, 0, 0, 0xb049, "ReleaseMode",&saReleaseModeInterpreter},
+ {0, 1, 0, 0, 0xb04a, "SequenceNumber", &stdInterpreter}, 
  {0, 1, 0, 0, 0xb04b, "AntiBlur", &saAntiBlurInterpreter},
  {0, 1, 0, 0, 0xb04e, "LongExposureNoiseReduction", &saOnOffInterpreter},
+ {0, 1, 0, 0, 0xb04f, "DynamicRangeOptimizer", &stdInterpreter}, 
+ {0, 1, 0, 0, 0xb052, "IntelligentAuto", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
 
 const TagAttrib sonyCameraSettingsAttribs[]={
@@ -864,8 +944,7 @@ const TagAttrib sonyCameraSettingsAttribs2[]={
  {0, 1, 0, 0, 63, "Rotation",&saRotation},
  {0, 1, 0, 0, 84, "SonyImageSize",&saSonyImageSize},
  {-1, 0, 0,  0, 0, "", NULL}};
-
-};
+}
 #endif
 
 

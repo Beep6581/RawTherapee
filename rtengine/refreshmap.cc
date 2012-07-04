@@ -53,9 +53,9 @@ SHARPENING,       // EvShrDRadius,
 SHARPENING,       // EvShrDAmount,
 SHARPENING,       // EvShrDDamping,
 SHARPENING,       // EvShrDIterations,
-0,                // EvCBAvoidClip: obsolete
-0,                // EvCBSatLimiter: obsolete
-0,                // EvCBSatLimit: obsolete
+TRANSFORM,        // EvLCPUseDist,
+DARKFRAME,        // EvLCPUseVign,
+TRANSFORM,        // EvLCPUseCA,
 0,                // EvCBBoost: obsolete
 WHITEBALANCE,     // EvWBMethod,
 WHITEBALANCE,     // EvWBTemp,
@@ -68,7 +68,7 @@ WHITEBALANCE,     // EvWBGreen,
 0,                // EvCDNEnabled:obsolete,
 0,                // EvCDNRadius: obsolete,
 0,                // EvCDNEdgeTolerance: obsolete,
-0,                // EvCDNEdgeSensitive: obsolete,
+ALL,              // EvPrefProfile,
 RETINEX,          // EvSHEnabled,
 RGBCURVE,         // EvSHHighlights,
 RGBCURVE,         // EvSHShadows,
@@ -104,7 +104,7 @@ RESIZE,           // EvResizeEnabled
 ALL,              // EvProfileChangeNotification
 RETINEX,          // EvShrHighQuality
 TRANSFORM,        // EvPerspCorr
-0,                // EvEqualizer: obsolete
+DARKFRAME,        // EvLCPFile
 0,                // EvEqlEnabled:obsolete
 IMPULSEDENOISE,   // EvIDNEnabled,
 IMPULSEDENOISE,   // EvIDNThresh,
@@ -152,10 +152,10 @@ FLATFIELD,        // EvFlatFieldBlurType,
 TRANSFORM,        // EvAutoDIST,
 ALLNORAW,         // EvDPDNLumCurve,
 ALLNORAW,         // EvDPDNChromCurve,
-ALL,              // EvGAMMA
-ALL,              // EvGAMPOS
-ALL,              // EvGAMFREE
-ALL,              // EvSLPOS
+GAMMA,            // EvGAMMA
+GAMMA,            // EvGAMPOS
+GAMMA,            // EvGAMFREE
+GAMMA,            // EvSLPOS
 DARKFRAME,        // EvPreProcessExpBlackzero
 DARKFRAME,        // EvPreProcessExpBlackone
 DARKFRAME,        // EvPreProcessExpBlacktwo
@@ -186,6 +186,7 @@ RGBCURVE,         // EvRGBrCurve
 RGBCURVE,         // EvRGBgCurve
 RGBCURVE,         // EvRGBbCurve
 RGBCURVE,         // EvNeutralExp
+LUMINANCECURVE,   // EvLBWtoning
 ALLNORAW          // EvDPDNLdetail
 	
 };

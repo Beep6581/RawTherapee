@@ -1,7 +1,7 @@
 
 [Version]
-AppVersion=4.0.6
-Version=301
+AppVersion=4.0.9
+Version=302
 
 [General]
 Rank=0
@@ -10,7 +10,7 @@ InTrash=false
 
 [Exposure]
 Auto=true
-Clip=0
+Clip=0.0000
 Compensation=0
 Brightness=0
 Contrast=20
@@ -32,7 +32,7 @@ Contrast=0
 Saturation=-100
 AvoidColorClipping=false
 SaturationLimiter=false
-SaturationLimit=40
+SaturationLimit=50
 LCurve=3;0;0;0.84892086330935235;0.69064748201438808;1;1;
 aCurve=0;
 bCurve=0;
@@ -41,8 +41,8 @@ bCurve=0;
 Enabled=false
 Method=usm
 Radius=0.5
-Amount=250
-Threshold=512
+Amount=125
+Threshold=20;80;2000;1200;
 OnlyEdges=false
 EdgedetectionRadius=1.9
 EdgeTolerance=1800
@@ -57,7 +57,7 @@ DeconvIterations=30
 Enabled=false
 Pastels=50
 Saturated=50
-PSThreshold=75
+PSThreshold=1;75;
 ProtectSkins=false
 AvoidColorShift=true
 PastSatTog=true
@@ -85,16 +85,22 @@ Threshold=50
 
 [Defringing]
 Enabled=false
-Radius=2
+Radius=2.0
 Threshold=25
 
 [Directional Pyramid Denoising]
 Enabled=false
-Luma=5
-Chroma=5
-Gamma=2
-LumCurve=0;
-ChromCurve=0;
+Luma=0
+Ldetail=80
+Chroma=15
+Gamma=1.7
+
+[EPD]
+Enabled=false
+Strength=0.25
+EdgeStopping=1.4
+Scale=1
+ReweightingIterates=0
 
 [Shadows & Highlights]
 Enabled=false
@@ -106,18 +112,70 @@ ShadowTonalWidth=80
 LocalContrast=0
 Radius=30
 
+[Crop]
+Enabled=false
+X=0
+Y=0
+W=7360
+H=4912
+FixedRatio=false
+Ratio=3:2
+Orientation=Landscape
+Guide=None
+
+[Coarse Transformation]
+Rotate=0
+HorizontalFlip=false
+VerticalFlip=false
+
 [Common Properties for Transformations]
-AutoFill=false
+AutoFill=true
+
+[Rotation]
+Degree=0
+
+[Distortion]
+Amount=0
+
+[LensProfile]
+LCPFile=
+UseDistortion=true
+UseVignette=true
+UseCA=false
+
+[Perspective]
+Horizontal=0
+Vertical=0
+
+[CACorrection]
+Red=0
+Blue=0
+
+[Vignetting Correction]
+Amount=0
+Radius=50
+Strength=1
+CenterX=0
+CenterY=0
 
 [HLRecovery]
 Enabled=false
 Method=Blend
 
+[Resize]
+Enabled=false
+Scale=1
+AppliesTo=Cropped area
+Method=Lanczos
+DataSpecified=3
+Width=900
+Height=900
+
 [Color Management]
 InputProfile=(cameraICC)
 BlendCMSMatrix=true
 WorkingProfile=sRGB
-OutputProfile=RT_sRGB
+OutputProfile=No ICM: sRGB output
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
@@ -142,6 +200,12 @@ gCurve=0;
 bCurve=0;
 
 [RAW]
+DarkFrame=
+DarkFrameAuto=false
+FlatFieldFile=
+FlatFieldAutoSelect=false
+FlatFieldBlurRadius=32
+FlatFieldBlurType=Area Flatfield
 CA=false
 CARed=0
 CABlue=0
@@ -149,7 +213,7 @@ HotDeadPixels=false
 HotDeadPixelThresh=40
 LineDenoise=0
 GreenEqThreshold=0
-CcSteps=1
+CcSteps=0
 Method=amaze
 DCBIterations=2
 DCBEnhance=false

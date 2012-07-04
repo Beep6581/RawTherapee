@@ -86,6 +86,7 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         void    setPosition (int x, int y, bool update=true);
         void    getPosition (int& x, int& y);
         void    getSize     (int& w, int& h);
+        void    getFullImageSize (int& w, int& h);
 
         void    setEnabled (bool e);
         bool    getEnabled ();

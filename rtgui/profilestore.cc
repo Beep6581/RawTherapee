@@ -26,17 +26,57 @@ ProfileStore profileStore;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-extern Glib::ustring argv0;
+ProfileStore::ProfileStore () {
+    storeState = STORESTATE_NOTINITIALIZED;
+    parseMutex = NULL;
+}
+
+bool ProfileStore::init () {
+    if (storeState == STORESTATE_DELETED)
+        return false;
+    if (storeState == STORESTATE_NOTINITIALIZED) {
+        storeState = STORESTATE_BEINGINITIALIZED;
+        parseMutex = new Glib::Mutex();
+        _parseProfiles ();
+        storeState = STORESTATE_INITIALIZED;
+    }
+	return true;
+}
 
 ProfileStore::~ProfileStore () {
+
+    // This lock prevent object's suppression while scanning the directories
+    storeState = STORESTATE_DELETED;
+    Glib::Mutex::Lock lock(*parseMutex);
+
     for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++) {
         if (i->second->pparams) delete i->second->pparams;
         if (i->second->pedited) delete i->second->pedited;
         delete i->second;
     }
+    partProfiles.clear ();
+    lock.release();
+    delete parseMutex;
+    parseMutex = NULL;
 }
 
+/*
+ * Public method to parse the profiles' directories
+ * Since there's a race condition in the multithreaded environment on this object,
+ * parseProfiles may need to ask for initialization of this object, and then will
+ * ask a mutex lock on it, has it been initialized by this call or not
+ */
 void ProfileStore::parseProfiles () {
+
+    if (!init())
+        // I don't even know if this situation can occur
+        return;
+    Glib::Mutex::Lock lock(*parseMutex);
+
+    _parseProfiles ();
+}
+
+void ProfileStore::_parseProfiles () {
 
     // clear loaded profiles
     for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++) {
@@ -46,35 +86,25 @@ void ProfileStore::parseProfiles () {
     }
     partProfiles.clear ();
 
-    if (options.multiUser) {
-        Glib::ustring userPD = options.rtdir + "/" + options.profilePath;
-        if (!safe_file_test (userPD, Glib::FILE_TEST_IS_DIR))
-            safe_g_mkdir_with_parents (userPD, 511);
-        parseDir (userPD);
-    }
-    parseDir (argv0 + "/" + options.profilePath);
+    parseDir (options.getUserProfilePath());
+    parseDir (options.getGlobalProfilePath());
 }
 
 void ProfileStore::parseDir (const Glib::ustring& pdir) {
 
   // reload the available profiles from the profile dir
-  if (pdir!="") {
+  if (pdir!="" && safe_file_test(pdir, Glib::FILE_TEST_EXISTS) && safe_file_test(pdir, Glib::FILE_TEST_IS_DIR)) {
     // process directory
     Glib::ustring dirname = pdir;
     Glib::Dir* dir = NULL;
-    try {
-        dir = new Glib::Dir (dirname);
-    }
-    catch (const Glib::FileError& fe) {
-        return;
-    }
+    dir = new Glib::Dir (dirname);
     dirname = dirname + "/";
     for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) {
       Glib::ustring fname = dirname + *i;
       Glib::ustring sname = *i;
       // ignore directories
       if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
-        int lastdot = sname.find_last_of ('.');
+        size_t lastdot = sname.find_last_of ('.');
         if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && !sname.casefold().compare (lastdot, 4, paramFileExtension)) {
           if( options.rtSettings.verbose )
             printf ("Processing file %s...\n", fname.c_str());
@@ -99,33 +129,80 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
     }
     delete dir;
   }
+  // Check if the default profiles has been found. If no, create default instance
+  // This operation is safe: if the profile is finally found in another directory, the profile will be updated
+  if (partProfiles.find(options.defProfRaw) == partProfiles.end()) {
+    PartialProfile* pProf = new PartialProfile (true);
+    pProf->set(true);
+    partProfiles[options.defProfRaw] = pProf;
+  }
+  if (partProfiles.find(options.defProfImg) == partProfiles.end()) {
+    PartialProfile* pProf = new PartialProfile (true);
+    pProf->set(true);
+    partProfiles[options.defProfImg] = pProf;
+  }
 }
 
 PartialProfile* ProfileStore::getProfile (const Glib::ustring& profname) {
 
-    std::map<Glib::ustring, PartialProfile*>::iterator prof = partProfiles.find(profname);
-    if (prof != partProfiles.end())
-        return partProfiles[profname];
-    else
+    if (!init())
+        // I don't even know if this situation can occur
         return NULL;
+    Glib::Mutex::Lock lock(*parseMutex);
+
+    if (partProfiles.find(profname) != partProfiles.end()) {
+        return partProfiles[profname];
+    }
+    else {
+        return NULL;
+    }
 }
 
 std::vector<Glib::ustring> ProfileStore::getProfileNames () {
 
     std::vector<Glib::ustring> ret;
+
+    if (!init())
+        // I don't even know if this situation can occur
+        return ret;
+    Glib::Mutex::Lock lock(*parseMutex);
+
     for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++)
         ret.push_back (i->first);
     return ret;
 }
 
+/*
+ * Send back a pointer to the default procparams for raw or standard images.
+ * If the profile doesn't already exist in the profile list,
+ * it will add it with default internal values, so this method never fails
+ */
 ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
 
+    if (!init())
+        // I don't even know if this situation can occur
+        return NULL;
+    //Note: the mutex is locked in getProfile, called below
+
     PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
-    if (!pProf) {
-    	Glib::ustring profName = isRaw ? options.defProfRaw : options.defProfImg;
-    	pProf = new PartialProfile (true);
-        partProfiles[profName] = pProf;
-    }
+    // NOTE: pProf should not be NULL anymore, since init() should have created the default profiles already
     return pProf->pparams;
+}
+
+/*
+ * Send back a pointer to the default partial profile for raw or standard images.
+ * If it doesn't already exist in the profile list, it will add it with default internal values,
+ * so this method will never fails
+ */
+PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw) {
+
+    if (!init())
+        // I don't even know if this situation can occur
+        return NULL;
+    //Note: the mutex is locked in getProfile, called below
+
+    PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
+    // NOTE: pProf should not be NULL anymore, since init() should have created the default profiles already
+    return pProf;
 }
 

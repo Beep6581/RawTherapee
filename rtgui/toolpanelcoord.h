@@ -45,6 +45,7 @@
 #include "chmixer.h"
 #include "hlrec.h"
 #include "cacorrection.h"
+#include "lensprofile.h"
 #include "distortion.h"
 #include "perspective.h"
 #include "rotate.h"
@@ -83,6 +84,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         WhiteBalance* whitebalance;
         Vignetting* vignetting;
         LensGeometry* lensgeom;
+        LensProfilePanel* lensProf;
         Rotate* rotate;
         Distortion* distortion;
         PerspCorrection* perspective;

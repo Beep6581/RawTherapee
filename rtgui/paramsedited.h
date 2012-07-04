@@ -60,6 +60,7 @@ class LCurveParamsEdited {
         bool lcurve;
         bool acurve;
         bool bcurve;
+        bool bwtoning;
 };
 
 class RGBCurvesParamsEdited {
@@ -244,8 +245,14 @@ class RotateParamsEdited {
 class DistortionParamsEdited {
 
     public:
-		bool uselensfun;
         bool amount;
+};
+
+class LensProfParamsEdited {
+    public:
+        bool lcpFile,useDist,useVign,useCA; 
+
+        bool isUnchanged() const;
 };
 
 class PerspectiveParamsEdited {
@@ -304,6 +311,7 @@ class ColorManagementParamsEdited {
     public:
         bool input;
         bool blendCMSMatrix;
+        bool preferredProfile;
         bool working;
         bool output;
 		bool gamma;
@@ -386,6 +394,7 @@ class ParamsEdited {
         CommonTransformParamsEdited   commonTrans;
         RotateParamsEdited            rotate;
         DistortionParamsEdited        distortion;
+        LensProfParamsEdited          lensProf;
         PerspectiveParamsEdited       perspective;
         CACorrParamsEdited            cacorrection;
         VignettingParamsEdited        vignetting;

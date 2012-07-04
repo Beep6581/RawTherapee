@@ -16,16 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "../rtengine/utils.h"
 #include <cmath>
 #include <cstring>
 #include <cstdio>
+#include "rt_math.h"
 
-#undef MAX
-#undef MIN
+#include "utils.h"
+#include "rt_math.h"
 
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
+using namespace std;
 
 namespace rtengine {
 

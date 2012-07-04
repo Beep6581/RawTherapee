@@ -22,6 +22,7 @@
 #include "guiutils.h"
 #include "../rtengine/safegtk.h"
 #include "../rtengine/iccstore.h"
+#include "../rtengine/dcp.h"
 #include "rtimage.h"
 
 using namespace rtengine;
@@ -29,14 +30,13 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-Glib::ustring ICMPanel::lastICCWorkDir;
-
 ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL) {
 
 //    set_border_width (4);
 
     ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     ipDialog->set_tooltip_text (M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
+    ipDialogPersister.reset(new FileChooserLastFolderPersister(ipDialog, options.lastIccDir));
 
     Gtk::Label* ilab = Gtk::manage (new Gtk::Label ());
     ilab->set_alignment (0.0, 0.5);
@@ -73,6 +73,20 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     ifromfile->set_group (opts);
     inone->set_group (opts);
 
+    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+    hb->show ();
+    Gtk::Label* ppl = Gtk::manage (new Gtk::Label (M("TP_ICM_PREFERREDPROFILE")+":"));
+    ppl->show ();
+    prefprof = Gtk::manage (new MyComboBoxText ());
+    prefprof->append_text (M("TP_ICM_PREFERREDPROFILE_1"));
+    prefprof->append_text (M("TP_ICM_PREFERREDPROFILE_2"));
+    prefprof->append_text (M("TP_ICM_PREFERREDPROFILE_3"));
+    prefprof->append_text (M("TP_ICM_PREFERREDPROFILE_4"));
+    prefprof->show ();
+    hb->pack_start(*ppl, Gtk::PACK_SHRINK, 4);
+    hb->pack_start(*prefprof);  
+    pack_start (*hb, Gtk::PACK_SHRINK, 4);
+
     ckbBlendCMSMatrix = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_BLENDCMSMATRIX")));
     ckbBlendCMSMatrix->set_sensitive (false);
     ckbBlendCMSMatrix->set_tooltip_text (M("TP_ICM_BLENDCMSMATRIX_TOOLTIP"));
@@ -106,7 +120,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     pack_start (*onames, Gtk::PACK_SHRINK, 4);
 
     std::vector<std::string> wpnames = rtengine::getWorkingProfiles ();
-    for (int i=0; i<wpnames.size(); i++)
+    for (size_t i=0; i<wpnames.size(); i++)
         wnames->append_text (wpnames[i]);
   
  
@@ -144,14 +158,14 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 		
 		
     std::vector<std::string> wpgamma = rtengine::getGamma ();
-    for (int i=0; i<wpgamma.size(); i++)
+    for (size_t i=0; i<wpgamma.size(); i++)
         wgamma->append_text (wpgamma[i]);
 
     onames->append_text (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
     std::vector<std::string> opnames = iccStore->getOutputProfiles ();
-    for (int i=0; i<opnames.size(); i++)
+    for (size_t i=0; i<opnames.size(); i++)
         onames->append_text (opnames[i]);
 
     wnames->set_active (0);
@@ -160,6 +174,8 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     Gtk::FileFilter filter_icc;
     filter_icc.set_name(M("TP_ICM_FILEDLGFILTERICM"));
+    filter_icc.add_pattern("*.dcp");
+    filter_icc.add_pattern("*.DCP");
     filter_icc.add_pattern("*.icc");
     filter_icc.add_pattern("*.icm");
     filter_icc.add_pattern("*.ICC");
@@ -171,13 +187,12 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     ipDialog->add_filter (filter_icc);
     ipDialog->add_filter (filter_any);
 
-    ipDialog->set_current_folder ( lastICCWorkDir.empty() ? options.rtSettings.iccDirectory : lastICCWorkDir);
-
     oldip = "";
 
     wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
     onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
     wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
+    prefprof->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::prefProfChanged) );
 	
     icamera->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     icameraICC->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
@@ -196,32 +211,33 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     ipc.block (true);
     if (pp->icm.input == "(none)" && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
-        inone->set_active (true);
+        inone->set_active (true); prefprof->set_sensitive (false);
         ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()==Gtk::STATE_INSENSITIVE)) {
-        iembedded->set_active (true);
+        iembedded->set_active (true); prefprof->set_sensitive (false);
         ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()!=Gtk::STATE_INSENSITIVE) {
-        icameraICC->set_active (true);
+        icameraICC->set_active (true); prefprof->set_sensitive (true);
         ckbBlendCMSMatrix->set_sensitive (true);
     }
     else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
     	// this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
     	// therefore falling back UI to explicitly reflect the (camera) option
     	icamera->set_active (true);
+        prefprof->set_sensitive (false);  // RT's own are always single-illuminant
     	ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive (false);  prefprof->set_sensitive (false);
     }
     else {
         ifromfile->set_active (true);
         oldip = pp->icm.input.substr(5);  // cut of "file:"
         ipDialog->set_filename (pp->icm.input.substr(5));
-        ckbBlendCMSMatrix->set_sensitive (true);
+        ckbBlendCMSMatrix->set_sensitive (true);  prefprof->set_sensitive (true);
     }
 
     wnames->set_active_text (pp->icm.working);   
@@ -235,6 +251,8 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     if (onames->get_active_row_number()==-1)
         onames->set_active_text (M("TP_ICM_NOICM"));
 
+    prefprof->set_active(pp->icm.preferredProfile-1);
+
     ckbBlendCMSMatrix->set_active (pp->icm.blendCMSMatrix);
 	onames->set_sensitive(wgamma->get_active_row_number()==0 || freegamma->get_active()); //"default"
 	wgamma->set_sensitive(!freegamma->get_active());
@@ -246,6 +264,8 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.output)
             onames->set_active_text(M("GENERAL_UNCHANGED"));
+        if (!pedited->icm.preferredProfile)
+            prefprof->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.gamma){
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
@@ -280,16 +300,17 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (icameraICC->get_active ())
         pp->icm.input = "(cameraICC)";
     else {
+        if (safe_file_test (ipDialog->get_filename (), Glib::FILE_TEST_EXISTS) && !safe_file_test (ipDialog->get_filename (), Glib::FILE_TEST_IS_DIR))
         pp->icm.input = "file:"+ipDialog->get_filename ();
+        else
+            pp->icm.input = "";  // just a directory
 
         Glib::ustring p=Glib::path_get_dirname(ipDialog->get_filename ());
-        if (p!=options.rtSettings.iccDirectory) {
-            lastICCWorkDir=p;
-        }
      }
 
     pp->icm.working = wnames->get_active_text ();
     pp->icm.gamma = wgamma->get_active_text ();
+    pp->icm.preferredProfile = prefprof->get_active_row_number()+1;
    
     if (onames->get_active_text()==M("TP_ICM_NOICM"))
         pp->icm.output  = ColorManagementParams::NoICMString;
@@ -304,6 +325,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text()!=M("GENERAL_UNCHANGED");
+        pedited->icm.preferredProfile = prefprof->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.blendCMSMatrix = !ckbBlendCMSMatrix->get_inconsistent ();
         pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->icm.freegamma =!freegamma->get_inconsistent();
@@ -362,28 +384,33 @@ void ICMPanel::gpChanged () {
 		 }
 }
 
+void ICMPanel::prefProfChanged() {
+    if (listener)
+        listener->panelChanged (EvPrefProfile, prefprof->get_active_text ());
+}
+
 void ICMPanel::ipChanged () {
 
     std::string profname;
     if (inone->get_active()) {
         profname = "(none)";
-        ckbBlendCMSMatrix->set_sensitive(false);
+        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false);
     }
     else if (iembedded->get_active ()) {
         profname = "(embedded)";
-        ckbBlendCMSMatrix->set_sensitive(false);
+        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false);
     }
     else if (icamera->get_active ()) {
         profname = "(camera)";
-        ckbBlendCMSMatrix->set_sensitive(false);
+        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false);
     }
     else if (icameraICC->get_active ()) {
         profname = "(cameraICC)";
-        ckbBlendCMSMatrix->set_sensitive(true);
+        ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (false);
     }
     else {
         profname = ipDialog->get_filename ();
-        ckbBlendCMSMatrix->set_sensitive(true);
+        ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (true);
     }
     
     if (listener && profname!=oldip)
@@ -437,18 +464,18 @@ void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta) {
     icamera->set_active (raw);
     iembedded->set_active (!raw);
     icamera->set_sensitive (raw);
-    icameraICC->set_sensitive (raw && iccStore->getStdProfile(pMeta->getCamera()) != NULL);
+    icameraICC->set_sensitive (raw && (iccStore->getStdProfile(pMeta->getCamera()) != NULL || dcpStore->getStdProfile(pMeta->getCamera()) != NULL));
     iembedded->set_sensitive (!raw);  
 
     enableListener ();
 }
 
-void ICMPanel::ipSelectionChanged () {
+void ICMPanel::ipSelectionChanged() {
 
-    if (ipDialog->get_filename () == "")
-        return;
+	if (ipDialog->get_filename() == "")
+		return;
 
-        ipChanged ();
+	ipChanged();
 }
 
 void ICMPanel::saveReferencePressed () {
@@ -456,6 +483,7 @@ void ICMPanel::saveReferencePressed () {
     if (!icmplistener)
         return;
     Gtk::FileChooserDialog dialog(M("TP_ICM_SAVEREFERENCEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    FileChooserLastFolderPersister persister(&dialog, options.lastProfilingReferenceDir);
 
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);
@@ -482,6 +510,7 @@ void ICMPanel::setBatchMode (bool batchMode) {
     onames->append_text (M("GENERAL_UNCHANGED"));
     wnames->append_text (M("GENERAL_UNCHANGED"));
 	wgamma->append_text (M("GENERAL_UNCHANGED"));
+    prefprof->append_text (M("GENERAL_UNCHANGED"));
 	gampos->showEditedCB ();
 	slpos->showEditedCB ();
 

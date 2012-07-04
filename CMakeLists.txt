@@ -5,6 +5,8 @@ else (WIN32)
   cmake_minimum_required(VERSION 2.6)
 endif (WIN32)
 
+PROJECT(RawTherapee)
+
 # the default target is 'Debug'
 if (CMAKE_BUILD_TYPE STREQUAL "")
   set (CMAKE_BUILD_TYPE Debug CACHE STRING "One of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
@@ -64,68 +66,98 @@ if (APPLE)
     SET (CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
 endif (APPLE)
 
-option(USE_CLANG "Build rawtherapee with clang" OFF)
-option (AUTOMATED_BUILD_SYSTEM "TRUE if built by an automate" OFF)
-
+option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
 option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
-option (WITH_RAWZOR "Build with Rawzor support" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
+option (BUILD_BUNDLE "Self-contained build" OFF)
 
 # set install directories
-if (NOT DEFINED DATADIR)
-    if (WIN32 OR APPLE)
-        set (DATADIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
-    else (WIN32 OR APPLE)
-        set (DATADIR ${CMAKE_INSTALL_PREFIX}/share/rawtherapee)
-    endif (WIN32 OR APPLE)
-endif (NOT DEFINED DATADIR)
+if (WIN32 OR APPLE)
+    set (BUILD_BUNDLE ON FORCE)
+endif(WIN32 OR APPLE)
+
+if (NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
+    set (BUNDLE_BASE_INSTALL_DIR "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+endif (NOT DEFINED BUNDLE_BASE_INSTALL_DIR)
+
+if (BUILD_BUNDLE)
+    set (BINDIR .)
+    set (CMAKE_INSTALL_PREFIX "${BUNDLE_BASE_INSTALL_DIR}")
+endif (BUILD_BUNDLE)
 
 if (NOT DEFINED BINDIR)
-    if (WIN32 OR APPLE)
-        set (BINDIR  ${CMAKE_CURRENT_SOURCE_DIR}/release)
-    else (WIN32 OR APPLE)
-        set (BINDIR  ${CMAKE_INSTALL_PREFIX}/bin)
-    endif (WIN32 OR APPLE)
+    set (BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
 endif (NOT DEFINED BINDIR)
 
+if (NOT DEFINED DATADIR)
+    if (BUILD_BUNDLE)
+        set (DATADIR .)
+    else (BUILD_BUNDLE)
+        set (DATADIR "${CMAKE_INSTALL_PREFIX}/share/rawtherapee")
+    endif (BUILD_BUNDLE)
+endif (NOT DEFINED DATADIR)
+
 if (NOT DEFINED LIBDIR)
-    if (WIN32 OR APPLE)
-        set (LIBDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
-    else (WIN32 OR APPLE)
+    if (BUILD_BUNDLE)
+        set (LIBDIR .)
+    else (BUILD_BUNDLE)
         # Respect CMAKE_INSTALL_LIBDIR if set
         if (DEFINED CMAKE_INSTALL_LIBDIR)
-            set (LIBDIR ${CMAKE_INSTALL_LIBDIR})
+	    if (IS_ABSOLUTE "${LIBDIR}")
+            	set (LIBDIR "${CMAKE_INSTALL_LIBDIR}")
+	    else (IS_ABSOLUTE "${LIBDIR}")
+		set (LIBDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+	    endif (IS_ABSOLUTE "${LIBDIR}")
         else (DEFINED CMAKE_INSTALL_LIBDIR)
-            set (LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
+            set (LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
         endif (DEFINED CMAKE_INSTALL_LIBDIR)
-    endif (WIN32 OR APPLE)
+    endif (BUILD_BUNDLE)
 endif (NOT DEFINED LIBDIR)
 
 if (NOT DEFINED DOCDIR)
-    if (WIN32 OR APPLE)
-        set (DOCDIR ${CMAKE_CURRENT_SOURCE_DIR}/release/doc)
-    else (WIN32 OR APPLE)
-        set (DOCDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
-    endif (WIN32 OR APPLE)
+    if (BUILD_BUNDLE)
+        set (DOCDIR ./doc)
+    else (BUILD_BUNDLE)
+        set (DOCDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
+    endif (BUILD_BUNDLE)
 endif (NOT DEFINED DOCDIR)
 
 if (NOT DEFINED CREDITSDIR)
-    if (WIN32 OR APPLE)
-        set (CREDITSDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
-    else (WIN32 OR APPLE)
-        set (CREDITSDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
-    endif (WIN32 OR APPLE)
+    if (BUILD_BUNDLE)
+        set (CREDITSDIR .)
+    else (BUILD_BUNDLE)
+        set (CREDITSDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
+    endif (BUILD_BUNDLE)
 endif (NOT DEFINED CREDITSDIR)
 
 if (NOT DEFINED LICENCEDIR)
-    if (WIN32 OR APPLE)
-        set (LICENCEDIR ${CMAKE_CURRENT_SOURCE_DIR}/release)
-    else (WIN32 OR APPLE)
-        set (LICENCEDIR ${CMAKE_INSTALL_PREFIX}/share/doc)
-    endif (WIN32 OR APPLE)
+    if (BUILD_BUNDLE)
+        set (LICENCEDIR .)
+    else (BUILD_BUNDLE)
+        set (LICENCEDIR "${CMAKE_INSTALL_PREFIX}/share/doc/rawtherapee")
+    endif (BUILD_BUNDLE)
 endif (NOT DEFINED LICENCEDIR)
+
+if (NOT DEFINED DESKTOPDIR)
+    if (UNIX)
+        set (DESKTOPDIR "${CMAKE_INSTALL_PREFIX}/share/applications")
+    endif (UNIX)
+endif (NOT DEFINED DESKTOPDIR)
+
+if (NOT DEFINED ICONSDIR)
+    if (UNIX)
+        set (ICONSDIR "${CMAKE_INSTALL_PREFIX}/share/icons")
+    endif (UNIX)
+endif (NOT DEFINED ICONSDIR)
+
+# non-bundle builds has to use absolute paths
+if (NOT BUILD_BUNDLE AND
+    NOT (IS_ABSOLUTE "${BINDIR}" AND IS_ABSOLUTE "${DATADIR}" AND IS_ABSOLUTE "${LIBDIR}" AND
+    IS_ABSOLUTE "${DOCDIR}" AND IS_ABSOLUTE "${CREDITSDIR}" AND IS_ABSOLUTE "${LICENCEDIR}"))
+    message (FATAL_ERROR "The paths has to be absolute or use -DBUILD_BUNDLE=ON")
+endif ()
 
 # check for libraries
 find_package(PkgConfig)
@@ -150,6 +182,7 @@ if (WIN32)
 endif (WIN32)
 # you may need lcms v1.xx for older version : pkg_check_modules (LCMS REQUIRED lcms<=1.99)
 pkg_check_modules (LCMS REQUIRED lcms2)
+find_package (EXPAT REQUIRED expat>=2.0)
 pkg_check_modules (FFTW3F REQUIRED fftw3f)
 pkg_check_modules (IPTCDATA REQUIRED libiptcdata)
 pkg_check_modules(FFTW3 fftw3)
@@ -157,151 +190,6 @@ find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
-
-if (AUTOMATED_BUILD_SYSTEM)
-
-	message(WARNING "Automated build system mode! You have to make sure that AboutThisBuild.txt and rtgui/version.h are up-to-date by building RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF.")
-
-  # Checking for the presence of AboutThisBuild.txt
-  find_file(ABOUT_FILE AboutThisBuild.txt PATHS "${CMAKE_CURRENT_SOURCE_DIR}" NO_DEFAULT_PATH)
-  if (ABOUT_FILE STREQUAL ABOUT_FILE-NOTFOUND)
-	  message(FATAL_ERROR "AboutThisBuild.txt not found! You have to build RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF to generate this file.")
-  endif (ABOUT_FILE STREQUAL ABOUT_FILE-NOTFOUND)
-
-  # Checking for the presence of version.h
-  find_file(VERSION_FILE version.h PATHS "${CMAKE_CURRENT_SOURCE_DIR}/rtgui" NO_DEFAULT_PATH)
-  if (VERSION_FILE STREQUAL VERSION_FILE-NOTFOUND)
-	  message(FATAL_ERROR "rtgui/version.h not found! You have to build RT at least one time with AUTOMATED_BUILD_SYSTEM=OFF to generate this file.")
-  endif (VERSION_FILE STREQUAL VERSION_FILE-NOTFOUND)
-
-else (AUTOMATED_BUILD_SYSTEM)
-
-  # set the bit number information of the platform
-  if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(PROC_BIT_DEPTH 32 bits)
-  elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(PROC_BIT_DEPTH 64 bits)
-  endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-
-  #generating AboutThisBuild.txt
-  if (WIN32)
-
-    add_custom_target (AboutFile ALL
-      COMMAND ${CMAKE_COMMAND}
-              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
-              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-              -DSYSTEM:STRING=Windows
-              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
-              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
-              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
-              -DCXX_FLAGS:STRING=\"${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
-              -DLFLAGS:STRING=\"${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}\"
-              -DOPTION_OMP:STRING=${OPTION_OMP}
-              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Windows.cmake
-      COMMENT "Creating the about file"
-    )
-    find_file(HG_CMD hg.exe HINTS ENV Path PATH_SUFFIXES ../)
-
-  elseif (APPLE)
- 
-    add_custom_target (AboutFile ALL
-      COMMAND ${CMAKE_COMMAND}
-              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
-              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-              -DSYSTEM:STRING=Apple
-              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
-              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
-              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
-              -DCXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
-              -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
-              -DOPTION_OMP:STRING=${OPTION_OMP}
-              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Apple.cmake
-      COMMENT "Creating the about file"
-    )
-    find_file(HG_CMD hg PATHS "/opt/local/bin" "/usr/local/bin" "/usr/bin")
-    find_file(HG_CMD hg)
-
-  else (WIN32)
- 
-    add_custom_target (AboutFile ALL
-      COMMAND ${CMAKE_COMMAND}
-              -DSRC_DIR:STRING=${CMAKE_CURRENT_SOURCE_DIR}
-              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-              -DSYSTEM:STRING=Linux
-              -DPROC_LABEL:STRING=\"${PROC_LABEL}\"
-              -DPROC_BIT_DEPTH:STRING=\"${PROC_BIT_DEPTH}\"
-              -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
-              -DCXX_FLAGS:STRING=${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
-              -DLFLAGS:STRING=${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}
-              -DOPTION_OMP:STRING=${OPTION_OMP}
-              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
-              -DWITH_RAWZOR:STRING=${WITH_RAWZOR}
-              -P ${CMAKE_CURRENT_SOURCE_DIR}/About-Linux.cmake
-      COMMENT "Creating the about file"
-    )
-    find_file(HG_CMD hg)
-
-  endif (WIN32)
- 
-  add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
-
-  if (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-    message(FATAL_ERROR "hg command not found!")
-  else (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-    message(STATUS "hg command found: ${HG_CMD}")
-  endif (HG_CMD STREQUAL HG_CMD-NOTFOUND)
-
-endif (AUTOMATED_BUILD_SYSTEM)
-
-# link rawzor
-if (WITH_RAWZOR)
-    set (EXTRA_INCDIR ${EXTRA_INCDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor")
-    add_definitions (-DRAWZOR_SUPPORT)
-    if (WIN32)
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win32")
-            set (EXTRA_LIB ${EXTRA_LIB} "rwz_sdk.lib")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win32/rwz_sdk.dll DESTINATION ${BINDIR}
-                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win64")
-            set (EXTRA_LIB ${EXTRA_LIB} "rwz_sdk.lib")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/win64/rwz_sdk.dll DESTINATION ${BINDIR}
-                PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
-        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    elseif (APPLE)
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac32")
-            set (EXTRA_LIB "-lrwz_sdk")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac32/rwz_sdk.dylib DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac64")
-            set (EXTRA_LIB "-lrwz_sdk_64")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/mac64/rwz_sdk_64.dylib DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    else (WIN32)
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin32")
-            set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin32/librwz_sdk.so DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-        elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set (EXTRA_LIBDIR ${EXTRA_LIBDIR} "${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin64")
-            set (EXTRA_LIB ${EXTRA_LIB} "-lrwz_sdk")
-            install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/rawzor/lin64/librwz_sdk.so DESTINATION ${LIBDIR}
-                PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ RENAME rwz_sdk.so)
-        endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    endif (WIN32)
-endif (WITH_RAWZOR)
 
 # link witz bzip
 if (WITH_BZIP)
@@ -324,44 +212,106 @@ if (OPTION_OMP)
     endif (OPENMP_FOUND)
 endif (OPTION_OMP)
 
-if(USE_CLANG)
-    find_file(CLANG_CMD clang)
-    find_file(CLANGPP_CMD clang++)
+if(USE_EXPERIMENTAL_LANG_VERSIONS)
+	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu1x")
+	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
+endif (USE_EXPERIMENTAL_LANG_VERSIONS)
 
-    if ((CLANG_CMD STREQUAL CLANG_CMD-NOTFOUND) OR (CLANGPP_CMD STREQUAL CLANGPP_CMD-NOTFOUND))
-      message(FATAL_ERROR "clang not found! auto-disabling option USE_CLANG")
-    else ((CLANG_CMD STREQUAL CLANG_CMD-NOTFOUND) OR (CLANGPP_CMD STREQUAL CLANGPP_CMD-NOTFOUND))
-      message(STATUS "clang found: ${CLANG_CMD}")
-      message(STATUS "clang++ found: ${CLANGPP_CMD}")
+# find out whether we are building out of source
+get_filename_component(ABS_SOURCE_DIR "${PROJECT_SOURCE_DIR}" ABSOLUTE)
+get_filename_component(ABS_BINARY_DIR "${CMAKE_BINARY_DIR}" ABSOLUTE)
+set (OUT_OF_SOURCE_BUILD TRUE)
+if (ABS_SOURCE_DIR STREQUAL ABS_BINARY_DIR)
+    set (OUT_OF_SOURCE_BUILD FALSE)
+    message (WARNING "You are performing an in-source build. This is discouraged. Please refer e.g. to http://www.cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F for advantages of o    ut of source builds.")
+endif ()
 
-      SET (CMAKE_C_COMPILER             ${CLANG_CMD})
-      SET (CMAKE_C_FLAGS                "") #-Wall
-      SET (CMAKE_C_FLAGS_DEBUG          "-O0 -g")
-      SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-      SET (CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
-      SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
+# XXX remove files triggering the below check to prevent every developer from
+# needing manual manual work. We will remove this after some time to have a
+# clean build system without file modifications in the source tree again.
+set(OOSB_FILES "${PROJECT_SOURCE_DIR}/rtdata/rawtherapee.desktop" "${PROJECT_SOURCE_DIR}/rtgui/version.h" "${PROJECT_SOURCE_DIR}/rtgui/config.h" "${PROJECT_SOURCE_DIR}/AboutThisBuild.txt")
+if (OUT_OF_SOURCE_BUILD)
+    foreach(f ${OOSB_FILES})
+        file (REMOVE "${f}")
+    endforeach(f) 
+endif ()
 
-      SET (CMAKE_CXX_COMPILER             ${CLANGPP_CMD})
-      SET (CMAKE_CXX_FLAGS                "") #-Wall
-      SET (CMAKE_CXX_FLAGS_DEBUG          "-O0 -g")
-      SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-      SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
-      SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-    endif ((CLANG_CMD STREQUAL CLANG_CMD-NOTFOUND) OR (CLANGPP_CMD STREQUAL CLANGPP_CMD-NOTFOUND))
+# check for generated files in the source tree which should not be there when
+# doing out of source builds. Without checking for this it might happen that old
+# versions are used for the compilation
+if (OUT_OF_SOURCE_BUILD)
+    foreach(f ${OOSB_FILES})
+        if (EXISTS "${f}")
+            message (SEND_ERROR "Generated \"${f}\" found inside the source tree. Please remove it as it is a relic of the old build system and prevents valid compilation now.")
+	endif ()
+    endforeach(f) 
+endif ()
 
-    find_file(LDGOLD_CMD ld.gold)
-    if (LDGOLD_CMD STREQUAL LDGOLD_CMD-NOTFOUND)
-      message(FATAL_ERROR "ld.gold not found! using standard linker")
-    else (LDGOLD_CMD STREQUAL LDGOLD_CMD-NOTFOUND)
-      message(STATUS "ld.gold found: ${LDGOLD_CMD}")
-    SET (CMAKE_LINKER  LDGOLD_CMD)
-    endif (LDGOLD_CMD STREQUAL LDGOLD_CMD-NOTFOUND)
-endif(USE_CLANG)
+## BEGIN: Generating AboutThisBuild.txt
+# set the bit number information of the platform
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+  set(PROC_BIT_DEPTH 32 bits)
+elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(PROC_BIT_DEPTH 64 bits)
+endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
-install (FILES AUTHORS.txt DESTINATION ${CREDITSDIR})
-install (FILES LICENSE.txt DESTINATION ${LICENCEDIR})
-install (FILES AboutThisBuild.txt DESTINATION ${CREDITSDIR})
-install (FILES RELEASE_NOTES.txt DESTINATION ${CREDITSDIR} OPTIONAL)
+# Get comiler name and version
+# only cmake > 2.8.7 knows CMAKE_*_COMPILER_VERSION
+if (CMAKE_VERSION VERSION_GREATER 2.8.7)
+  get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
+  set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
+else ()
+  execute_process(COMMAND gcc -dumpversion OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+  set(COMPILER_INFO "gcc ${GCC_VERSION}")
+endif ()
+
+# Get c++ and linker flags
+set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
+set(LFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
+
+set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
+							-DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
+                            -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
+                            -DPROC_LABEL:STRING="${PROC_LABEL}"
+                            -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
+                            -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+                            -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+                            -DOPTION_OMP:STRING=${OPTION_OMP}
+                            -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP})
+
+if (WIN32)
+  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Windows
+                                      -DCXX_FLAGS:STRING="${CXX_FLAGS}"
+                                      -DLFLAGS:STRING="${LFLAGS}"
+                                      -DCOMPILER_INFO:STRING="${COMPILER_INFO}")
+elseif (APPLE)
+  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Apple
+                                      -DCXX_FLAGS:STRING=${CXX_FLAGS}
+                                      -DLFLAGS:STRING=${LFLAGS}
+                                      -DCOMPILER_INFO:STRING=${COMPILER_INFO})
+else (WIN32)
+  list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
+                                      -DCXX_FLAGS:STRING=${CXX_FLAGS}
+                                      -DLFLAGS:STRING=${LFLAGS}
+                                      -DCOMPILER_INFO:STRING=${COMPILER_INFO})
+endif (WIN32)
+
+list(APPEND ABOUT_COMMAND_WITH_ARGS -P "${PROJECT_SOURCE_DIR}/AboutThisBuild.cmake")
+
+add_custom_target(AboutFile ALL
+    COMMAND ${ABOUT_COMMAND_WITH_ARGS}
+    COMMENT "Creating the about file")
+
+add_dependencies(AboutFile Debug Release MinSizeRel RelWithDebInfo)
+## END: Generating AboutThisBuild.txt
+
+install (FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
+install (FILES LICENSE.txt DESTINATION "${LICENCEDIR}")
+install (FILES "${CMAKE_BINARY_DIR}/AboutThisBuild.txt" DESTINATION "${CREDITSDIR}")
+install (FILES RELEASE_NOTES.txt DESTINATION "${CREDITSDIR}" OPTIONAL)
+if (UNIX)
+  install (FILES "${PROJECT_SOURCE_DIR}/doc/manpage/rawtherapee.1" DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man1")
+endif (UNIX)
 
 add_subdirectory (rtexif)
 add_subdirectory (rtengine)

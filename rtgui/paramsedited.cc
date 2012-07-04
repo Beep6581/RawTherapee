@@ -52,6 +52,7 @@ void ParamsEdited::set (bool v) {
 	labCurve.avoidclip   = v;
 	labCurve.enable_saturationlimiter = v;
 	labCurve.saturationlimit      = v;
+	labCurve.bwtoning    =v;
 	rgbCurves.rcurve      = v;
 	rgbCurves.gcurve      = v;
 	rgbCurves.bcurve      = v;
@@ -135,8 +136,11 @@ void ParamsEdited::set (bool v) {
 	coarse.vflip = v;
 	commonTrans.autofill = v;
 	rotate.degree = v;
-	distortion.uselensfun = v;
 	distortion.amount = v;
+    lensProf.lcpFile = v;
+    lensProf.useDist = v;
+    lensProf.useVign = v;
+    lensProf.useCA = v;
 	perspective.horizontal = v;
 	perspective.vertical = v;
 	cacorrection.red = v;
@@ -166,6 +170,7 @@ void ParamsEdited::set (bool v) {
 	resize.enabled   = v;
 	icm.input        = v;
     icm.blendCMSMatrix = v;
+    icm.preferredProfile = v;
 	icm.working      = v;
 	icm.output       = v;
 	icm.gamma		= v;
@@ -219,7 +224,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         return;
 
     const ProcParams& p = src[0];
-    for (int i=1; i<src.size(); i++) {
+    for (size_t i=1; i<src.size(); i++) {
         const ProcParams& other = src[i];
         toneCurve.curve = toneCurve.curve && p.toneCurve.curve == other.toneCurve.curve;
         toneCurve.brightness = toneCurve.brightness && p.toneCurve.brightness == other.toneCurve.brightness;
@@ -241,6 +246,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.avoidclip = labCurve.avoidclip && p.labCurve.avoidclip == other.labCurve.avoidclip;
         labCurve.enable_saturationlimiter = labCurve.enable_saturationlimiter && p.labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter;
         labCurve.saturationlimit = labCurve.saturationlimit && p.labCurve.saturationlimit == other.labCurve.saturationlimit;
+        labCurve.bwtoning = labCurve.bwtoning && p.labCurve.bwtoning == other.labCurve.bwtoning;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
         rgbCurves.gcurve = rgbCurves.gcurve && p.rgbCurves.gcurve == other.rgbCurves.gcurve;
         rgbCurves.bcurve = rgbCurves.bcurve && p.rgbCurves.bcurve == other.rgbCurves.bcurve;
@@ -328,8 +334,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
         commonTrans.autofill = commonTrans.autofill && p.commonTrans.autofill == other.commonTrans.autofill;
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
-        distortion.uselensfun = distortion.uselensfun && p.distortion.uselensfun == other.distortion.uselensfun;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
+        lensProf.lcpFile = lensProf.lcpFile && p.lensProf.lcpFile == other.lensProf.lcpFile;
+        lensProf.useDist = lensProf.useDist && p.lensProf.useDist == other.lensProf.useDist;
+        lensProf.useVign = lensProf.useVign && p.lensProf.useVign == other.lensProf.useVign;
+        lensProf.useCA = lensProf.useCA && p.lensProf.useCA == other.lensProf.useCA;
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
         cacorrection.red = cacorrection.red && p.cacorrection.red == other.cacorrection.red;
@@ -359,6 +368,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         icm.input = icm.input && p.icm.input == other.icm.input;
         icm.blendCMSMatrix = icm.blendCMSMatrix && p.icm.blendCMSMatrix == other.icm.blendCMSMatrix;
+        icm.preferredProfile = icm.preferredProfile && p.icm.preferredProfile == other.icm.preferredProfile;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
         icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
@@ -429,6 +439,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.avoidclip)					toEdit.labCurve.avoidclip 	= mods.labCurve.avoidclip;
 	if (labCurve.enable_saturationlimiter)	toEdit.labCurve.enable_saturationlimiter 	= mods.labCurve.enable_saturationlimiter;
 	if (labCurve.saturationlimit)			toEdit.labCurve.saturationlimit 	= mods.labCurve.saturationlimit;	
+	if (labCurve.bwtoning)					toEdit.labCurve.bwtoning 	= mods.labCurve.bwtoning;
 
 	if (rgbCurves.rcurve)		            toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
 	if (rgbCurves.gcurve)		            toEdit.rgbCurves.gcurve     = mods.rgbCurves.gcurve;
@@ -445,7 +456,15 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (sharpening.enabled)					toEdit.sharpening.enabled 	= mods.sharpening.enabled;
 	if (sharpening.radius)					toEdit.sharpening.radius 	= mods.sharpening.radius;
 	if (sharpening.amount)					toEdit.sharpening.amount 	= dontforceSet && options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.amount + mods.sharpening.amount : mods.sharpening.amount;
-	if (sharpening.threshold)				toEdit.sharpening.threshold 	= mods.sharpening.threshold;
+	if (sharpening.threshold)				toEdit.sharpening.threshold = mods.sharpening.threshold;
+
+	for (int i=0; i<3; i++) {
+		if (chmixer.red[i])		toEdit.chmixer.red[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.red[i] + mods.chmixer.red[i] : mods.chmixer.red[i];
+		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
+		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
+	}
+
+
 	if (sharpening.edgesonly)				toEdit.sharpening.edgesonly 	= mods.sharpening.edgesonly;
 	if (sharpening.edges_radius)			toEdit.sharpening.edges_radius 	= mods.sharpening.edges_radius;
 	if (sharpening.edges_tolerance)			toEdit.sharpening.edges_tolerance	 = mods.sharpening.edges_tolerance;
@@ -459,7 +478,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (vibrance.enabled)					toEdit.vibrance.enabled			= mods.vibrance.enabled;
 	if (vibrance.pastels)					toEdit.vibrance.pastels			= dontforceSet && options.baBehav[ADDSET_VIBRANCE_PASTELS] ? toEdit.vibrance.pastels + mods.vibrance.pastels : mods.vibrance.pastels;
 	if (vibrance.saturated)					toEdit.vibrance.saturated		= dontforceSet && options.baBehav[ADDSET_VIBRANCE_SATURATED] ? toEdit.vibrance.saturated + mods.vibrance.saturated : mods.vibrance.saturated;
-	if (vibrance.psthreshold)				toEdit.vibrance.psthreshold		= dontforceSet && options.baBehav[ADDSET_VIBRANCE_PSTHRESHOLD] ? toEdit.vibrance.psthreshold + mods.vibrance.psthreshold : mods.vibrance.psthreshold;
+	if (vibrance.psthreshold)				toEdit.vibrance.psthreshold		= mods.vibrance.psthreshold;
 	if (vibrance.protectskins)				toEdit.vibrance.protectskins	= mods.vibrance.protectskins;
 	if (vibrance.avoidcolorshift)			toEdit.vibrance.avoidcolorshift	= mods.vibrance.avoidcolorshift;
 	if (vibrance.pastsattog)				toEdit.vibrance.pastsattog	    = mods.vibrance.pastsattog;
@@ -515,13 +534,17 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (crop.ratio)		    				toEdit.crop.ratio 	    = mods.crop.ratio;
 	if (crop.orientation)					toEdit.crop.orientation = mods.crop.orientation;
 	if (crop.guide)		    				toEdit.crop.guide 	    = mods.crop.guide;
-	if (coarse.rotate)						toEdit.coarse.rotate 	= (toEdit.coarse.rotate + mods.coarse.rotate) % 360;
-	if (coarse.hflip)						toEdit.coarse.hflip 	= mods.coarse.hflip ? !toEdit.coarse.hflip : toEdit.coarse.hflip;
-	if (coarse.vflip)						toEdit.coarse.vflip 	= mods.coarse.vflip ? !toEdit.coarse.vflip : toEdit.coarse.vflip;
+	if (coarse.rotate)						toEdit.coarse.rotate 	= mods.coarse.rotate;
+	if (coarse.hflip)						toEdit.coarse.hflip 	= mods.coarse.hflip;
+	if (coarse.vflip)						toEdit.coarse.vflip 	= mods.coarse.vflip;
 	if (commonTrans.autofill)				toEdit.commonTrans.autofill		= mods.commonTrans.autofill;
 	if (rotate.degree)						toEdit.rotate.degree 			= dontforceSet && options.baBehav[ADDSET_ROTATE_DEGREE] ? toEdit.rotate.degree + mods.rotate.degree : mods.rotate.degree;
-	if (distortion.uselensfun)				toEdit.distortion.uselensfun	= mods.distortion.uselensfun;
 	if (distortion.amount)					toEdit.distortion.amount 		= dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
+	if (lensProf.lcpFile)                   toEdit.lensProf.lcpFile         = mods.lensProf.lcpFile;
+    if (lensProf.useDist)                   toEdit.lensProf.useDist         = mods.lensProf.useDist;
+    if (lensProf.useVign)                   toEdit.lensProf.useVign         = mods.lensProf.useVign;
+    if (lensProf.useCA)                     toEdit.lensProf.useCA           = mods.lensProf.useCA;
+
 	if (perspective.horizontal)				toEdit.perspective.horizontal 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
 	if (perspective.vertical)				toEdit.perspective.vertical 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vertical + mods.perspective.vertical : mods.perspective.vertical;
 	if (cacorrection.red)					toEdit.cacorrection.red 	= dontforceSet && options.baBehav[ADDSET_CA] ? toEdit.cacorrection.red + mods.cacorrection.red : mods.cacorrection.red;
@@ -547,6 +570,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (resize.enabled)	    toEdit.resize.enabled 	= mods.resize.enabled;
 	if (icm.input)		    toEdit.icm.input 	    = mods.icm.input;
     if (icm.blendCMSMatrix)	toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
+    if (icm.preferredProfile) toEdit.icm.preferredProfile = mods.icm.preferredProfile;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output       = mods.icm.output;
 	//if (icm.gampos)		    toEdit.icm.gampos       = mods.icm.gampos;
@@ -609,4 +633,8 @@ bool RAWParamsEdited::isUnchanged() const {
     return ccSteps && dmethod && dcbIterations && dcbEnhance && allEnhance && caCorrection && caRed && caBlue && greenEq
         && hotDeadPixelFilter && hotDeadPixelThresh && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
 	    && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
+}
+
+bool LensProfParamsEdited::isUnchanged() const {
+    return lcpFile;
 }

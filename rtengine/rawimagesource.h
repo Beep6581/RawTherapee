@@ -21,6 +21,7 @@
 
 #include "imagesource.h"
 #include <lcms2.h>
+#include "dcp.h"
 #include "array2D.h"
 #include "curves.h"
 #include <fftw3.h>
@@ -62,7 +63,7 @@ class RawImageSource : public ImageSource {
     private:
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
-        static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, cmsHPROFILE& in);
+        static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
 
     protected:
         Glib::Mutex getImageMutex;  // locks getImage
@@ -78,13 +79,17 @@ class RawImageSource : public ImageSource {
         double camwb_red;
         double camwb_green;
         double camwb_blue;
+        double rgb_cam[3][3];
+        double cam_rgb[3][3];
+        double xyz_cam[3][3];
+        double cam_xyz[3][3];
         bool fuji;
         bool d1x;
         int border;
         //char** hpmap;
         float** hrmap[3];   // for color propagation
         char** needhr;      // for color propagation
-        int max[3];
+        int max_3[3];
         float chmax[4],hlmax[4];
         double initialGain; // initial gain calculated after scale_colors
         double defGain;
@@ -124,18 +129,20 @@ class RawImageSource : public ImageSource {
         void HLRecovery_ColorPropagation (float* red, float* green, float* blue, int i, int sx1, int width, int skip);
         unsigned FC(int row, int col){ return ri->FC(row,col); }
         inline void getRowStartEnd (int x, int &start, int &end);
+        static void getProfilePreprocParams(cmsHPROFILE in, float& gammafac, float& lineFac, float& lineSum);
+
 
     public:
         RawImageSource ();
         ~RawImageSource ();
 
         int         load        (Glib::ustring fname, bool batch = false);
-        void        preprocess  (const RAWParams &raw);
+        void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse);
         void        demosaic    (const RAWParams &raw);
         void        flushRawData      ();
         void        flushRGB          ();
-        void        HLRecovery_Global  (HRecParams hrp);
-        void        refinement_lassus ();
+        void        HLRecovery_Global (HRecParams hrp);
+        //void        refinement_lassus ();
 
         bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
 
@@ -147,7 +154,7 @@ class RawImageSource : public ImageSource {
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
-		bool        isWBProviderReady () { return rawData != NULL; };
+        bool        isWBProviderReady () { return rawData != NULL; };
 
         double      getDefGain  () { return defGain; }
 
@@ -155,6 +162,7 @@ class RawImageSource : public ImageSource {
        
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
+        int         getRotateDegree() const { return ri->get_rotateDegree(); }
 
         ImageData*     getImageData () { return idata; }
         ImageMatrices* getImageMatrices () { return &imatrices; }
@@ -165,7 +173,7 @@ class RawImageSource : public ImageSource {
         void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp);
         static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
-        static void inverse33 (double (*coeff)[3], double (*icoeff)[3]);
+        static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 
         void boxblur2(float** src, float** dst, int H, int W, int box );
         void boxblur_resamp(float **src, float **dst, float & max, int H, int W, int box, int samp );
@@ -234,5 +242,5 @@ class RawImageSource : public ImageSource {
         void    vflip       (Imagefloat* im);
 
 };
-};
+}
 #endif

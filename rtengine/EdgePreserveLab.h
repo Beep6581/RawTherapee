@@ -47,7 +47,6 @@ Written by ben_pcc in Portland, Oregon, USA; code modified by Emil Martinec.
 #include <string.h>
 #include "EdgePreservingDecomposition.h"
 
-
 class EdgePreserveLab{
 public:
 	EdgePreserveLab(unsigned int width, unsigned int height);

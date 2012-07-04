@@ -28,12 +28,33 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia) {
     iB  = new RTImage ("previewmodeB-on.png");
     iL  = new RTImage ("previewmodeL-on.png");
     iF  = new RTImage ("previewmodeF-on.png");
-    
+    iBC0= new RTImage ("previewmodeBC0-on.png");
+    iBC1= new RTImage ("previewmodeBC1-on.png");
+    iBC2= new RTImage ("previewmodeBC2-on.png");
+
     igR = new RTImage ("previewmodeR-off.png");
     igG = new RTImage ("previewmodeG-off.png");
     igB = new RTImage ("previewmodeB-off.png");
     igL = new RTImage ("previewmodeL-off.png");
     igF = new RTImage ("previewmodeF-off.png");
+    igBC0= new RTImage ("previewmodeBC0-off.png");
+    igBC1= new RTImage ("previewmodeBC1-off.png");
+    igBC2= new RTImage ("previewmodeBC2-off.png");
+
+    backColor0 = Gtk::manage (new Gtk::ToggleButton ());
+    backColor0->set_relief(Gtk::RELIEF_NONE);
+    backColor0->set_tooltip_markup (M("MAIN_TOOLTIP_BACKCOLOR0"));
+    backColor0->set_image(options.bgcolor==0?*iBC0:*igBC0);
+
+    backColor1 = Gtk::manage (new Gtk::ToggleButton ());
+    backColor1->set_relief(Gtk::RELIEF_NONE);
+    backColor1->set_tooltip_markup (M("MAIN_TOOLTIP_BACKCOLOR1"));
+    backColor1->set_image(options.bgcolor==1?*iBC1:*igBC1);
+
+    backColor2 = Gtk::manage (new Gtk::ToggleButton ());
+    backColor2->set_relief(Gtk::RELIEF_NONE);
+    backColor2->set_tooltip_markup (M("MAIN_TOOLTIP_BACKCOLOR2"));
+    backColor2->set_image(options.bgcolor==2?*iBC2:*igBC2);
 
     previewR = Gtk::manage (new Gtk::ToggleButton ());
     previewR->set_relief(Gtk::RELIEF_NONE);
@@ -66,6 +87,17 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia) {
     previewL->set_active (false);
     previewFocusMask->set_active (false);
 
+    backColor0->set_active (options.bgcolor==0?true:false);
+    backColor1->set_active (options.bgcolor==1?true:false);
+    backColor2->set_active (options.bgcolor==2?true:false);
+
+    vbbackColor = Gtk::manage (new Gtk::VBox ());
+    vbbackColor->set_border_width (0);
+    vbbackColor->pack_start (*backColor0, Gtk::PACK_SHRINK, 0);
+    vbbackColor->pack_start (*backColor1, Gtk::PACK_SHRINK, 0);
+    vbbackColor->pack_start (*backColor2, Gtk::PACK_SHRINK, 0);
+    pack_start (*vbbackColor, Gtk::PACK_SHRINK, 0);
+
     pack_start (*previewR, Gtk::PACK_SHRINK, 0);
     pack_start (*previewG, Gtk::PACK_SHRINK, 0);
     pack_start (*previewB, Gtk::PACK_SHRINK, 0);
@@ -78,6 +110,10 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia) {
     connL = previewL->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &PreviewModePanel::buttonToggled),previewL) );
     connFocusMask = previewFocusMask->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &PreviewModePanel::buttonToggled),previewFocusMask) );
 
+    connbackColor0 = backColor0->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &PreviewModePanel::buttonToggled_backColor),backColor0) );
+    connbackColor1 = backColor1->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &PreviewModePanel::buttonToggled_backColor),backColor1) );
+    connbackColor2 = backColor2->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &PreviewModePanel::buttonToggled_backColor),backColor2) );
+
 	//show_all ();
 }
 
@@ -87,13 +123,19 @@ PreviewModePanel::~PreviewModePanel (){
 	delete iB;
 	delete iL;
 	delete iF;
+	delete iBC0;
+	delete iBC1;
+	delete iBC2;
 	delete igR;
 	delete igG;
 	delete igB;
 	delete igL;
 	delete igF;
+	delete igBC0;
+	delete igBC1;
+	delete igBC2;
 }
-//TODO: use functions below for shortcuts
+//toggle Functions below are for shortcuts
 void PreviewModePanel::toggleR () {
     previewR->set_active(!previewR->get_active());
 }
@@ -108,6 +150,16 @@ void PreviewModePanel::toggleL () {
 }
 void PreviewModePanel::toggleFocusMask () {
     previewFocusMask->set_active(!previewFocusMask->get_active());
+}
+
+void PreviewModePanel::togglebackColor0 () {
+	backColor0->set_active(!backColor0->get_active());
+}
+void PreviewModePanel::togglebackColor1 () {
+	backColor1->set_active(!backColor1->get_active());
+}
+void PreviewModePanel::togglebackColor2 () {
+	backColor2->set_active(!backColor2->get_active());
 }
 
 void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview) {
@@ -139,6 +191,49 @@ void PreviewModePanel::buttonToggled (Gtk::ToggleButton* tbpreview) {
 	connL.block(false);
 	connFocusMask.block(false);
 
+	imageArea->queue_draw ();
+
+	// this will redraw the linked Before image area
+	// which is set when before/after view is enabled
+	if (imageArea->iLinkedImageArea!=NULL)
+		imageArea->iLinkedImageArea->queue_draw ();
+}
+
+int PreviewModePanel::GetbackColor(){
+	int backColor;
+	if (backColor0->get_active ()) backColor=0;
+	if (backColor1->get_active ()) backColor=1;
+	if (backColor2->get_active ()) backColor=2;
+
+	return backColor;
+}
+
+void PreviewModePanel::buttonToggled_backColor (Gtk::ToggleButton* tbbackColor) {
+
+	connbackColor0.block(true);
+	connbackColor1.block(true);
+	connbackColor2.block(true);
+
+	// control the state of the buttons
+	// Exactly 1 button at a time must remain pressed
+	if (tbbackColor==backColor0 && !backColor0->get_active()) backColor0->set_active(true);
+	if (tbbackColor==backColor1 && !backColor1->get_active()) backColor1->set_active(true);
+	if (tbbackColor==backColor2 && !backColor2->get_active()) backColor2->set_active(true);
+
+	if (tbbackColor!=backColor0) backColor0->set_active(false);
+	if (tbbackColor!=backColor1) backColor1->set_active(false);
+	if (tbbackColor!=backColor2) backColor2->set_active(false);
+
+	// set image based on button's state
+	backColor0->set_image(backColor0->get_active()?*iBC0:*igBC0);
+	backColor1->set_image(backColor1->get_active()?*iBC1:*igBC1);
+	backColor2->set_image(backColor2->get_active()?*iBC2:*igBC2);
+
+	connbackColor0.block(false);
+	connbackColor1.block(false);
+	connbackColor2.block(false);
+
+	//TODO not sure if queue_draw is necessary, but will need to reach to backColor of the Before view
 	imageArea->queue_draw ();
 
 	// this will redraw the linked Before image area

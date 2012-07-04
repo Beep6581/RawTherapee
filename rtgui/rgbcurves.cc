@@ -24,7 +24,7 @@ using namespace rtengine::procparams;
 
 RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
 
-	curveEditorG = new CurveEditorGroup (M("TP_RGBCURVES_CHANNEL"));
+	curveEditorG = new CurveEditorGroup (options.lastRgbCurvesDir, M("TP_RGBCURVES_CHANNEL"));
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 

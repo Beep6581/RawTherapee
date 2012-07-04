@@ -7,7 +7,7 @@
 #include "rawimage.h"
 #include "settings.h"
 #include "colortemp.h"
-#include "../rtengine/utils.h"
+#include "utils.h"
 #ifdef WIN32
 #include <winsock2.h>
 #else
@@ -42,13 +42,13 @@ RawImage::~RawImage()
 /* Similar to dcraw scale_colors for coeff. calculation, but without actual pixels scaling.
  * need pixels in data[][] available
  */
-int RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_)
+void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_)
 
 {
 	unsigned  row, col, x, y, c, sum[8];
 	unsigned  W = this->get_width();
 	unsigned  H = this->get_height();
-	int val, dark, sat;
+	int val, sat;
 	double dsum[8], dmin, dmax;
 
 	for (int c = 0; c < 4; c++){
@@ -106,19 +106,18 @@ skip_block: ;
 	}
 	if (pre_mul_[3] == 0)
 		pre_mul_[3] = this->get_colors() < 4 ? pre_mul_[1] : 1;
-	dark = this->get_black();
-	sat = this->get_white();
-	sat -= this->get_black();
 	for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
 		if (dmin > pre_mul_[c])
 			dmin = pre_mul_[c];
 		if (dmax < pre_mul_[c])
 			dmax = pre_mul_[c];
 	}
+
+	sat = this->get_white() - this->get_black();
 	for (c = 0; c < 4; c++)
 		scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
 	if (settings->verbose) {
-		fprintf(stderr,"Scaling with darkness %d, saturation %d, and\nmultipliers", dark, sat);
+		fprintf(stderr,"Scaling with saturation %d, and\nmultipliers", sat);
 		for (c = 0; c < 4; c++)
 			fprintf(stderr, " %f", pre_mul[c]);
 		fputc('\n', stderr);
@@ -141,6 +140,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
   use_camera_wb = 0;
   highlight = 1;
   half_size = 0;
+  raw_image = 0;
 
   //***************** Read ALL raw file info
   identify ();
@@ -156,6 +156,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
      this->rotate_deg = 180;
   else if (flip==6)
      this->rotate_deg = 90;
+  else if (flip % 90 == 0 && flip < 360)
+     this->rotate_deg = flip;
   else
      this->rotate_deg = 0;
 
@@ -167,6 +169,11 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  iheight = height;
 	  iwidth  = width;
 
+      if (filters || colors == 1) {
+        raw_image = (ushort *) calloc ((raw_height+7)*raw_width, 2);
+        merror (raw_image, "main()");
+      }
+
 	  // dcraw needs this global variable to hold pixel data
 	  image = (dcrawImage_t)calloc (height*width*sizeof *image + meta_length, 1);
 	  meta_data = (char *) (image + height*width);
@@ -175,6 +182,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 
 	  if (setjmp (failure)) {
           if (image) { free (image); image=NULL; }
+          if (raw_image) { free(raw_image); raw_image=NULL; }
 		  fclose(ifp); ifp=NULL;
 		  return 100;
 	  }
@@ -182,6 +190,12 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  // Load raw pixels data
 	  fseek (ifp, data_offset, SEEK_SET);
 	  (this->*load_raw)();
+
+      if (raw_image) {
+        crop_masked_pixels();
+        free (raw_image);
+        raw_image=NULL;
+      }
 
 	  // Load embedded profile
 	  if (profile_length) {
@@ -191,13 +205,15 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  }
 
 	  // Setting the black and cblack
-	  int i = cblack[3];
-	  for (int c=0; c <3; c++)
-		  if (i > cblack[c])
-			  i = cblack[c];
-	  for (int c=0; c < 4; c++)
-		  cblack[c] -= i;
-	  black += i;
+	  unsigned int minBlack = cblack[3];
+	  for (int c=0; c < 3; c++)
+		  if (minBlack > cblack[c]) minBlack = cblack[c];
+	  for (int c=0; c < 4; c++) cblack[c] -= minBlack;
+
+	  black += minBlack;
+      for (int c=0; c < 4; c++) cblack[c] += black;
+      calcBlack=black;  // safe for compatibility with darkframe substraction
+      black=0;  // since black is already reflected in cblack now, set it to zero
   }
 
   if ( closeFile ) {
@@ -262,4 +278,4 @@ RawImage::get_thumbSwap() const
     return ((order == 0x4949) == (ntohs(0x1234) == 0x1234)) ? true : false; 
 }
 
-}; //namespace rtengine
+} //namespace rtengine

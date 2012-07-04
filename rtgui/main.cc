@@ -34,6 +34,7 @@
 #include "soundman.h"
 #include "rtimage.h"
 #include "version.h"
+#include "extprog.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -106,7 +107,7 @@ int main(int argc, char **argv)
    Gio::init ();
 
    Options::load ();
-
+   extProgStore->init();
    SoundManager::init();
 
    if (argc>1){
@@ -158,7 +159,20 @@ int main(int argc, char **argv)
 
    RTWindow *rtWindow = new class RTWindow();
    gdk_threads_enter ();
+
+   // alerting users if the default raw and image profiles are missing
+   if (options.is_defProfRawMissing()) {
+       Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+       msgd.run ();
+   }
+   if (options.is_defProfImgMissing()) {
+       Gtk::MessageDialog msgd (Glib::ustring::compose(M("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+       msgd.run ();
+   }
+
+   // opening the main window
    m.run(*rtWindow);
+
    gdk_threads_leave ();
    delete rtWindow;
    rtengine::cleanup();
@@ -325,7 +339,7 @@ int processLineParams( int argc, char **argv )
 			}
 			else {
 				options.saveUsePathTemplate = true;
-				if (!options.savePathTemplate.length())
+				if (options.savePathTemplate.empty())
 					// If the save path template is empty, we use its default value
 					options.savePathTemplate = "%p1/converted/%f";
 			}
@@ -347,16 +361,18 @@ int processLineParams( int argc, char **argv )
 
 	if (useDefault) {
 		rawParams = new rtengine::procparams::PartialProfile(true);
-		if (rawParams->load(options.profilePath+"/" + options.defProfRaw + paramFileExtension)) {
-			std::cerr << "Error: default Raw procparams file \""<< (options.profilePath+"/" + options.defProfRaw + paramFileExtension) << "\" not found" << std::endl;
+		Glib::ustring profPath = options.findProfilePath(options.defProfRaw);
+		if (options.is_defProfRawMissing() || profPath.empty() || rawParams->load(Glib::build_filename(profPath, options.defProfRaw + paramFileExtension))) {
+			std::cerr << "Error: default Raw procparams file not found" << std::endl;
 			rawParams->deleteInstance();
 			delete rawParams;
 			deleteProcParams(processingParams);
 			return -3;
 		}
 		imgParams = new rtengine::procparams::PartialProfile(true);
-		if (imgParams->load(options.profilePath+"/" + options.defProfImg + paramFileExtension)) {
-			std::cerr << "Error: default Image procparams file \""<< (options.profilePath+"/" + options.defProfImg + paramFileExtension) << "\" not found" << std::endl;
+		profPath = options.findProfilePath(options.defProfImg);
+		if (options.is_defProfImgMissing() || profPath.empty() || imgParams->load(Glib::build_filename(profPath, options.defProfImg + paramFileExtension))) {
+			std::cerr << "Error: default Image procparams file not found" << std::endl;
 			imgParams->deleteInstance();
 			delete imgParams;
 			rawParams->deleteInstance();

@@ -17,21 +17,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <glib/gstdio.h>
+#include <iostream>
+#include <iomanip>
+#include "../rtengine/rt_math.h"
+
 #include "filecatalog.h"
 #include "filepanel.h"
 #include "options.h"
 #include "cachemanager.h"
 #include "multilangmgr.h"
 #include "guiutils.h"
-#include <glib/gstdio.h>
-#include <iostream>
-#include <iomanip>
 #include "renamedlg.h"
 #include "thumbimageupdater.h"
 #include "../rtengine/safegtk.h"
 #include "batchqueue.h"
 #include "rtimage.h"
 
+using namespace std;
 
 #define CHECKTIME 2000
 
@@ -143,7 +146,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bFilterClear->set_relief (Gtk::RELIEF_NONE);
     bFilterClear->set_tooltip_markup (M("FILEBROWSER_SHOWDIRHINT"));
     bFilterClear->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
-    bCateg[0] = bFilterClear->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bFilterClear));
+    bCateg[0] = bFilterClear->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bFilterClear, true));
     buttonBar->pack_start (*bFilterClear, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
@@ -158,7 +161,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bUnRanked->set_image (*igUnRanked);
     bUnRanked->set_relief (Gtk::RELIEF_NONE);
     bUnRanked->set_tooltip_markup (M("FILEBROWSER_SHOWUNRANKHINT"));
-    bCateg[1] = bUnRanked->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bUnRanked));    
+    bCateg[1] = bUnRanked->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bUnRanked, true));
     fltrRankbox->pack_start (*bUnRanked, Gtk::PACK_SHRINK);
     bUnRanked->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
 
@@ -171,7 +174,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
         bRank[i]->set_image (*igranked[i]);
         bRank[i]->set_relief (Gtk::RELIEF_NONE);
         fltrRankbox->pack_start (*bRank[i], Gtk::PACK_SHRINK);
-        bCateg[i+2] = bRank[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bRank[i]));    
+        bCateg[i+2] = bRank[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bRank[i], true));    
         bRank[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     }  
 
@@ -182,7 +185,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bUnCLabeled->set_image (*igUnCLabeled);
     bUnCLabeled->set_relief (Gtk::RELIEF_NONE);
     bUnCLabeled->set_tooltip_markup (M("FILEBROWSER_SHOWUNCOLORHINT"));
-    bCateg[7] = bUnCLabeled->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bUnCLabeled));
+    bCateg[7] = bUnCLabeled->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bUnCLabeled, true));
     fltrLabelbox->pack_start (*bUnCLabeled, Gtk::PACK_SHRINK);
     bUnCLabeled->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
 
@@ -195,7 +198,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		bCLabel[i]->set_image (*igCLabeled[i]);
 		bCLabel[i]->set_relief (Gtk::RELIEF_NONE);
 		fltrLabelbox->pack_start (*bCLabel[i], Gtk::PACK_SHRINK);
-		bCateg[i+8] = bCLabel[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bCLabel[i]));
+		bCateg[i+8] = bCLabel[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bCLabel[i], true));
 		bCLabel[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     }
 
@@ -234,7 +237,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		bEdited[i]->set_relief (Gtk::RELIEF_NONE);
 		fltrEditedBox->pack_start (*bEdited[i], Gtk::PACK_SHRINK);
 		//13, 14
-		bCateg[i+13] = bEdited[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bEdited[i]));
+		bCateg[i+13] = bEdited[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bEdited[i], true));
 		bEdited[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     }
     bEdited[0]->set_tooltip_markup (M("FILEBROWSER_SHOWEDITEDNOTHINT"));
@@ -253,7 +256,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		bRecentlySaved[i]->set_relief (Gtk::RELIEF_NONE);
 		fltrRecentlySavedBox->pack_start (*bRecentlySaved[i], Gtk::PACK_SHRINK);
 		//15, 16
-		bCateg[i+15] = bRecentlySaved[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bRecentlySaved[i]));
+		bCateg[i+15] = bRecentlySaved[i]->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bRecentlySaved[i], true));
 		bRecentlySaved[i]->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     }
     bRecentlySaved[0]->set_tooltip_markup (M("FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT"));
@@ -273,7 +276,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bTrash->set_image (*iTrashEmpty);
     bTrash->set_relief (Gtk::RELIEF_NONE);
     bTrash->set_tooltip_markup (M("FILEBROWSER_SHOWTRASHHINT"));   
-    bCateg[17] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash));
+    bCateg[17] = bTrash->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bTrash, true));
     bTrash->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event),false);
     buttonBar->pack_start (*bTrash, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
@@ -696,7 +699,7 @@ struct FCOIParams {
 };
 
 int openRequestedUI (void* p) {
-    FCOIParams* params = (FCOIParams*)p;
+    FCOIParams* params = static_cast<FCOIParams*>(p);
     params->catalog->_openImage (params->tmb);
     delete params;
 
@@ -718,8 +721,8 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
     if (tbe.empty())
         return;
 
-    Gtk::MessageDialog msd (M("FILEBROWSER_DELETEDLGLABEL"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
-    msd.set_secondary_text(Glib::ustring::compose ( inclBatchProcessed ? M("FILEBROWSER_DELETEDLGMSGINCLPROC") : M("FILEBROWSER_DELETEDLGMSG"), tbe.size()));
+    Gtk::MessageDialog msd (M("FILEBROWSER_DELETEDLGLABEL"), true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+    msd.set_secondary_text(Glib::ustring::compose ( inclBatchProcessed ? M("FILEBROWSER_DELETEDLGMSGINCLPROC") : M("FILEBROWSER_DELETEDLGMSG"), tbe.size()), true);
 
     if (msd.run()==Gtk::RESPONSE_YES) {
         for (unsigned int i=0; i<tbe.size(); i++) {
@@ -1017,7 +1020,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
                 continue;
             // if no extension is given, concatenate the extension of the original file
             if (nBaseName.find ('.')==nBaseName.npos) {
-                int lastdot = baseName.find_last_of ('.');
+		size_t lastdot = baseName.find_last_of ('.');
                 nBaseName += "." + (lastdot!=Glib::ustring::npos ? baseName.substr (lastdot+1) : "");
             }
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
@@ -1044,7 +1047,7 @@ void FileCatalog::clearFromCacheRequested  (std::vector<FileBrowserEntry*> tbe, 
 	 }
 }
 
-void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
+void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick) {
     
     //was control key pressed
     bool control_down = modifierKey & GDK_CONTROL_MASK;
@@ -1055,8 +1058,10 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 	for (int i=0; i<18; i++)
 		bCateg[i].block (true);
 
-	//button is already toggled when entering this function, so we switch it back to its initial state
-    b->set_active(!b->get_active());
+    // button already toggled when entering this function from a mouse click, so
+    // we switch it back to its initial state.
+    if (isMouseClick)
+	b->set_active(!b->get_active());
 
     //if both control and shift keys were pressed, do nothing
     if (!(control_down && shift_down)) {
@@ -1077,10 +1082,24 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 			if (categoryButtons[i] == b) toggled_button = i;
 		}
 
-		//if no modifier key were pressed, we can switch-on the button, and clear all others
+		// if no modifier key is pressed, 
 		if (!(control_down || shift_down)) {
-			for (int i=0; i<18; i++) {
-				categoryButtons[i]->set_active (i==toggled_button);
+			// if we're deselecting the only star still active
+			if (toggled_stars_count == 1 && (buttons & (1 << toggled_button))) {
+				// activate clear-filters
+				categoryButtons[0]->set_active (true);
+				// deactivate the toggled filter
+				categoryButtons[toggled_button]->set_active (false);
+			}
+			// if we're deselecting trash
+			else if (toggled_button == 17 && (buttons & (1 << toggled_button))) {
+				categoryButtons[0]->set_active (true);	
+				categoryButtons[17]->set_active (false);
+			}
+			else {
+				// activate the toggled filter, deactivate the rest
+				for (int i=0; i<18; i++)
+					categoryButtons[i]->set_active (i==toggled_button);
 			}
 		}
 		//modifier key allowed only for stars and color labels
@@ -1088,7 +1107,7 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 			if (control_down) {
 				//control is pressed
 				if (toggled_stars_count == 1 && (buttons & (1 << toggled_button))) {
-					//we're deselecting the only star still active, so we activate the folder filter
+					//we're deselecting the only star still active, so we activate clear-filters
 					categoryButtons[0]->set_active(true);
 					//and we deselect the toggled star
 					categoryButtons[toggled_button]->set_active (false);
@@ -1120,8 +1139,8 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b) {
 					toggled_stars_count = 1;
 				}
 				if (toggled_stars_count == 1) {
-					int current_star=MIN(start_star,toggled_button);
-					int last_star   =MAX(start_star,toggled_button);
+					int current_star=min(start_star,toggled_button);
+					int last_star   =max(start_star,toggled_button);
 					//we permute the start and the end star for the next loop
 					for (; current_star <= last_star; current_star++) {
 						//we toggle on all the star in the range
@@ -1336,7 +1355,7 @@ void FileCatalog::reparseDirectory () {
 	// check if a new file has been added
 	for (size_t i=0; i<nfileNameList.size(); i++) {
 		bool found = false;
-		for (int j=0; j<fileNameList.size(); j++)
+		for (size_t j=0; j<fileNameList.size(); j++)
 			if (nfileNameList[i]==fileNameList[j]) {
 				found = true;
 				break;
@@ -1386,8 +1405,8 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     	return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        int lastdot = info->get_name().find_last_of ('.');
-        if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+	size_t lastdot = info->get_name().find_last_of ('.');
+        if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
 						previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
             previewsToLoad++;
 				}
@@ -1404,8 +1423,8 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if( !info )
     	return;
-    int lastdot = info->get_name().find_last_of ('.');
-    if (options.is_extention_enabled(lastdot!=(int)Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
+    size_t lastdot = info->get_name().find_last_of ('.');
+    if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         // if supported, load thumbnail first
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
@@ -1628,28 +1647,28 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
     if (!alt) {
         switch(event->keyval) {
 			case GDK_grave:
-				categoryButtonToggled(bUnRanked);
+				categoryButtonToggled(bUnRanked,false);
 				return true;
             case GDK_1:
-                categoryButtonToggled(bRank[0]);
+                categoryButtonToggled(bRank[0],false);
                 return true;
             case GDK_2:
-                categoryButtonToggled(bRank[1]);
+                categoryButtonToggled(bRank[1],false);
                 return true;
             case GDK_3:
-                categoryButtonToggled(bRank[2]);
+                categoryButtonToggled(bRank[2],false);
                 return true;
             case GDK_4:
-                categoryButtonToggled(bRank[3]);
+                categoryButtonToggled(bRank[3],false);
                 return true;
             case GDK_5:
-                categoryButtonToggled(bRank[4]);
+                categoryButtonToggled(bRank[4],false);
                 return true;
             case GDK_6:
-                categoryButtonToggled(bEdited[0]);
+                categoryButtonToggled(bEdited[0],false);
                 return true;
             case GDK_7:
-                categoryButtonToggled(bEdited[1]);
+                categoryButtonToggled(bEdited[1],false);
                 return true;
 
             case GDK_Return:
@@ -1661,29 +1680,29 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
     
     if (alt) {
         switch(event->keyval) {
-        	case GDK_grave:
-				categoryButtonToggled(bUnCLabeled);
-				return true;
+            case GDK_grave:
+                 categoryButtonToggled(bUnCLabeled,false);
+                 return true;
             case GDK_1:
-                categoryButtonToggled(bCLabel[0]);
+                categoryButtonToggled(bCLabel[0],false);
                 return true;
             case GDK_2:
-                categoryButtonToggled(bCLabel[1]);
+                categoryButtonToggled(bCLabel[1],false);
                 return true;
             case GDK_3:
-                categoryButtonToggled(bCLabel[2]);
+                categoryButtonToggled(bCLabel[2],false);
                 return true;
             case GDK_4:
-                categoryButtonToggled(bCLabel[3]);
+                categoryButtonToggled(bCLabel[3],false);
                 return true;
             case GDK_5:
-                categoryButtonToggled(bCLabel[4]);
+                categoryButtonToggled(bCLabel[4],false);
                 return true;
             case GDK_6:
-                categoryButtonToggled(bRecentlySaved[0]);
+                categoryButtonToggled(bRecentlySaved[0],false);
                 return true;
             case GDK_7:
-                categoryButtonToggled(bRecentlySaved[1]);
+                categoryButtonToggled(bRecentlySaved[1],false);
                 return true;
         }
     }
@@ -1692,11 +1711,11 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         switch(event->keyval) {
 			case GDK_d:
 			case GDK_D:
-				categoryButtonToggled(bFilterClear);
+				categoryButtonToggled(bFilterClear,false);
 				return true;
 			case GDK_t:
 			case GDK_T:
-				categoryButtonToggled(bTrash);
+				categoryButtonToggled(bTrash,false);
 				return true;
         }
     }

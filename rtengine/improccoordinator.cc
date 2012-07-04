@@ -22,8 +22,6 @@
 #include "refreshmap.h"
 #include "simpleprocess.h"
 #include "../rtgui/ppversion.h"
-#define CLIPTO(a,b,c) ((a)>b?((a)<c?(a):c):b)
-#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 
 namespace rtengine {
 
@@ -79,7 +77,7 @@ ImProcCoordinator::~ImProcCoordinator () {
     freeAll ();
 
     std::vector<Crop*> toDel = crops;
-    for (int i=0; i<toDel.size(); i++)
+    for (size_t i=0; i<toDel.size(); i++)
         delete toDel[i];
 
     imgsrc->decreaseRef ();
@@ -105,7 +103,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	// Check if any detail crops need high detail. If not, take a fast path short cut
     bool highDetailNeeded = (todo & M_HIGHQUAL);
     if (!highDetailNeeded) {
-	for (int i=0; i<crops.size(); i++)
+	for (size_t i=0; i<crops.size(); i++)
 		    if (crops[i]->get_skip() == 1 ) {  // skip=1 -> full resolution
 			highDetailNeeded=true;
 			break;
@@ -124,7 +122,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
     if ( todo & M_PREPROC) {
-    	imgsrc->preprocess( rp );
+    	imgsrc->preprocess( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
     }
 
@@ -165,7 +163,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		int brightness, contrast, black, hlcompr, hlcomprthresh;
 		
 		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-		ipf.getAutoExp (aehist, aehistcompr, clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);	
+		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);	
     }
     lastHighDetail=highDetailNeeded;
 
@@ -227,7 +225,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (needstransform && orig_prev==oprevi)
         oprevi = new Imagefloat (pW, pH);
     if ((todo & M_TRANSFORM) && needstransform)
-    	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH);
+    	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, imgsrc->getMetaData()->getFocalLen(), 
+            imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
 
     readyphase++;
 
@@ -245,8 +244,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (params.toneCurve.autoexp) {
 			LUTu aehist; int aehistcompr;
 			imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-			ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, params.toneCurve.expcomp, params.toneCurve.brightness, 
-							params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+			ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, 
+							params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
 			if (aeListener)
 				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
 											params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
@@ -355,7 +354,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     // process crop, if needed
-    for (int i=0; i<crops.size(); i++)
+    for (size_t i=0; i<crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] )
             crops[i]->update (todo);  // may call outselves
 
@@ -364,7 +363,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         previmg->getMutex().lock();
         try
         {
-            ipf.lab2rgb (nprevl, previmg);
+            ipf.lab2monitorRgb (nprevl, previmg);
             delete workimg;
 			workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);        
         }
@@ -464,7 +463,7 @@ if (settings->verbose) printf ("setscale before lock\n");
     fullh = fh;
     if (settings->verbose) printf ("setscale ends\n");
     if (!sizeListeners.empty())
-        for (int i=0; i<sizeListeners.size(); i++)
+        for (size_t i=0; i<sizeListeners.size(); i++)
             sizeListeners[i]->sizeChanged (fullw, fullh, fw, fh);
     if (settings->verbose) printf ("setscale ends2\n");
 
@@ -578,7 +577,14 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
 
     mProcessing.lock ();
 
-    double fillscale = ipf.getTransformAutoFill (fullw, fullh);
+    LCPMapper *pLCPMap=NULL;
+    if (params.lensProf.lcpFile.length() && imgsrc->getMetaData()->getFocalLen()>0) {
+        LCPProfile *pLCPProf=lcpStore->getProfile(params.lensProf.lcpFile);
+        if (pLCPProf) pLCPMap=new LCPMapper(pLCPProf, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(),
+            0, false, params.lensProf.useDist, fullw, fullh, params.coarse, imgsrc->getRotateDegree());
+    }
+
+    double fillscale = ipf.getTransformAutoFill (fullw, fullh, pLCPMap);
     if (ratio>0) {
         w = fullw * fillscale;
     	h = w / ratio;
@@ -610,7 +616,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	ppar.icm.input = "(none)";
 	Imagefloat* im = new Imagefloat (fW, fH);
 	Image16* im16 = new Image16 (fW, fH);
-	imgsrc->preprocess( ppar.raw );
+	imgsrc->preprocess( ppar.raw, ppar.lensProf, ppar.coarse );
 	imgsrc->demosaic(ppar.raw );
 	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
 	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);

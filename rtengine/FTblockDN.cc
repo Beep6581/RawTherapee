@@ -37,6 +37,7 @@
 #include "array2D.h"
 #include "iccmatrices.h"
 #include "boxblur.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -44,8 +45,6 @@
 
 #include "cplx_wavelet_dec.h"
 
-
-#define SQR(x) ((x)*(x))
 //#define MIN(a,b) ((a) < (b) ? (a) : (b))
 //#define MAX(a,b) ((a) > (b) ? (a) : (b))
 //#define LIM(x,min,max) MAX(min,MIN(x,max))

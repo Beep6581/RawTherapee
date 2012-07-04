@@ -16,10 +16,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#define	A	(-0.85)
-//#define CLIP(a)  ((a>CMAXVAL)?a=CMAXVAL:((a<0)?0:a))
 
-inline void cubint (Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul) {
+inline void interpolateTransformCubic (Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul) {
+  const double A=-0.85;
 
   double w[4];
 

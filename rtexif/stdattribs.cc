@@ -540,6 +540,7 @@ const TagAttrib iopAttribs[] = {
  {0, 1, 0, 0, 0x828d, "CFAPatternDim", &stdInterpreter},
  {0, 1, 0, 0, 0x828e, "CFAPattern", &cfaInterpreter},
  {0, 1, 1, 0, 0x8298, "Copyright", &stdInterpreter},
+ {0, 0, 0, 0, 0x8606, "LeafData", &stdInterpreter}, // is actually a subdir, but a proprietary format
  {0, 1, 0, exifAttribs, 0x8769, "Exif", &stdInterpreter},
  {0, 2, 0, 0, 0x8773, "ICCProfile", &stdInterpreter},
  {0, 2, 0, 0, 0x83BB, "IPTCData", &stdInterpreter},
@@ -555,7 +556,6 @@ const TagAttrib iopAttribs[] = {
  {0, 0, 0, 0, 0xc761, "NoiseProfile", &stdInterpreter},
  {0, 2, 0, 0, 0x00fe, "NewSubFileType", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
-
-};
+}
 
 #endif

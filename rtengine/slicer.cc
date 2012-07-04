@@ -18,11 +18,16 @@
  */
 
 #include <cmath>
+#include <gtkmm.h>
+#include "rt_math.h"
+
+#include "slicer.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include "slicer.h"
-#include <gtkmm.h>
+
+using namespace std;
 
 // If no parameter set, everything = 0 -> process all the image
 Block::Block() {
@@ -75,7 +80,7 @@ Slicer::Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegi
 
 	//calculate the number of block
 	blockNumber = (double(region.width*region.height) / (double)pixels);
-	blockNumber = int((MAX(blockNumber, 1) + (double)procNumber/2.)/procNumber)*procNumber;
+	blockNumber = int((max(blockNumber, 1U) + (double)procNumber/2.)/procNumber)*procNumber;
 	vBlockNumber = (unsigned int)(sqrt((double)blockNumber / subRegionRatio)+0.5);
 	vBlockNumber = CLAMP(vBlockNumber, 1, blockNumber);
 	hBlockNumber = (double)blockNumber / (double)vBlockNumber;

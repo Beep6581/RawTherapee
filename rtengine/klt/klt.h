@@ -209,28 +209,28 @@ void KLTWriteFeatureListToPPM(
   KLT_PixelType *greyimg,
   int ncols,
   int nrows,
-  char *filename);
+  const char *filename);
 void KLTWriteFeatureList(
   KLT_FeatureList fl,
-  char *filename,
-  char *fmt);
+  const char *filename,
+  const char *fmt);
 void KLTWriteFeatureHistory(
   KLT_FeatureHistory fh,
-  char *filename,
-  char *fmt);
+  const char *filename,
+  const char *fmt);
 void KLTWriteFeatureTable(
   KLT_FeatureTable ft,
-  char *filename,
-  char *fmt);
+  const char *filename,
+  const char *fmt);
 KLT_FeatureList KLTReadFeatureList(
   KLT_FeatureList fl,
-  char *filename);
+  const char *filename);
 KLT_FeatureHistory KLTReadFeatureHistory(
   KLT_FeatureHistory fh,
-  char *filename);
+  const char *filename);
 KLT_FeatureTable KLTReadFeatureTable(
   KLT_FeatureTable ft,
-  char *filename);
+  const char *filename);
 #ifdef __cplusplus
 }
 #endif

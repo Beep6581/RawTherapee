@@ -18,6 +18,7 @@
  */
 
 #include "improcfun.h"
+#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -30,14 +31,6 @@
 #endif
 
 namespace rtengine {
-
-#undef CLIP
-#undef CLIPTO
-#undef CMAXVAL
-
-#define CMAXVAL 0xffff
-#define CLIP(a) ((a)>0?((a)<CMAXVAL?(a):CMAXVAL):0)
-#define CLIPTO(a,b,c) ((a)>(b)?((a)<(c)?(a):(c)):(b))
 
 static inline float Lanc(float x, float a)
 {
@@ -55,7 +48,7 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
 {
     const float delta = 1.0f / scale;
     const float a = 3.0f;
-    const float sc = std::min(scale, 1.0f);
+    const float sc = min(scale, 1.0f);
     const int support = static_cast<int>(2.0f * a / sc) + 1;
     
     // storage for precomputed parameters for horisontal interpolation
@@ -81,8 +74,8 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
         // sum of weights used for normalization
         float ws = 0.0f;
 
-        jj0[j] = std::max(0, static_cast<int>(floorf(x0 - a / sc)) + 1);
-        jj1[j] = std::min(src->width, static_cast<int>(floorf(x0 + a / sc)) + 1);
+        jj0[j] = max(0, static_cast<int>(floorf(x0 - a / sc)) + 1);
+        jj1[j] = min(src->width, static_cast<int>(floorf(x0 + a / sc)) + 1);
 
         // calculate weights
         for (int jj = jj0[j]; jj < jj1[j]; jj++) {
@@ -111,8 +104,8 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
         // sum of weights used for normalization
         float ws= 0.0f;
 
-        int ii0 = std::max(0, static_cast<int>(floorf(y0 - a / sc)) + 1);
-        int ii1 = std::min(src->height, static_cast<int>(floorf(y0 + a / sc)) + 1);
+        int ii0 = max(0, static_cast<int>(floorf(y0 - a / sc)) + 1);
+        int ii1 = min(src->height, static_cast<int>(floorf(y0 + a / sc)) + 1);
         
         // calculate weights for vertical interpolation
         for (int ii = ii0; ii < ii1; ii++) {
@@ -235,8 +228,8 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
                     dst->b[i][j] = CLIP(b);
                 }
                 else {
-                    xc = CLIPTO(xc, 0, src->width-1);
-                    yc = CLIPTO(yc, 0, src->height-1);
+                    xc = LIM(xc, 0, src->width-1);
+                    yc = LIM(yc, 0, src->height-1);
                     int nx = xc + 1;
                     if (nx >= src->width)
                         nx = xc;
@@ -254,14 +247,14 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
             int sy = i/dScale;
-            sy = CLIPTO(sy, 0, src->height-1);
+            sy = LIM(sy, 0, src->height-1);
             float dy = i/dScale - sy;
             int ny = sy+1;
             if (ny>=src->height)
                 ny = sy;
             for (int j=0; j<dst->width; j++) {
                 int sx = j/dScale;
-                sx = CLIPTO(sx, 0, src->width-1);
+                sx = LIM(sx, 0, src->width-1);
                 float dx = j/dScale - sx;
                 int nx = sx+1;
                 if (nx>=src->width)
@@ -277,10 +270,10 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
 		#pragma omp parallel for if (multiThread)
         for (int i=0; i<dst->height; i++) {
             int sy = i/dScale;
-            sy = CLIPTO(sy, 0, src->height-1);
+            sy = LIM(sy, 0, src->height-1);
             for (int j=0; j<dst->width; j++) {
                 int sx = j/dScale;
-                sx = CLIPTO(sx, 0, src->width-1);
+                sx = LIM(sx, 0, src->width-1);
                 dst->r[i][j] = src->r[sy][sx];
                 dst->g[i][j] = src->g[sy][sx];
                 dst->b[i][j] = src->b[sy][sx];
@@ -293,71 +286,6 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
     std::cout << "Resize: " << params->resize.method << ": "
         << (float)(t2 - t1) / CLOCKS_PER_SEC << std::endl;
 #endif
-}
-	
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void ImProcFunctions::resize (LabImage* src, LabImage* dst, float dScale) {
-	
-	//bicubic resampling of Lab image
-	float Av = -0.5f;
-#pragma omp parallel for if (multiThread)
-	for (int i=0; i<dst->H; i++) {
-		float wx[4], wy[4];
-		float Dy = i / dScale;
-		int yc  =  (int) Dy;
-		Dy -= (float)yc;
-		int ys = yc - 1; // smallest y-index used for interpolation
-		// compute vertical weights
-		float t1y = -Av*(Dy-1.0f)*Dy;
-		float t2y = (3.0f - 2.0f*Dy)*Dy*Dy;
-		wy[3] = t1y*Dy;
-		wy[2] = t1y*(Dy - 1.0f) + t2y;
-		wy[1] = -t1y*Dy + 1.0f - t2y;
-		wy[0] = -t1y*(Dy - 1.0f);
-		for (int j = 0; j < dst->W; j++) {
-			float Dx = j / dScale;
-			int xc  =  (int) Dx;
-			Dx -= (float)xc;
-			int xs = xc - 1; // smallest x-index used for interpolation
-			if (ys >= 0 && ys < src->H-3 && xs >= 0 && xs <= src->W-3) {
-				// compute horizontal weights
-				float t1 = -Av*(Dx-1.0f)*Dx;
-				float t2 = (3.0f - 2.0f*Dx)*Dx*Dx;
-				wx[3] = t1*Dx;
-				wx[2] = t1*(Dx - 1.0f) + t2;
-				wx[1] = -t1*Dx + 1.0f - t2;
-				wx[0] = -t1*(Dx - 1.0f);
-				// compute weighted sum
-				float L = 0;
-				float a = 0;
-				float b = 0;
-				for (int x=0; x<4; x++)
-					for (int y=0; y<4; y++) {
-						float w = wx[x]*wy[y];
-						L += w*src->L[ys+y][xs+x];
-						a += w*src->a[ys+y][xs+x];
-						b += w*src->b[ys+y][xs+x];
-					}
-				dst->L[i][j] = (L);
-				dst->a[i][j] = (a);
-				dst->b[i][j] = (b);
-			}
-			else {
-				xc = CLIPTO(xc, 0, src->W-1);
-				yc = CLIPTO(yc, 0, src->H-1);
-				int nx = xc + 1;
-				if (nx >= src->W)
-					nx = xc;
-				int ny = yc + 1;
-				if (ny >= src->H)
-					ny = yc;
-				dst->L[i][j] = (1-Dx)*(1-Dy)*src->L[yc][xc] + (1-Dx)*Dy*src->L[ny][xc] + Dx*(1-Dy)*src->L[yc][nx] + Dx*Dy*src->L[ny][nx];
-				dst->a[i][j] = (1-Dx)*(1-Dy)*src->a[yc][xc] + (1-Dx)*Dy*src->a[ny][xc] + Dx*(1-Dy)*src->a[yc][nx] + Dx*Dy*src->a[ny][nx];
-				dst->b[i][j] = (1-Dx)*(1-Dy)*src->b[yc][xc] + (1-Dx)*Dy*src->b[ny][xc] + Dx*(1-Dy)*src->b[yc][nx] + Dx*Dy*src->b[ny][nx];
-			}
-		}
-	}
 }
 
 }

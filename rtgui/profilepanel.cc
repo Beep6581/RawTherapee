@@ -72,7 +72,6 @@ ProfilePanel::ProfilePanel (bool readOnly) {
     paste->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &ProfilePanel::paste_clicked) );
 
     custom = NULL;
-    lastphoto = NULL;
     lastsaved = NULL;
     dontupdate = false;
 
@@ -82,10 +81,10 @@ ProfilePanel::ProfilePanel (bool readOnly) {
     old = profiles->get_active_text();
     changeconn = profiles->signal_changed().connect( sigc::mem_fun(*this, &ProfilePanel::selection_changed) );
 
-    load->set_tooltip_text (M("PROFILEPANEL_TOOLTIPLOAD"));
-    if (!readOnly) save->set_tooltip_text (M("PROFILEPANEL_TOOLTIPSAVE"));
-    if (!readOnly) copy->set_tooltip_text (M("PROFILEPANEL_TOOLTIPCOPY"));
-    paste->set_tooltip_text (M("PROFILEPANEL_TOOLTIPPASTE"));
+    load->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPLOAD"));
+    if (!readOnly) save->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPSAVE"));
+    if (!readOnly) copy->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPCOPY"));
+    paste->set_tooltip_markup (M("PROFILEPANEL_TOOLTIPPASTE"));
     
     show_all_children ();
 }
@@ -94,7 +93,6 @@ ProfilePanel::~ProfilePanel () {
 
     if (custom)    { custom->deleteInstance();    delete custom;    }
     if (lastsaved) { lastsaved->deleteInstance(); delete lastsaved; }
-    if (lastphoto) { lastphoto->deleteInstance(); delete lastphoto; }
 }
 
 void ProfilePanel::refreshProfileList () {
@@ -116,8 +114,6 @@ void ProfilePanel::refreshProfileList () {
         profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
     if (lastsaved)
         profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")");
-    if (lastphoto)
-        profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")");
 
     profiles->set_active_text (oldsel);
     changeconn.block (false);
@@ -129,12 +125,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
         return;
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
-    if (options.loadSaveProfilePath.length())
-    dialog.set_current_folder (options.loadSaveProfilePath);
-    else if (options.multiUser)
-    dialog.set_current_folder (Options::rtdir + "/" + options.profilePath);
-    else
-    dialog.set_current_folder (argv0 + "/" + options.profilePath);
+    FileChooserLastFolderPersister persister( &dialog, options.loadSaveProfilePath );
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -164,16 +155,15 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
         if (result==Gtk::RESPONSE_OK) {
 
             std::string fname = dialog.get_filename();
-            options.loadSaveProfilePath = Glib::path_get_dirname(fname);
 
             bool hasext = true;
-            int dotpos = fname.find_last_of ('.');
+	    size_t dotpos = fname.find_last_of ('.');
             if (dotpos==Glib::ustring::npos)
                 hasext = false;
-            int dirpos1 = fname.find_last_of ('/');
+	    size_t dirpos1 = fname.find_last_of ('/');
             if (dirpos1!=Glib::ustring::npos && dirpos1>dotpos)
                 hasext = false;
-            int dirpos2 = fname.find_last_of ('\\');
+	    size_t dirpos2 = fname.find_last_of ('\\');
             if (dirpos2!=Glib::ustring::npos && dirpos2>dotpos)
                 hasext = false;
 
@@ -194,8 +184,6 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
                 toSave = custom;
             else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")")
                 toSave = lastsaved;
-            else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")")
-                toSave = lastphoto;
             else
                 toSave = profileStore.getProfile (profiles->get_active_text());
 
@@ -239,8 +227,6 @@ void ProfilePanel::copy_clicked (GdkEventButton* event) {
         toSave = custom;
     else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")") 
         toSave = lastsaved; 
-    else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")") 
-        toSave = lastphoto; 
     else
         toSave = profileStore.getProfile (profiles->get_active_text());
 
@@ -275,12 +261,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
         return;
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_LOADDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN);
-    if (options.loadSaveProfilePath.length())
-        dialog.set_current_folder (options.loadSaveProfilePath);
-    else if (options.multiUser)
-    dialog.set_current_folder (Options::rtdir + "/" + options.profilePath);
-    else
-    dialog.set_current_folder (argv0 + "/" + options.profilePath);
+    FileChooserLastFolderPersister persister( &dialog, options.loadSaveProfilePath );
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -302,9 +283,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     dialog.hide();
 
     if (result==Gtk::RESPONSE_OK) {
-        bool prevState = changeconn.block(true);
         Glib::ustring fname = dialog.get_filename();
-        options.loadSaveProfilePath = Glib::path_get_dirname(fname);
 
         if (event->state & Gdk::CONTROL_MASK) {
             // opening the partial paste dialog window
@@ -322,8 +301,10 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
         }
         int err = custom->load (fname);
         if (!err) {
-            profiles->append_text     (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
-            profiles->set_active_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
+            bool prevState = changeconn.block(true);
+            Glib::ustring newEntry = Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")";
+            profiles->append_text     (newEntry);
+            profiles->set_active_text (newEntry);
             old = profiles->get_active_text();
             changeconn.block(prevState);
 
@@ -365,15 +346,21 @@ void ProfilePanel::paste_clicked (GdkEventButton* event) {
             return;
     }
 
+    bool prevState = changeconn.block(true);
+    Glib::ustring newEntry = Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")";
+
     if (!custom) {
         custom = new PartialProfile (true);
         custom->pedited->set(true);
-        profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
+        profiles->append_text (newEntry);
     }
     ProcParams pp = clipboard.getProcParams ();
-    custom->pparams = &pp;
-    profiles->set_active_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
+    *custom->pparams = pp;
+
+    profiles->set_active_text (newEntry);
     old = profiles->get_active_text();
+
+    changeconn.block(prevState);
 
     if (event->state & Gdk::CONTROL_MASK) {
         // applying partial profile
@@ -399,14 +386,13 @@ void ProfilePanel::changeTo (PartialProfile* newpp, Glib::ustring profname) {
 
 void ProfilePanel::selection_changed () {
 
-    if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")") {
+    Glib::ustring entry;
+    if (profiles->get_active_text() == (entry = Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")")) {
         if (!dontupdate) 
-            changeTo (custom, Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");          
-    }             
-    else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")") 
-            changeTo (lastsaved, Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")");                       
-    else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")") 
-            changeTo (lastphoto, Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")");                       
+            changeTo (custom, entry);
+    }
+    else if (profiles->get_active_text() == (entry = Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")"))
+            changeTo (lastsaved, entry);
     else {
     	PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
         if (s)
@@ -422,23 +408,21 @@ void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rteng
     if (ev==EvProfileChanged || ev==EvPhotoLoaded)
         return;
 
-    if (profiles->get_active_text() != Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")") {
+    Glib::ustring entry = Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")";
+    if (profiles->get_active_text() != entry) {
         dontupdate = true;
         if (!custom) {
             custom = new PartialProfile (true);
             custom->set(true);
-            profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
+            profiles->append_text (entry);
         }
-        profiles->set_active_text (Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")");
+        profiles->set_active_text (entry);
         old = profiles->get_active_text();
     }
-    *(custom->pparams) = *p;
+    *custom->pparams = *p;
 }
 
-/*
- * TODO: "lastPhoto" is not used anymore, a code cleanup should delete everything related to it
- */
-void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastSaved, ProcParams* lastPhoto) {
+void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastSaved) {
 
     changeconn.block (true);
 
@@ -464,26 +448,13 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
         lastsaved = new PartialProfile(lastSaved, pe);
     }
 
-    if (lastphoto) {
-        lastphoto->deleteInstance();
-        delete lastphoto; lastphoto = NULL;
-    }
-    if (lastPhoto) {
-    	ParamsEdited* pe = new ParamsEdited();
-        pe->set(true);
-        lastphoto = new PartialProfile(lastPhoto, pe);
-    }
-
     Glib::ustring defline = profname;
     PartialProfile* defprofile = profileStore.getProfile (profname);
-
-    if (lastphoto) 
-        profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PLASTPHOTO") + ")");  
 
     if (lastsaved) {
         defline = Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")";
         defprofile = lastsaved;
-        profiles->append_text (Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")");  
+        profiles->append_text (defline);
     }
 
     if (tpc) {
@@ -506,13 +477,19 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
         profiles->set_active (0);
         PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
         if (!s) {
+            changeconn.block (false);
             s = new PartialProfile (true);
             s->set(true);
             dels = true;  // we've created a temporary PartialProfile, so we set a flag to destroy it
+            if (tpc)
+                tpc->profileChange (s, EvPhotoLoaded, DEFPROFILE_INTERNAL);
         }
-        changeconn.block (false);
-        if (tpc)
-            tpc->profileChange (s, EvPhotoLoaded, profiles->get_active_text());  
+        else {
+            Glib::ustring cProfile = profiles->get_active_text();
+            changeconn.block (false);
+            if (tpc)
+                tpc->profileChange (s, EvPhotoLoaded, cProfile);
+        }
 
         if (dels) {
             s->deleteInstance();

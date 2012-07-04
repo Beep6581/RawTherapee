@@ -27,6 +27,13 @@
 #define STARTUPDIR_CUSTOM  2
 #define STARTUPDIR_LAST    3
 
+// Default bundled profile name to use for Raw images
+#define DEFPROFILE_RAW      "Default"
+// Default bundled profile name to use for Standard images
+#define DEFPROFILE_IMG      "Neutral"
+// Profile name to use for internal values' profile
+#define DEFPROFILE_INTERNAL "Internal"
+
 class SaveFormat {
 
     public:
@@ -42,11 +49,35 @@ class SaveFormat {
 enum ThFileType {FT_Invalid=-1, FT_None=0, FT_Raw=1, FT_Jpeg=2, FT_Tiff=3, FT_Png=4, FT_Custom=5, FT_Tiff16=6, FT_Png16=7, FT_Custom16=8}; 
 enum PPLoadLocation {PLL_Cache=0, PLL_Input=1};
 
+namespace rtengine {
+	class SafeKeyFile;
+}
+
 class Options {
 
   private:
+    bool defProfRawMissing;
+    bool defProfImgMissing;
+    Glib::ustring userProfilePath;
+    Glib::ustring globalProfilePath;
+    bool checkProfilePath(Glib::ustring &path);
+    bool checkDirPath(Glib::ustring &path, Glib::ustring errString);
+    void updatePaths();
     int getString (const char* src, char* dst);
-    void error (int line); 
+    void error (int line);
+    /**
+     * Safely reads a directory from the configuration file and only applies it
+     * to the provided destination variable if there is a non-empty string in
+     * the configuration.
+     *
+     * @param keyFile file to read configuration from
+     * @param section name of the section in the configuration file
+     * @param entryName name of the entry in the configuration file
+     * @param destination destination variable to store to
+     * @return @c true if @p destination was changed
+     */
+    bool safeDirGet(const rtengine::SafeKeyFile& keyFile, const Glib::ustring& section,
+            const Glib::ustring& entryName, Glib::ustring& destination);
 
   public:
     bool savesParamsAtExit;
@@ -60,7 +91,8 @@ class Options {
     int adjusterDelay;
     int  startupDir;
     Glib::ustring startupPath;
-    Glib::ustring profilePath;
+    Glib::ustring profilePath; // can be an absolute or relative path; depending on this value, bundled profiles may not be found
+    bool useBundledProfiles;   // only used if multiUser == true
     Glib::ustring loadSaveProfilePath;
     Glib::ustring lastSaveAsPath;
     int saveAsDialogWidth;
@@ -118,7 +150,7 @@ class Options {
     Glib::ustring customProfileBuilder;
     int editorToSendTo;   
     int maxThumbnailHeight;
-    int maxCacheEntries;
+    std::size_t maxCacheEntries;
     ThFileType thumbnailFormat;
     int thumbInterp; // 0: nearest, 1: bilinear
     bool liveThumbnails;
@@ -163,6 +195,7 @@ class Options {
     bool menuGroupLabel;
     bool menuGroupFileOperations;
     bool menuGroupProfileOperations;
+    bool menuGroupExtProg;
 
     // fast export options
     bool fastexport_bypass_sharpening;
@@ -196,6 +229,16 @@ class Options {
     int           fastexport_resize_width;
     int           fastexport_resize_height;
 
+    // Dialog settings
+    Glib::ustring lastIccDir;
+    Glib::ustring lastDarkframeDir;
+    Glib::ustring lastFlatfieldDir;
+    Glib::ustring lastRgbCurvesDir;
+    Glib::ustring lastLabCurvesDir;
+    Glib::ustring lastHsvCurvesDir;
+    Glib::ustring lastToneCurvesDir;
+    Glib::ustring lastProfilingReferenceDir;
+
     Options ();
 
     Options*    copyFrom        (Options* other);
@@ -206,8 +249,15 @@ class Options {
     static void load            ();
     static void save            ();
 
+    // if multiUser=false, send back the global profile path
+    Glib::ustring getPreferredProfilePath();
+    Glib::ustring getUserProfilePath() { return userProfilePath; }
+    Glib::ustring getGlobalProfilePath() { return globalProfilePath; }
+    Glib::ustring findProfilePath(Glib::ustring &profName);
     bool        has_retained_extention (Glib::ustring fname);
     bool        is_extention_enabled(Glib::ustring ext);
+    bool        is_defProfRawMissing() { return defProfRawMissing; }
+    bool        is_defProfImgMissing() { return defProfImgMissing; }
 };
 
 extern Options options;

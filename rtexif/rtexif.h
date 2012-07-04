@@ -69,7 +69,7 @@ class TagDirectory {
     
   public:
     TagDirectory ();
-    TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border);
+    TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored=true);
     TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border);
     virtual ~TagDirectory ();
    
@@ -197,9 +197,9 @@ class ExifManager {
   
     static Tag* saveCIFFMNTag (FILE* f, TagDirectory* root, int len, const char* name);
   public:
-    static TagDirectory* parse (FILE*f, int base);
+    static TagDirectory* parse (FILE*f, int base, bool skipIgnored=true);
     static TagDirectory* parseJPEG (FILE*f);
-    static TagDirectory* parseTIFF (FILE*f);
+    static TagDirectory* parseTIFF (FILE*f, bool skipIgnored=true);
     static TagDirectory* parseCIFF (FILE* f, int base, int length);
     static void          parseCIFF (FILE* f, int base, int length, TagDirectory* root);
     
@@ -364,5 +364,5 @@ extern const TagAttrib sonyAttribs[];
 extern const TagAttrib sonyCameraSettingsAttribs[];
 extern const TagAttrib sonyCameraSettingsAttribs2[];
 extern const TagAttrib olympusAttribs[];
-};
+}
 #endif

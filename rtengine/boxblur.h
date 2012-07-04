@@ -28,9 +28,14 @@
 #include <omp.h>
 #endif
 
-#define SQR(x) ((x)*(x))
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#include "rt_math.h"
+//using namespace rtengine;
+
+namespace rtengine {
+
+//#define SQR(x) ((x)*(x))
+//#define MIN(a,b) ((a) < (b) ? (a) : (b))
+//#define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 // classical filtering if the support window is small:
 
@@ -484,9 +489,9 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 	
 	if (radx==0) {
 		for (int row=0; row<H; row++) {
-			int rr = MIN(H-1,MAX(0,row+dy));
+			int rr = min(H-1,max(0,row+dy));
 			for (int col=0; col<H; col++) {
-				int cc = MIN(W-1,MAX(0,col+dx));
+				int cc = min(W-1,max(0,col+dx));
 				temp[row*H+col] = dy>0 ? (src[row*W+col])*(src[rr*W+cc]) : 0;
 			}
 		}
@@ -495,26 +500,26 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 //OpenMP here		
 		for (int row = 0; row < H; row++) {
 			int len = radx + 1;
-			int rr = MIN(H-1,MAX(0,row+dy));
-			int cc = MIN(W-1,MAX(0,0+dx));
+			int rr = min(H-1,max(0,row+dy));
+			int cc = min(W-1,max(0,0+dx));
 			temp[row*W+0] = ((float)src[row*W+0])*(src[rr*W+cc])/len;
 			for (int j=1; j<=radx; j++) {
-				int cc = MIN(W-1,MAX(0,j+dx));
+				int cc = min(W-1,max(0,j+dx));
 				temp[row*W+0] += ((float)src[row*W+j])*(src[rr*W+cc])/len;
 			}
 			for (int col=1; col<=radx; col++) {
-				int cc = MIN(W-1,MAX(0,col+dx+radx));
+				int cc = min(W-1,max(0,col+dx+radx));
 				temp[row*W+col] = (temp[row*W+col-1]*len + (src[row*W+col+radx])*(src[rr*W+cc]))/(len+1);
 				len ++;
 			}
 			for (int col = radx+1; col < W-radx; col++) {
-				int cc = MIN(W-1,MAX(0,col+dx+radx));
-				int cc1 = MIN(W-1,MAX(0,col+dx-radx-1));
+				int cc = min(W-1,max(0,col+dx+radx));
+				int cc1 = min(W-1,max(0,col+dx-radx-1));
 				temp[row*W+col] = temp[row*W+col-1] + ((float)((src[row*W+col+radx])*(src[rr*W+cc]) - 
 															   (src[row*W+col-radx-1])*(src[rr*W+cc1])))/len;
 			}
 			for (int col=W-radx; col<W; col++) {
-				int cc1 = MIN(W-1,MAX(0,col+dx-radx-1));
+				int cc1 = min(W-1,max(0,col+dx-radx-1));
 				temp[row*W+col] = (temp[row*W+col-1]*len - (src[row*W+col-radx-1])*(src[rr*W+cc1]))/(len-1);
 				len --;
 			}
@@ -629,5 +634,5 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+}
 #endif /* _BOXBLUR_H_ */

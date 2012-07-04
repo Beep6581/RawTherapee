@@ -103,7 +103,7 @@ public:
 	}
 
 	LUT(void) {
-		data = 0;
+		data = NULL;
 		owner = 1;
 		size = 0;
 		maxs=0;
@@ -119,9 +119,9 @@ public:
 	      if (rhs.size>this->size)
 	      {
 	    	delete [] this->data;
-	    	this->data=0;
+	    	this->data=NULL;
 	      }
-	      if (this->data==0) this->data=new T[rhs.size];
+	      if (this->data==NULL) this->data=new T[rhs.size];
 	      this->clip=rhs.clip;
 	      this->owner=1;
 	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));
@@ -145,7 +145,7 @@ public:
 	}
 	// use with float indices
 	T operator[](float index) {
-		int idx = floor(index);
+		int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
 		if (((unsigned int)idx) > maxs) {
 			if (idx<0)
 			{

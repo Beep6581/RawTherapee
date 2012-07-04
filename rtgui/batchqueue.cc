@@ -16,9 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "batchqueue.h"
 #include <glibmm.h>
 #include <glib/gstdio.h>
+#include <cstring>
+#include "../rtengine/rt_math.h"
+
+#include "batchqueue.h"
 #include "multilangmgr.h"
 #include "filecatalog.h"
 #include "batchqueuebuttonset.h"
@@ -26,8 +29,7 @@
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
-#include <cstring>
-
+using namespace std;
 using namespace rtengine;
 
 BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
@@ -66,7 +68,7 @@ BatchQueue::~BatchQueue ()
 // Reduce the max size of a thumb, since thumb is processed synchronously on adding to queue
 // leading to very long waiting when adding more images
 int BatchQueue::calcMaxThumbnailHeight() {
-    return MIN(options.maxThumbnailHeight, 200);
+    return std::min(options.maxThumbnailHeight, 200);
 }
 
 // Function for virtual override in thumbbrowser base
@@ -90,7 +92,7 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 
 	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
 		(*entry)->setParent (this);
-		(*entry)->resize (MIN(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
+		(*entry)->resize (std::min(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
 		Glib::ustring tempFile = getTempFilenameForParams( (*entry)->filename );
 
 		// recovery save
@@ -241,7 +243,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
         Glib::RWLock::WriterLock l(entryRW);
 #endif
 
-        for (int i=0; i<items->size(); i++) {
+	for (size_t i=0; i<items->size(); i++) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
             if (entry->processing)
                 continue;
@@ -254,7 +256,7 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
                 g_idle_add (cancelItemUI, entry);
             }
         }
-        for (int i=0; i<fd.size(); i++) 
+        for (size_t i=0; i<fd.size(); i++)
             fd[i]->selected = false;
         lastClicked = NULL;
         selected.clear ();
@@ -299,7 +301,7 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
 #ifdef WIN32
         Glib::RWLock::WriterLock l(entryRW);
 #endif
-        for (int i=0; i<items->size(); i++) {
+	for (size_t i=0; i<items->size(); i++) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
             if (entry->processing)
                 continue;
@@ -324,7 +326,7 @@ void BatchQueue::selectAll () {
 
         lastClicked = NULL;
         selected.clear ();
-        for (int i=0; i<fd.size(); i++) {
+	for (size_t i=0; i<fd.size(); i++) {
             if (fd[i]->processing)
                 continue;
             fd[i]->selected = true;
@@ -466,7 +468,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
     std::vector<Glib::ustring> pa;
     std::vector<Glib::ustring> da;
 
-    for (int i=0; i<origFileName.size(); i++) {
+    for (size_t i=0; i<origFileName.size(); i++) {
         while ((i<origFileName.size()) && (origFileName[i]=='\\' || origFileName[i]=='/'))
             i++;
         if (i>=origFileName.size())
@@ -482,7 +484,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
     else
         pa.push_back (da[0]);
         
-    for (int i=1; i<da.size(); i++)
+    for (size_t i=1; i<da.size(); i++)
         pa.push_back (pa[i-1] + "/" + da[i]);
 
 //    for (int i=0; i<da.size(); i++)
@@ -620,7 +622,7 @@ struct NLParams {
 };
 
 int bqnotifylistenerUI (void* data) {
-    NLParams* params = (NLParams*)data;
+    NLParams* params = static_cast<NLParams*>(data);
     params->listener->queueSizeChanged (params->qsize, params->queueEmptied);
     delete params;
     return 0;

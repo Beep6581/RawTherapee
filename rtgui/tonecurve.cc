@@ -85,7 +85,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 //----------- Curve ------------------------------
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  curveEditorG = new CurveEditorGroup (M("TP_EXPOSURE_CURVEEDITOR"));
+  curveEditorG = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_EXPOSURE_CURVEEDITOR"));
   curveEditorG->setCurveListener (this);
 
   shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
@@ -274,7 +274,7 @@ void ToneCurve::neutral_pressed () {
     hlcomprthresh->setValue(0);
     brightness->setValue(0);
     black->setValue(0);
-    shcompr->setValue(0);
+    shcompr->setValue(50);
     if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     contrast->setValue(0);
     //saturation->setValue(0);

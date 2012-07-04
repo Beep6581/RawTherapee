@@ -195,7 +195,6 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi->set_value (behavColumns.label, M("TP_VIBRANCE_LABEL"));
     appendBehavList (mi, M("TP_VIBRANCE_PASTELS"), ADDSET_VIBRANCE_PASTELS, false);
     appendBehavList (mi, M("TP_VIBRANCE_SATURATED"), ADDSET_VIBRANCE_SATURATED, false);
-    appendBehavList (mi, M("TP_VIBRANCE_PSTHRESHOLD"), ADDSET_VIBRANCE_PSTHRESHOLD, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_GAMMA_OUTPUT"));
@@ -359,10 +358,9 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     ffconn = flatFieldDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
 	
     std::vector<Glib::ustring> pnames;
-    if (options.multiUser)
-        parseDir (Options::rtdir + "/" + options.profilePath, pnames, paramFileExtension);
-    parseDir (argv0 + "/" + options.profilePath, pnames, paramFileExtension);
-    for (int i=0; i<pnames.size(); i++) {
+    parseDir (options.getUserProfilePath(), pnames, paramFileExtension);
+    parseDir (options.getGlobalProfilePath(), pnames, paramFileExtension);
+    for (size_t i=0; i<pnames.size(); i++) {
         rprofiles->append_text (pnames[i]);
         iprofiles->append_text (pnames[i]);
     }
@@ -481,7 +479,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
 
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
-    for (int i=0; i<langs.size(); i++) {
+    for (size_t i=0; i<langs.size(); i++) {
 	if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
   	    languages->append_text (langs[i]);
 	}
@@ -525,7 +523,7 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     theme->set_active (0);
     std::vector<Glib::ustring> themes;
     parseDir (argv0 + "/themes", themes, ".gtkrc");
-    for (int i=0; i<themes.size(); i++) 
+    for (size_t i=0; i<themes.size(); i++)
         theme->append_text (themes[i]);
 
     Gtk::Label* fontlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_SELECTFONT")+":") );
@@ -773,6 +771,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     ckbmenuGroupLabel = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPLABEL")) );
     ckbmenuGroupFileOperations = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPFILEOPERATIONS")) );
     ckbmenuGroupProfileOperations = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPPROFILEOPERATIONS")) );
+    ckbmenuGroupExtProg = Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_MENUGROUPEXTPROGS")) );
     Gtk::VBox* vbmnu = Gtk::manage( new Gtk::VBox () );
 
     vbmnu->set_border_width (4);
@@ -780,6 +779,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     vbmnu->pack_start (*ckbmenuGroupLabel, Gtk::PACK_SHRINK, 0);
     vbmnu->pack_start (*ckbmenuGroupFileOperations, Gtk::PACK_SHRINK, 0);
     vbmnu->pack_start (*ckbmenuGroupProfileOperations, Gtk::PACK_SHRINK, 0);
+    vbmnu->pack_start (*ckbmenuGroupExtProg, Gtk::PACK_SHRINK, 0);
 
 	frmnu->add (*vbmnu);
 
@@ -942,6 +942,9 @@ Gtk::Widget* Preferences::getSoundPanel () {
 
 void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext) {
 
+    if (dirname.empty())
+        return;
+
     // process directory
     Glib::Dir* dir = NULL;
     try {
@@ -950,9 +953,8 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
     catch (const Glib::FileError& fe) {
         return;
     }
-    dirname = dirname + "/";
     for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) {
-      Glib::ustring fname = dirname + *i;
+      Glib::ustring fname = Glib::build_filename(dirname, *i);
       Glib::ustring sname = *i;
       // ignore directories
       if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
@@ -964,7 +966,9 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
 void Preferences::storePreferences () {
 
     moptions.defProfRaw          = rprofiles->get_active_text();
+    if (moptions.defProfRaw.empty()) moptions.defProfRaw = DEFPROFILE_RAW;
     moptions.defProfImg          = iprofiles->get_active_text();
+    if (moptions.defProfImg.empty()) moptions.defProfImg = DEFPROFILE_IMG;
     moptions.dateFormat          = dateformat->get_text();
     moptions.panAccelFactor      = (int)panFactor->get_value();
     moptions.fbShowDateTime  = showDateTime->get_active ();
@@ -974,6 +978,7 @@ void Preferences::storePreferences () {
     moptions.menuGroupLabel             = ckbmenuGroupLabel->get_active();
     moptions.menuGroupFileOperations    = ckbmenuGroupFileOperations->get_active();
     moptions.menuGroupProfileOperations = ckbmenuGroupProfileOperations->get_active();
+    moptions.menuGroupExtProg           = ckbmenuGroupExtProg->get_active();
     moptions.blinkClipped    = blinkClipped->get_active ();
     moptions.highlightThreshold = (int)hlThresh->get_value ();
     moptions.shadowThreshold = (int)shThresh->get_value ();
@@ -1030,7 +1035,7 @@ void Preferences::storePreferences () {
     moptions.parseExtensions.clear ();
     moptions.parseExtensionsEnabled.clear ();
     Gtk::TreeNodeChildren c = extensionModel->children ();
-    for (int i=0; i<c.size(); i++) {
+    for (size_t i=0; i<c.size(); i++) {
         moptions.parseExtensions.push_back (c[i][extensionColumns.ext]);
         moptions.parseExtensionsEnabled.push_back (c[i][extensionColumns.enabled]);
     }
@@ -1120,6 +1125,8 @@ void Preferences::fillPreferences () {
     ckbmenuGroupLabel->set_active(moptions.menuGroupLabel);
     ckbmenuGroupFileOperations->set_active(moptions.menuGroupFileOperations);
     ckbmenuGroupProfileOperations->set_active(moptions.menuGroupProfileOperations);
+    ckbmenuGroupExtProg->set_active(moptions.menuGroupExtProg);
+
     blinkClipped->set_active (moptions.blinkClipped);
     hlThresh->set_value (moptions.highlightThreshold);
     shThresh->set_value (moptions.shadowThreshold);
@@ -1153,7 +1160,7 @@ void Preferences::fillPreferences () {
     }
     
     extensionModel->clear ();
-    for (int i=0; i<moptions.parseExtensions.size(); i++) {
+    for (size_t i=0; i<moptions.parseExtensions.size(); i++) {
         Gtk::TreeRow row = *(extensionModel->append());
         row[extensionColumns.enabled] = moptions.parseExtensionsEnabled[i];
         row[extensionColumns.ext]     = moptions.parseExtensions[i];
@@ -1202,7 +1209,7 @@ void Preferences::fillPreferences () {
     addc.block (true);
     setc.block (true);
     if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-		for (int i=0; i<moptions.baBehav.size(); i++) 
+		for (size_t i=0; i<moptions.baBehav.size(); i++)
 			for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++) 
 				for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
 					if (adjs->get_value (behavColumns.addsetid) == i) {
@@ -1415,7 +1422,7 @@ void Preferences::useThemeChanged(){
 void Preferences::addExtPressed () {
 
   Gtk::TreeNodeChildren c = extensionModel->children ();
-  for (int i=0; i<c.size(); i++)
+  for (size_t i=0; i<c.size(); i++)
     if (c[i][extensionColumns.ext] == extension->get_text ())
         return;
 

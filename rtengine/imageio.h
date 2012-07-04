@@ -88,5 +88,5 @@ class ImageIO {
         Glib::Mutex& mutex () { return imutex; }
 };
 
-};
+}
 #endif

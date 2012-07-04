@@ -407,7 +407,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
 
     // initialize profile
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
-    profilep->initProfile (defProf, ldprof, NULL);
+    profilep->initProfile (defProf, ldprof);
 
     openThm->addThumbnailListener (this);
     info_toggled ();
@@ -507,7 +507,7 @@ struct spsparams {
 
 int setProgressStateUIThread (void* data) {
 
-    spsparams* p = (spsparams*)data;
+    spsparams* p = static_cast<spsparams*>(data);
 
     if (p->epih->destroyed) {
         if (p->epih->pending == 1)
@@ -544,7 +544,7 @@ struct spparams {
 
 int setprogressStrUI( void *p )
 {
-	spparams *s= (spparams*)p;
+	spparams *s= static_cast<spparams*>(p);
 
 	if( ! s->str.empty() )
 	   s->pProgress->set_text( M(s->str) );
@@ -635,7 +635,7 @@ void EditorPanel::displayError (Glib::ustring descr) {
 }
 
 int disperrorUI (void* data) {
-    errparams* p = (errparams*)data;
+    errparams* p = static_cast<errparams*>(data);
 
     if (p->epih->destroyed) {
         if (p->epih->pending == 1)
@@ -842,6 +842,16 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
                     iareapanel->imageArea->zoomPanel->zoom11Clicked();
 					return true;
 
+				case GDK_8: //background color of the preview 0
+				    iareapanel->imageArea->previewModePanel->togglebackColor0();
+				    return true;
+				case GDK_9: //background color of the preview 1
+					iareapanel->imageArea->previewModePanel->togglebackColor1();
+					return true;
+				case GDK_0: //background color of the preview 2
+					iareapanel->imageArea->previewModePanel->togglebackColor2();
+					return true;
+
 				case GDK_r: //preview mode Red
                     iareapanel->imageArea->previewModePanel->toggleR();
 					return true;
@@ -1011,7 +1021,7 @@ void EditorPanel::saveAsPressed () {
 	saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (openThm->getFileName())));
 	do {
 		saveAsDialog->run ();
-		if (saveAsDialog->getResponse()==Gtk::RESPONSE_CANCEL)
+		if (saveAsDialog->getResponse()!=Gtk::RESPONSE_OK)
 			return;
 
 		// The SaveAsDialog ensure that a filename has been specified

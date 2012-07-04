@@ -29,8 +29,17 @@
 
 #ifdef WIN32
 #include <windows.h>
+// for GCC32
+#ifndef _WIN32_IE
+#define _WIN32_IE 0x0600
+#endif
 #include <Shlobj.h>
 #endif
+
+// User's settings directory, including images' profiles if used
+Glib::ustring Options::rtdir;
+// User's cached datas' directory
+Glib::ustring Options::cacheBaseDir;
 
 Options options;
 Glib::ustring versionString      = VERSION;
@@ -38,14 +47,146 @@ Glib::ustring paramFileExtension = ".pp3";
 
 Options::Options () {
 
+    defProfRawMissing = false;
+    defProfImgMissing = false;
     setDefaults ();
 }
 
 const char *DefaultLanguage = "English (US)";
 
+inline bool Options::checkProfilePath(Glib::ustring &path) {
+    if (path.empty())
+        return false;
+
+    Glib::ustring p = getUserProfilePath();
+    if (!p.empty() && safe_file_test (path+paramFileExtension, Glib::FILE_TEST_EXISTS))
+        return true;
+
+    p = getGlobalProfilePath();
+    if (!p.empty() && safe_file_test (path+paramFileExtension, Glib::FILE_TEST_EXISTS))
+        return true;
+    else
+    	return false;
+}
+
+bool Options::checkDirPath(Glib::ustring &path, Glib::ustring errString) {
+    if (safe_file_test (path, Glib::FILE_TEST_EXISTS) && safe_file_test (path, Glib::FILE_TEST_IS_DIR))
+        return true;
+    else {
+        if (!errString.empty()) printf("%s\n", errString.c_str());
+        return false;
+    }
+}
+
+void Options::updatePaths() {
+
+    Glib::ustring tmpPath;
+
+    userProfilePath = "";
+    globalProfilePath = "";
+
+    if (Glib::path_is_absolute(profilePath)) {
+        // absolute path
+        if (!checkDirPath (profilePath, "")) {
+            int retVal = safe_g_mkdir_with_parents (profilePath, 511);
+            if (!retVal)
+            	printf("Error: user's profiles' directory \"%s\" creation failed\n", profilePath.c_str());
+        }
+        if (checkDirPath (profilePath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+            if (multiUser) {
+                userProfilePath = profilePath;
+                if (useBundledProfiles) {
+                    tmpPath = Glib::build_filename(argv0, "profiles");
+                    if(checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+                        if (userProfilePath != tmpPath)
+                            globalProfilePath = tmpPath;
+                    }
+                }
+            }
+            else {
+                globalProfilePath = profilePath;
+            }
+        }
+        else {
+            tmpPath = Glib::build_filename(argv0, "profiles");
+            if(checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+                globalProfilePath = tmpPath;
+            }
+        }
+    }
+    else {
+        // relative paths
+        if (multiUser) {
+            tmpPath = Glib::build_filename(rtdir, profilePath);
+            if (!checkDirPath (tmpPath, "")) {
+                int retVal = safe_g_mkdir_with_parents (tmpPath, 511);
+                if (!retVal)
+                	printf("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
+            }
+            if(checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory!\n")) {
+               	userProfilePath = tmpPath;
+            }
+            if (useBundledProfiles) {
+                tmpPath = Glib::build_filename(argv0, "profiles");
+                if(checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+                    globalProfilePath = tmpPath;
+                }
+            }
+        }
+        else {
+            // common directory
+            // directory name set in options is ignored, we use the default directory name
+            tmpPath = Glib::build_filename(argv0, "profiles");
+            if(checkDirPath (tmpPath, "Error: no global profiles' directory found!\n")) {
+                globalProfilePath = tmpPath;
+            }
+        }
+    }
+
+    Glib::ustring preferredPath = getPreferredProfilePath();
+    // Paths are updated only if the user or global profile path is set
+    if (lastRgbCurvesDir.empty() || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastRgbCurvesDir = preferredPath;
+    if (lastLabCurvesDir.empty() || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastLabCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastLabCurvesDir = preferredPath;
+    if (lastHsvCurvesDir.empty() || !safe_file_test (lastHsvCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastHsvCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastHsvCurvesDir = preferredPath;
+    if (lastToneCurvesDir.empty() || !safe_file_test (lastToneCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastToneCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastToneCurvesDir = preferredPath;
+    if (lastProfilingReferenceDir.empty() || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_IS_DIR))
+        lastProfilingReferenceDir = preferredPath;
+}
+
+Glib::ustring Options::getPreferredProfilePath() {
+    if (!userProfilePath.empty())
+        return userProfilePath;
+    else if (!globalProfilePath.empty())
+        return globalProfilePath;
+    else
+        return "";
+}
+
+Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
+    if (profName.empty())
+        return "";
+
+    Glib::ustring p = getUserProfilePath();
+    Glib::ustring fullPath = Glib::build_filename(p, profName + paramFileExtension);
+    if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
+        return p;
+
+    p = getGlobalProfilePath();
+    fullPath = Glib::build_filename(p, profName + paramFileExtension);
+    if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
+        return p;
+    else
+    	return "";
+
+}
+
 void Options::setDefaults () {
 
-	font = "sans, 10";
+	font = "sans, 8";
     windowWidth = 900;
     windowHeight = 560;
     windowMaximized = false;
@@ -56,7 +197,7 @@ void Options::setDefaults () {
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 8;
     saveFormat.tiffUncompressed = true;
-    saveFormat.saveParams = true;		// was false
+    saveFormat.saveParams = true;
 
     saveFormatBatch.format = "jpg";
     saveFormatBatch.jpegQuality = 100;
@@ -64,19 +205,18 @@ void Options::setDefaults () {
     saveFormatBatch.pngBits = 8;
     saveFormatBatch.tiffBits = 8;
     saveFormatBatch.tiffUncompressed = true;
-    saveFormatBatch.saveParams = true;		// was false
+    saveFormatBatch.saveParams = true;
 
     savePathTemplate = "%p1/converted/%f";
     savePathFolder = "";
     saveUsePathTemplate = true;
-    defProfRaw = "default";
-    defProfImg = "neutral";
+    defProfRaw = DEFPROFILE_RAW;
+    defProfImg = DEFPROFILE_IMG;
     dateFormat = "%y-%m-%d";
     adjusterDelay = 0;
-    startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)
+    startupDir = STARTUPDIR_LAST;
     startupPath = "";
-    profilePath = "profiles";
-    loadSaveProfilePath = "";
+    useBundledProfiles = true;
     dirBrowserWidth = 200;
     dirBrowserHeight = 150;
     preferencesWidth = 0;
@@ -84,8 +224,8 @@ void Options::setDefaults () {
     toolPanelWidth = 300;
     browserToolPanelWidth = 300;
     browserToolPanelHeight = 300;
-    historyPanelWidth = 230;			// was 150
-    lastScale = 5;						// was 4
+    historyPanelWidth = 230;
+    lastScale = 5;
     panAccelFactor = 5;
     lastCropSize = 1;
     fbOnlyRaw = false;
@@ -95,35 +235,37 @@ void Options::setDefaults () {
     fbShowHidden = false;
     fbArrangement = 2;					// was 0
     multiUser = true;
+    profilePath = "profiles";
+    loadSaveProfilePath = "";			// will be corrected in load as otherwise construction fails
     version = "0.0.0.0";				// temporary value; will be correctly set in RTWindow::on_realize
-    thumbSize = 240;					// was 80
+    thumbSize = 240;
     thumbSizeTab = 80;
     showHistory = true;
     showFilePanelState = 0;				// Not used anymore ; was the thumb strip state
-    showInfo = true;					// was false
-    cropPPI = 600;						// was 300
+    showInfo = true;
+    cropPPI = 600;
     showClippedHighlights = false;
     showClippedShadows = false;
     highlightThreshold = 253;			// was 254
     shadowThreshold = 8;				// was 0
     bgcolor = 0;
-    blinkClipped = false;				// was true
+    blinkClipped = false;
     language = DefaultLanguage;
     languageAutoDetect= langMgr.isOSLanguageDetectSupported();
     lastSaveAsPath = "";
     overwriteOutputFile = false;		// if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
     theme = "25-Gray-Gray";
-    slimUI = false;		// TODO: Should this be TRUE for worst case screen resolution or FALSE for nicer interface by default ???
-    useSystemTheme = true;
+    slimUI = false;
+    useSystemTheme = false;
     maxThumbnailHeight = 400;
-    maxCacheEntries = 20000;			// was 10000
+    maxCacheEntries = 20000;
     thumbnailFormat = FT_Custom;		// was FT_Custom16
     thumbInterp = 1;
     autoSuffix = false;
     saveParamsFile = true;				// was false, but saving the procparams files next to the file make more sense when reorganizing file tree than in a cache
     saveParamsCache = false;			// there's no need to save the procparams files in a cache if saveParamsFile is true
     paramsLoadLocation = PLL_Input;		// was PLL_Cache
-    procQueueEnabled = false;			// was true
+    procQueueEnabled = false;
     gimpDir = "";
     psDir = "";
     customEditorProg = "";
@@ -147,13 +289,13 @@ void Options::setDefaults () {
     overlayedFileNames = true;
     internalThumbIfUntouched = true; 	// if TRUE, only fast, internal preview images are taken if the image is not edited yet
     showFileNames = true;
-    tabbedUI = true;					// was false;
+    tabbedUI = true;
     multiDisplayMode = 0;
     tunnelMetaData = false;
     histogramPosition = 2;
     histogramBar = true;
     showProfileSelector = true;
-    FileBrowserToolbarSingleRow = true;
+    FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     UseIconNoText = true;
     whiteBalanceSpotSize = 8;
@@ -162,6 +304,7 @@ void Options::setDefaults () {
     menuGroupLabel = true;
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
+    menuGroupExtProg = true;
 
     fastexport_bypass_sharpening         = true;
     fastexport_bypass_sharpenEdge        = true;
@@ -244,9 +387,8 @@ void Options::setDefaults () {
 			0,  // ADDSET_SHARPENMICRO_UNIFORMITY
 			0,  // ADDSET_VIBRANCE_PASTELS
 			0,  // ADDSET_VIBRANCE_SATURATED
-			0,   // ADDSET_VIBRANCE_PSTHRESHOLD
-			0,   // ADDSET_FREE_OUPUT_GAMMA
-			0,   // ADDSET_FREE_OUTPUT_SLOPE
+			0,  // ADDSET_FREE_OUPUT_GAMMA
+			0,  // ADDSET_FREE_OUTPUT_SLOPE
 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
@@ -265,7 +407,6 @@ void Options::setDefaults () {
     rtSettings.colorimetricIntent = 1;
     rtSettings.monitorProfile = "";
     rtSettings.autoMonitorProfile = false;
-    rtSettings.LCMSSafeMode = true;
     rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RT_Large_gBT709"; // these names appear in the menu "output profile"
     rtSettings.prophoto10 = "RT_Large_g10"; // these names appear in the menu "output profile"
@@ -277,6 +418,21 @@ void Options::setDefaults () {
     rtSettings.best = "BestRGB";
     rtSettings.verbose = false;
 	rtSettings.gamutICC = true;
+
+	lastIccDir = rtSettings.iccDirectory;
+	lastDarkframeDir = rtSettings.darkFramesPath;
+	lastFlatfieldDir = rtSettings.flatFieldsPath;
+
+	// There is no reasonable default for curves. We can still suppose that they will take place
+	// in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
+	// of the one pointed to by the "profile" field.
+	// The following fields will then be initialized when "profile" will have its final value,
+	// at the end of the "updatePaths" method.
+	lastRgbCurvesDir = "";
+	lastLabCurvesDir = "";
+	lastHsvCurvesDir = "";
+	lastToneCurvesDir = "";
+	lastProfilingReferenceDir = "";
 }
 
 Options* Options::copyFrom (Options* other) {
@@ -368,10 +524,11 @@ if (keyFile.has_group ("Output")) {
 }
 
 if (keyFile.has_group ("Profiles")) { 
-    if (keyFile.has_key ("Profiles", "Directory"))              profilePath          = keyFile.get_string ("Profiles", "Directory");
-    if (keyFile.has_key ("Profiles", "LoadSaveProfilePath"))    loadSaveProfilePath  = keyFile.get_string ("Profiles", "LoadSaveProfilePath");
-    if (keyFile.has_key ("Profiles", "RawDefault"))             defProfRaw           = keyFile.get_string ("Profiles", "RawDefault");
-    if (keyFile.has_key ("Profiles", "ImgDefault"))             defProfImg           = keyFile.get_string ("Profiles", "ImgDefault");
+    if (keyFile.has_key ("Profiles", "Directory"))              profilePath          = keyFile.get_string  ("Profiles", "Directory");
+    if (keyFile.has_key ("Profiles", "UseBundledProfiles"))     useBundledProfiles   = keyFile.get_boolean ("Profiles", "UseBundledProfiles");
+    if (keyFile.has_key ("Profiles", "LoadSaveProfilePath"))    loadSaveProfilePath  = keyFile.get_string  ("Profiles", "LoadSaveProfilePath");
+    if (keyFile.has_key ("Profiles", "RawDefault"))             defProfRaw           = keyFile.get_string  ("Profiles", "RawDefault");
+    if (keyFile.has_key ("Profiles", "ImgDefault"))             defProfImg           = keyFile.get_string  ("Profiles", "ImgDefault");
     if (keyFile.has_key ("Profiles", "SaveParamsWithFile"))     saveParamsFile       = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
     if (keyFile.has_key ("Profiles", "SaveParamsToCache"))      saveParamsCache      = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
     if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation   = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
@@ -380,7 +537,7 @@ if (keyFile.has_group ("Profiles")) {
 
 if (keyFile.has_group ("File Browser")) { 
     if (keyFile.has_key ("File Browser", "ThumbnailSize"))      thumbSize          = keyFile.get_integer ("File Browser", "ThumbnailSize");
-    if (keyFile.has_key ("File Browser", "ThumbnailSizeTab"))      thumbSizeTab    = keyFile.get_integer ("File Browser", "ThumbnailSizeTab");
+    if (keyFile.has_key ("File Browser", "ThumbnailSizeTab"))   thumbSizeTab       = keyFile.get_integer ("File Browser", "ThumbnailSizeTab");
     if (keyFile.has_key ("File Browser", "BrowseOnlyRaw"))      fbOnlyRaw          = keyFile.get_boolean ("File Browser", "BrowseOnlyRaw");
     if (keyFile.has_key ("File Browser", "BrowserShowsDate"))   fbShowDateTime     = keyFile.get_boolean ("File Browser", "BrowserShowsDate");
     if (keyFile.has_key ("File Browser", "BrowserShowsExif"))   fbShowBasicExif    = keyFile.get_boolean ("File Browser", "BrowserShowsExif");
@@ -405,6 +562,7 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "menuGroupLabel")) menuGroupLabel = keyFile.get_boolean ("File Browser", "menuGroupLabel");
     if (keyFile.has_key ("File Browser", "menuGroupFileOperations")) menuGroupFileOperations = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
     if (keyFile.has_key ("File Browser", "menuGroupProfileOperations")) menuGroupProfileOperations = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
+    if (keyFile.has_key ("File Browser", "menuGroupExtProg")) menuGroupExtProg = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -476,9 +634,6 @@ if (keyFile.has_group ("Color Management")) {
     if( keyFile.has_key ("Color Management", "Beta"))           rtSettings.beta                 = keyFile.get_string("Color Management", "Beta");
     if( keyFile.has_key ("Color Management", "Best"))           rtSettings.best                 = keyFile.get_string("Color Management", "Best");
     if( keyFile.has_key ("Color Management", "Bruce"))          rtSettings.bruce                = keyFile.get_string("Color Management", "Bruce");
-
-    // Disabled (default is true) till issues are sorted out
-    //if (keyFile.has_key ("Color Management", "LCMSSafeMode")) rtSettings.LCMSSafeMode = keyFile.get_boolean ("Color Management", "LCMSSafeMode");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -524,9 +679,31 @@ if (keyFile.has_group ("Fast Export")) {
     if (keyFile.has_key ("Fast Export", "fastexport_resize_width"             ))  fastexport_resize_width               = keyFile.get_integer ("Fast Export", "fastexport_resize_width"             );
     if (keyFile.has_key ("Fast Export", "fastexport_resize_height"            ))  fastexport_resize_height              = keyFile.get_integer ("Fast Export", "fastexport_resize_height"            );
 }
+
+if (keyFile.has_group ("Dialogs")) {
+    safeDirGet(keyFile, "Dialogs", "LastIccDir", lastIccDir);
+    safeDirGet(keyFile, "Dialogs", "LastDarkframeDir", lastDarkframeDir);
+    safeDirGet(keyFile, "Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+    safeDirGet(keyFile, "Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
+}
+
         filterOutParsedExtensions ();
 
         return 0;
+}
+
+bool Options::safeDirGet(const rtengine::SafeKeyFile& keyFile, const Glib::ustring& section,
+                         const Glib::ustring& entryName, Glib::ustring& destination)
+{
+    if (keyFile.has_key(section, entryName) && !keyFile.get_string(section, entryName).empty()) {
+        destination = keyFile.get_string(section, entryName);
+        return true;
+    }
+    return false;
 }
 
 int Options::saveToFile (Glib::ustring fname) {
@@ -594,6 +771,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "menuGroupLabel", menuGroupLabel);
     keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
     keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
+    keyFile.set_boolean ("File Browser", "menuGroupExtProg", menuGroupExtProg);
    
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
@@ -624,6 +802,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
+    keyFile.set_boolean ("Profiles", "UseBundledProfiles", useBundledProfiles);
     keyFile.set_string  ("Profiles", "LoadSaveProfilePath", loadSaveProfilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
     keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
@@ -678,7 +857,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
 	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
-    keyFile.set_boolean ("Color Management", "LCMSSafeMode", rtSettings.LCMSSafeMode);
     keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
     keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);
     keyFile.set_string  ("Color Management", "ProPhoto10", rtSettings.prophoto10);
@@ -731,6 +909,14 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Fast Export", "fastexport_resize_width"              , fastexport_resize_width             );
     keyFile.set_integer ("Fast Export", "fastexport_resize_height"             , fastexport_resize_height            );
 
+    keyFile.set_string ("Dialogs", "LastIccDir", lastIccDir);
+    keyFile.set_string ("Dialogs", "LastDarkframeDir", lastDarkframeDir);
+    keyFile.set_string ("Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+    keyFile.set_string ("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
+    keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
+    keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
+    keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+    keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 
     FILE *f = safe_g_fopen (fname, "wt");
     if (f==NULL)
@@ -742,45 +928,23 @@ int Options::saveToFile (Glib::ustring fname) {
     }
 }
 
-Glib::ustring Options::rtdir;
-Glib::ustring Options::cacheBaseDir;
-
 void Options::load () {
 
 	// Find the application data path
 
 #ifdef WIN32
-	/*
-	 * If LOCALAPPDATA exists, RT run on a WinVista/7 system, so we use LOCALAPPDATA as is
-	 * otherwise RT run on a Win2000/XP system, so we rebuild the path like this: %USERPROFILE%\Local Settings\Application Data
-	 *
-	 * Folder redirection is then fully supported on WinVista/7, but not on Win2000/XP
-	 */
 	const gchar* dataPath;
 	Glib::ustring dPath;
-
-	// ->ODUIS: How to make that commented out code work ?
-
-	/*WCHAR path[MAX_PATH] = {0};
-	if (SHGetSpecialFolderPathW(NULL, path, CSIDL_LOCAL_APPDATA, false)) {
-		dPath = path;
-		printf("SHGetSpecialFolderPathW: \"%s\"\n", dPath.c_str());
-	}
-	else {
-		printf("SHGetSpecialFolderPathW: Fail!\n");
-	}*/
 
 	dataPath = g_getenv("RT_CACHE");
 	if (dataPath != NULL)
 		rtdir = Glib::ustring(dataPath);
 	else {
-		dataPath = g_getenv("LOCALAPPDATA");
-		if (dataPath != NULL)
-			rtdir = Glib::ustring(dataPath) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
-		else {
-			dataPath = g_getenv("USERPROFILE");
-			if (dataPath != NULL)
-				rtdir = Glib::ustring(dataPath) + Glib::ustring("\\Local Settings\\Application Data\\") + Glib::ustring(CACHEFOLDERNAME);
+        WCHAR pathW[MAX_PATH]={0}; char pathA[MAX_PATH];
+
+        if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_LOCAL_APPDATA,false)) {
+            WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
+            rtdir = Glib::ustring(pathA) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
 		}
 	}
 #else
@@ -796,15 +960,12 @@ void Options::load () {
     // Check if RT is installed in Multi-User mode
     if (options.multiUser) {
         // Read the user option file (the one located somewhere in the user's home folder)
-    	// Those values supersets those of the global option file
+        // Those values supersets those of the global option file
         int r = options.readFromFile (rtdir + "/options");
         // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
         if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
-        	// Recreate the user's profile folder
-            Glib::ustring profdir = rtdir + "/profiles";
-            safe_g_mkdir_with_parents (profdir, 511);
             // Save the option file
-            options.saveToFile (rtdir + "/options");
+        	options.saveToFile (rtdir + "/options");
         }
         // Modify the path of the cache folder to the user's personal folder
 #ifdef WIN32
@@ -812,6 +973,38 @@ void Options::load () {
 #else
         cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
 #endif
+    }
+
+    // Update profile's path and recreate it if necessary
+    options.updatePaths();
+
+    // Check default Raw and Img procparams existence
+    if (options.defProfRaw.empty())
+    	options.defProfRaw = DEFPROFILE_INTERNAL;
+    else {
+        Glib::ustring tmpFName = options.findProfilePath(options.defProfRaw);
+        if (!tmpFName.empty()) {
+            if (options.rtSettings.verbose) printf("Raws' default profile \"%s\" found\n", options.defProfRaw.c_str());
+        }
+        else {
+            if (options.rtSettings.verbose) printf("Raws' default profile \"%s\" not found or not set -> using Internal values\n", options.defProfRaw.c_str());
+            options.defProfRaw = DEFPROFILE_INTERNAL;
+            options.defProfRawMissing = true;
+        }
+    }
+
+    if (options.defProfImg.empty())
+    	options.defProfImg = DEFPROFILE_INTERNAL;
+    else {
+        Glib::ustring tmpFName = options.findProfilePath(options.defProfImg);
+        if (!tmpFName.empty()) {
+            if (options.rtSettings.verbose) printf("Images' default profile \"%s\" found\n", options.defProfImg.c_str());
+        }
+        else {
+            if (options.rtSettings.verbose) printf("Images' default profile \"%s\" not found or not set -> using Internal values\n", options.defProfImg.c_str());
+            options.defProfImg = DEFPROFILE_INTERNAL;
+            options.defProfImgMissing = true;
+        }
     }
 
 	//We handle languages using a hierarchy of translations.  The top of the hierarchy is default.  This includes a default translation for all items
@@ -867,7 +1060,7 @@ bool Options::has_retained_extention (Glib::ustring fname) {
 
 	Glib::ustring ext = getExtension(fname).lowercase();
 
-	if (ext.length()) {
+	if (!ext.empty()) {
 		// there is an extension to the filename
 
 		// look out if it has one of the retained extensions

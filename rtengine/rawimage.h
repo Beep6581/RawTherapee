@@ -90,7 +90,7 @@ public:
   ~RawImage();
 
   int loadRaw (bool loadData=true, bool closeFile=true);
-  int get_colorsCoeff( float *pre_mul, float *scale_mul, float *cblack  );
+  	void get_colorsCoeff( float* pre_mul_, float* scale_mul_, float* cblack_  );
   void set_prefilters(){
       if (isBayer() && get_colors() == 3) {
          prefilters = filters;
@@ -107,6 +107,8 @@ protected:
   char* profile_data; // Embedded ICC color profile
   unsigned short* allocation; // pointer to allocated memory
 
+  unsigned calcBlack;  // calculated black, like DCRAW  before 9.15
+
 public:
 
   std::string get_filename() const { return filename;}
@@ -116,7 +118,8 @@ public:
   bool isBayer() const { return filters!=0; }
   unsigned get_filters() const { return filters; }
   int get_colors() const { return colors;}
-  int get_black()  const { return black;}
+  int get_black()  const { return black;}  // from DCRAW 9.15 =0, but reflected in cblack
+  int get_calcblack()  const { return calcBlack;}  // simulated like DCRAW before 9.15
   int get_cblack(int i) const {return cblack[i];}
   int get_white() const { return maximum;}
   unsigned short get_whiteSample( int r, int c ) const { return white[r][c];}

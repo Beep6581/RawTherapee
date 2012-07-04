@@ -29,14 +29,13 @@ class DiagonalCurveEditorSubGroup : public CurveEditorSubGroup, public SHCListen
 	friend class DiagonalCurveEditor;
 
 protected:
-	Gtk::HBox* customCurveBox;
+	Gtk::VBox* customCurveBox;
+	Gtk::VBox* NURBSCurveBox;
 	Gtk::VBox* paramCurveBox;
-	Gtk::HBox* paramInnerBox;
-	Gtk::HBox* NURBSCurveBox;
 
 	MyDiagonalCurve* customCurve;
-	MyDiagonalCurve* paramCurve;
 	MyDiagonalCurve* NURBSCurve;
+	MyDiagonalCurve* paramCurve;
 
 	SHCSelector* shcSelector;
 	Adjuster* highlights;
@@ -60,7 +59,7 @@ protected:
 	int activeParamControl;
 
 public:
-	DiagonalCurveEditorSubGroup(CurveEditorGroup* prt);
+	DiagonalCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
 	virtual ~DiagonalCurveEditorSubGroup();
 
 	DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = "");

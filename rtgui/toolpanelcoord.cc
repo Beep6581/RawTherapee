@@ -52,6 +52,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     lcurve              = Gtk::manage (new LCurve ());
     rgbcurves           = Gtk::manage (new RGBCurves ());
     lensgeom            = Gtk::manage (new LensGeometry ());
+    lensProf            = Gtk::manage (new LensProfilePanel ());
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     vibrance            = Gtk::manage (new Vibrance ());
@@ -97,6 +98,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (transformPanel, lensgeom,         M("TP_LENSGEOM_LABEL"));       toolPanels.push_back (lensgeom);
     addPanel (lensgeom->getPackBox(), rotate,       M("TP_ROTATE_LABEL"));       toolPanels.push_back (rotate);
     addPanel (lensgeom->getPackBox(), perspective,  M("TP_PERSPECTIVE_LABEL"));  toolPanels.push_back (perspective);
+    addPanel (lensgeom->getPackBox(), lensProf,     M("TP_LENSPROFILE_LABEL"));  toolPanels.push_back (lensProf);
     addPanel (lensgeom->getPackBox(), distortion,   M("TP_DISTORTION_LABEL"));   toolPanels.push_back (distortion);
     addPanel (lensgeom->getPackBox(), cacorrection, M("TP_CACORRECTION_LABEL")); toolPanels.push_back (cacorrection);
     addPanel (lensgeom->getPackBox(), vignetting,   M("TP_VIGNETTING_LABEL"));   toolPanels.push_back (vignetting);
@@ -176,7 +178,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     toolPanelNotebook->set_scrollable ();
     toolPanelNotebook->show_all ();
 
-    for (int i=0; i<toolPanels.size(); i++)
+    for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->setListener (this);
 
     whitebalance->setWBProvider (this);
@@ -223,7 +225,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
     int changeFlags=refreshmap[(int)event];
 
     ProcParams* params = ipc->beginUpdateParams ();
-    for (int i=0; i<toolPanels.size(); i++)
+    for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (params);
 
     // Compensate rotation on flip
@@ -259,7 +261,7 @@ void ToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const Glib::
 
     hasChanged = true;
 
-    for (int i=0; i<paramcListeners.size(); i++)
+    for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->procParamsChanged (params, event, descr);
 }
 
@@ -292,7 +294,7 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
         pe.set(true);
         pe.initFrom (lParams);
 
-        filterRawRefresh=pe.raw.isUnchanged();
+        filterRawRefresh=pe.raw.isUnchanged() && pe.lensProf.isUnchanged();
     }
 
     *params = *mergedParams;
@@ -320,14 +322,14 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
 
     hasChanged = event != rtengine::EvProfileChangeNotification;
 
-    for (int i=0; i<paramcListeners.size(); i++)
+    for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->procParamsChanged (params, event, descr);
 }
 
 void ToolPanelCoordinator::setDefaults (ProcParams* defparams) {
 
     if (defparams)
-        for (int i=0; i<toolPanels.size(); i++) 
+	    for (size_t i=0; i<toolPanels.size(); i++)
             toolPanels[i]->setDefaults (defparams);
 }
 
@@ -354,6 +356,8 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     }
 
     icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData); 
+    lensProf->setRawMeta (raw, pMetaData); 
+
     hlrecovery->setRaw (raw);
     hasChanged = true;
 }
@@ -370,7 +374,7 @@ void ToolPanelCoordinator::closeImage () {
 void ToolPanelCoordinator::readOptions () {
 
     crop->readOptions (); 
-    for (int i=0; i<options.tpOpen.size(); i++)
+    for (size_t i=0; i<options.tpOpen.size(); i++)
         if (i<expList.size())
             expList[i]->set_expanded (options.tpOpen[i]);
 }
@@ -379,7 +383,7 @@ void ToolPanelCoordinator::writeOptions () {
 
     crop->writeOptions (); 
     options.tpOpen.clear ();
-    for (int i=0; i<expList.size(); i++)
+    for (size_t i=0; i<expList.size(); i++)
         options.tpOpen.push_back (expList[i]->get_expanded ());
 }
 
@@ -519,7 +523,7 @@ void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* o
 
 	FoldableToolPanel* currentTP;
 
-    for (int i=0; i<toolPanels.size(); i++) {
+	for (size_t i=0; i<toolPanels.size(); i++) {
 	currentTP = static_cast<FoldableToolPanel*>(toolPanels[i]);
         if (currentTP->getParent() == parent) {
             // Section in the same tab, we unfold it if it's not the one that has been clicked

@@ -112,6 +112,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbmenuGroupLabel;
     Gtk::CheckButton* ckbmenuGroupFileOperations;
     Gtk::CheckButton* ckbmenuGroupProfileOperations;
+    Gtk::CheckButton* ckbmenuGroupExtProg;
 
     Gtk::CheckButton* chOverwriteOutputFile;
 

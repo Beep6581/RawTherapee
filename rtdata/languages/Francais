@@ -1,3 +1,6 @@
+#00 Français
+#01 1.3.2008: Initial translation by Hombre
+
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
@@ -31,6 +34,7 @@ EDITWINDOW_TITLE;Édition d'image
 EXIFFILTER_APERTURE;Ouverture
 EXIFFILTER_CAMERA;Appareil photo
 EXIFFILTER_DIALOGLABEL;Filtre EXIF
+EXIFFILTER_EXPOSURECOMPENSATION;Compensation d'exposition (EV)
 EXIFFILTER_FILETYPE;Type de fichier
 EXIFFILTER_FOCALLEN;Longueur focale
 EXIFFILTER_ISO;ISO
@@ -66,10 +70,10 @@ EXPORT_BYPASS_RAW_DF;Forcer la Trame Noire [raw]
 EXPORT_BYPASS_RAW_FF;Forcer le Champ Uniforme [raw]
 EXPORT_BYPASS_RAW_GREENTHRESH;Forcer l'équilibrage du vert [raw]
 EXPORT_BYPASS_RAW_LINENOISE;Forcer le filtre de bruit de ligne [raw]
-EXPORT_BYPASS_SH_HQ;Forcer Ombres/Hautes lumières (haute qualité)
 EXPORT_BYPASS_SHARPENEDGE;Forcer netteté des bords
 EXPORT_BYPASS_SHARPENING;Forcer la netteté
 EXPORT_BYPASS_SHARPENMICRO;Forcer netteté des microcontrastes
+EXPORT_BYPASS_SH_HQ;Forcer Ombres/Hautes lumières (haute qualité)
 EXPORT_FASTEXPORTOPTIONS;<b>Options d'Export Rapide</b>
 EXPORT_INSTRUCTIONS;Les options d'Export Rapide permettent de forcer des paramètres afin d'éviter d'utiliser des outils très consommateur de temps et de ressources, et d'utiliser ces options dans la file de traitement. Cette méthode est recommandée pour la génération rapide d'images de basse résolution quand la vitesse est une priorité ou lorsqu'on désir une version redimensionnée d'une ou plusieurs images de sortie sans avoir à modifier leurs paramètres de développement.
 EXPORT_MAXHEIGHT;Hauteur maximum:
@@ -123,8 +127,8 @@ FILEBROWSER_POPUPMOVEEND;Déplacer à la fin de la file
 FILEBROWSER_POPUPMOVEHEAD;Déplacer en tête de file
 FILEBROWSER_POPUPMOVETO;Déplacer vers...
 FILEBROWSER_POPUPOPEN;Ouvrir
-FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
 FILEBROWSER_POPUPPROCESSFAST;Mettre dans la file de traitement (Export Rapide)
+FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
 FILEBROWSER_POPUPPROFILEOPERATIONS;Opérations sur les profils
 FILEBROWSER_POPUPRANK1;1 étoile
 FILEBROWSER_POPUPRANK2;2 étoiles
@@ -373,6 +377,15 @@ HISTORY_MSG_154;Vibrance - Protéger les tons chairs
 HISTORY_MSG_155;Vibrance - Éviter les dérives de teinte
 HISTORY_MSG_156;Vibrance - Lier Pastels et Saturés
 HISTORY_MSG_157;Vibrance - Seuil entre Pastels/Saturés
+HISTORY_MSG_158;Force
+HISTORY_MSG_159;Arrêt des bords
+HISTORY_MSG_160;Échelle
+HISTORY_MSG_161;Itérations de la pondération
+HISTORY_MSG_162;Compression tonale
+HISTORY_MSG_163;Courbes RVB - R
+HISTORY_MSG_164;Courbes RVB - V
+HISTORY_MSG_165;Courbes RVB - B
+HISTORY_MSG_166;Niveaux neutre
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
@@ -489,17 +502,24 @@ MAIN_TAB_TAGGING;Étiquetter
 MAIN_TAB_TRANSFORM;Transformation
 MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumultaif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
 MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique) <b>H</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine
 MAIN_TOOLTIP_INDCLIPPEDS;Indication ombres hors domaine
 MAIN_TOOLTIP_PREFERENCES;Régler les préférences
+MAIN_TOOLTIP_PREVIEWB;Affichage du <b>canal Bleu</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Affichage du <b>Masque du focus</b> <i>(beta)</i> <b>Shift-F</b>\n\nPlus précis sur les images avec une faible profondeur de champ, à faible bruit et à des niveaux de zoom élevé\n\nPour améliorer la précision de détection des images bruitées, évaluez les à un facteur de zoom de 10-30%\n\nLa prévisualisation met plus de temps à se calculer lorsque cet outil est actif.
+MAIN_TOOLTIP_PREVIEWG;Affichage du <b>canal Vert</b>
+MAIN_TOOLTIP_PREVIEWL;Affichage de la <b>Luminosité</b>\n0.299*R + 0.587*V + 0.114*B
+MAIN_TOOLTIP_PREVIEWR;Affichage du <b>canal Rouge</b>
 MAIN_TOOLTIP_QINFO;Montrer les infos EXIF <b>I</b>
 MAIN_TOOLTIP_SAVEAS;Enregistrer l'image dans un dossier de son choix
 MAIN_TOOLTIP_SAVE;Enregistrer l'image dans le dossier par défaut
 MAIN_TOOLTIP_SHOWHIDELP1;Montrer/Cacher le panneau gauche <b>H</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Afficher/Cacher le panneau droit <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Afficher/Cacher le panneau supérieur <b>Shift-l</b>
+MAIN_TOOLTIP_THRESHOLD;Seuil
 MAIN_TOOLTIP_TOGGLE;Comparaison avant/après <b>B</b>
 NAVIGATOR_B_NA;B = n/d
 NAVIGATOR_B_VALUE;B = %1
@@ -520,6 +540,8 @@ NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_NA;V = n/d
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/d, y = n/d
+OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
+OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
 PARTIALPASTE_CHANNELMIXER;Mixage des canaux
@@ -540,6 +562,7 @@ PARTIALPASTE_DIALOGLABEL;Collage partiel de profil de traitement
 PARTIALPASTE_DIRPYRDENOISE;Réduction du bruit
 PARTIALPASTE_DIRPYREQUALIZER;Contraste par niveaux de détail
 PARTIALPASTE_DISTORTION;Correction de distorsion
+PARTIALPASTE_EPD;Compression tonale
 PARTIALPASTE_EVERYTHING;Tout
 PARTIALPASTE_EXIFCHANGES;Modification des données EXIF
 PARTIALPASTE_EXPOSURE;Exposition
@@ -552,6 +575,7 @@ PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récup. des hautes lumières
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Seuil de récup. hautes lumières
 PARTIALPASTE_HLRECOVERY;Récupération des hautes lumières
 PARTIALPASTE_HSVEQUALIZER;Égaliseur TSV
+PARTIALPASTE_ICMGAMMA;Gamma de sortie
 PARTIALPASTE_ICMSETTINGS;Réglages ICM
 PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
 PARTIALPASTE_IPTCINFO;Infos IPTC
@@ -577,6 +601,7 @@ PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
 PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
 PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
 PARTIALPASTE_RESIZE;Redimentionnement
+PARTIALPASTE_RGBCURVES;Courbes RVB
 PARTIALPASTE_ROTATION;Rotation
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Ombres/Hautes lumières
 PARTIALPASTE_SHARPENEDGE;Bords
@@ -696,6 +721,7 @@ PREFERENCES_SELECTTHEME;Choisissez un thème
 PREFERENCES_SET;Remplace
 PREFERENCES_SHOWBASICEXIF;Voir les infos EXIF basiques
 PREFERENCES_SHOWDATETIME;Voir la date et l'heure
+PREFERENCES_SHOWEXPOSURECOMPENSATION;Ajoute la compensation d'exposition
 PREFERENCES_SHOWONLYRAW;Voir seulement les fichiers RAW
 PREFERENCES_SHOWPROFILESELECTOR;Affiche le sélecteur de profils
 PREFERENCES_SHTHRESHOLD;Seuil pour le dépassement de domaine inférieur
@@ -721,19 +747,19 @@ PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale
 PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
 PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_WORKFLOW;Habitudes de travail
+PROFILEPANEL_COPYPPASTE;Paramètres à copier
 PROFILEPANEL_FILEDLGFILTERANY;Tous les fichiers
 PROFILEPANEL_FILEDLGFILTERPP;Profils de post-traitement
 PROFILEPANEL_LABEL;Profils de post-traitement
 PROFILEPANEL_LOADDLGLABEL;Charger les paramètres de post-traitement...
+PROFILEPANEL_LOADPPASTE;Paramètres à charger
+PROFILEPANEL_PASTEPPASTE;Paramètres à coller
 PROFILEPANEL_PCUSTOM;Personnel
 PROFILEPANEL_PFILE;Depuis le fichier
 PROFILEPANEL_PLASTPHOTO;Photo précédente
 PROFILEPANEL_PLASTSAVED;Dernière sauvegarde
 PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Enregistrer les paramètres de post-traitement...
-PROFILEPANEL_COPYPPASTE;Paramètres à copier
-PROFILEPANEL_LOADPPASTE;Paramètres à charger
-PROFILEPANEL_PASTEPPASTE;Paramètres à coller
 PROFILEPANEL_SAVEPPASTE;Paramètres à enregistrer
 PROFILEPANEL_TOOLTIPCOPY;Copie le profil courant dans le presse-papier\nCTRL-clic pour sélectionner les paramètres à copier
 PROFILEPANEL_TOOLTIPLOAD;Charger un profil depuis un fichier\nCTRL-clic pour sélectionner les paramètres à charger
@@ -777,6 +803,13 @@ SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
 SAVEDLG_TIFFFILTER;Fichiers TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
+THRESHOLDSELECTOR_B;Bas
+THRESHOLDSELECTOR_BL;Bas-gauche
+THRESHOLDSELECTOR_BR;Bas-droite
+THRESHOLDSELECTOR_HINT;Maintenez la touche <b>Shift</b> appuyée pour déplacer les curseurs individuellement.
+THRESHOLDSELECTOR_T;Haut
+THRESHOLDSELECTOR_TL;Haut-Gauche
+THRESHOLDSELECTOR_TR;Haut-droite
 TOOLBAR_TOOLTIP_CROP;Sélection du recadrage <b>C</b>
 TOOLBAR_TOOLTIP_HAND;Outil de navigation <b>N</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon <b>S</b>
@@ -849,6 +882,11 @@ TP_DISTORTION_AMOUNT;Quantité
 TP_DISTORTION_AUTO;Correction auto de la distorsion
 TP_DISTORTION_AUTO_TIP;(Experimental) Corrige la distorsion de l'objectif automatiquement pour certains APN (M4/3, quelques compacts, etc.)
 TP_DISTORTION_LABEL;Distorsion
+TP_EPD_EDGESTOPPING;Arrêt des bords
+TP_EPD_LABEL;Compression tonale
+TP_EPD_REWEIGHTINGITERATES;Itérations de la pondération
+TP_EPD_SCALE;Échelle
+TP_EPD_STRENGTH;Force
 TP_EQUALIZER_CONTRAST_MINUS;Contraste-
 TP_EQUALIZER_CONTRAST_PLUS;Contraste+
 TP_EQUALIZER_FINEST;les plus petites
@@ -857,9 +895,11 @@ TP_EQUALIZER_LARGEST;les plus grandes
 TP_EQUALIZER_NEUTRAL;Neutre
 TP_EXPOSCORR_LABEL;Exposition
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
+TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de <b>Niveaux automatiques</b> afin de régler\nautomatiquement les valeurs basé sur l'analyse de l'image  
 TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
 TP_EXPOSURE_CLIP;Rognage
+TP_EXPOSURE_CLIP_TIP;La fraction de pixels que l'outil <b>Niveaux automatiques</b> passera en dehors du domaine
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
 TP_EXPOSURE_COMPRSHADOWS;Compression des ombres
@@ -896,14 +936,19 @@ TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndans l'espace de la matrice
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
-TP_ICM_FILEDLGFILTERICM;Fichiers de profil ICC
+TP_ICM_FILEDLGFILTERICM;Fichiers de profil
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil
-TP_ICM_INPUTCAMERAICC;Profil ICC spécifique à l'APN\nsélectionné automatiquement
+TP_ICM_INPUTCAMERAICC;Profil spécifique à l'APN\nsélectionné automatiquement
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils d'entrée DCP ou ICC spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareil photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
 TP_ICM_INPUTCAMERA;Celui de l'appareil photo
+TP_ICM_INPUTCAMERA_TOOLTIP;Par ordre de préférence, utilise les matrices de couleur inclus dans le fichier RAW, les matrices de couleur simple fournis par RawTherapee ou celles de DCRaw
 TP_ICM_INPUTCUSTOM;Personnel
-TP_ICM_INPUTDLGLABEL;Choix du profil ICC d'entrée...
+TP_ICM_INPUTCUSTOM_TOOLTIP;Sélectionez votre propre profil DCP/ICC pour votre appareil photo
+TP_ICM_INPUTDLGLABEL;Choix du profil DCP/ICC d'entrée...
 TP_ICM_INPUTEMBEDDED;Utiliser celui inclus, si possible
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Utilise le profil inclus dans les fichiers non-Raw
 TP_ICM_INPUTNONE;Sans profil
+TP_ICM_INPUTNONE_TOOLTIP;N'utilise aucun profil couleur d'entrée du tout. À n'utiliser que dans des cas très spéciaux.
 TP_ICM_INPUTPROFILE;Profil d'entrée
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Pas d'ICM: sortie sRGB
@@ -927,6 +972,8 @@ TP_LENSGEOM_LABEL;Objectif / Géométrie
 TP_LUMADENOISE_EDGETOLERANCE;Tolérance des bords
 TP_LUMADENOISE_LABEL;Réduction du bruit de luminance
 TP_LUMADENOISE_RADIUS;Rayon
+TP_NEUTRAL;Neutre
+TP_NEUTRAL_TIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
 TP_PERSPECTIVE_HORIZONTAL;Horizontale
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Verticale
@@ -974,6 +1021,11 @@ TP_RESIZE_SCALE;Échelle
 TP_RESIZE_SPECIFY;Préciser:
 TP_RESIZE_WIDTH;Largeur
 TP_RESIZE_W;L:
+TP_RGBCURVES_BLUE;B
+TP_RGBCURVES_CHANNEL;Canal
+TP_RGBCURVES_GREEN;V
+TP_RGBCURVES_LABEL;Courbes RVB
+TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation
 TP_ROTATE_SELECTLINE;Choisir la ligne d'horizon
@@ -1012,7 +1064,7 @@ TP_VIBRANCE_LABEL;Vibrance
 TP_VIBRANCE_PASTELS;Tons pastels
 TP_VIBRANCE_PASTSATTOG;Lier Pastels et Saturés
 TP_VIBRANCE_PROTECTSKINS;Protéger les tons chairs
-TP_VIBRANCE_PSTHRESHOLD;Seuil entre Pastels/Saturés
+TP_VIBRANCE_PSTHRESHOLD;Seuil différentiel entre Pastels/Saturés
 TP_VIBRANCE_SATURATED;Tons saturés
 TP_VIGNETTING_AMOUNT;Quantité
 TP_VIGNETTING_CENTER;Centre
@@ -1075,53 +1127,19 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-
-#00 Français
-#01 1.3.2008: Initial translation by Hombre
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-EXIFFILTER_EXPOSURECOMPENSATION;Compensation d'exposition (EV)
-HISTORY_MSG_158;Force
-HISTORY_MSG_159;Arrêt des bords
-HISTORY_MSG_160;Échelle
-HISTORY_MSG_161;Itérations de la pondération
-HISTORY_MSG_162;Compression tonale
-HISTORY_MSG_163;Courbes RVB - R
-HISTORY_MSG_164;Courbes RVB - V
-HISTORY_MSG_165;Courbes RVB - B
-HISTORY_MSG_166;Niveaux neutre
-MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumultaif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
-MAIN_TOOLTIP_PREVIEWB;Affichage du <b>canal Bleu</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Affichage du <b>Masque du focus</b> <i>(beta)</i> <b>Shift-F</b>\n\nPlus précis sur les images avec une faible profondeur de champ, à faible bruit et à des niveaux de zoom élevé\n\nPour améliorer la précision de détection des images bruitées, évaluez les à un facteur de zoom de 10-30%\n\nLa prévisualisation met plus de temps à se calculer lorsque cet outil est actif.
-MAIN_TOOLTIP_PREVIEWG;Affichage du <b>canal Vert</b>
-MAIN_TOOLTIP_PREVIEWL;Affichage de la <b>Luminosité</b>\n0.299*R + 0.587*V + 0.114*B
-MAIN_TOOLTIP_PREVIEWR;Affichage du <b>canal Rouge</b>
-MAIN_TOOLTIP_THRESHOLD;Seuil
-PARTIALPASTE_EPD;Compression tonale
-PARTIALPASTE_ICMGAMMA;Gamma de sortie
-PARTIALPASTE_RGBCURVES;Courbes RVB
-PREFERENCES_SHOWEXPOSURECOMPENSATION;Ajoute la compensation d'exposition
-TP_EPD_EDGESTOPPING;Arrêt des bords
-TP_EPD_LABEL;Compression tonale
-TP_EPD_REWEIGHTINGITERATES;Itérations de la pondération
-TP_EPD_SCALE;Échelle
-TP_EPD_STRENGTH;Force
-TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de <b>Niveaux automatiques</b> afin de régler\nautomatiquement les valeurs basé sur l'analyse de l'image  
-TP_EXPOSURE_CLIP_TIP;La fraction de pixels que l'outil <b>Niveaux automatiques</b> passera en dehors du domaine
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils ICC d'entrée spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareil photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
-TP_ICM_INPUTCAMERA_TOOLTIP;Par ordre de préférence, utilise les matrices de couleur inclus dans le fichier RAW, les matrices de couleur simple fournis par RawTherapee ou celles de DCRaw
-TP_ICM_INPUTCUSTOM_TOOLTIP;Sélectionez votre propre profil ICC pour votre appareil photo
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Utilise le profil inclus dans les fichiers non-Raw
-TP_ICM_INPUTNONE_TOOLTIP;N'utilise aucun profil couleur d'entrée du tout. À n'utiliser que dans des cas très spéciaux.
-TP_NEUTRAL;Neutre
-TP_NEUTRAL_TIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
-TP_RGBCURVES_LABEL;Courbes RVB
-TP_RGBCURVES_CHANNEL;Canal
-TP_RGBCURVES_BLUE;B
-TP_RGBCURVES_GREEN;V
-TP_RGBCURVES_RED;R
+EXTPROGTARGET_1;raw
+EXTPROGTARGET_2;file de traitement
+FILEBROWSER_EXTPROGMENU;Ouvrir avec
+FILEBROWSER_OPENDEFAULTVIEWER;Visualiseur par défaut de Windows (image déjà traitée) 
+MAIN_MSG_IMAGEUNPROCESSED;Cette commande nécessite que toutes les images sélectionnées aient été préalablement traité.
+PREFERENCES_MENUGROUPEXTPROGS;Groupe "Ouvrir avec"
+TP_ICM_PREFERREDPROFILE;Profil DCP préféré
+TP_ICM_PREFERREDPROFILE_1;Lumière du jour (ensoleillé)
+TP_ICM_PREFERREDPROFILE_2;Tungstène
+TP_ICM_PREFERREDPROFILE_3;Fluorescent
+TP_ICM_PREFERREDPROFILE_4;Flash
+TP_LENSPROFILE_FILEDLGFILTERLCP;Fichiers de correction d'objectif
+TP_LENSPROFILE_LABEL;Profil de correction d'objectif
+TP_LENSPROFILE_USECA;Appliquer la correction de l'aberration chromatique
+TP_LENSPROFILE_USEDIST;Appliquer la correction de la distortion
+TP_LENSPROFILE_USEVIGN;Appliquer la correction du vignettage

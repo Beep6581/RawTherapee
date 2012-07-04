@@ -22,8 +22,8 @@
 #include <cmath>
 #include <cstring>
 #include <ctime>
-#include <algorithm>
 #include <sstream>
+#include <stdint.h>
 
 #include "rtexif.h"
 
@@ -45,7 +45,7 @@ TagDirectory::TagDirectory ()
 TagDirectory::TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border) 
     : attribs(ta), order(border), parent(p) {}
 
-TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border) {
+TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored) {
 
   attribs = ta;
   order = border;
@@ -66,6 +66,7 @@ TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib*
         continue;
     }
         
+    if (skipIgnored) {
     int id = newTag->getID();
 
     // detect and possibly ignore tags of directories belonging to the embedded thumbnail image
@@ -78,12 +79,13 @@ TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib*
       delete newTag;
     else 
         addTag (newTag);
+    } else addTag (newTag);
   }  
 }
  
 TagDirectory::~TagDirectory () {
 
-  for (int i=0; i<tags.size(); i++) 
+  for (size_t i=0; i<tags.size(); i++)
     delete tags[i];
 }
 
@@ -97,7 +99,7 @@ public:
 void TagDirectory::sort () {
 
     std::sort (tags.begin(), tags.end(), CompareTags());
-    for (int i=0; i<tags.size(); i++) 
+    for (size_t i=0; i<tags.size(); i++)
         if (tags[i]->isDirectory())
             for (int j=0; tags[i]->getDirectory(j); j++)
                 tags[i]->getDirectory(j)->sort ();
@@ -130,7 +132,7 @@ const TagAttrib* TagDirectory::getAttrib (const char* name) {
 
 void TagDirectory::printAll () const {
   
-  for (int i=0; i<tags.size(); i++) {
+  for (size_t i=0; i<tags.size(); i++) {
     std::string name = tags[i]->nameToString ();
     if (tags[i]->isDirectory())
         for (int j=0; tags[i]->getDirectory(j); j++) {
@@ -166,7 +168,7 @@ void TagDirectory::addTagFront (Tag* tag) {
 void TagDirectory::replaceTag (Tag* tag) {
 
   // look up if it already exists:
-  for (int i=0; i<tags.size(); i++) 
+  for (size_t i=0; i<tags.size(); i++)
     if (tags[i]->getID()==tag->getID()) {
       delete tags[i];
       tags[i] = tag;
@@ -177,7 +179,7 @@ void TagDirectory::replaceTag (Tag* tag) {
 
 Tag* TagDirectory::getTag (int ID) const {
 
-  for (int i=0; i<tags.size(); i++) 
+  for (size_t i=0; i<tags.size(); i++)
     if (tags[i]->getID()==ID)
       return tags[i];
   return NULL;
@@ -202,7 +204,7 @@ Tag* TagDirectory::findTag (const char* name) const {
 				else break;
 			}
 	  }
-	  for (int i=0; i<tags.size(); i++)
+	  for (size_t i=0; i<tags.size(); i++)
 	     if(tags[i]->isDirectory()){
 	    	 TagDirectory *dir = tags[i]->getDirectory();
 	    	 Tag* t=dir->findTag(name);
@@ -212,14 +214,14 @@ Tag* TagDirectory::findTag (const char* name) const {
 }
 
 void TagDirectory::keepTag (int ID) {
-    for (int i=0; i<tags.size(); i++) 
+    for (size_t i=0; i<tags.size(); i++)
         if (tags[i]->getID()==ID) tags[i]->setKeep(true);
 }
 
 int TagDirectory::calculateSize () {
 
   int size = 2; // space to store the number of tags
-  for (int i=0; i<tags.size(); i++) 
+  for (size_t i=0; i<tags.size(); i++)
     if (tags[i]->getKeep()) 
         size += 12 + tags[i]->calculateSize ();
     
@@ -230,7 +232,7 @@ int TagDirectory::calculateSize () {
 TagDirectory* TagDirectory::clone (TagDirectory* parent) {
     
     TagDirectory* td = new TagDirectory (parent, attribs, order);
-    for (int i=0; i<tags.size(); i++)
+    for (size_t i=0; i<tags.size(); i++)
         td->tags.push_back (tags[i]->clone (td));
     return td;
 }
@@ -240,7 +242,7 @@ int TagDirectory::write (int start, unsigned char* buffer) {
     int size = calculateSize ();
     int tagnum = 0;
     int nondirspace = 0;
-    for (int i=0; i<tags.size(); i++)
+    for (size_t i=0; i<tags.size(); i++)
         if (tags[i]->getKeep()) {
             tagnum++;
             if (!tags[i]->isDirectory())
@@ -252,7 +254,7 @@ int TagDirectory::write (int start, unsigned char* buffer) {
     sset2 (tagnum, buffer+start, order);
     pos += 2;
     int maxPos = start + size;
-    for (int i=0; i<tags.size(); i++) {
+    for (size_t i=0; i<tags.size(); i++) {
         if (tags[i]->getKeep()) {
             if (!tags[i]->isDirectory())
                 nextValOffs = tags[i]->write (pos, nextValOffs, buffer);  // pos: where to put the tag, dataoffset: the place where the value can be put. return: next data offset
@@ -274,7 +276,7 @@ void TagDirectory::applyChange (std::string name, std::string value) {
     if (dp==std::string::npos) {
 
         Tag* t = NULL;
-        for (int i=0; i<tags.size(); i++)
+        for (size_t i=0; i<tags.size(); i++)
             if (tags[i]->nameToString()==fseg) {
                 t = tags[i];
                 break;
@@ -307,7 +309,7 @@ void TagDirectory::applyChange (std::string name, std::string value) {
         std::string basename = fseg.substr (0,dp1);
         Tag* t = NULL;
         int dirnum = -1;
-        for (int i=0; i<tags.size(); i++)
+        for (size_t i=0; i<tags.size(); i++)
             if (tags[i]->isDirectory()) {
                 for (int j=0; tags[i]->getDirectory(j); j++) {
                     if (tags[i]->nameToString(j) == fseg) {
@@ -649,7 +651,7 @@ defsubdirs:
               // allocate space
               directory = new TagDirectory*[sdcount+1];
               // load directories
-              for (int j=0,i=0; j<count; j++,i++) {
+              for (size_t j=0,i=0; j<count; j++,i++) {
                   int newpos = base + toInt(j*4, LONG);
                   fseek (f, newpos, SEEK_SET);
                   directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
@@ -759,7 +761,7 @@ int Tag::toInt (int ofs, TagType astype) {
     case LONG:  return (int)sget4 (value+ofs, getOrder());
     case SRATIONAL: 
     case RATIONAL: a = (int)sget4 (value+ofs+4, getOrder()); return a==0 ? 0 : (int)sget4 (value+ofs, getOrder()) / a;
-    case FLOAT:     return (int)((float) sget4 (value+ofs, getOrder()));
+    case FLOAT:     return (int)toDouble(ofs);
     case UNDEFINED: return 0;
     default: return 0; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
@@ -767,6 +769,7 @@ int Tag::toInt (int ofs, TagType astype) {
 }
 
 double Tag::toDouble (int ofs) {
+  union IntFloat { uint32_t i; float f; } conv;
 
   double ud, dd;
   switch (type) {
@@ -778,7 +781,10 @@ double Tag::toDouble (int ofs) {
     case LONG:  return (double)((int)sget4 (value+ofs, getOrder()));
     case SRATIONAL: 
     case RATIONAL: ud = (int)sget4 (value+ofs, getOrder()); dd = (int)sget4 (value+ofs+4, getOrder()); return dd==0. ? 0. : (double)ud / (double)dd;
-    case FLOAT:     return (float) sget4 (value+ofs, getOrder());
+    case FLOAT:     
+        conv.i=sget4 (value+ofs, getOrder());
+        return conv.f;  // IEEE FLOATs are already C format, they just need a recast
+
     case UNDEFINED: return 0.;
     default: return 0.; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
@@ -826,12 +832,12 @@ void Tag::toString (char* buffer, int ofs) {
     return; 
   }
 
-  int maxcount = 4;
+  size_t maxcount = 4;
   if (count<4)
     maxcount = count;
   
   strcpy (buffer, "");
-  for (int i=0; i<maxcount; i++) {
+  for (size_t i=0; i<maxcount; i++) {
     if (i>0)
         strcat (buffer, ", ");
     char* b = buffer + strlen(buffer);
@@ -896,7 +902,7 @@ int Tag::calculateSize () {
       size += valuesize + (valuesize%2); // we align tags to even byte positions 
 
    if (makerNoteKind!=NOMK) 
-        count = directory[0]->calculateSize ();
+        count = directory[0]->calculateSize () / getTypeSize(type);
         
    if (makerNoteKind==NIKON3 || makerNoteKind==OLYMPUS2 || makerNoteKind==FUJI) 
         size += valuesize;
@@ -1302,7 +1308,250 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root) 
   }
 }
 
-TagDirectory* ExifManager::parse (FILE* f, int base) {
+static void
+parse_leafdata(TagDirectory* root, ByteOrder order) {
+
+    Tag *leafdata = root->getTag("LeafData");
+    if (!leafdata) {
+        return;
+    }
+    unsigned char *value = leafdata->getValue();
+    int valuesize = leafdata->getValueSize();
+
+    // parse LeafData tag, a tag specific to Leaf digital backs, and has a custom
+    // format with 52 byte tag headers starting with "PKTS".
+    char *hdr;
+    int pos = 0;
+
+    // There are lots of sub-tags in here, but for now we only care about those directly
+    // useful to RT, which is ISO and rotation. Shutter speed and aperture is not
+    // available here.
+    int iso_speed = 0;
+    int rotation_angle = 0;
+    int found_count = 0;
+    while (pos + sizeof(hdr) <= valuesize && found_count < 2) {
+        hdr = (char *)&value[pos];
+        if (strncmp(hdr, "PKTS", 4) != 0) {
+            // in a few cases the header can be offset a few bytes, don't know why
+            // it does not seem to be some sort of alignment, it appears random,
+            // this check takes care of it, restart if we find an offset match.
+            int offset = 1;
+            for (; offset <= 3; offset++) {
+                if (strncmp(&hdr[offset], "PKTS", 4) == 0) {
+                    pos += offset;
+                    break;
+                }
+            }
+            if (offset <= 3) {
+                continue;
+            }
+            break;
+        }
+        int size = sget4((unsigned char *)&hdr[48], order);
+        if (pos + size > valuesize) {
+            break;
+        }
+        pos += 52;
+        char *val = (char *)&value[pos];
+        if (strncmp(&hdr[8], "CameraObj_ISO_speed", 19) == 0) {
+            iso_speed = 25 * (1 << (atoi(val) - 1));
+            found_count++;
+        } else if (strncmp(&hdr[8], "ImgProf_rotation_angle", 22) == 0) {
+            rotation_angle = atoi(val);
+            found_count++;
+        } else {
+            // check if this is a sub-directory, include test for that strange offset of next header
+            if (size >= 8 &&
+                (strncmp(val, "PKTS", 4) == 0 ||
+                 strncmp(&val[1], "PKTS", 4) == 0 ||
+                 strncmp(&val[2], "PKTS", 4) == 0 ||
+                 strncmp(&val[3], "PKTS", 4) == 0))
+            {
+                // start of next hdr, this is a sub-directory, we skip those for now.
+                size = 0;
+            }
+        }
+        pos += size;
+    }
+
+    // create standard tags from the custom Leaf tags
+    Tag* exif = root->getTag ("Exif");
+    if (!exif) {
+        exif = new Tag (root, root->getAttrib ("Exif"));
+        exif->initSubDir();
+        root->addTagFront (exif);
+    }
+    if (!exif->getDirectory()->getTag("ISOSpeedRatings")) {
+        Tag *t = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
+        t->initInt (iso_speed, LONG);
+        exif->getDirectory()->addTagFront (t);
+    }
+    if (!root->getTag("Orientation")) {
+        int orientation;
+        switch (rotation_angle) {
+        case 0: orientation = 1; break;
+        case 90: orientation = 6; break;
+        case 180: orientation = 3; break;
+        case 270: orientation = 8; break;
+        default: orientation = 1; break;
+        }
+        Tag *t = new Tag (root, root->getAttrib ("Orientation"));
+        t->initInt (orientation, SHORT);
+        root->addTagFront (t);
+    }
+
+    // now look in ApplicationNotes tag for additional information
+    Tag *appnotes = root->getTag("ApplicationNotes");
+    if (!appnotes) {
+        return;
+    }
+    char *xmp = (char *)appnotes->getValue();
+    char *end, *p;
+    // Quick-and-dirty value extractor, no real xml parsing.
+    // We could make it more generic, but we just get most important
+    // values we know use to be in there.
+    if ((p = strstr(xmp, "xmlns:tiff")) != NULL &&
+        (end = strstr(p, "</rdf:Description>")) != NULL)
+    {
+        *end = '\0';
+        while ((p = strstr(p, "<tiff:")) != NULL) {
+            char *tag = &p[6], *tagend;
+            if ((tagend = strchr(tag, '>')) == NULL) {
+                break;
+            }
+            *tagend = '\0';
+            char *val = &tagend[1];
+            if ((p = strstr(val, "</tiff:")) == NULL) {
+                *tagend = '>';
+                break;
+            }
+            *p = '\0';
+            if (root->getAttrib (tag) && !root->getTag (tag)) {
+                Tag *t = new Tag (root, root->getAttrib (tag));
+                if (strcmp(tag, "Make") == 0 ||
+                    strcmp(tag, "Model") == 0)
+                {
+                    t->initString (val);
+                    root->addTagFront (t);
+                } else {
+                    delete t;
+                }
+            }
+            *p = '<';
+            *tagend = '>';
+        }
+        *end = '<';
+    }
+    if ((p = strstr(xmp, "xmlns:exif")) != NULL &&
+        (end = strstr(p, "</rdf:Description>")) != NULL)
+    {
+        *end = '\0';
+        while ((p = strstr(p, "<exif:")) != NULL) {
+            char *tag = &p[6], *tagend;
+            if ((tagend = strchr(tag, '>')) == NULL) {
+                break;
+            }
+            *tagend = '\0';
+            char *val = &tagend[1];
+            if ((p = strstr(val, "</exif:")) == NULL) {
+                *tagend = '>';
+                break;
+            }
+            *p = '\0';
+            if (exif->getDirectory()->getAttrib (tag) && !exif->getDirectory()->getTag (tag)) {
+                Tag *t = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib (tag));
+                int num, denom;
+                struct tm tm;
+                if (strcmp(tag, "ApertureValue") == 0 && sscanf(val, "%d/%d", &num, &denom) == 2) {
+                    t->initRational (num, denom);
+                    exif->getDirectory()->addTagFront (t);
+                    // we also make an "FNumber" tag since many tools don't interpret ApertureValue
+                    // according to Exif standard
+                    t = new Tag (exif->getDirectory(), lookupAttrib(exifAttribs,"FNumber"));
+                    double f = pow(sqrt(2.0), ((double)num / denom));
+                    if (f > 10.0) {
+                        t->initRational ((int)floor(f), 1);
+                    } else {
+                        t->initRational ((int)floor(f * 10.0), 10);
+                    }
+                    exif->getDirectory()->addTagFront (t);
+                } else if (strcmp(tag, "ShutterSpeedValue") == 0 && sscanf(val, "%d/%d", &num, &denom) == 2) {
+                    t->initRational (num, denom);
+                    exif->getDirectory()->addTagFront (t);
+                    // we also make an "ExposureTime" tag since many tools don't interpret ShutterSpeedValue
+                    // according to Exif standard
+                    t = new Tag (exif->getDirectory(), lookupAttrib(exifAttribs,"ExposureTime"));
+                    double f = 1.0 / pow(2.0, ((double)num / denom));
+                    if (f > 10.0) {
+                        t->initRational ((int)floor(f), 1);
+                    } else if (f > 1.0) {
+                        t->initRational ((int)floor(f * 10.0), 10);
+                    } else if (f == 1.0) {
+                        t->initRational (1, 1);
+                    } else {
+                        f = 1.0 / f;
+                        static const double etimes[] = {
+                            10000, 8000, 6400, 6000, 5000,
+                            4000, 3200, 3000, 2500,
+                            2000, 1600, 1500, 1250,
+                            1000, 800, 750, 640,
+                            500, 400, 350, 320,
+                            250, 200, 180, 160,
+                            125, 100, 90, 80,
+                            60, 50, 45, 40,
+                            30, 25, 22, 20,
+                            15, 13, 11, 10,
+                            8, 6, 5,
+                            4, 3, 2.5,
+                            2, 1.6, 1.5, 1.3,
+                            1, -1 };
+                        double diff = etimes[0];
+                        int idx = -1;
+                        for (int i = 1; etimes[i] > 0; i++) {
+                            if (abs(etimes[i] - f) < diff) {
+                                idx = i;
+                                diff = abs(etimes[i] - f);
+                            }
+                        }
+                        if (idx != -1 && f < etimes[0]) {
+                            f = etimes[idx];
+                        }
+                        if (f < 2) {
+                            t->initRational (10, (int)(10 * f));
+                        } else {
+                            t->initRational (1, (int)f);
+                        }
+                    }
+                    exif->getDirectory()->addTagFront (t);
+                } else if (strcmp(tag, "FocalLength") == 0 && sscanf(val, "%d/%d", &num, &denom) == 2) {
+                    t->initRational (num, denom);
+                    exif->getDirectory()->addTagFront (t);
+                } else if (strcmp(tag, "ISOSpeedRatings") == 0) {
+                    t->initInt (atoi(val), LONG);
+                    exif->getDirectory()->addTagFront (t);
+                } else if (strcmp(tag, "DateTimeOriginal") == 0 &&
+                           sscanf(val, "%d-%d-%dT%d:%d:%dZ",
+                                  &tm.tm_year, &tm.tm_mon,
+                                  &tm.tm_mday, &tm.tm_hour,
+                                  &tm.tm_min, &tm.tm_sec) == 6)
+                {
+                    char tstr[64];
+                    sprintf(tstr, "%02d:%02d:%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon,
+                            tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+                    t->initString (tstr);
+                    exif->getDirectory()->addTagFront (t);
+                } else {
+                    delete t;
+                }
+            }
+            *p = '<';
+            *tagend = '>';
+        }
+        *end = '<';
+    }
+}
+
+TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored) {
   setlocale(LC_NUMERIC, "C"); // to set decimal point in sscanf
   // read tiff header
   fseek (f, base, SEEK_SET);
@@ -1316,12 +1565,12 @@ TagDirectory* ExifManager::parse (FILE* f, int base) {
   fseek (f, base+firstifd, SEEK_SET);
 
   // first read the IFD directory
-  TagDirectory* root =  new TagDirectory (NULL, f, base, ifdAttribs, order);
+  TagDirectory* root =  new TagDirectory (NULL, f, base, ifdAttribs, order, skipIgnored);
 
   // fix ISO issue with nikon and panasonic cameras
+  Tag* make = root->getTag ("Make");
   Tag* exif = root->getTag ("Exif");
   if (exif && !exif->getDirectory()->getTag("ISOSpeedRatings")) {
-    Tag* make = root->getTag ("Make");
     if (make && !strncmp((char*)make->getValue(), "NIKON", 5)) {
         Tag* mn   = exif->getDirectory()->getTag("MakerNote");
         if (mn) {
@@ -1343,6 +1592,22 @@ TagDirectory* ExifManager::parse (FILE* f, int base) {
             exif->getDirectory()->addTagFront (niso);
         }
     }
+  }
+
+  parse_leafdata(root, order);
+
+  if (!root->getTag("Orientation")) {
+      if (make && !strncmp((char*)make->getValue(), "Phase One", 9)) {
+          int orientation = 0;
+          Tag *iw = root->getTag("ImageWidth");
+          if (iw) {
+              // from dcraw, derive orientation from image width
+              orientation = "0653"[iw->toInt()&3]-'0';
+          }
+          Tag *t = new Tag (root, root->getAttrib ("Orientation"));
+          t->initInt (orientation, SHORT);
+          root->addTagFront (t);
+      }
   }
 
 // root->printAll ();
@@ -1373,9 +1638,9 @@ TagDirectory* ExifManager::parseJPEG (FILE* f) {
   return NULL;
 }
 
-TagDirectory* ExifManager::parseTIFF (FILE* f) {
+TagDirectory* ExifManager::parseTIFF (FILE* f, bool skipIgnored) {
 
-  return parse (f, 0);
+  return parse (f, 0, skipIgnored);
 }
 
 std::vector<Tag*> ExifManager::defTags; 
@@ -1383,7 +1648,7 @@ std::vector<Tag*> ExifManager::defTags;
 // forthis: the byte order will be taken from directory "forthis"
 const std::vector<Tag*>& ExifManager::getDefaultTIFFTags (TagDirectory* forthis) {
 
-    for (int i=0; i<defTags.size(); i++)
+    for (size_t i=0; i<defTags.size(); i++)
         delete defTags[i];
     defTags.clear ();
     defTags.push_back (new Tag (forthis, lookupAttrib(ifdAttribs,"ImageWidth"), 0, LONG));
@@ -1418,8 +1683,7 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
 
   TagDirectory* cl;
   if (root)
-    //FIXME: static_cast needed here
-    cl = ((TagDirectory*)root)->clone (NULL);
+    cl = (const_cast<TagDirectory*>(root))->clone (NULL);
   else
     cl = new TagDirectory (NULL, ifdAttribs, INTEL);
 
@@ -1455,8 +1719,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
 
     TagDirectory* cl;
     if (root)
-	//FIXME: static_cast needed here
-        cl = ((TagDirectory*)root)->clone (NULL);
+	cl = (const_cast<TagDirectory*>(root))->clone (NULL);
     else
         cl = new TagDirectory (NULL, ifdAttribs, INTEL);
 
@@ -1497,7 +1760,8 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
 
     defTags[0]->setInt (W, 0, LONG);
     defTags[1]->setInt (H, 0, LONG);
-    defTags[8]->setInt (bps, 0, SHORT);
+    defTags[8]->initInt(0, SHORT, 3);
+    for (int i=0;i<3;i++) defTags[8]->setInt(bps, i*2, SHORT);
  
     for (int i=defTags.size()-1; i>=0; i--) 
         cl->replaceTag (defTags[i]->clone (cl));

@@ -30,7 +30,7 @@
 #include "curveeditor.h"
 #include "flatcurveeditorsubgroup.h"
 
-FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt) {
+FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir) {
 
 	valLinear = (int)FCT_Linear;
 	valUnchanged = (int)FCT_Unchanged;

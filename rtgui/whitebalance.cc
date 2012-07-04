@@ -186,7 +186,7 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
 }
 
 WhiteBalance::~WhiteBalance () {
-    delete custom_green;
+    delete[] custom_green;
 }
 
 void WhiteBalance::adjusterChanged (Adjuster* a, double newval) {

@@ -178,7 +178,7 @@ void FFManager::init( Glib::ustring pathname )
 	safe_build_file_list (dir, names, pathname);
 	
 	ffList.clear();
-    for (int i=0; i<names.size(); i++) {
+    for (size_t i=0; i<names.size(); i++) {
         try{
             addFileInfo(names[i]);
         }catch( std::exception& e ){}
@@ -214,7 +214,7 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
     	return false;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-        int lastdot = info->get_name().find_last_of ('.');
+	size_t lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot

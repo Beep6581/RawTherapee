@@ -18,7 +18,7 @@
  */
 
 #include "hsvequalizer.h"
-#include "../rtengine/utils.h"
+#include "../rtengine/improcfun.h"
 #include "../rtengine/color.h"
 
 using namespace rtengine;
@@ -28,7 +28,7 @@ using namespace rtengine::procparams;
 
 HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	
-	curveEditorG = new CurveEditorGroup (M("TP_HSVEQUALIZER_CHANNEL"));
+	curveEditorG = new CurveEditorGroup (options.lastHsvCurvesDir, M("TP_HSVEQUALIZER_CHANNEL"));
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 
@@ -191,27 +191,27 @@ void HSVEqualizer::colorForValue (double valX, double valY) {
 
 	if (ce == hshape) {        // Hue = f(Hue)
 
-		float h = (float)((valY - 0.5) * 2. + valX);
-		if (h > 1.0)
-			h -= 1.0;
-		else if (h < 0.0)
-			h += 1.0;
-		Color::hsv2rgb(h, (float)0.5, (float)0.5, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		float h = float((valY - 0.5) * 2. + valX);
+		if (h > 1.0f)
+			h -= 1.0f;
+		else if (h < 0.0f)
+			h += 1.0f;
+		ImProcFunctions::hsv2rgb01(h, 0.5f, 0.5f, r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else if (ce == sshape) {   // Saturation = f(Hue)
-		Color::hsv2rgb((float)valX, (float)valY, (float)0.5, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		ImProcFunctions::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else if (ce == vshape) {   // Value = f(Hue)
-		Color::hsv2rgb((float)valX, (float)0.5, (float)valY, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		ImProcFunctions::hsv2rgb01(float(valX), 0.5f, float(valY), r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else {
 		printf("Error: no curve displayed!\n");

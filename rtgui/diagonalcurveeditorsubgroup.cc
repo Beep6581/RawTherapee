@@ -31,7 +31,7 @@
 #include "curveeditor.h"
 #include "diagonalcurveeditorsubgroup.h"
 
-DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt) {
+DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt, Glib::ustring& curveDir) : CurveEditorSubGroup(curveDir) {
 
 	valLinear = (int)DCT_Linear;
 	valUnchanged = (int)DCT_Unchanged;
@@ -40,7 +40,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	activeParamControl = -1;
 
 	// custom curve
-	customCurveBox = new Gtk::HBox ();
+	customCurveBox = new Gtk::VBox ();
 	customCurveBox->set_spacing(4);
 	customCurve = Gtk::manage (new MyDiagonalCurve ());
 	customCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
@@ -48,23 +48,22 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	//customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
 	customCurveBox->pack_start (*customCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
-	Gtk::VBox* custombbox = Gtk::manage (new Gtk::VBox ());
+	Gtk::HBox* custombbox = Gtk::manage (new Gtk::HBox ());
 	custombbox->set_spacing(4);
-	saveCustom = Gtk::manage (new Gtk::Button ());
-	saveCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-	loadCustom = Gtk::manage (new Gtk::Button ());
-	loadCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+
         pasteCustom = Gtk::manage (new Gtk::Button ());
-        pasteCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-paste"), Gtk::ICON_SIZE_BUTTON)));
+	pasteCustom->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 	copyCustom = Gtk::manage (new Gtk::Button ());
-        copyCustom->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-copy"), Gtk::ICON_SIZE_BUTTON)));
+	copyCustom->add (*Gtk::manage (new RTImage ("edit-copy.png")));
+	saveCustom = Gtk::manage (new Gtk::Button ());
+	saveCustom->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+	loadCustom = Gtk::manage (new Gtk::Button ());
+	loadCustom->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 
-
-	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 0);
-	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 0);
         custombbox->pack_end (*pasteCustom, Gtk::PACK_SHRINK, 0);
         custombbox->pack_end (*copyCustom, Gtk::PACK_SHRINK, 0);
-
+	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 0);
+	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 0);
 
 	customCurveBox->pack_end (*custombbox, Gtk::PACK_SHRINK, 0);
 	customCurveBox->show_all ();
@@ -82,7 +81,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 
 
 	// NURBS curve
-	NURBSCurveBox = new Gtk::HBox ();
+	NURBSCurveBox = new Gtk::VBox ();
 	NURBSCurveBox->set_spacing(4);
 	NURBSCurve = Gtk::manage (new MyDiagonalCurve ());
 	NURBSCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
@@ -91,21 +90,21 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	//customCurve->set_tooltip_text (M("CURVEEDITOR_TOOLTIPMOVESPEED"));
 	NURBSCurveBox->pack_start (*NURBSCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
-	Gtk::VBox* NURBSbbox = Gtk::manage (new Gtk::VBox ());
+	Gtk::HBox* NURBSbbox = Gtk::manage (new Gtk::HBox ());
 	NURBSbbox->set_spacing(4);
-	saveNURBS = Gtk::manage (new Gtk::Button ());
-	saveNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-	loadNURBS = Gtk::manage (new Gtk::Button ());
-	loadNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
         pasteNURBS = Gtk::manage (new Gtk::Button ());
-        pasteNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-paste"), Gtk::ICON_SIZE_BUTTON)));
+	pasteNURBS->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 	copyNURBS = Gtk::manage (new Gtk::Button ());
-        copyNURBS->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-copy"), Gtk::ICON_SIZE_BUTTON)));
+	copyNURBS->add (*Gtk::manage (new RTImage ("edit-copy.png")));
+	saveNURBS = Gtk::manage (new Gtk::Button ());
+	saveNURBS->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+	loadNURBS = Gtk::manage (new Gtk::Button ());
+	loadNURBS->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 
-	NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_SHRINK, 0);
-	NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 0);
         NURBSbbox->pack_end (*pasteNURBS, Gtk::PACK_SHRINK, 0);
         NURBSbbox->pack_end (*copyNURBS, Gtk::PACK_SHRINK, 0);
+	NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_SHRINK, 0);
+	NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 0);
 
 	NURBSCurveBox->pack_end (*NURBSbbox, Gtk::PACK_SHRINK, 0);
 	NURBSCurveBox->show_all ();
@@ -125,37 +124,33 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	// parametric curve
 	paramCurveBox = new Gtk::VBox ();
 	paramCurveBox->set_spacing(4);
-	paramInnerBox = new Gtk::HBox ();
-	paramInnerBox->set_spacing(4);
 
 	paramCurve = Gtk::manage (new MyDiagonalCurve ());
-	Gtk::Table* paramctab = Gtk::manage (new Gtk::Table (2,1));
 	paramCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
 	paramCurve->setType (DCT_Parametric);
 
 	shcSelector = Gtk::manage (new SHCSelector ());
-	shcSelector->set_size_request (GRAPH_SIZE, 20);
+	shcSelector->set_size_request (GRAPH_SIZE-100, 20); // width, height
+	//* shcSelector->set_size_request ((GRAPH_SIZE+2*RADIUS)-20, 20);
 
-	paramctab->attach (*paramCurve, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 0, 0);
-	paramctab->attach (*shcSelector, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, RADIUS, 0);
+	paramCurveBox->pack_start (*paramCurve, Gtk::PACK_EXPAND_WIDGET, 0);
+	paramCurveBox->pack_start (*shcSelector, Gtk::PACK_EXPAND_WIDGET, 0);
 
-	paramInnerBox->pack_start (*paramctab, Gtk::PACK_EXPAND_WIDGET, 0);
-
-	Gtk::VBox* Parambbox = Gtk::manage (new Gtk::VBox ());
+	Gtk::HBox* Parambbox = Gtk::manage (new Gtk::HBox ());
 	Parambbox->set_spacing(4);
-	saveParam = Gtk::manage (new Gtk::Button ());
-	saveParam->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
-	loadParam = Gtk::manage (new Gtk::Button ());
-	loadParam->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
         pasteParam = Gtk::manage (new Gtk::Button ());
-        pasteParam->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-paste"), Gtk::ICON_SIZE_BUTTON)));
+	pasteParam->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 	copyParam = Gtk::manage (new Gtk::Button ());
-        copyParam->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-copy"), Gtk::ICON_SIZE_BUTTON)));
+	copyParam->add (*Gtk::manage (new RTImage ("edit-copy.png")));
+	saveParam = Gtk::manage (new Gtk::Button ());
+	saveParam->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+	loadParam = Gtk::manage (new Gtk::Button ());
+	loadParam->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 
-	Parambbox->pack_end (*saveParam, Gtk::PACK_SHRINK, 0);
-	Parambbox->pack_end (*loadParam, Gtk::PACK_SHRINK, 0);
         Parambbox->pack_end (*pasteParam, Gtk::PACK_SHRINK, 0);
         Parambbox->pack_end (*copyParam, Gtk::PACK_SHRINK, 0);
+	Parambbox->pack_end (*saveParam, Gtk::PACK_SHRINK, 0);
+	Parambbox->pack_end (*loadParam, Gtk::PACK_SHRINK, 0);
 
 	saveParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
 	loadParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
@@ -167,9 +162,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
         pasteParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
         copyParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
 
-	paramInnerBox->pack_start (*Parambbox, Gtk::PACK_EXPAND_WIDGET, 0);
-
-	paramCurveBox->pack_start (*paramInnerBox, Gtk::PACK_SHRINK, 0);
+	paramCurveBox->set_spacing(4);
+	paramCurveBox->pack_end (*Parambbox, Gtk::PACK_EXPAND_WIDGET, 0);
 
 	highlights = Gtk::manage (new Adjuster (M("CURVEEDITOR_HIGHLIGHTS"), -100, 100, 1, 0));
 	lights     = Gtk::manage (new Adjuster (M("CURVEEDITOR_LIGHTS"), -100, 100, 1, 0));
@@ -186,7 +180,6 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt)
 	evdarks->add (*darks);
 	evshadows->add (*shadows);
 
-	paramCurveBox->pack_start (*Gtk::manage (new Gtk::HSeparator ()));
 	paramCurveBox->pack_start (*evhighlights);
 	paramCurveBox->pack_start (*evlights);
 	paramCurveBox->pack_start (*evdarks);
@@ -228,7 +221,6 @@ DiagonalCurveEditorSubGroup::~DiagonalCurveEditorSubGroup() {
     delete customCurveBox;
     delete paramCurveBox;
     delete NURBSCurveBox;
-    delete paramInnerBox;
 }
 
 /*

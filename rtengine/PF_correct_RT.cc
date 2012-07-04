@@ -25,24 +25,23 @@
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-//#include "rtengine.h"
-//#include <cmath>
 #include "gauss.h"
-//#include "bilateral2.h"
 #include "improcfun.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-#define SQR(x) ((x)*(x))
+#include "rt_math.h"
+
+using namespace std;
 
 namespace rtengine {
 
 void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh) { 
 	int halfwin = ceil(2*radius)+1;
 	
-#define SQR(x) ((x)*(x))
+#include "rt_math.h"
 		
 	// local variables
 	int width=src->W, height=src->H;
@@ -57,7 +56,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 #pragma omp parallel
 #endif
 	{
-		AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(src->W,src->H));
+		AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(src->W,src->H));
 		gaussHorizontal<float> (src->a, tmp1->a, buffer, src->W, src->H, radius, multiThread);
 		gaussHorizontal<float> (src->b, tmp1->b, buffer, src->W, src->H, radius, multiThread);
 		gaussVertical<float>   (tmp1->a, tmp1->a, buffer, src->W, src->H, radius, multiThread);
@@ -98,8 +97,8 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 				float btot=0;
 				float norm=0;
 				float wt;
-				for (int i1=MAX(0,i-halfwin+1); i1<MIN(height,i+halfwin); i1++) 
-					for (int j1=MAX(0,j-halfwin+1); j1<MIN(width,j+halfwin); j1++) {
+				for (int i1=max(0,i-halfwin+1); i1<min(height,i+halfwin); i1++)
+					for (int j1=max(0,j-halfwin+1); j1<min(width,j+halfwin); j1++) {
 						//neighborhood average of pixels weighted by chrominance
 						wt = 1/(fringe[i1*width+j1]+chromave);
 						atot += wt*src->a[i1][j1];
@@ -126,9 +125,6 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 	
 	delete tmp1;
 	free(fringe);
-	
-//#undef SQR
-
 }
 
 }

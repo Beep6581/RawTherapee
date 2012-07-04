@@ -30,6 +30,7 @@ DarkFrame::DarkFrame () : Gtk::VBox(), FoldableToolPanel(this)
 {
 	hbdf = Gtk::manage(new Gtk::HBox());
 	darkFrameFile = Gtk::manage(new MyFileChooserButton(M("TP_DARKFRAME_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
+	darkFrameFilePersister.reset(new FileChooserLastFolderPersister(darkFrameFile, options.lastDarkframeDir));
 	dfLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
 	btnReset = Gtk::manage(new Gtk::Button());
 	btnReset->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
@@ -59,8 +60,6 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 	}
 	if (safe_file_test (pp->raw.dark_frame, Glib::FILE_TEST_EXISTS))
 		darkFrameFile->set_filename (pp->raw.dark_frame);
-	else if( !options.rtSettings.darkFramesPath.empty() )
-		darkFrameFile->set_current_folder( options.rtSettings.darkFramesPath );
 	hbdf->set_sensitive( !pp->raw.df_autoselect );
 
 	lastDFauto = pp->raw.df_autoselect;
@@ -139,8 +138,8 @@ void DarkFrame::darkFrameReset()
 	//darkFrameFile->set_current_name("");
 	darkFrameFile->set_filename ("");
 
-		if( !options.rtSettings.darkFramesPath.empty() )
-	  	darkFrameFile->set_current_folder( options.rtSettings.darkFramesPath );
+	if (!options.lastDarkframeDir.empty())
+		darkFrameFile->set_current_folder(options.lastDarkframeDir);
 
 	dfInfo->set_text("");
     if (listener)

@@ -19,30 +19,32 @@
  */
 #include <png.h>
 #include <glib/gstdio.h>
-#include "imageio.h"
-#include "safegtk.h"
 #include <tiff.h>
 #include <tiffio.h>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
+#include <libiptcdata/iptc-jpeg.h>
+#include "rt_math.h"
+
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
-#include "iptcpairs.h"
-#include <libiptcdata/iptc-jpeg.h>
 
+#include "imageio.h"
+#include "safegtk.h"
+#include "iptcpairs.h"
 #include "iccjpeg.h"
 
 #include "jpeg.h"
 
-Glib::ustring safe_locale_to_utf8 (const std::string& src);
-
+using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+Glib::ustring safe_locale_to_utf8 (const std::string& src);
 Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.","Error while reading header.","File reading error", "Image format not supported."};
 
 // For only copying the raw input data
@@ -91,7 +93,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
                 std::string loc = safe_locale_to_utf8(i->second.at(j));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(64,loc.size()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(64), loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -102,7 +104,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
                 std::string loc = safe_locale_to_utf8(i->second.at(j));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(32,loc.size()), IPTC_DONT_VALIDATE);
+		iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(static_cast<size_t>(32), loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -113,7 +115,7 @@ void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::pr
                 IptcDataSet * ds = iptc_dataset_new ();
                 iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
                 std::string loc = safe_locale_to_utf8(i->second.at(0));
-                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), MIN(strTags[j].size,loc.size()), IPTC_DONT_VALIDATE);
+                iptc_dataset_set_data (ds, (unsigned char*)loc.c_str(), min(strTags[j].size, loc.size()), IPTC_DONT_VALIDATE);
                 iptc_data_add_dataset (iptc, ds);
                 iptc_dataset_unref (ds);
             }
@@ -280,7 +282,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jpeg_create_decompress(&cinfo);
 
     jpeg_memory_src (&cinfo,(const JOCTET*)buffer,bufsize);
-    if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+    if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
     {
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
@@ -305,8 +307,8 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
         jpeg_start_decompress(&cinfo);
 
-        int width = cinfo.output_width;
-        int height = cinfo.output_height;
+	unsigned int width = cinfo.output_width;
+        unsigned int height = cinfo.output_height;
 
         allocate (width, height);
 
@@ -351,7 +353,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
     jpeg_create_decompress(&cinfo);
 
     my_jpeg_stdio_src (&cinfo,file);
-    if ( setjmp(((rt_jpeg_error_mgr*)cinfo.src)->error_jmp_buf) == 0 )
+    if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
     {
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_LOADJPEG");
@@ -365,7 +367,7 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
         jpeg_read_header(&cinfo, TRUE);
 
 	//if JPEG is CMYK, then abort reading
-	if (cinfo.jpeg_color_space == JCS_CMYK || cinfo.jpeg_color_space == JCS_YCCK) {
+	    if (cinfo.jpeg_color_space == JCS_CMYK || cinfo.jpeg_color_space == JCS_YCCK || cinfo.jpeg_color_space == JCS_GRAYSCALE) {
 	    jpeg_destroy_decompress(&cinfo);
     	    return IMIO_READERROR;
     	}
@@ -380,8 +382,8 @@ int ImageIO::loadJPEG (Glib::ustring fname) {
 
         jpeg_start_decompress(&cinfo);
 
-        int width = cinfo.output_width;
-        int height = cinfo.output_height;
+	unsigned int width = cinfo.output_width;
+	unsigned int height = cinfo.output_height;
 
         allocate (width, height);
 
@@ -436,12 +438,21 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
 	TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &width);
 	TIFFGetField(in, TIFFTAG_IMAGELENGTH, &height);
 
-    uint16 bitspersample, samplesperpixel;
-	TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
-	TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
+    uint16 bitspersample, samplesperpixel, sampleformat;
+	int hasTag = TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
+	hasTag &= TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
+    if (!hasTag) {
+        // These are needed
+        TIFFClose(in);
+		return IMIO_VARIANTNOTSUPPORTED;
+    }
+
+    hasTag=TIFFGetField(in, TIFFTAG_SAMPLEFORMAT, &sampleformat);
+    if (!hasTag) sampleformat=0;
+
     uint16 photometric;
 	if (!TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric) ||
-	    photometric != PHOTOMETRIC_RGB || samplesperpixel < 3) {
+	    photometric != PHOTOMETRIC_RGB || samplesperpixel < 3 || (bitspersample!=8 && bitspersample!=16) || sampleformat>2) {
         TIFFClose(in);
 		return IMIO_VARIANTNOTSUPPORTED;
 	}
@@ -642,7 +653,7 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	jpeg_start_compress(&cinfo, TRUE);
 
     // buffer for exif and iptc markers
-	unsigned char* buffer = new unsigned char[165535];	//TODO: Is it really 165535... or 65535 ?
+	unsigned char* buffer = new unsigned char[165535]; //FIXME: no buffer size check so it can be overflowed in createJPEGMarker() for large tags, and then software will crash
     unsigned int size;
     // assemble and write exif marker
    if (exifRoot) {
@@ -895,7 +906,7 @@ void png_flush(png_structp png_ptr) {
 
 int ImageIO::load (Glib::ustring fname) {
 
-  unsigned int lastdot = fname.find_last_of ('.');
+  size_t lastdot = fname.find_last_of ('.');
   if( Glib::ustring::npos == lastdot )
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
@@ -909,7 +920,7 @@ int ImageIO::load (Glib::ustring fname) {
 
 int ImageIO::save (Glib::ustring fname) {
 
-  unsigned int lastdot = fname.find_last_of ('.');
+  size_t lastdot = fname.find_last_of ('.');
   if( Glib::ustring::npos == lastdot )
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))

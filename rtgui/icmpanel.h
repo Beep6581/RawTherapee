@@ -19,6 +19,8 @@
 #ifndef _ICMPANEL_
 #define _ICMPANEL_
 
+#include <auto_ptr.h>
+
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "guiutils.h"
@@ -48,6 +50,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Gtk::RadioButton*  icamera;
         Gtk::RadioButton*  icameraICC;
         Gtk::RadioButton*  ifromfile;
+        MyComboBoxText*    prefprof;
         Gtk::CheckButton*  ckbBlendCMSMatrix;
         MyComboBoxText*    wnames;
         MyComboBoxText*    wgamma;
@@ -57,13 +60,13 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Gtk::RadioButton*  ofromfile;
         Gtk::RadioButton*  iunchanged;
         MyFileChooserButton* ipDialog;
+        std::auto_ptr<FileChooserLastFolderPersister> ipDialogPersister;
         Gtk::RadioButton::Group opts;
         Gtk::Button*        saveRef;
         sigc::connection   ipc;
         Glib::ustring      oldip;
         ICMPanelListener*  icmplistener;
         
-        static Glib::ustring lastICCWorkDir;
         bool enableLastICCWorkDirChange;
 
     public:
@@ -83,6 +86,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
 		void GamChanged ();
         void ipSelectionChanged ();
         void iccTogglesChanged();
+        void prefProfChanged();
 
         void setRawMeta (bool raw, const rtengine::ImageData* pMeta);
         void saveReferencePressed ();

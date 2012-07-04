@@ -2,8 +2,8 @@
 #include "boxblur.h"
 #include <cstdlib>
 
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
+//#define MAX(a,b) ((a)<(b)?(b):(a))
+//#define MIN(a,b) ((a)>(b)?(b):(a))
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ float *EdgePreserveLab::CreateBlur(float *Source, float LScale, float abScale, f
 	float scab = powf(200.0f,abScale);
 	
 	float * var = new float[w*h];
-	boxvar(g, var, 1, 1, w, h);
+	rtengine::boxvar(g, var, 1, 1, w, h);
 
 	for(y = 0; y != h1; y++){
 		float *rg = &g[w*y];

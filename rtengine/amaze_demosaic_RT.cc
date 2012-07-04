@@ -24,17 +24,15 @@
 //
 ////////////////////////////////////////////////////////////////
 
+#include "rtengine.h"
+#include "rawimagesource.h"
+#include "rt_math.h"
+
 using namespace rtengine;
 
 void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {  
-
-#define SQR(x) ((x)*(x))
-	//#define MIN(a,b) ((a) < (b) ? (a) : (b))
-	//#define MAX(a,b) ((a) > (b) ? (a) : (b))
-#define LIM(x,min,max) MAX(min,MIN(x,max))
-#define ULIM(x,y,z) ((y) < (z) ? LIM(x,y,z) : LIM(x,z,y))
 #define HCLIP(x) x //is this still necessary???
-	//MIN(clip_pt,x)
+	//min(clip_pt,x)
 
 	int width=winw, height=winh;
 	
@@ -218,9 +216,9 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	for (top=winy-16; top < winy+height; top += TS-32)
 		for (left=winx-16; left < winx+width; left += TS-32) {
 			//location of tile bottom edge
-			int bottom = MIN( top+TS,winy+height+16);
+			int bottom = min(top+TS,winy+height+16);
 			//location of tile right edge
-			int right  = MIN(left+TS, winx+width+16);
+			int right  = min(left+TS, winx+width+16);
 			//tile width  (=TS except for right edge of image)
 			int rr1 = bottom - top;
 			//tile height (=TS except for bottom edge of image)
@@ -476,8 +474,8 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					}
 
 					//differences of interpolations in opposite directions
-					dgintv[indx]=MIN(SQR(guha-gdha),SQR(guar-gdar));
-					dginth[indx]=MIN(SQR(glha-grha),SQR(glar-grar));
+					dgintv[indx]=min(SQR(guha-gdha),SQR(guar-gdar));
+					dginth[indx]=min(SQR(glha-grha),SQR(glar-grar));
 					
 				}
 			//t2_vcdhcd += clock() - t1_vcdhcd;

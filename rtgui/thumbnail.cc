@@ -185,10 +185,11 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     Glib::ustring defProf = getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
 
     const CacheImageData* cfs=getCacheImageData();
-    if (!options.customProfileBuilder.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
+    Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
+    if (!options.customProfileBuilder.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
-        + options.rtdir + Glib::ustring("/") + options.profilePath + Glib::ustring("/") + defProf + Glib::ustring(".pp3") + Glib::ustring("\" ");
+        + Glib::build_filename(defaultPparamsPath, defProf + paramFileExtension) + Glib::ustring("\" ");
 
         // ustring doesn't know int etc formatting, so take these via (unsafe) stream
         std::ostringstream strm;
@@ -211,7 +212,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 }
 
 void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt){
-	for (int i=0; i<listeners.size(); i++)
+	for (size_t i=0; i<listeners.size(); i++)
 		listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
@@ -231,8 +232,8 @@ void Thumbnail::loadProcParams () {
 
     pparamsValid = false;
     pparams.setDefaults();
-    // WARNING: loading the default Raw or Img pp3 file at each thumbnail may be a performance bottleneck
-    pparams.load(options.profilePath+"/" + (getType()==FT_Raw?options.defProfRaw:options.defProfImg) + paramFileExtension);
+    PartialProfile *defaultPP = profileStore.getDefaultPartialProfile(getType()==FT_Raw);
+    defaultPP->applyTo(&pparams);
 
     if (options.paramsLoadLocation==PLL_Input) {
         // try to load it from params file next to the image file
@@ -311,7 +312,7 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
             safe_g_remove (fname_);
     }
 
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoClearedIt);
 }
 
@@ -326,6 +327,11 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 	Glib::Mutex::Lock lock(mutex);
 	#endif
     
+	if (pparams.sharpening.threshold.isDouble() != pp.sharpening.threshold.isDouble())
+		printf("WARNING: Sharpening different!\n");
+	if (pparams.vibrance.psthreshold.isDouble() != pp.vibrance.psthreshold.isDouble())
+		printf("WARNING: Vibrance different!\n");
+
     if (pparams!=pp) 
         cfs.recentlySaved = false;
 
@@ -351,7 +357,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     if (updateCacheNow)
         updateCache ();
 
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
@@ -468,7 +474,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 	else
 	{
 		// Full thumbnail: apply profile
- 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, scale );
+ 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, scale );
 	}
  
     tpp->getDimensions(lastW,lastH,lastScale);
@@ -493,7 +499,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
  		return 0;
  	}
  
- 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, scale );
+ 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, scale );
     tpp->getDimensions(lastW,lastH,lastScale);
  
  	delete tpp;
@@ -517,7 +523,7 @@ void Thumbnail::generateExifDateTimeStrings () {
     std::string dateFormat = options.dateFormat;
     std::ostringstream ostr;
     bool spec = false;
-    for (int i=0; i<dateFormat.size(); i++)
+    for (size_t i=0; i<dateFormat.size(); i++)
         if (spec && dateFormat[i]=='y') {
             ostr << cfs.year;
             spec = false;
@@ -572,6 +578,8 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
         cfs.shutter  = idata->getShutterSpeed ();
         cfs.fnumber  = idata->getFNumber ();
         cfs.focalLen = idata->getFocalLen ();
+        cfs.focalLen35mm = idata->getFocalLen35mm ();
+        cfs.focusDist = idata->getFocusDist ();
         cfs.iso      = idata->getISOSpeed ();
         cfs.expcomp  = idata->expcompToString (idata->getExpComp(), false); // do not mask Zero expcomp
         cfs.year     = 1900 + idata->getDateTime().tm_year;

@@ -18,20 +18,23 @@
  */
 #include <glib.h>
 #include <glib/gstdio.h>
-#include "curves.h"
 #include <cmath>
 #include <vector>
-#include "mytime.h"
 #include <cstring>
+#include <algorithm>
 
+#include "rt_math.h"
+
+#include "mytime.h"
 #include "array2D.h"
 #include "LUT.h"
+#include "curves.h"
 #include "color.h"
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
-#define CLIP(a) ((a)<65535 ? (a) : (65535))
 
+using namespace std;
 
 namespace rtengine {
 
@@ -100,7 +103,7 @@ namespace rtengine {
 			}
 			fclose (f);
 			f = fopen ("poly_x.txt", "wt");
-			for (unsigned int i=0; i<poly_x.size();i++) {
+			for (size_t i=0; i<poly_x.size();i++) {
 				fprintf (f, "%d: %.5f, %.5f\n", i, poly_x[i], poly_y[i]);
 			}
 			fclose (f);
@@ -108,6 +111,12 @@ namespace rtengine {
     	*/
 
 	}
+
+    // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
+    // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent 
+    // and a gamma (slope of log output versus log input) changing from 1.0 through about 2.3.
+    const double CurveFactory::sRGBGamma = 2.2;
+    const double CurveFactory::sRGBGammaCurve = 2.4;
 
 	void fillCurveArray(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool needed) {
 		if (needed) {
@@ -306,9 +315,9 @@ namespace rtengine {
 				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
 
 				brightcurvePoints.push_back(0.7); //shoulder point
-				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7+br/300.0)); //value at shoulder point
 			} else {
-				brightcurvePoints.push_back(MAX(0.0,0.1-br/150.0)); //toe point
+				brightcurvePoints.push_back(max(0.0,0.1-br/150.0)); //toe point
 				brightcurvePoints.push_back(0.1); //value at toe point
 
 				brightcurvePoints.push_back(0.7-br/300.0); //shoulder point
@@ -323,8 +332,8 @@ namespace rtengine {
 
 		float exp_scale = a;
 		float scale = 65536.0;
-		float comp = (MAX(0,ecomp) + 1.0)*hlcompr/100.0;
-		float shoulder = ((scale/MAX(1,exp_scale))*(hlcomprthresh/200.0))+0.1;
+		float comp = (max(0.0,ecomp) + 1.0)*hlcompr/100.0;
+		float shoulder = ((scale/max(1.0f,exp_scale))*(hlcomprthresh/200.0))+0.1;
 		//printf("shoulder = %e\n",shoulder);
 		//printf ("exp_scale= %f comp= %f def_mul=%f a= %f \n",exp_scale,comp,def_mul,a);
 		
@@ -362,7 +371,7 @@ namespace rtengine {
 			
 			// gamma correction
 			if (gamma_>1)
-				val = Color::gamma (val, gamma_, start, slope, mul, add);
+				val = gamma (val, gamma_, start, slope, mul, add);
 			
 			// apply brightness curve
 			if (brightcurve)
@@ -461,7 +470,7 @@ namespace rtengine {
 
 			// if inverse gamma is needed, do it (standard sRGB inverse gamma is applied)
 			if (needigamma)
-				val = Color::igamma (val, gamma_, start, slope, mul, add);
+				val = igamma (val, gamma_, start, slope, mul, add);
 
 			outCurve[i] = (65535.0 * val);
 		}
@@ -508,12 +517,12 @@ namespace rtengine {
 				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
 
 				brightcurvePoints.push_back(0.7); // shoulder point
-				brightcurvePoints.push_back(MIN(1.0,0.7+br/300.0)); //value at shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7+br/300.0)); //value at shoulder point
 			} else {
 				brightcurvePoints.push_back(0.1-br/150.0); // toe point
 				brightcurvePoints.push_back(0.1); // value at toe point
 
-				brightcurvePoints.push_back(MIN(1.0,0.7-br/300.0)); // shoulder point
+				brightcurvePoints.push_back(min(1.0,0.7-br/300.0)); // shoulder point
 				brightcurvePoints.push_back(0.7); // value at shoulder point
 			}
 			brightcurvePoints.push_back(1.); // white point
@@ -685,5 +694,30 @@ namespace rtengine {
 	
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	
+
+LUTf CurveFactory::gammatab;
+LUTf CurveFactory::igammatab_srgb;
+LUTf CurveFactory::gammatab_srgb;
+
+void CurveFactory::init () {
+	
+	gammatab(65536,0);
+	igammatab_srgb(65536,0);
+	gammatab_srgb(65536,0);
+
+  for (int i=0; i<65536; i++)
+    gammatab_srgb[i] = (65535.0 * gamma2 (i/65535.0));
+  for (int i=0; i<65536; i++)
+    igammatab_srgb[i] = (65535.0 * igamma2 (i/65535.0));
+  for (int i=0; i<65536; i++)
+    gammatab[i] = (65535.0 * pow (i/65535.0, 0.454545));
+    
+/*    FILE* f = fopen ("c.txt", "wt");
+    for (int i=0; i<256; i++)
+        fprintf (f, "%g %g\n", i/255.0, clower (i/255.0, 2.0, 1.0));
+    fclose (f);*/
+}
 
 }

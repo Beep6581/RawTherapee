@@ -8,6 +8,7 @@
 #include <cassert>
 #include <cmath>    /* logf() */
 #include <cstdlib>  /* malloc() */
+#include "../rt_math.h"
 
 /* Our includes */
 #include "base.h"
@@ -16,6 +17,7 @@
 #include "klt.h"
 #include "pyramid.h"
 
+using namespace std;
 
 static const int mindist = 10;
 static const int window_size = 7;
@@ -232,6 +234,7 @@ KLT_FeatureTable KLTCreateFeatureTable(
     for (i = 0 ; i < nFrames ; i++)
       ft->feature[j][i] = first + j*nFrames + i;
 
+  //free(first);
   /* Return feature table */
   return(ft);
 }

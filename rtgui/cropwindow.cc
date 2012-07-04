@@ -16,14 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <iomanip>
+
 #include "cropwindow.h"
 #include "options.h"
-#include <iomanip>
 #include "guiutils.h"
 #include "../rtengine/mytime.h"
 #include "imagearea.h"
 #include "cursormanager.h"
 #include "../rtengine/safegtk.h"
+#include "../rtengine/rt_math.h"
+
+using namespace rtengine;
 
 struct ZoomStep {   
     Glib::ustring label;
@@ -232,10 +236,11 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
             zoom11 ();
         state = SNormal;
     }
-    else if (button==1 && type==GDK_2BUTTON_PRESS && onArea (CropBorder, x, y)) {
+  //below code is no longer working/needed after adding buttons for each of the backColor values
+  /*else if (button==1 && type==GDK_2BUTTON_PRESS && onArea (CropBorder, x, y)) {
         backColor = (backColor+1) % 3;
         options.bgcolor = backColor;
-    }
+    }*/
     else if (button==1 && type==GDK_BUTTON_PRESS && state==SNormal && onArea (CropToolBar, x, y)) {
         if (!decorated || !buttonSet.pressNotify (x, y)) {
             state = SCropWinMove;
@@ -473,11 +478,9 @@ void CropWindow::pointerMoved (int x, int y) {
 		int mx, my;
 		translateCoord (x, y, mx, my);
 		if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) {
-		//	pmlistener->pointerMoved (false, mx, my, -1, -1, -1);
+            cropHandler.getFullImageSize(mx,my);
 			pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
-                        if (pmhlistener) {
-                           pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
-                        }
+            if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
                 }
 		else {
 			/*Glib::Mutex::Lock lock(cropHandler.cimg);
@@ -634,6 +637,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     int x = xpos, y = ypos, h = height, w = width;
  
     // draw the background
+    backColor = iarea->previewModePanel->GetbackColor();
+    options.bgcolor = backColor;
     if (backColor==0) {
         Gdk::Color cback = iarea->get_style()->get_bg(Gtk::STATE_NORMAL);
         cr->set_source_rgb (cback.get_red_p(), cback.get_green_p(), cback.get_blue_p());
@@ -758,25 +763,25 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                                     	currIndex = currWS+3*k + kh*pixWSRowStride;
                                     	curL = 0.299*(currIndex)[0]+0.587*(currIndex)[1]+0.114*(currIndex)[2];
                                     	sum_L += curL;
-                                    	sumsq_L += pow(curL,2);
+                                    	sumsq_L += SQR(curL);
 
                                     	// Band2 @ blur_radius2
                                     	if (kh>=-blur_radius2 && kh<=blur_radius2 && k>=-blur_radius2 && k<=blur_radius2){
                                     		sum_L2 += curL;
-                                    		sumsq_L2 += pow(curL,2);
+						sumsq_L2 += SQR(curL);
                                     	}
                                     }
                                 }
                                 //*************
                                 // averages
-                                kernel_size= pow(2*blur_radius+1,2); // consider -1: Bessel's correction for the sample standard deviation (tried, did not make any visible difference)
-                                kernel_size2= pow(2*blur_radius2+1,2);
+                                kernel_size= SQR(2*blur_radius+1); // consider -1: Bessel's correction for the sample standard deviation (tried, did not make any visible difference)
+                                kernel_size2= SQR(2*blur_radius2+1);
                                 avg_L = sum_L/kernel_size;
                                 avg_L2 = sum_L2/kernel_size2;
 
 
-                                stdDev_L = sqrt(sumsq_L/kernel_size - pow(avg_L,2));
-                                stdDev_L2 = sqrt(sumsq_L2/kernel_size2 - pow(avg_L2,2));
+				stdDev_L = sqrt(sumsq_L/kernel_size - SQR(avg_L));
+				stdDev_L2 = sqrt(sumsq_L2/kernel_size2 - SQR(avg_L2));
 
                                 //TODO: try to normalize by average L of the entire (preview) image
 

@@ -175,6 +175,14 @@ style "clearlooks-scale" {
 	}
 }
 
+style "clearlooks-thresholdselector" {
+
+	bg[ACTIVE]   = shade (1.35, @rt_bg_color)
+	bg[PRELIGHT] = shade (1.70, @rt_bg_color)
+
+	fg[PRELIGHT] = shade (1.30, @rt_fg_color)
+}
+
 style "clearlooks-vscale" {
 
 	engine "clearlooks" {
@@ -464,6 +472,7 @@ widget "*.partialPasteHeader.*" style "clearlooks-frame_title"
 widget "*.partialPasteHeaderSep" style "clearlooks-partialPasteHeaderSep"
 widget "*.histButton" style "clearlooks-histButton"
 widget "*.FramelessSpinButton" style "clearlooks-framelessspinbutton"
+widget "*.ThresholdSelector" style "clearlooks-thresholdselector"
 
 # The window of the tooltip is called "gtk-tooltip"
 ##################################################################

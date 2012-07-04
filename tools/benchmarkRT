@@ -7,7 +7,7 @@
 
 revision="tip"
 inFile='http://rawtherapee.com/shared/test_images/colorspace_flowers.pef'
-sidecarDefault=("neutral.pp3" "default.pp3")
+sidecarDefault=("Neutral.pp3" "Default.pp3")
 buildType="release"
 branch="default"
 rtExe="rawtherapee"
@@ -60,7 +60,7 @@ Options:
               which the input file must be developed.
               This can be a file on your hard drive or a url.
               The default behaviour if you do not use -s is to use the
-              "neutral" profile.
+              "Neutral" profile.
 
 Examples:
   Run the default benchmark (recommended)
@@ -156,7 +156,7 @@ cd "$tmpDir"
     cd "$tmpDir"
     wget -c --trust-server-names "$inFile"
     echo
-  }
+  } 
 }
 
 if [[ -n "${sidecarCustom}" ]]; then # if sidecarCustom was specified
@@ -174,6 +174,7 @@ if [[ -n "${sidecarCustom}" ]]; then # if sidecarCustom was specified
       exit 1
     }
     unset sidecarFiles # just to be sure, since custom supports only 1 file.
+    sidecarDir=""
     sidecarFiles="${sidecarCustom}"
   fi
 else # if sidecarCustom was not specified, use the ones in sidecarDefault
@@ -181,7 +182,7 @@ else # if sidecarCustom was not specified, use the ones in sidecarDefault
   for dir in "${sidecarDirs[@]}"; do
     for sidecar in "${sidecarDefault[@]}"; do
       # echo "Checking for ${sidecar} in ${dir}"
-      if [[ -f "${dir}/${sidecar}" ]]; then
+      if [[ -f "${dir}${sidecar}" ]]; then
         sidecarDir="$dir"
         found="true"
       # echo "Found sidecar ${sidecar} in ${sidecarDir[@]}"
@@ -189,47 +190,63 @@ else # if sidecarCustom was not specified, use the ones in sidecarDefault
     done
     [[ -n $found ]] && break
   done
-  # if the loop above did not find a neutral.pp3 anywhere, then we download one to $tmpDir
+  # if the loop above did not find a Neutral.pp3 anywhere, then we download one to $tmpDir
   [[ -z $found ]] && {
-    wget -c --trust-server-names "http://code.google.com/p/rawtherapee/source/browse/rtdata/profiles/neutral.pp3" "http://code.google.com/p/rawtherapee/source/browse/rtdata/profiles/default.pp3"
-    sidecarDir="$tmpDir"
+    wget -c --trust-server-names "http://code.google.com/p/rawtherapee/source/browse/rtdata/profiles/Neutral.pp3" "http://code.google.com/p/rawtherapee/source/browse/rtdata/profiles/Default.pp3"
+    sidecarDir="${tmpDir}/"
   }
   sidecarFiles=("${sidecarDefault[@]}")
 fi
 
 rtExeDirs=("${customExeDir}" "${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee/")
-for rtExeDir in "${rtExeDirs}"; do
-  #if [[ -n "$customExe"
+for rtExeDir in "${rtExeDirs[@]}"; do
+  # test below prevents looking for RT in empty rtExeDir variables, so the printf doesn't report "Checking for RawTherapee executable in " with no dir.
+  [[ $rtExeDir ]] && {
   if [[ -x "${rtExeDir}/${rtExe}" ]]; then
+    printf "%s\n" "Using RawTherapee executable: ${rtExeDir}/${rtExe}"
     break
   else
-    printf "%s\n" "Could not find the rawtherapee executable. Either re-run this script using the -e flag, or continue to have this script clone the source code repository and compile RawTherapee for you. For this to work, you need to have the correct dependencies installed - see http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" | fold -s
-  echo
+    printf "%s\n" "Checking for RawTherapee executable in $rtExeDir"
+  fi
+  }
+done
+
+if [[ ! -x "${rtExeDir}/${rtExe}" ]]; then
+  printf "%s\n" "Could not find the RawTherapee executable. Either re-run this script using the -e flag, or continue to have this script clone the source code repository and compile RawTherapee for you. For this to work, you need to have the correct dependencies installed - see http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" | fold -s
   read -p "Do you want to proceed? y/n: " YN
   [[ "$YN" = y ]] && buildRT || exit 0
-  fi
-done
+fi
 
-printf "%s\n" "Benchmark of RawTherapee"
-uname -srvmpio
+printf "%s\n" "--------------------------------------------------------------------------" "" "Benchmark of RawTherapee"
+printf "%s\n" "`uname -srvmpio`" ""
+
+#rtATBdirs=("${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee")
+#for rtATBdir in "${rtATBdirs[@]}"; do
+#  if [[ -f "${rtATBdir}/AboutThisBuild.txt" ]]; then
+#    printf "%s\n" "${rtATBdir}/AboutThisBuild.txt"
+#    cat "${rtATBdir}/AboutThisBuild.txt"
+#    break
+#  fi
+#done
+
+if [[ ! -f "${rtExeDir}/AboutThisBuild.txt" ]]; then
+  printf "%s\n" "[Could not find ${rtExeDir}/AboutThisBuild.txt]" ""
+else
+  cat "${rtExeDir}/AboutThisBuild.txt"
+fi
+
+printf "%s\n" "Photo: ${tmpDir}/${inFileName}"
+for sidecar in "${sidecarFiles[@]}"; do
+  printf "%s\n" "Sidecar[s]: ${sidecarDir}${sidecar}"
+done
 echo
-rtATBdirs=("${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee")
-for rtATBdir in "${rtATBdirs[@]}"; do
-  if [[ -f "${rtATBdir}/AboutThisBuild.txt" ]]; then
-    printf "%s\n" "${rtATBdir}/AboutThisBuild.txt"
-    cat "${rtATBdir}/AboutThisBuild.txt"
-    break
-  fi
-done
-
-printf "%s\n" "Input file: ${inFileName}"
 
 unset sidecar
 for sidecar in "${sidecarFiles[@]}"; do
   unset benchmark
   for (( i=1; i<=${runs}; i++ )); do
     # printf "%s\n" "rtExe is $rtExe" "tmpDir is $tmpDir" "sidecarDir is $sidecarDir" "sidecar is $sidecar" "outFileFormat is $outFileFormat" "tmpDir is $tmpDir" "inFileName is $inFileName"
-    benchmark+=("`\time -f %e "${rtExeDir}/${rtExe}" -o "$tmpDir" -p "${sidecarDir}/${sidecar}" "$outFileFormat" -Y -c "${tmpDir}/${inFileName}" 2>&1 >/dev/null`")
+    benchmark+=("`\time -f %e "${rtExeDir}/${rtExe}" -o "$tmpDir" -p "${sidecarDir}${sidecar}" "$outFileFormat" -Y -c "${tmpDir}/${inFileName}" 2>&1 >/dev/null`")
     printf "%b\n" "Benchmark ${sidecar} ${i}: ${benchmark[$i - 1]}"
   done
   avg=$( { printf "scale=2; ("; IFS="+"; printf %s "${benchmark[*]}"; echo ") / ${#benchmark[@]}"; } | bc)

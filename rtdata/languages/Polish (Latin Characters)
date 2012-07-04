@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;Wersja
 ABOUT_TAB_CREDITS;Zaslugi
 ABOUT_TAB_LICENSE;Licencja
@@ -79,6 +78,8 @@ EXPORT_MAXWIDTH;Maksymalna szerokosc:
 EXPORT_PUTTOQUEUEFAST;  Dodaj do kolejki szybkiego eksportu
 EXPORT_RAW_DMETHOD;Algorytm demozaikowania
 EXPORT_RESIZEMETHOD;Metoda zmiany rozmiaru
+EXTPROGTARGET_1;raw
+EXTPROGTARGET_2;wywolane w kolejce
 FILEBROWSER_ADDDELTEMPLATE;Dodaj/Usun szablon...
 FILEBROWSER_APPLYPROFILE;Zastosuj profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Zastosuj profil (czesciowo)
@@ -105,10 +106,12 @@ FILEBROWSER_EXIFFILTERAPPLY;Zastosuj
 FILEBROWSER_EXIFFILTERLABEL;Filrt Exif
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Zmienia ustawienia filtru Exif
 FILEBROWSER_EXIFFILTERSETTINGS;Ustawienia
+FILEBROWSER_EXTPROGMENU;Otworz za pomoca
 FILEBROWSER_FLATFIELD;Puste pole
 FILEBROWSER_MOVETODARKFDIR;Przenies do katalogu z czarnymi klatkami
 FILEBROWSER_MOVETOFLATFIELDDIR;Przenies do katalogu zawierajacego puste pola
 FILEBROWSER_NEW_NAME;Nowa nazwa:
+FILEBROWSER_OPENDEFAULTVIEWER;Domyslna przegladarka zdjec (z kolejki) 
 FILEBROWSER_PARTIALPASTEPROFILE;Wklej czesciowo
 FILEBROWSER_PASTEPROFILE;Wklej profil
 FILEBROWSER_POPUPCANCELJOB;Anuluj zadanie
@@ -477,6 +480,7 @@ MAIN_MSG_EMPTYFILENAME;Nie podano nazwy pliku!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Blad podczas zapisu zdjecia
 MAIN_MSG_EXITJOBSINQUEUEINFO;Nieprzetworzone zdjecia w kolejce beda utracone po zamknieciu.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Na pewno zamknac aplikacje? W kolejce znajduja sie nieprzetworzone zdjecia.
+MAIN_MSG_IMAGEUNPROCESSED;Ta komenda wymaga aby wszystkie wybrane zdjecia byly wpierw wywolane poprzez kolejke.
 MAIN_MSG_JOBSINQUEUE;zadan w kolejce
 MAIN_MSG_NAVIGATOR;Nawigator
 MAIN_MSG_PLACES;Miejsca
@@ -540,6 +544,8 @@ NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_NA;V = n/a
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/a, y = n/a
+OPTIONS_DEFIMG_MISSING;Nie znaleziono domyslnego profilu dla plikow innych niz raw, lub profil nie jest ustawiony.\n\nProsze sprawdz folder z profilami - mozliwe ze zostal skasowany badz uszkodzony.\n\nDomyslne wewnetrzne ustawienia zostana uzyte.
+OPTIONS_DEFRAW_MISSING;Nie znaleziono domyslnego profilu dla plikow raw, lub profil nie jest ustawiony.\n\nProsze sprawdz folder z profilami - mozliwe ze zostal skasowany badz uszkodzony.\n\nDomyslne wewnetrzne ustawienia zostana uzyte.
 PARTIALPASTE_BASICGROUP;Podstawowe ustawienia
 PARTIALPASTE_CACORRECTION;Korekcja AbChr
 PARTIALPASTE_CHANNELMIXER;Mikser kanalow
@@ -664,8 +670,8 @@ PREFERENCES_FLATFIELDSDIR;Katalog z pustymi polami
 PREFERENCES_FLATFIELDSHOTS;kadry
 PREFERENCES_FLATFIELDTEMPLATES;szablony
 PREFERENCES_FLATFIELD;Puste pole
-PREFERENCES_FORIMAGE;Dla plikow z obrazami
-PREFERENCES_FORRAW;Dla plikow RAW
+PREFERENCES_FORIMAGE;Dla zdjec innych niz raw
+PREFERENCES_FORRAW;Dla zdjec raw
 PREFERENCES_GIMPPATH;Katalog, w ktorym zainstalowany jest GIMP
 PREFERENCES_GTKTHEME;Domyslny temat GTK
 PREFERENCES_HINT;Porada
@@ -677,9 +683,10 @@ PREFERENCES_INTENT_ABSOLUTE;Absolutnie kolorymetryczny
 PREFERENCES_INTENT_PERCEPTUAL;Percepcyjny
 PREFERENCES_INTENT_RELATIVE;Wzglednie kolorymetryczny
 PREFERENCES_INTENT_SATURATION;Nasyceniowy
-PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Pokaz osadzona miniature RAW, jesli nieedytowany
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Pokaz osadzona miniature raw, jesli nieedytowany
 PREFERENCES_LANGAUTODETECT;Uzycie systemowych ustawien jezykowych
 PREFERENCES_LIVETHUMBNAILS;Miniaturki na zywo (wolniej)
+PREFERENCES_MENUGROUPEXTPROGS;Grupuj "Otworz za pomoca"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Grupuj operacje plikow
 PREFERENCES_MENUGROUPLABEL;Grupuj operacje etykiet
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grupuj operacje profili
@@ -691,8 +698,8 @@ PREFERENCES_MULTITABDUALMON;Tryb wielu zakladek, jezeli dostepny drugi monitor
 PREFERENCES_MULTITAB;Tryb wielu zakladek
 PREFERENCES_OUTDIRFOLDERHINT;Umieszcza zapisywane zdjecia w wybranym katalogu
 PREFERENCES_OUTDIRFOLDER;Zapisz do katalogu
-PREFERENCES_OUTDIRHINT;<i>Dozwolone sa nastepujace kody formatujace:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nKody formatujace odnosza sie do katalogow i podkatalogow w sciezce pliku RAW.\n\nPrzykladowo, jezeli otworzono plik </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, znaczenie kodow formatujacych bedzie nastepujace:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nAby zapisac plik wynikowy obok zrodlowego, prosze wpisac:\n</i><b>%p1/%f\n</b><i>\nJezeli zdjecia maja zostac umieszczone w nowym katalog 'converted' znajdujacym sie w katalogu zrodlowym, prosze wpisac:\n</i><b>%p1/converted/%f\n</b><i>\nJezeli zdjecia maja zostac umieszczone w katalogu '/home/tom/converted' zgrupowane w podkatalogi z data w nazwie, prosze wpisac:\n</i><b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Dozwolone sa nastepujace kody formatujace:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nKody formatujace odnosza sie do katalogow i podkatalogow w sciezce pliku RAW.\n\nPrzykladowo, jezeli otworzono plik </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, znaczenie kodow formatujacych bedzie nastepujace:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nBy zapisac plik wyjsciowy obok pliku orginalnego, prosze wpisac:\n</i><b>%p1/%f\n</b><i>\nJezeli zdjecia maja zostac umieszczone w nowym katalog 'converted' znajdujacym sie w katalogu zrodlowym, prosze wpisac:\n</i><b>%p1/converted/%f\n</b><i>\nJezeli zdjecia maja zostac umieszczone w katalogu '/home/tom/converted' zgrupowane w podkatalogi z data w nazwie, prosze wpisac:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;<i>Dozwolone sa nastepujace kody formatujace:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nKody formatujace odnosza sie do katalogow i podkatalogow w sciezce pliku raw.\n\nPrzykladowo, jezeli otworzono plik </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, znaczenie kodow formatujacych bedzie nastepujace:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nAby zapisac plik wynikowy obok zrodlowego, prosze wpisac:\n</i><b>%p1/%f\n</b><i>\nJezeli zdjecia maja zostac umieszczone w nowym katalog 'converted' znajdujacym sie w katalogu zrodlowym, prosze wpisac:\n</i><b>%p1/converted/%f\n</b><i>\nJezeli zdjecia maja zostac umieszczone w katalogu '/home/tom/converted' zgrupowane w podkatalogi z data w nazwie, prosze wpisac:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;<i>Dozwolone sa nastepujace kody formatujace:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nKody formatujace odnosza sie do katalogow i podkatalogow w sciezce pliku raw.\n\nPrzykladowo, jezeli otworzono plik </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, znaczenie kodow formatujacych bedzie nastepujace:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nBy zapisac plik wyjsciowy obok pliku orginalnego, prosze wpisac:\n</i><b>%p1/%f\n</b><i>\nJezeli zdjecia maja zostac umieszczone w nowym katalog 'converted' znajdujacym sie w katalogu zrodlowym, prosze wpisac:\n</i><b>%p1/converted/%f\n</b><i>\nJezeli zdjecia maja zostac umieszczone w katalogu '/home/tom/converted' zgrupowane w podkatalogi z data w nazwie, prosze wpisac:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Uzyj schemat
 PREFERENCES_OUTDIR;Katalog wyjsciowy
 PREFERENCES_OVERLAY_FILENAMES;Nakladaj nazwy pliku na miniatury
@@ -720,7 +727,7 @@ PREFERENCES_SET;Ustaw
 PREFERENCES_SHOWBASICEXIF;Pokaz podstawowe dane Exif
 PREFERENCES_SHOWDATETIME;Pokaz date i czas
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Pokaz korekte ekspozycji
-PREFERENCES_SHOWONLYRAW;Pokaz tylko pliki RAW
+PREFERENCES_SHOWONLYRAW;Pokaz tylko pliki raw
 PREFERENCES_SHOWPROFILESELECTOR;Umozliw wybor profilu
 PREFERENCES_SHTHRESHOLD;Prog dla niedoswietlen
 PREFERENCES_SINGLETABVERTAB;Tryb pojedynczej zakladki, pionowy uklad
@@ -745,16 +752,20 @@ PREFERENCES_TP_VSCROLLBAR;Ukry pionowy pasek przesuwania
 PREFERENCES_TUNNELMETADATA;Skopiuj niezmienione IPTC/XMP do pliku wynikowego (gdy tagowane za pomoca innego programu)
 PREFERENCES_USESYSTEMTHEME; Uzyj tematu systemowego
 PREFERENCES_WORKFLOW;Tok pracy
+PROFILEPANEL_COPYPPASTE;Parametry do skopiowania
 PROFILEPANEL_FILEDLGFILTERANY;Wszystkie pliki
 PROFILEPANEL_FILEDLGFILTERPP;Profile przetwarzania koncowego
 PROFILEPANEL_LABEL;Profil przetwarzania koncowego
 PROFILEPANEL_LOADDLGLABEL;Wczytaj profil przetwarzania koncowego...
+PROFILEPANEL_LOADPPASTE;Parametry do zaladowania
+PROFILEPANEL_PASTEPPASTE;Parametry do wklejenia
 PROFILEPANEL_PCUSTOM;Reczny
 PROFILEPANEL_PFILE;Z pliku
 PROFILEPANEL_PLASTPHOTO;Ostatnie zdjecie
 PROFILEPANEL_PLASTSAVED;Ostatnio zapisany
 PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Zapisz parametry przetwarzania koncowego...
+PROFILEPANEL_SAVEPPASTE;Parametry do zapisania
 PROFILEPANEL_TOOLTIPCOPY;Skopiuj aktualny profil do schowka
 PROFILEPANEL_TOOLTIPLOAD;Laduj profil z pliku
 PROFILEPANEL_TOOLTIPPASTE;Wklej profil ze schowka
@@ -881,7 +892,7 @@ TP_EQUALIZER_FINEST;delikatnie
 TP_EQUALIZER_LABEL;Korektor Wavelet
 TP_EQUALIZER_LARGEST;zgrubnie
 TP_EQUALIZER_NEUTRAL;Neutralne
-TP_EXPOSCORR_LABEL;Punkt bieli RAW
+TP_EXPOSCORR_LABEL;Punkt bieli raw
 TP_EXPOSURE_AUTOLEVELS;Wyrownaj poziomy
 TP_EXPOSURE_AUTOLEVELS_TIP;Dokonaj automatycznego ustawienia parametrow ekspozycji na podstawie analizy obrazu
 TP_EXPOSURE_BLACKLEVEL;Czern
@@ -942,7 +953,7 @@ TP_ICM_INPUTCUSTOM;Reczny
 TP_ICM_INPUTCUSTOM_TOOLTIP;Wczytaj wlasny profil ICC z pliku.
 TP_ICM_INPUTDLGLABEL;Wybierz wejsciowy profil ICC...
 TP_ICM_INPUTEMBEDDED;Jesli to mozliwe, uzyj osadzonego
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Uzyj profil kolorow zapisany w plikach nie-raw.
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Uzyj profil kolorow zapisany w plikach innych niz raw.
 TP_ICM_INPUTNONE;Bez profilu
 TP_ICM_INPUTNONE_TOOLTIP;Nie uzywaj zadnego profilu kolorow. Pozyteczne jedynie w wyjatkowych przypadkach.
 TP_ICM_INPUTPROFILE;Profil wejsciowy
@@ -950,6 +961,11 @@ TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: Wyjscie sRGB
 TP_ICM_OUTPUTDLGLABEL;Wybierz wyjsciowy profil ICC...
 TP_ICM_OUTPUTPROFILE;Profil wyjsciowy
+TP_ICM_PREFERREDPROFILE;Preferowany profil DCP
+TP_ICM_PREFERREDPROFILE_1;Swiatlo dzienne
+TP_ICM_PREFERREDPROFILE_2;Wolfram
+TP_ICM_PREFERREDPROFILE_3;Jarzeniowe
+TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Zapisz obraz wzorcowy dla profilowania
 TP_ICM_WORKINGPROFILE;Profil roboczy
 TP_IMPULSEDENOISE_LABEL;Impulsowa redukcja szumu
@@ -965,6 +981,11 @@ TP_LABCURVE_SATURATION;Nasycenie
 TP_LENSGEOM_AUTOCROP;Auto przycinanie
 TP_LENSGEOM_FILL;Auto wypelnienie
 TP_LENSGEOM_LABEL;Obiektywy / Geometria
+TP_LENSPROFILE_FILEDLGFILTERLCP;Profile korekcji obiektywow LCP
+TP_LENSPROFILE_LABEL;Profil korekcji obiektywu LCP
+TP_LENSPROFILE_USECA;Korekja aberacji chromatycznej
+TP_LENSPROFILE_USEDIST;Korekcja dystorsji
+TP_LENSPROFILE_USEVIGN;Korekcja winietowania
 TP_LUMACURVE_BLACKLEVEL;Czern
 TP_LUMACURVE_BRIGHTNESS;Jasnosc
 TP_LUMACURVE_COMPRHIGHLIGHTS;Kompresja swiatel
@@ -982,6 +1003,7 @@ TP_PERSPECTIVE_LABEL;Perspektywa
 TP_PERSPECTIVE_VERTICAL;Pionowa
 TP_PREPROCESS_GREENEQUIL;Wyrownanie zieleni
 TP_PREPROCESS_HOTDEADPIXFILT;Uzyj filtra goracych/martwych pikseli
+TP_PREPROCESS_HOTDEADPIXTHRESH;Prog wykrycia goracych/martwych pikseli
 TP_PREPROCESS_LABEL;Przetwarzanie poczatkowe
 TP_PREPROCESS_LINEDENOISE;Filtr zaklocen liniowych
 TP_PREPROCESS_NO_FOUND;Nic nie znaleziono
@@ -1131,6 +1153,7 @@ ZOOMPANEL_ZOOM100;Powieksz do 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Dopasuj do ekranu <b>F</b>
 ZOOMPANEL_ZOOMIN;Przybliz <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
+
 #00 Polish
 #01 24.12.2007
 #02 Mateusz Ludwin
@@ -1145,10 +1168,9 @@ ZOOMPANEL_ZOOMOUT;Oddal <b>-</b>
 #11 2011-11-30 DrSlony
 #12 2012-01-14 DrSlony
 #13 2012-01-30 DrSlony
-
+#13 2012-04-02 DrSlony
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
-
 

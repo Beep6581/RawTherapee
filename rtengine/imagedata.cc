@@ -36,7 +36,7 @@ ImageMetaData* ImageMetaData::fromFile (const Glib::ustring& fname, RawMetaDataL
 
 ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
 
-    int dotpos = fname.find_last_of ('.');
+    size_t dotpos = fname.find_last_of ('.');
     root = NULL;
     iptc = NULL;
                 
@@ -57,7 +57,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             extractInfo ();
         }
     }    
-    else if (dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
+    else if (dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseJPEG (f);
@@ -68,7 +68,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             fclose (ff);
         }
     }    
-    else if ((dotpos<(int)fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
+    else if ((dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseTIFF (f);
@@ -108,7 +108,8 @@ void ImageData::extractInfo () {
   expcomp = 0;
   shutter = 0;
   aperture = 0;
-  focal_len = 0;
+  focal_len = focal_len35mm = 0;
+  focus_dist = 0;
   iso_speed = 0;
   memset (&time, 0, sizeof(time));
   timeStamp = 0;
@@ -119,8 +120,8 @@ void ImageData::extractInfo () {
      static const char *corp[] =
        { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
          "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
-         "SAMSUNG", "Mamiya", "MOTOROLA" };
-     for (int i=0; i < sizeof corp / sizeof *corp; i++)
+         "SAMSUNG", "Mamiya", "MOTOROLA", "Leaf" };
+     for (size_t i=0; i < (sizeof(corp)/sizeof(*corp)); i++)
        if ( make.find( corp[i] ) != std::string::npos ){		/* Simplify company names */
    	     make = corp[i];
    	     break;
@@ -169,12 +170,26 @@ void ImageData::extractInfo () {
         expcomp = exif->getTag ("ExposureBiasValue")->toDouble ();
     if (exif->getTag ("FocalLength"))
         focal_len = exif->getTag ("FocalLength")->toDouble ();
+    if (exif->getTag ("FocalLengthIn35mmFilm"))
+        focal_len35mm = exif->getTag ("FocalLengthIn35mmFilm")->toDouble ();
+    rtexif::Tag* pDst=exif->getTag("SubjectDistance");  // EXIF, set by Adobe. MakerNote ones are scattered and partly encrypted
+    if (pDst) {
+        int num, denom;
+        pDst->toRational(num,denom);
+        if ((denom==1 && num>=10000) || num<0 || denom<0) 
+            focus_dist=10000;  // infinity
+        else if (denom>0) {
+            focus_dist=(float)num/denom;
+        }
+    }
+
     if (exif->getTag ("ISOSpeedRatings"))
         iso_speed = exif->getTag ("ISOSpeedRatings")->toDouble ();
     if (exif->getTag ("DateTimeOriginal")) {
         if (sscanf ((const char*)exif->getTag("DateTimeOriginal")->getValue(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
             time.tm_year -= 1900;
             time.tm_mon -= 1;
+            time.tm_isdst = -1;
             timeStamp = mktime(&time);
         }
     }
@@ -203,7 +218,7 @@ void ImageData::extractInfo () {
             }
             if (!lensOk && mnote->getTag ("Lens")) {
                 std::string ldata = mnote->getTag ("Lens")->valueToString ();
-                int i=0, j=0; 
+                size_t i=0, j=0;
                 double n[4];
                 for (int m=0; m<4; m++) {
                     while (i<ldata.size() && ldata[i]!='/') i++;
@@ -352,7 +367,7 @@ std::string ImageMetaData::expcompToString (double expcomp, bool maskZeroexpcomp
 
 double ImageMetaData::shutterFromString (std::string s) {
 
-    int i = s.find_first_of ('/');
+    size_t i = s.find_first_of ('/');
     if (i==std::string::npos)
         return atof (s.c_str());
     else 

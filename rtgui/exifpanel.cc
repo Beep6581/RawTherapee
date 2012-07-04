@@ -152,7 +152,7 @@ void ExifPanel::setImageData (const ImageMetaData* id) {
     exifTreeModel->clear ();
 
     const std::vector<Tag*>& defTags = ExifManager::getDefaultTIFFTags (NULL);
-    for (int i=0; i<defTags.size(); i++) 
+    for (size_t i=0; i<defTags.size(); i++)
         if (defTags[i]->nameToString() == "ImageWidth" || defTags[i]->nameToString() == "ImageHeight" || defTags[i]->nameToString() == "BitsPerSample")
             addTag (exifTreeModel->children(), defTags[i]->nameToString(), "?", SYSTEM, false);     
         else
@@ -198,8 +198,7 @@ Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root
 void ExifPanel::addDirectory (const TagDirectory* dir, Gtk::TreeModel::Children root) {
 
     for (int i=0; i<dir->getCount(); i++) {
-	    //FIXME: static_cast needed here
-        Tag* t = ((TagDirectory*)dir)->getTagByIndex (i);
+	Tag* t = (const_cast<TagDirectory*>(dir))->getTagByIndex (i);
         if (t->getAttrib() && t->getAttrib()->action==SYSTEM)
             continue;
         if (t->isDirectory()) 
@@ -266,7 +265,7 @@ void ExifPanel::delIt (Gtk::TreeModel::iterator iter) {
 void ExifPanel::removePressed () {
 
     std::vector<Gtk::TreeModel::Path> sel = exifTree->get_selection()->get_selected_rows();
-    for (int i=0; i<sel.size(); i++) 
+    for (size_t i=0; i<sel.size(); i++)
         delIt (exifTreeModel->get_iter (sel[i]));
 
     exifSelectionChanged ();
@@ -289,7 +288,7 @@ void ExifPanel::keepIt (Gtk::TreeModel::iterator iter) {
 void ExifPanel::keepPressed () {
 
     std::vector<Gtk::TreeModel::Path> sel = exifTree->get_selection()->get_selected_rows();
-    for (int i=0; i<sel.size(); i++) 
+    for (size_t i=0; i<sel.size(); i++)
         keepIt (exifTreeModel->get_iter (sel[i]));
 
     exifSelectionChanged ();
@@ -342,7 +341,7 @@ Gtk::TreeModel::iterator ExifPanel::resetIt (Gtk::TreeModel::iterator  iter) {
 void ExifPanel::resetPressed () {
 
     std::vector<Gtk::TreeModel::Path> sel = exifTree->get_selection()->get_selected_rows();
-    for (int i=0; i<sel.size(); i++) 
+    for (size_t i=0; i<sel.size(); i++)
         resetIt (exifTreeModel->get_iter (sel[i]));
 
     exifSelectionChanged ();

@@ -31,9 +31,6 @@
 #undef THREAD_PRIORITY_NORMAL
 #define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 
-
-
-
 namespace rtengine {
 extern const Settings* settings;
 
@@ -95,7 +92,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     ImProcFunctions ipf (&params, true);
 
     PreviewProps pp (0, 0, fw, fh, 1);
-    imgsrc->preprocess( params.raw);
+    imgsrc->preprocess( params.raw, params.lensProf, params.coarse);
 	if (pl) pl->setProgress (0.20);
     imgsrc->demosaic( params.raw);
     if (pl) pl->setProgress (0.30);
@@ -125,7 +122,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // perform transform (excepted resizing)
     if (ipf.needsTransform()) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
-        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh);
+        ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, imgsrc->getMetaData()->getFocalLen(), imgsrc->getMetaData()->getFocalLen35mm(),
+                       imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), true);
         delete baseImg;
         baseImg = trImg;
     }
@@ -151,7 +149,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (params.toneCurve.autoexp) {
 		LUTu aehist; int aehistcompr;
 		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-		ipf.getAutoExp (aehist, aehistcompr, params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
+		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, expcomp, bright, contr, black, hlcompr,hlcomprthresh);
     }
 
     // at this stage, we can flush the raw data to free up quite an important amount of memory
@@ -211,7 +209,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
 	ipf.vibrance(labView);
 
-  	ipf.impulsedenoise (labView);
+	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
 	if (params.sharpenEdge.enabled) {
 		 ipf.MLsharpen(labView);
@@ -503,12 +501,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         Glib::ustring outputProfile;
         if (params.icm.output!="" && params.icm.output!=ColorManagementParams::NoICMString) {
             outputProfile = params.icm.output;
-        }
+
+            /*  if we'd wanted the RT_sRGB profile we would have selected it
         else {
             // use RT_sRGB.icm profile if present, otherwise use LCMS2 profile generate by lab2rgb16b
             if (settings->verbose) printf("No output profiles set ; looking for the default sRGB profile (\"%s\")...\n", options.rtSettings.srgb.c_str());
             outputProfile = options.rtSettings.srgb;
-        }
+            }*/
 
         // if iccStore->getProfile send back an object, then iccStore->getContent will do too
         cmsHPROFILE jprof = iccStore->getProfile(outputProfile); //get outProfile
@@ -519,6 +518,10 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
             if (settings->verbose) printf("Using \"%s\" output profile\n", outputProfile.c_str());
             ProfileContent pc = iccStore->getContent (outputProfile);
             readyImg->setOutputProfile (pc.data, pc.length);
+        }
+        } else {
+            // No ICM
+             readyImg->setOutputProfile (NULL,0);
         }
     }
 

@@ -19,6 +19,7 @@
 #ifndef _FLATFIELD_H_
 #define _FLATFIELD_H_
 
+#include <auto_ptr.h>
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
@@ -36,6 +37,7 @@ class FlatField : public Gtk::VBox, public AdjusterListener, public FoldableTool
 protected:
 
 	MyFileChooserButton *flatFieldFile;
+	std::auto_ptr<FileChooserLastFolderPersister> flatFieldFilePersister;
 	Gtk::Label *ffLabel;
 	Gtk::Label *ffInfo;
 	Gtk::Button *flatFieldFileReset;

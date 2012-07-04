@@ -55,9 +55,9 @@ enum ProcEvent {
     EvShrDAmount=30,
     EvShrDDamping=31,
     EvShrDIterations=32,
-    EvCBAvoidClip=33, // obsolete
-    EvCBSatLimiter=34,// obsolete
-    EvCBSatLimit=35,  // obsolete
+    EvLCPUseDist=33,
+    EvLCPUseVign=34,
+    EvLCPUseCA=35,
     EvCBBoost=36,     // obsolete
     EvWBMethod=37,
     EvWBTemp=38,
@@ -70,7 +70,7 @@ enum ProcEvent {
     EvCDNEnabled=45,  // obsolete
     EvCDNRadius=46,   // obsolete
     EvCDNEdgeTolerance=47, // obsolete
-    EvCDNEdgeSensitive=48, // obsolete
+    EvPrefProfile=48,
     EvSHEnabled=49,
     EvSHHighlights=50,
     EvSHShadows=51,
@@ -106,7 +106,7 @@ enum ProcEvent {
     EvProfileChangeNotification=81,
     EvSHHighQuality=82,
     EvPerspCorr=83,
-    EvEqualizer=84, // obsolete
+    EvLCPFile=84,
     EvEqlEnabled=85,// obsolete
     EvIDNEnabled=86,
     EvIDNThresh=87,
@@ -188,8 +188,9 @@ enum ProcEvent {
 	EvRGBgCurve=163,
 	EvRGBbCurve=164,
 	EvNeutralExp=165,
-	EvDPDNLdetail=166,
-	NUMOFEVENTS=167
+	EvLBWtoning=166,
+	EvDPDNLdetail=167,
+	NUMOFEVENTS=168
 };
 }    
 #endif    

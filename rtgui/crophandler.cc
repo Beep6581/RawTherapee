@@ -168,7 +168,7 @@ int createpixbufs (void* data) {
 
     GThreadLock lock;
 
-    CropHandlerIdleHelper* chi = (CropHandlerIdleHelper*) data;
+    CropHandlerIdleHelper* chi = static_cast<CropHandlerIdleHelper*>(data);
     if (chi->destroyed) {
         if (chi->pending == 1)
             delete chi;
@@ -331,6 +331,15 @@ void CropHandler::getSize (int& w, int& h) {
     
     w = cropW;
     h = cropH;
+}
+
+void CropHandler::getFullImageSize (int& w, int& h) {
+    if (ipc) {
+        w = ipc->getFullWidth ();
+        h = ipc->getFullHeight ();
+    } else {
+        w=h=0;
+    }
 }
 
 void CropHandler::compDim () {

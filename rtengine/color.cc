@@ -17,19 +17,13 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "rt_math.h"
 #include "color.h"
 #include "iccmatrices.h"
 
+using namespace std;
+
 namespace rtengine {
-
-#undef MAXVAL
-#undef MAX
-#undef MIN
-
-#define MAXVAL  0xffff
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
-#define SQR(x) ((x)*(x))
 
 #define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
 #define kappa	903.29630 //24389.0/27.0;
@@ -97,8 +91,8 @@ void Color::rgb2hsv (float r, float g, float b, float &h, float &s, float &v) {
 	double var_G = g / 65535.0;
 	double var_B = b / 65535.0;
 
-	double var_Min = MIN(MIN(var_R,var_G),var_B);
-	double var_Max = MAX(MAX(var_R,var_G),var_B);
+	double var_Min = min(var_R,var_G,var_B);
+	double var_Max = max(var_R,var_G,var_B);
 	double del_Max = var_Max - var_Min;
 	v = var_Max;
 	if (fabs(del_Max)<0.00001) {
@@ -124,8 +118,8 @@ void Color::rgb2hsv (int r, int g, int b, float &h, float &s, float &v) {
 	double var_G = g / 65535.0;
 	double var_B = b / 65535.0;
 
-	double var_Min = MIN(MIN(var_R,var_G),var_B);
-	double var_Max = MAX(MAX(var_R,var_G),var_B);
+	double var_Min = min(var_R,var_G,var_B);
+	double var_Max = max(var_R,var_G,var_B);
 	double del_Max = var_Max - var_Min;
 	v = var_Max;
 	if (fabs(del_Max)<0.00001) {
@@ -157,12 +151,12 @@ void Color::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
 
 	float r1,g1,b1;
 
-	if      (i==1)    {r1 = q;  g1 = v;  b1 = p;}
-	else if (i==2)    {r1 = p;  g1 = v;  b1 = t;}
-	else if (i==3)    {r1 = p;  g1 = q;  b1 = v;}
-	else if (i==4)    {r1 = t;  g1 = p;  b1 = v;}
-	else if (i==5)    {r1 = v;  g1 = p;  b1 = q;}
-	else /*i==(0|6)*/ {r1 = v;  g1 = t;  b1 = p;}
+	if      (i==0) {r1 = v;  g1 = t;  b1 = p;}
+	else if (i==1) {r1 = q;  g1 = v;  b1 = p;}
+	else if (i==2) {r1 = p;  g1 = v;  b1 = t;}
+	else if (i==3) {r1 = p;  g1 = q;  b1 = v;}
+	else if (i==4) {r1 = t;  g1 = p;  b1 = v;}
+	else if (i==5) {r1 = v;  g1 = p;  b1 = q;}
 
 	r = ((r1)*65535.0);
 	g = ((g1)*65535.0);
@@ -270,7 +264,7 @@ void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, fl
 void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {
 //from Dcraw (D.Coffin)
 	int i;
-	double g[6], bnd[2]={0,0}, r;
+	double g[6], bnd[2]={0,0};
 
 	g[0] = pwr;
 	g[1] = ts;

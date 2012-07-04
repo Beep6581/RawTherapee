@@ -140,7 +140,7 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBuffer<double>*
 }
 
 template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* buffer, int W, int H, double sigma, bool multiThread) {
-	
+
     if (sigma<0.25) {
         // dont perform filtering
         if (src!=dst)
@@ -149,7 +149,7 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
                 memcpy (dst[i], src[i], W*sizeof(T));
         return;
     }
-	
+
     if (sigma<0.6) {
         // compute 3x3 kernel
         double c1 = exp (-1.0 / (2.0 * sigma * sigma));
@@ -159,7 +159,7 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
         gaussVertical3<T> (src, dst, (T*)(buffer->data), W, H, c0, c1, multiThread);
         return;
     }
-	
+
     // coefficient calculation
     double q = 0.98711 * sigma - 0.96330;
     if (sigma<2.5)
@@ -169,11 +169,11 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
     double b2 = -1.4281*q*q - 1.26661*q*q*q;
     double b3 = 0.422205*q*q*q;
     double B = 1.0 - (b1+b2+b3) / b0;
-	
+
     b1 /= b0;
     b2 /= b0;
     b3 /= b0;
-	
+
     // From: Bill Triggs, Michael Sdika: Boundary Conditions for Young-van Vliet Recursive Filtering
     double M[3][3];
     M[0][0] = -b3*b1+1.0-b3*b3-b2;
@@ -196,10 +196,10 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBuffer<double>* b
     	temp2[0] = B * src[0][i] + b1*src[0][i] + b2*src[0][i] + b3*src[0][i];
         temp2[1] = B * src[1][i] + b1*temp2[0]  + b2*src[0][i] + b3*src[0][i];
         temp2[2] = B * src[2][i] + b1*temp2[1]  + b2*temp2[0]  + b3*src[0][i];
-		
+
         for (int j=3; j<H; j++)
             temp2[j] = B * src[j][i] + b1*temp2[j-1] + b2*temp2[j-2] + b3*temp2[j-3];
-		
+
         double temp2Hm1 = src[H-1][i] + M[0][0]*(temp2[H-1] - src[H-1][i]) + M[0][1]*(temp2[H-2] - src[H-1][i]) + M[0][2]*(temp2[H-3] - src[H-1][i]);
         double temp2H   = src[H-1][i] + M[1][0]*(temp2[H-1] - src[H-1][i]) + M[1][1]*(temp2[H-2] - src[H-1][i]) + M[1][2]*(temp2[H-3] - src[H-1][i]);
         double temp2Hp1 = src[H-1][i] + M[2][0]*(temp2[H-1] - src[H-1][i]) + M[2][1]*(temp2[H-2] - src[H-1][i]) + M[2][2]*(temp2[H-3] - src[H-1][i]);

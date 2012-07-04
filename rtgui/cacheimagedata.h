@@ -49,7 +49,8 @@ class CacheImageData {
         bool  exifValid;
         double fnumber;
         double shutter;
-        double focalLen;
+        double focalLen,focalLen35mm;
+        float focusDist;
         unsigned iso;
         Glib::ustring lens;
         Glib::ustring camera;
@@ -64,7 +65,7 @@ class CacheImageData {
 		enum
 		{
 			FULL_THUMBNAIL = 0,  // was the thumbnail generated from whole file
-			QUICK_THUMBNAIL = 1, // was rhe thumbnail generated from embedded jpeg
+			QUICK_THUMBNAIL = 1 // was rhe thumbnail generated from embedded jpeg
 		};
 
         CacheImageData ();

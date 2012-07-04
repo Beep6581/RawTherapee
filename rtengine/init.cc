@@ -19,12 +19,14 @@
 #include "rtengine.h"
 #include "iccstore.h"
 #include "color.h"
+#include "dcp.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
 #include "curves.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
 #include "rtthumbnail.h"
+#include "../rtgui/profilestore.h"
 
 namespace rtengine {
 
@@ -38,9 +40,14 @@ int init (const Settings* s, Glib::ustring baseDir) {
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
 	iccStore->findDefaultMonitorProfile();
 
+    dcpStore->init (baseDir + "/dcpprofiles");
+
+    profileStore.init ();
     ProcParams::init ();
+    CurveFactory::init ();
     Color::init ();
     ImProcFunctions::initMunsell();
+    ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;
     lcmsMutex = new Glib::Mutex;
@@ -52,7 +59,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 void cleanup () {
 
     ProcParams::cleanup ();
-	Color::cleanup ();
+    ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }
 

@@ -78,7 +78,7 @@ class ImageSource : public InitialImage {
 
         virtual ~ImageSource            () {}
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
-        virtual void        preprocess  (const RAWParams &raw){};
+        virtual void        preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse){};
         virtual void        demosaic    (const RAWParams &raw){};
         virtual void        flushRawData       (){};
         virtual void        flushRGB           (){};
@@ -87,9 +87,10 @@ class ImageSource : public InitialImage {
 
         virtual bool        IsrgbSourceModified() =0; // tracks whether cached rgb output of demosaic has been modified
 
+        // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
         virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
-		// true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
-		virtual bool        isWBProviderReady () =0; 
+        // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
+        virtual bool        isWBProviderReady () =0;
 		virtual void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp) =0;
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;
@@ -101,6 +102,7 @@ class ImageSource : public InitialImage {
 
         virtual void        getFullSize (int& w, int& h, int tr = TR_NONE) {}
         virtual void        getSize     (int tran, PreviewProps pp, int& w, int& h) {}
+        virtual int         getRotateDegree() const { return 0; }
 
         virtual ImageData*     getImageData () =0;
         virtual ImageMatrices* getImageMatrices () =0;
@@ -121,5 +123,5 @@ class ImageSource : public InitialImage {
         virtual const ImageMetaData* getMetaData () { return idata; }
         virtual ImageSource* getImageSource ()      { return this; }
 };
-};
+}
 #endif

@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
-#include "guiutils.h"
+#include "thresholdadjuster.h"
 #include "toolpanel.h"
 
-class Sharpening : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class Sharpening : public Gtk::VBox, public ThresholdAdjusterListener, public AdjusterListener, public FoldableToolPanel {
 
   protected:
     MyComboBoxText* method;
@@ -37,7 +37,6 @@ class Sharpening : public Gtk::VBox, public AdjusterListener, public FoldableToo
     
     Adjuster* radius;
     Adjuster* amount;
-    Adjuster* threshold;
     Adjuster* eradius;
     Adjuster* etolerance;
     Adjuster* hcamount;
@@ -45,6 +44,7 @@ class Sharpening : public Gtk::VBox, public AdjusterListener, public FoldableToo
     Gtk::VBox* hcbin;
     Gtk::VBox* edgebox;
     Gtk::VBox* hcbox;
+    ThresholdAdjuster* threshold;
     Gtk::CheckButton* enabled;  
     bool lastEnabled;
     sigc::connection enaConn;
@@ -68,6 +68,7 @@ class Sharpening : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
+    void adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight);
     void enabled_toggled ();
     void edgesonly_toggled ();
     void halocontrol_toggled ();

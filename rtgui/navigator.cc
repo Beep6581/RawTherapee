@@ -22,6 +22,7 @@
 #include "../rtengine/iccstore.h"
 #include "../rtengine/curves.h"
 #include "../rtengine/color.h"
+#include "../rtengine/rt_math.h"
 
 Navigator::Navigator () {
 
@@ -61,7 +62,11 @@ Navigator::Navigator () {
 	show_all ();
 }
 
-void Navigator::setInvalid () {
+void Navigator::setInvalid (int fullWidth, int fullHeight) {
+    if (fullWidth>0 && fullHeight>0)
+        position->set_text (Glib::ustring::compose (M("NAVIGATOR_XY_FULL"),fullWidth,fullHeight));
+    else 
+        position->set_text (M("NAVIGATOR_XY_NA"));
 
         position->set_text (M("NAVIGATOR_XY_NA"));
 	R->set_text (M("NAVIGATOR_R_NA"));
@@ -75,11 +80,11 @@ void Navigator::setInvalid () {
 	LAB_L->set_text (M("NAVIGATOR_LAB_L_NA"));
 }
 
-
+// if !validPos then x/y contain the full image size
 void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b) {
 
 	if (!validPos)
-		setInvalid ();
+		setInvalid (x,y);
 	else {
 		position->set_text (Glib::ustring::compose ("x = %1, y = %2", x, y));
 		R->set_text (Glib::ustring::compose (M("NAVIGATOR_R_VALUE"), r));
@@ -107,8 +112,8 @@ void Navigator::rgb2hsv (int r, int g, int b, int &h, int &s, int &v) {
 	volatile double var_G = g / 255.0;
 	volatile double var_B = b / 255.0;
 
-	/*volatile double var_Min = MIN(MIN(var_R,var_G),var_B);
-	volatile double var_Max = MAX(MAX(var_R,var_G),var_B);
+	/*volatile double var_Min = min(var_R,var_G,var_B);
+	volatile double var_Max = max(var_R,var_G,var_B);
 	double del_Max = var_Max - var_Min;
     double	V = (var_Max + var_Min) / 2;
     double H, S;
@@ -131,8 +136,8 @@ void Navigator::rgb2hsv (int r, int g, int b, int &h, int &s, int &v) {
 		if ( H > 1 )  H -= 1;
 	}*/
 	
-	double var_Min = MIN(MIN(var_R,var_G),var_B);
-	double var_Max = MAX(MAX(var_R,var_G),var_B);
+	double var_Min = rtengine::min(var_R,var_G,var_B);
+	double var_Max = rtengine::max(var_R,var_G,var_B);
 	double del_Max = var_Max - var_Min;
 	double V = var_Max;
 	double H, S;

@@ -24,9 +24,9 @@ using namespace rtengine::procparams;
 
 LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
-	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 0.01, 0));
+	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100, 100, 1, 0));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100, 100, 1, 0));
-	saturation   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SATURATION"), -100, 100, 1, 0));
+	saturation   = Gtk::manage (new Adjuster (M("TP_LABCURVE_SATURATION"), -100, 100, 1, 5));
 
 	pack_start (*brightness);
 	brightness->show ();
@@ -44,6 +44,10 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	//%%%%%%%%%%%%%%%%%%
 	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 	
+	bwtoning = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_BWTONING")));
+	bwtoning->set_tooltip_markup (M("TP_LABCURVE_BWTONING_TIP"));
+	pack_start (*bwtoning);
+
 	avoidclip = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_AVOIDCOLORCLIP")));
 	
 	pack_start (*avoidclip);
@@ -52,13 +56,14 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	enablelimiter = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_ENABLESATLIMITER")));
 	pack_start (*enablelimiter);
 	
-	saturationlimiter = Gtk::manage ( new Adjuster (M("TP_LABCURVE_SATLIMIT"), 0, 100, 1.0, 40) );
+	saturationlimiter = Gtk::manage ( new Adjuster (M("TP_LABCURVE_SATLIMIT"), 0, 100, 1.0, 50) );
 	pack_start (*saturationlimiter);
 	saturationlimiter->show ();
 	saturationlimiter->reference ();  
 	
 	//saturation->setAdjusterListener (this);
 	saturationlimiter->setAdjusterListener (this);
+	bwtconn= bwtoning->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::bwtoning_toggled) );
 	acconn = avoidclip->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::avoidclip_toggled) );
 	elconn = enablelimiter->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::enablelimiter_toggled) );
 	//%%%%%%%%%%%%%%%%%%%
@@ -67,7 +72,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	hsep3->show ();
 	pack_start (*hsep3);
 
-	curveEditorG = new CurveEditorGroup ();
+	curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
 	curveEditorG->setCurveListener (this);
 	curveEditorG->setColorProvider (this);
 
@@ -97,6 +102,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%
 		saturationlimiter->setEditedState (pedited->labCurve.saturationlimit ? Edited : UnEdited);
+		bwtoning->set_inconsistent (!pedited->labCurve.bwtoning);
         avoidclip->set_inconsistent (!pedited->labCurve.avoidclip);
         enablelimiter->set_inconsistent (!pedited->labCurve.enable_saturationlimiter);
 		//%%%%%%%%%%%%%%%%%%%%%%
@@ -114,6 +120,8 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	//%%%%%%%%%%%%%%%%%%%%%%
 	saturationlimiter->setValue (pp->labCurve.saturationlimit);
     acconn.block (true);
+    bwtoning->set_active (pp->labCurve.bwtoning);
+    saturation->set_sensitive(!(bwtoning->get_active ())); //at bwtoning enabled saturation value has no effect
     avoidclip->set_active (pp->labCurve.avoidclip);
     acconn.block (false);
     elconn.block (true);
@@ -124,6 +132,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     // if (enablelimiter->get_active () || enablelimiter->get_inconsistent())
     //    pack_start (*saturationlimiter);
 	
+    lastBWTVal = pp->labCurve.bwtoning;
     lastACVal = pp->labCurve.avoidclip;
     lastELVal = pp->labCurve.enable_saturationlimiter;
 	//%%%%%%%%%%%%%%%%%%%%%%
@@ -147,6 +156,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->labCurve.saturation      = (int)saturation->getValue ();
 	
 	//%%%%%%%%%%%%%%%%%%%%%%
+	pp->labCurve.bwtoning = bwtoning->get_active ();
 	pp->labCurve.avoidclip = avoidclip->get_active ();
     pp->labCurve.enable_saturationlimiter = enablelimiter->get_active ();
     pp->labCurve.saturationlimit = saturationlimiter->getValue ();
@@ -162,6 +172,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->labCurve.saturation = saturation->getEditedState ();
 		
 		//%%%%%%%%%%%%%%%%%%%%%%
+		pedited->labCurve.bwtoning  = !bwtoning->get_inconsistent();
 		pedited->labCurve.avoidclip = !avoidclip->get_inconsistent();
         pedited->labCurve.enable_saturationlimiter = !enablelimiter->get_inconsistent();
         pedited->labCurve.saturationlimit = saturationlimiter->getEditedState ();
@@ -217,6 +228,33 @@ void LCurve::avoidclip_toggled () {
             listener->panelChanged (EvLAvoidClip, M("GENERAL_ENABLED"));
         else            
             listener->panelChanged (EvLAvoidClip, M("GENERAL_DISABLED"));
+    }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%
+//BW toning control changed
+void LCurve::bwtoning_toggled () {
+
+    if (batchMode) {
+        if (bwtoning->get_inconsistent()) {
+        	bwtoning->set_inconsistent (false);
+        	bwtconn.block (true);
+            bwtoning->set_active (false);
+            bwtconn.block (false);
+        }
+        else if (lastBWTVal)
+        	bwtoning->set_inconsistent (true);
+
+        lastBWTVal = bwtoning->get_active ();
+    }
+
+    saturation->set_sensitive(!(bwtoning->get_active ())); //at bwtoning enabled saturation value has no effect
+
+    if (listener) {
+    	if (bwtoning->get_active ())
+        	listener->panelChanged (EvLBWtoning, M("GENERAL_ENABLED"));
+        else
+            listener->panelChanged (EvLBWtoning, M("GENERAL_DISABLED"));
     }
 }
 

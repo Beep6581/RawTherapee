@@ -161,7 +161,7 @@ struct tiupdate {
 
 int updateImageUI (void* data) {
     
-    tiupdate* params = (tiupdate*)data;
+    tiupdate* params = static_cast<tiupdate*>(data);
     FileBrowserEntryIdleHelper* feih = params->feih;
 
     if (feih->destroyed) {

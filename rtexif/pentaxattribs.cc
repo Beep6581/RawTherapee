@@ -1199,7 +1199,7 @@ const TagAttrib pentaxCameraInfoAttribs[] = {
  {0, 1, 0, 0,  4, "InternalSerialNumber", &stdInterpreter},
  {-1, 0, 0,  0, 0, "", NULL}};
 
-};
+}
 #endif
 
 

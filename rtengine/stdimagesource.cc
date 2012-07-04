@@ -19,8 +19,6 @@
 #include "stdimagesource.h"
 #include "mytime.h"
 #include "iccstore.h"
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
 #include "curves.h"
 #include "color.h"
 
@@ -288,12 +286,21 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     t1.set ();
 
     // the code will use OpenMP as of now.
-
-    //Image16* tmpim = new Image16 (image->width,image->height);
+	
+	//Image16* tmpim = new Image16 (image->width,image->height);
     getImage_ (ctemp, tran, image, pp, true, hrp);
 
     // *** colorSpaceConversion was there ***
-
+/*    	colorSpaceConversion (image, cmp, embProfile);
+	
+	for ( int h = 0; h < image->height; ++h )
+		for ( int w = 0; w < image->width; ++w ) {
+			image->r[h][w] *= 65535.0f;
+			image->g[h][w] *= 65535.0f;
+			image->b[h][w] *= 65535.0f;
+			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",image->r[h][w],image->g[h][w],image->b[h][w]);
+		}
+*/
     // Flip if needed
     if (tran & TR_HFLIP)
         hflip (image);
@@ -302,13 +309,13 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 
     t2.set ();
 }
-
+	
 void StdImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp) {
     colorSpaceConversion (image, cmp, embProfile);
 }
 
 void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
-
+	
 	cmsHPROFILE in;
 	cmsHPROFILE out = iccStore->workingSpace (cmp.working);
 	if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
@@ -325,14 +332,14 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 				in = iccStore->getsRGBProfile ();
 		}
 	}
-
+	
 	if (cmp.input!="(none)") {
 		lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), out, (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|PLANAR_SH(1)), settings->colorimetricIntent, 
-            settings->LCMSSafeMode ? cmsFLAGS_NOOPTIMIZE : cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 
+            cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
 		lcmsMutex->unlock ();
 		
-        im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+        im->ExecCMSTransform(hTransform);
 		
         cmsDeleteTransform(hTransform);
 	}
@@ -346,6 +353,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",im->r[h][w],im->g[h][w],im->b[h][w]);
 		}
 }
+	
 
 void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
 
@@ -367,11 +375,11 @@ void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
 
     if (cmp.input!="(none)") {
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16_PLANAR, out, TYPE_RGB_16_PLANAR, settings->colorimetricIntent, 
-            settings->LCMSSafeMode ? 0 : cmsFLAGS_NOCACHE);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16, out, TYPE_RGB_16, settings->colorimetricIntent, 
+            cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
         
-        im->ExecCMSTransform(hTransform, settings->LCMSSafeMode);
+        im->ExecCMSTransform(hTransform);
         
         cmsDeleteTransform(hTransform);
     }
@@ -514,7 +522,7 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
-    for (int i=0; i<red.size(); i++) {
+    for (size_t i=0; i<red.size(); i++) {
         transformPixel (red[i].x, red[i].y, tran, x, y);
         if (x>=0 && y>=0 && x<img->width && y<img->height) {
             reds += img->r[y][x];

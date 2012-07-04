@@ -8,8 +8,8 @@
 #include <cstdio>
 #include <cstdarg>
 
-void KLTError(char *fmt, ...);
-void KLTWarning(char *fmt, ...);
+void KLTError(const char *fmt, ...);
+void KLTWarning(const char *fmt, ...);
 
 #endif
 

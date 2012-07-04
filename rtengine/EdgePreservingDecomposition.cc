@@ -1,11 +1,7 @@
+#include <cmath>
+#include "rt_math.h"
+
 #include "EdgePreservingDecomposition.h"
-
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#endif
-
-
-
 
 /* Solves A x = b by the conjugate gradient method, where instead of feeding it the matrix A you feed it a function which
 calculates A x where x is some vector. Stops when rms residual < RMSResidual or when maximum iterates is reached.
@@ -190,14 +186,14 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(unsigne
 	MaxFillAbove++;	//Conceptually, now "fill" includes an existing diagonal. Simpler in the math that follows.
 	unsigned int i, j, mic;
 	for(mic = i = 1; i != m; i++)
-		mic += min(StartRows[i] - StartRows[i - 1], MaxFillAbove);	//Guarunteed positive since StartRows must be created in increasing order.
+		mic += rtengine::min(StartRows[i] - StartRows[i - 1], MaxFillAbove);	//Guarunteed positive since StartRows must be created in increasing order.
 
 	//Initialize the decomposition - setup memory, start rows, etc.
 	MultiDiagonalSymmetricMatrix *ic = new MultiDiagonalSymmetricMatrix(n, mic);
 	ic->CreateDiagonal(0, 0);	//There's always a main diagonal in this type of decomposition.
 	for(mic = i = 1; i != m; i++){
 		//Set j to the number of diagonals to be created corresponding to a diagonal on this source matrix...
-		j = min(StartRows[i] - StartRows[i - 1], MaxFillAbove);
+		j = rtengine::min(StartRows[i] - StartRows[i - 1], MaxFillAbove);
 
 		//...and create those diagonals. I want to take a moment to tell you about how much I love minimalistic loops: very much.
 		while(j-- != 0)

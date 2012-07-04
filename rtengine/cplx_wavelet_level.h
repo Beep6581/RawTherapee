@@ -25,14 +25,9 @@
 #include <algorithm>
 
 #include "gauss.h"
+#include "rt_math.h"
 
 namespace rtengine {
-	
-#undef MAX
-#undef MIN
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
-#define MIN(a,b) ((a) > (b) ? (b) : (a))
-#define SQR(x) ((x)*(x))
 
 	
 	//////////////////////////////////////////////////////////////////////////////

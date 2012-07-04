@@ -17,12 +17,14 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <glib/gstdio.h>
-#include "safegtk.h"
-#include "../rtgui/multilangmgr.h"
-#include "procparams.h"
 #include <glibmm.h>
 #include <sstream>
 #include <cstring>
+#include "rt_math.h"
+
+#include "safegtk.h"
+#include "../rtgui/multilangmgr.h"
+#include "procparams.h"
 #include "../rtgui/version.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/mydiagonalcurve.h"
@@ -31,8 +33,11 @@
 #include "rawimage.h"
 #include "../rtgui/ppversion.h"
 #include "../rtgui/paramsedited.h"
+#include "dcp.h"
 
 #define APPVERSION VERSION
+
+using namespace std;
 
 namespace rtengine {
 namespace procparams {
@@ -87,10 +92,10 @@ void WBParams::cleanup() {
 void CropParams::mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const {
     x1 = 0, x2 = resizedWidth, y1 = 0, y2 = resizedHeight;
     if (enabled) {
-        x1 = MIN(resizedWidth-1,  MAX(0, x / scale));
-        y1 = MIN(resizedHeight-1, MAX(0, y / scale));   
-        x2 = MIN(resizedWidth,    MAX(0, (x+w) / scale)); 
-        y2 = MIN(resizedHeight,   MAX(0, (y+h) / scale));
+        x1 = min(resizedWidth-1,  max(0, x / scale));
+        y1 = min(resizedHeight-1, max(0, y / scale));
+        x2 = min(resizedWidth,    max(0, (x+w) / scale));
+        y2 = min(resizedHeight,   max(0, (y+h) / scale));
     }
 }
 
@@ -130,7 +135,7 @@ void ProcParams::setDefaults () {
     toneCurve.black         = 0;
     toneCurve.hlcompr       = 70;
     toneCurve.hlcomprthresh = 0;
-    toneCurve.shcompr       = 25;
+    toneCurve.shcompr       = 50;
     toneCurve.curve.clear ();
     toneCurve.curve.push_back(DCT_Linear);
     
@@ -140,6 +145,7 @@ void ProcParams::setDefaults () {
     labCurve.avoidclip          = false;
     labCurve.enable_saturationlimiter = false;
     labCurve.saturationlimit    = 50;
+    labCurve.bwtoning           = false;
     labCurve.lcurve.clear ();
     labCurve.lcurve.push_back(DCT_Linear);
     labCurve.acurve.clear ();
@@ -157,18 +163,18 @@ void ProcParams::setDefaults () {
 
     sharpenEdge.enabled         = false;
     sharpenEdge.passes          = 2;
-    sharpenEdge.amount        = 50.0;
+    sharpenEdge.amount          = 50.0;
     sharpenEdge.threechannels   = false;
 
     sharpenMicro.enabled        = false;
-    sharpenMicro.amount       = 20.0;
+    sharpenMicro.amount         = 20.0;
     sharpenMicro.uniformity     = 50.0;
     sharpenMicro.matrix         = false;
 
     sharpening.enabled          = false;
     sharpening.radius           = 1.0;
     sharpening.amount           = 90;
-    sharpening.threshold        = 768;
+    sharpening.threshold.setValues(20, 80, 2000, 1200);
     sharpening.edgesonly        = false;
     sharpening.edges_radius     = 3;
     sharpening.edges_tolerance  = 1000;
@@ -183,7 +189,7 @@ void ProcParams::setDefaults () {
     vibrance.enabled            = false;
     vibrance.pastels            = 0;
     vibrance.saturated          = 0;
-    vibrance.psthreshold        = 75;
+    vibrance.psthreshold.setValues(1, 75);
     vibrance.protectskins       = false;
     vibrance.avoidcolorshift    = true;
     vibrance.pastsattog     	= true;
@@ -222,11 +228,11 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.gamma         = 1.7;
 	dirpyrDenoise.expcomp       = 0.0;
 
-	edgePreservingDecompositionUI.enabled = false;
-	edgePreservingDecompositionUI.Strength = 0.25;
-	edgePreservingDecompositionUI.EdgeStopping = 1.4;
-	edgePreservingDecompositionUI.Scale = 1.0;
-	edgePreservingDecompositionUI.ReweightingIterates = 0;
+    edgePreservingDecompositionUI.enabled = false;
+    edgePreservingDecompositionUI.Strength = 0.25;
+    edgePreservingDecompositionUI.EdgeStopping = 1.4;
+    edgePreservingDecompositionUI.Scale = 1.0;
+    edgePreservingDecompositionUI.ReweightingIterates = 0;
 
     sh.enabled       = false;
     sh.hq            = false;
@@ -256,7 +262,6 @@ void ProcParams::setDefaults () {
     rotate.degree       = 0;
 
     distortion.amount     = 0;
-    distortion.uselensfun = false;
     
     perspective.horizontal = 0;
     perspective.vertical   = 0;
@@ -273,6 +278,10 @@ void ProcParams::setDefaults () {
     vignetting.centerX = 0;
     vignetting.centerY = 0;
     
+    lensProf.lcpFile="";
+    lensProf.useDist=lensProf.useVign=true;
+    lensProf.useCA=false;
+
     chmixer.red[0] = 100;
     chmixer.red[1] = 0;
     chmixer.red[2] = 0;
@@ -293,6 +302,7 @@ void ProcParams::setDefaults () {
     
     icm.input   = "";
     icm.blendCMSMatrix = false;
+    icm.preferredProfile = (short)rtengine::Daylight;
     icm.working = "sRGB";
     icm.output  = "sRGB";
     icm.gamma  = "default";
@@ -398,6 +408,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->labCurve.avoidclip)       keyFile.set_boolean ("Luminance Curve", "AvoidColorClipping",  labCurve.avoidclip);
     if (!pedited || pedited->labCurve.enable_saturationlimiter) keyFile.set_boolean ("Luminance Curve", "SaturationLimiter", labCurve.enable_saturationlimiter);
     if (!pedited || pedited->labCurve.saturationlimit) keyFile.set_double  ("Luminance Curve", "SaturationLimit",     labCurve.saturationlimit);
+    if (!pedited || pedited->labCurve.avoidclip)       keyFile.set_boolean ("Luminance Curve", "BWtoning",            labCurve.bwtoning);
     if (!pedited || pedited->labCurve.lcurve)  {
         Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
         keyFile.set_double_list("Luminance Curve", "LCurve", lcurve);
@@ -416,7 +427,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->sharpening.method)             keyFile.set_string  ("Sharpening", "Method",              sharpening.method);
     if (!pedited || pedited->sharpening.radius)             keyFile.set_double  ("Sharpening", "Radius",              sharpening.radius);
     if (!pedited || pedited->sharpening.amount)             keyFile.set_integer ("Sharpening", "Amount",              sharpening.amount);
-    if (!pedited || pedited->sharpening.threshold)          keyFile.set_integer ("Sharpening", "Threshold",           sharpening.threshold);
+    if (!pedited || pedited->sharpening.threshold) {
+        Glib::ArrayHandle<int> thresh (sharpening.threshold.value, 4, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("Sharpening",   "Threshold", thresh);
+    }
     if (!pedited || pedited->sharpening.edgesonly)          keyFile.set_boolean ("Sharpening", "OnlyEdges",           sharpening.edgesonly);
     if (!pedited || pedited->sharpening.edges_radius)       keyFile.set_double  ("Sharpening", "EdgedetectionRadius", sharpening.edges_radius);
     if (!pedited || pedited->sharpening.edges_tolerance)    keyFile.set_integer ("Sharpening", "EdgeTolerance",       sharpening.edges_tolerance);
@@ -431,7 +445,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->vibrance.enabled)          keyFile.set_boolean ("Vibrance", "Enabled",         vibrance.enabled);
     if (!pedited || pedited->vibrance.pastels)          keyFile.set_integer ("Vibrance", "Pastels",         vibrance.pastels);
     if (!pedited || pedited->vibrance.saturated)        keyFile.set_integer ("Vibrance", "Saturated",       vibrance.saturated);
-    if (!pedited || pedited->vibrance.psthreshold)      keyFile.set_integer ("Vibrance", "PSThreshold",     vibrance.psthreshold);
+    if (!pedited || pedited->vibrance.psthreshold) {
+        Glib::ArrayHandle<int> thresh (vibrance.psthreshold.value, 2, Glib::OWNERSHIP_NONE);
+        keyFile.set_integer_list("Vibrance", "PSThreshold", thresh);
+    }
     if (!pedited || pedited->vibrance.protectskins)     keyFile.set_boolean ("Vibrance", "ProtectSkins",    vibrance.protectskins);
     if (!pedited || pedited->vibrance.avoidcolorshift)  keyFile.set_boolean ("Vibrance", "AvoidColorShift", vibrance.avoidcolorshift);
     if (!pedited || pedited->vibrance.pastsattog)       keyFile.set_boolean ("Vibrance", "PastSatTog",      vibrance.pastsattog);
@@ -537,7 +554,12 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
 
     // save distortion
     if (!pedited || pedited->distortion.amount)      keyFile.set_double  ("Distortion", "Amount", distortion.amount);
-    if (!pedited || pedited->distortion.uselensfun)  keyFile.set_boolean ("Distortion", "UseLensFun", distortion.uselensfun);
+
+    // lens profile
+    if (!pedited || pedited->lensProf.lcpFile)       keyFile.set_string  ("LensProfile", "LCPFile", lensProf.lcpFile);
+    if (!pedited || pedited->lensProf.useDist)       keyFile.set_boolean  ("LensProfile", "UseDistortion", lensProf.useDist);
+    if (!pedited || pedited->lensProf.useVign)       keyFile.set_boolean  ("LensProfile", "UseVignette", lensProf.useDist);
+    if (!pedited || pedited->lensProf.useCA)         keyFile.set_boolean  ("LensProfile", "UseCA", lensProf.useDist);
 
     // save perspective correction
     if (!pedited || pedited->perspective.horizontal) keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
@@ -569,6 +591,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     // save color management settings
     if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   icm.input);
     if (!pedited || pedited->icm.blendCMSMatrix)     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
+    if (!pedited || pedited->icm.preferredProfile)   keyFile.set_boolean ("Color Management", "PreferredProfile",   icm.preferredProfile);
     if (!pedited || pedited->icm.working)            keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
     if (!pedited || pedited->icm.output)             keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
     if (!pedited || pedited->icm.gamma)              keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
@@ -682,6 +705,9 @@ int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const {
 
 int ProcParams::load (Glib::ustring fname, ParamsEdited* pedited) {
 
+    if (fname.empty())
+        return 1;
+
     SafeKeyFile keyFile;
     try {
         //setDefaults ();
@@ -759,8 +785,9 @@ if (keyFile.has_group ("Luminance Curve")) {
     if (keyFile.has_key ("Luminance Curve", "Contrast"))       { labCurve.contrast    = keyFile.get_integer ("Luminance Curve", "Contrast"); if (pedited) pedited->labCurve.contrast = true; }
 	if (keyFile.has_key ("Luminance Curve", "Saturation"))      { labCurve.saturation = keyFile.get_integer ("Luminance Curve", "Saturation"); if (pedited) pedited->labCurve.saturation = true; }
 	if (keyFile.has_key ("Luminance Curve", "AvoidColorClipping"))  { labCurve.avoidclip                = keyFile.get_boolean ("Luminance Curve", "AvoidColorClipping"); if (pedited) pedited->labCurve.avoidclip = true; }
-    if (keyFile.has_key ("Luminance Curve", "SaturationLimiter"))   { labCurve.enable_saturationlimiter = keyFile.get_boolean ("Luminance Curve", "SaturationLimiter"); if (pedited) pedited->labCurve.enable_saturationlimiter = true; }
+    if (keyFile.has_key ("Luminance Curve", "SaturationLimiter"))   { labCurve.enable_saturationlimiter = keyFile.get_boolean ("Luminance Curve", "SaturationLimiter");  if (pedited) pedited->labCurve.enable_saturationlimiter = true; }
     if (keyFile.has_key ("Luminance Curve", "SaturationLimit"))     { labCurve.saturationlimit          = keyFile.get_double  ("Luminance Curve", "SaturationLimit");	 if (pedited) pedited->labCurve.saturationlimit = true; }
+    if (keyFile.has_key ("Luminance Curve", "BWtoning"))            { labCurve.bwtoning                 = keyFile.get_boolean ("Luminance Curve", "BWtoning");           if (pedited) pedited->labCurve.bwtoning = true; }
 	if (keyFile.has_key ("Luminance Curve", "LCurve"))          { labCurve.lcurve = keyFile.get_double_list ("Luminance Curve", "LCurve"); if (pedited) pedited->labCurve.lcurve = true; }
 	if (keyFile.has_key ("Luminance Curve", "aCurve"))          { labCurve.acurve = keyFile.get_double_list ("Luminance Curve", "aCurve"); if (pedited) pedited->labCurve.acurve = true; }
 	if (keyFile.has_key ("Luminance Curve", "bCurve"))          { labCurve.bcurve = keyFile.get_double_list ("Luminance Curve", "bCurve"); if (pedited) pedited->labCurve.bcurve = true; }
@@ -771,7 +798,17 @@ if (keyFile.has_group ("Sharpening")) {
     if (keyFile.has_key ("Sharpening", "Enabled"))              { sharpening.enabled          = keyFile.get_boolean ("Sharpening", "Enabled"); if (pedited) pedited->sharpening.enabled = true; }
     if (keyFile.has_key ("Sharpening", "Radius"))               { sharpening.radius           = keyFile.get_double  ("Sharpening", "Radius"); if (pedited) pedited->sharpening.radius = true; }
     if (keyFile.has_key ("Sharpening", "Amount"))               { sharpening.amount           = keyFile.get_integer ("Sharpening", "Amount"); if (pedited) pedited->sharpening.amount = true; }
-    if (keyFile.has_key ("Sharpening", "Threshold"))            { sharpening.threshold        = keyFile.get_integer ("Sharpening", "Threshold"); if (pedited) pedited->sharpening.threshold = true; }
+    if (keyFile.has_key ("Sharpening", "Threshold"))            {
+        if (ppVersion < 302) {
+            int thresh = min(keyFile.get_integer ("Sharpening", "Threshold"), 2000);
+            sharpening.threshold.setValues(thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
+        }
+        else {
+            Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Sharpening", "Threshold");
+            sharpening.threshold.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 2000), min(thresh.data()[3], 2000));
+        }
+        if (pedited) pedited->sharpening.threshold = true;
+    }
     if (keyFile.has_key ("Sharpening", "OnlyEdges"))            { sharpening.edgesonly        = keyFile.get_boolean ("Sharpening", "OnlyEdges"); if (pedited) pedited->sharpening.edgesonly = true; }
     if (keyFile.has_key ("Sharpening", "EdgedetectionRadius"))  { sharpening.edges_radius     = keyFile.get_double  ("Sharpening", "EdgedetectionRadius"); if (pedited) pedited->sharpening.edges_radius = true; }
     if (keyFile.has_key ("Sharpening", "EdgeTolerance"))        { sharpening.edges_tolerance  = keyFile.get_integer ("Sharpening", "EdgeTolerance"); if (pedited) pedited->sharpening.edges_tolerance = true; }
@@ -805,7 +842,17 @@ if (keyFile.has_group ("Vibrance")) {
     if (keyFile.has_key ("Vibrance", "Enabled"))                { vibrance.enabled            = keyFile.get_boolean ("Vibrance", "Enabled"); if (pedited) pedited->vibrance.enabled = true; }
     if (keyFile.has_key ("Vibrance", "Pastels"))                { vibrance.pastels            = keyFile.get_integer ("Vibrance", "Pastels"); if (pedited) pedited->vibrance.pastels = true; }
     if (keyFile.has_key ("Vibrance", "Saturated"))              { vibrance.saturated          = keyFile.get_integer ("Vibrance", "Saturated"); if (pedited) pedited->vibrance.saturated = true; }
-    if (keyFile.has_key ("Vibrance", "PSThreshold"))            { vibrance.psthreshold        = keyFile.get_integer ("Vibrance", "PSThreshold"); if (pedited) pedited->vibrance.psthreshold = true; }
+    if (keyFile.has_key ("Vibrance", "PSThreshold"))            {
+        if (ppVersion < 302) {
+            int thresh = keyFile.get_integer ("Vibrance", "PSThreshold");
+            vibrance.psthreshold.setValues(thresh, thresh);
+        }
+        else {
+            Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Vibrance", "PSThreshold");
+            vibrance.psthreshold.setValues(thresh.data()[0], thresh.data()[1]);
+        }
+        if (pedited) pedited->vibrance.psthreshold = true;
+    }
     if (keyFile.has_key ("Vibrance", "ProtectSkins"))           { vibrance.protectskins       = keyFile.get_boolean ("Vibrance", "ProtectSkins"); if (pedited) pedited->vibrance.protectskins = true; }
     if (keyFile.has_key ("Vibrance", "AvoidColorShift"))        { vibrance.avoidcolorshift    = keyFile.get_boolean ("Vibrance", "AvoidColorShift"); if (pedited) pedited->vibrance.avoidcolorshift = true; }
     if (keyFile.has_key ("Vibrance", "PastSatTog"))             { vibrance.pastsattog         = keyFile.get_boolean ("Vibrance", "PastSatTog"); if (pedited) pedited->vibrance.pastsattog = true; }
@@ -936,7 +983,14 @@ if (keyFile.has_group ("Common Properties for Transformations")) {
     // load distortion
 if (keyFile.has_group ("Distortion")) {
     if (keyFile.has_key ("Distortion", "Amount"))     { distortion.amount     = keyFile.get_double  ("Distortion", "Amount"); if (pedited) pedited->distortion.amount = true; }
-    if (keyFile.has_key ("Distortion", "UseLensFun")) { distortion.uselensfun = keyFile.get_boolean ("Distortion", "UseLensFun"); if (pedited) pedited->distortion.uselensfun = true; }
+}
+
+    // lens profile
+if (keyFile.has_group ("LensProfile")) {
+    if (keyFile.has_key ("LensProfile", "LCPFile")) { lensProf.lcpFile = keyFile.get_string ("LensProfile", "LCPFile"); if (pedited) pedited->lensProf.lcpFile = true; }
+    if (keyFile.has_key ("LensProfile", "UseDistortion")) { lensProf.useDist = keyFile.get_boolean ("LensProfile", "UseDistortion"); if (pedited) pedited->lensProf.useDist = true; }
+    if (keyFile.has_key ("LensProfile", "UseVignette")) { lensProf.useVign = keyFile.get_boolean ("LensProfile", "UseVignette"); if (pedited) pedited->lensProf.useVign = true; }
+    if (keyFile.has_key ("LensProfile", "UseCA")) { lensProf.useCA = keyFile.get_boolean ("LensProfile", "UseCA"); if (pedited) pedited->lensProf.useCA = true; }
 }
     
     // load perspective correction
@@ -980,6 +1034,7 @@ if (keyFile.has_group ("Resize")) {
 if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "InputProfile"))   { icm.input          = keyFile.get_string ("Color Management", "InputProfile"); if (pedited) pedited->icm.input = true; }
     if (keyFile.has_key ("Color Management", "BlendCMSMatrix")) { icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix"); if (pedited) pedited->icm.blendCMSMatrix = true; }
+    if (keyFile.has_key ("Color Management", "PreferredProfile")) { icm.preferredProfile = keyFile.get_boolean ("Color Management", "PreferredProfile"); if (pedited) pedited->icm.preferredProfile = true; }
     if (keyFile.has_key ("Color Management", "WorkingProfile")) { icm.working        = keyFile.get_string ("Color Management", "WorkingProfile"); if (pedited) pedited->icm.working = true; }
     if (keyFile.has_key ("Color Management", "OutputProfile"))  { icm.output         = keyFile.get_string ("Color Management", "OutputProfile"); if (pedited) pedited->icm.output = true; }
     if (keyFile.has_key ("Color Management", "Gammafree"))      { icm.gamma          = keyFile.get_string ("Color Management", "Gammafree"); if (pedited) pedited->icm.gamfree = true; }
@@ -1103,6 +1158,7 @@ if (keyFile.has_group ("IPTC")) {
         printf ("-->unknown exception!\n");
         return 1;
     }
+    return 0;
 }
 
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
@@ -1149,7 +1205,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& labCurve.saturation == other.labCurve.saturation
 		&& labCurve.avoidclip == other.labCurve.avoidclip
 		&& labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter
-		&& labCurve.saturationlimit == other.labCurve.saturationlimit			
+		&& labCurve.saturationlimit == other.labCurve.saturationlimit
+		&& labCurve.bwtoning == other.labCurve.bwtoning
 		&& sharpenEdge.enabled == other.sharpenEdge.enabled
 		&& sharpenEdge.passes == other.sharpenEdge.passes
 		&& sharpenEdge.amount == other.sharpenEdge.amount
@@ -1231,8 +1288,11 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& coarse.vflip == other.coarse.vflip
 		&& rotate.degree == other.rotate.degree
 		&& commonTrans.autofill == other.commonTrans.autofill
-		&& distortion.uselensfun == other.distortion.uselensfun
 		&& distortion.amount == other.distortion.amount
+        && lensProf.lcpFile == other.lensProf.lcpFile
+        && lensProf.useDist == other.lensProf.useDist
+        && lensProf.useVign == other.lensProf.useVign
+        && lensProf.useCA == other.lensProf.useCA
 		&& perspective.horizontal == other.perspective.horizontal
 		&& perspective.vertical == other.perspective.vertical
 		&& cacorrection.red == other.cacorrection.red
@@ -1272,6 +1332,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& raw.linenoise == other.raw.linenoise
 		&& icm.input == other.icm.input
 		&& icm.blendCMSMatrix == other.icm.blendCMSMatrix
+        && icm.preferredProfile == other.icm.preferredProfile
 		&& icm.working == other.icm.working
 		&& icm.output == other.icm.output
 		&& icm.gamma == other.icm.gamma		
@@ -1326,7 +1387,7 @@ PartialProfile::PartialProfile(ProcParams* pp, ParamsEdited* pe, bool fullCopy) 
     }
     else
         pedited = pe;
-};
+}
 
 PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe) {
     if (pp) {
@@ -1340,7 +1401,7 @@ PartialProfile::PartialProfile(const ProcParams* pp, const ParamsEdited* pe) {
     }
     else
         pedited = NULL;
-};
+}
 
 int PartialProfile::load (Glib::ustring fName) {
     if (!pparams) pparams = new ProcParams();
@@ -1367,20 +1428,13 @@ void PartialProfile::clearGeneral () {
 
 void PartialProfile::applyTo(ProcParams *destParams) const {
     if (destParams && pparams && pedited) {
-        if (pedited->coarse.rotate)
-            destParams->coarse.rotate = 0;
-        if (pedited->coarse.hflip)
-            destParams->coarse.hflip = false;
-        if (pedited->coarse.vflip)
-            destParams->coarse.vflip = false;
-
         pedited->combine(*destParams, *pparams, true);
     }
 }
 
 void PartialProfile::set(bool v) {
     if (pedited) pedited->set(v);
-};
+}
 
 }
 }

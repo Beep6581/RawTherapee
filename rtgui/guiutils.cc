@@ -15,10 +15,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "../rtengine/rt_math.h"
+
 #include "guiutils.h"
 #include "options.h"
 #include "../rtengine/utils.h"
 #include "rtimage.h"
+
+#include <assert.h>
+
+using namespace std;
 
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference) {
 
@@ -46,7 +52,7 @@ void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, 
 Glib::ustring removeExtension (const Glib::ustring& filename) {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
-    int lastdot = bname.find_last_of ('.');
+    size_t lastdot = bname.find_last_of ('.');
     if (lastdot!=bname.npos)
         return filename.substr (0, filename.size()-(bname.size()-lastdot));
     else
@@ -56,7 +62,7 @@ Glib::ustring removeExtension (const Glib::ustring& filename) {
 Glib::ustring getExtension (const Glib::ustring& filename) {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
-    int lastdot = bname.find_last_of ('.');
+    size_t lastdot = bname.find_last_of ('.');
     if (lastdot!=bname.npos)
         return filename.substr (filename.size()-(bname.size()-lastdot)+1, filename.npos);
     else
@@ -74,7 +80,14 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     double c2x = (cparams.x+cparams.w-1-startx)*scale;
     double c2y = (cparams.y+cparams.h-1-starty)*scale;
 
+    // crop overlay color, linked with crop windows background
+    if (options.bgcolor==0)
     cr->set_source_rgba (options.cutOverlayBrush[0], options.cutOverlayBrush[1], options.cutOverlayBrush[2], options.cutOverlayBrush[3]);
+    else if (options.bgcolor==1)
+        cr->set_source_rgb (0,0,0);
+    else if (options.bgcolor==2)
+        cr->set_source_rgb (1,1,1);
+    
 
     cr->rectangle (imx, imy, imw, c1y);
     cr->rectangle (imx, imy+c2y, imw, imh-c2y);
@@ -168,7 +181,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
             }
 
             // Horizontals
-            for (int i=0; i<horiz_ratios.size(); i++) {
+            for (size_t i=0; i<horiz_ratios.size(); i++) {
                 cr->set_source_rgb (1.0, 1.0, 1.0);
                 cr->move_to (rectx1, recty1 + (recty2-recty1) * horiz_ratios[i]);
                 cr->line_to (rectx2, recty1 + (recty2-recty1) * horiz_ratios[i]);
@@ -184,7 +197,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 cr->set_dash (ds, 0);
             }
             // Verticals
-            for (int i=0; i<vert_ratios.size(); i++) {
+            for (size_t i=0; i<vert_ratios.size(); i++) {
                 cr->set_source_rgb (1.0, 1.0, 1.0);
                 cr->move_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty1);
                 cr->line_to (rectx1 + (rectx2-rectx1) * vert_ratios[i], recty2);
@@ -203,7 +216,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         else {
             int corners_from[4][2];
             int corners_to[4][2];
-            int mindim = MIN (rectx2-rectx1+1, recty2-recty1+1);
+            int mindim = min(rectx2-rectx1+1, recty2-recty1+1);
             corners_from[0][0] = rectx1;
             corners_from[0][1] = recty1;
             corners_to[0][0]   = rectx1 + mindim;
@@ -384,7 +397,7 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event) {
 
 MyFileChooserButton::MyFileChooserButton (const Glib::ustring& title, Gtk::FileChooserAction action) : Gtk::FileChooserButton(title, action) {
 	set_size_request(20, -1);
-};
+}
 
 // For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
 bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event) {
@@ -396,6 +409,33 @@ bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event) {
 	}
 	// ... otherwise the scroll event is sent back to an upper level
 	return false;
+}
+
+FileChooserLastFolderPersister::FileChooserLastFolderPersister(
+		Gtk::FileChooser* chooser, Glib::ustring& folderVariable) :
+		chooser(chooser), folderVariable(folderVariable) {
+	assert(chooser != NULL);
+
+	selectionChangedConnetion = chooser->signal_selection_changed().connect(
+			sigc::mem_fun(*this,
+					&FileChooserLastFolderPersister::selectionChanged));
+
+	if (!folderVariable.empty()) {
+		chooser->set_current_folder(folderVariable);
+	}
+
+}
+
+FileChooserLastFolderPersister::~FileChooserLastFolderPersister() {
+
+}
+
+void FileChooserLastFolderPersister::selectionChanged() {
+
+	if (!chooser->get_current_folder().empty()) {
+		folderVariable = chooser->get_current_folder();
+	}
+
 }
 
 TextOrIcon::TextOrIcon (Glib::ustring fname, Glib::ustring labelTx, Glib::ustring tooltipTx, TOITypes type) {

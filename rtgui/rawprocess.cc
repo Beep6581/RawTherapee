@@ -49,7 +49,7 @@ RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
 
    ccOptions = Gtk::manage (new Gtk::VBox ());
    ccOptions->set_border_width(4);
-   ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"),0,5,1,2 ));
+   ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"),0,5,1,0 ));
    ccSteps->setAdjusterListener (this);
    if (ccSteps->delay < 1000) ccSteps->delay = 1000;
    ccSteps->show();
@@ -57,15 +57,15 @@ RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
 
    pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
 
-   allOptions = Gtk::manage (new Gtk::VBox ());
+   //allOptions = Gtk::manage (new Gtk::VBox ());
    //allOptions->set_border_width(2);
-   allEnhance = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_ALLENHANCE")));
-   allOptions->pack_start(*allEnhance);
-   pack_start( *allOptions, Gtk::PACK_SHRINK, 4);
+   //allEnhance = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_ALLENHANCE")));
+   //allOptions->pack_start(*allEnhance);
+   //pack_start( *allOptions, Gtk::PACK_SHRINK, 4);
 
    methodconn = dmethod->signal_changed().connect( sigc::mem_fun(*this, &RawProcess::methodChanged) );
    dcbEnhconn = dcbEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &RawProcess::dcbEnhanceChanged), true);
-   allEnhconn = allEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &RawProcess::allEnhanceChanged), true);
+   //allEnhconn = allEnhance->signal_toggled().connect ( sigc::mem_fun(*this, &RawProcess::allEnhanceChanged), true);
 }
 
 
@@ -74,7 +74,7 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    disableListener ();
    methodconn.block (true);
    dcbEnhconn.block (true);
-   allEnhconn.block (true);
+   //allEnhconn.block (true);
 
    dmethod->set_active(procparams::RAWParams::numMethods);
    for( size_t i=0; i< procparams::RAWParams::numMethods;i++)
@@ -82,7 +82,7 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 		   dmethod->set_active(i);
 		   break;
 	   }
-   allEnhance->set_active(pp->raw.all_enhance);
+   //allEnhance->set_active(pp->raw.all_enhance);
 
    dcbIterations->setValue (pp->raw.dcb_iterations);
    dcbEnhance->set_active(pp->raw.dcb_enhance);
@@ -100,13 +100,13 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	   ccOptions->hide();
 
    lastDCBen = pp->raw.dcb_enhance;
-   lastALLen = pp->raw.all_enhance;
+   //lastALLen = pp->raw.all_enhance;
 
    if(pedited ){
 	   ccSteps->setEditedState (pedited->raw.ccSteps ? Edited : UnEdited);
 	   dcbIterations->setEditedState ( pedited->raw.dcbIterations ? Edited : UnEdited);
 	   dcbEnhance->set_inconsistent(!pedited->raw.dcbEnhance);
-	   allEnhance->set_inconsistent(!pedited->raw.allEnhance);
+	   //allEnhance->set_inconsistent(!pedited->raw.allEnhance);
 	   
 	   if( !pedited->raw.dmethod )
 		   dmethod->set_active(procparams::RAWParams::numMethods); // No name
@@ -114,7 +114,7 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 
    methodconn.block (false);
    dcbEnhconn.block (false);
-   allEnhconn.block (false);
+   //allEnhconn.block (false);
    
    enableListener ();
 }
@@ -124,7 +124,7 @@ void RawProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 	pp->raw.ccSteps = ccSteps->getIntValue();
 	pp->raw.dcb_iterations = dcbIterations->getIntValue();
 	pp->raw.dcb_enhance = dcbEnhance->get_active();
-	pp->raw.all_enhance = allEnhance->get_active();
+	//pp->raw.all_enhance = allEnhance->get_active();
 
 	int currentRow = dmethod->get_active_row_number();
 	if( currentRow>=0 && currentRow < procparams::RAWParams::numMethods)
@@ -135,7 +135,7 @@ void RawProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 		pedited->raw.dmethod = dmethod->get_active_row_number() != procparams::RAWParams::numMethods;
 		pedited->raw.dcbIterations = dcbIterations->getEditedState ();
 		pedited->raw.dcbEnhance = !dcbEnhance->get_inconsistent();
-		pedited->raw.allEnhance = !allEnhance->get_inconsistent();
+		//pedited->raw.allEnhance = !allEnhance->get_inconsistent();
 		
 	}
 }
@@ -206,7 +206,7 @@ void RawProcess::dcbEnhanceChanged ()
         listener->panelChanged (EvDemosaicDCBEnhanced, dcbEnhance->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
 }
 
-void RawProcess::allEnhanceChanged ()
+/*void RawProcess::allEnhanceChanged ()
 {
     if (batchMode) {
         if (allEnhance->get_inconsistent()) {
@@ -222,4 +222,4 @@ void RawProcess::allEnhanceChanged ()
     }
     if (listener)
         listener->panelChanged (EvDemosaicALLEnhanced, allEnhance->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
-}
+}*/

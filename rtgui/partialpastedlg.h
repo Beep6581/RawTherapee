@@ -66,6 +66,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* distortion;
         Gtk::CheckButton* cacorr;
         Gtk::CheckButton* vignetting;
+        Gtk::CheckButton* lcp;
 
         // options in composition:
         Gtk::CheckButton* coarserot;
@@ -95,7 +96,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* raw_ccSteps;
         Gtk::CheckButton* raw_dcb_iterations;
         Gtk::CheckButton* raw_dcb_enhance;
-        Gtk::CheckButton* raw_all_enhance;
+        //Gtk::CheckButton* raw_all_enhance;
 
         Gtk::CheckButton* df_file;
         Gtk::CheckButton* df_AutoSelect;
@@ -104,16 +105,16 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* ff_BlurRadius;
         Gtk::CheckButton* ff_BlurType;
 
-        sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;;
+        sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;
 
         sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn;
         sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn;
         sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn;
-        sigc::connection distortionConn, cacorrConn, vignettingConn;
+        sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
         sigc::connection exifchConn, iptcConn, icmConn, gamcsconn;
         sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
-        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_all_enhanceConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn;
+        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn; //,raw_all_enhanceConn
 
     public:
         PartialPasteDlg (Glib::ustring title);

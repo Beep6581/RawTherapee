@@ -20,21 +20,10 @@
 #include "gauss.h"
 #include "bilateral2.h"
 #include "rtengine.h"
-
-#include "rawimagesource.h"//for dirpyr
-
-
-#undef MAXVAL
-#undef MAX
-#undef MIN
-#undef SQR
+#include "rt_math.h"
+#include "rawimagesource.h"
 
 #undef THREAD_PRIORITY_NORMAL
-#define MAXVAL  0xffff
-#define SQR(x) ((x)*(x))
-
-#define MAX(a,b) ((a)<(b)?(b):(a))
-#define MIN(a,b) ((a)>(b)?(b):(a))
 
 namespace rtengine {
 
@@ -57,16 +46,17 @@ SHMap::~SHMap () {
 void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip) {
 
     // fill with luminance
+    #pragma omp parallel for
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
-            map[i][j] = fabs(lumi[0]*img->r[i][j]) + fabs(lumi[1]*img->g[i][j]) + fabs(lumi[2]*img->b[i][j]);
+            map[i][j] = lumi[0]*std::max(img->r[i][j],0.f) + lumi[1]*std::max(img->g[i][j],0.f) + lumi[2]*std::max(img->b[i][j],0.f);
 		}
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
     {
     if (!hq) {
-    	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(W,H));
+    	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
     	gaussHorizontal<float> (map, map, buffer, W, H, radius, multiThread);
 		gaussVertical<float>   (map, map, buffer, W, H, radius, multiThread);
 
@@ -105,7 +95,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 		
 		for (int i=0; i<0x10000; i++) {
 			//rangefn[i] = (int)(((thresh)/((double)(i) + (thresh)))*intfactor);
-			rangefn[i] = (int)(exp(-(MIN(10,((float)i*i) / (thresh*thresh))))*intfactor);
+			rangefn[i] = static_cast<int>(exp(-(min(10.0f,(static_cast<float>(i)*i) / (thresh*thresh))))*intfactor);
 			//if (rangefn[i]<0 || rangefn[i]>intfactor) 
 				//printf("i=%d rangefn=%d arg=%f \n",i,rangefn[i], float(i*i) / (thresh*thresh));
 		}
@@ -152,15 +142,15 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
     // update average, minimum, maximum
     double _avg = 0;
     int n = 1;
-    min = 65535;
-    max = 0;
+    min_f = 65535;
+    max_f = 0;
     for (int i=32; i<H-32; i++)
         for (int j=32; j<W-32; j++) {
             int val = map[i][j];
-            if (val < min)
-                min = val;
-            if (val > max)
-                max = val;
+            if (val < min_f)
+                min_f = val;
+            if (val > max_f)
+                max_f = val;
             _avg = 1.0/n * val + (1.0 - 1.0/n) * _avg;
             n++;
         }
@@ -169,8 +159,8 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 
 void SHMap::forceStat (float max_, float min_, float avg_) {
 
-    max = max_;
-    min = min_;
+    max_f = max_;
+    min_f = min_;
     avg = avg_;
 }
 

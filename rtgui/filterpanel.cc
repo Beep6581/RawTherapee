@@ -300,19 +300,19 @@ ExifFilterSettings FilterPanel::getFilter () {
 	efs.filterFiletype = enaFiletype->get_active ();
 	
     std::vector<int> sel = camera->get_selected ();
-    for (int i=0; i<sel.size(); i++) 
+    for (size_t i=0; i<sel.size(); i++)
         efs.cameras.insert (camera->get_text (sel[i]));
 
     sel = expcomp->get_selected ();
-    for (int i=0; i<sel.size(); i++)
+    for (size_t i=0; i<sel.size(); i++)
         efs.expcomp.insert (expcomp->get_text (sel[i]));
 
     sel = lens->get_selected ();
-    for (int i=0; i<sel.size(); i++)
+    for (size_t i=0; i<sel.size(); i++)
         efs.lenses.insert (lens->get_text (sel[i]));
 
     sel = filetype->get_selected ();
-    for (int i=0; i<sel.size(); i++)
+    for (size_t i=0; i<sel.size(); i++)
         efs.filetypes.insert (filetype->get_text (sel[i]));
 
     return efs;
