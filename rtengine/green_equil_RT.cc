@@ -40,7 +40,8 @@ void RawImageSource::green_equilibrate(float thresh)
 	int height=H, width=W; 
 
 	// local variables
-	array2D<float> cfa (width,height,rawData);
+	float** rawptr = rawData;
+	array2D<float> cfa (width,height,rawptr);
 	//array2D<int> checker (width,height,ARRAY2D_CLEAR_DATA);
 	
 	

@@ -33,7 +33,10 @@
 #include "rtthumbnail.h"
 #include "utils.h"
 #include "iccmatrices.h"
+#include "color.h"
 #include "calc_distort.h"
+#include "cplx_wavelet_dec.h"
+#include "boxblur.h"
 #include "rt_math.h"
 
 #ifdef _OPENMP
@@ -425,7 +428,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (sCurveEnabled) delete sCurve;
 	if (vCurveEnabled) delete vCurve;
 	delete [] cossq;
- }
+}
 
 void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & curve) {
 
@@ -594,12 +597,6 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
 	}
 	
-	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
-		
-		if (params->dirpyrDenoise.enabled && lab->W>=8 && lab->H>=8)
-			
-			dirpyrLab_denoise(lab, lab, params->dirpyrDenoise );
-	}
 	
 	void ImProcFunctions::dirpyrequalizer (LabImage* lab) {
 		
@@ -748,7 +745,6 @@ fclose(f);*/
 			hlcomprthresh=0;
 			return;
 		}
-		
 		
 		// compute clipping points based on the original histograms (linear, without exp comp.)
 		int clipped = 0;
@@ -1138,7 +1134,7 @@ void ImProcFunctions::calcGamma (double pwr, double ts, int mode, int imax, doub
 		float X = (9*u1*Y)/(4*v1*D50x); 
 		float Z = (12 - 3*u1 - 20*v1)*Y/(4*v1*D50z);
 		
-		gamutmap(X,Y,Z,wp);
+		Color::gamutmap(X,Y,Z,wp);
 		
 		float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVAL)/3.0 )));
 		float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));

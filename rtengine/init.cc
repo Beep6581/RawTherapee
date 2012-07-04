@@ -18,6 +18,7 @@
  */
 #include "rtengine.h"
 #include "iccstore.h"
+#include "color.h"
 #include "dcp.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
@@ -44,6 +45,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
     profileStore.init ();
     ProcParams::init ();
     CurveFactory::init ();
+    Color::init ();
     ImProcFunctions::initMunsell();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();

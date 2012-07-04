@@ -212,7 +212,7 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_VIGN_AMOUNT])  pparams.vignetting.amount = 0;
 
 			if (options.baBehav[ADDSET_DIRPYREQ]) for (int i=0; i<5; i++) pparams.dirpyrequalizer.mult[i] = 0;
-			if (options.baBehav[ADDSET_DIRPYRDN_CHLUM])  pparams.dirpyrDenoise.luma = pparams.dirpyrDenoise.chroma = 0;
+			if (options.baBehav[ADDSET_DIRPYRDN_CHLUM])  pparams.dirpyrDenoise.Ldetail = pparams.dirpyrDenoise.luma = pparams.dirpyrDenoise.chroma = 0;
 			if (options.baBehav[ADDSET_DIRPYRDN_GAMMA])  pparams.dirpyrDenoise.gamma = 0;
 
 			if (options.baBehav[ADDSET_PREPROCESS_GREENEQUIL])  pparams.raw.greenthresh = 0;
