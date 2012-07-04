@@ -79,7 +79,7 @@ void Crop::update (int todo) {
     else
         needsinitupdate = setCropSizes (wx, wy, ww, wh, ws, true); // this set skip=ws
     // it something has been reallocated, all processing steps have to be performed
-    if (needsinitupdate)
+    if (needsinitupdate || (todo & M_HIGHQUAL))
         todo = ALL;
 
     baseCrop = origCrop;

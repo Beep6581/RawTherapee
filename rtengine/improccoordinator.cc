@@ -28,7 +28,7 @@ namespace rtengine {
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), lastHighDetail(false), allocated(false),
+    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), highDetailComputed(false), allocated(false),
     pW(-1), pH(-1), plistener(NULL),
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
     changeSinceLast(0), updaterRunning(false), destroying(false) {
@@ -137,13 +137,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         OR HLR gets disabled when Color method was selected
     */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
-    if ((todo & M_RAW)
-    	|| (!lastHighDetail && highDetailNeeded)
-    	|| (params.hlrecovery.enabled && params.hlrecovery.method!="Color" && imgsrc->IsrgbSourceModified())
-    	|| (!params.hlrecovery.enabled && params.hlrecovery.method=="Color" && imgsrc->IsrgbSourceModified())){
+    if (   (todo & M_RAW)
+        || (!highDetailComputed && highDetailNeeded)
+        || ( params.hlrecovery.enabled && params.hlrecovery.method!="Color" && imgsrc->IsrgbSourceModified())
+        || (!params.hlrecovery.enabled && params.hlrecovery.method=="Color" && imgsrc->IsrgbSourceModified()))
+    {
 
-    	if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
+        if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
 		
+		//TODO - denoise branch - is this code for WB params still necessary?
 		currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
         if (params.wb.method=="Camera")
             currWB = imgsrc->getWB ();
@@ -156,7 +158,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
         params.wb.temperature = currWB.getTemp ();
         params.wb.green = currWB.getGreen ();
+        
     	imgsrc->demosaic( rp );
+    	
+        if (highDetailNeeded) {
+            highDetailComputed = true;
+            if (params.hlrecovery.enabled && params.hlrecovery.method=="Color") {
+                todo |= M_INIT;
+            }
+        }
+        else
+            highDetailComputed = false;
+		
 		
 		LUTu aehist; int aehistcompr;
 		double clip;
@@ -165,7 +178,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
 		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);	
     }
-    lastHighDetail=highDetailNeeded;
 
 
     if (todo & (M_INIT|M_LINDENOISE)) {

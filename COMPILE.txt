@@ -1,8 +1,16 @@
 If you have problems with the compilation, please ask on the appropriate
-RawTherapee forum : http://www.rawtherapee.com/forum/viewforum.php?f=10
+RawTherapee forum: http://www.rawtherapee.com/forum/viewforum.php?f=10
 
-Preamble
+PREAMBLE
 --------
+
+  Some commands span multiple lines, each line of such a command except for the
+  last one will end in a backslash character, "\".
+  When copying code, be sure to copy all lines from the first one that ends in \
+  till the last line that does not end in a \ character.
+
+  Some parts of code contain <variable containers>. Replace these with whatever
+  value is needed, e.g. <your favorite drink>
 
   CMake is actually used to create the makefiles (scripts that handle the build
   process) or specific Integrated Developement Environement (IDE) projects.  It
@@ -28,18 +36,20 @@ Preamble
   Note for developers that handle an automated build system: Mercurial is
   required in order to produce the build information file, but your build system
   will certainly only use the source code without any access to a Mercurial
-  repository. To generate the needed information, run the sript
-  ./tools/generateReleaseInfo. After that you can delete .hg* and continue with
-  the normal compile instructions without the need for mercurial.
+  repository. To generate the needed information, run the script:
+    ./tools/generateReleaseInfo
+  After that, you can delete .hg* (the example below uses "-X *.hg*" to exclude
+  those files and folders instead of deleting them - the end result is the same)
+  and continue with the normal compile instructions without the need for
+  mercurial.
 
   In short, once you cd into your clone of the RawTherapee source code
-  repository:
+  repository, using version "4.0.10" as an example:
   1. Check out the desired hg tag: hg update "4.0.10"
   2. Run tools/generateReleaseInfo to generate ReleaseInfo.cmake:
-     ./tools/generateReleaseInfo
-  3. Delete the mercurial stuff: rm -rvf .hg*
-  4. The repository is now ready to be made into a public tarball: hg archive
-     "rawtherapee-4.0.10.tar" -X ".hg*" && xz -z -9e -T 8 "rawtherapee-4.0.10.tar"
+      ./tools/generateReleaseInfo
+  3. The repository is now ready to be made into a public tarball:
+      ./tools/generateSourceTarball
 
   The build system especially encourages to perform out-of-source builds. This
   means that the CMake project is generated in a folder which is not in the
@@ -55,11 +65,48 @@ Preamble
   configure_file. Please keep this in mind when altering the CMake files.
 
 
+DEPENDENCIES
+------------
 
-Windows
+  PACKAGE                        URL
+  BZIP2       bzip2>-1.0.4       http://www.bzip.org/
+  EXIV2       exiv2>=0.19        http://www.exiv2.org/
+  EXPAT       expat>=2.1.0       http://expat.sourceforge.net/
+  GLIB2       glib-2.0>=2.16     http://www.gtk.org/
+  GLIBMM      glibmm-2.4>=2.16   http://www.gtkmm.org
+  GTK+        gtk+-2.0>=2.12     http://www.gtk.org/
+  GTKMM       gtkmm-2.4>=2.12    http://www.gtkmm.org
+  JPEG        libjpeg>=6b        http://libjpeg-turbo.virtualgl.org/
+                                 http://jpegclub.org/
+                                 http://www.ijg.org/
+  LCMS2       lcms>=2.0a         http://www.littlecms.com/
+  LIBIPTCDATA libiptcdata>=1.0.2 http://libiptcdata.sourceforge.net
+  PNG         libpng>=1.2.44     http://www.libpng.org/
+  SIGC        sigc++-2.0         http://libsigc.sourceforge.net/
+  TIFF        libtiff>=3.9.4     http://www.remotesensing.org/libtiff/
+  ZLIB        zlib>=1.2.3-r1     http://www.zlib.net/
+
+
+WINDOWS
 -------
 
-  The toolchain:
+  OPTIONAL:
+    - TortoiseHG
+      You can make your life a little easier by using a graphical client for
+      working with Mercurial. One such free and open-soure cross-platform
+      client is TortoiseHG, you can get it from:
+        http://tortoisehg.bitbucket.org/
+
+    - Weird compressed archive formats?
+      You might need to unpack archives in formats which Windows does not
+      handle by default. That's no problem, there are a few free programs out
+      there which handle many more formats than Windows does, and faster too.
+      We recommend:
+        http://www.7-zip.org/
+        http://peazip.sourceforge.net/
+          
+
+  THE TOOLCHAIN:
 
     There are two methods of compiling RawTherapee in Windows, and they each
     rely on different and common packages. They will be referred to as METHOD 1
@@ -67,9 +114,8 @@ Windows
     methods explained later in this document.
 
     The rest of this document assumes that you've installed MinGW, MSYS and
-    gtkmm respectively to "C:\mingw", "C:\msys" and "C:\gtkmm".  This tutorial
-    assume that you've installed the packages in paths that DO NOT CONTAIN
-    SPACES.
+    gtkmm respectively to "C:\mingw", "C:\msys" and "C:\gtkmm".  These packages
+    must be installed in paths that DO NOT CONTAIN SPACES.
     
     METHOD 1
       - MinGW64-TDM (Bundle or On-Demand installer from
@@ -100,7 +146,7 @@ Windows
         - for 64bit:
             http://ftp.gnome.org/pub/gnome/binaries/win64/gtk+/2.22/
 
-    Additional steps:
+    ADDITIONAL STEPS:
     When all the packages of your preferred method are installed:
       - set the GTKMM_BASEPATH user or system environment variable to the
         installation directory of gtkmm (the gtkmm installer can do it for you).
@@ -137,29 +183,31 @@ Windows
            quotes). Specifying the processor frequency isof no use.
 
 
-
-  Dependancies:
+  DEPENDENCIES:
   
-    RawTherapee relies on libraries that may not be part of the gtkmm or MinGW
-    packages. There are two ways of installing these libraries.
+    RawTherapee depends on libraries which are not part of the gtkmm or MinGW
+    packages. There are two ways of installing these libraries:
 
-    The simple way:
-      For your convenience, these libraries has been precompiled and are
+    THE SIMPLE WAY:
+      For your convenience, most of the required libraries has been precompiled and are
       downloadable at:
         http://www.rawtherapee.com/releases_head/windows/dependencies_for_creating_builds/
-      If you don't find a suitable package for your toolchain, take the DIY way
-      or ask a developer to build them for you. Unpack the contents of this
-      archive to the base installation dir of MinGW, and everything should work
-      fine.
+      Unpack the contents of these archives to the base installation dir of
+      MinGW.
+
+      NOTE: those archives contain most but not all of the required
+      libraries. See the dependencies list at the beginning of the document,
+      find the missing ones (such as LCMS2 and Expat) and see below for
+      instructions on where to download them from and how to install them.  
       
-    The "Do It Yourself" way:
+    THE "DO IT YOURSELF" WAY:
       The MSYS package is required to build the libraries. See above for the
       download link. Before building them, check if they are already installed
       in your gtkmm and MinGW directories. There shouldn't be two versions of
       the same library in different places.
 
       Open an MSYS console, that will create a Linux environment, and compile
-      the dependancies in the following order:
+      the dependencies in the following order:
         zlib:
           If you have Gtkmm-2.22 installed, you should skip this zlib section.
           - Download: http://zlib.net/
@@ -222,13 +270,17 @@ Windows
               make
               make install
             
-        lcms:
-          - Download lcms1 for RawTherapee-3.0 or lcms2 for RawTherapee-3.1 and
-            newer http://sourceforge.net/projects/lcms/files/
+        LCMS:
+          - Download LCMS2 for RawTherapee-3.1 and newer (or LCMS1 for RawTherapee-3.0)
+              http://sourceforge.net/projects/lcms/files/
           - How to build (suitable for both version):
               ./configure --prefix=/mingw
               make
               make install
+
+        Expat:
+          - Download: http://expat.sourceforge.net/
+          - Install
 
 
       IMPORTANT:
@@ -247,8 +299,8 @@ Windows
           -- Found PNG: C:/gtkmm/lib/libpng.lib
           -- Found TIFF: C:/mingw/lib/libtiff.dll.a
 
-  Building RT:
-  
+  BUILDING RT:
+
     METHOD 1:
       Requirements:
         - MinGW + MSYS
@@ -262,88 +314,96 @@ Windows
             mkdir build
             cd build
         - Type:
-            cmake -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -Ccmo.txt <path to the source directory, if done as above '..'>
+            cmake -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -Ccmo.txt \
+            <path to the source directory, if done as above '..'>
         - Type:
             make install
         - You'll find the compiled program in the subdirectory named like the
           value of CMAKE_BUILD_TYPE ("Release" in this example).
 
-    METHOD 2: Requirements:
+    METHOD 2:
+      Requirements:
         - MinGW-TDM:
           https://sourceforge.net/projects/tdm-gcc/files/TDM-GCC%20Installer/
         - CMake: http://www.cmake.org/cmake/resources/software.html
         - Mercurial: http://mercurial.selenic.com/wiki/WindowsInstall
         - gtkmm: http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/
-      
+
       Compile:
         - Start a standard DOS command prompt (WIN+R > cmd),
         - Enter a new empty folder outside RawTherapee's source directory:
             cd /C/Absolute/Path/To/RawTherapee_sourceTree
             mkdir build
             cd build
-      
-        If you want to upload a build, you should set some additional
-        information about your processor. There are two possibilities:
-          1. You pick up a target processor from "ProcessorTargets.cmake". All
-             you have to do is set "-D PROC_TARGET_NUMBER:STRING=number" in
-             cmake's command line to the desired target number. If you choose
-             the 'native' solution, you have to set the processor label manually
-             by setting "-D PROC_LABEL:STRING=procLabel" in cmake's command
-             line. Please provide a short name, like "core i5" or "athlon64"
-             (without double quotes). Processor frequency is of no use.
-          2. You don't need specific processor flags, so you'll let
-             PROC_TARGET_NUMBER default to 0, but you still have to set the
-             PROC_LABEL parameter (see point 1 righ above).
-        
+          If you want to upload a build, you should set some additional
+          information about your processor. There are two possibilities:
+            1. You pick up a target processor from "ProcessorTargets.cmake". All
+               you have to do is set "-D PROC_TARGET_NUMBER:STRING=number" in
+               cmake's command line to the desired target number. If you choose
+               the 'native' solution, you have to set the processor label manually
+               by setting "-D PROC_LABEL:STRING=procLabel" in cmake's command
+               line. Please provide a short name, like "core i5" or "athlon64"
+               (without double quotes). Processor frequency is of no use.
+            2. You don't need specific processor flags, so you'll let
+               PROC_TARGET_NUMBER default to 0, but you still have to set the
+               PROC_LABEL parameter (see point 1 righ above).
         - Type:
             mingw32-make.exe install
         - You'll find the compiled program in the subdirectory named like the
           value of CMAKE_BUILD_TYPE ("Release" in this example).
 
-Linux
+LINUX
 -----
 
-  Requirements:
+  DEPENDENCIES:
+    See the list of dependencies at the beginning of this document.
+
+    In Ubuntu/Debian the requirements can be installed by running:
+      sudo apt-get install build-essential cmake libbz2-dev libexiv2-dev \
+      libexpat1-dev libglib2.0-dev libglibmm-2.4-dev libgtk2.0-dev \
+      libgtkmm-2.4-dev libiptcdata-dev libjpeg8-dev liblcms2-dev libpng-dev \
+      libsigc++-2.0-dev libtiff-dev mercurial zlib1g-dev
+
+    In Gentoo, run:
+      sudo emerge -uva app-arch/bzip2 media-gfx/exiv2 dev-libs/expat \
+      dev-libs/glib dev-cpp/glibmm x11-libs/gtk+ dev-cpp/gtkmm \
+      media-libs/libjpeg-turbo media-libs/lcms media-libs/libiptcdata \
+      media-libs/libpng dev-libs/libsigc++ media-libs/tiff sys-libs/zlib
+
+    In Arch, run:
+      sudo pacman -S bzip2 exiv2 expat glib2 glibmm gtk gtkmm lcms2 \
+      libiptcdata libjpeg-turbo libpng libsigc++ libtiff zlib
+
+  COMPILE:
+    The Automatic Way:
+      The easiest way compile RawTherapee is by using the buildRT script, read
+      all about it in the forum:
+        http://rawtherapee.com/forum/viewtopic.php?p=22213#p22213
+
+    The Manual Way:
+      - Create and enter a new empty folder outside RawTherapee's source
+        directory:
+          mkdir ~/rt-build
+          cd ~/rt-build
+      - Type:
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release \
+          -DBINDIR=. -DDATADIR=. -DLIBDIR=. <path to source directory>
+        Developers who want to provide a public build have to set the PROC_LABEL
+        to their processor name, e.g.:
+          cmake -DPROC_LABEL:STRING=athlon64 -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. \
+          <path to source directory>
+      - Type:
+          make install
+      - You'll find the compiled program in the subdirectory named like the
+        value of CMAKE_BUILD_TYPE ("Release" in this example). You can copy it
+        anywhere you want. By changing the cmake flags, you can change where
+        the release will compile to. By removing all flags it should go to the
+        standard system install location.
+
+    You're done.
   
-    PACKAGE                        GENTOO                 DEBIAN/UBUNTU     URL
-    GTK+        gtk+-2.0>=2.12     x11-libs/gtk+          libgtk2.0-dev     http://www.gtk.org/
-    GLIB2       glib-2.0>=2.16     dev-libs/glib          libglib2.0-dev    http://www.gtk.org/
-    GLIBMM      glibmm-2.4>=2.16   dev-cpp/glibmm         libglibmm-2.4-dev http://www.gtkmm.org
-    GTKMM       gtkmm-2.4>=2.12    dev-cpp/gtkmm          libgtkmm-2.4-dev  http://www.gtkmm.org
-    SIGC        sigc++-2.0         dev-libs/libsigc++     libsigc++-2.0-dev http://libsigc.sourceforge.net/
-    LIBIPTCDATA libiptcdata>=1.0.2 media-libs/libiptcdata libiptcdata-dev   http://libiptcdata.sourceforge.net
-    LCMS2       lcms>=2.0a         media-libs/lcms        liblcms2-dev      http://www.littlecms.com/
-    JPEG        libjpeg>=6b        media-libs/jpeg        libjpeg-dev       http://jpegclub.org/ http://www.ijg.org/
-    TIFF        libtiff>=3.9.4     media-libs/tiff        libtiff-dev       http://www.remotesensing.org/libtiff/
-    PNG         libpng>=1.2.44     media-libs/libpng      libpng-dev        http://www.libpng.org/
-    BZIP2       bzip2>-1.0.4       app-arch/bzip2         libbz2-dev        http://www.bzip.org/
-    ZLIB        zlib>=1.2.3-r1     sys-libs/zlib          zlib1g-dev        http://www.zlib.net/
-    EXIV2       exiv2>=0.19        media-gfx/exiv2        libexiv2-dev      http://www.exiv2.org/
-    EXPAT       expat>=2.1.0       dev-libs/expat         libexpat-dev      http://expat.sourceforge.net/
 
-  On Ubuntu/Debian the requirements can be installed by running:
-    sudo apt-get install build-essential cmake libbz2-dev libexiv2-dev libexpat1-dev libglib2.0-dev libglibmm-2.4-dev libgtk2.0-dev libgtkmm-2.4-dev libiptcdata-dev libjpeg8-dev liblcms2-dev libpng-dev libsigc++-2.0-dev libtiff-dev mercurial zlib1g-dev
-
-  Compile:
-    - Create and enter a new empty folder outside RawTherapee's source directory:
-        mkdir ~/rt-build
-        cd ~/rt-build
-    - Type:
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. <path to source directory>
-      Developers who want to provide a public build have to set the PROC_LABEL
-      to their processor name, e.g.:
-        cmake -DPROC_LABEL:STRING=athlon64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./release -DBINDIR=. -DDATADIR=. -DLIBDIR=. <path to source directory>
-
-    - Type:
-        make install
-    - You'll find the compiled program in the subdirectory named like the value
-      of CMAKE_BUILD_TYPE ("Release" in this example). You can copy it anywhere
-      you want.
-
-    By changing the cmake flags, you can change where the release will compile
-    to. By removing all flags it should go to the standard system install
-    location.
-    
   Using Eclipse under Linux:
    
     Eclipse mercurial plugin: Click "Help > Install new Software".
@@ -382,7 +442,7 @@ Linux
 OS X
 ----
 
-  Requirements:
+  REQUIREMENTS:
     - XCode Development Tools (you only need a subset of these, but it is
       probably easier to just install all of them)
     - MacPorts
@@ -402,10 +462,11 @@ OS X
       - If you want to try OpenMP builds, run:
           sudo port install gcc45
 
-  Compile:
+  COMPILE:
     - Enter the root directory of the RawTherapee source tree
     - To enable OpenMP, assuming you have installed gcc45), type:
-        cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5  <path to source directory>
+        cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5 \
+        <path to source directory>
       OR to disable OpenMP and use the default compiler, type:
         cmake -D OPTION_OMP=false <path to source directory>
   

@@ -28,19 +28,20 @@ Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
 	enabled->set_active (false);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 
-	pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"),-100,100,5,50));
-	pastels->setAdjusterListener (this);
-	//if (pastels->delay < 1000) pastels->delay = 1000;
-	pack_start( *pastels, Gtk::PACK_SHRINK, 0);
-
-	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100,100,5,50));
+	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100,100,1,50));
 	saturated->setAdjusterListener (this);
 	saturated->set_sensitive(false);
 	//if (saturated->delay < 1000) saturated->delay = 1000;
 	pack_start( *saturated, Gtk::PACK_SHRINK, 0);
 
-	psThreshold = Gtk::manage (new ThresholdAdjuster (M("TP_VIBRANCE_PSTHRESHOLD"), 0., 100., 1., 75., 0, false));
+	pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"),-100,100,1,50));
+	pastels->setAdjusterListener (this);
+	//if (pastels->delay < 1000) pastels->delay = 1000;
+	pack_start( *pastels, Gtk::PACK_SHRINK, 0);
+
+	psThreshold = Gtk::manage (new ThresholdAdjuster (M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false));
 	psThreshold->setAdjusterListener (this);
+	psThreshold->set_tooltip_markup(M("TP_VIBRANCE_PSTHRESHOLD_TOOLTIP"));
 	psThreshold->set_sensitive(false);
 	//if (psThreshold->delay < 1000) psThreshold->delay = 1000;
 	pack_start( *psThreshold, Gtk::PACK_SHRINK, 0);
@@ -251,12 +252,14 @@ void Vibrance::adjusterChanged (Adjuster* a, double newval) {
 		else if (a == saturated && !pastSatTog->get_active())
 			listener->panelChanged (EvVibranceSaturated, value );
 	}
+	if (pastSatTog->get_active())
+		psThreshold->queue_draw();
 }
 
 void Vibrance::adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop) {
-    if (listener && enabled->get_active()) {
-        listener->panelChanged (EvVibrancePastSatThreshold, psThreshold->getHistoryString());
-    }
+	if (listener && enabled->get_active()) {
+		listener->panelChanged (EvVibrancePastSatThreshold, psThreshold->getHistoryString());
+	}
 }
 
 
@@ -294,4 +297,47 @@ void Vibrance::setAdjusterBehavior (bool pastelsadd, bool saturatedadd, bool pst
 void Vibrance::trimValues (ProcParams* pp) {
 	pastels->trimValue (pp->vibrance.pastels);
 	saturated->trimValue (pp->vibrance.saturated);
+}
+
+std::vector<double> Vibrance::getCurvePoints(ThresholdSelector* tAdjuster) const {
+	std::vector<double> points;
+	double threshold, transitionWeighting;
+	tAdjuster->getPositions<double>(transitionWeighting, threshold);  // ( range -100;+100,   range 0;+100 )
+	transitionWeighting /= 100.; // range -1., +1.
+	threshold /= 100.;      // range  0., +1.
+
+	// Initial point
+	points.push_back(0.); points.push_back(0.);
+
+	double p2 = 3.0*threshold/4.0;                 // same one than in ipvibrance.cc
+	double s0 = threshold + (1.0-threshold)/4.0;   // same one than in ipvibrance.cc
+
+	// point at the beginning of the first linear transition
+	points.push_back(p2); points.push_back(0.);
+
+	// Y value of the chroma mean point, calculated to get a straight line between p2 and s0
+	double chromaMean = (threshold/4.0) / (s0-p2);
+	// move chromaMean up or down depending on transitionWeighting
+	if (transitionWeighting > 0.0) {
+		// positive values -> give more weight to Saturated
+		chromaMean = (1.0-chromaMean) * transitionWeighting + chromaMean;
+	}
+	else if (transitionWeighting < 0.0) {
+		// negative values -> give more weight to Pastels
+		chromaMean =      chromaMean  * transitionWeighting + chromaMean;
+	}
+
+	// point at the location of the Top cursor, at the end of the first linear transition and the beginning of the second one
+	points.push_back(threshold); points.push_back(chromaMean);
+
+	if (threshold < 1.0) {
+
+		// point at the end of the second linear transition
+		points.push_back(s0); points.push_back(1.0);
+
+		// end point
+		points.push_back(1.0); points.push_back(1.0);
+	}
+
+	return points;
 }

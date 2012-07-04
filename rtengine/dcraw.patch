@@ -1,5 +1,5 @@
---- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Fri Jun 22 14:06:35 2012
-+++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Fri Jun 22 18:20:12 2012
+--- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Tue Jun 26 23:00:34 2012
++++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Fri Jun 29 23:09:38 2012
 @@ -1,5 +1,17 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -1427,6 +1427,19 @@
      cam_mul[0] *= 256/527.0;
      cam_mul[2] *= 256/317.0;
    } else if (!strcmp(model,"D1X")) {
+@@ -7786,11 +7401,11 @@
+     width -= 42;
+   } else if (!strcmp(model,"D5100") ||
+ 	     !strcmp(model,"D7000")) {
+     width -= 44;
+   } else if (!strcmp(model,"D3200") ||
+-	     !strcmp(model,"D800")) {
++	     !strcmp(model,"D800") || !strcmp(model,"D800E") ) {
+     width -= 46;
+   } else if (!strcmp(model,"D4")) {
+     width -= 52;
+     left_margin = 2;
+   } else if (!strncmp(model,"D40",3) ||
 @@ -8681,198 +8296,11 @@
  quit:
    cmsCloseProfile (hInProfile);

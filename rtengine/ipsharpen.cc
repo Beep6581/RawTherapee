@@ -80,15 +80,15 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #pragma omp parallel
 #endif
 	{
+        AlignedBufferMP<double> buffer(max(W,H));
 
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
 	float damping = params->sharpening.deconvdamping / 5.0;
 	bool needdamp = params->sharpening.deconvdamping > 0;
 	for (int k=0; k<params->sharpening.deconviter; k++) {
 
 		// apply blur function (gaussian blur)
-		gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
-		gaussVertical<float>   (tmp, tmp,  buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
+            gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
 
 		if (!needdamp) {
 #ifdef _OPENMP
@@ -102,8 +102,8 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 		else
 			dcdamping (tmp, lab->L, damping, W, H);
 
-		gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
-		gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
+            gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
 
 #ifdef _OPENMP
 #pragma omp for
@@ -112,7 +112,6 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 			for (int j=0; j<W; j++)
 				tmpI[i][j] = tmpI[i][j] * tmp[i][j];
 	} // end for
-	delete buffer;
 
 	float p2 = params->sharpening.deconvamount / 100.0;
 	float p1 = 1.0 - p2;
@@ -155,18 +154,17 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 	{
 
 
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
+    AlignedBufferMP<double> buffer(max(W,H));
 	if (params->sharpening.edgesonly==false) {
 
-		gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
-		gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
+		gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale);
+		gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale);
 	}
 	else {
 		bilateral<float, float> (lab->L, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
-		gaussHorizontal<float> (b3, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
-		gaussVertical<float>   (b2, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
+		gaussHorizontal<float> (b3, b2, buffer, W, H, params->sharpening.radius / scale);
+		gaussVertical<float>   (b2, b2, buffer, W, H, params->sharpening.radius / scale);
 	}
-	delete buffer;
 
 	float** base = lab->L;
 	if (params->sharpening.edgesonly)

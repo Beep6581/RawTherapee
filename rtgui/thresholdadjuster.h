@@ -64,6 +64,7 @@ class ThresholdAdjuster : public Gtk::VBox {
 		bool afterReset;
 		bool blocked;
 		bool addMode;
+		bool separatedMode;
 		int delay;
 
 		double shapeValue (double a);
@@ -73,8 +74,16 @@ class ThresholdAdjuster : public Gtk::VBox {
 
 	public:
 
+		// Custom Threshold widget with 2 cursors (Top and Bottom) and a custom curve provided by the instanciator,
+		// each cursor having his own range, default value and precision
+		ThresholdAdjuster (Glib::ustring label,
+				double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
+				double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,
+				ThresholdCurveProvider* curveProvider, bool editedCheckBox=false);
+		// Simple Threshold widget with 2 linked sliders (0->1 or 1->0)
 		ThresholdAdjuster (Glib::ustring label, double minValue, double maxValue, double defBottom,
 				double defTop, unsigned int precision, bool startAtOne, bool editedCheckBox=false);
+		// Simple Threshold widget with 4 linked sliders by pairs (0->1->0 or 1->0->1)
 		ThresholdAdjuster (Glib::ustring label, double minValue, double maxValue, double defBottomLeft,
 				double defTopLeft, double defBottomRight, double defTopRight, unsigned int precision,
 				bool startAtOne, bool editedCheckBox=false);
@@ -82,8 +91,13 @@ class ThresholdAdjuster : public Gtk::VBox {
 		virtual ~ThresholdAdjuster ();
 		void setAdjusterListener (ThresholdAdjusterListener* alistener) { adjusterListener = alistener; }
 
+		void setBgCurveProvider (ThresholdCurveProvider* provider);
+		ThresholdSelector* getThresholdSelector() { return &tSelector; };
+
 		template <typename T>
-		rtengine::procparams::Threshold<T> getValue () { return tSelector.getPositions<T>(); }
+		rtengine::procparams::Threshold<T> getValue () {
+			return tSelector.getPositions<T>();
+		}
 		void getValue (double& bottom, double& top);
 		void getValue (double& bottomLeft, double& topLeft, double& bottomRight, double& topRight);
 		void getValue (int& bottom, int& top);
@@ -91,9 +105,7 @@ class ThresholdAdjuster : public Gtk::VBox {
 		void getValue (Glib::ustring& bottom, Glib::ustring& top);
 		void getValue (Glib::ustring& bottomLeft, Glib::ustring& topLeft, Glib::ustring& bottomRight, Glib::ustring& topRight);
 		template <class T>
-		void setValue (const rtengine::procparams::Threshold<T> &tValues) {
-			tSelector.setPositions<T>(tValues);
-		}
+		void setValue (const rtengine::procparams::Threshold<T> &tValues) { tSelector.setPositions<T>(tValues); }
 		void setValue (double bottom, double top);
 		void setValue (double bottomLeft, double topLeft, double bottomRight, double topRight);
 		void setEnabled (bool enabled);
@@ -114,6 +126,9 @@ class ThresholdAdjuster : public Gtk::VBox {
 		void resetPressed (GdkEventButton* event);
 		void editedToggled ();
 		Glib::ustring getHistoryString ();
+		void set_tooltip_markup(const Glib::ustring& markup);
+		// this set_tooltip_text method is to set_tooltip_markup, and text can contain markups
+		void set_tooltip_text(const Glib::ustring& text);
 };
 
 #endif

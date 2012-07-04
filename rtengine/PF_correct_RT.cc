@@ -56,16 +56,15 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 #pragma omp parallel
 #endif
 	{
-		AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(src->W,src->H));
-		gaussHorizontal<float> (src->a, tmp1->a, buffer, src->W, src->H, radius, multiThread);
-		gaussHorizontal<float> (src->b, tmp1->b, buffer, src->W, src->H, radius, multiThread);
-		gaussVertical<float>   (tmp1->a, tmp1->a, buffer, src->W, src->H, radius, multiThread);
-		gaussVertical<float>   (tmp1->b, tmp1->b, buffer, src->W, src->H, radius, multiThread);
+		AlignedBufferMP<double> buffer(max(src->W,src->H));
 
-		//gaussHorizontal<float> (src->L, tmp1->L, buffer, src->W, src->H, radius, multiThread);
-		//gaussVertical<float>   (tmp1->L, tmp1->L, buffer, src->W, src->H, radius, multiThread);
+		gaussHorizontal<float> (src->a, tmp1->a, buffer, src->W, src->H, radius);
+		gaussHorizontal<float> (src->b, tmp1->b, buffer, src->W, src->H, radius);
+		gaussVertical<float>   (tmp1->a, tmp1->a, buffer, src->W, src->H, radius);
+		gaussVertical<float>   (tmp1->b, tmp1->b, buffer, src->W, src->H, radius);
 
-		delete buffer;
+		gaussHorizontal<float> (src->L, tmp1->L, buffer, src->W, src->H, radius);
+		gaussVertical<float>   (tmp1->L, tmp1->L, buffer, src->W, src->H, radius);
 	}
 	
 //#ifdef _OPENMP

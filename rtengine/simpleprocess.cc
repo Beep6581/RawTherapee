@@ -29,7 +29,6 @@
 #include "rawimagesource.h"
 #include "../rtgui/ppversion.h"
 #undef THREAD_PRIORITY_NORMAL
-#define CLIP(a) ((a)>0?((a)<65535?(a):65535):0)
 
 namespace rtengine {
 extern const Settings* settings;
@@ -55,7 +54,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
     procparams::ProcParams& params = job->pparams;
 
-    // aquire image from imagesource
+    // acquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
 
     int tr = TR_NONE;

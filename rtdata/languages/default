@@ -1077,7 +1077,10 @@ TP_VIBRANCE_LABEL;Vibrance
 TP_VIBRANCE_PASTELS;Pastel tones
 TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 TP_VIBRANCE_PROTECTSKINS;Protect skin tones
-TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone differential threshold
+TP_VIBRANCE_PSTHRESHOLD;Pastel/saturated tones threshold
+TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
 TP_VIBRANCE_SATURATED;Saturated tones
 TP_VIGNETTING_AMOUNT;Amount
 TP_VIGNETTING_CENTER;Center

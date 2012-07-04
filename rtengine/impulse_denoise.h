@@ -62,14 +62,15 @@ void ImProcFunctions::impulse_nr (LabImage* lab, double thresh) {
 	int i1, j1;	
 	
 	//rangeblur<unsigned short, unsigned int> (lab->L, lpf, impish /*used as buffer here*/, width, height, thresh, false);
+    #ifdef _OPENMP
+    #pragma omp parallel
+    #endif
+    {
+		AlignedBufferMP<double> buffer(max(width,height));
 	
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(width,height));
-
-	gaussHorizontal<float> (lab->L, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false /*multiThread*/);
-	gaussVertical<float>   (lpf, lpf, buffer, width, height, MAX(2.0,thresh-1.0), false);
-
-	delete buffer;
-
+	    gaussHorizontal<float> (lab->L, lpf, buffer, width, height, max(2.0,thresh-1.0));
+	    gaussVertical<float>   (lpf, lpf, buffer, width, height, max(2.0,thresh-1.0));
+    }
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	

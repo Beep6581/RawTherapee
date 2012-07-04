@@ -44,23 +44,22 @@ SHMap::~SHMap () {
 }
 
 void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip) {
-
-    // fill with luminance
-    #pragma omp parallel for
-    for (int i=0; i<H; i++)
-        for (int j=0; j<W; j++) {
-            map[i][j] = lumi[0]*std::max(img->r[i][j],0.f) + lumi[1]*std::max(img->g[i][j],0.f) + lumi[2]*std::max(img->b[i][j],0.f);
-		}
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
     {
-    if (!hq) {
-    	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
-    	gaussHorizontal<float> (map, map, buffer, W, H, radius, multiThread);
-		gaussVertical<float>   (map, map, buffer, W, H, radius, multiThread);
+    // fill with luminance
+    #pragma omp for
+    for (int i=0; i<H; i++)
+        for (int j=0; j<W; j++) {
+            map[i][j] = lumi[0]*std::max(img->r[i][j],0.f) + lumi[1]*std::max(img->g[i][j],0.f) + lumi[2]*std::max(img->b[i][j],0.f);
+		}
 
-        delete buffer;
+    if (!hq) {
+        AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W,H));
+    	gaussHorizontal<float> (map, map, *pBuffer, W, H, radius);
+		gaussVertical<float>   (map, map, *pBuffer, W, H, radius);
+        delete pBuffer;
     }
     else {
 /*		
