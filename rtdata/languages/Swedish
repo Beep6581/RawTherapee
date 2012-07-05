@@ -1080,7 +1080,7 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_RGBCURVES;RGB curves

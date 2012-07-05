@@ -97,7 +97,7 @@ FILEBROWSER_CURRENT_NAME;Current name:
 FILEBROWSER_DARKFRAME;Dark frame
 FILEBROWSER_DELETEDLGLABEL;File delete confirmation
 FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
-FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected <b>%1<b> files?
+FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected <b>%1</b> files?
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files from trash
 FILEBROWSER_EMPTYTRASH;Empty Trash
 FILEBROWSER_EXEC_CPB;Custom Profile Builder
@@ -548,7 +548,7 @@ NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_NA;x = n/a, y = n/a
 NAVIGATOR_XY_FULL;Width = %1, Height = %2
 OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;C/A Correction
 PARTIALPASTE_CHANNELMIXER;Channel mixer
