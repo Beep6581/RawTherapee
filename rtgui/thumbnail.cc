@@ -95,7 +95,7 @@ void Thumbnail::_generateThumbnailImage () {
 	cfs.exifValid = false;
 	cfs.timeValid = false;
 
-	if (ext.lowercase()=="jpg") {
+	if (ext.lowercase()=="jpg" || ext.lowercase()=="jpeg") {
 			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
 			if (tpp)
 					cfs.format = FT_Jpeg;
