@@ -2741,7 +2741,7 @@ void CLASS foveon_huff (ushort *huff)
 void CLASS foveon_dp_load_raw()
 {
   unsigned c, roff[4], row, col, diff;
-  ushort huff[258], vpred, hpred;
+  ushort huff[258], vpred[2][2], hpred[2];
 
   fseek (ifp, 8, SEEK_CUR);
   foveon_huff (huff);
@@ -2750,13 +2750,13 @@ void CLASS foveon_dp_load_raw()
   FORC3 {
     fseek (ifp, data_offset+roff[c], SEEK_SET);
     getbits(-1);
-    vpred = 1024;
+    vpred[0][0] = vpred[0][1] = vpred[1][0] = vpred[1][1] = 512;
     for (row=0; row < height; row++) {
       for (col=0; col < width; col++) {
 	diff = ljpeg_diff(huff);
-	if (col) hpred += diff;
-	else hpred = vpred += diff;
-	image[row*width+col][c] = hpred;
+	if (col < 2) hpred[col] = vpred[row & 1][col] += diff;
+	else hpred[col & 1] += diff;
+	image[row*width+col][c] = hpred[col & 1];
       }
     }
   }
@@ -4224,12 +4224,13 @@ nf: order = 0x4949;
       cam_mul[0] = getreal(type);
       cam_mul[2] = getreal(type);
     }
-//    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
-//      fread (buf97, 1, sizeof buf97, ifp);
-//      i = (uchar *) memmem ((char*) buf97, sizeof buf97,"\xbb\xbb",2) - buf97 + 10;
-//      if (i < 70 && buf97[i] < 3)
-//	flip = "065"[buf97[i]]-'0';
-//    }
+    if (tag == 0xd && type == 7 && get2() == 0xaaaa) {
+      for (c=i=2; (ushort) c != 0xbbbb && i < len; i++)
+	c = c << 8 | fgetc(ifp);
+      while ((i+=4) < len-5)
+	if (get4() == 257 && (i=len) && (c = (get4(),fgetc(ifp))) < 3)
+	  flip = "065"[c]-'0';
+    }
     if (tag == 0x10 && type == 4)
       unique_id = get4();
     if (tag == 0x11 && is_raw && !strncmp(make,"NIKON",5)) {
@@ -5943,6 +5944,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6519,-772,-703,-4994,12737,2519,-1387,2492,6175 } },
     { "Canon EOS 600D", 0, 0x3510,
 	{ 6461,-907,-882,-4300,12184,2378,-819,1944,5931 } },
+    { "Canon EOS 650D", 0, 0x354d,
+	{ 6602,-841,-939,-4472,12458,2247,-975,2039,6148 } },
     { "Canon EOS 1000D", 0, 0xe43,
 	{ 6771,-1139,-977,-7818,15123,2928,-1244,1437,7533 } },
     { "Canon EOS 1100D", 0, 0x3510,
@@ -6357,6 +6360,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 7041,-1794,-336,-3790,11192,2984,-1364,2625,6217 } },
     { "OLYMPUS E-PM1", 0, 0,
 	{ 7575,-2159,-571,-3722,11341,2725,-1434,2819,6271 } },
+    { "OLYMPUS E-M5", 0, 0,
+	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },
     { "OLYMPUS SP350", 0, 0,
 	{ 12078,-4836,-1069,-6671,14306,2578,-786,939,7418 } },
     { "OLYMPUS SP3", 0, 0,
@@ -7342,6 +7347,12 @@ canon_a5:
     height -= top_margin = 45;
     left_margin = 142;
     width = 4916;
+  } else if (is_canon && raw_width == 5280) {
+    top_margin  = 52;
+    left_margin = 72;
+    if (unique_id == 0x80000301)
+      adobe_coeff ("Canon","EOS 650D");
+    goto canon_cr2;
   } else if (is_canon && raw_width == 5344) {
     top_margin = 51;
     left_margin = 142;
@@ -7650,7 +7661,7 @@ konica_400z:
     height -= top_margin = 8;
     width -= 2 * (left_margin = 8);
     load_flags = 32;
-  } else if (!strcmp(model,"NX200")) {
+  } else if (!strncmp(model,"NX2",3)) {
     order = 0x4949;
     height = 3694;
     top_margin = 2;
