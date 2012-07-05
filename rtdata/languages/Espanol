@@ -1041,7 +1041,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !MAIN_TOOLTIP_SHOWHIDETP1;Show/Hide the top panel.\nShortcut: <b>Shift-L</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_DEFRINGE;Defringe

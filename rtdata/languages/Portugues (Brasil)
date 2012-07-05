@@ -852,7 +852,7 @@ ZOOMBAR_SMALL;Pequeno
 !NAVIGATOR_V_VALUE;V = %1
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
