@@ -57,7 +57,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             extractInfo ();
         }
     }    
-    else if (dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) {
+    else if ((dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".jpeg"))) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
             root = rtexif::ExifManager::parseJPEG (f);
