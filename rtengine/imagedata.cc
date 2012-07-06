@@ -172,10 +172,22 @@ void ImageData::extractInfo () {
         focal_len = exif->getTag ("FocalLength")->toDouble ();
     if (exif->getTag ("FocalLengthIn35mmFilm"))
         focal_len35mm = exif->getTag ("FocalLengthIn35mmFilm")->toDouble ();
-    rtexif::Tag* pDst=exif->getTag("SubjectDistance");  // EXIF, set by Adobe. MakerNote ones are scattered and partly encrypted
+
+    // Focus distance from EXIF or XMP. MakerNote ones are scattered and partly encrypted
+    int num=-3, denom=-3;
+
+    // First try, offical EXIF. Set by Adobe on some DNGs
+    rtexif::Tag* pDst=exif->getTag("SubjectDistance");  
     if (pDst) {
         int num, denom;
         pDst->toRational(num,denom);
+    } else {
+        // Second try, XMP data
+        char sXMPVal[64];
+        if (root->getXMPTagValue("aux:ApproximateFocusDistance",sXMPVal)) { sscanf(sXMPVal,"%d/%d",&num,&denom); }
+    }
+
+    if (num!=-3) {
         if ((denom==1 && num>=10000) || num<0 || denom<0) 
             focus_dist=10000;  // infinity
         else if (denom>0) {
