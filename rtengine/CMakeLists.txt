@@ -20,6 +20,8 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     klt/storeFeatures.cc klt/trackFeatures.cc klt/writeFeatures.cc
     )
 
+include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+
 add_library (rtengine ${RTENGINESOURCEFILES})
 #It may be nice to store library version too
 IF (BUILD_SHARED_LIBS)
