@@ -461,7 +461,7 @@ MAIN_TOOLTIP_HIDEHP;Приказује/сакрива леву површ, за�
 MAIN_TOOLTIP_INDCLIPPEDH;Приказује исечене светле делове
 MAIN_TOOLTIP_INDCLIPPEDS;Приказује исечене тамне делове
 MAIN_TOOLTIP_PREFERENCES;Мења поставке програма
-MAIN_TOOLTIP_QINFO;Основни подаци о слици <b>И</б>
+MAIN_TOOLTIP_QINFO;Основни подаци о слици <b>И</b>
 MAIN_TOOLTIP_SAVEAS;Чува слику у изабрану фасциклу
 MAIN_TOOLTIP_SAVE;Чува слику у подразумевану фасциклу
 MAIN_TOOLTIP_SHOWHIDELP1;Приказује/сакрива леву површ <b>l</b>
@@ -1082,7 +1082,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
 !MAIN_TOOLTIP_THRESHOLD;Threshold
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_RGBCURVES;RGB curves

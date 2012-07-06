@@ -83,6 +83,7 @@ class TagDirectory {
     virtual Tag*     getTag        (const char* name) const;
     virtual Tag*     getTag        (int ID) const;
     virtual Tag*     findTag       (const char* name) const;
+    bool             getXMPTagValue(const char* name, char* value) const;
 
     void             keepTag       (int ID);
     virtual void     addTag        (Tag* a);

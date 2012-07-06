@@ -1147,4 +1147,4 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.

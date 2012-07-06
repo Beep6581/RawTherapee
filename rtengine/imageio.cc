@@ -911,9 +911,11 @@ int ImageIO::load (Glib::ustring fname) {
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return loadPNG (fname);
-  else if (!fname.casefold().compare (lastdot, 4, ".jpg"))
+  else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
+           !fname.casefold().compare (lastdot, 5, ".jpeg"))
     return loadJPEG (fname);
-  else if (!fname.casefold().compare (lastdot, 4, ".tif"))
+  else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
+           !fname.casefold().compare (lastdot, 5, ".tiff"))
     return loadTIFF (fname);
   else return IMIO_FILETYPENOTSUPPORTED;
 }
@@ -925,9 +927,11 @@ int ImageIO::save (Glib::ustring fname) {
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return savePNG (fname);
-  else if (!fname.casefold().compare (lastdot, 4, ".jpg"))
+  else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
+           !fname.casefold().compare (lastdot, 5, ".jpeg"))
     return saveJPEG (fname);
-  else if (!fname.casefold().compare (lastdot, 4, ".tif"))
+  else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
+           !fname.casefold().compare (lastdot, 5, ".tiff"))
     return saveTIFF (fname);
   else return IMIO_FILETYPENOTSUPPORTED;
 }
