@@ -39,15 +39,24 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
     // exposure correction inspired from G.Luijk
     if (fabs(preser)<0.001) {	
         // No highlight protection - simple mutiplication
-		for (int c=0; c<4; c++) {
-			chmax[c] *= expos;
-		}
-#pragma omp parallel for shared(expos)
+		for (int c=0; c<4; c++) chmax[c] *= expos;
+
+        #pragma omp parallel for
         for (int row=0;row<height;row++)
             for (int col=0;col<width;col++) {
+                if (ri->isBayer()) {
                 rawData[row][col] *= expos;
+                } else {
+                    rawData[row][col*3] *= expos;
+                    rawData[row][col*3+1] *= expos;
+                    rawData[row][col*3+2] *= expos;
+                }
 			}
     } else {
+		// calculate CIE luminosity
+        float* luminosity = (float *) new float[width*height];
+
+        if (ri->isBayer()) {
         // save old image as it's overwritten by demosaic
         float** imgd = allocArray< float >(W,H); 
 		
@@ -57,47 +66,58 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
         // Demosaic to calc luminosity
         fast_demosaic (0,0,W,H);
 		
-		// calculate CIE luminosity
-        float* luminosity = (float *) new float[width*height];
-		
-#pragma omp parallel default(shared)  
-		{
             // CIE luminosity
-#pragma omp for  
+            #pragma omp parallel for  
 			for(int row=0;row<height;row++)
 				for(int col=0;col<width;col++)
                     luminosity[row*width+col] = 
                     0.299f * (float)red[row][col] + 0.587f * (float)green[row][col] + 0.114f * (float)blue[row][col]; 
-		}	
 		
         // restore image destroyed by demosaic
         for (int i=0; i<H; i++) memcpy (rawData[i], imgd[i], W*sizeof(**imgd));
         freeArray<float>(imgd, H);
+        } else {
+            // Non-Bayers are already RGB
+            
+            // CIE luminosity
+            #pragma omp parallel for  
+			for(int row=0;row<height;row++)
+				for(int col=0;col<width;col++)
+                    luminosity[row*width+col] = 
+                    0.299f * (float)rawData[row][col*3] + 0.587f * (float)rawData[row][col*3+1] + 0.114f * (float)rawData[row][col*3+2]; 
+        }
 		
         // Find maximum to adjust LUTs. New float engines clips only at the very end
         int maxVal=0;
 		for(int row=0;row<height;row++)
-			for(int col=0;col<width;col++)
+			for (int col=0;col<width;col++) {
+                if (ri->isBayer()) {
                 if (rawData[row][col]>maxVal) maxVal = rawData[row][col];
+                } else {
+                    for (int c=0;c<3;c++) if (rawData[row][col*3+c]>maxVal) maxVal = rawData[row][col*3+c];
+                }
+            }
 		
 		// Exposure correction with highlight preservation
         LUTf lut(maxVal+1);
 		if(expos>1){
+            // Positive exposure
+
             float K = (float) maxVal / expos*exp(-preser*log(2.0));
             for (int j=0;j<=maxVal;j++) 
                 lut[(int)j]=(((float)maxVal-K*expos)/((float)maxVal-K)*(j-maxVal)+(float) maxVal) / j;
 			
-			for (int c=0; c<4; c++) {
-				chmax[c] *= expos;
-			}
+			for (int c=0; c<4; c++) chmax[c] *= expos;
 			
-#pragma omp parallel for  shared(expos)
+            #pragma omp parallel for
 			for(int row=0;row<height;row++)
 				for(int col=0;col<width;col++){
-                    if (luminosity[row*width + col] < K) {
-                        rawData[row][col] *= expos;
+                    float fac = luminosity[row*width + col] < K ? expos : lut[luminosity[row*width+col]];
+                    
+                    if (ri->isBayer()) {
+                        rawData[row][col] *= fac;
                     } else {
-                        rawData[row][col] *= lut[luminosity[row*width+col]];
+                        for (int c=0;c<3;c++) rawData[row][col*3+c] *= fac;
 					}
                 }
         } else {
@@ -108,20 +128,20 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
             for (int j=0;j<=maxVal;j++) 
                 lut[(int)j] = exp(EV*((float)maxVal-j) / ((float)maxVal-K) * log(2.0));
 			
-#pragma omp parallel for  shared(expos)	  
+            #pragma omp parallel for
 			for(int row=0;row<height;row++)
 				for(int col=0;col<width;col++){
-                    if (luminosity[row*width+col]<K) {
-                        rawData[row][col] *= expos;
+                    float fac = luminosity[row*width + col] < K ? expos : lut[luminosity[row*width+col]];
+
+                    if (ri->isBayer()) {
+                        rawData[row][col] *= fac;
                     } else {
-                        rawData[row][col] *= lut[luminosity[row*width+col]];
-					}	
-				}
-			for (int c=0; c<4; c++) {
-				chmax[c] *= expos;
+                        for (int c=0;c<3;c++) rawData[row][col*3+c] *= fac;
 			}
         }	
 		
+			for (int c=0; c<4; c++) chmax[c] *= expos;
+        }	
 		
         delete[] luminosity;
     }
