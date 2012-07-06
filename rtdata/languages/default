@@ -388,6 +388,7 @@ HISTORY_MSG_164;RGB Curves - G
 HISTORY_MSG_165;RGB Curves - B
 HISTORY_MSG_166;Neutral Levels
 HISTORY_MSG_167;BW Toning
+HISTORY_MSG_168;NR - Luminance Detail
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -872,6 +873,7 @@ TP_DETAIL_AMOUNT;Amount
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Noise reduction
+TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
 TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels
 TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
@@ -1142,4 +1144,5 @@ ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>
 #00 default translation file 
-#01 Developers should add translations to this file and then run the 'generateTranslationDiffs' script to update other locales. This is a Bash script, tested in >=Bash-4.2.
+#01 Developers should add translations to this file and then run 'generateTranslationDiffs' script to update other locales.
+#02 WARNING: This script works on Linux only

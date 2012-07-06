@@ -19,6 +19,7 @@
 
 #include "hsvequalizer.h"
 #include "../rtengine/improcfun.h"
+#include "../rtengine/color.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;

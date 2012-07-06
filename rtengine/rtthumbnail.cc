@@ -38,6 +38,9 @@
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
 
+#define MAXVAL  0xffff
+#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
+
 namespace rtengine {
 
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, int deg) {
@@ -110,9 +113,9 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     tpp->aeHistogram.clear();
     int ix = 0;
     for (int i=0; i<img->height*img->width; i++) {
-		int rtmp=CurveFactory::igamma_srgb (img->data[ix++]);
-		int gtmp=CurveFactory::igamma_srgb (img->data[ix++]);
-		int btmp=CurveFactory::igamma_srgb (img->data[ix++]);
+		int rtmp=Color::igamma_srgb (img->data[ix++]);
+		int gtmp=Color::igamma_srgb (img->data[ix++]);
+		int btmp=Color::igamma_srgb (img->data[ix++]);
 		
 		tpp->aeHistogram[rtmp>>tpp->aeHistCompression]++;
 		tpp->aeHistogram[gtmp>>tpp->aeHistCompression]+=2;
@@ -502,9 +505,9 @@ void Thumbnail::initGamma () {
     igammatab = new unsigned short[256];
     gammatab = new unsigned char[65536];
     for (int i=0; i<256; i++)
-        igammatab[i] = (unsigned short)(255.0*pow((double)i/255.0,CurveFactory::sRGBGamma));
+        igammatab[i] = (unsigned short)(255.0*pow((double)i/255.0,Color::sRGBGamma));
     for (int i=0; i<65536; i++)
-        gammatab[i] = (unsigned char)(255.0*pow((double)i/65535.0,1.f/CurveFactory::sRGBGamma));
+        gammatab[i] = (unsigned char)(255.0*pow((double)i/65535.0,1.f/Color::sRGBGamma));
 }
 
 void Thumbnail::cleanupGamma () {
@@ -678,6 +681,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         }
     }
 */
+
+    // if luma denoise has to be done for thumbnails, it should be right here
+
     // perform color space transformation
     if (isRaw)
         RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, camName, logDefGain );
@@ -693,7 +699,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.setScale (sqrt(double(fw*fw+fh*fh))/sqrt(double(thumbImg->width*thumbImg->width+thumbImg->height*thumbImg->height))*scale);
 
     LUTu hist16 (65536);
-	double gamma = isRaw ? CurveFactory::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
+	double gamma = isRaw ? Color::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
     ipf.firstAnalysis (baseImg, &params, hist16,  gamma);
 
     // perform transform
@@ -876,7 +882,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     // calculate spot wb (copy & pasted from stdimagesource)
 	unsigned short igammatab[256];
 	for (int i=0; i<256; i++)
-	    igammatab[i] = (unsigned short)(255.0*pow(i/255.0,CurveFactory::sRGBGamma));
+	    igammatab[i] = (unsigned short)(255.0*pow(i/255.0,Color::sRGBGamma));
     int x; int y;
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
@@ -975,7 +981,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
         unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
 
         int max_;
-	unsigned long sum=0;
+        unsigned long sum=0;
         for (max_=65535; max_>16384 && sum<cutoff; max_--) sum+=hist16[max_];
 
         delete[] hist16;
@@ -986,8 +992,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
         for (int i=0; i<thumbImg->height; i++)
             for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
                 int r= gammatab[min(thumbImg->r[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-		int g= gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-		int b= gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                int g= gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                int b= gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                 tmpdata[ix++] = (r*19595+g*38469+b*7472) >> 16;
             }
     }
@@ -1081,8 +1087,8 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=0; j<thumbImg->width; j++) {
                     tmpdata[ix++] = gammatab[min(thumbImg->r[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-		    tmpdata[ix++] = gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-		    tmpdata[ix++] = gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                 }
         }
         else {

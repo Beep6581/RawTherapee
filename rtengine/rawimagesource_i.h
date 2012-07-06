@@ -21,7 +21,7 @@
 #define RAWIMAGESOURCE_I_H_INCLUDED
 
 #include "rawimagesource.h"
-
+//include "rt_math.h"
 #include "curves.h"
 
 namespace rtengine {

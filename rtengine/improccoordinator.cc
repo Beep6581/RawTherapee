@@ -144,7 +144,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     {
 
         if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
-        imgsrc->demosaic( rp );
+		
+		//TODO - denoise branch - is this code for WB params still necessary?
+		currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
+        if (params.wb.method=="Camera")
+            currWB = imgsrc->getWB ();
+        else if (params.wb.method=="Auto") {
+            if (!awbComputed) {
+                autoWB = imgsrc->getAutoWB ();
+                awbComputed = true;
+            }
+            currWB = autoWB;
+        }
+        params.wb.temperature = currWB.getTemp ();
+        params.wb.green = currWB.getGreen ();
+        
+    	imgsrc->demosaic( rp );
+    	
         if (highDetailNeeded) {
             highDetailComputed = true;
             if (params.hlrecovery.enabled && params.hlrecovery.method=="Color") {
@@ -153,10 +169,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
         else
             highDetailComputed = false;
+		
+		
+		LUTu aehist; int aehistcompr;
+		double clip;
+		int brightness, contrast, black, hlcompr, hlcomprthresh;
+		
+		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);	
     }
 
 
-    if (todo & M_INIT) {
+    if (todo & (M_INIT|M_LINDENOISE)) {
         Glib::Mutex::Lock lock(minit);  // Also used in crop window
 
         imgsrc->HLRecovery_Global( params.hlrecovery ); // this handles Color HLRecovery
@@ -187,6 +211,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         PreviewProps pp (0, 0, fw, fh, scale);
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
+
+		//imgsrc->convertColorSpace(orig_prev, params.icm);
+
+        if (todo & M_LINDENOISE) {
+        	//printf("denoising!\n");
+			if (scale==1 && params.dirpyrDenoise.enabled) {
+				ipf.RGB_denoise(orig_prev, orig_prev, params.dirpyrDenoise, params.defringe);
+			}
+			ImageMatrices* imatrices = imgsrc->getImageMatrices ();
+        }
+        imgsrc->convertColorSpace(orig_prev, params.icm);
+
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
     }
     readyphase++;
@@ -297,9 +333,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             readyphase++;
 			progress ("Defringing...",100*readyphase/numofphases);
             ipf.defringe (nprevl);
-            readyphase++;
-            progress ("Denoising luma/chroma...",100*readyphase/numofphases);
-            ipf.dirpyrdenoise (nprevl);
             readyphase++;
 			if (params.sharpenEdge.enabled) {
                 progress ("Edge sharpening...",100*readyphase/numofphases);
@@ -611,6 +644,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	params.wb.temperature = currWB.getTemp ();
 	params.wb.green = currWB.getGreen ();
 	imgsrc->getImage (currWB, 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+	imgsrc->convertColorSpace(im, ppar.icm);
 	im16 = im->to16();
 	im16->saveTIFF (fname,16,true);
 	//im->saveJPEG (fname, 85);
