@@ -427,7 +427,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
-    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera(), defGain);
+    colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1690,7 +1690,7 @@ void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, fl
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
+void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
 
     //MyTime t1, t2, t3;
     //t1.set ();
@@ -1700,7 +1700,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
 
     if (dcpProf!=NULL) {
-        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working);
+        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, (float)raw.expos);
     } else {
     // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
@@ -1916,7 +1916,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 // Converts raw image including ICC input profile to working space - 16bit int version
-void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
+void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
 	cmsHPROFILE in;
     DCPProfile *dcpProf;
 	
