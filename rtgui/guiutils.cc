@@ -20,7 +20,9 @@
 #include "guiutils.h"
 #include "options.h"
 #include "../rtengine/utils.h"
+#include "../rtengine/safegtk.h"
 #include "rtimage.h"
+#include "multilangmgr.h"
 
 #include <assert.h>
 
@@ -53,7 +55,8 @@ Glib::ustring removeExtension (const Glib::ustring& filename) {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
     size_t lastdot = bname.find_last_of ('.');
-    if (lastdot!=bname.npos)
+    size_t lastwhitespace = bname.find_last_of (" \t\f\v\n\r");
+    if (lastdot!=bname.npos && (lastwhitespace==bname.npos || lastdot > lastwhitespace))
         return filename.substr (0, filename.size()-(bname.size()-lastdot));
     else
         return filename;
@@ -63,10 +66,22 @@ Glib::ustring getExtension (const Glib::ustring& filename) {
 
     Glib::ustring bname = Glib::path_get_basename(filename);
     size_t lastdot = bname.find_last_of ('.');
-    if (lastdot!=bname.npos)
+    size_t lastwhitespace = bname.find_last_of (" \t\f\v\n\r");
+    if (lastdot!=bname.npos && (lastwhitespace==bname.npos || lastdot > lastwhitespace))
         return filename.substr (filename.size()-(bname.size()-lastdot)+1, filename.npos);
     else
         return "";
+}
+
+bool confirmOverwrite (Gtk::Window& parent, const std::string& filename) {
+    bool safe = true;
+    if (safe_file_test (filename, Glib::FILE_TEST_EXISTS)) {
+        Glib::ustring msg_ = Glib::ustring ("<b>\"") + Glib::path_get_basename (filename) + "\": "
+                             + M("MAIN_MSG_ALREADYEXISTS") + "</b>\n" + M("MAIN_MSG_QOVERWRITE");
+        Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+        safe = (msgd.run () == Gtk::RESPONSE_YES);
+    }
+    return safe;
 }
 
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams) {

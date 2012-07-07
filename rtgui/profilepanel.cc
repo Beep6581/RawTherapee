@@ -40,7 +40,7 @@ void ProfilePanel::cleanup () {
     delete partialProfileDlg;
 }
 
-ProfilePanel::ProfilePanel (bool readOnly) {
+ProfilePanel::ProfilePanel (bool readOnly) : lastFilename("") {
 
     tpc = NULL;
   
@@ -126,6 +126,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
 
     Gtk::FileChooserDialog dialog(M("PROFILEPANEL_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     FileChooserLastFolderPersister persister( &dialog, options.loadSaveProfilePath );
+    dialog.set_current_name (lastFilename);
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -145,39 +146,20 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
 
 //    dialog.set_do_overwrite_confirmation (true);
 
-    savedialog = &dialog;
-
     bool done = false;
     do {
-        int result = dialog.run();
-        dialog.hide();
-
-        if (result==Gtk::RESPONSE_OK) {
+        if (dialog.run()==Gtk::RESPONSE_OK) {
 
             std::string fname = dialog.get_filename();
+            Glib::ustring ext = getExtension (fname);
 
-            bool hasext = true;
-	    size_t dotpos = fname.find_last_of ('.');
-            if (dotpos==Glib::ustring::npos)
-                hasext = false;
-	    size_t dirpos1 = fname.find_last_of ('/');
-            if (dirpos1!=Glib::ustring::npos && dirpos1>dotpos)
-                hasext = false;
-	    size_t dirpos2 = fname.find_last_of ('\\');
-            if (dirpos2!=Glib::ustring::npos && dirpos2>dotpos)
-                hasext = false;
+            if (("." + ext) != paramFileExtension)
+                fname += paramFileExtension;
 
-            if (!hasext)
-                fname = fname + paramFileExtension;
+            if (!confirmOverwrite (dialog, fname))
+                continue;
 
-            if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
-                Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
-                Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-                int response = msgd.run ();
-                if (response==Gtk::RESPONSE_NO)
-                    // make another try
-                    continue;
-            }
+            lastFilename = Glib::path_get_basename (fname);
 
             PartialProfile* toSave = NULL;
             if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")")
