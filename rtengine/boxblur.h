@@ -248,7 +248,7 @@ template<typename T> void boxvar (T* src, T* dst, int radx, int rady, int W, int
 		T* tempsqave=(T*)pBuf2->data;
 		
 		AlignedBuffer<float>* pBuf3 = buffer3.acquire();
-		T* tempave2=(T*)pBuf2->data;
+		T* tempave2=(T*)pBuf3->data;
 			
 		int len = radx + 1;
 		tempave[row*W+0] = src[row*W+0]/len;
@@ -288,7 +288,7 @@ template<typename T> void boxvar (T* src, T* dst, int radx, int rady, int W, int
 		T* tempsqave=(T*)pBuf2->data;
 		
 		AlignedBuffer<float>* pBuf3 = buffer3.acquire();
-		T* tempave2=(T*)pBuf2->data;
+		T* tempave2=(T*)pBuf3->data;
 			
 		int len = rady + 1;
 		tempave2[0] = tempave[0*W+col]/len;
@@ -344,14 +344,10 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
 			T* temp=(T*)pBuf1->data;
 		
-			AlignedBuffer<float>* pBuf2 = buffer2.acquire();
-			T* tempave=(T*)pBuf2->data;
-			
 			for (int col=0; col<H; col++) {
 				temp[row*H+col] = src[row*W+col];
 			}
 			buffer1.release(pBuf1);
-			buffer2.release(pBuf2);
 		}
 	} else {
 		//horizontal blur
