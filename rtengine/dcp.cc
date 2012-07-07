@@ -205,7 +205,7 @@ DCPLightType DCPProfile::GetLightType(short iLightSource) const {
     return Daylight;
 }
 
-void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const {
+void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, float rawWhiteFac) const {
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
     double mXYZCAM[3][3]; 
@@ -258,10 +258,12 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
         int hueStep = iSatDivisions;
         int valStep = iHueDivisions * hueStep;
 
+        bool useRawWhite=fabs(rawWhiteFac)>0.001;
+
         // Convert to prophoto and apply LUT
 #pragma omp parallel for
         for (int y=0; y<pImg->height; y++) {
-            float newr, newg, newb, h,s,v;
+            float newr, newg, newb, h,s,v,hs,ss,vs;
             for (int x=0; x<pImg->width; x++) {
                 newr = m2ProPhoto[0][0]*pImg->r[y][x] + m2ProPhoto[0][1]*pImg->g[y][x] + m2ProPhoto[0][2]*pImg->b[y][x];
                 newg = m2ProPhoto[1][0]*pImg->r[y][x] + m2ProPhoto[1][1]*pImg->g[y][x] + m2ProPhoto[1][2]*pImg->b[y][x];
@@ -272,13 +274,21 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
                 ImProcFunctions::rgb2hsv(newr, newg, newb, h , s, v);
                 h*=6.f;  // RT calculates in [0,1]
 
+                if (useRawWhite) {
+                    // Retro-calculate what the point was like before RAW white came in
+                    ImProcFunctions::rgb2hsv(newr/rawWhiteFac, newg/rawWhiteFac, newb/rawWhiteFac, hs, ss, vs);
+                    hs*=6.f;  // RT calculates in [0,1]
+                } else {
+                    hs=h; ss=s; vs=v;
+                }
+
                 // Apply the HueSatMap. Ported from Adobes reference implementation
                 float hueShift, satScale, valScale;
 
                 if (iValDivisions < 2)  // Optimize most common case of "2.5D" table.
                 {
-                    float hScaled = h * hScale;
-                    float sScaled = s * sScale;
+                    float hScaled = hs * hScale;
+                    float sScaled = ss * sScale;
 
                     int hIndex0 = max((int)hScaled, 0);
                     int sIndex0 = max(min((int)sScaled,maxSatIndex0),0);
@@ -329,9 +339,9 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
 
                 } else {
 
-                    float hScaled = h * hScale;
-                    float sScaled = s * sScale;
-                    float vScaled = v * vScale;
+                    float hScaled = hs * hScale;
+                    float sScaled = ss * sScale;
+                    float vScaled = vs * vScale;
 
                     int hIndex0 = (int) hScaled;
                     int sIndex0 = max(min((int)sScaled,maxSatIndex0),0);
