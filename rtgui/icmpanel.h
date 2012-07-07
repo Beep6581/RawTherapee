@@ -68,6 +68,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         ICMPanelListener*  icmplistener;
         
         bool enableLastICCWorkDirChange;
+        Glib::ustring lastRefFilename;
 
     public:
         ICMPanel ();

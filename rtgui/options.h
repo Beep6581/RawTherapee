@@ -140,6 +140,7 @@ class Options {
     bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;
+    int saveMethodNum;
     bool saveParamsFile;
     bool saveParamsCache;
     PPLoadLocation paramsLoadLocation;

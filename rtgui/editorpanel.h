@@ -49,6 +49,9 @@ class EditorPanel : public Gtk::VBox,
                     public ThumbnailListener,
                     public HistoryBeforeLineListener,
                     public rtengine::HistogramListener {
+    private:
+
+        Glib::ustring lastSaveAsFileName;
 
     protected:      
         Gtk::ProgressBar  *progressLabel;
@@ -97,7 +100,7 @@ class EditorPanel : public Gtk::VBox,
         HistogramPanel* histogramPanel;
         ToolPanelCoordinator* tpc;
         RTWindow* parent;
-        SaveAsDialog* saveAsDialog;
+        //SaveAsDialog* saveAsDialog;
         BatchToolPanelCoordinator* btpCoordinator;        
         FilePanel* fPanel;
       

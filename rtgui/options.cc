@@ -190,6 +190,8 @@ void Options::setDefaults () {
     windowWidth = 900;
     windowHeight = 560;
     windowMaximized = false;
+    saveAsDialogWidth = 600;
+    saveAsDialogHeight = 600;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
     saveFormat.jpegQuality = 100;
@@ -262,6 +264,7 @@ void Options::setDefaults () {
     thumbnailFormat = FT_Custom;		// was FT_Custom16
     thumbInterp = 1;
     autoSuffix = false;
+    saveMethodNum = 0;				// 0->immediate, 1->putToQueuHead, 2->putToQueueTail
     saveParamsFile = true;				// was false, but saving the procparams files next to the file make more sense when reorganizing file tree than in a cache
     saveParamsCache = false;			// there's no need to save the procparams files in a cache if saveParamsFile is true
     paramsLoadLocation = PLL_Input;		// was PLL_Cache
@@ -517,6 +520,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "PathTemplate"))     savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
     if (keyFile.has_key ("Output", "PathFolder"))       savePathFolder             = keyFile.get_string ("Output", "PathFolder");
     if (keyFile.has_key ("Output", "AutoSuffix"))       autoSuffix                 = keyFile.get_boolean("Output", "AutoSuffix");
+    if (keyFile.has_key ("Output", "SaveMethodNum"))    saveMethodNum              = keyFile.get_integer("Output", "SaveMethodNum");
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
 	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
@@ -796,6 +800,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
     keyFile.set_string  ("Output", "PathFolder", savePathFolder);
     keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);
+    keyFile.set_integer ("Output", "SaveMethodNum", saveMethodNum);
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
 	keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
