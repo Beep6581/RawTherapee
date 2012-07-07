@@ -33,10 +33,6 @@
 
 namespace rtengine {
 
-//#define SQR(x) ((x)*(x))
-//#define MIN(a,b) ((a) < (b) ? (a) : (b))
-//#define MAX(a,b) ((a) > (b) ? (a) : (b))
-
 // classical filtering if the support window is small:
 
 template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, int W, int H) {
@@ -44,24 +40,29 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady)
 	
-	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
-	float* temp = buffer->data;
+	AlignedBufferMP<float> buffer(W*H);
 	
 	if (radx==0) {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
 			for (int col=0; col<H; col++) {
 				temp[row*H+col] = (float)src[row][col];
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//horizontal blur
-//OpenMP here		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 		for (int row = 0; row < H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+
 			int len = radx + 1;
 			temp[row*W+0] = (float)src[row][0]/len;
 			for (int j=1; j<=radx; j++) {
@@ -78,6 +79,7 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 				temp[row*W+col] = (temp[row*W+col-1]*len - src[row][col-radx-1])/(len-1);
 				len --;
 			}
+			buffer.release(pBuf);
 		}
 	}
 	
@@ -85,17 +87,24 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+
 			for (int col=0; col<H; col++) {
 				dst[row][col] = temp[row*W+col];
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//vertical blur
-//OpenMP here		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 		for (int col = 0; col < W; col++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int len = rady + 1;
 			dst[0][col] = temp[0*W+col]/len;
 			for (int i=1; i<=rady; i++) {
@@ -112,11 +121,9 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 				dst[row][col] = (dst[(row-1)][col]*len - temp[(row-rady-1)*W+col])/(len-1);
 				len --;
 			}
+			buffer.release(pBuf);
 		}
 	}
-	
-	delete buffer;
-	
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,21 +135,29 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 	
-	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
-	float* temp = buffer->data;
-	
+	AlignedBufferMP<float> buffer(W*H);
+		
 	if (radx==0) {
-		for (int row=0; row<H; row++) 
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+		for (int row=0; row<H; row++){
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
 			for (int col=0; col<H; col++) {
 				temp[row*H+col] = src[row*W+col];
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//horizontal blur
-//OpenMP here		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 		for (int row = 0; row < H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int len = radx + 1;
 			temp[row*W+0] = (float)src[row*W+0]/len;
 			for (int j=1; j<=radx; j++) {
@@ -159,6 +174,7 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 				temp[row*W+col] = (temp[row*W+col-1]*len - src[row*W+col-radx-1])/(len-1);
 				len --;
 			}
+			buffer.release(pBuf);
 		}
 	}
 	
@@ -166,17 +182,24 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			 
 			for (int col=0; col<H; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//vertical blur
-//OpenMP here		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 		for (int col = 0; col < W; col++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int len = rady + 1;
 			dst[0*W+col] = temp[0*W+col]/len;
 			for (int i=1; i<=rady; i++) {
@@ -193,10 +216,9 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
 				len --;
 			}
+			buffer.release(pBuf);
 		}
 	}
-	
-	delete buffer;
 	
 }
 
@@ -206,14 +228,10 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 
 template<typename T> void boxvar (T* src, T* dst, int radx, int rady, int W, int H) {
 	
-	AlignedBuffer<float>* buffer1 = new AlignedBuffer<float> (W*H);
-	AlignedBuffer<float>* buffer2 = new AlignedBuffer<float> (W*H);
-	float* tempave = buffer1->data;
-	float* tempsqave = buffer2->data;
+	AlignedBufferMP<float> buffer1(W*H);
+	AlignedBufferMP<float> buffer2(W*H);
+	AlignedBufferMP<float> buffer3(W*H);
 	
-	//float *tempave2 = new float[H];
-	AlignedBuffer<float>* buffer3 = new AlignedBuffer<float> (H);
-	float* tempave2 = buffer3->data;
 
 	//float image_ave = 0;
 	
@@ -223,6 +241,15 @@ template<typename T> void boxvar (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif
 	for (int row = 0; row < H; row++) {
+		AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+		T* tempave=(T*)pBuf1->data;
+		
+		AlignedBuffer<float>* pBuf2 = buffer2.acquire();
+		T* tempsqave=(T*)pBuf2->data;
+		
+		AlignedBuffer<float>* pBuf3 = buffer3.acquire();
+		T* tempave2=(T*)pBuf2->data;
+			
 		int len = radx + 1;
 		tempave[row*W+0] = src[row*W+0]/len;
 		tempsqave[row*W+0] = SQR(src[row*W+0])/len;
@@ -244,6 +271,9 @@ template<typename T> void boxvar (T* src, T* dst, int radx, int rady, int W, int
 			tempsqave[row*W+col] = (tempsqave[row*W+col-1]*len - SQR(src[row*W+col-radx-1]))/(len-1);
 			len --;
 		}
+		buffer1.release(pBuf1);
+		buffer2.release(pBuf2);
+		buffer3.release(pBuf3);
 	}
 	
 	//vertical blur
@@ -251,6 +281,15 @@ template<typename T> void boxvar (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif
 	for (int col = 0; col < W; col++) {
+		AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+		T* tempave=(T*)pBuf1->data;
+		
+		AlignedBuffer<float>* pBuf2 = buffer2.acquire();
+		T* tempsqave=(T*)pBuf2->data;
+		
+		AlignedBuffer<float>* pBuf3 = buffer3.acquire();
+		T* tempave2=(T*)pBuf2->data;
+			
 		int len = rady + 1;
 		tempave2[0] = tempave[0*W+col]/len;
 		dst[0*W+col] = tempsqave[0*W+col]/len;
@@ -277,14 +316,12 @@ template<typename T> void boxvar (T* src, T* dst, int radx, int rady, int W, int
 			dst[row*W+col] = fabs(dst[row*W+col] - SQR(tempave2[row]));
 			//image_ave += src[row*W+col];
 		}
+		buffer1.release(pBuf1);
+		buffer2.release(pBuf2);
+		buffer3.release(pBuf3);
 	}
 	
-	//image_ave /= (W*H);
-	
-	delete buffer1;
-	delete buffer2;
-	delete buffer3;
-	
+	//image_ave /= (W*H);	
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -296,20 +333,26 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 	
-	AlignedBuffer<float>* buffer1 = new AlignedBuffer<float> (W*H);
-	float* temp = buffer1->data;
-	
-	AlignedBuffer<float>* buffer2 = new AlignedBuffer<float> (W*H);
-	float* tempave = buffer2->data;
+	AlignedBufferMP<float> buffer1(W*H);
+	AlignedBufferMP<float> buffer2(W*H);	
 	
 	if (radx==0) {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif	
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+			T* temp=(T*)pBuf1->data;
+		
+			AlignedBuffer<float>* pBuf2 = buffer2.acquire();
+			T* tempave=(T*)pBuf2->data;
+			
 			for (int col=0; col<H; col++) {
 				temp[row*H+col] = src[row*W+col];
 			}
+			buffer1.release(pBuf1);
+			buffer2.release(pBuf2);
+		}
 	} else {
 		//horizontal blur
 //OpenMP here		
@@ -317,6 +360,12 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif
 		for (int row = 0; row < H; row++) {
+			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+			T* temp=(T*)pBuf1->data;
+		
+			AlignedBuffer<float>* pBuf2 = buffer2.acquire();
+			T* tempave=(T*)pBuf2->data;
+			
 			int len = radx + 1;
 			temp[row*W+0] = (float)src[row*W+0]/len;
 			for (int j=1; j<=radx; j++) {
@@ -333,17 +382,28 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 				temp[row*W+col] = (temp[row*W+col-1]*len - src[row*W+col-radx-1])/(len-1);
 				len --;
 			}
+			buffer1.release(pBuf1);
+			buffer2.release(pBuf2);
 		}
 	}
 	
 	if (rady==0) {
-		for (int row=0; row<H; row++) 
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
+		for (int row=0; row<H; row++){
+			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+			T* temp=(T*)pBuf1->data;
+		
+			AlignedBuffer<float>* pBuf2 = buffer2.acquire();
+			T* tempave=(T*)pBuf2->data;
+			
 			for (int col=0; col<H; col++) {
 				tempave[row*W+col] = temp[row*W+col];
 			}
+			buffer1.release(pBuf1);
+			buffer2.release(pBuf2);
+		}
 	} else {
 		//vertical blur
 //OpenMP here		
@@ -351,6 +411,12 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif
 		for (int col = 0; col < W; col++) {
+			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+			T* temp=(T*)pBuf1->data;
+		
+			AlignedBuffer<float>* pBuf2 = buffer2.acquire();
+			T* tempave=(T*)pBuf2->data;
+			
 			int len = rady + 1;
 			tempave[0*W+col] = temp[0*W+col]/len;
 			for (int i=1; i<=rady; i++) {
@@ -367,6 +433,8 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 				tempave[row*W+col] = (tempave[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
 				len --;
 			}
+			buffer1.release(pBuf1);
+			buffer2.release(pBuf2);
 		}
 	}
 	
@@ -378,10 +446,19 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+			T* temp=(T*)pBuf1->data;
+		
+			AlignedBuffer<float>* pBuf2 = buffer2.acquire();
+			T* tempave=(T*)pBuf2->data;
+			
 			for (int col=0; col<H; col++) {
 				temp[row*H+col] = fabs(src[row*W+col]-tempave[row*W+col]);
 			}
+			buffer1.release(pBuf1);
+			buffer2.release(pBuf2);
+		}
 	} else {
 		//horizontal blur
 //OpenMP here
@@ -389,6 +466,12 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif		
 		for (int row = 0; row < H; row++) {
+			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+			T* temp=(T*)pBuf1->data;
+		
+			AlignedBuffer<float>* pBuf2 = buffer2.acquire();
+			T* tempave=(T*)pBuf2->data;
+			
 			int len = radx + 1;
 			temp[row*W+0] = fabs(src[row*W+0]-tempave[row*W+0])/len;
 			for (int j=1; j<=radx; j++) {
@@ -406,6 +489,8 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 				temp[row*W+col] = (temp[row*W+col-1]*len - fabs(src[row*W+col-radx-1]-tempave[row*W+col-radx-1]))/(len-1);
 				len --;
 			}
+			buffer1.release(pBuf1);
+			buffer2.release(pBuf2);
 		}
 	}
 	
@@ -413,10 +498,15 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+			T* temp=(T*)pBuf1->data;
+			
 			for (int col=0; col<H; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
+			buffer1.release(pBuf1);
+		}
 	} else {
 		//vertical blur
 //OpenMP here		
@@ -424,6 +514,9 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif
 		for (int col = 0; col < W; col++) {
+			AlignedBuffer<float>* pBuf1 = buffer1.acquire();
+			T* temp=(T*)pBuf1->data;
+			
 			int len = rady + 1;
 			dst[0*W+col] = temp[0*W+col]/len;
 			for (int i=1; i<=rady; i++) {
@@ -440,12 +533,10 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
 				len --;
 			}
+			
+			buffer1.release(pBuf1);
 		}
 	}
-	
-	delete buffer1;
-	delete buffer2;
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -457,17 +548,21 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 	
-	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
-	float* temp = buffer->data;
+	AlignedBufferMP<float> buffer(W*H);
 	
 	if (radx==0) {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+
 			for (int col=0; col<H; col++) {
 				temp[row*H+col] = SQR(src[row*W+col]);
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//horizontal blur
 //OpenMP here		
@@ -475,6 +570,9 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 #pragma omp parallel for
 #endif
 		for (int row = 0; row < H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+		
 			int len = radx + 1;
 			temp[row*W+0] = SQR((float)src[row*W+0])/len;
 			for (int j=1; j<=radx; j++) {
@@ -491,6 +589,8 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 				temp[row*W+col] = (temp[row*W+col-1]*len - SQR(src[row*W+col-radx-1]))/(len-1);
 				len --;
 			}
+			
+			buffer.release(pBuf);
 		}
 	}
 	
@@ -498,10 +598,15 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+		
 			for (int col=0; col<H; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//vertical blur
 //OpenMP here		
@@ -509,6 +614,9 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 #pragma omp parallel for
 #endif
 		for (int col = 0; col < W; col++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int len = rady + 1;
 			dst[0*W+col] = temp[0*W+col]/len;
 			for (int i=1; i<=rady; i++) {
@@ -525,11 +633,10 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
 				len --;
 			}
+			
+			buffer.release(pBuf);
 		}
-	}
-	
-	delete buffer;
-	
+	}	
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -541,19 +648,22 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 	
-	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
-	float* temp = buffer->data;
+	AlignedBufferMP<float> buffer(W*H);
 	
 	if (radx==0) {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int rr = min(H-1,max(0,row+dy));
 			for (int col=0; col<H; col++) {
 				int cc = min(W-1,max(0,col+dx));
 				temp[row*H+col] = dy>0 ? (src[row*W+col])*(src[rr*W+cc]) : 0;
 			}
+			buffer.release(pBuf);
 		}
 	} else {
 		//horizontal blur
@@ -562,6 +672,9 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 #pragma omp parallel for
 #endif
 		for (int row = 0; row < H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int len = radx + 1;
 			int rr = min(H-1,max(0,row+dy));
 			int cc = min(W-1,max(0,0+dx));
@@ -586,6 +699,7 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 				temp[row*W+col] = (temp[row*W+col-1]*len - (src[row*W+col-radx-1])*(src[rr*W+cc1]))/(len-1);
 				len --;
 			}
+			buffer.release(pBuf);
 		}
 	}
 	
@@ -593,10 +707,15 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			for (int col=0; col<H; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//vertical blur
 //OpenMP here		
@@ -604,6 +723,9 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 #pragma omp parallel for
 #endif
 		for (int col = 0; col < W; col++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int len = rady + 1;
 			dst[0*W+col] = temp[0*W+col]/len;
 			for (int i=1; i<=rady; i++) {
@@ -620,11 +742,9 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
 				len --;
 			}
+			buffer.release(pBuf);
 		}
 	}
-	
-	delete buffer;
-	
 }
 
 
@@ -637,17 +757,21 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 	
-	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
-	float* temp = buffer->data;
+	AlignedBufferMP<float> buffer(W*H);
 	
 	if (radx==0) {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			 
 			for (int col=0; col<H; col++) {
 				temp[row*H+col] = fabs(src[row*W+col]);
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//horizontal blur
 //OpenMP here		
@@ -655,6 +779,9 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 #pragma omp parallel for
 #endif
 		for (int row = 0; row < H; row++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int len = radx + 1;
 			temp[row*W+0] = fabs((float)src[row*W+0])/len;
 			for (int j=1; j<=radx; j++) {
@@ -671,6 +798,7 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 				temp[row*W+col] = (temp[row*W+col-1]*len - fabs(src[row*W+col-radx-1]))/(len-1);
 				len --;
 			}
+			buffer.release(pBuf);
 		}
 	}
 	
@@ -678,10 +806,15 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		for (int row=0; row<H; row++) 
+		for (int row=0; row<H; row++)  {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			for (int col=0; col<H; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
+			buffer.release(pBuf);
+		}
 	} else {
 		//vertical blur
 //OpenMP here		
@@ -689,6 +822,9 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 #pragma omp parallel for
 #endif
 		for (int col = 0; col < W; col++) {
+			AlignedBuffer<float>* pBuf = buffer.acquire();
+			T* temp=(T*)pBuf->data;
+			
 			int len = rady + 1;
 			dst[0*W+col] = temp[0*W+col]/len;
 			for (int i=1; i<=rady; i++) {
@@ -705,11 +841,9 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
 				len --;
 			}
+			buffer.release(pBuf);
 		}
 	}
-	
-	delete buffer;
-	
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
