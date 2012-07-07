@@ -205,6 +205,7 @@ namespace rtengine {
 		//now we have tile dimensions, overlaps
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+//adding omp here slows it down
 		for (int tiletop=0; tiletop<imheight; tiletop+=tileHskip) {
 			for (int tileleft=0; tileleft<imwidth; tileleft+=tileWskip) {
 				
@@ -222,10 +223,15 @@ namespace rtengine {
 				//pixel weight
 				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
 
-// OMP candidate?
+//#ifdef _OPENMP
+//#pragma omp parallel for
+//#endif
+//TODO: implement using AlignedBufferMP
 				//fill tile from image; convert RGB to "luma/chroma"
-				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) 
-					for (int j=tileleft, j1=0; j<tileright; j++, j1++) {
+				for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
+					int i1 = i - tiletop;
+					for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
+						int j1 = j - tileleft;
 						
 						float X = gain*src->r[i][j];//xyz_prophoto[0][0]*src->r[i][j] + xyz_prophoto[0][1]*src->g[i][j] + xyz_prophoto[0][2]*src->b[i][j];
 						float Y = gain*src->g[i][j];//xyz_prophoto[1][0]*src->r[i][j] + xyz_prophoto[1][1]*src->g[i][j] + xyz_prophoto[1][2]*src->b[i][j];
@@ -243,6 +249,7 @@ namespace rtengine {
 						Lin[i1][j1] = Y;
 						totwt[i1][j1] = 0;
 					}
+				}
 				
 				//initial impulse denoise
 				if (dnparams.luma>0.01) {
@@ -318,7 +325,8 @@ namespace rtengine {
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				// Main detail recovery algorithm: Block loop
-//OpenMP here				
+//OpenMP here			
+//adding omp here leads to artifacts	
 				for (int vblk=0; vblk<numblox_H; vblk++) {
 					//printf("vblock=%d",vblk);
 					int vblkmod = vblk%8;
@@ -328,8 +336,12 @@ namespace rtengine {
 					float * buffer = new float [width + TS + 2*blkrad*offset];
 					float * datarow = buffer+blkrad*offset;
 
-					for (int i=0, row=top; i<TS; i++, row++) {
-						
+//#ifdef _OPENMP
+//#pragma omp parallel for
+//#endif
+//TODO: implement using AlignedBufferMP
+					for (int i=0/*, row=top*/; i<TS; i++/*, row++*/) {
+						int row = top + i;
 						int rr = row;
 						if (row<0) {
 							rr = MIN(-row,height-1);
@@ -349,9 +361,7 @@ namespace rtengine {
 						}//now we have a padded data row
 						
 						//now fill this row of the blocks with Lab high pass data
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif							
+//OMP here does not add speed, better handled on the outside loop
 						for (int hblk=0; hblk<numblox_W; hblk++) {
 							int left = (hblk-blkrad)*offset;
 							int indx = (hblk)*TS;//index of block in malloc
@@ -410,9 +420,10 @@ namespace rtengine {
 				fftwf_cleanup();
 				
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif					
+//#ifdef _OPENMP
+//#pragma omp parallel for
+//#endif
+//TODO: implement using AlignedBufferMP
 				for (int i=0; i<height; i++) {
 					for (int j=0; j<width; j++) {
 						//may want to include masking threshold for large hipass data to preserve edges/detail
@@ -444,11 +455,15 @@ namespace rtengine {
 					if (tileright<imwidth) Hmask[width-1-i] = mask;
 				}
 
-//TODO: OMP candidate?
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 				//convert back to RGB and write to destination array
-				for (int i=tiletop, i1=0; i<tilebottom; i++, i1++) {
+				for (int i=tiletop/* i1=0*/; i<tilebottom; i++/*, i1++*/){
+					int i1 = i-tiletop;
 					float X,Y,Z;
-					for (int j=tileleft, j1=0; j<tileright; j++, j1++) {
+					for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
+						int j1=j-tileleft;
 						
 						Y = labdn->L[i1][j1];
 						X = (labdn->a[i1][j1]) + Y;
@@ -501,9 +516,10 @@ namespace rtengine {
 		
 		boxabsblur(fLblox+blkstart, nbrwt, 3, 3, TS, TS);//blur neighbor weights for more robust estimation	//for DCT
 
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif			
+//#ifdef _OPENMP
+//#pragma omp parallel for
+//#endif
+//TODO: implement using AlignedBufferMP
 		for (int n=0; n<TS*TS; n++) {		//for DCT
 			fLblox[blkstart+n] *= (1-expf(-SQR(nbrwt[n])/noisevar_Ldetail));
 		}//output neighbor averaged result
@@ -854,7 +870,7 @@ namespace rtengine {
 				
 				boxblur(sfavea, sfavea, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
 				boxblur(sfaveb, sfaveb, level+2, level+2, W_ab, H_ab);//increase smoothness by locally averaging shrinkage
-//MK
+
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
