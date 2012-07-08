@@ -1790,8 +1790,8 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         lcmsMutex->unlock ();
 		if (hTransform) {
             im->ExecCMSTransform(hTransform);
-			}
-			else {
+		}
+		else {
           // create the profile from camera
           lcmsMutex->lock ();
           hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent,
@@ -1799,24 +1799,25 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
           lcmsMutex->unlock ();
 				
           im->ExecCMSTransform(hTransform);
-				}
-		float x, y,z;
+		}
 		Glib::ustring choiceprofile;
 		choiceprofile=cmp.working;
 		if(choiceprofile!="ProPhoto") {
-		for ( int h = 0; h < im->height; ++h )
-			for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
-		     x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
-             y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
-             z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
-			 //convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
-			im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
-			im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
-			im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;			
-			}	
-			}
+			#pragma omp parallel for
+			for ( int h = 0; h < im->height; ++h )
+				for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
+					float x, y,z;
+					x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
+					y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
+					z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
+					//convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
+					im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
+					im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
+					im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;
+				}
+		}
 			
-		        cmsDeleteTransform(hTransform);
+		cmsDeleteTransform(hTransform);
 	
 	}
      else {	
