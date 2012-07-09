@@ -258,7 +258,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     updateHistogramPosition (0, options.histogramPosition);
 
     show_all ();
-
+/*
     // save as dialog
     if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
@@ -266,7 +266,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
 
     saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
-
+*/
     // connect listeners
     profilep->setProfileChangeListener (tpc);
     history->setProfileChangeListener (tpc);
@@ -329,7 +329,7 @@ EditorPanel::~EditorPanel () {
     delete ppframe;
     delete leftbox;
     delete vboxright;
-    delete saveAsDialog;
+    //delete saveAsDialog;
     if(catalogPane)
         delete catalogPane;
 }
@@ -382,6 +382,8 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     openThm->increaseRef ();
 
     fname=openThm->getFileName();
+    //saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (fname)));
+    lastSaveAsFileName = removeExtension (Glib::path_get_basename (fname));
 
     previewHandler = new PreviewHandler ();
 
@@ -408,6 +410,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     // initialize profile
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
     profilep->initProfile (defProf, ldprof);
+    profilep->setInitialFileName (Glib::path_get_basename (fname) + paramFileExtension);
 
     openThm->addThumbnailListener (this);
     info_toggled ();
@@ -1016,42 +1019,52 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
 void EditorPanel::saveAsPressed () {
 	if (!ipc || !openThm) return;
 	bool fnameOK = false;
-	Glib::ustring fname;
+	Glib::ustring fnameOut;
 
-	saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (openThm->getFileName())));
+	SaveAsDialog* saveAsDialog;
+	if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
+		saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
+	else
+		saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
+
+	saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
+	saveAsDialog->setInitialFileName (lastSaveAsFileName);
+
 	do {
-		saveAsDialog->run ();
-		if (saveAsDialog->getResponse()!=Gtk::RESPONSE_OK)
-			return;
+		int result = saveAsDialog->run ();
 
 		// The SaveAsDialog ensure that a filename has been specified
-		fname = saveAsDialog->getFileName ();
+		fnameOut = saveAsDialog->getFileName ();
 
 		options.lastSaveAsPath = saveAsDialog->getDirectory ();
-		options.saveAsDialogWidth = saveAsDialog->get_width();
-		options.saveAsDialogHeight = saveAsDialog->get_height();
-
+		options.saveAsDialogWidth = saveAsDialog->get_width ();
+		options.saveAsDialogHeight = saveAsDialog->get_height ();
+		options.autoSuffix = saveAsDialog->getAutoSuffix ();
+		options.saveMethodNum = saveAsDialog->getSaveMethodNum ();
+		lastSaveAsFileName = Glib::path_get_basename (removeExtension (fnameOut));
 		SaveFormat sf = saveAsDialog->getFormat ();
-
 		options.saveFormat = sf;
-		options.autoSuffix = saveAsDialog->getAutoSuffix();
+
+		if (result != Gtk::RESPONSE_OK)
+			break;
 
 		if (saveAsDialog->getImmediately ()) {
 			// separate filename and the path to the destination directory
-			Glib::ustring dstdir = Glib::path_get_dirname (fname);
-			Glib::ustring dstfname = Glib::path_get_basename (removeExtension(fname));
+			Glib::ustring dstdir = Glib::path_get_dirname (fnameOut);
+			Glib::ustring dstfname = Glib::path_get_basename (removeExtension(fnameOut));
+			Glib::ustring dstext = getExtension (fnameOut);
 
 			if (saveAsDialog->getAutoSuffix()) {
 
 				Glib::ustring fnameTemp;
 				for (int tries=0; tries<100; tries++) {
 					if (tries==0)
-						fnameTemp = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
+						fnameTemp = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), dstext);
 					else
-						fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, sf.format);
+						fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, dstext);
 
 					if (!safe_file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
-						fname = fnameTemp;
+						fnameOut = fnameTemp;
 						fnameOK = true;
 						break;
 					}
@@ -1059,13 +1072,7 @@ void EditorPanel::saveAsPressed () {
 			}
 			// check if it exists
 			if (!fnameOK) {
-				if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
-					Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
-					Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-					int response = msgd.run ();
-					fnameOK = (response==Gtk::RESPONSE_YES);
-				}
-				else fnameOK = true;
+				fnameOK = confirmOverwrite (*saveAsDialog, fnameOut);
 			}
 
 			if (fnameOK) {
@@ -1076,14 +1083,14 @@ void EditorPanel::saveAsPressed () {
 
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
 				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener(), options.tunnelMetaData ),
-							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf ));
+							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fnameOut,sf ));
 				saveimgas->set_sensitive(false);
 				sendtogimp->set_sensitive(false);
 			}
 		}
 		else {
 			BatchQueueEntry* bqe = createBatchQueueEntry ();
-			bqe->outFileName = fname;
+			bqe->outFileName = fnameOut;
 			bqe->saveFormat = saveAsDialog->getFormat ();
 			parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
 			fnameOK = true;
@@ -1091,6 +1098,8 @@ void EditorPanel::saveAsPressed () {
 		// ask parent to redraw file browser
 		// ... or does it automatically when the tab is switched to it
 	} while (!fnameOK);
+
+	saveAsDialog->hide();
 }
 
 void EditorPanel::queueImgPressed () {

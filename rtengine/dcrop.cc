@@ -109,7 +109,7 @@ void Crop::update (int todo) {
 				parent->ipf.RGB_denoise(origCrop, origCrop, /*Roffset,*/ params.dirpyrDenoise, params.defringe);
 			}
         }
-        parent->imgsrc->convertColorSpace(origCrop, params.icm);
+        parent->imgsrc->convertColorSpace(origCrop, params.icm, params.raw);
 }
 
     // transform

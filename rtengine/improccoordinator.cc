@@ -212,7 +212,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
 
-		//imgsrc->convertColorSpace(orig_prev, params.icm);
+		//imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
 
         if (todo & M_LINDENOISE) {
         	//printf("denoising!\n");
@@ -221,7 +221,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			}
 			ImageMatrices* imatrices = imgsrc->getImageMatrices ();
         }
-        imgsrc->convertColorSpace(orig_prev, params.icm);
+        imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
 
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
     }
@@ -644,7 +644,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	params.wb.temperature = currWB.getTemp ();
 	params.wb.green = currWB.getGreen ();
 	imgsrc->getImage (currWB, 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
-	imgsrc->convertColorSpace(im, ppar.icm);
+	imgsrc->convertColorSpace(im, ppar.icm, params.raw);
 	im16 = im->to16();
 	im16->saveTIFF (fname,16,true);
 	//im->saveJPEG (fname, 85);

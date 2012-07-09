@@ -91,7 +91,8 @@ class ImageSource : public InitialImage {
         virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
         // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
         virtual bool        isWBProviderReady () =0;
-		virtual void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp) =0;
+
+		virtual void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) =0;// DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;
         virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) =0;

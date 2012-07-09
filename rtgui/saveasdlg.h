@@ -34,10 +34,10 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
     Gtk::FileFilter filter_jpg;
     Gtk::FileFilter filter_tif;
     Gtk::FileFilter filter_png;
-    Gtk::RadioButton* immediately;
-    Gtk::RadioButton* putToQueueHead;
-    Gtk::RadioButton* putToQueueTail;
-    Gtk::ResponseType response;
+    Gtk::RadioButton* saveMethod[3]; /*  0 -> immediately
+                                      *  1 -> putToQueueHead
+                                      *  2 -> putToQueueTail
+                                      */
 
   public:
     SaveAsDialog (Glib::ustring initialDir);
@@ -49,9 +49,9 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
     bool            getImmediately   ();
     bool            getToHeadOfQueue ();
     bool            getToTailOfQueue ();    
+    int             getSaveMethodNum ();
 
     void  setInitialFileName (Glib::ustring iname);
-    Gtk::ResponseType getResponse    () { return response; };
 
     void okPressed ();
     void cancelPressed ();

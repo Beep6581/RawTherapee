@@ -29,6 +29,10 @@
 
 class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
 
+  private:
+
+    Glib::ustring lastFilename;
+
   protected:
 
     static PartialPasteDlg* partialProfileDlg;
@@ -44,7 +48,6 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     ProfileChangeListener* tpc;
     bool dontupdate;
     sigc::connection changeconn;
-    Gtk::FileChooserDialog* savedialog;
 
     void changeTo (rtengine::procparams::PartialProfile* newpp, Glib::ustring profname);
     void refreshProfileList ();
@@ -60,6 +63,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     static void cleanup ();
 
     void initProfile (const Glib::ustring& profname, rtengine::procparams::ProcParams* lastSaved);
+    void setInitialFileName (const Glib::ustring& filename) {lastFilename = filename;}
 
     // PParamsChangeListener interface
     void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);

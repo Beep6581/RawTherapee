@@ -423,13 +423,13 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
     // *** colorSpaceConversion was here ***
-    //colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera(), defGain);
+    //colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 
-void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp) {
-    colorSpaceConversion (image, cmp, embProfile, camProfile, imatrices.xyz_cam, ((const ImageData*)getMetaData())->getCamera(), defGain);
+void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) {
+    colorSpaceConversion (image, cmp, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
-
+	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* cfaCleanFromMap: correct raw pixels looking at the bitmap
@@ -1686,7 +1686,7 @@ void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, fl
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
+void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
 
     //MyTime t1, t2, t3;
     //t1.set ();
@@ -1696,7 +1696,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
 
     if (dcpProf!=NULL) {
-        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working);
+        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, (float)raw.expos);
     } else {
     // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
@@ -1786,8 +1786,8 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         lcmsMutex->unlock ();
 		if (hTransform) {
             im->ExecCMSTransform(hTransform);
-			}
-			else {
+		}
+		else {
           // create the profile from camera
           lcmsMutex->lock ();
           hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent,
@@ -1795,21 +1795,22 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
           lcmsMutex->unlock ();
 				
           im->ExecCMSTransform(hTransform);
-				}
-		float x, y,z;
+		}
 		Glib::ustring choiceprofile;
 		choiceprofile=cmp.working;
 		if(choiceprofile!="ProPhoto") {
-		for ( int h = 0; h < im->height; ++h )
-			for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
-				x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
-				y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
-				z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
-				//convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
-				im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
-				im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
-				im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;
-			}
+			#pragma omp parallel for
+			for ( int h = 0; h < im->height; ++h )
+				for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
+					float x, y,z;
+					x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
+					y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
+					z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
+					//convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
+					im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
+					im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
+					im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;
+				}
 		}
 			
 		cmsDeleteTransform(hTransform);
@@ -1912,7 +1913,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 // Converts raw image including ICC input profile to working space - 16bit int version
-void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
+void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
 	cmsHPROFILE in;
     DCPProfile *dcpProf;
 	
@@ -2588,7 +2589,7 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
         tty = ty;
     }
 }
-
+		
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::inverse33 (const double (*rgb_cam)[3], double (*cam_rgb)[3]) {
