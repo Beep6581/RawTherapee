@@ -19,8 +19,8 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.450 $
-   $Date: 2012/06/30 20:36:46 $
+   $Revision: 1.451 $
+   $Date: 2012/07/05 04:33:11 $
  */
 
 #define DCRAW_VERSION "9.16"
@@ -6897,6 +6897,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8898,-2498,-994,-3144,11328,2066,-760,1381,4576 } },
     { "SAMSUNG NX2", 0, 0xfff,	/* NX20, NX200, NX210 */
 	{ 6933,-2268,-753,-4921,13387,1647,-803,1641,6096 } },
+    { "SAMSUNG NX1000", 0, 0,
+	{ 6933,-2268,-753,-4921,13387,1647,-803,1641,6096 } },
     { "SAMSUNG NX", 0, 0,	/* NX5, NX10, NX11, NX100 */
 	{ 10332,-3234,-1168,-6111,14639,1520,-1352,2647,8331 } },
     { "SAMSUNG WB2000", 0, 0xfff,
@@ -6913,6 +6915,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8512,-2641,-694,-8042,15670,2526,-1821,2117,7414 } },
     { "SONY DSC-V3", 0, 0,
 	{ 7511,-2571,-692,-7894,15088,3060,-948,1111,8128 } },
+    { "SONY DSC-RX100", 192, 0,		/* DJC */
+	{ 7329,-2746,-405,-2691,9338,3354,-136,1259,5051 } },
     { "SONY DSLR-A100", 0, 0xfeb,
 	{ 9437,-2811,-774,-8405,16215,2290,-710,596,7181 } },
     { "SONY DSLR-A290", 0, 0,
@@ -6968,7 +6972,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "SONY SLT-A65", 128, 0,
 	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
     { "SONY SLT-A77", 128, 0,
-	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } }
+	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
   };
   double cam_xyz[4][3];
   char name[130];
@@ -8040,11 +8044,11 @@ konica_400z:
     raw_width = fsize/height/2;
     order = 0x4d4d;
     load_raw = &CLASS unpacked_load_raw;
-  } else if (!strncmp(model,"NX1",3)) {
+  } else if (!strcmp(make,"SAMSUNG") && raw_width == 4704) {
     height -= top_margin = 8;
     width -= 2 * (left_margin = 8);
     load_flags = 32;
-  } else if (!strncmp(model,"NX2",3)) {
+  } else if (!strcmp(make,"SAMSUNG") && raw_width == 5632) {
     order = 0x4949;
     height = 3694;
     top_margin = 2;
@@ -8312,6 +8316,8 @@ wb550:
     adobe_coeff ("SONY","DSC-R1");
     width = 3925;
     order = 0x4d4d;
+  } else if (!strcmp(make,"SONY") && raw_width == 5504) {
+    width -= 8;
   } else if (!strcmp(make,"SONY") && raw_width == 6048) {
     width -= 24;
   } else if (!strcmp(model,"DSLR-A100")) {
