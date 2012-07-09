@@ -98,6 +98,7 @@ class CurveEditorSubGroup {
 
 private:
 	Glib::ustring& curveDir;
+	Glib::ustring lastFilename;
 
 protected:
 	int valLinear;

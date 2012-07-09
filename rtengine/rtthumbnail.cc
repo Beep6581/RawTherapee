@@ -38,9 +38,6 @@
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
 
-#define MAXVAL  0xffff
-#define CLIP(a) ((a)>0?((a)<MAXVAL?(a):MAXVAL):0)
-
 namespace rtengine {
 
 Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, int deg) {
@@ -686,7 +683,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // perform color space transformation
     if (isRaw)
-        RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, camName, logDefGain );
+        RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, camName );
     else
         StdImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile);
 	

@@ -310,7 +310,7 @@ void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     t2.set ();
 }
 	
-void StdImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp) {
+void StdImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) {
     colorSpaceConversion (image, cmp, embProfile);
 }
 

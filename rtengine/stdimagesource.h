@@ -59,7 +59,8 @@ class StdImageSource : public ImageSource {
         ImageData*  getImageData () { return idata; }
         ImageMatrices* getImageMatrices () { return (ImageMatrices*)NULL; }
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
-        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp);
+
+        void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw);// RAWParams raw will not be used for non-raw files (see imagesource.h)
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 		static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 
