@@ -18,7 +18,6 @@
  */
 
 #include "hsvequalizer.h"
-#include "../rtengine/improcfun.h"
 #include "../rtengine/color.h"
 
 using namespace rtengine;
@@ -196,19 +195,19 @@ void HSVEqualizer::colorForValue (double valX, double valY) {
 			h -= 1.0f;
 		else if (h < 0.0f)
 			h += 1.0f;
-		ImProcFunctions::hsv2rgb01(h, 0.5f, 0.5f, r, g, b);
+		Color::hsv2rgb01(h, 0.5f, 0.5f, r, g, b);
 		red = double(r);
 		green = double(g);
 		blue = double(b);
 	}
 	else if (ce == sshape) {   // Saturation = f(Hue)
-		ImProcFunctions::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
+		Color::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
 		red = double(r);
 		green = double(g);
 		blue = double(b);
 	}
 	else if (ce == vshape) {   // Value = f(Hue)
-		ImProcFunctions::hsv2rgb01(float(valX), 0.5f, float(valY), r, g, b);
+		Color::hsv2rgb01(float(valX), 0.5f, float(valY), r, g, b);
 		red = double(r);
 		green = double(g);
 		blue = double(b);

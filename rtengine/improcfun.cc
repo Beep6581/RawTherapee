@@ -56,13 +56,7 @@ namespace rtengine {
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
 #define CLIP2(a) ((a)<MAXVAL ? a : MAXVAL )
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
-	
-#define u0 4.0*D50x/(D50x+15+3*D50z)
-#define v0 9.0/(D50x+15+3*D50z)
-	
-#define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
-#define kappa	903.29630 //24389.0/27.0;
-	
+
 	
 extern const Settings* settings;
 
@@ -81,7 +75,7 @@ void ImProcFunctions::initCache () {
 			cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVAL) ));
         }
         else {
-			cachef[i] = 327.68*((kappa*i/MAXVAL+16.0)/116.0);
+			cachef[i] = 327.68*((Color::kappa*i/MAXVAL+16.0)/116.0);
         }
 	}
 
@@ -212,17 +206,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
     double toxyz[3][3] = {
         {
-        	( wprof[0][0] / D50x),
-        	( wprof[0][1] / D50x),
-        	( wprof[0][2] / D50x)
+        	( wprof[0][0] / Color::D50x),
+        	( wprof[0][1] / Color::D50x),
+        	( wprof[0][2] / Color::D50x)
         },{
 			( wprof[1][0]		),
 			( wprof[1][1]		),
 			( wprof[1][2]		)
         },{
-			( wprof[2][0] / D50z),
-			( wprof[2][1] / D50z),
-			( wprof[2][2] / D50z)
+			( wprof[2][0] / Color::D50z),
+			( wprof[2][1] / Color::D50z),
+			( wprof[2][2] / Color::D50z)
         }
     };
 
@@ -412,9 +406,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			float fx = (0.002 * lab->a[i][j])/327.68 + fy;
 			float fz = fy - (0.005 * lab->b[i][j])/327.68;
 			
-			float x_ = 65535*Lab2xyz(fx)*D50x;
+			float x_ = 65535*Lab2xyz(fx)*Color::D50x;
 			float y_ = 65535*Lab2xyz(fy);
-			float z_ = 65535*Lab2xyz(fz)*D50z;
+			float z_ = 65535*Lab2xyz(fz)*Color::D50z;
 			
 			int R,G,B;
 			xyz2srgb(x_,y_,z_,R,G,B);
@@ -927,227 +921,5 @@ fclose(f);*/
 	}
 	 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	void ImProcFunctions::rgb2hsv (float r, float g, float b, float &h, float &s, float &v) {
-		
-		double var_R = r / 65535.0;
-		double var_G = g / 65535.0;
-		double var_B = b / 65535.0;
-		
-		double var_Min = min(var_R,var_G,var_B);
-		double var_Max = max(var_R,var_G,var_B);
-		double del_Max = var_Max - var_Min;
-		v = var_Max;
-		if (del_Max<0.00001 && del_Max>-0.00001) {  // no fabs, slow!
-			h = 0;
-			s = 0;
-		}
-		else {
-			s = del_Max/var_Max;
-			
-			if      ( var_R == var_Max ) h = (var_G - var_B)/del_Max; 
-			else if ( var_G == var_Max ) h = 2.0 + (var_B - var_R)/del_Max; 
-			else if ( var_B == var_Max ) h = 4.0 + (var_R - var_G)/del_Max; 
-			h /= 6.0;
-			
-			if ( h < 0 )  h += 1;
-			if ( h > 1 )  h -= 1;
-		}
-	}
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//
-	// WARNING: rtengine/color.cc have similar functions. I guess that color.cc was mistakenly committed from the denoise branch
-	//          in changeset #2493dd00b9f3. Code cleanup about those methods will have to be made when the denoise branch will be merged
-	//
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
-		
-		float h1 = h*6; // sector 0 to 5
-		int i = (int)h1;  // floor() is very slow, and h1 is always >0
-		float f = h1 - i; // fractional part of h
-		
-		float p = v * ( 1 - s );
-		float q = v * ( 1 - s * f );
-		float t = v * ( 1 - s * ( 1 - f ) );
-		
-		float r1,g1,b1;
 
-		if      (i==1)    {r1 = q;  g1 = v;  b1 = p;}
-		else if (i==2)    {r1 = p;  g1 = v;  b1 = t;}
-		else if (i==3)    {r1 = p;  g1 = q;  b1 = v;}
-		else if (i==4)    {r1 = t;  g1 = p;  b1 = v;}
-		else if (i==5)    {r1 = v;  g1 = p;  b1 = q;}
-		else /*i==(0|6)*/ {r1 = v;  g1 = t;  b1 = p;}
-		
-		r = ((r1)*65535.0);
-		g = ((g1)*65535.0);
-		b = ((b1)*65535.0);
-	}
-	
-	// Function copied for speed concerns
-	// Not exactly the same as above ; this one return a result in the [0.0 ; 1.0] range
-	void ImProcFunctions::hsv2rgb01 (float h, float s, float v, float &r, float &g, float &b) {
-
-		float h1 = h*6; // sector 0 to 5
-		int i = int(h1);
-		float f = h1 - i; // fractional part of h
-
-		float p = v * ( 1 - s );
-		float q = v * ( 1 - s * f );
-		float t = v * ( 1 - s * ( 1 - f ) );
-
-		if      (i==1)    {r = q;  g = v;  b = p;}
-		else if (i==2)    {r = p;  g = v;  b = t;}
-		else if (i==3)    {r = p;  g = q;  b = v;}
-		else if (i==4)    {r = t;  g = p;  b = v;}
-		else if (i==5)    {r = v;  g = p;  b = q;}
-		else /*(i==0|6)*/ {r = v;  g = t;  b = p;}
-	}
-
-	void ImProcFunctions::xyz2srgb (float x, float y, float z, float &r, float &g, float &b) {
-		
-		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
-		//Note that it is only at this point that we should have need of clipping color data
-		
-		/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
-		 float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
-		 float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
-		 
-		 r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
-		 g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
-		 b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
-		
-		/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
-		 g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
-		 b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
-		
-		r = ((sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z)) ;
-		g = ((sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z)) ;
-		b = ((sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z)) ;
-		
-	}
-	
-	
-	void ImProcFunctions::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]) {
-		
-		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
-		//Note that it is only at this point that we should have need of clipping color data
-		
-		/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
-		 float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
-		 float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
-		 
-		 r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
-		 g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
-		 b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
-		
-		/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
-		 g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
-		 b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
-		
-		
-		
-		r = ((rgb_xyz[0][0]*x + rgb_xyz[0][1]*y + rgb_xyz[0][2]*z)) ;
-		g = ((rgb_xyz[1][0]*x + rgb_xyz[1][1]*y + rgb_xyz[1][2]*z)) ;
-		b = ((rgb_xyz[2][0]*x + rgb_xyz[2][1]*y + rgb_xyz[2][2]*z)) ;
-		
-	}
- 	
-void ImProcFunctions::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {
-{//from Dcraw (D.Coffin)
-  int i;
-  double g[6], bnd[2]={0,0};
-
-  g[0] = pwr;
-  g[1] = ts;
-  g[2] = g[3] = g[4] = 0;
-  bnd[g[1] >= 1] = 1;
-  if (g[1] && (g[1]-1)*(g[0]-1) <= 0) {
-    for (i=0; i < 48; i++) {
-      g[2] = (bnd[0] + bnd[1])/2;
-      if (g[0]) bnd[(pow(g[2]/g[1],-g[0]) - 1)/g[0] - 1/g[2] > -1] = g[2];
-      else	bnd[g[2]/exp(1-1/g[2]) < g[1]] = g[2];
-    }
-    g[3] = g[2] / g[1];
-    if (g[0]) g[4] = g[2] * (1/g[0] - 1);
-  }
-  if (g[0]) g[5] = 1 / (g[1]*SQR(g[3])/2 - g[4]*(1 - g[3]) +
-		(1 - pow(g[3],1+g[0]))*(1 + g[4])/(1 + g[0])) - 1;
-  else      g[5] = 1 / (g[1]*SQR(g[3])/2 + 1
-		- g[2] - g[3] -	g[2]*g[3]*(log(g[3]) - 1)) - 1;
-  if (!mode--) {
-   gamma0=g[0];gamma1=g[1];gamma2=g[2];gamma3=g[3];gamma4=g[4];gamma5=g[5];
-    return;
-  }
 }
-}
-	
-	void ImProcFunctions::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z) {
-		float fy = (0.00862069 * L) + 0.137932; // (L+16)/116
-		float fx = (0.002 * a) + fy;
-		float fz = fy - (0.005 * b);
-		
-		x = 65535*f2xyz(fx)*D50x;
-		y = 65535*f2xyz(fy);
-		z = 65535*f2xyz(fz)*D50z;
-	}
-	
-	void ImProcFunctions::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b) {
-		
-		float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVAL)/3.0 )));
-		float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));
-		float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVAL)/3.0 )));
-		
-		L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
-		a = (500.0 * (fx - fy) );
-		b = (200.0 * (fy - fz) );
-		
-	}
-	
-	void ImProcFunctions::Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v) {
-		float fy = (0.00862069 * L/327.68) + 0.137932; // (L+16)/116
-		float fx = (0.002 * a/327.68) + fy;
-		float fz = fy - (0.005 * b/327.68);
-		
-		float X = 65535.0*f2xyz(fx)*D50x;
-		Y = 65535.0*f2xyz(fy);
-		float Z = 65535.0*f2xyz(fz)*D50z;
-		
-		u = 4.0*X/(X+15*Y+3*Z)-u0;
-		v = 9.0*Y/(X+15*Y+3*Z)-v0;
-		
-		/*float u0 = 4*D50x/(D50x+15+3*D50z);
-		 float v0 = 9/(D50x+15+3*D50z);
-		 u -= u0;
-		 v -= v0;*/
-		
-	}
-	
-	void ImProcFunctions::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, double wp[3][3]) {
-		
-		float u1 = u + u0;
-		float v1 = v + v0;
-		
-		float Y = Yin;
-		float X = (9*u1*Y)/(4*v1*D50x); 
-		float Z = (12 - 3*u1 - 20*v1)*Y/(4*v1*D50z);
-		
-		Color::gamutmap(X,Y,Z,wp);
-		
-		float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVAL)/3.0 )));
-		float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));
-		float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVAL)/3.0 )));
-		
-		L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
-		a = (500.0 * (fx - fy) );
-		b = (200.0 * (fy - fz) );
-		
-	}
-	
-#include "gamutbdy.cc"
-}
-
-#undef eps_max
-#undef kappa

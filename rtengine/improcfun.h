@@ -187,27 +187,6 @@ namespace rtengine {
 		void getAutoExp       (LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
 		static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);	
 		double getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap=NULL);
-
-		static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
-		static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
-		static void hsv2rgb01 (float h, float s, float v, float &r, float &g, float &b);
-		void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
-		void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]);
-		void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
-		void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
-		void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);
-		void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
-		void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
-
-		//void gamutmap(LabImage* );
-		void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
-
-		static inline float f2xyz(float f) {
-			const float epsilonExpInv3 = 6.0/29.0;
-			const float kappaInv = 27.0/24389.0;  // inverse of kappa
-
-			return (f > epsilonExpInv3) ? f*f*f : (116 * f - 16) * kappaInv;
-		}
 };
 }
 #endif
