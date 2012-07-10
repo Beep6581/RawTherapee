@@ -23,11 +23,6 @@
 #include <math.h>
 #include "LUT.h"
 
-#define D50x 0.96422
-#define D50z 0.82521
-#define u0 4.0*D50x/(D50x+15+3*D50z)
-#define v0 9.0/(D50x+15+3*D50z)
-
 namespace rtengine {
 
 class Color {
@@ -35,6 +30,9 @@ class Color {
 public:
 	const static double sRGBGamma;        // standard average gamma
     const static double sRGBGammaCurve;   // 2.4 in the curve
+    const static double eps_max, kappa;
+    const static float D50x, D50z;
+    const static double u0, v0;
 
     static LUTf cachef;
 	static LUTf gamma2curve;
@@ -50,15 +48,17 @@ public:
 	static void cleanup ();
 
 	static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
-	static void rgb2hsv (int r, int g, int b, float &h, float &s, float &v);
 	static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 	static void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
+    static void hsv2rgb01 (float h, float s, float v, float &r, float &g, float &b);
 	static void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
-	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
+	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]);
+    static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
 	static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
 	static void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
 	static void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);
 	static void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
+    static double f2xyz(double f);
 	static void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
 
 	// standard srgb gamma and its inverse

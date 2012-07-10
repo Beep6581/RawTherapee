@@ -2210,8 +2210,8 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
             double fz = fy - y + z;
             double fx = fy + x - y;
 
-			double zr = ImProcFunctions::f2xyz(fz);
-            double xr = ImProcFunctions::f2xyz(fx);
+			double zr = Color::f2xyz(fz);
+            double xr = Color::f2xyz(fx);
 
             x = xr*65535.0 ;
             y = yy;
