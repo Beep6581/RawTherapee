@@ -271,12 +271,12 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
 
                 // if point is in negative area, just the matrix, but not the LUT
                 if (newr>=0 && newg>=0 && newb>=0) {
-                ImProcFunctions::rgb2hsv(newr, newg, newb, h , s, v);
+                Color::rgb2hsv(newr, newg, newb, h , s, v);
                 h*=6.f;  // RT calculates in [0,1]
 
                 if (useRawWhite) {
                     // Retro-calculate what the point was like before RAW white came in
-                    ImProcFunctions::rgb2hsv(newr/rawWhiteFac, newg/rawWhiteFac, newb/rawWhiteFac, hs, ss, vs);
+                    Color::rgb2hsv(newr/rawWhiteFac, newg/rawWhiteFac, newb/rawWhiteFac, hs, ss, vs);
                     hs*=6.f;  // RT calculates in [0,1]
                 } else {
                     hs=h; ss=s; vs=v;
@@ -422,7 +422,7 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
                 if (h < 0.0f) h += 6.0f;
                 if (h >= 6.0f) h -= 6.0f;
                 h/=6.f;  
-                ImProcFunctions::hsv2rgb( h, s, v, newr, newg, newb);
+                Color::hsv2rgb( h, s, v, newr, newg, newb);
                 }
 
                 pImg->r[y][x] = m2Work[0][0]*newr + m2Work[0][1]*newg + m2Work[0][2]*newb;

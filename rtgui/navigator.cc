@@ -21,7 +21,10 @@
 #include "../rtengine/iccmatrices.h"
 #include "../rtengine/iccstore.h"
 #include "../rtengine/curves.h"
+#include "../rtengine/color.h"
 #include "../rtengine/rt_math.h"
+
+using namespace rtengine;
 
 Navigator::Navigator () {
 
@@ -88,11 +91,11 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 		R->set_text (Glib::ustring::compose (M("NAVIGATOR_R_VALUE"), r));
 		G->set_text (Glib::ustring::compose (M("NAVIGATOR_G_VALUE"), g));
 		B->set_text (Glib::ustring::compose (M("NAVIGATOR_B_VALUE"), b));
-		int h, s, v;
-		rgb2hsv (r, g, b, h, s, v);
-		H->set_text (Glib::ustring::compose (M("NAVIGATOR_H_VALUE"), h));
-		S->set_text (Glib::ustring::compose (M("NAVIGATOR_S_VALUE"), s));
-		V->set_text (Glib::ustring::compose (M("NAVIGATOR_V_VALUE"), v));
+		float h, s, v;
+		Color::rgb2hsv (r*0xffff/0xff, g*0xffff/0xff, b*0xffff/0xff, h, s, v);
+		H->set_text (Glib::ustring::compose (M("NAVIGATOR_H_VALUE"), (int)(h*(float)0xff)));
+		S->set_text (Glib::ustring::compose (M("NAVIGATOR_S_VALUE"), (int)(s*(float)0xff)));
+		V->set_text (Glib::ustring::compose (M("NAVIGATOR_V_VALUE"), (int)(v*(float)0xff)));
 		int LAB_a, LAB_b, LAB_l;
 		//rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
 		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);
@@ -104,67 +107,12 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 	}
 }
 
-void Navigator::rgb2hsv (int r, int g, int b, int &h, int &s, int &v) {
-
-	volatile double var_R = r / 255.0;
-	volatile double var_G = g / 255.0;
-	volatile double var_B = b / 255.0;
-
-	/*volatile double var_Min = min(var_R,var_G,var_B);
-	volatile double var_Max = max(var_R,var_G,var_B);
-	double del_Max = var_Max - var_Min;
-    double	V = (var_Max + var_Min) / 2;
-    double H, S;
-	if (fabs(del_Max)<0.0000001) {
-		H = 0;
-		S = 0;
-	}
-	else {
-		if (V < 0.5) S = del_Max / (var_Max + var_Min);
-		else         S = del_Max / (2 - var_Max - var_Min);
-
-		double del_R = ( ( ( var_Max - var_R ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
-		double del_G = ( ( ( var_Max - var_G ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
-		double del_B = ( ( ( var_Max - var_B ) / 6.0 ) + ( del_Max / 2.0 ) ) / del_Max;
-		if      ( var_R == var_Max ) H = del_B - del_G; 
-		else if ( var_G == var_Max ) H = (1.0 / 3.0) + del_R - del_B; 
-		else if ( var_B == var_Max ) H = (2.0 / 3.0) + del_G - del_R; 
-
-		if ( H < 0 )  H += 1;
-		if ( H > 1 )  H -= 1;
-	}*/
-	
-	double var_Min = rtengine::min(var_R,var_G,var_B);
-	double var_Max = rtengine::max(var_R,var_G,var_B);
-	double del_Max = var_Max - var_Min;
-	double V = var_Max;
-	double H, S;
-	if (fabs(del_Max)<0.001) {
-		H = 0;
-		S = 0;
-	}
-	else {
-		S = del_Max/var_Max;
-		
-		if      ( var_R == var_Max ) H = (var_G - var_B)/del_Max; 
-		else if ( var_G == var_Max ) H = 2.0 + (var_B - var_R)/del_Max; 
-		else if ( var_B == var_Max ) H = 4.0 + (var_R - var_G)/del_Max; 
-		H /= 6.0;
-		
-		if ( H < 0 )  H += 1;
-		if ( H > 1 )  H -= 1;
-	}
-    
-    h = (int)(H*255.0);
-    s = (int)(S*255.0);
-    v = (int)(V*255.0);
-}
 
 void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l, int &LAB_a, int &LAB_b) {
 	
 	double xyz_rgb[3][3];
-	double ep=216.0/24389.0;
-	double ka=24389.0/27.0;
+	const double ep=216.0/24389.0;
+	const double ka=24389.0/27.0;
 
 	double var_R = r / 255.0;
 	double var_G = g / 255.0;
@@ -177,15 +125,15 @@ void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l,
 // today as the gamma output can not be configured
 // it is better that the user has the gamma of the output space
 	if ( var_R > 0.04045 ) 
-		var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::CurveFactory::sRGBGammaCurve);
+		var_R = pow ( ( ( var_R + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
 	else    
 		var_R = var_R / 12.92;
 	if ( var_G > 0.04045 ) 
-		var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::CurveFactory::sRGBGammaCurve);
+		var_G = pow ( ( ( var_G + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
 	else                   
 		var_G = var_G / 12.92;
 	if ( var_B > 0.04045 ) 
-		var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::CurveFactory::sRGBGammaCurve);
+		var_B = pow ( ( ( var_B + 0.055 ) / 1.055 ), rtengine::Color::sRGBGammaCurve);
 	else    
 		var_B = var_B / 12.92;
 	} 
@@ -220,9 +168,9 @@ void Navigator::rgb2lab (Glib::ustring profile, int r, int g, int b, int &LAB_l,
 		}
 
 	double varxx,varyy,varzz;
-	double var_X = ( xyz_rgb[0][0]*var_R + xyz_rgb[0][1]*var_G + xyz_rgb[0][2]*var_B ) / D50x;
+	double var_X = ( xyz_rgb[0][0]*var_R + xyz_rgb[0][1]*var_G + xyz_rgb[0][2]*var_B ) / Color::D50x;
 	double var_Y = ( xyz_rgb[1][0]*var_R + xyz_rgb[1][1]*var_G + xyz_rgb[1][2]*var_B ) ;
-	double var_Z = ( xyz_rgb[2][0]*var_R + xyz_rgb[2][1]*var_G + xyz_rgb[2][2]*var_B ) / D50z;
+	double var_Z = ( xyz_rgb[2][0]*var_R + xyz_rgb[2][1]*var_G + xyz_rgb[2][2]*var_B ) / Color::D50z;
 
 	varxx = var_X>ep?pow (var_X, 1.0/3.0):( ka * var_X  +  16.0) / 116.0 ;
 	varyy = var_Y>ep?pow (var_Y, 1.0/3.0):( ka * var_Y  +  16.0) / 116.0 ;
