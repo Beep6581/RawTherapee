@@ -70,7 +70,6 @@ void Navigator::setInvalid (int fullWidth, int fullHeight) {
     else 
         position->set_text (M("NAVIGATOR_XY_NA"));
 
-        position->set_text (M("NAVIGATOR_XY_NA"));
 	R->set_text (M("NAVIGATOR_R_NA"));
 	G->set_text (M("NAVIGATOR_G_NA"));
 	B->set_text (M("NAVIGATOR_B_NA"));
