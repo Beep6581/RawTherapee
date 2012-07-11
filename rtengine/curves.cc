@@ -695,29 +695,5 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	
-
-LUTf CurveFactory::gammatab;
-LUTf CurveFactory::igammatab_srgb;
-LUTf CurveFactory::gammatab_srgb;
-
-void CurveFactory::init () {
-	
-	gammatab(65536,0);
-	igammatab_srgb(65536,0);
-	gammatab_srgb(65536,0);
-
-  for (int i=0; i<65536; i++)
-    gammatab_srgb[i] = (65535.0 * gamma2 (i/65535.0));
-  for (int i=0; i<65536; i++)
-    igammatab_srgb[i] = (65535.0 * igamma2 (i/65535.0));
-  for (int i=0; i<65536; i++)
-    gammatab[i] = (65535.0 * pow (i/65535.0, 0.454545));
-    
-/*    FILE* f = fopen ("c.txt", "wt");
-    for (int i=0; i<256; i++)
-        fprintf (f, "%g %g\n", i/255.0, clower (i/255.0, 2.0, 1.0));
-    fclose (f);*/
-}
 
 }
