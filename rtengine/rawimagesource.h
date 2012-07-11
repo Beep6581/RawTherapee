@@ -154,7 +154,7 @@ class RawImageSource : public ImageSource {
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
-        bool        isWBProviderReady () { return rawData != NULL; };//TODO this generates compiler warning: converting to non-pointer type 'long long int' from NULL [-Wconversion-null]
+        bool        isWBProviderReady () { return rawData; }
 
         double      getDefGain  () { return defGain; }
 
