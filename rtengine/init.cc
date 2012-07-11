@@ -21,7 +21,6 @@
 #include "dcp.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
-#include "curves.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
 #include "rtthumbnail.h"
@@ -43,7 +42,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 
     profileStore.init ();
     ProcParams::init ();
-    CurveFactory::init ();
+    Color::init();
     ImProcFunctions::initMunsell();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
@@ -57,6 +56,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 void cleanup () {
 
     ProcParams::cleanup ();
+    Color::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }

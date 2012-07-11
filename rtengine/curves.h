@@ -45,12 +45,6 @@ class CurveFactory {
 
   protected:
 
-    // look-up tables for the standard srgb gamma and its inverse (filled by init())
-    static LUTf igammatab_srgb;
-    static LUTf gammatab_srgb;
-    // look-up tables for the simple exponential gamma
-    static LUTf gammatab;
-
     // functions calculating the parameters of the contrast curve based on the desired slope at the center
     static double solve_upper (double m, double c, double deriv);
     static double solve_lower (double m, double c, double deriv);
@@ -151,9 +145,6 @@ class CurveFactory {
 	}
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    static void init ();
-    static void cleanup ();
-
     static inline double centercontrast   (double x, double b, double m);
     
     // standard srgb gamma and its inverse
@@ -171,17 +162,6 @@ class CurveFactory {
 											return (x <= start*slope ? x/slope : exp(log((x+add)/mul)*gamma) );
 										  }
 											
-    // gamma functions on [0,65535] based on look-up tables
-	static inline float    gamma_srgb       (int x) { return gammatab_srgb[x]; }
-	static inline float    gamma            (int x) { return gammatab[x]; }
-	static inline float    igamma_srgb      (int x) { return igammatab_srgb[x]; }
-	static inline float    gamma_srgb       (float x) { return gammatab_srgb[x]; }
-	static inline float    gamma            (float x) { return gammatab[x]; }
-	static inline float    igamma_srgb      (float x) { return igammatab_srgb[x]; }
-	//static inline float    gamma_srgb       (double x) { return gammatab_srgb[x]; }
-	//static inline float    gamma            (double x) { return gammatab[x]; }
-	//static inline float    igamma_srgb      (double x) { return igammatab_srgb[x]; }
-	
 	static inline float hlcurve (const float exp_scale, const float comp, const float hlrange, float level) 
 	{
 		if (comp>0.0) {

@@ -2298,29 +2298,29 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
                 if (ri->ISGREEN(i,j)) {
-                    if(i &1) idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[1]/*+black_lev[1]*/))));// green 1
+                    if(i &1) idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[1]/*+black_lev[1]*/))));// green 1
 					else 
-					idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[3]/*+black_lev[3]*/))));//green 2
+					idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[3]/*+black_lev[3]*/))));//green 2
                     histGreenRaw[idx>>8]++;
                 } else if (ri->ISRED(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[0]/*+black_lev[0]*/))));
+                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[0]/*+black_lev[0]*/))));
 					
                     histRedRaw[idx>>8]++;
                 } else if (ri->ISBLUE(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[2]/*+black_lev[2]*/))));
+                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[2]/*+black_lev[2]*/))));
 					
                     histBlueRaw[idx>>8]++;
     }
             }
         } else {
 			for (int j=start; j<3*end; j++) {
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[0])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-cblack[0])));
                 histRedRaw[idx>>8]++;
 
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j+1]-cblack[1])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j+1]-cblack[1])));
                 histGreenRaw[idx>>8]++;
 
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j+2]-cblack[2])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j+2]-cblack[2])));
                 histBlueRaw[idx>>8]++;
 			}
 		}
