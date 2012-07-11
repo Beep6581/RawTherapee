@@ -5,9 +5,6 @@
 
 #include "rtengine.h"
 
-#define D50x 0.96422
-#define D50z 0.82521
-
 namespace rtengine {
 	static const int MAXVAL = 0xffff;
 

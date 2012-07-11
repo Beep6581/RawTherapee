@@ -393,7 +393,7 @@ void Crop::fullUpdate () {
     parent->updaterThreadStart.lock ();
     if (parent->updaterRunning && parent->thread) {
 		// Do NOT reset changes here, since in a long chain of events it will lead to chroma_scale not being updated,
-		// causing ImProcFunctions::lab2rgb to return a black image on some opens
+		// causing Color::lab2rgb to return a black image on some opens
         //parent->changeSinceLast = 0;
         parent->thread->join ();
     }
