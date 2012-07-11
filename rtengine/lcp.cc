@@ -236,7 +236,7 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
     isFisheye=inCamProfiles=firstLIDone=inPerspect=inAlternateLensID=false;
     sensorFormatFactor=1;
     for (int i=0;i<MaxPersModelCount;i++) aPersModel[i]=NULL;
-    persModelCount=0;
+    persModelCount=0; *inInvalidTag=0;
 
     FILE *pFile = safe_g_fopen(fname, "rb");
 
