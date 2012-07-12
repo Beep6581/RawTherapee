@@ -402,8 +402,11 @@ int DFManager::scanBadPixelsFile( Glib::ustring filename )
 	size_t dirpos2 = filename.find_last_of ('\\');
 	if( dirpos1 == Glib::ustring::npos && dirpos2== Glib::ustring::npos )
 		dirpos1 =0;
-	else
+	else if( dirpos1 != Glib::ustring::npos && dirpos2 != Glib::ustring::npos )
 		dirpos1= (dirpos1> dirpos2 ? dirpos1: dirpos2);
+	else if( dirpos1 == Glib::ustring::npos )
+		dirpos1= dirpos2;
+
 	std::string makmodel(filename,dirpos1+1,lastdot-(dirpos1+1) );
 	std::list<badPix> bp;
 	char line[256];
