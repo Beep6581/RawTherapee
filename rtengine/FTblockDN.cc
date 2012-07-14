@@ -97,17 +97,9 @@ namespace rtengine {
 		
 		const short int imheight=src->height, imwidth=src->width;
 		
-		if (dnparams.luma==0 && dnparams.chroma==0) {//nothing to do; copy src to dst
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-			for (int i=0; i<imheight; i++) {
-				for (int j=0; j<imwidth; j++) {
-					dst->r[i][j] = src->r[i][j];
-					dst->r[i][j] = src->r[i][j];
-					dst->r[i][j] = src->r[i][j];
-				}
-			}
+		if (dnparams.luma==0 && dnparams.chroma==0) {
+            //nothing to do; copy src to dst
+            memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
 			return;
 		}
 		
@@ -170,12 +162,7 @@ namespace rtengine {
 		
 		//output buffer
 		Imagefloat * dsttmp = new Imagefloat(imwidth,imheight);
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif
-		for (int n=0; n<3*imwidth*imheight; n++) {
-			dsttmp->data[n] = 0;
-		}
+		for (int n=0; n<3*imwidth*imheight; n++) dsttmp->data[n] = 0;
 		
 		const int tilesize = 1024;
 		const int overlap = 128;
@@ -383,9 +370,6 @@ namespace rtengine {
 					
 					//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 					// now process the vblk row of blocks for noise reduction
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif	
 					for (int hblk=0; hblk<numblox_W; hblk++) {
 						
 						RGBtile_denoise (fLblox, vblk, hblk, numblox_H, numblox_W, noisevar_Ldetail );
@@ -420,10 +404,6 @@ namespace rtengine {
 				fftwf_cleanup();
 				
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//#ifdef _OPENMP
-//#pragma omp parallel for
-//#endif
-//TODO: implement using AlignedBufferMP
 				for (int i=0; i<height; i++) {
 					for (int j=0; j<width; j++) {
 						//may want to include masking threshold for large hipass data to preserve edges/detail
@@ -493,9 +473,8 @@ namespace rtengine {
 			}//end of tile row
 		}//end of tile loop
 		
-//TODO: is memcpy multithreaded - should this be replaced with the OMP-ed for loop?	
 	//copy denoised image to output
-	memcpy (dst->data, dsttmp->data, 3*imwidth*imheight*sizeof(float));
+	memcpy (dst->data, dsttmp->data, 3*dst->width*dst->height*sizeof(float));
 	
 	delete dsttmp;
 	
@@ -516,10 +495,6 @@ namespace rtengine {
 		
 		boxabsblur(fLblox+blkstart, nbrwt, 3, 3, TS, TS);//blur neighbor weights for more robust estimation	//for DCT
 
-//#ifdef _OPENMP
-//#pragma omp parallel for
-//#endif
-//TODO: implement using AlignedBufferMP
 		for (int n=0; n<TS*TS; n++) {		//for DCT
 			fLblox[blkstart+n] *= (1-expf(-SQR(nbrwt[n])/noisevar_Ldetail));
 		}//output neighbor averaged result
@@ -584,9 +559,6 @@ namespace rtengine {
 		for (int i=0; i<65536; i++) histo[i]=0;
 		
 		//calculate histogram of absolute values of HH wavelet coeffs
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif		
 		for (int i=0; i<datalen; i++) {
 			histo[MAX(0,MIN(65535,abs((int)DataList[i])))]++;
 		}
@@ -826,9 +798,7 @@ namespace rtengine {
 		int max;
 		
 		printf("\n level=%d  \n",level);
-#ifdef _OPENMP
-#pragma omp parallel for
-#endif			
+	
 		for (int dir=1; dir<4; dir++) {
 			float madL = SQR(MadMax(WavCoeffs_L[dir], max, W_L*H_L));	
 			float mada = SQR(MadMax(WavCoeffs_a[dir], max, W_ab*H_ab));
