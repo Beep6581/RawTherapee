@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <iomanip>
 #include "navigator.h"
 #include "toolpanel.h"
 #include "../rtengine/iccmatrices.h"
@@ -88,21 +89,21 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 		setInvalid (x,y);
 	else {
 		position->set_text (Glib::ustring::compose ("x = %1, y = %2", x, y));
-		R->set_text (Glib::ustring::compose (M("NAVIGATOR_R_VALUE"), r));
-		G->set_text (Glib::ustring::compose (M("NAVIGATOR_G_VALUE"), g));
-		B->set_text (Glib::ustring::compose (M("NAVIGATOR_B_VALUE"), b));
+		R->set_text (Glib::ustring::compose (M("NAVIGATOR_R_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), r*100.f/255.f) + Glib::ustring("%")));
+		G->set_text (Glib::ustring::compose (M("NAVIGATOR_G_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), g*100.f/255.f) + Glib::ustring("%")));
+		B->set_text (Glib::ustring::compose (M("NAVIGATOR_B_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), b*100.f/255.f) + Glib::ustring("%")));
 		float h, s, v;
 		Color::rgb2hsv (r*0xffff/0xff, g*0xffff/0xff, b*0xffff/0xff, h, s, v);
-		H->set_text (Glib::ustring::compose (M("NAVIGATOR_H_VALUE"), (int)(h*(float)0xff)));
-		S->set_text (Glib::ustring::compose (M("NAVIGATOR_S_VALUE"), (int)(s*(float)0xff)));
-		V->set_text (Glib::ustring::compose (M("NAVIGATOR_V_VALUE"), (int)(v*(float)0xff)));
+		H->set_text (Glib::ustring::compose (M("NAVIGATOR_H_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), h*360.f) + Glib::ustring("\xc2\xb0")));
+		S->set_text (Glib::ustring::compose (M("NAVIGATOR_S_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), s*100.f) + Glib::ustring("%")));
+		V->set_text (Glib::ustring::compose (M("NAVIGATOR_V_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), v*100.f) + Glib::ustring("%")));
 		int LAB_a, LAB_b, LAB_l;
 		//rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
-		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);
+		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);  // TODO: Really sure this function works?
 		
-		LAB_A->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_A_VALUE"), LAB_a));
-		LAB_B->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_B_VALUE"), LAB_b));
-		LAB_L->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_L_VALUE"), LAB_l));
+		LAB_A->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_A_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_a*100.f/255.f) + Glib::ustring("%")));
+		LAB_B->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_B_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_b*100.f/255.f) + Glib::ustring("%")));
+		LAB_L->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_L_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_l*100.f/255.f) + Glib::ustring("%")));
 
 	}
 }
