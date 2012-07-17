@@ -163,12 +163,11 @@ void RawImageSource::eahd_demosaic () {
       homh[ipx][j] = 0;
       homv[ipx][j] = 0;
     }
-    int sh, sv, idx, idx2;
+    int sh, sv, idx;
     for (int j=1; j<W-1; j++) {
       int dmi = 0;
       for (int x=-1; x<=1; x++) {
         idx = (i+x)%3;
-        idx2 = (i+x)%2;
         for (int y=-1; y<=1; y++) {
           // compute distance in a, b, and L
           if (dmi<4) {

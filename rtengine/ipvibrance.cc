@@ -2145,9 +2145,9 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 				fx = (0.002 * aprov1) + fy;
 				fz = fy - (0.005 * bprov1);
 
-				x_ = 65535.0 * f2xyz(fx)*Color::D50x;
-				y_ = 65535.0 * f2xyz(fy);
-				z_ = 65535.0 * f2xyz(fz)*Color::D50z;
+				x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
+				y_ = 65535.0 * Color::f2xyz(fy);
+				z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
 				Color::xyz2rgb(x_,y_,z_,R,G,B,wip);
 
 				// gamut control before saturation to put Lab values in future gamut, but not RGB
@@ -2323,9 +2323,9 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 					fxx = (0.002 * aprovn) + fyy;
 					fzz = fyy - (0.005 * bprovn);
 
-					xx_ = 65535.0 * f2xyz(fxx)*Color::D50x;
-					yy_ = 65535.0 * f2xyz(fyy);
-					zz_ = 65535.0 * f2xyz(fzz)*Color::D50z;
+					xx_ = 65535.0 * Color::f2xyz(fxx)*Color::D50x;
+					yy_ = 65535.0 * Color::f2xyz(fyy);
+					zz_ = 65535.0 * Color::f2xyz(fzz)*Color::D50z;
 					Color::xyz2rgb(xx_,yy_,zz_,RR,GG,BB,wip);
 
 					if(RR<0.0 || GG < 0.0 || BB < 0.0) {

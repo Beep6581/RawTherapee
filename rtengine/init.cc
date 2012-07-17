@@ -18,7 +18,6 @@
  */
 #include "rtengine.h"
 #include "iccstore.h"
-#include "color.h"
 #include "dcp.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
@@ -57,6 +56,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 void cleanup () {
 
     ProcParams::cleanup ();
+    Color::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }

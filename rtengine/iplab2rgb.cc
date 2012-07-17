@@ -74,9 +74,9 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 				fx = (0.002 * ra[j]) / 327.68 + fy;
 				fz = fy - (0.005 * rb[j]) / 327.68;
 				
-				x_ = f2xyz(fx)*Color::D50x;
-				y_ = f2xyz(fy);
-				z_ = f2xyz(fz)*Color::D50z;
+				x_ = Color::f2xyz(fx)*Color::D50x;
+				y_ = Color::f2xyz(fy);
+				z_ = Color::f2xyz(fz)*Color::D50z;
 
                 buffer[iy++] = (unsigned short)CLIP(x_* MAXVAL+0.5);
                 buffer[iy++] = (unsigned short)CLIP(y_* MAXVAL+0.5);
@@ -108,11 +108,11 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 				fx = (0.002 * ra[j]) / 327.68 + fy;
 				fz = fy - (0.005 * rb[j]) / 327.68;
 				
-				x_ = 65535.0 * f2xyz(fx)*Color::D50x;
-				y_ = 65535.0 * f2xyz(fy);
-				z_ = 65535.0 * f2xyz(fz)*Color::D50z;
+				x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
+				y_ = 65535.0 * Color::f2xyz(fy);
+				z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
 
-				xyz2srgb(x_,y_,z_,R,G,B);
+				Color::xyz2srgb(x_,y_,z_,R,G,B);
 				
 				/* copy RGB */
 				//int R1=((int)gamma2curve[(R)]) 
@@ -165,9 +165,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0 * f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * f2xyz(fy);
-				float z_ = 65535.0 * f2xyz(fz)*Color::D50z;
+				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
+				float y_ = 65535.0 * Color::f2xyz(fy);
+				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
 
                 buffer[iy++] = CLIP((int)(x_+0.5));
                 buffer[iy++] = CLIP((int)(y_+0.5));
@@ -205,9 +205,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0 * f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * f2xyz(fy);
-				float z_ = 65535.0 * f2xyz(fz)*Color::D50z;
+				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
+				float y_ = 65535.0 * Color::f2xyz(fy);
+				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
 
 				Color::xyz2rgb(x_,y_,z_,R,G,B,rgb_xyz);
 
@@ -249,9 +249,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0 * f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * f2xyz(fy);
-				float z_ = 65535.0 * f2xyz(fz)*Color::D50z;
+				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
+				float y_ = 65535.0 * Color::f2xyz(fy);
+				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
 
 				xa[j-cx] = CLIP((int)(x_+0.5));
 				ya[j-cx] = CLIP((int)(y_+0.5));
@@ -280,11 +280,11 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0 * f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * f2xyz(fy);
-				float z_ = 65535.0 * f2xyz(fz)*Color::D50z;
+				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
+				float y_ = 65535.0 * Color::f2xyz(fy);
+				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
 
-				xyz2srgb(x_,y_,z_,R,G,B);
+				Color::xyz2srgb(x_,y_,z_,R,G,B);
 
 				image->r[i-cy][j-cx] = (int)gamma2curve[CLIP(R)];
 				image->g[i-cy][j-cx] = (int)gamma2curve[CLIP(G)];
@@ -388,9 +388,9 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0 * f2xyz(fx)*D50x;
-				float y_ = 65535.0 * f2xyz(fy);
-				float z_ = 65535.0 * f2xyz(fz)*D50z;
+				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
+				float y_ = 65535.0 * Color::f2xyz(fy);
+				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
 
 				xa[j-cx] = CLIP((int)x_);
 				ya[j-cx] = CLIP((int)y_);
@@ -419,11 +419,11 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
 				
-				float x_ = 65535.0 * f2xyz(fx)*D50x;
-				float y_ = 65535.0 * f2xyz(fy);
-				float z_ = 65535.0 * f2xyz(fz)*D50z;
+				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
+				float y_ = 65535.0 * Color::f2xyz(fy);
+				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
 
-				xyz2srgb(x_,y_,z_,R,G,B);
+				Color::xyz2srgb(x_,y_,z_,R,G,B);
 
 				image->r[i-cy][j-cx] = (int)gamma2curve[CLIP(R)];
 				image->g[i-cy][j-cx] = (int)gamma2curve[CLIP(G)];
