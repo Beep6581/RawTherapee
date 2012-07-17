@@ -36,7 +36,7 @@ namespace rtengine {
 	
 	using namespace procparams;
 	
-	class ImProcFunctions : public Color {
+class ImProcFunctions {
 		
 		static LUTf gamma2curve;
 

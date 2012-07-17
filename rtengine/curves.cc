@@ -29,7 +29,6 @@
 #include "array2D.h"
 #include "LUT.h"
 #include "curves.h"
-#include "color.h"
 
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)

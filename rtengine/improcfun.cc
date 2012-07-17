@@ -71,7 +71,7 @@ void ImProcFunctions::initCache () {
 	gamma2curve(maxindex,0);
 
     for (int i=0; i<maxindex; i++) {
-        if (i>eps_max) {
+        if (i>Color::eps_max) {
 			cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVAL) ));
         }
         else {
@@ -327,7 +327,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 			if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 				float h,s,v;
-				rgb2hsv(r,g,b,h,s,v);
+				Color::rgb2hsv(r,g,b,h,s,v);
 				if (sat > 0.5) {
 					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-min(s,1.0f))));
 					if (s<0) s=0;
@@ -370,7 +370,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					}
 					
 				}
-				hsv2rgb(h,s,v,r,g,b);
+				Color::hsv2rgb(h,s,v,r,g,b);
 			}
 			 
             float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
@@ -479,9 +479,9 @@ void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & a
             if (params->labCurve.avoidclip) {
 				//Luv limiter
 				float Y,u,v;
-				Lab2Yuv(lnew->L[i][j],atmp,btmp,Y,u,v);
+				Color::Lab2Yuv(lnew->L[i][j],atmp,btmp,Y,u,v);
 				//Yuv2Lab includes gamut restriction map
-				Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
+				Color::Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
 				
             } else {
 				//Luv limiter only
@@ -739,6 +739,7 @@ fclose(f);*/
 			hlcomprthresh=0;
 			return;
 		}
+		
 		
 		// compute clipping points based on the original histograms (linear, without exp comp.)
 		int clipped = 0;

@@ -1,5 +1,5 @@
---- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Wed Jul 04 20:53:43 2012
-+++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Wed Jul 04 21:00:00 2012
+--- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Sun Jul 08 22:42:31 2012
++++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Sun Jul 08 22:53:12 2012
 @@ -1,5 +1,17 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -18,20 +18,7 @@
     Copyright 1997-2012 by Dave Coffin, dcoffin a cybercom o net
  
     This is a command-line ANSI C program to convert raw photos from
-@@ -17,31 +29,31 @@
-    since Revision 1.237.  All other code remains free for all uses.
- 
-    *If you have not modified dcraw.c in any way, a link to my
-    homepage qualifies as "full source code".
- 
--   $Revision: 1.450 $
--   $Date: 2012/06/30 20:36:46 $
-+   $Revision: 1.448 $
-+   $Date: 2012/06/18 19:44:18 $
-  */
- 
--#define DCRAW_VERSION "9.16"
-+#define DCRAW_VERSION "9.15"
+@@ -27,21 +39,21 @@
  
  #ifndef _GNU_SOURCE
  #define _GNU_SOURCE
@@ -1288,7 +1275,7 @@
      { "Phase One H 20", 0, 0,		/* DJC */
  	{ 1313,1855,-109,-6715,15908,808,-327,1840,6020 } },
      { "Phase One H 25", 0, 0,
-@@ -6933,26 +6542,24 @@
+@@ -6937,26 +6546,24 @@
  	{ 4950,-580,-103,-5228,12542,3029,-709,1435,7371 } },
      { "SONY DSLR-A580", 128, 0xfeb,
  	{ 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
@@ -1327,7 +1314,7 @@
      { "SONY NEX", 128, 0,	/* NEX-C3, NEX-F3 */
  	{ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
      { "SONY SLT-A33", 128, 0,
-@@ -6962,15 +6569,15 @@
+@@ -6966,15 +6573,15 @@
      { "SONY SLT-A37", 128, 0,
  	{ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
      { "SONY SLT-A55", 128, 0,
@@ -1338,7 +1325,7 @@
      { "SONY SLT-A65", 128, 0,
  	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
 -    { "SONY SLT-A77", 128, 0,
--	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } }
+-	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
 +    { "SONY SLT-A77", 128, 0,  /* RT - Colin Walker */
 +    { 5126,-830,-261,-4788,12196,2934,-948,1602,7068 } }
    };
@@ -1346,7 +1333,7 @@
    char name[130];
    int i, j;
  
-@@ -7214,17 +6821,26 @@
+@@ -7218,17 +6825,26 @@
    hlen = get4();
    fseek (ifp, 0, SEEK_SET);
    fread (head, 1, 32, ifp);
@@ -1375,7 +1362,7 @@
    } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
  	     !memcmp (head+6,"Exif",4)) {
      fseek (ifp, 4, SEEK_SET);
-@@ -7265,10 +6881,11 @@
+@@ -7269,10 +6885,11 @@
      }
      load_raw = &CLASS unpacked_load_raw;
      fseek (ifp, 100+28*(shot_select > 0), SEEK_SET);
@@ -1387,7 +1374,7 @@
      fseek (ifp, 0, SEEK_SET);
      parse_riff();
    } else if (!memcmp (head,"\0\001\0\001\0@",6)) {
-@@ -7362,11 +6979,11 @@
+@@ -7366,11 +6983,11 @@
    if (height == 2624 && width == 3936)	/* Pentax K10D and Samsung GX10 */
      { height  = 2616;   width  = 3896; }
    if (height == 3136 && width == 4864)  /* Pentax K20D and Samsung GX20 */
@@ -1400,7 +1387,7 @@
    if (width == 4736 && !strcmp(model,"K-7"))
      { height  = 3122;   width  = 4684; filters = 0x16161616; top_margin = 2; }
    if (width == 7424 && !strcmp(model,"645D"))
-@@ -7766,11 +7383,11 @@
+@@ -7770,11 +7387,11 @@
      height -= top_margin;
      width  -= left_margin;
    } else if (is_canon && raw_width == 5920) {
@@ -1413,7 +1400,7 @@
      cam_mul[0] *= 256/527.0;
      cam_mul[2] *= 256/317.0;
    } else if (!strcmp(model,"D1X")) {
-@@ -7795,11 +7412,11 @@
+@@ -7799,11 +7416,11 @@
      width -= 42;
    } else if (!strcmp(model,"D5100") ||
  	     !strcmp(model,"D7000")) {
@@ -1426,7 +1413,7 @@
      width -= 52;
      left_margin = 2;
    } else if (!strncmp(model,"D40",3) ||
-@@ -8690,198 +8307,11 @@
+@@ -8696,198 +8313,11 @@
  quit:
    cmsCloseProfile (hInProfile);
  }
@@ -1626,7 +1613,7 @@
    ushort tag, type;
    int count;
    union { char c[4]; short s[2]; int i; } val;
-@@ -8901,572 +8331,13 @@
+@@ -8907,572 +8337,13 @@
    int rat[10];
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
