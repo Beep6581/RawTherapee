@@ -48,8 +48,8 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
-				temp[row*H+col] = (float)src[row][col];
+			for (int col=0; col<W; col++) {
+				temp[row*W+col] = (float)src[row][col];
 			}
 	} else {
 		//horizontal blur
@@ -81,7 +81,7 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
+			for (int col=0; col<W; col++) {
 				dst[row][col] = temp[row*W+col];
 			}
 	} else {
@@ -127,8 +127,8 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 		
 	if (radx==0) {
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
-				temp[row*H+col] = src[row*W+col];
+			for (int col=0; col<W; col++) {
+				temp[row*W+col] = src[row*W+col];
 			}
 	} else {
 		//horizontal blur
@@ -160,7 +160,7 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
+			for (int col=0; col<W; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
 	} else {
@@ -296,8 +296,8 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif	
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
-				temp[row*H+col] = src[row*W+col];
+			for (int col=0; col<W; col++) {
+				temp[row*W+col] = src[row*W+col];
 			}
 	} else {
 		//horizontal blur
@@ -329,7 +329,7 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++){
-			for (int col=0; col<H; col++) {
+			for (int col=0; col<W; col++) {
 				tempave[row*W+col] = temp[row*W+col];
 			}
 		}
@@ -367,8 +367,8 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
-				temp[row*H+col] = fabs(src[row*W+col]-tempave[row*W+col]);
+			for (int col=0; col<W; col++) {
+				temp[row*W+col] = fabs(src[row*W+col]-tempave[row*W+col]);
 			}
 	} else {
 		//horizontal blur
@@ -402,7 +402,7 @@ template<typename T> void boxdev (T* src, T* dst, int radx, int rady, int W, int
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
+			for (int col=0; col<W; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
 	} else {
@@ -453,8 +453,8 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
-				temp[row*H+col] = SQR(src[row*W+col]);
+			for (int col=0; col<W; col++) {
+				temp[row*W+col] = SQR(src[row*W+col]);
 			}
 	} else {
 		//horizontal blur
@@ -487,7 +487,7 @@ template<class T, class A> void boxsqblur (T* src, A* dst, int radx, int rady, i
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
+			for (int col=0; col<W; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
 	} else {
@@ -535,9 +535,9 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 	if (radx==0) {
 		for (int row=0; row<H; row++) {
 			int rr = min(H-1,max(0,row+dy));
-			for (int col=0; col<H; col++) {
+			for (int col=0; col<W; col++) {
 				int cc = min(W-1,max(0,col+dx));
-				temp[row*H+col] = dy>0 ? (src[row*W+col])*(src[rr*W+cc]) : 0;
+				temp[row*W+col] = dy>0 ? (src[row*W+col])*(src[rr*W+cc]) : 0;
 			}
 		}
 	} else {
@@ -575,7 +575,7 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
+			for (int col=0; col<W; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
 	} else {
@@ -626,8 +626,8 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
-				temp[row*H+col] = fabs(src[row*W+col]);
+			for (int col=0; col<W; col++) {
+				temp[row*W+col] = fabs(src[row*W+col]);
 			}
 	} else {
 		//horizontal blur
@@ -660,7 +660,7 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 #pragma omp parallel for
 #endif
 		for (int row=0; row<H; row++) 
-			for (int col=0; col<H; col++) {
+			for (int col=0; col<W; col++) {
 				dst[row*W+col] = temp[row*W+col];
 			}
 	} else {
