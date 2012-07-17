@@ -889,6 +889,10 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 		else {
 			// With control
 			switch (event->keyval) {
+				case GDK_S:
+					saveProfile();
+					setProgressStr(M("PROGRESSBAR_PROCESSING_PROFILESAVED"));
+					return true;
 				case GDK_s:
 					saveAsPressed();
 					return true;
