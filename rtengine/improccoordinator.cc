@@ -246,7 +246,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=CROP ) {
             ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve);
+                         rCurve, gCurve, bCurve, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
         }
 
         // compute L channel histogram
