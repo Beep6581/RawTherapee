@@ -186,9 +186,15 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 }
 
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve) {
+    rgbProc (working, lab, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
+}
+
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve) {
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
+                               double expcomp, int hlcompr, int hlcomprthresh) {
 
     int h_th, s_th;
     if (shmap) {
@@ -247,9 +253,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (sCurveEnabled) sCurve = new FlatCurve(params->hsvequalizer.scurve);
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
 	
-	const float exp_scale = pow (2.0, params->toneCurve.expcomp);
-	const float comp = (max(0.0, params->toneCurve.expcomp) + 1.0)*params->toneCurve.hlcompr/100.0;
-	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(params->toneCurve.hlcomprthresh/200.0))+0.1;
+	const float exp_scale = pow (2.0, expcomp);
+	const float comp = (max(0.0, expcomp) + 1.0)*hlcompr/100.0;
+	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(hlcomprthresh/200.0))+0.1;
 	const float hlrange = 65536.0-shoulder;
 	
 	

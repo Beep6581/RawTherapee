@@ -369,7 +369,7 @@ LINUX
       liblcms2-dev libpng-dev libsigc++-2.0-dev libtiff-dev mercurial \
       zlib1g-dev
 
-    in Fedora, run:
+    In Fedora, run:
       sudo yum install gcc-c++ cmake bzip2-devel exiv2-devel expat-devel \
       fftw-devel glib2-devel glibmm24-devel gtk+-devel gtkmm24-devel \
       libjpeg-turbo-devel lcms2-devel libiptcdata-devel libpng-devel \

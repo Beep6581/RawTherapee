@@ -117,7 +117,10 @@ class ImProcFunctions {
 
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve);
+		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve);
+		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
+		                       double expcomp, int hlcompr, int hlcomprthresh);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		void chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
