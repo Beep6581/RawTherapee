@@ -138,7 +138,7 @@ void MyDiagonalCurve::draw (int handle) {
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevGraphW != graphW || prevGraphH != graphH || int(point.size()) != graphW/4)
+    if (prevGraphW != graphW || prevGraphH != graphH || int(point.size()) != graphW-2)
         interpolate ();
 
     Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;

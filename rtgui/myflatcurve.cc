@@ -96,7 +96,7 @@ void MyFlatCurve::draw () {
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevGraphW != graphW || prevGraphH != graphH || (int)point.size() != graphW/4)
+    if (prevGraphW != graphW || prevGraphH != graphH || (int)point.size() != graphW-2)
         interpolate ();
 
     double innerW = double(graphW-2);
