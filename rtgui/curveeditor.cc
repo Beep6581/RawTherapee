@@ -8,7 +8,6 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  * 
- *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
@@ -26,8 +25,6 @@
 
 #include <cstring>
 
-extern Glib::ustring argv0;
-
 DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup) {
 
     // Order set in the same order than "enum DiagonalCurveType". Shouldn't change, for compatibility reason
@@ -37,6 +34,15 @@ DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* 
     curveType->addEntry("curveType-NURBS.png",      M("CURVEEDITOR_NURBS"));		// 3 NURBS
     curveType->setSelected(DCT_Linear);
     curveType->show();
+
+    rangeLabels[0] = M("CURVEEDITOR_SHADOWS");
+    rangeLabels[1] = M("CURVEEDITOR_DARKS");
+    rangeLabels[2] = M("CURVEEDITOR_LIGHTS");
+    rangeLabels[3] = M("CURVEEDITOR_HIGHLIGHTS");
+
+    rangeMilestones[0] = 0.25;
+    rangeMilestones[1] = 0.50;
+    rangeMilestones[2] = 0.75;
 }
 
 std::vector<double> DiagonalCurveEditor::getCurve () {
@@ -54,6 +60,39 @@ std::vector<double> DiagonalCurveEditor::getCurve () {
 		curve.push_back((double)(selected));
 		return curve;
 	}
+}
+
+void DiagonalCurveEditor::setRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4) {
+    rangeLabels[0] = r1;
+    rangeLabels[1] = r2;
+    rangeLabels[2] = r3;
+    rangeLabels[3] = r4;
+}
+
+void DiagonalCurveEditor::getRangeLabels(Glib::ustring &r1, Glib::ustring &r2, Glib::ustring &r3, Glib::ustring &r4) {
+    r1 = rangeLabels[0];
+    r2 = rangeLabels[1];
+    r3 = rangeLabels[2];
+    r4 = rangeLabels[3];
+}
+
+/*
+ * Admittedly that this method is called just after the instantiation of this class, we set the shcselector's default values
+ */
+void DiagonalCurveEditor::setRangeDefaultMilestones(double m1, double m2, double m3) {
+    rangeMilestones[0] = m1;
+    rangeMilestones[1] = m2;
+    rangeMilestones[2] = m3;
+
+    paramCurveEd.at(1) = m1;
+    paramCurveEd.at(2) = m2;
+    paramCurveEd.at(3) = m3;
+}
+
+void DiagonalCurveEditor::getRangeDefaultMilestones(double &m1, double &m2, double &m3) {
+    m1 = rangeMilestones[0];
+    m2 = rangeMilestones[1];
+    m3 = rangeMilestones[2];
 }
 
 FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, bool isPeriodic) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup) {
@@ -93,6 +132,9 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 
 	bgHistValid = false;
 	selected = DCT_Linear;
+	bottomBarCP = NULL;
+	leftBarCP = NULL;
+	curveCP = NULL;
 
 	group = ceGroup;
 	subGroup = ceSubGroup;
@@ -160,4 +202,67 @@ bool CurveEditor::openIfNonlinear() {
     }
 
     return nonLinear;
+}
+
+// Handles markup tooltips
+void CurveEditor::setTooltip(Glib::ustring ttip) {
+	curveType->set_tooltip_text(ttip.empty() ?
+			Glib::ustring::compose("<b>%1</b> ", M("CURVEEDITOR_TYPE")) :
+			Glib::ustring::compose("%1\n<b>%2</b>", ttip, M("CURVEEDITOR_TYPE")));
+}
+
+void CurveEditor::setLeftBarColorProvider(ColorProvider* cp) {
+	leftBarCP = cp;
+}
+
+void CurveEditor::setBottomBarColorProvider(ColorProvider* cp) {
+	bottomBarCP = cp;
+}
+
+void CurveEditor::setLeftBarBgGradient (const std::vector<GradientMilestone> &milestones) {
+	leftBarBgGradient = milestones;
+}
+
+void CurveEditor::setBottomBarBgGradient (const std::vector<GradientMilestone> &milestones) {
+	bottomBarBgGradient = milestones;
+}
+
+void CurveEditor::setCurveColorProvider(ColorProvider* cp) {
+	curveCP = cp;
+}
+
+ColorProvider* CurveEditor::getLeftBarColorProvider() {
+	return leftBarCP;
+}
+
+ColorProvider* CurveEditor::getBottomBarColorProvider() {
+	return bottomBarCP;
+}
+
+ColorProvider* CurveEditor::getCurveColorProvider() {
+	return curveCP;
+}
+
+std::vector<GradientMilestone> CurveEditor::getBottomBarBgGradient () const {
+	return bottomBarBgGradient;
+}
+
+std::vector<GradientMilestone> CurveEditor::getLeftBarBgGradient () const {
+	return leftBarBgGradient;
+}
+
+sigc::signal<void> CurveEditor::signal_curvegraph_enter() {
+	return sig_curvegraph_enter;
+}
+
+sigc::signal<void> CurveEditor::signal_curvegraph_leave() {
+	return sig_curvegraph_leave;
+}
+
+sigc::signal<void> CurveEditor::signal_curvepoint_click() {
+	return sig_curvepoint_click;
+}
+
+sigc::signal<void> CurveEditor::signal_curvepoint_release() {
+	return sig_curvepoint_release;
 }

@@ -152,7 +152,7 @@ class RawImageSource : public ImageSource {
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
-        bool        isWBProviderReady () { return rawData != NULL; };
+        bool        isWBProviderReady () { return rawData != (float**)NULL; };
 
         double      getDefGain  () { return defGain; }
 

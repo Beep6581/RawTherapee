@@ -27,6 +27,10 @@ using namespace rtengine::procparams;
 
 ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
+  std::vector<GradientMilestone> bottomMilestones;
+  bottomMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+  bottomMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+
 //----------- Auto Levels ----------------------------------
   abox = Gtk::manage (new Gtk::HBox ());
   abox->set_border_width (2);
@@ -89,6 +93,9 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   curveEditorG->setCurveListener (this);
 
   shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
+  shape->setBottomBarBgGradient(bottomMilestones);
+  shape->setLeftBarBgGradient(bottomMilestones);
+
 
   // This will add the reset button at the end of the curveType buttons
   curveEditorG->curveListComplete();

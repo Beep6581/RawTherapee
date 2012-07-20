@@ -554,11 +554,13 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
 
     xD=x; yD=y;
 
+    /*
     if (settings->verbose) {
 		double u=4*xD/(-2*xD+12*yD+3);
 		double v=6*yD/(-2*xD+12*yD+3);
     	printf("xD=%f yD=%f u=%f v=%f\n",xD,yD,u,v);
     }
+    */
 
     double X = xD/yD;
     double Y = 1.0;

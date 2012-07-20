@@ -66,6 +66,9 @@
 #define LUTu LUT<unsigned int>
 
 #include <cstring>
+#ifndef NDEBUG
+#include <fstream>
+#endif
 
 template<typename T>
 class LUT {
@@ -165,6 +168,22 @@ public:
 		T p2 = data[idx + 1]-p1;
 		return (p1 + p2*diff);
 	}
+#ifndef NDEBUG
+	// Debug facility ; dump the content of the LUT in a file. No control of the filename is done
+	void dump(Glib::ustring fname) {
+		if (size) {
+		    Glib::ustring fname_ = fname + ".xyz"; // TopSolid'Design "plot" file format
+			std::ofstream f (fname_.c_str());
+			f << "$" << std::endl;;
+			for (unsigned int iter=0; iter<size; iter++) {
+				f << iter << ", " << data[iter] << ", 0." << std::endl;;
+			}
+			f << "$" << std::endl;;
+			f.close ();
+		}
+	}
+#endif
+
 
 	operator bool (void)
 		{

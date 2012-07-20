@@ -132,9 +132,9 @@ enum ProcEvent {
     EvHLComprThreshold=107,
     EvResizeBoundingBox=108,
     EvResizeAppliesTo=109,
-    EvLAvoidClip=110,
-    EvLSatLimiter=111,
-    EvLSatLimit=112,
+    EvLAvoidColorShift=110,
+    EvLSatLimiter=111,      // obsolete
+    EvLRSTProtection=112,
     EvDemosaicDCBIter=113,
     EvDemosaicFalseColorIter=114,
     EvDemosaicDCBEnhanced=115,
@@ -189,7 +189,10 @@ enum ProcEvent {
 	EvRGBbCurve=164,
 	EvNeutralExp=165,
 	EvLBWtoning=166,
-	NUMOFEVENTS=167
+	EvLCCCurve=167,
+	EvLCHCurve=168,
+	EvVibranceSkinTonesCurve=169,
+	NUMOFEVENTS=170
 };
 }    
 #endif    

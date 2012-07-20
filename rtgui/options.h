@@ -238,6 +238,7 @@ class Options {
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;
+    Glib::ustring lastVibranceCurvesDir;
     Glib::ustring lastProfilingReferenceDir;
 
     Options ();

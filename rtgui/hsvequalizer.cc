@@ -27,13 +27,32 @@ using namespace rtengine::procparams;
 
 HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	
+	std::vector<GradientMilestone> bottomMilestones;
+	float R, G, B;
+	// -0.1 rad < Hue < 1.6 rad
+	for (int i=0; i<7; i++) {
+		float x = float(i)*(1.0f/6.0);
+		Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+		bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+	}
+
 	curveEditorG = new CurveEditorGroup (options.lastHsvCurvesDir, M("TP_HSVEQUALIZER_CHANNEL"));
 	curveEditorG->setCurveListener (this);
-	curveEditorG->setColorProvider (this);
 
 	hshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE")));
+	hshape->setBottomBarBgGradient(bottomMilestones);
+	//hshape->setLeftBarColorProvider(this);  Not working yet
+	hshape->setCurveColorProvider(this);
+
 	sshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_SAT")));
+	sshape->setBottomBarBgGradient(bottomMilestones);
+	//sshape->setLeftBarColorProvider(this);  Not working yet
+	sshape->setCurveColorProvider(this);
+
 	vshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_VAL")));
+	vshape->setBottomBarBgGradient(bottomMilestones);
+	//vshape->setLeftBarColorProvider(this);  Not working yet
+	vshape->setCurveColorProvider(this);
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();

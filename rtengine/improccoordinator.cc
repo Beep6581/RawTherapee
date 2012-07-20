@@ -41,6 +41,7 @@ ImProcCoordinator::ImProcCoordinator ()
     chroma_acurve(65536,0);
     chroma_bcurve(65536,0);
 	satcurve(65536,0);
+//	satbgcurve(65536,0);
 
     vhist16(65536);
     lhist16(65536); lhist16Cropped(65536);
@@ -264,16 +265,19 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
  
     }
     readyphase++;
-
+		bool utili=false;
+		bool autili=false;
+		bool butili=false;
+		bool ccutili=false;
+		
     if ((todo & M_LUMACURVE) || todo==CROP) {
-
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
-                                     lumacurve, histLCurve, scale==1 ? 1 : 16);
+                                     lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
     }
 
     if (todo & M_LUMACURVE) {
-		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
-									   params.labCurve.acurve, params.labCurve.bcurve, chroma_acurve, chroma_bcurve, satcurve, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (autili, butili,ccutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve/*,params.labCurve.cbgcurve*/, chroma_acurve, chroma_bcurve, satcurve,/*satbgcurve,*/ scale==1 ? 1 : 16);
 	}
 	
 	if (todo & (M_LUMINANCE+M_COLOR) ) {
@@ -281,13 +285,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
 		ipf.EPDToneMap(nprevl,0,scale);
 
-		progress ("Applying Luminance Curve...",100*readyphase/numofphases);
+		//progress ("Applying Luminance Curve...",100*readyphase/numofphases);
 
-		ipf.luminanceCurve (nprevl, nprevl, lumacurve);
+		//ipf.luminanceCurve (nprevl, nprevl, lumacurve);
 
-		readyphase++;
+		//readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-		ipf.chrominanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*, params.labCurve.saturation*/);
+		ipf.chromiLuminanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*,satbgcurve*/, lumacurve, utili, autili, butili, ccutili);
 		//ipf.colorCurve (nprevl, nprevl);
 		ipf.vibrance(nprevl);
 		readyphase++;

@@ -18,23 +18,33 @@
  */
 
 #include "vibrance.h"
+#include "../rtengine/color.h"
+#include <iomanip>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
 
+	std::vector<GradientMilestone> milestones;
+	float R, G, B;
+	// -0.1 rad < Hue < 1.6 rad
+	Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
+	milestones.push_back( GradientMilestone(0.0, double(R), double(G), double(B)) );
+	Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
+	milestones.push_back( GradientMilestone(1.0, double(R), double(G), double(B)) );
+
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 
-	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100,100,1,50));
+	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100.,100.,1.,0.));
 	saturated->setAdjusterListener (this);
 	saturated->set_sensitive(false);
 	//if (saturated->delay < 1000) saturated->delay = 1000;
 	pack_start( *saturated, Gtk::PACK_SHRINK, 0);
 
-	pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"),-100,100,1,50));
+	pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"),-100.,100.,1.,0.));
 	pastels->setAdjusterListener (this);
 	//if (pastels->delay < 1000) pastels->delay = 1000;
 	pack_start( *pastels, Gtk::PACK_SHRINK, 0);
@@ -58,12 +68,32 @@ Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
 	pastSatTog->set_active (true);
 	pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
 
+	curveEditorGG = new CurveEditorGroup (options.lastVibranceCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"));
+	curveEditorGG->setCurveListener (this);
+
+	skinTonesCurve = static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")));
+	skinTonesCurve->setTooltip(M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP"));
+	skinTonesCurve->setBottomBarBgGradient(milestones);
+	skinTonesCurve->setLeftBarBgGradient(milestones);
+	skinTonesCurve->setRangeLabels(
+			M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2"),
+			M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4")
+	);
+	skinTonesCurve->setRangeDefaultMilestones(0.1, 0.4, 0.85);
+	curveEditorGG->curveListComplete();
+
+	pack_start (*curveEditorGG, Gtk::PACK_SHRINK, 4);
+
 	show ();
 
 	enaconn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::enabled_toggled) );
 	pskinsconn = protectSkins->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::protectskins_toggled) );
 	ashiftconn = avoidColorShift->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::avoidcolorshift_toggled) );
 	pastsattogconn = pastSatTog->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::pastsattog_toggled) );
+}
+
+Vibrance::~Vibrance () {
+	delete curveEditorGG;
 }
 
 void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
@@ -76,7 +106,8 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 		psThreshold->setEditedState       (pedited->vibrance.psthreshold ? Edited : UnEdited);
 		protectSkins->set_inconsistent    (!pedited->vibrance.protectskins);
 		avoidColorShift->set_inconsistent (!pedited->vibrance.avoidcolorshift);
-		pastSatTog->set_inconsistent   		 (!pedited->vibrance.pastsattog);
+		pastSatTog->set_inconsistent      (!pedited->vibrance.pastsattog);
+		skinTonesCurve->setUnChanged      (!pedited->vibrance.skintonescurve);
 	}
 
 	enaconn.block (true);
@@ -114,6 +145,8 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 		saturated->set_sensitive(true);
 		saturated->setValue (pp->vibrance.saturated);  // Pastels and Saturated are separate
 	}
+	skinTonesCurve->setCurve (pp->vibrance.skintonescurve);
+	skinTonesCurve->openIfNonlinear();
 
 	enableListener ();
 }
@@ -126,6 +159,7 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
 	pp->vibrance.protectskins    = protectSkins->get_active ();
 	pp->vibrance.avoidcolorshift = avoidColorShift->get_active ();
 	pp->vibrance.pastsattog      = pastSatTog->get_active ();
+	pp->vibrance.skintonescurve  = skinTonesCurve->getCurve ();
 
 	if (pedited) {
 		pedited->vibrance.enabled         = !enabled->get_inconsistent();
@@ -135,8 +169,13 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
 		pedited->vibrance.protectskins    = !protectSkins->get_inconsistent();
 		pedited->vibrance.avoidcolorshift = !avoidColorShift->get_inconsistent();
 		pedited->vibrance.pastsattog      = !pastSatTog->get_inconsistent();
+		pedited->vibrance.skintonescurve  = !skinTonesCurve->isUnChanged ();
 	}
 
+}
+void Vibrance::curveChanged () {
+
+	if (listener && enabled->get_active()) listener->panelChanged (EvVibranceSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
 }
 
 void Vibrance::enabled_toggled () {
@@ -252,8 +291,6 @@ void Vibrance::adjusterChanged (Adjuster* a, double newval) {
 		else if (a == saturated && !pastSatTog->get_active())
 			listener->panelChanged (EvVibranceSaturated, value );
 	}
-	if (pastSatTog->get_active())
-		psThreshold->queue_draw();
 }
 
 void Vibrance::adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop) {
@@ -270,6 +307,8 @@ void Vibrance::setBatchMode(bool batchMode) {
 	pastels->showEditedCB   ();
 	saturated->showEditedCB ();
 	psThreshold->showEditedCB ();
+
+	curveEditorGG->setBatchMode (batchMode);
 }
 
 void Vibrance::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited) {
@@ -293,6 +332,20 @@ void Vibrance::setAdjusterBehavior (bool pastelsadd, bool saturatedadd, bool pst
 	pastels->setAddMode (pastelsadd);
 	saturated->setAddMode (saturatedadd);
 }
+
+void Vibrance::colorForValue (double valX, double valY) {
+	CurveEditor* ce = curveEditorGG->getDisplayedCurve();
+
+	if (ce == skinTonesCurve) {         // L = f(L)
+		red   = double(valY);
+		green = double(valY);
+		blue  = double(valY);
+	}
+	else {
+		printf("Error: no curve displayed!\n");
+	}
+}
+
 
 void Vibrance::trimValues (ProcParams* pp) {
 	pastels->trimValue (pp->vibrance.pastels);

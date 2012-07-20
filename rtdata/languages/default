@@ -316,7 +316,7 @@ HISTORY_MSG_91;NR - Chrominance
 HISTORY_MSG_92;NR - Gamma
 HISTORY_MSG_93;Contrast by Detail Levels Value
 HISTORY_MSG_94;Contrast by Detail Levels
-HISTORY_MSG_95;Saturation
+HISTORY_MSG_95;Chromaticity
 HISTORY_MSG_96;'a' Curve
 HISTORY_MSG_97;'b' Curve
 HISTORY_MSG_98;Demosaicing Method
@@ -332,9 +332,9 @@ HISTORY_MSG_107;Defringing Threshold
 HISTORY_MSG_108;Highlight Compr. Threshold
 HISTORY_MSG_109;Resize Bounding Box
 HISTORY_MSG_110;Resizing applies o  
-HISTORY_MSG_111;Avoid Color Clipping
-HISTORY_MSG_112;Saturation Limiter
-HISTORY_MSG_113;Saturation Limit
+HISTORY_MSG_111;Avoid Color Shift
+HISTORY_MSG_112;--unused--
+HISTORY_MSG_113;Red and Skin Tones Protection
 HISTORY_MSG_114;DCB Iterations
 HISTORY_MSG_115;False Color Iterations
 HISTORY_MSG_116;Enhanced DCB
@@ -388,7 +388,10 @@ HISTORY_MSG_163;RGB Curves - R
 HISTORY_MSG_164;RGB Curves - G
 HISTORY_MSG_165;RGB Curves - B
 HISTORY_MSG_166;Neutral Levels
-HISTORY_MSG_167;BW Toning
+HISTORY_MSG_167;B&amp;W Toning
+HISTORY_MSG_168;'Cc' curve
+HISTORY_MSG_169;'Ch' curve
+HISTORY_MSG_170;Vibrance - Curve
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -807,6 +810,7 @@ SAVEDLG_SAVESPP;Save processing parameters with image
 SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 SAVEDLG_WARNFILENAME;File will be named
+SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
 THRESHOLDSELECTOR_B;Bottom
 THRESHOLDSELECTOR_BL;Bottom-left
 THRESHOLDSELECTOR_BR;Bottom-right
@@ -967,16 +971,32 @@ TP_ICM_SAVEREFERENCE;Save reference image for profiling
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
-TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
 TP_LABCURVE_BRIGHTNESS;Brightness
-TP_LABCURVE_BWTONING;BW Toning
-TP_LABCURVE_BWTONING_TIP;With <b>BW Toning</b> option enabled the Lab Saturation is not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves 
+TP_LABCURVE_BWTONING;B&W Toning
+TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves 
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminance Curve
-TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
+TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green pastel
+TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red pastel
+TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red saturated
+TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue saturated
+TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue pastel
+TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow pastel
+TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow saturated
+TP_LABCURVE_CURVEEDITOR_CC;CC
+TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
+TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
+TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
+TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
+TP_LABCURVE_CURVEEDITOR_CH;CH
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
 TP_LABCURVE_LABEL;Lab Adjustments
-TP_LABCURVE_SATLIMIT;Saturation limit
-TP_LABCURVE_SATURATION;Saturation
+TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
+TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LENSGEOM_AUTOCROP;    Auto Crop
 TP_LENSGEOM_FILL;Auto Fill
 TP_LENSGEOM_LABEL;Lens / Geometry
@@ -1074,6 +1094,13 @@ TP_SHARPENMICRO_LABEL;Microcontrast
 TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformity
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin tones
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the Hue
 TP_VIBRANCE_LABEL;Vibrance
 TP_VIBRANCE_PASTELS;Pastel tones
 TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
