@@ -173,6 +173,13 @@ private:
 
 };
 
+typedef enum RTOrientation {
+	RTO_Left2Right,
+	RTO_Bottom2Top,
+	RTO_Right2Left,
+	RTO_Top2Bottom
+} eRTOrientation;
+
 enum TOITypes {
 	TOI_TEXT,
 	TOI_ICON
@@ -212,5 +219,61 @@ public:
 		position = _p; r = _r; g = _g; b = _b; a = _a;
 	}
 };
+
+/**
+ * @brief Handle point coordinates
+ */
+template <class T>
+class Point {
+public:
+	T x, y;
+	Point() {
+		x = T(0);
+		y = T(0);
+	}
+
+	Point(T coordX, T coordY) {
+		x = coordX;
+		y = coordY;
+	}
+
+	void setCoords(T coordX, T coordY) {
+		x = coordX;
+		y = coordY;
+	}
+};
+
+/**
+ * @brief Handle backbuffers as automatically as possible
+ */
+class BackBuffer {
+
+protected:
+	int x, y, w, h;  // Rectangle where the colored bar has to be drawn
+	Cairo::RefPtr<Cairo::Surface> surface;
+	bool dirty;  // mean that the Surface has to be (re)allocated
+
+public:
+	BackBuffer();
+
+	// set the destination drawing rectangle; return true if the dimensions are different
+	bool setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH);
+
+	void copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rectangle=NULL);
+	void copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle=NULL);
+	void copySurface(Cairo::RefPtr<Cairo::Surface> destSurface, GdkRectangle *rectangle=NULL);
+
+	void setDirty(bool isDirty) { dirty = isDirty; if (!dirty && !surface) dirty = true; }
+	bool isDirty() { return dirty; }
+	// you have to check if the surface is created thanks to surfaceCreated before starting to draw on it
+	bool surfaceCreated() { return surface; }
+	Cairo::RefPtr<Cairo::Surface> getSurface() { return surface; }
+	void deleteSurface() { surface.clear(); dirty=true; }
+	// will let you get a Cairo::Context for Cairo drawing operations
+	Cairo::RefPtr<Cairo::Context> getContext() { return Cairo::Context::create(surface); }
+	int getWidth() { return w; }
+	int getHeight() { return h; }
+};
+
 
 #endif

@@ -166,8 +166,13 @@ void Crop::update (int todo) {
 
 		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
-		parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
-		parent->ipf.chrominanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve);
+	//	parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
+	    bool utili=false;
+	    bool autili=false;
+	    bool butili=false;
+		bool ccutili=false;
+		
+		parent->ipf.chromiLuminanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve,/*parent->satbgcurve,*/ parent->lumacurve, utili, autili, butili, ccutili);
 		//parent->ipf.colorCurve (labnCrop, labnCrop);
 		parent->ipf.vibrance (labnCrop);
 

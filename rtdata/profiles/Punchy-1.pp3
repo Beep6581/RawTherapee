@@ -1,7 +1,7 @@
 
 [Version]
 AppVersion=4.0.9
-Version=302
+Version=303
 
 [General]
 Rank=0
@@ -29,13 +29,15 @@ Blue=-10;-10;120;
 [Luminance Curve]
 Brightness=0
 Contrast=10
-Saturation=5
-AvoidColorClipping=false
-SaturationLimiter=false
-SaturationLimit=50
+Chromaticity=5
+BWtoning=false
+AvoidColorShift=true
+RedAndSkinTonesProtection=0
 LCurve=0;
 aCurve=0;
 bCurve=0;
+ccCurve=0;
+chCurve=0;
 
 [Sharpening]
 Enabled=false
@@ -57,10 +59,11 @@ DeconvIterations=30
 Enabled=false
 Pastels=50
 Saturated=50
-PSThreshold=1;75;
+PSThreshold=0;75;
 ProtectSkins=false
 AvoidColorShift=true
 PastSatTog=true
+SkinTonesCurve=0;
 
 [SharpenEdge]
 Enabled=false

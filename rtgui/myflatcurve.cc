@@ -23,9 +23,10 @@
 
 MyFlatCurve::MyFlatCurve () {
 
-    innerWidth = get_allocation().get_width() - RADIUS * 2;
-    innerHeight = get_allocation().get_height() - RADIUS * 2;
-    prevInnerHeight = innerHeight;
+    graphW = get_allocation().get_width() - RADIUS * 2;
+    graphH = get_allocation().get_height() - RADIUS * 2;
+    prevGraphW = 0;
+    prevGraphH = 0;
     lit_point = -1;
     closest_point = 0;
     buttonPressed = false;
@@ -49,18 +50,18 @@ MyFlatCurve::MyFlatCurve () {
 
 std::vector<double> MyFlatCurve::get_vector (int veclen) {
 
-	// Create the output variable
+    // Create the output variable
     std::vector<double> convertedValues;
 
     // Get the curve control points
     std::vector<double> curveDescr = getPoints ();
-    rtengine::FlatCurve* rtcurve = new rtengine::FlatCurve (curveDescr, periodic, veclen*1.5 > 5000 ? 5000 : veclen*1.5);
+    rtengine::FlatCurve* rtcurve = new rtengine::FlatCurve (curveDescr, periodic, veclen*1.2 > 5000 ? 5000 : veclen*1.2);
 
     // Create the sample values that will be converted
     std::vector<double> samples;
     samples.resize (veclen);
     for (int i = 0; i < veclen; i++)
-    	samples[i] = (double) i / (veclen - 1.0);
+        samples.at(i) = (double) i / (veclen - 1.0);
 
     // Converting the values
     rtcurve->getVal (samples, convertedValues);
@@ -72,114 +73,57 @@ std::vector<double> MyFlatCurve::get_vector (int veclen) {
 
 void MyFlatCurve::interpolate () {
 
-    prevInnerHeight = innerHeight;
-    point.resize (innerWidth+1);
-    std::vector<double> vector = get_vector (innerWidth+1);
-    for (int i = 0; i <= innerWidth; ++i)
-        point[i] = Gdk::Point ((double)RADIUS+0.5 + i, (double)RADIUS+0.5 + (double)innerHeight*(1.-vector[i]));
+    prevGraphW = graphW;
+    prevGraphH = graphH;
+    int nbPoints = graphW-2;
+    point.resize (nbPoints);
+    std::vector<double> vector = get_vector (nbPoints);
+    for (int i = 0; i < int(point.size()); ++i) {
+    	float currX = float(i)/float(nbPoints-1);
+        point.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
+    }
     upoint.clear ();
     lpoint.clear ();
-
-    /*if (curve.type==FCT_Parametric && activeParam>0) {
-        double tmp = curve.x[activeParam-1];
-        if (activeParam>=4) {
-            upoint.resize(innerWidth);
-            lpoint.resize(innerWidth);
-            curve.x[activeParam-1] = 100;
-            vector = get_vector (innerWidth);
-            for (int i = 0; i < innerWidth; ++i)
-                upoint[i] = Gdk::Point (RADIUS + i, RADIUS + innerHeight - (int)((innerHeight-1) * vector[i] + 0.5));
-            curve.x[activeParam-1] = -100;
-            vector = get_vector (innerWidth);
-            for (int i = 0; i < innerWidth; ++i)
-                lpoint[i] = Gdk::Point (RADIUS + i, RADIUS + innerHeight - (int)((innerHeight-1) * vector[i] + 0.5));
-            curve.x[activeParam-1] = tmp;
-        }
-    }*/
 }
 
 void MyFlatCurve::draw () {
-    if (!pixmap)
+	if (!isDirty()) {
+		return;
+	}
+
+    Glib::RefPtr<Gdk::Window> win = get_window();
+    if (!surfaceCreated() || !win)
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevInnerHeight != innerHeight || (int)point.size() != (innerWidth+1)) {
+    if (prevGraphW != graphW || prevGraphH != graphH || (int)point.size() != graphW/4)
         interpolate ();
 
-    }
+    double innerW = double(graphW-2);
+    double innerH = double(graphH-2);
 
     Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
 
     Glib::RefPtr<Gtk::Style> style = get_style ();
-    Cairo::RefPtr<Cairo::Context> cr = pixmap->create_cairo_context();
-
-    // bounding rectangle
-    Gdk::Color c = style->get_bg (Gtk::STATE_NORMAL);
-    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    cr->rectangle (0, 0, innerWidth+RADIUS*2+1.5, innerHeight+RADIUS*2+1.5);
-    cr->fill ();
-
-    // histogram in the background
-    /*if (bghistvalid) {
-        // find highest bin
-        unsigned int histheight = 0;
-        for (int i=0; i<256; i++)
-            if (bghist[i]>histheight)
-	            histheight = bghist[i];
-        // draw histogram
-        cr->set_line_width (1.0);
-        double stepSize = (innerWidth-1) / 256.0;
-        cr->move_to (RADIUS, innerHeight-1+RADIUS);
-        c = style->get_fg (Gtk::STATE_INSENSITIVE);
-        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-        for (int i=0; i<256; i++) {
-            double val = bghist[i] * (double)(innerHeight-2) / (double)histheight;
-            if (val>innerHeight-1)
-                val = innerHeight-1;
-      	    if (i>0)
-       	        cr->line_to (i*stepSize+RADIUS, innerHeight-1+RADIUS-val);
-    	}
-        cr->line_to (innerWidth-1+RADIUS, innerHeight-1+RADIUS);
-    	cr->fill ();
-    }*/
-
+    Cairo::RefPtr<Cairo::Context> cr = getContext();
     cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
-    // draw the grid lines:
-    cr->set_line_width (1.0);
-    cr->set_antialias (Cairo::ANTIALIAS_NONE);
-    c = style->get_dark (state);
+    // clear background
+    Gdk::Color c = style->get_bg (Gtk::STATE_NORMAL);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    cr->rectangle (0, 0, double(getWidth()), double(getHeight()));
+    cr->fill ();
 
-    double x0 = (double)RADIUS-0.5;
-    double x1 = (double)RADIUS-0.5 + (double)innerWidth + 2.;
-    double y0 = (double)RADIUS-0.5;
-    double y1 = (double)RADIUS-0.5 + (double)innerHeight + 2.;
-    for (int i = 0; i < 5; i++) {
-        cr->move_to (x0, y0);
-        cr->line_to (x0, y1);
-        cr->line_to (x1, y1);
-        cr->line_to (x1, y0);
-        cr->line_to (x0, y0);
-    }
-    /*for (int i = 0; i < 5; i++) {
-        double currX = (double)RADIUS-0.5 + (double)i*((double)innerWidth + 2.)/4.;
-        double currY = (double)RADIUS-0.5 + (double)i*((double)innerHeight + 2.)/4.;
-        cr->move_to (x0, currY);
-        cr->line_to (x1, currY);
-        cr->move_to (currX, y0);
-        cr->line_to (currX, y1);
-    }*/
-    cr->stroke ();
+    cr->set_line_width (1.0);
 
     // draw f(x)=0.5 line
-    c = style->get_fg (state);
+    c = style->get_dark (state);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     std::valarray<double> ds (1);
     ds[0] = 4;
     cr->set_dash (ds, 0);
-    cr->move_to (x0, (double)RADIUS+0.5 + (double)innerHeight/2.);
-    cr->line_to (x1, (double)RADIUS+0.5 + (double)innerHeight/2.);
+    cr->move_to (double(graphX)+1.5, double(graphY-graphH/2)-0.5);
+    cr->rel_line_to (double(graphW-3), 0.);
     cr->stroke ();
 
     cr->unset_dash ();
@@ -187,6 +131,36 @@ void MyFlatCurve::draw () {
     cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
 
     cr->set_line_width (1.0);
+
+    // draw the left colored bar
+    if (leftBar) {
+        // first the background
+        BackBuffer *bb = this;
+        leftBar->setDrawRectangle(win, 1, graphY-graphH+1, CBAR_WIDTH-2, graphH-2);
+        leftBar->expose(bb);
+
+        // now the border
+        c = style->get_dark (state);
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        cr->rectangle(0.5, graphY-graphH+0.5, CBAR_WIDTH-1, graphH-1);
+        cr->stroke();
+    }
+
+    // draw the bottom colored bar
+    if (bottomBar) {
+        // first the background
+        BackBuffer *bb = this;
+        bottomBar->setDrawRectangle(win, graphX+1, graphY+CBAR_MARGIN+1, graphW-2, CBAR_WIDTH-2);
+        bottomBar->expose(bb);
+
+        // now the border
+        c = style->get_dark (state);
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        cr->rectangle(graphX+0.5, graphY+CBAR_MARGIN+0.5, graphW-1, CBAR_WIDTH-1 );
+        cr->stroke();
+    }
+
+    cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
     // draw the color feedback of the control points
     if (colorProvider) {
@@ -200,20 +174,18 @@ void MyFlatCurve::draw () {
                     colorProvider->colorForValue(curve.x[i], 0.5);
                     cr->set_source_rgb (colorProvider->red, colorProvider->green, colorProvider->blue);
 
-                    double x = (double)RADIUS+0.5 + innerWidth*curve.x[i];
-
-                    if (i == lit_point && editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointX)) {
+                    if ( i==lit_point && (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointX)) ) {
                         cr->set_line_width (4.0);
                     }
-                    cr->move_to (x, (double)RADIUS+0.5);
-                    cr->line_to (x, (double)RADIUS+0.5 + innerHeight);
+                    cr->move_to (double(graphX)+1 + innerW*curve.x[i], double(graphY-1));
+                    cr->rel_line_to (0., -innerH);
                     cr->stroke ();
                     cr->set_line_width (1.0);
 
                     // draw the lit_point's horizontal line
                     if (i == lit_point) {
 
-                        if (area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point) || editedHandle==FCT_EditedHandle_CPointUD) {
+                        if ( (area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point)) || editedHandle==FCT_EditedHandle_CPointUD) {
 
                             if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
                                 cr->set_line_width (4.0);
@@ -222,49 +194,52 @@ void MyFlatCurve::draw () {
                             colorProvider->colorForValue(curve.x[i], curve.y[i]);
                             cr->set_source_rgb (colorProvider->red, colorProvider->green, colorProvider->blue);
 
-                            double y = (double)RADIUS+0.5 + (double)innerHeight*(1.-curve.y[lit_point]);
-                            cr->move_to (                 RADIUS, y);
-                            cr->line_to ((double)RADIUS+0.5 + (double)innerWidth, y);
+                            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y[lit_point]);
+                            cr->rel_line_to (innerW, 0.);
                             cr->stroke ();
                         }
                     }
                 }
             }
         // endif
-	    cr->set_line_width (1.0);
+        cr->set_line_width (1.0);
     }
     else {
         cr->set_source_rgb (0.5, 0.0, 0.0);
 
-        if (area==(FCT_Area_H|FCT_Area_V|FCT_Area_Point) || editedHandle==FCT_EditedHandle_CPointUD) {
-        	double position;
-
+        if ( (area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point)) || editedHandle==FCT_EditedHandle_CPointUD ) {
             // draw the lit_point's vertical line
-            if (editedHandle==(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
+            if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
                 cr->set_line_width (2.0);
             }
-            position = (double)RADIUS+0.5 + (double)innerWidth*curve.x[lit_point];
-            cr->move_to (position, (double)RADIUS+0.5);
-            cr->line_to (position, (double)RADIUS+0.5 + (double)innerHeight);
+            cr->move_to (double(graphX)+1 + innerW*curve.x[lit_point], double(graphY-1));
+            cr->rel_line_to (0., -innerH);
             cr->stroke ();
             cr->set_line_width (1.0);
 
             // draw the lit_point's horizontal line
-            if (editedHandle==(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
+            if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
                 cr->set_line_width (2.0);
             }
-            position = (double)RADIUS+0.5 + (double)innerHeight*(1.-curve.y[lit_point]);
-            cr->move_to ((double)RADIUS+0.5                     , position);
-            cr->line_to ((double)RADIUS+0.5 + (double)innerWidth, position);
+            cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y[lit_point]);
+            cr->rel_line_to (innerW, 0.);
             cr->stroke ();
             cr->set_line_width (1.0);
         }
     }
 
-    double lineMinLength = 1. / innerWidth * SQUARE * 0.9;
+    cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
+
+    // draw the graph's borders:
+    c = style->get_dark (state);
+    cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+    cr->rectangle(double(graphX)+0.5, double(graphY)-0.5, double(graphW-1), double(-graphH+1));
+    cr->stroke ();
+
+    double lineMinLength = 1. / graphW * SQUARE * 0.9;
     if (lit_point!=-1 && getHandles(lit_point) && curve.x[lit_point]!=-1.) {
-        double x = (double)RADIUS+0.5 + (double)innerWidth * curve.x[lit_point];
-        double y = (double)RADIUS+0.5 + (double)innerHeight * (1.-curve.y[lit_point]);
+        double x = double(graphX+1) + innerW*curve.x[lit_point];
+        double y = double(graphY) - innerH*curve.y[lit_point];
         double x2;
         double square;
         bool crossingTheFrame;
@@ -281,26 +256,22 @@ void MyFlatCurve::draw () {
             leftTanX += 1.0;
             crossingTheFrame = true;
         }
-        x2 = (double)RADIUS+0.5 + (double)innerWidth * leftTanX;
+        x2 = double(graphX+1) + innerW*leftTanX;
         if (curve.x[lit_point] - leftTanX > lineMinLength || crossingTheFrame) {
             // The left tangential vector reappear on the right side
             // draw the line
             cr->move_to (x, y);
             if (crossingTheFrame) {
-                cr->line_to ((double)RADIUS+0.5, y);
+                cr->line_to (double(graphX+1), y);
                 cr->stroke ();
-                cr->move_to ((double)RADIUS+0.5 + (double)innerWidth, y);
+                cr->move_to (double(graphX) + innerW, y);
             }
             cr->line_to (x2, y);
             cr->stroke ();
         }
         // draw tangential knot
         square = area == FCT_Area_LeftTan ? SQUARE*2. : SQUARE;
-        cr->move_to(x2-square, y+square);
-        cr->line_to(x2+square, y+square);
-        cr->line_to(x2+square, y-square);
-        cr->line_to(x2-square, y-square);
-        cr->line_to(x2-square, y+square);
+        cr->rectangle(x2-square, y-square, 2.*square, 2.*square);
         cr->fill();
 
         // right handle is blue
@@ -315,34 +286,31 @@ void MyFlatCurve::draw () {
             rightTanX -= 1.0;
             crossingTheFrame = true;
         }
-        x2 = (double)RADIUS+0.5 + (double)innerWidth * rightTanX;
+        x2 = double(graphX+1) +innerW*rightTanX;
         if (rightTanX - curve.x[lit_point] > lineMinLength || crossingTheFrame) {
             // The left tangential vector reappear on the right side
             // draw the line
             cr->move_to (x, y);
             if (crossingTheFrame) {
-                cr->line_to ((double)RADIUS+0.5 + (double)innerWidth, y);
+                cr->line_to (double(graphX) + innerW, y);
                 cr->stroke ();
-                cr->move_to ((double)RADIUS+0.5, y);
+                cr->move_to (double(graphX+1), y);
             }
             cr->line_to (x2, y);
             cr->stroke ();
         }
         // draw tangential knot
         square = area == FCT_Area_RightTan ? SQUARE*2. : SQUARE;
-        cr->move_to(x2-square, y+square);
-        cr->line_to(x2+square, y+square);
-        cr->line_to(x2+square, y-square);
-        cr->line_to(x2-square, y-square);
-        cr->line_to(x2-square, y+square);
+        cr->rectangle(x2-square, y-square, 2.*square, 2.*square);
         cr->fill();
     }
 
     // draw curve
+    c = style->get_fg (state);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    cr->move_to (point[0].get_x(), point[0].get_y());
+    cr->move_to (point.at(0).x, point.at(0).y);
     for (int i=1; i<(int)point.size(); i++)
-        cr->line_to (point[i].get_x(), point[i].get_y());
+        cr->line_to (double(point.at(i).x), double(point.at(i).y));
     cr->stroke ();
 
     // draw bullets
@@ -350,12 +318,12 @@ void MyFlatCurve::draw () {
         for (int i = 0; i < (int)curve.x.size(); ++i) {
             if (curve.x[i] != -1.) {
                 if (i == lit_point) {
-                	if (colorProvider) {
+                    if (colorProvider) {
                         colorProvider->colorForValue(curve.x[i], curve.y[i]);
                         cr->set_source_rgb (colorProvider->red, colorProvider->green, colorProvider->blue);
-                	}
-                	else
-                		cr->set_source_rgb (1.0, 0.0, 0.0);
+                    }
+                    else
+                        cr->set_source_rgb (1.0, 0.0, 0.0);
                 }
                 else if (i == snapToElmt) {
                     cr->set_source_rgb (1.0, 0.0, 0.0);
@@ -364,8 +332,9 @@ void MyFlatCurve::draw () {
                     cr->set_source_rgb (0.0, 0.5, 0.0);
                 else
                     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-                double x = (double)RADIUS+0.5 + (double)innerWidth * curve.x[i];    // project (curve.x[i], 0, 1, innerWidth);
-                double y = (double)RADIUS+0.5 + (double)innerHeight * (1.-curve.y[i]); // project (curve.y[i], 0, 1, innerHeight);
+
+                double x = double(graphX+1) + innerW * curve.x[i]; // project (curve.x[i], 0, 1, graphW);
+                double y = double(graphY-1) - innerH * curve.y[i]; // project (curve.y[i], 0, 1, graphH);
 
                 cr->arc (x, y, (double)RADIUS, 0, 2*M_PI);
                 cr->fill ();
@@ -375,47 +344,32 @@ void MyFlatCurve::draw () {
 
     // draw the left and right tangent handles
     if (tanHandlesDisplayed) {
-    	double top, bottom, left, right;
-    	double halfSquareSizeX, halfSquareSizeY;
+        double halfSquareSizeX = minDistanceX/2.;
+        double halfSquareSizeY = minDistanceY/2.;
 
-    	// LEFT handle
-    	halfSquareSizeX = minDistanceX/2.;
-    	halfSquareSizeY = minDistanceY/2.;
-    	//halfSquareSizeX = area == FCT_Area_LeftTan ? minDistanceX : minDistanceX/2.;
-    	//halfSquareSizeY = area == FCT_Area_LeftTan ? minDistanceY : minDistanceY/2.;
-		top    = leftTanHandle.centerY + halfSquareSizeY;
-		bottom = leftTanHandle.centerY - halfSquareSizeY;
-		left   = leftTanHandle.centerX - halfSquareSizeX;
-		right  = leftTanHandle.centerX + halfSquareSizeX;
+        // LEFT handle
 
-		// yellow
+        // yellow
         cr->set_source_rgb (1.0, 1.0, 0.0);
-        cr->move_to((double)RADIUS+0.5 + (double)innerWidth * left,  (double)RADIUS+0.5 + (double)innerHeight * (1.-top));
-        cr->line_to((double)RADIUS+0.5 + (double)innerWidth * right, (double)RADIUS+0.5 + (double)innerHeight * (1.-top));
-        cr->line_to((double)RADIUS+0.5 + (double)innerWidth * right, (double)RADIUS+0.5 + (double)innerHeight * (1.-bottom));
-        cr->line_to((double)RADIUS+0.5 + (double)innerWidth * left,  (double)RADIUS+0.5 + (double)innerHeight * (1.-bottom));
-        cr->line_to((double)RADIUS+0.5 + (double)innerWidth * left,  (double)RADIUS+0.5 + (double)innerHeight * (1.-top));
+        cr->rectangle(double(graphX+1) + innerW*(leftTanHandle.centerX-halfSquareSizeX),
+                      double(graphY-1) - innerH*(leftTanHandle.centerY+halfSquareSizeY),
+                      innerW*minDistanceX,
+                      innerW*minDistanceY);
         cr->fill();
 
         // RIGHT handle
-    	//halfSquareSizeX = area == FCT_Area_RightTan ? minDistanceX : minDistanceX/2.;
-    	//halfSquareSizeY = area == FCT_Area_RightTan ? minDistanceY : minDistanceY/2.;
-		top    = rightTanHandle.centerY + halfSquareSizeY;
-		bottom = rightTanHandle.centerY - halfSquareSizeY;
-		left   = rightTanHandle.centerX - halfSquareSizeX;
-		right  = rightTanHandle.centerX + halfSquareSizeX;
 
         // blue
         cr->set_source_rgb (0.0, 0.0, 1.0);
-        cr->move_to((double)RADIUS+0.5 + (double)innerWidth * left,  (double)RADIUS+0.5 + (double)innerHeight * (1.-top));
-        cr->line_to((double)RADIUS+0.5 + (double)innerWidth * right, (double)RADIUS+0.5 + (double)innerHeight * (1.-top));
-        cr->line_to((double)RADIUS+0.5 + (double)innerWidth * right, (double)RADIUS+0.5 + (double)innerHeight * (1.-bottom));
-        cr->line_to((double)RADIUS+0.5 + (double)innerWidth * left,  (double)RADIUS+0.5 + (double)innerHeight * (1.-bottom));
-        cr->line_to((double)RADIUS+0.5 + (double)innerWidth * left,  (double)RADIUS+0.5 + (double)innerHeight * (1.-top));
+        cr->rectangle(double(graphX+1) + innerW*(rightTanHandle.centerX-halfSquareSizeX),
+                      double(graphY-1) - innerH*(rightTanHandle.centerY+halfSquareSizeY),
+                      innerW*minDistanceX,
+                      innerW*minDistanceY);
         cr->fill();
     }
 
-    get_window()->draw_drawable (style->get_fg_gc (state), pixmap, 0, 0, 0, 0, innerWidth + RADIUS * 2 + 1, innerHeight + RADIUS * 2 + 1);
+    setDirty(false);
+	queue_draw();
 }
 
 /*
@@ -424,46 +378,28 @@ void MyFlatCurve::draw () {
 bool MyFlatCurve::getHandles(int n) {
 	int N = curve.x.size();
 	double prevX, nextX;
-	double prevY, nextY;
-	double prevTan, nextTan;
-	double x, y, leftTan, rightTan;
+	double x, leftTan, rightTan;
 
 	if (n == -1) return false;
 
 	x = curve.x[n];
-	y = curve.y[n];
 	leftTan = curve.leftTangent[n];
 	rightTan = curve.rightTangent[n];
 
 	if (!n) {
 		// first point, the left handle is then computed with the last point's right handle
 		prevX = curve.x[N-1]-1.0;
-		prevY = curve.y[N-1];
-		prevTan = curve.rightTangent[N-1];
-
 		nextX = curve.x[n+1];
-		nextY = curve.y[n+1];
-		nextTan = curve.leftTangent[n+1];
 	}
 	else if (n == N-1) {
 		// last point, the right handle is then computed with the first point's left handle
 		prevX = curve.x[n-1];
-		prevY = curve.y[n-1];
-		prevTan = curve.rightTangent[n-1];
-
 		nextX = curve.x[0]+1.0;
-		nextY = curve.y[0];
-		nextTan = curve.leftTangent[0];
 	}
 	else {
 		// last point, the right handle is then computed with the first point's left handle
 		prevX = curve.x[n-1];
-		prevY = curve.y[n-1];
-		prevTan = curve.rightTangent[n-1];
-
 		nextX = curve.x[n+1];
-		nextY = curve.y[n+1];
-		nextTan = curve.leftTangent[n+1];
 	}
 
 	if (leftTan == 0.0) leftTanX = x;
@@ -490,42 +426,42 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 	bool retval = false;
 	int num = (int)curve.x.size();
 
-	/* innerWidth and innerHeight are the size of the graph */
-	innerWidth = get_allocation().get_width() - 2*RADIUS - 1;
-	innerHeight = get_allocation().get_height() - 2*RADIUS - 1;
+	/* graphW and graphH are the size of the graph */
+	calcDimensions();
 
-	minDistanceX = (double)(MIN_DISTANCE) / (double)innerWidth;
-	minDistanceY = (double)(MIN_DISTANCE) / (double)innerHeight;
+	minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
+	minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
 
-	if ((innerWidth < 0) || (innerHeight < 0))
+	if ((graphW < 0) || (graphH < 0))
 		return false;
 
 	switch (event->type) {
 	case Gdk::CONFIGURE: {
 		// Happen when the the window is resized
 		if (sized & (RS_Pending | RS_Force)) {
-			int size = get_allocation().get_width();
-			set_size_request(-1, size);
+			set_size_request(-1, calcDimensions());
 			sized = RS_Done;
 		}
-		if (pixmap)
-			pixmap.clear ();
 		retval = true;
 		break;
 	}
 	case Gdk::EXPOSE:
+	{
+		Glib::RefPtr<Gdk::Window> win = get_window();
 		if (sized & (RS_Pending | RS_Force)) {
-			int size = get_allocation().get_width();
-			set_size_request(-1, size);
+			set_size_request(-1, calcDimensions());
 		}
 		sized = RS_Pending;
-		if (!pixmap) {
-			pixmap = Gdk::Pixmap::create (get_window(), get_allocation().get_width(),  get_allocation().get_height());
+		// setDrawRectangle will allocate the backbuffer Surface
+		if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height()))
 			interpolate ();
-		}
 		draw ();
-		retval = true;
+		GdkRectangle *rectangle = &(event->expose.area);
+	   	copySurface(win, rectangle);
+
+	   	retval = true;
 		break;
+	}
 
 	case Gdk::BUTTON_PRESS:
 		//if (curve.type!=FCT_Parametric) {
@@ -569,6 +505,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					curve.rightTangent[closest_point] = 0.35;
 
 					interpolate ();
+					setDirty(true);
 					draw ();
 					notifyListener ();
 
@@ -698,8 +635,10 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					break;
 				}
 
-				if ((lit_point != previous_lit_point) || (prevArea != area))
+				if ((lit_point != previous_lit_point) || (prevArea != area)) {
+					setDirty(true);
 					draw ();
+				}
 				retval = true;
 				//notifyListener ();
 			}
@@ -741,7 +680,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 			case (FCT_EditedHandle_None): {
 
-				if ((lit_point != -1 && previous_lit_point != lit_point) && area & (FCT_Area_V|FCT_Area_Point)) {
+				if ((lit_point != -1 && previous_lit_point != lit_point) && (area&(FCT_Area_V|FCT_Area_Point))) {
 
 					bool sameSide = false;
 
@@ -821,8 +760,10 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					break;
 				}
 
-				if ((lit_point != previous_lit_point) || (prevArea != area))
+				if ((lit_point != previous_lit_point) || (prevArea != area)) {
+					setDirty(true);
 					draw ();
+				}
 				break;
 			}
 
@@ -856,6 +797,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 				if (curve.leftTangent[lit_point] != prevValue) {
 					interpolate ();
+					setDirty(true);
 					draw ();
 					notifyListener ();
 				}
@@ -880,6 +822,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 				if (curve.rightTangent[lit_point] != prevValue) {
 					interpolate ();
+					setDirty(true);
 					draw ();
 					notifyListener ();
 				}
@@ -904,6 +847,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 			new_type = CSArrow;
 			lit_point = -1;
 			tanHandlesDisplayed = false;
+			setDirty(true);
 			draw ();
 		}
 		retval = true;
@@ -1089,6 +1033,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 	if (curve.x[lit_point] != prevPosX || curve.y[lit_point] != prevPosY) {
 		// we recompute the curve only if we have to
 		interpolate ();
+		setDirty(true);
 		draw ();
 		notifyListener ();
 	}
@@ -1098,8 +1043,8 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 void MyFlatCurve::getCursorPosition(GdkEvent* event) {
 	int tx, ty;
 	int prevCursorX, prevCursorY;
-	double incrementX = 1. / (double)innerWidth;
-	double incrementY = 1. / (double)innerHeight;
+	double incrementX = 1. / double(graphW);
+	double incrementY = 1. / double(graphH);
 
 	switch (event->type) {
 	case (Gdk::MOTION_NOTIFY) :
@@ -1127,33 +1072,33 @@ void MyFlatCurve::getCursorPosition(GdkEvent* event) {
 	if (editedHandle != FCT_EditedHandle_None) {
 		prevCursorX = cursorX;
 		prevCursorY = cursorY;
-    }
-    cursorX = tx - RADIUS;
-    cursorY = innerHeight - (ty - RADIUS);
+	}
+	cursorX = tx - graphX;
+	cursorY = graphY - ty;
 
-    preciseCursorX = cursorX * incrementX;
-    preciseCursorY = cursorY * incrementY;
+	preciseCursorX = cursorX * incrementX;
+	preciseCursorY = cursorY * incrementY;
 
-    snapTo = false;
+	snapTo = false;
 
-    // update deltaX/Y if the user drags a point
-    if (editedHandle != FCT_EditedHandle_None) {
-    	// set the dragging factor
-    	int control_key = mod_type & GDK_CONTROL_MASK;
-    	int shift_key = mod_type & GDK_SHIFT_MASK;
+	// update deltaX/Y if the user drags a point
+	if (editedHandle != FCT_EditedHandle_None) {
+		// set the dragging factor
+		int control_key = mod_type & GDK_CONTROL_MASK;
+		int shift_key = mod_type & GDK_SHIFT_MASK;
 
-    	// the increment get smaller if modifier key are used, and "snap to" may be enabled
-    	if (control_key) { incrementX *= 0.05; incrementY *= 0.05; }
-    	if (shift_key)   { snapTo = true; }
+		// the increment get smaller if modifier key are used, and "snap to" may be enabled
+		if (control_key) { incrementX *= 0.05; incrementY *= 0.05; }
+		if (shift_key)   { snapTo = true; }
 
-    	deltaX = (double)(cursorX - prevCursorX) * incrementX;
-    	deltaY = (double)(cursorY - prevCursorY) * incrementY;
-    }
-    // otherwise set the position of the new point (modifier keys has no effect here)
-    else {
+		deltaX = (double)(cursorX - prevCursorX) * incrementX;
+		deltaY = (double)(cursorY - prevCursorY) * incrementY;
+	}
+	// otherwise set the position of the new point (modifier keys has no effect here)
+	else {
 		clampedX = CLAMP (preciseCursorX, 0., 1.); // X position of the pointer from the origin of the graph
 		clampedY = CLAMP (preciseCursorY, 0., 1.); // Y position of the pointer from the origin of the graph
-    }
+	}
 
 }
 
@@ -1235,7 +1180,7 @@ std::vector<double> MyFlatCurve::getPoints () {
         }
     }
     else {*/
-    	// the first value gives the type of the curve
+        // the first value gives the type of the curve
         if (curve.type==FCT_Linear)
             result.push_back ((double)(FCT_Linear));
         else if (curve.type==FCT_MinMaxCPoints)
@@ -1269,47 +1214,47 @@ void MyFlatCurve::setPoints (const std::vector<double>& p) {
             curve.rightTangent.push_back (p[ix++]);
         }
     }
-    pixmap.clear ();
+    setDirty(true);
     queue_draw ();
 }
 
 void MyFlatCurve::setType (FlatCurveType t) {
 
     curve.type = t;
-    pixmap.clear ();
+    setDirty(true);
 }
 
 void MyFlatCurve::reset() {
-	innerWidth = get_allocation().get_width() - RADIUS * 2;
-	innerHeight = get_allocation().get_height() - RADIUS * 2;
+    calcDimensions();
 
-	switch (curve.type) {
-	case  FCT_MinMaxCPoints :
-		defaultCurve();
-	    lit_point = -1;
+    switch (curve.type) {
+    case  FCT_MinMaxCPoints :
+        defaultCurve();
+        lit_point = -1;
         interpolate ();
-		break;
-	//case Parametric :
-		// Nothing to do (?)
-	default:
-		break;
-	}
-	draw();
+        break;
+    //case Parametric :
+        // Nothing to do (?)
+    default:
+        break;
+    }
+	setDirty(true);
+    draw();
 }
 
 void MyFlatCurve::defaultCurve () {
 
-	curve.x.clear();
-	curve.y.clear();
+    curve.x.clear();
+    curve.y.clear();
     curve.leftTangent.clear();
     curve.rightTangent.clear();
 
     // Point for RGBCMY colors
     for (int i=0; i<6; i++) {
-		curve.x.push_back((1./6.)*i);
-		curve.y.push_back(0.5);
-		curve.leftTangent.push_back(0.35);
-		curve.rightTangent.push_back(0.35);
+        curve.x.push_back((1./6.)*i);
+        curve.y.push_back(0.5);
+        curve.leftTangent.push_back(0.35);
+        curve.rightTangent.push_back(0.35);
     }
 
 }

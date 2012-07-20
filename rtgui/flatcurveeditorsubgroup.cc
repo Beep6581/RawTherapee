@@ -37,19 +37,19 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	parent = prt;
 
 	// ControlPoints curve
-	CPointsCurveBox = new Gtk::HBox ();
+	CPointsCurveBox = new Gtk::VBox ();
 	CPointsCurveBox->set_spacing(4);
 	CPointsCurve = Gtk::manage (new MyFlatCurve ());
-	//CPointsCurve->set_size_request (GRAPH_SIZE+2*RADIUS+1, GRAPH_SIZE+2*RADIUS+1);
+	CPointsCurve->set_size_request (GRAPH_SIZE+2*RADIUS+1, GRAPH_SIZE+2*RADIUS+1);
 	CPointsCurve->setType (FCT_MinMaxCPoints);
 	CPointsCurveBox->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
-	Gtk::VBox* CPointsbbox = Gtk::manage (new Gtk::VBox ());
+	Gtk::HBox* CPointsbbox = Gtk::manage (new Gtk::HBox ());
 	CPointsbbox->set_spacing(4);
 	saveCPoints = Gtk::manage (new Gtk::Button ());
-	saveCPoints->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-save"), Gtk::ICON_SIZE_BUTTON)));
+	saveCPoints->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
 	loadCPoints = Gtk::manage (new Gtk::Button ());
-	loadCPoints->add (*Gtk::manage (new Gtk::Image (Gtk::StockID("gtk-open"), Gtk::ICON_SIZE_BUTTON)));
+	loadCPoints->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 
 	CPointsbbox->pack_end (*saveCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_end (*loadCPoints, Gtk::PACK_SHRINK, 0);
@@ -97,10 +97,64 @@ void FlatCurveEditorSubGroup::switchGUI() {
 		// Initializing GUI values + repacking the appropriated widget
 		//dCurve->typeconn.block(true);
 
+		// first we update the colored bar
+
+		ColorProvider *barColorProvider = dCurve->getLeftBarColorProvider();
+		std::vector<GradientMilestone>  bgGradient = dCurve->getLeftBarBgGradient();
+		if (barColorProvider == NULL && bgGradient.size() == 0) {
+			// dCurve has no left colored bar, so we delete the object
+			if (leftBar) {
+				delete leftBar;
+				leftBar = NULL;
+			}
+		}
+		else {
+			// dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
+			if (!leftBar) {
+				leftBar = new ColoredBar(RTO_Bottom2Top);
+			}
+			if (barColorProvider) {
+				bgGradient.clear();
+				leftBar->setColorProvider(barColorProvider);
+				leftBar->setBgGradient (bgGradient);
+			}
+			else {
+				leftBar->setColorProvider(NULL);
+				leftBar->setBgGradient (bgGradient);
+			}
+		}
+
+		barColorProvider = dCurve->getBottomBarColorProvider();
+		bgGradient = dCurve->getBottomBarBgGradient();
+		if (barColorProvider == NULL && bgGradient.size() == 0) {
+			// dCurve has no left colored bar, so we delete the object
+			if (bottomBar) {
+				delete bottomBar;
+				bottomBar = NULL;
+			}
+		}
+		else {
+			// dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
+			if (!bottomBar) {
+				bottomBar = new ColoredBar(RTO_Left2Right);
+			}
+			if (barColorProvider) {
+				bgGradient.clear();
+				bottomBar->setColorProvider(barColorProvider);
+				bottomBar->setBgGradient (bgGradient);
+			}
+			else {
+				bottomBar->setColorProvider(NULL);
+				bottomBar->setBgGradient (bgGradient);
+			}
+		}
+
 		switch((FlatCurveType)(dCurve->curveType->getSelected())) {
 		case (FCT_MinMaxCPoints):
 			CPointsCurve->setPeriodicity(dCurve->periodic);		// Setting Periodicity before setting points
 			CPointsCurve->setPoints (dCurve->controlPointsCurveEd);
+			CPointsCurve->setColorProvider(dCurve->getCurveColorProvider());
+			CPointsCurve->setColoredBar(leftBar, bottomBar);
 			parent->pack_start (*CPointsCurveBox);
 			CPointsCurveBox->check_resize();
 			CPointsCurve->forceResize();
