@@ -25,6 +25,25 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     jpegqual = new Adjuster (M("SAVEDLG_JPEGQUAL"), 0, 100, 1, 100);
     jpegqual->setAdjusterListener (this);
     jpegqual->show ();
+    
+    jpegSubSampBox = Gtk::manage (new Gtk::HBox ());
+
+    jpegSubSampHead=Gtk::manage (new Gtk::Label (M("SAVEDLG_SUBSAMP") + Glib::ustring(":")) );
+    jpegSubSampHead->show ();
+    jpegSubSampBox->pack_start (*jpegSubSampHead, Gtk::PACK_SHRINK, 4);
+
+    jpegSubSamp = Gtk::manage (new MyComboBoxText ());
+    jpegSubSamp->append_text (M("SAVEDLG_SUBSAMP_1"));
+    jpegSubSamp->append_text (M("SAVEDLG_SUBSAMP_2"));
+    jpegSubSamp->append_text (M("SAVEDLG_SUBSAMP_3"));
+    jpegSubSamp->set_tooltip_text (M("SAVEDLG_SUBSAMP_TOOLTIP"));
+    jpegSubSamp->set_active (2);
+    jpegSubSamp->signal_changed().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged) );
+    jpegSubSamp->show ();
+
+    jpegSubSampBox->pack_end (*jpegSubSamp);
+    jpegSubSampBox->show ();
+
     pngcompr = new Adjuster (M("SAVEDLG_PNGCOMPR"), 0, 6, 1, 6);
     pngcompr->setAdjusterListener (this);
     pngcompr->show ();
@@ -49,6 +68,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
 
     formatopts = Gtk::manage (new Gtk::VBox ());
     formatopts->pack_start (*jpegqual, Gtk::PACK_SHRINK, 4);
+    formatopts->pack_start (*jpegSubSampBox, Gtk::PACK_SHRINK, 4);
     pack_start (*formatopts, Gtk::PACK_SHRINK, 4);
     
     savespp = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_SAVESPP")));
@@ -87,6 +107,8 @@ void SaveFormatPanel::init (SaveFormat &sf) {
     else if (sf.format=="tif" && sf.tiffBits==8)
         format->set_active (1);
        
+    jpegSubSamp->set_active (sf.jpegSubSamp-1);
+       
     pngcompr->setValue (sf.pngCompression);
     jpegqual->setValue (sf.jpegQuality);
     savespp->set_active (sf.saveParams);
@@ -110,6 +132,7 @@ SaveFormat SaveFormatPanel::getFormat () {
         sf.tiffBits = 8;
     sf.pngCompression   = (int) pngcompr->getValue ();
     sf.jpegQuality      = (int) jpegqual->getValue ();
+    sf.jpegSubSamp      = jpegSubSamp->get_active_row_number()+1;
     sf.tiffUncompressed = tiffuncompressed->get_active();
     sf.saveParams       = savespp->get_active ();
     return sf;
@@ -117,9 +140,10 @@ SaveFormat SaveFormatPanel::getFormat () {
         
 void SaveFormatPanel::formatChanged () {
 
-    if (oformat==0)
+    if (oformat==0) {
         removeIfThere (formatopts, jpegqual);
-    else if (oformat==3 || oformat==4)
+        removeIfThere (formatopts, jpegSubSampBox);
+    } else if (oformat==3 || oformat==4)
         removeIfThere (formatopts, pngcompr);
     else if (oformat==1 || oformat==2)
 				removeIfThere (formatopts, tiffuncompressed);
@@ -129,9 +153,10 @@ void SaveFormatPanel::formatChanged () {
         return;
         
     Glib::ustring fr = fstr[act];
-    if (fr=="jpg") 
+    if (fr=="jpg") {
         formatopts->pack_start (*jpegqual, Gtk::PACK_SHRINK,4);
-    else if (fr=="png") 
+        formatopts->pack_start (*jpegSubSampBox, Gtk::PACK_SHRINK,4);
+    } else if (fr=="png") 
         formatopts->pack_start (*pngcompr, Gtk::PACK_SHRINK,4);
 		else if (fr=="tif") 
         formatopts->pack_start (*tiffuncompressed, Gtk::PACK_SHRINK,4);

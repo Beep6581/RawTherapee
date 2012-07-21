@@ -41,6 +41,7 @@ class SaveFormat {
         int pngBits;
         int pngCompression;
         int jpegQuality;
+        int jpegSubSamp;  // 1=best compression, 3=best quality
         int tiffBits;
         bool tiffUncompressed;
         bool saveParams;

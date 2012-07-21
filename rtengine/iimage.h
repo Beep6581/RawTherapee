@@ -56,7 +56,7 @@ namespace rtengine {
           * @param fname is the name of the file 
           * @param quality is the quality of the jpeg (0...100), set it to -1 to use default
             @return the error code, 0 if none */
-            virtual int saveAsJPEG (Glib::ustring fname, int quality = 100)=0;
+            virtual int saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3 )=0;
         /** Saves the image to file in a tif format.
           * @param fname is the name of the file 
           * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
