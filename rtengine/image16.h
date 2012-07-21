@@ -80,7 +80,7 @@ class Image16 : public ImageIO, public IImage16 {
         virtual int getBitsPerPixel () { return 16; }
         virtual int saveToFile (Glib::ustring fname) { return save (fname); }
         virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) { return savePNG (fname, compression, bps); }
-        virtual int saveAsJPEG (Glib::ustring fname, int quality = 100) { return saveJPEG (fname, quality); }
+        virtual int saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3) { return saveJPEG (fname, quality, subSamp); }
         virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false) { return saveTIFF (fname, bps, uncompressed); }
         virtual void setSaveProgressListener (ProgressListener* pl) { return setProgressListener (pl); } 
         virtual void free () { delete this; }
