@@ -63,9 +63,6 @@ void Crop::update (int todo) {
 
     ProcParams& params = parent->params;
 
-
-    parent->ipf.setScale (skip);
-
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
     int wx, wy, ww, wh, ws;
     bool overrideWindow = false;
@@ -81,6 +78,9 @@ void Crop::update (int todo) {
     // it something has been reallocated, all processing steps have to be performed
     if (needsinitupdate || (todo & M_HIGHQUAL))
         todo = ALL;
+
+    // set improcfuncions' scale now that skip has been updated
+    parent->ipf.setScale (skip);
 
     baseCrop = origCrop;
 
