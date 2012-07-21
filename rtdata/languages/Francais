@@ -806,6 +806,11 @@ SAVEDLG_PUTTOQUEUETAIL;Placer au fin de la file de traitement
 SAVEDLG_PUTTOQUEUE;Placer dans la file de traitement
 SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
+SAVEDLG_SUBSAMP;Sous-échantillonnage
+SAVEDLG_SUBSAMP_1;Meilleure compression
+SAVEDLG_SUBSAMP_2;Équilibré
+SAVEDLG_SUBSAMP_3;Meilleure qualité
+SAVEDLG_SUBSAMP_TOOLTIP;Compression: 4:1:1\nÉquilibré: 4:2:2\nQualité: 4:4:4
 SAVEDLG_TIFFFILTER;Fichiers TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
