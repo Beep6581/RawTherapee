@@ -38,7 +38,10 @@ class SaveFormatPanel : public Gtk::VBox, public AdjusterListener {
         Adjuster*           pngcompr;
         Gtk::CheckButton*   tiffuncompressed;
         MyComboBoxText*     format;
+        MyComboBoxText*     jpegSubSamp;
         Gtk::VBox*          formatopts;
+        Gtk::HBox*          jpegSubSampBox;
+        Gtk::Label*         jpegSubSampHead;
         int                 oformat;
         FormatChangeListener* listener;
         Glib::ustring       fstr[5];

@@ -76,7 +76,7 @@ class ImageIO {
         int loadPPMFromMemory(const char* buffer,int width,int height, bool swap, int bps);
 
         int savePNG  (Glib::ustring fname, int compression = -1, volatile int bps = -1);
-        int saveJPEG (Glib::ustring fname, int quality = 100);
+        int saveJPEG (Glib::ustring fname, int quality = 100, int subSamp=3);
         int saveTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false);
 
         cmsHPROFILE getEmbeddedProfile () { return embProfile; }

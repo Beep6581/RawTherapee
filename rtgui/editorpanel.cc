@@ -949,7 +949,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
             ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsPNG), fname, sf.pngCompression, sf.pngBits),
     			            sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fname, sf));
         else if (sf.format=="jpg")
-            ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsJPEG), fname, sf.jpegQuality),
+            ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsJPEG), fname, sf.jpegQuality, sf.jpegSubSamp),
     			            sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fname, sf));
     } else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image processing\n</b>";
