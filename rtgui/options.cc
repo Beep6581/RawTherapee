@@ -194,7 +194,8 @@ void Options::setDefaults () {
     saveAsDialogHeight = 600;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
-    saveFormat.jpegQuality = 100;
+    saveFormat.jpegQuality = 90;
+    saveFormat.jpegSubSamp = 2;
     saveFormat.pngCompression = 6;
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 8;
@@ -202,7 +203,8 @@ void Options::setDefaults () {
     saveFormat.saveParams = true;
 
     saveFormatBatch.format = "jpg";
-    saveFormatBatch.jpegQuality = 100;
+    saveFormatBatch.jpegQuality = 90;
+    saveFormatBatch.jpegSubSamp = 2;
     saveFormatBatch.pngCompression = 6;
     saveFormatBatch.pngBits = 8;
     saveFormatBatch.tiffBits = 8;
@@ -501,6 +503,7 @@ if (keyFile.has_group ("External Editor")) {
 if (keyFile.has_group ("Output")) { 
     if (keyFile.has_key ("Output", "Format"))           saveFormat.format          = keyFile.get_string ("Output", "Format");
     if (keyFile.has_key ("Output", "JpegQuality"))      saveFormat.jpegQuality     = keyFile.get_integer ("Output", "JpegQuality");
+    if (keyFile.has_key ("Output", "JpegSubSamp"))      saveFormat.jpegSubSamp     = keyFile.get_integer ("Output", "JpegSubSamp");
     if (keyFile.has_key ("Output", "PngCompression"))   saveFormat.pngCompression  = keyFile.get_integer ("Output", "PngCompression");
     if (keyFile.has_key ("Output", "PngBps"))           saveFormat.pngBits         = keyFile.get_integer ("Output", "PngBps");
     if (keyFile.has_key ("Output", "TiffBps"))          saveFormat.tiffBits        = keyFile.get_integer ("Output", "TiffBps");
@@ -510,6 +513,7 @@ if (keyFile.has_group ("Output")) {
 
     if (keyFile.has_key ("Output", "FormatBatch"))           saveFormatBatch.format          = keyFile.get_string ("Output", "FormatBatch");
     if (keyFile.has_key ("Output", "JpegQualityBatch"))      saveFormatBatch.jpegQuality     = keyFile.get_integer ("Output", "JpegQualityBatch");
+    if (keyFile.has_key ("Output", "JpegSubSampBatch"))      saveFormatBatch.jpegSubSamp     = keyFile.get_integer ("Output", "JpegSubSampBatch");
     if (keyFile.has_key ("Output", "PngCompressionBatch"))   saveFormatBatch.pngCompression  = keyFile.get_integer ("Output", "PngCompressionBatch");
     if (keyFile.has_key ("Output", "PngBpsBatch"))           saveFormatBatch.pngBits         = keyFile.get_integer ("Output", "PngBpsBatch");
     if (keyFile.has_key ("Output", "TiffBpsBatch"))          saveFormatBatch.tiffBits        = keyFile.get_integer ("Output", "TiffBpsBatch");
@@ -783,6 +787,7 @@ int Options::saveToFile (Glib::ustring fname) {
 
     keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
+    keyFile.set_integer ("Output", "JpegSubSamp", saveFormat.jpegSubSamp);
     keyFile.set_integer ("Output", "PngCompression", saveFormat.pngCompression);
     keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
     keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
@@ -791,6 +796,7 @@ int Options::saveToFile (Glib::ustring fname) {
 
     keyFile.set_string  ("Output", "FormatBatch", saveFormatBatch.format);
     keyFile.set_integer ("Output", "JpegQualityBatch", saveFormatBatch.jpegQuality);
+    keyFile.set_integer ("Output", "JpegSubSampBatch", saveFormatBatch.jpegSubSamp);
     keyFile.set_integer ("Output", "PngCompressionBatch", saveFormatBatch.pngCompression);
     keyFile.set_integer ("Output", "PngBpsBatch", saveFormatBatch.pngBits);
     keyFile.set_integer ("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
