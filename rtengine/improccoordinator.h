@@ -60,7 +60,8 @@ class ImProcCoordinator : public StagedImageProcessor {
         ImProcFunctions ipf;
 
         int scale;
-        bool highDetailComputed;
+        bool highDetailPreprocessComputed;
+        bool highDetailRawComputed;
         bool allocated;
 
         void freeAll ();

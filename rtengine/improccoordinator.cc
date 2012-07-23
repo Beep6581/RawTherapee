@@ -28,7 +28,7 @@ namespace rtengine {
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), highDetailComputed(false), allocated(false),
+    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
     pW(-1), pH(-1), plistener(NULL),
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
     changeSinceLast(0), updaterRunning(false), destroying(false) {
@@ -122,9 +122,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	}
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
-    if ( todo & M_PREPROC) {
+    // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
+    if ( (todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
     	imgsrc->preprocess( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
+        if (highDetailNeeded)
+        	highDetailPreprocessComputed = true;
+        else
+        	highDetailPreprocessComputed = false;
     }
 
     /*  
@@ -139,7 +144,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
     if (   (todo & M_RAW)
-        || (!highDetailComputed && highDetailNeeded)
+        || (!highDetailRawComputed && highDetailNeeded)
         || ( params.hlrecovery.enabled && params.hlrecovery.method!="Color" && imgsrc->IsrgbSourceModified())
         || (!params.hlrecovery.enabled && params.hlrecovery.method=="Color" && imgsrc->IsrgbSourceModified()))
     {
@@ -147,13 +152,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
         imgsrc->demosaic( rp );
         if (highDetailNeeded) {
-            highDetailComputed = true;
+            highDetailRawComputed = true;
             if (params.hlrecovery.enabled && params.hlrecovery.method=="Color") {
                 todo |= M_INIT;
             }
         }
         else
-            highDetailComputed = false;
+            highDetailRawComputed = false;
     }
 
 
