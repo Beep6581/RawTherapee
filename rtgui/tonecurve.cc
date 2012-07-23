@@ -226,7 +226,9 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
 
     // Switch off auto exposure if user changes sliders manually
     if (autolevels->get_active() && (a==expcomp || a==brightness || a==contrast || a==black || a==hlcompr || a==hlcomprthresh)) {
+    	autoconn.block(true);
         autolevels->set_active (false);
+    	autoconn.block(false);
         autolevels->set_inconsistent (false);
     }
 
@@ -301,35 +303,45 @@ void ToneCurve::autolevels_toggled () {
             autolevels->set_inconsistent (true);
 
         lastAuto = autolevels->get_active ();
-    }
 
-    if (!batchMode && autolevels->get_active() && listener) {
-        listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
-        waitForAutoExp ();
-        if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
-    } 
-    
-    if (batchMode) {
         expcomp->setEditedState (UnEdited);
-		brightness->setEditedState (UnEdited);
-		contrast->setEditedState (UnEdited);
+        brightness->setEditedState (UnEdited);
+        contrast->setEditedState (UnEdited);
         black->setEditedState (UnEdited);
         hlcompr->setEditedState (UnEdited);
         hlcomprthresh->setEditedState (UnEdited);
         if (expcomp->getAddMode())
             expcomp->setValue (0);
-		if (brightness->getAddMode())
+        if (brightness->getAddMode())
             brightness->setValue (0);
-		if (contrast->getAddMode())
+        if (contrast->getAddMode())
             contrast->setValue (0);
-		if (black->getAddMode())
+        if (black->getAddMode())
             black->setValue (0);
         if (hlcompr->getAddMode())
-        	hlcompr->setValue (0);
+            hlcompr->setValue (0);
         if (hlcomprthresh->getAddMode())
-        	hlcomprthresh->setValue (0);
-        listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
+            hlcomprthresh->setValue (0);
+        if (listener) {
+            if (!autolevels->get_inconsistent()) {
+                if (autolevels->get_active ())
+                    listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
+                else
+                    listener->panelChanged (EvFixedExp, M("GENERAL_DISABLED"));
+            }
+        }
     }
+    else if (/* !batchMode && */ listener) {
+        if (autolevels->get_active()) {
+            listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
+            waitForAutoExp ();
+            if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
+        }
+        else {
+            listener->panelChanged (EvFixedExp, M("GENERAL_DISABLED"));
+        }
+    }
+
 }
 
 void ToneCurve::clip_changed () {

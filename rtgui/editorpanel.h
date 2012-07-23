@@ -61,8 +61,6 @@ class EditorPanel : public Gtk::VBox,
         Gtk::ToggleButton* tbTopPanel_1;
         Gtk::ToggleButton* tbRightPanel_1;
         Gtk::ToggleButton* tbBeforeLock;
-        bool tbTopPanel_1_Active;
-        bool tbRightPanel_1_Active;
         //bool bAllSidePanelsVisible;
         Gtk::ToggleButton* beforeAfter;
         Gtk::HPaned* hpanedl;
