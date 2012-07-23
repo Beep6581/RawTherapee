@@ -56,7 +56,7 @@ SHARPENING,       // EvShrDIterations,
 TRANSFORM,        // EvLCPUseDist,
 DARKFRAME,        // EvLCPUseVign,
 TRANSFORM,        // EvLCPUseCA,
-0,                // EvCBBoost: obsolete
+M_VOID,           // EvFixedExp
 WHITEBALANCE,     // EvWBMethod,
 WHITEBALANCE,     // EvWBTemp,
 WHITEBALANCE,     // EvWBGreen,

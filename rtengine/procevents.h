@@ -58,7 +58,7 @@ enum ProcEvent {
     EvLCPUseDist=33,
     EvLCPUseVign=34,
     EvLCPUseCA=35,
-    EvCBBoost=36,     // obsolete
+    EvFixedExp=36,
     EvWBMethod=37,
     EvWBTemp=38,
     EvWBGreen=39,
