@@ -101,10 +101,9 @@ void Navigator::pointerMoved (bool validPos, Glib::ustring profile, int x, int y
 		//rgb2lab (r, g, b, LAB_l, LAB_a, LAB_b);
 		rgb2lab (profile, r, g, b, LAB_l, LAB_a, LAB_b);  // TODO: Really sure this function works?
 		
-		LAB_A->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_A_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_a*100.f/255.f) + Glib::ustring("%")));
-		LAB_B->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_B_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_b*100.f/255.f) + Glib::ustring("%")));
-		LAB_L->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_L_VALUE"), Glib::ustring::format(std::fixed, std::setprecision(1), LAB_l*100.f/255.f) + Glib::ustring("%")));
-
+		LAB_A->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_A_VALUE"), LAB_a));
+		LAB_B->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_B_VALUE"), LAB_b));
+		LAB_L->set_text (Glib::ustring::compose (M("NAVIGATOR_LAB_L_VALUE"), LAB_l));
 	}
 }
 
