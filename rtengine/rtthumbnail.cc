@@ -734,6 +734,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf curve2 (65536);
 	LUTf curve (65536);
 	LUTf satcurve (65536);
+	LUTf satbgcurve (65536);
+	
 	LUTf rCurve (65536);
 	LUTf gCurve (65536);
 	LUTf bCurve (65536);
@@ -742,7 +744,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
       //CurveFactory::complexCurve (expcomp, black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
       //							params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
       //							gamma, true, params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, 16);
-    CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, params.toneCurve.hlcomprthresh,
+    CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh,
 								params.toneCurve.shcompr, bright, contr, gamma, true, 
 								params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, 16);
 	
@@ -752,7 +754,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	
 	LabImage* labView = new LabImage (fw,fh);
 
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve );
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, expcomp, hlcompr, hlcomprthresh);
 
     if (shmap)
         delete shmap;
@@ -765,13 +767,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // luminance processing
 	ipf.EPDToneMap(labView,0,6);
-
+	bool utili=false;
+	bool autili=false;
+	bool butili=false;
+	bool ccutili=false;
+	
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
-        hist16, hist16, curve, dummy, 16);
-    CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
-								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 16);
-    ipf.luminanceCurve (labView, labView, curve);
-    ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
+        hist16, hist16, curve, dummy, 16, utili);
+    CurveFactory::complexsgnCurve (autili, butili, ccutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve/*,params.labCurve.cbgcurve*/, curve1, curve2, satcurve,/*satbgcurve,*/ 16);
+    //ipf.luminanceCurve (labView, labView, curve);
+    ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,/*satbgcurve,*/ curve, utili, autili, butili, ccutili);
 	ipf.vibrance(labView);
 
     // color processing

@@ -66,6 +66,7 @@ public:
 	virtual void updateBackgroundHistogram (CurveEditor* ce);
 	virtual void setColorProvider (ColorProvider* p);
 
+
 protected:
 	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
 	void storeDisplayedCurve ();
@@ -82,6 +83,8 @@ protected:
 	void adjusterChanged (Adjuster* a, double newval);
 	bool adjusterEntered (GdkEventCrossing* ev, int ac);
 	bool adjusterLeft (GdkEventCrossing* ev, int ac);
+	void setSubGroupRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4);
+	void setSubGroupBottomBarBgGradient();
 };
 
 #endif

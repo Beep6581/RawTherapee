@@ -42,8 +42,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 
     profileStore.init ();
     ProcParams::init ();
-    Color::init ();
-    ImProcFunctions::initMunsell();
+    Color::init();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;

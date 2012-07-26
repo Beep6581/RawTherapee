@@ -154,9 +154,9 @@ namespace rtengine {
 	}
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	void CurveFactory::complexsgnCurve (double saturation, bool satlimit, double satlimthresh,
-										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,
-										LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, int skip) {
+	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, double saturation, double rstprotection,
+										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,
+										/*const std::vector<double>& cbgcurvePoints,*/ LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve,/* LUTf & satbgCurve,*/ int skip) {
 		
 		//colormult = chroma_scale for Lab manipulations
 		
@@ -164,7 +164,7 @@ namespace rtengine {
 
 		bool needed;
 		DiagonalCurve* dCurve = NULL;
-
+/*
 		// check if contrast curve is needed
 		needed = (saturation<-0.0001 || saturation>0.0001);
 
@@ -194,13 +194,15 @@ namespace rtengine {
 
 				satcurvePoints.push_back(0.5+0.5*scale); //shoulder point
 				satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point
-				/*} else {
-				 satcurvePoints.push_back(0.25+saturation/500.0); //toe point
-				 satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
+				/ Commented out...
+				} else {
+				satcurvePoints.push_back(0.25+saturation/500.0); //toe point
+				satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
 
-				 satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
-				 satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
-				 }*/
+				satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
+				satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
+				}
+				/
 
 				satcurvePoints.push_back(1); // white point
 				satcurvePoints.push_back(1); // value at white point
@@ -222,17 +224,21 @@ namespace rtengine {
 		else {
 			fillCurveArray(NULL, satCurve, skip, needed);
 		}
-
+*/
 		//-----------------------------------------------------
 
 		needed = false;
 		// create a curve if needed
 		if (!acurvePoints.empty() && acurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (acurvePoints, CURVES_MIN_POLY_POINTS/skip);
-			if (dCurve && !dCurve->isIdentity())
+			if (dCurve && !dCurve->isIdentity()) {
 				needed = true;
+				autili=true;
+			}
 		}
 		fillCurveArray(dCurve, aoutCurve, skip, needed);
+		//if(autili) aoutCurve.dump("acurve");
+
 		if (dCurve) {
 			delete dCurve;
 			dCurve = NULL;
@@ -243,14 +249,43 @@ namespace rtengine {
 		needed = false;
 		if (!bcurvePoints.empty() && bcurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (bcurvePoints, CURVES_MIN_POLY_POINTS/skip);
-			if (dCurve && !dCurve->isIdentity())
+			if (dCurve && !dCurve->isIdentity()) {
 				needed = true;
+				butili=true;
+			}
 		}
 		fillCurveArray(dCurve, boutCurve, skip, needed);
 		if (dCurve) {
 			delete dCurve;
 			dCurve = NULL;
 		}
+		
+		//-----------------------------------------------
+		needed = false;
+		if (!cccurvePoints.empty() && cccurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (cccurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (dCurve && !dCurve->isIdentity())
+				{needed = true;ccutili=true;}
+		}
+		fillCurveArray(dCurve, satCurve, skip, needed);
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
+		}
+		//----------------------------
+		/*needed = false;
+		if (!cbgcurvePoints.empty() && cbgcurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (cbgcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (dCurve && !dCurve->isIdentity())
+				{needed = true;cbgutili=true;}
+		}
+		fillCurveArray(dCurve, satbgCurve, skip, needed);
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
+		}
+		*/
+		
 	}
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -489,7 +524,7 @@ namespace rtengine {
 	
 	void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints,
 									 LUTu & histogram, LUTu & histogramCropped, LUTf & outCurve,
-									 LUTu & outBeforeCCurveHistogram, int skip) {
+									 LUTu & outBeforeCCurveHistogram, int skip, bool & utili) {
 		
 		// curve without contrast
 		LUTf dcurve(65536,0);
@@ -504,6 +539,7 @@ namespace rtengine {
 		
 		// check if brightness curve is needed
 		if (br>0.00001 || br<-0.00001) {
+			utili=true;
 
 			std::vector<double> brightcurvePoints;
 			brightcurvePoints.push_back((double)((CurveType)DCT_NURBS));
@@ -550,13 +586,13 @@ namespace rtengine {
 				dcurve[i] = (float)i / 32767.0;
 			}
 		}
-		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		// check if contrast curve is needed
 		if (contr>0.00001 || contr<-0.00001) {
+			utili=true;
 
 			// compute mean luminance of the image with the curve applied
 			int sum = 0;
@@ -613,6 +649,8 @@ namespace rtengine {
 		}
 
 		if (tcurve) {
+			utili=true;//if active
+
 			// L values go up to 32767, last stop is for highlight overflow
 			for (int i=0; i<32768; i++) {
 				float val;
@@ -694,5 +732,5 @@ namespace rtengine {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-
+	
 }

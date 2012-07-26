@@ -497,3 +497,89 @@ void TextOrIcon::switchTo(TOITypes type) {
 	}
 	show_all();
 }
+
+BackBuffer::BackBuffer() {
+	x = y = w = h = 0;
+	dirty = true;
+}
+
+bool BackBuffer::setDrawRectangle(Glib::RefPtr<Gdk::Window> window, int newX, int newY, int newW, int newH) {
+	bool newSize = w!=newW || h!=newH;
+
+	x = newX;
+	y = newY;
+	w = newW;
+	h = newH;
+
+	// WARNING: we're assuming that the surface type won't change during all the execution time of RT. I guess it may be wrong when the user change the gfx card display settings!?
+	if (newSize && window) {
+		// allocate a new Surface
+		if (newW>0 && newH>0) {
+			surface = window->create_similar_surface(Cairo::CONTENT_COLOR, w, h);
+		}
+		else {
+			// at least one dimension is null, so we delete the Surface
+			surface.clear();
+			// and we reset all dimensions
+			x = y = w = h = 0;
+		}
+		dirty = true;
+	}
+	return dirty;
+}
+
+/*
+ * Copy the backbuffer to a Gdk::Window
+ */
+void BackBuffer::copySurface(Glib::RefPtr<Gdk::Window> window, GdkRectangle *rectangle) {
+	if (surface && window) {
+		// TODO: look out if window can be different on each call, and if not, store a reference to the window
+		Cairo::RefPtr<Cairo::Context> crSrc = window->create_cairo_context();
+		Cairo::RefPtr<Cairo::Surface> destSurface = crSrc->get_target();
+
+		// now copy the off-screen Surface to the destination Surface
+		Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destSurface);
+		crDest->set_source(surface, x, y);
+		crDest->set_line_width(0.);
+		if (rectangle)
+			crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
+		else
+			crDest->rectangle(x, y, w, h);
+		crDest->fill();
+	}
+}
+
+/*
+ * Copy the BackBuffer to another BackBuffer
+ */
+void BackBuffer::copySurface(BackBuffer *destBackBuffer, GdkRectangle *rectangle) {
+	if (surface && destBackBuffer) {
+		// now copy the off-screen Surface to the destination Surface
+		Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destBackBuffer->getSurface());
+		crDest->set_source(surface, x, y);
+		crDest->set_line_width(0.);
+		if (rectangle)
+			crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
+		else
+			crDest->rectangle(x, y, w, h);
+		crDest->fill();
+	}
+}
+
+/*
+ * Copy the BackBuffer to another Cairo::Surface
+ */
+void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Surface> destSurface, GdkRectangle *rectangle) {
+	if (surface && destSurface) {
+		// now copy the off-screen Surface to the destination Surface
+		Cairo::RefPtr<Cairo::Context> crDest = Cairo::Context::create(destSurface);
+		crDest->set_source(surface, x, y);
+		crDest->set_line_width(0.);
+		if (rectangle)
+			crDest->rectangle(rectangle->x, rectangle->y, rectangle->width, rectangle->height);
+		else
+			crDest->rectangle(x, y, w, h);
+		crDest->fill();
+	}
+}
+

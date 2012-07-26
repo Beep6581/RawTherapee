@@ -24,13 +24,26 @@ using namespace rtengine::procparams;
 
 RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
 
+	std::vector<GradientMilestone> milestones;
+
 	curveEditorG = new CurveEditorGroup (options.lastRgbCurvesDir, M("TP_RGBCURVES_CHANNEL"));
 	curveEditorG->setCurveListener (this);
-	curveEditorG->setColorProvider (this);
 
 	Rshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_RED")));
+	milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
+	milestones.push_back( GradientMilestone(1.0, 1.0, 0.0, 0.0) );
+	Rshape->setBottomBarBgGradient(milestones);
+	Rshape->setLeftBarBgGradient(milestones);
+
+	milestones[1].r = 0.0; milestones[1].g = 1.0;
 	Gshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_GREEN")));
+	Gshape->setBottomBarBgGradient(milestones);
+	Gshape->setLeftBarBgGradient(milestones);
+
+	milestones[1].g = 0.0; milestones[1].b = 1.0;
 	Bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_BLUE")));
+	Bshape->setBottomBarBgGradient(milestones);
+	Bshape->setLeftBarBgGradient(milestones);
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();

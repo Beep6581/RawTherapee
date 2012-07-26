@@ -44,6 +44,9 @@ namespace rtengine {
 			Glib::ustring   srgb10;					// default name of SRGB space profile
 			
 			bool		    gamutICC;           // 
+			bool			gamutLch;
+			int     		protectred;
+			double     		protectredh;
 			
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */

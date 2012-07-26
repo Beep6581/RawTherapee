@@ -23,10 +23,13 @@
 #include <vector>
 #include "curvelistener.h"
 #include "cursormanager.h"
-#include "colorprovider.h"
+#include "coloredbar.h"
 #include "../rtengine/LUT.h"
+#include "guiutils.h"
 
 #define RADIUS			3	/* radius of the control points */
+#define CBAR_WIDTH		10	/* width of the colored bar (border included) */
+#define CBAR_MARGIN		2	/* spacing between the colored bar and the graph */
 #define SQUARE			2	/* half length of the square shape of the tangent handles */
 #define MIN_DISTANCE	5	/* min distance between control points */
 #define GRAPH_SIZE		200 /* size of the curve editor graphic */
@@ -51,24 +54,24 @@ enum ResizeState {
 
 class MyCurveIdleHelper;
 
-class MyCurve : public Gtk::DrawingArea {
+class MyCurve : public Gtk::DrawingArea, public BackBuffer {
 
 	friend class MyCurveIdleHelper;
 
 	protected:
 		CurveListener* listener;
+		ColoredBar *leftBar;
+		ColoredBar *bottomBar;
 		ColorProvider* colorProvider;
 		CursorShape cursor_type;
-		Glib::RefPtr<Gdk::Pixmap> pixmap;
-		int innerWidth;		// inner width of the editor, allocated by the system
-		int innerHeight;	// inner height of the editor, allocated by the system
-		int prevInnerHeight;// previous inner height of the editor
+		int graphX, graphY, graphW, graphH; // dimensions of the graphic area, excluding surrounding space for the points of for the colored bar
+		int prevGraphW, prevGraphH;         // previous inner width and height of the editor
 		Gdk::ModifierType mod_type;
 		int cursorX;		// X coordinate in the graph of the cursor
 		int cursorY;		// Y coordinate in the graph of the cursor
-		std::vector<Gdk::Point> point;
-		std::vector<Gdk::Point> upoint;
-		std::vector<Gdk::Point> lpoint;
+		std::vector< Point<float> > point;
+		std::vector< Point<float> > upoint;
+		std::vector< Point<float> > lpoint;
 		bool buttonPressed;
 		/*
 		 * snapToElmt must be interpreted like this:
@@ -90,15 +93,20 @@ class MyCurve : public Gtk::DrawingArea {
 		int getGraphMinSize() { return GRAPH_SIZE + RADIUS + 1; }
 		bool snapCoordinate(double testedVal, double realVal);
 
+		// return value = new requested height
+		int calcDimensions ();
+
 	public:
 		MyCurve ();
 		~MyCurve ();
 
 		void setCurveListener (CurveListener* cl) { listener = cl; }
+		void setColoredBar (ColoredBar *left, ColoredBar *bottom);
 		void setColorProvider (ColorProvider* cp) { colorProvider = cp; }
 		void notifyListener ();
 		void updateBackgroundHistogram (LUTu & hist) {return;} ;
 		void forceResize() { sized = RS_Force; }
+	    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
 		virtual std::vector<double> getPoints () = 0;
 		virtual void setPoints (const std::vector<double>& p) = 0;
 		virtual bool handleEvents (GdkEvent* event) = 0;
@@ -111,8 +119,7 @@ class MyCurveIdleHelper {
 		bool destroyed;
 		int pending;
 
-		void clearPixmap () { myCurve->pixmap.clear (); }
-
+		void clearPixmap () { myCurve->setDirty(true); }
 };
 
 #endif

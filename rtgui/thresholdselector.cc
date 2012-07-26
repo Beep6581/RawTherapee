@@ -24,7 +24,9 @@
 
 ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBottom, double defBottom, Glib::ustring labelBottom, unsigned int precisionBottom,
 	                                 double minValueTop,    double maxValueTop,    double defTop,    Glib::ustring labelTop,    unsigned int precisionTop,
-	                                 ThresholdCurveProvider* curveProvider) {
+	                                 ThresholdCurveProvider* curveProvider)
+	                                 : ColoredBar(RTO_Left2Right)
+{
 	positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
 	positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
 	positions[TS_BOTTOMRIGHT] = defPos[TS_BOTTOMRIGHT] = 0;  // unused
@@ -47,7 +49,10 @@ ThresholdSelector::ThresholdSelector(double minValueBottom, double maxValueBotto
 	initValues ();
 }
 
-ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottom, double defTop, unsigned int precision, bool startAtOne) {
+ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottom,
+	                                 double defTop, unsigned int precision, bool startAtOne)
+	                                 : ColoredBar(RTO_Left2Right)
+{
 	positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottom;
 	positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTop;
 	positions[TS_BOTTOMRIGHT] = defPos[TS_BOTTOMRIGHT] = maxValue;
@@ -83,7 +88,10 @@ ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double de
 
 }
 
-ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottomLeft, double defTopLeft, double defBottomRight, double defTopRight, unsigned int precision, bool startAtOne) {
+ThresholdSelector::ThresholdSelector(double minValue, double maxValue, double defBottomLeft, double defTopLeft,
+	                                 double defBottomRight, double defTopRight, unsigned int precision, bool startAtOne)
+	                                 : ColoredBar(RTO_Left2Right)
+{
 	positions[TS_BOTTOMLEFT]  = defPos[TS_BOTTOMLEFT]  = defBottomLeft;
 	positions[TS_TOPLEFT]     = defPos[TS_TOPLEFT]     = defTopLeft;
 	positions[TS_BOTTOMRIGHT] = defPos[TS_BOTTOMRIGHT] = defBottomRight;
@@ -178,11 +186,6 @@ void ThresholdSelector::setDefaults (double bottomLeft, double topLeft, double b
 	}
 }
 
-void ThresholdSelector::setBgGradient (const std::vector<GradientMilestone> &milestones) {
-	bgGradient.clear();
-	bgGradient = milestones;
-}
-
 void ThresholdSelector::on_realize() {
 
 	Gtk::DrawingArea::on_realize();
@@ -202,8 +205,7 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 
 	wslider = std::max(int(h / 5), 10);
 	int hwslider = wslider/2;
-
-	int iw = w-wslider-2*hb;  // inner width  (excluding padding for tabs)
+	int iw = w-wslider-2*hb;  // inner width  (excluding padding for sliders)
 
 	positions01[TS_BOTTOMLEFT]  = to01(TS_BOTTOMLEFT);
 	positions01[TS_TOPLEFT]     = to01(TS_TOPLEFT);
@@ -216,19 +218,15 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 	// set the box's colors
 	cr->set_line_width (1.0);
 	cr->set_line_cap(Cairo::LINE_CAP_BUTT);
-	if (is_sensitive() && bgGradient.size()>1) {
+	if (is_sensitive() && canGetColors()) {
 		// gradient background
-		Cairo::RefPtr< Cairo::LinearGradient > bggradient = Cairo::LinearGradient::create (hwslider, 0, hwslider+iw, 0);
-		for (std::vector<GradientMilestone>::iterator i=bgGradient.begin(); i!=bgGradient.end(); i++) {
-			bggradient->add_color_stop_rgb (i->position, i->r, i->g, i->b);
-		}
-		cr->set_source (bggradient);
-
-		// draw the box's background
-		cr->rectangle (hb+hwslider-0.5, double(int(float(h)*1.5f/7.f))+0.5, iw+1, double(int(float(h)*4.f/7.f)));
-		cr->fill();
+		Glib::RefPtr<Gdk::Window> win = get_window();
+		// this will eventually create/update the off-screen Surface
+		setDrawRectangle(win, hb+hwslider, int(float(h)*1.5f/7.f+0.5f), iw+1, int(float(h)*4.f/7.f+0.5f));
+		// that we're displaying here
+		ColoredBar::expose(win);
 	}
-	else if (is_sensitive()) {
+	else {
 		// solid background
 		c = style->get_bg (state);
 		cr->set_source_rgb (c.get_red_p()*0.85, c.get_green_p()*0.85, c.get_blue_p()*0.85);
@@ -314,7 +312,7 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 
 	// draw sliders
 	//if (!(litCursor == TS_UNDEFINED && movedCursor == TS_UNDEFINED)) {
-	cr->set_line_width (1.);
+	//cr->set_line_width (1.);
 	for (int i=0; i<(doubleThresh?4:2); i++) {
 		double posX = hb+hwslider+iw*positions01[i]+0.5;
 		double arrowY = i==0 || i==2 ? h-(h*2.5/7.-0.5)-vb : h*2.5/7.-0.5+vb;
@@ -357,35 +355,7 @@ bool ThresholdSelector::on_expose_event(GdkEventExpose* event) {
 		}
 	}
 	//}
-	//printf("\n\n");
 
-	// draw text for the slider that is being moved
-	/*
-	 * Original code from shcselector.cc
-	 *
-	Glib::RefPtr<Pango::Context> context = get_pango_context () ;
-	cr->set_line_width (0.5);
-	if (litCursor != TS_UNDEFINED) {
-		int offset;
-		int layout_width, layout_height;
-		Glib::RefPtr<Pango::Layout> layout = create_pango_layout(Glib::ustring::format(std::setprecision(2), positions01[litCursor]));
-		layout->get_pixel_size(layout_width, layout_height);
-		offset = positions01[litCursor] > 0.5 ? -layout_width-1-wslider/2 : 1+wslider/2;
-		cr->move_to (w*positions01[litCursor]+offset-0.5, 0);
-		cr->set_source_rgb (bgnc.get_red_p(), bgnc.get_green_p(), bgnc.get_blue_p());
-		layout->add_to_cairo_context (cr);
-		cr->fill_preserve ();
-		cr->stroke ();
-		cr->move_to (w*positions01[litCursor]+offset+0.5, 1);
-		layout->add_to_cairo_context (cr);
-		cr->fill_preserve ();
-		cr->stroke ();
-		cr->set_source_rgb (fgnc.get_red_p(), fgnc.get_green_p(), fgnc.get_blue_p());
-		cr->move_to (w*positions01[litCursor]+offset, 0.5);
-		layout->add_to_cairo_context (cr);
-		cr->fill_preserve ();
-		cr->stroke ();
-	}*/
 	return true;
 }
 

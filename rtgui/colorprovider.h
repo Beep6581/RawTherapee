@@ -19,15 +19,22 @@
 #ifndef _COLORPROVIDER_
 #define _COLORPROVIDER_
 
+/*
+ * Use it to let your widget feed a colored bar or graph lines with the wanted colors
+ * If you don't need to dynamically feed a widget with colors (e.g. curve's graph),
+ * you don't need to declare the instanciator class as BEING a ColorProvider, you'll
+ * still be able to set gradients for e.g. ColoredBar(s)
+ */
 class ColorProvider {
 
-    public:
+	public:
 		double red;
 		double green;
 		double blue;
 
-        virtual void colorForValue (double valX, double valY) {}
-
+		ColorProvider() { red = green = blue = 0.0; };
+		virtual ~ColorProvider() {};
+		virtual void colorForValue (double valX, double valY) {};
 };
 
 #endif

@@ -51,7 +51,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	Gtk::HBox* custombbox = Gtk::manage (new Gtk::HBox ());
 	custombbox->set_spacing(4);
 
-        pasteCustom = Gtk::manage (new Gtk::Button ());
+	pasteCustom = Gtk::manage (new Gtk::Button ());
 	pasteCustom->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 	copyCustom = Gtk::manage (new Gtk::Button ());
 	copyCustom->add (*Gtk::manage (new RTImage ("edit-copy.png")));
@@ -60,8 +60,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	loadCustom = Gtk::manage (new Gtk::Button ());
 	loadCustom->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 
-        custombbox->pack_end (*pasteCustom, Gtk::PACK_SHRINK, 0);
-        custombbox->pack_end (*copyCustom, Gtk::PACK_SHRINK, 0);
+	custombbox->pack_end (*pasteCustom, Gtk::PACK_SHRINK, 0);
+	custombbox->pack_end (*copyCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*saveCustom, Gtk::PACK_SHRINK, 0);
 	custombbox->pack_end (*loadCustom, Gtk::PACK_SHRINK, 0);
 
@@ -70,13 +70,13 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 	saveCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
 	loadCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
-        copyCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
-        pasteCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
+	copyCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
+	pasteCustom->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
  
 	saveCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
 	loadCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
-        copyCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
-        pasteCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
+	copyCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
+	pasteCustom->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
 	// Custom curve end
 
 
@@ -92,7 +92,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 	Gtk::HBox* NURBSbbox = Gtk::manage (new Gtk::HBox ());
 	NURBSbbox->set_spacing(4);
-        pasteNURBS = Gtk::manage (new Gtk::Button ());
+	pasteNURBS = Gtk::manage (new Gtk::Button ());
 	pasteNURBS->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 	copyNURBS = Gtk::manage (new Gtk::Button ());
 	copyNURBS->add (*Gtk::manage (new RTImage ("edit-copy.png")));
@@ -101,8 +101,8 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	loadNURBS = Gtk::manage (new Gtk::Button ());
 	loadNURBS->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 
-        NURBSbbox->pack_end (*pasteNURBS, Gtk::PACK_SHRINK, 0);
-        NURBSbbox->pack_end (*copyNURBS, Gtk::PACK_SHRINK, 0);
+	NURBSbbox->pack_end (*pasteNURBS, Gtk::PACK_SHRINK, 0);
+	NURBSbbox->pack_end (*copyNURBS, Gtk::PACK_SHRINK, 0);
 	NURBSbbox->pack_end (*saveNURBS, Gtk::PACK_SHRINK, 0);
 	NURBSbbox->pack_end (*loadNURBS, Gtk::PACK_SHRINK, 0);
 
@@ -111,26 +111,26 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 	saveNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
 	loadNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
-        pasteNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
-        copyNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
+	pasteNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
+	copyNURBS->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
 
 	saveNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
 	loadNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
-        pasteNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
-        copyNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
+	pasteNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
+	copyNURBS->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
 	// NURBS curve end
 
 
 	// parametric curve
 	paramCurveBox = new Gtk::VBox ();
-	paramCurveBox->set_spacing(4);
+	paramCurveBox->set_spacing(0);
 
 	paramCurve = Gtk::manage (new MyDiagonalCurve ());
 	paramCurve->set_size_request (GRAPH_SIZE+2*RADIUS, GRAPH_SIZE+2*RADIUS);
 	paramCurve->setType (DCT_Parametric);
 
 	shcSelector = Gtk::manage (new SHCSelector ());
-	shcSelector->set_size_request (GRAPH_SIZE-100, 20); // width, height
+	shcSelector->set_size_request (GRAPH_SIZE-100, 12); // width, height
 	//* shcSelector->set_size_request ((GRAPH_SIZE+2*RADIUS)-20, 20);
 
 	paramCurveBox->pack_start (*paramCurve, Gtk::PACK_EXPAND_WIDGET, 0);
@@ -138,7 +138,7 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 
 	Gtk::HBox* Parambbox = Gtk::manage (new Gtk::HBox ());
 	Parambbox->set_spacing(4);
-        pasteParam = Gtk::manage (new Gtk::Button ());
+	pasteParam = Gtk::manage (new Gtk::Button ());
 	pasteParam->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 	copyParam = Gtk::manage (new Gtk::Button ());
 	copyParam->add (*Gtk::manage (new RTImage ("edit-copy.png")));
@@ -147,22 +147,21 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 	loadParam = Gtk::manage (new Gtk::Button ());
 	loadParam->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 
-        Parambbox->pack_end (*pasteParam, Gtk::PACK_SHRINK, 0);
-        Parambbox->pack_end (*copyParam, Gtk::PACK_SHRINK, 0);
+	Parambbox->pack_end (*pasteParam, Gtk::PACK_SHRINK, 0);
+	Parambbox->pack_end (*copyParam, Gtk::PACK_SHRINK, 0);
 	Parambbox->pack_end (*saveParam, Gtk::PACK_SHRINK, 0);
 	Parambbox->pack_end (*loadParam, Gtk::PACK_SHRINK, 0);
 
 	saveParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::savePressed) );
 	loadParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::loadPressed) );
-        pasteParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
-        copyParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
+	pasteParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::pastePressed) );
+	copyParam->signal_clicked().connect( sigc::mem_fun(*this, &DiagonalCurveEditorSubGroup::copyPressed) );
 
 	saveParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
 	loadParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
-        pasteParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
-        copyParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
+	pasteParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
+	copyParam->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
 
-	paramCurveBox->set_spacing(4);
 	paramCurveBox->pack_end (*Parambbox, Gtk::PACK_EXPAND_WIDGET, 0);
 
 	highlights = Gtk::manage (new Adjuster (M("CURVEEDITOR_HIGHLIGHTS"), -100, 100, 1, 0));
@@ -218,9 +217,9 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
 }
 
 DiagonalCurveEditorSubGroup::~DiagonalCurveEditorSubGroup() {
-    delete customCurveBox;
-    delete paramCurveBox;
-    delete NURBSCurveBox;
+	delete customCurveBox;
+	delete paramCurveBox;
+	delete NURBSCurveBox;
 }
 
 /*
@@ -253,30 +252,101 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 		// Initializing GUI values + repacking the appropriated widget
 		//dCurve->typeconn.block(true);
 
+		// first we update the colored bar
+
+		ColorProvider *barColorProvider = dCurve->getLeftBarColorProvider();
+		std::vector<GradientMilestone>  bgGradient = dCurve->getLeftBarBgGradient();
+		if (barColorProvider == NULL && bgGradient.size() == 0) {
+			// dCurve has no left colored bar, so we delete the object
+			if (leftBar) {
+				delete leftBar;
+				leftBar = NULL;
+			}
+		}
+		else {
+			// dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
+			if (!leftBar) {
+				leftBar = new ColoredBar(RTO_Bottom2Top);
+			}
+			if (barColorProvider) {
+				bgGradient.clear();
+				leftBar->setColorProvider(barColorProvider);
+				leftBar->setBgGradient (bgGradient);
+			}
+			else {
+				leftBar->setColorProvider(NULL);
+				leftBar->setBgGradient (bgGradient);
+			}
+		}
+
+		barColorProvider = dCurve->getBottomBarColorProvider();
+		bgGradient = dCurve->getBottomBarBgGradient();
+		if (barColorProvider == NULL && bgGradient.size() == 0) {
+			// dCurve has no left colored bar, so we delete the object
+			if (bottomBar) {
+				delete bottomBar;
+				bottomBar = NULL;
+			}
+		}
+		else {
+			// dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
+			if (!bottomBar) {
+				bottomBar = new ColoredBar(RTO_Left2Right);
+			}
+			if (barColorProvider) {
+				bgGradient.clear();
+				bottomBar->setColorProvider(barColorProvider);
+				bottomBar->setBgGradient (bgGradient);
+			}
+			else {
+				bottomBar->setColorProvider(NULL);
+				bottomBar->setBgGradient (bgGradient);
+			}
+		}
 
 		switch((DiagonalCurveType)(dCurve->curveType->getSelected())) {
 		case (DCT_Spline):
 			customCurve->setPoints (dCurve->customCurveEd);
+			customCurve->setColorProvider(dCurve->getCurveColorProvider());
+			customCurve->setColoredBar(leftBar, bottomBar);
 			parent->pack_start (*customCurveBox);
 			customCurveBox->check_resize();
 			customCurve->forceResize();
 			break;
 		case (DCT_Parametric):
+		{
+			Glib::ustring label[4];
+			dCurve->getRangeLabels(label[0], label[1], label[2], label[3]);
+			double mileStone[3];
+			dCurve->getRangeDefaultMilestones(mileStone[0], mileStone[1], mileStone[2]);
 			paramCurve->setPoints (dCurve->paramCurveEd);
+			shcSelector->setDefaults(mileStone[0], mileStone[1], mileStone[2]);
 			shcSelector->setPositions (
 					dCurve->paramCurveEd.at(1),
 					dCurve->paramCurveEd.at(2),
 					dCurve->paramCurveEd.at(3)
 			);
+
 			highlights->setValue (dCurve->paramCurveEd.at(4));
+			highlights->setLabel(label[3]);
 			lights->setValue (dCurve->paramCurveEd.at(5));
+			lights->setLabel(label[2]);
 			darks->setValue (dCurve->paramCurveEd.at(6));
+			darks->setLabel(label[1]);
 			shadows->setValue (dCurve->paramCurveEd.at(7));
+			shadows->setLabel(label[0]);
+			shcSelector->setColorProvider(barColorProvider);
+			shcSelector->setBgGradient(bgGradient);
+			shcSelector->setMargins( (leftBar ? CBAR_WIDTH+CBAR_MARGIN : RADIUS), RADIUS );
+			paramCurve->setColoredBar(leftBar, NULL);
 			parent->pack_start (*paramCurveBox);
 			paramCurve->forceResize();
 			break;
+		}
 		case (DCT_NURBS):
 			NURBSCurve->setPoints (dCurve->NURBSCurveEd);
+			NURBSCurve->setColorProvider(dCurve->getCurveColorProvider());
+			NURBSCurve->setColoredBar(leftBar, bottomBar);
 			parent->pack_start (*NURBSCurveBox);
 			NURBSCurveBox->check_resize();
 			NURBSCurve->forceResize();
@@ -306,7 +376,7 @@ void DiagonalCurveEditorSubGroup::savePressed () {
 			p = NURBSCurve->getPoints ();
 			break;
 		case DCT_Parametric:
-                        p = paramCurve->getPoints ();
+			p = paramCurve->getPoints ();
 			break;
 		default:
 			break;
@@ -322,14 +392,14 @@ void DiagonalCurveEditorSubGroup::savePressed () {
 		else if (p[ix]==(double)(DCT_Parametric))
 			f << "Parametric\n";
 		if (p[ix]==(double)(DCT_Parametric)) {
-		  ix++;
-		  for (unsigned int i=0; i<p.size()-1; i++, ix++)
-                        f << p[ix] << std::endl;
-	        }
+			ix++;
+			for (unsigned int i=0; i<p.size()-1; i++, ix++)
+			f << p[ix] << std::endl;
+		}
 		else {	
-		   ix++;
-		   for (unsigned int i=0; i<p.size()/2; i++, ix+=2)
-			f << p[ix] << ' ' << p[ix+1] << std::endl;
+			ix++;
+			for (unsigned int i=0; i<p.size()/2; i++, ix+=2)
+				f << p[ix] << ' ' << p[ix+1] << std::endl;
 		}
 
 		f.close ();
@@ -372,90 +442,87 @@ void DiagonalCurveEditorSubGroup::loadPressed () {
 				NURBSCurve->notifyListener ();
 			}
 			else if (p[0] == (double)(DCT_Parametric)) {
-			        shcSelector->setPositions (
-					p[1],
-					p[2],
-					p[3]  );
-			        highlights->setValue (p[4]);
-			        lights->setValue (p[5]);
-		        	darks->setValue (p[6]);
-			        shadows->setValue (p[7]);
-			        paramCurve->setPoints (p);
-			        paramCurve->queue_draw ();
-			        paramCurve->notifyListener ();
+				shcSelector->setPositions ( p[1], p[2], p[3] );
+				highlights->setValue (p[4]);
+				lights->setValue (p[5]);
+				darks->setValue (p[6]);
+				shadows->setValue (p[7]);
+				paramCurve->setPoints (p);
+				paramCurve->queue_draw ();
+				paramCurve->notifyListener ();
 			}
 		}
-    }
+	}
 }
 
 void DiagonalCurveEditorSubGroup::copyPressed () {
 // For compatibility use enum DiagonalCurveType here
 
-     std::vector<double> curve;
+	std::vector<double> curve;
 
-     switch (parent->displayedCurve->selected) {
-     case DCT_Spline:                // custom
-             curve = customCurve->getPoints (); 
-             clipboard.setCurveData (curve,DCT_Spline);
-             break;
-     case DCT_Parametric:            // parametric
-            // ... do something, first add save/load functions
-             curve = paramCurve->getPoints ();
-             clipboard.setCurveData (curve,DCT_Parametric);
-              break;
-     case DCT_NURBS:                 // NURBS
-             curve = NURBSCurve->getPoints ();
-             clipboard.setCurveData (curve,DCT_NURBS);
-             break;
-     default:                       // (DCT_Linear, DCT_Unchanged)
-            // ... do nothing
-	     break;
-     }   
+	switch (parent->displayedCurve->selected) {
+	case DCT_Spline:                // custom
+		curve = customCurve->getPoints ();
+		clipboard.setCurveData (curve,DCT_Spline);
+		break;
+	case DCT_Parametric:            // parametric
+		// ... do something, first add save/load functions
+		curve = paramCurve->getPoints ();
+		clipboard.setCurveData (curve,DCT_Parametric);
+		break;
+	case DCT_NURBS:                 // NURBS
+		curve = NURBSCurve->getPoints ();
+		clipboard.setCurveData (curve,DCT_NURBS);
+		break;
+	default:                       // (DCT_Linear, DCT_Unchanged)
+		// ... do nothing
+		break;
+	}
 }
 
 void DiagonalCurveEditorSubGroup::pastePressed () {
 // For compatibility use enum DiagonalCurveType here
 
-     std::vector<double> curve;
-     DiagonalCurveType type;
+	std::vector<double> curve;
+	DiagonalCurveType type;
 
-     type = clipboard.hasCurveData(); 
+	type = clipboard.hasCurveData();
 
-     if (type == (DiagonalCurveType)parent->displayedCurve->selected) {
-         curve = clipboard.getCurveData (); 
-	 switch (type) {
-	 case DCT_Linear:           // linear
-	      break;
-	 case DCT_Spline:           // custom
-              customCurve->setPoints (curve);
-              customCurve->queue_draw (); 
-              customCurve->notifyListener (); 
-	      break;
-	 case DCT_Parametric:       // parametric
-              // ... do something, first add save/load functions
-              shcSelector->setPositions (
-                curve[1],
-                curve[2],
-                curve[3]  );
-              highlights->setValue (curve[4]);
-              lights->setValue (curve[5]);
-              darks->setValue (curve[6]);
-              shadows->setValue (curve[7]);
-              paramCurve->setPoints (curve);
-              paramCurve->queue_draw ();
-              paramCurve->notifyListener ();
-	      break;
-         case DCT_NURBS:            // NURBS
-              NURBSCurve->setPoints (curve);
-              NURBSCurve->queue_draw ();
-              NURBSCurve->notifyListener ();
-	      break;
-         default:                   // (DCT_Linear, DCT_Unchanged)
-             // ... do nothing
-	     break;
-         }
-     }
-     return;    
+	if (type == (DiagonalCurveType)parent->displayedCurve->selected) {
+		curve = clipboard.getCurveData ();
+		switch (type) {
+		case DCT_Linear:           // linear
+			break;
+		case DCT_Spline:           // custom
+			customCurve->setPoints (curve);
+			customCurve->queue_draw ();
+			customCurve->notifyListener ();
+			break;
+		case DCT_Parametric:       // parametric
+			// ... do something, first add save/load functions
+			shcSelector->setPositions (
+			curve[1],
+			curve[2],
+			curve[3]  );
+			highlights->setValue (curve[4]);
+			lights->setValue (curve[5]);
+			darks->setValue (curve[6]);
+			shadows->setValue (curve[7]);
+			paramCurve->setPoints (curve);
+			paramCurve->queue_draw ();
+			paramCurve->notifyListener ();
+			break;
+		case DCT_NURBS:            // NURBS
+			NURBSCurve->setPoints (curve);
+			NURBSCurve->queue_draw ();
+			NURBSCurve->notifyListener ();
+			break;
+		default:                   // (DCT_Linear, DCT_Unchanged)
+			// ... do nothing
+			break;
+		}
+	}
+	return;
 }
 
 
@@ -529,9 +596,9 @@ const std::vector<double> DiagonalCurveEditorSubGroup::getCurveFromGUI (int type
 		return lcurve;
 		}
 	case (DCT_Spline):
-        return customCurve->getPoints ();
+		return customCurve->getPoints ();
 	case (DCT_NURBS):
-        return NURBSCurve->getPoints ();
+		return NURBSCurve->getPoints ();
 	default: {
 		// linear and other solutions
 		std::vector<double> lcurve (1);
@@ -561,18 +628,26 @@ bool DiagonalCurveEditorSubGroup::curveReset(int cType) {
 		return true;
 		break;
 	case (DCT_Parametric) :
+	{
+		DiagonalCurveEditor* dCurve = static_cast<DiagonalCurveEditor*>(parent->displayedCurve);
+		double mileStone[3];
+		dCurve->getRangeDefaultMilestones(mileStone[0], mileStone[1], mileStone[2]);
+
 		highlights->resetPressed(NULL);
 		lights->resetPressed(NULL);
 		darks->resetPressed(NULL);
 		shadows->resetPressed(NULL);
+		shcSelector->setDefaults(mileStone[0], mileStone[1], mileStone[2]);
 		shcSelector->reset();
 		paramCurve->reset ();
 		return true;
 		break;
+	}
 	default:
 		return false;
 		break;
 	}
+	return true;
 }
 
 void DiagonalCurveEditorSubGroup::setColorProvider (ColorProvider* p) {
@@ -596,7 +671,7 @@ void DiagonalCurveEditorSubGroup::shcChanged () {
  */
 void DiagonalCurveEditorSubGroup::adjusterChanged (Adjuster* a, double newval) {
 
-    paramCurve->setPoints (getCurveFromGUI(DCT_Parametric));
+	paramCurve->setPoints (getCurveFromGUI(DCT_Parametric));
 	storeDisplayedCurve();
 	parent->curveChanged ();
 }
@@ -606,11 +681,11 @@ void DiagonalCurveEditorSubGroup::adjusterChanged (Adjuster* a, double newval) {
  */
 bool DiagonalCurveEditorSubGroup::adjusterEntered (GdkEventCrossing* ev, int ac) {
 
-    if (ev->detail != GDK_NOTIFY_INFERIOR) {
-        activeParamControl = ac;
-        paramCurve->setActiveParam (activeParamControl);
-    }
-    return true;
+	if (ev->detail != GDK_NOTIFY_INFERIOR) {
+		activeParamControl = ac;
+		paramCurve->setActiveParam (activeParamControl);
+	}
+	return true;
 }
 
 /*
@@ -618,11 +693,11 @@ bool DiagonalCurveEditorSubGroup::adjusterEntered (GdkEventCrossing* ev, int ac)
  */
 bool DiagonalCurveEditorSubGroup::adjusterLeft (GdkEventCrossing* ev, int ac) {
 
-    if (ev->detail != GDK_NOTIFY_INFERIOR) {
-        activeParamControl = -1;
-        paramCurve->setActiveParam (activeParamControl);
-    }
-    return true;
+	if (ev->detail != GDK_NOTIFY_INFERIOR) {
+		activeParamControl = -1;
+		paramCurve->setActiveParam (activeParamControl);
+	}
+	return true;
 }
 
 void DiagonalCurveEditorSubGroup::updateBackgroundHistogram (CurveEditor* ce) {
@@ -631,4 +706,11 @@ void DiagonalCurveEditorSubGroup::updateBackgroundHistogram (CurveEditor* ce) {
 		customCurve->updateBackgroundHistogram (ce->histogram);
 		NURBSCurve->updateBackgroundHistogram (ce->histogram);
 	}
+}
+
+void DiagonalCurveEditorSubGroup::setSubGroupRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4) {
+	shadows->setLabel(r1);
+	darks->setLabel(r2);
+	lights->setLabel(r3);
+	highlights->setLabel(r4);
 }

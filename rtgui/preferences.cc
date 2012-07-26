@@ -165,7 +165,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi->set_value (behavColumns.label, M("TP_LABCURVE_LABEL"));
     appendBehavList (mi, M("TP_LABCURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
     appendBehavList (mi, M("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
-	appendBehavList (mi, M("TP_LABCURVE_SATURATION"), ADDSET_LC_SATURATION, false);
+	appendBehavList (mi, M("TP_LABCURVE_CHROMATICITY"), ADDSET_LC_CHROMATICITY, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_SHARPENING_LABEL"));

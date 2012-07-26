@@ -24,17 +24,21 @@
 MyCurve::MyCurve () : listener(NULL) {
 
     cursor_type = CSArrow;
-    innerWidth = get_allocation().get_width() - RADIUS * 2;
-    innerHeight = get_allocation().get_height() - RADIUS * 2;
-    prevInnerHeight = innerHeight;
+    graphX = get_allocation().get_width() - RADIUS * 2;
+    graphY = get_allocation().get_height() - RADIUS * 2;
+    prevGraphW = graphW;
+    prevGraphH = graphH;
     buttonPressed = false;
     snapTo = ST_None;
+    leftBar = NULL;
+    bottomBar = NULL;
     colorProvider = NULL;
     sized = RS_Pending;
     snapToElmt = -100;
 
     set_extension_events(Gdk::EXTENSION_EVENTS_ALL);
     add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::POINTER_MOTION_HINT_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
+    signal_style_changed().connect( sigc::mem_fun(*this, &MyCurve::styleChanged) );
 
     mcih = new MyCurveIdleHelper;
     mcih->myCurve = this;
@@ -48,6 +52,28 @@ MyCurve::~MyCurve () {
         mcih->destroyed = true;
     else
         delete mcih;
+}
+
+int MyCurve::calcDimensions () {
+	int newRequestedW, newRequestedH;
+
+	newRequestedW = newRequestedH = get_allocation().get_width();
+	if (leftBar && !bottomBar)
+		newRequestedH -= CBAR_WIDTH + CBAR_MARGIN - RADIUS;
+	if (!leftBar && bottomBar)
+		newRequestedH += CBAR_WIDTH + CBAR_MARGIN - RADIUS;
+
+	graphW = newRequestedW - RADIUS - (leftBar   ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
+	graphH = newRequestedH - RADIUS - (bottomBar ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
+	graphX = newRequestedW - RADIUS - graphW;
+	graphY = RADIUS + graphH;
+
+	return newRequestedH;
+}
+
+void MyCurve::setColoredBar (ColoredBar *left, ColoredBar *bottom) {
+	leftBar = left;
+	bottomBar = bottom;
 }
 
 void MyCurve::notifyListener () {
@@ -68,3 +94,9 @@ bool MyCurve::snapCoordinate(double testedVal, double realVal) {
 	}
 	return false;
 }
+
+void MyCurve::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
+	setDirty(true);
+    queue_draw ();
+}
+

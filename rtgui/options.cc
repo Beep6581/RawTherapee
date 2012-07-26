@@ -155,6 +155,8 @@ void Options::updatePaths() {
         lastToneCurvesDir = preferredPath;
     if (lastProfilingReferenceDir.empty() || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_IS_DIR))
         lastProfilingReferenceDir = preferredPath;
+    if (lastVibranceCurvesDir.empty() || !safe_file_test (lastVibranceCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastVibranceCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastVibranceCurvesDir = preferredPath;
 }
 
 Glib::ustring Options::getPreferredProfilePath() {
@@ -371,7 +373,7 @@ void Options::setDefaults () {
 			0,  // ADDSET_PERSPECTIVE
 			0,  // ADDSET_CA
 			0,  // ADDSET_VIGN_AMOUNT
-			0,  // ADDSET_LC_SATURATION
+			0,  // ADDSET_LC_CHROMATICITY
 			0,  // ADDSET_TC_SATURATION
 			0,  // ADDSET_TC_HLCOMPAMOUNT
 			0,  // ADDSET_TC_HLCOMPTHRESH
@@ -422,7 +424,10 @@ void Options::setDefaults () {
     rtSettings.beta = "BetaRGB";
     rtSettings.best = "BestRGB";
     rtSettings.verbose = false;
-	rtSettings.gamutICC = true;
+    rtSettings.gamutICC = true;
+    rtSettings.gamutLch = true;
+    rtSettings.protectred = 60;
+    rtSettings.protectredh = 0.4;
 
 	lastIccDir = rtSettings.iccDirectory;
 	lastDarkframeDir = rtSettings.darkFramesPath;
@@ -437,6 +442,7 @@ void Options::setDefaults () {
 	lastLabCurvesDir = "";
 	lastHsvCurvesDir = "";
 	lastToneCurvesDir = "";
+	lastVibranceCurvesDir = "";
 	lastProfilingReferenceDir = "";
 }
 
@@ -642,6 +648,9 @@ if (keyFile.has_group ("Color Management")) {
     if( keyFile.has_key ("Color Management", "Beta"))           rtSettings.beta                 = keyFile.get_string("Color Management", "Beta");
     if( keyFile.has_key ("Color Management", "Best"))           rtSettings.best                 = keyFile.get_string("Color Management", "Best");
     if( keyFile.has_key ("Color Management", "Bruce"))          rtSettings.bruce                = keyFile.get_string("Color Management", "Bruce");
+    if( keyFile.has_key ("Color Management", "GamutLch"))       rtSettings.gamutLch             = keyFile.get_boolean("Color Management", "GamutLch");
+    if( keyFile.has_key ("Color Management", "ProtectRed"))     rtSettings.protectred           = keyFile.get_integer("Color Management", "ProtectRed");
+    if( keyFile.has_key ("Color Management", "ProtectRedH"))    rtSettings.protectredh          = keyFile.get_double("Color Management", "ProtectRedH");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -696,6 +705,7 @@ if (keyFile.has_group ("Dialogs")) {
     safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 }
 
@@ -879,6 +889,9 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
     keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
     keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
+    keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
+    keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
+    keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
@@ -927,6 +940,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
     keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
     keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+    keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
     keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 
     FILE *f = safe_g_fopen (fname, "wt");

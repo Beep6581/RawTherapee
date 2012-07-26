@@ -9,7 +9,7 @@ namespace rtengine {
 	static const int MAXVAL = 0xffff;
 
 	template <typename _Tp>
-	inline const _Tp SQR (const _Tp& x) {
+	inline const _Tp SQR (_Tp x) {
 //		return std::pow(x,2); Slower than:
 		return (x*x);
 	}
