@@ -812,7 +812,7 @@ SAVEDLG_SUBSAMP;Subsampling
 SAVEDLG_SUBSAMP_1;Best compression
 SAVEDLG_SUBSAMP_2;Balanced
 SAVEDLG_SUBSAMP_3;Best quality
-SAVEDLG_SUBSAMP_TOOLTIP;Compression: 4:1:1\nBalanced: 4:2:2\nQuality: 4:4:4
+SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
 SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 SAVEDLG_WARNFILENAME;File will be named
