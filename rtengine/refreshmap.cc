@@ -56,7 +56,7 @@ SHARPENING,       // EvShrDIterations,
 TRANSFORM,        // EvLCPUseDist,
 DARKFRAME,        // EvLCPUseVign,
 TRANSFORM,        // EvLCPUseCA,
-0,                // EvCBBoost: obsolete
+M_VOID,           // EvFixedExp
 WHITEBALANCE,     // EvWBMethod,
 WHITEBALANCE,     // EvWBTemp,
 WHITEBALANCE,     // EvWBGreen,
@@ -187,7 +187,9 @@ RGBCURVE,         // EvRGBgCurve
 RGBCURVE,         // EvRGBbCurve
 RGBCURVE,         // EvNeutralExp
 LUMINANCECURVE,   // EvLBWtoning
+LUMINANCECURVE,   // EvLCCurve
+LUMINANCECURVE,   // EvLCHGurve
+RGBCURVE,          // EvCCCurve
 ALLNORAW          // EvDPDNLdetail
-	
 };
 

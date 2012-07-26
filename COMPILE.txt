@@ -72,6 +72,7 @@ DEPENDENCIES
   BZIP2       bzip2>-1.0.4       http://www.bzip.org/
   EXIV2       exiv2>=0.19        http://www.exiv2.org/
   EXPAT       expat>=2.1.0       http://expat.sourceforge.net/
+  FFTW        fftw>=3.2.2        http://fftw.org/
   GLIB2       glib-2.0>=2.16     http://www.gtk.org/
   GLIBMM      glibmm-2.4>=2.16   http://www.gtkmm.org
   GTK+        gtk+-2.0>=2.12     http://www.gtk.org/
@@ -282,6 +283,9 @@ WINDOWS
           - Download: http://expat.sourceforge.net/
           - Install
 
+        FFTW:
+          - Instructions: http://www.fftw.org/install/windows.html
+
 
       IMPORTANT:
         Make sure that the lcms.pc and libiptcdata.pc files located in the
@@ -359,19 +363,27 @@ LINUX
     See the list of dependencies at the beginning of this document.
 
     In Ubuntu/Debian the requirements can be installed by running:
-      sudo apt-get install build-essential cmake libbz2-dev libexiv2-dev \
-      libexpat1-dev libglib2.0-dev libglibmm-2.4-dev libgtk2.0-dev \
-      libgtkmm-2.4-dev libiptcdata-dev libjpeg8-dev liblcms2-dev libpng-dev \
-      libsigc++-2.0-dev libtiff-dev mercurial zlib1g-dev
+      sudo apt-get install build-essential cmake libfftw3-dev libbz2-dev \
+      libexiv2-dev libexpat1-dev libglib2.0-dev libglibmm-2.4-dev \
+      libgtk2.0-dev libgtkmm-2.4-dev libiptcdata-dev libjpeg8-dev \
+      liblcms2-dev libpng-dev libsigc++-2.0-dev libtiff-dev mercurial \
+      zlib1g-dev
+
+    In Fedora, run:
+      sudo yum install gcc-c++ cmake bzip2-devel exiv2-devel expat-devel \
+      fftw-devel glib2-devel glibmm24-devel gtk+-devel gtkmm24-devel \
+      libjpeg-turbo-devel lcms2-devel libiptcdata-devel libpng-devel \
+      libsigc++20-devel libtiff-devel zlib-devel
 
     In Gentoo, run:
       sudo emerge -uva app-arch/bzip2 media-gfx/exiv2 dev-libs/expat \
       dev-libs/glib dev-cpp/glibmm x11-libs/gtk+ dev-cpp/gtkmm \
       media-libs/libjpeg-turbo media-libs/lcms media-libs/libiptcdata \
-      media-libs/libpng dev-libs/libsigc++ media-libs/tiff sys-libs/zlib
+      media-libs/libpng dev-libs/libsigc++ media-libs/tiff sci-libs/fftw \
+      sys-libs/zlib
 
     In Arch, run:
-      sudo pacman -S bzip2 exiv2 expat glib2 glibmm gtk gtkmm lcms2 \
+      sudo pacman -S bzip2 exiv2 expat fftw glib2 glibmm gtk gtkmm lcms2 \
       libiptcdata libjpeg-turbo libpng libsigc++ libtiff zlib
 
   COMPILE:
@@ -456,7 +468,8 @@ OS X
         - Edit the beginning of CMakeLists.txt to enable the same architectures
           as you added to variants.conf
       - To install all the tools and dependencies, run:
-          sudo port install cairomm pango-devel gtk2 cmake glibmm gtkmm lcms libiptcdata
+          sudo port install cairomm cmake fftw-3 glibmm gtk2 gtkmm lcms \
+          libiptcdata pango-devel
       - If you don't already have Mercurial installed, run:
           sudo port install mercurial
       - If you want to try OpenMP builds, run:

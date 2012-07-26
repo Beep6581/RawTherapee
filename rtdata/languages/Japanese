@@ -78,6 +78,8 @@ EXPORT_MAXWIDTH;最大幅:
 EXPORT_PUTTOQUEUEFAST;　高速書き出しのキューに追加
 EXPORT_RAW_DMETHOD;デモザイクの方式
 EXPORT_RESIZEMETHOD;リサイズの方式
+EXTPROGTARGET_1;RAW
+EXTPROGTARGET_2;キュー処理
 FILEBROWSER_ADDDELTEMPLATE;テンプレートの追加/削除...
 FILEBROWSER_APPLYPROFILE;プロファイルの適用
 FILEBROWSER_APPLYPROFILE_PARTIAL;プロファイルの適用 (部分)
@@ -94,8 +96,8 @@ FILEBROWSER_COPYPROFILE;プロファイルをコピー
 FILEBROWSER_CURRENT_NAME;カーブ名:
 FILEBROWSER_DARKFRAME;ダークフレーム
 FILEBROWSER_DELETEDLGLABEL;ファイル削除確認
-FILEBROWSER_DELETEDLGMSGINCLPROC;バッチ処理に含まれる選択済みの1個のファイル %1 を削除してもいいですか?
-FILEBROWSER_DELETEDLGMSG;%1 を削除してもいいですか？
+FILEBROWSER_DELETEDLGMSGINCLPROC;バッチ処理に<b>組み込まれている</b>選択済みのファイル <b>%1</b> を削除してもいいですか?
+FILEBROWSER_DELETEDLGMSG;選択済みのファイル <b>%1</b> を削除してもいいですか?
 FILEBROWSER_EMPTYTRASHHINT;ゴミ箱を完全に空にする
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
 FILEBROWSER_EXEC_CPB;カスタム・プロファイルビルダーを実行
@@ -104,10 +106,12 @@ FILEBROWSER_EXIFFILTERAPPLY;適用
 FILEBROWSER_EXIFFILTERLABEL;Exifフィルタ
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Exifフィルタの設定を変える
 FILEBROWSER_EXIFFILTERSETTINGS;セットアップ
+FILEBROWSER_EXTPROGMENU;..で開く
 FILEBROWSER_FLATFIELD;フラットフィールド
 FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
 FILEBROWSER_MOVETOFLATFIELDDIR;フラットフィールド・ディレクトリに移動
 FILEBROWSER_NEW_NAME;新規名称:
+FILEBROWSER_OPENDEFAULTVIEWER;Windowsのデフォルト・ビューア（キュー処理）
 FILEBROWSER_PARTIALPASTEPROFILE;部分的に貼り付け
 FILEBROWSER_PASTEPROFILE;プロファイルの貼り付け
 FILEBROWSER_POPUPCANCELJOB;ジョブ キャンセル
@@ -198,6 +202,7 @@ GENERAL_OK;OK
 GENERAL_PORTRAIT;縦
 GENERAL_SAVE;保存
 GENERAL_UNCHANGED;(変更なし)
+GENERAL_WARNING;警告
 GENERAL_YES;Yes
 HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_BUTTON_B;B
@@ -383,6 +388,7 @@ HISTORY_MSG_163;RGB カーブ - R
 HISTORY_MSG_164;RGB カーブ - G
 HISTORY_MSG_165;RGB カーブ - B
 HISTORY_MSG_166;ニュートラル・レベル
+HISTORY_MSG_167;白黒トーン
 HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSSDIALOGLABEL;スナップのラベル:
@@ -477,6 +483,7 @@ MAIN_MSG_EMPTYFILENAME;未定義のファイル名
 MAIN_MSG_ERRORDURINGIMAGESAVING;画像の保存中にエラー
 MAIN_MSG_EXITJOBSINQUEUEINFO;未処理画像の順番は終了時に失われます
 MAIN_MSG_EXITJOBSINQUEUEQUEST;キュー待ちの画像がありますが、終了しますか？
+MAIN_MSG_IMAGEUNPROCESSED;このコマンドは、先に選択されたすべての画像をキュー処理する必要があります。
 MAIN_MSG_JOBSINQUEUE; キューの作業中・・・
 MAIN_MSG_NAVIGATOR;ナビゲータ
 MAIN_MSG_PLACES;場所
@@ -502,6 +509,9 @@ MAIN_TAB_TAGGING;タグ付け
 MAIN_TAB_TRANSFORM;変形
 MAIN_TAB_TRANSFORM_TOOLTIP;ショートカット: <b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;補正 前|後
+MAIN_TOOLTIP_BACKCOLOR0;プレビューの背景色を指定します: <b>テーマに基づく</b>\nショートカット: <b>8</b>
+MAIN_TOOLTIP_BACKCOLOR1;プレビューの背景色を指定します: <b>黒</b>\nショートカットt: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;プレビューの背景色を指定します: <b>白</b>\nショートカット: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>固定</b> / <b>固定解除</b> - <b>補正前</b> の表示設定\n\n<b>固定</b>: <b>補正前</b>をそのまま表示し変更されません。\n複数のツールの累積効果を評価するのに役立ちます。\nさらに、比較は履歴上のどこからでも行うことができます。\n\n<b>固定解除</b>: 現在使用のツールの効果が <b>補正後</b> に表示され、その1段階前が <b>補正前</b> に表示されます。
 MAIN_TOOLTIP_HIDEFP;ボタンパネル 表示/非表示(ディレクトリとファイルブラウザ)\nショートカット: <b>F</b>
 MAIN_TOOLTIP_HIDEHP;左パネル 表示/非表示 (履歴含む)\nショートカット:  <b>l</b>
@@ -539,7 +549,10 @@ NAVIGATOR_S_NA;S = n/a
 NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_NA;V = n/a
 NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_FULL;幅 = %1, 高さ = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
+OPTIONS_DEFIMG_MISSING;<b>RAWではない画像</b>のデフォルプロファイルが見つからないか、設定されていません。\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません。\n\nデフォルト設定値が使用されます。
+OPTIONS_DEFRAW_MISSING;<b>RAW画像</b>のデフォル・プロファイルが見つからないか、設定されていません。\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません。\n\nデフォルト設定値が使用されます。
 PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
@@ -692,6 +705,7 @@ PREFERENCES_INTERNALTHUMBIFUNTOUCHED;未編集の場合 内部のRAWサムネイ
 PREFERENCES_LANGAUTODETECT;OSの言語設定を使用
 PREFERENCES_LINEDENOISE;ラインノイズ フィルタ
 PREFERENCES_LIVETHUMBNAILS;ライブ・サムネイル (遅い)
+PREFERENCES_MENUGROUPEXTPROGS;グループ "..で開く"
 PREFERENCES_MENUGROUPFILEOPERATIONS;ファイル・グループの操作
 PREFERENCES_MENUGROUPLABEL;グループ・ラベル
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;プロファイル・グループの操作
@@ -814,6 +828,14 @@ SAVEDLG_SAVEIMMEDIATELY;すぐに保存
 SAVEDLG_SAVESPP;設定値も保存する
 SAVEDLG_TIFFFILTER;TIFF ファイル
 SAVEDLG_TIFFUNCOMPRESSED;非圧縮 TIFF
+SAVEDLG_WARNFILENAME;ファイルに名前が付けられます
+THRESHOLDSELECTOR_BL;下-左
+THRESHOLDSELECTOR_BR;下-右
+THRESHOLDSELECTOR_B;下
+THRESHOLDSELECTOR_HINT;個々のコントロールポイントを移動するには、<b>Shiftキー</b>を押し続けます。
+THRESHOLDSELECTOR_TL;上-左
+THRESHOLDSELECTOR_TR;上-右
+THRESHOLDSELECTOR_T;上
 TOOLBAR_TOOLTIP_CROP;切り抜き範囲選択\nショートカット:  <b>c</b>
 TOOLBAR_TOOLTIP_HAND;手の平ツール\nショートカット:  <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>直線選択</b> / <b>角度補正</b>\nショートカット: <b>s</b>\nプレビュー画像上にガイド線を描画し、垂直または水平方向を指示します。回転角度は、ガイド線の隣に表示されます。回転の中心は、プレビュー画像の中心です。
@@ -850,6 +872,7 @@ TP_COLORSHIFT_LABEL;カラー シフト
 TP_CROP_FIXRATIO;縦横比 固定:
 TP_CROP_GTDIAGONALS;対角線
 TP_CROP_GTEPASSPORT;バイオメトリック・パスポート
+TP_CROP_GTFRAME;フレーム
 TP_CROP_GTGRID;グリッド
 TP_CROP_GTHARMMEANS1;調和平均 1
 TP_CROP_GTHARMMEANS2;調和平均 2
@@ -957,12 +980,19 @@ TP_ICM_LABEL;カラー・マネジメント
 TP_ICM_NOICM;No ICM: sRGB 出力
 TP_ICM_OUTPUTDLGLABEL;出力 ICC プロファイルを選択...
 TP_ICM_OUTPUTPROFILE;出力プロファイル
+TP_ICM_PREFERREDPROFILE;DCPプロファイル優先
+TP_ICM_PREFERREDPROFILE_1;昼光
+TP_ICM_PREFERREDPROFILE_2;タングステン
+TP_ICM_PREFERREDPROFILE_3;蛍光灯
+TP_ICM_PREFERREDPROFILE_4;フラッシュ
 TP_ICM_SAVEREFERENCE;プロファイリングの参照する画像を保存
 TP_ICM_WORKINGPROFILE;作業プロファイル
 TP_IMPULSEDENOISE_LABEL;インパルス ノイズ低減
 TP_IMPULSEDENOISE_THRESH;インパルス NR しきい値
 TP_LABCURVE_AVOIDCOLORCLIP;カラークリッピング回避
 TP_LABCURVE_BRIGHTNESS;明るさ
+TP_LABCURVE_BWTONING;白黒トーン
+TP_LABCURVE_BWTONING_TIP;<b>白黒トーン</b> オプションを有効にすると、Lab調整の彩度は無効になります。\n色調は <b>a</b> と <b>b</b> カーブで調整することができます。
 TP_LABCURVE_CONTRAST;コントラスト
 TP_LABCURVE_CURVEEDITOR;Lab 明度カーブ
 TP_LABCURVE_ENABLESATLIMITER;彩度制限・有効
@@ -972,6 +1002,11 @@ TP_LABCURVE_SATURATION;彩度
 TP_LENSGEOM_AUTOCROP;自動的に切り抜き選択
 TP_LENSGEOM_FILL;オートフィル
 TP_LENSGEOM_LABEL;レンズ / ジオメトリ
+TP_LENSPROFILE_FILEDLGFILTERLCP;レンズ補正 ファイル
+TP_LENSPROFILE_LABEL;レンズ補正 プロファイル
+TP_LENSPROFILE_USECA;色収差補正を使用
+TP_LENSPROFILE_USEDIST;歪曲収差補正を使用
+TP_LENSPROFILE_USEVIGN;周辺光量補正を使用
 TP_LUMADENOISE_EDGETOLERANCE;エッジの許容度
 TP_LUMADENOISE_LABEL;輝度 ノイズ低減
 TP_LUMADENOISE_RADIUS;半径
@@ -1074,6 +1109,9 @@ TP_VIBRANCE_PASTELS;パステルトーン
 TP_VIBRANCE_PASTSATTOG;パステルと純色トーンをリンク
 TP_VIBRANCE_PROTECTSKINS;肌トーンを保護
 TP_VIBRANCE_PSTHRESHOLD;パステル/純色トーン しきい値
+TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;純色トーン しきい値
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;縦軸は下がパステルトーン,上が純色を表し。\n\n横軸は彩度の範囲を表しています。
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;パステル/純色トーン 移行の荷重
 TP_VIBRANCE_SATURATED;純色トーン
 TP_VIGNETTING_AMOUNT;適用量
 TP_VIGNETTING_CENTER;中心
@@ -1144,26 +1182,4 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 #04 update: 2011-12-03 (for 4.0.6)
 #05 update: 2012-02-11 (for 4.0.7)
 #06 update: 2012-04-04 (for 4.0.8)
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!EXTPROGTARGET_1;raw
-!EXTPROGTARGET_2;queue-processed
-!FILEBROWSER_EXTPROGMENU;Open with
-!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed) 
-!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
-!TP_ICM_PREFERREDPROFILE;Preferred DCP profile
-!TP_ICM_PREFERREDPROFILE_1;Daylight
-!TP_ICM_PREFERREDPROFILE_2;Tungsten
-!TP_ICM_PREFERREDPROFILE_3;Fluorescent
-!TP_ICM_PREFERREDPROFILE_4;Flash
-!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
-!TP_LENSPROFILE_LABEL;Lens Correction Profile
-!TP_LENSPROFILE_USECA;Use CA correction
-!TP_LENSPROFILE_USEDIST;Use distortion correction
-!TP_LENSPROFILE_USEVIGN;Use vignette correction
+#07 update: 2012-07-12 (for 4.0.9)

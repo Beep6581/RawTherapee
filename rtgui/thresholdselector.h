@@ -21,6 +21,7 @@
 
 #include "guiutils.h"
 #include "../rtengine/procparams.h"
+#include "coloredbar.h"
 #include <iomanip>
 
 class ThresholdSelector;
@@ -30,6 +31,7 @@ class ThresholdSelector;
  */
 class ThresholdCurveProvider {
 	public:
+		virtual ~ThresholdCurveProvider() {};
 		/*
 		 * The curve provider has to send back a list of point (at least 2 points) in the [0.0 ; 1.0] range
 		 * for both X and Y axis; X and Y values are streamlined ( X1, Y1, X2, Y2, X3, Y3, ...)
@@ -57,7 +59,7 @@ class ThresholdCurveProvider {
  * have to provide through the
  *
  */
-class ThresholdSelector : public Gtk::DrawingArea {
+class ThresholdSelector : public Gtk::DrawingArea, public ColoredBar {
 
 	public:
 
@@ -74,9 +76,6 @@ class ThresholdSelector : public Gtk::DrawingArea {
 
 		sigc::signal<void> sig_val_changed;
 
-		Glib::RefPtr<Gdk::GC> gc_;
-		Glib::RefPtr<Gdk::Pixmap> backBuffer;
-		std::vector<GradientMilestone> bgGradient;
 		ThresholdCurveProvider* bgCurveProvider;
 
 		Glib::ustring additionalTTip;
@@ -183,7 +182,6 @@ class ThresholdSelector : public Gtk::DrawingArea {
 
 		void setSeparatedSliders(bool separated);
 		bool getSeparatedSliders();
-		void setBgGradient (const std::vector<GradientMilestone> &milestones);
 		void setBgCurveProvider (ThresholdCurveProvider* provider);
 		bool isStartAtOne() { return initalEq1; }
 		bool isDouble() { return doubleThresh; }

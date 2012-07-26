@@ -27,9 +27,7 @@
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
-CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), cl(NULL), cp(NULL) {
+CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), cl(NULL) {
 	curveEditors.clear();
 	displayedCurve = 0;
 	numberOfPackedCurve = 0;
@@ -120,12 +118,6 @@ void CurveEditorGroup::newLine() {
  */
 void CurveEditorGroup::curveListComplete() {
 	newLine();
-
-	// Set the color provider
-	if (cp) {
-		if (flatSubGroup) flatSubGroup->setColorProvider(cp);
-		if (diagonalSubGroup) diagonalSubGroup->setColorProvider(cp);
-	}
 
 	// We check the length of the label ; if it contains only one char (':'), we set it to the right default string
 	if (curveGroupLabel->get_label().size()==1)
@@ -294,8 +286,15 @@ void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce) {
 	}
 }
 
-CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) :
-		curveDir(curveDir), lastFilename("") {
+CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename("") {
+	leftBar = NULL;
+	bottomBar = NULL;
+	curveCP = NULL;
+}
+
+CurveEditorSubGroup::~CurveEditorSubGroup() {
+	if (leftBar) delete leftBar;
+	if (bottomBar) delete bottomBar;
 }
 
 Glib::ustring CurveEditorSubGroup::outputFile () {

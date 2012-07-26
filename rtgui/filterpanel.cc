@@ -86,6 +86,7 @@ FilterPanel::FilterPanel () : listener (NULL) {
     expcomp->set_headers_visible (false);
     Gtk::ScrolledWindow* sexpcomp = Gtk::manage(new Gtk::ScrolledWindow());
     sexpcomp->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+   	sexpcomp->set_size_request(-1, 80);
     sexpcomp->add(*expcomp);
     evb->pack_start (*sexpcomp, Gtk::PACK_SHRINK, 0);
     pack_start (*evb, Gtk::PACK_SHRINK, 4);
@@ -97,6 +98,7 @@ FilterPanel::FilterPanel () : listener (NULL) {
     camera->set_headers_visible (false);
     Gtk::ScrolledWindow* scamera = Gtk::manage(new Gtk::ScrolledWindow());
     scamera->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+   	scamera->set_size_request(-1, 80);
     scamera->add(*camera);
 	cvb->pack_start (*scamera, Gtk::PACK_SHRINK, 0);
 	pack_start (*cvb, Gtk::PACK_SHRINK, 4);
@@ -108,6 +110,7 @@ FilterPanel::FilterPanel () : listener (NULL) {
     lens->set_headers_visible (false);
     Gtk::ScrolledWindow* slens = Gtk::manage(new Gtk::ScrolledWindow());
     slens->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+   	slens->set_size_request(-1, 80);
     slens->add(*lens);
 	lvb->pack_start (*slens, Gtk::PACK_SHRINK, 0);
 	pack_start (*lvb, Gtk::PACK_SHRINK, 4);
@@ -119,6 +122,7 @@ FilterPanel::FilterPanel () : listener (NULL) {
 	filetype->set_headers_visible (false);
 	Gtk::ScrolledWindow* sfiletype = Gtk::manage(new Gtk::ScrolledWindow());
 	sfiletype->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+   	sfiletype->set_size_request(-1, 80);
 	sfiletype->add(*filetype);
 	ftvb->pack_start (*sfiletype, Gtk::PACK_SHRINK, 0);
 	pack_start (*ftvb, Gtk::PACK_SHRINK, 4);

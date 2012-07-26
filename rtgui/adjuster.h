@@ -27,6 +27,7 @@ class Adjuster;
 class AdjusterListener {
 
   public:
+	virtual ~AdjusterListener() {};
     virtual void adjusterChanged (Adjuster* a, double newval) {}
 };
 
@@ -71,13 +72,14 @@ class Adjuster : public Gtk::VBox {
     void setAdjusterListener (AdjusterListener* alistener) { adjusterListener = alistener; }
 
     // return the value trimmed to the limits at construction time
-    double getValue () { return spin->get_value (); }
+    double getValue () { return shapeValue(spin->get_value ()); }
     // return the value trimmed to the limits at construction time
     int getIntValue () { return spin->get_value_as_int (); }
     // return the value trimmed to the limits at construction time,
     // method only used by the history manager
     Glib::ustring getTextValue () { return spin->get_text (); }
 
+    void setLabel (Glib::ustring lbl) { label->set_label(lbl); }
     void setValue (double a);   
     void setLimits (double vmin, double vmax, double vstep, double vdefault);
     void setEnabled (bool enabled);

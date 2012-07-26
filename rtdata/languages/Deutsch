@@ -800,7 +800,7 @@ SAVEDLG_SUBSAMP;Subsampling
 SAVEDLG_SUBSAMP_1;Beste Kompression
 SAVEDLG_SUBSAMP_2;Ausbalanciert
 SAVEDLG_SUBSAMP_3;Beste Qualität
-SAVEDLG_SUBSAMP_TOOLTIP;Kompression: 4:1:1\nAusbalanciert: 4:2:2\nQualität: 4:4:4
+SAVEDLG_SUBSAMP_TOOLTIP;Beste Kompression: 4:1:1\nAusbalanciert: 4:2:2\nBeste Qualität: 4:4:4
 SAVEDLG_TIFFFILTER;TIFF-Datei
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen <b>C</b>\n\nZum Verschieben des Ausschnitts muss die Umschalttaste gedrückt gehalten werden

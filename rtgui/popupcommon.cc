@@ -24,8 +24,6 @@
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label) {
 	button = thisButton;
 	hasMenu = false;
@@ -140,9 +138,9 @@ void PopUpCommon::show() {
 }
 
 void PopUpCommon::setButtonHint() {
-	Glib::ustring hint = buttonHint.size() ? buttonHint + " " + sItems.at(selected) : sItems.at(selected);
+	Glib::ustring hint = !buttonHint.empty() ? buttonHint + " " + sItems.at(selected) : sItems.at(selected);
 //	if (hasMenu) hint += "\n(" + M("POPUPBUTTON_SELECTOPTIONHINT") + ")";
-	button->set_tooltip_text(hint);
+	button->set_tooltip_markup(hint);
 }
 
 void PopUpCommon::showMenu(GdkEventButton* event) {

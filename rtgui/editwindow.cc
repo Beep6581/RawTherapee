@@ -175,7 +175,7 @@ bool EditWindow::keyPressed (GdkEventKey* event) {
         toggleFullscreen();
         return true;
     } else {
-	EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
+        EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
         return ep->handleShortcutKey (event);
     }
 }

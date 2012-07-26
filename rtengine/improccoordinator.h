@@ -60,7 +60,8 @@ class ImProcCoordinator : public StagedImageProcessor {
         ImProcFunctions ipf;
 
         int scale;
-        bool highDetailComputed;
+        bool highDetailPreprocessComputed;
+        bool highDetailRawComputed;
         bool allocated;
 
         void freeAll ();
@@ -73,6 +74,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTf chroma_acurve;
         LUTf chroma_bcurve;
         LUTf satcurve;
+     //   LUTf satbgcurve;
 
         LUTf rCurve;
         LUTf gCurve;

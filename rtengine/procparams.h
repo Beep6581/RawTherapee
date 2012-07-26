@@ -202,12 +202,14 @@ class LCurveParams {
         std::vector<double>   lcurve;
         std::vector<double>   acurve;
         std::vector<double>   bcurve;
+        std::vector<double>   cccurve;
+        std::vector<double>   chcurve;
+        //std::vector<double>   cbgcurve;
         int     brightness;
         int     contrast;
-        int     saturation;
-        bool    avoidclip;
-        bool    enable_saturationlimiter;
-        double  saturationlimit;
+        int     chromaticity;
+        bool    avoidcolorshift;
+        double  rstprotection;
         bool    bwtoning;
 };
 
@@ -273,8 +275,9 @@ class VibranceParams {
         bool           protectskins;
         bool           avoidcolorshift;
         bool           pastsattog;
+        std::vector<double> skintonescurve;
 
-        VibranceParams() : psthreshold(1, 75,  false) {};
+        VibranceParams() : psthreshold(0, 75,  false) {};
 };
 
 /**

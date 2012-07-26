@@ -27,6 +27,10 @@ using namespace rtengine::procparams;
 
 ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
+  std::vector<GradientMilestone> bottomMilestones;
+  bottomMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+  bottomMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+
 //----------- Auto Levels ----------------------------------
   abox = Gtk::manage (new Gtk::HBox ());
   abox->set_border_width (2);
@@ -89,6 +93,9 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   curveEditorG->setCurveListener (this);
 
   shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
+  shape->setBottomBarBgGradient(bottomMilestones);
+  shape->setLeftBarBgGradient(bottomMilestones);
+
 
   // This will add the reset button at the end of the curveType buttons
   curveEditorG->curveListComplete();
@@ -219,7 +226,9 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
 
     // Switch off auto exposure if user changes sliders manually
     if (autolevels->get_active() && (a==expcomp || a==brightness || a==contrast || a==black || a==hlcompr || a==hlcomprthresh)) {
+    	autoconn.block(true);
         autolevels->set_active (false);
+    	autoconn.block(false);
         autolevels->set_inconsistent (false);
     }
 
@@ -294,35 +303,45 @@ void ToneCurve::autolevels_toggled () {
             autolevels->set_inconsistent (true);
 
         lastAuto = autolevels->get_active ();
-    }
 
-    if (!batchMode && autolevels->get_active() && listener) {
-        listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
-        waitForAutoExp ();
-        if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
-    } 
-    
-    if (batchMode) {
         expcomp->setEditedState (UnEdited);
-		brightness->setEditedState (UnEdited);
-		contrast->setEditedState (UnEdited);
+        brightness->setEditedState (UnEdited);
+        contrast->setEditedState (UnEdited);
         black->setEditedState (UnEdited);
         hlcompr->setEditedState (UnEdited);
         hlcomprthresh->setEditedState (UnEdited);
         if (expcomp->getAddMode())
             expcomp->setValue (0);
-		if (brightness->getAddMode())
+        if (brightness->getAddMode())
             brightness->setValue (0);
-		if (contrast->getAddMode())
+        if (contrast->getAddMode())
             contrast->setValue (0);
-		if (black->getAddMode())
+        if (black->getAddMode())
             black->setValue (0);
         if (hlcompr->getAddMode())
-        	hlcompr->setValue (0);
+            hlcompr->setValue (0);
         if (hlcomprthresh->getAddMode())
-        	hlcomprthresh->setValue (0);
-        listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
+            hlcomprthresh->setValue (0);
+        if (listener) {
+            if (!autolevels->get_inconsistent()) {
+                if (autolevels->get_active ())
+                    listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
+                else
+                    listener->panelChanged (EvFixedExp, M("GENERAL_DISABLED"));
+            }
+        }
     }
+    else if (/* !batchMode && */ listener) {
+        if (autolevels->get_active()) {
+            listener->panelChanged (EvAutoExp, M("GENERAL_ENABLED"));
+            waitForAutoExp ();
+            if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
+        }
+        else {
+            listener->panelChanged (EvFixedExp, M("GENERAL_DISABLED"));
+        }
+    }
+
 }
 
 void ToneCurve::clip_changed () {
