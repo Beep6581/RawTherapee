@@ -362,17 +362,16 @@ void Options::setDefaults () {
 			0,  // ADDSET_LC_BRIGHTNESS
 			0,  // ADDSET_LC_CONTRAST
 			0,  // ADDSET_SHARP_AMOUNT
-			//0,  // ADDSET_LD_EDGETOLERANCE -- From obsolete and removed tool
 			0,  // ADDSET_WB_TEMPERATURE
 			0,  // ADDSET_WB_GREEN
-			//0,  // ADDSET_CBOOST_AMOUNT -- From obsolete and removed tool
-			//0,  // ADDSET_CS_BLUEYELLOW -- From obsolete and removed tool
-			//0,  // ADDSET_CS_GREENMAGENTA -- From obsolete and removed tool
 			0,  // ADDSET_ROTATE_DEGREE
 			0,  // ADDSET_DIST_AMOUNT
 			0,  // ADDSET_PERSPECTIVE
 			0,  // ADDSET_CA
 			0,  // ADDSET_VIGN_AMOUNT
+			0,  // ADDSET_VIGN_RADIUS
+			0,  // ADDSET_VIGN_STRENGTH
+			0,  // ADDSET_VIGN_CENTER
 			0,  // ADDSET_LC_CHROMATICITY
 			0,  // ADDSET_TC_SATURATION
 			0,  // ADDSET_TC_HLCOMPAMOUNT
@@ -396,7 +395,7 @@ void Options::setDefaults () {
 			0,  // ADDSET_VIBRANCE_SATURATED
 			0,  // ADDSET_FREE_OUPUT_GAMMA
 			0,  // ADDSET_FREE_OUTPUT_SLOPE
-
+ 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     

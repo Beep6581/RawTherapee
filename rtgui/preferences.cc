@@ -225,6 +225,9 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_VIGNETTING_LABEL"));
     appendBehavList (mi, M("TP_VIGNETTING_AMOUNT"), ADDSET_VIGN_AMOUNT, false);
+    appendBehavList (mi, M("TP_VIGNETTING_RADIUS"), ADDSET_VIGN_RADIUS, false);
+    appendBehavList (mi, M("TP_VIGNETTING_STRENGTH"), ADDSET_VIGN_STRENGTH, false);
+    appendBehavList (mi, M("TP_VIGNETTING_CENTER_X")+", "+M("TP_VIGNETTING_CENTER_Y"), ADDSET_VIGN_CENTER, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_DIRPYREQUALIZER_LABEL"));

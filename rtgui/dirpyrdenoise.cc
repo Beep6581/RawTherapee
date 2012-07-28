@@ -114,18 +114,13 @@ void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited
 void DirPyrDenoise::adjusterChanged (Adjuster* a, double newval) {
 	
     if (listener && enabled->get_active()) {
-        
-        if (a==luma) {
+        if (a==luma)
             listener->panelChanged (EvDPDNLuma, Glib::ustring::format ((int)a->getValue()));
-        } else {
-			if (a==chroma) { 
-            listener->panelChanged (EvDPDNChroma, Glib::ustring::format ((int)a->getValue()));
-			} else {
-				if (a==gamma) 
-					listener->panelChanged (EvDPDNGamma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-			}
-		}
-	}
+        else if (a==chroma)
+             listener->panelChanged (EvDPDNChroma, Glib::ustring::format ((int)a->getValue()));
+        else if (a==gamma) 
+             listener->panelChanged (EvDPDNGamma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
+    }
 }
 
 void DirPyrDenoise::enabledChanged () {
@@ -156,6 +151,7 @@ void DirPyrDenoise::setBatchMode (bool batchMode) {
     ToolPanel::setBatchMode (batchMode);
     luma->showEditedCB ();
     chroma->showEditedCB ();
+    gamma->showEditedCB ();
 }
 
 void DirPyrDenoise::setAdjusterBehavior (bool chrolumaadd, bool gammaadd) {

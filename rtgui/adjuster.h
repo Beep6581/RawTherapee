@@ -35,6 +35,7 @@ class AdjusterListener {
 class Adjuster : public Gtk::VBox {
 
   protected:
+    Glib::ustring adjustmentName;
     Gtk::HBox* hbox;
     Gtk::Label* label;
     MyHScale* slider;
