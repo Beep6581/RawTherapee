@@ -403,6 +403,15 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
 				    mainNB->set_current_page (mainNB->page_num (*epanel));
 				}
 				return true;
+			case GDK_w: //multi-tab mode, close editor panel
+				if (!isSingleTabMode() && 
+					mainNB->get_current_page()!=mainNB->page_num(*fpanel) &&
+					mainNB->get_current_page()!=mainNB->page_num(*bpanel)) {
+					
+			    	EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
+    				remEditorPanel (ep);
+		    		return true;
+	    		}
 		}
 	}
 
