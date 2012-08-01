@@ -254,7 +254,7 @@ namespace rtengine {
 				wavelet_decomposition adecomp(labdn->data+datalen, labdn->W, labdn->H, 5, 1 );
 				wavelet_decomposition bdecomp(labdn->data+2*datalen, labdn->W, labdn->H, 5, 1 );
 				
-				float noisevarL	 = SQR(dnparams.luma/25.0f);
+				float noisevarL	 = SQR((dnparams.luma/125.0f)*(1+ dnparams.luma/25.0f));
 				float noisevarab = SQR(dnparams.chroma/10.0f);
 				
 				//WaveletDenoiseAll_BiShrink(Ldecomp, adecomp, bdecomp, noisevarL, noisevarab);
@@ -343,7 +343,7 @@ namespace rtengine {
 						for (int j=-blkrad*offset; j<0; j++) {
 							datarow[j] = datarow[MIN(-j,width-1)];
 						}
-						for (int j=width; j<width+(TS-(width%TS)-1)+blkrad*offset; j++) {
+						for (int j=width; j<width+TS+blkrad*offset; j++) {
 							datarow[j] = datarow[MAX(0,2*width-2-j)];
 						}//now we have a padded data row
 						
