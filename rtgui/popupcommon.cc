@@ -138,8 +138,14 @@ void PopUpCommon::show() {
 }
 
 void PopUpCommon::setButtonHint() {
-	Glib::ustring hint = !buttonHint.empty() ? buttonHint + " " + sItems.at(selected) : sItems.at(selected);
-//	if (hasMenu) hint += "\n(" + M("POPUPBUTTON_SELECTOPTIONHINT") + ")";
+	Glib::ustring hint;
+	if (!buttonHint.empty()) {
+		hint = buttonHint;
+		if (selected > -1)
+			hint += " ";
+	}
+	if (selected > -1)
+		hint += sItems.at(selected);
 	button->set_tooltip_markup(hint);
 }
 
@@ -149,4 +155,5 @@ void PopUpCommon::showMenu(GdkEventButton* event) {
 
 void PopUpCommon::set_tooltip_text (const Glib::ustring &text) {
 	buttonHint = text;
+	setButtonHint();
 }
