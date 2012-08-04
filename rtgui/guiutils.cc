@@ -329,6 +329,21 @@ bool MyComboBox::on_scroll_event (GdkEventScroll* event) {
 	return false;
 }
 
+MyComboBoxEntryText::MyComboBoxEntryText(){
+	set_size_request(40, -1);
+}
+
+bool MyComboBoxEntryText::on_scroll_event (GdkEventScroll* event) {
+
+	// If Shift is pressed, the widget is modified
+	if (event->state & GDK_SHIFT_MASK) {
+		Gtk::ComboBoxEntryText::on_scroll_event(event);
+		return true;
+	}
+	// ... otherwise the scroll event is sent back to an upper level
+	return false;
+}
+
 MySpinButton::MySpinButton () {
 	Gtk::Border border;
 	border.bottom = 0;

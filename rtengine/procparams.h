@@ -21,6 +21,7 @@
 
 #include <glibmm.h>
 #include <vector>
+#include "rtXmp.h"
 
 class ParamsEdited;
 
@@ -414,7 +415,7 @@ class ColorManagementParams {
     public:
         Glib::ustring input;
         bool          blendCMSMatrix;
-        short preferredProfile;
+        short         preferredProfile;
         Glib::ustring working;
         Glib::ustring output;
         static const Glib::ustring NoICMString;      
@@ -428,13 +429,13 @@ class ColorManagementParams {
 
 /**
   * Typedef for representing a key/value for the exif metadata information
-  */
 typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
+  */
 
 /**
   * The IPTC key/value pairs
-  */
 typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
+  */
 
 /**
 * Directional pyramid equalizer params
@@ -527,7 +528,7 @@ class ProcParams {
         DefringeParams          defringe;        ///< Defringing parameters
         ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
         DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
-        EPDParams					  edgePreservingDecompositionUI;
+        EPDParams               edgePreservingDecompositionUI;
         SHParams                sh;              ///< Shadow/highlight enhancement parameters
         CropParams              crop;            ///< Crop parameters
         CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
@@ -546,39 +547,32 @@ class ProcParams {
         RAWParams               raw;             ///< RAW parameters before demosaicing
         DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
-        char                    rank;            ///< Custom image quality ranking
-        char                    colorlabel;      ///< Custom color label
-        bool                    inTrash;         ///< Marks deleted image
+
         Glib::ustring           appVersion;      ///< Version of the application that generated the parameters
         int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
 
-        ExifPairs                exif;            ///< List of modifications appplied on the exif tags of the input image
-        IPTCPairs                iptc;            ///< The IPTC tags and values to be saved to the output image
 
       /**
         * The constructor only sets the hand-wired defaults.
         */
-        ProcParams          ();
+        ProcParams ();
       /**
         * Sets the hand-wired defaults parameters.
         */
-        void    setDefaults ();
-      /**
-        * Saves the parameters to possibly two files. This is a performance improvement if a function has to
-        * save the same file in two different location, i.e. the cache and the image's directory
-        * @param fname   the name of the first file (can be an empty string)
-        * @param fname2  the name of the second file (can be an empty string) (optional)
-        * @param pedited pointer to a ParamsEdited object (optional) to store which values has to be saved
-        * @return Error code (=0 if all supplied filenames where created correctly)
-        */
-        int     save        (Glib::ustring fname, Glib::ustring fname2 = "", ParamsEdited* pedited=NULL) const;
+        void setDefaults ();
+
       /**
         * Loads the parameters from a file.
         * @param fname the name of the file
         * @params pedited pointer to a ParamsEdited object (optional) to store which values has been loaded
         * @return Error code (=0 if no error)
         */
-        int     load        (Glib::ustring fname, ParamsEdited* pedited=NULL);
+        int load        (Glib::ustring fname, ParamsEdited* pedited=NULL, int *rank=NULL);
+
+        int saveIntoXMP (Exiv2::XmpData &xmpData, const std::string& baseKey) const;
+        int loadFromXMP (Exiv2::XmpData &xmpData, const std::string& baseKey);
+        int saveParams  (Glib::ustring fname) const;
+        int loadParams  (Glib::ustring fname);
 
       /** Creates a new instance of ProcParams.
         * @return a pointer to the new ProcParams instance. */

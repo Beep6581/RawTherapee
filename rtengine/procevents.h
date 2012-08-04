@@ -134,7 +134,7 @@ enum ProcEvent {
     EvResizeAppliesTo=109,
     EvLAvoidClip=110,
     EvLSatLimiter=111,
-    EvLSatLimit=112,
+    EvLRSTProtection=112,
     EvDemosaicDCBIter=113,
     EvDemosaicFalseColorIter=114,
     EvDemosaicDCBEnhanced=115,

@@ -34,9 +34,12 @@ BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolP
 	std::vector<ToolPanel*>::iterator ipi = std::find (toolPanels.begin(), toolPanels.end(), iptcpanel);
 	if (ipi!=toolPanels.end())
 		toolPanels.erase (ipi);
-	toolPanelNotebook->remove_page (*metadataPanel);
-	metadataPanel = 0;
+	toolPanelNotebook->remove_page (*iptcpanel);
+	toolPanelNotebook->remove_page (*exifpanel);
+	iptcpanel = 0;
+	exifpanel = 0;
 	toiM = 0;
+	toiX = 0;
 
     for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->setBatchMode (true);

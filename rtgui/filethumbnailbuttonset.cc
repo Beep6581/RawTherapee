@@ -85,6 +85,8 @@ void FileThumbnailButtonSet::setColorLabel (int colorLabel) {
 	if (colorLabel==3) buttons[8]->setIcon (colorLabelIcon_3);
 	if (colorLabel==4) buttons[8]->setIcon (colorLabelIcon_4);
 	if (colorLabel==5) buttons[8]->setIcon (colorLabelIcon_5);
+	if (colorLabel<options.colorLabels.size() )
+	   buttons[8]->setToolTip( options.colorLabels[colorLabel] );
 }
 
 void FileThumbnailButtonSet::setInTrash (bool inTrash) {

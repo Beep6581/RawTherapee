@@ -1,4 +1,5 @@
 
+
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -74,20 +75,18 @@
 !EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 !EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 !EXPORT_BYPASS_SHARPENING;Bypass Sharpening
-!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
 !EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
 !EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
-!EXPORT_MAXHEIGHT;Maximum Height:
-!EXPORT_MAXWIDTH;Maximum Width:
+!EXPORT_MAXHEIGHT;Maximum Height: 
+!EXPORT_MAXWIDTH;Maximum Width:  
 !EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
 !EXPORT_RAW_DMETHOD;Demosaic Method
 !EXPORT_RESIZEMETHOD;Resize Method
-!EXTPROGTARGET_1;raw
-!EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-!FILEBROWSER_APPLYPROFILE;Apply
-!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
+!FILEBROWSER_APPLYPROFILE;Apply profile
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
 !FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
 !FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
 !FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
@@ -96,29 +95,27 @@
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CACHE;Cache
-!FILEBROWSER_CLEARPROFILE;Clear
-!FILEBROWSER_COPYPROFILE;Copy
+!FILEBROWSER_CLEARPROFILE;Clear profile
+!FILEBROWSER_COPYPROFILE;Copy profile
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGLABEL;File delete confirmation
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
-!FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected <b>%1<b> files?
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a queue-processed version?
+!FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
 !FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files from trash
 !FILEBROWSER_EMPTYTRASH;Empty Trash
-!FILEBROWSER_EXEC_CPB;Custom Profile Builder
+!FILEBROWSER_EXEC_CPB;Run Custom Profile Builder
 !FILEBROWSER_EXIFFILTERAPPLYHINT;Switch File Browser Exif Filter on/off
 !FILEBROWSER_EXIFFILTERAPPLY;Apply
 !FILEBROWSER_EXIFFILTERLABEL;Exif Filter
 !FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the Exif Filter
 !FILEBROWSER_EXIFFILTERSETTINGS;Setup
-!FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_FLATFIELD;Flat Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
-!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
-!FILEBROWSER_PARTIALPASTEPROFILE;Paste - partial
-!FILEBROWSER_PASTEPROFILE;Paste
+!FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
+!FILEBROWSER_PASTEPROFILE;Paste profile
 !FILEBROWSER_POPUPCANCELJOB;Cancel job
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
@@ -129,20 +126,20 @@
 !FILEBROWSER_POPUPCOLORLABEL;Color label
 !FILEBROWSER_POPUPCOPYTO;Copy to...
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
-!FILEBROWSER_POPUPMOVEEND;Move to end of Queue
-!FILEBROWSER_POPUPMOVEHEAD;Move to head of Queue
+!FILEBROWSER_POPUPMOVEEND;Move to end of queue
+!FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
 !FILEBROWSER_POPUPMOVETO;Move to...
 !FILEBROWSER_POPUPOPEN;Open
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 !FILEBROWSER_POPUPPROCESS;Put to Queue
-!FILEBROWSER_POPUPPROFILEOPERATIONS;Processing Profile Operations
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
 !FILEBROWSER_POPUPRANK1;Rank 1 *
 !FILEBROWSER_POPUPRANK2;Rank 2 **
 !FILEBROWSER_POPUPRANK3;Rank 3 ***
 !FILEBROWSER_POPUPRANK4;Rank 4 ****
 !FILEBROWSER_POPUPRANK5;Rank 5 *****
 !FILEBROWSER_POPUPRANK;Rank
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_POPUPREMOVE;Delete
 !FILEBROWSER_POPUPRENAME;Rename
@@ -167,7 +164,7 @@
 !FILEBROWSER_SHOWDIRHINT;Clear all filters.\nShortcut: <b>D</b>
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
-!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>
+!FILEBROWSER_SHOWEXIFINFO;Show EXIF info.\nShortcut: <b>i</b>
 !FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
 !FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star.\nShortcut: <b>1</b>
 !FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star.\nShortcut: <b>2</b>
@@ -179,11 +176,11 @@
 !FILEBROWSER_SHOWTRASHHINT;Show content of the trash.\nShortcut: <b>T</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
 !FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>`</b>
-!FILEBROWSER_STARTPROCESSINGHINT;Start processing the images in the queue
+!FILEBROWSER_STARTPROCESSINGHINT;Start processing/saving of images in the queue
 !FILEBROWSER_STARTPROCESSING;Start processing
-!FILEBROWSER_STOPPROCESSINGHINT;Stop processing the images in the queue
+!FILEBROWSER_STOPPROCESSINGHINT;Stop processing of images
 !FILEBROWSER_STOPPROCESSING;Stop processing
-!FILEBROWSER_THUMBSIZE;Thumbnail size
+!FILEBROWSER_THUMBSIZE;Thumb. size
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 !FILEBROWSER_USETEMPLATE;Use template:
 !FILEBROWSER_ZOOMINHINT;Increase thumbnail size.\nShortcut: <b>+</b>
@@ -227,8 +224,8 @@
 !HISTORY_FROMCLIPBOARD;From Clipboard
 !HISTORY_LABEL;History
 !HISTORY_MSG_1;Photo Loaded
-!HISTORY_MSG_2;PP3 Loaded
-!HISTORY_MSG_3;PP3 Changed
+!HISTORY_MSG_2;Profile Loaded
+!HISTORY_MSG_3;Profile Changed
 !HISTORY_MSG_4;History Browsing
 !HISTORY_MSG_5;Brightness
 !HISTORY_MSG_6;Contrast
@@ -259,9 +256,9 @@
 !HISTORY_MSG_31;Deconvolution Amount
 !HISTORY_MSG_32;Deconvolution Damping
 !HISTORY_MSG_33;Deconvolution Iterations
-!HISTORY_MSG_34;LCP use disortion
-!HISTORY_MSG_35;LCP use vignette
-!HISTORY_MSG_36;LCP use CA
+!HISTORY_MSG_34;Avoid Color Clipping
+!HISTORY_MSG_35;Saturation Limiter
+!HISTORY_MSG_36;Saturation Limit
 !HISTORY_MSG_37;Color Boost
 !HISTORY_MSG_38;White Balance Method
 !HISTORY_MSG_39;Color Temperature
@@ -310,7 +307,7 @@
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High Quality Shadows/Highlights
 !HISTORY_MSG_84;Perspective Correction
-!HISTORY_MSG_85;Lens Correction Profile
+!HISTORY_MSG_85;Wavelet Coefficients
 !HISTORY_MSG_86;Wavelet Equalizer
 !HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR Threshold
@@ -335,7 +332,7 @@
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize Bounding Box
-!HISTORY_MSG_110;Resizing applies o
+!HISTORY_MSG_110;Resizing applies o  
 !HISTORY_MSG_111;Avoid Color Clipping
 !HISTORY_MSG_112;Saturation Limiter
 !HISTORY_MSG_113;Saturation Limit
@@ -400,18 +397,18 @@
 !HISTORY_SNAPSHOTS;Snapshots
 !HISTORY_SNAPSHOT;Snapshot
 !ICMPANEL_FILEDLGFILTERANY;Any files
-!ICMPANEL_FILEDLGFILTERICM;Color profiles
-!ICMPANEL_GAMMABEFOREINPUT;Color Profile Applies Gamma
+!ICMPANEL_FILEDLGFILTERICM;ICC Profile files
+!ICMPANEL_GAMMABEFOREINPUT;Profile Applies Gamma
 !ICMPANEL_INPUTCAMERA;Camera Default
 !ICMPANEL_INPUTCUSTOM;Custom
-!ICMPANEL_INPUTDLGLABEL;Select Input Color Profile...
+!ICMPANEL_INPUTDLGLABEL;Select Input ICC Profile...
 !ICMPANEL_INPUTEMBEDDED;Use Embedded, if possible
-!ICMPANEL_INPUTPROFILE;Input Color Profile
+!ICMPANEL_INPUTPROFILE;Input Profile
 !ICMPANEL_NOICM;No ICM: sRGB Output
-!ICMPANEL_OUTPUTDLGLABEL;Select Output Color Profile...
-!ICMPANEL_OUTPUTPROFILE;Output Color Profile
+!ICMPANEL_OUTPUTDLGLABEL;Select Output ICC Profile...
+!ICMPANEL_OUTPUTPROFILE;Output Profile
 !ICMPANEL_SAVEREFERENCE;Save reference image for profiling
-!ICMPANEL_WORKINGPROFILE;Working Color Profile
+!ICMPANEL_WORKINGPROFILE;Working Profile
 !IMAGEAREA_DETAILVIEW;Detail View
 !IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
 !IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
@@ -432,7 +429,7 @@
 !IPTCPANEL_COUNTRY;Country
 !IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
 !IPTCPANEL_CREDIT;Credit
-!IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMDD (Date Created).
+!IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: JJJJMMTT (Date Created).
 !IPTCPANEL_DATECREATED;Date Created
 !IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 !IPTCPANEL_EMBEDDED;Embedded
@@ -464,26 +461,25 @@
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit Fullscreen
-!MAIN_FRAME_BATCHQUEUE;Queue
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b>
-!MAIN_FRAME_EDITOR;Editor
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b>
-!MAIN_FRAME_FILEBROWSER;File Browser
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b>
-!MAIN_FRAME_PLACES;Places
+!MAIN_FRAME_BATCHQUEUE;Queue 
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b> 
+!MAIN_FRAME_EDITOR;Editor 
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b> 
+!MAIN_FRAME_FILEBROWSER;File Browser 
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b> 
+!MAIN_FRAME_PLACES;Places 
 !MAIN_FRAME_PLACES_ADD;Add
 !MAIN_FRAME_PLACES_DEL;Del
-!MAIN_FRAME_RECENT;Recent Folders
+!MAIN_FRAME_RECENT;Recent Folders 
 !MAIN_MSG_ALREADYEXISTS;File already exists.
 !MAIN_MSG_CANNOTLOAD;Cannot load image
 !MAIN_MSG_CANNOTSAVE;File saving error
-!MAIN_MSG_CANNOTSTARTEDITOR;Cannot start editor.
+!MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
 !MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
 !MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
-!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_JOBSINQUEUE;job(s) in the queue
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
@@ -493,12 +489,12 @@
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
 !MAIN_TAB_DETAIL;Detail
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
-!MAIN_TAB_DEVELOP; Develop
+!MAIN_TAB_DEVELOP; Develop 
 !MAIN_TAB_EXIF;Exif
-!MAIN_TAB_EXPORT; Export
+!MAIN_TAB_EXPORT; Export 
 !MAIN_TAB_EXPOSURE;Exposure
 !MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
-!MAIN_TAB_FILTER; Filter
+!MAIN_TAB_FILTER; Filter 
 !MAIN_TAB_ICM;ICM
 !MAIN_TAB_IPTC;IPTC
 !MAIN_TAB_METADATA;Metadata
@@ -509,9 +505,6 @@
 !MAIN_TAB_TRANSFORM;Transform
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-T</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
-!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
-!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_HIDEFP;Show/Hide the bottom panel (directory and file browser).\nShortcut: <b>F</b>
 !MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
@@ -519,7 +512,7 @@
 !MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&gt;</b>
 !MAIN_TOOLTIP_PREFERENCES;Set preferences
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on.
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -550,8 +543,6 @@
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_BASICGROUP;Basic Settings
 !PARTIALPASTE_CACORRECTION;C/A Correction
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
@@ -574,7 +565,7 @@
 !PARTIALPASTE_DISTORTION;Distortion correction
 !PARTIALPASTE_EPD;Tone Mapping
 !PARTIALPASTE_EVERYTHING;Everything
-!PARTIALPASTE_EXIFCHANGES;Changes to Exif data
+!PARTIALPASTE_EXIFCHANGES;Changes to exif data
 !PARTIALPASTE_EXPOSURE;Exposure
 !PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
@@ -586,14 +577,14 @@
 !PARTIALPASTE_HLRECOVERY;Highlight recovery
 !PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 !PARTIALPASTE_ICMGAMMA;Output gamma
-!PARTIALPASTE_ICMSETTINGS;Color Management settings
+!PARTIALPASTE_ICMSETTINGS;ICM settings
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 !PARTIALPASTE_IPTCINFO;IPTC info
 !PARTIALPASTE_LABCURVE;Lab adjustments
 !PARTIALPASTE_LENSGROUP;Lens related settings
 !PARTIALPASTE_LUMADENOISE;Luminance noise reduction
 !PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
-!PARTIALPASTE_METAICMGROUP;Metadata/Color Management settings
+!PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
 !PARTIALPASTE_PERSPECTIVE;Perspective
 !PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 !PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
@@ -620,15 +611,15 @@
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-!PARTIALPASTE_WHITEBALANCE;White balance
+!PARTIALPASTE_WHITEBALANCE;White balance 
 !PREFERENCES_ADD;ADD
 !PREFERENCES_APPLNEXTSTARTUP;restart required
-!PREFERENCES_AUTOMONPROFILE;Automatically use operating system's main monitor color profile
+!PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
 !PREFERENCES_BLINKCLIPPED;Blink clipped areas
 !PREFERENCES_CACHECLEARALL;Clear All
-!PREFERENCES_CACHECLEARPROFILES;Clear Processing Profiles
+!PREFERENCES_CACHECLEARPROFILES;Clear Profiles
 !PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
 !PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
 !PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
@@ -639,21 +630,21 @@
 !PREFERENCES_CACHESTRAT;Cache Strategy
 !PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 !PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
-!PREFERENCES_CLIPPINGIND;Clipping Indication
+!PREFERENCES_CLIPPINGIND;Clipping indication
 !PREFERENCES_CMETRICINTENT;Colorimetric Intent
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path raw/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
-!PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
+!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DARKFRAME;Dark Frame
-!PREFERENCES_DATEFORMATFRAME;Date Format
+!PREFERENCES_DARKFRAME;Dark frame
+!PREFERENCES_DATEFORMATFRAME;Date Format 
 !PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
-!PREFERENCES_DATEFORMAT;Date format
-!PREFERENCES_DEFAULTLANG;Default Language
-!PREFERENCES_DEFAULTTHEME;Default Theme
+!PREFERENCES_DATEFORMAT;Date Format
+!PREFERENCES_DEFAULTLANG;Default language
+!PREFERENCES_DEFAULTTHEME;Default theme
 !PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_DIRHOME;Home directory
@@ -663,7 +654,7 @@
 !PREFERENCES_DIRSOFTWARE;Installation directory
 !PREFERENCES_EDITORCMDLINE;Other command line
 !PREFERENCES_EDITORLAYOUT;Editor Layout
-!PREFERENCES_EXTERNALEDITOR;External Editor
+!PREFERENCES_EXTERNALEDITOR;External editor
 !PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
 !PREFERENCES_FILEFORMAT;File format
@@ -672,32 +663,31 @@
 !PREFERENCES_FLATFIELDSHOTS;shots
 !PREFERENCES_FLATFIELDTEMPLATES;templates
 !PREFERENCES_FLATFIELD;Flat Field
-!PREFERENCES_FORIMAGE;For non-raw photos
-!PREFERENCES_FORRAW;For raw photos
+!PREFERENCES_FORIMAGE;For image files
+!PREFERENCES_FORRAW;For raw files
 !PREFERENCES_GIMPPATH;GIMP installation directory
 !PREFERENCES_GTKTHEME;GTK default
 !PREFERENCES_HINT;Hint
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
 !PREFERENCES_HLTHRESHOLD;Threshold for clipped highlights
-!PREFERENCES_ICCDIR;Directory containing color profiles
-!PREFERENCES_IMPROCPARAMS;Default Image Processing Parameters
+!PREFERENCES_ICCDIR;Directory of ICC profiles
+!PREFERENCES_IMPROCPARAMS;Default image processing parameters
 !PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
 !PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 !PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 !PREFERENCES_INTENT_SATURATION;Saturation
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
 !PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
-!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
-!PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File Operations"
-!PREFERENCES_MENUGROUPLABEL;Group "Color Label"
-!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing Profile Operations"
-!PREFERENCES_MENUGROUPRANK;Group "Rank"
-!PREFERENCES_MENUOPTIONS;Context Menu Options
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
+!PREFERENCES_MENUGROUPLABEL;Group Labeling
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
+!PREFERENCES_MENUGROUPRANK;Group Ranking
+!PREFERENCES_MENUOPTIONS;Menu Options
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_MONITORICC;Monitor Color Profile
-!PREFERENCES_MULTITABDUALMON;Multiple editor tabs mode, if available on second monitor
-!PREFERENCES_MULTITAB;Multiple editor tabs mode
+!PREFERENCES_MONITORICC;Monitor Profile
+!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
+!PREFERENCES_MULTITAB;Multiple tabs mode
 !PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
 !PREFERENCES_OUTDIRFOLDER;Save to folder
 !PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nThese formatting strings refer to the different parts of the photo's pathname or some attributes of the photo.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in the trash bin, %r will be replaced by 'x'.\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
@@ -706,41 +696,41 @@
 !PREFERENCES_OUTDIR;Output Directory
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PANFACTORFRAME;Pan Rate Amplification
+!PREFERENCES_PANFACTORFRAME;Pan rate amplification
 !PREFERENCES_PANFACTORLABEL;Factor
 !PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 !PREFERENCES_PARSEDEXTADD;Add Extension
 !PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
 !PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PROFILEHANDLING;Processing Profile Handling
-!PREFERENCES_PROFILELOADPR;Processing Profile Loading Priority
+!PREFERENCES_PROFILELOADPR;Profile Loading Priority
 !PREFERENCES_PROFILEPRCACHE;Profile in cache
 !PREFERENCES_PROFILEPRFILE;Profile next to the input file
-!PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
-!PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
+!PREFERENCES_PROFILESAVECACHE;Save processing parameters to the cache
+!PREFERENCES_PROFILESAVEINPUT;Save processing parameters next to the input file
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_PSPATH;Adobe Photoshop installation directory
 !PREFERENCES_SELECTFONT;Select font
-!PREFERENCES_SELECTICCDIRDLG;Select Color Profile Directory...
+!PREFERENCES_SELECTICCDIRDLG;Select ICC Profile Directory...
 !PREFERENCES_SELECTLANG;Select language
-!PREFERENCES_SELECTMONITORPROFDLG;Select Color Profile of the Display...
+!PREFERENCES_SELECTMONITORPROFDLG;Select ICC Profile of the Display...
 !PREFERENCES_SELECTTHEME;Select theme
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 !PREFERENCES_SHOWDATETIME;Show date and time
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 !PREFERENCES_SHOWONLYRAW;Show only raw files
-!PREFERENCES_SHOWPROFILESELECTOR;Show processing profile selector
+!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
 !PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
-!PREFERENCES_SINGLETABVERTAB;Single editor tab mode, vertical tabs
-!PREFERENCES_SINGLETAB;Single editor tab mode
+!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
-!PREFERENCES_STARTUPIMDIR;Image Directory at Startup
+!PREFERENCES_STARTUPIMDIR;Image directory at startup
 !PREFERENCES_TAB_BROWSER;File Browser
 !PREFERENCES_TAB_COLORMGR;Color Management
 !PREFERENCES_TAB_GENERAL;General
@@ -752,13 +742,13 @@
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
-!PREFERENCES_USESYSTEMTHEME; Use system theme
+!PREFERENCES_USESYSTEMTHEME; Use System Theme
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_FILEDLGFILTERANY;Any files
-!PROFILEPANEL_FILEDLGFILTERPP;Processing profiles
-!PROFILEPANEL_LABEL;Processing Profiles
-!PROFILEPANEL_LOADDLGLABEL;Load Processing Parameters...
+!PROFILEPANEL_FILEDLGFILTERPP;Postprocessing profiles
+!PROFILEPANEL_LABEL;Postprocessing Profiles
+!PROFILEPANEL_LOADDLGLABEL;Load Postprocessing Parameters...
 !PROFILEPANEL_LOADPPASTE;Parameters to load
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
 !PROFILEPANEL_PCUSTOM;Custom
@@ -766,15 +756,15 @@
 !PROFILEPANEL_PLASTPHOTO;Last Photo
 !PROFILEPANEL_PLASTSAVED;Last Saved
 !PROFILEPANEL_PROFILE;Profile
-!PROFILEPANEL_SAVEDLGLABEL;Save Processing Parameters...
+!PROFILEPANEL_SAVEDLGLABEL;Save Postprocessing Parameters...
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
-!PROFILEPANEL_TOOLTIPCOPY;Copy current processing profile to clipboard.\n<b>Ctrl-click</b> to select the parameters to copy
-!PROFILEPANEL_TOOLTIPLOAD;Load a profile from file.\n<b>Ctrl-click</b> to select the parameters to load
-!PROFILEPANEL_TOOLTIPPASTE;Paste profile from clipboard.\n<b>Ctrl-click</b> to select the parameters to paste
-!PROFILEPANEL_TOOLTIPSAVE;Save current profile.\n<b>Ctrl-click</b> to select the parameters to save
+!PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard.\nCtrl-click to select the parameters to copy
+!PROFILEPANEL_TOOLTIPLOAD;Load a profile from file\nCtrl-click to select the parameters to load
+!PROFILEPANEL_TOOLTIPPASTE;Paste profile from clipboard\nCtrl-click key to select the parameters to paste
+!PROFILEPANEL_TOOLTIPSAVE;Save current profile\nCtrl-click key to select the parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe...
+!PROGRESSBAR_DARKFRAME;Darkframe... 
 !PROGRESSBAR_DECODING;Decoding raw file...
 !PROGRESSBAR_DEMOSAICING;Demosaicing...
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
@@ -789,7 +779,7 @@
 !PROGRESSBAR_SAVEJPEG;Saving JPEG file...
 !PROGRESSBAR_SAVEPNG;Saving PNG file...
 !PROGRESSBAR_SAVETIFF;Saving TIFF file...
-!PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
 !QINFO_FOCALLENGTH;Focal length
 !QINFO_ISO;ISO
 !QINFO_LENS;Lens
@@ -821,8 +811,8 @@
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_COARSETRAF_DEGREE;degree:
 !TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
-!TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\nShortcut: <b>[</b>
-!TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\nShortcut: <b>]</b>
+!TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left <b>[</b>
+!TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right <b>]</b>
 !TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
 !TP_COLORBOOST_ACHANNEL;Channel "a"
 !TP_COLORBOOST_AMOUNT;Amount
@@ -843,7 +833,6 @@
 !TP_CROP_FIXRATIO;Fix Ratio:
 !TP_CROP_GTDIAGONALS;Rule of diagonals
 !TP_CROP_GTEPASSPORT;Biometric Passport
-!TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
 !TP_CROP_GTHARMMEANS1;Harmonic means 1
 !TP_CROP_GTHARMMEANS2;Harmonic means 2
@@ -877,8 +866,8 @@
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 !TP_DISTORTION_AMOUNT;Amount
-!TP_DISTORTION_AUTO;    Auto Distortion Correction
-!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.)
+!TP_DISTORTION_AUTO;    Auto distortion correction
+!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
 !TP_DISTORTION_LABEL;Distortion
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_LABEL;Tone Mapping
@@ -891,9 +880,9 @@
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPOSCORR_LABEL;Raw white &amp; black points
+!TP_EXPOSCORR_LABEL;Raw white-black point
 !TP_EXPOSURE_AUTOLEVELS;Auto Levels
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Brightness
 !TP_EXPOSURE_CLIP;Clip
@@ -912,7 +901,7 @@
 !TP_FLATFIELD_BLURTYPE;Blur Type
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
-!TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
+!TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
 !TP_GAMMA_CURV;gamma
@@ -924,7 +913,7 @@
 !TP_HLREC_COLOR;Color Propagation
 !TP_HLREC_LABEL;Highlight Reconstruction
 !TP_HLREC_LUMINANCE;Luminance Recovery
-!TP_HLREC_METHOD;Method:
+!TP_HLREC_METHOD;Method: 
 !TP_HSVEQUALIZER_CHANNEL;HSV Channel
 !TP_HSVEQUALIZER_HUE;H
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
@@ -934,9 +923,9 @@
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_FILEDLGFILTERANY;Any files
-!TP_ICM_FILEDLGFILTERICM;Color profiles
-!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific color profile
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profile. These profiles are more precise than simpler matrix ones. Available for some cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
+!TP_ICM_FILEDLGFILTERICM;Profile files
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific profile
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
 !TP_ICM_INPUTCAMERA;Camera standard
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by dcraw, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
 !TP_ICM_INPUTCUSTOM;Custom
@@ -951,11 +940,6 @@
 !TP_ICM_NOICM;No ICM: sRGB output
 !TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
 !TP_ICM_OUTPUTPROFILE;Output Profile
-!TP_ICM_PREFERREDPROFILE;Preferred DCP profile
-!TP_ICM_PREFERREDPROFILE_1;Daylight
-!TP_ICM_PREFERREDPROFILE_2;Tungsten
-!TP_ICM_PREFERREDPROFILE_3;Fluorescent
-!TP_ICM_PREFERREDPROFILE_4;Flash
 !TP_ICM_SAVEREFERENCE;Save reference image for profiling
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
@@ -971,11 +955,6 @@
 !TP_LENSGEOM_AUTOCROP;    Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
-!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
-!TP_LENSPROFILE_LABEL;Lens Correction Profile
-!TP_LENSPROFILE_USECA;Use CA correction
-!TP_LENSPROFILE_USEDIST;Use distortion correction
-!TP_LENSPROFILE_USEVIGN;Use vignette correction
 !TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
 !TP_LUMADENOISE_LABEL;Luminance Noise Reduction
 !TP_LUMADENOISE_RADIUS;Radius
@@ -1020,7 +999,7 @@
 !TP_RESIZE_H;H:
 !TP_RESIZE_LABEL;Resize
 !TP_RESIZE_LANCZOS;Lanczos
-!TP_RESIZE_METHOD;Method:
+!TP_RESIZE_METHOD;Method: 
 !TP_RESIZE_NEAREST;Nearest
 !TP_RESIZE_SCALE;Scale
 !TP_RESIZE_SPECIFY;Specify:

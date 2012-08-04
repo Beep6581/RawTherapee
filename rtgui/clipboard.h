@@ -28,6 +28,7 @@
 class Clipboard {
 
     bool _hasIPTC;
+    //rtengine::MetadataList iptc;
     rtengine::procparams::IPTCPairs iptc;
     rtengine::procparams::PartialProfile partProfile;
     DiagonalCurveType hasCurveDataType;
@@ -37,6 +38,7 @@ class Clipboard {
     public:
         void                                               setIPTC (const rtengine::procparams::IPTCPairs& iptcc) { iptc = iptcc; _hasIPTC = true;}
         const rtengine::procparams::IPTCPairs&             getIPTC ()                                            { return iptc;  }
+        //const rtengine::MetadataList&                      getIPTC () { return iptc;  }
         bool                                               hasIPTC () { return _hasIPTC; }
 
         void                                               setPartialProfile   (const rtengine::procparams::PartialProfile& pprofile);

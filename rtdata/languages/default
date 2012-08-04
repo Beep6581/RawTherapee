@@ -91,8 +91,9 @@ FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus t
 FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CLEARPROFILE;Clear
-FILEBROWSER_COPYPROFILE;Copy
+FILEBROWSER_CLEARPROFILE;Clear profile
+FILEBROWSER_COPYPROFILE;Copy profile
+FILEBROWSER_COPYIPTC;Copy IPTC metadata
 FILEBROWSER_CURRENT_NAME;Current name:
 FILEBROWSER_DARKFRAME;Dark frame
 FILEBROWSER_DELETEDLGLABEL;File delete confirmation
@@ -112,8 +113,10 @@ FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 FILEBROWSER_NEW_NAME;New name:
 FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed) 
-FILEBROWSER_PARTIALPASTEPROFILE;Paste - partial
-FILEBROWSER_PASTEPROFILE;Paste
+FILEBROWSER_PARTIALPASTEPROFILE;Paste profile - partial
+FILEBROWSER_PARTIALPASTEIPTC;Paste IPTC - partial
+FILEBROWSER_PASTEPROFILE;Paste profile
+FILEBROWSER_PASTEIPTC;Paste IPTC metadata
 FILEBROWSER_POPUPCANCELJOB;Cancel job
 FILEBROWSER_POPUPCOLORLABEL0;Label: None
 FILEBROWSER_POPUPCOLORLABEL1;Label: Red
@@ -124,6 +127,7 @@ FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
 FILEBROWSER_POPUPCOLORLABEL;Color label
 FILEBROWSER_POPUPCOPYTO;Copy to...
 FILEBROWSER_POPUPFILEOPERATIONS;File Operations
+FILEBROWSER_POPUPIPTCOPERATIONS;IPTC metadata
 FILEBROWSER_POPUPMOVEEND;Move to end of Queue
 FILEBROWSER_POPUPMOVEHEAD;Move to head of Queue
 FILEBROWSER_POPUPMOVETO;Move to...
@@ -147,6 +151,7 @@ FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
 FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_PROCESSINGSETTINGS;Settings
+FILEBROWSER_RESYNCIPTC;Reset IPTC metadata
 FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 FILEBROWSER_QUERYHINT;Type a partial filename to search for.\n<b>Ctrl-F</b> to focus the Find text box (in the File Browser).\n<b>Enter</b> to commence search.
 FILEBROWSER_QUERYLABEL; Find:
@@ -222,8 +227,8 @@ HISTORY_DELSNAPSHOT;Del
 HISTORY_FROMCLIPBOARD;From Clipboard
 HISTORY_LABEL;History
 HISTORY_MSG_1;Photo Loaded
-HISTORY_MSG_2;PP3 Loaded
-HISTORY_MSG_3;PP3 Changed
+HISTORY_MSG_2;Profile Loaded
+HISTORY_MSG_3;Profile Changed
 HISTORY_MSG_4;History Browsing
 HISTORY_MSG_5;Brightness
 HISTORY_MSG_6;Contrast
@@ -330,7 +335,7 @@ HISTORY_MSG_106;Defringing Radius
 HISTORY_MSG_107;Defringing Threshold
 HISTORY_MSG_108;Highlight Compr. Threshold
 HISTORY_MSG_109;Resize Bounding Box
-HISTORY_MSG_110;Resizing applies o  
+HISTORY_MSG_110;Resizing applies to  
 HISTORY_MSG_111;Avoid Color Clipping
 HISTORY_MSG_112;Saturation Limiter
 HISTORY_MSG_113;Saturation Limit
@@ -408,48 +413,186 @@ ICMPANEL_OUTPUTPROFILE;Output Color Profile
 ICMPANEL_SAVEREFERENCE;Save reference image for profiling
 ICMPANEL_WORKINGPROFILE;Working Color Profile
 IMAGEAREA_DETAILVIEW;Detail View
-IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
-IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
-IPTCPANEL_AUTHORSPOSITION;Author's position
-IPTCPANEL_AUTHOR;Author
-IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
-IPTCPANEL_CAPTIONWRITER;Caption Writer
-IPTCPANEL_CAPTION;Caption
-IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
-IPTCPANEL_CATEGORY;Category
-IPTCPANEL_CITYHINT;City of image origin (City).
-IPTCPANEL_CITY;City
+IPTC_ARTWORKRIGHTS;Artwork copyrights
+IPTC_ARTWORKRIGHTS_HINT;Contains any necessary copyright notice for claiming the intellectual property for artwork or an object in the image and should identify the current owner of the copyright of this work with associated intellectual property rights
+IPTC_ARTWORKCREATOR;Artwork creator
+IPTC_ARTWORKCREATOR_HINT;Contains the name of the artist who has created artwork or an object in the image. In cases where the artist could or should not be identified the name of a company or organisation may be appropriate.
+IPTC_ARTWORKDATE;Artwork creation date
+IPTC_ARTWORKDATE_HINT;Designates the date and optionally the time the artwork or object in the image was created. This relates to artwork or objects with associated intellectual property rights
+IPTC_ARTWORKNUMBER;Source Inventory Number
+IPTC_ARTWORKNUMBER_HINT;The inventory number issued by the organisation or body holding and registering the artwork or object in the image.
+IPTC_ARTWORKSOURCE;Artwork source
+IPTC_ARTWORKSOURCE_HINT;The organisation or body holding and registering the artwork or object in the image for inventory purposes.
+IPTC_ARTWORKTITLE;Artwork title
+IPTC_ARTWORKTITLE_HINT;The verbal and human readable name of the artwork or object in this image
+IPTC_AUTHOR;Author
+IPTC_AUTHOR_HINT;Contains the name of the photographer, but in cases where the photographer should not be identified the name of a company or organisation may be appropriate. \nIIM 2:80 By line
+IPTC_AUTHOR_POS;Creator's job title
+IPTC_AUTHOR_POS_HINT;The job title of the photographer \nIIM 2:85 By line title
+IPTC_CATEGORY;Category
+IPTC_CATEGORY_HINT;Category \nIIM 2:15 (deprecated)
+IPTC_CITY;City
+IPTC_CITY_HINT;Name of the city of the location shown in the image. \nIIM 2:90
+IPTC_COUNTRY;Country
+IPTC_COUNTRY_HINT;Full name of the country of the location shown in the image. \nIIM 2:101
+IPTC_COUNTRYCODE;Country Code
+IPTC_COUNTRYCODE_HINT;The code should be taken from ISO 3166 two or three letter code. The full name of a country should go to the 'Country' element \nIIM 2:100
+IPTC_CREATEDCITY;Created City
+IPTC_CREATEDCITY_HINT;The location the content of the item was created: details about a location where this image was created
+IPTC_CREATEDCOUNTRY;Created Country
+IPTC_CREATEDCOUNTRY_HINT;The location the content of the item was created: details about a location where this image was created
+IPTC_CREATEDCOUNTRYCODE;Created Country code
+IPTC_CREATEDCOUNTRYCODE_HINT;The location the content of the item was created: details about a location where this image was created
+IPTC_CREATEDREGION;Created World region
+IPTC_CREATEDREGION_HINT;The location the content of the item was created: details about a location where this image was created
+IPTC_CREATEDSTATE;Created State/Province
+IPTC_CREATEDSTATE_HINT;The location the content of the item was created: details about a location where this image was created
+IPTC_CREATEDSUBLOC;Created Sublocation
+IPTC_CREATEDSUBLOC_HINT;The location the content of the item was created: details about a location where this image was created
+IPTC_CREATORADDRESS;Creator address
+IPTC_CREATORADDRESS_HINT;The address for the person that created this image
+IPTC_CREATORCITY;Creator city
+IPTC_CREATORCITY_HINT;The city for the address of the person that created this image
+IPTC_CREATORCOUNTRY;Creator country
+IPTC_CREATORCOUNTRY_HINT;The country name for the address of the person that created this image
+IPTC_CREATOREMAIL;Creator's email(s)
+IPTC_CREATOREMAIL_HINT;The work Email address(es) for the person that created this image
+IPTC_CREATORPCODE;Creator postal code
+IPTC_CREATORPCODE_HINT;The postal code for the address of the person that created this image
+IPTC_CREATORPHONE;Creator Phone num.
+IPTC_CREATORPHONE_HINT;The work Phone number(s) for the person that created this image, using the international format
+IPTC_CREATORSTATE;Creator State/Province
+IPTC_CREATORSTATE_HINT;The state or province for the address of the person that created this image
+IPTC_CREATORURL;Creator Web URL
+IPTC_CREATORURL_HINT;The work Web URL(s) for the person that created this image, such as http://www.domain.com/
+IPTC_CREDIT;Credit Line
+IPTC_CREDIT_HINT;The credit to person(s) and/or organisation(s) required by the supplier of the image to be used when published \nIIM 2:110
+IPTC_DATE;Date created
+IPTC_DATE_HINT;The Date the image was taken \nIIM 2:55
+IPTC_DESCRIPTION;Description
+IPTC_DESCRIPTION_HINT;A 'caption' describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image. \nIIM 2:120 Caption/Abstract
+IPTC_DIGITALSOURCETYPE;Digital Source Type
+IPTC_DIGITALSOURCETYPE_HINT;Select one of the values for identifying the source type of the digital image from the controlled vocabulary.\n\n - Original digital capture of a real life scene\nThe digital image is the original and only instance and was taken by a digital camera\n\n - Digitised from a negative on film\nThe digital image was digitised from a negative on film on any other transparent medium\n\n - Digitised from a positive on film\nThe digital image was digitised from a positive on a transparency or any other transparent medium\n\n - Digitised from a print on non-transparent medium\nThe digital image was digitised from an image printed on a non-transparent medium\n\n - Created by software\nShould be used for all kinds of computer generated images (CGI), such as images composited from several different photos and/or graphic elements, or images created entirely in the computer.
+IPTC_EVENT;Event
+IPTC_EVENT_HINT;The name or description of the event where this image was taken
+IPTC_GENRE;Intellectual Genre
+IPTC_GENRE_HINT;Describe the nature of the image in terms of its intellectual or journalistic characteristics, such as daybook, or feature (examples at: http://www.newscodes.org/) \nIIM 2:04
+IPTC_GROUPNAME_ABOUTMODELS;<b>About Models</b>
+IPTC_GROUPNAME_ARTWORKOROBJECT;<b>Artwork or Object in the image</b>
+IPTC_GROUPNAME_CLASSIFICATION;<b>Classification</b>
+IPTC_GROUPNAME_CREATORINFO;<b>Creator information</b>
+IPTC_GROUPNAME_DESCRIPTION;<b>Description of the image</b>
+IPTC_GROUPNAME_FEATUREDORGANISATION;<b>Featured Organisation</b>
+IPTC_GROUPNAME_LOCATIONCREATED;<b>Location Created at</b>
+IPTC_GROUPNAME_LOCATIONSHOWNCORE;<b>Location Shown (core, legacy)</b>
+IPTC_GROUPNAME_LOCATIONSHOWNEXT;<b>Location Shown (XMP extension)</b>
+IPTC_GROUPNAME_READONLYINFORMATION;<b>Read-only information</b>
+IPTC_GROUPNAME_REFERENCEADMINISTRATION;<b>Reference/Administration information</b>
+IPTC_GROUPNAME_RELEASEINFO;<b>Release information</b>
+IPTC_GROUPNAME_RIGHTSINFO;<b>Rights information</b>
+IPTC_HEADLINE;Headline
+IPTC_HEADLINE_HINT;A brief synopsis of the caption. A publishable entry providing a synopsis of the contents of the news object. Headline is not the same as Title.\nIIM 2:105 Headline
+IPTC_IMAGECREATOR;Image Creator
+IPTC_IMAGECREATOR_HINT;Creator or creators of the image
+IPTC_IMAGEGUID;Image GUID
+IPTC_IMAGEGUID_HINT;Globally unique identifier for this digital image
+IPTC_IMAGEMAXHEIGHT;Max height
+IPTC_IMAGEMAXHEIGHT_HINT;The maximum available height in pixels of the original photo from which this photo has been derived by downsizing.
+IPTC_IMAGEMAXWIDTH;Max width
+IPTC_IMAGEMAXWIDTH_HINT;The maximum available width in pixels of the original photo from which this photo has been derived by downsizing.
+IPTC_IMAGESUPPLIER;Image supplier
+IPTC_IMAGESUPPLIER_HINT;The identifier for the most recent supplier of this image - note that this might not be the creator or owner of the image
+IPTC_IMAGESUPPLIERGUID;Image supplier GUID
+IPTC_IMAGESUPPLIERGUID_HINT;Optional identifier assigned by the Image Supplier to the image
+IPTC_INSTRUCTIONS;Instructions
+IPTC_INSTRUCTIONS_HINT;Information about embargoes, or other restrictions not covered by the Rights Usage \nIIM 2:40
+IPTC_JOBID;Job Id
+IPTC_JOBID_HINT;A number or identifier needed for workflow control or tracking \nIIM 2:103
+IPTC_KEYWORDS;Keywords
+IPTC_KEYWORDS_HINT;Keywords to express the subject of the image. Any number of keywords, terms or phrases used to express the subject matter in the image. \nIIM 2:25
+IPTC_LICENSOR;Licensor
+IPTC_LICENSOR_HINT;A person or company that should be contacted to obtain a licence for using the item or who has licensed the item
+IPTC_LOCATIONCITY;Location City
+IPTC_LOCATIONCITY_HINT;Name of the city of the location shown in the image. \nIIM 2:90
+IPTC_LOCATIONCOUNTRY;Location Country
+IPTC_LOCATIONCOUNTRY_HINT;Full name of the country of the location shown in the image.\nThis element is at the top/first level of a top-down geographical hierarchy. The full name should be expressed as a verbal name and not as a code, a code should go to the element "CountryCode" \nIIM 2:101
+IPTC_LOCATIONCOUNTRYCODE;Location Country code
+IPTC_LOCATIONCOUNTRYCODE_HINT;Enter the 2 or 3 letter ISO 3166 Country Code of the Country.\nThe full name of a country should go to the "Country" element.\nIIM 2:100 Country/Primary Location Code
+IPTC_LOCATIONREGION;Location World region
+IPTC_LOCATIONREGION_HINT;The name of a world region of a location. This element is at the first (top I) level of a top-down geographical hierarchy.
+IPTC_LOCATIONSTATE;Location State/Province
+IPTC_LOCATIONSTATE_HINT;Name of the subregion of a country of the location shown in the image. \nIIM 2:95
+IPTC_LOCATIONSUBLOC;Location Sublocation
+IPTC_LOCATIONSUBLOC_HINT;Name of a sublocation shown in the image. This sublocation name could either be the name of a sublocation to a city or the name of a well known location or (natural) monument outside a city. In the sense of a sublocation to a city this element is at the fifth level of a top-down geographical hierarchy.\nIIM 2:92 Sublocation (Iptc4xmpExt:Sublocation)
+IPTC_MINORDISCLOSURE;Minor Model Age Disclosure
+IPTC_MINORDISCLOSURE_HINT;The age of the youngest model pictured in this image, at the time that this image was made.
+IPTC_MODELAGE;Model(s) Age
+IPTC_MODELAGE_HINT;The age of the human model(s) at the time this image was made
+IPTC_MODELINFO;Model information
+IPTC_MODELINFO_HINT;Information like ethnicity or other details about the model(s) in this image
+IPTC_MODELRELID;Model Release ID
+IPTC_MODELRELID_HINT;Identifier associated with each Model Release
+IPTC_MODELRELSTATUS;Model Release Status
+IPTC_MODELRELSTATUS_HINT;The availability and scope of model releases authorising usage of the likenesses of persons appearing in the photograph.
+IPTC_ORGANISATIONCODE;Organisation Code
+IPTC_ORGANISATIONCODE_HINT;Enter an identifier for the controlled vocabulary, then a colon, and finally the code from the vocabulary assigned to the organisation shown in this image (e.g. nasdaq:companyA)
+IPTC_ORGANISATIONNAME;Organisation Name
+IPTC_ORGANISATIONNAME_HINT;Enter the full name of the organisation or company which is featured in the image
+IPTC_PERSON;Person shown
+IPTC_PERSON_HINT;Name of a person shown in the image. Semicolons or commas can be used to separate multiple values
+IPTC_PLUSVERSION;PLUS Version
+IPTC_PLUSVERSION_HINT;The version number of the PLUS standards in place at the time of the transaction
+IPTC_PROPERTYRELID;Property Release Id
+IPTC_PROPERTYRELID_HINT;Optional identifier associated with each Property Release
+IPTC_PROPERTYRELSTATUS;Property Release Status
+IPTC_PROPERTYRELSTATUS_HINT;The availability and scope of property releases authorising usage of the properties appearing in the photograph.
+IPTC_REGISTRYID;Registry Image Id
+IPTC_REGISTRYID_HINT;A unique identifier created by a registry and applied by the creator of the digital image. This value shall not be changed after being applied.
+IPTC_REGISTRYORG;Registry Organisation Id
+IPTC_REGISTRYORG_HINT;An identifier for the registry which issued the corresponding Registry Image Id
+IPTC_RIGHTS;Copyright Notice
+IPTC_RIGHTS_HINT;Contains any necessary copyright notice for claiming the intellectual property for this photograph and should identify the current owner of the copyright for the photograph \nIIM 2:116 Copyright Notice
+IPTC_RIGHTSCERTIFICATE;Rights certificate URL
+IPTC_RIGHTSCERTIFICATE_HINT;A web URL for a rights management certificate
+IPTC_RIGHTSMARKED;Rights managed
+IPTC_RIGHTSMARKED_HINT;[XMP] Copyright status of the image:\n Copyrighted\n Public Domain\n Unknown\n It is recommented to also indicate the same information in the Copyright Status field
+IPTC_RIGHTSOWNER;Copyright Owner
+IPTC_RIGHTSOWNER_HINT;The owner or owners of the copyright in the licensed image
+IPTC_RIGHTSSTATEMENT;Rights statement URL
+IPTC_RIGHTSSTATEMENT_HINT;A web URL for a statement of the ownership and usage rights for this resource
+IPTC_RIGHTSSTATUS;Copyright status
+IPTC_RIGHTSSTATUS_HINT;[PLUS] Copyright status of the image:\n Protected\n Public Domain\n Unknown\n It is recommented to also indicate the same information in the Rights Makred field
+IPTC_SCENE;Scene code
+IPTC_SCENE_HINT;Describes the scene of a photo content. Specifies one ore more terms from the IPTC 'Scene-NewsCodes' (http://www.newscodes.org/). Each Scene is represented as a string of 6 digits in an unordered list.
+IPTC_SOURCE;Source
+IPTC_SOURCE_HINT;Identifies the original owner of the copyright for the intellectual content of the image. This could be an agency, a member of an agency or an individual. To aid in later searches, it is suggested to separate any slashes "/" with a blank space: " / ". Source could be different from Creator and from the entities in the CopyrightNotice. \nIIM 2:115
+IPTC_STATE;Province/State
+IPTC_STATE_HINT;Name of the subregion of a country of the location shown in the image. \nIIM 2:95
+IPTC_SUBJECT;Subject Code
+IPTC_SUBJECT_HINT;Specifies one or more Subjects from the IPTC 'Subject-NewsCodes' (http://www.newscodes.org/) taxonomy to categorise the image. Each Subject is represented as a string of 8 digits in an unordered list.
+IPTC_SUBLOCATION;Sublocation
+IPTC_SUBLOCATION_HINT;Name of a sublocation shown in the image. This sublocation name could either be the name of a sublocation to a city or the name of a well known location or (natural) monument outside a city. In the sense of a sublocation to a city this element is at the fifth level of a top-down geographical hierarchy.\nIIM 2:92 Sublocation (Iptc4xmpCore:Location)
+IPTC_SUPPLCATEGORIES;Supplemental Categories
+IPTC_SUPPLCATEGORIES_HINT;Supplemental Category \nIIM 2:20 (deprecated)
+IPTC_TITLE;Title
+IPTC_TITLE_HINT;Title holds a short verbal and human readable name, a shorthand reference for the digital image; this may be the file name.\nTitle is not the same as Headline.\nIIM 2:05 Object Name
+IPTC_URGENCY;Urgency
+IPTC_URGENCY_HINT;Urgency \nIIM  2:09 (deprecated)
+IPTC_USAGETERMS;Usage terms
+IPTC_USAGETERMS_HINT;Instructions on how this image can legally be used
+IPTC_VOCABULARY;Controlled Vocabulary Term
+IPTC_VOCABULARY_HINT;Term to describe the content of the image by a value from a Controlled Vocabulary: an identifier for the controlled vocabulary, then a colon, and finally the code from the vocabulary assigned to the term
+IPTC_WRITER;Description Writer
+IPTC_WRITER_HINT;The name of the person involved in writing, editing or correcting the description of the image \nIIM 2:122
 IPTCPANEL_COPYHINT;Copy IPTC settings to clipboard
-IPTCPANEL_COPYRIGHTHINT;Any necessary copyright notice (Copyright Notice).
-IPTCPANEL_COPYRIGHT;Copyright
-IPTCPANEL_COUNTRYHINT;The name of the country/primary location where the image was created (Country - Primary Location Name).
-IPTCPANEL_COUNTRY;Country
-IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
-IPTCPANEL_CREDIT;Credit
-IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMDD (Date Created).
-IPTCPANEL_DATECREATED;Date Created
-IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
-IPTCPANEL_EMBEDDED;Embedded
-IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
-IPTCPANEL_HEADLINE;Headline
-IPTCPANEL_INSTRUCTIONSHINT;Other editorial instructions concerning the use of the image (Special Instructions).
-IPTCPANEL_INSTRUCTIONS;Instructions
-IPTCPANEL_KEYWORDSHINT;Used to indicate specific information retrieval words (Keywords).
-IPTCPANEL_KEYWORDS;Keywords
+IPTCPANEL_FILEDLGFILTERXMP;IPTC template files (xmp)
+IPTCPANEL_LOADDLGLABEL;Load IPTC settings
+IPTCPANEL_OPENHINT;Load IPTC settings from file
 IPTCPANEL_PASTEHINT;Paste IPTC settings from clipboard
-IPTCPANEL_PROVINCEHINT;The Province/State where the image originates (Province-State).
-IPTCPANEL_PROVINCE;Province
-IPTCPANEL_RESETHINT;Reset to profile default
+IPTCPANEL_RESETHINT;Reset to previous IPTC
 IPTCPANEL_RESET;Reset
-IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
-IPTCPANEL_SOURCE;Source
-IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
-IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
-IPTCPANEL_TITLE;Title
-IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_SAVEDLGLABEL;Save IPTC settings
+IPTCPANEL_SAVEHINT;Save IPTC settings to file
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_FULLSCREEN;Fullscreen
 MAIN_BUTTON_PREFERENCES;Preferences
@@ -472,7 +615,7 @@ MAIN_FRAME_RECENT;Recent Folders
 MAIN_MSG_ALREADYEXISTS;File already exists.
 MAIN_MSG_CANNOTLOAD;Cannot load image
 MAIN_MSG_CANNOTSAVE;File saving error
-MAIN_MSG_CANNOTSTARTEDITOR;Cannot start editor.
+MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
 MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
@@ -490,6 +633,7 @@ MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
 MAIN_TAB_DEVELOP; Develop 
 MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXIF_TOOLTIP;Shortcut: <b>Alt-x</b>
 MAIN_TAB_EXPORT; Export 
 MAIN_TAB_EXPOSURE;Exposure
 MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
@@ -649,6 +793,7 @@ PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\
 PREFERENCES_DATEFORMAT;Date format
 PREFERENCES_DEFAULTLANG;Default Language
 PREFERENCES_DEFAULTTHEME;Default Theme
+PREFERENCES_DEFAULT_METADATA;Default IPTC metadata
 PREFERENCES_DEMOSAICINGALGO;Demosaicing Algorithm
 PREFERENCES_DIRDARKFRAMES;Dark frames directory
 PREFERENCES_DIRHOME;Home directory
@@ -699,6 +844,7 @@ PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>,
 PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nThese formatting strings refer to the different parts of the photo's pathname or some attributes of the photo.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in the trash bin, %r will be replaced by 'x'.\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIR;Output Directory
+PREFERENCES_OUTPUTMETADATA;Write metadata to developed photos
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
 PREFERENCES_PANFACTORFRAME;Pan Rate Amplification
@@ -712,7 +858,6 @@ PREFERENCES_PROFILELOADPR;Processing Profile Loading Priority
 PREFERENCES_PROFILEPRCACHE;Profile in cache
 PREFERENCES_PROFILEPRFILE;Profile next to the input file
 PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
-PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
 PREFERENCES_SELECTFONT;Select font
@@ -746,12 +891,16 @@ PREFERENCES_THUMBSIZE;Thumbnail Size
 PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
-PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 PREFERENCES_USESYSTEMTHEME; Use system theme
 PREFERENCES_WORKFLOW;Layout
+PREFERENCES_XMP_INSIDE_DNG;Save XMP metadata and processing params inside DNG (no sidecar file)
+PREFERENCES_XMP_INSIDE_JPG;Save XMP metadata and processing params inside JPG (no sidecar file)
+PREFERENCES_XMP_INSIDE_PNG;Save XMP metadata and processing params inside PNG (no sidecar file)
+PREFERENCES_XMP_INSIDE_TIFF;Save XMP metadata and processing params inside TIFF (no sidecar file)
 PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_FILEDLGFILTERANY;Any files
 PROFILEPANEL_FILEDLGFILTERPP;Processing profiles
+PROFILEPANEL_FILEDLGFILTERPP3;Old Processing profiles(pp3)
 PROFILEPANEL_LABEL;Processing Profiles
 PROFILEPANEL_LOADDLGLABEL;Load Processing Parameters...
 PROFILEPANEL_LOADPPASTE;Parameters to load
@@ -799,7 +948,6 @@ SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
-SAVEDLG_SAVESPP;Save processing parameters with image
 SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>

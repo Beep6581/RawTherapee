@@ -115,10 +115,14 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbmenuGroupExtProg;
 
     Gtk::CheckButton* chOverwriteOutputFile;
+    Gtk::FileChooserButton *fcDefMetadata;
 
-    Gtk::CheckButton* saveParamsFile;
+    Gtk::CheckButton* saveXmpIntoDng;
+    Gtk::CheckButton* saveXmpIntoJpg;
+    Gtk::CheckButton* saveXmpIntoPng;
+    Gtk::CheckButton* saveXmpIntoTiff;
     Gtk::CheckButton* saveParamsCache;
-    Gtk::ComboBoxText* loadParamsPreference;
+    //Gtk::ComboBoxText* loadParamsPreference;
     Gtk::ComboBoxText* editorLayout;
     RTWindow* parent;
 	
@@ -127,7 +131,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::Entry* txtSndLngEditProcDone;
 	Gtk::SpinButton* spbSndLngEditProcDoneSecs;
 	
-    Gtk::CheckButton* ckbTunnelMetaData;
+    Gtk::CheckButton* ckbWriteMetaData;
 	Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
     Gtk::Entry* txtCustProfBuilderPath;
