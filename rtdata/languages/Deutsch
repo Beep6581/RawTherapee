@@ -254,9 +254,9 @@ HISTORY_MSG_30;Dekonvolution Radius
 HISTORY_MSG_31;Dekonvolution Stärke
 HISTORY_MSG_32;Dekonvolution\nDämpfung
 HISTORY_MSG_33;Dekonvolution\nIterationen
-HISTORY_MSG_34;LCP Verzerrung
-HISTORY_MSG_35;LCP Vignettierung
-HISTORY_MSG_36;LCP CA
+HISTORY_MSG_34;Farbbeschneidungen\nverhindern
+HISTORY_MSG_35;Sättigung begrenzen
+HISTORY_MSG_36;Sättigungsgrenzwert
 HISTORY_MSG_37;Farbverstärkung
 HISTORY_MSG_38;Weißabgleich Methode
 HISTORY_MSG_39;Weißabgleich Farbtemp.
@@ -305,7 +305,7 @@ HISTORY_MSG_81;Größe ändern
 HISTORY_MSG_82;Profil geändert
 HISTORY_MSG_83;Schatten/Lichter\nHohe Qualität
 HISTORY_MSG_84;Perspektive - Korrektur
-HISTORY_MSG_85;Linsenkorrektur-Profil
+HISTORY_MSG_85;Wavelet Koeffizienten
 HISTORY_MSG_86;Wavelet-Mixer
 HISTORY_MSG_87;Impulsrauschminderung
 HISTORY_MSG_88;Impulsrauschminderung\nSchwellenwert
@@ -960,11 +960,6 @@ TP_LABCURVE_SATURATION;Sättigung
 TP_LENSGEOM_AUTOCROP;Auto-Schneiden
 TP_LENSGEOM_FILL;Auto-Füllen
 TP_LENSGEOM_LABEL;Objektivkorrekturen
-TP_LENSPROFILE_FILEDLGFILTERLCP;Linsen-Korrekturdateien
-TP_LENSPROFILE_LABEL;Linsen-Korrekturprofil
-TP_LENSPROFILE_USECA;CA korrigieren
-TP_LENSPROFILE_USEDIST;Verzerrung korrigieren
-TP_LENSPROFILE_USEVIGN;Vignettierung korrigieren
 TP_LUMADENOISE_EDGETOLERANCE;Kantentoleranz
 TP_LUMADENOISE_LABEL;Luminanz-Rauschfilter
 TP_LUMADENOISE_RADIUS;Radius
@@ -1145,5 +1140,3 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos<b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.

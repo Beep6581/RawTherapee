@@ -247,7 +247,7 @@ void PlacesBrowser::selectionChanged () {
     if (iter) {
         if (iter->get_value (placesColumns.type)==2) {
             std::vector<Glib::RefPtr<Gio::Volume> > volumes = vm->get_volumes ();
-	    for (size_t i=0; i<volumes.size(); i++)
+            for (size_t i=0; i<volumes.size(); i++)
                 if (volumes[i]->get_name () == iter->get_value (placesColumns.label)) {
                     volumes[i]->mount ();
                     break;
@@ -255,7 +255,7 @@ void PlacesBrowser::selectionChanged () {
         }
         else if (iter->get_value (placesColumns.type)==3) {
             std::vector<Glib::RefPtr<Gio::Drive> > drives = vm->get_connected_drives ();
-	    for (size_t i=0; i<drives.size(); i++)
+            for (size_t i=0; i<drives.size(); i++)
                 if (drives[i]->get_name () == iter->get_value (placesColumns.label)) {
                     drives[i]->poll_for_media ();
                     break;
@@ -277,7 +277,7 @@ void PlacesBrowser::addPressed () {
         return;
 
     // check if the dirname is already in the list. If yes, return.
-	for (size_t i=0; i<options.favoriteDirs.size(); i++)
+    for (size_t i=0; i<options.favoriteDirs.size(); i++)
         if (options.favoriteDirs[i] == lastSelectedDir)
             return;
 

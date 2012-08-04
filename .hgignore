@@ -22,3 +22,8 @@ rtgui/rawtherapee
 rtgui/rawtherapee.exe
 install_manifest.txt
 AboutThisBuild.txt
+
+syntax: regexp
+^build$
+syntax: regexp
+^patch$

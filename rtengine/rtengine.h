@@ -25,12 +25,13 @@
 #include <string>
 #include <glibmm.h>
 #include <ctime>
-#include "../rtexif/rtexif.h"
 #include "rawmetadatalocation.h"
 #include "iimage.h"
 #include "utils.h"
 #include "settings.h"
 #include "LUT.h"
+#include "imagedata.h"
+
 /**
  * @file 
  * This file contains the main functionality of the raw therapee engine.
@@ -39,75 +40,6 @@
 
 
 namespace rtengine {
-
-  /**
-    * This class represents provides functions to obtain exif and IPTC metadata information
-    * from the image file
-    */
-    class ImageMetaData {
-
-        public:
-          /** Checks the availability of exif metadata tags.
-            * @return Returns true if image contains exif metadata tags */
-            virtual bool hasExif () const =0;        
-          /** Returns the directory of exif metadata tags.
-            * @return The directory of exif metadata tags */
-            virtual const rtexif::TagDirectory* getExifData () const =0;
-          /** Checks the availability of IPTC tags.
-            * @return Returns true if image contains IPTC tags */
-            virtual bool hasIPTC () const =0;
-          /** Returns the directory of IPTC tags.
-            * @return The directory of IPTC tags */
-            virtual const procparams::IPTCPairs getIPTCData () const =0;
-          /** @return a struct containing the date and time of the image */
-            virtual struct tm   getDateTime () const =0;
-          /** @return a timestamp containing the date and time of the image */
-            virtual time_t   getDateTimeAsTS() const =0;
-          /** @return the ISO of the image */
-            virtual int         getISOSpeed () const =0;
-          /** @return the F number of the image */
-            virtual double      getFNumber  () const =0;
-          /** @return the focal length used at the exposure */
-            virtual double      getFocalLen () const =0;
-          /** @return the focal length in 35mm used at the exposure */
-            virtual double      getFocalLen35mm () const =0;
-          /** @return the focus distance in meters, 0=unknown, 10000=infinity */
-            virtual float       getFocusDist () const =0;
-          /** @return the shutter speed */
-            virtual double      getShutterSpeed () const =0;
-          /** @return the exposure compensation */
-            virtual double      getExpComp () const =0;
-          /** @return the maker of the camera */
-            virtual std::string getMake     () const =0;
-          /** @return the model of the camera */
-            virtual std::string getModel    () const =0;
-
-            std::string         getCamera   () const { return getMake() + " " + getModel(); }
-
-          /** @return the lens on the camera  */
-            virtual std::string getLens     () const =0;
-          /** @return the orientation of the image */
-            virtual std::string getOrientation () const =0;
-          /** Functions to convert between floating point and string representation of shutter and aperture */
-            static std::string apertureToString (double aperture);
-          /** Functions to convert between floating point and string representation of shutter and aperture */
-            static std::string shutterToString (double shutter);
-          /** Functions to convert between floating point and string representation of shutter and aperture */
-            static double apertureFromString (std::string shutter);
-          /** Functions to convert between floating point and string representation of shutter and aperture */
-            static double shutterFromString (std::string shutter);
-          /** Functions to convert between floating point and string representation of exposure compensation */
-            static std::string expcompToString (double expcomp, bool maskZeroexpcomp);
-            
-	    virtual ~ImageMetaData () {}
-
-          /** Reads metadata from file.
-            * @param fname is the name of the file
-            * @param rml is a struct containing information about metadata location. Use it only for raw files. In case
-            * of jpgs and tiffs pass a NULL pointer. 
-            * @return The metadata */
-            static ImageMetaData* fromFile (const Glib::ustring& fname, RawMetaDataLocation* rml);
-    };
 
   /** This listener interface is used to indicate the progress of time consuming operations */
     class ProgressListener {
@@ -161,7 +93,7 @@ namespace rtengine {
             * @param errorCode is a pointer to a variable that is set to nonzero if an error happened (output)
             * @param pl is a pointer pointing to an object implementing a progress listener. It can be NULL, in this case progress is not reported.
             * @return an object representing the loaded and pre-processed image */
-            static InitialImage* load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl = NULL);
+            static InitialImage* load (const Glib::ustring& fname, ImageMetaData *meta, bool isRaw, int* errorCode, ProgressListener* pl = NULL);
     };
 
     /** When the preview image is ready for display during staged processing (thus the changes have been updated),
@@ -352,7 +284,7 @@ namespace rtengine {
        * @param isRaw shall be true if it is a raw file
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */
-        static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams);
+        static ProcessingJob* create (const Glib::ustring& fname, bool isRaw, const procparams::ProcParams& pparams, ImageMetaData* md, bool writeMeta);
    
     /** Creates a processing job from a file name. This function always succeeds. It only stores the data into the ProcessingJob class, it does not load
        * the image thus it returns immediately. This function increases the reference count of the initialImage. If you decide not the process the image you
@@ -361,7 +293,7 @@ namespace rtengine {
        * @param initialImage is a loaded and pre-processed initial image
        * @param pparams is a struct containing the processing parameters
        * @return an object containing the data above. It can be passed to the functions that do the actual image processing. */   
-        static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams);
+        static ProcessingJob* create (InitialImage* initialImage, const procparams::ProcParams& pparams, ImageMetaData* md, bool writeMeta);
 
     /** Cancels and destroys a processing job. The reference count of the corresponding initialImage (if any) is decreased. After the call of this function the ProcessingJob instance
       * gets invalid, you must not use it any more. Dont call this function while the job is being processed. 
@@ -374,9 +306,8 @@ namespace rtengine {
    * @param job the ProcessingJob to cancel. 
    * @param errorCode is the error code if an error occured (e.g. the input image could not be loaded etc.) 
    * @param pl is an optional ProgressListener if you want to keep track of the progress
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change
    * @return the resulting image, with the output profile applied, exif and iptc data set. You have to save it or you can access the pixel data directly.  */  
-    IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL, bool tunnelMetaData=false);
+    IImage16* processImage (ProcessingJob* job, int& errorCode, ProgressListener* pl = NULL );
 
 /** This class is used to control the batch processing. The class implementing this interface will be called when the full processing of an
    * image is ready and the next job to process is needed. */
@@ -393,12 +324,13 @@ namespace rtengine {
    * with processing. If no new job is given, it finishes.
    * The ProcessingJob passed becomes invalid, you can not use it any more.
    * @param job the ProcessingJob to cancel. 
-   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.
-   * @param tunnelMetaData tunnels IPTC and XMP to output without change */  
-    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
+   * @param bpl is the BatchProcessingListener that is called when the image is ready or the next job is needed. It also acts as a ProgressListener.*/
+    void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl );
+
 
 
     extern Glib::Mutex* lcmsMutex;
+    extern Glib::Mutex* exiv2Mutex;
 }
 
 #endif

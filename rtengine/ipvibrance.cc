@@ -24,7 +24,6 @@
 #include "improcfun.h"
 #include "iccstore.h"
 #include "mytime.h"
-#include "rt_math.h"
 
 #ifdef _OPENMP
 #include <omp.h>
