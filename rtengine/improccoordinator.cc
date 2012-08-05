@@ -28,7 +28,7 @@ namespace rtengine {
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), lastHighDetail(false), allocated(false),
+    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
     pW(-1), pH(-1), plistener(NULL),
     imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
     changeSinceLast(0), updaterRunning(false), destroying(false) {
@@ -41,6 +41,7 @@ ImProcCoordinator::ImProcCoordinator ()
     chroma_acurve(65536,0);
     chroma_bcurve(65536,0);
 	satcurve(65536,0);
+//	satbgcurve(65536,0);
 
     vhist16(65536);
     lhist16(65536); lhist16Cropped(65536);
@@ -121,9 +122,14 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	}
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
-    if ( todo & M_PREPROC) {
+    // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
+    if ( (todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
     	imgsrc->preprocess( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
+        if (highDetailNeeded)
+        	highDetailPreprocessComputed = true;
+        else
+        	highDetailPreprocessComputed = false;
     }
 
     /*  
@@ -137,15 +143,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         OR HLR gets disabled when Color method was selected
     */
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
-    if ((todo & M_RAW)
-    	|| (!lastHighDetail && highDetailNeeded)
-    	|| (params.hlrecovery.enabled && params.hlrecovery.method!="Color" && imgsrc->IsrgbSourceModified())
-    	|| (!params.hlrecovery.enabled && params.hlrecovery.method=="Color" && imgsrc->IsrgbSourceModified())){
+    if (   (todo & M_RAW)
+        || (!highDetailRawComputed && highDetailNeeded)
+        || ( params.hlrecovery.enabled && params.hlrecovery.method!="Color" && imgsrc->IsrgbSourceModified())
+        || (!params.hlrecovery.enabled && params.hlrecovery.method=="Color" && imgsrc->IsrgbSourceModified()))
+    {
 
-    	if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
-    	imgsrc->demosaic( rp );
+        if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
+        imgsrc->demosaic( rp );
+        if (highDetailNeeded) {
+            highDetailRawComputed = true;
+            if (params.hlrecovery.enabled && params.hlrecovery.method=="Color") {
+                todo |= M_INIT;
+            }
+        }
+        else
+            highDetailRawComputed = false;
     }
-    lastHighDetail=highDetailNeeded;
 
 
     if (todo & M_INIT) {
@@ -238,7 +252,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=CROP ) {
             ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve);
+                         rCurve, gCurve, bCurve, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
         }
 
         // compute L channel histogram
@@ -256,16 +270,19 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
  
     }
     readyphase++;
-
+		bool utili=false;
+		bool autili=false;
+		bool butili=false;
+		bool ccutili=false;
+		
     if ((todo & M_LUMACURVE) || todo==CROP) {
-
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
-                                     lumacurve, histLCurve, scale==1 ? 1 : 16);
+                                     lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
     }
 
     if (todo & M_LUMACURVE) {
-		CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
-									   params.labCurve.acurve, params.labCurve.bcurve, chroma_acurve, chroma_bcurve, satcurve, scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (autili, butili,ccutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve/*,params.labCurve.cbgcurve*/, chroma_acurve, chroma_bcurve, satcurve,/*satbgcurve,*/ scale==1 ? 1 : 16);
 	}
 	
 	if (todo & (M_LUMINANCE+M_COLOR) ) {
@@ -273,13 +290,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
 		ipf.EPDToneMap(nprevl,0,scale);
 
-		progress ("Applying Luminance Curve...",100*readyphase/numofphases);
+		//progress ("Applying Luminance Curve...",100*readyphase/numofphases);
 
-		ipf.luminanceCurve (nprevl, nprevl, lumacurve);
+		//ipf.luminanceCurve (nprevl, nprevl, lumacurve);
 
-		readyphase++;
+		//readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-		ipf.chrominanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*, params.labCurve.saturation*/);
+		ipf.chromiLuminanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*,satbgcurve*/, lumacurve, utili, autili, butili, ccutili);
 		//ipf.colorCurve (nprevl, nprevl);
 		ipf.vibrance(nprevl);
 		readyphase++;

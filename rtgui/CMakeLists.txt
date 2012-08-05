@@ -3,8 +3,8 @@ set (BASESOURCEFILES
     editwindow.cc batchtoolpanelcoord.cc paramsedited.cc cropwindow.cc previewhandler.cc previewwindow.cc navigator.cc indclippedpanel.cc previewmodepanel.cc filterpanel.cc
     exportpanel.cc cursormanager.cc rtwindow.cc renamedlg.cc recentbrowser.cc placesbrowser.cc filepanel.cc editorpanel.cc batchqueuepanel.cc
     ilabel.cc thumbbrowserbase.cc adjuster.cc filebrowserentry.cc filebrowser.cc filethumbnailbuttonset.cc
-    cachemanager.cc cacheimagedata.cc shcselector.cc perspective.cc
-    clipboard.cc thumbimageupdater.cc bqentryupdater.cc lensgeom.cc
+    cachemanager.cc cacheimagedata.cc shcselector.cc perspective.cc thresholdselector.cc thresholdadjuster.cc
+    clipboard.cc thumbimageupdater.cc bqentryupdater.cc lensgeom.cc coloredbar.cc
     coarsepanel.cc cacorrection.cc hlrec.cc chmixer.cc
     resize.cc icmpanel.cc crop.cc shadowshighlights.cc
     impulsedenoise.cc dirpyrdenoise.cc epd.cc
@@ -30,10 +30,11 @@ set (BASESOURCEFILES
     dirpyrequalizer.cc hsvequalizer.cc defringe.cc
     popupcommon.cc popupbutton.cc popuptogglebutton.cc sharpenedge.cc sharpenmicro.cc)
 
+include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+
 if (WIN32)
     set (EXTRA_SRC windirmonitor.cc myicon.rc)
     set (EXTRA_LIB_RTGUI winmm)
-    #include_directories ( ../rtengine ${CMAKE_CURRENT_BINARY_DIR} . ${EXTRA_INCDIR} ${GLIB2_INCLUDE_DIRS} ${GLIBMM_INCLUDE_DIRS}
     include_directories (${EXTRA_INCDIR} ${GLIB2_INCLUDE_DIRS} ${GLIBMM_INCLUDE_DIRS}
         ${GTK_INCLUDE_DIRS} ${GTKMM_INCLUDE_DIRS} ${GIO_INCLUDE_DIRS} ${GIOMM_INCLUDE_DIRS})
     link_directories (. ${EXTRA_LIBDIR} ${GLIB2_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS}
@@ -47,7 +48,7 @@ else (WIN32)
         ${GTK_LIBRARY_DIRS} ${GTKMM_LIBRARY_DIRS} ${GIO_LIBRARY_DIRS} ${GIOMM_LIBRARY_DIRS} ${LCMS_LIBRARY_DIRS} ${EXPAT_LIBRARY_DIRS} ${GTHREAD_LIBRARY_DIRS} ${GOBJECT_LIBRARY_DIRS})
 endif (WIN32)
 # create config.h which defines where data are stored
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
+configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
 
 add_executable (rth ${EXTRA_SRC} ${BASESOURCEFILES})
 

@@ -535,7 +535,8 @@ int ImageIO::savePNG  (Glib::ustring fname, int compression, volatile int bps) {
 }
 
 
-int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
+// Quality 0..100, subsampling: 1=low quality, 2=medium, 3=high
+int ImageIO::saveJPEG (Glib::ustring fname, int quality, int subSamp) {
 
 	jpeg_compress_struct cinfo;
 	jpeg_error_mgr jerr;
@@ -574,6 +575,20 @@ int ImageIO::saveJPEG (Glib::ustring fname, int quality) {
 	
 	if (quality>=0 && quality<=100) 
 	    jpeg_set_quality (&cinfo, quality, true);
+
+    cinfo.comp_info[1].h_samp_factor=cinfo.comp_info[1].v_samp_factor = 1;
+    cinfo.comp_info[2].h_samp_factor=cinfo.comp_info[2].v_samp_factor = 1;
+
+    if (subSamp==1) {
+        // Best compression, default of the JPEG library:  2x2, 1x1, 1x1 (4:1:1)
+        cinfo.comp_info[0].h_samp_factor=cinfo.comp_info[0].v_samp_factor = 2;
+    } else if (subSamp==2) {
+        // Widely used normal ratio 2x1, 1x1, 1x1 (4:2:2)
+        cinfo.comp_info[0].h_samp_factor = 2; cinfo.comp_info[0].v_samp_factor = 1;
+    } else if (subSamp==3) {
+        // Best quality 1x1 1x1 1x1 (4:4:4)
+        cinfo.comp_info[0].h_samp_factor=cinfo.comp_info[0].v_samp_factor = 1;
+    }
 
 	jpeg_start_compress(&cinfo, TRUE);
 
@@ -739,9 +754,11 @@ int ImageIO::load (Glib::ustring fname) {
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return loadPNG (fname);
-  else if (!fname.casefold().compare (lastdot, 4, ".jpg"))
+  else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
+           !fname.casefold().compare (lastdot, 5, ".jpeg"))
     return loadJPEG (fname);
-  else if (!fname.casefold().compare (lastdot, 4, ".tif"))
+  else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
+           !fname.casefold().compare (lastdot, 5, ".tiff"))
     return loadTIFF (fname);
   else return IMIO_FILETYPENOTSUPPORTED;
 }
@@ -753,9 +770,11 @@ int ImageIO::save (Glib::ustring fname) {
     return IMIO_FILETYPENOTSUPPORTED;
   if (!fname.casefold().compare (lastdot, 4, ".png"))
     return savePNG (fname);
-  else if (!fname.casefold().compare (lastdot, 4, ".jpg"))
+  else if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
+           !fname.casefold().compare (lastdot, 5, ".jpeg"))
     return saveJPEG (fname);
-  else if (!fname.casefold().compare (lastdot, 4, ".tif"))
+  else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
+           !fname.casefold().compare (lastdot, 5, ".tiff"))
     return saveTIFF (fname);
   else return IMIO_FILETYPENOTSUPPORTED;
 }

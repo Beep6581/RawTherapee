@@ -333,6 +333,15 @@ void CropHandler::getSize (int& w, int& h) {
     h = cropH;
 }
 
+void CropHandler::getFullImageSize (int& w, int& h) {
+    if (ipc) {
+        w = ipc->getFullWidth ();
+        h = ipc->getFullHeight ();
+    } else {
+        w=h=0;
+    }
+}
+
 void CropHandler::compDim () {
 
     cropX = cx;

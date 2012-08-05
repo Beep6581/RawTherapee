@@ -18,28 +18,40 @@
  */
 
 #include "vibrance.h"
+#include "../rtengine/color.h"
+#include <iomanip>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
+
+	std::vector<GradientMilestone> milestones;
+	float R, G, B;
+	// -0.1 rad < Hue < 1.6 rad
+	Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
+	milestones.push_back( GradientMilestone(0.0, double(R), double(G), double(B)) );
+	Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
+	milestones.push_back( GradientMilestone(1.0, double(R), double(G), double(B)) );
+
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 
-	pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"),-100,100,5,0));
-	pastels->setAdjusterListener (this);
-	//if (pastels->delay < 1000) pastels->delay = 1000;
-	pack_start( *pastels, Gtk::PACK_SHRINK, 0);
-
-	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100,100,5,0));
+	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100.,100.,1.,0.));
 	saturated->setAdjusterListener (this);
 	saturated->set_sensitive(false);
 	//if (saturated->delay < 1000) saturated->delay = 1000;
 	pack_start( *saturated, Gtk::PACK_SHRINK, 0);
 
-	psThreshold = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PSTHRESHOLD"),0,100,5,75));
+	pastels = Gtk::manage(new Adjuster (M("TP_VIBRANCE_PASTELS"),-100.,100.,1.,0.));
+	pastels->setAdjusterListener (this);
+	//if (pastels->delay < 1000) pastels->delay = 1000;
+	pack_start( *pastels, Gtk::PACK_SHRINK, 0);
+
+	psThreshold = Gtk::manage (new ThresholdAdjuster (M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false));
 	psThreshold->setAdjusterListener (this);
+	psThreshold->set_tooltip_markup(M("TP_VIBRANCE_PSTHRESHOLD_TOOLTIP"));
 	psThreshold->set_sensitive(false);
 	//if (psThreshold->delay < 1000) psThreshold->delay = 1000;
 	pack_start( *psThreshold, Gtk::PACK_SHRINK, 0);
@@ -56,12 +68,32 @@ Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
 	pastSatTog->set_active (true);
 	pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
 
+	curveEditorGG = new CurveEditorGroup (options.lastVibranceCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"));
+	curveEditorGG->setCurveListener (this);
+
+	skinTonesCurve = static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")));
+	skinTonesCurve->setTooltip(M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP"));
+	skinTonesCurve->setBottomBarBgGradient(milestones);
+	skinTonesCurve->setLeftBarBgGradient(milestones);
+	skinTonesCurve->setRangeLabels(
+			M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2"),
+			M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3"), M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4")
+	);
+	skinTonesCurve->setRangeDefaultMilestones(0.1, 0.4, 0.85);
+	curveEditorGG->curveListComplete();
+
+	pack_start (*curveEditorGG, Gtk::PACK_SHRINK, 4);
+
 	show ();
 
 	enaconn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::enabled_toggled) );
 	pskinsconn = protectSkins->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::protectskins_toggled) );
 	ashiftconn = avoidColorShift->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::avoidcolorshift_toggled) );
 	pastsattogconn = pastSatTog->signal_toggled().connect( sigc::mem_fun(*this, &Vibrance::pastsattog_toggled) );
+}
+
+Vibrance::~Vibrance () {
+	delete curveEditorGG;
 }
 
 void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
@@ -74,7 +106,8 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 		psThreshold->setEditedState       (pedited->vibrance.psthreshold ? Edited : UnEdited);
 		protectSkins->set_inconsistent    (!pedited->vibrance.protectskins);
 		avoidColorShift->set_inconsistent (!pedited->vibrance.avoidcolorshift);
-		pastSatTog->set_inconsistent   		 (!pedited->vibrance.pastsattog);
+		pastSatTog->set_inconsistent      (!pedited->vibrance.pastsattog);
+		skinTonesCurve->setUnChanged      (!pedited->vibrance.skintonescurve);
 	}
 
 	enaconn.block (true);
@@ -98,7 +131,7 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 	lastPastSatTog = pp->vibrance.pastsattog;
 
 	pastels->setValue (pp->vibrance.pastels);
-	psThreshold->setValue (pp->vibrance.psthreshold);
+	psThreshold->setValue<int> (pp->vibrance.psthreshold);
 
 	if (lastPastSatTog) {
 		// Link both slider, so we set saturated and psThresholds unsensitive
@@ -112,6 +145,8 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 		saturated->set_sensitive(true);
 		saturated->setValue (pp->vibrance.saturated);  // Pastels and Saturated are separate
 	}
+	skinTonesCurve->setCurve (pp->vibrance.skintonescurve);
+	skinTonesCurve->openIfNonlinear();
 
 	enableListener ();
 }
@@ -120,10 +155,11 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
 	pp->vibrance.enabled         = enabled->get_active ();
 	pp->vibrance.pastels         = pastels->getIntValue();
 	pp->vibrance.saturated       = pastSatTog->get_active() ? pp->vibrance.pastels : saturated->getIntValue ();
-	pp->vibrance.psthreshold     = psThreshold->getIntValue ();
+	pp->vibrance.psthreshold     = psThreshold->getValue<int> ();
 	pp->vibrance.protectskins    = protectSkins->get_active ();
 	pp->vibrance.avoidcolorshift = avoidColorShift->get_active ();
 	pp->vibrance.pastsattog      = pastSatTog->get_active ();
+	pp->vibrance.skintonescurve  = skinTonesCurve->getCurve ();
 
 	if (pedited) {
 		pedited->vibrance.enabled         = !enabled->get_inconsistent();
@@ -133,8 +169,13 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
 		pedited->vibrance.protectskins    = !protectSkins->get_inconsistent();
 		pedited->vibrance.avoidcolorshift = !avoidColorShift->get_inconsistent();
 		pedited->vibrance.pastsattog      = !pastSatTog->get_inconsistent();
+		pedited->vibrance.skintonescurve  = !skinTonesCurve->isUnChanged ();
 	}
 
+}
+void Vibrance::curveChanged () {
+
+	if (listener && enabled->get_active()) listener->panelChanged (EvVibranceSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
 }
 
 void Vibrance::enabled_toggled () {
@@ -249,11 +290,15 @@ void Vibrance::adjusterChanged (Adjuster* a, double newval) {
 			listener->panelChanged (EvVibrancePastels,  value );
 		else if (a == saturated && !pastSatTog->get_active())
 			listener->panelChanged (EvVibranceSaturated, value );
-		else if (a == psThreshold){
-			listener->panelChanged (EvVibrancePastSatThreshold, value );
-		}
 	}
 }
+
+void Vibrance::adjusterChanged (ThresholdAdjuster* a, int newBottom, int newTop) {
+	if (listener && enabled->get_active()) {
+		listener->panelChanged (EvVibrancePastSatThreshold, psThreshold->getHistoryString());
+	}
+}
+
 
 void Vibrance::setBatchMode(bool batchMode) {
 
@@ -262,12 +307,14 @@ void Vibrance::setBatchMode(bool batchMode) {
 	pastels->showEditedCB   ();
 	saturated->showEditedCB ();
 	psThreshold->showEditedCB ();
+
+	curveEditorGG->setBatchMode (batchMode);
 }
 
 void Vibrance::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited) {
 	pastels->setDefault (defParams->vibrance.pastels);
 	saturated->setDefault (defParams->vibrance.saturated);
-	psThreshold->setDefault (defParams->vibrance.psthreshold);
+	psThreshold->setDefault<int> (defParams->vibrance.psthreshold);
 
 	if (pedited) {
 		pastels->setDefaultEditedState     (pedited->vibrance.pastels ? Edited : UnEdited);
@@ -284,11 +331,66 @@ void Vibrance::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
 void Vibrance::setAdjusterBehavior (bool pastelsadd, bool saturatedadd, bool psthreshdadd) {
 	pastels->setAddMode (pastelsadd);
 	saturated->setAddMode (saturatedadd);
-	psThreshold->setAddMode (psthreshdadd);
 }
+
+void Vibrance::colorForValue (double valX, double valY) {
+	CurveEditor* ce = curveEditorGG->getDisplayedCurve();
+
+	if (ce == skinTonesCurve) {         // L = f(L)
+		red   = double(valY);
+		green = double(valY);
+		blue  = double(valY);
+	}
+	else {
+		printf("Error: no curve displayed!\n");
+	}
+}
+
 
 void Vibrance::trimValues (ProcParams* pp) {
 	pastels->trimValue (pp->vibrance.pastels);
 	saturated->trimValue (pp->vibrance.saturated);
-	psThreshold->trimValue (pp->vibrance.psthreshold);
+}
+
+std::vector<double> Vibrance::getCurvePoints(ThresholdSelector* tAdjuster) const {
+	std::vector<double> points;
+	double threshold, transitionWeighting;
+	tAdjuster->getPositions<double>(transitionWeighting, threshold);  // ( range -100;+100,   range 0;+100 )
+	transitionWeighting /= 100.; // range -1., +1.
+	threshold /= 100.;      // range  0., +1.
+
+	// Initial point
+	points.push_back(0.); points.push_back(0.);
+
+	double p2 = 3.0*threshold/4.0;                 // same one than in ipvibrance.cc
+	double s0 = threshold + (1.0-threshold)/4.0;   // same one than in ipvibrance.cc
+
+	// point at the beginning of the first linear transition
+	points.push_back(p2); points.push_back(0.);
+
+	// Y value of the chroma mean point, calculated to get a straight line between p2 and s0
+	double chromaMean = (threshold/4.0) / (s0-p2);
+	// move chromaMean up or down depending on transitionWeighting
+	if (transitionWeighting > 0.0) {
+		// positive values -> give more weight to Saturated
+		chromaMean = (1.0-chromaMean) * transitionWeighting + chromaMean;
+	}
+	else if (transitionWeighting < 0.0) {
+		// negative values -> give more weight to Pastels
+		chromaMean =      chromaMean  * transitionWeighting + chromaMean;
+	}
+
+	// point at the location of the Top cursor, at the end of the first linear transition and the beginning of the second one
+	points.push_back(threshold); points.push_back(chromaMean);
+
+	if (threshold < 1.0) {
+
+		// point at the end of the second linear transition
+		points.push_back(s0); points.push_back(1.0);
+
+		// end point
+		points.push_back(1.0); points.push_back(1.0);
+	}
+
+	return points;
 }

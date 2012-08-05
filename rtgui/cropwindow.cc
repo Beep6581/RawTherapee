@@ -478,12 +478,10 @@ void CropWindow::pointerMoved (int x, int y) {
 		int mx, my;
 		translateCoord (x, y, mx, my);
 		if (!onArea (CropImage, x, y) || !cropHandler.cropPixbuf) {
-		//	pmlistener->pointerMoved (false, mx, my, -1, -1, -1);
+            cropHandler.getFullImageSize(mx,my);
 			pmlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
-                        if (pmhlistener) {
-                           pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
-                        }
-                }
+            if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
+        }
 		else {
 			/*Glib::Mutex::Lock lock(cropHandler.cimg);
 

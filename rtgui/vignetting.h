@@ -42,7 +42,7 @@ class Vignetting : public Gtk::VBox, public AdjusterListener, public FoldableToo
     void setBatchMode   (bool batchMode);
 
     void adjusterChanged (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool vadd);
+    void setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

@@ -23,9 +23,10 @@
 
 MyDiagonalCurve::MyDiagonalCurve () : activeParam(-1), bghistvalid(false) {
 
-    innerWidth = get_allocation().get_width() - RADIUS * 2;
-    innerHeight = get_allocation().get_height() - RADIUS * 2;
-    prevInnerHeight = innerHeight;
+    graphW = get_allocation().get_width() - RADIUS * 2;
+    graphH = get_allocation().get_height() - RADIUS * 2;
+    prevGraphW = graphW;
+    prevGraphH = graphH;
     grab_point = -1;
     lit_point = -1;
     buttonPressed = false;
@@ -58,30 +59,30 @@ std::vector<double> MyDiagonalCurve::get_vector (int veclen) {
         int active = 0;
         int firstact = -1;
         for (int i = 0; i < (int)curve.x.size(); ++i)
-            if (curve.x[i] > prev) {
+            if (curve.x.at(i) > prev) {
                 if (firstact < 0)
                   firstact = i;
-                prev = curve.x[i];
+                prev = curve.x.at(i);
                 ++active;
             }
         // handle degenerate case:
         if (active < 2) {
             double ry;
             if (active > 0)
-                ry = curve.y[firstact];
+                ry = curve.y.at(firstact);
             else
                 ry = 0.0;
             if (ry < 0.0) ry = 0.0;
             if (ry > 1.0) ry = 1.0;
             for (int x = 0; x < veclen; ++x)
-                vector[x] = ry;
+                vector.at(x) = ry;
             return vector;
         }
     }
 
     // calculate remaining points
     std::vector<double> curveDescr = getPoints ();
-    rtengine::DiagonalCurve* rtcurve = new rtengine::DiagonalCurve (curveDescr, veclen*1.5);
+    rtengine::DiagonalCurve* rtcurve = new rtengine::DiagonalCurve (curveDescr, veclen*1.2);
     std::vector<double> t;
     t.resize (veclen);
     for (int i = 0; i < veclen; i++)
@@ -93,73 +94,89 @@ std::vector<double> MyDiagonalCurve::get_vector (int veclen) {
 
 void MyDiagonalCurve::interpolate () {
 
-    prevInnerHeight = innerHeight;
-    point.resize (innerWidth);
-    std::vector<double> vector = get_vector (innerWidth);
-    prevInnerHeight = innerHeight;
-    for (int i = 0; i < innerWidth; ++i)
-        point[i] = Gdk::Point (RADIUS + i, RADIUS + innerHeight - (int)((innerHeight-1) * vector[i] + 0.5));
+    prevGraphW = graphW;
+    prevGraphH = graphH;
+    int nbPoints = graphW-2;
+    point.resize (nbPoints);
+    std::vector<double> vector = get_vector (nbPoints);
+    for (int i = 0; i < nbPoints; ++i) {
+    	float currX = float(i)/float(nbPoints-1);
+        point.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
+    }
     upoint.clear ();
     lpoint.clear ();
 
     if (curve.type==DCT_Parametric && activeParam>0) {
-        double tmp = curve.x[activeParam-1];
+        double tmp = curve.x.at(activeParam-1);
         if (activeParam>=4) {
-            upoint.resize(innerWidth);
-            lpoint.resize(innerWidth);
-            curve.x[activeParam-1] = 100;
-            vector = get_vector (innerWidth);
-            for (int i = 0; i < innerWidth; ++i)
-                upoint[i] = Gdk::Point (RADIUS + i, RADIUS + innerHeight - (int)((innerHeight-1) * vector[i] + 0.5));
-            curve.x[activeParam-1] = -100;
-            vector = get_vector (innerWidth);
-            for (int i = 0; i < innerWidth; ++i)
-                lpoint[i] = Gdk::Point (RADIUS + i, RADIUS + innerHeight - (int)((innerHeight-1) * vector[i] + 0.5));
-            curve.x[activeParam-1] = tmp;
+            upoint.resize(nbPoints);
+            lpoint.resize(nbPoints);
+            curve.x.at(activeParam-1) = 100;
+            vector = get_vector (nbPoints);
+            for (int i = 0; i < nbPoints; ++i) {
+            	float currX = float(i)/float(nbPoints-1);
+				upoint.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
+            }
+            curve.x.at(activeParam-1) = -100;
+            vector = get_vector (nbPoints);
+            for (int i = 0; i < nbPoints; ++i) {
+            	float currX = float(i)/float(nbPoints-1);
+				lpoint.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
+            }
+            curve.x.at(activeParam-1) = tmp;
         }
     }
 }
 
 void MyDiagonalCurve::draw (int handle) {
-    if (!pixmap)
+	if (!isDirty()) {
+		return;
+	}
+
+	Glib::RefPtr<Gdk::Window > win = get_window();
+    if (!surfaceCreated() || !win)
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevInnerHeight != innerHeight || (int)point.size() != innerWidth)
+    if (prevGraphW != graphW || prevGraphH != graphH || int(point.size()) != graphW-2)
         interpolate ();
 
     Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
 
     Glib::RefPtr<Gtk::Style> style = get_style ();
-    Cairo::RefPtr<Cairo::Context> cr = pixmap->create_cairo_context();
+    Cairo::RefPtr<Cairo::Context> cr = getContext();
+    cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
-    // bounding rectangle
+    // clear background
     Gdk::Color c = style->get_bg (Gtk::STATE_NORMAL);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    cr->rectangle (0, 0, innerWidth + RADIUS*2, innerHeight + RADIUS*2);
+    cr->rectangle (0., 0., double(getWidth()), double(getHeight()));
     cr->fill ();
 
     // histogram in the background
     if (bghistvalid) {
         // find highest bin
-        unsigned int histheight = 0;
+        unsigned int valMax = 0;
         for (int i=0; i<256; i++)
-            if (bghist[i]>histheight)
-                histheight = bghist[i];
+            if (bghist[i]>valMax)
+            	valMax = bghist[i];
         // draw histogram
         cr->set_line_width (1.0);
-        double stepSize = (innerWidth-1) / 256.0;
-        cr->move_to (RADIUS, innerHeight-1+RADIUS);
+        double stepSize = (graphW-3) / 255.0;
+        cr->move_to ( double(graphX+1), double(graphY-1) );
         c = style->get_fg (Gtk::STATE_INSENSITIVE);
         cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
         for (int i=0; i<256; i++) {
-            double val = bghist[i] * (double)(innerHeight-2) / (double)histheight;
-            if (val>innerHeight-1)
-                val = innerHeight-1;
-            if (i>0)
-                cr->line_to (i*stepSize+RADIUS, innerHeight-1+RADIUS-val);
+            double val = double(bghist[i]) * double(graphH-2) / double(valMax);
+            /*
+            if (val>graphH-2)
+                val = graphH-2;
+            */
+            //if (i>0)
+                cr->line_to (double(graphX)+1.5+double(i)*stepSize, double(graphY-1)-val);
         }
-        cr->line_to (innerWidth-1+RADIUS, innerHeight-1+RADIUS);
+		cr->line_to (double(graphX)+1.5+255.*stepSize, double(graphY-1));
+        cr->close_path();
         cr->fill ();
     }
 
@@ -168,17 +185,17 @@ void MyDiagonalCurve::draw (int handle) {
     c = style->get_dark (state);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
-    for (int i = 0; i < 5; i++) { // + 0.5 to align well with f(x)=x so it will cut through the center
-        cr->move_to (RADIUS, max(0.0, i * (innerHeight + 0.5) / 4) + RADIUS);
-        cr->line_to (innerWidth + RADIUS, max(0.0,i * (innerHeight + 0.5) / 4) + RADIUS);
-        cr->move_to (max(0,i * innerWidth / 4) + RADIUS, RADIUS);
-        cr->line_to (max(0,i * innerWidth / 4) + RADIUS, innerHeight + RADIUS);
+    for (int i = 0; i < 5; i++) {
+        // horizontal lines
+        cr->move_to     (double(graphX)+0.5                                 , double(graphY) - max(0.5, double(graphH*i/4) - 0.5));
+        cr->rel_line_to (double(graphW-1)                                   , 0.);
+        // vertical lines
+        cr->move_to     (double(graphX) + max(0.5, double(graphW*i/4) - 0.5), double(graphY));
+        cr->rel_line_to (0.                                                 , double(-graphH+1));
     }
     cr->stroke ();
 
     // draw f(x)=x line
-    //c = style->get_light (state);
-    c = style->get_fg (state);
     if (snapToElmt == -2)
         cr->set_source_rgb (1.0, 0.0, 0.0);
     else
@@ -186,8 +203,8 @@ void MyDiagonalCurve::draw (int handle) {
     std::valarray<double> ds (1);
     ds[0] = 4;
     cr->set_dash (ds, 0);
-    cr->move_to (RADIUS, innerHeight + RADIUS);
-    cr->line_to (innerWidth + RADIUS, RADIUS);
+    cr->move_to (double(graphX)+1.5, double(graphY)-1.5);
+    cr->rel_line_to (double(graphW-3), double(-graphH+3));
     cr->stroke ();
     cr->unset_dash ();
 
@@ -197,32 +214,35 @@ void MyDiagonalCurve::draw (int handle) {
     // draw upper and lower bounds
     if (curve.type==DCT_Parametric && activeParam>0 && lpoint.size()>1 && upoint.size()>1) {
         cr->set_source_rgba (0.0, 0.0, 0.0, 0.15);
-        cr->move_to (upoint[0].get_x(), upoint[0].get_y());
+        cr->move_to (upoint[0].x, upoint[0].y);
         for (int i=1; i<(int)upoint.size(); i++)
-            cr->line_to (upoint[i].get_x(), upoint[i].get_y());
-        cr->line_to (lpoint[lpoint.size()-1].get_x(), lpoint[lpoint.size()-1].get_y());
+            cr->line_to (upoint[i].x, upoint[i].y);
+        cr->line_to (lpoint[lpoint.size()-1].x, lpoint[lpoint.size()-1].y);
         for (int i=(int)lpoint.size()-2; i>=0; i--)
-            cr->line_to (lpoint[i].get_x(), lpoint[i].get_y());
-        cr->line_to (upoint[0].get_x(), upoint[0].get_y());
+            cr->line_to (lpoint[i].x, lpoint[i].y);
+        cr->line_to (upoint[0].x, upoint[0].y);
         cr->fill ();
     }
 
+    c = style->get_fg (state);
+
     // draw the cage of the NURBS curve
     if (curve.type==DCT_NURBS) {
-    	unsigned int nbPoints;
+        unsigned int nbPoints;
         std::valarray<double> ch_ds (1);
         ch_ds[0] = 2;
         cr->set_dash (ch_ds, 0);
+        cr->set_line_width (0.75);
         cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
         std::vector<double> points = getPoints();
         nbPoints = ((int)points.size()-1)/2;
         for (unsigned int i = 1; i < nbPoints; i++) {
             int pos = i*2+1;
 
-            double x1 = ((innerWidth-1) * points[pos-2] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
-            double y1 = innerHeight - ((innerHeight-1) * points[pos-1] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
-            double x2 = ((innerWidth-1) * points[pos] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
-            double y2 = innerHeight - ((innerHeight-1) * points[pos+1] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
+            double x1 = double(graphX)+1.5 + double(graphW-3)*points[pos-2];  // project (curve.x[i], 0, 1, graphW);
+            double y1 = double(graphY)-1.5 - double(graphH-3)*points[pos-1];  // project (curve.y[i], 0, 1, graphH);
+            double x2 = double(graphX)+0.5 + double(graphW-3)*points[pos];    // project (curve.x[i], 0, 1, graphW);
+            double y2 = double(graphY)-1.5 - double(graphH-3)*points[pos+1];  // project (curve.y[i], 0, 1, graphH);
 
             // set the color of the line when the point is snapped to the cage
             if (curve.x.size() == nbPoints && snapToElmt >= 1000 && ((i == (snapToElmt-1000)) || (i == (snapToElmt-999))))
@@ -234,17 +254,48 @@ void MyDiagonalCurve::draw (int handle) {
             cr->stroke ();
         }
         cr->unset_dash ();
+        cr->set_line_width (1.0);
     }
 
     // draw curve
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-    cr->move_to (point[0].get_x(), point[0].get_y());
-    for (int i=1; i<(int)point.size(); i++)
-        cr->line_to (point[i].get_x(), point[i].get_y());
+    cr->move_to (double(point.at(0).x), double(point.at(0).y));
+    for (int i=1; i<(int)point.size(); i++) {
+        cr->line_to (double(point.at(i).x), double(point.at(i).y));
+    }
     cr->stroke ();
 
+    // draw the left colored bar
+    if (leftBar) {
+        // first the background
+        BackBuffer *bb = this;
+        leftBar->setDrawRectangle(win, 1, graphY-graphH+1, CBAR_WIDTH-2, graphH-2);
+        leftBar->expose(bb);
+
+        // now the border
+        c = style->get_dark (state);
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        cr->rectangle(0.5, graphY-graphH+0.5, CBAR_WIDTH-1, graphH-1);
+        cr->stroke();
+    }
+
+    // draw the bottom colored bar
+    if (bottomBar) {
+        // first the background
+    	BackBuffer *bb = this;
+        bottomBar->setDrawRectangle(win, graphX+1, graphY+CBAR_MARGIN+1, graphW-2, CBAR_WIDTH-2);
+        bottomBar->expose(bb);
+
+        // now the border
+        c = style->get_dark (state);
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        cr->rectangle(graphX+0.5, graphY+CBAR_MARGIN+0.5, graphW-1, CBAR_WIDTH-1 );
+        cr->stroke();
+    }
+
     // draw bullets
-    if (curve.type!=DCT_Parametric)
+    if (curve.type!=DCT_Parametric) {
+        c = style->get_fg (state);
         for (int i = 0; i < (int)curve.x.size(); ++i) {
             if (curve.x[i] == -1) continue;
             if (snapToElmt >= 1000) {
@@ -261,14 +312,15 @@ void MyDiagonalCurve::draw (int handle) {
                     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
             }
 
-            double x = ((innerWidth-1) * curve.x[i] + 0.5)+RADIUS;    // project (curve.x[i], 0, 1, innerWidth);
-            double y = innerHeight - ((innerHeight-1) * curve.y[i] + 0.5)+RADIUS; // project (curve.y[i], 0, 1, innerHeight);
+            double x = double(graphX+1) + double((graphW-2) * curve.x[i]); // project (curve.x[i], 0, 1, graphW);
+            double y = double(graphY-1) - double((graphH-2) * curve.y[i]); // project (curve.y[i], 0, 1, graphH);
 
             cr->arc (x, y, RADIUS+0.5, 0, 2*M_PI);
             cr->fill ();
         }
-
-    get_window()->draw_drawable (style->get_fg_gc (state), pixmap, 0, 0, 0, 0, innerWidth + RADIUS * 2, innerHeight + RADIUS * 2);
+    }
+    setDirty(false);
+    queue_draw();
 }
 
 /*void MyDiagonalCurve::graphSizeRequest (Gtk::Requisition* req) {
@@ -287,42 +339,42 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 	bool retval = false;
 	int num = (int)curve.x.size();
 
-	/* innerWidth and innerHeight are the size of the graph */
-	innerWidth = get_allocation().get_width() - RADIUS * 2;
-	innerHeight = get_allocation().get_height() - RADIUS * 2;
+	/* graphW and graphH are the size of the graph */
+	calcDimensions();
 
-	double minDistanceX = (double)(MIN_DISTANCE) / (double)(innerWidth-1);
-	double minDistanceY = (double)(MIN_DISTANCE) / (double)(innerHeight-1);
+	double minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
+	double minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
 
-	if ((innerWidth < 0) || (innerHeight < 0))
+	if ((graphW < 0) || (graphH < 0))
 		return false;
 
 	switch (event->type) {
 	case Gdk::CONFIGURE: {
 		// Happen when the the window is resized
 		if (sized & (RS_Pending | RS_Force)) {
-			int size = get_allocation().get_width();
-			set_size_request(-1, size);
+			set_size_request(-1, calcDimensions());
 			sized = RS_Done;
 		}
-		if (pixmap)
-			pixmap.clear ();
 		retval = true;
 		break;
 	}
 	case Gdk::EXPOSE:
+	{
+		Glib::RefPtr<Gdk::Window> win = get_window();
 		if (sized & (RS_Pending | RS_Force)) {
-			int size = get_allocation().get_width();
-			set_size_request(-1, size);
+			set_size_request(-1, calcDimensions());
 		}
 		sized = RS_Pending;
-		if (!pixmap) {
-			pixmap = Gdk::Pixmap::create (get_window(), get_allocation().get_width(),  get_allocation().get_height());
+		// setDrawRectangle will allocate the backbuffer Surface
+		if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height()))
 			interpolate ();
-		}
 		draw (lit_point);
+		GdkRectangle *rectangle = &(event->expose.area);
+	   	copySurface(win, rectangle);
+
 		retval = true;
 		break;
+	}
 
 	case Gdk::BUTTON_PRESS:
 		snapToElmt = -100;
@@ -354,6 +406,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 					curve.y[closest_point] = clampedY;
 
 					interpolate ();
+					setDirty(true);
 					draw (closest_point);
 					notifyListener ();
 				}
@@ -395,6 +448,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 						curve.x.push_back (0);
 						curve.y.push_back (0);
 						interpolate ();
+						setDirty(true);
 						draw (lit_point);
 					}
 				}
@@ -406,8 +460,10 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 					new_type = CSPlus;
 					lit_point = -1;
 				}
-				if (lit_point != previous_lit_point)
+				if (lit_point != previous_lit_point) {
+					setDirty(true);
 					draw (lit_point);
+				}
 				grab_point = -1;
 				retval = true;
 				notifyListener ();
@@ -422,6 +478,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 			if (grab_point == -1) {
 				new_type = CSArrow;
 				lit_point = -1;
+				setDirty(true);
 				draw (lit_point);
 			}
 		retval = true;
@@ -442,7 +499,12 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				// there's no point currently being moved
 				int previous_lit_point = lit_point;
 				findClosestPoint();
-				if (distanceX <= minDistanceX) {
+				if (cursorX<0 || cursorX>graphW || cursorY<0 || cursorY>graphH) {
+					// the cursor has left the graph area
+					new_type = CSArrow;
+					lit_point = -1;
+				}
+				else if (distanceX <= minDistanceX) {
 					new_type = CSMove;
 					lit_point = closest_point;
 				}
@@ -450,8 +512,10 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 					new_type = CSPlus;
 					lit_point = -1;
 				}
-				if (lit_point != previous_lit_point)
+				if (lit_point != previous_lit_point) {
+					setDirty(true);
 					draw (lit_point);
+				}
 			}
 			else {
 				// a point is being moved
@@ -533,6 +597,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 				if (curve.x[grab_point] != prevPosX || curve.y[grab_point] != prevPosY) {
 					// we recalculate the curve only if we have to
 					interpolate ();
+					setDirty(true);
 					draw (lit_point);
 					notifyListener ();
 				}
@@ -555,8 +620,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 void MyDiagonalCurve::getCursorPosition(GdkEvent* event) {
 	int tx, ty;
 	int prevCursorX, prevCursorY;
-	double incrementX = 1. / (double)(innerWidth-1);
-	double incrementY = 1. / (double)(innerHeight-1);
+	double incrementX = 1. / double(graphW);
+	double incrementY = 1. / double(graphH);
 
 	// getting the cursor position
 	switch (event->type) {
@@ -565,15 +630,15 @@ void MyDiagonalCurve::getCursorPosition(GdkEvent* event) {
 			get_window()->get_pointer (tx, ty, mod_type);
 		}
 		else {
-			tx = (int)event->button.x;
-			ty = (int)event->button.y;
+			tx = int(event->button.x);
+			ty = int(event->button.y);
 			mod_type = (Gdk::ModifierType)event->button.state;
 		}
 		break;
 	case (Gdk::BUTTON_PRESS) :
 	case (Gdk::BUTTON_RELEASE) :
-		tx = (int)event->button.x;
-		ty = (int)event->button.y;
+		tx = int(event->button.x);
+		ty = int(event->button.y);
 		mod_type = (Gdk::ModifierType)event->button.state;
 		break;
 	default :
@@ -585,32 +650,32 @@ void MyDiagonalCurve::getCursorPosition(GdkEvent* event) {
 	if (grab_point != -1) {
 		prevCursorX = cursorX;
 		prevCursorY = cursorY;
-    }
-    cursorX = tx - RADIUS;
-    cursorY = (innerHeight-1) - (ty - RADIUS);
+	}
+	cursorX = tx - graphX;
+	cursorY = graphY - ty;
 
-    snapTo = ST_None;
+	snapTo = ST_None;
 
-    // update deltaX/Y if the user drags a point
-    if (grab_point != -1) {
-    	// set the dragging factor
-    	int control_key = mod_type & GDK_CONTROL_MASK;
-    	int shift_key = mod_type & GDK_SHIFT_MASK;
+	// update deltaX/Y if the user drags a point
+	if (grab_point != -1) {
+		// set the dragging factor
+		int control_key = mod_type & GDK_CONTROL_MASK;
+		int shift_key = mod_type & GDK_SHIFT_MASK;
 
-    	// the increment get smaller if modifier key are used, and "snap to" may be enabled
-    	if (control_key) { incrementX *= 0.05; incrementY *= 0.05; }
-    	if (shift_key)   { snapTo = true; }
+		// the increment get smaller if modifier key are used, and "snap to" may be enabled
+		if (control_key) { incrementX *= 0.05; incrementY *= 0.05; }
+		if (shift_key)   { snapTo = true; }
 
-    	deltaX = (double)(cursorX - prevCursorX) * incrementX;
-    	deltaY = (double)(cursorY - prevCursorY) * incrementY;
-    }
-    // otherwise set the position of the new point (modifier keys has no effect here)
-    else {
+		deltaX = double(cursorX - prevCursorX) * incrementX;
+		deltaY = double(cursorY - prevCursorY) * incrementY;
+	}
+	// otherwise set the position of the new point (modifier keys has no effect here)
+	else {
 		double tempCursorX = cursorX * incrementX;
 		double tempCursorY = cursorY * incrementY;
 		clampedX = CLAMP (tempCursorX, 0., 1.);  // X position of the pointer from the origin of the graph
 		clampedY = CLAMP (tempCursorY, 0., 1.); // Y position of the pointer from the origin of the graph
-    }
+	}
 
 }
 
@@ -630,9 +695,9 @@ void MyDiagonalCurve::findClosestPoint() {
                 closest_point = i;
             }
             else if (currDistX == distanceX && currDistY < distanceY) {
-            	// there is more than 1 point for that X coordinate, we select the closest point to the cursor
-				distanceY = currDistY;
-				closest_point = i;
+                // there is more than 1 point for that X coordinate, we select the closest point to the cursor
+                distanceY = currDistY;
+                closest_point = i;
             }
         }
     }
@@ -647,13 +712,13 @@ std::vector<double> MyDiagonalCurve::getPoints () {
         }
     }
     else {
-    	// the first value gives the type of the curve
+        // the first value gives the type of the curve
         if (curve.type==DCT_Linear)
-            result.push_back ((double)(DCT_Linear));
+            result.push_back (double(DCT_Linear));
         else if (curve.type==DCT_Spline)
-            result.push_back ((double)(DCT_Spline));
+            result.push_back (double(DCT_Spline));
         else if (curve.type==DCT_NURBS)
-            result.push_back ((double)(DCT_NURBS));
+            result.push_back (double(DCT_NURBS));
         // then we push all the points coordinate
         for (int i=0; i<(int)curve.x.size(); i++) {
             if (curve.x[i]>=0) {
@@ -672,32 +737,32 @@ void MyDiagonalCurve::setPoints (const std::vector<double>& p) {
     if (t==DCT_Parametric) {
         curve.x.clear ();
         curve.y.clear ();
-        for (int i=1; i<(int)p.size(); i++)
+        for (size_t i=1; i<p.size(); i++)
             curve.x.push_back (p[ix++]);
     }
     else {
         curve.x.clear ();
         curve.y.clear ();
-        for (int i=0; i<(int)p.size()/2; i++) {
+        for (size_t i=0; i<p.size()/2; i++) {
             curve.x.push_back (p[ix++]);
             curve.y.push_back (p[ix++]);
         }
         activeParam = -1;
     }
-    pixmap.clear ();
+    setDirty(true);
     queue_draw ();
 }
 
 void MyDiagonalCurve::setType (DiagonalCurveType t) {
 
     curve.type = t;
-    pixmap.clear ();
+    setDirty(true);
 }
 
 void MyDiagonalCurve::setActiveParam (int ac) {
     
     activeParam = ac;
-    pixmap.clear ();
+    setDirty(true);
     queue_draw ();
 }
 
@@ -723,7 +788,7 @@ int diagonalmchistupdateUI (void* data) {
 }
 
 void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
-	
+
     if (hist) {
         //memcpy (bghist, hist, 256*sizeof(unsigned int));
         for (int i=0; i<256; i++) bghist[i]=hist[i];
@@ -739,26 +804,25 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
 }
 
 void MyDiagonalCurve::reset() {
-	innerWidth = get_allocation().get_width() - RADIUS * 2;
-	innerHeight = get_allocation().get_height() - RADIUS * 2;
 
-	switch (curve.type) {
-	case DCT_Spline :
-	case  DCT_NURBS :
-		curve.x.clear();
-		curve.y.clear();
-	    curve.x.push_back(0.);
-	    curve.y.push_back(0.);
-	    curve.x.push_back(1.);
-	    curve.y.push_back(1.);
-	    grab_point = -1;
-	    lit_point = -1;
+    switch (curve.type) {
+    case DCT_Spline :
+    case  DCT_NURBS :
+        curve.x.clear();
+        curve.y.clear();
+        curve.x.push_back(0.);
+        curve.y.push_back(0.);
+        curve.x.push_back(1.);
+        curve.y.push_back(1.);
+        grab_point = -1;
+        lit_point = -1;
         interpolate ();
-		break;
-	case DCT_Parametric :
-		// Nothing to do (?)
-	default:
-		break;
-	}
-	draw(-1);
+        break;
+    case DCT_Parametric :
+        // Nothing to do (?)
+    default:
+        break;
+    }
+	setDirty(true);
+    draw(-1);
 }

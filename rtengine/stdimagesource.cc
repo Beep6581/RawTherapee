@@ -20,6 +20,7 @@
 #include "mytime.h"
 #include "iccstore.h"
 #include "curves.h"
+#include "color.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -227,9 +228,9 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
 				for (int m=0; m<skip; m++)
 					for (int n=0; n<skip; n++)
 					{
-						rtot += CurveFactory::igamma_srgb(img->r[i+m][jx+n]);
-						gtot += CurveFactory::igamma_srgb(img->g[i+m][jx+n]);
-						btot += CurveFactory::igamma_srgb(img->b[i+m][jx+n]);
+						rtot += Color::igamma_srgb(img->r[i+m][jx+n]);
+						gtot += Color::igamma_srgb(img->g[i+m][jx+n]);
+						btot += Color::igamma_srgb(img->b[i+m][jx+n]);
 					}
 				line_red[j]  = rtot;
 				line_green[j]  = gtot;
@@ -237,7 +238,7 @@ void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, Pr
 			}
 			
 			// covert back to gamma and clip
-#define GCLIP( x ) CurveFactory::gamma_srgb(CLIP(x))
+#define GCLIP( x ) Color::gamma_srgb(CLIP(x))
 			
 			if ((mtran & TR_ROT) == TR_R180) 
 				for (int j=0; j<imwidth; j++) {
@@ -436,9 +437,9 @@ void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
     for (int i=0; i<img->height; i++)
         for (int j=0; j<img->width; j++) {
-            histogram[(int)CurveFactory::igamma_srgb (img->r[i][j])>>histcompr]++;
-            histogram[(int)CurveFactory::igamma_srgb (img->g[i][j])>>histcompr]++;
-            histogram[(int)CurveFactory::igamma_srgb (img->b[i][j])>>histcompr]++;
+            histogram[(int)Color::igamma_srgb (img->r[i][j])>>histcompr]++;
+            histogram[(int)Color::igamma_srgb (img->g[i][j])>>histcompr]++;
+            histogram[(int)Color::igamma_srgb (img->b[i][j])>>histcompr]++;
         }
 }
 

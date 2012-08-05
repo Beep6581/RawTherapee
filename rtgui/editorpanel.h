@@ -49,6 +49,9 @@ class EditorPanel : public Gtk::VBox,
                     public ThumbnailListener,
                     public HistoryBeforeLineListener,
                     public rtengine::HistogramListener {
+    private:
+
+        Glib::ustring lastSaveAsFileName;
 
     protected:      
         Gtk::ProgressBar  *progressLabel;
@@ -58,8 +61,6 @@ class EditorPanel : public Gtk::VBox,
         Gtk::ToggleButton* tbTopPanel_1;
         Gtk::ToggleButton* tbRightPanel_1;
         Gtk::ToggleButton* tbBeforeLock;
-        bool tbTopPanel_1_Active;
-        bool tbRightPanel_1_Active;
         //bool bAllSidePanelsVisible;
         Gtk::ToggleButton* beforeAfter;
         Gtk::HPaned* hpanedl;
@@ -97,7 +98,7 @@ class EditorPanel : public Gtk::VBox,
         HistogramPanel* histogramPanel;
         ToolPanelCoordinator* tpc;
         RTWindow* parent;
-        SaveAsDialog* saveAsDialog;
+        //SaveAsDialog* saveAsDialog;
         BatchToolPanelCoordinator* btpCoordinator;        
         FilePanel* fPanel;
       

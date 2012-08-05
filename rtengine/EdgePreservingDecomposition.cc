@@ -1,6 +1,5 @@
 #include <cmath>
 #include "rt_math.h"
-
 #include "EdgePreservingDecomposition.h"
 
 /* Solves A x = b by the conjugate gradient method, where instead of feeding it the matrix A you feed it a function which
@@ -404,14 +403,19 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 				a0[i] += 4.0f*a[i]/6.0f;
 		}
 	}
-	if(UseBlurForEdgeStop) delete[] a;
+  if(UseBlurForEdgeStop) delete[] a;
 
-	//Solve & return.
-	A->CreateIncompleteCholeskyFactorization(1);	//Fill-in of 1 seems to work really good. More doesn't really help and less hurts (slightly).
-	if(!UseBlurForEdgeStop) memcpy(Blur, Source, n*sizeof(float));
-	SparseConjugateGradient(A->PassThroughVectorProduct, Source, n, false, Blur, 0.0f, (void *)A, Iterates, A->PassThroughCholeskyBackSolve);
-	A->KillIncompleteCholeskyFactorization();
-	return Blur;
+  //Solve & return.
+  bool success=A->CreateIncompleteCholeskyFactorization(1); //Fill-in of 1 seems to work really good. More doesn't really help and less hurts (slightly).
+  if(!success) {
+    fprintf(stderr,"Error: Tonemapping has failed.\n");
+    memset(Blur, 0, sizeof(float)*n);  // On failure, set the blur to zero.  This is subsequently exponentiated in CompressDynamicRange.
+    return Blur;
+  }
+  if(!UseBlurForEdgeStop) memcpy(Blur, Source, n*sizeof(float));
+  SparseConjugateGradient(A->PassThroughVectorProduct, Source, n, false, Blur, 0.0f, (void *)A, Iterates, A->PassThroughCholeskyBackSolve);
+  A->KillIncompleteCholeskyFactorization();
+  return Blur;
 }
 
 float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scale, float EdgeStopping, unsigned int Iterates, unsigned int Reweightings, float *Blur){

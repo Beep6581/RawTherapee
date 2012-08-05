@@ -30,6 +30,7 @@ RTWindow::RTWindow ()
 ,splash(NULL)
 ,epanel(NULL)
 ,fpanel(NULL)
+,btn_fullscreen(NULL)
 {
 
     cacheMgr->init ();
@@ -61,6 +62,7 @@ RTWindow::RTWindow ()
     is_fullscreen = false;
     property_destroy_with_parent().set_value(false);
     signal_window_state_event().connect( sigc::mem_fun(*this, &RTWindow::on_window_state_event) );
+	signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
 
     if(simpleEditor)
     {
@@ -84,7 +86,7 @@ RTWindow::RTWindow ()
 		mainNB->set_scrollable (true);
 		mainNB->signal_switch_page().connect_notify( sigc::mem_fun(*this, &RTWindow::on_mainNB_switch_page) );
 
-    fpanel =  new FilePanel () ;
+		fpanel =  new FilePanel () ;
 		fpanel->setParent (this);
 
 		// decorate tab
@@ -115,6 +117,7 @@ RTWindow::RTWindow ()
 
 		// decorate tab, the label is unimportant since its updated in batchqueuepanel anyway
         Gtk::Label* lbq = Gtk::manage ( new Gtk::Label (M("MAIN_FRAME_BATCHQUEUE")) );
+        if (options.mainNBVertical) lbq->set_angle(90);
 		mainNB->append_page (*bpanel, *lbq);
 
 		// epanel is only for single tab mode
@@ -146,8 +149,6 @@ RTWindow::RTWindow ()
 		}
 
 		mainNB->set_current_page (mainNB->page_num (*fpanel));
-
-		signal_key_press_event().connect( sigc::mem_fun(*this, &RTWindow::keyPressed) );
 
 		Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
 		mainBox->pack_start (*mainNB);
@@ -383,6 +384,13 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
 	bool ctrl = event->state & GDK_CONTROL_MASK;
 	//bool shift = event->state & GDK_SHIFT_MASK;
 
+    if(event->keyval == GDK_F11)
+        toggle_fullscreen();
+
+    if (simpleEditor)
+    	// in simpleEditor mode, there's no other tab that can handle pressed keys, so we can send the event to editor panel then return
+    	return epanel->handleShortcutKey (event);;
+
 	if (ctrl) {
 		switch(event->keyval) {
 			case GDK_F2: // file browser panel
@@ -396,12 +404,17 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
 				    mainNB->set_current_page (mainNB->page_num (*epanel));
 				}
 				return true;
+			case GDK_w: //multi-tab mode, close editor panel
+				if (!isSingleTabMode() && 
+					mainNB->get_current_page()!=mainNB->page_num(*fpanel) &&
+					mainNB->get_current_page()!=mainNB->page_num(*bpanel)) {
+					
+			    	EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
+    				remEditorPanel (ep);
+		    		return true;
+	    		}
 		}
 	}
-
-    if(event->keyval == GDK_F11) {
-        toggle_fullscreen();
-    }
 
     if (mainNB->get_current_page() == mainNB->page_num(*fpanel)) {
         return fpanel->handleShortcutKey (event);
@@ -500,15 +513,19 @@ void RTWindow::toggle_fullscreen () {
     if (is_fullscreen) {
         unfullscreen();
         is_fullscreen = false;
-        //btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
-        btn_fullscreen->set_tooltip_markup(M("MAIN_BUTTON_FULLSCREEN"));
-        btn_fullscreen->set_image (*iFullscreen);
+        if (btn_fullscreen) {
+            //btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
+            btn_fullscreen->set_tooltip_markup(M("MAIN_BUTTON_FULLSCREEN"));
+            btn_fullscreen->set_image (*iFullscreen);
+        }
     } else {
         fullscreen();
         is_fullscreen = true;
-        //btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
-        btn_fullscreen->set_tooltip_markup(M("MAIN_BUTTON_UNFULLSCREEN"));
-        btn_fullscreen->set_image (*iFullscreen_exit);
+        if (btn_fullscreen) {
+            //btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
+            btn_fullscreen->set_tooltip_markup(M("MAIN_BUTTON_UNFULLSCREEN"));
+            btn_fullscreen->set_image (*iFullscreen_exit);
+        }
     }
 }
 

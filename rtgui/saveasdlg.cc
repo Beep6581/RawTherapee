@@ -31,30 +31,32 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
     fchooser = Gtk::manage( new Gtk::FileChooserWidget (Gtk::FILE_CHOOSER_ACTION_SAVE) );
     fchooser->set_current_folder (initialDir);
+    fchooser->signal_file_activated().connect(sigc::mem_fun(*this,&SaveAsDialog::okPressed));
 
     filter_jpg.set_name(M("SAVEDLG_JPGFILTER"));
     filter_jpg.add_pattern("*.jpg");
+    filter_jpg.add_pattern("*.JPG");
+    filter_jpg.add_pattern("*.jpeg");
+    filter_jpg.add_pattern("*.JPEG");
+    filter_jpg.add_pattern("*.jpe");
+    filter_jpg.add_pattern("*.JPE");
 
     filter_tif.set_name(M("SAVEDLG_JPGFILTER"));
     filter_tif.add_pattern("*.tif");
+    filter_tif.add_pattern("*.TIF");
+    filter_tif.add_pattern("*.tiff");
+    filter_tif.add_pattern("*.TIFF");
 
     filter_png.set_name(M("SAVEDLG_JPGFILTER"));
     filter_png.add_pattern("*.png");
+    filter_png.add_pattern("*.PNG");
 
-    vbox->pack_start (*fchooser);
-
-    Gtk::HSeparator* hsep1 = Gtk::manage( new Gtk::HSeparator () );
-    vbox->pack_start (*hsep1, Gtk::PACK_SHRINK, 2);
+    formatChanged (options.saveFormat.format);
 
 // Unique filename option
 // ~~~~~~~~~~~~~~~~~~~~~~
     autoSuffix = Gtk::manage( new Gtk::CheckButton (M("SAVEDLG_AUTOSUFFIX")) );
     autoSuffix->set_active(options.autoSuffix);
-
-    vbox->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
-
-    Gtk::HSeparator* hsep2 = Gtk::manage( new Gtk::HSeparator () );
-    vbox->pack_start (*hsep2, Gtk::PACK_SHRINK, 2);
 
 // Output Options
 // ~~~~~~~~~~~~~~
@@ -62,29 +64,19 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     formatOpts->init (options.saveFormat);
     formatOpts->setListener (this);
 
-    vbox->pack_start (*formatOpts, Gtk::PACK_SHRINK, 4);
-
-    Gtk::HSeparator* hsep3 = Gtk::manage( new Gtk::HSeparator () );
-    vbox->pack_start (*hsep3, Gtk::PACK_SHRINK, 2);
-
 // queue/immediate
 // ~~~~~~~~~~~~~
-    immediately    = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_SAVEIMMEDIATELY")) );
-    putToQueueHead = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUEHEAD")) );
-    putToQueueTail = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUETAIL")) );
+    saveMethod[0]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_SAVEIMMEDIATELY")) );
+    saveMethod[1]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUEHEAD")) );
+    saveMethod[2]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUETAIL")) );
 
-    // There is no queue in simple mode, so no need to choose
-    if (!simpleEditor) {
-    vbox->pack_start (*immediately, Gtk::PACK_SHRINK, 4);
-    vbox->pack_start (*putToQueueHead, Gtk::PACK_SHRINK, 4);
-    vbox->pack_start (*putToQueueTail, Gtk::PACK_SHRINK, 4);
-    }
+    Gtk::RadioButton::Group g = saveMethod[0]->get_group();
+    saveMethod[1]->set_group (g);
+    saveMethod[2]->set_group (g);
 
-    immediately->set_active (true);
-    Gtk::RadioButton::Group g = immediately->get_group();
-    putToQueueHead->set_group (g);
-    putToQueueTail->set_group (g);
-        
+    if (options.saveMethodNum >= 0 && options.saveMethodNum < 3)
+        saveMethod[options.saveMethodNum]->set_active (true);
+
 // buttons
 // ~~~~~~    
     Gtk::Button* ok     = Gtk::manage( new Gtk::Button (M("GENERAL_OK")) );
@@ -96,11 +88,32 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );
     cancel->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::cancelPressed) );
 
+// pack everything
+// ~~~~~~~~~~~~~~~
+    Gtk::VBox* vbox_bottomRight = Gtk::manage(new Gtk::VBox ());
+    // There is no queue in simple mode, so no need to choose
+    if (!simpleEditor) {
+        vbox_bottomRight->pack_start (*saveMethod[0], Gtk::PACK_SHRINK, 2);
+        vbox_bottomRight->pack_start (*saveMethod[1], Gtk::PACK_SHRINK, 2);
+        vbox_bottomRight->pack_start (*saveMethod[2], Gtk::PACK_SHRINK, 2);
+        vbox_bottomRight->pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 5);
+    }
+    vbox_bottomRight->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
+
+    Gtk::HBox* hbox_bottom = Gtk::manage( new Gtk::HBox() );
+    hbox_bottom->pack_start (*formatOpts, Gtk::PACK_SHRINK, 2);
+    hbox_bottom->pack_start (*Gtk::manage(new Gtk::VSeparator ()), Gtk::PACK_SHRINK, 2);
+    hbox_bottom->pack_start (*vbox_bottomRight, Gtk::PACK_SHRINK, 2);
+
+    vbox->pack_start (*fchooser);
+    vbox->pack_start (*hbox_bottom, Gtk::PACK_SHRINK, 2);
+
     get_action_area()->pack_end (*ok, Gtk::PACK_SHRINK, 4);
     get_action_area()->pack_end (*cancel, Gtk::PACK_SHRINK, 4);
 
     set_border_width (4);
     show_all_children ();
+
 }
 
 bool SaveAsDialog::getAutoSuffix () {
@@ -110,26 +123,29 @@ bool SaveAsDialog::getAutoSuffix () {
 
 bool SaveAsDialog::getImmediately () {
 
-    return immediately->get_active ();
+    return saveMethod[0]->get_active ();
 }
 
 bool SaveAsDialog::getToHeadOfQueue () {
 
-    return putToQueueHead->get_active ();
+    return saveMethod[1]->get_active ();
 }
 
 bool SaveAsDialog::getToTailOfQueue () {
 
-    return putToQueueTail->get_active ();
+    return saveMethod[2]->get_active ();
+}
+
+int SaveAsDialog::getSaveMethodNum () {
+    for (int i = 0; i < 3; i++)
+        if (saveMethod[i]->get_active())
+            return i;
+    return -1;
 }
 
 Glib::ustring SaveAsDialog::getFileName () {
 
-	// fname is empty if the dialog has been cancelled
-	if (fname.length())
-		return removeExtension(fname) + Glib::ustring(".") + formatOpts->getFormat().format;
-	else
-		return "";
+    return fname;
 }
 
 Glib::ustring SaveAsDialog::getDirectory () {
@@ -155,15 +171,38 @@ void SaveAsDialog::okPressed () {
         msgd.run ();
         return;
     }
-    response = Gtk::RESPONSE_OK;
-    hide ();
+
+    // resolve extension ambiguities
+    SaveFormat sf = formatOpts->getFormat ();
+    Glib::ustring extLower = getExtension (fname).lowercase ();
+    bool extIsEmpty = (extLower == "");
+    bool extIsJpeg  = (extLower == "jpg" || extLower == "jpeg" || extLower == "jpe");
+    bool extIsTiff  = (extLower == "tif" || extLower == "tiff");
+    bool extIsPng   = (extLower == "png");
+    if (extIsEmpty || !(extIsJpeg || extIsTiff || extIsPng)) { 
+        // extension is either empty or unfamiliar.
+        fname += Glib::ustring (".") + sf.format;
+    } else if (    !(sf.format == "jpg" && extIsJpeg)
+                && !(sf.format == "tif" && extIsTiff)
+                && !(sf.format == "png" && extIsPng )    ) {
+        // create dialog to warn user that the filename may have two extensions on the end.
+        Glib::ustring msg_ = Glib::ustring ("<b>") + M("GENERAL_WARNING") + ": "
+                             + M("SAVEDLG_WARNFILENAME") + " \"" + Glib::path_get_basename (fname)
+                             + "." + sf.format + "\"</b>";
+        Gtk::MessageDialog msgd (*this, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK_CANCEL, true);
+        if (msgd.run () == Gtk::RESPONSE_OK)
+            fname += Glib::ustring (".") + sf.format;
+        else
+            return;
+    }
+
+    response (Gtk::RESPONSE_OK);
 }
 
 void SaveAsDialog::cancelPressed () {
 
-    fname = "";
-    response = Gtk::RESPONSE_CANCEL;
-    hide ();
+    fname = fchooser->get_filename();
+    response (Gtk::RESPONSE_CANCEL);
 }
 
 void SaveAsDialog::formatChanged (Glib::ustring f) {

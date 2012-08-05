@@ -412,6 +412,10 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
 }
 
 bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
+    // TODO: Check for Linux
+    #ifdef WIN32
+    Glib::RWLock::ReaderLock l(parent->entryRW);
+    #endif
 
     dirty = false;
 
@@ -424,7 +428,7 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
     // draw thumbnails
     Glib::RefPtr<Pango::Context> context = get_pango_context ();
     context->set_font_description (get_style()->get_font());
-    for (size_t i=0; i<parent->fd.size(); i++) {
+    for (size_t i=0; i<parent->fd.size() && !dirty; i++) {  // if dirty meanwhile, cancel and wait for next redraw
         if (!parent->fd[i]->drawable || !parent->fd[i]->insideWindow (0, 0, w, h))
             parent->fd[i]->updatepriority = false;
         else {

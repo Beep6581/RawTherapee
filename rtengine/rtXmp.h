@@ -22,7 +22,8 @@
 #include <glibmm.h>
 #include <vector>
 #include <exiv2/exiv2.hpp>
-#include <iptcmeta.h>
+#include "iptcmeta.h"
+#include "procparams.h"
  
 namespace rtengine {
 
@@ -58,7 +59,7 @@ template< class T > std::string serializeArray( T* v,size_t n)
 template <class T> int readVarFromXmp(Exiv2::XmpData &xmpData, const std::string& key, std::vector<T> &v )
 {
 	if( xmpData.findKey(Exiv2::XmpKey(key)) == xmpData.end())
-		return 1;
+		return false;
 	v.clear();
 	std::istringstream s( xmpData[key].value().toString() );
 	while( !s.eof()){
@@ -70,7 +71,7 @@ template <class T> int readVarFromXmp(Exiv2::XmpData &xmpData, const std::string
 	    	v.push_back(val);
 	    }
 	}
-	return 0;
+	return !v.empty();
 }
 
 template <class T> int readVarFromXmp(Exiv2::XmpData &xmpData, const std::string& key, T *v,size_t n )
@@ -88,12 +89,13 @@ template <class T> int readVarFromXmp(Exiv2::XmpData &xmpData, const std::string
 	    	v[i++]=val;
 	    }
 	}
-	return 0;
+	return i>0;
 }
 
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, bool &var);
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, int &var);
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, double &var);
+bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, float &var);
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, std::string &var);
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, Glib::ustring &var);
 bool readIPTCFromXmp( const Exiv2::XmpData &xmpData, IPTCMeta &tag, std::vector< Glib::ustring> &v );

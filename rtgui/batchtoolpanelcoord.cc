@@ -127,7 +127,7 @@ void BatchToolPanelCoordinator::initSession () {
 			lcurve->setAdjusterBehavior (false, false, false);
 			whitebalance->setAdjusterBehavior (false, false);
 			vibrance->setAdjusterBehavior (false, false, false);
-			vignetting->setAdjusterBehavior (false);
+			vignetting->setAdjusterBehavior (false, false, false, false);
 			rotate->setAdjusterBehavior (false);
 			distortion->setAdjusterBehavior (false);
 			perspective->setAdjusterBehavior (false);
@@ -148,10 +148,9 @@ void BatchToolPanelCoordinator::initSession () {
 		else {
 
 			toneCurve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT],options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL],options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
-			lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_SATURATION]);
+			lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_CHROMATICITY]);
 			whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN]);
-			vibrance->setAdjusterBehavior (options.baBehav[ADDSET_VIBRANCE_PASTELS], options.baBehav[ADDSET_VIBRANCE_SATURATED], options.baBehav[ADDSET_VIBRANCE_PSTHRESHOLD]);
-			vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT]);
+			vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
 			rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
 			distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
 			perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
@@ -183,7 +182,7 @@ void BatchToolPanelCoordinator::initSession () {
 
 			if (options.baBehav[ADDSET_LC_BRIGHTNESS])  pparams.labCurve.brightness = 0;
 			if (options.baBehav[ADDSET_LC_CONTRAST])  pparams.labCurve.contrast = 0;
-			if (options.baBehav[ADDSET_LC_SATURATION])  pparams.labCurve.saturation = 0;
+			if (options.baBehav[ADDSET_LC_CHROMATICITY])  pparams.labCurve.chromaticity = 0;
 
 			if (options.baBehav[ADDSET_SHARP_AMOUNT])  pparams.sharpening.amount = 0;
 			if (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT])  pparams.sharpenEdge.amount = 0;
@@ -214,6 +213,10 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_CA])  pparams.cacorrection.red = 0;
 			if (options.baBehav[ADDSET_CA])  pparams.cacorrection.blue = 0;
 			if (options.baBehav[ADDSET_VIGN_AMOUNT])  pparams.vignetting.amount = 0;
+			if (options.baBehav[ADDSET_VIGN_RADIUS])  pparams.vignetting.radius = 0;
+			if (options.baBehav[ADDSET_VIGN_STRENGTH])  pparams.vignetting.strength = 0;
+			if (options.baBehav[ADDSET_VIGN_CENTER])  pparams.vignetting.centerX = 0;
+			if (options.baBehav[ADDSET_VIGN_CENTER])  pparams.vignetting.centerY = 0;
 
 			if (options.baBehav[ADDSET_DIRPYREQ]) for (int i=0; i<5; i++) pparams.dirpyrequalizer.mult[i] = 0;
 			if (options.baBehav[ADDSET_DIRPYRDN_CHLUM])  pparams.dirpyrDenoise.luma = pparams.dirpyrDenoise.chroma = 0;

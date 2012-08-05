@@ -41,6 +41,7 @@ class SaveFormat {
         int pngBits;
         int pngCompression;
         int jpegQuality;
+        int jpegSubSamp;  // 1=best compression, 3=best quality
         int tiffBits;
         bool tiffUncompressed;
 };
@@ -140,6 +141,7 @@ class Options {
     bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;
+    int saveMethodNum;
     bool embedXmpIntoDNG;
     bool embedXmpIntoJPG;
     bool embedXmpIntoPNG;
@@ -241,6 +243,7 @@ class Options {
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;
+    Glib::ustring lastVibranceCurvesDir;
     Glib::ustring lastProfilingReferenceDir;
 
     Options ();

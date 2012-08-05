@@ -471,6 +471,15 @@ double ImageMetaData::getFocalLen ()
 	return 0.;
 }
 
+double ImageMetaData::getFocalLen35mm ()
+{
+	if( xmpData.findKey(Exiv2::XmpKey("Xmp.exif.FocalLengthIn35mmFilm")) != xmpData.end() ){
+		const Exiv2::Rational r=xmpData["Xmp.exif.FocalLengthIn35mmFilm"].value().toRational();
+		return r.second != 0 ? double(r.first)/r.second:0.;
+	}
+	return 0.;
+}
+
 double ImageMetaData::getShutterSpeed ()
 {
 	if( xmpData.findKey(Exiv2::XmpKey("Xmp.exif.ExposureTime")) != xmpData.end() ){

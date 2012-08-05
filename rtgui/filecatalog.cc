@@ -743,10 +743,16 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
             safe_g_remove (Glib::ustring(removeExtension(fname)+".THM"));
 
             // take info from snapshots inside thumb
-/*			if (inclBatchProcessed) {
-			    Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
-				if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
-			}*/
+/*
+            if (inclBatchProcessed) {
+                Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
+                if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
+
+                // delete paramfile if found
+                Glib::ustring procfNameParamFile = Glib::ustring::compose ("%1.%2.out%3", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format, paramFileExtension);
+                if (safe_file_test (procfNameParamFile, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfNameParamFile);
+            }
+*/
 
             previewsLoaded--;
         }

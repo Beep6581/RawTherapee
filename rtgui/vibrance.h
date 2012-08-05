@@ -21,20 +21,28 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
-//#include "guiutils.h"
+#include "thresholdadjuster.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 #include "toolpanel.h"
 
-class Vibrance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class Vibrance : public Gtk::VBox, public AdjusterListener, public ThresholdCurveProvider, public ThresholdAdjusterListener,
+                 public FoldableToolPanel, public CurveListener, public ColorProvider
+{
 
 protected:
+	CurveEditorGroup* curveEditorGG;
+
 	Gtk::CheckButton* enabled;
 	Adjuster* pastels;
 	Adjuster* saturated;
-	Adjuster* psThreshold;
+    ThresholdAdjuster* psThreshold;
 	Gtk::CheckButton* protectSkins;
 	Gtk::CheckButton* avoidColorShift;
 	Gtk::CheckButton* pastSatTog;
-    bool lastEnabled;
+	DiagonalCurveEditor* skinTonesCurve;
+
+	bool lastEnabled;
 	bool lastProtectSkins;
 	bool lastAvoidColorShift;
 	bool lastPastSatTog;
@@ -47,6 +55,7 @@ protected:
 public:
 
 	Vibrance                 ();
+	~Vibrance                ();
 
 	void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
 	void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
@@ -55,11 +64,15 @@ public:
 	void trimValues          (rtengine::procparams::ProcParams* pp);
 	void setAdjusterBehavior (bool amountadd, bool passadd, bool psthreshdadd);
 	void adjusterChanged     (Adjuster* a, double newval);
+	void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
+	void curveChanged        ();
 
 	void enabled_toggled         ();
 	void protectskins_toggled    ();
 	void avoidcolorshift_toggled ();
-	void pastsattog_toggled    ();
+	void pastsattog_toggled      ();
+	std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
+	virtual void colorForValue   (double valX, double valY);
 };
 
 

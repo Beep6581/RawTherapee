@@ -33,7 +33,7 @@ SharpenMicro::SharpenMicro () : Gtk::VBox(), FoldableToolPanel(this) {
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 	enabled->show ();
 
-	amount= Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_AMOUNT"),0,100,1,25));
+	amount= Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_AMOUNT"),0,100,1,20));
 	amount->setAdjusterListener (this);
 	if (amount->delay < 1000) amount->delay = 1000;
 	amount->show();

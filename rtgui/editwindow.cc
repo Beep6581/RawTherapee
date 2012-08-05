@@ -171,13 +171,27 @@ bool EditWindow::selectEditorPanel(const std::string &name) {
 }
 
 bool EditWindow::keyPressed (GdkEventKey* event) {
+	bool ctrl = event->state & GDK_CONTROL_MASK;
+
     if(event->keyval == GDK_F11) {
         toggleFullscreen();
         return true;
-    } else {
-	EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
-        return ep->handleShortcutKey (event);
     }
+    else {
+	    if(mainNB->get_n_pages ()>0) { //pass the handling for the editor panels, if there are any
+	        if (event->keyval == GDK_w && ctrl){ //remove editor panel
+				EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
+				remEditorPanel (ep);
+				return true;
+			}
+			else if(mainNB->get_n_pages ()>0){
+				EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));
+				return ep->handleShortcutKey (event);
+			}
+	    }
+	    return false;
+    }
+
 }
 
 void EditWindow::toggleFullscreen () {

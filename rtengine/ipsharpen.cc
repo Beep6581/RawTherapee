@@ -80,15 +80,15 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #pragma omp parallel
 #endif
 	{
+        AlignedBufferMP<double> buffer(max(W,H));
 
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
 	float damping = params->sharpening.deconvdamping / 5.0;
 	bool needdamp = params->sharpening.deconvdamping > 0;
 	for (int k=0; k<params->sharpening.deconviter; k++) {
 
 		// apply blur function (gaussian blur)
-		gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
-		gaussVertical<float>   (tmp, tmp,  buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
+            gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
 
 		if (!needdamp) {
 #ifdef _OPENMP
@@ -102,8 +102,8 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 		else
 			dcdamping (tmp, lab->L, damping, W, H);
 
-		gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
-		gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale, multiThread);
+            gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
 
 #ifdef _OPENMP
 #pragma omp for
@@ -112,7 +112,6 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 			for (int j=0; j<W; j++)
 				tmpI[i][j] = tmpI[i][j] * tmp[i][j];
 	} // end for
-	delete buffer;
 
 	float p2 = params->sharpening.deconvamount / 100.0;
 	float p1 = 1.0 - p2;
@@ -155,18 +154,17 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 	{
 
 
-	AlignedBuffer<double>* buffer = new AlignedBuffer<double> (max(W,H));
+    AlignedBufferMP<double> buffer(max(W,H));
 	if (params->sharpening.edgesonly==false) {
 
-		gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
-		gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
+		gaussHorizontal<float> (lab->L, b2, buffer, W, H, params->sharpening.radius / scale);
+		gaussVertical<float>   (b2,     b2, buffer, W, H, params->sharpening.radius / scale);
 	}
 	else {
 		bilateral<float, float> (lab->L, (float**)b3, b2, W, H, params->sharpening.edges_radius / scale, params->sharpening.edges_tolerance, multiThread);
-		gaussHorizontal<float> (b3, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
-		gaussVertical<float>   (b2, b2, buffer, W, H, params->sharpening.radius / scale, multiThread);
+		gaussHorizontal<float> (b3, b2, buffer, W, H, params->sharpening.radius / scale);
+		gaussVertical<float>   (b2, b2, buffer, W, H, params->sharpening.radius / scale);
 	}
-	delete buffer;
 
 	float** base = lab->L;
 	if (params->sharpening.edgesonly)
@@ -176,10 +174,13 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 		#pragma omp for
 		for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++) {
+				const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
 				float diff = base[i][j] - b2[i][j];
-				if (ABS(diff)>params->sharpening.threshold) {
-					lab->L[i][j] = lab->L[i][j] + params->sharpening.amount * diff / 100.f;
-				}
+				float delta = params->sharpening.threshold.multiply<float, float, float>(
+				              min(ABS(diff), upperBound),					// X axis value = absolute value of the difference, truncated to the max value of this field
+				              params->sharpening.amount * diff * 0.01f		// Y axis max value
+				              );
+				lab->L[i][j] = lab->L[i][j] + delta;
 			}
 	}
 	else
@@ -199,6 +200,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 	float scale = (100.f - params->sharpening.halocontrol_amount) * 0.01f;
 	float sharpFac = params->sharpening.amount * 0.01f;
 	float** nL = base;
+
 #pragma omp parallel for if (multiThread)
 	for (int i=2; i<H-2; i++) {
 		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min_, max_, labL;
@@ -224,16 +226,19 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 			// deviation from the environment as measurement
 			float diff = nL[i][j] - blurmap[i][j];
 
-			if (ABS(diff) > params->sharpening.threshold) {
-				float newL = labL + sharpFac * diff;
-				// applying halo control
-				if (newL > max_)
-					newL = max_ + (newL-max_) * scale;
-				else if (newL < min_)
-					newL = min_ - (min_-newL) * scale;
+			const float upperBound = 2000.f;  // WARNING: Duplicated value, it's baaaaaad !
+			float delta = params->sharpening.threshold.multiply<float, float, float>(
+			              min(ABS(diff), upperBound),	// X axis value = absolute value of the difference
+			              sharpFac * diff				// Y axis max value = sharpening.amount * signed difference
+			              );
+			float newL = labL + delta;
+			// applying halo control
+			if (newL > max_)
+				newL = max_ + (newL-max_) * scale;
+			else if (newL < min_)
+				newL = min_ - (min_-newL) * scale;
 
-				lab->L[i][j] = newL;
-			}
+			lab->L[i][j] = newL;
 		}
 	}
 }

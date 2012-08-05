@@ -31,7 +31,9 @@
 using namespace rtengine::procparams;
 
 EditorPanel::EditorPanel (FilePanel* filePanel) 
-    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL) {
+    : beforePreviewHandler(NULL), beforeIarea(NULL), parent(NULL), ipc(NULL), beforeIpc(NULL), isProcessing(false), catalogPane(NULL),
+      iTopPanel_1_Show(NULL), iTopPanel_1_Hide(NULL)
+{
 
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
@@ -90,7 +92,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::VSeparator* vsepz = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vsepi = Gtk::manage (new Gtk::VSeparator ());
     Gtk::VSeparator* vseph = Gtk::manage (new Gtk::VSeparator ());
-    Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
 
     hidehp = Gtk::manage (new Gtk::ToggleButton ());
 
@@ -107,13 +108,16 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         hidehp->set_image (*iHistoryShow);
     }
 
-    tbTopPanel_1 = new Gtk::ToggleButton ();
-    iTopPanel_1_Show = new RTImage ("panel-to-bottom.png");
-    iTopPanel_1_Hide = new RTImage ("panel-to-top.png");
-    tbTopPanel_1->set_relief(Gtk::RELIEF_NONE);
-    tbTopPanel_1->set_active (true);
-    tbTopPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDETP1"));
-    tbTopPanel_1->set_image (*iTopPanel_1_Hide);
+    tbTopPanel_1 = NULL;
+    if (!simpleEditor && filePanel) {
+        tbTopPanel_1 = new Gtk::ToggleButton ();
+        iTopPanel_1_Show = new RTImage ("panel-to-bottom.png");
+        iTopPanel_1_Hide = new RTImage ("panel-to-top.png");
+        tbTopPanel_1->set_relief(Gtk::RELIEF_NONE);
+        tbTopPanel_1->set_active (true);
+        tbTopPanel_1->set_tooltip_markup (M("MAIN_TOOLTIP_SHOWHIDETP1"));
+        tbTopPanel_1->set_image (*iTopPanel_1_Hide);
+    }
 
     tbRightPanel_1 = new Gtk::ToggleButton ();
     iRightPanel_1_Show = new RTImage ("panel-to-left.png");
@@ -139,8 +143,11 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     toolBarPanel->pack_start (*tpc->getToolBar(), Gtk::PACK_SHRINK, 1);
     toolBarPanel->pack_start (*vsept, Gtk::PACK_SHRINK, 2);
 
-    toolBarPanel->pack_end   (*tbTopPanel_1, Gtk::PACK_SHRINK, 1);
-    toolBarPanel->pack_end   (*vsep1, Gtk::PACK_SHRINK, 2);
+    if (tbTopPanel_1) {
+        toolBarPanel->pack_end   (*tbTopPanel_1, Gtk::PACK_SHRINK, 1);
+        Gtk::VSeparator* vsep1 = Gtk::manage (new Gtk::VSeparator ());
+        toolBarPanel->pack_end   (*vsep1, Gtk::PACK_SHRINK, 2);
+    }
     toolBarPanel->pack_end   (*tpc->coarse, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*vsepcl, Gtk::PACK_SHRINK, 2);
     toolBarPanel->pack_end   (*iareapanel->imageArea->indClippedPanel, Gtk::PACK_SHRINK, 0);
@@ -258,7 +265,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     updateHistogramPosition (0, options.histogramPosition);
 
     show_all ();
-
+/*
     // save as dialog
     if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
         saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
@@ -266,7 +273,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
 
     saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
-
+*/
     // connect listeners
     profilep->setProfileChangeListener (tpc);
     history->setProfileChangeListener (tpc);
@@ -286,12 +293,13 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     info->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::info_toggled) );
     beforeAfter->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::beforeAfterToggled) );
     hidehp->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::hideHistoryActivated) );
-    tbTopPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbTopPanel_1_toggled) );
     tbRightPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbRightPanel_1_toggled) );
     saveimgas->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::saveAsPressed) );
     queueimg->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::queueImgPressed) );
     sendtogimp->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::sendToGimpPressed) );
     ShowHideSidePanelsconn = tbShowHideSidePanels->signal_toggled().connect ( sigc::mem_fun(*this, &EditorPanel::toggleSidePanels), true);
+    if (tbTopPanel_1)
+        tbTopPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbTopPanel_1_toggled) );
 }
 
 EditorPanel::~EditorPanel () {
@@ -329,9 +337,13 @@ EditorPanel::~EditorPanel () {
     delete ppframe;
     delete leftbox;
     delete vboxright;
-    delete saveAsDialog;
+    //delete saveAsDialog;
     if(catalogPane)
         delete catalogPane;
+
+    if (iTopPanel_1_Show) delete iTopPanel_1_Show;
+    if (iTopPanel_1_Hide) delete iTopPanel_1_Hide;
+
 }
 
 void EditorPanel::leftPaneButtonReleased(GdkEventButton *event) {
@@ -382,6 +394,8 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     openThm->increaseRef ();
 
     fname=openThm->getFileName();
+    //saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (fname)));
+    lastSaveAsFileName = removeExtension (Glib::path_get_basename (fname));
 
     previewHandler = new PreviewHandler ();
 
@@ -408,6 +422,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     // initialize profile
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
     profilep->initProfile (defProf, ldprof);
+    profilep->setInitialFileName (Glib::path_get_basename (fname) + paramFileExtension);
 
     rtengine::snapshotsList_t snapshots = openThm->getSnapshotsList();
     for( rtengine::snapshotsList_t::iterator iter = snapshots.begin(); iter != snapshots.end(); iter++ ){
@@ -753,6 +768,9 @@ void EditorPanel::tbRightPanel_1_toggled () {
 }
 
 void EditorPanel::tbTopPanel_1_visible (bool visible){
+	if (!tbTopPanel_1)
+		return;
+
 	if (visible)
 		tbTopPanel_1->show();
 	else
@@ -762,9 +780,8 @@ void EditorPanel::tbTopPanel_1_visible (bool visible){
 void EditorPanel::tbTopPanel_1_toggled () {
 
 	if (catalogPane){ // catalogPane does not exist in multitab mode
-		tbTopPanel_1_Active = tbTopPanel_1->get_active();
 
-		if (tbTopPanel_1_Active){
+		if (tbTopPanel_1->get_active()){
 			catalogPane->show();
 			tbTopPanel_1->set_image (*iTopPanel_1_Hide);
 		}
@@ -777,6 +794,10 @@ void EditorPanel::tbTopPanel_1_toggled () {
 	}
 }
 
+/*
+ * WARNING: Take care of the simpleEditor value when adding or modifying shortcut keys,
+ *          since handleShortcutKey is now also triggered in simple editor mode
+ */
 bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
@@ -787,10 +808,12 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
     // Editor Layout
     switch(event->keyval) {
         case GDK_L:
-		    tbTopPanel_1->set_active (!tbTopPanel_1->get_active()); // toggle top panel
+			if (tbTopPanel_1)
+				tbTopPanel_1->set_active (!tbTopPanel_1->get_active()); // toggle top panel
 		    if (ctrl) hidehp->set_active (!hidehp->get_active()); // toggle History (left panel)
 			if (alt) tbRightPanel_1->set_active (!tbRightPanel_1->get_active()); // toggle right panel
 			return true;
+			break;
     	case GDK_l:
     		if (!shift && !alt /*&& !ctrl*/){
     			hidehp->set_active (!hidehp->get_active()); // toggle History (left panel)
@@ -805,16 +828,19 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				tbRightPanel_1->set_active (!tbRightPanel_1->get_active());
 				return true;
 			}
+			break;
         case GDK_m: // Maximize preview panel: hide top AND right AND history panels
         	if (!ctrl && !alt) {
         		toggleSidePanels();
         		return true;
         	}
+			break;
         case GDK_M: // Maximize preview panel: hide top AND right AND history panels AND (fit image preview)
         	if (!ctrl && !alt) {
         		toggleSidePanelsZoomFit();
         		return true;
         	}
+			break;
     }
 
     if (!alt){
@@ -891,11 +917,16 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 		else {
 			// With control
 			switch (event->keyval) {
+				case GDK_S:
+					saveProfile();
+					setProgressStr(M("PROGRESSBAR_PROCESSING_PROFILESAVED"));
+					return true;
 				case GDK_s:
 					saveAsPressed();
 					return true;
 				case GDK_q:
-					queueImgPressed();
+					if (!simpleEditor)
+						queueImgPressed();
 					return true;
 				case GDK_e:
 					sendToGimpPressed();
@@ -955,7 +986,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImage16*> *pc, Gl
             ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsPNG), fname, sf.pngCompression, sf.pngBits),
     			            sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fname, sf));
         else if (sf.format=="jpg")
-            ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsJPEG), fname, sf.jpegQuality),
+            ld->startFunc (sigc::bind(sigc::mem_fun(img, &rtengine::IImage16::saveAsJPEG), fname, sf.jpegQuality, sf.jpegSubSamp),
     			            sigc::bind(sigc::mem_fun(*this,&EditorPanel::idle_imageSaved), ld, img, fname, sf));
     } else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image processing\n</b>";
@@ -1037,42 +1068,52 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
 void EditorPanel::saveAsPressed () {
 	if (!ipc || !openThm) return;
 	bool fnameOK = false;
-	Glib::ustring fname;
+	Glib::ustring fnameOut;
 
-	saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (openThm->getFileName())));
+	SaveAsDialog* saveAsDialog;
+	if (safe_file_test (options.lastSaveAsPath, Glib::FILE_TEST_IS_DIR))
+		saveAsDialog = new SaveAsDialog (options.lastSaveAsPath);
+	else
+		saveAsDialog = new SaveAsDialog (safe_get_user_picture_dir());
+
+	saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
+	saveAsDialog->setInitialFileName (lastSaveAsFileName);
+
 	do {
-		saveAsDialog->run ();
-		if (saveAsDialog->getResponse()!=Gtk::RESPONSE_OK)
-			return;
+		int result = saveAsDialog->run ();
 
 		// The SaveAsDialog ensure that a filename has been specified
-		fname = saveAsDialog->getFileName ();
+		fnameOut = saveAsDialog->getFileName ();
 
 		options.lastSaveAsPath = saveAsDialog->getDirectory ();
-		options.saveAsDialogWidth = saveAsDialog->get_width();
-		options.saveAsDialogHeight = saveAsDialog->get_height();
-
+		options.saveAsDialogWidth = saveAsDialog->get_width ();
+		options.saveAsDialogHeight = saveAsDialog->get_height ();
+		options.autoSuffix = saveAsDialog->getAutoSuffix ();
+		options.saveMethodNum = saveAsDialog->getSaveMethodNum ();
+		lastSaveAsFileName = Glib::path_get_basename (removeExtension (fnameOut));
 		SaveFormat sf = saveAsDialog->getFormat ();
-
 		options.saveFormat = sf;
-		options.autoSuffix = saveAsDialog->getAutoSuffix();
+
+		if (result != Gtk::RESPONSE_OK)
+			break;
 
 		if (saveAsDialog->getImmediately ()) {
 			// separate filename and the path to the destination directory
-			Glib::ustring dstdir = Glib::path_get_dirname (fname);
-			Glib::ustring dstfname = Glib::path_get_basename (removeExtension(fname));
+			Glib::ustring dstdir = Glib::path_get_dirname (fnameOut);
+			Glib::ustring dstfname = Glib::path_get_basename (removeExtension(fnameOut));
+			Glib::ustring dstext = getExtension (fnameOut);
 
 			if (saveAsDialog->getAutoSuffix()) {
 
 				Glib::ustring fnameTemp;
 				for (int tries=0; tries<100; tries++) {
 					if (tries==0)
-						fnameTemp = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), sf.format);
+						fnameTemp = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), dstext);
 					else
-						fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, sf.format);
+						fnameTemp = Glib::ustring::compose ("%1-%2.%3", Glib::build_filename (dstdir,  dstfname), tries, dstext);
 
 					if (!safe_file_test (fnameTemp, Glib::FILE_TEST_EXISTS)) {
-						fname = fnameTemp;
+						fnameOut = fnameTemp;
 						fnameOK = true;
 						break;
 					}
@@ -1080,13 +1121,7 @@ void EditorPanel::saveAsPressed () {
 			}
 			// check if it exists
 			if (!fnameOK) {
-				if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
-					Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
-					Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-					int response = msgd.run ();
-					fnameOK = (response==Gtk::RESPONSE_YES);
-				}
-				else fnameOK = true;
+				fnameOK = confirmOverwrite (*saveAsDialog, fnameOut);
 			}
 
 			if (fnameOK) {
@@ -1099,14 +1134,14 @@ void EditorPanel::saveAsPressed () {
 
 				ProgressConnector<rtengine::IImage16*> *ld = new ProgressConnector<rtengine::IImage16*>();
 				ld->startFunc(sigc::bind(sigc::ptr_fun(&rtengine::processImage), job, err, parent->getProgressListener() ),
-							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fname,sf ));
+							  sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_saveImage ),ld,fnameOut,sf ));
 				saveimgas->set_sensitive(false);
 				sendtogimp->set_sensitive(false);
 			}
 		}
 		else {
 			BatchQueueEntry* bqe = createBatchQueueEntry ();
-			bqe->outFileName = fname;
+			bqe->outFileName = fnameOut;
 			bqe->saveFormat = saveAsDialog->getFormat ();
 			parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
 			fnameOK = true;
@@ -1114,6 +1149,8 @@ void EditorPanel::saveAsPressed () {
 		// ask parent to redraw file browser
 		// ... or does it automatically when the tab is switched to it
 	} while (!fnameOK);
+
+	saveAsDialog->hide();
 }
 
 void EditorPanel::queueImgPressed () {
@@ -1372,10 +1409,14 @@ void EditorPanel::histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & his
 }
 
 bool EditorPanel::CheckSidePanelsVisibility() {
-	if(tbTopPanel_1->get_active()==false && tbRightPanel_1->get_active()==false && hidehp->get_active()==false)
-		return false;
-	else
+	if (tbTopPanel_1) {
+		if(tbTopPanel_1->get_active()==false && tbRightPanel_1->get_active()==false && hidehp->get_active()==false)
+			return false;
 		return true;
+	}
+	if(tbRightPanel_1->get_active()==false && hidehp->get_active()==false)
+		return false;
+	return true;
 }
 void EditorPanel::toggleSidePanels(){
 	// Maximize preview panel:
@@ -1384,7 +1425,8 @@ void EditorPanel::toggleSidePanels(){
 	bool bAllSidePanelsVisible;
 	bAllSidePanelsVisible= CheckSidePanelsVisibility();
 
-	tbTopPanel_1->set_active (!bAllSidePanelsVisible);
+	if (tbTopPanel_1)
+		tbTopPanel_1->set_active (!bAllSidePanelsVisible);
 	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
 	hidehp->set_active (!bAllSidePanelsVisible);
 	if (bAllSidePanelsVisible == false)

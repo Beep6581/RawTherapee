@@ -152,7 +152,7 @@ class RawImageSource : public ImageSource {
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
         ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
-        bool        isWBProviderReady () { return rawData != NULL; };
+        bool        isWBProviderReady () { return rawData != (float**)NULL; };
 
         double      getDefGain  () { return defGain; }
 
@@ -166,8 +166,8 @@ class RawImageSource : public ImageSource {
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
-        static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
-        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName, double& defgain);
+        static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName);
+        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName);
         static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 
         void boxblur2(float** src, float** dst, int H, int W, int box );

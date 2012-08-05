@@ -30,7 +30,7 @@ using namespace rtengine::procparams;
 
 extern Options options;
 
-ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL) {
+ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL), lastRefFilename("") {
 
 //    set_border_width (4);
 
@@ -484,6 +484,7 @@ void ICMPanel::saveReferencePressed () {
         return;
     Gtk::FileChooserDialog dialog(M("TP_ICM_SAVEREFERENCEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     FileChooserLastFolderPersister persister(&dialog, options.lastProfilingReferenceDir);
+    dialog.set_current_name (lastRefFilename);
 
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_OK);
@@ -491,12 +492,34 @@ void ICMPanel::saveReferencePressed () {
     Gtk::FileFilter filter_tif;
     filter_tif.set_name(M("SAVEDLG_TIFFFILTER"));
     filter_tif.add_pattern("*.tif");
+    filter_tif.add_pattern("*.tiff");
     dialog.add_filter(filter_tif);
 
-    dialog.set_do_overwrite_confirmation (true);
+    Gtk::FileFilter filter_any;
+    filter_any.set_name(M("TP_ICM_FILEDLGFILTERANY"));
+    filter_any.add_pattern("*");
+    dialog.add_filter(filter_any);
 
-    if (dialog.run()==Gtk::RESPONSE_OK) 
-        icmplistener->saveInputICCReference (dialog.get_filename());
+    //dialog.set_do_overwrite_confirmation (true);
+
+    bool done = false;
+    do {
+        int result = dialog.run();
+        if (result != Gtk::RESPONSE_OK) {
+            done = true;
+        } else {
+            std::string fname = dialog.get_filename();
+            Glib::ustring ext = getExtension(fname);
+            if (ext != "tif" && ext != "tiff")
+                fname += ".tif";
+            if (confirmOverwrite(dialog, fname)) {
+                icmplistener->saveInputICCReference (fname);
+                lastRefFilename = Glib::path_get_basename (fname);
+                done = true;
+            }
+        }
+    } while (!done);
+    return;
 }
 
 void ICMPanel::setBatchMode (bool batchMode) {

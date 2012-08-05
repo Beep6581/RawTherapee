@@ -39,10 +39,11 @@ bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, bo
 	}
 	try{
 		var = (iter->getValue()->toString().compare("True")==0);
-		return true;
-	}catch( Exiv2::AnyError &e){
+	}
+	catch( Exiv2::AnyError &e){
 		return false;
 	}
+	return true;
 }
 
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, int &var)
@@ -53,10 +54,11 @@ bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, in
 	}
 	try{
 		var = int(iter->getValue()->toLong());
-		return true;
-	}catch( Exiv2::AnyError &e){
+	}
+	catch( Exiv2::AnyError &e){
 		return false;
 	}
+	return true;
 }
 
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, double &var)
@@ -66,11 +68,27 @@ bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, do
 		return false;
 	}
 	try{
-		var = iter->getValue()->toFloat();
-		return true;
-	}catch( Exiv2::AnyError &e){
+		var = double(iter->getValue()->toFloat());
+	}
+	catch( Exiv2::AnyError &e){
 		return false;
 	}
+	return true;
+}
+
+bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, float &var)
+{
+	Exiv2::XmpData::const_iterator iter = xmpData.findKey(Exiv2::XmpKey(key));
+	if( iter == xmpData.end()){
+		return false;
+	}
+	try{
+		var = iter->getValue()->toFloat();
+	}
+	catch( Exiv2::AnyError &e){
+		return false;
+	}
+	return true;
 }
 
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, std::string &var)
@@ -81,10 +99,11 @@ bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, st
 	}
 	try{
 		var = iter->getValue()->toString();
-		return true;
-	}catch( Exiv2::AnyError &e){
+	}
+	catch( Exiv2::AnyError &e){
 		return false;
 	}
+	return true;
 }
 
 bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, Glib::ustring &var)
@@ -95,10 +114,11 @@ bool readVarFromXmp( const Exiv2::XmpData &xmpData, const Glib::ustring &key, Gl
 	}
 	try{
 		var = iter->getValue()->toString();
-		return true;
-	}catch( Exiv2::AnyError &e){
+	}
+	catch( Exiv2::AnyError &e){
 		return false;
 	}
+	return true;
 }
 
 bool readIPTCFromXmp( const Exiv2::XmpData &xmpData, IPTCMeta &tag, std::vector< Glib::ustring> &v )

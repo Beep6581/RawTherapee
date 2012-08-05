@@ -27,9 +27,7 @@
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
-CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), cl(NULL), cp(NULL) {
+CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), cl(NULL) {
 	curveEditors.clear();
 	displayedCurve = 0;
 	numberOfPackedCurve = 0;
@@ -120,12 +118,6 @@ void CurveEditorGroup::newLine() {
  */
 void CurveEditorGroup::curveListComplete() {
 	newLine();
-
-	// Set the color provider
-	if (cp) {
-		if (flatSubGroup) flatSubGroup->setColorProvider(cp);
-		if (diagonalSubGroup) diagonalSubGroup->setColorProvider(cp);
-	}
 
 	// We check the length of the label ; if it contains only one char (':'), we set it to the right default string
 	if (curveGroupLabel->get_label().size()==1)
@@ -294,14 +286,22 @@ void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce) {
 	}
 }
 
-CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) :
-		curveDir(curveDir) {
+CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename("") {
+	leftBar = NULL;
+	bottomBar = NULL;
+	curveCP = NULL;
+}
+
+CurveEditorSubGroup::~CurveEditorSubGroup() {
+	if (leftBar) delete leftBar;
+	if (bottomBar) delete bottomBar;
 }
 
 Glib::ustring CurveEditorSubGroup::outputFile () {
 
     Gtk::FileChooserDialog dialog(M("CURVEEDITOR_SAVEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     FileChooserLastFolderPersister persister(&dialog, curveDir);
+    dialog.set_current_name (lastFilename);
 
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::StockID("gtk-save"), Gtk::RESPONSE_APPLY);
@@ -316,33 +316,22 @@ Glib::ustring CurveEditorSubGroup::outputFile () {
     filter_any.add_pattern("*");
     dialog.add_filter(filter_any);
 
-    dialog.set_do_overwrite_confirmation (true);
+    //dialog.set_do_overwrite_confirmation (true);
 
-	Glib::ustring fname;
+    Glib::ustring fname;
     do {
-		int result = dialog.run();
-
-		fname = dialog.get_filename();
-
-		if (result==Gtk::RESPONSE_APPLY) {
-
-			if (getExtension (fname)!="rtc")
-				fname = fname + ".rtc";
-
-			if (safe_file_test (fname, Glib::FILE_TEST_EXISTS)) {
-				Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "\n" + M("MAIN_MSG_QOVERWRITE") + "</b>";
-				Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
-				int response = msgd.run ();
-				if (response==Gtk::RESPONSE_YES)
-					break;
-			}
-			else
-				break;
-		}
-		else {
-			fname = "";
-			break;
-		}
+        if (dialog.run() == Gtk::RESPONSE_APPLY) {
+            fname = dialog.get_filename();
+            if (getExtension (fname) != "rtc")
+                fname += ".rtc";
+            if (confirmOverwrite (dialog, fname)) {
+                lastFilename = Glib::path_get_basename (fname);
+                break;
+            }
+        } else {
+            fname = "";
+            break;
+        }
     } while (1);
 
     return fname;

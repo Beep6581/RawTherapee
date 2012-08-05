@@ -27,6 +27,7 @@ class Adjuster;
 class AdjusterListener {
 
   public:
+	virtual ~AdjusterListener() {};
     virtual void adjusterChanged (Adjuster* a, double newval) {}
 };
 
@@ -34,6 +35,7 @@ class AdjusterListener {
 class Adjuster : public Gtk::VBox {
 
   protected:
+    Glib::ustring adjustmentName;
     Gtk::HBox* hbox;
     Gtk::Label* label;
     MyHScale* slider;
@@ -68,11 +70,17 @@ class Adjuster : public Gtk::VBox {
     Adjuster (Glib::ustring label, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
     Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
     virtual ~Adjuster ();
-    void setAdjusterListener (AdjusterListener* alistener);
+    void setAdjusterListener (AdjusterListener* alistener) { adjusterListener = alistener; }
 
-    double getValue ();
-    int getIntValue ();
-    Glib::ustring getTextValue ();
+    // return the value trimmed to the limits at construction time
+    double getValue () { return shapeValue(spin->get_value ()); }
+    // return the value trimmed to the limits at construction time
+    int getIntValue () { return spin->get_value_as_int (); }
+    // return the value trimmed to the limits at construction time,
+    // method only used by the history manager
+    Glib::ustring getTextValue () { return spin->get_text (); }
+
+    void setLabel (Glib::ustring lbl) { label->set_label(lbl); }
     void setValue (double a);   
     void setLimits (double vmin, double vmax, double vstep, double vdefault);
     void setEnabled (bool enabled);

@@ -58,7 +58,6 @@ protected:
 	DiagonalCurveEditorSubGroup* diagonalSubGroup;
 
 	CurveListener* cl;
-	ColorProvider* cp;
 
 	unsigned int numberOfPackedCurve;
 
@@ -68,6 +67,7 @@ public:
 	 *                 This variable will be updated with actions in the
 	 *                 dialogs.
 	 */
+
 	CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
 	~CurveEditorGroup();
 	void newLine();
@@ -75,7 +75,6 @@ public:
 	void setBatchMode (bool batchMode);
 	void setCurveExternal (CurveEditor* ce, const std::vector<double>& c);
 	void setCurveListener (CurveListener* l) { cl = l; }
-	void setColorProvider (ColorProvider* p) { cp = p; }
 	CurveEditor* getDisplayedCurve () { return displayedCurve; }
 	//void on_realize ();
 	CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, bool periodic = true);
@@ -98,17 +97,23 @@ class CurveEditorSubGroup {
 
 private:
 	Glib::ustring& curveDir;
+	Glib::ustring lastFilename;
 
 protected:
 	int valLinear;
 	int valUnchanged;
 	CurveEditorGroup *parent;
 
+	ColoredBar* leftBar;
+	ColoredBar* bottomBar;
+	ColorProvider* curveCP;
+
+
 public:
+	~CurveEditorSubGroup();
 	int getValUnchanged() { return valUnchanged; }
     int getValLinear() { return valLinear; }
 	virtual void updateBackgroundHistogram (CurveEditor* ce) {}
-	virtual void setColorProvider (ColorProvider* p) = 0;
 
 protected:
 
