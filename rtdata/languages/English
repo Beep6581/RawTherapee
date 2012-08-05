@@ -1,4 +1,5 @@
 
+
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -207,6 +208,7 @@
 !GENERAL_PORTRAIT;Portrait
 !GENERAL_SAVE;Save
 !GENERAL_UNCHANGED;(Unchanged)
+!GENERAL_WARNING;Warning
 !GENERAL_YES;Yes
 !HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_B;B
@@ -217,6 +219,7 @@
 !HISTOGRAM_LABEL;Histogram
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 !HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram
+!HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
 !HISTOGRAM_TOOLTIP_G;Show/Hide green histogram
 !HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
@@ -262,7 +265,7 @@
 !HISTORY_MSG_34;LCP use disortion
 !HISTORY_MSG_35;LCP use vignette
 !HISTORY_MSG_36;LCP use CA
-!HISTORY_MSG_37;Color Boost
+!HISTORY_MSG_37;Auto Exposure
 !HISTORY_MSG_38;White Balance Method
 !HISTORY_MSG_39;Color Temperature
 !HISTORY_MSG_40;White Balance Tint
@@ -320,7 +323,7 @@
 !HISTORY_MSG_92;NR - Gamma
 !HISTORY_MSG_93;Contrast by Detail Levels Value
 !HISTORY_MSG_94;Contrast by Detail Levels
-!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_95;Chromaticity
 !HISTORY_MSG_96;'a' Curve
 !HISTORY_MSG_97;'b' Curve
 !HISTORY_MSG_98;Demosaicing Method
@@ -336,9 +339,9 @@
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize Bounding Box
 !HISTORY_MSG_110;Resizing applies o
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_111;Avoid Color Shift
+!HISTORY_MSG_112;--unused--
+!HISTORY_MSG_113;Red and Skin Tones Protection
 !HISTORY_MSG_114;DCB Iterations
 !HISTORY_MSG_115;False Color Iterations
 !HISTORY_MSG_116;Enhanced DCB
@@ -392,6 +395,10 @@
 !HISTORY_MSG_164;RGB Curves - G
 !HISTORY_MSG_165;RGB Curves - B
 !HISTORY_MSG_166;Neutral Levels
+!HISTORY_MSG_167;B&amp;W Toning
+!HISTORY_MSG_168;'Cc' curve
+!HISTORY_MSG_169;'Ch' curve
+!HISTORY_MSG_170;Vibrance - Curve
 !HISTORY_NEWSNAPSHOTAS;As...
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -549,6 +556,7 @@
 !NAVIGATOR_S_VALUE;S = %1
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
+!NAVIGATOR_XY_FULL;Width = %1, Height = %2
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
@@ -785,6 +793,7 @@
 !PROGRESSBAR_LOADPNG;Loading PNG file...
 !PROGRESSBAR_LOADTIFF;Loading TIFF file...
 !PROGRESSBAR_PROCESSING;Processing Image...
+!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
 !PROGRESSBAR_READY;Ready.
 !PROGRESSBAR_SAVEJPEG;Saving JPEG file...
 !PROGRESSBAR_SAVEPNG;Saving PNG file...
@@ -805,8 +814,22 @@
 !SAVEDLG_PUTTOQUEUE;Put into processing queue
 !SAVEDLG_SAVEIMMEDIATELY;Save immediately
 !SAVEDLG_SAVESPP;Save processing parameters with image
+!SAVEDLG_SUBSAMP;Subsampling
+!SAVEDLG_SUBSAMP_1;Best compression
+!SAVEDLG_SUBSAMP_2;Balanced
+!SAVEDLG_SUBSAMP_3;Best quality
+!SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
 !SAVEDLG_TIFFFILTER;TIFF files
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!SAVEDLG_WARNFILENAME;File will be named
+!SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
+!THRESHOLDSELECTOR_BL;Bottom-left
+!THRESHOLDSELECTOR_BR;Bottom-right
+!THRESHOLDSELECTOR_B;Bottom
+!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+!THRESHOLDSELECTOR_TL;Top-left
+!THRESHOLDSELECTOR_TR;Top-right
+!THRESHOLDSELECTOR_T;Top
 !TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>
 !TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
 !TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
@@ -960,14 +983,32 @@
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
+!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
 !TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_BWTONING;B&W Toning
+!TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
+!TP_LABCURVE_CHROMATICITY;Chromaticity
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
+!TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow saturated
+!TP_LABCURVE_CURVEEDITOR_CC;CC
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
+!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
+!TP_LABCURVE_CURVEEDITOR_CH;CH
+!TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
 !TP_LABCURVE_LABEL;Lab Adjustments
-!TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_LABCURVE_SATURATION;Saturation
+!TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 !TP_LENSGEOM_AUTOCROP;    Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
@@ -1065,11 +1106,21 @@
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin tones
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the Hue
 !TP_VIBRANCE_LABEL;Vibrance
 !TP_VIBRANCE_PASTELS;Pastel tones
 !TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 !TP_VIBRANCE_PROTECTSKINS;Protect skin tones
-!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/saturated tones threshold
+!TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
+!TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
+!TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
 !TP_VIBRANCE_SATURATED;Saturated tones
 !TP_VIGNETTING_AMOUNT;Amount
 !TP_VIGNETTING_CENTER;Center

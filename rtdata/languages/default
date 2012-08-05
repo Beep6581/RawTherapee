@@ -202,8 +202,8 @@ GENERAL_OK;OK
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Save
 GENERAL_UNCHANGED;(Unchanged)
-GENERAL_YES;Yes
 GENERAL_WARNING;Warning
+GENERAL_YES;Yes
 HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
@@ -213,6 +213,7 @@ HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram
+HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
 HISTOGRAM_TOOLTIP_G;Show/Hide green histogram
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
 HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
@@ -549,8 +550,8 @@ NAVIGATOR_S_NA;S = n/a
 NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_NA;V = n/a
 NAVIGATOR_V_VALUE;V = %1
-NAVIGATOR_XY_NA;x = n/a, y = n/a
 NAVIGATOR_XY_FULL;Width = %1, Height = %2
+NAVIGATOR_XY_NA;x = n/a, y = n/a
 OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 PARTIALPASTE_BASICGROUP;Basic Settings
@@ -816,13 +817,13 @@ SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 SAVEDLG_WARNFILENAME;File will be named
 SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
-THRESHOLDSELECTOR_B;Bottom
 THRESHOLDSELECTOR_BL;Bottom-left
 THRESHOLDSELECTOR_BR;Bottom-right
+THRESHOLDSELECTOR_B;Bottom
 THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
-THRESHOLDSELECTOR_T;Top
 THRESHOLDSELECTOR_TL;Top-left
 THRESHOLDSELECTOR_TR;Top-right
+THRESHOLDSELECTOR_T;Top
 TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>
 TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
@@ -981,6 +982,7 @@ TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color s
 TP_LABCURVE_BRIGHTNESS;Brightness
 TP_LABCURVE_BWTONING;B&W Toning
 TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves 
+TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminance Curve
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
@@ -1001,7 +1003,6 @@ TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
 TP_LABCURVE_LABEL;Lab Adjustments
 TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
-TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LENSGEOM_AUTOCROP;    Auto Crop
 TP_LENSGEOM_FILL;Auto Fill
 TP_LENSGEOM_LABEL;Lens / Geometry
@@ -1112,8 +1113,8 @@ TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 TP_VIBRANCE_PROTECTSKINS;Protect skin tones
 TP_VIBRANCE_PSTHRESHOLD;Pastel/saturated tones threshold
 TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
-TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
 TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
 TP_VIBRANCE_SATURATED;Saturated tones
 TP_VIGNETTING_AMOUNT;Amount
 TP_VIGNETTING_CENTER;Center

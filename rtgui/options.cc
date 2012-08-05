@@ -301,6 +301,7 @@ void Options::setDefaults () {
     tunnelMetaData = false;
     histogramPosition = 2;
     histogramBar = true;
+    histogramFullMode = false;
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
@@ -616,6 +617,7 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "CutOverlayBrush"))     cutOverlayBrush     = keyFile.get_double_list ("GUI", "CutOverlayBrush");
     if (keyFile.has_key ("GUI", "HistogramPosition"))   histogramPosition   = keyFile.get_integer ("GUI", "HistogramPosition");
     if (keyFile.has_key ("GUI", "HistogramBar"))        histogramBar        = keyFile.get_boolean ("GUI", "HistogramBar");
+    if (keyFile.has_key ("GUI", "HistogramFullMode"))   histogramFullMode   = keyFile.get_boolean ("GUI", "HistogramFullMode");
     if (keyFile.has_key ("GUI", "ShowProfileSelector")) showProfileSelector = keyFile.get_boolean ("GUI", "ShowProfileSelector");
     if (keyFile.has_key ("GUI", "SquareDetailWindow"))  squareDetailWindow  = keyFile.get_boolean ("GUI", "SquareDetailWindow");
     if (keyFile.has_key ("GUI", "FileBrowserToolbarSingleRow")) FileBrowserToolbarSingleRow = keyFile.get_boolean ("GUI", "FileBrowserToolbarSingleRow");
@@ -862,6 +864,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_double_list ("GUI", "CutOverlayBrush", cutOverlayBrush);
     keyFile.set_integer ("GUI", "HistogramPosition", histogramPosition);
     keyFile.set_boolean ("GUI", "HistogramBar", histogramBar);
+    keyFile.set_boolean ("GUI", "HistogramFullMode", histogramFullMode);
     keyFile.set_boolean ("GUI", "ShowProfileSelector", showProfileSelector);
     keyFile.set_boolean ("GUI", "SquareDetailWindow", squareDetailWindow);
     keyFile.set_boolean ("GUI", "FileBrowserToolbarSingleRow", FileBrowserToolbarSingleRow);
