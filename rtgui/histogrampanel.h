@@ -99,6 +99,11 @@ class HistogramRGBArea : public Gtk::DrawingArea {
 };
 
 
+class FullModeListener {
+  public:
+    virtual void toggle_button_full () {}
+};
+
 class HistogramArea : public Gtk::DrawingArea {  
 
   protected:
@@ -118,7 +123,8 @@ class HistogramArea : public Gtk::DrawingArea {
     LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
     bool valid;
-    bool showFull;
+    bool fullMode;
+    FullModeListener *myFullModeListener;
     int oldwidth, oldheight;
 
     bool needLuma, needRed, needGreen, needBlue, rawMode;
@@ -127,12 +133,12 @@ class HistogramArea : public Gtk::DrawingArea {
 
   public:
          
-    HistogramArea();
+    HistogramArea(FullModeListener *fml=NULL);
     ~HistogramArea();
 
     void renderHistogram ();
     void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
-    void updateOptions (bool r, bool g, bool b, bool l, bool raw);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full);
     void on_realize();
     bool on_expose_event(GdkEventExpose* event);
     bool on_button_press_event (GdkEventButton* event);
@@ -144,7 +150,7 @@ class HistogramArea : public Gtk::DrawingArea {
 				   LUTu & data, double scale, int hsize, int & ui, int & oi);
 };
 
-class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
+class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public FullModeListener {
 
   protected:
 
@@ -157,6 +163,7 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
     Gtk::ToggleButton* showBlue;
     Gtk::ToggleButton* showValue;
     Gtk::ToggleButton* showRAW;
+    Gtk::ToggleButton* showFull;
     Gtk::ToggleButton* showBAR;
     
     Gtk::Image *redImage;
@@ -164,12 +171,15 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
     Gtk::Image *blueImage;
     Gtk::Image *valueImage;
     Gtk::Image *rawImage;
+    Gtk::Image *fullImage;
     Gtk::Image *barImage;
+
     Gtk::Image *redImage_g;
     Gtk::Image *greenImage_g;
     Gtk::Image *blueImage_g;
     Gtk::Image *valueImage_g;
     Gtk::Image *rawImage_g;
+    Gtk::Image *fullImage_g;
     Gtk::Image *barImage_g;
 
 
@@ -197,9 +207,13 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener  {
     void blue_toggled ();
     void value_toggled ();
     void raw_toggled ();
+    void full_toggled ();
     void bar_toggled ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
+
+    // fullModeListener interface
+    void toggle_button_full ();
 };
 
 #endif

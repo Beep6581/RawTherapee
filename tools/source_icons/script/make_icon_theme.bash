@@ -28,11 +28,11 @@ fi
 
 if [ $# -eq 4 ]
 then 
-change_colour.bash $DIR_IN $DIR_OUT $COLOUR_BG $COLOUR_GRADIENT
+./change_colour.bash $DIR_IN $DIR_OUT $COLOUR_BG $COLOUR_GRADIENT
 else
-change_colour.bash $DIR_IN $DIR_OUT $COLOUR_BG
+./change_colour.bash $DIR_IN $DIR_OUT $COLOUR_BG
 fi
-svg2png.bash $DIR_OUT $DIR_OUT $WIDTH
+./svg2png.bash $DIR_OUT $DIR_OUT $WIDTH
 rm $DIR_OUT/*.svg
 
 

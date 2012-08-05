@@ -39,8 +39,8 @@ rm -r $DIR_OUT/Dark/*
 rm -r $DIR_OUT/Light/*
 
 ### make all icon with generic option
-make_icon_theme.bash $DIR_IN $DIR_OUT/Dark "#BBBBBB" "#FFFFFF"
-make_icon_theme.bash $DIR_IN $DIR_OUT/Light "#252525" "#7D7D7D"
+./make_icon_theme.bash $DIR_IN $DIR_OUT/Dark "#BBBBBB" "#FFFFFF"
+./make_icon_theme.bash $DIR_IN $DIR_OUT/Light "#252525" "#7D7D7D"
 
 ### make custom icon with specific option
 if [ ! -d $DIR_OUT/Light/tmp ] 
@@ -56,8 +56,8 @@ fi
 cp $DIR_IN/closedhand.* $DIR_OUT/Dark/tmp
 cp $DIR_IN/closedhand.* $DIR_OUT/Light/tmp
 
-make_icon_theme.bash $DIR_OUT/Dark/tmp $DIR_OUT/Dark "#BBBBBB" "#000000"
-make_icon_theme.bash $DIR_OUT/Light/tmp $DIR_OUT/Light "#252525" "#FFFFFF"
+./make_icon_theme.bash $DIR_OUT/Dark/tmp $DIR_OUT/Dark "#BBBBBB" "#000000"
+./make_icon_theme.bash $DIR_OUT/Light/tmp $DIR_OUT/Light "#252525" "#FFFFFF"
 
 DIR_TMP=/tmp/icons
 

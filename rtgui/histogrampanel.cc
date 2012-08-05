@@ -33,7 +33,7 @@ extern Options options;
 // HistogramPanel
 HistogramPanel::HistogramPanel () {
 
-   histogramArea = Gtk::manage (new HistogramArea ());
+   histogramArea = Gtk::manage (new HistogramArea (this));
    histogramRGBArea = Gtk::manage (new HistogramRGBArea ());
    histogramRGBArea->show();
 
@@ -48,6 +48,7 @@ HistogramPanel::HistogramPanel () {
    blueImage  = new RTImage ("histBlue.png");
    valueImage = new RTImage ("histValue.png");
    rawImage   = new RTImage ("histRaw.png");
+   fullImage  = new RTImage ("histFull.png");
    barImage   = new RTImage ("histBar.png");
 
    redImage_g   = new RTImage ("histRedg.png");
@@ -55,6 +56,7 @@ HistogramPanel::HistogramPanel () {
    blueImage_g  = new RTImage ("histBlueg.png");
    valueImage_g = new RTImage ("histValueg.png");
    rawImage_g   = new RTImage ("histRawg.png");
+   fullImage_g  = new RTImage ("histFullg.png");
    barImage_g   = new RTImage ("histBarg.png");
 
    showRed   = Gtk::manage (new Gtk::ToggleButton ());
@@ -62,6 +64,7 @@ HistogramPanel::HistogramPanel () {
    showBlue  = Gtk::manage (new Gtk::ToggleButton ());
    showValue = Gtk::manage (new Gtk::ToggleButton ());
    showRAW   = Gtk::manage (new Gtk::ToggleButton ());
+   showFull  = Gtk::manage (new Gtk::ToggleButton ());
    showBAR   = Gtk::manage (new Gtk::ToggleButton ());
 
    showRed->set_name("histButton");   showRed->set_can_focus(false);
@@ -69,6 +72,7 @@ HistogramPanel::HistogramPanel () {
    showBlue->set_name("histButton");  showBlue->set_can_focus(false);
    showValue->set_name("histButton"); showValue->set_can_focus(false);
    showRAW->set_name("histButton");   showRAW->set_can_focus(false);
+   showFull->set_name("fullButton");  showFull->set_can_focus(false);
    showBAR->set_name("histButton");   showBAR->set_can_focus(false);
 
    showRed->set_relief (Gtk::RELIEF_NONE);
@@ -76,6 +80,7 @@ HistogramPanel::HistogramPanel () {
    showBlue->set_relief (Gtk::RELIEF_NONE);
    showValue->set_relief (Gtk::RELIEF_NONE);
    showRAW->set_relief (Gtk::RELIEF_NONE);
+   showFull->set_relief (Gtk::RELIEF_NONE);
    showBAR->set_relief (Gtk::RELIEF_NONE);
 
    showRed->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_R"));
@@ -83,6 +88,7 @@ HistogramPanel::HistogramPanel () {
    showBlue->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_B"));
    showValue->set_tooltip_text (M("HISTOGRAM_TOOLTIP_L"));
    showRAW->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_RAW"));
+   showFull->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_FULL"));
    showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
 
    buttonVBox = Gtk::manage (new Gtk::VBox (false, 2));
@@ -91,23 +97,23 @@ HistogramPanel::HistogramPanel () {
    showBlue->set_active (true);
    showValue->set_active (true);
    showRAW->set_active (false);
+   showFull->set_active (!options.histogramFullMode);
    showBAR->set_active (options.histogramBar);
 
-   showRed->set_image(*redImage);
-   showGreen->set_image(*greenImage);
-   showBlue->set_image(*blueImage);
-   showValue->set_image(*valueImage);
-   showRAW->set_image(*rawImage_g);
-   if (showBAR->get_active())
-     showBAR->set_image(*barImage);
-   else
-     showBAR->set_image(*barImage_g);
+   showRed->set_image   (showRed->get_active()   ? *redImage   : *redImage_g);
+   showGreen->set_image (showGreen->get_active() ? *greenImage : *greenImage_g);
+   showBlue->set_image  (showBlue->get_active()  ? *blueImage  : *blueImage_g);
+   showValue->set_image (showValue->get_active() ? *valueImage : *valueImage_g);
+   showRAW->set_image   (showRAW->get_active()   ? *rawImage   : *rawImage_g);
+   showFull->set_image  (showFull->get_active()  ? *fullImage  : *fullImage_g);
+   showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
 
    showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::red_toggled), showRed );
    showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::green_toggled), showGreen );
    showBlue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::blue_toggled), showBlue );
    showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::value_toggled), showValue );
    showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::raw_toggled), showRAW );
+   showFull->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::full_toggled), showFull );
    showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
 
    buttonVBox->pack_start (*showRed, Gtk::PACK_SHRINK, 0);
@@ -115,6 +121,7 @@ HistogramPanel::HistogramPanel () {
    buttonVBox->pack_start (*showBlue, Gtk::PACK_SHRINK, 0);
    buttonVBox->pack_start (*showValue, Gtk::PACK_SHRINK, 0);
    buttonVBox->pack_start (*showRAW, Gtk::PACK_SHRINK, 0);
+   buttonVBox->pack_start (*showFull, Gtk::PACK_SHRINK, 0);
    buttonVBox->pack_start (*showBAR, Gtk::PACK_SHRINK, 0);
 
    // Put the button vbox next to the window's border to be less disturbing
@@ -138,6 +145,7 @@ HistogramPanel::~HistogramPanel () {
   delete blueImage;
   delete valueImage;
   delete rawImage;
+  delete fullImage;
   delete barImage;
 
   delete redImage_g;
@@ -145,6 +153,7 @@ HistogramPanel::~HistogramPanel () {
   delete blueImage_g;
   delete valueImage_g;
   delete rawImage_g;
+  delete fullImage_g;
   delete barImage_g;
 }
 
@@ -208,6 +217,11 @@ void HistogramPanel::raw_toggled () {
 	}
     rgbv_toggled();
 }
+void HistogramPanel::full_toggled () {
+    options.histogramFullMode = !showFull->get_active();
+    showFull->set_image(showFull->get_active() ? *fullImage : *fullImage_g);
+    rgbv_toggled();
+}
 void HistogramPanel::bar_toggled () {
     showBAR->set_image(showBAR->get_active() ? *barImage : *barImage_g);
     rgbv_toggled();
@@ -215,7 +229,7 @@ void HistogramPanel::bar_toggled () {
 
 void HistogramPanel::rgbv_toggled () {
   // Update Display
-  histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active());
+  histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showFull->get_active());
   histogramArea->queue_draw ();
 
   histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showBAR->get_active());
@@ -263,6 +277,12 @@ void HistogramPanel::reorder (Gtk::AlignmentEnum align) {
 		reorder_child(*buttonVBox, 0);
 	else
 		reorder_child(*buttonVBox, 1);
+}
+
+// FullModeListener interface:
+void HistogramPanel::toggle_button_full () {
+    showFull->set_active (!showFull->get_active ());
+    showFull->set_image(showFull->get_active() ? *fullImage : *fullImage_g);
 }
 
 //
@@ -495,8 +515,8 @@ void HistogramRGBArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
 //
 //
 // HistogramArea
-HistogramArea::HistogramArea () : 
-    valid(false), showFull(true), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false) {
+HistogramArea::HistogramArea (FullModeListener *fml) : 
+    valid(false), fullMode(options.histogramFullMode), myFullModeListener(fml), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false) {
 
     lhist(256);
     rhist(256);
@@ -520,13 +540,14 @@ HistogramArea::~HistogramArea () {
 
 }
 
-void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw) {
+void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full) {
 
     needRed   = r;
     needGreen = g;
     needBlue  = b;
     needLuma  = l;
     rawMode   = raw;
+    fullMode  = !full;
 
     renderHistogram ();
 }
@@ -608,23 +629,17 @@ void HistogramArea::renderHistogram () {
 
     int realhistheight = fullhistheight;
 
-    if (!showFull) {    
-        int area1thres = 0;
-        int area2thres = 0;
+    if (!fullMode) {
         int area = 0;
         for (int i=0; i<fullhistheight; i++) {
             for (int j=0; j<256; j++)
                 if ((needLuma && !rawMode && lhist[j]>i) || (needRed && rh[j]>i) || (needGreen && gh[j]>i) || (needBlue && bh[j]>i))
                     area++;
-            if (area1thres==0 && (double)area / (256*(i+1)) < 0.3)
-                area1thres = i;
-            if (area2thres==0 && (double)area / (256*(i+1)) < 0.3)
-                area2thres = i;
-            if (area1thres && area2thres)
+            if ((double)area / (256*(i+1)) < 0.3) {
+                realhistheight = i;
                 break;
+            }
         }
-        if (area1thres>0 && area2thres>0 && area1thres<fullhistheight)
-            realhistheight = area2thres;
     }
     
     if (realhistheight<winh-2)
@@ -762,7 +777,10 @@ bool HistogramArea::on_expose_event(GdkEventExpose* event) {
 bool HistogramArea::on_button_press_event (GdkEventButton* event) {
 
     if (event->type==GDK_2BUTTON_PRESS && event->button==1) {
-        showFull = !showFull;
+        fullMode = !fullMode;
+        options.histogramFullMode = fullMode;
+        if (myFullModeListener)
+            myFullModeListener->toggle_button_full ();
         renderHistogram ();
         queue_draw ();
     }
