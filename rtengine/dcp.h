@@ -57,7 +57,7 @@ namespace rtengine {
         DCPProfile(Glib::ustring fname);
         ~DCPProfile();
 
-        void Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const;
+        void Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, float rawWhiteFac=1) const;
         void Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const;
     };
 

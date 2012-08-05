@@ -54,7 +54,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     }
     procparams::ProcParams& params = job->pparams;
 
-    // aquire image from imagesource
+    // acquire image from imagesource
     ImageSource* imgsrc = ii->getImageSource ();
 
     int tr = TR_NONE;
@@ -155,12 +155,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     LUTf curve2 (65536,0);
 	LUTf curve (65536,0);
 	LUTf satcurve (65536,0);
+	//LUTf satbgcurve (65536,0);
+	
 	LUTf rCurve (65536,0);
 	LUTf gCurve (65536,0);
 	LUTf bCurve (65536,0);
 	LUTu dummy;
 
-    CurveFactory::complexCurve (expcomp, black/65535.0, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh, params.toneCurve.shcompr, bright, params.toneCurve.contrast, imgsrc->getGamma(), true, params.toneCurve.curve, 
+    CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr, imgsrc->getGamma(), true, params.toneCurve.curve, 
         hist16, dummy, curve1, curve2, curve, dummy);
 	
 	CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
@@ -169,7 +171,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	LabImage* labView = new LabImage (fw,fh);
 
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, expcomp, hlcompr, hlcomprthresh);
 
     // Freeing baseImg because not used anymore
     delete baseImg;
@@ -192,13 +194,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // luminance processing
 
 	ipf.EPDToneMap(labView);
+	bool utili=false;
+	bool autili=false;
+	bool butili=false;
+	bool ccutili=false;
+	
+	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1, utili);
 
-	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1);
-
-	CurveFactory::complexsgnCurve (params.labCurve.saturation, params.labCurve.enable_saturationlimiter, params.labCurve.saturationlimit,
-								   params.labCurve.acurve, params.labCurve.bcurve, curve1, curve2, satcurve, 1);
-	ipf.luminanceCurve (labView, labView, curve);
-	ipf.chrominanceCurve (labView, labView, curve1, curve2, satcurve);
+	CurveFactory::complexsgnCurve (autili, butili, ccutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,/*params.labCurve.cbgcurve,*/curve1, curve2, satcurve,/*satbgcurve,*/ 1);
+	//ipf.luminanceCurve (labView, labView, curve);
+	ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,/*satbgcurve,*/curve, utili, autili, butili, ccutili);
 	ipf.vibrance(labView);
 
 	ipf.impulsedenoise (labView);

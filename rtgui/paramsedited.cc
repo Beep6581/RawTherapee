@@ -46,15 +46,18 @@ void ParamsEdited::set (bool v) {
 	labCurve.lcurve      = v;
 	labCurve.acurve      = v;
 	labCurve.bcurve      = v;
+	labCurve.cccurve     = v;
+	labCurve.chcurve     = v;
+	//labCurve.cbgcurve    = v;
 	labCurve.brightness  = v;
 	labCurve.contrast    = v;
-	labCurve.saturation  = v;
-	labCurve.avoidclip   = v;
-	labCurve.enable_saturationlimiter = v;
-	labCurve.saturationlimit      = v;
-	rgbCurves.rcurve      = v;
-	rgbCurves.gcurve      = v;
-	rgbCurves.bcurve      = v;
+	labCurve.chromaticity    = v;
+	labCurve.avoidcolorshift = v;
+	labCurve.rstprotection   = v;
+	labCurve.bwtoning        = v;
+	rgbCurves.rcurve         = v;
+	rgbCurves.gcurve         = v;
+	rgbCurves.bcurve         = v;
 	sharpening.enabled            = v;
 	sharpening.radius             = v;
 	sharpening.amount             = v;
@@ -84,6 +87,7 @@ void ParamsEdited::set (bool v) {
 	vibrance.protectskins     = v;
 	vibrance.avoidcolorshift  = v;
 	vibrance.pastsattog       = v;
+	vibrance.skintonescurve   = v;
 	//colorBoost.amount         = v;
 	//colorBoost.avoidclip      = v;
 	//colorBoost.enable_saturationlimiter = v;
@@ -238,12 +242,15 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
         labCurve.acurve = labCurve.acurve && p.labCurve.acurve == other.labCurve.acurve;
         labCurve.bcurve = labCurve.bcurve && p.labCurve.bcurve == other.labCurve.bcurve;
+        labCurve.cccurve = labCurve.cccurve && p.labCurve.cccurve == other.labCurve.cccurve;
+        labCurve.chcurve = labCurve.chcurve && p.labCurve.chcurve == other.labCurve.chcurve;
+        //labCurve.cbgcurve = labCurve.cbgcurve && p.labCurve.cbgcurve == other.labCurve.cbgcurve;
         labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
-        labCurve.saturation = labCurve.saturation && p.labCurve.saturation == other.labCurve.saturation;
-        labCurve.avoidclip = labCurve.avoidclip && p.labCurve.avoidclip == other.labCurve.avoidclip;
-        labCurve.enable_saturationlimiter = labCurve.enable_saturationlimiter && p.labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter;
-        labCurve.saturationlimit = labCurve.saturationlimit && p.labCurve.saturationlimit == other.labCurve.saturationlimit;
+        labCurve.chromaticity = labCurve.chromaticity && p.labCurve.chromaticity == other.labCurve.chromaticity;
+        labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
+        labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
+        labCurve.bwtoning = labCurve.bwtoning && p.labCurve.bwtoning == other.labCurve.bwtoning;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
         rgbCurves.gcurve = rgbCurves.gcurve && p.rgbCurves.gcurve == other.rgbCurves.gcurve;
         rgbCurves.bcurve = rgbCurves.bcurve && p.rgbCurves.bcurve == other.rgbCurves.bcurve;
@@ -276,6 +283,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         vibrance.protectskins = vibrance.protectskins && p.vibrance.protectskins == other.vibrance.protectskins;
         vibrance.avoidcolorshift = vibrance.avoidcolorshift && p.vibrance.avoidcolorshift == other.vibrance.avoidcolorshift;
         vibrance.pastsattog = vibrance.pastsattog && p.vibrance.pastsattog == other.vibrance.pastsattog;
+        vibrance.skintonescurve = vibrance.skintonescurve && p.vibrance.skintonescurve == other.vibrance.skintonescurve;
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
         //colorBoost.enable_saturationlimiter = colorBoost.enable_saturationlimiter && p.colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter;
@@ -429,16 +437,19 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.lcurve)		toEdit.labCurve.lcurve 	    = mods.labCurve.lcurve;
 	if (labCurve.acurve)		toEdit.labCurve.acurve 	    = mods.labCurve.acurve;
 	if (labCurve.bcurve)		toEdit.labCurve.bcurve 	    = mods.labCurve.bcurve;
-	if (labCurve.brightness)	toEdit.labCurve.brightness = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
-	if (labCurve.contrast)		toEdit.labCurve.contrast 	= dontforceSet && options.baBehav[ADDSET_LC_CONTRAST] ? toEdit.labCurve.contrast + mods.labCurve.contrast : mods.labCurve.contrast;
-	if (labCurve.saturation)	toEdit.labCurve.saturation = dontforceSet && options.baBehav[ADDSET_LC_SATURATION] ? toEdit.labCurve.saturation + mods.labCurve.saturation : mods.labCurve.saturation;
-	if (labCurve.avoidclip)					toEdit.labCurve.avoidclip 	= mods.labCurve.avoidclip;
-	if (labCurve.enable_saturationlimiter)	toEdit.labCurve.enable_saturationlimiter 	= mods.labCurve.enable_saturationlimiter;
-	if (labCurve.saturationlimit)			toEdit.labCurve.saturationlimit 	= mods.labCurve.saturationlimit;	
+	if (labCurve.cccurve)		toEdit.labCurve.cccurve     = mods.labCurve.cccurve;
+	if (labCurve.chcurve)		toEdit.labCurve.chcurve     = mods.labCurve.chcurve;
+	//if (labCurve.cbgcurve)		toEdit.labCurve.cbgcurve    = mods.labCurve.cbgcurve;
+	if (labCurve.brightness)	toEdit.labCurve.brightness   = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
+	if (labCurve.contrast)		toEdit.labCurve.contrast 	 = dontforceSet && options.baBehav[ADDSET_LC_CONTRAST] ? toEdit.labCurve.contrast + mods.labCurve.contrast : mods.labCurve.contrast;
+	if (labCurve.chromaticity)	toEdit.labCurve.chromaticity = dontforceSet && options.baBehav[ADDSET_LC_CHROMATICITY] ? toEdit.labCurve.chromaticity + mods.labCurve.chromaticity : mods.labCurve.chromaticity;
+	if (labCurve.avoidcolorshift)	toEdit.labCurve.avoidcolorshift		= mods.labCurve.avoidcolorshift;
+	if (labCurve.rstprotection)		toEdit.labCurve.rstprotection		= mods.labCurve.rstprotection;
+	if (labCurve.bwtoning)			toEdit.labCurve.bwtoning			= mods.labCurve.bwtoning;
 
-	if (rgbCurves.rcurve)		            toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
-	if (rgbCurves.gcurve)		            toEdit.rgbCurves.gcurve     = mods.rgbCurves.gcurve;
-	if (rgbCurves.bcurve)		            toEdit.rgbCurves.bcurve     = mods.rgbCurves.bcurve;
+	if (rgbCurves.rcurve)					toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
+	if (rgbCurves.gcurve)					toEdit.rgbCurves.gcurve     = mods.rgbCurves.gcurve;
+	if (rgbCurves.bcurve)					toEdit.rgbCurves.bcurve     = mods.rgbCurves.bcurve;
 
 	if (sharpenEdge.enabled)				toEdit.sharpenEdge.enabled 	= mods.sharpenEdge.enabled;
 	if (sharpenEdge.passes)					toEdit.sharpenEdge.passes	= dontforceSet && options.baBehav[ADDSET_SHARPENEDGE_PASS] ? toEdit.sharpenEdge.passes + mods.sharpenEdge.passes : mods.sharpenEdge.passes;
@@ -451,7 +462,15 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (sharpening.enabled)					toEdit.sharpening.enabled 	= mods.sharpening.enabled;
 	if (sharpening.radius)					toEdit.sharpening.radius 	= mods.sharpening.radius;
 	if (sharpening.amount)					toEdit.sharpening.amount 	= dontforceSet && options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.amount + mods.sharpening.amount : mods.sharpening.amount;
-	if (sharpening.threshold)				toEdit.sharpening.threshold 	= mods.sharpening.threshold;
+	if (sharpening.threshold)				toEdit.sharpening.threshold = mods.sharpening.threshold;
+
+	for (int i=0; i<3; i++) {
+		if (chmixer.red[i])		toEdit.chmixer.red[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.red[i] + mods.chmixer.red[i] : mods.chmixer.red[i];
+		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
+		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
+	}
+
+
 	if (sharpening.edgesonly)				toEdit.sharpening.edgesonly 	= mods.sharpening.edgesonly;
 	if (sharpening.edges_radius)			toEdit.sharpening.edges_radius 	= mods.sharpening.edges_radius;
 	if (sharpening.edges_tolerance)			toEdit.sharpening.edges_tolerance	 = mods.sharpening.edges_tolerance;
@@ -465,10 +484,11 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (vibrance.enabled)					toEdit.vibrance.enabled			= mods.vibrance.enabled;
 	if (vibrance.pastels)					toEdit.vibrance.pastels			= dontforceSet && options.baBehav[ADDSET_VIBRANCE_PASTELS] ? toEdit.vibrance.pastels + mods.vibrance.pastels : mods.vibrance.pastels;
 	if (vibrance.saturated)					toEdit.vibrance.saturated		= dontforceSet && options.baBehav[ADDSET_VIBRANCE_SATURATED] ? toEdit.vibrance.saturated + mods.vibrance.saturated : mods.vibrance.saturated;
-	if (vibrance.psthreshold)				toEdit.vibrance.psthreshold		= dontforceSet && options.baBehav[ADDSET_VIBRANCE_PSTHRESHOLD] ? toEdit.vibrance.psthreshold + mods.vibrance.psthreshold : mods.vibrance.psthreshold;
+	if (vibrance.psthreshold)				toEdit.vibrance.psthreshold		= mods.vibrance.psthreshold;
 	if (vibrance.protectskins)				toEdit.vibrance.protectskins	= mods.vibrance.protectskins;
 	if (vibrance.avoidcolorshift)			toEdit.vibrance.avoidcolorshift	= mods.vibrance.avoidcolorshift;
 	if (vibrance.pastsattog)				toEdit.vibrance.pastsattog	    = mods.vibrance.pastsattog;
+	if (vibrance.skintonescurve)			toEdit.vibrance.skintonescurve	= mods.vibrance.skintonescurve;
 
 	//if (colorBoost.amount)					toEdit.colorBoost.amount		= dontforceSet && options.baBehav[ADDSET_CBOOST_AMOUNT] ? toEdit.colorBoost.amount + mods.colorBoost.amount : mods.colorBoost.amount;
 	//if (colorBoost.avoidclip)				toEdit.colorBoost.avoidclip 	= mods.colorBoost.avoidclip;

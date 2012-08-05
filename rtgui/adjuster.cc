@@ -48,17 +48,20 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
 
   hbox = Gtk::manage (new Gtk::HBox ());
 
-  label = Gtk::manage (new Gtk::Label (vlabel, Gtk::ALIGN_LEFT));
+  adjustmentName = Glib::ustring(vlabel);
 
   if (editedcb) {
-    editedCheckBox = Gtk::manage (new Gtk::CheckButton ());
+    label = NULL;
+    editedCheckBox = Gtk::manage (new Gtk::CheckButton (adjustmentName));
     editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
-	hbox->pack_start (*editedCheckBox);
+    hbox->pack_start (*editedCheckBox);
   }
-  else
+  else {
     editedCheckBox = NULL;
+    label = Gtk::manage (new Gtk::Label (adjustmentName, Gtk::ALIGN_LEFT));
+    hbox->pack_start (*label);
+  }
     
-  hbox->pack_start (*label);
 
   reset = Gtk::manage (new Gtk::Button ());
   reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
@@ -243,11 +246,6 @@ void Adjuster::setAddMode(bool addM) {
 	}
 }
 
-void Adjuster::setAdjusterListener (AdjusterListener* alistener) {
-
-  adjusterListener = alistener;  
-}
-
 void Adjuster::spinChanged () {
 
   sliderChange.block (true);
@@ -312,24 +310,6 @@ void Adjuster::setValue (double a) {
   afterReset = false;
 }
 
-// return the value trimmed to the limits at construction time
-double Adjuster::getValue () {
-
-  return spin->get_value ();
-}
-
-// return the value trimmed to the limits at construction time
-int Adjuster::getIntValue () {
-
-  return spin->get_value_as_int ();
-}
-
-// method only used by the history manager
-Glib::ustring Adjuster::getTextValue () {
-
-  return spin->get_text ();
-}
-
 bool Adjuster::notifyListener () {
 
   if (adjusterListener!=NULL && !blocked) {
@@ -367,8 +347,11 @@ EditedState Adjuster::getEditedState () {
 
 void Adjuster::showEditedCB () {
 
+    if (label)
+        removeIfThere(hbox, label, false);
+
     if (!editedCheckBox) {
-        editedCheckBox =  Gtk::manage(new Gtk::CheckButton ());
+        editedCheckBox = Gtk::manage(new Gtk::CheckButton (adjustmentName));
         hbox->pack_start (*editedCheckBox, Gtk::PACK_SHRINK, 2);
         hbox->reorder_child (*editedCheckBox, 0);
 	    editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );

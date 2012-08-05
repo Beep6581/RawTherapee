@@ -18,7 +18,7 @@
  */
 
 #include "hsvequalizer.h"
-#include "../rtengine/improcfun.h"
+#include "../rtengine/color.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -27,13 +27,32 @@ using namespace rtengine::procparams;
 
 HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	
+	std::vector<GradientMilestone> bottomMilestones;
+	float R, G, B;
+	// -0.1 rad < Hue < 1.6 rad
+	for (int i=0; i<7; i++) {
+		float x = float(i)*(1.0f/6.0);
+		Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+		bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+	}
+
 	curveEditorG = new CurveEditorGroup (options.lastHsvCurvesDir, M("TP_HSVEQUALIZER_CHANNEL"));
 	curveEditorG->setCurveListener (this);
-	curveEditorG->setColorProvider (this);
 
 	hshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE")));
+	hshape->setBottomBarBgGradient(bottomMilestones);
+	//hshape->setLeftBarColorProvider(this);  Not working yet
+	hshape->setCurveColorProvider(this);
+
 	sshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_SAT")));
+	sshape->setBottomBarBgGradient(bottomMilestones);
+	//sshape->setLeftBarColorProvider(this);  Not working yet
+	sshape->setCurveColorProvider(this);
+
 	vshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_VAL")));
+	vshape->setBottomBarBgGradient(bottomMilestones);
+	//vshape->setLeftBarColorProvider(this);  Not working yet
+	vshape->setCurveColorProvider(this);
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();
@@ -190,27 +209,27 @@ void HSVEqualizer::colorForValue (double valX, double valY) {
 
 	if (ce == hshape) {        // Hue = f(Hue)
 
-		float h = (float)((valY - 0.5) * 2. + valX);
-		if (h > 1.0)
-			h -= 1.0;
-		else if (h < 0.0)
-			h += 1.0;
-		ImProcFunctions::hsv2rgb(h, (float)0.5, (float)0.5, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		float h = float((valY - 0.5) * 2. + valX);
+		if (h > 1.0f)
+			h -= 1.0f;
+		else if (h < 0.0f)
+			h += 1.0f;
+		Color::hsv2rgb01(h, 0.5f, 0.5f, r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else if (ce == sshape) {   // Saturation = f(Hue)
-		ImProcFunctions::hsv2rgb((float)valX, (float)valY, (float)0.5, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		Color::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else if (ce == vshape) {   // Value = f(Hue)
-		ImProcFunctions::hsv2rgb((float)valX, (float)0.5, (float)valY, r, g, b);
-		red = (double)r;
-		green = (double)g;
-		blue = (double)b;
+		Color::hsv2rgb01(float(valX), 0.5f, float(valY), r, g, b);
+		red = double(r);
+		green = double(g);
+		blue = double(b);
 	}
 	else {
 		printf("Error: no curve displayed!\n");

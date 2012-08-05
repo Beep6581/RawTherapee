@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+*  Copyright (c) 2004-2012 Gabor Horvath <hgabor@rawtherapee.com>, Oliver Duis <oduis@oliverduis.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,10 @@
 #ifndef _ALIGNEDBUFFER_
 #define _ALIGNEDBUFFER_
 #include <stdint.h>
+#include <vector>
+#include <glibmm.h>
 
+// Aligned buffer that should be faster
 template <class T> class AlignedBuffer {
 
     private:
@@ -27,10 +30,12 @@ template <class T> class AlignedBuffer {
       
     public:
       T* data ;
+    bool inUse;
 
         AlignedBuffer (size_t size, size_t align=16) {
             real = new T[size+2*align];
             data = (T*)((uintptr_t)real + (align-((uintptr_t)real)%align));
+        inUse=true;
         }
 
         ~AlignedBuffer () {
@@ -38,4 +43,44 @@ template <class T> class AlignedBuffer {
         }
 };
 
+// Multi processor version, use with OpenMP
+template <class T> class AlignedBufferMP {
+private:
+    Glib::Mutex mtx;
+    std::vector<AlignedBuffer<T>*> buffers;
+    size_t size;
+
+public:
+    AlignedBufferMP(size_t sizeP) {
+        size=sizeP;
+    }
+
+    ~AlignedBufferMP() {
+        for (int i=0;i<buffers.size();i++) delete buffers[i];
+    }
+
+    AlignedBuffer<T>* acquire() {
+        Glib::Mutex::Lock lock(mtx);
+
+        // Find available buffer
+        for (int i;i<buffers.size();i++) {
+            if (!buffers[i]->inUse) {
+                buffers[i]->inUse=true;
+                return buffers[i];
+            }
+        }
+
+        // Add new buffer if nothing is free
+        AlignedBuffer<T>* buffer=new AlignedBuffer<T>(size);
+        buffers.push_back(buffer);
+
+        return buffer;
+    }
+
+    void release(AlignedBuffer<T>* buffer) {
+        Glib::Mutex::Lock lock(mtx);
+
+        buffer->inUse=false;
+    }
+};
 #endif

@@ -384,7 +384,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         else if (saveFormat.format=="png")
             err = img->saveAsPNG (fname, saveFormat.pngCompression, saveFormat.pngBits);
         else if (saveFormat.format=="jpg")
-            err = img->saveAsJPEG (fname, saveFormat.jpegQuality);
+            err = img->saveAsJPEG (fname, saveFormat.jpegQuality, saveFormat.jpegSubSamp);
         img->free ();
 
 		if (err) throw "Unable to save output file";

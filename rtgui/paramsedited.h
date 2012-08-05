@@ -53,13 +53,16 @@ class LCurveParamsEdited {
     public:
         bool brightness;
         bool contrast;
-        bool saturation;
-        bool avoidclip;
-        bool enable_saturationlimiter;
-        bool saturationlimit;
+        bool chromaticity;
+        bool avoidcolorshift;
+        bool rstprotection;
         bool lcurve;
         bool acurve;
         bool bcurve;
+        bool bwtoning;
+        bool cccurve;
+        bool chcurve;
+        //bool cbgcurve;
 };
 
 class RGBCurvesParamsEdited {
@@ -117,6 +120,7 @@ class VibranceParamsEdited {
         bool protectskins;
         bool avoidcolorshift;
         bool pastsattog;
+        bool skintonescurve;
 };
 
 /*class ColorBoostParamsEdited {

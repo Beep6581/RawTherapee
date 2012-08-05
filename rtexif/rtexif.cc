@@ -213,6 +213,51 @@ Tag* TagDirectory::findTag (const char* name) const {
 	  return NULL;
 }
 
+// Searches a simple value, as either attribute or element
+// only for simple values, not for entries with special chars or free text
+bool TagDirectory::getXMPTagValue(const char* name, char* value) const {
+    *value=0;
+
+    if (!getTag("ApplicationNotes")) return false;
+    char *sXMP = (char*)getTag("ApplicationNotes")->getValue();
+
+    // Check for full word
+    char *pos=sXMP;
+
+    bool found=false;
+    do {
+        pos=strstr(pos,name);
+        if (pos) {
+            char nextChar=*(pos+strlen(name));
+            if (nextChar==' ' || nextChar=='>' || nextChar=='=') 
+                found=true;
+            else
+                pos+=strlen(name);
+        }
+    } while (pos && !found);
+    if (!found) return false;
+
+    char *posTag =strchr(pos,'>');
+    char *posAttr=strchr(pos,'"');
+
+    if (!posTag && !posAttr) return false;
+
+    if (posTag && (!posAttr || posTag<posAttr)) {
+        // Tag
+        pos=strchr(posTag+1,'<');
+        strncpy(value,posTag+1,pos-posTag-1);
+        value[pos-posTag-1]=0;
+        return true;
+    } else
+    if (posAttr && (!posTag || posAttr<posTag)) {
+        // Attribute
+        pos=strchr(posAttr+1,'"');
+        strncpy(value,posAttr+1,pos-posAttr-1);
+        value[pos-posAttr-1]=0;
+        return true;
+    } else return false;
+}
+
 void TagDirectory::keepTag (int ID) {
     for (size_t i=0; i<tags.size(); i++)
         if (tags[i]->getID()==ID) tags[i]->setKeep(true);
@@ -902,7 +947,7 @@ int Tag::calculateSize () {
       size += valuesize + (valuesize%2); // we align tags to even byte positions 
 
    if (makerNoteKind!=NOMK) 
-        count = directory[0]->calculateSize ();
+        count = directory[0]->calculateSize () / getTypeSize(type);
         
    if (makerNoteKind==NIKON3 || makerNoteKind==OLYMPUS2 || makerNoteKind==FUJI) 
         size += valuesize;

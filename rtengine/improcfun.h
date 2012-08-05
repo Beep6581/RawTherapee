@@ -25,6 +25,7 @@
 #include "procparams.h"
 #include "shmap.h"
 #include "coord2d.h"
+#include "color.h"
 #include "labimage.h"
 #include "LUT.h"
 #include "lcp.h"
@@ -65,46 +66,11 @@ class ImProcFunctions {
 
 	public:
 		static LUTf cachef;
-		// 195 LUTf for Munsell Lch correction 
-		static LUTf _4P10,_4P20,_4P30,_4P40,_4P50,_4P60;				
-		static LUTf _1P10,_1P20,_1P30,_1P40,_1P50,_1P60;
-		static LUTf _5B40,_5B50,_5B60, _5B70,_5B80;			
-		static LUTf _7B40,_7B50,_7B60, _7B70,_7B80;			
-		static LUTf _9B40,_9B50,_9B60, _9B70,_9B80;			
-		static LUTf _10B40,_10B50,_10B60, _10B70,_10B80;					
-		static LUTf _05PB40,_05PB50,_05PB60, _05PB70,_05PB80;			
-		static LUTf _10PB10,_10PB20,_10PB30,_10PB40,_10PB50,_10PB60;		
-		static LUTf _9PB10,_9PB20,_9PB30,_9PB40,_9PB50,_9PB60,_9PB70,_9PB80;
-		static LUTf _75PB10,_75PB20,_75PB30,_75PB40,_75PB50,_75PB60,_75PB70,_75PB80;
-		static LUTf _6PB10,_6PB20,_6PB30,_6PB40,_6PB50,_6PB60,_6PB70,_6PB80;
-		static LUTf _45PB10,_45PB20,_45PB30,_45PB40,_45PB50,_45PB60,_45PB70,_45PB80;
-		static LUTf _3PB10,_3PB20,_3PB30,_3PB40,_3PB50,_3PB60,_3PB70,_3PB80;
-		static LUTf _15PB10,_15PB20,_15PB30,_15PB40,_15PB50,_15PB60, _15PB70,_15PB80;
-		static LUTf _10YR20, _10YR30, _10YR40,_10YR50,_10YR60,_10YR70,_10YR80,_10YR90;
-		static LUTf _85YR20, _85YR30, _85YR40,_85YR50,_85YR60,_85YR70,_85YR80,_85YR90;
-		static LUTf  _7YR30, _7YR40,_7YR50,_7YR60,_7YR70,_7YR80;
-		static LUTf  _55YR30, _55YR40,_55YR50,_55YR60,_55YR70,_55YR80,_55YR90;
-		static LUTf  _4YR30, _4YR40,_4YR50,_4YR60,_4YR70,_4YR80;
-		static LUTf  _25YR30, _25YR40,_25YR50,_25YR60,_25YR70;
-		static LUTf  _10R30, _10R40,_10R50,_10R60,_10R70;
-		static LUTf  _9R30, _9R40,_9R50,_9R60,_9R70;
-		static LUTf  _7R30, _7R40,_7R50,_7R60,_7R70;
-		static LUTf  _5R10, _5R20,_5R30;
-		static LUTf  _25R10, _25R20,_25R30;	
-		static LUTf  _10RP10, _10RP20,_10RP30;		
-		static LUTf  _7G30, _7G40,_7G50,_7G60,_7G70,_7G80;
-		static LUTf  _5G30, _5G40,_5G50,_5G60,_5G70,_5G80;
-		static LUTf  _25G30, _25G40,_25G50,_25G60,_25G70,_25G80;
-		static LUTf  _1G30, _1G40,_1G50,_1G60,_1G70,_1G80;
-		static LUTf  _10GY30, _10GY40,_10GY50,_10GY60,_10GY70,_10GY80;
-		static LUTf  _75GY30, _75GY40,_75GY50,_75GY60,_75GY70,_75GY80;
-		static LUTf  _5GY30, _5GY40,_5GY50,_5GY60,_5GY70,_5GY80;
 		
 		double lumimul[3];
 
 		static void initCache ();
 		static void cleanupCache ();
-		static void initMunsell ();
 		
 		ImProcFunctions       (const ProcParams* iparams, bool imultiThread=true)
 			: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
@@ -116,12 +82,13 @@ class ImProcFunctions {
 
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve);
+		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve);
+		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
+		                       double expcomp, int hlcompr, int hlcomprthresh);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
-		void chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve);
+		void chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve/*,LUTf & satbgcurve*/, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
-		void skinsat 		  (float lum, float hue, float chrom, float &satreduc);//jacques Skin color
-		void MunsellLch 	  (float lum, float hue, float chrom, float memChprov, float &correction, int zone);//jacques:  Munsell correction
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH,
@@ -166,26 +133,6 @@ class ImProcFunctions {
 		void getAutoExp       (LUTu & histogram, int histcompr, double defgain, double clip, double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh);
 		static double getAutoDistor  (const Glib::ustring& fname, int thumb_size);	
 		double getTransformAutoFill (int oW, int oH, const LCPMapper *pLCPMap=NULL);
-
-		static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
-		static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
-		void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
-		void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]);
-		void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
-		void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
-		void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);
-		void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
-		void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
-
-		//void gamutmap(LabImage* );
-		void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
-
-		static inline float f2xyz(float f) {
-			const float epsilonExpInv3 = 6.0/29.0;
-			const float kappaInv = 27.0/24389.0;  // inverse of kappa
-
-			return (f > epsilonExpInv3) ? f*f*f : (116 * f - 16) * kappaInv;
-		}
 };
 }
 #endif

@@ -21,6 +21,7 @@
 
 #include "popuptogglebutton.h"
 #include "../rtengine/LUT.h"
+#include "coloredbar.h"
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
@@ -63,6 +64,17 @@ class CurveEditor {
 		std::vector<double> tempCurve;
 		sigc::connection typeconn;
 
+		ColorProvider* bottomBarCP;
+		ColorProvider* leftBarCP;
+		ColorProvider* curveCP;
+		std::vector<GradientMilestone> bottomBarBgGradient;
+		std::vector<GradientMilestone> leftBarBgGradient;
+
+		sigc::signal<void> sig_curvegraph_enter;
+		sigc::signal<void> sig_curvegraph_leave;
+		sigc::signal<void> sig_curvepoint_click;
+		sigc::signal<void> sig_curvepoint_release;
+
 	public:
 
 		CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
@@ -73,10 +85,27 @@ class CurveEditor {
 		void setUnChanged (bool uc);
 		void updateBackgroundHistogram (LUTu & hist);
 
+		void setLeftBarColorProvider(ColorProvider* cp);
+		void setBottomBarColorProvider(ColorProvider* cp);
+		void setCurveColorProvider(ColorProvider* cp);
+		void setBottomBarBgGradient (const std::vector<GradientMilestone> &milestones);
+		void setLeftBarBgGradient (const std::vector<GradientMilestone> &milestones);
+		ColorProvider* getLeftBarColorProvider();
+		ColorProvider* getBottomBarColorProvider();
+		ColorProvider* getCurveColorProvider();
+		std::vector<GradientMilestone> getBottomBarBgGradient () const;
+		std::vector<GradientMilestone> getLeftBarBgGradient () const;
+
         bool openIfNonlinear();  // Open up the curve if it has modifications and it's not already opened
 
 		void setCurve (const std::vector<double>& p);
 		virtual std::vector<double> getCurve () = 0;
+		void setTooltip(Glib::ustring ttip);
+
+		sigc::signal<void> signal_curvegraph_enter();
+		sigc::signal<void> signal_curvegraph_leave();
+		sigc::signal<void> signal_curvepoint_click();
+		sigc::signal<void> signal_curvepoint_release();
 };
 
 
@@ -94,10 +123,16 @@ class DiagonalCurveEditor : public CurveEditor {
 		std::vector<double> customCurveEd;
 		std::vector<double> paramCurveEd;
 		std::vector<double> NURBSCurveEd;
+		Glib::ustring rangeLabels[4];
+		double rangeMilestones[3];
 
 	public:
 		DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup);
 		std::vector<double> getCurve ();
+		void setRangeLabels(Glib::ustring r1, Glib::ustring r2, Glib::ustring r3, Glib::ustring r4);
+		void getRangeLabels(Glib::ustring &r1, Glib::ustring &r2, Glib::ustring &r3, Glib::ustring &r4);
+		void setRangeDefaultMilestones(double m1, double m2, double m3);
+		void getRangeDefaultMilestones(double &m1, double &m2, double &m3);
 };
 
 

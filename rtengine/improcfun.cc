@@ -33,6 +33,7 @@
 #include "rtthumbnail.h"
 #include "utils.h"
 #include "iccmatrices.h"
+#include "color.h"
 #include "calc_distort.h"
 #include "rt_math.h"
 
@@ -54,12 +55,6 @@ namespace rtengine {
 #define CLIP2(a) ((a)<MAXVAL ? a : MAXVAL )
 #define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
 	
-#define u0 4.0*D50x/(D50x+15+3*D50z)
-#define v0 9.0/(D50x+15+3*D50z)
-	
-#define eps_max 580.40756 //(MAXVAL* 216.0f/24389.0);
-#define kappa	903.29630 //24389.0/27.0;
-	
 	
 extern const Settings* settings;
 
@@ -74,11 +69,11 @@ void ImProcFunctions::initCache () {
 	gamma2curve(maxindex,0);
 
     for (int i=0; i<maxindex; i++) {
-        if (i>eps_max) {
+        if (i>Color::eps_max) {
 			cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVAL) ));
         }
         else {
-			cachef[i] = 327.68*((kappa*i/MAXVAL+16.0)/116.0);
+			cachef[i] = 327.68*((Color::kappa*i/MAXVAL+16.0)/116.0);
         }
 	}
 
@@ -191,9 +186,15 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 }
 
+void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve) {
+    rgbProc (working, lab, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
+}
+
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-							   SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve) {
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
+                               double expcomp, int hlcompr, int hlcomprthresh) {
 
     int h_th, s_th;
     if (shmap) {
@@ -209,17 +210,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
     double toxyz[3][3] = {
         {
-        	( wprof[0][0] / D50x),
-        	( wprof[0][1] / D50x),
-        	( wprof[0][2] / D50x)
+        	( wprof[0][0] / Color::D50x),
+        	( wprof[0][1] / Color::D50x),
+        	( wprof[0][2] / Color::D50x)
         },{
 			( wprof[1][0]		),
 			( wprof[1][1]		),
 			( wprof[1][2]		)
         },{
-			( wprof[2][0] / D50z),
-			( wprof[2][1] / D50z),
-			( wprof[2][2] / D50z)
+			( wprof[2][0] / Color::D50z),
+			( wprof[2][1] / Color::D50z),
+			( wprof[2][2] / Color::D50z)
         }
     };
 
@@ -252,9 +253,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (sCurveEnabled) sCurve = new FlatCurve(params->hsvequalizer.scurve);
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
 	
-	const float exp_scale = pow (2.0, params->toneCurve.expcomp);
-	const float comp = (max(0.0, params->toneCurve.expcomp) + 1.0)*params->toneCurve.hlcompr/100.0;
-	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(params->toneCurve.hlcomprthresh/200.0))+0.1;
+	const float exp_scale = pow (2.0, expcomp);
+	const float comp = (max(0.0, expcomp) + 1.0)*hlcompr/100.0;
+	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(hlcomprthresh/200.0))+0.1;
 	const float hlrange = 65536.0-shoulder;
 	
 	
@@ -330,7 +331,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 			if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 				float h,s,v;
-				rgb2hsv(r,g,b,h,s,v);
+				Color::rgb2hsv(r,g,b,h,s,v);
 				if (sat > 0.5) {
 					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-min(s,1.0f))));
 					if (s<0) s=0;
@@ -359,9 +360,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 				}
 				if (vCurveEnabled) {
+                    if (v<0) v=0;  // important
+
 					//shift value
 					float valparam = vCurve->getVal((double)h)-0.5;
-					valparam *= (1-SQR(SQR(1-s)));
+					valparam *= (1-SQR(SQR(1-min(s,1.0f))));
 					if (valparam > 0.00001) {
 						v = (1-valparam)*v+valparam*(1-SQR(1-min(v,1.0f)));
 						if (v<0) v=0;
@@ -371,16 +374,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					}
 					
 				}
-				hsv2rgb(h,s,v,r,g,b);
+				Color::hsv2rgb(h,s,v,r,g,b);
 			}
 			 
-			//r=FCLIP(r);
-			//g=FCLIP(g);
-			//b=FCLIP(b);
-			
-            float x = (toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b) ;
-            float y = (toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b) ;
-            float z = (toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b) ;
+            float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+            float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+            float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
 			
 			float fx,fy,fz;
 			
@@ -411,9 +410,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			float fx = (0.002 * lab->a[i][j])/327.68 + fy;
 			float fz = fy - (0.005 * lab->b[i][j])/327.68;
 			
-			float x_ = 65535*Lab2xyz(fx)*D50x;
+			float x_ = 65535*Lab2xyz(fx)*Color::D50x;
 			float y_ = 65535*Lab2xyz(fy);
-			float z_ = 65535*Lab2xyz(fz)*D50z;
+			float z_ = 65535*Lab2xyz(fz)*Color::D50z;
 			
 			int R,G,B;
 			xyz2srgb(x_,y_,z_,R,G,B);
@@ -433,6 +432,8 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
     int W = lold->W;
     int H = lold->H;
+
+#pragma omp parallel for if (multiThread)
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
 			float Lin=lold->L[i][j];
@@ -440,56 +441,307 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 				lnew->L[i][j] = curve[Lin];
 		}
 }
-		
-	
-void ImProcFunctions::chrominanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve) {
+
+void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve/*,LUTf & satbgcurve*/, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili) {
 	
 	int W = lold->W;
 	int H = lold->H;
+	//init Flatcurve for C=f(H)
+	FlatCurve* chCurve = NULL;
+	bool chutili = false;
+	if (!params->labCurve.bwtoning) {
+		chCurve = new FlatCurve(params->labCurve.chcurve);
+		if (chCurve && !chCurve->isIdentity()) {
+			chutili=true;
+		}//do not use "Munsell" if Chcurve not used
+	}
 
+#ifdef _DEBUG
+	MyTime t1e,t2e, t3e, t4e;
+	t1e.set();
+	// init variables to display Munsell corrections
+	MunsellDebugInfo* MunsDebugInfo = new MunsellDebugInfo();
+#endif
+
+	unsigned int N = W*H;
+	float *L = lold->L[0];
+	float *a=  lold->a[0];
+	float *b=  lold->b[0];
+
+	float* Lold = new float [lold->W*lold->H];//to save L before any used
+	float* Cold = new float [lold->W*lold->H];//to save C before any used
+	float adjustr=1.0f, adjustbg=1.0f;
+
+//	if(params->labCurve.avoidclip ){
+	for (unsigned int j=0; j!=N; j++){
+		Lold[j]=L[j]/327.68f;
+		Cold[j]=sqrt(SQR(a[j]/327.68f)+SQR(b[j]/327.68f));
+//		Hr=atan2(b[j],a[j]);
+//		if(Hr >-0.15f && Hr < 1.5f && Cold[j]>maxCr)
+//			maxCr=Cold[j];	// I do not take into account  "acurve" and "bcurve" to adjust max
+//		 else if (Cold[j]>maxCbg)
+//			maxCbg=Cold[j];
+	}
+	// parameter to adapt curve C=f(C) to gamut
 	
+	if      (params->icm.working=="ProPhoto")   {adjustr =       adjustbg = 1.2f;}// 1.2 instead 1.0 because it's very rare to have C>170..
+	else if (params->icm.working=="Adobe RGB")  {adjustr = 1.8f; adjustbg = 1.4f;}
+	else if (params->icm.working=="sRGB")  	    {adjustr = 2.0f; adjustbg = 1.7f;}
+	else if (params->icm.working=="WideGamut")  {adjustr =       adjustbg = 1.2f;}
+	else if (params->icm.working=="Beta RGB")   {adjustr =       adjustbg = 1.4f;}
+	else if (params->icm.working=="BestRGB")    {adjustr =       adjustbg = 1.4f;}
+	else if (params->icm.working=="BruceRGB")   {adjustr = 1.8f; adjustbg = 1.5f;}
+
+
+	// reference to the params structure has to be done outside of the parallelization to avoid CPU cache problem
+	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
+	int chromaticity = params->labCurve.chromaticity;
+	bool bwToning = params->labCurve.bwtoning;
+	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
+	// avoid color shift is disabled when bwToning is activated
+	bool avoidColorShift = params->labCurve.avoidcolorshift && !bwToning;
+	int protectRed = settings->protectred;
+	double protectRedH = settings->protectredh;
+	bool gamutLch = settings->gamutLch;
+
+	// only if user activate Lab adjustements
+	if (avoidColorShift) {
+		if(autili || butili || ccutili || chutili || utili || chromaticity)
+			Color::LabGamutMunsell(lold, Lold, Cold, /*corMunsell*/true, /*lumaMuns*/false, params->hlrecovery.enabled, /*gamut*/true, params->icm.working, multiThread);
+	}
+
+
+#ifdef _DEBUG
+#pragma omp parallel default(shared) firstprivate(highlight, chromaticity, bwToning, rstprotection, avoidColorShift, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo) if (multiThread)
+#else
+#pragma omp parallel default(shared) firstprivate(highlight, chromaticity, bwToning, rstprotection, avoidColorShift, protectRed, protectRedH, gamutLch, lold, lnew) if (multiThread)
+#endif
+{
+
+	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+	double wip[3][3] = {
+		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+	};
+
+
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
+
 	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
-	
+	//if(utili) curve.dump("Lcurve");
+
 	double wp[3][3] = {
 		{wprof[0][0],wprof[0][1],wprof[0][2]},
 		{wprof[1][0],wprof[1][1],wprof[1][2]},
 		{wprof[2][0],wprof[2][1],wprof[2][2]}};
-	
-#pragma omp parallel for if (multiThread)
-    for (int i=0; i<H; i++)
-        for (int j=0; j<W; j++) {
-			
-			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;
-			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;
-			
-			if (params->labCurve.saturation) {
+
+	//float maxlp=-100.0, minlp=200.0;
+
+#pragma omp for schedule(dynamic, 10)
+	for (int i=0; i<H; i++)
+		for (int j=0; j<W; j++) {
+			float LL=lold->L[i][j]/327.68f;
+			float CC=sqrt(SQR(lold->a[i][j]/327.68f) + SQR(lold->b[i][j]/327.68f));
+			float HH=atan2(lold->b[i][j],lold->a[i][j]);
+			float Chprov=CC;
+			float Chprov1=CC;
+			float memChprov=Chprov;
+			float Lprov2=LL;
+			float Lin=lold->L[i][j];
+			lnew->L[i][j] = curve[Lin];
+			float Lprov1=(lnew->L[i][j])/327.68f;
+			float chromaChfactor=1.0f;
+			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
+			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
+			//float chromaCredfactor=1.0f;
+			//float chromaCbgfactor=1.0f;
+//			chromaCfactor=(satcurve[chroma*adjustr])/(chroma*adjustr);//apply C=f(C)
+//			chromaCbgfactor=(satbgcurve[chroma*adjustbg])/(chroma*adjustbg);
+//			calculate C=f(H)
+			if (chutili) {
+				double hr;
+				//hr=translate Hue Lab value  (-Pi +Pi) in approximative hr (hsv values) (0 1) [red 1/6 yellow 1/6 green 1/6 cyan 1/6 blue 1/6 magenta 1/6 ]
+				// with multi linear correspondances (I expect there is no error !!)
+				if      (HH<-2.7f) hr=0.020380804*double(HH)+0.970281708; //Lab green                   =>hr # 0.33 ==> 0.33  0.42
+				else if (HH<-2.1f) hr=0.266666667*double(HH)+1.14;        //Lab cyan                    =>hr # 0.50 ==> 0.42  0.58
+				else if (HH<-0.9f) hr=0.141666   *double(HH)+0.8775;      //Lab blue                    =>hr # 0.67 ==> 0.58  0.75
+				else if (HH<-0.1f) hr=0.2125     *double(HH)+0.94125;     //Lab magenta (purple)        =>hr # 0.83 ==> 0.75  0.92
+				else if (HH< 1.3f) hr=0.12142857 *double(HH)+0.932142857; //Lab red and skin            =>hr # 0    ==> 0.92  1.09
+				else if (HH< 2.2f) hr=0.1666667  *double(HH)-0.1266667;   //Lab yellow and green yellow =>hr # 0.16 ==> 0.09  0.24
+				else               hr=0.0955828  *double(HH)+0.02971784;  //Lab green                   =>hr # 0.33 ==> 0.24  0.33
+
+				//allways put h between 0 and 1
+				if     (hr<0.0) hr += 1.0;
+				else if(hr>1.0) hr -= 1.0;
+				float chparam = float((chCurve->getVal(hr)-0.5f) * 2.0f);//get C=f(H)
+				chromaChfactor=1.0f+chparam;
+			}
+			atmp *= chromaChfactor;//apply C=f(H)
+			btmp *= chromaChfactor;
+//			if (params->labCurve.chromaticity) {// if user use sliders
+			if(chromaticity!=0 && !bwToning){
+				// approximation in Lab mode to protect skin tones and avoid too big gamut clip for red
+				float scale = 100.0f/100.1f;//reduction in normal zone
+				float scaleext=1.0f;//reduction in transition zone
+				float protect_red,protect_redh;
+				float deltaHH;//HH value transition
+				float dred=55.0f;//C red value limit
+				protect_red=float(protectRed);//default=60  chroma: one can put more or less if necessary...in 'option'  40...160
+				if(protect_red < 20.0f) protect_red=20.0; // avoid too low value
+				if(protect_red > 180.0f) protect_red=180.0; // avoid too high value
+				protect_redh=float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0
+				if(protect_redh<0.1f) protect_redh=0.1f;//avoid divide by 0 and negatives values
+				if(protect_redh>1.0f) protect_redh=1.0f;//avoid too big values
+
+				deltaHH=protect_redh;//transition hue
+
+				//simulate very approximative gamut f(L) : with pyramid transition
+				if     (Lprov1<25.0f)   dred = 40.0f;
+				else if(Lprov1<30.0f)   dred = 3.0f*Lprov1 -35.0f;
+				else if(Lprov1<70.0f)   dred = 55.0f;
+				else if(Lprov1<75.0f)   dred = -3.0f*Lprov1 +265.0f;
+				else                    dred = 40.0f;
+
+				if(rstprotection<99.9999) {
+					if(chromaticity>0)
+						scale = rstprotection/100.1f;
+					if((HH< (1.3f+deltaHH) && HH >=1.3f))
+						scaleext=HH*(1.0f-scale)/deltaHH + 1.0f - (1.3f+deltaHH)*(1.0f-scale)/deltaHH;    //transition for Hue (red - yellow)
+					else if((HH< 0.15f && HH >(0.15f-deltaHH)))
+						scaleext=HH*(scale-1.0f)/deltaHH + 1.0f - (0.15f-deltaHH)*(scale-1.0f)/deltaHH;   //transition for hue (red purple)
+				}
+
+				//transition for red , near skin tones
+				float factorskin, factorsat, factor, factorskinext;
+				factorskin=1.0f+(chromaticity*scale)/100.0f;
+				factorskinext=1.0f+(chromaticity*scaleext)/100.0f;
+				factorsat=1.0f+(chromaticity)/100.0f;/*if(factorsat==1.0f) factorsat=1.1f;*/
+
+				factor = factorsat;
+				// Test if chroma is in the normal range first
+				if(HH>=0.15f && HH<1.3f) {
+					if (Chprov1<dred)
+						factor = factorskin;
+					else if(Chprov1<(dred+protect_red))
+						factor = (factorsat-factorskin)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskin)/protect_red;
+				}
+				// then test if chroma is in the extanded range
+				else if ( HH>(0.15f-deltaHH) || HH<(1.3f+deltaHH) ) {
+					if (Chprov1 < dred)
+						factor = factorskinext;// C=dred=55 => real max of skin tones
+					else if (Chprov1 < (dred+protect_red))// transition
+						factor = (factorsat-factorskinext)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskinext)/protect_red;
+				}
+
+				atmp *= factor;
+				btmp *= factor;
+				// end approximation
+ 			}
+
+			// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
+			if (!bwToning) {
+				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
+				float chromaCfactor = (satcurve[chroma*adjustr])/(chroma*adjustr);//apply C=f(C)
+				atmp *= chromaCfactor;
+				btmp *= chromaCfactor;
+			}
+			// end chroma C=f(C)
+
+			Chprov1 = sqrt(SQR(atmp/327.68f)+SQR(btmp/327.68f));
+
+/*
+			// modulation of a and b curves with saturation
+			if (params->labCurve.chromaticity!=0 && !params->labCurve.bwtoning) {
 				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001);
 				float satfactor = (satcurve[chroma+32768.0f]-32768.0f)/chroma;
 				atmp *= satfactor;
 				btmp *= satfactor;
 			}
-			
-            if (params->labCurve.avoidclip) {
-				//Luv limiter
-				float Y,u,v;
-				Lab2Yuv(lnew->L[i][j],atmp,btmp,Y,u,v);
-				//Yuv2Lab includes gamut restriction map
-				Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
-				
-            } else {
+*/
+
+			// labCurve.bwtoning option allows to decouple modulation of a & b curves by saturation
+			// with bwtoning enabled the net effect of a & b curves is visible
+			if (bwToning) {
+				atmp -= lold->a[i][j];
+				btmp -= lold->b[i][j];
+			}
+
+			if (avoidColorShift) {
+				//gamutmap Lch ==> preserve Hue,but a little slower than gamutbdy for high values...and little faster for low values
+				if(gamutLch) {
+					float R,G,B;
+
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.4f, 0.95f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.4f, 0.95f);
+#endif
+					Lprov2 = Lprov1;
+
+					lnew->L[i][j]=Lprov1*327.68f;
+					lnew->a[i][j]=327.68f*Chprov1*cos(HH);
+					lnew->b[i][j]=327.68f*Chprov1*sin(HH);
+				}
+				else {
+					//use gamutbdy
+					//Luv limiter
+					float Y,u,v;
+					Color::Lab2Yuv(lnew->L[i][j],atmp,btmp,Y,u,v);
+					//Yuv2Lab includes gamut restriction map
+					Color::Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
+				}
+
+				if (utili || autili || butili || ccutili || chutili || chromaticity) {
+					float correctionHue=0.0f; // Munsell's correction
+					float correctlum=0.0f;
+
+					Lprov1=lnew->L[i][j]/327.68f;
+					Chprov=sqrt(SQR(lnew->a[i][j]/327.68f)+ SQR(lnew->b[i][j]/327.68f));
+
+#ifdef _DEBUG
+					Color::AllMunsellLch(/*lumaMuns*/true, Lprov1,Lprov2,HH,Chprov,memChprov,correctionHue,correctlum, MunsDebugInfo);
+#else
+					Color::AllMunsellLch(/*lumaMuns*/true, Lprov1,Lprov2,HH,Chprov,memChprov,correctionHue,correctlum);
+#endif
+
+					if(fabs(correctionHue) < 0.015f) HH+=correctlum;	// correct only if correct Munsell chroma very little.
+
+					lnew->a[i][j]=327.68f*Chprov*cos(HH+correctionHue);// apply Munsell
+					lnew->b[i][j]=327.68f*Chprov*sin(HH+correctionHue);
+				}
+			}
+			else {
+//				if(Lprov1 > maxlp) maxlp=Lprov1;
+//				if(Lprov1 < minlp) minlp=Lprov1;
+				lnew->L[i][j]=Lprov1*327.68f;
+
 				//Luv limiter only
 				lnew->a[i][j] = atmp;
 				lnew->b[i][j] = btmp;
 			}
+		}
+} // end of parallelization
 
-        }
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+#ifdef _DEBUG
+	if (settings->verbose) {
+		t3e.set();
+		printf("Color::AllMunsellLch (correction performed in %d usec):\n", t3e.etime(t1e));
+		printf("   Munsell chrominance: MaxBP=%1.2frad MaxRY=%1.2frad MaxGY=%1.2frad MaxRP=%1.2frad  dep=%i\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
+		printf("   Munsell luminance  : MaxBP=%1.2frad MaxRY=%1.2frad MaxGY=%1.2frad MaxRP=%1.2frad  dep=%i\n", MunsDebugInfo->maxdhuelum[0], MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
 	}
-	
+	delete MunsDebugInfo;
+#endif
+	delete [] Lold;
+	delete [] Cold;
+
+	if (chutili) delete chCurve;
+}
+
 
 //#include "cubic.cc"
 
@@ -921,204 +1173,7 @@ fclose(f);*/
 		else
 			return 0.0;
 	}
-	 
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	void ImProcFunctions::rgb2hsv (float r, float g, float b, float &h, float &s, float &v) {
-		
-		double var_R = r / 65535.0;
-		double var_G = g / 65535.0;
-		double var_B = b / 65535.0;
-		
-		double var_Min = min(var_R,var_G,var_B);
-		double var_Max = max(var_R,var_G,var_B);
-		double del_Max = var_Max - var_Min;
-		v = var_Max;
-		if (del_Max<0.00001 && del_Max>-0.00001) {  // no fabs, slow!
-			h = 0;
-			s = 0;
-		}
-		else {
-			s = del_Max/var_Max;
-			
-			if      ( var_R == var_Max ) h = (var_G - var_B)/del_Max; 
-			else if ( var_G == var_Max ) h = 2.0 + (var_B - var_R)/del_Max; 
-			else if ( var_B == var_Max ) h = 4.0 + (var_R - var_G)/del_Max; 
-			h /= 6.0;
-			
-			if ( h < 0 )  h += 1;
-			if ( h > 1 )  h -= 1;
-		}
-	}
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	void ImProcFunctions::hsv2rgb (float h, float s, float v, float &r, float &g, float &b) {
-		
-		float h1 = h*6; // sector 0 to 5
-		int i = (int)h1;  // floor() is very slow, and h1 is always >0
-		float f = h1 - i; // fractional part of h
-		
-		float p = v * ( 1 - s );
-		float q = v * ( 1 - s * f );
-		float t = v * ( 1 - s * ( 1 - f ) );
-		
-		float r1,g1,b1;
 
-		if      (i==1)    {r1 = q;  g1 = v;  b1 = p;}
-		else if (i==2)    {r1 = p;  g1 = v;  b1 = t;}
-		else if (i==3)    {r1 = p;  g1 = q;  b1 = v;}
-		else if (i==4)    {r1 = t;  g1 = p;  b1 = v;}
-		else if (i==5)    {r1 = v;  g1 = p;  b1 = q;}
-		else /*i==(0|6)*/ {r1 = v;  g1 = t;  b1 = p;}
-		
-		r = ((r1)*65535.0);
-		g = ((g1)*65535.0);
-		b = ((b1)*65535.0);
-	}
-	
-	void ImProcFunctions::xyz2srgb (float x, float y, float z, float &r, float &g, float &b) {
-		
-		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
-		//Note that it is only at this point that we should have need of clipping color data
-		
-		/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
-		 float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
-		 float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
-		 
-		 r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
-		 g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
-		 b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
-		
-		/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
-		 g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
-		 b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
-		
-		r = ((sRGB_xyz[0][0]*x + sRGB_xyz[0][1]*y + sRGB_xyz[0][2]*z)) ;
-		g = ((sRGB_xyz[1][0]*x + sRGB_xyz[1][1]*y + sRGB_xyz[1][2]*z)) ;
-		b = ((sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z)) ;
-		
-	}
-	
-	
-	void ImProcFunctions::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]) {
-		
-		//Transform to output color.  Standard sRGB is D65, but internal representation is D50
-		//Note that it is only at this point that we should have need of clipping color data
-		
-		/*float x65 = d65_d50[0][0]*x + d65_d50[0][1]*y + d65_d50[0][2]*z ;
-		 float y65 = d65_d50[1][0]*x + d65_d50[1][1]*y + d65_d50[1][2]*z ;
-		 float z65 = d65_d50[2][0]*x + d65_d50[2][1]*y + d65_d50[2][2]*z ;
-		 
-		 r = sRGB_xyz[0][0]*x65 + sRGB_xyz[0][1]*y65 + sRGB_xyz[0][2]*z65;
-		 g = sRGB_xyz[1][0]*x65 + sRGB_xyz[1][1]*y65 + sRGB_xyz[1][2]*z65;
-		 b = sRGB_xyz[2][0]*x65 + sRGB_xyz[2][1]*y65 + sRGB_xyz[2][2]*z65;*/
-		
-		/*r = sRGBd65_xyz[0][0]*x + sRGBd65_xyz[0][1]*y + sRGBd65_xyz[0][2]*z ;
-		 g = sRGBd65_xyz[1][0]*x + sRGBd65_xyz[1][1]*y + sRGBd65_xyz[1][2]*z ;
-		 b = sRGBd65_xyz[2][0]*x + sRGBd65_xyz[2][1]*y + sRGBd65_xyz[2][2]*z ;*/
-		
-		
-		
-		r = ((rgb_xyz[0][0]*x + rgb_xyz[0][1]*y + rgb_xyz[0][2]*z)) ;
-		g = ((rgb_xyz[1][0]*x + rgb_xyz[1][1]*y + rgb_xyz[1][2]*z)) ;
-		b = ((rgb_xyz[2][0]*x + rgb_xyz[2][1]*y + rgb_xyz[2][2]*z)) ;
-		
-	}
- 	
-void ImProcFunctions::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {
-{//from Dcraw (D.Coffin)
-  int i;
-  double g[6], bnd[2]={0,0};
-
-  g[0] = pwr;
-  g[1] = ts;
-  g[2] = g[3] = g[4] = 0;
-  bnd[g[1] >= 1] = 1;
-  if (g[1] && (g[1]-1)*(g[0]-1) <= 0) {
-    for (i=0; i < 48; i++) {
-      g[2] = (bnd[0] + bnd[1])/2;
-      if (g[0]) bnd[(pow(g[2]/g[1],-g[0]) - 1)/g[0] - 1/g[2] > -1] = g[2];
-      else	bnd[g[2]/exp(1-1/g[2]) < g[1]] = g[2];
-    }
-    g[3] = g[2] / g[1];
-    if (g[0]) g[4] = g[2] * (1/g[0] - 1);
-  }
-  if (g[0]) g[5] = 1 / (g[1]*SQR(g[3])/2 - g[4]*(1 - g[3]) +
-		(1 - pow(g[3],1+g[0]))*(1 + g[4])/(1 + g[0])) - 1;
-  else      g[5] = 1 / (g[1]*SQR(g[3])/2 + 1
-		- g[2] - g[3] -	g[2]*g[3]*(log(g[3]) - 1)) - 1;
-  if (!mode--) {
-   gamma0=g[0];gamma1=g[1];gamma2=g[2];gamma3=g[3];gamma4=g[4];gamma5=g[5];
-    return;
-  }
 }
-}
-	
-	void ImProcFunctions::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z) {
-		float fy = (0.00862069 * L) + 0.137932; // (L+16)/116
-		float fx = (0.002 * a) + fy;
-		float fz = fy - (0.005 * b);
-		
-		x = 65535*f2xyz(fx)*D50x;
-		y = 65535*f2xyz(fy);
-		z = 65535*f2xyz(fz)*D50z;
-	}
-	
-	void ImProcFunctions::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b) {
-		
-		float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVAL)/3.0 )));
-		float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));
-		float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVAL)/3.0 )));
-		
-		L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
-		a = (500.0 * (fx - fy) );
-		b = (200.0 * (fy - fz) );
-		
-	}
-	
-	void ImProcFunctions::Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v) {
-		float fy = (0.00862069 * L/327.68) + 0.137932; // (L+16)/116
-		float fx = (0.002 * a/327.68) + fy;
-		float fz = fy - (0.005 * b/327.68);
-		
-		float X = 65535.0*f2xyz(fx)*D50x;
-		Y = 65535.0*f2xyz(fy);
-		float Z = 65535.0*f2xyz(fz)*D50z;
-		
-		u = 4.0*X/(X+15*Y+3*Z)-u0;
-		v = 9.0*Y/(X+15*Y+3*Z)-v0;
-		
-		/*float u0 = 4*D50x/(D50x+15+3*D50z);
-		 float v0 = 9/(D50x+15+3*D50z);
-		 u -= u0;
-		 v -= v0;*/
-		
-	}
-	
-	void ImProcFunctions::Yuv2Lab(float Yin, float u, float v, float &L, float &a, float &b, double wp[3][3]) {
-		
-		float u1 = u + u0;
-		float v1 = v + v0;
-		
-		float Y = Yin;
-		float X = (9*u1*Y)/(4*v1*D50x); 
-		float Z = (12 - 3*u1 - 20*v1)*Y/(4*v1*D50z);
-		
-		gamutmap(X,Y,Z,wp);
-		
-		float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVAL)/3.0 )));
-		float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));
-		float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVAL)/3.0 )));
-		
-		L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
-		a = (500.0 * (fx - fy) );
-		b = (200.0 * (fy - fz) );
-		
-	}
-	
-#include "gamutbdy.cc"
-}
-
-#undef eps_max
-#undef kappa

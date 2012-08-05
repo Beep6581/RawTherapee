@@ -236,7 +236,7 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
     isFisheye=inCamProfiles=firstLIDone=inPerspect=inAlternateLensID=false;
     sensorFormatFactor=1;
     for (int i=0;i<MaxPersModelCount;i++) aPersModel[i]=NULL;
-    persModelCount=0;
+    persModelCount=0; *inInvalidTag=0;
 
     FILE *pFile = safe_g_fopen(fname, "rb");
 
@@ -458,11 +458,15 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
     LCPProfile *pProf=static_cast<LCPProfile*>(pLCPProfile);
     bool parseAttr=false;
 
+    if (*pProf->inInvalidTag) return;  // We ignore everything in dirty tag till it's gone
+
     // clean up tagname
     const char* src=strrchr(el,':');
     if (src==NULL) src=const_cast<char*>(el); else src++;
 
     strcpy(pProf->lastTag,src);
+
+    if (!strcmp("VignetteModelPiecewiseParam",src)) strcpy(pProf->inInvalidTag,src);
 
     if (!strcmp("CameraProfiles",src)) pProf->inCamProfiles=true;
     if (!strcmp("AlternateLensIDs",src)) pProf->inAlternateLensID=true;
@@ -516,7 +520,7 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
 void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, int len) {
     LCPProfile *pProf=static_cast<LCPProfile*>(pLCPProfile);
 
-    if (!pProf->inCamProfiles || pProf->inAlternateLensID) return;
+    if (!pProf->inCamProfiles || pProf->inAlternateLensID || *pProf->inInvalidTag) return;
 
     // Check if it contains non-whitespaces (there are several calls to this for one tag unfortunately)
     bool onlyWhiteSpace=true;
@@ -598,6 +602,12 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
 
 void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el) {
     LCPProfile *pProf=static_cast<LCPProfile*>(pLCPProfile);
+
+    // We ignore everything in dirty tag till it's gone
+    if (*pProf->inInvalidTag) {
+        if (strstr(el,pProf->inInvalidTag)) *pProf->inInvalidTag=0;
+        return;
+    }
 
     if (strstr(el,":CameraProfiles")) pProf->inCamProfiles=false;
     if (strstr(el,":AlternateLensIDs")) pProf->inAlternateLensID=false;

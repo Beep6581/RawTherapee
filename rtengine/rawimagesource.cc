@@ -426,8 +426,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
-    rtengine::ImageMetaData* idata = const_cast<const rtengine::ImageMetaData*>(getMetaData());
-    colorSpaceConversion (image, cmp, embProfile, camProfile, xyz_cam, idata->getCamera(), defGain);
+    colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageMetaData*>(getMetaData()))->getCamera());
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1196,13 +1195,15 @@ void RawImageSource::HLRecovery_Global(HRecParams hrp )
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
 {
+    unsigned short black=ri->get_calcblack();
+
 	if (ri->isBayer()) {
 		if (!rawData)
 			rawData = allocArray<float>(W,H);
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
-					rawData[row][col]	= max(src->data[row][col]+ri->get_black() - riDark->data[row][col], 0);
+					rawData[row][col]	= max(src->data[row][col]+black - riDark->data[row][col], 0);
 				}
 			}
 		}else{
@@ -1238,15 +1239,15 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			//find center ave values by channel
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
-					refcolor[m][n] = max(0.0f,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - ri->get_black());
+					refcolor[m][n] = max(0.0f,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - black);
 				}
 			
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
 					for (int row = 0; row+m < H; row+=2) 
 						for (int col = 0; col+n < W; col+=2) {
-							vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black()) );
-							rawData[row+m][col+n] = (rawData[row+m][col+n]-ri->get_black()) * vignettecorr + ri->get_black(); 	
+							vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black) );
+							rawData[row+m][col+n] = (rawData[row+m][col+n]-black) * vignettecorr + black; 	
 						}
 				}
 			
@@ -1265,9 +1266,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 					for (int n=0; n<2; n++) {
 						for (int row = 0; row+m < H; row+=2) 
 							for (int col = 0; col+n < W; col+=2) {
-								hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black())/max(1e-5f,cfablur1[(row+m)*W+col+n]-ri->get_black()) );
-								vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-ri->get_black())/max(1e-5f,cfablur2[(row+m)*W+col+n]-ri->get_black()) );
-								rawData[row+m][col+n] = ((rawData[row+m][col+n]-ri->get_black()) * hlinecorr * vlinecorr + ri->get_black()); 
+								hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black)/max(1e-5f,cfablur1[(row+m)*W+col+n]-black) );
+								vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black)/max(1e-5f,cfablur2[(row+m)*W+col+n]-black) );
+								rawData[row+m][col+n] = ((rawData[row+m][col+n]-black) * hlinecorr * vlinecorr + black); 
 							}
 					}
 				free (cfablur1);
@@ -1288,9 +1289,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
-					rawData[row][3*col+0] = max(src->data[row][3*col+0]+ri->get_black() - riDark->data[row][3*col+0], 0);
-					rawData[row][3*col+1] = max(src->data[row][3*col+1]+ri->get_black() - riDark->data[row][3*col+1], 0);
-					rawData[row][3*col+2] = max(src->data[row][3*col+2]+ri->get_black() - riDark->data[row][3*col+2], 0);
+					rawData[row][3*col+0] = max(src->data[row][3*col+0]+black - riDark->data[row][3*col+0], 0);
+					rawData[row][3*col+1] = max(src->data[row][3*col+1]+black - riDark->data[row][3*col+1], 0);
+					rawData[row][3*col+2] = max(src->data[row][3*col+2]+black - riDark->data[row][3*col+2], 0);
 				}
 			}
 		} else {
@@ -1687,7 +1688,7 @@ void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, fl
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
+void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
 
     //MyTime t1, t2, t3;
     //t1.set ();
@@ -1697,7 +1698,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
 
     if (dcpProf!=NULL) {
-        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working);
+        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, (float)raw.expos);
     } else {
     // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
@@ -1797,20 +1798,21 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 				
           im->ExecCMSTransform(hTransform);
 				}
-		float x, y,z;
 		Glib::ustring choiceprofile;
 		choiceprofile=cmp.working;
 		if(choiceprofile!="ProPhoto") {
-		for ( int h = 0; h < im->height; ++h )
-			for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
-		     x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
-             y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
-             z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
-			 //convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
-			im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
-			im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
-			im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;			
-			}	
+			#pragma omp parallel for
+		    for ( int h = 0; h < im->height; ++h )
+				for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
+					float x, y,z;
+					x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
+					y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
+					z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
+					//convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
+					im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
+					im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
+					im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;
+				}
 			}
 			
 		        cmsDeleteTransform(hTransform);
@@ -1913,7 +1915,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 // Converts raw image including ICC input profile to working space - 16bit int version
-void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName, double& defgain) {
+void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
 	cmsHPROFILE in;
     DCPProfile *dcpProf;
 	
@@ -2210,8 +2212,8 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
             double fz = fy - y + z;
             double fx = fy + x - y;
 
-			double zr = ImProcFunctions::f2xyz(fz);
-            double xr = ImProcFunctions::f2xyz(fx);
+			double zr = Color::f2xyz(fz);
+            double xr = Color::f2xyz(fx);
 
             x = xr*65535.0 ;
             y = yy;
@@ -2294,29 +2296,29 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
                 if (ri->ISGREEN(i,j)) {
-                    if(i &1) idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[1]/*+black_lev[1]*/))));// green 1
+                    if(i &1) idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[1]/*+black_lev[1]*/))));// green 1
 					else 
-					idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[3]/*+black_lev[3]*/))));//green 2
+					idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[3]/*+black_lev[3]*/))));//green 2
                     histGreenRaw[idx>>8]++;
                 } else if (ri->ISRED(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[0]/*+black_lev[0]*/))));
+                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[0]/*+black_lev[0]*/))));
 					
                     histRedRaw[idx>>8]++;
                 } else if (ri->ISBLUE(i,j)) {
-                    idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-(cblacksom[2]/*+black_lev[2]*/))));
+                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[2]/*+black_lev[2]*/))));
 					
                     histBlueRaw[idx>>8]++;
     }
             }
         } else {
 			for (int j=start; j<3*end; j++) {
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j]-cblack[0])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-cblack[0])));
                 histRedRaw[idx>>8]++;
 
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j+1]-cblack[1])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j+1]-cblack[1])));
                 histGreenRaw[idx>>8]++;
 
-				idx = CLIP((int)CurveFactory::gamma(mult*(ri->data[i][j+2]-cblack[2])));
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j+2]-cblack[2])));
                 histBlueRaw[idx>>8]++;
 			}
 		}

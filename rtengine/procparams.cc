@@ -139,18 +139,24 @@ void ProcParams::setDefaults () {
     toneCurve.curve.clear ();
     toneCurve.curve.push_back(DCT_Linear);
     
-    labCurve.brightness    = 0;
-    labCurve.contrast      = 0;
-    labCurve.saturation    = 0;
-    labCurve.avoidclip          = false;
-    labCurve.enable_saturationlimiter = false;
-    labCurve.saturationlimit    = 50;
+    labCurve.brightness      = 0;
+    labCurve.contrast        = 0;
+    labCurve.chromaticity    = 0;
+    labCurve.avoidcolorshift = true;
+    labCurve.rstprotection   = 0;
+    labCurve.bwtoning        = false;
     labCurve.lcurve.clear ();
     labCurve.lcurve.push_back(DCT_Linear);
     labCurve.acurve.clear ();
     labCurve.acurve.push_back(DCT_Linear);
     labCurve.bcurve.clear ();
     labCurve.bcurve.push_back(DCT_Linear);
+    labCurve.cccurve.clear ();
+    labCurve.cccurve.push_back(DCT_Linear);
+    labCurve.chcurve.clear ();
+    labCurve.chcurve.push_back(FCT_Linear);
+    //labCurve.cbgcurve.clear ();
+    //labCurve.cbgcurve.push_back(DCT_Linear);
 
     rgbCurves.rcurve.clear ();
     rgbCurves.rcurve.push_back(DCT_Linear);
@@ -162,18 +168,18 @@ void ProcParams::setDefaults () {
 
     sharpenEdge.enabled         = false;
     sharpenEdge.passes          = 2;
-    sharpenEdge.amount        = 50.0;
+    sharpenEdge.amount          = 50.0;
     sharpenEdge.threechannels   = false;
 
     sharpenMicro.enabled        = false;
-    sharpenMicro.amount       = 20.0;
+    sharpenMicro.amount         = 20.0;
     sharpenMicro.uniformity     = 50.0;
     sharpenMicro.matrix         = false;
 
     sharpening.enabled          = false;
     sharpening.radius           = 1.0;
     sharpening.amount           = 90;
-    sharpening.threshold        = 768;
+    sharpening.threshold.setValues(20, 80, 2000, 1200);
     sharpening.edgesonly        = false;
     sharpening.edges_radius     = 3;
     sharpening.edges_tolerance  = 1000;
@@ -188,10 +194,12 @@ void ProcParams::setDefaults () {
     vibrance.enabled            = false;
     vibrance.pastels            = 0;
     vibrance.saturated          = 0;
-    vibrance.psthreshold        = 75;
+    vibrance.psthreshold.setValues(0, 75);
     vibrance.protectskins       = false;
     vibrance.avoidcolorshift    = true;
     vibrance.pastsattog     	= true;
+    vibrance.skintonescurve.clear ();
+    vibrance.skintonescurve.push_back(DCT_Linear);
 
     //colorBoost.amount                   = 0;
     //colorBoost.avoidclip                = false;
@@ -351,23 +359,23 @@ void ProcParams::setDefaults () {
 
 
 
-int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey, ParamsEdited* pedited ) const
+void ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey, ParamsEdited* pedited ) const
 {
 	std::string prefix;
 	xmpData[baseKey+"rt:"+kXmpVersion] =                int(PPVERSION);
 
 	prefix=baseKey+"rt:ExposureRGB/";
-    if (!pedited || pedited->toneCurve.autoexp)    xmpData[prefix+"rt:Auto"] =                    toneCurve.autoexp;
-    if (!pedited || pedited->toneCurve.clip)       xmpData[prefix+"rt:Clip"] =                    toneCurve.clip;
-    if (!pedited || pedited->toneCurve.expcomp)    xmpData[prefix+"rt:Compensation"] =            toneCurve.expcomp;
-    if (!pedited || pedited->toneCurve.brightness) xmpData[prefix+"rt:Brightness"] =              toneCurve.brightness;
-    if (!pedited || pedited->toneCurve.contrast)   xmpData[prefix+"rt:Contrast"] =                toneCurve.contrast;
-    if (!pedited || pedited->toneCurve.saturation) xmpData[prefix+"rt:Saturation"] =              toneCurve.saturation;
-    if (!pedited || pedited->toneCurve.black)      xmpData[prefix+"rt:Black"] =                   toneCurve.black;
-    if (!pedited || pedited->toneCurve.hlcompr)    xmpData[prefix+"rt:HighlightCompression"] =    toneCurve.hlcompr;
-    if (!pedited || pedited->toneCurve.hlcomprthresh) xmpData[prefix+"rt:HighlightComprThreshold"] = toneCurve.hlcomprthresh;
-    if (!pedited || pedited->toneCurve.shcompr)    xmpData[prefix+"rt:ShadowCompression"] =       toneCurve.shcompr;
-    if (!pedited || pedited->toneCurve.curve)      xmpData[prefix+"rt:ToneCurve"] =               serializeVector(toneCurve.curve);
+    if (!pedited || pedited->toneCurve.autoexp)    xmpData[prefix+"rt:Auto"]=                       toneCurve.autoexp;
+    if (!pedited || pedited->toneCurve.clip)       xmpData[prefix+"rt:Clip"]=                       toneCurve.clip;
+    if (!pedited || pedited->toneCurve.expcomp)    xmpData[prefix+"rt:Compensation"]=               toneCurve.expcomp;
+    if (!pedited || pedited->toneCurve.brightness) xmpData[prefix+"rt:Brightness"]=                 toneCurve.brightness;
+    if (!pedited || pedited->toneCurve.contrast)   xmpData[prefix+"rt:Contrast"]=                   toneCurve.contrast;
+    if (!pedited || pedited->toneCurve.saturation) xmpData[prefix+"rt:Saturation"]=                 toneCurve.saturation;
+    if (!pedited || pedited->toneCurve.black)      xmpData[prefix+"rt:Black"]=                      toneCurve.black;
+    if (!pedited || pedited->toneCurve.hlcompr)    xmpData[prefix+"rt:HighlightCompression"]=       toneCurve.hlcompr;
+    if (!pedited || pedited->toneCurve.hlcomprthresh) xmpData[prefix+"rt:HighlightComprThreshold"]= toneCurve.hlcomprthresh;
+    if (!pedited || pedited->toneCurve.shcompr)    xmpData[prefix+"rt:ShadowCompression"]=          toneCurve.shcompr;
+    if (!pedited || pedited->toneCurve.curve)      xmpData[prefix+"rt:ToneCurve"]=                  serializeVector(toneCurve.curve);
 
 	prefix=baseKey+"rt:ChannelMixer/";
 	if (!pedited || pedited->chmixer.red[0] || pedited->chmixer.red[1] || pedited->chmixer.red[2])
@@ -378,40 +386,43 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey,
 		xmpData[prefix+"rt:Blue"]  = serializeArray(chmixer.blue,3);
 
     prefix=baseKey+"rt:ExposureLab/";
-    if (!pedited || pedited->labCurve.brightness)      xmpData[prefix+"rt:Brightness"] =         labCurve.brightness;
-    if (!pedited || pedited->labCurve.contrast)        xmpData[prefix+"rt:Contrast"] =           labCurve.contrast;
-    if (!pedited || pedited->labCurve.saturation)      xmpData[prefix+"rt:Saturation"] =         labCurve.saturation;
-    if (!pedited || pedited->labCurve.avoidclip)       xmpData[prefix+"rt:AvoidColorClipping"] = labCurve.avoidclip;
-    if (!pedited || pedited->labCurve.enable_saturationlimiter) xmpData[prefix+"rt:SaturationLimitEnabled"] =  labCurve.enable_saturationlimiter;
-    if (!pedited || pedited->labCurve.saturationlimit) xmpData[prefix+"rt:SaturationLimit"] =    labCurve.saturationlimit;
-    if (!pedited || pedited->labCurve.lcurve)          xmpData[prefix+"rt:LCurve"] =             serializeVector(labCurve.lcurve);
-    if (!pedited || pedited->labCurve.acurve)          xmpData[prefix+"rt:aCurve"] =             serializeVector(labCurve.acurve);
-    if (!pedited || pedited->labCurve.bcurve)          xmpData[prefix+"rt:bCurve"] =             serializeVector(labCurve.bcurve);
+    if (!pedited || pedited->labCurve.brightness)      xmpData[prefix+"rt:Brightness"]=             labCurve.brightness;
+    if (!pedited || pedited->labCurve.contrast)        xmpData[prefix+"rt:Contrast"]=               labCurve.contrast;
+    if (!pedited || pedited->labCurve.chromaticity)    xmpData[prefix+"rt:Chromaticity"]=           labCurve.chromaticity;
+    if (!pedited || pedited->labCurve.avoidcolorshift) xmpData[prefix+"rt:AvoidColorShift"]=        labCurve.avoidcolorshift;
+    if (!pedited || pedited->labCurve.bwtoning)        xmpData[prefix+"rt:BWtoning"]=               labCurve.bwtoning;
+    if (!pedited || pedited->labCurve.rstprotection)   xmpData[prefix+"rt:RedSkinTonesProtection"]= labCurve.rstprotection;
+    if (!pedited || pedited->labCurve.lcurve)          xmpData[prefix+"rt:LCurve"]=                 serializeVector(labCurve.lcurve);
+    if (!pedited || pedited->labCurve.acurve)          xmpData[prefix+"rt:aCurve"]=                 serializeVector(labCurve.acurve);
+    if (!pedited || pedited->labCurve.bcurve)          xmpData[prefix+"rt:bCurve"]=                 serializeVector(labCurve.bcurve);
+    if (!pedited || pedited->labCurve.cccurve)         xmpData[prefix+"rt:ccCurve"]=                serializeVector(labCurve.cccurve);
+    if (!pedited || pedited->labCurve.chcurve)         xmpData[prefix+"rt:chCurve"]=                serializeVector(labCurve.chcurve);
 
 	prefix=baseKey+"rt:Vibrance/";
     if (!pedited || pedited->vibrance.enabled)          xmpData[prefix+"rt:Enabled"]=         vibrance.enabled;
     if (!pedited || pedited->vibrance.pastels)          xmpData[prefix+"rt:Pastels"]=         vibrance.pastels;
     if (!pedited || pedited->vibrance.saturated)        xmpData[prefix+"rt:Saturated"]=       vibrance.saturated;
-    if (!pedited || pedited->vibrance.psthreshold)      xmpData[prefix+"rt:PSThreshold"]=     vibrance.psthreshold;
+    if (!pedited || pedited->vibrance.psthreshold)      xmpData[prefix+"rt:PSThreshold"]=     serializeArray(vibrance.psthreshold.value, 2);
     if (!pedited || pedited->vibrance.protectskins)     xmpData[prefix+"rt:ProtectSkins"]=    vibrance.protectskins;
     if (!pedited || pedited->vibrance.avoidcolorshift)  xmpData[prefix+"rt:AvoidColorShift"]= vibrance.avoidcolorshift;
     if (!pedited || pedited->vibrance.pastsattog)       xmpData[prefix+"rt:PastSatTog"]=      vibrance.pastsattog;
+    if (!pedited || pedited->vibrance.skintonescurve)   xmpData[prefix+"rt:SkinTonesCurve"]=  serializeVector(vibrance.skintonescurve);
 
 	prefix=baseKey+"rt:Sharpening/";
-    if (!pedited || pedited->sharpening.enabled)            xmpData[prefix+"rt:Enabled"] =             sharpening.enabled;
-    if (!pedited || pedited->sharpening.method)             xmpData[prefix+"rt:Method"] =              sharpening.method;
-    if (!pedited || pedited->sharpening.radius)             xmpData[prefix+"rt:Radius"]=               sharpening.radius;
-    if (!pedited || pedited->sharpening.amount)             xmpData[prefix+"rt:Amount"]=               sharpening.amount;
-    if (!pedited || pedited->sharpening.threshold)          xmpData[prefix+"rt:Threshold"]=            sharpening.threshold;
-    if (!pedited || pedited->sharpening.edgesonly)          xmpData[prefix+"rt:OnlyEdges"]=            sharpening.edgesonly;
-    if (!pedited || pedited->sharpening.edges_radius)       xmpData[prefix+"rt:EdgeDetectionRadius"]=  sharpening.edges_radius;
-    if (!pedited || pedited->sharpening.edges_tolerance)    xmpData[prefix+"rt:EdgeTolerance"]=        sharpening.edges_tolerance;
-    if (!pedited || pedited->sharpening.halocontrol)        xmpData[prefix+"rt:HaloControlEnabled"]=   sharpening.halocontrol;
-    if (!pedited || pedited->sharpening.halocontrol_amount) xmpData[prefix+"rt:HaloControlAmount"]=    sharpening.halocontrol_amount;
-    if (!pedited || pedited->sharpening.deconvradius)       xmpData[prefix+"rt:DeconvRadius"]=         sharpening.deconvradius;
-    if (!pedited || pedited->sharpening.deconvamount)       xmpData[prefix+"rt:DeconvAmount"]=         sharpening.deconvamount;
-    if (!pedited || pedited->sharpening.deconvdamping)      xmpData[prefix+"rt:DeconvDamping"]=        sharpening.deconvdamping;
-    if (!pedited || pedited->sharpening.deconviter)         xmpData[prefix+"rt:DeconvIterations"]=     sharpening.deconviter;
+    if (!pedited || pedited->sharpening.enabled)            xmpData[prefix+"rt:Enabled"] =            sharpening.enabled;
+    if (!pedited || pedited->sharpening.method)             xmpData[prefix+"rt:Method"] =             sharpening.method;
+    if (!pedited || pedited->sharpening.radius)             xmpData[prefix+"rt:Radius"]=              sharpening.radius;
+    if (!pedited || pedited->sharpening.amount)             xmpData[prefix+"rt:Amount"]=              sharpening.amount;
+    if (!pedited || pedited->sharpening.threshold)          xmpData[prefix+"rt:Threshold"]=           serializeArray(sharpening.threshold.value, 4);
+    if (!pedited || pedited->sharpening.edgesonly)          xmpData[prefix+"rt:OnlyEdges"]=           sharpening.edgesonly;
+    if (!pedited || pedited->sharpening.edges_radius)       xmpData[prefix+"rt:EdgeDetectionRadius"]= sharpening.edges_radius;
+    if (!pedited || pedited->sharpening.edges_tolerance)    xmpData[prefix+"rt:EdgeTolerance"]=       sharpening.edges_tolerance;
+    if (!pedited || pedited->sharpening.halocontrol)        xmpData[prefix+"rt:HaloControlEnabled"]=  sharpening.halocontrol;
+    if (!pedited || pedited->sharpening.halocontrol_amount) xmpData[prefix+"rt:HaloControlAmount"]=   sharpening.halocontrol_amount;
+    if (!pedited || pedited->sharpening.deconvradius)       xmpData[prefix+"rt:DeconvRadius"]=        sharpening.deconvradius;
+    if (!pedited || pedited->sharpening.deconvamount)       xmpData[prefix+"rt:DeconvAmount"]=        sharpening.deconvamount;
+    if (!pedited || pedited->sharpening.deconvdamping)      xmpData[prefix+"rt:DeconvDamping"]=       sharpening.deconvdamping;
+    if (!pedited || pedited->sharpening.deconviter)         xmpData[prefix+"rt:DeconvIterations"]=    sharpening.deconviter;
 
 	prefix=baseKey+"rt:SharpenEdge/";
     if (!pedited || pedited->sharpenEdge.enabled)       xmpData[prefix+"rt:Enabled"]=       sharpenEdge.enabled;
@@ -420,13 +431,13 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey,
     if (!pedited || pedited->sharpenEdge.threechannels) xmpData[prefix+"rt:Amount"]=        sharpenEdge.amount;
 
 	prefix=baseKey+"rt:MicroContrast/";
-    if (!pedited || pedited->sharpenMicro.enabled)      xmpData[prefix+"rt:Enabled"]=       sharpenMicro.enabled;
-    if (!pedited || pedited->sharpenMicro.matrix)       xmpData[prefix+"rt:Uniformity"]=    sharpenMicro.uniformity;
-    if (!pedited || pedited->sharpenMicro.amount)       xmpData[prefix+"rt:Matrix"]=        sharpenMicro.matrix;
-    if (!pedited || pedited->sharpenMicro.uniformity)   xmpData[prefix+"rt:Amount"]=        sharpenMicro.amount;
+    if (!pedited || pedited->sharpenMicro.enabled)      xmpData[prefix+"rt:Enabled"]=    sharpenMicro.enabled;
+    if (!pedited || pedited->sharpenMicro.matrix)       xmpData[prefix+"rt:Uniformity"]= sharpenMicro.uniformity;
+    if (!pedited || pedited->sharpenMicro.amount)       xmpData[prefix+"rt:Matrix"]=     sharpenMicro.matrix;
+    if (!pedited || pedited->sharpenMicro.uniformity)   xmpData[prefix+"rt:Amount"]=     sharpenMicro.amount;
 
 	prefix=baseKey+"rt:WhiteBalance/";
-    if (!pedited || pedited->wb.method)      xmpData[prefix+"rt:Mode"]= wb.method;
+    if (!pedited || pedited->wb.method)      xmpData[prefix+"rt:Mode"]=        wb.method;
     if (!pedited || pedited->wb.temperature) xmpData[prefix+"rt:Temperature"]= wb.temperature;
     if (!pedited || pedited->wb.green)       xmpData[prefix+"rt:Green"]=       wb.green;
 
@@ -437,7 +448,7 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey,
     prefix=baseKey+"rt:Defringe/";
     if (!pedited || pedited->defringe.enabled)       xmpData[prefix+"rt:Enabled"]=   defringe.enabled;
     if (!pedited || pedited->defringe.radius)        xmpData[prefix+"rt:Radius"]=    defringe.radius;
-    if (!pedited || pedited->defringe.threshold)     xmpData[prefix+"rt:Threshold"]=	defringe.threshold;
+    if (!pedited || pedited->defringe.threshold)     xmpData[prefix+"rt:Threshold"]= defringe.threshold;
 
     prefix=baseKey+"rt:PyramidDenoise/";
     if (!pedited || pedited->dirpyrDenoise.enabled) xmpData[prefix+"rt:Enabled"]= dirpyrDenoise.enabled;
@@ -446,21 +457,21 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey,
     if (!pedited || pedited->dirpyrDenoise.gamma)   xmpData[prefix+"rt:Gamma"]=   dirpyrDenoise.gamma;
 
     prefix=baseKey+"rt:ShadowHighlights/";
-    if (!pedited || pedited->sh.enabled)       xmpData[prefix+"rt:Enabled"]=               sh.enabled;
-    if (!pedited || pedited->sh.hq)            xmpData[prefix+"rt:HighQuality"]=           sh.hq;
-    if (!pedited || pedited->sh.highlights)    xmpData[prefix+"rt:Highlights"]=            sh.highlights;
-    if (!pedited || pedited->sh.htonalwidth)   xmpData[prefix+"rt:HighlightTonalWidth"]=   sh.htonalwidth;
-    if (!pedited || pedited->sh.shadows)       xmpData[prefix+"rt:Shadows"]=               sh.shadows;
-    if (!pedited || pedited->sh.stonalwidth)   xmpData[prefix+"rt:ShadowTonalWidth"]=      sh.stonalwidth;
-    if (!pedited || pedited->sh.localcontrast) xmpData[prefix+"rt:LocalContrast"]=         sh.localcontrast;
-    if (!pedited || pedited->sh.radius)        xmpData[prefix+"rt:Radius"]=                sh.radius;
+    if (!pedited || pedited->sh.enabled)       xmpData[prefix+"rt:Enabled"]=             sh.enabled;
+    if (!pedited || pedited->sh.hq)            xmpData[prefix+"rt:HighQuality"]=         sh.hq;
+    if (!pedited || pedited->sh.highlights)    xmpData[prefix+"rt:Highlights"]=          sh.highlights;
+    if (!pedited || pedited->sh.htonalwidth)   xmpData[prefix+"rt:HighlightTonalWidth"]= sh.htonalwidth;
+    if (!pedited || pedited->sh.shadows)       xmpData[prefix+"rt:Shadows"]=             sh.shadows;
+    if (!pedited || pedited->sh.stonalwidth)   xmpData[prefix+"rt:ShadowTonalWidth"]=    sh.stonalwidth;
+    if (!pedited || pedited->sh.localcontrast) xmpData[prefix+"rt:LocalContrast"]=       sh.localcontrast;
+    if (!pedited || pedited->sh.radius)        xmpData[prefix+"rt:Radius"]=              sh.radius;
 
     prefix=baseKey+"rt:Crop/";
-    if (!pedited || pedited->crop.enabled)     xmpData[prefix+"rt:Enabled"]=     crop.enabled;
-    if (!pedited || pedited->crop.x)           xmpData[prefix+"rt:X"]=           crop.x;
-    if (!pedited || pedited->crop.y)           xmpData[prefix+"rt:Y"]=           crop.y;
-    if (!pedited || pedited->crop.w)           xmpData[prefix+"rt:Width"]=       crop.w;
-    if (!pedited || pedited->crop.h)           xmpData[prefix+"rt:Height"]=      crop.h;
+    if (!pedited || pedited->crop.enabled)     xmpData[prefix+"rt:Enabled"]= crop.enabled;
+    if (!pedited || pedited->crop.x)           xmpData[prefix+"rt:X"]=       crop.x;
+    if (!pedited || pedited->crop.y)           xmpData[prefix+"rt:Y"]=       crop.y;
+    if (!pedited || pedited->crop.w)           xmpData[prefix+"rt:Width"]=   crop.w;
+    if (!pedited || pedited->crop.h)           xmpData[prefix+"rt:Height"]=  crop.h;
     /*
     if (!pedited || pedited->crop.fixratio)    xmpData[prefix+"rt:FixedRatio"]=  crop.fixratio;
     if (!pedited || pedited->crop.ratio)       xmpData[prefix+"rt:Ratio"]=       crop.ratio;
@@ -469,25 +480,31 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey,
     */
 
     prefix=baseKey+"rt:CoarseGeo/";
-    if (!pedited || pedited->coarse.rotate)    xmpData[prefix+"rt:RotationDegree"]=  coarse.rotate;
-    if (!pedited || pedited->coarse.hflip)     xmpData[prefix+"rt:HorizontalFlip"]=  coarse.hflip;
-    if (!pedited || pedited->coarse.vflip)     xmpData[prefix+"rt:VerticalFlip"]=    coarse.vflip;
+    if (!pedited || pedited->coarse.rotate)    xmpData[prefix+"rt:RotationDegree"]= coarse.rotate;
+    if (!pedited || pedited->coarse.hflip)     xmpData[prefix+"rt:HorizontalFlip"]= coarse.hflip;
+    if (!pedited || pedited->coarse.vflip)     xmpData[prefix+"rt:VerticalFlip"]=   coarse.vflip;
 
     prefix=baseKey+"rt:EPD/";
-    if (!pedited || pedited->edgePreservingDecompositionUI.enabled)             xmpData[prefix+"rt:Enabled"]= edgePreservingDecompositionUI.enabled;
-    if (!pedited || pedited->edgePreservingDecompositionUI.Strength)            xmpData[prefix+"rt:Strength"]= edgePreservingDecompositionUI.Strength;
-    if (!pedited || pedited->edgePreservingDecompositionUI.EdgeStopping)        xmpData[prefix+"rt:EdgeStopping"]= edgePreservingDecompositionUI.EdgeStopping;
-    if (!pedited || pedited->edgePreservingDecompositionUI.Scale)               xmpData[prefix+"rt:Scale"] = edgePreservingDecompositionUI.Scale;
+    if (!pedited || pedited->edgePreservingDecompositionUI.enabled)             xmpData[prefix+"rt:Enabled"]=              edgePreservingDecompositionUI.enabled;
+    if (!pedited || pedited->edgePreservingDecompositionUI.Strength)            xmpData[prefix+"rt:Strength"]=             edgePreservingDecompositionUI.Strength;
+    if (!pedited || pedited->edgePreservingDecompositionUI.EdgeStopping)        xmpData[prefix+"rt:EdgeStopping"]=         edgePreservingDecompositionUI.EdgeStopping;
+    if (!pedited || pedited->edgePreservingDecompositionUI.Scale)               xmpData[prefix+"rt:Scale"] =               edgePreservingDecompositionUI.Scale;
     if (!pedited || pedited->edgePreservingDecompositionUI.ReweightingIterates) xmpData[prefix+"rt:ReweightingIterates"] = edgePreservingDecompositionUI.ReweightingIterates;
 
 
     prefix=baseKey+"rt:Geometry/";
     //xmpData[prefix+"rt:Enabled"]=    geo.enabled;
-    if (!pedited || pedited->commonTrans.autofill)   xmpData[prefix+"rt:AutoFill"]= commonTrans.autofill;
-    if (!pedited || pedited->rotate.degree)          xmpData[prefix+"rt:RotationDegree"]= rotate.degree;
-    if (!pedited || pedited->distortion.amount)      xmpData[prefix+"rt:DistortionAmount"]= distortion.amount;
+    if (!pedited || pedited->commonTrans.autofill)   xmpData[prefix+"rt:AutoFill"]=              commonTrans.autofill;
+    if (!pedited || pedited->rotate.degree)          xmpData[prefix+"rt:RotationDegree"]=        rotate.degree;
+    if (!pedited || pedited->distortion.amount)      xmpData[prefix+"rt:DistortionAmount"]=      distortion.amount;
     if (!pedited || pedited->perspective.horizontal) xmpData[prefix+"rt:HorizontalPerspective"]= perspective.horizontal;
     if (!pedited || pedited->perspective.vertical)   xmpData[prefix+"rt:VerticalPerspective"]=   perspective.vertical;
+
+    prefix=baseKey+"rt:LensProfile/";
+    if (!pedited || pedited->lensProf.lcpFile)       xmpData[prefix+"rt:LCPFile"]=       lensProf.lcpFile;
+    if (!pedited || pedited->lensProf.useDist)       xmpData[prefix+"rt:UseDistortion"]= lensProf.useDist;
+    if (!pedited || pedited->lensProf.useVign)       xmpData[prefix+"rt:UseVignette"]=   lensProf.useVign;
+    if (!pedited || pedited->lensProf.useCA)         xmpData[prefix+"rt:UseCA"]=         lensProf.useCA;
 
     prefix=baseKey+"rt:CACorrection/";
     //xmpData[prefix+"rt:Enabled"]=    cacorrection.enabled;
@@ -496,8 +513,8 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey,
 
     prefix=baseKey+"rt:Vignetting/";
     //xmpData[prefix+"rt:Enabled"]= vignetting.enabled;
-    if (!pedited || pedited->vignetting.amount)      xmpData[prefix+"rt:Amount"] = vignetting.amount;
-    if (!pedited || pedited->vignetting.radius)      xmpData[prefix+"rt:Radius"] = vignetting.radius;
+    if (!pedited || pedited->vignetting.amount)      xmpData[prefix+"rt:Amount"] =  vignetting.amount;
+    if (!pedited || pedited->vignetting.radius)      xmpData[prefix+"rt:Radius"] =  vignetting.radius;
     if (!pedited || pedited->vignetting.strength)    xmpData[prefix+"rt:Strength"]= vignetting.strength;
     if (!pedited || pedited->vignetting.centerX)     xmpData[prefix+"rt:CenterX"] = vignetting.centerX;
     if (!pedited || pedited->vignetting.centerY)     xmpData[prefix+"rt:CenterY"] = vignetting.centerY;
@@ -507,13 +524,13 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey,
     if (!pedited || pedited->hlrecovery.method)      xmpData[prefix+"rt:Method"]=   hlrecovery.method;
 
     prefix=baseKey+"rt:Resize/";
-    if (!pedited || pedited->resize.enabled)         xmpData[prefix+"rt:Enabled"]=   resize.enabled;
-    if (!pedited || pedited->resize.scale)           xmpData[prefix+"rt:Scale"]  =   resize.scale;
-    if (!pedited || pedited->resize.appliesTo)       xmpData[prefix+"rt:AppliesTo"]= resize.appliesTo;
-    if (!pedited || pedited->resize.method)          xmpData[prefix+"rt:Method"]=    resize.method;
-    if (!pedited || pedited->resize.dataspec)        xmpData[prefix+"rt:DataSpecified"]=  resize.dataspec;
-    if (!pedited || pedited->resize.width)           xmpData[prefix+"rt:Width"] =    resize.width;
-    if (!pedited || pedited->resize.height)          xmpData[prefix+"rt:Height"] =   resize.height;
+    if (!pedited || pedited->resize.enabled)         xmpData[prefix+"rt:Enabled"]=       resize.enabled;
+    if (!pedited || pedited->resize.scale)           xmpData[prefix+"rt:Scale"]  =       resize.scale;
+    if (!pedited || pedited->resize.appliesTo)       xmpData[prefix+"rt:AppliesTo"]=     resize.appliesTo;
+    if (!pedited || pedited->resize.method)          xmpData[prefix+"rt:Method"]=        resize.method;
+    if (!pedited || pedited->resize.dataspec)        xmpData[prefix+"rt:DataSpecified"]= resize.dataspec;
+    if (!pedited || pedited->resize.width)           xmpData[prefix+"rt:Width"] =        resize.width;
+    if (!pedited || pedited->resize.height)          xmpData[prefix+"rt:Height"] =       resize.height;
 
     prefix=baseKey+"rt:ColorManagement/";
     // save color management settings
@@ -556,37 +573,37 @@ int ProcParams::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& baseKey,
 
     prefix=baseKey+"rt:RawCACorrection/";
     //xmpData[prefix+"rt:Enabled"]=
-    if (!pedited || pedited->raw.caCorrection)       xmpData[prefix+"rt:Auto"]=        raw.ca_autocorrect ;
-    if (!pedited || pedited->raw.caRed)              xmpData[prefix+"rt:Red"] =        raw.cared;
-    if (!pedited || pedited->raw.caBlue)             xmpData[prefix+"rt:Blue"]=        raw.cablue;
+    if (!pedited || pedited->raw.caCorrection)       xmpData[prefix+"rt:Auto"]= raw.ca_autocorrect;
+    if (!pedited || pedited->raw.caRed)              xmpData[prefix+"rt:Red"] = raw.cared;
+    if (!pedited || pedited->raw.caBlue)             xmpData[prefix+"rt:Blue"]= raw.cablue;
 
     prefix=baseKey+"rt:HotDeadPixelCorrection/";
-    if (!pedited || pedited->raw.hotDeadPixelFilter) xmpData[prefix+"rt:Enabled"]=     raw.hotdeadpix_filt;
-    if (!pedited || pedited->raw.hotDeadPixelThresh) xmpData[prefix+"rt:Threshold"]=   raw.hotdeadpix_thresh;
+    if (!pedited || pedited->raw.hotDeadPixelFilter) xmpData[prefix+"rt:Enabled"]=   raw.hotdeadpix_filt;
+    if (!pedited || pedited->raw.hotDeadPixelThresh) xmpData[prefix+"rt:Threshold"]= raw.hotdeadpix_thresh;
 
     prefix=baseKey+"rt:RawDenoise/";
     //xmpData[prefix+"rt:Enabled"]=
-    if (!pedited || pedited->raw.linenoise)          xmpData[prefix+"rt:LineDenoise"]=       raw.linenoise;
+    if (!pedited || pedited->raw.linenoise)          xmpData[prefix+"rt:LineDenoise"]= raw.linenoise;
 
     prefix=baseKey+"rt:Demosaicing/";
-    if (!pedited || pedited->raw.greenEq)            xmpData[prefix+"rt:GreenEqThreshold"] = raw.greenthresh;
-    if (!pedited || pedited->raw.ccSteps)            xmpData[prefix+"rt:CcSteps"] =          raw.ccSteps;
-    if (!pedited || pedited->raw.dmethod)            xmpData[prefix+"rt:Method"]  =          raw.dmethod;
-    if (!pedited || pedited->raw.dcbIterations)      xmpData[prefix+"rt:DCBIterations"] =    raw.dcb_iterations;
-    if (!pedited || pedited->raw.dcbEnhance)         xmpData[prefix+"rt:DCBEnhance"] =       raw.dcb_enhance;
-    if (!pedited || pedited->raw.allEnhance)         xmpData[prefix+"rt:Enhance"]=           raw.all_enhance;
+    if (!pedited || pedited->raw.greenEq)            xmpData[prefix+"rt:GreenEqThreshold"]= raw.greenthresh;
+    if (!pedited || pedited->raw.ccSteps)            xmpData[prefix+"rt:CcSteps"]=          raw.ccSteps;
+    if (!pedited || pedited->raw.dmethod)            xmpData[prefix+"rt:Method"]=           raw.dmethod;
+    if (!pedited || pedited->raw.dcbIterations)      xmpData[prefix+"rt:DCBIterations"]=    raw.dcb_iterations;
+    if (!pedited || pedited->raw.dcbEnhance)         xmpData[prefix+"rt:DCBEnhance"]=       raw.dcb_enhance;
+    if (!pedited || pedited->raw.allEnhance)         xmpData[prefix+"rt:Enhance"]=          raw.all_enhance;
 
     prefix=baseKey+"rt:RawExposure/";
-    if (!pedited || pedited->raw.exPos)              xmpData[prefix+"rt:Exposure"] =  raw.expos;
-    if (!pedited || pedited->raw.exPreser)           xmpData[prefix+"rt:HLPreserving"] = raw.preser;
-    if (!pedited || pedited->raw.exBlackzero)        xmpData[prefix+"rt:Blackzero"] = raw.blackzero;
-    if (!pedited || pedited->raw.exBlackone)         xmpData[prefix+"rt:Blackone"] = raw.blackone;
-    if (!pedited || pedited->raw.exBlacktwo)         xmpData[prefix+"rt:Blacktwo"] = raw.blacktwo;
-    if (!pedited || pedited->raw.exBlackthree)       xmpData[prefix+"rt:Blackthree"] = raw.blackthree;
-    if (!pedited || pedited->raw.exTwoGreen)         xmpData[prefix+"rt:TwoGreen"] = raw.twogreen;
+    if (!pedited || pedited->raw.exPos)              xmpData[prefix+"rt:Exposure"]=     raw.expos;
+    if (!pedited || pedited->raw.exPreser)           xmpData[prefix+"rt:HLPreserving"]= raw.preser;
+    if (!pedited || pedited->raw.exBlackzero)        xmpData[prefix+"rt:Blackzero"]=    raw.blackzero;
+    if (!pedited || pedited->raw.exBlackone)         xmpData[prefix+"rt:Blackone"]=     raw.blackone;
+    if (!pedited || pedited->raw.exBlacktwo)         xmpData[prefix+"rt:Blacktwo"]=     raw.blacktwo;
+    if (!pedited || pedited->raw.exBlackthree)       xmpData[prefix+"rt:Blackthree"]=   raw.blackthree;
+    if (!pedited || pedited->raw.exTwoGreen)         xmpData[prefix+"rt:TwoGreen"]=     raw.twogreen;
 }
 
-int ProcParams::loadFromXMP(Exiv2::XmpData &xmpData, const std::string& baseKey )
+int ProcParams::loadFromXMP(Exiv2::XmpData &xmpData, const std::string& baseKey, ParamsEdited* pedited=NULL )
 {
 try{
 	std::string prefix;
@@ -595,248 +612,258 @@ try{
 
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ExposureRGB")) != xmpData.end()){
 		prefix = baseKey+"rt:ExposureRGB/rt:";
-		readVarFromXmp( xmpData, prefix+"Auto", toneCurve.autoexp );
-		readVarFromXmp( xmpData, prefix+"Clip", toneCurve.clip );
-		readVarFromXmp( xmpData, prefix+"Compensation", toneCurve.expcomp );
-		readVarFromXmp( xmpData, prefix+"Brightness", toneCurve.brightness );
-		readVarFromXmp( xmpData, prefix+"Contrast", toneCurve.contrast );
-		readVarFromXmp( xmpData, prefix+"Saturation", toneCurve.saturation );
-		readVarFromXmp( xmpData, prefix+"Black", toneCurve.black );
-		readVarFromXmp( xmpData, prefix+"HighlightCompression", toneCurve.hlcompr );
-		readVarFromXmp( xmpData, prefix+"HighlightComprThreshold", toneCurve.hlcomprthresh );
-		readVarFromXmp( xmpData, prefix+"ShadowCompression", toneCurve.shcompr );
-		readVarFromXmp( xmpData, prefix+"ToneCurve",toneCurve.curve);
+		if (readVarFromXmp( xmpData, prefix+"Auto", toneCurve.autoexp ) && pedited) pedited->toneCurve.autoexp = true;
+		if (readVarFromXmp( xmpData, prefix+"Clip", toneCurve.clip ) && pedited) pedited->toneCurve.clip = true;
+		if (readVarFromXmp( xmpData, prefix+"Compensation", toneCurve.expcomp ) && pedited) pedited->toneCurve.expcomp = true;
+		if (readVarFromXmp( xmpData, prefix+"Brightness", toneCurve.brightness ) && pedited) pedited->toneCurve.brightness = true;
+		if (readVarFromXmp( xmpData, prefix+"Contrast", toneCurve.contrast ) && pedited) pedited->toneCurve.contrast = true;
+		if (readVarFromXmp( xmpData, prefix+"Saturation", toneCurve.saturation ) && pedited) pedited->toneCurve.saturation = true;
+		if (readVarFromXmp( xmpData, prefix+"Black", toneCurve.black ) && pedited) pedited->toneCurve.black = true;
+		if (readVarFromXmp( xmpData, prefix+"HighlightCompression", toneCurve.hlcompr ) && pedited) pedited->toneCurve.hlcompr = true;
+		if (readVarFromXmp( xmpData, prefix+"HighlightComprThreshold", toneCurve.hlcomprthresh ) && pedited) pedited->toneCurve.hlcomprthresh = true;
+		if (readVarFromXmp( xmpData, prefix+"ShadowCompression", toneCurve.shcompr ) && pedited) pedited->toneCurve.shcompr = true;
+		if (readVarFromXmp( xmpData, prefix+"ToneCurve",toneCurve.curve) && pedited) pedited->toneCurve.curve = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ChannelMixer")) != xmpData.end()){
 		prefix=baseKey+"rt:ChannelMixer/rt:";
-		readVarFromXmp( xmpData, prefix+"Red",chmixer.red,3 );
-		readVarFromXmp( xmpData, prefix+"Green",chmixer.green,3 );
-		readVarFromXmp( xmpData, prefix+"Blue",chmixer.blue,3 );
+		if (readVarFromXmp( xmpData, prefix+"Red",chmixer.red,3 ) && pedited) pedited->chmixer.red[0] = pedited->chmixer.red[1] = pedited->chmixer.red[2] = true;
+		if (readVarFromXmp( xmpData, prefix+"Green",chmixer.green,3 ) && pedited) pedited->chmixer.green[0] = pedited->chmixer.green[1] = pedited->chmixer.green[2] = true;
+		if (readVarFromXmp( xmpData, prefix+"Blue",chmixer.blue,3 ) && pedited) pedited->chmixer.blue[0] = pedited->chmixer.blue[1] = pedited->chmixer.blue[2] = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ExposureLab")) != xmpData.end()){
 		prefix=baseKey+"rt:ExposureLab/rt:";
-		readVarFromXmp( xmpData, prefix+"Brightness", labCurve.brightness );
-		readVarFromXmp( xmpData, prefix+"Contrast", labCurve.contrast );
-		readVarFromXmp( xmpData, prefix+"Saturation", labCurve.saturation );
-		readVarFromXmp( xmpData, prefix+"AvoidColorClipping", labCurve.avoidclip );
-		readVarFromXmp( xmpData, prefix+"SaturationLimitEnabled", labCurve.enable_saturationlimiter );
-		readVarFromXmp( xmpData, prefix+"SaturationLimit", labCurve.saturationlimit );
-		readVarFromXmp( xmpData, prefix+"LCurve",labCurve.lcurve);
-		readVarFromXmp( xmpData, prefix+"aCurve",labCurve.acurve);
-		readVarFromXmp( xmpData, prefix+"bCurve",labCurve.bcurve);
+		if (readVarFromXmp( xmpData, prefix+"Brightness", labCurve.brightness ) && pedited) pedited->labCurve.brightness = true;
+		if (readVarFromXmp( xmpData, prefix+"Contrast", labCurve.contrast ) && pedited) pedited->labCurve.contrast = true;
+		if (readVarFromXmp( xmpData, prefix+"Chromaticity", labCurve.chromaticity ) && pedited) pedited->labCurve.chromaticity = true;
+		if (readVarFromXmp( xmpData, prefix+"AvoidColorShift", labCurve.avoidcolorshift ) && pedited) pedited->labCurve.avoidcolorshift = true;
+		if (readVarFromXmp( xmpData, prefix+"BWToning", labCurve.bwtoning ) && pedited) pedited->labCurve.bwtoning = true;
+		if (readVarFromXmp( xmpData, prefix+"RedSkinTonesProtection", labCurve.rstprotection ) && pedited) pedited->labCurve.rstprotection = true;
+		if (readVarFromXmp( xmpData, prefix+"LCurve", labCurve.lcurve ) && pedited) pedited->labCurve.lcurve = true;
+		if (readVarFromXmp( xmpData, prefix+"aCurve", labCurve.acurve ) && pedited) pedited->labCurve.acurve = true;
+		if (readVarFromXmp( xmpData, prefix+"bCurve", labCurve.bcurve ) && pedited) pedited->labCurve.bcurve = true;
+		if (readVarFromXmp( xmpData, prefix+"ccCurve", labCurve.cccurve ) && pedited) pedited->labCurve.cccurve = true;
+		if (readVarFromXmp( xmpData, prefix+"chCurve", labCurve.chcurve ) && pedited) pedited->labCurve.chcurve = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Sharpening")) != xmpData.end()){
 		prefix=baseKey+"rt:Sharpening/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpening.enabled );
-		readVarFromXmp( xmpData, prefix+"Method", sharpening.method );
-		readVarFromXmp( xmpData, prefix+"Radius", sharpening.radius );
-		readVarFromXmp( xmpData, prefix+"Amount", sharpening.amount );
-		readVarFromXmp( xmpData, prefix+"Threshold", sharpening.threshold );
-		readVarFromXmp( xmpData, prefix+"OnlyEdges", sharpening.edgesonly );
-		readVarFromXmp( xmpData, prefix+"EdgeDetectionRadius", sharpening.edges_radius );
-		readVarFromXmp( xmpData, prefix+"EdgeTolerance", sharpening.edges_tolerance );
-		readVarFromXmp( xmpData, prefix+"HaloControlEnabled", sharpening.halocontrol );
-		readVarFromXmp( xmpData, prefix+"HaloControlAmount", sharpening.halocontrol_amount );
-		readVarFromXmp( xmpData, prefix+"DeconvRadius", sharpening.deconvradius );
-		readVarFromXmp( xmpData, prefix+"DeconvAmount", sharpening.deconvamount );
-		readVarFromXmp( xmpData, prefix+"DeconvDamping", sharpening.deconvdamping );
-		readVarFromXmp( xmpData, prefix+"DeconvIterations", sharpening.deconviter );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpening.enabled ) && pedited) pedited->sharpening.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Method", sharpening.method ) && pedited) pedited->sharpening.method = true;
+		if (readVarFromXmp( xmpData, prefix+"Radius", sharpening.radius ) && pedited) pedited->sharpening.radius = true;
+		if (readVarFromXmp( xmpData, prefix+"Amount", sharpening.amount ) && pedited) pedited->sharpening.amount = true;
+		if (readVarFromXmp( xmpData, prefix+"Threshold", sharpening.threshold.value, 4 ) && pedited) pedited->sharpening.threshold = true;
+		if (readVarFromXmp( xmpData, prefix+"OnlyEdges", sharpening.edgesonly ) && pedited) pedited->sharpening.edgesonly = true;
+		if (readVarFromXmp( xmpData, prefix+"EdgeDetectionRadius", sharpening.edges_radius ) && pedited) pedited->sharpening.edges_radius = true;
+		if (readVarFromXmp( xmpData, prefix+"EdgeTolerance", sharpening.edges_tolerance ) && pedited) pedited->sharpening.edges_tolerance = true;
+		if (readVarFromXmp( xmpData, prefix+"HaloControlEnabled", sharpening.halocontrol ) && pedited) pedited->sharpening.halocontrol = true;
+		if (readVarFromXmp( xmpData, prefix+"HaloControlAmount", sharpening.halocontrol_amount ) && pedited) pedited->sharpening.halocontrol_amount = true;
+		if (readVarFromXmp( xmpData, prefix+"DeconvRadius", sharpening.deconvradius ) && pedited) pedited->sharpening.deconvradius = true;
+		if (readVarFromXmp( xmpData, prefix+"DeconvAmount", sharpening.deconvamount ) && pedited) pedited->sharpening.deconvamount = true;
+		if (readVarFromXmp( xmpData, prefix+"DeconvDamping", sharpening.deconvdamping ) && pedited) pedited->sharpening.deconvdamping = true;
+		if (readVarFromXmp( xmpData, prefix+"DeconvIterations", sharpening.deconviter ) && pedited) pedited->sharpening.deconviter = true;
 	}
 	
     if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Vibrance")) != xmpData.end()){
 		prefix=baseKey+"rt:Vibrance/rt:";
-   	    readVarFromXmp( xmpData, prefix+kXmpEnabled, vibrance.enabled);
-   	    readVarFromXmp( xmpData, prefix+"Pastels",  vibrance.pastels);
-   	    readVarFromXmp( xmpData, prefix+"Saturated", vibrance.saturated);
-   	    readVarFromXmp( xmpData, prefix+"PSThreshold", vibrance.psthreshold);
-   	    readVarFromXmp( xmpData, prefix+"ProtectSkins", vibrance.protectskins);
-   	    readVarFromXmp( xmpData, prefix+"AvoidColorShift", vibrance.avoidcolorshift);
-   	    readVarFromXmp( xmpData, prefix+"PastSatTog", vibrance.pastsattog);
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, vibrance.enabled ) && pedited) pedited->vibrance.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Pastels",  vibrance.pastels ) && pedited) pedited->vibrance.pastels = true;
+		if (readVarFromXmp( xmpData, prefix+"Saturated", vibrance.saturated ) && pedited) pedited->vibrance.saturated = true;
+		if (readVarFromXmp( xmpData, prefix+"PSThreshold", vibrance.psthreshold.value, 2 ) && pedited) pedited->vibrance.psthreshold = true;
+		if (readVarFromXmp( xmpData, prefix+"ProtectSkins", vibrance.protectskins ) && pedited) pedited->vibrance.protectskins = true;
+		if (readVarFromXmp( xmpData, prefix+"AvoidColorShift", vibrance.avoidcolorshift ) && pedited) pedited->vibrance.avoidcolorshift = true;
+		if (readVarFromXmp( xmpData, prefix+"PastSatTog", vibrance.pastsattog ) && pedited) pedited->vibrance.pastsattog = true;
+		if (readVarFromXmp( xmpData, prefix+"SkinTonesCurve", vibrance.skintonescurve ) && pedited) pedited->vibrance.skintonescurve = true;
     }
 	
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:SharpenEdge")) != xmpData.end()){
 		prefix=baseKey+"rt:SharpenEdge/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpenEdge.enabled );
-		readVarFromXmp( xmpData, prefix+"Passes", sharpenEdge.passes );
-		readVarFromXmp( xmpData, prefix+"Amount", sharpenEdge.amount );
-		readVarFromXmp( xmpData, prefix+"ThreeChannels", sharpenEdge.threechannels );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpenEdge.enabled ) && pedited) pedited->sharpenEdge.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Passes", sharpenEdge.passes ) && pedited) pedited->sharpenEdge.passes = true;
+		if (readVarFromXmp( xmpData, prefix+"Amount", sharpenEdge.amount ) && pedited) pedited->sharpenEdge.amount = true;
+		if (readVarFromXmp( xmpData, prefix+"ThreeChannels", sharpenEdge.threechannels ) && pedited) pedited->sharpenEdge.threechannels = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:MicroContrast")) != xmpData.end()){
 		prefix=baseKey+"rt:MicroContrast/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpenMicro.enabled );
-		readVarFromXmp( xmpData, prefix+"Amount", sharpenMicro.amount);
-		readVarFromXmp( xmpData, prefix+"Uniformity", sharpenMicro.uniformity );
-		readVarFromXmp( xmpData, prefix+"Matrix", sharpenMicro.matrix );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, sharpenMicro.enabled ) && pedited) pedited->sharpenMicro.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Amount", sharpenMicro.amount) && pedited) pedited->sharpenMicro.amount = true;
+		if (readVarFromXmp( xmpData, prefix+"Uniformity", sharpenMicro.uniformity ) && pedited) pedited->sharpenMicro.uniformity = true;
+		if (readVarFromXmp( xmpData, prefix+"Matrix", sharpenMicro.matrix ) && pedited) pedited->sharpenMicro.matrix = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:WhiteBalance")) != xmpData.end()){
 		prefix=baseKey+"rt:WhiteBalance/rt:";
-		readVarFromXmp( xmpData, prefix+"Mode", wb.method );
-		readVarFromXmp( xmpData, prefix+"Temperature", wb.temperature );
-		readVarFromXmp( xmpData, prefix+"Green", wb.green );
+		if (readVarFromXmp( xmpData, prefix+"Mode", wb.method ) && pedited) pedited->wb.method = true;
+		if (readVarFromXmp( xmpData, prefix+"Temperature", wb.temperature ) && pedited) pedited->wb.temperature = true;
+		if (readVarFromXmp( xmpData, prefix+"Green", wb.green ) && pedited) pedited->wb.green = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ImpulseDenoise")) != xmpData.end()){
 		prefix=baseKey+"rt:ImpulseDenoise/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, impulseDenoise.enabled );
-		readVarFromXmp( xmpData, prefix+"Threshold", impulseDenoise.thresh );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, impulseDenoise.enabled ) && pedited) pedited->impulseDenoise.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Threshold", impulseDenoise.thresh ) && pedited) pedited->impulseDenoise.thresh = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Defringe")) != xmpData.end()){
 		prefix=baseKey+"rt:Defringe/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, defringe.enabled );
-		readVarFromXmp( xmpData, prefix+"Radius", defringe.radius );
-		readVarFromXmp( xmpData, prefix+"Threshold", defringe.threshold );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, defringe.enabled ) && pedited) pedited->defringe.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Radius", defringe.radius ) && pedited) pedited->defringe.radius = true;
+		if (readVarFromXmp( xmpData, prefix+"Threshold", defringe.threshold ) && pedited) pedited->defringe.threshold = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:PyramidDenoise")) != xmpData.end()){
 		prefix=baseKey+"rt:PyramidDenoise/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, dirpyrDenoise.enabled );
-		readVarFromXmp( xmpData, prefix+"Luma", dirpyrDenoise.luma );
-		readVarFromXmp( xmpData, prefix+"Chroma", dirpyrDenoise.chroma );
-		readVarFromXmp( xmpData, prefix+"Gamma", dirpyrDenoise.gamma );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, dirpyrDenoise.enabled ) && pedited) pedited->dirpyrDenoise.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Luma", dirpyrDenoise.luma ) && pedited) pedited->dirpyrDenoise.luma = true;
+		if (readVarFromXmp( xmpData, prefix+"Chroma", dirpyrDenoise.chroma ) && pedited) pedited->dirpyrDenoise.chroma = true;
+		if (readVarFromXmp( xmpData, prefix+"Gamma", dirpyrDenoise.gamma ) && pedited) pedited->dirpyrDenoise.gamma = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ShadowHighlights")) != xmpData.end()){
 		prefix=baseKey+"rt:ShadowHighlights/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, sh.enabled );
-		readVarFromXmp( xmpData, prefix+"HighQuality", sh.hq );
-		readVarFromXmp( xmpData, prefix+"Highlights", sh.highlights );
-		readVarFromXmp( xmpData, prefix+"HighlightTonalWidth", sh.htonalwidth );
-		readVarFromXmp( xmpData, prefix+"Shadows", sh.shadows );
-		readVarFromXmp( xmpData, prefix+"ShadowTonalWidth", sh.stonalwidth );
-		readVarFromXmp( xmpData, prefix+"LocalContrast", sh.localcontrast );
-		readVarFromXmp( xmpData, prefix+"Radius", sh.radius );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, sh.enabled ) && pedited) pedited->sh.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"HighQuality", sh.hq ) && pedited) pedited->sh.hq = true;
+		if (readVarFromXmp( xmpData, prefix+"Highlights", sh.highlights ) && pedited) pedited->sh.highlights = true;
+		if (readVarFromXmp( xmpData, prefix+"HighlightTonalWidth", sh.htonalwidth ) && pedited) pedited->sh.htonalwidth = true;
+		if (readVarFromXmp( xmpData, prefix+"Shadows", sh.shadows ) && pedited) pedited->sh.shadows = true;
+		if (readVarFromXmp( xmpData, prefix+"ShadowTonalWidth", sh.stonalwidth ) && pedited) pedited->sh.stonalwidth = true;
+		if (readVarFromXmp( xmpData, prefix+"LocalContrast", sh.localcontrast ) && pedited) pedited->sh.localcontrast = true;
+		if (readVarFromXmp( xmpData, prefix+"Radius", sh.radius ) && pedited) pedited->sh.radius = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Crop")) != xmpData.end()){
 		prefix=baseKey+"rt:Crop/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, crop.enabled );
-		readVarFromXmp( xmpData, prefix+"X", crop.x );
-		readVarFromXmp( xmpData, prefix+"Y", crop.y );
-		readVarFromXmp( xmpData, prefix+"Width", crop.w );
-		readVarFromXmp( xmpData, prefix+"Height", crop.h );
-	 //   xmpData[prefix+"rt:FixedRatio"]=  crop.fixratio;
-	 //   xmpData[prefix+"rt:Ratio"]=       crop.ratio;
-	 //   xmpData[prefix+"rt:Orientation"]= crop.orientation;
-	 //   xmpData[prefix+"rt:Guide"]=       crop.guide;
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, crop.enabled ) && pedited) pedited->crop.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"X", crop.x ) && pedited) pedited->crop.x = true;
+		if (readVarFromXmp( xmpData, prefix+"Y", crop.y ) && pedited) pedited->crop.y = true;
+		if (readVarFromXmp( xmpData, prefix+"Width", crop.w ) && pedited) pedited->crop.w = true;
+		if (readVarFromXmp( xmpData, prefix+"Height", crop.h ) && pedited) pedited->crop.h = true;
+	 //   if (xmpData[prefix+"rt:FixedRatio"]=  crop.fixratio;
+	 //   if (xmpData[prefix+"rt:Ratio"]=       crop.ratio;
+	 //   if (xmpData[prefix+"rt:Orientation"]= crop.orientation;
+	 //   if (xmpData[prefix+"rt:Guide"]=       crop.guide;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:CoarseGeo")) != xmpData.end()){
 		prefix=baseKey+"rt:CoarseGeo/rt:";
-		readVarFromXmp( xmpData, prefix+"RotationDegree", coarse.rotate );
-		readVarFromXmp( xmpData, prefix+"HorizontalFlip", coarse.hflip );
-		readVarFromXmp( xmpData, prefix+"VerticalFlip", coarse.vflip );
+		if (readVarFromXmp( xmpData, prefix+"RotationDegree", coarse.rotate ) && pedited) pedited->coarse.rotate = true;
+		if (readVarFromXmp( xmpData, prefix+"HorizontalFlip", coarse.hflip ) && pedited) pedited->coarse.hflip = true;
+		if (readVarFromXmp( xmpData, prefix+"VerticalFlip", coarse.vflip ) && pedited) pedited->coarse.vflip = true;
 	}
 	
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:EPD")) != xmpData.end()){
 	    prefix=baseKey+"rt:EPD/rt:";
-	    readVarFromXmp( xmpData, prefix+kXmpEnabled,edgePreservingDecompositionUI.enabled );
-        readVarFromXmp( xmpData, prefix+"Strength", edgePreservingDecompositionUI.Strength );
-        readVarFromXmp( xmpData, prefix+"EdgeStopping", edgePreservingDecompositionUI.EdgeStopping);
-        readVarFromXmp( xmpData, prefix+"Scale", edgePreservingDecompositionUI.Scale );
-        readVarFromXmp( xmpData, prefix+"ReweightingIterates", edgePreservingDecompositionUI.ReweightingIterates);
+	    if (readVarFromXmp( xmpData, prefix+kXmpEnabled,edgePreservingDecompositionUI.enabled ) && pedited) pedited->edgePreservingDecompositionUI.enabled = true;
+	    if (readVarFromXmp( xmpData, prefix+"Strength", edgePreservingDecompositionUI.Strength ) && pedited) pedited->edgePreservingDecompositionUI.Strength = true;
+	    if (readVarFromXmp( xmpData, prefix+"EdgeStopping", edgePreservingDecompositionUI.EdgeStopping) && pedited) pedited->edgePreservingDecompositionUI.EdgeStopping = true;
+	    if (readVarFromXmp( xmpData, prefix+"Scale", edgePreservingDecompositionUI.Scale ) && pedited) pedited->edgePreservingDecompositionUI.Scale = true;
+	    if (readVarFromXmp( xmpData, prefix+"ReweightingIterates", edgePreservingDecompositionUI.ReweightingIterates) && pedited) pedited->edgePreservingDecompositionUI.ReweightingIterates = true;
     }
 
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Geometry")) != xmpData.end()){
 		prefix=baseKey+"rt:Geometry/rt:";
-		//readVarFromXmp( xmpData, prefix+kXmpEnabled, geo.enabled);
-		readVarFromXmp( xmpData, prefix+"AutoFill", commonTrans.autofill );
-		readVarFromXmp( xmpData, prefix+"RotationDegree", rotate.degree );
-		readVarFromXmp( xmpData, prefix+"DistortionAmount", distortion.amount );
-		readVarFromXmp( xmpData, prefix+"HorizontalPerspective", perspective.horizontal );
-		readVarFromXmp( xmpData, prefix+"VerticalPerspective", perspective.vertical );
+		//if (readVarFromXmp( xmpData, prefix+kXmpEnabled, geo.enabled);
+		if (readVarFromXmp( xmpData, prefix+"AutoFill", commonTrans.autofill ) && pedited) pedited->commonTrans.autofill = true;
+		if (readVarFromXmp( xmpData, prefix+"RotationDegree", rotate.degree ) && pedited) pedited->rotate.degree = true;
+		if (readVarFromXmp( xmpData, prefix+"DistortionAmount", distortion.amount ) && pedited) pedited->distortion.amount = true;
+		if (readVarFromXmp( xmpData, prefix+"HorizontalPerspective", perspective.horizontal ) && pedited) pedited->perspective.horizontal = true;
+		if (readVarFromXmp( xmpData, prefix+"VerticalPerspective", perspective.vertical ) && pedited) pedited->perspective.vertical = true;
+	}
+	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:LensProfile")) != xmpData.end()){
+		prefix=baseKey+"rt:LensProfile/rt:";
+		if (readVarFromXmp( xmpData, prefix+"LCPFile", lensProf.lcpFile ) && pedited) pedited->lensProf.lcpFile = true;
+		if (readVarFromXmp( xmpData, prefix+"UseDistortion", lensProf.useDist ) && pedited) pedited->lensProf.useDist = true;
+		if (readVarFromXmp( xmpData, prefix+"UseVignette", lensProf.useVign ) && pedited) pedited->lensProf.useVign = true;
+		if (readVarFromXmp( xmpData, prefix+"UseCA", lensProf.useCA ) && pedited) pedited->lensProf.useCA = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:CACorrection")) != xmpData.end()){
 		prefix=baseKey+"rt:CACorrection/rt:";
-		//readVarFromXmp( xmpData, prefix+kXmpEnabled, cacorrection.enabled);
-		readVarFromXmp( xmpData, prefix+"Red", cacorrection.red );
-		readVarFromXmp( xmpData, prefix+"Blue", cacorrection.blue );
+		//if (readVarFromXmp( xmpData, prefix+kXmpEnabled, cacorrection.enabled) && pedited) pedited-> = true;
+		if (readVarFromXmp( xmpData, prefix+"Red", cacorrection.red ) && pedited) pedited->cacorrection.red = true;
+		if (readVarFromXmp( xmpData, prefix+"Blue", cacorrection.blue ) && pedited) pedited->cacorrection.blue = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Vignetting")) != xmpData.end()){
 		prefix=baseKey+"rt:Vignetting/rt:";
-		//readVarFromXmp( xmpData, prefix+kXmpEnabled, vignetting.enabled);
-		readVarFromXmp( xmpData, prefix+"Amount", vignetting.amount );
-		readVarFromXmp( xmpData, prefix+"Radius", vignetting.radius );
-		readVarFromXmp( xmpData, prefix+"Strength", vignetting.strength );
-		readVarFromXmp( xmpData, prefix+"CenterX", vignetting.centerX );
-		readVarFromXmp( xmpData, prefix+"CenterY", vignetting.centerY );
+		//if (readVarFromXmp( xmpData, prefix+kXmpEnabled, vignetting.enabled) && pedited) pedited-> = true;
+		if (readVarFromXmp( xmpData, prefix+"Amount", vignetting.amount ) && pedited) pedited->vignetting.amount = true;
+		if (readVarFromXmp( xmpData, prefix+"Radius", vignetting.radius ) && pedited) pedited->vignetting.radius = true;
+		if (readVarFromXmp( xmpData, prefix+"Strength", vignetting.strength ) && pedited) pedited->vignetting.strength = true;
+		if (readVarFromXmp( xmpData, prefix+"CenterX", vignetting.centerX ) && pedited) pedited->vignetting.centerX = true;
+		if (readVarFromXmp( xmpData, prefix+"CenterY", vignetting.centerY ) && pedited) pedited->vignetting.centerY = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:HLRecovery")) != xmpData.end()){
 		prefix=baseKey+"rt:HLRecovery/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, hlrecovery.enabled );
-		readVarFromXmp( xmpData, prefix+"Method", hlrecovery.method );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, hlrecovery.enabled ) && pedited) pedited->hlrecovery.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Method", hlrecovery.method ) && pedited) pedited->hlrecovery.method = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Resize")) != xmpData.end()){
 		prefix=baseKey+"rt:Resize/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, resize.enabled );
-		readVarFromXmp( xmpData, prefix+"Scale", resize.scale );
-		readVarFromXmp( xmpData, prefix+"AppliesTo", resize.appliesTo );
-		readVarFromXmp( xmpData, prefix+"Method", resize.method );
-		readVarFromXmp( xmpData, prefix+"DataSpecified", resize.dataspec );
-		readVarFromXmp( xmpData, prefix+"Width", resize.width );
-		readVarFromXmp( xmpData, prefix+"Height", resize.height );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, resize.enabled ) && pedited) pedited->resize.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Scale", resize.scale ) && pedited) pedited->resize.scale = true;
+		if (readVarFromXmp( xmpData, prefix+"AppliesTo", resize.appliesTo ) && pedited) pedited->resize.appliesTo = true;
+		if (readVarFromXmp( xmpData, prefix+"Method", resize.method ) && pedited) pedited->resize.method = true;
+		if (readVarFromXmp( xmpData, prefix+"DataSpecified", resize.dataspec ) && pedited) pedited->resize.dataspec = true;
+		if (readVarFromXmp( xmpData, prefix+"Width", resize.width ) && pedited) pedited->resize.width = true;
+		if (readVarFromXmp( xmpData, prefix+"Height", resize.height ) && pedited) pedited->resize.height = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ColorManagement")) != xmpData.end()){
 		prefix=baseKey+"rt:ColorManagement/rt:";
-		readVarFromXmp( xmpData, prefix+"InputProfile", icm.input );
-		readVarFromXmp( xmpData, prefix+"WorkingProfile", icm.working );
-		readVarFromXmp( xmpData, prefix+"OutputProfile", icm.output );
-		readVarFromXmp( xmpData, prefix+"FreeGamma", icm.gamma );
-		readVarFromXmp( xmpData, prefix+"FreeGammaEnabled", icm.freegamma );
-		readVarFromXmp( xmpData, prefix+"GammaValue", icm.gampos );
-		readVarFromXmp( xmpData, prefix+"GammaSlope", icm.slpos );
+		if (readVarFromXmp( xmpData, prefix+"InputProfile", icm.input ) && pedited) pedited->icm.input = true;
+		if (readVarFromXmp( xmpData, prefix+"WorkingProfile", icm.working ) && pedited) pedited->icm.working = true;
+		if (readVarFromXmp( xmpData, prefix+"OutputProfile", icm.output ) && pedited) pedited->icm.output = true;
+		if (readVarFromXmp( xmpData, prefix+"FreeGamma", icm.gamma ) && pedited) pedited->icm.gamma = true;
+		if (readVarFromXmp( xmpData, prefix+"FreeGammaEnabled", icm.freegamma ) && pedited) pedited->icm.gamfree = true;
+		if (readVarFromXmp( xmpData, prefix+"GammaValue", icm.gampos ) && pedited) pedited->icm.gampos = true;
+		if (readVarFromXmp( xmpData, prefix+"GammaSlope", icm.slpos ) && pedited) pedited->icm.slpos = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:DirectionalPyramidEqualizer")) != xmpData.end()){
 		prefix=baseKey+"rt:DirectionalPyramidEqualizer/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, dirpyrequalizer.enabled );
-		readVarFromXmp( xmpData, prefix+"Coeff",dirpyrequalizer.mult,5 );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, dirpyrequalizer.enabled ) && pedited) pedited->dirpyrequalizer.enabled = true;
+		if (readVarFromXmp( xmpData, prefix+"Coeff",dirpyrequalizer.mult,5 ) && pedited) for (int i=0; i<8; i++) pedited->dirpyrequalizer.mult[i] = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:DirectionalPyramidEqualizer")) != xmpData.end()){
 		prefix=baseKey+"rt:HSVEqualizer/rt:";
-		//readVarFromXmp( xmpData, prefix+kXmpEnabled, hsvequalizer.enabled);
-		readVarFromXmp( xmpData,prefix+"HCurve",hsvequalizer.hcurve);
-		readVarFromXmp( xmpData,prefix+"SCurve",hsvequalizer.scurve);
-		readVarFromXmp( xmpData,prefix+"VCurve",hsvequalizer.vcurve);
+		//if (readVarFromXmp( xmpData, prefix+kXmpEnabled, hsvequalizer.enabled) && pedited) pedited-> = true;
+		if (readVarFromXmp( xmpData,prefix+"HCurve",hsvequalizer.hcurve) && pedited) pedited->hsvequalizer.hcurve = true;
+		if (readVarFromXmp( xmpData,prefix+"SCurve",hsvequalizer.scurve) && pedited) pedited->hsvequalizer.scurve = true;
+		if (readVarFromXmp( xmpData,prefix+"VCurve",hsvequalizer.vcurve) && pedited) pedited->hsvequalizer.vcurve = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:RawArithmetic")) != xmpData.end()){
 		prefix=baseKey+"rt:RawArithmetic/rt:";
-		//readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.arithmeticEnabled);
-		readVarFromXmp( xmpData, prefix+"DarkFrameFile", raw.dark_frame );
-		readVarFromXmp( xmpData, prefix+"DarkFrameAutoSelect", raw.df_autoselect );
-		readVarFromXmp( xmpData, prefix+"FlatFieldFile", raw.ff_file );
-		readVarFromXmp( xmpData, prefix+"FlatFieldAutoSelect", raw.ff_AutoSelect );
-		readVarFromXmp( xmpData, prefix+"FlatFieldBlurRadius", raw.ff_BlurRadius );
-		readVarFromXmp( xmpData, prefix+"FlatFieldBlurType", raw.ff_BlurType );
+		//if (readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.arithmeticEnabled) && pedited) pedited-> = true;
+		if (readVarFromXmp( xmpData, prefix+"DarkFrameFile", raw.dark_frame ) && pedited) pedited->raw.darkFrame = true;
+		if (readVarFromXmp( xmpData, prefix+"DarkFrameAutoSelect", raw.df_autoselect ) && pedited) pedited->raw.dfAuto = true;
+		if (readVarFromXmp( xmpData, prefix+"FlatFieldFile", raw.ff_file ) && pedited) pedited->raw.ff_file = true;
+		if (readVarFromXmp( xmpData, prefix+"FlatFieldAutoSelect", raw.ff_AutoSelect ) && pedited) pedited->raw.ff_AutoSelect = true;
+		if (readVarFromXmp( xmpData, prefix+"FlatFieldBlurRadius", raw.ff_BlurRadius ) && pedited) pedited->raw.ff_BlurRadius = true;
+		if (readVarFromXmp( xmpData, prefix+"FlatFieldBlurType", raw.ff_BlurType ) && pedited) pedited->raw.ff_BlurType = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:RawCACorrection")) != xmpData.end()){
 		prefix=baseKey+"rt:RawCACorrection/rt:";
-		//readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.ca_enabled);
-		readVarFromXmp( xmpData, prefix+"Auto",	raw.ca_autocorrect );
-		readVarFromXmp( xmpData, prefix+"Red", raw.cared );
-		readVarFromXmp( xmpData, prefix+"Blue", raw.cablue );
+		//if (readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.ca_enabled) && pedited) pedited-> = true;
+		if (readVarFromXmp( xmpData, prefix+"Auto",	raw.ca_autocorrect ) && pedited) pedited->raw.caCorrection = true;
+		if (readVarFromXmp( xmpData, prefix+"Red", raw.cared ) && pedited) pedited->raw.caRed = true;
+		if (readVarFromXmp( xmpData, prefix+"Blue", raw.cablue ) && pedited) pedited->raw.caBlue = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:HotDeadPixelCorrection")) != xmpData.end()){
 		prefix=baseKey+"rt:HotDeadPixelCorrection/rt:";
-		readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.hotdeadpix_filt );
-		readVarFromXmp( xmpData, prefix+"Threshold", raw.hotdeadpix_thresh );
+		if (readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.hotdeadpix_filt ) && pedited) pedited->raw.hotDeadPixelFilter = true;
+		if (readVarFromXmp( xmpData, prefix+"Threshold", raw.hotdeadpix_thresh ) && pedited) pedited->raw.hotDeadPixelThresh = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:RawDenoise")) != xmpData.end()){
 		prefix=baseKey+"rt:RawDenoise/rt:";
-		//readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.linenoiseEnabled );
-		readVarFromXmp( xmpData, prefix+"LineDenoise", raw.linenoise );
+		//if (readVarFromXmp( xmpData, prefix+kXmpEnabled, raw.linenoiseEnabled ) && pedited) pedited-> = true;
+		if (readVarFromXmp( xmpData, prefix+"LineDenoise", raw.linenoise ) && pedited) pedited->raw.linenoise = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:Demosaicing")) != xmpData.end()){
 		prefix=baseKey+"rt:Demosaicing/rt:";
-		readVarFromXmp( xmpData, prefix+"GreenEqThreshold", raw.greenthresh );
-		readVarFromXmp( xmpData, prefix+"CcSteps", raw.ccSteps );
-		readVarFromXmp( xmpData, prefix+"Method", raw.dmethod );
-		readVarFromXmp( xmpData, prefix+"DCBIterations", raw.dcb_iterations );
-		readVarFromXmp( xmpData, prefix+"DCBEnhance", raw.dcb_enhance );
-		readVarFromXmp( xmpData, prefix+"Enhance", raw.all_enhance );
+		if (readVarFromXmp( xmpData, prefix+"GreenEqThreshold", raw.greenthresh ) && pedited) pedited->raw.greenEq = true;
+		if (readVarFromXmp( xmpData, prefix+"CcSteps", raw.ccSteps ) && pedited) pedited->raw.ccSteps = true;
+		if (readVarFromXmp( xmpData, prefix+"Method", raw.dmethod ) && pedited) pedited->raw.dmethod = true;
+		if (readVarFromXmp( xmpData, prefix+"DCBIterations", raw.dcb_iterations ) && pedited) pedited->raw.dcbIterations = true;
+		if (readVarFromXmp( xmpData, prefix+"DCBEnhance", raw.dcb_enhance ) && pedited) pedited->raw.dcbEnhance = true;
+		if (readVarFromXmp( xmpData, prefix+"Enhance", raw.all_enhance ) && pedited) pedited->raw.allEnhance = true;
 	}
 	if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:RawExposure")) != xmpData.end()){
 		prefix=baseKey+"rt:RawExposure/rt:";
-		readVarFromXmp( xmpData, prefix+"Exposure", raw.expos );
-		readVarFromXmp( xmpData, prefix+"HLPreserving", raw.preser );
-		readVarFromXmp( xmpData, prefix+"Black0", raw.blackzero );
-		readVarFromXmp( xmpData, prefix+"Black1", raw.blackone );
-		readVarFromXmp( xmpData, prefix+"Black2", raw.blacktwo );
-		readVarFromXmp( xmpData, prefix+"Black3", raw.blackthree );
-		readVarFromXmp( xmpData, prefix+"TwoGreen", raw.twogreen );
+		if (readVarFromXmp( xmpData, prefix+"Exposure", raw.expos ) && pedited) pedited->raw.exPos = true;
+		if (readVarFromXmp( xmpData, prefix+"HLPreserving", raw.preser ) && pedited) pedited->raw.exPreser = true;
+		if (readVarFromXmp( xmpData, prefix+"Black0", raw.blackzero ) && pedited) pedited->raw.exBlackzero = true;
+		if (readVarFromXmp( xmpData, prefix+"Black1", raw.blackone ) && pedited) pedited->raw.exBlackone = true;
+		if (readVarFromXmp( xmpData, prefix+"Black2", raw.blacktwo ) && pedited) pedited->raw.exBlacktwo = true;
+		if (readVarFromXmp( xmpData, prefix+"Black3", raw.blackthree ) && pedited) pedited->raw.exBlackthree = true;
+		if (readVarFromXmp( xmpData, prefix+"TwoGreen", raw.twogreen ) && pedited) pedited->raw.exTwoGreen = true;
 	}
 	return 0;
 }catch( Exiv2::AnyError &e){
@@ -845,7 +872,7 @@ try{
 }
 }
 
-int ProcParams::saveParams ( Glib::ustring fname ) const
+int ProcParams::saveParams ( Glib::ustring fname, ParamsEdited* pedited ) const
 {
 	Exiv2::XmpData  xmpData;
 
@@ -856,7 +883,7 @@ int ProcParams::saveParams ( Glib::ustring fname ) const
     Exiv2::XmpTextValue tv("");
     tv.setXmpArrayType(Exiv2::XmpValue::xaBag);
     xmpData.add(Exiv2::XmpKey(baseKey), &tv);
-    saveIntoXMP( xmpData, Glib::ustring::compose("Xmp.rt.%1[1]/",kXmpProcessing) );
+    saveIntoXMP( xmpData, Glib::ustring::compose("Xmp.rt.%1[1]/",kXmpProcessing), pedited );
 
     std::string xmpPacket;
     if (0 != Exiv2::XmpParser::encode(xmpPacket, xmpData)) {
@@ -873,7 +900,7 @@ int ProcParams::saveParams ( Glib::ustring fname ) const
     }
 }
 
-int ProcParams::loadParams( Glib::ustring fname )
+int ProcParams::loadParams( Glib::ustring fname, ParamsEdited* pedited )
 {
 	Exiv2::XmpData  xmpData;
     FILE *f = safe_g_fopen(fname,"rb");
@@ -896,7 +923,7 @@ int ProcParams::loadParams( Glib::ustring fname )
     	return 2;
     }
     std::string key(Glib::ustring::compose("Xmp.rt.%1[1]/",kXmpProcessing));
-    loadFromXMP( xmpData, key );
+    loadFromXMP( xmpData, key, pedited );
     return 0;
 }
 
@@ -1003,15 +1030,25 @@ if (keyFile.has_group ("Channel Mixer")) {
 
     // load luma curve
 if (keyFile.has_group ("Luminance Curve")) {    
-    if (keyFile.has_key ("Luminance Curve", "Brightness"))     { labCurve.brightness  = keyFile.get_integer  ("Luminance Curve", "Brightness"); if (pedited) pedited->labCurve.brightness = true; }
-    if (keyFile.has_key ("Luminance Curve", "Contrast"))       { labCurve.contrast    = keyFile.get_integer ("Luminance Curve", "Contrast"); if (pedited) pedited->labCurve.contrast = true; }
-	if (keyFile.has_key ("Luminance Curve", "Saturation"))      { labCurve.saturation = keyFile.get_integer ("Luminance Curve", "Saturation"); if (pedited) pedited->labCurve.saturation = true; }
-	if (keyFile.has_key ("Luminance Curve", "AvoidColorClipping"))  { labCurve.avoidclip                = keyFile.get_boolean ("Luminance Curve", "AvoidColorClipping"); if (pedited) pedited->labCurve.avoidclip = true; }
-    if (keyFile.has_key ("Luminance Curve", "SaturationLimiter"))   { labCurve.enable_saturationlimiter = keyFile.get_boolean ("Luminance Curve", "SaturationLimiter"); if (pedited) pedited->labCurve.enable_saturationlimiter = true; }
-    if (keyFile.has_key ("Luminance Curve", "SaturationLimit"))     { labCurve.saturationlimit          = keyFile.get_double  ("Luminance Curve", "SaturationLimit");	 if (pedited) pedited->labCurve.saturationlimit = true; }
-	if (keyFile.has_key ("Luminance Curve", "LCurve"))          { labCurve.lcurve = keyFile.get_double_list ("Luminance Curve", "LCurve"); if (pedited) pedited->labCurve.lcurve = true; }
-	if (keyFile.has_key ("Luminance Curve", "aCurve"))          { labCurve.acurve = keyFile.get_double_list ("Luminance Curve", "aCurve"); if (pedited) pedited->labCurve.acurve = true; }
-	if (keyFile.has_key ("Luminance Curve", "bCurve"))          { labCurve.bcurve = keyFile.get_double_list ("Luminance Curve", "bCurve"); if (pedited) pedited->labCurve.bcurve = true; }
+    if (keyFile.has_key ("Luminance Curve", "Brightness"))     { labCurve.brightness   = keyFile.get_integer ("Luminance Curve", "Brightness"); if (pedited) pedited->labCurve.brightness = true; }
+    if (keyFile.has_key ("Luminance Curve", "Contrast"))       { labCurve.contrast     = keyFile.get_integer ("Luminance Curve", "Contrast"); if (pedited) pedited->labCurve.contrast = true; }
+	if (keyFile.has_key ("Luminance Curve", "Chromaticity"))   { labCurve.chromaticity = keyFile.get_integer ("Luminance Curve", "Chromaticity"); if (pedited) pedited->labCurve.chromaticity = true; }
+
+	if (PPVERSION < 303) {
+	// transform AvoidColorClipping into AvoidColorShift
+	if (keyFile.has_key ("Luminance Curve", "AvoidColorClipping"))        { labCurve.avoidcolorshift = keyFile.get_boolean ("Luminance Curve", "AvoidColorClipping"); if (pedited) pedited->labCurve.avoidcolorshift = true; }
+	}
+	else {
+	if (keyFile.has_key ("Luminance Curve", "AvoidColorShift"))           { labCurve.avoidcolorshift = keyFile.get_boolean ("Luminance Curve", "AvoidColorShift"); if (pedited) pedited->labCurve.avoidcolorshift = true; }
+	if (keyFile.has_key ("Luminance Curve", "RedAndSkinTonesProtection")) { labCurve.rstprotection   = keyFile.get_double  ("Luminance Curve", "RedAndSkinTonesProtection"); if (pedited) pedited->labCurve.rstprotection = true; }
+	}
+
+    if (keyFile.has_key ("Luminance Curve", "BWtoning"))        { labCurve.bwtoning           = keyFile.get_boolean     ("Luminance Curve", "BWtoning"); if (pedited) pedited->labCurve.bwtoning = true; }
+	if (keyFile.has_key ("Luminance Curve", "LCurve"))          { labCurve.lcurve             = keyFile.get_double_list ("Luminance Curve", "LCurve"); if (pedited) pedited->labCurve.lcurve = true; }
+	if (keyFile.has_key ("Luminance Curve", "aCurve"))          { labCurve.acurve             = keyFile.get_double_list ("Luminance Curve", "aCurve"); if (pedited) pedited->labCurve.acurve = true; }
+	if (keyFile.has_key ("Luminance Curve", "bCurve"))          { labCurve.bcurve             = keyFile.get_double_list ("Luminance Curve", "bCurve"); if (pedited) pedited->labCurve.bcurve = true; }
+	if (keyFile.has_key ("Luminance Curve", "ccCurve"))         { labCurve.cccurve            = keyFile.get_double_list ("Luminance Curve", "ccCurve"); if (pedited) pedited->labCurve.cccurve = true; }
+	if (keyFile.has_key ("Luminance Curve", "chCurve"))         { labCurve.chcurve            = keyFile.get_double_list ("Luminance Curve", "chCurve"); if (pedited) pedited->labCurve.chcurve = true; }
 }
 
     // load sharpening
@@ -1019,7 +1056,17 @@ if (keyFile.has_group ("Sharpening")) {
     if (keyFile.has_key ("Sharpening", "Enabled"))              { sharpening.enabled          = keyFile.get_boolean ("Sharpening", "Enabled"); if (pedited) pedited->sharpening.enabled = true; }
     if (keyFile.has_key ("Sharpening", "Radius"))               { sharpening.radius           = keyFile.get_double  ("Sharpening", "Radius"); if (pedited) pedited->sharpening.radius = true; }
     if (keyFile.has_key ("Sharpening", "Amount"))               { sharpening.amount           = keyFile.get_integer ("Sharpening", "Amount"); if (pedited) pedited->sharpening.amount = true; }
-    if (keyFile.has_key ("Sharpening", "Threshold"))            { sharpening.threshold        = keyFile.get_integer ("Sharpening", "Threshold"); if (pedited) pedited->sharpening.threshold = true; }
+    if (keyFile.has_key ("Sharpening", "Threshold"))            {
+        if (ppVersion < 302) {
+            int thresh = min(keyFile.get_integer ("Sharpening", "Threshold"), 2000);
+            sharpening.threshold.setValues(thresh, thresh, 2000, 2000); // TODO: 2000 is the maximum value and is taken of rtgui/sharpening.cc ; should be changed by the tool modularization
+        }
+        else {
+            Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Sharpening", "Threshold");
+            sharpening.threshold.setValues(thresh.data()[0], thresh.data()[1], min(thresh.data()[2], 2000), min(thresh.data()[3], 2000));
+        }
+        if (pedited) pedited->sharpening.threshold = true;
+    }
     if (keyFile.has_key ("Sharpening", "OnlyEdges"))            { sharpening.edgesonly        = keyFile.get_boolean ("Sharpening", "OnlyEdges"); if (pedited) pedited->sharpening.edgesonly = true; }
     if (keyFile.has_key ("Sharpening", "EdgedetectionRadius"))  { sharpening.edges_radius     = keyFile.get_double  ("Sharpening", "EdgedetectionRadius"); if (pedited) pedited->sharpening.edges_radius = true; }
     if (keyFile.has_key ("Sharpening", "EdgeTolerance"))        { sharpening.edges_tolerance  = keyFile.get_integer ("Sharpening", "EdgeTolerance"); if (pedited) pedited->sharpening.edges_tolerance = true; }
@@ -1053,10 +1100,21 @@ if (keyFile.has_group ("Vibrance")) {
     if (keyFile.has_key ("Vibrance", "Enabled"))                { vibrance.enabled            = keyFile.get_boolean ("Vibrance", "Enabled"); if (pedited) pedited->vibrance.enabled = true; }
     if (keyFile.has_key ("Vibrance", "Pastels"))                { vibrance.pastels            = keyFile.get_integer ("Vibrance", "Pastels"); if (pedited) pedited->vibrance.pastels = true; }
     if (keyFile.has_key ("Vibrance", "Saturated"))              { vibrance.saturated          = keyFile.get_integer ("Vibrance", "Saturated"); if (pedited) pedited->vibrance.saturated = true; }
-    if (keyFile.has_key ("Vibrance", "PSThreshold"))            { vibrance.psthreshold        = keyFile.get_integer ("Vibrance", "PSThreshold"); if (pedited) pedited->vibrance.psthreshold = true; }
+    if (keyFile.has_key ("Vibrance", "PSThreshold"))            {
+        if (ppVersion < 302) {
+            int thresh = keyFile.get_integer ("Vibrance", "PSThreshold");
+            vibrance.psthreshold.setValues(thresh, thresh);
+        }
+        else {
+            Glib::ArrayHandle<int> thresh = keyFile.get_integer_list ("Vibrance", "PSThreshold");
+            vibrance.psthreshold.setValues(thresh.data()[0], thresh.data()[1]);
+        }
+        if (pedited) pedited->vibrance.psthreshold = true;
+    }
     if (keyFile.has_key ("Vibrance", "ProtectSkins"))           { vibrance.protectskins       = keyFile.get_boolean ("Vibrance", "ProtectSkins"); if (pedited) pedited->vibrance.protectskins = true; }
     if (keyFile.has_key ("Vibrance", "AvoidColorShift"))        { vibrance.avoidcolorshift    = keyFile.get_boolean ("Vibrance", "AvoidColorShift"); if (pedited) pedited->vibrance.avoidcolorshift = true; }
     if (keyFile.has_key ("Vibrance", "PastSatTog"))             { vibrance.pastsattog         = keyFile.get_boolean ("Vibrance", "PastSatTog"); if (pedited) pedited->vibrance.pastsattog = true; }
+    if (keyFile.has_key ("Vibrance", "SkinTonesCurve"))        	{ vibrance.skintonescurve     = keyFile.get_double_list ("Vibrance", "SkinTonesCurve"); if (pedited) pedited->vibrance.skintonescurve = true; }
 }
 
     // load colorBoost
@@ -1357,6 +1415,7 @@ if (keyFile.has_group ("RAW")) {
         printf ("-->unknown exception!\n");
         return 1;
     }
+    return 0;
 }
 
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
@@ -1398,12 +1457,15 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& labCurve.lcurve == other.labCurve.lcurve
 		&& labCurve.acurve == other.labCurve.acurve
 		&& labCurve.bcurve == other.labCurve.bcurve
+		&& labCurve.cccurve == other.labCurve.cccurve
+		&& labCurve.chcurve == other.labCurve.chcurve
+//		&& labCurve.cbgcurve == other.labCurve.cbgcurve
 		&& labCurve.brightness == other.labCurve.brightness
 		&& labCurve.contrast == other.labCurve.contrast
-		&& labCurve.saturation == other.labCurve.saturation
-		&& labCurve.avoidclip == other.labCurve.avoidclip
-		&& labCurve.enable_saturationlimiter == other.labCurve.enable_saturationlimiter
-		&& labCurve.saturationlimit == other.labCurve.saturationlimit			
+		&& labCurve.chromaticity == other.labCurve.chromaticity
+		&& labCurve.avoidcolorshift == other.labCurve.avoidcolorshift
+		&& labCurve.rstprotection == other.labCurve.rstprotection
+		&& labCurve.bwtoning == other.labCurve.bwtoning
 		&& sharpenEdge.enabled == other.sharpenEdge.enabled
 		&& sharpenEdge.passes == other.sharpenEdge.passes
 		&& sharpenEdge.amount == other.sharpenEdge.amount
@@ -1433,6 +1495,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& vibrance.protectskins == other.vibrance.protectskins
 		&& vibrance.avoidcolorshift == other.vibrance.avoidcolorshift
 		&& vibrance.pastsattog == other.vibrance.pastsattog
+		&& vibrance.skintonescurve == other.vibrance.skintonescurve
 		//&& colorBoost.amount == other.colorBoost.amount
 		//&& colorBoost.avoidclip == other.colorBoost.avoidclip
 		//&& colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter
@@ -1542,8 +1605,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& rgbCurves.rcurve == other.rgbCurves.rcurve
 		&& rgbCurves.gcurve == other.rgbCurves.gcurve
 		&& rgbCurves.bcurve == other.rgbCurves.bcurve
-		&& exif==other.exif
-		&& iptc==other.iptc
+		//&& exif==other.exif
+		//&& iptc==other.iptc
 		&& raw.expos==other.raw.expos
 		&& raw.preser==other.raw.preser 
 		&& raw.preser==other.raw.preser

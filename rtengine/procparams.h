@@ -21,12 +21,159 @@
 
 #include <glibmm.h>
 #include <vector>
+#include <cassert>
+#include <cstdio>
+#include <cmath>
 #include "rtXmp.h"
 
 class ParamsEdited;
 
 namespace rtengine {
 namespace procparams {
+
+template <typename T>
+class Threshold {
+    public:
+        T value[4];
+
+    protected:
+        bool initEq1;
+        bool _isDouble;
+#ifndef NDEBUG
+        unsigned int part[5];
+#endif
+
+    public:
+        Threshold (T val1, T val2, bool startAtOne) {
+            initEq1 = startAtOne;
+            value[0] = val1;
+            value[1] = val2;
+            value[2] = T(0);
+            value[3] = T(0);
+            _isDouble = false;
+        }
+
+        Threshold (T val1, T val2, T val3, T val4, bool startAtOne) {
+            initEq1 = startAtOne;
+            value[0] = val1;
+            value[1] = val2;
+            value[2] = val3;
+            value[3] = val4;
+            _isDouble = true;
+        }
+
+        // for convenience, since 'values' is public
+        void setValues(T val1, T val2) {
+            value[0] = val1;
+            value[1] = val2;
+        }
+
+        // for convenience, since 'values' is public
+        void setValues(T val1, T val2, T val3, T val4) {
+            value[0] = val1;
+            value[1] = val2;
+            value[2] = val3;
+            value[3] = val4;
+        }
+
+        bool isDouble() const { return _isDouble; }
+
+        // RT: Type of the returned value
+        // RV: Type of the value on the X axis
+        // RV2: Type of the maximum value on the Y axis
+        template <typename RT, typename RV, typename RV2>
+        RT multiply(RV x, RV2 yMax) const {
+        	double val = double(x);
+            if (initEq1) {
+                if (_isDouble) {
+                	if (val == double(value[2]) && double(value[2]) == double(value[3]))
+                		// this handle the special case where the 2 right values are the same, then bottom one is sent back,
+                		// useful if one wants to keep the bottom value even beyond the x max bound
+                        return RT(0.);
+                    if (val >= double(value[3]))
+                        return RT(yMax);
+                    if (val > double(value[2]))
+                        return RT(double(yMax)*(val-double(value[2]))/(double(value[3])-double(value[2])));
+                }
+                if (val >= double(value[0]))
+                    return RT(0);
+                if (val > double(value[1]))
+                    return RT(double(yMax)*(1.-(val-double(value[0]))/(double(value[1])-double(value[0]))));
+                return RT(yMax);
+            }
+            else {
+                if (_isDouble) {
+                	if (val == double(value[2]) && double(value[2]) == double(value[3]))
+                		// this handle the special case where the 2 right values are the same, then top one is sent back,
+                		// useful if one wants to keep the top value even beyond the x max bound
+                        return RT(yMax);
+                    if (val >= double(value[2]))
+                        return RT(0);
+                    if (val > double(value[3]))
+                        return RT(double(yMax)*(1.-(val-double(value[3]))/(double(value[2])-double(value[3]))));
+                }
+                if (val >= double(value[1]))
+                    return RT(yMax);
+                if (val > double(value[0]))
+                    return RT(double(yMax)*(val-double(value[0]))/(double(value[1])-double(value[0])));
+                return RT(0);
+            }
+        }
+
+        // RT: Type of the returned value
+        // RV: Type of the value on the X axis
+        /*template <typename RT, typename RV>
+        RT getRatio(RV val) const {
+        	double val = double(val);
+            if (initEq1) {
+                if (_isDouble) {  // assuming that simple thresholds will be more frequent
+                    if (val >= double(value[3]))
+                        return RT(1);
+                    if (val > double(value[2]))
+                        return (val-double(value[2]))/(double(value[3])-double(value[2]));
+                }
+                if (val >= double(value[1]))
+                    return RT(0);
+                if (val > double(value[0]))
+                    return 1.-(val-double(value[0]))/(double(value[1])-double(value[0]));
+                return RT(1);
+            }
+            else {
+                if (_isDouble) {  // assuming that simple thresholds will be more frequent
+                    if (val >= double(value[3]))
+                        return RT(0);
+                    if (val > double(value[2]))
+                        return 1.-(val-double(value[2]))/(double(value[3])-double(value[2]));
+                }
+                if (val >= double(value[1]))
+                    return RT(1);
+                if (val > double(value[0]))
+                    return (val-double(value[0]))/(double(value[1])-double(value[0]));
+                return RT(0);
+            }
+        }*/
+
+        Threshold<T> & operator= (const Threshold<T> &rhs) {
+            value[0] = rhs.value[0];
+            value[1] = rhs.value[1];
+            value[2] = rhs.value[2];
+            value[3] = rhs.value[3];
+            initEq1 = rhs.initEq1;
+            _isDouble = rhs._isDouble;
+    	    return *this;
+        }
+
+        bool operator== (const Threshold<T> &rhs) const {
+            if (_isDouble)
+            	return fabs(value[0]-rhs.value[0])<1e-10
+            	    && fabs(value[1]-rhs.value[1])<1e-10
+            	    && fabs(value[2]-rhs.value[2])<1e-10
+            	    && fabs(value[3]-rhs.value[3])<1e-10;
+            else
+            	return fabs(value[0]-rhs.value[0])<1e-10
+            	    && fabs(value[1]-rhs.value[1])<1e-10;
+        }
+};
 
 /**
   * Parameters of the tone curve 
@@ -56,12 +203,15 @@ class LCurveParams {
         std::vector<double>   lcurve;
         std::vector<double>   acurve;
         std::vector<double>   bcurve;
+        std::vector<double>   cccurve;
+        std::vector<double>   chcurve;
+        //std::vector<double>   cbgcurve;
         int     brightness;
         int     contrast;
-        int     saturation;
-        bool    avoidclip;
-        bool    enable_saturationlimiter;
-        double  saturationlimit;
+        int     chromaticity;
+        bool    avoidcolorshift;
+        double  rstprotection;
+        bool    bwtoning;
 };
 
 /**
@@ -81,20 +231,22 @@ class RGBCurvesParams {
 class SharpeningParams {
 
     public:
-        bool    enabled;
-        double  radius;
-        int     amount;
-        int     threshold;
-        bool    edgesonly;
-        double  edges_radius;
-        int     edges_tolerance;
-        bool    halocontrol;
-        int     halocontrol_amount;
-        Glib::ustring method;
-        int     deconvamount;
-        double  deconvradius;
-        int     deconviter;
-        int     deconvdamping;
+        bool           enabled;
+        double         radius;
+        int            amount;
+        Threshold<int> threshold;
+        bool           edgesonly;
+        double         edges_radius;
+        int            edges_tolerance;
+        bool           halocontrol;
+        int            halocontrol_amount;
+        Glib::ustring  method;
+        int            deconvamount;
+        double         deconvradius;
+        int            deconviter;
+        int            deconvdamping;
+
+        SharpeningParams() : threshold(20, 80, 2000, 1200, false) {};
 };
 class SharpenEdgeParams {
   public:
@@ -117,13 +269,16 @@ class SharpenMicroParams {
 class VibranceParams {
 
     public:
-        bool    enabled;
-        int     pastels;
-        int     saturated;
-        int     psthreshold;
-        bool    protectskins;
-        bool    avoidcolorshift;
-        bool    pastsattog;
+        bool           enabled;
+        int            pastels;
+        int            saturated;
+        Threshold<int> psthreshold;
+        bool           protectskins;
+        bool           avoidcolorshift;
+        bool           pastsattog;
+        std::vector<double> skintonescurve;
+
+        VibranceParams() : psthreshold(0, 75,  false) {};
 };
 
 /**
@@ -569,10 +724,10 @@ class ProcParams {
         */
         int load        (Glib::ustring fname, ParamsEdited* pedited=NULL, int *rank=NULL);
 
-        int saveIntoXMP (Exiv2::XmpData &xmpData, const std::string& baseKey) const;
-        int loadFromXMP (Exiv2::XmpData &xmpData, const std::string& baseKey);
-        int saveParams  (Glib::ustring fname) const;
-        int loadParams  (Glib::ustring fname);
+        void saveIntoXMP (Exiv2::XmpData &xmpData, const std::string& baseKey, ParamsEdited* pedited=NULL) const;
+        int loadFromXMP (Exiv2::XmpData &xmpData, const std::string& baseKey, ParamsEdited* pedited=NULL);
+        int saveParams  (Glib::ustring fname, ParamsEdited* pedited=NULL) const;
+        int loadParams  (Glib::ustring fname, ParamsEdited* pedited=NULL);
 
       /** Creates a new instance of ProcParams.
         * @return a pointer to the new ProcParams instance. */

@@ -275,7 +275,6 @@ void ICCStore::findDefaultMonitorProfile() {
     }
 #else
 // TODO: Add other OS specific code here
-printf("Automatic Monitor Profile Detection not supported on your OS\n");
 #endif
 
 	if (options.rtSettings.verbose) printf("Default monitor profile is: %s\n", defaultMonitorProfile.c_str());

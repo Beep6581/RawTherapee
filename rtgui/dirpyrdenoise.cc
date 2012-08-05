@@ -36,9 +36,9 @@ DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 	
 	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enabledChanged) );
 	
-	luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMA"), 0, 100, 1, 10));
-	chroma    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMA"), 0, 100, 1, 10));
-	gamma	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 0.10));
+	luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMA"), 0, 100, 1, 5));
+	chroma    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMA"), 0, 100, 1, 5));
+	gamma	= Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_GAMMA"), 1.0, 3.0, 0.01, 2.0));
 	
 	luma->setAdjusterListener (this);
 	chroma->setAdjusterListener (this); 
@@ -97,7 +97,7 @@ void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited
 	
     luma->setDefault (defParams->dirpyrDenoise.luma);
     chroma->setDefault (defParams->dirpyrDenoise.chroma);
-	gamma->setDefault (defParams->dirpyrDenoise.chroma);
+    gamma->setDefault (defParams->dirpyrDenoise.gamma);
 
     if (pedited) {
         luma->setDefaultEditedState		(pedited->dirpyrDenoise.luma ? Edited : UnEdited);
@@ -114,18 +114,13 @@ void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited
 void DirPyrDenoise::adjusterChanged (Adjuster* a, double newval) {
 	
     if (listener && enabled->get_active()) {
-        
-        if (a==luma) {
+        if (a==luma)
             listener->panelChanged (EvDPDNLuma, Glib::ustring::format ((int)a->getValue()));
-        } else {
-			if (a==chroma) { 
-            listener->panelChanged (EvDPDNChroma, Glib::ustring::format ((int)a->getValue()));
-			} else {
-				if (a==gamma) 
-					listener->panelChanged (EvDPDNGamma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-			}
-		}
-	}
+        else if (a==chroma)
+             listener->panelChanged (EvDPDNChroma, Glib::ustring::format ((int)a->getValue()));
+        else if (a==gamma) 
+             listener->panelChanged (EvDPDNGamma, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
+    }
 }
 
 void DirPyrDenoise::enabledChanged () {
@@ -156,6 +151,7 @@ void DirPyrDenoise::setBatchMode (bool batchMode) {
     ToolPanel::setBatchMode (batchMode);
     luma->showEditedCB ();
     chroma->showEditedCB ();
+    gamma->showEditedCB ();
 }
 
 void DirPyrDenoise::setAdjusterBehavior (bool chrolumaadd, bool gammaadd) {

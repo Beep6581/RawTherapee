@@ -63,9 +63,6 @@ void Crop::update (int todo) {
 
     ProcParams& params = parent->params;
 
-
-    parent->ipf.setScale (skip);
-
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
     int wx, wy, ww, wh, ws;
     bool overrideWindow = false;
@@ -79,8 +76,11 @@ void Crop::update (int todo) {
     else
         needsinitupdate = setCropSizes (wx, wy, ww, wh, ws, true); // this set skip=ws
     // it something has been reallocated, all processing steps have to be performed
-    if (needsinitupdate)
+    if (needsinitupdate || (todo & M_HIGHQUAL))
         todo = ALL;
+
+    // set improcfuncions' scale now that skip has been updated
+    parent->ipf.setScale (skip);
 
     baseCrop = origCrop;
 
@@ -166,8 +166,13 @@ void Crop::update (int todo) {
 
 		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
-		parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
-		parent->ipf.chrominanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve);
+	//	parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
+	    bool utili=false;
+	    bool autili=false;
+	    bool butili=false;
+		bool ccutili=false;
+		
+		parent->ipf.chromiLuminanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve,/*parent->satbgcurve,*/ parent->lumacurve, utili, autili, butili, ccutili);
 		//parent->ipf.colorCurve (labnCrop, labnCrop);
 		parent->ipf.vibrance (labnCrop);
 
@@ -393,7 +398,7 @@ void Crop::fullUpdate () {
     parent->updaterThreadStart.lock ();
     if (parent->updaterRunning && parent->thread) {
 		// Do NOT reset changes here, since in a long chain of events it will lead to chroma_scale not being updated,
-		// causing ImProcFunctions::lab2rgb to return a black image on some opens
+		// causing Color::lab2rgb to return a black image on some opens
         //parent->changeSinceLast = 0;
         parent->thread->join ();
     }

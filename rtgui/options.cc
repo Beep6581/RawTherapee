@@ -36,7 +36,9 @@
 #include <Shlobj.h>
 #endif
 
+// User's settings directory, including images' profiles if used
 Glib::ustring Options::rtdir;
+// User's cached datas' directory
 Glib::ustring Options::cacheBaseDir;
 
 Options options;
@@ -153,6 +155,8 @@ void Options::updatePaths() {
         lastToneCurvesDir = preferredPath;
     if (lastProfilingReferenceDir.empty() || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastProfilingReferenceDir, Glib::FILE_TEST_IS_DIR))
         lastProfilingReferenceDir = preferredPath;
+    if (lastVibranceCurvesDir.empty() || !safe_file_test (lastVibranceCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastVibranceCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastVibranceCurvesDir = preferredPath;
 }
 
 Glib::ustring Options::getPreferredProfilePath() {
@@ -184,20 +188,24 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
 
 void Options::setDefaults () {
 
-	font = "sans, 10";
+	font = "sans, 8";
     windowWidth = 900;
     windowHeight = 560;
     windowMaximized = false;
+    saveAsDialogWidth = 600;
+    saveAsDialogHeight = 600;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
-    saveFormat.jpegQuality = 100;
+    saveFormat.jpegQuality = 90;
+    saveFormat.jpegSubSamp = 2;
     saveFormat.pngCompression = 6;
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 8;
     saveFormat.tiffUncompressed = true;
 
     saveFormatBatch.format = "jpg";
-    saveFormatBatch.jpegQuality = 100;
+    saveFormatBatch.jpegQuality = 90;
+    saveFormatBatch.jpegSubSamp = 2;
     saveFormatBatch.pngCompression = 6;
     saveFormatBatch.pngBits = 8;
     saveFormatBatch.tiffBits = 8;
@@ -210,7 +218,7 @@ void Options::setDefaults () {
     defProfImg = DEFPROFILE_IMG;
     dateFormat = "%y-%m-%d";
     adjusterDelay = 0;
-    startupDir = STARTUPDIR_LAST;		// was STARTUPDIR_HOME ; an empty startupPath is now correctly handled (open in the Home dir)
+    startupDir = STARTUPDIR_LAST;
     startupPath = "";
     useBundledProfiles = true;
     dirBrowserWidth = 200;
@@ -220,8 +228,8 @@ void Options::setDefaults () {
     toolPanelWidth = 300;
     browserToolPanelWidth = 300;
     browserToolPanelHeight = 300;
-    historyPanelWidth = 230;			// was 150
-    lastScale = 5;						// was 4
+    historyPanelWidth = 230;
+    lastScale = 5;
     panAccelFactor = 5;
     lastCropSize = 1;
     fbOnlyRaw = false;
@@ -234,37 +242,38 @@ void Options::setDefaults () {
     profilePath = "profiles";
     loadSaveProfilePath = "";			// will be corrected in load as otherwise construction fails
     version = "0.0.0.0";				// temporary value; will be correctly set in RTWindow::on_realize
-    thumbSize = 240;					// was 80
+    thumbSize = 240;
     thumbSizeTab = 80;
     showHistory = true;
     showFilePanelState = 0;				// Not used anymore ; was the thumb strip state
-    showInfo = true;					// was false
-    cropPPI = 600;						// was 300
+    showInfo = true;
+    cropPPI = 600;
     showClippedHighlights = false;
     showClippedShadows = false;
     highlightThreshold = 253;			// was 254
     shadowThreshold = 8;				// was 0
     bgcolor = 0;
-    blinkClipped = false;				// was true
+    blinkClipped = false;
     language = DefaultLanguage;
     languageAutoDetect= langMgr.isOSLanguageDetectSupported();
     lastSaveAsPath = "";
     overwriteOutputFile = false;		// if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
     theme = "25-Gray-Gray";
-    slimUI = false;		// TODO: Should this be TRUE for worst case screen resolution or FALSE for nicer interface by default ???
-    useSystemTheme = true;
+    slimUI = false;
+    useSystemTheme = false;
     maxThumbnailHeight = 400;
-    maxCacheEntries = 20000;			// was 10000
+    maxCacheEntries = 20000;
     thumbnailFormat = FT_Custom;		// was FT_Custom16
     thumbInterp = 1;
     autoSuffix = false;
+    saveMethodNum = 0;				// 0->immediate, 1->putToQueuHead, 2->putToQueueTail
     embedXmpIntoDNG=false;
     embedXmpIntoJPG=false;
     embedXmpIntoPNG=false;
     embedXmpIntoTIFF=false;
-    saveParamsCache = false;			//
+    saveParamsCache = false;
     //paramsLoadLocation = PLL_Input;		// was PLL_Cache
-    procQueueEnabled = false;			// was true
+    procQueueEnabled = false;
     gimpDir = "";
     psDir = "";
     customEditorProg = "";
@@ -295,13 +304,13 @@ void Options::setDefaults () {
     overlayedFileNames = true;
     internalThumbIfUntouched = true; 	// if TRUE, only fast, internal preview images are taken if the image is not edited yet
     showFileNames = true;
-    tabbedUI = true;					// was false;
+    tabbedUI = true;
     multiDisplayMode = 0;
     outputMetaData = true;
     histogramPosition = 2;
     histogramBar = true;
     showProfileSelector = true;
-    FileBrowserToolbarSingleRow = true;
+    FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
     UseIconNoText = true;
     whiteBalanceSpotSize = 8;
@@ -361,18 +370,17 @@ void Options::setDefaults () {
 			0,  // ADDSET_LC_BRIGHTNESS
 			0,  // ADDSET_LC_CONTRAST
 			0,  // ADDSET_SHARP_AMOUNT
-			//0,  // ADDSET_LD_EDGETOLERANCE -- From obsolete and removed tool
 			0,  // ADDSET_WB_TEMPERATURE
 			0,  // ADDSET_WB_GREEN
-			//0,  // ADDSET_CBOOST_AMOUNT -- From obsolete and removed tool
-			//0,  // ADDSET_CS_BLUEYELLOW -- From obsolete and removed tool
-			//0,  // ADDSET_CS_GREENMAGENTA -- From obsolete and removed tool
 			0,  // ADDSET_ROTATE_DEGREE
 			0,  // ADDSET_DIST_AMOUNT
 			0,  // ADDSET_PERSPECTIVE
 			0,  // ADDSET_CA
 			0,  // ADDSET_VIGN_AMOUNT
-			0,  // ADDSET_LC_SATURATION
+			0,  // ADDSET_VIGN_RADIUS
+			0,  // ADDSET_VIGN_STRENGTH
+			0,  // ADDSET_VIGN_CENTER
+			0,  // ADDSET_LC_CHROMATICITY
 			0,  // ADDSET_TC_SATURATION
 			0,  // ADDSET_TC_HLCOMPAMOUNT
 			0,  // ADDSET_TC_HLCOMPTHRESH
@@ -393,10 +401,9 @@ void Options::setDefaults () {
 			0,  // ADDSET_SHARPENMICRO_UNIFORMITY
 			0,  // ADDSET_VIBRANCE_PASTELS
 			0,  // ADDSET_VIBRANCE_SATURATED
-			0,   // ADDSET_VIBRANCE_PSTHRESHOLD
-			0,   // ADDSET_FREE_OUPUT_GAMMA
-			0,   // ADDSET_FREE_OUTPUT_SLOPE
-
+			0,  // ADDSET_FREE_OUPUT_GAMMA
+			0,  // ADDSET_FREE_OUTPUT_SLOPE
+ 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
@@ -424,7 +431,10 @@ void Options::setDefaults () {
     rtSettings.beta = "BetaRGB";
     rtSettings.best = "BestRGB";
     rtSettings.verbose = false;
-	rtSettings.gamutICC = true;
+    rtSettings.gamutICC = true;
+    rtSettings.gamutLch = true;
+    rtSettings.protectred = 60;
+    rtSettings.protectredh = 0.4;
 
 	lastIccDir = rtSettings.iccDirectory;
 	lastDarkframeDir = rtSettings.darkFramesPath;
@@ -439,6 +449,7 @@ void Options::setDefaults () {
 	lastLabCurvesDir = "";
 	lastHsvCurvesDir = "";
 	lastToneCurvesDir = "";
+	lastVibranceCurvesDir = "";
 	lastProfilingReferenceDir = "";
 }
 
@@ -505,6 +516,7 @@ if (keyFile.has_group ("External Editor")) {
 if (keyFile.has_group ("Output")) { 
     if (keyFile.has_key ("Output", "Format"))           saveFormat.format          = keyFile.get_string ("Output", "Format");
     if (keyFile.has_key ("Output", "JpegQuality"))      saveFormat.jpegQuality     = keyFile.get_integer ("Output", "JpegQuality");
+    if (keyFile.has_key ("Output", "JpegSubSamp"))      saveFormat.jpegSubSamp     = keyFile.get_integer ("Output", "JpegSubSamp");
     if (keyFile.has_key ("Output", "PngCompression"))   saveFormat.pngCompression  = keyFile.get_integer ("Output", "PngCompression");
     if (keyFile.has_key ("Output", "PngBps"))           saveFormat.pngBits         = keyFile.get_integer ("Output", "PngBps");
     if (keyFile.has_key ("Output", "TiffBps"))          saveFormat.tiffBits        = keyFile.get_integer ("Output", "TiffBps");
@@ -512,6 +524,7 @@ if (keyFile.has_group ("Output")) {
 
     if (keyFile.has_key ("Output", "FormatBatch"))           saveFormatBatch.format          = keyFile.get_string ("Output", "FormatBatch");
     if (keyFile.has_key ("Output", "JpegQualityBatch"))      saveFormatBatch.jpegQuality     = keyFile.get_integer ("Output", "JpegQualityBatch");
+    if (keyFile.has_key ("Output", "JpegSubSampBatch"))      saveFormatBatch.jpegSubSamp     = keyFile.get_integer ("Output", "JpegSubSampBatch");
     if (keyFile.has_key ("Output", "PngCompressionBatch"))   saveFormatBatch.pngCompression  = keyFile.get_integer ("Output", "PngCompressionBatch");
     if (keyFile.has_key ("Output", "PngBpsBatch"))           saveFormatBatch.pngBits         = keyFile.get_integer ("Output", "PngBpsBatch");
     if (keyFile.has_key ("Output", "TiffBpsBatch"))          saveFormatBatch.tiffBits        = keyFile.get_integer ("Output", "TiffBpsBatch");
@@ -521,6 +534,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "PathTemplate"))     savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
     if (keyFile.has_key ("Output", "PathFolder"))       savePathFolder             = keyFile.get_string ("Output", "PathFolder");
     if (keyFile.has_key ("Output", "AutoSuffix"))       autoSuffix                 = keyFile.get_boolean("Output", "AutoSuffix");
+    if (keyFile.has_key ("Output", "SaveMethodNum"))    saveMethodNum              = keyFile.get_integer("Output", "SaveMethodNum");
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
 	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
@@ -643,6 +657,9 @@ if (keyFile.has_group ("Color Management")) {
     if( keyFile.has_key ("Color Management", "Beta"))           rtSettings.beta                 = keyFile.get_string("Color Management", "Beta");
     if( keyFile.has_key ("Color Management", "Best"))           rtSettings.best                 = keyFile.get_string("Color Management", "Best");
     if( keyFile.has_key ("Color Management", "Bruce"))          rtSettings.bruce                = keyFile.get_string("Color Management", "Bruce");
+    if( keyFile.has_key ("Color Management", "GamutLch"))       rtSettings.gamutLch             = keyFile.get_boolean("Color Management", "GamutLch");
+    if( keyFile.has_key ("Color Management", "ProtectRed"))     rtSettings.protectred           = keyFile.get_integer("Color Management", "ProtectRed");
+    if( keyFile.has_key ("Color Management", "ProtectRedH"))    rtSettings.protectredh          = keyFile.get_double("Color Management", "ProtectRedH");
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -697,6 +714,7 @@ if (keyFile.has_group ("Dialogs")) {
     safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 }
 
@@ -789,6 +807,7 @@ int Options::saveToFile (Glib::ustring fname) {
 
     keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);
+    keyFile.set_integer ("Output", "JpegSubSamp", saveFormat.jpegSubSamp);
     keyFile.set_integer ("Output", "PngCompression", saveFormat.pngCompression);
     keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
     keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
@@ -796,6 +815,7 @@ int Options::saveToFile (Glib::ustring fname) {
 
     keyFile.set_string  ("Output", "FormatBatch", saveFormatBatch.format);
     keyFile.set_integer ("Output", "JpegQualityBatch", saveFormatBatch.jpegQuality);
+    keyFile.set_integer ("Output", "JpegSubSampBatch", saveFormatBatch.jpegSubSamp);
     keyFile.set_integer ("Output", "PngCompressionBatch", saveFormatBatch.pngCompression);
     keyFile.set_integer ("Output", "PngBpsBatch", saveFormatBatch.pngBits);
     keyFile.set_integer ("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
@@ -804,6 +824,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
     keyFile.set_string  ("Output", "PathFolder", savePathFolder);
     keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);
+    keyFile.set_integer ("Output", "SaveMethodNum", saveMethodNum);
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
 	keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
@@ -881,6 +902,9 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
     keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
     keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
+    keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
+    keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
+    keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);
@@ -929,6 +953,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
     keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
     keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+    keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
     keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 
     FILE *f = safe_g_fopen (fname, "wt");

@@ -23,6 +23,7 @@
 #include "rtengine.h"
 #include "mytime.h"
 #include "iccstore.h"
+#include "alignedbuffer.h"
 
 using namespace rtengine;
 
@@ -271,22 +272,28 @@ void Imagefloat::calcCroppedHistogram(const ProcParams &params, float scale, LUT
 
 // Parallized transformation; create transform with cmsFLAGS_NOCACHE!
 void Imagefloat::ExecCMSTransform(cmsHTRANSFORM hTransform) {
+     
+    AlignedBufferMP<float> bufMP(width*3);
+
     // LittleCMS cannot parallize planar setups
     // so build temporary buffers to allow multi processor execution
         #pragma omp parallel for
     for (int y=0; y<height; y++) {
-        float buffer[width*3];
-        float *p=buffer, *pR=r[y], *pG=g[y], *pB=b[y];
+        AlignedBuffer<float>* pBuf=bufMP.acquire();
+
+        float *p=pBuf->data, *pR=r[y], *pG=g[y], *pB=b[y];
 
         for (int x=0; x<width; x++) {
             *(p++) = *(pR++); *(p++) = *(pG++); *(p++) = *(pB++);
     }
 
-        cmsDoTransform (hTransform, buffer, buffer, width);
+        cmsDoTransform (hTransform, pBuf->data, pBuf->data, width);
 
-        p=buffer; pR=r[y]; pG=g[y]; pB=b[y];
+        p=pBuf->data; pR=r[y]; pG=g[y]; pB=b[y];
         for (int x=0; x<width; x++) {
             *(pR++) = *(p++); *(pG++) = *(p++); *(pB++) = *(p++);
 }
+
+        bufMP.release(pBuf);
     }
 }

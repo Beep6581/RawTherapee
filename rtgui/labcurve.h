@@ -29,22 +29,24 @@
 class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider {
 
   protected:
-	CurveEditorGroup* curveEditorG;
+    CurveEditorGroup* curveEditorG;
     Adjuster* brightness;
     Adjuster* contrast;
-	Adjuster* saturation;
-	DiagonalCurveEditor* lshape;
-	DiagonalCurveEditor* ashape;
-	DiagonalCurveEditor* bshape;
-	
-	//%%%%%%%%%%%%%%%%
-	Gtk::CheckButton* avoidclip;  
-    Gtk::CheckButton* enablelimiter;  
-    Adjuster* saturationlimiter;
-    bool cbAdd;
-    sigc::connection  acconn, elconn;
-    bool lastACVal, lastELVal;
-	//%%%%%%%%%%%%%%%%
+    Adjuster* chromaticity;
+    DiagonalCurveEditor* lshape;
+    DiagonalCurveEditor* ashape;
+    DiagonalCurveEditor* bshape;
+    DiagonalCurveEditor* ccshape;
+    //DiagonalCurveEditor* cbgshape;
+    FlatCurveEditor*   chshape;
+
+    //%%%%%%%%%%%%%%%%
+    Gtk::CheckButton* avoidcolorshift;
+    Gtk::CheckButton* bwtoning;
+    Adjuster* rstprotection;
+    sigc::connection  bwtconn, acconn;
+    bool lastBWTVal, lastACVal;
+    //%%%%%%%%%%%%%%%%
 
   public:
 
@@ -60,8 +62,8 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
 
     void curveChanged (CurveEditor* ce);
     void adjusterChanged (Adjuster* a, double newval);
-	void avoidclip_toggled ();
-    void enablelimiter_toggled ();
+	void avoidcolorshift_toggled ();
+    void bwtoning_toggled();
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
     virtual void colorForValue (double valX, double valY);

@@ -21,7 +21,6 @@
 #include "dcp.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
-#include "curves.h"
 #include "dfmanager.h"
 #include "ffmanager.h"
 #include "rtthumbnail.h"
@@ -46,8 +45,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 
     profileStore.init ();
     ProcParams::init ();
-    CurveFactory::init ();
-    ImProcFunctions::initMunsell();
+    Color::init();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;
@@ -76,6 +74,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 void cleanup () {
 	Exiv2::XmpParser::terminate();
     ProcParams::cleanup ();
+    Color::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
 }

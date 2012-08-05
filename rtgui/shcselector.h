@@ -20,26 +20,34 @@
 #define _SHCSELECTOR_
 
 #include <gtkmm.h>
+#include "coloredbar.h"
 
 class SHCListener {
     public:
+        virtual ~SHCListener() {}
         virtual void shcChanged () {}
 };
 
-class SHCSelector : public Gtk::DrawingArea {  
+class SHCSelector : public Gtk::DrawingArea, public ColoredBar {
 
   protected:
-
-    Glib::RefPtr<Gdk::GC> gc_;
-    Glib::RefPtr<Gdk::Pixmap> backBuffer;
 
     int movingPosition;
     double tmpX, tmpPos;
 
+    double defaults[3];
     double positions[3];
     double wslider;
     
-    SHCListener* cl;
+    // left margin, essentially a workaround to take care of an eventual right colored bar (e.g. for curves)
+    int leftMargin;
+    // right margin, essentially a workaround to take care of an eventual right colored bar
+    int rightMargin;
+
+	const static int hb = 3;  // horizontal border
+	const static int vb = 2;  // vertical border
+
+	SHCListener* cl;
 
   public:
          
@@ -47,6 +55,8 @@ class SHCSelector : public Gtk::DrawingArea {
 
     void setSHCListener (SHCListener* l) { cl = l;; }
 
+    void setMargins(int left, int right);
+    void setDefaults (double spos, double cpos, double hpos);
     void setPositions (double spos, double cpos, double hpos);
     void getPositions (double& spos, double& cpos, double& hpos);
     void on_realize();
@@ -55,7 +65,7 @@ class SHCSelector : public Gtk::DrawingArea {
     bool on_button_release_event (GdkEventButton* event);
     bool on_motion_notify_event (GdkEventMotion* event);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
-    void reset ();
+    bool reset ();
 };
 
 #endif
