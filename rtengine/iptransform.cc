@@ -253,7 +253,7 @@ void ImProcFunctions::transformVignetteOnly (Imagefloat* original, Imagefloat* t
 		for (int x=0; x<transformed->width; x++) {
 			double vig_x_d = (double) (x + cx) - vig_w2 ;
 			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
-			double vign = v + mul * tanh (b*(maxRadius-r) / maxRadius);
+			double vign = std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
 			transformed->r[y][x] = original->r[y][x] / vign;
 			transformed->g[y][x] = original->g[y][x] / vign;
 			transformed->b[y][x] = original->b[y][x] / vign;
@@ -384,7 +384,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 					// multiplier for vignetting correction
 					double vignmul = 1.0;
 					if (needsVignetting())
-						vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
+						vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
 
 					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2) {
                         // all interpolation pixels inside image
@@ -513,7 +513,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                 // multiplier for vignetting correction
             	double vignmul = 1.0;
                 if (needsVignetting())
-                	vignmul /= (v + mul * tanh (b*(maxRadius-s*r2) / maxRadius));
+                	vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
 
                 if (yc < original->height-1 && xc < original->width-1) {  
                     // all interpolation pixels inside image
