@@ -33,11 +33,13 @@ Chromaticity=5
 BWtoning=false
 AvoidColorShift=true
 RedAndSkinTonesProtection=0
+LCredsk=true
 LCurve=0;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
 chCurve=0;
+LcCurve=0;
 
 [Sharpening]
 Enabled=false

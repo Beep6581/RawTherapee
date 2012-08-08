@@ -188,7 +188,9 @@ RGBCURVE,         // EvRGBbCurve
 RGBCURVE,         // EvNeutralExp
 LUMINANCECURVE,   // EvLBWtoning
 LUMINANCECURVE,   // EvLCCurve
-LUMINANCECURVE,   // EvLCHGurve
-RGBCURVE          // EvCCCurve
+LUMINANCECURVE,   // EvLCHurve
+RGBCURVE,   // 
+LUMINANCECURVE,    // EvCLCCurve
+LUMINANCECURVE    // EvCLLcredsk
 };
 

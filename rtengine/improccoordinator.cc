@@ -41,7 +41,7 @@ ImProcCoordinator::ImProcCoordinator ()
     chroma_acurve(65536,0);
     chroma_bcurve(65536,0);
 	satcurve(65536,0);
-//	satbgcurve(65536,0);
+	lhskcurve(65536,0);
 
     vhist16(65536);
     lhist16(65536); lhist16Cropped(65536);
@@ -274,15 +274,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		bool autili=false;
 		bool butili=false;
 		bool ccutili=false;
-		
+		bool cclutili=false;		
     if ((todo & M_LUMACURVE) || todo==CROP) {
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
                                      lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
     }
 
     if (todo & M_LUMACURVE) {
-		CurveFactory::complexsgnCurve (autili, butili,ccutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve/*,params.labCurve.cbgcurve*/, chroma_acurve, chroma_bcurve, satcurve,/*satbgcurve,*/ scale==1 ? 1 : 16);
+		CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, scale==1 ? 1 : 16);
 	}
 	
 	if (todo & (M_LUMINANCE+M_COLOR) ) {
@@ -296,7 +296,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
 		//readyphase++;
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
-		ipf.chromiLuminanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve/*,satbgcurve*/, lumacurve, utili, autili, butili, ccutili);
+		ipf.chromiLuminanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili);
 		//ipf.colorCurve (nprevl, nprevl);
 		ipf.vibrance(nprevl);
 		readyphase++;

@@ -87,7 +87,8 @@ class ImProcFunctions {
 		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
 		                       double expcomp, int hlcompr, int hlcomprthresh);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
-		void chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve/*,LUTf & satbgcurve*/, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili);
+		
+		void chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);

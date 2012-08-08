@@ -442,10 +442,14 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 		}
 }
 
-void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve/*,LUTf & satbgcurve*/, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili) {
+
+
+void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili) {
 	
 	int W = lold->W;
 	int H = lold->H;
+   // lhskcurve.dump("lh_curve");			
+
 	//init Flatcurve for C=f(H)
 	FlatCurve* chCurve = NULL;
 	bool chutili = false;
@@ -497,6 +501,7 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
 	int chromaticity = params->labCurve.chromaticity;
 	bool bwToning = params->labCurve.bwtoning;
+	bool LCredsk = params->labCurve.lcredsk;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
 	// avoid color shift is disabled when bwToning is activated
 	bool avoidColorShift = params->labCurve.avoidcolorshift && !bwToning;
@@ -506,15 +511,15 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 
 	// only if user activate Lab adjustements
 	if (avoidColorShift) {
-		if(autili || butili || ccutili || chutili || utili || chromaticity)
+		if(autili || butili || ccutili ||  cclutili || chutili || utili || chromaticity)
 			Color::LabGamutMunsell(lold, Lold, Cold, /*corMunsell*/true, /*lumaMuns*/false, params->hlrecovery.enabled, /*gamut*/true, params->icm.working, multiThread);
 	}
 
 
 #ifdef _DEBUG
-#pragma omp parallel default(shared) firstprivate(highlight, chromaticity, bwToning, rstprotection, avoidColorShift, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(highlight, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo) if (multiThread)
 #else
-#pragma omp parallel default(shared) firstprivate(highlight, chromaticity, bwToning, rstprotection, avoidColorShift, protectRed, protectRedH, gamutLch, lold, lnew) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(highlight, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew) if (multiThread)
 #endif
 {
 
@@ -579,14 +584,20 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 			}
 			atmp *= chromaChfactor;//apply C=f(H)
 			btmp *= chromaChfactor;
-//			if (params->labCurve.chromaticity) {// if user use sliders
+				//simulate very approximative gamut f(L) : with pyramid transition
+				float dred=55.0f;//C red value limit
+				if     (Lprov1<25.0f)   dred = 40.0f;
+				else if(Lprov1<30.0f)   dred = 3.0f*Lprov1 -35.0f;
+				else if(Lprov1<70.0f)   dred = 55.0f;
+				else if(Lprov1<75.0f)   dred = -3.0f*Lprov1 +265.0f;
+				else                    dred = 40.0f;
+				// end pyramid
 			if(chromaticity!=0 && !bwToning){
-				// approximation in Lab mode to protect skin tones and avoid too big gamut clip for red
+				float factorskin, factorsat, factor, factorskinext, interm;					
 				float scale = 100.0f/100.1f;//reduction in normal zone
 				float scaleext=1.0f;//reduction in transition zone
 				float protect_red,protect_redh;
 				float deltaHH;//HH value transition
-				float dred=55.0f;//C red value limit
 				protect_red=float(protectRed);//default=60  chroma: one can put more or less if necessary...in 'option'  40...160
 				if(protect_red < 20.0f) protect_red=20.0; // avoid too low value
 				if(protect_red > 180.0f) protect_red=180.0; // avoid too high value
@@ -595,71 +606,99 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 				if(protect_redh>1.0f) protect_redh=1.0f;//avoid too big values
 
 				deltaHH=protect_redh;//transition hue
-
-				//simulate very approximative gamut f(L) : with pyramid transition
-				if     (Lprov1<25.0f)   dred = 40.0f;
-				else if(Lprov1<30.0f)   dred = 3.0f*Lprov1 -35.0f;
-				else if(Lprov1<70.0f)   dred = 55.0f;
-				else if(Lprov1<75.0f)   dred = -3.0f*Lprov1 +265.0f;
-				else                    dred = 40.0f;
-
-				if(rstprotection<99.9999) {
-					if(chromaticity>0)
-						scale = rstprotection/100.1f;
-					if((HH< (1.3f+deltaHH) && HH >=1.3f))
-						scaleext=HH*(1.0f-scale)/deltaHH + 1.0f - (1.3f+deltaHH)*(1.0f-scale)/deltaHH;    //transition for Hue (red - yellow)
-					else if((HH< 0.15f && HH >(0.15f-deltaHH)))
-						scaleext=HH*(scale-1.0f)/deltaHH + 1.0f - (0.15f-deltaHH)*(scale-1.0f)/deltaHH;   //transition for hue (red purple)
-				}
-
-				//transition for red , near skin tones
-				float factorskin, factorsat, factor, factorskinext;
-				factorskin=1.0f+(chromaticity*scale)/100.0f;
-				factorskinext=1.0f+(chromaticity*scaleext)/100.0f;
-				factorsat=1.0f+(chromaticity)/100.0f;/*if(factorsat==1.0f) factorsat=1.1f;*/
-
+				float chromapro	= (chromaticity	+ 100.0f)/100.0f;				
+				if(chromapro>1.0) Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//1.0
+				else Color::scalered ( 100.0-rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);
+				
+				if(chromapro>1.0) {interm=(chromapro-1.0f)*100.0f; 
+					factorskin= 1.0f+(interm*scale)/100.0f;    
+					factorskinext=1.0f+(interm*scaleext)/100.0f;}
+				else {
+					interm=(1.0f-chromapro)*100.0f;
+					factorskin= 1.0f-(interm*scale)/100.0f;    
+					factorskinext=1.0f-(interm*scaleext)/100.0f;
+					}
+				factorsat=chromapro;
+				factor=factorsat;
+				
 				factor = factorsat;
 				// Test if chroma is in the normal range first
-				if(HH>=0.15f && HH<1.3f) {
-					if (Chprov1<dred)
-						factor = factorskin;
-					else if(Chprov1<(dred+protect_red))
-						factor = (factorsat-factorskin)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskin)/protect_red;
-				}
-				// then test if chroma is in the extanded range
-				else if ( HH>(0.15f-deltaHH) || HH<(1.3f+deltaHH) ) {
-					if (Chprov1 < dred)
-						factor = factorskinext;// C=dred=55 => real max of skin tones
-					else if (Chprov1 < (dred+protect_red))// transition
-						factor = (factorsat-factorskinext)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskinext)/protect_red;
-				}
-
+				Color::transitred ( HH, Chprov1, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);			
 				atmp *= factor;
 				btmp *= factor;
-				// end approximation
  			}
 
 			// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
 			if (!bwToning) {
+				float factorskin,factorsat,factor,factorskinext,interm;		
 				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
 				float chromaCfactor = (satcurve[chroma*adjustr])/(chroma*adjustr);//apply C=f(C)
-				atmp *= chromaCfactor;
-				btmp *= chromaCfactor;
+				float curf=0.7f;//empirical coeff because curve is more progressive
+				float scale = 100.0f/100.1f;//reduction in normal zone for curve CC
+				float scaleext=1.0f;//reduction in transition zone for curve CC
+				float protect_redcur,protect_redhcur;//perhaps the same value than protect_red and protect_redh
+				float deltaHH;//HH value transition for CC curve
+				protect_redcur=curf*float(protectRed);//default=60  chroma: one can put more or less if necessary...in 'option'  40...160==> curf =because curve is more progressive
+				if(protect_redcur < 20.0f) protect_redcur=20.0; // avoid too low value
+				if(protect_redcur > 180.0f) protect_redcur=180.0; // avoid too high value
+				protect_redhcur=curf*float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0 ==> curf =because curve is more progressive
+				if(protect_redhcur<0.1f) protect_redhcur=0.1f;//avoid divide by 0 and negatives values
+				if(protect_redhcur>1.0f) protect_redhcur=1.0f;//avoid too big values
+
+				deltaHH=protect_redhcur;//transition hue
+				if(chromaCfactor>1.0) Color::scalered ( rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);//1.0
+				else Color::scalered ( 100.0-rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);
+				
+				if(chromaCfactor>1.0) {
+					interm=(chromaCfactor-1.0f)*100.0f;   //else interm=(1.0f-chromaCfactor)*100.0f;
+					factorskin= 1.0f+(interm*scale)/100.0f;    
+					factorskinext=1.0f+(interm*scaleext)/100.0f;
+					}
+				else {
+					interm=(1.0f-chromaCfactor)*100.0f;
+					factorskin= 1.0f-(interm*scale)/100.0f;    
+					factorskinext=1.0f-(interm*scaleext)/100.0f;
+					}
+				
+				factorsat=chromaCfactor;
+				factor=factorsat;
+				Color::transitred ( HH, Chprov1, dred, factorskin, protect_redcur, factorskinext, deltaHH, factorsat, factor);			
+				atmp *=factor;
+				btmp *= factor;
 			}
 			// end chroma C=f(C)
 
+			if (!bwToning) {	//apply curve L=f(C) for skin and rd...but also for extended color ==> near green and blue (see 'curf')
+
+				const float xx=0.25f;//soft : between 0.2 and 0.4
+				float protect_redhcur;
+				float curf=1.0f;
+				float deltaHH;
+				protect_redhcur=curf*float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1
+				if(protect_redhcur<0.1f) protect_redhcur=0.1f;//avoid divide by 0 and negatives values:minimal protection for transition
+				if(protect_redhcur>3.5f) protect_redhcur=3.5f;//avoid too big values
+
+				deltaHH=protect_redhcur;//transition hue
+		
+				float skbeg=-0.05f;//begin hue skin
+				float skend=1.60f;//end hue skin
+				const float chrmin=20.0f;//to avoid artefact, because L curve is not a real curve for luminance
+				float aa,bb;
+				float zz=0.0f;
+				float yy=0.0f;
+				if(Chprov1 < chrmin) yy=(Chprov1/chrmin)*(Chprov1/chrmin)*xx;else yy=xx;//avoid artefact for low C
+				if(!LCredsk) {skbeg=-3.1415; skend=3.14159; deltaHH=0.001f;}
+					if(HH>skbeg && HH < skend ) zz=yy; 
+					else if(HH>skbeg-deltaHH && HH<=skbeg) {aa=yy/deltaHH;bb=-aa*(skbeg-deltaHH); zz=aa*HH+bb;}//transition
+					else if(HH>=skend && HH < skend+deltaHH) {aa=-yy/deltaHH;bb=-aa*(skend+deltaHH);zz=aa*HH+bb;}//transition
+				
+				float chroma=sqrt(SQR(atmp)+SQR(btmp)+0.001f);
+				float Lc = (lhskcurve[chroma*adjustr])/(chroma*adjustr);//apply L=f(C)
+				Lc=(Lc-1.0f)*zz+1.0f;//reduct action
+				Lprov1*=Lc;//adjust luminance
+				}
 			Chprov1 = sqrt(SQR(atmp/327.68f)+SQR(btmp/327.68f));
-
-/*
-			// modulation of a and b curves with saturation
-			if (params->labCurve.chromaticity!=0 && !params->labCurve.bwtoning) {
-				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001);
-				float satfactor = (satcurve[chroma+32768.0f]-32768.0f)/chroma;
-				atmp *= satfactor;
-				btmp *= satfactor;
-			}
-*/
-
+							
 			// labCurve.bwtoning option allows to decouple modulation of a & b curves by saturation
 			// with bwtoning enabled the net effect of a & b curves is visible
 			if (bwToning) {
@@ -696,7 +735,7 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 					Color::Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
 				}
 
-				if (utili || autili || butili || ccutili || chutili || chromaticity) {
+				if (utili || autili || butili || ccutili ||  cclutili || chutili || chromaticity) {
 					float correctionHue=0.0f; // Munsell's correction
 					float correctlum=0.0f;
 

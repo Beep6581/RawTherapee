@@ -155,7 +155,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     LUTf curve2 (65536,0);
 	LUTf curve (65536,0);
 	LUTf satcurve (65536,0);
-	//LUTf satbgcurve (65536,0);
+	LUTf lhskcurve (65536,0);
 	
 	LUTf rCurve (65536,0);
 	LUTf gCurve (65536,0);
@@ -198,13 +198,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	bool autili=false;
 	bool butili=false;
 	bool ccutili=false;
-	
+	bool cclutili=false;	
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1, utili);
 
-	CurveFactory::complexsgnCurve (autili, butili, ccutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,/*params.labCurve.cbgcurve,*/curve1, curve2, satcurve,/*satbgcurve,*/ 1);
+	CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,params.labCurve.lccurve,curve1, curve2, satcurve,lhskcurve, 1);
 	//ipf.luminanceCurve (labView, labView, curve);
-	ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,/*satbgcurve,*/curve, utili, autili, butili, ccutili);
+	ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,lhskcurve,curve, utili, autili, butili, ccutili,cclutili);
 	ipf.vibrance(labView);
 
 	ipf.impulsedenoise (labView);

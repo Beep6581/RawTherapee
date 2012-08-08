@@ -446,6 +446,35 @@ namespace rtengine {
             Z = (12 - 3*u - 20*v)*Y/(4*v);
     }
 
+	void Color::scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext)
+    {
+				if(rstprotection<99.9999) {
+					if(param > limit)
+						scale = rstprotection/100.1f;
+					if((HH< (1.3f+deltaHH) && HH >=1.3f))
+						scaleext=HH*(1.0f-scale)/deltaHH + 1.0f - (1.3f+deltaHH)*(1.0f-scale)/deltaHH;    //transition for Hue (red - yellow)
+					else if((HH< 0.15f && HH >(0.15f-deltaHH)))
+						scaleext=HH*(scale-1.0f)/deltaHH + 1.0f - (0.15f-deltaHH)*(scale-1.0f)/deltaHH;   //transition for hue (red purple)
+				}
+	}
+	
+	void Color::transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor)
+	{
+				if(HH>=0.15f && HH<1.3f) {
+					if (Chprov1<dred)
+						factor = factorskin;
+					else if(Chprov1<(dred+protect_red))
+						factor = (factorsat-factorskin)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskin)/protect_red;
+				}
+				// then test if chroma is in the extanded range
+				else if ( HH>(0.15f-deltaHH) || HH<(1.3f+deltaHH) ) {
+					if (Chprov1 < dred)
+						factor = factorskinext;// C=dred=55 => real max of skin tones
+					else if (Chprov1 < (dred+protect_red))// transition
+						factor = (factorsat-factorskinext)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskinext)/protect_red;
+				}
+	}
+	
     /*
      * AllMunsellLch correction
      * Copyright (c) 2012  Jacques Desmis <jdesmis@gmail.com>

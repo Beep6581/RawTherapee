@@ -204,13 +204,14 @@ class LCurveParams {
         std::vector<double>   bcurve;
         std::vector<double>   cccurve;
         std::vector<double>   chcurve;
-        //std::vector<double>   cbgcurve;
+        std::vector<double>   lccurve;
         int     brightness;
         int     contrast;
         int     chromaticity;
         bool    avoidcolorshift;
         double  rstprotection;
         bool    bwtoning;
+		bool    lcredsk;
 };
 
 /**
