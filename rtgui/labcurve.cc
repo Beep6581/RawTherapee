@@ -26,6 +26,13 @@ using namespace rtengine::procparams;
 LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	std::vector<GradientMilestone> bottomMilestones;
+	std::vector<GradientMilestone> milestones;
+	float R, G, B;
+	// -0.1 rad < Hue < 1.6 rad
+	Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
+	milestones.push_back( GradientMilestone(0.0, double(R), double(G), double(B)) );
+	Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
+	milestones.push_back( GradientMilestone(1.0, double(R), double(G), double(B)) );
 
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100., 100., 1., 0.));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100., 100., 1., 0.));
@@ -54,14 +61,22 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	avoidcolorshift = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_AVOIDCOLORSHIFT")));
 	avoidcolorshift->set_tooltip_text (M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
 	pack_start (*avoidcolorshift, Gtk::PACK_SHRINK, 4);
+	
+	lcredsk = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_LCREDSK")));
+	lcredsk->set_tooltip_markup (M("TP_LABCURVE_LCREDSK_TIP"));
+	pack_start (*lcredsk);
 
 	rstprotection = Gtk::manage ( new Adjuster (M("TP_LABCURVE_RSTPROTECTION"), 0., 100., 0.1, 0.) );
 	pack_start (*rstprotection);
 	rstprotection->show ();
 	
 	rstprotection->setAdjusterListener (this);
+	rstprotection->set_tooltip_text (M("TP_LABCURVE_RSTPRO_TOOLTIP"));
+	
 	bwtconn= bwtoning->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::bwtoning_toggled) );
 	acconn = avoidcolorshift->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::avoidcolorshift_toggled) );
+	lcconn = lcredsk->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::lcredsk_toggled) );
+	
 	//%%%%%%%%%%%%%%%%%%%
 
 	Gtk::HSeparator *hsep3 = Gtk::manage (new  Gtk::HSeparator());
@@ -78,8 +93,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
 	);
 	ccshape->setRangeDefaultMilestones(0.05, 0.2, 0.58);
-	//cbgshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CBG"));
-	//cbgshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CBG_TOOLTIP"));
+	
 	// -0.1 rad < Hue < 1.6 rad
 	for (int i=0; i<7; i++) {
 		float R, G, B;
@@ -91,7 +105,20 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	chshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP"));
 	chshape->setBottomBarBgGradient(bottomMilestones);
 	chshape->setCurveColorProvider(this);
-
+	
+	lcshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CCL")));
+	lcshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CCL_TOOLTIP"));
+	//lcshape->setBottomBarBgGradient(milestones);
+	bottomMilestones.clear();
+	bottomMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+	bottomMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+	
+	lcshape->setLeftBarBgGradient(bottomMilestones);
+	lcshape->setRangeLabels(
+			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE2"),
+			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
+	);
+	lcshape->setRangeDefaultMilestones(0.15, 0.3, 0.6);
 	curveEditorG->newLine();
 
 	bottomMilestones.clear();
@@ -125,6 +152,8 @@ LCurve::~LCurve () {
 void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
+	//	if(!pp->labCurve.cccurve.empty()) printf("plein"); else printf("vide");
+	//	if(pp->labCurve.cccurve[0] !=0) printf(" pp %i\n,pp->labCurve.cccurve[0] ");
 
     if (pedited) {
         brightness->setEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
@@ -135,6 +164,8 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		rstprotection->setEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
 		bwtoning->set_inconsistent (!pedited->labCurve.bwtoning);
         avoidcolorshift->set_inconsistent (!pedited->labCurve.avoidcolorshift);
+		lcredsk->set_inconsistent (!pedited->labCurve.lcredsk);
+		
 		//%%%%%%%%%%%%%%%%%%%%%%
 
         lshape->setUnChanged   (!pedited->labCurve.lcurve);
@@ -142,15 +173,17 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         bshape->setUnChanged   (!pedited->labCurve.bcurve);
         ccshape->setUnChanged  (!pedited->labCurve.cccurve);
         chshape->setUnChanged  (!pedited->labCurve.chcurve);
-        //cbgshape->setUnChanged (!pedited->labCurve.cbgcurve);
+        lcshape->setUnChanged (!pedited->labCurve.lccurve);
     }
     else {
         //if bwtoning is enabled, chromaticity value, avoid color shift and rstprotection has no effect
         //ccshape->set_sensitive(!(!pp->labCurve.bwtoning));
         //chshape->set_sensitive(!(!pp->labCurve.bwtoning));
         chromaticity->set_sensitive(!pp->labCurve.bwtoning);
-        rstprotection->set_sensitive( !pp->labCurve.bwtoning && pp->labCurve.chromaticity!=0 );
+        rstprotection->set_sensitive( !pp->labCurve.bwtoning /*&& pp->labCurve.chromaticity!=0*/ );//no reason for grey rstprotection
         avoidcolorshift->set_sensitive(!pp->labCurve.bwtoning);
+        lcredsk->set_sensitive(!pp->labCurve.bwtoning);
+		
     }
 
     brightness->setValue    (pp->labCurve.brightness);
@@ -162,13 +195,18 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     bwtconn.block (true);
     acconn.block (true);
+	lcconn.block (true);
     bwtoning->set_active (pp->labCurve.bwtoning);
     avoidcolorshift->set_active (pp->labCurve.avoidcolorshift);
+    lcredsk->set_active (pp->labCurve.lcredsk);
+	
     bwtconn.block (false);
     acconn.block (false);
-
+	lcconn.block (false);
+	
     lastBWTVal = pp->labCurve.bwtoning;
     lastACVal = pp->labCurve.avoidcolorshift;
+	lastLCVal = pp->labCurve.lcredsk;
 	//%%%%%%%%%%%%%%%%%%%%%%
 
     lshape->setCurve   (pp->labCurve.lcurve);
@@ -176,7 +214,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     bshape->setCurve   (pp->labCurve.bcurve);
     ccshape->setCurve  (pp->labCurve.cccurve);
     chshape->setCurve  (pp->labCurve.chcurve);
-    //cbgshape->setCurve (pp->labCurve.cbgcurve);
+    lcshape->setCurve (pp->labCurve.lccurve);
 
     // Open up the first curve if selected
     bool active = lshape->openIfNonlinear();
@@ -184,6 +222,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     if (!active) bshape->openIfNonlinear();
     if (!active) ccshape->openIfNonlinear();
     if (!active) chshape->openIfNonlinear();
+    if (!active) lcshape->openIfNonlinear();
 
     queue_draw();
 
@@ -199,6 +238,8 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 	//%%%%%%%%%%%%%%%%%%%%%%
 	pp->labCurve.bwtoning        = bwtoning->get_active ();
 	pp->labCurve.avoidcolorshift = avoidcolorshift->get_active ();
+	pp->labCurve.lcredsk = lcredsk->get_active ();
+	
     pp->labCurve.rstprotection   = rstprotection->getValue ();
 	//%%%%%%%%%%%%%%%%%%%%%%
 
@@ -207,7 +248,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->labCurve.bcurve  = bshape->getCurve ();
     pp->labCurve.cccurve = ccshape->getCurve ();
     pp->labCurve.chcurve = chshape->getCurve ();
-    //pp->labCurve.cbgcurve = cbgshape->getCurve ();
+    pp->labCurve.lccurve = lcshape->getCurve ();
 
     if (pedited) {
         pedited->labCurve.brightness   = brightness->getEditedState ();
@@ -217,6 +258,8 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 		//%%%%%%%%%%%%%%%%%%%%%%
 		pedited->labCurve.bwtoning        = !bwtoning->get_inconsistent();
 		pedited->labCurve.avoidcolorshift = !avoidcolorshift->get_inconsistent();
+		pedited->labCurve.lcredsk = !lcredsk->get_inconsistent();
+		
         pedited->labCurve.rstprotection   = rstprotection->getEditedState ();
 		//%%%%%%%%%%%%%%%%%%%%%%
 
@@ -225,7 +268,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->labCurve.bcurve    = !bshape->isUnChanged ();
         pedited->labCurve.cccurve   = !ccshape->isUnChanged ();
         pedited->labCurve.chcurve   = !chshape->isUnChanged ();
-        //pedited->labCurve.cbgcurve  = !bshape->isUnChanged ();
+        pedited->labCurve.lccurve  = !bshape->isUnChanged ();
     }
 }
 
@@ -276,6 +319,30 @@ void LCurve::avoidcolorshift_toggled () {
     }
 }
 
+void LCurve::lcredsk_toggled () {
+
+    if (batchMode) {
+        if (lcredsk->get_inconsistent()) {
+            lcredsk->set_inconsistent (false);
+            lcconn.block (true);
+            lcredsk->set_active (false);
+            lcconn.block (false);
+        }
+        else if (lastLCVal)
+            lcredsk->set_inconsistent (true);
+
+        lastLCVal = lcredsk->get_active ();
+    }
+
+    if (listener) {
+        if (lcredsk->get_active ())
+            listener->panelChanged (EvLLCredsk, M("GENERAL_ENABLED"));
+        else            
+            listener->panelChanged (EvLLCredsk, M("GENERAL_DISABLED"));
+    }
+}
+
+
 //%%%%%%%%%%%%%%%%%%%%%%
 //BW toning control changed
 void LCurve::bwtoning_toggled () {
@@ -296,8 +363,10 @@ void LCurve::bwtoning_toggled () {
         //ccshape->set_sensitive(!(!pp->labCurve.bwtoning));
         //chshape->set_sensitive(!(!pp->labCurve.bwtoning));
         chromaticity->set_sensitive( !(bwtoning->get_active ()) );
-        rstprotection->set_sensitive( !(bwtoning->get_active ()) && chromaticity->getIntValue()!=0 );
+        rstprotection->set_sensitive( !(bwtoning->get_active ()) /*&& chromaticity->getIntValue()!=0*/);
         avoidcolorshift->set_sensitive( !(bwtoning->get_active ()) );
+        lcredsk->set_sensitive( !(bwtoning->get_active ()) );
+		
     }
 
     if (listener) {
@@ -326,11 +395,11 @@ void LCurve::curveChanged (CurveEditor* ce) {
         if (ce == bshape)
             listener->panelChanged (EvLbCurve, M("HISTORY_CUSTOMCURVE"));
         if (ce == ccshape)
-            listener->panelChanged (EvLCCCurve, M("HISTORY_CUSTOMCURVE"));
+           listener->panelChanged (EvLCCCurve, M("HISTORY_CUSTOMCURVE"));
         if (ce == chshape)
             listener->panelChanged (EvLCHCurve, M("HISTORY_CUSTOMCURVE"));
-        //if (ce == cbgshape)
-        //    listener->panelChanged (EvLCBGCurve, M("HISTORY_CUSTOMCURVE"));
+        if (ce == lcshape)
+            listener->panelChanged (EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
     }
 }
 
@@ -353,7 +422,7 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvLContrast, costr);
 	else if (a==chromaticity) {
 		if (!batchMode) {
-	        rstprotection->set_sensitive( !(bwtoning->get_active ()) && chromaticity->getIntValue()!=0 );
+	        rstprotection->set_sensitive( !(bwtoning->get_active ())/* && chromaticity->getIntValue()!=0*/ );
 		}
         listener->panelChanged (EvLSaturation, costr);
 	}

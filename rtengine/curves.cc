@@ -154,9 +154,9 @@ namespace rtengine {
 	}
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, double saturation, double rstprotection,
+	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili, double saturation, double rstprotection,
 										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,
-										/*const std::vector<double>& cbgcurvePoints,*/ LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve,/* LUTf & satbgCurve,*/ int skip) {
+										const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, int skip) {
 		
 		//colormult = chroma_scale for Lab manipulations
 		
@@ -273,18 +273,18 @@ namespace rtengine {
 			dCurve = NULL;
 		}
 		//----------------------------
-		/*needed = false;
-		if (!cbgcurvePoints.empty() && cbgcurvePoints[0]!=0) {
-			dCurve = new DiagonalCurve (cbgcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+		needed = false;
+		if (!lccurvePoints.empty() && lccurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (lccurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (dCurve && !dCurve->isIdentity())
-				{needed = true;cbgutili=true;}
+				{needed = true;cclutili=true;}
 		}
-		fillCurveArray(dCurve, satbgCurve, skip, needed);
+		fillCurveArray(dCurve, lhskCurve, skip, needed);
 		if (dCurve) {
 			delete dCurve;
 			dCurve = NULL;
 		}
-		*/
+		
 		
 	}
 

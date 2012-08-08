@@ -427,7 +427,7 @@ void Options::setDefaults () {
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
     rtSettings.protectred = 60;
-    rtSettings.protectredh = 0.4;
+    rtSettings.protectredh = 0.3;
 
 	lastIccDir = rtSettings.iccDirectory;
 	lastDarkframeDir = rtSettings.darkFramesPath;

@@ -37,15 +37,18 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     DiagonalCurveEditor* ashape;
     DiagonalCurveEditor* bshape;
     DiagonalCurveEditor* ccshape;
-    //DiagonalCurveEditor* cbgshape;
+    DiagonalCurveEditor* lcshape;
     FlatCurveEditor*   chshape;
 
     //%%%%%%%%%%%%%%%%
     Gtk::CheckButton* avoidcolorshift;
     Gtk::CheckButton* bwtoning;
+    Gtk::CheckButton* lcredsk;
+	
     Adjuster* rstprotection;
-    sigc::connection  bwtconn, acconn;
-    bool lastBWTVal, lastACVal;
+    sigc::connection  bwtconn, acconn, lcconn;
+    bool lastBWTVal, lastACVal, lastLCVal;
+	
     //%%%%%%%%%%%%%%%%
 
   public:
@@ -64,6 +67,8 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void adjusterChanged (Adjuster* a, double newval);
 	void avoidcolorshift_toggled ();
     void bwtoning_toggled();
+    void lcredsk_toggled();
+	
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
     virtual void colorForValue (double valX, double valY);

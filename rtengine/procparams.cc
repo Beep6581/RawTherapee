@@ -143,6 +143,8 @@ void ProcParams::setDefaults () {
     labCurve.contrast        = 0;
     labCurve.chromaticity    = 0;
     labCurve.avoidcolorshift = true;
+    labCurve.lcredsk = true;
+	
     labCurve.rstprotection   = 0;
     labCurve.bwtoning        = false;
     labCurve.lcurve.clear ();
@@ -155,8 +157,8 @@ void ProcParams::setDefaults () {
     labCurve.cccurve.push_back(DCT_Linear);
     labCurve.chcurve.clear ();
     labCurve.chcurve.push_back(FCT_Linear);
-    //labCurve.cbgcurve.clear ();
-    //labCurve.cbgcurve.push_back(DCT_Linear);
+    labCurve.lccurve.clear ();
+    labCurve.lccurve.push_back(DCT_Linear);
 
     rgbCurves.rcurve.clear ();
     rgbCurves.rcurve.push_back(DCT_Linear);
@@ -413,6 +415,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->labCurve.avoidcolorshift) keyFile.set_boolean ("Luminance Curve", "AvoidColorShift",  labCurve.avoidcolorshift);
     if (!pedited || pedited->labCurve.rstprotection)   keyFile.set_double  ("Luminance Curve", "SaturationLimit",  labCurve.rstprotection);
     if (!pedited || pedited->labCurve.bwtoning)        keyFile.set_boolean ("Luminance Curve", "BWtoning",         labCurve.bwtoning);
+    if (!pedited || pedited->labCurve.lcredsk)         keyFile.set_boolean ("Luminance Curve", "LCredsk",          labCurve.lcredsk);
+	
     if (!pedited || pedited->labCurve.lcurve)  {
         Glib::ArrayHandle<double> lcurve = labCurve.lcurve;
         keyFile.set_double_list("Luminance Curve", "LCurve", lcurve);
@@ -433,12 +437,12 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
         Glib::ArrayHandle<double> chcurve = labCurve.chcurve;
         keyFile.set_double_list("Luminance Curve", "chCurve", chcurve);
     }
-/*
-    if (!pedited || pedited->labCurve.cbgcurve)  {
-        Glib::ArrayHandle<double> cbgcurve = labCurve.cbgcurve;
-        keyFile.set_double_list("Luminance Curve", "cbgCurve", cbgcurve);
+
+    if (!pedited || pedited->labCurve.lccurve)  {
+        Glib::ArrayHandle<double> lccurve = labCurve.lccurve;
+        keyFile.set_double_list("Luminance Curve", "LcCurve", lccurve);
     }
-*/
+
     // save sharpening
     if (!pedited || pedited->sharpening.enabled)            keyFile.set_boolean ("Sharpening", "Enabled",             sharpening.enabled);
     if (!pedited || pedited->sharpening.method)             keyFile.set_string  ("Sharpening", "Method",              sharpening.method);
@@ -813,14 +817,16 @@ if (keyFile.has_group ("Luminance Curve")) {
 	if (keyFile.has_key ("Luminance Curve", "AvoidColorShift"))           { labCurve.avoidcolorshift = keyFile.get_boolean ("Luminance Curve", "AvoidColorShift"); if (pedited) pedited->labCurve.avoidcolorshift = true; }
 	if (keyFile.has_key ("Luminance Curve", "RedAndSkinTonesProtection")) { labCurve.rstprotection   = keyFile.get_double  ("Luminance Curve", "RedAndSkinTonesProtection"); if (pedited) pedited->labCurve.rstprotection = true; }
 	}
-
+    if (keyFile.has_key ("Luminance Curve", "LCredsk"))         { labCurve.lcredsk            = keyFile.get_boolean     ("Luminance Curve", "LCredsk"); if (pedited) pedited->labCurve.lcredsk = true; }
     if (keyFile.has_key ("Luminance Curve", "BWtoning"))        { labCurve.bwtoning           = keyFile.get_boolean     ("Luminance Curve", "BWtoning"); if (pedited) pedited->labCurve.bwtoning = true; }
 	if (keyFile.has_key ("Luminance Curve", "LCurve"))          { labCurve.lcurve             = keyFile.get_double_list ("Luminance Curve", "LCurve"); if (pedited) pedited->labCurve.lcurve = true; }
 	if (keyFile.has_key ("Luminance Curve", "aCurve"))          { labCurve.acurve             = keyFile.get_double_list ("Luminance Curve", "aCurve"); if (pedited) pedited->labCurve.acurve = true; }
 	if (keyFile.has_key ("Luminance Curve", "bCurve"))          { labCurve.bcurve             = keyFile.get_double_list ("Luminance Curve", "bCurve"); if (pedited) pedited->labCurve.bcurve = true; }
 	if (keyFile.has_key ("Luminance Curve", "ccCurve"))         { labCurve.cccurve            = keyFile.get_double_list ("Luminance Curve", "ccCurve"); if (pedited) pedited->labCurve.cccurve = true; }
 	if (keyFile.has_key ("Luminance Curve", "chCurve"))         { labCurve.chcurve            = keyFile.get_double_list ("Luminance Curve", "chCurve"); if (pedited) pedited->labCurve.chcurve = true; }
-}
+    if (keyFile.has_key ("Luminance Curve", "LcCurve"))         { labCurve.lccurve           = keyFile.get_double_list ("Luminance Curve", "LcCurve"); if (pedited) pedited->labCurve.lccurve = true; }
+
+	}
 
     // load sharpening
 if (keyFile.has_group ("Sharpening")) {
@@ -1231,13 +1237,14 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& labCurve.bcurve == other.labCurve.bcurve
 		&& labCurve.cccurve == other.labCurve.cccurve
 		&& labCurve.chcurve == other.labCurve.chcurve
-//		&& labCurve.cbgcurve == other.labCurve.cbgcurve
+		&& labCurve.lccurve == other.labCurve.lccurve
 		&& labCurve.brightness == other.labCurve.brightness
 		&& labCurve.contrast == other.labCurve.contrast
 		&& labCurve.chromaticity == other.labCurve.chromaticity
 		&& labCurve.avoidcolorshift == other.labCurve.avoidcolorshift
 		&& labCurve.rstprotection == other.labCurve.rstprotection
 		&& labCurve.bwtoning == other.labCurve.bwtoning
+		&& labCurve.lcredsk == other.labCurve.lcredsk		
 		&& sharpenEdge.enabled == other.sharpenEdge.enabled
 		&& sharpenEdge.passes == other.sharpenEdge.passes
 		&& sharpenEdge.amount == other.sharpenEdge.amount

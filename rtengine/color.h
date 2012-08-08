@@ -156,6 +156,8 @@ public:
 	static void SkinSat         (float lum, float hue, float chrom, float &satreduc, int chromx);//jacques Skin color
 	static void MunsellLch      (float lum, float hue, float chrom, float memChprov, float &correction, int zone, float &lbe, bool &correctL);//jacques:  Munsell correction
 	// end Munsell
+	static void scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale, float &scaleext);
+	static void transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor);
 
 	//void gamutmap(LabImage* );
 	static void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
