@@ -1,5 +1,5 @@
---- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Sun Jul 08 22:42:31 2012
-+++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Sun Jul 08 22:53:12 2012
+--- C:/GCC/RT/RTSrc/rtengine/dcraw.c	Mon Aug 13 19:33:25 2012
++++ C:/GCC/RT/RTSrc/rtengine/dcraw.cc	Mon Aug 13 19:45:38 2012
 @@ -1,5 +1,17 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>

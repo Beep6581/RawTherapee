@@ -19,8 +19,8 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.451 $
-   $Date: 2012/07/05 04:33:11 $
+   $Revision: 1.452 $
+   $Date: 2012/07/23 04:28:00 $
  */
 
 #define DCRAW_VERSION "9.16"
@@ -6355,7 +6355,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6264,-582,-724,-8312,15948,2504,-1744,1919,8664 } },
     { "Canon EOS-1DS", 0, 0xe20,
 	{ 4374,3631,-1743,-7520,15212,2472,-2892,3632,8161 } },
-    { "Canon EOS-1D X", 0, 0,
+    { "Canon EOS-1D X", 0, 0x3c4e,
 	{ 6847,-614,-1014,-4669,12737,2139,-1197,2488,6846 } },
     { "Canon EOS-1D", 0, 0xe20,
 	{ 6806,-179,-1020,-8097,16415,1687,-3267,4236,7690 } },
