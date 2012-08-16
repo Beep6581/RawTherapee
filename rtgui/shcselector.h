@@ -66,6 +66,7 @@ class SHCSelector : public Gtk::DrawingArea, public ColoredBar {
     bool on_motion_notify_event (GdkEventMotion* event);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
     bool reset ();
+    void refresh();
 };
 
 #endif

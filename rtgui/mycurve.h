@@ -106,6 +106,7 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		void notifyListener ();
 		void updateBackgroundHistogram (LUTu & hist) {return;} ;
 		void forceResize() { sized = RS_Force; }
+		void refresh();
 	    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
 		virtual std::vector<double> getPoints () = 0;
 		virtual void setPoints (const std::vector<double>& p) = 0;

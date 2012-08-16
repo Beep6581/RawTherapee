@@ -231,7 +231,7 @@ void CurveEditor::setBottomBarBgGradient (const std::vector<GradientMilestone> &
 }
 
 void CurveEditor::refresh () {
-	subGroup->switchGUI();
+	subGroup->refresh(this);
 }
 
 void CurveEditor::setCurveColorProvider(ColorProvider* cp, int callerId) {

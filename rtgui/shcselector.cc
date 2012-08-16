@@ -237,3 +237,10 @@ bool SHCSelector::reset () {	//  : movingPosition(-1), cl(NULL) {
 	}
 	return false;
 }
+
+void SHCSelector::refresh() {
+	setDirty(true);
+	Glib::RefPtr<Gdk::Window> win = get_window();
+	if (win)
+		win->invalidate(true);
+}

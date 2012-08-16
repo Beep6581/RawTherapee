@@ -114,6 +114,7 @@ public:
 	int getValLinear() { return valLinear; }
 	virtual void updateBackgroundHistogram (CurveEditor* ce) {}
 	virtual void switchGUI() = 0;
+	virtual void refresh(CurveEditor *curveToRefresh) = 0;
 
 protected:
 
