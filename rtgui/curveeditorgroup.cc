@@ -289,7 +289,6 @@ void CurveEditorGroup::setUnChanged (bool uc, CurveEditor* ce) {
 CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(curveDir), lastFilename("") {
 	leftBar = NULL;
 	bottomBar = NULL;
-	curveCP = NULL;
 }
 
 CurveEditorSubGroup::~CurveEditorSubGroup() {

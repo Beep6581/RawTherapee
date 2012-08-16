@@ -390,11 +390,11 @@ HISTORY_MSG_164;RGB Curves - G
 HISTORY_MSG_165;RGB Curves - B
 HISTORY_MSG_166;Neutral Levels
 HISTORY_MSG_167;B&amp;W Toning
-HISTORY_MSG_168;'Cc' curve
-HISTORY_MSG_169;'Ch' curve
+HISTORY_MSG_168;'CC' curve
+HISTORY_MSG_169;'CH' curve
 HISTORY_MSG_170;Vibrance - Curve
-HISTORY_MSG_171;'Lc' curve
-HISTORY_MSG_172;'Lc' curve - Red and skin tones
+HISTORY_MSG_171;'LC' curve
+HISTORY_MSG_172;Restrict 'LC' to Red and Skin Tones
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -981,12 +981,12 @@ TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
-TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with chromaticity and Cc curve.
-TP_LABCURVE_LCREDSK;LC Curve - Red and skin tones
-TP_LABCURVE_LCREDSK_TIP;If enabled 'LC curve' is limited to Red and skin tones\n if desabled all color are concerned
+TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
+TP_LABCURVE_LCREDSK;Restrict LC to Red and Skin Tones
+TP_LABCURVE_LCREDSK_TIP;If enabled, 'LC curve' is limited to Red and skin tones\nIf disabled, applies on all tones
 TP_LABCURVE_BRIGHTNESS;Brightness
 TP_LABCURVE_BWTONING;B&W Toning
-TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc Ch Lc curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves 
+TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves 
 TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminance Curve
@@ -1006,8 +1006,8 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
 TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
 TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
-TP_LABCURVE_CURVEEDITOR_CCL;LC
-TP_LABCURVE_CURVEEDITOR_CCL_TOOLTIP;Luminance according to Chromaticity - Hue skin and also Red - Yellow - Blue  Green
+TP_LABCURVE_CURVEEDITOR_LC;LC
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to Chromaticity
 TP_LABCURVE_LABEL;Lab Adjustments
 TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 TP_LENSGEOM_AUTOCROP;    Auto Crop

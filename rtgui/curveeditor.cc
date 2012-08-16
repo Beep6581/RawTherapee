@@ -192,12 +192,13 @@ void CurveEditor::updateBackgroundHistogram (LUTu & hist) {
 }
 
 // Open up the curve if it has modifications and it's not already opened
-// Returns: is it non-linear?
+// Returns: true if curve was non linear and opened
 bool CurveEditor::openIfNonlinear() {
+
     bool nonLinear = tempCurve.size() && (tempCurve[0] > subGroup->getValLinear()) && (tempCurve[0] < subGroup->getValUnchanged());
 
     if (nonLinear && !curveType->get_active()) {
-        // Will toggle the event doing the display
+        // Will trigger the signal_clicked event doing the display
         curveType->set_active( true );
     }
 
@@ -211,12 +212,14 @@ void CurveEditor::setTooltip(Glib::ustring ttip) {
 			Glib::ustring::compose("%1\n<b>%2</b>", ttip, M("CURVEEDITOR_TYPE")));
 }
 
-void CurveEditor::setLeftBarColorProvider(ColorProvider* cp) {
+void CurveEditor::setLeftBarColorProvider(ColorProvider* cp, int callerId) {
 	leftBarCP = cp;
+	leftBarCId = callerId;
 }
 
-void CurveEditor::setBottomBarColorProvider(ColorProvider* cp) {
+void CurveEditor::setBottomBarColorProvider(ColorProvider* cp, int callerId) {
 	bottomBarCP = cp;
+	bottomBarCId = callerId;
 }
 
 void CurveEditor::setLeftBarBgGradient (const std::vector<GradientMilestone> &milestones) {
@@ -227,8 +230,13 @@ void CurveEditor::setBottomBarBgGradient (const std::vector<GradientMilestone> &
 	bottomBarBgGradient = milestones;
 }
 
-void CurveEditor::setCurveColorProvider(ColorProvider* cp) {
+void CurveEditor::refresh () {
+	subGroup->switchGUI();
+}
+
+void CurveEditor::setCurveColorProvider(ColorProvider* cp, int callerId) {
 	curveCP = cp;
+	curveCId = callerId;
 }
 
 ColorProvider* CurveEditor::getLeftBarColorProvider() {
@@ -241,6 +249,18 @@ ColorProvider* CurveEditor::getBottomBarColorProvider() {
 
 ColorProvider* CurveEditor::getCurveColorProvider() {
 	return curveCP;
+}
+
+int CurveEditor::getLeftBarCallerId() {
+	return leftBarCId;
+}
+
+int CurveEditor::getBottomBarCallerId() {
+	return bottomBarCId;
+}
+
+int CurveEditor::getCurveCallerId() {
+	return curveCId;
 }
 
 std::vector<GradientMilestone> CurveEditor::getBottomBarBgGradient () const {

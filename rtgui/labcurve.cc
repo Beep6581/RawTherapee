@@ -25,14 +25,7 @@ using namespace rtengine::procparams;
 
 LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
-	std::vector<GradientMilestone> bottomMilestones;
 	std::vector<GradientMilestone> milestones;
-	float R, G, B;
-	// -0.1 rad < Hue < 1.6 rad
-	Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
-	milestones.push_back( GradientMilestone(0.0, double(R), double(G), double(B)) );
-	Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
-	milestones.push_back( GradientMilestone(1.0, double(R), double(G), double(B)) );
 
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100., 100., 1., 0.));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100., 100., 1., 0.));
@@ -86,47 +79,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
 	curveEditorG->setCurveListener (this);
 
-	ccshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CC")));
-	ccshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP"));
-	ccshape->setRangeLabels(
-			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE2"),
-			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
-	);
-	ccshape->setRangeDefaultMilestones(0.05, 0.2, 0.58);
-	
-	// -0.1 rad < Hue < 1.6 rad
-	for (int i=0; i<7; i++) {
-		float R, G, B;
-		float x = float(i)*(1.0f/6.0);
-		Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
-		bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
-	}
-	chshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_LABCURVE_CURVEEDITOR_CH")));
-	chshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP"));
-	chshape->setBottomBarBgGradient(bottomMilestones);
-	chshape->setCurveColorProvider(this);
-	
-	lcshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CCL")));
-	lcshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CCL_TOOLTIP"));
-	//lcshape->setBottomBarBgGradient(milestones);
-	bottomMilestones.clear();
-	bottomMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
-	bottomMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
-	
-	lcshape->setLeftBarBgGradient(bottomMilestones);
-	lcshape->setRangeLabels(
-			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE2"),
-			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
-	);
-	lcshape->setRangeDefaultMilestones(0.15, 0.3, 0.6);
-	curveEditorG->newLine();
-
-	bottomMilestones.clear();
-	bottomMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
-	bottomMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
 	lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L"));
-	lshape->setBottomBarBgGradient(bottomMilestones);
-	lshape->setLeftBarBgGradient(bottomMilestones);
 	ashape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "a"));
 	ashape->setRangeLabels(
 			M("TP_LABCURVE_CURVEEDITOR_A_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_A_RANGE2"),
@@ -137,6 +90,54 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 			M("TP_LABCURVE_CURVEEDITOR_B_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_B_RANGE2"),
 			M("TP_LABCURVE_CURVEEDITOR_B_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_B_RANGE4")
 	);
+
+	curveEditorG->newLine();  //  ------------------------------------------------ second line
+
+	ccshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CC")));
+	ccshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP"));
+	ccshape->setRangeLabels(
+			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE2"),
+			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
+	);
+	ccshape->setBottomBarColorProvider(this, 2);
+	ccshape->setLeftBarColorProvider(this, 2);
+	ccshape->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+
+	chshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_LABCURVE_CURVEEDITOR_CH")));
+	chshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP"));
+	chshape->setCurveColorProvider(this, 1);
+	
+	lcshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_LC")));
+	lcshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP"));
+	// left and bottom bar uses the same caller id because the will display the same content
+	lcshape->setBottomBarColorProvider(this, 3);
+	lcshape->setRangeLabels(
+			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE2"),
+			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
+	);
+	lcshape->setRangeDefaultMilestones(0.15, 0.3, 0.6);
+
+	// Setting the gradient milestones
+
+	// from black to white
+	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+	lshape->setBottomBarBgGradient(milestones);
+	lshape->setLeftBarBgGradient(milestones);
+	milestones.at(0).r = milestones.at(0).g = milestones.at(0).b = 0.1;
+	milestones.at(1).r = milestones.at(1).g = milestones.at(1).b = 0.8;
+	lcshape->setLeftBarBgGradient(milestones);
+
+	// whole hue range
+	milestones.clear();
+	for (int i=0; i<7; i++) {
+		float R, G, B;
+		float x = float(i)*(1.0f/6.0);
+		Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+		milestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+	}
+	chshape->setBottomBarBgGradient(milestones);
+
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();
@@ -173,7 +174,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         bshape->setUnChanged   (!pedited->labCurve.bcurve);
         ccshape->setUnChanged  (!pedited->labCurve.cccurve);
         chshape->setUnChanged  (!pedited->labCurve.chcurve);
-        lcshape->setUnChanged (!pedited->labCurve.lccurve);
+        lcshape->setUnChanged  (!pedited->labCurve.lccurve);
     }
     else {
         //if bwtoning is enabled, chromaticity value, avoid color shift and rstprotection has no effect
@@ -183,7 +184,10 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         rstprotection->set_sensitive( !pp->labCurve.bwtoning /*&& pp->labCurve.chromaticity!=0*/ );//no reason for grey rstprotection
         avoidcolorshift->set_sensitive(!pp->labCurve.bwtoning);
         lcredsk->set_sensitive(!pp->labCurve.bwtoning);
-		
+
+        std::vector<GradientMilestone> milestones;
+        lcshape->setBottomBarBgGradient(milestones);
+        lcshape->refresh();
     }
 
     brightness->setValue    (pp->labCurve.brightness);
@@ -214,8 +218,14 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     bshape->setCurve   (pp->labCurve.bcurve);
     ccshape->setCurve  (pp->labCurve.cccurve);
     chshape->setCurve  (pp->labCurve.chcurve);
-    lcshape->setCurve (pp->labCurve.lccurve);
+    lcshape->setCurve  (pp->labCurve.lccurve);
 
+    queue_draw();
+
+    enableListener ();
+}
+
+void LCurve::autoOpenCurve () {
     // Open up the first curve if selected
     bool active = lshape->openIfNonlinear();
     if (!active) ashape->openIfNonlinear();
@@ -223,28 +233,24 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     if (!active) ccshape->openIfNonlinear();
     if (!active) chshape->openIfNonlinear();
     if (!active) lcshape->openIfNonlinear();
-
-    queue_draw();
-
-    enableListener ();
 }
 
 void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 
     pp->labCurve.brightness    = brightness->getValue ();
     pp->labCurve.contrast      = (int)contrast->getValue ();
-	pp->labCurve.chromaticity  = (int)chromaticity->getValue ();
-	
-	//%%%%%%%%%%%%%%%%%%%%%%
-	pp->labCurve.bwtoning        = bwtoning->get_active ();
-	pp->labCurve.avoidcolorshift = avoidcolorshift->get_active ();
-	pp->labCurve.lcredsk = lcredsk->get_active ();
-	
+    pp->labCurve.chromaticity  = (int)chromaticity->getValue ();
+
+    //%%%%%%%%%%%%%%%%%%%%%%
+    pp->labCurve.bwtoning        = bwtoning->get_active ();
+    pp->labCurve.avoidcolorshift = avoidcolorshift->get_active ();
+    pp->labCurve.lcredsk         = lcredsk->get_active ();
+
     pp->labCurve.rstprotection   = rstprotection->getValue ();
 	//%%%%%%%%%%%%%%%%%%%%%%
 
     pp->labCurve.lcurve  = lshape->getCurve ();
-	pp->labCurve.acurve  = ashape->getCurve ();
+    pp->labCurve.acurve  = ashape->getCurve ();
     pp->labCurve.bcurve  = bshape->getCurve ();
     pp->labCurve.cccurve = ccshape->getCurve ();
     pp->labCurve.chcurve = chshape->getCurve ();
@@ -253,22 +259,22 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     if (pedited) {
         pedited->labCurve.brightness   = brightness->getEditedState ();
         pedited->labCurve.contrast     = contrast->getEditedState ();
-		pedited->labCurve.chromaticity = chromaticity->getEditedState ();
-		
-		//%%%%%%%%%%%%%%%%%%%%%%
-		pedited->labCurve.bwtoning        = !bwtoning->get_inconsistent();
-		pedited->labCurve.avoidcolorshift = !avoidcolorshift->get_inconsistent();
-		pedited->labCurve.lcredsk = !lcredsk->get_inconsistent();
-		
+        pedited->labCurve.chromaticity = chromaticity->getEditedState ();
+
+        //%%%%%%%%%%%%%%%%%%%%%%
+        pedited->labCurve.bwtoning        = !bwtoning->get_inconsistent();
+        pedited->labCurve.avoidcolorshift = !avoidcolorshift->get_inconsistent();
+        pedited->labCurve.lcredsk         = !lcredsk->get_inconsistent();
+
         pedited->labCurve.rstprotection   = rstprotection->getEditedState ();
-		//%%%%%%%%%%%%%%%%%%%%%%
+        //%%%%%%%%%%%%%%%%%%%%%%
 
         pedited->labCurve.lcurve    = !lshape->isUnChanged ();
-		pedited->labCurve.acurve    = !ashape->isUnChanged ();
+        pedited->labCurve.acurve    = !ashape->isUnChanged ();
         pedited->labCurve.bcurve    = !bshape->isUnChanged ();
         pedited->labCurve.cccurve   = !ccshape->isUnChanged ();
         pedited->labCurve.chcurve   = !chshape->isUnChanged ();
-        pedited->labCurve.lccurve  = !bshape->isUnChanged ();
+        pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
     }
 }
 
@@ -332,6 +338,9 @@ void LCurve::lcredsk_toggled () {
             lcredsk->set_inconsistent (true);
 
         lastLCVal = lcredsk->get_active ();
+    }
+    else {
+        lcshape->refresh();
     }
 
     if (listener) {
@@ -399,7 +408,7 @@ void LCurve::curveChanged (CurveEditor* ce) {
         if (ce == chshape)
             listener->panelChanged (EvLCHCurve, M("HISTORY_CUSTOMCURVE"));
         if (ce == lcshape)
-            listener->panelChanged (EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged (EvLLCCurve, M("HISTORY_CUSTOMCURVE"));
     }
 }
 
@@ -430,46 +439,41 @@ void LCurve::adjusterChanged (Adjuster* a, double newval) {
         listener->panelChanged (EvLRSTProtection, costr);
 }
 
-void LCurve::colorForValue (double valX, double valY) {
+void LCurve::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {
 
-	CurveEditor* ce = curveEditorG->getDisplayedCurve();
+	float R, G, B;
+	if (callerId == 1) {         // ch - main curve
 
-	if (ce == lshape) {         // L = f(L)
-		red = (double)valY;
-		green = (double)valY;
-		blue = (double)valY;
+		Color::hsv2rgb01(float(valX), float(valY), 0.5f, R, G, B);
 	}
-	else if (ce == ashape) {    // a = f(a)
-		// TODO: To be implemented
-		red = (double)valY;
-		green = (double)valY;
-		blue = (double)valY;
-	}
-	else if (ce == bshape) {    // b = f(b)
-		red = (double)valY;
-		green = (double)valY;
-		blue = (double)valY;
-	}
-	else if (ce == ccshape) {    // c = f(c)
-		red = (double)valY;
-		green = (double)valY;
-		blue = (double)valY;
-	}
-	else if (ce == chshape) {    // c = f(h)
+	else if (callerId == 2) {    // cc - bottom bar
 
-		float r, g, b;
-
-		Color::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
-
-		red = double(r);
-		green = double(g);
-		blue = double(b);
+		float value = (1.f - 0.7f) * float(valX) + 0.7f;
+		// whole hue range
+		// Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+		Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
 	}
-	
-	else {
-		printf("Error: no curve displayed!\n");
-	}
+	else if (callerId == 3) {    // lc - bottom bar
 
+		float value = (1.f - 0.7f) * float(valX) + 0.7f;
+		if (lcredsk->get_active()) {
+			// skin range
+			// -0.1 rad < Hue < 1.6 rad
+			// Y axis / from 0.92 up to 0.14056
+			float hue = (1.14056f - 0.92f) * float(valY) + 0.92f;
+			if (hue > 1.0f) hue -= 1.0f;
+			// Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+			Color::hsv2rgb01(hue, float(valX), value, R, G, B);
+		}
+		else {
+			// whole hue range
+			// Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+			Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+		}
+	}
+	caller->ccRed = double(R);
+	caller->ccGreen = double(G);
+	caller->ccBlue = double(B);
 }
 
 void LCurve::setBatchMode (bool batchMode) {
@@ -481,6 +485,8 @@ void LCurve::setBatchMode (bool batchMode) {
 	rstprotection->showEditedCB ();
 
 	curveEditorG->setBatchMode (batchMode);
+	lcshape->setBottomBarColorProvider(NULL, -1);
+	lcshape->setLeftBarColorProvider(NULL, -1);
 }
 
 

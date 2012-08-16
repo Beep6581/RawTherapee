@@ -42,11 +42,10 @@ class RGBCurves : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
+    void autoOpenCurve  ();
 
     void curveChanged (CurveEditor* ce);
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
-
-    virtual void colorForValue (double valX, double valY);
 };
 
 #endif

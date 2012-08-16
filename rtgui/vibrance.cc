@@ -146,9 +146,12 @@ void Vibrance::read(const ProcParams* pp, const ParamsEdited* pedited) {
 		saturated->setValue (pp->vibrance.saturated);  // Pastels and Saturated are separate
 	}
 	skinTonesCurve->setCurve (pp->vibrance.skintonescurve);
-	skinTonesCurve->openIfNonlinear();
 
 	enableListener ();
+}
+
+void Vibrance::autoOpenCurve  () {
+	skinTonesCurve->openIfNonlinear();
 }
 
 void Vibrance::write( ProcParams* pp, ParamsEdited* pedited) {
@@ -332,20 +335,6 @@ void Vibrance::setAdjusterBehavior (bool pastelsadd, bool saturatedadd, bool pst
 	pastels->setAddMode (pastelsadd);
 	saturated->setAddMode (saturatedadd);
 }
-
-void Vibrance::colorForValue (double valX, double valY) {
-	CurveEditor* ce = curveEditorGG->getDisplayedCurve();
-
-	if (ce == skinTonesCurve) {         // L = f(L)
-		red   = double(valY);
-		green = double(valY);
-		blue  = double(valY);
-	}
-	else {
-		printf("Error: no curve displayed!\n");
-	}
-}
-
 
 void Vibrance::trimValues (ProcParams* pp) {
 	pastels->trimValue (pp->vibrance.pastels);

@@ -26,9 +26,11 @@
 #include "coloredbar.h"
 #include "../rtengine/LUT.h"
 #include "guiutils.h"
+#include "options.h"
 
 #define RADIUS			3	/* radius of the control points */
-#define CBAR_WIDTH		10	/* width of the colored bar (border included) */
+#define CBAR_WIDTH_STD	13	/* width of the colored bar (border included) for standard themes */
+#define CBAR_WIDTH_SLIM	10	/* width of the colored bar (border included) for slim themes */
 #define CBAR_MARGIN		2	/* spacing between the colored bar and the graph */
 #define SQUARE			2	/* half length of the square shape of the tangent handles */
 #define MIN_DISTANCE	5	/* min distance between control points */
@@ -54,7 +56,7 @@ enum ResizeState {
 
 class MyCurveIdleHelper;
 
-class MyCurve : public Gtk::DrawingArea, public BackBuffer {
+class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 
 	friend class MyCurveIdleHelper;
 
@@ -62,7 +64,6 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer {
 		CurveListener* listener;
 		ColoredBar *leftBar;
 		ColoredBar *bottomBar;
-		ColorProvider* colorProvider;
 		CursorShape cursor_type;
 		int graphX, graphY, graphW, graphH; // dimensions of the graphic area, excluding surrounding space for the points of for the colored bar
 		int prevGraphW, prevGraphH;         // previous inner width and height of the editor
@@ -102,7 +103,6 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer {
 
 		void setCurveListener (CurveListener* cl) { listener = cl; }
 		void setColoredBar (ColoredBar *left, ColoredBar *bottom);
-		void setColorProvider (ColorProvider* cp) { colorProvider = cp; }
 		void notifyListener ();
 		void updateBackgroundHistogram (LUTu & hist) {return;} ;
 		void forceResize() { sized = RS_Force; }
@@ -111,6 +111,8 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer {
 		virtual void setPoints (const std::vector<double>& p) = 0;
 		virtual bool handleEvents (GdkEvent* event) = 0;
 		virtual void reset () = 0;
+
+		static int getBarWidth() { return options.slimUI ? CBAR_WIDTH_SLIM : CBAR_WIDTH_STD; }
 };
 
 class MyCurveIdleHelper {

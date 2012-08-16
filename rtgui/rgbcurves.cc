@@ -70,12 +70,14 @@ void RGBCurves::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	Gshape->setCurve         (pp->rgbCurves.gcurve);
     Bshape->setCurve         (pp->rgbCurves.bcurve);
 
+    enableListener ();
+}
+
+void RGBCurves::autoOpenCurve  () {
     // Open up the first curve if selected
     bool active = Rshape->openIfNonlinear();
     if (!active) Gshape->openIfNonlinear();
     if (!active) Bshape->openIfNonlinear();
-
-    enableListener ();
 }
 
 void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited) {
@@ -108,34 +110,6 @@ void RGBCurves::curveChanged (CurveEditor* ce) {
     	if (ce == Bshape)
         	listener->panelChanged (EvRGBbCurve, M("HISTORY_CUSTOMCURVE"));
 	}
-}
-
-
-//!!! TODO: change
-void RGBCurves::colorForValue (double valX, double valY) {
-
-	CurveEditor* ce = curveEditorG->getDisplayedCurve();
-
-	if (ce == Rshape) {         // L = f(L)
-		red = (double)valY;
-		green = (double)valY;
-		blue = (double)valY;
-	}
-	else if (ce == Gshape) {    // a = f(a)
-		// TODO: To be implemented
-		red = (double)valY;
-		green = (double)valY;
-		blue = (double)valY;
-	}
-	else if (ce == Bshape) {    // b = f(b)
-		red = (double)valY;
-		green = (double)valY;
-		blue = (double)valY;
-	}
-	else {
-		printf("Error: no curve displayed!\n");
-	}
-
 }
 
 void RGBCurves::setBatchMode (bool batchMode) {

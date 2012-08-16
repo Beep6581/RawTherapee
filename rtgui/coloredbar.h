@@ -26,13 +26,12 @@
  * Parent class for all colored bar type; a ColorProvider has to be set
  * thanks to "setColorProvider" to be able to display colors inside the bar
  */
-class ColoredBar : public BackBuffer {
+class ColoredBar : public BackBuffer, public ColorCaller {
 
 	private:
 		void draw();
 
 	protected:
-		ColorProvider* cp;
 		eRTOrientation orientation;
 		std::vector<GradientMilestone> bgGradient;
 
@@ -43,7 +42,6 @@ class ColoredBar : public BackBuffer {
 		void expose(Cairo::RefPtr<Cairo::Surface> destSurface);
 		void expose(BackBuffer *backBuffer);
 
-		void setColorProvider (ColorProvider* p);
 		bool canGetColors();
 
 		// Method for convenience; if no Gradient provided, the ColoredBar will ask colors on a per pixel basis

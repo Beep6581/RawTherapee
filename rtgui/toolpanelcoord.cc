@@ -311,8 +311,11 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
     crop->trim(params, fw, fh);
 
     // updating the GUI with updated values
-    for (unsigned int i=0; i<toolPanels.size(); i++)
+    for (unsigned int i=0; i<toolPanels.size(); i++) {
         toolPanels[i]->read (params);
+        if (event==rtengine::EvPhotoLoaded || event==rtengine::EvProfileChanged)
+            toolPanels[i]->autoOpenCurve();
+    }
 
     // start the IPC processing
     if (filterRawRefresh) {

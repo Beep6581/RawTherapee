@@ -109,17 +109,17 @@ void FlatCurveEditorSubGroup::switchGUI() {
 			}
 		}
 		else {
-			// dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
+			// dCurve has a ColorProvider or a background gradient defined, so we create/update the object
 			if (!leftBar) {
 				leftBar = new ColoredBar(RTO_Bottom2Top);
 			}
 			if (barColorProvider) {
 				bgGradient.clear();
-				leftBar->setColorProvider(barColorProvider);
+				leftBar->setColorProvider(barColorProvider, dCurve->getLeftBarCallerId());
 				leftBar->setBgGradient (bgGradient);
 			}
 			else {
-				leftBar->setColorProvider(NULL);
+				leftBar->setColorProvider(NULL, -1);
 				leftBar->setBgGradient (bgGradient);
 			}
 		}
@@ -127,7 +127,7 @@ void FlatCurveEditorSubGroup::switchGUI() {
 		barColorProvider = dCurve->getBottomBarColorProvider();
 		bgGradient = dCurve->getBottomBarBgGradient();
 		if (barColorProvider == NULL && bgGradient.size() == 0) {
-			// dCurve has no left colored bar, so we delete the object
+			// dCurve has no bottom colored bar, so we delete the object
 			if (bottomBar) {
 				delete bottomBar;
 				bottomBar = NULL;
@@ -140,11 +140,11 @@ void FlatCurveEditorSubGroup::switchGUI() {
 			}
 			if (barColorProvider) {
 				bgGradient.clear();
-				bottomBar->setColorProvider(barColorProvider);
+				bottomBar->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
 				bottomBar->setBgGradient (bgGradient);
 			}
 			else {
-				bottomBar->setColorProvider(NULL);
+				bottomBar->setColorProvider(NULL, -1);
 				bottomBar->setBgGradient (bgGradient);
 			}
 		}
@@ -153,7 +153,7 @@ void FlatCurveEditorSubGroup::switchGUI() {
 		case (FCT_MinMaxCPoints):
 			CPointsCurve->setPeriodicity(dCurve->periodic);		// Setting Periodicity before setting points
 			CPointsCurve->setPoints (dCurve->controlPointsCurveEd);
-			CPointsCurve->setColorProvider(dCurve->getCurveColorProvider());
+			CPointsCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
 			CPointsCurve->setColoredBar(leftBar, bottomBar);
 			parent->pack_start (*CPointsCurveBox);
 			CPointsCurveBox->check_resize();
@@ -311,10 +311,6 @@ bool FlatCurveEditorSubGroup::curveReset(int cType) {
 		return false;
 		break;
 	}
-}
-
-void FlatCurveEditorSubGroup::setColorProvider (ColorProvider* p) {
-	CPointsCurve->setColorProvider(p);
 }
 
 /*void FlatCurveEditorSubGroup::updateBackgroundHistogram (CurveEditor* ce) {

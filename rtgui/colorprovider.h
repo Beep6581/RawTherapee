@@ -19,6 +19,29 @@
 #ifndef _COLORPROVIDER_
 #define _COLORPROVIDER_
 
+#include <gtkmm.h>
+
+class ColorProvider;
+
+/*
+ * The ColorCaller is the class that will query the ColorProvider
+ */
+class ColorCaller {
+	protected:
+		// a class can handle several ColorCaller;
+		// colorCallerId will let the provider identify the caller
+		int colorCallerId;
+		ColorProvider* colorProvider;
+
+	public:
+		double ccRed;
+		double ccGreen;
+		double ccBlue;
+
+		ColorCaller() : colorCallerId(-1), colorProvider(NULL), ccRed(0.), ccGreen(0.), ccBlue(0.) {}
+		void setColorProvider (ColorProvider* p, int id) { colorProvider = p; colorCallerId = id; }
+};
+
 /*
  * Use it to let your widget feed a colored bar or graph lines with the wanted colors
  * If you doesn't need to dynamically feed a widget with colors (e.g. curve's graph),
@@ -28,13 +51,8 @@
 class ColorProvider {
 
 	public:
-		double red;
-		double green;
-		double blue;
-
-		ColorProvider() { red = green = blue = 0.0; };
 		virtual ~ColorProvider() {};
-		virtual void colorForValue (double valX, double valY) {};
+		virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {};
 };
 
 #endif
