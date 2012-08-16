@@ -127,8 +127,8 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         shcompr->setEditedState (pedited->toneCurve.shcompr ? Edited : UnEdited);
         brightness->setEditedState (pedited->toneCurve.brightness ? Edited : UnEdited);
         contrast->setEditedState (pedited->toneCurve.contrast ? Edited : UnEdited);
-		saturation->setEditedState (pedited->toneCurve.saturation ? Edited : UnEdited);
-		autolevels->set_inconsistent (!pedited->toneCurve.autoexp);
+        saturation->setEditedState (pedited->toneCurve.saturation ? Edited : UnEdited);
+        autolevels->set_inconsistent (!pedited->toneCurve.autoexp);
         clipDirty = pedited->toneCurve.clip;
         shape->setUnChanged (!pedited->toneCurve.curve);
     }
@@ -147,12 +147,14 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     brightness->setValue (pp->toneCurve.brightness);
     contrast->setValue (pp->toneCurve.contrast);
-	saturation->setValue (pp->toneCurve.saturation);
-	shape->setCurve (pp->toneCurve.curve);
-
-    shape->openIfNonlinear();
+    saturation->setValue (pp->toneCurve.saturation);
+    shape->setCurve (pp->toneCurve.curve);
 
     enableListener ();
+}
+
+void ToneCurve::autoOpenCurve  () {
+    shape->openIfNonlinear();
 }
 
 void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
@@ -166,7 +168,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->toneCurve.shcompr = (int)shcompr->getValue ();
     pp->toneCurve.brightness = (int)brightness->getValue ();
     pp->toneCurve.contrast = (int)contrast->getValue ();
-	pp->toneCurve.saturation = (int)saturation->getValue ();
+    pp->toneCurve.saturation = (int)saturation->getValue ();
     pp->toneCurve.curve = shape->getCurve ();
 
     if (pedited) {
@@ -177,8 +179,8 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->toneCurve.shcompr = shcompr->getEditedState ();
         pedited->toneCurve.brightness = brightness->getEditedState ();
         pedited->toneCurve.contrast = contrast->getEditedState ();
-		pedited->toneCurve.saturation = saturation->getEditedState ();
-		pedited->toneCurve.autoexp  = !autolevels->get_inconsistent();
+        pedited->toneCurve.saturation = saturation->getEditedState ();
+        pedited->toneCurve.autoexp  = !autolevels->get_inconsistent();
         pedited->toneCurve.clip     = clipDirty;
         pedited->toneCurve.curve    = !shape->isUnChanged ();
     }
@@ -203,7 +205,7 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
         shcompr->setDefaultEditedState (pedited->toneCurve.shcompr ? Edited : UnEdited);
         brightness->setDefaultEditedState (pedited->toneCurve.brightness ? Edited : UnEdited);
         contrast->setDefaultEditedState (pedited->toneCurve.contrast ? Edited : UnEdited);
-		saturation->setDefaultEditedState (pedited->toneCurve.saturation ? Edited : UnEdited);
+        saturation->setDefaultEditedState (pedited->toneCurve.saturation ? Edited : UnEdited);
     }
     else {
         expcomp->setDefaultEditedState (Irrelevant);
@@ -213,7 +215,7 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
         shcompr->setDefaultEditedState (Irrelevant);
         brightness->setDefaultEditedState (Irrelevant);
         contrast->setDefaultEditedState (Irrelevant);
-		saturation->setDefaultEditedState (Irrelevant);
+        saturation->setDefaultEditedState (Irrelevant);
     }
 }
 
@@ -226,9 +228,9 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
 
     // Switch off auto exposure if user changes sliders manually
     if (autolevels->get_active() && (a==expcomp || a==brightness || a==contrast || a==black || a==hlcompr || a==hlcomprthresh)) {
-    	autoconn.block(true);
+        autoconn.block(true);
         autolevels->set_active (false);
-    	autoconn.block(false);
+        autoconn.block(false);
         autolevels->set_inconsistent (false);
     }
 
@@ -366,13 +368,13 @@ void ToneCurve::waitForAutoExp () {
     sclip->set_sensitive (false);
     expcomp->setEnabled (false);
     brightness->setEnabled (false);
-	contrast->setEnabled (false);
+    contrast->setEnabled (false);
     black->setEnabled (false);
     hlcompr->setEnabled (false);
     hlcomprthresh->setEnabled (false);
     shcompr->setEnabled (false);
     contrast->setEnabled (false);
-	saturation->setEnabled (false);
+    saturation->setEnabled (false);
     curveEditorG->set_sensitive (false);
 }
 
@@ -385,8 +387,8 @@ void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black
 
     nextBlack = black;
     nextExpcomp = expcomp;
-	nextBrightness = bright;
-	nextContrast = contr;
+    nextBrightness = bright;
+    nextContrast = contr;
     nextHlcompr = hlcompr;
     nextHlcomprthresh = hlcomprthresh;
     g_idle_add (autoExpChangedUI, this);
@@ -404,7 +406,7 @@ void ToneCurve::enableAll () {
     hlcomprthresh->setEnabled (true);
     shcompr->setEnabled (true);
     contrast->setEnabled (true);
-	saturation->setEnabled (true);
+    saturation->setEnabled (true);
     curveEditorG->set_sensitive (true);
 }
 
@@ -413,8 +415,8 @@ bool ToneCurve::autoExpComputed_ () {
     disableListener ();
     enableAll ();
     expcomp->setValue (nextExpcomp);
-	brightness->setValue (nextBrightness);
-	contrast->setValue (nextContrast);
+    brightness->setValue (nextBrightness);
+    contrast->setValue (nextContrast);
     black->setValue (nextBlack);
     hlcompr->setValue (nextHlcompr);
     hlcomprthresh->setValue (nextHlcomprthresh);

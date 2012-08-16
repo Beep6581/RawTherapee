@@ -268,28 +268,30 @@ void MyDiagonalCurve::draw (int handle) {
     // draw the left colored bar
     if (leftBar) {
         // first the background
+    	int bWidth = getBarWidth();
         BackBuffer *bb = this;
-        leftBar->setDrawRectangle(win, 1, graphY-graphH+1, CBAR_WIDTH-2, graphH-2);
+        leftBar->setDrawRectangle(win, 1, graphY-graphH+1, bWidth-2, graphH-2);
         leftBar->expose(bb);
 
         // now the border
         c = style->get_dark (state);
         cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-        cr->rectangle(0.5, graphY-graphH+0.5, CBAR_WIDTH-1, graphH-1);
+        cr->rectangle(0.5, graphY-graphH+0.5, bWidth-1, graphH-1);
         cr->stroke();
     }
 
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
+    	int bWidth = getBarWidth();
     	BackBuffer *bb = this;
-        bottomBar->setDrawRectangle(win, graphX+1, graphY+CBAR_MARGIN+1, graphW-2, CBAR_WIDTH-2);
+        bottomBar->setDrawRectangle(win, graphX+1, graphY+CBAR_MARGIN+1, graphW-2, bWidth-2);
         bottomBar->expose(bb);
 
         // now the border
         c = style->get_dark (state);
         cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-        cr->rectangle(graphX+0.5, graphY+CBAR_MARGIN+0.5, graphW-1, CBAR_WIDTH-1 );
+        cr->rectangle(graphX+0.5, graphY+CBAR_MARGIN+0.5, graphW-1, bWidth-1 );
         cr->stroke();
     }
 
@@ -807,19 +809,32 @@ void MyDiagonalCurve::reset() {
 
     switch (curve.type) {
     case DCT_Spline :
-    case  DCT_NURBS :
-        curve.x.clear();
-        curve.y.clear();
-        curve.x.push_back(0.);
-        curve.y.push_back(0.);
-        curve.x.push_back(1.);
-        curve.y.push_back(1.);
+    case DCT_NURBS :
+        curve.x.resize(2);
+        curve.y.resize(2);
+        curve.x.at(0) = 0.;
+        curve.y.at(0) = 0.;
+        curve.x.at(1) = 1.;
+        curve.y.at(1) = 1.;
         grab_point = -1;
         lit_point = -1;
         interpolate ();
         break;
     case DCT_Parametric :
-        // Nothing to do (?)
+        curve.x.resize(7);
+        curve.y.clear();
+        // the SHCSelector values doesn't really matter for the identity curve display
+        curve.x.at(0) = 0.25;
+        curve.x.at(1) = 0.50;
+        curve.x.at(2) = 0.75;
+        curve.x.at(3) = 0.00;
+        curve.x.at(4) = 0.00;
+        curve.x.at(5) = 0.00;
+        curve.x.at(6) = 0.00;
+        grab_point = -1;  // not sure that it's necessary
+        lit_point = -1;   // not sure that it's necessary
+        interpolate ();
+        break;
     default:
         break;
     }

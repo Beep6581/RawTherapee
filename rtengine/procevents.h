@@ -192,7 +192,7 @@ enum ProcEvent {
 	EvLCCCurve=167,
 	EvLCHCurve=168,
 	EvVibranceSkinTonesCurve=169,
-	EvLCLCurve=170,
+	EvLLCCurve=170,
 	EvLLCredsk=171,
 	
 	NUMOFEVENTS=172

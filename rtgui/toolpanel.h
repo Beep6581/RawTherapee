@@ -33,6 +33,7 @@ class ToolPanelListener {
 
     public:
     
+        virtual ~ToolPanelListener() {}
         virtual void panelChanged   (rtengine::ProcEvent event, const Glib::ustring& descr) {}
 };
 
@@ -46,14 +47,16 @@ class ToolPanel {
     public:
 
         ToolPanel () : listener(NULL), tmp(NULL), batchMode(false) {}
+        virtual ~ToolPanel() {}
 
-                void setParent   (Gtk::Box* parent) {}
-           Gtk::Box* getParent   () { return NULL; }
-                void setListener (ToolPanelListener* tpl) { listener = tpl; }
-        virtual void read        (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL) {}
-        virtual void write       (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL) {}
-        virtual void trimValues  (rtengine::procparams::ProcParams* pp) { return; }
-        virtual void setDefaults (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL) {}
+                void setParent       (Gtk::Box* parent) {}
+           Gtk::Box* getParent       () { return NULL; }
+                void setListener     (ToolPanelListener* tpl) { listener = tpl; }
+        virtual void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL) {}
+        virtual void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL) {}
+        virtual void trimValues      (rtengine::procparams::ProcParams* pp) { return; }
+        virtual void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL) {}
+        virtual void autoOpenCurve   () {}
         
                 void disableListener () { if (tmp==NULL) tmp = listener; listener = NULL; }
                 void enableListener  () { if (tmp!=NULL) listener = tmp; tmp = NULL; }

@@ -106,14 +106,14 @@ protected:
 
 	ColoredBar* leftBar;
 	ColoredBar* bottomBar;
-	ColorProvider* curveCP;
 
 
 public:
-	~CurveEditorSubGroup();
+	virtual ~CurveEditorSubGroup();
 	int getValUnchanged() { return valUnchanged; }
-    int getValLinear() { return valLinear; }
+	int getValLinear() { return valLinear; }
 	virtual void updateBackgroundHistogram (CurveEditor* ce) {}
+	virtual void switchGUI() = 0;
 
 protected:
 
@@ -131,7 +131,6 @@ protected:
 	virtual void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) = 0;
 	virtual void storeDisplayedCurve () = 0;
 	virtual void restoreDisplayedHistogram() {};
-	virtual void switchGUI() = 0;
 	virtual void removeEditor () = 0;
 	virtual const std::vector<double> getCurveFromGUI (int type) = 0;
 

@@ -22,12 +22,7 @@
 ColoredBar::ColoredBar (eRTOrientation orient) {
 	orientation = orient;
 	dirty = true;
-	cp = NULL;
 	this->x = this->y = this->w = this->h = 0;
-}
-
-void ColoredBar::setColorProvider (ColorProvider* p) {
-	cp = p;
 }
 
 /*
@@ -98,20 +93,67 @@ void ColoredBar::draw() {
 		}
 		else {
 			// ask the ColorProvider to provide colors :) for each pixels
-			if (cp) {
+			if (colorProvider) {
 				cr->set_antialias(Cairo::ANTIALIAS_NONE);
 				cr->set_line_width(1.);
-				for (int x=0; x<w; x++) {
-					for (int y=0; y<h; y++) {
-						double x2 = double(x)+0.5;
-						double y2 = double(y)+0.5;
-						double x01 = x2/(w-1);
-						double y01 = y2/h;
-						cp->colorForValue (x01, y01);
-						cr->set_source_rgb(cp->red, cp->green, cp->blue);
-						cr->move_to(x2, y2);
-						cr->stroke();
-					}
+				switch (orientation) {
+					case (RTO_Left2Right):
+						for (int x=0; x<w; x++) {
+							for (int y=0; y<h; y++) {
+								double x_ = double(      x);
+								double y_ = double((h-1)-y);
+								double x01 = x_       /double(w-1);
+								double y01 = double(y)/double(h-1);
+								colorProvider->colorForValue (x01, y01, colorCallerId, this);
+								cr->set_source_rgb(ccRed, ccGreen, ccBlue);
+								cr->rectangle(x_, y_, 1., 1.);
+								cr->fill();
+							}
+						}
+						break;
+					case (RTO_Right2Left):
+						for (int x=0; x<w; x++) {
+							for (int y=0; y<h; y++) {
+								double x_ = double((w-1)-x);
+								double y_ = double((h-1)-y);
+								double x01 = double(x)/double(w-1);
+								double y01 = double(y)/double(h-1);
+								colorProvider->colorForValue (x01, y01, colorCallerId, this);
+								cr->set_source_rgb(ccRed, ccGreen, ccBlue);
+								cr->rectangle(x_, y_, 1., 1.);
+								cr->fill();
+							}
+						}
+						break;
+					case (RTO_Bottom2Top):
+						for (int x=0; x<w; x++) {
+							for (int y=0; y<h; y++) {
+								double x_ = double((w-1)-x);
+								double y_ = double((h-1)-y);
+								double x01 = double(x)/double(w-1);
+								double y01 = double(y)/double(h-1);
+								colorProvider->colorForValue (y01, x01, colorCallerId, this);
+								cr->set_source_rgb(ccRed, ccGreen, ccBlue);
+								cr->rectangle(x_, y_, 1., 1.);
+								cr->fill();
+							}
+						}
+						break;
+					case (RTO_Top2Bottom):
+					default:
+						for (int x=0; x<w; x++) {
+							for (int y=0; y<h; y++) {
+								double x_ = double(      x);
+								double y_ = double(      y);
+								double x01 = x_/double(w-1);
+								double y01 = y_/double(h-1);
+								colorProvider->colorForValue (y01, x01, colorCallerId, this);
+								cr->set_source_rgb(ccRed, ccGreen, ccBlue);
+								cr->rectangle(x_, y_, 1., 1.);
+								cr->fill();
+							}
+						}
+						break;
 				}
 			}
 		}
@@ -131,5 +173,5 @@ void ColoredBar::clearBgGradient () {
 }
 
 bool ColoredBar::canGetColors() {
-	return cp!=NULL || bgGradient.size()>0;
+	return colorProvider!=NULL || bgGradient.size()>0;
 }

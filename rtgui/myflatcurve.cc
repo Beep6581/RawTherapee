@@ -135,28 +135,30 @@ void MyFlatCurve::draw () {
     // draw the left colored bar
     if (leftBar) {
         // first the background
+    	int bWidth = getBarWidth();
         BackBuffer *bb = this;
-        leftBar->setDrawRectangle(win, 1, graphY-graphH+1, CBAR_WIDTH-2, graphH-2);
+        leftBar->setDrawRectangle(win, 1, graphY-graphH+1, bWidth-2, graphH-2);
         leftBar->expose(bb);
 
         // now the border
         c = style->get_dark (state);
         cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-        cr->rectangle(0.5, graphY-graphH+0.5, CBAR_WIDTH-1, graphH-1);
+        cr->rectangle(0.5, graphY-graphH+0.5, bWidth-1, graphH-1);
         cr->stroke();
     }
 
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
+    	int bWidth = getBarWidth();
         BackBuffer *bb = this;
-        bottomBar->setDrawRectangle(win, graphX+1, graphY+CBAR_MARGIN+1, graphW-2, CBAR_WIDTH-2);
+        bottomBar->setDrawRectangle(win, graphX+1, graphY+CBAR_MARGIN+1, graphW-2, bWidth-2);
         bottomBar->expose(bb);
 
         // now the border
         c = style->get_dark (state);
         cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
-        cr->rectangle(graphX+0.5, graphY+CBAR_MARGIN+0.5, graphW-1, CBAR_WIDTH-1 );
+        cr->rectangle(graphX+0.5, graphY+CBAR_MARGIN+0.5, graphW-1, bWidth-1 );
         cr->stroke();
     }
 
@@ -171,8 +173,8 @@ void MyFlatCurve::draw () {
                 if (curve.x[i] != -1.) {
 
                     cr->set_line_width (1.0);
-                    colorProvider->colorForValue(curve.x[i], 0.5);
-                    cr->set_source_rgb (colorProvider->red, colorProvider->green, colorProvider->blue);
+                    colorProvider->colorForValue(curve.x[i], 0.5, colorCallerId, this);
+                    cr->set_source_rgb (ccRed, ccGreen, ccBlue);
 
                     if ( i==lit_point && (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointX)) ) {
                         cr->set_line_width (4.0);
@@ -191,8 +193,8 @@ void MyFlatCurve::draw () {
                                 cr->set_line_width (4.0);
                             }
 
-                            colorProvider->colorForValue(curve.x[i], curve.y[i]);
-                            cr->set_source_rgb (colorProvider->red, colorProvider->green, colorProvider->blue);
+                            colorProvider->colorForValue(curve.x[i], curve.y[i], colorCallerId, this);
+                            cr->set_source_rgb (ccRed, ccGreen, ccBlue);
 
                             cr->move_to (double(graphX+1) , double(graphY-1) - innerH*curve.y[lit_point]);
                             cr->rel_line_to (innerW, 0.);
@@ -319,8 +321,8 @@ void MyFlatCurve::draw () {
             if (curve.x[i] != -1.) {
                 if (i == lit_point) {
                     if (colorProvider) {
-                        colorProvider->colorForValue(curve.x[i], curve.y[i]);
-                        cr->set_source_rgb (colorProvider->red, colorProvider->green, colorProvider->blue);
+                        colorProvider->colorForValue(curve.x[i], curve.y[i], colorCallerId, this);
+                        cr->set_source_rgb (ccRed, ccGreen, ccBlue);
                     }
                     else
                         cr->set_source_rgb (1.0, 0.0, 0.0);

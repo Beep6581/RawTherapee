@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
@@ -214,6 +213,7 @@ HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogramme
 HISTOGRAM_TOOLTIP_BAR;Montrer/Cacher l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
+HISTOGRAM_TOOLTIP_FULL;Basculer la vue de l'histogramme : complet / zoomé
 HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
 HISTOGRAM_TOOLTIP_RAW;Montrer/Cacher l'histogramme des données RAW
@@ -390,9 +390,11 @@ HISTORY_MSG_164;Courbes RVB - V
 HISTORY_MSG_165;Courbes RVB - B
 HISTORY_MSG_166;Niveaux neutre
 HISTORY_MSG_167;Mode N&amp;B colorisable
-HISTORY_MSG_168;Courbe 'Cc'
-HISTORY_MSG_169;Courbe 'Ct'
+HISTORY_MSG_168;Courbe 'CC'
+HISTORY_MSG_169;Courbe 'CT'
 HISTORY_MSG_170;Vibrance - courbe
+HISTORY_MSG_171;Courbe 'LC'
+HISTORY_MSG_172;Restreindre 'LC' aux tons rouge et peau
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
@@ -510,6 +512,9 @@ MAIN_TAB_TAGGING;Étiquetter
 MAIN_TAB_TRANSFORM;Transformation
 MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
+MAIN_TOOLTIP_BACKCOLOR0;Couleur de fond de l'aperçu: <b>Selon le thème</b>\nRaccourci : <b>8</b>
+MAIN_TOOLTIP_BACKCOLOR1;Couleur de fond de l'aperçu: <b>Noir</b>\nRaccourci : <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Couleur de fond de l'aperçu: <b>Blanc</b>\nRaccourci: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumultaif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
 MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique) <b>H</b>
@@ -547,6 +552,7 @@ NAVIGATOR_S_NA;S = n/d
 NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_NA;V = n/d
 NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_FULL;Largeur = %1, Hauteur = %2
 NAVIGATOR_XY_NA;x = n/d, y = n/d
 OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
 OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
@@ -787,6 +793,7 @@ PROGRESSBAR_LOADJPEG;Chargement du fichier JPEG...
 PROGRESSBAR_LOADPNG;Chargement du fichier PNG...
 PROGRESSBAR_LOADTIFF;Chargement du fichier TIFF...
 PROGRESSBAR_PROCESSING;Traitement de l'Image...
+PROGRESSBAR_PROCESSING_PROFILESAVED;Profil de traitement sauvegardé
 PROGRESSBAR_READY;Prêt.
 PROGRESSBAR_SAVEJPEG;Enregistrement du fichier JPEG...
 PROGRESSBAR_SAVEPNG;Enregistrement du fichier PNG...
@@ -862,6 +869,7 @@ TP_COLORSHIFT_LABEL;Décalage couleur
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
 TP_CROP_GTEPASSPORT;Passeport biométrique
+TP_CROP_GTFRAME;Cadre
 TP_CROP_GTGRID;Grille
 TP_CROP_GTHARMMEANS1;Manière harmonique 1
 TP_CROP_GTHARMMEANS2;Manière harmonique 2
@@ -981,9 +989,12 @@ TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Ramènes les données dans le gamut de l'espace couleur de travail\npuis applique la correction de Munsell
+TP_LABCURVE_RSTPRO_TOOLTIP;Peut être tutilisé avec le curseur Chromaticité et la courbe CC.
+TP_LABCURVE_LCREDSK;Restreindre LC aux tons rouge et peau
+TP_LABCURVE_LCREDSK_TIP;Si activé, la courbe 'LC' est limitée au tons rouge et peau\nSi désactivé, s'applique à toutes les teintes
 TP_LABCURVE_BRIGHTNESS;Luminosité
 TP_LABCURVE_BWTONING;Mode N&B colorisable
-TP_LABCURVE_BWTONING_TIP;Avec le mode <b>N&amp;B colorisable</b> activé, la Chromaticité, la courbe Cc et Ct sont sans effet.\nLa colorisation peut être effctué en utilisant les courbes <b>a</b> et <b>b</b>.
+TP_LABCURVE_BWTONING_TIP;Avec le mode <b>N&amp;B colorisable</b> activé, la Chromaticité, la courbe CC, CT et LC sont sans effet.\nLa colorisation peut être effctué en utilisant les courbes <b>a</b> et <b>b</b>.
 TP_LABCURVE_CHROMATICITY;Chromaticité
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Courbe de luminance
@@ -1003,7 +1014,9 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturé
 TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticité en fonction de la Chromaticité
 TP_LABCURVE_CURVEEDITOR_CH;CT
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticité en fonction de la Teinte
-TP_LABCURVE_LABEL;Courbes Lab
+TP_LABCURVE_CURVEEDITOR_LC;LC
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance en fonction de la Chromaticité
+TP_LABCURVE_LABEL;Ajustements Lab
 TP_LABCURVE_RSTPROTECTION;Protection des tons rouges et chair
 TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir
@@ -1183,15 +1196,3 @@ ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
-!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
-!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
-!NAVIGATOR_XY_FULL;Width = %1, Height = %2
-!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
-!TP_CROP_GTFRAME;Frame

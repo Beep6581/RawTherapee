@@ -67,6 +67,9 @@ class CurveEditor {
 		ColorProvider* bottomBarCP;
 		ColorProvider* leftBarCP;
 		ColorProvider* curveCP;
+		int bottomBarCId;
+		int leftBarCId;
+		int curveCId;
 		std::vector<GradientMilestone> bottomBarBgGradient;
 		std::vector<GradientMilestone> leftBarBgGradient;
 
@@ -85,18 +88,22 @@ class CurveEditor {
 		void setUnChanged (bool uc);
 		void updateBackgroundHistogram (LUTu & hist);
 
-		void setLeftBarColorProvider(ColorProvider* cp);
-		void setBottomBarColorProvider(ColorProvider* cp);
-		void setCurveColorProvider(ColorProvider* cp);
+		void setLeftBarColorProvider(ColorProvider* cp, int callerId);
+		void setBottomBarColorProvider(ColorProvider* cp, int callerId);
+		void setCurveColorProvider(ColorProvider* cp, int callerId);
 		void setBottomBarBgGradient (const std::vector<GradientMilestone> &milestones);
 		void setLeftBarBgGradient (const std::vector<GradientMilestone> &milestones);
 		ColorProvider* getLeftBarColorProvider();
 		ColorProvider* getBottomBarColorProvider();
 		ColorProvider* getCurveColorProvider();
+		int getLeftBarCallerId();
+		int getBottomBarCallerId();
+		int getCurveCallerId();
 		std::vector<GradientMilestone> getBottomBarBgGradient () const;
 		std::vector<GradientMilestone> getLeftBarBgGradient () const;
 
-        bool openIfNonlinear();  // Open up the curve if it has modifications and it's not already opened
+		void refresh (); // refresh the display of the CurveEditor (e.g. when a ColoredBar has been changed from the outside)
+		bool openIfNonlinear();  // Open up the curve if it has modifications and it's not already opened
 
 		void setCurve (const std::vector<double>& p);
 		virtual std::vector<double> getCurve () = 0;

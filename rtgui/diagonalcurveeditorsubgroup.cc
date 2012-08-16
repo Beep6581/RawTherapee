@@ -270,11 +270,11 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 			}
 			if (barColorProvider) {
 				bgGradient.clear();
-				leftBar->setColorProvider(barColorProvider);
+				leftBar->setColorProvider(barColorProvider, dCurve->getLeftBarCallerId());
 				leftBar->setBgGradient (bgGradient);
 			}
 			else {
-				leftBar->setColorProvider(NULL);
+				leftBar->setColorProvider(NULL, -1);
 				leftBar->setBgGradient (bgGradient);
 			}
 		}
@@ -282,24 +282,24 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 		barColorProvider = dCurve->getBottomBarColorProvider();
 		bgGradient = dCurve->getBottomBarBgGradient();
 		if (barColorProvider == NULL && bgGradient.size() == 0) {
-			// dCurve has no left colored bar, so we delete the object
+			// dCurve has no bottom colored bar, so we delete the object
 			if (bottomBar) {
 				delete bottomBar;
 				bottomBar = NULL;
 			}
 		}
 		else {
-			// dCurve ave a ColorProvider or a background gradient defined, so we create/update the object
+			// dCurve has a ColorProvider or a background gradient defined, so we create/update the object
 			if (!bottomBar) {
 				bottomBar = new ColoredBar(RTO_Left2Right);
 			}
 			if (barColorProvider) {
 				bgGradient.clear();
-				bottomBar->setColorProvider(barColorProvider);
+				bottomBar->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
 				bottomBar->setBgGradient (bgGradient);
 			}
 			else {
-				bottomBar->setColorProvider(NULL);
+				bottomBar->setColorProvider(NULL, -1);
 				bottomBar->setBgGradient (bgGradient);
 			}
 		}
@@ -307,7 +307,7 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 		switch((DiagonalCurveType)(dCurve->curveType->getSelected())) {
 		case (DCT_Spline):
 			customCurve->setPoints (dCurve->customCurveEd);
-			customCurve->setColorProvider(dCurve->getCurveColorProvider());
+			customCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
 			customCurve->setColoredBar(leftBar, bottomBar);
 			parent->pack_start (*customCurveBox);
 			customCurveBox->check_resize();
@@ -335,9 +335,9 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 			darks->setLabel(label[1]);
 			shadows->setValue (dCurve->paramCurveEd.at(7));
 			shadows->setLabel(label[0]);
-			shcSelector->setColorProvider(barColorProvider);
+			shcSelector->setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
 			shcSelector->setBgGradient(bgGradient);
-			shcSelector->setMargins( (leftBar ? CBAR_WIDTH+CBAR_MARGIN : RADIUS), RADIUS );
+			shcSelector->setMargins( (leftBar ? MyCurve::getBarWidth()+CBAR_MARGIN : RADIUS), RADIUS );
 			paramCurve->setColoredBar(leftBar, NULL);
 			parent->pack_start (*paramCurveBox);
 			paramCurve->forceResize();
@@ -345,7 +345,7 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 		}
 		case (DCT_NURBS):
 			NURBSCurve->setPoints (dCurve->NURBSCurveEd);
-			NURBSCurve->setColorProvider(dCurve->getCurveColorProvider());
+			NURBSCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
 			NURBSCurve->setColoredBar(leftBar, bottomBar);
 			parent->pack_start (*NURBSCurveBox);
 			NURBSCurveBox->check_resize();
@@ -648,12 +648,6 @@ bool DiagonalCurveEditorSubGroup::curveReset(int cType) {
 		break;
 	}
 	return true;
-}
-
-void DiagonalCurveEditorSubGroup::setColorProvider (ColorProvider* p) {
-	customCurve->setColorProvider(p);
-	paramCurve->setColorProvider(p);
-	NURBSCurve->setColorProvider(p);
 }
 
 /*

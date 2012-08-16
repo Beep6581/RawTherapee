@@ -27,7 +27,7 @@
 #include "toolpanel.h"
 
 class Vibrance : public Gtk::VBox, public AdjusterListener, public ThresholdCurveProvider, public ThresholdAdjusterListener,
-                 public FoldableToolPanel, public CurveListener, public ColorProvider
+                 public FoldableToolPanel, public CurveListener
 {
 
 protected:
@@ -66,13 +66,13 @@ public:
 	void adjusterChanged     (Adjuster* a, double newval);
 	void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
 	void curveChanged        ();
+    void autoOpenCurve       ();
 
 	void enabled_toggled         ();
 	void protectskins_toggled    ();
 	void avoidcolorshift_toggled ();
 	void pastsattog_toggled      ();
 	std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const;
-	virtual void colorForValue   (double valX, double valY);
 };
 
 

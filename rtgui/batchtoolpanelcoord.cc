@@ -230,6 +230,9 @@ void BatchToolPanelCoordinator::initSession () {
 		for (size_t i=0; i<toolPanels.size(); i++) {
 			toolPanels[i]->setDefaults (&pparams, &pparamsEdited);
 			toolPanels[i]->read (&pparams, &pparamsEdited);
+			// TODO: autoOpenCurve has been disabled because initSession is called on each parameter change from the editor panel,
+			// if the thumbnail remains selected in the DirectoryBrowser (i.e. always, unless the user think about deselecting it)
+			//toolPanels[i]->autoOpenCurve();
 		}
 		for (size_t i=0; i<paramcListeners.size(); i++)
 			// send this initial state to the History
@@ -311,7 +314,7 @@ void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChange
 
 /*
  * WARNING: profileChange is actually called by the History only.
- *          Using aProfile panel in the batch tool panel editor is actually
+ *          Using a Profile panel in the batch tool panel editor is actually
  *          not supported by BatchToolPanelCoordinator::profileChange!
  */
 void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
@@ -328,8 +331,9 @@ void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::Part
 
 
     for (size_t i=0; i<toolPanels.size(); i++)
-    	// writing the values to the GUI
+        // writing the values to the GUI
         toolPanels[i]->read (&pparams, &pparamsEdited);
+        // I guess we don't want to automatically unfold curve editors here...
 
     somethingChanged = true;
 

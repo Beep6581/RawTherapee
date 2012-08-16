@@ -59,12 +59,12 @@ int MyCurve::calcDimensions () {
 
 	newRequestedW = newRequestedH = get_allocation().get_width();
 	if (leftBar && !bottomBar)
-		newRequestedH -= CBAR_WIDTH + CBAR_MARGIN - RADIUS;
+		newRequestedH -= getBarWidth() + CBAR_MARGIN - RADIUS;
 	if (!leftBar && bottomBar)
-		newRequestedH += CBAR_WIDTH + CBAR_MARGIN - RADIUS;
+		newRequestedH += getBarWidth() + CBAR_MARGIN - RADIUS;
 
-	graphW = newRequestedW - RADIUS - (leftBar   ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
-	graphH = newRequestedH - RADIUS - (bottomBar ? (CBAR_WIDTH+CBAR_MARGIN) : RADIUS);
+	graphW = newRequestedW - RADIUS - (leftBar   ? (getBarWidth()+CBAR_MARGIN) : RADIUS);
+	graphH = newRequestedH - RADIUS - (bottomBar ? (getBarWidth()+CBAR_MARGIN) : RADIUS);
 	graphX = newRequestedW - RADIUS - graphW;
 	graphY = RADIUS + graphH;
 

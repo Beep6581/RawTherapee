@@ -60,6 +60,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
+    void autoOpenCurve  ();
     void setAdjusterBehavior (bool bradd, bool contradd, bool satadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 
@@ -71,7 +72,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
 	
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
-    virtual void colorForValue (double valX, double valY);
+    virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
 };
 
 #endif

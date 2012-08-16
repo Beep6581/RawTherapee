@@ -42,17 +42,17 @@ HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	hshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE")));
 	hshape->setBottomBarBgGradient(bottomMilestones);
 	//hshape->setLeftBarColorProvider(this);  Not working yet
-	hshape->setCurveColorProvider(this);
+	hshape->setCurveColorProvider(this, 1);
 
 	sshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_SAT")));
 	sshape->setBottomBarBgGradient(bottomMilestones);
 	//sshape->setLeftBarColorProvider(this);  Not working yet
-	sshape->setCurveColorProvider(this);
+	sshape->setCurveColorProvider(this, 2);
 
 	vshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_VAL")));
 	vshape->setBottomBarBgGradient(bottomMilestones);
 	//vshape->setLeftBarColorProvider(this);  Not working yet
-	vshape->setCurveColorProvider(this);
+	vshape->setCurveColorProvider(this, 3);
 
 	// This will add the reset button at the end of the curveType buttons
 	curveEditorG->curveListComplete();
@@ -83,12 +83,14 @@ void HSVEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	sshape->setCurve         (pp->hsvequalizer.scurve);
     vshape->setCurve         (pp->hsvequalizer.vcurve);
 	
+    enableListener ();
+}
+
+void HSVEqualizer::autoOpenCurve () {
     // Open up the first curve if selected
     bool active = hshape->openIfNonlinear();
     if (!active) sshape->openIfNonlinear();
     if (!active) vshape->openIfNonlinear();
-
-    enableListener ();
 }
 
 void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
@@ -201,13 +203,11 @@ void HSVEqualizer::adjusterChanged (Adjuster* a, double newval) {
 }
 */
 
-void HSVEqualizer::colorForValue (double valX, double valY) {
+void HSVEqualizer::colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {
 
 	float r, g, b;
 
-	CurveEditor* ce = curveEditorG->getDisplayedCurve();
-
-	if (ce == hshape) {        // Hue = f(Hue)
+	if (callerId == 1) {        // Hue = f(Hue)
 
 		float h = float((valY - 0.5) * 2. + valX);
 		if (h > 1.0f)
@@ -215,21 +215,21 @@ void HSVEqualizer::colorForValue (double valX, double valY) {
 		else if (h < 0.0f)
 			h += 1.0f;
 		Color::hsv2rgb01(h, 0.5f, 0.5f, r, g, b);
-		red = double(r);
-		green = double(g);
-		blue = double(b);
+		caller->ccRed = double(r);
+		caller->ccGreen = double(g);
+		caller->ccBlue = double(b);
 	}
-	else if (ce == sshape) {   // Saturation = f(Hue)
+	else if (callerId == 2) {   // Saturation = f(Hue)
 		Color::hsv2rgb01(float(valX), float(valY), 0.5f, r, g, b);
-		red = double(r);
-		green = double(g);
-		blue = double(b);
+		caller->ccRed = double(r);
+		caller->ccGreen = double(g);
+		caller->ccBlue = double(b);
 	}
-	else if (ce == vshape) {   // Value = f(Hue)
+	else if (callerId == 3) {   // Value = f(Hue)
 		Color::hsv2rgb01(float(valX), 0.5f, float(valY), r, g, b);
-		red = double(r);
-		green = double(g);
-		blue = double(b);
+		caller->ccRed = double(r);
+		caller->ccGreen = double(g);
+		caller->ccBlue = double(b);
 	}
 	else {
 		printf("Error: no curve displayed!\n");
