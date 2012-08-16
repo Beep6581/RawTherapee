@@ -100,3 +100,15 @@ void MyCurve::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
     queue_draw ();
 }
 
+void MyCurve::refresh() {
+	if (leftBar != NULL)
+		leftBar->setDirty(true);
+	if (bottomBar != NULL)
+		bottomBar->setDirty(true);
+
+	setDirty(true);
+
+	Glib::RefPtr<Gdk::Window> win = get_window();
+	if (win)
+		win->invalidate(true);
+}

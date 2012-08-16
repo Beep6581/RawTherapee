@@ -43,6 +43,7 @@ public:
 	FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
 	//virtual void updateBackgroundHistogram (CurveEditor* ce);
 	void switchGUI();
+	void refresh(CurveEditor *curveToRefresh);
 
 protected:
 	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);

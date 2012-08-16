@@ -84,6 +84,22 @@ FlatCurveEditor* FlatCurveEditorSubGroup::addCurve(Glib::ustring curveLabel, boo
 }
 
 /*
+ * Force the resize of the curve editor, if the displayed one is the requested one
+ */
+void FlatCurveEditorSubGroup::refresh(CurveEditor *curveToRefresh) {
+	if (curveToRefresh != NULL && curveToRefresh == static_cast<FlatCurveEditor*>(parent->displayedCurve)) {
+		switch(FlatCurveType(curveToRefresh->curveType->getSelected())) {
+		case (FCT_MinMaxCPoints):
+			CPointsCurve->refresh();
+			break;
+		default:	// (DCT_Linear, DCT_Unchanged)
+			// ... do nothing
+			break;
+		}
+	}
+}
+
+/*
  * Switch the editor widgets to the currently edited curve
  */
 void FlatCurveEditorSubGroup::switchGUI() {
@@ -311,6 +327,7 @@ bool FlatCurveEditorSubGroup::curveReset(int cType) {
 		return false;
 		break;
 	}
+	return true;
 }
 
 /*void FlatCurveEditorSubGroup::updateBackgroundHistogram (CurveEditor* ce) {

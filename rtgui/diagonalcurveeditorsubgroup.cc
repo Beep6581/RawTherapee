@@ -239,6 +239,29 @@ DiagonalCurveEditor* DiagonalCurveEditorSubGroup::addCurve(Glib::ustring curveLa
 }
 
 /*
+ * Force the resize of the curve editor, if the displayed one is the requested one
+ */
+void DiagonalCurveEditorSubGroup::refresh(CurveEditor *curveToRefresh) {
+	if (curveToRefresh != NULL && curveToRefresh == static_cast<DiagonalCurveEditor*>(parent->displayedCurve)) {
+		switch((DiagonalCurveType)(curveToRefresh->curveType->getSelected())) {
+		case (DCT_Spline):
+			customCurve->refresh();
+			break;
+		case (DCT_Parametric):
+			paramCurve->refresh();
+			shcSelector->refresh();
+			break;
+		case (DCT_NURBS):
+			NURBSCurve->refresh();
+			break;
+		default:	// (DCT_Linear, DCT_Unchanged)
+			// ... do nothing
+			break;
+		}
+	}
+}
+
+/*
  * Switch the editor widgets to the currently edited curve
  */
 void DiagonalCurveEditorSubGroup::switchGUI() {

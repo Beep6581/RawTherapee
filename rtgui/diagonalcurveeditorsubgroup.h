@@ -65,6 +65,7 @@ public:
 	DiagonalCurveEditor* addCurve(Glib::ustring curveLabel = "");
 	virtual void updateBackgroundHistogram (CurveEditor* ce);
 	void switchGUI();
+	void refresh(CurveEditor *curveToRefresh);
 
 protected:
 	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
