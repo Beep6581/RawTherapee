@@ -913,7 +913,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     inverse33 (xyz_cam, cam_xyz);
 
 	float pre_mul[4];
-	ri->get_colorsCoeff( pre_mul, scale_mu_l, c_black);//modify  for black level
+	ri->get_colorsCoeff( pre_mul, scale_mul, c_black);//modify  for black level
 
 	camwb_red = ri->get_pre_mul(0) / pre_mul[0];
 	camwb_green = ri->get_pre_mul(1) / pre_mul[1];
@@ -1395,40 +1395,18 @@ void RawImageSource::cfaboxblur(RawImage *riFlatFile, float* cfablur, int boxH, 
 // Scale original pixels into the range 0 65535 using black offsets and multipliers 
 void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWParams &raw)
 {
-float black_lev[4];//black level
-	
 	chmax[0]=chmax[1]=chmax[2]=chmax[3]=0;//channel maxima
+	float black_lev[4];//black level
+	
 
-//adjust black level  (eg Canon)
-// cblack Bayer
-//0 green
-//1 red
-//2 blue
-// cblack no Bayer
-//0 red
-//1 green
-//2 blue
-if( ri->isBayer() ) {
-black_lev[0]=raw.blackzero;//G1
-black_lev[1]=raw.blackone;//R
-black_lev[2]=raw.blacktwo;//B
-black_lev[3]=raw.blackthree;//G2
+	//adjust black level  (eg Canon)
+	black_lev[0]=raw.blackone;//R
+	black_lev[1]=raw.blackzero;//G1
+	black_lev[2]=raw.blacktwo;//B
+	black_lev[3]=raw.blackthree;//G2  (only used with a Bayer filter)
 
-}
-else {
-black_lev[0]=raw.blackone;//R
-black_lev[1]=raw.blackzero;//G
-black_lev[2]=raw.blacktwo;//B
-black_lev[3]= raw.blackzero;
-}
-  for(int i=0; i<4; i++) {
-   scale_mul[i]=scale_mu_l[i];}
-   
-  if( c_black[0]+black_lev[1] >0) cblacksom[0]=c_black[0]+black_lev[1]; else cblacksom[0]=0;// adjust black level
-  if( c_black[3]+black_lev[3] >0) cblacksom[3]=c_black[3]+black_lev[3]; else cblacksom[3]=0;// adjust black level
-  if( c_black[2]+black_lev[2] >0) cblacksom[2]=c_black[2]+black_lev[2]; else cblacksom[2]=0;// adjust black level
-  if( c_black[1]+black_lev[0] >0) cblacksom[1]=c_black[1]+black_lev[0]; else cblacksom[1]=0;// adjust black level
-// this seems strange, but it works
+	for(int i=0; i<4 ;i++) cblacksom[i] = max( c_black[i]+black_lev[i], 0.0f ); // adjust black level
+	// this seems strange, but it works
 
 		// scale image colors
 		
@@ -1436,52 +1414,24 @@ black_lev[3]= raw.blackzero;
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
 				float val = rawData[row][col];				
-				int c = FC(row, col);
-				if (ri->ISGREEN(row,col)) {
-                    if (row&1) {
-						val-=cblacksom[1]; 
-						val *= scale_mul[1];
-                    }
-                    else {
-                        val-=cblacksom[3];
-						val *= scale_mul[3];
-                    }
-                }			
-				else if (ri->ISRED(row,col)) {
-				val-=cblacksom[0];
-				val*=scale_mul[0];}	
-				else if (ri->ISBLUE(row,col)) {
-				val-=cblacksom[2];
-				val*=scale_mul[2];}	
+				int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
+				int c4 = ( c == 1 && !row&1 ) ? 3 : c;        // four  colors,  0=R, 1=G1, 2=B, 3=G2
+				val-=cblacksom[c4];
+				val*=scale_mul[c4];
 				
 				rawData[row][col] = (val);
 				chmax[c] = max(chmax[c],val);
 			}
 		}
 	}else{
-	// i don't know how it's run...
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
-				float val = rawData[row][3*col+0];
-				if (val){
-					val -= cblack[0];
-					val *= scale_mul[0];
-					rawData[row][3*col+0] = (val);
-					chmax[0] = max(chmax[0],val);
-				}
-				val = rawData[row][3*col+1];
-				if (val){
-					val -= cblack[1];
-					val *= scale_mul[1];
-					rawData[row][3*col+1] = (val);
-					chmax[1] = max(chmax[1],val);
-				}
-				val = rawData[row][3*col+2];
-				if (val){
-					val -= cblack[2];
-					val *= scale_mul[2];
-					rawData[row][3*col+2] = (val);
-					chmax[2] = max(chmax[2],val);
+				for (int c=0; c<3; c++) {                     // three colors,  0=R, 1=G,  2=B
+					float val = rawData[row][3*col+c];
+					val -= cblacksom[c];
+					val *= scale_mul[c];
+					rawData[row][3*col+c] = (val);
+					chmax[c] = max(chmax[c],val);
 				}
 			}
 		}
@@ -2267,18 +2217,15 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
-                if (ri->ISGREEN(i,j))
-                    histogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
-                else if (ri->ISRED(i,j))
-					histogram[CLIP((int)(camwb_red*rawData[i][j]))>>histcompr]+=4;
-				else if (ri->ISBLUE(i,j))
-					histogram[CLIP((int)(camwb_blue*rawData[i][j]))>>histcompr]+=4;
+			if (ri->ISGREEN(i,j))     histogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
+			else if (ri->ISRED(i,j))  histogram[CLIP((int)(camwb_red*  rawData[i][j]))>>histcompr]+=4;
+			else if (ri->ISBLUE(i,j)) histogram[CLIP((int)(camwb_blue* rawData[i][j]))>>histcompr]+=4;
 			} 
 			} else {
-				for (int j=start; j<3*end; j++) {
-                    histogram[CLIP((int)(camwb_red*rawData[i][j+0]))>>histcompr]++;
-                    histogram[CLIP((int)(camwb_green*rawData[i][j+1]))>>histcompr]+=2;
-                    histogram[CLIP((int)(camwb_blue*rawData[i][j+2]))>>histcompr]++;
+		for (int j=start; j<end; j++) {
+                    histogram[CLIP((int)(camwb_red*  rawData[i][3*j+0]))>>histcompr]++;
+                    histogram[CLIP((int)(camwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
+                    histogram[CLIP((int)(camwb_blue* rawData[i][3*j+2]))>>histcompr]++;
 				}
 			}
     }
@@ -2295,35 +2242,31 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
         getRowStartEnd (i, start, end);
 
 	
-        if (ri->isBayer()) {
+	if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
-                if (ri->ISGREEN(i,j)) {
-                    if(i &1) idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[1]/*+black_lev[1]*/))));// green 1
-					else 
-					idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[3]/*+black_lev[3]*/))));//green 2
-                    histGreenRaw[idx>>8]++;
-                } else if (ri->ISRED(i,j)) {
-                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[0]/*+black_lev[0]*/))));
-					
-                    histRedRaw[idx>>8]++;
-                } else if (ri->ISBLUE(i,j)) {
-                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[2]/*+black_lev[2]*/))));
-					
-                    histBlueRaw[idx>>8]++;
-    }
-            }
-        } else {
-			for (int j=start; j<3*end; j++) {
-				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-cblack[0])));
-                histRedRaw[idx>>8]++;
+			int c  = FC(i, j);                        // three colors,  0=R, 1=G,  2=B
+			int c4 = ( c == 1 && !i&1 ) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
+			idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[c4]/*+black_lev[c4]*/))));
 
-				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j+1]-cblack[1])));
-                histGreenRaw[idx>>8]++;
-
-				idx = CLIP((int)Color::gamma(mult*(ri->data[i][j+2]-cblack[2])));
-                histBlueRaw[idx>>8]++;
+			switch (c) {
+				case 0: histRedRaw[idx>>8]++;   break;
+				case 1: histGreenRaw[idx>>8]++; break;
+				case 2: histBlueRaw[idx>>8]++;  break;
 			}
+            }
+	} else {
+		for (int j=start; j<end; j++) {
+			for (int c=0; c<3; c++){
+				idx = CLIP((int)Color::gamma(mult*(ri->data[i][3*j+c]-cblacksom[c])));
+
+				switch (c) {
+					case 0: histRedRaw[idx>>8]++;   break;
+					case 1: histGreenRaw[idx>>8]++; break;
+					case 2: histBlueRaw[idx>>8]++;  break;
+				}
+                        }
 		}
+	}
     }
 
     // since there are twice as many greens, correct for it
