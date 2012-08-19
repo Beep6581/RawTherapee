@@ -332,9 +332,9 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 			customCurve->setPoints (dCurve->customCurveEd);
 			customCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
 			customCurve->setColoredBar(leftBar, bottomBar);
+			customCurve->forceResize();
 			parent->pack_start (*customCurveBox);
 			customCurveBox->check_resize();
-			customCurve->forceResize();
 			break;
 		case (DCT_Parametric):
 		{
@@ -362,17 +362,17 @@ void DiagonalCurveEditorSubGroup::switchGUI() {
 			shcSelector->setBgGradient(bgGradient);
 			shcSelector->setMargins( (leftBar ? MyCurve::getBarWidth()+CBAR_MARGIN : RADIUS), RADIUS );
 			paramCurve->setColoredBar(leftBar, NULL);
-			parent->pack_start (*paramCurveBox);
 			paramCurve->forceResize();
+			parent->pack_start (*paramCurveBox);
 			break;
 		}
 		case (DCT_NURBS):
 			NURBSCurve->setPoints (dCurve->NURBSCurveEd);
 			NURBSCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
 			NURBSCurve->setColoredBar(leftBar, bottomBar);
+			NURBSCurve->forceResize();
 			parent->pack_start (*NURBSCurveBox);
 			NURBSCurveBox->check_resize();
-			NURBSCurve->forceResize();
 			break;
 		default:	// (DCT_Linear, DCT_Unchanged)
 			// ... do nothing
@@ -407,13 +407,13 @@ void DiagonalCurveEditorSubGroup::savePressed () {
 
 		int ix = 0;
 		if (p[ix]==(double)(DCT_Linear))
-			f << "Linear\n";
+			f << "Linear" << std::endl;
 		else if (p[ix]==(double)(DCT_Spline))
-			f << "Spline\n";
+			f << "Spline" << std::endl;
 		else if (p[ix]==(double)(DCT_NURBS))
-			f << "NURBS\n";
+			f << "NURBS" << std::endl;
 		else if (p[ix]==(double)(DCT_Parametric))
-			f << "Parametric\n";
+			f << "Parametric" << std::endl;
 		if (p[ix]==(double)(DCT_Parametric)) {
 			ix++;
 			for (unsigned int i=0; i<p.size()-1; i++, ix++)

@@ -100,7 +100,7 @@ void MyDiagonalCurve::interpolate () {
     point.resize (nbPoints);
     std::vector<double> vector = get_vector (nbPoints);
     for (int i = 0; i < nbPoints; ++i) {
-    	float currX = float(i)/float(nbPoints-1);
+        float currX = float(i)/float(nbPoints-1);
         point.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
     }
     upoint.clear ();
@@ -114,31 +114,33 @@ void MyDiagonalCurve::interpolate () {
             curve.x.at(activeParam-1) = 100;
             vector = get_vector (nbPoints);
             for (int i = 0; i < nbPoints; ++i) {
-            	float currX = float(i)/float(nbPoints-1);
-				upoint.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
+                float currX = float(i)/float(nbPoints-1);
+                upoint.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
             }
             curve.x.at(activeParam-1) = -100;
             vector = get_vector (nbPoints);
             for (int i = 0; i < nbPoints; ++i) {
-            	float currX = float(i)/float(nbPoints-1);
-				lpoint.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
+                float currX = float(i)/float(nbPoints-1);
+                 lpoint.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
             }
             curve.x.at(activeParam-1) = tmp;
         }
     }
+
+    curveIsDirty = false;
 }
 
 void MyDiagonalCurve::draw (int handle) {
-	if (!isDirty()) {
-		return;
-	}
+    if (!isDirty()) {
+        return;
+    }
 
-	Glib::RefPtr<Gdk::Window > win = get_window();
+    Glib::RefPtr<Gdk::Window > win = get_window();
     if (!surfaceCreated() || !win)
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevGraphW != graphW || prevGraphH != graphH || int(point.size()) != graphW-2)
+    if (curveIsDirty || prevGraphW != graphW || prevGraphH != graphH || int(point.size()) != graphW-2)
         interpolate ();
 
     Gtk::StateType state = !is_sensitive() ? Gtk::STATE_INSENSITIVE : Gtk::STATE_NORMAL;
@@ -159,7 +161,7 @@ void MyDiagonalCurve::draw (int handle) {
         unsigned int valMax = 0;
         for (int i=0; i<256; i++)
             if (bghist[i]>valMax)
-            	valMax = bghist[i];
+                valMax = bghist[i];
         // draw histogram
         cr->set_line_width (1.0);
         double stepSize = (graphW-3) / 255.0;
@@ -175,7 +177,7 @@ void MyDiagonalCurve::draw (int handle) {
             //if (i>0)
                 cr->line_to (double(graphX)+1.5+double(i)*stepSize, double(graphY-1)-val);
         }
-		cr->line_to (double(graphX)+1.5+255.*stepSize, double(graphY-1));
+        cr->line_to (double(graphX)+1.5+255.*stepSize, double(graphY-1));
         cr->close_path();
         cr->fill ();
     }
@@ -268,7 +270,7 @@ void MyDiagonalCurve::draw (int handle) {
     // draw the left colored bar
     if (leftBar) {
         // first the background
-    	int bWidth = getBarWidth();
+        int bWidth = getBarWidth();
         BackBuffer *bb = this;
         leftBar->setDrawRectangle(win, 1, graphY-graphH+1, bWidth-2, graphH-2);
         leftBar->expose(bb);
@@ -283,8 +285,8 @@ void MyDiagonalCurve::draw (int handle) {
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
-    	int bWidth = getBarWidth();
-    	BackBuffer *bb = this;
+        int bWidth = getBarWidth();
+        BackBuffer *bb = this;
         bottomBar->setDrawRectangle(win, graphX+1, graphY+CBAR_MARGIN+1, graphW-2, bWidth-2);
         bottomBar->expose(bb);
 
@@ -368,11 +370,13 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 		}
 		sized = RS_Pending;
 		// setDrawRectangle will allocate the backbuffer Surface
-		if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height()))
-			interpolate ();
+		if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height())) {
+			setDirty(true);
+			curveIsDirty = true;
+		}
 		draw (lit_point);
 		GdkRectangle *rectangle = &(event->expose.area);
-	   	copySurface(win, rectangle);
+		copySurface(win, rectangle);
 
 		retval = true;
 		break;
@@ -407,7 +411,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 					curve.x[closest_point] = clampedX;
 					curve.y[closest_point] = clampedY;
 
-					interpolate ();
+					curveIsDirty = true;
 					setDirty(true);
 					draw (closest_point);
 					notifyListener ();
@@ -449,7 +453,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 					if (curve.x.empty()) {
 						curve.x.push_back (0);
 						curve.y.push_back (0);
-						interpolate ();
+						curveIsDirty = true;
 						setDirty(true);
 						draw (lit_point);
 					}
@@ -598,7 +602,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 
 				if (curve.x[grab_point] != prevPosX || curve.y[grab_point] != prevPosY) {
 					// we recalculate the curve only if we have to
-					interpolate ();
+					curveIsDirty = true;
 					setDirty(true);
 					draw (lit_point);
 					notifyListener ();
@@ -751,6 +755,7 @@ void MyDiagonalCurve::setPoints (const std::vector<double>& p) {
         }
         activeParam = -1;
     }
+    curveIsDirty = true;
     setDirty(true);
     queue_draw ();
 }
@@ -818,7 +823,7 @@ void MyDiagonalCurve::reset() {
         curve.y.at(1) = 1.;
         grab_point = -1;
         lit_point = -1;
-        interpolate ();
+        curveIsDirty = true;
         break;
     case DCT_Parametric :
         curve.x.resize(7);
@@ -833,11 +838,11 @@ void MyDiagonalCurve::reset() {
         curve.x.at(6) = 0.00;
         grab_point = -1;  // not sure that it's necessary
         lit_point = -1;   // not sure that it's necessary
-        interpolate ();
+        curveIsDirty = true;
         break;
     default:
         break;
     }
-	setDirty(true);
+    setDirty(true);
     draw(-1);
 }
