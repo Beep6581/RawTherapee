@@ -25,8 +25,8 @@ MyFlatCurve::MyFlatCurve () {
 
     graphW = get_allocation().get_width() - RADIUS * 2;
     graphH = get_allocation().get_height() - RADIUS * 2;
-    prevGraphW = 0;
-    prevGraphH = 0;
+    prevGraphW = graphW;
+    prevGraphH = graphH;
     lit_point = -1;
     closest_point = 0;
     buttonPressed = false;
@@ -78,25 +78,27 @@ void MyFlatCurve::interpolate () {
     int nbPoints = graphW-2;
     point.resize (nbPoints);
     std::vector<double> vector = get_vector (nbPoints);
-    for (int i = 0; i < int(point.size()); ++i) {
-    	float currX = float(i)/float(nbPoints-1);
+    for (int i = 0; i < nbPoints; ++i) {
+        float currX = float(i)/float(nbPoints-1);
         point.at(i).setCoords(float(graphX)+1.5f+float(graphW-3)*currX, float(graphY)-1.5f-float(graphH-3)*float(vector.at(i)));
     }
     upoint.clear ();
     lpoint.clear ();
+
+    curveIsDirty = false;
 }
 
 void MyFlatCurve::draw () {
-	if (!isDirty()) {
-		return;
-	}
+    if (!isDirty()) {
+        return;
+    }
 
     Glib::RefPtr<Gdk::Window> win = get_window();
     if (!surfaceCreated() || !win)
         return;
 
     // re-calculate curve if dimensions changed
-    if (prevGraphW != graphW || prevGraphH != graphH || (int)point.size() != graphW-2)
+    if (curveIsDirty || prevGraphW != graphW || prevGraphH != graphH || (int)point.size() != graphW-2)
         interpolate ();
 
     double innerW = double(graphW-2);
@@ -135,7 +137,7 @@ void MyFlatCurve::draw () {
     // draw the left colored bar
     if (leftBar) {
         // first the background
-    	int bWidth = getBarWidth();
+        int bWidth = getBarWidth();
         BackBuffer *bb = this;
         leftBar->setDrawRectangle(win, 1, graphY-graphH+1, bWidth-2, graphH-2);
         leftBar->expose(bb);
@@ -150,7 +152,7 @@ void MyFlatCurve::draw () {
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
-    	int bWidth = getBarWidth();
+        int bWidth = getBarWidth();
         BackBuffer *bb = this;
         bottomBar->setDrawRectangle(win, graphX+1, graphY+CBAR_MARGIN+1, graphW-2, bWidth-2);
         bottomBar->expose(bb);
@@ -371,7 +373,7 @@ void MyFlatCurve::draw () {
     }
 
     setDirty(false);
-	queue_draw();
+    queue_draw();
 }
 
 /*
@@ -455,13 +457,15 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 		}
 		sized = RS_Pending;
 		// setDrawRectangle will allocate the backbuffer Surface
-		if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height()))
-			interpolate ();
+		if (setDrawRectangle(win, 0, 0, get_allocation().get_width(),  get_allocation().get_height())) {
+			setDirty(true);
+			curveIsDirty = true;
+		}
 		draw ();
 		GdkRectangle *rectangle = &(event->expose.area);
-	   	copySurface(win, rectangle);
+		copySurface(win, rectangle);
 
-	   	retval = true;
+		retval = true;
 		break;
 	}
 
@@ -506,7 +510,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					curve.leftTangent[closest_point] = 0.35;
 					curve.rightTangent[closest_point] = 0.35;
 
-					interpolate ();
+					curveIsDirty = true;
 					setDirty(true);
 					draw ();
 					notifyListener ();
@@ -595,7 +599,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 							curve.y.push_back (0.5);
 							curve.leftTangent.push_back (0.3);
 							curve.rightTangent.push_back (0.3);
-							interpolate ();
+							curveIsDirty = true;
 						}
 					}
 				}
@@ -798,7 +802,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				}
 
 				if (curve.leftTangent[lit_point] != prevValue) {
-					interpolate ();
+					curveIsDirty = true;
 					setDirty(true);
 					draw ();
 					notifyListener ();
@@ -823,7 +827,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				}
 
 				if (curve.rightTangent[lit_point] != prevValue) {
-					interpolate ();
+					curveIsDirty = true;
 					setDirty(true);
 					draw ();
 					notifyListener ();
@@ -1034,7 +1038,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 
 	if (curve.x[lit_point] != prevPosX || curve.y[lit_point] != prevPosY) {
 		// we recompute the curve only if we have to
-		interpolate ();
+		curveIsDirty = true;
 		setDirty(true);
 		draw ();
 		notifyListener ();
@@ -1216,6 +1220,7 @@ void MyFlatCurve::setPoints (const std::vector<double>& p) {
             curve.rightTangent.push_back (p[ix++]);
         }
     }
+    curveIsDirty = true;
     setDirty(true);
     queue_draw ();
 }
@@ -1233,30 +1238,29 @@ void MyFlatCurve::reset() {
     case  FCT_MinMaxCPoints :
         defaultCurve();
         lit_point = -1;
-        interpolate ();
+        curveIsDirty = true;
         break;
     //case Parametric :
         // Nothing to do (?)
     default:
         break;
     }
-	setDirty(true);
+    setDirty(true);
     draw();
 }
 
 void MyFlatCurve::defaultCurve () {
 
-    curve.x.clear();
-    curve.y.clear();
-    curve.leftTangent.clear();
-    curve.rightTangent.clear();
+    curve.x.resize(6);
+    curve.y.resize(6);
+    curve.leftTangent.resize(6);
+    curve.rightTangent.resize(6);
 
     // Point for RGBCMY colors
     for (int i=0; i<6; i++) {
-        curve.x.push_back((1./6.)*i);
-        curve.y.push_back(0.5);
-        curve.leftTangent.push_back(0.35);
-        curve.rightTangent.push_back(0.35);
+        curve.x.at(i) = (1./6.)*i;
+        curve.y.at(i) = 0.5;
+        curve.leftTangent.at(i) = 0.35;
+        curve.rightTangent.at(i) = 0.35;
     }
-
 }

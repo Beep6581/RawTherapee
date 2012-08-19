@@ -171,9 +171,9 @@ void FlatCurveEditorSubGroup::switchGUI() {
 			CPointsCurve->setPoints (dCurve->controlPointsCurveEd);
 			CPointsCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
 			CPointsCurve->setColoredBar(leftBar, bottomBar);
+			CPointsCurve->forceResize();
 			parent->pack_start (*CPointsCurveBox);
 			CPointsCurveBox->check_resize();
-			CPointsCurve->forceResize();
 			break;
 		default:	// (DCT_Linear, DCT_Unchanged)
 			// ... do nothing
@@ -202,9 +202,9 @@ void FlatCurveEditorSubGroup::savePressed () {
 
 		int ix = 0;
 		if (p[ix]==(double)(FCT_Linear))
-			f << "Linear\n";
+			f << "Linear" << std::endl;
 		else if (p[ix]==(double)(FCT_MinMaxCPoints))
-			f << "ControlPoints\n";
+			f << "ControlPoints" << std::endl;
 		ix++;
 		for (unsigned int i=0; i<p.size()/2; i++, ix+=2)
 			f << p[ix] << ' ' << p[ix+1] << std::endl;
@@ -291,7 +291,7 @@ void FlatCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vect
 const std::vector<double> FlatCurveEditorSubGroup::getCurveFromGUI (int type) {
 	switch ((FlatCurveType)type) {
 	case (FCT_MinMaxCPoints):
-        return CPointsCurve->getPoints ();
+		return CPointsCurve->getPoints ();
 	default: {
 		// linear and other solutions
 		std::vector<double> lcurve (1);
