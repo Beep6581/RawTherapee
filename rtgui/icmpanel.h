@@ -51,6 +51,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Gtk::RadioButton*  icameraICC;
         Gtk::RadioButton*  ifromfile;
         MyComboBoxText*    prefprof;
+        Gtk::CheckButton*  ckbToneCurve;
         Gtk::CheckButton*  ckbBlendCMSMatrix;
         MyComboBoxText*    wnames;
         MyComboBoxText*    wgamma;
@@ -88,6 +89,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         void ipSelectionChanged ();
         void iccTogglesChanged();
         void prefProfChanged();
+        void toneCurveChanged();
 
         void setRawMeta (bool raw, const rtengine::ImageData* pMeta);
         void saveReferencePressed ();

@@ -172,6 +172,7 @@ void ParamsEdited::set (bool v) {
 	resize.height    = v;
 	resize.enabled   = v;
 	icm.input        = v;
+    icm.toneCurve = v;
     icm.blendCMSMatrix = v;
     icm.preferredProfile = v;
 	icm.working      = v;
@@ -373,6 +374,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         icm.input = icm.input && p.icm.input == other.icm.input;
+        icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.blendCMSMatrix = icm.blendCMSMatrix && p.icm.blendCMSMatrix == other.icm.blendCMSMatrix;
         icm.preferredProfile = icm.preferredProfile && p.icm.preferredProfile == other.icm.preferredProfile;
         icm.working = icm.working && p.icm.working == other.icm.working;
@@ -578,6 +580,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (resize.height)	    toEdit.resize.height 	= mods.resize.height;
 	if (resize.enabled)	    toEdit.resize.enabled 	= mods.resize.enabled;
 	if (icm.input)		    toEdit.icm.input 	    = mods.icm.input;
+    if (icm.toneCurve)      toEdit.icm.toneCurve = mods.icm.toneCurve;
     if (icm.blendCMSMatrix)	toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
     if (icm.preferredProfile) toEdit.icm.preferredProfile = mods.icm.preferredProfile;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;

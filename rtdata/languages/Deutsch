@@ -926,8 +926,8 @@ TP_HSVEQUALIZER_LABEL;HSV-Equalizer
 TP_HSVEQUALIZER_NEUTRAL;Neutral
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
-TP_ICM_BLENDCMSMATRIX;Lichter aus Matrix einmischen
-TP_ICM_BLENDCMSMATRIX_TOOLTIP;Stellt bei Verwendung von LUT-basierten\nICC-Profilen die Lichter wieder her
+TP_ICM_BLENDCMSMATRIX;ICC Lichter aus Matrix einmischen
+TP_ICM_BLENDCMSMATRIX_TOOLTIP;Stellt bei Verwendung von LUT-basierten\nICC-Profilen die Lichter wieder her.
 TP_ICM_FILEDLGFILTERANY;Alle Dateien
 TP_ICM_FILEDLGFILTERICM;Profildateien
 TP_ICM_INPUTCAMERAICC;Kameraspezifisches Profil
@@ -952,6 +952,8 @@ TP_ICM_PREFERREDPROFILE_2;Glühlampe
 TP_ICM_PREFERREDPROFILE_3;Leuchtstofflampe
 TP_ICM_PREFERREDPROFILE_4;Blitz
 TP_ICM_SAVEREFERENCE;Referenzbild für Profil speichern
+TP_ICM_TONECURVE;DCP Tonwertkurve verwenden
+TP_ICM_TONECURVE_TOOLTIP;Verwendet die Tonwertkurve, die in DCP profilen eingebetten sein kann.
 TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
 TP_IMPULSEDENOISE_LABEL;Impulsrauschminderung
 TP_IMPULSEDENOISE_THRESH;Schwellenwert

@@ -309,6 +309,7 @@ void ProcParams::setDefaults () {
     
     icm.input   = "";
     icm.blendCMSMatrix = false;
+    icm.toneCurve = false;
     icm.preferredProfile = (short)rtengine::Daylight;
     icm.working = "sRGB";
     icm.output  = "sRGB";
@@ -614,6 +615,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
 
     // save color management settings
     if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   icm.input);
+    if (!pedited || pedited->icm.toneCurve)          keyFile.set_boolean ("Color Management", "ToneCurve",   icm.toneCurve);
     if (!pedited || pedited->icm.blendCMSMatrix)     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
     if (!pedited || pedited->icm.preferredProfile)   keyFile.set_boolean ("Color Management", "PreferredProfile",   icm.preferredProfile);
     if (!pedited || pedited->icm.working)            keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
@@ -1068,6 +1070,7 @@ if (keyFile.has_group ("Resize")) {
     // load color management settings
 if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "InputProfile"))   { icm.input          = keyFile.get_string ("Color Management", "InputProfile"); if (pedited) pedited->icm.input = true; }
+    if (keyFile.has_key ("Color Management", "ToneCurve"))      { icm.toneCurve      = keyFile.get_boolean ("Color Management", "ToneCurve"); if (pedited) pedited->icm.toneCurve = true; }
     if (keyFile.has_key ("Color Management", "BlendCMSMatrix")) { icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix"); if (pedited) pedited->icm.blendCMSMatrix = true; }
     if (keyFile.has_key ("Color Management", "PreferredProfile")) { icm.preferredProfile = keyFile.get_boolean ("Color Management", "PreferredProfile"); if (pedited) pedited->icm.preferredProfile = true; }
     if (keyFile.has_key ("Color Management", "WorkingProfile")) { icm.working        = keyFile.get_string ("Color Management", "WorkingProfile"); if (pedited) pedited->icm.working = true; }
@@ -1369,6 +1372,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& raw.greenthresh == other.raw.greenthresh
 		&& raw.linenoise == other.raw.linenoise
 		&& icm.input == other.icm.input
+		&& icm.toneCurve == other.icm.toneCurve
 		&& icm.blendCMSMatrix == other.icm.blendCMSMatrix
         && icm.preferredProfile == other.icm.preferredProfile
 		&& icm.working == other.icm.working
