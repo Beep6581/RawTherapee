@@ -569,6 +569,7 @@ class ColorManagementParams {
 
     public:
         Glib::ustring input;
+        bool          toneCurve;
         bool          blendCMSMatrix;
         short preferredProfile;
         Glib::ustring working;

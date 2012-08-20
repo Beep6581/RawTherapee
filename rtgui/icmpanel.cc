@@ -87,6 +87,11 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     hb->pack_start(*prefprof);  
     pack_start (*hb, Gtk::PACK_SHRINK, 4);
 
+    ckbToneCurve = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_TONECURVE")));
+    ckbToneCurve->set_sensitive (false);
+    ckbToneCurve->set_tooltip_text (M("TP_ICM_TONECURVE_TOOLTIP"));
+    pack_start (*ckbToneCurve, Gtk::PACK_SHRINK, 4);
+
     ckbBlendCMSMatrix = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_BLENDCMSMATRIX")));
     ckbBlendCMSMatrix->set_sensitive (false);
     ckbBlendCMSMatrix->set_tooltip_text (M("TP_ICM_BLENDCMSMATRIX_TOOLTIP"));
@@ -176,6 +181,8 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     filter_icc.set_name(M("TP_ICM_FILEDLGFILTERICM"));
     filter_icc.add_pattern("*.dcp");
     filter_icc.add_pattern("*.DCP");
+    filter_icc.add_pattern("*.dng");
+    filter_icc.add_pattern("*.DNG");
     filter_icc.add_pattern("*.icc");
     filter_icc.add_pattern("*.icm");
     filter_icc.add_pattern("*.ICC");
@@ -199,6 +206,8 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     iembedded->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     ifromfile->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     ckbBlendCMSMatrix->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::iccTogglesChanged) );
+    ckbToneCurve->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::toneCurveChanged) );
+
     ipc = ipDialog->signal_selection_changed().connect( sigc::mem_fun(*this, &ICMPanel::ipSelectionChanged) );
     saveRef->signal_pressed().connect( sigc::mem_fun(*this, &ICMPanel::saveReferencePressed) );
 
@@ -211,33 +220,33 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     ipc.block (true);
     if (pp->icm.input == "(none)" && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
-        inone->set_active (true); prefprof->set_sensitive (false);
+        inone->set_active (true); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
         ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()==Gtk::STATE_INSENSITIVE)) {
-        iembedded->set_active (true); prefprof->set_sensitive (false);
+        iembedded->set_active (true); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
         ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()!=Gtk::STATE_INSENSITIVE) {
-        icameraICC->set_active (true); prefprof->set_sensitive (true);
+        icameraICC->set_active (true); prefprof->set_sensitive (true); ckbToneCurve->set_sensitive (true);
         ckbBlendCMSMatrix->set_sensitive (true);
     }
     else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
     	// this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
     	// therefore falling back UI to explicitly reflect the (camera) option
     	icamera->set_active (true);
-        prefprof->set_sensitive (false);  // RT's own are always single-illuminant
+        prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);   // RT's own are always single-illuminant and tone curve disabled
     	ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (false);  prefprof->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive (false); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
     }
     else {
         ifromfile->set_active (true);
         oldip = pp->icm.input.substr(5);  // cut of "file:"
         ipDialog->set_filename (pp->icm.input.substr(5));
-        ckbBlendCMSMatrix->set_sensitive (true);  prefprof->set_sensitive (true);
+        ckbBlendCMSMatrix->set_sensitive (true);  prefprof->set_sensitive (true); ckbToneCurve->set_sensitive (true);
     }
 
     wnames->set_active_text (pp->icm.working);   
@@ -253,12 +262,14 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     prefprof->set_active(pp->icm.preferredProfile-1);
 
+    ckbToneCurve->set_active (pp->icm.toneCurve);
     ckbBlendCMSMatrix->set_active (pp->icm.blendCMSMatrix);
 	onames->set_sensitive(wgamma->get_active_row_number()==0 || freegamma->get_active()); //"default"
 	wgamma->set_sensitive(!freegamma->get_active());
 	
     if (pedited) {
         iunchanged->set_active (!pedited->icm.input);
+        ckbToneCurve->set_sensitive (false);
         ckbBlendCMSMatrix->set_sensitive (false);
         if (!pedited->icm.working)
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
@@ -317,6 +328,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
     else
         pp->icm.output  = onames->get_active_text();
 		pp->icm.freegamma = freegamma->get_active();
+    pp->icm.toneCurve = ckbToneCurve->get_active ();
     pp->icm.blendCMSMatrix = ckbBlendCMSMatrix->get_active ();
 	pp->icm.gampos =(double) gampos->getValue();
 	pp->icm.slpos =(double) slpos->getValue();
@@ -326,6 +338,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->icm.working = wnames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.preferredProfile = prefprof->get_active_text()!=M("GENERAL_UNCHANGED");
+        pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent ();
         pedited->icm.blendCMSMatrix = !ckbBlendCMSMatrix->get_inconsistent ();
         pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->icm.freegamma =!freegamma->get_inconsistent();
@@ -389,28 +402,33 @@ void ICMPanel::prefProfChanged() {
         listener->panelChanged (EvPrefProfile, prefprof->get_active_text ());
 }
 
+void ICMPanel::toneCurveChanged() {
+    if (listener)
+        listener->panelChanged (EvDCPToneCurve, "");
+}
+
 void ICMPanel::ipChanged () {
 
     std::string profname;
     if (inone->get_active()) {
         profname = "(none)";
-        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
     }
     else if (iembedded->get_active ()) {
         profname = "(embedded)";
-        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
     }
     else if (icamera->get_active ()) {
         profname = "(camera)";
-        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
     }
     else if (icameraICC->get_active ()) {
         profname = "(cameraICC)";
-        ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
     }
     else {
         profname = ipDialog->get_filename ();
-        ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (true);
+        ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (true); ckbToneCurve->set_sensitive (true);
     }
     
     if (listener && profname!=oldip)

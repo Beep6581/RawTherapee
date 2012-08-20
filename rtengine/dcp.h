@@ -47,6 +47,10 @@ namespace rtengine {
 
         int iHueStep, iValStep, iArrayCount;
 
+        LUTf lutToneCurve;  // 0..0xffff values to 0..1
+        void ApplyToneCurve(float& r, float& g, float& b) const;
+        void RGBTone(float& r, float& g, float& b) const;  // helper for tone curve
+
         void ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]);
 
         const HSBModify* GetBestProfile(DCPLightType preferredProfile,  double (*mXYZCAM)[3]) const;
@@ -54,11 +58,11 @@ namespace rtengine {
         DCPLightType GetLightType(short iLightSource) const;
 
     public:
-        DCPProfile(Glib::ustring fname);
+        DCPProfile(Glib::ustring fname, bool isRTProfile);
         ~DCPProfile();
 
-        void Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, float rawWhiteFac=1) const;
-        void Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const;
+        void Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, float rawWhiteFac=1, bool useToneCurve=false) const;
+        void Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, bool useToneCurve) const;
     };
 
     class DCPStore {
@@ -75,7 +79,7 @@ namespace rtengine {
 
         bool isValidDCPFileName(Glib::ustring filename) const;
 
-        DCPProfile* getProfile(Glib::ustring filename);
+        DCPProfile* getProfile(Glib::ustring filename, bool isRTProfile=false);
         DCPProfile* getStdProfile(Glib::ustring camShortName);
         
         static DCPStore* getInstance();

@@ -1650,7 +1650,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
 
     if (dcpProf!=NULL) {
-        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, (float)raw.expos);
+        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, (float)raw.expos, cmp.toneCurve);
     } else {
     // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
@@ -1874,7 +1874,7 @@ void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams 
     if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
 	
     if (dcpProf!=NULL) {
-        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working);
+        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, cmp.toneCurve);
     } else {
 	if (in==NULL) {
         // Take camprofile from DCRAW

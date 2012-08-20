@@ -25,17 +25,19 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "rt_math.h"
+#include "curves.h"
 
 using namespace std;
 using namespace rtengine;
 using namespace rtexif;
 
-DCPProfile::DCPProfile(Glib::ustring fname) {
+DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
     const int TIFFFloatSize=4;
     const int TagColorMatrix1=50721, TagColorMatrix2=50722, TagProfileHueSatMapDims=50937;
     const int TagProfileHueSatMapData1=50938, TagProfileHueSatMapData2=50939;
     const int TagCalibrationIlluminant1=50778, TagCalibrationIlluminant2=50779;
     const int TagProfileLookTableData=50982, TagProfileLookTableDims=50981;  // ProfileLookup is the low quality variant
+    const int TagProfileToneCurve=50940;
 
     aDeltas1=aDeltas2=NULL; iHueDivisions=iSatDivisions=iValDivisions=iArrayCount=0;
 
@@ -115,6 +117,24 @@ DCPProfile::DCPProfile(Glib::ustring fname) {
         }
     }
 
+    // Read tone curve points, if any, but disable to RTs own profiles
+    // the DCP tone curve is subjective and of low quality in comparison to RTs tone curves
+    tag = tagDir->getTag(TagProfileToneCurve);
+    if (tag!=NULL && !isRTProfile) {
+        std::vector<double> cPoints;
+        cPoints.push_back(double(DCT_Spline));  // The first value is the curve type
+
+        // push back each X/Y coordinates in a loop
+        for (int i=0;i<tag->getCount();i++) cPoints.push_back( tag->toDouble(i*TIFFFloatSize) ); 
+
+        // Create the curve
+        DiagonalCurve toneCurve(cPoints, CURVES_MIN_POLY_POINTS);
+
+        // Fill a LUT with X/Y, ranged 0xffff
+        lutToneCurve(0xffff);
+        for (int i=0;i<0xffff;i++) lutToneCurve[i] = toneCurve.getVal(i/(double)0xffff) * 0xffff;
+    }
+
     if (pFile!=NULL) fclose(pFile);
     delete tagDir;
 }
@@ -123,42 +143,42 @@ DCPProfile::~DCPProfile() {
     delete[] aDeltas1; delete[] aDeltas2;
 }
 
-        // Convert DNG color matrix to xyz_cam compatible matrix
+// Convert DNG color matrix to xyz_cam compatible matrix
 void DCPProfile::ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]) {
-        int i,j,k;
+    int i,j,k;
 
-        double cam_xyz[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-        for (i=0; i<3; i++)
-            for (j=0; j<3; j++)
-                for (k=0; k<3; k++)
-                    cam_xyz[i][j] += mColorMatrix[j][k] * (i==k);
+    double cam_xyz[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    for (i=0; i<3; i++)
+        for (j=0; j<3; j++)
+            for (k=0; k<3; k++)
+                cam_xyz[i][j] += mColorMatrix[j][k] * (i==k);
 
 
-        // Multiply out XYZ colorspace 
-        double cam_rgb[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-        for (i=0; i < 3; i++)	
-            for (j=0; j < 3; j++)
-                for (k=0; k < 3; k++) 
-                    cam_rgb[i][j] += cam_xyz[i][k] * xyz_sRGB[k][j];
+    // Multiply out XYZ colorspace 
+    double cam_rgb[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    for (i=0; i < 3; i++)	
+        for (j=0; j < 3; j++)
+            for (k=0; k < 3; k++) 
+                cam_rgb[i][j] += cam_xyz[i][k] * xyz_sRGB[k][j];
 
-        // Normalize cam_rgb so that:  cam_rgb * (1,1,1) is (1,1,1,1)
-        double num;
-        for (i=0; i<3; i++) {		
-            for (num=j=0; j<3; j++) num += cam_rgb[i][j];
-            for (j=0; j<3; j++) cam_rgb[i][j] /= num;
-        }
+    // Normalize cam_rgb so that:  cam_rgb * (1,1,1) is (1,1,1,1)
+    double num;
+    for (i=0; i<3; i++) {		
+        for (num=j=0; j<3; j++) num += cam_rgb[i][j];
+        for (j=0; j<3; j++) cam_rgb[i][j] /= num;
+    }
 
-        double rgb_cam[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-        RawImageSource::inverse33 (cam_rgb, rgb_cam);
+    double rgb_cam[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    RawImageSource::inverse33 (cam_rgb, rgb_cam);
 
     for (i=0; i<3; i++)
         for (j=0; j<3; j++) mXYZCAM[i][j]=0;
 
-        for (i=0; i<3; i++)
-            for (j=0; j<3; j++)
-                for (k=0; k<3; k++)
-                    mXYZCAM[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
-    }
+    for (i=0; i<3; i++)
+        for (j=0; j<3; j++)
+            for (k=0; k<3; k++)
+                mXYZCAM[i][j] += xyz_sRGB[i][k] * rgb_cam[k][j];
+}
 
 
 const DCPProfile::HSBModify* DCPProfile::GetBestProfile(DCPLightType preferredProfile, double (*mXYZCAM)[3]) const {
@@ -171,21 +191,21 @@ const DCPProfile::HSBModify* DCPProfile::GetBestProfile(DCPLightType preferredPr
         if (t2==Daylight) use2=true;
 
         switch (preferredProfile) {
-            case Tungsten:
-                if (t1==Tungsten) use2=false; else if (t2==Tungsten) use2=true;
-                break;
+        case Tungsten:
+            if (t1==Tungsten) use2=false; else if (t2==Tungsten) use2=true;
+            break;
 
-            case Fluorescent:
-                if (t1==Fluorescent) use2=false; else if (t2==Fluorescent) use2=true;
-                break;
+        case Fluorescent:
+            if (t1==Fluorescent) use2=false; else if (t2==Fluorescent) use2=true;
+            break;
 
-            case Flash:
-                if (t1==Flash) use2=false; else if (t2==Flash) use2=true;
-                break;
+        case Flash:
+            if (t1==Flash) use2=false; else if (t2==Flash) use2=true;
+            break;
 
-            default: break;  // e.g. Daylight
+        default: break;  // e.g. Daylight
         }
-}
+    }
 
     // printf("DCP using LightSource %i: %i for requested %i\n", use2?2:1, use2?iLightSource2:iLightSource1, (int)preferredProfile);
 
@@ -193,7 +213,7 @@ const DCPProfile::HSBModify* DCPProfile::GetBestProfile(DCPLightType preferredPr
         for (int col=0;col<3;col++) {
             mXYZCAM[col][row]= (use2 ? mXYZCAM2[col][row] : mXYZCAM1[col][row]);
         }
-}
+    }
 
     return use2?aDeltas2:aDeltas1;
 }
@@ -205,14 +225,16 @@ DCPLightType DCPProfile::GetLightType(short iLightSource) const {
     return Daylight;
 }
 
-void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, float rawWhiteFac) const {
+void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, float rawWhiteFac, bool useToneCurve) const {
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
     double mXYZCAM[3][3]; 
     const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
 
-    if (iArrayCount==0) {
-        //===== No LUT- Calculate matrix for direct conversion raw>working space
+    bool hasLUT=(iArrayCount>0); useToneCurve&=lutToneCurve;
+
+    if (!hasLUT && !useToneCurve) {
+        //===== The fast path: no LUT and not tone curve- Calculate matrix for direct conversion raw>working space
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++) 
             for (int j=0; j<3; j++)
@@ -270,160 +292,163 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
                 newb = m2ProPhoto[2][0]*pImg->r[y][x] + m2ProPhoto[2][1]*pImg->g[y][x] + m2ProPhoto[2][2]*pImg->b[y][x];
 
                 // if point is in negative area, just the matrix, but not the LUT
-                if (newr>=0 && newg>=0 && newb>=0) {
-                Color::rgb2hsv(newr, newg, newb, h , s, v);
-                h*=6.f;  // RT calculates in [0,1]
+                if (hasLUT && newr>=0 && newg>=0 && newb>=0) {
+                    Color::rgb2hsv(newr, newg, newb, h , s, v);
+                    h*=6.f;  // RT calculates in [0,1]
 
-                if (useRawWhite) {
-                    // Retro-calculate what the point was like before RAW white came in
-                    Color::rgb2hsv(newr/rawWhiteFac, newg/rawWhiteFac, newb/rawWhiteFac, hs, ss, vs);
-                    hs*=6.f;  // RT calculates in [0,1]
-                } else {
-                    hs=h; ss=s; vs=v;
-                }
-
-                // Apply the HueSatMap. Ported from Adobes reference implementation
-                float hueShift, satScale, valScale;
-
-                if (iValDivisions < 2)  // Optimize most common case of "2.5D" table.
-                {
-                    float hScaled = hs * hScale;
-                    float sScaled = ss * sScale;
-
-                    int hIndex0 = max((int)hScaled, 0);
-                    int sIndex0 = max(min((int)sScaled,maxSatIndex0),0);
-
-                    int hIndex1 = hIndex0 + 1;
-
-                    if (hIndex0 >= maxHueIndex0)
-                    {
-                        hIndex0 = maxHueIndex0;
-                        hIndex1 = 0;
+                    if (useRawWhite) {
+                        // Retro-calculate what the point was like before RAW white came in
+                        Color::rgb2hsv(newr/rawWhiteFac, newg/rawWhiteFac, newb/rawWhiteFac, hs, ss, vs);
+                        hs*=6.f;  // RT calculates in [0,1]
+                    } else {
+                        hs=h; ss=s; vs=v;
                     }
 
-                    float hFract1 = hScaled - (float) hIndex0;
-                    float sFract1 = sScaled - (float) sIndex0;
+                    // Apply the HueSatMap. Ported from Adobes reference implementation
+                    float hueShift, satScale, valScale;
 
-                    float hFract0 = 1.0f - hFract1;
-                    float sFract0 = 1.0f - sFract1;
-
-                    const HSBModify *entry00 = tableBase + hIndex0 * hueStep +
-                        sIndex0;
-
-                    const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * hueStep;
-
-                    float hueShift0 = hFract0 * entry00->fHueShift +
-                        hFract1 * entry01->fHueShift;
-
-                    float satScale0 = hFract0 * entry00->fSatScale +
-                        hFract1 * entry01->fSatScale;
-
-                    float valScale0 = hFract0 * entry00->fValScale +
-                        hFract1 * entry01->fValScale;
-
-                    entry00++;
-                    entry01++;
-
-                    float hueShift1 = hFract0 * entry00->fHueShift +
-                        hFract1 * entry01->fHueShift;
-
-                    float satScale1 = hFract0 * entry00->fSatScale +
-                        hFract1 * entry01->fSatScale;
-
-                    float valScale1 = hFract0 * entry00->fValScale +
-                        hFract1 * entry01->fValScale;
-
-                    hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
-                    satScale = sFract0 * satScale0 + sFract1 * satScale1;
-                    valScale = sFract0 * valScale0 + sFract1 * valScale1;
-
-                } else {
-
-                    float hScaled = hs * hScale;
-                    float sScaled = ss * sScale;
-                    float vScaled = vs * vScale;
-
-                    int hIndex0 = (int) hScaled;
-                    int sIndex0 = max(min((int)sScaled,maxSatIndex0),0);
-                    int vIndex0 = max(min((int)vScaled,maxValIndex0),0);
-
-                    int hIndex1 = hIndex0 + 1;
-
-                    if (hIndex0 >= maxHueIndex0)
+                    if (iValDivisions < 2)  // Optimize most common case of "2.5D" table.
                     {
-                        hIndex0 = maxHueIndex0;
-                        hIndex1 = 0;
+                        float hScaled = hs * hScale;
+                        float sScaled = ss * sScale;
+
+                        int hIndex0 = max((int)hScaled, 0);
+                        int sIndex0 = max(min((int)sScaled,maxSatIndex0),0);
+
+                        int hIndex1 = hIndex0 + 1;
+
+                        if (hIndex0 >= maxHueIndex0)
+                        {
+                            hIndex0 = maxHueIndex0;
+                            hIndex1 = 0;
+                        }
+
+                        float hFract1 = hScaled - (float) hIndex0;
+                        float sFract1 = sScaled - (float) sIndex0;
+
+                        float hFract0 = 1.0f - hFract1;
+                        float sFract0 = 1.0f - sFract1;
+
+                        const HSBModify *entry00 = tableBase + hIndex0 * hueStep +
+                            sIndex0;
+
+                        const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * hueStep;
+
+                        float hueShift0 = hFract0 * entry00->fHueShift +
+                            hFract1 * entry01->fHueShift;
+
+                        float satScale0 = hFract0 * entry00->fSatScale +
+                            hFract1 * entry01->fSatScale;
+
+                        float valScale0 = hFract0 * entry00->fValScale +
+                            hFract1 * entry01->fValScale;
+
+                        entry00++;
+                        entry01++;
+
+                        float hueShift1 = hFract0 * entry00->fHueShift +
+                            hFract1 * entry01->fHueShift;
+
+                        float satScale1 = hFract0 * entry00->fSatScale +
+                            hFract1 * entry01->fSatScale;
+
+                        float valScale1 = hFract0 * entry00->fValScale +
+                            hFract1 * entry01->fValScale;
+
+                        hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
+                        satScale = sFract0 * satScale0 + sFract1 * satScale1;
+                        valScale = sFract0 * valScale0 + sFract1 * valScale1;
+
+                    } else {
+
+                        float hScaled = hs * hScale;
+                        float sScaled = ss * sScale;
+                        float vScaled = vs * vScale;
+
+                        int hIndex0 = (int) hScaled;
+                        int sIndex0 = max(min((int)sScaled,maxSatIndex0),0);
+                        int vIndex0 = max(min((int)vScaled,maxValIndex0),0);
+
+                        int hIndex1 = hIndex0 + 1;
+
+                        if (hIndex0 >= maxHueIndex0)
+                        {
+                            hIndex0 = maxHueIndex0;
+                            hIndex1 = 0;
+                        }
+
+                        float hFract1 = hScaled - (float) hIndex0;
+                        float sFract1 = sScaled - (float) sIndex0;
+                        float vFract1 = vScaled - (float) vIndex0;
+
+                        float hFract0 = 1.0f - hFract1;
+                        float sFract0 = 1.0f - sFract1;
+                        float vFract0 = 1.0f - vFract1;
+
+                        const HSBModify *entry00 = tableBase + vIndex0 * valStep + 
+                            hIndex0 * hueStep +
+                            sIndex0;
+
+                        const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * hueStep;
+
+                        const HSBModify *entry10 = entry00 + valStep;
+                        const HSBModify *entry11 = entry01 + valStep;
+
+                        float hueShift0 = vFract0 * (hFract0 * entry00->fHueShift +
+                            hFract1 * entry01->fHueShift) +
+                            vFract1 * (hFract0 * entry10->fHueShift +
+                            hFract1 * entry11->fHueShift);
+
+                        float satScale0 = vFract0 * (hFract0 * entry00->fSatScale +
+                            hFract1 * entry01->fSatScale) +
+                            vFract1 * (hFract0 * entry10->fSatScale +
+                            hFract1 * entry11->fSatScale);
+
+                        float valScale0 = vFract0 * (hFract0 * entry00->fValScale +
+                            hFract1 * entry01->fValScale) +
+                            vFract1 * (hFract0 * entry10->fValScale +
+                            hFract1 * entry11->fValScale);
+
+                        entry00++;
+                        entry01++;
+                        entry10++;
+                        entry11++;
+
+                        float hueShift1 = vFract0 * (hFract0 * entry00->fHueShift +
+                            hFract1 * entry01->fHueShift) +
+                            vFract1 * (hFract0 * entry10->fHueShift +
+                            hFract1 * entry11->fHueShift);
+
+                        float satScale1 = vFract0 * (hFract0 * entry00->fSatScale +
+                            hFract1 * entry01->fSatScale) +
+                            vFract1 * (hFract0 * entry10->fSatScale +
+                            hFract1 * entry11->fSatScale);
+
+                        float valScale1 = vFract0 * (hFract0 * entry00->fValScale +
+                            hFract1 * entry01->fValScale) +
+                            vFract1 * (hFract0 * entry10->fValScale +
+                            hFract1 * entry11->fValScale);
+
+                        hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
+                        satScale = sFract0 * satScale0 + sFract1 * satScale1;
+                        valScale = sFract0 * valScale0 + sFract1 * valScale1;
                     }
 
-                    float hFract1 = hScaled - (float) hIndex0;
-                    float sFract1 = sScaled - (float) sIndex0;
-                    float vFract1 = vScaled - (float) vIndex0;
+                    hueShift *= (6.0f / 360.0f);	// Convert to internal hue range.
 
-                    float hFract0 = 1.0f - hFract1;
-                    float sFract0 = 1.0f - sFract1;
-                    float vFract0 = 1.0f - vFract1;
+                    h += hueShift; 
+                    s *= satScale;  // no clipping here, we are RT float :-)
+                    v *= valScale;
 
-                    const HSBModify *entry00 = tableBase + vIndex0 * valStep + 
-                        hIndex0 * hueStep +
-                        sIndex0;
-
-                    const HSBModify *entry01 = entry00 + (hIndex1 - hIndex0) * hueStep;
-
-                    const HSBModify *entry10 = entry00 + valStep;
-                    const HSBModify *entry11 = entry01 + valStep;
-
-                    float hueShift0 = vFract0 * (hFract0 * entry00->fHueShift +
-                        hFract1 * entry01->fHueShift) +
-                        vFract1 * (hFract0 * entry10->fHueShift +
-                        hFract1 * entry11->fHueShift);
-
-                    float satScale0 = vFract0 * (hFract0 * entry00->fSatScale +
-                        hFract1 * entry01->fSatScale) +
-                        vFract1 * (hFract0 * entry10->fSatScale +
-                        hFract1 * entry11->fSatScale);
-
-                    float valScale0 = vFract0 * (hFract0 * entry00->fValScale +
-                        hFract1 * entry01->fValScale) +
-                        vFract1 * (hFract0 * entry10->fValScale +
-                        hFract1 * entry11->fValScale);
-
-                    entry00++;
-                    entry01++;
-                    entry10++;
-                    entry11++;
-
-                    float hueShift1 = vFract0 * (hFract0 * entry00->fHueShift +
-                        hFract1 * entry01->fHueShift) +
-                        vFract1 * (hFract0 * entry10->fHueShift +
-                        hFract1 * entry11->fHueShift);
-
-                    float satScale1 = vFract0 * (hFract0 * entry00->fSatScale +
-                        hFract1 * entry01->fSatScale) +
-                        vFract1 * (hFract0 * entry10->fSatScale +
-                        hFract1 * entry11->fSatScale);
-
-                    float valScale1 = vFract0 * (hFract0 * entry00->fValScale +
-                        hFract1 * entry01->fValScale) +
-                        vFract1 * (hFract0 * entry10->fValScale +
-                        hFract1 * entry11->fValScale);
-
-                    hueShift = sFract0 * hueShift0 + sFract1 * hueShift1;
-                    satScale = sFract0 * satScale0 + sFract1 * satScale1;
-                    valScale = sFract0 * valScale0 + sFract1 * valScale1;
+                    // RT range correction
+                    if (h < 0.0f) h += 6.0f;
+                    if (h >= 6.0f) h -= 6.0f;
+                    h/=6.f;  
+                    Color::hsv2rgb( h, s, v, newr, newg, newb);
                 }
 
-                hueShift *= (6.0f / 360.0f);	// Convert to internal hue range.
-
-                h += hueShift; 
-                s *= satScale;  // no clipping here, we are RT float :-)
-                v *= valScale;
-
-                // RT range correction
-                if (h < 0.0f) h += 6.0f;
-                if (h >= 6.0f) h -= 6.0f;
-                h/=6.f;  
-                Color::hsv2rgb( h, s, v, newr, newg, newb);
-                }
+                // tone curve
+                if (useToneCurve) ApplyToneCurve(newr, newg, newb);
 
                 pImg->r[y][x] = m2Work[0][0]*newr + m2Work[0][1]*newg + m2Work[0][2]*newb;
                 pImg->g[y][x] = m2Work[1][0]*newr + m2Work[1][1]*newg + m2Work[1][2]*newb;
@@ -433,13 +458,72 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
     }
 }
 
+// Tone curve according to Adobes reference implementation
+void DCPProfile::ApplyToneCurve (float& r, float& g, float& b) const {
+    if (r >= g)
+    {
+        if (g > b)
+        {
+            // Case 1: r >= g > b
+            RGBTone (r, g, b);
+        }
+
+        else if (b > r)
+        {
+            // Case 2: b > r >= g
+            RGBTone (b, r, g);
+        }
+
+        else if (b > g)
+        {
+            // Case 3: r >= b > g
+            RGBTone (r, b, g);
+        }
+
+        else
+        {
+            // Case 4: r >= g == b
+            r = lutToneCurve[r];
+            g = lutToneCurve[g];
+            b = g;
+        }
+    }
+    else
+    {
+        if (r >= b)
+        {
+            // Case 5: g > r >= b
+            RGBTone (g, r, b);
+        }
+        else if (b > g)
+        {
+            // Case 6: b > g > r
+            RGBTone (b, g, r);
+        }
+        else
+        {
+            // Case 7: g >= b > r
+            RGBTone (g, b, r);
+        }
+    }
+}
+
+void DCPProfile::RGBTone (float& r, float& g, float& b) const {
+    float rold=r,gold=g,bold=b;
+
+    r = lutToneCurve[rold];
+    b = lutToneCurve[bold];
+    g = b + ((r - b) * (gold - bold) / (rold - bold));
+}
 
 // Integer variant is legacy, only used for thumbs. Simply take the matrix here
-void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace) const {
+void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, bool useToneCurve) const {
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
     double mXYZCAM[3][3]; 
     const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
+
+    useToneCurve&=lutToneCurve;
 
     // Calculate matrix for direct conversion raw>working space
     double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -456,6 +540,9 @@ void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustri
             newr = mat[0][0]*pImg->r[y][x] + mat[0][1]*pImg->g[y][x] + mat[0][2]*pImg->b[y][x];
             newg = mat[1][0]*pImg->r[y][x] + mat[1][1]*pImg->g[y][x] + mat[1][2]*pImg->b[y][x];
             newb = mat[2][0]*pImg->r[y][x] + mat[2][1]*pImg->g[y][x] + mat[2][2]*pImg->b[y][x];
+
+            // tone curve
+            if (useToneCurve) ApplyToneCurve(newr, newg, newb);
 
             pImg->r[y][x] = CLIP((int)newr); pImg->g[y][x] = CLIP((int)newg); pImg->b[y][x] = CLIP((int)newb);
         }
@@ -523,14 +610,14 @@ void DCPStore::init (Glib::ustring rtProfileDir) {
     }
 }
 
-DCPProfile* DCPStore::getProfile (Glib::ustring filename) {
+DCPProfile* DCPStore::getProfile (Glib::ustring filename, bool isRTProfile) {
     Glib::Mutex::Lock lock(mtx);
 
     std::map<Glib::ustring, DCPProfile*>::iterator r = profileCache.find (filename);
     if (r!=profileCache.end()) return r->second;
 
     // Add profile
-    profileCache[filename]=new DCPProfile(filename);
+    profileCache[filename]=new DCPProfile(filename, isRTProfile);
 
     return profileCache[filename];
 }
@@ -540,7 +627,7 @@ DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName) {
 
     // Warning: do NOT use map.find(), since it does not seem to work reliably here
     for (std::map<Glib::ustring, Glib::ustring>::iterator i=fileStdProfiles.begin();i!=fileStdProfiles.end();i++)
-        if (name2==(*i).first) return getProfile((*i).second);
+        if (name2==(*i).first) return getProfile((*i).second, true);
 
     return NULL;
 }
@@ -548,5 +635,5 @@ DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName) {
 bool DCPStore::isValidDCPFileName(Glib::ustring filename) const {
     if (!safe_file_test (filename, Glib::FILE_TEST_EXISTS) || safe_file_test (filename, Glib::FILE_TEST_IS_DIR)) return false;
     size_t pos=filename.find_last_of ('.');
-    return pos>0 && !filename.casefold().compare (pos, 4, ".dcp");
+    return pos>0 && (!filename.casefold().compare (pos, 4, ".dcp") || !filename.casefold().compare (pos, 4, ".dng"));
 }

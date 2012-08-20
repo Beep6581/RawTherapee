@@ -313,6 +313,7 @@ class ColorManagementParamsEdited {
 
     public:
         bool input;
+        bool toneCurve;
         bool blendCMSMatrix;
         bool preferredProfile;
         bool working;
