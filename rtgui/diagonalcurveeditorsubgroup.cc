@@ -585,7 +585,6 @@ void DiagonalCurveEditorSubGroup::restoreDisplayedHistogram() {
 void DiagonalCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {
 	if (!p.empty()) {
 		DiagonalCurveType t = (DiagonalCurveType)p[0];
-		for (int i=0; i<(int)p.size(); i++)
 
 		switch (t) {
 		case (DCT_Spline):
