@@ -410,13 +410,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     }
 
     // save luma curve
-    if (!pedited || pedited->labCurve.brightness)      keyFile.set_integer ("Luminance Curve", "Brightness",       labCurve.brightness);
-    if (!pedited || pedited->labCurve.contrast)        keyFile.set_integer ("Luminance Curve", "Contrast",         labCurve.contrast);
-    if (!pedited || pedited->labCurve.chromaticity)    keyFile.set_integer ("Luminance Curve", "Chromaticity",     labCurve.chromaticity);
-    if (!pedited || pedited->labCurve.avoidcolorshift) keyFile.set_boolean ("Luminance Curve", "AvoidColorShift",  labCurve.avoidcolorshift);
-    if (!pedited || pedited->labCurve.rstprotection)   keyFile.set_double  ("Luminance Curve", "SaturationLimit",  labCurve.rstprotection);
-    if (!pedited || pedited->labCurve.bwtoning)        keyFile.set_boolean ("Luminance Curve", "BWtoning",         labCurve.bwtoning);
-    if (!pedited || pedited->labCurve.lcredsk)         keyFile.set_boolean ("Luminance Curve", "LCredsk",          labCurve.lcredsk);
+    if (!pedited || pedited->labCurve.brightness)      keyFile.set_integer ("Luminance Curve", "Brightness",                 labCurve.brightness);
+    if (!pedited || pedited->labCurve.contrast)        keyFile.set_integer ("Luminance Curve", "Contrast",                   labCurve.contrast);
+    if (!pedited || pedited->labCurve.chromaticity)    keyFile.set_integer ("Luminance Curve", "Chromaticity",               labCurve.chromaticity);
+    if (!pedited || pedited->labCurve.avoidcolorshift) keyFile.set_boolean ("Luminance Curve", "AvoidColorShift",            labCurve.avoidcolorshift);
+    if (!pedited || pedited->labCurve.rstprotection)   keyFile.set_double  ("Luminance Curve", "RedAndSkinTonesProtection",  labCurve.rstprotection);
+    if (!pedited || pedited->labCurve.bwtoning)        keyFile.set_boolean ("Luminance Curve", "BWtoning",                   labCurve.bwtoning);
+    if (!pedited || pedited->labCurve.lcredsk)         keyFile.set_boolean ("Luminance Curve", "LCredsk",                    labCurve.lcredsk);
 	
     if (!pedited || pedited->labCurve.lcurve)  {
         Glib::ArrayHandle<double> lcurve = labCurve.lcurve;

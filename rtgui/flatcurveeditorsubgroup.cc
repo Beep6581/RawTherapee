@@ -273,7 +273,6 @@ void FlatCurveEditorSubGroup::restoreDisplayedHistogram() {
 void FlatCurveEditorSubGroup::storeCurveValues (CurveEditor* ce, const std::vector<double>& p) {
 	if (!p.empty()) {
 		FlatCurveType t = static_cast<FlatCurveType>(p[0]);
-		for (int i=0; i<(int)p.size(); i++)
 
 		switch (t) {
 		case (FCT_MinMaxCPoints):
