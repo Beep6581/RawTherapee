@@ -607,16 +607,13 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 
 				deltaHH=protect_redh;//transition hue
 				float chromapro	= (chromaticity	+ 100.0f)/100.0f;				
-				if(chromapro>1.0) Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//1.0
-				else Color::scalered ( 100.0-rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);
-				
+				if(chromapro>0.0) Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//1.0
 				if(chromapro>1.0) {interm=(chromapro-1.0f)*100.0f; 
 					factorskin= 1.0f+(interm*scale)/100.0f;    
 					factorskinext=1.0f+(interm*scaleext)/100.0f;}
 				else {
-					interm=(1.0f-chromapro)*100.0f;
-					factorskin= 1.0f-(interm*scale)/100.0f;    
-					factorskinext=1.0f-(interm*scaleext)/100.0f;
+					factorskin= chromapro*scale;   
+					factorskinext= chromapro*scaleext;   
 					}
 				factorsat=chromapro;
 				factor=factorsat;
@@ -646,8 +643,7 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 				if(protect_redhcur>1.0f) protect_redhcur=1.0f;//avoid too big values
 
 				deltaHH=protect_redhcur;//transition hue
-				if(chromaCfactor>1.0) Color::scalered ( rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);//1.0
-				else Color::scalered ( 100.0-rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);
+				if(chromaCfactor>0.0) Color::scalered ( rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);//1.0
 				
 				if(chromaCfactor>1.0) {
 					interm=(chromaCfactor-1.0f)*100.0f;   //else interm=(1.0f-chromaCfactor)*100.0f;
@@ -655,9 +651,8 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 					factorskinext=1.0f+(interm*scaleext)/100.0f;
 					}
 				else {
-					interm=(1.0f-chromaCfactor)*100.0f;
-					factorskin= 1.0f-(interm*scale)/100.0f;    
-					factorskinext=1.0f-(interm*scaleext)/100.0f;
+					factorskin= chromaCfactor*scale;    
+					factorskinext=chromaCfactor*scaleext;
 					}
 				
 				factorsat=chromaCfactor;
