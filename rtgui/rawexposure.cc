@@ -34,19 +34,19 @@ RAWExposure::RAWExposure () : Gtk::VBox(), FoldableToolPanel(this)
 	PexPreser->setAdjusterListener (this);
 	if (PexPreser->delay < 1000) PexPreser->delay = 1000;
 	PexPreser->show();
-	PexBlackone = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACKONE"),-50,50,0.1,0));//black level
+	PexBlackone = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACKONE"),-2048,2048,0.1,0));//black level
 	PexBlackone->setAdjusterListener (this);
 	if (PexBlackone->delay < 1000) PexBlackone->delay = 1000;
 	PexBlackone->show();
-	PexBlacktwo = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACKTWO"),-50,50,0.1,0));//black level
+	PexBlacktwo = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACKTWO"),-2048,2048,0.1,0));//black level
 	PexBlacktwo->setAdjusterListener (this);
 	if (PexBlacktwo->delay < 1000) PexBlacktwo->delay = 1000;
 	PexBlacktwo->show();
-	PexBlackthree = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACKTHREE"),-50,50,0.1,0));//black level
+	PexBlackthree = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACKTHREE"),-2048,2048,0.1,0));//black level
 	PexBlackthree->setAdjusterListener (this);
 	if (PexBlackthree->delay < 1000) PexBlackthree->delay = 1000;
 	PexBlackthree->show();
-	PexBlackzero = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACKZERO"),-50,50,0.1,0));//black level
+	PexBlackzero = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACKZERO"),-2048,2048,0.1,0));//black level
 	PexBlackzero->setAdjusterListener (this);
 	if (PexBlackzero->delay < 1000) PexBlackzero->delay = 1000;
 	PexBlackzero->show();
