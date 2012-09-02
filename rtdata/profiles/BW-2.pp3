@@ -1,7 +1,7 @@
 
 [Version]
 AppVersion=4.0.9
-Version=303
+Version=304
 
 [General]
 Rank=0
@@ -19,6 +19,7 @@ Black=0
 HighlightCompr=0
 HighlightComprThreshold=33
 ShadowCompr=50
+CurveMode=Standard
 Curve=1;0;0;0.45754265471370759;0.57906737998843294;1;1;
 
 [Channel Mixer]

@@ -36,16 +36,21 @@ class ICMPanelListener {
 
 class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
-	protected:
-	Adjuster* gampos;
-	Adjuster* slpos;
-	bool lastgamfree;
-    sigc::connection  gamcsconn; 
-	//bool freegamma;
+    protected:
+        Adjuster* gampos;
+        Adjuster* slpos;
+        bool lastgamfree;
+        sigc::connection  gamcsconn;
+        //bool freegamma;
+        bool lastToneCurve;
+        sigc::connection tcurveconn;
+        bool lastBlendCMSMatrix;
+        sigc::connection blendcmsconn;
+
     private:
         Gtk::CheckButton*  freegamma;
-    	Gtk::RadioButton*  inone;
-		
+        Gtk::RadioButton*  inone;
+
         Gtk::RadioButton*  iembedded;
         Gtk::RadioButton*  icamera;
         Gtk::RadioButton*  icameraICC;
@@ -55,7 +60,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Gtk::CheckButton*  ckbBlendCMSMatrix;
         MyComboBoxText*    wnames;
         MyComboBoxText*    wgamma;
-		
+
         MyComboBoxText*    onames;
         Gtk::RadioButton*  ofromdir;
         Gtk::RadioButton*  ofromfile;
@@ -67,27 +72,27 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         sigc::connection   ipc;
         Glib::ustring      oldip;
         ICMPanelListener*  icmplistener;
-        
+
         bool enableLastICCWorkDirChange;
         Glib::ustring lastRefFilename;
 
     public:
         ICMPanel ();
-        
+
         void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
         void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
         void setBatchMode   (bool batchMode);
-		void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+        void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
         void adjusterChanged (Adjuster* a, double newval);
-		void setAdjusterBehavior (bool gammaadd, bool slopeadd);
+        void setAdjusterBehavior (bool gammaadd, bool slopeadd);
  
         void wpChanged ();
         void opChanged ();
         void ipChanged ();
         void gpChanged ();
-		void GamChanged ();
+        void GamChanged ();
         void ipSelectionChanged ();
-        void iccTogglesChanged();
+        void blendCMSMatrixChanged();
         void prefProfChanged();
         void toneCurveChanged();
 

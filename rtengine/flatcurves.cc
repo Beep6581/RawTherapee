@@ -307,7 +307,7 @@ void FlatCurve::CtrlPoints_set () {
 	*/
 }
 
-double FlatCurve::getVal (double t) {
+double FlatCurve::getVal (double t) const {
 
     switch (kind) {
 
@@ -348,7 +348,7 @@ double FlatCurve::getVal (double t) {
     }
 }
 
-void FlatCurve::getVal (const std::vector<double>& t, std::vector<double>& res) {
+void FlatCurve::getVal (const std::vector<double>& t, std::vector<double>& res) const {
 
     res.resize (t.size());
     for (unsigned int i=0; i<t.size(); i++)

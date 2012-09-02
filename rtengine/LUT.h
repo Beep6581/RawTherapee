@@ -107,14 +107,16 @@ public:
 
 	LUT(void) {
 		data = NULL;
-		owner = 1;
-		size = 0;
-		maxs=0;
+		reset();
 	}
 
 	~LUT() {
 		if (owner)
 			delete[] data;
+	}
+
+	void setClip(int flags) {
+		clip = flags;
 	}
 
 	LUT<T> & operator=(const LUT<T> &rhs) {
@@ -193,6 +195,14 @@ public:
 	void clear(void) {
 		memset(data, 0, size * sizeof(T));
 	}
+
+	void reset(void) {
+		delete[] data;
+		data = NULL;
+		owner = 1;
+		size = 0;
+		maxs=0;
+    }
 };
 
 #endif /* LUT_H_ */

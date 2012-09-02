@@ -180,10 +180,18 @@ class Threshold {
 class ToneCurveParams {
 
     public:
+
+        enum eTCModeId {
+            TC_MODE_STD,        // Standard modes, the curve is applied on all component individually
+            TC_MODE_FILMLIKE,   // Film-like mode, as defined in Adobe's reference code
+            TC_MODE_VALBLENDING // Modify the Value channel only
+        };
+
         bool        autoexp;
         double      clip;
         double      expcomp;
         std::vector<double>   curve;
+        eTCModeId   curveMode;
         int         brightness;
         int         black;
         int         contrast;

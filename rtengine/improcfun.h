@@ -29,6 +29,7 @@
 #include "labimage.h"
 #include "LUT.h"
 #include "lcp.h"
+#include "curves.h"
 
 namespace rtengine {
 
@@ -82,9 +83,9 @@ class ImProcFunctions {
 
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve);
+		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const NonStandardToneCurve & nonStandardCurve);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
+		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const NonStandardToneCurve & nonStandardCurve,
 		                       double expcomp, int hlcompr, int hlcomprthresh);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		

@@ -42,9 +42,11 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     Adjuster* shcompr;
     Adjuster* contrast;
 	Adjuster* saturation;
+    MyComboBoxText*    toneCurveMode;
+
 
     bool clipDirty, lastAuto;
-    sigc::connection autoconn, neutralconn;
+    sigc::connection autoconn, neutralconn, tcmodeconn;
     CurveEditorGroup* curveEditorG;
     DiagonalCurveEditor* shape;
 
@@ -79,6 +81,8 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     bool autoExpComputed_ ();
     void enableAll ();
     void curveChanged ();
+    void curveModeChanged ();
+    bool curveModeChanged_ ();
     void expandCurve (bool isExpanded);
     bool isCurveExpanded ();
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
