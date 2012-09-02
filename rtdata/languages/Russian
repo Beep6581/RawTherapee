@@ -331,7 +331,7 @@ HISTORY_MSG_107;Подавление ореолов: порог
 HISTORY_MSG_108;Порог компрессии засветов
 HISTORY_MSG_109;Изменение размера выбранной рамки
 HISTORY_MSG_110;Изменение размера относится к
-HISTORY_MSG_111;Избегать обрезания цветов
+HISTORY_MSG_111;Избегать сдвига цвета
 HISTORY_MSG_112;Ограничитель насыщенности
 HISTORY_MSG_113;Предел насыщенности
 HISTORY_MSG_114;Проходы DCB
@@ -556,7 +556,7 @@ PARTIALPASTE_COLORBOOST;Усиление цвета
 PARTIALPASTE_COLORDENOISE;Удаление цветового шума
 PARTIALPASTE_COLORGROUP;Настройка цвета
 PARTIALPASTE_COLORMIXER;Цветовой микшер
-PARTIALPASTE_COLORSHIFT;Искажение цвета
+PARTIALPASTE_COLORSHIFT;Цветовой сдвиг
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Автозаполнение
 PARTIALPASTE_COMPOSITIONGROUP;Параметры компоновки
 PARTIALPASTE_CROP;Кадрирование
@@ -1167,61 +1167,61 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!GENERAL_WARNING;Warning
-!HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
-!HISTORY_MSG_167;B&amp;W Toning
-!HISTORY_MSG_168;'Cc' curve
-!HISTORY_MSG_169;'Ch' curve
-!HISTORY_MSG_170;Vibrance - Curve
-!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
-!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
-!NAVIGATOR_XY_FULL;Width = %1, Height = %2
-!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
-!SAVEDLG_SUBSAMP;Subsampling
-!SAVEDLG_SUBSAMP_1;Best compression
-!SAVEDLG_SUBSAMP_2;Balanced
-!SAVEDLG_SUBSAMP_3;Best quality
-!SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
-!SAVEDLG_WARNFILENAME;File will be named
-!SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
-!THRESHOLDSELECTOR_BL;Bottom-left
-!THRESHOLDSELECTOR_BR;Bottom-right
-!THRESHOLDSELECTOR_B;Bottom
-!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
-!THRESHOLDSELECTOR_TL;Top-left
-!THRESHOLDSELECTOR_TR;Top-right
-!THRESHOLDSELECTOR_T;Top
-!TP_CROP_GTFRAME;Frame
-!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
-!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
-!TP_LABCURVE_BWTONING;B&W Toning
-!TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
-!TP_LABCURVE_CHROMATICITY;Chromaticity
-!TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
-!TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green pastel
-!TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red pastel
-!TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red saturated
-!TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue saturated
-!TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue pastel
-!TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow pastel
-!TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow saturated
-!TP_LABCURVE_CURVEEDITOR_CC;CC
-!TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
-!TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
-!TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
-!TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
-!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
-!TP_LABCURVE_CURVEEDITOR_CH;CH
-!TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
-!TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin tones
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the Hue
-!TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
-!TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
-!TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
+GENERAL_WARNING;Внимание
+HISTOGRAM_TOOLTIP_FULL;Переключить полную или отмасштабированную гистограмму
+HISTORY_MSG_167;Ч/Б тонирование
+HISTORY_MSG_168;'Цц' кривая
+HISTORY_MSG_169;'Цо' кривая
+HISTORY_MSG_170;Резонанс - кривая
+MAIN_TOOLTIP_BACKCOLOR0;Фоновый цвет предпросмотра: <b>Как в теме</b>\nГорячая клавиша: <b>8</b>
+MAIN_TOOLTIP_BACKCOLOR1;Фоновый цвет предпросмотра: <b>Черный</b>\nГорячая клавиша: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Фоновый цвет предпросмотра: <b>Белый</b>\nГорячая клавиша: <b>0</b>
+NAVIGATOR_XY_FULL;Ширина = %1, Высота = %2
+PROGRESSBAR_PROCESSING_PROFILESAVED;Профиль обработки сохранен
+SAVEDLG_SUBSAMP;Субдискретизация
+SAVEDLG_SUBSAMP_1;Лучшая компрессия
+SAVEDLG_SUBSAMP_2;Сбалансированно
+SAVEDLG_SUBSAMP_3;Лучшее качество
+SAVEDLG_SUBSAMP_TOOLTIP;Лучшая компрессия: 4:1:1\nСбалансированно: 4:2:2\nЛучшее качество: 4:4:4
+SAVEDLG_WARNFILENAME;Файл будет наименован
+SHCSELECTOR_TOOLTIP;Нажмите правую кнопку мыши для сброса\nпозиции этих трех ползунков
+THRESHOLDSELECTOR_BL;Нижний левый
+THRESHOLDSELECTOR_BR;Нижний правый
+THRESHOLDSELECTOR_B;Низ
+THRESHOLDSELECTOR_HINT;Зажмите клавишу <b>Shift</b> для перемещения отдельных контрольных точек.
+THRESHOLDSELECTOR_TL;Верхний левый
+THRESHOLDSELECTOR_TR;Верхний правый
+THRESHOLDSELECTOR_T;Верх
+TP_CROP_GTFRAME;Рамка
+TP_LABCURVE_AVOIDCOLORSHIFT;Избегать сдвига цветов
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Умещать цвета в гамму рабочего цветового пространства и применять коррекцию Манселла
+TP_LABCURVE_BWTONING;Ч/Б тонирование
+TP_LABCURVE_BWTONING_TIP;Со включенной опцией <b>Ч/Б тонирование</b>, цветность Lab, кривые Цц и Цо не используются.\nТонирование выполняется с помощью кривых <b>a</b> и <b>b</b>
+TP_LABCURVE_CHROMATICITY;Цветность
+TP_LABCURVE_CURVEEDITOR_A_RANGE1;Зеленый насыщенный
+TP_LABCURVE_CURVEEDITOR_A_RANGE2;Зеленый пастельный
+TP_LABCURVE_CURVEEDITOR_A_RANGE3;Красный пастельный
+TP_LABCURVE_CURVEEDITOR_A_RANGE4;Красный насыщенный
+TP_LABCURVE_CURVEEDITOR_B_RANGE1;Синий насыщенный
+TP_LABCURVE_CURVEEDITOR_B_RANGE2;Синий пастельный
+TP_LABCURVE_CURVEEDITOR_B_RANGE3;Желтый пастельный
+TP_LABCURVE_CURVEEDITOR_B_RANGE4;Желтый насыщенный
+TP_LABCURVE_CURVEEDITOR_CC;ЦЦ
+TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Нейтральный
+TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Тусклый
+TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Пастельный
+TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Насыщенный
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Цветность в соответствии с цветностью
+TP_LABCURVE_CURVEEDITOR_CH;ЦО
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Цветность в соответствии с оттенком
+TP_LABCURVE_RSTPROTECTION;Защита красных тонов и оттенков кожи
+TP_VIBRANCE_CURVEEDITOR_SKINTONES;ОО
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Оттенки кожи
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Красный/Фиолетовый
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Красный
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Красный/Желтый
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Желтый
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Оттенок в соответствии с оттенком
+TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Порог насыщенности
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;Вертикальная ось обозначает пастельные тона внизу и насыщенные вверху.\nГоризонтальная ось представляет диапазон насыщенности.
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Условие перехода пастельных/насыщенных
