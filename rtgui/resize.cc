@@ -164,7 +164,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited) {
         hDirty = pedited->resize.height;
         scale->setEditedState (pedited->resize.scale ? Edited : UnEdited);
         if (!pedited->resize.appliesTo)
-            method->set_active (2);
+            appliesTo->set_active (2);
         if (!pedited->resize.method)
             method->set_active (8);
         if (!pedited->resize.dataspec) 
@@ -359,6 +359,7 @@ void Resize::setDimensions () {
 		tmpScale = h->get_value() / (double)refh;
 		scale->setValue (tmpScale);
 		w->set_value((double)((int)( (double)(refw) * tmpScale + 0.5) ));
+		break;
     case (3): {	// Bounding box mode
     	double wSliderValue = w->get_value();
     	double hSliderValue = h->get_value();
@@ -495,6 +496,7 @@ void Resize::specChanged () {
     case (3):
         // Bounding box mode
         notifyBBox();
+        break;
     default:
         break;
     }
@@ -528,6 +530,7 @@ void Resize::updateGUI () {
         pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
         w->set_sensitive (true);
         h->set_sensitive (true);
+        break;
     default:
         break;
     }
