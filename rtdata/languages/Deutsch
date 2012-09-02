@@ -261,14 +261,14 @@ HISTORY_MSG_37;Farbverstärkung
 HISTORY_MSG_38;Weißabgleich Methode
 HISTORY_MSG_39;Weißabgleich Farbtemp.
 HISTORY_MSG_40;Weißabgleich Farbton
-HISTORY_MSG_41;Farbkorrektur "A"
+HISTORY_MSG_41;Tonewertkurve Modus
 HISTORY_MSG_42;Farbkorrektur "B"
 HISTORY_MSG_43;Luminanz-Rauschfilter
 HISTORY_MSG_44;Luminanz-Rauschfilter Radius
 HISTORY_MSG_45;Luminanz-Rauschfilter Kantentoleranz
 HISTORY_MSG_46;Farb-Rauschfilter
-HISTORY_MSG_47;Farb-Rauschfilter Radius
-HISTORY_MSG_48;Farb-Rauschfilter Kantentoleranz
+HISTORY_MSG_47;ICC Lichter aus Matrix einmischen
+HISTORY_MSG_48;DCP Tonwertkurve verwenden
 HISTORY_MSG_49;Farb-Rauschfilter Kantensuche
 HISTORY_MSG_50;Schatten/Lichter
 HISTORY_MSG_51;Lichter abschwächen
@@ -901,6 +901,10 @@ TP_EXPOSURE_CURVEEDITOR;Tonwertkurve
 TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
 TP_EXPOSURE_LABEL;Belichtung
 TP_EXPOSURE_SATURATION;Sättigung
+TP_EXPOSURE_TCMODE_FILMLIKE;Film-ähnliche
+TP_EXPOSURE_TCMODE_LABEL;Tonewertkurve Modus
+TP_EXPOSURE_TCMODE_STANDARD;Standard
+TP_EXPOSURE_TCMODE_VALBLENDING;Hellwert-Kanal
 TP_EXPO_AFTER;Nach Interpolation (vor RGB-Konvertierung)
 TP_FLATFIELD_AUTOSELECT;Automatische Auswahl
 TP_FLATFIELD_BLURRADIUS;Unschärferadius

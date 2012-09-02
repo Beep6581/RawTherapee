@@ -20,10 +20,11 @@
 #ifndef _COLOR_H_
 #define _COLOR_H_
 
-#include <math.h>
+#include "rt_math.h"
 #include "LUT.h"
 #include "labimage.h"
 #include "iccstore.h"
+#include "iccmatrices.h"
 
 namespace rtengine {
 
@@ -82,6 +83,7 @@ private:
 
 	// Separated from init() to keep the code clear
 	static void initMunsell ();
+    static double hue2rgb(double p, double q, double t);
 
 public:
 	const static double sRGBGamma;        // standard average gamma
@@ -103,6 +105,10 @@ public:
 	static void init ();
 	static void cleanup ();
 
+	static float rgbLuminance(float r, float g, float b) { return r*float(xyz_sRGBd65[1][0]) + g*float(xyz_sRGBd65[1][1]) + b*float(xyz_sRGBd65[1][2]); }
+	static double rgbLuminance(double r, double g, double b) { return r*xyz_sRGBd65[1][0] + g*xyz_sRGBd65[1][1] + b*xyz_sRGBd65[1][2]; }
+	static void rgb2hsl (float r, float g, float b, float &h, float &s, float &l);
+	static void hsl2rgb (float h, float s, float l, float &r, float &g, float &b);
 	static void rgb2hsv (float r, float g, float b, float &h, float &s, float &v);
 	static void hsv2rgb (float h, float s, float v, float &r, float &g, float &b);
 	static void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);

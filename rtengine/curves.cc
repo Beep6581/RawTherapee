@@ -293,10 +293,10 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
-									 double shcompr, double br, double contr, double gamma_, bool igamma_,
+									 double shcompr, double br, double contr, double gamma_, bool igamma_, int curveMode,
 									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
 									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
-									 LUTu & outBeforeCCurveHistogram, int skip) {
+									 LUTu & outBeforeCCurveHistogram, NonStandardToneCurve & outNSToneCurve, int skip) {
 		
 		
 		//double def_mul = pow (2.0, defmul);
@@ -339,26 +339,27 @@ namespace rtengine {
 		if (br>0.00001 || br<-0.00001) {
 
 			std::vector<double> brightcurvePoints;
-			brightcurvePoints.push_back((double)DCT_NURBS);
+			brightcurvePoints.resize(9);
+			brightcurvePoints.at(0) = double(DCT_NURBS);
 
-			brightcurvePoints.push_back(0.); //black point.  Value in [0 ; 1] range
-			brightcurvePoints.push_back(0.); //black point.  Value in [0 ; 1] range
+			brightcurvePoints.at(1) = 0.; //black point.  Value in [0 ; 1] range
+			brightcurvePoints.at(2) = 0.; //black point.  Value in [0 ; 1] range
 			
 			if(br>0) {
-				brightcurvePoints.push_back(0.1); //toe point
-				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
+				brightcurvePoints.at(3) = 0.1; //toe point
+				brightcurvePoints.at(4) = 0.1+br/150.0; //value at toe point
 
-				brightcurvePoints.push_back(0.7); //shoulder point
-				brightcurvePoints.push_back(min(1.0,0.7+br/300.0)); //value at shoulder point
+				brightcurvePoints.at(5) = 0.7; //shoulder point
+				brightcurvePoints.at(6) = min(1.0,0.7+br/300.0); //value at shoulder point
 			} else {
-				brightcurvePoints.push_back(max(0.0,0.1-br/150.0)); //toe point
-				brightcurvePoints.push_back(0.1); //value at toe point
+				brightcurvePoints.at(3) = max(0.0,0.1-br/150.0); //toe point
+				brightcurvePoints.at(4) = 0.1; //value at toe point
 
-				brightcurvePoints.push_back(0.7-br/300.0); //shoulder point
-				brightcurvePoints.push_back(0.7); //value at shoulder point
+				brightcurvePoints.at(5) = 0.7-br/300.0; //shoulder point
+				brightcurvePoints.at(6) = 0.7; //value at shoulder point
 			}
-			brightcurvePoints.push_back(1.); // white point
-			brightcurvePoints.push_back(1.); // value at white point
+			brightcurvePoints.at(7) = 1.; // white point
+			brightcurvePoints.at(8) = 1.; // value at white point
 			
 			brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 		}
@@ -442,19 +443,20 @@ namespace rtengine {
 			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			std::vector<double> contrastcurvePoints;
-			contrastcurvePoints.push_back((double)DCT_NURBS);
+			contrastcurvePoints.resize(9);
+			contrastcurvePoints.at(0) = double(DCT_NURBS);
 			
-			contrastcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-			contrastcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
+			contrastcurvePoints.at(1) = 0; //black point.  Value in [0 ; 1] range
+			contrastcurvePoints.at(2) = 0; //black point.  Value in [0 ; 1] range
 			
-			contrastcurvePoints.push_back(avg-avg*(0.6-contr/250.0)); //toe point
-			contrastcurvePoints.push_back(avg-avg*(0.6+contr/250.0)); //value at toe point
+			contrastcurvePoints.at(3) = avg-avg*(0.6-contr/250.0); //toe point
+			contrastcurvePoints.at(4) = avg-avg*(0.6+contr/250.0); //value at toe point
 			
-			contrastcurvePoints.push_back(avg+(1-avg)*(0.6-contr/250.0)); //shoulder point
-			contrastcurvePoints.push_back(avg+(1-avg)*(0.6+contr/250.0)); //value at shoulder point
+			contrastcurvePoints.at(5) = avg+(1-avg)*(0.6-contr/250.0); //shoulder point
+			contrastcurvePoints.at(6) = avg+(1-avg)*(0.6+contr/250.0); //value at shoulder point
 			
-			contrastcurvePoints.push_back(1); // white point
-			contrastcurvePoints.push_back(1); // value at white point
+			contrastcurvePoints.at(7) = 1.; // white point
+			contrastcurvePoints.at(8) = 1.; // value at white point
 			
 			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -472,14 +474,23 @@ namespace rtengine {
 		// create a curve if needed
 		bool histNeeded = false;
 		DiagonalCurve* tcurve = NULL;
-		if (!curvePoints.empty() && curvePoints[0]!=0) {
+		outNSToneCurve.Reset();
+
+		if (!curvePoints.empty() && curvePoints[0]>DCT_Linear && curvePoints[0]<DCT_Unchanged) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
 			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
 				histNeeded = true;
 		}
-		if (tcurve && tcurve->isIdentity()) {
-			delete tcurve;
-			tcurve = NULL;
+		if (tcurve) {
+			if (tcurve->isIdentity()) {
+				delete tcurve;
+				tcurve = NULL;
+			}
+			else if (curveMode!=procparams::ToneCurveParams::TC_MODE_STD) {
+				outNSToneCurve.Set(tcurve);  // it's used in rgbProc, but not merge with the other curves
+				delete tcurve;
+				tcurve = NULL;
+			}
 		}
 
 		for (int i=0; i<=0xffff; i++) {
@@ -499,7 +510,7 @@ namespace rtengine {
 			if (tcurve) {
 				val = tcurve->getVal (dcurve[i]);  // TODO: getVal(double) is very slow! Optimize with a LUTf
 			} else {
-				val = (dcurve[i]);
+				val = dcurve[i];
 			}
 
 			// if inverse gamma is needed, do it (standard sRGB inverse gamma is applied)
@@ -542,26 +553,27 @@ namespace rtengine {
 			utili=true;
 
 			std::vector<double> brightcurvePoints;
-			brightcurvePoints.push_back((double)((CurveType)DCT_NURBS));
+			brightcurvePoints.resize(9);
+			brightcurvePoints.at(0) = double(DCT_NURBS);
 
-			brightcurvePoints.push_back(0.); // black point.  Value in [0 ; 1] range
-			brightcurvePoints.push_back(0.); // black point.  Value in [0 ; 1] range
+			brightcurvePoints.at(1) = 0.; // black point.  Value in [0 ; 1] range
+			brightcurvePoints.at(2) = 0.; // black point.  Value in [0 ; 1] range
 			
 			if (br>0) {
-				brightcurvePoints.push_back(0.1); // toe point
-				brightcurvePoints.push_back(0.1+br/150.0); //value at toe point
+				brightcurvePoints.at(3) = 0.1; // toe point
+				brightcurvePoints.at(4) = 0.1+br/150.0; //value at toe point
 
-				brightcurvePoints.push_back(0.7); // shoulder point
-				brightcurvePoints.push_back(min(1.0,0.7+br/300.0)); //value at shoulder point
+				brightcurvePoints.at(5) = 0.7; // shoulder point
+				brightcurvePoints.at(6) = min(1.0,0.7+br/300.0); //value at shoulder point
 			} else {
-				brightcurvePoints.push_back(0.1-br/150.0); // toe point
-				brightcurvePoints.push_back(0.1); // value at toe point
+				brightcurvePoints.at(3) = 0.1-br/150.0; // toe point
+				brightcurvePoints.at(4) = 0.1; // value at toe point
 
-				brightcurvePoints.push_back(min(1.0,0.7-br/300.0)); // shoulder point
-				brightcurvePoints.push_back(0.7); // value at shoulder point
+				brightcurvePoints.at(5) = min(1.0,0.7-br/300.0); // shoulder point
+				brightcurvePoints.at(6) = 0.7; // value at shoulder point
 			}
-			brightcurvePoints.push_back(1.); // white point
-			brightcurvePoints.push_back(1.); // value at white point
+			brightcurvePoints.at(7) = 1.; // white point
+			brightcurvePoints.at(8) = 1.; // value at white point
 			
 			DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -609,19 +621,20 @@ namespace rtengine {
 			
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			std::vector<double> contrastcurvePoints;
-			contrastcurvePoints.push_back((double)((CurveType)DCT_NURBS));
+			contrastcurvePoints.resize(9);
+			contrastcurvePoints.at(0) = double(DCT_NURBS);
 			
-			contrastcurvePoints.push_back(0.); // black point.  Value in [0 ; 1] range
-			contrastcurvePoints.push_back(0.); // black point.  Value in [0 ; 1] range
+			contrastcurvePoints.at(1) = 0.; // black point.  Value in [0 ; 1] range
+			contrastcurvePoints.at(2) = 0.; // black point.  Value in [0 ; 1] range
 			
-			contrastcurvePoints.push_back(avg-avg*(0.6-contr/250.0)); // toe point
-			contrastcurvePoints.push_back(avg-avg*(0.6+contr/250.0)); // value at toe point
+			contrastcurvePoints.at(3) = avg-avg*(0.6-contr/250.0); // toe point
+			contrastcurvePoints.at(4) = avg-avg*(0.6+contr/250.0); // value at toe point
 			
-			contrastcurvePoints.push_back(avg+(1-avg)*(0.6-contr/250.0)); // shoulder point
-			contrastcurvePoints.push_back(avg+(1-avg)*(0.6+contr/250.0)); // value at shoulder point
+			contrastcurvePoints.at(5) = avg+(1-avg)*(0.6-contr/250.0); // shoulder point
+			contrastcurvePoints.at(6) = avg+(1-avg)*(0.6+contr/250.0); // value at shoulder point
 			
-			contrastcurvePoints.push_back(1.); // white point
-			contrastcurvePoints.push_back(1.); // value at white point
+			contrastcurvePoints.at(7) = 1.; // white point
+			contrastcurvePoints.at(8) = 1.; // value at white point
 			
 			DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip);
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -733,4 +746,14 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	
+void NonStandardToneCurve::Reset() {
+    lutToneCurve.reset();
+}
+
+// Fill a LUT with X/Y, ranged 0xffff
+void NonStandardToneCurve::Set(Curve *pCurve) {
+    lutToneCurve(0xffff);
+    for (int i=0;i<0xffff;i++) lutToneCurve[i] = pCurve->getVal(i/(double)0xffff) * 0xffff;
+}
+
 }

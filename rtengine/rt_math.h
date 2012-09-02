@@ -31,6 +31,11 @@ namespace rtengine {
 	}
 
 	template<typename _Tp>
+	inline const _Tp LIM01(const _Tp& a) {
+		return std::max(_Tp(1),std::min(a,_Tp(0)));
+	}
+
+	template<typename _Tp>
 	inline const _Tp ULIM(const _Tp& a, const _Tp& b, const _Tp& c) {
 		return ((b < c) ? LIM(a,b,c) : LIM(a,c,b));
 	}

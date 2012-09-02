@@ -102,6 +102,18 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
   pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
 
+  Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
+  hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_EXPOSURE_TCMODE_LABEL") +": ")),Gtk::PACK_SHRINK, 4);
+  toneCurveMode = Gtk::manage (new MyComboBoxText ());
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_STANDARD"));
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_VALBLENDING"));
+  toneCurveMode->set_active (0);
+  hb1->pack_end (*toneCurveMode, Gtk::PACK_EXPAND_WIDGET, 4);
+
+  pack_start( *hb1, Gtk::PACK_SHRINK, 2);
+
+  tcmodeconn = toneCurveMode->signal_changed().connect( sigc::mem_fun(*this, &ToneCurve::curveModeChanged), true );
   //curveEditorG->show();
 
 // --------- Set Up Listeners -------------
@@ -119,23 +131,10 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
 
-    if (pedited) {
-        expcomp->setEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
-        black->setEditedState (pedited->toneCurve.black ? Edited : UnEdited);
-        hlcompr->setEditedState (pedited->toneCurve.hlcompr ? Edited : UnEdited);
-        hlcomprthresh->setEditedState (pedited->toneCurve.hlcomprthresh ? Edited : UnEdited);
-        shcompr->setEditedState (pedited->toneCurve.shcompr ? Edited : UnEdited);
-        brightness->setEditedState (pedited->toneCurve.brightness ? Edited : UnEdited);
-        contrast->setEditedState (pedited->toneCurve.contrast ? Edited : UnEdited);
-        saturation->setEditedState (pedited->toneCurve.saturation ? Edited : UnEdited);
-        autolevels->set_inconsistent (!pedited->toneCurve.autoexp);
-        clipDirty = pedited->toneCurve.clip;
-        shape->setUnChanged (!pedited->toneCurve.curve);
-    }
-
+    tcmodeconn.block(true);
     autoconn.block (true);
+
     autolevels->set_active (pp->toneCurve.autoexp);
-    autoconn.block (false);
     lastAuto = pp->toneCurve.autoexp;
     sclip->set_value (pp->toneCurve.clip);
 
@@ -149,6 +148,28 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     contrast->setValue (pp->toneCurve.contrast);
     saturation->setValue (pp->toneCurve.saturation);
     shape->setCurve (pp->toneCurve.curve);
+
+    toneCurveMode->set_active(pp->toneCurve.curveMode);
+
+    if (pedited) {
+        expcomp->setEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
+        black->setEditedState (pedited->toneCurve.black ? Edited : UnEdited);
+        hlcompr->setEditedState (pedited->toneCurve.hlcompr ? Edited : UnEdited);
+        hlcomprthresh->setEditedState (pedited->toneCurve.hlcomprthresh ? Edited : UnEdited);
+        shcompr->setEditedState (pedited->toneCurve.shcompr ? Edited : UnEdited);
+        brightness->setEditedState (pedited->toneCurve.brightness ? Edited : UnEdited);
+        contrast->setEditedState (pedited->toneCurve.contrast ? Edited : UnEdited);
+        saturation->setEditedState (pedited->toneCurve.saturation ? Edited : UnEdited);
+        autolevels->set_inconsistent (!pedited->toneCurve.autoexp);
+        clipDirty = pedited->toneCurve.clip;
+        shape->setUnChanged (!pedited->toneCurve.curve);
+        if (!pedited->toneCurve.curveMode) {
+            toneCurveMode->set_active(3);
+        }
+    }
+
+    autoconn.block (false);
+    tcmodeconn.block(false);
 
     enableListener ();
 }
@@ -171,6 +192,12 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->toneCurve.saturation = (int)saturation->getValue ();
     pp->toneCurve.curve = shape->getCurve ();
 
+    int tcMode = toneCurveMode->get_active_row_number();
+    if      (tcMode == 0) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
+    if      (tcMode == 1) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
+    else if (tcMode == 2) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_VALBLENDING;
+
+
     if (pedited) {
         pedited->toneCurve.expcomp = expcomp->getEditedState ();
         pedited->toneCurve.black   = black->getEditedState ();
@@ -183,6 +210,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->toneCurve.autoexp  = !autolevels->get_inconsistent();
         pedited->toneCurve.clip     = clipDirty;
         pedited->toneCurve.curve    = !shape->isUnChanged ();
+        pedited->toneCurve.curveMode = toneCurveMode->get_active_row_number() != 3;
     }
 }
 
@@ -222,6 +250,16 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
 void ToneCurve::curveChanged () {
 
     if (listener) listener->panelChanged (EvToneCurve, M("HISTORY_CUSTOMCURVE"));
+}
+
+void ToneCurve::curveModeChanged () {
+    //if (listener)  listener->panelChanged (EvToneCurveMode, toneCurveMode->get_active_text());
+    if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::curveModeChanged_));
+}
+
+bool ToneCurve::curveModeChanged_ () {
+    if (listener) listener->panelChanged (EvToneCurveMode, toneCurveMode->get_active_text());
+    return false;
 }
 
 void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
@@ -376,6 +414,7 @@ void ToneCurve::waitForAutoExp () {
     contrast->setEnabled (false);
     saturation->setEnabled (false);
     curveEditorG->set_sensitive (false);
+    toneCurveMode->set_sensitive (false);
 }
 
 int autoExpChangedUI (void* data) {
@@ -408,6 +447,7 @@ void ToneCurve::enableAll () {
     contrast->setEnabled (true);
     saturation->setEnabled (true);
     curveEditorG->set_sensitive (true);
+    toneCurveMode->set_sensitive (true);
 }
 
 bool ToneCurve::autoExpComputed_ () {
@@ -443,6 +483,8 @@ void ToneCurve::setBatchMode (bool batchMode) {
     brightness->showEditedCB ();
     contrast->showEditedCB ();
 	saturation->showEditedCB ();
+
+	toneCurveMode->append_text (M("GENERAL_UNCHANGED"));
 
     curveEditorG->setBatchMode (batchMode);
 }

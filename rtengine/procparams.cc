@@ -138,6 +138,7 @@ void ProcParams::setDefaults () {
     toneCurve.shcompr       = 50;
     toneCurve.curve.clear ();
     toneCurve.curve.push_back(DCT_Linear);
+    toneCurve.curveMode     = ToneCurveParams::TC_MODE_STD;
     
     labCurve.brightness      = 0;
     labCurve.contrast        = 0;
@@ -331,8 +332,8 @@ void ProcParams::setDefaults () {
     hsvequalizer.vcurve.clear ();
     hsvequalizer.vcurve.push_back (FCT_Linear);
     raw.df_autoselect = false;
-    raw.ff_AutoSelect = false;                                      
-    raw.ff_BlurRadius = 32;                                         
+    raw.ff_AutoSelect = false;
+    raw.ff_BlurRadius = 32;
     raw.ff_BlurType = RAWParams::ff_BlurTypestring[RAWParams::area_ff];
     raw.cared = 0;
     raw.cablue = 0;
@@ -390,6 +391,21 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->toneCurve.hlcompr)    keyFile.set_integer ("Exposure", "HighlightCompr", toneCurve.hlcompr);
     if (!pedited || pedited->toneCurve.hlcomprthresh) keyFile.set_integer ("Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh);
     if (!pedited || pedited->toneCurve.shcompr)       keyFile.set_integer ("Exposure", "ShadowCompr",             toneCurve.shcompr);
+    if (!pedited || pedited->toneCurve.curveMode)  {
+        Glib::ustring method;
+        switch (toneCurve.curveMode) {
+        case (ToneCurveParams::TC_MODE_STD):
+            method = "Standard";
+            break;
+        case (ToneCurveParams::TC_MODE_FILMLIKE):
+            method = "FilmLike";
+            break;
+        case (ToneCurveParams::TC_MODE_VALBLENDING):
+            method = "ValueBlending";
+            break;
+        }
+        keyFile.set_string  ("Exposure", "CurveMode", method);
+    }
     if (!pedited || pedited->toneCurve.curve) {
         Glib::ArrayHandle<double> tcurve = toneCurve.curve;
         keyFile.set_double_list("Exposure", "Curve", tcurve);
@@ -583,8 +599,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     // lens profile
     if (!pedited || pedited->lensProf.lcpFile)       keyFile.set_string  ("LensProfile", "LCPFile", lensProf.lcpFile);
     if (!pedited || pedited->lensProf.useDist)       keyFile.set_boolean  ("LensProfile", "UseDistortion", lensProf.useDist);
-    if (!pedited || pedited->lensProf.useVign)       keyFile.set_boolean  ("LensProfile", "UseVignette", lensProf.useDist);
-    if (!pedited || pedited->lensProf.useCA)         keyFile.set_boolean  ("LensProfile", "UseCA", lensProf.useDist);
+    if (!pedited || pedited->lensProf.useVign)       keyFile.set_boolean  ("LensProfile", "UseVignette", lensProf.useVign);
+    if (!pedited || pedited->lensProf.useCA)         keyFile.set_boolean  ("LensProfile", "UseCA", lensProf.useCA);
 
     // save perspective correction
     if (!pedited || pedited->perspective.horizontal) keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
@@ -784,6 +800,13 @@ if (keyFile.has_group ("Exposure")) {
     if (keyFile.has_key ("Exposure", "HighlightComprThreshold")) { toneCurve.hlcomprthresh = keyFile.get_integer ("Exposure", "HighlightComprThreshold"); if (pedited) pedited->toneCurve.hlcomprthresh = true; }
     if (keyFile.has_key ("Exposure", "ShadowCompr"))    { toneCurve.shcompr       = keyFile.get_integer ("Exposure", "ShadowCompr"); if (pedited) pedited->toneCurve.shcompr = true; }
     if (toneCurve.shcompr > 100) toneCurve.shcompr = 100; // older pp3 files can have values above 100.
+    if (keyFile.has_key ("Exposure", "CurveMode"))      {
+        Glib::ustring sMode = keyFile.get_string ("Exposure", "CurveMode");
+        if      (sMode == "Standard")           toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
+        else if (sMode == "FilmLike")           toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
+        else if (sMode == "ValueBlending")      toneCurve.curveMode = ToneCurveParams::TC_MODE_VALBLENDING;
+        if (pedited) pedited->toneCurve.curveMode = true; 
+    }
     if (ppVersion>200)
     if (keyFile.has_key ("Exposure", "Curve"))          { toneCurve.curve         = keyFile.get_double_list ("Exposure", "Curve"); if (pedited) pedited->toneCurve.curve = true; }
 }
@@ -1235,6 +1258,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& toneCurve.autoexp == other.toneCurve.autoexp
 		&& toneCurve.clip == other.toneCurve.clip
 		&& toneCurve.expcomp == other.toneCurve.expcomp
+        && toneCurve.curveMode == other.toneCurve.curveMode
 		&& labCurve.lcurve == other.labCurve.lcurve
 		&& labCurve.acurve == other.labCurve.acurve
 		&& labCurve.bcurve == other.labCurve.bcurve

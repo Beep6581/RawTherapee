@@ -25,7 +25,6 @@
 #include "rawimagesource.h"
 #include "improcfun.h"
 #include "rt_math.h"
-#include "curves.h"
 
 using namespace std;
 using namespace rtengine;
@@ -128,11 +127,9 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
         for (int i=0;i<tag->getCount();i++) cPoints.push_back( tag->toDouble(i*TIFFFloatSize) ); 
 
         // Create the curve
-        DiagonalCurve toneCurve(cPoints, CURVES_MIN_POLY_POINTS);
+        DiagonalCurve rawCurve(cPoints, CURVES_MIN_POLY_POINTS);
 
-        // Fill a LUT with X/Y, ranged 0xffff
-        lutToneCurve(0xffff);
-        for (int i=0;i<0xffff;i++) lutToneCurve[i] = toneCurve.getVal(i/(double)0xffff) * 0xffff;
+        toneCurve.Set((Curve*)&rawCurve);
     }
 
     if (pFile!=NULL) fclose(pFile);
@@ -231,7 +228,7 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
     double mXYZCAM[3][3]; 
     const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
 
-    bool hasLUT=(iArrayCount>0); useToneCurve&=lutToneCurve;
+    bool hasLUT=(iArrayCount>0); useToneCurve&=toneCurve;
 
     if (!hasLUT && !useToneCurve) {
         //===== The fast path: no LUT and not tone curve- Calculate matrix for direct conversion raw>working space
@@ -448,7 +445,7 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
                 }
 
                 // tone curve
-                if (useToneCurve) ApplyToneCurve(newr, newg, newb);
+                if (useToneCurve) toneCurve.Apply(newr, newg, newb);
 
                 pImg->r[y][x] = m2Work[0][0]*newr + m2Work[0][1]*newg + m2Work[0][2]*newb;
                 pImg->g[y][x] = m2Work[1][0]*newr + m2Work[1][1]*newg + m2Work[1][2]*newb;
@@ -458,64 +455,6 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
     }
 }
 
-// Tone curve according to Adobes reference implementation
-void DCPProfile::ApplyToneCurve (float& r, float& g, float& b) const {
-    if (r >= g)
-    {
-        if (g > b)
-        {
-            // Case 1: r >= g > b
-            RGBTone (r, g, b);
-        }
-
-        else if (b > r)
-        {
-            // Case 2: b > r >= g
-            RGBTone (b, r, g);
-        }
-
-        else if (b > g)
-        {
-            // Case 3: r >= b > g
-            RGBTone (r, b, g);
-        }
-
-        else
-        {
-            // Case 4: r >= g == b
-            r = lutToneCurve[r];
-            g = lutToneCurve[g];
-            b = g;
-        }
-    }
-    else
-    {
-        if (r >= b)
-        {
-            // Case 5: g > r >= b
-            RGBTone (g, r, b);
-        }
-        else if (b > g)
-        {
-            // Case 6: b > g > r
-            RGBTone (b, g, r);
-        }
-        else
-        {
-            // Case 7: g >= b > r
-            RGBTone (g, b, r);
-        }
-    }
-}
-
-void DCPProfile::RGBTone (float& r, float& g, float& b) const {
-    float rold=r,gold=g,bold=b;
-
-    r = lutToneCurve[rold];
-    b = lutToneCurve[bold];
-    g = b + ((r - b) * (gold - bold) / (rold - bold));
-}
-
 // Integer variant is legacy, only used for thumbs. Simply take the matrix here
 void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, bool useToneCurve) const {
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
@@ -523,7 +462,7 @@ void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustri
     double mXYZCAM[3][3]; 
     const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
 
-    useToneCurve&=lutToneCurve;
+    useToneCurve&=toneCurve;
 
     // Calculate matrix for direct conversion raw>working space
     double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -542,7 +481,7 @@ void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustri
             newb = mat[2][0]*pImg->r[y][x] + mat[2][1]*pImg->g[y][x] + mat[2][2]*pImg->b[y][x];
 
             // tone curve
-            if (useToneCurve) ApplyToneCurve(newr, newg, newb);
+            if (useToneCurve) toneCurve.Apply(newr, newg, newb);
 
             pImg->r[y][x] = CLIP((int)newr); pImg->g[y][x] = CLIP((int)newg); pImg->b[y][x] = CLIP((int)newb);
         }

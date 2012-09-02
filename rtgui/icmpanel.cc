@@ -108,7 +108,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     Gtk::Label* wlab = Gtk::manage (new Gtk::Label ());
     wlab->set_alignment (0.0, 0.5);
     wlab->set_markup (Glib::ustring("<b>") + M("TP_ICM_WORKINGPROFILE") + "</b>");
-    
+
     pack_start (*wlab, Gtk::PACK_SHRINK, 4);
     wnames = Gtk::manage (new MyComboBoxText ());
     pack_start (*wnames, Gtk::PACK_SHRINK, 4);
@@ -127,41 +127,39 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     std::vector<std::string> wpnames = rtengine::getWorkingProfiles ();
     for (size_t i=0; i<wpnames.size(); i++)
         wnames->append_text (wpnames[i]);
-  
- 
-	Gtk::HSeparator* hsep22 = Gtk::manage (new Gtk::HSeparator ());
+
+
+    Gtk::HSeparator* hsep22 = Gtk::manage (new Gtk::HSeparator ());
     pack_start (*hsep22, Gtk::PACK_SHRINK, 2);
-	
+
     Gtk::Label* galab = Gtk::manage (new Gtk::Label ());
     galab->set_alignment (0.0, 0.5);
     galab->set_markup (Glib::ustring("<b>") + M("TP_GAMMA_OUTPUT") + "</b>");
-	
+
     pack_start (*galab, Gtk::PACK_SHRINK, 4);
     wgamma = Gtk::manage (new MyComboBoxText ());
     pack_start (*wgamma, Gtk::PACK_SHRINK, 4);
-		
-	Gtk::HSeparator* hsep23 = Gtk::manage (new Gtk::HSeparator ());
-    pack_start (*hsep23, Gtk::PACK_SHRINK, 2);
-	
-	freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));	
-	freegamma->set_active (false);
-	pack_start( *freegamma);
-	
-	gampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"),1,3.5,0.01,2.22));
-	gampos->setAdjusterListener (this);
-	if (gampos->delay < 1000) gampos->delay = 1000;
-	gampos->show();
-	slpos = Gtk::manage(new Adjuster (M("TP_GAMMA_SLOP"),0,15,0.01,4.5));
-	slpos->setAdjusterListener (this); 
-	if (slpos->delay < 1000) slpos->delay = 1000;
-	slpos->show();
-	pack_start( *gampos, Gtk::PACK_SHRINK, 4);//gamma
-	pack_start( *slpos, Gtk::PACK_SHRINK, 4);//slope
-		
-	gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
 
-		
-		
+    Gtk::HSeparator* hsep23 = Gtk::manage (new Gtk::HSeparator ());
+    pack_start (*hsep23, Gtk::PACK_SHRINK, 2);
+
+    freegamma = Gtk::manage(new Gtk::CheckButton((M("TP_GAMMA_FREE"))));
+    freegamma->set_active (false);
+    pack_start( *freegamma);
+
+    gampos = Gtk::manage(new Adjuster (M("TP_GAMMA_CURV"),1,3.5,0.01,2.22));
+    gampos->setAdjusterListener (this);
+    if (gampos->delay < 1000) gampos->delay = 1000;
+    gampos->show();
+    slpos = Gtk::manage(new Adjuster (M("TP_GAMMA_SLOP"),0,15,0.01,4.5));
+    slpos->setAdjusterListener (this);
+    if (slpos->delay < 1000) slpos->delay = 1000;
+    slpos->show();
+    pack_start( *gampos, Gtk::PACK_SHRINK, 4);//gamma
+    pack_start( *slpos, Gtk::PACK_SHRINK, 4);//slope
+
+
+
     std::vector<std::string> wpgamma = rtengine::getGamma ();
     for (size_t i=0; i<wpgamma.size(); i++)
         wgamma->append_text (wpgamma[i]);
@@ -175,7 +173,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     wnames->set_active (0);
     onames->set_active (0);
-	wgamma->set_active (0);
+    wgamma->set_active (0);
 
     Gtk::FileFilter filter_icc;
     filter_icc.set_name(M("TP_ICM_FILEDLGFILTERICM"));
@@ -200,13 +198,15 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
     wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
     prefprof->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::prefProfChanged) );
-	
+
+    gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
+    tcurveconn = ckbToneCurve->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
+    blendcmsconn = ckbBlendCMSMatrix->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::blendCMSMatrixChanged));
+
     icamera->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     icameraICC->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     iembedded->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
     ifromfile->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::ipChanged) );
-    ckbBlendCMSMatrix->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::iccTogglesChanged) );
-    ckbToneCurve->signal_toggled().connect( sigc::mem_fun(*this, &ICMPanel::toneCurveChanged) );
 
     ipc = ipDialog->signal_selection_changed().connect( sigc::mem_fun(*this, &ICMPanel::ipSelectionChanged) );
     saveRef->signal_pressed().connect( sigc::mem_fun(*this, &ICMPanel::saveReferencePressed) );
@@ -219,6 +219,10 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     disableListener ();
 
     ipc.block (true);
+    gamcsconn.block (true);
+    tcurveconn.block(true);
+    blendcmsconn.block(true);
+
     if (pp->icm.input == "(none)" && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         inone->set_active (true); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
         ckbBlendCMSMatrix->set_sensitive (false);
@@ -232,11 +236,11 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         ckbBlendCMSMatrix->set_sensitive (true);
     }
     else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
-    	// this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
-    	// therefore falling back UI to explicitly reflect the (camera) option
-    	icamera->set_active (true);
+        // this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
+        // therefore falling back UI to explicitly reflect the (camera) option
+        icamera->set_active (true);
         prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);   // RT's own are always single-illuminant and tone curve disabled
-    	ckbBlendCMSMatrix->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive (false);
     }
     else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
@@ -249,9 +253,9 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         ckbBlendCMSMatrix->set_sensitive (true);  prefprof->set_sensitive (true); ckbToneCurve->set_sensitive (true);
     }
 
-    wnames->set_active_text (pp->icm.working);   
-    wgamma->set_active_text (pp->icm.gamma);    
-	
+    wnames->set_active_text (pp->icm.working);
+    wgamma->set_active_text (pp->icm.gamma);
+
     if (pp->icm.output==ColorManagementParams::NoICMString)
         onames->set_active_text (M("TP_ICM_NOICM"));
     else
@@ -263,14 +267,24 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     prefprof->set_active(pp->icm.preferredProfile-1);
 
     ckbToneCurve->set_active (pp->icm.toneCurve);
+    lastToneCurve = pp->icm.toneCurve;
+
     ckbBlendCMSMatrix->set_active (pp->icm.blendCMSMatrix);
-	onames->set_sensitive(wgamma->get_active_row_number()==0 || freegamma->get_active()); //"default"
-	wgamma->set_sensitive(!freegamma->get_active());
-	
+    lastBlendCMSMatrix = pp->icm.blendCMSMatrix;
+
+    onames->set_sensitive(wgamma->get_active_row_number()==0 || freegamma->get_active()); //"default"
+    wgamma->set_sensitive(!freegamma->get_active());
+
+    freegamma->set_active (pp->icm.freegamma);
+    lastgamfree = pp->icm.freegamma;
+
+    gampos->setValue (pp->icm.gampos);
+    slpos->setValue (pp->icm.slpos);
+
     if (pedited) {
         iunchanged->set_active (!pedited->icm.input);
-        ckbToneCurve->set_sensitive (false);
-        ckbBlendCMSMatrix->set_sensitive (false);
+        ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
+        ckbBlendCMSMatrix->set_inconsistent(!pedited->icm.blendCMSMatrix);
         if (!pedited->icm.working)
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.output)
@@ -280,21 +294,15 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
         if (!pedited->icm.gamma){
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
-			}
-	    gampos->setEditedState      (pedited->icm.gampos ? Edited : UnEdited);
-        slpos->setEditedState  	 (pedited->icm.slpos ? Edited : UnEdited);
-		
-    }
-	
-	gamcsconn.block (true);
-    freegamma->set_active (pp->icm.freegamma);
-    gamcsconn.block (false);
+        }
+        gampos->setEditedState (pedited->icm.gampos ? Edited : UnEdited);
+        slpos->setEditedState  (pedited->icm.slpos  ? Edited : UnEdited);
 
-	lastgamfree = pp->icm.freegamma;
-	gampos->setValue (pp->icm.gampos);
-	slpos->setValue (pp->icm.slpos);
-       
-       
+    }
+
+    blendcmsconn.block(false);
+    tcurveconn.block(false);
+    gamcsconn.block (false);
     ipc.block (false);
 
     enableListener ();
@@ -322,17 +330,17 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->icm.working = wnames->get_active_text ();
     pp->icm.gamma = wgamma->get_active_text ();
     pp->icm.preferredProfile = prefprof->get_active_row_number()+1;
-   
+
     if (onames->get_active_text()==M("TP_ICM_NOICM"))
         pp->icm.output  = ColorManagementParams::NoICMString;
     else
         pp->icm.output  = onames->get_active_text();
-		pp->icm.freegamma = freegamma->get_active();
+    pp->icm.freegamma = freegamma->get_active();
     pp->icm.toneCurve = ckbToneCurve->get_active ();
     pp->icm.blendCMSMatrix = ckbBlendCMSMatrix->get_active ();
-	pp->icm.gampos =(double) gampos->getValue();
-	pp->icm.slpos =(double) slpos->getValue();
-	
+    pp->icm.gampos =(double) gampos->getValue();
+    pp->icm.slpos =(double) slpos->getValue();
+
     if (pedited) {
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text()!=M("GENERAL_UNCHANGED");
@@ -341,45 +349,41 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent ();
         pedited->icm.blendCMSMatrix = !ckbBlendCMSMatrix->get_inconsistent ();
         pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
-		pedited->icm.freegamma =!freegamma->get_inconsistent();
-        pedited->icm.gampos          = gampos->getEditedState ();
-        pedited->icm.slpos   		 = slpos->getEditedState ();
-		
+        pedited->icm.freegamma =!freegamma->get_inconsistent();
+        pedited->icm.gampos = gampos->getEditedState ();
+        pedited->icm.slpos = slpos->getEditedState ();
     }
 }
-void ICMPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
-  gampos->setDefault (defParams->icm.gampos);
-  slpos->setDefault (defParams->icm.slpos);
- 
-  if (pedited) {
-          gampos->setDefaultEditedState (pedited->icm.gampos ? Edited : UnEdited);
-          slpos->setDefaultEditedState (pedited->icm.slpos ? Edited : UnEdited);
 
-  }
-  else {
+void ICMPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
+    gampos->setDefault (defParams->icm.gampos);
+    slpos->setDefault (defParams->icm.slpos);
+
+    if (pedited) {
+        gampos->setDefaultEditedState (pedited->icm.gampos ? Edited : UnEdited);
+        slpos->setDefaultEditedState (pedited->icm.slpos ? Edited : UnEdited);
+    }
+    else {
           gampos->setDefaultEditedState (Irrelevant);
           slpos->setDefaultEditedState (Irrelevant);
-
-  }
-  }
-  
- void ICMPanel::setAdjusterBehavior (bool gammaadd, bool slopeadd) {
-	gampos->setAddMode (gammaadd);
-	slpos->setAddMode (slopeadd);
+    }
 }
- 
-  
+
+void ICMPanel::setAdjusterBehavior (bool gammaadd, bool slopeadd) {
+    gampos->setAddMode (gammaadd);
+    slpos->setAddMode (slopeadd);
+}
+
 void ICMPanel::adjusterChanged (Adjuster* a, double newval) {
 
     if (listener && freegamma->get_active()) {
 
         Glib::ustring costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), newval);
 
-        if (a==gampos) 
+        if (a==gampos)
             listener->panelChanged (EvGAMPOS, costr);
-		else if (a==slpos)
+        else if (a==slpos)
             listener->panelChanged (EvSLPOS, costr);
-		
     }
 }
 
@@ -391,10 +395,10 @@ void ICMPanel::wpChanged () {
 
 void ICMPanel::gpChanged () {
 
-    if (listener)
-        {listener->panelChanged (EvGAMMA, wgamma->get_active_text ());
-		onames->set_sensitive(wgamma->get_active_row_number()==0); //"default"
-		 }
+    if (listener) {
+        listener->panelChanged (EvGAMMA, wgamma->get_active_text ());
+        onames->set_sensitive(wgamma->get_active_row_number()==0); //"default"
+    }
 }
 
 void ICMPanel::prefProfChanged() {
@@ -403,8 +407,21 @@ void ICMPanel::prefProfChanged() {
 }
 
 void ICMPanel::toneCurveChanged() {
+    if (batchMode) {
+        if (ckbToneCurve->get_inconsistent()) {
+            ckbToneCurve->set_inconsistent (false);
+            tcurveconn.block (true);
+            ckbToneCurve->set_active (false);
+            tcurveconn.block (false);
+        }
+        else if (lastToneCurve)
+            ckbToneCurve->set_inconsistent (true);
+
+        lastToneCurve = ckbToneCurve->get_active ();
+    }
+
     if (listener)
-        listener->panelChanged (EvDCPToneCurve, "");
+        listener->panelChanged (EvDCPToneCurve, ckbToneCurve->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
 }
 
 void ICMPanel::ipChanged () {
@@ -430,15 +447,28 @@ void ICMPanel::ipChanged () {
         profname = ipDialog->get_filename ();
         ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (true); ckbToneCurve->set_sensitive (true);
     }
-    
+
     if (listener && profname!=oldip)
         listener->panelChanged (EvIProfile, profname);
 
     oldip = profname;
 }
 
-void ICMPanel::iccTogglesChanged() {
-    if (listener) listener->panelChanged (EvIProfile, "");
+void ICMPanel::blendCMSMatrixChanged() {
+    if (batchMode) {
+        if (ckbBlendCMSMatrix->get_inconsistent()) {
+            ckbBlendCMSMatrix->set_inconsistent (false);
+            blendcmsconn.block (true);
+            ckbBlendCMSMatrix->set_active (false);
+            blendcmsconn.block (false);
+        }
+        else if (lastBlendCMSMatrix)
+            ckbBlendCMSMatrix->set_inconsistent (true);
+
+        lastBlendCMSMatrix = ckbBlendCMSMatrix->get_active ();
+    }
+
+    if (listener) listener->panelChanged (EvBlendCMSMatrix, ckbBlendCMSMatrix->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
 }
 
 void ICMPanel::GamChanged() {
@@ -454,18 +484,18 @@ void ICMPanel::GamChanged() {
 
         lastgamfree = freegamma->get_active ();
     }
-    
+
     if (listener) {
         if (freegamma->get_active()){
             listener->panelChanged (EvGAMFREE, M("GENERAL_ENABLED"));
-			onames->set_sensitive(!freegamma->get_active());//disabled choice
-			wgamma->set_sensitive(!freegamma->get_active());
-		}
+            onames->set_sensitive(!freegamma->get_active());//disabled choice
+            wgamma->set_sensitive(!freegamma->get_active());
+        }
         else {
             listener->panelChanged (EvGAMFREE, M("GENERAL_DISABLED"));
-		   	onames->set_sensitive(!freegamma->get_active() && wgamma->get_active_row_number()==0);
-			wgamma->set_sensitive(!freegamma->get_active()); 
-		}
+            onames->set_sensitive(!freegamma->get_active() && wgamma->get_active_row_number()==0);
+            wgamma->set_sensitive(!freegamma->get_active());
+        }
     }
 }
 
@@ -490,10 +520,10 @@ void ICMPanel::setRawMeta (bool raw, const rtengine::ImageData* pMeta) {
 
 void ICMPanel::ipSelectionChanged() {
 
-	if (ipDialog->get_filename() == "")
-		return;
+    if (ipDialog->get_filename() == "")
+        return;
 
-	ipChanged();
+    ipChanged();
 }
 
 void ICMPanel::saveReferencePressed () {
@@ -550,11 +580,10 @@ void ICMPanel::setBatchMode (bool batchMode) {
     removeIfThere (this, saveRef);
     onames->append_text (M("GENERAL_UNCHANGED"));
     wnames->append_text (M("GENERAL_UNCHANGED"));
-	wgamma->append_text (M("GENERAL_UNCHANGED"));
+    wgamma->append_text (M("GENERAL_UNCHANGED"));
     prefprof->append_text (M("GENERAL_UNCHANGED"));
-	gampos->showEditedCB ();
-	slpos->showEditedCB ();
-
+    gampos->showEditedCB ();
+    slpos->showEditedCB ();
 
 }
 

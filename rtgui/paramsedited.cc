@@ -33,6 +33,7 @@ void ParamsEdited::set (bool v) {
 	general.intrash      = v;
 
 	toneCurve.curve      = v;
+    toneCurve.curveMode  = v;
 	toneCurve.brightness = v;
 	toneCurve.black      = v;
 	toneCurve.contrast   = v;
@@ -231,6 +232,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
     for (size_t i=1; i<src.size(); i++) {
         const ProcParams& other = src[i];
         toneCurve.curve = toneCurve.curve && p.toneCurve.curve == other.toneCurve.curve;
+        toneCurve.curveMode = toneCurve.curveMode && p.toneCurve.curveMode == other.toneCurve.curveMode;
         toneCurve.brightness = toneCurve.brightness && p.toneCurve.brightness == other.toneCurve.brightness;
         toneCurve.black = toneCurve.black && p.toneCurve.black == other.toneCurve.black;
         toneCurve.contrast = toneCurve.contrast && p.toneCurve.contrast == other.toneCurve.contrast;
@@ -428,6 +430,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	bool dontforceSet = !forceSet;
 
 	if (toneCurve.curve)		toEdit.toneCurve.curve 	    = mods.toneCurve.curve;
+    if (toneCurve.curveMode)    toEdit.toneCurve.curveMode  = mods.toneCurve.curveMode;
 	if (toneCurve.brightness)	toEdit.toneCurve.brightness = dontforceSet && options.baBehav[ADDSET_TC_BRIGHTNESS] ? toEdit.toneCurve.brightness + mods.toneCurve.brightness : mods.toneCurve.brightness;
 	if (toneCurve.black)		toEdit.toneCurve.black 	    = dontforceSet && options.baBehav[ADDSET_TC_BLACKLEVEL] ? toEdit.toneCurve.black + mods.toneCurve.black : mods.toneCurve.black;
 	if (toneCurve.contrast)		toEdit.toneCurve.contrast 	= dontforceSet && options.baBehav[ADDSET_TC_CONTRAST] ? toEdit.toneCurve.contrast + mods.toneCurve.contrast : mods.toneCurve.contrast;

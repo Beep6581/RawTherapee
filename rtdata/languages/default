@@ -263,14 +263,14 @@ HISTORY_MSG_37;Auto Exposure
 HISTORY_MSG_38;White Balance Method
 HISTORY_MSG_39;Color Temperature
 HISTORY_MSG_40;White Balance Tint
-HISTORY_MSG_41;Color Shift "A"
+HISTORY_MSG_41;Tone Curve Mode
 HISTORY_MSG_42;Color Shift "B"
 HISTORY_MSG_43;Luminance Denoising
 HISTORY_MSG_44;Lum. Denoising Radius
 HISTORY_MSG_45;Lum. Denoising Edge Tolerance
 HISTORY_MSG_46;Color Denoising
-HISTORY_MSG_47;Color Denoising Radius
-HISTORY_MSG_48;Color Denoising Edge Tolerance
+HISTORY_MSG_47;Blend ICC highlights with matrix
+HISTORY_MSG_48;Use DCP's tone curve
 HISTORY_MSG_49;Edge Sensitive Color Denoising
 HISTORY_MSG_50;Shadow/Highlight Tool
 HISTORY_MSG_51;Highlight Boost
@@ -925,6 +925,10 @@ TP_EXPOSURE_CURVEEDITOR;Tone Curve
 TP_EXPOSURE_EXPCOMP;Exposure Compensation
 TP_EXPOSURE_LABEL;Exposure
 TP_EXPOSURE_SATURATION;Saturation
+TP_EXPOSURE_TCMODE_FILMLIKE;Film-like
+TP_EXPOSURE_TCMODE_LABEL;Curve mode
+TP_EXPOSURE_TCMODE_STANDARD;Standard
+TP_EXPOSURE_TCMODE_VALBLENDING;Value channel
 TP_EXPO_AFTER; After interpolation (before RGB conversion)
 TP_FLATFIELD_AUTOSELECT;Auto selection
 TP_FLATFIELD_BLURRADIUS;Blur Radius
@@ -976,7 +980,7 @@ TP_ICM_PREFERREDPROFILE_2;Tungsten
 TP_ICM_PREFERREDPROFILE_3;Fluorescent
 TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Save reference image for profiling
-TP_ICM_TONECURVE;Use DCP tone curve
+TP_ICM_TONECURVE;Use DCP's tone curve
 TP_ICM_TONECURVE_TOOLTIP;Enable to use tone curves that may be contained in DCP profiles.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction

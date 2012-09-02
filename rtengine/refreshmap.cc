@@ -60,13 +60,13 @@ M_VOID,           // EvFixedExp
 WHITEBALANCE,     // EvWBMethod,
 WHITEBALANCE,     // EvWBTemp,
 WHITEBALANCE,     // EvWBGreen,
-0,                // EvCShiftA: obsolete
+RGBCURVE,         // EvToneCurveMode
 0,                // EvCShiftB: obsolete
 0,                // EvLDNEnabled: obsolete,
 0,                // EvLDNRadius: obsolete,
 0,                // EvLDNEdgeTolerance: obsolete,
 0,                // EvCDNEnabled:obsolete,
-0,                // EvCDNRadius: obsolete,
+ALL,              // EvBlendCMSMatrix,
 ALL,              // EvDCPToneCurve,
 ALL,              // EvPrefProfile,
 RETINEX,          // EvSHEnabled,

@@ -187,12 +187,12 @@ void MyDiagonalCurve::draw (int handle) {
     c = style->get_dark (state);
     cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i <= 10; i++) {
         // horizontal lines
-        cr->move_to     (double(graphX)+0.5                                 , double(graphY) - max(0.5, double(graphH*i/4) - 0.5));
+        cr->move_to     (double(graphX)+0.5                                 , double(graphY) - max(0.5, double(graphH*i/10) - 0.5));
         cr->rel_line_to (double(graphW-1)                                   , 0.);
         // vertical lines
-        cr->move_to     (double(graphX) + max(0.5, double(graphW*i/4) - 0.5), double(graphY));
+        cr->move_to     (double(graphX) + max(0.5, double(graphW*i/10) - 0.5), double(graphY));
         cr->rel_line_to (0.                                                 , double(-graphH+1));
     }
     cr->stroke ();

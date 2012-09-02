@@ -214,7 +214,7 @@ void DiagonalCurve::NURBS_set () {
    	poly_y.push_back(y[N-1]);
 }
 
-double DiagonalCurve::getVal (double t) {
+double DiagonalCurve::getVal (double t) const {
 
     switch (kind) {
 
@@ -316,7 +316,7 @@ double DiagonalCurve::getVal (double t) {
     }
 }
 
-void DiagonalCurve::getVal (const std::vector<double>& t, std::vector<double>& res) {
+void DiagonalCurve::getVal (const std::vector<double>& t, std::vector<double>& res) const {
 
     res.resize (t.size());
     for (unsigned int i=0; i<t.size(); i++)

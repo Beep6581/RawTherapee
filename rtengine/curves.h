@@ -22,10 +22,11 @@
 #include <glibmm.h>
 #include <map>
 #include <string>
-#include <cmath>
+#include "rt_math.h"
 #include "../rtgui/mycurve.h"
 #include "../rtgui/myflatcurve.h"
 #include "../rtgui/mydiagonalcurve.h"
+#include "color.h"
 
 #include "LUT.h"
 
@@ -38,6 +39,7 @@
 using namespace std;
 
 namespace rtengine {
+    class NonStandardToneCurve;
 
 class CurveFactory {
 
@@ -176,8 +178,8 @@ class CurveFactory {
 
   public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-							  double gamma_, bool igamma_, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
-							  LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip=1);
+							  double gamma_, bool igamma_, int curveMode, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+							  LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, NonStandardToneCurve & outNSToneCurve, int skip=1);
 	static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili,  double saturation, double rstprotection, const std::vector<double>& acurvePoints,
 								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& cclurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, int skip=1);
 	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
@@ -221,11 +223,12 @@ class Curve {
 
   public:
     Curve ();
+    virtual ~Curve () {};
     void AddPolygons ();
-    virtual double getVal (double t) = 0;
-    virtual void   getVal (const std::vector<double>& t, std::vector<double>& res) = 0;
+    virtual double getVal (double t) const = 0;
+    virtual void   getVal (const std::vector<double>& t, std::vector<double>& res) const = 0;
 
-    virtual bool   isIdentity () = 0;
+    virtual bool   isIdentity () const = 0;
 };
 
 class DiagonalCurve : public Curve {
@@ -244,9 +247,9 @@ class DiagonalCurve : public Curve {
     DiagonalCurve (const std::vector<double>& points, int ppn=CURVES_MIN_POLY_POINTS);
     virtual ~DiagonalCurve ();
 
-    double getVal     (double t);
-    void   getVal     (const std::vector<double>& t, std::vector<double>& res);
-    bool   isIdentity () { return kind==DCT_Empty; };
+    double getVal     (double t) const;
+    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const;
+    bool   isIdentity () const { return kind==DCT_Empty; };
 };
 
 class FlatCurve : public Curve {
@@ -264,10 +267,100 @@ class FlatCurve : public Curve {
     FlatCurve (const std::vector<double>& points, bool isPeriodic = true, int ppn=CURVES_MIN_POLY_POINTS);
     virtual ~FlatCurve ();
 
-    double getVal     (double t);
-    void   getVal     (const std::vector<double>& t, std::vector<double>& res);
-    bool   isIdentity () { return kind==FCT_Empty; };
+    double getVal     (double t) const;
+    void   getVal     (const std::vector<double>& t, std::vector<double>& res) const;
+    bool   isIdentity () const { return kind==FCT_Empty; };
 };
+
+class NonStandardToneCurve {
+  public:
+    LUTf lutToneCurve;  // 0xffff range
+
+    virtual ~NonStandardToneCurve() {};
+
+    void Reset();
+    void Set(Curve *pCurve);
+    operator bool (void) const { return lutToneCurve; }
+};
+
+class AdobeToneCurve : public NonStandardToneCurve {
+  private:
+    void RGBTone(float& r, float& g, float& b) const;  // helper for tone curve
+
+  public:
+    void Apply(float& r, float& g, float& b) const;
+};
+
+class ValueBlendingToneCurve : public NonStandardToneCurve {
+  private:
+    float Triangle(float refX, float refY, float X2) const;
+  public:
+    void Apply(float& r, float& g, float& b) const;
+};
+
+
+// Tone curve according to Adobe's reference implementation
+// values in 0xffff space
+// inlined to make sure there will be no cache flush when used
+inline void AdobeToneCurve::Apply (float& r, float& g, float& b) const {
+
+#ifdef _DEBUG
+    assert (lutToneCurve);
+#endif
+    if (r >= g) {
+        if      (g > b) RGBTone (r, g, b); // Case 1: r >= g >  b
+        else if (b > r) RGBTone (b, r, g); // Case 2: b >  r >= g
+        else if (b > g) RGBTone (r, b, g); // Case 3: r >= b >  g
+        else {                             // Case 4: r >= g == b
+            r = lutToneCurve[r];
+            g = lutToneCurve[g];
+            b = g;
+        }
+    }
+    else {
+        if      (r >= b) RGBTone (g, r, b); // Case 5: g >  r >= b
+        else if (b >  g) RGBTone (b, g, r); // Case 6: b >  g >  r
+        else             RGBTone (g, b, r); // Case 7: g >= b >  r
+    }
+}
+
+inline void AdobeToneCurve::RGBTone (float& r, float& g, float& b) const {
+    float rold=r,gold=g,bold=b;
+
+    r = lutToneCurve[rold];
+    b = lutToneCurve[bold];
+    g = b + ((r - b) * (gold - bold) / (rold - bold));
+}
+
+
+inline float ValueBlendingToneCurve::Triangle(float a, float a1, float b) const {
+	if (a != b) {
+		float b1;
+		float a2 = a1 - a;
+		if (b < a) { b1 = b + a2 *      b  /     a ; }
+		else       { b1 = b + a2 * (1.f-b) / (1.-a); }
+		return b1;
+	}
+	return a1;
+}
+
+// Tone curve modifying the value channel only, preserving hue and saturation
+// values in 0xffff space
+inline void ValueBlendingToneCurve::Apply (float& r, float& g, float& b) const {
+
+    assert (lutToneCurve);
+
+    float h, s, v, h2, s2, v2;
+    Color::rgb2hsv(r, g, b, h, s, v);
+
+    r = lutToneCurve[r];
+    g = lutToneCurve[g];
+    b = lutToneCurve[b];
+    Color::rgb2hsv(r, g, b, h2, s2, v2);
+
+    Color::hsv2rgb(h, s, v2, r, g, b);
+}
+
 }
 
 #undef CLIPI

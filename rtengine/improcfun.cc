@@ -22,7 +22,6 @@
 
 #include "rtengine.h"
 #include "improcfun.h"
-#include "curves.h"
 #include "colorclip.h"
 #include "gauss.h"
 #include "bilateral2.h"
@@ -187,13 +186,13 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 }
 
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve) {
-    rgbProc (working, lab, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const NonStandardToneCurve & nonStandardCurve ) {
+    rgbProc (working, lab, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, nonStandardCurve, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
+                               SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const NonStandardToneCurve & nonStandardCurve,
                                double expcomp, int hlcompr, int hlcomprthresh) {
 
     int h_th, s_th;
@@ -258,73 +257,111 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	const float shoulder = ((65536.0/max(1.0f,exp_scale))*(hlcomprthresh/200.0))+0.1;
 	const float hlrange = 65536.0-shoulder;
 	
-	
+    // extracting datas from 'params' to avoid cache flush (to be confirmed)
+    ToneCurveParams::eTCModeId curveMode = params->toneCurve.curveMode;
+    bool hasNonStandardToneCurve = bool(nonStandardCurve);
+
+    float chMixRR = float(params->chmixer.red[0]);
+    float chMixRG = float(params->chmixer.red[1]);
+    float chMixRB = float(params->chmixer.red[2]);
+    float chMixGR = float(params->chmixer.green[0]);
+    float chMixGG = float(params->chmixer.green[1]);
+    float chMixGB = float(params->chmixer.green[2]);
+    float chMixBR = float(params->chmixer.blue[0]);
+    float chMixBG = float(params->chmixer.blue[1]);
+    float chMixBB = float(params->chmixer.blue[2]);
+
+    int shHighlights = params->sh.highlights;
+    int shShadows = params->sh.shadows;
+
 #pragma omp parallel for if (multiThread)
-    for (int i=0; i<tH; i++) {
+	for (int i=0; i<tH; i++) {
 
-        for (int j=0; j<tW; j++) {
+		for (int j=0; j<tW; j++) {
 
-            float r = working->r[i][j];
-            float g = working->g[i][j];
-            float b = working->b[i][j];
+			float r = working->r[i][j];
+			float g = working->g[i][j];
+			float b = working->b[i][j];
 			
 			//if (i==100 & j==100) printf("rgbProc input R= %f  G= %f  B= %f  \n",r,g,b);
 
-            if (mixchannels) {
-                float rmix = (r*params->chmixer.red[0]   + g*params->chmixer.red[1]   + b*params->chmixer.red[2]) / 100;
-                float gmix = (r*params->chmixer.green[0] + g*params->chmixer.green[1] + b*params->chmixer.green[2]) / 100;
-                float bmix = (r*params->chmixer.blue[0]  + g*params->chmixer.blue[1]  + b*params->chmixer.blue[2]) / 100;
+			if (mixchannels) {
+				float rmix = (r*chMixRR + g*chMixRG + b*chMixRB) / 100.f;
+				float gmix = (r*chMixGR + g*chMixGG + b*chMixGB) / 100.f;
+				float bmix = (r*chMixBR + g*chMixBG + b*chMixBB) / 100.f;
 				
 				r = rmix;
 				g = gmix;
 				b = bmix;
-            }
+			}
 
-            if (processSH || processLCE) {
-                double mapval = 1.0 + shmap->map[i][j];
-                double factor = 1.0;
-                
-                if (processSH) {
-                    if (mapval > h_th) 
-                        factor = (h_th + (100.0 - params->sh.highlights) * (mapval - h_th) / 100.0) / mapval; 
-                    else if (mapval < s_th) 
-                        factor = (s_th - (100.0 - params->sh.shadows) * (s_th - mapval) / 100.0) / mapval; 
-                }
-                if (processLCE) {
-                    double sub = lceamount*(mapval-factor*(r*lumimul[0] + g*lumimul[1] + b*lumimul[2]));
-                    r = factor*r-sub;
-                    g = factor*g-sub;
-                    b = factor*b-sub;
-                }
-                else {
-                    r = factor*r;
-                    g = factor*g;
-                    b = factor*b;
-                }
-            }
+			if (processSH || processLCE) {
+				double mapval = 1.0 + shmap->map[i][j];
+				double factor = 1.0;
+
+				if (processSH) {
+					if (mapval > h_th)
+						factor = (h_th + (100.0 - shHighlights) * (mapval - h_th) / 100.0) / mapval;
+					else if (mapval < s_th)
+						factor = (s_th - (100.0 - shShadows) * (s_th - mapval) / 100.0) / mapval;
+				}
+				if (processLCE) {
+					double sub = lceamount*(mapval-factor*(r*lumimul[0] + g*lumimul[1] + b*lumimul[2]));
+					r = factor*r-sub;
+					g = factor*g-sub;
+					b = factor*b-sub;
+				}
+				else {
+					r = factor*r;
+					g = factor*g;
+					b = factor*b;
+				}
+			}
 
 			//TODO: proper treatment of out-of-gamut colors
 			//float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
 			float tonefactor=((r<MAXVAL ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
-							  (g<MAXVAL ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
-							  (b<MAXVAL ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
-			
+			                  (g<MAXVAL ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
+			                  (b<MAXVAL ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
+
 			r = (r*tonefactor);
 			g = (g*tonefactor);
 			b = (b*tonefactor);
-			
+
 			//shadow tone curve
-			float Y = (0.299*r + 0.587*g + 0.114*b);
+			float Y = (0.299f*r + 0.587f*g + 0.114f*b);
 			tonefactor = shtonecurve[Y];
 			r *= tonefactor;
 			g *= tonefactor;
 			b *= tonefactor;
-			
-			//brightness/contrast and user tone curve
-			r = rCurve[tonecurve[r]];
-			g = gCurve[tonecurve[g]];
-			b = bCurve[tonecurve[b]];
-			
+
+			//brightness/contrast, + user tone curve if curveMode==TC_MODE_STD
+			r = tonecurve[r];
+			g = tonecurve[g];
+			b = tonecurve[b];
+
+			if (hasNonStandardToneCurve) {
+				/*if (curveMode==ToneCurveParams::TC_MODE_STD){
+
+					// Nothing to do, since the user's tone curve has been integrated into the global 'tonecurve'
+				}*/
+				if (curveMode==ToneCurveParams::TC_MODE_FILMLIKE){ // Adobe like
+					const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&>(nonStandardCurve);
+					userToneCurve.Apply(r,g,b);
+				}
+				else if (curveMode==ToneCurveParams::TC_MODE_VALBLENDING){ // apply the curve on the value channel
+
+					const ValueBlendingToneCurve& userToneCurve = static_cast<const ValueBlendingToneCurve&>(nonStandardCurve);
+					userToneCurve.Apply(r,g,b);
+				}
+			}
+
+			// individual R, G and B tone curves
+			r = rCurve[r];
+			g = gCurve[g];
+			b = bCurve[b];
+
+
 			//if (r<0 || g<0 || b<0) {
 			//	printf("negative values row=%d col=%d  r=%f  g=%f  b=%f  \n", i,j,r,g,b);
 			//}
@@ -332,79 +369,79 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 				float h,s,v;
 				Color::rgb2hsv(r,g,b,h,s,v);
-				if (sat > 0.5) {
-					s = (1-(float)sat/100)*s+(float)sat/100*(1-SQR(SQR(1-min(s,1.0f))));
-					if (s<0) s=0;
+				if (sat > 0.5f) {
+					s = (1.f-float(sat)/100.f)*s+float(sat)/100.f*(1.f-SQR(SQR(1.f-min(s,1.0f))));
+					if (s<0) s=0.f;
 				} else {
 					if (sat < -0.5)
-						s *= 1+(float)sat/100;	
+						s *= 1.f+float(sat)/100.f;
 				}
 				//HSV equalizer
 				if (hCurveEnabled) {
-					h = (hCurve->getVal((double)h) - 0.5) * 2 + h;
-					if (h > 1.0)
-						h -= 1.0;
-					else if (h < 0.0)
-						h += 1.0;
+					h = (hCurve->getVal(double(h)) - 0.5) * 2.f + h;
+					if (h > 1.0f)
+						h -= 1.0f;
+					else if (h < 0.0f)
+						h += 1.0f;
 				}
 				if (sCurveEnabled) {
 					//shift saturation
-					float satparam = (sCurve->getVal((double)h)-0.5) * 2;
-					if (satparam > 0.00001) {
-						s = (1-satparam)*s+satparam*(1-SQR(1-min(s,1.0f)));
-						if (s<0) s=0;
+					float satparam = (sCurve->getVal(double(h))-0.5) * 2;
+					if (satparam > 0.00001f) {
+						s = (1.f-satparam)*s+satparam*(1.f-SQR(1.f-min(s,1.0f)));
+						if (s<0.f) s=0.f;
 					} else {
-						if (satparam < -0.00001)
-							s *= 1+satparam;
+						if (satparam < -0.00001f)
+							s *= 1.f+satparam;
 					}
 
 				}
 				if (vCurveEnabled) {
-                    if (v<0) v=0;  // important
+					if (v<0) v=0;  // important
 
 					//shift value
-					float valparam = vCurve->getVal((double)h)-0.5;
-					valparam *= (1-SQR(SQR(1-min(s,1.0f))));
-					if (valparam > 0.00001) {
-						v = (1-valparam)*v+valparam*(1-SQR(1-min(v,1.0f)));
+					float valparam = vCurve->getVal((double)h)-0.5f;
+					valparam *= (1.f-SQR(SQR(1.f-min(s,1.0f))));
+					if (valparam > 0.00001f) {
+						v = (1.f-valparam)*v+valparam*(1.f-SQR(1.f-min(v,1.0f)));
 						if (v<0) v=0;
 					} else {
-						if (valparam < -0.00001)
-							v *= (1+valparam);
+						if (valparam < -0.00001f)
+							v *= (1.f+valparam);
 					}
 					
 				}
 				Color::hsv2rgb(h,s,v,r,g,b);
 			}
 			 
-            float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
-            float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
-            float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+			float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+			float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+			float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
 			
 			float fx,fy,fz;
 			
 			//if (x>0) {
-				fx = (x<65535.0 ? cachef[x] : (327.68*exp(log(x/MAXVAL)/3.0 )));
+				fx = (x<65535.0f ? cachef[x] : (327.68f*exp(log(x/MAXVAL)/3.0f )));
 			//} else {
 			//	fx = (x>-65535.0 ? -cachef[-x] : (-327.68*exp(log(-x/MAXVAL)/3.0 )));
 			//}
 			//if (y>0) {
-				fy = (y<65535.0 ? cachef[y] : (327.68*exp(log(y/MAXVAL)/3.0 )));
+				fy = (y<65535.0f ? cachef[y] : (327.68f*exp(log(y/MAXVAL)/3.0f )));
 			//} else {
 			//	fy = (y>-65535.0 ? -cachef[-y] : (-327.68*exp(log(-y/MAXVAL)/3.0 )));
 			//}
 			//if (z>0) {
-				fz = (z<65535.0 ? cachef[z] : (327.68*exp(log(z/MAXVAL)/3.0 )));
+				fz = (z<65535.0f ? cachef[z] : (327.68f*exp(log(z/MAXVAL)/3.0f )));
 			//} else {
 			//	fz = (z>-65535.0 ? -cachef[-z] : (-327.68*exp(log(-z/MAXVAL)/3.0 )));
 			//}
 
-			lab->L[i][j] = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
-            lab->a[i][j] = (500.0 * (fx - fy) );
-            lab->b[i][j] = (200.0 * (fy - fz) );
-			
+			lab->L[i][j] = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
+			lab->a[i][j] = (500.0f * (fx - fy) );
+			lab->b[i][j] = (200.0f * (fy - fz) );
 
-			
+
+
 			//test for color accuracy
 			/*float fy = (0.00862069 * lab->L[i][j])/327.68 + 0.137932; // (L+16)/116
 			float fx = (0.002 * lab->a[i][j])/327.68 + fy;
@@ -419,8 +456,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			r=(float)R; g=(float)G; b=(float)B;
 			float xxx=1;*/
 
-        }
-    }
+		}
+	}
 	
 	if (hCurveEnabled) delete hCurve;
 	if (sCurveEnabled) delete sCurve;

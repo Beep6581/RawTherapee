@@ -21,6 +21,7 @@
 #define _DCP_
 
 #include "imagefloat.h"
+#include "curves.h"
 #include <glibmm.h>
 #include <map>
 #include <string>
@@ -47,9 +48,7 @@ namespace rtengine {
 
         int iHueStep, iValStep, iArrayCount;
 
-        LUTf lutToneCurve;  // 0..0xffff values to 0..1
-        void ApplyToneCurve(float& r, float& g, float& b) const;
-        void RGBTone(float& r, float& g, float& b) const;  // helper for tone curve
+        AdobeToneCurve toneCurve;
 
         void ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]);
 

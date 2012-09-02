@@ -151,6 +151,75 @@ namespace rtengine {
 
     }
 
+    void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l) {
+
+        double var_R = double(r) / 65535.0;
+        double var_G = double(g) / 65535.0;
+        double var_B = double(b) / 65535.0;
+
+        double m = min(var_R,var_G,var_B);
+        double M = max(var_R,var_G,var_B);
+        double C = M - m;
+
+        double l_ = (M+m)/2.;
+        l = float(l_);
+
+        if (C<0.00001 && C>-0.00001) {  // no fabs, slow!
+            h = 0.f;
+            s = 0.f;
+        }
+        else {
+            double h_;
+            if (l_ <= 0.5)
+                s = float( (M-m) / (M+m) );
+            else
+                s = float( (M-m) / (2.0-M-m) );
+
+            if      ( var_R == M ) h_ =      (var_G - var_B)/C;
+            else if ( var_G == M ) h_ = 2. + (var_B - var_R)/C;
+            else                   h_ = 4. + (var_R - var_G)/C;
+            h = float(h_ /= 6.0);
+
+            if ( h < 0.f )  h += 1.f;
+            if ( h > 1.f )  h -= 1.f;
+        }
+    }
+
+    double Color::hue2rgb(double p, double q, double t){
+        if (t < 0.) t += 6.;
+        else if( t > 6.) t -= 6.;
+
+        if      (t < 1.) return p + (q - p) * t;
+        else if (t < 3.) return q;
+        else if (t < 4.) return p + (q - p) * (4. - t);
+        else             return p;
+    }
+
+    void Color::hsl2rgb (float h, float s, float l, float &r, float &g, float &b) {
+
+        if (s == 0)
+            r = g = b = 65535.0f * l; //  achromatic
+        else {
+            double m2;
+        	double h_ = double(h);
+            double s_ = double(s);
+        	double l_ = double(l);
+
+            if (l <= 0.5f)
+                m2 = l_ * (1.0 + s_);
+            else {
+                m2 = l_ + s_ - l_ * s_;
+            }
+
+            double m1 = 2.0 * l_ - m2;
+
+            r = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0 + 2.0));
+            g = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0));
+            b = float(65535.0 * hue2rgb (m1, m2, h_ * 6.0 - 2.0));
+        }
+    }
+
+
     void Color::rgb2hsv(float r, float g, float b, float &h, float &s, float &v) {
         double var_R = r / 65535.0;
         double var_G = g / 65535.0;

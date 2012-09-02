@@ -263,14 +263,14 @@ HISTORY_MSG_37;Exposition auto
 HISTORY_MSG_38;Méthode de balance des blancs
 HISTORY_MSG_39;Température de couleur
 HISTORY_MSG_40;Teinte de balance des blancs
-HISTORY_MSG_41;Décalage couleur "A"
+HISTORY_MSG_41;Mode courbe tonale
 HISTORY_MSG_42;Décalage couleur "B"
 HISTORY_MSG_43;Débruitage de la Luminance
 HISTORY_MSG_44;Débruitage Lum. - Rayon
 HISTORY_MSG_45;Débruitage Lum. - Tolérance des bords
 HISTORY_MSG_46;Débruitage Chromatique
-HISTORY_MSG_47;Débruitage Chrom. - Rayon
-HISTORY_MSG_48;Débruitage Chrom. - Tolérance des bords
+HISTORY_MSG_47;Mélange HL du profil ICC et la matrice
+HISTORY_MSG_48;Courbe tonale du profil DCP
 HISTORY_MSG_49;Débruitage Chrom. - Sensible aux bords
 HISTORY_MSG_50;Outil Ombres/Hautes lumières
 HISTORY_MSG_51;Accentuation des hautes lumières
@@ -932,6 +932,10 @@ TP_EXPOSURE_CURVEEDITOR;Courbe tonale
 TP_EXPOSURE_EXPCOMP;Compensation d'exposition
 TP_EXPOSURE_LABEL;Exposition
 TP_EXPOSURE_SATURATION;Saturation
+TP_EXPOSURE_TCMODE_FILMLIKE;Similaire Film
+TP_EXPOSURE_TCMODE_LABEL;Mode
+TP_EXPOSURE_TCMODE_STANDARD;Standard
+TP_EXPOSURE_TCMODE_VALBLENDING;Canal Valeur
 TP_EXPO_AFTER; Après l'interpolation (avant la conversion RVB)
 TP_FLATFIELD_AUTOSELECT;Sélection automatique
 TP_FLATFIELD_BLURRADIUS;Rayon de floutage
@@ -957,7 +961,7 @@ TP_HSVEQUALIZER_LABEL;Égaliseur TSV
 TP_HSVEQUALIZER_NEUTRAL;Neutre
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
-TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndans l'espace de la matrice
+TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndu profil ICC avec la matrice
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil
@@ -984,6 +988,7 @@ TP_ICM_PREFERREDPROFILE_2;Tungstène
 TP_ICM_PREFERREDPROFILE_3;Fluorescent
 TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
+TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
