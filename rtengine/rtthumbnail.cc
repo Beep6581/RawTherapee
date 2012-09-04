@@ -678,6 +678,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         }
     }
 */
+
+    // if luma denoise has to be done for thumbnails, it should be right here
+
     // perform color space transformation
     if (isRaw)
         RawImageSource::colorSpaceConversion16 (resImg, params.icm, embProfile, camProfile, cam2xyz, camName );
@@ -981,7 +984,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
         unsigned long cutoff = thumbImg->height * thumbImg->height * 4 * BurnOffPct;
 
         int max_;
-	unsigned long sum=0;
+        unsigned long sum=0;
         for (max_=65535; max_>16384 && sum<cutoff; max_--) sum+=hist16[max_];
 
         delete[] hist16;
@@ -992,8 +995,8 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
         for (int i=0; i<thumbImg->height; i++)
             for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
                 int r= gammatab[min(thumbImg->r[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-		int g= gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-		int b= gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                int g= gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                int b= gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                 tmpdata[ix++] = (r*19595+g*38469+b*7472) >> 16;
             }
     }
@@ -1087,8 +1090,8 @@ bool Thumbnail::writeImage (const Glib::ustring& fname, int format) {
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=0; j<thumbImg->width; j++) {
                     tmpdata[ix++] = gammatab[min(thumbImg->r[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-		    tmpdata[ix++] = gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-		    tmpdata[ix++] = gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[min(thumbImg->g[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    tmpdata[ix++] = gammatab[min(thumbImg->b[i][j],static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                 }
         }
         else {
