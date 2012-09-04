@@ -22,6 +22,7 @@
 
 #include "rtengine.h"
 #include "improcfun.h"
+#include "curves.h"
 #include "colorclip.h"
 #include "gauss.h"
 #include "bilateral2.h"
@@ -34,6 +35,8 @@
 #include "iccmatrices.h"
 #include "color.h"
 #include "calc_distort.h"
+#include "cplx_wavelet_dec.h"
+#include "boxblur.h"
 #include "rt_math.h"
 
 #ifdef _OPENMP
@@ -909,12 +912,6 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
 	}
 	
-	void ImProcFunctions::dirpyrdenoise (LabImage* lab) {
-		
-		if (params->dirpyrDenoise.enabled && lab->W>=8 && lab->H>=8)
-			
-			dirpyrLab_denoise(lab, lab, params->dirpyrDenoise );
-	}
 	
 	void ImProcFunctions::dirpyrequalizer (LabImage* lab) {
 		
