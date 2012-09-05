@@ -172,7 +172,10 @@ void Crop::update (int todo) {
 	    bool butili=false;
 		bool ccutili=false;
 		bool cclutili=false;
-		parent->ipf.chromiLuminanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve,parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili);
+		CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve,parent->lhskcurve, 1);
+		
+		parent->ipf.chromiLuminanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili);
 		//parent->ipf.colorCurve (labnCrop, labnCrop);
 		parent->ipf.vibrance (labnCrop);
 

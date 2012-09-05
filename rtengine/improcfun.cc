@@ -496,7 +496,6 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 			chutili=true;
 		}//do not use "Munsell" if Chcurve not used
 	}
-
 #ifdef _DEBUG
 	MyTime t1e,t2e, t3e, t4e;
 	t1e.set();
@@ -539,13 +538,13 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 	int chromaticity = params->labCurve.chromaticity;
 	bool bwToning = params->labCurve.bwtoning;
 	bool LCredsk = params->labCurve.lcredsk;
+	bool ccut = ccutili;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
 	// avoid color shift is disabled when bwToning is activated
 	bool avoidColorShift = params->labCurve.avoidcolorshift && !bwToning;
 	int protectRed = settings->protectred;
 	double protectRedH = settings->protectredh;
 	bool gamutLch = settings->gamutLch;
-
 	// only if user activate Lab adjustements
 	if (avoidColorShift) {
 		if(autili || butili || ccutili ||  cclutili || chutili || utili || chromaticity)
@@ -554,9 +553,9 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 
 
 #ifdef _DEBUG
-#pragma omp parallel default(shared) firstprivate(highlight, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(highlight, ccut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo) if (multiThread)
 #else
-#pragma omp parallel default(shared) firstprivate(highlight, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(highlight, ccut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew) if (multiThread)
 #endif
 {
 
@@ -571,14 +570,12 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
-	//if(utili) curve.dump("Lcurve");
 
 	double wp[3][3] = {
 		{wprof[0][0],wprof[0][1],wprof[0][2]},
 		{wprof[1][0],wprof[1][1],wprof[1][2]},
 		{wprof[2][0],wprof[2][1],wprof[2][2]}};
 
-	//float maxlp=-100.0, minlp=200.0;
 
 #pragma omp for schedule(dynamic, 10)
 	for (int i=0; i<H; i++)
@@ -596,10 +593,6 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 			float chromaChfactor=1.0f;
 			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
 			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
-			//float chromaCredfactor=1.0f;
-			//float chromaCbgfactor=1.0f;
-//			chromaCfactor=(satcurve[chroma*adjustr])/(chroma*adjustr);//apply C=f(C)
-//			chromaCbgfactor=(satbgcurve[chroma*adjustbg])/(chroma*adjustbg);
 //			calculate C=f(H)
 			if (chutili) {
 				double hr;
@@ -629,7 +622,8 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 				else if(Lprov1<75.0f)   dred = -3.0f*Lprov1 +265.0f;
 				else                    dred = 40.0f;
 				// end pyramid
-			if(chromaticity!=0 && !bwToning){
+		if(chromaticity!=0 && !bwToning){
+			
 				float factorskin, factorsat, factor, factorskinext, interm;					
 				float scale = 100.0f/100.1f;//reduction in normal zone
 				float scaleext=1.0f;//reduction in transition zone
@@ -663,10 +657,10 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
  			}
 
 			// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
-			if (!bwToning) {
+			if (!bwToning && ccut) {	
 				float factorskin,factorsat,factor,factorskinext,interm;		
 				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
-				float chromaCfactor = (satcurve[chroma*adjustr])/(chroma*adjustr);//apply C=f(C)
+				float chromaCfactor=(satcurve[chroma*adjustr])/(chroma*adjustr);//apply C=f(C)
 				float curf=0.7f;//empirical coeff because curve is more progressive
 				float scale = 100.0f/100.1f;//reduction in normal zone for curve CC
 				float scaleext=1.0f;//reduction in transition zone for curve CC
@@ -681,9 +675,8 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 
 				deltaHH=protect_redhcur;//transition hue
 				if(chromaCfactor>0.0) Color::scalered ( rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);//1.0
-				
 				if(chromaCfactor>1.0) {
-					interm=(chromaCfactor-1.0f)*100.0f;   //else interm=(1.0f-chromaCfactor)*100.0f;
+					interm=(chromaCfactor-1.0f)*100.0f;   
 					factorskin= 1.0f+(interm*scale)/100.0f;    
 					factorskinext=1.0f+(interm*scaleext)/100.0f;
 					}
@@ -695,7 +688,7 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 				factorsat=chromaCfactor;
 				factor=factorsat;
 				Color::transitred ( HH, Chprov1, dred, factorskin, protect_redcur, factorskinext, deltaHH, factorsat, factor);			
-				atmp *=factor;
+				atmp *= factor;
 				btmp *= factor;
 			}
 			// end chroma C=f(C)
@@ -729,6 +722,7 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 				Lc=(Lc-1.0f)*zz+1.0f;//reduct action
 				Lprov1*=Lc;//adjust luminance
 				}
+				
 			Chprov1 = sqrt(SQR(atmp/327.68f)+SQR(btmp/327.68f));
 							
 			// labCurve.bwtoning option allows to decouple modulation of a & b curves by saturation
@@ -752,7 +746,6 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 					//gamut control : Lab values are in gamut
 					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.4f, 0.95f);
 #endif
-					Lprov2 = Lprov1;
 
 					lnew->L[i][j]=Lprov1*327.68f;
 					lnew->a[i][j]=327.68f*Chprov1*cos(HH);
@@ -767,7 +760,7 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 					Color::Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
 				}
 
-				if (utili || autili || butili || ccutili ||  cclutili || chutili || chromaticity) {
+				if (utili || autili || butili || ccut ||  cclutili || chutili || chromaticity) {
 					float correctionHue=0.0f; // Munsell's correction
 					float correctlum=0.0f;
 
@@ -781,7 +774,12 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 #endif
 
 					if(fabs(correctionHue) < 0.015f) HH+=correctlum;	// correct only if correct Munsell chroma very little.
-
+			/*		if((HH>0.0f && HH < 1.6f)	&& memChprov < 70.0f) HH+=correctlum;//skin correct
+					else if(fabs(correctionHue) < 0.3f) HH+=0.08f*correctlum;					
+					else if(fabs(correctionHue) < 0.2f) HH+=0.25f*correctlum;
+					else if(fabs(correctionHue) < 0.1f) HH+=0.35f*correctlum;
+					else if(fabs(correctionHue) < 0.015f) HH+=correctlum;	// correct only if correct Munsell chroma very little.
+			*/
 					lnew->a[i][j]=327.68f*Chprov*cos(HH+correctionHue);// apply Munsell
 					lnew->b[i][j]=327.68f*Chprov*sin(HH+correctionHue);
 				}
