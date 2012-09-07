@@ -86,7 +86,7 @@ Temperature=5745
 Green=1.0
 
 [Impulse Denoising]
-Enabled=true
+Enabled=false
 Threshold=80
 
 [Defringing]
@@ -96,9 +96,10 @@ Threshold=25
 
 [Directional Pyramid Denoising]
 Enabled=true
-Luma=0
-Chroma=15
-Gamma=1.2
+Luma=50
+Ldetail=80
+Chroma=50
+Gamma=1.7
 
 [EPD]
 Enabled=false

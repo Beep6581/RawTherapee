@@ -58,7 +58,7 @@ DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
         ss = Glib::ustring::format(i);
         if(i == 0) {
             ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
-            multiplier[i] = Gtk::manage ( new Adjuster (ss, 0, 4, 0.01, 3.0) );
+            multiplier[i] = Gtk::manage ( new Adjuster (ss, 0, 4, 0.01, 1.0) );
         } else {
 	    if(i == 3)
                 ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));    

@@ -194,8 +194,9 @@ enum ProcEvent {
 	EvVibranceSkinTonesCurve=169,
 	EvLLCCurve=170,
 	EvLLCredsk=171,
+	EvDPDNLdetail=172,
 	
-	NUMOFEVENTS=172
+	NUMOFEVENTS=173
 };
 }    
 #endif    

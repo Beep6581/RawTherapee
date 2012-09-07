@@ -96,9 +96,10 @@ Threshold=25
 
 [Directional Pyramid Denoising]
 Enabled=false
-Luma=5
-Chroma=5
-Gamma=2
+Luma=0
+Ldetail=80
+Chroma=15
+Gamma=1.7
 
 [EPD]
 Enabled=false
