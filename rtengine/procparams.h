@@ -405,9 +405,11 @@ class WBParams {
 		
     public:
         bool    enabled;
-        int		luma;
-        int     chroma;
-		float	gamma;
+        double	luma;
+        double	Ldetail;
+        double  chroma;
+		double	gamma;
+		double	expcomp;
 	};
 
 //EPD related parameters.
