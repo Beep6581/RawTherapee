@@ -107,6 +107,7 @@ class ImageSource : public InitialImage {
 
         virtual ImageData*     getImageData () =0;
         virtual ImageMatrices* getImageMatrices () =0;
+        virtual bool        isRAW() const =0;
 
         virtual void        setProgressListener (ProgressListener* pl) {}
 

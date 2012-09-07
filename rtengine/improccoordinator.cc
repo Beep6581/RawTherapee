@@ -223,7 +223,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (todo & M_LINDENOISE) {
         	//printf("denoising!\n");
 			if (scale==1 && params.dirpyrDenoise.enabled) {
-				ipf.RGB_denoise(orig_prev, orig_prev, params.dirpyrDenoise, params.defringe);
+				ipf.RGB_denoise(orig_prev, orig_prev, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe);
 			}
 			ImageMatrices* imatrices = imgsrc->getImageMatrices ();
         }

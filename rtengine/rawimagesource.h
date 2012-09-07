@@ -164,6 +164,8 @@ class RawImageSource : public ImageSource {
 
         ImageData*  getImageData () { return idata; }
         ImageMatrices* getImageMatrices () { return &imatrices; }
+        bool        isRAW() const { return true; }
+
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
