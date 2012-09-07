@@ -58,6 +58,8 @@ class StdImageSource : public ImageSource {
 
         ImageData*  getImageData () { return idata; }
         ImageMatrices* getImageMatrices () { return (ImageMatrices*)NULL; }
+        bool        isRAW() const { return false; }
+
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
 
         void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw);// RAWParams raw will not be used for non-raw files (see imagesource.h)

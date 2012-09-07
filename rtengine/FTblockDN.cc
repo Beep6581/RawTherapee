@@ -81,7 +81,7 @@ namespace rtengine {
 	
 	
 	
-	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe)
+	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe)
 	{	
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,7 +139,7 @@ namespace rtengine {
 		array2D<float> tilemask_out(TS,TS);
 		
 		const int border = MAX(2,TS/16);
-
+		
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -166,9 +166,9 @@ namespace rtengine {
 		
 		const int tilesize = 1024;
 		const int overlap = 128;
-
+		
 		int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
-
+		
 		if (imwidth<tilesize) {
 			numtiles_W = 1;
 			tileWskip = imwidth;
@@ -191,8 +191,8 @@ namespace rtengine {
 		}
 		//now we have tile dimensions, overlaps
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-//adding omp here slows it down
+		
+		//adding omp here slows it down
 		for (int tiletop=0; tiletop<imheight; tiletop+=tileHskip) {
 			for (int tileleft=0; tileleft<imwidth; tileleft+=tileWskip) {
 				
@@ -209,34 +209,66 @@ namespace rtengine {
 				array2D<float> Ldetail(width,height,ARRAY2D_CLEAR_DATA);
 				//pixel weight
 				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
-
-//#ifdef _OPENMP
-//#pragma omp parallel for
-//#endif
-//TODO: implement using AlignedBufferMP
+				
+				//#ifdef _OPENMP
+				//#pragma omp parallel for
+				//#endif
+				//TODO: implement using AlignedBufferMP
 				//fill tile from image; convert RGB to "luma/chroma"
-				for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
-					int i1 = i - tiletop;
-					for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
-						int j1 = j - tileleft;
-						
-						float X = gain*src->r[i][j];//xyz_prophoto[0][0]*src->r[i][j] + xyz_prophoto[0][1]*src->g[i][j] + xyz_prophoto[0][2]*src->b[i][j];
-						float Y = gain*src->g[i][j];//xyz_prophoto[1][0]*src->r[i][j] + xyz_prophoto[1][1]*src->g[i][j] + xyz_prophoto[1][2]*src->b[i][j];
-						float Z = gain*src->b[i][j];//xyz_prophoto[2][0]*src->r[i][j] + xyz_prophoto[2][1]*src->g[i][j] + xyz_prophoto[2][2]*src->b[i][j];
-						
-						X = X<65535.0f ? gamcurve[X] : (Color::gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
-						Y = Y<65535.0f ? gamcurve[Y] : (Color::gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
-						Z = Z<65535.0f ? gamcurve[Z] : (Color::gamma((double)Z/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
-						
-						labdn->L[i1][j1] = Y;
-						labdn->a[i1][j1] = (X-Y);
-						labdn->b[i1][j1] = (Y-Z);
-						
-						Ldetail[i1][j1] = 0;
-						Lin[i1][j1] = Y;
-						totwt[i1][j1] = 0;
+				if (isRAW) {//image is raw; use channel differences for chroma channels
+					for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
+						int i1 = i - tiletop;
+						for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
+							int j1 = j - tileleft;
+							
+							float X = gain*src->r[i][j];
+							float Y = gain*src->g[i][j];
+							float Z = gain*src->b[i][j];
+							
+							X = X<65535.0f ? gamcurve[X] : (Color::gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+							Y = Y<65535.0f ? gamcurve[Y] : (Color::gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+							Z = Z<65535.0f ? gamcurve[Z] : (Color::gamma((double)Z/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+							
+							labdn->L[i1][j1] = Y;
+							labdn->a[i1][j1] = (X-Y);
+							labdn->b[i1][j1] = (Y-Z);
+							
+							Ldetail[i1][j1] = 0;
+							Lin[i1][j1] = Y;
+							totwt[i1][j1] = 0;
+						}
+					} 
+				} else {//image is not raw; use Lab parametrization
+					for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
+						int i1 = i - tiletop;
+						for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
+							int j1 = j - tileleft;
+							
+							//TODO: use embedded profile if present, instead of assuming sRGB
+							float rtmp = Color::igammatab_srgb[ src->r[i][j] ];
+							float gtmp = Color::igammatab_srgb[ src->g[i][j] ];
+							float btmp = Color::igammatab_srgb[ src->b[i][j] ];
+							
+							//perhaps use LCH or YCrCb ???
+							float X = xyz_sRGB[0][0]*rtmp + xyz_sRGB[0][1]*gtmp + xyz_sRGB[0][2]*btmp;
+							float Y = xyz_sRGB[1][0]*rtmp + xyz_sRGB[1][1]*gtmp + xyz_sRGB[1][2]*btmp;
+							float Z = xyz_sRGB[2][0]*rtmp + xyz_sRGB[2][1]*gtmp + xyz_sRGB[2][2]*btmp;
+							
+							X = X<65535.0f ? gamcurve[X] : (Color::gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+							Y = Y<65535.0f ? gamcurve[Y] : (Color::gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+							Z = Z<65535.0f ? gamcurve[Z] : (Color::gamma((double)Z/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
+							
+							labdn->L[i1][j1] = Y;
+							labdn->a[i1][j1] = (X-Y);
+							labdn->b[i1][j1] = (Y-Z);
+							
+							Ldetail[i1][j1] = 0;
+							Lin[i1][j1] = Y;
+							totwt[i1][j1] = 0;
+						}
 					}
 				}
+				
 				
 				//initial impulse denoise
 				if (dnparams.luma>0.01) {
@@ -259,7 +291,7 @@ namespace rtengine {
 				
 				//WaveletDenoiseAll_BiShrink(Ldecomp, adecomp, bdecomp, noisevarL, noisevarab);
 				WaveletDenoiseAll(Ldecomp, adecomp, bdecomp, noisevarL, noisevarab);
-
+				
 				Ldecomp.reconstruct(labdn->data);
 				adecomp.reconstruct(labdn->data+datalen);
 				bdecomp.reconstruct(labdn->data+2*datalen);
@@ -312,8 +344,8 @@ namespace rtengine {
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 				// Main detail recovery algorithm: Block loop
-//OpenMP here			
-//adding omp here leads to artifacts	
+				//OpenMP here			
+				//adding omp here leads to artifacts	
 				for (int vblk=0; vblk<numblox_H; vblk++) {
 					//printf("vblock=%d",vblk);
 					int vblkmod = vblk%8;
@@ -322,11 +354,11 @@ namespace rtengine {
 					
 					float * buffer = new float [width + TS + 2*blkrad*offset];
 					float * datarow = buffer+blkrad*offset;
-
-//#ifdef _OPENMP
-//#pragma omp parallel for
-//#endif
-//TODO: implement using AlignedBufferMP
+					
+					//#ifdef _OPENMP
+					//#pragma omp parallel for
+					//#endif
+					//TODO: implement using AlignedBufferMP
 					for (int i=0/*, row=top*/; i<TS; i++/*, row++*/) {
 						int row = top + i;
 						int rr = row;
@@ -348,7 +380,7 @@ namespace rtengine {
 						}//now we have a padded data row
 						
 						//now fill this row of the blocks with Lab high pass data
-//OMP here does not add speed, better handled on the outside loop
+						//OMP here does not add speed, better handled on the outside loop
 						for (int hblk=0; hblk<numblox_W; hblk++) {
 							int left = (hblk-blkrad)*offset;
 							int indx = (hblk)*TS;//index of block in malloc
@@ -397,7 +429,7 @@ namespace rtengine {
 				fftwf_destroy_plan( plan_forward_blox );
 				//#pragma omp single nowait
 				fftwf_destroy_plan( plan_backward_blox );
-								
+				
 				fftwf_free ( Lblox);
 				fftwf_free ( fLblox);
 				
@@ -420,7 +452,7 @@ namespace rtengine {
 				//calculate mask for feathering output tile overlaps
 				float * Vmask = new float [height];
 				float * Hmask = new float [width];
-
+				
 				for (int i=0; i<height; i++) {
 					Vmask[i] = 1;
 				}
@@ -434,33 +466,63 @@ namespace rtengine {
 					if (tileleft>0) Hmask[i] = mask;
 					if (tileright<imwidth) Hmask[width-1-i] = mask;
 				}
-
+				
+				//convert back to RGB and write to destination array
+				if (isRAW) {
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-				//convert back to RGB and write to destination array
-				for (int i=tiletop/* i1=0*/; i<tilebottom; i++/*, i1++*/){
-					int i1 = i-tiletop;
-					float X,Y,Z;
-					for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
-						int j1=j-tileleft;
-						
-						Y = labdn->L[i1][j1];
-						X = (labdn->a[i1][j1]) + Y;
-						Z = Y - (labdn->b[i1][j1]);
-						
-						X = X<32768.0f ? igamcurve[X] : (Color::gamma((float)X/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-						Y = Y<32768.0f ? igamcurve[Y] : (Color::gamma((float)Y/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-						Z = Z<32768.0f ? igamcurve[Z] : (Color::gamma((float)Z/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
-						
-						//Y = 65535.0f*(0.05+0.1*((float)rand()/(float)RAND_MAX));//test with random data
-						
-						float factor = Vmask[i1]*Hmask[j1]/gain;
-						
-						dsttmp->r[i][j] += factor*X;//prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
-						dsttmp->g[i][j] += factor*Y;//prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
-						dsttmp->b[i][j] += factor*Z;//prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
-						
+					for (int i=tiletop; i<tilebottom; i++){
+						int i1 = i-tiletop;
+						float X,Y,Z;
+						for (int j=tileleft; j<tileright; j++) {
+							int j1=j-tileleft;
+							
+							Y = labdn->L[i1][j1];
+							X = (labdn->a[i1][j1]) + Y;
+							Z = Y - (labdn->b[i1][j1]);
+							
+							X = X<32768.0f ? igamcurve[X] : (Color::gamma((float)X/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+							Y = Y<32768.0f ? igamcurve[Y] : (Color::gamma((float)Y/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+							Z = Z<32768.0f ? igamcurve[Z] : (Color::gamma((float)Z/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+														
+							float factor = Vmask[i1]*Hmask[j1]/gain;
+							
+							dsttmp->r[i][j] += factor*X;
+							dsttmp->g[i][j] += factor*Y;
+							dsttmp->b[i][j] += factor*Z;
+							
+						}
+					}
+				} else {
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+					for (int i=tiletop; i<tilebottom; i++){
+						int i1 = i-tiletop;
+						float X,Y,Z;
+						for (int j=tileleft; j<tileright; j++) {
+							int j1=j-tileleft;
+							
+							Y = labdn->L[i1][j1];
+							X = (labdn->a[i1][j1]) + Y;
+							Z = Y - (labdn->b[i1][j1]);
+							
+							X = X<32768.0f ? igamcurve[X] : (Color::gamma((float)X/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+							Y = Y<32768.0f ? igamcurve[Y] : (Color::gamma((float)Y/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+							Z = Z<32768.0f ? igamcurve[Z] : (Color::gamma((float)Z/32768.0f, igam, igamthresh, igamslope, 1.0, 0.0) * 65535.0f);
+														
+							float factor = Vmask[i1]*Hmask[j1];
+							
+							float rtmp = sRGB_xyz[0][0]*X + sRGB_xyz[0][1]*Y + sRGB_xyz[0][2]*Z;
+							float gtmp = sRGB_xyz[1][0]*X + sRGB_xyz[1][1]*Y + sRGB_xyz[1][2]*Z;
+							float btmp = sRGB_xyz[2][0]*X + sRGB_xyz[2][1]*Y + sRGB_xyz[2][2]*Z;
+							
+							dsttmp->r[i][j] += factor*rtmp;
+							dsttmp->g[i][j] += factor*gtmp;
+							dsttmp->b[i][j] += factor*btmp;
+							
+						}
 					}
 				}
 				
@@ -473,12 +535,21 @@ namespace rtengine {
 			}//end of tile row
 		}//end of tile loop
 		
-	//copy denoised image to output
-	memcpy (dst->data, dsttmp->data, 3*dst->width*dst->height*sizeof(float));
-	
-	delete dsttmp;
-	
-}//end of main RGB_denoise
+		//copy denoised image to output
+		memcpy (dst->data, dsttmp->data, 3*dst->width*dst->height*sizeof(float));
+		
+		if (!isRAW) {//restore original image gamma
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+			for (int i=0; i<3*dst->width*dst->height; i++) {
+				dst->data[i] = Color::gammatab_srgb[ dst->data[i] ];
+			}
+		}
+		
+		delete dsttmp;
+		
+	}//end of main RGB_denoise
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
