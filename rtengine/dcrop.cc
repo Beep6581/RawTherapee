@@ -86,8 +86,8 @@ void Crop::update (int todo) {
 
     bool needstransform  = parent->ipf.needsTransform();
 
-    if (todo & M_INIT) {
-        Glib::Mutex::Lock lock(parent->minit);  // Also used in inproccoord
+    if (todo & (M_INIT|M_LINDENOISE)) {
+        Glib::Mutex::Lock lock(parent->minit);  // Also used in improccoord
 
         int tr = TR_NONE;
         if (params.coarse.rotate==90)  tr |= TR_R90;
@@ -101,7 +101,16 @@ void Crop::update (int todo) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
-    }
+
+		//parent->imgsrc->convertColorSpace(origCrop, params.icm);
+
+        if (todo & M_LINDENOISE) {
+			if (skip==1 && params.dirpyrDenoise.enabled) {
+				parent->ipf.RGB_denoise(origCrop, origCrop, /*Roffset,*/ params.dirpyrDenoise, params.defringe);
+			}
+        }
+        parent->imgsrc->convertColorSpace(origCrop, params.icm, params.raw);
+}
 
     // transform
     if ((!needstransform && transCrop) || (transCrop && (transCrop->width!=cropw || transCrop->height!=croph))) {
@@ -182,7 +191,6 @@ void Crop::update (int todo) {
 		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
 			parent->ipf.defringe (labnCrop);
-			parent->ipf.dirpyrdenoise (labnCrop);
 			parent->ipf.MLsharpen (labnCrop);
 			parent->ipf.MLmicrocontrast (labnCrop);
 			//parent->ipf.MLmicrocontrast (labnCrop);

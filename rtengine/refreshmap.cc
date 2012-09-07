@@ -108,10 +108,10 @@ DARKFRAME,        // EvLCPFile
 0,                // EvEqlEnabled:obsolete
 IMPULSEDENOISE,   // EvIDNEnabled,
 IMPULSEDENOISE,   // EvIDNThresh,
-DIRPYRDENOISE,    // EvDPDNEnabled,
-DIRPYRDENOISE,    // EvDPDNLuma,
-DIRPYRDENOISE,    // EvDPDNChroma,
-DIRPYRDENOISE,    // EvDPDNGamma,
+ALLNORAW,         // EvDPDNEnabled,
+ALLNORAW,         // EvDPDNLuma,
+ALLNORAW,         // EvDPDNChroma,
+ALLNORAW,         // EvDPDNGamma,
 DIRPYREQUALIZER,  // EvDirPyrEqualizer,
 DIRPYREQUALIZER,  // EvDirPyrEqlEnabled,
 LUMINANCECURVE,   // EvLSaturation,
@@ -150,8 +150,8 @@ FLATFIELD,        // EvFlatFieldAutoSelect,
 FLATFIELD,        // EvFlatFieldBlurRadius,
 FLATFIELD,        // EvFlatFieldBlurType,
 TRANSFORM,        // EvAutoDIST,
-DIRPYRDENOISE,    // EvDPDNLumCurve,
-DIRPYRDENOISE,    // EvDPDNChromCurve,
+ALLNORAW,         // EvDPDNLumCurve,
+ALLNORAW,         // EvDPDNChromCurve,
 GAMMA,            // EvGAMMA
 GAMMA,            // EvGAMPOS
 GAMMA,            // EvGAMFREE
@@ -191,6 +191,7 @@ LUMINANCECURVE,   // EvLCCurve
 LUMINANCECURVE,   // EvLCHCurve
 RGBCURVE,         // EvVibranceSkinTonesCurve
 LUMINANCECURVE,   // EvLLCCurve
-LUMINANCECURVE    // EvLLCredsk
+LUMINANCECURVE,   // EvLLCredsk
+ALLNORAW          // EvDPDNLdetail
 };
 

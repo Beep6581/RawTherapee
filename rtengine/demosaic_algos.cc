@@ -57,18 +57,18 @@ void RawImageSource::eahd_demosaic () {
   }
 
   // prepare cache and constants for cielab conversion
-	//TODO: revisit after conversion to D50 illuminant
-	lc00 = (0.412453 * rgb_cam[0][0] + 0.357580 * rgb_cam[0][1] + 0.180423 * rgb_cam[0][2]) ;// / 0.950456;
-  lc01 = (0.412453 * rgb_cam[1][0] + 0.357580 * rgb_cam[1][1] + 0.180423 * rgb_cam[1][2]) ;// / 0.950456;
-  lc02 = (0.412453 * rgb_cam[2][0] + 0.357580 * rgb_cam[2][1] + 0.180423 * rgb_cam[2][2]) ;// / 0.950456;
+  //TODO: revisit after conversion to D50 illuminant
+  lc00 = (0.412453 * imatrices.rgb_cam[0][0] + 0.357580 * imatrices.rgb_cam[0][1] + 0.180423 * imatrices.rgb_cam[0][2]) ;// / 0.950456;
+  lc01 = (0.412453 * imatrices.rgb_cam[1][0] + 0.357580 * imatrices.rgb_cam[1][1] + 0.180423 * imatrices.rgb_cam[1][2]) ;// / 0.950456;
+  lc02 = (0.412453 * imatrices.rgb_cam[2][0] + 0.357580 * imatrices.rgb_cam[2][1] + 0.180423 * imatrices.rgb_cam[2][2]) ;// / 0.950456;
 
-  lc10 = 0.212671 * rgb_cam[0][0] + 0.715160 * rgb_cam[0][1] + 0.072169 * rgb_cam[0][2];
-  lc11 = 0.212671 * rgb_cam[1][0] + 0.715160 * rgb_cam[1][1] + 0.072169 * rgb_cam[1][2];
-  lc12 = 0.212671 * rgb_cam[2][0] + 0.715160 * rgb_cam[2][1] + 0.072169 * rgb_cam[2][2];
+  lc10 = 0.212671 * imatrices.rgb_cam[0][0] + 0.715160 * imatrices.rgb_cam[0][1] + 0.072169 * imatrices.rgb_cam[0][2];
+  lc11 = 0.212671 * imatrices.rgb_cam[1][0] + 0.715160 * imatrices.rgb_cam[1][1] + 0.072169 * imatrices.rgb_cam[1][2];
+  lc12 = 0.212671 * imatrices.rgb_cam[2][0] + 0.715160 * imatrices.rgb_cam[2][1] + 0.072169 * imatrices.rgb_cam[2][2];
 
-  lc20 = (0.019334 * rgb_cam[0][0] + 0.119193 * rgb_cam[0][1] + 0.950227 * rgb_cam[0][2]) ;// / 1.088754;
-  lc21 = (0.019334 * rgb_cam[1][0] + 0.119193 * rgb_cam[1][1] + 0.950227 * rgb_cam[1][2]) ;// / 1.088754;
-  lc22 = (0.019334 * rgb_cam[2][0] + 0.119193 * rgb_cam[2][1] + 0.950227 * rgb_cam[2][2]) ;// / 1.088754;
+  lc20 = (0.019334 * imatrices.rgb_cam[0][0] + 0.119193 * imatrices.rgb_cam[0][1] + 0.950227 * imatrices.rgb_cam[0][2]) ;// / 1.088754;
+  lc21 = (0.019334 * imatrices.rgb_cam[1][0] + 0.119193 * imatrices.rgb_cam[1][1] + 0.950227 * imatrices.rgb_cam[1][2]) ;// / 1.088754;
+  lc22 = (0.019334 * imatrices.rgb_cam[2][0] + 0.119193 * imatrices.rgb_cam[2][1] + 0.950227 * imatrices.rgb_cam[2][2]) ;// / 1.088754;
 
   int maxindex = 2*65536;
   cache = new double[maxindex];
@@ -530,7 +530,7 @@ void RawImageSource::hphd_demosaic () {
 #endif
 
   hphd_green (hpmap);
-  freeArray<float>(hpmap, H);
+  freeArray<float>(hpmap, H);//TODO: seems to cause sigabrt ???  why???
 
   if (plistener)
     plistener->setProgress (0.66);
@@ -820,22 +820,19 @@ void RawImageSource::ppg_demosaic()
     if(plistener) plistener->setProgress(0.67 + 0.33*row/(height-1));
   }
 
-  red = new float*[H];
-  for (int i=0; i<H; i++) {
-    red[i] = new float[W];
-    for (int j=0; j<W; j++)
+  red(W,H);
+  for (int i=0; i<H; i++) 
+	  for (int j=0; j<W; j++) {
         red[i][j] = image[i*W+j][0];
   }
-  green = new float*[H];
-  for (int i=0; i<H; i++) {
-    green[i] = new float[W];
-    for (int j=0; j<W; j++)
+  green(W,H);
+  for (int i=0; i<H; i++) 
+	  for (int j=0; j<W; j++) {
         green[i][j] = image[i*W+j][1];
   }
-  blue = new float*[H];
-  for (int i=0; i<H; i++) {
-    blue[i] = new float[W];
-    for (int j=0; j<W; j++)
+  blue(W,H);
+  for (int i=0; i<H; i++) 
+	  for (int j=0; j<W; j++) {
         blue[i][j] = image[i*W+j][2];
   }
   free (image);
@@ -919,7 +916,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
     for (i=0; i < 3; i++)
         for (j=0; j < colors; j++)
             for (xyz_cam[i][j] = k=0; k < 3; k++)
-	            xyz_cam[i][j] += xyz_rgb[i][k] * rgb_cam[k][j] / d65_white[i];
+	            xyz_cam[i][j] += xyz_rgb[i][k] * imatrices.rgb_cam[k][j] / d65_white[i];
 
     border_interpolate(5, image);
     buffer = (char *) malloc (13*TS*TS*sizeof(float));		/* 1664 kB */
@@ -1055,21 +1052,15 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
 
 void RawImageSource::nodemosaic()
 {
-    red = new float*[H];
-    green = new float*[H];
-    blue = new float*[H];
+    red(W,H);
+    green(W,H);
+    blue(W,H);
     for (int i=0; i<H; i++) {
-        red[i] = new float[W];
-        green[i] = new float[W];
-        blue[i] = new float[W];
         for (int j=0; j<W; j++){
         	switch( FC(i,j)){
 				case 0: red[i][j] = rawData[i][j]; green[i][j]=blue[i][j]=0; break;
 				case 1: green[i][j] = rawData[i][j]; red[i][j]=blue[i][j]=0; break;
 				case 2: blue[i][j] = rawData[i][j]; red[i][j]=green[i][j]=0; break;
-					//red[i][j] = rawData[i][j];
-					//green[i][j] = rawData[i][j];
-					//blue[i][j] = rawData[i][j];
         	}
         }
     }
