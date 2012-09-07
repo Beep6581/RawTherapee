@@ -26,10 +26,10 @@ namespace rtengine {
 class LabImage {
 private:
 	bool fromImage;
-	float * data;
 
 public:
 	int W, H;
+	float * data;
 	float** L;
 	float** a;
 	float** b;

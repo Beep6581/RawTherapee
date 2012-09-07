@@ -26,8 +26,9 @@
 class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
 
   protected:
-    Adjuster* luma;
-    Adjuster* chroma;
+	Adjuster* luma;
+	Adjuster* Ldetail;
+	Adjuster* chroma;
 	Adjuster* gamma;
 
     Gtk::CheckButton* enabled;
