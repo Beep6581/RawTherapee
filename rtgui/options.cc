@@ -188,7 +188,7 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
 
 void Options::setDefaults () {
 
-	font = "sans, 8";
+    font = "sans, 8";
     windowWidth = 900;
     windowHeight = 560;
     windowMaximized = false;
@@ -307,7 +307,7 @@ void Options::setDefaults () {
     hideTPVScrollbar = false;
     UseIconNoText = true;
     whiteBalanceSpotSize = 8;
-    squareDetailWindow = false;
+    squareDetailWindow = true;
     menuGroupRank = true;
     menuGroupLabel = true;
     menuGroupFileOperations = true;
@@ -401,7 +401,7 @@ void Options::setDefaults () {
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
     rtSettings.darkFramesPath = "";
-	rtSettings.flatFieldsPath = "";
+    rtSettings.flatFieldsPath = "";
 #ifdef WIN32
 	const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
 	if (sysRoot!=NULL) 
@@ -447,9 +447,8 @@ void Options::setDefaults () {
 }
 
 Options* Options::copyFrom (Options* other) {
-
-    *this = *other;
-	return this;
+  *this = *other;
+  return this;
 }
 
 void Options::filterOutParsedExtensions () {
@@ -533,8 +532,8 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "SaveMethodNum"))    saveMethodNum              = keyFile.get_integer("Output", "SaveMethodNum");
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
-	if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
-	if (keyFile.has_key ("Output", "TunnelMetaData"))   tunnelMetaData             = keyFile.get_boolean("Output", "TunnelMetaData");
+    if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
+    if (keyFile.has_key ("Output", "TunnelMetaData"))   tunnelMetaData             = keyFile.get_boolean("Output", "TunnelMetaData");
 }
 
 if (keyFile.has_group ("Profiles")) { 
@@ -592,8 +591,8 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "WindowMaximized")) windowMaximized = keyFile.get_boolean ("GUI", "WindowMaximized");
     if (keyFile.has_key ("GUI", "DirBrowserWidth"))     dirBrowserWidth          = keyFile.get_integer ("GUI", "DirBrowserWidth");
     if (keyFile.has_key ("GUI", "DirBrowserHeight"))    dirBrowserHeight         = keyFile.get_integer ("GUI", "DirBrowserHeight");
-	if (keyFile.has_key ("GUI", "PreferencesWidth"))    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
-	if (keyFile.has_key ("GUI", "PreferencesHeight"))   preferencesHeight        = keyFile.get_integer ("GUI", "PreferencesHeight"); 
+    if (keyFile.has_key ("GUI", "PreferencesWidth"))    preferencesWidth         = keyFile.get_integer ("GUI", "PreferencesWidth");
+    if (keyFile.has_key ("GUI", "PreferencesHeight"))   preferencesHeight        = keyFile.get_integer ("GUI", "PreferencesHeight"); 
     if (keyFile.has_key ("GUI", "SaveAsDialogWidth"))   saveAsDialogWidth        = keyFile.get_integer ("GUI", "SaveAsDialogWidth");
     if (keyFile.has_key ("GUI", "SaveAsDialogHeight"))  saveAsDialogHeight       = keyFile.get_integer ("GUI", "SaveAsDialogHeight");
     if (keyFile.has_key ("GUI", "ToolPanelWidth"))      toolPanelWidth           = keyFile.get_integer ("GUI", "ToolPanelWidth");
@@ -820,7 +819,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Output", "SaveMethodNum", saveMethodNum);
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
-	keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
+    keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
     keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
@@ -839,8 +838,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("GUI", "WindowMaximized", windowMaximized);
     keyFile.set_integer ("GUI", "DirBrowserWidth", dirBrowserWidth);
     keyFile.set_integer ("GUI", "DirBrowserHeight", dirBrowserHeight);
-	keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
-	keyFile.set_integer ("GUI", "PreferencesHeight", preferencesHeight); 
+    keyFile.set_integer ("GUI", "PreferencesWidth", preferencesWidth);
+    keyFile.set_integer ("GUI", "PreferencesHeight", preferencesHeight); 
     keyFile.set_integer ("GUI", "SaveAsDialogWidth", saveAsDialogWidth);
     keyFile.set_integer ("GUI", "SaveAsDialogHeight", saveAsDialogHeight);
     keyFile.set_integer ("GUI", "ToolPanelWidth", toolPanelWidth);
@@ -878,7 +877,7 @@ int Options::saveToFile (Glib::ustring fname) {
 
     keyFile.set_string  ("Color Management", "ICCDirectory", rtSettings.iccDirectory);
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
-	keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
+    keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
     keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
     keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);
@@ -1049,9 +1048,9 @@ void Options::load () {
 	// out which are the parent translations.  Furthermore, there must be a file <Language> for each locale <Language> (<LC>) -- you cannot have 
 	// 'French (CA)' unless there is a file 'French'.
 
-    Glib::ustring defaultTranslation = argv0 + "/languages/default";
-	Glib::ustring languageTranslation = "";
-	Glib::ustring localeTranslation = "";
+  Glib::ustring defaultTranslation = argv0 + "/languages/default";
+  Glib::ustring languageTranslation = "";
+  Glib::ustring localeTranslation = "";
 
     if (options.languageAutoDetect) options.language=langMgr.getOSUserLanguage();
 
