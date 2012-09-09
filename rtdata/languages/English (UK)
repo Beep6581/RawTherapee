@@ -25,7 +25,9 @@ ICMPANEL_OUTPUTDLGLABEL;Select Output Colour Profile...
 ICMPANEL_OUTPUTPROFILE;Output Colour Profile
 ICMPANEL_WORKINGPROFILE;Working Colour Profile
 MAIN_TAB_COLOR;Colour
-PARTIALPASTE_COLORBOOST;Colour boost
+MAIN_TOOLTIP_BACKCOLOR0;Background colour of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
+MAIN_TOOLTIP_BACKCOLOR1;Background colour of the preview: <b>Black</b>\nShortcut: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Background colour of the preview: <b>White</b>\nShortcut: <b>0</b>PARTIALPASTE_COLORBOOST;Colour boost
 PARTIALPASTE_COLORDENOISE;Colour denoise
 PARTIALPASTE_COLORGROUP;Colour related settings
 PARTIALPASTE_COLORMIXER;Colour mixer
@@ -49,7 +51,8 @@ TP_COLORBOOST_LABEL;Colour Boost
 TP_COLORDENOISE_LABEL;Colour Noise Reduction
 TP_COLORSHIFT_LABEL;Colour Shift
 TP_HLREC_COLOR;Colour Propagation
-TP_ICM_FILEDLGFILTERICM;Colour profiles
+TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Colour Shift
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colours into gamut of the working colour space\nand apply Munsell correctionTP_ICM_FILEDLGFILTERICM;Colour profiles
 TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific colour profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input colour profile. These profiles are more precise than simpler matrix ones. Available for some cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 TP_ICM_INPUTCAMERA_TOOLTIP;Use simple colour matrix by dcraw, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
@@ -544,9 +547,6 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !MAIN_TAB_TRANSFORM;Transform
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-T</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
-!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
-!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_HIDEFP;Show/Hide the bottom panel (directory and file browser).\nShortcut: <b>F</b>
 !MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
@@ -975,8 +975,6 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
-!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
-!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_BWTONING;B&W Toning
 !TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
