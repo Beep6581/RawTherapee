@@ -73,10 +73,10 @@ DEPENDENCIES
   EXIV2       exiv2>=0.19        http://www.exiv2.org/
   EXPAT       expat>=2.1.0       http://expat.sourceforge.net/
   FFTW        fftw>=3.2.2        http://fftw.org/
-  GLIB2       glib-2.0>=2.16     http://www.gtk.org/
-  GLIBMM      glibmm-2.4>=2.16   http://www.gtkmm.org
-  GTK+        gtk+-2.0>=2.12     http://www.gtk.org/
-  GTKMM       gtkmm-2.4>=2.12    http://www.gtkmm.org
+  GLIB2       glib-2.0>=2.24     http://www.gtk.org/
+  GLIBMM      glibmm-2.4>=2.24   http://www.gtkmm.org
+  GTK+        gtk+-2.0>=2.22     http://www.gtk.org/
+  GTKMM       gtkmm-2.4>=2.22    http://www.gtkmm.org
   JPEG        libjpeg>=6b        http://libjpeg-turbo.virtualgl.org/
                                  http://jpegclub.org/
                                  http://www.ijg.org/
@@ -131,7 +131,7 @@ WINDOWS
         http://www.mingw.org/wiki/MSYS
       - CMake - http://www.cmake.org/cmake/resources/software.html Version 2.8.8
         or above is required for this platform
-      - Gtkmm2.22
+      - gtkmm-2.22
         - for 32bit:
             http://ftp.se.debian.org/pub/gnome/binaries/win32/gtkmm/2.22/
         - for 64bit:
@@ -210,7 +210,7 @@ WINDOWS
       Open an MSYS console, that will create a Linux environment, and compile
       the dependencies in the following order:
         zlib:
-          If you have Gtkmm-2.22 installed, you should skip this zlib section.
+          If you have gtkmm-2.22 installed, you should skip this zlib section.
           - Download: http://zlib.net/
           - How to build:
               cd to the directory you unpacked zlib-1.2.5 to,
