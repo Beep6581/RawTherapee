@@ -669,7 +669,7 @@ namespace rtengine {
     void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
     {
-
+        const float ClipLevel = 65534.5f;
     	bool inGamut;
 #ifdef _DEBUG
         neg=false, more_rgb=false;
@@ -703,8 +703,8 @@ namespace rtengine {
                     Lprov1 += lowerCoef;
 				inGamut = false;
             }
-			// if "highlight reconstruction" is enabled, don't control Gamut
-            else if ((!isHLEnabled) && (R>65534.5f || G>65534.5f || B>65534.5f)) {
+			// if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
+            else if (!isHLEnabled && (R>ClipLevel || G>ClipLevel || B>ClipLevel) && (R<=ClipLevel || G<=ClipLevel || B<=ClipLevel)) {
 #ifdef _DEBUG
                 more_rgb=true;
 #endif
