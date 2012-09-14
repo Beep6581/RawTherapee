@@ -83,12 +83,12 @@ class Threshold {
         // RV2: Type of the maximum value on the Y axis
         template <typename RT, typename RV, typename RV2>
         RT multiply(RV x, RV2 yMax) const {
-        	double val = double(x);
+            double val = double(x);
             if (initEq1) {
                 if (_isDouble) {
-                	if (val == double(value[2]) && double(value[2]) == double(value[3]))
-                		// this handle the special case where the 2 right values are the same, then bottom one is sent back,
-                		// useful if one wants to keep the bottom value even beyond the x max bound
+                    if (val == double(value[2]) && double(value[2]) == double(value[3]))
+                        // this handle the special case where the 2 right values are the same, then bottom one is sent back,
+                        // useful if one wants to keep the bottom value even beyond the x max bound
                         return RT(0.);
                     if (val >= double(value[3]))
                         return RT(yMax);
@@ -103,9 +103,9 @@ class Threshold {
             }
             else {
                 if (_isDouble) {
-                	if (val == double(value[2]) && double(value[2]) == double(value[3]))
-                		// this handle the special case where the 2 right values are the same, then top one is sent back,
-                		// useful if one wants to keep the top value even beyond the x max bound
+                    if (val == double(value[2]) && double(value[2]) == double(value[3]))
+                        // this handle the special case where the 2 right values are the same, then top one is sent back,
+                        // useful if one wants to keep the top value even beyond the x max bound
                         return RT(yMax);
                     if (val >= double(value[2]))
                         return RT(0);
@@ -124,7 +124,7 @@ class Threshold {
         // RV: Type of the value on the X axis
         /*template <typename RT, typename RV>
         RT getRatio(RV val) const {
-        	double val = double(val);
+            double val = double(val);
             if (initEq1) {
                 if (_isDouble) {  // assuming that simple thresholds will be more frequent
                     if (val >= double(value[3]))
@@ -160,18 +160,18 @@ class Threshold {
             value[3] = rhs.value[3];
             initEq1 = rhs.initEq1;
             _isDouble = rhs._isDouble;
-    	    return *this;
+            return *this;
         }
 
         bool operator== (const Threshold<T> &rhs) const {
             if (_isDouble)
-            	return fabs(value[0]-rhs.value[0])<1e-10
-            	    && fabs(value[1]-rhs.value[1])<1e-10
-            	    && fabs(value[2]-rhs.value[2])<1e-10
-            	    && fabs(value[3]-rhs.value[3])<1e-10;
+                return fabs(value[0]-rhs.value[0])<1e-10
+                    && fabs(value[1]-rhs.value[1])<1e-10
+                    && fabs(value[2]-rhs.value[2])<1e-10
+                    && fabs(value[3]-rhs.value[3])<1e-10;
             else
-            	return fabs(value[0]-rhs.value[0])<1e-10
-            	    && fabs(value[1]-rhs.value[1])<1e-10;
+                return fabs(value[0]-rhs.value[0])<1e-10
+                    && fabs(value[1]-rhs.value[1])<1e-10;
         }
 };
 
@@ -249,14 +249,14 @@ class SharpeningParams {
         SharpeningParams() : threshold(20, 80, 2000, 1200, false) {};
 };
 class SharpenEdgeParams {
-  public:
+    public:
         bool    enabled;
         int     passes;
         double  amount;
         bool    threechannels;
 };
 class SharpenMicroParams {
-  public:
+    public:
         bool    enabled;
         bool    matrix;
         double  amount;
@@ -313,19 +313,19 @@ enum WBTypes {
 };
 
 class WBEntry {
-public:
-    Glib::ustring ppLabel;
-    enum WBTypes type;
-    Glib::ustring GUILabel;
-    int temperature;
+    public:
+        Glib::ustring ppLabel;
+        enum WBTypes type;
+        Glib::ustring GUILabel;
+        int temperature;
 
-    WBEntry(Glib::ustring p, enum WBTypes t, Glib::ustring l, int temp) : ppLabel(p), type(t), GUILabel(l), temperature(temp) {};
+        WBEntry(Glib::ustring p, enum WBTypes t, Glib::ustring l, int temp) : ppLabel(p), type(t), GUILabel(l), temperature(temp) {};
 };
 
 class WBParams {
 
     public:
-	    static std::vector<WBEntry*> wbEntries;
+        static std::vector<WBEntry*> wbEntries;
         Glib::ustring   method;
         int             temperature;
         double          green;
@@ -366,55 +366,57 @@ class WBParams {
         bool    edgesensitive;
         int		amount;
 };*/
-	
-	/**
-	 * Parameters of defringing
-	 */
-	class DefringeParams {
-		
+
+/**
+ * Parameters of defringing
+ */
+class DefringeParams {
+
     public:
         bool    enabled;
         double  radius;
         int     threshold;
-	};
-	
-	
-	/**
-	 * Parameters of impulse denoising
-	 */
-	class ImpulseDenoiseParams {
-		
+};
+
+
+/**
+ * Parameters of impulse denoising
+ */
+class ImpulseDenoiseParams {
+
     public:
         bool    enabled;
-		int		thresh;
+        int     thresh;
 
-	};
-	
-	/**
-	 * Parameters of the directional pyramid denoising
-	 */
-	class DirPyrDenoiseParams {
-		
-    public:
-        bool    enabled;
-        int		luma;
-        int     chroma;
-		float	gamma;
-	};
-
-//EPD related parameters.
-class EPDParams{
-public:
-	bool enabled;
-	double Strength;
-	double EdgeStopping;
-	double Scale;
-	int ReweightingIterates;
 };
 
 /**
-  * Parameters of the shadow/highlight enhancement
-  */
+ * Parameters of the directional pyramid denoising
+ */
+class DirPyrDenoiseParams {
+
+    public:
+        bool    enabled;
+        int     luma;
+        int     chroma;
+        float   gamma;
+};
+
+/*
+ * EPD related parameters.
+ */
+class EPDParams{
+    public:
+        bool enabled;
+        double Strength;
+        double EdgeStopping;
+        double Scale;
+        int ReweightingIterates;
+};
+
+/*
+ * Parameters of the shadow/highlight enhancement
+ */
 class SHParams {
 
     public:
@@ -428,9 +430,9 @@ class SHParams {
         int     radius;
 };
 
-/**
-  * Parameters of the cropping
-  */
+/*
+ * Parameters of the cropping
+ */
 class CropParams {
 
     public:
@@ -447,9 +449,9 @@ class CropParams {
         void mapToResized(int resizedWidth, int resizedHeight, int scale, int &x1, int &x2, int &y1, int &y2) const;
 };
 
-/**
-  * Parameters of the coarse transformations like 90 deg rotations and h/v flipping
-  */
+/*
+ * Parameters of the coarse transformations like 90 deg rotations and h/v flipping
+ */
 class CoarseTransformParams {
 
     public:
@@ -458,67 +460,69 @@ class CoarseTransformParams {
         bool    vflip;
 };
 
-/**
-  * Common transformation parameters
-  */
+/*
+ * Common transformation parameters
+ */
 class CommonTransformParams {
 
-	public:
-		bool autofill;
+    public:
+        bool autofill;
 };
 
-/**
-  * Parameters of the rotation
-  */
+/*
+ * Parameters of the rotation
+ */
 class RotateParams {
-    
+
     public:
         double  degree;
 };
 
-/**
-  * Parameters of the distortion correction
-  */
+/*
+ * Parameters of the distortion correction
+ */
 class DistortionParams {
 
     public:
         double  amount;
 };
 
-// Lens profile correction parameters
+/*
+ * Lens profile correction parameters
+ */
 class LensProfParams {
-    
-public:
-    Glib::ustring lcpFile;
-    bool useDist, useVign, useCA;
+
+    public:
+        Glib::ustring lcpFile;
+        bool useDist, useVign, useCA;
 };
 
-/**
-  * Parameters of the perspective correction
-  */
+/*
+ * Parameters of the perspective correction
+ */
 class PerspectiveParams {
 
     public:
-		int  horizontal;
-		int  vertical;
+        int  horizontal;
+        int  vertical;
 };
 
-/**
-  * Parameters of the vignetting correction
-  */
+/*
+ * Parameters of the vignetting correction
+ */
 class VignettingParams {
 
     public:
         int  amount;
         int  radius;
-	int  strength;
-	int  centerX;
-	int  centerY;
+        int  strength;
+        int  centerX;
+        int  centerY;
 };
 
-/**
-  * Parameters of the color mixer
-  */
+/*
+ * Parameters of the color mixer
+ */
 class ChannelMixerParams {
 
     public:
@@ -527,9 +531,9 @@ class ChannelMixerParams {
         int blue[3];
 };
 
-/**
-  * Parameters of the c/a correction
-  */
+/*
+ * Parameters of the c/a correction
+ */
 class CACorrParams {
 
     public:
@@ -537,19 +541,19 @@ class CACorrParams {
         double blue;
 };
 
-/**
-  * Parameters of the highlight recovery
-  */
+/*
+ * Parameters of the highlight recovery
+ */
 class HRecParams {
 
     public:
         bool enabled;
-		Glib::ustring method;
+        Glib::ustring method;
 };
 
-/**
-  * Parameters of the resizing
-  */
+/*
+ * Parameters of the resizing
+ */
 class ResizeParams {
 
     public:
@@ -562,9 +566,9 @@ class ResizeParams {
         int height;
 };
 
-/**
-  * Parameters of the color spaces used during the processing
-  */
+/*
+ * Parameters of the color spaces used during the processing
+ */
 class ColorManagementParams {
 
     public:
@@ -576,95 +580,92 @@ class ColorManagementParams {
         static const Glib::ustring NoICMString;      
         
         Glib::ustring gamma;
-		double gampos;
-		double slpos;
-		bool freegamma;
-		
+        double gampos;
+        double slpos;
+        bool freegamma;
 };
 
-/**
-  * Typedef for representing a key/value for the exif metadata information
+/*
+ * Typedef for representing a key/value for the exif metadata information
 typedef std::map<Glib::ustring, Glib::ustring> ExifPairs;
-  */
+ */
 
-/**
-  * The IPTC key/value pairs
+/*
+ * The IPTC key/value pairs
 typedef std::map<Glib::ustring, std::vector<Glib::ustring> > IPTCPairs;
-  */
+ */
 
-/**
-* Directional pyramid equalizer params
-*/
+/*
+ * Directional pyramid equalizer params
+ */
 class DirPyrEqualizerParams {
-	
-	public:
-		bool enabled;
-		double mult[8];
+
+    public:
+        bool enabled;
+        double mult[8];
 };
 	
-/**
+/*
  * HSV equalizer params
  */
 class HSVEqualizerParams {
-	
-	public:
-		std::vector<double>   hcurve;
-		std::vector<double>   scurve;
-		std::vector<double>   vcurve;
+
+    public:
+        std::vector<double>   hcurve;
+        std::vector<double>   scurve;
+        std::vector<double>   vcurve;
 };
 
 
-
-/**
-  * Parameters for RAW demosaicing
-  */
+/*
+ * Parameters for RAW demosaicing
+ */
 class RAWParams {
 
     public:
-		enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,fast,
-					numMethods }; // This MUST be the last enum
-		static const char *methodstring[numMethods];
+        enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,fast,
+                    numMethods }; // This MUST be the last enum
+        static const char *methodstring[numMethods];
 
-		enum eFlatFileBlurType{/*parametric,*/area_ff,v_ff,h_ff,vh_ff,
-								numFlatFileBlurTypes }; // This MUST be the last enum
-		static const char *ff_BlurTypestring[numFlatFileBlurTypes];
-	
+        enum eFlatFileBlurType{/*parametric,*/area_ff,v_ff,h_ff,vh_ff,
+                                numFlatFileBlurTypes }; // This MUST be the last enum
+        static const char *ff_BlurTypestring[numFlatFileBlurTypes];
 
-	    Glib::ustring dark_frame;
-	    bool df_autoselect;
-	
-		Glib::ustring ff_file;
-		bool ff_AutoSelect;
-		int ff_BlurRadius;
-		Glib::ustring ff_BlurType;
-	
-		bool ca_autocorrect;
-		double cared;
-		double cablue;
 
-		// exposure before interpolation
-		double expos;
-		double preser; 
-		double blackzero;
-		double blackone;
-		double blacktwo;
-		double blackthree;
-		bool twogreen;
-		bool hotdeadpix_filt;
-		int hotdeadpix_thresh;
-		int	linenoise;
-		int greenthresh;
+        Glib::ustring dark_frame;
+        bool df_autoselect;
+
+        Glib::ustring ff_file;
+        bool ff_AutoSelect;
+        int ff_BlurRadius;
+        Glib::ustring ff_BlurType;
+
+        bool ca_autocorrect;
+        double cared;
+        double cablue;
+
+        // exposure before interpolation
+        double expos;
+        double preser;
+        double blackzero;
+        double blackone;
+        double blacktwo;
+        double blackthree;
+        bool twogreen;
+        bool hotdeadpix_filt;
+        int hotdeadpix_thresh;
+        int	linenoise;
+        int greenthresh;
         int ccSteps;
         Glib::ustring dmethod;
         int dcb_iterations;
         bool dcb_enhance;
-        bool all_enhance;
-		
+        //bool all_enhance;
 };
 
-/**
-  * This class holds all the processing parameters applied on the images
-  */
+/*
+ * This class holds all the processing parameters applied on the images
+ */
 class ProcParams {
 
     public:
@@ -698,7 +699,7 @@ class ProcParams {
         HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
-		
+
         RAWParams               raw;             ///< RAW parameters before demosaicing
         DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters
@@ -708,26 +709,14 @@ class ProcParams {
 
 
       /**
-        * The constructor only sets the hand-wired defaults.
+        * The constructor makes a copy of the source ProcParams, or use the hand-wired defaults if source is NULL.
         */
-        ProcParams ();
+        ProcParams () { setDefaults(); }
+
       /**
         * Sets the hand-wired defaults parameters.
         */
         void setDefaults ();
-
-      /**
-        * Loads the parameters from a file.
-        * @param fname the name of the file
-        * @params pedited pointer to a ParamsEdited object (optional) to store which values has been loaded
-        * @return Error code (=0 if no error)
-        */
-        int load        (Glib::ustring fname, ParamsEdited* pedited=NULL, int *rank=NULL);
-
-        void saveIntoXMP (Exiv2::XmpData &xmpData, const std::string& baseKey, ParamsEdited* pedited=NULL) const;
-        int loadFromXMP (Exiv2::XmpData &xmpData, const std::string& baseKey, ParamsEdited* pedited=NULL);
-        int saveParams  (Glib::ustring fname, ParamsEdited* pedited=NULL) const;
-        int loadParams  (Glib::ustring fname, ParamsEdited* pedited=NULL);
 
       /** Creates a new instance of ProcParams.
         * @return a pointer to the new ProcParams instance. */
@@ -743,39 +732,65 @@ class ProcParams {
         bool operator== (const ProcParams& other);
         bool operator!= (const ProcParams& other);
 
+};
+
+/**
+  * This class associate a ProcParams object and a ParamEdited object through a pointer
+  * to instance of each type in order to handle partial procparam file loading and saving
+  *
+  * PartialProfile is not responsible of ProcParams and ParamsEdited object destructions.
+  * The function that instanciate PartialProfile object has to handle destruction of the
+  * pparams and pedited instances by itself if necessary, thanks to the deleteInstance method.
+  */
+class PartialProfile {
+    public:
+        rtengine::procparams::ProcParams* pparams;
+        ParamsEdited* pedited;
+
+        PartialProfile      () : pparams(NULL), pedited(NULL) {}
+        // Copy operator: Make a full copy of an existing PartialProfile
+        PartialProfile      (const PartialProfile& rhs) : pparams(NULL), pedited(NULL) {*this = rhs;}
+        // Assignment operator: Make a full copy of an existing PartialProfile
+        PartialProfile& operator=(const PartialProfile& rhs);
+
+        // Make a full copy of an existing PartialProfile
+        PartialProfile      (const PartialProfile* source);
+        //explicit PartialProfile    (bool createPParamsInstance=false, bool createPEditedInstance=false);
+        PartialProfile      (bool createPParamsInstance, bool createPEditedInstance);
+        // copy operation with more control (copy pointers only or make a full copy)
+        PartialProfile      (bool fullCopy, ProcParams* pp, ParamsEdited* pe=NULL);
+
+        // PartialProfile use a standard destructor; if you want to delete the pparams and pedited instance,
+
+        // you have to manually use the deleteInstance method first
+        void deleteInstance ();
+        void reset          (bool peditedValuesSetTo=false);
+        void clearGeneral   ();
+
+        /**
+          * Loads the parameters from a file.
+          * @param fname the name of the file
+          * @return Error code (=0 if no error)
+          */
+        int load            (Glib::ustring fname, int *rank=NULL);
+
+        void saveIntoXMP    (Exiv2::XmpData &xmpData, const std::string& baseKey) const;
+        int loadFromXMP     (Exiv2::XmpData &xmpData, const std::string& baseKey);
+        int saveParams      (Glib::ustring fname) const;
+        int loadParams      (Glib::ustring fname);
+
+        void set            (bool v);
+        void applyTo        (ProcParams *destParams) const ;
+        void applyTo        (PartialProfile *destPProfile) const;
+
     private:
         /** Write the ProcParams's text in the file of the given name.
         * @param fname the name of the file
         * @param content the text to write
         * @return Error code (=0 if no error)
         * */
-        int write (Glib::ustring &fname, Glib::ustring &content) const;
+        int write           (Glib::ustring &fname, Glib::ustring &content) const;
 
-};
-
-/**
-  * This class associate a ProcParams object and a ParamEdited object through a pointer
-  * to instance of each type in order to handle partial pp3 file loading (and later maybe
-  * saving too)
-  *
-  * PartialProfile is not responsible of ProcParams and ParamsEdited object creation
-  * and hence is not responsible of their destructions. The function that instanciate
-  * PartialProfile object has to handle all this itself.
-  */
-class PartialProfile {
-    public:
-        rtengine::procparams::ProcParams* pparams;
-        ParamsEdited* pedited;
-        PartialProfile& operator=(PartialProfile& rhs) { pparams=rhs.pparams; pedited=rhs.pedited; return *this; };
-
-        PartialProfile      (bool createInstance=false);
-        PartialProfile      (ProcParams* pp, ParamsEdited* pe=NULL, bool fullCopy=false);
-        PartialProfile      (const ProcParams* pp, const ParamsEdited* pe=NULL);
-        void deleteInstance ();
-        void clearGeneral   ();
-        int  load           (Glib::ustring fName);
-        void set            (bool v);
-        void applyTo        (ProcParams *destParams) const ;
 };
 
 }

@@ -17,6 +17,8 @@
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <cstring>
+#include <tiff.h>
+#include <tiffio.h>
 
 #include "dcp.h"
 #include "safegtk.h"
@@ -28,10 +30,9 @@
 
 using namespace std;
 using namespace rtengine;
-using namespace rtexif;
+
 
 DCPProfile::DCPProfile(Glib::ustring fname) {
-    const int TIFFFloatSize=4;
     const int TagColorMatrix1=50721, TagColorMatrix2=50722, TagProfileHueSatMapDims=50937;
     const int TagProfileHueSatMapData1=50938, TagProfileHueSatMapData2=50939;
     const int TagCalibrationIlluminant1=50778, TagCalibrationIlluminant2=50779;
@@ -39,57 +40,72 @@ DCPProfile::DCPProfile(Glib::ustring fname) {
 
     aDeltas1=aDeltas2=NULL; iHueDivisions=iSatDivisions=iValDivisions=iArrayCount=0;
 
-    FILE *pFile = safe_g_fopen(fname, "rb");
+#ifdef WIN32
+    wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
+    TIFF* in = TIFFOpenW (wfilename, "r");
+    g_free (wfilename);
+#else
+    TIFF* in = TIFFOpen(fname.c_str(), "r");
+#endif
 
-    TagDirectory *tagDir=ExifManager::parseTIFF(pFile, false);
-
-    Tag* tag = tagDir->getTag(TagCalibrationIlluminant1); iLightSource1 = (tag!=NULL ? tag->toInt(0,SHORT) : -1);  
-    tag = tagDir->getTag(TagCalibrationIlluminant2); iLightSource2 = (tag!=NULL ? tag->toInt(0,SHORT) : -1);
-
-    bool hasSecondHueSat = tagDir->getTag(TagProfileHueSatMapData2)!=NULL;  // some profiles have two matrices, but just one huesat
-
-    // Color Matrix (1 is always there)
-    tag = tagDir->getTag(TagColorMatrix1);
-
-    for (int row=0;row<3;row++) { 
-        for (int col=0;col<3;col++) {
-            mColorMatrix1[col][row]=(float)tag->toDouble((col+row*3)*8);
-        }
+    if (!in) {
+    	printf("Error: loading DCP profile \"%s\" failed\n", fname.c_str());
+    	return; // ... and crash!
     }
+
+    //iLightSource1 = (tag!=NULL ? tag->toInt(0,SHORT) : -1);
+    if (!TIFFGetField(in, TagCalibrationIlluminant1, &iLightSource1)) iLightSource1 = -1;
+    //iLightSource2 = (tag!=NULL ? tag->toInt(0,SHORT) : -1);
+    if (!TIFFGetField(in, TagCalibrationIlluminant2, &iLightSource2)) iLightSource2 = -1;
+    float foo;
+    bool hasSecondHueSat = TIFFGetField(in, TagProfileHueSatMapData2, &foo)!=0;  // some profiles have two matrices, but just one huesat
+
+    TIFFGetField(in, TagColorMatrix1, mColorMatrix1[0][0], mColorMatrix1[0][1], mColorMatrix1[0][2],
+                                      mColorMatrix1[1][0], mColorMatrix1[1][1], mColorMatrix1[1][2],
+                                      mColorMatrix1[2][0], mColorMatrix1[2][1], mColorMatrix1[2][2]);
+
     ConvertDNGMatrix2XYZCAM(mColorMatrix1,mXYZCAM1);
 
     // LUT profile? Divisions counts
     bool useSimpleLookup=false;
-    tag = tagDir->getTag(TagProfileHueSatMapDims);
-    if (tag==NULL) {
-        tag=tagDir->getTag(TagProfileLookTableDims);
+    bool hasTag;
+    if (!(hasTag = TIFFGetField(in, TagProfileHueSatMapDims, &iHueDivisions, &iSatDivisions, &iValDivisions)!=0)) {
+        hasTag = TIFFGetField(in, TagProfileLookTableDims, &iHueDivisions, &iSatDivisions, &iValDivisions)!=0;
         useSimpleLookup=true;
     }
 
-    if (tag!=NULL) {
-        iHueDivisions=tag->toInt(0); iSatDivisions=tag->toInt(4); iValDivisions=tag->toInt(8);
+    if (hasTag) {
 
         // Saturation maps. Need to be unwinded.
-        tag = tagDir->getTag(useSimpleLookup ? TagProfileLookTableData : TagProfileHueSatMapData1);
-        iArrayCount = tag->getCount()/3;
+    	float *datas;
+        TIFFGetField(in, useSimpleLookup ? TagProfileLookTableData : TagProfileHueSatMapData1, &iArrayCount, &datas);
+        #ifdef _DEBUG
+        printf("iArrayCount=%d, should be equal to %d\n", iArrayCount, iHueDivisions*iSatDivisions*iValDivisions);
+        #endif
+        iArrayCount /= 3;
 
-        aDeltas1=new HSBModify[iArrayCount];
+        aDeltas1 = new HSBModify[iArrayCount];
 
+        int a=0;
         for (int i=0;i<iArrayCount;i++) {
-            aDeltas1[i].fHueShift=tag->toDouble((i*3)*TIFFFloatSize);
-            aDeltas1[i].fSatScale=tag->toDouble((i*3+1)*TIFFFloatSize);
-            aDeltas1[i].fValScale=tag->toDouble((i*3+2)*TIFFFloatSize);
+            aDeltas1[i].fHueShift = datas[a++];
+            aDeltas1[i].fSatScale = datas[a++];
+            aDeltas1[i].fValScale = datas[a++];
         }
     }
 
-    // For second profile, copy everything from first profile is no better data is available
+    // For second profile, copy everything from first profile if no better data is available
     if (iLightSource2!=-1) {
         // Second matrix
-        tag = tagDir->getTag(TagColorMatrix2);
-
-        for (int row=0;row<3;row++) { 
-            for (int col=0;col<3;col++) {
-                mColorMatrix2[col][row]= (tag!=NULL ? (float)tag->toDouble((col+row*3)*8) : mColorMatrix1[col][row]);
+        if (!TIFFGetField(in, TagColorMatrix2, mColorMatrix2[0][0], mColorMatrix2[0][1], mColorMatrix2[0][2],
+                                               mColorMatrix2[1][0], mColorMatrix2[1][1], mColorMatrix2[1][2],
+                                               mColorMatrix2[2][0], mColorMatrix2[2][1], mColorMatrix2[2][2]))
+        {
+            // No TagColorMatrix2, so we copy matrix1 in matrix2
+            for (int row=0;row<3;row++) {
+                for (int col=0;col<3;col++) {
+                    mColorMatrix2[col][row] = mColorMatrix1[col][row];
+                }
             }
         }
 
@@ -97,15 +113,23 @@ DCPProfile::DCPProfile(Glib::ustring fname) {
 
         // Second huesatmap, or copy of first
         if (hasSecondHueSat) {
-            aDeltas2=new HSBModify[iArrayCount];
 
             // Saturation maps. Need to be unwinded.
-            tag = tagDir->getTag(TagProfileHueSatMapData2);
+            float *datas;
+            TIFFGetField(in, TagProfileHueSatMapData2, &iArrayCount, &datas);
+            #ifdef _DEBUG
+            // iArrayCount should be the same as for the first array
+            printf("iArrayCount=%d\n", iArrayCount);
+            #endif
+            iArrayCount /= 3;
 
+            aDeltas2 = new HSBModify[iArrayCount];
+
+            int a=0;
             for (int i=0;i<iArrayCount;i++) {
-                aDeltas2[i].fHueShift=tag->toDouble((i*3)*TIFFFloatSize);
-                aDeltas2[i].fSatScale=tag->toDouble((i*3+1)*TIFFFloatSize);
-                aDeltas2[i].fValScale=tag->toDouble((i*3+2)*TIFFFloatSize);
+                aDeltas2[i].fHueShift = datas[a++];
+                aDeltas2[i].fSatScale = datas[a++];
+                aDeltas2[i].fValScale = datas[a++];
             }
         } else {
             if (aDeltas1!=NULL) {
@@ -115,8 +139,8 @@ DCPProfile::DCPProfile(Glib::ustring fname) {
         }
     }
 
-    if (pFile!=NULL) fclose(pFile);
-    delete tagDir;
+    if (in!=NULL)
+        TIFFClose(in);
 }
 
 DCPProfile::~DCPProfile() {
@@ -439,7 +463,7 @@ void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustri
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
     double mXYZCAM[3][3]; 
-    const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
+    // const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);  ...unused
 
     // Calculate matrix for direct conversion raw>working space
     double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -538,9 +562,11 @@ DCPProfile* DCPStore::getProfile (Glib::ustring filename) {
 DCPProfile* DCPStore::getStdProfile(Glib::ustring camShortName) {
     Glib::ustring name2=camShortName.uppercase();
 
+    /*  Hombre: removed because DCP profiles can't be read yet
     // Warning: do NOT use map.find(), since it does not seem to work reliably here
     for (std::map<Glib::ustring, Glib::ustring>::iterator i=fileStdProfiles.begin();i!=fileStdProfiles.end();i++)
         if (name2==(*i).first) return getProfile((*i).second);
+    */
 
     return NULL;
 }

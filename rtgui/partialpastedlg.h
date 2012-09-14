@@ -119,7 +119,7 @@ class PartialPasteDlg : public Gtk::Dialog {
     public:
         PartialPasteDlg (Glib::ustring title);
 
-        void applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE=NULL);
+        void applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, rtengine::procparams::ProcParams* srcPP, ParamsEdited* srcPE=NULL);
 
         void everythingToggled ();
         void basicToggled ();

@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 #include "toolpanel.h"
 #include "guiutils.h"
-#include "iptcmeta.h"
+#include "../rtengine/iptcmeta.h"
 
 /*class IPTCSectionTitle{
 
@@ -145,7 +145,7 @@ class IPTCPanel : public Gtk::VBox, public ToolPanel {
 		void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
         
         void setImageData   (const rtengine::ImageMetaData* id);       
-		void writeImageData ( rtengine::ImageMetaData* id );
+		void writeImageData (rtengine::ImageMetaData* id);
 
         void notifyListener ();
 

@@ -144,6 +144,13 @@ void Options::updatePaths() {
     }
 
     Glib::ustring preferredPath = getPreferredProfilePath();
+
+	// if it doesn't exist, create iptc templates directory inside the user's preferred profile path
+    tmpPath = Glib::build_filename(preferredPath, "iptc");
+    if (!checkDirPath (tmpPath, ""))
+        safe_g_mkdir_with_parents (tmpPath, 511);
+
+
     // Paths are updated only if the user or global profile path is set
     if (lastRgbCurvesDir.empty() || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_IS_DIR))
         lastRgbCurvesDir = preferredPath;
@@ -1075,14 +1082,6 @@ void Options::load () {
 			localeTranslation = argv0 + "/languages/" + options.language;
 		}
 	}
-
-	// create iptc templates directory if it doesn't exist
-	Revoir ca!
-	Glib::ustring iptcDir = argv0 + "/iptc";
-	if (options.multiUser)
-		iptcDir = rtdir + "/iptc";
-    if (!safe_file_test (iptcDir, Glib::FILE_TEST_IS_DIR))
-        safe_g_mkdir_with_parents (iptcDir, 511);
 
 	langMgr.load(localeTranslation, new MultiLangMgr(languageTranslation, new MultiLangMgr(defaultTranslation)));
 

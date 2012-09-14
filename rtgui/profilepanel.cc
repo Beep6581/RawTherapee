@@ -27,8 +27,6 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-extern Glib::ustring argv0;
-
 PartialPasteDlg* ProfilePanel::partialProfileDlg;
 
 
@@ -179,14 +177,14 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
                         return;
 
                     // saving the partial profile
-                    PartialProfile ppTemp(true);
+                    PartialProfile ppTemp(true, true);
                     partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
-                    ppTemp.pparams->save (fname, "", ppTemp.pedited);
+                    ppTemp.saveParams (fname);
                     ppTemp.deleteInstance();
                 }
                 else {
                     // saving a full profile
-                    toSave->pparams->save (fname);
+                    toSave->saveParams (fname);
                 }
                 refreshProfileList ();
             }
@@ -223,7 +221,7 @@ void ProfilePanel::copy_clicked (GdkEventButton* event) {
                 return;
 
             // saving a partial profile
-            PartialProfile ppTemp(true);
+            PartialProfile ppTemp(true, true);
             partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
             clipboard.setPartialProfile(ppTemp);
             ppTemp.deleteInstance();
@@ -282,7 +280,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
         }
         bool customCreated = false;
         if (!custom) {
-            custom = new PartialProfile (true);
+            custom = new PartialProfile (true, true);
             custom->set(true);
             customCreated = true;
         }
@@ -297,10 +295,9 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
 
             if (event->state & Gdk::CONTROL_MASK) {
                 // applying partial profile
-                PartialProfile ppTemp(true);
+                PartialProfile ppTemp(true, true);
                 // the 2 next line modify custom->pedited without modifying custom->pparams
                 partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, custom->pparams, custom->pedited);
-                *custom->pedited = *ppTemp.pedited;
                 ppTemp.deleteInstance();
             }
 
@@ -337,12 +334,11 @@ void ProfilePanel::paste_clicked (GdkEventButton* event) {
     Glib::ustring newEntry = Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")";
 
     if (!custom) {
-        custom = new PartialProfile (true);
-        custom->pedited->set(true);
+        custom = new PartialProfile (true, true);
+        custom->set(true);
         profiles->append_text (newEntry);
     }
-    ProcParams pp = clipboard.getProcParams ();
-    *custom->pparams = pp;
+    *custom->pparams = clipboard.getProcParams ();
 
     profiles->set_active_text (newEntry);
     old = profiles->get_active_text();
@@ -351,7 +347,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event) {
 
     if (event->state & Gdk::CONTROL_MASK) {
         // applying partial profile
-        PartialProfile ppTemp(true);
+        PartialProfile ppTemp(true, true);
         // the 2 next line modify custom->pedited without modifying custom->pparams
         partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, custom->pparams, custom->pedited);
         *custom->pedited = *ppTemp.pedited;
@@ -399,7 +395,7 @@ void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rteng
     if (profiles->get_active_text() != entry) {
         dontupdate = true;
         if (!custom) {
-            custom = new PartialProfile (true);
+            custom = new PartialProfile (true, true);
             custom->set(true);
             profiles->append_text (entry);
         }
@@ -409,7 +405,7 @@ void ProfilePanel::procParamsChanged (rtengine::procparams::ProcParams* p, rteng
     *custom->pparams = *p;
 }
 
-void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastSaved) {
+void ProfilePanel::initProfile (const Glib::ustring& profname, PartialProfile* lastSaved) {
 
     changeconn.block (true);
 
@@ -430,9 +426,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
         delete lastsaved; lastsaved = NULL;
     }
     if (lastSaved) {
-        ParamsEdited* pe = new ParamsEdited();
-        pe->set(true);
-        lastsaved = new PartialProfile(lastSaved, pe);
+        lastsaved = new PartialProfile(lastSaved);
     }
 
     Glib::ustring defline = profname;
@@ -465,7 +459,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
         PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
         if (!s) {
             changeconn.block (false);
-            s = new PartialProfile (true);
+            s = new PartialProfile (true, true);
             s->set(true);
             dels = true;  // we've created a temporary PartialProfile, so we set a flag to destroy it
             if (tpc)

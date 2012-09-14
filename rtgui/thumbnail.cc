@@ -35,11 +35,11 @@
 using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
-    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
-      pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
-      initial_(false), lastW(0), lastH(0), lastScale(0),pparamsId(-1),idata(NULL)
+    : fname(fname), cfs(*cf), cachemgr(cm), ref(1), tpp(NULL), idata(NULL), pprofile(true, true),
+      pprofileId(-1), pprofileValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
+      lastW(0), lastH(0), lastScale(0), initial_(false)
 {
-
+	pprofile.set(true); // Not sure if it's better to set all parameters as used right from construction!?
     cfs.load (getCacheFileName ("data")+".txt");
     loadInfoFromImage ();
     //loadProcParams ();
@@ -51,10 +51,11 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
 }
 
 Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
-    : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
-      needsReProcessing(true),imageLoading(false), lastImg(NULL),
-      initial_(true),pparamsId(-1),idata(NULL)
+    : fname(fname), cachemgr(cm), ref(1), tpp(NULL), idata(NULL), pprofile(true, true), pprofileId(-1),
+      pprofileValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
+      initial_(true)
 {
+    pprofile.set(true); // Not sure if it's better to set all parameters as used right from construction!?
     cfs.md5 = md5;
     _generateThumbnailImage ();
     //loadProcParams ();
@@ -138,37 +139,38 @@ bool Thumbnail::isSupported () {
     return cfs.supported;
 }
 
-const ProcParams& Thumbnail::getProcParams () {
+const PartialProfile& Thumbnail::getPartialProfile () {
     // TODO: Check for Linux
     #ifdef WIN32
     Glib::Mutex::Lock lock(mutex);
     #endif
 
-    if (pparamsValid)
-        return pparams;
+    if (pprofileValid)
+        return pprofile;
     else {
-        pparams = *(profileStore.getDefaultProcParams (getType()==FT_Raw));
-        if (pparams.wb.method=="Camera") {
+        pprofile = *(profileStore.getDefaultPartialProfile(getType()==FT_Raw));
+        // TODO: Look out if we want to send back a partial or full profile
+        //pprofile.set(true);
+        if (pprofile.pparams->wb.method=="Camera") {
             double ct;
-            getCamWB (ct, pparams.wb.green);
-            pparams.wb.temperature = ct;
+            getCamWB (ct, pprofile.pparams->wb.green);
+            pprofile.pparams->wb.temperature = ct;
         }
-        else if (pparams.wb.method=="Auto") {
+        else if (pprofile.pparams->wb.method=="Auto") {
             double ct;
-            getAutoWB (ct, pparams.wb.green);
-            pparams.wb.temperature = ct;
+            getAutoWB (ct, pprofile.pparams->wb.green);
+            pprofile.pparams->wb.temperature = ct;
         }
     }
-    return pparams; // there is no valid pp to return, but we have to return something
+    return pprofile; // there is no valid pp to return, but we have to return something
 }
 
 /*
- *  Create default params on demand and returns a new updatable object
- *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
+ *  Create default PartialProfile on demand and returns a new updatable object
  */
-rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB) {
+rtengine::procparams::PartialProfile* Thumbnail::createPartialProfileForUpdate(bool returnPProfile, bool forceCPB) {
     // try to load the last saved parameters from the cache or from the paramfile file
-    ProcParams* ldprof = NULL;
+    PartialProfile* ldprof = NULL;
 
     Glib::ustring defProf = getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
 
@@ -176,6 +178,9 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
     if (!options.customProfileBuilder.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
+    	//
+    	// WARNING: The CPB have to generate valid XMP files now (with complete or partial parameter set)
+    	//
         Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
         + Glib::build_filename(defaultPparamsPath, defProf + paramFileExtension) + Glib::ustring("\" ");
 
@@ -191,9 +196,9 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         if (success) loadInfoFromImage();
     }
 
-    if (returnParams && hasProcParams()) {
-        ldprof = new ProcParams ();
-        *ldprof = getProcParams ();
+    if (returnPProfile && hasProcParams()) {
+        ldprof = new PartialProfile (false, false);  // instance of pparams and pedited will be eventually created on the next line
+        *ldprof = getPartialProfile ();
     }
 
     return ldprof;
@@ -204,7 +209,7 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt){
         listeners[i]->procParamsChanged (this, whoChangedIt);
 }
 
-void Thumbnail::clearProcParams (int whoClearedIt) {
+void Thumbnail::clearPartialProfile (int whoClearedIt) {
     
     // TODO: Check for Linux
     #ifdef WIN32
@@ -212,14 +217,14 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
     #endif
 
     cfs.recentlySaved = false;
-    pparamsValid = false;
+    pprofileValid = false;
     needsReProcessing = true;
 
     //TODO: run though customprofilebuilder?
     // probably not as this is the only option to set param values to default
 
     // reset the params to defaults
-    pparams.setDefaults();
+    pprofile.reset();
 
     idata->deleteAllSnapshots();
 
@@ -229,34 +234,41 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
 
 bool Thumbnail::hasProcParams () {
 
-    return pparamsValid;
+    return pprofileValid;
 }
 
-void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow) {
+void Thumbnail::setPartialProfile (const PartialProfile& newPprofile, int whoChangedIt, bool updateCacheNow) {
+    // Not sure it's necessary, but it's safer
+    #ifdef _DEBUG
+    if (!newPprofile.pparams || !pprofile.pparams) {
+        printf("Thumbnail::setPartialProfile");
+        if (!newPprofile.pparams)
+            printf(" / newPprofile.pparams == NULL!");
+        if (!pprofile.pparams)
+            printf(" / pprofile.pparams == NULL!");
+        printf(" / Aborting\n");
+        return;
+    }
+    #endif
+
     // TODO: Check for Linux
     #ifdef WIN32
     Glib::Mutex::Lock lock(mutex);
     #endif
 
-    #ifdef _DEBUG
-    if (pparams.sharpening.threshold.isDouble() != pp.sharpening.threshold.isDouble())
-        printf("WARNING: Sharpening different!\n");
-    if (pparams.vibrance.psthreshold.isDouble() != pp.vibrance.psthreshold.isDouble())
-        printf("WARNING: Vibrance different!\n");
-    #endif
-
-    if (pparams!=pp) 
+    if (*(pprofile.pparams)!=*(newPprofile.pparams))
         cfs.recentlySaved = false;
 
-
-    if (pe) {
+    if (newPprofile.pedited) {
         // coarse.rotate works in ADD mode only, so we set it to 0 first
-        if (pe->coarse.rotate)
-            pparams.coarse.rotate = 0;
-        pe->combine(pparams, pp, true);
+        if (newPprofile.pedited->coarse.rotate)
+            pprofile.pparams->coarse.rotate = 0;
+
+        // applying the parameter set and merging the ParamsEdited too, if any
+        newPprofile.applyTo(&pprofile);
     }
-    else pparams = pp;
-    pparamsValid = true;
+    else pprofile = newPprofile;
+    pprofileValid = true;
     needsReProcessing = true;
 
     if (updateCacheNow)
@@ -267,29 +279,14 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 }
 
 bool Thumbnail::isRecentlySaved () {
-    
+
     return cfs.recentlySaved;
 }
 
 void Thumbnail::imageDeveloped () {
-        
+
     cfs.recentlySaved = true;
     cfs.save (getCacheFileName ("data")+".txt");
-}
-
-void Thumbnail::imageEnqueued () {
-
-    enqueueNumber++;
-}
-
-void Thumbnail::imageRemovedFromQueue () {
-
-    enqueueNumber--;
-}
-
-bool Thumbnail::isEnqueued () {
-
-    return enqueueNumber > 0;
 }
 
 void Thumbnail::increaseRef ()
@@ -317,7 +314,7 @@ void Thumbnail::getThumbnailSize (int &w, int &h) {
     #endif
 
     w=0;
-    if (!initial_ && tpp) w = tpp->getImageWidth (getProcParams(), h, imgRatio);  // this might return 0 if image was just building
+    if (!initial_ && tpp) w = tpp->getImageWidth (*getPartialProfile().pparams, h, imgRatio);  // this might return 0 if image was just building
     if (w==0) {
         if (imgRatio > 0.)
             w = (int)(imgRatio * (float)h);
@@ -472,7 +469,7 @@ int Thumbnail::loadInfoFromImage ( ) {
         idata = rtengine::ImageMetaData::fromFile (fname,"",xmpfname2,true);
     else if( getExtension(fname).lowercase().compare("png")==0 && options.embedXmpIntoPNG )
         idata = rtengine::ImageMetaData::fromFile (fname,"",xmpfname2,true);
-    else if( getExtension(fname).lowercase().compare("jpg")==0 && options.embedXmpIntoJPG )
+    else if( (getExtension(fname).lowercase().compare("jpg")==0 || getExtension(fname).lowercase().compare("jpeg")==0) && options.embedXmpIntoJPG )
         idata = rtengine::ImageMetaData::fromFile (fname,"",xmpfname2,true);
     else if( (getExtension(fname).lowercase().compare("tif")==0 || getExtension(fname).lowercase().compare("tiff")==0) && options.embedXmpIntoTIFF )
         idata = rtengine::ImageMetaData::fromFile (fname,"",xmpfname2,true);
@@ -484,9 +481,9 @@ int Thumbnail::loadInfoFromImage ( ) {
     int currentId = idata->getSnapshotId( );
     if( currentId >=0 ){
         rtengine::SnapshotInfo si = idata->getSnapshot( currentId );
-        pparams = si.params;
-        pparamsId = currentId;
-        pparamsValid=true;
+        pprofile = si.pprofile;
+        pprofileId = currentId;
+        pprofileValid=true;
     }
 
     int deg = 0;
@@ -611,13 +608,13 @@ void Thumbnail::saveThumbnail ()
 
 void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData) {
 
-    if (updatePParams && pparamsValid) {
+    if (updatePParams && pprofileValid) {
         if( idata ){
             int idSnapshot=idata->getSnapshotId();
             if( idSnapshot<0 )
-                idata->newSnapshot( rtengine::SnapshotInfo::kCurrentSnapshotName , pparams);
+                idata->newSnapshot( rtengine::SnapshotInfo::kCurrentSnapshotName , pprofile);
             else
-                idata->updateSnapshot(idSnapshot, pparams );
+                idata->updateSnapshot(idSnapshot, pprofile );
         }
     }
     if (updateCacheImageData)
@@ -672,7 +669,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
     Glib::ustring openFName;
 
     if (destination==1) {
-            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname /* Merge uncertainty: was "this" */), options.saveFormatBatch.format);
+            openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(this), options.saveFormatBatch.format);
             if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
               wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (openFName.c_str(), -1, NULL, NULL, NULL);
               ShellExecuteW(NULL, L"open", wfilename, NULL, NULL, SW_SHOWMAXIMIZED );
@@ -683,7 +680,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
             }
     } else {
         openFName = destination == 3 ? fname
-            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname /* Merge uncertainty: was "this" */), options.saveFormatBatch.format);
+            : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(this), options.saveFormatBatch.format);
 
         printf("Opening %s\n", openFName.c_str());
 
@@ -742,11 +739,11 @@ bool Thumbnail::imageLoad(bool loading)
  * Append the processing parameters to the end of the list then save the xmp file
  * Returns the id of the new snapshot
  */
-int Thumbnail::newSnapshot(const Glib::ustring &newName, const rtengine::procparams::ProcParams& params, bool queued)
+int Thumbnail::newSnapshot(const Glib::ustring &newName, const rtengine::procparams::PartialProfile& pprofile, bool queued)
 {
-    int id =idata->newSnapshot( newName,params,queued);
+    int id =idata->newSnapshot( newName, pprofile, queued );
 
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->snapshotChanged(this,id);
     return id;
 }
@@ -765,7 +762,7 @@ bool Thumbnail::deleteSnapshot( int id )
 bool Thumbnail::renameSnapshot(int id, const Glib::ustring &newname )
 {
    bool b= idata->renameSnapshot(id, newname);
-   for (int i=0; i<listeners.size(); i++)
+   for (size_t i=0; i<listeners.size(); i++)
        listeners[i]->snapshotChanged(this,id);
    return b;
 }
@@ -791,7 +788,7 @@ rtengine::SnapshotInfo Thumbnail::getSnapshot( int id )
 bool  Thumbnail::setQueued( int id, bool inqueue )
 {
     bool b= idata->setQueuedSnapshot( id, inqueue );
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->snapshotChanged(this,id);
     return b;
 }
@@ -804,7 +801,7 @@ int Thumbnail::getNumSaved()
 bool Thumbnail::setSaved( int id, bool saved, const Glib::ustring &filename )
 {
     bool b= idata->setSavedSnapshot( id, saved, filename );
-    for (int i=0; i<listeners.size(); i++)
+    for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->snapshotChanged(this,id);
     return b;
 }

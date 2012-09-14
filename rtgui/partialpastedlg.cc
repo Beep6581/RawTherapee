@@ -564,18 +564,22 @@ void PartialPasteDlg::metaicmToggled () {
  * Copies the selected items from the source ProcParams+ParamsEdited(optional)
  * to the destination ProcParams.
  */
-void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE) {
+void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, rtengine::procparams::ProcParams* srcPP, ParamsEdited* srcPE) {
 
-    ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
-    ParamsEdited filterPE; // Contains the initial information about the loaded values
+    rtengine::procparams::PartialProfile srcPProfile(false, srcPP, srcPE);
+
+    rtengine::procparams::PartialProfile dstPProfile(false, false);
+    dstPProfile.pparams = dstPP;
+    dstPProfile.pedited = dstPE;
+
+    ParamsEdited falsePE;   // falsePE is a workaround to set a group of ParamsEdited to true
+    ParamsEdited filterPE; // Contains the initial information about the loaded values; By default, nothing has to be copied (i.e. set to false)
     if (srcPE) {
         filterPE = *srcPE;
     }
     else {
-        // By default, everything has to be copied
         filterPE.set(true);
     }
-
 
     // the general section is always ignored, whichever operation we use the PartialPaste for
     filterPE.general = falsePE.general;
@@ -617,13 +621,12 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     //if (!exifch->get_active ())      filterPE.exif = falsePE.exif;
     //if (!iptc->get_active ())        filterPE.iptc = falsePE.iptc;
-    if (!icm->get_active ())         filterPE.icm  = falsePE.icm;
 
     if (!raw_dmethod->get_active ())           filterPE.raw.dmethod            = falsePE.raw.dmethod;
     if (!raw_ccSteps->get_active ())           filterPE.raw.ccSteps            = falsePE.raw.ccSteps;
     if (!raw_dcb_iterations->get_active ())    filterPE.raw.dcbIterations      = falsePE.raw.dcbIterations;
     if (!raw_dcb_enhance->get_active ())       filterPE.raw.dcbEnhance         = falsePE.raw.dcbEnhance;
-    //if (!raw_all_enhance->get_active ())       filterPE.raw.allEnhance         = falsePE.raw.allEnhance;
+    //if! (raw_all_enhance->get_active ())       filterPE.raw.allEnhance         = falsePE.raw.allEnhance;
 
     if (!raw_expos->get_active ())             filterPE.raw.exPos              = falsePE.raw.exPos;
     if (!raw_preser->get_active ())            filterPE.raw.exPreser           = falsePE.raw.exPreser;
@@ -649,7 +652,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (dstPE) *dstPE = filterPE;
 
     // Apply the filter!
-    filterPE.combine(*dstPP, *srcPP, true);
+    srcPProfile.applyTo(&dstPProfile);
 }
 
 PartialPasteIPTCDlg::PartialPasteIPTCDlg( const rtengine::MetadataList &v)

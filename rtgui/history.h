@@ -25,12 +25,13 @@
 #include "profilechangelistener.h"
 #include "paramsedited.h"
 #include "thumbnail.h"
-#include "imagedata.h"
+#include "../rtengine/imagedata.h"
 
 class HistoryBeforeLineListener {
 
     public:
         virtual void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) {}
+        virtual ~HistoryBeforeLineListener() {}
 };
 
 class History : public Gtk::VBox, public PParamsChangeListener {

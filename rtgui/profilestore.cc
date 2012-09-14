@@ -115,8 +115,8 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
             delete j->second;
             partProfiles.erase (j);
           }
-          PartialProfile* pProf = new PartialProfile (true);
-          int res = pProf->load (fname);
+          PartialProfile* pProf = new PartialProfile (true, true);
+          int res = pProf->loadParams (fname);
           if (!res && pProf->pparams->ppVersion>=220) {
             partProfiles[name] = pProf;
           }
@@ -132,12 +132,12 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
   // Check if the default profiles has been found. If no, create default instance
   // This operation is safe: if the profile is finally found in another directory, the profile will be updated
   if (partProfiles.find(options.defProfRaw) == partProfiles.end()) {
-    PartialProfile* pProf = new PartialProfile (true);
+    PartialProfile* pProf = new PartialProfile (true, true);
     pProf->set(true);
     partProfiles[options.defProfRaw] = pProf;
   }
   if (partProfiles.find(options.defProfImg) == partProfiles.end()) {
-    PartialProfile* pProf = new PartialProfile (true);
+    PartialProfile* pProf = new PartialProfile (true, true);
     pProf->set(true);
     partProfiles[options.defProfImg] = pProf;
   }

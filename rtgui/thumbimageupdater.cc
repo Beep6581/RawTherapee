@@ -86,7 +86,7 @@ public:
 	Glib::Cond inactive_;
 
 	void
-	processNextJob(void)
+	processNextJob()
 	{ 
 		Job j;
 
@@ -151,18 +151,18 @@ public:
 		{
 			if ( thm->isQuick() )
 			{
-				img = thm->upgradeThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale);
+				img = thm->upgradeThumbImage(*thm->getPartialProfile().pparams, j.tbe_->getPreviewHeight(), scale);
 			}
 		}
 		else
 		{
-			img = thm->processThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale);
+			img = thm->processThumbImage(*thm->getPartialProfile().pparams, j.tbe_->getPreviewHeight(), scale);
 		}
 
 		if (img)
 		{
 			DEBUG("pushing image %s",thm->getFileName().c_str());
-			j.listener_->updateImage(img, scale, thm->getProcParams().crop);
+			j.listener_->updateImage(img, scale, thm->getPartialProfile().pparams->crop);
 		}
 
 		{
@@ -231,6 +231,13 @@ ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
 	impl_->threadPool_->push(sigc::mem_fun(*impl_, &ThumbImageUpdater::Impl::processNextJob));
 }
 
+/*
+- 'sigc::mem_fun' is ambiguous ' Candidates are:
+
+        sigc::bound_mem_functor0<void,ThumbImageUpdater::Impl>      mem_fun(ThumbImageUpdater::Impl &, void (ThumbImageUpdater::Impl::*)())
+        sigc::bound_mem_functor1<void,ThumbImageUpdater::Impl,void> mem_fun(ThumbImageUpdater::Impl &, void (ThumbImageUpdater::Impl::*)(void)) '
+	- Invalid arguments ' Candidates are: void push(const sigc::slot<void,sigc::nil,sigc::nil,sigc::nil,sigc::nil,sigc::nil,sigc::nil,sigc::nil> &) '
+ */
 
 void 
 ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)

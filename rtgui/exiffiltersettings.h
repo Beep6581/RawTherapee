@@ -35,8 +35,8 @@ class ExifFilterSettings {
         double shutterTo;
         double focalFrom;
         double focalTo;
-        int isoFrom;
-        int isoTo;
+        unsigned int isoFrom;
+        unsigned int isoTo;
 
 		bool filterFNumber;
 		bool filterShutter;

@@ -19,13 +19,12 @@
 #include "history.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
-#include "safegtk.h"
+#include "../rtengine/safegtk.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 Glib::ustring eventDescrArray[NUMOFEVENTS];
-extern Glib::ustring argv0;
 
 bool History::iconsLoaded = false;
 Glib::RefPtr<Gdk::Pixbuf> History::recentlySavedIcon;
@@ -238,15 +237,15 @@ void History::historySelectionChanged () {
     Gtk::TreeModel::iterator iter = selection->get_selected();
     if (iter) {
         Gtk::TreeModel::Row row = *iter;
-        if (row) 
+        if (row)
             bTreeView->get_selection()->unselect_all ();
         if (row && tpc) {
-        	ProcParams pparams = row[historyColumns.params];
-            ParamsEdited pe;
-            pe.set(true);
-        	PartialProfile pp(&pparams, &pe);
-            ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
-            tpc->profileChange (&pp, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
+        	ProcParams pp(row[historyColumns.params]);
+        	ParamsEdited pe;
+        	pe.set(true);
+            PartialProfile pprofile(false, &pp, &pe);
+            ParamsEdited paramsEdited(row[historyColumns.paramsEdited]);
+            tpc->profileChange (&pprofile, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
         }
         if (blistener && blistenerLock==false) {
             Gtk::TreeModel::Path path = historyModel->get_path (iter);
@@ -264,15 +263,15 @@ void History::bookmarkSelectionChanged () {
     Gtk::TreeModel::iterator iter = selection->get_selected();
     if (iter) {
         Gtk::TreeModel::Row row = *iter;
-        if (row) 
+        if (row)
             hTreeView->get_selection()->unselect_all ();
         if (row && tpc) {
-        	ProcParams pparams = row[bookmarkColumns.params];
-            ParamsEdited pe;
-            pe.set(true);
-        	PartialProfile pp(&pparams, &pe);
+            PartialProfile pprofile(true, false);
+            *pprofile.pparams = row[bookmarkColumns.params];
             ParamsEdited paramsEdited = row[bookmarkColumns.paramsEdited];
-            tpc->profileChange (&pp, EvBookmarkSelected, row[bookmarkColumns.text], &paramsEdited);
+            Glib::ustring bmName(row[bookmarkColumns.id] + "-"+row[bookmarkColumns.name]);
+            tpc->profileChange (&pprofile, EvBookmarkSelected, bmName, &paramsEdited);
+            pprofile.deleteInstance();
         }
     }
 }
@@ -351,15 +350,18 @@ void History::addBookmarkWithText (Glib::ustring text) {
     if (!row) {
         return;
     }
-    ProcParams params = row[historyColumns.params];
-    ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
-    int newId = rand();
     if( slistener ){
-    	newId = slistener->newSnapshot( text, params);
-    	if( newId<0 )
-    		return;
+    	ProcParams pp(row[historyColumns.params]);
+    	ParamsEdited pe(true);
+        PartialProfile pprofile(&pp, &pe);
+        int newId = rand();
+
+        newId = slistener->newSnapshot( text, pprofile);
+        if( newId<0 )
+            return;
     }
 /*
+    //ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
     // append new row to bookmarks
     Gtk::TreeModel::Row newrow = *(bookmarkModel->append());
     //newrow[bookmarkColumns.text] = text;
@@ -370,8 +372,7 @@ void History::addBookmarkWithText (Glib::ustring text) {
 */
 }
 
-void History::addSnapshot( const rtengine::SnapshotInfo &snapInfo )
-{
+void History::addSnapshot( const rtengine::SnapshotInfo &snapInfo ) {
 	// don't show current snapshot
 	if( snapInfo.name.compare( rtengine::SnapshotInfo::kCurrentSnapshotName)== 0 )
 		return;
@@ -380,7 +381,7 @@ void History::addSnapshot( const rtengine::SnapshotInfo &snapInfo )
     Gtk::TreeModel::Row newrow = *(bookmarkModel->append());
     newrow[bookmarkColumns.id] = snapInfo.id;
     newrow[bookmarkColumns.name] = snapInfo.name;
-    newrow[bookmarkColumns.params] = snapInfo.params;
+    newrow[bookmarkColumns.params] = *snapInfo.pprofile.pparams;
 	if( snapInfo.queued )
 		newrow[bookmarkColumns.status]=enqueuedIcon;
 	else if( snapInfo.saved )
@@ -392,8 +393,7 @@ void History::addSnapshot( const rtengine::SnapshotInfo &snapInfo )
     newrow[bookmarkColumns.paramsEdited] = paramsEdited;
 }
 
-void History::updateSnapshot(const rtengine::SnapshotInfo &snapInfo )
-{
+void History::updateSnapshot(const rtengine::SnapshotInfo &snapInfo ) {
 	Gtk::ListStore::Children l= bookmarkModel->children();
 	for( Gtk::ListStore::Children::iterator iter = l.begin();iter!=l.end();iter++ ){
 		if( snapInfo.id == (*iter)[bookmarkColumns.id] ){
@@ -411,8 +411,7 @@ void History::updateSnapshot(const rtengine::SnapshotInfo &snapInfo )
 	addSnapshot( snapInfo );
 }
 
-int  History::getSelectedSnapshot()
-{
+int  History::getSelectedSnapshot() {
     // lookup the selected item in the bookmark
     Glib::RefPtr<Gtk::TreeSelection> selection = bTreeView->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
@@ -423,8 +422,7 @@ int  History::getSelectedSnapshot()
     return (*iter)[bookmarkColumns.id];
 }
 
-bool History::findName( Glib::ustring text )
-{
+bool History::findName( Glib::ustring text ) {
 	Gtk::ListStore::Children l= bookmarkModel->children();
 
 	for( Gtk::ListStore::Children::iterator iter = l.begin();iter!=l.end();iter++ ){
@@ -440,7 +438,7 @@ void History::addBookmarkPressed () {
     if (hTreeView->get_selection()->get_selected()) {
     	Glib::ustring newName;
     	do{
-    		newName = Glib::ustring::compose ("%1 %2", M("HISTORY_SNAPSHOT"), bmnum++);
+    		newName = Glib::ustring::compose ("%1 %2", bmnum++, M("HISTORY_SNAPSHOT"));
     	}while( findName(newName) );
         addBookmarkWithText (newName);
     }

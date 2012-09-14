@@ -21,7 +21,7 @@
 
 #include <gtkmm.h>
 #include "toolpanel.h"
-#include "imagedata.h"
+#include "../rtengine/imagedata.h"
 
 class ExifPanel : public Gtk::VBox, public ToolPanel {
 

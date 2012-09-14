@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <rtXmp.h>
+#include "rtXmp.h"
 
 namespace rtengine {
 

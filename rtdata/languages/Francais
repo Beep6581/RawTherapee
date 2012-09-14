@@ -1,5 +1,3 @@
-#00 Français
-#01 1.3.2008: Initial translation by Hombre
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
@@ -81,6 +79,8 @@ EXPORT_MAXWIDTH;Largeur maximum:
 EXPORT_PUTTOQUEUEFAST;  Mettre dans la file de traitement pour Export Rapide
 EXPORT_RAW_DMETHOD;Méthode de dématriçage
 EXPORT_RESIZEMETHOD;Méthode de redimensionnement
+EXTPROGTARGET_1;raw
+EXTPROGTARGET_2;file de traitement
 FILEBROWSER_ADDDELTEMPLATE;Ajouter/Supprimer le modèle...
 FILEBROWSER_APPLYPROFILE;Appliquer le profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Appliquer le profil (partiel)
@@ -107,10 +107,12 @@ FILEBROWSER_EXIFFILTERAPPLY;Appliquer
 FILEBROWSER_EXIFFILTERLABEL;Filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGSHINT;Change les réglages du filtre EXIF
 FILEBROWSER_EXIFFILTERSETTINGS;Réglages
+FILEBROWSER_EXTPROGMENU;Ouvrir avec
 FILEBROWSER_FLATFIELD;Champ Uniforme
 FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
 FILEBROWSER_MOVETOFLATFIELDDIR;Déplacer vers le dossier de Trame Noire
 FILEBROWSER_NEW_NAME;Nouveau nom:
+FILEBROWSER_OPENDEFAULTVIEWER;Visualiseur par défaut de Windows (image déjà traitée) 
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
 FILEBROWSER_POPUPCANCELJOB;Abandonner la file de traitement
@@ -201,8 +203,8 @@ GENERAL_OK;OK
 GENERAL_PORTRAIT;Portrait
 GENERAL_SAVE;Enregistrer
 GENERAL_UNCHANGED;(Inchangé)
-GENERAL_YES;Oui
 GENERAL_WARNING;Attention
+GENERAL_YES;Oui
 HISTOGRAM_BUTTON_BAR;RVB
 HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;V
@@ -257,7 +259,7 @@ HISTORY_MSG_33;Déconvolution - Itérations
 HISTORY_MSG_34;Éviter l'écrêtage couleur
 HISTORY_MSG_35;Limiteur de saturation
 HISTORY_MSG_36;Limite de saturation
-HISTORY_MSG_37;Rehaussement couleur
+HISTORY_MSG_37;Exposition auto
 HISTORY_MSG_38;Méthode de balance des blancs
 HISTORY_MSG_39;Température de couleur
 HISTORY_MSG_40;Teinte de balance des blancs
@@ -315,7 +317,7 @@ HISTORY_MSG_91;Réd. de bruit Chrominance
 HISTORY_MSG_92;Réd. de bruit Gamma
 HISTORY_MSG_93;Param. de contraste
 HISTORY_MSG_94;Contraste par niveau de détail
-HISTORY_MSG_95;Saturation
+HISTORY_MSG_95;Chromaticité
 HISTORY_MSG_96;Courbe 'a'
 HISTORY_MSG_97;Courbe 'b'
 HISTORY_MSG_98;Algorithme de dématriçage
@@ -331,9 +333,9 @@ HISTORY_MSG_107;A.C. - Seuil
 HISTORY_MSG_108;Seuil de compr. des hautes lumières
 HISTORY_MSG_109;Redim. - boîte englobante
 HISTORY_MSG_110;Redim. s'applique à
-HISTORY_MSG_111;Éviter l'écrêtage couleur
-HISTORY_MSG_112;Limiteur de saturation
-HISTORY_MSG_113;Limite de saturation
+HISTORY_MSG_111;Éviter les dérives de teinte
+HISTORY_MSG_112;--inutilisé--
+HISTORY_MSG_113;Protection des tons rouges et chair
 HISTORY_MSG_114;Nbr d'itération DCB
 HISTORY_MSG_115;Nbr d'itération des fausses couleurs
 HISTORY_MSG_116;DCB amélioré
@@ -482,6 +484,7 @@ MAIN_MSG_EMPTYFILENAME;Nom de fichier non spécifié!
 MAIN_MSG_ERRORDURINGIMAGESAVING;Erreur pendant la sauvegarde de l'image
 MAIN_MSG_EXITJOBSINQUEUEINFO;Les images non traitées seront perdues en quittant l'application
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Êtes-vous sûr de vouloir quitter? Il reste dans la file des images en attente de traitement.
+MAIN_MSG_IMAGEUNPROCESSED;Cette commande nécessite que toutes les images sélectionnées aient été préalablement traité.
 MAIN_MSG_JOBSINQUEUE;travail(aux) en file d'attente
 MAIN_MSG_NAVIGATOR;Navigateur
 MAIN_MSG_PLACES;Emplacement
@@ -687,6 +690,7 @@ PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Afficher vignette incluse dans fichier RAW si non édité
 PREFERENCES_LANGAUTODETECT;Utiliser les paramètres linguistiques de l'OS
 PREFERENCES_LIVETHUMBNAILS;Vignettes "Live" (plus lent)
+PREFERENCES_MENUGROUPEXTPROGS;Groupe "Ouvrir avec"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Opérations sur les fichiers
 PREFERENCES_MENUGROUPLABEL;Label
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Opérations sur les profils
@@ -806,8 +810,22 @@ SAVEDLG_PUTTOQUEUETAIL;Placer au fin de la file de traitement
 SAVEDLG_PUTTOQUEUE;Placer dans la file de traitement
 SAVEDLG_SAVEIMMEDIATELY;Enregistrer immédiatement
 SAVEDLG_SAVESPP;Enregistrer les paramètres de développement avec l'image
+SAVEDLG_SUBSAMP;Sous-échantillonnage
+SAVEDLG_SUBSAMP_1;Meilleure compression
+SAVEDLG_SUBSAMP_2;Équilibré
+SAVEDLG_SUBSAMP_3;Meilleure qualité
+SAVEDLG_SUBSAMP_TOOLTIP;Compression: 4:1:1\nÉquilibré: 4:2:2\nQualité: 4:4:4
 SAVEDLG_TIFFFILTER;Fichiers TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
+SAVEDLG_WARNFILENAME;Le fichier sera nommé
+SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitiliser la position de ces 3 curseurs
+THRESHOLDSELECTOR_BL;Bas-gauche
+THRESHOLDSELECTOR_BR;Bas-droite
+THRESHOLDSELECTOR_B;Bas
+THRESHOLDSELECTOR_HINT;Maintenez la touche <b>Shift</b> appuyée pour déplacer les curseurs individuellement.
+THRESHOLDSELECTOR_TL;Haut-Gauche
+THRESHOLDSELECTOR_TR;Haut-droite
+THRESHOLDSELECTOR_T;Haut
 TOOLBAR_TOOLTIP_CROP;Sélection du recadrage <b>C</b>
 TOOLBAR_TOOLTIP_HAND;Outil de navigation <b>N</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon <b>S</b>
@@ -952,12 +970,21 @@ TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Pas d'ICM: sortie sRGB
 TP_ICM_OUTPUTDLGLABEL;Choix du profil ICC de sortie...
 TP_ICM_OUTPUTPROFILE;Profil de sortie
+TP_ICM_PREFERREDPROFILE;Profil DCP préféré
+TP_ICM_PREFERREDPROFILE_1;Lumière du jour (ensoleillé)
+TP_ICM_PREFERREDPROFILE_2;Tungstène
+TP_ICM_PREFERREDPROFILE_3;Fluorescent
+TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
-TP_LABCURVE_AVOIDCOLORCLIP;Éviter l'écrêtage couleur
+TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Ramènes les données dans le gamut de l'espace couleur de travail\npuis applique la correction de Munsell
 TP_LABCURVE_BRIGHTNESS;Luminosité
+TP_LABCURVE_BWTONING;Mode N&B colorisable
+TP_LABCURVE_BWTONING_TIP;Avec le mode <b>N&amp;B colorisable</b> activé, la Chromaticité, la courbe Cc et Ct sont sans effet.\nLa colorisation peut être effctué en utilisant les courbes <b>a</b> et <b>b</b>.
+TP_LABCURVE_CHROMATICITY;Chromaticité
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Courbe de luminance
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Vert saturé
@@ -978,10 +1005,14 @@ TP_LABCURVE_CURVEEDITOR_CH;CT
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticité en fonction de la Teinte
 TP_LABCURVE_LABEL;Courbes Lab
 TP_LABCURVE_RSTPROTECTION;Protection des tons rouges et chair
-TP_LABCURVE_CHROMATICITY;Chromaticité
 TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
+TP_LENSPROFILE_FILEDLGFILTERLCP;Fichiers de correction d'objectif
+TP_LENSPROFILE_LABEL;Profil de correction d'objectif
+TP_LENSPROFILE_USECA;Appliquer la correction de l'aberration chromatique
+TP_LENSPROFILE_USEDIST;Appliquer la correction de la distortion
+TP_LENSPROFILE_USEVIGN;Appliquer la correction du vignettage
 TP_LUMADENOISE_EDGETOLERANCE;Tolérance des bords
 TP_LUMADENOISE_LABEL;Réduction du bruit de luminance
 TP_LUMADENOISE_RADIUS;Rayon
@@ -1073,11 +1104,21 @@ TP_SHARPENMICRO_LABEL;Microcontraste
 TP_SHARPENMICRO_MATRIX;Matrice 3×3 au lieu de 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformité
 TP_VIBRANCE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
+TP_VIBRANCE_CURVEEDITOR_SKINTONES;TT
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons chair
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Rouge/Pourpre
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Rouge
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Rouge/Jaune
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Jaune
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Teinte en fonction de la teinte
 TP_VIBRANCE_LABEL;Vibrance
 TP_VIBRANCE_PASTELS;Tons pastels
 TP_VIBRANCE_PASTSATTOG;Lier Pastels et Saturés
 TP_VIBRANCE_PROTECTSKINS;Protéger les tons chairs
-TP_VIBRANCE_PSTHRESHOLD;Seuil entre Pastels/Saturés
+TP_VIBRANCE_PSTHRESHOLD;Seuil entre tons pastels/saturés
+TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Seuil de saturation
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;L'axe vertical represente les tons pastel en bas et le tons saturés en haut.\nL'axe horizontal represente l'échelle de la saturation.
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pondération de la transition pastels/saturés
 TP_VIBRANCE_SATURATED;Tons saturés
 TP_VIGNETTING_AMOUNT;Quantité
 TP_VIGNETTING_CENTER;Centre
@@ -1140,19 +1181,17 @@ ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-EXTPROGTARGET_1;raw
-EXTPROGTARGET_2;file de traitement
-FILEBROWSER_EXTPROGMENU;Ouvrir avec
-FILEBROWSER_OPENDEFAULTVIEWER;Visualiseur par défaut de Windows (image déjà traitée) 
-MAIN_MSG_IMAGEUNPROCESSED;Cette commande nécessite que toutes les images sélectionnées aient été préalablement traité.
-PREFERENCES_MENUGROUPEXTPROGS;Groupe "Ouvrir avec"
-TP_ICM_PREFERREDPROFILE;Profil DCP préféré
-TP_ICM_PREFERREDPROFILE_1;Lumière du jour (ensoleillé)
-TP_ICM_PREFERREDPROFILE_2;Tungstène
-TP_ICM_PREFERREDPROFILE_3;Fluorescent
-TP_ICM_PREFERREDPROFILE_4;Flash
-TP_LENSPROFILE_FILEDLGFILTERLCP;Fichiers de correction d'objectif
-TP_LENSPROFILE_LABEL;Profil de correction d'objectif
-TP_LENSPROFILE_USECA;Appliquer la correction de l'aberration chromatique
-TP_LENSPROFILE_USEDIST;Appliquer la correction de la distortion
-TP_LENSPROFILE_USEVIGN;Appliquer la correction du vignettage
+#00 Français
+#01 1.3.2008: Initial translation by Hombre
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
+!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
+!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
+!NAVIGATOR_XY_FULL;Width = %1, Height = %2
+!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
+!TP_CROP_GTFRAME;Frame

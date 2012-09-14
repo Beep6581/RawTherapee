@@ -27,19 +27,19 @@ using namespace rtengine::procparams;
 
 BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolPanelCoordinator(), parent(parent) {
 
-	// remove exif panel and iptc panel
-	std::vector<ToolPanel*>::iterator epi = std::find (toolPanels.begin(), toolPanels.end(), exifpanel);
-	if (epi!=toolPanels.end())
-		toolPanels.erase (epi);
-	std::vector<ToolPanel*>::iterator ipi = std::find (toolPanels.begin(), toolPanels.end(), iptcpanel);
-	if (ipi!=toolPanels.end())
-		toolPanels.erase (ipi);
-	toolPanelNotebook->remove_page (*iptcpanel);
-	toolPanelNotebook->remove_page (*exifpanel);
-	iptcpanel = 0;
-	exifpanel = 0;
-	toiM = 0;
-	toiX = 0;
+    // remove exif panel and iptc panel
+    std::vector<ToolPanel*>::iterator epi = std::find (toolPanels.begin(), toolPanels.end(), exifpanel);
+    if (epi!=toolPanels.end())
+        toolPanels.erase (epi);
+    std::vector<ToolPanel*>::iterator ipi = std::find (toolPanels.begin(), toolPanels.end(), iptcpanel);
+    if (ipi!=toolPanels.end())
+        toolPanels.erase (ipi);
+    toolPanelNotebook->remove_page (*iptcpanel);
+    toolPanelNotebook->remove_page (*exifpanel);
+    iptcpanel = 0;
+    exifpanel = 0;
+    toiM = 0;
+    toiX = 0;
 
     for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->setBatchMode (true);
@@ -59,7 +59,7 @@ void BatchToolPanelCoordinator::selectionChanged (const std::vector<Thumbnail*>&
 
 void BatchToolPanelCoordinator::closeSession (bool save) {
 
-    pparamsEdited.set (false);        
+    pparamsEdited.set (false);
 
     for (size_t i=0; i<selected.size(); i++)
         selected[i]->removeThumbnailListener (this);
@@ -71,17 +71,18 @@ void BatchToolPanelCoordinator::closeSession (bool save) {
             toolPanels[i]->write (&pparams, &pparamsEdited);
 
         // combine with initial parameters and set
-        ProcParams newParams;
+        PartialProfile pprofile(true, false);
         for (size_t i=0; i<selected.size(); i++) {
-            newParams = initialPP[i];
-            pparamsEdited.combine (newParams, pparams, selected.size()==1);
+            *pprofile.pparams = initialPP[i];
+            pparamsEdited.combine (*pprofile.pparams, pparams, selected.size()==1);
 
-    		// trim new adjuster's values to the adjuster's limits
-    		for (unsigned int j=0; j<toolPanels.size(); j++)
-    			toolPanels[j]->trimValues (&newParams);
+            // trim new adjuster's values to the adjuster's limits
+            for (unsigned int j=0; j<toolPanels.size(); j++)
+                toolPanels[j]->trimValues (pprofile.pparams);
 
-    		selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, true);
+            selected[i]->setPartialProfile (pprofile, BATCHEDITOR, true);
         }
+        pprofile.deleteInstance();
     }
     for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->clearParamChanges ();
@@ -93,7 +94,7 @@ void BatchToolPanelCoordinator::initSession () {
 
     initialPP.resize (selected.size());
     for (size_t i=0; i<selected.size(); i++) {
-        initialPP[i] = selected[i]->getProcParams ();
+        initialPP[i] = *(selected[i]->getPartialProfile().pparams);
         selected[i]->applyAutoExp (initialPP[i]);
         selected[i]->addThumbnailListener (this);
     }
@@ -117,7 +118,7 @@ void BatchToolPanelCoordinator::initSession () {
     if (!selected.empty()) {
 
 		// The first selected image (in the thumbnail list, not the click list) is used to populate the EditorPanel and set the default values
-		pparams = selected[0]->getProcParams ();
+		pparams = *(selected[0]->getPartialProfile().pparams);
 
 		coarse->initBatchBehavior ();
 
@@ -247,7 +248,7 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
 
     somethingChanged = true;
 
-    pparamsEdited.set (false);        
+    pparamsEdited.set (false);
     // read new values from the gui
     for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->write (&pparams, &pparamsEdited);
@@ -268,19 +269,20 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
     }
 
     // combine with initial parameters and set
-    ProcParams newParams;
+    PartialProfile pprofile(true, false);
     for (size_t i=0; i<selected.size(); i++) {
-        newParams = initialPP[i];
+        *pprofile.pparams = initialPP[i];
         // If only one file is selected, slider's addMode has been set to false, and hence the behave
         // like in SET mode like in an editor ; that's why we force the combination to the SET mode too
-        pparamsEdited.combine (newParams, pparams, selected.size()==1);
+        pparamsEdited.combine (*pprofile.pparams, pparams, selected.size()==1);
 
-		// trim new adjuster's values to the adjuster's limits
-		for (unsigned int j=0; j<toolPanels.size(); j++)
-			toolPanels[j]->trimValues (&newParams);
+        // trim new adjuster's values to the adjuster's limits
+        for (unsigned int j=0; j<toolPanels.size(); j++)
+            toolPanels[j]->trimValues (pprofile.pparams);
 
-        selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, false);
+        selected[i]->setPartialProfile (pprofile, BATCHEDITOR, false);
     }
+    pprofile.deleteInstance();
 
     for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->procParamsChanged (&pparams, event, descr, &pparamsEdited);
@@ -289,7 +291,7 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
 void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green) {
 
     if (!selected.empty())
-        selected[0]->getAutoWB (temp, green);       
+        selected[0]->getAutoWB (temp, green);
 }
 
 void BatchToolPanelCoordinator::getCamWB (double& temp, double& green) {
@@ -320,9 +322,9 @@ void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChange
 void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited) {
 
     if (event==rtengine::EvProfileChanged) {
-    	// a profile has been selected in a hypothetical Profile panel
-    	// -> ACTUALLY NOT SUPPORTED
-    	return;
+        // a profile has been selected in a hypothetical Profile panel
+        // -> ACTUALLY NOT SUPPORTED
+        return;
     }
 
     pparams = *(nparams->pparams);
@@ -331,7 +333,7 @@ void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::Part
 
 
     for (size_t i=0; i<toolPanels.size(); i++)
-    	// writing the values to the GUI
+        // writing the values to the GUI
         toolPanels[i]->read (&pparams, &pparamsEdited);
 
     somethingChanged = true;
@@ -341,12 +343,13 @@ void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::Part
         toolPanels[i]->write (&pparams, &pparamsEdited);
 
     // combine with initial parameters of each image and set
-    ProcParams newParams;
+    PartialProfile pprofile(true, false);
     for (size_t i=0; i<selected.size(); i++) {
-        newParams = initialPP[i];
-        pparamsEdited.combine (newParams, pparams, true);
-        selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, false);
+        *pprofile.pparams = initialPP[i];
+        pparamsEdited.combine (*pprofile.pparams, pparams, true);
+        selected[i]->setPartialProfile (pprofile, BATCHEDITOR, false);
     }
+    pprofile.deleteInstance();
 
     for (size_t i=0; i<paramcListeners.size(); i++)
         paramcListeners[i]->procParamsChanged (&pparams, event, descr, &pparamsEdited);
@@ -354,14 +357,14 @@ void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::Part
 
 void BatchToolPanelCoordinator::cropSelectionReady () {
 
-  toolBar->setTool (TMHand);
+    toolBar->setTool (TMHand);
 }
 
 CropGUIListener* BatchToolPanelCoordinator::startCropEditing (Thumbnail* thm) {
     
     if (thm) {
         int w, h;
-        thm->getFinalSize (thm->getProcParams (), w, h);
+        thm->getFinalSize (*(thm->getPartialProfile().pparams), w, h);
         crop->setDimensions (w, h);
     }
     return crop;

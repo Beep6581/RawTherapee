@@ -20,7 +20,7 @@
 
 Clipboard clipboard;
 
-Clipboard::Clipboard () : partProfile (false) {}
+Clipboard::Clipboard () : partProfile (false, false) {}
 
 Clipboard::~Clipboard () {
 	partProfile.deleteInstance();
@@ -30,27 +30,7 @@ Clipboard::~Clipboard () {
  * set both the "pparams" and "pedited" field of the PartialProfile; each one can be NULL
  */
 void Clipboard::setPartialProfile   (const rtengine::procparams::PartialProfile& pprofile) {
-	if (pprofile.pparams) {
-		if (!partProfile.pparams) partProfile.pparams = new rtengine::procparams::ProcParams();
-		*partProfile.pparams = *pprofile.pparams;
-	}
-	else {
-		if (partProfile.pparams) {
-			delete partProfile.pparams;
-			partProfile.pparams = NULL;
-		}
-	}
-
-	if (pprofile.pedited) {
-		if (!partProfile.pedited) partProfile.pedited = new ParamsEdited();
-		*partProfile.pedited = *pprofile.pedited;
-	}
-	else {
-		if (partProfile.pedited) {
-			delete partProfile.pedited;
-			partProfile.pedited = NULL;
-		}
-	}
+	partProfile = pprofile;
 }
 
 /*

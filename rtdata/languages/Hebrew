@@ -1,5 +1,5 @@
 ADJUSTER_RESET_TO_DEFAULT;ברירת מחדל
-CURVEEDITOR_FILEDLGFILTERANY;קבצי�? כלשה�?
+CURVEEDITOR_FILEDLGFILTERANY;קבצים כלשהם
 CURVEEDITOR_FILEDLGFILTERCURVE;קבצי עקמות
 CURVEEDITOR_LINEAR;ישיר
 CURVEEDITOR_LOADDLGLABEL;הטען עקמה
@@ -79,7 +79,7 @@ FILEBROWSER_STOPPROCESSING;Stop processing
 FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
-GENERAL_ABOUT;�?ודות
+GENERAL_ABOUT;אודות
 GENERAL_CANCEL;בטל
 GENERAL_DISABLED;מבוטל
 GENERAL_DISABLE;בטל
@@ -87,23 +87,23 @@ GENERAL_ENABLED;מופעל
 GENERAL_ENABLE;הפעל
 GENERAL_LANDSCAPE;נוף
 GENERAL_LOAD;הטען
-GENERAL_NA;�?ין
-GENERAL_NO;ל�?
+GENERAL_NA;אין
+GENERAL_NO;לא
 GENERAL_OK;שמור
 GENERAL_PORTRAIT;דיוקן
 GENERAL_SAVE;שמור
 GENERAL_YES;כן
 HISTOGRAM_LABEL;Histogram
-HISTOGRAM_TOOLTIP_B;Show/הסתר היסטוגר�? כחול
-HISTOGRAM_TOOLTIP_G;Show/הסתר היסטוגר�? ירוק
-HISTOGRAM_TOOLTIP_L;Show/CIELAB הסתר היסטוגר�?  
-HISTOGRAM_TOOLTIP_R;Show/הסתר היסטוגר�? �?דו�?
+HISTOGRAM_TOOLTIP_B;Show/הסתר היסטוגרם כחול
+HISTOGRAM_TOOLTIP_G;Show/הסתר היסטוגרם ירוק
+HISTOGRAM_TOOLTIP_L;Show/CIELAB הסתר היסטוגרם  
+HISTOGRAM_TOOLTIP_R;Show/הסתר היסטוגרם אדום
 HISTORY_CHANGED;Changed
-HISTORY_CUSTOMCURVE;עקמה מות�?מת
-HISTORY_DELSNAPSHOT;הסר תצלו�?
+HISTORY_CUSTOMCURVE;עקמה מותאמת
+HISTORY_DELSNAPSHOT;הסר תצלום
 HISTORY_FROMCLIPBOARD;From clipboard
 HISTORY_LABEL;היסטוריה
-HISTORY_MSG_1;צילו�? טעון
+HISTORY_MSG_1;צילום טעון
 HISTORY_MSG_2;פרופיל טעון
 HISTORY_MSG_3;פרופיל הוחלף
 HISTORY_MSG_4;דיפדוף בהיסטוריה
@@ -111,17 +111,17 @@ HISTORY_MSG_5;בהירות
 HISTORY_MSG_6;ניגודיות
 HISTORY_MSG_7;שחור
 HISTORY_MSG_8;פיצוי חשיפה
-HISTORY_MSG_9;דחיסת גווני�? בהירי�?
-HISTORY_MSG_10;דחיסת גווני�? כהי�?
-HISTORY_MSG_11;עקמת גווני�?
-HISTORY_MSG_12;חשיפה �?וטומטית
+HISTORY_MSG_9;דחיסת גוונים בהירים
+HISTORY_MSG_10;דחיסת גוונים כהים
+HISTORY_MSG_11;עקמת גוונים
+HISTORY_MSG_12;חשיפה אוטומטית
 HISTORY_MSG_13;קיצוץ החסיפה
-HISTORY_MSG_14;ה�?רה - בהירות
-HISTORY_MSG_15;ה�?רה - ניגודיות
-HISTORY_MSG_16;ה�?רה - שחור
-HISTORY_MSG_17;ה�?רה - דחיסת גווני�? בהירי�?
-HISTORY_MSG_18;ה�?רה - דחיסת גווני�? כהי�?
-HISTORY_MSG_19;ה�?רה - עקמה
+HISTORY_MSG_14;הארה - בהירות
+HISTORY_MSG_15;הארה - ניגודיות
+HISTORY_MSG_16;הארה - שחור
+HISTORY_MSG_17;הארה - דחיסת גוונים בהירים
+HISTORY_MSG_18;הארה - דחיסת גוונים כהים
+HISTORY_MSG_19;הארה - עקמה
 HISTORY_MSG_20;חידוד
 HISTORY_MSG_21;חידוד - רדיוס
 HISTORY_MSG_22;חידוד - כמות
@@ -140,10 +140,10 @@ HISTORY_MSG_34;המנע מקיצוץ צבע
 HISTORY_MSG_35;הגבלת רויה
 HISTORY_MSG_36;גבול רויה
 HISTORY_MSG_37;הגברת צבע
-HISTORY_MSG_38;שיטת �?יזון לבן
-HISTORY_MSG_39;מידת חו�?
-HISTORY_MSG_40;גיוון �?יזון צבע
-HISTORY_MSG_41;העברת צבע �?
+HISTORY_MSG_38;שיטת איזון לבן
+HISTORY_MSG_39;מידת חום
+HISTORY_MSG_40;גיוון איזון צבע
+HISTORY_MSG_41;העברת צבע א
 HISTORY_MSG_42;העברת צבע ב
 HISTORY_MSG_43;הסרת רעש בהירות
 HISTORY_MSG_44;הסרת רעש בהירות רדיוס
@@ -152,30 +152,30 @@ HISTORY_MSG_46;הסרת רעש צבעוני
 HISTORY_MSG_47;הסרת רעש צבעוני רדיוס
 HISTORY_MSG_48;הסרת רעש צבעוני סבילות קצוות
 HISTORY_MSG_49;הסרת רעש צבעוני רגישות לקצוות
-HISTORY_MSG_50;כלי בהירי�?\כהי�?
-HISTORY_MSG_51;הגברת גווני�? בהירי�?
-HISTORY_MSG_52;ההגברת גווני�? כהי�?
-HISTORY_MSG_53;בהירי�?, רוחב גווני�?
-HISTORY_MSG_54;כהי�?, רוחב גווני�?
+HISTORY_MSG_50;כלי בהירים\כהים
+HISTORY_MSG_51;הגברת גוונים בהירים
+HISTORY_MSG_52;ההגברת גוונים כהים
+HISTORY_MSG_53;בהירים, רוחב גוונים
+HISTORY_MSG_54;כהים, רוחב גוונים
 HISTORY_MSG_55;ניגודיות מקומית
-HISTORY_MSG_56;בהירי�?\כהי�? רדיוס
+HISTORY_MSG_56;בהירים\כהים רדיוס
 HISTORY_MSG_57;סיבוב גס
-HISTORY_MSG_58;היפוך �?ופקי
-HISTORY_MSG_59;היפוך �?נכי
+HISTORY_MSG_58;היפוך אופקי
+HISTORY_MSG_59;היפוך אנכי
 HISTORY_MSG_60;סיבוב
 HISTORY_MSG_61;סיבוב
 HISTORY_MSG_62;תיקון עיוות בעדשה
 HISTORY_MSG_63;סימניה נבחרה
-HISTORY_MSG_64;גזירת תצלו�?
+HISTORY_MSG_64;גזירת תצלום
 HISTORY_MSG_65;C/A תיקון עיוות
-HISTORY_MSG_66;שחזור גווני�?  בהירי�?
-HISTORY_MSG_67;שחזור גווני�?  בהירי�?, כמות
-HISTORY_MSG_68;שחזור גווני�?  בהירי�?, שיטה
+HISTORY_MSG_66;שחזור גוונים  בהירים
+HISTORY_MSG_67;שחזור גוונים  בהירים, כמות
+HISTORY_MSG_68;שחזור גוונים  בהירים, שיטה
 HISTORY_MSG_69;מרחב צבע עבודה
-HISTORY_MSG_70;מרחב צבע ייצו�?
-HISTORY_MSG_71;מרחב צבע ייבו�?
+HISTORY_MSG_70;מרחב צבע ייצוא
+HISTORY_MSG_71;מרחב צבע ייבוא
 HISTORY_MSG_72;תיקון פינות כהות
-HISTORY_MSG_73;מערבב ערוצי�?
+HISTORY_MSG_73;מערבב ערוצים
 HISTORY_MSG_74;מידת שינוי גודל
 HISTORY_MSG_75;שיטת שינוי גודל
 HISTORY_MSG_76;Exif Metadata
@@ -184,27 +184,27 @@ HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Resize width
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
-HISTORY_NEWSNAPSHOTAS;בש�?
-HISTORY_NEWSNAPSHOT;תצלו�? חדש
-HISTORY_NEWSSDIALOGLABEL;ש�? התצלו�?
-HISTORY_NEWSSDIALOGTITLE;הוסף תצלו�? חדש
-HISTORY_SETTO;העבר �?ל
-HISTORY_SNAPSHOTS;תצלומי�?
-HISTORY_SNAPSHOT;תצלו�?
-ICMPANEL_FILEDLGFILTERANY;קבצי�? כלשה�?
+HISTORY_NEWSNAPSHOTAS;בשם
+HISTORY_NEWSNAPSHOT;תצלום חדש
+HISTORY_NEWSSDIALOGLABEL;שם התצלום
+HISTORY_NEWSSDIALOGTITLE;הוסף תצלום חדש
+HISTORY_SETTO;העבר אל
+HISTORY_SNAPSHOTS;תצלומים
+HISTORY_SNAPSHOT;תצלום
+ICMPANEL_FILEDLGFILTERANY;קבצים כלשהם
 ICMPANEL_FILEDLGFILTERICM;ICC קבצי צבע
 ICMPANEL_GAMMABEFOREINPUT;Profile applies Gamma
 ICMPANEL_INPUTCAMERA;ברירת מחדל המצלמה
-ICMPANEL_INPUTCUSTOM;מות�?�?
-ICMPANEL_INPUTDLGLABEL;בחר בפרופיל צבע ייבו�?
-ICMPANEL_INPUTEMBEDDED;השתמש בפרופיל משובץ,�?�? �?פשר
-ICMPANEL_INPUTPROFILE;פרופיל ייבו�?
-ICMPANEL_NOICM;sRGBלל�? ניהול צבע - ייצו�? ב
-ICMPANEL_OUTPUTDLGLABEL;בחר בפרופיל צבע ייצו�?
-ICMPANEL_OUTPUTPROFILE;פרופיל ייצו�?
+ICMPANEL_INPUTCUSTOM;מותאם
+ICMPANEL_INPUTDLGLABEL;בחר בפרופיל צבע ייבוא
+ICMPANEL_INPUTEMBEDDED;השתמש בפרופיל משובץ,אם אפשר
+ICMPANEL_INPUTPROFILE;פרופיל ייבוא
+ICMPANEL_NOICM;sRGBללא ניהול צבע - ייצוא ב
+ICMPANEL_OUTPUTDLGLABEL;בחר בפרופיל צבע ייצוא
+ICMPANEL_OUTPUTPROFILE;פרופיל ייצוא
 ICMPANEL_SAVEREFERENCE;Save reference image for profiling
 ICMPANEL_WORKINGPROFILE;פרופיל עבודה
-IMAGEAREA_DETAILVIEW;תצוגת פרטי�?
+IMAGEAREA_DETAILVIEW;תצוגת פרטים
 IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
 IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Author's position
@@ -250,8 +250,8 @@ IPTCPANEL_TRANSREFERENCE;Trans. Reference
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;העדפויות
 MAIN_BUTTON_QUEUE;Put to queue
-MAIN_BUTTON_SAVEAS;שמור בש�?
-MAIN_BUTTON_SAVE;שמור צילו�?
+MAIN_BUTTON_SAVEAS;שמור בשם
+MAIN_BUTTON_SAVE;שמור צילום
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
 MAIN_FRAME_BATCHQUEUE;Batch Queue 
 MAIN_FRAME_FILEBROWSER;File Browser 
@@ -259,15 +259,15 @@ MAIN_FRAME_PLACES;Places
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
 MAIN_FRAME_RECENT;Recent Folders 
-MAIN_MSG_ALREADYEXISTS;הקובץ כבר קיי�?
-MAIN_MSG_CANNOTLOAD;ל�? יכול להעלות �?ת הקובץ
+MAIN_MSG_ALREADYEXISTS;הקובץ כבר קיים
+MAIN_MSG_CANNOTLOAD;לא יכול להעלות את הקובץ
 MAIN_MSG_CANNOTSAVE;טעות בשמירת הקובץ
 MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
 MAIN_MSG_JOBSINQUEUE;עבודות בתור
-MAIN_MSG_QOVERWRITE;?רצונך לכתוב �?ותו מחדש?
+MAIN_MSG_QOVERWRITE;?רצונך לכתוב אותו מחדש?
 MAIN_TAB_BASIC;יסודות
 MAIN_TAB_COLOR;Color
 MAIN_TAB_DETAIL;Detail
@@ -281,11 +281,11 @@ MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;התמרות
 MAIN_TOOLTIP_HIDEFP;גלה\הסתר לוח תחתון - דפדפן (shortcut key: F)
-MAIN_TOOLTIP_HIDEHP;גלה\הסתר לוח שמ�?לי - היסטוריה (shortcut key: F)
-MAIN_TOOLTIP_INDCLIPPEDH;סימן לגווני�? בהירי�? מקוצצי�?
-MAIN_TOOLTIP_INDCLIPPEDS;סימן לגווני�? כהי�? מקוצצי�?
+MAIN_TOOLTIP_HIDEHP;גלה\הסתר לוח שמאלי - היסטוריה (shortcut key: F)
+MAIN_TOOLTIP_INDCLIPPEDH;סימן לגוונים בהירים מקוצצים
+MAIN_TOOLTIP_INDCLIPPEDS;סימן לגוונים כהים מקוצצים
 MAIN_TOOLTIP_PREFERENCES;קבע העדפויות
-MAIN_TOOLTIP_QINFO;מידע מהיר �?ודות הצילו�?
+MAIN_TOOLTIP_QINFO;מידע מהיר אודות הצילום
 MAIN_TOOLTIP_SAVEAS;שמור לתיק נבחר
 MAIN_TOOLTIP_SAVE;שמור לתיק ברירת המחדל
 PARTIALPASTE_BASICGROUP;Basic settings
@@ -316,8 +316,8 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
 PARTIALPASTE_SHARPENING;Sharpening
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WHITEBALANCE;White balance
-PREFERENCES_APPLNEXTSTARTUP;ייוש�? ב�?תחול הב�?
-PREFERENCES_BLINKCLIPPED;הבהוב ב�?זור המקוצץ
+PREFERENCES_APPLNEXTSTARTUP;ייושם באתחול הבא
+PREFERENCES_BLINKCLIPPED;הבהוב באזור המקוצץ
 PREFERENCES_CACHECLEARALL;Clear All
 PREFERENCES_CACHECLEARPROFILES;Clear Profiles
 PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
@@ -336,20 +336,20 @@ PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;סימון קיצוץ
 PREFERENCES_CMETRICINTENT;כוונה קולורמטרית
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DATEFORMAT;צורת ת�?ריך
+PREFERENCES_DATEFORMAT;צורת תאריך
 PREFERENCES_DEFAULTLANG;שפה ברירת המחדל
 PREFERENCES_DEFAULTTHEME;Default theme
-PREFERENCES_DEMOSAICINGALGO;�?לגורית�? דימוז�?יק
+PREFERENCES_DEMOSAICINGALGO;אלגוריתם דימוזאיק
 PREFERENCES_DIRHOME;תיקיית הבית
-PREFERENCES_DIRLAST;תיקיה ה�?חרונה שביקרתי בה
-PREFERENCES_DIROTHER;�?חר
-PREFERENCES_DIRSELECTDLG;בחר תיקיית צילומי�? ל�?תחול
+PREFERENCES_DIRLAST;תיקיה האחרונה שביקרתי בה
+PREFERENCES_DIROTHER;אחר
+PREFERENCES_DIRSELECTDLG;בחר תיקיית צילומים לאתחול
 PREFERENCES_DIRSOFTWARE;תיקיית התקנה
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EXTERNALEDITOR;External editor
 PREFERENCES_FBROWSEROPTS;ברירות דפדפן
 PREFERENCES_FILEFORMAT;תצורת קובץ
-PREFERENCES_FORIMAGE;עבור קבצי צילו�?
+PREFERENCES_FORIMAGE;עבור קבצי צילום
 PREFERENCES_FORRAW;RAW עבור קבצי
 PREFERENCES_GIMPPATH;GIMP installation directory
 PREFERENCES_GTKTHEME;GTK default
@@ -368,7 +368,7 @@ PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
-PREFERENCES_OUTDIR;תיקיית ייצו�?
+PREFERENCES_OUTDIR;תיקיית ייצוא
 PREFERENCES_PARSEDEXTADDHINT;Type an extension and press this button to append list
 PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
@@ -384,25 +384,25 @@ PREFERENCES_SELECTICCDIRDLG;ICC בחר תיקיית פרופילי צבע
 PREFERENCES_SELECTLANG;בחר שפה
 PREFERENCES_SELECTMONITORPROFDLG;של התצוגה ICC בחר פרופיל
 PREFERENCES_SELECTTHEME;Select theme
-PREFERENCES_SHOWBASICEXIF;Exif הר�?ה מידע
-PREFERENCES_SHOWDATETIME;הר�?ה ת�?ריך ושעה
-PREFERENCES_SHOWONLYRAW;RAW הר�?ה רק קבצי 
+PREFERENCES_SHOWBASICEXIF;Exif הראה מידע
+PREFERENCES_SHOWDATETIME;הראה תאריך ושעה
+PREFERENCES_SHOWONLYRAW;RAW הראה רק קבצי 
 PREFERENCES_SHTHRESHOLD;סף קיצוץ תחתון
-PREFERENCES_STARTUPIMDIR;תיקיית צילומי�? ב�?תחול
-PREFERENCES_TAB_BROWSER;דפדפן קבצי�?
-PREFERENCES_TAB_COLORMGR;ניהול צבעי�?
+PREFERENCES_STARTUPIMDIR;תיקיית צילומים באתחול
+PREFERENCES_TAB_BROWSER;דפדפן קבצים
+PREFERENCES_TAB_COLORMGR;ניהול צבעים
 PREFERENCES_TAB_GENERAL;כללי
-PREFERENCES_TAB_IMPROC;עיבוד צילו�?
-PREFERENCES_TAB_OUTPUT;�?פשרויות ייצו�?
+PREFERENCES_TAB_IMPROC;עיבוד צילום
+PREFERENCES_TAB_OUTPUT;אפשרויות ייצוא
 PREFERENCES_THUMBSIZE;גודל תמונות ממוזערות
-PROFILEPANEL_FILEDLGFILTERANY;קבצי�? כלשה�?
+PROFILEPANEL_FILEDLGFILTERANY;קבצים כלשהם
 PROFILEPANEL_FILEDLGFILTERPP;פרופילי עיבוד
 PROFILEPANEL_LABEL;פרופילי עיבוד
 PROFILEPANEL_LOADDLGLABEL;הטען נתוני עיבוד
-PROFILEPANEL_PCUSTOM;מות�?�?
+PROFILEPANEL_PCUSTOM;מותאם
 PROFILEPANEL_PFILE;מקובץ
-PROFILEPANEL_PLASTPHOTO;צילו�? �?חרון
-PROFILEPANEL_PLASTSAVED;נשמר �?חרון
+PROFILEPANEL_PLASTPHOTO;צילום אחרון
+PROFILEPANEL_PLASTSAVED;נשמר אחרון
 PROFILEPANEL_PROFILE;פרופיל
 PROFILEPANEL_SAVEDLGLABEL;שמור נתוני עיבוד
 PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
@@ -410,12 +410,12 @@ PROFILEPANEL_TOOLTIPLOAD;הטען פרופיל מקובץ
 PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
 PROFILEPANEL_TOOLTIPSAVE;שמור פרופיל נוכחי
 PROGRESSBAR_DECODING;מפענח קובץ
-PROGRESSBAR_DEMOSAICING;מעבד צילו�?
-PROGRESSBAR_LOADING;מטעין צילו�?
+PROGRESSBAR_DEMOSAICING;מעבד צילום
+PROGRESSBAR_LOADING;מטעין צילום
 PROGRESSBAR_LOADJPEG;JPG מטעין קובץ
 PROGRESSBAR_LOADPNG;PNG מטעין קובץ
 PROGRESSBAR_LOADTIFF;TIFF מטעין קובץ
-PROGRESSBAR_PROCESSING;מעבד צילו�?
+PROGRESSBAR_PROCESSING;מעבד צילום
 PROGRESSBAR_READY;מוכן
 PROGRESSBAR_SAVEJPEG;JPG שומר קובץ
 PROGRESSBAR_SAVEPNG;PNG שומר קובץ
@@ -423,12 +423,12 @@ PROGRESSBAR_SAVETIFF;TIFF שומר קובץ
 PROGRESSDLG_LOADING;Loading file...
 PROGRESSDLG_PROCESSING;Processing image...
 PROGRESSDLG_SAVING;Saving file...
-QINFO_FOCALLENGTH;�?ורך מוקד
+QINFO_FOCALLENGTH;אורך מוקד
 QINFO_ISO;ISO
 QINFO_LENS;Lens
-QINFO_NOEXIF;המידע ל�? זמין
+QINFO_NOEXIF;המידע לא זמין
 SAVEDLG_FILEFORMAT;תצורת קובץ
-SAVEDLG_JPEGQUAL;JPEG �?יכות
+SAVEDLG_JPEGQUAL;JPEG איכות
 SAVEDLG_JPGFILTER;JPEG קבצי
 SAVEDLG_PNGCOMPR;PNG דחיסת
 SAVEDLG_PNGFILTER;PNG קבצי
@@ -436,25 +436,25 @@ SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
-SAVEDLG_SAVESPP;שמור נתוני עיבוד ע�? הצילו�?
+SAVEDLG_SAVESPP;שמור נתוני עיבוד עם הצילום
 SAVEDLG_TIFFFILTER;TIFF קבצי
 TOOLBAR_TOOLTIP_CROP;בחירת גזירה (shortcut key: C)
 TOOLBAR_TOOLTIP_HAND;כלי יד (shortcut key: N)
 TOOLBAR_TOOLTIP_STRAIGHTEN;בחירת קו ישר (shortcut key: S)
-TOOLBAR_TOOLTIP_WB;�?יזון לבן נקודתי (shortcut key: W)
+TOOLBAR_TOOLTIP_WB;איזון לבן נקודתי (shortcut key: W)
 TP_CACORRECTION_BLUE;כחול
 TP_CACORRECTION_LABEL;C/A תיקון
-TP_CACORRECTION_RED;�?דו�?
+TP_CACORRECTION_RED;אדום
 TP_CHMIXER_BLUE;כחול
 TP_CHMIXER_GREEN;ירוק
-TP_CHMIXER_LABEL;מערבב ערוצי�?
-TP_CHMIXER_RED;�?דו�?
+TP_CHMIXER_LABEL;מערבב ערוצים
+TP_CHMIXER_RED;אדום
 TP_COARSETRAF_DEGREE;מעלות
-TP_COARSETRAF_TOOLTIP_HFLIP;הפוך �?ופקי
-TP_COARSETRAF_TOOLTIP_ROTLEFT;סובב שמ�?לה
+TP_COARSETRAF_TOOLTIP_HFLIP;הפוך אופקי
+TP_COARSETRAF_TOOLTIP_ROTLEFT;סובב שמאלה
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;סובב ימינה
-TP_COARSETRAF_TOOLTIP_VFLIP;הפוך �?נכי
-TP_COLORBOOST_ACHANNEL;ערוץ �?
+TP_COARSETRAF_TOOLTIP_VFLIP;הפוך אנכי
+TP_COLORBOOST_ACHANNEL;ערוץ א
 TP_COLORBOOST_AMOUNT;כמות
 TP_COLORBOOST_AVOIDCOLORCLIP;הימנע מקיצוץ צבע
 TP_COLORBOOST_BCHANNEL;ערוץ ב
@@ -472,12 +472,12 @@ TP_COLORSHIFT_GREENMAGENTA;מג'נטה-ירוק
 TP_COLORSHIFT_LABEL;העברת צבע
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;קבע יחס
-TP_CROP_GTDIAGONALS;כלל ה�?לכסון
-TP_CROP_GTHARMMEANS1;ממוצ�? הרמוני 1
-TP_CROP_GTHARMMEANS2;ממוצ�? הרמוני 2
-TP_CROP_GTHARMMEANS3;ממוצ�? הרמוני 3
-TP_CROP_GTHARMMEANS4;ממוצ�? הרמוני 4
-TP_CROP_GTNONE;לל�?
+TP_CROP_GTDIAGONALS;כלל האלכסון
+TP_CROP_GTHARMMEANS1;ממוצא הרמוני 1
+TP_CROP_GTHARMMEANS2;ממוצא הרמוני 2
+TP_CROP_GTHARMMEANS3;ממוצא הרמוני 3
+TP_CROP_GTHARMMEANS4;ממוצא הרמוני 4
+TP_CROP_GTNONE;ללא
 TP_CROP_GTRULETHIRDS;כלל השליש
 TP_CROP_GUIDETYPE;סוג מדריך
 TP_CROP_H;גובה
@@ -488,39 +488,39 @@ TP_CROP_X;x
 TP_CROP_Y;y
 TP_DISTORTION_AMOUNT;כמות
 TP_DISTORTION_LABEL;עיוות
-TP_EXPOSURE_AUTOLEVELS;מפלסי�? �?וטומטי�?
+TP_EXPOSURE_AUTOLEVELS;מפלסים אוטומטים
 TP_EXPOSURE_BLACKLEVEL;שחור
 TP_EXPOSURE_BRIGHTNESS;בהירות
 TP_EXPOSURE_CLIP;קצץ
-TP_EXPOSURE_COMPRHIGHLIGHTS;דחיסת גווני�? בהירי�?
-TP_EXPOSURE_COMPRSHADOWS;דחיסת גווני�? כהי�?
+TP_EXPOSURE_COMPRHIGHLIGHTS;דחיסת גוונים בהירים
+TP_EXPOSURE_COMPRSHADOWS;דחיסת גוונים כהים
 TP_EXPOSURE_CONTRAST;ניגודיות
-TP_EXPOSURE_CURVEEDITOR;עקמת גווני�?
+TP_EXPOSURE_CURVEEDITOR;עקמת גוונים
 TP_EXPOSURE_EXPCOMP;פיצוי חשיפה
 TP_EXPOSURE_LABEL;חשיפה
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;הפצת צבע
-TP_HLREC_LABEL;שחזור גווני�? בהירי�?
+TP_HLREC_LABEL;שחזור גוונים בהירים
 TP_HLREC_LUMINANCE;שחזור בהירות
 TP_HLREC_METHOD;שיטה
-TP_ICM_FILEDLGFILTERANY;קבצי�? כלשה�?
+TP_ICM_FILEDLGFILTERANY;קבצים כלשהם
 TP_ICM_FILEDLGFILTERICM;ICC קבצי צבע
 TP_ICM_GAMMABEFOREINPUT;Profile applies Gamma
 TP_ICM_INPUTCAMERA;ברירת מחדל המצלמה
-TP_ICM_INPUTCUSTOM;מות�?�?
-TP_ICM_INPUTDLGLABEL;בחר בפרופיל צבע ייבו�?
-TP_ICM_INPUTEMBEDDED;השתמש בפרופיל משובץ,�?�? �?פשר
-TP_ICM_INPUTPROFILE;פרופיל ייבו�?
+TP_ICM_INPUTCUSTOM;מותאם
+TP_ICM_INPUTDLGLABEL;בחר בפרופיל צבע ייבוא
+TP_ICM_INPUTEMBEDDED;השתמש בפרופיל משובץ,אם אפשר
+TP_ICM_INPUTPROFILE;פרופיל ייבוא
 TP_ICM_LABEL;ניהול צבע
-TP_ICM_NOICM;sRGBלל�? ניהול צבע - ייצו�? ב
-TP_ICM_OUTPUTDLGLABEL;בחר בפרופיל צבע ייצו�?
-TP_ICM_OUTPUTPROFILE;פרופיל ייצו�?
+TP_ICM_NOICM;sRGBללא ניהול צבע - ייצוא ב
+TP_ICM_OUTPUTDLGLABEL;בחר בפרופיל צבע ייצוא
+TP_ICM_OUTPUTPROFILE;פרופיל ייצוא
 TP_ICM_SAVEREFERENCE;Save reference image for profiling
 TP_ICM_WORKINGPROFILE;פרופיל עבודה
 TP_LUMACURVE_BLACKLEVEL;שחור
 TP_LUMACURVE_BRIGHTNESS;בהירות
-TP_LUMACURVE_COMPRHIGHLIGHTS;דחיסת גווני�? בהירי�?
-TP_LUMACURVE_COMPRSHADOWS;דחיסת גווני�? כהי�?
+TP_LUMACURVE_COMPRHIGHLIGHTS;דחיסת גוונים בהירים
+TP_LUMACURVE_COMPRSHADOWS;דחיסת גוונים כהים
 TP_LUMACURVE_CONTRAST;ניגודיות
 TP_LUMACURVE_CURVEEDITOR;עקמת בהירות
 TP_LUMACURVE_LABEL;עקמת בהירות
@@ -532,26 +532,26 @@ TP_RAW_FALSECOLOR;דחיית צבע מסולף
 TP_RESIZE_BICUBICSF;ביקובי חלק
 TP_RESIZE_BICUBICSH;ביקובי חד
 TP_RESIZE_BICUBIC;ביקובי
-TP_RESIZE_BILINEAR;בילינ�?רי
-TP_RESIZE_FULLSIZE;גודל מל�?
+TP_RESIZE_BILINEAR;בילינארי
+TP_RESIZE_FULLSIZE;גודל מלא
 TP_RESIZE_H;גובה
 TP_RESIZE_LABEL;החלף גודל
 TP_RESIZE_METHOD;שיטה
 TP_RESIZE_NEAREST;הקרוב
 TP_RESIZE_SCALE;מידה
 TP_RESIZE_W;רוחב
-TP_ROTATE_AUTOCROP;גזירה �?וטומטי
+TP_ROTATE_AUTOCROP;גזירה אוטומטי
 TP_ROTATE_DEGREE;מעלות
-TP_ROTATE_FILL;מל�?
+TP_ROTATE_FILL;מלא
 TP_ROTATE_LABEL;סובב
 TP_ROTATE_SELECTLINE;בחור קו ישר
-TP_SHADOWSHLIGHTS_HIGHLIGHTS;גווני�? בהירי�?
-TP_SHADOWSHLIGHTS_HLTONALW;רוחב גווני�?
-TP_SHADOWSHLIGHTS_LABEL;בהירי�?\כהי�?
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;גוונים בהירים
+TP_SHADOWSHLIGHTS_HLTONALW;רוחב גוונים
+TP_SHADOWSHLIGHTS_LABEL;בהירים\כהים
 TP_SHADOWSHLIGHTS_LOCALCONTR;ניגודיות מקומית
 TP_SHADOWSHLIGHTS_RADIUS;רדיוס
-TP_SHADOWSHLIGHTS_SHADOWS;גווני�? כהי�?
-TP_SHADOWSHLIGHTS_SHTONALW;רוחב גווני�?
+TP_SHADOWSHLIGHTS_SHADOWS;גוונים כהים
+TP_SHADOWSHLIGHTS_SHTONALW;רוחב גוונים
 TP_SHARPENING_AMOUNT;כמות
 TP_SHARPENING_EDRADIUS;רדיוס
 TP_SHARPENING_EDTOLERANCE;סבילות לקצוות
@@ -565,21 +565,21 @@ TP_SHARPENING_RLD;RL דיקונבולוציה
 TP_SHARPENING_RLD_AMOUNT;כמות
 TP_SHARPENING_RLD_DAMPING;ריסון
 TP_SHARPENING_RLD_ITERATIONS;חזרות
-TP_SHARPENING_THRESHOLD;�?ף
-TP_SHARPENING_USM;מיסוך �?י-חדות
+TP_SHARPENING_THRESHOLD;םף
+TP_SHARPENING_USM;מיסוך אי-חדות
 TP_VIGNETTING_AMOUNT;כמות
 TP_VIGNETTING_LABEL;תיקון פינות כהות
 TP_VIGNETTING_RADIUS;רדיוס
-TP_WBALANCE_AUTO;�?וטומטי
+TP_WBALANCE_AUTO;אוטומטי
 TP_WBALANCE_CAMERA;מצלמה
-TP_WBALANCE_CUSTOM;מות�?�?
+TP_WBALANCE_CUSTOM;מותאם
 TP_WBALANCE_GREEN;גיוון
-TP_WBALANCE_LABEL;�?יזון לבן
+TP_WBALANCE_LABEL;איזון לבן
 TP_WBALANCE_METHOD;שיטה
 TP_WBALANCE_SIZE;גודל
 TP_WBALANCE_SPOTWB;לפי נקודה
-TP_WBALANCE_TEMPERATURE;מידת חו�?
-ZOOMBAR_DETAIL;פרטי�?
+TP_WBALANCE_TEMPERATURE;מידת חום
+ZOOMBAR_DETAIL;פרטים
 ZOOMBAR_HUGE;ענק
 ZOOMBAR_LARGE;גדול
 ZOOMBAR_NORMAL;רגיל
@@ -636,17 +636,19 @@ ZOOMBAR_SMALL;קטן
 !EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 !EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 !EXPORT_BYPASS_SHARPENING;Bypass Sharpening
-!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 !EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
 !EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
-!EXPORT_MAXHEIGHT;Maximum Height: 
-!EXPORT_MAXWIDTH;Maximum Width:  
+!EXPORT_MAXHEIGHT;Maximum Height:
+!EXPORT_MAXWIDTH;Maximum Width:
 !EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
 !EXPORT_RAW_DMETHOD;Demosaic Method
 !EXPORT_RESIZEMETHOD;Resize Method
+!EXTPROGTARGET_1;raw
+!EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
 !FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
 !FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
@@ -656,12 +658,14 @@ ZOOMBAR_SMALL;קטן
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a queue-processed version?
-!FILEBROWSER_EXEC_CPB;Run Custom Profile Builder
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
+!FILEBROWSER_EXEC_CPB;Custom Profile Builder
+!FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_FLATFIELD;Flat Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 !FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
@@ -673,8 +677,8 @@ ZOOMBAR_SMALL;קטן
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
-!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Processing Profile Operations
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 !FILEBROWSER_QUERYHINT;Type a partial filename to search for.\n<b>Ctrl-F</b> to focus the Find text box (in the File Browser).\n<b>Enter</b> to commence search.
@@ -688,7 +692,7 @@ ZOOMBAR_SMALL;קטן
 !FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
-!FILEBROWSER_SHOWEXIFINFO;Show EXIF info.\nShortcut: <b>i</b>
+!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
@@ -700,6 +704,7 @@ ZOOMBAR_SMALL;קטן
 !GENERAL_HIGH_QUALITY;High Quality
 !GENERAL_NONE;None
 !GENERAL_UNCHANGED;(Unchanged)
+!GENERAL_WARNING;Warning
 !HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_B;B
 !HISTOGRAM_BUTTON_G;G
@@ -707,11 +712,12 @@ ZOOMBAR_SMALL;קטן
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
+!HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High Quality Shadows/Highlights
 !HISTORY_MSG_84;Perspective Correction
-!HISTORY_MSG_85;Wavelet Coefficients
+!HISTORY_MSG_85;Lens Correction Profile
 !HISTORY_MSG_86;Wavelet Equalizer
 !HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR Threshold
@@ -721,7 +727,7 @@ ZOOMBAR_SMALL;קטן
 !HISTORY_MSG_92;NR - Gamma
 !HISTORY_MSG_93;Contrast by Detail Levels Value
 !HISTORY_MSG_94;Contrast by Detail Levels
-!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_95;Chromaticity
 !HISTORY_MSG_96;'a' Curve
 !HISTORY_MSG_97;'b' Curve
 !HISTORY_MSG_98;Demosaicing Method
@@ -736,10 +742,10 @@ ZOOMBAR_SMALL;קטן
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize Bounding Box
-!HISTORY_MSG_110;Resizing applies o  
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_110;Resizing applies o
+!HISTORY_MSG_111;Avoid Color Shift
+!HISTORY_MSG_112;--unused--
+!HISTORY_MSG_113;Red and Skin Tones Protection
 !HISTORY_MSG_114;DCB Iterations
 !HISTORY_MSG_115;False Color Iterations
 !HISTORY_MSG_116;Enhanced DCB
@@ -793,32 +799,40 @@ ZOOMBAR_SMALL;קטן
 !HISTORY_MSG_164;RGB Curves - G
 !HISTORY_MSG_165;RGB Curves - B
 !HISTORY_MSG_166;Neutral Levels
+!HISTORY_MSG_167;B&amp;W Toning
+!HISTORY_MSG_168;'Cc' curve
+!HISTORY_MSG_169;'Ch' curve
+!HISTORY_MSG_170;Vibrance - Curve
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit Fullscreen
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b> 
-!MAIN_FRAME_EDITOR;Editor 
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b> 
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b> 
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b>
+!MAIN_FRAME_EDITOR;Editor
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b>
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
+!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
-!MAIN_TAB_EXPORT; Export 
+!MAIN_TAB_EXPORT; Export
 !MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
 !MAIN_TAB_METADATA_TOOLTIP;Shortcut: <b>Alt-M</b>
 !MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-R</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-T</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
+!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
+!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on.
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -845,7 +859,10 @@ ZOOMBAR_SMALL;קטן
 !NAVIGATOR_S_VALUE;S = %1
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
+!NAVIGATOR_XY_FULL;Width = %1, Height = %2
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
@@ -889,18 +906,18 @@ ZOOMBAR_SMALL;קטן
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_ADD;ADD
-!PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
+!PREFERENCES_AUTOMONPROFILE;Automatically use operating system's main monitor color profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path raw/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+!PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DARKFRAME;Dark frame
-!PREFERENCES_DATEFORMATFRAME;Date Format 
+!PREFERENCES_DARKFRAME;Dark Frame
+!PREFERENCES_DATEFORMATFRAME;Date Format
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
@@ -910,27 +927,28 @@ ZOOMBAR_SMALL;קטן
 !PREFERENCES_FLATFIELDTEMPLATES;templates
 !PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
-!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
-!PREFERENCES_MENUGROUPLABEL;Group Labeling
-!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
-!PREFERENCES_MENUGROUPRANK;Group Ranking
-!PREFERENCES_MENUOPTIONS;Menu Options
+!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File Operations"
+!PREFERENCES_MENUGROUPLABEL;Group "Color Label"
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing Profile Operations"
+!PREFERENCES_MENUGROUPRANK;Group "Rank"
+!PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_MULTITAB;Multiple tabs mode
+!PREFERENCES_MULTITABDUALMON;Multiple editor tabs mode, if available on second monitor
+!PREFERENCES_MULTITAB;Multiple editor tabs mode
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PANFACTORFRAME;Pan rate amplification
+!PREFERENCES_PANFACTORFRAME;Pan Rate Amplification
 !PREFERENCES_PANFACTORLABEL;Factor
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_SHOWPROFILESELECTOR;Show processing profile selector
+!PREFERENCES_SINGLETABVERTAB;Single editor tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single editor tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -942,7 +960,7 @@ ZOOMBAR_SMALL;קטן
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
-!PREFERENCES_USESYSTEMTHEME; Use System Theme
+!PREFERENCES_USESYSTEMTHEME; Use system theme
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_LOADPPASTE;Parameters to load
@@ -950,15 +968,31 @@ ZOOMBAR_SMALL;קטן
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe... 
+!PROGRESSBAR_DARKFRAME;Darkframe...
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
-!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
+!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_SUBSAMP;Subsampling
+!SAVEDLG_SUBSAMP_1;Best compression
+!SAVEDLG_SUBSAMP_2;Balanced
+!SAVEDLG_SUBSAMP_3;Best quality
+!SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!SAVEDLG_WARNFILENAME;File will be named
+!SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
+!THRESHOLDSELECTOR_BL;Bottom-left
+!THRESHOLDSELECTOR_BR;Bottom-right
+!THRESHOLDSELECTOR_B;Bottom
+!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+!THRESHOLDSELECTOR_TL;Top-left
+!THRESHOLDSELECTOR_TR;Top-right
+!THRESHOLDSELECTOR_T;Top
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTEPASSPORT;Biometric Passport
+!TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
 !TP_CROP_PPI;PPI=
 !TP_DARKFRAME_AUTOSELECT;Auto selection
@@ -978,8 +1012,8 @@ ZOOMBAR_SMALL;קטן
 !TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-!TP_DISTORTION_AUTO;    Auto distortion correction
-!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_DISTORTION_AUTO;    Auto Distortion Correction
+!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.)
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_LABEL;Tone Mapping
 !TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
@@ -991,8 +1025,8 @@ ZOOMBAR_SMALL;קטן
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPOSCORR_LABEL;Raw white-black point
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
+!TP_EXPOSCORR_LABEL;Raw white &amp; black points
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis
 !TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
@@ -1002,7 +1036,7 @@ ZOOMBAR_SMALL;קטן
 !TP_FLATFIELD_BLURTYPE;Blur Type
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
-!TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
+!TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
 !TP_GAMMA_CURV;gamma
@@ -1018,26 +1052,54 @@ ZOOMBAR_SMALL;קטן
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
-!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific profile
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific color profile
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profile. These profiles are more precise than simpler matrix ones. Available for some cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by dcraw, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera
 !TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
+!TP_ICM_PREFERREDPROFILE;Preferred DCP profile
+!TP_ICM_PREFERREDPROFILE_1;Daylight
+!TP_ICM_PREFERREDPROFILE_2;Tungsten
+!TP_ICM_PREFERREDPROFILE_3;Fluorescent
+!TP_ICM_PREFERREDPROFILE_4;Flash
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
+!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
 !TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_BWTONING;B&W Toning
+!TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
+!TP_LABCURVE_CHROMATICITY;Chromaticity
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
+!TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow saturated
+!TP_LABCURVE_CURVEEDITOR_CC;CC
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
+!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
+!TP_LABCURVE_CURVEEDITOR_CH;CH
+!TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
 !TP_LABCURVE_LABEL;Lab Adjustments
-!TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_LABCURVE_SATURATION;Saturation
+!TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 !TP_LENSGEOM_AUTOCROP;    Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
+!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_USECA;Use CA correction
+!TP_LENSPROFILE_USEDIST;Use distortion correction
+!TP_LENSPROFILE_USEVIGN;Use vignette correction
 !TP_NEUTRAL;Neutral
 !TP_NEUTRAL_TIP;Reset exposure controls to neutral values
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
@@ -1086,11 +1148,21 @@ ZOOMBAR_SMALL;קטן
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin tones
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the Hue
 !TP_VIBRANCE_LABEL;Vibrance
 !TP_VIBRANCE_PASTELS;Pastel tones
 !TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 !TP_VIBRANCE_PROTECTSKINS;Protect skin tones
-!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/saturated tones threshold
+!TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
+!TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
+!TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
 !TP_VIBRANCE_SATURATED;Saturated tones
 !TP_VIGNETTING_CENTER;Center
 !TP_VIGNETTING_CENTER_X;Center X
