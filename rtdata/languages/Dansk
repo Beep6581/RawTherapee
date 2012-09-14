@@ -637,17 +637,19 @@ ZOOMBAR_SMALL;Lille
 !EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 !EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 !EXPORT_BYPASS_SHARPENING;Bypass Sharpening
-!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 !EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
 !EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
-!EXPORT_MAXHEIGHT;Maximum Height: 
-!EXPORT_MAXWIDTH;Maximum Width:  
+!EXPORT_MAXHEIGHT;Maximum Height:
+!EXPORT_MAXWIDTH;Maximum Width:
 !EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
 !EXPORT_RAW_DMETHOD;Demosaic Method
 !EXPORT_RESIZEMETHOD;Resize Method
+!EXTPROGTARGET_1;raw
+!EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
 !FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
 !FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
@@ -657,12 +659,14 @@ ZOOMBAR_SMALL;Lille
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a queue-processed version?
-!FILEBROWSER_EXEC_CPB;Run Custom Profile Builder
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
+!FILEBROWSER_EXEC_CPB;Custom Profile Builder
+!FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_FLATFIELD;Flat Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 !FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
@@ -674,8 +678,8 @@ ZOOMBAR_SMALL;Lille
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
-!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Processing Profile Operations
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 !FILEBROWSER_QUERYHINT;Type a partial filename to search for.\n<b>Ctrl-F</b> to focus the Find text box (in the File Browser).\n<b>Enter</b> to commence search.
@@ -689,7 +693,7 @@ ZOOMBAR_SMALL;Lille
 !FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
-!FILEBROWSER_SHOWEXIFINFO;Show EXIF info.\nShortcut: <b>i</b>
+!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
@@ -701,6 +705,7 @@ ZOOMBAR_SMALL;Lille
 !GENERAL_HIGH_QUALITY;High Quality
 !GENERAL_NONE;None
 !GENERAL_UNCHANGED;(Unchanged)
+!GENERAL_WARNING;Warning
 !HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_B;B
 !HISTOGRAM_BUTTON_G;G
@@ -708,11 +713,12 @@ ZOOMBAR_SMALL;Lille
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
+!HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High Quality Shadows/Highlights
 !HISTORY_MSG_84;Perspective Correction
-!HISTORY_MSG_85;Wavelet Coefficients
+!HISTORY_MSG_85;Lens Correction Profile
 !HISTORY_MSG_86;Wavelet Equalizer
 !HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR Threshold
@@ -722,7 +728,7 @@ ZOOMBAR_SMALL;Lille
 !HISTORY_MSG_92;NR - Gamma
 !HISTORY_MSG_93;Contrast by Detail Levels Value
 !HISTORY_MSG_94;Contrast by Detail Levels
-!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_95;Chromaticity
 !HISTORY_MSG_96;'a' Curve
 !HISTORY_MSG_97;'b' Curve
 !HISTORY_MSG_98;Demosaicing Method
@@ -737,10 +743,10 @@ ZOOMBAR_SMALL;Lille
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize Bounding Box
-!HISTORY_MSG_110;Resizing applies o  
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_110;Resizing applies o
+!HISTORY_MSG_111;Avoid Color Shift
+!HISTORY_MSG_112;--unused--
+!HISTORY_MSG_113;Red and Skin Tones Protection
 !HISTORY_MSG_114;DCB Iterations
 !HISTORY_MSG_115;False Color Iterations
 !HISTORY_MSG_116;Enhanced DCB
@@ -794,32 +800,40 @@ ZOOMBAR_SMALL;Lille
 !HISTORY_MSG_164;RGB Curves - G
 !HISTORY_MSG_165;RGB Curves - B
 !HISTORY_MSG_166;Neutral Levels
+!HISTORY_MSG_167;B&amp;W Toning
+!HISTORY_MSG_168;'Cc' curve
+!HISTORY_MSG_169;'Ch' curve
+!HISTORY_MSG_170;Vibrance - Curve
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit Fullscreen
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b> 
-!MAIN_FRAME_EDITOR;Editor 
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b> 
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b> 
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b>
+!MAIN_FRAME_EDITOR;Editor
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b>
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
+!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
-!MAIN_TAB_EXPORT; Export 
+!MAIN_TAB_EXPORT; Export
 !MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
 !MAIN_TAB_METADATA_TOOLTIP;Shortcut: <b>Alt-M</b>
 !MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-R</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-T</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
+!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
+!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on.
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -846,7 +860,10 @@ ZOOMBAR_SMALL;Lille
 !NAVIGATOR_S_VALUE;S = %1
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
+!NAVIGATOR_XY_FULL;Width = %1, Height = %2
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
@@ -890,18 +907,18 @@ ZOOMBAR_SMALL;Lille
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_ADD;ADD
-!PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
+!PREFERENCES_AUTOMONPROFILE;Automatically use operating system's main monitor color profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path raw/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+!PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DARKFRAME;Dark frame
-!PREFERENCES_DATEFORMATFRAME;Date Format 
+!PREFERENCES_DARKFRAME;Dark Frame
+!PREFERENCES_DATEFORMATFRAME;Date Format
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
@@ -911,27 +928,28 @@ ZOOMBAR_SMALL;Lille
 !PREFERENCES_FLATFIELDTEMPLATES;templates
 !PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
-!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
-!PREFERENCES_MENUGROUPLABEL;Group Labeling
-!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
-!PREFERENCES_MENUGROUPRANK;Group Ranking
-!PREFERENCES_MENUOPTIONS;Menu Options
+!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File Operations"
+!PREFERENCES_MENUGROUPLABEL;Group "Color Label"
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing Profile Operations"
+!PREFERENCES_MENUGROUPRANK;Group "Rank"
+!PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_MULTITAB;Multiple tabs mode
+!PREFERENCES_MULTITABDUALMON;Multiple editor tabs mode, if available on second monitor
+!PREFERENCES_MULTITAB;Multiple editor tabs mode
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PANFACTORFRAME;Pan rate amplification
+!PREFERENCES_PANFACTORFRAME;Pan Rate Amplification
 !PREFERENCES_PANFACTORLABEL;Factor
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_SHOWPROFILESELECTOR;Show processing profile selector
+!PREFERENCES_SINGLETABVERTAB;Single editor tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single editor tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -943,7 +961,7 @@ ZOOMBAR_SMALL;Lille
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
-!PREFERENCES_USESYSTEMTHEME; Use System Theme
+!PREFERENCES_USESYSTEMTHEME; Use system theme
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_LOADPPASTE;Parameters to load
@@ -951,15 +969,31 @@ ZOOMBAR_SMALL;Lille
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe... 
+!PROGRESSBAR_DARKFRAME;Darkframe...
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
-!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
+!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_SUBSAMP;Subsampling
+!SAVEDLG_SUBSAMP_1;Best compression
+!SAVEDLG_SUBSAMP_2;Balanced
+!SAVEDLG_SUBSAMP_3;Best quality
+!SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!SAVEDLG_WARNFILENAME;File will be named
+!SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
+!THRESHOLDSELECTOR_BL;Bottom-left
+!THRESHOLDSELECTOR_BR;Bottom-right
+!THRESHOLDSELECTOR_B;Bottom
+!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+!THRESHOLDSELECTOR_TL;Top-left
+!THRESHOLDSELECTOR_TR;Top-right
+!THRESHOLDSELECTOR_T;Top
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTEPASSPORT;Biometric Passport
+!TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
 !TP_CROP_PPI;PPI=
 !TP_DARKFRAME_AUTOSELECT;Auto selection
@@ -979,8 +1013,8 @@ ZOOMBAR_SMALL;Lille
 !TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-!TP_DISTORTION_AUTO;    Auto distortion correction
-!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_DISTORTION_AUTO;    Auto Distortion Correction
+!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.)
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_LABEL;Tone Mapping
 !TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
@@ -992,8 +1026,8 @@ ZOOMBAR_SMALL;Lille
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPOSCORR_LABEL;Raw white-black point
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
+!TP_EXPOSCORR_LABEL;Raw white &amp; black points
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis
 !TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
@@ -1003,7 +1037,7 @@ ZOOMBAR_SMALL;Lille
 !TP_FLATFIELD_BLURTYPE;Blur Type
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
-!TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
+!TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
 !TP_GAMMA_CURV;gamma
@@ -1019,26 +1053,54 @@ ZOOMBAR_SMALL;Lille
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
-!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific profile
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific color profile
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profile. These profiles are more precise than simpler matrix ones. Available for some cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by dcraw, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera
 !TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
+!TP_ICM_PREFERREDPROFILE;Preferred DCP profile
+!TP_ICM_PREFERREDPROFILE_1;Daylight
+!TP_ICM_PREFERREDPROFILE_2;Tungsten
+!TP_ICM_PREFERREDPROFILE_3;Fluorescent
+!TP_ICM_PREFERREDPROFILE_4;Flash
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
+!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
 !TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_BWTONING;B&W Toning
+!TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
+!TP_LABCURVE_CHROMATICITY;Chromaticity
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
+!TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow saturated
+!TP_LABCURVE_CURVEEDITOR_CC;CC
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
+!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
+!TP_LABCURVE_CURVEEDITOR_CH;CH
+!TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
 !TP_LABCURVE_LABEL;Lab Adjustments
-!TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_LABCURVE_SATURATION;Saturation
+!TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 !TP_LENSGEOM_AUTOCROP;    Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
+!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_USECA;Use CA correction
+!TP_LENSPROFILE_USEDIST;Use distortion correction
+!TP_LENSPROFILE_USEVIGN;Use vignette correction
 !TP_NEUTRAL;Neutral
 !TP_NEUTRAL_TIP;Reset exposure controls to neutral values
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
@@ -1087,11 +1149,21 @@ ZOOMBAR_SMALL;Lille
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin tones
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the Hue
 !TP_VIBRANCE_LABEL;Vibrance
 !TP_VIBRANCE_PASTELS;Pastel tones
 !TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 !TP_VIBRANCE_PROTECTSKINS;Protect skin tones
-!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/saturated tones threshold
+!TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
+!TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
+!TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
 !TP_VIBRANCE_SATURATED;Saturated tones
 !TP_VIGNETTING_CENTER;Center
 !TP_VIGNETTING_CENTER_X;Center X

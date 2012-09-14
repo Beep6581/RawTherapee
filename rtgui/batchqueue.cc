@@ -27,7 +27,7 @@
 #include "batchqueuebuttonset.h"
 #include "guiutils.h"
 #include "../rtengine/safegtk.h"
-#include "processingjob.h"
+#include "../rtengine/processingjob.h"
 #include "rtimage.h"
 
 using namespace std;
@@ -95,8 +95,9 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 		(*entry)->setParent (this);
 		(*entry)->resize (std::min(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
 
-	    // Is not and already present snapshot, so we create a new one
-		if( (*entry)->currentSnapshoId <0 ){
+	    // Is not an already present snapshot, so we create a new one
+		if( (*entry)->currentSnapshoId < 0 ){
+			PartialProfile pprofile(false, &(*entry)->params);
 		    time_t rawtime;
 		    struct tm *timeinfo;
 		    char stringTimestamp [80];
@@ -104,8 +105,10 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 		    timeinfo = localtime ( &rawtime );
 		    strftime (stringTimestamp,sizeof(stringTimestamp),"%Y-%m-%d %H:%M:%S",timeinfo);
 
-			int id = (*entry)->thumbnail->newSnapshot(stringTimestamp,(*entry)->params,true );
+			int id = (*entry)->thumbnail->newSnapshot(stringTimestamp, pprofile, true );
 			(*entry)->currentSnapshoId = id;
+			pprofile.deleteInstance();
+
 		}else
 			(*entry)->thumbnail->setQueued((*entry)->currentSnapshoId,true );
 
@@ -185,13 +188,13 @@ void BatchQueue::loadBatchQueue( )
                     	if( si.id != id ) // better checking for info returned
                     		continue;
                     	rtengine::ImageMetaData* md= new rtengine::ImageMetaData( *(thumb->getMetadata()) );
-                    	rtengine::ProcessingJobImpl* job = (rtengine::ProcessingJobImpl*)rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, si.params, md,options.outputMetaData);
+                    	rtengine::ProcessingJobImpl* job = (rtengine::ProcessingJobImpl*)rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, *si.pprofile.pparams, md,options.outputMetaData);
 
                         int prevh = getMaxThumbnailHeight();
                         int prevw = prevh;
                         guint8* prev = NULL;
                         double tmpscale;
-                        rtengine::IImage8* img = thumb->processThumbImage( si.params, prevh, tmpscale);
+                        rtengine::IImage8* img = thumb->processThumbImage( *si.pprofile.pparams, prevh, tmpscale);
                         if (img) {
                             prevw = img->getWidth();
                             prevh = img->getHeight();
@@ -199,7 +202,7 @@ void BatchQueue::loadBatchQueue( )
                             memcpy(prev, img->getData(), prevw * prevh * 3);
                             img->free();
                         }
-                        BatchQueueEntry *entry = new BatchQueueEntry(job, si.params, source, prev, prevw, prevh, thumb);
+                        BatchQueueEntry *entry = new BatchQueueEntry(job, *si.pprofile.pparams, source, prev, prevw, prevh, thumb);
                         entry->currentSnapshoId = id;
                         entry->setParent(this);
                         entry->resize(options.thumbSize);

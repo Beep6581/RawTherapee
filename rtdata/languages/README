@@ -48,7 +48,7 @@ comments in the right order, e.g.:
 To create a file with only Latin characters from a non-Latin one, you can use 
 sed with the "y" command. For example, to create a latin-only "Polish (Latin 
 Characters)" file from the non-latin "Polish" one:
-  sed 'y/ĄĆĘ�?ŃÓŚŹŻąćęłńóśźż/ACELNOSZZacelnoszz/' < Polish > "Polish (Latin Characters)"
+  sed 'y/ĄĆĘŁŃÓŚŹŻąćęłńóśźż/ACELNOSZZacelnoszz/' < Polish > "Polish (Latin Characters)"
 
 You can use this Wikipedia "Character sets" category page to help you find all 
 the characters in the language file you want to convert into Latin-only:

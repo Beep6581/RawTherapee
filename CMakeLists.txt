@@ -67,7 +67,14 @@ if (APPLE)
 endif (APPLE)
 
 option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
-option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
+
+if (WIN32)
+    # link statically for Windows
+    option (BUILD_SHARED_LIBS "Build rawtherapee with shared libraries" OFF)
+else (WIN32)
+    # linux developers recomand dynamically linked libraries
+    option (BUILD_SHARED_LIBS "Build rawtherapee with shared libraries" ON)
+endif (WIN32)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
@@ -161,16 +168,17 @@ endif ()
 
 # check for libraries
 find_package(PkgConfig)
-pkg_check_modules (GTK     REQUIRED gtk+-2.0>=2.12)
+pkg_check_modules (XMP     REQUIRED xmp>=5.4)
+pkg_check_modules (GTK     REQUIRED gtk+-2.0>=2.22)
 pkg_check_modules (GLIB2   REQUIRED glib-2.0>=2.16)
 pkg_check_modules (GLIBMM  REQUIRED glibmm-2.4>=2.16)
-pkg_check_modules (GTKMM   REQUIRED gtkmm-2.4>=2.12)
+pkg_check_modules (GTKMM   REQUIRED gtkmm-2.4>=2.22)
 pkg_check_modules (GIO     REQUIRED gio-2.0>=2.16)
 pkg_check_modules (GIOMM   REQUIRED giomm-2.4>=2.12)
 pkg_check_modules (GTHREAD REQUIRED gthread-2.0>=2.16)
 pkg_check_modules (GOBJECT REQUIRED gobject-2.0>=2.16)
 pkg_check_modules (SIGC    REQUIRED sigc++-2.0)
-# NOTE: The new mechanism has been tested with BUILD_SHARED = OFF
+# NOTE: The new mechanism has been tested with BUILD_SHARED_LIBS = OFF
 if (WIN32)
     add_definitions (-DWIN32)
     add_definitions (-D_WIN32)
@@ -182,14 +190,14 @@ if (WIN32)
 endif (WIN32)
 # you may need lcms v1.xx for older version : pkg_check_modules (LCMS REQUIRED lcms<=1.99)
 pkg_check_modules (LCMS REQUIRED lcms2)
-find_package (EXPAT REQUIRED expat>=2.0)
 find_package (JPEG REQUIRED)
 find_package (PNG REQUIRED)
 find_package (TIFF REQUIRED)
 find_package (ZLIB REQUIRED)
+find_package (EXPAT REQUIRED expat>=2.0)
 pkg_check_modules (EXIV2 REQUIRED exiv2)
 
-# link witz bzip
+# link with bzip
 if (WITH_BZIP)
   find_package(BZip2)
   if (BZIP2_FOUND)
@@ -313,4 +321,5 @@ endif (UNIX)
 
 add_subdirectory (rtengine)
 add_subdirectory (rtgui)
+
 add_subdirectory (rtdata)

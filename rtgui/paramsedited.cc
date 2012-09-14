@@ -21,11 +21,6 @@
 #include "options.h"
 #include "addsetids.h"
 
-ParamsEdited::ParamsEdited () {
-
-    set (false);
-}
-
 void ParamsEdited::set (bool v) {
 
 	general.rank         = v;
@@ -183,7 +178,7 @@ void ParamsEdited::set (bool v) {
 	raw.dmethod = v;
 	raw.dcbIterations = v;
 	raw.dcbEnhance = v;
-	raw.allEnhance = v;
+	//raw.allEnhance = v;
 	raw.caCorrection = v;
 	raw.caBlue  = v;
 	raw.caRed   = v;
@@ -383,7 +378,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.dmethod = raw.dmethod && p.raw.dmethod == other.raw.dmethod;
         raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
         raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
-        raw.allEnhance = raw.allEnhance && p.raw.all_enhance == other.raw.all_enhance;
+        //raw.allEnhance = raw.allEnhance && p.raw.all_enhance == other.raw.all_enhance;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
         raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
         raw.caBlue = raw.caBlue && p.raw.cablue == other.raw.cablue;
@@ -401,9 +396,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.exPreser = raw.exPreser && p.raw.preser == other.raw.preser;
         raw.exBlackzero = raw.exBlackzero && p.raw.blackzero == other.raw.blackzero;
         raw.exBlackone = raw.exBlackone && p.raw.blackone == other.raw.blackone;
-        raw.exBlacktwo = p.raw.blacktwo == other.raw.blacktwo;
-        raw.exBlackthree = p.raw.blackthree == other.raw.blackthree;
-        raw.exTwoGreen = p.raw.twogreen == other.raw.twogreen;
+        raw.exBlacktwo = raw.exBlacktwo && p.raw.blacktwo == other.raw.blacktwo;
+        raw.exBlackthree = raw.exBlackthree && p.raw.blackthree == other.raw.blackthree;
+        raw.exTwoGreen = raw.exTwoGreen && p.raw.twogreen == other.raw.twogreen;
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
         for(int i = 0; i < 8; i++) {
@@ -589,7 +584,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.dmethod)        toEdit.raw.dmethod      = mods.raw.dmethod;
     if (raw.dcbIterations)  toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
     if (raw.dcbEnhance)     toEdit.raw.dcb_enhance     = mods.raw.dcb_enhance;
-    if (raw.allEnhance)     toEdit.raw.all_enhance     = mods.raw.all_enhance;
+    //if (raw.allEnhance)     toEdit.raw.all_enhance     = mods.raw.all_enhance;
 	
     if (raw.caCorrection)   toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
 	if (raw.caRed)          toEdit.raw.cared           = dontforceSet && options.baBehav[ADDSET_RAWCACORR] ? toEdit.raw.cared + mods.raw.cared : mods.raw.cared;
@@ -622,6 +617,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (hsvequalizer.scurve)		toEdit.hsvequalizer.scurve		= mods.hsvequalizer.scurve;
 	if (hsvequalizer.vcurve)		toEdit.hsvequalizer.vcurve		= mods.hsvequalizer.vcurve;
 
+	/*
 	// Exif changes are added to the existing ones
 	if (exif)
 		for (procparams::ExifPairs::const_iterator i=mods.exif.begin(); i!=mods.exif.end(); i++) {
@@ -633,10 +629,377 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 		for (procparams::IPTCPairs::const_iterator i=mods.iptc.begin(); i!=mods.iptc.end(); i++) {
 			toEdit.iptc[i->first] = i->second;
 		}
+	*/
+}
+
+ParamsEdited& ParamsEdited::operator&= (const ParamsEdited& rhs) {
+    toneCurve.curve &= rhs.toneCurve.curve;
+    toneCurve.brightness &= rhs.toneCurve.brightness;
+    toneCurve.black &= rhs.toneCurve.black;
+    toneCurve.contrast &= rhs.toneCurve.contrast;
+    toneCurve.saturation &= rhs.toneCurve.saturation;
+    toneCurve.shcompr &= rhs.toneCurve.shcompr;
+    toneCurve.hlcompr &= rhs.toneCurve.hlcompr;
+    toneCurve.hlcomprthresh &= rhs.toneCurve.hlcomprthresh;
+    toneCurve.autoexp &= rhs.toneCurve.autoexp;
+    toneCurve.clip &= rhs.toneCurve.clip;
+    toneCurve.expcomp &= rhs.toneCurve.expcomp;
+    labCurve.lcurve &= rhs.labCurve.lcurve;
+    labCurve.acurve &= rhs.labCurve.acurve;
+    labCurve.bcurve &= rhs.labCurve.bcurve;
+    labCurve.cccurve &= rhs.labCurve.cccurve;
+    labCurve.chcurve &= rhs.labCurve.chcurve;
+    //labCurve.cbgcurve &= rhs.labCurve.cbgcurve;
+    labCurve.brightness &= rhs.labCurve.brightness;
+    labCurve.contrast &= rhs.labCurve.contrast;
+    labCurve.chromaticity &= rhs.labCurve.chromaticity;
+    labCurve.avoidcolorshift &= rhs.labCurve.avoidcolorshift;
+    labCurve.rstprotection &= rhs.labCurve.rstprotection;
+    labCurve.bwtoning &= rhs.labCurve.bwtoning;
+    rgbCurves.rcurve &= rhs.rgbCurves.rcurve;
+    rgbCurves.gcurve &= rhs.rgbCurves.gcurve;
+    rgbCurves.bcurve &= rhs.rgbCurves.bcurve;
+    sharpenEdge.enabled &= rhs.sharpenEdge.enabled;
+    sharpenEdge.passes &= rhs.sharpenEdge.passes;
+    sharpenEdge.amount &= rhs.sharpenEdge.amount;
+    sharpenEdge.threechannels &= rhs.sharpenEdge.threechannels;
+    sharpenMicro.enabled &= rhs.sharpenMicro.enabled;
+    sharpenMicro.matrix &= rhs.sharpenMicro.matrix;
+    sharpenMicro.amount &= rhs.sharpenMicro.amount;
+    sharpenMicro.uniformity &= rhs.sharpenMicro.uniformity;
+    sharpening.enabled &= rhs.sharpening.enabled;
+    sharpening.radius &= rhs.sharpening.radius;
+    sharpening.amount &= rhs.sharpening.amount;
+    sharpening.threshold &= rhs.sharpening.threshold;
+    sharpening.edgesonly &= rhs.sharpening.edgesonly;
+    sharpening.edges_radius &= rhs.sharpening.edges_radius;
+    sharpening.edges_tolerance &= rhs.sharpening.edges_tolerance;
+    sharpening.halocontrol &= rhs.sharpening.halocontrol;
+    sharpening.halocontrol_amount &= rhs.sharpening.halocontrol_amount;
+    sharpening.method &= rhs.sharpening.method;
+    sharpening.deconvamount &= rhs.sharpening.deconvamount;
+    sharpening.deconvradius &= rhs.sharpening.deconvradius;
+    sharpening.deconviter &= rhs.sharpening.deconviter;
+    sharpening.deconvdamping &= rhs.sharpening.deconvdamping;
+    vibrance.enabled &= rhs.vibrance.enabled;
+    vibrance.pastels &= rhs.vibrance.pastels;
+    vibrance.saturated &= rhs.vibrance.saturated;
+    vibrance.psthreshold &= rhs.vibrance.psthreshold;
+    vibrance.protectskins &= rhs.vibrance.protectskins;
+    vibrance.avoidcolorshift &= rhs.vibrance.avoidcolorshift;
+    vibrance.pastsattog &= rhs.vibrance.pastsattog;
+    vibrance.skintonescurve &= rhs.vibrance.skintonescurve;
+    //colorBoost.amount &= rhs.colorBoost.amount;
+    //colorBoost.avoidclip &= rhs.colorBoost.avoidclip;
+    //colorBoost.enable_saturationlimiter &= rhs.colorBoost.enable_saturationlimiter;
+    //colorBoost.saturationlimit &= rhs.colorBoost.saturationlimit;
+    wb.method &= rhs.wb.method;
+    wb.green &= rhs.wb.green;
+    wb.temperature &= rhs.wb.temperature;
+    //colorShift.a &= rhs.colorShift.a;
+    //colorShift.b &= rhs.colorShift.b;
+    //lumaDenoise.enabled &= rhs.lumaDenoise.enabled;
+    //lumaDenoise.radius &= rhs.lumaDenoise.radius;
+    //lumaDenoise.edgetolerance &= rhs.lumaDenoise.edgetolerance;
+    //colorDenoise.enabled &= rhs.colorDenoise.enabled;
+    //colorDenoise.amount &= rhs.colorDenoise.amount;
+    defringe.enabled &= rhs.defringe.enabled;
+    defringe.radius &= rhs.defringe.radius;
+    defringe.threshold &= rhs.defringe.threshold;
+    impulseDenoise.enabled &= rhs.impulseDenoise.enabled;
+    impulseDenoise.thresh &= rhs.impulseDenoise.thresh;
+    dirpyrDenoise.enabled &= rhs.dirpyrDenoise.enabled;
+    dirpyrDenoise.luma &= rhs.dirpyrDenoise.luma;
+    dirpyrDenoise.chroma &= rhs.dirpyrDenoise.chroma;
+    dirpyrDenoise.gamma &= rhs.dirpyrDenoise.gamma;
+    edgePreservingDecompositionUI.enabled &= rhs.edgePreservingDecompositionUI.enabled;
+    edgePreservingDecompositionUI.Strength &= rhs.edgePreservingDecompositionUI.Strength;
+    edgePreservingDecompositionUI.EdgeStopping &= rhs.edgePreservingDecompositionUI.EdgeStopping;
+    edgePreservingDecompositionUI.Scale &= rhs.edgePreservingDecompositionUI.Scale;
+    edgePreservingDecompositionUI.ReweightingIterates &= rhs.edgePreservingDecompositionUI.ReweightingIterates;
+    sh.enabled &= rhs.sh.enabled;
+    sh.hq &= rhs.sh.hq;
+    sh.highlights &= rhs.sh.highlights;
+    sh.htonalwidth &= rhs.sh.htonalwidth;
+    sh.shadows &= rhs.sh.shadows;
+    sh.stonalwidth &= rhs.sh.stonalwidth;
+    sh.localcontrast &= rhs.sh.localcontrast;
+    sh.radius &= rhs.sh.radius;
+    crop.enabled &= rhs.crop.enabled;
+    crop.x &= rhs.crop.x;
+    crop.y &= rhs.crop.y;
+    crop.w &= rhs.crop.w;
+    crop.h &= rhs.crop.h;
+    crop.fixratio &= rhs.crop.fixratio;
+    crop.ratio &= rhs.crop.ratio;
+    crop.orientation &= rhs.crop.orientation;
+    crop.guide &= rhs.crop.guide;
+    coarse.rotate &= rhs.coarse.rotate;
+    coarse.hflip &= rhs.coarse.hflip;
+    coarse.vflip &= rhs.coarse.vflip;
+    commonTrans.autofill &= rhs.commonTrans.autofill;
+    rotate.degree &= rhs.rotate.degree;
+    distortion.amount &= rhs.distortion.amount;
+    lensProf.lcpFile &= rhs.lensProf.lcpFile;
+    lensProf.useDist &= rhs.lensProf.useDist;
+    lensProf.useVign &= rhs.lensProf.useVign;
+    lensProf.useCA &= rhs.lensProf.useCA;
+    perspective.horizontal &= rhs.perspective.horizontal;
+    perspective.vertical &= rhs.perspective.vertical;
+    cacorrection.red &= rhs.cacorrection.red;
+    cacorrection.blue &= rhs.cacorrection.blue;
+    vignetting.amount &= rhs.vignetting.amount;
+    vignetting.radius &= rhs.vignetting.radius;
+    vignetting.strength &= rhs.vignetting.strength;
+    vignetting.centerX &= rhs.vignetting.centerX;
+    vignetting.centerY &= rhs.vignetting.centerY;
+    chmixer.red[0] &= rhs.chmixer.red[0];
+    chmixer.red[1] &= rhs.chmixer.red[1];
+    chmixer.red[2] &= rhs.chmixer.red[2];
+    chmixer.green[0] &= rhs.chmixer.green[0];
+    chmixer.green[1] &= rhs.chmixer.green[1];
+    chmixer.green[2] &= rhs.chmixer.green[2];
+    chmixer.blue[0] &= rhs.chmixer.blue[0];
+    chmixer.blue[1] &= rhs.chmixer.blue[1];
+    chmixer.blue[2] &= rhs.chmixer.blue[2];
+    hlrecovery.enabled &= rhs.hlrecovery.enabled;
+    hlrecovery.method &= rhs.hlrecovery.method;
+    resize.scale &= rhs.resize.scale;
+    resize.appliesTo &= rhs.resize.appliesTo;
+    resize.method &= rhs.resize.method;
+    resize.dataspec &= rhs.resize.dataspec;
+    resize.width &= rhs.resize.width;
+    resize.height &= rhs.resize.height;
+    resize.enabled &= rhs.resize.enabled;
+    icm.input &= rhs.icm.input;
+    icm.blendCMSMatrix &= rhs.icm.blendCMSMatrix;
+    icm.preferredProfile &= rhs.icm.preferredProfile;
+    icm.working &= rhs.icm.working;
+    icm.output &= rhs.icm.output;
+    icm.gamma &= rhs.icm.gamma;
+    icm.freegamma &= rhs.icm.freegamma;
+    icm.gampos &= rhs.icm.gampos;
+    icm.slpos &= rhs.icm.slpos;
+    raw.ccSteps &= rhs.raw.ccSteps;
+    raw.dmethod &= rhs.raw.dmethod;
+    raw.dcbIterations &= rhs.raw.dcbIterations;
+    raw.dcbEnhance &= rhs.raw.dcbEnhance;
+    //raw.allEnhance &= rhs.raw.allEnhance;
+    raw.caCorrection &= rhs.raw.caCorrection;
+    raw.caRed &= rhs.raw.caRed;
+    raw.caBlue &= rhs.raw.caBlue;
+    raw.greenEq &= rhs.raw.greenEq;
+    raw.hotDeadPixelFilter &= rhs.raw.hotDeadPixelFilter;
+    raw.hotDeadPixelThresh &= rhs.raw.hotDeadPixelThresh;
+    raw.linenoise &= rhs.raw.linenoise;
+    raw.darkFrame &= rhs.raw.darkFrame;
+    raw.dfAuto &= rhs.raw.dfAuto;
+    raw.ff_file &= rhs.raw.ff_file;
+    raw.ff_AutoSelect &= rhs.raw.ff_AutoSelect;
+    raw.ff_BlurRadius &= rhs.raw.ff_BlurRadius;
+    raw.ff_BlurType &= rhs.raw.ff_BlurType;
+    raw.exPos &= rhs.raw.exPos;
+    raw.exPreser &= rhs.raw.exPreser;
+    raw.exBlackzero &= rhs.raw.exBlackzero;
+    raw.exBlackone &= rhs.raw.exBlackone;
+    raw.exBlacktwo &= rhs.raw.exBlacktwo;
+    raw.exBlackthree &= rhs.raw.exBlackthree;
+    raw.exTwoGreen &= rhs.raw.exTwoGreen;
+    dirpyrequalizer.enabled &= rhs.dirpyrequalizer.enabled;
+    for(int i=0; i<8; i++) {
+        dirpyrequalizer.mult[i] &= rhs.dirpyrequalizer.mult[i];
+    }
+    hsvequalizer.hcurve &= rhs.hsvequalizer.hcurve;
+    hsvequalizer.scurve &= rhs.hsvequalizer.scurve;
+    hsvequalizer.vcurve &= rhs.hsvequalizer.vcurve;
+    return *this;
+}
+
+ParamsEdited& ParamsEdited::operator|= (const ParamsEdited& rhs) {
+    toneCurve.curve |= rhs.toneCurve.curve;
+    toneCurve.brightness |= rhs.toneCurve.brightness;
+    toneCurve.black |= rhs.toneCurve.black;
+    toneCurve.contrast |= rhs.toneCurve.contrast;
+    toneCurve.saturation |= rhs.toneCurve.saturation;
+    toneCurve.shcompr |= rhs.toneCurve.shcompr;
+    toneCurve.hlcompr |= rhs.toneCurve.hlcompr;
+    toneCurve.hlcomprthresh |= rhs.toneCurve.hlcomprthresh;
+    toneCurve.autoexp |= rhs.toneCurve.autoexp;
+    toneCurve.clip |= rhs.toneCurve.clip;
+    toneCurve.expcomp |= rhs.toneCurve.expcomp;
+    labCurve.lcurve |= rhs.labCurve.lcurve;
+    labCurve.acurve |= rhs.labCurve.acurve;
+    labCurve.bcurve |= rhs.labCurve.bcurve;
+    labCurve.cccurve |= rhs.labCurve.cccurve;
+    labCurve.chcurve |= rhs.labCurve.chcurve;
+    //labCurve.cbgcurve |= rhs.labCurve.cbgcurve;
+    labCurve.brightness |= rhs.labCurve.brightness;
+    labCurve.contrast |= rhs.labCurve.contrast;
+    labCurve.chromaticity |= rhs.labCurve.chromaticity;
+    labCurve.avoidcolorshift |= rhs.labCurve.avoidcolorshift;
+    labCurve.rstprotection |= rhs.labCurve.rstprotection;
+    labCurve.bwtoning |= rhs.labCurve.bwtoning;
+    rgbCurves.rcurve |= rhs.rgbCurves.rcurve;
+    rgbCurves.gcurve |= rhs.rgbCurves.gcurve;
+    rgbCurves.bcurve |= rhs.rgbCurves.bcurve;
+    sharpenEdge.enabled |= rhs.sharpenEdge.enabled;
+    sharpenEdge.passes |= rhs.sharpenEdge.passes;
+    sharpenEdge.amount |= rhs.sharpenEdge.amount;
+    sharpenEdge.threechannels |= rhs.sharpenEdge.threechannels;
+    sharpenMicro.enabled |= rhs.sharpenMicro.enabled;
+    sharpenMicro.matrix |= rhs.sharpenMicro.matrix;
+    sharpenMicro.amount |= rhs.sharpenMicro.amount;
+    sharpenMicro.uniformity |= rhs.sharpenMicro.uniformity;
+    sharpening.enabled |= rhs.sharpening.enabled;
+    sharpening.radius |= rhs.sharpening.radius;
+    sharpening.amount |= rhs.sharpening.amount;
+    sharpening.threshold |= rhs.sharpening.threshold;
+    sharpening.edgesonly |= rhs.sharpening.edgesonly;
+    sharpening.edges_radius |= rhs.sharpening.edges_radius;
+    sharpening.edges_tolerance |= rhs.sharpening.edges_tolerance;
+    sharpening.halocontrol |= rhs.sharpening.halocontrol;
+    sharpening.halocontrol_amount |= rhs.sharpening.halocontrol_amount;
+    sharpening.method |= rhs.sharpening.method;
+    sharpening.deconvamount |= rhs.sharpening.deconvamount;
+    sharpening.deconvradius |= rhs.sharpening.deconvradius;
+    sharpening.deconviter |= rhs.sharpening.deconviter;
+    sharpening.deconvdamping |= rhs.sharpening.deconvdamping;
+    vibrance.enabled |= rhs.vibrance.enabled;
+    vibrance.pastels |= rhs.vibrance.pastels;
+    vibrance.saturated |= rhs.vibrance.saturated;
+    vibrance.psthreshold |= rhs.vibrance.psthreshold;
+    vibrance.protectskins |= rhs.vibrance.protectskins;
+    vibrance.avoidcolorshift |= rhs.vibrance.avoidcolorshift;
+    vibrance.pastsattog |= rhs.vibrance.pastsattog;
+    vibrance.skintonescurve |= rhs.vibrance.skintonescurve;
+    //colorBoost.amount |= rhs.colorBoost.amount;
+    //colorBoost.avoidclip |= rhs.colorBoost.avoidclip;
+    //colorBoost.enable_saturationlimiter |= rhs.colorBoost.enable_saturationlimiter;
+    //colorBoost.saturationlimit |= rhs.colorBoost.saturationlimit;
+    wb.method |= rhs.wb.method;
+    wb.green |= rhs.wb.green;
+    wb.temperature |= rhs.wb.temperature;
+    //colorShift.a |= rhs.colorShift.a;
+    //colorShift.b |= rhs.colorShift.b;
+    //lumaDenoise.enabled |= rhs.lumaDenoise.enabled;
+    //lumaDenoise.radius |= rhs.lumaDenoise.radius;
+    //lumaDenoise.edgetolerance |= rhs.lumaDenoise.edgetolerance;
+    //colorDenoise.enabled |= rhs.colorDenoise.enabled;
+    //colorDenoise.amount |= rhs.colorDenoise.amount;
+    defringe.enabled |= rhs.defringe.enabled;
+    defringe.radius |= rhs.defringe.radius;
+    defringe.threshold |= rhs.defringe.threshold;
+    impulseDenoise.enabled |= rhs.impulseDenoise.enabled;
+    impulseDenoise.thresh |= rhs.impulseDenoise.thresh;
+    dirpyrDenoise.enabled |= rhs.dirpyrDenoise.enabled;
+    dirpyrDenoise.luma |= rhs.dirpyrDenoise.luma;
+    dirpyrDenoise.chroma |= rhs.dirpyrDenoise.chroma;
+    dirpyrDenoise.gamma |= rhs.dirpyrDenoise.gamma;
+    edgePreservingDecompositionUI.enabled |= rhs.edgePreservingDecompositionUI.enabled;
+    edgePreservingDecompositionUI.Strength |= rhs.edgePreservingDecompositionUI.Strength;
+    edgePreservingDecompositionUI.EdgeStopping |= rhs.edgePreservingDecompositionUI.EdgeStopping;
+    edgePreservingDecompositionUI.Scale |= rhs.edgePreservingDecompositionUI.Scale;
+    edgePreservingDecompositionUI.ReweightingIterates |= rhs.edgePreservingDecompositionUI.ReweightingIterates;
+    sh.enabled |= rhs.sh.enabled;
+    sh.hq |= rhs.sh.hq;
+    sh.highlights |= rhs.sh.highlights;
+    sh.htonalwidth |= rhs.sh.htonalwidth;
+    sh.shadows |= rhs.sh.shadows;
+    sh.stonalwidth |= rhs.sh.stonalwidth;
+    sh.localcontrast |= rhs.sh.localcontrast;
+    sh.radius |= rhs.sh.radius;
+    crop.enabled |= rhs.crop.enabled;
+    crop.x |= rhs.crop.x;
+    crop.y |= rhs.crop.y;
+    crop.w |= rhs.crop.w;
+    crop.h |= rhs.crop.h;
+    crop.fixratio |= rhs.crop.fixratio;
+    crop.ratio |= rhs.crop.ratio;
+    crop.orientation |= rhs.crop.orientation;
+    crop.guide |= rhs.crop.guide;
+    coarse.rotate |= rhs.coarse.rotate;
+    coarse.hflip |= rhs.coarse.hflip;
+    coarse.vflip |= rhs.coarse.vflip;
+    commonTrans.autofill |= rhs.commonTrans.autofill;
+    rotate.degree |= rhs.rotate.degree;
+    distortion.amount |= rhs.distortion.amount;
+    lensProf.lcpFile |= rhs.lensProf.lcpFile;
+    lensProf.useDist |= rhs.lensProf.useDist;
+    lensProf.useVign |= rhs.lensProf.useVign;
+    lensProf.useCA |= rhs.lensProf.useCA;
+    perspective.horizontal |= rhs.perspective.horizontal;
+    perspective.vertical |= rhs.perspective.vertical;
+    cacorrection.red |= rhs.cacorrection.red;
+    cacorrection.blue |= rhs.cacorrection.blue;
+    vignetting.amount |= rhs.vignetting.amount;
+    vignetting.radius |= rhs.vignetting.radius;
+    vignetting.strength |= rhs.vignetting.strength;
+    vignetting.centerX |= rhs.vignetting.centerX;
+    vignetting.centerY |= rhs.vignetting.centerY;
+    chmixer.red[0] |= rhs.chmixer.red[0];
+    chmixer.red[1] |= rhs.chmixer.red[1];
+    chmixer.red[2] |= rhs.chmixer.red[2];
+    chmixer.green[0] |= rhs.chmixer.green[0];
+    chmixer.green[1] |= rhs.chmixer.green[1];
+    chmixer.green[2] |= rhs.chmixer.green[2];
+    chmixer.blue[0] |= rhs.chmixer.blue[0];
+    chmixer.blue[1] |= rhs.chmixer.blue[1];
+    chmixer.blue[2] |= rhs.chmixer.blue[2];
+    hlrecovery.enabled |= rhs.hlrecovery.enabled;
+    hlrecovery.method |= rhs.hlrecovery.method;
+    resize.scale |= rhs.resize.scale;
+    resize.appliesTo |= rhs.resize.appliesTo;
+    resize.method |= rhs.resize.method;
+    resize.dataspec |= rhs.resize.dataspec;
+    resize.width |= rhs.resize.width;
+    resize.height |= rhs.resize.height;
+    resize.enabled |= rhs.resize.enabled;
+    icm.input |= rhs.icm.input;
+    icm.blendCMSMatrix |= rhs.icm.blendCMSMatrix;
+    icm.preferredProfile |= rhs.icm.preferredProfile;
+    icm.working |= rhs.icm.working;
+    icm.output |= rhs.icm.output;
+    icm.gamma |= rhs.icm.gamma;
+    icm.freegamma |= rhs.icm.freegamma;
+    icm.gampos |= rhs.icm.gampos;
+    icm.slpos |= rhs.icm.slpos;
+    raw.ccSteps |= rhs.raw.ccSteps;
+    raw.dmethod |= rhs.raw.dmethod;
+    raw.dcbIterations |= rhs.raw.dcbIterations;
+    raw.dcbEnhance |= rhs.raw.dcbEnhance;
+    //raw.allEnhance |= rhs.raw.allEnhance;
+    raw.caCorrection |= rhs.raw.caCorrection;
+    raw.caRed |= rhs.raw.caRed;
+    raw.caBlue |= rhs.raw.caBlue;
+    raw.greenEq |= rhs.raw.greenEq;
+    raw.hotDeadPixelFilter |= rhs.raw.hotDeadPixelFilter;
+    raw.hotDeadPixelThresh |= rhs.raw.hotDeadPixelThresh;
+    raw.linenoise |= rhs.raw.linenoise;
+    raw.darkFrame |= rhs.raw.darkFrame;
+    raw.dfAuto |= rhs.raw.dfAuto;
+    raw.ff_file |= rhs.raw.ff_file;
+    raw.ff_AutoSelect |= rhs.raw.ff_AutoSelect;
+    raw.ff_BlurRadius |= rhs.raw.ff_BlurRadius;
+    raw.ff_BlurType |= rhs.raw.ff_BlurType;
+    raw.exPos |= rhs.raw.exPos;
+    raw.exPreser |= rhs.raw.exPreser;
+    raw.exBlackzero |= rhs.raw.exBlackzero;
+    raw.exBlackone |= rhs.raw.exBlackone;
+    raw.exBlacktwo |= rhs.raw.exBlacktwo;
+    raw.exBlackthree |= rhs.raw.exBlackthree;
+    raw.exTwoGreen |= rhs.raw.exTwoGreen;
+    dirpyrequalizer.enabled |= rhs.dirpyrequalizer.enabled;
+    for(int i=0; i<8; i++) {
+        dirpyrequalizer.mult[i] |= rhs.dirpyrequalizer.mult[i];
+    }
+    hsvequalizer.hcurve |= rhs.hsvequalizer.hcurve;
+    hsvequalizer.scurve |= rhs.hsvequalizer.scurve;
+    hsvequalizer.vcurve |= rhs.hsvequalizer.vcurve;
+    return *this;
 }
 
 bool RAWParamsEdited::isUnchanged() const {
-    return ccSteps && dmethod && dcbIterations && dcbEnhance && allEnhance && caCorrection && caRed && caBlue && greenEq
+    return ccSteps && dmethod && dcbIterations && dcbEnhance /* && allEnhance */ && caCorrection && caRed && caBlue && greenEq
         && hotDeadPixelFilter && hotDeadPixelThresh && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
 	    && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
 }

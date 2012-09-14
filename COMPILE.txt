@@ -270,7 +270,7 @@ WINDOWS
         EXIV2
           - Download EXIV2 from http://www.exiv2.org/
           - how to build
-              ./configure --prefix=/mingw --with-zlib=/mingw  --disable-visibility --disable-nls --without-libiconv-prefix
+              ./configure --prefix=/mingw --with-zlib=/mingw  --disable-visibility --enable-nls --with-libiconv-prefix
               make
               make install
               (libgcc_s_sjlj-1.dll provided with gtkmm (36K) doesn't supports __chkstk, so while compiling RT there is a link error: the one with mingw (88K) is OK)

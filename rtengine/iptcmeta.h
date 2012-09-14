@@ -121,7 +121,7 @@ public:
 	bool readOnly;               // If true this property should not be modified after first creation
 
 	IPTCMeta():arrType(Exiv2::xmpText),readOnly(false){}
-	IPTCMeta( const std::string &vkey, const Glib::ustring &vName, const Glib::ustring &vdesc, Exiv2::TypeId arr=Exiv2::xmpText,bool isArr= false ): key(vkey), guiName(vName), description(vdesc), arrType(arr),isStructArray(isArr),readOnly(false){}
+	IPTCMeta( const std::string &vkey, const Glib::ustring &vName, const Glib::ustring &vdesc, Exiv2::TypeId arr=Exiv2::xmpText,bool isArr= false ): arrType(arr),isStructArray(isArr), key(vkey), guiName(vName), description(vdesc), readOnly(false){}
 
 	/** Extract a Xmp key formatted for exiv2; index is meaningful only for array types */
 	std::string getXmpKey( int index=0 ) const;

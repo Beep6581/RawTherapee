@@ -278,16 +278,17 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
 
     if (!ipc) return;
     ProcParams *params = ipc->beginUpdateParams ();
-    ProcParams *mergedParams = new ProcParams();
-
-    // Copy the current params as default values for the fusion
-    *mergedParams = *params;
+    // Make a copy of the current params as default values for the fusion
+    ProcParams *mergedParams = new ProcParams(*params);
 
     // Reset IPTC values when switching procparams from the History
+    // Merge uncertainty: look out how to handle the IPTC and EXIF values
+    /*
     if (event == rtengine::EvHistoryBrowsed) {
         mergedParams->iptc.clear();
         mergedParams->exif.clear();
     }
+    */
 
     // And apply the partial profile nparams to mergedParams
     nparams->applyTo(mergedParams);
@@ -354,17 +355,17 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
 
     rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
     if( idata ){
-    	if( !idata->getIPTCDataChanged() && !options.defMetadata.empty() ){
+        if( !idata->getIPTCDataChanged() && !options.defMetadata.empty() ){
             rtengine::ImageMetaData *id = rtengine::ImageMetaData::fromFile("",options.defMetadata,"",false );
             if( id ){
-            	rtengine::MetadataList loaded = id->getIPTCData();
-            	idata->setIPTCData( loaded );
-            	delete id;
+                rtengine::MetadataList loaded = id->getIPTCData();
+                idata->setIPTCData( loaded );
+                delete id;
             }
-    	}
-		idata->updateExif();
-		exifpanel->setImageData (idata );
-		iptcpanel->setImageData (idata );
+        }
+        idata->updateExif();
+        exifpanel->setImageData (idata);
+        iptcpanel->setImageData (idata);
     }
 
     if (ipc) {
@@ -374,7 +375,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     }
 
     icm->setRawMeta (raw, idata);
-    lensProf->setRawMeta (raw, pMetaData); 
+    lensProf->setRawMeta (raw, idata);
 
     hlrecovery->setRaw (raw);
     hasChanged = true;
@@ -382,16 +383,17 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
 
 void ToolPanelCoordinator::saveIPTC()
 {
-	if( iptcpanel )
-	   iptcpanel->writeImageData( ipc->getInitialImage()->getMetaData() );
+    if( iptcpanel )
+        // Merge uncertainty: Look out how to handle this
+        iptcpanel->writeImageData( ipc->getInitialImage()->getMetaData() );
 }
 
 
 void ToolPanelCoordinator::closeImage () {
 
     if (ipc) {
-    	saveIPTC();
-        ipc->stopProcessing ();        
+        saveIPTC();
+        ipc->stopProcessing ();
         ipc = NULL;
     }
 }
@@ -464,7 +466,7 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
 {
     if (!ipc)
         return NULL;
-    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
     if(imd){
       int iso = imd->getISOSpeed();
       double shutter = imd->getShutterSpeed();
@@ -481,7 +483,7 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
 {
     if (!ipc)
         return NULL;
-    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
     if(imd){
       // int iso = imd->getISOSpeed();              temporarilly removed because unused
       // double shutter = imd->getShutterSpeed();   temporarilly removed because unused

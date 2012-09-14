@@ -417,7 +417,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     is->setProgressListener( this );
 
     // try to load the last saved parameters from the cache or from the paramfile file
-    ProcParams* ldprof = openThm->createProcParamsForUpdate(true,false);  // will be freed by initProfile
+    PartialProfile* ldprof = openThm->createPartialProfileForUpdate(true,false);  // will be freed by initProfile
 
     // initialize profile
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
@@ -495,12 +495,15 @@ void EditorPanel::saveProfile () {
 
     // If the file was deleted, do not generate ghost entries
     if (safe_file_test(fname, Glib::FILE_TEST_EXISTS)) {
-        ProcParams params;
-        ipc->getParams (&params);
+        PartialProfile pprofile(true, true);
+        // we save the full parameter set
+        pprofile.set(true);
+        ipc->getParams (pprofile.pparams);
 
         // Will call updateCache, which will update both the cached and sidecar files if necessary
-        openThm->setProcParams (params, NULL, EDITOR);
-}
+        openThm->setPartialProfile(pprofile, EDITOR);
+        pprofile.deleteInstance();
+    }
 }
 
 Glib::ustring EditorPanel::getShortName () {
@@ -599,23 +602,25 @@ void EditorPanel::setProgressStr (Glib::ustring str)
 
 // This is only called from the ThreadUI, so within the gtk thread
 void EditorPanel::refreshProcessingState (bool inProcessingP) {
-	spparams *s=new spparams;
+    spparams *s=new spparams;
     s->pProgress = progressLabel;
 
     if (inProcessingP) {
         if (processingStartedTime==0) processingStartedTime = ::time(NULL);
 
-    	s->str = "PROGRESSBAR_PROCESSING";
-    	s->val = 0.0;
+        s->str = "PROGRESSBAR_PROCESSING";
+        s->val = 0.0;
     } else {
-    // Set proc params of thumbnail. It saves it into the cache and updates the file browser.
-			if (ipc && openThm && tpc->getChangedState()) {
-        rtengine::procparams::ProcParams pparams;
-        ipc->getParams (&pparams);
-        openThm->setProcParams (pparams, NULL, EDITOR, false);
-    }
+        // Set proc params of thumbnail. It saves it into the cache and updates the file browser.
+        if (ipc && openThm && tpc->getChangedState()) {
+            PartialProfile pprofile(true, true);
+            pprofile.set(true);
+            ipc->getParams (pprofile.pparams);
+            openThm->setPartialProfile (pprofile, EDITOR, false);
+            pprofile.deleteInstance();
+        }
 
-		// Ring a sound if it was a long event
+        // Ring a sound if it was a long event
         if (processingStartedTime!=0) {
             time_t curTime= ::time(NULL);
             if (::difftime(curTime, processingStartedTime) > options.sndLngEditProcDoneSecs) 
@@ -624,19 +629,19 @@ void EditorPanel::refreshProcessingState (bool inProcessingP) {
             processingStartedTime = 0;
         }
 
-		// Set progress bar "done"
-    	s->str = "PROGRESSBAR_READY";
-    	s->val = 1.0;
+        // Set progress bar "done"
+        s->str = "PROGRESSBAR_READY";
+        s->val = 1.0;
 
 #ifdef WIN32
-	if (!firstProcessingDone && static_cast<RTWindow*>(parent)->getIsFullscreen()) { parent->fullscreen(); }
+        if (!firstProcessingDone && static_cast<RTWindow*>(parent)->getIsFullscreen()) { parent->fullscreen(); }
 #endif
         firstProcessingDone = true;
-}
+    }
 
     isProcessing=inProcessingP;
 
-	setprogressStrUI(s);
+    setprogressStrUI(s);
 }
 
 struct errparams {
@@ -692,28 +697,31 @@ void EditorPanel::info_toggled () {
     Glib::ustring expcomp;
 
     if (!ipc || !openThm) return;
-    const rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
-    if (idata && idata->hasExif()){
-    	infoString1 = Glib::ustring::compose ("%1 + %2",
-    			Glib::ustring(idata->getMake()+" "+idata->getModel()),
-    			Glib::ustring(idata->getLens()));
+    rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
+    if (idata){  //  && idata->hasExif()
+        infoString1 = Glib::ustring::compose ("%1 %2 + %3",
+                Glib::ustring(idata->getMake()),
+                Glib::ustring(idata->getModel()),
+                Glib::ustring(idata->getLens())
+        );
 
         infoString2 = Glib::ustring::compose ("<span size=\"small\">f/</span><span size=\"large\">%1</span>  <span size=\"large\">%2</span><span size=\"small\">s</span>  <span size=\"small\">%3</span><span size=\"large\">%4</span>  <span size=\"large\">%5</span><span size=\"small\">mm</span>",
-        		Glib::ustring(idata->apertureToString(idata->getFNumber())),
-				Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
-				M("QINFO_ISO"), idata->getISOSpeed(),
-				idata->getFocalLen());
+                Glib::ustring(idata->apertureToString(idata->getFNumber())),
+                Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
+                M("QINFO_ISO"), idata->getISOSpeed(),
+                idata->getFocalLen()
+        );
 
         expcomp = Glib::ustring(idata->expcompToString(idata->getExpComp(),true)); // maskZeroexpcomp
         if (expcomp!=""){
-        		infoString2 = Glib::ustring::compose("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
-        				infoString2,
-        				expcomp /*Glib::ustring(idata->expcompToString(idata->getExpComp()))*/);
+                infoString2 = Glib::ustring::compose("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
+                        infoString2,
+                        expcomp /*Glib::ustring(idata->expcompToString(idata->getExpComp()))*/);
         }
 
         infoString3 = Glib::ustring::compose ("<span size=\"small\">%1</span><span>%2</span>",
-        		Glib::path_get_dirname(openThm->getFileName()) + G_DIR_SEPARATOR_S,
-        		Glib::path_get_basename(openThm->getFileName()));
+                Glib::path_get_dirname(openThm->getFileName()) + G_DIR_SEPARATOR_S,
+                Glib::path_get_basename(openThm->getFileName()));
 
         infoString = Glib::ustring::compose ("%1\n%2\n%3",infoString1, infoString2, infoString3);
     }
@@ -955,11 +963,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
 
     if (whoChangedIt!=EDITOR) {
-        PartialProfile pp(true);
-        pp.set(true);
-        *(pp.pparams) = openThm->getProcParams();
-        tpc->profileChange (&pp, rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
-        pp.deleteInstance();
+        tpc->profileChange (&(openThm->getPartialProfile()), rtengine::EvProfileChangeNotification, M("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
     }
 }
 
@@ -1007,8 +1011,8 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 
 	if (! pc->returnValue() ) {
 		openThm->imageDeveloped ();
-		rtengine::procparams::ProcParams pparams;
-		ipc->getParams (&pparams);
+		PartialProfile pprofile(true, false);
+		ipc->getParams (pprofile.pparams);
 
 		time_t rawtime;
 		struct tm *timeinfo;
@@ -1016,8 +1020,9 @@ bool EditorPanel::idle_imageSaved(ProgressConnector<int> *pc,rtengine::IImage16*
 		time ( &rawtime );
 		timeinfo = localtime ( &rawtime );
 		strftime (stringTimestamp,sizeof(stringTimestamp),"%Y-%m-%d %H:%M:%S",timeinfo);
-		int id = openThm->newSnapshot(stringTimestamp, pparams);
+		int id = openThm->newSnapshot(stringTimestamp, pprofile);
 		openThm->setSaved(id ,true, fname );
+		pprofile.deleteInstance();
 
 	} else {
 		Glib::ustring msg_ = Glib::ustring("<b>") + fname + ": Error during image saving\n</b>";

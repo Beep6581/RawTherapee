@@ -1,12 +1,12 @@
-ADJUSTER_RESET_TO_DEFAULT;Επαναφο�?ά π�?οεπιλογών
-CURVEEDITOR_FILEDLGFILTERANY;Οποιοδήποτε α�?χείο
-CURVEEDITOR_FILEDLGFILTERCURVE;Α�?χεία καμπυλών
-CURVEEDITOR_LINEAR;Γ�?αμμικό
-CURVEEDITOR_LOADDLGLABEL;Φό�?τωση καμπ�?λης...
+ADJUSTER_RESET_TO_DEFAULT;Επαναφορά προεπιλογών
+CURVEEDITOR_FILEDLGFILTERANY;Οποιοδήποτε αρχείο
+CURVEEDITOR_FILEDLGFILTERCURVE;Αρχεία καμπυλών
+CURVEEDITOR_LINEAR;Γραμμικό
+CURVEEDITOR_LOADDLGLABEL;Φόρτωση καμπύλης...
 CURVEEDITOR_SAVEDLGLABEL;Αποθήκευση καμπλης...
-CURVEEDITOR_TOOLTIPLINEAR;Επαναφο�?ά καμπ�?λης σε γ�?αμμική
-CURVEEDITOR_TOOLTIPLOAD;Φό�?τωση καμπ�?λης απο α�?χείο
-CURVEEDITOR_TOOLTIPSAVE;Αποθήκευση πα�?ο�?σας καμπ�?λης
+CURVEEDITOR_TOOLTIPLINEAR;Επαναφορά καμπύλης σε γραμμική
+CURVEEDITOR_TOOLTIPLOAD;Φόρτωση καμπύλης απο αρχείο
+CURVEEDITOR_TOOLTIPSAVE;Αποθήκευση παρούσας καμπύλης
 EXIFFILTER_APERTURE;Aperture
 EXIFFILTER_CAMERA;Camera
 EXIFFILTER_DIALOGLABEL;Exif Filter
@@ -14,19 +14,19 @@ EXIFFILTER_FOCALLEN;Focal Length
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lens
 EXIFFILTER_SHUTTER;Shutter
-EXIFPANEL_ADDEDITHINT;Π�?οσθήκη καινο�?�?ιας ετικέττας ή επεξε�?γασία
-EXIFPANEL_ADDEDIT;Π�?οσθήκη/Επεξε�?γασία
+EXIFPANEL_ADDEDITHINT;Προσθήκη καινούριας ετικέττας ή επεξεργασία
+EXIFPANEL_ADDEDIT;Προσθήκη/Επεξεργασία
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Εισαγωγή τιμής
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Επιλογή ετικέττας
-EXIFPANEL_ADDTAGDLG_TITLE;Π�?οσθήκη/Επεξε�?γασία ετικέττας
-EXIFPANEL_KEEPHINT;Συγκ�?άτηση των επιλεγμένων ετικεττών κατά την εγγ�?αφή του πα�?αγώμενου α�?χείου
-EXIFPANEL_KEEP;Συγκ�?άτηση
-EXIFPANEL_REMOVEHINT;Αφαί�?εση των επιλεγμένων ετικεττών κατά την εγγ�?αφή του πα�?αγώμενου α�?χείου
-EXIFPANEL_REMOVE;Αφαί�?εση
-EXIFPANEL_RESETALLHINT;Επαναφο�?ά όλων των ετικεττών στην α�?χική τους τιμή
-EXIFPANEL_RESETALL;Επαναφο�?ά όλων
-EXIFPANEL_RESETHINT;Επαναφο�?ά των επιλεγμένων ετικεττών στις π�?ωτότυπες τους τιμές
-EXIFPANEL_RESET;Επαναφο�?ά
+EXIFPANEL_ADDTAGDLG_TITLE;Προσθήκη/Επεξεργασία ετικέττας
+EXIFPANEL_KEEPHINT;Συγκράτηση των επιλεγμένων ετικεττών κατά την εγγραφή του παραγώμενου αρχείου
+EXIFPANEL_KEEP;Συγκράτηση
+EXIFPANEL_REMOVEHINT;Αφαίρεση των επιλεγμένων ετικεττών κατά την εγγραφή του παραγώμενου αρχείου
+EXIFPANEL_REMOVE;Αφαίρεση
+EXIFPANEL_RESETALLHINT;Επαναφορά όλων των ετικεττών στην αρχική τους τιμή
+EXIFPANEL_RESETALL;Επαναφορά όλων
+EXIFPANEL_RESETHINT;Επαναφορά των επιλεγμένων ετικεττών στις πρωτότυπες τους τιμές
+EXIFPANEL_RESET;Επαναφορά
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
 FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
@@ -80,55 +80,55 @@ FILEBROWSER_THUMBSIZE;Thumb. size
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size
 GENERAL_ABOUT;About
-GENERAL_CANCEL;Ακ�?�?ωση
-GENERAL_DISABLED;Απενε�?γοποιημένο
-GENERAL_DISABLE;Απενε�?γοποίηση
-GENERAL_ENABLED;Ενε�?γοποιημένο
-GENERAL_ENABLE;Ενε�?γοποίηση
+GENERAL_CANCEL;Ακύρωση
+GENERAL_DISABLED;Απενεργοποιημένο
+GENERAL_DISABLE;Απενεργοποίηση
+GENERAL_ENABLED;Ενεργοποιημένο
+GENERAL_ENABLE;Ενεργοποίηση
 GENERAL_LANDSCAPE;Τοπίο
-GENERAL_LOAD;Φό�?τωση
+GENERAL_LOAD;Φόρτωση
 GENERAL_NA;μη διαθέσιμο
 GENERAL_NO;Όχι
 GENERAL_OK;Εντάξει
-GENERAL_PORTRAIT;Πο�?τ�?αίτο
+GENERAL_PORTRAIT;Πορτραίτο
 GENERAL_SAVE;Αποθήκευση
-GENERAL_YES;�?αί
+GENERAL_YES;Ναί
 HISTOGRAM_LABEL;Histogram
-HISTOGRAM_TOOLTIP_B;Π�?οβολή/απόκ�?υψη ΜΠΛΕ ιστογ�?άμματος
-HISTOGRAM_TOOLTIP_G;Π�?οβολή/απόκ�?υψη ΠΡΑΣΙ�?ΟΥ ιστογ�?άμματος
-HISTOGRAM_TOOLTIP_L;Π�?οβολή/απόκ�?υψη CIELAB ιστογ�?άμματος φωτεινότητας
-HISTOGRAM_TOOLTIP_R;Π�?οβολή/απόκ�?υψη KOKKINOY ιστογ�?άμματος
+HISTOGRAM_TOOLTIP_B;Προβολή/απόκρυψη ΜΠΛΕ ιστογράμματος
+HISTOGRAM_TOOLTIP_G;Προβολή/απόκρυψη ΠΡΑΣΙΝΟΥ ιστογράμματος
+HISTOGRAM_TOOLTIP_L;Προβολή/απόκρυψη CIELAB ιστογράμματος φωτεινότητας
+HISTOGRAM_TOOLTIP_R;Προβολή/απόκρυψη KOKKINOY ιστογράμματος
 HISTORY_CHANGED;Αλλαγή
-HISTORY_CUSTOMCURVE;Π�?οσα�?μοσμένη καμπ�?λη
-HISTORY_DELSNAPSHOT;Αφαί�?εση στιγμιοτ�?που
+HISTORY_CUSTOMCURVE;Προσαρμοσμένη καμπύλη
+HISTORY_DELSNAPSHOT;Αφαίρεση στιγμιοτύπου
 HISTORY_FROMCLIPBOARD;From clipboard
-HISTORY_LABEL;Ιστο�?ικό
-HISTORY_MSG_1;Φο�?τώθηκε εικόνα
-HISTORY_MSG_2;Φο�?τώθηκε π�?οφίλ
-HISTORY_MSG_3;Αλλαγή π�?οφίλ
-HISTORY_MSG_4;Αναζήτηση ιστο�?ικο�?
+HISTORY_LABEL;Ιστορικό
+HISTORY_MSG_1;Φορτώθηκε εικόνα
+HISTORY_MSG_2;Φορτώθηκε προφίλ
+HISTORY_MSG_3;Αλλαγή προφίλ
+HISTORY_MSG_4;Αναζήτηση ιστορικού
 HISTORY_MSG_5;Φωτεινότητα
 HISTORY_MSG_6;Αντίθεση
-HISTORY_MSG_7;Μα�?�?α
-HISTORY_MSG_8;Επανό�?θωση Έκθεσης
+HISTORY_MSG_7;Μαύρα
+HISTORY_MSG_8;Επανόρθωση Έκθεσης
 HISTORY_MSG_9;Συμπίεση φωτεινών σημείων
 HISTORY_MSG_10;Συμπίεση σκιών
-HISTORY_MSG_11;Καμπ�?λη τονικότητας
+HISTORY_MSG_11;Καμπύλη τονικότητας
 HISTORY_MSG_12;Αυτόματη έκθεση
 HISTORY_MSG_13;Ψαλιδισμός έκθεσης
 HISTORY_MSG_14;Φωτεινότητα Φωτεινότητας
 HISTORY_MSG_15;Φωτεινότητα αντίθεσης
-HISTORY_MSG_16;Φωτεινότητα μα�?�?ων
+HISTORY_MSG_16;Φωτεινότητα μαύρων
 HISTORY_MSG_17;Φωτεινότητα συμπίεσησ φωτεινών σημείων.
 HISTORY_MSG_18;Φωτεινότητα συμπίεσης σκιών.
-HISTORY_MSG_19;Καμπ�?λη φωτεινότητας
+HISTORY_MSG_19;Καμπύλη φωτεινότητας
 HISTORY_MSG_20;Όξυνση
 HISTORY_MSG_21;Ακτίνα όξυνσης
 HISTORY_MSG_22;Ένταση όξυνσης
 HISTORY_MSG_23;Κατώφλι όξυνσης
-HISTORY_MSG_24;Όξυνση μόνο ο�?ίων
-HISTORY_MSG_25;Ακτίνα ανίχνευσης ο�?ίων όξυνσης
-HISTORY_MSG_26;Όξυνση, Ανοχή ο�?ίων
+HISTORY_MSG_24;Όξυνση μόνο ορίων
+HISTORY_MSG_25;Ακτίνα ανίχνευσης ορίων όξυνσης
+HISTORY_MSG_26;Όξυνση, Ανοχή ορίων
 HISTORY_MSG_27;Όξυνση, Έλεγχος άλως
 HISTORY_MSG_28;Ένταση ελέγχου άλως
 HISTORY_MSG_29;Μέθοδοςν όξυνσης
@@ -136,45 +136,45 @@ HISTORY_MSG_30;Ακτίνα Deconvolution
 HISTORY_MSG_31;Ένταση Deconvolution
 HISTORY_MSG_32;Καταστολή Deconvolution
 HISTORY_MSG_33;Επαναλήψεις Deconvolution
-HISTORY_MSG_34;Αποφυγή ψαλιδίσματος χ�?ώματος
-HISTORY_MSG_35;Πε�?ιοσμός κο�?εσμο�?
-HISTORY_MSG_36;Ένταση πε�?ιοσμο�? κο�?εσμο�?
-HISTORY_MSG_37;Ενίσχυση χ�?ώματος
-HISTORY_MSG_38;Μέθοδος εξισο�?�?όπησης λευκο�?
-HISTORY_MSG_39;Θε�?μοκ�?ασία χ�?ώματος
-HISTORY_MSG_40;Απόχ�?ωση εξισο�?�?όπησης λευκο�?
-HISTORY_MSG_41;Χ�?ωματική μετατόπιση "A"
-HISTORY_MSG_42;Χ�?ωματική μετατόπιση "B"
-HISTORY_MSG_43;Αποθο�?�?βηση φωτεινότητας
-HISTORY_MSG_44;Ακτίνα αποθο�?�?βησης φωτεινότητας
-HISTORY_MSG_45;Ανοχή ο�?ίων αποθο�?�?βησης φωτεινότητας
-HISTORY_MSG_46;Αποθο�?�?βηση χ�?ώματος
-HISTORY_MSG_47;Ακτίνα αποθο�?�?βησης χ�?ώματος
-HISTORY_MSG_48;Ανοχή ο�?ίων αποθο�?�?βησης χ�?ώματος
-HISTORY_MSG_49;Αποθο�?�?βηση χ�?ώματος (ευαισθησία ο�?ίων)
-HISTORY_MSG_50;Ε�?γαλείο σκιών/φωτεινών σημείων
+HISTORY_MSG_34;Αποφυγή ψαλιδίσματος χρώματος
+HISTORY_MSG_35;Περιοσμός κορεσμού
+HISTORY_MSG_36;Ένταση περιοσμού κορεσμού
+HISTORY_MSG_37;Ενίσχυση χρώματος
+HISTORY_MSG_38;Μέθοδος εξισορρόπησης λευκού
+HISTORY_MSG_39;Θερμοκρασία χρώματος
+HISTORY_MSG_40;Απόχρωση εξισορρόπησης λευκού
+HISTORY_MSG_41;Χρωματική μετατόπιση "A"
+HISTORY_MSG_42;Χρωματική μετατόπιση "B"
+HISTORY_MSG_43;Αποθορύβηση φωτεινότητας
+HISTORY_MSG_44;Ακτίνα αποθορύβησης φωτεινότητας
+HISTORY_MSG_45;Ανοχή ορίων αποθορύβησης φωτεινότητας
+HISTORY_MSG_46;Αποθορύβηση χρώματος
+HISTORY_MSG_47;Ακτίνα αποθορύβησης χρώματος
+HISTORY_MSG_48;Ανοχή ορίων αποθορύβησης χρώματος
+HISTORY_MSG_49;Αποθορύβηση χρώματος (ευαισθησία ορίων)
+HISTORY_MSG_50;Εργαλείο σκιών/φωτεινών σημείων
 HISTORY_MSG_51;Μείωση φωτεινών σημείων
 HISTORY_MSG_52;Ενίσχυση σκιών
-HISTORY_MSG_53;Τονικό ε�?�?ος φωτεινών σημείων
-HISTORY_MSG_54;Τονικό ε�?�?ος σκιών 
+HISTORY_MSG_53;Τονικό εύρος φωτεινών σημείων
+HISTORY_MSG_54;Τονικό εύρος σκιών 
 HISTORY_MSG_55;Τοπική αντίθεση
 HISTORY_MSG_56;Ακτίνα σκιών/φωτεινών σημείων
 HISTORY_MSG_57;Coarse Rotation
-HISTORY_MSG_58;Ο�?ιζόντια ανατ�?οπή
-HISTORY_MSG_59;Κατακό�?υφη ανατ�?οπή
-HISTORY_MSG_60;Πε�?ιστ�?οφή
-HISTORY_MSG_61;Πε�?ιστ�?οφή
-HISTORY_MSG_62;Διό�?θωση πα�?αμό�?φωσης φακο�?
+HISTORY_MSG_58;Οριζόντια ανατροπή
+HISTORY_MSG_59;Κατακόρυφη ανατροπή
+HISTORY_MSG_60;Περιστροφή
+HISTORY_MSG_61;Περιστροφή
+HISTORY_MSG_62;Διόρθωση παραμόρφωσης φακού
 HISTORY_MSG_63;Επιλέχθηκε στιγμιότυπο
 HISTORY_MSG_64;Αποκοπή εικόνας
-HISTORY_MSG_65;C/A Διό�?θωση
+HISTORY_MSG_65;C/A Διόρθωση
 HISTORY_MSG_66;Ανάκτηση Φωτεινών σημείων 
 HISTORY_MSG_67;Ένταση ανάκτησης φωτεινών σημείων
 HISTORY_MSG_68;Μέθοδος ανάκτηση φωτεινών σημείων
-HISTORY_MSG_69;Πα�?όν χ�?ωματικό π�?οφίλ
-HISTORY_MSG_70;Χ�?ωματικό π�?οφίλ εξόδου
-HISTORY_MSG_71;Χ�?ωματικό π�?οφίλ εισόδου
-HISTORY_MSG_72;Διό�?θωση Vignetting
+HISTORY_MSG_69;Παρόν χρωματικό προφίλ
+HISTORY_MSG_70;Χρωματικό προφίλ εξόδου
+HISTORY_MSG_71;Χρωματικό προφίλ εισόδου
+HISTORY_MSG_72;Διόρθωση Vignetting
 HISTORY_MSG_73;Μίξη καναλιών
 HISTORY_MSG_74;Αλλαγή μεγέθους/κλίμακας
 HISTORY_MSG_75;Μέθοδος αλλαγής μεγέθους
@@ -185,67 +185,67 @@ HISTORY_MSG_79;Resize width
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
 HISTORY_NEWSNAPSHOTAS;Ως...
-HISTORY_NEWSNAPSHOT;�?έο στιγμιότυπο
-HISTORY_NEWSSDIALOGLABEL;Όνομα στιγμιοτ�?που:
-HISTORY_NEWSSDIALOGTITLE;Π�?οσθήκη νέου στιγμιοτ�?που
-HISTORY_SETTO;Ο�?ισμός σε
+HISTORY_NEWSNAPSHOT;Νέο στιγμιότυπο
+HISTORY_NEWSSDIALOGLABEL;Όνομα στιγμιοτύπου:
+HISTORY_NEWSSDIALOGTITLE;Προσθήκη νέου στιγμιοτύπου
+HISTORY_SETTO;Ορισμός σε
 HISTORY_SNAPSHOTS;Στιγμιότυπα
 HISTORY_SNAPSHOT;Στιγμιότυπο
-ICMPANEL_FILEDLGFILTERANY;Οποιοδήποτε α�?χείο
-ICMPANEL_FILEDLGFILTERICM;Α�?χεία π�?οφίλ ICC
-ICMPANEL_GAMMABEFOREINPUT;Το π�?οφίλ αλλάζει την gamma
-ICMPANEL_INPUTCAMERA;Π�?οεπιλογή φωτογ�?αφικής μηχανής
-ICMPANEL_INPUTCUSTOM;Π�?οσα�?μοσμένο
-ICMPANEL_INPUTDLGLABEL;Επιλέξτε π�?οφιλ ICC εισόδου...
-ICMPANEL_INPUTEMBEDDED;Χ�?ήση ενσωματωμένου, αν αυτό είναι δυνατό
-ICMPANEL_INPUTPROFILE;Π�?οφίλ εισαγωγής
+ICMPANEL_FILEDLGFILTERANY;Οποιοδήποτε αρχείο
+ICMPANEL_FILEDLGFILTERICM;Αρχεία προφίλ ICC
+ICMPANEL_GAMMABEFOREINPUT;Το προφίλ αλλάζει την gamma
+ICMPANEL_INPUTCAMERA;Προεπιλογή φωτογραφικής μηχανής
+ICMPANEL_INPUTCUSTOM;Προσαρμοσμένο
+ICMPANEL_INPUTDLGLABEL;Επιλέξτε προφιλ ICC εισόδου...
+ICMPANEL_INPUTEMBEDDED;Χρήση ενσωματωμένου, αν αυτό είναι δυνατό
+ICMPANEL_INPUTPROFILE;Προφίλ εισαγωγής
 ICMPANEL_NOICM;No ICM: sRGB output
-ICMPANEL_OUTPUTDLGLABEL;Επιλέξτε π�?οφιλ ICC εξόδου...
-ICMPANEL_OUTPUTPROFILE;Π�?οφίλ εξόδου
-ICMPANEL_SAVEREFERENCE;Αποθήκευση εικόνας ως αναφο�?ά για δημιου�?γία π�?οφίλ.
-ICMPANEL_WORKINGPROFILE;Πα�?όν π�?οφίλ
-IMAGEAREA_DETAILVIEW;Λεπτομε�?ής π�?οβολή
-IPTCPANEL_AUTHORHINT;Όνομα του δημιου�?γο�? του αντικειμένου, π.χ. συγγ�?αφέας, φωτογ�?άφος ή γ�?αφίστας (Ανα γ�?αμμή).
-IPTCPANEL_AUTHORSPOSITIONHINT;Τίτλος που αποδίδεται από τον/τους δημιου�?γό/γους (Ανα γ�?αμμή τίτλος).
-IPTCPANEL_AUTHORSPOSITION;Θέση δημιου�?γο�?
-IPTCPANEL_AUTHOR;Συγγ�?αφέας
-IPTCPANEL_CAPTIONHINT;Μια λεκτική πε�?ιγ�?αφή των στοιχείων (Λεζάντα - Πε�?ίληψη).
-IPTCPANEL_CAPTIONWRITERHINT;Το όνομα του π�?οσώπου που ασχολήθηκε με την συγγ�?αφή, επεξε�?γασία ή διό�?θωση της εικόνας ή λεζάντας/πε�?ίληψης (Συγγ�?αφέας - Επιμελητής).
-IPTCPANEL_CAPTIONWRITER;Συγγ�?αφέας λεζάντας
+ICMPANEL_OUTPUTDLGLABEL;Επιλέξτε προφιλ ICC εξόδου...
+ICMPANEL_OUTPUTPROFILE;Προφίλ εξόδου
+ICMPANEL_SAVEREFERENCE;Αποθήκευση εικόνας ως αναφορά για δημιουργία προφίλ.
+ICMPANEL_WORKINGPROFILE;Παρόν προφίλ
+IMAGEAREA_DETAILVIEW;Λεπτομερής προβολή
+IPTCPANEL_AUTHORHINT;Όνομα του δημιουργού του αντικειμένου, π.χ. συγγραφέας, φωτογράφος ή γραφίστας (Ανα γραμμή).
+IPTCPANEL_AUTHORSPOSITIONHINT;Τίτλος που αποδίδεται από τον/τους δημιουργό/γους (Ανα γραμμή τίτλος).
+IPTCPANEL_AUTHORSPOSITION;Θέση δημιουργού
+IPTCPANEL_AUTHOR;Συγγραφέας
+IPTCPANEL_CAPTIONHINT;Μια λεκτική περιγραφή των στοιχείων (Λεζάντα - Περίληψη).
+IPTCPANEL_CAPTIONWRITERHINT;Το όνομα του προσώπου που ασχολήθηκε με την συγγραφή, επεξεργασία ή διόρθωση της εικόνας ή λεζάντας/περίληψης (Συγγραφέας - Επιμελητής).
+IPTCPANEL_CAPTIONWRITER;Συγγραφέας λεζάντας
 IPTCPANEL_CAPTION;Λεζάντα
-IPTCPANEL_CATEGORYHINT;Ταυτοποιεί το θέμα της εικόνας βάση της άποψης του πα�?οχέα (Κατηγο�?ία).
-IPTCPANEL_CATEGORY;Κατηγο�?ία
-IPTCPANEL_CITYHINT;Πόλη π�?οέλευσης εικόνας (Πόλη).
+IPTCPANEL_CATEGORYHINT;Ταυτοποιεί το θέμα της εικόνας βάση της άποψης του παροχέα (Κατηγορία).
+IPTCPANEL_CATEGORY;Κατηγορία
+IPTCPANEL_CITYHINT;Πόλη προέλευσης εικόνας (Πόλη).
 IPTCPANEL_CITY;Πόλη
-IPTCPANEL_COPYHINT;Αντιγ�?αφή �?υθμίσεων IPTC στην πε�?ιοχή αποκομμάτων
-IPTCPANEL_COPYRIGHTHINT;Όποιο απα�?αίτητο σχόλιο πε�?ι πνευματικής ιδιοκτησίας (Σχόλια πε�?ι πνευματική ιδιοκτησία).
+IPTCPANEL_COPYHINT;Αντιγραφή ρυθμίσεων IPTC στην περιοχή αποκομμάτων
+IPTCPANEL_COPYRIGHTHINT;Όποιο απαραίτητο σχόλιο περι πνευματικής ιδιοκτησίας (Σχόλια περι πνευματική ιδιοκτησία).
 IPTCPANEL_COPYRIGHT;Πνευματική ιδιοκτησία
-IPTCPANEL_COUNTRYHINT;Χώ�?α/α�?χική τοποθεσία δημιου�?γίας εικόνας (Χώ�?α/α�?χική τοποθεσία).
-IPTCPANEL_COUNTRY;Χώ�?α
-IPTCPANEL_CREDITHINT;Ταυτοποιεί τον πα�?οχέα της εικόνας, όχι απ�?αίτητα δημιου�?γό/ιδιοκτήτη (Ε�?σημα).
-IPTCPANEL_CREDIT;Ε�?σημα
-IPTCPANEL_DATECREATEDHINT;Η ημε�?ομηνία δημιου�?γίας του πνευματικο�? πε�?ιεχομένου; Τ�?πος: JJJJMMTT (Ημε�?ομηνία δημιου�?γίας).
-IPTCPANEL_DATECREATED;Ημε�?ομηνία δημιου�?γίας
-IPTCPANEL_EMBEDDEDHINT;Επαναφο�?ά στοιχείων IPTC α�?χείου εικόνας
+IPTCPANEL_COUNTRYHINT;Χώρα/αρχική τοποθεσία δημιουργίας εικόνας (Χώρα/αρχική τοποθεσία).
+IPTCPANEL_COUNTRY;Χώρα
+IPTCPANEL_CREDITHINT;Ταυτοποιεί τον παροχέα της εικόνας, όχι απραίτητα δημιουργό/ιδιοκτήτη (Εύσημα).
+IPTCPANEL_CREDIT;Εύσημα
+IPTCPANEL_DATECREATEDHINT;Η ημερομηνία δημιουργίας του πνευματικού περιεχομένου; Τύπος: JJJJMMTT (Ημερομηνία δημιουργίας).
+IPTCPANEL_DATECREATED;Ημερομηνία δημιουργίας
+IPTCPANEL_EMBEDDEDHINT;Επαναφορά στοιχείων IPTC αρχείου εικόνας
 IPTCPANEL_EMBEDDED;Ενσωματωμένο
-IPTCPANEL_HEADLINEHINT;Ένας δημοσιε�?σιμος τίτλος που πα�?έχει μια σ�?νοψη των πε�?ιεχομένων της εικόνας (Επικεφαλίδα).
+IPTCPANEL_HEADLINEHINT;Ένας δημοσιεύσιμος τίτλος που παρέχει μια σύνοψη των περιεχομένων της εικόνας (Επικεφαλίδα).
 IPTCPANEL_HEADLINE;Επικεφαλίδα
-IPTCPANEL_INSTRUCTIONSHINT;Άλλες οδηγίες επιμέλειας που αφο�?ο�?ν την χ�?ήση της εικόνας (Ειδικίες οδηγίες).
+IPTCPANEL_INSTRUCTIONSHINT;Άλλες οδηγίες επιμέλειας που αφορούν την χρήση της εικόνας (Ειδικίες οδηγίες).
 IPTCPANEL_INSTRUCTIONS;Οδηγίες
-IPTCPANEL_KEYWORDSHINT;Χ�?ησιμοποιο�?νται ενδεικτικά ως λέξεις ανάκτησης(Λέξεις-κλειδιά).
+IPTCPANEL_KEYWORDSHINT;Χρησιμοποιούνται ενδεικτικά ως λέξεις ανάκτησης(Λέξεις-κλειδιά).
 IPTCPANEL_KEYWORDS;Λέξεις-κλειδιά
-IPTCPANEL_PASTEHINT;Επικόλληση �?υθμίσεων IPTC από την πε�?ιοχή αποκομμάτων
-IPTCPANEL_PROVINCEHINT;Επα�?χία/Πολιτεία/�?ομός π�?οέλευσης της εικόνας (Επα�?χία/Πολιτεία/�?ομός).
-IPTCPANEL_PROVINCE;Επα�?χία
-IPTCPANEL_RESETHINT;Επαναφο�?ά π�?οεπιλεγμένου π�?οφίλ
-IPTCPANEL_RESET;Επαναφο�?ά
-IPTCPANEL_SOURCEHINT;Αυθεντικός ιδιοκτήτης πνευματικο�? πε�?ιεχομένου της εικόνας (Πηγή).
+IPTCPANEL_PASTEHINT;Επικόλληση ρυθμίσεων IPTC από την περιοχή αποκομμάτων
+IPTCPANEL_PROVINCEHINT;Επαρχία/Πολιτεία/Νομός προέλευσης της εικόνας (Επαρχία/Πολιτεία/Νομός).
+IPTCPANEL_PROVINCE;Επαρχία
+IPTCPANEL_RESETHINT;Επαναφορά προεπιλεγμένου προφίλ
+IPTCPANEL_RESET;Επαναφορά
+IPTCPANEL_SOURCEHINT;Αυθεντικός ιδιοκτήτης πνευματικού περιεχομένου της εικόνας (Πηγή).
 IPTCPANEL_SOURCE;Πηγή
-IPTCPANEL_SUPPCATEGORIESHINT;Π�?οσδιο�?ίζουν επιπλέον το θέμα της εικόνας (Συμπλη�?ωματικές κατηγο�?ίες).
-IPTCPANEL_SUPPCATEGORIES;Συμπλη�?. Κατηγο�?ίες
-IPTCPANEL_TITLEHINT;Μια σ�?ντομη αναφο�?ά για την εικόνα (Όνομα αντικειμένου).
+IPTCPANEL_SUPPCATEGORIESHINT;Προσδιορίζουν επιπλέον το θέμα της εικόνας (Συμπληρωματικές κατηγορίες).
+IPTCPANEL_SUPPCATEGORIES;Συμπληρ. Κατηγορίες
+IPTCPANEL_TITLEHINT;Μια σύντομη αναφορά για την εικόνα (Όνομα αντικειμένου).
 IPTCPANEL_TITLE;Τίτλος
-IPTCPANEL_TRANSREFERENCEHINT;Ένας κωδικός που αντιπ�?οσωπέυει την τοποθεσία αυθεντικής μετάδοσης (Κωδικός Αυθεντικής Μετάδοσης).
+IPTCPANEL_TRANSREFERENCEHINT;Ένας κωδικός που αντιπροσωπέυει την τοποθεσία αυθεντικής μετάδοσης (Κωδικός Αυθεντικής Μετάδοσης).
 IPTCPANEL_TRANSREFERENCE;Κωδικός αυθεντικής μετάδοσης
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Ρυθμίσεις
@@ -259,14 +259,14 @@ MAIN_FRAME_PLACES;Places
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
 MAIN_FRAME_RECENT;Recent Folders 
-MAIN_MSG_ALREADYEXISTS;Το α�?χείο ήδη υπά�?χει.
-MAIN_MSG_CANNOTLOAD;Αδ�?νατη η φό�?τωση εικόνας
-MAIN_MSG_CANNOTSAVE;Αδ�?νατη η αποθήκευση α�?χείου
+MAIN_MSG_ALREADYEXISTS;Το αρχείο ήδη υπάρχει.
+MAIN_MSG_CANNOTLOAD;Αδύνατη η φόρτωση εικόνας
+MAIN_MSG_CANNOTSAVE;Αδύνατη η αποθήκευση αρχείου
 MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
 MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
-MAIN_MSG_JOBSINQUEUE;ε�?γασία(ες) μέσα στην λίστα αναμονής
+MAIN_MSG_JOBSINQUEUE;εργασία(ες) μέσα στην λίστα αναμονής
 MAIN_MSG_QOVERWRITE;Θέλετε να το αντικαταστήσετε;
 MAIN_TAB_BASIC;Βασικό
 MAIN_TAB_COLOR;Color
@@ -279,15 +279,15 @@ MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TAGGING;Tagging
-MAIN_TAB_TRANSFORM;Μετατ�?οπή
-MAIN_TOOLTIP_HIDEFP;Π�?οβολή/απόκ�?υψη του κάτω πλαισίου (τοποθεσίες και πε�?ιηγητής α�?χείων, shortcut key: F)
-MAIN_TOOLTIP_HIDEHP;Π�?οβολή/απόκ�?υψη α�?ιστε�?ο�? πλαισίου (πε�?ιλαμβανομένου του ιστο�?ικο�?, shortcut key: H)
-MAIN_TOOLTIP_INDCLIPPEDH;Ένδειξη ψαλισμο�? φωτεινών σημείων
-MAIN_TOOLTIP_INDCLIPPEDS;Ένδειξη ψαλισμο�? σκιών
-MAIN_TOOLTIP_PREFERENCES;Ο�?ισμός �?υθμίσεων
-MAIN_TOOLTIP_QINFO;Γ�?ήγο�?ες πλη�?οφο�?ίες στην εικόνα
+MAIN_TAB_TRANSFORM;Μετατροπή
+MAIN_TOOLTIP_HIDEFP;Προβολή/απόκρυψη του κάτω πλαισίου (τοποθεσίες και περιηγητής αρχείων, shortcut key: F)
+MAIN_TOOLTIP_HIDEHP;Προβολή/απόκρυψη αριστερού πλαισίου (περιλαμβανομένου του ιστορικού, shortcut key: H)
+MAIN_TOOLTIP_INDCLIPPEDH;Ένδειξη ψαλισμού φωτεινών σημείων
+MAIN_TOOLTIP_INDCLIPPEDS;Ένδειξη ψαλισμού σκιών
+MAIN_TOOLTIP_PREFERENCES;Ορισμός ρυθμίσεων
+MAIN_TOOLTIP_QINFO;Γρήγορες πληροφορίες στην εικόνα
 MAIN_TOOLTIP_SAVEAS;Αποθήκευση εικόνας σε ένα επιλεγμένο φάκελο
-MAIN_TOOLTIP_SAVE;Αποθήκευση εικόνας στον π�?οκαθο�?ισμένο φάκελο
+MAIN_TOOLTIP_SAVE;Αποθήκευση εικόνας στον προκαθορισμένο φάκελο
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
 PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
@@ -316,8 +316,8 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
 PARTIALPASTE_SHARPENING;Sharpening
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WHITEBALANCE;White balance
-PREFERENCES_APPLNEXTSTARTUP;εφα�?μόζεται στην επόμενη εκκίνηση
-PREFERENCES_BLINKCLIPPED;Οι πε�?ιοχές ψαλιδίσματος να αναβοσβήνουν
+PREFERENCES_APPLNEXTSTARTUP;εφαρμόζεται στην επόμενη εκκίνηση
+PREFERENCES_BLINKCLIPPED;Οι περιοχές ψαλιδίσματος να αναβοσβήνουν
 PREFERENCES_CACHECLEARALL;Clear All
 PREFERENCES_CACHECLEARPROFILES;Clear Profiles
 PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
@@ -335,37 +335,37 @@ PREFERENCES_CLEARDLG_LINE2;This may take a few seconds.
 PREFERENCES_CLEARDLG_TITLE;Please wait
 PREFERENCES_CLIPPINGIND;Ένδειξη ψαλιδίσματος
 PREFERENCES_CMETRICINTENT;Colorimetric Intent
-PREFERENCES_DATEFORMATHINT;<i>YΜπο�?είτε να χ�?ησιμοποιήσετε τις εξής εντολές μο�?φοποίησης:</i>\n<b>%y</b><i> : χ�?ονολογία</i>\n<b>%m</b><i> : μήνας</i>\n<b>%d</b><i> : ημέ�?α</i>\n<i>\nΓια πα�?άδειγμα, η μο�?φοποίηση ημε�?ομηνίας στην Ελλάδα είναι:</i>\n<b>%y/%m/%d</b>
-PREFERENCES_DATEFORMAT;Διάταξη ημε�?ομηνίας
-PREFERENCES_DEFAULTLANG;Π�?οεπιλεγμένη γλώσσα
-PREFERENCES_DEFAULTTHEME;Π�?οεπιλεγμένο θέμα
-PREFERENCES_DEMOSAICINGALGO;Αλγό�?ιθμος απομωσαϊκοποίησης
+PREFERENCES_DATEFORMATHINT;<i>YΜπορείτε να χρησιμοποιήσετε τις εξής εντολές μορφοποίησης:</i>\n<b>%y</b><i> : χρονολογία</i>\n<b>%m</b><i> : μήνας</i>\n<b>%d</b><i> : ημέρα</i>\n<i>\nΓια παράδειγμα, η μορφοποίηση ημερομηνίας στην Ελλάδα είναι:</i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Διάταξη ημερομηνίας
+PREFERENCES_DEFAULTLANG;Προεπιλεγμένη γλώσσα
+PREFERENCES_DEFAULTTHEME;Προεπιλεγμένο θέμα
+PREFERENCES_DEMOSAICINGALGO;Αλγόριθμος απομωσαϊκοποίησης
 PREFERENCES_DIRHOME;Τοποθεσία "Home"
-PREFERENCES_DIRLAST;Τελευταία τοποθεσία που χ�?ησιμοποιήθηκε
+PREFERENCES_DIRLAST;Τελευταία τοποθεσία που χρησιμοποιήθηκε
 PREFERENCES_DIROTHER;Άλλο
-PREFERENCES_DIRSELECTDLG;Επιλέξτε τοποθεσία εικόνων κατά την ένα�?ξη...
+PREFERENCES_DIRSELECTDLG;Επιλέξτε τοποθεσία εικόνων κατά την έναρξη...
 PREFERENCES_DIRSOFTWARE;Τοποθεσία εγκατάστασης
 PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EXTERNALEDITOR;External editor
-PREFERENCES_FBROWSEROPTS;Επιλογές πε�?ιήγησης α�?χείων
-PREFERENCES_FILEFORMAT;Είδος α�?χείου
-PREFERENCES_FORIMAGE;Για α�?χεία εικόνων
-PREFERENCES_FORRAW;Για α�?χεία RAW
+PREFERENCES_FBROWSEROPTS;Επιλογές περιήγησης αρχείων
+PREFERENCES_FILEFORMAT;Είδος αρχείου
+PREFERENCES_FORIMAGE;Για αρχεία εικόνων
+PREFERENCES_FORRAW;Για αρχεία RAW
 PREFERENCES_GIMPPATH;GIMP installation directory
-PREFERENCES_GTKTHEME;Π�?οεπιλεγμένη GTK
-PREFERENCES_HINT;�?�?ξη
+PREFERENCES_GTKTHEME;Προεπιλεγμένη GTK
+PREFERENCES_HINT;Νύξη
 PREFERENCES_HLTHRESHOLD;Κατώφλι ψαλιδίσματος φωτεινών σημείων
-PREFERENCES_ICCDIR;Τοποθεσία των π�?οφίλ ICC
-PREFERENCES_IMPROCPARAMS;Π�?οεπιλεγμένες πα�?αμέτ�?οι επεξε�?γασίας εικόνας
+PREFERENCES_ICCDIR;Τοποθεσία των προφίλ ICC
+PREFERENCES_IMPROCPARAMS;Προεπιλεγμένες παραμέτροι επεξεργασίας εικόνας
 PREFERENCES_INTENT_ABSOLUTE;Absolute Colorimetric
 PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Relative Colorimetric
 PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
-PREFERENCES_MONITORICC;Π�?οφίλ οθόνης
+PREFERENCES_MONITORICC;Προφίλ οθόνης
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
 PREFERENCES_OUTDIRFOLDER;Save to folder
-PREFERENCES_OUTDIRHINT;<i>Μπο�?είτε να χ�?ησιμοποιήσετε τις ακόλουθες σει�?ές μο�?φοποίησης:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nΑυτές οι σει�?ές μο�?φοποίησης αναφέ�?ονται στις τοποθεσίες και τις υπο-διαδ�?ομές της τοποθεσίας του α�?χείου raw.\n\nΓια πα�?άδειγμα, αν το</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ανοιχθεί, η σημασία των ακόλουθων σει�?ών μο�?φοποίησης είναι:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nΑν θέλεθτε να αποδηκε�?σετε την εικόνα εξόδου μαζί με το π�?ωτότυπο, γ�?άψτε:\n</i><b>%p1/%f\n</b><i>\nΑν θέλετε να αποθηκε�?σετε την εικόνα εξόδου σε ένα φάκελο 'converted', μέσα στην τοποθεσία που β�?ίσκεται το π�?ωτότυπο, γ�?άψτε:\n</i><b>%p1/converted/%f\n</b><i>\nΑν θέλετε να αποθηκε�?σετε την εικόνα εξόδου σε στην τοποθεσία '/home/tom/converted' κ�?ατώντας όμως την ίδια δομή υπο-τοποθεσιών ημε�?ομηνίων, γ�?άψτε:\n</i><b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;<i>Μπορείτε να χρησιμοποιήσετε τις ακόλουθες σειρές μορφοποίησης:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nΑυτές οι σειρές μορφοποίησης αναφέρονται στις τοποθεσίες και τις υπο-διαδρομές της τοποθεσίας του αρχείου raw.\n\nΓια παράδειγμα, αν το</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> ανοιχθεί, η σημασία των ακόλουθων σειρών μορφοποίησης είναι:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nΑν θέλεθτε να αποδηκεύσετε την εικόνα εξόδου μαζί με το πρωτότυπο, γράψτε:\n</i><b>%p1/%f\n</b><i>\nΑν θέλετε να αποθηκεύσετε την εικόνα εξόδου σε ένα φάκελο 'converted', μέσα στην τοποθεσία που βρίσκεται το πρωτότυπο, γράψτε:\n</i><b>%p1/converted/%f\n</b><i>\nΑν θέλετε να αποθηκεύσετε την εικόνα εξόδου σε στην τοποθεσία '/home/tom/converted' κρατώντας όμως την ίδια δομή υπο-τοποθεσιών ημερομηνίων, γράψτε:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIR;Τοποθεσία εξόδου
@@ -380,46 +380,46 @@ PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
 PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
 PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
-PREFERENCES_SELECTICCDIRDLG;Επιλογή τοποθεσίας π�?οφίλ ICC...
+PREFERENCES_SELECTICCDIRDLG;Επιλογή τοποθεσίας προφίλ ICC...
 PREFERENCES_SELECTLANG;Επιλογή γλώσσας
-PREFERENCES_SELECTMONITORPROFDLG;Επιλογή π�?οφίλ ICC της οθόνης...
+PREFERENCES_SELECTMONITORPROFDLG;Επιλογή προφίλ ICC της οθόνης...
 PREFERENCES_SELECTTHEME;Επιλογή θέματος
-PREFERENCES_SHOWBASICEXIF;Π�?οβολή βασικών στοιχείων Exif
-PREFERENCES_SHOWDATETIME;Π�?οβολή ημε�?ομηνίας και ώ�?ας
-PREFERENCES_SHOWONLYRAW;Π�?οβολή μόνο α�?χείων RAW
+PREFERENCES_SHOWBASICEXIF;Προβολή βασικών στοιχείων Exif
+PREFERENCES_SHOWDATETIME;Προβολή ημερομηνίας και ώρας
+PREFERENCES_SHOWONLYRAW;Προβολή μόνο αρχείων RAW
 PREFERENCES_SHTHRESHOLD;Κατώφλι ψαλιδίσματος σκιών
-PREFERENCES_STARTUPIMDIR;Τοποθεσία εικόνων κατά την ένα�?ξη
-PREFERENCES_TAB_BROWSER;Πε�?ιήγηση α�?χείου
-PREFERENCES_TAB_COLORMGR;Διαχεί�?ιση χ�?ώματος
+PREFERENCES_STARTUPIMDIR;Τοποθεσία εικόνων κατά την έναρξη
+PREFERENCES_TAB_BROWSER;Περιήγηση αρχείου
+PREFERENCES_TAB_COLORMGR;Διαχείριση χρώματος
 PREFERENCES_TAB_GENERAL;Γενικά
-PREFERENCES_TAB_IMPROC;Επεξε�?γασίας εικόνας
-PREFERENCES_TAB_OUTPUT;Επιλογές πα�?αγωγής
+PREFERENCES_TAB_IMPROC;Επεξεργασίας εικόνας
+PREFERENCES_TAB_OUTPUT;Επιλογές παραγωγής
 PREFERENCES_THUMBSIZE;Μέγεθος εικονιδίου
-PROFILEPANEL_FILEDLGFILTERANY;Οποιοφήποτε α�?χείο
-PROFILEPANEL_FILEDLGFILTERPP;Π�?οφίλ επεξε�?γασίας
-PROFILEPANEL_LABEL;Π�?οφίλ επεξε�?γασίας
-PROFILEPANEL_LOADDLGLABEL;Φό�?τωση πα�?αμέτ�?ων επεξε�?γασίας...
-PROFILEPANEL_PCUSTOM;Π�?οσα�?μοσμένο
-PROFILEPANEL_PFILE;Απο α�?χείο
-PROFILEPANEL_PLASTPHOTO;Τελευταία φωτογ�?αφία
+PROFILEPANEL_FILEDLGFILTERANY;Οποιοφήποτε αρχείο
+PROFILEPANEL_FILEDLGFILTERPP;Προφίλ επεξεργασίας
+PROFILEPANEL_LABEL;Προφίλ επεξεργασίας
+PROFILEPANEL_LOADDLGLABEL;Φόρτωση παραμέτρων επεξεργασίας...
+PROFILEPANEL_PCUSTOM;Προσαρμοσμένο
+PROFILEPANEL_PFILE;Απο αρχείο
+PROFILEPANEL_PLASTPHOTO;Τελευταία φωτογραφία
 PROFILEPANEL_PLASTSAVED;Τελευταία αποθηκευμένη
-PROFILEPANEL_PROFILE;Π�?οφίλ
-PROFILEPANEL_SAVEDLGLABEL;Αποθήκευση πα�?αμέτ�?ων επεξε�?γασίας...
+PROFILEPANEL_PROFILE;Προφίλ
+PROFILEPANEL_SAVEDLGLABEL;Αποθήκευση παραμέτρων επεξεργασίας...
 PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
-PROFILEPANEL_TOOLTIPLOAD;Φό�?τωση π�?οφίλ απο α�?χείο
+PROFILEPANEL_TOOLTIPLOAD;Φόρτωση προφίλ απο αρχείο
 PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
-PROFILEPANEL_TOOLTIPSAVE;Αποθήκευση πα�?όντος π�?οφίλ
+PROFILEPANEL_TOOLTIPSAVE;Αποθήκευση παρόντος προφίλ
 PROGRESSBAR_DECODING;Αποκωδικοποίηση εικόνας...
 PROGRESSBAR_DEMOSAICING;Demosaicing...
-PROGRESSBAR_LOADING;Φό�?τωση εικόνας...
-PROGRESSBAR_LOADJPEG;Φό�?τωση α�?χείου JPEG...
-PROGRESSBAR_LOADPNG;Φό�?τωση α�?χείου PNG...
-PROGRESSBAR_LOADTIFF;Φό�?τωση α�?χείου TIFF...
-PROGRESSBAR_PROCESSING;Επεξε�?γάζεται εικόνα...
+PROGRESSBAR_LOADING;Φόρτωση εικόνας...
+PROGRESSBAR_LOADJPEG;Φόρτωση αρχείου JPEG...
+PROGRESSBAR_LOADPNG;Φόρτωση αρχείου PNG...
+PROGRESSBAR_LOADTIFF;Φόρτωση αρχείου TIFF...
+PROGRESSBAR_PROCESSING;Επεξεργάζεται εικόνα...
 PROGRESSBAR_READY;Έτοιμο.
-PROGRESSBAR_SAVEJPEG;Αποθήκευση α�?χείου JPEG...
-PROGRESSBAR_SAVEPNG;Αποθήκευση α�?χείου PNG...
-PROGRESSBAR_SAVETIFF;Αποθήκευση α�?χείου TIFF...
+PROGRESSBAR_SAVEJPEG;Αποθήκευση αρχείου JPEG...
+PROGRESSBAR_SAVEPNG;Αποθήκευση αρχείου PNG...
+PROGRESSBAR_SAVETIFF;Αποθήκευση αρχείου TIFF...
 PROGRESSDLG_LOADING;Loading file...
 PROGRESSDLG_PROCESSING;Processing image...
 PROGRESSDLG_SAVING;Saving file...
@@ -427,49 +427,49 @@ QINFO_FOCALLENGTH;Εστιακή απόσταση
 QINFO_ISO;ISO
 QINFO_LENS;Lens
 QINFO_NOEXIF;Στοιχεία Exif μη διαθέσιμα.
-SAVEDLG_FILEFORMAT;Είδος α�?χείου
+SAVEDLG_FILEFORMAT;Είδος αρχείου
 SAVEDLG_JPEGQUAL;Ποιότητα JPEG
-SAVEDLG_JPGFILTER;Α�?χεία JPEG
+SAVEDLG_JPGFILTER;Αρχεία JPEG
 SAVEDLG_PNGCOMPR;Συμπίεση PNG
-SAVEDLG_PNGFILTER;Α�?χεία PNG
+SAVEDLG_PNGFILTER;Αρχεία PNG
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
-SAVEDLG_SAVESPP;Αποθήκευση πα�?αμέτ�?ων επεξε�?γασίας μαζί με την εικόνα
-SAVEDLG_TIFFFILTER;Α�?χεία TIFF
+SAVEDLG_SAVESPP;Αποθήκευση παραμέτρων επεξεργασίας μαζί με την εικόνα
+SAVEDLG_TIFFFILTER;Αρχεία TIFF
 TOOLBAR_TOOLTIP_CROP;Αποκοπή επιλογής (shortcut key: C)
-TOOLBAR_TOOLTIP_HAND;Ε�?γαλείο μετακίνησης (shortcut key: N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Επιλογή ευθείας γ�?αμμής (shortcut key: S)
-TOOLBAR_TOOLTIP_WB;Εξισο�?�?οπία λευκο�? από σημείο (shortcut key: W)
+TOOLBAR_TOOLTIP_HAND;Εργαλείο μετακίνησης (shortcut key: N)
+TOOLBAR_TOOLTIP_STRAIGHTEN;Επιλογή ευθείας γραμμής (shortcut key: S)
+TOOLBAR_TOOLTIP_WB;Εξισορροπία λευκού από σημείο (shortcut key: W)
 TP_CACORRECTION_BLUE;Μπλέ
-TP_CACORRECTION_LABEL;C/A Διό�?θωση
+TP_CACORRECTION_LABEL;C/A Διόρθωση
 TP_CACORRECTION_RED;Κόκκινο
 TP_CHMIXER_BLUE;Μπλέ
-TP_CHMIXER_GREEN;Π�?άσινο
+TP_CHMIXER_GREEN;Πράσινο
 TP_CHMIXER_LABEL;Μίξη καναλιών
 TP_CHMIXER_RED;Κόκκινο
 TP_COARSETRAF_DEGREE;γωνία:
-TP_COARSETRAF_TOOLTIP_HFLIP;Αναστ�?οφή ο�?ιζόντια
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Πε�?ιστ�?οφή α�?ιστε�?ά
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Πε�?ιστ�?οφή δεξιά
-TP_COARSETRAF_TOOLTIP_VFLIP;Αναστ�?οφή κατακό�?υφα
+TP_COARSETRAF_TOOLTIP_HFLIP;Αναστροφή οριζόντια
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Περιστροφή αριστερά
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Περιστροφή δεξιά
+TP_COARSETRAF_TOOLTIP_VFLIP;Αναστροφή κατακόρυφα
 TP_COLORBOOST_ACHANNEL;κανάλι "a"
 TP_COLORBOOST_AMOUNT;Ένταση
-TP_COLORBOOST_AVOIDCOLORCLIP;Αποφυγή ψαλιδίσματος χ�?ώματος
+TP_COLORBOOST_AVOIDCOLORCLIP;Αποφυγή ψαλιδίσματος χρώματος
 TP_COLORBOOST_BCHANNEL;κανάλι "b"
 TP_COLORBOOST_CHANNEL;Κανάλι
-TP_COLORBOOST_CHSEPARATE;ξεχω�?ιστά
-TP_COLORBOOST_ENABLESATLIMITER;Ενε�?γοποίηση πε�?ιο�?ισμο�? κο�?εσμο�?
-TP_COLORBOOST_LABEL;Ενίσχυση χ�?ώματος
-TP_COLORBOOST_SATLIMIT;Πε�?ιο�?ισμός κο�?εσμο�?
-TP_COLORDENOISE_EDGESENSITIVE;Ευαισθησία ο�?ίων
-TP_COLORDENOISE_EDGETOLERANCE;Ανοχή ο�?ίων
-TP_COLORDENOISE_LABEL;Μείωση χ�?ωματικο�? θο�?�?βου
+TP_COLORBOOST_CHSEPARATE;ξεχωριστά
+TP_COLORBOOST_ENABLESATLIMITER;Ενεργοποίηση περιορισμού κορεσμού
+TP_COLORBOOST_LABEL;Ενίσχυση χρώματος
+TP_COLORBOOST_SATLIMIT;Περιορισμός κορεσμού
+TP_COLORDENOISE_EDGESENSITIVE;Ευαισθησία ορίων
+TP_COLORDENOISE_EDGETOLERANCE;Ανοχή ορίων
+TP_COLORDENOISE_LABEL;Μείωση χρωματικού θορύβου
 TP_COLORDENOISE_RADIUS;Ακτίνα
-TP_COLORSHIFT_BLUEYELLOW;Μπλέ-Κίτ�?ινο
-TP_COLORSHIFT_GREENMAGENTA;Π�?άσινο-Magenta
-TP_COLORSHIFT_LABEL;Μετατόπιση χ�?ώματος
+TP_COLORSHIFT_BLUEYELLOW;Μπλέ-Κίτρινο
+TP_COLORSHIFT_GREENMAGENTA;Πράσινο-Magenta
+TP_COLORSHIFT_LABEL;Μετατόπιση χρώματος
 TP_CROP_DPI;DPI=
 TP_CROP_FIXRATIO;Κλείδωμα αναλογίας:
 TP_CROP_GTDIAGONALS;Κανόνας διαγωνίων
@@ -478,7 +478,7 @@ TP_CROP_GTHARMMEANS2;Harmonic means 2
 TP_CROP_GTHARMMEANS3;Harmonic means 3
 TP_CROP_GTHARMMEANS4;Harmonic means 4
 TP_CROP_GTNONE;Κανένα
-TP_CROP_GTRULETHIRDS;Κανόνας τ�?ίτων
+TP_CROP_GTRULETHIRDS;Κανόνας τρίτων
 TP_CROP_GUIDETYPE;Είδος βοηθών:
 TP_CROP_H;H
 TP_CROP_LABEL;Αποκοπή
@@ -487,53 +487,53 @@ TP_CROP_W;W
 TP_CROP_X;x
 TP_CROP_Y;y
 TP_DISTORTION_AMOUNT;Ένταση
-TP_DISTORTION_LABEL;Πα�?αμό�?φωση
+TP_DISTORTION_LABEL;Παραμόρφωση
 TP_EXPOSURE_AUTOLEVELS;Αυτόματα επίπεδα
-TP_EXPOSURE_BLACKLEVEL;Μα�?�?α
+TP_EXPOSURE_BLACKLEVEL;Μαύρα
 TP_EXPOSURE_BRIGHTNESS;Φωτεινότητα
 TP_EXPOSURE_CLIP;Αποκοπή
 TP_EXPOSURE_COMPRHIGHLIGHTS;Συμπίεση φωτεινών σημείων
 TP_EXPOSURE_COMPRSHADOWS;Συμπίεση σκιών
 TP_EXPOSURE_CONTRAST;Αντίθεση
-TP_EXPOSURE_CURVEEDITOR;Καμπ�?λη τονικότητας
-TP_EXPOSURE_EXPCOMP;Επανό�?θωση Έκθεσης
+TP_EXPOSURE_CURVEEDITOR;Καμπύλη τονικότητας
+TP_EXPOSURE_EXPCOMP;Επανόρθωση Έκθεσης
 TP_EXPOSURE_LABEL;Έκθεση
 TP_HLREC_CIELAB;Ανάμιξη CIELab
-TP_HLREC_COLOR;Διάδοση χ�?ώματος
+TP_HLREC_COLOR;Διάδοση χρώματος
 TP_HLREC_LABEL;Ανάκτηση φωτεινών σημείων
 TP_HLREC_LUMINANCE;Ανάκτηση Φωτεινότητας
 TP_HLREC_METHOD;Μέθοδος: 
-TP_ICM_FILEDLGFILTERANY;Οποιοδήποτε α�?χείο
-TP_ICM_FILEDLGFILTERICM;Α�?χεία π�?οφίλ ICC
-TP_ICM_GAMMABEFOREINPUT;Το π�?οφίλ αλλάζει την gamma
-TP_ICM_INPUTCAMERA;Π�?οεπιλογή φωτογ�?αφικής μηχανής
-TP_ICM_INPUTCUSTOM;Π�?οσα�?μοσμένο
-TP_ICM_INPUTDLGLABEL;Επιλέξτε π�?οφιλ ICC εισόδου...
-TP_ICM_INPUTEMBEDDED;Χ�?ήση ενσωματωμένου, αν αυτό είναι δυνατό
-TP_ICM_INPUTPROFILE;Π�?οφίλ εισαγωγής
+TP_ICM_FILEDLGFILTERANY;Οποιοδήποτε αρχείο
+TP_ICM_FILEDLGFILTERICM;Αρχεία προφίλ ICC
+TP_ICM_GAMMABEFOREINPUT;Το προφίλ αλλάζει την gamma
+TP_ICM_INPUTCAMERA;Προεπιλογή φωτογραφικής μηχανής
+TP_ICM_INPUTCUSTOM;Προσαρμοσμένο
+TP_ICM_INPUTDLGLABEL;Επιλέξτε προφιλ ICC εισόδου...
+TP_ICM_INPUTEMBEDDED;Χρήση ενσωματωμένου, αν αυτό είναι δυνατό
+TP_ICM_INPUTPROFILE;Προφίλ εισαγωγής
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: sRGB output
-TP_ICM_OUTPUTDLGLABEL;Επιλέξτε π�?οφιλ ICC εξόδου...
-TP_ICM_OUTPUTPROFILE;Π�?οφίλ εξόδου
-TP_ICM_SAVEREFERENCE;Αποθήκευση εικόνας ως αναφο�?ά για δημιου�?γία π�?οφίλ.
-TP_ICM_WORKINGPROFILE;Πα�?όν π�?οφίλ
-TP_LUMACURVE_BLACKLEVEL;Μα�?�?α
+TP_ICM_OUTPUTDLGLABEL;Επιλέξτε προφιλ ICC εξόδου...
+TP_ICM_OUTPUTPROFILE;Προφίλ εξόδου
+TP_ICM_SAVEREFERENCE;Αποθήκευση εικόνας ως αναφορά για δημιουργία προφίλ.
+TP_ICM_WORKINGPROFILE;Παρόν προφίλ
+TP_LUMACURVE_BLACKLEVEL;Μαύρα
 TP_LUMACURVE_BRIGHTNESS;Φωτεινότητα
 TP_LUMACURVE_COMPRHIGHLIGHTS;Συμπίεση φωτεινών σημείων
 TP_LUMACURVE_COMPRSHADOWS;Συμπίεση σκιών
 TP_LUMACURVE_CONTRAST;Αντίθεση
-TP_LUMACURVE_CURVEEDITOR;Καμπ�?λη φωτεινότητας
-TP_LUMACURVE_LABEL;Καμπ�?λη φωτεινότητας
-TP_LUMADENOISE_EDGETOLERANCE;Ανοχή ο�?ίων
-TP_LUMADENOISE_LABEL;Μείωση θο�?�?βου φωτεινότητας
+TP_LUMACURVE_CURVEEDITOR;Καμπύλη φωτεινότητας
+TP_LUMACURVE_LABEL;Καμπύλη φωτεινότητας
+TP_LUMADENOISE_EDGETOLERANCE;Ανοχή ορίων
+TP_LUMADENOISE_LABEL;Μείωση θορύβου φωτεινότητας
 TP_LUMADENOISE_RADIUS;Ακτίνα
 TP_RAW_DMETHOD;Μέθοδος
-TP_RAW_FALSECOLOR;Βήματα καταστολής σφαλμένων χ�?ωμάτων
+TP_RAW_FALSECOLOR;Βήματα καταστολής σφαλμένων χρωμάτων
 TP_RESIZE_BICUBICSF;Bicubic (Softer)
 TP_RESIZE_BICUBICSH;Bicubic (Sharper)
 TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BILINEAR;Bilinear
-TP_RESIZE_FULLSIZE;Πλή�?ες μέγεθος εικόνας:
+TP_RESIZE_FULLSIZE;Πλήρες μέγεθος εικόνας:
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Αλλαγή μεγέθους
 TP_RESIZE_METHOD;Μέθοδος: 
@@ -543,23 +543,23 @@ TP_RESIZE_W;W:
 TP_ROTATE_AUTOCROP;Αυτόματη αποκοπή
 TP_ROTATE_DEGREE;Γωνία
 TP_ROTATE_FILL;Γέμισμα εικόνας
-TP_ROTATE_LABEL;Πε�?ιστ�?οφή
+TP_ROTATE_LABEL;Περιστροφή
 TP_ROTATE_SELECTLINE;    Επιλογή ευθείας
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Φωτεινά σημεία
-TP_SHADOWSHLIGHTS_HLTONALW;Τονικό ε�?�?ος
+TP_SHADOWSHLIGHTS_HLTONALW;Τονικό εύρος
 TP_SHADOWSHLIGHTS_LABEL;Σκιές/Φωτεινά σημεία
 TP_SHADOWSHLIGHTS_LOCALCONTR;Τοπική αντίθεση
 TP_SHADOWSHLIGHTS_RADIUS;Ακτίνα
 TP_SHADOWSHLIGHTS_SHADOWS;Σκιές
-TP_SHADOWSHLIGHTS_SHTONALW;Τονικό ε�?�?ος
+TP_SHADOWSHLIGHTS_SHTONALW;Τονικό εύρος
 TP_SHARPENING_AMOUNT;Ένταση
 TP_SHARPENING_EDRADIUS;Ακτίνα
-TP_SHARPENING_EDTOLERANCE;Ανοχή ο�?ίων
+TP_SHARPENING_EDTOLERANCE;Ανοχή ορίων
 TP_SHARPENING_HALOCONTROL;Έλεγχος άλως
 TP_SHARPENING_HCAMOUNT;Ένταση
 TP_SHARPENING_LABEL;Όξυνση
 TP_SHARPENING_METHOD;Μέθοδος
-TP_SHARPENING_ONLYEDGES;Όξυνση μόνο ο�?ίων
+TP_SHARPENING_ONLYEDGES;Όξυνση μόνο ορίων
 TP_SHARPENING_RADIUS;Ακτίνα
 TP_SHARPENING_RLD;RL Deconvolution
 TP_SHARPENING_RLD_AMOUNT;Ένταση
@@ -568,24 +568,24 @@ TP_SHARPENING_RLD_ITERATIONS;Επαναλήψεις
 TP_SHARPENING_THRESHOLD;Κατώφλι
 TP_SHARPENING_USM;Unsharp Mask
 TP_VIGNETTING_AMOUNT;Ένταση
-TP_VIGNETTING_LABEL;Διό�?θωση vignetting
+TP_VIGNETTING_LABEL;Διόρθωση vignetting
 TP_VIGNETTING_RADIUS;Ακτίνα
 TP_WBALANCE_AUTO;Αυτόματο
-TP_WBALANCE_CAMERA;Φωτογ�?αφικής μηχανής
-TP_WBALANCE_CUSTOM;Π�?οσα�?μοσμένο
-TP_WBALANCE_GREEN;Απόχ�?ωση
-TP_WBALANCE_LABEL;Εξισο�?�?όπηση λευκο�?
+TP_WBALANCE_CAMERA;Φωτογραφικής μηχανής
+TP_WBALANCE_CUSTOM;Προσαρμοσμένο
+TP_WBALANCE_GREEN;Απόχρωση
+TP_WBALANCE_LABEL;Εξισορρόπηση λευκού
 TP_WBALANCE_METHOD;Μέθοδος
 TP_WBALANCE_SIZE;Μέγεθος:
 TP_WBALANCE_SPOTWB;Εξ.Λ. σημείου
-TP_WBALANCE_TEMPERATURE;Θε�?μοκ�?ασία
-ZOOMBAR_DETAIL;Λεπτομέ�?εια
-ZOOMBAR_HUGE;Τε�?άστιο
+TP_WBALANCE_TEMPERATURE;Θερμοκρασία
+ZOOMBAR_DETAIL;Λεπτομέρεια
+ZOOMBAR_HUGE;Τεράστιο
 ZOOMBAR_LARGE;Μεγάλο
 ZOOMBAR_NORMAL;Κανονικό
-ZOOMBAR_PREVIEW;Π�?οεπισκόπηση
+ZOOMBAR_PREVIEW;Προεπισκόπηση
 ZOOMBAR_SCALE;Κλίμακα
-ZOOMBAR_SMALL;Μικ�?ό
+ZOOMBAR_SMALL;Μικρό
 
 #00 Greek
 #01 14.05.2008: zeusalmighty
@@ -635,17 +635,19 @@ ZOOMBAR_SMALL;Μικ�?ό
 !EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 !EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 !EXPORT_BYPASS_SHARPENING;Bypass Sharpening
-!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+!EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 !EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
 !EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
-!EXPORT_MAXHEIGHT;Maximum Height: 
-!EXPORT_MAXWIDTH;Maximum Width:  
+!EXPORT_MAXHEIGHT;Maximum Height:
+!EXPORT_MAXWIDTH;Maximum Width:
 !EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
 !EXPORT_RAW_DMETHOD;Demosaic Method
 !EXPORT_RESIZEMETHOD;Resize Method
+!EXTPROGTARGET_1;raw
+!EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_ADDDELTEMPLATE;Add/Del templates...
-!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply profile (partial)
+!FILEBROWSER_APPLYPROFILE_PARTIAL;Apply - partial
 !FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
 !FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
@@ -655,12 +657,14 @@ ZOOMBAR_SMALL;Μικ�?ό
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
-!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected %1 files INCLUDING a queue-processed version?
-!FILEBROWSER_EXEC_CPB;Run Custom Profile Builder
+!FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
+!FILEBROWSER_EXEC_CPB;Custom Profile Builder
+!FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_FLATFIELD;Flat Field
 !FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
+!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
 !FILEBROWSER_POPUPCOLORLABEL0;Label: None
 !FILEBROWSER_POPUPCOLORLABEL1;Label: Red
 !FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
@@ -672,8 +676,8 @@ ZOOMBAR_SMALL;Μικ�?ό
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
-!FILEBROWSER_POPUPPROFILEOPERATIONS;Profile Operations
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete (with output from queue)
+!FILEBROWSER_POPUPPROFILEOPERATIONS;Processing Profile Operations
+!FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 !FILEBROWSER_QUERYHINT;Type a partial filename to search for.\n<b>Ctrl-F</b> to focus the Find text box (in the File Browser).\n<b>Enter</b> to commence search.
@@ -687,7 +691,7 @@ ZOOMBAR_SMALL;Μικ�?ό
 !FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
-!FILEBROWSER_SHOWEXIFINFO;Show EXIF info.\nShortcut: <b>i</b>
+!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
@@ -699,6 +703,7 @@ ZOOMBAR_SMALL;Μικ�?ό
 !GENERAL_HIGH_QUALITY;High Quality
 !GENERAL_NONE;None
 !GENERAL_UNCHANGED;(Unchanged)
+!GENERAL_WARNING;Warning
 !HISTOGRAM_BUTTON_BAR;RGB
 !HISTOGRAM_BUTTON_B;B
 !HISTOGRAM_BUTTON_G;G
@@ -706,11 +711,12 @@ ZOOMBAR_SMALL;Μικ�?ό
 !HISTOGRAM_BUTTON_RAW;Raw
 !HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
+!HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
 !HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 !HISTORY_MSG_82;Profile Changed
 !HISTORY_MSG_83;High Quality Shadows/Highlights
 !HISTORY_MSG_84;Perspective Correction
-!HISTORY_MSG_85;Wavelet Coefficients
+!HISTORY_MSG_85;Lens Correction Profile
 !HISTORY_MSG_86;Wavelet Equalizer
 !HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR Threshold
@@ -720,7 +726,7 @@ ZOOMBAR_SMALL;Μικ�?ό
 !HISTORY_MSG_92;NR - Gamma
 !HISTORY_MSG_93;Contrast by Detail Levels Value
 !HISTORY_MSG_94;Contrast by Detail Levels
-!HISTORY_MSG_95;Saturation
+!HISTORY_MSG_95;Chromaticity
 !HISTORY_MSG_96;'a' Curve
 !HISTORY_MSG_97;'b' Curve
 !HISTORY_MSG_98;Demosaicing Method
@@ -735,10 +741,10 @@ ZOOMBAR_SMALL;Μικ�?ό
 !HISTORY_MSG_107;Defringing Threshold
 !HISTORY_MSG_108;Highlight Compr. Threshold
 !HISTORY_MSG_109;Resize Bounding Box
-!HISTORY_MSG_110;Resizing applies o  
-!HISTORY_MSG_111;Avoid Color Clipping
-!HISTORY_MSG_112;Saturation Limiter
-!HISTORY_MSG_113;Saturation Limit
+!HISTORY_MSG_110;Resizing applies o
+!HISTORY_MSG_111;Avoid Color Shift
+!HISTORY_MSG_112;--unused--
+!HISTORY_MSG_113;Red and Skin Tones Protection
 !HISTORY_MSG_114;DCB Iterations
 !HISTORY_MSG_115;False Color Iterations
 !HISTORY_MSG_116;Enhanced DCB
@@ -792,32 +798,40 @@ ZOOMBAR_SMALL;Μικ�?ό
 !HISTORY_MSG_164;RGB Curves - G
 !HISTORY_MSG_165;RGB Curves - B
 !HISTORY_MSG_166;Neutral Levels
+!HISTORY_MSG_167;B&amp;W Toning
+!HISTORY_MSG_168;'Cc' curve
+!HISTORY_MSG_169;'Ch' curve
+!HISTORY_MSG_170;Vibrance - Curve
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit Fullscreen
-!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b> 
-!MAIN_FRAME_EDITOR;Editor 
-!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b> 
-!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b> 
+!MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b>
+!MAIN_FRAME_EDITOR;Editor
+!MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b>
+!MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b>
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
+!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_PLACES;Places
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
-!MAIN_TAB_EXPORT; Export 
+!MAIN_TAB_EXPORT; Export
 !MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
 !MAIN_TAB_METADATA_TOOLTIP;Shortcut: <b>Alt-M</b>
 !MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-R</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-T</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
+!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
+!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
+!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
+!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on.
 !MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 !MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 !MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -844,7 +858,10 @@ ZOOMBAR_SMALL;Μικ�?ό
 !NAVIGATOR_S_VALUE;S = %1
 !NAVIGATOR_V_NA;V = n/a
 !NAVIGATOR_V_VALUE;V = %1
+!NAVIGATOR_XY_FULL;Width = %1, Height = %2
 !NAVIGATOR_XY_NA;x = n/a, y = n/a
+!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
+!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_CHANNELMIXER;Channel mixer
 !PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 !PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
@@ -888,18 +905,18 @@ ZOOMBAR_SMALL;Μικ�?ό
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_ADD;ADD
-!PREFERENCES_AUTOMONPROFILE;Automatically use operating systems main monitors profile
+!PREFERENCES_AUTOMONPROFILE;Automatically use operating system's main monitor color profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial profile should be generated for an image.\nReceives command line params to allow a rules based .pp3 generation:\n[Path raw/JPG] [Path default profile] [f-no] [exposure in secs] [focal length in mm] [ISO] [Lens] [Camera]
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
-!PREFERENCES_CUSTPROFBUILD;Custom image profile builder
+!PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
 !PREFERENCES_DARKFRAMEFOUND;Found
 !PREFERENCES_DARKFRAMESHOTS;shots
 !PREFERENCES_DARKFRAMETEMPLATES;templates
-!PREFERENCES_DARKFRAME;Dark frame
-!PREFERENCES_DATEFORMATFRAME;Date Format 
+!PREFERENCES_DARKFRAME;Dark Frame
+!PREFERENCES_DATEFORMATFRAME;Date Format
 !PREFERENCES_DIRDARKFRAMES;Dark frames directory
 !PREFERENCES_EDITORLAYOUT;Editor Layout
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
@@ -909,27 +926,28 @@ ZOOMBAR_SMALL;Μικ�?ό
 !PREFERENCES_FLATFIELDTEMPLATES;templates
 !PREFERENCES_FLATFIELD;Flat Field
 !PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
-!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show raw internal thumbnail if unedited
+!PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
 !PREFERENCES_LANGAUTODETECT;Use OS language setting
-!PREFERENCES_MENUGROUPFILEOPERATIONS;Group File Operations
-!PREFERENCES_MENUGROUPLABEL;Group Labeling
-!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group Profile Operations
-!PREFERENCES_MENUGROUPRANK;Group Ranking
-!PREFERENCES_MENUOPTIONS;Menu Options
+!PREFERENCES_MENUGROUPEXTPROGS;Group "Open with"
+!PREFERENCES_MENUGROUPFILEOPERATIONS;Group "File Operations"
+!PREFERENCES_MENUGROUPLABEL;Group "Color Label"
+!PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing Profile Operations"
+!PREFERENCES_MENUGROUPRANK;Group "Rank"
+!PREFERENCES_MENUOPTIONS;Context Menu Options
 !PREFERENCES_METADATA;Metadata
-!PREFERENCES_MULTITABDUALMON;Multiple tabs mode, if available on second monitor
-!PREFERENCES_MULTITAB;Multiple tabs mode
+!PREFERENCES_MULTITABDUALMON;Multiple editor tabs mode, if available on second monitor
+!PREFERENCES_MULTITAB;Multiple editor tabs mode
 !PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 !PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
-!PREFERENCES_PANFACTORFRAME;Pan rate amplification
+!PREFERENCES_PANFACTORFRAME;Pan Rate Amplification
 !PREFERENCES_PANFACTORLABEL;Factor
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;SET
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
-!PREFERENCES_SHOWPROFILESELECTOR;Show profile selector
-!PREFERENCES_SINGLETABVERTAB;Single tab mode, vertical tabs
-!PREFERENCES_SINGLETAB;Single tab mode
+!PREFERENCES_SHOWPROFILESELECTOR;Show processing profile selector
+!PREFERENCES_SINGLETABVERTAB;Single editor tab mode, vertical tabs
+!PREFERENCES_SINGLETAB;Single editor tab mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 !PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -941,7 +959,7 @@ ZOOMBAR_SMALL;Μικ�?ό
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
-!PREFERENCES_USESYSTEMTHEME; Use System Theme
+!PREFERENCES_USESYSTEMTHEME; Use system theme
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_LOADPPASTE;Parameters to load
@@ -949,15 +967,31 @@ ZOOMBAR_SMALL;Μικ�?ό
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe... 
+!PROGRESSBAR_DARKFRAME;Darkframe...
 !PROGRESSBAR_GREENEQUIL;Green equilibrate...
 !PROGRESSBAR_LINEDENOISE;Line Denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
-!PROGRESSDLG_PROFILECHANGEDINBROWSER;Profile changed in browser
+!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
+!PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_SUBSAMP;Subsampling
+!SAVEDLG_SUBSAMP_1;Best compression
+!SAVEDLG_SUBSAMP_2;Balanced
+!SAVEDLG_SUBSAMP_3;Best quality
+!SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
+!SAVEDLG_WARNFILENAME;File will be named
+!SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
+!THRESHOLDSELECTOR_BL;Bottom-left
+!THRESHOLDSELECTOR_BR;Bottom-right
+!THRESHOLDSELECTOR_B;Bottom
+!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+!THRESHOLDSELECTOR_TL;Top-left
+!THRESHOLDSELECTOR_TR;Top-right
+!THRESHOLDSELECTOR_T;Top
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_CROP_GTEPASSPORT;Biometric Passport
+!TP_CROP_GTFRAME;Frame
 !TP_CROP_GTGRID;Grid
 !TP_CROP_PPI;PPI=
 !TP_DARKFRAME_AUTOSELECT;Auto selection
@@ -977,8 +1011,8 @@ ZOOMBAR_SMALL;Μικ�?ό
 !TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 !TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 !TP_DIRPYREQUALIZER_THRESHOLD;Threshold
-!TP_DISTORTION_AUTO;    Auto distortion correction
-!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (M4/3, some compact DC, etc.)
+!TP_DISTORTION_AUTO;    Auto Distortion Correction
+!TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.)
 !TP_EPD_EDGESTOPPING;Edge stopping
 !TP_EPD_LABEL;Tone Mapping
 !TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
@@ -990,8 +1024,8 @@ ZOOMBAR_SMALL;Μικ�?ό
 !TP_EQUALIZER_LABEL;Wavelet equalizer
 !TP_EQUALIZER_LARGEST;coarsest
 !TP_EQUALIZER_NEUTRAL;Neutral
-!TP_EXPOSCORR_LABEL;Raw white-black point
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
+!TP_EXPOSCORR_LABEL;Raw white &amp; black points
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis
 !TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 !TP_EXPOSURE_SATURATION;Saturation
@@ -1001,7 +1035,7 @@ ZOOMBAR_SMALL;Μικ�?ό
 !TP_FLATFIELD_BLURTYPE;Blur Type
 !TP_FLATFIELD_BT_AREA;Area
 !TP_FLATFIELD_BT_HORIZONTAL;Horizontal
-!TP_FLATFIELD_BT_VERTHORIZ;Vert. + Horiz.
+!TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_LABEL;Flat Field
 !TP_GAMMA_CURV;gamma
@@ -1017,26 +1051,54 @@ ZOOMBAR_SMALL;Μικ�?ό
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
-!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific profile
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input profile that is more precise than a simpler matrix. Available for some cameras, these profiles are stored in /iccprofiles/input directory and are automatically retrieved based on file name matching the exact model name of the camera.
+!TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific color profile
+!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profile. These profiles are more precise than simpler matrix ones. Available for some cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by dcraw, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
 !TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera
 !TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 !TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
+!TP_ICM_PREFERREDPROFILE;Preferred DCP profile
+!TP_ICM_PREFERREDPROFILE_1;Daylight
+!TP_ICM_PREFERREDPROFILE_2;Tungsten
+!TP_ICM_PREFERREDPROFILE_3;Fluorescent
+!TP_ICM_PREFERREDPROFILE_4;Flash
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
-!TP_LABCURVE_AVOIDCOLORCLIP;Avoid color clipping
+!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
+!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
 !TP_LABCURVE_BRIGHTNESS;Brightness
+!TP_LABCURVE_BWTONING;B&W Toning
+!TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
+!TP_LABCURVE_CHROMATICITY;Chromaticity
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve
-!TP_LABCURVE_ENABLESATLIMITER;Enable saturation limiter
+!TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
+!TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red pastel
+!TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue saturated
+!TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow pastel
+!TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow saturated
+!TP_LABCURVE_CURVEEDITOR_CC;CC
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
+!TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
+!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
+!TP_LABCURVE_CURVEEDITOR_CH;CH
+!TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
 !TP_LABCURVE_LABEL;Lab Adjustments
-!TP_LABCURVE_SATLIMIT;Saturation limit
-!TP_LABCURVE_SATURATION;Saturation
+!TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 !TP_LENSGEOM_AUTOCROP;    Auto Crop
 !TP_LENSGEOM_FILL;Auto Fill
 !TP_LENSGEOM_LABEL;Lens / Geometry
+!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
+!TP_LENSPROFILE_LABEL;Lens Correction Profile
+!TP_LENSPROFILE_USECA;Use CA correction
+!TP_LENSPROFILE_USEDIST;Use distortion correction
+!TP_LENSPROFILE_USEVIGN;Use vignette correction
 !TP_NEUTRAL;Neutral
 !TP_NEUTRAL_TIP;Reset exposure controls to neutral values
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
@@ -1085,11 +1147,21 @@ ZOOMBAR_SMALL;Μικ�?ό
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin tones
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
+!TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the Hue
 !TP_VIBRANCE_LABEL;Vibrance
 !TP_VIBRANCE_PASTELS;Pastel tones
 !TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 !TP_VIBRANCE_PROTECTSKINS;Protect skin tones
-!TP_VIBRANCE_PSTHRESHOLD;Pastel/Saturated tone threshold
+!TP_VIBRANCE_PSTHRESHOLD;Pastel/saturated tones threshold
+!TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
+!TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
+!TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
 !TP_VIBRANCE_SATURATED;Saturated tones
 !TP_VIGNETTING_CENTER;Center
 !TP_VIGNETTING_CENTER_X;Center X

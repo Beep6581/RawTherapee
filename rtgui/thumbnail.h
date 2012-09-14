@@ -27,14 +27,15 @@
 #include "../rtengine/rtthumbnail.h"
 #include "cacheimagedata.h"
 #include "thumbnaillistener.h"
-#include "rtXmp.h"
+#include "../rtengine/rtXmp.h"
 
 
 class SnapshotListener {
-	public:
-		virtual int  newSnapshot(const Glib::ustring &name, const rtengine::procparams::ProcParams& params, bool queued=false ){};
-		virtual bool deleteSnapshot( int id ){};
-		virtual bool renameSnapshot(int id, const Glib::ustring &newname ){};
+    public:
+        virtual ~SnapshotListener(){}
+        virtual int  newSnapshot(const Glib::ustring &name, const rtengine::procparams::PartialProfile& pprofile, bool queued=false)=0;
+        virtual bool deleteSnapshot(int id)=0;
+        virtual bool renameSnapshot(int id, const Glib::ustring &newname)=0;
 };
 
 class CacheManager;
@@ -55,9 +56,9 @@ class Thumbnail :public SnapshotListener{
 
         rtengine::ImageMetaData  *idata;    // Metadata
 
-        rtengine::procparams::ProcParams      pparams; // Current parameters for developing the shot
-        int             pparamsId;	        // For identifing current pparams among the snapshots
-        bool            pparamsValid;
+        rtengine::procparams::PartialProfile      pprofile; // Current parameters for developing the shot
+        int             pprofileId;	        // For identifing current pparams among the snapshots
+        bool            pprofileValid;
         bool            pparamsSet;
         bool            needsReProcessing;
         bool            imageLoading;
@@ -71,8 +72,8 @@ class Thumbnail :public SnapshotListener{
         // exif & date/time strings
         Glib::ustring   exifString;
         Glib::ustring   dateTimeString;
-        
-		bool            initial_;
+
+        bool            initial_;
 
         // vector of listeners
         std::vector<ThumbnailListener*> listeners;
@@ -86,27 +87,28 @@ class Thumbnail :public SnapshotListener{
         int             loadInfoFromImage ( );
 
         int              initRTXMP();
+
     public:
         Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
         Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
-        ~Thumbnail ();
-        
+        virtual ~Thumbnail ();
+
         int loadXMP( );
         int saveXMP( ) const;
 
         bool              hasProcParams ();
-        const rtengine::procparams::ProcParams& getProcParams ();
-        Glib::ustring    getCacheFileName (const Glib::ustring &subdir) const;
+        const rtengine::procparams::PartialProfile& getPartialProfile ();
+        Glib::ustring     getCacheFileName (const Glib::ustring &subdir) const;
 
         // Use this to create params on demand for update
-        rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB);
+        rtengine::procparams::PartialProfile* createPartialProfileForUpdate (bool returnPProfile, bool forceCPB);
 
-        void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe=NULL, int whoChangedIt=-1, bool updateCacheNow=true);
-        void              clearProcParams (int whoClearedIt=-1);
+        void              setPartialProfile (const rtengine::procparams::PartialProfile& newPprofile, int whoChangedIt=-1, bool updateCacheNow=true);
+        void              clearPartialProfile (int whoClearedIt=-1);
 
         void              notifylisterners_procParamsChanged(int whoChangedIt);
 
-		bool              isQuick() { return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL; }
+        bool              isQuick() { return cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL; }
 
         bool              isRecentlySaved ();
         void              imageDeveloped ();
@@ -122,9 +124,9 @@ class Thumbnail :public SnapshotListener{
         const Glib::ustring&  getDateTimeString ();
         void                  getCamWB (double& temp, double& green) { if (tpp) tpp->getCamWB (temp, green); }
         void                  getAutoWB (double& temp, double& green) { if (tpp) tpp->getAutoWB (temp, green); }
-        void                  getSpotWB (int x, int y, int rect, double& temp, double& green) { if (tpp) tpp->getSpotWB (getProcParams(), x, y, rect, temp, green); }
+        void                  getSpotWB (int x, int y, int rect, double& temp, double& green) { if (tpp) tpp->getSpotWB (*getPartialProfile().pparams, x, y, rect, temp, green); }
         void                  applyAutoExp (rtengine::procparams::ProcParams& pparams) { if (tpp) tpp->applyAutoExp (pparams); }
-        
+
         ThFileType      getType ();
         Glib::ustring   getFileName () { return fname; }
         void            setFileName (const Glib::ustring fn);
@@ -148,21 +150,21 @@ class Thumbnail :public SnapshotListener{
 
         void            increaseRef ();
         void            decreaseRef ();
-        
+
         void            updateCache (bool updatePParams = true, bool updateCacheImageData = true);
         void            saveThumbnail ();
 
         bool            openDefaultViewer(int destination);
         bool            imageLoad(bool loading);
-		int 			newSnapshot(const Glib::ustring &name, const rtengine::procparams::ProcParams& params, bool queued=false );
-		bool 			deleteSnapshot( int id );
-		bool 			renameSnapshot(int id, const Glib::ustring &newname );
-		rtengine::snapshotsList_t getSnapshotsList();
-		rtengine::SnapshotInfo    getSnapshot( int id );
-		int				getNumQueued();
-		int				getNumSaved();
-		bool			setQueued( int id, bool inqueue=true );
-		bool			setSaved( int id, bool saved=true, const Glib::ustring &filename="" );
+        int             newSnapshot(const Glib::ustring &name, const rtengine::procparams::PartialProfile& pprofile, bool queued=false);
+        bool            deleteSnapshot( int id );
+        bool            renameSnapshot(int id, const Glib::ustring &newname );
+        rtengine::snapshotsList_t getSnapshotsList();
+        rtengine::SnapshotInfo    getSnapshot( int id );
+        int             getNumQueued();
+        int             getNumSaved();
+        bool            setQueued( int id, bool inqueue=true );
+        bool            setSaved( int id, bool saved=true, const Glib::ustring &filename="" );
 };
 
 

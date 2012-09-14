@@ -252,14 +252,15 @@ FileBrowser::FileBrowser ()
     pasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     partpasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
 
+    // Bind to event handlers
     open->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), open));    
     for (int i=0; i<6; i++)
         rank[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rank[i]));
     for (int i=0; i<6; i++)
-    	colorlabel[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), colorlabel[i]));
+        colorlabel[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), colorlabel[i]));
 
-    for (int i=0; i<mMenuExtProgs.size(); i++)
-    	amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
+    for (size_t i=0; i<mMenuExtProgs.size(); i++)
+        amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
 
     if (miOpenDefaultViewer!=NULL) {
         miOpenDefaultViewer->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), miOpenDefaultViewer));
@@ -542,17 +543,17 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
             return;
         }
 
-    for (int j=0; j<mMenuExtProgs.size(); j++) {
+    for (size_t j=0; j<mMenuExtProgs.size(); j++) {
         if (m==amiExtProg[j]) {
             ExtProgAction* pAct = mMenuExtProgs[m->get_label()];
 
             // Build vector of all file names
             std::vector<Glib::ustring> selFileNames;
-            for (int i=0; i<selected.size(); i++) {
+            for (size_t i=0; i<selected.size(); i++) {
                 Glib::ustring fn=selected[i]->thumbnail->getFileName();
 
                 // Maybe batch processed version
-                if (pAct->target==2) fn = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fn), options.saveFormatBatch.format);
+                if (pAct->target==2) fn = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(selected[i]->thumbnail), options.saveFormatBatch.format);
 
                 selFileNames.push_back(fn);
             }
@@ -564,7 +565,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 
     if (m==open) {
         std::vector<Thumbnail*> entries;
-	for (size_t i=0; i<mselected.size(); i++)
+    for (size_t i=0; i<mselected.size(); i++)
             entries.push_back (mselected[i]->thumbnail);
         tbl->openRequested (entries);
      }
@@ -585,107 +586,119 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         tbl->renameRequested (mselected);
     else if (m==selall) {
         lastClicked = NULL;
-		{
-			// TODO: Check for Linux
-			#ifdef WIN32
-			Glib::RWLock::ReaderLock l(entryRW);
-			#endif
+        {
+            // TODO: Check for Linux
+            #ifdef WIN32
+            Glib::RWLock::ReaderLock l(entryRW);
+            #endif
 
             selected.clear ();
-	    for (size_t i=0; i<fd.size(); i++)
+        for (size_t i=0; i<fd.size(); i++)
                 if (checkFilter (fd[i])) {
                     fd[i]->selected = true;
                     selected.push_back (fd[i]);
                 }
-		}
+        }
         queue_draw ();
         notifySelectionListener ();
     }
     else if( m==copyTo){
-    	tbl->copyMoveRequested (mselected, false);
+        tbl->copyMoveRequested (mselected, false);
     }
 
     else if( m==moveTo){
-       	tbl->copyMoveRequested (mselected, true);
+        tbl->copyMoveRequested (mselected, true);
     }
 
     else if (m==autoDF){
-	    for (size_t i=0; i<mselected.size(); i++){
-			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
-			pp.raw.df_autoselect= true;
-			pp.raw.dark_frame.clear();
-			mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
-		}
+        rtengine::procparams::PartialProfile pprofile(false,false);
+        for (size_t i=0; i<mselected.size(); i++){
+            pprofile = mselected[i]->thumbnail->getPartialProfile();
+            pprofile.pparams->raw.df_autoselect= true;
+            pprofile.pparams->raw.dark_frame.clear();
+            if (pprofile.pedited) {
+                pprofile.pedited->raw.dfAuto = true;
+                pprofile.pedited->raw.darkFrame = true;
+            }
+            mselected[i]->thumbnail->setPartialProfile(pprofile,FILEBROWSER,false);
+        }
+        pprofile.deleteInstance();
     }else if (m==selectDF){
-    	if( !mselected.empty() ){
-    		rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
-    		Gtk::FileChooserDialog fc("Dark Frame",Gtk::FILE_CHOOSER_ACTION_OPEN );
-    		FileChooserLastFolderPersister persister(&fc, options.lastDarkframeDir);
-    		fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    		fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
-    		if(!pp.raw.dark_frame.empty())
-    		   fc.set_filename( pp.raw.dark_frame );
-    		if( fc.run() == Gtk::RESPONSE_APPLY ){
-			for (size_t i=0; i<mselected.size(); i++){
-    				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
-					pp.raw.dark_frame= fc.get_filename();
-					pp.raw.df_autoselect= false;
-					mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
-				}
-			}
-    	}
+        if( !mselected.empty() ){
+            rtengine::procparams::PartialProfile pprofile(false,false);
+            pprofile = mselected[0]->thumbnail->getPartialProfile();
+            Gtk::FileChooserDialog fc("Dark Frame",Gtk::FILE_CHOOSER_ACTION_OPEN );
+            FileChooserLastFolderPersister persister(&fc, options.lastDarkframeDir);
+            fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+            fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
+            if(!pprofile.pparams->raw.dark_frame.empty())
+                fc.set_filename( pprofile.pparams->raw.dark_frame );
+            if( fc.run() == Gtk::RESPONSE_APPLY ){
+                for (size_t i=0; i<mselected.size(); i++){
+                    pprofile = mselected[i]->thumbnail->getPartialProfile();
+                    pprofile.pparams->raw.dark_frame= fc.get_filename();
+                    pprofile.pparams->raw.df_autoselect= false;
+                    mselected[i]->thumbnail->setPartialProfile(pprofile,FILEBROWSER,false);
+                }
+            }
+            pprofile.deleteInstance();
+        }
     }else if( m==thisIsDF){
-    	if( !options.rtSettings.darkFramesPath.empty() && Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
-		for (size_t i=0; i<mselected.size(); i++){
-				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
-				if( !file )continue;
-				Glib::ustring destName = options.rtSettings.darkFramesPath+ "/" + file->get_basename();
-				Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
-				file->move(  dest );
-			}
-			// Reinit cache
-			rtengine::dfm.init( options.rtSettings.darkFramesPath );
-    	}
+        if( !options.rtSettings.darkFramesPath.empty() && Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
+            for (size_t i=0; i<mselected.size(); i++){
+                Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
+                if( !file )continue;
+                Glib::ustring destName = options.rtSettings.darkFramesPath+ "/" + file->get_basename();
+                Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
+                file->move(  dest );
+            }
+            // Reinit cache
+            rtengine::dfm.init( options.rtSettings.darkFramesPath );
+        }
     }
     else if (m==autoFF){
-	    for (size_t i=0; i<mselected.size(); i++){
-			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
-			pp.raw.ff_AutoSelect= true;
-			pp.raw.ff_file.clear();
-			mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
-		}
+        rtengine::procparams::PartialProfile pprofile(false,false);
+        for (size_t i=0; i<mselected.size(); i++){
+            pprofile = mselected[i]->thumbnail->getPartialProfile();
+            pprofile.pparams->raw.ff_AutoSelect= true;
+            pprofile.pparams->raw.ff_file.clear();
+            mselected[i]->thumbnail->setPartialProfile(pprofile,FILEBROWSER,false);
+        }
+        pprofile.deleteInstance();
     }
     else if (m==selectFF){
-    	if( !mselected.empty() ){
-    		rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
-    		Gtk::FileChooserDialog fc("Flat Field",Gtk::FILE_CHOOSER_ACTION_OPEN );
-    		FileChooserLastFolderPersister persister(&fc, options.lastFlatfieldDir);
-    		fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    		fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
-    		if(!pp.raw.ff_file.empty())
-    		   fc.set_filename( pp.raw.ff_file );
-    		if( fc.run() == Gtk::RESPONSE_APPLY ){
-			for (size_t i=0; i<mselected.size(); i++){
-    				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
-					pp.raw.ff_file= fc.get_filename();
-					pp.raw.ff_AutoSelect= false;
-					mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
-				  }
-			  }
-    	}
+        if( !mselected.empty() ){
+            rtengine::procparams::PartialProfile pprofile(false,false);
+            pprofile = mselected[0]->thumbnail->getPartialProfile();
+            Gtk::FileChooserDialog fc("Flat Field",Gtk::FILE_CHOOSER_ACTION_OPEN );
+            FileChooserLastFolderPersister persister(&fc, options.lastFlatfieldDir);
+            fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+            fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
+            if(!pprofile.pparams->raw.ff_file.empty())
+                fc.set_filename( pprofile.pparams->raw.ff_file );
+            if( fc.run() == Gtk::RESPONSE_APPLY ){
+                for (size_t i=0; i<mselected.size(); i++){
+                    pprofile = mselected[i]->thumbnail->getPartialProfile();
+                    pprofile.pparams->raw.ff_file= fc.get_filename();
+                    pprofile.pparams->raw.ff_AutoSelect= false;
+                    mselected[i]->thumbnail->setPartialProfile(pprofile,FILEBROWSER,false);
+                }
+            }
+            pprofile.deleteInstance();
+        }
     }
     else if( m==thisIsFF){
         if( !options.rtSettings.flatFieldsPath.empty() && Gio::File::create_for_path(options.rtSettings.flatFieldsPath)->query_exists() ){
             for (size_t i=0; i<mselected.size(); i++){
-				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
-				if( !file )continue;
-				Glib::ustring destName = options.rtSettings.flatFieldsPath+ "/" + file->get_basename();
-				Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
-				file->move(  dest );
-			}
-			// Reinit cache
-			rtengine::ffm.init( options.rtSettings.flatFieldsPath );
-    	}
+                Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
+                if( !file )continue;
+                Glib::ustring destName = options.rtSettings.flatFieldsPath+ "/" + file->get_basename();
+                Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
+                file->move(  dest );
+            }
+            // Reinit cache
+            rtengine::ffm.init( options.rtSettings.flatFieldsPath );
+        }
     }
     else if (m==copyprof)
         copyProfile ();
@@ -694,43 +707,44 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     else if (m==partpasteprof) 
         partPasteProfile ();
     else if (m==clearprof) {
-	    for (size_t i=0; i<mselected.size(); i++)
-            mselected[i]->thumbnail->clearProcParams (FILEBROWSER);
+        for (size_t i=0; i<mselected.size(); i++)
+            mselected[i]->thumbnail->clearPartialProfile(FILEBROWSER);
         queue_draw ();
     }else if (m==copyIPTC)
-		copyMetadata ();
-	else if (m==pasteIPTC)
-		pasteMetadata ();
-	else if (m==partpasteIPTC)
-		partPasteMetadata ();
-	else if( m== resyncIPTC)
-		resyncMetadata ();
+        copyMetadata ();
+    else if (m==pasteIPTC)
+        pasteMetadata ();
+    else if (m==partpasteIPTC)
+        partPasteMetadata ();
+    else if( m== resyncIPTC)
+        resyncMetadata ();
     else if (m==execcustprof) {
-	    for (size_t i=0; i<mselected.size(); i++)  {
-            mselected[i]->thumbnail->createProcParamsForUpdate (false, true);
+        for (size_t i=0; i<mselected.size(); i++)  {
+            mselected[i]->thumbnail->createPartialProfileForUpdate (false, true);
 
             // Empty run to update the thumb
-            rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            mselected[i]->thumbnail->setProcParams (params, NULL, FILEBROWSER);
-    }
+            mselected[i]->thumbnail->setPartialProfile (mselected[i]->thumbnail->getPartialProfile(), FILEBROWSER);
+        }
     } else if (m==clearFromCache) {
-	    for (size_t i=0; i<mselected.size(); i++)
-			tbl->clearFromCacheRequested (mselected, false);
-		//queue_draw ();
+        for (size_t i=0; i<mselected.size(); i++)
+            tbl->clearFromCacheRequested (mselected, false);
+        //queue_draw ();
     }
-	else if (m==clearFromCacheFull) {
-		for (size_t i=0; i<mselected.size(); i++)
-			tbl->clearFromCacheRequested (mselected, true);
-		//queue_draw ();
-    } else if (miOpenDefaultViewer!=NULL && m==miOpenDefaultViewer) {
+    else if (m==clearFromCacheFull) {
+        for (size_t i=0; i<mselected.size(); i++)
+            tbl->clearFromCacheRequested (mselected, true);
+        //queue_draw ();
+    }
+    else if (miOpenDefaultViewer!=NULL && m==miOpenDefaultViewer) {
         openDefaultViewer(1);
     }
 }
 
 void FileBrowser::copyProfile () {
 
-    if (selected.size()==1)
-        clipboard.setProcParams ((static_cast<FileBrowserEntry*>(selected[0]))->thumbnail->getProcParams());
+    if (selected.size()==1) {
+        clipboard.setPartialProfile((static_cast<FileBrowserEntry*>(selected[0]))->thumbnail->getPartialProfile());
+    }
 }
 
 void FileBrowser::pasteProfile () {
@@ -744,13 +758,8 @@ void FileBrowser::pasteProfile () {
             return;
 
         for (unsigned int i=0; i<mselected.size(); i++) {
-            // copying read only clipboard PartialProfile to a temporary one
-            rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
-            rtengine::procparams::PartialProfile pastedPartProf(cbPartProf.pparams, cbPartProf.pedited, true);
-
             // applying the PartialProfile to the thumb's ProcParams
-            mselected[i]->thumbnail->setProcParams (*pastedPartProf.pparams, pastedPartProf.pedited, FILEBROWSER);
-            pastedPartProf.deleteInstance();
+            mselected[i]->thumbnail->setPartialProfile(clipboard.getPartialProfile(), FILEBROWSER);
         }
 
         queue_draw ();
@@ -771,19 +780,20 @@ void FileBrowser::partPasteProfile () {
         int i = partialPasteDlg.run ();
         if (i == Gtk::RESPONSE_OK) {
 
+            rtengine::procparams::PartialProfile updatedPartProf(false, false);
             for (unsigned int i=0; i<mselected.size(); i++) {
                 // copying read only clipboard PartialProfile to a temporary one, initialized to the thumb's ProcParams
-                mselected[i]->thumbnail->createProcParamsForUpdate(false,false);  // this can execute customprofilebuilder to generate param file
+                mselected[i]->thumbnail->createPartialProfileForUpdate(false,false);  // this can execute customprofilebuilder to generate param file
                 rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
-                rtengine::procparams::PartialProfile pastedPartProf(&mselected[i]->thumbnail->getProcParams (), NULL);
+                updatedPartProf = mselected[i]->thumbnail->getPartialProfile();
 
                 // pushing the selected values of the clipboard PartialProfile to the temporary PartialProfile
-                partialPasteDlg.applyPaste (pastedPartProf.pparams, pastedPartProf.pedited, cbPartProf.pparams, cbPartProf.pedited);
+                partialPasteDlg.applyPaste (updatedPartProf.pparams, updatedPartProf.pedited, cbPartProf.pparams, cbPartProf.pedited);
 
                 // applying the temporary PartialProfile to the thumb's ProcParams
-                mselected[i]->thumbnail->setProcParams (*pastedPartProf.pparams, pastedPartProf.pedited, FILEBROWSER);
-                pastedPartProf.deleteInstance();
+                mselected[i]->thumbnail->setPartialProfile(updatedPartProf, FILEBROWSER);
             }
+            updatedPartProf.deleteInstance();
 
             queue_draw ();
         }
@@ -800,20 +810,20 @@ void FileBrowser::copyMetadata () {
 void FileBrowser::pasteMetadata() {
 
     std::vector<FileBrowserEntry*> mselected;
-    for (int i=0; i<selected.size(); i++)
+    for (size_t i=0; i<selected.size(); i++)
         mselected.push_back ((FileBrowserEntry*)selected[i]);
 
     if (!tbl || mselected.size()==0)
         return;
 
-    for (int i=0; i<mselected.size(); i++)
+    for (size_t i=0; i<mselected.size(); i++)
         mselected[i]->thumbnail->getMetadata()->setIPTCData( clipboard.getIPTC() );
 }
 
 void FileBrowser::partPasteMetadata () {
 
     std::vector<FileBrowserEntry*> mselected;
-    for (int i=0; i<selected.size(); i++)
+    for (size_t i=0; i<selected.size(); i++)
         mselected.push_back ((FileBrowserEntry*)selected[i]);
 
     if (!tbl || mselected.size()==0)
@@ -823,7 +833,7 @@ void FileBrowser::partPasteMetadata () {
 
     if ( dlg.run ()) {
     	rtengine::MetadataList iptc = dlg.getIPTC();
-        for (int i=0; i<mselected.size(); i++) {
+        for (size_t i=0; i<mselected.size(); i++) {
             mselected[i]->thumbnail->getMetadata()->setIPTCData( iptc );
         }
     }
@@ -832,13 +842,13 @@ void FileBrowser::partPasteMetadata () {
 void FileBrowser::resyncMetadata ()
 {
     std::vector<FileBrowserEntry*> mselected;
-    for (int i=0; i<selected.size(); i++)
+    for (size_t i=0; i<selected.size(); i++)
         mselected.push_back ((FileBrowserEntry*)selected[i]);
 
     if (!tbl || mselected.size()==0)
         return;
 
-    for (int i=0; i<mselected.size(); i++)
+    for (size_t i=0; i<mselected.size(); i++)
         mselected[i]->thumbnail->getMetadata()->resync();
 }
 
@@ -855,15 +865,15 @@ void FileBrowser::openDefaultViewer (int destination) {
 
 bool FileBrowser::keyPressed (GdkEventKey* event) {
 
-    if ((event->keyval==GDK_C || event->keyval==GDK_c) && event->state & GDK_CONTROL_MASK) {
+    if ((event->keyval==GDK_C || event->keyval==GDK_c) && (event->state & GDK_CONTROL_MASK)) {
         copyProfile ();
         return true;
     }
-    else if ((event->keyval==GDK_V || event->keyval==GDK_v) && event->state & GDK_CONTROL_MASK && !(event->state & GDK_SHIFT_MASK)) {
+    else if ((event->keyval==GDK_V || event->keyval==GDK_v) && (event->state & GDK_CONTROL_MASK) && !(event->state & GDK_SHIFT_MASK)) {
         pasteProfile ();
         return true;
     }
-    else if ((event->keyval==GDK_V || event->keyval==GDK_v) && event->state & GDK_CONTROL_MASK && event->state & GDK_SHIFT_MASK) {
+    else if ((event->keyval==GDK_V || event->keyval==GDK_v) && (event->state & GDK_CONTROL_MASK) && (event->state & GDK_SHIFT_MASK)) {
         partPasteProfile ();
         return true;
     }
@@ -871,15 +881,15 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         menuItemActivated (trash);
         return true;
     }
-    else if (event->keyval==GDK_Delete && event->state & GDK_SHIFT_MASK) {
+    else if (event->keyval==GDK_Delete && (event->state & GDK_SHIFT_MASK)) {
         menuItemActivated (untrash);
         return true;
     }
-    else if ((event->keyval==GDK_Q || event->keyval==GDK_q) && event->state & GDK_CONTROL_MASK) {
+    else if ((event->keyval==GDK_Q || event->keyval==GDK_q) && (event->state & GDK_CONTROL_MASK)) {
         menuItemActivated (develop);
         return true;
     }
-    else if ((event->keyval==GDK_A || event->keyval==GDK_a) && event->state & GDK_CONTROL_MASK) {
+    else if ((event->keyval==GDK_A || event->keyval==GDK_a) && (event->state & GDK_CONTROL_MASK)) {
         menuItemActivated (selall);
         return true;
     }
@@ -912,37 +922,37 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
 void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
 
     rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (ppname);
+    // TODO: Should we force the pedited to true for all params? If yes, then we have to make a copy of the profile sent back by getProfile
     if (partProfile->pparams && !selected.empty()) {
-	    for (size_t i=0; i<selected.size(); i++)
-            (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*partProfile->pparams, partProfile->pedited, FILEBROWSER);
+        for (size_t i=0; i<selected.size(); i++)
+            (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setPartialProfile(*partProfile, FILEBROWSER);
         queue_draw ();
     }
 }
 
 void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 
-	if (!tbl || selected.empty())
-		return;
+    if (!tbl || selected.empty())
+        return;
 
-	rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (ppname);
+    rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (ppname);
 
-	if (srcProfiles->pparams) {
-		if (partialPasteDlg.run()==Gtk::RESPONSE_OK) {
+    if (srcProfiles->pparams) {
+        if (partialPasteDlg.run()==Gtk::RESPONSE_OK) {
 
-			for (size_t i=0; i<selected.size(); i++) {
-				selected[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+            rtengine::procparams::PartialProfile dstProfile(false, false);
+            for (size_t i=0; i<selected.size(); i++) {
+                selected[i]->thumbnail->createPartialProfileForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
-				rtengine::procparams::PartialProfile dstProfile(true);
-				*dstProfile.pparams = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getProcParams ();
-				dstProfile.set(true);
-				partialPasteDlg.applyPaste (dstProfile.pparams, dstProfile.pedited, srcProfiles->pparams, srcProfiles->pedited);
-				(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*dstProfile.pparams, dstProfile.pedited, FILEBROWSER);
-				dstProfile.deleteInstance();
-			}
-			queue_draw ();
-		}
-		partialPasteDlg.hide ();
-	}
+                dstProfile = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getPartialProfile();
+                partialPasteDlg.applyPaste (dstProfile.pparams, dstProfile.pedited, srcProfiles->pparams, srcProfiles->pedited);
+                (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setPartialProfile(dstProfile, FILEBROWSER);
+            }
+            dstProfile.deleteInstance();
+            queue_draw ();
+        }
+        partialPasteDlg.hide ();
+    }
 }
 
 void FileBrowser::applyFilter (const BrowserFilter& filter) {
@@ -952,16 +962,16 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
     // remove items not complying the filter from the selection
     bool selchanged = false;
     numFiltered=0;
-	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::ReaderLock l(entryRW);  // Don't make this a writer lock!
-		#endif
+    {
+        // TODO: Check for Linux
+        #ifdef WIN32
+        Glib::RWLock::ReaderLock l(entryRW);  // Don't make this a writer lock!
+        #endif
 
-		for (size_t i=0; i<fd.size(); i++) {
-    	    if (checkFilter (fd[i]))
-    		    numFiltered++;
-    	    else if (fd[i]->selected ) {
+        for (size_t i=0; i<fd.size(); i++) {
+            if (checkFilter (fd[i]))
+                numFiltered++;
+            else if (fd[i]->selected ) {
                 fd[i]->selected = false;
                 std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), fd[i]);
                 selected.erase (j);
@@ -970,7 +980,7 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
                 selchanged = true;
             }
         }
-	}
+    }
 
     if (selchanged)
         notifySelectionListener ();
@@ -994,53 +1004,52 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
         (entry->thumbnail->getRank()>=0 && !filter.showNotTrash))
         return false;
 
-    // return false is query is not satisfied
+    // return false if query is not satisfied
     if (!filter.queryFileName.empty()){
-    	// check if image's FileName contains queryFileName (case insensitive)
-    	// TODO should we provide case-sensitive search option via preferences?
-    	Glib::ustring FileName;
-    	FileName = Glib::path_get_basename (entry->thumbnail->getFileName());
-    	FileName = FileName.uppercase();
-    	//printf("FileBrowser::checkFilter FileName = '%s'; find() result= %i \n",FileName.c_str(), FileName.find(filter.queryFileName.uppercase()));
-    	
-    	if (FileName.find(filter.queryFileName.uppercase())==-1)
-    		 return false;
+        // check if image's FileName contains queryFileName (case insensitive)
+        // TODO should we provide case-sensitive search option via preferences?
+        Glib::ustring FileName;
+        FileName = Glib::path_get_basename (entry->thumbnail->getFileName());
+        FileName = FileName.uppercase();
+        //printf("FileBrowser::checkFilter FileName = '%s'; find() result= %i \n",FileName.c_str(), FileName.find(filter.queryFileName.uppercase()));
+
+        if (FileName.find(filter.queryFileName.uppercase())==-1)
+             return false;
     }
 
     // check exif filter
     const CacheImageData* cfs = entry->thumbnail->getCacheImageData();
     double tol = 0.01;
     double tol2 = 1e-8;
-    
-	if (!filter.exifFilterEnabled)
-		return true;
-	
-	if (!cfs->exifValid)
-		return (!filter.exifFilter.filterCamera || filter.exifFilter.cameras.count(cfs->camera)>0) 
-			&& (!filter.exifFilter.filterLens || filter.exifFilter.lenses.count(cfs->lens)>0)
-			&& (!filter.exifFilter.filterFiletype || filter.exifFilter.filetypes.count(cfs->filetype)>0)
-			&& (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp)>0);
 
-    return 
-         (!filter.exifFilter.filterShutter || (rtengine::ImageMetaData::shutterFromString(rtengine::ImageMetaData::shutterToString(cfs->shutter)) >= filter.exifFilter.shutterFrom-tol2 && rtengine::ImageMetaData::shutterFromString(rtengine::ImageMetaData::shutterToString(cfs->shutter)) <= filter.exifFilter.shutterTo+tol2))
-      && (!filter.exifFilter.filterFNumber || (rtengine::ImageMetaData::apertureFromString(rtengine::ImageMetaData::apertureToString(cfs->fnumber)) >= filter.exifFilter.fnumberFrom-tol2 && rtengine::ImageMetaData::apertureFromString(rtengine::ImageMetaData::apertureToString(cfs->fnumber)) <= filter.exifFilter.fnumberTo+tol2))
-      && (!filter.exifFilter.filterFocalLen || (cfs->focalLen >= filter.exifFilter.focalFrom-tol && cfs->focalLen <= filter.exifFilter.focalTo+tol))
-	  && (!filter.exifFilter.filterISO     || (cfs->iso >= filter.exifFilter.isoFrom && cfs->iso <= filter.exifFilter.isoTo))
-	  && (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp)>0)
-      && (!filter.exifFilter.filterCamera  || filter.exifFilter.cameras.count(cfs->camera)>0)
-	  && (!filter.exifFilter.filterLens    || filter.exifFilter.lenses.count(cfs->lens)>0)
-	  && (!filter.exifFilter.filterFiletype  || filter.exifFilter.filetypes.count(cfs->filetype)>0);
+    if (!filter.exifFilterEnabled)
+        return true;
+
+    if (!cfs->exifValid)
+        return (!filter.exifFilter.filterCamera || filter.exifFilter.cameras.count(cfs->camera)>0)
+            && (!filter.exifFilter.filterLens || filter.exifFilter.lenses.count(cfs->lens)>0)
+            && (!filter.exifFilter.filterFiletype || filter.exifFilter.filetypes.count(cfs->filetype)>0)
+            && (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp)>0);
+
+    return (!filter.exifFilter.filterShutter || (rtengine::ImageMetaData::shutterFromString(rtengine::ImageMetaData::shutterToString(cfs->shutter)) >= filter.exifFilter.shutterFrom-tol2 && rtengine::ImageMetaData::shutterFromString(rtengine::ImageMetaData::shutterToString(cfs->shutter)) <= filter.exifFilter.shutterTo+tol2))
+        && (!filter.exifFilter.filterFNumber || (rtengine::ImageMetaData::apertureFromString(rtengine::ImageMetaData::apertureToString(cfs->fnumber)) >= filter.exifFilter.fnumberFrom-tol2 && rtengine::ImageMetaData::apertureFromString(rtengine::ImageMetaData::apertureToString(cfs->fnumber)) <= filter.exifFilter.fnumberTo+tol2))
+        && (!filter.exifFilter.filterFocalLen || (cfs->focalLen >= filter.exifFilter.focalFrom-tol && cfs->focalLen <= filter.exifFilter.focalTo+tol))
+        && (!filter.exifFilter.filterISO     || (cfs->iso >= filter.exifFilter.isoFrom && cfs->iso <= filter.exifFilter.isoTo))
+        && (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp)>0)
+        && (!filter.exifFilter.filterCamera  || filter.exifFilter.cameras.count(cfs->camera)>0)
+        && (!filter.exifFilter.filterLens    || filter.exifFilter.lenses.count(cfs->lens)>0)
+        && (!filter.exifFilter.filterFiletype  || filter.exifFilter.filetypes.count(cfs->filetype)>0);
 }
 
 void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
-	for (size_t i=0; i<tbe.size(); i++) {
-    	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+    for (size_t i=0; i<tbe.size(); i++) {
+        // try to load the last saved parameters from the cache or from the paramfile file
+        tbe[i]->thumbnail->createPartialProfileForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
-    	// no need to notify listeners as item goes to trash, likely to be deleted
+        // no need to notify listeners as item goes to trash, likely to be deleted
 
-    	if (tbe[i]->thumbnail->getRank()==-1)
+        if (tbe[i]->thumbnail->getRank()==-1)
             continue;               
         tbe[i]->thumbnail->setRank (-1);
         if (tbe[i]->getThumbButtonSet()) {
@@ -1056,8 +1065,8 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
 void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
-	for (size_t i=0; i<tbe.size(); i++) {
-    	// if thumbnail was marked inTrash=true then param file must be there, no need to run customprofilebuilder
+    for (size_t i=0; i<tbe.size(); i++) {
+        // if thumbnail was marked inTrash=true then param file must be there, no need to run customprofilebuilder
 
         if (tbe[i]->thumbnail->getRank()>=0)
             continue;
@@ -1075,18 +1084,18 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
 void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank) {
 
-	for (size_t i=0; i<tbe.size(); i++) {
-    	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+    for (size_t i=0; i<tbe.size(); i++) {
+        // try to load the last saved parameters from the cache or from the paramfile file
+        tbe[i]->thumbnail->createPartialProfileForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
-    	// notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
-    	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
+        // notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
+        tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
 
         tbe[i]->thumbnail->setRank (rank);
 
         if (tbe[i]->getThumbButtonSet()){
-        	tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
-        	tbe[i]->getThumbButtonSet()->setInTrash (false);
+            tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
+            tbe[i]->getThumbButtonSet()->setInTrash (false);
         }
     }
     applyFilter (filter);
@@ -1094,20 +1103,20 @@ void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank
 
 void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int colorlabel) {
 
-	for (size_t i=0; i<tbe.size(); i++) {
-    	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+    for (size_t i=0; i<tbe.size(); i++) {
+        // try to load the last saved parameters from the cache or from the paramfile file
+        tbe[i]->thumbnail->createPartialProfileForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
-    	// notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
-    	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
+        // notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
+        tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
 
-    	if( colorlabel<=0 )
+        if( colorlabel<=0 )
             tbe[i]->thumbnail->setLabel ( "" );
-    	else if( colorlabel< options.colorLabels.size() )
-    		tbe[i]->thumbnail->setLabel ( options.colorLabels[colorlabel] );
+        else if( colorlabel< int(options.colorLabels.size()) )
+            tbe[i]->thumbnail->setLabel ( options.colorLabels[colorlabel] );
 
         if (tbe[i]->getThumbButtonSet())
-                tbe[i]->getThumbButtonSet()->setColorLabel ( options.getColorFromLabel( tbe[i]->thumbnail->getLabel() ));
+            tbe[i]->getThumbButtonSet()->setColorLabel ( options.getColorFromLabel( tbe[i]->thumbnail->getLabel() ));
     }
     applyFilter (filter);
 }
@@ -1116,17 +1125,17 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
 
     if (actionCode>=0 && actionCode<=5) { // rank
         std::vector<FileBrowserEntry*> tbe;
-	    tbe.push_back (static_cast<FileBrowserEntry*>(actionData));
+        tbe.push_back (static_cast<FileBrowserEntry*>(actionData));
         rankingRequested (tbe, actionCode);
     }
     else if (actionCode==6 && tbl) { // to processing queue
         std::vector<FileBrowserEntry*> tbe;
-	    tbe.push_back (static_cast<FileBrowserEntry*>(actionData));
+        tbe.push_back (static_cast<FileBrowserEntry*>(actionData));
         tbl->developRequested (tbe, false); // not a fast, but a FULL mode
     }
     else if (actionCode==7) { // to trash / undelete
         std::vector<FileBrowserEntry*> tbe;
-	    FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(actionData);
+        FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(actionData);
         tbe.push_back (entry);
         if (entry->thumbnail->getRank()>=0)
             toTrashRequested (tbe);
@@ -1136,13 +1145,13 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
 }
 
 void FileBrowser::openNextImage () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
-	#endif
+    // TODO: Check for Linux
+    #ifdef WIN32
+    Glib::RWLock::ReaderLock l(entryRW);
+    #endif
 
     if (!fd.empty()) {
-	    for (size_t i=fd.size()-1; i>0; i--)
+        for (size_t i=fd.size()-1; i>0; i--)
             if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
                 if (i<fd.size()-1 && tbl) {
                     std::vector<Thumbnail*> entries;
@@ -1159,13 +1168,13 @@ void FileBrowser::openNextImage () {
 }
 
 void FileBrowser::openPrevImage () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
-	#endif
+    // TODO: Check for Linux
+    #ifdef WIN32
+    Glib::RWLock::ReaderLock l(entryRW);
+    #endif
 
     if (!fd.empty()) {
-	    for (size_t i=0; i<fd.size(); i++)
+        for (size_t i=0; i<fd.size(); i++)
             if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
                 if (i>0 && tbl) {
                     std::vector<Thumbnail*> entries;
@@ -1206,11 +1215,11 @@ void FileBrowser::notifySelectionListener () {
         for (size_t i=0; i<selected.size(); i++)
             thm.push_back ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail);
         tbl->selectionChanged (thm);
-    }    
+    }
 }
 
 void FileBrowser::redrawNeeded (LWButton* button) {
-    
+
     queue_draw ();
 }
 FileBrowser::type_trash_changed FileBrowser::trash_changed () {
@@ -1225,7 +1234,7 @@ void FileBrowser::exportRequested (){
 
 void FileBrowser::setExportPanel (ExportPanel* expanel) {
 
-	exportPanel = expanel;
-	exportPanel->set_sensitive (false);
-	exportPanel->setExportPanelListener (this);
+    exportPanel = expanel;
+    exportPanel->set_sensitive (false);
+    exportPanel->setExportPanelListener (this);
 }

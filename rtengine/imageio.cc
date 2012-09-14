@@ -37,10 +37,6 @@
 //#include "iptcpairs.h"
 #include "iccjpeg.h"
 
-
-extern "C" {
-#include <iccjpeg.h>
-}
 #include "jpeg.h"
 
 Glib::ustring safe_locale_to_utf8 (const std::string& src);

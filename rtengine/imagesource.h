@@ -106,7 +106,7 @@ class ImageSource : public InitialImage {
         // functions inherited from the InitialImage interface
         virtual Glib::ustring getFileName ()        { return fileName; }
         virtual cmsHPROFILE getEmbeddedProfile ()   { return embProfile; }
-        virtual const ImageMetaData* getMetaData () { return idata; }
+        virtual ImageMetaData* getMetaData ()       { return idata; }
         virtual ImageSource* getImageSource ()      { return this; }
 };
 }

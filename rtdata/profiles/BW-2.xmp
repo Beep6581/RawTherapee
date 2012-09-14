@@ -3,15 +3,15 @@
  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
   <rdf:Description rdf:about=""
     xmlns:rt="http://www.rawtherapee.com/1.0/"
-   rt:Version="4.0.6">
+   rt:Version="4.1.0">
    <rt:Processing>
     <rdf:Bag>
      <rdf:li>
       <rdf:Description
-       rt:Version="301">
+       rt:Version="304">
       <rt:ExposureRGB
        rt:Auto="True"
-       rt:Clip="0"
+       rt:Clip="0.0"
        rt:Compensation="0"
        rt:Brightness="0"
        rt:Contrast="20"
@@ -20,7 +20,7 @@
        rt:HighlightCompression="0"
        rt:HighlightComprThreshold="33"
        rt:ShadowCompression="50"
-       rt:ToneCurve="1;0;0;0.457543;0.579067;1;1;"/>
+       rt:ToneCurve="1;0;0;0.45754265;0.57906738;1;1"/>
       <rt:ChannelMixer
        rt:Red="100;0;0;"
        rt:Green="0;100;0;"
@@ -28,27 +28,30 @@
       <rt:ExposureLab
        rt:Brightness="0"
        rt:Contrast="0"
-       rt:Saturation="-100"
-       rt:AvoidColorClipping="False"
-       rt:SaturationLimitEnabled="False"
-       rt:SaturationLimit="40"
-       rt:LCurve="3;0;0;0.848921;0.690647;1;1;"
+       rt:Chromaticity="0"
+       rt:BWtoning="True"
+       rt:AvoidColorShift="True"
+       rt:RedAndSkinTonesProtection="0"
+       rt:LCurve="3;0;0;0.84892;0.69;1;1;"
        rt:aCurve="0;"
-       rt:bCurve="0;"/>
+       rt:bCurve="0;"
+       rt:ccCurve="0;"
+       rt:chCurve="0;"/>
       <rt:Vibrance
        rt:Enabled="False"
        rt:Pastels="0"
        rt:Saturated="0"
-       rt:PSThreshold="75"
+       rt:PSThreshold="0;75;"
        rt:ProtectSkins="False"
        rt:AvoidColorShift="True"
-       rt:PastSatTog="True"/>
+       rt:PastSatTog="True"
+       rt:SkinTonesCurve="0;"/>
       <rt:Sharpening
        rt:Enabled="False"
        rt:Method="usm"
        rt:Radius="0.5"
-       rt:Amount="250"
-       rt:Threshold="512"
+       rt:Amount="125"
+       rt:Threshold="20;80;2000;1200;"
        rt:OnlyEdges="False"
        rt:EdgeDetectionRadius="1.9"
        rt:EdgeTolerance="1800"
@@ -70,14 +73,14 @@
        rt:Amount="20"/>
       <rt:WhiteBalance
        rt:Mode="Camera"
-       rt:Temperature="5000"
-       rt:Green="1"/>
+       rt:Temperature="5745"
+       rt:Green="1.0"/>
       <rt:ImpulseDenoise
        rt:Enabled="False"
        rt:Threshold="50"/>
       <rt:Defringe
        rt:Enabled="False"
-       rt:Radius="2"
+       rt:Radius="2.0"
        rt:Threshold="25"/>
       <rt:PyramidDenoise
        rt:Enabled="False"
@@ -97,8 +100,8 @@
        rt:Enabled="False"
        rt:X="0"
        rt:Y="0"
-       rt:Width="4281"
-       rt:Height="2871"/>
+       rt:Width="20000"
+       rt:Height="20000"/>
       <rt:CoarseGeo
        rt:RotationDegree="0"
        rt:HorizontalFlip="False"
@@ -110,9 +113,9 @@
        rt:Scale="1"
        rt:ReweightingIterates="0"/>
       <rt:Geometry
-       rt:AutoFill="False"
-       rt:RotationDegree="0"
-       rt:DistortionAmount="0"
+       rt:AutoFill="True"
+       rt:RotationDegree="0.0"
+       rt:DistortionAmount="0.0"
        rt:HorizontalPerspective="0"
        rt:VerticalPerspective="0"/>
       <rt:CACorrection
@@ -131,14 +134,15 @@
        rt:Enabled="False"
        rt:Scale="1"
        rt:AppliesTo="Cropped area"
-       rt:Method="Bicubic"
-       rt:DataSpecified="0"
-       rt:Width="4281"
-       rt:Height="2871"/>
+       rt:Method="Lanczos"
+       rt:DataSpecified="3"
+       rt:Width="900"
+       rt:Height="900"/>
       <rt:ColorManagement
-       rt:InputProfile="(camera)"
-       rt:WorkingProfile="ProPhoto"
-       rt:OutputProfile="RT_sRGB"
+       rt:InputProfile="(camera ICC)"
+       rt:BlendCMSMatrix="True"
+       rt:WorkingProfile="sRGB"
+       rt:OutputProfile="No ICM: sRGB output"
        rt:FreeGamma="default"
        rt:FreeGammaEnabled="False"
        rt:GammaValue="2.22"
@@ -150,6 +154,10 @@
        rt:HCurve="0;"
        rt:SCurve="0;"
        rt:VCurve="0;"/>
+      <rt:RGBCurves
+       rt:RCurve="0;"
+       rt:GCurve="0;"
+       rt:BCurve="0;"/>
       <rt:RawArithmetic
        rt:DarkFrameFile=""
        rt:DarkFrameAutoSelect="False"
@@ -168,18 +176,18 @@
        rt:LineDenoise="0"/>
       <rt:Demosaicing
        rt:GreenEqThreshold="0"
-       rt:CcSteps="1"
+       rt:CcSteps="0"
        rt:Method="amaze"
        rt:DCBIterations="2"
        rt:DCBEnhance="False"
-       rt:Enhance="False"/>
+       rt:AllEnhance="False"/>
       <rt:RawExposure
-       rt:Exposure="1"
-       rt:HLPreserving="0"
-       rt:Blackzero="0"
-       rt:Blackone="0"
-       rt:Blacktwo="0"
-       rt:Blackthree="0"
+       rt:Exposure="1.0"
+       rt:HLPreserving="0.0"
+       rt:Black0="0.0"
+       rt:Black1="0.0"
+       rt:Black2="0.0"
+       rt:Black3="0.0"
        rt:TwoGreen="True"/>
       </rdf:Description>
      </rdf:li>
@@ -188,25 +196,4 @@
   </rdf:Description>
  </rdf:RDF>
 </x:xmpmeta>
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                                                                                                    
-                           
 <?xpacket end="w"?>

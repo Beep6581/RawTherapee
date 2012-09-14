@@ -45,21 +45,24 @@ namespace rtengine {
     class ProgressListener {
     
          public:
-        /** This member function is called when the percentage of the progress has been changed.
-          * @param p is a number between 0 and 1 */
-          virtual void setProgress (double p) {}
-        /** This member function is called when a textual information corresponding to the progress has been changed.
-          * @param str is the textual information corresponding to the progress */
-          virtual void setProgressStr (Glib::ustring str) {}
-        /** This member function is called when the state of the processing has been changed.
-          * @param inProcessing =true if the processing has been started, =false if it has been stopped */
-          virtual void setProgressState (bool inProcessing) {}
-        /** This member function is called when an error occurs during the operation.
-          * @param descr is the error message */
-          virtual void error (Glib::ustring descr) {}
+           /** This member function is called when the percentage of the progress has been changed.
+             * @param p is a number between 0 and 1 */
+             virtual void setProgress (double p) {}
+           /** This member function is called when a textual information corresponding to the progress has been changed.
+             * @param str is the textual information corresponding to the progress */
+             virtual void setProgressStr (Glib::ustring str) {}
+           /** This member function is called when the state of the processing has been changed.
+             * @param inProcessing =true if the processing has been started, =false if it has been stopped */
+             virtual void setProgressState (bool inProcessing) {}
+           /** This member function is called when an error occurs during the operation.
+             * @param descr is the error message */
+             virtual void error (Glib::ustring descr) {}
+
+             virtual  ~ProgressListener() {}
     };
     
     class ImageSource;
+    class ImageMetaData;
 
   /**
     * This class represents an image loaded into the memory. It is the basis of further processing.
@@ -76,7 +79,7 @@ namespace rtengine {
             virtual cmsHPROFILE getEmbeddedProfile () =0;
           /** Returns a class providing access to the exif and iptc metadata tags of the image.
             * @return An instance of the ImageMetaData class */
-            virtual const ImageMetaData* getMetaData () =0;
+            virtual ImageMetaData* getMetaData () =0;
           /** This is a function used for internal purposes only. */
             virtual ImageSource* getImageSource () =0;
           /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */
@@ -118,6 +121,8 @@ namespace rtengine {
             /** With this member function the staged processor notifies the listener that the preview image has been updated.
               * @param cp holds the coordinates of the current crop rectangle */
             virtual void imageReady (procparams::CropParams cp) {}
+
+            virtual ~PreviewImageListener() {}
     };
 
     /** When the detailed crop image is ready for display during staged processing (thus the changes have been updated),
@@ -131,6 +136,8 @@ namespace rtengine {
             virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp,
 										  procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
             virtual bool getWindow       (int& cx, int& cy, int& cw, int& ch, int& skip) { return false; }
+
+            virtual ~DetailedCropListener() {}
     };
 
     /** This listener is used when the full size of the final image has been changed (e.g. rotated by 90 deg.) */
@@ -142,6 +149,8 @@ namespace rtengine {
               * @param ow is the width of the final image (without resizing and cropping)           
               * @param oh is the height of the final image (without resizing and cropping) */
             virtual void sizeChanged (int w, int h, int ow, int oh) {}
+
+            virtual ~SizeListener() {}
     };
 
     /** This listener is used when the histogram of the final image has changed. */
@@ -155,6 +164,8 @@ namespace rtengine {
               * other for curves backgrounds, histRAW is RAW without colors */
             virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve,
                 LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {}
+
+            virtual ~HistogramListener() {}
     };
 
     /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */
@@ -168,6 +179,8 @@ namespace rtengine {
               * @param hlcompr is the new highlight recovery amount 
               * #param hlcomprthresh is the new threshold for hlcompr*/
             virtual void autoExpChanged (double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh) {}
+
+            virtual ~AutoExpListener() {}
     };
 
     /** This class represents a detailed part of the image (looking through a kind of window).
@@ -185,7 +198,9 @@ namespace rtengine {
             /** Sets the listener of the crop. */
             virtual void setListener (DetailedCropListener* il) {}       
             /** Destroys the crop. */
-            virtual void destroy () {}       
+            virtual void destroy () {}
+
+            virtual ~DetailedCrop() {}
     };
 
     /** This is a staged, cached image processing manager with partial image update support.  */

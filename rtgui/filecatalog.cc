@@ -38,8 +38,6 @@ using namespace std;
 
 #define CHECKTIME 2000
 
-extern Glib::ustring argv0;
-
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		filepanel(filepanel),
 		selectedDirectoryId(1),
@@ -48,6 +46,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		dirlistener(NULL),
 		hasValidCurrentEFS(false),
 		filterPanel(NULL),
+		exportPanel(NULL),
 		previewsToLoad(0),
 		previewsLoaded(0),
 		coarsePanel(cp),
@@ -869,43 +868,44 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 
         #pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
-            rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
+            rtengine::procparams::PartialProfile pprofile(false, false);
+            pprofile = tbe[i]->thumbnail->getPartialProfile();
 
-            // if fast mode is selected, override (disable) prams
+            // if fast mode is selected, override (disable) params
             // controlling time and resource consuming tasks
             // and also those which effect is not pronounced after reducing the image size
             // TODO!!! could expose selections below via preferences
             if (fastmode){
-				if (options.fastexport_bypass_sharpening         ) params.sharpening.enabled          = false;
-				if (options.fastexport_bypass_sharpenEdge        ) params.sharpenEdge.enabled         = false;
-				if (options.fastexport_bypass_sharpenMicro       ) params.sharpenMicro.enabled        = false;
-				//if (options.fastexport_bypass_lumaDenoise        ) params.lumaDenoise.enabled         = false;
-				//if (options.fastexport_bypass_colorDenoise       ) params.colorDenoise.enabled        = false;
-				if (options.fastexport_bypass_defringe           ) params.defringe.enabled            = false;
-				if (options.fastexport_bypass_dirpyrDenoise      ) params.dirpyrDenoise.enabled       = false;
-				if (options.fastexport_bypass_sh_hq              ) params.sh.hq                       = false;
-				if (options.fastexport_bypass_dirpyrequalizer    ) params.dirpyrequalizer.enabled     = false;
-				if (options.fastexport_bypass_raw_all_enhance    ) params.raw.all_enhance             = false;
-				if (options.fastexport_bypass_raw_ccSteps        ) params.raw.ccSteps                 = 0;
-				if (options.fastexport_bypass_raw_dcb_iterations ) params.raw.dcb_iterations          = 0;
-				if (options.fastexport_bypass_raw_dcb_enhance    ) params.raw.dcb_enhance             = false;
-				if (options.fastexport_bypass_raw_ca             ) {params.raw.ca_autocorrect =false; params.raw.cared=0; params.raw.cablue=0;}
-				if (options.fastexport_bypass_raw_linenoise      ) params.raw.linenoise               = 0;
-				if (options.fastexport_bypass_raw_greenthresh    ) params.raw.greenthresh             = 0;
-				if (options.fastexport_bypass_raw_df             ) {params.raw.df_autoselect = false; params.raw.dark_frame="";}
-				if (options.fastexport_bypass_raw_ff             ) {params.raw.ff_AutoSelect = false; params.raw.ff_file="";}
-				params.raw.dmethod       = options.fastexport_raw_dmethod     ;
-				params.icm.input         = options.fastexport_icm_input       ;
-				params.icm.working       = options.fastexport_icm_working     ;
-				params.icm.output        = options.fastexport_icm_output      ;
-				params.icm.gamma         = options.fastexport_icm_gamma       ;
-				params.resize.enabled    = options.fastexport_resize_enabled  ;
-				params.resize.scale      = options.fastexport_resize_scale    ;
-				params.resize.appliesTo  = options.fastexport_resize_appliesTo;
-				params.resize.method     = options.fastexport_resize_method   ;
-				params.resize.dataspec   = options.fastexport_resize_dataspec ;
-				params.resize.width      = options.fastexport_resize_width    ;
-				params.resize.height     = options.fastexport_resize_height   ;
+				if (options.fastexport_bypass_sharpening         ) pprofile.pparams->sharpening.enabled          = false;
+				if (options.fastexport_bypass_sharpenEdge        ) pprofile.pparams->sharpenEdge.enabled         = false;
+				if (options.fastexport_bypass_sharpenMicro       ) pprofile.pparams->sharpenMicro.enabled        = false;
+				//if (options.fastexport_bypass_lumaDenoise        ) pprofile.pparams->lumaDenoise.enabled         = false;
+				//if (options.fastexport_bypass_colorDenoise       ) pprofile.pparams->colorDenoise.enabled        = false;
+				if (options.fastexport_bypass_defringe           ) pprofile.pparams->defringe.enabled            = false;
+				if (options.fastexport_bypass_dirpyrDenoise      ) pprofile.pparams->dirpyrDenoise.enabled       = false;
+				if (options.fastexport_bypass_sh_hq              ) pprofile.pparams->sh.hq                       = false;
+				if (options.fastexport_bypass_dirpyrequalizer    ) pprofile.pparams->dirpyrequalizer.enabled     = false;
+				//if (options.fastexport_bypass_raw_all_enhance    ) pprofile.pparams->raw.all_enhance             = false;
+				if (options.fastexport_bypass_raw_ccSteps        ) pprofile.pparams->raw.ccSteps                 = 0;
+				if (options.fastexport_bypass_raw_dcb_iterations ) pprofile.pparams->raw.dcb_iterations          = 0;
+				if (options.fastexport_bypass_raw_dcb_enhance    ) pprofile.pparams->raw.dcb_enhance             = false;
+				if (options.fastexport_bypass_raw_ca             ) {pprofile.pparams->raw.ca_autocorrect =false; pprofile.pparams->raw.cared=0; pprofile.pparams->raw.cablue=0;}
+				if (options.fastexport_bypass_raw_linenoise      ) pprofile.pparams->raw.linenoise               = 0;
+				if (options.fastexport_bypass_raw_greenthresh    ) pprofile.pparams->raw.greenthresh             = 0;
+				if (options.fastexport_bypass_raw_df             ) {pprofile.pparams->raw.df_autoselect = false; pprofile.pparams->raw.dark_frame="";}
+				if (options.fastexport_bypass_raw_ff             ) {pprofile.pparams->raw.ff_AutoSelect = false; pprofile.pparams->raw.ff_file="";}
+				pprofile.pparams->raw.dmethod       = options.fastexport_raw_dmethod     ;
+				pprofile.pparams->icm.input         = options.fastexport_icm_input       ;
+				pprofile.pparams->icm.working       = options.fastexport_icm_working     ;
+				pprofile.pparams->icm.output        = options.fastexport_icm_output      ;
+				pprofile.pparams->icm.gamma         = options.fastexport_icm_gamma       ;
+				pprofile.pparams->resize.enabled    = options.fastexport_resize_enabled  ;
+				pprofile.pparams->resize.scale      = options.fastexport_resize_scale    ;
+				pprofile.pparams->resize.appliesTo  = options.fastexport_resize_appliesTo;
+				pprofile.pparams->resize.method     = options.fastexport_resize_method   ;
+				pprofile.pparams->resize.dataspec   = options.fastexport_resize_dataspec ;
+				pprofile.pparams->resize.width      = options.fastexport_resize_width    ;
+				pprofile.pparams->resize.height     = options.fastexport_resize_height   ;
             }
 
             rtengine::ImageMetaData* idata = tbe[i]->thumbnail->getMetadata();
@@ -919,9 +919,9 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
                     }
             	}
             }
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params, idata ,options.outputMetaData );
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, *pprofile.pparams, idata ,options.outputMetaData );
             double tmpscale;
-            rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
+            rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (*pprofile.pparams, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
 
             int pw, ph;
             guint8* prev=NULL;
@@ -940,7 +940,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
             // processThumbImage is the processing intensive part, but adding to queue must be ordered
             #pragma omp ordered
             {
-                entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
+                entries.push_back(new BatchQueueEntry (pjob, *pprofile.pparams, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
             }
             }
 

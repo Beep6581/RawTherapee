@@ -426,7 +426,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     // Color correction (only when running on full resolution)
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
-    colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageMetaData*>(getMetaData()))->getCamera());
+    colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, getMetaData()->getCamera());
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2009,16 +2009,22 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
 
     if (inProfile == "(embedded)" && embedded) {
 		in = embedded;
-	} else if (inProfile=="(cameraICC)") {
+	}
+    // Hombre: removed because DCP profiles can't be read yet
+    /*else if (inProfile=="(cameraICC)") {
         // DCPs have higher quality, so use them first
         *dcpProf=dcpStore->getStdProfile(camName);
         if (*dcpProf==NULL)  in = iccStore->getStdProfile(camName);
-    } else if (inProfile!="(camera)" && inProfile!="") {
+    }*/
+    else if (inProfile!="(camera)" && inProfile!="") {
         Glib::ustring normalName=inProfile;
         if (!inProfile.compare (0, 5, "file:")) normalName=inProfile.substr(5);
 
+        // Hombre: removed because DCP profiles can't be read yet
+        /*
         if (dcpStore->isValidDCPFileName(normalName)) *dcpProf=dcpStore->getProfile(normalName);
         if (*dcpProf==NULL) in = iccStore->getProfile (inProfile);
+        */
     }
     
     // "in" might be NULL because of "not found". That's ok, we take the cam profile then

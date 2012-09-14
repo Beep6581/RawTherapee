@@ -20,11 +20,10 @@
 #include "../rtengine/safegtk.h"
 #include "guiutils.h"
 #include "rtimage.h"
+#include <cstdio>
 
 using namespace rtengine;
 using namespace rtengine::procparams;
-using namespace rtexif;
-extern Glib::ustring argv0;
 
 ExifPanel::ExifPanel () : idata(NULL) {
 
@@ -111,7 +110,7 @@ void ExifPanel::setImageData (const ImageMetaData* id) {
     exifTreeModel->clear ();
 
     if( !idata )
-    	return;
+        return;
 
     std::vector<ExifPair>  list=idata->getExifData ();
 
@@ -119,13 +118,16 @@ void ExifPanel::setImageData (const ImageMetaData* id) {
     std::sort( list.begin(),list.end());
     Glib::ustring currentGroup="";
     Gtk::TreeModel::Children chldr=exifTreeModel->children();
-    for( std::vector<ExifPair>::iterator iter= list.begin(); iter != list.end(); iter++ ){
+    for( std::vector<ExifPair>::iterator iter= list.begin(); iter != list.end(); iter++ ) {
         if( iter->group != currentGroup ){
-        	chldr = addGroup (exifTreeModel->children(), iter->group );
-        	currentGroup = iter->group;
+            chldr = addGroup (exifTreeModel->children(), iter->group );
+            currentGroup = iter->group;
         }
+        if (iter->value.length() > 80 )
+            iter->value = iter->value.substr(0, 80) + " [...]";
         addTag (chldr, iter->field, iter->value );
     }
+
 }
 
 Gtk::TreeModel::Children ExifPanel::addGroup (const Gtk::TreeModel::Children& root, Glib::ustring group )
@@ -141,10 +143,11 @@ Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root
 {
     Gtk::TreeModel::Row row = *(exifTreeModel->append(root));
 
-    row[exifColumns.orig_value]    = value;
+    row[exifColumns.orig_value] = value;
 
     row[exifColumns.field] = field;
-    row[exifColumns.value] = Glib::ustring("<i>") + value + "</i>";
+    row[exifColumns.value] = value;
+    row[exifColumns.value] = Glib::ustring("<i>") + value +  Glib::ustring("</i>");
     
     return row.children();
 }

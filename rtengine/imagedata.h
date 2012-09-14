@@ -37,11 +37,13 @@ class SnapshotInfo{
 		Glib::ustring   outputFilename; // If saved or in batch queue, this contains the relative path to the output file
 		bool			queued; // processing pending
 		bool			saved; // snapshot saved
-		procparams::ProcParams params; // Processing parameters
+		procparams::PartialProfile pprofile; // Processing parameters
 
 		static const char *kCurrentSnapshotName;
 
-		SnapshotInfo():id(-1),queued(false),saved(false){}
+		SnapshotInfo():id(-1),queued(false),saved(false), pprofile(true, true) {}
+		~SnapshotInfo() { pprofile.deleteInstance(); }
+		SnapshotInfo& operator=(const SnapshotInfo& rhs);
 };
 
 typedef std::map< unsigned int , SnapshotInfo > snapshotsList_t;
@@ -69,180 +71,187 @@ inline bool operator<(const ExifPair &v1, const ExifPair &v2 )
 
 class ImageMetaData {
 
-  protected:
-    Exiv2::XmpData  xmpData;  // This contains all metadata: EXIF(partial) and IPTC extracted and more XMP tags added later
-    Exiv2::ExifData exifData; // This contains all EXIF data read from image (included makernotes): is valid only if exifExtracted is true
-    Exiv2::IptcData iptcData; // Buffer for old IIM iptc data
-    bool exifExtracted;       // Exif are fully read only first time, when xmp data is written with most important tiff/exif tags
-    bool xmpEmbedded;         // Write xmp inside image file
-    Glib::ustring fname;      // Filename of the original photo.
-    Glib::ustring fnameMeta;  // Filename of persisted metadata
-    Glib::ustring fnameMeta2; // Backup of persisted metadata  
-  
-    /** Init xmp RT data */
-    int initRTXMP( );
+protected:
+	Exiv2::XmpData  xmpData;  // This contains all metadata: EXIF(partial) and IPTC extracted and more XMP tags added later
+	Exiv2::ExifData exifData; // This contains all EXIF data read from image (included makernotes): is valid only if exifExtracted is true
+	Exiv2::IptcData iptcData; // Buffer for old IIM iptc data
+	bool exifExtracted;       // Exif are fully read only first time, when xmp data is written with most important tiff/exif tags
+	bool xmpEmbedded;         // Write xmp inside image file
+	Glib::ustring fnameMeta;  // Filename of persisted metadata
+	Glib::ustring fnameMeta2; // Backup of persisted metadata
 
-    /** (Re)Init metadata from image */
-    int readMetadataFromImage();
+	/** Init xmp RT data */
+	int initRTXMP( );
 
-  public:
-    // Equal to the definition in TIFF/EXIF tag
-    typedef enum
-    {
-    	ePhotoOrientationNormal=1,
-    	ePhotoOrientationMirrorHoriz=2,
-    	ePhotoOrientationRotate180=3,
-    	ePhotoOrientationMirrorVert=4,
-    	ePhotoOrientationMirHorz270=5,
-    	ePhotoOrientationRotate90=6,
-    	ePhotoOrientationMirHorz90=7,
-    	ePhotoOrientationRotate270=8
-    }ePhotoOrientation;    
-  
+	/** (Re)Init metadata from image */
+	int readMetadataFromImage();
 
-    ImageMetaData (const Glib::ustring &fname, const Glib::ustring &fnameMeta, const Glib::ustring &fnameMeta2="" );
-    ImageMetaData ( const ImageMetaData &v);
-    virtual ~ImageMetaData ();
 
-    /** Prepare metadata for writing */
-    void            merge( bool syncExif=true, bool syncIPTC=true, bool removeProcessing=true );
+public:
+	// Equal to the definition in TIFF/EXIF tag
+	typedef enum
+	{
+		ePhotoOrientationNormal=1,
+		ePhotoOrientationMirrorHoriz=2,
+		ePhotoOrientationRotate180=3,
+		ePhotoOrientationMirrorVert=4,
+		ePhotoOrientationMirHorz270=5,
+		ePhotoOrientationRotate90=6,
+		ePhotoOrientationMirHorz90=7,
+		ePhotoOrientationRotate270=8
+	}ePhotoOrientation;
 
-    /** Set output image informations in xmp tags */
-    void setOutputImageInfo(int w, int h, int bits );
+	Glib::ustring fname;      // Filename of the original photo.
 
-    /** Write metadata to image */
-    bool            writeToImage( const Glib::ustring &fname, bool writeExif=true, bool writeIPTC=true, bool writeXmp=true ) const;
+	ImageMetaData (const Glib::ustring &fname, const Glib::ustring &fnameMeta, const Glib::ustring &fnameMeta2="" );
+	ImageMetaData ( const ImageMetaData &v);
+	virtual            ~ImageMetaData ();
 
-    /** Load xmp data from sidecar file */
-    int             loadXMP( );
+	/** Prepare metadata for writing */
+	void               merge( bool syncExif=true, bool syncIPTC=true, bool removeProcessing=true );
 
-    /** Save xmp data into sidecar file */
-    int             saveXMP( ) const;
+	/** Set output image informations in xmp tags */
+	void               setOutputImageInfo(int w, int h, int bits );
 
-    /** Re-read metadata embedded in imagefile (delete previously modified data)*/
-    int             resync( );
+	/** Write metadata to image */
+	bool               writeToImage( const Glib::ustring &fname, bool writeExif=true, bool writeIPTC=true, bool writeXmp=true ) const;
 
-    /** Create a new snapshot with given name */
-	int 			newSnapshot(const Glib::ustring &name, const rtengine::procparams::ProcParams& params, bool queued=false );
+	/** Load xmp data from sidecar file */
+	int                loadXMP( );
+
+	/** Save xmp data into sidecar file */
+	int                saveXMP( ) const;
+
+	/** Re-read metadata embedded in imagefile (delete previously modified data)*/
+	int                resync( );
+
+	/** Create a new snapshot with given name */
+	int                newSnapshot(const Glib::ustring &newName, const rtengine::procparams::PartialProfile& pprofile, bool queued=false);
 
 	/** Delete a snapshot */
-	bool 			deleteSnapshot( int id );
+	bool               deleteSnapshot( int id );
 
 	/** Delete all procparams saved inside XMP */
-	bool            deleteAllSnapshots();
+	bool               deleteAllSnapshots();
 
 	/** Rename a snapshot*/
-	bool 			renameSnapshot(int id, const Glib::ustring &newname );
+	bool               renameSnapshot(int id, const Glib::ustring &newname );
 
 	/** Return a l ist of all readable snapshots contained in xmp */
-	snapshotsList_t getSnapshotsList();
+	snapshotsList_t    getSnapshotsList();
 
 	/** Get a snpashot by id*/
-	SnapshotInfo    getSnapshot( int id );
+	SnapshotInfo       getSnapshot( int id );
 
 	/** Get a snapshot identifier by its name*/
-	int             getSnapshotId( const Glib::ustring &snapshotName=SnapshotInfo::kCurrentSnapshotName );
+	int                getSnapshotId( const Glib::ustring &snapshotName=SnapshotInfo::kCurrentSnapshotName );
 
 	/** Update porcessing parameters of a snapshot (usually current))*/
-	bool            updateSnapshot( int id, const rtengine::procparams::ProcParams& params);
+	bool               updateSnapshot( int id, const rtengine::procparams::PartialProfile& PartialProfile);
 
 	/** Return number of snapshot queued*/
-	int				getNumQueued();
+	int                getNumQueued();
 
 	/** Set/reset the flag queued*/
-	bool			setQueuedSnapshot( int id, bool inqueue=true );
+	bool               setQueuedSnapshot( int id, bool inqueue=true );
 
 	/** Set/reset the flag saved adn optionally the filename of the output file*/
-	bool			setSavedSnapshot( int id, bool saved=true, const Glib::ustring &filename="" );
+	bool               setSavedSnapshot( int id, bool saved=true, const Glib::ustring &filename="" );
 
 	/** Return number of snapshots saved */
-	int				getSavedSnapshots( );
+	int                getSavedSnapshots( );
 
 	/** Full EXIF is read only when thumbnail is loaded first time, so, to access full EXIF call updateExif*/
-	int             updateExif();
+	void               updateExif();
 
 	/** call updateExif() before getting ExifData */
-	std::vector<ExifPair>     getExifData () const;
+	std::vector<ExifPair> getExifData () const;
 
 	/** return all IPTC metadata */
-    const rtengine::MetadataList getIPTCData () const;
+	const rtengine::MetadataList getIPTCData () const;
 
-    /** return true if changes have been applied */
-    bool  getIPTCDataChanged() const;
+	/** return true if changes have been applied */
+	bool               getIPTCDataChanged() const;
 
-    /** change IPTC data */
-    void setIPTCData( const rtengine::MetadataList &meta );
+	/** change IPTC data */
+	void               setIPTCData( const rtengine::MetadataList &meta );
 
-    /** if embedded, RT saves metadata inside source image and not in sidecar xmp file */
-    bool isEmbedded() const { return xmpEmbedded; }
+	/** if embedded, RT saves metadata inside source image and not in sidecar xmp file */
+	bool               isEmbedded() const { return xmpEmbedded; }
 
-    /** @return a struct containing the date and time of the image */
-    struct tm   getDateTime ();
+	/** @return a struct containing the date and time of the image */
+	struct tm          getDateTime ();
 
-    /** @return a timestamp containing the date and time of the image */
-    time_t      getDateTimeAsTS();
+	/** @return a timestamp containing the date and time of the image */
+	time_t             getDateTimeAsTS();
 
-    /** @return the ISO of the image */
-    int         getISOSpeed ();
+	/** @return the ISO of the image */
+	int                getISOSpeed ();
 
-    /** @return the F number of the image */
-    double      getFNumber  ();
+	/** @return the F number of the image */
+	double             getFNumber  ();
 
-    /** @return the focal length used at the exposure */
-    double      getFocalLen () ;
+	/** @return the focal length used at the exposure */
+	double             getFocalLen ();
 
-    /** @return the shutter speed */
-    double      getShutterSpeed ();
+	/** @return the focal length used at the exposure in 35mm film equivalence */
+	double             getFocalLen35mm ();
 
-    /** @return the exposure compensation */
-    double      getExpComp  ();
+	/** @return the focus distance used at the exposure */
+	float              getFocusDist ();
 
-    /** @return if flash fired */
-    bool        getFlashFired();
+	/** @return the shutter speed */
+	double             getShutterSpeed ();
 
-    /** @return the maker of the camera */
-    std::string getMake     ();
+	/** @return the exposure compensation */
+	double             getExpComp  ();
 
-    /** @return the model of the camera */
-    std::string getModel    ();
+	/** @return if flash fired */
+	bool               getFlashFired();
 
-    /** @return the complete name of the camera for displaying purpose: Maker and Model are simplified like dcraw */
-    std::string getCamera   ();
+	/** @return the maker of the camera */
+	std::string        getMake     ();
 
-    /** @return the lens on the camera  */
-    std::string getLens     ();
+	/** @return the model of the camera */
+	std::string        getModel    ();
 
-    /** @return the serial number of the camera if available */
-    std::string getSerialNumber ();
+	/** @return the complete name of the camera for displaying purpose: Maker and Model are simplified like dcraw */
+	std::string        getCamera   ();
 
-    /** @return the orientation of the image */
-    ePhotoOrientation getOrientation ();
+	/** @return the lens on the camera  */
+	std::string        getLens     ();
 
-    /** Rank of the photo 0..1, -1= rejected*/
-    void        setRank  (int rank);
-    int         getRank  ();
+	/** @return the serial number of the camera if available */
+	std::string        getSerialNumber ();
 
-    /** Label is used to stick a color flag */
-    void        setLabel( const Glib::ustring &colorlabel );
-    Glib::ustring getLabel();
+	/** @return the orientation of the image */
+	ePhotoOrientation  getOrientation ();
 
-    /** Functions to convert between floating point and string representation of shutter and aperture */
-      static std::string apertureToString (double aperture);
-    /** Functions to convert between floating point and string representation of shutter and aperture */
-      static std::string shutterToString (double shutter);
-    /** Functions to convert between floating point and string representation of shutter and aperture */
-      static double apertureFromString (std::string shutter);
-    /** Functions to convert between floating point and string representation of shutter and aperture */
-      static double shutterFromString (std::string shutter);
-    /** Functions to convert between floating point and string representation of exposure compensation */
-      static std::string expcompToString (double expcomp, bool maskZeroexpcomp);
+	/** Rank of the photo 0..1, -1= rejected*/
+	void               setRank  (int rank);
+	int                getRank  ();
 
-    /** Reads metadata from file.
-      * @param fname is the name of the file
-      * @param rml is a struct containing information about metadata location. Use it only for raw files. In case
-      * of jpgs and tiffs pass a NULL pointer.
-      * @return The metadata */
-      static ImageMetaData* fromFile (const Glib::ustring& fname, const Glib::ustring &fnameMeta, const Glib::ustring &fnameMeta2="", bool embed=false);
+	/** Label is used to stick a color flag */
+	void               setLabel( const Glib::ustring &colorlabel );
+	Glib::ustring      getLabel();
+
+	/** Functions to convert between floating point and string representation of shutter and aperture */
+	static std::string apertureToString (double aperture);
+	/** Functions to convert between floating point and string representation of shutter and aperture */
+	static std::string shutterToString (double shutter);
+	/** Functions to convert between floating point and string representation of shutter and aperture */
+	static double      apertureFromString (std::string shutter);
+	/** Functions to convert between floating point and string representation of shutter and aperture */
+	static double      shutterFromString (std::string shutter);
+	/** Functions to convert between floating point and string representation of exposure compensation */
+	static std::string expcompToString (double expcomp, bool maskZeroexpcomp);
+
+	/** Reads metadata from file.
+	  * @param fname is the name of the file
+	  * @param rml is a struct containing information about metadata location. Use it only for raw files. In case
+	  * of jpgs and tiffs pass a NULL pointer.
+	  * @return The metadata */
+	static ImageMetaData* fromFile (const Glib::ustring& fname, const Glib::ustring &fnameMeta, const Glib::ustring &fnameMeta2="", bool embed=false);
 };
 }
 #endif
