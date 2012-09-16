@@ -48,7 +48,7 @@ namespace rtengine {
     const float Color::D50z=0.82521;
     const double Color::u0=4.0*D50x/(D50x+15+3*D50z);
     const double Color::v0=9.0/(D50x+15+3*D50z);
-
+	const double Color::epskap=8.0;
     /*
      * Munsell Lch correction
      * Copyright (c) 2011  Jacques Desmis <jdesmis@gmail.com>
@@ -402,8 +402,10 @@ namespace rtengine {
         float fz = fy - (0.005 * b);
 
         x = 65535.0*f2xyz(fx)*D50x;
-        y = 65535.0*f2xyz(fy);
+     //   y = 65535.0*f2xyz(fy);
         z = 65535.0*f2xyz(fz)*D50z;
+		y=(L>epskap) ? 65535.0*fy*fy*fy : 65535.0*L/kappa;
+		
     }
 
     void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b) {
@@ -411,9 +413,9 @@ namespace rtengine {
         float X1 = X/D50x;
         float Z1 = Z/D50z;
 
-        float fx = (X1<65535.0 ? cachef[X1] : (327.68*exp(log(X1/MAXVAL)/3.0 )));
-        float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));
-        float fz = (Z1<65535.0 ? cachef[Z1] : (327.68*exp(log(Z1/MAXVAL)/3.0 )));
+        float fx = (X1<65535.0 ? (cachef[std::max(X1,0.f)]) : (327.68*exp(log(X1/MAXVAL)/3.0 )));
+        float fy = (Y<65535.0  ? (cachef[std::max(Y,0.f)])  : (327.68*exp(log(Y/MAXVAL)/3.0 )));
+        float fz = (Z1<65535.0 ? (cachef[std::max(Z1,0.f)]) : (327.68*exp(log(Z1/MAXVAL)/3.0 )));
 
         L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
         a = (500.0 * (fx - fy) );
@@ -425,10 +427,12 @@ namespace rtengine {
         float fy = (0.00862069 * L/327.68) + 0.137932; // (L+16)/116
         float fx = (0.002 * a/327.68) + fy;
         float fz = fy - (0.005 * b/327.68);
+		float LL=L/327.68;
 
         float X = 65535.0*f2xyz(fx)*D50x;
-        Y = 65535.0*f2xyz(fy);
+       // Y = 65535.0*f2xyz(fy);
         float Z = 65535.0*f2xyz(fz)*D50z;
+		Y=(LL>epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/kappa;
 
         u = 4.0*X/(X+15*Y+3*Z)-u0;
         v = 9.0*Y/(X+15*Y+3*Z)-v0;
@@ -669,7 +673,7 @@ namespace rtengine {
     void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, double wip[3][3], const bool isHLEnabled, const float lowerCoef, const float higherCoef)
 #endif
     {
-        const float ClipLevel = 65534.5f;
+        const float ClipLevel = 65535.0f;
     	bool inGamut;
 #ifdef _DEBUG
         neg=false, more_rgb=false;
@@ -687,8 +691,10 @@ namespace rtengine {
             float fz = fy - (0.005f * bprov1);
 
             float x_ = 65535.0f * f2xyz(fx)*D50x;
-            float y_ = 65535.0f * f2xyz(fy);
+           // float y_ = 65535.0f * f2xyz(fy);
             float z_ = 65535.0f * f2xyz(fz)*D50z;
+			float y_=(Lprov1>epskap) ? 65535.0*fy*fy*fy : 65535.0*Lprov1/kappa;
+
             xyz2rgb(x_,y_,z_,R,G,B,wip);
 
             // gamut control before saturation to put Lab values in future gamut, but not RGB
@@ -696,23 +702,19 @@ namespace rtengine {
 #ifdef _DEBUG
                 neg=true;
 #endif
-                if (Lprov1 < 0.01f)
-                    Lprov1 = 0.05f;
+                if (Lprov1 < 0.01f) Lprov1 = 0.01f;
                 Chprov1 *= higherCoef; // decrease the chromaticity value
-                if (Chprov1 <= 3.0f)
-                    Lprov1 += lowerCoef;
+                if (Chprov1 <= 3.0f) Lprov1 += lowerCoef;
 				inGamut = false;
-            }
+                } else
 			// if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
-            else if (!isHLEnabled && (R>ClipLevel || G>ClipLevel || B>ClipLevel) && (R<=ClipLevel || G<=ClipLevel || B<=ClipLevel)) {
+                if (!isHLEnabled && (R>ClipLevel || G>ClipLevel || B>ClipLevel)) {
 #ifdef _DEBUG
                 more_rgb=true;
 #endif
-                if (Lprov1 > 99.99f)
-                    Lprov1 = 99.8f;
+                if (Lprov1 > 99.999f) Lprov1 = 99.98f;
                 Chprov1 *= higherCoef;
-                if (Chprov1 <= 3.0f)
-                    Lprov1 -= lowerCoef;
+                if (Chprov1 <= 3.0f) Lprov1 -= lowerCoef;
 				inGamut = false;
             }
         }
@@ -783,9 +785,9 @@ namespace rtengine {
 
                     //gamut control : Lab values are in gamut
 #ifdef _DEBUG
-                    gamutLchonly(HH, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.4f, 0.95f, neg, more_rgb);
+                    gamutLchonly(HH, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f, neg, more_rgb);
 #else
-                    gamutLchonly(HH, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.4f, 0.95f);
+                    gamutLchonly(HH, Lprov1, Chprov1, R, G, B, wip, isHLEnabled, 0.15f, 0.96f);
 #endif
 
 #ifdef _DEBUG
