@@ -634,8 +634,11 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 					factorskin= 1.0f+(interm*scale)/100.0f;    
 					factorskinext=1.0f+(interm*scaleext)/100.0f;}
 				else {
-					factorskin= chromapro*scale;   
-					factorskinext= chromapro*scaleext;   
+					//factorskin= chromapro*scale;   
+					//factorskinext= chromapro*scaleext;   
+					factorskin= chromapro ; // +(chromapro)*scale;   
+					factorskinext= chromapro ;// +(chromapro)*scaleext;   
+			
 					}
 				factorsat=chromapro;
 				factor=factorsat;
@@ -672,8 +675,11 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 					factorskinext=1.0f+(interm*scaleext)/100.0f;
 					}
 				else {
-					factorskin= chromaCfactor*scale;    
-					factorskinext=chromaCfactor*scaleext;
+					//factorskin= chromaCfactor*scale;    
+					//factorskinext=chromaCfactor*scaleext;
+					factorskin= chromaCfactor; // +(1.0f-chromaCfactor)*scale;   
+					factorskinext= chromaCfactor ; //+(1.0f-chromaCfactor)*scaleext;   
+					
 					}
 				
 				factorsat=chromaCfactor;

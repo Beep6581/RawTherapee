@@ -335,7 +335,7 @@ HISTORY_MSG_109;Resize Bounding Box
 HISTORY_MSG_110;Resizing applies o  
 HISTORY_MSG_111;Avoid Color Shift
 HISTORY_MSG_112;--unused--
-HISTORY_MSG_113;Red and skin oversaturation protection
+HISTORY_MSG_113;Red and skin tones protection
 HISTORY_MSG_114;DCB Iterations
 HISTORY_MSG_115;False Color Iterations
 HISTORY_MSG_116;Enhanced DCB
@@ -1017,7 +1017,7 @@ TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
 TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to Chromaticity
 TP_LABCURVE_LABEL;Lab Adjustments
-TP_LABCURVE_RSTPROTECTION;Red and skin oversaturation protection
+TP_LABCURVE_RSTPROTECTION;Red and skin tones protection
 TP_LENSGEOM_AUTOCROP;    Auto Crop
 TP_LENSGEOM_FILL;Auto Fill
 TP_LENSGEOM_LABEL;Lens / Geometry
