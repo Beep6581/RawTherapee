@@ -423,21 +423,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			
 			float fx,fy,fz;
 			
-			//if (x>0) {
-				fx = (x<65535.0f ? cachef[x] : (327.68f*exp(log(x/MAXVAL)/3.0f )));
-			//} else {
-			//	fx = (x>-65535.0 ? -cachef[-x] : (-327.68*exp(log(-x/MAXVAL)/3.0 )));
-			//}
-			//if (y>0) {
-				fy = (y<65535.0f ? cachef[y] : (327.68f*exp(log(y/MAXVAL)/3.0f )));
-			//} else {
-			//	fy = (y>-65535.0 ? -cachef[-y] : (-327.68*exp(log(-y/MAXVAL)/3.0 )));
-			//}
-			//if (z>0) {
-				fz = (z<65535.0f ? cachef[z] : (327.68f*exp(log(z/MAXVAL)/3.0f )));
-			//} else {
-			//	fz = (z>-65535.0 ? -cachef[-z] : (-327.68*exp(log(-z/MAXVAL)/3.0 )));
-			//}
+			fx = (x<65535.0f ? cachef[std::max(x,0.f)] : (327.68f*exp(log(x/MAXVAL)/3.0f )));
+			fy = (y<65535.0f ? cachef[std::max(y,0.f)] : (327.68f*exp(log(y/MAXVAL)/3.0f )));
+			fz = (z<65535.0f ? cachef[std::max(z,0.f)] : (327.68f*exp(log(z/MAXVAL)/3.0f )));
 
 			lab->L[i][j] = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
 			lab->a[i][j] = (500.0f * (fx - fy) );
@@ -744,10 +732,10 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 					bool neg=false;
 					bool more_rgb=false;
 					//gamut control : Lab values are in gamut
-					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.4f, 0.95f, neg, more_rgb);
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
 #else
 					//gamut control : Lab values are in gamut
-					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.4f, 0.95f);
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
 #endif
 
 					lnew->L[i][j]=Lprov1*327.68f;
