@@ -42,20 +42,18 @@ template<class T> T** allocArray (int W, int H) {
 }
 
 #define HR_SCALE 2
-StdImageSource::StdImageSource () : ImageSource(), img(NULL), plistener(NULL) {
-
+StdImageSource::StdImageSource (ImageMetaData* meta)
+: ImageSource(meta), img(NULL), plistener(NULL)
+{
     hrmap[0] = NULL;
     hrmap[1] = NULL;
     hrmap[2] = NULL;
 	needhr = NULL;
 	embProfile = NULL;
-    idata = NULL;
  }
 
 StdImageSource::~StdImageSource () {
 
-    delete idata;
-    
     if (hrmap[0]!=NULL) {
         int dh = img->height/HR_SCALE;
         freeArray<float>(hrmap[0], dh);
@@ -88,24 +86,25 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
     }
 
     embProfile = img->getEmbeddedProfile ();
-    idata = new ImageData (fname); 
-    if (idata->hasExif()) {
-        int deg = 0;
-        if (idata->getOrientation()=="Rotate 90 CW") {
-            deg = 90;
-        }
-        else if (idata->getOrientation()=="Rotate 180") {
-            deg = 180;
-        }
-        else if (idata->getOrientation()=="Rotate 270 CW") {
-            deg = 270;
-        }
-        if (deg) {
-            Image16* rot = img->rotate(deg);
-            delete img;
-            img = rot;
-        }
-    }
+
+	int deg = 0;
+	if( idata ){
+		if (idata->getOrientation()==ImageMetaData::ePhotoOrientationRotate90) {
+			deg = 90;
+		}
+		else if (idata->getOrientation()==ImageMetaData::ePhotoOrientationRotate180) {
+			deg = 180;
+		}
+		else if (idata->getOrientation()==ImageMetaData::ePhotoOrientationRotate270) {
+			deg = 270;
+		}
+	}
+	if (deg) {
+		Image16* rot = img->rotate(deg);
+		delete img;
+		img = rot;
+	}
+
 
     if (plistener) {
         plistener->setProgressStr ("PROGRESSBAR_READY");

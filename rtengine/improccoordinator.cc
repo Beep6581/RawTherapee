@@ -118,7 +118,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		rp.ca_autocorrect  = false;
 		rp.hotdeadpix_filt = false;
 		rp.ccSteps = 0;
-		rp.all_enhance = false;
+		//rp.all_enhance = false;
 	}
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);

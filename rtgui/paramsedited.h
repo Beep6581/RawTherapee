@@ -125,14 +125,6 @@ class VibranceParamsEdited {
         bool skintonescurve;
 };
 
-/*class ColorBoostParamsEdited {
-
-    public: 
-        bool amount;
-        bool avoidclip;
-        bool enable_saturationlimiter;
-        bool rstprotection;
-};*/
 
 class WBParamsEdited {
 
@@ -141,28 +133,6 @@ class WBParamsEdited {
         bool temperature;
         bool green;
 };
-
-/*class ColorShiftParamsEdited {
-
-    public:
-        bool a;
-        bool b;
-};*/
-
-/*class LumaDenoiseParamsEdited {
-
-    public:
-        bool enabled;
-        bool radius;
-        bool edgetolerance;
-};*/
-
-/*class ColorDenoiseParamsEdited {
-
-    public:
-        bool enabled;
-        bool amount;
-};*/
 
 class DefringeParamsEdited {
 	
@@ -321,10 +291,9 @@ class ColorManagementParamsEdited {
         bool working;
         bool output;
 		bool gamma;
+		bool freegamma;
 		bool gampos;
 		bool slpos;
-		bool gamfree;
-		bool freegamma;		
 };
 
 class DirPyrEqualizerParamsEdited {
@@ -349,7 +318,7 @@ class RAWParamsEdited {
         bool dmethod;
         bool dcbIterations;
         bool dcbEnhance;
-        bool allEnhance;
+        //bool allEnhance;
         bool caCorrection;
         bool caRed;
         bool caBlue;
@@ -385,11 +354,7 @@ class ParamsEdited {
         SharpenEdgeParamsEdited       sharpenEdge;
         SharpenMicroParamsEdited      sharpenMicro;
         VibranceParamsEdited          vibrance;
-        //ColorBoostParamsEdited        colorBoost;
         WBParamsEdited                wb;
-        //ColorShiftParamsEdited        colorShift;
-        //LumaDenoiseParamsEdited       lumaDenoise;
-        //ColorDenoiseParamsEdited      colorDenoise;
         DefringeParamsEdited          defringe;
         DirPyrDenoiseParamsEdited     dirpyrDenoise;
         EPDParamsEdited               edgePreservingDecompositionUI;
@@ -414,12 +379,15 @@ class ParamsEdited {
         bool                          exif;
         bool                          iptc;
 
-        ParamsEdited ();
+        ParamsEdited () { set(false); }
+        ParamsEdited (const bool setVal) { set(setVal); }
 
         void set   (bool v);
         void initFrom (const std::vector<rtengine::procparams::ProcParams>& src);
         void combine (rtengine::procparams::ProcParams& toEdit, const rtengine::procparams::ProcParams& mods, bool forceSet);
 
+        ParamsEdited& operator&= (const ParamsEdited& rhs);
+        ParamsEdited& operator|= (const ParamsEdited& rhs);
         bool operator== (const ParamsEdited& other);
         bool operator!= (const ParamsEdited& other);
 };

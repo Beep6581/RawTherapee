@@ -975,6 +975,8 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 !TP_ICM_WORKINGPROFILE;Working Profile
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
+!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
+!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
 !TP_LABCURVE_BRIGHTNESS;Brightness
 !TP_LABCURVE_BWTONING;B&W Toning
 !TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves

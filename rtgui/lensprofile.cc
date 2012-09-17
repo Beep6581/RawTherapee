@@ -95,11 +95,11 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     enableListener ();
 }
 
-void LensProfilePanel::setRawMeta(bool raw, const rtengine::ImageMetaData* pMeta) {
+void LensProfilePanel::setRawMeta(bool raw, rtengine::ImageMetaData* pMeta) {
     if (!raw || pMeta->getFocusDist()<=0) {
         disableListener();
         
-        // CA is very focus layer dependend, otherwise it might even worsen things
+        // CA is very focus layer dependent, otherwise it might even worsen things
         allowFocusDep=false;
         ckbUseCA->set_active(false);
         ckbUseCA->set_sensitive(false);

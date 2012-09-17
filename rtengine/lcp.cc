@@ -38,7 +38,6 @@
 
 using namespace std;
 using namespace rtengine;
-using namespace rtexif;
 
 
 LCPModelCommon::LCPModelCommon() {
@@ -663,7 +662,7 @@ Glib::ustring LCPStore::getDefaultCommonDirectory() const {
     Glib::ustring dir;
 
 #ifdef WIN32
-    WCHAR pathW[MAX_PATH]={0}; char pathA[MAX_PATH];
+    WCHAR pathW[MAX_PATH]={0};
 
     if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_COMMON_APPDATA,false)) {
         char pathA[MAX_PATH];

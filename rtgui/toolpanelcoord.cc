@@ -114,11 +114,11 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     toolPanels.push_back (exifpanel);
     toolPanels.push_back (iptcpanel);
 
-    metadataPanel = Gtk::manage (new Gtk::Notebook ());
+    //metadataPanel = Gtk::manage (new Gtk::Notebook ());
     toolPanelNotebook = new Gtk::Notebook ();
 
-    metadataPanel->append_page (*exifpanel, M("MAIN_TAB_EXIF"));
-    metadataPanel->append_page (*iptcpanel, M("MAIN_TAB_IPTC"));
+    //metadataPanel->append_page (*exifpanel, M("MAIN_TAB_EXIF"));
+    //metadataPanel->append_page (*iptcpanel, M("MAIN_TAB_IPTC"));
 
     exposurePanelSW    = Gtk::manage (new MyScrolledWindow ());
     detailsPanelSW     = Gtk::manage (new MyScrolledWindow ());
@@ -164,6 +164,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     toiC = Gtk::manage (new TextOrIcon ("colour.png"   , M("MAIN_TAB_COLOR")    , M("MAIN_TAB_COLOR_TOOLTIP")    , type));
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M("MAIN_TAB_TRANSFORM"), M("MAIN_TAB_TRANSFORM_TOOLTIP"), type));
     toiR = Gtk::manage (new TextOrIcon ("raw.png"      , M("MAIN_TAB_RAW")      , M("MAIN_TAB_RAW_TOOLTIP")      , type));
+    toiX = Gtk::manage (new TextOrIcon ("exif.png"     , M("MAIN_TAB_EXIF")     , M("MAIN_TAB_EXIF_TOOLTIP")     , type));
     toiM = Gtk::manage (new TextOrIcon ("meta.png"     , M("MAIN_TAB_METADATA") , M("MAIN_TAB_METADATA_TOOLTIP") , type));
 
 	toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
@@ -171,12 +172,18 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 	toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
 	toolPanelNotebook->append_page (*transformPanelSW, *toiT);
 	toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
-	toolPanelNotebook->append_page (*metadataPanel,    *toiM);
+	//toolPanelNotebook->append_page (*metadataPanel,    *toiM);
+	toolPanelNotebook->append_page (*exifpanel,    *toiX);
+	toolPanelNotebook->append_page (*iptcpanel,    *toiM);
 
+    /* Note that due to historical reasons, GtkNotebook refuses to switch to a page unless the child widget is visible.
+     * Therefore, it is recommended to show child widgets before adding them to a notebook.
+     * Ref: http://developer.gnome.org/gtk/unstable/GtkNotebook.html#gtk-notebook-set-current-page
+     * Calling show_all() BEFORE setting the page makes it work.
+    */
+	toolPanelNotebook->set_scrollable ();
+	toolPanelNotebook->show_all ();
     toolPanelNotebook->set_current_page (0);
-
-    toolPanelNotebook->set_scrollable ();
-    toolPanelNotebook->show_all ();
 
     for (size_t i=0; i<toolPanels.size(); i++)
         toolPanels[i]->setListener (this);
@@ -271,16 +278,17 @@ void ToolPanelCoordinator::profileChange  (const PartialProfile *nparams, rtengi
 
     if (!ipc) return;
     ProcParams *params = ipc->beginUpdateParams ();
-    ProcParams *mergedParams = new ProcParams();
-
-    // Copy the current params as default values for the fusion
-    *mergedParams = *params;
+    // Make a copy of the current params as default values for the fusion
+    ProcParams *mergedParams = new ProcParams(*params);
 
     // Reset IPTC values when switching procparams from the History
+    // Merge uncertainty: look out how to handle the IPTC and EXIF values
+    /*
     if (event == rtengine::EvHistoryBrowsed) {
         mergedParams->iptc.clear();
         mergedParams->exif.clear();
     }
+    */
 
     // And apply the partial profile nparams to mergedParams
     nparams->applyTo(mergedParams);
@@ -348,9 +356,20 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     toneCurve->enableAll ();
     toneCurve->enableListener ();
 
-    const rtengine::ImageMetaData* pMetaData=ipc->getInitialImage()->getMetaData();
-    exifpanel->setImageData (pMetaData);
-    iptcpanel->setImageData (pMetaData);
+    rtengine::ImageMetaData* idata = ipc->getInitialImage()->getMetaData();
+    if( idata ){
+        if( !idata->getIPTCDataChanged() && !options.defMetadata.empty() ){
+            rtengine::ImageMetaData *id = rtengine::ImageMetaData::fromFile("",options.defMetadata,"",false );
+            if( id ){
+                rtengine::MetadataList loaded = id->getIPTCData();
+                idata->setIPTCData( loaded );
+                delete id;
+            }
+        }
+        idata->updateExif();
+        exifpanel->setImageData (idata);
+        iptcpanel->setImageData (idata);
+    }
 
     if (ipc) {
         ipc->setAutoExpListener (toneCurve);
@@ -358,18 +377,26 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (resize);
     }
 
-    icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData); 
-    lensProf->setRawMeta (raw, pMetaData); 
+    icm->setRawMeta (raw, idata);
+    lensProf->setRawMeta (raw, idata);
 
     hlrecovery->setRaw (raw);
     hasChanged = true;
+}
+
+void ToolPanelCoordinator::saveIPTC()
+{
+    if( iptcpanel )
+        // Merge uncertainty: Look out how to handle this
+        iptcpanel->writeImageData( ipc->getInitialImage()->getMetaData() );
 }
 
 
 void ToolPanelCoordinator::closeImage () {
 
     if (ipc) {
-        ipc->stopProcessing ();        
+        saveIPTC();
+        ipc->stopProcessing ();
         ipc = NULL;
     }
 }
@@ -442,7 +469,7 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
 {
     if (!ipc)
         return NULL;
-    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
     if(imd){
       int iso = imd->getISOSpeed();
       double shutter = imd->getShutterSpeed();
@@ -459,7 +486,7 @@ rtengine::RawImage* ToolPanelCoordinator::getFF()
 {
     if (!ipc)
         return NULL;
-    const rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
+    rtengine::ImageMetaData *imd = ipc->getInitialImage()->getMetaData();
     if(imd){
       // int iso = imd->getISOSpeed();              temporarilly removed because unused
       // double shutter = imd->getShutterSpeed();   temporarilly removed because unused
@@ -551,6 +578,7 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 		switch(event->keyval) {
 			case GDK_e:
 				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*exposurePanelSW));
+				printf ("pagenum exposurePanelSW=%i\n",toolPanelNotebook->page_num(*exposurePanelSW));
 				return true;
 			case GDK_d:
 				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*detailsPanelSW));
@@ -564,9 +592,15 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 			case GDK_r:
 				toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*rawPanelSW));
 				return true;
+			case GDK_x:
+				if (exifpanel){
+					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*exifpanel));
+					printf ("pagenum exifpanel=%i\n",toolPanelNotebook->page_num(*exifpanel));
+					return true;
+				}
 			case GDK_m:
-				if (metadataPanel){
-					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*metadataPanel));
+				if (iptcpanel){
+					toolPanelNotebook->set_current_page (toolPanelNotebook->page_num(*iptcpanel));
 					return true;
 				}
 		}
@@ -591,8 +625,8 @@ void ToolPanelCoordinator::updateTabsHeader (bool useIcons) {
     toiC->switchTo(type);
     toiT->switchTo(type);
     toiR->switchTo(type);
-    if (toiM)
-        toiM->switchTo(type);
+    if (toiM) toiM->switchTo(type);
+    if (toiX) toiX->switchTo(type);
 }
 
 void ToolPanelCoordinator::updateTPVScrollbar (bool hide) {

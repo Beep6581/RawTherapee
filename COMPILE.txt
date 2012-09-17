@@ -81,7 +81,6 @@ DEPENDENCIES
                                  http://jpegclub.org/
                                  http://www.ijg.org/
   LCMS2       lcms>=2.0a         http://www.littlecms.com/
-  LIBIPTCDATA libiptcdata>=1.0.2 http://libiptcdata.sourceforge.net
   PNG         libpng>=1.2.44     http://www.libpng.org/
   SIGC        sigc++-2.0         http://libsigc.sourceforge.net/
   TIFF        libtiff>=3.9.4     http://www.remotesensing.org/libtiff/
@@ -260,17 +259,6 @@ WINDOWS
               cd libtiff
               make install
         
-        libiptcdata:
-          - Download: http://libiptcdata.sourceforge.net/
-          - How to build:
-              ./configure --prefix=/mingw
-
-              Edit the "Makefile" file from the root dir of libiptcdata and
-              search for "DIST_SUBDIRS =" and "SUBDIRS =". You should only find
-              one line for each search. From these lines, remove "iptc", then:
-              make
-              make install
-            
         LCMS:
           - Download LCMS2 for RawTherapee-3.1 and newer (or LCMS1 for RawTherapee-3.0)
               http://sourceforge.net/projects/lcms/files/
@@ -278,6 +266,14 @@ WINDOWS
               ./configure --prefix=/mingw
               make
               make install
+
+        EXIV2
+          - Download EXIV2 from http://www.exiv2.org/
+          - how to build
+              ./configure --prefix=/mingw --with-zlib=/mingw  --disable-visibility --enable-nls --with-libiconv-prefix
+              make
+              make install
+              (libgcc_s_sjlj-1.dll provided with gtkmm (36K) doesn't supports __chkstk, so while compiling RT there is a link error: the one with mingw (88K) is OK)
 
         Expat:
           - Download: http://expat.sourceforge.net/
@@ -288,14 +284,12 @@ WINDOWS
 
 
       IMPORTANT:
-        Make sure that the lcms.pc and libiptcdata.pc files located in the
+        Make sure that the lcms.pc file located in the
         pkgconfig dir have the first line like this:
           prefix=/mingw
-        
+
         If everything has been installed correctly, you should see the following
         lines when running the cmake command (see "Building RT" below):
-          -- checking for module 'libiptcdata'
-          --   found libiptcdata, version 1.0.4
           -- checking for module 'lcms2'
           --   found lcms2, version 2.3
           -- Found JPEG: C:/mingw/lib/libjpeg.dll.a
@@ -365,26 +359,25 @@ LINUX
     In Ubuntu/Debian the requirements can be installed by running:
       sudo apt-get install build-essential cmake libfftw3-dev libbz2-dev \
       libexiv2-dev libexpat1-dev libglib2.0-dev libglibmm-2.4-dev \
-      libgtk2.0-dev libgtkmm-2.4-dev libiptcdata-dev libjpeg8-dev \
-      liblcms2-dev libpng-dev libsigc++-2.0-dev libtiff-dev mercurial \
-      zlib1g-dev
+      libgtk2.0-dev libgtkmm-2.4-dev libjpeg8-dev liblcms2-dev \
+      libpng-dev libsigc++-2.0-dev libtiff-dev mercurial zlib1g-dev
+
 
     In Fedora, run:
       sudo yum install gcc-c++ cmake bzip2-devel exiv2-devel expat-devel \
       fftw-devel glib2-devel glibmm24-devel gtk+-devel gtkmm24-devel \
-      libjpeg-turbo-devel lcms2-devel libiptcdata-devel libpng-devel \
+      libjpeg-turbo-devel lcms2-devel libpng-devel \
       libsigc++20-devel libtiff-devel zlib-devel
 
     In Gentoo, run:
       sudo emerge -uva app-arch/bzip2 media-gfx/exiv2 dev-libs/expat \
       dev-libs/glib dev-cpp/glibmm x11-libs/gtk+ dev-cpp/gtkmm \
-      media-libs/libjpeg-turbo media-libs/lcms media-libs/libiptcdata \
-      media-libs/libpng dev-libs/libsigc++ media-libs/tiff sci-libs/fftw \
-      sys-libs/zlib
+      media-libs/libjpeg-turbo media-libs/lcms media-libs/libpng \
+      dev-libs/libsigc++ media-libs/tiff sci-libs/fftw sys-libs/zlib
 
     In Arch, run:
       sudo pacman -S bzip2 exiv2 expat fftw glib2 glibmm gtk gtkmm lcms2 \
-      libiptcdata libjpeg-turbo libpng libsigc++ libtiff zlib
+      libjpeg-turbo libpng libsigc++ libtiff zlib
 
   COMPILE:
     The Automatic Way:
@@ -469,7 +462,7 @@ OS X
           as you added to variants.conf
       - To install all the tools and dependencies, run:
           sudo port install cairomm cmake fftw-3 glibmm gtk2 gtkmm lcms \
-          libiptcdata pango-devel
+          pango-devel
       - If you don't already have Mercurial installed, run:
           sudo port install mercurial
       - If you want to try OpenMP builds, run:

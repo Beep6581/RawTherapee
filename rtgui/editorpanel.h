@@ -155,6 +155,7 @@ class EditorPanel : public Gtk::VBox,
 
         // thumbnaillistener interface
         void procParamsChanged (Thumbnail* thm, int whoChangedIt);
+        void snapshotChanged( Thumbnail* thm, int id );
         
         // HistoryBeforeLineListener
         void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params);

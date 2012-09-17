@@ -83,6 +83,7 @@ class FileBrowser  : public ThumbBrowserBase,
     Gtk::MenuItem* miOpenDefaultViewer;
     std::map<Glib::ustring, ExtProgAction*> mMenuExtProgs;  // key is menuitem label
 
+    Gtk::ImageMenuItem* menuIPTCOperations;
     Gtk::MenuItem* menuDF;
     Gtk::MenuItem* selectDF;
     Gtk::MenuItem* thisIsDF;
@@ -96,6 +97,10 @@ class FileBrowser  : public ThumbBrowserBase,
     Gtk::MenuItem* copyprof;
     Gtk::MenuItem* pasteprof;
     Gtk::MenuItem* partpasteprof;
+    Gtk::MenuItem* copyIPTC;
+    Gtk::MenuItem* pasteIPTC;
+    Gtk::MenuItem* partpasteIPTC;
+    Gtk::MenuItem* resyncIPTC;
     Gtk::MenuItem* applyprof;
     Gtk::MenuItem* applypartprof;
     Gtk::MenuItem* execcustprof;
@@ -154,6 +159,10 @@ class FileBrowser  : public ThumbBrowserBase,
     void copyProfile ();
     void pasteProfile ();
     void partPasteProfile ();
+    void copyMetadata ();
+    void pasteMetadata ();
+    void partPasteMetadata ();
+    void resyncMetadata ();
 
     void openDefaultViewer (int destination);
 

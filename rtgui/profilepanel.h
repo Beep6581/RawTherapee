@@ -62,7 +62,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     static void init ();
     static void cleanup ();
 
-    void initProfile (const Glib::ustring& profname, rtengine::procparams::ProcParams* lastSaved);
+    void initProfile (const Glib::ustring& profname, rtengine::procparams::PartialProfile* lastSaved);
     void setInitialFileName (const Glib::ustring& filename) {lastFilename = filename;}
 
     // PParamsChangeListener interface

@@ -38,7 +38,7 @@ class StdImageSource : public ImageSource {
         void transformPixel      (int x, int y, int tran, int& tx, int& ty);
         bool rgbSourceModified;
     public:
-        StdImageSource ();
+        StdImageSource (ImageMetaData* meta);
         ~StdImageSource ();
     
         int         load        (Glib::ustring fname, bool batch = false);
@@ -56,7 +56,6 @@ class StdImageSource : public ImageSource {
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 
-        ImageData*  getImageData () { return idata; }
         ImageMatrices* getImageMatrices () { return (ImageMatrices*)NULL; }
         bool        isRAW() const { return false; }
 

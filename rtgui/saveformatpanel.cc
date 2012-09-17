@@ -61,6 +61,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     format->append_text ("PNG (8 bit)");
     format->append_text ("PNG (16 bit)");
     format->set_active (0);
+    format->set_size_request(-1,-1);
     oformat = 0;
     format->signal_changed().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged) );
     hb1->pack_start (*format);
@@ -71,13 +72,9 @@ SaveFormatPanel::SaveFormatPanel () : listener (NULL) {
     formatopts->pack_start (*jpegSubSampBox, Gtk::PACK_SHRINK, 4);
     pack_start (*formatopts, Gtk::PACK_SHRINK, 4);
     
-    savespp = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_SAVESPP")));
-    savespp->signal_toggled().connect( sigc::mem_fun(*this,&SaveFormatPanel::formatChanged));
-    pack_start (*savespp, Gtk::PACK_SHRINK, 4);
-
     show_all ();
     set_border_width (4);
-    
+
     fstr[0] = "jpg";
     fstr[1] = "tif";
     fstr[2] = "tif";
@@ -111,7 +108,6 @@ void SaveFormatPanel::init (SaveFormat &sf) {
        
     pngcompr->setValue (sf.pngCompression);
     jpegqual->setValue (sf.jpegQuality);
-    savespp->set_active (sf.saveParams);
     tiffuncompressed->set_active (sf.tiffUncompressed);
     listener = tmp;
 }
@@ -134,7 +130,6 @@ SaveFormat SaveFormatPanel::getFormat () {
     sf.jpegQuality      = (int) jpegqual->getValue ();
     sf.jpegSubSamp      = jpegSubSamp->get_active_row_number()+1;
     sf.tiffUncompressed = tiffuncompressed->get_active();
-    sf.saveParams       = savespp->get_active ();
     return sf;
 }
         

@@ -106,6 +106,16 @@ public:
 };
 
 /**
+ * @brief subclass of Gtk::ComboBoxEntryText in order to handle the scrollwheel
+ */
+class MyComboBoxEntryText: public Gtk::ComboBoxEntryText {
+	bool on_scroll_event (GdkEventScroll* event);
+
+public:
+	MyComboBoxEntryText ();
+};
+
+/**
  * @brief subclass of Gtk::SpinButton in order to handle the scrollwheel
  */
 class MySpinButton : public Gtk::SpinButton {

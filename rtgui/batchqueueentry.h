@@ -41,7 +41,7 @@ class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListen
 public:
     rtengine::ProcessingJob* job;
     rtengine::procparams::ProcParams params;
-    Glib::ustring savedParamsFile;
+
     double progress;
     Glib::ustring outFileName;
     SaveFormat saveFormat;

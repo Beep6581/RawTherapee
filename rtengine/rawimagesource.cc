@@ -69,8 +69,8 @@ PIX_SORT(p[1],p[4]) ; PIX_SORT(p[1],p[2]) ; PIX_SORT(p[2],p[3]) ; \
 PIX_SORT(p[1],p[2]) ; median=p[2] ;}
 	
 
-RawImageSource::RawImageSource ()
-:ImageSource()
+RawImageSource::RawImageSource (ImageMetaData* meta)
+:ImageSource(meta)
 ,plistener(NULL)
 ,border(4)
 ,ri(NULL)
@@ -94,7 +94,6 @@ RawImageSource::RawImageSource ()
 
 RawImageSource::~RawImageSource () {
 
-    delete idata;
     if (ri) {
         delete ri;
     }
@@ -423,11 +422,11 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     if (ri->isBayer() && pp.skip==1)
         processFalseColorCorrection (image, raw.ccSteps);
     // *** colorSpaceConversion was here ***
-    //colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
+    //colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, getMetaData()->getCamera());
 }
 
 void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) {
-    colorSpaceConversion (image, cmp, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
+    colorSpaceConversion (image, cmp, raw, embProfile, camProfile, imatrices.xyz_cam, getMetaData()->getCamera());
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -892,7 +891,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     fuji = ri->get_FujiWidth()!=0;
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
-        	imatrices.rgb_cam[i][j] = ri->get_rgb_cam(i,j);
+            imatrices.rgb_cam[i][j] = ri->get_rgb_cam(i,j);
     // compute inverse of the color transformation matrix
 	// first arg is matrix, second arg is inverse
     inverse33 (imatrices.rgb_cam, imatrices.cam_rgb);
@@ -908,7 +907,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     for (int i=0; i<3; i++)
         for (int j=0; j<3; j++)
             for (int k=0; k<3; k++)
-            	imatrices.xyz_cam[i][j] += xyz_sRGB[i][k] * imatrices.rgb_cam[k][j];
+                imatrices.xyz_cam[i][j] += xyz_sRGB[i][k] * imatrices.rgb_cam[k][j];
     camProfile = iccStore->createFromMatrix (imatrices.xyz_cam, false, "Camera");
     inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
 
@@ -933,7 +932,6 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     rml.exifBase = ri->get_exifBase();
     rml.ciffBase = ri->get_ciffBase();
     rml.ciffLength = ri->get_ciffLen();
-    idata = new ImageData (fname, &rml);
 
     green(W,H);
     red(W,H);
@@ -976,7 +974,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 	if (!raw.ff_AutoSelect) {
 		if( !raw.ff_file.empty())
 			rif = ffm.searchFlatField( raw.ff_file );
-	} else {
+	} else if( idata ) {
 		rif = ffm.searchFlatField( idata->getMake(), idata->getModel(),idata->getLens(),idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
 	}
 
@@ -1050,7 +1048,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 	   cfaCleanFromMap( bitmapBads );
 
     // check if it is an olympus E camera, if yes, compute G channel pre-compensation factors
-    if ( raw.greenthresh || (((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,9)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer()) ) {
+    if ( raw.greenthresh || (idata &&(((idata->getMake().size()>=7 && idata->getMake().substr(0,7)=="OLYMPUS" && idata->getModel()[0]=='E') || (idata->getMake().size()>=9 && idata->getMake().substr(0,7)=="Panasonic")) && raw.dmethod != RAWParams::methodstring[ RAWParams::vng4] && ri->isBayer())) ) {
         // global correction
         int ng1=0, ng2=0, i=0;
         double avgg1=0., avgg2=0.;
@@ -1683,9 +1681,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         #pragma omp parallel for
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
-				im->r[h][w] /= 65535.0f ;
-				im->g[h][w] /= 65535.0f ;
-				im->b[h][w] /= 65535.0f ;
+				im->r[h][w] /= 65535.0f;
+				im->g[h][w] /= 65535.0f;
+				im->b[h][w] /= 65535.0f;
 			}
 
 
@@ -1957,16 +1955,22 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
 
     if (inProfile == "(embedded)" && embedded) {
 		in = embedded;
-	} else if (inProfile=="(cameraICC)") {
+	}
+    // Hombre: removed because DCP profiles can't be read yet
+    /*else if (inProfile=="(cameraICC)") {
         // DCPs have higher quality, so use them first
         *dcpProf=dcpStore->getStdProfile(camName);
         if (*dcpProf==NULL)  in = iccStore->getStdProfile(camName);
-    } else if (inProfile!="(camera)" && inProfile!="") {
+    }*/
+    else if (inProfile!="(camera)" && inProfile!="") {
         Glib::ustring normalName=inProfile;
         if (!inProfile.compare (0, 5, "file:")) normalName=inProfile.substr(5);
 
+        // Hombre: removed because DCP profiles can't be read yet
+        /*
         if (dcpStore->isValidDCPFileName(normalName)) *dcpProf=dcpStore->getProfile(normalName);
         if (*dcpProf==NULL) in = iccStore->getProfile (inProfile);
+        */
     }
     
     // "in" might be NULL because of "not found". That's ok, we take the cam profile then
@@ -2213,17 +2217,17 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
-			if (ri->ISGREEN(i,j))     histogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
-			else if (ri->ISRED(i,j))  histogram[CLIP((int)(camwb_red*  rawData[i][j]))>>histcompr]+=4;
-			else if (ri->ISBLUE(i,j)) histogram[CLIP((int)(camwb_blue* rawData[i][j]))>>histcompr]+=4;
-			} 
-			} else {
-		for (int j=start; j<end; j++) {
-                    histogram[CLIP((int)(camwb_red*  rawData[i][3*j+0]))>>histcompr]++;
-                    histogram[CLIP((int)(camwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
-                    histogram[CLIP((int)(camwb_blue* rawData[i][3*j+2]))>>histcompr]++;
-				}
-			}
+                if (ri->ISGREEN(i,j))     histogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
+                else if (ri->ISRED(i,j))  histogram[CLIP((int)(camwb_red*  rawData[i][j]))>>histcompr]+=4;
+                else if (ri->ISBLUE(i,j)) histogram[CLIP((int)(camwb_blue* rawData[i][j]))>>histcompr]+=4;
+            }
+        } else {
+            for (int j=start; j<end; j++) {
+                histogram[CLIP((int)(camwb_red*  rawData[i][3*j+0]))>>histcompr]++;
+                histogram[CLIP((int)(camwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
+                histogram[CLIP((int)(camwb_blue* rawData[i][3*j+2]))>>histcompr]++;
+            }
+        }
     }
 }
 		
@@ -2233,39 +2237,38 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
 	float mult = 65535.0 / ri->get_white();
 
-	// WARNING: This parallelization is not thread-safe because it R/W in histRedRaw, histGreenRaw, histBlueRaw
-	// which are defined before the parallel section and must survive after it
+    // WARNING: This parallelization is not thread-safe because it R/W in histRedRaw, histGreenRaw, histBlueRaw
+    // which are defined before the parallel section and must survive after it
     #pragma omp parallel for
     for (int i=border; i<H-border; i++) {
         int start, end, idx;
         getRowStartEnd (i, start, end);
 
-	
-	if (ri->isBayer()) {
+        if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
-			int c  = FC(i, j);                        // three colors,  0=R, 1=G,  2=B
-			int c4 = ( c == 1 && !i&1 ) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
-			idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[c4]/*+black_lev[c4]*/))));
+                int c  = FC(i, j);                        // three colors,  0=R, 1=G,  2=B
+                int c4 = ( c == 1 && !i&1 ) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
+                idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[c4]/*+black_lev[c4]*/))));
 
-			switch (c) {
-				case 0: histRedRaw[idx>>8]++;   break;
-				case 1: histGreenRaw[idx>>8]++; break;
-				case 2: histBlueRaw[idx>>8]++;  break;
-			}
+                switch (c) {
+                    case 0: histRedRaw[idx>>8]++;   break;
+                    case 1: histGreenRaw[idx>>8]++; break;
+                    case 2: histBlueRaw[idx>>8]++;  break;
+                }
             }
-	} else {
-		for (int j=start; j<end; j++) {
-			for (int c=0; c<3; c++){
-				idx = CLIP((int)Color::gamma(mult*(ri->data[i][3*j+c]-cblacksom[c])));
+        } else {
+            for (int j=start; j<end; j++) {
+                for (int c=0; c<3; c++) {
+                    idx = CLIP((int)Color::gamma(mult*(ri->data[i][3*j+c]-cblacksom[c])));
 
-				switch (c) {
-					case 0: histRedRaw[idx>>8]++;   break;
-					case 1: histGreenRaw[idx>>8]++; break;
-					case 2: histBlueRaw[idx>>8]++;  break;
-				}
-                        }
-		}
-	}
+                    switch (c) {
+                        case 0: histRedRaw[idx>>8]++;   break;
+                        case 1: histGreenRaw[idx>>8]++; break;
+                        case 2: histBlueRaw[idx>>8]++;  break;
+                    }
+                }
+            }
+        }
     }
 
     // since there are twice as many greens, correct for it

@@ -89,7 +89,7 @@ void FileBrowserEntry::refreshThumbnailImage () {
 void FileBrowserEntry::refreshQuickThumbnailImage () {
 	// Only make a (slow) processed preview if the picture has been edited at all
     if ( thumbnail &&
-			thumbnail->isQuick() && (!options.internalThumbIfUntouched || thumbnail->isPParamsValid()) )
+			thumbnail->isQuick() && (!options.internalThumbIfUntouched || thumbnail->hasProcParams()) )
 	{
 		thumbImageUpdater->add(this, &updatepriority, true, this);    
 	}
@@ -110,9 +110,9 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getIconsOnImageArea ()
 
     if (thumbnail->hasProcParams() && editedIcon)
         ret.push_back (editedIcon);
-    if (thumbnail->isRecentlySaved() && recentlySavedIcon)
+    if (thumbnail->getNumSaved()>0 && recentlySavedIcon)
         ret.push_back (recentlySavedIcon);
-    if (thumbnail->isEnqueued () && enqueuedIcon)
+    if (thumbnail->getNumQueued ()>0 && enqueuedIcon)
         ret.push_back (enqueuedIcon);
 
    return ret;
@@ -123,7 +123,7 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) 
     if (state==SCropSelecting || state==SResizeH1 || state==SResizeH2 || state==SResizeW1 || state==SResizeW2 || state==SCropMove)
         drawCrop (c, prex, prey, prew, preh, 0, 0, scale, cropParams);
     else {
-        rtengine::procparams::CropParams cparams = thumbnail->getProcParams().crop;
+        rtengine::procparams::CropParams cparams = thumbnail->getPartialProfile().pparams->crop;
         if (cparams.enabled && !thumbnail->isQuick())  // Quick thumb have arbitrary sizes, so don't apply the crop
             drawCrop (c, prex, prey, prew, preh, 0, 0, scale, cparams);
     }
