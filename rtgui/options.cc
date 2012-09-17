@@ -43,7 +43,7 @@ Glib::ustring Options::cacheBaseDir;
 
 Options options;
 Glib::ustring versionString      = VERSION;
-Glib::ustring paramFileExtension = ".pp3";
+Glib::ustring paramFileExtension = ".xmp";
 
 Options::Options () {
 
@@ -144,6 +144,13 @@ void Options::updatePaths() {
     }
 
     Glib::ustring preferredPath = getPreferredProfilePath();
+
+	// if it doesn't exist, create iptc templates directory inside the user's preferred profile path
+    tmpPath = Glib::build_filename(preferredPath, "iptc");
+    if (!checkDirPath (tmpPath, ""))
+        safe_g_mkdir_with_parents (tmpPath, 511);
+
+
     // Paths are updated only if the user or global profile path is set
     if (lastRgbCurvesDir.empty() || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastRgbCurvesDir, Glib::FILE_TEST_IS_DIR))
         lastRgbCurvesDir = preferredPath;
@@ -202,7 +209,6 @@ void Options::setDefaults () {
     saveFormat.pngBits = 8;
     saveFormat.tiffBits = 8;
     saveFormat.tiffUncompressed = true;
-    saveFormat.saveParams = true;
 
     saveFormatBatch.format = "jpg";
     saveFormatBatch.jpegQuality = 90;
@@ -211,7 +217,6 @@ void Options::setDefaults () {
     saveFormatBatch.pngBits = 8;
     saveFormatBatch.tiffBits = 8;
     saveFormatBatch.tiffUncompressed = true;
-    saveFormatBatch.saveParams = true;
 
     savePathTemplate = "%p1/converted/%f";
     savePathFolder = "";
@@ -269,9 +274,12 @@ void Options::setDefaults () {
     thumbInterp = 1;
     autoSuffix = false;
     saveMethodNum = 0;				// 0->immediate, 1->putToQueuHead, 2->putToQueueTail
-    saveParamsFile = true;				// was false, but saving the procparams files next to the file make more sense when reorganizing file tree than in a cache
-    saveParamsCache = false;			// there's no need to save the procparams files in a cache if saveParamsFile is true
-    paramsLoadLocation = PLL_Input;		// was PLL_Cache
+    embedXmpIntoDNG=false;
+    embedXmpIntoJPG=false;
+    embedXmpIntoPNG=false;
+    embedXmpIntoTIFF=false;
+    saveParamsCache = false;
+    //paramsLoadLocation = PLL_Input;		// was PLL_Cache
     procQueueEnabled = false;
     gimpDir = "";
     psDir = "";
@@ -281,6 +289,13 @@ void Options::setDefaults () {
     favoriteDirs.clear();
     tpOpen.clear ();
     //crvOpen.clear ();
+    colorLabels.resize(6);
+    colorLabels[0] = "Other";
+    colorLabels[1] = "Select";
+    colorLabels[2] = "Second";
+    colorLabels[3] = "Approved";
+    colorLabels[4] = "Review";
+    colorLabels[5] = "To do";
     parseExtensions.clear ();
     parseExtensionsEnabled.clear ();
     parsedExtensions.clear ();
@@ -298,7 +313,7 @@ void Options::setDefaults () {
     showFileNames = true;
     tabbedUI = true;
     multiDisplayMode = 0;
-    tunnelMetaData = false;
+    outputMetaData = true;
     histogramPosition = 2;
     histogramBar = true;
     histogramFullMode = false;
@@ -513,8 +528,6 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "PngBps"))           saveFormat.pngBits         = keyFile.get_integer ("Output", "PngBps");
     if (keyFile.has_key ("Output", "TiffBps"))          saveFormat.tiffBits        = keyFile.get_integer ("Output", "TiffBps");
     if (keyFile.has_key ("Output", "TiffUncompressed")) saveFormat.tiffUncompressed= keyFile.get_boolean ("Output", "TiffUncompressed");
-    if (keyFile.has_key ("Output", "SaveProcParams"))   saveFormat.saveParams      = keyFile.get_boolean ("Output", "SaveProcParams");
-
 
     if (keyFile.has_key ("Output", "FormatBatch"))           saveFormatBatch.format          = keyFile.get_string ("Output", "FormatBatch");
     if (keyFile.has_key ("Output", "JpegQualityBatch"))      saveFormatBatch.jpegQuality     = keyFile.get_integer ("Output", "JpegQualityBatch");
@@ -523,7 +536,6 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "PngBpsBatch"))           saveFormatBatch.pngBits         = keyFile.get_integer ("Output", "PngBpsBatch");
     if (keyFile.has_key ("Output", "TiffBpsBatch"))          saveFormatBatch.tiffBits        = keyFile.get_integer ("Output", "TiffBpsBatch");
     if (keyFile.has_key ("Output", "TiffUncompressedBatch")) saveFormatBatch.tiffUncompressed= keyFile.get_boolean ("Output", "TiffUncompressedBatch");
-    if (keyFile.has_key ("Output", "SaveProcParamsBatch"))   saveFormatBatch.saveParams      = keyFile.get_boolean ("Output", "SaveProcParamsBatch");
 
     if (keyFile.has_key ("Output", "Path"))             savePathTemplate           = keyFile.get_string ("Output", "Path");
     if (keyFile.has_key ("Output", "PathTemplate"))     savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
@@ -533,7 +545,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
     if (keyFile.has_key ("Output", "OverwriteOutputFile"))  overwriteOutputFile    = keyFile.get_boolean("Output", "OverwriteOutputFile");
-    if (keyFile.has_key ("Output", "TunnelMetaData"))   tunnelMetaData             = keyFile.get_boolean("Output", "TunnelMetaData");
+    if (keyFile.has_key ("Output", "WriteMetaData"))    outputMetaData             = keyFile.get_boolean("Output", "WriteMetaData");
 }
 
 if (keyFile.has_group ("Profiles")) { 
@@ -542,9 +554,13 @@ if (keyFile.has_group ("Profiles")) {
     if (keyFile.has_key ("Profiles", "LoadSaveProfilePath"))    loadSaveProfilePath  = keyFile.get_string  ("Profiles", "LoadSaveProfilePath");
     if (keyFile.has_key ("Profiles", "RawDefault"))             defProfRaw           = keyFile.get_string  ("Profiles", "RawDefault");
     if (keyFile.has_key ("Profiles", "ImgDefault"))             defProfImg           = keyFile.get_string  ("Profiles", "ImgDefault");
-    if (keyFile.has_key ("Profiles", "SaveParamsWithFile"))     saveParamsFile       = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
+    if (keyFile.has_key ("Profiles", "MetaDefault"))            defMetadata          = keyFile.get_string ("Profiles", "MetaDefault");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideDng"))       embedXmpIntoDNG      = keyFile.get_boolean ("Profiles", "SaveXmpInsideDng");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideJpeg"))      embedXmpIntoJPG      = keyFile.get_boolean ("Profiles", "SaveXmpInsideJpeg");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsidePng"))       embedXmpIntoPNG      = keyFile.get_boolean ("Profiles", "SaveXmpInsidePng");
+    if (keyFile.has_key ("Profiles", "SaveXmpInsideTiff"))      embedXmpIntoTIFF     = keyFile.get_boolean ("Profiles", "SaveXmpInsideTiff");
     if (keyFile.has_key ("Profiles", "SaveParamsToCache"))      saveParamsCache      = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
-    if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation   = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
+    //if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation   = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
     if (keyFile.has_key ("Profiles", "CustomProfileBuilder"))   customProfileBuilder = keyFile.get_string  ("Profiles", "CustomProfileBuilder");
 }
 
@@ -576,6 +592,7 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "menuGroupFileOperations")) menuGroupFileOperations = keyFile.get_boolean ("File Browser", "menuGroupFileOperations");
     if (keyFile.has_key ("File Browser", "menuGroupProfileOperations")) menuGroupProfileOperations = keyFile.get_boolean ("File Browser", "menuGroupProfileOperations");
     if (keyFile.has_key ("File Browser", "menuGroupExtProg")) menuGroupExtProg = keyFile.get_boolean ("File Browser", "menuGroupExtProg");
+    if (keyFile.has_key ("File Browser", "colorLabels")) colorLabels = keyFile.get_string_list ("File Browser","colorLabels");
 }
 
 if (keyFile.has_group ("Clipping Indication")) { 
@@ -790,6 +807,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "menuGroupFileOperations", menuGroupFileOperations);
     keyFile.set_boolean ("File Browser", "menuGroupProfileOperations", menuGroupProfileOperations);
     keyFile.set_boolean ("File Browser", "menuGroupExtProg", menuGroupExtProg);
+    keyFile.set_string_list ("File Browser","colorLabels",colorLabels);
    
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
@@ -802,7 +820,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Output", "PngBps", saveFormat.pngBits);
     keyFile.set_integer ("Output", "TiffBps", saveFormat.tiffBits);
     keyFile.set_boolean ("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
-    keyFile.set_boolean ("Output", "SaveProcParams", saveFormat.saveParams);
 
     keyFile.set_string  ("Output", "FormatBatch", saveFormatBatch.format);
     keyFile.set_integer ("Output", "JpegQualityBatch", saveFormatBatch.jpegQuality);
@@ -811,7 +828,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Output", "PngBpsBatch", saveFormatBatch.pngBits);
     keyFile.set_integer ("Output", "TiffBpsBatch", saveFormatBatch.tiffBits);
     keyFile.set_boolean ("Output", "TiffUncompressedBatch", saveFormatBatch.tiffUncompressed);
-    keyFile.set_boolean ("Output", "SaveProcParamsBatch", saveFormatBatch.saveParams);
 
     keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
     keyFile.set_string  ("Output", "PathFolder", savePathFolder);
@@ -820,16 +836,21 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);
     keyFile.set_boolean ("Output", "OverwriteOutputFile", overwriteOutputFile);
-    keyFile.set_boolean ("Output", "TunnelMetaData", tunnelMetaData);
+    keyFile.set_boolean ("Output", "WriteMetaData", outputMetaData);
 
     keyFile.set_string  ("Profiles", "Directory", profilePath);
     keyFile.set_boolean ("Profiles", "UseBundledProfiles", useBundledProfiles);
     keyFile.set_string  ("Profiles", "LoadSaveProfilePath", loadSaveProfilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
     keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
-    keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
+    keyFile.set_string  ("Profiles", "MetaDefault",defMetadata);
+
+    keyFile.set_boolean ("Profiles", "SaveXmpInsideDng",   embedXmpIntoDNG);
+    keyFile.set_boolean ("Profiles", "SaveXmpInsideJpeg",  embedXmpIntoJPG);
+    keyFile.set_boolean ("Profiles", "SaveXmpInsidePng",   embedXmpIntoPNG);
+    keyFile.set_boolean ("Profiles", "SaveXmpInsideTiff",  embedXmpIntoTIFF);
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
-    keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
+    //keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);
     keyFile.set_string  ("Profiles", "CustomProfileBuilder", customProfileBuilder);
     
     keyFile.set_string  ("GUI", "Font", font);
@@ -1048,9 +1069,9 @@ void Options::load () {
 	// out which are the parent translations.  Furthermore, there must be a file <Language> for each locale <Language> (<LC>) -- you cannot have 
 	// 'French (CA)' unless there is a file 'French'.
 
-  Glib::ustring defaultTranslation = argv0 + "/languages/default";
-  Glib::ustring languageTranslation = "";
-  Glib::ustring localeTranslation = "";
+    Glib::ustring defaultTranslation = argv0 + "/languages/default";
+    Glib::ustring languageTranslation = "";
+    Glib::ustring localeTranslation = "";
 
     if (options.languageAutoDetect) options.language=langMgr.getOSUserLanguage();
 
@@ -1107,4 +1128,12 @@ bool Options::is_extention_enabled (Glib::ustring ext) {
       if (parseExtensions[j].casefold() == ext.casefold())
 				return j>=(int)parseExtensionsEnabled.size() || parseExtensionsEnabled[j];
 		return false;
+}
+
+unsigned Options::getColorFromLabel( const Glib::ustring &label)
+{
+	for( unsigned i=0; i<colorLabels.size();i++)
+		if( label.compare( colorLabels[i] )==0 )
+			return i;
+	return 0;
 }

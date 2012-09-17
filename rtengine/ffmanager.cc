@@ -171,6 +171,8 @@ void ffInfo::updateRawImage()
 
 void FFManager::init( Glib::ustring pathname )
 {
+	if( pathname.empty())
+		return;
     std::vector<Glib::ustring> names;
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (pathname);
 	if( dir && !dir->query_exists())
@@ -214,7 +216,7 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
     	return false;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-	size_t lastdot = info->get_name().find_last_of ('.');
+        size_t lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
         	RawImage ri(filename);
         	int res = ri.loadRaw(false); // Read informations about shot
@@ -225,16 +227,15 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
         		   iter = ffList.insert(std::pair< std::string,ffInfo>( "", n ) );
         		   return &(iter->second);
         	   }
-         	   RawMetaDataLocation rml;
-         	   rml.exifBase = ri.get_exifBase();
-         	   rml.ciffBase = ri.get_ciffBase();
-         	   rml.ciffLength = ri.get_ciffLen();
-         	   ImageData idata(filename, &rml);
+
+        	   int lastdot = filename.find_last_of ('.');
+        	   Glib::ustring xmpfname = filename.substr(0,lastdot) + ".xmp";
+         	   ImageMetaData *md = ImageMetaData::fromFile( filename, xmpfname );
          	   /* Files are added in the map, divided by same maker/model,lens and aperture*/
-        	   std::string key( ffInfo::key(idata.getMake(),idata.getModel(),idata.getLens(),idata.getFocalLen(),idata.getFNumber()) );
+        	   std::string key( ffInfo::key(md->getMake(),md->getModel(),md->getLens(),md->getFocalLen(),md->getFNumber()) );
         	   iter = ffList.find( key );
         	   if( iter == ffList.end() ){
-				   ffInfo n(filename,idata.getMake(),idata.getModel(),idata.getLens(),idata.getFocalLen(),idata.getFNumber(),idata.getDateTimeAsTS());
+				   ffInfo n(filename,md->getMake(),md->getModel(),md->getLens(),md->getFocalLen(),md->getFNumber(),md->getDateTimeAsTS());
 				   iter = ffList.insert(std::pair< std::string,ffInfo>( key,n ) );
         	   }else{
         		   while( iter != ffList.end() && iter->second.key() == key && ABS(iter->second.timestamp - ri.get_timestamp()) >60*60*6 ) // 6 hour difference
@@ -243,10 +244,11 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
         		   if( iter != ffList.end() )
         		      iter->second.pathNames.push_back( filename );
         		   else{
-    				   ffInfo n(filename,idata.getMake(),idata.getModel(),idata.getLens(),idata.getFocalLen(),idata.getFNumber(),idata.getDateTimeAsTS());
+    				   ffInfo n(filename,md->getMake(),md->getModel(),md->getLens(),md->getFocalLen(),md->getFNumber(),md->getDateTimeAsTS());
     				   iter = ffList.insert(std::pair< std::string,ffInfo>( key,n ) );
         		   }
         	   }
+        	   delete md;
                return &(iter->second);
         	}
 		}

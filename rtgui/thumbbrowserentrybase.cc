@@ -25,7 +25,7 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname)
     : preh(0), preview(NULL), buttonSet(NULL), exp_width(0), exp_height(0), redrawRequests(0),
       parent(NULL), filename(fname), exifline(""), datetimeline(""), selected(false),
       drawable(false),framed(false), processing(false), italicstyle(false),
-      updatepriority(false) {
+      updatepriority(false),currentSnapshoId(-1) {
 
     shortname = Glib::path_get_basename (fname);
     dispname = shortname;
@@ -128,7 +128,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     if (!bbIcons.empty()) {
         int iwidth = igap;
         int iheight = 0;
-	for (size_t i=0; i<bbIcons.size(); i++) {
+        for (size_t i=0; i<bbIcons.size(); i++) {
             iwidth += bbIcons[i]->get_width() + igap;
             if (bbIcons[i]->get_height() > iheight)
                 iheight = bbIcons[i]->get_height();

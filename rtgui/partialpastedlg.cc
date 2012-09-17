@@ -81,8 +81,8 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     commonTrans = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COMMONTRANSFORMPARAMS")));
 
     // options in metaicm:
-    exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
-    iptc        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IPTCINFO")));
+    //exifch      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXIFCHANGES")));
+    //iptc        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_IPTCINFO")));
     icm         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMSETTINGS")));
     gam         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_ICMGAMMA")));
 
@@ -163,8 +163,8 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
 
     vboxes[5]->pack_start (*metaicm, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*hseps[5], Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
-    vboxes[5]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
+    //vboxes[5]->pack_start (*exifch, Gtk::PACK_SHRINK, 2);
+    //vboxes[5]->pack_start (*iptc, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*icm, Gtk::PACK_SHRINK, 2);
     vboxes[5]->pack_start (*gam, Gtk::PACK_SHRINK, 2);
 
@@ -271,8 +271,8 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     perspectiveConn = perspective->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
     commonTransConn = commonTrans->signal_toggled().connect (sigc::bind (sigc::mem_fun(*composition, &Gtk::CheckButton::set_inconsistent), true));
 
-    exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
-    iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
+    //exifchConn      = exifch->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));
+    //iptcConn        = iptc->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));
     icmConn         = icm->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));    
     gamcsconn		= gam->signal_toggled().connect (sigc::bind (sigc::mem_fun(*metaicm, &Gtk::CheckButton::set_inconsistent), true));
 
@@ -541,19 +541,19 @@ void PartialPasteDlg::compositionToggled () {
 
 void PartialPasteDlg::metaicmToggled () {
 
-    exifchConn.block (true);
-    iptcConn.block (true);
+    //exifchConn.block (true);
+    //iptcConn.block (true);
     icmConn.block (true);
     gamcsconn.block (true);
     metaicm->set_inconsistent (false);
 
-    exifch->set_active (metaicm->get_active ());
-    iptc->set_active (metaicm->get_active ());
+    //exifch->set_active (metaicm->get_active ());
+    //iptc->set_active (metaicm->get_active ());
     icm->set_active (metaicm->get_active ());
     gam->set_active (metaicm->get_active ());
 
-    exifchConn.block (false);
-    iptcConn.block (false);
+    //exifchConn.block (false);
+    //iptcConn.block (false);
     icmConn.block (false);
     gamcsconn.block (false);
 
@@ -564,18 +564,22 @@ void PartialPasteDlg::metaicmToggled () {
  * Copies the selected items from the source ProcParams+ParamsEdited(optional)
  * to the destination ProcParams.
  */
-void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE) {
+void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, rtengine::procparams::ProcParams* srcPP, ParamsEdited* srcPE) {
 
-    ParamsEdited falsePE;  // falsePE is a workaround to set a group of ParamsEdited to false
-    ParamsEdited filterPE; // Contains the initial information about the loaded values
+    rtengine::procparams::PartialProfile srcPProfile(false, srcPP, srcPE);
+
+    rtengine::procparams::PartialProfile dstPProfile(false, false);
+    dstPProfile.pparams = dstPP;
+    dstPProfile.pedited = dstPE;
+
+    ParamsEdited falsePE;   // falsePE is a workaround to set a group of ParamsEdited to true
+    ParamsEdited filterPE; // Contains the initial information about the loaded values; By default, nothing has to be copied (i.e. set to false)
     if (srcPE) {
         filterPE = *srcPE;
     }
     else {
-        // By default, everything has to be copied
         filterPE.set(true);
     }
-
 
     // the general section is always ignored, whichever operation we use the PartialPaste for
     filterPE.general = falsePE.general;
@@ -615,15 +619,14 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!perspective->get_active ()) filterPE.perspective = falsePE.perspective;
     if (!commonTrans->get_active ()) filterPE.commonTrans = falsePE.commonTrans;
 
-    if (!exifch->get_active ())      filterPE.exif = falsePE.exif;
-    if (!iptc->get_active ())        filterPE.iptc = falsePE.iptc;
-    if (!icm->get_active ())         filterPE.icm  = falsePE.icm;
+    //if (!exifch->get_active ())      filterPE.exif = falsePE.exif;
+    //if (!iptc->get_active ())        filterPE.iptc = falsePE.iptc;
 
     if (!raw_dmethod->get_active ())           filterPE.raw.dmethod            = falsePE.raw.dmethod;
     if (!raw_ccSteps->get_active ())           filterPE.raw.ccSteps            = falsePE.raw.ccSteps;
     if (!raw_dcb_iterations->get_active ())    filterPE.raw.dcbIterations      = falsePE.raw.dcbIterations;
     if (!raw_dcb_enhance->get_active ())       filterPE.raw.dcbEnhance         = falsePE.raw.dcbEnhance;
-    //if (!raw_all_enhance->get_active ())       filterPE.raw.allEnhance         = falsePE.raw.allEnhance;
+    //if! (raw_all_enhance->get_active ())       filterPE.raw.allEnhance         = falsePE.raw.allEnhance;
 
     if (!raw_expos->get_active ())             filterPE.raw.exPos              = falsePE.raw.exPos;
     if (!raw_preser->get_active ())            filterPE.raw.exPreser           = falsePE.raw.exPreser;
@@ -649,6 +652,66 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (dstPE) *dstPE = filterPE;
 
     // Apply the filter!
-    filterPE.combine(*dstPP, *srcPP, true);
+    srcPProfile.applyTo(&dstPProfile);
 }
 
+PartialPasteIPTCDlg::PartialPasteIPTCDlg( const rtengine::MetadataList &v)
+{
+	iptc = v;
+
+    set_modal (true);
+    set_title (M("PARTIALPASTE_DIALOGIPTCLABEL"));
+    set_size_request (400, 600);
+
+    table = Gtk::manage( new Gtk::Table ( iptc.size(), 2, TRUE) );
+    int row=0;
+    for( rtengine::MetadataList::const_iterator iter = iptc.begin(); iter != iptc.end(); iter++,row++){
+    	rtengine::IPTCMeta  meta = rtengine::IPTCMeta::IPTCtags[ iter->first ];
+
+    	if( meta.readOnly )
+    		continue;
+    	Gtk::CheckButton *descr = Gtk::manage( new Gtk::CheckButton (M(meta.guiName)) );
+    	chk[ iter->first ] = descr;
+    	descr->set_tooltip_text (M(meta.description));
+    	descr->set_active( true );
+    	Glib::ustring s(iter->second[0]);
+    	for( int j=1; j< iter->second.size(); j++ ){
+    		s += ";";
+    		s += iter->second[j];
+    	}
+    	Gtk::Label* val = Gtk::manage( new Gtk::Label ( s ) );
+    	val->set_alignment(Gtk::ALIGN_LEFT);
+    	val->set_tooltip_text (M(meta.description));
+
+    	table->attach (*descr, 0, 1, row, row+1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    	table->attach (*val, 1, 2, row, row+1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    }
+
+    Gtk::ScrolledWindow* scrolledWindow = Gtk::manage( new Gtk::ScrolledWindow() );
+    scrolledWindow->set_border_width(2);
+    scrolledWindow->set_shadow_type(Gtk::SHADOW_NONE);
+    scrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+    scrolledWindow->property_window_placement().set_value(Gtk::CORNER_TOP_LEFT);
+    scrolledWindow->add(*table);
+
+    get_vbox()->pack_start (*scrolledWindow);
+
+    add_button (Gtk::StockID("gtk-ok"), 1);
+    add_button (Gtk::StockID("gtk-cancel"), 0);
+
+    set_response_sensitive (1);
+    set_default_response (1);
+    show_all_children ();
+}
+
+rtengine::MetadataList PartialPasteIPTCDlg::getIPTC()
+{
+	rtengine::MetadataList v=iptc;
+	// remove unselected items from v
+	std::map<std::string, Gtk::CheckButton *>::iterator iterC = chk.begin();
+	for( ;iterC!= chk.end();iterC++)
+		if( !iterC->second->get_active() )
+			v.erase( iterC->first );
+
+	return v;
+}

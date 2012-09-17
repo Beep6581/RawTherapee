@@ -38,8 +38,6 @@ using namespace std;
 
 #define CHECKTIME 2000
 
-extern Glib::ustring argv0;
-
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		filepanel(filepanel),
 		selectedDirectoryId(1),
@@ -48,6 +46,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		dirlistener(NULL),
 		hasValidCurrentEFS(false),
 		filterPanel(NULL),
+		exportPanel(NULL),
 		previewsToLoad(0),
 		previewsLoaded(0),
 		coarsePanel(cp),
@@ -742,14 +741,17 @@ void FileCatalog::deleteRequested  (std::vector<FileBrowserEntry*> tbe, bool inc
             safe_g_remove (Glib::ustring(removeExtension(fname)+".thm"));
             safe_g_remove (Glib::ustring(removeExtension(fname)+".THM"));
 
-			if (inclBatchProcessed) {
-			    Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
-				if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
+            // take info from snapshots inside thumb
+/*
+            if (inclBatchProcessed) {
+                Glib::ustring procfName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
+                if (safe_file_test (procfName, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfName);
 
-				// delete paramfile if found
-				Glib::ustring procfNameParamFile = Glib::ustring::compose ("%1.%2.out%3", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format, paramFileExtension);
-				if (safe_file_test (procfNameParamFile, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfNameParamFile);
-			}
+                // delete paramfile if found
+                Glib::ustring procfNameParamFile = Glib::ustring::compose ("%1.%2.out%3", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format, paramFileExtension);
+                if (safe_file_test (procfNameParamFile, Glib::FILE_TEST_EXISTS)) safe_g_remove (procfNameParamFile);
+            }
+*/
 
             previewsLoaded--;
         }
@@ -785,6 +787,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 		// iterate through selected files
 		for (unsigned int i=0; i<tbe.size(); i++) {
 			Glib::ustring src_fPath = tbe[i]->filename;
+			Glib::ustring src_fPath_noExt = removeExtension( src_fPath );
 			Glib::ustring src_Dir = Glib::path_get_dirname(src_fPath);
 			Glib::RefPtr<Gio::File> src_file = Gio::File::create_for_path ( src_fPath );
 			if( !src_file ) continue; // if file is missing - skip it
@@ -795,7 +798,8 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 
 			// construct  destination File Paths
 			Glib::ustring dest_fPath = Glib::build_filename (dest_Dir, fname);
-			Glib::ustring dest_fPath_param= dest_fPath + paramFileExtension;
+			Glib::ustring dest_fPath_noExt = removeExtension( dest_fPath );
+			Glib::ustring dest_fPath_param= dest_fPath_noExt + paramFileExtension;
 
 			if (moveRequested && (src_Dir==dest_Dir)) continue;
 			/* comparison of src_Dir and dest_Dir is done per image for compatibility with
@@ -823,16 +827,16 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 
 
 					// attempt to copy/move paramFile only if it exist next to the src
-					Glib::RefPtr<Gio::File> scr_param = Gio::File::create_for_path (  src_fPath + paramFileExtension );
+					Glib::RefPtr<Gio::File> scr_param = Gio::File::create_for_path (  src_fPath_noExt + paramFileExtension );
 
-					if (safe_file_test( src_fPath + paramFileExtension, Glib::FILE_TEST_EXISTS)){
-						Glib::RefPtr<Gio::File> dest_param = Gio::File::create_for_path ( dest_fPath_param);
+					if (safe_file_test( src_fPath_noExt + paramFileExtension, Glib::FILE_TEST_EXISTS)){
+						Glib::RefPtr<Gio::File> dest_param = Gio::File::create_for_path ( dest_fPath_param );
 						// copy/move paramFile to destination
 						if (moveRequested){
-							if (safe_file_test( dest_fPath + paramFileExtension, Glib::FILE_TEST_EXISTS)){
+							if (safe_file_test( dest_fPath_param , Glib::FILE_TEST_EXISTS)){
 								// profile already got copied to destination from cache after cacheMgr->renameEntry
 								// delete source profile as cleanup
-								safe_g_remove (src_fPath + paramFileExtension);
+								safe_g_remove (src_fPath_noExt + paramFileExtension);
 							}
 							else
 								scr_param->move(dest_param);
@@ -847,7 +851,7 @@ void FileCatalog::copyMoveRequested  (std::vector<FileBrowserEntry*> tbe, bool m
 					Glib::ustring dest_fname = Glib::ustring::compose("%1%2%3%4%5",fname_noExt,"_",i_copyindex,".",fname_Ext);
 					// re-construct  destination File Paths
 					dest_fPath = Glib::build_filename (dest_Dir, dest_fname);
-					dest_fPath_param= dest_fPath + paramFileExtension;
+					dest_fPath_param= Glib::ustring::compose("%1%2%3%4",dest_fPath_noExt,"_",i_copyindex, paramFileExtension);
 					i_copyindex++;
 				}
 			}//while
@@ -864,48 +868,60 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 
         #pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
-            rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
+            rtengine::procparams::PartialProfile pprofile(false, false);
+            pprofile = tbe[i]->thumbnail->getPartialProfile();
 
-            // if fast mode is selected, override (disable) prams
+            // if fast mode is selected, override (disable) params
             // controlling time and resource consuming tasks
             // and also those which effect is not pronounced after reducing the image size
             // TODO!!! could expose selections below via preferences
             if (fastmode){
-				if (options.fastexport_bypass_sharpening         ) params.sharpening.enabled          = false;
-				if (options.fastexport_bypass_sharpenEdge        ) params.sharpenEdge.enabled         = false;
-				if (options.fastexport_bypass_sharpenMicro       ) params.sharpenMicro.enabled        = false;
-				//if (options.fastexport_bypass_lumaDenoise        ) params.lumaDenoise.enabled         = false;
-				//if (options.fastexport_bypass_colorDenoise       ) params.colorDenoise.enabled        = false;
-				if (options.fastexport_bypass_defringe           ) params.defringe.enabled            = false;
-				if (options.fastexport_bypass_dirpyrDenoise      ) params.dirpyrDenoise.enabled       = false;
-				if (options.fastexport_bypass_sh_hq              ) params.sh.hq                       = false;
-				if (options.fastexport_bypass_dirpyrequalizer    ) params.dirpyrequalizer.enabled     = false;
-				if (options.fastexport_bypass_raw_all_enhance    ) params.raw.all_enhance             = false;
-				if (options.fastexport_bypass_raw_ccSteps        ) params.raw.ccSteps                 = 0;
-				if (options.fastexport_bypass_raw_dcb_iterations ) params.raw.dcb_iterations          = 0;
-				if (options.fastexport_bypass_raw_dcb_enhance    ) params.raw.dcb_enhance             = false;
-				if (options.fastexport_bypass_raw_ca             ) {params.raw.ca_autocorrect =false; params.raw.cared=0; params.raw.cablue=0;}
-				if (options.fastexport_bypass_raw_linenoise      ) params.raw.linenoise               = 0;
-				if (options.fastexport_bypass_raw_greenthresh    ) params.raw.greenthresh             = 0;
-				if (options.fastexport_bypass_raw_df             ) {params.raw.df_autoselect = false; params.raw.dark_frame="";}
-				if (options.fastexport_bypass_raw_ff             ) {params.raw.ff_AutoSelect = false; params.raw.ff_file="";}
-				params.raw.dmethod       = options.fastexport_raw_dmethod     ;
-				params.icm.input         = options.fastexport_icm_input       ;
-				params.icm.working       = options.fastexport_icm_working     ;
-				params.icm.output        = options.fastexport_icm_output      ;
-				params.icm.gamma         = options.fastexport_icm_gamma       ;
-				params.resize.enabled    = options.fastexport_resize_enabled  ;
-				params.resize.scale      = options.fastexport_resize_scale    ;
-				params.resize.appliesTo  = options.fastexport_resize_appliesTo;
-				params.resize.method     = options.fastexport_resize_method   ;
-				params.resize.dataspec   = options.fastexport_resize_dataspec ;
-				params.resize.width      = options.fastexport_resize_width    ;
-				params.resize.height     = options.fastexport_resize_height   ;
+				if (options.fastexport_bypass_sharpening         ) pprofile.pparams->sharpening.enabled          = false;
+				if (options.fastexport_bypass_sharpenEdge        ) pprofile.pparams->sharpenEdge.enabled         = false;
+				if (options.fastexport_bypass_sharpenMicro       ) pprofile.pparams->sharpenMicro.enabled        = false;
+				//if (options.fastexport_bypass_lumaDenoise        ) pprofile.pparams->lumaDenoise.enabled         = false;
+				//if (options.fastexport_bypass_colorDenoise       ) pprofile.pparams->colorDenoise.enabled        = false;
+				if (options.fastexport_bypass_defringe           ) pprofile.pparams->defringe.enabled            = false;
+				if (options.fastexport_bypass_dirpyrDenoise      ) pprofile.pparams->dirpyrDenoise.enabled       = false;
+				if (options.fastexport_bypass_sh_hq              ) pprofile.pparams->sh.hq                       = false;
+				if (options.fastexport_bypass_dirpyrequalizer    ) pprofile.pparams->dirpyrequalizer.enabled     = false;
+				//if (options.fastexport_bypass_raw_all_enhance    ) pprofile.pparams->raw.all_enhance             = false;
+				if (options.fastexport_bypass_raw_ccSteps        ) pprofile.pparams->raw.ccSteps                 = 0;
+				if (options.fastexport_bypass_raw_dcb_iterations ) pprofile.pparams->raw.dcb_iterations          = 0;
+				if (options.fastexport_bypass_raw_dcb_enhance    ) pprofile.pparams->raw.dcb_enhance             = false;
+				if (options.fastexport_bypass_raw_ca             ) {pprofile.pparams->raw.ca_autocorrect =false; pprofile.pparams->raw.cared=0; pprofile.pparams->raw.cablue=0;}
+				if (options.fastexport_bypass_raw_linenoise      ) pprofile.pparams->raw.linenoise               = 0;
+				if (options.fastexport_bypass_raw_greenthresh    ) pprofile.pparams->raw.greenthresh             = 0;
+				if (options.fastexport_bypass_raw_df             ) {pprofile.pparams->raw.df_autoselect = false; pprofile.pparams->raw.dark_frame="";}
+				if (options.fastexport_bypass_raw_ff             ) {pprofile.pparams->raw.ff_AutoSelect = false; pprofile.pparams->raw.ff_file="";}
+				pprofile.pparams->raw.dmethod       = options.fastexport_raw_dmethod     ;
+				pprofile.pparams->icm.input         = options.fastexport_icm_input       ;
+				pprofile.pparams->icm.working       = options.fastexport_icm_working     ;
+				pprofile.pparams->icm.output        = options.fastexport_icm_output      ;
+				pprofile.pparams->icm.gamma         = options.fastexport_icm_gamma       ;
+				pprofile.pparams->resize.enabled    = options.fastexport_resize_enabled  ;
+				pprofile.pparams->resize.scale      = options.fastexport_resize_scale    ;
+				pprofile.pparams->resize.appliesTo  = options.fastexport_resize_appliesTo;
+				pprofile.pparams->resize.method     = options.fastexport_resize_method   ;
+				pprofile.pparams->resize.dataspec   = options.fastexport_resize_dataspec ;
+				pprofile.pparams->resize.width      = options.fastexport_resize_width    ;
+				pprofile.pparams->resize.height     = options.fastexport_resize_height   ;
             }
 
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
+            rtengine::ImageMetaData* idata = tbe[i]->thumbnail->getMetadata();
+            if( idata ){
+            	if( !idata->getIPTCDataChanged() && !options.defMetadata.empty() ){
+                    rtengine::ImageMetaData *id = rtengine::ImageMetaData::fromFile("",options.defMetadata,"",false );
+                    if( id ){
+                    	rtengine::MetadataList loaded = id->getIPTCData();
+                    	idata->setIPTCData( loaded );
+                    	delete id;
+                    }
+            	}
+            }
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, *pprofile.pparams, idata ,options.outputMetaData );
             double tmpscale;
-            rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
+            rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (*pprofile.pparams, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
 
             int pw, ph;
             guint8* prev=NULL;
@@ -924,7 +940,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
             // processThumbImage is the processing intensive part, but adding to queue must be ordered
             #pragma omp ordered
             {
-                entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
+                entries.push_back(new BatchQueueEntry (pjob, *pprofile.pparams, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
             }
             }
 
@@ -1024,7 +1040,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
                 continue;
             // if no extension is given, concatenate the extension of the original file
             if (nBaseName.find ('.')==nBaseName.npos) {
-		size_t lastdot = baseName.find_last_of ('.');
+                size_t lastdot = baseName.find_last_of ('.');
                 nBaseName += "." + (lastdot!=Glib::ustring::npos ? baseName.substr (lastdot+1) : "");
             }
             Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
@@ -1409,7 +1425,7 @@ void FileCatalog::checkAndAddFile (Glib::RefPtr<Gio::File> file) {
     	return;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
-	size_t lastdot = info->get_name().find_last_of ('.');
+        size_t lastdot = info->get_name().find_last_of ('.');
         if (options.is_extention_enabled(lastdot!=Glib::ustring::npos ? info->get_name().substr (lastdot+1) : "")){
 						previewLoader->add (selectedDirectoryId,file->get_parse_name(),this);
             previewsToLoad++;
@@ -1449,8 +1465,8 @@ void FileCatalog::emptyTrash () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     std::vector<FileBrowserEntry*> toDel;
     for (size_t i=0; i<t.size(); i++)
-      if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getStage()==1)
-	toDel.push_back (static_cast<FileBrowserEntry*>(t[i]));
+        if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getRank()==-1)
+            toDel.push_back (static_cast<FileBrowserEntry*>(t[i]));
     deleteRequested (toDel, false);
     trashChanged();
 }
@@ -1458,7 +1474,7 @@ void FileCatalog::emptyTrash () {
 bool FileCatalog::trashIsEmpty () {
     const std::vector<ThumbBrowserEntryBase*> t = fileBrowser->getEntries ();
     for (size_t i=0; i<t.size(); i++)
-      if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getStage()==1)
+        if ((static_cast<FileBrowserEntry*>(t[i]))->thumbnail->getRank()==-1)
             return false;
 
     return true;

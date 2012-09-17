@@ -119,7 +119,7 @@ class PartialPasteDlg : public Gtk::Dialog {
     public:
         PartialPasteDlg (Glib::ustring title);
 
-        void applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, const rtengine::procparams::ProcParams* srcPP, const ParamsEdited* srcPE=NULL);
+        void applyPaste (rtengine::procparams::ProcParams* dstPP, ParamsEdited* dstPE, rtengine::procparams::ProcParams* srcPP, ParamsEdited* srcPE=NULL);
 
         void everythingToggled ();
         void basicToggled ();
@@ -129,6 +129,16 @@ class PartialPasteDlg : public Gtk::Dialog {
         void compositionToggled ();
         void metaicmToggled ();
         void rawToggled ();
+};
+
+class PartialPasteIPTCDlg : public Gtk::Dialog {
+	rtengine::MetadataList iptc;
+	Gtk::Table* table;
+	std::map<std::string, Gtk::CheckButton *> chk;
+public:
+	PartialPasteIPTCDlg( const rtengine::MetadataList &iptc);
+	rtengine::MetadataList getIPTC();
+
 };
 
 #endif

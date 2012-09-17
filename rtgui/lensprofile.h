@@ -43,7 +43,7 @@ public:
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setRawMeta     (bool raw, const rtengine::ImageMetaData* pMeta);
+    void setRawMeta     (bool raw, rtengine::ImageMetaData* pMeta);
 
     void onLCPFileChanged ();
     void onLCPFileReset   ();
