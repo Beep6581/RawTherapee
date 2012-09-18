@@ -1265,7 +1265,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         cinfo.err = my_jpeg_std_error (&jerr);
         jpeg_create_decompress (&cinfo);
         my_jpeg_stdio_src (&cinfo,f);
-		if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
+        if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
         {
             jpeg_read_header (&cinfo, TRUE);
             int width, height;
@@ -1318,6 +1318,7 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
     SafeKeyFile keyFile;
     
     try {
+        Glib::Mutex::Lock thmbLock(thumbMutex);
         if (!keyFile.load_from_file (fname)) 
             return false;
 
@@ -1343,16 +1344,19 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
                         colorMatrix[i][j] = cm[ix++];
             }
         }
-        return true;
     }
-    catch (Glib::Error) {
+    catch (Glib::Error &err) {
         return false;
     }
+
+    return true;
 }
 
 bool Thumbnail::writeData  (const Glib::ustring& fname) {
 
     SafeKeyFile keyFile;
+
+    Glib::Mutex::Lock thmbLock(thumbMutex);
 
     try {
     if( safe_file_test(fname,Glib::FILE_TEST_EXISTS) )
@@ -1381,8 +1385,8 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     else {
         fprintf (f, "%s", keyFile.to_data().c_str());
         fclose (f);
-        return true;
     }
+    return true;
 }
 
 bool Thumbnail::readEmbProfile  (const Glib::ustring& fname) {
