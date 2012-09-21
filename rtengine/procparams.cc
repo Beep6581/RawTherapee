@@ -138,7 +138,10 @@ void ProcParams::setDefaults () {
     toneCurve.shcompr       = 50;
     toneCurve.curve.clear ();
     toneCurve.curve.push_back(DCT_Linear);
+    toneCurve.curve2.clear ();
+    toneCurve.curve2.push_back(DCT_Linear);
     toneCurve.curveMode     = ToneCurveParams::TC_MODE_STD;
+    toneCurve.curveMode2    = ToneCurveParams::TC_MODE_STD;
     
     labCurve.brightness      = 0;
     labCurve.contrast        = 0;
@@ -402,15 +405,40 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
         case (ToneCurveParams::TC_MODE_FILMLIKE):
             method = "FilmLike";
             break;
-        case (ToneCurveParams::TC_MODE_VALBLENDING):
-            method = "ValueBlending";
+        case (ToneCurveParams::TC_MODE_SATANDVALBLENDING):
+            method = "SatAndValueBlending";
+            break;
+        case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
+            method = "WeightedStd";
             break;
         }
         keyFile.set_string  ("Exposure", "CurveMode", method);
     }
+    if (!pedited || pedited->toneCurve.curveMode2)  {
+        Glib::ustring method;
+        switch (toneCurve.curveMode2) {
+        case (ToneCurveParams::TC_MODE_STD):
+            method = "Standard";
+            break;
+        case (ToneCurveParams::TC_MODE_FILMLIKE):
+            method = "FilmLike";
+            break;
+        case (ToneCurveParams::TC_MODE_SATANDVALBLENDING):
+            method = "SatAndValueBlending";
+            break;
+        case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
+            method = "WeightedStd";
+            break;
+        }
+        keyFile.set_string  ("Exposure", "CurveMode2", method);
+    }
     if (!pedited || pedited->toneCurve.curve) {
         Glib::ArrayHandle<double> tcurve = toneCurve.curve;
         keyFile.set_double_list("Exposure", "Curve", tcurve);
+    }
+    if (!pedited || pedited->toneCurve.curve2) {
+        Glib::ArrayHandle<double> tcurve = toneCurve.curve2;
+        keyFile.set_double_list("Exposure", "Curve2", tcurve);
     }
 
     // save channel mixer
@@ -805,13 +833,24 @@ if (keyFile.has_group ("Exposure")) {
     if (toneCurve.shcompr > 100) toneCurve.shcompr = 100; // older pp3 files can have values above 100.
     if (keyFile.has_key ("Exposure", "CurveMode"))      {
         Glib::ustring sMode = keyFile.get_string ("Exposure", "CurveMode");
-        if      (sMode == "Standard")           toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
-        else if (sMode == "FilmLike")           toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
-        else if (sMode == "ValueBlending")      toneCurve.curveMode = ToneCurveParams::TC_MODE_VALBLENDING;
+        if      (sMode == "Standard")            toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
+        else if (sMode == "FilmLike")            toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
+        else if (sMode == "SatAndValueBlending") toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+        else if (sMode == "WeightedStd")         toneCurve.curveMode = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
         if (pedited) pedited->toneCurve.curveMode = true; 
     }
-    if (ppVersion>200)
+    if (keyFile.has_key ("Exposure", "CurveMode2"))      {
+        Glib::ustring sMode = keyFile.get_string ("Exposure", "CurveMode2");
+        if      (sMode == "Standard")            toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
+        else if (sMode == "FilmLike")            toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
+        else if (sMode == "SatAndValueBlending") toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+        else if (sMode == "WeightedStd")         toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+        if (pedited) pedited->toneCurve.curveMode2 = true;
+    }
+    if (ppVersion>200) {
     if (keyFile.has_key ("Exposure", "Curve"))          { toneCurve.curve         = keyFile.get_double_list ("Exposure", "Curve"); if (pedited) pedited->toneCurve.curve = true; }
+    if (keyFile.has_key ("Exposure", "Curve2"))         { toneCurve.curve2        = keyFile.get_double_list ("Exposure", "Curve2"); if (pedited) pedited->toneCurve.curve2 = true; }
+    }
 }
 
     // load channel mixer curve
@@ -1252,6 +1291,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 
 	return
 		toneCurve.curve == other.toneCurve.curve
+		&& toneCurve.curve2 == other.toneCurve.curve2
 		&& toneCurve.brightness == other.toneCurve.brightness
 		&& toneCurve.black == other.toneCurve.black
 		&& toneCurve.contrast == other.toneCurve.contrast
@@ -1263,6 +1303,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& toneCurve.clip == other.toneCurve.clip
 		&& toneCurve.expcomp == other.toneCurve.expcomp
         && toneCurve.curveMode == other.toneCurve.curveMode
+        && toneCurve.curveMode2 == other.toneCurve.curveMode2
 		&& labCurve.lcurve == other.labCurve.lcurve
 		&& labCurve.acurve == other.labCurve.acurve
 		&& labCurve.bcurve == other.labCurve.bcurve

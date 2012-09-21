@@ -233,7 +233,7 @@ HISTORY_MSG_7;Black
 HISTORY_MSG_8;Exposure Compensation
 HISTORY_MSG_9;Highlight Compression
 HISTORY_MSG_10;Shadow Compression
-HISTORY_MSG_11;Tone Curve
+HISTORY_MSG_11;Tone Curve 1
 HISTORY_MSG_12;Auto Exposure
 HISTORY_MSG_13;Exposure Clipping
 HISTORY_MSG_14;Luminance Brightness
@@ -263,9 +263,9 @@ HISTORY_MSG_37;Auto Exposure
 HISTORY_MSG_38;White Balance Method
 HISTORY_MSG_39;Color Temperature
 HISTORY_MSG_40;White Balance Tint
-HISTORY_MSG_41;Tone Curve Mode
-HISTORY_MSG_42;Color Shift "B"
-HISTORY_MSG_43;Luminance Denoising
+HISTORY_MSG_41;Tone Curve Mode 1
+HISTORY_MSG_42;Tone Curve 2
+HISTORY_MSG_43;Tone Curve Mode 2
 HISTORY_MSG_44;Lum. Denoising Radius
 HISTORY_MSG_45;Lum. Denoising Edge Tolerance
 HISTORY_MSG_46;Color Denoising
@@ -923,14 +923,18 @@ TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
 TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
 TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
 TP_EXPOSURE_CONTRAST;Contrast
-TP_EXPOSURE_CURVEEDITOR;Tone Curve
+TP_EXPOSURE_CURVEEDITOR1;Tone Curve 1
+TP_EXPOSURE_CURVEEDITOR2;Tone Curve 2
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the following section of the manual to learn more on how to achieve the best results with the double curve option:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_EXPCOMP;Exposure Compensation
 TP_EXPOSURE_LABEL;Exposure
 TP_EXPOSURE_SATURATION;Saturation
 TP_EXPOSURE_TCMODE_FILMLIKE;Film-like
-TP_EXPOSURE_TCMODE_LABEL;Curve mode
+TP_EXPOSURE_TCMODE_LABEL1;Curve mode 1
+TP_EXPOSURE_TCMODE_LABEL2;Curve mode 2
+TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 TP_EXPOSURE_TCMODE_STANDARD;Standard
-TP_EXPOSURE_TCMODE_VALBLENDING;Value channel
+TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 TP_EXPO_AFTER; After interpolation (before RGB conversion)
 TP_FLATFIELD_AUTOSELECT;Auto selection
 TP_FLATFIELD_BLURRADIUS;Blur Radius

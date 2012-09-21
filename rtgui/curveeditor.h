@@ -60,6 +60,7 @@ class CurveEditor {
 
 		CurveEditorGroup* group;
 		CurveEditorSubGroup* subGroup;
+		Gtk::Widget* relatedWidget;
 
 		std::vector<double> tempCurve;
 		sigc::connection typeconn;

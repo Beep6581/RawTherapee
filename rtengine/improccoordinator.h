@@ -76,22 +76,25 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTf satcurve;
         LUTf lhskcurve;
 
-        LUTf rCurve;
-        LUTf gCurve;
-        LUTf bCurve;
-
-        NonStandardToneCurve nonStandardCurve;
-
-        LUTu rcurvehist, rcurvehistCropped, rbeforehist;
-        LUTu gcurvehist, gcurvehistCropped, gbeforehist;
-        LUTu bcurvehist, bcurvehistCropped, bbeforehist;
-
         LUTu vhist16;
         LUTu lhist16,lhist16Cropped;
         LUTu histCropped;
 
-        LUTu histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, bcabhist;
-        LUTu histRedRaw, histGreenRaw, histBlueRaw;
+        LUTu histRed, histRedRaw;
+        LUTu histGreen, histGreenRaw;
+        LUTu histBlue, histBlueRaw;
+        LUTu histLuma, histToneCurve, histLCurve, bcabhist;
+
+        LUTf rCurve;
+        LUTf gCurve;
+        LUTf bCurve;
+
+        ToneCurve customToneCurve1;
+        ToneCurve customToneCurve2;
+
+        LUTu rcurvehist, rcurvehistCropped, rbeforehist;
+        LUTu gcurvehist, gcurvehistCropped, gbeforehist;
+        LUTu bcurvehist, bcurvehistCropped, bbeforehist;
 
         int fw, fh, tr, fullw, fullh;
         int pW, pH;

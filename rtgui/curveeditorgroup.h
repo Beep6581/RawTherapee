@@ -75,9 +75,10 @@ public:
 	void setBatchMode (bool batchMode);
 	void setCurveExternal (CurveEditor* ce, const std::vector<double>& c);
 	void setCurveListener (CurveListener* l) { cl = l; }
+	void setTooltip (Glib::ustring ttip);
 	CurveEditor* getDisplayedCurve () { return displayedCurve; }
 	//void on_realize ();
-	CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, bool periodic = true);
+	CurveEditor* addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget=NULL, bool periodic=true);
 
 protected:
 	//void curveTypeToggled ();

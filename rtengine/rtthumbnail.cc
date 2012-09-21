@@ -742,11 +742,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
 	LUTu dummy;
 
-	NonStandardToneCurve nonStandardCurve;
+	ToneCurve customToneCurve1, customToneCurve2;
 
-    CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh,
-								params.toneCurve.shcompr, bright, contr, gamma, true, params.toneCurve.curveMode, 
-								params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, nonStandardCurve, 16);
+	ipf.g = gamma;
+	ipf.iGamma = true;
+	CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh,
+								params.toneCurve.shcompr, bright, contr, ipf.g, !ipf.iGamma,
+								params.toneCurve.curveMode, params.toneCurve.curve,
+								params.toneCurve.curveMode2, params.toneCurve.curve2,
+								hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2, 16);
 	
 	CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 16);
 	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 16);
@@ -754,7 +758,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	
 	LabImage* labView = new LabImage (fw,fh);
 
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, nonStandardCurve, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, expcomp, hlcompr, hlcomprthresh);
 
     if (shmap)
         delete shmap;

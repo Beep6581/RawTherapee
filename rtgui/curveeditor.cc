@@ -135,18 +135,19 @@ CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEd
 	bottomBarCP = NULL;
 	leftBarCP = NULL;
 	curveCP = NULL;
+	relatedWidget = NULL;
 
 	group = ceGroup;
 	subGroup = ceSubGroup;
 
-    if (group && text.size())
-    	curveType = new PopUpToggleButton(text + ":");
-    else
-    	curveType = new PopUpToggleButton();
+	if (group && text.size())
+		curveType = new PopUpToggleButton(text + ":");
+	else
+		curveType = new PopUpToggleButton();
 
-    curveType->set_tooltip_text(M("CURVEEDITOR_TYPE"));
-    // TODO: Does this signal have to be blocked when on curve type change ?
-    curveType->signal_toggled().connect ( sigc::mem_fun(*this, &CurveEditor::curveTypeToggled) );
+	curveType->set_tooltip_text(M("CURVEEDITOR_TYPE"));
+	// TODO: Does this signal have to be blocked when on curve type change ?
+	curveType->signal_toggled().connect ( sigc::mem_fun(*this, &CurveEditor::curveTypeToggled) );
 	typeconn  = curveType->signal_changed().connect (sigc::mem_fun(*this, &CurveEditor::typeSelectionChanged) );
 }
 
