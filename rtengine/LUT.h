@@ -95,7 +95,8 @@ public:
 		maxs=size-2;
 	}
 
-	LUT(int s, T * source) {
+	LUT(int s, T * source, int flags = 0xfffffff) {
+		clip = flags;
 		data = new T[s];
 		owner = 1;
 		size = s;

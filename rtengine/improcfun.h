@@ -46,7 +46,6 @@ class ImProcFunctions {
 		const ProcParams* params;
 		double scale;
 		bool multiThread;
-		float g;
 
         void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul);
 
@@ -68,6 +67,9 @@ class ImProcFunctions {
 
 
 	public:
+		bool iGamma; // true if inverse gamma has to be applied in rgbProc
+		double g;
+
 		static LUTf cachef;
 		
 		double lumimul[3];
@@ -76,7 +78,7 @@ class ImProcFunctions {
 		static void cleanupCache ();
 		
 		ImProcFunctions       (const ProcParams* iparams, bool imultiThread=true)
-			: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread) {}
+			: monitorTransform(NULL), params(iparams), scale(1), multiThread(imultiThread), iGamma(true), g(0.0) {}
 		~ImProcFunctions      ();
 
 		void setScale         (double iscale);
@@ -85,9 +87,9 @@ class ImProcFunctions {
 
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const NonStandardToneCurve & nonStandardCurve);
+		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
-		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const NonStandardToneCurve & nonStandardCurve,
+		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
 		                       double expcomp, int hlcompr, int hlcomprthresh);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
 		

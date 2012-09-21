@@ -150,7 +150,7 @@ void Crop::update (int todo) {
 	
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->nonStandardCurve );
+							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1, parent->customToneCurve2 );
 
 	/*xref=000;yref=000;
 	if (colortest && cropw>115 && croph>115) 

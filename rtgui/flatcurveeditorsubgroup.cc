@@ -77,9 +77,6 @@ FlatCurveEditor* FlatCurveEditorSubGroup::addCurve(Glib::ustring curveLabel, boo
 
 	// Initialization of the new curve
 	storeCurveValues(newCE, getCurveFromGUI(FCT_MinMaxCPoints));
-
-	// We add it to the curve editor list
-	parent->curveEditors.push_back(newCE);
 	return newCE;
 }
 

@@ -424,7 +424,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 // has waived all copyright and related or neighboring rights to this work.
 // This code is licensed under CC0 v1.0, see license information at
 // http://creativecommons.org/publicdomain/zero/1.0/
-// addition from JD : pyramid  + ponderated contrast with matrix 5x5
+// addition from JD : pyramid  + pondered contrast with matrix 5x5
 void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 	if (params->sharpenMicro.enabled==false)
 		return;

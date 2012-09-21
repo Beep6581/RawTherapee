@@ -232,9 +232,6 @@ DiagonalCurveEditor* DiagonalCurveEditorSubGroup::addCurve(Glib::ustring curveLa
 	storeCurveValues(newCE, getCurveFromGUI(DCT_Spline));
 	storeCurveValues(newCE, getCurveFromGUI(DCT_Parametric));
 	storeCurveValues(newCE, getCurveFromGUI(DCT_NURBS));
-
-	// We add it to the curve editor list
-	parent->curveEditors.push_back(newCE);
 	return newCE;
 }
 
