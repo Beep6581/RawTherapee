@@ -28,6 +28,7 @@
 #include "../rtgui/thresholdselector.h"
 #include "curves.h"
 //#include "calc_distort.h"
+#include "color.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -265,12 +266,12 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 			bool neg=false;
 			bool more_rgb=false;
 			//gamut control : Lab values are in gamut
-			Color::gamutLchonly(HH, Lprov, Chprov, R, G, B, wip, highlight, 0.2f, 0.98f, neg, more_rgb);
+			Color::gamutLchonly(HH, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f, neg, more_rgb);
 			if(neg) negat++;
 			if(more_rgb) moreRGB++;
 #else
 			//gamut control : Lab values are in gamut
-			Color::gamutLchonly(HH, Lprov, Chprov, R, G, B, wip, highlight, 0.2f, 0.98f);
+			Color::gamutLchonly(HH, Lprov, Chprov, R, G, B, wip, highlight, 0.15f, 0.98f);
 #endif
 
 			float saturation=SAT(R,G,B);
@@ -416,10 +417,11 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 				float fyy = (0.00862069f *Lprov )+ 0.137932f;
 				float fxx = (0.002f * aprovn) + fyy;
 				float fzz = fyy - (0.005f * bprovn);
-
 				float xx_ = 65535.0f * Color::f2xyz(fxx)*Color::D50x;
-				float yy_ = 65535.0f * Color::f2xyz(fyy);
+			//	float yy_ = 65535.0f * Color::f2xyz(fyy);
 				float zz_ = 65535.0f * Color::f2xyz(fzz)*Color::D50z;
+				float yy_= (Lprov>Color::epskap) ? 65535.0*fyy*fyy*fyy : 65535.0*Lprov/Color::kappa;
+
 				Color::xyz2rgb(xx_,yy_,zz_,R,G,B,wip);
 
 				if(R<0.0f || G<0.0f || B<0.0f) {

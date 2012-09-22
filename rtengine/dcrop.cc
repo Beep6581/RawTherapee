@@ -102,12 +102,12 @@ void Crop::update (int todo) {
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
 
-		//parent->imgsrc->convertColorSpace(origCrop, params.icm);
+        //parent->imgsrc->convertColorSpace(origCrop, params.icm);
 
         if (todo & M_LINDENOISE) {
-			if (skip==1 && params.dirpyrDenoise.enabled) {
-				parent->ipf.RGB_denoise(origCrop, origCrop, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe);
-			}
+            if (skip==1 && params.dirpyrDenoise.enabled) {
+                parent->ipf.RGB_denoise(origCrop, origCrop, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe);
+            }
         }
         parent->imgsrc->convertColorSpace(origCrop, params.icm, params.raw);
 }
@@ -120,7 +120,7 @@ void Crop::update (int todo) {
     if (needstransform && !transCrop)
         transCrop = new Imagefloat (cropw, croph);
     if ((todo & M_TRANSFORM) && needstransform)
-    	parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip),
+        parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip),
             parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getMetaData()->getFocalLen35mm(),
             parent->imgsrc->getMetaData()->getFocusDist(), parent->imgsrc->getRotateDegree(), false);
     if (transCrop)
@@ -129,9 +129,9 @@ void Crop::update (int todo) {
     // blurmap for shadow & highlights
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip))) / 2.0;
-		double shradius = params.sh.radius;
-		if (!params.sh.hq) shradius *= radius / 1800.0;        
-		cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
+        double shradius = params.sh.radius;
+        if (!params.sh.hq) shradius *= radius / 1800.0;
+        cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
         cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
     }
 
@@ -150,7 +150,7 @@ void Crop::update (int todo) {
 	
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->nonStandardCurve );
+							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1, parent->customToneCurve2 );
 
 	/*xref=000;yref=000;
 	if (colortest && cropw>115 && croph>115) 

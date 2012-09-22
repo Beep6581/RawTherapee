@@ -168,17 +168,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf bCurve (65536,0);
 	LUTu dummy;
 
-	NonStandardToneCurve nonStandardCurve;
+	ToneCurve customToneCurve1, customToneCurve2;
 
-	CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr, imgsrc->getGamma(), true,
-	                            params.toneCurve.curveMode, params.toneCurve.curve,
-	                            hist16, dummy, curve1, curve2, curve, dummy, nonStandardCurve);
+	ipf.g = imgsrc->getGamma();
+	ipf.iGamma = true;
+	CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr, ipf.g, !ipf.iGamma,
+	                            params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
+	                            hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2);
 	
 	CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
 	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 1);
 	CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 1);
 
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, nonStandardCurve, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, expcomp, hlcompr, hlcomprthresh);
 
     // Freeing baseImg because not used anymore
     delete baseImg;

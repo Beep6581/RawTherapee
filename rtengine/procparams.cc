@@ -138,7 +138,10 @@ void ProcParams::setDefaults () {
     toneCurve.shcompr       = 50;
     toneCurve.curve.clear ();
     toneCurve.curve.push_back(DCT_Linear);
+    toneCurve.curve2.clear ();
+    toneCurve.curve2.push_back(DCT_Linear);
     toneCurve.curveMode     = ToneCurveParams::TC_MODE_STD;
+    toneCurve.curveMode2    = ToneCurveParams::TC_MODE_STD;
 
     labCurve.brightness      = 0;
     labCurve.contrast        = 0;
@@ -373,6 +376,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 
 	return
 		toneCurve.curve == other.toneCurve.curve
+		&& toneCurve.curve2 == other.toneCurve.curve2
 		&& toneCurve.brightness == other.toneCurve.brightness
 		&& toneCurve.black == other.toneCurve.black
 		&& toneCurve.contrast == other.toneCurve.contrast
@@ -384,6 +388,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& toneCurve.clip == other.toneCurve.clip
 		&& toneCurve.expcomp == other.toneCurve.expcomp
 		&& toneCurve.curveMode == other.toneCurve.curveMode
+		&& toneCurve.curveMode2 == other.toneCurve.curveMode2
 		&& labCurve.lcurve == other.labCurve.lcurve
 		&& labCurve.acurve == other.labCurve.acurve
 		&& labCurve.bcurve == other.labCurve.bcurve
@@ -629,6 +634,7 @@ void PartialProfile::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& bas
     if (!pedited || pedited->toneCurve.hlcomprthresh) xmpData[prefix+"rt:HighlightComprThreshold"]= pparams->toneCurve.hlcomprthresh;
     if (!pedited || pedited->toneCurve.shcompr)    xmpData[prefix+"rt:ShadowCompression"]=          pparams->toneCurve.shcompr;
     if (!pedited || pedited->toneCurve.curve)      xmpData[prefix+"rt:ToneCurve"]=                  serializeVector(pparams->toneCurve.curve);
+    if (!pedited || pedited->toneCurve.curve2)     xmpData[prefix+"rt:ToneCurve2"]=                 serializeVector(pparams->toneCurve.curve2);
     if (!pedited || pedited->toneCurve.curveMode)  {
         Glib::ustring method;
         switch (pparams->toneCurve.curveMode) {
@@ -638,11 +644,32 @@ void PartialProfile::saveIntoXMP(Exiv2::XmpData &xmpData, const std::string& bas
         case (ToneCurveParams::TC_MODE_FILMLIKE):
             method = "FilmLike";
             break;
-        case (ToneCurveParams::TC_MODE_VALBLENDING):
-            method = "ValueBlending";
+        case (ToneCurveParams::TC_MODE_SATANDVALBLENDING):
+            method = "SatAndValueBlending";
+            break;
+        case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
+            method = "WeightedStd";
             break;
         }
         xmpData[prefix+"rt:ToneCurveMode"]= method;
+    }
+    if (!pedited || pedited->toneCurve.curveMode2)  {
+        Glib::ustring method;
+        switch (pparams->toneCurve.curveMode2) {
+        case (ToneCurveParams::TC_MODE_STD):
+            method = "Standard";
+            break;
+        case (ToneCurveParams::TC_MODE_FILMLIKE):
+            method = "FilmLike";
+            break;
+        case (ToneCurveParams::TC_MODE_SATANDVALBLENDING):
+            method = "SatAndValueBlending";
+            break;
+        case (ToneCurveParams::TC_MODE_WEIGHTEDSTD):
+            method = "WeightedStd";
+            break;
+        }
+        xmpData[prefix+"rt:ToneCurveMode2"]= method;
     }
 
     prefix=baseKey+"rt:ChannelMixer/";
@@ -898,6 +925,9 @@ int PartialProfile::loadFromXMP(Exiv2::XmpData &xmpData, const std::string& base
             if (readVarFromXmp( xmpData, prefix+"HighlightComprThreshold", pparams->toneCurve.hlcomprthresh ) && pedited) pedited->toneCurve.hlcomprthresh = true;
             if (readVarFromXmp( xmpData, prefix+"ShadowCompression", pparams->toneCurve.shcompr ) && pedited) pedited->toneCurve.shcompr = true;
             if (readVarFromXmp( xmpData, prefix+"ToneCurve", pparams->toneCurve.curve) && pedited) pedited->toneCurve.curve = true;
+            if (readVarFromXmp( xmpData, prefix+"ToneCurveMode", static_cast<int &>(pparams->toneCurve.curveMode)) && pedited) pedited->toneCurve.curveMode = true;
+            if (readVarFromXmp( xmpData, prefix+"ToneCurve2", pparams->toneCurve.curve2) && pedited) pedited->toneCurve.curve2 = true;
+            if (readVarFromXmp( xmpData, prefix+"ToneCurveMode2", static_cast<int &>(pparams->toneCurve.curveMode2)) && pedited) pedited->toneCurve.curveMode2 = true;
         }
         if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ChannelMixer")) != xmpData.end()){
             prefix=baseKey+"rt:ChannelMixer/rt:";
@@ -1288,19 +1318,29 @@ if (keyFile.has_group ("Exposure")) {
     if (keyFile.has_key ("Exposure", "Contrast"))       { pparams->toneCurve.contrast      = keyFile.get_integer ("Exposure", "Contrast"); if (pedited) pedited->toneCurve.contrast = true; }
     if (keyFile.has_key ("Exposure", "Saturation"))     { pparams->toneCurve.saturation    = keyFile.get_integer ("Exposure", "Saturation"); if (pedited) pedited->toneCurve.saturation = true; }
     if (keyFile.has_key ("Exposure", "Black"))          { pparams->toneCurve.black         = keyFile.get_integer ("Exposure", "Black"); if (pedited) pedited->toneCurve.black = true; }
+    if (keyFile.has_key ("Exposure", "ShadowCompr"))    { pparams->toneCurve.shcompr       = keyFile.get_integer ("Exposure", "ShadowCompr"); if (pedited) pedited->toneCurve.shcompr = true; }
     if (keyFile.has_key ("Exposure", "HighlightCompr")) { pparams->toneCurve.hlcompr       = keyFile.get_integer ("Exposure", "HighlightCompr"); if (pedited) pedited->toneCurve.hlcompr = true; }
     if (keyFile.has_key ("Exposure", "HighlightComprThreshold")) { pparams->toneCurve.hlcomprthresh = keyFile.get_integer ("Exposure", "HighlightComprThreshold"); if (pedited) pedited->toneCurve.hlcomprthresh = true; }
-    if (keyFile.has_key ("Exposure", "ShadowCompr"))    { pparams->toneCurve.shcompr       = keyFile.get_integer ("Exposure", "ShadowCompr"); if (pedited) pedited->toneCurve.shcompr = true; }
+    if (pparams->toneCurve.shcompr > 100) pparams->toneCurve.shcompr = 100; // older pp3 files can have values above 100.
     if (keyFile.has_key ("Exposure", "CurveMode"))      {
         Glib::ustring sMode = keyFile.get_string ("Exposure", "CurveMode");
-        if      (sMode == "Standard")           pparams->toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
-        else if (sMode == "FilmLike")           pparams->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
-        else if (sMode == "ValueBlending")      pparams->toneCurve.curveMode = ToneCurveParams::TC_MODE_VALBLENDING;
+        if      (sMode == "Standard")            pparams->toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
+        else if (sMode == "FilmLike")            pparams->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
+        else if (sMode == "SatAndValueBlending") pparams->toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+        else if (sMode == "WeightedStd")         pparams->toneCurve.curveMode = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
         if (pedited) pedited->toneCurve.curveMode = true;
     }
-    if (pparams->toneCurve.shcompr > 100) pparams->toneCurve.shcompr = 100; // older pp3 files can have values above 100.
+    if (keyFile.has_key ("Exposure", "CurveMode2"))      {
+        Glib::ustring sMode = keyFile.get_string ("Exposure", "CurveMode2");
+        if      (sMode == "Standard")            pparams->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
+        else if (sMode == "FilmLike")            pparams->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
+        else if (sMode == "SatAndValueBlending") pparams->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+        else if (sMode == "WeightedStd")         pparams->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+        if (pedited) pedited->toneCurve.curveMode2 = true;
+    }
     if (pparams->ppVersion>200)
     if (keyFile.has_key ("Exposure", "Curve"))          { pparams->toneCurve.curve         = keyFile.get_double_list ("Exposure", "Curve"); if (pedited) pedited->toneCurve.curve = true; }
+    if (keyFile.has_key ("Exposure", "Curve2"))         { pparams->toneCurve.curve2        = keyFile.get_double_list ("Exposure", "Curve2"); if (pedited) pedited->toneCurve.curve2 = true; }
 }
 
     // load channel mixer curve

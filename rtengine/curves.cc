@@ -41,7 +41,7 @@ namespace rtengine {
 		x = 0;
 		y = 0;
 		ypp = 0;
-		hashSize = 1000;  // has to be initiallised to the maximum value
+		hashSize = 1000;  // has to be initialized to the maximum value
 	}
 	
 	void Curve::AddPolygons ()
@@ -293,10 +293,15 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
-									 double shcompr, double br, double contr, double gamma_, bool igamma_, int curveMode,
-									 const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
+									 double shcompr, double br, double contr, double gamma_, bool igamma_,
+									 ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
+									 ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+									 LUTu & histogram, LUTu & histogramCropped,
 									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
-									 LUTu & outBeforeCCurveHistogram, NonStandardToneCurve & outNSToneCurve, int skip) {
+									 LUTu & outBeforeCCurveHistogram,
+									 ToneCurve & customToneCurve1,
+									 ToneCurve & customToneCurve2,
+									 int skip) {
 		
 		
 		//double def_mul = pow (2.0, defmul);
@@ -324,7 +329,7 @@ namespace rtengine {
 		LUTf dcurve(0x10000);
 		
 		// check if inverse gamma is needed at the end
-		bool needigamma = igamma_ && gamma_>0;
+		bool needigamma = igamma_ && gamma_>1.;
 		
 		// clear array that stores histogram valid before applying the custom curve
 		outBeforeCCurveHistogram.clear();
@@ -405,7 +410,7 @@ namespace rtengine {
 			val = (double)i / 65535.0;
 			
 			// gamma correction
-			if (gamma_>1)
+			if (gamma_>1.)
 				val = gamma (val, gamma_, start, slope, mul, add);
 			
 			// apply brightness curve
@@ -470,11 +475,32 @@ namespace rtengine {
 		}
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		// create a curve if needed
+
+		// create second curve if needed
 		bool histNeeded = false;
 		DiagonalCurve* tcurve = NULL;
-		outNSToneCurve.Reset();
+		customToneCurve2.Reset();
+
+		if (!curvePoints2.empty() && curvePoints2[0]>DCT_Linear && curvePoints2[0]<DCT_Unchanged) {
+			tcurve = new DiagonalCurve (curvePoints2, CURVES_MIN_POLY_POINTS/skip);
+			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
+				histNeeded = true;
+		}
+		if (tcurve) {
+			if (tcurve->isIdentity()) {
+				delete tcurve;
+				tcurve = NULL;
+			}
+			else
+				customToneCurve2.Set(tcurve);
+			delete tcurve;
+			tcurve = NULL;
+		}
+
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		// create first curve if needed
+		customToneCurve1.Reset();
 
 		if (!curvePoints.empty() && curvePoints[0]>DCT_Linear && curvePoints[0]<DCT_Unchanged) {
 			tcurve = new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS/skip);
@@ -486,12 +512,14 @@ namespace rtengine {
 				delete tcurve;
 				tcurve = NULL;
 			}
-			else if (curveMode!=procparams::ToneCurveParams::TC_MODE_STD) {
-				outNSToneCurve.Set(tcurve);  // it's used in rgbProc, but not merge with the other curves
+			else if (curveMode != ToneCurveParams::TC_MODE_STD) {
+				customToneCurve1.Set(tcurve);
 				delete tcurve;
 				tcurve = NULL;
 			}
 		}
+
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 		for (int i=0; i<=0xffff; i++) {
 			float val;
@@ -520,8 +548,7 @@ namespace rtengine {
 			outCurve[i] = (65535.0 * val);
 		}
 
-		if (tcurve)
-			delete tcurve;
+		if (tcurve) delete tcurve;
 
 		/*if (outBeforeCCurveHistogram) {
 			for (int i=0; i<256; i++) printf("i= %d bchist= %d \n",i,outBeforeCCurveHistogram[i]);
@@ -724,21 +751,19 @@ namespace rtengine {
 		}
 		
 		if (tcurve) {
-			for (int i=0; i<65536; i++) {				
+			if (!outCurve)
+				outCurve(65536, 0);
+			for (int i=0; i<65536; i++) {
 				// apply custom/parametric/NURBS curve, if any
 				float val = tcurve->getVal ((float)i/65536.0f);
 				outCurve[i] = (65536.0f * val);
 			}
-		}
-		else {
-			// Skip the slow getval method if no curve is used (or an identity curve)
-			for (int i=0; i<65536; i++) {
-				outCurve[i] = i;
-			}
-		}
-		
-		if (tcurve)
 			delete tcurve;
+		}
+		// let the LUTf empty for identity curves
+		else {
+			outCurve.reset();
+		}
 
 	}
 	
@@ -746,14 +771,14 @@ namespace rtengine {
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	
-void NonStandardToneCurve::Reset() {
+void ToneCurve::Reset() {
     lutToneCurve.reset();
 }
 
 // Fill a LUT with X/Y, ranged 0xffff
-void NonStandardToneCurve::Set(Curve *pCurve) {
-    lutToneCurve(0xffff);
-    for (int i=0;i<0xffff;i++) lutToneCurve[i] = pCurve->getVal(i/(double)0xffff) * 0xffff;
+void ToneCurve::Set(Curve *pCurve) {
+    lutToneCurve(65536);
+    for (int i=0;i<65536;i++) lutToneCurve[i] = pCurve->getVal(i/(double)65535) * 65535;
 }
 
 }

@@ -227,6 +227,8 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
         
         for (int j=0; j<H; j++)
             dst[j][i] = (T)temp2[j];
+
+        buffer.release(pBuf);
     }
 }   
 

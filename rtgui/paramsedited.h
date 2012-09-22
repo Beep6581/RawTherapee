@@ -36,7 +36,9 @@ class ToneCurveParamsEdited {
 
     public:
         bool curve;
+        bool curve2;
         bool curveMode;
+        bool curveMode2;
         bool brightness;
         bool black;
         bool contrast;

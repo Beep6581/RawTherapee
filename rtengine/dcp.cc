@@ -78,7 +78,7 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
     if (hasTag) {
 
         // Saturation maps. Need to be unwinded.
-    	float *datas;
+        float *datas = NULL;
         TIFFGetField(in, useSimpleLookup ? TagProfileLookTableData : TagProfileHueSatMapData1, &iArrayCount, &datas);
         #ifdef _DEBUG
         printf("iArrayCount=%d, should be equal to %d\n", iArrayCount, iHueDivisions*iSatDivisions*iValDivisions);
@@ -93,6 +93,8 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
             aDeltas1[i].fSatScale = datas[a++];
             aDeltas1[i].fValScale = datas[a++];
         }
+        if (datas)
+            delete datas;
     }
 
     // For second profile, copy everything from first profile if no better data is available
@@ -142,19 +144,27 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
 
     // Read tone curve points, if any, but disable to RTs own profiles
     // the DCP tone curve is subjective and of low quality in comparison to RTs tone curves
-    tag = tagDir->getTag(TagProfileToneCurve);
-    if (tag!=NULL && !isRTProfile) {
-        std::vector<double> cPoints;
-        cPoints.push_back(double(DCT_Spline));  // The first value is the curve type
+    float *datas = NULL;
+    int count = 0;
+    hasTag = TIFFGetField(in, TagProfileToneCurve, &count, &datas);
+    if (hasTag && !isRTProfile) {
+        #ifdef _DEBUG
+        printf("Number of points defining the ToneCurve: %d\n", count);
+        #endif
+
+        std::vector<double> cPoints(count+1);
+        cPoints.at(0) = double(DCT_Spline);  // The first value is the curve type
 
         // push back each X/Y coordinates in a loop
-        for (int i=0;i<tag->getCount();i++) cPoints.push_back( tag->toDouble(i*TIFFFloatSize) ); 
+        for (int i=0; i<count; i++) cPoints.at(i) = datas[i++];
 
         // Create the curve
         DiagonalCurve rawCurve(cPoints, CURVES_MIN_POLY_POINTS);
 
         toneCurve.Set((Curve*)&rawCurve);
     }
+    if (datas)
+        delete datas;
 
     if (in!=NULL)
         TIFFClose(in);

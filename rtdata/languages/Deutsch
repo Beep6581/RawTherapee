@@ -231,7 +231,7 @@ HISTORY_MSG_7;Schwarz
 HISTORY_MSG_8;Belichtungskorrektur
 HISTORY_MSG_9;Lichter-Kompression
 HISTORY_MSG_10;Schatten-Kompression
-HISTORY_MSG_11;Tonwertkurve
+HISTORY_MSG_11;Tonwertkurve 1
 HISTORY_MSG_12;Automatische Belichtung
 HISTORY_MSG_13;Belichtungsbeschneidung
 HISTORY_MSG_14;Luminanz Helligkeit
@@ -261,9 +261,9 @@ HISTORY_MSG_37;Farbverstärkung
 HISTORY_MSG_38;Weißabgleich Methode
 HISTORY_MSG_39;Weißabgleich Farbtemp.
 HISTORY_MSG_40;Weißabgleich Farbton
-HISTORY_MSG_41;Tonewertkurve Modus
-HISTORY_MSG_42;Farbkorrektur "B"
-HISTORY_MSG_43;Luminanz-Rauschfilter
+HISTORY_MSG_41;Tonewertkurve Modus 1
+HISTORY_MSG_42;Tonwertkurve 2
+HISTORY_MSG_43;Tonewertkurve Modus 2
 HISTORY_MSG_44;Luminanz-Rauschfilter Radius
 HISTORY_MSG_45;Luminanz-Rauschfilter Kantentoleranz
 HISTORY_MSG_46;Farb-Rauschfilter
@@ -897,14 +897,17 @@ TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Lichter wiederherstellen\nSchwellenwert
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichter wiederherstellen\nStärke
 TP_EXPOSURE_COMPRSHADOWS;Schatten wiederherstellen
 TP_EXPOSURE_CONTRAST;Kontrast
-TP_EXPOSURE_CURVEEDITOR;Tonwertkurve
+TP_EXPOSURE_CURVEEDITOR1;Tonwertkurve 1
+TP_EXPOSURE_CURVEEDITOR2;Tonwertkurve 2
 TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
 TP_EXPOSURE_LABEL;Belichtung
 TP_EXPOSURE_SATURATION;Sättigung
 TP_EXPOSURE_TCMODE_FILMLIKE;Film-ähnliche
-TP_EXPOSURE_TCMODE_LABEL;Tonewertkurve Modus
+TP_EXPOSURE_TCMODE_LABEL1;Tonewertkurve Modus 1
+TP_EXPOSURE_TCMODE_LABEL2;Tonewertkurve Modus 2
+TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 TP_EXPOSURE_TCMODE_STANDARD;Standard
-TP_EXPOSURE_TCMODE_VALBLENDING;Hellwert-Kanal
+TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 TP_EXPO_AFTER;Nach Interpolation (vor RGB-Konvertierung)
 TP_FLATFIELD_AUTOSELECT;Automatische Auswahl
 TP_FLATFIELD_BLURRADIUS;Unschärferadius
