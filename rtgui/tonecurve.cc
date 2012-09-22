@@ -27,6 +27,8 @@ using namespace rtengine::procparams;
 
 ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
+  CurveListener::setMulti(true);
+
   std::vector<GradientMilestone> bottomMilestones;
   bottomMilestones.push_back( GradientMilestone(0., 0., 0., 0.) );
   bottomMilestones.push_back( GradientMilestone(1., 1., 1., 1.) );
@@ -86,35 +88,55 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   saturation = Gtk::manage (new Adjuster (M("TP_EXPOSURE_SATURATION"), -100, 100, 1, 0));
   pack_start (*saturation);
   
-//----------- Curve ------------------------------
+//----------- Curve 1 ------------------------------
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  curveEditorG = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_EXPOSURE_CURVEEDITOR"));
+  toneCurveMode = Gtk::manage (new MyComboBoxText ());
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_STANDARD"));
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
+  toneCurveMode->set_active (0);
+  toneCurveMode->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL1"));
+
+  curveEditorG = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_EXPOSURE_CURVEEDITOR1"));
   curveEditorG->setCurveListener (this);
 
-  shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""));
+  shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "", toneCurveMode));
   shape->setBottomBarBgGradient(bottomMilestones);
   shape->setLeftBarBgGradient(bottomMilestones);
-
 
   // This will add the reset button at the end of the curveType buttons
   curveEditorG->curveListComplete();
 
-  pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
+  pack_start( *curveEditorG, Gtk::PACK_SHRINK, 2);
 
-  Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
-  hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_EXPOSURE_TCMODE_LABEL") +": ")),Gtk::PACK_SHRINK, 4);
-  toneCurveMode = Gtk::manage (new MyComboBoxText ());
-  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_STANDARD"));
-  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
-  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_VALBLENDING"));
-  toneCurveMode->set_active (0);
-  hb1->pack_end (*toneCurveMode, Gtk::PACK_EXPAND_WIDGET, 4);
+  tcmodeconn = toneCurveMode->signal_changed().connect( sigc::mem_fun(*this, &ToneCurve::curveMode1Changed), true );
 
-  pack_start( *hb1, Gtk::PACK_SHRINK, 2);
+//----------- Curve 2 ------------------------------
 
-  tcmodeconn = toneCurveMode->signal_changed().connect( sigc::mem_fun(*this, &ToneCurve::curveModeChanged), true );
-  //curveEditorG->show();
+  toneCurveMode2 = Gtk::manage (new MyComboBoxText ());
+  toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_STANDARD"));
+  toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
+  toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
+  toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
+  toneCurveMode2->set_active (0);
+  toneCurveMode2->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL2"));
+
+  curveEditorG2 = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_EXPOSURE_CURVEEDITOR2"));
+  curveEditorG2->setCurveListener (this);
+
+  shape2 = static_cast<DiagonalCurveEditor*>(curveEditorG2->addCurve(CT_Diagonal, "", toneCurveMode2));
+  shape2->setBottomBarBgGradient(bottomMilestones);
+  shape2->setLeftBarBgGradient(bottomMilestones);
+
+  // This will add the reset button at the end of the curveType buttons
+  curveEditorG2->curveListComplete();
+  curveEditorG2->setTooltip(M("TP_EXPOSURE_CURVEEDITOR2_TOOLTIP"));
+
+  pack_start( *curveEditorG2, Gtk::PACK_SHRINK, 2);
+
+  tcmode2conn = toneCurveMode2->signal_changed().connect( sigc::mem_fun(*this, &ToneCurve::curveMode2Changed), true );
 
 // --------- Set Up Listeners -------------
   expcomp->setAdjusterListener (this);
@@ -127,11 +149,17 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   saturation->setAdjusterListener (this);
 }
 
+ToneCurve::~ToneCurve () {
+    delete curveEditorG;
+    delete curveEditorG2;
+}
+
 void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
 
     tcmodeconn.block(true);
+    tcmode2conn.block(true);
     autoconn.block (true);
 
     autolevels->set_active (pp->toneCurve.autoexp);
@@ -148,8 +176,10 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     contrast->setValue (pp->toneCurve.contrast);
     saturation->setValue (pp->toneCurve.saturation);
     shape->setCurve (pp->toneCurve.curve);
+    shape2->setCurve (pp->toneCurve.curve2);
 
     toneCurveMode->set_active(pp->toneCurve.curveMode);
+    toneCurveMode2->set_active(pp->toneCurve.curveMode2);
 
     if (pedited) {
         expcomp->setEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
@@ -163,12 +193,17 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         autolevels->set_inconsistent (!pedited->toneCurve.autoexp);
         clipDirty = pedited->toneCurve.clip;
         shape->setUnChanged (!pedited->toneCurve.curve);
+        shape2->setUnChanged (!pedited->toneCurve.curve2);
         if (!pedited->toneCurve.curveMode) {
-            toneCurveMode->set_active(3);
+            toneCurveMode->set_active(4);
+        }
+        if (!pedited->toneCurve.curveMode2) {
+            toneCurveMode2->set_active(4);
         }
     }
 
     autoconn.block (false);
+    tcmode2conn.block(false);
     tcmodeconn.block(false);
 
     enableListener ();
@@ -176,6 +211,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 void ToneCurve::autoOpenCurve  () {
     shape->openIfNonlinear();
+    shape2->openIfNonlinear();
 }
 
 void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
@@ -191,26 +227,36 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->toneCurve.contrast = (int)contrast->getValue ();
     pp->toneCurve.saturation = (int)saturation->getValue ();
     pp->toneCurve.curve = shape->getCurve ();
+    pp->toneCurve.curve2 = shape2->getCurve ();
 
     int tcMode = toneCurveMode->get_active_row_number();
     if      (tcMode == 0) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
-    if      (tcMode == 1) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
-    else if (tcMode == 2) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_VALBLENDING;
+    else if (tcMode == 1) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
+    else if (tcMode == 2) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+    else if (tcMode == 3) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+
+    tcMode = toneCurveMode2->get_active_row_number();
+    if      (tcMode == 0) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
+    else if (tcMode == 1) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
+    else if (tcMode == 2) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
+    else if (tcMode == 3) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
 
 
     if (pedited) {
-        pedited->toneCurve.expcomp = expcomp->getEditedState ();
-        pedited->toneCurve.black   = black->getEditedState ();
-        pedited->toneCurve.hlcompr = hlcompr->getEditedState ();
+        pedited->toneCurve.expcomp    = expcomp->getEditedState ();
+        pedited->toneCurve.black      = black->getEditedState ();
+        pedited->toneCurve.hlcompr    = hlcompr->getEditedState ();
         pedited->toneCurve.hlcomprthresh = hlcomprthresh->getEditedState ();
-        pedited->toneCurve.shcompr = shcompr->getEditedState ();
+        pedited->toneCurve.shcompr    = shcompr->getEditedState ();
         pedited->toneCurve.brightness = brightness->getEditedState ();
-        pedited->toneCurve.contrast = contrast->getEditedState ();
+        pedited->toneCurve.contrast   = contrast->getEditedState ();
         pedited->toneCurve.saturation = saturation->getEditedState ();
-        pedited->toneCurve.autoexp  = !autolevels->get_inconsistent();
-        pedited->toneCurve.clip     = clipDirty;
-        pedited->toneCurve.curve    = !shape->isUnChanged ();
-        pedited->toneCurve.curveMode = toneCurveMode->get_active_row_number() != 3;
+        pedited->toneCurve.autoexp    = !autolevels->get_inconsistent();
+        pedited->toneCurve.clip       = clipDirty;
+        pedited->toneCurve.curve      = !shape->isUnChanged ();
+        pedited->toneCurve.curve2     = !shape2->isUnChanged ();
+        pedited->toneCurve.curveMode  = toneCurveMode->get_active_row_number() != 4;
+        pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 4;
     }
 }
 
@@ -247,18 +293,33 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
     }
 }
 
-void ToneCurve::curveChanged () {
+void ToneCurve::curveChanged (CurveEditor* ce) {
 
-    if (listener) listener->panelChanged (EvToneCurve, M("HISTORY_CUSTOMCURVE"));
+    if (listener) {
+        if (ce == shape)
+            listener->panelChanged (EvToneCurve1, M("HISTORY_CUSTOMCURVE"));
+        else if (ce == shape2)
+            listener->panelChanged (EvToneCurve2, M("HISTORY_CUSTOMCURVE"));
+    }
 }
 
-void ToneCurve::curveModeChanged () {
+void ToneCurve::curveMode1Changed () {
     //if (listener)  listener->panelChanged (EvToneCurveMode, toneCurveMode->get_active_text());
-    if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::curveModeChanged_));
+    if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::curveMode1Changed_));
 }
 
-bool ToneCurve::curveModeChanged_ () {
-    if (listener) listener->panelChanged (EvToneCurveMode, toneCurveMode->get_active_text());
+bool ToneCurve::curveMode1Changed_ () {
+    if (listener) listener->panelChanged (EvToneCurveMode1, toneCurveMode->get_active_text());
+    return false;
+}
+
+void ToneCurve::curveMode2Changed () {
+    //if (listener)  listener->panelChanged (EvToneCurveMode, toneCurveMode->get_active_text());
+    if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::curveMode2Changed_));
+}
+
+bool ToneCurve::curveMode2Changed_ () {
+    if (listener) listener->panelChanged (EvToneCurveMode2, toneCurveMode2->get_active_text());
     return false;
 }
 

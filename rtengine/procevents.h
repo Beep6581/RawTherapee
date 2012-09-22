@@ -32,7 +32,7 @@ enum ProcEvent {
     EvExpComp=7,
     EvHLCompr=8,
     EvSHCompr=9,
-    EvToneCurve=10,
+    EvToneCurve1=10,
     EvAutoExp=11,
     EvClip=12,
     EvLBrightness=13,
@@ -62,9 +62,9 @@ enum ProcEvent {
     EvWBMethod=37,
     EvWBTemp=38,
     EvWBGreen=39,
-    EvToneCurveMode=40,
-    EvCShiftB=41,     // obsolete
-    EvLDNEnabled=42,  // obsolete
+    EvToneCurveMode1=40,
+    EvToneCurve2=41,
+    EvToneCurveMode2=42,
     EvLDNRadius=43,   // obsolete
     EvLDNEdgeTolerance=44, // obsolete
     EvCDNEnabled=45,  // obsolete

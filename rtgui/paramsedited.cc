@@ -28,7 +28,9 @@ void ParamsEdited::set (bool v) {
 	general.intrash      = v;
 
 	toneCurve.curve      = v;
+	toneCurve.curve2     = v;
     toneCurve.curveMode  = v;
+    toneCurve.curveMode2 = v;
 	toneCurve.brightness = v;
 	toneCurve.black      = v;
 	toneCurve.contrast   = v;
@@ -228,7 +230,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
     for (size_t i=1; i<src.size(); i++) {
         const ProcParams& other = src[i];
         toneCurve.curve = toneCurve.curve && p.toneCurve.curve == other.toneCurve.curve;
+        toneCurve.curve2 = toneCurve.curve2 && p.toneCurve.curve2 == other.toneCurve.curve2;
         toneCurve.curveMode = toneCurve.curveMode && p.toneCurve.curveMode == other.toneCurve.curveMode;
+        toneCurve.curveMode2 = toneCurve.curveMode2 && p.toneCurve.curveMode2 == other.toneCurve.curveMode2;
         toneCurve.brightness = toneCurve.brightness && p.toneCurve.brightness == other.toneCurve.brightness;
         toneCurve.black = toneCurve.black && p.toneCurve.black == other.toneCurve.black;
         toneCurve.contrast = toneCurve.contrast && p.toneCurve.contrast == other.toneCurve.contrast;
@@ -426,8 +430,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 	bool dontforceSet = !forceSet;
 
-	if (toneCurve.curve)		toEdit.toneCurve.curve 	    = mods.toneCurve.curve;
+	if (toneCurve.curve)		toEdit.toneCurve.curve      = mods.toneCurve.curve;
+	if (toneCurve.curve2)		toEdit.toneCurve.curve2     = mods.toneCurve.curve2;
     if (toneCurve.curveMode)    toEdit.toneCurve.curveMode  = mods.toneCurve.curveMode;
+    if (toneCurve.curveMode2)   toEdit.toneCurve.curveMode2 = mods.toneCurve.curveMode2;
 	if (toneCurve.brightness)	toEdit.toneCurve.brightness = dontforceSet && options.baBehav[ADDSET_TC_BRIGHTNESS] ? toEdit.toneCurve.brightness + mods.toneCurve.brightness : mods.toneCurve.brightness;
 	if (toneCurve.black)		toEdit.toneCurve.black 	    = dontforceSet && options.baBehav[ADDSET_TC_BLACKLEVEL] ? toEdit.toneCurve.black + mods.toneCurve.black : mods.toneCurve.black;
 	if (toneCurve.contrast)		toEdit.toneCurve.contrast 	= dontforceSet && options.baBehav[ADDSET_TC_CONTRAST] ? toEdit.toneCurve.contrast + mods.toneCurve.contrast : mods.toneCurve.contrast;

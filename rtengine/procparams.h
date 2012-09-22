@@ -183,16 +183,19 @@ class ToneCurveParams {
     public:
 
         enum eTCModeId {
-            TC_MODE_STD,        // Standard modes, the curve is applied on all component individually
-            TC_MODE_FILMLIKE,   // Film-like mode, as defined in Adobe's reference code
-            TC_MODE_VALBLENDING // Modify the Value channel only
+            TC_MODE_STD,               // Standard modes, the curve is applied on all component individually
+            TC_MODE_FILMLIKE,          // Film-like mode, as defined in Adobe's reference code
+            TC_MODE_SATANDVALBLENDING, // Modify the Saturation and Value channel
+            TC_MODE_WEIGHTEDSTD        // Weighted standard mode
         };
 
         bool        autoexp;
         double      clip;
         double      expcomp;
         std::vector<double>   curve;
+        std::vector<double>   curve2;
         eTCModeId   curveMode;
+        eTCModeId   curveMode2;
         int         brightness;
         int         black;
         int         contrast;
@@ -723,7 +726,7 @@ class ProcParams {
       /**
         * The constructor makes a copy of the source ProcParams, or use the hand-wired defaults if source is NULL.
         */
-        ProcParams () { setDefaults(); }
+        ProcParams ();
 
       /**
         * Sets the hand-wired defaults parameters.

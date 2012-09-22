@@ -88,7 +88,7 @@ private:
 public:
 	const static double sRGBGamma;        // standard average gamma
 	const static double sRGBGammaCurve;   // 2.4 in the curve
-	const static double eps_max, kappa;
+	const static double eps_max, kappa, epskap;
 	const static float D50x, D50z;
 	const static double u0, v0;
 

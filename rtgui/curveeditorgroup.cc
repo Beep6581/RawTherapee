@@ -56,24 +56,45 @@ void CurveEditorGroup::hideCurrentCurve() {
 /*
  * Add a new curve to the curves list
  *
- * The "periodic" parameter is only used by flat curve editors
+ * Parameters:
+ *     cType:         enum saying which kind of curve type has to be created
+ *     curveLabel:    Name of the curve that will be inserted in the toggle button, before the image.
+ *                    If empty, no text will prepend the image
+ *     relatedWidget: pointer to a widget (or NULL) that will be inserted next to the curve's toggle button.
+ *                    if a smart pointer created by Gtk::manage is passed in, the widget will be deleted by the destructor,
+ *                    otherwise it'll have to be delete it manually
+ *     periodic:      for FlatCurve only, ask the curve to be periodic (default: True)
+ *
  */
-CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, bool periodic) {
+CurveEditor* CurveEditorGroup::addCurve(CurveType cType, Glib::ustring curveLabel, Gtk::Widget *relatedWidget, bool periodic) {
 	switch (cType) {
 	case (CT_Diagonal):
+	{
 		if (!diagonalSubGroup) {
 			diagonalSubGroup = new DiagonalCurveEditorSubGroup(this, curveDir);
 		}
-		return (static_cast<CurveEditor*>(diagonalSubGroup->addCurve(curveLabel)));
+		// We add it to the curve editor list
+		DiagonalCurveEditor* newCE = diagonalSubGroup->addCurve(curveLabel);
+		newCE->relatedWidget = relatedWidget;
+		curveEditors.push_back(newCE);
+		return (newCE);
+	}
 	case (CT_Flat):
+	{
 		if (!flatSubGroup) {
 			flatSubGroup = new FlatCurveEditorSubGroup(this, curveDir);
 		}
-		return (static_cast<CurveEditor*>(flatSubGroup->addCurve(curveLabel, periodic)));
+		// We add it to the curve editor list
+		FlatCurveEditor* newCE = flatSubGroup->addCurve(curveLabel, periodic);
+		newCE->relatedWidget = relatedWidget;
+		curveEditors.push_back(newCE);
+		return (newCE);
+	}
 	default:
 		return (static_cast<CurveEditor*>(NULL));
 		break;
 	}
+	return NULL; // to avoid complains from Gcc
 }
 
 /*
@@ -99,9 +120,15 @@ void CurveEditorGroup::newLine() {
 		}
 
 		int j = numberOfPackedCurve;
-		for (int i = (int)(curveEditors.size())-1; i >= j; i--)
-		{
-			headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, Gtk::PACK_EXPAND_WIDGET, 2);
+		bool hasRelatedWidget = false;
+		for (int i = (int)(curveEditors.size())-1; i >= j; i--) {
+			if (curveEditors[i]->relatedWidget != NULL)
+				hasRelatedWidget = true;
+		}
+		for (int i = (int)(curveEditors.size())-1; i >= j; i--) {
+			if (curveEditors[i]->relatedWidget != NULL)
+				headerBox->pack_end (*curveEditors[i]->relatedWidget, Gtk::PACK_EXPAND_WIDGET, 2);
+			headerBox->pack_end (*curveEditors[i]->curveType->buttonGroup, hasRelatedWidget ? Gtk::PACK_SHRINK : Gtk::PACK_EXPAND_WIDGET, 2);
 			numberOfPackedCurve++;
 		}
 
@@ -257,6 +284,13 @@ void CurveEditorGroup::curveResetPressed () {
 			curveChanged();
 		}
 	}
+}
+
+/*
+ * Set the tooltip text of the label of the curve group
+ */
+void CurveEditorGroup::setTooltip( Glib::ustring ttip) {
+	curveGroupLabel->set_tooltip_text( ttip );
 }
 
 void CurveEditorGroup::setBatchMode (bool batchMode) {

@@ -28,40 +28,42 @@ namespace rtengine {
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
-    pW(-1), pH(-1), plistener(NULL),
-    imageListener(NULL), aeListener(NULL), hListener(NULL), resultValid(false),
-    changeSinceLast(0), updaterRunning(false), destroying(false) {
+    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), highDetailPreprocessComputed(false),
+      highDetailRawComputed(false), allocated(false),
 
-    hltonecurve(65536,0);
-    shtonecurve(65536,2);//clip above
-    tonecurve(65536,0);//,1);
+      hltonecurve(65536,0),
+      shtonecurve(65536,2),//clip above
+      tonecurve(65536,0),//,1);
 
-    lumacurve(65536,0);
-    chroma_acurve(65536,0);
-    chroma_bcurve(65536,0);
-	satcurve(65536,0);
-	lhskcurve(65536,0);
+      lumacurve(65536,0),
+      chroma_acurve(65536,0),
+      chroma_bcurve(65536,0),
+      satcurve(65536,0),
+      lhskcurve(65536,0),
 
-    vhist16(65536);
-    lhist16(65536); lhist16Cropped(65536);
-    histCropped(65536);
+      vhist16(65536),
+      lhist16(65536), lhist16Cropped(65536),
+      histCropped(65536),
 
-    histRed(256); histRedRaw(256);
-    histGreen(256); histGreenRaw(256);
-    histBlue(256); histBlueRaw(256);
-    histLuma(256);
-    histToneCurve(256);
-    histLCurve(256);
-    bcabhist(256);
-		
-    rCurve(65536,0);
-    rcurvehist(256); rcurvehistCropped(256); rbeforehist(256);
-    gCurve(65536,0);
-    gcurvehist(256); gcurvehistCropped(256); gbeforehist(256);		
-    bCurve(65536,0);
-    bcurvehist(256); bcurvehistCropped(256); bbeforehist(256);
-}
+      histRed(256), histRedRaw(256),
+      histGreen(256), histGreenRaw(256),
+      histBlue(256), histBlueRaw(256),
+      histLuma(256),
+      histToneCurve(256),
+      histLCurve(256),
+      bcabhist(256),
+
+      rCurve(),
+      gCurve(),
+      bCurve(),
+      rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
+      gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
+      bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
+
+      pW(-1), pH(-1),
+      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false)
+    {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {
     this->imgsrc = imgsrc;
@@ -72,7 +74,7 @@ ImProcCoordinator::~ImProcCoordinator () {
     destroying = true;
     updaterThreadStart.lock ();
     if (updaterRunning && thread)
-        thread->join ();      
+        thread->join ();
     mProcessing.lock(); 
     mProcessing.unlock(); 
     freeAll ();
@@ -275,11 +277,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
         // complexCurve also calculated pre-curves histogram dependend on crop
+        ipf.g = imgsrc->getGamma();
+        ipf.iGamma = true;
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0,
 									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
 									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
-									imgsrc->getGamma(), true, params.toneCurve.curveMode, params.toneCurve.curve,
-									vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, nonStandardCurve, scale==1 ? 1 : 1);
+									ipf.g, !ipf.iGamma, params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
+									vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, scale==1 ? 1 : 1);
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale==1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale==1 ? 1 : 1);
@@ -288,7 +292,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=CROP ) {
             ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, nonStandardCurve, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+                         rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
         }
 
         // compute L channel histogram
@@ -377,7 +381,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] )
-            crops[i]->update (todo);  // may call outselves
+            crops[i]->update (todo);  // may call ourselves
 
     progress ("Conversion to RGB...",100*readyphase/numofphases);
     if (todo!=CROP) {

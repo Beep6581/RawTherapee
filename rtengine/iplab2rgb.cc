@@ -27,6 +27,7 @@
 #include "settings.h"
 #include "curves.h"
 #include "alignedbuffer.h"
+#include "color.h"
 
 
 #ifdef _OPENMP
@@ -66,16 +67,18 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
 
-            float fy,fx,fz,x_,y_,z_;
+            float fy,fx,fz,x_,y_,z_,LL;
 
 			for (int j=0; j<lab->W; j++) {
 								
 				fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
 				fx = (0.002 * ra[j]) / 327.68 + fy;
 				fz = fy - (0.005 * rb[j]) / 327.68;
-				
+				LL=rL[j]/327.68;
 				x_ = Color::f2xyz(fx)*Color::D50x;
-				y_ = Color::f2xyz(fy);
+				//y_ = Color::f2xyz(fy);
+				y_= (LL>Color::epskap) ? fy*fy*fy : LL/Color::kappa;
+				
 				z_ = Color::f2xyz(fz)*Color::D50z;
 
                 buffer[iy++] = (unsigned short)CLIP(x_* MAXVAL+0.5);
@@ -98,7 +101,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 			int ix = i * 3 * lab->W;
 
 			float R,G,B;
-            float fy,fx,fz,x_,y_,z_;
+            float fy,fx,fz,x_,y_,z_,LL;
 
 			for (int j=0; j<lab->W; j++) {
 			
@@ -107,10 +110,12 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 				fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
 				fx = (0.002 * ra[j]) / 327.68 + fy;
 				fz = fy - (0.005 * rb[j]) / 327.68;
+				LL=rL[j]/327.68;
 				
 				x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
-				y_ = 65535.0 * Color::f2xyz(fy);
+			//	y_ = 65535.0 * Color::f2xyz(fy);
 				z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
+				y_= (LL>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/Color::kappa;
 
 				Color::xyz2srgb(x_,y_,z_,R,G,B);
 				
@@ -164,10 +169,12 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
+				float LL=rL[j]/327.68;
 				
 				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * Color::f2xyz(fy);
+				//float y_ = 65535.0 * Color::f2xyz(fy);
 				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
+				float y_= (LL>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/Color::kappa;
 
                 buffer[iy++] = CLIP((int)(x_+0.5));
                 buffer[iy++] = CLIP((int)(y_+0.5));
@@ -204,10 +211,12 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
+				float LL=rL[j]/327.68;
 				
 				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * Color::f2xyz(fy);
+				//float y_ = 65535.0 * Color::f2xyz(fy);
 				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
+				float y_= (LL>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/Color::kappa;
 
 				Color::xyz2rgb(x_,y_,z_,R,G,B,rgb_xyz);
 
@@ -248,10 +257,12 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
+				float LL=rL[j]/327.68;
 				
 				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * Color::f2xyz(fy);
+				//float y_ = 65535.0 * Color::f2xyz(fy);
 				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
+				float y_= (LL>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/Color::kappa;
 
 				xa[j-cx] = CLIP((int)(x_+0.5));
 				ya[j-cx] = CLIP((int)(y_+0.5));
@@ -279,10 +290,12 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
+				float LL=rL[j]/327.68;
 				
 				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * Color::f2xyz(fy);
+				//float y_ = 65535.0 * Color::f2xyz(fy);
 				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
+				float y_= (LL>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/Color::kappa;
 
 				Color::xyz2srgb(x_,y_,z_,R,G,B);
 
@@ -388,10 +401,12 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
+				float LL=rL[j]/327.68;
 				
 				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * Color::f2xyz(fy);
+			//	float y_ = 65535.0 * Color::f2xyz(fy);
 				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
+				float y_= (LL>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/Color::kappa;
 
 				xa[j-cx] = CLIP((int)x_);
 				ya[j-cx] = CLIP((int)y_);
@@ -419,10 +434,12 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
 				float fx = (0.002 * ra[j])/327.68 + fy;
 				float fz = fy - (0.005 * rb[j])/327.68;
+				float LL=rL[j]/327.68;
 				
 				float x_ = 65535.0 * Color::f2xyz(fx)*Color::D50x;
-				float y_ = 65535.0 * Color::f2xyz(fy);
+				//float y_ = 65535.0 * Color::f2xyz(fy);
 				float z_ = 65535.0 * Color::f2xyz(fz)*Color::D50z;
+				float y_= (LL>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/Color::kappa;
 
 				Color::xyz2srgb(x_,y_,z_,R,G,B);
 

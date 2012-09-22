@@ -742,11 +742,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
 	LUTu dummy;
 
-	NonStandardToneCurve nonStandardCurve;
+	ToneCurve customToneCurve1, customToneCurve2;
 
-    CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh,
-								params.toneCurve.shcompr, bright, contr, gamma, true, params.toneCurve.curveMode, 
-								params.toneCurve.curve, hist16, dummy, curve1, curve2, curve, dummy, nonStandardCurve, 16);
+	ipf.g = gamma;
+	ipf.iGamma = true;
+	CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh,
+								params.toneCurve.shcompr, bright, contr, ipf.g, !ipf.iGamma,
+								params.toneCurve.curveMode, params.toneCurve.curve,
+								params.toneCurve.curveMode2, params.toneCurve.curve2,
+								hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2, 16);
 	
 	CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 16);
 	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 16);
@@ -754,7 +758,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	
 	LabImage* labView = new LabImage (fw,fh);
 
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, nonStandardCurve, expcomp, hlcompr, hlcomprthresh);
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, expcomp, hlcompr, hlcomprthresh);
 
     if (shmap)
         delete shmap;
@@ -1265,7 +1269,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname) {
         cinfo.err = my_jpeg_std_error (&jerr);
         jpeg_create_decompress (&cinfo);
         my_jpeg_stdio_src (&cinfo,f);
-		if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
+        if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 )
         {
             jpeg_read_header (&cinfo, TRUE);
             int width, height;
@@ -1318,6 +1322,7 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
     SafeKeyFile keyFile;
     
     try {
+        Glib::Mutex::Lock thmbLock(thumbMutex);
         if (!keyFile.load_from_file (fname)) 
             return false;
 
@@ -1343,16 +1348,19 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
                         colorMatrix[i][j] = cm[ix++];
             }
         }
-        return true;
     }
-    catch (Glib::Error) {
+    catch (Glib::Error &err) {
         return false;
     }
+
+    return true;
 }
 
 bool Thumbnail::writeData  (const Glib::ustring& fname) {
 
     SafeKeyFile keyFile;
+
+    Glib::Mutex::Lock thmbLock(thumbMutex);
 
     try {
     if( safe_file_test(fname,Glib::FILE_TEST_EXISTS) )
@@ -1381,8 +1389,8 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     else {
         fprintf (f, "%s", keyFile.to_data().c_str());
         fclose (f);
-        return true;
     }
+    return true;
 }
 
 bool Thumbnail::readEmbProfile  (const Glib::ustring& fname) {

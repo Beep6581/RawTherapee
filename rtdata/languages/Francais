@@ -233,7 +233,7 @@ HISTORY_MSG_7;Noir
 HISTORY_MSG_8;Compensation d'exposition
 HISTORY_MSG_9;Compression des hautes lumières
 HISTORY_MSG_10;Compression des ombres
-HISTORY_MSG_11;Courbe tonale
+HISTORY_MSG_11;Courbe tonale 1
 HISTORY_MSG_12;Exposition auto
 HISTORY_MSG_13;Rognage de l'exposition
 HISTORY_MSG_14;Luminance - Luminosité
@@ -263,9 +263,9 @@ HISTORY_MSG_37;Exposition auto
 HISTORY_MSG_38;Méthode de balance des blancs
 HISTORY_MSG_39;Température de couleur
 HISTORY_MSG_40;Teinte de balance des blancs
-HISTORY_MSG_41;Mode courbe tonale
-HISTORY_MSG_42;Décalage couleur "B"
-HISTORY_MSG_43;Débruitage de la Luminance
+HISTORY_MSG_41;Mode courbe tonale 1
+HISTORY_MSG_42;Courbe tonale2
+HISTORY_MSG_43;Mode courbe tonale 2
 HISTORY_MSG_44;Débruitage Lum. - Rayon
 HISTORY_MSG_45;Débruitage Lum. - Tolérance des bords
 HISTORY_MSG_46;Débruitage Chromatique
@@ -928,14 +928,18 @@ TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
 TP_EXPOSURE_COMPRSHADOWS;Compression des ombres
 TP_EXPOSURE_CONTRAST;Contraste
-TP_EXPOSURE_CURVEEDITOR;Courbe tonale
+TP_EXPOSURE_CURVEEDITOR1;Courbe Tonale 1
+TP_EXPOSURE_CURVEEDITOR2;Courbe Tonale 2
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Référez-vous à la section suivante du manuel pour en savoir plus sur les manières d'obtenir les meilleurs résultats avec l'option de double courbe:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_EXPCOMP;Compensation d'exposition
 TP_EXPOSURE_LABEL;Exposition
 TP_EXPOSURE_SATURATION;Saturation
 TP_EXPOSURE_TCMODE_FILMLIKE;Similaire Film
-TP_EXPOSURE_TCMODE_LABEL;Mode
+TP_EXPOSURE_TCMODE_LABEL1;Mode courbe 1
+TP_EXPOSURE_TCMODE_LABEL2;Mode courbe 2
+TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Standard Pondéré
 TP_EXPOSURE_TCMODE_STANDARD;Standard
-TP_EXPOSURE_TCMODE_VALBLENDING;Canal Valeur
+TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Mixage Saturation et Valeur
 TP_EXPO_AFTER; Après l'interpolation (avant la conversion RVB)
 TP_FLATFIELD_AUTOSELECT;Sélection automatique
 TP_FLATFIELD_BLURRADIUS;Rayon de floutage

@@ -41,19 +41,22 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     Adjuster* hlcomprthresh;
     Adjuster* shcompr;
     Adjuster* contrast;
-	Adjuster* saturation;
-    MyComboBoxText*    toneCurveMode;
+    Adjuster* saturation;
+    MyComboBoxText* toneCurveMode;
+    MyComboBoxText* toneCurveMode2;
 
 
     bool clipDirty, lastAuto;
-    sigc::connection autoconn, neutralconn, tcmodeconn;
+    sigc::connection autoconn, neutralconn, tcmodeconn, tcmode2conn;
     CurveEditorGroup* curveEditorG;
+    CurveEditorGroup* curveEditorG2;
     DiagonalCurveEditor* shape;
+    DiagonalCurveEditor* shape2;
 
     // used temporarily in eventing
     double nextExpcomp;
-	int nextBrightness;
-	int nextContrast;
+    int nextBrightness;
+    int nextContrast;
     int nextBlack;
     int nextHlcompr;
     int nextHlcomprthresh;
@@ -61,6 +64,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
   public:
 
     ToneCurve ();
+    ~ToneCurve ();
 
     void read                (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
     void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
@@ -80,9 +84,11 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh);
     bool autoExpComputed_ ();
     void enableAll ();
-    void curveChanged ();
-    void curveModeChanged ();
-    bool curveModeChanged_ ();
+    void curveChanged (CurveEditor* ce);
+    void curveMode1Changed ();
+    bool curveMode1Changed_ ();
+    void curveMode2Changed ();
+    bool curveMode2Changed_ ();
     void expandCurve (bool isExpanded);
     bool isCurveExpanded ();
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
