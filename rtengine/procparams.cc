@@ -925,9 +925,11 @@ int PartialProfile::loadFromXMP(Exiv2::XmpData &xmpData, const std::string& base
             if (readVarFromXmp( xmpData, prefix+"HighlightComprThreshold", pparams->toneCurve.hlcomprthresh ) && pedited) pedited->toneCurve.hlcomprthresh = true;
             if (readVarFromXmp( xmpData, prefix+"ShadowCompression", pparams->toneCurve.shcompr ) && pedited) pedited->toneCurve.shcompr = true;
             if (readVarFromXmp( xmpData, prefix+"ToneCurve", pparams->toneCurve.curve) && pedited) pedited->toneCurve.curve = true;
-            if (readVarFromXmp( xmpData, prefix+"ToneCurveMode", static_cast<int &>(pparams->toneCurve.curveMode)) && pedited) pedited->toneCurve.curveMode = true;
+            int x = pparams->toneCurve.curveMode;
+            if (readVarFromXmp( xmpData, prefix+"ToneCurveMode", x) && pedited) pedited->toneCurve.curveMode = true;
             if (readVarFromXmp( xmpData, prefix+"ToneCurve2", pparams->toneCurve.curve2) && pedited) pedited->toneCurve.curve2 = true;
-            if (readVarFromXmp( xmpData, prefix+"ToneCurveMode2", static_cast<int &>(pparams->toneCurve.curveMode2)) && pedited) pedited->toneCurve.curveMode2 = true;
+            x = pparams->toneCurve.curveMode2;
+            if (readVarFromXmp( xmpData, prefix+"ToneCurveMode2", x) && pedited) pedited->toneCurve.curveMode2 = true;
         }
         if( xmpData.findKey(Exiv2::XmpKey(baseKey+"rt:ChannelMixer")) != xmpData.end()){
             prefix=baseKey+"rt:ChannelMixer/rt:";
