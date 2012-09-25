@@ -1476,9 +1476,9 @@ if (keyFile.has_group ("Impulse Denoising")) {
     // load dirpyrDenoise
 if (keyFile.has_group ("Directional Pyramid Denoising")) {
     if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled"))    { pparams->dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled"); if (pedited) pedited->dirpyrDenoise.enabled = true; }
-    if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))       { pparams->dirpyrDenoise.luma    = keyFile.get_integer ("Directional Pyramid Denoising", "Luma"); if (pedited) pedited->dirpyrDenoise.luma = true; }
-    if (keyFile.has_key ("Directional Pyramid Denoising", "Ldetail"))    { pparams->dirpyrDenoise.Ldetail = keyFile.get_integer ("Directional Pyramid Denoising", "Ldetail"); if (pedited) pedited->dirpyrDenoise.Ldetail = true; }
-    if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))     { pparams->dirpyrDenoise.chroma  = keyFile.get_integer ("Directional Pyramid Denoising", "Chroma"); if (pedited) pedited->dirpyrDenoise.chroma = true;
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))       { pparams->dirpyrDenoise.luma    = keyFile.get_double  ("Directional Pyramid Denoising", "Luma"); if (pedited) pedited->dirpyrDenoise.luma = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Ldetail"))    { pparams->dirpyrDenoise.Ldetail = keyFile.get_double  ("Directional Pyramid Denoising", "Ldetail"); if (pedited) pedited->dirpyrDenoise.Ldetail = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))     { pparams->dirpyrDenoise.chroma  = keyFile.get_double  ("Directional Pyramid Denoising", "Chroma"); if (pedited) pedited->dirpyrDenoise.chroma = true;
     if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))      { pparams->dirpyrDenoise.gamma   = keyFile.get_double  ("Directional Pyramid Denoising", "Gamma"); if (pedited) pedited->dirpyrDenoise.gamma = true; }
     }
 }

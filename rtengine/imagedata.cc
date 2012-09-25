@@ -23,7 +23,6 @@
 #include "../rtgui/version.h"
 #include "iptcmeta.h"
 #include <iostream>
-#include <iconv.h>
 
 #ifndef GLIBMM_EXCEPTIONS_ENABLED
 #include <memory>
