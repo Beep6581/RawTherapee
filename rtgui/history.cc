@@ -172,7 +172,6 @@ void History::cellrenderer_validated_on_edited(const Glib::ustring& path_string,
     Gtk::TreeModel::iterator iter = bookmarkModel->get_iter(path);
     //Prevent entry of the same name
     Glib::ustring convertedStr( safe_locale_to_utf8(new_text) );
-    printf("Edited name = %s\n", convertedStr.c_str());
     if( convertedStr.compare( SnapshotInfo::kCurrentSnapshotName)==0 || findName( convertedStr ) ){
 
         //Start editing again, with the bad text, so that the user can correct it.
