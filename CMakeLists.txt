@@ -161,7 +161,7 @@ endif ()
 
 # check for libraries
 find_package(PkgConfig)
-pkg_check_modules (XMP     REQUIRED xmp>=5.4)
+#pkg_check_modules (XMP     REQUIRED xmp>=5.4)
 pkg_check_modules (GTK     REQUIRED gtk+-2.0>=2.22)
 pkg_check_modules (GLIB2   REQUIRED glib-2.0>=2.16)
 pkg_check_modules (GLIBMM  REQUIRED glibmm-2.4>=2.16)
