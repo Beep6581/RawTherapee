@@ -31,7 +31,7 @@ Glib::RefPtr<Gdk::Pixbuf> History::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> History::enqueuedIcon;
 Glib::RefPtr<Gdk::Pixbuf> History::voidIcon;
 
-History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener(NULL), bmnum (1) {
+History::History (bool bookmarkSupport) : blistener(NULL), slistener(NULL), tpc (NULL), bmnum (1) {
 
     if (!iconsLoaded) {
         recentlySavedIcon = safe_create_from_file ("recent-save.png");
@@ -84,9 +84,6 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener
 
     // Bookmark List
     // ~~~~~~~~~~~~~
-
-    Gtk::HSeparator* hsepb = Gtk::manage (new Gtk::HSeparator ());
-
 
     Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
     addBookmark = Gtk::manage (new Gtk::Button (M("HISTORY_NEWSNAPSHOT")));
@@ -151,73 +148,69 @@ History::History (bool bookmarkSupport) : blistener(NULL), tpc (NULL), slistener
 }
 
 
-void History::cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path)
-{
-	  //Start editing with previously-entered (but invalid) text,
-	  //if we are allowing the user to correct some invalid data.
-	  if(m_validate_retry)
-	  {
-	    //This is the CellEditable inside the CellRenderer.
-	    Gtk::CellEditable* celleditable_validated = cell_editable;
+void History::cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path) {
 
-	    //It's usually an Entry, at least for a CellRendererText:
-	    Gtk::Entry* pEntry = dynamic_cast<Gtk::Entry*>(celleditable_validated);
-	    if(pEntry)
-	    {
-	      pEntry->set_text(m_invalid_text_for_retry);
-	      m_validate_retry = false;
-	      m_invalid_text_for_retry.clear();
-	    }
-	  }
+    //Start editing with previously-entered (but invalid) text,
+    //if we are allowing the user to correct some invalid data.
+    if(m_validate_retry) {
+        //This is the CellEditable inside the CellRenderer.
+        Gtk::CellEditable* celleditable_validated = cell_editable;
+
+        //It's usually an Entry, at least for a CellRendererText:
+        Gtk::Entry* pEntry = dynamic_cast<Gtk::Entry*>(celleditable_validated);
+        if(pEntry) {
+            pEntry->set_text(m_invalid_text_for_retry);
+            m_validate_retry = false;
+            m_invalid_text_for_retry.clear();
+        }
+    }
 }
 
-void History::cellrenderer_validated_on_edited(const Glib::ustring& path_string, const Glib::ustring& new_text)
-{
-	 Gtk::TreePath path(path_string);
-	 Gtk::TreeModel::iterator iter = bookmarkModel->get_iter(path);
-	 //Prevent entry of the same name
-	 if( new_text.compare( SnapshotInfo::kCurrentSnapshotName)==0 || findName( new_text ) ){
+void History::cellrenderer_validated_on_edited(const Glib::ustring& path_string, const Glib::ustring& new_text) {
 
-	    //Start editing again, with the bad text, so that the user can correct it.
-	    //A real application should probably allow the user to revert to the
-	    //previous text.
+    Gtk::TreePath path(path_string);
+    Gtk::TreeModel::iterator iter = bookmarkModel->get_iter(path);
+    //Prevent entry of the same name
+    Glib::ustring convertedStr( safe_locale_to_utf8(new_text) );
+    printf("Edited name = %s\n", convertedStr.c_str());
+    if( convertedStr.compare( SnapshotInfo::kCurrentSnapshotName)==0 || findName( convertedStr ) ){
 
-	    //Set the text to be used in the start_editing signal handler:
-		if(iter)
-	       m_invalid_text_for_retry = (*iter)[bookmarkColumns.name];
-		else
-			m_invalid_text_for_retry = new_text;
-	    m_validate_retry = true;
+        //Start editing again, with the bad text, so that the user can correct it.
+        //A real application should probably allow the user to revert to the
+        //previous text.
 
-	    //Start editing again:
-	    bTreeView->set_cursor(path, m_treeviewcolumn_validated, m_cellrenderer_validated, true /* start_editing */);
-	  }
-	  else
-	  {
+        //Set the text to be used in the start_editing signal handler:
+        if(iter)
+            m_invalid_text_for_retry = (*iter)[bookmarkColumns.name];
+        else
+            m_invalid_text_for_retry = convertedStr;
+        m_validate_retry = true;
 
-	    if(iter)
-	    {
-	      Gtk::TreeModel::Row row = *iter;
-	      Glib::ustring old_value(row[bookmarkColumns.name]);
-	      //Put the new value in the model:
-	      row[bookmarkColumns.name] = new_text;
-	      int id = row[bookmarkColumns.id];
-	      if( slistener )
-	    	  slistener->renameSnapshot(id,new_text );
-	    }
-	  }
+        //Start editing again:
+        bTreeView->set_cursor(path, m_treeviewcolumn_validated, m_cellrenderer_validated, true /* start_editing */);
+    }
+    else {
+
+        if(iter) {
+            Gtk::TreeModel::Row row = *iter;
+            Glib::ustring old_value(row[bookmarkColumns.name]);
+            //Put the new value in the model:
+            row[bookmarkColumns.name] = convertedStr;
+            int id = row[bookmarkColumns.id];
+            if( slistener )
+                slistener->renameSnapshot(id,convertedStr );
+        }
+    }
 }
 
-void History::column_validated_on_cell_data( Gtk::CellRenderer*  renderer , const Gtk::TreeModel::iterator& iter)
-{
-	  //Get the value from the model and show it appropriately in the view:
-	  if(iter)
-	  {
-	    Gtk::TreeModel::Row row = *iter;
-	    Glib::ustring value = row[bookmarkColumns.name];
-	    m_cellrenderer_validated.property_text() = value;
-	  }
+void History::column_validated_on_cell_data( Gtk::CellRenderer*  renderer , const Gtk::TreeModel::iterator& iter) {
 
+    //Get the value from the model and show it appropriately in the view:
+    if(iter) {
+        Gtk::TreeModel::Row row = *iter;
+        Glib::ustring value(row[bookmarkColumns.name]);
+        m_cellrenderer_validated.property_text() = value;
+    }
 }
 
 void History::initHistory () {
@@ -241,11 +234,10 @@ void History::historySelectionChanged () {
             bTreeView->get_selection()->unselect_all ();
         if (row && tpc) {
         	ProcParams pp(row[historyColumns.params]);
-        	ParamsEdited pe;
-        	pe.set(true);
+        	ParamsEdited pe(true);
             PartialProfile pprofile(false, &pp, &pe);
-            ParamsEdited paramsEdited(row[historyColumns.paramsEdited]);
-            tpc->profileChange (&pprofile, EvHistoryBrowsed, row[historyColumns.text], &paramsEdited);
+            //ParamsEdited paramsEdited(row[historyColumns.paramsEdited]);
+            tpc->profileChange (&pprofile, EvHistoryBrowsed, row[historyColumns.text], NULL);
         }
         if (blistener && blistenerLock==false) {
             Gtk::TreeModel::Path path = historyModel->get_path (iter);
@@ -266,12 +258,11 @@ void History::bookmarkSelectionChanged () {
         if (row)
             hTreeView->get_selection()->unselect_all ();
         if (row && tpc) {
-            PartialProfile pprofile(true, false);
-            *pprofile.pparams = row[bookmarkColumns.params];
-            ParamsEdited paramsEdited = row[bookmarkColumns.paramsEdited];
-            Glib::ustring bmName(row[bookmarkColumns.id] + "-"+row[bookmarkColumns.name]);
+        	ProcParams pp(row[bookmarkColumns.params]);
+            PartialProfile pprofile(false, &pp, NULL);
+            ParamsEdited paramsEdited(row[bookmarkColumns.paramsEdited]);
+            Glib::ustring bmName(Glib::ustring::compose("%1-%2", row[bookmarkColumns.id], row[bookmarkColumns.name]));
             tpc->profileChange (&pprofile, EvBookmarkSelected, bmName, &paramsEdited);
-            pprofile.deleteInstance();
         }
     }
 }
@@ -350,13 +341,13 @@ void History::addBookmarkWithText (Glib::ustring text) {
     if (!row) {
         return;
     }
+
+    //int newId = rand();
     if( slistener ){
     	ProcParams pp(row[historyColumns.params]);
     	ParamsEdited pe(true);
-        PartialProfile pprofile(&pp, &pe);
-        int newId = rand();
-
-        newId = slistener->newSnapshot( text, pprofile);
+        PartialProfile pprofile(false, &pp, &pe);
+        int newId = slistener->newSnapshot( text, pprofile);
         if( newId<0 )
             return;
     }

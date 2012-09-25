@@ -40,12 +40,12 @@ class History : public Gtk::VBox, public PParamsChangeListener {
 
         class HistoryColumns : public Gtk::TreeModel::ColumnRecord {
             public:
-                Gtk::TreeModelColumn<Glib::ustring>  realText;
-                Gtk::TreeModelColumn<Glib::ustring>  text;
-                Gtk::TreeModelColumn<Glib::ustring>  value;
-                Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
-                Gtk::TreeModelColumn<rtengine::ProcEvent>    chev;
-                Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
+                Gtk::TreeModelColumn<Glib::ustring> realText;
+                Gtk::TreeModelColumn<Glib::ustring> text;
+                Gtk::TreeModelColumn<Glib::ustring> value;
+                Gtk::TreeModelColumn<rtengine::procparams::ProcParams> params;
+                Gtk::TreeModelColumn<rtengine::ProcEvent> chev;
+                Gtk::TreeModelColumn<ParamsEdited> paramsEdited;
                 HistoryColumns() { add(text); add(realText); add(value); add(chev); add(params); add(paramsEdited); }
         };
         HistoryColumns historyColumns;
@@ -53,8 +53,8 @@ class History : public Gtk::VBox, public PParamsChangeListener {
             public:
                 //Gtk::TreeModelColumn<Glib::ustring>  text;
         	    Gtk::TreeModelColumn<int> id;
-                Gtk::TreeModelColumn<rtengine::procparams::ProcParams>     params;
-                Gtk::TreeModelColumn<ParamsEdited>     paramsEdited;
+                Gtk::TreeModelColumn<rtengine::procparams::ProcParams> params;
+                Gtk::TreeModelColumn<ParamsEdited> paramsEdited;
                 Gtk::TreeModelColumn<Glib::ustring> name;
                 Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > status;
                 BookmarkColumns() { add(id); add(params); add(paramsEdited); add(name); add(status);}
