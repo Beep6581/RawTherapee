@@ -770,7 +770,6 @@ class PartialProfile {
 
         // Make a full copy of an existing PartialProfile
         PartialProfile      (const PartialProfile* source);
-        //explicit PartialProfile    (bool createPParamsInstance=false, bool createPEditedInstance=false);
         PartialProfile      (bool createPParamsInstance, bool createPEditedInstance);
         // copy operation with more control (copy pointers only or make a full copy)
         PartialProfile      (bool fullCopy, ProcParams* pp, ParamsEdited* pe=NULL);

@@ -107,7 +107,6 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 
 			int id = (*entry)->thumbnail->newSnapshot(stringTimestamp, pprofile, true );
 			(*entry)->currentSnapshoId = id;
-			pprofile.deleteInstance();
 
 		}else
 			(*entry)->thumbnail->setQueued((*entry)->currentSnapshoId,true );
