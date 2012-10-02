@@ -1196,7 +1196,7 @@ fclose(f);*/
 		//find average luminance
 		for (int i=0; i<imax; i++) {
 			sum += histogram[i];
-			ave += histogram[i] * i;
+			ave += histogram[i] *(float)i;
 		}
 		ave /= (sum);
 		
@@ -1252,6 +1252,10 @@ fclose(f);*/
 		hidev = (hidev/(log(2)*hisum));
 		if (octile[7]>log(imax+1)/log2(2)) {
 			octile[7]=1.5*octile[6]-0.5*octile[5];
+		}
+		for(int i=1; i<8; i++) {
+		  if (octile[i] == 0.0)
+		    octile[i] = octile[i-1];
 		}
 		// compute weighted average separation of octiles
 		// for future use in contrast setting
