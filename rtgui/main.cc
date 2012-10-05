@@ -30,6 +30,7 @@
 #include "rtwindow.h"
 #include <cstring>
 #include <cstdlib>
+#include <locale.h>
 #include "options.h"
 #include "soundman.h"
 #include "rtimage.h"
@@ -65,6 +66,7 @@ int processLineParams( int argc, char **argv );
 
 int main(int argc, char **argv)
 {
+    setlocale(LC_ALL,"");
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
     Glib::ustring exePath;
