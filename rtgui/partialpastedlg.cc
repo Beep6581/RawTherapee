@@ -70,7 +70,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     distortion  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DISTORTION")));
     cacorr      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CACORRECTION")));
     vignetting  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIGNETTING")));
-    lcp         = Gtk::manage (new Gtk::CheckButton (M("TP_LENSPROFILE_LABEL")));
+    lcp         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LENSPROFILE")));
 
     // options in composition:
     coarserot   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COARSETRANS")));

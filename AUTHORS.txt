@@ -7,6 +7,7 @@ Developement contributors, in last name alphabetical order:
 
 	Jacques Desmis
 	Oliver Duis
+	Maciek Dworak
 	Michael Ezra
 	Jean-Christophe Frisch
 	Steve Herrell
@@ -28,7 +29,6 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
 	Thorsten Bartolomäus
 	Patrik Brunner
 	Fernando Carello
-	Maciek Dworak
 	M. Dávid Gyurkó
 	Arturs Jekabsons
 	Karl Loncarek

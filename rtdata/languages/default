@@ -5,7 +5,7 @@ ABOUT_TAB_RELEASENOTES;Release Notes
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Reset to default
 BATCHQUEUE_AUTOSTART;Auto start
-BATCH_PROCESSING;Batch processing
+BATCH_PROCESSING;Batch Processing
 CURVEEDITOR_CURVES;Curves
 CURVEEDITOR_CURVE;Curve
 CURVEEDITOR_CUSTOM;Custom
@@ -69,13 +69,13 @@ EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
 EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
 EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 EXPORT_BYPASS_SHARPENING;Bypass Sharpening
-EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast  
+EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
 EXPORT_BYPASS_SH_HQ;Bypass Shadow/Highlights (High Quality)
 EXPORT_FASTEXPORTOPTIONS;<b>Fast Export Options</b>
 EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
-EXPORT_MAXHEIGHT;Maximum Height: 
-EXPORT_MAXWIDTH;Maximum Width:  
-EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export
+EXPORT_MAXHEIGHT;Maximum Height:
+EXPORT_MAXWIDTH;Maximum Width:
+EXPORT_PUTTOQUEUEFAST;  Put to Queue for Fast Export  
 EXPORT_RAW_DMETHOD;Demosaic Method
 EXPORT_RESIZEMETHOD;Resize Method
 EXTPROGTARGET_1;raw
@@ -111,7 +111,7 @@ FILEBROWSER_FLATFIELD;Flat Field
 FILEBROWSER_MOVETODARKFDIR;Move to dark frames directory
 FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 FILEBROWSER_NEW_NAME;New name:
-FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed) 
+FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
 FILEBROWSER_PARTIALPASTEPROFILE;Paste - partial
 FILEBROWSER_PASTEPROFILE;Paste
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -149,7 +149,7 @@ FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 FILEBROWSER_QUERYHINT;Type a partial filename to search for.\n<b>Ctrl-F</b> to focus the Find text box (in the File Browser).\n<b>Enter</b> to commence search.
-FILEBROWSER_QUERYLABEL; Find:
+FILEBROWSER_QUERYLABEL; Find: 
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SELECTDARKFRAME;Select dark frame...
@@ -175,9 +175,9 @@ FILEBROWSER_SHOWTRASHHINT;Show content of the trash.\nShortcut: <b>T</b>
 FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>`</b>
 FILEBROWSER_STARTPROCESSINGHINT;Start processing the images in the queue
-FILEBROWSER_STARTPROCESSING;Start processing
+FILEBROWSER_STARTPROCESSING;Start Processing
 FILEBROWSER_STOPPROCESSINGHINT;Stop processing the images in the queue
-FILEBROWSER_STOPPROCESSING;Stop processing
+FILEBROWSER_STOPPROCESSING;Stop Processing
 FILEBROWSER_THUMBSIZE;Thumbnail size
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 FILEBROWSER_USETEMPLATE;Use template:
@@ -192,7 +192,7 @@ GENERAL_DISABLE;Disable
 GENERAL_ENABLED;Enabled
 GENERAL_ENABLE;Enable
 GENERAL_FILE;File
-GENERAL_HIGH_QUALITY;High Quality
+GENERAL_HIGH_QUALITY;High quality
 GENERAL_LANDSCAPE;Landscape
 GENERAL_LOAD;Load
 GENERAL_NA;n/a
@@ -246,20 +246,20 @@ HISTORY_MSG_20;Sharpening
 HISTORY_MSG_21;Sharpening Radius
 HISTORY_MSG_22;Sharpening Amount
 HISTORY_MSG_23;Sharpening Threshold
-HISTORY_MSG_24;Sharpen Only Edges
+HISTORY_MSG_24;Sharpen only edges
 HISTORY_MSG_25;Sharpening Edge Detection Radius
 HISTORY_MSG_26;Sharpening Edge Tolerance
-HISTORY_MSG_27;Sharpening Halo Control
+HISTORY_MSG_27;Sharpening halo control
 HISTORY_MSG_28;Halo Control Amount
 HISTORY_MSG_29;Sharpening Method
 HISTORY_MSG_30;Deconvolution Radius
 HISTORY_MSG_31;Deconvolution Amount
 HISTORY_MSG_32;Deconvolution Damping
 HISTORY_MSG_33;Deconvolution Iterations
-HISTORY_MSG_34;LCP use disortion
-HISTORY_MSG_35;LCP use vignette
-HISTORY_MSG_36;LCP use CA
-HISTORY_MSG_37;Auto Exposure
+HISTORY_MSG_34;LCP distortion correction
+HISTORY_MSG_35;LCP vignetting correction
+HISTORY_MSG_36;LCP CA correction
+HISTORY_MSG_37;Auto Levels
 HISTORY_MSG_38;White Balance Method
 HISTORY_MSG_39;Color Temperature
 HISTORY_MSG_40;White Balance Tint
@@ -272,9 +272,9 @@ HISTORY_MSG_46;Color Denoising
 HISTORY_MSG_47;Blend ICC highlights with matrix
 HISTORY_MSG_48;Use DCP's tone curve
 HISTORY_MSG_49;Edge Sensitive Color Denoising
-HISTORY_MSG_50;Shadow/Highlight Tool
-HISTORY_MSG_51;Highlight Boost
-HISTORY_MSG_52;Shadow Boost
+HISTORY_MSG_50;Shadow/Highlight
+HISTORY_MSG_51;Highlights
+HISTORY_MSG_52;Shadows
 HISTORY_MSG_53;Highlight Tonal Width
 HISTORY_MSG_54;Shadow Tonal Width
 HISTORY_MSG_55;Local Contrast
@@ -283,18 +283,18 @@ HISTORY_MSG_57;Coarse Rotation
 HISTORY_MSG_58;Horizontal Flipping
 HISTORY_MSG_59;Vertical Flipping
 HISTORY_MSG_60;Rotation
-HISTORY_MSG_61;Auto Fill
+HISTORY_MSG_61;Auto fill
 HISTORY_MSG_62;Lens Distortion Correction
 HISTORY_MSG_63;Snapshot Selected
 HISTORY_MSG_64;Crop Photo
-HISTORY_MSG_65;C/A Correction
+HISTORY_MSG_65;CA correction
 HISTORY_MSG_66;Highlight Recovery
 HISTORY_MSG_67;Highlight Recovery Amount
 HISTORY_MSG_68;Highlight Recovery Method
 HISTORY_MSG_69;Working Color Space
 HISTORY_MSG_70;Output Color Space
 HISTORY_MSG_71;Input Color Space
-HISTORY_MSG_72;Vignetting Correction
+HISTORY_MSG_72;Vignetting correction
 HISTORY_MSG_73;Channel Mixer
 HISTORY_MSG_74;Resize Scale
 HISTORY_MSG_75;Resize Method
@@ -321,7 +321,7 @@ HISTORY_MSG_95;Chromaticity
 HISTORY_MSG_96;'a' Curve
 HISTORY_MSG_97;'b' Curve
 HISTORY_MSG_98;Demosaicing Method
-HISTORY_MSG_99;Hot/Dead Pixel Filter
+HISTORY_MSG_99;Hot/Dead pixel filter
 HISTORY_MSG_100;RGB Saturation
 HISTORY_MSG_101;HSV EQ -- Hue
 HISTORY_MSG_102;HSV EQ -- Saturation
@@ -332,18 +332,18 @@ HISTORY_MSG_106;Defringing Radius
 HISTORY_MSG_107;Defringing Threshold
 HISTORY_MSG_108;Highlight Compr. Threshold
 HISTORY_MSG_109;Resize Bounding Box
-HISTORY_MSG_110;Resizing applies o  
-HISTORY_MSG_111;Avoid Color Shift
+HISTORY_MSG_110;Resizing applies to
+HISTORY_MSG_111;Avoid color shift
 HISTORY_MSG_112;--unused--
-HISTORY_MSG_113;Red and skin tones protection
+HISTORY_MSG_113;Red and Skin Tones Protection
 HISTORY_MSG_114;DCB Iterations
 HISTORY_MSG_115;False Color Iterations
 HISTORY_MSG_116;Enhanced DCB
-HISTORY_MSG_117;Red CA Correction
-HISTORY_MSG_118;Blue CA Correction
+HISTORY_MSG_117;Raw Red CA Correction
+HISTORY_MSG_118;Raw Blue CA Correction
 HISTORY_MSG_119;Line Denoise
 HISTORY_MSG_120;Green Equil. Threshold
-HISTORY_MSG_121;Auto CA
+HISTORY_MSG_121;Raw Auto CA
 HISTORY_MSG_122;Auto Dark Frame
 HISTORY_MSG_123;Dark Frame File
 HISTORY_MSG_124;Linear Exp. Correction
@@ -357,7 +357,7 @@ HISTORY_MSG_131;Noise Reduction Luma
 HISTORY_MSG_132;Noise Reduction Chroma
 HISTORY_MSG_133;Gamma
 HISTORY_MSG_134;Gamma Position
-HISTORY_MSG_135;Gamma Free
+HISTORY_MSG_135;Gamma free
 HISTORY_MSG_136;Gamma Slope
 HISTORY_MSG_137;Black Level Green 1
 HISTORY_MSG_138;Black Level Red
@@ -371,13 +371,13 @@ HISTORY_MSG_145;Microcontrast - Uniformity
 HISTORY_MSG_146;Edges Sharpening
 HISTORY_MSG_147;Edges Sharpening - Luminance Only
 HISTORY_MSG_148;Microcontrast
-HISTORY_MSG_149;Microcontrast - 3x3 Matrix
+HISTORY_MSG_149;Microcontrast - 3x3 matrix
 HISTORY_MSG_150;Post Demosaic Artifact/Noise Reduction
 HISTORY_MSG_151;Vibrance
 HISTORY_MSG_152;Vibrance - Pastel tones
 HISTORY_MSG_153;Vibrance - Saturated tones
 HISTORY_MSG_154;Vibrance - Protect skin tones
-HISTORY_MSG_155;Vibrance - Avoid color drift
+HISTORY_MSG_155;Vibrance - Avoid color shift
 HISTORY_MSG_156;Vibrance - Link pastel and saturated tones
 HISTORY_MSG_157;Vibrance - Pastel/Saturated threshold
 HISTORY_MSG_158;Strength
@@ -389,12 +389,12 @@ HISTORY_MSG_163;RGB Curves - R
 HISTORY_MSG_164;RGB Curves - G
 HISTORY_MSG_165;RGB Curves - B
 HISTORY_MSG_166;Neutral Levels
-HISTORY_MSG_167;B&amp;W Toning
+HISTORY_MSG_167;B&amp;W toning
 HISTORY_MSG_168;'CC' curve
 HISTORY_MSG_169;'CH' curve
 HISTORY_MSG_170;Vibrance - Curve
 HISTORY_MSG_171;'LC' curve
-HISTORY_MSG_172;Restrict 'LC' to Red and Skin Tones
+HISTORY_MSG_172;Restrict LC to red and skin tones
 HISTORY_MSG_173;NR - Luminance Detail
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
@@ -423,7 +423,7 @@ IPTCPANEL_AUTHORSPOSITION;Author's position
 IPTCPANEL_AUTHOR;Author
 IPTCPANEL_CAPTIONHINT;A textual description of the data (Caption - Abstract).
 IPTCPANEL_CAPTIONWRITERHINT;The name of the person involved in the writing, editing or correcting the image or caption/abstract (Writer - Editor).
-IPTCPANEL_CAPTIONWRITER;Caption Writer
+IPTCPANEL_CAPTIONWRITER;Caption writer
 IPTCPANEL_CAPTION;Caption
 IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider (Category).
 IPTCPANEL_CATEGORY;Category
@@ -437,7 +437,7 @@ IPTCPANEL_COUNTRY;Country
 IPTCPANEL_CREDITHINT;Identifies the provider of the image, not necessarily the owner/creator (Credit).
 IPTCPANEL_CREDIT;Credit
 IPTCPANEL_DATECREATEDHINT;The date the intellectual content of the image was created; Format: YYYYMMDD (Date Created).
-IPTCPANEL_DATECREATED;Date Created
+IPTCPANEL_DATECREATED;Date created
 IPTCPANEL_EMBEDDEDHINT;Reset to IPTC data embedded in the image file
 IPTCPANEL_EMBEDDED;Embedded
 IPTCPANEL_HEADLINEHINT;A publishable entry providing a synopsis of the contents of the image (Headline).
@@ -454,11 +454,11 @@ IPTCPANEL_RESET;Reset
 IPTCPANEL_SOURCEHINT;The original owner of the intellectual content of the image (Source).
 IPTCPANEL_SOURCE;Source
 IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image (Supplemental Categories).
-IPTCPANEL_SUPPCATEGORIES;Suppl. Categories
+IPTCPANEL_SUPPCATEGORIES;Suppl. categories
 IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 IPTCPANEL_TITLE;Title
-IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
-IPTCPANEL_TRANSREFERENCE;Trans. Reference
+IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of the original transmission (Original Transmission Reference).
+IPTCPANEL_TRANSREFERENCE;Trans. reference
 MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_FULLSCREEN;Fullscreen
 MAIN_BUTTON_PREFERENCES;Preferences
@@ -468,16 +468,16 @@ MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit Fullscreen
-MAIN_FRAME_BATCHQUEUE;Queue 
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Processing Queue.\nShortcut: <b>Ctrl-F3</b> 
-MAIN_FRAME_EDITOR;Editor 
-MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nShortcut: <b>Ctrl-F4</b> 
-MAIN_FRAME_FILEBROWSER;File Browser 
-MAIN_FRAME_FILEBROWSER_TOOLTIP; File Browser.\nShortcut: <b>Ctrl-F2</b> 
-MAIN_FRAME_PLACES;Places 
+MAIN_FRAME_BATCHQUEUE;Queue
+MAIN_FRAME_BATCHQUEUE_TOOLTIP;Processing Queue.\nShortcut: <b>Ctrl-F3</b>
+MAIN_FRAME_EDITOR;Editor
+MAIN_FRAME_EDITOR_TOOLTIP;Editor.\nShortcut: <b>Ctrl-F4</b>
+MAIN_FRAME_FILEBROWSER;File Browser
+MAIN_FRAME_FILEBROWSER_TOOLTIP;File Browser.\nShortcut: <b>Ctrl-F2</b>
+MAIN_FRAME_PLACES;Places
 MAIN_FRAME_PLACES_ADD;Add
 MAIN_FRAME_PLACES_DEL;Del
-MAIN_FRAME_RECENT;Recent Folders 
+MAIN_FRAME_RECENT;Recent Folders
 MAIN_MSG_ALREADYEXISTS;File already exists.
 MAIN_MSG_CANNOTLOAD;Cannot load image
 MAIN_MSG_CANNOTSAVE;File saving error
@@ -523,7 +523,7 @@ MAIN_TOOLTIP_INDCLIPPEDH;Clipped highlight indication.\nShortcut: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Clipped shadow indication.\nShortcut: <b>&gt;</b>
 MAIN_TOOLTIP_PREFERENCES;Set preferences
 MAIN_TOOLTIP_PREVIEWB;Preview the <b>Blue channel</b>.\nShortcut: <b>b</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on. 
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on.
 MAIN_TOOLTIP_PREVIEWG;Preview the <b>Green channel</b>.\nShortcut: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Preview the <b>Luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Preview the <b>Red channel</b>.\nShortcut: <b>r</b>
@@ -541,10 +541,10 @@ NAVIGATOR_G_NA;G = n/a
 NAVIGATOR_G_VALUE;G = %1
 NAVIGATOR_H_NA;H = n/a
 NAVIGATOR_H_VALUE;H = %1
-NAVIGATOR_LAB_A_NA;A = n/a
-NAVIGATOR_LAB_A_VALUE;A = %1
-NAVIGATOR_LAB_B_NA;B = n/a
-NAVIGATOR_LAB_B_VALUE;B = %1
+NAVIGATOR_LAB_A_NA;a = n/a
+NAVIGATOR_LAB_A_VALUE;a = %1
+NAVIGATOR_LAB_B_NA;b = n/a
+NAVIGATOR_LAB_B_VALUE;b = %1
 NAVIGATOR_LAB_L_NA;L = n/a
 NAVIGATOR_LAB_L_VALUE;L = %1
 NAVIGATOR_R_NA;R = n/a
@@ -558,77 +558,78 @@ NAVIGATOR_XY_NA;x = n/a, y = n/a
 OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 PARTIALPASTE_BASICGROUP;Basic Settings
-PARTIALPASTE_CACORRECTION;C/A Correction
+PARTIALPASTE_CACORRECTION;CA correction
 PARTIALPASTE_CHANNELMIXER;Channel mixer
 PARTIALPASTE_COARSETRANS;90° rotation / flipping
 PARTIALPASTE_COLORBOOST;Color boost
 PARTIALPASTE_COLORDENOISE;Color denoise
-PARTIALPASTE_COLORGROUP;Color related settings
+PARTIALPASTE_COLORGROUP;Color Related Settings
 PARTIALPASTE_COLORMIXER;Color mixer
 PARTIALPASTE_COLORSHIFT;Color shift
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
-PARTIALPASTE_COMPOSITIONGROUP;Composition settings
+PARTIALPASTE_COMPOSITIONGROUP;Composition Settings
 PARTIALPASTE_CROP;Crop
-PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark Frame Auto Select
-PARTIALPASTE_DARKFRAMEFILE;Dark Frame File
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Dark frame auto select
+PARTIALPASTE_DARKFRAMEFILE;Dark frame file
 PARTIALPASTE_DEFRINGE;Defringe
-PARTIALPASTE_DETAILGROUP;Detail settings
+PARTIALPASTE_DETAILGROUP;Detail Settings
 PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
 PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 PARTIALPASTE_DISTORTION;Distortion correction
-PARTIALPASTE_EPD;Tone Mapping
+PARTIALPASTE_EPD;Tone mapping
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Changes to Exif data
 PARTIALPASTE_EXPOSURE;Exposure
-PARTIALPASTE_FLATFIELDAUTOSELECT;FF Auto Select
-PARTIALPASTE_FLATFIELDBLURRADIUS;FF Blur Radius
-PARTIALPASTE_FLATFIELDBLURTYPE;FF Blur Type
+PARTIALPASTE_FLATFIELDAUTOSELECT;FF auto select
+PARTIALPASTE_FLATFIELDBLURRADIUS;FF blur radius
+PARTIALPASTE_FLATFIELDBLURTYPE;FF blur type
 PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
 PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
 PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
 PARTIALPASTE_HLRECOVERY;Highlight recovery
-PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
+PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 PARTIALPASTE_ICMGAMMA;Output gamma
-PARTIALPASTE_ICMSETTINGS;Color Management settings
+PARTIALPASTE_ICMSETTINGS;Color management settings
 PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LABCURVE;Lab adjustments
-PARTIALPASTE_LENSGROUP;Lens related settings
+PARTIALPASTE_LENSGROUP;Lens Related Settings
+PARTIALPASTE_LENSPROFILE;Lens correction profile
 PARTIALPASTE_LUMADENOISE;Luminance noise reduction
 PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
-PARTIALPASTE_METAICMGROUP;Metadata/Color Management settings
+PARTIALPASTE_METAICMGROUP;Metadata/Color Management Settings
 PARTIALPASTE_PERSPECTIVE;Perspective
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Line noise filter
 PARTIALPASTE_RAWCACORR_AUTO;CA auto correction
-PARTIALPASTE_RAWCACORR_CABLUE;CA Blue
-PARTIALPASTE_RAWCACORR_CARED;CA Red
-PARTIALPASTE_RAWEXPOS_BLACK;Black Level
-PARTIALPASTE_RAWEXPOS_LINEAR;Raw white point linear corr. factor
-PARTIALPASTE_RAWEXPOS_PRESER;Raw white point HL preserving corr. (EV)
-PARTIALPASTE_RAWGROUP;Raw settings
+PARTIALPASTE_RAWCACORR_CABLUE;CA blue
+PARTIALPASTE_RAWCACORR_CARED;CA red
+PARTIALPASTE_RAWEXPOS_BLACK;Black level
+PARTIALPASTE_RAWEXPOS_LINEAR;White point linear corr. factor
+PARTIALPASTE_RAWEXPOS_PRESER;White point HL preserving corr. (EV)
+PARTIALPASTE_RAWGROUP;Raw Settings
 PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-PARTIALPASTE_RAW_DMETHOD;Demosaic Method
-PARTIALPASTE_RAW_FALSECOLOR;Demosaic False color suppression steps
+PARTIALPASTE_RAW_DMETHOD;Demosaic method
+PARTIALPASTE_RAW_FALSECOLOR;Demosaic false color suppression steps
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_RGBCURVES;RGB curves
 PARTIALPASTE_ROTATION;Rotation
-PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/Highlights
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Shadows/highlights
 PARTIALPASTE_SHARPENEDGE;Edges
 PARTIALPASTE_SHARPENING;Sharpening (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
-PARTIALPASTE_WHITEBALANCE;White balance 
-PREFERENCES_ADD;ADD
+PARTIALPASTE_WHITEBALANCE;White balance
+PREFERENCES_ADD;Add
 PREFERENCES_APPLNEXTSTARTUP;restart required
-PREFERENCES_AUTOMONPROFILE;Automatically use operating system's main monitor color profile
+PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
 PREFERENCES_BATCH_PROCESSING;Batch Processing
 PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_BLINKCLIPPED;Blink clipped areas
@@ -637,15 +638,15 @@ PREFERENCES_CACHECLEARPROFILES;Clear Processing Profiles
 PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
 PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
 PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
-PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
+PREFERENCES_CACHEMAXENTRIES;Maximal number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options
 PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
 PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
 PREFERENCES_CACHESTRAT;Cache Strategy
-PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
-PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
+PREFERENCES_CACHETHUMBFORM;Cache thumbnail format
+PREFERENCES_CACHETHUMBHEIGHT;Maximal thumbnail height
 PREFERENCES_CLIPPINGIND;Clipping Indication
-PREFERENCES_CMETRICINTENT;Colorimetric Intent
+PREFERENCES_CMETRICINTENT;Colorimetric intent
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
 PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
@@ -654,7 +655,7 @@ PREFERENCES_DARKFRAMEFOUND;Found
 PREFERENCES_DARKFRAMESHOTS;shots
 PREFERENCES_DARKFRAMETEMPLATES;templates
 PREFERENCES_DARKFRAME;Dark Frame
-PREFERENCES_DATEFORMATFRAME;Date Format 
+PREFERENCES_DATEFORMATFRAME;Date Format
 PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\n<b>%y</b><i> : year</i>\n<b>%m</b><i> : month</i>\n<b>%d</b><i> : day</i>\n<i>\nFor example, the hungarian date format is:</i>\n<b>%y/%m/%d</b>
 PREFERENCES_DATEFORMAT;Date format
 PREFERENCES_DEFAULTLANG;Default Language
@@ -670,10 +671,10 @@ PREFERENCES_EDITORCMDLINE;Other command line
 PREFERENCES_EDITORLAYOUT;Editor Layout
 PREFERENCES_EXTERNALEDITOR;External Editor
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
-PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low res display)
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Single row file browser toolbar (de-select for low resolution display)
 PREFERENCES_FILEFORMAT;File format
 PREFERENCES_FLATFIELDFOUND;Found
-PREFERENCES_FLATFIELDSDIR;Flat Fields directory
+PREFERENCES_FLATFIELDSDIR;Flat fields directory
 PREFERENCES_FLATFIELDSHOTS;shots
 PREFERENCES_FLATFIELDTEMPLATES;templates
 PREFERENCES_FLATFIELD;Flat Field
@@ -700,14 +701,14 @@ PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group "Processing Profile Operations"
 PREFERENCES_MENUGROUPRANK;Group "Rank"
 PREFERENCES_MENUOPTIONS;Context Menu Options
 PREFERENCES_METADATA;Metadata
-PREFERENCES_MONITORICC;Monitor Color Profile
-PREFERENCES_MULTITABDUALMON;Multiple editor tabs mode, if available on second monitor
-PREFERENCES_MULTITAB;Multiple editor tabs mode
+PREFERENCES_MONITORICC;Monitor color profile
+PREFERENCES_MULTITABDUALMON;Multiple Editor Tabs Mode (if available on second monitor)
+PREFERENCES_MULTITAB;Multiple Editor Tabs Mode
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the selected folder
 PREFERENCES_OUTDIRFOLDER;Save to folder
 PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nThese formatting strings refer to the different parts of the photo's pathname or some attributes of the photo.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in the trash bin, %r will be replaced by 'x'.\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nThese formatting strings refer to the different parts of the photo's pathname or some attributes of the photo.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in the trash bin, %r will be replaced by 'x'.\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATE;Use Template
+PREFERENCES_OUTDIRTEMPLATE;Use template
 PREFERENCES_OUTDIR;Output Directory
 PREFERENCES_OVERLAY_FILENAMES;Overlay filenames on thumbnails
 PREFERENCES_OVERWRITEOUTPUTFILE;Overwrite existing output files
@@ -718,9 +719,9 @@ PREFERENCES_PARSEDEXTADD;Add Extension
 PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list
 PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PROFILEHANDLING;Processing Profile Handling
-PREFERENCES_PROFILELOADPR;Processing Profile Loading Priority
-PREFERENCES_PROFILEPRCACHE;Profile in cache
-PREFERENCES_PROFILEPRFILE;Profile next to the input file
+PREFERENCES_PROFILELOADPR;Processing profile loading priority
+PREFERENCES_PROFILEPRCACHE;Profile in Cache
+PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
 PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 PREFERENCES_PROPERTY;Property
@@ -730,15 +731,15 @@ PREFERENCES_SELECTICCDIRDLG;Select Color Profile Directory...
 PREFERENCES_SELECTLANG;Select language
 PREFERENCES_SELECTMONITORPROFDLG;Select Color Profile of the Display...
 PREFERENCES_SELECTTHEME;Select theme
-PREFERENCES_SET;SET
+PREFERENCES_SET;Set
 PREFERENCES_SHOWBASICEXIF;Show basic Exif info
 PREFERENCES_SHOWDATETIME;Show date and time
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
 PREFERENCES_SHOWONLYRAW;Show only raw files
 PREFERENCES_SHOWPROFILESELECTOR;Show processing profile selector
 PREFERENCES_SHTHRESHOLD;Threshold for clipped shadows
-PREFERENCES_SINGLETABVERTAB;Single editor tab mode, vertical tabs
-PREFERENCES_SINGLETAB;Single editor tab mode
+PREFERENCES_SINGLETABVERTAB;Single Editor Tab Mode, Vertical Tabs
+PREFERENCES_SINGLETAB;Single Editor Tab Mode
 PREFERENCES_SLIMUI;Slim interface
 PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
 PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
@@ -757,7 +758,7 @@ PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
-PREFERENCES_USESYSTEMTHEME; Use system theme
+PREFERENCES_USESYSTEMTHEME;Use system theme
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_FILEDLGFILTERANY;Any files
@@ -779,18 +780,18 @@ PROFILEPANEL_TOOLTIPPASTE;Paste profile from clipboard.\n<b>Ctrl-click</b> to se
 PROFILEPANEL_TOOLTIPSAVE;Save current profile.\n<b>Ctrl-click</b> to select the parameters to save
 PROGRESSBAR_BADPIXELS;Bad pixels...
 PROGRESSBAR_CACORRECTION;CA correction...
-PROGRESSBAR_DARKFRAME;Darkframe... 
+PROGRESSBAR_DARKFRAME;Darkframe...
 PROGRESSBAR_DECODING;Decoding raw file...
 PROGRESSBAR_DEMOSAICING;Demosaicing...
-PROGRESSBAR_GREENEQUIL;Green equilibrate...
-PROGRESSBAR_LINEDENOISE;Line Denoise...
+PROGRESSBAR_GREENEQUIL;Green equilibrating...
+PROGRESSBAR_LINEDENOISE;Line denoise...
 PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
-PROGRESSBAR_LOADING;Loading Image...
+PROGRESSBAR_LOADING;Loading image...
 PROGRESSBAR_LOADJPEG;Loading JPEG file...
 PROGRESSBAR_LOADPNG;Loading PNG file...
 PROGRESSBAR_LOADTIFF;Loading TIFF file...
-PROGRESSBAR_PROCESSING;Processing Image...
-PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
+PROGRESSBAR_PROCESSING;Processing image...
+PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
 PROGRESSBAR_READY;Ready.
 PROGRESSBAR_SAVEJPEG;Saving JPEG file...
 PROGRESSBAR_SAVEPNG;Saving PNG file...
@@ -812,10 +813,10 @@ SAVEDLG_PUTTOQUEUE;Put into processing queue
 SAVEDLG_SAVEIMMEDIATELY;Save immediately
 SAVEDLG_SAVESPP;Save processing parameters with image
 SAVEDLG_SUBSAMP;Subsampling
-SAVEDLG_SUBSAMP_1;Best compression
+SAVEDLG_SUBSAMP_1;Best Compression
 SAVEDLG_SUBSAMP_2;Balanced
-SAVEDLG_SUBSAMP_3;Best quality
-SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
+SAVEDLG_SUBSAMP_3;Best Quality
+SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest Quality: 4:4:4
 SAVEDLG_TIFFFILTER;TIFF files
 SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 SAVEDLG_WARNFILENAME;File will be named
@@ -832,51 +833,34 @@ TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
 TOOLBAR_TOOLTIP_WB;Spot white balance.\nShortcut: <b>w</b>
 TP_CACORRECTION_BLUE;Blue
-TP_CACORRECTION_LABEL;C/A Correction
+TP_CACORRECTION_LABEL;CA Correction
 TP_CACORRECTION_RED;Red
-TP_CHMIXER_BLUE;Blue channel
-TP_CHMIXER_GREEN;Green channel
+TP_CHMIXER_BLUE;Blue Channel
+TP_CHMIXER_GREEN;Green Channel
 TP_CHMIXER_LABEL;Channel Mixer
-TP_CHMIXER_RED;Red channel
+TP_CHMIXER_RED;Red Channel
 TP_CHROMATABERR_LABEL;Chromatic Aberration
-TP_COARSETRAF_DEGREE;degree:
 TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\nShortcut: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\nShortcut: <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
-TP_COLORBOOST_ACHANNEL;Channel "a"
-TP_COLORBOOST_AMOUNT;Amount
-TP_COLORBOOST_AVOIDCOLORCLIP;Avoid color clipping
-TP_COLORBOOST_BCHANNEL;Channel "b"
-TP_COLORBOOST_CHANNEL;Channel
-TP_COLORBOOST_CHSEPARATE;separate
-TP_COLORBOOST_ENABLESATLIMITER;Enable saturation limiter
-TP_COLORBOOST_LABEL;Color Boost
-TP_COLORBOOST_SATLIMIT;Saturation limit
-TP_COLORDENOISE_EDGESENSITIVE;Edge Sensitive
-TP_COLORDENOISE_EDGETOLERANCE;Edge Tolerance
-TP_COLORDENOISE_LABEL;Color Noise Reduction
-TP_COLORDENOISE_RADIUS;Radius
-TP_COLORSHIFT_BLUEYELLOW;Blue-Yellow
-TP_COLORSHIFT_GREENMAGENTA;Green-Magenta
-TP_COLORSHIFT_LABEL;Color Shift
-TP_CROP_FIXRATIO;Fix Ratio:
-TP_CROP_GTDIAGONALS;Rule of diagonals
+TP_CROP_FIXRATIO;Fix ratio:
+TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
 TP_CROP_GTFRAME;Frame
 TP_CROP_GTGRID;Grid
-TP_CROP_GTHARMMEANS1;Harmonic means 1
-TP_CROP_GTHARMMEANS2;Harmonic means 2
-TP_CROP_GTHARMMEANS3;Harmonic means 3
-TP_CROP_GTHARMMEANS4;Harmonic means 4
+TP_CROP_GTHARMMEANS1;Harmonic Means 1
+TP_CROP_GTHARMMEANS2;Harmonic Means 2
+TP_CROP_GTHARMMEANS3;Harmonic Means 3
+TP_CROP_GTHARMMEANS4;Harmonic Means 4
 TP_CROP_GTNONE;None
-TP_CROP_GTRULETHIRDS;Rule of thirds
+TP_CROP_GTRULETHIRDS;Rule of Thirds
 TP_CROP_GUIDETYPE;Guide Type:
-TP_CROP_H;H
+TP_CROP_H;Height
 TP_CROP_LABEL;Crop
 TP_CROP_PPI;PPI=
-TP_CROP_SELECTCROP;    Select Crop
-TP_CROP_W;W
+TP_CROP_SELECTCROP;Select Crop
+TP_CROP_W;Width
 TP_CROP_X;x
 TP_CROP_Y;y
 TP_DARKFRAME_AUTOSELECT;Auto selection
@@ -884,13 +868,12 @@ TP_DARKFRAME_LABEL;Dark Frame
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
-TP_DETAIL_AMOUNT;Amount
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_LABEL;Noise reduction (raw images only)
+TP_DIRPYRDENOISE_LABEL;Noise Reduction (raw images only)
 TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
 TP_DIRPYRDENOISE_LUMA;Luminance
-TP_DIRPYREQUALIZER_LABEL;Contrast by detail levels
+TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
 TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
@@ -898,34 +881,28 @@ TP_DIRPYREQUALIZER_LUMAFINEST;Finest
 TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 TP_DISTORTION_AMOUNT;Amount
-TP_DISTORTION_AUTO;    Auto Distortion Correction
+TP_DISTORTION_AUTO;Auto Distortion Correction
 TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.)
 TP_DISTORTION_LABEL;Distortion
-TP_EPD_EDGESTOPPING;Edge stopping
+TP_EPD_EDGESTOPPING;Edge Stopping
 TP_EPD_LABEL;Tone Mapping
-TP_EPD_REWEIGHTINGITERATES;Reweighting iterates
+TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
 TP_EPD_SCALE;Scale
 TP_EPD_STRENGTH;Strength
-TP_EQUALIZER_CONTRAST_MINUS;Contrast-
-TP_EQUALIZER_CONTRAST_PLUS;Contrast+
-TP_EQUALIZER_FINEST;finest
-TP_EQUALIZER_LABEL;Wavelet equalizer
-TP_EQUALIZER_LARGEST;coarsest
-TP_EQUALIZER_NEUTRAL;Neutral
-TP_EXPOSCORR_LABEL;Raw white &amp; black points
+TP_EXPOSCORR_LABEL;Raw White &amp; Black Points
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
-TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of Auto Levels to automatically set parameter values based on image analysis  
+TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
 TP_EXPOSURE_BLACKLEVEL;Black
 TP_EXPOSURE_BRIGHTNESS;Brightness
 TP_EXPOSURE_CLIP;Clip
-TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto levels operation
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight recovery threshold
-TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight recovery amount
-TP_EXPOSURE_COMPRSHADOWS;Shadow recovery
+TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto level's operation
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight Recovery Threshold
+TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight Recovery Amount
+TP_EXPOSURE_COMPRSHADOWS;Shadow Recovery
 TP_EXPOSURE_CONTRAST;Contrast
 TP_EXPOSURE_CURVEEDITOR1;Tone Curve 1
 TP_EXPOSURE_CURVEEDITOR2;Tone Curve 2
-TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the following section of the manual to learn more on how to achieve the best results with the double curve option:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the following section of the manual to learn how to achieve the best results with double curves:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_EXPCOMP;Exposure Compensation
 TP_EXPOSURE_LABEL;Exposure
 TP_EXPOSURE_SATURATION;Saturation
@@ -935,7 +912,6 @@ TP_EXPOSURE_TCMODE_LABEL2;Curve mode 2
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
-TP_EXPO_AFTER; After interpolation (before RGB conversion)
 TP_FLATFIELD_AUTOSELECT;Auto selection
 TP_FLATFIELD_BLURRADIUS;Blur Radius
 TP_FLATFIELD_BLURTYPE;Blur Type
@@ -944,16 +920,16 @@ TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_LABEL;Flat Field
-TP_GAMMA_CURV;gamma
+TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Free gamma
-TP_GAMMA_OUTPUT;Output gamma
-TP_GAMMA_SLOP;slope (linear)
+TP_GAMMA_OUTPUT;Output Gamma
+TP_GAMMA_SLOP;Slope (linear)
 TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
 TP_HLREC_LABEL;Highlight Reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
-TP_HLREC_METHOD;Method: 
+TP_HLREC_METHOD;Method:
 TP_HSVEQUALIZER_CHANNEL;HSV Channel
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
@@ -965,19 +941,19 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT 
 TP_ICM_FILEDLGFILTERANY;Any files
 TP_ICM_FILEDLGFILTERICM;Color profiles
 TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific color profile
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profile. These profiles are more precise than simpler matrix ones. Available for some cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERA_TOOLTIP;Use simple color matrix by dcraw, enhanced RawTherapee version (whichever is available based on camera model) or embedded in DNG.
 TP_ICM_INPUTCUSTOM;Custom
 TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera
 TP_ICM_INPUTDLGLABEL;Select Input DCP/ICC Profile...
-TP_ICM_INPUTEMBEDDED;Use Embedded, if possible
+TP_ICM_INPUTEMBEDDED;Use embedded, if possible
 TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files
 TP_ICM_INPUTNONE;No profile
 TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all. Use only in special cases.
 TP_ICM_INPUTPROFILE;Input Profile
 TP_ICM_LABEL;Color Management
-TP_ICM_NOICM;No ICM: sRGB output
+TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_PREFERREDPROFILE;Preferred DCP profile
@@ -985,51 +961,51 @@ TP_ICM_PREFERREDPROFILE_1;Daylight
 TP_ICM_PREFERREDPROFILE_2;Tungsten
 TP_ICM_PREFERREDPROFILE_3;Fluorescent
 TP_ICM_PREFERREDPROFILE_4;Flash
-TP_ICM_SAVEREFERENCE;Save reference image for profiling
+TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
 TP_ICM_TONECURVE;Use DCP's tone curve
 TP_ICM_TONECURVE_TOOLTIP;Enable to use tone curves that may be contained in DCP profiles.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
-TP_IMPULSEDENOISE_THRESH;Impulse NR Threshold
-TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
+TP_IMPULSEDENOISE_THRESH;Threshold
+TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
 TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
-TP_LABCURVE_LCREDSK;Restrict LC to Red and Skin Tones
-TP_LABCURVE_LCREDSK_TIP;If enabled, 'LC curve' is limited to Red and skin tones\nIf disabled, applies on all tones
+TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
+TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies on all tones
 TP_LABCURVE_BRIGHTNESS;Brightness
-TP_LABCURVE_BWTONING;B&W Toning
-TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves 
+TP_LABCURVE_BWTONING;B&W toning
+TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
 TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminance Curve
-TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
-TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green pastel
-TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red pastel
-TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red saturated
-TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue saturated
-TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue pastel
-TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow pastel
-TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow saturated
+TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green Saturated
+TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green Pastel
+TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red Pastel
+TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red Saturated
+TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue Saturated
+TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue Pastel
+TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow Pastel
+TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow Saturated
 TP_LABCURVE_CURVEEDITOR_CC;CC
 TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the chromaticity
 TP_LABCURVE_CURVEEDITOR_CH;CH
-TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the hue
 TP_LABCURVE_CURVEEDITOR_LC;LC
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to Chromaticity
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to the chromaticity
 TP_LABCURVE_LABEL;Lab Adjustments
-TP_LABCURVE_RSTPROTECTION;Red and skin tones protection
-TP_LENSGEOM_AUTOCROP;    Auto Crop
-TP_LENSGEOM_FILL;Auto Fill
+TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
+TP_LENSGEOM_AUTOCROP;Auto Crop
+TP_LENSGEOM_FILL;Auto fill
 TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
 TP_LENSPROFILE_LABEL;Lens Correction Profile
-TP_LENSPROFILE_USECA;Use CA correction
-TP_LENSPROFILE_USEDIST;Use distortion correction
-TP_LENSPROFILE_USEVIGN;Use vignette correction
+TP_LENSPROFILE_USECA;CA correction
+TP_LENSPROFILE_USEDIST;Distortion correction
+TP_LENSPROFILE_USEVIGN;Vignetting correction
 TP_LUMADENOISE_EDGETOLERANCE;Edge Tolerance
 TP_LUMADENOISE_LABEL;Luminance Noise Reduction
 TP_LUMADENOISE_RADIUS;Radius
@@ -1038,11 +1014,10 @@ TP_NEUTRAL_TIP;Reset exposure controls to neutral values
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
-TP_PREPROCESS_GREENEQUIL;Green equilibration
-TP_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
-TP_PREPROCESS_HOTDEADPIXTHRESH;Hot/dead pixel detection threshold
+TP_PREPROCESS_GREENEQUIL;Green Equilibration
+TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead pixel filter
 TP_PREPROCESS_LABEL;Preprocessing
-TP_PREPROCESS_LINEDENOISE;Line noise filter
+TP_PREPROCESS_LINEDENOISE;Line Noise Filter
 TP_PREPROCESS_NO_FOUND;None found
 TP_RAWCACORR_AUTO;Auto correction
 TP_RAWCACORR_CABLUE;Blue
@@ -1052,29 +1027,29 @@ TP_RAWEXPOS_BLACKS;Black Levels
 TP_RAWEXPOS_BLACKTHREE;Black Level: Green 2
 TP_RAWEXPOS_BLACKTWO;Black Level: Blue
 TP_RAWEXPOS_BLACKZERO;Black Level: Green 1 (leader)
-TP_RAWEXPOS_LINEAR;White Point: Linear corr. factor
-TP_RAWEXPOS_PRESER;White Point: HL preserving corr.(EV)
+TP_RAWEXPOS_LINEAR;White Point: Linear Corr. Factor
+TP_RAWEXPOS_PRESER;White Point: HL Preserving Corr. (EV)
 TP_RAWEXPOS_TWOGREEN;Two greens together
-TP_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
-TP_RAW_DCBENHANCE;Apply DCB enhancement step
-TP_RAW_DCBITERATIONS;Number of DCB iterations
+TP_RAW_ALLENHANCE;Post-Demosaic Artifact/Noise Reduction
+TP_RAW_DCBENHANCE;DCB Enhancement Step
+TP_RAW_DCBITERATIONS;Number of DCB Iterations
 TP_RAW_DMETHOD;Method
-TP_RAW_FALSECOLOR;False color suppression steps
+TP_RAW_FALSECOLOR;False Color Suppression Steps
 TP_RAW_LABEL;Demosaicing
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_BICUBICSF;Bicubic (Softer)
 TP_RESIZE_BICUBICSH;Bicubic (Sharper)
 TP_RESIZE_BICUBIC;Bicubic
 TP_RESIZE_BILINEAR;Bilinear
-TP_RESIZE_CROPPEDAREA;Cropped area
-TP_RESIZE_FITBOX;Bounding box
-TP_RESIZE_FULLIMAGE;Full image
+TP_RESIZE_CROPPEDAREA;Cropped Area
+TP_RESIZE_FITBOX;Bounding Box
+TP_RESIZE_FULLIMAGE;Full Image
 TP_RESIZE_FULLSIZE;Full Image Size:
 TP_RESIZE_HEIGHT;Height
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Resize
 TP_RESIZE_LANCZOS;Lanczos
-TP_RESIZE_METHOD;Method: 
+TP_RESIZE_METHOD;Method:
 TP_RESIZE_NEAREST;Nearest
 TP_RESIZE_SCALE;Scale
 TP_RESIZE_SPECIFY;Specify:
@@ -1087,7 +1062,7 @@ TP_RGBCURVES_LABEL;RGB Curves
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degree
 TP_ROTATE_LABEL;Rotate
-TP_ROTATE_SELECTLINE;    Select Straight Line
+TP_ROTATE_SELECTLINE;Select Straight Line
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Highlights
 TP_SHADOWSHLIGHTS_HLTONALW;Tonal Width for Highlights
 TP_SHADOWSHLIGHTS_LABEL;Shadows/Highlights
@@ -1101,7 +1076,7 @@ TP_SHARPENEDGE_PASSES;Iterations
 TP_SHARPENEDGE_THREE;Luminance only
 TP_SHARPENING_AMOUNT;Amount
 TP_SHARPENING_EDRADIUS;Radius
-TP_SHARPENING_EDTOLERANCE;Edge tolerance
+TP_SHARPENING_EDTOLERANCE;Edge Tolerance
 TP_SHARPENING_HALOCONTROL;Halo control
 TP_SHARPENING_HCAMOUNT;Amount
 TP_SHARPENING_LABEL;Sharpening
@@ -1125,16 +1100,16 @@ TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
-TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the Hue
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the hue
 TP_VIBRANCE_LABEL;Vibrance
-TP_VIBRANCE_PASTELS;Pastel tones
+TP_VIBRANCE_PASTELS;Pastel Tones
 TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 TP_VIBRANCE_PROTECTSKINS;Protect skin tones
 TP_VIBRANCE_PSTHRESHOLD;Pastel/saturated tones threshold
 TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
 TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
 TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
-TP_VIBRANCE_SATURATED;Saturated tones
+TP_VIBRANCE_SATURATED;Saturated Tones
 TP_VIGNETTING_AMOUNT;Amount
 TP_VIGNETTING_CENTER;Center
 TP_VIGNETTING_CENTER_X;Center X
@@ -1152,14 +1127,14 @@ TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
 TP_WBALANCE_FLASH_HEADER;Flash
 TP_WBALANCE_FLUO1;F1 - Daylight
-TP_WBALANCE_FLUO2;F2 - Cool white
+TP_WBALANCE_FLUO2;F2 - Cool White
 TP_WBALANCE_FLUO3;F3 - White
-TP_WBALANCE_FLUO4;F4 - Warm white
+TP_WBALANCE_FLUO4;F4 - Warm White
 TP_WBALANCE_FLUO5;F5 - Daylight
-TP_WBALANCE_FLUO6;F6 - Lite white
-TP_WBALANCE_FLUO7;F7 - D65 Daylight simulator
+TP_WBALANCE_FLUO6;F6 - Lite White
+TP_WBALANCE_FLUO7;F7 - D65 Daylight Simulator
 TP_WBALANCE_FLUO8;F8 - D50 / Sylvania F40 Design
-TP_WBALANCE_FLUO9;F9 - Cool white deluxe
+TP_WBALANCE_FLUO9;F9 - Cool White Deluxe
 TP_WBALANCE_FLUO10;F10 - Philips TL85
 TP_WBALANCE_FLUO11;F11 - Philips TL84
 TP_WBALANCE_FLUO12;F12 - Philips TL83
@@ -1192,9 +1167,9 @@ ZOOMBAR_SCALE;Scale
 ZOOMBAR_SMALL;Small
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
-ZOOMPANEL_ZOOM100;Zoom to 100% <b>1</b>
-ZOOMPANEL_ZOOMFITSCREEN;Fit to screen <b>F</b>
-ZOOMPANEL_ZOOMIN;Zoom In <b>+</b>
-ZOOMPANEL_ZOOMOUT;Zoom Out <b>-</b>
-#00 default translation file 
+ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>1</b>
+ZOOMPANEL_ZOOMFITSCREEN;Fit to screen\nShortcut: <b>f</b>
+ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
+ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
+#00 default translation file
 #01 Developers should add translations to this file and then run the 'generateTranslationDiffs' script to update other locales. This is a Bash script, tested in >=Bash-4.2.
