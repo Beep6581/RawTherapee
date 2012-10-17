@@ -408,6 +408,8 @@ void Options::setDefaults () {
 		rtSettings.iccDirectory = Glib::ustring(sysRoot) + Glib::ustring("\\System32\\spool\\drivers\\color");
 	else 
 		rtSettings.iccDirectory = "C:\\WINDOWS\\System32\\spool\\drivers\\color";
+#elif defined __APPLE__
+    rtSettings.iccDirectory = "/library/ColorSync/Profiles/Displays";
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif

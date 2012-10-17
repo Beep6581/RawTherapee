@@ -1020,9 +1020,9 @@ void Preferences::storePreferences () {
     moptions.customProfileBuilder = txtCustProfBuilderPath->get_text();
 
     moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
-	moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
-	moptions.rtSettings.iccDirectory        = iccDir->get_current_folder ();
-	moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
+    moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
+    moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
+    moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
 
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
