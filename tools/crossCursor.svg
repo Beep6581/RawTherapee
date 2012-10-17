@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="22"
+   height="22"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="crossCursor.svg"
+   inkscape:export-filename="F:\Developpement\WorkspaceCPP\rawtherapee-Branch3-flatCurveEditor\build\Debug\MinGW4.5.1\images\cross22.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask3790">
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
+         d="m -35.53125,1021.2997 0,38.7188 54.8125,0 0,-38.7188 -54.8125,0 z M -9.5,1038.8622 c 1.1045695,0 2,0.8954 2,2 0,1.1046 -0.8954305,2 -2,2 -1.10457,0 -2,-0.8954 -2,-2 0,-1.1046 0.89543,-2 2,-2 z"
+         id="path3792"
+         inkscape:connector-curvature="0" />
+    </mask>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#da8f8f"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="57.609065"
+     inkscape:cy="-19.427025"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1440"
+     inkscape:window-height="814"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1030.3622)">
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       d="m -9.5,1030.8622 c -0.554,0 -1,0.446 -1,1 l 0,8 -8,0 c -0.554,0 -1,0.446 -1,1 0,0.554 0.446,1 1,1 l 8,0 0,8 c 0,0.554 0.446,1 1,1 0.554,0 1,-0.446 1,-1 l 0,-8 8,0 c 0.554,0 1,-0.446 1,-1 0,-0.554 -0.446,-1 -1,-1 l -8,0 0,-8 c 0,-0.554 -0.446,-1 -1,-1 z"
+       id="rect3760"
+       inkscape:connector-curvature="0"
+       mask="url(#mask3790)"
+       transform="translate(20,0)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.27847433000000010;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3757"
+       sodipodi:cx="8.4284601"
+       sodipodi:cy="10.036006"
+       sodipodi:rx="2.5569487"
+       sodipodi:ry="2.5569487"
+       d="m 10.985409,10.036006 a 2.5569487,2.5569487 0 1 1 -5.1138975,0 2.5569487,2.5569487 0 1 1 5.1138975,0 z"
+       transform="matrix(0.78218231,0,0,0.78218231,3.9074076,1033.0122)" />
+  </g>
+</svg>
