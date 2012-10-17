@@ -183,9 +183,9 @@ class ToneCurveParams {
 
         enum eTCModeId {
             TC_MODE_STD,               // Standard modes, the curve is applied on all component individually
+            TC_MODE_WEIGHTEDSTD,       // Weighted standard mode
             TC_MODE_FILMLIKE,          // Film-like mode, as defined in Adobe's reference code
-            TC_MODE_SATANDVALBLENDING, // Modify the Saturation and Value channel
-            TC_MODE_WEIGHTEDSTD        // Weighted standard mode
+            TC_MODE_SATANDVALBLENDING  // Modify the Saturation and Value channel
         };
 
         bool        autoexp;
