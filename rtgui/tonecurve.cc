@@ -93,9 +93,9 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
   toneCurveMode = Gtk::manage (new MyComboBoxText ());
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_STANDARD"));
+  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
   toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
-  toneCurveMode->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
   toneCurveMode->set_active (0);
   toneCurveMode->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL1"));
 
@@ -117,9 +117,9 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
   toneCurveMode2 = Gtk::manage (new MyComboBoxText ());
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_STANDARD"));
+  toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_FILMLIKE"));
   toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_SATANDVALBLENDING"));
-  toneCurveMode2->append_text (M("TP_EXPOSURE_TCMODE_WEIGHTEDSTD"));
   toneCurveMode2->set_active (0);
   toneCurveMode2->set_tooltip_text(M("TP_EXPOSURE_TCMODE_LABEL2"));
 
@@ -231,15 +231,15 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 
     int tcMode = toneCurveMode->get_active_row_number();
     if      (tcMode == 0) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_STD;
-    else if (tcMode == 1) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
-    else if (tcMode == 2) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
-    else if (tcMode == 3) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+    else if (tcMode == 1) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+    else if (tcMode == 2) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_FILMLIKE;
+    else if (tcMode == 3) pp->toneCurve.curveMode = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
 
     tcMode = toneCurveMode2->get_active_row_number();
     if      (tcMode == 0) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_STD;
-    else if (tcMode == 1) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
-    else if (tcMode == 2) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
-    else if (tcMode == 3) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+    else if (tcMode == 1) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_WEIGHTEDSTD;
+    else if (tcMode == 2) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
+    else if (tcMode == 3) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
 
 
     if (pedited) {
