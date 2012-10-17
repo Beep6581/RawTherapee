@@ -2,7 +2,7 @@ ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
 ABOUT_TAB_RELEASENOTES;Poznámky k vydání
-ABOUT_TAB_SPLASH;Splash
+ABOUT_TAB_SPLASH;Úvodní obrazovka
 ADJUSTER_RESET_TO_DEFAULT;Vrátit se k původnímu
 BATCHQUEUE_AUTOSTART;Automatický start
 BATCH_PROCESSING;Dávkové zpracování
@@ -81,8 +81,8 @@ EXPORT_RESIZEMETHOD;Metoda změny rozměru
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;Zpracování fronty
 FILEBROWSER_ADDDELTEMPLATE;Přidat/Smazat šablony...
-FILEBROWSER_APPLYPROFILE;Aplikovat profil
-FILEBROWSER_APPLYPROFILE_PARTIAL;Aplikovat profil (částečně)
+FILEBROWSER_APPLYPROFILE;Použít
+FILEBROWSER_APPLYPROFILE_PARTIAL;Aplikovat - částečně
 FILEBROWSER_ARRANGEMENTHINT;Přepnout mezi vertikálním/horizontálním zarovnáním náhledů
 FILEBROWSER_AUTODARKFRAME;Automatický tmavý snímek
 FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
@@ -91,16 +91,16 @@ FILEBROWSER_BROWSEPATHHINT;Vložte cestu pro procházení.\n<b>Ctrl-O</b> pro p�
 FILEBROWSER_CACHECLEARFROMFULL;Vymazat z cache - úplně
 FILEBROWSER_CACHECLEARFROMPARTIAL;Vymazat z cache - částečně
 FILEBROWSER_CACHE;Cache
-FILEBROWSER_CLEARPROFILE;Vymazat profil
-FILEBROWSER_COPYPROFILE;Kopírovat profil
+FILEBROWSER_CLEARPROFILE;Smazat
+FILEBROWSER_COPYPROFILE;Kopírovat
 FILEBROWSER_CURRENT_NAME;Současné jméno:
 FILEBROWSER_DARKFRAME;Tmavý snímek
 FILEBROWSER_DELETEDLGLABEL;Potvrzení smazání souboru
-FILEBROWSER_DELETEDLGMSGINCLPROC;Jste si jisti, že chcete vymazat %1 vybraných souborů VČETNĚ výstupů dávkového zpracování?
-FILEBROWSER_DELETEDLGMSG;Jste si jisti, že chcete vymazat %1 vybraných souborů?
+FILEBROWSER_DELETEDLGMSGINCLPROC;Jste si jisti, že chcete vymazat <b>%1</b> vybraných souborů <b>včetně</b> výstupů dávkového zpracování?
+FILEBROWSER_DELETEDLGMSG;Jste si jisti, že chcete vymazat <b>%1</b> vybraných souborů?
 FILEBROWSER_EMPTYTRASHHINT;Trvale smazat soubory z koše
 FILEBROWSER_EMPTYTRASH;Vysypat koš
-FILEBROWSER_EXEC_CPB;Spustit vlastní generátor profilu
+FILEBROWSER_EXEC_CPB;Vlastní generátor profilu
 FILEBROWSER_EXIFFILTERAPPLYHINT;Zapnout/vypnout Exif filtr v prohlížeči souborů
 FILEBROWSER_EXIFFILTERAPPLY;Použít
 FILEBROWSER_EXIFFILTERLABEL;Filtrovat dle Exif
@@ -112,8 +112,8 @@ FILEBROWSER_MOVETODARKFDIR;Přesunout do složky tmavých snímků
 FILEBROWSER_MOVETOFLATFIELDDIR;Přesunout do složky Flat Field
 FILEBROWSER_NEW_NAME;Nové jméno:
 FILEBROWSER_OPENDEFAULTVIEWER;Výchozí prohlížeč Windows (zpracování fronty) 
-FILEBROWSER_PARTIALPASTEPROFILE;Vložit částečně
-FILEBROWSER_PASTEPROFILE;Vložit profil
+FILEBROWSER_PARTIALPASTEPROFILE;Vložit - částečně
+FILEBROWSER_PASTEPROFILE;Vložit
 FILEBROWSER_POPUPCANCELJOB;Zrušit úlohu
 FILEBROWSER_POPUPCOLORLABEL0;Štítek: Žádný
 FILEBROWSER_POPUPCOLORLABEL1;Štítek: Červený
@@ -130,14 +130,14 @@ FILEBROWSER_POPUPMOVETO;Přesunout do...
 FILEBROWSER_POPUPOPEN;Otevřít
 FILEBROWSER_POPUPPROCESSFAST;Vložit do fronty (Rychlý export)
 FILEBROWSER_POPUPPROCESS;Vložit do fronty
-FILEBROWSER_POPUPPROFILEOPERATIONS;Operace s profily
+FILEBROWSER_POPUPPROFILEOPERATIONS;Operace profilů zpracování
 FILEBROWSER_POPUPRANK1;Hodnocení 1 *
 FILEBROWSER_POPUPRANK2;Hodnocení 2 **
 FILEBROWSER_POPUPRANK3;Hodnocení 3 ***
 FILEBROWSER_POPUPRANK4;Hodnocení 4 ****
 FILEBROWSER_POPUPRANK5;Hodnocení 5 *****
 FILEBROWSER_POPUPRANK;Hodnocení
-FILEBROWSER_POPUPREMOVEINCLPROC;Smazat (včetně výstupů z fronty)
+FILEBROWSER_POPUPREMOVEINCLPROC;Smazat včetně výstupů z fronty
 FILEBROWSER_POPUPREMOVESUBMENU;Smazat
 FILEBROWSER_POPUPREMOVE;Smazat
 FILEBROWSER_POPUPRENAME;Přejmenovat
@@ -162,7 +162,7 @@ FILEBROWSER_SHOWCOLORLABEL5HINT;Ukázat obrázky s růžovým štítkem.\nZkratk
 FILEBROWSER_SHOWDIRHINT;Smazat všechny filtry.\nZkratka: <b>D</b>
 FILEBROWSER_SHOWEDITEDHINT;Ukázat upravené obrázky.\nZkratka: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Ukázat neupravené obrázky.\nZkratka: <b>6</b>
-FILEBROWSER_SHOWEXIFINFO;Zobrazit EXIF informace.\nZkratka: <b>i</b>
+FILEBROWSER_SHOWEXIFINFO;Zobrazit Exif informace.\nZkratka: <b>i</b>
 FILEBROWSER_SHOWQUEUEHINT;Ukázat obsah fronty zpracování
 FILEBROWSER_SHOWRANK1HINT;Ukázat obrázky hodnocené 1 hvězdičkou.\nZkratka: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Ukázat obrázky hodnocené 2 hvězdičkami.\nZkratka: <b>2</b>
@@ -174,11 +174,11 @@ FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Ukázat naposledy neuložené obrázky.\nZk
 FILEBROWSER_SHOWTRASHHINT;Ukázat obsah koše.\nZkratka: <b>T</b>
 FILEBROWSER_SHOWUNCOLORHINT;Ukázat obrázky bez barevného štítku.\nZkratka: <b>Alt-`</b>
 FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky.\nZkratka: <b>`</b>
-FILEBROWSER_STARTPROCESSINGHINT;Spustit zpracování nebo ukládání obrázků ve frontě
+FILEBROWSER_STARTPROCESSINGHINT;Spustit zpracování obrázků ve frontě
 FILEBROWSER_STARTPROCESSING;Spustit zpracování
-FILEBROWSER_STOPPROCESSINGHINT;Zastavit zpracovávaní obrázků
+FILEBROWSER_STOPPROCESSINGHINT;Zastavit zpracování obrázků ve frontě
 FILEBROWSER_STOPPROCESSING;Zastavit zpracovávaní
-FILEBROWSER_THUMBSIZE;Velikost náhledů
+FILEBROWSER_THUMBSIZE;Velikost náhledu
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Automatické spuštění zpracování po vložení nové úlohy
 FILEBROWSER_USETEMPLATE;Použít šablonu:
 FILEBROWSER_ZOOMINHINT;Zvětšit velikosti náhledů.\nZkratka:  <b>+</b>
@@ -202,6 +202,7 @@ GENERAL_OK;OK
 GENERAL_PORTRAIT;Na výšku
 GENERAL_SAVE;Uložit
 GENERAL_UNCHANGED;(Beze změny)
+GENERAL_WARNING;Varování
 GENERAL_YES;Ano
 HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_BUTTON_B;B
@@ -212,6 +213,7 @@ HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_BAR;Skrýt/zobrazit řádek RGB indikátoru\nKlikněte pravým tlačítkem myši na náhled pro zmrazení/uvolnění
 HISTOGRAM_TOOLTIP_B;Skrýt /zobrazit histogram modré
+HISTOGRAM_TOOLTIP_FULL;Přepnout plný nebo přiblížený histogram
 HISTOGRAM_TOOLTIP_G;Skrýt /zobrazit histogram zelené
 HISTOGRAM_TOOLTIP_L;Skrýt /zobrazit CIELAB histogram jasu
 HISTOGRAM_TOOLTIP_RAW;Skrýt /zobrazit raw histogram
@@ -222,8 +224,8 @@ HISTORY_DELSNAPSHOT;Odstranit
 HISTORY_FROMCLIPBOARD;Ze schránky
 HISTORY_LABEL;Historie
 HISTORY_MSG_1;Fotka načtena
-HISTORY_MSG_2;Profil načten
-HISTORY_MSG_3;Profil změněn
+HISTORY_MSG_2;PP3 načten
+HISTORY_MSG_3;PP3 změněn
 HISTORY_MSG_4;Prohlížení historie
 HISTORY_MSG_5;Jas
 HISTORY_MSG_6;Kontrast
@@ -231,7 +233,7 @@ HISTORY_MSG_7;Černá
 HISTORY_MSG_8;Kompenzace expozice
 HISTORY_MSG_9;Komprese světel
 HISTORY_MSG_10;Komprese stínů
-HISTORY_MSG_11;Tónová křivka
+HISTORY_MSG_11;Tónová křivka 1
 HISTORY_MSG_12;Automatická expozice
 HISTORY_MSG_13;Oříznutí expozice
 HISTORY_MSG_14;Zářivost jasu
@@ -254,21 +256,21 @@ HISTORY_MSG_30;Poloměr dekonvoluce
 HISTORY_MSG_31;Míra dekonvoluce
 HISTORY_MSG_32;Útlum dekonvoluce
 HISTORY_MSG_33;Počet průchodů dekonvoluce
-HISTORY_MSG_34;Zabránit oříznutí barev
-HISTORY_MSG_35;Povolit omezení saturace
-HISTORY_MSG_36;Omezení saturace
-HISTORY_MSG_37;Sytost barev
+HISTORY_MSG_34;LPC používá korekci zkreslení
+HISTORY_MSG_35;LPC používá vinětaci
+HISTORY_MSG_36;LPC používá chromatickou aberaci
+HISTORY_MSG_37;Automatická expozice
 HISTORY_MSG_38;Metoda vyvážení bílé
 HISTORY_MSG_39;Barevná teplota
 HISTORY_MSG_40;Odstín vyvážení bílé
-HISTORY_MSG_41;Barevný posun "A"
-HISTORY_MSG_42;Barevný posun "B"
-HISTORY_MSG_43;Jas Redukce šumu
+HISTORY_MSG_41;Tónová křivka mód 1
+HISTORY_MSG_42;Tónová křivka 2
+HISTORY_MSG_43;Tónová křivka mód 2
 HISTORY_MSG_44;Poloměr redukce šumu v jasech
 HISTORY_MSG_45;Okrajová tolerance redukce šumu v jasech
 HISTORY_MSG_46;Redukce barevného šumu
-HISTORY_MSG_47;Poloměr redukce barevného šumu
-HISTORY_MSG_48;Okrajová tolerance v redukci barevného šumu
+HISTORY_MSG_47;Smísení ICC světel s matici
+HISTORY_MSG_48;Použita tónová křivka DCP
 HISTORY_MSG_49;Redukce barevného šumu s ohledem na okraje
 HISTORY_MSG_50;Nástroj Stíny/světla
 HISTORY_MSG_51;Propagace světel
@@ -305,7 +307,7 @@ HISTORY_MSG_81;Změna rozměrů povolena
 HISTORY_MSG_82;Profil změněn
 HISTORY_MSG_83;Vysoká kvalita světel/stínů
 HISTORY_MSG_84;Korekce perspektivy
-HISTORY_MSG_85;Vlnkové koeficienty
+HISTORY_MSG_85;Korekční profil objektivu
 HISTORY_MSG_86;Vlnková korekce
 HISTORY_MSG_87;Redukce impulzního šumu
 HISTORY_MSG_88;Práh
@@ -315,7 +317,7 @@ HISTORY_MSG_91;Redukce šumu - barevnost
 HISTORY_MSG_92;Redukce šumu - gama
 HISTORY_MSG_93;Kontrast dle detailu úrovní - hodnota
 HISTORY_MSG_94;Kontrast dle detailu úrovní
-HISTORY_MSG_95;Sytost
+HISTORY_MSG_95;Barva
 HISTORY_MSG_96;'a' křivka
 HISTORY_MSG_97;'b' křivka
 HISTORY_MSG_98;Metoda demozajkování
@@ -331,9 +333,9 @@ HISTORY_MSG_107;Odstranění lemu práh
 HISTORY_MSG_108;Práh komprese světel
 HISTORY_MSG_109;Změna rozměrů výřezu
 HISTORY_MSG_110;Změna rozměrů aplikována na  
-HISTORY_MSG_111;Zabránit oříznutí barev
-HISTORY_MSG_112;Povolit omezení saturace
-HISTORY_MSG_113;Omezení saturace
+HISTORY_MSG_111;Zabránit posunu barev
+HISTORY_MSG_112;--nepoužito--
+HISTORY_MSG_113;Ochrana červených a pleťových tónů
 HISTORY_MSG_114;Průchody DCB
 HISTORY_MSG_115;Průchody chybných barev
 HISTORY_MSG_116;Rozšířené DCB
@@ -352,7 +354,7 @@ HISTORY_MSG_128;Flat Field Poloměr rozostření
 HISTORY_MSG_129;Flat Field Typ rozostření
 HISTORY_MSG_130;Automatická oprava zkreslení objektivu
 HISTORY_MSG_131;Redukce jasového šumu
-HISTORY_MSG_132;Redukce chromatického šumu
+HISTORY_MSG_132;Redukce barevného šumu
 HISTORY_MSG_133;Gama
 HISTORY_MSG_134;Pozice gamy
 HISTORY_MSG_135;Volná gama
@@ -387,6 +389,13 @@ HISTORY_MSG_163;RGB křivky - R
 HISTORY_MSG_164;RGB křivky - G
 HISTORY_MSG_165;RGB křivky - B
 HISTORY_MSG_166;Neutrální úrovně
+HISTORY_MSG_167;Černobílé tónování
+HISTORY_MSG_168;'CC' křivka
+HISTORY_MSG_169;'CH' křivka
+HISTORY_MSG_170;Živost - křivka
+HISTORY_MSG_171;'LC' křivka
+HISTORY_MSG_172;Omezit 'LC' na červené a pleťové tóny
+HISTORY_MSG_173;Redukce šumu - jas detailu
 HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSNAPSHOT;Přidat
 HISTORY_NEWSSDIALOGLABEL;Titulek snímku:
@@ -395,18 +404,18 @@ HISTORY_SETTO;Nastavit na
 HISTORY_SNAPSHOTS;Snímky
 HISTORY_SNAPSHOT;Snímek
 ICMPANEL_FILEDLGFILTERANY;Jakékoliv soubory
-ICMPANEL_FILEDLGFILTERICM;Soubory ICC profilů
-ICMPANEL_GAMMABEFOREINPUT;Profil aplikuje Gama korekci
+ICMPANEL_FILEDLGFILTERICM;Barevné profily
+ICMPANEL_GAMMABEFOREINPUT;Barevný profil aplikuje Gamu
 ICMPANEL_INPUTCAMERA;Výchozí fotoaparátu
 ICMPANEL_INPUTCUSTOM;Vlastní
-ICMPANEL_INPUTDLGLABEL;Vybrat vstupní ICC profil...
+ICMPANEL_INPUTDLGLABEL;Vybrat vstupní barevný profil...
 ICMPANEL_INPUTEMBEDDED;Použít vložený profil, pokud je k dispozici
-ICMPANEL_INPUTPROFILE;Vstupní profil
+ICMPANEL_INPUTPROFILE;Vstupní barevný profil
 ICMPANEL_NOICM;Bez ICM: sRGB výstup
-ICMPANEL_OUTPUTDLGLABEL;Vybrat výstupní ICC profil...
+ICMPANEL_OUTPUTDLGLABEL;Vybrat výstupní barevný profil...
 ICMPANEL_OUTPUTPROFILE;Výstupní barevný prostor
 ICMPANEL_SAVEREFERENCE;Uložit referenční obrázek pro profilování
-ICMPANEL_WORKINGPROFILE;Pracovní barevný prostor
+ICMPANEL_WORKINGPROFILE;Pracovní barevný profil
 IMAGEAREA_DETAILVIEW;Detailní pohled
 IPTCPANEL_AUTHORHINT;Jméno autora, například spisovatele, fotografa nebo grafika (By-line).
 IPTCPANEL_AUTHORSPOSITIONHINT;Titul/pozice autora nebo autorů obrázku (By-line Title).
@@ -427,7 +436,7 @@ IPTCPANEL_COUNTRYHINT;Jméno země/lokace kde byl obrázek vytvořen (Země - Lo
 IPTCPANEL_COUNTRY;Země
 IPTCPANEL_CREDITHINT;Dodavatel obrázku, ne nutně vlastník/autor (Credit).
 IPTCPANEL_CREDIT;Zásluhy
-IPTCPANEL_DATECREATEDHINT;Kdy byl obrázek vytvořen; Formát: RRRRMMDD (Datum vytvoření).
+IPTCPANEL_DATECREATEDHINT;Datum kdy byl duševní obsah obrázku vytvořen; Formát: RRRRMMDD (Datum vytvoření).
 IPTCPANEL_DATECREATED;Datum vytvoření
 IPTCPANEL_EMBEDDEDHINT;Obnov IPTC data z obrázku
 IPTCPANEL_EMBEDDED;Uložené
@@ -504,6 +513,9 @@ MAIN_TAB_TAGGING;Štítky
 MAIN_TAB_TRANSFORM;Transformace
 MAIN_TAB_TRANSFORM_TOOLTIP;Zkratka: <b>Alt-T</b>
 MAIN_TOGGLE_BEFORE_AFTER;Před|Po
+MAIN_TOOLTIP_BACKCOLOR0;Barva pozadí náhledu: <b>Dle motivu</b>\nZkratka: <b>8</b>
+MAIN_TOOLTIP_BACKCOLOR1;Barva pozadí náhledu: <b>Černá</b>\nZkratka: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Barva pozadí náhledu: <b>Bílá</b>\nZkratka: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Zamknout</b> / <b>Odemknout</b> pohled <b>Před</b>\n\n<b>Zamknout</b>: ponechá pohled <b>Před</b> nezměněn.\nUžitečné pro posouzení výsledného efektu po použití více nástrojů.\nNavíc může být porovnání provedeno proti kterémukoli stavu v historii.\n\n<b>Odemknout</b>: pohled <b>Před</b> bude následovat pohled <b>Poté</b>, vždy jen o jeden krok zpět, představí vliv právě použitého nástroje.
 MAIN_TOOLTIP_HIDEFP;Zobrazit či schovat dolní panel (složky a prohlížeč souborů).\nZkratka: <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Zobrazit či schovat levý panel (obsahující historii).\nZkratka: <b>l</b>
@@ -541,7 +553,10 @@ NAVIGATOR_S_NA;S = n/a
 NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_NA;V = n/a
 NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_FULL;Šířka = %1, Výška = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
+OPTIONS_DEFIMG_MISSING;Výchozí profil pro <b>ne raw fotky</b> nelze nalézt nebo nastavit.\n\nZkontrolujte prosím vaši složku s profily, buď chybí nebo je poškozena.\n\nBudou použity výchozí přednastavené hodnoty.
+OPTIONS_DEFRAW_MISSING;Výchozí profil pro <b>raw fotky</b> nelze nalézt nebo nastavit.\n\nZkontrolujte prosím vaši složku s profily, buď chybí nebo je poškozena.\n\nBudou použity výchozí přednastavené hodnoty.
 PARTIALPASTE_BASICGROUP;Základní nastavení
 PARTIALPASTE_CACORRECTION;Úprava chromatické vady
 PARTIALPASTE_CHANNELMIXER;Míchání kanálů
@@ -564,7 +579,7 @@ PARTIALPASTE_DIRPYREQUALIZER;Kontrast dle detailu úrovní
 PARTIALPASTE_DISTORTION;Korekce zkreslení
 PARTIALPASTE_EPD;Mapování tónů
 PARTIALPASTE_EVERYTHING;Vše
-PARTIALPASTE_EXIFCHANGES;Upravená exif data
+PARTIALPASTE_EXIFCHANGES;Změny Exif dat
 PARTIALPASTE_EXPOSURE;Expozice
 PARTIALPASTE_FLATFIELDAUTOSELECT;FF Automatický výběr
 PARTIALPASTE_FLATFIELDBLURRADIUS;FF Poloměr rozostření
@@ -576,14 +591,14 @@ PARTIALPASTE_HLRECOVERYTHRESHOLD;Práh obnovení světel
 PARTIALPASTE_HLRECOVERY;Obnovení světel
 PARTIALPASTE_HSVEQUALIZER;HSV korekce
 PARTIALPASTE_ICMGAMMA;Výstupní gama
-PARTIALPASTE_ICMSETTINGS;Nastavení ICM
+PARTIALPASTE_ICMSETTINGS;Nastavení správy barev
 PARTIALPASTE_IMPULSEDENOISE;Redukce impulzního šumu
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LABCURVE;Úprava LAB křivek
 PARTIALPASTE_LENSGROUP;Nastavení objektivu
 PARTIALPASTE_LUMADENOISE;Redukce šumu v jasech
 PARTIALPASTE_LUMINANCEGROUP;Nastavení jasu
-PARTIALPASTE_METAICMGROUP;Nastavení metadat a ICM
+PARTIALPASTE_METAICMGROUP;Nastavení metadat a správy barev
 PARTIALPASTE_PERSPECTIVE;Perspektiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Vyrovnání zelené
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Aplikovat filtr na vypálené/mrtvé body
@@ -613,12 +628,12 @@ PARTIALPASTE_WAVELETEQUALIZER;Vlnková korekce
 PARTIALPASTE_WHITEBALANCE;Nastavení bílé 
 PREFERENCES_ADD;Přidat
 PREFERENCES_APPLNEXTSTARTUP;vyžaduje restart aplikace
-PREFERENCES_AUTOMONPROFILE;Automaticky použít hlavní profil monitoru z operačního systému.
+PREFERENCES_AUTOMONPROFILE;Automaticky použít hlavní barevný profil monitoru z operačního systému.
 PREFERENCES_BATCH_PROCESSING;Dávkové zpracování
 PREFERENCES_BEHAVIOR;Režim
 PREFERENCES_BLINKCLIPPED;Blikání v oříznutých oblastech
 PREFERENCES_CACHECLEARALL;Vymazat vše
-PREFERENCES_CACHECLEARPROFILES;Vymazat profily
+PREFERENCES_CACHECLEARPROFILES;Smazat profily zpracování
 PREFERENCES_CACHECLEARTHUMBS;Vymazat náhledy
 PREFERENCES_CACHEFORMAT1;Vlastní (rychlejší a kvalitnější)
 PREFERENCES_CACHEFORMAT2;JPEG (menší velikost)
@@ -631,9 +646,9 @@ PREFERENCES_CACHETHUMBFORM;Formát náhledů v cache
 PREFERENCES_CACHETHUMBHEIGHT;Maximální výška náhledu
 PREFERENCES_CLIPPINGIND;Indikace oříznutí
 PREFERENCES_CMETRICINTENT;Kolorimetrická metoda
-PREFERENCES_CUSTPROFBUILDHINT;Program (nebo skript) spuštěný v případě, že má být vygenerován nový profil pro obrázek.\nBude spuštěn s následujícími parametry,  které umožní vygenerování vhodného  .pp3 profilu:\n[Cesta raw/JPG] [Výchozí cesta profilu] [Clona] [Expozice v sekundách] [Ohnisková vzdálenost v mm] [ISO] [Objektiv] [Fotoaparát]
+PREFERENCES_CUSTPROFBUILDHINT;Program (nebo skript) spuštěný v případě, že má být vygenerován nový profil pro obrázek.\nBude spuštěn s následujícími parametry,  které umožní vygenerování vhodného profilu upracování :\n[cesta raw/JPG] [výchozí cesta profilu] [clona] [expozice v sekundách] [ohnisková vzdálenost v mm] [ISO] [objektiv] [fotoaparát]
 PREFERENCES_CUSTPROFBUILDPATH;Cesta k programu
-PREFERENCES_CUSTPROFBUILD;Vlastní generátor profilu obrázku
+PREFERENCES_CUSTPROFBUILD;Vlastní generátor profilu zpracování
 PREFERENCES_CUTOVERLAYBRUSH;Barva masky ořezu/průhlednosti
 PREFERENCES_DARKFRAMEFOUND;Nalezeno
 PREFERENCES_DARKFRAMESHOTS;snímků
@@ -662,32 +677,32 @@ PREFERENCES_FLATFIELDSDIR;Složka Flat Field souborů
 PREFERENCES_FLATFIELDSHOTS;snímků
 PREFERENCES_FLATFIELDTEMPLATES;šablon
 PREFERENCES_FLATFIELD;Flat Field
-PREFERENCES_FORIMAGE;Pro obrázkové soubory
-PREFERENCES_FORRAW;Pro raw soubory
+PREFERENCES_FORIMAGE;Pro ne-raw fotografie
+PREFERENCES_FORRAW;Pro raw fotografie
 PREFERENCES_GIMPPATH;GIMP instalační složka
 PREFERENCES_GTKTHEME;GTK výchozí
 PREFERENCES_HINT;Nápověda
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram v levém panelu
 PREFERENCES_HLTHRESHOLD;Práh oříznutých světel
-PREFERENCES_ICCDIR;Složka ICC profilů
-PREFERENCES_IMPROCPARAMS;Výchozí profily pro zpracování obrázku
+PREFERENCES_ICCDIR;Složka obsahující barevné profily
+PREFERENCES_IMPROCPARAMS;Výchozí parametry zpracování obrázku
 PREFERENCES_INTENT_ABSOLUTE;Absolutní kolorimetrie
 PREFERENCES_INTENT_PERCEPTUAL;Vnímání
 PREFERENCES_INTENT_RELATIVE;Relativní kolorimetrie
 PREFERENCES_INTENT_SATURATION;Sytost
-PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Ukázat interní raw náhledy u needitovaných snímků
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Ukázat vložené JPEG náhledy u needitovaných snímků
 PREFERENCES_LANGAUTODETECT;Použít jazykové nastavení OS
 PREFERENCES_LIVETHUMBNAILS;Živé náhledy (pomalejší)
-PREFERENCES_MENUGROUPEXTPROGS;Seskupit "Otevřít pomocí"
-PREFERENCES_MENUGROUPFILEOPERATIONS;Seskupit souborové operace
-PREFERENCES_MENUGROUPLABEL;Seskupit značení
-PREFERENCES_MENUGROUPPROFILEOPERATIONS;Seskupit operace s profily
-PREFERENCES_MENUGROUPRANK;Seskupit hodnocení
-PREFERENCES_MENUOPTIONS;Vlastnosti nabídky
+PREFERENCES_MENUGROUPEXTPROGS;Skupina "Otevřít pomocí"
+PREFERENCES_MENUGROUPFILEOPERATIONS;Skupina "Souborové operace"
+PREFERENCES_MENUGROUPLABEL;Skupina "Barevné štítky"
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Skupina "Operace s profily zpracování"
+PREFERENCES_MENUGROUPRANK;Skupina "Hodnocení"
+PREFERENCES_MENUOPTIONS;Volby místní nabídky
 PREFERENCES_METADATA;Metadata
-PREFERENCES_MONITORICC;Profil monitoru
-PREFERENCES_MULTITABDUALMON;Mód více karet; pouze pokud je dostupný druhý monitor
-PREFERENCES_MULTITAB;Mód více karet
+PREFERENCES_MONITORICC;Barevný profil monitoru
+PREFERENCES_MULTITABDUALMON;Mód více karet editoru, pokud je dostupný druhý monitor
+PREFERENCES_MULTITAB;Mód více karet editoru
 PREFERENCES_OUTDIRFOLDERHINT;Uložit obrázky do vybrané složky
 PREFERENCES_OUTDIRFOLDER;Ulož do souboru
 PREFERENCES_OUTDIRHINT;Lze použít následující formátovací řetězce:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nTyto formátovací řetězce reprezentují různé části cesty k uložené fotografii.\n\nNapříklad pokud má zpracovávaná fotografie následující cestu:\n<b><i>/home/tomas/fotky/2010-10-31/dsc0042.nef</i></b>,\nmají jednotlivé formátovací řetězce tento význam:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tomas</i>\n<b>%d2</b> = <i>fotky</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tomas/fotky/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tomas/fotky/</i>\n<b>%p3</b> = <i>/home/tomas/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> bude nahrazeno hodnocením fotografie.  Pokud není fotografie ohodnocena, bude %r nahrazeno '0'.  Pokud je fotografie v koši, bude %r nahrazeno 'x'.\n\nPokud si přejete uložit výstupní obrázek vedle originálu, napište:\n<b>%p1/%f</b>\n\nPokud si jej ale přejete uložit do adresáře "<i>converted</i>" ve stejném adresáři jako otevřený obrázek, napište:\n<b>%p1/converted/%f</b>\n\nPro uložení výstupního obrázku do adresáře  "<i>/home/tom/photos/converted/2010-10-31</i>", napište:\n<b>%p2/converted/%d1/%f</b>
@@ -703,27 +718,27 @@ PREFERENCES_PARSEDEXTADD;Přidej příponu
 PREFERENCES_PARSEDEXTDELHINT;Vymazat označenou příponu ze seznamu
 PREFERENCES_PARSEDEXT;Zachytávané přípony
 PREFERENCES_PROFILEHANDLING;Řízení profilů zpracování
-PREFERENCES_PROFILELOADPR;Priorita nahrávání profilu
+PREFERENCES_PROFILELOADPR;Priorita nahrávání profilů zpracování
 PREFERENCES_PROFILEPRCACHE;Profil v cache
 PREFERENCES_PROFILEPRFILE;Profil uložený se zdrojovým souborem
 PREFERENCES_PROFILESAVECACHE;Ukládat parametry zpracování do cache
-PREFERENCES_PROFILESAVEINPUT;Ukládat parametry zpracování se zdrojovým souborem
+PREFERENCES_PROFILESAVEINPUT;Ukládat parametry zpracování spolu se zdrojovým souborem
 PREFERENCES_PROPERTY;Vlastnost
 PREFERENCES_PSPATH;Instalační složka Adobe Photoshop
 PREFERENCES_SELECTFONT;Vybrat písmo
-PREFERENCES_SELECTICCDIRDLG;Zvolit složku s ICC profily...
+PREFERENCES_SELECTICCDIRDLG;Vybrat složku s barevnými profily...
 PREFERENCES_SELECTLANG;Volba jazyka
-PREFERENCES_SELECTMONITORPROFDLG;Zvolit ICC profil obrazovky...
+PREFERENCES_SELECTMONITORPROFDLG;Vybrat barevný profil obrazovky...
 PREFERENCES_SELECTTHEME;Zvolit vzhled
 PREFERENCES_SET;Nastavit
 PREFERENCES_SHOWBASICEXIF;Zobrazovat základní Exif informace
 PREFERENCES_SHOWDATETIME;Zobrazovat datum a čas
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Přidat kompenzaci expozice
 PREFERENCES_SHOWONLYRAW;Zobrazovat pouze soubory raw
-PREFERENCES_SHOWPROFILESELECTOR;Zobrazit výběr profilu
+PREFERENCES_SHOWPROFILESELECTOR;Zobrazit výběr profilu zpracování
 PREFERENCES_SHTHRESHOLD;Práh oříznutých stínů
-PREFERENCES_SINGLETABVERTAB;Mód jedné karty, svislé karty
-PREFERENCES_SINGLETAB;Mód jedné karty
+PREFERENCES_SINGLETABVERTAB;Mód jedné karty editoru, svislé karty
+PREFERENCES_SINGLETAB;Mód jedné karty editoru
 PREFERENCES_SLIMUI;Štíhlé rozhraní
 PREFERENCES_SND_BATCHQUEUEDONE;Zpracování fronty dokončeno
 PREFERENCES_SND_HELP;Vložte cestu k souboru nebo ponechte prázdné (bez zvuku). Ve Windows zadejte "SystemDefault", "SystemAsterisk", atd. pro použití systémových zvuků.
@@ -756,12 +771,12 @@ PROFILEPANEL_PFILE;Ze souboru
 PROFILEPANEL_PLASTPHOTO;Poslední fotka
 PROFILEPANEL_PLASTSAVED;Poslední uschovaný
 PROFILEPANEL_PROFILE;Profil
-PROFILEPANEL_SAVEDLGLABEL;Uschovat parametry zpracování...
+PROFILEPANEL_SAVEDLGLABEL;Uložit parametry zpracování...
 PROFILEPANEL_SAVEPPASTE;Parametry ukládání
-PROFILEPANEL_TOOLTIPCOPY;Kopírovat současný profil do schránky.\nCtrl-klik umožní vybrat parametry pro kopírování
-PROFILEPANEL_TOOLTIPLOAD;Nahrát profil ze souboru\nCtrl-klik umožní vybrat parametry pro nahrání
-PROFILEPANEL_TOOLTIPPASTE;Vložit profil ze schránky\nCtrl-klik umožní vybrat parametry pro vložení
-PROFILEPANEL_TOOLTIPSAVE;Uložit současný profil\nCtrl-klik umožní vybrat parametry pro uložení
+PROFILEPANEL_TOOLTIPCOPY;Kopírovat současný profil do schránky.\n<b>Ctrl-klik</b> umožní vybrat parametry pro kopírování
+PROFILEPANEL_TOOLTIPLOAD;Nahrát profil ze souboru\n<b>Ctrl-klik</b> umožní vybrat parametry pro nahrání
+PROFILEPANEL_TOOLTIPPASTE;Vložit profil ze schránky\n<b>Ctrl-klik</b> umožní vybrat parametry pro vložení
+PROFILEPANEL_TOOLTIPSAVE;Uložit současný profil\n<b>Ctrl-klik</b> umožní vybrat parametry pro uložení
 PROGRESSBAR_BADPIXELS;Špatné pixely
 PROGRESSBAR_CACORRECTION;Korekce chromatické aberace...
 PROGRESSBAR_DARKFRAME;Tmavý snímek...
@@ -775,11 +790,12 @@ PROGRESSBAR_LOADJPEG;Načítání JPEG...
 PROGRESSBAR_LOADPNG;Načítání PNG...
 PROGRESSBAR_LOADTIFF;Načítání TIFF...
 PROGRESSBAR_PROCESSING;Zpracovávaní obrázku...
+PROGRESSBAR_PROCESSING_PROFILESAVED;Profil zpracování uložen
 PROGRESSBAR_READY;Připraven.
 PROGRESSBAR_SAVEJPEG;Ukládání JPEG souboru...
 PROGRESSBAR_SAVEPNG;Ukládání PNG souboru...
 PROGRESSBAR_SAVETIFF;Ukládání TIFF souboru...
-PROGRESSDLG_PROFILECHANGEDINBROWSER;Změněn profil v prohlížeči
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil upracování změněn v prohlížeči
 QINFO_FOCALLENGTH;Ohnisková vzdálenost
 QINFO_ISO;ISO
 QINFO_LENS;Objektiv
@@ -795,8 +811,22 @@ SAVEDLG_PUTTOQUEUETAIL;Vložit na konec fronty
 SAVEDLG_PUTTOQUEUE;Vložit soubor do fronty
 SAVEDLG_SAVEIMMEDIATELY;Okamžitě uložit
 SAVEDLG_SAVESPP;Uschovat parametry zpracování s obrázkem
+SAVEDLG_SUBSAMP;Podvzorkování
+SAVEDLG_SUBSAMP_1;Nejlepší komprese
+SAVEDLG_SUBSAMP_2;Vyvážené
+SAVEDLG_SUBSAMP_3;Nejlepší kvalita
+SAVEDLG_SUBSAMP_TOOLTIP;Nejlepší komprese: 4:1:1\nVyvážený: 4:2:2\nNejlepší kvalita: 4:4:4
 SAVEDLG_TIFFFILTER;Soubory TIFF
 SAVEDLG_TIFFUNCOMPRESSED;Nekomprimovaný TIFF
+SAVEDLG_WARNFILENAME;Soubor bude pojmenován
+SHCSELECTOR_TOOLTIP;Klikněte pravým tlačítkem myši\npro obnovení výchozí pozice těchto tří posuvníků
+THRESHOLDSELECTOR_BL;Dole vlevo
+THRESHOLDSELECTOR_BR;Dole vpravo
+THRESHOLDSELECTOR_B;Dole
+THRESHOLDSELECTOR_HINT;Držte klávesu <b>Shift</b> pro přesun individuálních kontrolních bodů..
+THRESHOLDSELECTOR_TL;Nahoře vlevo
+THRESHOLDSELECTOR_TR;Nahoře vpravo
+THRESHOLDSELECTOR_T;Nahoře
 TOOLBAR_TOOLTIP_CROP;Vyznačení výřezu.\nZkratka: <b>c</b>
 TOOLBAR_TOOLTIP_HAND;Nástroj ruka.\nZkratka: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Vyznačení <b>roviny</b> / <b>rotace</b>.\nZkratka: <b>s</b> \n\nZobrazení míry rotace pomocí vodící linky na náhledu snímky. Úhel rotace je zobrazen vedle vodící linky. Střed rotace je geometrický střed snímku.
@@ -811,8 +841,8 @@ TP_CHMIXER_RED;Červený kanál
 TP_CHROMATABERR_LABEL;Chromatická Aberace
 TP_COARSETRAF_DEGREE;Stupeň:
 TP_COARSETRAF_TOOLTIP_HFLIP;Překlopit horizontálně
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočit doleva
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Otočit doprava
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočit doleva.\nZkratka: <b>[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Otočit doprava.\nZkratka: <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Překlopit vertikálně
 TP_COLORBOOST_ACHANNEL;Kanál "a"
 TP_COLORBOOST_AMOUNT;Míra
@@ -833,6 +863,7 @@ TP_COLORSHIFT_LABEL;Barevný posun
 TP_CROP_FIXRATIO;Poměr stran:
 TP_CROP_GTDIAGONALS;Pravidlo diagonál
 TP_CROP_GTEPASSPORT;Biometrický pas
+TP_CROP_GTFRAME;Snímek
 TP_CROP_GTGRID;Mřížka
 TP_CROP_GTHARMMEANS1;Zlatý řez 1
 TP_CROP_GTHARMMEANS2;Zlatý řez 2
@@ -856,7 +887,8 @@ TP_DEFRINGE_THRESHOLD;Práh
 TP_DETAIL_AMOUNT;Míra
 TP_DIRPYRDENOISE_CHROMA;Barevnost
 TP_DIRPYRDENOISE_GAMMA;Gama
-TP_DIRPYRDENOISE_LABEL;Redukce šumu
+TP_DIRPYRDENOISE_LABEL;Redukce šumu (pouze raw obrázky)
+TP_DIRPYRDENOISE_LDETAIL;Jas detailů
 TP_DIRPYRDENOISE_LUMA;Jas
 TP_DIRPYREQUALIZER_LABEL;Kontrast dle detailu úrovní
 TP_DIRPYREQUALIZER_LUMACOARSEST;Nejhrubší
@@ -867,7 +899,7 @@ TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutrální
 TP_DIRPYREQUALIZER_THRESHOLD;Práh
 TP_DISTORTION_AMOUNT;Míra
 TP_DISTORTION_AUTO;    Automatická korekce zkreslení objektivu
-TP_DISTORTION_AUTO_TIP;(Experimentální) Automatická korekce zkreslení objektivu pro některé fotoaparáty (M4/3, některé kompakty a jiné).
+TP_DISTORTION_AUTO_TIP;(Experimentální) Automatická korekce zkreslení objektivu pro některé fotoaparáty (Micro 4/3, některé kompakty a jiné).
 TP_DISTORTION_LABEL;Oprava zkreslení objektivu
 TP_EPD_EDGESTOPPING;Zachování okrajů
 TP_EPD_LABEL;Mapování tónů
@@ -880,9 +912,9 @@ TP_EQUALIZER_FINEST;Nejjemnější
 TP_EQUALIZER_LABEL;Vlnková korekce
 TP_EQUALIZER_LARGEST;Nejhrubší
 TP_EQUALIZER_NEUTRAL;Neutrální
-TP_EXPOSCORR_LABEL;Raw bílý-černý bod
+TP_EXPOSCORR_LABEL;Raw bílý a černý bod
 TP_EXPOSURE_AUTOLEVELS;Úrovně automaticky
-TP_EXPOSURE_AUTOLEVELS_TIP;Přepne provedení automatických úrovní na automatickou sadu hodnot parametrů založených na analýze obrázku  
+TP_EXPOSURE_AUTOLEVELS_TIP;Přepne provedení Úrovně automaticky na automatickou sadu hodnot parametrů založených na analýze obrázku  
 TP_EXPOSURE_BLACKLEVEL;Černá
 TP_EXPOSURE_BRIGHTNESS;Jas
 TP_EXPOSURE_CLIP;Oříznutí
@@ -891,17 +923,25 @@ TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Práh obnovení světel
 TP_EXPOSURE_COMPRHIGHLIGHTS;Míra obnovení světel
 TP_EXPOSURE_COMPRSHADOWS;Komprese stínů
 TP_EXPOSURE_CONTRAST;Kontrast
-TP_EXPOSURE_CURVEEDITOR;Tónová křivka
+TP_EXPOSURE_CURVEEDITOR1;Tónová křivka 1
+TP_EXPOSURE_CURVEEDITOR2;Tónová křivka 2
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Podívejte se prosím do následující sekce návodu pro více informací o tom jak získat co nejlepší výsledek při využití dvou křivek:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_EXPCOMP;Kompenzace expozice
 TP_EXPOSURE_LABEL;Expozice
 TP_EXPOSURE_SATURATION;Sytost
+TP_EXPOSURE_TCMODE_FILMLIKE;Jako film
+TP_EXPOSURE_TCMODE_LABEL1;Mód křivky 1
+TP_EXPOSURE_TCMODE_LABEL2;Mód křivky 2
+TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Mísení saturace a hodnoty
+TP_EXPOSURE_TCMODE_STANDARD;Běžný
+TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Běžný vážený
 TP_EXPO_AFTER; Po interpolaci (před RGB konverzí)
 TP_FLATFIELD_AUTOSELECT;Automatický výběr
 TP_FLATFIELD_BLURRADIUS;Poloměr rozostření
 TP_FLATFIELD_BLURTYPE;Typ rozostření
 TP_FLATFIELD_BT_AREA;Oblast
 TP_FLATFIELD_BT_HORIZONTAL;Vodorovně
-TP_FLATFIELD_BT_VERTHORIZ;Vod. a Svisle
+TP_FLATFIELD_BT_VERTHORIZ;Vodorovně a svisle
 TP_FLATFIELD_BT_VERTICAL;Svisle
 TP_FLATFIELD_LABEL;Flat Field
 TP_GAMMA_CURV;gama
@@ -920,12 +960,12 @@ TP_HSVEQUALIZER_LABEL;HSV korekce
 TP_HSVEQUALIZER_NEUTRAL;Neutrální
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
-TP_ICM_BLENDCMSMATRIX;Smísit světla a matici
+TP_ICM_BLENDCMSMATRIX;Smísení ICC světel s matici
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Povolit obnovení vypálených jasů při použití ICC profilů založených na LUT
 TP_ICM_FILEDLGFILTERANY;Jakékoliv soubory
-TP_ICM_FILEDLGFILTERICM;Soubory profilů
-TP_ICM_INPUTCAMERAICC;Automatický dohledaný specifický profil fotoaparátu
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Použít RawTherapee specifický DCP nebo ICC vstupní profil fotoaparátu jenž je mnohem přesnější než zjednodušená matice. Dostupné pro některé fotoaparáty. Profily jsou uloženy ve složce /iccprofiles/input a jsou automaticky vybrány dle jména souboru shodného s fotoaparátem.
+TP_ICM_FILEDLGFILTERICM;Barevné profily
+TP_ICM_INPUTCAMERAICC;Automatický dohledaný specifický barevný profil fotoaparátu
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Použít RawTherapee specifický DCP nebo ICC vstupní barevný profil fotoaparátu jenž je mnohem přesnější než zjednodušená matice. Dostupné pro některé fotoaparáty. Profily jsou uloženy ve složkách /iccprofiles/input a /dcpprofiles a jsou automaticky vybrány dle jména souboru shodného s fotoaparátem.
 TP_ICM_INPUTCAMERA;Standard fotoaparátu
 TP_ICM_INPUTCAMERA_TOOLTIP;Použít jednoduchou matici barev dcraw, rozšířenou verzí RawTherapee (kterýkoli dostupný, založený na modelu fotoaparátu) nebo vložený v DNG.
 TP_ICM_INPUTCUSTOM;Vlastní
@@ -946,20 +986,50 @@ TP_ICM_PREFERREDPROFILE_2;Wolfram
 TP_ICM_PREFERREDPROFILE_3;Fluorescenční
 TP_ICM_PREFERREDPROFILE_4;Blesk
 TP_ICM_SAVEREFERENCE;Uložit referenční obrázek pro profilování
+TP_ICM_TONECURVE;Použita tónová křivka DCP
+TP_ICM_TONECURVE_TOOLTIP;Povolit použití tónových křivek jenž mohou být uloženy v DCP profilech.
 TP_ICM_WORKINGPROFILE;Pracovní barevný prostor
 TP_IMPULSEDENOISE_LABEL;Redukce impulzního šumu
 TP_IMPULSEDENOISE_THRESH;Práh
-TP_LABCURVE_AVOIDCOLORCLIP;Zabránit oříznutí barvy
+TP_LABCURVE_AVOIDCOLORSHIFT;Zabránit posunu barev
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Přizpůsobit barvy gamutu barevného pracovního prostoru\na aplikovat Munsellovu korekci
 TP_LABCURVE_BRIGHTNESS;Jas
+TP_LABCURVE_BWTONING;Černobílé tónování
+TP_LABCURVE_BWTONING_TIP;Při zapnuté volbě <b>Černobílé tónování</b> nemají křivky Lab barvy, CC, CH a LC efekt.\nTónování může být ovlivněno použitím křivek <b>a</b> a <b>b</b> 
+TP_LABCURVE_CHROMATICITY;Barva
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Křivka jasů
-TP_LABCURVE_ENABLESATLIMITER;Omezovat sytost
-TP_LABCURVE_LABEL;Úprava LAB křivek
-TP_LABCURVE_SATLIMIT;Limit sytosti
-TP_LABCURVE_SATURATION;Sytost
+TP_LABCURVE_CURVEEDITOR_A_RANGE1;Sytě zelená
+TP_LABCURVE_CURVEEDITOR_A_RANGE2;Pastelově zelená
+TP_LABCURVE_CURVEEDITOR_A_RANGE3;Pastelově červená
+TP_LABCURVE_CURVEEDITOR_A_RANGE4;Sytě červená
+TP_LABCURVE_CURVEEDITOR_B_RANGE1;Sytě modrá
+TP_LABCURVE_CURVEEDITOR_B_RANGE2;Pastelově modrá
+TP_LABCURVE_CURVEEDITOR_B_RANGE3;Pastelově žlutá
+TP_LABCURVE_CURVEEDITOR_B_RANGE4;Sytě žlutá
+TP_LABCURVE_CURVEEDITOR_CC;CC
+TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutrální
+TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Matné
+TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastelové
+TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturované
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Barevnost dle barvy
+TP_LABCURVE_CURVEEDITOR_CH;CH
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Barevnost dle odstínu
+TP_LABCURVE_CURVEEDITOR_LC;LC
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Jas dle barvy
+TP_LABCURVE_LABEL;Lab úpravy
+TP_LABCURVE_LCREDSK;Omezit LC na tóny červené a pleti
+TP_LABCURVE_LCREDSK_TIP;Pokud je povoleno, je 'LC křivka' omezena pouze na červené a pleťové tóny\nPokud je zakázáno, aplikuje se na všechny tóny
+TP_LABCURVE_RSTPROTECTION;Ochrana červených a pleťových tónů
+TP_LABCURVE_RSTPRO_TOOLTIP;Může být použito s posuvníkem barev a CC křivkou.
 TP_LENSGEOM_AUTOCROP;    Automatický ořez
 TP_LENSGEOM_FILL;Automatické vyplnění
 TP_LENSGEOM_LABEL;Objektiv / Geometrie
+TP_LENSPROFILE_FILEDLGFILTERLCP;Soubory korekcí objektivu
+TP_LENSPROFILE_LABEL;Korekční profil objektivu
+TP_LENSPROFILE_USECA;Použít korekci C/A
+TP_LENSPROFILE_USEDIST;Použít korekci zkreslení
+TP_LENSPROFILE_USEVIGN;Použít korekci vinětace
 TP_LUMADENOISE_EDGETOLERANCE;Tolerance okrajům
 TP_LUMADENOISE_LABEL;Redukce šumu v jasech
 TP_LUMADENOISE_RADIUS;Poloměr
@@ -989,7 +1059,7 @@ TP_RAW_ALLENHANCE;Aplikovat redukci artefaktů/šumu po demozajkování
 TP_RAW_DCBENHANCE;Aplikovat kroky rozšířeného DCB
 TP_RAW_DCBITERATIONS;Počet průchodů DCB
 TP_RAW_DMETHOD;Metoda
-TP_RAW_FALSECOLOR;Počet kroků při potlačování chybných barev
+TP_RAW_FALSECOLOR;Počet kroků potlačování chybných barev
 TP_RAW_LABEL;Demozajkování
 TP_RESIZE_APPLIESTO;Aplikovat na:
 TP_RESIZE_BICUBICSF;Bikubická (Měkčí)
@@ -1049,11 +1119,21 @@ TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;Matice 3x3 namísto 5x5
 TP_SHARPENMICRO_UNIFORMITY;Jednolitost
 TP_VIBRANCE_AVOIDCOLORSHIFT;Zabránit posunu barev
+TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tóny pleti
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Červená/Růžová
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Červená
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Červená/Žlutá
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Žlutá
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Odstín dle odstínu
 TP_VIBRANCE_LABEL;Živost
 TP_VIBRANCE_PASTELS;Pastelové tóny
 TP_VIBRANCE_PASTSATTOG;Propojit pastelové a saturované tóny
 TP_VIBRANCE_PROTECTSKINS;Zachovat tóny pleti
 TP_VIBRANCE_PSTHRESHOLD;Práh mezi pastelovými a saturovanými tóny
+TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Práh saturace
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;Spodní vodorovná osa představuje pastelové a horní saturované tóny..\nSvislá osa představuje rozsah saturace.
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Váha přechodu mezi pastelovými a saturovanými tóny
 TP_VIBRANCE_SATURATED;Saturované tóny
 TP_VIGNETTING_AMOUNT;Míra
 TP_VIGNETTING_CENTER;Střed
@@ -1116,7 +1196,6 @@ ZOOMPANEL_ZOOM100;Zvětšit na 100% <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrazovce <b>F</b>
 ZOOMPANEL_ZOOMIN;Přiblížit <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
-
 #00 Czech
 #01 20.1.2008: translated by absolution
 #02 21.2.2008: updated by mkyral (typos and some missing strings)
@@ -1138,73 +1217,10 @@ ZOOMPANEL_ZOOMOUT;Oddálit <b>-</b>
 #18 29.12.2011: updated by mkyral
 #19 22.02.2012: updated by mkyral
 #20 28.04.2012: updated by mkyral
+#21 10.10.2012: updated by mkyral
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!GENERAL_WARNING;Warning
-!HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
-!HISTORY_MSG_167;B&amp;W Toning
-!HISTORY_MSG_168;'Cc' curve
-!HISTORY_MSG_169;'Ch' curve
-!HISTORY_MSG_170;Vibrance - Curve
-!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
-!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
-!NAVIGATOR_XY_FULL;Width = %1, Height = %2
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing Profile Saved
-!SAVEDLG_SUBSAMP;Subsampling
-!SAVEDLG_SUBSAMP_1;Best compression
-!SAVEDLG_SUBSAMP_2;Balanced
-!SAVEDLG_SUBSAMP_3;Best quality
-!SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest quality: 4:4:4
-!SAVEDLG_WARNFILENAME;File will be named
-!SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
-!THRESHOLDSELECTOR_BL;Bottom-left
-!THRESHOLDSELECTOR_BR;Bottom-right
-!THRESHOLDSELECTOR_B;Bottom
-!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
-!THRESHOLDSELECTOR_TL;Top-left
-!THRESHOLDSELECTOR_TR;Top-right
-!THRESHOLDSELECTOR_T;Top
-!TP_CROP_GTFRAME;Frame
-!TP_LABCURVE_AVOIDCOLORSHIFT;Avoid Color Shift
-!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
-!TP_LABCURVE_BWTONING;B&W Toning
-!TP_LABCURVE_BWTONING_TIP;With <b>B&amp;W Toning</b> option enabled, the Lab Chromaticity, Cc and Ch curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
-!TP_LABCURVE_CHROMATICITY;Chromaticity
-!TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green saturated
-!TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green pastel
-!TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red pastel
-!TP_LABCURVE_CURVEEDITOR_A_RANGE4;Red saturated
-!TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blue saturated
-!TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blue pastel
-!TP_LABCURVE_CURVEEDITOR_B_RANGE3;Yellow pastel
-!TP_LABCURVE_CURVEEDITOR_B_RANGE4;Yellow saturated
-!TP_LABCURVE_CURVEEDITOR_CC;CC
-!TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
-!TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
-!TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
-!TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
-!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the Chromaticity
-!TP_LABCURVE_CURVEEDITOR_CH;CH
-!TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the Hue
-!TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
-!TP_LENSPROFILE_FILEDLGFILTERLCP;Lens correction files
-!TP_LENSPROFILE_LABEL;Lens Correction Profile
-!TP_LENSPROFILE_USECA;Use CA correction
-!TP_LENSPROFILE_USEDIST;Use distortion correction
-!TP_LENSPROFILE_USEVIGN;Use vignette correction
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin tones
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the Hue
-!TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Saturation threshold
-!TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
-!TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
+!PARTIALPASTE_LENSPROFILE;Lens correction profile
