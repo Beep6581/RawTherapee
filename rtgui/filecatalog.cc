@@ -114,6 +114,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hbToolBar1->pack_start (*hbQuery, Gtk::PACK_SHRINK,0);
 
     Query->signal_activate().connect (sigc::mem_fun(*this, &FileCatalog::executeQuery)); //respond to the Enter key
+    Query->signal_key_press_event().connect(sigc::mem_fun(*this, &FileCatalog::Query_key_pressed));
 
     // if NOT a single row toolbar
     if (!options.FileBrowserToolbarSingleRow) pack_start (*hbToolBar1, Gtk::PACK_SHRINK,0);
@@ -1523,6 +1524,16 @@ void FileCatalog::executeQuery(){
 		buttonBrowsePathPressed ();
 	else
 		FileCatalog::filterChanged ();
+}
+
+bool FileCatalog::Query_key_pressed (GdkEventKey *event){
+	switch (event->keyval)
+	  {
+	    case GDK_Escape:
+	    	// Clear Query if the Escape character is pressed within it
+	    	FileCatalog::buttonQueryClearPressed ();
+	        return true;
+	  }
 }
 
 void FileCatalog::updateFBQueryTB (bool singleRow) {

@@ -148,7 +148,7 @@ FILEBROWSER_POPUPUNTRASH;Remove from trash
 FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-FILEBROWSER_QUERYHINT;Type a partial filename to search for.\n<b>Ctrl-F</b> to focus the Find text box (in the File Browser).\n<b>Enter</b> to commence search.
+FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box (in the File Browser).\n<b>Enter</b> to commence search.\n<b>Escape</b> to clear.
 FILEBROWSER_QUERYLABEL; Find: 
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:

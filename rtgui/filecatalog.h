@@ -225,6 +225,7 @@ class FileCatalog : public Gtk::VBox,
                 void buttonBrowsePathPressed ();
                 void buttonQueryClearPressed ();
                 void executeQuery ();
+                bool Query_key_pressed(GdkEventKey *event);
                 void updateFBQueryTB (bool singleRow);
 
                 void tbLeftPanel_1_toggled ();
