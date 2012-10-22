@@ -450,8 +450,8 @@ namespace rtengine {
 				// transform denoised "Lab" to output RGB
 				
 				//calculate mask for feathering output tile overlaps
-				float * Vmask = new float [height];
-				float * Hmask = new float [width];
+				float * Vmask = new float [height+1];
+				float * Hmask = new float [width+1];
 				
 				for (int i=0; i<height; i++) {
 					Vmask[i] = 1;
@@ -462,9 +462,9 @@ namespace rtengine {
 				for (int i=0; i<overlap; i++) {
 					float mask = SQR(sin((M_PI*i)/(2*overlap)));
 					if (tiletop>0) Vmask[i] = mask;
-					if (tilebottom<imheight) Vmask[height-1-i] = mask;
+					if (tilebottom<imheight) Vmask[height-i] = mask;
 					if (tileleft>0) Hmask[i] = mask;
-					if (tileright<imwidth) Hmask[width-1-i] = mask;
+					if (tileright<imwidth) Hmask[width-i] = mask;
 				}
 				
 				//convert back to RGB and write to destination array
@@ -721,7 +721,7 @@ namespace rtengine {
 				array2D<float> edge(Wlvl_L,Hlvl_L);
 				AlignedBuffer<double>* buffer = new AlignedBuffer<double> (MAX(Wlvl_L,Hlvl_L));
 				
-				printf("\n level=%d  \n",lvl);
+				//printf("\n level=%d  \n",lvl);
 				
 				for (int dir=1; dir<4; dir++) {
 					float mad_L = madL[lvl][dir-1];
@@ -736,7 +736,7 @@ namespace rtengine {
 					
 					if (noisevar_ab>0.01) {
 						
-						printf("  dir=%d  mad_L=%f		mad_a=%f		mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
+						//printf("  dir=%d  mad_L=%f		mad_a=%f		mad_b=%f	\n",dir,sqrt(mad_L),sqrt(mad_a),sqrt(mad_b));
 						
 //OpenMP here						
 						for (int i=0; i<Hlvl_ab; i++) {
@@ -868,7 +868,7 @@ namespace rtengine {
 
 		int max;
 		
-		printf("\n level=%d  \n",level);
+		//printf("\n level=%d  \n",level);
 	
 		for (int dir=1; dir<4; dir++) {
 			float madL = SQR(MadMax(WavCoeffs_L[dir], max, W_L*H_L));	
@@ -876,7 +876,7 @@ namespace rtengine {
 			float madb = SQR(MadMax(WavCoeffs_b[dir], max, W_ab*H_ab));
 			
 			
-			printf("  dir=%d  mad_L=%f	mad_a=%f	mad_b=%f	\n",dir,sqrt(madL),sqrt(mada),sqrt(madb));
+			//printf("  dir=%d  mad_L=%f	mad_a=%f	mad_b=%f	\n",dir,sqrt(madL),sqrt(mada),sqrt(madb));
 
 			float mad_L = madL*noisevar_L*5/(level+1);
 			float mad_a = mada*noisevar_ab;
