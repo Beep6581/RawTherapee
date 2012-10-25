@@ -41,6 +41,7 @@ IPTCPanel::IPTCPanel () {
     scrolledWindowc->add(*captionView);
     capl->set_tooltip_text (M("IPTCPANEL_CAPTIONHINT"));
     captionView->set_tooltip_text (M("IPTCPANEL_CAPTIONHINT"));
+    captionView->set_size_request(32, 80);
     iptc->attach (*capl, 0, 1, row, row+1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     iptc->attach (*scrolledWindowc, 1, 2, row, row+1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
 
@@ -81,6 +82,7 @@ IPTCPanel::IPTCPanel () {
     Gtk::Label* keyl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_KEYWORDS")+":"));
     keywords = Gtk::manage( new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE) );
     keywords->set_headers_visible (false);
+    keywords->set_size_request (50, 80);
     Gtk::ScrolledWindow* scrolledWindowkw = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindowkw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowkw->add(*keywords);
@@ -117,6 +119,7 @@ IPTCPanel::IPTCPanel () {
     Gtk::Label* scl = Gtk::manage( new Gtk::Label (M("IPTCPANEL_SUPPCATEGORIES")+":") );
     suppCategories = Gtk::manage( new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE) );
     suppCategories->set_headers_visible (false);
+    suppCategories->set_size_request(50, 80);
     Gtk::ScrolledWindow* scrolledWindowsc = Gtk::manage( new Gtk::ScrolledWindow() );
     scrolledWindowsc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
     scrolledWindowsc->add(*suppCategories);
