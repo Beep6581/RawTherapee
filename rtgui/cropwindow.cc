@@ -682,16 +682,12 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     //t3.set ();
 			bool showcs = iarea->indClippedPanel->showClippedShadows();
 			bool showch = iarea->indClippedPanel->showClippedHighlights();
-			bool showR  = iarea->previewModePanel->showR();
-			bool showG  = iarea->previewModePanel->showG();
-			bool showB  = iarea->previewModePanel->showB();
-			bool showL  = iarea->previewModePanel->showL();
+			bool showR  = iarea->previewModePanel->showR(); // will show clipping if R channel is clipped
+			bool showG  = iarea->previewModePanel->showG(); // will show clipping if G channel is clipped
+			bool showB  = iarea->previewModePanel->showB(); // will show clipping if B channel is clipped
+			bool showL  = iarea->previewModePanel->showL(); // will show clipping if L value   is clipped
 			bool showFocusMask  = iarea->previewModePanel->showFocusMask();
-			// additional flags to control clipping indicators for individual channels and across all channels
-			bool showclippedAll = (!showR && !showG && !showB && !showL);
-			bool showclippedR = showR || showL || showclippedAll;
-			bool showclippedG = showG || showL || showclippedAll;
-			bool showclippedB = showB || showL || showclippedAll;
+			bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any of RGB chanels is clipped
 
             // If ALT was pressed, auto-enable highlight and shadow
             // TODO: Add linux/MacOS specific functions for alternative
@@ -768,7 +764,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                                     	// Band2 @ blur_radius2
                                     	if (kh>=-blur_radius2 && kh<=blur_radius2 && k>=-blur_radius2 && k<=blur_radius2){
                                     		sum_L2 += curL;
-						sumsq_L2 += SQR(curL);
+                                    		sumsq_L2 += SQR(curL);
                                     	}
                                     }
                                 }
@@ -780,8 +776,8 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
                                 avg_L2 = sum_L2/kernel_size2;
 
 
-				stdDev_L = sqrt(sumsq_L/kernel_size - SQR(avg_L));
-				stdDev_L2 = sqrt(sumsq_L2/kernel_size2 - SQR(avg_L2));
+                                stdDev_L = sqrt(sumsq_L/kernel_size - SQR(avg_L));
+                                stdDev_L2 = sqrt(sumsq_L2/kernel_size2 - SQR(avg_L2));
 
                                 //TODO: try to normalize by average L of the entire (preview) image
 
@@ -816,29 +812,36 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
     
                             changedHL=false;
                             changedSH=false;
+
+                            // for efficiency, pre-calculate currWS_L as it may be needed in both
+                            // if (showch) and if (showcs) branches
+                            int currWS_L;
+                            if (showL && (showch||showcs)) currWS_L = (int)(0.299*currWS[0]+0.587*currWS[1]+0.114*currWS[2]);
     
                             if (showch) {
                                 delta=0; changedHL=false;
-    
-                                if (currWS[0]>=options.highlightThreshold && showclippedR) { delta += 255-currWS[0]; changedHL=true; }
-                                if (currWS[1]>=options.highlightThreshold && showclippedG) { delta += 255-currWS[1]; changedHL=true; }
-                                if (currWS[2]>=options.highlightThreshold && showclippedB) { delta += 255-currWS[2]; changedHL=true; }
-    
+
+                            	if (currWS[0]>=options.highlightThreshold && (showR || showclippedAny)) { delta += 255-currWS[0]; changedHL=true; }
+								if (currWS[1]>=options.highlightThreshold && (showG || showclippedAny)) { delta += 255-currWS[1]; changedHL=true; }
+								if (currWS[2]>=options.highlightThreshold && (showB || showclippedAny)) { delta += 255-currWS[2]; changedHL=true; }
+								if (currWS_L>= options.highlightThreshold && showL)                     { delta += 255-currWS_L ; changedHL=true; }
+
                                 if (changedHL) { 
                                     delta *= HighlightFac; 
-                                    if (showclippedAll) curr[0]=curr[1]=curr[2]=delta; // indicate clipped highlights in gray
+                                    if (showclippedAny) curr[0]=curr[1]=curr[2]=delta; // indicate clipped highlights in gray
                                     else {curr[0]=255; curr[1]=curr[2]=delta;}         // indicate clipped highlights in red
                                 }
                             }
                             if (showcs) {
                                 delta=0; changedSH=false;
     
-                                if (currWS[0]<=options.shadowThreshold && showclippedR) { delta += currWS[0]; changedSH=true; }
-                                if (currWS[1]<=options.shadowThreshold && showclippedG) { delta += currWS[1]; changedSH=true; }
-                                if (currWS[2]<=options.shadowThreshold && showclippedB) { delta += currWS[2]; changedSH=true; }
-                                    
+                                if (currWS[0]<=options.shadowThreshold && (showR || showclippedAny)) { delta += currWS[0]; changedSH=true; }
+                                if (currWS[1]<=options.shadowThreshold && (showG || showclippedAny)) { delta += currWS[1]; changedSH=true; }
+                                if (currWS[2]<=options.shadowThreshold && (showB || showclippedAny)) { delta += currWS[2]; changedSH=true; }
+                                if (currWS_L <=options.shadowThreshold && showL)                     { delta += currWS_L ; changedSH=true; }
+
                                 if (changedSH) {                            
-                                    if (showclippedAll) {
+                                    if (showclippedAny) {
                                         delta = 255 - (delta * ShawdowFac);
                                         curr[0]=curr[1]=curr[2]=delta;      // indicate clipped shadows in gray
                                     }
