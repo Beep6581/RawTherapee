@@ -20,12 +20,12 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 LensGeometry::LensGeometry () : Gtk::VBox(), FoldableToolPanel(this), rlistener(NULL) {
+
+  set_border_width(4);
 
   fill = Gtk::manage (new Gtk::CheckButton (M("TP_LENSGEOM_FILL")));
   pack_start (*fill);

@@ -56,6 +56,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     vibrance            = Gtk::manage (new Vibrance ());
+    colorappearance     = Gtk::manage (new Colorappearance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
     perspective         = Gtk::manage (new PerspCorrection ());
@@ -89,6 +90,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (colorPanel, rgbcurves,            M("TP_RGBCURVES_LABEL"));      toolPanels.push_back (rgbcurves);
     addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));  toolPanels.push_back (edgePreservingDecompositionUI);
     addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
+    addPanel (exposurePanel, colorappearance,   M("TP_COLORAPP_LABEL"));       toolPanels.push_back (colorappearance);
     addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
     addPanel (detailsPanel, defringe,           M("TP_DEFRINGE_LABEL"));	   toolPanels.push_back (defringe);

@@ -44,6 +44,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* sh;
         Gtk::CheckButton* epd;
         Gtk::CheckButton* labcurve;
+        Gtk::CheckButton* colorappearance;
 
         // options in detail:
         Gtk::CheckButton* sharpen;
@@ -107,7 +108,7 @@ class PartialPasteDlg : public Gtk::Dialog {
 
         sigc::connection everythingConn, basicConn, detailConn, colorConn, lensConn, compositionConn, metaicmConn, rawConn;
 
-        sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn;
+        sigc::connection wbConn, exposureConn, hlrecConn, shConn, labcurveConn, colorappearanceConn;
         sigc::connection sharpenConn, gradsharpenConn, microcontrastConn, impdenConn, dirpyrdenConn, waveqConn, defringeConn, epdConn, dirpyreqConn;
         sigc::connection vibranceConn, chmixerConn, hsveqConn, rgbcurvesConn;
         sigc::connection distortionConn, cacorrConn, vignettingConn, lcpConn;

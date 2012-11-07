@@ -42,15 +42,17 @@ class ToolPanel {
     protected:
         ToolPanelListener* listener;
         ToolPanelListener* tmp;
-        bool batchMode;
+        bool batchMode;  // True if the ToolPanel is used in Batch mode
+        bool multiImage; // True if more than one image are being edited at the same time (also imply that batchMode=true), false otherwise
 
     public:
 
-        ToolPanel () : listener(NULL), tmp(NULL), batchMode(false) {}
+        ToolPanel () : listener(NULL), tmp(NULL), batchMode(false), multiImage(false) {}
         virtual ~ToolPanel() {}
 
                 void setParent       (Gtk::Box* parent) {}
            Gtk::Box* getParent       () { return NULL; }
+                void setMultiImage   (bool m) { multiImage = m; }
                 void setListener     (ToolPanelListener* tpl) { listener = tpl; }
         virtual void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL) {}
         virtual void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL) {}
@@ -71,10 +73,10 @@ class FoldableToolPanel : public ToolPanel {
         Gtk::Box* parentContainer;
         void foldThemAll (GdkEventButton* event);
 
-	public:
-		Gtk::Expander* exp;
+    public:
+        Gtk::Expander* exp;
 
-		FoldableToolPanel(Gtk::Box* content);
+        FoldableToolPanel(Gtk::Box* content);
 
         void setParent (Gtk::Box* parent) { parentContainer = parent; }
         Gtk::Box* getParent () { return parentContainer; }

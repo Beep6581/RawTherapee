@@ -1,7 +1,7 @@
 
 [Version]
 AppVersion=4.0.9
-Version=305
+Version=306
 
 [General]
 Rank=0
@@ -86,6 +86,27 @@ Uniformity=50
 Setting=Camera
 Temperature=5745
 Green=1.0
+
+[Color appearance]
+Enabled=false
+Degree=90
+AutoDegree=true
+Surround=Average
+AdaptLum=16
+Model=RawT
+Algorithm=JC
+J-Light=0
+Q-Bright=0
+C-Chroma=0
+S-Chroma=0
+M-Chroma=0
+J-Contrast=0
+Q-Contrast=0
+H-Hue=0
+RSTProtection=0
+AdaptScene=2000
+SurrSource=false
+Gamut=false
 
 [Impulse Denoising]
 Enabled=false

@@ -30,6 +30,7 @@
 #include "coarsepanel.h"
 #include "tonecurve.h"
 #include "vibrance.h"
+#include "colorappearance.h"
 #include "shadowshighlights.h"
 #include "impulsedenoise.h"
 #include "defringe.h"
@@ -90,6 +91,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         PerspCorrection* perspective;
         CACorrection* cacorrection;
         HLRecovery* hlrecovery;
+        Colorappearance* colorappearance;
         Vibrance* vibrance;
         ChMixer* chmixer;
         Resize* resize;

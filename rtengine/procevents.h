@@ -195,8 +195,27 @@ enum ProcEvent {
 	EvLLCCurve=170,
 	EvLLCredsk=171,
 	EvDPDNLdetail=172,
+	EvCATEnabled=173,
+	EvCATDegree=174,
+	EvCATMethodsur=175,
+	EvCATAdapscen=176,
+	EvCATAdapLum=177,
+	EvCATMethodWB=178,
+	EvCATJLight=179,
+	EvCATChroma=180,
+	EvCATAutoDegree=181,
+	EvCATContrast=182,
+	EvCATsurr=183,
+	EvCATgamut=184,
+	EvCATMethodalg=185,
+	EvCATRstpro=186,
+	EvCATQbright=187,
+	EvCATQContrast=188,
+	EvCATSChroma=189,
+	EvCATMChroma=190,
+	EvCAThue=191,
 	
-	NUMOFEVENTS=173
+	NUMOFEVENTS=192
 };
-}    
-#endif    
+}
+#endif

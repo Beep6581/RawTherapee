@@ -169,36 +169,60 @@ class WBParamsEdited {
 class DefringeParamsEdited {
 	
 public:
-	bool enabled;
-	bool radius;
-	bool threshold;
+    bool enabled;
+    bool radius;
+    bool threshold;
 };
 
 class ImpulseDenoiseParamsEdited {
-	
-public:
-	bool enabled;
-	bool thresh;
 
+public:
+    bool enabled;
+    bool thresh;
 };
 
-class DirPyrDenoiseParamsEdited {
-	
+class ColorappearanceParamsEdited {
+
 public:
-	bool enabled;
-	bool Ldetail;
-	bool luma;
-	bool chroma;
-	bool gamma;
+    bool enabled;
+    bool degree;
+    bool autodegree;
+    bool surround;
+    bool adapscen;
+    bool adaplum;
+    bool wbmodel;
+	bool algo;
+    bool jlight;
+    bool qbright;
+    bool chroma;
+    bool schroma;
+    bool mchroma;
+    bool contrast;
+    bool qcontrast;
+    bool colorh;
+	bool rstprotection;
+	bool surrsource;
+	bool gamut;
+};
+
+
+class DirPyrDenoiseParamsEdited {
+
+public:
+    bool enabled;
+    bool Ldetail;
+    bool luma;
+    bool chroma;
+    bool gamma;
 };
 
 class EPDParamsEdited{
 public:
-	bool enabled;
-	bool Strength;
-	bool EdgeStopping;
-	bool Scale;
-	bool ReweightingIterates;
+    bool enabled;
+    bool Strength;
+    bool EdgeStopping;
+    bool Scale;
+    bool ReweightingIterates;
 };
 
 
@@ -387,6 +411,7 @@ class ParamsEdited {
         SharpenEdgeParamsEdited       sharpenEdge;
         SharpenMicroParamsEdited      sharpenMicro;
         VibranceParamsEdited          vibrance;
+        ColorappearanceParamsEdited   colorappearance;
         //ColorBoostParamsEdited        colorBoost;
         WBParamsEdited                wb;
         //ColorShiftParamsEdited        colorShift;

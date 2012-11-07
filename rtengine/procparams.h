@@ -336,7 +336,7 @@ public:
 class WBParams {
 
     public:
-	    static std::vector<WBEntry*> wbEntries;
+        static std::vector<WBEntry*> wbEntries;
         Glib::ustring   method;
         int             temperature;
         double          green;
@@ -344,6 +344,33 @@ class WBParams {
         static void     init();
         static void     cleanup();
 };
+
+    /**
+     * Parameters of colorappearance
+     */
+    class ColorappearanceParams {
+
+    public:
+        bool          enabled;
+        int           degree;
+        bool          autodegree;
+        Glib::ustring surround;
+        double         adapscen;
+        double         adaplum;
+        Glib::ustring wbmodel;
+        Glib::ustring algo;
+        double        contrast;		
+        double        qcontrast;		
+        double        jlight;
+        double        qbright;
+        double        chroma;
+        double        schroma;
+        double        mchroma;
+        double        colorh;
+        double        rstprotection;
+		bool          surrsource;
+		bool		  gamut;
+    };
 
 /**
   * Parameters of the color shift
@@ -377,43 +404,42 @@ class WBParams {
         bool    edgesensitive;
         int		amount;
 };*/
-	
-	/**
-	 * Parameters of defringing
-	 */
-	class DefringeParams {
-		
+
+    /**
+     * Parameters of defringing
+     */
+    class DefringeParams {
+
     public:
         bool    enabled;
         double  radius;
         int     threshold;
-	};
-	
-	
-	/**
-	 * Parameters of impulse denoising
-	 */
-	class ImpulseDenoiseParams {
-		
+    };
+
+    /**
+     * Parameters of impulse denoising
+     */
+    class ImpulseDenoiseParams {
+
     public:
         bool    enabled;
-		int		thresh;
+        int     thresh;
 
-	};
-	
-	/**
-	 * Parameters of the directional pyramid denoising
-	 */
-	class DirPyrDenoiseParams {
-		
+    };
+
+    /**
+     * Parameters of the directional pyramid denoising
+     */
+    class DirPyrDenoiseParams {
+
     public:
         bool    enabled;
         double	luma;
         double	Ldetail;
         double  chroma;
-		double	gamma;
-		double	expcomp;
-	};
+        double	gamma;
+        double	expcomp;
+    };
 
 //EPD related parameters.
 class EPDParams{
@@ -691,13 +717,14 @@ class ProcParams {
         VibranceParams          vibrance;        ///< Vibrance parameters
         //ColorBoostParams        colorBoost;      ///< Color boost parameters
         WBParams                wb;              ///< White balance parameters
+        ColorappearanceParams   colorappearance;
         //ColorShiftParams        colorShift;      ///< Color shift parameters
         //LumaDenoiseParams       lumaDenoise;     ///< Luminance denoising parameters
         //ColorDenoiseParams      colorDenoise;    ///< Color denoising parameters
         DefringeParams          defringe;        ///< Defringing parameters
         ImpulseDenoiseParams    impulseDenoise;  ///< Impulse denoising parameters
         DirPyrDenoiseParams     dirpyrDenoise;   ///< Directional Pyramid denoising parameters
-        EPDParams					  edgePreservingDecompositionUI;
+        EPDParams               edgePreservingDecompositionUI;
         SHParams                sh;              ///< Shadow/highlight enhancement parameters
         CropParams              crop;            ///< Crop parameters
         CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
@@ -712,7 +739,6 @@ class ProcParams {
         HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
-		
         RAWParams               raw;             ///< RAW parameters before demosaicing
         DirPyrEqualizerParams   dirpyrequalizer; ///< directional pyramid equalizer parameters
         HSVEqualizerParams      hsvequalizer;    ///< hsv equalizer parameters

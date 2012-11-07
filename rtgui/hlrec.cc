@@ -24,6 +24,8 @@ using namespace rtengine::procparams;
 
 HLRecovery::HLRecovery () : Gtk::VBox(), FoldableToolPanel(this) {
 
+    set_border_width(4);
+
     enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLE")));
     enabled->set_active (false);
     pack_start (*enabled);

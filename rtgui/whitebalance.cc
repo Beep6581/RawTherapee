@@ -61,6 +61,8 @@ void WhiteBalance::cleanup () {
 
 WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL), wblistener(NULL) {
 
+  set_border_width(4);
+
   Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
   hbox->show ();
   Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_METHOD")));

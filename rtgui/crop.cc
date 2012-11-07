@@ -37,6 +37,8 @@ class RefreshSpinHelper {
 
 Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
 
+  set_border_width(4);
+
   clistener = NULL;
 
   maxw = 3000;
@@ -46,7 +48,7 @@ Crop::Crop (): Gtk::VBox(), FoldableToolPanel(this) {
   enabled->set_active (false);
   pack_start(*enabled);
 
-  pack_start(*Gtk::manage (new  Gtk::HSeparator()));
+  pack_start(*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
 
   Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
 

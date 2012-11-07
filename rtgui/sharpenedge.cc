@@ -28,9 +28,16 @@ using namespace rtengine::procparams;
 
 
 SharpenEdge::SharpenEdge () : Gtk::VBox(), FoldableToolPanel(this) {
+
+	set_border_width(4);
+
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (true);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
+
+	Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
+	hsep1->show ();
+	pack_start (*hsep1);
 
 	passes = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_PASSES"),1,4,1,2));
 	passes->setAdjusterListener (this);

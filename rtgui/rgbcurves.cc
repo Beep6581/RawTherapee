@@ -24,6 +24,8 @@ using namespace rtengine::procparams;
 
 RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
 
+	set_border_width(4);
+
 	std::vector<GradientMilestone> milestones;
 
 	curveEditorG = new CurveEditorGroup (options.lastRgbCurvesDir, M("TP_RGBCURVES_CHANNEL"));

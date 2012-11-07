@@ -25,6 +25,8 @@ using namespace rtengine::procparams;
 
 LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
+	set_border_width(4);
+
 	std::vector<GradientMilestone> milestones;
 
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100., 100., 1., 0.));
@@ -45,7 +47,9 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	chromaticity->setAdjusterListener (this);
 	
 	//%%%%%%%%%%%%%%%%%%
-	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+	Gtk::HSeparator *hsep2 = Gtk::manage (new  Gtk::HSeparator());
+	hsep2->show ();
+	pack_start (*hsep2, Gtk::PACK_EXPAND_WIDGET, 4);
 	
 	bwtoning = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_BWTONING")));
 	bwtoning->set_tooltip_markup (M("TP_LABCURVE_BWTONING_TIP"));
@@ -74,7 +78,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	Gtk::HSeparator *hsep3 = Gtk::manage (new  Gtk::HSeparator());
 	hsep3->show ();
-	pack_start (*hsep3);
+	pack_start (*hsep3, Gtk::PACK_EXPAND_WIDGET, 4);
 
 	curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
 	curveEditorG->setCurveListener (this);

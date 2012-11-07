@@ -22,6 +22,7 @@
 #include "refreshmap.h"
 #include "simpleprocess.h"
 #include "../rtgui/ppversion.h"
+#include "colortemp.h"
 
 namespace rtengine {
 
@@ -167,8 +168,11 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         params.wb.temperature = currWB.getTemp ();
         params.wb.green = currWB.getGreen ();
         
-    	imgsrc->demosaic( rp );
-    	
+        imgsrc->demosaic( rp );
+        //imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
+
+        //imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
+
         if (highDetailNeeded) {
             highDetailRawComputed = true;
             if (params.hlrecovery.enabled && params.hlrecovery.method=="Color") {
@@ -219,6 +223,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         PreviewProps pp (0, 0, fw, fh, scale);
         setScale (scale);
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
+        //ColorTemp::CAT02 (orig_prev, &params)	;
 
 		//imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
 
@@ -339,6 +344,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		ipf.chromiLuminanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili);
 		//ipf.colorCurve (nprevl, nprevl);
 		ipf.vibrance(nprevl);
+	//	ColorTemp::ciecam_02 (nprevl, &params);
+
 		readyphase++;
 		if (scale==1) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
@@ -377,6 +384,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             readyphase++;
         }
     }
+		ColorTemp::ciecam_02 (nprevl, &params);
 
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)

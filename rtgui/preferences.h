@@ -88,6 +88,8 @@ class Preferences : public Gtk::Dialog {
 	Gtk::SpinButton*  panFactor;
 
     Gtk::ComboBoxText* intent;
+    Gtk::ComboBoxText* view;
+    Gtk::ComboBoxText* grey;
 
     Gtk::ComboBoxText* theme;
     Gtk::CheckButton* slimUI;

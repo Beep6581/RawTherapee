@@ -26,6 +26,8 @@ extern Glib::ustring argv0;
 
 ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
 
+    set_border_width(4);
+
     imgIcon[0] = Gtk::manage (new RTImage ("Chanmixer-RR.png"));
     imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer-RG.png"));
     imgIcon[2] = Gtk::manage (new RTImage ("Chanmixer-RB.png"));
@@ -49,7 +51,7 @@ ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
     pack_start (*rlabel);
     for (int i=0; i<3; i++)
         pack_start (*red[i]);
-    pack_start (*rsep);
+    pack_start (*rsep, Gtk::PACK_EXPAND_WIDGET, 4);
 
     Gtk::Label* glabel = Gtk::manage (new Gtk::Label ());
     glabel->set_markup (Glib::ustring("\t<span foreground=\"#0b8c21\"><b>") + M("TP_CHMIXER_GREEN") + Glib::ustring(":</b></span>"));
@@ -65,7 +67,7 @@ ChMixer::ChMixer (): Gtk::VBox(), FoldableToolPanel(this) {
     pack_start (*glabel);
     for (int i=0; i<3; i++)
         pack_start (*green[i]);
-    pack_start (*gsep);
+    pack_start (*gsep, Gtk::PACK_EXPAND_WIDGET, 4);
 
     Gtk::Label* blabel = Gtk::manage (new Gtk::Label ());
     blabel->set_markup (Glib::ustring("\t<span foreground=\"#1377d7\"><b>") + M("TP_CHMIXER_BLUE") + Glib::ustring(":</b></span>"));

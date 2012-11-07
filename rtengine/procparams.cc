@@ -73,7 +73,7 @@ void WBParams::init() {
     wbEntries.push_back(new WBEntry("Solux Lamp 4100K"    ,WBT_LAMP,        M("TP_WBALANCE_SOLUX41"),    3930));
     wbEntries.push_back(new WBEntry("Solux Lamp 4700K"    ,WBT_LAMP,        M("TP_WBALANCE_SOLUX47"),    4700));
     wbEntries.push_back(new WBEntry("NG Solux Lamp 4700K" ,WBT_LAMP,        M("TP_WBALANCE_SOLUX47_NG"), 4480));
-    wbEntries.push_back(new WBEntry("LED LSI Lumelex 2040",WBT_LED,         M("TP_WBALANCE_LED_LSI"),    3000));
+    wbEntries.push_back(new WBEntry("LED LSI Lumelex 2040",WBT_LED,         M("TP_WBALANCE_LED_LSI"),    2970));
     wbEntries.push_back(new WBEntry("LED CRS SP12 WWMR16" ,WBT_LED,         M("TP_WBALANCE_LED_CRS"),    3050));
     wbEntries.push_back(new WBEntry("Flash 5500K"         ,WBT_FLASH,       M("TP_WBALANCE_FLASH55"),    5500));
     wbEntries.push_back(new WBEntry("Flash 6000K"         ,WBT_FLASH,       M("TP_WBALANCE_FLASH60"),    6000));
@@ -207,25 +207,30 @@ void ProcParams::setDefaults () {
     vibrance.skintonescurve.clear ();
     vibrance.skintonescurve.push_back(DCT_Linear);
 
-    //colorBoost.amount                   = 0;
-    //colorBoost.avoidclip                = false;
-    //colorBoost.enable_saturationlimiter = false;
-    //colorBoost.saturationlimit          = 50;
-
     wb.method       = "Camera";
     wb.temperature  = 6504;
     wb.green        = 1.0;
 
-    //colorShift.a    = 0;
-    //colorShift.b    = 0;
-
-    //lumaDenoise.enabled         = false;
-    //lumaDenoise.radius          = 1.9;
-    //lumaDenoise.edgetolerance   = 2000;
-
-    //colorDenoise.enabled        = false;
-    //colorDenoise.edgesensitive  = false;
-    //colorDenoise.edgetolerance  = 2000;
+    colorappearance.enabled       = false;
+    colorappearance.degree        = 90;
+    colorappearance.autodegree    = true;
+    colorappearance.surround      = "Average";
+//  colorappearance.backgrd       = 20;
+    colorappearance.adaplum       = 16;
+    colorappearance.adapscen      = 2000.0;
+    colorappearance.algo          = "JC";
+    colorappearance.wbmodel       = "RawT";
+    colorappearance.jlight        = 0.0;
+    colorappearance.qbright       = 0.0;
+    colorappearance.chroma        = 0.0;
+    colorappearance.schroma       = 0.0;
+    colorappearance.mchroma       = 0.0;
+    colorappearance.rstprotection = 0.0;
+    colorappearance.contrast      = 0.0;
+    colorappearance.qcontrast     = 0.0;
+    colorappearance.colorh        = 0.0;
+    colorappearance.surrsource    = false;
+    colorappearance.gamut         = false;
 
     impulseDenoise.enabled      = false;
     impulseDenoise.thresh       = 50;
@@ -555,6 +560,29 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->colorShift.a)   keyFile.set_double ("Color Shift", "ChannelA", colorShift.a);
     if (!pedited || pedited->colorShift.b)   keyFile.set_double ("Color Shift", "ChannelB", colorShift.b);
 */
+    // save colorappearance
+    if (!pedited || pedited->colorappearance.enabled)       keyFile.set_boolean ("Color appearance", "Enabled",       colorappearance.enabled);
+    if (!pedited || pedited->colorappearance.degree)        keyFile.set_integer ("Color appearance", "Degree",        colorappearance.degree);
+    if (!pedited || pedited->colorappearance.autodegree)    keyFile.set_boolean ("Color appearance", "AutoDegree",    colorappearance.autodegree);
+    if (!pedited || pedited->colorappearance.surround)      keyFile.set_string  ("Color appearance", "Surround",      colorappearance.surround);
+ // if (!pedited || pedited->colorappearance.backgrd)       keyFile.set_integer ("Color appearance", "Background",    colorappearance.backgrd);
+    if (!pedited || pedited->colorappearance.adaplum)       keyFile.set_double  ("Color appearance", "AdaptLum",      colorappearance.adaplum);
+    if (!pedited || pedited->colorappearance.wbmodel)       keyFile.set_string  ("Color appearance", "Model",         colorappearance.wbmodel);
+    if (!pedited || pedited->colorappearance.algo)          keyFile.set_string  ("Color appearance", "Algorithm",     colorappearance.algo);
+
+    if (!pedited || pedited->colorappearance.jlight)        keyFile.set_double  ("Color appearance", "J-Light",       colorappearance.jlight);
+    if (!pedited || pedited->colorappearance.qbright)       keyFile.set_double  ("Color appearance", "Q-Bright",      colorappearance.qbright);
+    if (!pedited || pedited->colorappearance.chroma)        keyFile.set_double  ("Color appearance", "C-Chroma",      colorappearance.chroma);
+    if (!pedited || pedited->colorappearance.schroma)       keyFile.set_double  ("Color appearance", "S-Chroma",      colorappearance.schroma);
+    if (!pedited || pedited->colorappearance.mchroma)       keyFile.set_double  ("Color appearance", "M-Chroma",      colorappearance.mchroma);
+    if (!pedited || pedited->colorappearance.contrast)      keyFile.set_double  ("Color appearance", "J-Contrast",    colorappearance.contrast);
+    if (!pedited || pedited->colorappearance.qcontrast)     keyFile.set_double  ("Color appearance", "Q-Contrast",    colorappearance.qcontrast);
+    if (!pedited || pedited->colorappearance.colorh)        keyFile.set_double  ("Color appearance", "H-Hue",         colorappearance.colorh);
+    if (!pedited || pedited->colorappearance.rstprotection) keyFile.set_double  ("Color appearance", "RSTProtection", colorappearance.rstprotection);
+
+    if (!pedited || pedited->colorappearance.adapscen)      keyFile.set_double  ("Color appearance", "AdaptScene",    colorappearance.adapscen);
+    if (!pedited || pedited->colorappearance.surrsource)    keyFile.set_boolean ("Color appearance", "SurrSource",    colorappearance.surrsource);
+    if (!pedited || pedited->colorappearance.gamut)         keyFile.set_boolean ("Color appearance", "Gamut",         colorappearance.gamut);
 
     // save impulseDenoise
     if (!pedited || pedited->impulseDenoise.enabled) keyFile.set_boolean ("Impulse Denoising", "Enabled",   impulseDenoise.enabled);
@@ -988,38 +1016,61 @@ if (keyFile.has_group ("White Balance")) {
     if (keyFile.has_key ("Color Shift", "ChannelA")) { colorShift.a = keyFile.get_double ("Color Shift", "ChannelA"); if (pedited) pedited->colorShift.a = true; }
     if (keyFile.has_key ("Color Shift", "ChannelB")) { colorShift.b = keyFile.get_double ("Color Shift", "ChannelB"); if (pedited) pedited->colorShift.b = true; }
 }*/
-		
-// load defringe
+
+    // load defringe
 if (keyFile.has_group ("Defringing")) {
-	if (keyFile.has_key ("Defringing", "Enabled"))        { defringe.enabled   = keyFile.get_boolean ("Defringing", "Enabled"); if (pedited) pedited->defringe.enabled = true; }
-	if (keyFile.has_key ("Defringing", "Radius"))         { defringe.radius    = keyFile.get_double  ("Defringing", "Radius"); if (pedited) pedited->defringe.radius = true; }
-	if (keyFile.has_key ("Defringing", "Threshold"))      { defringe.threshold = keyFile.get_integer ("Defringing", "Threshold"); if (pedited) pedited->defringe.threshold = true; }
+    if (keyFile.has_key ("Defringing", "Enabled"))        { defringe.enabled   = keyFile.get_boolean ("Defringing", "Enabled"); if (pedited) pedited->defringe.enabled = true; }
+    if (keyFile.has_key ("Defringing", "Radius"))         { defringe.radius    = keyFile.get_double  ("Defringing", "Radius"); if (pedited) pedited->defringe.radius = true; }
+    if (keyFile.has_key ("Defringing", "Threshold"))      { defringe.threshold = keyFile.get_integer ("Defringing", "Threshold"); if (pedited) pedited->defringe.threshold = true; }
 }
-		
-	// load impulseDenoise
-if (keyFile.has_group ("Impulse Denoising")) {
-	if (keyFile.has_key ("Impulse Denoising", "Enabled"))   { impulseDenoise.enabled = keyFile.get_boolean ("Impulse Denoising", "Enabled"); if (pedited) pedited->impulseDenoise.enabled = true; }
-	if (keyFile.has_key ("Impulse Denoising", "Threshold")) { impulseDenoise.thresh  = keyFile.get_integer ("Impulse Denoising", "Threshold"); if (pedited) pedited->impulseDenoise.thresh = true; }
-}
-		
-	// load dirpyrDenoise
-if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an accurate description for FT denoise
-	if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled"))    { dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled"); if (pedited) pedited->dirpyrDenoise.enabled = true; }
-	if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))       { dirpyrDenoise.luma    = keyFile.get_double ("Directional Pyramid Denoising", "Luma"); if (pedited) pedited->dirpyrDenoise.luma = true; }
-	if (keyFile.has_key ("Directional Pyramid Denoising", "Ldetail"))    { dirpyrDenoise.Ldetail = keyFile.get_double ("Directional Pyramid Denoising", "Ldetail"); if (pedited) pedited->dirpyrDenoise.Ldetail = true; }
-	if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))     { dirpyrDenoise.chroma  = keyFile.get_double ("Directional Pyramid Denoising", "Chroma"); if (pedited) pedited->dirpyrDenoise.chroma = true; }
-	if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))      { dirpyrDenoise.gamma   = keyFile.get_double ("Directional Pyramid Denoising", "Gamma"); if (pedited) pedited->dirpyrDenoise.gamma = true; }
+    // load colorappearance
+if (keyFile.has_group ("Color appearance")) {
+    if (keyFile.has_key ("Color appearance", "Enabled"))       {colorappearance.enabled       = keyFile.get_boolean ("Color appearance", "Enabled"); if (pedited) pedited->colorappearance.enabled = true; }
+    if (keyFile.has_key ("Color appearance", "Degree"))        {colorappearance.degree        = keyFile.get_integer ("Color appearance", "Degree"); if (pedited) pedited->colorappearance.degree = true; }
+    if (keyFile.has_key ("Color appearance", "AutoDegree"))    {colorappearance.autodegree    = keyFile.get_boolean ("Color appearance", "AutoDegree"); if (pedited) pedited->colorappearance.autodegree = true; }
+    if (keyFile.has_key ("Color appearance", "Surround"))      {colorappearance.surround      = keyFile.get_string  ("Color appearance", "Surround"); if (pedited) pedited->colorappearance.surround = true; }
+//  if (keyFile.has_key ("Color appearance", "Background"))    {colorappearance.backgrd       = keyFile.get_integer ("Color appearance", "Background"); if (pedited) pedited->colorappearance.backgrd = true; }
+    if (keyFile.has_key ("Color appearance", "AdaptLum"))      {colorappearance.adaplum       = keyFile.get_double  ("Color appearance", "AdaptLum"); if (pedited) pedited->colorappearance.adaplum = true; }
+    if (keyFile.has_key ("Color appearance", "Model"))         {colorappearance.wbmodel       = keyFile.get_string  ("Color appearance", "Model"); if (pedited) pedited->colorappearance.wbmodel = true; }
+    if (keyFile.has_key ("Color appearance", "Algorithm"))     {colorappearance.algo          = keyFile.get_string  ("Color appearance", "Algorithm"); if (pedited) pedited->colorappearance.algo = true; }
+    if (keyFile.has_key ("Color appearance", "J-Light"))       {colorappearance.jlight        = keyFile.get_double  ("Color appearance", "J-Light"); if (pedited) pedited->colorappearance.jlight = true; }
+    if (keyFile.has_key ("Color appearance", "Q-Bright"))      {colorappearance.qbright       = keyFile.get_double  ("Color appearance", "Q-Bright"); if (pedited) pedited->colorappearance.qbright = true; }
+    if (keyFile.has_key ("Color appearance", "C-Chroma"))      {colorappearance.chroma        = keyFile.get_double  ("Color appearance", "C-Chroma"); if (pedited) pedited->colorappearance.chroma = true; }
+    if (keyFile.has_key ("Color appearance", "S-Chroma"))      {colorappearance.schroma       = keyFile.get_double  ("Color appearance", "S-Chroma"); if (pedited) pedited->colorappearance.schroma = true; }
+    if (keyFile.has_key ("Color appearance", "M-Chroma"))      {colorappearance.mchroma       = keyFile.get_double  ("Color appearance", "M-Chroma"); if (pedited) pedited->colorappearance.mchroma = true; }
+    if (keyFile.has_key ("Color appearance", "RSTProtection")) {colorappearance.rstprotection = keyFile.get_double  ("Color appearance", "RSTProtection"); if (pedited) pedited->colorappearance.rstprotection = true; }
+    if (keyFile.has_key ("Color appearance", "J-Contrast"))    {colorappearance.contrast      = keyFile.get_double  ("Color appearance", "J-Contrast"); if (pedited) pedited->colorappearance.contrast = true; }
+    if (keyFile.has_key ("Color appearance", "Q-Contrast"))    {colorappearance.qcontrast     = keyFile.get_double  ("Color appearance", "Q-Contrast"); if (pedited) pedited->colorappearance.qcontrast = true; }
+    if (keyFile.has_key ("Color appearance", "H-Hue"))         {colorappearance.colorh        = keyFile.get_double  ("Color appearance", "H-Hue"); if (pedited) pedited->colorappearance.colorh = true; }
+    if (keyFile.has_key ("Color appearance", "AdaptScene"))    {colorappearance.adapscen      = keyFile.get_double  ("Color appearance", "AdaptScene"); if (pedited) pedited->colorappearance.adapscen = true; }
+    if (keyFile.has_key ("Color appearance", "SurrSource"))    {colorappearance.surrsource    = keyFile.get_boolean ("Color appearance", "SurrSource"); if (pedited) pedited->colorappearance.surrsource = true; }
+    if (keyFile.has_key ("Color appearance", "Gamut"))         {colorappearance.gamut         = keyFile.get_boolean ("Color appearance", "Gamut"); if (pedited) pedited->colorappearance.gamut = true; }
 }
 
-//Load EPD.
-if (keyFile.has_group ("EPD")) {
-	if(keyFile.has_key("EPD", "Enabled"))             { edgePreservingDecompositionUI.enabled = keyFile.get_boolean ("EPD", "Enabled"); if (pedited) pedited->edgePreservingDecompositionUI.enabled = true; }
-	if(keyFile.has_key("EPD", "Strength"))            { edgePreservingDecompositionUI.Strength = keyFile.get_double ("EPD", "Strength"); if (pedited) pedited->edgePreservingDecompositionUI.Strength = true; }
-	if(keyFile.has_key("EPD", "EdgeStopping"))        { edgePreservingDecompositionUI.EdgeStopping = keyFile.get_double ("EPD", "EdgeStopping"); if (pedited) pedited->edgePreservingDecompositionUI.EdgeStopping = true; }
-	if(keyFile.has_key("EPD", "Scale"))               { edgePreservingDecompositionUI.Scale = keyFile.get_double ("EPD", "Scale"); if (pedited) pedited->edgePreservingDecompositionUI.Scale = true; }
-	if(keyFile.has_key("EPD", "ReweightingIterates")) { edgePreservingDecompositionUI.ReweightingIterates = keyFile.get_integer ("EPD", "ReweightingIterates"); if (pedited) pedited->edgePreservingDecompositionUI.ReweightingIterates = true; }
+    // load impulseDenoise
+if (keyFile.has_group ("Impulse Denoising")) {
+    if (keyFile.has_key ("Impulse Denoising", "Enabled"))   { impulseDenoise.enabled = keyFile.get_boolean ("Impulse Denoising", "Enabled"); if (pedited) pedited->impulseDenoise.enabled = true; }
+    if (keyFile.has_key ("Impulse Denoising", "Threshold")) { impulseDenoise.thresh  = keyFile.get_integer ("Impulse Denoising", "Threshold"); if (pedited) pedited->impulseDenoise.thresh = true; }
 }
-  
+
+    // load dirpyrDenoise
+if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an accurate description for FT denoise
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled"))    { dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled"); if (pedited) pedited->dirpyrDenoise.enabled = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))       { dirpyrDenoise.luma    = keyFile.get_double ("Directional Pyramid Denoising", "Luma"); if (pedited) pedited->dirpyrDenoise.luma = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Ldetail"))    { dirpyrDenoise.Ldetail = keyFile.get_double ("Directional Pyramid Denoising", "Ldetail"); if (pedited) pedited->dirpyrDenoise.Ldetail = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))     { dirpyrDenoise.chroma  = keyFile.get_double ("Directional Pyramid Denoising", "Chroma"); if (pedited) pedited->dirpyrDenoise.chroma = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))      { dirpyrDenoise.gamma   = keyFile.get_double ("Directional Pyramid Denoising", "Gamma"); if (pedited) pedited->dirpyrDenoise.gamma = true; }
+}
+
+    //Load EPD.
+if (keyFile.has_group ("EPD")) {
+    if(keyFile.has_key("EPD", "Enabled"))             { edgePreservingDecompositionUI.enabled = keyFile.get_boolean ("EPD", "Enabled"); if (pedited) pedited->edgePreservingDecompositionUI.enabled = true; }
+    if(keyFile.has_key("EPD", "Strength"))            { edgePreservingDecompositionUI.Strength = keyFile.get_double ("EPD", "Strength"); if (pedited) pedited->edgePreservingDecompositionUI.Strength = true; }
+    if(keyFile.has_key("EPD", "EdgeStopping"))        { edgePreservingDecompositionUI.EdgeStopping = keyFile.get_double ("EPD", "EdgeStopping"); if (pedited) pedited->edgePreservingDecompositionUI.EdgeStopping = true; }
+    if(keyFile.has_key("EPD", "Scale"))               { edgePreservingDecompositionUI.Scale = keyFile.get_double ("EPD", "Scale"); if (pedited) pedited->edgePreservingDecompositionUI.Scale = true; }
+    if(keyFile.has_key("EPD", "ReweightingIterates")) { edgePreservingDecompositionUI.ReweightingIterates = keyFile.get_integer ("EPD", "ReweightingIterates"); if (pedited) pedited->edgePreservingDecompositionUI.ReweightingIterates = true; }
+}
+
     // load lumaDenoise
 /*if (keyFile.has_group ("Luminance Denoising")) {
     if (keyFile.has_key ("Luminance Denoising", "Enabled"))        { lumaDenoise.enabled       = keyFile.get_boolean ("Luminance Denoising", "Enabled"); if (pedited) pedited->lumaDenoise.enabled = true; }
@@ -1356,6 +1407,24 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& wb.temperature == other.wb.temperature
 		//&& colorShift.a == other.colorShift.a
 		//&& colorShift.b == other.colorShift.b
+		&& colorappearance.enabled == other.colorappearance.enabled
+		&& colorappearance.degree == other.colorappearance.degree
+		&& colorappearance.autodegree == other.colorappearance.autodegree
+		&& colorappearance.surround == other.colorappearance.surround
+		&& colorappearance.adapscen == other.colorappearance.adapscen
+		&& colorappearance.adaplum == other.colorappearance.adaplum
+		&& colorappearance.wbmodel == other.colorappearance.wbmodel
+		&& colorappearance.algo == other.colorappearance.algo
+		
+		&& colorappearance.jlight == other.colorappearance.jlight
+		&& colorappearance.qbright == other.colorappearance.qbright
+		&& colorappearance.chroma == other.colorappearance.chroma
+		&& colorappearance.schroma == other.colorappearance.schroma
+		&& colorappearance.mchroma == other.colorappearance.mchroma
+		&& colorappearance.rstprotection == other.colorappearance.rstprotection
+		&& colorappearance.contrast == other.colorappearance.contrast
+		&& colorappearance.qcontrast == other.colorappearance.qcontrast
+		&& colorappearance.colorh == other.colorappearance.colorh
 		&& impulseDenoise.enabled == other.impulseDenoise.enabled
 		&& impulseDenoise.thresh == other.impulseDenoise.thresh
 		&& dirpyrDenoise.enabled == other.dirpyrDenoise.enabled

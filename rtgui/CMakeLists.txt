@@ -28,7 +28,7 @@ set (BASESOURCEFILES
     profilestore.cc partialpastedlg.cc rawprocess.cc preprocess.cc
     darkframe.cc flatfield.cc rawcacorrection.cc rawexposure.cc
     dirpyrequalizer.cc hsvequalizer.cc defringe.cc
-    popupcommon.cc popupbutton.cc popuptogglebutton.cc sharpenedge.cc sharpenmicro.cc)
+    popupcommon.cc popupbutton.cc popuptogglebutton.cc sharpenedge.cc sharpenmicro.cc colorappearance.cc)
 
 include_directories (BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 

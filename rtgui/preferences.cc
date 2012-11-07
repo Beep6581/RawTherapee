@@ -192,6 +192,21 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_WBALANCE_GREEN"), ADDSET_WB_GREEN, true);
 
     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_COLORAPP_LABEL"));
+    appendBehavList (mi, M("TP_COLORAPP_CIECAT_DEGREE"),ADDSET_CAT_DEGREE, true);
+    appendBehavList (mi, M("TP_COLORAPP_ADAPTSCENE"),ADDSET_CAT_ADAPTSCENE, true);
+    appendBehavList (mi, M("TP_COLORAPP_ADAPTVIEWING"),ADDSET_CAT_ADAPTVIEWING, true);
+    appendBehavList (mi, M("TP_COLORAPP_LIGHT"),ADDSET_CAT_LIGHT, true);
+    appendBehavList (mi, M("TP_COLORAPP_BRIGHT"),ADDSET_CAT_BRIGHT, true);
+    appendBehavList (mi, M("TP_COLORAPP_CHROMA"),ADDSET_CAT_CHROMA, true);
+    appendBehavList (mi, M("TP_COLORAPP_RSTPRO"),ADDSET_CAT_RSTPRO, true);
+    appendBehavList (mi, M("TP_COLORAPP_CONTRAST"),ADDSET_CAT_CONTRAST, true);
+    appendBehavList (mi, M("TP_COLORAPP_CONTRAST_Q"),ADDSET_CAT_CONTRAST_Q, true);
+    appendBehavList (mi, M("TP_COLORAPP_CHROMA_S"),ADDSET_CAT_CHROMA_S, true);
+    appendBehavList (mi, M("TP_COLORAPP_CHROMA_M"),ADDSET_CAT_CHROMA_M, true);
+    appendBehavList (mi, M("TP_COLORAPP_HUE"),ADDSET_CAT_HUE, true);
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_VIBRANCE_LABEL"));
     appendBehavList (mi, M("TP_VIBRANCE_PASTELS"), ADDSET_VIBRANCE_PASTELS, false);
     appendBehavList (mi, M("TP_VIBRANCE_SATURATED"), ADDSET_VIBRANCE_SATURATED, false);
@@ -200,8 +215,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi->set_value (behavColumns.label, M("TP_GAMMA_OUTPUT"));
     appendBehavList (mi, M("TP_GAMMA_CURV"), ADDSET_FREE_OUPUT_GAMMA, false);
     appendBehavList (mi, M("TP_GAMMA_SLOP"), ADDSET_FREE_OUTPUT_SLOPE, false);
-	
-	
+
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CHMIXER_LABEL"));
     appendBehavList (mi, M("TP_CHMIXER_RED")+", "+M("TP_CHMIXER_GREEN")+", "+M("TP_CHMIXER_BLUE"), ADDSET_CHMIXER, false);
@@ -410,6 +424,41 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
 
     autoMonProfileToggled();
+    //Gtk::Frame* fdp = Gtk::manage (new Gtk::Frame (M("PREFERENCES_OUTPUTDEVICE")));
+    Gtk::VBox* vbdp = Gtk::manage (new Gtk::VBox ());
+    vbdp->set_border_width (4);
+    //Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_VIEW")+":"));
+    Gtk::Label* viewlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_VIEW")+":", Gtk::ALIGN_LEFT));
+
+    view = Gtk::manage (new Gtk::ComboBoxText ());
+    view->append_text (M("PREFERENCES_D50"));
+    view->append_text (M("PREFERENCES_D55"));
+    view->append_text (M("PREFERENCES_D60"));
+    view->append_text (M("PREFERENCES_D65"));
+    view->append_text (M("PREFERENCES_BLACKBODY"));
+
+    Gtk::Label* greylab = Gtk::manage (new Gtk::Label (M("PREFERENCES_GREY")+":", Gtk::ALIGN_LEFT));
+    grey = Gtk::manage (new Gtk::ComboBoxText ());
+    grey->append_text (M("PREFERENCES_GREY05"));
+    grey->append_text (M("PREFERENCES_GREY10"));
+    grey->append_text (M("PREFERENCES_GREY15"));
+    grey->append_text (M("PREFERENCES_GREY18"));
+    grey->append_text (M("PREFERENCES_GREY23"));
+    grey->append_text (M("PREFERENCES_GREY30"));
+    grey->append_text (M("PREFERENCES_GREY40"));
+
+    Gtk::Label* restartNeeded1 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+    Gtk::Label* restartNeeded2 = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
+
+    Gtk::Table* colo = Gtk::manage (new Gtk::Table (2, 3));
+    colo->attach (*viewlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colo->attach (*view, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colo->attach (*restartNeeded1, 2, 3, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colo->attach (*greylab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    colo->attach (*grey, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    colo->attach (*restartNeeded2, 2, 3, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
+
+    mvbcm->pack_start (*colo, Gtk::PACK_SHRINK, 4);
 
     return mvbcm;
 }
@@ -483,9 +532,9 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     std::vector<Glib::ustring> langs;
     parseDir (argv0 + "/languages", langs, "");
     for (size_t i=0; i<langs.size(); i++) {
-	if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
-  	    languages->append_text (langs[i]);
-	}
+        if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
+            languages->append_text (langs[i]);
+        }
     }
 
     Gtk::Label* langw = Gtk::manage( new Gtk::Label (Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")") );
@@ -1003,7 +1052,7 @@ void Preferences::storePreferences () {
     moptions.psDir          = psDir->get_filename ();
 #elif defined __APPLE__
     moptions.psDir          = psDir->get_filename (); 
-#endif	
+#endif
     moptions.customEditorProg = editorToSendTo->get_text ();
     if (edGimp->get_active ())
         moptions.editorToSendTo = 1;
@@ -1013,7 +1062,7 @@ void Preferences::storePreferences () {
 #elif defined __APPLE__   
     else if (edPS->get_active ())
       moptions.editorToSendTo = 2; 
-#endif	
+#endif
     else if (edOther->get_active ())
         moptions.editorToSendTo = 3;
 
@@ -1023,6 +1072,8 @@ void Preferences::storePreferences () {
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
     moptions.rtSettings.iccDirectory        = iccDir->get_filename ();
     moptions.rtSettings.colorimetricIntent  = intent->get_active_row_number ();
+    moptions.rtSettings.viewingdevice       = view->get_active_row_number ();
+    moptions.rtSettings.viewingdevicegrey   = grey->get_active_row_number ();
 
     if (sdcurrent->get_active ()) 
         moptions.startupDir = STARTUPDIR_CURRENT;
@@ -1103,12 +1154,15 @@ void Preferences::fillPreferences () {
     if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
     if (moptions.rtSettings.monitorProfile.empty())
-    	monProfile->set_current_folder (moptions.rtSettings.iccDirectory);
-	cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
+        monProfile->set_current_folder (moptions.rtSettings.iccDirectory);
+    cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 
     if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
-	intent->set_active (moptions.rtSettings.colorimetricIntent);
+    intent->set_active (moptions.rtSettings.colorimetricIntent);
+    view->set_active (moptions.rtSettings.viewingdevice);
+    grey->set_active (moptions.rtSettings.viewingdevicegrey);
+
     languages->set_active_text (moptions.language);
     ckbLangAutoDetect->set_active (moptions.languageAutoDetect);
     theme->set_active_text (moptions.theme);
@@ -1146,7 +1200,7 @@ void Preferences::fillPreferences () {
   edPS->set_active (moptions.editorToSendTo==2);
   if (safe_file_test (moptions.psDir, Glib::FILE_TEST_IS_DIR))
     psDir->set_filename (moptions.psDir); 
-#endif	
+#endif
     editorToSendTo->set_text (moptions.customEditorProg);
 
     txtCustProfBuilderPath->set_text(moptions.customProfileBuilder);
@@ -1212,14 +1266,14 @@ void Preferences::fillPreferences () {
     addc.block (true);
     setc.block (true);
     if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
-		for (size_t i=0; i<moptions.baBehav.size(); i++)
-			for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++) 
-				for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
-					if (adjs->get_value (behavColumns.addsetid) == i) {
-						adjs->set_value (behavColumns.badd, moptions.baBehav[i]==1);
-						adjs->set_value (behavColumns.bset, moptions.baBehav[i]!=1);
-						break;
-					}
+        for (size_t i=0; i<moptions.baBehav.size(); i++)
+            for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++) 
+                for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++) 
+                    if (adjs->get_value (behavColumns.addsetid) == i) {
+                        adjs->set_value (behavColumns.badd, moptions.baBehav[i]==1);
+                        adjs->set_value (behavColumns.bset, moptions.baBehav[i]!=1);
+                        break;
+                    }
     }
     addc.block (false);
     setc.block (false);
