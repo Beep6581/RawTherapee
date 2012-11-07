@@ -396,7 +396,13 @@ void Options::setDefaults () {
 			0,  // ADDSET_VIBRANCE_SATURATED
 			0,  // ADDSET_FREE_OUPUT_GAMMA
 			0,  // ADDSET_FREE_OUTPUT_SLOPE
- 
+			0,  // ADDSET_CAT_DEGREE
+			0,  // ADDSET_CAT_ADAPSCEN
+			0,  // ADDSET_CAT_ADAPLUM
+			0,  // ADDSET_CAT_JLIGHT
+			0,  // ADDSET_CAT_CHROMA
+ 			0,  // ADDSET_CAT_CONTRAST
+
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
     
@@ -414,6 +420,9 @@ void Options::setDefaults () {
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
     rtSettings.colorimetricIntent = 1;
+	rtSettings.viewingdevice=0;
+	rtSettings.viewingdevicegrey=3;
+	
     rtSettings.monitorProfile = "";
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RT_Medium_gsRGB"; // put the name of yours profiles (here windows)
@@ -430,6 +439,7 @@ void Options::setDefaults () {
     rtSettings.gamutLch = true;
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
+    rtSettings.CRI_color =0;
 
 	lastIccDir = rtSettings.iccDirectory;
 	lastDarkframeDir = rtSettings.darkFramesPath;
@@ -638,6 +648,9 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) rtSettings.autoMonitorProfile = keyFile.get_boolean ("Color Management", "AutoMonitorProfile");
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
+    if (keyFile.has_key ("Color Management", "CRI"))            rtSettings.CRI_color            = keyFile.get_integer("Color Management", "CRI");
+    if (keyFile.has_key ("Color Management", "view"))           rtSettings.viewingdevice   = keyFile.get_integer("Color Management", "view");
+    if (keyFile.has_key ("Color Management", "grey"))           rtSettings.viewingdevice   = keyFile.get_integer("Color Management", "grey");
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
     if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
@@ -881,6 +894,9 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
     keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
+    keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);	
+    keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevice);	
+	
     keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
     keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);
     keyFile.set_string  ("Color Management", "ProPhoto10", rtSettings.prophoto10);
@@ -895,6 +911,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
     keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
     keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
+    keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);

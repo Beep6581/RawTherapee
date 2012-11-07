@@ -27,6 +27,8 @@ using namespace rtengine::procparams;
 
 Distortion::Distortion (): Gtk::VBox(), FoldableToolPanel(this) {
 
+    set_border_width(4);
+
     rlistener = NULL;
     autoDistor = Gtk::manage (new Gtk::Button (M("TP_DISTORTION_AUTO")));
     autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto.png")));

@@ -27,13 +27,13 @@
 
 #define MIN_RESET_BUTTON_HEIGHT 17
 
-extern Glib::ustring argv0;
-
 Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, bool editedcb) {
 
   adjusterListener = NULL;
   afterReset = false;
   blocked = false;
+  automatic = NULL;
+  eventPending = false;
 
   vMin = vmin;
   vMax = vmax;
@@ -44,9 +44,12 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   // TODO: let the user chose the default value of Adjuster::delay, for slow machines
   delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
 
-  set_border_width (2);
+  set_border_width (0);
+  set_spacing (2);
 
   hbox = Gtk::manage (new Gtk::HBox ());
+  hbox->set_border_width(0);
+  hbox->set_spacing(2);
 
   adjustmentName = Glib::ustring(vlabel);
 
@@ -61,7 +64,6 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     label = Gtk::manage (new Gtk::Label (adjustmentName, Gtk::ALIGN_LEFT));
     hbox->pack_start (*label);
   }
-    
 
   reset = Gtk::manage (new Gtk::Button ());
   reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
@@ -90,6 +92,7 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   defaultVal = shapeValue (vdefault);
   initialDefaultVal = shapeValue (vdefault);
   editedState = defEditedState = Irrelevant;
+  autoState = Irrelevant;
 
   sliderChange = slider->signal_value_changed().connect( sigc::mem_fun(*this, &Adjuster::sliderChanged) );
   spinChange = spin->signal_value_changed().connect ( sigc::mem_fun(*this, &Adjuster::spinChanged), true);
@@ -104,6 +107,8 @@ Adjuster::Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep,
   adjusterListener = NULL;
   afterReset = false;
   blocked = false;
+  automatic = NULL;
+  eventPending = false;
 
   vMin = vmin;
   vMax = vmax;
@@ -114,13 +119,16 @@ Adjuster::Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep,
   // TODO: let the user chose the default value of Adjuster::delay, for slow machines
   delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
 
-  set_border_width (2);
+  set_border_width (0);
+  set_spacing (2);
 
   hbox = Gtk::manage (new Gtk::HBox ());
-
+  hbox->set_border_width(0);
+  hbox->set_spacing(2);
 
   if (editedcb) {
     editedCheckBox = Gtk::manage (new Gtk::CheckButton ());
+    editedCheckBox->set_border_width (0);
     editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
 	hbox->pack_start (*editedCheckBox);
   }
@@ -158,6 +166,7 @@ Adjuster::Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep,
   defaultVal = shapeValue (vdefault);
   initialDefaultVal = shapeValue (vdefault);
   editedState = defEditedState = Irrelevant;
+  autoState = Irrelevant;
 
   sliderChange = slider->signal_value_changed().connect( sigc::mem_fun(*this, &Adjuster::sliderChanged) );
   spinChange = spin->signal_value_changed().connect ( sigc::mem_fun(*this, &Adjuster::spinChanged), true);
@@ -173,6 +182,45 @@ Adjuster::~Adjuster () {
     spinChange.block (true);
     delayConnection.block (true);
     adjusterListener = NULL;
+    if (automatic) delete automatic;
+}
+
+void Adjuster::addAutoButton () {
+    if (!automatic) {
+        automatic = new Gtk::CheckButton ();
+        //automatic->add (*Gtk::manage (new RTImage ("processing.png")));
+        automatic->set_border_width (0);
+        automatic->set_tooltip_text (M("GENERAL_AUTO"));
+        autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );
+
+        hbox->pack_end (*automatic, Gtk::PACK_SHRINK, 0);
+        hbox->reorder_child (*automatic, 0);
+    }
+}
+
+void Adjuster::delAutoButton () {
+    if (automatic) {
+        removeIfThere(hbox, automatic);
+        delete automatic;
+        automatic = NULL;
+    }
+}
+
+void Adjuster::throwOnButtonRelease(bool throwOnBRelease) {
+
+    if (throwOnBRelease) {
+        if (!buttonReleaseSlider.connected())
+            buttonReleaseSlider = slider->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::sliderReleased) );
+        if (!buttonReleaseSpin.connected())
+            buttonReleaseSpin = spin->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::spinReleased) ); // Use the same callback hook
+    }
+    else {
+        if (buttonReleaseSlider.connected())
+            buttonReleaseSlider.disconnect();
+        if (buttonReleaseSpin.connected())
+            buttonReleaseSpin.disconnect();
+    }
+    eventPending = false;
 }
 
 void Adjuster::setDefault (double def) {
@@ -185,24 +233,64 @@ void Adjuster::setDefaultEditedState (EditedState eState) {
     defEditedState = eState;
 }
 
+void Adjuster::autoToggled () {
+
+    if (!editedCheckBox) {
+        // If not used in the BatchEditor panel
+        if (automatic->get_active()) {
+            // Disable the slider and spin button
+            spin->set_sensitive(false);
+            slider->set_sensitive(false);
+        }
+        else {
+            // Enable the slider and spin button
+            spin->set_sensitive(true);
+            slider->set_sensitive(true);
+        }
+    }
+
+    if (adjusterListener!=NULL && !blocked) {
+        adjusterListener->adjusterAutoToggled(this, automatic->get_active());
+    }
+}
+
+void Adjuster::sliderReleased (GdkEventButton* event) {
+
+    if ((event != NULL) && (event->button == 1)) {
+        if (delayConnection.connected())
+            delayConnection.disconnect ();
+        notifyListener();
+    }
+}
+
+void Adjuster::spinReleased (GdkEventButton* event) {
+
+    if ((event != NULL) && delay==0) {
+        if (delayConnection.connected())
+            delayConnection.disconnect ();
+        notifyListener();
+    }
+}
+
+// Please note that it won't change the "Auto" CheckBox's state, if there
 void Adjuster::resetPressed (GdkEventButton* event) {
 
     if (editedState!=Irrelevant) {
         editedState = defEditedState;
         if (editedCheckBox) {
-			editedChange.block (true);
+            editedChange.block (true);
             editedCheckBox->set_active (defEditedState==Edited);
-			editedChange.block (false);
-		}
+            editedChange.block (false);
+        }
         refreshLabelStyle ();
     }
-	afterReset = true;
-	if ((event != NULL) && (event->state & GDK_CONTROL_MASK) && (event->button == 1))
-		// CTRL pressed : resetting to current default value
-		slider->set_value (defaultVal);
-	else
-		// no modifier key or addMode=true : resetting to initial default value
-		slider->set_value (initialDefaultVal);
+    afterReset = true;
+    if ((event != NULL) && (event->state & GDK_CONTROL_MASK) && (event->button == 1))
+        // CTRL pressed : resetting to current default value
+        slider->set_value (defaultVal);
+    else
+        // no modifier key or addMode=true : resetting to initial default value
+        slider->set_value (initialDefaultVal);
 }
 
 double Adjuster::shapeValue (double a) {
@@ -248,24 +336,34 @@ void Adjuster::setAddMode(bool addM) {
 
 void Adjuster::spinChanged () {
 
+  if (delayConnection.connected())
+    delayConnection.disconnect ();
+
   sliderChange.block (true);
   slider->set_value (spin->get_value ());
   sliderChange.block (false);
 
   if (delay==0) {
-    if (adjusterListener!=NULL && !blocked)
-        adjusterListener->adjusterChanged (this, spin->get_value ());
+    if (adjusterListener && !blocked) {
+        if (!buttonReleaseSlider.connected() || afterReset) {
+            eventPending = false;
+            adjusterListener->adjusterChanged (this, spin->get_value ());
+        }
+        else eventPending = true;
+    }
   }
-  else
-    Glib::signal_idle().connect (sigc::mem_fun(*this, &Adjuster::notifyListener));
-    
+  else {
+    eventPending = true;
+    delayConnection = Glib::signal_timeout().connect (sigc::mem_fun(*this, &Adjuster::notifyListener), delay);
+  }
+
   if (editedState==UnEdited) {
     editedState = Edited;
     if (editedCheckBox) {
-		editedChange.block (true);
+        editedChange.block (true);
         editedCheckBox->set_active (true);
-		editedChange.block (false);
-	}
+        editedChange.block (false);
+    }
     refreshLabelStyle ();
   }
   afterReset = false;
@@ -275,25 +373,32 @@ void Adjuster::sliderChanged () {
   
   if (delayConnection.connected())
     delayConnection.disconnect ();
-    
+
   spinChange.block (true);
   spin->set_value (slider->get_value ());
   spinChange.block (false);
 
-  if (delay==0) {
-    if (adjusterListener && !blocked)
+  if (delay==0 || afterReset) {
+    if (adjusterListener && !blocked) {
+      if (!buttonReleaseSlider.connected() || afterReset) {
+        eventPending = false;
         adjusterListener->adjusterChanged (this, spin->get_value ());
+      }
+      else eventPending = true;
+    }
   }
-  else
+  else {
+    eventPending = true;
     delayConnection = Glib::signal_timeout().connect (sigc::mem_fun(*this, &Adjuster::notifyListener), delay);
+  }
 
   if (!afterReset && editedState==UnEdited) {
     editedState = Edited;
     if (editedCheckBox) {
-		editedChange.block (true);
+        editedChange.block (true);
         editedCheckBox->set_active (true);
-		editedChange.block (false);
-	}
+        editedChange.block (false);
+    }
     refreshLabelStyle ();
   }
   afterReset = false;
@@ -310,36 +415,71 @@ void Adjuster::setValue (double a) {
   afterReset = false;
 }
 
+void Adjuster::setAutoValue (bool a) {
+    if (automatic) {
+        bool oldVal = autoChange.block(true);
+        automatic->set_active(a);
+        autoChange.block(oldVal);
+        if (!editedCheckBox) {
+            // If not used in the BatchEditor panel
+            if (a) {
+                // Disable the slider and spin button
+                spin->set_sensitive(false);
+                slider->set_sensitive(false);
+            }
+            else {
+                // Enable the slider and spin button
+                spin->set_sensitive(true);
+                slider->set_sensitive(true);
+            }
+        }
+    }
+}
+
 bool Adjuster::notifyListener () {
+
+  if (eventPending && adjusterListener!=NULL && !blocked) {
+    GThreadLock lock;
+    adjusterListener->adjusterChanged (this, spin->get_value ());
+  }
+  eventPending = false;
+
+  return false;
+}
+
+bool Adjuster::notifyListenerAutoToggled () {
 
   if (adjusterListener!=NULL && !blocked) {
     GThreadLock lock;
-    adjusterListener->adjusterChanged (this, spin->get_value ());
+    adjusterListener->adjusterAutoToggled(this, automatic->get_active());
   }
   return false;
 }
 
 void Adjuster::setEnabled (bool enabled) {
 
-    spin->set_sensitive (enabled);
-    slider->set_sensitive (enabled);
+    bool autoVal = automatic && !editedCheckBox ? automatic->get_active() : true;
+    spin->set_sensitive (enabled && autoVal);
+    slider->set_sensitive (enabled && autoVal);
+    if (automatic)
+        automatic->set_sensitive (enabled);
 }
 
 void Adjuster::setEditedState (EditedState eState) {
 
     if (editedState!=eState) {
         if (editedCheckBox) {
-			editedChange.block (true);
+            editedChange.block (true);
             editedCheckBox->set_active (eState==Edited);
-			editedChange.block (false);
-		}
+            editedChange.block (false);
+        }
         editedState = eState;
         refreshLabelStyle ();
     }
 }
 
 EditedState Adjuster::getEditedState () {
-    
+
     if (editedState!=Irrelevant && editedCheckBox)
         editedState = editedCheckBox->get_active () ? Edited : UnEdited;
     return editedState;
@@ -354,7 +494,7 @@ void Adjuster::showEditedCB () {
         editedCheckBox = Gtk::manage(new Gtk::CheckButton (adjustmentName));
         hbox->pack_start (*editedCheckBox, Gtk::PACK_SHRINK, 2);
         hbox->reorder_child (*editedCheckBox, 0);
-	    editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
+        editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
     }
 }
 
@@ -365,13 +505,15 @@ void Adjuster::refreshLabelStyle () {
     fd.set_weight (editedState==Edited ? Pango::WEIGHT_BOLD : Pango::WEIGHT_NORMAL);
     style->set_font (fd);
     label->set_style (style);
-	label->queue_draw ();*/
+    label->queue_draw ();*/
 }
 
 void Adjuster::editedToggled () {
-	
-    if (adjusterListener && !blocked)
+
+    if (adjusterListener && !blocked) {
         adjusterListener->adjusterChanged (this, spin->get_value ());
+    }
+    eventPending = false;
 }
 
 double Adjuster::trimValue (double& val) {

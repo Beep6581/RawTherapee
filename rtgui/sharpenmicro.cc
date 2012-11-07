@@ -28,10 +28,17 @@ using namespace rtengine::procparams;
 
 
 SharpenMicro::SharpenMicro () : Gtk::VBox(), FoldableToolPanel(this) {
+
+	set_border_width(4);
+
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (true);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 	enabled->show ();
+
+	Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
+	hsep1->show ();
+	pack_start (*hsep1);
 
 	amount= Gtk::manage(new Adjuster (M("TP_SHARPENMICRO_AMOUNT"),0,100,1,20));
 	amount->setAdjusterListener (this);

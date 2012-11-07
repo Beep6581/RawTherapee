@@ -26,7 +26,10 @@ namespace rtengine {
         public:
             Glib::ustring   iccDirectory;           ///< The directory containing the possible output icc profiles
             int             colorimetricIntent;     ///< Colorimetric intent used at color space conversions
-            Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
+			int				viewingdevice; 			// white of output device (D50...D65..)
+			int				viewingdevicegrey; 			// level of grey output device
+ 
+			Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
 			bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
 
             bool            verbose;
@@ -43,11 +46,12 @@ namespace rtengine {
 			Glib::ustring   srgb;					// default name of SRGB space profile
 			Glib::ustring   srgb10;					// default name of SRGB space profile
 			
-			bool		    gamutICC;           // 
-			bool			gamutLch;
-			int     		protectred;
-			double     		protectredh;
-			
+			bool            gamutICC;
+			bool            gamutLch;
+			int             protectred;
+			double          protectredh;
+			int             CRI_color; // N° for display Lab value  ; 0 disabled
+
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */
             static Settings* create  ();

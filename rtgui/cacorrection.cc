@@ -24,6 +24,8 @@ using namespace rtengine::procparams;
 
 CACorrection::CACorrection () : Gtk::VBox(), FoldableToolPanel(this) {
 
+    set_border_width(4);
+
     red = Gtk::manage (new Adjuster (M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0));
     red->setAdjusterListener (this); 
 

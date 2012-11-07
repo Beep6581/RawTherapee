@@ -397,42 +397,43 @@ namespace rtengine {
     }
 
     void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z) {
-        float fy = (0.00862069 * L) + 0.137932; // (L+16)/116
-        float fx = (0.002 * a) + fy;
-        float fz = fy - (0.005 * b);
-
-        x = 65535.0*f2xyz(fx)*D50x;
-     //   y = 65535.0*f2xyz(fy);
-        z = 65535.0*f2xyz(fz)*D50z;
-		y=(L>epskap) ? 65535.0*fy*fy*fy : 65535.0*L/kappa;
-		
+        float LL=L/327.68f;
+        float aa=a/327.68f;
+        float bb=b/327.68f;
+        float fy = (0.00862069f * LL) + 0.137932f; // (L+16)/116
+        float fx = (0.002f * aa) + fy;
+        float fz = fy - (0.005f * bb);
+        x = 65535.0f*f2xyz(fx)*D50x;
+        z = 65535.0f*f2xyz(fz)*D50z;
+        y=(LL>epskap) ? 65535.0f*fy*fy*fy : 65535.0f*LL/kappa;
     }
 
     void Color::XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b) {
 
-        float X1 = X/D50x;
-        float Z1 = Z/D50z;
+        float x = X/D50x;
+        float z = Z/D50z;
+        float y= Y;
+        float fx,fy,fz;
 
-        float fx = (X1<65535.0 ? (cachef[std::max(X1,0.f)]) : (327.68*exp(log(X1/MAXVAL)/3.0 )));
-        float fy = (Y<65535.0  ? (cachef[std::max(Y,0.f)])  : (327.68*exp(log(Y/MAXVAL)/3.0 )));
-        float fz = (Z1<65535.0 ? (cachef[std::max(Z1,0.f)]) : (327.68*exp(log(Z1/MAXVAL)/3.0 )));
+        fx = (x<65535.0f ? cachef[std::max(x,0.f)] : (327.68f*exp(log(x/MAXVAL)/3.0f )));
+        fy = (y<65535.0f ? cachef[std::max(y,0.f)] : (327.68f*exp(log(y/MAXVAL)/3.0f )));
+        fz = (z<65535.0f ? cachef[std::max(z,0.f)] : (327.68f*exp(log(z/MAXVAL)/3.0f )));
 
-        L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
-        a = (500.0 * (fx - fy) );
-        b = (200.0 * (fy - fz) );
-
+        L = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
+        a = (500.0f * (fx - fy) );
+        b = (200.0f * (fy - fz) );
     }
 
     void Color::Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v) {
         float fy = (0.00862069 * L/327.68) + 0.137932; // (L+16)/116
         float fx = (0.002 * a/327.68) + fy;
         float fz = fy - (0.005 * b/327.68);
-		float LL=L/327.68;
+        float LL=L/327.68;
 
         float X = 65535.0*f2xyz(fx)*D50x;
        // Y = 65535.0*f2xyz(fy);
         float Z = 65535.0*f2xyz(fz)*D50z;
-		Y=(LL>epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/kappa;
+        Y=(LL/327.68f>epskap) ? 65535.0*fy*fy*fy : 65535.0*LL/kappa;
 
         u = 4.0*X/(X+15*Y+3*Z)-u0;
         v = 9.0*Y/(X+15*Y+3*Z)-v0;

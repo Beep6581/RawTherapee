@@ -26,6 +26,8 @@ using namespace rtengine::procparams;
 
 RAWCACorr::RAWCACorr () : Gtk::VBox(), FoldableToolPanel(this)
 {
+	set_border_width(4);
+
 	caAutocorrect = Gtk::manage(new Gtk::CheckButton((M("TP_RAWCACORR_AUTO"))));
 	caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"),-4.0,4.0,0.1,0));
 	caRed->setAdjusterListener (this);

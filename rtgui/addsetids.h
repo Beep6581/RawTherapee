@@ -2,7 +2,7 @@
 #define _ADDSETIDS_
 
 
-//          UPDATE THE DEFAULT VALUE IN OPTIONS.CC TOO !!!
+//          UPDATE THE DEFAULT VALUE IN OPTIONS.CC  int babehav[] TOO !!!
 
 
 #define ADDSET_TC_EXPCOMP               0
@@ -48,8 +48,19 @@
 #define ADDSET_VIBRANCE_SATURATED       40
 #define ADDSET_FREE_OUPUT_GAMMA         41
 #define ADDSET_FREE_OUTPUT_SLOPE        42
- 
+#define ADDSET_CAT_DEGREE               43
+#define ADDSET_CAT_ADAPTSCENE           44
+#define ADDSET_CAT_ADAPTVIEWING         45
+#define ADDSET_CAT_LIGHT                46
+#define ADDSET_CAT_CHROMA               47
+#define ADDSET_CAT_CONTRAST             48
+#define ADDSET_CAT_RSTPRO               49
+#define ADDSET_CAT_BRIGHT               50
+#define ADDSET_CAT_CONTRAST_Q           51
+#define ADDSET_CAT_CHROMA_S             52
+#define ADDSET_CAT_CHROMA_M             53
+#define ADDSET_CAT_HUE                  54
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                43 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                55 // THIS IS USED AS A DELIMITER!!
 
 #endif

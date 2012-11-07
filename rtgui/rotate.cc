@@ -28,6 +28,8 @@ using namespace rtengine::procparams;
 
 Rotate::Rotate () : Gtk::VBox(), FoldableToolPanel(this) {
 
+  set_border_width(4);
+
   rlistener = NULL;
 
   degree = Gtk::manage (new Adjuster (M("TP_ROTATE_DEGREE"), -45, 45, 0.01, 0));

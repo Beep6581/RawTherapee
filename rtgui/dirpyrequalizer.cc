@@ -24,6 +24,8 @@ using namespace rtengine::procparams;
 
 DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 
+    set_border_width(4);
+
     enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
     enabled->set_active (true);
     pack_start(*enabled);

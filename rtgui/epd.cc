@@ -24,6 +24,9 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : Gtk::VBox(), FoldableToolPanel(this){
+
+	set_border_width(4);
+
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 	enabled->show ();

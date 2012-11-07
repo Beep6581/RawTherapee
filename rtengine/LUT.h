@@ -64,6 +64,7 @@
 #define LUTf LUT<float>
 #define LUTi LUT<int>
 #define LUTu LUT<unsigned int>
+#define LUTd LUT<double>
 
 #include <cstring>
 #ifndef NDEBUG
@@ -171,6 +172,8 @@ public:
 		T p2 = data[idx + 1]-p1;
 		return (p1 + p2*diff);
 	}
+	
+	
 #ifndef NDEBUG
 	// Debug facility ; dump the content of the LUT in a file. No control of the filename is done
 	void dump(Glib::ustring fname) {

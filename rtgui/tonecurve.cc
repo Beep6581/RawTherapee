@@ -27,6 +27,8 @@ using namespace rtengine::procparams;
 
 ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
+  set_border_width(4);
+
   CurveListener::setMulti(true);
 
   std::vector<GradientMilestone> bottomMilestones;

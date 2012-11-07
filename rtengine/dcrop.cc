@@ -21,6 +21,7 @@
 #include "mytime.h"
 #include "refreshmap.h"
 #include "rt_math.h"
+#include "colortemp.h"
 
 #define SKIPS(a,b) ((a) / (b) + ((a) % (b) > 0))
 
@@ -101,6 +102,7 @@ void Crop::update (int todo) {
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
+        //ColorTemp::CAT02 (origCrop, &params)	;
 
 		//parent->imgsrc->convertColorSpace(origCrop, params.icm);
 
@@ -187,6 +189,7 @@ void Crop::update (int todo) {
 		parent->ipf.chromiLuminanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili);
 		//parent->ipf.colorCurve (labnCrop, labnCrop);
 		parent->ipf.vibrance (labnCrop);
+	//	ColorTemp::ciecam_02 (labnCrop, &params);
 
 		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
@@ -198,6 +201,7 @@ void Crop::update (int todo) {
 			parent->ipf.dirpyrequalizer (labnCrop);
 		}
 	}
+	ColorTemp::ciecam_02 (labnCrop, &params);
 
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);

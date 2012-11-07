@@ -123,7 +123,52 @@ void ImProcFunctions::firstAnalysisThread (Imagefloat* original, Glib::ustring w
         }
     }
 }
+/*
+void ImProcFunctions::CAT02 (Imagefloat* baseImg, const ProcParams* params)
+{
+	const double toxyz[3][3] = 		{{0.7976749,  0.1351917,  0.0313534},
+									{0.2880402,  0.7118741,  0.0000857},
+									{0.0000000,  0.0000000,  0.8252100}};
 
+	const double xyzto[3][3] = 		{{1.3459433, -0.2556075, -0.0511118},
+									{-0.5445989,  1.5081673,  0.0205351},
+									{0.0000000,  0.0000000,  1.2118128}};
+  int fw = baseImg->width;	
+  int fh = baseImg->height;								
+  
+  double CAM02BB00,CAM02BB01,CAM02BB02,CAM02BB10,CAM02BB11,CAM02BB12,CAM02BB20,CAM02BB21,CAM02BB22;								
+  double Xxx,Yyy,Zzz;
+ // Xxx=1.09844;
+ // Yyy=1.0;
+ // Zzz=0.355961;
+ //params.wb.temperature, params.wb.green, params.wb.method
+ double Xxyz, Zxyz;
+// ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xxyz, Zxyz);
+  ColorTemp::temp2mulxyz (5000.0, 1.0, "Camera", Xxyz, Zxyz);
+
+ ColorTemp::cieCAT02(Xxx, Yyy, Zzz, CAM02BB00,CAM02BB01,CAM02BB02,CAM02BB10,CAM02BB11,CAM02BB12,CAM02BB20,CAM02BB21,CAM02BB22);
+  printf("00=%f 01=%f 11=%f 20=%f 22=%f\n", CAM02BB00,CAM02BB01,CAM02BB11,CAM02BB20,CAM02BB22);
+
+ 
+ 	for (int i=0; i<fh; i++) {
+		for (int j=0; j<fw; j++) {
+			float r = baseImg->r[i][j];
+			float g = baseImg->g[i][j];
+			float b = baseImg->b[i][j];
+			
+			float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+			float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+			float z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+			float Xcam=CAM02BB00* x +CAM02BB01* y + CAM02BB02* z ;
+			float Ycam=CAM02BB10* x +CAM02BB11* y + CAM02BB12* z ;
+			float Zcam=CAM02BB20* x +CAM02BB21* y + CAM02BB22* z ;	
+			baseImg->r[i][j] = xyzto[0][0] * Xcam + xyzto[0][1] * Ycam + xyzto[0][2] * Zcam;
+			baseImg->g[i][j] = xyzto[1][0] * Xcam + xyzto[1][1] * Ycam + xyzto[1][2] * Zcam;
+			baseImg->b[i][j] = xyzto[2][0] * Xcam + xyzto[2][1] * Ycam + xyzto[2][2] * Zcam;			
+								}
+							}
+}
+*/
 void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* params, LUTu & histogram, double gamma) {
 
 	// set up monitor transform

@@ -92,6 +92,27 @@ void ParamsEdited::set (bool v) {
 	vibrance.avoidcolorshift  = v;
 	vibrance.pastsattog       = v;
 	vibrance.skintonescurve   = v;
+	colorappearance.enabled    = v;
+	colorappearance.degree     = v;
+	colorappearance.autodegree = v;
+	colorappearance.surround     = v;
+	colorappearance.adapscen    = v;
+	colorappearance.adaplum    = v;
+	colorappearance.wbmodel    = v;
+	colorappearance.algo    = v;
+	
+	colorappearance.jlight     = v;
+	colorappearance.qbright     = v;
+	colorappearance.chroma     = v;
+	colorappearance.schroma     = v;
+	colorappearance.mchroma     = v;
+	colorappearance.contrast     = v;
+	colorappearance.qcontrast     = v;
+	colorappearance.colorh     = v;
+	colorappearance.rstprotection     = v;
+	colorappearance.surrsource = v;
+	colorappearance.gamut = v;
+	
 	//colorBoost.amount         = v;
 	//colorBoost.avoidclip      = v;
 	//colorBoost.enable_saturationlimiter = v;
@@ -294,6 +315,27 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         vibrance.avoidcolorshift = vibrance.avoidcolorshift && p.vibrance.avoidcolorshift == other.vibrance.avoidcolorshift;
         vibrance.pastsattog = vibrance.pastsattog && p.vibrance.pastsattog == other.vibrance.pastsattog;
         vibrance.skintonescurve = vibrance.skintonescurve && p.vibrance.skintonescurve == other.vibrance.skintonescurve;
+
+        colorappearance.enabled = colorappearance.enabled && p.colorappearance.enabled == other.colorappearance.enabled;
+        colorappearance.degree = colorappearance.degree && p.colorappearance.degree == other.colorappearance.degree;
+        colorappearance.autodegree = colorappearance.autodegree && p.colorappearance.autodegree == other.colorappearance.autodegree;
+        colorappearance.surround = colorappearance.surround && p.colorappearance.surround == other.colorappearance.surround;
+        colorappearance.adapscen = colorappearance.adapscen && p.colorappearance.adapscen == other.colorappearance.adapscen;
+        colorappearance.adaplum = colorappearance.adaplum && p.colorappearance.adaplum == other.colorappearance.adaplum;
+        colorappearance.wbmodel = colorappearance.wbmodel && p.colorappearance.wbmodel == other.colorappearance.wbmodel;
+        colorappearance.algo = colorappearance.algo && p.colorappearance.algo == other.colorappearance.algo;
+        colorappearance.jlight = colorappearance.jlight && p.colorappearance.jlight == other.colorappearance.jlight;
+        colorappearance.qbright = colorappearance.qbright && p.colorappearance.qbright == other.colorappearance.qbright;
+        colorappearance.chroma = colorappearance.chroma && p.colorappearance.chroma == other.colorappearance.chroma;
+        colorappearance.schroma = colorappearance.schroma && p.colorappearance.schroma == other.colorappearance.schroma;
+        colorappearance.mchroma = colorappearance.mchroma && p.colorappearance.mchroma == other.colorappearance.mchroma;
+        colorappearance.rstprotection = colorappearance.rstprotection && p.colorappearance.rstprotection == other.colorappearance.rstprotection;
+        colorappearance.contrast = colorappearance.contrast && p.colorappearance.contrast == other.colorappearance.contrast;
+        colorappearance.qcontrast = colorappearance.qcontrast && p.colorappearance.qcontrast == other.colorappearance.qcontrast;
+        colorappearance.colorh = colorappearance.colorh && p.colorappearance.colorh == other.colorappearance.colorh;
+        colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
+        colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
+
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
         //colorBoost.enable_saturationlimiter = colorBoost.enable_saturationlimiter && p.colorBoost.enable_saturationlimiter == other.colorBoost.enable_saturationlimiter;
@@ -437,8 +479,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 	if (toneCurve.curve)		toEdit.toneCurve.curve      = mods.toneCurve.curve;
 	if (toneCurve.curve2)		toEdit.toneCurve.curve2     = mods.toneCurve.curve2;
-    if (toneCurve.curveMode)    toEdit.toneCurve.curveMode  = mods.toneCurve.curveMode;
-    if (toneCurve.curveMode2)   toEdit.toneCurve.curveMode2 = mods.toneCurve.curveMode2;
+	if (toneCurve.curveMode)	toEdit.toneCurve.curveMode  = mods.toneCurve.curveMode;
+	if (toneCurve.curveMode2)	toEdit.toneCurve.curveMode2 = mods.toneCurve.curveMode2;
 	if (toneCurve.brightness)	toEdit.toneCurve.brightness = dontforceSet && options.baBehav[ADDSET_TC_BRIGHTNESS] ? toEdit.toneCurve.brightness + mods.toneCurve.brightness : mods.toneCurve.brightness;
 	if (toneCurve.black)		toEdit.toneCurve.black 	    = dontforceSet && options.baBehav[ADDSET_TC_BLACKLEVEL] ? toEdit.toneCurve.black + mods.toneCurve.black : mods.toneCurve.black;
 	if (toneCurve.contrast)		toEdit.toneCurve.contrast 	= dontforceSet && options.baBehav[ADDSET_TC_CONTRAST] ? toEdit.toneCurve.contrast + mods.toneCurve.contrast : mods.toneCurve.contrast;
@@ -525,6 +567,26 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (defringe.radius)					toEdit.defringe.radius 	= mods.defringe.radius;	
 	if (defringe.threshold)					toEdit.defringe.threshold 	= mods.defringe.threshold;
 
+	if (colorappearance.enabled)			toEdit.colorappearance.enabled		= mods.colorappearance.enabled;
+	if (colorappearance.degree)				toEdit.colorappearance.degree		= dontforceSet && options.baBehav[ADDSET_CAT_DEGREE] ? toEdit.colorappearance.degree + mods.colorappearance.degree : mods.colorappearance.degree;
+	if (colorappearance.autodegree)			toEdit.colorappearance.autodegree	= mods.colorappearance.autodegree;
+	if (colorappearance.surround)			toEdit.colorappearance.surround		= mods.colorappearance.surround;
+	if (colorappearance.adapscen)			toEdit.colorappearance.adapscen	= mods.colorappearance.adapscen;
+	if (colorappearance.adaplum)			toEdit.colorappearance.adaplum		= dontforceSet && options.baBehav[ADDSET_CAT_ADAPTVIEWING] ? toEdit.colorappearance.adaplum + mods.colorappearance.adaplum : mods.colorappearance.adaplum;
+	if (colorappearance.wbmodel)			toEdit.colorappearance.wbmodel		= mods.colorappearance.wbmodel;
+	if (colorappearance.algo)				toEdit.colorappearance.algo		= mods.colorappearance.algo;
+
+	if (colorappearance.jlight)				toEdit.colorappearance.jlight		= dontforceSet && options.baBehav[ADDSET_CAT_LIGHT] ? toEdit.colorappearance.jlight + mods.colorappearance.jlight : mods.colorappearance.jlight;
+	if (colorappearance.qbright)			toEdit.colorappearance.qbright		= dontforceSet && options.baBehav[ADDSET_CAT_BRIGHT] ? toEdit.colorappearance.qbright + mods.colorappearance.qbright : mods.colorappearance.qbright;
+	if (colorappearance.chroma)				toEdit.colorappearance.chroma		= dontforceSet && options.baBehav[ADDSET_CAT_CHROMA] ? toEdit.colorappearance.chroma + mods.colorappearance.chroma : mods.colorappearance.chroma;
+	if (colorappearance.schroma)			toEdit.colorappearance.schroma		= dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_S] ? toEdit.colorappearance.schroma + mods.colorappearance.schroma : mods.colorappearance.schroma;
+	if (colorappearance.mchroma)			toEdit.colorappearance.mchroma		= dontforceSet && options.baBehav[ADDSET_CAT_CHROMA_M] ? toEdit.colorappearance.mchroma + mods.colorappearance.mchroma : mods.colorappearance.mchroma;
+	if (colorappearance.contrast)			toEdit.colorappearance.contrast		= dontforceSet && options.baBehav[ADDSET_CAT_CONTRAST] ? toEdit.colorappearance.contrast + mods.colorappearance.contrast : mods.colorappearance.contrast;
+	if (colorappearance.qcontrast)			toEdit.colorappearance.qcontrast	= dontforceSet && options.baBehav[ADDSET_CAT_CONTRAST_Q] ? toEdit.colorappearance.qcontrast + mods.colorappearance.qcontrast : mods.colorappearance.qcontrast;
+	if (colorappearance.colorh)				toEdit.colorappearance.colorh		= dontforceSet && options.baBehav[ADDSET_CAT_HUE] ? toEdit.colorappearance.colorh + mods.colorappearance.colorh : mods.colorappearance.colorh;
+	if (colorappearance.rstprotection)		toEdit.colorappearance.rstprotection= dontforceSet && options.baBehav[ADDSET_CAT_RSTPRO] ? toEdit.colorappearance.rstprotection + mods.colorappearance.rstprotection : mods.colorappearance.rstprotection;
+ 	if (colorappearance.surrsource)			toEdit.colorappearance.surrsource = mods.colorappearance.surrsource;
+ 	if (colorappearance.gamut)				toEdit.colorappearance.gamut = mods.colorappearance.gamut;
 	if (impulseDenoise.enabled)				toEdit.impulseDenoise.enabled 	= mods.impulseDenoise.enabled;
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
 

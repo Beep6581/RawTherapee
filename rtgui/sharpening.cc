@@ -26,6 +26,8 @@ using namespace rtengine::procparams;
 
 Sharpening::Sharpening () : Gtk::VBox(), FoldableToolPanel(this) {
 
+   set_border_width(4);
+
    std::vector<GradientMilestone> milestones;
    milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
    milestones.push_back( GradientMilestone(1.0, 1.0, 1.0, 1.0) );
@@ -168,12 +170,12 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		dradius->setEditedState 	(pedited->sharpening.deconvradius ? Edited : UnEdited);
 		diter->setEditedState 		(pedited->sharpening.deconviter ? Edited : UnEdited);
 		ddamping->setEditedState 	(pedited->sharpening.deconvdamping ? Edited : UnEdited);
-		
-        enabled->set_inconsistent 		(!pedited->sharpening.enabled);
-        halocontrol->set_inconsistent	(!pedited->sharpening.halocontrol);
-        edgesonly->set_inconsistent		(!pedited->sharpening.edgesonly);
-    }
-	
+
+		enabled->set_inconsistent 		(multiImage && !pedited->sharpening.enabled);
+		halocontrol->set_inconsistent	(multiImage && !pedited->sharpening.halocontrol);
+		edgesonly->set_inconsistent		(multiImage && !pedited->sharpening.edgesonly);
+	}
+
     enaConn.block (true);
     enabled->set_active (pp->sharpening.enabled);
     enaConn.block (false);   
@@ -301,7 +303,7 @@ void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
 void Sharpening::adjusterChanged (Adjuster* a, double newval) {
 
-    if (listener && enabled->get_active()) {
+    if (listener && (multiImage||enabled->get_active()) ) {
 
         Glib::ustring costr;
         if (a==radius || a==dradius)
@@ -334,14 +336,14 @@ void Sharpening::adjusterChanged (Adjuster* a, double newval) {
 
 //void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
 void Sharpening::adjusterChanged (ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) {
-    if (listener && enabled->get_active()) {
+    if (listener && (multiImage||enabled->get_active()) ) {
         listener->panelChanged (EvShrThresh, threshold->getHistoryString());
     }
 }
 
 void Sharpening::enabled_toggled () {
 
-    if (batchMode) {
+    if (multiImage) {
         if (enabled->get_inconsistent()) {
             enabled->set_inconsistent (false);
             enaConn.block (true);
@@ -355,7 +357,9 @@ void Sharpening::enabled_toggled () {
     }
 
     if (listener) {
-        if (enabled->get_active ())
+        if (enabled->get_inconsistent())
+            listener->panelChanged (EvShrEnabled, M("GENERAL_UNCHANGED"));
+        else if (enabled->get_active ())
             listener->panelChanged (EvShrEnabled, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvShrEnabled, M("GENERAL_DISABLED"));
@@ -364,7 +368,7 @@ void Sharpening::enabled_toggled () {
 
 void Sharpening::edgesonly_toggled () {
 
-    if (batchMode) {
+    if (multiImage) {
         if (edgesonly->get_inconsistent()) {
             edgesonly->set_inconsistent (false);
             eonlyConn.block (true);
@@ -377,14 +381,16 @@ void Sharpening::edgesonly_toggled () {
         lastEdgesOnly = edgesonly->get_active ();
     }
 
-	if (!batchMode) {
-		removeIfThere (edgebin, edgebox, false);
-		if (edgesonly->get_active ())
-			edgebin->pack_start (*edgebox);
-	}
-	
-    if (listener && enabled->get_active()) {
+    if (!batchMode) {
+        removeIfThere (edgebin, edgebox, false);
         if (edgesonly->get_active ())
+            edgebin->pack_start (*edgebox);
+    }
+
+    if (listener && (multiImage||enabled->get_active()) ) {
+        if (edgesonly->get_inconsistent())
+            listener->panelChanged (EvShrEdgeOnly, M("GENERAL_INITIALVALUES"));
+        else if (edgesonly->get_active ())
             listener->panelChanged (EvShrEdgeOnly, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvShrEdgeOnly, M("GENERAL_DISABLED"));
@@ -393,7 +399,7 @@ void Sharpening::edgesonly_toggled () {
 
 void Sharpening::halocontrol_toggled () {
 
-    if (batchMode) {
+    if (multiImage) {
         if (halocontrol->get_inconsistent()) {
             halocontrol->set_inconsistent (false);
             hcConn.block (true);
@@ -406,14 +412,16 @@ void Sharpening::halocontrol_toggled () {
         lastHaloControl = halocontrol->get_active ();
     }
 
-	if (!batchMode) {
-		removeIfThere (hcbin, hcbox, false);
-		if (halocontrol->get_active ())
-			hcbin->pack_start (*hcbox);
-	}
-
-    if (listener && enabled->get_active()) {
+    if (!batchMode) {
+        removeIfThere (hcbin, hcbox, false);
         if (halocontrol->get_active ())
+            hcbin->pack_start (*hcbox);
+    }
+
+    if (listener && (multiImage||enabled->get_active()) ) {
+        if (halocontrol->get_inconsistent())
+            listener->panelChanged (EvShrHaloControl, M("GENERAL_INITIALVALUES"));
+        else if (halocontrol->get_active ())
             listener->panelChanged (EvShrHaloControl, M("GENERAL_ENABLED"));
         else
             listener->panelChanged (EvShrHaloControl, M("GENERAL_DISABLED"));
@@ -429,8 +437,8 @@ void Sharpening::method_changed () {
         pack_start (*usm);   
     else if (method->get_active_row_number()==1) 
         pack_start (*rld);
-    
-    if (listener && enabled->get_active ())
+
+    if (listener && (multiImage||enabled->get_active()) )
         listener->panelChanged (EvShrMethod, method->get_active_text ());
     
 }
@@ -439,10 +447,10 @@ void Sharpening::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
 
-	removeIfThere (hcbin, hcbox, false);
-	hcbin->pack_start (*hcbox);
-	removeIfThere (edgebin, edgebox, false);
-	edgebin->pack_start (*edgebox);
+    removeIfThere (hcbin, hcbox, false);
+    hcbin->pack_start (*hcbox);
+    removeIfThere (edgebin, edgebox, false);
+    edgebin->pack_start (*edgebox);
 
     radius->showEditedCB ();
     amount->showEditedCB ();
@@ -459,12 +467,12 @@ void Sharpening::setBatchMode (bool batchMode) {
 
 void Sharpening::setAdjusterBehavior (bool amountadd) {
 
-	amount->setAddMode(amountadd);
-	damount->setAddMode(amountadd);
+    amount->setAddMode(amountadd);
+    damount->setAddMode(amountadd);
 }
 
 void Sharpening::trimValues (rtengine::procparams::ProcParams* pp) {
 
-	amount->trimValue(pp->sharpening.amount);
-	damount->trimValue(pp->sharpening.deconvamount);
+    amount->trimValue(pp->sharpening.amount);
+    damount->trimValue(pp->sharpening.deconvamount);
 }

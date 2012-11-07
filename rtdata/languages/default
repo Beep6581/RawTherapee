@@ -185,6 +185,7 @@ FILEBROWSER_ZOOMINHINT;Increase thumbnail size.\nShortcut: <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\nShortcut: <b>-</b>
 GENERAL_ABOUT;About
 GENERAL_AFTER;After
+GENERAL_AUTO;Automatic
 GENERAL_BEFORE;Before
 GENERAL_CANCEL;Cancel
 GENERAL_DISABLED;Disabled
@@ -396,6 +397,25 @@ HISTORY_MSG_170;Vibrance - Curve
 HISTORY_MSG_171;'LC' curve
 HISTORY_MSG_172;Restrict LC to red and skin tones
 HISTORY_MSG_173;NR - Luminance Detail
+HISTORY_MSG_174;Color Appearance Modele 2002
+HISTORY_MSG_175;CAM02 - Chrom. adaptation amount
+HISTORY_MSG_176;CAM02 - Viewing's black surround
+HISTORY_MSG_177;CAM02 - Scene's Lum. Adaptation
+HISTORY_MSG_178;CAM02 - Viewing's Lum. Adaptation
+HISTORY_MSG_179;CAM02 - Model
+HISTORY_MSG_180;CAM02 - Lightness (J)
+HISTORY_MSG_181;CAM02 - Chroma (C)
+HISTORY_MSG_182;CAM02 - Automatic CAT02
+HISTORY_MSG_183;CAM02 - Contrast (J)
+HISTORY_MSG_184;CAM02 - Scene with dark surround
+HISTORY_MSG_185;CAM02 - Gamut control
+HISTORY_MSG_186;CAM02 - Algorithm
+HISTORY_MSG_187;CAM02 - Red &amp; skin tones protection
+HISTORY_MSG_188;CAM02 - Brightness (Q)
+HISTORY_MSG_189;CAM02 - Contrast (Q)
+HISTORY_MSG_190;CAM02 - Saturation (S)
+HISTORY_MSG_191;CAM02 - Colorfullness (M)
+HISTORY_MSG_192;CAM02 - Hue (angle)
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSSDIALOGLABEL;Label of the snapshot:
@@ -646,6 +666,20 @@ PREFERENCES_CACHESTRAT;Cache Strategy
 PREFERENCES_CACHETHUMBFORM;Cache thumbnail format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal thumbnail height
 PREFERENCES_CLIPPINGIND;Clipping Indication
+PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector,...)
+PREFERENCES_D65;6500K
+PREFERENCES_D60;6000K
+PREFERENCES_D55;5500K
+PREFERENCES_D50;5000K
+PREFERENCES_BLACKBODY;Tungsten
+PREFERENCES_GREY;Output device's Yb luminance (%)
+PREFERENCES_GREY05;Yb=05 CIE L#30
+PREFERENCES_GREY10;Yb=10 CIE L#40
+PREFERENCES_GREY15;Yb=15 CIE L#45
+PREFERENCES_GREY18;Yb=18 CIE L#50
+PREFERENCES_GREY23;Yb=23 CIE L#55
+PREFERENCES_GREY30;Yb=30 CIE L#60
+PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_CMETRICINTENT;Colorimetric intent
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
@@ -844,6 +878,55 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\nShortcut: <b>[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\nShortcut: <b>]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
+TP_COLORAPP_ADAPTSCENE;Adaptation luminosity (cd/m2)
+TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environnement\n(usually 2000cd/m2)
+TP_COLORAPP_ADAPTVIEWING;Adaptation luminosity (cd/m2)
+TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m2)
+TP_COLORAPP_ALGO;Algorithm
+TP_COLORAPP_ALGO_ALL;All
+TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
+TP_COLORAPP_ALGO_JS;Lightnes + Saturation (JS)
+TP_COLORAPP_ALGO_QM;Brightness + Colorfullness (QM)
+TP_COLORAPP_ALGO_TOOLTIP;Lets you chose between parameters subsets or all parameters
+TP_COLORAPP_BRIGHT;Brightness (Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 is different from Lab and RGB, take into account the white's luminosity
+TP_COLORAPP_CHROMA;Chroma (C)
+TP_COLORAPP_CHROMA_M;Colorfullnes (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfullness in CIECAM02 is different from Lab and RGB
+TP_COLORAPP_CHROMA_S;Saturation (S)
+TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 is different from Lab and RGB
+TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 is different from Lab and RGB
+TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
+TP_COLORAPP_CONTRAST;Contrast (J)
+TP_COLORAPP_CONTRAST_Q;Contrast (Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; is different from Lab and RGB
+TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; is different from Lab and RGB
+TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf you check the " <i>Automatic</i> " box, RT will try to find the best value
+TP_COLORAPP_EQUAL;Equal
+TP_COLORAPP_GAMUT;Gamut control (Lab & CIECAM)
+TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
+TP_COLORAPP_HUE;Hue (H)
+TP_COLORAPP_HUE_TOOLTIP;Hue (H) - angle between 0° and 360°
+TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
+TP_COLORAPP_LABEL_CAM02;Modifying image with CIECAM
+TP_COLORAPP_LABEL_SCENE;Scene conditions
+TP_COLORAPP_LABEL_VIEWING;Viewing conditions
+TP_COLORAPP_LIGHT;Lightness (J)
+TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 is different from Lab and RGB
+TP_COLORAPP_MODEL;White-Point Model
+TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [output]:</b>\nRT's WB is used for the scene, CIECAM is set to D50, the output device's white uses the value set in Preferences\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's WB settings are used by CAT02 and the output device's white uses the value set in Preferences
+TP_COLORAPP_RSTPRO;Red & skin tones protection (C)
+TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin tones protection by the (C) slider
+TP_COLORAPP_SURROUND;Surround
+TP_COLORAPP_SURROUND_AVER;Average
+TP_COLORAPP_SURROUND_DARK;Dark
+TP_COLORAPP_SURROUND_DIM;Dim
+TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
+TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colors to take into account the viewing conditions of the output device\n\n<b>Average:</b>\nAverage light environment (standard)\nThe image will not change\n\n<b>Dim:</b>\nDim environment (TV)\nThe image will become slighty dark\n\n<b>Dark:</b>\nDark environment (projector)\nThe image will become much dark\n\n<b>Extremly Dark:</b>\nExtremly dark environment (Cutsheet)\nThe image will become very much dark
+TP_COLORAPP_SURSOURCE;Dark surround
+TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if source image has a dark border
+TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
+TP_COLORAPP_WBRT;WB [RT] + [output]
 TP_CROP_FIXRATIO;Fix ratio:
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
@@ -861,8 +944,8 @@ TP_CROP_LABEL;Crop
 TP_CROP_PPI;PPI=
 TP_CROP_SELECTCROP;Select Crop
 TP_CROP_W;Width
-TP_CROP_X;x
-TP_CROP_Y;y
+TP_CROP_X;X
+TP_CROP_Y;Y
 TP_DARKFRAME_AUTOSELECT;Auto selection
 TP_DARKFRAME_LABEL;Dark Frame
 TP_DEFRINGE_LABEL;Defringe

@@ -691,6 +691,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     delete resImg;// << avoid mem leak!
     int fw = baseImg->width;
     int fh = baseImg->height;
+    //ColorTemp::CAT02 (baseImg, &params)	;//perhaps not good!
 
     ImProcFunctions ipf (&params, false);
     ipf.setScale (sqrt(double(fw*fw+fh*fh))/sqrt(double(thumbImg->width*thumbImg->width+thumbImg->height*thumbImg->height))*scale);
@@ -783,6 +784,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     //ipf.luminanceCurve (labView, labView, curve);
     ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,lhskcurve, curve, utili, autili, butili, ccutili,cclutili);
 	ipf.vibrance(labView);
+	ColorTemp::ciecam_02 (labView, &params);
 
     // color processing
     //ipf.colorCurve (labView, labView);

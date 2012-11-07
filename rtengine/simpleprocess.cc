@@ -107,6 +107,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
+
     // perform luma/chroma denoise
     LabImage* labView = new LabImage (fw,fh);
     if (params.dirpyrDenoise.enabled) {
@@ -218,6 +219,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	//ipf.luminanceCurve (labView, labView, curve);
 	ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,lhskcurve,curve, utili, autili, butili, ccutili,cclutili);
 	ipf.vibrance(labView);
+//	ColorTemp::ciecam_02 (labView, &params);
 
 	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
@@ -241,6 +243,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	// directional pyramid equalizer
     ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
+	ColorTemp::ciecam_02 (labView, &params);
 
 	// end tile processing...???
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

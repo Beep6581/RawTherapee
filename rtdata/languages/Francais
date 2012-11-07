@@ -185,6 +185,7 @@ FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes <b>-</b>
 GENERAL_ABOUT;À propos
 GENERAL_AFTER;Après
+GENERAL_AUTO;Automatique
 GENERAL_BEFORE;Avant
 GENERAL_CANCEL;Annuler
 GENERAL_DISABLED;Désactivé
@@ -395,6 +396,26 @@ HISTORY_MSG_169;Courbe 'CT'
 HISTORY_MSG_170;Vibrance - courbe
 HISTORY_MSG_171;Courbe 'LC'
 HISTORY_MSG_172;Restreindre 'LC' aux tons rouge et peau
+HISTORY_MSG_173;Réd. Bruit - Détail Luminance
+HISTORY_MSG_174;Modèle d'Apparence de la Couleur 2002
+HISTORY_MSG_175;CAM02 - Quantité d'adaptation chrom.
+HISTORY_MSG_176;CAM02 - Environ. de visionnage sombre
+HISTORY_MSG_177;CAM02 - Adapt. lum. de la scène
+HISTORY_MSG_178;CAM02 - Addap. lum. du visionnage
+HISTORY_MSG_179;CAM02 - Modèle
+HISTORY_MSG_180;CAM02 - Lumière (J)
+HISTORY_MSG_181;CAM02 - Couleur (C)
+HISTORY_MSG_182;CAM02 - CAT02 Automatique
+HISTORY_MSG_183;CAM02 - Contraste (J)
+HISTORY_MSG_184;CAM02 - Scène avec entourage sombre
+HISTORY_MSG_185;CAM02 - Controle du gamut
+HISTORY_MSG_186;CAM02 - Algorithme
+HISTORY_MSG_187;CAM02 - Prot. tons rouges &amp; chair
+HISTORY_MSG_188;CAM02 - Brillance (Q)
+HISTORY_MSG_189;CAM02 - Contraste (Q)
+HISTORY_MSG_190;CAM02 - Saturation (S)
+HISTORY_MSG_191;CAM02 - Niveau de couleur (M)
+HISTORY_MSG_192;CAM02 - Teinte (angle)
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
@@ -644,6 +665,20 @@ PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
+PREFERENCES_VIEW;Réglage du point blanc du périphérique sortie (moniteur, TV, projecteur,...)
+PREFERENCES_D65;6500K
+PREFERENCES_D60;6000K
+PREFERENCES_D55;5500K
+PREFERENCES_D50;5000K
+PREFERENCES_BLACKBODY;Tungstène
+PREFERENCES_GREY;Luminance Yb du périphérique de sortie (%)
+PREFERENCES_GREY05;Yb=05 CIE L#30
+PREFERENCES_GREY10;Yb=10 CIE L#40
+PREFERENCES_GREY15;Yb=15 CIE L#45
+PREFERENCES_GREY18;Yb=18 CIE L#50
+PREFERENCES_GREY23;Yb=23 CIE L#55
+PREFERENCES_GREY30;Yb=30 CIE L#60
+PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\nParamètres de ligne de commande pour permettre la génération d'un .pp3 basé sur des règles:\n[Chemin vers le fichier RAW/JPG] [Chemin vers le profil par défault] [ouverture f] [tps d'exposition en seconde] [longueur focale en mm] [ISO] [Objectif] [Appareil photo]
 PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
@@ -850,22 +885,55 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite
 TP_COARSETRAF_TOOLTIP_VFLIP;Symétriser / axe horizontal
-TP_COLORBOOST_ACHANNEL;canal "a"
-TP_COLORBOOST_AMOUNT;Quantité
-TP_COLORBOOST_AVOIDCOLORCLIP;Éviter l'écrêtage couleur
-TP_COLORBOOST_BCHANNEL;canal "b"
-TP_COLORBOOST_CHANNEL;Canal
-TP_COLORBOOST_CHSEPARATE;séparé
-TP_COLORBOOST_ENABLESATLIMITER;Activer le limiteur de saturation
-TP_COLORBOOST_LABEL;Rehaussement couleur
-TP_COLORBOOST_SATLIMIT;Limite de saturation
-TP_COLORDENOISE_EDGESENSITIVE;Sensible aux bords
-TP_COLORDENOISE_EDGETOLERANCE;Tolérance des bords
-TP_COLORDENOISE_LABEL;Réduction du bruit chromatique
-TP_COLORDENOISE_RADIUS;Rayon
-TP_COLORSHIFT_BLUEYELLOW;Bleu-Jaune
-TP_COLORSHIFT_GREENMAGENTA;Vert-Magenta
-TP_COLORSHIFT_LABEL;Décalage couleur
+TP_COLORAPP_ADAPTSCENE;Luminosité d'adaptation (cd/m2)
+TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminance absolue de l'environnement de la scène\n(souvent 2000cd/m2)
+TP_COLORAPP_ADAPTVIEWING;Luminosité d'adaptation (cd/m2)
+TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Luminance absolue de l'environnement de visionnage\n(souvent 16cd/m2)
+TP_COLORAPP_ALGO;Algorithme
+TP_COLORAPP_ALGO_ALL;Tout
+TP_COLORAPP_ALGO_JC;Luminosité + Chroma (JC)
+TP_COLORAPP_ALGO_JS;Luminosité + Saturation (JS)
+TP_COLORAPP_ALGO_QM;Brillance + Niveau de couleur (QM)
+TP_COLORAPP_ALGO_TOOLTIP;Permet de choisir entre des jeux réduits de paramètre ou tout les paramètres
+TP_COLORAPP_BRIGHT;Brillance (Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;Brillance dans CIECAM02 est différent de Lab et RVB, prend en compte la luminosité du blanc
+TP_COLORAPP_CHROMA;Chroma (C)
+TP_COLORAPP_CHROMA_M;Niveau de couleurs (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;Niveau de couleurs dans CIECAM02 est différent de Lab et RVB
+TP_COLORAPP_CHROMA_S;Saturation (S)
+TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation dans CIECAM02 est différent de Lab et RVB
+TP_COLORAPP_CHROMA_TOOLTIP;Chroma dans CIECAM02 est différent de Lab et RVB
+TP_COLORAPP_CIECAT_DEGREE;Adaptation CAT02
+TP_COLORAPP_CONTRAST;Contraste (J)
+TP_COLORAPP_CONTRAST_Q;Contraste (Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contraste dans CIECAM02 pour le curseur (Q); est différent du contraste Lab et RVB
+TP_COLORAPP_CONTRAST_TOOLTIP;Contraste dans CIECAM02 pour le curseur (J); est différent du contraste Lab et RVB
+TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002\nSi vous sélectionnez " <i>Automatic</i> ", RT essaiera de trouver la meilleure valeur
+TP_COLORAPP_EQUAL;Préservé
+TP_COLORAPP_GAMUT;Contrôle du gamut (Lab & CIECAM)
+TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
+TP_COLORAPP_HUE;Teinte (H)
+TP_COLORAPP_HUE_TOOLTIP;Teinte (H) - angle entre 0° et 360°
+TP_COLORAPP_LABEL;Modèle CIE d'Apparence de la Couleur (CAM02)
+TP_COLORAPP_LABEL_CAM02;Édition de l'image avec CIECAM
+TP_COLORAPP_LABEL_SCENE;Conditions de la scène
+TP_COLORAPP_LABEL_VIEWING;Conditions de visionnage
+TP_COLORAPP_LIGHT;Luminosité (J)
+TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de Lab et RVB
+TP_COLORAPP_MODEL;Modèle de Point Blanc
+TP_COLORAPP_MODEL_TOOLTIP;<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglé dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglé dans Préférences
+TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges (C)
+TP_COLORAPP_RSTPRO_TOOLTIP;Protection par le curseur (C) des tons chairs et rouges
+TP_COLORAPP_SURROUND;Entourage
+TP_COLORAPP_SURROUND_AVER;Moyen
+TP_COLORAPP_SURROUND_DARK;Sombre
+TP_COLORAPP_SURROUND_DIM;Tamisé
+TP_COLORAPP_SURROUND_EXDARK;Extrêmement Sombre (Transparent)
+TP_COLORAPP_SURROUND_TOOLTIP;Changes les tons et couleurs pour prendre en compte les conditions de visionnage du périphérique de sortie\n\n<b>Moyen:</b>\nLuminance de l'entourage moyen (standard)\nL'image ne vas pas changer\n\n<b>Tamisé:</b>\nEntourage légèrement sombre (TV)\nL'image va devenir un peu plus sombre\n\n<b>Sombre:</b>\nEntourage sombre (projecteur)\nL'image va devenir plus sombre\n\n<b>Extrêmement sombre:</b>\nEntourage noir (transparents)\nL'image va devenir encore plus sombre
+TP_COLORAPP_SURSOURCE;Entourage sombre
+TP_COLORAPP_SURSOURCE_TOOLTIP;Peut être utilisé si l'image source a un bord noir.
+TP_COLORAPP_WBCAM;BB [RT+CAT02] + [sortie]
+TP_COLORAPP_WBRT;BB [RT] + [sortie]
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
 TP_CROP_GTEPASSPORT;Passeport biométrique
@@ -883,8 +951,8 @@ TP_CROP_LABEL;Recadrage
 TP_CROP_PPI;PPI=
 TP_CROP_SELECTCROP;    Sélection du recadrage
 TP_CROP_W;L
-TP_CROP_X;x
-TP_CROP_Y;y
+TP_CROP_X;X
+TP_CROP_Y;Y
 TP_DARKFRAME_AUTOSELECT;Sélection automatique
 TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Aberration chromatique

@@ -28,6 +28,8 @@ using namespace rtengine::procparams;
 
 FlatField::FlatField () : Gtk::VBox(), FoldableToolPanel(this)
 {
+	set_border_width(4);
+
 	hbff = Gtk::manage(new Gtk::HBox());
 	flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
 	flatFieldFilePersister.reset(new FileChooserLastFolderPersister(flatFieldFile, options.lastFlatfieldDir));

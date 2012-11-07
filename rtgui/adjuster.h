@@ -27,8 +27,9 @@ class Adjuster;
 class AdjusterListener {
 
   public:
-	virtual ~AdjusterListener() {};
+    virtual ~AdjusterListener() {};
     virtual void adjusterChanged (Adjuster* a, double newval) {}
+    virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
 };
 
 
@@ -41,21 +42,28 @@ class Adjuster : public Gtk::VBox {
     MyHScale* slider;
     MySpinButton* spin;
     Gtk::Button* reset;
+    Gtk::CheckButton* automatic;
     AdjusterListener* adjusterListener;
     sigc::connection delayConnection;
     sigc::connection spinChange;
     sigc::connection sliderChange;
     sigc::connection editedChange;
+    sigc::connection autoChange;
+    sigc::connection buttonReleaseSlider;
+    sigc::connection buttonReleaseSpin;
     bool listenerReady;
     double defaultVal;			// current default value (it can change when switching from ADD or SET mode)
     double initialDefaultVal;	// default value at construction time
     EditedState editedState;
     EditedState defEditedState;
+    EditedState autoState;
+    EditedState defAutoState;
     int digits;
     Gtk::CheckButton* editedCheckBox;
-	bool afterReset;
+    bool afterReset;
     bool blocked;
     bool addMode;
+    bool eventPending;
     double vMin;
     double vMax;
     double vStep;
@@ -70,6 +78,19 @@ class Adjuster : public Gtk::VBox {
     Adjuster (Glib::ustring label, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
     Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
     virtual ~Adjuster ();
+
+    // Add an "Automatic" checkbox next to the reset button.
+    void addAutoButton();
+    // Remove the "Automatic" checkbox next to the reset button.
+    void delAutoButton();
+    // Send back the value of og the Auto checkbox
+    bool getAutoValue () { return automatic!=NULL ? automatic->get_active () : false; }
+    void setAutoValue (bool a);
+    bool notifyListenerAutoToggled ();
+    void autoToggled ();
+    void setAutoInconsistent (bool i) { if (automatic) automatic->set_inconsistent(i);  }
+    bool getAutoInconsistent () { return automatic ? automatic->get_inconsistent() : true /* we have to return something */; }
+
     void setAdjusterListener (AdjusterListener* alistener) { adjusterListener = alistener; }
 
     // return the value trimmed to the limits at construction time
@@ -77,26 +98,30 @@ class Adjuster : public Gtk::VBox {
     // return the value trimmed to the limits at construction time
     int getIntValue () { return spin->get_value_as_int (); }
     // return the value trimmed to the limits at construction time,
-    // method only used by the history manager
-    Glib::ustring getTextValue () { return spin->get_text (); }
+    // method only used by the history manager, so decoration is added if addMode=true
+    Glib::ustring getTextValue () { if (addMode) return Glib::ustring::compose("<i>%1</i>", spin->get_text ()); else return spin->get_text (); }
 
     void setLabel (Glib::ustring lbl) { label->set_label(lbl); }
-    void setValue (double a);   
+    void setValue (double a);
     void setLimits (double vmin, double vmax, double vstep, double vdefault);
     void setEnabled (bool enabled);
     void setDefault (double def);
+    // will let the adjuster throw it's "changed" signal when the mouse button is released. Can work altogether with the delay value.
+    void throwOnButtonRelease(bool throwOnBRelease=true);
     void setNbDisplayedChars (int nbr) { spin->set_width_chars(nbr); }
     void setEditedState (EditedState eState);
     EditedState getEditedState ();
     void setDefaultEditedState (EditedState eState);
     void showEditedCB ();
-    void block(bool isBlocked) { blocked = isBlocked; }
-    
+    bool block(bool isBlocked) { bool oldValue = blocked; blocked = isBlocked; return oldValue; }
+
     void setAddMode(bool addM);
     bool getAddMode() { return addMode; };
     void spinChanged ();
     void sliderChanged ();
     bool notifyListener ();
+    void sliderReleased (GdkEventButton* event);
+    void spinReleased (GdkEventButton* event);
     void resetPressed (GdkEventButton* event);
     void editedToggled ();
     double trimValue (double& val);

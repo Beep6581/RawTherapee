@@ -31,6 +31,7 @@
 class ICMPanelListener {
 
     public:
+        virtual ~ICMPanelListener() {}
         virtual void saveInputICCReference (Glib::ustring fname) {}
 };
 
@@ -48,6 +49,8 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         sigc::connection blendcmsconn;
 
     private:
+        Gtk::VBox       *  iVBox;
+
         Gtk::CheckButton*  freegamma;
         Gtk::RadioButton*  inone;
 
