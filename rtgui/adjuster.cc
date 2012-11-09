@@ -439,7 +439,6 @@ void Adjuster::setAutoValue (bool a) {
 bool Adjuster::notifyListener () {
 
   if (eventPending && adjusterListener!=NULL && !blocked) {
-    GThreadLock lock;
     adjusterListener->adjusterChanged (this, spin->get_value ());
   }
   eventPending = false;
@@ -450,7 +449,6 @@ bool Adjuster::notifyListener () {
 bool Adjuster::notifyListenerAutoToggled () {
 
   if (adjusterListener!=NULL && !blocked) {
-    GThreadLock lock;
     adjusterListener->adjusterAutoToggled(this, automatic->get_active());
   }
   return false;
