@@ -489,6 +489,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&>(customToneCurve1);
+					tmpImage->r[i][j] = CLIP<float>(tmpImage->r[i][j]);
+					tmpImage->g[i][j] = CLIP<float>(tmpImage->g[i][j]);
+					tmpImage->b[i][j] = CLIP<float>(tmpImage->b[i][j]);
+
 					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
 				}
 			}
@@ -500,6 +504,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurve1);
+					tmpImage->r[i][j] = CLIP<float>(tmpImage->r[i][j]);
+					tmpImage->g[i][j] = CLIP<float>(tmpImage->g[i][j]);
+					tmpImage->b[i][j] = CLIP<float>(tmpImage->b[i][j]);
+
 					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
 				}
 			}

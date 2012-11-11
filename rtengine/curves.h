@@ -381,9 +381,9 @@ inline void WeightedStdToneCurve::Apply (float& r, float& g, float& b) const {
     float r3 = Triangle(b, b3, r);
     float g3 = Triangle(b, b3, g);
 
-    r = LIM((r1*0.50f + r2*0.25f + r3*0.25f), 0.f, 65535.f);
-    g = LIM((g1*0.25f + g2*0.50f + g3*0.25f), 0.f, 65535.f);
-    b = LIM((b1*0.25f + b2*0.25f + b3*0.50f), 0.f, 65535.f);
+    r = CLIP<float>( r1*0.50f + r2*0.25f + r3*0.25f);
+    g = CLIP<float>(g1*0.25f + g2*0.50f + g3*0.25f);
+    b = CLIP<float>(b1*0.25f + b2*0.25f + b3*0.50f);
 }
 
 // Tone curve modifying the value channel only, preserving hue and saturation
