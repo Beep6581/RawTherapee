@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.4, 2012-06-28
+# Version 2.5, 2012-11-13
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -74,8 +74,8 @@ compile () {
       cd "$repo" || exit 1
       echo
       printf "%s\n" "Cleaning out old CMake files"
-      make clean
-      ./clean.sh
+      make clean || { printf "%s\n" "Error while running \"make clean\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
+      ./clean.sh || { printf "%s\n" "Error while running \"./clean.sh\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
       echo
 
       # print current line in script:
@@ -85,7 +85,7 @@ compile () {
       if [[ ! $patched = b ]]; then
         printf "%s\n" "Updating the local repository."
         hg pull
-        hg update ${branch}
+        hg update -C ${branch}
       else
         printf "%s\n" "You ran this script with the \"b\" option (\"build-only\")." "Skipping repository update and binary zip creation."
       fi
@@ -233,7 +233,7 @@ setVars () {
   checkBits
   repo="${HOME}/rawtherapee" && echo "Repository is set to ${repo}"
   cpuCount="`grep -c 'processor' /proc/cpuinfo`"
-  if (( "$cpuCount" >= 1 && "$cpuCount" <= 8 )); then echo "CPU count detected as ${cpuCount}"; else cpuCount="1"; echo "CPU count set to ${cpuCount}"; fi
+  if (( "$cpuCount" >= 1 && "$cpuCount" <= 16 )); then echo "CPU count detected as ${cpuCount}"; else cpuCount="1"; echo "CPU count set to ${cpuCount}"; fi
   procTarget="2" && echo "procTarget set to ${procTarget}"
 
   if hash notify-send 2>/dev/null; then alert_type="notify-send"
