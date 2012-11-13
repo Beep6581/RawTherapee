@@ -936,6 +936,15 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 			}
 		} //if (!ctrl)
     } //if (!alt)
+    
+    if (alt){
+    	switch (event->keyval) {
+			case GDK_s:
+				history->addBookmarkPressed ();
+				setProgressStr(M("PROGRESSBAR_SNAPSHOT_ADDED"));
+				return true;
+		}
+    }
 
     if(tpc->getToolBar()->handleShortcutKey(event))
         return true;
