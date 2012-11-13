@@ -197,7 +197,8 @@ checkDistro () {
         # distribution=${distro} because if none of the elements match, distro will =YellowDog (last item in the list)
         # add "break 2;" to the end if we really want to, but Ubuntu gets detected as Debian first, then as Ubuntu,
         # so we might want to not break the loop.
-        [[ -e "$loc" ]] && { distribution=${distro}; echo "Distribution detected as ${distribution}"; } 
+        [[ -e "$loc" ]] && { distribution=${distro}; echo "Distribution detected as ${distribution}"; }
+        [[ "$distro" = Gentoo ]] && break 2
     done
   done
 
