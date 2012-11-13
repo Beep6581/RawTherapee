@@ -56,6 +56,7 @@ class History : public Gtk::VBox, public PParamsChangeListener {
         BookmarkColumns bookmarkColumns;
 
     protected:    
+        Gtk::VPaned*            historyVPaned;
         Gtk::ScrolledWindow*    hscrollw;
         Gtk::TreeView*          hTreeView;
         Glib::RefPtr<Gtk::ListStore> historyModel;
