@@ -348,19 +348,37 @@ class WBParams {
     /**
      * Parameters of colorappearance
      */
-    class ColorappearanceParams {
+    class ColorAppearanceParams {
 
     public:
+        enum eTCModeId {
+            TC_MODE_LIGHT,    // Lightness mode
+            TC_MODE_BRIGHT,   // Brightness mode
+        };
+
+        enum eCTCModeId {
+            TC_MODE_CHROMA,   // chroma mode
+            TC_MODE_SATUR,    // saturation mode
+            TC_MODE_COLORF,   // colorfullness mode
+       };
+
         bool          enabled;
         int           degree;
         bool          autodegree;
+        std::vector<double> curve;
+        std::vector<double> curve2;
+        std::vector<double> curve3;
+        eTCModeId     curveMode;
+        eTCModeId     curveMode2;
+        eCTCModeId    curveMode3;
+
         Glib::ustring surround;
-        double         adapscen;
-        double         adaplum;
+        double        adapscen;
+        double        adaplum;
         Glib::ustring wbmodel;
         Glib::ustring algo;
-        double        contrast;		
-        double        qcontrast;		
+        double        contrast;
+        double        qcontrast;
         double        jlight;
         double        qbright;
         double        chroma;
@@ -368,8 +386,8 @@ class WBParams {
         double        mchroma;
         double        colorh;
         double        rstprotection;
-		bool          surrsource;
-		bool		  gamut;
+        bool          surrsource;
+        bool          gamut;
     };
 
 /**
@@ -717,7 +735,7 @@ class ProcParams {
         VibranceParams          vibrance;        ///< Vibrance parameters
         //ColorBoostParams        colorBoost;      ///< Color boost parameters
         WBParams                wb;              ///< White balance parameters
-        ColorappearanceParams   colorappearance;
+        ColorAppearanceParams   colorappearance;
         //ColorShiftParams        colorShift;      ///< Color shift parameters
         //LumaDenoiseParams       lumaDenoise;     ///< Luminance denoising parameters
         //ColorDenoiseParams      colorDenoise;    ///< Color denoising parameters

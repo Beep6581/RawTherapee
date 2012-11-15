@@ -48,7 +48,7 @@ namespace rtengine {
     const float Color::D50z=0.82521;
     const double Color::u0=4.0*D50x/(D50x+15+3*D50z);
     const double Color::v0=9.0/(D50x+15+3*D50z);
-	const double Color::epskap=8.0;
+    const double Color::epskap=8.0;
     /*
      * Munsell Lch correction
      * Copyright (c) 2011  Jacques Desmis <jdesmis@gmail.com>
@@ -201,9 +201,9 @@ namespace rtengine {
             r = g = b = 65535.0f * l; //  achromatic
         else {
             double m2;
-        	double h_ = double(h);
+            double h_ = double(h);
             double s_ = double(s);
-        	double l_ = double(l);
+            double l_ = double(l);
 
             if (l <= 0.5f)
                 m2 = l_ * (1.0 + s_);
@@ -520,33 +520,76 @@ namespace rtengine {
             Z = (12 - 3*u - 20*v)*Y/(4*v);
     }
 
+	void Color::skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s)
+	{
+		float factorskin, factorsat,factor, factorskinext, interm;
+		float scale = 100.0f/100.1f;//reduction in normal zone
+		float scaleext=1.0f;//reduction in transition zone
+		float protect_redh;
+		float deltaHH=0.3f;//HH value transition : I have choice 0.3 radians
+		float HH;
+		bool doskin=false;
+		//rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
+		if     ((float)h>8.6f  && (float)h<=74.f ) {HH=(1.15f/65.4f)*(float)h-0.0012f;  doskin=true;}//H > 0.15   H<1.3
+		else if((float)h>0.f   && (float)h<=8.6f ) {HH=(0.19f/8.6f )*(float)h-0.04f;    doskin=true;}//H>-0.04 H < 0.15
+		else if((float)h>355.f && (float)h<=360.f) {HH=(0.11f/5.0f )*(float)h-7.96f;    doskin=true;}//H>-0.15 <-0.04
+		else if((float)h>74.f  && (float)h<95.f  ) {HH=(0.30f/21.0f)*(float)h+0.24285f; doskin=true;}//H>1.3  H<1.6
+
+		if(doskin)
+		{
+			float chromapro=sres/Sp;
+			if(sk==1){//in C mode to adapt dred to J
+			if     (J<16.0)   dred = 40.0f;
+			else if(J<22.0)   dred = (4.1666f)*(float)J -26.6f;
+			else if(J<60.0)   dred = 55.0f;
+			else if(J<70.0)   dred = -1.5f*(float)J +145.0f;
+			else              dred = 40.0f;
+			}
+			if(chromapro>0.0) Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//Scale factor
+			if(chromapro>1.0) {interm=(chromapro-1.0f)*100.0f;
+				factorskin= 1.0f+(interm*scale)/100.0f;
+				factorskinext=1.0f+(interm*scaleext)/100.0f;}
+			else {
+				factorskin= chromapro ;
+				factorskinext= chromapro ;
+			}
+			factorsat=chromapro;
+			factor=factorsat;
+			Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);	//transition
+			s*=factor;
+		}
+		else s=ko*sres;
+
+	}
+
+
 	void Color::scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext)
-    {
-				if(rstprotection<99.9999) {
-					if(param > limit)
-						scale = rstprotection/100.1f;
-					if((HH< (1.3f+deltaHH) && HH >=1.3f))
-						scaleext=HH*(1.0f-scale)/deltaHH + 1.0f - (1.3f+deltaHH)*(1.0f-scale)/deltaHH;    //transition for Hue (red - yellow)
-					else if((HH< 0.15f && HH >(0.15f-deltaHH)))
-						scaleext=HH*(scale-1.0f)/deltaHH + 1.0f - (0.15f-deltaHH)*(scale-1.0f)/deltaHH;   //transition for hue (red purple)
-				}
+	{
+		if(rstprotection<99.9999) {
+			if(param > limit)
+				scale = rstprotection/100.1f;
+			if((HH< (1.3f+deltaHH) && HH >=1.3f))
+				scaleext=HH*(1.0f-scale)/deltaHH + 1.0f - (1.3f+deltaHH)*(1.0f-scale)/deltaHH;    //transition for Hue (red - yellow)
+			else if((HH< 0.15f && HH >(0.15f-deltaHH)))
+				scaleext=HH*(scale-1.0f)/deltaHH + 1.0f - (0.15f-deltaHH)*(scale-1.0f)/deltaHH;   //transition for hue (red purple)
+		}
 	}
 	
 	void Color::transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor)
 	{
-				if(HH>=0.15f && HH<1.3f) {
-					if (Chprov1<dred)
-						factor = factorskin;
-					else if(Chprov1<(dred+protect_red))
-						factor = (factorsat-factorskin)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskin)/protect_red;
-				}
-				// then test if chroma is in the extanded range
-				else if ( HH>(0.15f-deltaHH) || HH<(1.3f+deltaHH) ) {
-					if (Chprov1 < dred)
-						factor = factorskinext;// C=dred=55 => real max of skin tones
-					else if (Chprov1 < (dred+protect_red))// transition
-						factor = (factorsat-factorskinext)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskinext)/protect_red;
-				}
+		if(HH>=0.15f && HH<1.3f) {
+			if (Chprov1<dred)
+				factor = factorskin;
+			else if(Chprov1<(dred+protect_red))
+				factor = (factorsat-factorskin)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskin)/protect_red;
+		}
+		// then test if chroma is in the extanded range
+		else if ( HH>(0.15f-deltaHH) || HH<(1.3f+deltaHH) ) {
+			if (Chprov1 < dred)
+				factor = factorskinext;// C=dred=55 => real max of skin tones
+			else if (Chprov1 < (dred+protect_red))// transition
+				factor = (factorsat-factorskinext)/protect_red*Chprov1+factorsat-(dred+protect_red)*(factorsat-factorskinext)/protect_red;
+		}
 	}
 	
     /*
@@ -588,17 +631,17 @@ namespace rtengine {
                     correctL=false;
                     MunsellLch (Lprov1, HH,Chprov1, CC, correctionHue, zo, correctionHueLum, correctL);        //munsell chroma correction
 #ifdef _DEBUG
-					float absCorrectionHue = fabs(correctionHue);
+                    float absCorrectionHue = fabs(correctionHue);
                     if(correctionHue !=0.0) {
-                    	int idx=zo-1;
+                        int idx=zo-1;
 #pragma omp critical (maxdhue)
 {
-						munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
+munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 }
                     }
                     if(absCorrectionHue > 0.45)
 #pragma omp atomic
-                    	munsDbgInfo->depass++;        //verify if no bug in calculation
+                        munsDbgInfo->depass++;        //verify if no bug in calculation
 #endif
                     correctionHuechroma=correctionHue;    //preserve
                     if(lumaMuns) {
@@ -624,17 +667,17 @@ namespace rtengine {
                             if(contin1==true && contin2==true)
                                 correctlum=correctlumprov2-correctlumprov;
 #ifdef _DEBUG
-                        	float absCorrectLum = fabs(correctlum);
+                            float absCorrectLum = fabs(correctlum);
                             if(correctlum !=0.0) {
-                            	int idx=zo-1;
+                                int idx=zo-1;
 #pragma omp critical (maxdhuelum)
 {
-                            	munsDbgInfo->maxdhuelum[idx] = MAX(munsDbgInfo->maxdhuelum[idx],absCorrectLum);
+                                munsDbgInfo->maxdhuelum[idx] = MAX(munsDbgInfo->maxdhuelum[idx],absCorrectLum);
 }
                             }
                             if(absCorrectLum > 0.35)
 #pragma omp atomic
-                            	munsDbgInfo->depassLum++;    //verify if no bug in calculation
+                                munsDbgInfo->depassLum++;    //verify if no bug in calculation
 #endif
                         }
                     }
@@ -675,7 +718,7 @@ namespace rtengine {
 #endif
     {
         const float ClipLevel = 65535.0f;
-    	bool inGamut;
+        bool inGamut;
 #ifdef _DEBUG
         neg=false, more_rgb=false;
 #endif
@@ -694,7 +737,7 @@ namespace rtengine {
             float x_ = 65535.0f * f2xyz(fx)*D50x;
            // float y_ = 65535.0f * f2xyz(fy);
             float z_ = 65535.0f * f2xyz(fz)*D50z;
-			float y_=(Lprov1>epskap) ? 65535.0*fy*fy*fy : 65535.0*Lprov1/kappa;
+            float y_=(Lprov1>epskap) ? 65535.0*fy*fy*fy : 65535.0*Lprov1/kappa;
 
             xyz2rgb(x_,y_,z_,R,G,B,wip);
 
@@ -706,9 +749,9 @@ namespace rtengine {
                 if (Lprov1 < 0.01f) Lprov1 = 0.01f;
                 Chprov1 *= higherCoef; // decrease the chromaticity value
                 if (Chprov1 <= 3.0f) Lprov1 += lowerCoef;
-				inGamut = false;
+                inGamut = false;
                 } else
-			// if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
+                // if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
                 if (!isHLEnabled && (R>ClipLevel || G>ClipLevel || B>ClipLevel)) {
 #ifdef _DEBUG
                 more_rgb=true;
@@ -716,7 +759,7 @@ namespace rtengine {
                 if (Lprov1 > 99.999f) Lprov1 = 99.98f;
                 Chprov1 *= higherCoef;
                 if (Chprov1 <= 3.0f) Lprov1 -= lowerCoef;
-				inGamut = false;
+                inGamut = false;
             }
         }
         while (!inGamut);
@@ -752,7 +795,7 @@ namespace rtengine {
         int negat=0, moreRGB=0;
         MunsellDebugInfo* MunsDebugInfo=NULL;
         if (corMunsell)
-        	MunsDebugInfo = new MunsellDebugInfo();
+            MunsDebugInfo = new MunsellDebugInfo();
 
     #pragma omp parallel default(shared) firstprivate(MunsDebugInfo) reduction(+: negat, moreRGB) if (multiThread)
 #else
@@ -822,11 +865,11 @@ namespace rtengine {
 #ifdef _DEBUG
         t2e.set();
         if (settings->verbose) {
-        	printf("Color::LabGamutMunsell (correction performed in %d usec):\n", t2e.etime(t1e));
+            printf("Color::LabGamutMunsell (correction performed in %d usec):\n", t2e.etime(t1e));
             printf("   Gamut              : G1negat=%iiter G165535=%iiter \n",negat,moreRGB);
             if (MunsDebugInfo) {
-           	printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%i\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
-			printf("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%i\n", MunsDebugInfo->maxdhuelum[0] ,MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
+                printf("   Munsell chrominance: MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%i\n", MunsDebugInfo->maxdhue[0],    MunsDebugInfo->maxdhue[1],    MunsDebugInfo->maxdhue[2],    MunsDebugInfo->maxdhue[3],    MunsDebugInfo->depass);
+                printf("   Munsell luminance  : MaxBP=%1.2frad  MaxRY=%1.2frad  MaxGY=%1.2frad  MaxRP=%1.2frad  depass=%i\n", MunsDebugInfo->maxdhuelum[0] ,MunsDebugInfo->maxdhuelum[1], MunsDebugInfo->maxdhuelum[2], MunsDebugInfo->maxdhuelum[3], MunsDebugInfo->depassLum);
             }
             else {
            	printf("   Munsell correction wasn't requested\n");

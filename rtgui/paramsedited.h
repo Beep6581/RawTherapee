@@ -181,9 +181,15 @@ public:
     bool thresh;
 };
 
-class ColorappearanceParamsEdited {
+class ColorAppearanceParamsEdited {
 
 public:
+    bool curve;
+    bool curve2;
+	bool curve3;
+    bool curveMode;
+    bool curveMode2;
+    bool curveMode3;
     bool enabled;
     bool degree;
     bool autodegree;
@@ -411,7 +417,7 @@ class ParamsEdited {
         SharpenEdgeParamsEdited       sharpenEdge;
         SharpenMicroParamsEdited      sharpenMicro;
         VibranceParamsEdited          vibrance;
-        ColorappearanceParamsEdited   colorappearance;
+        ColorAppearanceParamsEdited   colorappearance;
         //ColorBoostParamsEdited        colorBoost;
         WBParamsEdited                wb;
         //ColorShiftParamsEdited        colorShift;

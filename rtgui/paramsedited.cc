@@ -112,6 +112,12 @@ void ParamsEdited::set (bool v) {
 	colorappearance.rstprotection     = v;
 	colorappearance.surrsource = v;
 	colorappearance.gamut = v;
+	colorappearance.curve      = v;
+	colorappearance.curve2     = v;
+	colorappearance.curve3     = v;
+    colorappearance.curveMode  = v;
+    colorappearance.curveMode2 = v;
+    colorappearance.curveMode3 = v;
 	
 	//colorBoost.amount         = v;
 	//colorBoost.avoidclip      = v;
@@ -335,6 +341,12 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.colorh = colorappearance.colorh && p.colorappearance.colorh == other.colorappearance.colorh;
         colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
         colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
+        colorappearance.curve = colorappearance.curve && p.colorappearance.curve == other.colorappearance.curve;
+        colorappearance.curve3 = colorappearance.curve3 && p.colorappearance.curve3 == other.colorappearance.curve3;
+		colorappearance.curve2 = colorappearance.curve2 && p.colorappearance.curve2 == other.colorappearance.curve2;
+        colorappearance.curveMode = colorappearance.curveMode && p.colorappearance.curveMode == other.colorappearance.curveMode;
+        colorappearance.curveMode2 = colorappearance.curveMode2 && p.colorappearance.curveMode2 == other.colorappearance.curveMode2;
+        colorappearance.curveMode3 = colorappearance.curveMode3 && p.colorappearance.curveMode3 == other.colorappearance.curveMode3;
 
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
@@ -566,6 +578,13 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (defringe.enabled)					toEdit.defringe.enabled 	= mods.defringe.enabled;
 	if (defringe.radius)					toEdit.defringe.radius 	= mods.defringe.radius;	
 	if (defringe.threshold)					toEdit.defringe.threshold 	= mods.defringe.threshold;
+	
+	if (colorappearance.curve)				toEdit.colorappearance.curve      = mods.colorappearance.curve;
+	if (colorappearance.curve2)				toEdit.colorappearance.curve2     = mods.colorappearance.curve2;
+	if (colorappearance.curve3)				toEdit.colorappearance.curve3     = mods.colorappearance.curve3;
+	if (colorappearance.curveMode)			toEdit.colorappearance.curveMode  = mods.colorappearance.curveMode;
+	if (colorappearance.curveMode2)			toEdit.colorappearance.curveMode2 = mods.colorappearance.curveMode2;
+	if (colorappearance.curveMode3)			toEdit.colorappearance.curveMode3 = mods.colorappearance.curveMode3;
 
 	if (colorappearance.enabled)			toEdit.colorappearance.enabled		= mods.colorappearance.enabled;
 	if (colorappearance.degree)				toEdit.colorappearance.degree		= dontforceSet && options.baBehav[ADDSET_CAT_DEGREE] ? toEdit.colorappearance.degree + mods.colorappearance.degree : mods.colorappearance.degree;

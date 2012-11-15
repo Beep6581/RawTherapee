@@ -233,6 +233,439 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 }
 
+void ImProcFunctions::ciecam_02 (LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3 )
+{
+if(params->colorappearance.enabled) {
+
+#ifdef _DEBUG
+	MyTime t1e,t2e;
+	t1e.set();
+#endif
+
+	int width = lab->W, height = lab->H;
+	double Yw;
+	Yw=1.0;
+	double Xw, Zw;
+	double f,c,nc,yb,la,xw,yw,zw,f2,c2,nc2,yb2,la2;
+	double z,fl,n,nbb,ncb,d,aw;
+	double xwd,ywd,zwd;
+	int alg=0;
+	float sum=0.f;
+	float mean;
+	
+	LUTf bright_curve (65536,0);//init curve
+	LUTf bright_curveQ (65536,0);//init curve
+	
+    LUTu hist16 (65536);
+	LUTu hist16Q (65536);
+	float koef=1.0f;//rough correspondence between L and J	
+    hist16.clear();hist16Q.clear();
+    for (int i=0; i<height; i++)
+        for (int j=0; j<width; j++) {//rough correspondence between L and J	
+			if(((lab->L[i][j])/327.68f)>95.) koef=1.f;
+			else if(((lab->L[i][j])/327.68f)>85.) koef=0.97f;
+			else if(((lab->L[i][j])/327.68f)>80.) koef=0.93f;
+			else if(((lab->L[i][j])/327.68f)>70.) koef=0.87f;
+			else if(((lab->L[i][j])/327.68f)>60.) koef=0.85f;
+			else if(((lab->L[i][j])/327.68f)>50.) koef=0.8f;
+			else if(((lab->L[i][j])/327.68f)>40.) koef=0.75f;
+			else if(((lab->L[i][j])/327.68f)>30.) koef=0.7f;
+			else if(((lab->L[i][j])/327.68f)>20.) koef=0.7f;
+			else if(((lab->L[i][j])/327.68f)>10.) koef=0.9f;
+			else if(((lab->L[i][j])/327.68f)>0.) koef=1.0f;	
+		
+            hist16[CLIP((int)((koef*lab->L[i][j])))]++;//evaluate histogram luminance L # J
+			sum+=koef*lab->L[i][j];//evaluate mean J to calcualte Yb
+			hist16Q[CLIP((int) (32768.f*sqrt((koef*(lab->L[i][j]))/32768.f)))]++;	//for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+	}	
+	mean=(sum/(height*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone 
+	if     (mean<15.f) yb=3.0;
+	else if(mean<30.f) yb=5.0;
+	else if(mean<40.f) yb=10.0;
+	else if(mean<45.f) yb=15.0;
+	else if(mean<50.f) yb=18.0;
+	else if(mean<55.f) yb=23.0;
+	else if(mean<60.f) yb=30.0;
+	else if(mean<70.f) yb=40.0;
+	else if(mean<80.f) yb=60.0;
+	else if(mean<90.f) yb=80.0;
+	else               yb=90.0;
+
+	
+	ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+	//viewing condition for surround
+	if(params->colorappearance.surround=="Average") { f  = 1.00; c  = 0.69; nc = 1.00;f2=1.0,c2=0.69,nc2=1.0;}
+	else if(params->colorappearance.surround=="Dim"){ f2  = 0.9; c2  = 0.59; nc2 = 0.9;f=1.0,c=0.69,nc=1.0;}
+	else if(params->colorappearance.surround=="Dark"){f2  = 0.8; c2  = 0.525;nc2 = 0.8;f=1.0,c=0.69,nc=1.0;}
+	else if(params->colorappearance.surround=="ExtremelyDark"){f2  = 0.8; c2  = 0.41;nc2 = 0.8;f=1.0,c=0.69,nc=1.0;}
+	
+	//scene condition for surround
+	if(params->colorappearance.surrsource==true)  {f  = 0.85; c  = 0.55; nc = 0.85;}// if user => source image has surround very dark 
+	//with which algorithme
+	if     (params->colorappearance.algo=="JC")  alg=0;
+	else if(params->colorappearance.algo=="JS")  alg=1;
+	else if(params->colorappearance.algo=="QM")  alg=2;
+	else if(params->colorappearance.algo=="ALL") alg=3;
+	//settings white point of output device - or illuminant viewing
+	if(settings->viewingdevice==0) {xwd=96.42;ywd=100.0;zwd=82.52;}//5000K
+	else if(settings->viewingdevice==1) {xwd=95.68;ywd=100.0;zwd=92.15;}//5500
+	else if(settings->viewingdevice==2) {xwd=95.24;ywd=100.0;zwd=100.81;}//6000
+	else if(settings->viewingdevice==3)  {xwd=95.04;ywd=100.0;zwd=108.88;}//6500
+	else if(settings->viewingdevice==4)  {xwd=109.85;ywd=100.0;zwd=35.58;}//tungsten
+	else if(settings->viewingdevice==5)  {xwd=99.18;ywd=100.0;zwd=67.39;}//fluo F2
+	else if(settings->viewingdevice==6)  {xwd=95.04;ywd=100.0;zwd=108.75;}//fluo F7
+	else if(settings->viewingdevice==7)  {xwd=100.96;ywd=100.0;zwd=64.35;}//fluo F11
+	
+	
+	//settings mean Luminance Y of output device or viewing
+	if(settings->viewingdevicegrey==0) {yb2=5.0;}
+	else if(settings->viewingdevicegrey==1) {yb2=10.0;}
+	else if(settings->viewingdevicegrey==2) {yb2=15.0;}
+	else if(settings->viewingdevicegrey==3) {yb2=18.0;}
+	else if(settings->viewingdevicegrey==4) {yb2=23.0;}	
+	else if(settings->viewingdevicegrey==5)  {yb2=30.0;}
+	else if(settings->viewingdevicegrey==6)  {yb2=40.0;}
+	
+	//La and la2 = ambiant luminosity scene and viewing
+	la=double(params->colorappearance.adapscen);
+	la2=double(params->colorappearance.adaplum);
+	
+	// level of adaptation
+	double deg=(params->colorappearance.degree)/100.0;
+	double pilot=params->colorappearance.autodegree ? 2.0 : deg;
+	
+	//algoritm's params
+	float jli=params->colorappearance.jlight;
+	float chr=params->colorappearance.chroma;
+	float contra=params->colorappearance.contrast;
+	float qbri=params->colorappearance.qbright;
+	float schr=params->colorappearance.schroma;
+	float mchr=params->colorappearance.mchroma;
+	float qcontra=params->colorappearance.qcontrast;
+	float hue=params->colorappearance.colorh;
+	double rstprotection = 100.-params->colorappearance.rstprotection; 	
+	if(schr>0.0) schr=schr/2.0f;//divide sensibility for saturation
+	
+    // extracting datas from 'params' to avoid cache flush (to be confirmed)
+    ColorAppearanceParams::eTCModeId curveMode = params->colorappearance.curveMode;
+    ColorAppearanceParams::eTCModeId curveMode2 = params->colorappearance.curveMode2;
+    bool hasColCurve1 = bool(customColCurve1);
+    bool hasColCurve2 = bool(customColCurve2);
+    ColorAppearanceParams::eCTCModeId curveMode3 = params->colorappearance.curveMode3;
+    bool hasColCurve3 = bool(customColCurve3);
+	
+	
+	
+	//evaluate lightness, contrast
+	ColorTemp::curveJ (jli, contra, 1, bright_curve, hist16);//lightness and contrast J
+	ColorTemp::curveJ (qbri, qcontra, 1, bright_curveQ, hist16Q);//brightness and contrast Q
+	int gamu=0;
+	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
+	
+	if(params->colorappearance.gamut==true) gamu=1;//enabled gamut control
+	xw=100.0*Xw;
+	yw=100.0*Yw;
+	zw=100.0*Zw;
+	double xw1,yw1,zw1,xw2,yw2,zw2;
+	// settings of WB: scene and viewing
+    if(params->colorappearance.wbmodel=="RawT") {xw1=96.46;yw1=100.0;zw1=82.445;xw2=xwd;yw2=ywd;zw2=zwd;}	//use RT WB; CAT 02 is used for output device (see prefreneces)
+    else if(params->colorappearance.wbmodel=="RawTCAT02") {xw1=xw;yw1=yw;zw1=zw;xw2=xwd;yw2=ywd;zw2=zwd;}	// Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
+	bool doneinit=true;
+	bool doneinit2=true;
+#ifndef _DEBUG	
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,fl,nc,f,c, height,width,doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection)
+#endif
+{	
+	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+	double wip[3][3] = {
+		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+	};
+	
+#ifndef _DEBUG
+#pragma omp for schedule(dynamic, 10)
+#endif
+	for (int i=0; i<height; i++)
+		for (int j=0; j<width; j++) {
+		
+			float L=lab->L[i][j];
+			float a=lab->a[i][j];
+			float b=lab->b[i][j];
+			float x1,y1,z1;
+			double x,y,z;
+			//convert Lab => XYZ
+			Color::Lab2XYZ(L, a, b, x1, y1, z1);
+			double J, C, h, Q, M, s, aw, fl, wh;                       
+			double Jp,Cpr;
+			double Jpro,Cpro, hpro, Qpro, Mpro, spro;
+			bool t1L=false;
+			bool t1B=false;
+			bool t2L=false;
+			bool t2B=false;
+			int c1C=0;
+			int c1s=0;
+			int c1co=0;
+			
+			x=(double)x1/655.35;
+			y=(double)y1/655.35;
+			z=(double)z1/655.35;
+			//process source==> normal
+			ColorTemp::xyz2jchqms_ciecam02( J, C,  h,
+                           Q,  M,  s, aw, fl, wh,
+                           x,  y,  z,
+                           xw1, yw1,  zw1,
+                           yb,  la,
+                           f, c,  nc,  pilot, doneinit, gamu );
+			Jpro=J;
+			Cpro=C; 
+			hpro=h;
+			Qpro=Q; 
+			Mpro=M;
+			spro=s;	
+			// we cannot have all algoritms with all chroma curves
+			if(alg==1) 	{		   
+				// Lightness saturation
+				Jpro=(bright_curve[(float)(Jpro*327.68)])/327.68;//ligthness CIECAM02 + contrast
+				double sres;
+				double Sp=spro/100.0;
+				double parsat=1.5;
+				parsat=1.5;//parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
+				if(schr==-100.0) schr=-99.8;
+				ColorTemp::curvecolor(schr, Sp , sres, parsat);	
+				double coe=pow(fl,0.25);
+				float dred=100.f;// in C mode
+				float protect_red=80.0f; // in C mode
+				dred = 100.0 * sqrt((dred*coe)/Qpro);
+				protect_red=100.0 * sqrt((protect_red*coe)/Qpro);
+				int sk=0;
+				float ko=100.f;
+				Color::skinred(Jpro, hpro, sres, Sp, dred, protect_red,sk,rstprotection,ko, spro);
+				Qpro= ( 4.0 / c ) * sqrt( Jpro / 100.0 ) * ( aw + 4.0 ) ;
+				Cpro=(spro*spro*Qpro)/(10000.0);
+				}
+			else if(alg==3 || alg==0  || alg==2) {
+				double coef=32760./wh;
+				if(alg==3 || alg==2) Qpro=(bright_curveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
+				double Mp, sres;
+				double coe=pow(fl,0.25);
+				Mp=Mpro/100.0;
+				double parsat=2.5;
+				if(mchr==-100.0) mchr=-99.8 ;
+				if(mchr==100.0) mchr=99.9;
+				ColorTemp::curvecolor(mchr, Mp , sres, parsat);//colorfullness
+				float dred=100.f;//in C mode
+				float protect_red=80.0f;// in C mode
+				dred *=coe;//in M mode
+				protect_red	*=coe;//M mode			
+				int sk=0;
+				float ko=100.f;
+				Color::skinred(Jpro, hpro, sres, Mp, dred, protect_red,sk,rstprotection,ko, Mpro);								
+				Jpro=(100.0* Qpro*Qpro) /(wh*wh);
+				Cpro= Mpro/coe;
+				spro = 100.0 * sqrt( Mpro / Qpro );
+				if(alg!=2) Jpro=(bright_curve[(float)(Jpro*327.68)])/327.68;//ligthness CIECAM02 + contrast
+				double Cp;
+				double Sp=spro/100.0;
+				parsat=1.5;
+				if(schr==-100.0) schr=-99.;
+				if(schr==100.0) schr=98.;
+				ColorTemp::curvecolor(schr, Sp , sres, parsat);	//saturation
+				dred=100.f;// in C mode
+				protect_red=80.0f; // in C mode
+				dred = 100.0 * sqrt((dred*coe)/Q);
+				protect_red=100.0 * sqrt((protect_red*coe)/Q);
+				sk=0;
+				Color::skinred(Jpro, hpro, sres, Sp, dred, protect_red,sk,rstprotection,ko, spro);				
+				//double Q1;
+				Qpro= ( 4.0 / c ) * sqrt( Jpro / 100.0 ) * ( aw + 4.0 ) ;
+				Cpro=(spro*spro*Qpro)/(10000.0);
+				Cp=Cpro/100.0;
+				parsat=1.8;//parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation : for not)
+				if(chr==-100.0) chr=-99.8;
+				ColorTemp::curvecolor(chr, Cp , sres, parsat);	//chroma
+				dred=55.f;
+				protect_red=30.0f;
+				sk=1;
+				Color::skinred(Jpro, hpro, sres, Cp, dred, protect_red,sk,rstprotection, ko, Cpro);
+				
+				hpro=hpro+hue;if( hpro < 0.0 ) hpro += 360.0;//hue
+			}
+			
+	 if (hasColCurve1) {//curve 1 with Lightness and Brightness
+		if (curveMode==ColorAppearanceParams::TC_MODE_LIGHT){
+		    float Jj=(float) Jpro*327.68;
+			float Jold=Jj;
+			const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve1);
+				userColCurve.Apply(Jj);
+				Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility	
+			Jpro=(double)(Jj/327.68f);	
+			t1L=true;
+		}
+	else if (curveMode==ColorAppearanceParams::TC_MODE_BRIGHT){ 
+			double coef=32760./wh;
+			float Qq=(float) Qpro*coef;
+			float Qold=Qq;
+			const Brightcurve& userColCurve = static_cast<const Brightcurve&>(customColCurve1);
+					userColCurve.Apply(Qq);
+					Qq=0.5f*(Qq-Qold)+Qold;//divide sensibility	
+			Qpro=(double)(Qq/coef);	
+			Jpro=(100.0* Qpro*Qpro) /(wh*wh);
+			t1B=true;
+		}
+	}
+	
+	if (hasColCurve2) {//curve 2 with Lightness and Brightness
+		if (curveMode2==ColorAppearanceParams::TC_MODE_LIGHT){  
+			float Jj=(float) Jpro*327.68;
+			float Jold=Jj;			
+			const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve2);
+					userColCurve.Apply(Jj);
+					Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility
+			Jpro=(double)(Jj/327.68f);	
+			t2L=true;	
+		}
+	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ // 
+			double coef=32760./wh;
+			float Qq=(float) Qpro*coef;
+			float Qold = Qq;	
+			const Brightcurve& userColCurve = static_cast<const Brightcurve&>(customColCurve2);
+					userColCurve.Apply(Qq);
+					Qq=0.5f*(Qq-Qold)+Qold;//divide sensibility		
+			Qpro=(double)(Qq/coef);	
+			Jpro=(100.0* Qpro*Qpro) /(wh*wh);
+			t2B=true;
+			}
+	}
+	
+	if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
+		if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA){  
+		    double parsat=1.;
+			double coef=327.68/parsat;
+			float Cc=(float) Cpro*coef;
+			float Ccold=Cc;
+			const Chromacurve& userColCurve = static_cast<const Chromacurve&>(customColCurve3);
+				userColCurve.Apply(Cc);
+				float dred=55.f;
+				float protect_red=30.0f;
+				float sk=1;
+				float ko=1.f/coef;
+				Color::skinred(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);	
+				c1C=1;	
+		}
+	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ // 
+				double parsat=0.8;
+				double coef=327.68/parsat;
+				float Ss=(float) spro*coef;
+				float Sold=Ss;
+				const Saturcurve& userColCurve = static_cast<const Saturcurve&>(customColCurve3);
+					userColCurve.Apply(Ss);
+					Ss=0.7f*(Ss-Sold)+Sold;//divide sensibility saturation
+				double coe=pow(fl,0.25);
+				float dred=100.f;// in C mode
+				float protect_red=80.0f; // in C mode
+				dred = 100.0 * sqrt((dred*coe)/Qpro);
+				protect_red=100.0 * sqrt((protect_red*coe)/Qpro);
+				int sk=0;
+				float ko=1.f/coef;	
+				Color::skinred(Jpro, hpro, Ss, Sold, dred, protect_red,sk,rstprotection,ko, spro);									
+				Qpro= ( 4.0 / c ) * sqrt( Jpro / 100.0 ) * ( aw + 4.0 ) ;
+				Cpro=(spro*spro*Qpro)/(10000.0);
+				c1s=1;
+				
+			}
+	else if (curveMode3==ColorAppearanceParams::TC_MODE_COLORF){ // 
+				double parsat=1.;
+				double coef=327.68/parsat;	
+				float Mm=(float) Mpro*coef;
+				float Mold=Mm;
+				const Colorfcurve& userColCurve = static_cast<const Colorfcurve&>(customColCurve3);
+					userColCurve.Apply(Mm);
+				double coe=pow(fl,0.25);					
+				float dred=100.f;//in C mode
+				float protect_red=80.0f;// in C mode
+				dred *=coe;//in M mode
+				protect_red	*=coe;			
+				int sk=0;
+				float ko=1.f/coef;
+				Color::skinred(Jpro, hpro, Mm, Mold, dred, protect_red,sk,rstprotection,ko, Mpro);								
+				Cpro= Mpro/coe;	
+				c1co=1;
+			}		
+	}
+			//to retrieve the correct values of variables
+			if(t2B && t1B) Jpro=(100.0* Qpro*Qpro) /(wh*wh);// for brightness curve
+			if(c1s==1) {
+				Qpro= ( 4.0 / c ) * sqrt( Jpro / 100.0 ) * ( aw + 4.0 ) ;//for saturation curve
+				Cpro=(spro*spro*Qpro)/(10000.0);
+				}
+			if(c1co==1) {	double coe=pow(fl,0.25);Cpro= Mpro/coe;}	// for colorfullness curve
+			//retrieve values C,J...s
+			C=Cpro;
+			J=Jpro;
+			Q=Qpro;
+			M=Mpro;
+			h=hpro;
+			s=spro;
+			double xx,yy,zz;
+			//process normal==> viewing
+			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
+			                             J,  C, h,
+			                             xw2, yw2,  zw2,
+			                             yb2, la2,
+			                             f2,  c2, nc2, doneinit2, gamu);
+			x=(float)xx*655.35;
+			y=(float)yy*655.35;
+			z=(float)zz*655.35;
+			float Ll,aa,bb;
+			//convert xyz=>lab
+			Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+			lab->L[i][j]=Ll;
+			lab->a[i][j]=aa;
+			lab->b[i][j]=bb;
+		// gamut control in Lab mode; I must study how to do with cIECAM only		
+		if(gamu==1) {		
+					float R,G,B;
+					float HH, Lprov1, Chprov1;
+					Lprov1=lab->L[i][j]/327.68f;
+					Chprov1=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
+					HH=atan2(lab->b[i][j],lab->a[i][j]);
+	
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
+#endif
+
+					lab->L[i][j]=Lprov1*327.68f;
+					lab->a[i][j]=327.68f*Chprov1*cos(HH);
+					lab->b[i][j]=327.68f*Chprov1*sin(HH);
+			
+		}			
+		}
+	}	
+	// End of parallelization
+
+#ifdef _DEBUG
+	if (settings->verbose) {
+		t2e.set();
+		printf("CIECAM02 performed in %d usec:\n", t2e.etime(t1e));
+		//	printf("minc=%f maxc=%f minj=%f maxj=%f\n",minc,maxc,minj,maxj);
+	}
+#endif
+}
+}
+
+
+
+
+
+
+
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
                                const ToneCurve & customToneCurve1,const ToneCurve & customToneCurve2 ) {
@@ -800,8 +1233,8 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 	bool LCredsk = params->labCurve.lcredsk;
 	bool ccut = ccutili;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
-	// avoid color shift is disabled when bwToning is activated
-	bool avoidColorShift = params->labCurve.avoidcolorshift && !bwToning;
+	// avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
+	bool avoidColorShift = (params->labCurve.avoidcolorshift && !bwToning) || params->colorappearance.gamut;	
 	int protectRed = settings->protectred;
 	double protectRedH = settings->protectredh;
 	bool gamutLch = settings->gamutLch;

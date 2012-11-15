@@ -170,6 +170,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTu dummy;
 
 	ToneCurve customToneCurve1, customToneCurve2;
+	ColorAppearance customColCurve1, customColCurve2,customColCurve3 ;
 
 	ipf.g = imgsrc->getGamma();
 	ipf.iGamma = true;
@@ -219,7 +220,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	//ipf.luminanceCurve (labView, labView, curve);
 	ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,lhskcurve,curve, utili, autili, butili, ccutili,cclutili);
 	ipf.vibrance(labView);
-//	ColorTemp::ciecam_02 (labView, &params);
 
 	ipf.impulsedenoise (labView);
 	ipf.defringe (labView);
@@ -243,7 +243,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	// directional pyramid equalizer
     ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
-	ColorTemp::ciecam_02 (labView, &params);
+	
+	CurveFactory::curveLightBrightColor (
+					params.colorappearance.curveMode, params.colorappearance.curve,
+					params.colorappearance.curveMode2, params.colorappearance.curve2,
+					params.colorappearance.curveMode3, params.colorappearance.curve3,
+					customColCurve1,
+					customColCurve2,
+					customColCurve3, 					
+					1);
+	
+	ipf.ciecam_02 (labView, &params,customColCurve1,customColCurve2,customColCurve2);
 
 	// end tile processing...???
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

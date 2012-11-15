@@ -40,6 +40,7 @@ using namespace std;
 
 namespace rtengine {
     class ToneCurve;
+    class ColorAppearance;
 
 class CurveFactory {
 
@@ -184,6 +185,14 @@ class CurveFactory {
 								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& cclurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, int skip=1);
 	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
 							   LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili); 
+	static void curveLightBrightColor (
+					ColorAppearanceParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
+					ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+					ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,				
+					ColorAppearance & outColCurve1,
+					ColorAppearance & outColCurve2,
+					ColorAppearance & outColCurve3,
+					int skip=1);
 	static void RGBCurve (const std::vector<double>& curvePoints, LUTf & outCurve, int skip);
 
 };
@@ -283,6 +292,82 @@ class ToneCurve {
     operator bool (void) const { return lutToneCurve; }
 };
 
+class ColorAppearance {
+  public:
+    LUTf lutColCurve;  // 0xffff range
+
+    virtual ~ColorAppearance() {};
+
+    void Reset();
+    void Set(Curve *pCurve);
+    operator bool (void) const { return lutColCurve; }
+};
+
+class Lightcurve : public ColorAppearance {
+  public:
+    void Apply(float& Li) const;
+};
+
+//lightness curve
+inline void Lightcurve::Apply (float& Li) const {
+
+    assert (lutColCurve);
+
+    Li = lutColCurve[Li];
+}
+
+class Brightcurve : public ColorAppearance {
+  public:
+    void Apply(float& Br) const;
+};
+
+//brightness curve
+inline void Brightcurve::Apply (float& Br) const {
+
+    assert (lutColCurve);
+
+    Br = lutColCurve[Br];
+}
+
+class Chromacurve : public ColorAppearance {
+  public:
+    void Apply(float& Cr) const;
+};
+
+//Chroma curve
+inline void Chromacurve::Apply (float& Cr) const {
+
+    assert (lutColCurve);
+
+    Cr = lutColCurve[Cr];
+}
+class Saturcurve : public ColorAppearance {
+  public:
+    void Apply(float& Sa) const;
+};
+
+//Saturation curve
+inline void Saturcurve::Apply (float& Sa) const {
+
+    assert (lutColCurve);
+
+    Sa = lutColCurve[Sa];
+}
+
+class Colorfcurve : public ColorAppearance {
+  public:
+    void Apply(float& Cf) const;
+};
+
+//Colorfullness curve
+inline void Colorfcurve::Apply (float& Cf) const {
+
+    assert (lutColCurve);
+
+    Cf = lutColCurve[Cf];
+}
+
+
 class StandardToneCurve : public ToneCurve {
   public:
     void Apply(float& r, float& g, float& b) const;
@@ -324,9 +409,8 @@ inline void StandardToneCurve::Apply (float& r, float& g, float& b) const {
 // inlined to make sure there will be no cache flush when used
 inline void AdobeToneCurve::Apply (float& r, float& g, float& b) const {
 
-#ifdef _DEBUG
     assert (lutToneCurve);
-#endif
+
     if (r >= g) {
         if      (g > b) RGBTone (r, g, b); // Case 1: r >= g >  b
         else if (b > r) RGBTone (b, r, g); // Case 2: b >  r >= g

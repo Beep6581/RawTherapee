@@ -61,7 +61,7 @@ class ColorTemp {
 		int XYZtoCorColorTemp(double x0,double y0 ,double z0, double &temp);
 		static void cieCAT02(double Xw, double Yw, double Zw,double &CAM02BB00,double &CAM02BB01,double &CAM02BB02, double &CAM02BB10,double &CAM02BB11,double &CAM02BB12,double &CAM02BB20,double &CAM02BB21,double &CAM02BB22, double adap );
 		//static	void CAT02 (Imagefloat* baseImg, const ProcParams* params);
-		static void ciecam_02 (LabImage* lab, const ProcParams* params);
+		//static void ciecam_02 (LabImage* lab, const ProcParams* params);
 
 		static double d_factor( double f, double la ) {
 			return f * (1.0 - ((1.0 / 3.6) * exp((-la - 42.0) / 92.0)));
@@ -90,7 +90,7 @@ class ColorTemp {
 			gc = g * (((y * d) / g) + (1.0 - d));
 			bc = b * (((y * d) / b) + (1.0 - d));
 
-			cat02_to_hpe( rp, gp, bp, rc, gc, bc );
+			cat02_to_hpe( rp, gp, bp, rc, gc, bc, gamu );
 			if(gamu==1){//gamut correction M.H.Brill S.Susstrunk
 				rp=MAXR(rp,0.0);
 				gp=MAXR(gp,0.0);
@@ -105,7 +105,7 @@ class ColorTemp {
 		}
 
 		static void xyz_to_cat02 ( double &r,  double &g,  double &b,  double x, double y, double z, int gamu );
-		static void cat02_to_hpe ( double &rh, double &gh, double &bh, double r, double g, double b );
+		static void cat02_to_hpe ( double &rh, double &gh, double &bh, double r, double g, double b, int gamu );
 		static void cat02_to_xyz ( double &x,  double &y,  double &z,  double r, double g, double b, int gamu );
 		static void hpe_to_xyz   ( double &x,  double &y,  double &z,  double r, double g, double b );
 
@@ -253,11 +253,13 @@ if(gamu==0){
 	b = ( 0.0030 * x) + (0.0136 * y) + (0.9834 * z);
 	}
 else if (gamu==1) {//gamut correction M.H.Brill S.Susstrunk
-	r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
-	g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
+	//r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
+	//g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
+	//b = ( 0.0000 * x) + (0.0000 * y) + (1.0000 * z);
+	r = ( 1.007245 * x) + (0.011136* y) - (0.018381 * z);//Changjun Li
+	g = (-0.318061 * x) + (1.314589 * y) + (0.003471 * z);
 	b = ( 0.0000 * x) + (0.0000 * y) + (1.0000 * z);
-
-
+	
 }
 }
 
@@ -269,9 +271,13 @@ if(gamu==0) {
 	z = (-0.009628 * r) - (0.005698 * g) + (1.015326 * b);
 	}
 else if(gamu==1) {//gamut correction M.H.Brill S.Susstrunk
-	x = ( 1.0978566 * r) - (0.277843 * g) + (0.179987 * b);
-	y = ( 0.455053 * r) + (0.473938 * g) + (0.0710096* b);
+	//x = ( 1.0978566 * r) - (0.277843 * g) + (0.179987 * b);
+	//y = ( 0.455053 * r) + (0.473938 * g) + (0.0710096* b);
+	//z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
+	x = ( 0.99015849 * r) - (0.00838772* g) + (0.018229217 * b);//Changjun Li
+	y = ( 0.239565979 * r) + (0.758664642 * g) + (0.001770137* b);
 	z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
+	
 }	
 }
 
@@ -280,16 +286,24 @@ inline void ColorTemp::hpe_to_xyz( double &x, double &y, double &z, double r, do
 	x = (1.910197 * r) - (1.112124 * g) + (0.201908 * b);
 	y = (0.370950 * r) + (0.629054 * g) - (0.000008 * b);
 	z = b;
+	
 }
 
-inline void ColorTemp::cat02_to_hpe( double &rh, double &gh, double &bh, double r, double g, double b )
-{
+
+
+
+inline void ColorTemp::cat02_to_hpe( double &rh, double &gh, double &bh, double r, double g, double b, int gamu )
+{  if(gamu==0){
 	rh = ( 0.7409792 * r) + (0.2180250 * g) + (0.0410058 * b);
 	gh = ( 0.2853532 * r) + (0.6242014 * g) + (0.0904454 * b);
 	bh = (-0.0096280 * r) - (0.0056980 * g) + (1.0153260 * b);
+	}
+	else if (gamu==1) {//Changjun Li
+	rh = ( 0.550930835 * r) + (0.519435987* g) - ( 0.070356303* b);
+	gh = ( 0.055954056 * r) + (0.89973132 * g) + (0.044315524 * b);
+	bh = (0.0 * r) - (0.0* g) + (1.0 * b);
+	}
 }
-
-
 
 }
 #endif

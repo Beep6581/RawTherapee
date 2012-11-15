@@ -214,8 +214,14 @@ enum ProcEvent {
 	EvCATSChroma=189,
 	EvCATMChroma=190,
 	EvCAThue=191,
+	EvCATCurve1=192,
+	EvCATCurve2=193,
+	EvCATCurveMode1=194,
+	EvCATCurveMode2=195,
+	EvCATCurve3=196,
+	EvCATCurveMode3=197,
 	
-	NUMOFEVENTS=192
+	NUMOFEVENTS=198
 };
 }
 #endif

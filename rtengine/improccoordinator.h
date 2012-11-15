@@ -91,6 +91,9 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         ToneCurve customToneCurve1;
         ToneCurve customToneCurve2;
+        ColorAppearance customColCurve1;
+        ColorAppearance customColCurve2;
+        ColorAppearance customColCurve3;
 
         LUTu rcurvehist, rcurvehistCropped, rbeforehist;
         LUTu gcurvehist, gcurvehistCropped, gbeforehist;

@@ -56,7 +56,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     distortion          = Gtk::manage (new Distortion ());
     rotate              = Gtk::manage (new Rotate ());
     vibrance            = Gtk::manage (new Vibrance ());
-    colorappearance     = Gtk::manage (new Colorappearance ());
+    colorappearance     = Gtk::manage (new ColorAppearance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
     perspective         = Gtk::manage (new PerspCorrection ());

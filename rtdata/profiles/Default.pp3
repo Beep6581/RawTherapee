@@ -106,7 +106,14 @@ H-Hue=0
 RSTProtection=0
 AdaptScene=2000
 SurrSource=false
-Gamut=false
+Gamut=true
+CurveMode=Lightness
+CurveMode2=Lightness
+CurveMode3=Chroma
+Curve=0;
+Curve2=0;
+Curve3=0;
+
 
 [Impulse Denoising]
 Enabled=false

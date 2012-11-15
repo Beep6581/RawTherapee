@@ -1,5 +1,4 @@
 /*
-/*
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -21,11 +20,16 @@
 #include <cmath>
 #include <iomanip>
 #include "guiutils.h"
+#include "../rtengine/color.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Colorappearance::Colorappearance () : Gtk::VBox(), FoldableToolPanel(this) {
+ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
+	CurveListener::setMulti(true);
+	std::vector<GradientMilestone> milestones;
+	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
 
 	set_border_width(4);
 
@@ -135,11 +139,6 @@ Colorappearance::Colorappearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	chroma->set_tooltip_markup (M("TP_COLORAPP_CHROMA_TOOLTIP"));
 	p2VBox->pack_start (*chroma);
 
-	rstprotection = Gtk::manage ( new Adjuster (M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 0.) );
-	if (rstprotection->delay < 1000) rstprotection->delay = 1000;
-	rstprotection->throwOnButtonRelease();
-	rstprotection->set_tooltip_markup (M("TP_COLORAPP_RSTPRO_TOOLTIP"));
-	p2VBox->pack_start (*rstprotection);
 
 	schroma = Gtk::manage (new Adjuster (M("TP_COLORAPP_CHROMA_S"), -100.0, 100.0, 0.1, 0.));
 	if (schroma->delay < 1000) schroma->delay = 1000;
@@ -152,6 +151,12 @@ Colorappearance::Colorappearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	mchroma->throwOnButtonRelease();
 	mchroma->set_tooltip_markup (M("TP_COLORAPP_CHROMA_M_TOOLTIP"));
 	p2VBox->pack_start (*mchroma);
+	
+	rstprotection = Gtk::manage ( new Adjuster (M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 0.) );
+	if (rstprotection->delay < 1000) rstprotection->delay = 1000;
+	rstprotection->throwOnButtonRelease();
+	rstprotection->set_tooltip_markup (M("TP_COLORAPP_RSTPRO_TOOLTIP"));
+	p2VBox->pack_start (*rstprotection);
 
 	contrast = Gtk::manage (new Adjuster (M("TP_COLORAPP_CONTRAST"), -100.0, 100.0, 0.1, 0.));
 	if (contrast->delay < 1000) contrast->delay = 1000;
@@ -171,6 +176,92 @@ Colorappearance::Colorappearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	colorh->set_tooltip_markup (M("TP_COLORAPP_HUE_TOOLTIP"));
 	p2VBox->pack_start (*colorh);
 
+	p2VBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
+
+	toneCurveMode = Gtk::manage (new MyComboBoxText ());
+	toneCurveMode->append_text (M("TP_COLORAPP_TCMODE_LIGHTNESS"));
+	toneCurveMode->append_text (M("TP_COLORAPP_TCMODE_BRIGHTNESS"));
+	toneCurveMode->set_active (0);
+	toneCurveMode->set_tooltip_text(M("TP_COLORAPP_TCMODE_LABEL1"));
+
+	curveEditorG = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_COLORAPP_CURVEEDITOR1"));
+	curveEditorG->setCurveListener (this);
+
+	shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "", toneCurveMode));
+
+
+
+	tcmodeconn = toneCurveMode->signal_changed().connect( sigc::mem_fun(*this, &ColorAppearance::curveMode1Changed), true );
+
+	toneCurveMode2 = Gtk::manage (new MyComboBoxText ());
+	toneCurveMode2->append_text (M("TP_COLORAPP_TCMODE_LIGHTNESS"));
+	toneCurveMode2->append_text (M("TP_COLORAPP_TCMODE_BRIGHTNESS"));
+	toneCurveMode2->set_active (0);
+	toneCurveMode2->set_tooltip_text(M("TP_COLORAPP_TCMODE_LABEL2"));
+
+	curveEditorG2 = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_COLORAPP_CURVEEDITOR2"));
+	curveEditorG2->setCurveListener (this);
+
+	shape2 = static_cast<DiagonalCurveEditor*>(curveEditorG2->addCurve(CT_Diagonal, "", toneCurveMode2));
+
+	tcmode2conn = toneCurveMode2->signal_changed().connect( sigc::mem_fun(*this, &ColorAppearance::curveMode2Changed), true );
+
+	toneCurveMode3 = Gtk::manage (new MyComboBoxText ());
+	toneCurveMode3->append_text (M("TP_COLORAPP_TCMODE_CHROMA"));
+	toneCurveMode3->append_text (M("TP_COLORAPP_TCMODE_SATUR"));
+	toneCurveMode3->append_text (M("TP_COLORAPP_TCMODE_COLORF"));
+	toneCurveMode3->set_active (0);
+	toneCurveMode3->set_tooltip_text(M("TP_COLORAPP_TCMODE_LABEL3"));
+
+	curveEditorG3 = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_COLORAPP_CURVEEDITOR3"));
+	curveEditorG3->setCurveListener (this);
+
+	shape3 = static_cast<DiagonalCurveEditor*>(curveEditorG3->addCurve(CT_Diagonal, "", toneCurveMode3));
+	shape3->setRangeLabels(
+			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE2"),
+			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
+	);
+	shape3->setBottomBarColorProvider(this, 1);
+	shape3->setLeftBarColorProvider(this, 1);
+	shape3->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+
+	
+//	shape3->setBottomBarColorProvider(this, 2);
+//	shape3->setLeftBarColorProvider(this, 2);
+//	shape3->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+	
+	// The milestones are still the same than those define above
+	//milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+	//milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+	shape->setBottomBarBgGradient(milestones);
+	shape->setLeftBarBgGradient(milestones);
+	shape2->setBottomBarBgGradient(milestones);
+	shape2->setLeftBarBgGradient(milestones);
+	
+	std::vector<GradientMilestone> shape3Milestones;
+	float R, G, B;
+	for (int i=0; i<7; i++) {
+		float x = float(i)*(1.0f/6.0);
+		Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+		shape3Milestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
+	}
+	shape3->setBottomBarBgGradient(shape3Milestones);
+	shape3->setLeftBarBgGradient(shape3Milestones);
+
+	shape3->setRangeDefaultMilestones(0.05, 0.2, 0.58);	
+
+	curveEditorG->curveListComplete();
+
+	curveEditorG2->curveListComplete();
+	curveEditorG2->setTooltip(M("TP_COLORAPP_CURVEEDITOR2_TOOLTIP"));
+
+	curveEditorG3->curveListComplete();
+	curveEditorG3->setTooltip(M("TP_COLORAPP_CURVEEDITOR3_TOOLTIP"));
+	tcmode3conn = toneCurveMode3->signal_changed().connect( sigc::mem_fun(*this, &ColorAppearance::curveMode3Changed), true );
+
+	p2VBox->pack_start( *curveEditorG, Gtk::PACK_SHRINK, 2);
+	p2VBox->pack_start( *curveEditorG2, Gtk::PACK_SHRINK, 2);
+	p2VBox->pack_start( *curveEditorG3, Gtk::PACK_SHRINK, 2);
 	p2Frame->add(*p2VBox);
 	pack_start (*p2Frame, Gtk::PACK_EXPAND_WIDGET, 4);
 
@@ -221,18 +312,18 @@ Colorappearance::Colorappearance () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	gamut = Gtk::manage (new Gtk::CheckButton (M("TP_COLORAPP_GAMUT")));
 	gamut->set_tooltip_markup (M("TP_COLORAPP_GAMUT_TOOLTIP"));
-	gamutconn = gamut->signal_toggled().connect( sigc::mem_fun(*this, &Colorappearance::gamut_toggled) );
+	gamutconn = gamut->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::gamut_toggled) );
 	pack_start (*gamut, Gtk::PACK_SHRINK);
 
 
 	// ------------------------ Listening events
 
 
-	surrconn = surrsource->signal_toggled().connect( sigc::mem_fun(*this, &Colorappearance::surrsource_toggled) );
-	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Colorappearance::enabledChanged) );
-	wbmodelconn = wbmodel->signal_changed().connect ( sigc::mem_fun(*this, &Colorappearance::wbmodelChanged) );
-	algoconn = algo->signal_changed().connect ( sigc::mem_fun(*this, &Colorappearance::algoChanged) );
-	surroundconn = surround->signal_changed().connect ( sigc::mem_fun(*this, &Colorappearance::surroundChanged) );
+	surrconn = surrsource->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::surrsource_toggled) );
+	enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::enabledChanged) );
+	wbmodelconn = wbmodel->signal_changed().connect ( sigc::mem_fun(*this, &ColorAppearance::wbmodelChanged) );
+	algoconn = algo->signal_changed().connect ( sigc::mem_fun(*this, &ColorAppearance::algoChanged) );
+	surroundconn = surround->signal_changed().connect ( sigc::mem_fun(*this, &ColorAppearance::surroundChanged) );
 
 	degree->setAdjusterListener  (this);
 	adapscen->setAdjusterListener (this);
@@ -250,17 +341,35 @@ Colorappearance::Colorappearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	show_all();
 }
 
-bool Colorappearance::bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
+ColorAppearance::~ColorAppearance () {
+	delete curveEditorG;
+	delete curveEditorG2;
+	delete curveEditorG3;	
+}
+
+
+
+bool ColorAppearance::bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
 	return true;
 }
 
-bool Colorappearance::srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
+bool ColorAppearance::srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
 	return true;
 }
 
-void Colorappearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
+void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 	disableListener ();
+	tcmodeconn.block(true);
+	tcmode2conn.block(true);
+	tcmode3conn.block(true);
+	shape->setCurve (pp->colorappearance.curve);
+	shape2->setCurve (pp->colorappearance.curve2);
+	shape3->setCurve (pp->colorappearance.curve3);
+	toneCurveMode->set_active(pp->colorappearance.curveMode);
+	toneCurveMode2->set_active(pp->colorappearance.curveMode2);
+	toneCurveMode3->set_active(pp->colorappearance.curveMode3);
+	curveMode3Changed(); // This will set the correct sensitive state of depending Adjusters
 
 	if (pedited) {
 		degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
@@ -280,7 +389,21 @@ void Colorappearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 		degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
 		enabled->set_inconsistent     (multiImage && !pedited->colorappearance.enabled);
-	}
+		shape->setUnChanged (!pedited->colorappearance.curve);
+		shape2->setUnChanged (!pedited->colorappearance.curve2);
+		shape3->setUnChanged (!pedited->colorappearance.curve3);
+		if (!pedited->colorappearance.curveMode) {
+			toneCurveMode->set_active(2);
+		}
+		if (!pedited->colorappearance.curveMode2) {
+			toneCurveMode2->set_active(2);
+		}
+		if (!pedited->colorappearance.curveMode3) {
+			toneCurveMode3->set_active(3);
+		}
+
+
+		}
 
 	enaConn.block (true);
 	enabled->set_active (pp->colorappearance.enabled);
@@ -304,8 +427,6 @@ void Colorappearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	wbmodelconn.block(true);
 	if (pedited && !pedited->colorappearance.wbmodel)
 		wbmodel->set_active (2);
-//	else if (pp->colorappearance.wbmodel=="Equal")
-//		wbmodel->set_active (0);
 	else if (pp->colorappearance.wbmodel=="RawT")
 		wbmodel->set_active (0);
 	else if (pp->colorappearance.wbmodel=="RawTCAT02")
@@ -356,28 +477,53 @@ void Colorappearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	qcontrast->setValue (pp->colorappearance.qcontrast);
 	colorh->setValue (pp->colorappearance.colorh);
 
+	tcmode3conn.block(false);
+	tcmode2conn.block(false);
+	tcmodeconn.block(false);
 	enableListener ();
 }
+void ColorAppearance::autoOpenCurve  () {
+	shape->openIfNonlinear();
+	shape2->openIfNonlinear();
+	shape3->openIfNonlinear();
 
-void Colorappearance::write (ProcParams* pp, ParamsEdited* pedited) {
+}
 
-	pp->colorappearance.degree     = degree->getValue ();
-	pp->colorappearance.autodegree = degree->getAutoValue ();
-	pp->colorappearance.enabled    = enabled->get_active();
-	pp->colorappearance.adapscen   = adapscen->getValue ();
-	pp->colorappearance.adaplum    = adaplum->getValue ();
-	pp->colorappearance.jlight     = jlight->getValue ();
-	pp->colorappearance.qbright    = qbright->getValue ();
-	pp->colorappearance.chroma     = chroma->getValue ();
-	pp->colorappearance.schroma     = schroma->getValue ();
-	pp->colorappearance.mchroma     = mchroma->getValue ();
-	pp->colorappearance.contrast   = contrast->getValue ();
-	pp->colorappearance.qcontrast   = qcontrast->getValue ();
-	pp->colorappearance.colorh   = colorh->getValue ();
 
-	pp->colorappearance.rstprotection   = rstprotection->getValue ();
+void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
+
+	pp->colorappearance.degree        = degree->getValue ();
+	pp->colorappearance.autodegree    = degree->getAutoValue ();
+	pp->colorappearance.enabled       = enabled->get_active();
+	pp->colorappearance.adapscen      = adapscen->getValue ();
+	pp->colorappearance.adaplum       = adaplum->getValue ();
+	pp->colorappearance.jlight        = jlight->getValue ();
+	pp->colorappearance.qbright       = qbright->getValue ();
+	pp->colorappearance.chroma        = chroma->getValue ();
+	pp->colorappearance.schroma       = schroma->getValue ();
+	pp->colorappearance.mchroma       = mchroma->getValue ();
+	pp->colorappearance.contrast      = contrast->getValue ();
+	pp->colorappearance.qcontrast     = qcontrast->getValue ();
+	pp->colorappearance.colorh        = colorh->getValue ();
+	pp->colorappearance.rstprotection = rstprotection->getValue ();
 	pp->colorappearance.surrsource    = surrsource->get_active();
-	pp->colorappearance.gamut    = gamut->get_active();
+	pp->colorappearance.gamut         = gamut->get_active();
+	pp->colorappearance.curve         = shape->getCurve ();
+	pp->colorappearance.curve2        = shape2->getCurve ();
+	pp->colorappearance.curve3        = shape3->getCurve ();
+	
+	int tcMode = toneCurveMode->get_active_row_number();
+	if      (tcMode == 0) pp->colorappearance.curveMode = ColorAppearanceParams::TC_MODE_LIGHT;
+	else if (tcMode == 1) pp->colorappearance.curveMode = ColorAppearanceParams::TC_MODE_BRIGHT;
+	
+	tcMode = toneCurveMode2->get_active_row_number();
+	if      (tcMode == 0) pp->colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_LIGHT;
+	else if (tcMode == 1) pp->colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_BRIGHT;
+	
+	int tcMode3 = toneCurveMode3->get_active_row_number();
+	if      (tcMode3 == 0) pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_CHROMA;
+	else if (tcMode3 == 1) pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_SATUR;
+	else if (tcMode3 == 2) pp->colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_COLORF;
 
 	if (pedited) {
 		pedited->colorappearance.degree        = degree->getEditedState ();
@@ -399,6 +545,12 @@ void Colorappearance::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorappearance.algo          = algo->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->colorappearance.surrsource    = !surrsource->get_inconsistent();
 		pedited->colorappearance.gamut         = !gamut->get_inconsistent();
+		pedited->colorappearance.curve         = !shape->isUnChanged ();
+		pedited->colorappearance.curve2        = !shape2->isUnChanged ();
+		pedited->colorappearance.curve3        = !shape3->isUnChanged ();
+		pedited->colorappearance.curveMode     = toneCurveMode->get_active_row_number() != 2;
+		pedited->colorappearance.curveMode2    = toneCurveMode2->get_active_row_number() != 2;
+		pedited->colorappearance.curveMode3    = toneCurveMode3->get_active_row_number() != 3;
 	}
 	if (surround->get_active_row_number()==0)
 		pp->colorappearance.surround = "Average";
@@ -409,8 +561,6 @@ void Colorappearance::write (ProcParams* pp, ParamsEdited* pedited) {
 	else if (surround->get_active_row_number()==3)
 		pp->colorappearance.surround = "ExtremelyDark";
 
-//	if (wbmodel->get_active_row_number()==0)
-//		pp->colorappearance.wbmodel = "Equal";
 	if (wbmodel->get_active_row_number()==0)
 		pp->colorappearance.wbmodel = "RawT";
 	else if (wbmodel->get_active_row_number()==1)
@@ -426,8 +576,53 @@ void Colorappearance::write (ProcParams* pp, ParamsEdited* pedited) {
 		pp->colorappearance.algo = "ALL";
 
 }
+void ColorAppearance::curveChanged (CurveEditor* ce) {
 
-void Colorappearance::surrsource_toggled () {
+	if (listener) {
+		if (ce == shape)
+			listener->panelChanged (EvCATCurve1, M("HISTORY_CUSTOMCURVE"));
+		else if (ce == shape2)
+			listener->panelChanged (EvCATCurve2, M("HISTORY_CUSTOMCURVE"));
+		else if (ce == shape3)
+			listener->panelChanged (EvCATCurve3, M("HISTORY_CUSTOMCURVE"));
+	}
+}
+
+void ColorAppearance::curveMode1Changed () {
+	if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ColorAppearance::curveMode1Changed_));
+}
+
+bool ColorAppearance::curveMode1Changed_ () {
+	if (listener) listener->panelChanged (EvCATCurveMode1, toneCurveMode->get_active_text());
+	return false;
+}
+
+void ColorAppearance::curveMode2Changed () {
+	if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ColorAppearance::curveMode2Changed_));
+}
+
+bool ColorAppearance::curveMode2Changed_ () {
+	if (listener) listener->panelChanged (EvCATCurveMode2, toneCurveMode2->get_active_text());
+	return false;
+}
+
+void ColorAppearance::curveMode3Changed () {
+	int tcMode3 = toneCurveMode3->get_active_row_number();
+	if      (tcMode3 == 0) {chroma->set_sensitive(true);  schroma->set_sensitive(true); }
+	else if (tcMode3 == 2) {chroma->set_sensitive(false); schroma->set_sensitive(false);}
+	else if (tcMode3 == 1) {chroma->set_sensitive(false); schroma->set_sensitive(true); }
+
+	if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ColorAppearance::curveMode3Changed_));
+}
+
+bool ColorAppearance::curveMode3Changed_ () {
+	if (listener) {
+		listener->panelChanged (EvCATCurveMode3, toneCurveMode3->get_active_text());
+	}
+	return false;
+}
+
+void ColorAppearance::surrsource_toggled () {
 
 	if (batchMode) {
 		if (surrsource->get_inconsistent()) {
@@ -450,7 +645,7 @@ void Colorappearance::surrsource_toggled () {
 	}
 }
 
-void Colorappearance::gamut_toggled () {
+void ColorAppearance::gamut_toggled () {
 
 	if (batchMode) {
 		if (gamut->get_inconsistent()) {
@@ -474,7 +669,7 @@ void Colorappearance::gamut_toggled () {
 }
 
 
-void Colorappearance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
+void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
 	degree->setDefault (defParams->colorappearance.degree);
 	adapscen->setDefault (defParams->colorappearance.adapscen);
@@ -521,7 +716,22 @@ void Colorappearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 	}
 }
 
-void Colorappearance::adjusterChanged (Adjuster* a, double newval) {
+void ColorAppearance::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {
+
+	float R, G, B;
+	if (callerId == 1) {    // cc - bottom bar
+
+		float value = (1.f - 0.7f) * float(valX) + 0.7f;
+		// whole hue range
+		// Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
+		Color::hsv2rgb01(float(valY), float(valX), value, R, G, B);
+	}
+	caller->ccRed = double(R);
+	caller->ccGreen = double(G);
+	caller->ccBlue = double(B);
+}
+
+void ColorAppearance::adjusterChanged (Adjuster* a, double newval) {
 
 	if (listener && (multiImage||enabled->get_active()) ) {
 		if(a==degree)
@@ -552,7 +762,7 @@ void Colorappearance::adjusterChanged (Adjuster* a, double newval) {
 	}
 }
 
-void Colorappearance::adjusterAutoToggled (Adjuster* a, bool newval) {
+void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval) {
 
 	if (multiImage) {
 		if (degree->getAutoInconsistent()) {
@@ -577,7 +787,7 @@ void Colorappearance::adjusterAutoToggled (Adjuster* a, bool newval) {
 	}
 }
 
-void Colorappearance::enabledChanged () {
+void ColorAppearance::enabledChanged () {
 
 	if (multiImage) {
 		if (enabled->get_inconsistent()) {
@@ -595,28 +805,32 @@ void Colorappearance::enabledChanged () {
 	if (listener) {
 		if (enabled->get_inconsistent())
 			listener->panelChanged (EvCATEnabled, M("GENERAL_UNCHANGED"));
-		else if (enabled->get_active ())
+		else if (enabled->get_active ()) {
 			listener->panelChanged (EvCATEnabled, M("GENERAL_ENABLED"));
+			    curveEditorG->set_sensitive (true);
+				toneCurveMode->set_sensitive (true);
+			}
 		else
 			listener->panelChanged (EvCATEnabled, M("GENERAL_DISABLED"));
 	}
 }
 
-void Colorappearance::surroundChanged () {
+void ColorAppearance::surroundChanged () {
 
 	if (listener && (multiImage||enabled->get_active()) ) {
 		listener->panelChanged (EvCATMethodsur, surround->get_active_text ());
 	}
 }
 
-void Colorappearance::wbmodelChanged () {
+void ColorAppearance::wbmodelChanged () {
 
 	if (listener && (multiImage||enabled->get_active()) ) {
 		listener->panelChanged (EvCATMethodWB, wbmodel->get_active_text ());
 	}
 }
 
-void Colorappearance::algoChanged () {
+
+void ColorAppearance::algoChanged () {
 
 	if ( algo->get_active_row_number()==0 ) {
 		contrast->show();
@@ -628,9 +842,12 @@ void Colorappearance::algoChanged () {
 		schroma->hide();
 		qbright->hide();
 		colorh->hide();
+		curveEditorG->show();
+		curveEditorG2->show();
+		curveEditorG3->show();
 	}
 	else if ( algo->get_active_row_number()==1 ) {
-		rstprotection->hide();
+		rstprotection->show();
 		contrast->show();
 		qcontrast->hide();
 		jlight->show();
@@ -639,10 +856,13 @@ void Colorappearance::algoChanged () {
 		schroma->show();
 		qbright->hide();
 		colorh->hide();
+		curveEditorG->show();
+		curveEditorG2->show();
+		curveEditorG3->show();
 	}
 	else if ( algo->get_active_row_number()==2 ) {
 		contrast->hide();
-		rstprotection->hide();
+		rstprotection->show();
 		qcontrast->show();
 		jlight->hide();
 		mchroma->show();
@@ -650,6 +870,9 @@ void Colorappearance::algoChanged () {
 		schroma->hide();
 		qbright->show();
 		colorh->hide();
+		curveEditorG->show();
+		curveEditorG2->show();
+		curveEditorG3->show();
 	}
 	else if ( algo->get_active_row_number()>=3 ) {  // ">=3" because everything has to be visible with the "(unchanged)" option too
 		contrast->show();
@@ -661,6 +884,9 @@ void Colorappearance::algoChanged () {
 		schroma->show();
 		qbright->show();
 		colorh->show();
+		curveEditorG->show();
+		curveEditorG2->show();
+		curveEditorG3->show();
 	}
 
 	if (listener && (multiImage||enabled->get_active()) ) {
@@ -668,7 +894,7 @@ void Colorappearance::algoChanged () {
 	}
 }
 
-void Colorappearance::setBatchMode (bool batchMode) {
+void ColorAppearance::setBatchMode (bool batchMode) {
 
 	ToolPanel::setBatchMode (batchMode);
 
@@ -688,10 +914,16 @@ void Colorappearance::setBatchMode (bool batchMode) {
 	surround->append_text (M("GENERAL_UNCHANGED"));
 	wbmodel->append_text (M("GENERAL_UNCHANGED"));
 	algo->append_text (M("GENERAL_UNCHANGED"));
-	
+	toneCurveMode->append_text (M("GENERAL_UNCHANGED"));
+//	toneCurveMode2->append_text (M("GENERAL_UNCHANGED"));
+//	toneCurveMode3->append_text (M("GENERAL_UNCHANGED"));
+
+	curveEditorG->setBatchMode (batchMode);
+//	curveEditorG2->setBatchMode (batchMode);
+//	curveEditorG3->setBatchMode (batchMode);
 }
 
-void Colorappearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd) {
+void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd) {
 
 	degree->setAddMode(degreeadd);
 	adapscen->setAddMode(adapscenadd);
@@ -705,10 +937,9 @@ void Colorappearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, boo
 	contrast->setAddMode(contrastadd);
 	qcontrast->setAddMode(qcontrastadd);
 	colorh->setAddMode(colorhadd);
-	
 }
 
-void Colorappearance::trimValues (rtengine::procparams::ProcParams* pp) {
+void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp) {
 
 	degree->trimValue(pp->colorappearance.degree);
 	adapscen->trimValue(pp->colorappearance.adapscen);
@@ -722,5 +953,4 @@ void Colorappearance::trimValues (rtengine::procparams::ProcParams* pp) {
 	contrast->trimValue(pp->colorappearance.contrast);
 	qcontrast->trimValue(pp->colorappearance.qcontrast);
 	colorh->trimValue(pp->colorappearance.colorh);
-
 }

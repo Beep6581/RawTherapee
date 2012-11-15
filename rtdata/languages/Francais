@@ -416,6 +416,12 @@ HISTORY_MSG_189;CAM02 - Contraste (Q)
 HISTORY_MSG_190;CAM02 - Saturation (S)
 HISTORY_MSG_191;CAM02 - Niveau de couleur (M)
 HISTORY_MSG_192;CAM02 - Teinte (angle)
+HISTORY_MSG_193;CAM02 - Courbe tonale 1
+HISTORY_MSG_194;CAM02 - Courbe tonale 2
+HISTORY_MSG_195;CAM02 - Courbe tonale
+HISTORY_MSG_196;CAM02 - Courbe tonale 2
+HISTORY_MSG_197;CAM02 - Courbe couleur
+HISTORY_MSG_198;CAM02 - Courbe couleur
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
@@ -912,8 +918,8 @@ TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002\nSi vous
 TP_COLORAPP_EQUAL;Préservé
 TP_COLORAPP_GAMUT;Contrôle du gamut (Lab & CIECAM)
 TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
-TP_COLORAPP_HUE;Teinte (H)
-TP_COLORAPP_HUE_TOOLTIP;Teinte (H) - angle entre 0° et 360°
+TP_COLORAPP_HUE;Teinte (h)
+TP_COLORAPP_HUE_TOOLTIP;Teinte (h) - angle entre 0° et 360°
 TP_COLORAPP_LABEL;Modèle CIE d'Apparence de la Couleur (CAM02)
 TP_COLORAPP_LABEL_CAM02;Édition de l'image avec CIECAM
 TP_COLORAPP_LABEL_SCENE;Conditions de la scène
@@ -922,8 +928,8 @@ TP_COLORAPP_LIGHT;Luminosité (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de Lab et RVB
 TP_COLORAPP_MODEL;Modèle de Point Blanc
 TP_COLORAPP_MODEL_TOOLTIP;<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglé dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglé dans Préférences
-TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges (C)
-TP_COLORAPP_RSTPRO_TOOLTIP;Protection par le curseur (C) des tons chairs et rouges
+TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges 
+TP_COLORAPP_RSTPRO_TOOLTIP;Protection des tons chairs et rouges (curseurs et courbes)
 TP_COLORAPP_SURROUND;Entourage
 TP_COLORAPP_SURROUND_AVER;Moyen
 TP_COLORAPP_SURROUND_DARK;Sombre
@@ -934,6 +940,19 @@ TP_COLORAPP_SURSOURCE;Entourage sombre
 TP_COLORAPP_SURSOURCE_TOOLTIP;Peut être utilisé si l'image source a un bord noir.
 TP_COLORAPP_WBCAM;BB [RT+CAT02] + [sortie]
 TP_COLORAPP_WBRT;BB [RT] + [sortie]
+TP_COLORAPP_CURVEEDITOR1;Courbe tonale 1
+TP_COLORAPP_CURVEEDITOR2;Courbe tonale 2
+TP_COLORAPP_CURVEEDITOR3;Courbes chroma
+TP_COLORAPP_TCMODE_CHROMA;Chroma
+TP_COLORAPP_TCMODE_SATUR;Saturation
+TP_COLORAPP_TCMODE_COLORF;Niveau de couleurs
+TP_COLORAPP_TCMODE_BRIGHTNESS;Brillance
+TP_COLORAPP_TCMODE_LIGHTNESS;Luminosité
+TP_COLORAPP_TCMODE_LABEL1;Courbe mode 1
+TP_COLORAPP_TCMODE_LABEL2;Courbe mode 2
+TP_COLORAPP_TCMODE_LABEL3;Courbe chroma mode
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;usage similaire aux courbes tonales exposition
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
 TP_CROP_GTEPASSPORT;Passeport biométrique

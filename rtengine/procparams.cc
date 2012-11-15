@@ -215,7 +215,6 @@ void ProcParams::setDefaults () {
     colorappearance.degree        = 90;
     colorappearance.autodegree    = true;
     colorappearance.surround      = "Average";
-//  colorappearance.backgrd       = 20;
     colorappearance.adaplum       = 16;
     colorappearance.adapscen      = 2000.0;
     colorappearance.algo          = "JC";
@@ -230,7 +229,16 @@ void ProcParams::setDefaults () {
     colorappearance.qcontrast     = 0.0;
     colorappearance.colorh        = 0.0;
     colorappearance.surrsource    = false;
-    colorappearance.gamut         = false;
+    colorappearance.gamut         = true;
+    colorappearance.curve.clear ();
+	colorappearance.curve.push_back(DCT_Linear);
+    colorappearance.curve2.clear ();
+	colorappearance.curve2.push_back(DCT_Linear);
+    colorappearance.curveMode     =ColorAppearanceParams::TC_MODE_LIGHT;
+    colorappearance.curveMode2    = ColorAppearanceParams::TC_MODE_LIGHT;
+    colorappearance.curve3.clear ();
+	colorappearance.curve3.push_back(DCT_Linear);
+    colorappearance.curveMode3    = ColorAppearanceParams::TC_MODE_CHROMA;
 
     impulseDenoise.enabled      = false;
     impulseDenoise.thresh       = 50;
@@ -583,7 +591,62 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->colorappearance.adapscen)      keyFile.set_double  ("Color appearance", "AdaptScene",    colorappearance.adapscen);
     if (!pedited || pedited->colorappearance.surrsource)    keyFile.set_boolean ("Color appearance", "SurrSource",    colorappearance.surrsource);
     if (!pedited || pedited->colorappearance.gamut)         keyFile.set_boolean ("Color appearance", "Gamut",         colorappearance.gamut);
+    if (!pedited || pedited->colorappearance.curveMode)  {
+        Glib::ustring method;
+        switch (colorappearance.curveMode) {
+        case (ColorAppearanceParams::TC_MODE_LIGHT):
+            method = "Lightness";
+            break;
+        case (ColorAppearanceParams::TC_MODE_BRIGHT):
+            method = "Brightness";
+            break;
+        }
+        keyFile.set_string  ("Color appearance", "CurveMode", method);
+    }
+    if (!pedited || pedited->colorappearance.curveMode2)  {
+        Glib::ustring method;
+        switch (colorappearance.curveMode2) {
+        case (ColorAppearanceParams::TC_MODE_LIGHT):
+            method = "Lightness";
+            break;
+        case (ColorAppearanceParams::TC_MODE_BRIGHT):
+            method = "Brightness";
+            break;
+        }
+        keyFile.set_string  ("Color appearance", "CurveMode2", method);
+    }
+    if (!pedited || pedited->colorappearance.curveMode3)  {
+        Glib::ustring method;
+        switch (colorappearance.curveMode3) {
+        case (ColorAppearanceParams::TC_MODE_CHROMA):
+            method = "Chroma";
+            break;
+        case (ColorAppearanceParams::TC_MODE_SATUR):
+            method = "Saturation";
+            break;
+        case (ColorAppearanceParams::TC_MODE_COLORF):
+            method = "Colorfullness";
+            break;
+			
+        }
+        keyFile.set_string  ("Color appearance", "CurveMode3", method);
+    }
+	
+    if (!pedited || pedited->colorappearance.curve) {
+        Glib::ArrayHandle<double> tcurve = colorappearance.curve;
+        keyFile.set_double_list("Color appearance", "Curve", tcurve);
+    }
+    if (!pedited || pedited->colorappearance.curve2) {
+        Glib::ArrayHandle<double> tcurve = colorappearance.curve2;
+        keyFile.set_double_list("Color appearance", "Curve2", tcurve);
+    }
+    if (!pedited || pedited->colorappearance.curve3) {
+        Glib::ArrayHandle<double> tcurve = colorappearance.curve3;
+        keyFile.set_double_list("Color appearance", "Curve3", tcurve);
+    }
 
+
+	
     // save impulseDenoise
     if (!pedited || pedited->impulseDenoise.enabled) keyFile.set_boolean ("Impulse Denoising", "Enabled",   impulseDenoise.enabled);
     if (!pedited || pedited->impulseDenoise.thresh)  keyFile.set_integer ("Impulse Denoising", "Threshold", impulseDenoise.thresh);
@@ -1045,7 +1108,34 @@ if (keyFile.has_group ("Color appearance")) {
     if (keyFile.has_key ("Color appearance", "AdaptScene"))    {colorappearance.adapscen      = keyFile.get_double  ("Color appearance", "AdaptScene"); if (pedited) pedited->colorappearance.adapscen = true; }
     if (keyFile.has_key ("Color appearance", "SurrSource"))    {colorappearance.surrsource    = keyFile.get_boolean ("Color appearance", "SurrSource"); if (pedited) pedited->colorappearance.surrsource = true; }
     if (keyFile.has_key ("Color appearance", "Gamut"))         {colorappearance.gamut         = keyFile.get_boolean ("Color appearance", "Gamut"); if (pedited) pedited->colorappearance.gamut = true; }
-}
+    if (keyFile.has_key ("Color appearance", "CurveMode"))      {
+        Glib::ustring sMode = keyFile.get_string ("Color appearance", "CurveMode");
+        if      (sMode == "Lightness")            colorappearance.curveMode = ColorAppearanceParams::TC_MODE_LIGHT;
+        else if (sMode == "Brightness")           colorappearance.curveMode = ColorAppearanceParams::TC_MODE_BRIGHT;
+        if (pedited) pedited->colorappearance.curveMode = true; 
+    }
+    if (keyFile.has_key ("Color appearance", "CurveMode2"))      {
+        Glib::ustring sMode = keyFile.get_string ("Color appearance", "CurveMode2");
+        if      (sMode == "Lightness")         	colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_LIGHT;
+        else if (sMode == "Brightness")         colorappearance.curveMode2 = ColorAppearanceParams::TC_MODE_BRIGHT;
+        if (pedited) pedited->colorappearance.curveMode2 = true;
+    }
+    if (keyFile.has_key ("Color appearance", "CurveMode3"))      {
+        Glib::ustring sMode = keyFile.get_string ("Color appearance", "CurveMode3");
+        if      (sMode == "Chroma")         	colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_CHROMA;
+        else if (sMode == "Saturation")         colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_SATUR;
+        else if (sMode == "Colorfullness")      colorappearance.curveMode3 = ColorAppearanceParams::TC_MODE_COLORF;
+
+        if (pedited) pedited->colorappearance.curveMode3 = true;
+    }
+	
+    if (ppVersion>200) {
+    if (keyFile.has_key ("Color appearance", "Curve"))          { colorappearance.curve         = keyFile.get_double_list ("Color appearance", "Curve"); if (pedited) pedited->colorappearance.curve = true; }
+    if (keyFile.has_key ("Color appearance", "Curve2"))         { colorappearance.curve2        = keyFile.get_double_list ("Color appearance", "Curve2"); if (pedited) pedited->colorappearance.curve2 = true; }
+    if (keyFile.has_key ("Color appearance", "Curve3"))         { colorappearance.curve3        = keyFile.get_double_list ("Color appearance", "Curve3"); if (pedited) pedited->colorappearance.curve3 = true; }
+	}
+	
+	}
 
     // load impulseDenoise
 if (keyFile.has_group ("Impulse Denoising")) {
@@ -1415,7 +1505,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& colorappearance.adaplum == other.colorappearance.adaplum
 		&& colorappearance.wbmodel == other.colorappearance.wbmodel
 		&& colorappearance.algo == other.colorappearance.algo
-		
+        && colorappearance.curveMode == other.colorappearance.curveMode
+        && colorappearance.curveMode2 == other.colorappearance.curveMode2
+        && colorappearance.curveMode3 == other.colorappearance.curveMode3				
 		&& colorappearance.jlight == other.colorappearance.jlight
 		&& colorappearance.qbright == other.colorappearance.qbright
 		&& colorappearance.chroma == other.colorappearance.chroma

@@ -416,6 +416,12 @@ HISTORY_MSG_189;CAM02 - Contrast (Q)
 HISTORY_MSG_190;CAM02 - Saturation (S)
 HISTORY_MSG_191;CAM02 - Colorfullness (M)
 HISTORY_MSG_192;CAM02 - Hue (angle)
+HISTORY_MSG_193;CAM02 - Tone curve 1
+HISTORY_MSG_194;CAM02 - Tone curve 2
+HISTORY_MSG_195;CAM02 - Tone curve 
+HISTORY_MSG_196;CAM02 - Tone curve 2
+HISTORY_MSG_197;CAM02 - Color curve
+HISTORY_MSG_198;CAM02 - Color curve
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -667,12 +673,15 @@ PREFERENCES_CACHESTRAT;Cache Strategy
 PREFERENCES_CACHETHUMBFORM;Cache thumbnail format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal thumbnail height
 PREFERENCES_CLIPPINGIND;Clipping Indication
-PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector,...)
+PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector,viewing...)
 PREFERENCES_D65;6500K
 PREFERENCES_D60;6000K
 PREFERENCES_D55;5500K
 PREFERENCES_D50;5000K
 PREFERENCES_BLACKBODY;Tungsten
+PREFERENCES_FLUOF2;Fluorescent F2
+PREFERENCES_FLUOF7;Fluorescent F7
+PREFERENCES_FLUOF11;Fluorescent F11
 PREFERENCES_GREY;Output device's Yb luminance (%)
 PREFERENCES_GREY05;Yb=05 CIE L#30
 PREFERENCES_GREY10;Yb=10 CIE L#40
@@ -887,7 +896,7 @@ TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement
 TP_COLORAPP_ALGO;Algorithm
 TP_COLORAPP_ALGO_ALL;All
 TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
-TP_COLORAPP_ALGO_JS;Lightnes + Saturation (JS)
+TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
 TP_COLORAPP_ALGO_QM;Brightness + Colorfullness (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Lets you chose between parameters subsets or all parameters
 TP_COLORAPP_BRIGHT;Brightness (Q)
@@ -907,8 +916,8 @@ TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf
 TP_COLORAPP_EQUAL;Equal
 TP_COLORAPP_GAMUT;Gamut control (Lab & CIECAM)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
-TP_COLORAPP_HUE;Hue (H)
-TP_COLORAPP_HUE_TOOLTIP;Hue (H) - angle between 0° and 360°
+TP_COLORAPP_HUE;Hue (h)
+TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
 TP_COLORAPP_LABEL_CAM02;Modifying image with CIECAM
 TP_COLORAPP_LABEL_SCENE;Scene conditions
@@ -917,8 +926,8 @@ TP_COLORAPP_LIGHT;Lightness (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 is different from Lab and RGB
 TP_COLORAPP_MODEL;White-Point Model
 TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [output]:</b>\nRT's WB is used for the scene, CIECAM is set to D50, the output device's white uses the value set in Preferences\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's WB settings are used by CAT02 and the output device's white uses the value set in Preferences
-TP_COLORAPP_RSTPRO;Red & skin tones protection (C)
-TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin tones protection by the (C) slider
+TP_COLORAPP_RSTPRO;Red & skin tones protection
+TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin tones protection (sliders and curves)
 TP_COLORAPP_SURROUND;Surround
 TP_COLORAPP_SURROUND_AVER;Average
 TP_COLORAPP_SURROUND_DARK;Dark
@@ -929,6 +938,19 @@ TP_COLORAPP_SURSOURCE;Dark surround
 TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if source image has a dark border
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 TP_COLORAPP_WBRT;WB [RT] + [output]
+TP_COLORAPP_CURVEEDITOR1;Tone curve 1
+TP_COLORAPP_CURVEEDITOR2;Tone curve 2
+TP_COLORAPP_CURVEEDITOR3;Chroma  curve
+TP_COLORAPP_TCMODE_CHROMA;Chroma
+TP_COLORAPP_TCMODE_SATUR;Saturation
+TP_COLORAPP_TCMODE_COLORF;Colorfullness
+TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
+TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
+TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
+TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
+TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as exposure tone curve
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;You can select between chroma saturation colorfullness
 TP_CROP_FIXRATIO;Fix ratio:
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport

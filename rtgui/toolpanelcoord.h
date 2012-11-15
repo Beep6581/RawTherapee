@@ -91,7 +91,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         PerspCorrection* perspective;
         CACorrection* cacorrection;
         HLRecovery* hlrecovery;
-        Colorappearance* colorappearance;
+        ColorAppearance* colorappearance;
         Vibrance* vibrance;
         ChMixer* chmixer;
         Resize* resize;
