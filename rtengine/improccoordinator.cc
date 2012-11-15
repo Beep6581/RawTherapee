@@ -344,7 +344,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		ipf.chromiLuminanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili);
 		//ipf.colorCurve (nprevl, nprevl);
 		ipf.vibrance(nprevl);
-	//	ColorTemp::ciecam_02 (nprevl, &params);
 
 		readyphase++;
 		if (scale==1) {
@@ -384,7 +383,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             readyphase++;
         }
     }
-		ColorTemp::ciecam_02 (nprevl, &params);
+	CurveFactory::curveLightBrightColor (
+					params.colorappearance.curveMode, params.colorappearance.curve,
+					params.colorappearance.curveMode2, params.colorappearance.curve2,
+					params.colorappearance.curveMode3, params.colorappearance.curve3,
+					customColCurve1,
+					customColCurve2, 
+					customColCurve3, 
+					scale==1 ? 1 : 1);
+	
+    ipf.ciecam_02 (nprevl, &params, customColCurve1,customColCurve2,customColCurve3);
 
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)

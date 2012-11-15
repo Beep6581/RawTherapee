@@ -436,6 +436,9 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     view->append_text (M("PREFERENCES_D60"));
     view->append_text (M("PREFERENCES_D65"));
     view->append_text (M("PREFERENCES_BLACKBODY"));
+    view->append_text (M("PREFERENCES_FLUOF2"));
+    view->append_text (M("PREFERENCES_FLUOF7"));
+    view->append_text (M("PREFERENCES_FLUOF11"));
 
     Gtk::Label* greylab = Gtk::manage (new Gtk::Label (M("PREFERENCES_GREY")+":", Gtk::ALIGN_LEFT));
     grey = Gtk::manage (new Gtk::ComboBoxText ());

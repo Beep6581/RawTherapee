@@ -201,7 +201,20 @@ void Crop::update (int todo) {
 			parent->ipf.dirpyrequalizer (labnCrop);
 		}
 	}
-	ColorTemp::ciecam_02 (labnCrop, &params);
+	    ColorAppearance customColCurve1;
+        ColorAppearance customColCurve2;
+        ColorAppearance customColCurve3;
+
+	CurveFactory::curveLightBrightColor (
+					params.colorappearance.curveMode, params.colorappearance.curve,
+					params.colorappearance.curveMode2, params.colorappearance.curve2,
+					params.colorappearance.curveMode3, params.colorappearance.curve3,
+					customColCurve1,
+					customColCurve2, 
+					customColCurve3, 
+					1);
+	
+	parent->ipf.ciecam_02 (labnCrop, &params,customColCurve1,customColCurve2,customColCurve3);
 
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);

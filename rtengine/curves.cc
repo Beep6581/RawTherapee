@@ -153,6 +153,71 @@ namespace rtengine {
 		}
 	}
 
+void CurveFactory::curveLightBrightColor (
+		ColorAppearanceParams::eTCModeId curveMode1, const std::vector<double>& curvePoints1,
+		ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+		ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,
+
+		ColorAppearance & customColCurve1,
+		ColorAppearance & customColCurve2,
+		ColorAppearance & customColCurve3,
+
+		int skip)
+{
+
+	DiagonalCurve* tcurve = NULL;
+	customColCurve3.Reset();
+
+	if (!curvePoints3.empty() && curvePoints3[0]>DCT_Linear && curvePoints3[0]<DCT_Unchanged) {
+		tcurve = new DiagonalCurve (curvePoints3, CURVES_MIN_POLY_POINTS/skip);
+	}
+	if (tcurve) {
+		if (tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+		else
+			customColCurve3.Set(tcurve);
+		delete tcurve;
+		tcurve = NULL;
+	}
+
+	customColCurve2.Reset();
+
+	if (!curvePoints2.empty() && curvePoints2[0]>DCT_Linear && curvePoints2[0]<DCT_Unchanged) {
+		tcurve = new DiagonalCurve (curvePoints2, CURVES_MIN_POLY_POINTS/skip);
+	}
+	if (tcurve) {
+		if (tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+		else
+			customColCurve2.Set(tcurve);
+		delete tcurve;
+		tcurve = NULL;
+	}
+	// create first curve if needed
+	customColCurve1.Reset();
+
+	if (!curvePoints1.empty() && curvePoints1[0]>DCT_Linear && curvePoints1[0]<DCT_Unchanged) {
+		tcurve = new DiagonalCurve (curvePoints1, CURVES_MIN_POLY_POINTS/skip);
+	}
+	if (tcurve) {
+		if (tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+		else  {
+			customColCurve1.Set(tcurve);
+			delete tcurve;
+			tcurve = NULL;
+		}
+	}
+	if (tcurve) delete tcurve;
+
+}
+
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili, double saturation, double rstprotection,
 										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,
@@ -769,8 +834,17 @@ namespace rtengine {
 	
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	
+
+void ColorAppearance::Reset() {
+    lutColCurve.reset();
+}
+
+// Fill a LUT with X/Y, ranged 0xffff
+void ColorAppearance::Set(Curve *pCurve) {
+    lutColCurve(65536);
+    for (int i=0; i<65536; i++) lutColCurve[i] = pCurve->getVal(double(i)/65535.) * 65535.;
+}
+
 void ToneCurve::Reset() {
     lutToneCurve.reset();
 }
@@ -778,7 +852,7 @@ void ToneCurve::Reset() {
 // Fill a LUT with X/Y, ranged 0xffff
 void ToneCurve::Set(Curve *pCurve) {
     lutToneCurve(65536);
-    for (int i=0;i<65536;i++) lutToneCurve[i] = pCurve->getVal(i/(double)65535) * 65535;
+    for (int i=0; i<65536; i++) lutToneCurve[i] = pCurve->getVal(double(i)/65535.) * 65535.;
 }
 
 }
