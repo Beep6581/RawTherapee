@@ -551,7 +551,7 @@ if(params->colorappearance.enabled) {
 				float sk=1;
 				float ko=1.f/coef;
 				Color::skinred(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);	
-				Cpro=Cc/coef;
+			//	Cpro=Cc/coef;
 				c1C=1;	
 		}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ // 
