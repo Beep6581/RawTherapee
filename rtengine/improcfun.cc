@@ -256,10 +256,10 @@ if(params->colorappearance.enabled) {
 	LUTf bright_curve (65536,0);//init curve
 	LUTf bright_curveQ (65536,0);//init curve
 	
-    LUTu hist16 (65536);
+    LUTu hist16J (65536);
 	LUTu hist16Q (65536);
 	float koef=1.0f;//rough correspondence between L and J	
-    hist16.clear();hist16Q.clear();
+    hist16J.clear();hist16Q.clear();
     for (int i=0; i<height; i++)
         for (int j=0; j<width; j++) {//rough correspondence between L and J	
 			if(((lab->L[i][j])/327.68f)>95.) koef=1.f;
@@ -274,7 +274,7 @@ if(params->colorappearance.enabled) {
 			else if(((lab->L[i][j])/327.68f)>10.) koef=0.9f;
 			else if(((lab->L[i][j])/327.68f)>0.) koef=1.0f;	
 		
-            hist16[CLIP((int)((koef*lab->L[i][j])))]++;//evaluate histogram luminance L # J
+            hist16J[CLIP((int)((koef*lab->L[i][j])))]++;//evaluate histogram luminance L # J
 			sum+=koef*lab->L[i][j];//evaluate mean J to calcualte Yb
 			hist16Q[CLIP((int) (32768.f*sqrt((koef*(lab->L[i][j]))/32768.f)))]++;	//for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
 	}	
@@ -357,7 +357,7 @@ if(params->colorappearance.enabled) {
 	
 	
 	//evaluate lightness, contrast
-	ColorTemp::curveJ (jli, contra, 1, bright_curve, hist16);//lightness and contrast J
+	ColorTemp::curveJ (jli, contra, 1, bright_curve, hist16J);//lightness and contrast J
 	ColorTemp::curveJ (qbri, qcontra, 1, bright_curveQ, hist16Q);//brightness and contrast Q
 	int gamu=0;
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
@@ -551,6 +551,7 @@ if(params->colorappearance.enabled) {
 				float sk=1;
 				float ko=1.f/coef;
 				Color::skinred(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);	
+				Cpro=Cc/coef;
 				c1C=1;	
 		}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ // 
