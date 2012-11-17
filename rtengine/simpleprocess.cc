@@ -253,7 +253,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					customColCurve3, 					
 					1);
 	
-	ipf.ciecam_02 (labView, &params,customColCurve1,customColCurve2,customColCurve2);
+	ipf.ciecam_02 (labView, &params,customColCurve1,customColCurve2,customColCurve3);
 
 	// end tile processing...???
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
