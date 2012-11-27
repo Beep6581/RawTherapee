@@ -186,6 +186,7 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	curveEditorG = new CurveEditorGroup (options.lastToneCurvesDir, M("TP_COLORAPP_CURVEEDITOR1"));
 	curveEditorG->setCurveListener (this);
+	curveEditorG->setTooltip(M("TP_COLORAPP_CURVEEDITOR1_TOOLTIP"));
 
 	shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "", toneCurveMode));
 
@@ -922,6 +923,15 @@ void ColorAppearance::setBatchMode (bool batchMode) {
 //	curveEditorG2->setBatchMode (batchMode);
 //	curveEditorG3->setBatchMode (batchMode);
 }
+
+void ColorAppearance::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
+
+	shape->updateBackgroundHistogram (histLCAM);
+	shape3->updateBackgroundHistogram (histCCAM);
+	
+}
+
+
 
 void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd) {
 

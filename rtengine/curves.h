@@ -182,13 +182,23 @@ class CurveFactory {
 							  double gamma_, bool igamma_, ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2, LUTu & histogram, LUTu & histogramCropped,
 							  LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2, int skip=1);
 	static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili,  double saturation, double rstprotection, const std::vector<double>& acurvePoints,
-								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& cclurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, int skip=1);
+								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& cclurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, 
+								LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
+								int skip=1);
 	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
 							   LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili); 
+
+	static void updatechroma (
+					const std::vector<double>& cccurvePoints,
+					LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
+					int skip=1);
+
 	static void curveLightBrightColor (
 					ColorAppearanceParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
 					ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
 					ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,				
+					LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram,
+					LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,
 					ColorAppearance & outColCurve1,
 					ColorAppearance & outColCurve2,
 					ColorAppearance & outColCurve3,

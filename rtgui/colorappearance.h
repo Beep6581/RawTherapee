@@ -114,7 +114,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
 
     void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
-
+    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
     virtual void colorForValue (double valX, double valY, int callerId, ColorCaller *caller);
 };
 

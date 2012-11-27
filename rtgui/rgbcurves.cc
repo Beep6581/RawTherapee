@@ -121,10 +121,10 @@ void RGBCurves::setBatchMode (bool batchMode) {
 }
 
 
-void RGBCurves::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {
+void RGBCurves::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {
 
-    //Rshape->updateBackgroundHistogram (histRed);
-    //Gshape->updateBackgroundHistogram (histGreen);
-    //Bshape->updateBackgroundHistogram (histBlue);
+  //  Rshape->updateBackgroundHistogram (histRed);
+  //  Gshape->updateBackgroundHistogram (histGreen);
+  //  Bshape->updateBackgroundHistogram (histBlue);
 }
 

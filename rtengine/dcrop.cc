@@ -174,8 +174,8 @@ void Crop::update (int todo) {
 	if (todo & (M_LUMINANCE+M_COLOR)) {
 		//I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
 		labnCrop->CopyFrom(laboCrop);
+//		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
-		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
 	//	parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
 	    bool utili=false;
@@ -183,12 +183,17 @@ void Crop::update (int todo) {
 	    bool butili=false;
 		bool ccutili=false;
 		bool cclutili=false;
+		LUTu dummy;
+
 		CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve,parent->lhskcurve, 1);
+									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve,parent->lhskcurve,
+										dummy, dummy, dummy,
+									   1);
 		
 		parent->ipf.chromiLuminanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili);
-		//parent->ipf.colorCurve (labnCrop, labnCrop);
+	//	parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 		parent->ipf.vibrance (labnCrop);
+		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
 		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);

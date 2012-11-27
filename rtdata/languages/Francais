@@ -951,8 +951,9 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Luminosité
 TP_COLORAPP_TCMODE_LABEL1;Courbe mode 1
 TP_COLORAPP_TCMODE_LABEL2;Courbe mode 2
 TP_COLORAPP_TCMODE_LABEL3;Courbe chroma mode
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogramme affiche L (lab) avant CIECAM.\n On peut voir le résultat dans la fenêtre histogramme
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;usage similaire aux courbes tonales exposition
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs.\n Histogramme affiche la chromaticité Lab.\n On peut voir le résultat dans la fenêtre histogramme
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
 TP_CROP_GTEPASSPORT;Passeport biométrique
@@ -1107,7 +1108,8 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutre
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Terne
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturé
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticité en fonction de la Chromaticité
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Avant ajustements Lab.\n on peut voir le résultat dans la fenêtre Histogramme 
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticité en fonction de la Chromaticité.\n C=f(C) On peut voir le résultat dans la fenêtre Histogramme
 TP_LABCURVE_CURVEEDITOR_CH;CT
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticité en fonction de la Teinte
 TP_LABCURVE_CURVEEDITOR_LC;LC

@@ -117,6 +117,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     // perform first analysis
     LUTu hist16 (65536);
+    LUTu hist16C (65536);
+	
     ipf.firstAnalysis (baseImg, &params, hist16, imgsrc->getGamma());
 
     // perform transform (excepted resizing)
@@ -200,14 +202,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	// start tile processing...???
 
     // luminance histogram update
-    hist16.clear();
+    hist16.clear();  hist16C.clear();
     for (int i=0; i<fh; i++)
-        for (int j=0; j<fw; j++)
+        for (int j=0; j<fw; j++){
             hist16[CLIP((int)((labView->L[i][j])))]++;
-
+            hist16C=CLIP((int)sqrt(labView->a[i][j]*labView->a[i][j] + labView->b[i][j]*labView->b[i][j]));
+			}
     // luminance processing
-
-	ipf.EPDToneMap(labView);
+//	ipf.EPDToneMap(labView);
 	bool utili=false;
 	bool autili=false;
 	bool butili=false;
@@ -216,9 +218,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1, utili);
 
 	CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,params.labCurve.lccurve,curve1, curve2, satcurve,lhskcurve, 1);
+								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,params.labCurve.lccurve,curve1, curve2, satcurve,lhskcurve, 
+								   hist16C, hist16C,dummy,	
+								   1);
 	//ipf.luminanceCurve (labView, labView, curve);
 	ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,lhskcurve,curve, utili, autili, butili, ccutili,cclutili);
+	ipf.EPDToneMap(labView);
+
 	ipf.vibrance(labView);
 
 	ipf.impulsedenoise (labView);
@@ -248,6 +254,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					params.colorappearance.curveMode, params.colorappearance.curve,
 					params.colorappearance.curveMode2, params.colorappearance.curve2,
 					params.colorappearance.curveMode3, params.colorappearance.curve3,
+					hist16, hist16,dummy,
+					hist16C, hist16C,dummy,	
 					customColCurve1,
 					customColCurve2,
 					customColCurve3, 					

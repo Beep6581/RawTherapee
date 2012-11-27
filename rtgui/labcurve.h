@@ -70,7 +70,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void bwtoning_toggled();
     void lcredsk_toggled();
 	
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
+    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 
     virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
 };
