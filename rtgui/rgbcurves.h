@@ -45,7 +45,7 @@ class RGBCurves : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void autoOpenCurve  ();
 
     void curveChanged (CurveEditor* ce);
-    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
+    void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
 };
 
 #endif

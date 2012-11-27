@@ -44,14 +44,22 @@ ImProcCoordinator::ImProcCoordinator ()
 
       vhist16(65536),
       lhist16(65536), lhist16Cropped(65536),
+      lhist16CAM(65536), lhist16CroppedCAM(65536),
+      lhist16CCAM(65536), lhist16CroppedCCAM(65536),
+	  lhist16CCAMAF(65536), lhist16ClabAF(65536),
       histCropped(65536),
+	  lhist16Clad(65536),lhist16CroppedClad(65536),
 
       histRed(256), histRedRaw(256),
       histGreen(256), histGreenRaw(256),
       histBlue(256), histBlueRaw(256),
-      histLuma(256),
+      histLuma(256), histChroma(256),
       histToneCurve(256),
       histLCurve(256),
+      histCCurve(256),
+	  histLCAM(256),
+	  histCCAM(256),
+	  histClad(256),	
       bcabhist(256),
 
       rCurve(),
@@ -301,49 +309,60 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
 
         // compute L channel histogram
-        int x1, y1, x2, y2, pos;
+        int x1, y1, x2, y2, pos, poscc;
         params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2); 
-
         lhist16.clear(); lhist16Cropped.clear();
+	    lhist16Clad.clear(); lhist16CroppedClad.clear();
+		lhist16ClabAF.clear();		
         for (int x=0; x<pH; x++)
             for (int y=0; y<pW; y++) {
                 pos=CLIP((int)(oprevl->L[x][y]));
                 lhist16[pos]++;
-
-                if (y>=y1 && y<y2 && x>=x1 && x<x2) lhist16Cropped[pos]++;
+                poscc=CLIP((int)sqrt(oprevl->a[x][y]*oprevl->a[x][y] + oprevl->b[x][y]*oprevl->b[x][y]));
+	            lhist16Clad[poscc]++;
+                if (y>=y1 && y<y2 && x>=x1 && x<x2) {lhist16Cropped[pos]++;lhist16CroppedClad[poscc]++;}
             }
  
     }
     readyphase++;
-		bool utili=false;
-		bool autili=false;
-		bool butili=false;
-		bool ccutili=false;
-		bool cclutili=false;		
+		utili=false;
+		autili=false;
+		butili=false;
+		ccutili=false;
+		cclutili=false;		
     if ((todo & M_LUMACURVE) || todo==CROP) {
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
                                      lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
-    }
-
+    
+		}
     if (todo & M_LUMACURVE) {
 		CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, scale==1 ? 1 : 16);
-	}
+										params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, 
+										lhist16Clad, lhist16CroppedClad, histCCurve, scale==1 ? 1 : 16);
 	
+	}
 	if (todo & (M_LUMINANCE+M_COLOR) ) {
 		nprevl->CopyFrom(oprevl);
-
-		ipf.EPDToneMap(nprevl,0,scale);
-
-		//progress ("Applying Luminance Curve...",100*readyphase/numofphases);
-
-		//ipf.luminanceCurve (nprevl, nprevl, lumacurve);
-
-		//readyphase++;
+	//	ipf.EPDToneMap(nprevl,0,scale);
+		
 		progress ("Applying Color Boost...",100*readyphase/numofphases);
+	    int poscc;
+		
+		
 		ipf.chromiLuminanceCurve (nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili);
-		//ipf.colorCurve (nprevl, nprevl);
+		if(!ccutili){
+		for (int x=0; x<pH; x++)
+            for (int y=0; y<pW; y++) {
+                poscc=CLIP((int)sqrt(nprevl->a[x][y]*nprevl->a[x][y] + nprevl->b[x][y]*nprevl->b[x][y]));
+	            lhist16ClabAF[poscc]++;
+            }
+		CurveFactory::updatechroma (
+					params.labCurve.cccurve,
+					lhist16ClabAF, lhist16CroppedCCAM,histCCurve,	
+					scale==1 ? 1 : 16);
+		}
 		ipf.vibrance(nprevl);
+		ipf.EPDToneMap(nprevl,0,scale);
 
 		readyphase++;
 		if (scale==1) {
@@ -382,18 +401,48 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             ipf.dirpyrequalizer (nprevl);
             readyphase++;
         }
-    }
+	    //L histo  and Chroma histo for ciecam
+		// histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
+        int x1, y1, x2, y2, pos, posc;
+        params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2); 	
+	    lhist16CAM.clear(); lhist16CroppedCAM.clear();
+	    lhist16CCAM.clear(); lhist16CroppedCCAM.clear();
+		lhist16CCAMAF.clear();
+        for (int x=0; x<pH; x++)
+            for (int y=0; y<pW; y++) {
+                pos=CLIP((int)(nprevl->L[x][y]));
+                posc=CLIP((int)sqrt(nprevl->a[x][y]*nprevl->a[x][y] + nprevl->b[x][y]*nprevl->b[x][y]));
+	            lhist16CCAM[posc]++;
+                lhist16CAM[pos]++;
+                if (y>=y1 && y<y2 && x>=x1 && x<x2) {lhist16CroppedCAM[pos]++;lhist16CroppedCCAM[posc]++;}
+            }
+
 	CurveFactory::curveLightBrightColor (
 					params.colorappearance.curveMode, params.colorappearance.curve,
 					params.colorappearance.curveMode2, params.colorappearance.curve2,
 					params.colorappearance.curveMode3, params.colorappearance.curve3,
+					lhist16CAM, lhist16CroppedCAM,histLCAM,	
+					lhist16CCAM, lhist16CroppedCCAM,histCCAM,						
 					customColCurve1,
 					customColCurve2, 
 					customColCurve3, 
 					scale==1 ? 1 : 1);
 	
     ipf.ciecam_02 (nprevl, &params, customColCurve1,customColCurve2,customColCurve3);
-
+	   //update histogram chroma
+	/*   if(!customColCurve3){
+	    for (int x=0; x<pH; x++)
+            for (int y=0; y<pW; y++) {
+                posc=CLIP((int)sqrt(nprevl->a[x][y]*nprevl->a[x][y] + nprevl->b[x][y]*nprevl->b[x][y]));
+	            lhist16CCAMAF[posc]++;
+            }
+		CurveFactory::updatechroma(
+					params.colorappearance.curve3,
+					lhist16CCAMAF, lhist16CroppedCCAM,histCCAM,	
+					scale==1 ? 1 : 1);
+		//end update histogram chroma			
+		}  */
+	}
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] )
@@ -430,7 +479,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     if (hListener) {
         updateLRGBHistograms ();
-        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histRedRaw, histGreenRaw, histBlueRaw);
+        hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve,histCCurve, histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
 
     mProcessing.unlock ();
@@ -533,10 +582,13 @@ void ImProcCoordinator::updateLRGBHistograms () {
         }
     }
 
-    histLuma.clear();
+    histLuma.clear();    
+	histChroma.clear();
     for (int i=y1; i<y2; i++)
         for (int j=x1; j<x2; j++) {
-            histLuma[(int)(nprevl->L[i][j]/128)]++;
+		  histChroma[(int)(sqrt(nprevl->a[i][j]*nprevl->a[i][j] + nprevl->b[i][j]*nprevl->b[i][j]))/188]++;//188 = 48000/256
+		  histLuma[(int)(nprevl->L[i][j]/128)]++;
+		
 		}
 	
 	/*for (int i=0; i<256; i++) {

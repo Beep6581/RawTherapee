@@ -217,6 +217,7 @@ HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram
 HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
 HISTOGRAM_TOOLTIP_G;Show/Hide green histogram
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
+HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
 HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 HISTOGRAM_TOOLTIP_R;Show/Hide red histogram
 HISTORY_CHANGED;Changed
@@ -228,7 +229,7 @@ HISTORY_MSG_1;Photo Loaded
 HISTORY_MSG_2;PP3 Loaded
 HISTORY_MSG_3;PP3 Changed
 HISTORY_MSG_4;History Browsing
-HISTORY_MSG_5;Brightness
+HISTORY_MSG_5;Lightness
 HISTORY_MSG_6;Contrast
 HISTORY_MSG_7;Black
 HISTORY_MSG_8;Exposure Compensation
@@ -237,7 +238,7 @@ HISTORY_MSG_10;Shadow Compression
 HISTORY_MSG_11;Tone Curve 1
 HISTORY_MSG_12;Auto Exposure
 HISTORY_MSG_13;Exposure Clipping
-HISTORY_MSG_14;Luminance Brightness
+HISTORY_MSG_14;Luminance Lightness
 HISTORY_MSG_15;Luminance Contrast
 HISTORY_MSG_16;Luminance Black
 HISTORY_MSG_17;Luminance Highlight Compr.
@@ -940,7 +941,7 @@ TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 TP_COLORAPP_WBRT;WB [RT] + [output]
 TP_COLORAPP_CURVEEDITOR1;Tone curve 1
 TP_COLORAPP_CURVEEDITOR2;Tone curve 2
-TP_COLORAPP_CURVEEDITOR3;Chroma  curve
+TP_COLORAPP_CURVEEDITOR3;Color curve
 TP_COLORAPP_TCMODE_CHROMA;Chroma
 TP_COLORAPP_TCMODE_SATUR;Saturation
 TP_COLORAPP_TCMODE_COLORF;Colorfullness
@@ -949,8 +950,9 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
 TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
 TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
-TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as exposure tone curve
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;You can select between chroma saturation colorfullness
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogram of L (Lab) before CIECAM.\n For final output refer to the Histogram panel
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfullness.\n Histogram shows chromaticity (Lab) before CIECAM.\n For final output refer to the Histogram panel
 TP_CROP_FIXRATIO;Fix ratio:
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
@@ -1000,7 +1002,7 @@ TP_EXPOSCORR_LABEL;Raw White &amp; Black Points
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
 TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
 TP_EXPOSURE_BLACKLEVEL;Black
-TP_EXPOSURE_BRIGHTNESS;Brightness
+TP_EXPOSURE_BRIGHTNESS;Lightness
 TP_EXPOSURE_CLIP;Clip
 TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto level's operation
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight Recovery Threshold
@@ -1079,7 +1081,7 @@ TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color s
 TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
 TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies on all tones
-TP_LABCURVE_BRIGHTNESS;Brightness
+TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_BWTONING;B&W toning
 TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
 TP_LABCURVE_CHROMATICITY;Chromaticity
@@ -1098,11 +1100,12 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to the chromaticity
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity C=f(C).\n Histogram of Chromaticity before Lab adjustements.\n For final output refer to the Histogram panel
 TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the hue
 TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to the chromaticity
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Histogram of L before Lab adjustements.\n For final output refer to the Histogram panel
 TP_LABCURVE_LABEL;Lab Adjustments
 TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 TP_LENSGEOM_AUTOCROP;Auto Crop

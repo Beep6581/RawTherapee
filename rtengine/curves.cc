@@ -153,23 +153,74 @@ namespace rtengine {
 		}
 	}
 
+void CurveFactory::updatechroma (
+		const std::vector<double>& cccurvePoints,
+		LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
+		int skip)
+{
+	LUTf dCcurve(65536,0);
+	float val;
+	for (int i=0; i<48000; i++) {//32768*1.414  + ...
+			val = (double)i / 47999.0;
+			dCcurve[i] = CLIPD(val);
+		}
+
+	outBeforeCCurveHistogramC.clear();
+	bool histNeededC = false;
+	
+
+	if (!cccurvePoints.empty() && cccurvePoints[0]!=0) {
+		if (outBeforeCCurveHistogramC /*&& histogramCropped*/)
+				histNeededC = true;	
+	}
+	for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+		float val;
+			if (histNeededC) {
+				float hval = dCcurve[i];
+				int hi = (int)(255.0*CLIPD(hval)); //
+				outBeforeCCurveHistogramC[hi] += histogramC[i] ;
+			}
+	}
+}
+	
+	
 void CurveFactory::curveLightBrightColor (
 		ColorAppearanceParams::eTCModeId curveMode1, const std::vector<double>& curvePoints1,
 		ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
 		ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,
-
+		LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram,//for Luminance  
+		LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
 		ColorAppearance & customColCurve1,
 		ColorAppearance & customColCurve2,
 		ColorAppearance & customColCurve3,
-
 		int skip)
 {
+	LUTf dcurve(65536,0);
+	LUTf dCcurve(65536,0);
+	
+	float val;
+	for (int i=0; i<32768; i++) {
+			val = (double)i / 32767.0;
+			dcurve[i] = CLIPD(val);
+		}
+	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+			val = (double)i / 47999.0;
+			dCcurve[i] = CLIPD(val);
+		}
 
+	outBeforeCCurveHistogram.clear();
+	outBeforeCCurveHistogramC.clear();
+	bool histNeededC = false;
+	
+	bool histNeeded = false;
 	DiagonalCurve* tcurve = NULL;
 	customColCurve3.Reset();
 
 	if (!curvePoints3.empty() && curvePoints3[0]>DCT_Linear && curvePoints3[0]<DCT_Unchanged) {
 		tcurve = new DiagonalCurve (curvePoints3, CURVES_MIN_POLY_POINTS/skip);
+		if (outBeforeCCurveHistogramC /*&& histogramCropped*/)
+				histNeededC = true;
+		
 	}
 	if (tcurve) {
 		if (tcurve->isIdentity()) {
@@ -186,6 +237,9 @@ void CurveFactory::curveLightBrightColor (
 
 	if (!curvePoints2.empty() && curvePoints2[0]>DCT_Linear && curvePoints2[0]<DCT_Unchanged) {
 		tcurve = new DiagonalCurve (curvePoints2, CURVES_MIN_POLY_POINTS/skip);
+		if (outBeforeCCurveHistogram /*&& histogramCropped*/)
+				histNeeded = true;
+		
 	}
 	if (tcurve) {
 		if (tcurve->isIdentity()) {
@@ -202,6 +256,9 @@ void CurveFactory::curveLightBrightColor (
 
 	if (!curvePoints1.empty() && curvePoints1[0]>DCT_Linear && curvePoints1[0]<DCT_Unchanged) {
 		tcurve = new DiagonalCurve (curvePoints1, CURVES_MIN_POLY_POINTS/skip);
+		if (outBeforeCCurveHistogram /*&& histogramCropped*/)
+				histNeeded = true;
+		
 	}
 	if (tcurve) {
 		if (tcurve->isIdentity()) {
@@ -214,6 +271,24 @@ void CurveFactory::curveLightBrightColor (
 			tcurve = NULL;
 		}
 	}
+	for (int i=0; i<=32768; i++) {
+		float val;
+
+			if (histNeeded) {
+				float hval = dcurve[i];
+				int hi = (int)(255.0*CLIPD(hval));
+				outBeforeCCurveHistogram[hi] += histogram[i] ;
+			}
+	}
+	for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+		float val;
+			if (histNeededC) {
+				float hval = dCcurve[i];
+				int hi = (int)(255.0*CLIPD(hval)); //
+				outBeforeCCurveHistogramC[hi] += histogramC[i] ;
+			}
+	}
+	
 	if (tcurve) delete tcurve;
 
 }
@@ -221,75 +296,24 @@ void CurveFactory::curveLightBrightColor (
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili, double saturation, double rstprotection,
 										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,
-										const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, int skip) {
+										const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
+										LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogram,//for chroma
+										int skip) {
 		
-		//colormult = chroma_scale for Lab manipulations
 		
 		//-----------------------------------------------------
 
 		bool needed;
 		DiagonalCurve* dCurve = NULL;
-/*
-		// check if contrast curve is needed
-		needed = (saturation<-0.0001 || saturation>0.0001);
-
-		// Filling the curve if needed
-		if (needed) {
-
-			//%%%%%%%%%%%%%%%%% Saturation curve's control points %%%%%%%%%%%%%%%%%
-		    std::vector<double> satcurvePoints;
-			satcurvePoints.push_back((double)DCT_NURBS);
-			if (saturation>0) {
-				double satslope = (0.5+2*saturation/500.0)/(0.5-2*saturation/500.0);
-				double scale = (satlimthresh/100.1);
-				if (!satlimit) scale=100/100.1;
-
-				satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-				satcurvePoints.push_back(0); //black point.  Value in [0 ; 1] range
-
-				//if (satlimit) {
-				satcurvePoints.push_back(0.5-0.5*scale); //toe point
-				satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
-
-				satcurvePoints.push_back(0.5-(0.5/satslope)*scale); //toe point
-				satcurvePoints.push_back(0.5-0.5*scale); //value at toe point
-
-				satcurvePoints.push_back(0.5+(0.5/satslope)*scale); //shoulder point
-				satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point
-
-				satcurvePoints.push_back(0.5+0.5*scale); //shoulder point
-				satcurvePoints.push_back(0.5+0.5*scale); //value at shoulder point
-				/ Commented out...
-				} else {
-				satcurvePoints.push_back(0.25+saturation/500.0); //toe point
-				satcurvePoints.push_back(0.25-saturation/500.0); //value at toe point
-
-				satcurvePoints.push_back(0.75-saturation/500.0); //shoulder point
-				satcurvePoints.push_back(0.75+saturation/500.0); //value at shoulder point
-				}
-				/
-
-				satcurvePoints.push_back(1); // white point
-				satcurvePoints.push_back(1); // value at white point
-			} else {
-				satcurvePoints.push_back(0);
-				satcurvePoints.push_back(-(saturation/200.0));
-
-				satcurvePoints.push_back(1);
-				satcurvePoints.push_back(1+saturation/200.0);
-			}
-			dCurve = new DiagonalCurve (satcurvePoints, CURVES_MIN_POLY_POINTS/skip);
-			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-			fillCurveArray(dCurve, satCurve, skip, needed);
-
-			delete dCurve;
-			dCurve = NULL;
+		LUTf dCcurve(65536,0);
+	
+		float val;
+		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+				dCcurve[i] = (float)i / 47999.0;
 		}
-		else {
-			fillCurveArray(NULL, satCurve, skip, needed);
-		}
-*/
+		if (outBeforeCCurveHistogram)		
+			outBeforeCCurveHistogram.clear();
+		bool histNeededC = false;
 		//-----------------------------------------------------
 
 		needed = false;
@@ -329,9 +353,21 @@ void CurveFactory::curveLightBrightColor (
 		needed = false;
 		if (!cccurvePoints.empty() && cccurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (cccurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (outBeforeCCurveHistogram /*&& histogramCropped*/)
+				histNeededC = true;
+			
 			if (dCurve && !dCurve->isIdentity())
 				{needed = true;ccutili=true;}
 		}
+		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+			float val;
+			if (histNeededC) {
+				float hval = dCcurve[i];
+				int hi = (int)(255.0*CLIPD(hval)); //
+				outBeforeCCurveHistogram[hi] += histogramC[i] ;
+			}
+		}
+		
 		fillCurveArray(dCurve, satCurve, skip, needed);
 		if (dCurve) {
 			delete dCurve;

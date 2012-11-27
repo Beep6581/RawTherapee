@@ -78,16 +78,25 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         LUTu vhist16;
         LUTu lhist16,lhist16Cropped;
-        LUTu histCropped;
-
+        LUTu lhist16CAM,lhist16CroppedCAM;
+        LUTu lhist16CCAM,lhist16CroppedCCAM;
+		LUTu lhist16CCAMAF;
+ 		LUTu lhist16ClabAF;
+		LUTu histCropped;
+		LUTu lhist16Clad,lhist16CroppedClad;
         LUTu histRed, histRedRaw;
         LUTu histGreen, histGreenRaw;
         LUTu histBlue, histBlueRaw;
-        LUTu histLuma, histToneCurve, histLCurve, bcabhist;
+        LUTu histLuma, histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma;
 
         LUTf rCurve;
         LUTf gCurve;
         LUTf bCurve;
+		bool utili;
+		bool autili;
+		bool butili;
+		bool ccutili;
+		bool cclutili;		
 
         ToneCurve customToneCurve1;
         ToneCurve customToneCurve2;

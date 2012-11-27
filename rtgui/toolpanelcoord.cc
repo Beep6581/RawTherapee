@@ -90,6 +90,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (colorPanel, rgbcurves,            M("TP_RGBCURVES_LABEL"));      toolPanels.push_back (rgbcurves);
     addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));  toolPanels.push_back (edgePreservingDecompositionUI);
     addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
+//    addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));  toolPanels.push_back (edgePreservingDecompositionUI);
     addPanel (exposurePanel, colorappearance,   M("TP_COLORAPP_LABEL"));       toolPanels.push_back (colorappearance);
     addPanel (detailsPanel, impulsedenoise,     M("TP_IMPULSEDENOISE_LABEL")); toolPanels.push_back (impulsedenoise);
     addPanel (detailsPanel, dirpyrdenoise,      M("TP_DIRPYRDENOISE_LABEL"));  toolPanels.push_back (dirpyrdenoise);
@@ -517,11 +518,11 @@ int ToolPanelCoordinator::getSpotWBRectSize () {
     return whitebalance->getSize ();
 }
 
-void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {
-
-    toneCurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histRed, histGreen, histBlue, histLuma);
-    rgbcurves->updateCurveBackgroundHistogram(histToneCurve, histLCurve,histRed,histGreen, histBlue, histLuma);
-    lcurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histRed, histGreen, histBlue, histLuma);
+void ToolPanelCoordinator::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {
+    colorappearance->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, histLCAM,  histCCAM,histRed, histGreen, histBlue, histLuma);
+    toneCurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve,histCCurve, histLCAM,  histCCAM,histRed, histGreen, histBlue, histLuma);
+    lcurve->updateCurveBackgroundHistogram (histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM,histRed, histGreen, histBlue, histLuma); 
+	rgbcurves->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM,histRed,histGreen, histBlue, histLuma);
 }
 
 void ToolPanelCoordinator::foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection) {

@@ -697,6 +697,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.setScale (sqrt(double(fw*fw+fh*fh))/sqrt(double(thumbImg->width*thumbImg->width+thumbImg->height*thumbImg->height))*scale);
 
     LUTu hist16 (65536);
+    LUTu hist16C (65536);
+	
 	double gamma = isRaw ? Color::sRGBGamma : 0;  // usually in ImageSource, but we don't have that here
     ipf.firstAnalysis (baseImg, &params, hist16,  gamma);
 
@@ -768,13 +770,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         delete shmap;
 
     // luminance histogram update
-    hist16.clear();
+    hist16.clear();hist16C.clear();
     for (int i=0; i<fh; i++)
-        for (int j=0; j<fw; j++)
+        for (int j=0; j<fw; j++){
             hist16[CLIP((int)((labView->L[i][j])))]++;
-
+            hist16C=CLIP((int)sqrt(labView->a[i][j]*labView->a[i][j] + labView->b[i][j]*labView->b[i][j]));
+			}
     // luminance processing
-	ipf.EPDToneMap(labView,0,6);
+//	ipf.EPDToneMap(labView,0,6);
+	
 	bool utili=false;
 	bool autili=false;
 	bool butili=false;
@@ -783,15 +787,20 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
         hist16, hist16, curve, dummy, 16, utili);
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, curve1, curve2, satcurve,lhskcurve, 16);
+								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, curve1, curve2, satcurve,lhskcurve, 
+									hist16C, hist16C, dummy,  
+								   16);
     //ipf.luminanceCurve (labView, labView, curve);
     ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,lhskcurve, curve, utili, autili, butili, ccutili,cclutili);
 	ipf.vibrance(labView);
+	ipf.EPDToneMap(labView,0,6);
+	
 	CurveFactory::curveLightBrightColor (
 					params.colorappearance.curveMode, params.colorappearance.curve,
 					params.colorappearance.curveMode2, params.colorappearance.curve2,
 					params.colorappearance.curveMode3, params.colorappearance.curve3,
-					
+					hist16, hist16, dummy,
+					hist16C, hist16C, dummy,
 					customColCurve1,
 					customColCurve2, 
 					customColCurve3, 

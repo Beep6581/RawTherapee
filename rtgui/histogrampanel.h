@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 #include <glibmm.h>
 #include "../rtengine/LUT.h"
+#include "../rtengine/improccoordinator.h"
 
 #include "pointermotionlistener.h"
 
@@ -71,6 +72,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     bool rawMode;
     bool showMode;
     bool barDisplayed;
+    bool needChroma;
 
     Gtk::VBox* parent;
 
@@ -88,7 +90,7 @@ class HistogramRGBArea : public Gtk::DrawingArea {
     void setParent (Gtk::VBox* p) { parent = p; };
 
     void update (int val, int rh, int gh, int bh);
-    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool show, bool c);
 
     void on_realize();
     bool on_expose_event(GdkEventExpose* event);
@@ -104,7 +106,7 @@ class FullModeListener {
     virtual void toggle_button_full () {}
 };
 
-class HistogramArea : public Gtk::DrawingArea {  
+class HistogramArea : public Gtk::DrawingArea{  
 
   protected:
 
@@ -119,7 +121,7 @@ class HistogramArea : public Gtk::DrawingArea {
     Gdk::Color lgray;
     Gdk::Color mgray;
     Gdk::Color dgray;
-    LUTu lhist, rhist, ghist, bhist;
+    LUTu lhist, rhist, ghist, bhist, chist;
     LUTu lhistRaw, rhistRaw, ghistRaw, bhistRaw;
 
     bool valid;
@@ -127,7 +129,7 @@ class HistogramArea : public Gtk::DrawingArea {
     FullModeListener *myFullModeListener;
     int oldwidth, oldheight;
 
-    bool needLuma, needRed, needGreen, needBlue, rawMode;
+    bool needLuma, needRed, needGreen, needBlue, rawMode, needChroma;
 
     HistogramAreaIdleHelper* haih;
 
@@ -137,8 +139,8 @@ class HistogramArea : public Gtk::DrawingArea {
     ~HistogramArea();
 
     void renderHistogram ();
-    void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
-    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full);
+    void update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma);
+    void updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full , bool c);
     void on_realize();
     bool on_expose_event(GdkEventExpose* event);
     bool on_button_press_event (GdkEventButton* event);
@@ -165,6 +167,7 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
     Gtk::ToggleButton* showRAW;
     Gtk::ToggleButton* showFull;
     Gtk::ToggleButton* showBAR;
+	Gtk::ToggleButton* showChro;
     
     Gtk::Image *redImage;
     Gtk::Image *greenImage;
@@ -173,6 +176,7 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
     Gtk::Image *rawImage;
     Gtk::Image *fullImage;
     Gtk::Image *barImage;
+    Gtk::Image *chroImage;
 
     Gtk::Image *redImage_g;
     Gtk::Image *greenImage_g;
@@ -181,6 +185,7 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
     Gtk::Image *rawImage_g;
     Gtk::Image *fullImage_g;
     Gtk::Image *barImage_g;
+    Gtk::Image *chroImage_g;
 
 
     sigc::connection rconn;
@@ -191,8 +196,8 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
     HistogramPanel ();
     ~HistogramPanel ();
 
-    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw) { 
-        histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw);
+    void histogramChanged (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma) { 
+        histogramArea->update (histRed, histGreen, histBlue, histLuma, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, Glib::ustring profile, int x, int y, int r, int g, int b);
@@ -208,7 +213,8 @@ class HistogramPanel : public Gtk::HBox, public PointerMotionListener, public Fu
     void value_toggled ();
     void raw_toggled ();
     void full_toggled ();
-    void bar_toggled ();
+	void chro_toggled ();
+	void bar_toggled ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);
 

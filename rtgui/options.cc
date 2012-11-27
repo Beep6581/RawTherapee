@@ -302,6 +302,7 @@ void Options::setDefaults () {
     histogramPosition = 2;
     histogramBar = true;
     histogramFullMode = false;
+	
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;

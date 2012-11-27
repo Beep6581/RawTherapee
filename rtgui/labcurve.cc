@@ -84,6 +84,8 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	curveEditorG->setCurveListener (this);
 
 	lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L"));
+	lshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP"));
+	
 	ashape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "a"));
 	ashape->setRangeLabels(
 			M("TP_LABCURVE_CURVEEDITOR_A_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_A_RANGE2"),
@@ -494,9 +496,11 @@ void LCurve::setBatchMode (bool batchMode) {
 }
 
 
-void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
+void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
 
 	lshape->updateBackgroundHistogram (histLCurve);
+	ccshape->updateBackgroundHistogram (histCCurve);
+	
 }
 
 void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd) {

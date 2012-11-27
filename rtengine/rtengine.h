@@ -221,8 +221,8 @@ namespace rtengine {
               * @param histBlue is the array of size 256 containing the histogram of the blue channel
               * @param histLuma is the array of size 256 containing the histogram of the luminance channel
               * other for curves backgrounds, histRAW is RAW without colors */
-            virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve,
-                LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {}
+            virtual void histogramChanged (LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma, LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM, LUTu & histCCAM,
+                LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw, LUTu & histChroma) {}
     };
 
     /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */

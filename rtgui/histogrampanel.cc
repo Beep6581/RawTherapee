@@ -23,6 +23,7 @@
 #include <cstring>
 #include "../rtengine/LUT.h"
 #include "rtimage.h"
+#include "../rtengine/improccoordinator.h"
 
 extern Glib::ustring argv0;
 extern Options options;
@@ -47,6 +48,7 @@ HistogramPanel::HistogramPanel () {
    greenImage = new RTImage ("histGreen.png");
    blueImage  = new RTImage ("histBlue.png");
    valueImage = new RTImage ("histValue.png");
+   chroImage  = new RTImage ("histChro.png");
    rawImage   = new RTImage ("histRaw.png");
    fullImage  = new RTImage ("histFull.png");
    barImage   = new RTImage ("histBar.png");
@@ -55,6 +57,7 @@ HistogramPanel::HistogramPanel () {
    greenImage_g = new RTImage ("histGreeng.png");
    blueImage_g  = new RTImage ("histBlueg.png");
    valueImage_g = new RTImage ("histValueg.png");
+   chroImage_g  = new RTImage ("histChrog.png");
    rawImage_g   = new RTImage ("histRawg.png");
    fullImage_g  = new RTImage ("histFullg.png");
    barImage_g   = new RTImage ("histBarg.png");
@@ -63,6 +66,7 @@ HistogramPanel::HistogramPanel () {
    showGreen = Gtk::manage (new Gtk::ToggleButton ());
    showBlue  = Gtk::manage (new Gtk::ToggleButton ());
    showValue = Gtk::manage (new Gtk::ToggleButton ());
+   showChro  = Gtk::manage (new Gtk::ToggleButton ());
    showRAW   = Gtk::manage (new Gtk::ToggleButton ());
    showFull  = Gtk::manage (new Gtk::ToggleButton ());
    showBAR   = Gtk::manage (new Gtk::ToggleButton ());
@@ -71,6 +75,7 @@ HistogramPanel::HistogramPanel () {
    showGreen->set_name("histButton"); showGreen->set_can_focus(false);
    showBlue->set_name("histButton");  showBlue->set_can_focus(false);
    showValue->set_name("histButton"); showValue->set_can_focus(false);
+   showChro->set_name("histButton");  showChro->set_can_focus(false);
    showRAW->set_name("histButton");   showRAW->set_can_focus(false);
    showFull->set_name("fullButton");  showFull->set_can_focus(false);
    showBAR->set_name("histButton");   showBAR->set_can_focus(false);
@@ -79,6 +84,7 @@ HistogramPanel::HistogramPanel () {
    showGreen->set_relief (Gtk::RELIEF_NONE);
    showBlue->set_relief (Gtk::RELIEF_NONE);
    showValue->set_relief (Gtk::RELIEF_NONE);
+   showChro->set_relief (Gtk::RELIEF_NONE);
    showRAW->set_relief (Gtk::RELIEF_NONE);
    showFull->set_relief (Gtk::RELIEF_NONE);
    showBAR->set_relief (Gtk::RELIEF_NONE);
@@ -87,6 +93,7 @@ HistogramPanel::HistogramPanel () {
    showGreen->set_tooltip_text (M("HISTOGRAM_TOOLTIP_G"));
    showBlue->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_B"));
    showValue->set_tooltip_text (M("HISTOGRAM_TOOLTIP_L"));
+   showChro->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_CHRO"));
    showRAW->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_RAW"));
    showFull->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_FULL"));
    showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
@@ -96,6 +103,7 @@ HistogramPanel::HistogramPanel () {
    showGreen->set_active (true);
    showBlue->set_active (true);
    showValue->set_active (true);
+   showChro->set_active (true);
    showRAW->set_active (false);
    showFull->set_active (!options.histogramFullMode);
    showBAR->set_active (options.histogramBar);
@@ -104,6 +112,7 @@ HistogramPanel::HistogramPanel () {
    showGreen->set_image (showGreen->get_active() ? *greenImage : *greenImage_g);
    showBlue->set_image  (showBlue->get_active()  ? *blueImage  : *blueImage_g);
    showValue->set_image (showValue->get_active() ? *valueImage : *valueImage_g);
+   showChro->set_image  (showChro->get_active()   ? *chroImage : *chroImage_g);
    showRAW->set_image   (showRAW->get_active()   ? *rawImage   : *rawImage_g);
    showFull->set_image  (showFull->get_active()  ? *fullImage  : *fullImage_g);
    showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
@@ -112,6 +121,7 @@ HistogramPanel::HistogramPanel () {
    showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::green_toggled), showGreen );
    showBlue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::blue_toggled), showBlue );
    showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::value_toggled), showValue );
+   showChro->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::chro_toggled), showChro );
    showRAW->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::raw_toggled), showRAW );
    showFull->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::full_toggled), showFull );
    showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
@@ -120,7 +130,8 @@ HistogramPanel::HistogramPanel () {
    buttonVBox->pack_start (*showGreen, Gtk::PACK_SHRINK, 0);
    buttonVBox->pack_start (*showBlue, Gtk::PACK_SHRINK, 0);
    buttonVBox->pack_start (*showValue, Gtk::PACK_SHRINK, 0);
-   buttonVBox->pack_start (*showRAW, Gtk::PACK_SHRINK, 0);
+   buttonVBox->pack_start (*showChro, Gtk::PACK_SHRINK, 0);
+	buttonVBox->pack_start (*showRAW, Gtk::PACK_SHRINK, 0);
    buttonVBox->pack_start (*showFull, Gtk::PACK_SHRINK, 0);
    buttonVBox->pack_start (*showBAR, Gtk::PACK_SHRINK, 0);
 
@@ -144,6 +155,7 @@ HistogramPanel::~HistogramPanel () {
   delete greenImage;
   delete blueImage;
   delete valueImage;
+  delete chroImage;
   delete rawImage;
   delete fullImage;
   delete barImage;
@@ -152,9 +164,11 @@ HistogramPanel::~HistogramPanel () {
   delete greenImage_g;
   delete blueImage_g;
   delete valueImage_g;
+  delete chroImage_g;
   delete rawImage_g;
   delete fullImage_g;
   delete barImage_g;
+  
 }
 
 void HistogramPanel::resized (Gtk::Allocation& req) {
@@ -206,14 +220,23 @@ void HistogramPanel::value_toggled () {
     showValue->set_image(showValue->get_active() ? *valueImage : *valueImage_g);
     rgbv_toggled();
 }
+void HistogramPanel::chro_toggled () {
+	removeIfThere(showChro, chroImage, false);
+	removeIfThere(showChro, chroImage_g, false);
+    showChro->set_image(showChro->get_active() ? *chroImage : *chroImage_g);
+    rgbv_toggled();
+}
+
 void HistogramPanel::raw_toggled () {
 	if (showRAW->get_active()) {
       showRAW->set_image(*rawImage);
       showValue->set_sensitive(false);
+      showChro->set_sensitive(false);
 	}
 	else {
       showRAW->set_image(*rawImage_g);
       showValue->set_sensitive(true);
+      showChro->set_sensitive(true);
 	}
     rgbv_toggled();
 }
@@ -226,13 +249,12 @@ void HistogramPanel::bar_toggled () {
     showBAR->set_image(showBAR->get_active() ? *barImage : *barImage_g);
     rgbv_toggled();
 }
-
 void HistogramPanel::rgbv_toggled () {
   // Update Display
-  histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showFull->get_active());
+  histogramArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showFull->get_active(), showChro->get_active());
   histogramArea->queue_draw ();
 
-  histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showBAR->get_active());
+  histogramRGBArea->updateOptions (showRed->get_active(), showGreen->get_active(), showBlue->get_active(), showValue->get_active(), showRAW->get_active(), showBAR->get_active(), showChro->get_active());
   histogramRGBArea->renderRGBMarks (0,0,0);
   histogramArea->queue_draw ();
 }
@@ -290,7 +312,7 @@ void HistogramPanel::toggle_button_full () {
 //
 // HistogramRGBArea
 HistogramRGBArea::HistogramRGBArea () :
-  frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar) {
+  frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(true){
 
   harih = new HistogramRGBAreaIdleHelper;
   harih->harea = this;
@@ -384,6 +406,14 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b) {
       cr->line_to((int)((r+g+b)/3*(winw/256.0)), winh-0);
       cr->stroke();
     }
+    if (needChroma) {
+      // Luma
+      cr->set_source_rgb(1.0, 1.0, 1.0);
+      cr->move_to((int)((r+g+b)/3*(winw/256.0)), 0);
+      cr->line_to((int)((r+g+b)/3*(winw/256.0)), winh-0);
+      cr->stroke();
+    }
+	
   }
 }
 
@@ -427,7 +457,7 @@ void HistogramRGBArea::update (int valh, int rh, int  gh, int bh) {
     g_idle_add (histrgbupdate, harih);
 }
 
-void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool bar) {
+void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool bar, bool c) {
 
     needRed   = r;
     needGreen = g;
@@ -435,6 +465,7 @@ void HistogramRGBArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, 
     needLuma  = l;
     rawMode   = raw;
     showMode  = bar;
+	needChroma = c;
 
     // Histogram RGB BAR button logic goes here
 
@@ -516,12 +547,13 @@ void HistogramRGBArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
 //
 // HistogramArea
 HistogramArea::HistogramArea (FullModeListener *fml) : 
-    valid(false), fullMode(options.histogramFullMode), myFullModeListener(fml), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false) {
+    valid(false), fullMode(options.histogramFullMode), myFullModeListener(fml), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(true) {
 
     lhist(256);
     rhist(256);
     ghist(256);
     bhist(256);
+    chist(256);
 
     haih = new HistogramAreaIdleHelper;
     haih->harea = this;
@@ -540,7 +572,7 @@ HistogramArea::~HistogramArea () {
 
 }
 
-void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full) {
+void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, bool full, bool c) {
 
     needRed   = r;
     needGreen = g;
@@ -548,6 +580,7 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool raw, boo
     needLuma  = l;
     rawMode   = raw;
     fullMode  = !full;
+	needChroma = c;
 
     renderHistogram ();
 }
@@ -573,10 +606,10 @@ int histupdateUI (void* data) {
     return 0;
 }
 
-void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw) {
+void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu &histLuma, LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw, LUTu &histChroma) {
 	
     if (histRed) {
-        lhist=histLuma;
+        lhist=histLuma;chist=histChroma;
         rhist=histRed; ghist=histGreen; bhist=histBlue;
         rhistRaw=histRedRaw; ghistRaw=histGreenRaw; bhistRaw=histBlueRaw;
 
@@ -619,6 +652,8 @@ void HistogramArea::renderHistogram () {
     for (int i=1; i<255; i++) {
         if (needLuma && lhist[i]>fullhistheight)
 	        fullhistheight = lhist[i];
+        if (needChroma && chist[i]>fullhistheight)
+	        fullhistheight = chist[i];
         if (needRed && (rawMode?rhistRaw:rhist)[i]>fullhistheight)
 	        fullhistheight = rh[i];
         if (needGreen && (rawMode?ghistRaw:ghist)[i]>fullhistheight)
@@ -633,7 +668,7 @@ void HistogramArea::renderHistogram () {
         int area = 0;
         for (int i=0; i<fullhistheight; i++) {
             for (int j=0; j<256; j++)
-                if ((needLuma && !rawMode && lhist[j]>i) || (needRed && rh[j]>i) || (needGreen && gh[j]>i) || (needBlue && bh[j]>i))
+                if ((needLuma && !rawMode && lhist[j]>i) || (needChroma && !rawMode && chist[j]>i) || (needRed && rh[j]>i) || (needGreen && gh[j]>i) || (needBlue && bh[j]>i))
                     area++;
             if ((double)area / (256*(i+1)) < 0.3) {
                 realhistheight = i;
@@ -654,12 +689,23 @@ void HistogramArea::renderHistogram () {
     if (needLuma && !rawMode) {
         drawCurve(cr, lhist, realhistheight, winw, winh);
         cr->set_source_rgb (0.75, 0.75, 0.75);
-        cr->fill_preserve ();
+		cr->fill_preserve ();
         cr->set_source_rgb (0.5, 0.5, 0.5);
-    	cr->stroke ();
+   	cr->stroke ();
 
         drawMarks(cr, lhist, realhistheight, winw, ui, oi);
     }
+    if (needChroma && !rawMode) {
+        drawCurve(cr, chist, realhistheight, winw, winh);
+        cr->set_source_rgb (1.0, 1.0, 1.0);
+		cr->fill_preserve ();
+        cr->set_source_rgb (0.2, 0.2, 0.1);
+   	cr->stroke ();
+
+        drawMarks(cr, lhist, realhistheight, winw, ui, oi);
+    }
+	
+	
     if (needRed) {
         drawCurve(cr, rh, realhistheight, winw, winh);
         cr->set_source_rgb (1.0, 0.0, 0.0);

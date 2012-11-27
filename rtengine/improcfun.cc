@@ -357,7 +357,7 @@ if(params->colorappearance.enabled) {
 	
 	
 	//evaluate lightness, contrast
-	ColorTemp::curveJ (jli, contra, 1, bright_curve, hist16J);//lightness and contrast J
+	ColorTemp::curveJ (jli, contra, 1, bright_curve,hist16J);//lightness and contrast J
 	ColorTemp::curveJ (qbri, qcontra, 1, bright_curveQ, hist16Q);//brightness and contrast Q
 	int gamu=0;
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
@@ -540,7 +540,7 @@ if(params->colorappearance.enabled) {
 	
 	if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
 		if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA){  
-		    double parsat=1.;
+		    double parsat=0.8;//0.68;
 			double coef=327.68/parsat;
 			float Cc=(float) Cpro*coef;
 			float Ccold=Cc;
@@ -555,13 +555,13 @@ if(params->colorappearance.enabled) {
 				c1C=1;	
 		}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ // 
-				double parsat=0.8;
+				double parsat=0.8;//0.6
 				double coef=327.68/parsat;
 				float Ss=(float) spro*coef;
 				float Sold=Ss;
 				const Saturcurve& userColCurve = static_cast<const Saturcurve&>(customColCurve3);
 					userColCurve.Apply(Ss);
-					Ss=0.7f*(Ss-Sold)+Sold;//divide sensibility saturation
+					Ss=0.6f*(Ss-Sold)+Sold;//divide sensibility saturation
 				double coe=pow(fl,0.25);
 				float dred=100.f;// in C mode
 				float protect_red=80.0f; // in C mode
@@ -576,7 +576,7 @@ if(params->colorappearance.enabled) {
 				
 			}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_COLORF){ // 
-				double parsat=1.;
+				double parsat=0.8;//0.68;
 				double coef=327.68/parsat;	
 				float Mm=(float) Mpro*coef;
 				float Mold=Mm;
@@ -1622,11 +1622,15 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 #include "EdgePreservingDecomposition.cc"
 void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip){
 	//Hasten access to the parameters.
-	EPDParams *p = (EPDParams *)(&params->edgePreservingDecompositionUI);
+//	EPDParams *p = (EPDParams *)(&params->edgePreservingDecompositionUI);
 
 	//Enabled? Leave now if not.
-	if(!p->enabled) return;
-
+//	if(!p->enabled) return;
+if(!params->edgePreservingDecompositionUI.enabled) return;
+float stren=params->edgePreservingDecompositionUI.Strength;
+float edgest=params->edgePreservingDecompositionUI.EdgeStopping;
+float sca=params->edgePreservingDecompositionUI.Scale;
+float rew=params->edgePreservingDecompositionUI.ReweightingIterates;
 	//Pointers to whole data and size of it.
 	float *L = lab->L[0];
 	float *a = lab->a[0];
@@ -1645,12 +1649,12 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
 		L[i] = (L[i] - minL)/32767.0f;
 
 	//Some interpretations.
-	float Compression = expf(-p->Strength);		//This modification turns numbers symmetric around 0 into exponents.
-	float DetailBoost = p->Strength;
-	if(p->Strength < 0.0f) DetailBoost = 0.0f;	//Go with effect of exponent only if uncompressing.
+	float Compression = expf(-stren);		//This modification turns numbers symmetric around 0 into exponents.
+	float DetailBoost = stren;
+	if(stren < 0.0f) DetailBoost = 0.0f;	//Go with effect of exponent only if uncompressing.
 
 	//Auto select number of iterates. Note that p->EdgeStopping = 0 makes a Gaussian blur.
-	if(Iterates == 0) Iterates = (unsigned int)(p->EdgeStopping*15.0);
+	if(Iterates == 0) Iterates = (unsigned int)(edgest*15.0);
 
 /* Debuggery. Saves L for toying with outside of RT.
 char nm[64];
@@ -1659,7 +1663,7 @@ FILE *f = fopen(nm, "wb");
 fwrite(L, N, sizeof(float), f);
 fclose(f);*/
 
-	epd.CompressDynamicRange(L, (float)p->Scale/skip, (float)p->EdgeStopping, Compression, DetailBoost, Iterates, p->ReweightingIterates, L);
+	epd.CompressDynamicRange(L, (float)sca/skip, (float)edgest, Compression, DetailBoost, Iterates, rew, L);
 
 	//Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
 	float s = (1.0f + 38.7889f)*powf(Compression, 1.5856f)/(1.0f + 38.7889f*powf(Compression, 1.5856f));
