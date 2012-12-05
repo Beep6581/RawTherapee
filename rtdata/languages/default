@@ -594,6 +594,7 @@ PARTIALPASTE_COLORDENOISE;Color denoise
 PARTIALPASTE_COLORGROUP;Color Related Settings
 PARTIALPASTE_COLORMIXER;Color mixer
 PARTIALPASTE_COLORSHIFT;Color shift
+PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 PARTIALPASTE_COMPOSITIONGROUP;Composition Settings
 PARTIALPASTE_CROP;Crop
@@ -915,6 +916,8 @@ TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; is differe
 TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; is different from Lab and RGB
 TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf you check the " <i>Automatic</i> " box, RT will try to find the best value
 TP_COLORAPP_EQUAL;Equal
+TP_COLORAPP_DATACIE;Show CIECAM output histograms in curves
+TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM curves show approximate values/ranges for J or Q, and C or s or M after the CIECAM adjustments.\n This selection does not impact the main histogram panel.\n\n When disabled, histograms in CIECAM curves show Lab values, that are before CIECAM adjustments
 TP_COLORAPP_GAMUT;Gamut control (Lab & CIECAM)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 TP_COLORAPP_HUE;Hue (h)
@@ -950,9 +953,9 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
 TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
 TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogram of L (Lab) before CIECAM.\n For final output refer to the Histogram panel
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogram of L (Lab) before CIECAM.\n\n Histogram of J,Q after CIECAM, if checkbox Show CIECAM output is enabled.\n (J,Q) are not directly shown in histogram panel. \n\n For final output refer to the Histogram panel.
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfullness.\n Histogram shows chromaticity (Lab) before CIECAM.\n For final output refer to the Histogram panel
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfullness.\n Histogram shows chromaticity (Lab) before CIECAM.\n Histogram shows  C,s,M after CIECAM if checkbox Show CIECAM output is enabled.\n (C,s,M) are not directly shown in histogram panel. \n For final output refer to the Histogram panel
 TP_CROP_FIXRATIO;Fix ratio:
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
@@ -1100,12 +1103,12 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity C=f(C).\n Histogram of Chromaticity before Lab adjustements.\n For final output refer to the Histogram panel
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity C=f(C).\n Histogram of Chromaticity before Curve adjustements.\n For final output refer to the Histogram panel
 TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the hue
 TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to the chromaticity
-TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Histogram of L before Lab adjustements.\n For final output refer to the Histogram panel
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Histogram of L before Curve Lab adjustements.\n For final output refer to the Histogram panel
 TP_LABCURVE_LABEL;Lab Adjustments
 TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 TP_LENSGEOM_AUTOCROP;Auto Crop

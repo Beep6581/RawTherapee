@@ -42,6 +42,8 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#undef CLIPD
+#define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
 
 namespace rtengine {
 	
@@ -233,7 +235,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 
 }
 
-void ImProcFunctions::ciecam_02 (LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3 )
+void ImProcFunctions::ciecam_02 (int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM )
 {
 if(params->colorappearance.enabled) {
 
@@ -241,6 +243,28 @@ if(params->colorappearance.enabled) {
 	MyTime t1e,t2e;
 	t1e.set();
 #endif
+	LUTf dLcurve(65536,0);
+	LUTu hist16JCAM(65536);
+	bool jp=false;
+	float val;
+	if(pW!=1){//only with improccoordinator
+	for (int i=0; i<32768; i++) {  //# 32768*1.414  approximation maxi for chroma
+			val = (double)i / 32767.0;
+			dLcurve[i] = CLIPD(val);
+		}
+	hist16JCAM.clear();
+	}
+	LUTf dCcurve(65536,0);
+	LUTu hist16_CCAM(65536);
+	bool chropC=false;
+	float valc;
+	if(pW!=1){//only with improccoordinator
+	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+			valc = (double)i / 47999.0;
+			dCcurve[i] = CLIPD(valc);
+		}
+	hist16_CCAM.clear();
+	}
 
 	int width = lab->W, height = lab->H;
 	double Yw;
@@ -291,6 +315,7 @@ if(params->colorappearance.enabled) {
 	else if(mean<90.f) yb=80.0;
 	else               yb=90.0;
 
+	bool ciedata=params->colorappearance.datacie;
 	
 	ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
 	//viewing condition for surround
@@ -373,7 +398,7 @@ if(params->colorappearance.enabled) {
 	bool doneinit=true;
 	bool doneinit2=true;
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,fl,nc,f,c, height,width,doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection)
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,fl,nc,f,c, height,width,doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
 #endif
 {	
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -608,6 +633,35 @@ if(params->colorappearance.enabled) {
 			M=Mpro;
 			h=hpro;
 			s=spro;
+			int posl, posc;
+			double brli=327.;
+			double chsacol=327.;
+			int libr=0;
+			int colch=0;
+			if(curveMode==ColorAppearanceParams::TC_MODE_BRIGHT) {brli=70.0; libr=1;}
+			else if(curveMode==ColorAppearanceParams::TC_MODE_LIGHT) {brli=327.;libr=0;}
+			if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA) {chsacol=327.;colch=0;}
+			else if(curveMode3==ColorAppearanceParams::TC_MODE_SATUR) {chsacol=450.0;colch=1;}
+			else if(curveMode3==ColorAppearanceParams::TC_MODE_COLORF) {chsacol=327.0;colch=2;}
+			
+			if(ciedata) {
+			// Data for J Q M s and C histograms
+				//update histogram
+				jp=true;
+                if(pW!=1){//only with improccoordinator
+				if(libr==1) posl=CLIP((int)(Q*brli));//40.0 to 100.0 approximative factor for Q  - 327 for J
+				else if(libr==0) posl=CLIP((int)(J*brli));//327 for J	
+				hist16JCAM[posl]++;
+				}
+				chropC=true;
+                if(pW!=1){//only with improccoordinator
+				if(colch==0) posc=CLIP((int)(C*chsacol));//450.0 approximative factor for s    320 for M
+				else if(colch==1) posc=CLIP((int)(s*chsacol));
+				else if(colch==2) posc=CLIP((int)(M*chsacol));
+				hist16_CCAM[posc]++;
+				}
+			}
+			
 			double xx,yy,zz;
 			//process normal==> viewing
 			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
@@ -650,6 +704,29 @@ if(params->colorappearance.enabled) {
 		}
 	}	
 	// End of parallelization
+	if(ciedata) {
+    //update histogram J 
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=32768; i++) {//
+			float val;
+			if (jp) {
+				float hval = dLcurve[i];
+				int hi = (int)(255.0*CLIPD(hval)); //
+				histLCAM[hi] += hist16JCAM[i] ;
+			}
+		}
+	}
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=48000; i++) {//
+			float valc;
+			if (chropC) {
+				float hvalc = dCcurve[i];
+				int hic = (int)(255.0*CLIPD(hvalc)); //
+				histCCAM[hic] += hist16_CCAM[i] ;
+			}
+		}
+	}
+	}
 
 #ifdef _DEBUG
 	if (settings->verbose) {
@@ -1175,12 +1252,11 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 
 
-void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili) {
+void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, LUTu &histCCurve) {
 	
 	int W = lold->W;
 	int H = lold->H;
    // lhskcurve.dump("lh_curve");			
-
 	//init Flatcurve for C=f(H)
 	FlatCurve* chCurve = NULL;
 	bool chutili = false;
@@ -1189,6 +1265,17 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 		if (chCurve && !chCurve->isIdentity()) {
 			chutili=true;
 		}//do not use "Munsell" if Chcurve not used
+	}
+	LUTf dCcurve(65536,0);
+	LUTu hist16Clad(65536);
+	bool chrop=false;
+	float val;
+	if(pW!=1){//only with improccoordinator
+	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+			val = (double)i / 47999.0;
+			dCcurve[i] = CLIPD(val);
+		}
+	hist16Clad.clear();
 	}
 #ifdef _DEBUG
 	MyTime t1e,t2e, t3e, t4e;
@@ -1235,7 +1322,7 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 	bool ccut = ccutili;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
 	// avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
-	bool avoidColorShift = (params->labCurve.avoidcolorshift || params->colorappearance.gamut) && !bwToning;
+	bool avoidColorShift = (params->labCurve.avoidcolorshift || params->colorappearance.gamut )&& !bwToning ;	
 	int protectRed = settings->protectred;
 	double protectRedH = settings->protectredh;
 	bool gamutLch = settings->gamutLch;
@@ -1247,9 +1334,9 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 
 
 #ifdef _DEBUG
-#pragma omp parallel default(shared) firstprivate(highlight, ccut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(highlight, ccut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo, pW) if (multiThread)
 #else
-#pragma omp parallel default(shared) firstprivate(highlight, ccut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(highlight, ccut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, pW) if (multiThread)
 #endif
 {
 
@@ -1287,6 +1374,8 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 			float chromaChfactor=1.0f;
 			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
 			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
+			int poscc,posp;
+
 //			calculate C=f(H)
 			if (chutili) {
 				double hr;
@@ -1317,7 +1406,7 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 				else                    dred = 40.0f;
 				// end pyramid
 		if(chromaticity!=0 && !bwToning){
-			
+				float chromahist;
 				float factorskin, factorsat, factor, factorskinext, interm;					
 				float scale = 100.0f/100.1f;//reduction in normal zone
 				float scaleext=1.0f;//reduction in transition zone
@@ -1351,7 +1440,14 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 				Color::transitred ( HH, Chprov1, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);			
 				atmp *= factor;
 				btmp *= factor;
+				
  			}
+				//update histogram C
+				chrop=true;
+                if(pW!=1){//only with improccoordinator
+				posp=CLIP((int)sqrt((atmp*atmp + btmp*btmp)));
+				hist16Clad[posp]++;
+				}
 
 			// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
 			if (!bwToning && ccut) {	
@@ -1495,6 +1591,17 @@ void ImProcFunctions::chromiLuminanceCurve (LabImage* lold, LabImage* lnew, LUTf
 			}
 		}
 } // end of parallelization
+    //update histogram C  with data chromaticity and not with CC curve
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+			float val;
+			if (chrop) {
+				float hval = dCcurve[i];
+				int hi = (int)(255.0*CLIPD(hval)); //
+				histCCurve[hi] += hist16Clad[i] ;
+			}
+		}
+	}
 
 #ifdef _DEBUG
 	if (settings->verbose) {

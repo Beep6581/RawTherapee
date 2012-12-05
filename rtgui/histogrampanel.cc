@@ -103,7 +103,8 @@ HistogramPanel::HistogramPanel () {
    showGreen->set_active (true);
    showBlue->set_active (true);
    showValue->set_active (true);
-   showChro->set_active (true);
+   showChro->set_active (false);//unactive by default
+
    showRAW->set_active (false);
    showFull->set_active (!options.histogramFullMode);
    showBAR->set_active (options.histogramBar);
@@ -311,8 +312,8 @@ void HistogramPanel::toggle_button_full () {
 //
 //
 // HistogramRGBArea
-HistogramRGBArea::HistogramRGBArea () :
-  frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(true){
+HistogramRGBArea::HistogramRGBArea () ://needChroma unactive by default
+  frozen(false), valid(false), needRed(true), needGreen(true), needBlue(true), needLuma(true), rawMode(false), showMode(options.histogramBar), barDisplayed(options.histogramBar), needChroma(false){
 
   harih = new HistogramRGBAreaIdleHelper;
   harih->harea = this;
@@ -546,8 +547,8 @@ void HistogramRGBArea::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
 //
 //
 // HistogramArea
-HistogramArea::HistogramArea (FullModeListener *fml) : 
-    valid(false), fullMode(options.histogramFullMode), myFullModeListener(fml), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(true) {
+HistogramArea::HistogramArea (FullModeListener *fml) : //needChroma unactive by default
+    valid(false), fullMode(options.histogramFullMode), myFullModeListener(fml), oldwidth(-1), needLuma(true), needRed(true), needGreen(true), needBlue(true), rawMode(false), needChroma(false) {
 
     lhist(256);
     rhist(256);
@@ -697,9 +698,9 @@ void HistogramArea::renderHistogram () {
     }
     if (needChroma && !rawMode) {
         drawCurve(cr, chist, realhistheight, winw, winh);
-        cr->set_source_rgb (1.0, 1.0, 1.0);
-		cr->fill_preserve ();
-        cr->set_source_rgb (0.2, 0.2, 0.1);
+        cr->set_source_rgb (0.6, 0.6, 0.6);
+	//	cr->fill_preserve ();
+     //   cr->set_source_rgb (0.2, 0.2, 0.1);
    	cr->stroke ();
 
         drawMarks(cr, lhist, realhistheight, winw, ui, oi);

@@ -263,9 +263,25 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	p2VBox->pack_start( *curveEditorG, Gtk::PACK_SHRINK, 2);
 	p2VBox->pack_start( *curveEditorG2, Gtk::PACK_SHRINK, 2);
 	p2VBox->pack_start( *curveEditorG3, Gtk::PACK_SHRINK, 2);
+	
+	// ------------------------ Choice CIECAM data
+
+
+	datacie = Gtk::manage (new Gtk::CheckButton (M("TP_COLORAPP_DATACIE")));
+	datacie->set_tooltip_markup (M("TP_COLORAPP_DATACIE_TOOLTIP"));
+	datacieconn = datacie->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::datacie_toggled) );
+	p2VBox->pack_start (*datacie);
+
+    //-------------------------
+	
+	
+	
 	p2Frame->add(*p2VBox);
+	
+	
 	pack_start (*p2Frame, Gtk::PACK_EXPAND_WIDGET, 4);
 
+	
 
 	// ------------------------ Process #3: Converting back to Lab/RGB
 
@@ -387,6 +403,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		colorh->setEditedState        (pedited->colorappearance.colorh ? Edited : UnEdited);
 		surrsource->set_inconsistent  (!pedited->colorappearance.surrsource);
 		gamut->set_inconsistent       (!pedited->colorappearance.gamut);
+		datacie->set_inconsistent     (!pedited->colorappearance.datacie);
 
 		degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
 		enabled->set_inconsistent     (multiImage && !pedited->colorappearance.enabled);
@@ -457,9 +474,13 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	gamutconn.block (true);
 	gamut->set_active (pp->colorappearance.gamut);
 	gamutconn.block (false);
+	datacieconn.block (true);
+	datacie->set_active (pp->colorappearance.datacie);
+	datacieconn.block (false);
 
 	lastsurr=pp->colorappearance.surrsource;
 	lastgamut=pp->colorappearance.gamut;
+	lastdatacie=pp->colorappearance.datacie;
 
 	lastEnabled = pp->colorappearance.enabled;
 	lastAutoDegree = pp->colorappearance.autodegree;
@@ -509,6 +530,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->colorappearance.rstprotection = rstprotection->getValue ();
 	pp->colorappearance.surrsource    = surrsource->get_active();
 	pp->colorappearance.gamut         = gamut->get_active();
+	pp->colorappearance.datacie       = datacie->get_active();
 	pp->colorappearance.curve         = shape->getCurve ();
 	pp->colorappearance.curve2        = shape2->getCurve ();
 	pp->colorappearance.curve3        = shape3->getCurve ();
@@ -546,6 +568,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorappearance.algo          = algo->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->colorappearance.surrsource    = !surrsource->get_inconsistent();
 		pedited->colorappearance.gamut         = !gamut->get_inconsistent();
+		pedited->colorappearance.datacie       = !datacie->get_inconsistent();
 		pedited->colorappearance.curve         = !shape->isUnChanged ();
 		pedited->colorappearance.curve2        = !shape2->isUnChanged ();
 		pedited->colorappearance.curve3        = !shape3->isUnChanged ();
@@ -666,6 +689,28 @@ void ColorAppearance::gamut_toggled () {
 			listener->panelChanged (EvCATgamut, M("GENERAL_ENABLED"));
 		else
 			listener->panelChanged (EvCATgamut, M("GENERAL_DISABLED"));
+	}
+}
+void ColorAppearance::datacie_toggled () {
+
+	if (batchMode) {
+		if (datacie->get_inconsistent()) {
+			datacie->set_inconsistent (false);
+			datacieconn.block (true);
+			datacie->set_active (false);
+			datacieconn.block (false);
+		}
+		else if (lastdatacie)
+			datacie->set_inconsistent (true);
+
+		lastdatacie = datacie->get_active ();
+	}
+
+	if (listener) {
+		if (datacie->get_active ())
+			listener->panelChanged (EvCATdatacie, M("GENERAL_ENABLED"));
+		else
+			listener->panelChanged (EvCATdatacie, M("GENERAL_DISABLED"));
 	}
 }
 

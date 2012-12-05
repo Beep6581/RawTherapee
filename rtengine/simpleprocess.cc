@@ -201,15 +201,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// start tile processing...???
 
-    // luminance histogram update
     hist16.clear();  hist16C.clear();
-    for (int i=0; i<fh; i++)
-        for (int j=0; j<fw; j++){
-            hist16[CLIP((int)((labView->L[i][j])))]++;
-            hist16C=CLIP((int)sqrt(labView->a[i][j]*labView->a[i][j] + labView->b[i][j]*labView->b[i][j]));
-			}
-    // luminance processing
-//	ipf.EPDToneMap(labView);
 	bool utili=false;
 	bool autili=false;
 	bool butili=false;
@@ -221,8 +213,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,params.labCurve.lccurve,curve1, curve2, satcurve,lhskcurve, 
 								   hist16C, hist16C,dummy,	
 								   1);
-	//ipf.luminanceCurve (labView, labView, curve);
-	ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,lhskcurve,curve, utili, autili, butili, ccutili,cclutili);
+	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,curve, utili, autili, butili, ccutili,cclutili,dummy);
+	
 	ipf.EPDToneMap(labView);
 
 	ipf.vibrance(labView);
@@ -261,7 +253,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					customColCurve3, 					
 					1);
 	
-	ipf.ciecam_02 (labView, &params,customColCurve1,customColCurve2,customColCurve3);
+	ipf.ciecam_02 (1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy);
 
 	// end tile processing...???
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

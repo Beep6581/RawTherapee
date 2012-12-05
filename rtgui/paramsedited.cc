@@ -112,6 +112,7 @@ void ParamsEdited::set (bool v) {
 	colorappearance.rstprotection     = v;
 	colorappearance.surrsource = v;
 	colorappearance.gamut = v;
+	colorappearance.datacie = v;
 	colorappearance.curve      = v;
 	colorappearance.curve2     = v;
 	colorappearance.curve3     = v;
@@ -341,6 +342,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.colorh = colorappearance.colorh && p.colorappearance.colorh == other.colorappearance.colorh;
         colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
         colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
+        colorappearance.datacie = colorappearance.datacie && p.colorappearance.datacie == other.colorappearance.datacie;
         colorappearance.curve = colorappearance.curve && p.colorappearance.curve == other.colorappearance.curve;
         colorappearance.curve3 = colorappearance.curve3 && p.colorappearance.curve3 == other.colorappearance.curve3;
 		colorappearance.curve2 = colorappearance.curve2 && p.colorappearance.curve2 == other.colorappearance.curve2;
@@ -606,6 +608,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (colorappearance.rstprotection)		toEdit.colorappearance.rstprotection= dontforceSet && options.baBehav[ADDSET_CAT_RSTPRO] ? toEdit.colorappearance.rstprotection + mods.colorappearance.rstprotection : mods.colorappearance.rstprotection;
  	if (colorappearance.surrsource)			toEdit.colorappearance.surrsource = mods.colorappearance.surrsource;
  	if (colorappearance.gamut)				toEdit.colorappearance.gamut = mods.colorappearance.gamut;
+ 	if (colorappearance.datacie)			toEdit.colorappearance.datacie = mods.colorappearance.datacie;
 	if (impulseDenoise.enabled)				toEdit.impulseDenoise.enabled 	= mods.impulseDenoise.enabled;
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
 

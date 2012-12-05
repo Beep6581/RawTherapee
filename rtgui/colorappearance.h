@@ -55,6 +55,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     //Adjuster* edge;
     Gtk::CheckButton* surrsource;
     Gtk::CheckButton* gamut;
+    Gtk::CheckButton* datacie;
 
     Gtk::CheckButton* enabled;
     MyComboBoxText*   surround;
@@ -64,7 +65,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     MyComboBoxText*   algo;
     sigc::connection  algoconn;
     sigc::connection  surrconn;
-    sigc::connection  gamutconn;
+    sigc::connection  gamutconn, datacieconn;
     sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn;
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
@@ -79,6 +80,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     sigc::connection enaConn;
     bool lastsurr;
     bool lastgamut;
+	bool lastdatacie;
     bool bgTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
@@ -100,6 +102,8 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     void algoChanged         ();
     void surrsource_toggled  ();
     void gamut_toggled       ();
+    void datacie_toggled     ();
+	
     void curveChanged        (CurveEditor* ce);
     void curveMode1Changed   ();
     bool curveMode1Changed_  ();
