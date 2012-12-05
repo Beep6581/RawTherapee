@@ -209,6 +209,8 @@ public:
 	bool rstprotection;
 	bool surrsource;
 	bool gamut;
+	bool datacie;
+	
 };
 
 

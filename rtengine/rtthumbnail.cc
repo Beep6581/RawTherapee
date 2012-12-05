@@ -791,7 +791,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 									hist16C, hist16C, dummy,  
 								   16);
     //ipf.luminanceCurve (labView, labView, curve);
-    ipf.chromiLuminanceCurve (labView, labView, curve1, curve2, satcurve,lhskcurve, curve, utili, autili, butili, ccutili,cclutili);
+    ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, curve, utili, autili, butili, ccutili,cclutili, dummy);
+	
 	ipf.vibrance(labView);
 	ipf.EPDToneMap(labView,0,6);
 	
@@ -806,7 +807,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 					customColCurve3, 
 					16);
 	
-	ipf.ciecam_02 (labView, &params,customColCurve1,customColCurve2,customColCurve3);
+	ipf.ciecam_02 (1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy);
 
     // color processing
     //ipf.colorCurve (labView, labView);

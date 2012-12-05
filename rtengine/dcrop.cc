@@ -178,20 +178,14 @@ void Crop::update (int todo) {
 
 
 	//	parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
-	    bool utili=false;
-	    bool autili=false;
-	    bool butili=false;
-		bool ccutili=false;
-		bool cclutili=false;
-		LUTu dummy;
-
-		CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-									   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve,parent->lhskcurve,
-										dummy, dummy, dummy,
-									   1);
+	    bool utili=true;
+	    bool autili=true;
+	    bool butili=true;
+		bool ccutili=true;
+		bool cclutili=true;
 		
-		parent->ipf.chromiLuminanceCurve (labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili);
-	//	parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
+		LUTu dummy;
+		parent->ipf.chromiLuminanceCurve (1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, dummy);
 		parent->ipf.vibrance (labnCrop);
 		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
@@ -205,7 +199,7 @@ void Crop::update (int todo) {
 			parent->ipf.dirpyrequalizer (labnCrop);
 		}
 	
-	parent->ipf.ciecam_02 (labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3);
+	parent->ipf.ciecam_02 (1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy);
 	}
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);

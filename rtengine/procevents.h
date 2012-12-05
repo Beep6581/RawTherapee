@@ -220,8 +220,9 @@ enum ProcEvent {
 	EvCATCurveMode2=195,
 	EvCATCurve3=196,
 	EvCATCurveMode3=197,
+	EvCATdatacie=198,
 	
-	NUMOFEVENTS=198
+	NUMOFEVENTS=199
 };
 }
 #endif

@@ -388,6 +388,8 @@ class WBParams {
         double        rstprotection;
         bool          surrsource;
         bool          gamut;
+        bool          datacie;
+		
     };
 
 /**

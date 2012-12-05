@@ -592,6 +592,7 @@ PARTIALPASTE_COLORDENOISE;Réduction du bruit chromatique
 PARTIALPASTE_COLORGROUP;Réglages couleurs
 PARTIALPASTE_COLORMIXER;Mixage couleur
 PARTIALPASTE_COLORSHIFT;Décalage couleur
+PARTIALPASTE_COLORAPP;CIE Modèle apparence de la couleur 2002
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Remplir
 PARTIALPASTE_COMPOSITIONGROUP;Réglages de la composition
 PARTIALPASTE_CROP;Recadrage
@@ -916,6 +917,8 @@ TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contraste dans CIECAM02 pour le curseur (Q); est 
 TP_COLORAPP_CONTRAST_TOOLTIP;Contraste dans CIECAM02 pour le curseur (J); est différent du contraste Lab et RVB
 TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002\nSi vous sélectionnez " <i>Automatic</i> ", RT essaiera de trouver la meilleure valeur
 TP_COLORAPP_EQUAL;Préservé
+TP_COLORAPP_DATACIE;Montre les données de sortie CIECAM dans les courbes histogrammes 
+TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les courbes dans les histogrammes montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\n Cette sélection n'a aps d'incidence sur le panneau histogramme général.\n\n Quand désactivé, les histogrammes dans les courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
 TP_COLORAPP_GAMUT;Contrôle du gamut (Lab & CIECAM)
 TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
 TP_COLORAPP_HUE;Teinte (h)
@@ -951,9 +954,9 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Luminosité
 TP_COLORAPP_TCMODE_LABEL1;Courbe mode 1
 TP_COLORAPP_TCMODE_LABEL2;Courbe mode 2
 TP_COLORAPP_TCMODE_LABEL3;Courbe chroma mode
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogramme affiche L (lab) avant CIECAM.\n On peut voir le résultat dans la fenêtre histogramme
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogramme affiche L (lab) avant CIECAM.\n On peut voir le résultat dans la fenêtre histogramme.\n Histogramme de J/Q avant/après si la cas à cocher "Données CIECAM" est activée.\n (J,Q) ne sont pas affichés dans le panneau histogramme
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;usage similaire aux courbes tonales exposition
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs.\n Histogramme affiche la chromaticité Lab.\n On peut voir le résultat dans la fenêtre histogramme
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs.\n Histogramme affiche la chromaticité Lab avant CIECAM.\n On peut voir le résultat final dans la fenêtre histogramme.\n Histogramme de C,s,M avant/après si la cas à cocher "Données CIECAM" est activée.\n (C,s,M) ne sont pas affichés dans le panneau histogramme
 TP_CROP_FIXRATIO;Ratio fixe:
 TP_CROP_GTDIAGONALS;Règle des diagonales
 TP_CROP_GTEPASSPORT;Passeport biométrique
@@ -1108,8 +1111,8 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutre
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Terne
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturé
-TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Avant ajustements Lab.\n on peut voir le résultat dans la fenêtre Histogramme 
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticité en fonction de la Chromaticité.\n C=f(C) On peut voir le résultat dans la fenêtre Histogramme
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Avant ajustements courbe Lab.\n on peut voir le résultat dans la fenêtre Histogramme 
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticité en fonction de la Chromaticité.\n Histogramme de la chromaticité avant la courbe chroma.\n On peut voir le résultat dans la fenêtre Histogramme
 TP_LABCURVE_CURVEEDITOR_CH;CT
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticité en fonction de la Teinte
 TP_LABCURVE_CURVEEDITOR_LC;LC
