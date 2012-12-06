@@ -98,8 +98,13 @@ void ExtProgStore::init () {
     SearchProg("GeoSetter", "GeoSetter\\GeoSetter.exe", "", 0, true, true);
     SearchProg("FastStone Image Viewer", "FastStone Image Viewer\\FSViewer.exe", "", 0, true, true);
     SearchProg("FastPictureViewer", "FastPictureViewer\\FastPictureViewer.exe", "", 0, true, true);
-    if (!SearchProg("Autopano Giga", "Kolor\\Autopano Giga 2.%1\\AutopanoGiga_x64.exe", "Kolor\\Autopano Giga 2.%1\\AutopanoGiga.exe", 15, true, true))
-        SearchProg("Autopano Pro", "Kolor\\Autopano Pro 2.%1\\AutopanoPro_x64.exe", "Kolor\\Autopano Pro 2.%1\\AutopanoPro.exe", 15, true, true);
+
+    if (!SearchProg("Autopano Giga 3", "Kolor\\Autopano Giga 3.%1\\AutopanoGiga_x64.exe", "Kolor\\Autopano Giga 3.%1\\AutopanoGiga.exe", 15, true, true)){
+    	if ( !SearchProg("Autopano Pro 3", "Kolor\\Autopano Pro 3.%1\\AutopanoPro_x64.exe", "Kolor\\Autopano Pro 3.%1\\AutopanoPro.exe", 15, true, true))	{
+    		if (!SearchProg("Autopano Giga 2", "Kolor\\Autopano Giga 2.%1\\AutopanoGiga_x64.exe", "Kolor\\Autopano Giga 2.%1\\AutopanoGiga.exe", 6, true, true))
+    		        SearchProg("Autopano Pro 2", "Kolor\\Autopano Pro 2.%1\\AutopanoPro_x64.exe", "Kolor\\Autopano Pro 2.%1\\AutopanoPro.exe", 6, true, true);
+    	}
+    }
 
     // DO NOT add obscure little tools here, only widely used programs with proper setup program to have a standard path
 #endif
@@ -137,7 +142,7 @@ bool ExtProgStore::SearchProg(Glib::ustring name, Glib::ustring exePath, Glib::u
     pAct->target= (allowRaw?1:2);
 
     if (maxVer>0) {
-        for (int verNo=maxVer;verNo>1;verNo--) {
+        for (int verNo=maxVer;verNo>=0;verNo--) {
             pAct->filePathEXE=progFilesDir+"\\"+Glib::ustring::compose(exePath,verNo);
             if (safe_file_test(pAct->filePathEXE, Glib::FILE_TEST_EXISTS)) break;
 
