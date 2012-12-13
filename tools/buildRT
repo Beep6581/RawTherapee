@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.5, 2012-11-13
+# Version 2.6, 2012-12-13
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -14,7 +14,7 @@ getBranches () {
   branches=()
   while read branch _; do
     branches+=("$branch")
-  done < <(curl -s 'https://rawtherapee.googlecode.com/hg/?cmd=branchmap'; echo)
+  done < <(curl -s 'https://rawtherapee.googlecode.com/hg/?cmd=branchmap' | sort)
 }
 
 hgClone () {
@@ -38,7 +38,7 @@ menu () {
   printf "%s\n------------------------------------------\n#   -  branch            -  build type\n------------------------------------------\n"
   printf "%s\n" "0   -  only clone the repository and exit"
   printf "%s\n" "${list[@]:1}" | column -t
-  printf "%s\n" "------------------------------------------" "" "If you don't know which option to choose, then choose the \"default\" branch, \"release\" build type. Enter your choices, each number separated by a single space, e.g. 7 8" "" | fold -s
+  printf "%s\n" "------------------------------------------" "" "If you don't know which option to choose, then choose the \"default\" branch, \"release\" build type. Enter your choices, each number separated by a single space, e.g. 5 6" "" | fold -s
   read -p "Your choices: " -a choiceNumbers
 
   #sanitize
