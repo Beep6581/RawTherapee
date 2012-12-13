@@ -380,6 +380,14 @@ cmsHPROFILE ICCStore::createFromMatrix (const double matrix[3][3], bool gamma, G
 	   // normalize gamma in RT, default (Emil's choice = sRGB)
         pcurve[3] = 0x2390000;//pcurve for gamma sRGB : g:2.4 s=12.92
 		
+    } else {
+       // lcms2 up to 2.4 has a bug with linear gamma causing precision loss (banding)
+       // of floating point data when a normal icc encoding of linear gamma is used
+       // (i e 0 table entries), but by encoding a gamma curve which is 1.0 the
+       // floating point path is taken within lcms2 so no precision loss occurs and
+       // gamma is still 1.0.
+       pcurve[2] = 1;
+       pcurve[3] = 0x1000000; //pcurve for gamma 1
     }
 
     // constructing profile header
