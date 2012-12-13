@@ -47,6 +47,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         LabImage *nprevl;    
         Image8 *previmg;
         Image8 *workimg;
+        CieImage *ncie;    
 
         ImageSource* imgsrc;
 

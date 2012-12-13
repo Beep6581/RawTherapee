@@ -917,9 +917,11 @@ TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contraste dans CIECAM02 pour le curseur (Q); est 
 TP_COLORAPP_CONTRAST_TOOLTIP;Contraste dans CIECAM02 pour le curseur (J); est différent du contraste Lab et RVB
 TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002\nSi vous sélectionnez " <i>Automatic</i> ", RT essaiera de trouver la meilleure valeur
 TP_COLORAPP_EQUAL;Préservé
+TP_COLORAPP_TONECIE;Compression tonale avec brillance Q CIECAM
+TP_COLORAPP_TONECIE_TOOLTIP;Si vous choisissez cette option, tous les réglages "compression tonale" (si activé) seront utilisés par CIECAM 
 TP_COLORAPP_DATACIE;Montre les données de sortie CIECAM dans les courbes histogrammes 
 TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les courbes dans les histogrammes montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\n Cette sélection n'a aps d'incidence sur le panneau histogramme général.\n\n Quand désactivé, les histogrammes dans les courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
-TP_COLORAPP_GAMUT;Contrôle du gamut (Lab & CIECAM)
+TP_COLORAPP_GAMUT;Contrôle du gamut (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
 TP_COLORAPP_HUE;Teinte (h)
 TP_COLORAPP_HUE_TOOLTIP;Teinte (h) - angle entre 0° et 360°
@@ -998,9 +1000,10 @@ TP_DISTORTION_AUTO;Correction auto de la distorsion
 TP_DISTORTION_AUTO_TIP;(Experimental) Corrige la distorsion de l'objectif automatiquement pour certains APN (M4/3, quelques compacts, etc.)
 TP_DISTORTION_LABEL;Distorsion
 TP_EPD_EDGESTOPPING;Arrêt des bords
-TP_EPD_LABEL;Compression tonale
+TP_EPD_LABEL;Compression tonale [Lab] ou [CIECAM02]
 TP_EPD_REWEIGHTINGITERATES;Itérations de la pondération
 TP_EPD_SCALE;Échelle
+TP_EPD_TOOLTIP;Vous pouvez choisir entre le mode Lab (standard) ou le mode CIECAM02.\n En activant "Compression tonale avec brillance Q CIECAM" dans le menu "Brillance + Niveau de couleur CIECAM"
 TP_EPD_STRENGTH;Force
 TP_EQUALIZER_CONTRAST_MINUS;Contraste-
 TP_EQUALIZER_CONTRAST_PLUS;Contraste+

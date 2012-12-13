@@ -1652,7 +1652,7 @@ void ColorTemp::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q,
     double cz;
     double myh, myj, myc, myq, mym, mys;
 	double pfl;
-	
+	gamu=1;
     xyz_to_cat02( r, g, b, x, y, z, gamu );
     xyz_to_cat02( rw, gw, bw, xw, yw, zw, gamu );
 
@@ -1743,7 +1743,7 @@ void ColorTemp::jch2xyz_ciecam02( double &x, double &y, double &z, double J, dou
     double aw;
     double e, t;
     double cz;
-
+	gamu=1;
     ColorTemp::xyz_to_cat02( rw, gw, bw, xw, yw, zw, gamu );
 	if(doneinit2){
     n = yb / yw;

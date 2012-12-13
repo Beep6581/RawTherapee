@@ -349,8 +349,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		
 		ipf.chromiLuminanceCurve (pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili, histCCurve);
 		ipf.vibrance(nprevl);
-		ipf.EPDToneMap(nprevl,0,scale);
+	//	if(!params.colorappearance.tonecie) ipf.EPDToneMap(nprevl,0,scale);
+/*	if(params.colorappearance.enabled){
+		if(!params.colorappearance.tonecie) ipf.EPDToneMap(nprevl,5,1);
+		}
+	if(!params.colorappearance.enabled){ipf.EPDToneMap(nprevl,5,1);}
+	*/
+	if(params.colorappearance.enabled && !params.colorappearance.tonecie) ipf.EPDToneMap(nprevl,5,1);
 
+	if(!params.colorappearance.enabled){ipf.EPDToneMap(nprevl,5,1);}
+		
 		readyphase++;
 		if (scale==1) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
@@ -414,8 +422,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 					customColCurve2, 
 					customColCurve3, 
 					scale==1 ? 1 : 1);
-	
-    ipf.ciecam_02 (pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM);
+	int  Iterates=0;
+	int begh=0;
+	int endh=pH;
+    ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1);
 	}
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)
@@ -470,7 +480,8 @@ void ImProcCoordinator::freeAll () {
         delete orig_prev;
         delete oprevl;
         delete nprevl;
-        
+         delete ncie;
+       
         if (imageListener) {
             imageListener->delImage (previmg);
         }
@@ -514,6 +525,7 @@ if (settings->verbose) printf ("setscale before lock\n");
         oprevi = orig_prev;
         oprevl = new LabImage (pW, pH);    
         nprevl = new LabImage (pW, pH);    
+        ncie = new CieImage (pW, pH);    
         previmg = new Image8 (pW, pH);
 		workimg = new Image8 (pW, pH);
         shmap = new SHMap (pW, pH, true);

@@ -170,12 +170,18 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	qcontrast->set_tooltip_markup (M("TP_COLORAPP_CONTRAST_Q_TOOLTIP"));
 	p2VBox->pack_start (*qcontrast);
 
+	
 	colorh = Gtk::manage (new Adjuster (M("TP_COLORAPP_HUE"), -100.0, 100.0, 0.1, 0.));
 	if (colorh->delay < 1000) colorh->delay = 1000;
 	colorh->throwOnButtonRelease();
 	colorh->set_tooltip_markup (M("TP_COLORAPP_HUE_TOOLTIP"));
 	p2VBox->pack_start (*colorh);
 
+	tonecie = Gtk::manage (new Gtk::CheckButton (M("TP_COLORAPP_TONECIE")));
+	tonecie->set_tooltip_markup (M("TP_COLORAPP_TONECIE_TOOLTIP"));
+	tonecieconn = tonecie->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::tonecie_toggled) );
+	p2VBox->pack_start (*tonecie);
+	
 	p2VBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
 
 	toneCurveMode = Gtk::manage (new MyComboBoxText ());
@@ -331,8 +337,12 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	gamut->set_tooltip_markup (M("TP_COLORAPP_GAMUT_TOOLTIP"));
 	gamutconn = gamut->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::gamut_toggled) );
 	pack_start (*gamut, Gtk::PACK_SHRINK);
-
-
+/*
+	tonecie = Gtk::manage (new Gtk::CheckButton (M("TP_COLORAPP_TONECIE")));
+	tonecie->set_tooltip_markup (M("TP_COLORAPP_TONECIE_TOOLTIP"));
+	tonecieconn = tonecie->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::tonecie_toggled) );
+	pack_start (*tonecie, Gtk::PACK_SHRINK);
+*/
 	// ------------------------ Listening events
 
 
@@ -404,6 +414,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		surrsource->set_inconsistent  (!pedited->colorappearance.surrsource);
 		gamut->set_inconsistent       (!pedited->colorappearance.gamut);
 		datacie->set_inconsistent     (!pedited->colorappearance.datacie);
+		tonecie->set_inconsistent     (!pedited->colorappearance.tonecie);
 
 		degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
 		enabled->set_inconsistent     (multiImage && !pedited->colorappearance.enabled);
@@ -477,10 +488,14 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	datacieconn.block (true);
 	datacie->set_active (pp->colorappearance.datacie);
 	datacieconn.block (false);
+	tonecieconn.block (true);
+	tonecie->set_active (pp->colorappearance.tonecie);
+	tonecieconn.block (false);
 
 	lastsurr=pp->colorappearance.surrsource;
 	lastgamut=pp->colorappearance.gamut;
 	lastdatacie=pp->colorappearance.datacie;
+	lasttonecie=pp->colorappearance.tonecie;
 
 	lastEnabled = pp->colorappearance.enabled;
 	lastAutoDegree = pp->colorappearance.autodegree;
@@ -531,6 +546,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->colorappearance.surrsource    = surrsource->get_active();
 	pp->colorappearance.gamut         = gamut->get_active();
 	pp->colorappearance.datacie       = datacie->get_active();
+	pp->colorappearance.tonecie       = tonecie->get_active();
 	pp->colorappearance.curve         = shape->getCurve ();
 	pp->colorappearance.curve2        = shape2->getCurve ();
 	pp->colorappearance.curve3        = shape3->getCurve ();
@@ -569,6 +585,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorappearance.surrsource    = !surrsource->get_inconsistent();
 		pedited->colorappearance.gamut         = !gamut->get_inconsistent();
 		pedited->colorappearance.datacie       = !datacie->get_inconsistent();
+		pedited->colorappearance.tonecie       = !tonecie->get_inconsistent();
 		pedited->colorappearance.curve         = !shape->isUnChanged ();
 		pedited->colorappearance.curve2        = !shape2->isUnChanged ();
 		pedited->colorappearance.curve3        = !shape3->isUnChanged ();
@@ -683,13 +700,14 @@ void ColorAppearance::gamut_toggled () {
 
 		lastgamut = gamut->get_active ();
 	}
-
 	if (listener) {
 		if (gamut->get_active ())
 			listener->panelChanged (EvCATgamut, M("GENERAL_ENABLED"));
 		else
 			listener->panelChanged (EvCATgamut, M("GENERAL_DISABLED"));
 	}
+	
+
 }
 void ColorAppearance::datacie_toggled () {
 
@@ -712,6 +730,28 @@ void ColorAppearance::datacie_toggled () {
 		else
 			listener->panelChanged (EvCATdatacie, M("GENERAL_DISABLED"));
 	}
+}
+void ColorAppearance::tonecie_toggled () {
+
+	if (batchMode) {
+		if (tonecie->get_inconsistent()) {
+			tonecie->set_inconsistent (false);
+			tonecieconn.block (true);
+			tonecie->set_active (false);
+			tonecieconn.block (false);
+		}
+		else if (lasttonecie)
+			tonecie->set_inconsistent (true);
+
+		lasttonecie = tonecie->get_active ();
+	}
+	if (listener) {
+		if (tonecie->get_active ())
+			listener->panelChanged (EvCATtonecie, M("GENERAL_ENABLED"));
+		else
+			listener->panelChanged (EvCATtonecie, M("GENERAL_DISABLED"));
+	}
+
 }
 
 
@@ -888,6 +928,7 @@ void ColorAppearance::algoChanged () {
 		schroma->hide();
 		qbright->hide();
 		colorh->hide();
+		tonecie->hide();
 		curveEditorG->show();
 		curveEditorG2->show();
 		curveEditorG3->show();
@@ -902,6 +943,7 @@ void ColorAppearance::algoChanged () {
 		schroma->show();
 		qbright->hide();
 		colorh->hide();
+		tonecie->hide();		
 		curveEditorG->show();
 		curveEditorG2->show();
 		curveEditorG3->show();
@@ -916,6 +958,7 @@ void ColorAppearance::algoChanged () {
 		schroma->hide();
 		qbright->show();
 		colorh->hide();
+		tonecie->show();
 		curveEditorG->show();
 		curveEditorG2->show();
 		curveEditorG3->show();
@@ -930,6 +973,7 @@ void ColorAppearance::algoChanged () {
 		schroma->show();
 		qbright->show();
 		colorh->show();
+		tonecie->show();		
 		curveEditorG->show();
 		curveEditorG2->show();
 		curveEditorG3->show();

@@ -448,13 +448,12 @@ float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Sc
 	if(Compressed == NULL) Compressed = u;
 
 	//Apply compression, detail boost, unlogging. Compression is done on the logged data and detail boost on unlogged.
-	for(i = 0; i != n; i++){
+	for(int i = 0; i != n; i++){
 		float ce = expf(Source[i] + u[i]*(CompressionExponent - 1.0f)) - eps;
 		float ue = expf(u[i]) - eps;
 		Source[i] = expf(Source[i]) - eps;
 		Compressed[i] = ce + DetailBoost*(Source[i] - ue);
 	}
-
 	if(Compressed != u) delete[] u;
 	return Compressed;
 }

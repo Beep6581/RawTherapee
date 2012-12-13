@@ -763,6 +763,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 16);
 	
 	LabImage* labView = new LabImage (fw,fh);
+	CieImage* cieView = new CieImage (fw,fh);
 
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, expcomp, hlcompr, hlcomprthresh);
 
@@ -794,7 +795,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, curve, utili, autili, butili, ccutili,cclutili, dummy);
 	
 	ipf.vibrance(labView);
-	ipf.EPDToneMap(labView,0,6);
+	int begh = 0, endh = labView->H;
+
+	if(params.colorappearance.enabled && !params.colorappearance.tonecie) ipf.EPDToneMap(labView,5,6);
+
+	if(!params.colorappearance.enabled){ipf.EPDToneMap(labView,5,6);}
 	
 	CurveFactory::curveLightBrightColor (
 					params.colorappearance.curveMode, params.colorappearance.curve,
@@ -807,7 +812,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 					customColCurve3, 
 					16);
 	
-	ipf.ciecam_02 (1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy);
+	ipf.ciecam_02 (cieView, begh, endh, 1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6);
 
     // color processing
     //ipf.colorCurve (labView, labView);

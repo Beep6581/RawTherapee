@@ -113,6 +113,7 @@ void ParamsEdited::set (bool v) {
 	colorappearance.surrsource = v;
 	colorappearance.gamut = v;
 	colorappearance.datacie = v;
+	colorappearance.tonecie = v;
 	colorappearance.curve      = v;
 	colorappearance.curve2     = v;
 	colorappearance.curve3     = v;
@@ -343,7 +344,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
         colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
         colorappearance.datacie = colorappearance.datacie && p.colorappearance.datacie == other.colorappearance.datacie;
-        colorappearance.curve = colorappearance.curve && p.colorappearance.curve == other.colorappearance.curve;
+        colorappearance.tonecie = colorappearance.tonecie && p.colorappearance.tonecie == other.colorappearance.tonecie;
+		colorappearance.curve = colorappearance.curve && p.colorappearance.curve == other.colorappearance.curve;
         colorappearance.curve3 = colorappearance.curve3 && p.colorappearance.curve3 == other.colorappearance.curve3;
 		colorappearance.curve2 = colorappearance.curve2 && p.colorappearance.curve2 == other.colorappearance.curve2;
         colorappearance.curveMode = colorappearance.curveMode && p.colorappearance.curveMode == other.colorappearance.curveMode;
@@ -609,6 +611,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
  	if (colorappearance.surrsource)			toEdit.colorappearance.surrsource = mods.colorappearance.surrsource;
  	if (colorappearance.gamut)				toEdit.colorappearance.gamut = mods.colorappearance.gamut;
  	if (colorappearance.datacie)			toEdit.colorappearance.datacie = mods.colorappearance.datacie;
+ 	if (colorappearance.tonecie)			toEdit.colorappearance.tonecie = mods.colorappearance.tonecie;
 	if (impulseDenoise.enabled)				toEdit.impulseDenoise.enabled 	= mods.impulseDenoise.enabled;
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
 
