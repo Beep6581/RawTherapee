@@ -389,6 +389,7 @@ class WBParams {
         bool          surrsource;
         bool          gamut;
         bool          datacie;
+        bool          tonecie;
 		
     };
 

@@ -9,7 +9,7 @@ set (RTENGINESOURCEFILES safegtk.cc colortemp.cc curves.cc flatcurves.cc diagona
     dfmanager.cc ffmanager.cc rawimage.cc image8.cc image16.cc imagefloat.cc imagedata.cc imageio.cc improcfun.cc init.cc dcrop.cc
     loadinitial.cc procparams.cc rawimagesource.cc demosaic_algos.cc shmap.cc simpleprocess.cc refreshmap.cc
     stdimagesource.cc myfile.cc iccjpeg.cc hlmultipliers.cc improccoordinator.cc
-    processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc
+    processingjob.cc rtthumbnail.cc utils.cc labimage.cc slicer.cc cieimage.cc
     iplab2rgb.cc ipsharpen.cc iptransform.cc ipresize.cc ipvibrance.cc
 	jpeg_memsrc.cc jdatasrc.cc
 	EdgePreserveLab.cc EdgePreservingDecomposition.cc cplx_wavelet_dec.cc FTblockDN.cc

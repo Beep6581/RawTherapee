@@ -109,6 +109,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 
     // perform luma/chroma denoise
+//	CieImage *cieView;    
+
     LabImage* labView = new LabImage (fw,fh);
     if (params.dirpyrDenoise.enabled) {
 		ipf.RGB_denoise(baseImg, baseImg, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe);
@@ -215,7 +217,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 								   1);
 	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,curve, utili, autili, butili, ccutili,cclutili,dummy);
 	
-	ipf.EPDToneMap(labView);
+ 	if(params.colorappearance.enabled && !params.colorappearance.tonecie)ipf.EPDToneMap(labView,5,1);
+	
+	if(!params.colorappearance.enabled){ipf.EPDToneMap(labView,5,1);}
 
 	ipf.vibrance(labView);
 
@@ -242,6 +246,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	// directional pyramid equalizer
     ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
 	
+	//Colorappearance and tone-mapping associated
+	
+	int f_w=1,f_h=1;
+	int begh = 0, endh = fh;
+	if(params.colorappearance.tonecie || params.colorappearance.enabled){f_w=fw;f_h=fh;}
+	CieImage *cieView = new CieImage (f_w,(f_h));
+	begh=0;
+	endh=fh;
 	CurveFactory::curveLightBrightColor (
 					params.colorappearance.curveMode, params.colorappearance.curve,
 					params.colorappearance.curveMode2, params.colorappearance.curve2,
@@ -253,7 +265,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					customColCurve3, 					
 					1);
 	
-	ipf.ciecam_02 (1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy);
+	ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1);
+	
+    delete cieView;
+    cieView = NULL;
+	
+	
+	
 
 	// end tile processing...???
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

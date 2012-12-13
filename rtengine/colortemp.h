@@ -83,7 +83,7 @@ class ColorTemp {
 			double rc, gc, bc;
 			double rp, gp, bp;
 			double rpa, gpa, bpa;
-
+			gamu=1;
 			xyz_to_cat02( r, g, b, x, y, z, gamu );
 
 			rc = r * (((y * d) / r) + (1.0 - d));
@@ -247,6 +247,7 @@ class ColorTemp {
 };
 inline void ColorTemp::xyz_to_cat02( double &r, double &g, double &b, double x, double y, double z, int gamu )
 {
+gamu=1;
 if(gamu==0){
 	r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
 	g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
@@ -265,6 +266,7 @@ else if (gamu==1) {//gamut correction M.H.Brill S.Susstrunk
 
 inline void ColorTemp::cat02_to_xyz( double &x, double &y, double &z, double r, double g, double b, int gamu )
 {
+gamu=1;
 if(gamu==0) {
 	x = ( 1.096124 * r) - (0.278869 * g) + (0.182745 * b);
 	y = ( 0.454369 * r) + (0.473533 * g) + (0.072098 * b);
@@ -293,7 +295,8 @@ inline void ColorTemp::hpe_to_xyz( double &x, double &y, double &z, double r, do
 
 
 inline void ColorTemp::cat02_to_hpe( double &rh, double &gh, double &bh, double r, double g, double b, int gamu )
-{  if(gamu==0){
+{ gamu=1; 
+ if(gamu==0){
 	rh = ( 0.7409792 * r) + (0.2180250 * g) + (0.0410058 * b);
 	gh = ( 0.2853532 * r) + (0.6242014 * g) + (0.0904454 * b);
 	bh = (-0.0096280 * r) - (0.0056980 * g) + (1.0153260 * b);

@@ -174,7 +174,6 @@ void Crop::update (int todo) {
 	if (todo & (M_LUMINANCE+M_COLOR)) {
 		//I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
 		labnCrop->CopyFrom(laboCrop);
-//		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
 
 	//	parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
@@ -187,7 +186,13 @@ void Crop::update (int todo) {
 		LUTu dummy;
 		parent->ipf.chromiLuminanceCurve (1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, dummy);
 		parent->ipf.vibrance (labnCrop);
-		parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
+	//	if(!params.colorappearance.tonecie) parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
+	//	if(!params.colorappearance.tonecie) parent->ipf.EPDToneMap(labnCrop, 0, 1);	//Go with much fewer than normal iterates for fast redisplay.
+	if(params.colorappearance.enabled && !params.colorappearance.tonecie)parent->ipf.EPDToneMap(labnCrop, 5, 1);
+
+	if(!params.colorappearance.enabled){parent->ipf.EPDToneMap(labnCrop, 5, 1);}
+		
+	//	parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 
 		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
@@ -198,8 +203,9 @@ void Crop::update (int todo) {
 			parent->ipf.sharpening (labnCrop, (float**)cbuffer);
 			parent->ipf.dirpyrequalizer (labnCrop);
 		}
+	int begh = 0, endh = labnCrop->H;
 	
-	parent->ipf.ciecam_02 (1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy);
+	parent->ipf.ciecam_02 (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1);
 	}
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);
@@ -277,6 +283,7 @@ void Crop::freeAll () {
             delete resizeCrop;
         resizeCrop = NULL;
         delete laboCrop;
+		delete cieCrop;
         delete labnCrop;
         delete cropImg;
         delete cshmap;
@@ -363,6 +370,7 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
         laboCrop = new LabImage (cropw, croph);    
         labnCrop = new LabImage (cropw, croph);    
         cropImg = new Image8 (cropw, croph);
+        cieCrop = new CieImage (cropw, croph);    
 
         cshmap = new SHMap (cropw, croph, true);
         

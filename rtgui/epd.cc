@@ -29,6 +29,7 @@ EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : Gtk::VBox(), F
 
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
+	enabled->set_tooltip_markup (M("TP_EPD_TOOLTIP"));
 	enabled->show ();
 	pack_start (*enabled);
 

@@ -27,6 +27,7 @@
 #include "coord2d.h"
 #include "color.h"
 #include "labimage.h"
+#include "cieimage.h"
 #include "LUT.h"
 #include "lcp.h"
 #include "curves.h"
@@ -92,7 +93,7 @@ class ImProcFunctions {
 		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
 		                       double expcomp, int hlcompr, int hlcomprthresh);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
-		void ciecam_02 (int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM);
+		void ciecam_02 (CieImage* ncie, int begh, int endh,  int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale  );
 		void chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, LUTu &histCCurve);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
 		void colorCurve       (LabImage* lold, LabImage* lnew);
@@ -111,7 +112,8 @@ class ImProcFunctions {
 		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
 		
 		void EPDToneMap(LabImage *lab, unsigned int Iterates = 0, int skip = 1);
-	//	void CAT02 (Imagefloat* baseImg, const ProcParams* params);
+		void EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates=0, int skip =1);
+		//	void CAT02 (Imagefloat* baseImg, const ProcParams* params);
 
 		// pyramid denoise
 		procparams::DirPyrDenoiseParams dnparams;
@@ -152,6 +154,7 @@ class ImProcFunctions {
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6);// for gamma output		
 		Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);//without gamma ==>default
+       // CieImage *ciec;    
 
 		bool transCoord       (int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LCPMapper *pLCPMap=NULL);
 		bool transCoord       (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LCPMapper *pLCPMap=NULL);

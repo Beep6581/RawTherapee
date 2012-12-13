@@ -210,6 +210,7 @@ public:
 	bool surrsource;
 	bool gamut;
 	bool datacie;
+	bool tonecie;
 	
 };
 

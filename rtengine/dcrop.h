@@ -40,7 +40,7 @@ class Crop : public DetailedCrop {
         Imagefloat* *resizeCrop, *transCrop;
         LabImage *laboCrop, *labnCrop;
         Image8 *cropImg;  // permanently allocated in RAM and only renewed on size changes
-
+		CieImage *cieCrop;
         float** cbuffer;
         float * cbuf_real;
         SHMap* cshmap;

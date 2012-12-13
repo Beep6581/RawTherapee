@@ -1,4 +1,5 @@
 /*
+/*
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -38,7 +39,7 @@
 #include "cplx_wavelet_dec.h"
 #include "boxblur.h"
 #include "rt_math.h"
-
+#include "EdgePreservingDecomposition.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -234,8 +235,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
     delete [] hist;
 
 }
-
-void ImProcFunctions::ciecam_02 (int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM )
+void ImProcFunctions::ciecam_02 (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale )
 {
 if(params->colorappearance.enabled) {
 
@@ -267,6 +267,15 @@ if(params->colorappearance.enabled) {
 	}
 
 	int width = lab->W, height = lab->H;
+	int Np=width*height;
+	float minQ=10000.f;
+	float minM=10000.f;
+	float maxQ= -1000.f;
+	float maxM= -1000.f;
+	float w_h;
+	float a_w;
+	float c_;
+	float f_l;
 	double Yw;
 	Yw=1.0;
 	double Xw, Zw;
@@ -285,6 +294,7 @@ if(params->colorappearance.enabled) {
 	float koef=1.0f;//rough correspondence between L and J	
     hist16J.clear();hist16Q.clear();
     for (int i=0; i<height; i++)
+ //   for (int i=begh; i<endh; i++)
         for (int j=0; j<width; j++) {//rough correspondence between L and J	
 			if(((lab->L[i][j])/327.68f)>95.) koef=1.f;
 			else if(((lab->L[i][j])/327.68f)>85.) koef=0.97f;
@@ -302,7 +312,8 @@ if(params->colorappearance.enabled) {
 			sum+=koef*lab->L[i][j];//evaluate mean J to calcualte Yb
 			hist16Q[CLIP((int) (32768.f*sqrt((koef*(lab->L[i][j]))/32768.f)))]++;	//for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
 	}	
-	mean=(sum/(height*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone 
+	//mean=(sum/((endh-begh)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone 
+	mean=(sum/((height)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone 
 	if     (mean<15.f) yb=3.0;
 	else if(mean<30.f) yb=5.0;
 	else if(mean<40.f) yb=10.0;
@@ -398,7 +409,7 @@ if(params->colorappearance.enabled) {
 	bool doneinit=true;
 	bool doneinit2=true;
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,fl,nc,f,c, height,width,doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh, doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
 #endif
 {	
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -412,6 +423,7 @@ if(params->colorappearance.enabled) {
 #pragma omp for schedule(dynamic, 10)
 #endif
 	for (int i=0; i<height; i++)
+//	for (int i=begh; i<endh; i++)
 		for (int j=0; j<width; j++) {
 		
 			float L=lab->L[i][j];
@@ -419,6 +431,7 @@ if(params->colorappearance.enabled) {
 			float b=lab->b[i][j];
 			float x1,y1,z1;
 			double x,y,z;
+			double epsil=0.0001;
 			//convert Lab => XYZ
 			Color::Lab2XYZ(L, a, b, x1, y1, z1);
 			double J, C, h, Q, M, s, aw, fl, wh;                       
@@ -448,6 +461,10 @@ if(params->colorappearance.enabled) {
 			Qpro=Q; 
 			Mpro=M;
 			spro=s;	
+			w_h=wh+epsil;
+			a_w=aw;
+			c_=c;
+			f_l=fl;
 			// we cannot have all algoritms with all chroma curves
 			if(alg==1) 	{		   
 				// Lightness saturation
@@ -633,6 +650,18 @@ if(params->colorappearance.enabled) {
 			M=Mpro;
 			h=hpro;
 			s=spro;
+			
+		if(params->colorappearance.tonecie){
+			ncie->Q_p[i][j]=(float)Q+epsil;
+			ncie->M_p[i][j]=(float)M+epsil;
+			ncie->J_p[i][j]=(float)J+epsil;
+			ncie->h_p[i][j]=(float)h;
+			ncie->C_p[i][j]=(float)C+epsil;
+	//		ciec->s_p[i][j]=(float)s;
+			
+		if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];
+		if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];
+			}
 			int posl, posc;
 			double brli=327.;
 			double chsacol=327.;
@@ -661,7 +690,7 @@ if(params->colorappearance.enabled) {
 				hist16_CCAM[posc]++;
 				}
 			}
-			
+			if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie){
 			double xx,yy,zz;
 			//process normal==> viewing
 			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
@@ -702,8 +731,11 @@ if(params->colorappearance.enabled) {
 			
 		}			
 		}
+		}
 	}	
 	// End of parallelization
+if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie){
+	
 	if(ciedata) {
     //update histogram J 
 	if(pW!=1){//only with improccoordinator
@@ -727,7 +759,7 @@ if(params->colorappearance.enabled) {
 		}
 	}
 	}
-
+}
 #ifdef _DEBUG
 	if (settings->verbose) {
 		t2e.set();
@@ -735,6 +767,78 @@ if(params->colorappearance.enabled) {
 		//	printf("minc=%f maxc=%f minj=%f maxj=%f\n",minc,maxc,minj,maxj);
 	}
 #endif
+//select here tonemapping with Q
+if(params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enabled) {
+	//EPDToneMapCIE adated to CIECAM
+	ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+	
+#ifndef _DEBUG	
+#pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh,doneinit2, nc2,f2,c2, gamu, highlight)
+#endif
+{	
+	TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params->icm.working);
+	double wipa[3][3] = {
+		{wiprofa[0][0],wiprofa[0][1],wiprofa[0][2]},
+		{wiprofa[1][0],wiprofa[1][1],wiprofa[1][2]},
+		{wiprofa[2][0],wiprofa[2][1],wiprofa[2][2]}
+	};
+	
+	
+#ifndef _DEBUG
+		#pragma omp for schedule(dynamic, 10)
+#endif
+		for (int i=0; i<height; i++) // update CIECAM with new values after tone-mapping
+	//	for (int i=begh; i<endh; i++) // update CIECAM with new values after tone-mapping
+			for (int j=0; j<width; j++) {
+			double xx,yy,zz;
+			float x,y,z;
+			float eps=0.0001;
+			float co_e=(pow(f_l,0.25))+eps;
+
+			ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j]) /(w_h*w_h);
+			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
+
+			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
+			                             ncie->J_p[i][j],  ncie->C_p[i][j], ncie->h_p[i][j],
+			                             xw2, yw2,  zw2,
+			                             yb2, la2,
+			                             f2,  c2, nc2, doneinit2, gamu);
+			x=(float)xx*655.35;
+			y=(float)yy*655.35;
+			z=(float)zz*655.35;
+			float Ll,aa,bb;
+			//convert xyz=>lab
+			Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+			lab->L[i][j]=Ll;
+			lab->a[i][j]=aa;
+			lab->b[i][j]=bb;
+			if(gamu==1) {		
+					float R,G,B;
+					float HH, Lprov1, Chprov1;
+					Lprov1=lab->L[i][j]/327.68f;
+					Chprov1=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
+					HH=atan2(lab->b[i][j],lab->a[i][j]);
+	
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wipa, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wipa, highlight, 0.15f, 0.96f);
+#endif
+
+					lab->L[i][j]=Lprov1*327.68f;
+					lab->a[i][j]=327.68f*Chprov1*cos(HH);
+					lab->b[i][j]=327.68f*Chprov1*sin(HH);
+						}			
+										}	
+			
+			
+		}
+	}
+
 }
 }
 
@@ -1724,9 +1828,85 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			
 		}
 	}
+void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates, int skip){
+
+if(!params->edgePreservingDecompositionUI.enabled) return;
+		float stren=params->edgePreservingDecompositionUI.Strength;
+		float edgest=params->edgePreservingDecompositionUI.EdgeStopping;
+		float sca=params->edgePreservingDecompositionUI.Scale;
+		float rew=params->edgePreservingDecompositionUI.ReweightingIterates;
+		unsigned int i, N = Wid*Hei;
+		float Qpro= ( 4.0 / c_)  * ( a_w + 4.0 ) ;//estimate Q max if J=100.0
+		float *Qpr=ncie->Q_p[0];
+		float eps=0.0001;
+		if (settings->verbose) printf("minQ=%f maxQ=%f  Qpro=%f\n",minQ,maxQ, Qpro);
+		if(maxQ>Qpro) Qpro=maxQ;
+		for (int i=0; i<Hei; i++)
+			for (int j=0; j<Wid; j++) { Qpr[i*Wid+j]=ncie->Q_p[i][j];}
+			
+		EdgePreservingDecomposition epd = EdgePreservingDecomposition(Wid, Hei);
+		
+		for(i = 0; i != N; i++) Qpr[i] = (Qpr[i]+eps)/(Qpro);
+
+		float Compression = expf(-stren);		//This modification turns numbers symmetric around 0 into exponents.
+		float DetailBoost = stren;
+		if(stren < 0.0f) DetailBoost = 0.0f;	//Go with effect of exponent only if uncompressing.
+
+		//Auto select number of iterates. Note that p->EdgeStopping = 0 makes a Gaussian blur.
+		if(Iterates == 0) Iterates = (unsigned int)(edgest*15.0);
+		//Jacques Desmis : always Iterates=5 for compatibility images between preview and output
+
+		epd.CompressDynamicRange(Qpr, (float)sca/skip, (float)edgest, Compression, DetailBoost, Iterates, rew, Qpr);
+
+		//Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
+		float s = (1.0f + 38.7889f)*powf(Compression, 1.5856f)/(1.0f + 38.7889f*powf(Compression, 1.5856f));
+		for (int i=0; i<Hei; i++)
+			for (int j=0; j<Wid; j++) {
+			ncie->Q_p[i][j]=(Qpr[i*Wid+j]+eps)*Qpro;
+			ncie->M_p[i][j]*=s;
+		}
+/*
+	float *Qpr2 = new float[Wid*((heir)+1)];
+		
+		for (int i=heir; i<Hei; i++)
+			for (int j=0; j<Wid; j++) { Qpr2[(i-heir)*Wid+j]=ncie->Q_p[i][j];}
+	if(minQ>0.0) minQ=0.0;//normaly minQ always > 0...
+//	EdgePreservingDecomposition epd = EdgePreservingDecomposition(Wid, Hei);
+//EdgePreservingDecomposition epd = EdgePreservingDecomposition(Wid, Hei/2);
+	for(i = N2; i != N; i++)
+//	for(i = begh*Wid; i != N; i++)
+		//Qpr[i] = (Qpr[i]-minQ)/(maxQ+1.0);
+		Qpr2[i-N2] = (Qpr2[i-N2]-minQ)/(Qpro+1.0);
+
+	float Compression2 = expf(-stren);		//This modification turns numbers symmetric around 0 into exponents.
+	float DetailBoost2 = stren;
+	if(stren < 0.0f) DetailBoost2 = 0.0f;	//Go with effect of exponent only if uncompressing.
+
+	//Auto select number of iterates. Note that p->EdgeStopping = 0 makes a Gaussian blur.
+	if(Iterates == 0) Iterates = (unsigned int)(edgest*15.0);
+
+
+	epd.CompressDynamicRange(Qpr2, (float)sca/skip, (float)edgest, Compression2, DetailBoost2, Iterates, rew, Qpr2);
+
+	//Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
+	 float s2 = (1.0f + 38.7889f)*powf(Compression, 1.5856f)/(1.0f + 38.7889f*powf(Compression, 1.5856f));
+		for (int i=heir; i<Hei; i++)
+	//	for (int i=begh; i<endh; i++)
+			for (int j=0; j<Wid; j++) {
+			ncie->Q_p[i][j]=Qpr2[(i-heir)*Wid+j]*Qpro + minQ;
+		//	Qpr[i*Wid+j]=Qpr[i*Wid+j]*maxQ + minQ;
+		//	ncie->J_p[i][j]=(100.0* Qpr[i*Wid+j]*Qpr[i*Wid+j]) /(w_h*w_h);
+
+			ncie->M_p[i][j]*=s2;
+		}
+				delete [] Qpr2;
+
+*/		
+}
+
 
 //Map tones by way of edge preserving decomposition. Is this the right way to include source?
-#include "EdgePreservingDecomposition.cc"
+//#include "EdgePreservingDecomposition.cc"
 void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip){
 	//Hasten access to the parameters.
 //	EPDParams *p = (EPDParams *)(&params->edgePreservingDecompositionUI);
