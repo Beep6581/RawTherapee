@@ -1484,7 +1484,8 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	bool ccut = ccutili;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
 	// avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
-	bool avoidColorShift = (params->labCurve.avoidcolorshift || params->colorappearance.gamut )&& !bwToning ;	
+//	bool avoidColorShift = (params->labCurve.avoidcolorshift || params->colorappearance.gamut )&& !bwToning ;	
+	bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;	
 	int protectRed = settings->protectred;
 	double protectRedH = settings->protectredh;
 	bool gamutLch = settings->gamutLch;
