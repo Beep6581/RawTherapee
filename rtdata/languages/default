@@ -919,7 +919,7 @@ TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; is different
 TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf you check the " <i>Automatic</i> " box, RT will try to find the best value
 TP_COLORAPP_EQUAL;Equal
 TP_COLORAPP_TONECIE;Tone-mapping with Q brightness CIECAM
-TP_COLORAPP_TONECIE_TOOLTIP;Additional tone mapping adjustments are controlled in Tone Mapping section and must be enabled for tone mapping to engage.\n With this option enabled CIECAM adjustments to Lightness (J), Chroma (C) and Saturation (S) will not be applied.
+TP_COLORAPP_TONECIE_TOOLTIP;Additional tone mapping adjustments are controlled in Tone Mapping section and must be enabled for tone mapping to engage.
 TP_COLORAPP_DATACIE;Show CIECAM output histograms in curves
 TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM curves show approximate values/ranges for J or Q, and C or s or M after the CIECAM adjustments.\n This selection does not impact the main histogram panel.\n\n When disabled, histograms in CIECAM curves show Lab values, that are before CIECAM adjustments
 TP_COLORAPP_GAMUT;Gamut control (Lab)

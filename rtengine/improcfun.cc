@@ -235,6 +235,8 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
     delete [] hist;
 
 }
+
+// Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::ciecam_02 (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale )
 {
 if(params->colorappearance.enabled) {
@@ -247,6 +249,7 @@ if(params->colorappearance.enabled) {
 	LUTu hist16JCAM(65536);
 	bool jp=false;
 	float val;
+	//preparate for histograms CIECAM
 	if(pW!=1){//only with improccoordinator
 	for (int i=0; i<32768; i++) {  //# 32768*1.414  approximation maxi for chroma
 			val = (double)i / 32767.0;
@@ -265,7 +268,7 @@ if(params->colorappearance.enabled) {
 		}
 	hist16_CCAM.clear();
 	}
-
+	//end preparate histogram
 	int width = lab->W, height = lab->H;
 	int Np=width*height;
 	float minQ=10000.f;
@@ -285,7 +288,7 @@ if(params->colorappearance.enabled) {
 	int alg=0;
 	float sum=0.f;
 	float mean;
-	
+	//LUTf for sliders J and Q
 	LUTf bright_curve (65536,0);//init curve
 	LUTf bright_curveQ (65536,0);//init curve
 	
@@ -411,7 +414,7 @@ if(params->colorappearance.enabled) {
 #ifndef _DEBUG	
 #pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh, doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
 #endif
-{	
+{	//matrix for current working space
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
 	double wip[3][3] = {
 		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
@@ -651,17 +654,18 @@ if(params->colorappearance.enabled) {
 			h=hpro;
 			s=spro;
 			
-		if(params->colorappearance.tonecie){
-			ncie->Q_p[i][j]=(float)Q+epsil;
+		if(params->colorappearance.tonecie){//use pointer for tonemapping with CIECAM
+			ncie->Q_p[i][j]=(float)Q+epsil;//epsil to avoid Q=0
 			ncie->M_p[i][j]=(float)M+epsil;
 			ncie->J_p[i][j]=(float)J+epsil;
 			ncie->h_p[i][j]=(float)h;
 			ncie->C_p[i][j]=(float)C+epsil;
 	//		ciec->s_p[i][j]=(float)s;
 			
-		if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];
-		if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];
+			if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
+			if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
 			}
+			if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie){						
 			int posl, posc;
 			double brli=327.;
 			double chsacol=327.;
@@ -672,7 +676,6 @@ if(params->colorappearance.enabled) {
 			if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA) {chsacol=327.;colch=0;}
 			else if(curveMode3==ColorAppearanceParams::TC_MODE_SATUR) {chsacol=450.0;colch=1;}
 			else if(curveMode3==ColorAppearanceParams::TC_MODE_COLORF) {chsacol=327.0;colch=2;}
-			
 			if(ciedata) {
 			// Data for J Q M s and C histograms
 				//update histogram
@@ -690,7 +693,6 @@ if(params->colorappearance.enabled) {
 				hist16_CCAM[posc]++;
 				}
 			}
-			if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie){
 			double xx,yy,zz;
 			//process normal==> viewing
 			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
@@ -734,7 +736,7 @@ if(params->colorappearance.enabled) {
 		}
 	}	
 	// End of parallelization
-if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie){
+if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie){//normal
 	
 	if(ciedata) {
     //update histogram J 
@@ -773,7 +775,7 @@ if(params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enab
 	ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
 	
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh,doneinit2, nc2,f2,c2, gamu, highlight)
+#pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh,doneinit2, nc2,f2,c2, gamu, highlight,pW)
 #endif
 {	
 	TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -797,7 +799,36 @@ if(params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enab
 
 			ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j]) /(w_h*w_h);
 			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
-
+			//show histogram in CIECAM mode (Q,J, M,s,C)
+			int posl, posc;
+			double brli=327.;
+			double chsacol=327.;
+			int libr=0;
+			int colch=0;
+			float sa_t;
+			if(curveMode==ColorAppearanceParams::TC_MODE_BRIGHT) {brli=70.0; libr=1;}
+			else if(curveMode==ColorAppearanceParams::TC_MODE_LIGHT) {brli=327.;libr=0;}
+			if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA) {chsacol=327.;colch=0;}
+			else if(curveMode3==ColorAppearanceParams::TC_MODE_SATUR) {chsacol=450.0;colch=1;}
+			else if(curveMode3==ColorAppearanceParams::TC_MODE_COLORF) {chsacol=327.0;colch=2;}
+			if(ciedata) {
+			// Data for J Q M s and C histograms
+				//update histogram
+				jp=true;
+                if(pW!=1){//only with improccoordinator
+				if(libr==1) posl=CLIP((int)(ncie->Q_p[i][j]*brli));//40.0 to 100.0 approximative factor for Q  - 327 for J
+				else if(libr==0) posl=CLIP((int)(ncie->J_p[i][j]*brli));//327 for J	
+				hist16JCAM[posl]++;
+				}
+				chropC=true;
+                if(pW!=1){//only with improccoordinator
+			if(colch==0) posc=CLIP((int)(ncie->C_p[i][j]*chsacol));//450.0 approximative factor for s    320 for M
+				else if(colch==1) {sa_t=100.f*sqrt(ncie->C_p[i][j]/ncie->Q_p[i][j]); posc=CLIP((int)(sa_t*chsacol));}//Q_p always > 0
+				else if(colch==2) posc=CLIP((int)(ncie->M_p[i][j]*chsacol));
+				hist16_CCAM[posc]++;
+				}
+			}
+			//end histograms
 			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
 			                             ncie->J_p[i][j],  ncie->C_p[i][j], ncie->h_p[i][j],
 			                             xw2, yw2,  zw2,
@@ -837,11 +868,38 @@ if(params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enab
 			
 			
 		}
+		//end parallelization
+	//show CIECAM histograms	
+	if(ciedata) {
+    //update histogram J and Q
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=32768; i++) {//
+			float val;
+			if (jp) {
+				float hval = dLcurve[i];
+				int hi = (int)(255.0*CLIPD(hval)); //
+				histLCAM[hi] += hist16JCAM[i] ;
+			}
+		}
+	}
+	//update color histogram M,s,C
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=48000; i++) {//
+			float valc;
+			if (chropC) {
+				float hvalc = dCcurve[i];
+				int hic = (int)(255.0*CLIPD(hvalc)); //
+				histCCAM[hic] += hist16_CCAM[i] ;
+			}
+		}
+	} 
+	}
+		
 	}
 
 }
 }
-
+//end CIECAM
 
 
 
