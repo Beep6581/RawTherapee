@@ -498,7 +498,7 @@ if(params->colorappearance.enabled) {
 				double parsat=2.5;
 				if(mchr==-100.0) mchr=-99.8 ;
 				if(mchr==100.0) mchr=99.9;
-				ColorTemp::curvecolor(mchr, Mp , sres, parsat);//colorfullness
+				if(alg==3 || alg==2) ColorTemp::curvecolor(mchr, Mp , sres, parsat); else ColorTemp::curvecolor(0.0, Mp , sres, parsat);//colorfullness
 				float dred=100.f;//in C mode
 				float protect_red=80.0f;// in C mode
 				dred *=coe;//in M mode
@@ -515,7 +515,7 @@ if(params->colorappearance.enabled) {
 				parsat=1.5;
 				if(schr==-100.0) schr=-99.;
 				if(schr==100.0) schr=98.;
-				ColorTemp::curvecolor(schr, Sp , sres, parsat);	//saturation
+				if(alg==3) ColorTemp::curvecolor(schr, Sp , sres, parsat);	else ColorTemp::curvecolor(0.0, Sp , sres, parsat);	//saturation
 				dred=100.f;// in C mode
 				protect_red=80.0f; // in C mode
 				dred = 100.0 * sqrt((dred*coe)/Q);
@@ -528,7 +528,7 @@ if(params->colorappearance.enabled) {
 				Cp=Cpro/100.0;
 				parsat=1.8;//parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation : for not)
 				if(chr==-100.0) chr=-99.8;
-				ColorTemp::curvecolor(chr, Cp , sres, parsat);	//chroma
+				if(alg!=2) ColorTemp::curvecolor(chr, Cp , sres, parsat);else ColorTemp::curvecolor(0.0, Cp , sres, parsat);	//chroma
 				dred=55.f;
 				protect_red=30.0f;
 				sk=1;
