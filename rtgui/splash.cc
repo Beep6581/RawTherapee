@@ -79,6 +79,13 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     nb = Gtk::manage (new Gtk::Notebook ());
     get_vbox()->pack_start (*nb);
 
+    // Add close button to bottom of the notebook
+    Gtk::Button* closeButton = Gtk::manage (new Gtk::Button (M("GENERAL_CLOSE")));
+    closeButton->signal_clicked().connect( sigc::mem_fun(*this, &Splash::closePressed) );
+    Gtk::HBox* bottomHBox = Gtk::manage (new Gtk::HBox ());
+    bottomHBox->pack_end (*closeButton, Gtk::PACK_SHRINK, 0);
+    get_vbox()->pack_start (*bottomHBox, Gtk::PACK_SHRINK, 0);
+
     // Tab 1: the image
     splashImage = Gtk::manage(new SplashImage ());
     nb->append_page (*splashImage,  M("ABOUT_TAB_SPLASH"));
@@ -248,4 +255,8 @@ bool Splash::on_button_release_event (GdkEventButton* event) {
 void Splash::showReleaseNotes() {
 	if (releaseNotesSW)
 		nb->set_current_page(nb->page_num(*releaseNotesSW));
+}
+
+void Splash::closePressed() {
+    hide();
 }
