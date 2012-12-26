@@ -50,6 +50,7 @@ class Splash : public Gtk::Dialog {
     void showReleaseNotes();
     bool on_timer ();
     //virtual bool on_button_release_event (GdkEventButton* event);
+    void closePressed();
 };
 
 #endif
