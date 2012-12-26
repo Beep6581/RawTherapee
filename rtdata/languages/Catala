@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;Versió
 ABOUT_TAB_CREDITS;Crèdits
 ABOUT_TAB_LICENSE;Llicència
@@ -1182,8 +1183,9 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !GENERAL_AUTO;Automatic
+!GENERAL_CLOSE;Close
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
-!HISTORY_MSG_174;Color Appearance Modele 2002
+!HISTORY_MSG_174;CIECAM02
 !HISTORY_MSG_175;CAM02 - Chrom. adaptation amount
 !HISTORY_MSG_176;CAM02 - Viewing's black surround
 !HISTORY_MSG_177;CAM02 - Scene's Lum. Adaptation
@@ -1208,6 +1210,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_196;CAM02 - Tone curve 2
 !HISTORY_MSG_197;CAM02 - Color curve
 !HISTORY_MSG_198;CAM02 - Color curve
+!HISTORY_MSG_199;CAM02 - Show CIECAM in histograms
+!HISTORY_MSG_200;CAM02 - Tone mapping with Q
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 !PREFERENCES_BLACKBODY;Tungsten
@@ -1261,7 +1265,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM curves show approximate values/ranges for J or Q, and C or s or M after the CIECAM adjustments.\n This selection does not impact the main histogram panel.\n\n When disabled, histograms in CIECAM curves show Lab values, that are before CIECAM adjustments
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf you check the " <i>Automatic</i> " box, RT will try to find the best value
 !TP_COLORAPP_EQUAL;Equal
-!TP_COLORAPP_GAMUT;Gamut control (Lab & CIECAM)
+!TP_COLORAPP_GAMUT;Gamut control (Lab)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 !TP_COLORAPP_HUE;Hue (h)
 !TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°
@@ -1291,6 +1295,9 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
+!TP_COLORAPP_TONECIE;Tone-mapping with Q brightness CIECAM
+!TP_COLORAPP_TONECIE_TOOLTIP;Additional tone mapping adjustments are controlled in Tone Mapping section and must be enabled for tone mapping to engage.
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
+!TP_EPD_TOOLTIP;Tone mapping is possible via Lab (standard) mode or CIECAM02 mode.\n\n To engage CIECAM02 Tone mapping mode enable the following settings: \n 1. CIECAM\n 2. Algorithm="Brightness + Colorfullness (QM)"\n 3. "Tone-mapping with Q brightness CIECAM"
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Histogram of L before Curve Lab adjustements.\n For final output refer to the Histogram panel

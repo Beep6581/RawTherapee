@@ -188,6 +188,7 @@ GENERAL_AFTER;After
 GENERAL_AUTO;Automatic
 GENERAL_BEFORE;Before
 GENERAL_CANCEL;Cancel
+GENERAL_CLOSE;Close
 GENERAL_DISABLED;Disabled
 GENERAL_DISABLE;Disable
 GENERAL_ENABLED;Enabled
@@ -214,10 +215,10 @@ HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram
+HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
 HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
 HISTOGRAM_TOOLTIP_G;Show/Hide green histogram
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
-HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
 HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
 HISTOGRAM_TOOLTIP_R;Show/Hide red histogram
 HISTORY_CHANGED;Changed
@@ -591,12 +592,12 @@ PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;CA correction
 PARTIALPASTE_CHANNELMIXER;Channel mixer
 PARTIALPASTE_COARSETRANS;90° rotation / flipping
+PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 PARTIALPASTE_COLORBOOST;Color boost
 PARTIALPASTE_COLORDENOISE;Color denoise
 PARTIALPASTE_COLORGROUP;Color Related Settings
 PARTIALPASTE_COLORMIXER;Color mixer
 PARTIALPASTE_COLORSHIFT;Color shift
-PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto fill
 PARTIALPASTE_COMPOSITIONGROUP;Composition Settings
 PARTIALPASTE_CROP;Crop
@@ -663,6 +664,7 @@ PREFERENCES_APPLNEXTSTARTUP;restart required
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
 PREFERENCES_BATCH_PROCESSING;Batch Processing
 PREFERENCES_BEHAVIOR;Behavior
+PREFERENCES_BLACKBODY;Tungsten
 PREFERENCES_BLINKCLIPPED;Blink clipped areas
 PREFERENCES_CACHECLEARALL;Clear All
 PREFERENCES_CACHECLEARPROFILES;Clear Processing Profiles
@@ -677,28 +679,15 @@ PREFERENCES_CACHESTRAT;Cache Strategy
 PREFERENCES_CACHETHUMBFORM;Cache thumbnail format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal thumbnail height
 PREFERENCES_CLIPPINGIND;Clipping Indication
-PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector,viewing...)
-PREFERENCES_D65;6500K
-PREFERENCES_D60;6000K
-PREFERENCES_D55;5500K
-PREFERENCES_D50;5000K
-PREFERENCES_BLACKBODY;Tungsten
-PREFERENCES_FLUOF2;Fluorescent F2
-PREFERENCES_FLUOF7;Fluorescent F7
-PREFERENCES_FLUOF11;Fluorescent F11
-PREFERENCES_GREY;Output device's Yb luminance (%)
-PREFERENCES_GREY05;Yb=05 CIE L#30
-PREFERENCES_GREY10;Yb=10 CIE L#40
-PREFERENCES_GREY15;Yb=15 CIE L#45
-PREFERENCES_GREY18;Yb=18 CIE L#50
-PREFERENCES_GREY23;Yb=23 CIE L#55
-PREFERENCES_GREY30;Yb=30 CIE L#60
-PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_CMETRICINTENT;Colorimetric intent
 PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
 PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
+PREFERENCES_D50;5000K
+PREFERENCES_D55;5500K
+PREFERENCES_D60;6000K
+PREFERENCES_D65;6500K
 PREFERENCES_DARKFRAMEFOUND;Found
 PREFERENCES_DARKFRAMESHOTS;shots
 PREFERENCES_DARKFRAMETEMPLATES;templates
@@ -726,9 +715,20 @@ PREFERENCES_FLATFIELDSDIR;Flat fields directory
 PREFERENCES_FLATFIELDSHOTS;shots
 PREFERENCES_FLATFIELDTEMPLATES;templates
 PREFERENCES_FLATFIELD;Flat Field
+PREFERENCES_FLUOF2;Fluorescent F2
+PREFERENCES_FLUOF7;Fluorescent F7
+PREFERENCES_FLUOF11;Fluorescent F11
 PREFERENCES_FORIMAGE;For non-raw photos
 PREFERENCES_FORRAW;For raw photos
 PREFERENCES_GIMPPATH;GIMP installation directory
+PREFERENCES_GREY05;Yb=05 CIE L#30
+PREFERENCES_GREY10;Yb=10 CIE L#40
+PREFERENCES_GREY15;Yb=15 CIE L#45
+PREFERENCES_GREY18;Yb=18 CIE L#50
+PREFERENCES_GREY23;Yb=23 CIE L#55
+PREFERENCES_GREY30;Yb=30 CIE L#60
+PREFERENCES_GREY40;Yb=40 CIE L#70
+PREFERENCES_GREY;Output device's Yb luminance (%)
 PREFERENCES_GTKTHEME;GTK default
 PREFERENCES_HINT;Hint
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in left panel
@@ -807,6 +807,7 @@ PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 PREFERENCES_USESYSTEMTHEME;Use system theme
+PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector,viewing...)
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_FILEDLGFILTERANY;Any files
@@ -916,12 +917,16 @@ TP_COLORAPP_CONTRAST;Contrast (J)
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; is different from Lab and RGB
 TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; is different from Lab and RGB
-TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf you check the " <i>Automatic</i> " box, RT will try to find the best value
-TP_COLORAPP_EQUAL;Equal
-TP_COLORAPP_TONECIE;Tone-mapping with Q brightness CIECAM
-TP_COLORAPP_TONECIE_TOOLTIP;Additional tone mapping adjustments are controlled in Tone Mapping section and must be enabled for tone mapping to engage.
+TP_COLORAPP_CURVEEDITOR1;Tone curve 1
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogram of L (Lab) before CIECAM.\n\n Histogram of J,Q after CIECAM, if checkbox Show CIECAM output is enabled.\n (J,Q) are not directly shown in histogram panel. \n\n For final output refer to the Histogram panel.
+TP_COLORAPP_CURVEEDITOR2;Tone curve 2
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
+TP_COLORAPP_CURVEEDITOR3;Color curve
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfullness.\n Histogram shows chromaticity (Lab) before CIECAM.\n Histogram shows  C,s,M after CIECAM if checkbox Show CIECAM output is enabled.\n (C,s,M) are not directly shown in histogram panel. \n For final output refer to the Histogram panel
 TP_COLORAPP_DATACIE;Show CIECAM output histograms in curves
 TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM curves show approximate values/ranges for J or Q, and C or s or M after the CIECAM adjustments.\n This selection does not impact the main histogram panel.\n\n When disabled, histograms in CIECAM curves show Lab values, that are before CIECAM adjustments
+TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf you check the " <i>Automatic</i> " box, RT will try to find the best value
+TP_COLORAPP_EQUAL;Equal
 TP_COLORAPP_GAMUT;Gamut control (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 TP_COLORAPP_HUE;Hue (h)
@@ -944,22 +949,18 @@ TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
 TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colors to take into account the viewing conditions of the output device\n\n<b>Average:</b>\nAverage light environment (standard)\nThe image will not change\n\n<b>Dim:</b>\nDim environment (TV)\nThe image will become slighty dark\n\n<b>Dark:</b>\nDark environment (projector)\nThe image will become much dark\n\n<b>Extremly Dark:</b>\nExtremly dark environment (Cutsheet)\nThe image will become very much dark
 TP_COLORAPP_SURSOURCE;Dark surround
 TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if source image has a dark border
-TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
-TP_COLORAPP_WBRT;WB [RT] + [output]
-TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-TP_COLORAPP_CURVEEDITOR2;Tone curve 2
-TP_COLORAPP_CURVEEDITOR3;Color curve
-TP_COLORAPP_TCMODE_CHROMA;Chroma
-TP_COLORAPP_TCMODE_SATUR;Saturation
-TP_COLORAPP_TCMODE_COLORF;Colorfullness
 TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
-TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
+TP_COLORAPP_TCMODE_CHROMA;Chroma
+TP_COLORAPP_TCMODE_COLORF;Colorfullness
 TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
 TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
 TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogram of L (Lab) before CIECAM.\n\n Histogram of J,Q after CIECAM, if checkbox Show CIECAM output is enabled.\n (J,Q) are not directly shown in histogram panel. \n\n For final output refer to the Histogram panel.
-TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfullness.\n Histogram shows chromaticity (Lab) before CIECAM.\n Histogram shows  C,s,M after CIECAM if checkbox Show CIECAM output is enabled.\n (C,s,M) are not directly shown in histogram panel. \n For final output refer to the Histogram panel
+TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
+TP_COLORAPP_TCMODE_SATUR;Saturation
+TP_COLORAPP_TONECIE;Tone-mapping with Q brightness CIECAM
+TP_COLORAPP_TONECIE_TOOLTIP;Additional tone mapping adjustments are controlled in Tone Mapping section and must be enabled for tone mapping to engage.
+TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
+TP_COLORAPP_WBRT;WB [RT] + [output]
 TP_CROP_FIXRATIO;Fix ratio:
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
@@ -1004,8 +1005,8 @@ TP_EPD_EDGESTOPPING;Edge Stopping
 TP_EPD_LABEL;Tone Mapping [Lab] or [CIECAM02]
 TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
 TP_EPD_SCALE;Scale
-TP_EPD_TOOLTIP;Tone mapping is possible via Lab (standard) mode or CIECAM02 mode.\n\n To engage CIECAM02 Tone mapping mode enable the following settings: \n 1. CIECAM\n 2. Algorithm="Brightness + Colorfullness (QM)"\n 3. "Tone-mapping with Q brightness CIECAM"
 TP_EPD_STRENGTH;Strength
+TP_EPD_TOOLTIP;Tone mapping is possible via Lab (standard) mode or CIECAM02 mode.\n\n To engage CIECAM02 Tone mapping mode enable the following settings: \n 1. CIECAM\n 2. Algorithm="Brightness + Colorfullness (QM)"\n 3. "Tone-mapping with Q brightness CIECAM"
 TP_EXPOSCORR_LABEL;Raw White &amp; Black Points
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
 TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
@@ -1026,9 +1027,9 @@ TP_EXPOSURE_SATURATION;Saturation
 TP_EXPOSURE_TCMODE_FILMLIKE;Film-like
 TP_EXPOSURE_TCMODE_LABEL1;Curve mode 1
 TP_EXPOSURE_TCMODE_LABEL2;Curve mode 2
-TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
-TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
+TP_EXPOSURE_TCMODE_STANDARD;Standard
+TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 TP_FLATFIELD_AUTOSELECT;Auto selection
 TP_FLATFIELD_BLURRADIUS;Blur Radius
 TP_FLATFIELD_BLURTYPE;Blur Type
@@ -1086,9 +1087,6 @@ TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
-TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
-TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
-TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies on all tones
 TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_BWTONING;B&W toning
 TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
@@ -1115,7 +1113,10 @@ TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to the chromaticity
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Histogram of L before Curve Lab adjustements.\n For final output refer to the Histogram panel
 TP_LABCURVE_LABEL;Lab Adjustments
+TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
+TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies on all tones
 TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
+TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
 TP_LENSGEOM_AUTOCROP;Auto Crop
 TP_LENSGEOM_FILL;Auto fill
 TP_LENSGEOM_LABEL;Lens / Geometry
