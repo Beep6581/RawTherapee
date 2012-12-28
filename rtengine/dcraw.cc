@@ -31,11 +31,11 @@
    *If you have not modified dcraw.c in any way, a link to my
    homepage qualifies as "full source code".
 
-   $Revision: 1.452 $
-   $Date: 2012/07/23 04:28:00 $
+   $Revision: 1.454 $
+   $Date: 2012/12/23 19:25:36 $
  */
 
-#define DCRAW_VERSION "9.16"
+#define DCRAW_VERSION "9.17"
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -125,6 +125,7 @@ const double xyz_rgb[3][3] = {			// XYZ from RGB
   { 0.212671, 0.715160, 0.072169 },
   { 0.019334, 0.119193, 0.950227 } };
 const float d65_white[3] = { 0.950456, 1, 1.088754 };
+
 /* RT: Removed unused structs */
 #define CLASS DCraw::
 
@@ -212,7 +213,7 @@ int CLASS fcol (int row, int col)
     { 0,2,0,3,1,0,0,1,1,3,3,2,3,2,2,1 },
     { 2,1,3,2,3,1,2,1,0,3,0,2,0,2,0,2 },
     { 0,3,1,0,0,2,0,3,2,1,3,1,1,3,1,3 } };
- static const char filter2[6][6] =
+  static const char filter2[6][6] =
   { { 1,1,0,1,1,2 },
     { 1,1,2,1,1,0 },
     { 2,0,1,0,2,1 },
@@ -255,7 +256,7 @@ void CLASS derror()
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
   }
   data_error++;
-  /*RT*/  longjmp (failure, 1);
+/*RT*/  longjmp (failure, 1);
 }
 
 ushort CLASS sget2 (uchar *s)
@@ -329,7 +330,7 @@ void CLASS read_shorts (ushort *pixel, int count)
 {
   if (fread (pixel, 2, count, ifp) < count) derror();
   if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
-    swab ((char*)pixel, (char*)pixel, count*2);
+	  swab ((char*)pixel, (char*)pixel, count*2);
 }
 
 void CLASS canon_600_fixed_wb (int temp)
@@ -476,6 +477,7 @@ void CLASS canon_600_correct()
   int row, col, val;
   static const short mul[4][2] =
   { { 1141,1145 }, { 1128,1109 }, { 1178,1149 }, { 1128,1109 } };
+
   for (row=0; row < height; row++)
     for (col=0; col < width; col++) {
       if ((val = BAYER(row,col) - black) < 0) val = 0;
@@ -921,19 +923,21 @@ void CLASS canon_sraw_load_raw()
 	else ip[col][c] = (ip[col-1][c] + ip[col+1][c] + 1) >> 1;
   }
   for ( ; rp < ip[0]; rp+=4) {
-    if (unique_id < 0x80000218) {
-      rp[0] -= 512;
-      goto next;
-    } else if (unique_id == 0x80000285) {
-next: pix[0] = rp[0] + rp[2];
-      pix[2] = rp[0] + rp[1];
-      pix[1] = rp[0] + ((-778*rp[1] - (rp[2] << 11)) >> 12);
-    } else {
+    if (unique_id == 0x80000218 ||
+	unique_id == 0x80000250 ||
+	unique_id == 0x80000261 ||
+	unique_id == 0x80000281 ||
+	unique_id == 0x80000287) {
       rp[1] = (rp[1] << 2) + hue;
       rp[2] = (rp[2] << 2) + hue;
       pix[0] = rp[0] + ((   50*rp[1] + 22929*rp[2]) >> 14);
       pix[1] = rp[0] + ((-5640*rp[1] - 11751*rp[2]) >> 14);
       pix[2] = rp[0] + ((29040*rp[1] -   101*rp[2]) >> 14);
+    } else {
+      if (unique_id < 0x80000218) rp[0] -= 512;
+      pix[0] = rp[0] + rp[2];
+      pix[2] = rp[0] + rp[1];
+      pix[1] = rp[0] + ((-778*rp[1] - (rp[2] << 11)) >> 12);
     }
     FORC3 rp[c] = CLIP(pix[c] * sraw_mul[c] >> 10);
   }
@@ -1102,23 +1106,6 @@ void CLASS nikon_load_raw()
 }
 
 /*
-   Figure out if a NEF file is compressed.  These fancy heuristics
-   are only needed for the D100, thanks to a bug in some cameras
-   that tags all images as "compressed".
- */
-int CLASS nikon_is_compressed()
-{
-  uchar test[256];
-  int i;
-
-  fseek (ifp, data_offset, SEEK_SET);
-  fread (test, 1, 256, ifp);
-  for (i=15; i < 256; i+=16)
-    if (test[i]) return 1;
-  return 0;
-}
-
-/*
    Returns 1 for a Coolpix 995, 0 for anything else.
  */
 int CLASS nikon_e995()
@@ -1191,7 +1178,6 @@ int CLASS minolta_z2()
     if (tail[i]) nz++;
   return nz > 20;
 }
-
 
 /*RT  void CLASS jpeg_thumb(); */
 
@@ -1273,7 +1259,6 @@ void CLASS rollei_load_raw()
       todo[i]   = isix++;
       todo[i+1] = buffer >> (14-i)*5;
     }
-
     for (i=0; i < 16; i+=2)
       raw_image[todo[i]] = (todo[i+1] & 0x3ff);
   }
@@ -1538,7 +1523,7 @@ void CLASS phase_one_load_raw_c()
     for (col=0; col < raw_width; col++) {
       i = (pixel[col] << 2) - ph1.black + black[row][col >= ph1.split_col];
 	if (i > 0) RAW(row,col) = i;
-      }
+    }
   }
   free (pixel);
   maximum = 0xfffc - ph1.black;
@@ -1561,9 +1546,7 @@ void CLASS hasselblad_load_raw()
 	if ((diff & (1 << (len[c]-1))) == 0)
 	  diff -= (1 << len[c]) - 1;
 	if (diff == 65535) diff = -32768;
-	pred[c] += diff;
-	if (row >= 0 && (unsigned)(col+c) < width)
-	  RAW(row,col+c) = pred[c];
+	RAW(row,col+c) = pred[c] += diff;
       }
     }
   }
@@ -1577,8 +1560,8 @@ void CLASS leaf_hdr_load_raw()
   unsigned tile=0, r, c, row, col;
 
   if (!filters) {
-  pixel = (ushort *) calloc (raw_width, sizeof *pixel);
-  merror (pixel, "leaf_hdr_load_raw()");
+    pixel = (ushort *) calloc (raw_width, sizeof *pixel);
+    merror (pixel, "leaf_hdr_load_raw()");
   }
   FORC(tiff_samples)
     for (r=0; r < raw_height; r++) {
@@ -1590,7 +1573,7 @@ void CLASS leaf_hdr_load_raw()
       if (filters) pixel = raw_image + r*raw_width;
       read_shorts (pixel, raw_width);
       if (!filters && (row = r - top_margin) < height)
-      for (col=0; col < width; col++)
+	for (col=0; col < width; col++)
 	  image[row*width+col][c] = pixel[col+left_margin];
     }
   if (!filters) {
@@ -1642,7 +1625,7 @@ void CLASS sinar_4shot_load_raw()
       if ((r = row-top_margin - (shot >> 1 & 1)) >= height) continue;
       for (col=0; col < raw_width; col++) {
 	if ((c = col-left_margin - (shot & 1)) >= width) continue;
-        image[r*width+c][FC(row,col)] = pixel[col];
+	image[r*width+c][FC(row,col)] = pixel[col];
       }
     }
   }
@@ -1751,8 +1734,7 @@ void CLASS panasonic_load_raw()
 	}
       } else if ((nonz[i & 1] = pana_bits(8)) || i > 11)
 	pred[i & 1] = nonz[i & 1] << 4 | pana_bits(4);
-      if (col < width)
-	if ((RAW(row,col) = pred[col & 1]) > 4098) derror();
+      if ((RAW(row,col) = pred[col & 1]) > 4098 && col < width) derror();
     }
 }
 
@@ -2336,7 +2318,6 @@ void CLASS kodak_thumb_load_raw()
 void CLASS sony_decrypt_t::operator()(unsigned *data, int len, int start, int key)
 {
 /*RT  static unsigned pad[128], p;*/
-
   if (start) {
     for (p=0; p < 4; p++)
       pad[p] = key = key * 48828125 + 1;
@@ -2424,7 +2405,7 @@ void CLASS sony_arw2_load_raw()
 	  bit += 7;
 	}
       for (i=0; i < 16; i++, col+=2)
-	if (col < width) RAW(row,col) = curve[pix[i] << 1] >> 2;
+	RAW(row,col) = curve[pix[i] << 1] >> 2;
       col -= col & 1 ? 1:31;
     }
   }
@@ -3356,11 +3337,8 @@ void CLASS crop_masked_pixels()
     mask[0][3] = -2;
     goto sides;
   }
-  if (load_raw == &CLASS sony_load_raw) {
-    mask[0][3] = 9;
-    goto sides;
-  }
   if (load_raw == &CLASS canon_600_load_raw ||
+      load_raw == &CLASS sony_load_raw ||
      (load_raw == &CLASS eight_bit_load_raw && strncmp(model,"DC2",3)) ||
       load_raw == &CLASS kodak_262_load_raw ||
      (load_raw == &CLASS packed_load_raw && (load_flags & 32))) {
@@ -3709,7 +3687,7 @@ void CLASS wavelet_denoise()
       lpass = size*((lev & 1)+1);
       for (row=0; row < iheight; row++) {
 	hat_transform (temp, fimg+hpass+row*iwidth, 1, iwidth, 1 << lev);
-        for (col=0; col < iwidth; col++)
+	for (col=0; col < iwidth; col++)
 	  fimg[lpass + row*iwidth + col] = temp[col] * 0.25;
       }
       for (col=0; col < iwidth; col++) {
@@ -4388,7 +4366,7 @@ get2_256:
       fseek (ifp, i, SEEK_CUR);
 get2_rggb:
       FORC4 cam_mul[c ^ (c >> 1)] = get2();
-      i = len == 1312 ? 112:22;
+      i = len >> 3 == 164 ? 112:22;
       fseek (ifp, i, SEEK_CUR);
       FORC4 sraw_mul[c ^ (c >> 1)] = get2();
     }
@@ -5057,13 +5035,13 @@ guess_cfa_pc:
     fread (buf, sony_length, 1, ifp);
     sony_decrypt (buf, sony_length/4, 1, sony_key);
     sfp = ifp;
-/*RT*/    ifp = fopen (buf, sony_length);
-//    if ((ifp = tmpfile())) {
-//      fwrite (buf, sony_length, 1, ifp);
-//      fseek (ifp, 0, SEEK_SET);
-      parse_tiff_ifd (-sony_offset);
-//      fclose (ifp);
-//    }
+/*RT*/ ifp = fopen (buf, sony_length);
+// if ((ifp = tmpfile())) {
+// fwrite (buf, sony_length, 1, ifp);
+// fseek (ifp, 0, SEEK_SET);
+    parse_tiff_ifd (-sony_offset);
+// fclose (ifp);
+// }
     ifp = sfp;
     free (buf);
   }
@@ -5087,7 +5065,6 @@ guess_cfa_pc:
 int CLASS parse_tiff (int base)
 {
   int doff;
-
   /*RT*/  if (exif_base == -1) exif_base = base;
 
   fseek (ifp, base, SEEK_SET);
@@ -5163,7 +5140,7 @@ void CLASS apply_tiff()
 	  case  8: load_raw = &CLASS eight_bit_load_raw;	break;
 	  case 12: if (tiff_ifd[raw].phint == 2)
 		     load_flags = 6;
-	load_raw = &CLASS packed_load_raw;			break;
+		   load_raw = &CLASS packed_load_raw;			break;
 	  case 14: load_flags = 0;
 	  case 16: load_raw = &CLASS unpacked_load_raw;		break;
 	}
@@ -5173,9 +5150,17 @@ void CLASS apply_tiff()
       case 262:
 	load_raw = &CLASS kodak_262_load_raw;			break;
       case 34713:
-	load_raw = &CLASS nikon_load_raw;			break;
+	if ((raw_width+9)/10*16*raw_height == tiff_ifd[raw].bytes) {
+	  load_raw = &CLASS packed_load_raw;
+	  load_flags = 1;
+	} else if (raw_width*raw_height*2 == tiff_ifd[raw].bytes) {
+	  load_raw = &CLASS unpacked_load_raw;
+	  load_flags = 4;
+	  order = 0x4d4d;
+	} else
+	  load_raw = &CLASS nikon_load_raw;			break;
       case 34892:
-	load_raw = &CLASS lossy_dng_load_raw;		break;
+	load_raw = &CLASS lossy_dng_load_raw;			break;
       case 65535:
 	load_raw = &CLASS pentax_load_raw;			break;
       case 65000:
@@ -5189,7 +5174,8 @@ void CLASS apply_tiff()
     }
   if (!dng_version)
     if ( (tiff_samples == 3 && tiff_ifd[raw].bytes &&
-	  tiff_bps != 14 && tiff_bps != 2048 && tiff_compress != 32770)
+	  tiff_bps != 14 && tiff_bps != 2048 &&
+	  tiff_compress != 32769 && tiff_compress != 32770)
       || (tiff_bps == 8 && !strstr(make,"KODAK") && !strstr(make,"Kodak") &&
 	  !strstr(model2,"DEBUG RAW")))
       is_raw = 0;
@@ -5292,7 +5278,7 @@ void CLASS parse_external_jpeg()
   } else
     while (isdigit(*--jext)) {
       if (*jext != '9') {
-        (*jext)++;
+      (*jext)++;
 	break;
       }
       *jext = '0';
@@ -5608,7 +5594,7 @@ void CLASS parse_fuji (int offset)
     } else if (tag == 0xc000) {
       c = order;
       order = 0x4949;
-      width  = get4();
+      if ((width = get4()) > 10000) width = get4();
       height = get4();
       order = c;
     }
@@ -5912,23 +5898,25 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6722,-635,-963,-4287,12460,2028,-908,2162,5668 } },
     { "Canon EOS 5D Mark II", 0, 0x3cf0,
 	{ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 } },
-    { "Canon EOS 5D", 0, 0xe6c, /* RT */
+	{ "Canon EOS 5D", 0, 0xe6c, /* RT */
 	{ 6319,-793,-614,-5809,13342,2738,-1132,1559,7971 } },
-    { "Canon EOS 7D", 0, 0x3510, /* RT - Colin Walker */
+	{ "Canon EOS 6D", 0, 0x3c82,
+	{ 7034,-804,-1014,-4420,12564,2058,-851,1994,5758 } },
+	{ "Canon EOS 7D", 0, 0x3510, /* RT - Colin Walker */
 	{ 5962,-171,-732,-4189,12307,2099,-911,1981,6304 } },
     { "Canon EOS 10D", 0, 0xfa0,
 	{ 8197,-2000,-1118,-6714,14335,2592,-2536,3178,8266 } },
     { "Canon EOS 20Da", 0, 0,
 	{ 14155,-5065,-1382,-6550,14633,2039,-1623,1824,6561 } },
-    { "Canon EOS 20D", 0, 0xfff,  /* RT */
+	{ "Canon EOS 20D", 0, 0xfff,  /* RT */
 	{ 7590,-1646,-673,-4697,12411,2568,-627,1118,7295 } },
     { "Canon EOS 30D", 0, 0,
 	{ 6257,-303,-1000,-7880,15621,2396,-1714,1904,7046 } },
-    { "Canon EOS 40D", 0, 0x3f60,  /* RT */
+	{ "Canon EOS 40D", 0, 0x3f60,  /* RT */
 	{ 6070,-531,-883,-5763,13647,2315,-1533,2582,6801 } },
     { "Canon EOS 50D", 0, 0x3d93,
 	{ 4920,616,-593,-6493,13964,2784,-1774,3178,7005 } },
-    { "Canon EOS 60D", 0, 0x2ff7, /* RT - Colin Walker */
+	{ "Canon EOS 60D", 0, 0x2ff7, /* RT - Colin Walker */
 	{ 5678,-179,-718,-4389,12381,2243,-869,1819,6380 } },
     { "Canon EOS 300D", 0, 0xfa0,
 	{ 8197,-2000,-1118,-6714,14335,2592,-2536,3178,8266 } },
@@ -5936,11 +5924,11 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6018,-617,-965,-8645,15881,2975,-1530,1719,7642 } },
     { "Canon EOS 400D", 0, 0xe8e,
 	{ 7054,-1501,-990,-8156,15544,2812,-1278,1414,7796 } },
-    { "Canon EOS 450D", 0, 0x390d, /* RT */
+	{ "Canon EOS 450D", 0, 0x390d, /* RT */
 	{ 6246,-1272,-523,-5075,12357,3075,-1035,1825,7333 } },
     { "Canon EOS 500D", 0, 0x3479,
 	{ 4763,712,-646,-6821,14399,2640,-1921,3276,6561 } },
-    { "Canon EOS 550D", 0, 0x3dd7, /* RT - Lebedev*/
+	{ "Canon EOS 550D", 0, 0x3dd7, /* RT - Lebedev*/
 	{ 6519,-772,-703,-4994,12737,2519,-1387,2492,6175 } },
     { "Canon EOS 600D", 0, 0x3510,
 	{ 6461,-907,-882,-4300,12184,2378,-819,1944,5931 } },
@@ -5950,13 +5938,15 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 6771,-1139,-977,-7818,15123,2928,-1244,1437,7533 } },
     { "Canon EOS 1100D", 0, 0x3510,
 	{ 6444,-904,-893,-4563,12308,2535,-903,2016,6728 } },
+    { "Canon EOS M", 0, 0,
+	{ 6602,-841,-939,-4472,12458,2247,-975,2039,6148 } },
     { "Canon EOS-1Ds Mark III", 0, 0x3bb0,
 	{ 5859,-211,-930,-8255,16017,2353,-1732,1887,7448 } },
     { "Canon EOS-1Ds Mark II", 0, 0xe80,
 	{ 6517,-602,-867,-8180,15926,2378,-1618,1771,7633 } },
     { "Canon EOS-1D Mark IV", 0, 0x3bb0,
 	{ 6014,-220,-795,-4109,12014,2361,-561,1824,5787 } },
-    { "Canon EOS-1D Mark III", 0, 0x3bb0,  /* RT */
+	{ "Canon EOS-1D Mark III", 0, 0x3bb0,  /* RT */
 	{ 7406,-1592,-646,-4856,12457,2698,-432,726,7921 } },
     { "Canon EOS-1D Mark II N", 0, 0xe80,
 	{ 6240,-466,-822,-8180,15825,2500,-1801,1938,8042 } },
@@ -5976,12 +5966,14 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ -5300,9846,1776,3436,684,3939,-5540,9879,6200,-1404,11175,217 } },
     { "Canon PowerShot A5", 0, 0,
 	{ -4801,9475,1952,2926,1611,4094,-5259,10164,5947,-1554,10883,547 } },
-    { "Canon PowerShot G10", 0, 0,  /* RT */
+	{ "Canon PowerShot G10", 0, 0,  /* RT */
 	{ 12535,-5030,-796,-2711,10134,3006,-413,1605,5264 } },
     { "Canon PowerShot G11", 0, 0,
 	{ 12177,-4817,-1069,-1612,9864,2049,-98,850,4471 } },
-    { "Canon PowerShot G12", 0, 0,  /* RT */
+	{ "Canon PowerShot G12", 0, 0,  /* RT */
 	{ 12222,-4097,-1380,-2876,11016,2130,-888,1630,4434 } },
+    { "Canon PowerShot G15", 0, 0,
+	{ 7474,-2301,-567,-4056,11456,2975,-222,716,4181 } },
     { "Canon PowerShot G1 X", 0, 0,
 	{ 7378,-1255,-1043,-4088,12251,2048,-876,1946,5805 } },
     { "Canon PowerShot G1", 0, 0,
@@ -6020,6 +6012,12 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 13440,-5896,-1279,-1236,9598,1931,-180,1001,4651 } },
     { "Canon PowerShot S100", 0, 0,
 	{ 7968,-2565,-636,-2873,10697,2513,180,667,4211 } },
+    { "Canon PowerShot S110", 0, 0,
+	{ 8039,-2643,-654,-3783,11230,2930,-206,690,4194 } },
+    { "Canon PowerShot SX1 IS", 0, 0,
+	{ 6578,-259,-502,-5974,13030,3309,-308,1058,4970 } },
+    { "Canon PowerShot SX50 HS", 0, 0,
+	{ 12432,-4753,-1247,-2110,10691,1629,-412,1623,4926 } },
     { "Canon PowerShot A470", 0, 0,	/* DJC */
 	{ 12513,-4407,-1242,-2680,10276,2405,-878,2215,4734 } },
     { "Canon PowerShot A610", 0, 0,	/* DJC */
@@ -6036,10 +6034,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 14573,-5482,-1546,-1266,9799,1468,-1040,1912,3810 } },
     { "Canon PowerShot S3 IS", 0, 0,	/* DJC */
 	{ 14062,-5199,-1446,-4712,12470,2243,-1286,2028,4836 } },
-    { "Canon PowerShot SX1 IS", 0, 0,
-	{ 6578,-259,-502,-5974,13030,3309,-308,1058,4970 } },
     { "Canon PowerShot SX110 IS", 0, 0,	/* DJC */
-        { 14134,-5576,-1527,-1991,10719,1273,-1158,1929,3581 } },
+    { 14134,-5576,-1527,-1991,10719,1273,-1158,1929,3581 } },
     { "Canon PowerShot SX220", 0, 0,	/* DJC */
 	{ 13898,-5076,-1447,-1405,10109,1297,-244,1860,3687 } },
     { "CASIO EX-S20", 0, 0,		/* DJC */
@@ -6066,12 +6062,12 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
     { "FUJIFILM F6", 0, 0,
 	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
-    { "FUJIFILM F77", 0, 0,
+    { "FUJIFILM F77", 0, 0xfe9,
 	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
     { "FUJIFILM F7", 0, 0,
 	{ 10004,-3219,-1201,-7036,15047,2107,-1863,2565,7736 } },
     { "FUJIFILM F8", 0, 0,
-	{ 11044,-3888,-1120,-7248,15168,2208,-1531,2277,8069 } },
+	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
     { "FUJIFILM S100FS", 514, 0,
 	{ 11521,-4355,-1065,-6524,13767,3058,-1466,1984,6045 } },
     { "FUJIFILM S200EXR", 512, 0x3fff,
@@ -6116,12 +6112,16 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
     { "FUJIFILM HS3", 0, 0,
 	{ 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
-    { "FUJIFILM X100", 0, 0,  /* RT - Colin Walker */ 
-    { 10841,-3288,-807,-4652,12552,2344,-642,1355,7206 } },
+	{ "FUJIFILM X100", 0, 0,  /* RT - Colin Walker */
+	{ 10841,-3288,-807,-4652,12552,2344,-642,1355,7206 } },
     { "FUJIFILM X10", 0, 0,
 	{ 13509,-6199,-1254,-4430,12733,1865,-331,1441,5022 } },
     { "FUJIFILM X-Pro1", 0, 0,
 	{ 10413,-3996,-993,-3721,11640,2361,-733,1540,6011 } },
+    { "FUJIFILM X-E1", 0, 0,
+	{ 10413,-3996,-993,-3721,11640,2361,-733,1540,6011 } },
+    { "FUJIFILM XF1", 0, 0,
+	{ 13509,-6199,-1254,-4430,12733,1865,-331,1441,5022 } },
     { "FUJIFILM X-S1", 0, 0,
 	{ 13509,-6199,-1254,-4430,12733,1865,-331,1441,5022 } },
     { "Imacon Ixpress", 0, 0,		/* DJC */
@@ -6140,15 +6140,15 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10592,-2206,-967,-1944,11685,230,2206,670,1273 } },
     { "KODAK EOSDCS3B", 0, 0,
 	{ 9898,-2700,-940,-2478,12219,206,1985,634,1031 } },
-    { "Kodak DCS520C", 180, 0,
+    { "Kodak DCS520C", 178, 0,
 	{ 24542,-10860,-3401,-1490,11370,-297,2858,-605,3225 } },
-    { "Kodak DCS560C", 188, 0,
+    { "Kodak DCS560C", 177, 0,
 	{ 20482,-7172,-3125,-1033,10410,-285,2542,226,3136 } },
-    { "Kodak DCS620C", 180, 0,
+    { "Kodak DCS620C", 177, 0,
 	{ 23617,-10175,-3149,-2054,11749,-272,2586,-489,3453 } },
-    { "Kodak DCS620X", 185, 0,
+    { "Kodak DCS620X", 176, 0,
 	{ 13095,-6231,154,12221,-21,-2137,895,4602,2258 } },
-    { "Kodak DCS660C", 214, 0,
+    { "Kodak DCS660C", 173, 0,
 	{ 18244,-6351,-2739,-791,11193,-521,3711,-129,2802 } },
     { "Kodak DCS720X", 0, 0,
 	{ 11775,-5884,950,9556,1846,-1286,-1019,6221,2728 } },
@@ -6222,21 +6222,23 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 7702,-2245,-975,-9114,17242,1875,-2679,3055,8521 } },
     { "NIKON D1", 0, 0, /* multiplied by 2.218750, 1.0, 1.148438 */
 	{ 16772,-4726,-2141,-7611,15713,1972,-2846,3494,9521 } },
-    { "NIKON D200", 0, 0xfbc,  /* RT */
+	{ "NIKON D200", 0, 0xfbc,  /* RT */
 	{ 8498,-2633,-295,-5423,12869,2860,-777,1077,8124 } },
     { "NIKON D2H", 0, 0,
 	{ 5710,-901,-615,-8594,16617,2024,-2975,4120,6830 } },
     { "NIKON D2X", 0, 0,
 	{ 10231,-2769,-1255,-8301,15900,2552,-797,680,7148 } },
     { "NIKON D3000", 0, 0, /* RT */
-	{ 9211,-2521,-104,-6487,14280,2394,-754,1122,8033 } },
+    { 9211,-2521,-104,-6487,14280,2394,-754,1122,8033 } },
     { "NIKON D3100", 0, 0, /* RT */
-	{ 7729,-2212,-481,-5709,13148,2858,-1295,1908,8936 } },
+    { 7729,-2212,-481,-5709,13148,2858,-1295,1908,8936 } },
+    { "NIKON D3200", 0, 0xfb9,
+	{ 7013,-1408,-635,-5268,12902,2640,-1470,2801,7379 } },
     { "NIKON D300", 0, 0,
 	{ 9030,-1992,-715,-8465,16302,2255,-2689,3217,8069 } },
     { "NIKON D3X", 0, 0,
 	{ 7171,-1986,-648,-8085,15555,2718,-2170,2512,7457 } },
-    { "NIKON D3S", 0, 0,  /* RT */
+	{ "NIKON D3S", 0, 0,  /* RT */
 	{ 8792,-2663,-344,-5221,12764,2752,-1491,2165,8121 } },
     { "NIKON D3", 0, 0,
 	{ 8139,-2171,-663,-8747,16541,2295,-1925,2008,8093 } },
@@ -6252,9 +6254,11 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8198,-2239,-724,-4871,12389,2798,-1043,2050,7181 } },
     { "NIKON D50", 0, 0,
 	{ 7732,-2422,-789,-8238,15884,2498,-859,783,7330 } },
+    { "NIKON D600", 0, 0x3e07,
+	{ 8178,-2245,-609,-4857,12394,2776,-1207,2086,7298 } },
     { "NIKON D60", 0, 0,
 	{ 8736,-2458,-935,-9075,16894,2251,-1354,1242,8263 } },
-    { "NIKON D7000", 0, 0,  /* RT - Tanveer(tsk1979) */
+	{ "NIKON D7000", 0, 0,  /* RT - Tanveer(tsk1979) */
 	{ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 } },
     { "NIKON D700", 0, 0,  /* RT */
 	{ 8364,-2503,-352,-6307,14026,2492,-1134,1512,8156 } },
@@ -6298,6 +6302,10 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 11432,-3679,-1111,-3169,11239,2202,-791,1380,4455 } },
     { "NIKON COOLPIX P7100", 0, 0,
 	{ 11053,-4269,-1024,-1976,10182,2088,-526,1263,4469 } },
+    { "NIKON COOLPIX P7700", 200, 0,
+	{ 10321,-3920,-931,-2750,11146,1824,-442,1545,5539 } },
+    { "NIKON 1 V2", 0, 0,
+	{ 6588,-1305,-693,-3277,10987,2634,-355,2016,5106 } },
     { "NIKON 1 ", 0, 0,
 	{ 8994,-2667,-865,-4594,12324,2552,-699,1786,6260 } },
     { "OLYMPUS C5050", 0, 0,
@@ -6320,7 +6328,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 7828,-1761,-348,-5788,14071,1830,-2853,4518,6557 } },
     { "OLYMPUS E-330", 0, 0,
 	{ 8961,-2473,-1084,-7979,15990,2067,-2319,3035,8249 } },
-    { "OLYMPUS E-30", 0, 0xfbc, /* RT - Colin Walker */
+	{ "OLYMPUS E-30", 0, 0xfbc, /* RT - Colin Walker */
 	{ 8510,-2355,-693,-4819,12520,2578,-1029,2067,7752 } },
     { "OLYMPUS E-3", 0, 0xf99,
 	{ 9487,-2875,-1115,-7533,15606,2010,-1618,2100,7389 } },
@@ -6338,29 +6346,33 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8785,-2529,-1033,-7639,15624,2112,-1783,2300,7817 } },
     { "OLYMPUS E-520", 0, 0xfd2,
 	{ 8344,-2322,-1020,-7596,15635,2048,-1748,2269,7287 } },
-    { "OLYMPUS E-5", 0, 0, /* RT - Colin Walker */
+	{ "OLYMPUS E-5", 0, 0, /* RT - Colin Walker */
 	{ 9732,-2629,-999,-4899,12931,2173,-1243,2353,7457 } },
     { "OLYMPUS E-600", 0, 0xfaf,
 	{ 8453,-2198,-1092,-7609,15681,2008,-1725,2337,7824 } },
     { "OLYMPUS E-620", 0, 0xfaf,
 	{ 8453,-2198,-1092,-7609,15681,2008,-1725,2337,7824 } },
-    { "OLYMPUS E-P1", 0, 0xffd, /* RT - Colin Walker */
+	{ "OLYMPUS E-P1", 0, 0xffd, /* RT - Colin Walker */
 	{ 8834,-2344,-804,-4691,12503,2448,-978,1919,7603 } },
-    { "OLYMPUS E-P2", 0, 0xffd, /* RT - Colin Walker */
+	{ "OLYMPUS E-P2", 0, 0xffd, /* RT - Colin Walker */
 	{ 7758,-1619,-800,-5002,12886,2349,-985,1964,8305 } },
-    { "OLYMPUS E-P3", 0, 0, /* RT - Colin Walker */
+	{ "OLYMPUS E-P3", 0, 0, /* RT - Colin Walker */
 	{ 7041,-1794,-336,-3790,11192,2984,-1364,2625,6217 } },
-    { "OLYMPUS E-PL1s", 0, 0, /* RT - Colin Walker */
+	{ "OLYMPUS E-PL1s", 0, 0, /* RT - Colin Walker */
 	{ 9010,-2271,-838,-4792,12753,2263,-1059,2058,7589 } },
-    { "OLYMPUS E-PL1", 0, 0, /* RT - Colin Walker */
+	{ "OLYMPUS E-PL1", 0, 0, /* RT - Colin Walker */
 	{ 9010,-2271,-838,-4792,12753,2263,-1059,2058,7589 } },
-    { "OLYMPUS E-PL2", 0, 0, /* RT - Colin Walker */
+	{ "OLYMPUS E-PL2", 0, 0, /* RT - Colin Walker */
 	{ 11975,-3351,-1184,-4500,12639,2061,-1230,2353,7009 } },
 	{ "OLYMPUS E-PL3", 0, 0, /* RT - Colin Walker */
 	{ 7041,-1794,-336,-3790,11192,2984,-1364,2625,6217 } },
+    { "OLYMPUS E-PL5", 0, 0xfcb,
+	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },
     { "OLYMPUS E-PM1", 0, 0,
 	{ 7575,-2159,-571,-3722,11341,2725,-1434,2819,6271 } },
-    { "OLYMPUS E-M5", 0, 0,
+    { "OLYMPUS E-PM2", 0, 0,
+	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },
+    { "OLYMPUS E-M5", 0, 0xfe1,
 	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },
     { "OLYMPUS SP350", 0, 0,
 	{ 12078,-4836,-1069,-6671,14306,2578,-786,939,7418 } },
@@ -6376,8 +6388,10 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10915,-3677,-982,-5587,12986,2911,-1168,1968,6223 } },
     { "OLYMPUS SP570UZ", 0, 0,
 	{ 11522,-4044,-1146,-4736,12172,2904,-988,1829,6039 } },
-    { "OLYMPUS XZ-1", 0, 0, /* RT - Colin Walker */
+	{ "OLYMPUS XZ-1", 0, 0, /* RT - Colin Walker */
 	{ 8665,-2247,-762,-2424,10372,2382,-1011,2286,5189 } },
+    { "OLYMPUS XZ-2", 0, 0,
+	{ 9777,-3483,-925,-2886,11297,1800,-602,1663,5134 } },
     { "PENTAX *ist DL2", 0, 0,
 	{ 10504,-2438,-1189,-8603,16207,2531,-1022,863,12242 } },
     { "PENTAX *ist DL", 0, 0,
@@ -6394,7 +6408,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 11095,-3157,-1324,-8377,15834,2720,-1108,947,11688 } },
     { "PENTAX K20D", 0, 0,
 	{ 9427,-2714,-868,-7493,16092,1373,-2199,3264,7180 } },
-    { "PENTAX K200D", 0, 0,  /* RT */
+	{ "PENTAX K200D", 0, 0,  /* RT */
 	{ 10962,-4428,-542,-5486,13023,2748,-569,842,8390 } },
     { "PENTAX K2000", 0, 0,
 	{ 11057,-3604,-1155,-5152,13046,2329,-282,375,8104 } },
@@ -6404,6 +6418,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8843,-2837,-625,-5025,12644,2668,-411,1234,7410 } },
     { "PENTAX K-r", 0, 0,
 	{ 9895,-3077,-850,-5304,13035,2521,-883,1768,6936 } },
+    { "PENTAX K-5 II", 0, 0,
+	{ 8170,-2725,-639,-4440,12017,2744,-771,1465,6599 } },
     { "PENTAX K-5", 0, 0,
 	{ 8713,-2833,-743,-4342,11900,2772,-722,1543,6247 } },
     { "PENTAX K-7", 0, 0,
@@ -6452,38 +6468,48 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10909,-4295,-948,-1333,9306,2399,22,1738,4582 } },
     { "LEICA D-LUX 5", 143, 0,
 	{ 10909,-4295,-948,-1333,9306,2399,22,1738,4582 } },
-    { "Leica Camera AG M9 Digital Camera", 0, 0,  /* RT */
+	{ "Leica Camera AG M9 Digital Camera", 0, 0,  /* RT */
 	{ 7181,-1706,-55,-3557,11409,2450,-621,2072,7533 } },
+    { "Panasonic DMC-LX7", 143, 0,
+	{ 10148,-3743,-991,-2837,11366,1659,-701,1893,4899 } },
+    { "LEICA D-LUX 6", 143, 0,
+	{ 10148,-3743,-991,-2837,11366,1659,-701,1893,4899 } },
     { "Panasonic DMC-FZ100", 143, 0xfff,
 	{ 16197,-6146,-1761,-2393,10765,1869,366,2238,5248 } },
     { "LEICA V-LUX 2", 143, 0xfff,
 	{ 16197,-6146,-1761,-2393,10765,1869,366,2238,5248 } },
-    { "Panasonic DMC-FZ150", 143, 0xfff,  /* RT */
+	{ "Panasonic DMC-FZ150", 143, 0xfff,  /* RT */
 	{ 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 } },
     { "LEICA V-LUX 3", 143, 0xfff,
 	{ 11904,-4541,-1189,-2355,10899,1662,-296,1586,4289 } },
+    { "Panasonic DMC-FZ200", 143, 0xfff,
+	{ 8112,-2563,-740,-3730,11784,2197,-941,2075,4933 } },
+    { "LEICA V-LUX 4", 143, 0xfff,
+	{ 8112,-2563,-740,-3730,11784,2197,-941,2075,4933 } },
     { "Panasonic DMC-FX150", 15, 0xfff,
 	{ 9082,-2907,-925,-6119,13377,3058,-1797,2641,5609 } },
-    { "Panasonic DMC-G10", 15, 0xf3c, /* RT - Colin Walker */
+	{ "Panasonic DMC-G10", 15, 0xf3c, /* RT - Colin Walker */
 	{ 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
-    { "Panasonic DMC-G1", 15, 0xf94,    /* RT - Colin Walker*/
-	{ 7477,-1615,-651,-5016,12769,2506,-1380,2475,7240 } },  
-    { "Panasonic DMC-G2", 15, 0xf3c, /* RT - Colin Walker */
+	{ "Panasonic DMC-G1", 15, 0xf94,    /* RT - Colin Walker*/
+	{ 7477,-1615,-651,-5016,12769,2506,-1380,2475,7240 } },
+	{ "Panasonic DMC-G2", 15, 0xf3c, /* RT - Colin Walker */
 	{ 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
 	{ "Panasonic DMC-G3", 143, 0xfff,   /* RT - Colin Walker */
 	{ 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 } },
-    { "Panasonic DMC-GF1", 15, 0xf92, /* RT - Colin Walker */
+	{ "Panasonic DMC-GF1", 15, 0xf92, /* RT - Colin Walker */
 	{ 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 } },
-    { "Panasonic DMC-GF2", 143, 0xfff, /* RT - Colin Walker */
+	{ "Panasonic DMC-GF2", 143, 0xfff, /* RT - Colin Walker */
 	{ 7694,-1791,-745,-4917,12818,2332,-1221,2322,7197 } },
-    { "Panasonic DMC-GF3", 143, 0xfff, /* RT - Colin Walker */
-    { 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 } },
+	{ "Panasonic DMC-GF3", 143, 0xfff, /* RT - Colin Walker */
+	{ 8074,-1846,-861,-5026,12999,2239,-1320,2375,7422 } },
     { "Panasonic DMC-GF5", 143, 0xfff,
 	{ 8228,-2945,-660,-3938,11792,2430,-1094,2278,5793 } },
-    { "Panasonic DMC-GH1", 15, 0xf92,  /* RT - Colin Walker */
-	{ 6360,-1557,-375,-4201,11504,3086,-1378,2518,5843 } },  
-    { "Panasonic DMC-GH2", 15, 0xf95, /* RT - Colin Walker */
+	{ "Panasonic DMC-GH1", 15, 0xf92,  /* RT - Colin Walker */
+	{ 6360,-1557,-375,-4201,11504,3086,-1378,2518,5843 } },
+	{ "Panasonic DMC-GH2", 15, 0xf95, /* RT - Colin Walker */
 	{ 6855,-1765,-456,-4223,11600,2996,-1450,2602,5761 } },
+    { "Panasonic DMC-GH3", 144, 0,
+	{ 6559,-1752,-491,-3672,11407,2586,-962,1875,5130 } },
     { "Panasonic DMC-GX1", 143, 0,
 	{ 6763,-1919,-863,-3868,11515,2684,-1216,2387,5879 } },
     { "Phase One H 20", 0, 0,		/* DJC */
@@ -6504,6 +6530,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 21014,-7891,-2613,-3056,12201,856,-2203,5125,8042 } },
     { "SAMSUNG EX1", 0, 0x3e00,
 	{ 8898,-2498,-994,-3144,11328,2066,-760,1381,4576 } },
+    { "SAMSUNG EX2F", 0, 0x7ff,
+	{ 10648,-3897,-1055,-2022,10573,1668,-492,1611,4742 } },
     { "SAMSUNG NX2", 0, 0xfff,	/* NX20, NX200, NX210 */
 	{ 6933,-2268,-753,-4921,13387,1647,-803,1641,6096 } },
     { "SAMSUNG NX1000", 0, 0,
@@ -6518,14 +6546,16 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 11885,-3968,-1473,-4214,12299,1916,-835,1655,5549 } },
     { "Sinar", 0, 0,			/* DJC */
 	{ 16442,-2956,-2422,-2877,12128,750,-1136,6066,4559 } },
-    { "SONY DSC-F828", 491, 0,
+    { "SONY DSC-F828", 0, 0,
 	{ 7924,-1910,-777,-8226,15459,2998,-1517,2199,6818,-7242,11401,3481 } },
     { "SONY DSC-R1", 512, 0,
 	{ 8512,-2641,-694,-8042,15670,2526,-1821,2117,7414 } },
     { "SONY DSC-V3", 0, 0,
 	{ 7511,-2571,-692,-7894,15088,3060,-948,1111,8128 } },
-    { "SONY DSC-RX100", 192, 0,		/* DJC */
-	{ 7329,-2746,-405,-2691,9338,3354,-136,1259,5051 } },
+    { "SONY DSC-RX100", 200, 0,
+	{ 8651,-2754,-1057,-3464,12207,1373,-568,1398,4434 } },
+    { "SONY DSC-RX1", 128, 0,
+	{ 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 } },
     { "SONY DSLR-A100", 0, 0xfeb,
 	{ 9437,-2811,-774,-8405,16215,2290,-710,596,7181 } },
     { "SONY DSLR-A290", 0, 0,
@@ -6548,20 +6578,24 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
     { "SONY DSLR-A5", 128, 0xfeb,
 	{ 4950,-580,-103,-5228,12542,3029,-709,1435,7371 } },
-    { "SONY DSLR-A700", 126, 0, /* RT */
+	{ "SONY DSLR-A700", 126, 0, /* RT */
 	{ 6509,-1333,-137,-6171,13621,2824,-1490,2226,6952 } },
     { "SONY DSLR-A850", 128, 0,
 	{ 5413,-1162,-365,-5665,13098,2866,-608,1179,8440 } },
-    { "SONY DSLR-A900", 128, 0, /* RT */
+	{ "SONY DSLR-A900", 128, 0, /* RT */
 	{ 5715,-1433,-410,-5603,12937,2989,-644,1247,8372 } },
-    { "SONY NEX-5N", 138, 0, /* RT - Colin Walker */
+	{ "SONY NEX-5N", 138, 0, /* RT - Colin Walker */
 	{ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
-    { "SONY NEX-C3", 128, 0,  /* RT - Colin Walker */
+    { "SONY NEX-5R", 128, 0,
+	{ 6129,-1545,-418,-4930,12490,2743,-977,1693,6615 } },
+	{ "SONY NEX-C3", 128, 0,  /* RT - Colin Walker */
 	{ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
-    { "SONY NEX-3", 128, 0, /* RT - Colin Walker */
+	{ "SONY NEX-3", 128, 0, /* RT - Colin Walker */
 	{ 5145,-741,-123,-4915,12310,2945,-794,1489,6906 } },
-    { "SONY NEX-5", 128, 0, /* RT - Colin Walker */
+	{ "SONY NEX-5", 128, 0, /* RT - Colin Walker */
 	{ 5154,-716,-115,-5065,12506,2882,-988,1715,6800 } },
+    { "SONY NEX-6", 128, 0,
+	{ 6129,-1545,-418,-4930,12490,2743,-977,1693,6615 } },
     { "SONY NEX-7", 128, 0,
 	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
     { "SONY NEX", 128, 0,	/* NEX-C3, NEX-F3 */
@@ -6578,8 +6612,10 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 } },
     { "SONY SLT-A65", 128, 0,
 	{ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 } },
-    { "SONY SLT-A77", 128, 0,  /* RT - Colin Walker */
-    { 5126,-830,-261,-4788,12196,2934,-948,1602,7068 } }
+	{ "SONY SLT-A77", 128, 0,  /* RT - Colin Walker */
+	{ 5126,-830,-261,-4788,12196,2934,-948,1602,7068 } },
+    { "SONY SLT-A99", 128, 0,
+	{ 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 } }
   };
   double cam_xyz[4][3];
   char name[130];
@@ -6772,6 +6808,7 @@ void CLASS identify()
     { 12310144, "CASIO",    "EX-Z850"         ,1 },
     { 12489984, "CASIO",    "EX-Z8"           ,1 },
     { 15499264, "CASIO",    "EX-Z1050"        ,1 },
+    { 18702336, "CASIO",    "EX-ZR100"        ,1 },
     {  7426656, "CASIO",    "EX-P505"         ,1 },
     {  9313536, "CASIO",    "EX-P600"         ,1 },
     { 10979200, "CASIO",    "EX-P700"         ,1 },
@@ -6827,15 +6864,13 @@ void CLASS identify()
   fread (head, 1, 32, ifp);
   fseek (ifp, 0, SEEK_END);
   flen = fsize = ftell(ifp);
-
   /*RT*/ if (fsize<100000) {
         is_raw = 0;
         return;
-    }
-
+  }
   /* RT: changed string constant */
   if ((cp = (char *) memmem (head, 32, (char*)"MMMM", 4)) ||
-      (cp = (char *) memmem (head, 32, (char*)"IIII", 4))) {
+    (cp = (char *) memmem (head, 32, (char*)"IIII", 4))) {
     parse_phase_one (cp-head);
     if (cp-head && parse_tiff(0)) apply_tiff();
   } else if (order == 0x4949 || order == 0x4d4d) {
@@ -6986,7 +7021,7 @@ void CLASS identify()
     { height  = 3124;   width  = 4688; filters = 0x16161616; }
   if (width == 4352 && (!strcmp(model,"K-r") || !strcmp(model,"K-x")))
 /*RT*/   {			width  = 4308; filters = 0x16161616; }
-  if (width >= 4960 && !strcmp(model,"K-5"))
+  if (width >= 4960 && !strncmp(model,"K-5",3))
     { left_margin = 10; width  = 4950; filters = 0x16161616; }
   if (width == 4736 && !strcmp(model,"K-7"))
     { height  = 3122;   width  = 4684; filters = 0x16161616; top_margin = 2; }
@@ -7031,6 +7066,7 @@ void CLASS identify()
       case 3344: width -= 66;
       case 3872: width -= 6;
     }
+    if (height > width) SWAP(height,width);
     filters = 0;
     load_raw = &CLASS canon_sraw_load_raw;
   } else if (!strcmp(model,"PowerShot 600")) {
@@ -7309,6 +7345,14 @@ canon_a5:
     width  = 4048;
     top_margin  = 11;
     left_margin = 104;
+  } else if (is_canon && raw_width == 4176) {
+    height = 3045;
+    width  = 4072;
+    left_margin = 96;
+    mask[0][0] = top_margin = 17;
+    mask[0][2] = raw_height;
+    mask[0][3] = 80;
+    filters = 0x49494949;
   } else if (is_canon && raw_width == 4312) {
     top_margin  = 18;
     left_margin = 22;
@@ -7375,6 +7419,10 @@ canon_a5:
     top_margin = 51;
     left_margin = 158;
     goto canon_cr2;
+  } else if (is_canon && raw_width == 5568) {
+    top_margin = 38;
+    left_margin = 72;
+    goto canon_cr2;
   } else if (is_canon && raw_width == 5712) {
     height = 3752;
     width  = 5640;
@@ -7389,7 +7437,7 @@ canon_cr2:
   } else if (is_canon && raw_width == 5920) {
     height = 3870;
     width  = 5796;
-    top_margin  =  80;
+    top_margin  = 80;
     left_margin = 122;
   } else if (!strcmp(model,"D1")) {
     cam_mul[0] *= 256/527.0;
@@ -7418,6 +7466,7 @@ canon_cr2:
 	     !strcmp(model,"D7000")) {
     width -= 44;
   } else if (!strcmp(model,"D3200") ||
+	     !strcmp(model,"D600")  ||
 	     !strcmp(model,"D800") || !strcmp(model,"D800E") ) {
     width -= 46;
   } else if (!strcmp(model,"D4")) {
@@ -7428,11 +7477,8 @@ canon_cr2:
 	     !strncmp(model,"D70",3)) {
     width--;
   } else if (!strcmp(model,"D100")) {
-    if (tiff_compress == 34713 && !nikon_is_compressed()) {
-      load_raw = &CLASS packed_load_raw;
-      load_flags |= 1;
+    if (load_flags)
       raw_width = (width += 3) + 3;
-    }
   } else if (!strcmp(model,"D200")) {
     left_margin = 1;
     width -= 4;
@@ -7445,6 +7491,8 @@ canon_cr2:
     else width -= 8;
   } else if (!strncmp(model,"D300",4)) {
     width -= 32;
+  } else if (!strcmp(make,"NIKON") && raw_width == 4032) {
+    adobe_coeff ("NIKON","COOLPIX P7700");
   } else if (!strncmp(model,"COOLPIX P",9)) {
     load_flags = 24;
     filters = 0x94949494;
@@ -7560,13 +7608,12 @@ cp_e2500:
       maximum = (is_raw == 2 && shot_select) ? 0x2f00 : 0x3e00;
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;
+    if (width == 2848) filters = 0x16161616;
     if (width == 3328) {
       width = 3262;
       left_margin = 34;
     }
-    if (!strcmp(model,"X10") || !strcmp(model,"X-S1"))
-      filters = 0x16161616;
-    if (!strcmp(model,"X-Pro1")) {
+    if (width == 4952) {
       left_margin = 0;
       filters = 2;
     }
@@ -7702,6 +7749,13 @@ wb550:
     load_raw = &CLASS unpacked_load_raw;
     load_flags = 6;
     maximum = 0x3df;
+  } else if (!strcmp(model,"EX2F")) {
+    height = 3045;
+    width  = 4070;
+    top_margin = 3;
+    order = 0x4949;
+    filters = 0x49494949;
+    load_raw = &CLASS unpacked_load_raw;
   } else if (!strcmp(model,"STV680 VGA")) {
     height = 484;
     width  = 644;
@@ -7909,6 +7963,9 @@ wb550:
       thumb_length = flen - (thumb_offset = 0xa39800);
       thumb_height = 480;
       thumb_width  = 640;
+    } else if (!strcmp(model,"XZ-2")) {
+      load_raw = &CLASS packed_load_raw;
+      load_flags = 24;
     }
   } else if (!strcmp(model,"N Digital")) {
     height = 2047;
@@ -7919,6 +7976,7 @@ wb550:
   } else if (!strcmp(model,"DSC-F828")) {
     width = 3288;
     left_margin = 5;
+    mask[1][3] = -17;
     data_offset = 862144;
     load_raw = &CLASS sony_load_raw;
     filters = 0x9c9c9c9c;
@@ -7927,6 +7985,7 @@ wb550:
   } else if (!strcmp(model,"DSC-V3")) {
     width = 3109;
     left_margin = 59;
+    mask[0][1] = 9;
     data_offset = 787392;
     load_raw = &CLASS sony_load_raw;
   } else if (!strcmp(make,"SONY") && raw_width == 3984) {
@@ -8196,6 +8255,11 @@ c603:
     height = 2752;
     width  = 3672;
     raw_width = 5632;
+  } else if (!strcmp(model,"EX-ZR100")) {
+    height = 3044;
+    width  = 4072;
+    raw_width = 4096;
+    load_flags = 80;
   } else if (!strcmp(model,"EX-P505")) {
     height = 1928;
     width  = 2568;
@@ -8315,7 +8379,7 @@ quit:
 }
 #endif
 
-/* RT: removed unused function */
+/* RT: removed unused functions */
 
 struct tiff_tag {
   ushort tag, type;
@@ -8338,7 +8402,6 @@ struct tiff_hdr {
   unsigned gps[26];
   char desc[512], make[64], model[64], soft[32], date[20], artist[64];
 };
-
 /* RT: Delete from here */
 /*RT*/#undef SQR
 /*RT*/#undef MAX
@@ -8347,3 +8410,4 @@ struct tiff_hdr {
 /*RT*/#undef LIM
 /*RT*/#undef ULIM
 /*RT*/#undef CLIP
+
