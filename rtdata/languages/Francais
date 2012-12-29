@@ -921,8 +921,8 @@ TP_COLORAPP_CURVEEDITOR2;Courbe tonale 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;usage similaire aux courbes tonales exposition
 TP_COLORAPP_CURVEEDITOR3;Courbes chroma
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs.\n Histogramme affiche la chromaticité Lab avant CIECAM.\n On peut voir le résultat final dans la fenêtre histogramme.\n Histogramme de C,s,M avant/après si la cas à cocher "Données CIECAM" est activée.\n (C,s,M) ne sont pas affichés dans le panneau histogramme
-TP_COLORAPP_DATACIE;Montre les données de sortie CIECAM dans les courbes histogrammes 
-TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les courbes dans les histogrammes montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\n Cette sélection n'a aps d'incidence sur le panneau histogramme général.\n\n Quand désactivé, les histogrammes dans les courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
+TP_COLORAPP_DATACIE;Histogrammes post CIECAM
+TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les histogrammes de fond des courbes CIECAM montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\nCette sélection n'a pas d'incidence sur l'histogramme général.\n\nQuand désactivé, les histogrammes de fond des courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
 TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002\nSi vous sélectionnez " <i>Automatic</i> ", RT essaiera de trouver la meilleure valeur
 TP_COLORAPP_EQUAL;Préservé
 TP_COLORAPP_GAMUT;Contrôle du gamut (Lab)
