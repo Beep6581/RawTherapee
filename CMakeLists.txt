@@ -16,6 +16,9 @@ string (TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CMAKE_BUILD_TYPE)
 
 if (UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   add_definitions (-D_DEBUG)
+else ()
+  add_definitions (-DNDEBUG)
+  add_definitions (-D_DNDEBUG)
 endif ()
 
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
