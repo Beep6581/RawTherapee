@@ -237,7 +237,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 }
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02 (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale )
+void ImProcFunctions::ciecam_02 (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp)
 {
 if(params->colorappearance.enabled) {
 
@@ -654,18 +654,22 @@ if(params->colorappearance.enabled) {
 			h=hpro;
 			s=spro;
 			
-		if(params->colorappearance.tonecie){//use pointer for tonemapping with CIECAM
+		if(params->colorappearance.tonecie  || settings->autocielab){//use pointer for tonemapping with CIECAM and also sharpening , defringe, contrast detail
+	//	if(params->colorappearance.tonecie  || params->colorappearance.sharpcie){//use pointer for tonemapping with CIECAM and also sharpening , defringe, contrast detail
+			float Qred= ( 4.0 / c)  * ( aw + 4.0 );//estimate Q max if J=100.0
 			ncie->Q_p[i][j]=(float)Q+epsil;//epsil to avoid Q=0
 			ncie->M_p[i][j]=(float)M+epsil;
 			ncie->J_p[i][j]=(float)J+epsil;
 			ncie->h_p[i][j]=(float)h;
 			ncie->C_p[i][j]=(float)C+epsil;
-	//		ciec->s_p[i][j]=(float)s;
-			
+	//		ncie->s_p[i][j]=(float)s;
+			ncie->sh_p[i][j]=(float) 32768.*(( 4.0 / c )*sqrt( J / 100.0 ) * ( aw + 4.0 ))/Qred ;
+	//		ncie->ch_p[i][j]=(float) 327.68*C;
 			if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
 			if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
 			}
-			if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie){						
+			if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !settings->autocielab){						
+		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !params->colorappearance.sharpcie){						
 			int posl, posc;
 			double brli=327.;
 			double chsacol=327.;
@@ -736,7 +740,8 @@ if(params->colorappearance.enabled) {
 		}
 	}	
 	// End of parallelization
-if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie){//normal
+if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie   || !settings->autocielab){//normal
+//if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie   || !params->colorappearance.sharpcie){//normal
 	
 	if(ciedata) {
     //update histogram J 
@@ -769,10 +774,44 @@ if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.to
 		//	printf("minc=%f maxc=%f minj=%f maxj=%f\n",minc,maxc,minj,maxj);
 	}
 #endif
-//select here tonemapping with Q
-if(params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enabled) {
-	//EPDToneMapCIE adated to CIECAM
-	ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+
+if(settings->autocielab) {
+//if(params->colorappearance.sharpcie) {
+
+//all this treatments reduce artefacts, but can leed to slighty  different results
+if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
+
+if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastcam(ncie);
+
+if(params->sharpening.enabled)  if(execsharp) {ImProcFunctions::sharpeningcam (ncie, (float**)buffer);}			//sharpening adapted to CIECAM 
+
+if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, true);//contrast by detail adapted to CIECAM
+
+		   float Qredi= ( 4.0 / c_)  * ( a_w + 4.0 );
+		   float co_e=(pow(f_l,0.25));
+
+#ifndef _DEBUG	
+#pragma omp parallel default(shared) firstprivate(height,width, Qredi,a_w,c_)
+#endif
+{	
+#ifndef _DEBUG
+		#pragma omp for schedule(dynamic, 10)
+#endif
+		   		for (int i=0; i<height; i++) // update CieImages with new values after sharpening, defringe, contrast by detail level
+					for (int j=0; j<width; j++) {
+						float interm=Qredi*ncie->sh_p[i][j]/(32768.f);
+						ncie->J_p[i][j]=100.0* interm*interm/((a_w+4.)*(a_w+4.)*(4./c_)*(4./c_));
+						ncie->Q_p[i][j]=( 4.0 / c_)  * ( a_w + 4.0 ) *  sqrt(ncie->J_p[i][j]/100.f);
+						ncie->M_p[i][j]=ncie->C_p[i][j]*co_e;
+					}
+			}
+}	
+if((params->colorappearance.tonecie || params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab) 
+		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)) {
+		
+		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+			//EPDToneMapCIE adated to CIECAM
+
 	
 #ifndef _DEBUG	
 #pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh,doneinit2, nc2,f2,c2, gamu, highlight,pW)
@@ -790,14 +829,13 @@ if(params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enab
 		#pragma omp for schedule(dynamic, 10)
 #endif
 		for (int i=0; i<height; i++) // update CIECAM with new values after tone-mapping
-	//	for (int i=begh; i<endh; i++) // update CIECAM with new values after tone-mapping
+	//	for (int i=begh; i<endh; i++) 
 			for (int j=0; j<width; j++) {
 			double xx,yy,zz;
 			float x,y,z;
 			float eps=0.0001;
 			float co_e=(pow(f_l,0.25))+eps;
-
-			ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j]) /(w_h*w_h);
+			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
 			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
 			//show histogram in CIECAM mode (Q,J, M,s,C)
 			int posl, posc;
@@ -896,6 +934,721 @@ if(params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enab
 	}
 		
 	}
+
+}
+}
+//end CIECAM
+
+
+// Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
+void ImProcFunctions::ciecam_02float (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp)
+{
+if(params->colorappearance.enabled) {
+//printf("ciecam float\n");
+
+#ifdef _DEBUG
+	MyTime t1e,t2e;
+	t1e.set();
+#endif
+	LUTf dLcurve(65536,0);
+	LUTu hist16JCAM(65536);
+	bool jp=false;
+	float val;
+	//preparate for histograms CIECAM
+	if(pW!=1){//only with improccoordinator
+	for (int i=0; i<32768; i++) {  //# 32768*1.414  approximation maxi for chroma
+			val = (double)i / 32767.0;
+			dLcurve[i] = CLIPD(val);
+		}
+	hist16JCAM.clear();
+	}
+	LUTf dCcurve(65536,0);
+	LUTu hist16_CCAM(65536);
+	bool chropC=false;
+	float valc;
+	if(pW!=1){//only with improccoordinator
+	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+			valc = (double)i / 47999.0;
+			dCcurve[i] = CLIPD(valc);
+		}
+	hist16_CCAM.clear();
+	}
+	//end preparate histogram
+	int width = lab->W, height = lab->H;
+	int Np=width*height;
+	float minQ=10000.f;
+	float minM=10000.f;
+	float maxQ= -1000.f;
+	float maxM= -1000.f;
+	float w_h;
+	float a_w;
+	float c_;
+	float f_l;
+	float Yw;
+	Yw=1.0;
+	double Xw, Zw;
+	float f,c,nc,yb,la,xw,yw,zw,f2,c2,nc2,yb2,la2;
+	float z,fl,n,nbb,ncb,d,aw;
+	float xwd,ywd,zwd;
+	int alg=0;
+	float sum=0.f;
+	float mean;
+	//LUTf for sliders J and Q
+	LUTf bright_curve (65536,0);//init curve
+	LUTf bright_curveQ (65536,0);//init curve
+	
+    LUTu hist16J (65536);
+	LUTu hist16Q (65536);
+	float koef=1.0f;//rough correspondence between L and J	
+    hist16J.clear();hist16Q.clear();
+    for (int i=0; i<height; i++)
+ //   for (int i=begh; i<endh; i++)
+        for (int j=0; j<width; j++) {//rough correspondence between L and J	
+			if(((lab->L[i][j])/327.68f)>95.) koef=1.f;
+			else if(((lab->L[i][j])/327.68f)>85.) koef=0.97f;
+			else if(((lab->L[i][j])/327.68f)>80.) koef=0.93f;
+			else if(((lab->L[i][j])/327.68f)>70.) koef=0.87f;
+			else if(((lab->L[i][j])/327.68f)>60.) koef=0.85f;
+			else if(((lab->L[i][j])/327.68f)>50.) koef=0.8f;
+			else if(((lab->L[i][j])/327.68f)>40.) koef=0.75f;
+			else if(((lab->L[i][j])/327.68f)>30.) koef=0.7f;
+			else if(((lab->L[i][j])/327.68f)>20.) koef=0.7f;
+			else if(((lab->L[i][j])/327.68f)>10.) koef=0.9f;
+			else if(((lab->L[i][j])/327.68f)>0.) koef=1.0f;	
+		
+            hist16J[CLIP((int)((koef*lab->L[i][j])))]++;//evaluate histogram luminance L # J
+			sum+=koef*lab->L[i][j];//evaluate mean J to calcualte Yb
+			hist16Q[CLIP((int) (32768.f*sqrt((koef*(lab->L[i][j]))/32768.f)))]++;	//for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+	}	
+	//mean=(sum/((endh-begh)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone 
+	mean=(sum/((height)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone 
+	if     (mean<15.f) yb=3.0;
+	else if(mean<30.f) yb=5.0;
+	else if(mean<40.f) yb=10.0;
+	else if(mean<45.f) yb=15.0;
+	else if(mean<50.f) yb=18.0;
+	else if(mean<55.f) yb=23.0;
+	else if(mean<60.f) yb=30.0;
+	else if(mean<70.f) yb=40.0;
+	else if(mean<80.f) yb=60.0;
+	else if(mean<90.f) yb=80.0;
+	else               yb=90.0;
+
+	bool ciedata=params->colorappearance.datacie;
+	
+	ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
+	//viewing condition for surround
+	if(params->colorappearance.surround=="Average") { f  = 1.00; c  = 0.69; nc = 1.00;f2=1.0,c2=0.69,nc2=1.0;}
+	else if(params->colorappearance.surround=="Dim"){ f2  = 0.9; c2  = 0.59; nc2 = 0.9;f=1.0,c=0.69,nc=1.0;}
+	else if(params->colorappearance.surround=="Dark"){f2  = 0.8; c2  = 0.525;nc2 = 0.8;f=1.0,c=0.69,nc=1.0;}
+	else if(params->colorappearance.surround=="ExtremelyDark"){f2  = 0.8; c2  = 0.41;nc2 = 0.8;f=1.0,c=0.69,nc=1.0;}
+	
+	//scene condition for surround
+	if(params->colorappearance.surrsource==true)  {f  = 0.85; c  = 0.55; nc = 0.85;}// if user => source image has surround very dark 
+	//with which algorithme
+	if     (params->colorappearance.algo=="JC")  alg=0;
+	else if(params->colorappearance.algo=="JS")  alg=1;
+	else if(params->colorappearance.algo=="QM")  alg=2;
+	else if(params->colorappearance.algo=="ALL") alg=3;
+	//settings white point of output device - or illuminant viewing
+	if(settings->viewingdevice==0) {xwd=96.42;ywd=100.0;zwd=82.52;}//5000K
+	else if(settings->viewingdevice==1) {xwd=95.68;ywd=100.0;zwd=92.15;}//5500
+	else if(settings->viewingdevice==2) {xwd=95.24;ywd=100.0;zwd=100.81;}//6000
+	else if(settings->viewingdevice==3)  {xwd=95.04;ywd=100.0;zwd=108.88;}//6500
+	else if(settings->viewingdevice==4)  {xwd=109.85;ywd=100.0;zwd=35.58;}//tungsten
+	else if(settings->viewingdevice==5)  {xwd=99.18;ywd=100.0;zwd=67.39;}//fluo F2
+	else if(settings->viewingdevice==6)  {xwd=95.04;ywd=100.0;zwd=108.75;}//fluo F7
+	else if(settings->viewingdevice==7)  {xwd=100.96;ywd=100.0;zwd=64.35;}//fluo F11
+	
+	
+	//settings mean Luminance Y of output device or viewing
+	if(settings->viewingdevicegrey==0) {yb2=5.0;}
+	else if(settings->viewingdevicegrey==1) {yb2=10.0;}
+	else if(settings->viewingdevicegrey==2) {yb2=15.0;}
+	else if(settings->viewingdevicegrey==3) {yb2=18.0;}
+	else if(settings->viewingdevicegrey==4) {yb2=23.0;}	
+	else if(settings->viewingdevicegrey==5)  {yb2=30.0;}
+	else if(settings->viewingdevicegrey==6)  {yb2=40.0;}
+	
+	//La and la2 = ambiant luminosity scene and viewing
+	la=float(params->colorappearance.adapscen);
+	la2=float(params->colorappearance.adaplum);
+	
+	// level of adaptation
+	float deg=(params->colorappearance.degree)/100.0;
+	float pilot=params->colorappearance.autodegree ? 2.0 : deg;
+	
+	//algoritm's params
+	float jli=params->colorappearance.jlight;
+	float chr=params->colorappearance.chroma;
+	float contra=params->colorappearance.contrast;
+	float qbri=params->colorappearance.qbright;
+	float schr=params->colorappearance.schroma;
+	float mchr=params->colorappearance.mchroma;
+	float qcontra=params->colorappearance.qcontrast;
+	float hue=params->colorappearance.colorh;
+	float rstprotection = 100.-params->colorappearance.rstprotection; 	
+	if(schr>0.0) schr=schr/2.0f;//divide sensibility for saturation
+	
+    // extracting datas from 'params' to avoid cache flush (to be confirmed)
+    ColorAppearanceParams::eTCModeId curveMode = params->colorappearance.curveMode;
+    ColorAppearanceParams::eTCModeId curveMode2 = params->colorappearance.curveMode2;
+    bool hasColCurve1 = bool(customColCurve1);
+    bool hasColCurve2 = bool(customColCurve2);
+    ColorAppearanceParams::eCTCModeId curveMode3 = params->colorappearance.curveMode3;
+    bool hasColCurve3 = bool(customColCurve3);
+	
+	
+	
+	//evaluate lightness, contrast
+	ColorTemp::curveJfloat (jli, contra, 1, bright_curve,hist16J);//lightness and contrast J
+	ColorTemp::curveJfloat (qbri, qcontra, 1, bright_curveQ, hist16Q);//brightness and contrast Q
+	int gamu=0;
+	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
+	
+	if(params->colorappearance.gamut==true) gamu=1;//enabled gamut control
+	xw=100.0*Xw;
+	yw=100.0*Yw;
+	zw=100.0*Zw;
+	float xw1,yw1,zw1,xw2,yw2,zw2;
+	// settings of WB: scene and viewing
+    if(params->colorappearance.wbmodel=="RawT") {xw1=96.46;yw1=100.0;zw1=82.445;xw2=xwd;yw2=ywd;zw2=zwd;}	//use RT WB; CAT 02 is used for output device (see prefreneces)
+    else if(params->colorappearance.wbmodel=="RawTCAT02") {xw1=xw;yw1=yw;zw1=zw;xw2=xwd;yw2=ywd;zw2=zwd;}	// Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
+	bool doneinit=true;
+	bool doneinit2=true;
+#ifndef _DEBUG	
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh, doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
+#endif
+{	//matrix for current working space
+	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+	double wip[3][3] = {
+		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+	};
+	
+#ifndef _DEBUG
+#pragma omp for schedule(dynamic, 10)
+#endif
+	for (int i=0; i<height; i++)
+//	for (int i=begh; i<endh; i++)
+		for (int j=0; j<width; j++) {
+		
+			float L=lab->L[i][j];
+			float a=lab->a[i][j];
+			float b=lab->b[i][j];
+			float x1,y1,z1;
+			float x,y,z;
+			float epsil=0.0001;
+			//convert Lab => XYZ
+			Color::Lab2XYZ(L, a, b, x1, y1, z1);
+			float J, C, h, Q, M, s, aw, fl, wh;                       
+			float Jp,Cpr;
+			float Jpro,Cpro, hpro, Qpro, Mpro, spro;
+			bool t1L=false;
+			bool t1B=false;
+			bool t2L=false;
+			bool t2B=false;
+			int c1C=0;
+			int c1s=0;
+			int c1co=0;
+			
+			x=(float)x1/655.35f;
+			y=(float)y1/655.35f;
+			z=(float)z1/655.35f;
+			//process source==> normal
+			ColorTemp::xyz2jchqms_ciecam02float( J, C,  h,
+                           Q,  M,  s, aw, fl, wh,
+                           x,  y,  z,
+                           xw1, yw1,  zw1,
+                           yb,  la,
+                           f, c,  nc,  pilot, doneinit, gamu );
+			Jpro=J;
+			Cpro=C; 
+			hpro=h;
+			Qpro=Q; 
+			Mpro=M;
+			spro=s;	
+			w_h=wh+epsil;
+			a_w=aw;
+			c_=c;
+			f_l=fl;
+			// we cannot have all algoritms with all chroma curves
+			if(alg==1) 	{		   
+				// Lightness saturation
+				Jpro=(bright_curve[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
+				float sres;
+				float Sp=spro/100.0f;
+				float parsat=1.5f;
+				parsat=1.5f;//parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
+				if(schr==-100.0f) schr=-99.8f;
+				ColorTemp::curvecolorfloat(schr, Sp , sres, parsat);	
+				float coe=pow_F(fl,0.25f);
+				float dred=100.f;// in C mode
+				float protect_red=80.0f; // in C mode
+				dred = 100.0f * sqrt((dred*coe)/Qpro);
+				protect_red=100.0 * sqrt((protect_red*coe)/Qpro);
+				int sk=0;
+				float ko=100.f;
+				Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red,sk,rstprotection,ko, spro);
+				Qpro= ( 4.0f / c ) * sqrt( Jpro / 100.0f ) * ( aw + 4.0f ) ;
+				Cpro=(spro*spro*Qpro)/(10000.0f);
+				}
+			else if(alg==3 || alg==0  || alg==2) {
+				float coef=32760.f/wh;
+				if(alg==3 || alg==2) Qpro=(bright_curveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
+				float Mp, sres;
+				float coe=pow_F(fl,0.25f);
+				Mp=Mpro/100.0f;
+				float parsat=2.5f;
+				if(mchr==-100.0f) mchr=-99.8f ;
+				if(mchr==100.0f) mchr=99.9f;
+				if(alg==3 || alg==2) ColorTemp::curvecolorfloat(mchr, Mp , sres, parsat); else ColorTemp::curvecolorfloat(0.0, Mp , sres, parsat);//colorfullness
+				float dred=100.f;//in C mode
+				float protect_red=80.0f;// in C mode
+				dred *=coe;//in M mode
+				protect_red	*=coe;//M mode			
+				int sk=0;
+				float ko=100.f;
+				Color::skinredfloat(Jpro, hpro, sres, Mp, dred, protect_red,sk,rstprotection,ko, Mpro);								
+				Jpro=(100.0f* Qpro*Qpro) /(wh*wh);
+				Cpro= Mpro/coe;
+				spro = 100.0f * sqrt( Mpro / Qpro );
+				if(alg!=2) Jpro=(bright_curve[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
+				float Cp;
+				float Sp=spro/100.0f;
+				parsat=1.5;
+				if(schr==-100.0f) schr=-99.f;
+				if(schr==100.0f) schr=98.f;
+				if(alg==3) ColorTemp::curvecolorfloat(schr, Sp , sres, parsat);	else ColorTemp::curvecolorfloat(0.0, Sp , sres, parsat);	//saturation
+				dred=100.f;// in C mode
+				protect_red=80.0f; // in C mode
+				dred = 100.0 * sqrt((dred*coe)/Q);
+				protect_red=100.0f * sqrt((protect_red*coe)/Q);
+				sk=0;
+				Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red,sk,rstprotection,ko, spro);				
+				Qpro= ( 4.0f / c ) * sqrt( Jpro / 100.0f ) * ( aw + 4.0f ) ;
+				Cpro=(spro*spro*Qpro)/(10000.0f);
+				Cp=Cpro/100.0f;
+				parsat=1.8f;//parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation : for not)
+				if(chr==-100.0f) chr=-99.8f;
+				if(alg!=2) ColorTemp::curvecolorfloat(chr, Cp , sres, parsat);else ColorTemp::curvecolorfloat(0.0, Cp , sres, parsat);	//chroma
+				dred=55.f;
+				protect_red=30.0f;
+				sk=1;
+				Color::skinredfloat(Jpro, hpro, sres, Cp, dred, protect_red,sk,rstprotection, ko, Cpro);
+				
+				hpro=hpro+hue;if( hpro < 0.0f ) hpro += 360.0f;//hue
+			}
+			
+	 if (hasColCurve1) {//curve 1 with Lightness and Brightness
+		if (curveMode==ColorAppearanceParams::TC_MODE_LIGHT){
+		    float Jj=(float) Jpro*327.68f;
+			float Jold=Jj;
+			const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve1);
+				userColCurve.Apply(Jj);
+				Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility	
+			Jpro=(float)(Jj/327.68f);	
+			t1L=true;
+		}
+	else if (curveMode==ColorAppearanceParams::TC_MODE_BRIGHT){ 
+			float coef=32760.f/wh;
+			float Qq=(float) Qpro*coef;
+			float Qold=Qq;
+			const Brightcurve& userColCurve = static_cast<const Brightcurve&>(customColCurve1);
+					userColCurve.Apply(Qq);
+					Qq=0.5f*(Qq-Qold)+Qold;//divide sensibility	
+			Qpro=(float)(Qq/coef);	
+			Jpro=(100.0f* Qpro*Qpro) /(wh*wh);
+			t1B=true;
+		}
+	}
+	
+	if (hasColCurve2) {//curve 2 with Lightness and Brightness
+		if (curveMode2==ColorAppearanceParams::TC_MODE_LIGHT){  
+			float Jj=(float) Jpro*327.68f;
+			float Jold=Jj;			
+			const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve2);
+					userColCurve.Apply(Jj);
+					Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility
+			Jpro=(float)(Jj/327.68f);	
+			t2L=true;	
+		}
+	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ // 
+			float coef=32760.f/wh;
+			float Qq=(float) Qpro*coef;
+			float Qold = Qq;	
+			const Brightcurve& userColCurve = static_cast<const Brightcurve&>(customColCurve2);
+					userColCurve.Apply(Qq);
+					Qq=0.5f*(Qq-Qold)+Qold;//divide sensibility		
+			Qpro=(float)(Qq/coef);	
+			Jpro=(100.0f* Qpro*Qpro) /(wh*wh);
+			t2B=true;
+			}
+	}
+	
+	if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
+		if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA){  
+		    float parsat=0.8f;//0.68;
+			float coef=327.68f/parsat;
+			float Cc=(float) Cpro*coef;
+			float Ccold=Cc;
+			const Chromacurve& userColCurve = static_cast<const Chromacurve&>(customColCurve3);
+				userColCurve.Apply(Cc);
+				float dred=55.f;
+				float protect_red=30.0f;
+				float sk=1;
+				float ko=1.f/coef;
+				Color::skinredfloat(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);	
+			//	Cpro=Cc/coef;
+				c1C=1;	
+		}
+	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ // 
+				float parsat=0.8f;//0.6
+				float coef=327.68f/parsat;
+				float Ss=(float) spro*coef;
+				float Sold=Ss;
+				const Saturcurve& userColCurve = static_cast<const Saturcurve&>(customColCurve3);
+					userColCurve.Apply(Ss);
+					Ss=0.6f*(Ss-Sold)+Sold;//divide sensibility saturation
+				float coe=pow_F(fl,0.25f);
+				float dred=100.f;// in C mode
+				float protect_red=80.0f; // in C mode
+				dred = 100.0 * sqrt((dred*coe)/Qpro);
+				protect_red=100.0 * sqrt((protect_red*coe)/Qpro);
+				int sk=0;
+				float ko=1.f/coef;	
+				Color::skinredfloat(Jpro, hpro, Ss, Sold, dred, protect_red,sk,rstprotection,ko, spro);									
+				Qpro= ( 4.0 / c ) * sqrt( Jpro / 100.0 ) * ( aw + 4.0 ) ;
+				Cpro=(spro*spro*Qpro)/(10000.0f);
+				c1s=1;
+				
+			}
+	else if (curveMode3==ColorAppearanceParams::TC_MODE_COLORF){ // 
+				float parsat=0.8f;//0.68;
+				float coef=327.68f/parsat;	
+				float Mm=(float) Mpro*coef;
+				float Mold=Mm;
+				const Colorfcurve& userColCurve = static_cast<const Colorfcurve&>(customColCurve3);
+					userColCurve.Apply(Mm);
+				float coe=pow_F(fl,0.25f);					
+				float dred=100.f;//in C mode
+				float protect_red=80.0f;// in C mode
+				dred *=coe;//in M mode
+				protect_red	*=coe;			
+				int sk=0;
+				float ko=1.f/coef;
+				Color::skinredfloat(Jpro, hpro, Mm, Mold, dred, protect_red,sk,rstprotection,ko, Mpro);								
+				Cpro= Mpro/coe;	
+				c1co=1;
+			}		
+	}
+			//to retrieve the correct values of variables
+			if(t2B && t1B) Jpro=(100.0* Qpro*Qpro) /(wh*wh);// for brightness curve
+			if(c1s==1) {
+				Qpro= ( 4.0f / c ) * sqrt( Jpro / 100.0f ) * ( aw + 4.0f ) ;//for saturation curve
+				Cpro=(spro*spro*Qpro)/(10000.0);
+				}
+			if(c1co==1) {	float coe=pow_F(fl,0.25f);Cpro= Mpro/coe;}	// for colorfullness curve
+			//retrieve values C,J...s
+			C=Cpro;
+			J=Jpro;
+			Q=Qpro;
+			M=Mpro;
+			h=hpro;
+			s=spro;
+			
+		if(params->colorappearance.tonecie  || settings->autocielab){//use pointer for tonemapping with CIECAM and also sharpening , defringe, contrast detail
+	//	if(params->colorappearance.tonecie  || params->colorappearance.sharpcie){//use pointer for tonemapping with CIECAM and also sharpening , defringe, contrast detail
+			float Qred= ( 4.0f / c)  * ( aw + 4.0f );//estimate Q max if J=100.0
+			ncie->Q_p[i][j]=(float)Q+epsil;//epsil to avoid Q=0
+			ncie->M_p[i][j]=(float)M+epsil;
+			ncie->J_p[i][j]=(float)J+epsil;
+			ncie->h_p[i][j]=(float)h;
+			ncie->C_p[i][j]=(float)C+epsil;
+	//		ncie->s_p[i][j]=(float)s;
+			ncie->sh_p[i][j]=(float) 32768.f*(( 4.0f / c )*sqrt( J / 100.0f ) * ( aw + 4.0f ))/Qred ;
+	//		ncie->ch_p[i][j]=(float) 327.68*C;
+			if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
+			if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
+			}
+			if(!params->colorappearance.tonecie  || !settings->autocielab){						
+		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !settings->autocielab){						
+		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !params->colorappearance.sharpcie){						
+			int posl, posc;
+			float brli=327.f;
+			float chsacol=327.f;
+			int libr=0;
+			int colch=0;
+			if(curveMode==ColorAppearanceParams::TC_MODE_BRIGHT) {brli=70.0f; libr=1;}
+			else if(curveMode==ColorAppearanceParams::TC_MODE_LIGHT) {brli=327.f;libr=0;}
+			if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA) {chsacol=327.f;colch=0;}
+			else if(curveMode3==ColorAppearanceParams::TC_MODE_SATUR) {chsacol=450.0f;colch=1;}
+			else if(curveMode3==ColorAppearanceParams::TC_MODE_COLORF) {chsacol=327.0f;colch=2;}
+			if(ciedata) {
+			// Data for J Q M s and C histograms
+				//update histogram
+				jp=true;
+                if(pW!=1){//only with improccoordinator
+				if(libr==1) posl=CLIP((int)(Q*brli));//40.0 to 100.0 approximative factor for Q  - 327 for J
+				else if(libr==0) posl=CLIP((int)(J*brli));//327 for J	
+				hist16JCAM[posl]++;
+				}
+				chropC=true;
+                if(pW!=1){//only with improccoordinator
+				if(colch==0) posc=CLIP((int)(C*chsacol));//450.0 approximative factor for s    320 for M
+				else if(colch==1) posc=CLIP((int)(s*chsacol));
+				else if(colch==2) posc=CLIP((int)(M*chsacol));
+				hist16_CCAM[posc]++;
+				}
+			}
+			float xx,yy,zz;
+			//process normal==> viewing
+			ColorTemp::jch2xyz_ciecam02float( xx, yy, zz,
+			                             J,  C, h,
+			                             xw2, yw2,  zw2,
+			                             yb2, la2,
+			                             f2,  c2, nc2, doneinit2, gamu);
+			x=(float)xx*655.35f;
+			y=(float)yy*655.35f;
+			z=(float)zz*655.35f;
+			float Ll,aa,bb;
+			//convert xyz=>lab
+			Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+			lab->L[i][j]=Ll;
+			lab->a[i][j]=aa;
+			lab->b[i][j]=bb;
+		// gamut control in Lab mode; I must study how to do with cIECAM only		
+		if(gamu==1) {		
+					float R,G,B;
+					float HH, Lprov1, Chprov1;
+					Lprov1=lab->L[i][j]/327.68f;
+					Chprov1=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
+					HH=atan2(lab->b[i][j],lab->a[i][j]);
+	
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
+#endif
+
+					lab->L[i][j]=Lprov1*327.68f;
+					lab->a[i][j]=327.68f*Chprov1*cos(HH);
+					lab->b[i][j]=327.68f*Chprov1*sin(HH);
+			
+		}			
+		}
+		}
+	}	
+	// End of parallelization
+if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
+	
+//if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie   || !settings->autocielab){//normal
+//if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie   || !params->colorappearance.sharpcie){//normal
+	
+	if(ciedata) {
+    //update histogram J 
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=32768; i++) {//
+			float val;
+			if (jp) {
+				float hval = dLcurve[i];
+				int hi = (int)(255.0f*CLIPD(hval)); //
+				histLCAM[hi] += hist16JCAM[i] ;
+			}
+		}
+	}
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=48000; i++) {//
+			float valc;
+			if (chropC) {
+				float hvalc = dCcurve[i];
+				int hic = (int)(255.0f*CLIPD(hvalc)); //
+				histCCAM[hic] += hist16_CCAM[i] ;
+			}
+		}
+	}
+	}
+}
+#ifdef _DEBUG
+	if (settings->verbose) {
+		t2e.set();
+		printf("CIECAM02 performed in %d usec:\n", t2e.etime(t1e));
+		//	printf("minc=%f maxc=%f minj=%f maxj=%f\n",minc,maxc,minj,maxj);
+	}
+#endif
+
+if(settings->autocielab) {
+//if(params->colorappearance.sharpcie) {
+
+//all this treatments reduce artefacts, but can leed to slighty  different results
+if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
+
+if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastcam(ncie);
+
+if(params->sharpening.enabled)  if(execsharp) {ImProcFunctions::sharpeningcam (ncie, (float**)buffer);}			//sharpening adapted to CIECAM 
+
+if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, true);//contrast by detail adapted to CIECAM
+
+		   float Qredi= ( 4.0f / c_)  * ( a_w + 4.0f );
+		   float co_e=(pow_F(f_l,0.25f));
+
+#ifndef _DEBUG	
+#pragma omp parallel default(shared) firstprivate(height,width, Qredi,a_w,c_)
+#endif
+{	
+#ifndef _DEBUG
+		#pragma omp for schedule(dynamic, 10)
+#endif
+		   		for (int i=0; i<height; i++) // update CieImages with new values after sharpening, defringe, contrast by detail level
+					for (int j=0; j<width; j++) {
+						float interm=Qredi*ncie->sh_p[i][j]/(32768.f);
+						ncie->J_p[i][j]=100.0f* interm*interm/((a_w+4.f)*(a_w+4.f)*(4.f/c_)*(4.f/c_));
+						ncie->Q_p[i][j]=( 4.0f / c_)  * ( a_w + 4.0f ) *  sqrt(ncie->J_p[i][j]/100.f);
+						ncie->M_p[i][j]=ncie->C_p[i][j]*co_e;
+					}
+			}
+}	
+if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab) 
+		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)) {
+		
+		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+			//EPDToneMapCIE adated to CIECAM
+
+	
+#ifndef _DEBUG	
+#pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh,doneinit2, nc2,f2,c2, gamu, highlight,pW)
+#endif
+{	
+	TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params->icm.working);
+	double wipa[3][3] = {
+		{wiprofa[0][0],wiprofa[0][1],wiprofa[0][2]},
+		{wiprofa[1][0],wiprofa[1][1],wiprofa[1][2]},
+		{wiprofa[2][0],wiprofa[2][1],wiprofa[2][2]}
+	};
+	
+	
+#ifndef _DEBUG
+		#pragma omp for schedule(dynamic, 10)
+#endif
+		for (int i=0; i<height; i++) // update CIECAM with new values after tone-mapping
+	//	for (int i=begh; i<endh; i++) 
+			for (int j=0; j<width; j++) {
+			float xx,yy,zz;
+			float x,y,z;
+			float eps=0.0001;
+			float co_e=(pow_F(f_l,0.25))+eps;
+			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
+			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
+			//show histogram in CIECAM mode (Q,J, M,s,C)
+			int posl, posc;
+			float brli=327.;
+			float chsacol=327.;
+			int libr=0;
+			int colch=0;
+			float sa_t;
+			if(curveMode==ColorAppearanceParams::TC_MODE_BRIGHT) {brli=70.0f; libr=1;}
+			else if(curveMode==ColorAppearanceParams::TC_MODE_LIGHT) {brli=327.f;libr=0;}
+			if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA) {chsacol=327.f;colch=0;}
+			else if(curveMode3==ColorAppearanceParams::TC_MODE_SATUR) {chsacol=450.0f;colch=1;}
+			else if(curveMode3==ColorAppearanceParams::TC_MODE_COLORF) {chsacol=327.0f;colch=2;}
+			if(ciedata) {
+			// Data for J Q M s and C histograms
+				//update histogram
+				jp=true;
+                if(pW!=1){//only with improccoordinator
+				if(libr==1) posl=CLIP((int)(ncie->Q_p[i][j]*brli));//40.0 to 100.0 approximative factor for Q  - 327 for J
+				else if(libr==0) posl=CLIP((int)(ncie->J_p[i][j]*brli));//327 for J	
+				hist16JCAM[posl]++;
+				}
+				chropC=true;
+                if(pW!=1){//only with improccoordinator
+			if(colch==0) posc=CLIP((int)(ncie->C_p[i][j]*chsacol));//450.0 approximative factor for s    320 for M
+				else if(colch==1) {sa_t=100.f*sqrt(ncie->C_p[i][j]/ncie->Q_p[i][j]); posc=CLIP((int)(sa_t*chsacol));}//Q_p always > 0
+				else if(colch==2) posc=CLIP((int)(ncie->M_p[i][j]*chsacol));
+				hist16_CCAM[posc]++;
+				}
+			}
+			//end histograms
+			ColorTemp::jch2xyz_ciecam02float( xx, yy, zz,
+			                             ncie->J_p[i][j],  ncie->C_p[i][j], ncie->h_p[i][j],
+			                             xw2, yw2,  zw2,
+			                             yb2, la2,
+			                             f2,  c2, nc2, doneinit2, gamu);
+			x=(float)xx*655.35f;
+			y=(float)yy*655.35f;
+			z=(float)zz*655.35f;
+			float Ll,aa,bb;
+			//convert xyz=>lab
+			Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+			lab->L[i][j]=Ll;
+			lab->a[i][j]=aa;
+			lab->b[i][j]=bb;
+			if(gamu==1) {		
+					float R,G,B;
+					float HH, Lprov1, Chprov1;
+					Lprov1=lab->L[i][j]/327.68f;
+					Chprov1=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
+					HH=atan2(lab->b[i][j],lab->a[i][j]);
+	
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wipa, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wipa, highlight, 0.15f, 0.96f);
+#endif
+
+					lab->L[i][j]=Lprov1*327.68f;
+					lab->a[i][j]=327.68f*Chprov1*cos(HH);
+					lab->b[i][j]=327.68f*Chprov1*sin(HH);
+						}			
+										}	
+			
+			
+		}
+		//end parallelization
+	//show CIECAM histograms	
+	if(ciedata) {
+    //update histogram J and Q
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=32768; i++) {//
+			float val;
+			if (jp) {
+				float hval = dLcurve[i];
+				int hi = (int)(255.0f*CLIPD(hval)); //
+				histLCAM[hi] += hist16JCAM[i] ;
+			}
+		}
+	}
+	//update color histogram M,s,C
+	if(pW!=1){//only with improccoordinator
+		for (int i=0; i<=48000; i++) {//
+			float valc;
+			if (chropC) {
+				float hvalc = dCcurve[i];
+				int hic = (int)(255.0f*CLIPD(hvalc)); //
+				histCCAM[hic] += hist16_CCAM[i] ;
+			}
+		}
+	} 
+	}
+		
+	}
+	hist16JCAM.reset();
+	hist16_CCAM.reset();
+	dLcurve.reset();
+	dCcurve.reset();
+	bright_curve.reset();
+	bright_curveQ.reset();
+	hist16J.reset();
+	hist16Q.reset();
 
 }
 }
@@ -1187,6 +1940,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		}
 	}
 
+
 	if (hasToneCurve2) {
 		if (curveMode2==ToneCurveParams::TC_MODE_STD){ // Standard
 #ifdef _OPENMP
@@ -1432,6 +2186,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	LUTu hist16Clad(65536);
 	bool chrop=false;
 	float val;
+	//preparate for histograms CIECAM
 	if(pW!=1){//only with improccoordinator
 	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
 			val = (double)i / 47999.0;
@@ -1877,14 +2632,19 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			PF_correct_RT(lab, lab, params->defringe.radius, params->defringe.threshold);
 	}
 	
+	void ImProcFunctions::defringecam (CieImage* ncie) {
+		
+		if (params->defringe.enabled && ncie->W>=8 && ncie->H>=8)
+			
+			PF_correct_RTcam(ncie, ncie, params->defringe.radius, params->defringe.threshold);
+	}
 	
 	void ImProcFunctions::dirpyrequalizer (LabImage* lab) {
 		
 		if (params->dirpyrequalizer.enabled && lab->W>=8 && lab->H>=8) {
 			
 			//dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
-			dirpyr_equalizer(lab->L, lab->L, lab->W, lab->H, params->dirpyrequalizer.mult);
-			
+			dirpyr_equalizer(lab->L, lab->L, lab->W, lab->H, params->dirpyrequalizer.mult);		
 		}
 	}
 void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates, int skip){

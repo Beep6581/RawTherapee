@@ -211,6 +211,7 @@ public:
 	bool gamut;
 	bool datacie;
 	bool tonecie;
+//	bool sharpcie;
 	
 };
 

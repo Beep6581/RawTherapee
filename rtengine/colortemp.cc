@@ -903,6 +903,16 @@ void ColorTemp::curvecolor(double satind, double satval, double &sres, double pa
 			sres = satval*(1.+(satind)/100.);
 	}
 }
+void ColorTemp::curvecolorfloat(float satind, float satval, float &sres, float parsat) {
+	if (satind >=0.0f) {
+		sres = (1.-(satind)/100.f)*satval+(satind)/100.f*(1.f-SQR(SQR(1.f-min(satval,1.0f))));
+		if (sres>parsat) sres=parsat;
+		if (sres<0.f) sres=0.f;
+	} else {
+		if (satind < -0.1f)
+			sres = satval*(1.f+(satind)/100.f);
+	}
+}
 
 
 void ColorTemp::curveJ (double br, double contr, int db, LUTf & outCurve, LUTu & histogram ) {
@@ -1000,6 +1010,102 @@ void ColorTemp::curveJ (double br, double contr, int db, LUTf & outCurve, LUTu &
 	
 	//   for (int i=0; i<32768; i++) outCurve[i] = 32768.0*dcurve[i];
 	for (int i=0; i<(db*32768); i++) outCurve[i] = db*32768.0*dcurve[i];
+}
+void ColorTemp::curveJfloat (float br, float contr, int db, LUTf & outCurve, LUTu & histogram ) {
+	LUTf dcurve(65536,0);
+	int skip=1;
+
+	// check if brightness curve is needed
+	if (br>0.00001f || br<-0.00001f) {
+
+		std::vector<double> brightcurvePoints;
+		brightcurvePoints.resize(9);
+		brightcurvePoints.at(0) = double(DCT_NURBS);
+
+		brightcurvePoints.at(1) = 0.f; // black point.  Value in [0 ; 1] range
+		brightcurvePoints.at(2) = 0.f; // black point.  Value in [0 ; 1] range
+
+		if (br>0) {
+			brightcurvePoints.at(3) = 0.1f; // toe point
+			brightcurvePoints.at(4) = 0.1f+br/150.0f; //value at toe point
+
+			brightcurvePoints.at(5) = 0.7f; // shoulder point
+			brightcurvePoints.at(6) = min(1.0f,0.7f+br/300.0f); //value at shoulder point
+		} else {
+			brightcurvePoints.at(3) = 0.1f-br/150.0f; // toe point
+			brightcurvePoints.at(4) = 0.1f; // value at toe point
+
+			brightcurvePoints.at(5) = min(1.0f,0.7f-br/300.0f); // shoulder point
+			brightcurvePoints.at(6) = 0.7f; // value at shoulder point
+		}
+		brightcurvePoints.at(7) = 1.f; // white point
+		brightcurvePoints.at(8) = 1.f; // value at white point
+
+		DiagonalCurve* brightcurve = new DiagonalCurve (brightcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+
+		// Applying brightness curve
+		for (int i=0; i<32768; i++) {
+
+			// change to [0,1] range
+			float val = (float)i / 32767.0f;
+
+			// apply brightness curve
+			val = brightcurve->getVal (val);
+
+			// store result in a temporary array
+			dcurve[i] = CLIPD(val);
+		}
+		delete brightcurve;
+	}
+	else {
+	//	for (int i=0; i<32768; i++) { // L values range up to 32767, higher values are for highlight overflow
+		for (int i=0; i<(32768*db); i++) { // L values range up to 32767, higher values are for highlight overflow
+
+			// set the identity curve in the temporary array
+			dcurve[i] = (float)i / (db*32768.0f);
+		}
+	}
+
+
+	if (contr>0.00001f || contr<-0.00001f) {
+
+		// compute mean luminance of the image with the curve applied
+		int sum = 0;
+		float avg = 0;
+		//float sqavg = 0;
+		for (int i=0; i<32768; i++) {
+			avg += dcurve[i] * histogram[i];//approximation for average : usage of L (lab) instead of J
+			sum += histogram[i];
+		}
+		avg /= sum;
+		std::vector<double> contrastcurvePoints;
+		contrastcurvePoints.resize(9);
+		contrastcurvePoints.at(0) = double(DCT_NURBS);
+
+		contrastcurvePoints.at(1) = 0.f; // black point.  Value in [0 ; 1] range
+		contrastcurvePoints.at(2) = 0.f; // black point.  Value in [0 ; 1] range
+		
+		contrastcurvePoints.at(3) = avg-avg*(0.6f-contr/250.0f); // toe point
+		contrastcurvePoints.at(4) = avg-avg*(0.6f+contr/250.0f); // value at toe point
+
+		contrastcurvePoints.at(5) = avg+(1-avg)*(0.6f-contr/250.0f); // shoulder point
+		contrastcurvePoints.at(6) = avg+(1-avg)*(0.6f+contr/250.0f); // value at shoulder point
+
+		contrastcurvePoints.at(7) = 1.f; // white point
+		contrastcurvePoints.at(8) = 1.f; // value at white point
+
+		DiagonalCurve* contrastcurve = new DiagonalCurve (contrastcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+
+		// apply contrast enhancement
+		for (int i=0; i<(32768*db); i++) {
+			dcurve[i]  = contrastcurve->getVal (dcurve[i]);
+		}
+
+		delete contrastcurve;
+	}
+	
+	//   for (int i=0; i<32768; i++) outCurve[i] = 32768.0*dcurve[i];
+	for (int i=0; i<(db*32768); i++) outCurve[i] = db*32768.0f*dcurve[i];
 }
 
 void ColorTemp::cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00,double &CAM02BB01,double &CAM02BB02,double &CAM02BB10,double &CAM02BB11,double &CAM02BB12,double &CAM02BB20,double &CAM02BB21,double &CAM02BB22, double adap ) {
@@ -1596,8 +1702,131 @@ and also gamut correction M.H.Brill S.Susstrunk
  * SOFTWARE.
  *
  */
+void ColorTemp::xyz_to_cat02( double &r, double &g, double &b, double x, double y, double z, int gamu )
+{
+gamu=1;
+if(gamu==0){
+	r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
+	g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
+	b = ( 0.0030 * x) + (0.0136 * y) + (0.9834 * z);
+	}
+else if (gamu==1) {//gamut correction M.H.Brill S.Susstrunk
+	//r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
+	//g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
+	//b = ( 0.0000 * x) + (0.0000 * y) + (1.0000 * z);
+	r = ( 1.007245 * x) + (0.011136* y) - (0.018381 * z);//Changjun Li
+	g = (-0.318061 * x) + (1.314589 * y) + (0.003471 * z);
+	b = ( 0.0000 * x) + (0.0000 * y) + (1.0000 * z);
+	
+}
+}
 
-inline void Aab_to_rgb( double &r, double &g, double &b, double A, double aa, double bb, double nbb )
+ void ColorTemp::xyz_to_cat02float( float &r, float &g, float &b, float x, float y, float z, int gamu )
+{
+gamu=1;
+if(gamu==0){
+	r = ( 0.7328f * x) + (0.4296f * y) - (0.1624f * z);
+	g = (-0.7036f * x) + (1.6975f * y) + (0.0061f * z);
+	b = ( 0.0030f * x) + (0.0136f * y) + (0.9834f * z);
+	}
+else if (gamu==1) {//gamut correction M.H.Brill S.Susstrunk
+	//r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
+	//g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
+	//b = ( 0.0000 * x) + (0.0000 * y) + (1.0000 * z);
+	r = ( 1.007245f * x) + (0.011136f* y) - (0.018381f * z);//Changjun Li
+	g = (-0.318061f * x) + (1.314589f * y) + (0.003471f * z);
+	b = ( 0.0000f * x) + (0.0000f * y) + (1.0000f * z);
+	
+}
+}
+
+
+ void ColorTemp::cat02_to_xyz( double &x, double &y, double &z, double r, double g, double b, int gamu )
+{
+gamu=1;
+if(gamu==0) {
+	x = ( 1.096124 * r) - (0.278869 * g) + (0.182745 * b);
+	y = ( 0.454369 * r) + (0.473533 * g) + (0.072098 * b);
+	z = (-0.009628 * r) - (0.005698 * g) + (1.015326 * b);
+	}
+else if(gamu==1) {//gamut correction M.H.Brill S.Susstrunk
+	//x = ( 1.0978566 * r) - (0.277843 * g) + (0.179987 * b);
+	//y = ( 0.455053 * r) + (0.473938 * g) + (0.0710096* b);
+	//z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
+	x = ( 0.99015849 * r) - (0.00838772* g) + (0.018229217 * b);//Changjun Li
+	y = ( 0.239565979 * r) + (0.758664642 * g) + (0.001770137* b);
+	z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
+	
+}	
+}
+
+ void ColorTemp::cat02_to_xyzfloat( float &x, float &y, float &z, float r, float g, float b, int gamu )
+{
+gamu=1;
+if(gamu==0) {
+	x = ( 1.096124f * r) - (0.278869f * g) + (0.182745f * b);
+	y = ( 0.454369f * r) + (0.473533f * g) + (0.072098f * b);
+	z = (-0.009628f * r) - (0.005698f * g) + (1.015326f * b);
+	}
+else if(gamu==1) {//gamut correction M.H.Brill S.Susstrunk
+	//x = ( 1.0978566 * r) - (0.277843 * g) + (0.179987 * b);
+	//y = ( 0.455053 * r) + (0.473938 * g) + (0.0710096* b);
+	//z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
+	x = ( 0.99015849f * r) - (0.00838772f* g) + (0.018229217f * b);//Changjun Li
+	y = ( 0.239565979f * r) + (0.758664642f * g) + (0.001770137f* b);
+	z = ( 0.000000f * r) - (0.000000f * g) + (1.000000f * b);
+	
+}	
+}
+
+
+void ColorTemp::hpe_to_xyz( double &x, double &y, double &z, double r, double g, double b )
+{
+	x = (1.910197 * r) - (1.112124 * g) + (0.201908 * b);
+	y = (0.370950 * r) + (0.629054 * g) - (0.000008 * b);
+	z = b;
+	
+}
+
+ void ColorTemp::hpe_to_xyzfloat( float &x, float &y, float &z, float r, float g, float b )
+{
+	x = (1.910197f * r) - (1.112124f * g) + (0.201908f * b);
+	y = (0.370950f * r) + (0.629054f * g) - (0.000008f * b);
+	z = b;
+	
+}
+
+
+
+void ColorTemp::cat02_to_hpe( double &rh, double &gh, double &bh, double r, double g, double b, int gamu )
+{ gamu=1; 
+ if(gamu==0){
+	rh = ( 0.7409792 * r) + (0.2180250 * g) + (0.0410058 * b);
+	gh = ( 0.2853532 * r) + (0.6242014 * g) + (0.0904454 * b);
+	bh = (-0.0096280 * r) - (0.0056980 * g) + (1.0153260 * b);
+	}
+	else if (gamu==1) {//Changjun Li
+	rh = ( 0.550930835 * r) + (0.519435987* g) - ( 0.070356303* b);
+	gh = ( 0.055954056 * r) + (0.89973132 * g) + (0.044315524 * b);
+	bh = (0.0 * r) - (0.0* g) + (1.0 * b);
+	}
+}
+void ColorTemp::cat02_to_hpefloat( float &rh, float &gh, float &bh, float r, float g, float b, int gamu )
+{ gamu=1; 
+ if(gamu==0){
+	rh = ( 0.7409792f * r) + (0.2180250f * g) + (0.0410058f * b);
+	gh = ( 0.2853532f * r) + (0.6242014f * g) + (0.0904454f * b);
+	bh = (-0.0096280f * r) - (0.0056980f * g) + (1.0153260f * b);
+	}
+	else if (gamu==1) {//Changjun Li
+	rh = ( 0.550930835f * r) + (0.519435987f* g) - ( 0.070356303f* b);
+	gh = ( 0.055954056f * r) + (0.89973132f * g) + (0.044315524f * b);
+	bh = (0.0f * r) - (0.0f* g) + (1.0f * b);
+	}
+}
+
+
+ void  ColorTemp::Aab_to_rgb( double &r, double &g, double &b, double A, double aa, double bb, double nbb )
 {
 	double x = (A / nbb) + 0.305;
 
@@ -1608,8 +1837,19 @@ inline void Aab_to_rgb( double &r, double &g, double &b, double A, double aa, do
 	/*       c1              c6               c7       */
 	b = (0.32787 * x) - (0.15681 * aa) - (4.49038 * bb);
 }
+ void  ColorTemp::Aab_to_rgbfloat( float &r, float &g, float &b, float A, float aa, float bb, float nbb )
+{
+	float x = (A / nbb) + 0.305f;
 
-inline void calculate_ab( double &aa, double &bb, double h, double e, double t, double nbb, double a )
+	/*       c1              c2               c3       */
+	r = (0.32787f * x) + (0.32145f * aa) + (0.20527f * bb);
+	/*       c1              c4               c5       */
+	g = (0.32787f * x) - (0.63507f * aa) - (0.18603f * bb);
+	/*       c1              c6               c7       */
+	b = (0.32787f * x) - (0.15681f * aa) - (4.49038f * bb);
+}
+
+void  ColorTemp::calculate_ab( double &aa, double &bb, double h, double e, double t, double nbb, double a )
 {
 	double hrad = (h * M_PI) / 180.0;
 	double sinh = sin( hrad );
@@ -1636,6 +1876,36 @@ inline void calculate_ab( double &aa, double &bb, double h, double e, double t, 
 				bb = (aa * sinh) / cosh;
 	}
 }
+void  ColorTemp::calculate_abfloat( float &aa, float &bb, float h, float e, float t, float nbb, float a )
+{
+	float hrad = (h * M_PI) / 180.0f;
+	float sinh = sin( hrad );
+	float cosh = cos( hrad );
+	float x = (a / nbb) + 0.305f;
+	float p3 = 21.0f/20.0f;	
+	if( fabs( sinh ) >= fabs( cosh ) ) {
+		bb =    ((0.32787f * x) * (2.0f + p3)) /
+				((e / (t * sinh)) -
+			//	((0.32145 - 0.63507 - (p3 * 0.15681)) * (cosh / sinh)) -
+			//	 (0.20527 - 0.18603 - (p3 * 4.49038)));
+				((-0.31362f - (p3 * 0.15681f)) * (cosh / sinh)) -
+				 (0.01924f - (p3 * 4.49038f)));
+				 
+		aa = (bb * cosh) / sinh;
+	} else {
+		aa =    ((0.32787f * x) * (2.0f + p3)) /
+				((e / (t * cosh)) -
+			//	 (0.32145 - 0.63507 - (p3 * 0.15681)) -
+			//	((0.20527 - 0.18603 - (p3 * 4.49038)) * (sinh / cosh)));
+				 (-0.31362f - (p3 * 0.15681f)) -
+				((0.01924f - (p3 * 4.49038f)) * (sinh / cosh)));
+
+				bb = (aa * sinh) / cosh;
+	}
+}
+
+
+
 void ColorTemp::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q, double &M, double &s,double &aw, double &fl, double &wh,
 									 double x, double y, double z, double xw, double yw, double zw, 
 									 double yb, double la, double f, double c, double nc, double pilotd, bool doneinit, int gamu)
@@ -1727,6 +1997,98 @@ void ColorTemp::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q,
 
 }
 
+void ColorTemp::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q, float &M, float &s,float &aw, float &fl, float &wh,
+									 float x, float y, float z, float xw, float yw, float zw, 
+									 float yb, float la, float f, float c, float nc, float pilotd, bool doneinit, int gamu)
+{
+    float r, g, b;
+    float rw, gw, bw;
+    float rc, gc, bc;
+    float rp, gp, bp;
+    float rpa, gpa, bpa;
+    float a, ca, cb;
+    float d;
+    float n, nbb, ncb;
+    float e, t;
+    float cz;
+    float myh, myj, myc, myq, mym, mys;
+	float pfl;
+	gamu=1;
+    xyz_to_cat02float( r, g, b, x, y, z, gamu );
+    xyz_to_cat02float( rw, gw, bw, xw, yw, zw, gamu );
+
+	if(doneinit){//if one day, we have a pipette...
+    n = yb / yw;
+    if(pilotd==2.0) d = d_factorfloat( f, la );else d=pilotd;
+	fl = calculate_fl_from_la_ciecam02float( la );
+    nbb = ncb = 0.725f * pow_F( 1.0f / n, 0.2f );
+    cz = 1.48f + sqrt( n );
+    aw = achromatic_response_to_whitefloat( xw, yw, zw, d, fl, nbb, gamu );
+	wh =( 4.0f / c ) * ( aw + 4.0f ) * pow_F( fl, 0.25f );
+	pfl = pow_F( fl, 0.25f );
+	doneinit=false;	
+	}
+	
+    rc = r * (((yw * d) / rw) + (1.0 - d));
+    gc = g * (((yw * d) / gw) + (1.0 - d));
+    bc = b * (((yw * d) / bw) + (1.0 - d));
+
+    ColorTemp::cat02_to_hpefloat( rp, gp, bp, rc, gc, bc, gamu );
+    if(gamu==1){//gamut correction M.H.Brill S.Susstrunk
+	rp=MAXR(rp,0.0f);
+	gp=MAXR(gp,0.0f);
+	bp=MAXR(bp,0.0f);
+	}
+    rpa = nonlinear_adaptationfloat( rp, fl );
+    gpa = nonlinear_adaptationfloat( gp, fl );
+    bpa = nonlinear_adaptationfloat( bp, fl );
+
+    ca = rpa - ((12.0f * gpa) / 11.0f) + (bpa / 11.0f);
+    cb = (1.0f / 9.0f) * (rpa + gpa - (2.0f * bpa));
+
+    myh = (180.0f / M_PI) * atan2( cb, ca );
+    if( myh < 0.0f ) myh += 360.0f;
+	//we can also calculate H, if necessary...but it's using time...for  what usage ?
+	/*double temp;
+	if(myh<20.14) {
+        temp = ((myh + 122.47)/1.2) + ((20.14 - myh)/0.8);
+        H = 300 + (100*((myh + 122.47)/1.2)) / temp;
+	}
+	else if(myh < 90.0) {
+        temp = ((myh - 20.14)/0.8) + ((90.00 - myh)/0.7);
+        H = (100*((myh - 20.14)/0.8)) / temp;
+    }
+    else if (myh < 164.25) {
+        temp = ((myh - 90.00)/0.7) + ((164.25 - myh)/1.0);
+        H = 100 + ((100*((myh - 90.00)/0.7)) / temp);
+    }
+    else if (myh < 237.53) {
+        temp = ((myh - 164.25)/1.0) + ((237.53 - myh)/1.2);
+        H = 200 + ((100*((myh - 164.25)/1.0)) / temp);
+    }
+    else {
+        temp = ((myh - 237.53)/1.2) + ((360 - myh + 20.14)/0.8);
+        H = 300 + ((100*((myh - 237.53)/1.2)) / temp);
+    }
+	*/
+    a = ((2.0f * rpa) + gpa + ((1.0f / 20.0f) * bpa) - 0.305f) * nbb;
+	if (gamu==1) a=MAXR(a,0.0f);//gamut correction M.H.Brill S.Susstrunk
+    J = 100.0f * pow_F( a / aw, c * cz );
+
+    e = ((12500.0f / 13.0f) * nc * ncb) * (cos( ((myh * M_PI) / 180.0f) + 2.0f ) + 3.8f);
+    t = (e * sqrt( (ca * ca) + (cb * cb) )) / (rpa + gpa + ((21.0f / 20.0f) * bpa));
+
+    C = pow_F( t, 0.9f ) * sqrt( J / 100.0f )
+                        * pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
+
+	Q = wh * sqrt( J / 100.0f );
+    M = C * pfl;
+    s = 100.0f * sqrt( M / Q );
+    h = myh;
+
+}
+
+
 
 void ColorTemp::jch2xyz_ciecam02( double &x, double &y, double &z, double J, double C, double h,
 								  double xw, double yw, double zw, double yb, double la,
@@ -1773,6 +2135,53 @@ void ColorTemp::jch2xyz_ciecam02( double &x, double &y, double &z, double J, dou
     b = bc / (((yw * d) / bw) + (1.0 - d));
 
     ColorTemp::cat02_to_xyz( x, y, z, r, g, b, gamu );
+}
+
+void ColorTemp::jch2xyz_ciecam02float( float &x, float &y, float &z, float J, float C, float h,
+								  float xw, float yw, float zw, float yb, float la,
+								  float f, float c, float nc , bool doneinit2, int gamu)
+{
+    float r, g, b;
+    float rc, gc, bc;
+    float rp, gp, bp;
+    float rpa, gpa, bpa;
+    float rw, gw, bw;
+    float fl, d;
+    float n, nbb, ncb;
+    float a, ca, cb;
+    float aw;
+    float e, t;
+    float cz;
+	gamu=1;
+    ColorTemp::xyz_to_cat02float( rw, gw, bw, xw, yw, zw, gamu );
+	if(doneinit2){
+    n = yb / yw;
+    d = d_factorfloat( f, la );
+    fl = calculate_fl_from_la_ciecam02float( la );
+    nbb = ncb = 0.725f * pow_F( 1.0f / n, 0.2f );
+    cz = 1.48f + sqrt( n );
+    aw = achromatic_response_to_whitefloat( xw, yw, zw, d, fl, nbb, gamu );
+	doneinit2=false;
+	}
+    e = ((12500.0f / 13.0f) * nc * ncb) * (cos( ((h * M_PI) / 180.0f) + 2.0f ) + 3.8f);
+    a = pow_F( J / 100.0f, 1.0f / (c * cz) ) * aw;
+    t = pow_F( C / (sqrt( J / 100.f) * pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f )), 10.0f / 9.0f );
+
+    calculate_abfloat( ca, cb, h, e, t, nbb, a );
+    Aab_to_rgbfloat( rpa, gpa, bpa, a, ca, cb, nbb );
+
+    rp = inverse_nonlinear_adaptationfloat( rpa, fl );
+    gp = inverse_nonlinear_adaptationfloat( gpa, fl );
+    bp = inverse_nonlinear_adaptationfloat( bpa, fl );
+
+    ColorTemp::hpe_to_xyzfloat( x, y, z, rp, gp, bp );
+    ColorTemp::xyz_to_cat02float( rc, gc, bc, x, y, z, gamu );
+
+    r = rc / (((yw * d) / rw) + (1.0f - d));
+    g = gc / (((yw * d) / gw) + (1.0f - d));
+    b = bc / (((yw * d) / bw) + (1.0f - d));
+
+    ColorTemp::cat02_to_xyzfloat( x, y, z, r, g, b, gamu );
 }
 
 

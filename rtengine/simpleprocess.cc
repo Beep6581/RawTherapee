@@ -29,6 +29,9 @@
 #include "rawimagesource.h"
 #include "../rtgui/ppversion.h"
 #undef THREAD_PRIORITY_NORMAL
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 namespace rtengine {
 extern const Settings* settings;
@@ -167,7 +170,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf curve (65536,0);
 	LUTf satcurve (65536,0);
 	LUTf lhskcurve (65536,0);
-	
+	LUTf lumacurve(65536,0);
+
 	LUTf rCurve (65536,0);
 	LUTf gCurve (65536,0);
 	LUTf bCurve (65536,0);
@@ -204,47 +208,68 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	// start tile processing...???
 
     hist16.clear();  hist16C.clear();
+	if(params.labCurve.contrast !=0) {//only use hist16 for contrast
+	
+#ifdef _OPENMP
+#pragma omp parallel shared(hist16,labView, fh, fw)
+#endif
+{
+#ifdef _OPENMP	
+#pragma omp for schedule(static)
+#endif
+    for (int i=0; i<fh; i++)
+        for (int j=0; j<fw; j++){
+            hist16[CLIP((int)((labView->L[i][j])))]++;
+			}
+}
+	
+	
+	}
 	bool utili=false;
 	bool autili=false;
 	bool butili=false;
 	bool ccutili=false;
 	bool cclutili=false;	
-	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, hist16, curve, dummy, 1, utili);
+	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,hist16, hist16, lumacurve, dummy, 1, utili);
 
 	CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
 								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,params.labCurve.lccurve,curve1, curve2, satcurve,lhskcurve, 
 								   hist16C, hist16C,dummy,	
 								   1);
-	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,curve, utili, autili, butili, ccutili,cclutili,dummy);
+
+	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,lumacurve, utili, autili, butili, ccutili,cclutili,dummy);
 	
- 	if(params.colorappearance.enabled && !params.colorappearance.tonecie)ipf.EPDToneMap(labView,5,1);
+ 	if((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled))ipf.EPDToneMap(labView,5,1);
 	
-	if(!params.colorappearance.enabled){ipf.EPDToneMap(labView,5,1);}
 
 	ipf.vibrance(labView);
 
 	ipf.impulsedenoise (labView);
-	ipf.defringe (labView);
+	// for all treatments Defringe, Sharpening, Contrast detail ,Microcontrast they are activated if "CIECAM" function are disabled
+
+	if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) ipf.defringe (labView);
+	
 	if (params.sharpenEdge.enabled) {
 		 ipf.MLsharpen(labView);
 	}
 	if (params.sharpenMicro.enabled) {
-		ipf.MLmicrocontrast (labView);
+		if((params.colorappearance.enabled && !settings->autocielab) ||  (!params.colorappearance.enabled)) ipf.MLmicrocontrast (labView);//!params.colorappearance.sharpcie
 	}
-    if (params.sharpening.enabled) {
-        float** buffer = new float*[fh];
-        for (int i=0; i<fh; i++)
-            buffer[i] = new float[fw];
+	
+	if(((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {			
+                    
+        float **buffer = new float*[fh];
+            for (int i=0; i<fh; i++)
+                buffer[i] = new float[fw];
 
         ipf.sharpening (labView, (float**)buffer);
 
-        for (int i=0; i<fh; i++)
-            delete [] buffer[i];
-        delete [] buffer; buffer=NULL;
+            for (int i=0; i<fh; i++)
+                delete [] buffer[i];
+                delete [] buffer;
     }
-
 	// directional pyramid equalizer
-    ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
+	if((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) ipf.dirpyrequalizer (labView);//TODO: this is the luminance tonecurve, not the RGB one
 	
 	//Colorappearance and tone-mapping associated
 	
@@ -264,9 +289,30 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					customColCurve2,
 					customColCurve3, 					
 					1);
-	
-	ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1);
-	
+    if (params.sharpening.enabled) {
+        float** buffer = new float*[fh];
+        for (int i=0; i<fh; i++)
+            buffer[i] = new float[fw];	
+	if(settings->ciecamfloat) ipf.ciecam_02float (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true);
+	else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true);
+
+	        for (int i=0; i<fh; i++)
+            delete [] buffer[i];
+			delete [] buffer;
+			}
+			else {
+			int f_h=2,f_w=2;
+	        float** buffer = new float*[f_h];
+			for (int i=0; i<f_h; i++)
+            buffer[i] = new float[f_w];
+if(settings->ciecamfloat) ipf.ciecam_02float (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true);
+else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true);
+
+	        for (int i=0; i<f_h; i++)
+            delete [] buffer[i];
+			delete [] buffer;
+			}
+		
     delete cieView;
     cieView = NULL;
 	
@@ -572,7 +618,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     delete job;
     if (pl)
         pl->setProgress (0.75);
-
+/*	curve1.reset();curve2.reset();
+	curve.reset();
+	satcurve.reset();
+	lhskcurve.reset();
+	
+	rCurve.reset();
+	gCurve.reset();
+	bCurve.reset();
+	hist16.reset();
+	hist16C.reset();
+*/
     return readyImg;
 }
 

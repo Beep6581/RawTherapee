@@ -349,35 +349,31 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 		
 		ipf.chromiLuminanceCurve (pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili, histCCurve);
 		ipf.vibrance(nprevl);
-	//	if(!params.colorappearance.tonecie) ipf.EPDToneMap(nprevl,0,scale);
-/*	if(params.colorappearance.enabled){
-		if(!params.colorappearance.tonecie) ipf.EPDToneMap(nprevl,5,1);
-		}
-	if(!params.colorappearance.enabled){ipf.EPDToneMap(nprevl,5,1);}
-	*/
-	if(params.colorappearance.enabled && !params.colorappearance.tonecie) ipf.EPDToneMap(nprevl,5,1);
-
-	if(!params.colorappearance.enabled){ipf.EPDToneMap(nprevl,5,1);}
-		
+	if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) ipf.EPDToneMap(nprevl,5,1);
+		// for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
 		readyphase++;
 		if (scale==1) {
             progress ("Denoising luminance impulse...",100*readyphase/numofphases);
             ipf.impulsedenoise (nprevl);
             readyphase++;
+			if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
 			progress ("Defringing...",100*readyphase/numofphases);
-            ipf.defringe (nprevl);
-            readyphase++;
+			ipf.defringe (nprevl);
+			readyphase++;
+			}
 			if (params.sharpenEdge.enabled) {
                 progress ("Edge sharpening...",100*readyphase/numofphases);
 				ipf.MLsharpen (nprevl);
 		        readyphase++;
 			}
 			if (params.sharpenMicro.enabled) {
+				if(( params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
                 progress ("Microcontrast...",100*readyphase/numofphases);			
 				ipf.MLmicrocontrast (nprevl);
 		        readyphase++;
+				}
 			}
-            if (params.sharpening.enabled) {
+			if(((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {			
                 progress ("Sharpening...",100*readyphase/numofphases);
                     
                 float **buffer = new float*[pH];
@@ -391,10 +387,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 delete [] buffer;
                 readyphase++;
             }
-
-            progress ("Pyramid equalizer...",100*readyphase/numofphases);
-            ipf.dirpyrequalizer (nprevl);
-            readyphase++;
+			if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
+//			if(params.colorappearance.enabled && !params.colorappearance.sharpcie){
+				progress ("Pyramid equalizer...",100*readyphase/numofphases);
+				ipf.dirpyrequalizer (nprevl);
+				readyphase++;
+			}
+			
         }
 	    //L histo  and Chroma histo for ciecam
 		// histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
@@ -425,7 +424,16 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	int  Iterates=0;
 	int begh=0;
 	int endh=pH;
-    ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1);
+	
+	float **buffer = new float*[pH];
+       for (int i=0; i<pH; i++)
+         buffer[i] = new float[pW];
+	if(settings->ciecamfloat) ipf.ciecam_02float (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true);
+	else ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true);
+		for (int i=0; i<pH; i++)
+			delete [] buffer[i];
+			delete [] buffer;
+		readyphase++;
 	}
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)
@@ -476,11 +484,11 @@ void ImProcCoordinator::freeAll () {
 
     if (allocated) {
         if (orig_prev!=oprevi)
-            delete oprevi;
+        delete oprevi;
         delete orig_prev;
         delete oprevl;
         delete nprevl;
-         delete ncie;
+        delete ncie;
        
         if (imageListener) {
             imageListener->delImage (previmg);

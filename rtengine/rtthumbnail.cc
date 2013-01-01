@@ -791,15 +791,15 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, curve1, curve2, satcurve,lhskcurve, 
 									hist16C, hist16C, dummy,  
 								   16);
-    //ipf.luminanceCurve (labView, labView, curve);
+  //  ipf.luminanceCurve (labView, labView, curve);
     ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, curve, utili, autili, butili, ccutili,cclutili, dummy);
 	
 	ipf.vibrance(labView);
 	int begh = 0, endh = labView->H;
 
-	if(params.colorappearance.enabled && !params.colorappearance.tonecie) ipf.EPDToneMap(labView,5,6);
+	if((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) ipf.EPDToneMap(labView,5,6);
 
-	if(!params.colorappearance.enabled){ipf.EPDToneMap(labView,5,6);}
+//	if(!params.colorappearance.enabled){ipf.EPDToneMap(labView,5,6);}
 	
 	CurveFactory::curveLightBrightColor (
 					params.colorappearance.curveMode, params.colorappearance.curve,
@@ -811,8 +811,16 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 					customColCurve2, 
 					customColCurve3, 
 					16);
-	
-	ipf.ciecam_02 (cieView, begh, endh, 1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6);
+					
+			int f_h=2,f_w=2;
+	        float** buffer = new float*[fh];
+			for (int i=0; i<fh; i++)
+            buffer[i] = new float[fw];
+	bool execsharp=false;				
+	ipf.ciecam_02float (cieView, begh, endh, 1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6, (float**)buffer, execsharp);
+	        for (int i=0; i<fh; i++)
+            delete [] buffer[i];
+			delete [] buffer; buffer=NULL;
 
     // color processing
     //ipf.colorCurve (labView, labView);
@@ -822,7 +830,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ipf.lab2monitorRgb (labView, readyImg);
     delete labView;
     delete baseImg;
-
+	delete cieView;
     // calculate scale
     if (params.coarse.rotate==90 || params.coarse.rotate==270) 
         myscale = scale * thumbImg->width / fh;

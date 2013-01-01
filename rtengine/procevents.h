@@ -222,6 +222,7 @@ enum ProcEvent {
 	EvCATCurveMode3=197,
 	EvCATdatacie=198,
 	EvCATtonecie=199,
+//	EvCATsharpcie=200,
 	
 	NUMOFEVENTS=200
 };

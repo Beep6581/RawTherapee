@@ -80,6 +80,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::FileChooserButton* iccDir;
     Gtk::FileChooserButton* monProfile;
 	Gtk::CheckButton* cbAutoMonProfile;
+	//Gtk::CheckButton* cbAutocielab;
+	Gtk::CheckButton* cbciecamfloat;
 
     Gtk::CheckButton* blinkClipped;
 	Gtk::SpinButton*  hlThresh;
@@ -144,7 +146,7 @@ class Preferences : public Gtk::Dialog {
 
     Options moptions;
     sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn;
-    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn;
+    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
 
@@ -186,6 +188,7 @@ class Preferences : public Gtk::Dialog {
 	void autoMonProfileToggled ();
     void sndEnableToggled ();
     void langAutoDetectToggled ();
+    void autocielabToggled ();
 
     void selectStartupDir ();
     void addExtPressed ();

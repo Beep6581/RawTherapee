@@ -34,7 +34,8 @@ public:
 	float** Q_p;
 	float** M_p;
 	float** C_p;
-	//float** s_p;
+	float** sh_p;
+//	float** ch_p;
 	float** h_p;
 
 	CieImage (int w, int h);

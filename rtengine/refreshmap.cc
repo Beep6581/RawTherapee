@@ -220,6 +220,7 @@ LUMINANCECURVE,    // EvCATcurve3
 LUMINANCECURVE,    // EvCATcurvemode3
 LUMINANCECURVE,    // EvCATdatacie
 LUMINANCECURVE    // EvCATtonecie
+//LUMINANCECURVE    // EvCATsharpcie
 
 
 };

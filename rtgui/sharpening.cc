@@ -33,6 +33,8 @@ Sharpening::Sharpening () : Gtk::VBox(), FoldableToolPanel(this) {
    milestones.push_back( GradientMilestone(1.0, 1.0, 1.0, 1.0) );
 
    enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
+   enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
+
    enabled->set_active (true);
    pack_start(*enabled);
    enabled->show ();

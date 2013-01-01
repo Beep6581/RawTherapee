@@ -212,8 +212,8 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 }
 
 void ToneCurve::autoOpenCurve  () {
-    shape->openIfNonlinear();
-    shape2->openIfNonlinear();
+		shape->openIfNonlinear();
+		shape2->openIfNonlinear();
 }
 
 void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {

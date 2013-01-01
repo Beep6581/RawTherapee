@@ -239,6 +239,7 @@ void LCurve::autoOpenCurve () {
     if (!active) ccshape->openIfNonlinear();
     if (!active) chshape->openIfNonlinear();
     if (!active) lcshape->openIfNonlinear();
+	
 }
 
 void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {

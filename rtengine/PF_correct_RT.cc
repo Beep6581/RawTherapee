@@ -79,7 +79,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 		}
 	}
 	chromave /= (height*width);
-	
+//	printf("Chro %f \n",chromave);
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -91,15 +91,15 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 			//test for pixel darker than some fraction of neighborhood ave, near an edge, more saturated than average
 			/*if (100*tmp1->L[i][j]>50*src->L[i][j] && \*/
 				/*1000*abs(tmp1->L[i][j]-src->L[i][j])>thresh*(tmp1->L[i][j]+src->L[i][j]) && \*/
-			if (33*fringe[i*width+j]>thresh*chromave) {
-				float atot=0;
-				float btot=0;
-				float norm=0;
+			if (33.f*fringe[i*width+j]>thresh*chromave) {
+				float atot=0.f;
+				float btot=0.f;
+				float norm=0.f;
 				float wt;
 				for (int i1=max(0,i-halfwin+1); i1<min(height,i+halfwin); i1++)
 					for (int j1=max(0,j-halfwin+1); j1<min(width,j+halfwin); j1++) {
 						//neighborhood average of pixels weighted by chrominance
-						wt = 1/(fringe[i1*width+j1]+chromave);
+						wt = 1.f/(fringe[i1*width+j1]+chromave);
 						atot += wt*src->a[i1][j1];
 						btot += wt*src->b[i1][j1];
 						norm += wt;
@@ -125,6 +125,145 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 	delete tmp1;
 	free(fringe);
 }
+void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh) { 
+	int halfwin = ceil(2*radius)+1;
+	
+#include "rt_math.h"
+		
+	// local variables
+	int width=src->W, height=src->H;
+	float piid=3.14159265f/180.f;
+	//temporary array to store chromaticity
+	int (*fringe);
+	fringe = (int (*)) calloc ((height)*(width), sizeof *fringe);
+	
+	float** sraa;
+		sraa = new float*[height];
+		for (int i=0; i<height; i++)
+			sraa[i] = new float[width];
+	
+	
+		for (int i=0; i<height; i++)
+			for (int j=0; j<width; j++) {
+				sraa[i][j]=src->C_p[i][j]*cos(piid*src->h_p[i][j]);
+			}
+	float** tmaa;
+		tmaa = new float*[height];
+		for (int i=0; i<height; i++)
+			tmaa[i] = new float[width];
+
+	float** srbb;
+	srbb = new float*[height];
+		for (int i=0; i<height; i++)
+			srbb[i] = new float[width];
+	
+	
+		for (int i=0; i<height; i++)
+			for (int j=0; j<width; j++) {
+				srbb[i][j]=src->C_p[i][j]*sin(piid*src->h_p[i][j]);
+			}
+	float** tmbb;
+		tmbb = new float*[height];
+	for (int i=0; i<height; i++)
+			tmbb[i] = new float[width];
+
+	/*float** tmL;
+		tmL = new float*[height];
+	for (int i=0; i<height; i++)
+			tmL[i] = new float[width];
+*/
+			
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+	{
+		AlignedBufferMP<double> buffer(max(src->W,src->H));
+		gaussHorizontal<float> (sraa, tmaa, buffer, src->W, src->H, radius);
+		gaussHorizontal<float> (srbb, tmbb, buffer, src->W, src->H, radius);
+		gaussVertical<float>   (tmaa, tmaa, buffer, src->W, src->H, radius);
+		gaussVertical<float>   (tmbb, tmbb, buffer, src->W, src->H, radius);
+	//	gaussHorizontal<float> (src->sh_p, tmL, buffer, src->W, src->H, radius);
+	//	gaussVertical<float>   (tmL, tmL, buffer, src->W, src->H, radius);
+		
+	}
+	
+//#ifdef _OPENMP
+//#pragma omp parallel for
+//#endif
+	float chromave=0;
+	for(int i = 0; i < height; i++ ) {
+		for(int j = 0; j < width; j++) {
+			float chroma =SQR(sraa[i][j]-tmaa[i][j])+SQR(srbb[i][j]-tmbb[i][j]);
+			chromave += chroma;
+			fringe[i*width+j]=chroma;
+		}
+	}
+	chromave /= (height*width);
+	//	printf("Chromave CAM %f \n",chromave);
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+	
+	for(int i = 0; i < height; i++ ) {
+		for(int j = 0; j < width; j++) {
+			tmaa[i][j] = sraa[i][j];
+			tmbb[i][j] = srbb[i][j];
+			
+			//test for pixel darker than some fraction of neighborhood ave, near an edge, more saturated than average
+			/*if (100*tmp1->L[i][j]>50*src->L[i][j] && \*/
+				/*1000*abs(tmp1->L[i][j]-src->L[i][j])>thresh*(tmp1->L[i][j]+src->L[i][j]) && \*/
+			if (33.f*fringe[i*width+j]>thresh*chromave) {
+				float atot=0.f;
+				float btot=0.f;
+				float norm=0.f;
+				float wt;
+				for (int i1=max(0,i-halfwin+1); i1<min(height,i+halfwin); i1++)
+					for (int j1=max(0,j-halfwin+1); j1<min(width,j+halfwin); j1++) {
+						//neighborhood average of pixels weighted by chrominance
+						wt = 1.f/(fringe[i1*width+j1]+chromave);
+						atot += wt*sraa[i1][j1];
+						btot += wt*srbb[i1][j1];
+						norm += wt;
+					}
+				tmaa[i][j] = (int)(atot/norm);
+				tmbb[i][j] = (int)(btot/norm);
+			}//end of ab channel averaging
+		}
+	}
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+	
+	for(int i = 0; i < height; i++ ) {
+		for(int j = 0; j < width; j++) {
+			dst->sh_p[i][j] = src->sh_p[i][j];
+			float intera = tmaa[i][j];
+			float interb = tmbb[i][j];
+			dst->h_p[i][j]=(atan2(interb,intera))/piid;
+			dst->C_p[i][j]=sqrt(SQR(interb)+SQR(intera));
+		}
+	}
+                for (int i=0; i<height; i++)
+                    delete [] sraa[i];
+                delete [] sraa;
+                for (int i=0; i<height; i++)
+                    delete [] srbb[i];
+                delete [] srbb;
+                for (int i=0; i<height; i++)
+                    delete [] tmaa[i];
+                delete [] tmaa;
+                for (int i=0; i<height; i++)
+                    delete [] tmbb[i];
+                delete [] tmbb;
+           /*     for (int i=0; i<height; i++)
+                    delete [] tmL[i];
+                delete [] tmL;
+			*/
+	free(fringe);
+}
+
 
 }
 
