@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include "../rtengine/rtengine.h"
 
+Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference=true);
 void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, int dw, int dh);
 Glib::ustring removeExtension (const Glib::ustring& filename);

@@ -28,6 +28,37 @@
 
 using namespace std;
 
+Glib::ustring escapeHtmlChars(const Glib::ustring &src) {
+
+    // Sources chars to be escaped
+    static const Glib::ustring srcChar("&<>");
+
+    // Destination strings, in the same order than the source
+    static std::vector<Glib::ustring> dstChar(3);
+    dstChar.at(0) = "&amp;";
+    dstChar.at(1) = "&lt;";
+    dstChar.at(2) = "&gt;";
+
+    // Copying the original string, that will be modified
+    Glib::ustring dst(src);
+
+    // Iterating all chars of the copy of the source string
+    for (size_t i=0; i<dst.length();) {
+
+        // Looking out if it's part of the characters to be escaped
+        size_t pos = srcChar.find_first_of(dst.at(i), 0);
+
+        if (pos != Glib::ustring::npos) {
+            // If yes, replacing the char in the destination string
+            dst.replace(i, 1, dstChar.at(pos));
+            // ... and going forward  by the length of the new string
+            i += dstChar.at(pos).length();
+        }
+        else ++i;
+    }
+    return dst;
+}
+
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference) {
 
     Glib::ListHandle<Gtk::Widget*> list = cont->get_children ();

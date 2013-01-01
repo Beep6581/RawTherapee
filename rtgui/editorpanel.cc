@@ -705,8 +705,8 @@ void EditorPanel::info_toggled () {
         }
 
         infoString3 = Glib::ustring::compose ("<span size=\"small\">%1</span><span>%2</span>",
-        		Glib::path_get_dirname(openThm->getFileName()) + G_DIR_SEPARATOR_S,
-        		Glib::path_get_basename(openThm->getFileName()));
+        				escapeHtmlChars(Glib::path_get_dirname(openThm->getFileName())) + G_DIR_SEPARATOR_S,
+        				escapeHtmlChars(Glib::path_get_basename(openThm->getFileName()))  );
 
         infoString = Glib::ustring::compose ("%1\n%2\n%3",infoString1, infoString2, infoString3);
     }
