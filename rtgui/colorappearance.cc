@@ -181,7 +181,12 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	tonecie->set_tooltip_markup (M("TP_COLORAPP_TONECIE_TOOLTIP"));
 	tonecieconn = tonecie->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::tonecie_toggled) );
 	p2VBox->pack_start (*tonecie);
-	
+/*
+	sharpcie = Gtk::manage (new Gtk::CheckButton (M("TP_COLORAPP_SHARPCIE")));
+	sharpcie->set_tooltip_markup (M("TP_COLORAPP_SHARPCIE_TOOLTIP"));
+	sharpcieconn = sharpcie->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::sharpcie_toggled) );
+	p2VBox->pack_start (*sharpcie);
+*/	
 	p2VBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
 
 	toneCurveMode = Gtk::manage (new MyComboBoxText ());
@@ -337,12 +342,6 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	gamut->set_tooltip_markup (M("TP_COLORAPP_GAMUT_TOOLTIP"));
 	gamutconn = gamut->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::gamut_toggled) );
 	pack_start (*gamut, Gtk::PACK_SHRINK);
-/*
-	tonecie = Gtk::manage (new Gtk::CheckButton (M("TP_COLORAPP_TONECIE")));
-	tonecie->set_tooltip_markup (M("TP_COLORAPP_TONECIE_TOOLTIP"));
-	tonecieconn = tonecie->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::tonecie_toggled) );
-	pack_start (*tonecie, Gtk::PACK_SHRINK);
-*/
 	// ------------------------ Listening events
 
 
@@ -415,6 +414,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		gamut->set_inconsistent       (!pedited->colorappearance.gamut);
 		datacie->set_inconsistent     (!pedited->colorappearance.datacie);
 		tonecie->set_inconsistent     (!pedited->colorappearance.tonecie);
+	//	sharpcie->set_inconsistent    (!pedited->colorappearance.sharpcie);
 
 		degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
 		enabled->set_inconsistent     (multiImage && !pedited->colorappearance.enabled);
@@ -491,11 +491,15 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	tonecieconn.block (true);
 	tonecie->set_active (pp->colorappearance.tonecie);
 	tonecieconn.block (false);
+//	sharpcieconn.block (true);
+//	sharpcie->set_active (pp->colorappearance.sharpcie);
+//	sharpcieconn.block (false);
 
 	lastsurr=pp->colorappearance.surrsource;
 	lastgamut=pp->colorappearance.gamut;
 	lastdatacie=pp->colorappearance.datacie;
 	lasttonecie=pp->colorappearance.tonecie;
+//	lastsharpcie=pp->colorappearance.sharpcie;
 
 	lastEnabled = pp->colorappearance.enabled;
 	lastAutoDegree = pp->colorappearance.autodegree;
@@ -547,6 +551,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->colorappearance.gamut         = gamut->get_active();
 	pp->colorappearance.datacie       = datacie->get_active();
 	pp->colorappearance.tonecie       = tonecie->get_active();
+//	pp->colorappearance.sharpcie      = sharpcie->get_active();
 	pp->colorappearance.curve         = shape->getCurve ();
 	pp->colorappearance.curve2        = shape2->getCurve ();
 	pp->colorappearance.curve3        = shape3->getCurve ();
@@ -586,6 +591,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorappearance.gamut         = !gamut->get_inconsistent();
 		pedited->colorappearance.datacie       = !datacie->get_inconsistent();
 		pedited->colorappearance.tonecie       = !tonecie->get_inconsistent();
+	//	pedited->colorappearance.sharpcie      = !sharpcie->get_inconsistent();
 		pedited->colorappearance.curve         = !shape->isUnChanged ();
 		pedited->colorappearance.curve2        = !shape2->isUnChanged ();
 		pedited->colorappearance.curve3        = !shape3->isUnChanged ();
@@ -753,7 +759,30 @@ void ColorAppearance::tonecie_toggled () {
 	}
 
 }
+/*
+void ColorAppearance::sharpcie_toggled () {
 
+	if (batchMode) {
+		if (sharpcie->get_inconsistent()) {
+			sharpcie->set_inconsistent (false);
+			sharpcieconn.block (true);
+			sharpcie->set_active (false);
+			sharpcieconn.block (false);
+		}
+		else if (lastsharpcie)
+			sharpcie->set_inconsistent (true);
+
+		lastsharpcie = sharpcie->get_active ();
+	}
+	if (listener) {
+		if (sharpcie->get_active ())
+			listener->panelChanged (EvCATsharpcie, M("GENERAL_ENABLED"));
+		else
+			listener->panelChanged (EvCATsharpcie, M("GENERAL_DISABLED"));
+	}
+
+}
+*/
 
 void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
@@ -929,6 +958,7 @@ void ColorAppearance::algoChanged () {
 		qbright->hide();
 		colorh->hide();
 		tonecie->hide();
+	//	sharpcie->hide();
 		curveEditorG->show();
 		curveEditorG2->show();
 		curveEditorG3->show();
@@ -944,6 +974,7 @@ void ColorAppearance::algoChanged () {
 		qbright->hide();
 		colorh->hide();
 		tonecie->hide();		
+//		sharpcie->hide();
 		curveEditorG->show();
 		curveEditorG2->show();
 		curveEditorG3->show();
@@ -959,6 +990,8 @@ void ColorAppearance::algoChanged () {
 		qbright->show();
 		colorh->hide();
 		tonecie->show();
+	//	sharpcie->show();
+	//	sharpcie->hide();
 		curveEditorG->show();
 		curveEditorG2->show();
 		curveEditorG3->show();
@@ -974,6 +1007,8 @@ void ColorAppearance::algoChanged () {
 		qbright->show();
 		colorh->show();
 		tonecie->show();		
+//		sharpcie->show();
+//		sharpcie->hide();
 		curveEditorG->show();
 		curveEditorG2->show();
 		curveEditorG3->show();

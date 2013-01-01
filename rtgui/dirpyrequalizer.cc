@@ -30,6 +30,7 @@ DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
     enabled->set_active (true);
     pack_start(*enabled);
     enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrEqualizer::enabledToggled) );
+	enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
 
     Gtk::HSeparator *separator1 = Gtk::manage (new  Gtk::HSeparator());
     pack_start(*separator1, Gtk::PACK_SHRINK, 2);

@@ -232,6 +232,7 @@ void ProcParams::setDefaults () {
     colorappearance.gamut         = true;
     colorappearance.datacie       = false;
     colorappearance.tonecie       = false;
+ //   colorappearance.sharpcie      = false;
     colorappearance.curve.clear ();
 	colorappearance.curve.push_back(DCT_Linear);
     colorappearance.curve2.clear ();
@@ -595,6 +596,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->colorappearance.gamut)         keyFile.set_boolean ("Color appearance", "Gamut",         colorappearance.gamut);
     if (!pedited || pedited->colorappearance.datacie)       keyFile.set_boolean ("Color appearance", "Datacie",       colorappearance.datacie);
     if (!pedited || pedited->colorappearance.tonecie)       keyFile.set_boolean ("Color appearance", "Tonecie",       colorappearance.tonecie);
+//    if (!pedited || pedited->colorappearance.sharpcie)      keyFile.set_boolean ("Color appearance", "Sharpcie",      colorappearance.sharpcie);
     if (!pedited || pedited->colorappearance.curveMode)  {
         Glib::ustring method;
         switch (colorappearance.curveMode) {
@@ -1114,6 +1116,7 @@ if (keyFile.has_group ("Color appearance")) {
     if (keyFile.has_key ("Color appearance", "Gamut"))         {colorappearance.gamut         = keyFile.get_boolean ("Color appearance", "Gamut"); if (pedited) pedited->colorappearance.gamut = true; }
     if (keyFile.has_key ("Color appearance", "Datacie"))       {colorappearance.datacie       = keyFile.get_boolean ("Color appearance", "Datacie"); if (pedited) pedited->colorappearance.datacie = true; }
     if (keyFile.has_key ("Color appearance", "Tonecie"))       {colorappearance.tonecie       = keyFile.get_boolean ("Color appearance", "Tonecie"); if (pedited) pedited->colorappearance.tonecie = true; }
+//    if (keyFile.has_key ("Color appearance", "Sharpcie"))      {colorappearance.sharpcie      = keyFile.get_boolean ("Color appearance", "Sharpcie"); if (pedited) pedited->colorappearance.sharpcie = true; }
     if (keyFile.has_key ("Color appearance", "CurveMode"))      {
         Glib::ustring sMode = keyFile.get_string ("Color appearance", "CurveMode");
         if      (sMode == "Lightness")            colorappearance.curveMode = ColorAppearanceParams::TC_MODE_LIGHT;

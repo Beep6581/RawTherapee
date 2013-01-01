@@ -438,10 +438,11 @@ void Options::setDefaults () {
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
+    rtSettings.ciecamfloat = true;
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color =0;
-
+	rtSettings.autocielab=true;
 	lastIccDir = rtSettings.iccDirectory;
 	lastDarkframeDir = rtSettings.darkFramesPath;
 	lastFlatfieldDir = rtSettings.flatFieldsPath;
@@ -647,6 +648,8 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "ICCDirectory"))   rtSettings.iccDirectory         = keyFile.get_string ("Color Management", "ICCDirectory");
     if (keyFile.has_key ("Color Management", "MonitorProfile")) rtSettings.monitorProfile       = keyFile.get_string ("Color Management", "MonitorProfile");
     if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) rtSettings.autoMonitorProfile = keyFile.get_boolean ("Color Management", "AutoMonitorProfile");
+    if (keyFile.has_key ("Color Management", "Autocielab")) rtSettings.autocielab = keyFile.get_boolean ("Color Management", "Autocielab");
+    if (keyFile.has_key ("Color Management", "Ciencamfloat")) rtSettings.ciecamfloat = keyFile.get_boolean ("Color Management", "Ciecamfloat");
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
     if (keyFile.has_key ("Color Management", "CRI"))            rtSettings.CRI_color            = keyFile.get_integer("Color Management", "CRI");
@@ -655,6 +658,7 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
     if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
+    if( keyFile.has_key ("Color Management", "Ciecamfloat"))    rtSettings.ciecamfloat          = keyFile.get_boolean("Color Management", "Ciecamfloat");
     if( keyFile.has_key ("Color Management", "AdobeRGB"))       rtSettings.adobe                = keyFile.get_string("Color Management", "AdobeRGB");
     if( keyFile.has_key ("Color Management", "ProPhoto"))       rtSettings.prophoto             = keyFile.get_string("Color Management", "ProPhoto");
     if( keyFile.has_key ("Color Management", "ProPhoto10"))     rtSettings.prophoto10           = keyFile.get_string("Color Management", "ProPhoto10");
@@ -894,6 +898,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "ICCDirectory", rtSettings.iccDirectory);
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
     keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
+    keyFile.set_boolean ("Color Management", "Autocielab", rtSettings.autocielab);
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
     keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);	
     keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevice);	
@@ -909,6 +914,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
     keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
     keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
+    keyFile.set_boolean ("Color Management", "Ciecamfloat", rtSettings.ciecamfloat);
     keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
     keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
     keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);

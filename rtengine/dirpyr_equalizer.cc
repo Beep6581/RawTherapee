@@ -30,6 +30,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#define CLIPI(a) ((a)>0 ?((a)<32768 ?(a):32768):0)
 
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
 #define DIRWT(i1,j1,i,j) ( domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] * rangefn[abs((int)data_fine[i1][j1]-data_fine[i][j])] )
@@ -48,7 +49,7 @@ namespace rtengine {
 	//scale is spacing of directional averaging weights
 	
 	
-	void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, const double * mult )
+	void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, const double * mult)
 	{
 		int lastlevel=maxlevel;
 		
@@ -135,8 +136,7 @@ namespace rtengine {
 		
 		for (int i=0; i<srcheight; i++) 
 			for (int j=0; j<srcwidth; j++) {
-				
-				dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?
+				dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?		
 								
 			}
 		
@@ -147,6 +147,113 @@ namespace rtengine {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	}
+
+
+	
+	void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, bool execdir )
+	{
+		int lastlevel=maxlevel;
+		
+		while (fabs(mult[lastlevel-1]-1)<0.001 && lastlevel>0) {
+			lastlevel--;
+			//printf("last level to process %d \n",lastlevel);
+		}
+		if (lastlevel==0) return;
+		
+
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		LUTf rangefn(0x10000);
+				
+		int intfactor = 1024;//16384;
+		
+		
+		//set up range functions
+		
+		for (int i=0; i<0x10000; i++) {
+			rangefn[i] = (int)((thresh/((double)(i) + thresh))*intfactor);
+		}
+				
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		
+		int level;
+		array2D<float> buffer (srcwidth, srcheight);
+		
+		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
+
+				
+		for (int i=0; i<srcheight; i++)
+			for (int j=0; j<srcwidth; j++) {
+				buffer[i][j]=0;
+			}
+		
+		level = 0;
+		
+		int scale = scales[level];
+		//int thresh = 100 * mult[5];
+				
+		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, rangefn, 0, scale, mult );
+		
+		level = 1;
+		
+		while(level < lastlevel)
+		{
+			scale = scales[level];
+						
+			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, rangefn, level, scale, mult );
+			
+			level ++;
+		}
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		//initiate buffer for final image
+		for(int i = 0; i < srcheight; i++)
+			for(int j = 0; j < srcwidth; j++) {
+				
+				//copy pixels
+				buffer[i][j] = dirpyrlo[lastlevel-1][i][j];
+				
+			}
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		
+		
+		for(int level = lastlevel - 1; level > 0; level--)
+		{
+			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, mult );
+		}
+		
+		
+		scale = scales[0];
+		
+		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, mult );
+		
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		
+		for (int i=0; i<srcheight; i++) 
+			for (int j=0; j<srcwidth; j++) {
+				if(execdir) {if(ncie->J_p[i][j] > 8.f && ncie->J_p[i][j] < 92.f) dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?
+							else dst[i][j]=src[i][j];}
+				else dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?		
+								
+			}
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
+		
+				
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	}
+
+
+	
+	
 	
 	void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  )
 	{

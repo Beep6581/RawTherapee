@@ -1,4 +1,5 @@
 /*
+/*
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -186,26 +187,24 @@ void Crop::update (int todo) {
 		LUTu dummy;
 		parent->ipf.chromiLuminanceCurve (1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, dummy);
 		parent->ipf.vibrance (labnCrop);
-	//	if(!params.colorappearance.tonecie) parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
-	//	if(!params.colorappearance.tonecie) parent->ipf.EPDToneMap(labnCrop, 0, 1);	//Go with much fewer than normal iterates for fast redisplay.
-	if(params.colorappearance.enabled && !params.colorappearance.tonecie)parent->ipf.EPDToneMap(labnCrop, 5, 1);
-
-	if(!params.colorappearance.enabled){parent->ipf.EPDToneMap(labnCrop, 5, 1);}
-		
+		if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) parent->ipf.EPDToneMap(labnCrop,5,1);
 	//	parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
-
+		// for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
 		if (skip==1) {
 			parent->ipf.impulsedenoise (labnCrop);
-			parent->ipf.defringe (labnCrop);
+			if((params.colorappearance.enabled && !settings->autocielab) ||(!params.colorappearance.enabled) ) {parent->ipf.defringe (labnCrop);}
 			parent->ipf.MLsharpen (labnCrop);
-			parent->ipf.MLmicrocontrast (labnCrop);
-			//parent->ipf.MLmicrocontrast (labnCrop);
-			parent->ipf.sharpening (labnCrop, (float**)cbuffer);
-			parent->ipf.dirpyrequalizer (labnCrop);
+			if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
+					parent->ipf.MLmicrocontrast (labnCrop);
+					parent->ipf.sharpening (labnCrop, (float**)cbuffer);
+					parent->ipf.dirpyrequalizer (labnCrop);
+					}
 		}
 	int begh = 0, endh = labnCrop->H;
-	
-	parent->ipf.ciecam_02 (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1);
+	bool execsharp=false;
+	if(skip==1) execsharp=true;
+	if(settings->ciecamfloat) parent->ipf.ciecam_02float (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp);
+	else parent->ipf.ciecam_02 (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp);
 	}
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);
@@ -287,8 +286,8 @@ void Crop::freeAll () {
         delete labnCrop;
         delete cropImg;
         delete cshmap;
-        //for (int i=0; i<croph; i++)
-        //    delete [] cbuffer[i];
+   //  for (int i=0; i<croph; i++)
+    //       delete [] cbuffer[i];
         delete [] cbuf_real;
         delete [] cbuffer;
     }

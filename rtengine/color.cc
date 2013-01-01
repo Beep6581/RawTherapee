@@ -561,6 +561,48 @@ namespace rtengine {
 		else s=ko*sres;
 
 	}
+	void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)
+	{
+		float factorskin, factorsat,factor, factorskinext, interm;
+		float scale = 100.0f/100.1f;//reduction in normal zone
+		float scaleext=1.0f;//reduction in transition zone
+		float protect_redh;
+		float deltaHH=0.3f;//HH value transition : I have choice 0.3 radians
+		float HH;
+		bool doskin=false;
+		//rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
+		if     ((float)h>8.6f  && (float)h<=74.f ) {HH=(1.15f/65.4f)*(float)h-0.0012f;  doskin=true;}//H > 0.15   H<1.3
+		else if((float)h>0.f   && (float)h<=8.6f ) {HH=(0.19f/8.6f )*(float)h-0.04f;    doskin=true;}//H>-0.04 H < 0.15
+		else if((float)h>355.f && (float)h<=360.f) {HH=(0.11f/5.0f )*(float)h-7.96f;    doskin=true;}//H>-0.15 <-0.04
+		else if((float)h>74.f  && (float)h<95.f  ) {HH=(0.30f/21.0f)*(float)h+0.24285f; doskin=true;}//H>1.3  H<1.6
+
+		if(doskin)
+		{
+			float chromapro=sres/Sp;
+			if(sk==1){//in C mode to adapt dred to J
+			if     (J<16.0)   dred = 40.0f;
+			else if(J<22.0)   dred = (4.1666f)*(float)J -26.6f;
+			else if(J<60.0)   dred = 55.0f;
+			else if(J<70.0)   dred = -1.5f*(float)J +145.0f;
+			else              dred = 40.0f;
+			}
+			if(chromapro>0.0) Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//Scale factor
+			if(chromapro>1.0) {interm=(chromapro-1.0f)*100.0f;
+				factorskin= 1.0f+(interm*scale)/100.0f;
+				factorskinext=1.0f+(interm*scaleext)/100.0f;}
+			else {
+				factorskin= chromapro ;
+				factorskinext= chromapro ;
+			}
+			factorsat=chromapro;
+			factor=factorsat;
+			Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);	//transition
+			s*=factor;
+		}
+		else s=ko*sres;
+
+	}
+
 
 
 	void Color::scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext)

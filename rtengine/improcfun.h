@@ -55,6 +55,7 @@ class ImProcFunctions {
 		void transformHighQuality  (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap, bool fullImage);
 
 		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
+		void sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H);
 		void firstAnalysisThread(Imagefloat* original, Glib::ustring wprofile, unsigned int* histogram, int row_from, int row_to);
 		void dcdamping          (float** aI, float** aO, float damping, int W, int H);
 
@@ -93,18 +94,22 @@ class ImProcFunctions {
 		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
 		                       double expcomp, int hlcompr, int hlcomprthresh);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
-		void ciecam_02 (CieImage* ncie, int begh, int endh,  int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale  );
+		void ciecam_02float	 (CieImage* ncie, int begh, int endh,  int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale, float** buffer, bool execsharp  );
+		void ciecam_02		 (CieImage* ncie, int begh, int endh,  int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale, float** buffer, bool execsharp  );
 		void chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, LUTu &histCCurve);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
+		void sharpeningcam    (CieImage* ncie, float** buffer);
 		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH,
                                double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage);
 		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);
 		void deconvsharpening (LabImage* lab, float** buffer);
+		void deconvsharpeningcam (CieImage* ncie, float** buffer);
 		void MLsharpen (LabImage* lab);// Manuel's clarity / sharpening
 		void MLmicrocontrast(LabImage* lab ); //Manuel's microcontrast
+		void MLmicrocontrastcam(CieImage* ncie ); //Manuel's microcontrast
 
 		void impulsedenoise   (LabImage* lab);//Emil's impulse denoise
 		void impulse_nr (LabImage* lab, double thresh);
@@ -144,12 +149,15 @@ class ImProcFunctions {
 		float MadMax(float * HH_Coeffs, int &max, int datalen);
 		
 		// pyramid equalizer
-		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult );//Emil's directional pyramid equalizer
+		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult);//Emil's directional pyramid equalizer
+		void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, bool execdir );//Emil's directional pyramid equalizer
 		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  );
 		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );
 
 		void defringe         (LabImage* lab);
+		void defringecam      (CieImage* ncie);
 		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh);
+		void PF_correct_RTcam (CieImage * src, CieImage * dst, double radius, int thresh);
 
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6);// for gamma output		
