@@ -386,6 +386,12 @@ LINUX
       sudo pacman -S bzip2 exiv2 expat fftw glib2 glibmm gtk gtkmm lcms2 \
       libiptcdata libjpeg-turbo libpng libsigc++ libtiff zlib
 
+    In openSUSE, run:
+      sudo zypper in gcc-c++ cmake fftw3-devel glib2-devel gtk2-devel \
+      glibmm2-devel gtkmm2-devel libbz2-devel libexpat-devel libiptcdata-devel \
+      libjpeg-devel liblcms2-devel libpng-devel libsigc++2-devel libtiff-devel \
+      zlib-devel
+
   COMPILE:
     The Automatic Way:
       The easiest way compile RawTherapee is by using the buildRT script, read
