@@ -2679,6 +2679,9 @@ if(!params->edgePreservingDecompositionUI.enabled) return;
 
 		//Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
 		float s = (1.0f + 38.7889f)*powf(Compression, 1.5856f)/(1.0f + 38.7889f*powf(Compression, 1.5856f));
+		#ifndef _DEBUG	
+		#pragma omp parallel for schedule(dynamic,10)
+		#endif	
 		for (int i=0; i<Hei; i++)
 			for (int j=0; j<Wid; j++) {
 			ncie->Q_p[i][j]=(Qpr[i*Wid+j]+eps)*Qpro;
@@ -2773,10 +2776,13 @@ fclose(f);*/
 
 	//Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
 	float s = (1.0f + 38.7889f)*powf(Compression, 1.5856f)/(1.0f + 38.7889f*powf(Compression, 1.5856f));
-	for(i = 0; i != N; i++)
-		a[i] *= s,
-		b[i] *= s,
-		L[i] = L[i]*32767.0f + minL;
+	#ifdef _OPENMP
+	#pragma omp parallel for schedule(dynamic,10)
+	#endif	
+	for(int ii = 0; ii < N; ii++)
+		a[ii] *= s,
+		b[ii] *= s,
+		L[ii] = L[ii]*32767.0f + minL;
 }
 
 	
