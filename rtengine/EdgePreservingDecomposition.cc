@@ -1,6 +1,9 @@
 #include <cmath>
 #include "rt_math.h"
 #include "EdgePreservingDecomposition.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 /* Solves A x = b by the conjugate gradient method, where instead of feeding it the matrix A you feed it a function which
 calculates A x where x is some vector. Stops when rms residual < RMSResidual or when maximum iterates is reached.
@@ -11,26 +14,34 @@ Takes less memory with OkToModify_b = true, and Preconditioner = NULL. */
 float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, unsigned int n, bool OkToModify_b, 
 	float *x, float RMSResidual, void *Pass, unsigned int MaximumIterates, void Preconditioner(float *Product, float *x, void *Pass)){
 	unsigned int iterate, i;
+	
+	float *r = new float[n];
 
 	//Start r and x.
-	float *r = new float[n];
 	if(x == NULL){
 		x = new float[n];
 		memset(x, 0, sizeof(float)*n);		//Zero initial guess if x == NULL.
 		memcpy(r, b, sizeof(float)*n);
 	}else{
 		Ax(r, x, Pass);
-		for(i = 0; i != n; i++) r[i] = b[i] - r[i];		//r = b - A x.
+		#ifdef _OPENMP
+		#pragma omp  parallel for schedule(dynamic,10)
+		#endif
+		for(int ii = 0; ii < n; ii++) r[ii] = b[ii] - r[ii];		//r = b - A x.
 	}
-
 	//s is preconditionment of r. Without, direct to r.
-	float *s = r, rs = 0.0f;
+	float *s = r, rs = 0.0f, fp=0.f;
 	if(Preconditioner != NULL){
 		s = new float[n];
 		Preconditioner(s, r, Pass);
 	}
-	for(i = 0; i != n; i++) rs += r[i]*s[i];
-
+	#ifdef _OPENMP	
+	#pragma omp  parallel for schedule(dynamic,10) firstprivate(fp) reduction(+:rs)
+	#endif                       
+	for(int ii = 0; ii < n; ii++) {
+		fp = r[ii]*s[ii];
+		rs=rs+fp;
+		}
 	//Search direction d.
 	float *d = new float[n];
 	memcpy(d, s, sizeof(float)*n);
@@ -41,21 +52,21 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
 	//Start iterating!
 	if(MaximumIterates == 0) MaximumIterates = n;
-	for(iterate = 0; iterate != MaximumIterates; iterate++){
+	for(iterate = 0; iterate < MaximumIterates; iterate++){
 		//Get step size alpha, store ax while at it.
 		float ab = 0.0f;
 		Ax(ax, d, Pass);
-		for(i = 0; i != n; i++) ab += d[i]*ax[i];
+		for(int ii = 0; ii < n; ii++) ab += d[ii]*ax[ii];
 
 		if(ab == 0.0f) break;	//So unlikely. It means perfectly converged or singular, stop either way.
 		ab = rs/ab;
 
 		//Update x and r with this step size.
 		float rms = 0.0;
-		for(i = 0; i != n; i++){
-			x[i] += ab*d[i];
-			r[i] -= ab*ax[i];	//"Fast recursive formula", use explicit r = b - Ax occasionally?
-			rms += r[i]*r[i];
+		for(int ii = 0; ii < n; ii++){
+			x[ii] += ab*d[ii];
+			r[ii] -= ab*ax[ii];	//"Fast recursive formula", use explicit r = b - Ax occasionally?
+			rms += r[ii]*r[ii];
 		}
 		rms = sqrtf(rms/n);
 //printf("%f\n", rms);
@@ -67,12 +78,13 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 		//Get beta.
 		ab = rs;
 		rs = 0.0f;
-		for(i = 0; i != n; i++) rs += r[i]*s[i];
+		for(int ii = 0; ii < n; ii++) rs += r[ii]*s[ii];
 		ab = rs/ab;
 
 		//Update search direction p.
-		for(i = 0; i != n; i++) d[i] = s[i] + ab*d[i];
+		for(int ii = 0; ii < n; ii++) d[ii] = s[ii] + ab*d[ii];
 	}
+
 	if(iterate == MaximumIterates)
 		if(iterate != n && RMSResidual != 0.0f)
 			printf("Warning: MaximumIterates (%u) reached in SparseConjugateGradient.\n", MaximumIterates);
@@ -83,7 +95,6 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 	delete[] d;
 	return x;
 }
-
 
 MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(unsigned int Dimension, unsigned int NumberOfDiagonalsInLowerTriangle){
 	n = Dimension;
@@ -183,20 +194,27 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(unsigne
 
 	//How many diagonals in the decomposition?
 	MaxFillAbove++;	//Conceptually, now "fill" includes an existing diagonal. Simpler in the math that follows.
-	unsigned int i, j, mic;
-	for(mic = i = 1; i != m; i++)
-		mic += rtengine::min(StartRows[i] - StartRows[i - 1], MaxFillAbove);	//Guarunteed positive since StartRows must be created in increasing order.
-
+	unsigned int i, j, mic, fp;
+	mic=1;
+	fp=1;
+	#ifdef _OPENMP
+	#pragma omp parallel for schedule(dynamic,10) firstprivate(fp) reduction(+:mic)
+	#endif 
+	for(int ii = 1; ii < m; ii++) {
+		fp = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);	//Guarunteed positive since StartRows must be created in increasing order.
+		mic=mic+fp;
+		}
 	//Initialize the decomposition - setup memory, start rows, etc.
 	MultiDiagonalSymmetricMatrix *ic = new MultiDiagonalSymmetricMatrix(n, mic);
 	ic->CreateDiagonal(0, 0);	//There's always a main diagonal in this type of decomposition.
-	for(mic = i = 1; i != m; i++){
+	mic=1;
+	for(int ii = 1; ii < m; ii++){
 		//Set j to the number of diagonals to be created corresponding to a diagonal on this source matrix...
-		j = rtengine::min(StartRows[i] - StartRows[i - 1], MaxFillAbove);
+		j = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);
 
 		//...and create those diagonals. I want to take a moment to tell you about how much I love minimalistic loops: very much.
 		while(j-- != 0)
-			if(!ic->CreateDiagonal(mic++, StartRows[i] - j)){
+			if(!ic->CreateDiagonal(mic++, StartRows[ii] - j)){
 				//Beware of out of memory, possible for large, sparse problems if you ask for too much fill.
 				printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: Out of memory. Ask for less fill?\n");
 				delete ic;
@@ -350,12 +368,16 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 	if(UseBlurForEdgeStop) a = new float[n], g = Blur;
 	else a = Blur, g = Source;
 
-	unsigned int x, y, i;
+	//unsigned int x, y;
+	unsigned int i;
 	unsigned int w1 = w - 1, h1 = h - 1;
 	float eps = 0.02f;
-	for(y = 0; y != h1; y++){
+	#ifdef _OPENMP
+	#pragma omp parallel for schedule(dynamic,10)
+	#endif
+	for(int y = 0; y < h1; y++){
 		float *rg = &g[w*y];
-		for(x = 0; x != w1; x++){
+		for(int x = 0; x < w1; x++){
 			//Estimate the central difference gradient in the center of a four pixel square. (gx, gy) is actually 2*gradient.
 			float gx = (rg[x + 1] - rg[x]) + (rg[x + w + 1] - rg[x + w]);
 			float gy = (rg[x + w] - rg[x]) + (rg[x + w + 1] - rg[x + 1]);
@@ -364,7 +386,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 			a[x + w*y] = Scale*powf(0.5f*sqrtf(gx*gx + gy*gy + eps*eps), -EdgeStopping);
 		}
 	}
-
+//unsigned int x,y;
 	/* Now setup the linear problem. I use the Maxima CAS, here's code for making an FEM formulation for the smoothness term:
 		p(x, y) := (1 - x)*(1 - y);
 		P(m, n) := A[m][n]*p(x, y) + A[m + 1][n]*p(1 - x, y) + A[m + 1][n + 1]*p(1 - x, 1 - y) + A[m][n + 1]*p(x, 1 - y);
@@ -379,6 +401,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 	memset(a_w1, 0, A->DiagonalLength(w - 1)*sizeof(float));
 	memset(a_w, 0, A->DiagonalLength(w)*sizeof(float));
 	memset(a_w_1, 0, A->DiagonalLength(w + 1)*sizeof(float));
+	unsigned int x, y;
 	for(i = y = 0; y != h; y++){
 		for(x = 0; x != w; x++, i++){
 			float ac;
@@ -403,6 +426,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 				a0[i] += 4.0f*a[i]/6.0f;
 		}
 	}
+	
   if(UseBlurForEdgeStop) delete[] a;
 
   //Solve & return.
@@ -428,7 +452,7 @@ float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scal
 
 	//Iteratively improve the blur.
 	Reweightings++;
-	for(unsigned int i = 0; i != Reweightings; i++)
+	for(unsigned int i = 0; i < Reweightings; i++)
 		CreateBlur(Source, Scale, EdgeStopping, Iterates, Blur, true);
 
 	return Blur;
@@ -440,21 +464,29 @@ float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Sc
 
 	//We're working with luminance, which does better logarithmic.
 	unsigned int i;
-	for(i = 0; i != n; i++)
-		Source[i] = logf(Source[i] + eps);
+	#ifdef _OPENMP
+	#pragma omp parallel for schedule(dynamic,10)
+	#endif	
+	for(int ii = 0; ii < n; ii++)
+		Source[ii] = logf(Source[ii] + eps);
 
 	//Blur. Also setup memory for Compressed (we can just use u since each element of u is used in one calculation).
 	float *u = CreateIteratedBlur(Source, Scale, EdgeStopping, Iterates, Reweightings);
 	if(Compressed == NULL) Compressed = u;
 
 	//Apply compression, detail boost, unlogging. Compression is done on the logged data and detail boost on unlogged.
-	for(int i = 0; i != n; i++){
+	#ifdef _OPENMP
+	#pragma omp parallel for schedule(dynamic,10)	
+	#endif
+	for(int i = 0; i < n; i++){
 		float ce = expf(Source[i] + u[i]*(CompressionExponent - 1.0f)) - eps;
 		float ue = expf(u[i]) - eps;
 		Source[i] = expf(Source[i]) - eps;
 		Compressed[i] = ce + DetailBoost*(Source[i] - ue);
 	}
+	
 	if(Compressed != u) delete[] u;
 	return Compressed;
+
 }
 
