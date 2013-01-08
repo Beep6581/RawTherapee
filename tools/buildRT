@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.6, 2012-12-13
+# Version 2.7, 2012-12-31
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -64,10 +64,10 @@ compile () {
       [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Found old build directory \"${repo}/$buildType\". Removing it."; rm -rf "${repo}/${buildType}"; }
       [[ -d "${repo}/rawtherapee" ]] && { printf "%s\n" "Found old build directory \"${repo}/rawtherapee\". Removing it."; rm -rf "${repo}/rawtherapee"; }
       [[ -d "${repo}/build" ]] && { printf "%s\n" "Found old build directory \"${repo}/build\". Removing it."; rm -rf "${repo}/build"; }
-      [[ -d "${HOME}/rt_${branch}_${buildType}" ]] && {
-        printf "%s\n" "Found old build directory ${HOME}/rt_${branch}_${buildType}" "It must be removed to proceed."
+      [[ -d "${HOME}/rt_${branch}_${buildType}${movetoPatched}" ]] && {
+        printf "%s\n" "Found old build directory ${HOME}/rt_${branch}_${buildType}${movetoPatched}" "It must be removed to proceed."
         read -p "Do you want to remove it and proceed? y/n: " YN
-        [[ "$YN" = y ]] && rm -rf "${HOME}/rt_${branch}_${buildType}" || exit 1
+        [[ "$YN" = y ]] && rm -rf "${HOME}/rt_${branch}_${buildType}${movetoPatched}" || exit 1
       }
 
       # Clean up old CMake junk
@@ -140,12 +140,12 @@ compile () {
         zip -Xrq "/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip" AboutThisBuild.txt rawtherapee
       fi
 
-      # Now that the zip is ready, the build can be moved to ~/rt_<branch>_<buildType>
-      printf "%s\n" "" "Moving \"${repo}/build/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}\""
-      mv "${repo}/build/rawtherapee" "${HOME}/rt_${branch}_${buildType}" || { printf "%s\n" "" "Could not move \"${repo}/build/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}\", exiting."; exit 1; }
+      # Now that the zip is ready, the build can be moved to ~/rt_<branch>_<buildType><_patched>
+      printf "%s\n" "" "Moving \"${repo}/build/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}\""
+      mv "${repo}/build/rawtherapee" "${HOME}/rt_${branch}_${buildType}${movetoPatched}" || { printf "%s\n" "" "Could not move \"${repo}/build/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}\", exiting."; exit 1; }
 
       printf "%-15b %b\n" "" "" "Build ready:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget"
-      printf "%s\n" "" "To run RawTherapee, fire up a terminal and type:" "~/rt_${branch}_${buildType}/rawtherapee" "" "------------------------------------------"
+      printf "%s\n" "" "To run RawTherapee, fire up a terminal and type:" "~/rt_${branch}_${buildType}${movetoPatched}/rawtherapee" "" "------------------------------------------"
       alert "RawTherapee-${verLatesttag}.${verLatesttagdistance} ready.\nChoice number ${choiceNumber}, branch: ${branch}, type: ${buildType}, target: ${procTarget}"
       done
 }
@@ -197,7 +197,7 @@ checkDistro () {
         # distribution=${distro} because if none of the elements match, distro will =YellowDog (last item in the list)
         # add "break 2;" to the end if we really want to, but Ubuntu gets detected as Debian first, then as Ubuntu,
         # so we might want to not break the loop.
-        [[ -e "$loc" ]] && { distribution=${distro}; echo "Distribution detected as ${distribution}"; }
+        [[ -e "$loc" ]] && { distribution=${distro}; echo "Distribution: ${distribution}"; }
         [[ "$distro" = Gentoo ]] && break 2
     done
   done
@@ -210,7 +210,7 @@ checkDistro () {
       #sanitize
       distribution=${distribution//[^a-zA-Z0-9]/}
 
-      echo "Distribution entered manually: ${distribution}"
+      echo "Distribution: ${distribution}"
   fi
 }
 
@@ -219,11 +219,10 @@ checkBits () {
   if [[ $bits = *64* ]]
     then
       bits=64
-      echo "Bits detected as ${bits}"
     else
       bits=32
-      echo "Bits detected as ${bits}"
   fi
+  echo "System: ${bits}-bit"
 
   [[ $bits != 32 ]] && [[ $bits != 64 ]] && checkBits
 }
@@ -232,10 +231,10 @@ setVars () {
   unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
   checkDistro
   checkBits
-  repo="${HOME}/rawtherapee" && echo "Repository is set to ${repo}"
+  repo="${HOME}/rawtherapee" && echo "Repository: ${repo}"
   cpuCount="`grep -c 'processor' /proc/cpuinfo`"
-  if (( "$cpuCount" >= 1 && "$cpuCount" <= 16 )); then echo "CPU count detected as ${cpuCount}"; else cpuCount="1"; echo "CPU count set to ${cpuCount}"; fi
-  procTarget="2" && echo "procTarget set to ${procTarget}"
+  if (( "$cpuCount" >= 1 && "$cpuCount" <= 32 )); then echo "CPU count: ${cpuCount}"; else cpuCount="1"; echo "CPU count: ${cpuCount}"; fi
+  procTarget="2" && echo "procTarget: ${procTarget}"
 
   if hash notify-send 2>/dev/null; then alert_type="notify-send"
     elif hash kdialog 2>/dev/null; then alert_type="kdialog"
@@ -266,10 +265,12 @@ finishUp () {
 
 # PROGRAM START
 printf "%s\n\n" "Running the RawTherapee build script."
+movetoPatched=""
 
 while getopts "bh?-nh" opt; do
   case $opt in
     b)    patched="b"
+          movetoPatched="_patched"
           printf "%s\n" "Buildonly flag detected, will not hg pull or update";;
     n)    noomp="-DOPTION_OMP=OFF"
           printf "%s\n" "OpenMP disabled";;
