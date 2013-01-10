@@ -178,6 +178,16 @@ int ImageIO::getPNGSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, 
         return IMIO_HEADERERROR;
     }
 
+    if (setjmp (png_jmpbuf(png))) {
+        png_destroy_read_struct (&png, &info, &end_info);
+        fclose (file);
+        return IMIO_READERROR;
+    }
+
+    //set up png read
+    png_set_read_fn (png, file, png_read_data);
+    png_set_sig_bytes (png,8);
+
     png_read_info(png,info);
 
     //retrieving image information
