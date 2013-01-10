@@ -22,8 +22,7 @@
 #include <gtkmm.h>
 #include <cmath>
 #include "colortemp.h"
-#include "imagefloat.h"
-#include "labimage.h"
+#include "LUT.h"
 #define MAXR(a,b) ((a) > (b) ? (a) : (b))
 #define pow_F(a,b) (exp(b*log(a)))
 

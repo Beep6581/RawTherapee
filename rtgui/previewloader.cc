@@ -117,7 +117,7 @@ public:
 			{
 				j.listener_->previewReady(j.dir_id_,new FileBrowserEntry(tmb,j.dir_entry_));
 			}
-		} catch (Glib::Error){} catch(...){}
+		} catch (Glib::Error &e){} catch(...){}
 
 		bool last = g_atomic_int_dec_and_test (&nConcurrentThreads);
 

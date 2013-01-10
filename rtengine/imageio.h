@@ -32,10 +32,32 @@
 #include "procparams.h"
 #include <libiptcdata/iptc-data.h>
 #include "../rtexif/rtexif.h"
+#include "imagedimensions.h"
+#include "iimage.h"
 
 namespace rtengine {
 
-class ImageIO {
+    class ProgressListener;
+    class Imagefloat;
+
+    typedef enum IIO_Sample_Format {
+        IIOSF_UNKNOWN        = 0,       // Unknown or Unsupported file type; Has to remain 0
+        //IIOSF_SIGNED_INT         ,    // Not yet supported
+        IIOSF_UNSIGNED_CHAR  = 1<<0,
+        IIOSF_UNSIGNED_SHORT = 1<<1,
+        //IIOSF_HALF               ,    // OpenEXR & NVidia's Half Float, not yet supported
+        IIOSF_LOGLUV24       = 1<<2,
+        IIOSF_LOGLUV32       = 1<<3,
+        IIOSF_FLOAT          = 1<<4
+    } IIOSampleFormat;
+
+    typedef enum IIO_Sample_Arrangement {
+        IIOSA_UNKNOWN,       // Unknown or Unsupported file type
+        IIOSA_CHUNKY,
+        IIOSA_PLANAR
+    } IIOSampleArrangement;
+
+class ImageIO : virtual public ImageDatas {
 
     protected:
         ProgressListener* pl;
@@ -48,22 +70,35 @@ class ImageIO {
         IptcData* iptc;
         const rtexif::TagDirectory* exifRoot;
         Glib::Mutex imutex;
+        IIOSampleFormat sampleFormat;
+        IIOSampleArrangement sampleArrangement;
 
     public:
         static Glib::ustring errorMsg[6];
 
-        ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), loadedProfileData(NULL), loadedProfileLength(0), iptc(NULL), exifRoot (NULL) {}
+        ImageIO () : pl (NULL), embProfile(NULL), profileData(NULL), profileLength(0), loadedProfileData(NULL),
+                     loadedProfileLength(0), iptc(NULL), exifRoot (NULL), sampleFormat(IIOSF_UNKNOWN),
+                     sampleArrangement(IIOSA_UNKNOWN) {}
 
         virtual ~ImageIO ();
 
         void setProgressListener (ProgressListener* l) { pl = l; }
 
-        virtual int     getW            () =0;
-        virtual int     getH            () =0;
-        virtual void    allocate        (int width, int height) =0;
-        virtual int     getBPS          () =0;
-        virtual void    getScanline     (int row, unsigned char* buffer, int bps) {}
-        virtual void    setScanline     (int row, unsigned char* buffer, int bps) {}
+        void                 setSampleFormat(IIOSampleFormat sFormat) { sampleFormat = sFormat; }
+        IIOSampleFormat      getSampleFormat() { return sampleFormat; }
+        void                 setSampleArrangement(IIOSampleArrangement sArrangement) { sampleArrangement = sArrangement; }
+        IIOSampleArrangement getSampleArrangement() { return sampleArrangement; }
+
+        virtual void    getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::HRecParams hrp) {
+            printf("getStdImage NULL!\n");
+        }
+
+        virtual int     getBPS      () =0;
+        virtual void    getScanline (int row, unsigned char* buffer, int bps) {}
+        virtual void    setScanline (int row, unsigned char* buffer, int bps, float minValue[3]=NULL, float  maxValue[3]=NULL) {}
+
+        virtual bool    readImage   (Glib::ustring &fname, FILE *fh) { return false; };
+        virtual bool    writeImage  (Glib::ustring &fname, FILE *fh) { return false; };
 
         int load (Glib::ustring fname);
         int save (Glib::ustring fname);
@@ -71,6 +106,8 @@ class ImageIO {
         int loadPNG  (Glib::ustring fname);
         int loadJPEG (Glib::ustring fname);
         int loadTIFF (Glib::ustring fname);
+        static int getPNGSampleFormat  (Glib::ustring fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement);
+        static int getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement);
 
         int loadJPEGFromMemory (const char* buffer, int bufsize);
         int loadPPMFromMemory(const char* buffer,int width,int height, bool swap, int bps);

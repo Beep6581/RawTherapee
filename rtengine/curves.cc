@@ -185,9 +185,9 @@ void CurveFactory::updatechroma (
 	
 	
 void CurveFactory::curveLightBrightColor (
-		ColorAppearanceParams::eTCModeId curveMode1, const std::vector<double>& curvePoints1,
-		ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
-		ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,
+		procparams::ColorAppearanceParams::eTCModeId curveMode1, const std::vector<double>& curvePoints1,
+		procparams::ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+		procparams::ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,
 		LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram,//for Luminance  
 		LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
 		ColorAppearance & customColCurve1,
@@ -395,8 +395,8 @@ void CurveFactory::curveLightBrightColor (
 
 	void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh,
 									 double shcompr, double br, double contr, double gamma_, bool igamma_,
-									 ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
-									 ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+									 procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
+									 procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
 									 LUTu & histogram, LUTu & histogramCropped,
 									 LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve,
 									 LUTu & outBeforeCCurveHistogram,
@@ -613,7 +613,7 @@ void CurveFactory::curveLightBrightColor (
 				delete tcurve;
 				tcurve = NULL;
 			}
-			else if (curveMode != ToneCurveParams::TC_MODE_STD) {
+			else if (curveMode != procparams::ToneCurveParams::TC_MODE_STD) {
 				customToneCurve1.Set(tcurve);
 				delete tcurve;
 				tcurve = NULL;

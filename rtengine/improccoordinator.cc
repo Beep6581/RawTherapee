@@ -241,7 +241,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 			if (scale==1 && params.dirpyrDenoise.enabled) {
 				ipf.RGB_denoise(orig_prev, orig_prev, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe);
 			}
-			ImageMatrices* imatrices = imgsrc->getImageMatrices ();
         }
         imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
 
@@ -702,7 +701,6 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	ppar.hlrecovery.enabled = false;
 	ppar.icm.input = "(none)";
 	Imagefloat* im = new Imagefloat (fW, fH);
-	Image16* im16 = new Image16 (fW, fH);
 	imgsrc->preprocess( ppar.raw, ppar.lensProf, ppar.coarse );
 	imgsrc->demosaic(ppar.raw );
 	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
@@ -720,8 +718,10 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	params.wb.green = currWB.getGreen ();
 	imgsrc->getImage (currWB, 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
 	imgsrc->convertColorSpace(im, ppar.icm, params.raw);
-	im16 = im->to16();
+	Image16* im16 = im->to16();
+	delete im;
 	im16->saveTIFF (fname,16,true);
+	delete im16;
 	//im->saveJPEG (fname, 85);
 	mProcessing.unlock ();
 }

@@ -35,17 +35,17 @@ inline void interpolateTransformCubic (Imagefloat* src, int xs, int ys, double D
   double rd, gd, bd;  
   double yr[4], yg[4], yb[4];
 
-  for (int k=ys, kx=0; k<ys+4; k++, kx++) {                                                               
-    rd = gd = bd = 0.0;                                         
-    for (int i=xs, ix=0; i<xs+4; i++, ix++) {                                                           
-      rd += src->r[k][i] * w[ix];
-      gd += src->g[k][i] * w[ix];
-      bd += src->b[k][i] * w[ix];
-    }                                                           
-    yr[kx] = rd; yg[kx] = gd; yb[kx] = bd;                         
-  }                                                               
+  for (int k=ys, kx=0; k<ys+4; k++, kx++) {
+    rd = gd = bd = 0.0;
+    for (int i=xs, ix=0; i<xs+4; i++, ix++) {
+      rd += src->r(k,i) * w[ix];
+      gd += src->g(k,i) * w[ix];
+      bd += src->b(k,i) * w[ix];
+    }
+    yr[kx] = rd; yg[kx] = gd; yb[kx] = bd;
+  }
 
-                                                                    
+
   { 
       double t1, t2;
       
@@ -57,12 +57,12 @@ inline void interpolateTransformCubic (Imagefloat* src, int xs, int ys, double D
       w[0] = -t1*(Dy-1.0);
   }
 
-  rd = gd = bd = 0.0;                                             
-  for (int i=0; i<4; i++) {                                                               
+  rd = gd = bd = 0.0;
+  for (int i=0; i<4; i++) {
     rd += yr[i] * w[i];
     gd += yg[i] * w[i];
     bd += yb[i] * w[i];
-  }                                                               
+  }
 
   *r = rd * mul;
   *g = gd * mul;

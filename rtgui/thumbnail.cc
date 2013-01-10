@@ -96,22 +96,23 @@ void Thumbnail::_generateThumbnailImage () {
 	cfs.timeValid = false;
 
 	if (ext.lowercase()=="jpg" || ext.lowercase()=="jpeg") {
-			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
-			if (tpp)
-					cfs.format = FT_Jpeg;
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
+		if (tpp)
+			cfs.format = FT_Jpeg;
 	}
 	else if (ext.lowercase()=="png") {
-			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
-			if (tpp)
-					cfs.format = FT_Png;
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
+		if (tpp)
+			cfs.format = FT_Png;
 	}
 	else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-			tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
-			if (tpp)
-					cfs.format = FT_Tiff;
+		int deg = infoFromImage (fname);
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, deg);
+		if (tpp)
+			cfs.format = FT_Tiff;
 	}
-    else {
- 		// RAW works like this:
+	else {
+		// RAW works like this:
 		//  1. if we are here it's because we aren't in the cache so load the JPG
 		//     image out of the RAW. Mark as "quick".
 		//  2. if we don't find that then just grab the real image.
@@ -341,10 +342,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     int inTrash = getStage();
 
     if (pe) {
-    	// coarse.rotate works in ADD mode only, so we set it to 0 first
-    	if (pe->coarse.rotate)
-    		pparams.coarse.rotate = 0;
-    	pe->combine(pparams, pp, true);
+        pe->combine(pparams, pp, true);
     }
     else pparams = pp;
     pparamsValid = true;
@@ -603,16 +601,16 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
             deg = 270;
         }
     }
-	else {
+    else {
         cfs.lens     = "Unknown";
         cfs.camera   = "Unknown";
-	}
-		// get image filetype
+    }
+    // get image filetype
     std::string::size_type idx;
     idx = fname.rfind('.');
     if(idx != std::string::npos){cfs.filetype = fname.substr(idx+1);}
     else {cfs.filetype="";}
-	
+
     delete idata;
     return deg;
 }
@@ -620,8 +618,8 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
 void Thumbnail::_loadThumbnail(bool firstTrial) {
 
     needsReProcessing = true;
- 	tw = -1;
- 	th = options.maxThumbnailHeight;
+    tw = -1;
+    th = options.maxThumbnailHeight;
     delete tpp;
     tpp = new rtengine::Thumbnail ();
     tpp->isRaw = (cfs.format == (int) FT_Raw);
@@ -642,7 +640,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
     else if (!succ) {
         delete tpp;
         tpp = NULL;
-		return;
+        return;
     }
  
     if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
@@ -653,15 +651,14 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
         tpp->readEmbProfile (getCacheFileName ("embprofiles")+".icc");
 
         tpp->init ();
-        
     }
  
- 	getThumbnailSize(tw,th);
+    getThumbnailSize(tw,th);
 }
 
 void Thumbnail::loadThumbnail (bool firstTrial) {
-	Glib::Mutex::Lock lock(mutex);
-	_loadThumbnail(firstTrial);
+    Glib::Mutex::Lock lock(mutex);
+    _loadThumbnail(firstTrial);
 }
 
 void Thumbnail::_saveThumbnail () {
@@ -669,17 +666,15 @@ void Thumbnail::_saveThumbnail () {
     if (!tpp)
         return;
 
-    safe_g_remove (getCacheFileName ("images")+".cust");
-    safe_g_remove (getCacheFileName ("images")+".cust16");
-    safe_g_remove (getCacheFileName ("images")+".jpg");
+    if (safe_g_remove (getCacheFileName ("images")+".rtti") == -1) {
+        // No file deleted, so we try to deleted obsolete files, if any
+        safe_g_remove (getCacheFileName ("images")+".cust");
+        safe_g_remove (getCacheFileName ("images")+".cust16");
+        safe_g_remove (getCacheFileName ("images")+".jpg");
+    }
     
     // save thumbnail image
-    if (options.thumbnailFormat == FT_Custom) 
-        tpp->writeImage (getCacheFileName ("images")+".cust", 1);
-    else if (options.thumbnailFormat == FT_Custom16) 
-        tpp->writeImage (getCacheFileName ("images")+".cust16", 2);
-    else if (options.thumbnailFormat == FT_Jpeg) 
-        tpp->writeImage (getCacheFileName ("images")+".jpg", 3);
+    tpp->writeImage (getCacheFileName ("images"), 1);
 
     // save aehistogram
     tpp->writeAEHistogram (getCacheFileName ("aehistograms"));
@@ -694,7 +689,7 @@ void Thumbnail::_saveThumbnail () {
 void Thumbnail::saveThumbnail () 
 {
    	Glib::Mutex::Lock lock(mutex);
-	_saveThumbnail(); 
+    _saveThumbnail();
 }
 
 void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData) {
@@ -710,10 +705,10 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData) {
 }
 
 Thumbnail::~Thumbnail () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(mutex);
-	#endif
+    // TODO: Check for Linux
+    #ifdef WIN32
+    Glib::Mutex::Lock lock(mutex);
+    #endif
 
     delete [] lastImg;
     delete tpp;
@@ -753,7 +748,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
 
 #ifdef WIN32 
     Glib::ustring openFName;
-  
+
     if (destination==1) {
             openFName = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
             if (safe_file_test (openFName, Glib::FILE_TEST_EXISTS)) {
@@ -810,12 +805,12 @@ bool Thumbnail::openDefaultViewer(int destination) {
 
 bool Thumbnail::imageLoad(bool loading)
 {
-	Glib::Mutex::Lock lock(mutex);
-	bool previous = imageLoading;
-	if( loading && !previous ){
-		imageLoading = true;
-		return true;
-	}else if( !loading )
-		imageLoading = false;
+    Glib::Mutex::Lock lock(mutex);
+    bool previous = imageLoading;
+    if( loading && !previous ){
+        imageLoading = true;
+        return true;
+    }else if( !loading )
+        imageLoading = false;
     return false;
 }

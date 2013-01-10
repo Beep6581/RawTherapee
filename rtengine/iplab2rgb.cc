@@ -51,16 +51,26 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 	//gamutmap(lab);
 
 	if (monitorTransform) {
-        AlignedBufferMP<unsigned short> bufferMP(3*lab->W);
-        
-        // cmsDoTransform is relatively expensive
-        #pragma omp parallel for
-		for (int i=0; i<lab->H; i++) {
-            // pre-conversion to integer, since the output is 8 bit anyway, but LCMS is MUCH faster not converting from float
-            AlignedBuffer<unsigned short>* pBuf=bufferMP.acquire();
-            unsigned short * buffer=pBuf->data;
 
-            const int ix = i * 3 * lab->W;
+        int W = lab->W;
+        int H = lab->H;
+        unsigned char * data = image->data;
+
+        // cmsDoTransform is relatively expensive
+#ifdef _OPENMP
+#pragma omp parallel firstprivate(lab, data, W, H)
+#endif
+{
+        AlignedBuffer<unsigned short> pBuf(3*lab->W);
+        unsigned short *buffer=pBuf.data;
+
+#ifdef _OPENMP
+#pragma omp for schedule(static)
+#endif
+		for (int i=0; i<H; i++) {
+            // pre-conversion to integer, since the output is 8 bit anyway, but LCMS is MUCH faster not converting from float
+
+            const int ix = i * 3 * W;
             int iy = 0;
 
 			float* rL = lab->L[i];
@@ -69,7 +79,7 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 
             float fy,fx,fz,x_,y_,z_,LL;
 
-			for (int j=0; j<lab->W; j++) {
+			for (int j=0; j<W; j++) {
 								
 				fy = (0.00862069 * rL[j]) / 327.68 + 0.137932; // (L+16)/116
 				fx = (0.002 * ra[j]) / 327.68 + fy;
@@ -81,29 +91,35 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 				
 				z_ = Color::f2xyz(fz)*Color::D50z;
 
-                buffer[iy++] = (unsigned short)CLIP(x_* MAXVAL+0.5);
-                buffer[iy++] = (unsigned short)CLIP(y_* MAXVAL+0.5);
-                buffer[iy++] = (unsigned short)CLIP(z_* MAXVAL+0.5);
+                buffer[iy++] = (unsigned short)CLIP(x_* MAXVALF+0.5);
+                buffer[iy++] = (unsigned short)CLIP(y_* MAXVALF+0.5);
+                buffer[iy++] = (unsigned short)CLIP(z_* MAXVALF+0.5);
 			}
 
-            cmsDoTransform (monitorTransform, buffer, image->data + ix, lab->W);
+            cmsDoTransform (monitorTransform, buffer, data + ix, W);
 
-            bufferMP.release(pBuf);
+} // End of parallelization
+
 		}
-        
 	} else {
 
-		#pragma omp parallel for if (multiThread)
-		for (int i=0; i<lab->H; i++) {
+        int W = lab->W;
+        int H = lab->H;
+        unsigned char * data = image->data;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) firstprivate(lab, data, W, H) if (multiThread)
+#endif
+		for (int i=0; i<H; i++) {
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
-			int ix = i * 3 * lab->W;
+			int ix = i * 3 * W;
 
 			float R,G,B;
             float fy,fx,fz,x_,y_,z_,LL;
 
-			for (int j=0; j<lab->W; j++) {
+			for (int j=0; j<W; j++) {
 			
 				//float L1=rL[j],a1=ra[j],b1=rb[j];//for testing
 				
@@ -121,9 +137,9 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
 				
 				/* copy RGB */
 				//int R1=((int)gamma2curve[(R)]) 
-				image->data[ix++] = ((int)gamma2curve[CLIP(R)]) >> 8;
-				image->data[ix++] = ((int)gamma2curve[CLIP(G)]) >> 8;
-				image->data[ix++] = ((int)gamma2curve[CLIP(B)]) >> 8;
+				data[ix++] = ((int)gamma2curve[CLIP(R)]) >> 8;
+				data[ix++] = ((int)gamma2curve[CLIP(G)]) >> 8;
+				data[ix++] = ((int)gamma2curve[CLIP(B)]) >> 8;
 			}
 		}
 	}
@@ -152,10 +168,21 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
             cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
         lcmsMutex->unlock ();
 
+        unsigned char *data = image->data;
+
         // cmsDoTransform is relatively expensive
-		#pragma omp parallel for
-        for (int i=cy; i<cy+ch; i++) {
-            short buffer [3*cw];
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+        AlignedBuffer<unsigned short> pBuf(3*cw);
+        unsigned short *buffer=pBuf.data;
+        int condition = cy+ch;
+
+#ifdef _OPENMP
+#pragma omp for firstprivate(lab) schedule(static)
+#endif
+        for (int i=cy; i<condition; i++) {
 
             const int ix = i * 3 * cw;
             int iy = 0;
@@ -181,8 +208,9 @@ Image8* ImProcFunctions::lab2rgb (LabImage* lab, int cx, int cy, int cw, int ch,
                 buffer[iy++] = CLIP((int)(z_+0.5));
             }
 
-            cmsDoTransform (hTransform, buffer, image->data + ix, cw);
+            cmsDoTransform (hTransform, buffer, data + ix, cw);
         }
+} // End of parallelization
 
         cmsDeleteTransform(hTransform);
     } else {
@@ -249,9 +277,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
-			short* xa = (short*)image->r[i-cy];
-			short* ya = (short*)image->g[i-cy];
-			short* za = (short*)image->b[i-cy];
+			short* xa = (short*)image->r(i-cy);
+			short* ya = (short*)image->g(i-cy);
+			short* za = (short*)image->b(i-cy);
 			for (int j=cx; j<cx+cw; j++) {
 				
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
@@ -299,9 +327,9 @@ Image16* ImProcFunctions::lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int 
 
 				Color::xyz2srgb(x_,y_,z_,R,G,B);
 
-				image->r[i-cy][j-cx] = (int)gamma2curve[CLIP(R)];
-				image->g[i-cy][j-cx] = (int)gamma2curve[CLIP(G)];
-				image->b[i-cy][j-cx] = (int)gamma2curve[CLIP(B)];
+				image->r(i-cy,j-cx) = (int)gamma2curve[CLIP(R)];
+				image->g(i-cy,j-cx) = (int)gamma2curve[CLIP(G)];
+				image->b(i-cy,j-cx) = (int)gamma2curve[CLIP(B)];
 			}
 		}
 	}
@@ -332,7 +360,7 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 	
 	int t50;
 	int select_temp =1;//5003K
-	double eps=0.000000001;// not divide by zero
+	const double eps=0.000000001;// not divide by zero
 	//primaries for 7 working profiles ==> output profiles
 	// eventually to adapt primaries  if RT used special profiles !
 	if(profi=="ProPhoto") 	  {p1=0.7347; p2=0.2653; p3=0.1596; p4=0.8404; p5=0.0366; p6=0.0001;select_temp=1;}//Prophoto primaries
@@ -393,9 +421,9 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];
 			float* rb = lab->b[i];
-			short* xa = (short*)image->r[i-cy];
-			short* ya = (short*)image->g[i-cy];
-			short* za = (short*)image->b[i-cy];
+			short* xa = (short*)image->r(i-cy);
+			short* ya = (short*)image->g(i-cy);
+			short* za = (short*)image->b(i-cy);
 			for (int j=cx; j<cx+cw; j++) {
 				
 				float fy = (0.00862069 * rL[j])/327.68 + 0.137932; // (L+16)/116
@@ -443,9 +471,9 @@ Image16* ImProcFunctions::lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int
 
 				Color::xyz2srgb(x_,y_,z_,R,G,B);
 
-				image->r[i-cy][j-cx] = (int)gamma2curve[CLIP(R)];
-				image->g[i-cy][j-cx] = (int)gamma2curve[CLIP(G)];
-				image->b[i-cy][j-cx] = (int)gamma2curve[CLIP(B)];
+				image->r(i-cy,j-cx) = (int)gamma2curve[CLIP(R)];
+				image->g(i-cy,j-cx) = (int)gamma2curve[CLIP(G)];
+				image->b(i-cy,j-cx) = (int)gamma2curve[CLIP(B)];
 			}
 		}
 	}

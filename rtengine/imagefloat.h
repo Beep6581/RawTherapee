@@ -27,71 +27,51 @@
 
 namespace rtengine {
     using namespace procparams;
-//enum TypeInterpolation { TI_Nearest, TI_Bilinear };
 
 class Image8;
 class Image16;
 
-class Imagefloat : public ImageIO, public IImagefloat {
-
-    private:
-        unsigned char* unaligned;
+/*
+ * Image type used by most tools; expected range: [0.0 ; 65535.0]
+ */
+class Imagefloat : public IImagefloat, public ImageIO {
 
     public:
-        int rowstride;
-        int planestride;
 
-        int width;
-        int height;
-
-        float* data;
-        
-        float** r;
-        float** g;
-        float** b;
-  
-  
         Imagefloat ();
         Imagefloat (int width, int height);
         ~Imagefloat ();
 
-        Imagefloat* copy ();
-	
-        Image8* to8() const;
-        Image16* to16() const;
+        Imagefloat*          copy ();
 
+        Image8*              to8();
+        Image16*             to16();
 
-        Imagefloat* rotate (int deg);
-        Imagefloat* hflip ();
-        Imagefloat* vflip ();
-        //Imagefloat* resize (int nw, int nh, TypeInterpolation interp);
+        virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::HRecParams hrp);
 
-        virtual int     getW            () { return width;  }
-        virtual int     getH            () { return height; }
-        virtual void    allocate        (int width, int height);
-        virtual int     getBPS          () { return 8*sizeof(float); }
-        //virtual void    getScanline     (int row, unsigned char* buffer, int bps);
-        //virtual void    setScanline     (int row, unsigned char* buffer, int bps);
+        virtual const char*  getType     () const { return sImagefloat; }
+        virtual int          getBPS      () { return 8*sizeof(float); }
+        virtual void         getScanline (int row, unsigned char* buffer, int bps);
+        virtual void         setScanline (int row, unsigned char* buffer, int bps, float *minValue=NULL, float *maxValue=NULL);
 
         // functions inherited from IImagefloat:
-        virtual int getWidth ()  { return width; }
-        virtual int getHeight () { return height; }
         virtual Glib::Mutex& getMutex () { return mutex (); }
-        virtual cmsHPROFILE getProfile () { return getEmbeddedProfile (); }
-        virtual int getBitsPerPixel () { return 16; }
-        virtual int saveToFile (Glib::ustring fname) { return save (fname); }
-        virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) { return savePNG (fname, compression, bps); }
-        virtual int saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3) { return saveJPEG (fname, quality, subSamp); }
-        virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false) { return saveTIFF (fname, bps, uncompressed); }
-        virtual void setSaveProgressListener (ProgressListener* pl) { return setProgressListener (pl); } 
-        virtual void free () { delete this; }
-        virtual float** getRPlane () { return r; }
-        virtual float** getGPlane () { return g; }
-        virtual float** getBPlane () { return b; }
+        virtual cmsHPROFILE  getProfile () { return getEmbeddedProfile (); }
+        virtual int          getBitsPerPixel () { return 8*sizeof(float); }
+        virtual int          saveToFile (Glib::ustring fname) { return save (fname); }
+        virtual int          saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) { return savePNG (fname, compression, bps); }
+        virtual int          saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3) { return saveJPEG (fname, quality, subSamp); }
+        virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false) { return saveTIFF (fname, bps, uncompressed); }
+        virtual void         setSaveProgressListener (ProgressListener* pl) { setProgressListener (pl); }
+        virtual void         free () { delete this; }
 
-        void calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
+        virtual void         normalizeFloat(float srcMinVal, float srcMaxVal);
+        void                 normalizeFloatTo1();
+        void                 normalizeFloatTo65535();
+        void                 calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
 
-        void ExecCMSTransform(cmsHTRANSFORM hTransform);
-    };
+        void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
+};
+
 }
 #endif

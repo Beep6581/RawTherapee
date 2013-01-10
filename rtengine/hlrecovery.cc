@@ -92,9 +92,9 @@ void RawImageSource::updateHLRecoveryMap (bool needred, bool needgreen, bool nee
             if (cr<SCALE*SCALE && needred) rec[0][i][j] = INT_MAX; else rec[0][i][j] = sumr / SCALE/SCALE;
             if (cg<SCALE*SCALE && needgreen) rec[1][i][j] = INT_MAX; else rec[1][i][j] = sumg / SCALE/SCALE;
             if (cb<SCALE*SCALE && needblue) rec[2][i][j] = INT_MAX; else rec[2][i][j] = sumb / SCALE/SCALE;
-            ds->r[i][j] = sumr / SCALE/SCALE;
-            ds->g[i][j] = sumg / SCALE/SCALE;
-            ds->b[i][j] = sumb / SCALE/SCALE;
+            ds->r(i,j) = sumr / SCALE/SCALE;
+            ds->g(i,j) = sumg / SCALE/SCALE;
+            ds->b(i,j) = sumb / SCALE/SCALE;
         }
     }
     for (int i=0; i<SCALE; i++) {
@@ -241,16 +241,16 @@ if (full) {
                                 
     for (int i=0; i<dh; i++)
         for (int j=0; j<dw; j++) {
-            hrmap[0][i][j] = (double)rec[0][i][j] / ds->r[i][j];
-            hrmap[1][i][j] = (double)rec[1][i][j] / ds->g[i][j];
-            hrmap[2][i][j] = (double)rec[2][i][j] / ds->b[i][j];
+            hrmap[0][i][j] = (double)rec[0][i][j] / ds->r(i,j);
+            hrmap[1][i][j] = (double)rec[1][i][j] / ds->g(i,j);
+            hrmap[2][i][j] = (double)rec[2][i][j] / ds->b(i,j);
         }
     
 /*    for (int i=0; i<dh; i++)
         for (int j=0; j<dh; j++) {
-            ds->r[i][j] = CLIP (rec[0][i][j]);
-            ds->g[i][j] = CLIP (rec[1][i][j]);
-            ds->b[i][j] = CLIP (rec[2][i][j]);
+            ds->r(i,j) = CLIP (rec[0][i][j]);
+            ds->g(i,j) = CLIP (rec[1][i][j]);
+            ds->b(i,j) = CLIP (rec[2][i][j]);
         }
     ds->save ("test.png");
 */

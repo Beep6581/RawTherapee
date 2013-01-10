@@ -342,7 +342,7 @@ else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,cust
     if(params.icm.gamma != "default" || params.icm.freegamma) { // if select gamma output between BT709, sRGB, linear, low, high, 2.2 , 1.8
         cmsMLU *DescriptionMLU, *CopyrightMLU, *DmndMLU, *DmddMLU;// for modification TAG
 
-        cmsToneCurve* GammaTRC[3];
+        cmsToneCurve* GammaTRC[3] = { NULL, NULL, NULL };
         cmsFloat64Number Parameters[7];
         double ga0,ga1,ga2,ga3,ga4,ga5,ga6;
        // wchar_t string[80] ;
@@ -496,6 +496,7 @@ else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,cust
 				
             }
         }
+        if (GammaTRC[0]) cmsFreeToneCurve(GammaTRC[0]);
     }
     else {
         // if Default gamma mode: we use the profile selected in the "Output profile" combobox;

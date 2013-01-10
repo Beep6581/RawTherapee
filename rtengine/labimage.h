@@ -19,8 +19,6 @@
 #ifndef _LABIMAGE_H_
 #define _LABIMAGE_H_
 
-#include "image16.h"
-
 namespace rtengine {
 
 class LabImage {

@@ -52,7 +52,7 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
     #pragma omp for
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
-            map[i][j] = lumi[0]*std::max(img->r[i][j],0.f) + lumi[1]*std::max(img->g[i][j],0.f) + lumi[2]*std::max(img->b[i][j],0.f);
+            map[i][j] = lumi[0]*std::max(img->r(i,j),0.f) + lumi[1]*std::max(img->g(i,j),0.f) + lumi[2]*std::max(img->b(i,j),0.f);
 		}
 
     if (!hq) {

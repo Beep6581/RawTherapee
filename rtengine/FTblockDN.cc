@@ -221,9 +221,9 @@ namespace rtengine {
 						for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
 							int j1 = j - tileleft;
 							
-							float X = gain*src->r[i][j];
-							float Y = gain*src->g[i][j];
-							float Z = gain*src->b[i][j];
+							float X = gain*src->r(i,j);
+							float Y = gain*src->g(i,j);
+							float Z = gain*src->b(i,j);
 							
 							X = X<65535.0f ? gamcurve[X] : (Color::gamma((double)X/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
 							Y = Y<65535.0f ? gamcurve[Y] : (Color::gamma((double)Y/65535.0, gam, gamthresh, gamslope, 1.0, 0.0)*32768.0f);
@@ -245,9 +245,9 @@ namespace rtengine {
 							int j1 = j - tileleft;
 							
 							//TODO: use embedded profile if present, instead of assuming sRGB
-							float rtmp = Color::igammatab_srgb[ src->r[i][j] ];
-							float gtmp = Color::igammatab_srgb[ src->g[i][j] ];
-							float btmp = Color::igammatab_srgb[ src->b[i][j] ];
+							float rtmp = Color::igammatab_srgb[ src->r(i,j) ];
+							float gtmp = Color::igammatab_srgb[ src->g(i,j) ];
+							float btmp = Color::igammatab_srgb[ src->b(i,j) ];
 							
 							//perhaps use LCH or YCrCb ???
 							float X = xyz_sRGB[0][0]*rtmp + xyz_sRGB[0][1]*gtmp + xyz_sRGB[0][2]*btmp;
@@ -488,9 +488,9 @@ namespace rtengine {
 														
 							float factor = Vmask[i1]*Hmask[j1]/gain;
 							
-							dsttmp->r[i][j] += factor*X;
-							dsttmp->g[i][j] += factor*Y;
-							dsttmp->b[i][j] += factor*Z;
+							dsttmp->r(i,j) += factor*X;
+							dsttmp->g(i,j) += factor*Y;
+							dsttmp->b(i,j) += factor*Z;
 							
 						}
 					}
@@ -518,9 +518,9 @@ namespace rtengine {
 							float gtmp = sRGB_xyz[1][0]*X + sRGB_xyz[1][1]*Y + sRGB_xyz[1][2]*Z;
 							float btmp = sRGB_xyz[2][0]*X + sRGB_xyz[2][1]*Y + sRGB_xyz[2][2]*Z;
 							
-							dsttmp->r[i][j] += factor*rtmp;
-							dsttmp->g[i][j] += factor*gtmp;
-							dsttmp->b[i][j] += factor*btmp;
+							dsttmp->r(i,j) += factor*rtmp;
+							dsttmp->g(i,j) += factor*gtmp;
+							dsttmp->b(i,j) += factor*btmp;
 							
 						}
 					}

@@ -92,6 +92,8 @@ public:
 	const static float D50x, D50z;
 	const static double u0, v0;
 
+	static cmsToneCurve* linearGammaTRC;
+
 	static LUTf cachef;
 	static LUTf gamma2curve;
 
@@ -139,6 +141,9 @@ public:
 									}
 
 	// gamma functions on [0,65535] based on look-up tables
+	static inline float  gamma_srgb       (char x) { return gammatab_srgb[x]; }
+	static inline float  gamma            (char x) { return gammatab[x]; }
+	static inline float  igamma_srgb      (char x) { return igammatab_srgb[x]; }
 	static inline float  gamma_srgb       (int x) { return gammatab_srgb[x]; }
 	static inline float  gamma            (int x) { return gammatab[x]; }
 	static inline float  igamma_srgb      (int x) { return igammatab_srgb[x]; }

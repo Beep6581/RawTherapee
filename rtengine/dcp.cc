@@ -243,11 +243,11 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
         for (int y=0; y<pImg->height; y++) {
             float newr, newg, newb;
             for (int x=0; x<pImg->width; x++) {
-                newr = mat[0][0]*pImg->r[y][x] + mat[0][1]*pImg->g[y][x] + mat[0][2]*pImg->b[y][x];
-                newg = mat[1][0]*pImg->r[y][x] + mat[1][1]*pImg->g[y][x] + mat[1][2]*pImg->b[y][x];
-                newb = mat[2][0]*pImg->r[y][x] + mat[2][1]*pImg->g[y][x] + mat[2][2]*pImg->b[y][x];
+                newr = mat[0][0]*pImg->r(y,x) + mat[0][1]*pImg->g(y,x) + mat[0][2]*pImg->b(y,x);
+                newg = mat[1][0]*pImg->r(y,x) + mat[1][1]*pImg->g(y,x) + mat[1][2]*pImg->b(y,x);
+                newb = mat[2][0]*pImg->r(y,x) + mat[2][1]*pImg->g(y,x) + mat[2][2]*pImg->b(y,x);
 
-                pImg->r[y][x] = newr; pImg->g[y][x] = newg; pImg->b[y][x] = newb;
+                pImg->r(y,x) = newr; pImg->g(y,x) = newg; pImg->b(y,x) = newb;
             }
         }
     }
@@ -284,9 +284,9 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
         for (int y=0; y<pImg->height; y++) {
             float newr, newg, newb, h,s,v,hs,ss,vs;
             for (int x=0; x<pImg->width; x++) {
-                newr = m2ProPhoto[0][0]*pImg->r[y][x] + m2ProPhoto[0][1]*pImg->g[y][x] + m2ProPhoto[0][2]*pImg->b[y][x];
-                newg = m2ProPhoto[1][0]*pImg->r[y][x] + m2ProPhoto[1][1]*pImg->g[y][x] + m2ProPhoto[1][2]*pImg->b[y][x];
-                newb = m2ProPhoto[2][0]*pImg->r[y][x] + m2ProPhoto[2][1]*pImg->g[y][x] + m2ProPhoto[2][2]*pImg->b[y][x];
+                newr = m2ProPhoto[0][0]*pImg->r(y,x) + m2ProPhoto[0][1]*pImg->g(y,x) + m2ProPhoto[0][2]*pImg->b(y,x);
+                newg = m2ProPhoto[1][0]*pImg->r(y,x) + m2ProPhoto[1][1]*pImg->g(y,x) + m2ProPhoto[1][2]*pImg->b(y,x);
+                newb = m2ProPhoto[2][0]*pImg->r(y,x) + m2ProPhoto[2][1]*pImg->g(y,x) + m2ProPhoto[2][2]*pImg->b(y,x);
 
                 // if point is in negative area, just the matrix, but not the LUT
                 if (hasLUT && newr>=0 && newg>=0 && newb>=0) {
@@ -447,9 +447,9 @@ void DCPProfile::Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::us
                 // tone curve
                 if (useToneCurve) toneCurve.Apply(newr, newg, newb);
 
-                pImg->r[y][x] = m2Work[0][0]*newr + m2Work[0][1]*newg + m2Work[0][2]*newb;
-                pImg->g[y][x] = m2Work[1][0]*newr + m2Work[1][1]*newg + m2Work[1][2]*newb;
-                pImg->b[y][x] = m2Work[2][0]*newr + m2Work[2][1]*newg + m2Work[2][2]*newb;
+                pImg->r(y,x) = m2Work[0][0]*newr + m2Work[0][1]*newg + m2Work[0][2]*newb;
+                pImg->g(y,x) = m2Work[1][0]*newr + m2Work[1][1]*newg + m2Work[1][2]*newb;
+                pImg->b(y,x) = m2Work[2][0]*newr + m2Work[2][1]*newg + m2Work[2][2]*newb;
             }
         }
     }
@@ -460,7 +460,7 @@ void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustri
     TMatrix mWork = iccStore->workingSpaceInverseMatrix (workingSpace);
 
     double mXYZCAM[3][3]; 
-    const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
+    // unused //const HSBModify* tableBase=GetBestProfile(preferredProfile,mXYZCAM);
 
     useToneCurve&=toneCurve;
 
@@ -476,14 +476,14 @@ void DCPProfile::Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustri
     for (int y=0; y<pImg->height; y++) {
         float newr, newg, newb;
         for (int x=0; x<pImg->width; x++) {
-            newr = mat[0][0]*pImg->r[y][x] + mat[0][1]*pImg->g[y][x] + mat[0][2]*pImg->b[y][x];
-            newg = mat[1][0]*pImg->r[y][x] + mat[1][1]*pImg->g[y][x] + mat[1][2]*pImg->b[y][x];
-            newb = mat[2][0]*pImg->r[y][x] + mat[2][1]*pImg->g[y][x] + mat[2][2]*pImg->b[y][x];
+            newr = mat[0][0]*pImg->r(y,x) + mat[0][1]*pImg->g(y,x) + mat[0][2]*pImg->b(y,x);
+            newg = mat[1][0]*pImg->r(y,x) + mat[1][1]*pImg->g(y,x) + mat[1][2]*pImg->b(y,x);
+            newb = mat[2][0]*pImg->r(y,x) + mat[2][1]*pImg->g(y,x) + mat[2][2]*pImg->b(y,x);
 
             // tone curve
             if (useToneCurve) toneCurve.Apply(newr, newg, newb);
 
-            pImg->r[y][x] = CLIP((int)newr); pImg->g[y][x] = CLIP((int)newg); pImg->b[y][x] = CLIP((int)newb);
+            pImg->r(y,x) = CLIP((int)newr); pImg->g(y,x) = CLIP((int)newg); pImg->b(y,x) = CLIP((int)newb);
         }
     }
 }

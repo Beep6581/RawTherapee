@@ -24,48 +24,39 @@
 
 #include "imageio.h"
 #include "rtengine.h"
+#include "imagefloat.h"
 
 namespace rtengine {
 
-class Image8 : public ImageIO, public IImage8 {
+class Image8 : public IImage8, public ImageIO {
 
     public:
-        unsigned char* data;
-        int width;
-        int height;
-        
+
         Image8 ();
         Image8 (int width, int height);
        ~Image8 ();
-     
-        unsigned char r (int row, int col);
-        unsigned char g (int row, int col);
-        unsigned char b (int row, int col);
-        void r (int row, int col, unsigned char val);
-        void g (int row, int col, unsigned char val);
-        void b (int row, int col, unsigned char val);
-    
-        virtual int     getW            () { return width;  }
-        virtual int     getH            () { return height; }
-        virtual void    allocate        (int width, int height);
-        virtual int     getBPS          () { return 8; }
-        virtual void    getScanline     (int row, unsigned char* buffer, int bps);
-        virtual void    setScanline     (int row, unsigned char* buffer, int bps);
-    
+
+        Image8*              copy ();
+
+        virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::HRecParams hrp);
+
+        virtual const char*  getType     () const { return sImage8; }
+        virtual int          getBPS      () { return 8*sizeof(unsigned char); }
+        virtual void         getScanline (int row, unsigned char* buffer, int bps);
+        virtual void         setScanline (int row, unsigned char* buffer, int bps, float *minValue=NULL, float *maxValue=NULL);
+
         // functions inherited from IImage*:
         virtual Glib::Mutex& getMutex () { return mutex (); }
-        virtual cmsHPROFILE getProfile () { return getEmbeddedProfile (); }
-        virtual int getWidth ()  { return width; }
-        virtual int getHeight () { return height; }
-        virtual int getBitsPerPixel () { return 16; }
-        virtual int saveToFile (Glib::ustring fname) { return save (fname); }
-        virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) { return savePNG (fname, compression, bps); }
-        virtual int saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3) { return saveJPEG (fname, quality, subSamp); }
-        virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false) { return saveTIFF (fname, bps, uncompressed); }
-        virtual void setSaveProgressListener (ProgressListener* pl) { setProgressListener (pl); } 
-        virtual void free () { delete this; }
-        virtual const unsigned char* getData () { return data; }
+        virtual cmsHPROFILE  getProfile () { return getEmbeddedProfile (); }
+        virtual int          getBitsPerPixel () { return 8*sizeof(unsigned char); }
+        virtual int          saveToFile (Glib::ustring fname) { return save (fname); }
+        virtual int          saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) { return savePNG (fname, compression, bps); }
+        virtual int          saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3) { return saveJPEG (fname, quality, subSamp); }
+        virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false) { return saveTIFF (fname, bps, uncompressed); }
+        virtual void         setSaveProgressListener (ProgressListener* pl) { setProgressListener (pl); }
+        virtual void         free () { delete this; }
 
 };
+
 }
 #endif

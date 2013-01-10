@@ -19,28 +19,89 @@
 #ifndef _ALIGNEDBUFFER_
 #define _ALIGNEDBUFFER_
 #include <stdint.h>
+#include <cstdlib>
 #include <vector>
 #include <glibmm.h>
 
 // Aligned buffer that should be faster
 template <class T> class AlignedBuffer {
 
-    private:
-      T* real ;
-      
-    public:
-      T* data ;
+private:
+    void* real ;
+    char alignment;
+    size_t allocatedSize;
+
+public:
+    T* data ;
     bool inUse;
 
-        AlignedBuffer (size_t size, size_t align=16) {
-            real = new T[size+2*align];
-            data = (T*)((uintptr_t)real + (align-((uintptr_t)real)%align));
-        inUse=true;
-        }
+    /* size is the number of elements of size T, i.e. allocated size will be sizeof(T)*size ; set it to 0 if you want to defer the allocation
+     * align is expressed in bytes; SSE instructions need 128 bits alignment, which mean 16 bytes, which is the default value
+     */
+    AlignedBuffer (size_t size=0, size_t align=16) : real(NULL), alignment(align), allocatedSize(0), data(NULL), inUse(false) {
+        if (size)
+            resize(size);
+    }
 
-        ~AlignedBuffer () {
-            delete [] real;
+    ~AlignedBuffer () {
+        if (real) free(real);
+    }
+
+    /* Allocate the the "size" amount of elements of "structSize" length each
+     * params:
+     * @size: number of elements to allocate
+     * @structSize: if non null, will let you override the default struct's size (unit: byte)
+     */
+    bool resize(size_t size, int structSize=0) {
+        if (allocatedSize != size) {
+            if (!size) {
+                // The user want to free the memory
+                if (real) free(real);
+                real = NULL;
+                data = NULL;
+                inUse = false;
+            }
+            else {
+                int sSize = structSize ? structSize : sizeof(T);
+                allocatedSize = size*sSize;
+                real = realloc(real, allocatedSize+alignment);
+                if (real) {
+                    //data = (T*)( (uintptr_t)real + (alignment-((uintptr_t)real)%alignment) );
+                    data = (T*)( ( uintptr_t(real) + uintptr_t(alignment-1)) / alignment * alignment);
+                    inUse = true;
+                }
+                else {
+                    allocatedSize = 0;
+                    data = NULL;
+                    inUse = false;
+                    return false;
+                }
+            }
         }
+        return true;
+    }
+
+    void swap(AlignedBuffer<T> &other) {
+        void *tmpReal = other.real;
+        other.real = real;
+        real = tmpReal;
+
+        char tmpAlignt = other.alignment;
+        other.alignment = alignment;
+        alignment = tmpAlignt;
+
+        size_t tmpAllocSize = other.allocatedSize;
+        other.allocatedSize = allocatedSize;
+        allocatedSize = tmpAllocSize;
+
+        T* tmpData = other.data;
+        other.data = data;
+        data = tmpData;
+
+        bool tmpInUse = other.inUse;
+        other.inUse = inUse;
+        inUse = tmpInUse;
+    }
 };
 
 // Multi processor version, use with OpenMP

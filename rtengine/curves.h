@@ -27,6 +27,7 @@
 #include "../rtgui/myflatcurve.h"
 #include "../rtgui/mydiagonalcurve.h"
 #include "color.h"
+#include "procparams.h"
 
 #include "LUT.h"
 
@@ -179,7 +180,7 @@ class CurveFactory {
 
   public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-							  double gamma_, bool igamma_, ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2, LUTu & histogram, LUTu & histogramCropped,
+							  double gamma_, bool igamma_, procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2, LUTu & histogram, LUTu & histogramCropped,
 							  LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2, int skip=1);
 	static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili,  double saturation, double rstprotection, const std::vector<double>& acurvePoints,
 								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& cclurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, 
@@ -194,9 +195,9 @@ class CurveFactory {
 					int skip=1);
 
 	static void curveLightBrightColor (
-					ColorAppearanceParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
-					ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
-					ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,				
+					procparams::ColorAppearanceParams::eTCModeId curveMode, const std::vector<double>& curvePoints,
+					procparams::ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
+					procparams::ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,
 					LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram,
 					LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,
 					ColorAppearance & outColCurve1,

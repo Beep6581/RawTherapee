@@ -128,9 +128,9 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
             for (int ii = ii0; ii < ii1; ii++) {
                 int k = ii - ii0;
             
-                r += w[k] * src->r[ii][j];
-                g += w[k] * src->g[ii][j];
-                b += w[k] * src->b[ii][j];
+                r += w[k] * src->r(ii,j);
+                g += w[k] * src->g(ii,j);
+                b += w[k] * src->b(ii,j);
             }
             
             lr[j] = r;
@@ -138,7 +138,7 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
             lb[j] = b;
         }
         
-        // Do horisontal interpolation
+        // Do horizontal interpolation
         for(int j = 0; j < dst->width; j++) {
 
             float * wh = wwh + support * j;
@@ -153,9 +153,9 @@ static void Lanczos(const Image16* src, Image16* dst, float scale)
                 b += wh[k] * lb[jj];
             }
             
-            dst->r[i][j] = CLIP(static_cast<int>(r));
-            dst->g[i][j] = CLIP(static_cast<int>(g));
-            dst->b[i][j] = CLIP(static_cast<int>(b));
+            dst->r(i,j) = CLIP(static_cast<int>(r));
+            dst->g(i,j) = CLIP(static_cast<int>(g));
+            dst->b(i,j) = CLIP(static_cast<int>(b));
         }
     }
     
@@ -219,13 +219,13 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
                     for (int x=0; x<4; x++)
                         for (int y=0; y<4; y++) {
                             float w = wx[x]*wy[y];
-                            r += w*src->r[ys+y][xs+x];
-                            g += w*src->g[ys+y][xs+x];
-                            b += w*src->b[ys+y][xs+x];
+                            r += w*src->r(ys+y,xs+x);
+                            g += w*src->g(ys+y,xs+x);
+                            b += w*src->b(ys+y,xs+x);
                         }
-                    dst->r[i][j] = CLIP(r);
-                    dst->g[i][j] = CLIP(g);
-                    dst->b[i][j] = CLIP(b);
+                    dst->r(i,j) = CLIP(r);
+                    dst->g(i,j) = CLIP(g);
+                    dst->b(i,j) = CLIP(b);
                 }
                 else {
                     xc = LIM(xc, 0, src->width-1);
@@ -236,9 +236,9 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
                     int ny = yc + 1;
                     if (ny >= src->height)
                         ny = yc;
-                    dst->r[i][j] = (1-Dx)*(1-Dy)*src->r[yc][xc] + (1-Dx)*Dy*src->r[ny][xc] + Dx*(1-Dy)*src->r[yc][nx] + Dx*Dy*src->r[ny][nx];
-                    dst->g[i][j] = (1-Dx)*(1-Dy)*src->g[yc][xc] + (1-Dx)*Dy*src->g[ny][xc] + Dx*(1-Dy)*src->g[yc][nx] + Dx*Dy*src->g[ny][nx];
-                    dst->b[i][j] = (1-Dx)*(1-Dy)*src->b[yc][xc] + (1-Dx)*Dy*src->b[ny][xc] + Dx*(1-Dy)*src->b[yc][nx] + Dx*Dy*src->b[ny][nx];
+                    dst->r(i,j) = (1-Dx)*(1-Dy)*src->r(yc,xc) + (1-Dx)*Dy*src->r(ny,xc) + Dx*(1-Dy)*src->r(yc,nx) + Dx*Dy*src->r(ny,nx);
+                    dst->g(i,j) = (1-Dx)*(1-Dy)*src->g(yc,xc) + (1-Dx)*Dy*src->g(ny,xc) + Dx*(1-Dy)*src->g(yc,nx) + Dx*Dy*src->g(ny,nx);
+                    dst->b(i,j) = (1-Dx)*(1-Dy)*src->b(yc,xc) + (1-Dx)*Dy*src->b(ny,xc) + Dx*(1-Dy)*src->b(yc,nx) + Dx*Dy*src->b(ny,nx);
                 }
             }
         }
@@ -259,9 +259,9 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
                 int nx = sx+1;
                 if (nx>=src->width)
                     nx = sx;
-                dst->r[i][j] = (1-dx)*(1-dy)*src->r[sy][sx] + (1-dx)*dy*src->r[ny][sx] + dx*(1-dy)*src->r[sy][nx] + dx*dy*src->r[ny][nx];
-                dst->g[i][j] = (1-dx)*(1-dy)*src->g[sy][sx] + (1-dx)*dy*src->g[ny][sx] + dx*(1-dy)*src->g[sy][nx] + dx*dy*src->g[ny][nx];
-                dst->b[i][j] = (1-dx)*(1-dy)*src->b[sy][sx] + (1-dx)*dy*src->b[ny][sx] + dx*(1-dy)*src->b[sy][nx] + dx*dy*src->b[ny][nx];
+                dst->r(i,j) = (1-dx)*(1-dy)*src->r(sy,sx) + (1-dx)*dy*src->r(ny,sx) + dx*(1-dy)*src->r(sy,nx) + dx*dy*src->r(ny,nx);
+                dst->g(i,j) = (1-dx)*(1-dy)*src->g(sy,sx) + (1-dx)*dy*src->g(ny,sx) + dx*(1-dy)*src->g(sy,nx) + dx*dy*src->g(ny,nx);
+                dst->b(i,j) = (1-dx)*(1-dy)*src->b(sy,sx) + (1-dx)*dy*src->b(ny,sx) + dx*(1-dy)*src->b(sy,nx) + dx*dy*src->b(ny,nx);
             }
         }
     }
@@ -274,9 +274,9 @@ void ImProcFunctions::resize (Image16* src, Image16* dst, float dScale) {
             for (int j=0; j<dst->width; j++) {
                 int sx = j/dScale;
                 sx = LIM(sx, 0, src->width-1);
-                dst->r[i][j] = src->r[sy][sx];
-                dst->g[i][j] = src->g[sy][sx];
-                dst->b[i][j] = src->b[sy][sx];
+                dst->r(i,j) = src->r(sy,sx);
+                dst->g(i,j) = src->g(sy,sx);
+                dst->b(i,j) = src->b(sy,sx);
             }
         }
     }

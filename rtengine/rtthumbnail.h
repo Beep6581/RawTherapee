@@ -23,7 +23,9 @@
 #include "procparams.h"
 #include <glibmm.h>
 #include <lcms2.h>
+#include "image8.h"
 #include "image16.h"
+#include "imagefloat.h"
 
 namespace rtengine {
 
@@ -40,7 +42,7 @@ namespace rtengine {
             static unsigned short *igammatab;
             static unsigned char *gammatab;
 
-            Image16* thumbImg; 
+            ImageIO* thumbImg;
             double camwbRed;
             double camwbGreen;
             double camwbBlue;
@@ -98,7 +100,55 @@ namespace rtengine {
 
             bool readAEHistogram  (const Glib::ustring& fname);
             bool writeAEHistogram (const Glib::ustring& fname);
-    };   
+
+
+            // Hombre: ... let's hope that proper template can make this cleaner
+
+            static ImageIO* resizeToSameType(int nw, int nh, TypeInterpolation interp, ImageIO* srcImg) {
+                ImageIO* imgPtr;
+                if (srcImg->getType() == sImage8) {
+                    Image8* castedSrcImg = static_cast<Image8*>(srcImg);
+                    Image8* img8 = new Image8 (nw, nh);
+                    castedSrcImg->resizeImgTo(nw, nh, interp, img8);
+                    imgPtr = img8;
+                }
+                else if (srcImg->getType() == sImage16) {
+                    Image16* castedSrcImg = static_cast<Image16*>(srcImg);
+                    Image16* img16 = new Image16 (nw, nh);
+                    castedSrcImg->resizeImgTo(nw, nh, interp, img16);
+                    imgPtr = img16;
+                }
+                else if (srcImg->getType() == sImagefloat) {
+                    Imagefloat* castedSrcImg = static_cast<Imagefloat*>(srcImg);
+                    Imagefloat* imgfloat = new Imagefloat (nw, nh);
+                    castedSrcImg->resizeImgTo(nw, nh, interp, imgfloat);
+                    imgPtr = imgfloat;
+                }
+                return imgPtr;
+            }
+
+            template<class IC>
+            static IC* resizeTo(int nw, int nh, TypeInterpolation interp, ImageIO* srcImg) {
+
+                IC* imgPtr = new IC (nw, nh);
+
+               // Hombre: ... let's hope that proper template can make this cleaner
+
+               if (srcImg->getType() == sImage8) {
+                   Image8* castedSrcImg = static_cast<Image8*>(srcImg);
+                   castedSrcImg->resizeImgTo<>(nw, nh, interp, imgPtr);
+               }
+               else if (srcImg->getType() == sImage16) {
+                   Image16* castedSrcImg = static_cast<Image16*>(srcImg);
+                   castedSrcImg->resizeImgTo<>(nw, nh, interp, imgPtr);
+               }
+               else if (srcImg->getType() == sImagefloat) {
+                   Imagefloat* castedSrcImg = static_cast<Imagefloat*>(srcImg);
+                   castedSrcImg->resizeImgTo<>(nw, nh, interp, imgPtr);
+               }
+               return imgPtr;
+           };
+};
 }
 
 #endif

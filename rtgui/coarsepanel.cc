@@ -19,14 +19,13 @@
 #include "coarsepanel.h"
 #include "rtimage.h"
 
-extern Glib::ustring argv0;
-
 using namespace rtengine;
 using namespace rtengine::procparams;
 
 CoarsePanel::CoarsePanel () : ToolPanel () {
 
     degree = 0;
+    degreechanged = true;
 
     Gtk::Image* rotateli = Gtk::manage (new RTImage ("stock-rotate-270.png"));
     rotate_left = Gtk::manage (new Gtk::Button ());
@@ -69,15 +68,16 @@ void CoarsePanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
 
+    degree = pp->coarse.rotate;
+
     if (pedited) {
-        degree = 0;
         hflip->set_active (pedited->coarse.hflip ? pp->coarse.hflip : false);
         vflip->set_active (pedited->coarse.vflip ? pp->coarse.vflip : false);
+        degreechanged = false;
         oldhflip = pp->coarse.hflip;
         oldvflip = pp->coarse.vflip;
     }
     else {
-        degree = pp->coarse.rotate;
         hflip->set_active (pp->coarse.hflip);
         vflip->set_active (pp->coarse.vflip);
     }
@@ -86,19 +86,14 @@ void CoarsePanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 void CoarsePanel::write (ProcParams* pp, ParamsEdited* pedited) {
 
-    pp->coarse.rotate = degree;
-    
     if (pedited) {
-        pedited->coarse.rotate = degree!=0;
+        pedited->coarse.rotate = degreechanged;
         pedited->coarse.hflip = oldhflip != hflip->get_active ();
         pedited->coarse.vflip = oldvflip != vflip->get_active ();
-        pp->coarse.hflip = oldhflip != hflip->get_active ();
-        pp->coarse.vflip = oldvflip != vflip->get_active ();
     }
-    else {
-        pp->coarse.hflip = hflip->get_active ();
-        pp->coarse.vflip = vflip->get_active ();
-    }
+    pp->coarse.rotate = degree;
+    pp->coarse.hflip = hflip->get_active ();
+    pp->coarse.vflip = vflip->get_active ();
 }
 
 void CoarsePanel::initBatchBehavior () {
@@ -113,8 +108,9 @@ void CoarsePanel::initBatchBehavior () {
 }
 
 void CoarsePanel::rotateLeft () {
-    
+
     degree = (degree + 270) % 360;
+    degreechanged = true;
     if (listener)
         listener->panelChanged (EvCTRotate, Glib::ustring::format (degree));
 }
@@ -122,6 +118,7 @@ void CoarsePanel::rotateLeft () {
 void CoarsePanel::rotateRight () {
 
     degree = (degree + 90) % 360;
+    degreechanged = true;
     if (listener)
         listener->panelChanged (EvCTRotate, Glib::ustring::format (degree));
 }

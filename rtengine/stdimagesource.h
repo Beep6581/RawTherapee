@@ -26,53 +26,51 @@ namespace rtengine {
 class StdImageSource : public ImageSource {
 
     protected:
-        Image16* img;
+        ImageIO* img;
         ColorTemp wb;
         ProgressListener* plistener;
         bool full;
         float** hrmap[3];
-		char** needhr;
+        char** needhr;
         int max[3];
-
-        void transform           (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2);
-        void transformPixel      (int x, int y, int tran, int& tx, int& ty);
         bool rgbSourceModified;
+
+        //void transformPixel             (int x, int y, int tran, int& tx, int& ty);
+        void getSampleFormat (Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement);
+
     public:
         StdImageSource ();
         ~StdImageSource ();
-    
+
         int         load        (Glib::ustring fname, bool batch = false);
         void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
-        ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
+        ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran);
+
         bool        isWBProviderReady () { return true; };
 
         void        getAutoExpHistogram (LUTu &histogram, int& histcompr);
-        
+
         double      getDefGain  () { return 0.0; }
         double      getGamma    () { return 0.0; }
-        
+
         void        getFullSize (int& w, int& h, int tr = TR_NONE);
         void        getSize     (int tran, PreviewProps pp, int& w, int& h);
 
         ImageData*  getImageData () { return idata; }
+        ImageIO*    getImageIO   () { return img; }
         ImageMatrices* getImageMatrices () { return (ImageMatrices*)NULL; }
         bool        isRAW() const { return false; }
 
         void        setProgressListener (ProgressListener* pl) { plistener = pl; }
 
-        void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw);// RAWParams raw will not be used for non-raw files (see imagesource.h)
-        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded);
-		static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
-
+        void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw);// RAWParams raw will not be used for non-raw files (see imagesource.h)
+        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat);
+        //static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded);
 
         static inline double intpow (double a, int b) { double r = 1.0; for (int i=0; i<b; i++) r *= a; return r; }
         bool        IsrgbSourceModified() {return rgbSourceModified;}
-    protected:
-        void    getImage_   (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp);
-        void    hflip       (Imagefloat* im);
-        void    vflip       (Imagefloat* im);
 };
 }
 #endif

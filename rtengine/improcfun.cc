@@ -75,10 +75,10 @@ void ImProcFunctions::initCache () {
 
     for (int i=0; i<maxindex; i++) {
         if (i>Color::eps_max) {
-			cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVAL) ));
+            cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVALD) ));
         }
         else {
-			cachef[i] = 327.68*((Color::kappa*i/MAXVAL+16.0)/116.0);
+            cachef[i] = 327.68*((Color::kappa*i/MAXVALD+16.0)/116.0);
         }
 	}
 
@@ -114,9 +114,9 @@ void ImProcFunctions::firstAnalysisThread (Imagefloat* original, Glib::ustring w
     for (int i=row_from; i<row_to; i++) {
         for (int j=0; j<W; j++) {
       
-            int r = original->r[i][j];
-            int g = original->g[i][j];
-            int b = original->b[i][j];
+            int r = original->r(i,j);
+            int g = original->g(i,j);
+            int b = original->b(i,j);
 
             int y = CLIP((int)(lumimul[0] * r + lumimul[1] * g + lumimul[2] * b)) ;
 
@@ -155,9 +155,9 @@ void ImProcFunctions::CAT02 (Imagefloat* baseImg, const ProcParams* params)
  
  	for (int i=0; i<fh; i++) {
 		for (int j=0; j<fw; j++) {
-			float r = baseImg->r[i][j];
-			float g = baseImg->g[i][j];
-			float b = baseImg->b[i][j];
+			float r = baseImg->r(i,j);
+			float g = baseImg->g(i,j);
+			float b = baseImg->b(i,j);
 			
 			float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
 			float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
@@ -165,11 +165,11 @@ void ImProcFunctions::CAT02 (Imagefloat* baseImg, const ProcParams* params)
 			float Xcam=CAM02BB00* x +CAM02BB01* y + CAM02BB02* z ;
 			float Ycam=CAM02BB10* x +CAM02BB11* y + CAM02BB12* z ;
 			float Zcam=CAM02BB20* x +CAM02BB21* y + CAM02BB22* z ;	
-			baseImg->r[i][j] = xyzto[0][0] * Xcam + xyzto[0][1] * Ycam + xyzto[0][2] * Zcam;
-			baseImg->g[i][j] = xyzto[1][0] * Xcam + xyzto[1][1] * Ycam + xyzto[1][2] * Zcam;
-			baseImg->b[i][j] = xyzto[2][0] * Xcam + xyzto[2][1] * Ycam + xyzto[2][2] * Zcam;			
-								}
-							}
+			baseImg->r(i,j) = xyzto[0][0] * Xcam + xyzto[0][1] * Ycam + xyzto[0][2] * Zcam;
+			baseImg->g(i,j) = xyzto[1][0] * Xcam + xyzto[1][1] * Ycam + xyzto[1][2] * Zcam;
+			baseImg->b(i,j) = xyzto[2][0] * Xcam + xyzto[2][1] * Ycam + xyzto[2][2] * Zcam;
+		}
+	}
 }
 */
 void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* params, LUTu & histogram, double gamma) {
@@ -778,7 +778,7 @@ if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.to
 if(settings->autocielab) {
 //if(params->colorappearance.sharpcie) {
 
-//all this treatments reduce artefacts, but can leed to slighty  different results
+//all this treatments reduce artifacts, but can lead to slightly  different results
 if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
 
 if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastcam(ncie);
@@ -788,7 +788,7 @@ if(params->sharpening.enabled)  if(execsharp) {ImProcFunctions::sharpeningcam (n
 if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, true);//contrast by detail adapted to CIECAM
 
 		   float Qredi= ( 4.0 / c_)  * ( a_w + 4.0 );
-		   float co_e=(pow(f_l,0.25));
+		   float co_e=(pow(f_l,0.25f));
 
 #ifndef _DEBUG	
 #pragma omp parallel default(shared) firstprivate(height,width, Qredi,a_w,c_)
@@ -806,11 +806,11 @@ if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie
 					}
 			}
 }	
-if((params->colorappearance.tonecie || params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab) 
+if((params->colorappearance.tonecie || (params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab)
 		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)) {
 		
 		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
-			//EPDToneMapCIE adated to CIECAM
+			//EPDToneMapCIE adapted to CIECAM
 
 	
 #ifndef _DEBUG	
@@ -833,8 +833,8 @@ if((params->colorappearance.tonecie || params->colorappearance.tonecie && (param
 			for (int j=0; j<width; j++) {
 			double xx,yy,zz;
 			float x,y,z;
-			float eps=0.0001;
-			float co_e=(pow(f_l,0.25))+eps;
+			const float eps=0.0001;
+			float co_e=(pow(f_l,0.25f))+eps;
 			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
 			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
 			//show histogram in CIECAM mode (Q,J, M,s,C)
@@ -1512,7 +1512,7 @@ if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie
 						ncie->M_p[i][j]=ncie->C_p[i][j]*co_e;
 					}
 			}
-}	
+}
 if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab) 
 		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)) {
 		
@@ -1779,9 +1779,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
 
-				float r = tmpImage->r[i][j];
-				float g = tmpImage->g[i][j];
-				float b = tmpImage->b[i][j];
+				float r = tmpImage->r(i,j);
+				float g = tmpImage->g(i,j);
+				float b = tmpImage->b(i,j);
 
 				//if (i==100 & j==100) printf("rgbProc input R= %f  G= %f  B= %f  \n",r,g,b);
 
@@ -1789,9 +1789,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 				float gmix = (r*chMixGR + g*chMixGG + b*chMixGB) / 100.f;
 				float bmix = (r*chMixBR + g*chMixBG + b*chMixBB) / 100.f;
 
-				tmpImage->r[i][j] = rmix;
-				tmpImage->g[i][j] = gmix;
-				tmpImage->b[i][j] = bmix;
+				tmpImage->r(i,j) = rmix;
+				tmpImage->g(i,j) = gmix;
+				tmpImage->b(i,j) = bmix;
 			}
 		}
 	}
@@ -1803,9 +1803,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
 
-				float r = tmpImage->r[i][j];
-				float g = tmpImage->g[i][j];
-				float b = tmpImage->b[i][j];
+				float r = tmpImage->r(i,j);
+				float g = tmpImage->g(i,j);
+				float b = tmpImage->b(i,j);
 
 				double mapval = 1.0 + shmap->map[i][j];
 				double factor = 1.0;
@@ -1818,14 +1818,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 				}
 				if (processLCE) {
 					double sub = lceamount*(mapval-factor*(r*lumimul[0] + g*lumimul[1] + b*lumimul[2]));
-					tmpImage->r[i][j] = factor*r-sub;
-					tmpImage->g[i][j] = factor*g-sub;
-					tmpImage->b[i][j] = factor*b-sub;
+					tmpImage->r(i,j) = factor*r-sub;
+					tmpImage->g(i,j) = factor*g-sub;
+					tmpImage->b(i,j) = factor*b-sub;
 				}
 				else {
-					tmpImage->r[i][j] = factor*r;
-					tmpImage->g[i][j] = factor*g;
-					tmpImage->b[i][j] = factor*b;
+					tmpImage->r(i,j) = factor*r;
+					tmpImage->g(i,j) = factor*g;
+					tmpImage->b(i,j) = factor*b;
 				}
 			}
 		}
@@ -1837,19 +1837,19 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	for (int i=0; i<tH; i++) {
 		for (int j=0; j<tW; j++) {
 
-			float r = tmpImage->r[i][j];
-			float g = tmpImage->g[i][j];
-			float b = tmpImage->b[i][j];
+			float r = tmpImage->r(i,j);
+			float g = tmpImage->g(i,j);
+			float b = tmpImage->b(i,j);
 
 			//TODO: proper treatment of out-of-gamut colors
 			//float tonefactor = hltonecurve[(0.299f*r+0.587f*g+0.114f*b)];
-			float tonefactor=((r<MAXVAL ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
-			                  (g<MAXVAL ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
-			                  (b<MAXVAL ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
+			float tonefactor=((r<MAXVALF ? hltonecurve[r] : CurveFactory::hlcurve (exp_scale, comp, hlrange, r) ) +
+			                  (g<MAXVALF ? hltonecurve[g] : CurveFactory::hlcurve (exp_scale, comp, hlrange, g) ) +
+			                  (b<MAXVALF ? hltonecurve[b] : CurveFactory::hlcurve (exp_scale, comp, hlrange, b) ) )/3.0;
 
-			tmpImage->r[i][j] = (r*tonefactor);
-			tmpImage->g[i][j] = (g*tonefactor);
-			tmpImage->b[i][j] = (b*tonefactor);
+			tmpImage->r(i,j) = r*tonefactor;
+			tmpImage->g(i,j) = g*tonefactor;
+			tmpImage->b(i,j) = b*tonefactor;
 		}
 	}
 
@@ -1859,16 +1859,16 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	for (int i=0; i<tH; i++) {
 		for (int j=0; j<tW; j++) {
 
-			float r = tmpImage->r[i][j];
-			float g = tmpImage->g[i][j];
-			float b = tmpImage->b[i][j];
+			float r = tmpImage->r(i,j);
+			float g = tmpImage->g(i,j);
+			float b = tmpImage->b(i,j);
 
 			//shadow tone curve
 			float Y = (0.299f*r + 0.587f*g + 0.114f*b);
 			float tonefactor = shtonecurve[Y];
-			tmpImage->r[i][j] *= tonefactor;
-			tmpImage->g[i][j] *= tonefactor;
-			tmpImage->b[i][j] *= tonefactor;
+			tmpImage->r(i,j) = tmpImage->r(i,j)*tonefactor;
+			tmpImage->g(i,j) = tmpImage->g(i,j)*tonefactor;
+			tmpImage->b(i,j) = tmpImage->b(i,j)*tonefactor;
 		}
 	}
 
@@ -1879,9 +1879,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		for (int j=0; j<tW; j++) {
 
 			//brightness/contrast
-			tmpImage->r[i][j] = tonecurve[ tmpImage->r[i][j] ];
-			tmpImage->g[i][j] = tonecurve[ tmpImage->g[i][j] ];
-			tmpImage->b[i][j] = tonecurve[ tmpImage->b[i][j] ];
+			tmpImage->r(i,j) = tonecurve[ tmpImage->r(i,j) ];
+			tmpImage->g(i,j) = tonecurve[ tmpImage->g(i,j) ];
+			tmpImage->b(i,j) = tonecurve[ tmpImage->b(i,j) ];
 		}
 	}
 
@@ -1893,7 +1893,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&>(customToneCurve1);
-					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				}
 			}
 		}
@@ -1904,7 +1904,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&>(customToneCurve1);
-					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				}
 			}
 		}
@@ -1915,11 +1915,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&>(customToneCurve1);
-					tmpImage->r[i][j] = CLIP<float>(tmpImage->r[i][j]);
-					tmpImage->g[i][j] = CLIP<float>(tmpImage->g[i][j]);
-					tmpImage->b[i][j] = CLIP<float>(tmpImage->b[i][j]);
+					tmpImage->r(i,j) = CLIP<float>(tmpImage->r(i,j));
+					tmpImage->g(i,j) = CLIP<float>(tmpImage->g(i,j));
+					tmpImage->b(i,j) = CLIP<float>(tmpImage->b(i,j));
 
-					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				}
 			}
 		}
@@ -1930,16 +1930,15 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurve1);
-					tmpImage->r[i][j] = CLIP<float>(tmpImage->r[i][j]);
-					tmpImage->g[i][j] = CLIP<float>(tmpImage->g[i][j]);
-					tmpImage->b[i][j] = CLIP<float>(tmpImage->b[i][j]);
+					tmpImage->r(i,j) = CLIP<float>(tmpImage->r(i,j));
+					tmpImage->g(i,j) = CLIP<float>(tmpImage->g(i,j));
+					tmpImage->b(i,j) = CLIP<float>(tmpImage->b(i,j));
 
-					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				}
 			}
 		}
 	}
-
 
 	if (hasToneCurve2) {
 		if (curveMode2==ToneCurveParams::TC_MODE_STD){ // Standard
@@ -1949,7 +1948,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&>(customToneCurve2);
-					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				}
 			}
 		}
@@ -1960,7 +1959,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&>(customToneCurve2);
-					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				}
 			}
 		}
@@ -1971,7 +1970,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&>(customToneCurve2);
-					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				}
 			}
 		}
@@ -1982,7 +1981,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			for (int i=0; i<tH; i++) {
 				for (int j=0; j<tW; j++) {
 					const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurve2);
-					userToneCurve.Apply(tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				}
 			}
 		}
@@ -1995,9 +1994,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
 				// apply inverse gamma
-				tmpImage->r[i][j] = iGammaLUTf[ tmpImage->r[i][j] ];
-				tmpImage->g[i][j] = iGammaLUTf[ tmpImage->g[i][j] ];
-				tmpImage->b[i][j] = iGammaLUTf[ tmpImage->b[i][j] ];
+				tmpImage->r(i,j) = iGammaLUTf[ tmpImage->r(i,j) ];
+				tmpImage->g(i,j) = iGammaLUTf[ tmpImage->g(i,j) ];
+				tmpImage->b(i,j) = iGammaLUTf[ tmpImage->b(i,j) ];
 			}
 		}
 	}
@@ -2009,7 +2008,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
 				// individual R tone curve
-				tmpImage->r[i][j] = rCurve[ tmpImage->r[i][j] ];
+				tmpImage->r(i,j) = rCurve[ tmpImage->r(i,j) ];
 			}
 		}
 	}
@@ -2021,7 +2020,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
 				// individual G tone curve
-				tmpImage->g[i][j] = gCurve[ tmpImage->g[i][j] ];
+				tmpImage->g(i,j) = gCurve[ tmpImage->g(i,j) ];
 			}
 		}
 	}
@@ -2033,7 +2032,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
 				// individual B tone curve
-				tmpImage->b[i][j] = bCurve[ tmpImage->b[i][j] ];
+				tmpImage->b(i,j) = bCurve[ tmpImage->b(i,j) ];
 			}
 		}
 	}
@@ -2046,9 +2045,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
 
-				float r = tmpImage->r[i][j];
-				float g = tmpImage->g[i][j];
-				float b = tmpImage->b[i][j];
+				float r = tmpImage->r(i,j);
+				float g = tmpImage->g(i,j);
+				float b = tmpImage->b(i,j);
 
 				float h,s,v;
 				Color::rgb2hsv(r,g,b,h,s,v);
@@ -2094,7 +2093,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					}
 					
 				}
-				Color::hsv2rgb(h, s, v, tmpImage->r[i][j], tmpImage->g[i][j], tmpImage->b[i][j]);
+				Color::hsv2rgb(h, s, v, tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 			}
 		}
 	}
@@ -2104,9 +2103,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 #endif
 	for (int i=0; i<tH; i++) {
 		for (int j=0; j<tW; j++) {
-			float r = tmpImage->r[i][j];
-			float g = tmpImage->g[i][j];
-			float b = tmpImage->b[i][j];
+			float r = tmpImage->r(i,j);
+			float g = tmpImage->g(i,j);
+			float b = tmpImage->b(i,j);
 
 			float x = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
 			float y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
@@ -2114,9 +2113,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			
 			float fx,fy,fz;
 			
-			fx = (x<65535.0f ? cachef[std::max(x,0.f)] : (327.68f*exp(log(x/MAXVAL)/3.0f )));
-			fy = (y<65535.0f ? cachef[std::max(y,0.f)] : (327.68f*exp(log(y/MAXVAL)/3.0f )));
-			fz = (z<65535.0f ? cachef[std::max(z,0.f)] : (327.68f*exp(log(z/MAXVAL)/3.0f )));
+			fx = (x<65535.0f ? cachef[std::max(x,0.f)] : (327.68f*float(exp(log(x/MAXVALF)/3.0f ))));
+			fy = (y<65535.0f ? cachef[std::max(y,0.f)] : (327.68f*float(exp(log(y/MAXVALF)/3.0f ))));
+			fz = (z<65535.0f ? cachef[std::max(z,0.f)] : (327.68f*float(exp(log(z/MAXVALF)/3.0f ))));
 
 			lab->L[i][j] = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
 			lab->a[i][j] = (500.0f * (fx - fy) );

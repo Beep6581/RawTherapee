@@ -64,30 +64,30 @@ class ICCStore {
         Glib::Mutex mutex_;
 
         ICCStore (); 
-        void loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents);
+        void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents);
         
     public:
 
         static ICCStore* getInstance(void);
 
-        Glib::ustring defaultMonitorProfile;  // Main monitors standard profile name, from OS
-        void findDefaultMonitorProfile();
+        Glib::ustring    defaultMonitorProfile;  // Main monitors standard profile name, from OS
+        void             findDefaultMonitorProfile();
 
-        int     numOfWProfiles ();
-        cmsHPROFILE createFromMatrix (const double matrix[3][3], bool gamma=false, Glib::ustring name="");
-        cmsHPROFILE workingSpace (Glib::ustring name);
-        cmsHPROFILE workingSpaceGamma (Glib::ustring name);
-        TMatrix workingSpaceMatrix (Glib::ustring name);
-        TMatrix workingSpaceInverseMatrix (Glib::ustring name);
+        int              numOfWProfiles ();
+        cmsHPROFILE      createFromMatrix (const double matrix[3][3], bool gamma=false, Glib::ustring name="");
+        cmsHPROFILE      workingSpace (Glib::ustring name);
+        cmsHPROFILE      workingSpaceGamma (Glib::ustring name);
+        TMatrix          workingSpaceMatrix (Glib::ustring name);
+        TMatrix          workingSpaceInverseMatrix (Glib::ustring name);
         
-        cmsHPROFILE              getProfile   (Glib::ustring name);
+        cmsHPROFILE      getProfile   (Glib::ustring name);
         cmsHPROFILE      getStdProfile(Glib::ustring name);
 
         void             init         (Glib::ustring usrICCDir, Glib::ustring stdICCDir);
-        ProfileContent           getContent   (Glib::ustring name);
+        ProfileContent   getContent   (Glib::ustring name);
 
-        cmsHPROFILE getXYZProfile ()  { return xyz;  }
-        cmsHPROFILE getsRGBProfile () { return srgb; }
+        cmsHPROFILE      getXYZProfile ()  { return xyz;  }
+        cmsHPROFILE      getsRGBProfile () { return srgb; }
         std::vector<std::string> getOutputProfiles ();
 };
 

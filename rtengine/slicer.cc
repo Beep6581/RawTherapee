@@ -80,7 +80,7 @@ Slicer::Slicer(unsigned int imageWidth, unsigned int imageHeight, Block *subRegi
 
 	//calculate the number of block
 	blockNumber = (double(region.width*region.height) / (double)pixels);
-	blockNumber = int((max(blockNumber, 1U) + (double)procNumber/2.)/procNumber)*procNumber;
+	blockNumber = int((rtengine::max(blockNumber, 1U) + (double)procNumber/2.)/procNumber)*procNumber;
 	vBlockNumber = (unsigned int)(sqrt((double)blockNumber / subRegionRatio)+0.5);
 	vBlockNumber = CLAMP(vBlockNumber, 1, blockNumber);
 	hBlockNumber = (double)blockNumber / (double)vBlockNumber;

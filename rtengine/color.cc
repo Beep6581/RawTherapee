@@ -41,7 +41,7 @@ namespace rtengine {
     const double Color::sRGBGamma = 2.2;
     const double Color::sRGBGammaCurve = 2.4;
 
-    const double Color::eps_max=580.40756;  //(MAXVAL* 216.0f/24389.0);
+    const double Color::eps_max=580.40756;  //(MAXVALF* 216.0f/24389.0);
     const double Color::kappa=903.29630;  //24389.0/27.0;
 
     const float Color::D50x=0.96422;
@@ -115,10 +115,10 @@ namespace rtengine {
 
         for (int i=0; i<maxindex; i++) {
             if (i>eps_max) {
-                cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVAL) ));
+                cachef[i] = 327.68*( exp(1.0/3.0 * log((double)i / MAXVALF) ));
             }
             else {
-                cachef[i] = 327.68*((kappa*i/MAXVAL+16.0)/116.0);
+                cachef[i] = 327.68*((kappa*i/MAXVALF+16.0)/116.0);
             }
         }
 
@@ -145,10 +145,12 @@ namespace rtengine {
         fclose (f);*/
 
         initMunsell();
+
+        linearGammaTRC = cmsBuildGamma(NULL, 1.0);
     }
 
     void Color::cleanup () {
-
+        if (linearGammaTRC) cmsFreeToneCurve(linearGammaTRC);
     }
 
     void Color::rgb2hsl(float r, float g, float b, float &h, float &s, float &l) {
@@ -415,9 +417,9 @@ namespace rtengine {
         float y= Y;
         float fx,fy,fz;
 
-        fx = (x<65535.0f ? cachef[std::max(x,0.f)] : (327.68f*exp(log(x/MAXVAL)/3.0f )));
-        fy = (y<65535.0f ? cachef[std::max(y,0.f)] : (327.68f*exp(log(y/MAXVAL)/3.0f )));
-        fz = (z<65535.0f ? cachef[std::max(z,0.f)] : (327.68f*exp(log(z/MAXVAL)/3.0f )));
+        fx = (x<65535.0f ? cachef[std::max(x,0.f)] : (327.68f*exp(log(x/MAXVALF)/3.0f )));
+        fy = (y<65535.0f ? cachef[std::max(y,0.f)] : (327.68f*exp(log(y/MAXVALF)/3.0f )));
+        fz = (z<65535.0f ? cachef[std::max(z,0.f)] : (327.68f*exp(log(z/MAXVALF)/3.0f )));
 
         L = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
         a = (500.0f * (fx - fy) );
@@ -449,9 +451,9 @@ namespace rtengine {
 
         gamutmap(X,Y,Z,wp);
 
-        float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVAL)/3.0 )));
-        float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVAL)/3.0 )));
-        float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVAL)/3.0 )));
+        float fx = (X<65535.0 ? cachef[X] : (327.68*exp(log(X/MAXVALF)/3.0 )));
+        float fy = (Y<65535.0 ? cachef[Y] : (327.68*exp(log(Y/MAXVALF)/3.0 )));
+        float fz = (Z<65535.0 ? cachef[Z] : (327.68*exp(log(Z/MAXVALF)/3.0 )));
 
         L = (116.0 * fy - 5242.88); //5242.88=16.0*327.68;
         a = (500.0 * (fx - fy) );

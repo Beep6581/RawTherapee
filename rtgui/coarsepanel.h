@@ -30,7 +30,7 @@ class CoarsePanel : public Gtk::HBox, public ToolPanel {
         Gtk::ToggleButton* hflip;
         Gtk::ToggleButton* vflip;
         int degree;
-        bool oldhflip, oldvflip;
+        bool oldhflip, oldvflip, degreechanged;
 
     public:
 

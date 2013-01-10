@@ -72,9 +72,9 @@ void RawImageSource::eahd_demosaic () {
 
   int maxindex = 2*65536;
   cache = new double[maxindex];
-  threshold = (int)(0.008856*MAXVAL);
+  threshold = (int)(0.008856*MAXVALD);
   for (int i=0; i<maxindex; i++)
-    cache[i] = exp(1.0/3.0 * log((double)i / MAXVAL));
+    cache[i] = exp(1.0/3.0 * log(double(i) / MAXVALD));
 
   // end of cielab preparation
 

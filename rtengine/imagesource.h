@@ -19,39 +19,21 @@
 #ifndef _IMAGESOURCE_
 #define _IMAGESOURCE_
 
+#include <glibmm.h>
+#include <vector>
 #include "rtengine.h"
 #include "colortemp.h"
-#include <glibmm.h>
-#include "image16.h"
-#include "imagefloat.h"
 #include "procparams.h"
 #include "coord2d.h"
-#include <vector>
-#include "imagedata.h"
 #include "LUT.h"
+#include "imagedata.h"
+#include "image8.h"
+#include "image16.h"
+#include "imagefloat.h"
 
 namespace rtengine {
 
 using namespace procparams;
-
-#define TR_NONE     0
-#define TR_R90      1
-#define TR_R180     2
-#define TR_R270     3
-#define TR_VFLIP    4
-#define TR_HFLIP    8
-#define TR_ROT      3
-
-class PreviewProps {
-
-    public:
-    
-        int x, y, w, h, skip;
-        
-        PreviewProps (int _x, int _y, int _w, int _h, int _skip)
-            : x(_x), y(_y), w(_w), h(_h), skip(_skip) {}
-
-};
 
 class ImageMatrices {
 
@@ -92,10 +74,10 @@ class ImageSource : public InitialImage {
         // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
         virtual bool        isWBProviderReady () =0;
 
-		virtual void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) =0;// DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
+        virtual void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) =0;// DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
         virtual ColorTemp   getWB       () =0;
         virtual ColorTemp   getAutoWB   () =0;
-        virtual ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) =0;
+        virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran) =0;
 
         virtual double      getDefGain  () { return 1.0; }
 

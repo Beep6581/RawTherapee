@@ -7,6 +7,8 @@
 
 namespace rtengine {
 	static const int MAXVAL = 0xffff;
+	static const float MAXVALF = float(MAXVAL);  // float version of MAXVAL
+	static const double MAXVALD = double(MAXVAL); // double version of MAXVAL
 
 	template <typename _Tp>
 	inline const _Tp SQR (_Tp x) {
@@ -43,7 +45,6 @@ namespace rtengine {
 	template<typename _Tp>
 	inline const _Tp CLIP(const _Tp& a) {
 		return LIM(a, static_cast<_Tp>(0), static_cast<_Tp>(MAXVAL));
-		//return ((a)>0.0? ((a)<MAXVAL?(a):MAXVAL):0.0);
 	}
 
 

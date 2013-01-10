@@ -312,9 +312,9 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation () {
 			if (cr<HR_SCALE*HR_SCALE) rec[0][i][j] = INT_MAX; else rec[0][i][j] = sumr / HR_SCALE/HR_SCALE;
             if (cg<HR_SCALE*HR_SCALE) rec[1][i][j] = INT_MAX; else rec[1][i][j] = sumg / HR_SCALE/HR_SCALE;
             if (cb<HR_SCALE*HR_SCALE) rec[2][i][j] = INT_MAX; else rec[2][i][j] = sumb / HR_SCALE/HR_SCALE;
-            ds->r[i][j] = sumr / HR_SCALE/HR_SCALE;
-            ds->g[i][j] = sumg / HR_SCALE/HR_SCALE;
-            ds->b[i][j] = sumb / HR_SCALE/HR_SCALE;
+            ds->r(i,j) = sumr / HR_SCALE/HR_SCALE;
+            ds->g(i,j) = sumg / HR_SCALE/HR_SCALE;
+            ds->b(i,j) = sumb / HR_SCALE/HR_SCALE;
         }
     }
     for (int i=0; i<HR_SCALE; i++) {
@@ -336,9 +336,9 @@ void RawImageSource::updateHLRecoveryMap_ColorPropagation () {
 
     for (int i=0; i<dh; i++)
         for (int j=0; j<dw; j++) {
-            hrmap[0][i][j] = ds->r[i][j]>0 ? (double)rec[0][i][j] / ds->r[i][j] : 1.0;
-            hrmap[1][i][j] = ds->g[i][j]>0 ? (double)rec[1][i][j] / ds->g[i][j] : 1.0;
-            hrmap[2][i][j] = ds->b[i][j]>0 ? (double)rec[2][i][j] / ds->b[i][j] : 1.0;
+            hrmap[0][i][j] = ds->r(i,j)>0 ? (double)rec[0][i][j] / ds->r(i,j) : 1.0;
+            hrmap[1][i][j] = ds->g(i,j)>0 ? (double)rec[1][i][j] / ds->g(i,j) : 1.0;
+            hrmap[2][i][j] = ds->b(i,j)>0 ? (double)rec[2][i][j] / ds->b(i,j) : 1.0;
         }
 
     delete ds;

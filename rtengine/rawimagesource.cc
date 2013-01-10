@@ -373,41 +373,41 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         int a = ((tran & TR_ROT) == TR_R90 && image->width%2==0) || ((tran & TR_ROT) == TR_R180 && image->height%2+image->width%2==1) || ((tran & TR_ROT) == TR_R270 && image->height%2==0);
         // first row
         for (int j=1+a; j<image->width-1; j+=2) {
-          image->r[0][j] = (image->r[1][j] + image->r[0][j+1] + image->r[0][j-1]) / 3;
-          image->g[0][j] = (image->g[1][j] + image->g[0][j+1] + image->g[0][j-1]) / 3;
-          image->b[0][j] = (image->b[1][j] + image->b[0][j+1] + image->b[0][j-1]) / 3;
+          image->r(0,j) = (image->r(1,j) + image->r(0,j+1) + image->r(0,j-1)) / 3;
+          image->g(0,j) = (image->g(1,j) + image->g(0,j+1) + image->g(0,j-1)) / 3;
+          image->b(0,j) = (image->b(1,j) + image->b(0,j+1) + image->b(0,j-1)) / 3;
         }
         // other rows
         for (int i=1; i<image->height-1; i++) {
           for (int j=2-(a+i+1)%2; j<image->width-1; j+=2) {
               // edge-adaptive interpolation
-              double dh = (ABS(image->r[i][j+1] - image->r[i][j-1]) + ABS(image->g[i][j+1] - image->g[i][j-1]) + ABS(image->b[i][j+1] - image->b[i][j-1])) / 1.0;
-              double dv = (ABS(image->r[i+1][j] - image->r[i-1][j]) + ABS(image->g[i+1][j] - image->g[i-1][j]) + ABS(image->b[i+1][j] - image->b[i-1][j])) / 1.0;
+              double dh = (ABS(image->r(i,j+1) - image->r(i,j-1)) + ABS(image->g(i,j+1) - image->g(i,j-1)) + ABS(image->b(i,j+1) - image->b(i,j-1))) / 1.0;
+              double dv = (ABS(image->r(i+1,j) - image->r(i-1,j)) + ABS(image->g(i+1,j) - image->g(i-1,j)) + ABS(image->b(i+1,j) - image->b(i-1,j))) / 1.0;
               double eh = 1.0 / (1.0 + dh);
               double ev = 1.0 / (1.0 + dv);
-              image->r[i][j] = (eh * (image->r[i][j+1] + image->r[i][j-1]) + ev * (image->r[i+1][j] + image->r[i-1][j])) / (2.0 * (eh + ev));
-              image->g[i][j] = (eh * (image->g[i][j+1] + image->g[i][j-1]) + ev * (image->g[i+1][j] + image->g[i-1][j])) / (2.0 * (eh + ev));
-              image->b[i][j] = (eh * (image->b[i][j+1] + image->b[i][j-1]) + ev * (image->b[i+1][j] + image->b[i-1][j])) / (2.0 * (eh + ev));
+              image->r(i,j) = (eh * (image->r(i,j+1) + image->r(i,j-1)) + ev * (image->r(i+1,j) + image->r(i-1,j))) / (2.0 * (eh + ev));
+              image->g(i,j) = (eh * (image->g(i,j+1) + image->g(i,j-1)) + ev * (image->g(i+1,j) + image->g(i-1,j))) / (2.0 * (eh + ev));
+              image->b(i,j) = (eh * (image->b(i,j+1) + image->b(i,j-1)) + ev * (image->b(i+1,j) + image->b(i-1,j))) / (2.0 * (eh + ev));
           }
           // first pixel
           if (2-(a+i+1)%2==2) {
-              image->r[i][0] = (image->r[i+1][0] + image->r[i-1][0] + image->r[i][1]) / 3;
-              image->g[i][0] = (image->g[i+1][0] + image->g[i-1][0] + image->g[i][1]) / 3;
-              image->b[i][0] = (image->b[i+1][0] + image->b[i-1][0] + image->b[i][1]) / 3;
+              image->r(i,0) = (image->r(i+1,0) + image->r(i-1,0) + image->r(i,1)) / 3;
+              image->g(i,0) = (image->g(i+1,0) + image->g(i-1,0) + image->g(i,1)) / 3;
+              image->b(i,0) = (image->b(i+1,0) + image->b(i-1,0) + image->b(i,1)) / 3;
           }
           // last pixel
           if (2-(a+i+image->width)%2==2) {
-              image->r[i][image->width-1] = (image->r[i+1][image->width-1] + image->r[i-1][image->width-1] + image->r[i][image->width-2]) / 3;
-              image->g[i][image->width-1] = (image->g[i+1][image->width-1] + image->g[i-1][image->width-1] + image->g[i][image->width-2]) / 3;
-              image->b[i][image->width-1] = (image->b[i+1][image->width-1] + image->b[i-1][image->width-1] + image->b[i][image->width-2]) / 3;
+              image->r(i,image->width-1) = (image->r(i+1,image->width-1) + image->r(i-1,image->width-1) + image->r(i,image->width-2)) / 3;
+              image->g(i,image->width-1) = (image->g(i+1,image->width-1) + image->g(i-1,image->width-1) + image->g(i,image->width-2)) / 3;
+              image->b(i,image->width-1) = (image->b(i+1,image->width-1) + image->b(i-1,image->width-1) + image->b(i,image->width-2)) / 3;
           }
         }
         // last row
         int b = (a==1 && image->height%2) || (a==0 && image->height%2==0);
         for (int j=1+b; j<image->width-1; j+=2) {
-          image->r[image->height-1][j] = (image->r[image->height-2][j] + image->r[image->height-1][j+1] + image->r[image->height-1][j-1]) / 3;
-          image->g[image->height-1][j] = (image->g[image->height-2][j] + image->g[image->height-1][j+1] + image->g[image->height-1][j-1]) / 3;
-          image->b[image->height-1][j] = (image->b[image->height-2][j] + image->b[image->height-1][j+1] + image->b[image->height-1][j-1]) / 3;
+          image->r(image->height-1,j) = (image->r(image->height-2,j) + image->r(image->height-1,j+1) + image->r(image->height-1,j-1)) / 3;
+          image->g(image->height-1,j) = (image->g(image->height-2,j) + image->g(image->height-1,j+1) + image->g(image->height-1,j-1)) / 3;
+          image->b(image->height-1,j) = (image->b(image->height-2,j) + image->b(image->height-1,j+1) + image->b(image->height-1,j-1)) / 3;
         }
     }
 
@@ -541,24 +541,24 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 	return counter;
 }
 
-void RawImageSource::rotateLine (float* line, float** channel, int tran, int i, int w, int h) {
+void RawImageSource::rotateLine (float* line, PlanarPtr<float> &channel, int tran, int i, int w, int h) {
 
     if ((tran & TR_ROT) == TR_R180) 
-        for (int j=0; j<w; j++) 
-            channel[h-1-i][w-1-j] = line[j];
+        for (int j=0; j<w; j++)
+            channel(h-1-i,w-1-j) = line[j];
 
-    else if ((tran & TR_ROT) == TR_R90) 
+    else if ((tran & TR_ROT) == TR_R90)
         for (int j=0; j<w; j++) 
-            channel[j][h-1-i] = line[j];
+            channel(j,h-1-i) = line[j];
 
-    else if ((tran & TR_ROT) == TR_R270) 
+    else if ((tran & TR_ROT) == TR_R270)
         for (int j=0; j<w; j++) 
-            channel[w-1-j][i] = line[j];
+            channel(w-1-j,i) = line[j];
     else 
-		for (int j=0; j<w; j++) 
-			channel[i][j] = line[j];
+        for (int j=0; j<w; j++)
+            channel(i,j) = line[j];
 }
-	
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::transLine (float* red, float* green, float* blue, int i, Imagefloat* image, int tran, int imwidth, int imheight, int fw) {
@@ -575,9 +575,9 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
             int y = i+j-fw;
             int x = fw-i+j;
             if (x>=0 && y<image->height && y>=0 && x<image->width) {
-                image->r[image->height-1-y][image->width-1-x] = red[j];
-                image->g[image->height-1-y][image->width-1-x] = green[j];
-                image->b[image->height-1-y][image->width-1-x] = blue[j];
+                image->r(image->height-1-y,image->width-1-x) = red[j];
+                image->g(image->height-1-y,image->width-1-x) = green[j];
+                image->b(image->height-1-y,image->width-1-x) = blue[j];
             }
           }
       }
@@ -587,9 +587,9 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
             int y = i+j-fw;
             int x = fw-i+j;
             if (x>=0 && x<image->height && y>=0 && y<image->width) {
-                image->r[image->height-1-x][y] = red[j];
-                image->g[image->height-1-x][y] = green[j];
-                image->b[image->height-1-x][y] = blue[j];
+                image->r(image->height-1-x,y) = red[j];
+                image->g(image->height-1-x,y) = green[j];
+                image->b(image->height-1-x,y) = blue[j];
             }
           }
       }
@@ -599,9 +599,9 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
             int y = i+j-fw;
             int x = fw-i+j;
             if (x>=0 && y<image->width && y>=0 && x<image->height) {
-                image->r[x][image->width-1-y] = red[j];
-                image->g[x][image->width-1-y] = green[j];
-                image->b[x][image->width-1-y] = blue[j];
+                image->r(x,image->width-1-y) = red[j];
+                image->g(x,image->width-1-y) = green[j];
+                image->b(x,image->width-1-y) = blue[j];
             }
           }
       }
@@ -611,9 +611,9 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
             int y = i+j-fw;
             int x = fw-i+j;
             if (x>=0 && y<image->height && y>=0 && x<image->width) {
-                image->r[y][x] = red[j];
-                image->g[y][x] = green[j];
-                image->b[y][x] = blue[j];
+                image->r(y,x) = red[j];
+                image->g(y,x) = green[j];
+                image->b(y,x) = blue[j];
             }
         }
       }
@@ -623,114 +623,114 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
     // copy new pixels
     if ((tran & TR_ROT) == TR_R180) {
       for (int j=0; j<imwidth; j++) {
-        image->r[2*imheight-2-2*i][imwidth-1-j] = red[j];
-        image->g[2*imheight-2-2*i][imwidth-1-j] = green[j];
-        image->b[2*imheight-2-2*i][imwidth-1-j] = blue[j];
+        image->r(2*imheight-2-2*i,imwidth-1-j) = red[j];
+        image->g(2*imheight-2-2*i,imwidth-1-j) = green[j];
+        image->b(2*imheight-2-2*i,imwidth-1-j) = blue[j];
       }
 
       if (i==1 || i==2) { // linear interpolation
         int row = 2*imheight-1-2*i;
         for (int j=0; j<imwidth; j++) {
           int col = imwidth-1-j;
-          image->r[row][col] = (red[j] + image->r[row+1][col]) /2;
-          image->g[row][col] = (green[j] + image->g[row+1][col]) /2;
-          image->b[row][col] = (blue[j] + image->b[row+1][col]) /2;
+          image->r(row,col) = (red[j] + image->r(row+1,col)) /2;
+          image->g(row,col) = (green[j] + image->g(row+1,col)) /2;
+          image->b(row,col) = (blue[j] + image->b(row+1,col)) /2;
         }
       }
       else if (i==imheight-1) {
         int row = 2*imheight-1-2*i;
         for (int j=0; j<imwidth; j++) {
           int col = imwidth-1-j;
-          image->r[row][col] = (red[j] + image->r[row+1][col]) /2;
-          image->g[row][col] = (green[j] + image->g[row+1][col]) /2;
-          image->b[row][col] = (blue[j] + image->b[row+1][col]) /2;
+          image->r(row,col) = (red[j] + image->r(row+1,col)) /2;
+          image->g(row,col) = (green[j] + image->g(row+1,col)) /2;
+          image->b(row,col) = (blue[j] + image->b(row+1,col)) /2;
         }
         row = 2*imheight-1-2*i+2;
         for (int j=0; j<imwidth; j++) {
           int col = imwidth-1-j;
-          image->r[row][col] = (red[j] + image->r[row+1][col]) /2;
-          image->g[row][col] = (green[j] + image->g[row+1][col]) /2;
-          image->b[row][col] = (blue[j] + image->b[row+1][col]) /2;
+          image->r(row,col) = (red[j] + image->r(row+1,col)) /2;
+          image->g(row,col) = (green[j] + image->g(row+1,col)) /2;
+          image->b(row,col) = (blue[j] + image->b(row+1,col)) /2;
         }
       }
-      else if (i>2 && i<imheight-1) { // vertical bicubic interpolationi
+      else if (i>2 && i<imheight-1) { // vertical bicubic interpolation
         int row = 2*imheight-1-2*i+2;
         for (int j=0; j<imwidth; j++) {
           int col = imwidth-1-j;
-          image->r[row][col] = CLIP((int)(-0.0625*red[j] + 0.5625*image->r[row-1][col] + 0.5625*image->r[row+1][col] - 0.0625*image->r[row+3][col]));
-          image->g[row][col] = CLIP((int)(-0.0625*green[j] + 0.5625*image->g[row-1][col] + 0.5625*image->g[row+1][col] - 0.0625*image->g[row+3][col]));
-          image->b[row][col] = CLIP((int)(-0.0625*blue[j] + 0.5625*image->b[row-1][col] + 0.5625*image->b[row+1][col] - 0.0625*image->b[row+3][col]));
+          image->r(row,col) = CLIP((int)(-0.0625*red[j] + 0.5625*image->r(row-1,col) + 0.5625*image->r(row+1,col) - 0.0625*image->r(row+3,col)));
+          image->g(row,col) = CLIP((int)(-0.0625*green[j] + 0.5625*image->g(row-1,col) + 0.5625*image->g(row+1,col) - 0.0625*image->g(row+3,col)));
+          image->b(row,col) = CLIP((int)(-0.0625*blue[j] + 0.5625*image->b(row-1,col) + 0.5625*image->b(row+1,col) - 0.0625*image->b(row+3,col)));
         }
       }
     }
     else if ((tran & TR_ROT) == TR_R90) {
       for (int j=0; j<imwidth; j++) {
-        image->r[j][2*imheight-2-2*i] = red[j];
-        image->g[j][2*imheight-2-2*i] = green[j];
-        image->b[j][2*imheight-2-2*i] = blue[j];
+        image->r(j,2*imheight-2-2*i) = red[j];
+        image->g(j,2*imheight-2-2*i) = green[j];
+        image->b(j,2*imheight-2-2*i) = blue[j];
       }
       if (i==1 || i==2) { // linear interpolation
         int col = 2*imheight-1-2*i;
         for (int j=0; j<imwidth; j++) {
-          image->r[j][col] = (red[j] + image->r[j][col+1]) /2;
-          image->g[j][col] = (green[j] + image->g[j][col+1]) /2;
-          image->b[j][col] = (blue[j] + image->b[j][col+1]) /2;
+          image->r(j,col) = (red[j] + image->r(j,col+1)) /2;
+          image->g(j,col) = (green[j] + image->g(j,col+1)) /2;
+          image->b(j,col) = (blue[j] + image->b(j,col+1)) /2;
         }
       }
       else if (i==imheight-1) {
         int col = 2*imheight-1-2*i;
         for (int j=0; j<imwidth; j++) {
-          image->r[j][col] = (red[j] + image->r[j][col+1]) /2;
-          image->g[j][col] = (green[j] + image->g[j][col+1]) /2;
-          image->b[j][col] = (blue[j] + image->b[j][col+1]) /2;
+          image->r(j,col) = (red[j] + image->r(j,col+1)) /2;
+          image->g(j,col) = (green[j] + image->g(j,col+1)) /2;
+          image->b(j,col) = (blue[j] + image->b(j,col+1)) /2;
         }
         col = 2*imheight-1-2*i+2;
         for (int j=0; j<imwidth; j++) {
-          image->r[j][col] = (red[j] + image->r[j][col+1]) /2;
-          image->g[j][col] = (green[j] + image->g[j][col+1]) /2;
-          image->b[j][col] = (blue[j] + image->b[j][col+1]) /2;
+          image->r(j,col) = (red[j] + image->r(j,col+1)) /2;
+          image->g(j,col) = (green[j] + image->g(j,col+1)) /2;
+          image->b(j,col) = (blue[j] + image->b(j,col+1)) /2;
         }
       }
       else if (i>2 && i<imheight-1) { // vertical bicubic interpolation
         int col = 2*imheight-1-2*i+2;
         for (int j=0; j<imwidth; j++) {
-          image->r[j][col] = CLIP((int)(-0.0625*red[j] + 0.5625*image->r[j][col-1] + 0.5625*image->r[j][col+1] - 0.0625*image->r[j][col+3]));
-          image->g[j][col] = CLIP((int)(-0.0625*green[j] + 0.5625*image->g[j][col-1] + 0.5625*image->g[j][col+1] - 0.0625*image->g[j][col+3]));
-          image->b[j][col] = CLIP((int)(-0.0625*blue[j] + 0.5625*image->b[j][col-1] + 0.5625*image->b[j][col+1] - 0.0625*image->b[j][col+3]));
+          image->r(j,col) = CLIP((int)(-0.0625*red[j] + 0.5625*image->r(j,col-1) + 0.5625*image->r(j,col+1) - 0.0625*image->r(j,col+3)));
+          image->g(j,col) = CLIP((int)(-0.0625*green[j] + 0.5625*image->g(j,col-1) + 0.5625*image->g(j,col+1) - 0.0625*image->g(j,col+3)));
+          image->b(j,col) = CLIP((int)(-0.0625*blue[j] + 0.5625*image->b(j,col-1) + 0.5625*image->b(j,col+1) - 0.0625*image->b(j,col+3)));
         }
       }
     }
     else if ((tran & TR_ROT) == TR_R270) {
       for (int j=0; j<imwidth; j++) {
-        image->r[imwidth-1-j][2*i] = red[j];
-        image->g[imwidth-1-j][2*i] = green[j];
-        image->b[imwidth-1-j][2*i] = blue[j];
+        image->r(imwidth-1-j,2*i) = red[j];
+        image->g(imwidth-1-j,2*i) = green[j];
+        image->b(imwidth-1-j,2*i) = blue[j];
       }
       if (i==1 || i==2) { // linear interpolation
         for (int j=0; j<imwidth; j++) {
           int row = imwidth-1-j;
-          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) * 0.5f;
-          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) * 0.5f;
-          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) * 0.5f;
+          image->r(row,2*i-1) = (red[j] + image->r(row,2*i-2)) * 0.5f;
+          image->g(row,2*i-1) = (green[j] + image->g(row,2*i-2)) * 0.5f;
+          image->b(row,2*i-1) = (blue[j] + image->b(row,2*i-2)) * 0.5f;
         }
       }
       else if (i==imheight-1) {
         for (int j=0; j<imwidth; j++) {
           int row = imwidth-1-j;
-          image->r[row][2*i-1] = (red[j] + image->r[row][2*i-2]) * 0.5f;
-          image->g[row][2*i-1] = (green[j] + image->g[row][2*i-2]) * 0.5f;
-          image->b[row][2*i-1] = (blue[j] + image->b[row][2*i-2]) * 0.5f;
-          image->r[row][2*i-3] = (image->r[row][2*i-2] + image->r[row][2*i-4]) * 0.5f;
-          image->g[row][2*i-3] = (image->g[row][2*i-2] + image->g[row][2*i-4]) * 0.5f;
-          image->b[row][2*i-3] = (image->b[row][2*i-2] + image->b[row][2*i-4]) * 0.5f;
+          image->r(row,2*i-1) = (red[j] + image->r(row,2*i-2)) * 0.5f;
+          image->g(row,2*i-1) = (green[j] + image->g(row,2*i-2)) * 0.5f;
+          image->b(row,2*i-1) = (blue[j] + image->b(row,2*i-2)) * 0.5f;
+          image->r(row,2*i-3) = (image->r(row,2*i-2) + image->r(row,2*i-4)) * 0.5f;
+          image->g(row,2*i-3) = (image->g(row,2*i-2) + image->g(row,2*i-4)) * 0.5f;
+          image->b(row,2*i-3) = (image->b(row,2*i-2) + image->b(row,2*i-4)) * 0.5f;
         }
       }
       else if (i>0 && i<imheight-1) { // vertical bicubic interpolationi
         for (int j=0; j<imwidth; j++) {
           int row = imwidth-1-j;
-          image->r[row][2*i-3] = CLIP((int)(-0.0625*red[j] + 0.5625*image->r[row][2*i-2] + 0.5625*image->r[row][2*i-4] - 0.0625*image->r[row][2*i-6]));
-          image->g[row][2*i-3] = CLIP((int)(-0.0625*green[j] + 0.5625*image->g[row][2*i-2] + 0.5625*image->g[row][2*i-4] - 0.0625*image->g[row][2*i-6]));
-          image->b[row][2*i-3] = CLIP((int)(-0.0625*blue[j] + 0.5625*image->b[row][2*i-2] + 0.5625*image->b[row][2*i-4] - 0.0625*image->b[row][2*i-6]));
+          image->r(row,2*i-3) = CLIP((int)(-0.0625*red[j] + 0.5625*image->r(row,2*i-2) + 0.5625*image->r(row,2*i-4) - 0.0625*image->r(row,2*i-6)));
+          image->g(row,2*i-3) = CLIP((int)(-0.0625*green[j] + 0.5625*image->g(row,2*i-2) + 0.5625*image->g(row,2*i-4) - 0.0625*image->g(row,2*i-6)));
+          image->b(row,2*i-3) = CLIP((int)(-0.0625*blue[j] + 0.5625*image->b(row,2*i-2) + 0.5625*image->b(row,2*i-4) - 0.0625*image->b(row,2*i-6)));
         }
       }    
     }
@@ -741,26 +741,26 @@ void RawImageSource::transLine (float* red, float* green, float* blue, int i, Im
 
       if (i==1 || i==2) { // linear interpolation
         for (int j=0; j<imwidth; j++) {
-          image->r[2*i-1][j] = (red[j] + image->r[2*i-2][j]) /2;
-          image->g[2*i-1][j] = (green[j] + image->g[2*i-2][j]) /2;
-          image->b[2*i-1][j] = (blue[j] + image->b[2*i-2][j]) /2;
+          image->r(2*i-1,j) = (red[j] + image->r(2*i-2,j)) /2;
+          image->g(2*i-1,j) = (green[j] + image->g(2*i-2,j)) /2;
+          image->b(2*i-1,j) = (blue[j] + image->b(2*i-2,j)) /2;
         }
       }
       else if (i==imheight-1) {
             for (int j=0; j<imwidth; j++) {
-              image->r[2*i-3][j] = (image->r[2*i-4][j] + image->r[2*i-2][j]) /2;
-              image->g[2*i-3][j] = (image->g[2*i-4][j] + image->g[2*i-2][j]) /2;
-              image->b[2*i-3][j] = (image->b[2*i-4][j] + image->b[2*i-2][j]) /2;
-              image->r[2*i-1][j] = (red[j] + image->r[2*i-2][j]) /2;
-              image->g[2*i-1][j] = (green[j] + image->g[2*i-2][j]) /2;
-              image->b[2*i-1][j] = (blue[j] + image->b[2*i-2][j]) /2;
+              image->r(2*i-3,j) = (image->r(2*i-4,j) + image->r(2*i-2,j)) /2;
+              image->g(2*i-3,j) = (image->g(2*i-4,j) + image->g(2*i-2,j)) /2;
+              image->b(2*i-3,j) = (image->b(2*i-4,j) + image->b(2*i-2,j)) /2;
+              image->r(2*i-1,j) = (red[j] + image->r(2*i-2,j)) /2;
+              image->g(2*i-1,j) = (green[j] + image->g(2*i-2,j)) /2;
+              image->b(2*i-1,j) = (blue[j] + image->b(2*i-2,j)) /2;
             }
       }
       else if (i>2 && i<imheight-1) { // vertical bicubic interpolationi
         for (int j=0; j<imwidth; j++) {
-          image->r[2*i-3][j] = CLIP((int)(-0.0625*red[j] + 0.5625*image->r[2*i-2][j] + 0.5625*image->r[2*i-4][j] - 0.0625*image->r[2*i-6][j]));
-          image->g[2*i-3][j] = CLIP((int)(-0.0625*green[j] + 0.5625*image->g[2*i-2][j] + 0.5625*image->g[2*i-4][j] - 0.0625*image->g[2*i-6][j]));
-          image->b[2*i-3][j] = CLIP((int)(-0.0625*blue[j] + 0.5625*image->b[2*i-2][j] + 0.5625*image->b[2*i-4][j] - 0.0625*image->b[2*i-6][j]));
+          image->r(2*i-3,j) = CLIP((int)(-0.0625*red[j] + 0.5625*image->r(2*i-2,j) + 0.5625*image->r(2*i-4,j) - 0.0625*image->r(2*i-6,j)));
+          image->g(2*i-3,j) = CLIP((int)(-0.0625*green[j] + 0.5625*image->g(2*i-2,j) + 0.5625*image->g(2*i-4,j) - 0.0625*image->g(2*i-6,j)));
+          image->b(2*i-3,j) = CLIP((int)(-0.0625*blue[j] + 0.5625*image->b(2*i-2,j) + 0.5625*image->b(2*i-4,j) - 0.0625*image->b(2*i-6,j)));
         }
       }
     }
@@ -822,46 +822,13 @@ void RawImageSource::getSize (int tran, PreviewProps pp, int& w, int& h) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::hflip (Imagefloat* image) {
-    int width  = image->width;
-    int height = image->height;
-
-    float* rowr = new float[width];
-    float* rowg = new float[width];
-    float* rowb = new float[width];
-    for (int i=0; i<height; i++) {
-      for (int j=0; j<width; j++) {
-        rowr[j] = image->r[i][width-1-j];
-        rowg[j] = image->g[i][width-1-j];
-        rowb[j] = image->b[i][width-1-j];
-      }
-      memcpy (image->r[i], rowr, width*sizeof(float));
-      memcpy (image->g[i], rowg, width*sizeof(float));
-      memcpy (image->b[i], rowb, width*sizeof(float));
-    }
-    delete [] rowr;
-    delete [] rowg;
-    delete [] rowb;
+    image->hflip();
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::vflip (Imagefloat* image) {
-    int width  = image->width;
-    int height = image->height;
-
-    float tmp;
-    for (int i=0; i<height/2; i++) 
-      for (int j=0; j<width; j++) {
-        tmp = image->r[i][j]; 
-        image->r[i][j] = image->r[height-1-i][j];
-        image->r[height-1-i][j] = tmp;
-        tmp = image->g[i][j]; 
-        image->g[i][j] = image->g[height-1-i][j];
-        image->g[height-1-i][j] = tmp;
-        tmp = image->b[i][j]; 
-        image->b[i][j] = image->b[height-1-i][j];
-        image->b[height-1-i][j] = tmp;
-      }
+    image->vflip();
 }
 	
 	
@@ -1494,8 +1461,8 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
 
   int ppx=0, px=(row_from-1)%3, cx=row_from%3, nx=0;
   
-    convert_row_to_YIQ (im->r[row_from-1], im->g[row_from-1], im->b[row_from-1], rbconv_Y[px], rbconv_I[px], rbconv_Q[px], W);
-    convert_row_to_YIQ (im->r[row_from], im->g[row_from], im->b[row_from], rbconv_Y[cx], rbconv_I[cx], rbconv_Q[cx], W);
+    convert_row_to_YIQ (im->r(row_from-1), im->g(row_from-1), im->b(row_from-1), rbconv_Y[px], rbconv_I[px], rbconv_Q[px], W);
+    convert_row_to_YIQ (im->r(row_from), im->g(row_from), im->b(row_from), rbconv_Y[cx], rbconv_I[cx], rbconv_Q[cx], W);
 
     for (int j=0; j<W; j++) {
       rbout_I[px][j] = rbconv_I[px][j];
@@ -1509,7 +1476,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
       cx = i%3;
       nx = (i+1)%3;
 
-      convert_row_to_YIQ (im->r[i+1], im->g[i+1], im->b[i+1], rbconv_Y[nx], rbconv_I[nx], rbconv_Q[nx], W);
+      convert_row_to_YIQ (im->r(i+1), im->g(i+1), im->b(i+1), rbconv_Y[nx], rbconv_I[nx], rbconv_Q[nx], W);
 
       SORT3(rbconv_I[px][0],rbconv_I[cx][0],rbconv_I[nx][0],pre1_I[0],pre1_I[1],pre1_I[2]);
       SORT3(rbconv_I[px][1],rbconv_I[cx][1],rbconv_I[nx][1],pre2_I[0],pre2_I[1],pre2_I[2]);
@@ -1563,7 +1530,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
         row_Q[0] = rbout_Q[px][0];
         row_I[W-1] = rbout_I[px][W-1];
         row_Q[W-1] = rbout_Q[px][W-1];
-        convert_row_to_RGB (im->r[i-1], im->g[i-1], im->b[i-1], rbconv_Y[px], row_I, row_Q, W);
+        convert_row_to_RGB (im->r(i-1), im->g(i-1), im->b(i-1), rbconv_Y[px], row_I, row_Q, W);
       }
     }
     // blur last 3 row and finalize H-1th row
@@ -1575,7 +1542,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
     row_Q[0] = rbout_Q[cx][0];
     row_I[W-1] = rbout_I[cx][W-1];
     row_Q[W-1] = rbout_Q[cx][W-1];
-    convert_row_to_RGB (im->r[row_to-1], im->g[row_to-1], im->b[row_to-1], rbconv_Y[cx], row_I, row_Q, W);
+    convert_row_to_RGB (im->r(row_to-1), im->g(row_to-1), im->b(row_to-1), rbconv_Y[cx], row_I, row_Q, W);
 
   delete [] row_I;
   delete [] row_Q;
@@ -1636,7 +1603,7 @@ void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, fl
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
+void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
 
     //MyTime t1, t2, t3;
     //t1.set ();
@@ -1646,7 +1613,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
 
     if (dcpProf!=NULL) {
-        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, (float)raw.expos, cmp.toneCurve);
+        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, rawWhitePoint, cmp.toneCurve);
     } else {
     // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
@@ -1665,13 +1632,13 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         for (int i=0; i<im->height; i++)
             for (int j=0; j<im->width; j++) {
 
-                float newr = mat[0][0]*im->r[i][j] + mat[0][1]*im->g[i][j] + mat[0][2]*im->b[i][j];
-                float newg = mat[1][0]*im->r[i][j] + mat[1][1]*im->g[i][j] + mat[1][2]*im->b[i][j];
-                float newb = mat[2][0]*im->r[i][j] + mat[2][1]*im->g[i][j] + mat[2][2]*im->b[i][j];
+                float newr = mat[0][0]*im->r(i,j) + mat[0][1]*im->g(i,j) + mat[0][2]*im->b(i,j);
+                float newg = mat[1][0]*im->r(i,j) + mat[1][1]*im->g(i,j) + mat[1][2]*im->b(i,j);
+                float newb = mat[2][0]*im->r(i,j) + mat[2][1]*im->g(i,j) + mat[2][2]*im->b(i,j);
 
-                im->r[i][j] = (newr);
-                im->g[i][j] = (newg);
-                im->b[i][j] = (newb);
+                im->r(i,j) = newr;
+                im->g(i,j) = newg;
+                im->b(i,j) = newb;
 
             }
     } else {
@@ -1683,9 +1650,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         #pragma omp parallel for
 		for ( int h = 0; h < im->height; ++h )
 			for ( int w = 0; w < im->width; ++w ) {
-				im->r[h][w] /= 65535.0f ;
-				im->g[h][w] /= 65535.0f ;
-				im->b[h][w] /= 65535.0f ;
+				im->r(h,w) /= 65535.0f ;
+				im->g(h,w) /= 65535.0f ;
+				im->b(h,w) /= 65535.0f ;
 			}
 
 
@@ -1697,9 +1664,9 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
             #pragma omp parallel for
 		    for ( int h = 0; h < im->height; ++h )
 			    for ( int w = 0; w < im->width; ++w ) {
-				    im->r[h][w] = pow (max(im->r[h][w],0.0f), gammaFac);
-				    im->g[h][w] = pow (max(im->g[h][w],0.0f), gammaFac);
-				    im->b[h][w] = pow (max(im->b[h][w],0.0f), gammaFac);
+				    im->r(h,w) = pow (max(im->r(h,w),0.0f), gammaFac);
+				    im->g(h,w) = pow (max(im->g(h,w),0.0f), gammaFac);
+				    im->b(h,w) = pow (max(im->b(h,w),0.0f), gammaFac);
 			    }
         }
 
@@ -1753,13 +1720,13 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 			for ( int h = 0; h < im->height; ++h )
 				for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
 					float x, y,z;
-					x = (toxyz[0][0] * im->r[h][w] + toxyz[0][1] * im->g[h][w]  + toxyz[0][2] * im->b[h][w] ) ;
-					y = (toxyz[1][0] * im->r[h][w] + toxyz[1][1] * im->g[h][w]  + toxyz[1][2] * im->b[h][w] ) ;
-					z = (toxyz[2][0] * im->r[h][w] + toxyz[2][1] * im->g[h][w]  + toxyz[2][2] * im->b[h][w] ) ;
+					x = (toxyz[0][0] * im->r(h,w) + toxyz[0][1] * im->g(h,w)  + toxyz[0][2] * im->b(h,w) ) ;
+					y = (toxyz[1][0] * im->r(h,w) + toxyz[1][1] * im->g(h,w)  + toxyz[1][2] * im->b(h,w) ) ;
+					z = (toxyz[2][0] * im->r(h,w) + toxyz[2][1] * im->g(h,w)  + toxyz[2][2] * im->b(h,w) ) ;
 					//convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
-					im->r[h][w] = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
-					im->g[h][w] = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
-					im->b[h][w] = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;
+					im->r(h,w) = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
+					im->g(h,w) = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
+					im->b(h,w) = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;
 				}
 		}
 			
@@ -1801,57 +1768,57 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
                
                 // There might be Nikon postprocessings
                 if (lineSum>0) {
-                    im->r[h][w] *= im->r[h][w] * lineFac + lineSum;
-                    im->g[h][w] *= im->g[h][w] * lineFac + lineSum;
-                    im->b[h][w] *= im->b[h][w] * lineFac + lineSum;
+                    im->r(h,w) *= im->r(h,w) * lineFac + lineSum;
+                    im->g(h,w) *= im->g(h,w) * lineFac + lineSum;
+                    im->b(h,w) *= im->b(h,w) * lineFac + lineSum;
                 }
 
-				im->r[h][w] *= 65535.0 ;
-				im->g[h][w] *= 65535.0 ;
-				im->b[h][w] *= 65535.0 ;
+				im->r(h,w) *= 65535.0 ;
+				im->g(h,w) *= 65535.0 ;
+				im->b(h,w) *= 65535.0 ;
 
                 if (cmp.blendCMSMatrix) {
                     // Red
-                    float red=im->r[h][w];
+                    float red=im->r(h,w);
                     if (red>RecoverTresh) {
-                        float matrixRed = mat[0][0]*imgPreLCMS->r[h][w] + mat[0][1]*imgPreLCMS->g[h][w] + mat[0][2]*imgPreLCMS->b[h][w];
+                        float matrixRed = mat[0][0]*imgPreLCMS->r(h,w) + mat[0][1]*imgPreLCMS->g(h,w) + mat[0][2]*imgPreLCMS->b(h,w);
 
                         if (red>=65535.0)
-                            im->r[h][w] = matrixRed;
+                            im->r(h,w) = matrixRed;
                         else {
                             float fac = (red - RecoverTresh) / (65535.0 - RecoverTresh);
-                            im->r[h][w] = (1.0-fac) * red + fac * matrixRed;
+                            im->r(h,w) = (1.0-fac) * red + fac * matrixRed;
                         }
                     }
 
                     // Green
-                    float green=im->g[h][w];
+                    float green=im->g(h,w);
                     if (green>RecoverTresh) {
-                        float matrixGreen = mat[1][0]*imgPreLCMS->r[h][w] + mat[1][1]*imgPreLCMS->g[h][w] + mat[1][2]*imgPreLCMS->b[h][w];
+                        float matrixGreen = mat[1][0]*imgPreLCMS->r(h,w) + mat[1][1]*imgPreLCMS->g(h,w) + mat[1][2]*imgPreLCMS->b(h,w);
 
                         if (green>=65535.0)
-                            im->g[h][w] = matrixGreen;
+                            im->g(h,w) = matrixGreen;
                         else {
                             float fac = (green - RecoverTresh) / (65535.0 - RecoverTresh);
-                            im->g[h][w] = (1.0-fac) * green + fac * matrixGreen;
+                            im->g(h,w) = (1.0-fac) * green + fac * matrixGreen;
                         }
                     }
 
 
                     // Blue
-                    float blue=im->b[h][w];
+                    float blue=im->b(h,w);
                     if (blue>RecoverTresh) {
-                        float matrixBlue = mat[2][0]*imgPreLCMS->r[h][w] + mat[2][1]*imgPreLCMS->g[h][w] + mat[2][2]*imgPreLCMS->b[h][w];
+                        float matrixBlue = mat[2][0]*imgPreLCMS->r(h,w) + mat[2][1]*imgPreLCMS->g(h,w) + mat[2][2]*imgPreLCMS->b(h,w);
 
                         if (blue>=65535.0)
-                            im->b[h][w] = matrixBlue;
+                            im->b(h,w) = matrixBlue;
                         else {
                             float fac = (blue - RecoverTresh) / (65535.0 - RecoverTresh);
-                            im->b[h][w] = (1.0-fac) * blue + fac * matrixBlue;
+                            im->b(h,w) = (1.0-fac) * blue + fac * matrixBlue;
                         }
                     }
                 }
-			}
+            }
 
         if (imgPreLCMS!=NULL) delete imgPreLCMS;
     }
@@ -1859,94 +1826,92 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
         //t3.set ();
 //        printf ("ICM TIME: %d\n", t3.etime(t1));
 }
-	
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
+
 // Converts raw image including ICC input profile to working space - 16bit int version
-void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
-	cmsHPROFILE in;
+/*void RawImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], std::string camName) {
+    cmsHPROFILE in;
     DCPProfile *dcpProf;
-	
+
     if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
-	
+
     if (dcpProf!=NULL) {
         dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, cmp.toneCurve);
     } else {
-	if (in==NULL) {
-        // Take camprofile from DCRAW
-        // in this case we avoid using the slllllooooooowwww lcms
-TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
-		double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-		for (int i=0; i<3; i++)
-			for (int j=0; j<3; j++) 
-				for (int k=0; k<3; k++) 
-					mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * imatrices.xyz_cam
-		
+        if (in==NULL) {
+            // Take camprofile from DCRAW
+            // in this case we avoid using the slllllooooooowwww lcms
+            TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
+            double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+            for (int i=0; i<3; i++)
+                for (int j=0; j<3; j++)
+                    for (int k=0; k<3; k++)
+                        mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * imatrices.xyz_cam
+
 #pragma omp parallel for
-		for (int i=0; i<im->height; i++)
-			for (int j=0; j<im->width; j++) {
-				
-				float newr = mat[0][0]*im->r[i][j] + mat[0][1]*im->g[i][j] + mat[0][2]*im->b[i][j];
-				float newg = mat[1][0]*im->r[i][j] + mat[1][1]*im->g[i][j] + mat[1][2]*im->b[i][j];
-				float newb = mat[2][0]*im->r[i][j] + mat[2][1]*im->g[i][j] + mat[2][2]*im->b[i][j];
-				
-				im->r[i][j] = CLIP((int)newr);
-				im->g[i][j] = CLIP((int)newg);
-				im->b[i][j] = CLIP((int)newb);
-			}
-	}
-	else
-	{
-        // Gamma preprocessing
-        float gammaFac, lineFac, lineSum;
-        getProfilePreprocParams(in, gammaFac, lineFac, lineSum);
+            for (int i=0; i<im->height; i++)
+                for (int j=0; j<im->width; j++) {
 
-        if (gammaFac>0) {
-            #pragma omp parallel for
-		    for ( int h = 0; h < im->height; ++h )
-			    for ( int w = 0; w < im->width; ++w ) {
-				    im->r[h][w]=  (int) (pow ((double)(im->r[h][w] / 65535.0), (double)gammaFac) * 65535.0);
-				    im->g[h][w]=  (int) (pow ((double)(im->g[h][w] / 65535.0), (double)gammaFac) * 65535.0);
-				    im->b[h][w]=  (int) (pow ((double)(im->b[h][w] / 65535.0), (double)gammaFac) * 65535.0);
-			    }
-        }
+                    float newr = mat[0][0]*im->r(i,j) + mat[0][1]*im->g(i,j) + mat[0][2]*im->b(i,j);
+                    float newg = mat[1][0]*im->r(i,j) + mat[1][1]*im->g(i,j) + mat[1][2]*im->b(i,j);
+                    float newb = mat[2][0]*im->r(i,j) + mat[2][1]*im->g(i,j) + mat[2][2]*im->b(i,j);
 
-		cmsHPROFILE out = iccStore->workingSpace (cmp.working);
-		//        out = iccStore->workingSpaceGamma (wProfile);
-		lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16, out, TYPE_RGB_16, settings->colorimetricIntent,
-            cmsFLAGS_NOCACHE);  // NOCACHE is important for thread safety
-		lcmsMutex->unlock ();
+                    im->r(i,j) = CLIP((int)newr);
+                    im->g(i,j) = CLIP((int)newg);
+                    im->b(i,j) = CLIP((int)newb);
+                }
+        } else {
+            // Gamma preprocessing
+            float gammaFac, lineFac, lineSum;
+            getProfilePreprocParams(in, gammaFac, lineFac, lineSum);
 
-		if (hTransform) {
-			im->ExecCMSTransform(hTransform);
-
-            // There might be Nikon postprocessings
-            if (lineSum>0) {
-                #pragma omp parallel for
+            if (gammaFac>0) {
+#pragma omp parallel for
                 for ( int h = 0; h < im->height; ++h )
                     for ( int w = 0; w < im->width; ++w ) {
-                        im->r[h][w] *= im->r[h][w] * lineFac / 65535.0 + lineSum;
-                        im->g[h][w] *= im->g[h][w] * lineFac / 65535.0 + lineSum;
-                        im->b[h][w] *= im->b[h][w] * lineFac / 65535.0 + lineSum;
+                        im->r(h,w)=  (int) (pow ((double)(im->r(h,w) / 65535.0), (double)gammaFac) * 65535.0);
+                        im->g(h,w)=  (int) (pow ((double)(im->g(h,w) / 65535.0), (double)gammaFac) * 65535.0);
+                        im->b(h,w)=  (int) (pow ((double)(im->b(h,w) / 65535.0), (double)gammaFac) * 65535.0);
                     }
             }
-		}
-		else {
-			lcmsMutex->lock ();
-			hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16, out, TYPE_RGB_16, settings->colorimetricIntent,
-                cmsFLAGS_NOCACHE);   
-			lcmsMutex->unlock ();
 
-			im->ExecCMSTransform(hTransform);
-		}
+            cmsHPROFILE out = iccStore->workingSpace (cmp.working);
+            //out = iccStore->workingSpaceGamma (wProfile);
+            lcmsMutex->lock ();
+            cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16, out, TYPE_RGB_16, settings->colorimetricIntent,
+            cmsFLAGS_NOCACHE);  // NOCACHE is important for thread safety
+            lcmsMutex->unlock ();
 
-		cmsDeleteTransform(hTransform);
-	}
+            if (hTransform) {
+                im->ExecCMSTransform(hTransform);
+
+                // There might be Nikon postprocessings
+                if (lineSum>0) {
+#pragma omp parallel for
+                    for ( int h = 0; h < im->height; ++h )
+                        for ( int w = 0; w < im->width; ++w ) {
+                            im->r(h,w) *= im->r(h,w) * lineFac / 65535.0 + lineSum;
+                            im->g(h,w) *= im->g(h,w) * lineFac / 65535.0 + lineSum;
+                            im->b(h,w) *= im->b(h,w) * lineFac / 65535.0 + lineSum;
+                        }
+                }
+            }
+            else {
+                lcmsMutex->lock ();
+                hTransform = cmsCreateTransform (camprofile, TYPE_RGB_16, out, TYPE_RGB_16,
+                              settings->colorimetricIntent, cmsFLAGS_NOCACHE);
+                lcmsMutex->unlock ();
+
+                im->ExecCMSTransform(hTransform);
+            }
+
+            cmsDeleteTransform(hTransform);
+        }
     }
-	//t3.set ();
-	//        printf ("ICM TIME: %d\n", t3.etime(t1));
-}
+    //t3.set ();
+    //printf ("ICM TIME: %d\n", t3.etime(t1));
+}*/
 
 // Determine RAW input and output profiles. Returns TRUE on success
 bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in) {
@@ -2148,14 +2113,14 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 		    float go = min(g, maxval);
 		    float bo = min(b, maxval);
             float yy = xyz_cam[1][0]*r + xyz_cam[1][1]*g + xyz_cam[1][2]*b;
-            float fy = (yy<65535.0 ? ImProcFunctions::cachef[yy]/327.68 : (exp(log(yy/MAXVAL)/3.0 )));
+            float fy = (yy<65535.0 ? ImProcFunctions::cachef[yy]/327.68 : (exp(log(yy/MAXVALD)/3.0 )));
             // compute LCH decompostion of the clipped pixel (only color information, thus C and H will be used)
             float x = xyz_cam[0][0]*ro + xyz_cam[0][1]*go + xyz_cam[0][2]*bo;
             float y = xyz_cam[1][0]*ro + xyz_cam[1][1]*go + xyz_cam[1][2]*bo;
             float z = xyz_cam[2][0]*ro + xyz_cam[2][1]*go + xyz_cam[2][2]*bo;
-			x = (x<65535.0 ? ImProcFunctions::cachef[x]/327.68 : (exp(log(x/MAXVAL)/3.0 )));
-			y = (y<65535.0 ? ImProcFunctions::cachef[y]/327.68 : (exp(log(y/MAXVAL)/3.0 )));
-			z = (z<65535.0 ? ImProcFunctions::cachef[z]/327.68 : (exp(log(z/MAXVAL)/3.0 )));
+			x = (x<65535.0 ? ImProcFunctions::cachef[x]/327.68 : (exp(log(x/MAXVALD)/3.0 )));
+			y = (y<65535.0 ? ImProcFunctions::cachef[y]/327.68 : (exp(log(y/MAXVALD)/3.0 )));
+			z = (z<65535.0 ? ImProcFunctions::cachef[z]/327.68 : (exp(log(z/MAXVALD)/3.0 )));
             // convert back to rgb
             double fz = fy - y + z;
             double fx = fy + x - y;
@@ -2394,7 +2359,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	
-	ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {
+	ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran) {
 		
 		int x; int y;
 		double reds = 0, greens = 0, blues = 0;

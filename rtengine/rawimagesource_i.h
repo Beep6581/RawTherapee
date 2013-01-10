@@ -56,10 +56,10 @@ inline void RawImageSource::convert_to_cielab_row (float* ar, float* ag, float* 
 	if (y>threshold)
       oL[j] = cache[(int)y];
     else
-      oL[j] = 903.3 * y / MAXVAL;
+      oL[j] = float(903.3 * y / MAXVALD);
 
-    oa[j] = 500.0 * ((x>threshold ? cache[(int)x] : 7.787*x/MAXVAL+16.0/116.0) - (y>threshold ? cache[(int)y] : 7.787*y/MAXVAL+16.0/116.0));
-    ob[j] = 200.0 * ((y>threshold ? cache[(int)y] : 7.787*y/MAXVAL+16.0/116.0) - (z>threshold ? cache[(int)z] : 7.787*z/MAXVAL+16.0/116.0));
+    oa[j] = float(500.0 * ((x>threshold ? cache[(int)x] : 7.787*x/MAXVALD+16.0/116.0) - (y>threshold ? cache[(int)y] : 7.787*y/MAXVALD+16.0/116.0)));
+    ob[j] = float(200.0 * ((y>threshold ? cache[(int)y] : 7.787*y/MAXVALD+16.0/116.0) - (z>threshold ? cache[(int)z] : 7.787*z/MAXVALD+16.0/116.0)));
   }
 }
 

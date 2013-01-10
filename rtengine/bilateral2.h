@@ -438,9 +438,6 @@ template<class T, class A> void bilateral (T** src, T** dst, T** buffer, int W, 
 // START OF EXPERIMENTAL CODE: O(1) bilateral box filter
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#define MAXVAL  65535.0
-#define CLIP(a) ((a)>0.0?((a)<MAXVAL?(a):MAXVAL):0.0)
-
 #define BINBIT 7 //bit depth of histogram -- there are 2^BINBIT discrete levels
 #define TRANSBIT 9 //bit shift = 16-BINBIT taking short ints to bit depth BINBIT
 
@@ -523,9 +520,6 @@ template<class T> void bilateral (T** src, T** dst, int W, int H, int sigmar, do
     //delete [] real_buff_final;
     //delete [] buff_final;
 }
-#undef MAXVAL
-#undef CLIP
-
 #undef BINBIT
 #undef TRANSBIT
 

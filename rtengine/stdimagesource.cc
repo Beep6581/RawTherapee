@@ -19,6 +19,7 @@
 #include "stdimagesource.h"
 #include "mytime.h"
 #include "iccstore.h"
+#include "imageio.h"
 #include "curves.h"
 #include "color.h"
 
@@ -26,6 +27,7 @@
 
 namespace rtengine {
 
+extern cmsToneCurve* Color::linearGammaTRC;
 extern const Settings* settings;
 
 template<class T> void freeArray (T** a, int H) {
@@ -47,38 +49,113 @@ StdImageSource::StdImageSource () : ImageSource(), img(NULL), plistener(NULL) {
     hrmap[0] = NULL;
     hrmap[1] = NULL;
     hrmap[2] = NULL;
-	needhr = NULL;
-	embProfile = NULL;
+    needhr = NULL;
+    embProfile = NULL;
     idata = NULL;
- }
+}
 
 StdImageSource::~StdImageSource () {
 
     delete idata;
     
     if (hrmap[0]!=NULL) {
-        int dh = img->height/HR_SCALE;
+        int dh = img->getH()/HR_SCALE;
         freeArray<float>(hrmap[0], dh);
         freeArray<float>(hrmap[1], dh);
         freeArray<float>(hrmap[2], dh);
-    }       
+    }
 
-    delete img;
+    if (needhr)
+        freeArray<char>(needhr, img->getH());
 
-	if (needhr)
-        freeArray<char>(needhr, img->height);
+    if (img) delete img;
 }
 
+void StdImageSource::getSampleFormat (Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement) {
+
+    sFormat = IIOSF_UNKNOWN;
+    sArrangement = IIOSA_UNKNOWN;
+
+    size_t lastdot = fname.find_last_of ('.');
+    if( Glib::ustring::npos == lastdot ) {
+        return;
+    }
+    if (!fname.casefold().compare (lastdot, 4, ".jpg") ||
+        !fname.casefold().compare (lastdot, 5, ".jpeg"))
+    {
+        // For now, png and jpeg files are converted to unsigned short by the loader itself,
+        // but there should be functions that read the sample format first, like the TIFF case below
+        sFormat = IIOSF_UNSIGNED_CHAR;
+        sArrangement = IIOSA_CHUNKY;
+        return;
+    }
+    else if (!fname.casefold().compare (lastdot, 4, ".png")) {
+        int result = ImageIO::getPNGSampleFormat (fname, sFormat, sArrangement);
+        if (result == IMIO_SUCCESS)
+            return;
+    }
+    else if (!fname.casefold().compare (lastdot, 4, ".tif") ||
+             !fname.casefold().compare (lastdot, 5, ".tiff"))
+    {
+        int result = ImageIO::getTIFFSampleFormat (fname, sFormat, sArrangement);
+        if (result == IMIO_SUCCESS)
+            return;
+    }
+    return;
+}
+
+/*
+ * This method make define the correspondence between the input image type
+ * and RT's image data type (Image8, Image16 and Imagefloat), then it will
+ * load the image into it
+ */
 int StdImageSource::load (Glib::ustring fname, bool batch) {
 
     fileName = fname;
 
-    img = new Image16 ();
+    // First let's find out the input image's type
+
+    IIOSampleFormat sFormat;
+    IIOSampleArrangement sArrangement;
+    getSampleFormat(fname, sFormat, sArrangement);
+
+    // Then create the appropriate object
+
+    switch (sFormat) {
+    case (IIOSF_UNSIGNED_CHAR):
+        {
+        Image8 *img_8 = new Image8 ();
+        img = img_8;
+        break;
+        }
+    case (IIOSF_UNSIGNED_SHORT):
+        {
+        Image16 *img_16 = new Image16 ();
+        img = img_16;
+        break;
+        }
+    case (IIOSF_LOGLUV24):
+    case (IIOSF_LOGLUV32):
+    case (IIOSF_FLOAT):
+        {
+        Imagefloat *img_float = new Imagefloat ();
+        img = img_float;
+        break;
+        }
+    default:
+        return IMIO_FILETYPENOTSUPPORTED;
+    }
+
+    img->setSampleFormat(sFormat);
+    img->setSampleArrangement(sArrangement);
+
     if (plistener) {
         plistener->setProgressStr ("PROGRESSBAR_LOADING");
         plistener->setProgress (0.0);
         img->setProgressListener (plistener);
     }
+
+    // And load the image!
 
     int error = img->load (fname);
     if (error) {
@@ -88,6 +165,15 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
     }
 
     embProfile = img->getEmbeddedProfile ();
+
+    // For 32 bits floating point images, gamma is forced to linear in embedded ICC profiles
+    // HOMBRE: Doesn't seem to have any effect
+    if ( (sFormat&(IIOSF_LOGLUV24|IIOSF_LOGLUV32|IIOSF_FLOAT) ) && embProfile) {
+        cmsWriteTag(embProfile, cmsSigGreenTRCTag, (void*)Color::linearGammaTRC );
+        cmsWriteTag(embProfile, cmsSigRedTRCTag,   (void*)Color::linearGammaTRC );
+        cmsWriteTag(embProfile, cmsSigBlueTRCTag,  (void*)Color::linearGammaTRC );
+    }
+
     idata = new ImageData (fname); 
     if (idata->hasExif()) {
         int deg = 0;
@@ -101,9 +187,7 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
             deg = 270;
         }
         if (deg) {
-            Image16* rot = img->rotate(deg);
-            delete img;
-            img = rot;
+            img->rotate(deg);
         }
     }
 
@@ -112,279 +196,77 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
         plistener->setProgress (1.0);
     }
 
-	wb = ColorTemp (1.0,1.0,1.0);
-	//this is probably a mistake if embedded profile is not D65
+    wb = ColorTemp (1.0,1.0,1.0);
+    //this is probably a mistake if embedded profile is not D65
 
     return 0;
 }
 
-void StdImageSource::transform (PreviewProps pp, int tran, int &sx1, int &sy1, int &sx2, int &sy2) {
-
-    int W = img->width;
-    int H = img->height;
-    int sw = W, sh = H;  
-    if ((tran & TR_ROT) == TR_R90 || (tran & TR_ROT) == TR_R270) {
-        sw = H;
-        sh = W;
-    }
-    int ppx = pp.x, ppy = pp.y;
-    if (tran & TR_HFLIP) 
-        ppx = sw - pp.x - pp.w;
-    if (tran & TR_VFLIP) 
-        ppy = sh - pp.y - pp.h;
-    
-    sx1 = ppx;
-    sy1 = ppy;
-    sx2 = ppx + pp.w;
-    sy2 = ppy + pp.h;
-    
-    if ((tran & TR_ROT) == TR_R180) {
-        sx1 = W - ppx - pp.w;
-        sy1 = H - ppy - pp.h;
-        sx2 = sx1 + pp.w;
-        sy2 = sy1 + pp.h;
-    }
-    else if ((tran & TR_ROT) == TR_R90) {
-        sx1 = ppy;
-        sy1 = H - ppx - pp.w;
-        sx2 = sx1 + pp.h;
-        sy2 = sy1 + pp.w;
-    }
-    else if ((tran & TR_ROT) == TR_R270) {
-        sx1 = W - ppy - pp.h;
-        sy1 = ppx;
-        sx2 = sx1 + pp.h;
-        sy2 = sy1 + pp.w;
-    }   
-    //printf ("ppx %d ppy %d ppw %d pph %d s: %d %d %d %d\n",pp.x, pp.y,pp.w,pp.h,sx1,sy1,sx2,sy2);
-    if (sx1<0)sx1=0;
-    if (sy1<0)sy1=0;
-}
-
-void StdImageSource::getImage_ (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, HRecParams hrp) {
-
-    // compute channel multipliers
-    double drm, dgm, dbm;
-    ctemp.getMultipliers (drm, dgm, dbm);
-    float rm=drm,gm=dgm,bm=dbm;
-
-    rm = 1.0 / rm;
-    gm = 1.0 / gm;
-    bm = 1.0 / bm;
-    float mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
-    rm /= mul_lum;
-    gm /= mul_lum;
-    bm /= mul_lum;    
-
-    int sx1, sy1, sx2, sy2;
-
-    transform (pp, tran, sx1, sy1, sx2, sy2);
-    // printf(" sx1:%d sy1:%d sx2:%d sy2:%d\n",sx1, sy1, sx2, sy2);
-/*   the sizes are already known: image->width and image->height
-    int imwidth  = (sx2 - sx1) / pp.skip + ((sx2 - sx1) % pp.skip > 0);
-    int imheight = (sy2 - sy1) / pp.skip + ((sy2 - sy1) % pp.skip > 0);
-*/
-    int imwidth=image->width,imheight=image->height;
-    // printf("1: imw=%d imh=%d\n",imwidth,imheight);
-    if (((tran & TR_ROT) == TR_R90)||((tran & TR_ROT) == TR_R270))
-    {
-    	int swap = imwidth;
-    	imwidth=imheight;
-    	imheight=swap;
-    }
-    // printf("2: imw=%d imh=%d\n",imwidth,imheight);
-    int istart = sy1;
-    int maxx=img->width,maxy=img->height;
-    int mtran = tran;
-    int skip = pp.skip;
-
-    //if ((sx1 + skip*imwidth)>maxx) imwidth -- ; // we have a boundary condition that can cause errors
-
-    // improve speed by integrating the area division into the multipliers
-    // switched to using ints for the red/green/blue channel buffer.
-    // Incidentally this improves accuracy too.
-    float area=skip*skip;
-    rm/=area;
-    gm/=area;
-    bm/=area;
-
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-#endif
-    float *line_red  = new float[imwidth];
-    float *line_green  = new float[imwidth];
-    float *line_blue = new float[imwidth];
-
-#ifdef _OPENMP
-#pragma omp for
-#endif
-		for (int ix=0;ix<imheight;ix++) {
-			int i=istart+skip*ix;if (i>=maxy-skip) i=maxy-skip-1; // avoid trouble
-			for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {if (jx>=maxx-skip) jx=maxx-skip-1; // avoid trouble
-				
-				float rtot,gtot,btot;
-				rtot=gtot=btot=0;
-				
-				for (int m=0; m<skip; m++)
-					for (int n=0; n<skip; n++)
-					{
-						rtot += Color::igamma_srgb(img->r[i+m][jx+n]);
-						gtot += Color::igamma_srgb(img->g[i+m][jx+n]);
-						btot += Color::igamma_srgb(img->b[i+m][jx+n]);
-					}
-				line_red[j]  = rtot;
-				line_green[j]  = gtot;
-				line_blue[j] = btot;
-			}
-			
-			// covert back to gamma and clip
-#define GCLIP( x ) Color::gamma_srgb(CLIP(x))
-			
-			if ((mtran & TR_ROT) == TR_R180) 
-				for (int j=0; j<imwidth; j++) {
-					image->r[imheight-1-ix][imwidth-1-j] = GCLIP(rm*line_red[j])/65535.0;
-					image->g[imheight-1-ix][imwidth-1-j] = GCLIP(gm*line_green[j])/65535.0;
-					image->b[imheight-1-ix][imwidth-1-j] = GCLIP(bm*line_blue[j])/65535.0;
-				}
-			else if ((mtran & TR_ROT) == TR_R90) 
-				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-					image->r[j][imheight-1-ix] = GCLIP(rm*line_red[j])/65535.0;
-					image->g[j][imheight-1-ix] = GCLIP(gm*line_green[j])/65535.0;
-					image->b[j][imheight-1-ix] = GCLIP(bm*line_blue[j])/65535.0;
-				}
-			else if ((mtran & TR_ROT) == TR_R270) 
-				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-					image->r[imwidth-1-j][ix] = GCLIP(rm*line_red[j])/65535.0;
-					image->g[imwidth-1-j][ix] = GCLIP(gm*line_green[j])/65535.0;
-					image->b[imwidth-1-j][ix] = GCLIP(bm*line_blue[j])/65535.0;
-				}
-			else {
-				for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-					image->r[ix][j] = GCLIP(rm*line_red[j])/65535.0;
-					image->g[ix][j] = GCLIP(gm*line_green[j])/65535.0;
-					image->b[ix][j] = GCLIP(bm*line_blue[j])/65535.0;
-					//if (ix==100 && j==100) printf("stdimsrc before R= %f  G= %f  B= %f  \n",65535*image->r[ix][j],65535*image->g[ix][j],65535*image->b[ix][j]);
-					
-				}
-			}
-		}
-#undef GCLIP
-    delete [] line_red;
-    delete [] line_green;
-    delete [] line_blue;
-#ifdef _OPENMP
-    }
-#endif
-}
-
-
 void StdImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw) {
 
-    MyTime t1,t2;
-
-    t1.set ();
-
     // the code will use OpenMP as of now.
-	
-	//Image16* tmpim = new Image16 (image->width,image->height);
-    getImage_ (ctemp, tran, image, pp, true, hrp);
 
-    // *** colorSpaceConversion was there ***
-/*    	colorSpaceConversion (image, cmp, embProfile);
-	
-	for ( int h = 0; h < image->height; ++h )
-		for ( int w = 0; w < image->width; ++w ) {
-			image->r[h][w] *= 65535.0f;
-			image->g[h][w] *= 65535.0f;
-			image->b[h][w] *= 65535.0f;
-			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",image->r[h][w],image->g[h][w],image->b[h][w]);
-		}
-*/
+    img->getStdImage(ctemp, tran, image, pp, true, hrp);
+
+    // Hombre: we could have rotated the image here too, with just few line of code, but:
+    // 1. it would require other modifications in the engine, so "do not touch that little plonker!"
+    // 2. it's more optimized like this
+
     // Flip if needed
     if (tran & TR_HFLIP)
-        hflip (image);
+        image->hflip();
     if (tran & TR_VFLIP)
-        vflip (image);
-
-    t2.set ();
+        image->vflip();
 }
-	
+
 void StdImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) {
-    colorSpaceConversion (image, cmp, embProfile);
+    colorSpaceConversion (image, cmp, embProfile, img->getSampleFormat());
 }
 
-void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
-	
-	cmsHPROFILE in;
-	cmsHPROFILE out = iccStore->workingSpace (cmp.working);
-	if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
-		if (embedded)
-			in = embedded;
-		else
-			in = iccStore->getsRGBProfile ();
-	} else {
-		if (cmp.input!="(none)") {
-			in = iccStore->getProfile (cmp.input);
-			if (in==NULL && embedded)
-				in = embedded;
-			else if (in==NULL)
-				in = iccStore->getsRGBProfile ();
-		}
-	}
-	
-	if (cmp.input!="(none)") {
-		lcmsMutex->lock ();
-		cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent, 
-            cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-		lcmsMutex->unlock ();
-		
-        im->ExecCMSTransform(hTransform);
-		
-        cmsDeleteTransform(hTransform);
-	}
+void StdImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, IIOSampleFormat sampleFormat) {
 
-	// Code moved from getImage to change the range of the float value from [0.;1.] to [0.;65535.]
-	for ( int h = 0; h < im->height; ++h )
-		for ( int w = 0; w < im->width; ++w ) {
-			im->r[h][w] *= 65535.0f;
-			im->g[h][w] *= 65535.0f;
-			im->b[h][w] *= 65535.0f;
-			//if (h==100 && w==100) printf("stdimsrc after R= %f  G= %f  B= %f  \n",im->r[h][w],im->g[h][w],im->b[h][w]);
-		}
-}
-	
-
-void StdImageSource::colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded) {
-
+    bool skipTransform = false;
     cmsHPROFILE in;
     cmsHPROFILE out = iccStore->workingSpace (cmp.working);
-    if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)") {
+    if (cmp.input=="(embedded)" || cmp.input=="" || cmp.input=="(camera)" || cmp.input=="(cameraICC)") {
         if (embedded)
             in = embedded;
-        else
-            in = iccStore->getsRGBProfile ();
-    }
-    else if (cmp.input!="(none)") {
-        in = iccStore->getProfile (cmp.input);
-        if (in==NULL && embedded)
-            in = embedded;
-        else if (in==NULL)
-            in = iccStore->getsRGBProfile ();
+        else {
+            if (sampleFormat & (IIOSF_LOGLUV24|IIOSF_LOGLUV32|IIOSF_FLOAT))
+                skipTransform = true;
+            else
+                in = iccStore->getsRGBProfile ();
+        }
+    } else {
+        if (cmp.input!="(none)") {
+            in = iccStore->getProfile (cmp.input);
+            if (in==NULL && embedded)
+                in = embedded;
+            else if (in==NULL) {
+                if (sampleFormat & (IIOSF_LOGLUV24|IIOSF_LOGLUV32|IIOSF_FLOAT))
+                    skipTransform = true;
+                else
+                    in = iccStore->getsRGBProfile ();
+            }
+        }
     }
 
-    if (cmp.input!="(none)") {
+    if (!skipTransform && cmp.input!="(none)") {
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_16, out, TYPE_RGB_16, settings->colorimetricIntent, 
-            cmsFLAGS_NOCACHE);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent,
+                                                       cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
         lcmsMutex->unlock ();
-        
+
+        // Convert to the [0.0 ; 1.0] range
+        im->normalizeFloatTo1();
+
         im->ExecCMSTransform(hTransform);
-        
+
+        // Converting back to the [0.0 ; 65535.0] range
+        im->normalizeFloatTo65535();
+
         cmsDeleteTransform(hTransform);
     }
-
-    // WARNING: A range update may be missing here (see colorSpaceConversion above)
 }
 
 void StdImageSource::getFullSize (int& w, int& h, int tr) {
@@ -396,157 +278,42 @@ void StdImageSource::getFullSize (int& w, int& h, int tr) {
         h = img->width;
     }
 }
- 
+
 void StdImageSource::getSize (int tran, PreviewProps pp, int& w, int& h) {
 
     w = pp.w / pp.skip + (pp.w % pp.skip > 0);
     h = pp.h / pp.skip + (pp.h % pp.skip > 0);
 }
 
-void StdImageSource::hflip (Imagefloat* image) {
-    int width  = image->width;
-    int height = image->height;
-
-    float* rowr = new float[width];
-    float* rowg = new float[width];
-    float* rowb = new float[width];
-    for (int i=0; i<height; i++) {
-      for (int j=0; j<width; j++) {
-        rowr[j] = image->r[i][width-1-j];
-        rowg[j] = image->g[i][width-1-j];
-        rowb[j] = image->b[i][width-1-j];
-      }
-      memcpy (image->r[i], rowr, width*sizeof(float));
-      memcpy (image->g[i], rowg, width*sizeof(float));
-      memcpy (image->b[i], rowb, width*sizeof(float));
-    }
-    delete [] rowr;
-    delete [] rowg;
-    delete [] rowb;
-}
-
-void StdImageSource::vflip (Imagefloat* image) {
-    int width  = image->width;
-    int height = image->height;
-
-    float tmp;
-    for (int i=0; i<height/2; i++) 
-      for (int j=0; j<width; j++) {
-        tmp = image->r[i][j]; 
-        image->r[i][j] = image->r[height-1-i][j];
-        image->r[height-1-i][j] = tmp;
-        tmp = image->g[i][j]; 
-        image->g[i][j] = image->g[height-1-i][j];
-        image->g[height-1-i][j] = tmp;
-        tmp = image->b[i][j]; 
-        image->b[i][j] = image->b[height-1-i][j];
-        image->b[height-1-i][j] = tmp;
-      }
-}
-
 void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
-
-    histcompr = 3;
-
-    histogram(65536>>histcompr);
-    histogram.clear();
-
-    for (int i=0; i<img->height; i++)
-        for (int j=0; j<img->width; j++) {
-            histogram[(int)Color::igamma_srgb (img->r[i][j])>>histcompr]++;
-            histogram[(int)Color::igamma_srgb (img->g[i][j])>>histcompr]++;
-            histogram[(int)Color::igamma_srgb (img->b[i][j])>>histcompr]++;
-        }
+    if (img->getType() == sImage8) {
+        Image8 *img_ = static_cast<Image8*>(img);
+        img_->computeAutoHistogram(histogram, histcompr);
+    }
+    else if (img->getType() == sImage16) {
+        Image16 *img_ = static_cast<Image16*>(img);
+        img_->computeAutoHistogram(histogram, histcompr);
+    }
+    else if (img->getType() == sImagefloat) {
+        Imagefloat *img_ = static_cast<Imagefloat*>(img);
+        img_->computeAutoHistogram(histogram, histcompr);
+    }
 }
 
 ColorTemp StdImageSource::getAutoWB () {
-
-    double avg_r = 0;
-    double avg_g = 0;
-    double avg_b = 0;
-    int n = 0;
-    //int p = 6;
-
-    for (int i=1; i<img->height-1; i++)
-        for (int j=1; j<img->width-1; j++) {
-            if (img->r[i][j]>64000 || img->g[i][j]>64000 || img->b[i][j]>64000)
-                continue;
-			avg_r += SQR((double)img->r[i][j]);
-            avg_g += SQR((double)img->g[i][j]);
-            avg_b += SQR((double)img->b[i][j]);			
-            /*avg_r += intpow((double)img->r[i][j], p);
-            avg_g += intpow((double)img->g[i][j], p);
-            avg_b += intpow((double)img->b[i][j], p);*/
-			
-            n++;
-        }
-	return ColorTemp (sqrt(avg_r/n), sqrt(avg_g/n), sqrt(avg_b/n));
-    //return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
+    return img->getAutoWB();
 }
 
-void StdImageSource::transformPixel (int x, int y, int tran, int& tx, int& ty) {
-    
-    int W = img->width;
-    int H = img->height;
-    int sw = W, sh = H;  
-    if ((tran & TR_ROT) == TR_R90 || (tran & TR_ROT) == TR_R270) {
-        sw = H;
-        sh = W;
-    }
-
-    int ppx = x, ppy = y;
-    if (tran & TR_HFLIP) 
-        ppx = sw - 1 - x ;
-    if (tran & TR_VFLIP) 
-        ppy = sh - 1 - y;
-    
-    tx = ppx;
-    ty = ppy;
-    
-    if ((tran & TR_ROT) == TR_R180) {
-        tx = W - 1 - ppx;
-        ty = H - 1 - ppy;
-    }
-    else if ((tran & TR_ROT) == TR_R90) {
-        tx = ppy;
-        ty = H - 1 - ppx;
-    }
-    else if ((tran & TR_ROT) == TR_R270) {
-        tx = W - 1 - ppy;
-        ty = ppx;
-    }   
-}
-
-ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran) {
-
-    int x; int y;
-    double reds = 0, greens = 0, blues = 0;
-    int rn = 0, gn = 0, bn = 0;
-    for (size_t i=0; i<red.size(); i++) {
-        transformPixel (red[i].x, red[i].y, tran, x, y);
-        if (x>=0 && y>=0 && x<img->width && y<img->height) {
-            reds += img->r[y][x];
-//            img->r[y][x]=0;   // debug!!!
-            rn++;
-        }
-        transformPixel (green[i].x, green[i].y, tran, x, y);
-        if (x>=0 && y>=0 && x<img->width && y<img->height) {
-            greens += img->g[y][x];
-//            img->g[y][x]=0; // debug!!!
-            gn++;
-        }
-        transformPixel (blue[i].x, blue[i].y, tran, x, y);
-        if (x>=0 && y>=0 && x<img->width && y<img->height) {
-            blues += img->b[y][x];
-//            img->b[y][x]=0; // debug!!!
-            bn++;
-        }
-    }
+ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D>& blue, int tran) {
+    int rn, gn, bn;
+    double reds, greens, blues;
+    img->getSpotWBData(reds, greens, blues, rn, gn, bn, red, green, blue, tran);
     double img_r, img_g, img_b;
     wb.getMultipliers (img_r, img_g, img_b);
     printf ("AVG: %g %g %g\n", reds/rn, greens/gn, blues/bn);
 
     return ColorTemp (reds/rn*img_r, greens/gn*img_g, blues/bn*img_b);
 }
+
 }
 

@@ -28,67 +28,41 @@
 
 namespace rtengine {
 
-enum TypeInterpolation { TI_Nearest, TI_Bilinear };
-
 class Image8;
 
-class Image16 : public ImageIO, public IImage16 {
-
-    private:
-        unsigned char* unaligned;
+class Image16 : public IImage16, public ImageIO {
 
     public:
-        int rowstride;
-        int planestride;
 
-        int width;
-        int height;
-
-        unsigned short* data;
-        
-        unsigned short** r;
-        unsigned short** g;
-        unsigned short** b;
-  
-  
         Image16 ();
         Image16 (int width, int height);
         ~Image16 ();
 
-        Image16* copy ();
+        Image16*             copy ();
 
-		Image8* to8() const;
-        Imagefloat* tofloat() const;
+        Image8*              to8();
+        Imagefloat*          tofloat();
 
-        Image16* rotate (int deg);
-        Image16* hflip ();
-        Image16* vflip ();
-        Image16* resize (int nw, int nh, TypeInterpolation interp);
+        virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::HRecParams hrp);
 
-        virtual int     getW            () { return width;  }
-        virtual int     getH            () { return height; }
-        virtual void    allocate        (int width, int height);
-        virtual int     getBPS          () { return 16; }
-        virtual void    getScanline     (int row, unsigned char* buffer, int bps);
-        virtual void    setScanline     (int row, unsigned char* buffer, int bps);
+        virtual const char*  getType     () const { return sImage16; }
+        virtual int          getBPS      () { return 8*sizeof(unsigned short); }
+        virtual void         getScanline (int row, unsigned char* buffer, int bps);
+        virtual void         setScanline (int row, unsigned char* buffer, int bps, float *minValue=NULL, float *maxValue=NULL);
 
         // functions inherited from IImage16:
         virtual Glib::Mutex& getMutex () { return mutex (); }
-        virtual cmsHPROFILE getProfile () { return getEmbeddedProfile (); }
-        virtual int getWidth ()  { return width; }
-        virtual int getHeight () { return height; }
-        virtual int getBitsPerPixel () { return 16; }
-        virtual int saveToFile (Glib::ustring fname) { return save (fname); }
-        virtual int saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) { return savePNG (fname, compression, bps); }
-        virtual int saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3) { return saveJPEG (fname, quality, subSamp); }
-        virtual int saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false) { return saveTIFF (fname, bps, uncompressed); }
-        virtual void setSaveProgressListener (ProgressListener* pl) { return setProgressListener (pl); } 
-        virtual void free () { delete this; }
-        virtual unsigned short** getRPlane () { return r; }
-        virtual unsigned short** getGPlane () { return g; }
-        virtual unsigned short** getBPlane () { return b; }
+        virtual cmsHPROFILE  getProfile () { return getEmbeddedProfile (); }
+        virtual int          getBitsPerPixel () { return 8*sizeof(unsigned short); }
+        virtual int          saveToFile (Glib::ustring fname) { return save (fname); }
+        virtual int          saveAsPNG  (Glib::ustring fname, int compression = -1, int bps = -1) { return savePNG (fname, compression, bps); }
+        virtual int          saveAsJPEG (Glib::ustring fname, int quality = 100, int subSamp = 3) { return saveJPEG (fname, quality, subSamp); }
+        virtual int          saveAsTIFF (Glib::ustring fname, int bps = -1, bool uncompressed = false) { return saveTIFF (fname, bps, uncompressed); }
+        virtual void         setSaveProgressListener (ProgressListener* pl) { setProgressListener (pl); }
+        virtual void         free () { delete this; }
 
-        void ExecCMSTransform(cmsHTRANSFORM hTransform);
-    };
+        void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
+};
+
 }
 #endif

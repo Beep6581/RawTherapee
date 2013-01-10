@@ -19,6 +19,7 @@
 #ifndef _RTENGINE_
 #define _RTENGINE_
 
+#include "rt_math.h"
 #include "procparams.h"
 #include "procevents.h"
 #include <lcms2.h>
@@ -39,6 +40,10 @@
 
 
 namespace rtengine {
+
+    class IImage8;
+    class IImage16;
+    class IImagefloat;
 
   /**
     * This class represents provides functions to obtain exif and IPTC metadata information
@@ -99,7 +104,7 @@ namespace rtengine {
           /** Functions to convert between floating point and string representation of exposure compensation */
             static std::string expcompToString (double expcomp, bool maskZeroexpcomp);
             
-	    virtual ~ImageMetaData () {}
+            virtual ~ImageMetaData () {}
 
           /** Reads metadata from file.
             * @param fname is the name of the file
@@ -112,18 +117,19 @@ namespace rtengine {
   /** This listener interface is used to indicate the progress of time consuming operations */
     class ProgressListener {
     
-         public:
-        /** This member function is called when the percentage of the progress has been changed.
-          * @param p is a number between 0 and 1 */
+       public:
+          virtual ~ProgressListener() {}
+          /** This member function is called when the percentage of the progress has been changed.
+            * @param p is a number between 0 and 1 */
           virtual void setProgress (double p) {}
-        /** This member function is called when a textual information corresponding to the progress has been changed.
-          * @param str is the textual information corresponding to the progress */
+          /** This member function is called when a textual information corresponding to the progress has been changed.
+            * @param str is the textual information corresponding to the progress */
           virtual void setProgressStr (Glib::ustring str) {}
-        /** This member function is called when the state of the processing has been changed.
-          * @param inProcessing =true if the processing has been started, =false if it has been stopped */
+          /** This member function is called when the state of the processing has been changed.
+            * @param inProcessing =true if the processing has been started, =false if it has been stopped */
           virtual void setProgressState (bool inProcessing) {}
-        /** This member function is called when an error occurs during the operation.
-          * @param descr is the error message */
+          /** This member function is called when an error occurs during the operation.
+            * @param descr is the error message */
           virtual void error (Glib::ustring descr) {}
     };
     
@@ -138,22 +144,22 @@ namespace rtengine {
         public:
           /** Returns the file name of the image.
             * @return The file name of the image */
-            virtual Glib::ustring getFileName () =0;
+          virtual Glib::ustring getFileName () =0;
           /** Returns the embedded icc profile of the image.
             * @return The handle of the embedded profile */
-            virtual cmsHPROFILE getEmbeddedProfile () =0;
+          virtual cmsHPROFILE getEmbeddedProfile () =0;
           /** Returns a class providing access to the exif and iptc metadata tags of the image.
             * @return An instance of the ImageMetaData class */
-            virtual const ImageMetaData* getMetaData () =0;
+          virtual const ImageMetaData* getMetaData () =0;
           /** This is a function used for internal purposes only. */
-            virtual ImageSource* getImageSource () =0;
+          virtual ImageSource* getImageSource () =0;
           /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */
-            virtual void increaseRef () {}
+          virtual void increaseRef () {}
           /** This class has manual reference counting. You have to call this function each time to remove a reference 
             * (the last one deletes the instance automatically). */
-            virtual void decreaseRef () {}
+          virtual void decreaseRef () {}
 
-            virtual ~InitialImage () {}
+          virtual ~InitialImage () {}
 
           /** Loads an image into the memory.
             * @param fname the name of the file
@@ -161,7 +167,7 @@ namespace rtengine {
             * @param errorCode is a pointer to a variable that is set to nonzero if an error happened (output)
             * @param pl is a pointer pointing to an object implementing a progress listener. It can be NULL, in this case progress is not reported.
             * @return an object representing the loaded and pre-processed image */
-            static InitialImage* load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl = NULL);
+          static InitialImage* load (const Glib::ustring& fname, bool isRaw, int* errorCode, ProgressListener* pl = NULL);
     };
 
     /** When the preview image is ready for display during staged processing (thus the changes have been updated),
@@ -173,6 +179,7 @@ namespace rtengine {
       * The image you get with this listener is created to display on the monitor (monitor profile has been already applied). */
     class PreviewImageListener {
         public: 
+            virtual ~PreviewImageListener() {}
             /** With this member function the staged processor notifies the listener that it allocated a new
              * image to store the end result of the processing. It can be used in a shared manner. 
              * @param img is a pointer to the image
@@ -194,16 +201,18 @@ namespace rtengine {
       * implementing this interface has to store a copy of it. */
     class DetailedCropListener {
         public: 
+            virtual ~DetailedCropListener() {}
             /** With this member function the staged processor notifies the listener that the detailed crop image has been updated.
               * @param img is a pointer to the detailed crop image */
             virtual void setDetailedCrop (IImage8* img, IImage8* imgtrue, procparams::ColorManagementParams cmp,
-										  procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
+                                          procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip) {}
             virtual bool getWindow       (int& cx, int& cy, int& cw, int& ch, int& skip) { return false; }
     };
 
     /** This listener is used when the full size of the final image has been changed (e.g. rotated by 90 deg.) */
     class SizeListener {
         public: 
+            virtual ~SizeListener() {}
             /** This member function is called when the size of the final image has been changed
               * @param w is the width of the final image (without cropping)           
               * @param h is the height of the final image (without cropping)
@@ -215,6 +224,7 @@ namespace rtengine {
     /** This listener is used when the histogram of the final image has changed. */
     class HistogramListener {
         public:
+            virtual ~HistogramListener() {}
             /** This member function is called when the histogram of the final image has changed.
               * @param histRed is the array of size 256 containing the histogram of the red channel
               * @param histGreen is the array of size 256 containing the histogram of the green channel
@@ -228,6 +238,7 @@ namespace rtengine {
     /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */
     class AutoExpListener {
         public:
+            virtual ~AutoExpListener() {}
             /** This member function is called when the auto exposure has been recomputed.
               * @param brightness is the new brightness value (in logarithmic scale)
               * @param, bright is the new ...
@@ -243,17 +254,18 @@ namespace rtengine {
       * Several crops can be assigned to the same image.   */
     class DetailedCrop {
         public:
+            virtual ~DetailedCrop() {}
             /** Sets the window defining the crop. */
             virtual void setWindow   (int cx, int cy, int cw, int ch, int skip) {} 
 
-			/** First try to update (threadless update). If it returns false, make a full update */
+            /** First try to update (threadless update). If it returns false, make a full update */
             virtual bool tryUpdate  () { return false; }
             /** Perform a full recalculation of the part of the image corresponding to the crop. */
             virtual void fullUpdate  () {}
             /** Sets the listener of the crop. */
-            virtual void setListener (DetailedCropListener* il) {}       
+            virtual void setListener (DetailedCropListener* il) {}
             /** Destroys the crop. */
-            virtual void destroy () {}       
+            virtual void destroy () {}
     };
 
     /** This is a staged, cached image processing manager with partial image update support.  */

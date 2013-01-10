@@ -26,6 +26,7 @@
 #include "curves.h"
 #include <fftw3.h>
 #include "color.h"
+#include "iimage.h"
 #include "../rtgui/cacheimagedata.h"
 
 #define HR_SCALE 2
@@ -64,6 +65,7 @@ class RawImageSource : public ImageSource {
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
         static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
+        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
 
     protected:
         Glib::Mutex getImageMutex;  // locks getImage
@@ -119,7 +121,7 @@ class RawImageSource : public ImageSource {
         void processFalseColorCorrectionThread (Imagefloat* im, int row_from, int row_to);
         void hlRecovery          (std::string method, float* red, float* green, float* blue, int i, int sx1, int width, int skip, const RAWParams &raw, float* hlmax);
         int  defTransform        (int tran);
-        void rotateLine          (float* line, float** channel, int tran, int i, int w, int h);
+        void rotateLine          (float* line, PlanarPtr<float> &channel, int tran, int i, int w, int h);
         void transformRect       (PreviewProps pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
         void transformPosition   (int x, int y, int tran, int& tx, int& ty);
 
@@ -151,7 +153,7 @@ class RawImageSource : public ImageSource {
         void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
         ColorTemp   getAutoWB   ();
-        ColorTemp   getSpotWB   (std::vector<Coord2D> red, std::vector<Coord2D> green, std::vector<Coord2D>& blue, int tran);
+        ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran);
         bool        isWBProviderReady () { return rawData; }
 
         double      getDefGain  () { return defGain; }
@@ -171,8 +173,13 @@ class RawImageSource : public ImageSource {
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
         void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw);
-        static void colorSpaceConversion16 (Image16* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName);
-        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams cmp, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName);
+        //static void colorSpaceConversion16 (Image16*    im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName);
+        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
+            colorSpaceConversion (im, cmp, 0.0f, embedded, camprofile, cam, camName);
+        }
+        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
+            colorSpaceConversion (im, cmp, float(raw.expos), embedded, camprofile, cam, camName);
+        }
         static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 
         void boxblur2(float** src, float** dst, int H, int W, int box );

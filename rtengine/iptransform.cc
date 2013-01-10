@@ -254,9 +254,9 @@ void ImProcFunctions::transformVignetteOnly (Imagefloat* original, Imagefloat* t
 			double vig_x_d = (double) (x + cx) - vig_w2 ;
 			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
 			double vign = std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
-			transformed->r[y][x] = original->r[y][x] / vign;
-			transformed->g[y][x] = original->g[y][x] / vign;
-			transformed->b[y][x] = original->b[y][x] / vign;
+			transformed->r(y,x) = original->r(y,x) / vign;
+			transformed->g(y,x) = original->g(y,x) / vign;
+			transformed->b(y,x) = original->b(y,x) / vign;
 		}
 	}
 }
@@ -275,14 +275,14 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
     float** chOrig[3];
-    chOrig[0] = original->r;
-    chOrig[1] = original->g;
-    chOrig[2] = original->b;
+    chOrig[0] = original->r.ptrs;
+    chOrig[1] = original->g.ptrs;
+    chOrig[2] = original->b.ptrs;
 
     float** chTrans[3];
-    chTrans[0] = transformed->r;
-    chTrans[1] = transformed->g;
-    chTrans[2] = transformed->b;
+    chTrans[0] = transformed->r.ptrs;
+    chTrans[1] = transformed->g.ptrs;
+    chTrans[2] = transformed->b.ptrs;
 
     // auxiliary variables for c/a correction
     double chDist[3];
@@ -388,10 +388,10 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 
 					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2) {
                         // all interpolation pixels inside image
-                                if (enableCA) 
-                        interpolateTransformChannelsCubic (chOrig[c], xc-1, yc-1, Dx, Dy, &(chTrans[c][y][x]), vignmul);
-                                else
-                                    interpolateTransformCubic (original, xc-1, yc-1, Dx, Dy, &(transformed->r[y][x]), &(transformed->g[y][x]), &(transformed->b[y][x]), vignmul);
+                        if (enableCA)
+                            interpolateTransformChannelsCubic (chOrig[c], xc-1, yc-1, Dx, Dy, &(chTrans[c][y][x]), vignmul);
+                        else
+                            interpolateTransformCubic (original, xc-1, yc-1, Dx, Dy, &(transformed->r(y,x)), &(transformed->g(y,x)), &(transformed->b(y,x)), vignmul);
                     } else { 
                         // edge pixels
 						int y1 = LIM(yc,   0, original->height-1);
@@ -402,9 +402,9 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                                 if (enableCA) {
                         chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chOrig[c][y1][x2]*Dx*(1.0-Dy) + chOrig[c][y2][x1]*(1.0-Dx)*Dy + chOrig[c][y2][x2]*Dx*Dy);
                                 } else {
-                                    transformed->r[y][x] = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
-                                    transformed->g[y][x] = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
-                                    transformed->b[y][x] = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
+                                    transformed->r(y,x) = vignmul*(original->r(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->r(y1,x2)*Dx*(1.0-Dy) + original->r(y2,x1)*(1.0-Dx)*Dy + original->r(y2,x2)*Dx*Dy);
+                                    transformed->g(y,x) = vignmul*(original->g(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->g(y1,x2)*Dx*(1.0-Dy) + original->g(y2,x1)*(1.0-Dx)*Dy + original->g(y2,x2)*Dx*Dy);
+                                    transformed->b(y,x) = vignmul*(original->b(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->b(y1,x2)*Dx*(1.0-Dy) + original->b(y2,x1)*(1.0-Dx)*Dy + original->b(y2,x2)*Dx*Dy);
 					}
 				}
                         }
@@ -413,9 +413,9 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 					// not valid (source pixel x,y not inside source image, etc.)
 					chTrans[c][y][x] = 0;
                             } else {
-                                transformed->r[y][x] = 0;
-                                transformed->g[y][x] = 0;
-                                transformed->b[y][x] = 0;
+                                transformed->r(y,x) = 0;
+                                transformed->g(y,x) = 0;
+                                transformed->b(y,x) = 0;
                             }
                         }
 			}
@@ -517,9 +517,9 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 
                 if (yc < original->height-1 && xc < original->width-1) {  
                     // all interpolation pixels inside image
-                    transformed->r[y][x] = vignmul*(original->r[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->r[yc][xc+1]*Dx*(1.0-Dy) + original->r[yc+1][xc]*(1.0-Dx)*Dy + original->r[yc+1][xc+1]*Dx*Dy);
-                    transformed->g[y][x] = vignmul*(original->g[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->g[yc][xc+1]*Dx*(1.0-Dy) + original->g[yc+1][xc]*(1.0-Dx)*Dy + original->g[yc+1][xc+1]*Dx*Dy);
-                    transformed->b[y][x] = vignmul*(original->b[yc][xc]*(1.0-Dx)*(1.0-Dy) + original->b[yc][xc+1]*Dx*(1.0-Dy) + original->b[yc+1][xc]*(1.0-Dx)*Dy + original->b[yc+1][xc+1]*Dx*Dy);
+                    transformed->r(y,x) = vignmul*(original->r(yc,xc)*(1.0-Dx)*(1.0-Dy) + original->r(yc,xc+1)*Dx*(1.0-Dy) + original->r(yc+1,xc)*(1.0-Dx)*Dy + original->r(yc+1,xc+1)*Dx*Dy);
+                    transformed->g(y,x) = vignmul*(original->g(yc,xc)*(1.0-Dx)*(1.0-Dy) + original->g(yc,xc+1)*Dx*(1.0-Dy) + original->g(yc+1,xc)*(1.0-Dx)*Dy + original->g(yc+1,xc+1)*Dx*Dy);
+                    transformed->b(y,x) = vignmul*(original->b(yc,xc)*(1.0-Dx)*(1.0-Dy) + original->b(yc,xc+1)*Dx*(1.0-Dy) + original->b(yc+1,xc)*(1.0-Dx)*Dy + original->b(yc+1,xc+1)*Dx*Dy);
                 }
                 else { 
                     // edge pixels
@@ -527,16 +527,16 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                 	int y2 = LIM(yc+1, 0, original->height-1);
                 	int x1 = LIM(xc,   0, original->width-1);
                 	int x2 = LIM(xc+1, 0, original->width-1);
-                    transformed->r[y][x] = vignmul*(original->r[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->r[y1][x2]*Dx*(1.0-Dy) + original->r[y2][x1]*(1.0-Dx)*Dy + original->r[y2][x2]*Dx*Dy);
-                    transformed->g[y][x] = vignmul*(original->g[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->g[y1][x2]*Dx*(1.0-Dy) + original->g[y2][x1]*(1.0-Dx)*Dy + original->g[y2][x2]*Dx*Dy);
-                    transformed->b[y][x] = vignmul*(original->b[y1][x1]*(1.0-Dx)*(1.0-Dy) + original->b[y1][x2]*Dx*(1.0-Dy) + original->b[y2][x1]*(1.0-Dx)*Dy + original->b[y2][x2]*Dx*Dy);
+                    transformed->r(y,x) = vignmul*(original->r(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->r(y1,x2)*Dx*(1.0-Dy) + original->r(y2,x1)*(1.0-Dx)*Dy + original->r(y2,x2)*Dx*Dy);
+                    transformed->g(y,x) = vignmul*(original->g(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->g(y1,x2)*Dx*(1.0-Dy) + original->g(y2,x1)*(1.0-Dx)*Dy + original->g(y2,x2)*Dx*Dy);
+                    transformed->b(y,x) = vignmul*(original->b(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->b(y1,x2)*Dx*(1.0-Dy) + original->b(y2,x1)*(1.0-Dx)*Dy + original->b(y2,x2)*Dx*Dy);
                 }
             }
             else {
                 // not valid (source pixel x,y not inside source image, etc.)
-                transformed->r[y][x] = 0;
-                transformed->g[y][x] = 0;
-                transformed->b[y][x] = 0;
+                transformed->r(y,x) = 0;
+                transformed->g(y,x) = 0;
+                transformed->b(y,x) = 0;
             }
         }
     }

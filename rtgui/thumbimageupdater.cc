@@ -65,10 +65,11 @@ public:
 		active_(0),
 		inactive_waiting_(false)
 	{
-		int threadCount=1;  
+		int threadCount=1;
+		/* Test: Only 1 thread for thumbnails creation, since tools are already parallelized
 		#ifdef _OPENMP
 		threadCount=omp_get_num_procs();  
-		#endif 
+		#endif */
 		
 		threadPool_=new Glib::ThreadPool(threadCount,0);
 	}
