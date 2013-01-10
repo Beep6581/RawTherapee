@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [[ ! "$1" ]]; then
+  printf "%s\n" "Usage: $0 <hg tag>" "Example: $0 4.0.10"
+  exit
+fi
+
+hg update "$1"
+tools/generateReleaseInfo
+hg archive -X ".hg*" -X "rtgui/config.h" -X "rtgui/version.h" -X "rtdata/rawtherapee.desktop" rawtherapee-"$1".tar
+xz -z -9e rawtherapee-"$1".tar
+hg update
+rm ReleaseInfo.cmake
