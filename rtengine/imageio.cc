@@ -655,10 +655,31 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
        delete [] loadedProfileData;
        loadedProfileData = NULL;
     }
-   	if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &loadedProfileLength, &profdata)) {
+    if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &loadedProfileLength, &profdata)) {
         embProfile = cmsOpenProfileFromMem (profdata, loadedProfileLength);
-        loadedProfileData = new char [loadedProfileLength];
-        memcpy (loadedProfileData, profdata, loadedProfileLength);
+
+        // For 32 bits floating point images, gamma is forced to linear in embedded ICC profiles
+        if ( sampleFormat&(IIOSF_LOGLUV24|IIOSF_LOGLUV32|IIOSF_FLOAT) ) {
+            // Modifying the gammaTRG tags
+            cmsWriteTag(embProfile, cmsSigGreenTRCTag, (void*)Color::linearGammaTRC );
+            cmsWriteTag(embProfile, cmsSigRedTRCTag,   (void*)Color::linearGammaTRC );
+            cmsWriteTag(embProfile, cmsSigBlueTRCTag,  (void*)Color::linearGammaTRC );
+
+            // Saving the profile in the memory
+            cmsUInt32Number bytesNeeded = 0;
+            cmsSaveProfileToMem(embProfile, 0, &bytesNeeded);
+            if (bytesNeeded > 0) {
+              loadedProfileData = new char[bytesNeeded+1];
+              cmsSaveProfileToMem(embProfile, loadedProfileData, &bytesNeeded);
+            }
+            loadedProfileLength = (int)bytesNeeded;
+        }
+        else {
+            // Saving the profile in the memory as is
+            loadedProfileData = new char [loadedProfileLength];
+            memcpy (loadedProfileData, profdata, loadedProfileLength);
+        }
+
     }
    	else 
         embProfile = NULL;
@@ -686,12 +707,14 @@ int ImageIO::loadTIFF (Glib::ustring fname) {
             pl->setProgress ((double)(row+1)/height);
     }
     if (sampleFormat & (IIOSF_FLOAT|IIOSF_LOGLUV24|IIOSF_LOGLUV32)) {
-        //if (options.rtSettings.verbose)
+#ifdef _DEBUG
+        if (options.rtSettings.verbose)
             printf("Normalizing \"%s\" image \"%s\" whose mini/maxi values are:\n   Red:   minimum value=%0.5f / maximum value=%0.5f\n   Green: minimum value=%0.5f / maximum value=%0.5f\n   Blue:  minimum value=%0.5f / maximum value=%0.5f\n",
                    getType(), fname.c_str(),
                    minValue[0], maxValue[0], minValue[1],
                    maxValue[1], minValue[2], maxValue[2]
                   );
+#endif
         float minVal = min( min( minValue[0],minValue[1] ),minValue[2] );
         float maxVal = max( max( maxValue[0],maxValue[1] ),maxValue[2] );
         normalizeFloat(minVal, maxVal);
