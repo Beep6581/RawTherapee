@@ -166,14 +166,6 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
 
     embProfile = img->getEmbeddedProfile ();
 
-    // For 32 bits floating point images, gamma is forced to linear in embedded ICC profiles
-    // HOMBRE: Doesn't seem to have any effect
-    if ( (sFormat&(IIOSF_LOGLUV24|IIOSF_LOGLUV32|IIOSF_FLOAT) ) && embProfile) {
-        cmsWriteTag(embProfile, cmsSigGreenTRCTag, (void*)Color::linearGammaTRC );
-        cmsWriteTag(embProfile, cmsSigRedTRCTag,   (void*)Color::linearGammaTRC );
-        cmsWriteTag(embProfile, cmsSigBlueTRCTag,  (void*)Color::linearGammaTRC );
-    }
-
     idata = new ImageData (fname); 
     if (idata->hasExif()) {
         int deg = 0;
