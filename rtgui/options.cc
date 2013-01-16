@@ -265,7 +265,6 @@ void Options::setDefaults () {
     useSystemTheme = false;
     maxThumbnailHeight = 400;
     maxCacheEntries = 20000;
-    thumbnailFormat = FT_Custom;		// was FT_Custom16
     thumbInterp = 1;
     autoSuffix = false;
     saveMethodNum = 0;				// 0->immediate, 1->putToQueuHead, 2->putToQueueTail
@@ -572,7 +571,6 @@ if (keyFile.has_group ("File Browser")) {
     if (keyFile.has_key ("File Browser", "BrowserShowsHidden")) fbShowHidden       = keyFile.get_boolean ("File Browser", "BrowserShowsHidden");
     if (keyFile.has_key ("File Browser", "MaxPreviewHeight"))   maxThumbnailHeight = keyFile.get_integer ("File Browser", "MaxPreviewHeight");
     if (keyFile.has_key ("File Browser", "MaxCacheEntries"))    maxCacheEntries    = keyFile.get_integer ("File Browser", "MaxCacheEntries");
-    if (keyFile.has_key ("File Browser", "ThumbnailFormat"))    thumbnailFormat    = (ThFileType)keyFile.get_integer ("File Browser", "ThumbnailFormat");
     if (keyFile.has_key ("File Browser", "ParseExtensions"))    parseExtensions    = keyFile.get_string_list ("File Browser", "ParseExtensions");
     if (keyFile.has_key ("File Browser", "ParseExtensionsEnabled")) parseExtensionsEnabled    = keyFile.get_integer_list ("File Browser", "ParseExtensionsEnabled");
     if (keyFile.has_key ("File Browser", "ThumbnailArrangement")) fbArrangement    = keyFile.get_integer ("File Browser", "ThumbnailArrangement");
@@ -787,7 +785,6 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("File Browser", "ThumbnailSizeTab", thumbSizeTab);
     keyFile.set_integer ("File Browser", "MaxPreviewHeight", maxThumbnailHeight);
     keyFile.set_integer ("File Browser", "MaxCacheEntries", maxCacheEntries);
-    keyFile.set_integer ("File Browser", "ThumbnailFormat", (int)thumbnailFormat);
     Glib::ArrayHandle<Glib::ustring> pext = parseExtensions;
     keyFile.set_string_list ("File Browser", "ParseExtensions", pext);
     Glib::ArrayHandle<int> pextena = parseExtensionsEnabled;

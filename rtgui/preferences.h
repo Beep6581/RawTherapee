@@ -100,7 +100,6 @@ class Preferences : public Gtk::Dialog {
     Gtk::FontButton* fontbutton;
     Gtk::ColorButton* butCropCol;
 	
-    Gtk::ComboBoxText* cformat;
     Gtk::SpinButton*   maxThumbSize;
     Gtk::SpinButton*   maxCacheEntries;
     Gtk::Button*       clearThumbnails;
@@ -162,7 +161,6 @@ class Preferences : public Gtk::Dialog {
     void forRAWComboChanged ();
     void forImageComboChanged ();
     void layoutComboChanged ();
-    void cacheFormatComboChanged ();
     void switchThemeTo (Glib::ustring newTheme, bool slimInterface);
     void switchFontTo  (Glib::ustring newFont);
     bool splashClosed(GdkEventAny* event);

@@ -889,18 +889,6 @@ Gtk::Widget* Preferences::getFileBrowserPanel () {
     frc->add (*vbc);  
     vbc->set_border_width (4);
 
-    Gtk::Label* cflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CACHETHUMBFORM")+":") );
-    cflab->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP);
-    cformat = Gtk::manage( new Gtk::ComboBoxText () );
-    cformat->set_size_request(50, -1);
-    cformat->append_text (M("PREFERENCES_CACHEFORMAT1"));
-    cformat->append_text (M("PREFERENCES_CACHEFORMAT2"));
-    cformat->append_text (M("PREFERENCES_CACHEFORMAT1")+", 16 bit");
-    cformat->signal_changed().connect( sigc::mem_fun(*this, &Preferences::cacheFormatComboChanged) );
-    cacheFormatComboChanged(); // update the tooltip
-    vbc->pack_start (*cflab, Gtk::PACK_SHRINK, 2);
-    vbc->pack_start (*cformat);
-
     Gtk::HBox* hb3 = Gtk::manage( new Gtk::HBox () );
     Gtk::Label* chlab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CACHETHUMBHEIGHT")+":") );
     maxThumbSize = Gtk::manage( new Gtk::SpinButton () );
@@ -1111,13 +1099,6 @@ void Preferences::storePreferences () {
         moptions.parseExtensionsEnabled.push_back (c[i][extensionColumns.enabled]);
     }
     
-    if (cformat->get_active_row_number() == 0)
-        moptions.thumbnailFormat = FT_Custom;
-    else if (cformat->get_active_row_number() == 1)
-        moptions.thumbnailFormat = FT_Jpeg;
-    else if (cformat->get_active_row_number() == 2)
-        moptions.thumbnailFormat = FT_Custom16;
-
     moptions.maxThumbnailHeight = (int)maxThumbSize->get_value ();
     moptions.maxCacheEntries = (int)maxCacheEntries->get_value ();
     moptions.overlayedFileNames = overlayedFileNames->get_active ();
@@ -1241,13 +1222,6 @@ void Preferences::fillPreferences () {
         row[extensionColumns.ext]     = moptions.parseExtensions[i];
     }
        
-    if (moptions.thumbnailFormat == FT_Custom)
-        cformat->set_active (0);
-    else if (moptions.thumbnailFormat == FT_Jpeg)
-        cformat->set_active (1);
-    else if (moptions.thumbnailFormat == FT_Custom16)
-        cformat->set_active (2);
-    
     maxThumbSize->set_value (moptions.maxThumbnailHeight);
     maxCacheEntries->set_value (moptions.maxCacheEntries);
     overlayedFileNames->set_active (moptions.overlayedFileNames);
@@ -1410,11 +1384,6 @@ void Preferences::forImageComboChanged () {
 void Preferences::layoutComboChanged () {
 	editorLayout->set_tooltip_text(editorLayout->get_active_text());
 }
-
-void Preferences::cacheFormatComboChanged () {
-	cformat->set_tooltip_text(cformat->get_active_text());
-}
-
 
 void Preferences::fontChanged () {
 
