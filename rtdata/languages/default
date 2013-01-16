@@ -669,14 +669,11 @@ PREFERENCES_BLINKCLIPPED;Blink clipped areas
 PREFERENCES_CACHECLEARALL;Clear All
 PREFERENCES_CACHECLEARPROFILES;Clear Processing Profiles
 PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
-PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
-PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
 PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options
 PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
 PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
 PREFERENCES_CACHESTRAT;Cache Strategy
-PREFERENCES_CACHETHUMBFORM;Cache thumbnail format
 PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
 PREFERENCES_CIEART;CIECAM02 optimization
 PREFERENCES_CIEART_LABEL;Use float precision instead of double

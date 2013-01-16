@@ -665,14 +665,11 @@ PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
 PREFERENCES_CACHECLEARALL;Tout nettoyer
 PREFERENCES_CACHECLEARPROFILES;Nettoyer les profils
 PREFERENCES_CACHECLEARTHUMBS;Nettoyer les vignettes
-PREFERENCES_CACHEFORMAT1;Propriétaire (plus rapide et de meilleure qualité)
-PREFERENCES_CACHEFORMAT2;JPEG (moins volumineux sur le disque)
 PREFERENCES_CACHEMAXENTRIES;Nombre maximal d'éléments dans le Cache
 PREFERENCES_CACHEOPTS;Options du Cache
 PREFERENCES_CACHESTRAT1;Optimiser la vitesse au détriment de la consommation mémoire
 PREFERENCES_CACHESTRAT2;Optimiser la consommation mémoire au détriment de la vitesse
 PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
-PREFERENCES_CACHETHUMBFORM;Format des vignettes du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
