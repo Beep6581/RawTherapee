@@ -285,6 +285,38 @@ WINDOWS
 
         FFTW:
           - Instructions: http://www.fftw.org/install/windows.html
+          - Specific instructions more suitable for RawTherapee purposes:
+
+          1. Download the official fftw64 DLL package from http://www.fftw.org/download.html,
+          unpack it somewhere you can reach it with MSYS
+          (Hint: in MSYS console to change directory to 'C:/DirName' execute 'cd /C/DirName')
+          
+          2. in MSYS command line, execute:
+          dlltool --def libfftw3f-3.def --dllname libfftw3f-3.dll --output-lib libfftw3f-3.a
+          dlltool --def libfftw3l-3.def --dllname libfftw3l-3.dll --output-lib libfftw3l-3.a
+          dlltool --def libfftw3-3.def --dllname libfftw3-3.dll --output-lib libfftw3-3.a
+          
+          This will generate generate 'libfftw3f-3.a.a' file
+          
+          3. copy files:
+          libfftw3f-3.dll -> MinGW64/bin
+          libfftw3l-3.dll -> MinGW64/bin
+          libfftw3-3.dll -> MinGW64/bin
+          libfftw3f-3.a.a -> MinGW64/lib
+          fftw3.f.h -> MinGW64/include
+          
+          4. Create a new textfile MinGW64/lib/pkgconfig/fftw3f.pc with the following contents:
+          
+          prefix=/mingw64
+          exec_prefix=${prefix}
+          libdir=${exec_prefix}/lib
+          includedir=${prefix}/include
+          
+          Name: fftw3f
+          Description: FFTW3 Float
+          Version: 3.3
+          Libs: -L${libdir} -lfftw3f-3 -lm
+          Cflags: -I${includedir}
 
 
       IMPORTANT:
