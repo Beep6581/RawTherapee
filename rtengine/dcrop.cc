@@ -203,8 +203,8 @@ void Crop::update (int todo) {
 	int begh = 0, endh = labnCrop->H;
 	bool execsharp=false;
 	if(skip==1) execsharp=true;
-	if(settings->ciecamfloat) parent->ipf.ciecam_02float (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp);
-	else parent->ipf.ciecam_02 (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp);
+	if(settings->ciecamfloat) {parent->ipf.ciecam_02float (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp);}
+	else {parent->ipf.ciecam_02 (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp);}
 	}
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);

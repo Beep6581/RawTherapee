@@ -1905,28 +1905,9 @@ void  ColorTemp::calculate_abfloat( float &aa, float &bb, float h, float e, floa
 }
 
 
-
-void ColorTemp::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q, double &M, double &s,double &aw, double &fl, double &wh,
-									 double x, double y, double z, double xw, double yw, double zw, 
-									 double yb, double la, double f, double c, double nc, double pilotd, bool doneinit, int gamu)
-{
-    double r, g, b;
-    double rw, gw, bw;
-    double rc, gc, bc;
-    double rp, gp, bp;
-    double rpa, gpa, bpa;
-    double a, ca, cb;
-    double d;
-    double n, nbb, ncb;
-    double e, t;
-    double cz;
-    double myh, myj, myc, myq, mym, mys;
-	double pfl;
-	gamu=1;
-    xyz_to_cat02( r, g, b, x, y, z, gamu );
-    xyz_to_cat02( rw, gw, bw, xw, yw, zw, gamu );
-
-	if(doneinit){//if one day, we have a pipette...
+void ColorTemp::initcam1(double gamu, double yb, double pilotd, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
+							double &cz, double &aw, double &wh, double &pfl, double &fl, double &c)
+{							
     n = yb / yw;
     if(pilotd==2.0) d = d_factor( f, la );else d=pilotd;
 	fl = calculate_fl_from_la_ciecam02( la );
@@ -1935,9 +1916,74 @@ void ColorTemp::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q,
     aw = achromatic_response_to_white( xw, yw, zw, d, fl, nbb, gamu );
 	wh =( 4.0 / c ) * ( aw + 4.0 ) * pow( fl, 0.25 );
 	pfl = pow( fl, 0.25 );
-	doneinit=false;	
-	}
+#ifdef _DEBUG
+	if (settings->verbose) printf("Source double d=%f aw=%f fl=%f wh=%f\n",d,aw,fl,wh);
+#endif	
 	
+}
+void ColorTemp::initcam1float(float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
+							float &cz, float &aw, float &wh, float &pfl, float &fl, float &c)
+{
+    n = yb / yw;
+    if(pilotd==2.0) d = d_factorfloat( f, la );else d=pilotd;
+	fl = calculate_fl_from_la_ciecam02float( la );
+    nbb = ncb = 0.725f * pow_F( 1.0f / n, 0.2f );
+    cz = 1.48f + sqrt( n );
+    aw = achromatic_response_to_whitefloat( xw, yw, zw, d, fl, nbb, gamu );
+	wh =( 4.0f / c ) * ( aw + 4.0f ) * pow_F( fl, 0.25f );
+	pfl = pow_F( fl, 0.25f );
+#ifdef _DEBUG
+	if (settings->verbose) printf("Source float d=%f aw=%f fl=%f wh=%f\n",d,aw,fl,wh);
+#endif	
+
+}							
+
+void ColorTemp::initcam2(double gamu, double yb, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
+							double &cz, double &aw, double &fl)
+{							
+    n = yb / yw;
+    d = d_factor( f, la );
+    fl = calculate_fl_from_la_ciecam02( la );
+    nbb = ncb = 0.725 * pow( 1.0 / n, 0.2 );
+    cz = 1.48 + sqrt( n );
+    aw = achromatic_response_to_white( xw, yw, zw, d, fl, nbb, gamu );
+#ifdef _DEBUG
+	if (settings->verbose) printf("Viewing double d=%f aw=%f fl=%f n=%f\n",d,aw,fl,n);	
+#endif	
+}
+
+void ColorTemp::initcam2float(float gamu, float yb, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
+							float &cz, float &aw, float &fl)
+{
+    n = yb / yw;
+    d = d_factorfloat( f, la );
+    fl = calculate_fl_from_la_ciecam02float( la );
+    nbb = ncb = 0.725f * pow_F( 1.0f / n, 0.2f );
+    cz = 1.48f + sqrt( n );
+    aw = achromatic_response_to_whitefloat( xw, yw, zw, d, fl, nbb, gamu );
+#ifdef _DEBUG
+	if (settings->verbose) printf("Viewing float d=%f aw=%f fl=%f n=%f\n",d,aw,fl,n);	
+#endif
+
+}
+
+							
+
+void ColorTemp::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q, double &M, double &s,double &aw, double &fl, double &wh,
+									 double x, double y, double z, double xw, double yw, double zw, 
+									 double yb, double la, double f, double c, double nc, double pilotd, int gamu , double n, double nbb, double ncb, double pfl, double cz, double d)
+{
+    double r, g, b;
+    double rw, gw, bw;
+    double rc, gc, bc;
+    double rp, gp, bp;
+    double rpa, gpa, bpa;
+    double a, ca, cb;
+    double e, t;
+    double myh, myj, myc, myq, mym, mys;
+	gamu=1;
+    xyz_to_cat02( r, g, b, x, y, z, gamu );
+    xyz_to_cat02( rw, gw, bw, xw, yw, zw, gamu );
     rc = r * (((yw * d) / rw) + (1.0 - d));
     gc = g * (((yw * d) / gw) + (1.0 - d));
     bc = b * (((yw * d) / bw) + (1.0 - d));
@@ -1997,38 +2043,23 @@ void ColorTemp::xyz2jchqms_ciecam02( double &J, double &C, double &h, double &Q,
 
 }
 
+
 void ColorTemp::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q, float &M, float &s,float &aw, float &fl, float &wh,
 									 float x, float y, float z, float xw, float yw, float zw, 
-									 float yb, float la, float f, float c, float nc, float pilotd, bool doneinit, int gamu)
-{
+									 float yb, float la, float f, float c, float nc, float pilotd, int gamu, float n, float nbb, float ncb, float pfl, float cz, float d)
+
+									 {
     float r, g, b;
     float rw, gw, bw;
     float rc, gc, bc;
     float rp, gp, bp;
     float rpa, gpa, bpa;
     float a, ca, cb;
-    float d;
-    float n, nbb, ncb;
     float e, t;
-    float cz;
     float myh, myj, myc, myq, mym, mys;
-	float pfl;
 	gamu=1;
     xyz_to_cat02float( r, g, b, x, y, z, gamu );
     xyz_to_cat02float( rw, gw, bw, xw, yw, zw, gamu );
-
-	if(doneinit){//if one day, we have a pipette...
-    n = yb / yw;
-    if(pilotd==2.0) d = d_factorfloat( f, la );else d=pilotd;
-	fl = calculate_fl_from_la_ciecam02float( la );
-    nbb = ncb = 0.725f * pow_F( 1.0f / n, 0.2f );
-    cz = 1.48f + sqrt( n );
-    aw = achromatic_response_to_whitefloat( xw, yw, zw, d, fl, nbb, gamu );
-	wh =( 4.0f / c ) * ( aw + 4.0f ) * pow_F( fl, 0.25f );
-	pfl = pow_F( fl, 0.25f );
-	doneinit=false;	
-	}
-	
     rc = r * (((yw * d) / rw) + (1.0 - d));
     gc = g * (((yw * d) / gw) + (1.0 - d));
     bc = b * (((yw * d) / bw) + (1.0 - d));
@@ -2089,33 +2120,19 @@ void ColorTemp::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q
 }
 
 
-
 void ColorTemp::jch2xyz_ciecam02( double &x, double &y, double &z, double J, double C, double h,
 								  double xw, double yw, double zw, double yb, double la,
-								  double f, double c, double nc , bool doneinit2, int gamu)
+								  double f, double c, double nc , int gamu, double n, double nbb, double ncb, double fl, double cz, double d, double aw )
 {
     double r, g, b;
     double rc, gc, bc;
     double rp, gp, bp;
     double rpa, gpa, bpa;
     double rw, gw, bw;
-    double fl, d;
-    double n, nbb, ncb;
     double a, ca, cb;
-    double aw;
     double e, t;
-    double cz;
 	gamu=1;
     ColorTemp::xyz_to_cat02( rw, gw, bw, xw, yw, zw, gamu );
-	if(doneinit2){
-    n = yb / yw;
-    d = d_factor( f, la );
-    fl = calculate_fl_from_la_ciecam02( la );
-    nbb = ncb = 0.725 * pow( 1.0 / n, 0.2 );
-    cz = 1.48 + sqrt( n );
-    aw = achromatic_response_to_white( xw, yw, zw, d, fl, nbb, gamu );
-	doneinit2=false;
-	}
     e = ((12500.0 / 13.0) * nc * ncb) * (cos( ((h * M_PI) / 180.0) + 2.0 ) + 3.8);
     a = pow( J / 100.0, 1.0 / (c * cz) ) * aw;
     t = pow( C / (sqrt( J / 100) * pow( 1.64 - pow( 0.29, n ), 0.73 )), 10.0 / 9.0 );
@@ -2139,30 +2156,18 @@ void ColorTemp::jch2xyz_ciecam02( double &x, double &y, double &z, double J, dou
 
 void ColorTemp::jch2xyz_ciecam02float( float &x, float &y, float &z, float J, float C, float h,
 								  float xw, float yw, float zw, float yb, float la,
-								  float f, float c, float nc , bool doneinit2, int gamu)
+								  float f, float c, float nc , int gamu, float n, float nbb, float ncb, float fl, float cz, float d, float aw)
+								  
 {
     float r, g, b;
     float rc, gc, bc;
     float rp, gp, bp;
     float rpa, gpa, bpa;
     float rw, gw, bw;
-    float fl, d;
-    float n, nbb, ncb;
     float a, ca, cb;
-    float aw;
     float e, t;
-    float cz;
 	gamu=1;
     ColorTemp::xyz_to_cat02float( rw, gw, bw, xw, yw, zw, gamu );
-	if(doneinit2){
-    n = yb / yw;
-    d = d_factorfloat( f, la );
-    fl = calculate_fl_from_la_ciecam02float( la );
-    nbb = ncb = 0.725f * pow_F( 1.0f / n, 0.2f );
-    cz = 1.48f + sqrt( n );
-    aw = achromatic_response_to_whitefloat( xw, yw, zw, d, fl, nbb, gamu );
-	doneinit2=false;
-	}
     e = ((12500.0f / 13.0f) * nc * ncb) * (cos( ((h * M_PI) / 180.0f) + 2.0f ) + 3.8f);
     a = pow_F( J / 100.0f, 1.0f / (c * cz) ) * aw;
     t = pow_F( C / (sqrt( J / 100.f) * pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f )), 10.0f / 9.0f );

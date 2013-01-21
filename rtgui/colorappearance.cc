@@ -57,7 +57,7 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	degree  = Gtk::manage (new Adjuster (M("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   100.));
 	if (degree->delay < 1000) degree->delay = 1000;
 	degree->throwOnButtonRelease();
-	degree->addAutoButton();
+	degree->addAutoButton(M("TP_COLORAPP_DEGREE_AUTO_TOOLTIP"));
 	degree->set_tooltip_markup (M("TP_COLORAPP_DEGREE_TOOLTIP"));
 	p1VBox->pack_start (*degree);
 

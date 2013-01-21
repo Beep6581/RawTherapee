@@ -428,8 +428,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	float **buffer = new float*[pH];
        for (int i=0; i<pH; i++)
          buffer[i] = new float[pW];
-	if(settings->ciecamfloat) ipf.ciecam_02float (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true);
-	else ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true);
+	if(settings->ciecamfloat){ipf.ciecam_02float (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true);}
+	else {ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true);}
 		for (int i=0; i<pH; i++)
 			delete [] buffer[i];
 			delete [] buffer;
