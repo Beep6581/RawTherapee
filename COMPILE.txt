@@ -356,6 +356,24 @@ WINDOWS
         - You'll find the compiled program in the subdirectory named like the
           value of CMAKE_BUILD_TYPE ("Release" in this example).
 
+    METHOD 3:
+      Here is a sample batch file to compile RawTherapee in Windows
+      Adjust directory names to match your setup
+               
+      set GTKMM_BASEPATH=C:\gtkmm64
+      set GTKMM64_BASEPATH=C:\gtkmm64
+      set MINGW_BASEPATH=C:\MinGW64
+      set PATH=%PATH%;C:\gtkmm64\bin;C:\MinGW64\bin;C:\CMake\bin;C:\DevTools\XMPToolkit\bin
+      set PKG_CONFIG_PATH=C:\MinGW64\lib\pkgconfig;c:\gtkmm64\lib\pkgconfig
+      
+      set RT_SOURCECODE_PATH=C:\Users\YOURNAME\workspace\rawtherapee_default
+      set RT_BUILD_PATH=C:\Users\YOURNAME\rt_builds\rt_default_release
+      cd %RT_BUILD_PATH%
+      
+      cmake -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" -DPROC_TARGET_NUMBER:STRING=2 -C%RT_SOURCECODE_PATH%\Win32CMakeOptions-Sample.txt %RT_SOURCECODE_PATH%
+      mingw32-make -j12 install
+      pause
+
 LINUX
 -----
 
