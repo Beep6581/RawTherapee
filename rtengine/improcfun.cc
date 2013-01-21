@@ -409,10 +409,16 @@ if(params->colorappearance.enabled) {
 	// settings of WB: scene and viewing
     if(params->colorappearance.wbmodel=="RawT") {xw1=96.46;yw1=100.0;zw1=82.445;xw2=xwd;yw2=ywd;zw2=zwd;}	//use RT WB; CAT 02 is used for output device (see prefreneces)
     else if(params->colorappearance.wbmodel=="RawTCAT02") {xw1=xw;yw1=yw;zw1=zw;xw2=xwd;yw2=ywd;zw2=zwd;}	// Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
-	bool doneinit=true;
-	bool doneinit2=true;
+	double cz,wh, pfl;
+	ColorTemp::initcam1(gamu, yb, pilot, f, la,xw, yw, zw, n, d, nbb, ncb,cz, aw, wh, pfl, fl, c);
+	double nj,dj,nbbj,ncbj,czj,awj,flj;
+	ColorTemp::initcam2(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
+
+
+
+	
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh, doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
 #endif
 {	//matrix for current working space
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -437,7 +443,9 @@ if(params->colorappearance.enabled) {
 			double epsil=0.0001;
 			//convert Lab => XYZ
 			Color::Lab2XYZ(L, a, b, x1, y1, z1);
-			double J, C, h, Q, M, s, aw, fl, wh;                       
+		//	double J, C, h, Q, M, s, aw, fl, wh;  
+			double J, C, h, Q, M, s;                       
+			
 			double Jp,Cpr;
 			double Jpro,Cpro, hpro, Qpro, Mpro, spro;
 			bool t1L=false;
@@ -447,7 +455,7 @@ if(params->colorappearance.enabled) {
 			int c1C=0;
 			int c1s=0;
 			int c1co=0;
-			
+			//double n,nbb,ncb,pfl,cz,d;
 			x=(double)x1/655.35;
 			y=(double)y1/655.35;
 			z=(double)z1/655.35;
@@ -457,7 +465,7 @@ if(params->colorappearance.enabled) {
                            x,  y,  z,
                            xw1, yw1,  zw1,
                            yb,  la,
-                           f, c,  nc,  pilot, doneinit, gamu );
+                           f, c,  nc,  pilot, gamu , n, nbb, ncb, pfl, cz, d );
 			Jpro=J;
 			Cpro=C; 
 			hpro=h;
@@ -698,12 +706,13 @@ if(params->colorappearance.enabled) {
 				}
 			}
 			double xx,yy,zz;
+			//double nj, nbbj, ncbj, flj, czj, dj, awj;
 			//process normal==> viewing
 			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
 			                             J,  C, h,
 			                             xw2, yw2,  zw2,
 			                             yb2, la2,
-			                             f2,  c2, nc2, doneinit2, gamu);
+			                             f2,  c2, nc2, gamu, nj, nbbj, ncbj, flj, czj, dj, awj);
 			x=(float)xx*655.35;
 			y=(float)yy*655.35;
 			z=(float)zz*655.35;
@@ -814,7 +823,7 @@ if((params->colorappearance.tonecie || params->colorappearance.tonecie && (param
 
 	
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh,doneinit2, nc2,f2,c2, gamu, highlight,pW)
+#pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh, nc2,f2,c2, gamu, highlight,pW)
 #endif
 {	
 	TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -867,11 +876,12 @@ if((params->colorappearance.tonecie || params->colorappearance.tonecie && (param
 				}
 			}
 			//end histograms
+		//	double nd, nbbd, ncbd, fld, czd, dd, awd;
 			ColorTemp::jch2xyz_ciecam02( xx, yy, zz,
 			                             ncie->J_p[i][j],  ncie->C_p[i][j], ncie->h_p[i][j],
 			                             xw2, yw2,  zw2,
 			                             yb2, la2,
-			                             f2,  c2, nc2, doneinit2, gamu);
+			                             f2,  c2, nc2, gamu, nj, nbbj, ncbj, flj, czj, dj, awj);
 			x=(float)xx*655.35;
 			y=(float)yy*655.35;
 			z=(float)zz*655.35;
@@ -1114,10 +1124,14 @@ if(params->colorappearance.enabled) {
 	// settings of WB: scene and viewing
     if(params->colorappearance.wbmodel=="RawT") {xw1=96.46;yw1=100.0;zw1=82.445;xw2=xwd;yw2=ywd;zw2=zwd;}	//use RT WB; CAT 02 is used for output device (see prefreneces)
     else if(params->colorappearance.wbmodel=="RawTCAT02") {xw1=xw;yw1=yw;zw1=zw;xw2=xwd;yw2=ywd;zw2=zwd;}	// Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
-	bool doneinit=true;
-	bool doneinit2=true;
+	float cz,wh, pfl;
+	ColorTemp::initcam1float(gamu, yb, pilot, f, la,xw, yw, zw, n, d, nbb, ncb,cz, aw, wh, pfl, fl, c);
+	float nj,dj,nbbj,ncbj,czj,awj,flj;
+	ColorTemp::initcam2float(gamu,yb2, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj,czj, awj, flj);
+
+	
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh, doneinit,doneinit2, nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg, gamu, highlight, rstprotection, pW,nj, nbbj, ncbj, flj, czj, dj, awj, n, nbb, ncb, pfl, cz, d)
 #endif
 {	//matrix for current working space
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -1142,7 +1156,8 @@ if(params->colorappearance.enabled) {
 			float epsil=0.0001;
 			//convert Lab => XYZ
 			Color::Lab2XYZ(L, a, b, x1, y1, z1);
-			float J, C, h, Q, M, s, aw, fl, wh;                       
+		//	float J, C, h, Q, M, s, aw, fl, wh;                       
+			float J, C, h, Q, M, s;                       
 			float Jp,Cpr;
 			float Jpro,Cpro, hpro, Qpro, Mpro, spro;
 			bool t1L=false;
@@ -1152,7 +1167,8 @@ if(params->colorappearance.enabled) {
 			int c1C=0;
 			int c1s=0;
 			int c1co=0;
-			
+		//	float n,nbb,ncb,pfl,cz,d;
+
 			x=(float)x1/655.35f;
 			y=(float)y1/655.35f;
 			z=(float)z1/655.35f;
@@ -1162,7 +1178,7 @@ if(params->colorappearance.enabled) {
                            x,  y,  z,
                            xw1, yw1,  zw1,
                            yb,  la,
-                           f, c,  nc,  pilot, doneinit, gamu );
+                           f, c,  nc,  pilot, gamu, n, nbb, ncb, pfl, cz, d);
 			Jpro=J;
 			Cpro=C; 
 			hpro=h;
@@ -1404,11 +1420,13 @@ if(params->colorappearance.enabled) {
 			}
 			float xx,yy,zz;
 			//process normal==> viewing
+			//float nj, nbbj, ncbj, flj, czj, dj, awj;
+
 			ColorTemp::jch2xyz_ciecam02float( xx, yy, zz,
 			                             J,  C, h,
 			                             xw2, yw2,  zw2,
 			                             yb2, la2,
-			                             f2,  c2, nc2, doneinit2, gamu);
+			                             f2,  c2, nc2, gamu, nj, nbbj, ncbj, flj, czj, dj, awj);
 			x=(float)xx*655.35f;
 			y=(float)yy*655.35f;
 			z=(float)zz*655.35f;
@@ -1521,7 +1539,7 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 
 	
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh,doneinit2, nc2,f2,c2, gamu, highlight,pW)
+#pragma omp parallel default(shared) firstprivate(lab,xw2,yw2,zw2,chr,yb,la2,yb2, height,width,begh, endh, nc2,f2,c2, gamu, highlight,pW,nj, nbbj, ncbj, flj, czj, dj, awj)
 #endif
 {	
 	TMatrix wiprofa = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -1574,11 +1592,12 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 				}
 			}
 			//end histograms
+			
 			ColorTemp::jch2xyz_ciecam02float( xx, yy, zz,
 			                             ncie->J_p[i][j],  ncie->C_p[i][j], ncie->h_p[i][j],
 			                             xw2, yw2,  zw2,
 			                             yb2, la2,
-			                             f2,  c2, nc2, doneinit2, gamu);
+			                             f2,  c2, nc2, gamu, nj, nbbj, ncbj, flj, czj, dj, awj);
 			x=(float)xx*655.35f;
 			y=(float)yy*655.35f;
 			z=(float)zz*655.35f;
