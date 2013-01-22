@@ -102,6 +102,8 @@ bool MultiLangMgr::isOSLanguageDetectSupported() {
 #else
     return false;
 #endif
+#elif __linux__
+    return true;
 #else
     return false;
 #endif
@@ -128,8 +130,10 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
             langName=TranslateRFC2Language(localRFC);
         }
 #endif
+#elif __linux__
+    langName = TranslateRFC2Language(std::setlocale(LC_CTYPE,""));
 #endif
-    } else printf("Automatic language detection not supported on your OS\n");
+    }
 
     return langName;
 }
