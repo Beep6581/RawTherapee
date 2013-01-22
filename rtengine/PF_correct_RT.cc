@@ -38,20 +38,20 @@ using namespace std;
 
 namespace rtengine {
 
-void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh) { 
+void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radius, int thresh) {
 	int halfwin = ceil(2*radius)+1;
-	
+
 #include "rt_math.h"
-		
+
 	// local variables
 	int width=src->W, height=src->H;
 	//temporary array to store chromaticity
 	int (*fringe);
 	fringe = (int (*)) calloc ((height)*(width), sizeof *fringe);
-	
-	LabImage * tmp1; 
+
+	LabImage * tmp1;
 	tmp1 = new LabImage(width, height);
-	
+
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
@@ -63,14 +63,14 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 		gaussVertical<float>   (tmp1->a, tmp1->a, buffer, src->W, src->H, radius);
 		gaussVertical<float>   (tmp1->b, tmp1->b, buffer, src->W, src->H, radius);
 
-		gaussHorizontal<float> (src->L, tmp1->L, buffer, src->W, src->H, radius);
-		gaussVertical<float>   (tmp1->L, tmp1->L, buffer, src->W, src->H, radius);
+//		gaussHorizontal<float> (src->L, tmp1->L, buffer, src->W, src->H, radius);
+//		gaussVertical<float>   (tmp1->L, tmp1->L, buffer, src->W, src->H, radius);
 	}
-	
-//#ifdef _OPENMP
-//#pragma omp parallel for
-//#endif
-	float chromave=0;
+
+float chromave=0;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:chromave)
+#endif
 	for(int i = 0; i < height; i++ ) {
 		for(int j = 0; j < width; j++) {
 			float chroma = SQR(src->a[i][j]-tmp1->a[i][j])+SQR(src->b[i][j]-tmp1->b[i][j]);
@@ -79,11 +79,17 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 		}
 	}
 	chromave /= (height*width);
+	float threshfactor = (thresh*chromave)/33.f;      // Calculated once to eliminate mult inside the next loop
 //	printf("Chro %f \n",chromave);
+
+// Issue 1674:
+// often, CA isn't evenly distributed, e.g. a lot in contrasty regions and none in the sky.
+// so it's better to schedule dynamic and let every thread only process 16 rows, to avoid running big threads out of work
+// Measured it and in fact gives better performance than without schedule(dynamic,16). Of course, there could be a better
+// choice for the chunk_size than 16
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic,16)
 #endif
-	
 	for(int i = 0; i < height; i++ ) {
 		for(int j = 0; j < width; j++) {
 			tmp1->a[i][j] = src->a[i][j];
@@ -91,7 +97,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 			//test for pixel darker than some fraction of neighborhood ave, near an edge, more saturated than average
 			/*if (100*tmp1->L[i][j]>50*src->L[i][j] && \*/
 				/*1000*abs(tmp1->L[i][j]-src->L[i][j])>thresh*(tmp1->L[i][j]+src->L[i][j]) && \*/
-			if (33.f*fringe[i*width+j]>thresh*chromave) {
+			if (fringe[i*width+j]>threshfactor) {
 				float atot=0.f;
 				float btot=0.f;
 				float norm=0.f;
@@ -113,7 +119,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	
+
 	for(int i = 0; i < height; i++ ) {
 		for(int j = 0; j < width; j++) {
 			dst->L[i][j] = src->L[i][j];
@@ -121,28 +127,30 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 			dst->b[i][j] = tmp1->b[i][j];
 		}
 	}
-	
+
 	delete tmp1;
 	free(fringe);
 }
-void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh) { 
+void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh) {
 	int halfwin = ceil(2*radius)+1;
-	
+
 #include "rt_math.h"
-		
+
 	// local variables
 	int width=src->W, height=src->H;
 	float piid=3.14159265f/180.f;
 	//temporary array to store chromaticity
 	int (*fringe);
 	fringe = (int (*)) calloc ((height)*(width), sizeof *fringe);
-	
+
 	float** sraa;
 		sraa = new float*[height];
 		for (int i=0; i<height; i++)
 			sraa[i] = new float[width];
-	
-	
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 		for (int i=0; i<height; i++)
 			for (int j=0; j<width; j++) {
 				sraa[i][j]=src->C_p[i][j]*cos(piid*src->h_p[i][j]);
@@ -156,8 +164,10 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double ra
 	srbb = new float*[height];
 		for (int i=0; i<height; i++)
 			srbb[i] = new float[width];
-	
-	
+
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
 		for (int i=0; i<height; i++)
 			for (int j=0; j<width; j++) {
 				srbb[i][j]=src->C_p[i][j]*sin(piid*src->h_p[i][j]);
@@ -172,7 +182,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double ra
 	for (int i=0; i<height; i++)
 			tmL[i] = new float[width];
 */
-			
+
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
@@ -184,13 +194,13 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double ra
 		gaussVertical<float>   (tmbb, tmbb, buffer, src->W, src->H, radius);
 	//	gaussHorizontal<float> (src->sh_p, tmL, buffer, src->W, src->H, radius);
 	//	gaussVertical<float>   (tmL, tmL, buffer, src->W, src->H, radius);
-		
+
 	}
-	
-//#ifdef _OPENMP
-//#pragma omp parallel for
-//#endif
-	float chromave=0;
+
+float chromave=0;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:chromave)
+#endif
 	for(int i = 0; i < height; i++ ) {
 		for(int j = 0; j < width; j++) {
 			float chroma =SQR(sraa[i][j]-tmaa[i][j])+SQR(srbb[i][j]-tmbb[i][j]);
@@ -199,21 +209,26 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double ra
 		}
 	}
 	chromave /= (height*width);
+	float threshfactor = (thresh*chromave)/33.f;      // Calculated once to eliminate mult inside the next loop
 	//	printf("Chromave CAM %f \n",chromave);
 
+// Issue 1674:
+// often, CA isn't evenly distributed, e.g. a lot in contrasty regions and none in the sky.
+// so it's better to schedule dynamic and let every thread only process 16 rows, to avoid running big threads out of work
+// Measured it and in fact gives better performance than without schedule(dynamic,16). Of course, there could be a better
+// choice for the chunk_size than 16
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic,16)
 #endif
-	
 	for(int i = 0; i < height; i++ ) {
 		for(int j = 0; j < width; j++) {
 			tmaa[i][j] = sraa[i][j];
 			tmbb[i][j] = srbb[i][j];
-			
+
 			//test for pixel darker than some fraction of neighborhood ave, near an edge, more saturated than average
 			/*if (100*tmp1->L[i][j]>50*src->L[i][j] && \*/
 				/*1000*abs(tmp1->L[i][j]-src->L[i][j])>thresh*(tmp1->L[i][j]+src->L[i][j]) && \*/
-			if (33.f*fringe[i*width+j]>thresh*chromave) {
+			if (fringe[i*width+j]>threshfactor) {
 				float atot=0.f;
 				float btot=0.f;
 				float norm=0.f;
@@ -235,7 +250,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double ra
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	
+
 	for(int i = 0; i < height; i++ ) {
 		for(int j = 0; j < width; j++) {
 			dst->sh_p[i][j] = src->sh_p[i][j];
