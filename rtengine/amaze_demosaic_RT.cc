@@ -30,17 +30,17 @@
 
 using namespace rtengine;
 
-void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {  
+void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 #define HCLIP(x) x //is this still necessary???
 	//min(clip_pt,x)
 
 	int width=winw, height=winh;
-	
-	
+
+
 	const float clip_pt = 1/initialGain;
 
 #define TS 512	 // Tile size; the image is processed in square tiles to lower memory requirements and facilitate multi-threading
-	
+
 	// local variables
 
 
@@ -70,6 +70,14 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 
 	volatile double progress = 0.0;
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// Issue 1676
+// Moved from inside the parallel section
+	if (plistener) {
+		plistener->setProgressStr ("AMaZE Demosaicing...");
+		plistener->setProgress (0.0);
+	}
+
 #pragma omp parallel
 {
 	//position of top/left corner of the tile
@@ -159,7 +167,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	delm		= (float (*))			(buffer +  18*sizeof(float)*TS*TS);
 	rbint		= (float (*))			(buffer +  19*sizeof(float)*TS*TS);
 	Dgrbh2		= (float (*))			(buffer +  20*sizeof(float)*TS*TS);
-	Dgrbv2		= (float (*))			(buffer +  21*sizeof(float)*TS*TS);	
+	Dgrbv2		= (float (*))			(buffer +  21*sizeof(float)*TS*TS);
 	dgintv		= (float (*))			(buffer +  22*sizeof(float)*TS*TS);
 	dginth		= (float (*))			(buffer +  23*sizeof(float)*TS*TS);
 	Dgrbp1		= (float (*))			(buffer +  24*sizeof(float)*TS*TS);
@@ -194,10 +202,6 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	if (plistener) {
-		plistener->setProgressStr ("AMaZE Demosaicing...");
-		plistener->setProgress (0.0);
-	}
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -212,7 +216,10 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	// Main algorithm: Tile loop
 	//#pragma omp parallel for shared(rawData,height,width,red,green,blue) private(top,left) schedule(dynamic)
 	//code is openmp ready; just have to pull local tile variable declarations inside the tile loop
-#pragma omp for schedule(dynamic) nowait
+
+// Issue 1676
+// use collapse(2) to collapse the 2 loops to one large loop, so there is better scaling
+#pragma omp for schedule(dynamic) collapse(2) nowait
 	for (top=winy-16; top < winy+height; top += TS-32)
 		for (left=winx-16; left < winx+width; left += TS-32) {
 			//location of tile bottom edge
@@ -224,7 +231,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 			//tile height (=TS except for bottom edge of image)
 			int cc1 = right - left;
 
-			//tile vars	
+			//tile vars
 			//counters for pixel location in the image
 			int row, col;
 			//min and max row/column in the tile
@@ -286,13 +293,13 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 			float rbvarp, rbvarm;
 
 
-		
+
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 			// rgb from input CFA data
-			// rgb values should be floating point number between 0 and 1 
-			// after white balance multipliers are applied 
+			// rgb values should be floating point number between 0 and 1
+			// after white balance multipliers are applied
 			// a 16 pixel border is added to each side of the image
 
 			// bookkeeping for borders
@@ -300,7 +307,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 			if (left<winx) {ccmin=16;} else {ccmin=0;}
 			if (bottom>(winy+height)) {rrmax=winy+height-top;} else {rrmax=rr1;}
 			if (right>(winx+width)) {ccmax=winx+width-left;} else {ccmax=cc1;}
-			
+
 			for (rr=rrmin; rr < rrmax; rr++)
 				for (row=rr+top, cc=ccmin; cc < ccmax; cc++) {
 					col = cc+left;
@@ -315,7 +322,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			//fill borders
 			if (rrmin>0) {
-				for (rr=0; rr<16; rr++) 
+				for (rr=0; rr<16; rr++)
 					for (cc=ccmin; cc<ccmax; cc++) {
 						c = FC(rr,cc);
 						rgb[rr*TS+cc][c] = rgb[(32-rr)*TS+cc][c];
@@ -323,7 +330,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					}
 			}
 			if (rrmax<rr1) {
-				for (rr=0; rr<16; rr++) 
+				for (rr=0; rr<16; rr++)
 					for (cc=ccmin; cc<ccmax; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+cc][c] = (rawData[(winy+height-rr-2)][left+cc])/65535.0f;
@@ -332,10 +339,10 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					}
 			}
 			if (ccmin>0) {
-				for (rr=rrmin; rr<rrmax; rr++) 
+				for (rr=rrmin; rr<rrmax; rr++)
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
-						rgb[rr*TS+cc][c] = rgb[rr*TS+32-cc][c];           
+						rgb[rr*TS+cc][c] = rgb[rr*TS+32-cc][c];
 						cfa[rr*TS+cc] = rgb[rr*TS+cc][c];
 					}
 			}
@@ -348,10 +355,10 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 						cfa[rr*TS+ccmax+cc] = rgb[rr*TS+ccmax+cc][c];
 					}
 			}
-			
+
 			//also, fill the image corners
 			if (rrmin>0 && ccmin>0) {
-				for (rr=0; rr<16; rr++) 
+				for (rr=0; rr<16; rr++)
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
 						rgb[(rr)*TS+cc][c] = (rawData[winy+32-rr][winx+32-cc])/65535.0f;
@@ -360,7 +367,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					}
 			}
 			if (rrmax<rr1 && ccmax<cc1) {
-				for (rr=0; rr<16; rr++) 
+				for (rr=0; rr<16; rr++)
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+ccmax+cc][c] = (rawData[(winy+height-rr-2)][(winx+width-cc-2)])/65535.0f;
@@ -369,7 +376,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					}
 			}
 			if (rrmin>0 && ccmax<cc1) {
-				for (rr=0; rr<16; rr++) 
+				for (rr=0; rr<16; rr++)
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
 						rgb[(rr)*TS+ccmax+cc][c] = (rawData[(winy+32-rr)][(winx+width-cc-2)])/65535.0f;
@@ -378,7 +385,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					}
 			}
 			if (rrmax<rr1 && ccmin>0) {
-				for (rr=0; rr<16; rr++) 
+				for (rr=0; rr<16; rr++)
 					for (cc=0; cc<16; cc++) {
 						c=FC(rr,cc);
 						rgb[(rrmax+rr)*TS+cc][c] = (rawData[(winy+height-rr-2)][(winx+32-cc)])/65535.0f;
@@ -392,31 +399,31 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 
 			for (rr=1; rr < rr1-1; rr++)
 				for (cc=1, indx=(rr)*TS+cc; cc < cc1-1; cc++, indx++) {
-					
+
 					delh[indx] = fabs(cfa[indx+1]-cfa[indx-1]);
 					delv[indx] = fabs(cfa[indx+v1]-cfa[indx-v1]);
 					delhsq[indx] = SQR(delh[indx]);
 					delvsq[indx] = SQR(delv[indx]);
 					delp[indx] = fabs(cfa[indx+p1]-cfa[indx-p1]);
 					delm[indx] = fabs(cfa[indx+m1]-cfa[indx-m1]);
-					
+
 				}
 
 			for (rr=2; rr < rr1-2; rr++)
 				for (cc=2,indx=(rr)*TS+cc; cc < cc1-2; cc++, indx++) {
-					
+
 					dirwts[indx][0] = eps+delv[indx+v1]+delv[indx-v1]+delv[indx];//+fabs(cfa[indx+v2]-cfa[indx-v2]);
 					//vert directional averaging weights
 					dirwts[indx][1] = eps+delh[indx+1]+delh[indx-1]+delh[indx];//+fabs(cfa[indx+2]-cfa[indx-2]);
 					//horizontal weights
-					
+
 					if (FC(rr,cc)&1) {
 						//for later use in diagonal interpolation
 						//Dgrbp1[indx]=2*cfa[indx]-(cfa[indx-p1]+cfa[indx+p1]);
 						//Dgrbm1[indx]=2*cfa[indx]-(cfa[indx-m1]+cfa[indx+m1]);
 						Dgrbpsq1[indx]=(SQR(cfa[indx]-cfa[indx-p1])+SQR(cfa[indx]-cfa[indx+p1]));
 						Dgrbmsq1[indx]=(SQR(cfa[indx]-cfa[indx-m1])+SQR(cfa[indx]-cfa[indx+m1]));
-					} 
+					}
 				}
 
 			//t2_init += clock()-t1_init;
@@ -452,7 +459,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					if (fabs(1.0f-crd)<arthresh) {gdar=cfa[indx]*crd;} else {gdar=gdha;}
 					if (fabs(1.0f-crl)<arthresh) {glar=cfa[indx]*crl;} else {glar=glha;}
 					if (fabs(1.0f-crr)<arthresh) {grar=cfa[indx]*crr;} else {grar=grha;}
-					
+
 					hwt = dirwts[indx-1][1]/(dirwts[indx-1][1]+dirwts[indx+1][1]);
 					vwt = dirwts[indx-v1][0]/(dirwts[indx+v1][0]+dirwts[indx-v1][0]);
 
@@ -466,7 +473,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					hcd[indx] = sgn*(Ginthar-cfa[indx]);
 					vcdalt[indx] = sgn*(Gintvha-cfa[indx]);
 					hcdalt[indx] = sgn*(Ginthha-cfa[indx]);
-					
+
 					if (cfa[indx] > 0.8*clip_pt || Gintvha > 0.8*clip_pt || Ginthha > 0.8*clip_pt) {
 						//use HA if highlights are (nearly) clipped
 						guar=guha; gdar=gdha; glar=glha; grar=grha;
@@ -476,7 +483,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					//differences of interpolations in opposite directions
 					dgintv[indx]=min(SQR(guha-gdha),SQR(guar-gdar));
 					dginth[indx]=min(SQR(glha-grha),SQR(glar-grar));
-					
+
 				}
 			//t2_vcdhcd += clock() - t1_vcdhcd;
 
@@ -493,7 +500,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					//choose the smallest variance; this yields a smoother interpolation
 					if (hcdaltvar<hcdvar) hcd[indx]=hcdalt[indx];
 					if (vcdaltvar<vcdvar) vcd[indx]=vcdalt[indx];
-					
+
 					//bound the interpolation in regions of high saturation
 					if (c&1) {//G site
 						Ginth = -hcd[indx]+cfa[indx];//R or B
@@ -515,7 +522,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 								vcd[indx]=vwt*vcd[indx] + (1.0f-vwt)*(-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx]);
 							}
 						}
-						
+
 						if (Ginth > clip_pt) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for RT implementation
 						if (Gintv > clip_pt) vcd[indx]=-ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])+cfa[indx];
 						//if (Ginth > pre_mul[c]) hcd[indx]=-ULIM(Ginth,cfa[indx-1],cfa[indx+1])+cfa[indx];//for dcraw implementation
@@ -548,7 +555,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 						//if (Ginth > pre_mul[c]) hcd[indx]=ULIM(Ginth,cfa[indx-1],cfa[indx+1])-cfa[indx];//for dcraw implementation
 						//if (Gintv > pre_mul[c]) vcd[indx]=ULIM(Gintv,cfa[indx-v1],cfa[indx+v1])-cfa[indx];
 					}
-					
+
 					cddiffsq[indx] = SQR(vcd[indx]-hcd[indx]);
 				}
 
@@ -556,20 +563,20 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 				for (cc=6+(FC(rr,2)&1),indx=rr*TS+cc; cc<cc1-6; cc+=2,indx+=2) {
 
 					//compute color difference variances in cardinal directions
-					
+
 					float uave = vcd[indx]+vcd[indx-v1]+vcd[indx-v2]+vcd[indx-v3];
 					float dave = vcd[indx]+vcd[indx+v1]+vcd[indx+v2]+vcd[indx+v3];
 					float lave = (hcd[indx]+hcd[indx-1]+hcd[indx-2]+hcd[indx-3]);
 					float rave = (hcd[indx]+hcd[indx+1]+hcd[indx+2]+hcd[indx+3]);
-					
+
 					Dgrbvvaru = SQR(vcd[indx]-uave)+SQR(vcd[indx-v1]-uave)+SQR(vcd[indx-v2]-uave)+SQR(vcd[indx-v3]-uave);
 					Dgrbvvard = SQR(vcd[indx]-dave)+SQR(vcd[indx+v1]-dave)+SQR(vcd[indx+v2]-dave)+SQR(vcd[indx+v3]-dave);
 					Dgrbhvarl = SQR(hcd[indx]-lave)+SQR(hcd[indx-1]-lave)+SQR(hcd[indx-2]-lave)+SQR(hcd[indx-3]-lave);
 					Dgrbhvarr = SQR(hcd[indx]-rave)+SQR(hcd[indx+1]-rave)+SQR(hcd[indx+2]-rave)+SQR(hcd[indx+3]-rave);
-					
+
 					hwt = dirwts[indx-1][1]/(dirwts[indx-1][1]+dirwts[indx+1][1]);
 					vwt = dirwts[indx-v1][0]/(dirwts[indx+v1][0]+dirwts[indx-v1][0]);
-					
+
 					vcdvar = epssq+vwt*Dgrbvvard+(1.0f-vwt)*Dgrbvvaru;
 					hcdvar = epssq+hwt*Dgrbhvarr+(1.0f-hwt)*Dgrbhvarl;
 
@@ -589,13 +596,13 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					//if both agree on interpolation direction, choose the one with strongest directional discrimination;
 					//otherwise, choose the u/d and l/r difference fluctuation weights
 					if ((0.5-varwt)*(0.5-diffwt)>0 && fabs(0.5-diffwt)<fabs(0.5-varwt)) {hvwt[indx]=varwt;} else {hvwt[indx]=diffwt;}
-					
+
 					//hvwt[indx]=varwt;
 				}
 			//t2_cdvar += clock() - t1_cdvar;
 
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			// Nyquist test				 
+			// Nyquist test
 			//t1_nyqtest = clock();
 
 			for (rr=6; rr<rr1-6; rr++)
@@ -630,7 +637,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 
 			for (rr=8; rr<rr1-8; rr++)
 				for (cc=8+(FC(rr,2)&1),indx=rr*TS+cc; cc<cc1-8; cc+=2,indx+=2) {
-					
+
 					areawt=(nyquist[indx-v2]+nyquist[indx-m1]+nyquist[indx+p1]+
 							nyquist[indx-2]+nyquist[indx]+nyquist[indx+2]+
 							nyquist[indx-p1]+nyquist[indx+m1]+nyquist[indx+v2]);
@@ -693,9 +700,9 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					vo=fabs(0.5-hvwt[indx]);
 					ve=fabs(0.5-hvwtalt);
 					if (vo<ve) {hvwt[indx]=hvwtalt;}//a better result was obtained from the neighbors
-					
-					
-					
+
+
+
 					Dgrb[indx][0] = (hcd[indx]*(1.0f-hvwt[indx]) + vcd[indx]*hvwt[indx]);//evaluate color differences
 					//if (hvwt[indx]<0.5) Dgrb[indx][0]=hcd[indx];
 					//if (hvwt[indx]>0.5) Dgrb[indx][0]=vcd[indx];
@@ -722,7 +729,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 				for (cc=8+(FC(rr,2)&1),indx=rr*TS+cc; cc<cc1-8; cc+=2,indx+=2) {
 
 					if (nyquist[indx]) {
-						//local averages (over Nyquist pixels only) of G curvature squared 
+						//local averages (over Nyquist pixels only) of G curvature squared
 						gvarh = epssq + (gquinc[0]*Dgrbh2[indx]+
 									   gquinc[1]*(Dgrbh2[indx-m1]+Dgrbh2[indx+p1]+Dgrbh2[indx-p1]+Dgrbh2[indx+m1])+
 									   gquinc[2]*(Dgrbh2[indx-v2]+Dgrbh2[indx-2]+Dgrbh2[indx+2]+Dgrbh2[indx+v2])+
@@ -827,8 +834,8 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 				}
 
 			for (rr=12; rr<rr1-12; rr++)
-				for (cc=12+(FC(rr,2)&1),indx=rr*TS+cc; cc<cc1-12; cc+=2,indx+=2) {	
-						
+				for (cc=12+(FC(rr,2)&1),indx=rr*TS+cc; cc<cc1-12; cc+=2,indx+=2) {
+
 					if (fabs(0.5-pmwt[indx])<fabs(0.5-hvwt[indx]) ) continue;
 
 					//now interpolate G vertically/horizontally using R+B values
@@ -888,7 +895,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 					rgb[indx][1] = Ginth*(1.0f-hvwt[indx]) + Gintv*hvwt[indx];
 					//rgb[indx][1] = 0.5*(rgb[indx][1]+0.25*(rgb[indx-v1][1]+rgb[indx+v1][1]+rgb[indx-1][1]+rgb[indx+1][1]));
 					Dgrb[indx][0] = rgb[indx][1]-cfa[indx];
-					
+
 					//rgb[indx][2-FC(rr,cc)]=2*rbint[indx]-cfa[indx];
 				}
 			//end of diagonal interpolation correction
@@ -949,8 +956,8 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 
 					//for dcraw implementation
 					//for (c=0; c<3; c++){
-					//	image[indx][c] = CLIP((int)(65535.0f*rgb[rr*TS+cc][c] + 0.5f)); 
-					//} 
+					//	image[indx][c] = CLIP((int)(65535.0f*rgb[rr*TS+cc][c] + 0.5f));
+					//}
 
 
 				}
@@ -976,5 +983,5 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 	// done
 
 #undef TS
-	
+
 }
