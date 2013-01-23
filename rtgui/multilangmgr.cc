@@ -102,7 +102,7 @@ bool MultiLangMgr::isOSLanguageDetectSupported() {
 #else
     return false;
 #endif
-#elif __linux__
+#elif __linux__ || __APPLE__
     return true;
 #else
     return false;
@@ -116,7 +116,6 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
 
     if (isOSLanguageDetectSupported()) {
 
-        // TODO: Add support for other OS here
 #ifdef WIN32
 // When using old versions of MINGW this is not defined
 #ifdef __MINGW64_VERSION_MAJOR
@@ -130,7 +129,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
             langName=TranslateRFC2Language(localRFC);
         }
 #endif
-#elif __linux__
+#elif __linux__ || __APPLE__
     langName = TranslateRFC2Language(std::setlocale(LC_CTYPE,""));
 #endif
     }
