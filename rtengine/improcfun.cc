@@ -40,6 +40,8 @@
 #include "boxblur.h"
 #include "rt_math.h"
 #include "EdgePreservingDecomposition.h"
+#include "improccoordinator.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -62,10 +64,8 @@ namespace rtengine {
 	
 	
 extern const Settings* settings;
-
 LUTf ImProcFunctions::cachef ;
 LUTf ImProcFunctions::gamma2curve = 0;
-
 void ImProcFunctions::initCache () {
 
     int maxindex = 65536;
@@ -237,7 +237,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 }
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02 (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp)
+void ImProcFunctions::ciecam_02 (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp, double &d)
 {
 if(params->colorappearance.enabled) {
 
@@ -283,7 +283,7 @@ if(params->colorappearance.enabled) {
 	Yw=1.0;
 	double Xw, Zw;
 	double f,c,nc,yb,la,xw,yw,zw,f2,c2,nc2,yb2,la2;
-	double z,fl,n,nbb,ncb,d,aw;
+	double z,fl,n,nbb,ncb,aw;
 	double xwd,ywd,zwd;
 	int alg=0;
 	float sum=0.f;
@@ -951,11 +951,10 @@ if((params->colorappearance.tonecie || params->colorappearance.tonecie && (param
 
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02float (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp)
+void ImProcFunctions::ciecam_02float (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp, float &d)
 {
 if(params->colorappearance.enabled) {
 //printf("ciecam float\n");
-
 #ifdef _DEBUG
 	MyTime t1e,t2e;
 	t1e.set();
@@ -997,8 +996,8 @@ if(params->colorappearance.enabled) {
 	float Yw;
 	Yw=1.0;
 	double Xw, Zw;
-	float f,c,nc,yb,la,xw,yw,zw,f2,c2,nc2,yb2,la2;
-	float z,fl,n,nbb,ncb,d,aw;
+	float f,nc,yb,la,c,xw,yw,zw,f2,c2,nc2,yb2,la2;
+	float z,fl,n,nbb,ncb,aw;//d
 	float xwd,ywd,zwd;
 	int alg=0;
 	float sum=0.f;
@@ -1131,7 +1130,7 @@ if(params->colorappearance.enabled) {
 
 	
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg, gamu, highlight, rstprotection, pW,nj, nbbj, ncbj, flj, czj, dj, awj, n, nbb, ncb, pfl, cz, d)
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg, gamu, highlight, rstprotection, pW,nj, nbbj, ncbj, flj, czj, dj, awj, n, nbb, ncb, pfl, cz)
 #endif
 {	//matrix for current working space
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);

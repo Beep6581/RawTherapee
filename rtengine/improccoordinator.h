@@ -115,6 +115,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         ProgressListener* plistener;
         PreviewImageListener* imageListener;
         AutoExpListener* aeListener;
+        AutoCamListener* acListener;
         HistogramListener* hListener;
         std::vector<SizeListener*> sizeListeners;
 
@@ -184,6 +185,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void delSizeListener     (SizeListener* il)      {std::vector<SizeListener*>::iterator it = std::find (sizeListeners.begin(), sizeListeners.end(), il); if (it!=sizeListeners.end()) sizeListeners.erase (it); }
         void setAutoExpListener  (AutoExpListener* ael)  {aeListener = ael; }
         void setHistogramListener(HistogramListener *h)  {hListener = h; }
+        void setAutoCamListener  (AutoCamListener* acl)  {acListener = acl; }
 
         void saveInputICCReference (const Glib::ustring& fname);
         

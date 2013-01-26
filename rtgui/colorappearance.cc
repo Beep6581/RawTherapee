@@ -78,7 +78,7 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	wbmHBox->pack_start (*wbmodel);
 	p1VBox->pack_start (*wbmHBox);
 
-	adapscen = Gtk::manage (new Adjuster (M("TP_COLORAPP_ADAPTSCENE"), 1, 4000., 1., 2000.));
+	adapscen = Gtk::manage (new Adjuster (M("TP_COLORAPP_ADAPTSCENE"), 0.1, 4000., 0.1, 2000.));
 	if (adapscen->delay < 1000) adapscen->delay = 1000;
 	adapscen->throwOnButtonRelease();
 	adapscen->set_tooltip_markup (M("TP_COLORAPP_ADAPTSCENE_TOOLTIP"));
@@ -830,6 +830,27 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 		
 	}
 }
+int autoCamChangedUI (void* data) {
+    (static_cast<ColorAppearance*>(data))->autoCamComputed_ ();
+    return 0;
+}
+void ColorAppearance::autoCamChanged (double ccam) 
+{
+    nextCcam = ccam;
+	g_idle_add (autoCamChangedUI, this);
+  //  Glib::signal_idle().connect (sigc::mem_fun(*this, &ColorAppearance::autoCamComputed_));
+}
+
+bool ColorAppearance::autoCamComputed_ () {
+
+    disableListener ();
+//	degree->setEnabled (true);
+	degree->setValue (nextCcam);
+    enableListener ();
+
+    return false;
+}
+
 
 void ColorAppearance::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {
 
@@ -891,6 +912,7 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval) {
 	}
 
 	if (listener && (multiImage||enabled->get_active()) ) {
+	
 		if(a==degree) {
 			if (degree->getAutoInconsistent())
 				listener->panelChanged (EvCATAutoDegree, M("GENERAL_UNCHANGED"));
@@ -926,7 +948,8 @@ void ColorAppearance::enabledChanged () {
 				toneCurveMode->set_sensitive (true);
 			}
 		else
-			listener->panelChanged (EvCATEnabled, M("GENERAL_DISABLED"));
+			{listener->panelChanged (EvCATEnabled, M("GENERAL_DISABLED"));
+			}
 	}
 }
 
