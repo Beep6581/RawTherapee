@@ -28,7 +28,7 @@
 #include "guiutils.h"
 #include "colorprovider.h"
 
-class ColorAppearance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener,  public ColorProvider {
+class ColorAppearance : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoCamListener, public CurveListener,  public ColorProvider {
 
   protected:
     Glib::RefPtr<Gtk::Tooltip> bgTTips;
@@ -76,7 +76,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     DiagonalCurveEditor* shape;
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
-
+	double nextCcam;
     bool lastEnabled;
     bool lastAutoDegree;
     sigc::connection enaConn;
@@ -109,6 +109,8 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     void datacie_toggled     ();
     void tonecie_toggled     ();
 //    void sharpcie_toggled     ();
+    void autoCamChanged (double ccam);
+    bool autoCamComputed_ ();
 	
     void curveChanged        (CurveEditor* ce);
     void curveMode1Changed   ();

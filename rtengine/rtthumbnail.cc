@@ -816,8 +816,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	        float** buffer = new float*[fh];
 			for (int i=0; i<fh; i++)
             buffer[i] = new float[fw];
-	bool execsharp=false;				
-	ipf.ciecam_02float (cieView, begh, endh, 1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6, (float**)buffer, execsharp);
+	bool execsharp=false;		
+	float d;	
+	ipf.ciecam_02float (cieView, begh, endh, 1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6, (float**)buffer, execsharp, d);
 	        for (int i=0; i<fh; i++)
             delete [] buffer[i];
 			delete [] buffer; buffer=NULL;

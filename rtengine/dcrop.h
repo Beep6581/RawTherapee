@@ -55,6 +55,7 @@ class Crop : public DetailedCrop {
 
         bool cropAllocated;
         DetailedCropListener* cropImageListener;
+		
         Glib::Mutex cropMutex;
         ImProcCoordinator* parent;
 
