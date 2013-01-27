@@ -23,6 +23,7 @@
 #include "../rtengine/rtengine.h"
 #include "../rtengine/procparams.h"
 #include "paramsedited.h"
+#include "myflatcurve.h"
 #include "mydiagonalcurve.h"
 
 class Clipboard {
@@ -30,8 +31,10 @@ class Clipboard {
     bool _hasIPTC;
     rtengine::procparams::IPTCPairs iptc;
     rtengine::procparams::PartialProfile partProfile;
-    DiagonalCurveType hasCurveDataType;
-    std::vector<double> curve;
+    DiagonalCurveType hasDiagonalCurveDataType;
+    FlatCurveType hasFlatCurveDataType;
+    std::vector<double> diagonalCurve;
+    std::vector<double> flatCurve;
 
 
     public:
@@ -46,9 +49,13 @@ class Clipboard {
         bool                                               hasProcParams       () { return partProfile.pparams; }
         bool                                               hasPEdited          () { return partProfile.pedited; }
 
-        void                                               setCurveData (std::vector<double>& p, DiagonalCurveType type ) { curve = p;  hasCurveDataType = type; return; }
-        const std::vector<double> &                        getCurveData ()                       { return curve; }
-        DiagonalCurveType                                  hasCurveData ()                       { return hasCurveDataType; }
+        void                                               setDiagonalCurveData (std::vector<double>& p, DiagonalCurveType type ) { diagonalCurve = p;  hasDiagonalCurveDataType = type; return; }
+        const std::vector<double> &                        getDiagonalCurveData () { return diagonalCurve; }
+        DiagonalCurveType                                  hasDiagonalCurveData () { return hasDiagonalCurveDataType; }
+
+        void                                               setFlatCurveData (std::vector<double>& p, FlatCurveType type ) { flatCurve = p;  hasFlatCurveDataType = type; return; }
+        const std::vector<double> &                        getFlatCurveData () { return flatCurve; }
+        FlatCurveType                                      hasFlatCurveData () { return hasFlatCurveDataType; }
 
         Clipboard ();
         ~Clipboard ();
