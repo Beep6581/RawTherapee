@@ -35,6 +35,8 @@ protected:
 
 	Gtk::Button* saveCPoints;
 	Gtk::Button* loadCPoints;
+	Gtk::Button* copyCPoints;
+	Gtk::Button* pasteCPoints;
 
 public:
 	FlatCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
@@ -51,6 +53,8 @@ protected:
 	void restoreDisplayedHistogram ();
 	void savePressed ();
 	void loadPressed ();
+	void copyPressed ();
+	void pastePressed ();
 	bool curveReset (int cType);
 	void removeEditor ();
 	const std::vector<double> getCurveFromGUI (int type);

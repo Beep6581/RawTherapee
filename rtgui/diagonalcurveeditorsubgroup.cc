@@ -483,16 +483,16 @@ void DiagonalCurveEditorSubGroup::copyPressed () {
 	switch (parent->displayedCurve->selected) {
 	case DCT_Spline:                // custom
 		curve = customCurve->getPoints ();
-		clipboard.setCurveData (curve,DCT_Spline);
+		clipboard.setDiagonalCurveData (curve,DCT_Spline);
 		break;
 	case DCT_Parametric:            // parametric
 		// ... do something, first add save/load functions
 		curve = paramCurve->getPoints ();
-		clipboard.setCurveData (curve,DCT_Parametric);
+		clipboard.setDiagonalCurveData (curve,DCT_Parametric);
 		break;
 	case DCT_NURBS:                 // NURBS
 		curve = NURBSCurve->getPoints ();
-		clipboard.setCurveData (curve,DCT_NURBS);
+		clipboard.setDiagonalCurveData (curve,DCT_NURBS);
 		break;
 	default:                       // (DCT_Linear, DCT_Unchanged)
 		// ... do nothing
@@ -506,13 +506,11 @@ void DiagonalCurveEditorSubGroup::pastePressed () {
 	std::vector<double> curve;
 	DiagonalCurveType type;
 
-	type = clipboard.hasCurveData();
+	type = clipboard.hasDiagonalCurveData();
 
 	if (type == (DiagonalCurveType)parent->displayedCurve->selected) {
-		curve = clipboard.getCurveData ();
+		curve = clipboard.getDiagonalCurveData ();
 		switch (type) {
-		case DCT_Linear:           // linear
-			break;
 		case DCT_Spline:           // custom
 			customCurve->setPoints (curve);
 			customCurve->queue_draw ();

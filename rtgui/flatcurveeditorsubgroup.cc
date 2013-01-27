@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "clipboard.h"
 #include <gtkmm.h>
 #include <fstream>
 #include <string>
@@ -46,11 +47,18 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 
 	Gtk::HBox* CPointsbbox = Gtk::manage (new Gtk::HBox ());
 	CPointsbbox->set_spacing(4);
+
+	pasteCPoints = Gtk::manage (new Gtk::Button ());
+	pasteCPoints->add (*Gtk::manage (new RTImage ("edit-paste.png")));
+	copyCPoints = Gtk::manage (new Gtk::Button ());
+	copyCPoints->add (*Gtk::manage (new RTImage ("edit-copy.png")));
 	saveCPoints = Gtk::manage (new Gtk::Button ());
 	saveCPoints->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
 	loadCPoints = Gtk::manage (new Gtk::Button ());
 	loadCPoints->add (*Gtk::manage (new RTImage ("gtk-open.png")));
 
+	CPointsbbox->pack_end (*pasteCPoints, Gtk::PACK_SHRINK, 0);
+	CPointsbbox->pack_end (*copyCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_end (*saveCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_end (*loadCPoints, Gtk::PACK_SHRINK, 0);
 
@@ -59,8 +67,13 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 
 	saveCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::savePressed) );
 	loadCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::loadPressed) );
+	copyCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::copyPressed) );
+	pasteCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::pastePressed) );
+
 	saveCPoints->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
 	loadCPoints->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
+	copyCPoints->set_tooltip_text (M("CURVEEDITOR_TOOLTIPCOPY"));
+	pasteCPoints->set_tooltip_text (M("CURVEEDITOR_TOOLTIPPASTE"));
 
 	CPointsCurve->setCurveListener (parent); // Send the message directly to the parent
 }
@@ -236,6 +249,46 @@ void FlatCurveEditorSubGroup::loadPressed () {
 			}
 		}
     }
+}
+
+void FlatCurveEditorSubGroup::copyPressed () {
+// For compatibility use enum FlatCurveType here
+
+	std::vector<double> curve;
+
+	switch (parent->displayedCurve->selected) {
+	case FCT_MinMaxCPoints:                // custom
+		curve = CPointsCurve->getPoints ();
+		clipboard.setFlatCurveData (curve,FCT_MinMaxCPoints);
+		break;
+	default:                       // (DCT_Linear, DCT_Unchanged)
+		// ... do nothing
+		break;
+	}
+}
+
+void FlatCurveEditorSubGroup::pastePressed () {
+// For compatibility use enum FlatCurveType here
+
+	std::vector<double> curve;
+	FlatCurveType type;
+
+	type = clipboard.hasFlatCurveData();
+
+	if (type == (FlatCurveType)parent->displayedCurve->selected) {
+		curve = clipboard.getFlatCurveData ();
+		switch (type) {
+		case FCT_MinMaxCPoints:    // min/max control points
+			CPointsCurve->setPoints (curve);
+			CPointsCurve->queue_draw ();
+			CPointsCurve->notifyListener ();
+			break;
+		default:                   // (FCT_Linear, FCT_Unchanged)
+			// ... do nothing
+			break;
+		}
+	}
+	return;
 }
 
 /*
