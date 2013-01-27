@@ -185,12 +185,12 @@ Adjuster::~Adjuster () {
     if (automatic) delete automatic;
 }
 
-void Adjuster::addAutoButton () {
+void Adjuster::addAutoButton (Glib::ustring tooltip) {
     if (!automatic) {
         automatic = new Gtk::CheckButton ();
         //automatic->add (*Gtk::manage (new RTImage ("processing.png")));
         automatic->set_border_width (0);
-        automatic->set_tooltip_text (M("GENERAL_AUTO"));
+        automatic->set_tooltip_markup(tooltip.length() ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip) : M("GENERAL_AUTO"));
         autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );
 
         hbox->pack_end (*automatic, Gtk::PACK_SHRINK, 0);

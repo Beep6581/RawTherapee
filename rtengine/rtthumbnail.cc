@@ -797,8 +797,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	float** buffer = new float*[fh];
 	for (int i=0; i<fh; i++)
 		buffer[i] = new float[fw];
-	bool execsharp=false;				
-	ipf.ciecam_02float (cieView, begh, endh, 1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6, (float**)buffer, execsharp);
+	bool execsharp=false;
+	float d;
+	ipf.ciecam_02float (cieView, begh, endh, 1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6, (float**)buffer, execsharp, d);
 	for (int i=0; i<fh; i++)
 		delete [] buffer[i];
 	delete [] buffer; buffer=NULL;
@@ -812,7 +813,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     delete labView;
     delete baseImg;
     delete cieView;
-/*    // calculate scale
+    // calculate scale
     if (params.coarse.rotate==90 || params.coarse.rotate==270) 
         myscale = scale * thumbImg->width / fh;
     else
@@ -820,7 +821,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     myscale = 1.0 / myscale;
 
-    // apply crop
+/*    // apply crop
     if (params.crop.enabled) {
         int ix = 0;
         for (int i=0; i<fh; i++) 
