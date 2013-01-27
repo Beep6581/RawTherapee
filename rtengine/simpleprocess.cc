@@ -290,11 +290,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					customColCurve3, 					
 					1);
     if (params.sharpening.enabled) {
+		float d;
+		double dd;
         float** buffer = new float*[fh];
         for (int i=0; i<fh; i++)
             buffer[i] = new float[fw];	
-	if(settings->ciecamfloat) ipf.ciecam_02float (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true);
-	else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true);
+	if(settings->ciecamfloat) ipf.ciecam_02float (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, d);
+	else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, dd);
 
 	        for (int i=0; i<fh; i++)
             delete [] buffer[i];
@@ -302,11 +304,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			}
 			else {
 			int f_h=2,f_w=2;
+			float d;
+			double dd;
 	        float** buffer = new float*[f_h];
 			for (int i=0; i<f_h; i++)
             buffer[i] = new float[f_w];
-if(settings->ciecamfloat) ipf.ciecam_02float (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true);
-else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true);
+if(settings->ciecamfloat) ipf.ciecam_02float (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, d);
+else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, dd);
 
 	        for (int i=0; i<f_h; i++)
             delete [] buffer[i];

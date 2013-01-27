@@ -298,30 +298,42 @@ class ColorTemp {
 		                              double J, double C, double h,
 		                              double xw, double yw, double zw,
 		                              double yb, double la,
-		                              double f, double c, double nc, bool doneinit2, int gamu );
+		                              double f, double c, double nc, int gamu, double n, double nbb, double ncb, double fl, double cz, double d, double aw);
 									  
 		static void jch2xyz_ciecam02float( float &x, float &y, float &z,
 		                              float J, float C, float h,
 		                              float xw, float yw, float zw,
 		                              float yb, float la,
-		                              float f, float c, float nc, bool doneinit2, int gamu );
+		                              float f, float c, float nc,int gamu,float n, float nbb, float ncb, float fl, float cz, float d, float aw );
 									  
 /**
  * Forward transform from XYZ to CIECAM02 JCh.
  */
+		static void initcam1(double gamu, double yb, double pilotd, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
+							double &cz, double &aw, double &wh, double &pfl, double &fl, double &c);
+
+		static void initcam2(double gamu, double yb, double f, double la, double xw, double yw, double zw, double &n, double &d, double &nbb, double &ncb,
+							double &cz, double &aw, double &fl);
+							
+		static void initcam1float(float gamu, float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
+							float &cz, float &aw, float &wh, float &pfl, float &fl, float &c);
+
+		static void initcam2float(float gamu, float yb, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
+							float &cz, float &aw, float &fl);
+							
 		static void xyz2jchqms_ciecam02( double &J, double &C, double &h,
 		                                 double &Q, double &M, double &s,double &aw, double &fl, double &wh,
 		                                 double x, double y, double z,
 		                                 double xw, double yw, double zw,
 		                                 double yb, double la,
-		                                 double f, double c, double nc,  double pilotd, bool doneinit1, int gamu  );
+		                                 double f, double c, double nc,  double pilotd,int gamu , double n, double nbb, double ncb, double pfl, double cz, double d );
 
 		static void xyz2jchqms_ciecam02float( float &J, float &C, float &h,
 		                                 float &Q, float &M, float &s,float &aw, float &fl, float &wh,
 		                                 float x, float y, float z,
 		                                 float xw, float yw, float zw,
 		                                 float yb, float la,
-		                                 float f, float c, float nc,  float pilotd, bool doneinit1, int gamu  );
+		                                 float f, float c, float nc,  float pilotd, int gamu, float n, float nbb, float ncb, float pfl, float cz, float d  );
 										 
 										 
 };

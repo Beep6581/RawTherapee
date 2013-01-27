@@ -285,6 +285,38 @@ WINDOWS
 
         FFTW:
           - Instructions: http://www.fftw.org/install/windows.html
+          - Specific instructions more suitable for RawTherapee purposes:
+
+          1. Download the official fftw64 DLL package from http://www.fftw.org/download.html,
+          unpack it somewhere you can reach it with MSYS
+          (Hint: in MSYS console to change directory to 'C:/DirName' execute 'cd /C/DirName')
+          
+          2. in MSYS command line, execute:
+          dlltool --def libfftw3f-3.def --dllname libfftw3f-3.dll --output-lib libfftw3f-3.a
+          dlltool --def libfftw3l-3.def --dllname libfftw3l-3.dll --output-lib libfftw3l-3.a
+          dlltool --def libfftw3-3.def --dllname libfftw3-3.dll --output-lib libfftw3-3.a
+          
+          This will generate generate 'libfftw3f-3.a.a' file
+          
+          3. copy files:
+          libfftw3f-3.dll -> MinGW64/bin
+          libfftw3l-3.dll -> MinGW64/bin
+          libfftw3-3.dll -> MinGW64/bin
+          libfftw3f-3.a.a -> MinGW64/lib
+          fftw3.f.h -> MinGW64/include
+          
+          4. Create a new textfile MinGW64/lib/pkgconfig/fftw3f.pc with the following contents:
+          
+          prefix=/mingw64
+          exec_prefix=${prefix}
+          libdir=${exec_prefix}/lib
+          includedir=${prefix}/include
+          
+          Name: fftw3f
+          Description: FFTW3 Float
+          Version: 3.3
+          Libs: -L${libdir} -lfftw3f-3 -lm
+          Cflags: -I${includedir}
 
 
       IMPORTANT:
@@ -355,6 +387,24 @@ WINDOWS
             mingw32-make.exe install
         - You'll find the compiled program in the subdirectory named like the
           value of CMAKE_BUILD_TYPE ("Release" in this example).
+
+    METHOD 3:
+      Here is a sample batch file to compile RawTherapee in Windows
+      Adjust directory names to match your setup
+               
+      set GTKMM_BASEPATH=C:\gtkmm64
+      set GTKMM64_BASEPATH=C:\gtkmm64
+      set MINGW_BASEPATH=C:\MinGW64
+      set PATH=%PATH%;C:\gtkmm64\bin;C:\MinGW64\bin;C:\CMake\bin;C:\DevTools\XMPToolkit\bin
+      set PKG_CONFIG_PATH=C:\MinGW64\lib\pkgconfig;c:\gtkmm64\lib\pkgconfig
+      
+      set RT_SOURCECODE_PATH=C:\Users\YOURNAME\workspace\rawtherapee_default
+      set RT_BUILD_PATH=C:\Users\YOURNAME\rt_builds\rt_default_release
+      cd %RT_BUILD_PATH%
+      
+      cmake -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" -DPROC_TARGET_NUMBER:STRING=2 -C%RT_SOURCECODE_PATH%\Win32CMakeOptions-Sample.txt %RT_SOURCECODE_PATH%
+      mingw32-make -j12 install
+      pause
 
 LINUX
 -----

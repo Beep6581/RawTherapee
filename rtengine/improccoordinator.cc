@@ -70,7 +70,7 @@ ImProcCoordinator::ImProcCoordinator ()
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
 
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),
+      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL),
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false)
     {}
 
@@ -423,12 +423,18 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	int  Iterates=0;
 	int begh=0;
 	int endh=pH;
-	
+	float d;
+	double dd;
 	float **buffer = new float*[pH];
        for (int i=0; i<pH; i++)
          buffer[i] = new float[pW];
-	if(settings->ciecamfloat) ipf.ciecam_02float (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true);
-	else ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true);
+		 
+	if(settings->ciecamfloat){ipf.ciecam_02float (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true, d);
+	if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
+	}
+	else {ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true, dd);
+	if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);	
+	}
 		for (int i=0; i<pH; i++)
 			delete [] buffer[i];
 			delete [] buffer;

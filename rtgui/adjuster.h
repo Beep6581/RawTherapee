@@ -80,7 +80,7 @@ class Adjuster : public Gtk::VBox {
     virtual ~Adjuster ();
 
     // Add an "Automatic" checkbox next to the reset button.
-    void addAutoButton();
+    void addAutoButton(Glib::ustring tooltip="");
     // Remove the "Automatic" checkbox next to the reset button.
     void delAutoButton();
     // Send back the value of og the Auto checkbox
