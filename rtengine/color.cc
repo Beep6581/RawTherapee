@@ -17,7 +17,7 @@
 *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "rt_math.h"
+#include "rtengine.h"
 #include "color.h"
 #include "iccmatrices.h"
 #include "mytime.h"

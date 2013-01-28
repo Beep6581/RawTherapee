@@ -3,7 +3,6 @@
 #include <cmath>
 #include <algorithm>
 
-#include "rtengine.h"
 
 namespace rtengine {
 	static const int MAXVAL = 0xffff;
