@@ -68,6 +68,7 @@
 
 #include <cstring>
 #ifndef NDEBUG
+#include <glibmm.h>
 #include <fstream>
 #endif
 
