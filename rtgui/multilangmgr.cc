@@ -102,7 +102,7 @@ bool MultiLangMgr::isOSLanguageDetectSupported() {
 #else
     return false;
 #endif
-#elif __linux__ || __APPLE__
+#elif defined(__linux__) || defined(__APPLE__)
     return true;
 #else
     return false;
@@ -129,7 +129,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage() {
             langName=TranslateRFC2Language(localRFC);
         }
 #endif
-#elif __linux__ || __APPLE__
+#elif defined(__linux__) || defined(__APPLE__)
     langName = TranslateRFC2Language(std::setlocale(LC_CTYPE,""));
 #endif
     }
