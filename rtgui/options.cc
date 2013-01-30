@@ -651,8 +651,8 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
     if (keyFile.has_key ("Color Management", "CRI"))            rtSettings.CRI_color            = keyFile.get_integer("Color Management", "CRI");
-    if (keyFile.has_key ("Color Management", "view"))           rtSettings.viewingdevice   = keyFile.get_integer("Color Management", "view");
-    if (keyFile.has_key ("Color Management", "grey"))           rtSettings.viewingdevice   = keyFile.get_integer("Color Management", "grey");
+    if (keyFile.has_key ("Color Management", "view"))           rtSettings.viewingdevice        = keyFile.get_integer("Color Management", "view");
+    if (keyFile.has_key ("Color Management", "grey"))           rtSettings.viewingdevicegrey    = keyFile.get_integer("Color Management", "grey");
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
     if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
@@ -898,7 +898,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Color Management", "Autocielab", rtSettings.autocielab);
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
     keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);	
-    keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevice);	
+    keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);	
 	
     keyFile.set_string  ("Color Management", "AdobeRGB", rtSettings.adobe);
     keyFile.set_string  ("Color Management", "ProPhoto", rtSettings.prophoto);
