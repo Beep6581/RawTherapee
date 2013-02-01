@@ -204,6 +204,11 @@ if (WITH_BZIP)
   endif (BZIP2_FOUND)
 endif (WITH_BZIP)
 
+#Check for libcanberra-gtk (sound events on Linux)
+if (UNIX AND (NOT APPLE))
+    pkg_check_modules (CANBERRA-GTK REQUIRED libcanberra-gtk)
+endif (UNIX AND (NOT APPLE))
+
 if (WITH_MYFILE_MMAP)
 	add_definitions (-DMYFILE_MMAP)
 endif (WITH_MYFILE_MMAP)

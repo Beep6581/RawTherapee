@@ -26,6 +26,10 @@
 #include <mmsystem.h>
 #endif
 
+#ifdef __linux__
+#include <canberra-gtk.h>
+#endif
+
 
 void SoundManager::init()
 {
@@ -45,9 +49,10 @@ void SoundManager::init()
 // param is either file name or name of the system event on Windows (e.g. "SystemAsterisk" or "SystemDefault").
 void SoundManager::playSoundAsync(const Glib::ustring &sound)
 {
-     if (sound.empty() || !options.sndEnable) return;
+     if (!options.sndEnable) return;
 
 #ifdef WIN32
+    if (sound.empty()) return;
     DWORD sndParam=SND_ASYNC | SND_NODEFAULT;
 
     if (sound.find('.')!=Glib::ustring::npos) {
@@ -61,8 +66,7 @@ void SoundManager::playSoundAsync(const Glib::ustring &sound)
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (sound.c_str(), -1, NULL, NULL, NULL);
     PlaySoundW(wfilename, NULL, sndParam);
     g_free( wfilename );
-#else
-    // TODO: Add code for other OSes here
-    printf("Sound not supported on your OS (yet)\n");
+#elif defined(__linux__)
+    ca_context_play(ca_gtk_context_get(), 0, CA_PROP_EVENT_ID, "complete", NULL);
 #endif
 }

@@ -80,6 +80,7 @@ DEPENDENCIES
   JPEG        libjpeg>=6b        http://libjpeg-turbo.virtualgl.org/
                                  http://jpegclub.org/
                                  http://www.ijg.org/
+  LIBCANBERRA libcanberra-gtk    http://0pointer.de/lennart/projects/libcanberra/ [Only on Linux]
   LCMS2       lcms>=2.0a         http://www.littlecms.com/
   LIBIPTCDATA libiptcdata>=1.0.2 http://libiptcdata.sourceforge.net
   PNG         libpng>=1.2.44     http://www.libpng.org/
@@ -413,34 +414,34 @@ LINUX
     See the list of dependencies at the beginning of this document.
 
     In Ubuntu/Debian the requirements can be installed by running:
-      sudo apt-get install build-essential cmake libfftw3-dev libbz2-dev \
-      libexiv2-dev libexpat1-dev libglib2.0-dev libglibmm-2.4-dev \
-      libgtk2.0-dev libgtkmm-2.4-dev libiptcdata-dev libjpeg8-dev \
-      liblcms2-dev libpng-dev libsigc++-2.0-dev libtiff-dev mercurial \
-      zlib1g-dev
+      sudo apt-get install build-essential cmake libcanberra-gtk-dev \
+      libfftw3-dev libbz2-dev libexiv2-dev libexpat1-dev libglib2.0-dev \
+      libglibmm-2.4-dev libgtk2.0-dev libgtkmm-2.4-dev libiptcdata-dev \
+      libjpeg8-dev liblcms2-dev libpng-dev libsigc++-2.0-dev libtiff-dev \
+      mercurial zlib1g-dev
 
     In Fedora, run:
       sudo yum install gcc-c++ cmake bzip2-devel exiv2-devel expat-devel \
       fftw-devel glib2-devel glibmm24-devel gtk+-devel gtkmm24-devel \
-      libjpeg-turbo-devel lcms2-devel libiptcdata-devel libpng-devel \
-      libsigc++20-devel libtiff-devel zlib-devel
+      libcanberra-devel libjpeg-turbo-devel lcms2-devel libiptcdata-devel \
+      libpng-devel libsigc++20-devel libtiff-devel zlib-devel
 
     In Gentoo, run:
       sudo emerge -uva app-arch/bzip2 media-gfx/exiv2 dev-libs/expat \
       dev-libs/glib dev-cpp/glibmm x11-libs/gtk+ dev-cpp/gtkmm \
-      media-libs/libjpeg-turbo media-libs/lcms media-libs/libiptcdata \
-      media-libs/libpng dev-libs/libsigc++ media-libs/tiff sci-libs/fftw \
-      sys-libs/zlib
+      media-libs/libcanberra media-libs/libjpeg-turbo media-libs/lcms \
+      media-libs/libiptcdata media-libs/libpng dev-libs/libsigc++ \
+      media-libs/tiff sci-libs/fftw sys-libs/zlib
 
     In Arch, run:
       sudo pacman -S bzip2 exiv2 expat fftw glib2 glibmm gtk gtkmm lcms2 \
-      libiptcdata libjpeg-turbo libpng libsigc++ libtiff zlib
+      libcanberra libiptcdata libjpeg-turbo libpng libsigc++ libtiff zlib
 
     In openSUSE, run:
       sudo zypper in gcc-c++ cmake fftw3-devel glib2-devel gtk2-devel \
-      glibmm2-devel gtkmm2-devel libbz2-devel libexpat-devel libiptcdata-devel \
-      libjpeg-devel liblcms2-devel libpng-devel libsigc++2-devel libtiff-devel \
-      zlib-devel
+      glibmm2-devel gtkmm2-devel libbz2-devel libcanberra-devel libexpat-devel \
+      libiptcdata-devel libjpeg-devel liblcms2-devel libpng-devel \
+      libsigc++2-devel libtiff-devel zlib-devel
 
   COMPILE:
     The Automatic Way:

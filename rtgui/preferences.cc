@@ -1280,6 +1280,10 @@ void Preferences::fillPreferences () {
     ckbSndEnable->set_active (moptions.sndEnable);
     txtSndBatchQueueDone->set_text (moptions.sndBatchQueueDone);
     txtSndLngEditProcDone->set_text (moptions.sndLngEditProcDone);
+#if defined(__linux__) || defined(__APPLE__)
+    txtSndBatchQueueDone->set_sensitive (false);
+    txtSndLngEditProcDone->set_sensitive (false);
+#endif
     spbSndLngEditProcDoneSecs->set_value (moptions.sndLngEditProcDoneSecs);
 }
 
@@ -1307,9 +1311,12 @@ void Preferences::autocielabToggled () {
 }
 */
 void Preferences::sndEnableToggled () {
+#ifdef WIN32
 	txtSndBatchQueueDone->set_sensitive(ckbSndEnable->get_active());
 	txtSndLngEditProcDone->set_sensitive(ckbSndEnable->get_active());
+#elif defined(__linux__) || defined(WIN32)
 	spbSndLngEditProcDoneSecs->set_sensitive(ckbSndEnable->get_active());
+#endif
 }
 
 void Preferences::langAutoDetectToggled () {
