@@ -348,7 +348,11 @@ void Options::setDefaults () {
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p
 
+#if defined(__linux__) || defined(WIN32)
     sndEnable=true;
+#else
+    sndEnable=false;
+#endif
     sndLngEditProcDoneSecs=3.0;
 
     // Reminder: 0 = SET mode, 1 = ADD mode
