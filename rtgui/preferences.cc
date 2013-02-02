@@ -82,7 +82,10 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(),M("PREFERENCES_TAB_COLORMGR"));
     nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
+    // Sounds only on Windows and Linux
+#if defined(WIN32) || defined(__linux__)
     nb->append_page (*getSoundPanel(),          M("PREFERENCES_TAB_SOUND"));
+#endif
     nb->set_current_page (0);
 
     fillPreferences ();
@@ -1131,11 +1134,13 @@ void Preferences::storePreferences () {
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
 
-    // Sounds
+    // Sounds only on Windows and Linux
+#if defined(WIN32) || defined(__linux__)
     moptions.sndEnable = ckbSndEnable->get_active ();
     moptions.sndBatchQueueDone = txtSndBatchQueueDone->get_text ();
     moptions.sndLngEditProcDone     = txtSndLngEditProcDone->get_text ();
     moptions.sndLngEditProcDoneSecs = spbSndLngEditProcDoneSecs->get_value ();
+#endif
 }
 
 void Preferences::fillPreferences () {
@@ -1276,15 +1281,13 @@ void Preferences::fillPreferences () {
 
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
 
-    // Sounds
+    // Sounds only on Windows and Linux
+#if defined(WIN32) || defined(__linux__)
     ckbSndEnable->set_active (moptions.sndEnable);
     txtSndBatchQueueDone->set_text (moptions.sndBatchQueueDone);
     txtSndLngEditProcDone->set_text (moptions.sndLngEditProcDone);
-#if defined(__linux__) || defined(__APPLE__)
-    txtSndBatchQueueDone->set_sensitive (false);
-    txtSndLngEditProcDone->set_sensitive (false);
-#endif
     spbSndLngEditProcDoneSecs->set_value (moptions.sndLngEditProcDoneSecs);
+#endif
 }
 
 /*
@@ -1311,12 +1314,9 @@ void Preferences::autocielabToggled () {
 }
 */
 void Preferences::sndEnableToggled () {
-#ifdef WIN32
 	txtSndBatchQueueDone->set_sensitive(ckbSndEnable->get_active());
 	txtSndLngEditProcDone->set_sensitive(ckbSndEnable->get_active());
-#elif defined(__linux__) || defined(WIN32)
 	spbSndLngEditProcDoneSecs->set_sensitive(ckbSndEnable->get_active());
-#endif
 }
 
 void Preferences::langAutoDetectToggled () {
