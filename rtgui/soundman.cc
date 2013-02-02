@@ -49,10 +49,9 @@ void SoundManager::init()
 // param is either file name or name of the system event on Windows (e.g. "SystemAsterisk" or "SystemDefault").
 void SoundManager::playSoundAsync(const Glib::ustring &sound)
 {
-     if (!options.sndEnable) return;
+     if (sound.empty() || !options.sndEnable) return;
 
 #ifdef WIN32
-    if (sound.empty()) return;
     DWORD sndParam=SND_ASYNC | SND_NODEFAULT;
 
     if (sound.find('.')!=Glib::ustring::npos) {
@@ -67,6 +66,6 @@ void SoundManager::playSoundAsync(const Glib::ustring &sound)
     PlaySoundW(wfilename, NULL, sndParam);
     g_free( wfilename );
 #elif defined(__linux__)
-    ca_context_play(ca_gtk_context_get(), 0, CA_PROP_EVENT_ID, "complete", NULL);
+    ca_context_play(ca_gtk_context_get(), 0, CA_PROP_EVENT_ID, sound.c_str(), CA_PROP_MEDIA_FILENAME, sound.c_str(), NULL);
 #endif
 }
