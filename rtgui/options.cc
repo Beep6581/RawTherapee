@@ -157,6 +157,8 @@ void Options::updatePaths() {
         lastProfilingReferenceDir = preferredPath;
     if (lastVibranceCurvesDir.empty() || !safe_file_test (lastVibranceCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastVibranceCurvesDir, Glib::FILE_TEST_IS_DIR))
         lastVibranceCurvesDir = preferredPath;
+    if (loadSaveProfilePath.empty() || !safe_file_test (loadSaveProfilePath, Glib::FILE_TEST_EXISTS) || !safe_file_test (loadSaveProfilePath, Glib::FILE_TEST_IS_DIR))
+        loadSaveProfilePath = preferredPath;
 }
 
 Glib::ustring Options::getPreferredProfilePath() {

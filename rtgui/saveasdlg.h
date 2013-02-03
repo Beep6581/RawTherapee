@@ -52,6 +52,7 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
     int             getSaveMethodNum ();
 
     void  setInitialFileName (Glib::ustring iname);
+    void  setImagePath (Glib::ustring ipath);
 
     void okPressed ();
     void cancelPressed ();
