@@ -203,8 +203,8 @@ namespace rtengine {
         // these are needed only for creation of the plans and will be freed before entering the parallel loop
 		float * Lbloxtmp;
 		float * fLbloxtmp;
-		Lbloxtmp  = fftwf_alloc_real(max_numblox_W*TS*TS);
-		fLbloxtmp = fftwf_alloc_real(max_numblox_W*TS*TS);
+		Lbloxtmp  = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof (float));
+		fLbloxtmp = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof (float));
 
 		int nfwd[2]={TS,TS};
 
@@ -238,8 +238,8 @@ namespace rtengine {
 #pragma omp critical
 #endif
         {
-		Lblox  = fftwf_alloc_real(max_numblox_W*TS*TS);
-		fLblox = fftwf_alloc_real(max_numblox_W*TS*TS);
+		Lblox  = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof(float));
+		fLblox = (float*) fftwf_malloc(max_numblox_W*TS*TS*sizeof(float));
         }
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic) collapse(2)
