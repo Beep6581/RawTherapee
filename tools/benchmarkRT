@@ -15,7 +15,7 @@ repo="${HOME}/rawtherapee"
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
 outFileFormat="-t"
 tmpDir="/tmp/rawtherapee-benchmark"
-runs=3
+runs=5
 
 howto() {
   fold -s <<END

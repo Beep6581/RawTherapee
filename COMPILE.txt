@@ -80,7 +80,7 @@ DEPENDENCIES
   JPEG        libjpeg>=6b        http://libjpeg-turbo.virtualgl.org/
                                  http://jpegclub.org/
                                  http://www.ijg.org/
-  LIBCANBERRA libcanberra-gtk    http://0pointer.de/lennart/projects/libcanberra/ [Only on Linux]
+  LIBCANBERRA libcanberra-gtk    http://0pointer.de/lennart/projects/libcanberra/ (Linux only)
   LCMS2       lcms>=2.0a         http://www.littlecms.com/
   LIBIPTCDATA libiptcdata>=1.0.2 http://libiptcdata.sourceforge.net
   PNG         libpng>=1.2.44     http://www.libpng.org/
@@ -106,7 +106,7 @@ WINDOWS
       We recommend:
         http://www.7-zip.org/
         http://peazip.sourceforge.net/
-          
+
 
   THE TOOLCHAIN:
 
@@ -118,7 +118,7 @@ WINDOWS
     The rest of this document assumes that you've installed MinGW, MSYS and
     gtkmm respectively to "C:\mingw", "C:\msys" and "C:\gtkmm".  These packages
     must be installed in paths that DO NOT CONTAIN SPACES.
-    
+
     METHOD 1
       - MinGW64-TDM (Bundle or On-Demand installer from
         http://tdm-gcc.tdragon.net/download) Make sure you use the current 4.6.1
@@ -164,9 +164,8 @@ WINDOWS
           CMAKE_CXX_FLAGS,CMAKE_C_FLAGS,CMAKE_SHARED_LINKER_FLAGS: -m32
           CMAKE_EXE_LINKER_FLAGS: -m32 --large-address-aware
           CMAKE_RC_FLAGS: -F pe-i386
-
       - Copy the "Win32CMakeOptions-sample.txt" file located in the root
-        directory of RT's source tree, to "cmo.txt" (for example). You can edit
+        directory of RT's source tree to "cmo.txt" (for example). You can edit
         that copy to change the compilation flags to your needs, but the default
         values should be fine. However, if you want to upload a build, you
         should set some additional information about your processor. There are
@@ -186,13 +185,13 @@ WINDOWS
 
 
   DEPENDENCIES:
-  
+
     RawTherapee depends on libraries which are not part of the gtkmm or MinGW
     packages. There are two ways of installing these libraries:
 
     THE SIMPLE WAY:
-      For your convenience, most of the required libraries has been precompiled and are
-      downloadable at:
+      For your convenience, most of the required libraries has been precompiled
+      and are downloadable at:
         http://www.rawtherapee.com/releases_head/windows/dependencies_for_creating_builds/
       Unpack the contents of these archives to the base installation dir of
       MinGW.
@@ -201,7 +200,7 @@ WINDOWS
       libraries. See the dependencies list at the beginning of the document,
       find the missing ones (such as LCMS2 and Expat) and see below for
       instructions on where to download them from and how to install them.  
-      
+
     THE "DO IT YOURSELF" WAY:
       The MSYS package is required to build the libraries. See above for the
       download link. Before building them, check if they are already installed
@@ -216,7 +215,7 @@ WINDOWS
           - How to build:
               cd to the directory you unpacked zlib-1.2.5 to,
               make -f win32/Makefile.gcc
-          
+
           Then, manually copy the files as follows (tip: you can individually
           copy the lines below and paste them in MSYS' prompt with the middle
           mouse button):
@@ -249,7 +248,7 @@ WINDOWS
               Copy jconfig.txt to jconfig.h (overwrite the existing file).
               make
               make install
-        
+
         libtiff:
           - Download: ftp://ftp.remotesensing.org/pub/libtiff/
           - How to build:
@@ -260,7 +259,7 @@ WINDOWS
               make
               cd libtiff
               make install
-        
+
         libiptcdata:
           - Download: http://libiptcdata.sourceforge.net/
           - How to build:
@@ -271,7 +270,7 @@ WINDOWS
               one line for each search. From these lines, remove "iptc", then:
               make
               make install
-            
+
         LCMS:
           - Download LCMS2 for RawTherapee-3.1 and newer (or LCMS1 for RawTherapee-3.0)
               http://sourceforge.net/projects/lcms/files/
@@ -287,44 +286,40 @@ WINDOWS
         FFTW:
           - Instructions: http://www.fftw.org/install/windows.html
           - Specific instructions more suitable for RawTherapee purposes:
-
-          1. Download the official fftw64 DLL package from http://www.fftw.org/download.html,
-          unpack it somewhere you can reach it with MSYS
-          (Hint: in MSYS console to change directory to 'C:/DirName' execute 'cd /C/DirName')
-          
-          2. in MSYS command line, execute:
-          dlltool --def libfftw3f-3.def --dllname libfftw3f-3.dll --output-lib libfftw3f-3.a
-          dlltool --def libfftw3l-3.def --dllname libfftw3l-3.dll --output-lib libfftw3l-3.a
-          dlltool --def libfftw3-3.def --dllname libfftw3-3.dll --output-lib libfftw3-3.a
-          
-          This will generate generate 'libfftw3f-3.a.a' file
-          
-          3. copy files:
-          libfftw3f-3.dll -> MinGW64/bin
-          libfftw3l-3.dll -> MinGW64/bin
-          libfftw3-3.dll -> MinGW64/bin
-          libfftw3f-3.a.a -> MinGW64/lib
-          fftw3.f.h -> MinGW64/include
-          
-          4. Create a new textfile MinGW64/lib/pkgconfig/fftw3f.pc with the following contents:
-          
-          prefix=/mingw64
-          exec_prefix=${prefix}
-          libdir=${exec_prefix}/lib
-          includedir=${prefix}/include
-          
-          Name: fftw3f
-          Description: FFTW3 Float
-          Version: 3.3
-          Libs: -L${libdir} -lfftw3f-3 -lm
-          Cflags: -I${includedir}
+            1. Download the official FFTW-64 DLL package from
+                 http://www.fftw.org/download.html
+               Unpack it somewhere you can reach it with MSYS
+               Hint: in MSYS console to change directory to 'C:/DirName' execute
+                 'cd /C/DirName'
+            2. In MSYS command line, execute:
+                dlltool --def libfftw3f-3.def --dllname libfftw3f-3.dll --output-lib libfftw3f-3.a
+                dlltool --def libfftw3l-3.def --dllname libfftw3l-3.dll --output-lib libfftw3l-3.a
+                dlltool --def libfftw3-3.def --dllname libfftw3-3.dll --output-lib libfftw3-3.a
+               This will generate a 'libfftw3f-3.a.a' file.
+            3. Copy files:
+                libfftw3f-3.dll -> MinGW64/bin
+                libfftw3l-3.dll -> MinGW64/bin
+                libfftw3-3.dll -> MinGW64/bin
+                libfftw3f-3.a.a -> MinGW64/lib
+                fftw3.f.h -> MinGW64/include
+            4. Create a new text file MinGW64/lib/pkgconfig/fftw3f.pc with the
+               following contents:
+                prefix=/mingw64
+                exec_prefix=${prefix}
+                libdir=${exec_prefix}/lib
+                includedir=${prefix}/include
+                Name: fftw3f
+                Description: FFTW3 Float
+                Version: 3.3
+                Libs: -L${libdir} -lfftw3f-3 -lm
+                Cflags: -I${includedir}
 
 
       IMPORTANT:
         Make sure that the lcms.pc and libiptcdata.pc files located in the
         pkgconfig dir have the first line like this:
           prefix=/mingw
-        
+
         If everything has been installed correctly, you should see the following
         lines when running the cmake command (see "Building RT" below):
           -- checking for module 'libiptcdata'
@@ -377,10 +372,11 @@ WINDOWS
             1. You pick up a target processor from "ProcessorTargets.cmake". All
                you have to do is set "-D PROC_TARGET_NUMBER:STRING=number" in
                cmake's command line to the desired target number. If you choose
-               the 'native' solution, you have to set the processor label manually
-               by setting "-D PROC_LABEL:STRING=procLabel" in cmake's command
-               line. Please provide a short name, like "core i5" or "athlon64"
-               (without double quotes). Processor frequency is of no use.
+               the 'native' solution, you have to set the processor label
+               manually by setting "-D PROC_LABEL:STRING=procLabel" in cmake's
+               command line. Please provide a short name, like "core i5" or
+               "athlon64" (without double quotes). Processor frequency is of no
+               use.
             2. You don't need specific processor flags, so you'll let
                PROC_TARGET_NUMBER default to 0, but you still have to set the
                PROC_LABEL parameter (see point 1 righ above).
@@ -390,22 +386,19 @@ WINDOWS
           value of CMAKE_BUILD_TYPE ("Release" in this example).
 
     METHOD 3:
-      Here is a sample batch file to compile RawTherapee in Windows
-      Adjust directory names to match your setup
-               
-      set GTKMM_BASEPATH=C:\gtkmm64
-      set GTKMM64_BASEPATH=C:\gtkmm64
-      set MINGW_BASEPATH=C:\MinGW64
-      set PATH=%PATH%;C:\gtkmm64\bin;C:\MinGW64\bin;C:\CMake\bin;C:\DevTools\XMPToolkit\bin
-      set PKG_CONFIG_PATH=C:\MinGW64\lib\pkgconfig;c:\gtkmm64\lib\pkgconfig
-      
-      set RT_SOURCECODE_PATH=C:\Users\YOURNAME\workspace\rawtherapee_default
-      set RT_BUILD_PATH=C:\Users\YOURNAME\rt_builds\rt_default_release
-      cd %RT_BUILD_PATH%
-      
-      cmake -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" -DPROC_TARGET_NUMBER:STRING=2 -C%RT_SOURCECODE_PATH%\Win32CMakeOptions-Sample.txt %RT_SOURCECODE_PATH%
-      mingw32-make -j12 install
-      pause
+      Here is a sample batch file to compile RawTherapee in Windows. Adjust
+      directory names to match your setup:
+       set GTKMM_BASEPATH=C:\gtkmm64
+       set GTKMM64_BASEPATH=C:\gtkmm64
+       set MINGW_BASEPATH=C:\MinGW64
+       set PATH=%PATH%;C:\gtkmm64\bin;C:\MinGW64\bin;C:\CMake\bin;C:\DevTools\XMPToolkit\bin
+       set PKG_CONFIG_PATH=C:\MinGW64\lib\pkgconfig;c:\gtkmm64\lib\pkgconfig
+       set RT_SOURCECODE_PATH=C:\Users\YOURNAME\workspace\rawtherapee_default
+       set RT_BUILD_PATH=C:\Users\YOURNAME\rt_builds\rt_default_release
+       cd %RT_BUILD_PATH%
+       cmake -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" -DPROC_TARGET_NUMBER:STRING=2 -C%RT_SOURCECODE_PATH%\Win32CMakeOptions-Sample.txt %RT_SOURCECODE_PATH%
+       mingw32-make -j12 install
+       pause
 
 LINUX
 -----
@@ -413,35 +406,35 @@ LINUX
   DEPENDENCIES:
     See the list of dependencies at the beginning of this document.
 
-    In Ubuntu/Debian the requirements can be installed by running:
-      sudo apt-get install build-essential cmake libcanberra-gtk-dev \
-      libfftw3-dev libbz2-dev libexiv2-dev libexpat1-dev libglib2.0-dev \
-      libglibmm-2.4-dev libgtk2.0-dev libgtkmm-2.4-dev libiptcdata-dev \
-      libjpeg8-dev liblcms2-dev libpng-dev libsigc++-2.0-dev libtiff-dev \
-      mercurial zlib1g-dev
-
-    In Fedora, run:
-      sudo yum install gcc-c++ cmake bzip2-devel exiv2-devel expat-devel \
-      fftw-devel glib2-devel glibmm24-devel gtk+-devel gtkmm24-devel \
-      libcanberra-devel libjpeg-turbo-devel lcms2-devel libiptcdata-devel \
-      libpng-devel libsigc++20-devel libtiff-devel zlib-devel
-
-    In Gentoo, run:
-      sudo emerge -uva app-arch/bzip2 media-gfx/exiv2 dev-libs/expat \
-      dev-libs/glib dev-cpp/glibmm x11-libs/gtk+ dev-cpp/gtkmm \
-      media-libs/libcanberra media-libs/libjpeg-turbo media-libs/lcms \
-      media-libs/libiptcdata media-libs/libpng dev-libs/libsigc++ \
-      media-libs/tiff sci-libs/fftw sys-libs/zlib
-
     In Arch, run:
-      sudo pacman -S bzip2 exiv2 expat fftw glib2 glibmm gtk gtkmm lcms2 \
+      sudo pacman -S bzip2 exiv2 expat fftw glib2 glibmm gtk gtkmm lcms2       \
       libcanberra libiptcdata libjpeg-turbo libpng libsigc++ libtiff zlib
 
+    In Fedora, run:
+      sudo yum install bzip2-devel cmake exiv2-devel expat-devel fftw-devel    \
+      gcc-c++ glib2-devel glibmm24-devel gtk+-devel gtkmm24-devel lcms2-devel  \
+      libcanberra-devel libiptcdata-devel libjpeg-turbo-devel libpng-devel     \
+      libsigc++20-devel libtiff-devel zlib-devel
+
+    In Gentoo, run:
+      sudo emerge -uva app-arch/bzip2 dev-cpp/glibmm dev-cpp/gtkmm             \
+      dev-libs/expat dev-libs/glib dev-libs/libsigc++ dev-vcs/mercurial        \
+      media-gfx/exiv2 media-libs/lcms media-libs/libcanberra                   \
+      media-libs/libiptcdata media-libs/libjpeg-turbo media-libs/libpng        \
+      media-libs/tiff net-misc/curl sci-libs/fftw sys-libs/zlib x11-libs/gtk+
+
     In openSUSE, run:
-      sudo zypper in gcc-c++ cmake fftw3-devel glib2-devel gtk2-devel \
-      glibmm2-devel gtkmm2-devel libbz2-devel libcanberra-devel libexpat-devel \
-      libiptcdata-devel libjpeg-devel liblcms2-devel libpng-devel \
+      sudo zypper in cmake fftw3-devel gcc-c++ glib2-devel glibmm2-devel       \
+      gtk2-devel gtkmm2-devel libbz2-devel libcanberra-devel libexpat-devel    \
+      libiptcdata-devel libjpeg-devel liblcms2-devel libpng-devel              \
       libsigc++2-devel libtiff-devel zlib-devel
+
+    In Ubuntu/Debian the requirements can be installed by running:
+      sudo apt-get update && sudo apt-get install build-essential cmake curl   \
+      libbz2-dev libcanberra-gtk-dev libexiv2-dev libexpat-dev libfftw3-dev    \
+      libglibmm-2.4-dev libgtk2.0-dev libgtkmm-2.4-dev libiptcdata0-dev        \
+      libjpeg8-dev liblcms2-dev libpng12-dev libsigc++-2.0-dev libtiff4-dev    \
+      mercurial zlib1g-dev
 
   COMPILE:
     The Automatic Way:
@@ -560,6 +553,3 @@ OS X
     - You will find a RawTherapee.dmg file in the release/ folder; this is the
       distribution release and can be run on any machine which meets the
       architecture requirements you specified in variants.conf earlier.
-
-  Contact: For any bugs or patches to the OS X build, please contact Wyatt
-  <wyatt@digitalcave.ca>
