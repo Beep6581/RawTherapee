@@ -392,7 +392,6 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     openThm->increaseRef ();
 
     fname=openThm->getFileName();
-    //saveAsDialog->setInitialFileName (removeExtension (Glib::path_get_basename (fname)));
     lastSaveAsFileName = removeExtension (Glib::path_get_basename (fname));
 
     previewHandler = new PreviewHandler ();
@@ -420,7 +419,7 @@ void EditorPanel::open (Thumbnail* tmb, rtengine::InitialImage* isrc) {
     // initialize profile
     Glib::ustring defProf = openThm->getType()==FT_Raw ? options.defProfRaw : options.defProfImg;
     profilep->initProfile (defProf, ldprof);
-    profilep->setInitialFileName (Glib::path_get_basename (fname) + paramFileExtension);
+    profilep->setInitialFileName (fname);
 
     openThm->addThumbnailListener (this);
     info_toggled ();
@@ -1064,6 +1063,7 @@ void EditorPanel::saveAsPressed () {
 
 	saveAsDialog->set_default_size (options.saveAsDialogWidth, options.saveAsDialogHeight);
 	saveAsDialog->setInitialFileName (lastSaveAsFileName);
+	saveAsDialog->setImagePath (fname);
 
 	do {
 		int result = saveAsDialog->run ();

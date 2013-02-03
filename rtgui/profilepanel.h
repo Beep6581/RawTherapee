@@ -32,6 +32,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
   private:
 
     Glib::ustring lastFilename;
+    Glib::ustring imagePath;
 
   protected:
 
@@ -63,7 +64,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     static void cleanup ();
 
     void initProfile (const Glib::ustring& profname, rtengine::procparams::ProcParams* lastSaved);
-    void setInitialFileName (const Glib::ustring& filename) {lastFilename = filename;}
+    void setInitialFileName (const Glib::ustring& filename);
 
     // PParamsChangeListener interface
     void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL);

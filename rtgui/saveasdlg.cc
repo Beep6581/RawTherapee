@@ -219,3 +219,9 @@ void SaveAsDialog::setInitialFileName (Glib::ustring fname) {
 
     fchooser->set_current_name(fname);
 }
+
+void SaveAsDialog::setImagePath (Glib::ustring ipath) {
+
+    //Add the image's path to the Shortcut list
+    fchooser->add_shortcut_folder(Glib::path_get_dirname(ipath));
+}
