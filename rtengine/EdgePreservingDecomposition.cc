@@ -11,10 +11,10 @@ Stops at n iterates if MaximumIterates = 0 since that many iterates gives exact 
 definite problems only, which is what unconstrained smooth optimization pretty much always is.
 Parameter pass can be passed through, containing whatever info you like it to contain (matrix info?).
 Takes less memory with OkToModify_b = true, and Preconditioner = NULL. */
-float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, unsigned int n, bool OkToModify_b, 
+float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, unsigned int n, bool OkToModify_b,
 	float *x, float RMSResidual, void *Pass, unsigned int MaximumIterates, void Preconditioner(float *Product, float *x, void *Pass)){
 	unsigned int iterate, i;
-	
+
 	float *r = new float[n];
 
 	//Start r and x.
@@ -25,7 +25,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 	}else{
 		Ax(r, x, Pass);
 		#ifdef _OPENMP
-		#pragma omp  parallel for schedule(dynamic,10)
+		#pragma omp  parallel for           // removed schedule(dynamic,10)
 		#endif
 		for(int ii = 0; ii < n; ii++) r[ii] = b[ii] - r[ii];		//r = b - A x.
 	}
@@ -35,9 +35,9 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 		s = new float[n];
 		Preconditioner(s, r, Pass);
 	}
-	#ifdef _OPENMP	
-	#pragma omp  parallel for schedule(dynamic,10) firstprivate(fp) reduction(+:rs)
-	#endif                       
+	#ifdef _OPENMP
+	#pragma omp  parallel for firstprivate(fp) reduction(+:rs)  // removed schedule(dynamic,10)
+	#endif
 	for(int ii = 0; ii < n; ii++) {
 		fp = r[ii]*s[ii];
 		rs=rs+fp;
@@ -56,6 +56,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 		//Get step size alpha, store ax while at it.
 		float ab = 0.0f;
 		Ax(ax, d, Pass);
+#pragma omp parallel for reduction(+:ab)
 		for(int ii = 0; ii < n; ii++) ab += d[ii]*ax[ii];
 
 		if(ab == 0.0f) break;	//So unlikely. It means perfectly converged or singular, stop either way.
@@ -63,6 +64,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
 		//Update x and r with this step size.
 		float rms = 0.0;
+//#pragma omp parallel for reduction(+:rms)                        // Omp makes it slower here. Don't know why
 		for(int ii = 0; ii < n; ii++){
 			x[ii] += ab*d[ii];
 			r[ii] -= ab*ax[ii];	//"Fast recursive formula", use explicit r = b - Ax occasionally?
@@ -78,6 +80,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 		//Get beta.
 		ab = rs;
 		rs = 0.0f;
+//#pragma omp parallel for reduction(+:rs)                            // Omp makes it slower here. Don't know why
 		for(int ii = 0; ii < n; ii++) rs += r[ii]*s[ii];
 		ab = rs/ab;
 
@@ -173,12 +176,20 @@ void MultiDiagonalSymmetricMatrix::VectorProduct(float *Product, float *x){
 		unsigned int j, l = DiagonalLength(sr);
 
 		if(sr == 0)
-			for(j = 0; j != l; j++)
+#pragma omp parallel for
+			for(j = 0; j < l; j++)
 				Product[j] += a[j]*x[j];		//Separate, fairly simple treatment for the main diagonal.
-		else
-			for(j = 0; j != l; j++)
-				Product[j + sr] += a[j]*x[j],	//Contribution from lower...
+		else {
+// Split the loop in 2 parts, so now it can be parallelized without race conditions
+#pragma omp parallel for
+			for(j = 0; j < l; j++) {
+				Product[j + sr] += a[j]*x[j];	//Contribution from lower...
+			}
+#pragma omp parallel for
+			for(j = 0; j < l; j++) {
 				Product[j] += a[j]*x[j + sr];	//...and upper triangle.
+			}
+		}
 	}
 }
 
@@ -198,8 +209,8 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(unsigne
 	mic=1;
 	fp=1;
 	#ifdef _OPENMP
-	#pragma omp parallel for schedule(dynamic,10) firstprivate(fp) reduction(+:mic)
-	#endif 
+	#pragma omp parallel for firstprivate(fp) reduction(+:mic)                  // removed schedule(dynamic,10)
+	#endif
 	for(int ii = 1; ii < m; ii++) {
 		fp = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);	//Guarunteed positive since StartRows must be created in increasing order.
 		mic=mic+fp;
@@ -300,23 +311,34 @@ void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float *x, float *b){
 	unsigned int M = IncompleteCholeskyFactorization->m, N = IncompleteCholeskyFactorization->n;
 	unsigned int i, j;
 	for(j = 0; j != N; j++){
-		y[j] = b[j];
-
+        float sub = 0;              // using local var to reduce memory writes, gave a big speedup
 		for(i = 1; i != M; i++){	//Start at 1 because zero is D.
+
 			int c = (int)j - (int)s[i];
 			if(c < 0) break;		//Due to ordering of StartRows, no further contributions.
-			y[j] -= d[i][c]*y[c];
+			if(c==j) {
+                sub += d[i][c]*b[c];    //Because y is not filled yet, we have to access b
+			}
+			else {
+                sub += d[i][c]*y[c];
+			}
 		}
+		y[j] = b[j] - sub;          // only one memory-write per j
 	}
 
 	//Now, solve x from D Lt x = y -> Lt x = D^-1 y
-	while(j-- != 0){
+// Took this one out of the while, so it can be parallelized now, which speeds up, because division is expensive
+#pragma omp parallel for
+    for(j = 0; j < N; j++)
 		x[j] = y[j]/d[0][j];
 
+	while(j-- != 0){
+        float sub = 0;                      // using local var to reduce memory writes, gave a big speedup
 		for(i = 1; i != M; i++){
 			if(j + s[i] >= N) break;
-			x[j] -= d[i][j]*x[j + s[i]];
+			sub += d[i][j]*x[j + s[i]];
 		}
+		x[j] -= sub;                        // only one memory-write per j
 	}
 
 	delete[] y;
@@ -371,9 +393,11 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 	//unsigned int x, y;
 	unsigned int i;
 	unsigned int w1 = w - 1, h1 = h - 1;
-	float eps = 0.02f;
+//	float eps = 0.02f;
+	const float sqreps = 0.0004f;                           // removed eps*eps from inner loop
+//	float ScaleConstant = Scale * powf(0.5f,-EdgeStopping);
 	#ifdef _OPENMP
-	#pragma omp parallel for schedule(dynamic,10)
+	#pragma omp parallel for                // removed schedule(dynamic,10)
 	#endif
 	for(int y = 0; y < h1; y++){
 		float *rg = &g[w*y];
@@ -383,7 +407,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 			float gy = (rg[x + w] - rg[x]) + (rg[x + w + 1] - rg[x + 1]);
 
 			//Apply power to the magnitude of the gradient to get the edge stopping function.
-			a[x + w*y] = Scale*powf(0.5f*sqrtf(gx*gx + gy*gy + eps*eps), -EdgeStopping);
+			a[x + w*y] = Scale*powf(0.5f*sqrtf(gx*gx + gy*gy + sqreps), -EdgeStopping);
 		}
 	}
 //unsigned int x,y;
@@ -401,9 +425,20 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 	memset(a_w1, 0, A->DiagonalLength(w - 1)*sizeof(float));
 	memset(a_w, 0, A->DiagonalLength(w)*sizeof(float));
 	memset(a_w_1, 0, A->DiagonalLength(w + 1)*sizeof(float));
-	unsigned int x, y;
-	for(i = y = 0; y != h; y++){
-		for(x = 0; x != w; x++, i++){
+//	unsigned int x, y;
+
+// checked for race condition here
+// a0[] is read and write but adressed by i only
+// a[] is read only
+// a_w_1 is write only
+// a_w is write only
+// a_w1 is write only
+// a_1 is write only
+// So, there should be no race conditions
+#pragma omp parallel for
+	for(int y = 0; y < h; y++){
+        unsigned int i = y*w;
+		for(int x = 0; x != w; x++, i++){
 			float ac;
 			a0[i] = 1.0;
 
@@ -426,7 +461,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 				a0[i] += 4.0f*a[i]/6.0f;
 		}
 	}
-	
+
   if(UseBlurForEdgeStop) delete[] a;
 
   //Solve & return.
@@ -465,8 +500,8 @@ float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Sc
 	//We're working with luminance, which does better logarithmic.
 	unsigned int i;
 	#ifdef _OPENMP
-	#pragma omp parallel for schedule(dynamic,10)
-	#endif	
+	#pragma omp parallel for                        // removed schedule(dynamic,10)
+	#endif
 	for(int ii = 0; ii < n; ii++)
 		Source[ii] = logf(Source[ii] + eps);
 
@@ -476,7 +511,7 @@ float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Sc
 
 	//Apply compression, detail boost, unlogging. Compression is done on the logged data and detail boost on unlogged.
 	#ifdef _OPENMP
-	#pragma omp parallel for schedule(dynamic,10)	
+	#pragma omp parallel for                        // removed schedule(dynamic,10)
 	#endif
 	for(int i = 0; i < n; i++){
 		float ce = expf(Source[i] + u[i]*(CompressionExponent - 1.0f)) - eps;
@@ -484,7 +519,7 @@ float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Sc
 		Source[i] = expf(Source[i]) - eps;
 		Compressed[i] = ce + DetailBoost*(Source[i] - ue);
 	}
-	
+
 	if(Compressed != u) delete[] u;
 	return Compressed;
 
