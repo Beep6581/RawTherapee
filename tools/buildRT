@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# Version 2.7, 2012-12-31
+# Version 2.8, 2013-02-05
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -198,7 +198,7 @@ checkDistro () {
         # add "break 2;" to the end if we really want to, but Ubuntu gets detected as Debian first, then as Ubuntu,
         # so we might want to not break the loop.
         [[ -e "$loc" ]] && { distribution=${distro}; echo "Distribution: ${distribution}"; }
-        [[ "$distro" = Gentoo ]] && break 2
+        [[ "$distribution" = Gentoo ]] && break 2
     done
   done
 
