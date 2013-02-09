@@ -286,6 +286,7 @@ if(params->colorappearance.enabled) {
 	double z,fl,n,nbb,ncb,aw;
 	double xwd,ywd,zwd;
 	int alg=0;
+	bool algepd=false;	
 	float sum=0.f;
 	float mean;
 	//LUTf for sliders J and Q
@@ -343,8 +344,8 @@ if(params->colorappearance.enabled) {
 	//with which algorithme
 	if     (params->colorappearance.algo=="JC")  alg=0;
 	else if(params->colorappearance.algo=="JS")  alg=1;
-	else if(params->colorappearance.algo=="QM")  alg=2;
-	else if(params->colorappearance.algo=="ALL") alg=3;
+	else if(params->colorappearance.algo=="QM")  {alg=2;algepd=true;}
+	else if(params->colorappearance.algo=="ALL")  {alg=3;algepd=true;}
 	//settings white point of output device - or illuminant viewing
 	if(settings->viewingdevice==0) {xwd=96.42;ywd=100.0;zwd=82.52;}//5000K
 	else if(settings->viewingdevice==1) {xwd=95.68;ywd=100.0;zwd=92.15;}//5500
@@ -418,7 +419,7 @@ if(params->colorappearance.enabled) {
 
 
 #ifndef _DEBUG
-#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg, gamu, highlight, rstprotection, pW)
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg,algepd, gamu, highlight, rstprotection, pW)
 #endif
 {	//matrix for current working space
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -676,7 +677,9 @@ if(params->colorappearance.enabled) {
 			if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
 			if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
 			}
-			if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !settings->autocielab){
+			if(!params->colorappearance.tonecie  || !settings->autocielab  || !params->edgePreservingDecompositionUI.enabled ){						
+			
+//			if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !settings->autocielab){
 		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !params->colorappearance.sharpcie){
 			int posl, posc;
 			double brli=327.;
@@ -815,10 +818,11 @@ if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie
 					}
 			}
 }	
+
 if((params->colorappearance.tonecie || (params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab)
 		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)) {
 		
-		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie  && algepd) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
 			//EPDToneMapCIE adapted to CIECAM
 
 	
@@ -1000,6 +1004,7 @@ if(params->colorappearance.enabled) {
 	float z,fl,n,nbb,ncb,aw;//d
 	float xwd,ywd,zwd;
 	int alg=0;
+	bool algepd=false;
 	float sum=0.f;
 	float mean;
 	//LUTf for sliders J and Q
@@ -1057,8 +1062,8 @@ if(params->colorappearance.enabled) {
 	//with which algorithme
 	if     (params->colorappearance.algo=="JC")  alg=0;
 	else if(params->colorappearance.algo=="JS")  alg=1;
-	else if(params->colorappearance.algo=="QM")  alg=2;
-	else if(params->colorappearance.algo=="ALL") alg=3;
+	else if(params->colorappearance.algo=="QM")  {alg=2;algepd=true;}
+	else if(params->colorappearance.algo=="ALL") {alg=3;algepd=true;}
 	//settings white point of output device - or illuminant viewing
 	if(settings->viewingdevice==0) {xwd=96.42;ywd=100.0;zwd=82.52;}//5000K
 	else if(settings->viewingdevice==1) {xwd=95.68;ywd=100.0;zwd=92.15;}//5500
@@ -1130,7 +1135,7 @@ if(params->colorappearance.enabled) {
 
 	
 #ifndef _DEBUG	
-#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg, gamu, highlight, rstprotection, pW,nj, nbbj, ncbj, flj, czj, dj, awj, n, nbb, ncb, pfl, cz)
+#pragma omp parallel default(shared) firstprivate(lab,xw1,xw2,yw1,yw2,zw1,zw2,pilot,jli,chr,yb,la,yb2,la2,fl,nc,f,c, height,width,begh, endh,nc2,f2,c2, alg, algepd, gamu, highlight, rstprotection, pW,nj, nbbj, ncbj, flj, czj, dj, awj, n, nbb, ncb, pfl, cz)
 #endif
 {	//matrix for current working space
 	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
@@ -1155,7 +1160,6 @@ if(params->colorappearance.enabled) {
 			float epsil=0.0001;
 			//convert Lab => XYZ
 			Color::Lab2XYZ(L, a, b, x1, y1, z1);
-		//	float J, C, h, Q, M, s, aw, fl, wh;
 			float J, C, h, Q, M, s;
 			float Jp,Cpr;
 			float Jpro,Cpro, hpro, Qpro, Mpro, spro;
@@ -1166,7 +1170,6 @@ if(params->colorappearance.enabled) {
 			int c1C=0;
 			int c1s=0;
 			int c1co=0;
-		//	float n,nbb,ncb,pfl,cz,d;
 
 			x=(float)x1/655.35f;
 			y=(float)y1/655.35f;
@@ -1260,22 +1263,34 @@ if(params->colorappearance.enabled) {
 		if (curveMode==ColorAppearanceParams::TC_MODE_LIGHT){
 		    float Jj=(float) Jpro*327.68f;
 			float Jold=Jj;
-			const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve1);
-				userColCurve.Apply(Jj);
+			const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
+				userColCurveJ1.Apply(Jj);
 				Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility
 			Jpro=(float)(Jj/327.68f);
+			
+		/*	float coef=1.0;//32760.f/wh;
+			float Qq=(float) Qpro*coef;
+			float Qold=Qq;
+			const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
+				userColCurveJ1.Apply(Qq);
+				Qq=0.2*(Qq-Qold)+Qold;//divide sensibility
+			Qpro=(float)(Qq/coef);
+			Jpro=(100.0f* Qpro*Qpro) /(wh*wh);
+			*/	
+			
 			t1L=true;
 		}
 	else if (curveMode==ColorAppearanceParams::TC_MODE_BRIGHT){
+
 			float coef=32760.f/wh;
 			float Qq=(float) Qpro*coef;
 			float Qold=Qq;
-			const Brightcurve& userColCurve = static_cast<const Brightcurve&>(customColCurve1);
-					userColCurve.Apply(Qq);
-					Qq=0.5f*(Qq-Qold)+Qold;//divide sensibility
+			const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
+					userColCurveB1.Apply(Qq);
+					Qq=0.3f*(Qq-Qold)+Qold;//divide sensibility
 			Qpro=(float)(Qq/coef);
-			Jpro=(100.0f* Qpro*Qpro) /(wh*wh);
-			t1B=true;
+			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));
+			t1B=true;		
 		}
 	}
 
@@ -1283,22 +1298,33 @@ if(params->colorappearance.enabled) {
 		if (curveMode2==ColorAppearanceParams::TC_MODE_LIGHT){
 			float Jj=(float) Jpro*327.68f;
 			float Jold=Jj;
-			const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve2);
-					userColCurve.Apply(Jj);
+			const Lightcurve& userColCurveJ2 = static_cast<const Lightcurve&>(customColCurve2);
+					userColCurveJ2.Apply(Jj);
 					Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility
 			Jpro=(float)(Jj/327.68f);
-			t2L=true;
+			t2L=true;					
 		}
 	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ //
 			float coef=32760.f/wh;
 			float Qq=(float) Qpro*coef;
 			float Qold = Qq;
-			const Brightcurve& userColCurve = static_cast<const Brightcurve&>(customColCurve2);
-					userColCurve.Apply(Qq);
-					Qq=0.5f*(Qq-Qold)+Qold;//divide sensibility
+			const Brightcurve& userColCurveB2 = static_cast<const Brightcurve&>(customColCurve2);
+					userColCurveB2.Apply(Qq);
+					Qq=0.3f*(Qq-Qold)+Qold;//divide sensibility
 			Qpro=(float)(Qq/coef);
-			Jpro=(100.0f* Qpro*Qpro) /(wh*wh);
+			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));
 			t2B=true;
+			
+			if(t1L){//to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
+			coef=2.f;//adapt Q to J approximation
+			Qq=(float) Qpro*coef;
+			Qold=Qq;
+			const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
+				userColCurveJ1.Apply(Qq);
+				Qq=0.15f*(Qq-Qold)+Qold;//adaptation approx...	
+			Qpro=(float)(Qq/coef);
+			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));			
+			} 
 			}
 	}
 
@@ -1359,10 +1385,11 @@ if(params->colorappearance.enabled) {
 			}
 	}
 			//to retrieve the correct values of variables
-			if(t2B && t1B) Jpro=(100.0* Qpro*Qpro) /(wh*wh);// for brightness curve
+		//	if(t2B && t1B) Jpro=(100.0f* Qpro*Qpro) /(wh*wh);// for brightness curve
+			
 			if(c1s==1) {
 				Qpro= ( 4.0f / c ) * sqrt( Jpro / 100.0f ) * ( aw + 4.0f ) ;//for saturation curve
-				Cpro=(spro*spro*Qpro)/(10000.0);
+				Cpro=(spro*spro*Qpro)/(10000.0f);
 				}
 			if(c1co==1) {	float coe=pow_F(fl,0.25f);Cpro= Mpro/coe;}	// for colorfullness curve
 			//retrieve values C,J...s
@@ -1387,7 +1414,7 @@ if(params->colorappearance.enabled) {
 			if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
 			if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
 			}
-			if(!params->colorappearance.tonecie  || !settings->autocielab){
+			if(!params->colorappearance.tonecie  || !settings->autocielab || !params->edgePreservingDecompositionUI.enabled){
 		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !settings->autocielab){
 		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !params->colorappearance.sharpcie){
 			int posl, posc;
@@ -1400,6 +1427,8 @@ if(params->colorappearance.enabled) {
 			if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA) {chsacol=327.f;colch=0;}
 			else if(curveMode3==ColorAppearanceParams::TC_MODE_SATUR) {chsacol=450.0f;colch=1;}
 			else if(curveMode3==ColorAppearanceParams::TC_MODE_COLORF) {chsacol=327.0f;colch=2;}
+//			if(!params->colorappearance.tonecie  || !settings->autocielab  || !params->edgePreservingDecompositionUI.enabled ){						
+			
 			if(ciedata) {
 			// Data for J Q M s and C histograms
 				//update histogram
@@ -1533,7 +1562,7 @@ if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie
 if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab) 
 		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)) {
 		
-		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
+		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie && algepd) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
 			//EPDToneMapCIE adated to CIECAM
 
 	

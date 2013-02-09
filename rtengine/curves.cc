@@ -746,7 +746,8 @@ void CurveFactory::curveLightBrightColor (
 			avg /= sum;
 			//sqavg /= sum;
 			//float stddev = sqrt(sqavg-avg*avg);
-			
+			//		printf("avg=%f\n",avg);
+
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			std::vector<double> contrastcurvePoints;
 			contrastcurvePoints.resize(9);
