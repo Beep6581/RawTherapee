@@ -1078,6 +1078,7 @@ void ColorTemp::curveJfloat (float br, float contr, int db, LUTf & outCurve, LUT
 			sum += histogram[i];
 		}
 		avg /= sum;
+		//printf("avg=%f\n",avg);
 		std::vector<double> contrastcurvePoints;
 		contrastcurvePoints.resize(9);
 		contrastcurvePoints.at(0) = double(DCT_NURBS);
