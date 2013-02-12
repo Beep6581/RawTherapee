@@ -1533,6 +1533,7 @@ bool FileCatalog::Query_key_pressed (GdkEventKey *event){
 	    	// Clear Query if the Escape character is pressed within it
 	    	FileCatalog::buttonQueryClearPressed ();
 	        return true;
+	    default: return false;
 	  }
 }
 

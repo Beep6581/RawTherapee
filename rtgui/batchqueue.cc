@@ -558,6 +558,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
     // separate filename and the path to the destination directory
     Glib::ustring dstdir = Glib::path_get_dirname (fileName);
     Glib::ustring dstfname = Glib::path_get_basename (fileName);
+    Glib::ustring fname;
 
     // create directory, if does not exist
     if (safe_g_mkdir_with_parents (dstdir, 0755) ) 
@@ -568,7 +569,6 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
 	bool inOverwriteMode=options.overwriteOutputFile;
 
     for (int tries=0; tries<100; tries++) {
-        Glib::ustring fname;
         if (tries==0)
             fname = Glib::ustring::compose ("%1.%2", Glib::build_filename (dstdir,  dstfname), format);
         else
@@ -587,6 +587,7 @@ Glib::ustring BatchQueue::autoCompleteFileName (const Glib::ustring& fileName, c
             return fname;
         }
     }
+    return "";
 }
 
 int setProgressUI (void* p) {

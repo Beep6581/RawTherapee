@@ -28,7 +28,7 @@
 
 class FFProvider {
   public:
-    virtual rtengine::RawImage* getFF() {}
+    virtual rtengine::RawImage* getFF() = 0;
     // add other info here
 };
 

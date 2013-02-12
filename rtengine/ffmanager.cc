@@ -209,9 +209,9 @@ ffInfo *FFManager::addFileInfo(const Glib::ustring &filename, bool pool )
 {
 	Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(filename);
     if (!file )
-        return false;
+        return 0;
     if( !file->query_exists())
-    	return false;
+    	return 0;
     Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info(file);
     if (info && info->get_file_type() != Gio::FILE_TYPE_DIRECTORY && (!info->is_hidden() || !options.fbShowHidden)) {
 	size_t lastdot = info->get_name().find_last_of ('.');
