@@ -27,7 +27,7 @@
 
 class DFProvider {
   public:
-    virtual rtengine::RawImage* getDF() {}
+    virtual rtengine::RawImage* getDF() = 0;
     // add other info here
 };
 
