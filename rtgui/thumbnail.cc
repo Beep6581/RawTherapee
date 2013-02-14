@@ -409,19 +409,10 @@ void Thumbnail::decreaseRef ()
 }
 
 void Thumbnail::getThumbnailSize (int &w, int &h) {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(mutex);
-	#endif
-
-	w=0;
-	if (!initial_ && tpp) w = tpp->getImageWidth (getProcParams(), h, imgRatio);  // this might return 0 if image was just building
-	if (w==0) {
-		if (imgRatio > 0.)
-			w = (int)(imgRatio * (float)h);
-		else
-			w = tw * h / th;
-	}
+	if (imgRatio > 0.)
+		w = (int)(imgRatio * (float)h);
+	else
+		w = tw * h / th;
 }
 
 void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, int& w, int& h) {
@@ -653,7 +644,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
         tpp->init ();
     }
  
-    getThumbnailSize(tw,th);
+    if (!initial_ && tpp) tw = tpp->getImageWidth (getProcParams(), th, imgRatio);  // this might return 0 if image was just building
 }
 
 void Thumbnail::loadThumbnail (bool firstTrial) {
