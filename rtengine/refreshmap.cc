@@ -105,7 +105,7 @@ ALL,              // EvProfileChangeNotification
 RETINEX,          // EvShrHighQuality
 TRANSFORM,        // EvPerspCorr
 DARKFRAME,        // EvLCPFile
-0,                // EvEqlEnabled:obsolete
+RGBCURVE,         // EvRGBrCurveLumamode
 IMPULSEDENOISE,   // EvIDNEnabled,
 IMPULSEDENOISE,   // EvIDNThresh,
 ALLNORAW,         // EvDPDNEnabled,

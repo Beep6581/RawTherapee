@@ -448,6 +448,7 @@ void Options::setDefaults () {
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color =0;
 	rtSettings.autocielab=true;
+	rtSettings.rgbcurveslumamode_gamut=true;
 	lastIccDir = rtSettings.iccDirectory;
 	lastDarkframeDir = rtSettings.darkFramesPath;
 	lastFlatfieldDir = rtSettings.flatFieldsPath;
@@ -654,6 +655,7 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) rtSettings.autoMonitorProfile = keyFile.get_boolean ("Color Management", "AutoMonitorProfile");
     if (keyFile.has_key ("Color Management", "Autocielab")) rtSettings.autocielab = keyFile.get_boolean ("Color Management", "Autocielab");
     if (keyFile.has_key ("Color Management", "Ciencamfloat")) rtSettings.ciecamfloat = keyFile.get_boolean ("Color Management", "Ciecamfloat");
+    if (keyFile.has_key ("Color Management", "RGBcurvesLumamode_Gamut")) rtSettings.rgbcurveslumamode_gamut = keyFile.get_boolean ("Color Management", "RGBcurvesLumamode_Gamut");
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");
     if (keyFile.has_key ("Color Management", "CRI"))            rtSettings.CRI_color            = keyFile.get_integer("Color Management", "CRI");
@@ -902,6 +904,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "MonitorProfile", rtSettings.monitorProfile);
     keyFile.set_boolean ("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
     keyFile.set_boolean ("Color Management", "Autocielab", rtSettings.autocielab);
+    keyFile.set_boolean ("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
     keyFile.set_integer ("Color Management", "Intent", rtSettings.colorimetricIntent);
     keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);	
     keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);	

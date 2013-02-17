@@ -107,7 +107,7 @@ enum ProcEvent {
     EvSHHighQuality=82,
     EvPerspCorr=83,
     EvLCPFile=84,
-    EvEqlEnabled=85,// obsolete
+    EvRGBrCurveLumamode=85,
     EvIDNEnabled=86,
     EvIDNThresh=87,
     EvDPDNEnabled=88,

@@ -311,7 +311,7 @@ HISTORY_MSG_82;Profile Changed
 HISTORY_MSG_83;High Quality Shadows/Highlights
 HISTORY_MSG_84;Perspective Correction
 HISTORY_MSG_85;Lens Correction Profile
-HISTORY_MSG_86;Wavelet Equalizer
+HISTORY_MSG_86;RGB Curves - Luminosity Mode
 HISTORY_MSG_87;Impulse Noise Reduction
 HISTORY_MSG_88;Impulse NR Threshold
 HISTORY_MSG_89;Noise Reduction
@@ -1181,6 +1181,8 @@ TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Channel
 TP_RGBCURVES_GREEN;G
 TP_RGBCURVES_LABEL;RGB Curves
+TP_RGBCURVES_LUMAMODE;Luminosity Mode
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.    
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degree
 TP_ROTATE_LABEL;Rotate

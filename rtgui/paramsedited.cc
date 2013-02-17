@@ -59,6 +59,7 @@ void ParamsEdited::set (bool v) {
 	labCurve.rstprotection   = v;
 	labCurve.bwtoning        = v;
 	labCurve.lcredsk        = v;
+	rgbCurves.lumamode       = v;
 	rgbCurves.rcurve         = v;
 	rgbCurves.gcurve         = v;
 	rgbCurves.bcurve         = v;
@@ -290,7 +291,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.bwtoning = labCurve.bwtoning && p.labCurve.bwtoning == other.labCurve.bwtoning;
-        labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;	
+        labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
+        rgbCurves.lumamode = rgbCurves.lumamode && p.rgbCurves.lumamode == other.rgbCurves.lumamode;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
         rgbCurves.gcurve = rgbCurves.gcurve && p.rgbCurves.gcurve == other.rgbCurves.gcurve;
         rgbCurves.bcurve = rgbCurves.bcurve && p.rgbCurves.bcurve == other.rgbCurves.bcurve;
@@ -523,6 +525,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.bwtoning)			toEdit.labCurve.bwtoning			= mods.labCurve.bwtoning;
 	if (labCurve.lcredsk)			toEdit.labCurve.lcredsk			= mods.labCurve.lcredsk;
 
+	if (rgbCurves.lumamode)					toEdit.rgbCurves.lumamode   = mods.rgbCurves.lumamode;
 	if (rgbCurves.rcurve)					toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
 	if (rgbCurves.gcurve)					toEdit.rgbCurves.gcurve     = mods.rgbCurves.gcurve;
 	if (rgbCurves.bcurve)					toEdit.rgbCurves.bcurve     = mods.rgbCurves.bcurve;
