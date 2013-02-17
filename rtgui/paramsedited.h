@@ -72,6 +72,7 @@ class LCurveParamsEdited {
 class RGBCurvesParamsEdited {
 
     public:
+        bool lumamode;
         bool rcurve;
         bool gcurve;
         bool bcurve;

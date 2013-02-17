@@ -34,6 +34,10 @@ class RGBCurves : public Gtk::VBox, public AdjusterListener, public FoldableTool
 	DiagonalCurveEditor* Gshape;
 	DiagonalCurveEditor* Bshape;
 
+    Gtk::CheckButton* lumamode;
+    bool lastLumamode;
+    sigc::connection lumamodeConn;
+
   public:
 
     RGBCurves ();
@@ -46,6 +50,7 @@ class RGBCurves : public Gtk::VBox, public AdjusterListener, public FoldableTool
 
     void curveChanged (CurveEditor* ce);
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
+    void lumamodeChanged  ();
 };
 
 #endif

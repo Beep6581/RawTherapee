@@ -32,6 +32,7 @@ namespace rtengine {
 			Glib::ustring   monitorProfile;         ///< ICC profile of the monitor (full path recommended)
 			bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
 			bool			autocielab;
+			bool			rgbcurveslumamode_gamut;// controls gamut enforcement for RGB curves in lumamode
             bool            verbose;
             Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
             Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields

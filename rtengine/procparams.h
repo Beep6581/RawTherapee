@@ -231,6 +231,7 @@ class LCurveParams {
 class RGBCurvesParams {
 
     public:
+        bool lumamode;
         std::vector<double>   rcurve;
         std::vector<double>   gcurve;
         std::vector<double>   bcurve;

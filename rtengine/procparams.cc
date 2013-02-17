@@ -164,6 +164,7 @@ void ProcParams::setDefaults () {
     labCurve.lccurve.clear ();
     labCurve.lccurve.push_back(DCT_Linear);
 
+    rgbCurves.lumamode          = false;
     rgbCurves.rcurve.clear ();
     rgbCurves.rcurve.push_back(DCT_Linear);
     rgbCurves.gcurve.clear ();
@@ -792,6 +793,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
         keyFile.set_double_list("HSV Equalizer", "VCurve", vcurve);
     }
 
+
+    if (!pedited || pedited->rgbCurves.lumamode)     keyFile.set_boolean ("RGB Curves", "LumaMode",  rgbCurves.lumamode);
+
     if (!pedited || pedited->rgbCurves.rcurve) {
         Glib::ArrayHandle<double> RGBrcurve = rgbCurves.rcurve;
         keyFile.set_double_list("RGB Curves", "rCurve", RGBrcurve);
@@ -1319,6 +1323,7 @@ if (keyFile.has_group ("HSV Equalizer")) {
 
     // load RGB curves
 if (keyFile.has_group ("RGB Curves")) {
+	if (keyFile.has_key ("RGB Curves", "LumaMode"))  { rgbCurves.lumamode = keyFile.get_boolean ("RGB Curves", "LumaMode"); if (pedited) pedited->rgbCurves.lumamode = true; }
     if (keyFile.has_key ("RGB Curves", "rCurve")) { rgbCurves.rcurve = keyFile.get_double_list ("RGB Curves", "rCurve"); if (pedited) pedited->rgbCurves.rcurve = true; }
     if (keyFile.has_key ("RGB Curves", "gCurve")) { rgbCurves.gcurve = keyFile.get_double_list ("RGB Curves", "gCurve"); if (pedited) pedited->rgbCurves.gcurve = true; }
     if (keyFile.has_key ("RGB Curves", "bCurve")) { rgbCurves.bcurve  = keyFile.get_double_list ("RGB Curves", "bCurve"); if (pedited) pedited->rgbCurves.bcurve = true; }

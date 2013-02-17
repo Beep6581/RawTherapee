@@ -1748,6 +1748,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
         }
     };
 
+	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
+	//inverse matrix user select
+	double wip[3][3] = {
+		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
+		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
+		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
+	};
 
     bool mixchannels = (params->chmixer.red[0]!=100	|| params->chmixer.red[1]!=0     || params->chmixer.red[2]!=0   ||
 						params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 ||
@@ -2048,42 +2055,88 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		}
 	}
 
-	if (rCurve) {
+	if (rCurve || gCurve || bCurve) { // if any of the RGB curves is engaged
+		if (!params->rgbCurves.lumamode){ // normal RGB mode
+		
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
-		for (int i=0; i<tH; i++) {
-			for (int j=0; j<tW; j++) {
-				// individual R tone curve
-				tmpImage->r(i,j) = rCurve[ tmpImage->r(i,j) ];
+			for (int i=0; i<tH; i++) {
+				for (int j=0; j<tW; j++) {
+					// individual R tone curve
+					if (rCurve) tmpImage->r(i,j) = rCurve[ tmpImage->r(i,j) ];
+					// individual G tone curve
+					if (gCurve) tmpImage->g(i,j) = gCurve[ tmpImage->g(i,j) ];
+					// individual B tone curve
+					if (bCurve) tmpImage->b(i,j) = bCurve[ tmpImage->b(i,j) ];
+				}
 			}
-		}
 	}
+	else { //params->rgbCurves.lumamode==true (Luminosity mode)
+		// rCurve.dump("r_curve");//debug
 
-	if (gCurve) {
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
-		for (int i=0; i<tH; i++) {
-			for (int j=0; j<tW; j++) {
-				// individual G tone curve
-				tmpImage->g(i,j) = gCurve[ tmpImage->g(i,j) ];
-			}
+    	    for (int i=0; i<tH; i++) {
+	            for (int j=0; j<tW; j++) {
+					bool highlight = params->hlrecovery.enabled;//Get the value if "highlight reconstruction" is activated
+
+					float r1,g1,b1, r2,g2,b2, L_1,L_2, Lfactor,a_1,b_1,x_,y_,z_,R,G,B ;
+					float y,fy, yy,fyy,x,z,fx,fz;
+					
+					// rgb values before RGB curves
+					r1 = tmpImage->r(i,j) ;
+					g1 = tmpImage->g(i,j) ;
+					b1 = tmpImage->b(i,j) ;
+					//convert to Lab to get a&b before RGB curves
+					x = toxyz[0][0] * r1 + toxyz[0][1] * g1 + toxyz[0][2] * b1;
+					y = toxyz[1][0] * r1 + toxyz[1][1] * g1 + toxyz[1][2] * b1;
+					z = toxyz[2][0] * r1 + toxyz[2][1] * g1 + toxyz[2][2] * b1;
+			
+					fx = (x<65535.0f ? cachef[std::max(x,0.f)] : (327.68f*float(exp(log(x/MAXVALF)/3.0f ))));
+					fy = (y<65535.0f ? cachef[std::max(y,0.f)] : (327.68f*float(exp(log(y/MAXVALF)/3.0f ))));
+					fz = (z<65535.0f ? cachef[std::max(z,0.f)] : (327.68f*float(exp(log(z/MAXVALF)/3.0f ))));
+
+					L_1 = (116.0f *  fy - 5242.88f); //5242.88=16.0*327.68;
+					a_1 = (500.0f * (fx - fy) );
+					b_1 = (200.0f * (fy - fz) );
+					
+					// rgb values after RGB curves
+	                if (rCurve) r2 = rCurve[ tmpImage->r(i,j)]; else r2=r1;
+	                if (gCurve) g2 = gCurve[ tmpImage->g(i,j)]; else g2=g1;
+	                if (bCurve) b2 = bCurve[ tmpImage->b(i,j)]; else b2=b1;
+					
+					// Luminosity after
+					// only Luminance in Lab
+					yy = toxyz[1][0] * r2 + toxyz[1][1] * g2 + toxyz[1][2] * b2;
+					fyy = (yy<65535.0f ? cachef[std::max(yy,0.f)] : (327.68f*float(exp(log(yy/MAXVALF)/3.0f ))));
+					L_2 = (116.0f *  fyy - 5242.88f);
+
+					//gamut control
+					if(settings->rgbcurveslumamode_gamut) {
+						float RR,GG,BB;
+						float HH, Lpro, Chpro;
+						Lpro=L_2/327.68f;					
+						Chpro=sqrt(SQR(a_1/327.68f) + SQR(b_1/327.68f));
+						HH=atan2(b_1,a_1);
+						Color::gamutLchonly(HH,Lpro,Chpro, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
+						L_2=Lpro*327.68f;
+						a_1=327.68f*Chpro*cos(HH);
+						b_1=327.68f*Chpro*sin(HH);
+					} //end of gamut control
+					
+					//calculate RGB with L_2 and old value of a and b					
+					Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
+					Color::xyz2rgb(x_,y_,z_,R,G,B,wip);
+					
+		            tmpImage->r(i,j) =R;
+		            tmpImage->g(i,j) =G;
+		            tmpImage->b(i,j) =B;
+	            }
+	        }
 		}
 	}
-
-	if (bCurve) {
-#ifdef _OPENMP
-#pragma omp for schedule(dynamic, 5)
-#endif
-		for (int i=0; i<tH; i++) {
-			for (int j=0; j<tW; j++) {
-				// individual B tone curve
-				tmpImage->b(i,j) = bCurve[ tmpImage->b(i,j) ];
-			}
-		}
-	}
-
 
 	if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 #ifdef _OPENMP

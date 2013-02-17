@@ -230,6 +230,7 @@ SCurve=0;
 VCurve=0;
 
 [RGB Curves]
+LumaMode=false
 rCurve=0;
 gCurve=0;
 bCurve=0;

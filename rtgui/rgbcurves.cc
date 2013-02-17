@@ -26,6 +26,18 @@ RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	set_border_width(4);
 
+	lumamode = Gtk::manage (new Gtk::CheckButton (M("TP_RGBCURVES_LUMAMODE")));
+	lumamode->set_tooltip_markup (M("TP_RGBCURVES_LUMAMODE_TOOLTIP"));
+	lumamode->set_active (false);
+	lumamode->show ();
+	pack_start (*lumamode);
+
+	Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
+	hsep1->show ();
+	pack_start (*hsep1);
+
+	lumamodeConn = lumamode->signal_toggled().connect( sigc::mem_fun(*this, &RGBCurves::lumamodeChanged) );
+
 	std::vector<GradientMilestone> milestones;
 
 	curveEditorG = new CurveEditorGroup (options.lastRgbCurvesDir, M("TP_RGBCURVES_CHANNEL"));
@@ -66,7 +78,14 @@ void RGBCurves::read (const ProcParams* pp, const ParamsEdited* pedited) {
         Rshape->setUnChanged (!pedited->rgbCurves.rcurve);
 		Gshape->setUnChanged (!pedited->rgbCurves.gcurve);
         Bshape->setUnChanged (!pedited->rgbCurves.bcurve);
+        lumamode->set_inconsistent (!pedited->rgbCurves.lumamode);
     }
+
+    lumamodeConn.block (true);
+    lumamode->set_active (pp->rgbCurves.lumamode);
+    lumamodeConn.block (false);
+
+    lastLumamode = pp->rgbCurves.lumamode;
 
     Rshape->setCurve         (pp->rgbCurves.rcurve);
 	Gshape->setCurve         (pp->rgbCurves.gcurve);
@@ -87,11 +106,13 @@ void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->rgbCurves.rcurve         = Rshape->getCurve ();
 	pp->rgbCurves.gcurve         = Gshape->getCurve ();
     pp->rgbCurves.bcurve         = Bshape->getCurve ();
+    pp->rgbCurves.lumamode       = lumamode->get_active();
 
     if (pedited) {
         pedited->rgbCurves.rcurve    = !Rshape->isUnChanged ();
 		pedited->rgbCurves.gcurve    = !Gshape->isUnChanged ();
         pedited->rgbCurves.bcurve    = !Bshape->isUnChanged ();
+        pedited->rgbCurves.lumamode  = !lumamode->get_inconsistent();
     }
 }
 
@@ -112,6 +133,29 @@ void RGBCurves::curveChanged (CurveEditor* ce) {
     	if (ce == Bshape)
         	listener->panelChanged (EvRGBbCurve, M("HISTORY_CUSTOMCURVE"));
 	}
+}
+
+void RGBCurves::lumamodeChanged () {
+
+    if (batchMode) {
+        if (lumamode->get_inconsistent()) {
+        	lumamode->set_inconsistent (false);
+            lumamodeConn.block (true);
+            lumamode->set_active (false);
+            lumamodeConn.block (false);
+        }
+        else if (lastLumamode)
+        	lumamode->set_inconsistent (true);
+
+        lastLumamode = lumamode->get_active ();
+    }
+
+    if (listener) {
+        if (lumamode->get_active ())
+            listener->panelChanged (EvRGBrCurveLumamode, M("GENERAL_ENABLED"));
+        else
+            listener->panelChanged (EvRGBrCurveLumamode, M("GENERAL_DISABLED"));
+    }
 }
 
 void RGBCurves::setBatchMode (bool batchMode) {
