@@ -2120,7 +2120,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 						Lpro=L_2/327.68f;					
 						Chpro=sqrt(SQR(a_1/327.68f) + SQR(b_1/327.68f));
 						HH=atan2(b_1,a_1);
-						Color::gamutLchonly(HH,Lpro,Chpro, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lpro,Chpro, RR, GG, BB, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lpro,Chpro, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
+#endif
+						
+//						Color::gamutLchonly(HH,Lpro,Chpro, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
 						L_2=Lpro*327.68f;
 						a_1=327.68f*Chpro*cos(HH);
 						b_1=327.68f*Chpro*sin(HH);
