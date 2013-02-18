@@ -91,11 +91,26 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 			M("TP_LABCURVE_CURVEEDITOR_A_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_A_RANGE2"),
 			M("TP_LABCURVE_CURVEEDITOR_A_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_A_RANGE4")
 	);
+	//from green to magenta
+	milestones.clear();
+	milestones.push_back( GradientMilestone(0., 0., 1., 0.) );
+	milestones.push_back( GradientMilestone(1., 1., 0., 1.) );
+	ashape->setBottomBarBgGradient(milestones);
+	ashape->setLeftBarBgGradient(milestones);
+	milestones.clear();
+
 	bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "b"));
 	bshape->setRangeLabels(
 			M("TP_LABCURVE_CURVEEDITOR_B_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_B_RANGE2"),
 			M("TP_LABCURVE_CURVEEDITOR_B_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_B_RANGE4")
 	);
+	//from blue to yellow
+	milestones.clear();
+	milestones.push_back( GradientMilestone(0., 0., 0., 1.) );
+	milestones.push_back( GradientMilestone(1., 1., 1., 0.) );
+	bshape->setBottomBarBgGradient(milestones);
+	bshape->setLeftBarBgGradient(milestones);
+	milestones.clear();
 
 	curveEditorG->newLine();  //  ------------------------------------------------ second line
 
