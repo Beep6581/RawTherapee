@@ -26,7 +26,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <xmmintrin.h>
+#include <intrin.h>
 
 // classical filtering if the support window is small:
 
