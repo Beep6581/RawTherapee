@@ -188,6 +188,7 @@ GENERAL_AFTER;Après
 GENERAL_AUTO;Automatique
 GENERAL_BEFORE;Avant
 GENERAL_CANCEL;Annuler
+GENERAL_CLOSE;Fermer
 GENERAL_DISABLED;Désactivé
 GENERAL_DISABLE;Désactiver
 GENERAL_ENABLED;Activé
@@ -214,6 +215,7 @@ HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogramme
 HISTOGRAM_TOOLTIP_BAR;Montrer/Cacher l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
+HISTOGRAM_TOOLTIP_CHRO;Montrer/Cacher l'histograme de Chromaticité
 HISTOGRAM_TOOLTIP_FULL;Basculer la vue de l'histogramme : complet / zoomé
 HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
@@ -426,6 +428,7 @@ HISTORY_MSG_199;CAM02 - Montre les histogrammes CIECAM
 HISTORY_MSG_200;CAM02 - Compression tonale avec Q
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
+HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourcis: <b>Alt-s</b>
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
 HISTORY_NEWSSDIALOGTITLE;Ajouter une nouvelle capture
 HISTORY_SETTO;Réglé à
@@ -625,6 +628,7 @@ PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
 PARTIALPASTE_IPTCINFO;Infos IPTC
 PARTIALPASTE_LABCURVE;Courbes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
+PARTIALPASTE_LENSPROFILE;Profile de correction d'Objectif
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
 PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
@@ -715,6 +719,9 @@ PREFERENCES_FLATFIELDSDIR;Dossier des images de Champ Uniforme
 PREFERENCES_FLATFIELDSHOTS;image(s)
 PREFERENCES_FLATFIELDTEMPLATES;modèle(s)
 PREFERENCES_FLATFIELD;Champ Uniforme
+PREFERENCES_FLUOF2;Fluorescent F2
+PREFERENCES_FLUOF7;Fluorescent F7
+PREFERENCES_FLUOF11;Fluorescent F11
 PREFERENCES_FORIMAGE;Pour les fichiers images
 PREFERENCES_FORRAW;Pour les fichiers RAW
 PREFERENCES_GIMPPATH;Dossier d'intallation de GIMP
@@ -842,6 +849,7 @@ PROGRESSBAR_READY;Prêt.
 PROGRESSBAR_SAVEJPEG;Enregistrement du fichier JPEG...
 PROGRESSBAR_SAVEPNG;Enregistrement du fichier PNG...
 PROGRESSBAR_SAVETIFF;Enregistrement du fichier TIFF...
+PROGRESSBAR_SNAPSHOT_ADDED;Signet ajouté
 PROGRESSDLG_LOADING;Chargement du fichier...
 PROGRESSDLG_PROCESSING;Traitement de l'image...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profil modifié dans le navigateur
@@ -990,6 +998,7 @@ TP_DETAIL_AMOUNT;Quantité
 TP_DIRPYRDENOISE_CHROMA;Chrominance
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Réduction du bruit
+TP_DIRPYRDENOISE_LDETAIL;Niveau de détails de Luminance
 TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail (lab / ciecam02)
 TP_DIRPYREQUALIZER_LUMACOARSEST;les plus gros
@@ -1090,6 +1099,7 @@ TP_ICM_PREFERREDPROFILE_3;Fluorescent
 TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
+TP_ICM_TONECURVE_TOOLTIP;Permet d'utiliser la courbe tonale contenue dans le profile DCP, si elle existe
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
@@ -1304,18 +1314,3 @@ ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!GENERAL_CLOSE;Close
-!HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
-!HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
-!PARTIALPASTE_LENSPROFILE;Lens correction profile
-!PREFERENCES_FLUOF2;Fluorescent F2
-!PREFERENCES_FLUOF7;Fluorescent F7
-!PREFERENCES_FLUOF11;Fluorescent F11
-!PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
-!TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
-!TP_ICM_TONECURVE_TOOLTIP;Enable to use tone curves that may be contained in DCP profiles.
