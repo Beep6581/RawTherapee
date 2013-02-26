@@ -194,6 +194,9 @@ class Options {
     bool UseIconNoText;
     int whiteBalanceSpotSize;
 
+    // Performance options
+    int rgbDenoiseThreadLimit; // maximum number of threads for the denoising tool ; 0 = use the maximum available
+
     bool menuGroupRank;
     bool menuGroupLabel;
     bool menuGroupFileOperations;

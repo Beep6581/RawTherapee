@@ -712,6 +712,8 @@ PREFERENCES_PROFILESAVECACHE;Verarbeitungsparameter im Zwischenspeicher speicher
 PREFERENCES_PROFILESAVEINPUT;Verarbeitungsparameter zusammen mit Datei speichern (Sidecar)
 PREFERENCES_PROPERTY;Eigenschaft
 PREFERENCES_PSPATH;Adobe Photoshop Installationsverzeichnis
+PREFERENCES_RGBDTL_LABEL;Max. Anzahl Threads für Rauschminderung
+PREFERENCES_RGBDTL_TOOLTIP;Die Rauschminderung benötigt mindestens 128MB RAM für ein 10 Megapixel-Bild oder 512MB für ein 40 Megapixel-Bild, und zusätzlich 128MB RAM pro Thread. Je mehr Threads parallel ablaufen, desto schneller ist die Berechnung. Bei Einstellung "0" werden so viele Threads wie möglich benutzt.
 PREFERENCES_SELECTFONT;Schriftart
 PREFERENCES_SELECTICCDIRDLG;Wähle ICC-Profile-Verzeichnis...
 PREFERENCES_SELECTLANG;Sprache
@@ -738,6 +740,7 @@ PREFERENCES_TAB_COLORMGR;Farbmanagement
 PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_OUTPUT;Ausgabe
+PREFERENCES_TAB_PERFORMANCE;Performance
 PREFERENCES_TAB_SOUND;Systemklänge
 PREFERENCES_THUMBSIZE;Größe der Vorschau
 PREFERENCES_TP_LABEL;Werkzeugbereich:

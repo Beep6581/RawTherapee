@@ -227,7 +227,7 @@ namespace rtengine {
         // Calculate number of tiles. If less than omp_get_max_threads(), then limit num_threads to number of tiles
         int numtiles = numtiles_W * numtiles_H;
         int numthreads = MIN(numtiles,omp_get_max_threads());
-        //if(options.RgbDenoiseThreadLimit > 0) numthreads = MIN(numthreads,options.RgbDenoiseThreadLimit);
+        if(options.rgbDenoiseThreadLimit > 0) numthreads = MIN(numthreads,options.rgbDenoiseThreadLimit);
 #pragma omp parallel num_threads(numthreads)
 #endif
         {

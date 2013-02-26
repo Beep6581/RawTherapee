@@ -82,6 +82,7 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
     nb->append_page (*getFileBrowserPanel(),    M("PREFERENCES_TAB_BROWSER"));
     nb->append_page (*getColorManagementPanel(),M("PREFERENCES_TAB_COLORMGR"));
     nb->append_page (*getBatchProcPanel(),      M("PREFERENCES_BATCH_PROCESSING"));
+    nb->append_page (*getPerformancePanel(),    M("PREFERENCES_TAB_PERFORMANCE"));
     // Sounds only on Windows and Linux
 #if defined(WIN32) || defined(__linux__)
     nb->append_page (*getSoundPanel(),          M("PREFERENCES_TAB_SOUND"));
@@ -393,6 +394,32 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     mvbpp->pack_start (*fmd, Gtk::PACK_SHRINK, 4);
 
     return mvbpp;
+}
+
+Gtk::Widget* Preferences::getPerformancePanel () {
+	Gtk::VBox* mainContainer = Gtk::manage( new Gtk::VBox () );
+	mainContainer->set_spacing(4);
+
+    Gtk::HBox* threadLimitHB = Gtk::manage( new Gtk::HBox () );
+    threadLimitHB->set_border_width(4);
+    threadLimitHB->set_spacing(4);
+    threadLimitHB->set_tooltip_text(M("PREFERENCES_RGBDTL_TOOLTIP"));
+    Gtk::Label* RGBDTLl = Gtk::manage( new Gtk::Label (M("PREFERENCES_RGBDTL_LABEL") + ":", Gtk::ALIGN_LEFT));
+    rgbDenoiseTreadLimitSB = Gtk::manage( new Gtk::SpinButton () );
+    rgbDenoiseTreadLimitSB->set_digits (0);
+    rgbDenoiseTreadLimitSB->set_increments (1, 5);
+    rgbDenoiseTreadLimitSB->set_max_length(2);  // Will this be sufficient? :)
+    int maxThreadNumber = 10;
+#ifdef _OPENMP
+    maxThreadNumber = omp_get_max_threads();
+#endif
+    rgbDenoiseTreadLimitSB->set_range (0, maxThreadNumber);
+    threadLimitHB->pack_start (*RGBDTLl, Gtk::PACK_SHRINK, 0);
+    threadLimitHB->pack_end (*rgbDenoiseTreadLimitSB, Gtk::PACK_SHRINK, 0);
+
+    mainContainer->pack_start(*threadLimitHB, Gtk::PACK_SHRINK, 4);
+
+    return mainContainer;
 }
 
 Gtk::Widget* Preferences::getColorManagementPanel () {
@@ -1134,6 +1161,8 @@ void Preferences::storePreferences () {
     moptions.overwriteOutputFile = chOverwriteOutputFile->get_active ();
     moptions.UseIconNoText = ckbUseIconNoText->get_active();
 
+    moptions.rgbDenoiseThreadLimit = rgbDenoiseTreadLimitSB->get_value_as_int();
+
     // Sounds only on Windows and Linux
 #if defined(WIN32) || defined(__linux__)
     moptions.sndEnable = ckbSndEnable->get_active ();
@@ -1249,6 +1278,8 @@ void Preferences::fillPreferences () {
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
     ckbHideTPVScrollbar->set_active(moptions.hideTPVScrollbar);
     ckbUseIconNoText->set_active(moptions.UseIconNoText);
+
+    rgbDenoiseTreadLimitSB->set_value(moptions.rgbDenoiseThreadLimit);
 
     //darkFrameDir->set_filename( moptions.rtSettings.darkFramesPath );
     //updateDFinfos();
