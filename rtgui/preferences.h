@@ -111,6 +111,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::Button*    delExt;
     Gtk::CheckButton* overlayedFileNames;
 
+    Gtk::SpinButton*  rgbDenoiseTreadLimitSB;
+
     Gtk::CheckButton* ckbmenuGroupRank;
     Gtk::CheckButton* ckbmenuGroupLabel;
     Gtk::CheckButton* ckbmenuGroupFileOperations;
@@ -172,6 +174,7 @@ class Preferences : public Gtk::Dialog {
     Gtk::Widget* getFileBrowserPanel ();
     Gtk::Widget* getGeneralPanel ();
     Gtk::Widget* getBatchProcPanel ();
+    Gtk::Widget* getPerformancePanel ();
     Gtk::Widget* getSoundPanel ();
     
   public:

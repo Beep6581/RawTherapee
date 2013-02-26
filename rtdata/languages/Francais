@@ -778,6 +778,8 @@ PREFERENCES_PROFILESAVECACHE;Enregistrer la paramètres de traitement dans le Ca
 PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au fichier d'entrée
 PREFERENCES_PROPERTY;Propriété
 PREFERENCES_PSPATH;Dossier d'installation d'Adobe Photoshop
+PREFERENCES_RGBDTL_LABEL;Nombre maximum d'unités de calcul pour la Réduction du bruit
+PREFERENCES_RGBDTL_TOOLTIP;La réduction du bruit nécessite un minimum d'à peu près 128Mo de RAM pour une image de 10MPix ou 512Mo pour une image de 40MPix, ainsi que 128Mo de RAM supplémentaire par unité de calcul. Plus il y aura d'unité de calcul travaillant en parallèle, plus ce sera rapide. Laissez la valeur à "0" pour utiliser automatiquement autant d'unité de calcul que possible.
 PREFERENCES_SELECTFONT;Police de caractère
 PREFERENCES_SELECTICCDIRDLG;Choix du dossier des profils ICC...
 PREFERENCES_SELECTLANG;Choix de la langue
@@ -804,6 +806,7 @@ PREFERENCES_TAB_COLORMGR;Gestion des couleurs
 PREFERENCES_TAB_GENERAL;Général
 PREFERENCES_TAB_IMPROC;Traitement de l'image
 PREFERENCES_TAB_OUTPUT;Options de sortie
+PREFERENCES_TAB_PERFORMANCE;Performance
 PREFERENCES_TAB_SOUND;Sons
 PREFERENCES_THUMBSIZE;Tailles des vignettes
 PREFERENCES_TP_LABEL;Panneau des outils:

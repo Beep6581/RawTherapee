@@ -303,7 +303,9 @@ void Options::setDefaults () {
     histogramPosition = 2;
     histogramBar = true;
     histogramFullMode = false;
-	
+
+    rgbDenoiseThreadLimit = 0;
+
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
@@ -603,6 +605,10 @@ if (keyFile.has_group ("Clipping Indication")) {
     if (keyFile.has_key ("Clipping Indication", "BlinkClipped"))        blinkClipped      = keyFile.get_boolean ("Clipping Indication", "BlinkClipped");
 }
 
+if (keyFile.has_group ("Performance")) {
+    if (keyFile.has_key ("Performance", "RgbDenoiseThreadLimit")) rgbDenoiseThreadLimit = keyFile.get_integer ("Performance", "RgbDenoiseThreadLimit");
+}
+
 if (keyFile.has_group ("GUI")) { 
     if (keyFile.has_key ("GUI", "Font"))            font            = keyFile.get_string  ("GUI", "Font");
     if (keyFile.has_key ("GUI", "WindowWidth"))     windowWidth     = keyFile.get_integer ("GUI", "WindowWidth");
@@ -819,6 +825,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Clipping Indication", "HighlightThreshold", highlightThreshold);
     keyFile.set_integer ("Clipping Indication", "ShadowThreshold", shadowThreshold);
     keyFile.set_boolean ("Clipping Indication", "BlinkClipped", blinkClipped);
+
+    keyFile.set_integer ("Performance", "RgbDenoiseThreadLimit", rgbDenoiseThreadLimit);
 
     keyFile.set_string  ("Output", "Format", saveFormat.format);
     keyFile.set_integer ("Output", "JpegQuality", saveFormat.jpegQuality);

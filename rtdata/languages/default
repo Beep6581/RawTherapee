@@ -774,6 +774,8 @@ PREFERENCES_PROFILESAVECACHE;Save processing profile to the cache
 PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
+PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction
+PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
 PREFERENCES_SELECTFONT;Select font
 PREFERENCES_SELECTICCDIRDLG;Select Color Profile Directory...
 PREFERENCES_SELECTLANG;Select language
@@ -800,6 +802,7 @@ PREFERENCES_TAB_COLORMGR;Color Management
 PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_OUTPUT;Output Options
+PREFERENCES_TAB_PERFORMANCE;Performance
 PREFERENCES_TAB_SOUND;Sounds
 PREFERENCES_THUMBSIZE;Thumbnail Size
 PREFERENCES_TP_LABEL;Tool panel:
