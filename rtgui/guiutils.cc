@@ -115,6 +115,12 @@ bool confirmOverwrite (Gtk::Window& parent, const std::string& filename) {
     return safe;
 }
 
+void writeFailed (Gtk::Window& parent, const std::string& filename) {
+    Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), filename);
+    Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+    msgd.run ();
+}
+
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams) {
 
     cr->set_line_width (0.);

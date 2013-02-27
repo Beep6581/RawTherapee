@@ -856,8 +856,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
 
     int error1, error2;
     error1 = write (fname , sPParams);
-    error2 = write (fname2, sPParams);
-    return error1 & error2;
+    if (fname2.length()) {
+        error2 = write (fname2, sPParams);
+        // If at least one file has been saved, it's a success
+        return error1 & error2;
+    }
+    else
+        return error1;
 }
 
 int ProcParams::write (Glib::ustring &fname, Glib::ustring &content) const {

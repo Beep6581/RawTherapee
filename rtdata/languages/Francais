@@ -523,6 +523,7 @@ MAIN_MSG_JOBSINQUEUE;travail(aux) en file d'attente
 MAIN_MSG_NAVIGATOR;Navigateur
 MAIN_MSG_PLACES;Emplacement
 MAIN_MSG_QOVERWRITE;Voulez-vous l'écraser?
+MAIN_MSG_WRITEFAILED;Échec de l'enregistrement du fichier\n\n<b>"%1"</b>\n\nAssurez-vous que le dossier existe et qu'il est permis d'y écrire.
 MAIN_TAB_BASIC;Basique
 MAIN_TAB_COLOR;Couleur
 MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
