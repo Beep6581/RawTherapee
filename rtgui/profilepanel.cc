@@ -186,17 +186,29 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
                     // saving the partial profile
                     PartialProfile ppTemp(true);
                     partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
-                    ppTemp.pparams->save (fname, "", ppTemp.pedited);
+                    int retCode = ppTemp.pparams->save (fname, "", ppTemp.pedited);
                     ppTemp.deleteInstance();
+                    if (retCode)
+                        writeFailed(dialog, fname);
+                    else {
+                        done=true;
+                        refreshProfileList ();
+                    }
                 }
                 else {
                     // saving a full profile
-                    toSave->pparams->save (fname);
+                    int retCode = toSave->pparams->save (fname);
+                    if (retCode)
+                        writeFailed(dialog, fname);
+                    else {
+                        done=true;
+                        refreshProfileList ();
+                    }
                 }
-                refreshProfileList ();
             }
+            else done = true;
         }
-        done = true;
+        else done = true;
     } while (!done);
     return;
 }

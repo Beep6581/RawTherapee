@@ -28,6 +28,7 @@ void thumbInterp (const unsigned char* src, int sw, int sh, unsigned char* dst, 
 Glib::ustring removeExtension (const Glib::ustring& filename);
 Glib::ustring getExtension (const Glib::ustring& filename);
 bool confirmOverwrite (Gtk::Window& parent, const std::string& filename);
+void writeFailed (Gtk::Window& parent, const std::string& filename);
 void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int imh, int startx, int starty, double scale, const rtengine::procparams::CropParams& cparams);
 
 /** 
