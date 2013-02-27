@@ -80,22 +80,15 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 #pragma omp parallel
 #endif
 	{
-#ifndef __SSE__
     AlignedBufferMP<double> buffer(max(W,H));
-#endif
 
 	float damping = params->sharpening.deconvdamping / 5.0;
 	bool needdamp = params->sharpening.deconvdamping > 0;
 	for (int k=0; k<params->sharpening.deconviter; k++) {
 
 		// apply blur function (gaussian blur)
-#ifdef __SSE__
-            gaussHorizontalSse<float> (tmpI, tmp, W, H, params->sharpening.deconvradius / scale);
-            gaussVerticalSse<float>   (tmp, tmp, W, H, params->sharpening.deconvradius / scale);
-#else
-            gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-#endif
+        gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+        gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
 
 		if (!needdamp) {
 #ifdef _OPENMP
@@ -109,13 +102,8 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 		else
 			dcdamping (tmp, lab->L, damping, W, H);
 
-#ifdef __SSE__
-            gaussHorizontalSse<float> (tmp, tmp, W, H, params->sharpening.deconvradius / scale);
-            gaussVerticalSse<float>   (tmp, tmp, W, H, params->sharpening.deconvradius / scale);
-#else
-            gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-#endif
+        gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+        gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
 
 #ifdef _OPENMP
 #pragma omp for
@@ -140,6 +128,7 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 	for (int i=0; i<H; i++)
 		delete [] tmpI[i];
 	delete [] tmpI;
+
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
@@ -848,22 +837,16 @@ void ImProcFunctions::deconvsharpeningcam (CieImage* ncie, float** b2) {
 #pragma omp parallel
 #endif
 	{
-#ifndef __SSE__
-        AlignedBufferMP<double> buffer(max(W,H));
-#endif
+    AlignedBufferMP<double> buffer(max(W,H));
+
 
 	float damping = params->sharpening.deconvdamping / 5.0;
 	bool needdamp = params->sharpening.deconvdamping > 0;
 	for (int k=0; k<params->sharpening.deconviter; k++) {
 
 		// apply blur function (gaussian blur)
-#ifdef __SSE__
-            gaussHorizontalSse<float> (tmpI, tmp, W, H, params->sharpening.deconvradius / scale);
-            gaussVerticalSse<float>   (tmp, tmp, W, H, params->sharpening.deconvradius / scale);
-#else
-            gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-#endif
+        gaussHorizontal<float> (tmpI, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+        gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
 
 		if (!needdamp) {
 #ifdef _OPENMP
@@ -877,13 +860,9 @@ void ImProcFunctions::deconvsharpeningcam (CieImage* ncie, float** b2) {
 		else
 			dcdamping (tmp, ncie->sh_p, damping, W, H);
 
-#ifdef __SSE__
-            gaussHorizontalSse<float> (tmp, tmp, W, H, params->sharpening.deconvradius / scale);
-            gaussVerticalSse<float>   (tmp, tmp, W, H, params->sharpening.deconvradius / scale);
-#else
-            gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-            gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
-#endif
+        gaussHorizontal<float> (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+        gaussVertical<float>   (tmp, tmp, buffer, W, H, params->sharpening.deconvradius / scale);
+
 
 #ifdef _OPENMP
 #pragma omp for
@@ -909,6 +888,7 @@ void ImProcFunctions::deconvsharpeningcam (CieImage* ncie, float** b2) {
 	for (int i=0; i<H; i++)
 		delete [] tmpI[i];
 	delete [] tmpI;
+
 }
 
 void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2) {
