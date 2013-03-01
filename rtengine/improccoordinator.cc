@@ -428,11 +428,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 	float **buffer = new float*[pH];
        for (int i=0; i<pH; i++)
          buffer[i] = new float[pW];
-		 
-	if(settings->ciecamfloat){ipf.ciecam_02float (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true, d);
+	bool execsharp=false;
+	if(scale==1) execsharp=true;	
+	if(settings->ciecamfloat){ipf.ciecam_02float (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, d);
 	if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
 	}
-	else {ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, true, dd);
+	else {ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, dd);
 	if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);	
 	}
 		for (int i=0; i<pH; i++)
