@@ -428,7 +428,7 @@ HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
 HISTORY_MSG_200;CAMO2 - Tone mapping using CIECAM02 Q
 HISTORY_MSG_201;NR - Delta Chrominance red
 HISTORY_MSG_202;NR - Delta Chrominance blue
-HISTORY_MSG_203;NR - RGB &lt;&gt; Lab
+HISTORY_MSG_203;NR - Method
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
