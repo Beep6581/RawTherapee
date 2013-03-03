@@ -100,6 +100,11 @@ public:
 	// look-up tables for the standard srgb gamma and its inverse (filled by init())
 	static LUTf igammatab_srgb;
 	static LUTf gammatab_srgb;
+//	static LUTf igammatab_709;
+//	static LUTf gammatab_709;
+	static LUTf igammatab_26_11;
+	static LUTf gammatab_26_11;
+	
 	// look-up tables for the simple exponential gamma
 	static LUTf gammatab;
 
@@ -116,8 +121,12 @@ public:
 	static void hsv2rgb (float h, float s, float v, int &r, int &g, int &b);
 	static void hsv2rgb01 (float h, float s, float v, float &r, float &g, float &b);
 	static void xyz2srgb (float x, float y, float z, float &r, float &g, float &b);
+	static void xyz2Prophoto (float x, float y, float z, float &r, float &g, float &b);
+	static void Prophotoxyz (float r, float g, float b, float &x, float &y, float &z);
 	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]);
 	static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, float rgb_xyz[3][3]);
+	static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, double xyz_rgb[3][3]);
+	
 	static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
 	static void XYZ2Lab(float X, float Y, float Z, float &L, float &a, float &b);
 	static void Lab2Yuv(float L, float a, float b, float &Y, float &u, float &v);
@@ -126,18 +135,38 @@ public:
 	static void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
 
 	// standard srgb gamma and its inverse
-	static inline double gamma2     (double x) {
+	static inline double gamma2     (double x) {	
 											return x <= 0.00304 ? x*12.92 : 1.055*exp(log(x)/sRGBGammaCurve)-0.055;
 									}
-	static inline double igamma2    (double x) {
-										return x <= 0.03928 ? x/12.92 : exp(log((x+0.055)/1.055)*sRGBGammaCurve);
+	static inline double igamma2    (double x) {	
+										return x <= 0.03928 ? x/12.92 : exp(log((x+0.055)/1.055)*sRGBGammaCurve);									
+									}	
+/*	static inline double gamma709     (double x) {
+											return x <= 0.0176 ? x*4.5 : 1.0954*exp(log(x)/2.2)-0.0954;
 									}
+	static inline double igamma709    (double x) {
+										return x <= 0.0795 ? x/4.5 : exp(log((x+0.0954)/1.0954)*2.2);									
+									}	
+*/									
+	static inline double gamma26_11     (double x) {
+											return x <= 0.004921 ? x*11.0 : 1.086603*exp(log(x)/2.6)-0.086603;
+									}
+	static inline double igamma26_11    (double x) {
+										return x <= 0.054127 ? x/11.0 : exp(log((x+0.086603)/1.086603)*2.6);									
+									}	
+									
 	// gamma function with adjustable parameters
 	static inline double gamma      (double x, double gamma, double start, double slope, double mul, double add){
 										return (x <= start ? x*slope : exp(log(x)/gamma)*mul-add);
 									}
 	static inline double igamma     (double x, double gamma, double start, double slope, double mul, double add){
 										return (x <= start*slope ? x/slope : exp(log((x+add)/mul)*gamma) );
+									}
+	static inline double gamman      (double x, double gamma){//gamma standard without slope...
+										return (x =exp(log(x)/gamma));
+									}
+	static inline double igamman     (double x, double gamma){//inverse gamma standard without slope...
+										return (x = exp(log(x)*gamma) );
 									}
 
 	// gamma functions on [0,65535] based on look-up tables

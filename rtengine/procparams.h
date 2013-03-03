@@ -457,11 +457,16 @@ class WBParams {
 
     public:
         bool    enabled;
-        double	luma;
+        bool    perform;
+		double	luma;
         double	Ldetail;
         double  chroma;
+		double	redchro;
+		double 	bluechro;
         double	gamma;
         double	expcomp;
+        Glib::ustring dmethod;
+		
     };
 
 //EPD related parameters.

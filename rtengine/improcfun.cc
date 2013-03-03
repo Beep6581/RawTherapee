@@ -2432,6 +2432,8 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				else if(Lprov1<75.0f)   dred = -3.0f*Lprov1 +265.0f;
 				else                    dred = 40.0f;
 				// end pyramid
+		if(params->dirpyrDenoise.enabled && chromaticity ==0) chromaticity = 0.5f;  
+				
 		if(chromaticity!=0 && !bwToning){
 				float chromahist;
 				float factorskin, factorsat, factor, factorskinext, interm;
@@ -2460,9 +2462,17 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 
 					}
 				factorsat=chromapro;
+				//increase saturation after denoise : ...approximation
+				float factnoise=1.f;
+				if(params->dirpyrDenoise.enabled) {
+					factnoise=(1.f+params->dirpyrDenoise.chroma/500.f);//levels=5
+					
+					
+			//		if(yyyy) factnoise=(1.f+params->dirpyrDenoise.chroma/100.f);//levels=7
+				}
+				factorsat*=factnoise;
+				
 				factor=factorsat;
-
-				factor = factorsat;
 				// Test if chroma is in the normal range first
 				Color::transitred ( HH, Chprov1, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);
 				atmp *= factor;
