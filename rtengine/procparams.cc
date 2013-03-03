@@ -252,11 +252,15 @@ void ProcParams::setDefaults () {
     defringe.threshold          = 25;
 
     dirpyrDenoise.enabled       = false;
+ //   dirpyrDenoise.perform       = false;
     dirpyrDenoise.luma          = 30;
     dirpyrDenoise.Ldetail       = 50;
     dirpyrDenoise.chroma        = 30;
+    dirpyrDenoise.redchro       = 0;
+    dirpyrDenoise.bluechro      = 0;
     dirpyrDenoise.gamma         = 1.7;
 	dirpyrDenoise.expcomp       = 0.0;
+    dirpyrDenoise.dmethod       = "RGB";
 
     edgePreservingDecompositionUI.enabled = false;
     edgePreservingDecompositionUI.Strength = 0.25;
@@ -665,9 +669,13 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
 
     // save dirpyrDenoise
     if (!pedited || pedited->dirpyrDenoise.enabled) keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
+ //   if (!pedited || pedited->dirpyrDenoise.perform) keyFile.set_boolean ("Directional Pyramid Denoising", "Perform", dirpyrDenoise.perform);
     if (!pedited || pedited->dirpyrDenoise.luma)    keyFile.set_double ("Directional Pyramid Denoising", "Luma",    dirpyrDenoise.luma);
     if (!pedited || pedited->dirpyrDenoise.Ldetail) keyFile.set_double ("Directional Pyramid Denoising", "Ldetail", dirpyrDenoise.Ldetail);
     if (!pedited || pedited->dirpyrDenoise.chroma)  keyFile.set_double ("Directional Pyramid Denoising", "Chroma",  dirpyrDenoise.chroma);
+    if (!pedited || pedited->dirpyrDenoise.dmethod)  keyFile.set_string  ("Directional Pyramid Denoising", "Method",  dirpyrDenoise.dmethod);
+   if (!pedited || pedited->dirpyrDenoise.redchro) keyFile.set_double ("Directional Pyramid Denoising", "Redchro",  dirpyrDenoise.redchro);
+    if (!pedited || pedited->dirpyrDenoise.bluechro)keyFile.set_double ("Directional Pyramid Denoising", "Bluechro",  dirpyrDenoise.bluechro);
     if (!pedited || pedited->dirpyrDenoise.gamma)   keyFile.set_double  ("Directional Pyramid Denoising", "Gamma",   dirpyrDenoise.gamma);
 
     //Save edgePreservingDecompositionUI.
@@ -1164,9 +1172,14 @@ if (keyFile.has_group ("Impulse Denoising")) {
     // load dirpyrDenoise
 if (keyFile.has_group ("Directional Pyramid Denoising")) {//TODO: No longer an accurate description for FT denoise
     if (keyFile.has_key ("Directional Pyramid Denoising", "Enabled"))    { dirpyrDenoise.enabled = keyFile.get_boolean ("Directional Pyramid Denoising", "Enabled"); if (pedited) pedited->dirpyrDenoise.enabled = true; }
+ //   if (keyFile.has_key ("Directional Pyramid Denoising", "Perform"))    { dirpyrDenoise.perform = keyFile.get_boolean ("Directional Pyramid Denoising", "Perform"); if (pedited) pedited->dirpyrDenoise.perform = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Luma"))       { dirpyrDenoise.luma    = keyFile.get_double ("Directional Pyramid Denoising", "Luma"); if (pedited) pedited->dirpyrDenoise.luma = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Ldetail"))    { dirpyrDenoise.Ldetail = keyFile.get_double ("Directional Pyramid Denoising", "Ldetail"); if (pedited) pedited->dirpyrDenoise.Ldetail = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Chroma"))     { dirpyrDenoise.chroma  = keyFile.get_double ("Directional Pyramid Denoising", "Chroma"); if (pedited) pedited->dirpyrDenoise.chroma = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Method"))     {dirpyrDenoise.dmethod  = keyFile.get_string  ("Directional Pyramid Denoising", "Method"); if (pedited) pedited->dirpyrDenoise.dmethod = true; }
+
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Redchro"))    { dirpyrDenoise.redchro  = keyFile.get_double ("Directional Pyramid Denoising", "Redchro"); if (pedited) pedited->dirpyrDenoise.redchro = true; }
+    if (keyFile.has_key ("Directional Pyramid Denoising", "Bluechro"))   { dirpyrDenoise.bluechro  = keyFile.get_double ("Directional Pyramid Denoising", "Bluechro"); if (pedited) pedited->dirpyrDenoise.bluechro = true; }
     if (keyFile.has_key ("Directional Pyramid Denoising", "Gamma"))      { dirpyrDenoise.gamma   = keyFile.get_double ("Directional Pyramid Denoising", "Gamma"); if (pedited) pedited->dirpyrDenoise.gamma = true; }
 }
 
@@ -1539,9 +1552,13 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& impulseDenoise.enabled == other.impulseDenoise.enabled
 		&& impulseDenoise.thresh == other.impulseDenoise.thresh
 		&& dirpyrDenoise.enabled == other.dirpyrDenoise.enabled
+//		&& dirpyrDenoise.perform == other.dirpyrDenoise.perform
 		&& dirpyrDenoise.luma == other.dirpyrDenoise.luma
 		&& dirpyrDenoise.Ldetail == other.dirpyrDenoise.Ldetail
 		&& dirpyrDenoise.chroma == other.dirpyrDenoise.chroma
+		&& dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod
+		&& dirpyrDenoise.redchro == other.dirpyrDenoise.redchro
+		&& dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro
 		&& dirpyrDenoise.gamma == other.dirpyrDenoise.gamma
 		&& edgePreservingDecompositionUI.enabled == other.edgePreservingDecompositionUI.enabled
 		&& edgePreservingDecompositionUI.Strength == other.edgePreservingDecompositionUI.Strength

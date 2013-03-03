@@ -219,7 +219,11 @@ LUMINANCECURVE,    // EvCATcurvemode2
 LUMINANCECURVE,    // EvCATcurve3
 LUMINANCECURVE,    // EvCATcurvemode3
 LUMINANCECURVE,    // EvCATdatacie
-LUMINANCECURVE    // EvCATtonecie
+LUMINANCECURVE,    // EvCATtonecie
+ALLNORAW,         // EvDPDNbluechro
+ALLNORAW,         // EvDPDNperform
+ALLNORAW         //EvDPDNmet
+
 //LUMINANCECURVE    // EvCATsharpcie
 
 

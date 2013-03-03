@@ -224,7 +224,11 @@ public:
     bool Ldetail;
     bool luma;
     bool chroma;
+	bool redchro;
+	bool bluechro;
     bool gamma;
+//    bool perform;
+	bool dmethod;
 };
 
 class EPDParamsEdited{

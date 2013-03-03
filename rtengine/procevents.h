@@ -222,9 +222,12 @@ enum ProcEvent {
 	EvCATCurveMode3=197,
 	EvCATdatacie=198,
 	EvCATtonecie=199,
-//	EvCATsharpcie=200,
+	EvDPDNredchro=200,
+	EvDPDNbluechro=201,
+	EvDPDNmet=202,
+//	EvDPDNperform=201,
 	
-	NUMOFEVENTS=200
+	NUMOFEVENTS=203
 };
 }
 #endif

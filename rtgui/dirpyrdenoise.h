@@ -29,11 +29,19 @@ class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public Foldable
 	Adjuster* luma;
 	Adjuster* Ldetail;
 	Adjuster* chroma;
+	Adjuster* redchro;
+	Adjuster* bluechro;	
 	Adjuster* gamma;
 
     Gtk::CheckButton* enabled;
     bool lastEnabled;
     sigc::connection enaConn;
+//    Gtk::CheckButton* perform;
+//    bool lastperform;
+//    sigc::connection perfconn;
+    MyComboBoxText*   dmethod;
+    sigc::connection  dmethodconn;
+	
 
   public:
 
@@ -46,8 +54,10 @@ class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public Foldable
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged  ();
+//    void perform_toggled  ();
+    void dmethodChanged      ();
 
-    void setAdjusterBehavior (bool chrolumaadd, bool gammaadd);
+    void setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

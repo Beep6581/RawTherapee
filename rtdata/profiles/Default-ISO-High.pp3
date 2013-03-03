@@ -125,9 +125,12 @@ Threshold=25
 
 [Directional Pyramid Denoising]
 Enabled=true
+Method=RGB
 Luma=50
-Ldetail=80
+Ldetail=50
 Chroma=50
+Redchro=0
+Bluechro=0
 Gamma=1.7
 
 [EPD]

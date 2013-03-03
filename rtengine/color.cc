@@ -34,6 +34,10 @@ namespace rtengine {
     LUTf Color::gammatab;
     LUTf Color::igammatab_srgb;
     LUTf Color::gammatab_srgb;
+  //  LUTf Color::igammatab_709;
+  // LUTf Color::gammatab_709;
+    LUTf Color::igammatab_26_11;
+    LUTf Color::gammatab_26_11;
 
     // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
     // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
@@ -131,6 +135,10 @@ namespace rtengine {
         gammatab(65536,0);
         igammatab_srgb(65536,0);
         gammatab_srgb(65536,0);
+   //     igammatab_709(65536,0);
+   //     gammatab_709(65536,0);
+        igammatab_26_11(65536,0);
+        gammatab_26_11(65536,0);
 
         for (int i=0; i<65536; i++)
             gammatab_srgb[i] = (65535.0 * gamma2 (i/65535.0));
@@ -138,7 +146,17 @@ namespace rtengine {
             igammatab_srgb[i] = (65535.0 * igamma2 (i/65535.0));
         for (int i=0; i<65536; i++)
             gammatab[i] = (65535.0 * pow (i/65535.0, 0.454545));
-
+/*
+        for (int i=0; i<65536; i++)
+            gammatab_709[i] = (65535.0 * gamma709 (i/65535.0));
+        for (int i=0; i<65536; i++)
+            igammatab_709[i] = (65535.0 * igamma709 (i/65535.0));
+*/
+        for (int i=0; i<65536; i++)
+            gammatab_26_11[i] = (65535.0 * gamma26_11 (i/65535.0));
+        for (int i=0; i<65536; i++)
+            igammatab_26_11[i] = (65535.0 * igamma26_11 (i/65535.0));
+			
         /*FILE* f = fopen ("c.txt", "wt");
         for (int i=0; i<256; i++)
         fprintf (f, "%g %g\n", i/255.0, clower (i/255.0, 2.0, 1.0));
@@ -339,7 +357,24 @@ namespace rtengine {
         b = ((sRGB_xyz[2][0]*x + sRGB_xyz[2][1]*y + sRGB_xyz[2][2]*z)) ;
 
     }
+    void Color::xyz2Prophoto (float x, float y, float z, float &r, float &g, float &b) {
+        r = ((prophoto_xyz[0][0]*x + prophoto_xyz[0][1]*y + prophoto_xyz[0][2]*z)) ;
+        g = ((prophoto_xyz[1][0]*x + prophoto_xyz[1][1]*y + prophoto_xyz[1][2]*z)) ;
+        b = ((prophoto_xyz[2][0]*x + prophoto_xyz[2][1]*y + prophoto_xyz[2][2]*z)) ;
+    }
+    void Color::Prophotoxyz (float r, float g, float b, float &x, float &y, float &z) {
+        x = ((xyz_prophoto[0][0]*r + xyz_prophoto[0][1]*g + xyz_prophoto[0][2]*b)) ;
+        y = ((xyz_prophoto[1][0]*r + xyz_prophoto[1][1]*g + xyz_prophoto[1][2]*b)) ;
+        z = ((xyz_prophoto[2][0]*r + xyz_prophoto[2][1]*g + xyz_prophoto[2][2]*b)) ;
+    }
 
+    void Color::rgbxyz (float r, float g, float b, float &x, float &y, float &z, double xyz_rgb[3][3]) {
+        x = ((xyz_rgb[0][0]*r + xyz_rgb[0][1]*g + xyz_rgb[0][2]*b)) ;
+        y = ((xyz_rgb[1][0]*r + xyz_rgb[1][1]*g + xyz_rgb[1][2]*b)) ;
+        z = ((xyz_rgb[2][0]*r + xyz_rgb[2][1]*g + xyz_rgb[2][2]*b)) ;
+    }
+	
+	
     void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, double rgb_xyz[3][3]) {
         //Transform to output color.  Standard sRGB is D65, but internal representation is D50
         //Note that it is only at this point that we should have need of clipping color data

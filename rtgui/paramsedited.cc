@@ -143,10 +143,14 @@ void ParamsEdited::set (bool v) {
 	impulseDenoise.enabled     = v;
 	impulseDenoise.thresh      = v;
 	dirpyrDenoise.enabled      = v;
+//	dirpyrDenoise.perform      = v;
 	dirpyrDenoise.luma         = v;
 	dirpyrDenoise.Ldetail      = v;
 	dirpyrDenoise.chroma       = v;
+	dirpyrDenoise.redchro      = v;
+	dirpyrDenoise.bluechro 	   = v;
 	dirpyrDenoise.gamma        = v;
+	dirpyrDenoise.dmethod      = v;
 	edgePreservingDecompositionUI.enabled = v;
 	edgePreservingDecompositionUI.Strength = v;
 	edgePreservingDecompositionUI.EdgeStopping = v;
@@ -378,10 +382,14 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         impulseDenoise.thresh = impulseDenoise.thresh && p.impulseDenoise.thresh == other.impulseDenoise.thresh;
 
         dirpyrDenoise.enabled = dirpyrDenoise.enabled && p.dirpyrDenoise.enabled == other.dirpyrDenoise.enabled;
+ //       dirpyrDenoise.perform = dirpyrDenoise.perform && p.dirpyrDenoise.perform == other.dirpyrDenoise.perform;
         dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
         dirpyrDenoise.Ldetail = dirpyrDenoise.Ldetail && p.dirpyrDenoise.Ldetail == other.dirpyrDenoise.Ldetail;
         dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
+		dirpyrDenoise.redchro = dirpyrDenoise.redchro && p.dirpyrDenoise.redchro == other.dirpyrDenoise.redchro;
+        dirpyrDenoise.bluechro = dirpyrDenoise.bluechro && p.dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro;	
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
+        dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
 
         edgePreservingDecompositionUI.enabled = edgePreservingDecompositionUI.enabled && p.edgePreservingDecompositionUI.enabled == other.edgePreservingDecompositionUI.enabled;
         edgePreservingDecompositionUI.Strength = edgePreservingDecompositionUI.Strength && p.edgePreservingDecompositionUI.Strength == other.edgePreservingDecompositionUI.Strength;
@@ -622,10 +630,14 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (impulseDenoise.thresh)				toEdit.impulseDenoise.thresh 	= mods.impulseDenoise.thresh;
 
 	if (dirpyrDenoise.enabled)				toEdit.dirpyrDenoise.enabled 	= mods.dirpyrDenoise.enabled;
-	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.luma + mods.dirpyrDenoise.luma : mods.dirpyrDenoise.luma;
-	if (dirpyrDenoise.Ldetail)				toEdit.dirpyrDenoise.Ldetail	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.Ldetail + mods.dirpyrDenoise.Ldetail : mods.dirpyrDenoise.Ldetail;
-	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHLUM] ? toEdit.dirpyrDenoise.chroma + mods.dirpyrDenoise.chroma : mods.dirpyrDenoise.chroma;
+	if (dirpyrDenoise.luma)					toEdit.dirpyrDenoise.luma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_LUMA] ? toEdit.dirpyrDenoise.luma + mods.dirpyrDenoise.luma : mods.dirpyrDenoise.luma;
+	if (dirpyrDenoise.Ldetail)				toEdit.dirpyrDenoise.Ldetail	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_LUMDET] ? toEdit.dirpyrDenoise.Ldetail + mods.dirpyrDenoise.Ldetail : mods.dirpyrDenoise.Ldetail;
+	if (dirpyrDenoise.chroma)				toEdit.dirpyrDenoise.chroma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMA] ? toEdit.dirpyrDenoise.chroma + mods.dirpyrDenoise.chroma : mods.dirpyrDenoise.chroma;
+	if (dirpyrDenoise.redchro)				toEdit.dirpyrDenoise.redchro	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMARED] ? toEdit.dirpyrDenoise.redchro + mods.dirpyrDenoise.redchro : mods.dirpyrDenoise.redchro;
+	if (dirpyrDenoise.bluechro)				toEdit.dirpyrDenoise.bluechro	= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE] ? toEdit.dirpyrDenoise.bluechro + mods.dirpyrDenoise.bluechro : mods.dirpyrDenoise.bluechro;
 	if (dirpyrDenoise.gamma)				toEdit.dirpyrDenoise.gamma		= dontforceSet && options.baBehav[ADDSET_DIRPYRDN_GAMMA] ? toEdit.dirpyrDenoise.gamma + mods.dirpyrDenoise.gamma : mods.dirpyrDenoise.gamma;
+//	if (dirpyrDenoise.perform)				toEdit.dirpyrDenoise.perform 	= mods.dirpyrDenoise.perform;
+	if (dirpyrDenoise.dmethod)				toEdit.dirpyrDenoise.dmethod		= mods.dirpyrDenoise.dmethod;
 
 	if (edgePreservingDecompositionUI.enabled) toEdit.edgePreservingDecompositionUI.enabled = mods.edgePreservingDecompositionUI.enabled;
 	if (edgePreservingDecompositionUI.Strength) toEdit.edgePreservingDecompositionUI.Strength = mods.edgePreservingDecompositionUI.Strength;	
