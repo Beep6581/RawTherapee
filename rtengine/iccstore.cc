@@ -218,41 +218,45 @@ void ICCStore::loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std:
         qDirs.push_front(rootDirName);
 
         while (!qDirs.empty()) {
-        // process directory
+            // process directory
             Glib::ustring dirname = qDirs.back();
             qDirs.pop_back();
 
-        Glib::Dir* dir = NULL;
-        try {
-            if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR)) return;
-            dir = new Glib::Dir (dirname);
-        }
-        catch (Glib::Exception& fe) {
-            return;
-        }
-        dirname = dirname + "/";
-        for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) {
-            Glib::ustring fname = dirname + *i;
-            Glib::ustring sname = *i;
-            // ignore directories
-            if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
-		size_t lastdot = sname.find_last_of ('.');
-                if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
-                    Glib::ustring name = nameUpper ? sname.substr(0,lastdot).uppercase() : sname.substr(0,lastdot);
-                    ProfileContent pc (fname);
-                    if (pc.data) {
-                        cmsHPROFILE profile = pc.toProfile ();
-                        if (profile) {
-                            resultProfiles[name] = profile;
-                            resultProfileContents[name] = pc;
+            Glib::Dir* dir = NULL;
+            try {
+                if (!safe_file_test (dirname, Glib::FILE_TEST_IS_DIR)) return;
+                dir = new Glib::Dir (dirname);
+            }
+            catch (Glib::Exception& fe) {
+                return;
+            }
+            dirname = dirname + "/";
+            for (Glib::DirIterator i = dir->begin(); i!=dir->end(); ++i) {
+                Glib::ustring fname = dirname + *i;
+                Glib::ustring sname = *i;
+                // ignore directories
+                if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
+                    size_t lastdot = sname.find_last_of ('.');
+                    if (lastdot!=Glib::ustring::npos && lastdot<=sname.size()-4 && (!sname.casefold().compare (lastdot, 4, ".icm") || !sname.casefold().compare (lastdot, 4, ".icc"))) {
+                        Glib::ustring name = nameUpper ? sname.substr(0,lastdot).uppercase() : sname.substr(0,lastdot);
+                        ProfileContent pc (fname);
+                        if (pc.data) {
+                            cmsHPROFILE profile = pc.toProfile ();
+                            if (profile) {
+                                resultProfiles[name] = profile;
+                                resultProfileContents[name] = pc;
+                            }
                         }
                     }
                 }
-                } else qDirs.push_front(fname);  // for later scanning
+                // Removed recursive scanning, see issue #1730.
+                // To revert to the recursive method, just uncomment the next line.
+
+                //else qDirs.push_front(fname);  // for later scanning
+            }
+            delete dir;
         }
-        delete dir;
     }
-}
 }
 
 // Determine the first monitor default profile of operating system, if selected
