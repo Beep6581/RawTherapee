@@ -126,14 +126,15 @@ void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Prev
 
     transform (pp, tran, sx1, sy1, sx2, sy2);
 
-    int imwidth=image->width,imheight=image->height;
+    int imwidth=image->width;   // Destination image
+    int imheight=image->height; // Destination image
     if (((tran & TR_ROT) == TR_R90)||((tran & TR_ROT) == TR_R270)) {
         int swap = imwidth;
         imwidth=imheight;
         imheight=swap;
     }
-    int istart = sy1;
-    int maxx=width,maxy=height;
+    int maxx=width;  // Source image
+    int maxy=height; // Source image
     int mtran = tran & TR_ROT;
     int skip = pp.skip;
 
@@ -141,6 +142,9 @@ void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Prev
     // switched to using ints for the red/green/blue channel buffer.
     // Incidentally this improves accuracy too.
     float area=skip*skip;
+    float rm2=rm;
+    float gm2=gm;
+    float bm2=bm;
     rm/=area;
     gm/=area;
     bm/=area;
@@ -159,48 +163,88 @@ void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Prev
 #ifdef _OPENMP
 #pragma omp for
 #endif
-    for (int ix=0;ix<imheight;ix++) {
-        int i=istart+skip*ix;if (i>=maxy-skip) i=maxy-skip-1; // avoid trouble
-        for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-            if (jx>=maxx-skip) jx=maxx-skip-1; // avoid trouble
+    for (int iy=0; iy<imheight; iy++) {
+        if (skip==1) {
+            // special case (speedup for 1:1 scale)
+            // i: source image, first line of the current destination row
+            int src_y=sy1+iy;
 
-            float rtot,gtot,btot;
-            rtot=gtot=btot=0;
+            // overflow security check, not sure that it's necessary
+            if (src_y>=maxy)
+                continue;
 
-            for (int m=0; m<skip; m++)
-                for (int n=0; n<skip; n++) {
-                    rtot += r(i+m, jx+n);
-                    gtot += g(i+m, jx+n);
-                    btot += b(i+m, jx+n);
+            for (int dst_x=0,src_x=sx1; dst_x<imwidth; dst_x++,src_x++) {
+                // overflow security check, not sure that it's necessary
+                if (src_x>=maxx)
+                    continue;
+
+                lineR[dst_x] = r(src_y, src_x);
+                lineG[dst_x] = g(src_y, src_x);
+                lineB[dst_x] = b(src_y, src_x);
+            }
+        }
+        else {
+            // source image, first line of the current destination row
+            int src_y=sy1+skip*iy;
+            if (src_y>=maxy)
+                continue;
+
+            for (int dst_x=0,src_x=sx1; dst_x<imwidth; dst_x++,src_x+=skip) {
+                if (src_x>=maxx)
+                    continue;
+
+                int src_sub_width = MIN(maxx-src_x, skip);
+                int src_sub_height = MIN(maxy-src_y, skip);
+
+                float rtot,gtot,btot; // RGB accumulators
+                rtot=gtot=btot=0.;
+
+                for (int src_sub_y=0; src_sub_y<src_sub_height; src_sub_y++)
+                    for (int src_sub_x=0; src_sub_x<src_sub_width; src_sub_x++) {
+                        rtot += r(src_y+src_sub_y, src_x+src_sub_x);
+                        gtot += g(src_y+src_sub_y, src_x+src_sub_x);
+                        btot += b(src_y+src_sub_y, src_x+src_sub_x);
+                    }
+                // convert back to gamma and clip
+                if (src_sub_width == skip && src_sub_height == skip) {
+                    // Common case where the sub-region is complete
+                    lineR[dst_x] = CLIP(rm*rtot);
+                    lineG[dst_x] = CLIP(gm*gtot);
+                    lineB[dst_x] = CLIP(bm*btot);
                 }
-            lineR[j] = CLIP(rm*rtot);
-            lineG[j] = CLIP(gm*gtot);
-            lineB[j] = CLIP(bm*btot);
+                else {
+                    // computing a special factor for this incomplete sub-region
+                    float area = src_sub_width*src_sub_height;
+                    lineR[dst_x] = CLIP(rm2*rtot/area);
+                    lineG[dst_x] = CLIP(gm2*gtot/area);
+                    lineB[dst_x] = CLIP(bm2*btot/area);
+                }
+            }
         }
 
         if      (mtran == TR_NONE)
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r(ix, j) = lineR[j];
-                image->g(ix, j) = lineG[j];
-                image->b(ix, j) = lineB[j];
+            for (int dst_x=0,src_x=sx1; dst_x<imwidth; dst_x++,src_x+=skip) {
+                image->r(iy, dst_x) = lineR[dst_x];
+                image->g(iy, dst_x) = lineG[dst_x];
+                image->b(iy, dst_x) = lineB[dst_x];
             }
         else if (mtran == TR_R180)
-            for (int j=0; j<imwidth; j++) {
-                image->r(imheight-1-ix, imwidth-1-j) = lineR[j];
-                image->g(imheight-1-ix, imwidth-1-j) = lineG[j];
-                image->b(imheight-1-ix, imwidth-1-j) = lineB[j];
+            for (int dst_x=0; dst_x<imwidth; dst_x++) {
+                image->r(imheight-1-iy, imwidth-1-dst_x) = lineR[dst_x];
+                image->g(imheight-1-iy, imwidth-1-dst_x) = lineG[dst_x];
+                image->b(imheight-1-iy, imwidth-1-dst_x) = lineB[dst_x];
             }
         else if (mtran == TR_R90)
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r(j, imheight-1-ix) = lineR[j];
-                image->g(j, imheight-1-ix) = lineG[j];
-                image->b(j, imheight-1-ix) = lineB[j];
+            for (int dst_x=0,src_x=sx1; dst_x<imwidth; dst_x++,src_x+=skip) {
+                image->r(dst_x, imheight-1-iy) = lineR[dst_x];
+                image->g(dst_x, imheight-1-iy) = lineG[dst_x];
+                image->b(dst_x, imheight-1-iy) = lineB[dst_x];
             }
         else if (mtran == TR_R270)
-            for (int j=0,jx=sx1; j<imwidth; j++,jx+=skip) {
-                image->r(imwidth-1-j, ix) = lineR[j];
-                image->g(imwidth-1-j, ix) = lineG[j];
-                image->b(imwidth-1-j, ix) = lineB[j];
+            for (int dst_x=0,src_x=sx1; dst_x<imwidth; dst_x++,src_x+=skip) {
+                image->r(imwidth-1-dst_x, iy) = lineR[dst_x];
+                image->g(imwidth-1-dst_x, iy) = lineG[dst_x];
+                image->b(imwidth-1-dst_x, iy) = lineB[dst_x];
             }
     }
 #ifdef _OPENMP
