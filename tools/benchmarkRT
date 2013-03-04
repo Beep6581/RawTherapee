@@ -3,6 +3,7 @@
 # Written by DrSlony
 # v1  2012-02-10
 # v2  2013-02-15
+# v3  2013-03-04
 # www.rawtherapee.com
 
 revision="tip"
@@ -16,7 +17,6 @@ OPTIND=1 # Reset in case getopts has been used previously in the shell.
 outFileFormat="-t"
 tmpDir="/tmp/rawtherapee-benchmark"
 runs=5
-
 echo
 
 howto() {
@@ -37,12 +37,17 @@ Options:
 
   -h        - Print this help screen.
 
-  -i <file> - Input file name with complete path. This can be a file on your hard drive or a url.
-              The url must start with "http". The default behavior if you do
-              not use -i is to download a test file from www.rawtherapee.com
+  -i <file> - Input file name with complete path. This can be a file on your
+              hard drive or a url. The url must start with "http". The default
+              behavior if you do not use -i is to download a test file from
+              $inFile
 
-  -s <PP3-1> -s <PP3-2> -s <PP3-#> - Input sidecar file name(s) with full paths. You can specify '-s <PP3-#>' zero or more times. To specify multiple processing profiles, you must precede each file path with '-s'.
-              The processing profile can be a file on your hard drive or a url. Only one url is handled, so if you want to use multiple processing profiles, download them first.
+  -s <PP3-1> -s <PP3-2> -s <PP3-#> - Input sidecar file name(s) with full
+              paths. You can specify '-s <PP3-#>' zero or more times. To
+              specify multiple processing profiles, you must precede each
+              file path with '-s'. The processing profile can be a file on
+              your hard drive or a url. Only one url is handled, so if you
+              want to use multiple processing profiles, download them first.
               The default behaviour if you do not use -s is to use the
               "Neutral" profile.
 
@@ -50,7 +55,8 @@ Examples:
   Run the default benchmark (recommended)
     ./benchmarkRT
 
-  Run a benchmark using your own image file, a RawTherpee executable in a custom directory, and multiple processing profiles:
+  Run a benchmark using your own image file, a RawTherpee executable in a
+  custom directory, and multiple processing profiles:
     ./benchmarkRT -i /tmp/kittens.raw -s /tmp/kittens.raw.pp3 -s /tmp/kittens_tonemapped.raw.pp3 -s /tmp/kittens_denoised.raw.pp3
 
 Further help:
@@ -83,8 +89,7 @@ shift $((OPTIND-1))
 
 # tmpDir = /tmp/rawtherapee-benchmark
 
-inFileName="`basename ${inFile}`"
-
+inFileName="`basename "${inFile}"`"
 if [[ ! -e "${tmpDir}" ]]; then
   if [[ ! -w /tmp ]]; then
     printf "Error: /tmp is not writable.\n"
@@ -93,18 +98,26 @@ if [[ ! -e "${tmpDir}" ]]; then
   mkdir "$tmpDir"
 fi
 
+trap 'rm -rv "${tmpDir}"; exit 1' HUP INT QUIT ABRT TERM
+
 cd "$tmpDir"
 
-[[ ${inFile} = http* ]] && {
-  [[ ! -e "${tmpDir}/${inFileName}" ]] && {
+if [[ ${inFile} = http* ]]; then # if inFile is a url
+  [[ ! -e "${tmpDir}/${inFileName}" ]] && { # and if we haven't downloaded it already
     printf "${inFileName} not found in ${tmpDir}, downloading it.\n"
     [[ ! -w /tmp ]] && { printf "Error: /tmp is not writable.\n"; exit 1; }
     [[ ! -e "$tmpDir" ]] && mkdir "$tmpDir"
     cd "$tmpDir"
-    wget -c --trust-server-names "$inFile"
+    wget -c --trust-server-names "$inFile" # then download it.
     echo
-  } 
-}
+  }
+else # otherwise if inFile is not a url, check if it exists
+  [[ ! -e "${inFile}" ]] && { # if it doesnt exist, choke
+    printf "%s\n" "You specified" "-i ${inFile}" "but that file does not exist."
+    exit 1
+  }
+  cp "${inFile}" "${tmpDir}/${inFileName}"
+fi
 
 if [[ -n "${sidecarCustom}" ]]; then # if sidecarCustom was specified
   if [[ ${sidecarCustom} = http* ]]; then # and if sidecarCustom starts with an http
@@ -113,7 +126,7 @@ if [[ -n "${sidecarCustom}" ]]; then # if sidecarCustom was specified
       wget -c --trust-server-names "$sidecarCustom"
     fi
   else # else if sidecarCustom does not start with an http
-    for sidecarFile in ${sidecarCustom[@]}; do
+    for sidecarFile in "${sidecarCustom[@]}"; do
       [[ ! -e "${sidecarFile}" ]] && { # then check if it exists
       printf "You specified \"-s ${sidecarFile}\" but it does not exist. Make sure you wrote a full, absolute path, e.g.:" "-s /tmp/kittens_denoise.raw.pp3"
       exit 1
