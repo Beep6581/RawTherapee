@@ -113,7 +113,7 @@ skip_block: ;
 			dmax = pre_mul_[c];
 	}
 
-	sat = this->get_white() - this->get_black();
+	sat = this->get_white() - this->get_calcblack();
 	for (c = 0; c < 4; c++)
 		scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
 	if (settings->verbose) {
