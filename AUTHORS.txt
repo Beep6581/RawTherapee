@@ -24,6 +24,7 @@ Developement contributors, in last name alphabetical order:
 	Andrey Skvortsov
 	Fabio Suprani
 	Ingo Weyrich
+  Makoto Yoshida
 
 Other contributors (profiles, ideas, mockups, testing, forum activity, translations, etc.), in last name alphabetical order:
 
