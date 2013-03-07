@@ -109,7 +109,7 @@ FILEBROWSER_EXIFFILTERSETTINGS;Réglages
 FILEBROWSER_EXTPROGMENU;Ouvrir avec
 FILEBROWSER_FLATFIELD;Champ Uniforme
 FILEBROWSER_MOVETODARKFDIR;Déplacer dans le dossier d'images de Trame Noire
-FILEBROWSER_MOVETOFLATFIELDDIR;Déplacer vers le dossier de Trame Noire
+FILEBROWSER_MOVETOFLATFIELDDIR;Déplacer vers le dossier de Champ Uniforme
 FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_OPENDEFAULTVIEWER;Visualiseur par défaut de Windows (image déjà traitée) 
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
@@ -524,8 +524,11 @@ MAIN_MSG_EXITJOBSINQUEUEQUEST;Êtes-vous sûr de vouloir quitter? Il reste dans 
 MAIN_MSG_IMAGEUNPROCESSED;Cette commande nécessite que toutes les images sélectionnées aient été préalablement traité.
 MAIN_MSG_JOBSINQUEUE;travail(aux) en file d'attente
 MAIN_MSG_NAVIGATOR;Navigateur
+MAIN_MSG_OPERATIONCANCELLED;Opération annulée
 MAIN_MSG_PLACES;Emplacement
+MAIN_MSG_PATHDOESNTEXIST;Le chemin \n\n<b>%1</b>\n\nn'existe pas. S.V.P indiquez un chemin correct dans la fenêtre Préférences.
 MAIN_MSG_QOVERWRITE;Voulez-vous l'écraser?
+MAIN_MSG_SETPATHFIRST;Vous devez d'abord choisir un dossier cible dans Préférences\npour pouvoir utiliser cette fonction!
 MAIN_MSG_WRITEFAILED;Échec de l'enregistrement du fichier\n\n<b>"%1"</b>\n\nAssurez-vous que le dossier existe et qu'il est permis d'y écrire.
 MAIN_TAB_BASIC;Basique
 MAIN_TAB_COLOR;Couleur

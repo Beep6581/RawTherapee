@@ -613,16 +613,33 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 			}
     	}
     }else if( m==thisIsDF){
-    	if( !options.rtSettings.darkFramesPath.empty() && Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
-		for (size_t i=0; i<mselected.size(); i++){
-				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
-				if( !file )continue;
-				Glib::ustring destName = options.rtSettings.darkFramesPath+ "/" + file->get_basename();
-				Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
-				file->move(  dest );
+    	if( !options.rtSettings.darkFramesPath.empty()) {
+    		if (Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
+    			for (size_t i=0; i<mselected.size(); i++){
+					Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
+					if( !file )continue;
+					Glib::ustring destName = options.rtSettings.darkFramesPath+ "/" + file->get_basename();
+					Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
+					file->move(  dest );
+				}
+				// Reinit cache
+				rtengine::dfm.init( options.rtSettings.darkFramesPath );
 			}
-			// Reinit cache
-			rtengine::dfm.init( options.rtSettings.darkFramesPath );
+			else {
+				// Target directory creation failed, we clear the darkFramesPath setting
+				options.rtSettings.darkFramesPath.clear();
+				Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.darkFramesPath)
+				                     +"\n\n"+M("MAIN_MSG_OPERATIONCANCELLED");
+				Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+				msgd.set_title(M("TP_DARKFRAME_LABEL"));
+				msgd.run ();
+    		}
+    	}
+    	else {
+			Glib::ustring msg_ = M("MAIN_MSG_SETPATHFIRST")+"\n\n"+M("MAIN_MSG_OPERATIONCANCELLED");
+			Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+			msgd.set_title(M("TP_DARKFRAME_LABEL"));
+			msgd.run ();
     	}
     }
     else if (m==autoFF){
@@ -653,16 +670,33 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     	}
     }
     else if( m==thisIsFF){
-    	if( !options.rtSettings.flatFieldsPath.empty() && Gio::File::create_for_path(options.rtSettings.flatFieldsPath)->query_exists() ){
-		for (size_t i=0; i<mselected.size(); i++){
-				Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
-				if( !file )continue;
-				Glib::ustring destName = options.rtSettings.flatFieldsPath+ "/" + file->get_basename();
-				Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
-				file->move(  dest );
+    	if( !options.rtSettings.flatFieldsPath.empty()) {
+    		if (Gio::File::create_for_path(options.rtSettings.flatFieldsPath)->query_exists() ){
+    			for (size_t i=0; i<mselected.size(); i++){
+					Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
+					if( !file )continue;
+					Glib::ustring destName = options.rtSettings.flatFieldsPath+ "/" + file->get_basename();
+					Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
+					file->move(  dest );
+				}
+				// Reinit cache
+				rtengine::ffm.init( options.rtSettings.flatFieldsPath );
 			}
-			// Reinit cache
-			rtengine::ffm.init( options.rtSettings.flatFieldsPath );
+    		else {
+				// Target directory creation failed, we clear the flatFieldsPath setting
+				options.rtSettings.flatFieldsPath.clear();
+				Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.flatFieldsPath)
+				                     +"\n\n"+M("MAIN_MSG_OPERATIONCANCELLED");
+				Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+				msgd.set_title(M("TP_FLATFIELD_LABEL"));
+				msgd.run ();
+			}
+		}
+		else {
+			Glib::ustring msg_ = M("MAIN_MSG_SETPATHFIRST")+"\n\n"+M("MAIN_MSG_OPERATIONCANCELLED");
+			Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+			msgd.set_title(M("TP_FLATFIELD_LABEL"));
+			msgd.run ();
     	}
     }
     else if (m==copyprof)
