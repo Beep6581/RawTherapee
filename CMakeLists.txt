@@ -63,10 +63,11 @@ if (WIN32)
 endif (WIN32)
 
 if (APPLE)
-#    SET (CMAKE_OSX_ARCHITECTURES "i386;x86_64;" )
-#    SET (CMAKE_TRY_COMPILE_OSX_ARCHITECTURES "i386;x86_64;" )
-    SET (CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.5.sdk")
-    SET (CMAKE_OSX_DEPLOYMENT_TARGET "10.5")
+    if (CMAKE_CXX_COMPILER MATCHES "g\\+\\+-mp-4.[5-8]" OR
+        CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
+        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-weak_library,/usr/lib/libstdc++.6.dylib")
+        message (STATUS "CMAKE_CXX_COMPILER is MacPorts GCC.\n   CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+    endif ()
 endif (APPLE)
 
 option(USE_EXPERIMENTAL_LANG_VERSIONS "Build RT with -std=c++0x" OFF)
