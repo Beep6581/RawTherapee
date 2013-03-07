@@ -141,6 +141,7 @@ class EditorPanel : public Gtk::VBox,
         void rightPaneButtonReleased(GdkEventButton *event);
 
         void setParent (RTWindow* p) { parent = p; }
+        void writeOptions();
 
         // progresslistener interface
         void setProgress (double p);

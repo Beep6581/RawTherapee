@@ -364,6 +364,11 @@ void EditorPanel::rightPaneButtonReleased(GdkEventButton *event) {
 	}*/
 }
 
+void EditorPanel::writeOptions() {
+	if (tpc)
+		tpc->writeOptions();
+}
+
 void EditorPanel::setAspect () {
 	int winW, winH;
 	parent->get_size(winW, winH);

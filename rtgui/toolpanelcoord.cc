@@ -384,7 +384,7 @@ void ToolPanelCoordinator::readOptions () {
     crop->readOptions (); 
     for (size_t i=0; i<options.tpOpen.size(); i++)
         if (i<expList.size())
-            expList[i]->set_expanded (options.tpOpen[i]);
+            expList.at(i)->set_expanded (options.tpOpen.at(i));
 }
 
 void ToolPanelCoordinator::writeOptions () { 
@@ -392,7 +392,7 @@ void ToolPanelCoordinator::writeOptions () {
     crop->writeOptions (); 
     options.tpOpen.clear ();
     for (size_t i=0; i<expList.size(); i++)
-        options.tpOpen.push_back (expList[i]->get_expanded ());
+        options.tpOpen.push_back (expList.at(i)->get_expanded ());
 }
 
 
