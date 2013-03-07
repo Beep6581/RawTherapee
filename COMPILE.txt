@@ -508,30 +508,22 @@ OS X
     - XCode Development Tools (you only need a subset of these, but it is
       probably easier to just install all of them)
     - MacPorts
-      - Set /opt/local/etc/macports/variants.conf to include "+no_x11 +quartz"
-      - If you want to build for multiple architectures, add +universal to
-        variants.conf. Note that this will increase the size of the final
-        application substantially.
-        - Set /opt/local/etc/macports/macports.conf key 'universal_archs' to the
-          architectures you wish to build for.  Possible values include "i386
-          x86_64 ppc ppc64"
-        - Edit the beginning of CMakeLists.txt to enable the same architectures
-          as you added to variants.conf
-      - To install all the tools and dependencies, run:
-          sudo port install cairomm cmake fftw-3 glibmm gtk2 gtkmm lcms \
-          libiptcdata pango-devel
+      - To install the dependencies, run:
+          sudo port install cairo +quartz -x11 pango +quartz -x11 gdk-pixbuf2 -x11 gtk2 +quartz libsigcxx2
+      - gtkmm port will fail to install. Use `-s’ option.
+          sudo port -s install gtkmm
+      - To install other dependencies and tools.
+          sudo port install gtk-engines2 lcms2 libiptcdata fftw-3-single cmake gcc47
       - If you don't already have Mercurial installed, run:
           sudo port install mercurial
-      - If you want to try OpenMP builds, run:
-          sudo port install gcc45
 
   COMPILE:
-    - Enter the root directory of the RawTherapee source tree
-    - To enable OpenMP, assuming you have installed gcc45), type:
-        cmake -D CMAKE_C_COMPILER=gcc-mp-4.5 -D CMAKE_CXX_COMPILER=g++-mp-4.5 \
+    - Make build directory.
+        mkdir build
+        cd build
+    - To enable OpenMP, assuming you have installed gcc47), type:
+        cmake -D CMAKE_C_COMPILER=gcc-mp-4.7 -D CMAKE_CXX_COMPILER=g++-mp-4.7 \
         <path to source directory>
-      OR to disable OpenMP and use the default compiler, type:
-        cmake -D OPTION_OMP=false <path to source directory>
   
     If you want to upload a build, you should set some additional information
     about your processor. There are two possibilities:
@@ -549,7 +541,7 @@ OS X
     - Type:
         make install
     - Type:
-        ./tools/osx/make-app-bundle
-    - You will find a RawTherapee.dmg file in the release/ folder; this is the
+        make macosx_bundle
+    - You will find a disk image in the build directory; this is the
       distribution release and can be run on any machine which meets the
       architecture requirements you specified in variants.conf earlier.
