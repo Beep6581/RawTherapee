@@ -524,8 +524,11 @@ MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocess
 MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 MAIN_MSG_JOBSINQUEUE;job(s) in the queue
 MAIN_MSG_NAVIGATOR;Navigator
+MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 MAIN_MSG_PLACES;Places
+MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 MAIN_MSG_QOVERWRITE;Do you want to overwrite it?
+MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
 MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 MAIN_TAB_BASIC;Basic
 MAIN_TAB_COLOR;Color
