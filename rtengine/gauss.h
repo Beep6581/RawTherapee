@@ -217,9 +217,10 @@ template<class T> void gaussHorizontalSse (T** src, T** dst, int W, int H, float
     M[2][1] = b1*b2+b3*b2*b2-b1*b3*b3-b3*b3*b3-b3*b2+b3;
     M[2][2] = b3*(b1+b3*b2);
     for (int i=0; i<3; i++)
-        for (int j=0; j<3; j++)
-            M[i][j] /= (1.0+b1-b2+b3)*(1.0+b2+(b1-b3)*b3);
-
+        for (int j=0; j<3; j++) {
+            M[i][j] *= (1.0+b2+(b1-b3)*b3);
+            M[i][j] /= (1.0+b1-b2+b3)*(1.0-b1-b2-b3);
+        }
     float tmp[W][4] __attribute__ ((aligned (16)));
     float tmpV[4] __attribute__ ((aligned (16)));
     __m128 Rv;
@@ -453,9 +454,10 @@ template<class T> void gaussVerticalSse (T** src, T** dst, int W, int H, float s
     M[2][1] = b1*b2+b3*b2*b2-b1*b3*b3-b3*b3*b3-b3*b2+b3;
     M[2][2] = b3*(b1+b3*b2);
     for (int i=0; i<3; i++)
-        for (int j=0; j<3; j++)
-            M[i][j] /= (1.0+b1-b2+b3)*(1.0+b2+(b1-b3)*b3);
-
+        for (int j=0; j<3; j++) {
+            M[i][j] *= (1.0+b2+(b1-b3)*b3);
+            M[i][j] /= (1.0+b1-b2+b3)*(1.0-b1-b2-b3);
+        }
     float tmp[H][4] __attribute__ ((aligned (16)));
     __m128 Rv;
     __m128 Tv,Tm2v,Tm3v;
