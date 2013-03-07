@@ -1,0 +1,214 @@
+#!/usr/bin/env bash
+# Use this Bash script to test RT processing speed.
+# Written by DrSlony
+# v1  2012-02-10
+# v2  2013-02-15
+# v3  2013-03-04
+# www.rawtherapee.com
+
+revision="tip"
+inFile='http://rawtherapee.com/shared/test_images/colorspace_flowers.pef'
+sidecarDefault=("Neutral.pp3" "Default.pp3")
+buildType="release"
+branch="default"
+rtExe="rawtherapee"
+repo="${HOME}/rawtherapee"
+OPTIND=1 # Reset in case getopts has been used previously in the shell.
+outFileFormat="-t"
+tmpDir="/tmp/rawtherapee-benchmark"
+runs=5
+echo
+
+howto() {
+  fold -s <<END
+Benchmark the time it takes for RawTherapee to process an image file. The designated file will be processed five times in a row, and the average time of those five runs will be calculated.
+
+All options are optional.
+
+Make sure you have no unnecessary background activity - no programs intensively using the CPU. Turn off all P2P, multimedia, graphics editing, games, database, server and other "heavy" software, otherwise the timings will be skewed. You can use the "top" and "ps ux" commands to see a list of running processes and their CPU usage.
+
+Usage:
+  ./benchmarkRT [OPTIONS]
+
+Options:
+  -e        - Specify the whole path to (but excluding) the "rawtherapee"
+              executable.
+              e.g. "-e $HOME/rt_${branch}_${buildType}"
+
+  -h        - Print this help screen.
+
+  -i <file> - Input file name with complete path. This can be a file on your
+              hard drive or a url. The url must start with "http". The default
+              behavior if you do not use -i is to download a test file from
+              $inFile
+
+  -s <PP3-1> -s <PP3-2> -s <PP3-#> - Input sidecar file name(s) with full
+              paths. You can specify '-s <PP3-#>' zero or more times. To
+              specify multiple processing profiles, you must precede each
+              file path with '-s'. The processing profile can be a file on
+              your hard drive or a url. Only one url is handled, so if you
+              want to use multiple processing profiles, download them first.
+              The default behaviour if you do not use -s is to use the
+              "Neutral" profile.
+
+Examples:
+  Run the default benchmark (recommended)
+    ./benchmarkRT
+
+  Run a benchmark using your own image file, a RawTherpee executable in a
+  custom directory, and multiple processing profiles:
+    ./benchmarkRT -i /tmp/kittens.raw -s /tmp/kittens.raw.pp3 -s /tmp/kittens_tonemapped.raw.pp3 -s /tmp/kittens_denoised.raw.pp3
+
+Further help:
+  If you need further help, discover bugs or want to request new functionality
+  in this script, then tell us in the forum or on IRC:
+    http://rawtherapee.com/forum/
+    http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
+
+END
+}
+
+while getopts "e:h?i:s:" opt; do
+    case "$opt" in
+        e)  customExeDir="${OPTARG%/}"
+            ;;
+        h|\?)
+            howto
+            exit 0
+            ;;
+        i)  inFile="$OPTARG"
+            ;;
+        s)  sidecarCustom+=("$OPTARG")
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+[ "$1" = "--" ] && shift
+
+# tmpDir = /tmp/rawtherapee-benchmark
+
+inFileName="`basename "${inFile}"`"
+if [[ ! -e "${tmpDir}" ]]; then
+  if [[ ! -w /tmp ]]; then
+    printf "Error: /tmp is not writable.\n"
+    exit 1
+  fi
+  mkdir "$tmpDir"
+fi
+
+trap 'rm -rv "${tmpDir}"; exit 1' HUP INT QUIT ABRT TERM
+
+cd "$tmpDir"
+
+if [[ ${inFile} = http* ]]; then # if inFile is a url
+  [[ ! -e "${tmpDir}/${inFileName}" ]] && { # and if we haven't downloaded it already
+    printf "${inFileName} not found in ${tmpDir}, downloading it.\n"
+    [[ ! -w /tmp ]] && { printf "Error: /tmp is not writable.\n"; exit 1; }
+    [[ ! -e "$tmpDir" ]] && mkdir "$tmpDir"
+    cd "$tmpDir"
+    wget -c --trust-server-names "$inFile" # then download it.
+    echo
+  }
+else # otherwise if inFile is not a url, check if it exists
+  [[ ! -e "${inFile}" ]] && { # if it doesnt exist, choke
+    printf "%s\n" "You specified" "-i ${inFile}" "but that file does not exist."
+    exit 1
+  }
+  cp "${inFile}" "${tmpDir}/${inFileName}"
+fi
+
+if [[ -n "${sidecarCustom}" ]]; then # if sidecarCustom was specified
+  if [[ ${sidecarCustom} = http* ]]; then # and if sidecarCustom starts with an http
+    if [[ ! -e "${tmpDir}/${sidecarCustom##*/}" ]]; then # and if sidecarCustom hasn't been previously downloaded, then download it
+      printf "${sidecarCustom} not found in ${tmpDir}, downloading it.\n"
+      wget -c --trust-server-names "$sidecarCustom"
+    fi
+  else # else if sidecarCustom does not start with an http
+    for sidecarFile in "${sidecarCustom[@]}"; do
+      [[ ! -e "${sidecarFile}" ]] && { # then check if it exists
+      printf "You specified \"-s ${sidecarFile}\" but it does not exist. Make sure you wrote a full, absolute path, e.g.:" "-s /tmp/kittens_denoise.raw.pp3"
+      exit 1
+    }
+    done
+    unset sidecarFiles
+    sidecarDir=""
+    sidecarFiles=("${sidecarCustom[@]}")
+  fi
+else # if sidecarCustom was not specified, use the ones in sidecarDefault
+  sidecarDirs=("$HOME/rt_${branch}_${buildType}_patched/profiles/" "${tmpDir}/" "$HOME/.config/RawTherapee4/profiles/")
+  for dir in "${sidecarDirs[@]}"; do
+    for sidecar in "${sidecarDefault[@]}"; do
+      # echo "Checking for ${sidecar} in ${dir}"
+      if [[ -f "${dir}${sidecar}" ]]; then
+        sidecarDir="$dir"
+        found="true"
+      # echo "Found sidecar ${sidecar} in ${sidecarDir[@]}"
+      fi
+    done
+    [[ -n $found ]] && break
+  done
+  # if the loop above did not find a Neutral.pp3 anywhere, then we download one to $tmpDir
+  [[ -z $found ]] && {
+    wget -c --trust-server-names "http://code.google.com/p/rawtherapee/source/browse/rtdata/profiles/Neutral.pp3" "http://code.google.com/p/rawtherapee/source/browse/rtdata/profiles/Default.pp3"
+    sidecarDir="${tmpDir}/"
+  }
+  sidecarFiles=("${sidecarDefault[@]}")
+fi
+
+rtExeDirs=("${customExeDir}" "$HOME/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}_patched" "$HOME/rawtherapee/")
+for rtExeDir in "${rtExeDirs[@]}"; do
+  # test below prevents looking for RT in empty rtExeDir variables, so the printf doesn't report "Checking for RawTherapee executable in " with no dir.
+  [[ $rtExeDir ]] && {
+  if [[ -x "${rtExeDir}/${rtExe}" ]]; then
+    printf "%s\n" "Using RawTherapee executable: ${rtExeDir}/${rtExe}"
+    break
+  else
+    printf "%s\n" "Checking for RawTherapee executable in $rtExeDir"
+  fi
+  }
+done
+
+if [[ ! -x "${rtExeDir}/${rtExe}" ]]; then
+  printf "%s\n" "Could not find the RawTherapee executable. Re-run this script using the -e flag." | fold -s
+  exit 0
+fi
+
+printf "%s\n" "--------------------------------------------------------------------------" "" "Benchmark of RawTherapee"
+printf "%s\n" "`uname -srvmpio`" ""
+
+#rtATBdirs=("${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee")
+#for rtATBdir in "${rtATBdirs[@]}"; do
+#  if [[ -f "${rtATBdir}/AboutThisBuild.txt" ]]; then
+#    printf "%s\n" "${rtATBdir}/AboutThisBuild.txt"
+#    cat "${rtATBdir}/AboutThisBuild.txt"
+#    break
+#  fi
+#done
+
+if [[ ! -f "${rtExeDir}/AboutThisBuild.txt" ]]; then
+  printf "%s\n" "[Could not find ${rtExeDir}/AboutThisBuild.txt]" ""
+else
+  cat "${rtExeDir}/AboutThisBuild.txt"
+fi
+
+printf "%s\n" "Photo: ${tmpDir}/${inFileName}"
+for sidecar in "${sidecarFiles[@]}"; do
+  printf "%s\n" "Sidecar[s]: ${sidecarDir}${sidecar}"
+done
+echo
+
+unset sidecar
+for sidecar in "${sidecarFiles[@]}"; do
+  unset benchmark
+  for (( i=1; i<=${runs}; i++ )); do
+    # printf "%s\n" "rtExe is $rtExe" "tmpDir is $tmpDir" "sidecarDir is $sidecarDir" "sidecar is $sidecar" "outFileFormat is $outFileFormat" "tmpDir is $tmpDir" "inFileName is $inFileName"
+    benchmark+=("`\time -f %e "${rtExeDir}/${rtExe}" -o "$tmpDir" -p "${sidecarDir}${sidecar}" "$outFileFormat" -Y -c "${tmpDir}/${inFileName}" 2>&1 >/dev/null`")
+    printf "%b\n" "Benchmark ${sidecar##*/} ${i}: ${benchmark[$i - 1]}"
+  done
+  avg=$( { printf "scale=2; ("; IFS="+"; printf %s "${benchmark[*]}"; echo ") / ${#benchmark[@]}"; } | bc)
+  printf "%b\n" "Benchmark ${sidecar##*/} average:\t${avg}" "" 
+done
+
+printf "Total runtime:\t`IFS=+; bc -l <<< "${benchmark[*]}"`\n"
