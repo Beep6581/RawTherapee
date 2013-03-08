@@ -6,12 +6,12 @@ NEW FEATURES
 - Color Appearance Model 2002 (CIECAM02) support
 - New powerful Noise Reduction tool
 - New PP3 processing profiles
-- RGB Curve Luminosity mode
+- RGB Curves Luminosity mode
 - Support for HDR files in TIFF 32-bit format
 - Support for audio feedback in Linux (see Preferences)
 - Tone mapping using CIECAM02
 - Histogram backgrounds in curves
-- Two tone curves for finer adjustment
+- Two tone curves for finer adjustment (in both RGB and CIECAM02)
 - New tone curve modes:
   - Weighted Standard
   - Film-like
@@ -24,16 +24,16 @@ NEW FEATURES
   - Avoid color shift
   - Red and skin tones protection
   - Black and white toning
-- JPEG subsampling slider
+- JPEG subsampling options
 - Colored bars in curves to aid in adjustment
-- Munsell correction
+- Munsell corrections
 - Skin tones correction in Vibrance tool
 - Keyboard shortcuts:
   - Ctrl+Shift+s to quick-save PP3 in Image Editor tab
   - Ctrl+w to close image tab
   - Alt+s to take a snapshot
   - + more, see tooltips and the manual for information
-- dcraw 9.17
+- dcraw 9.17, support for additional camera models
 - New Unsharp Mask (USM) threshold curve widget
 - DCP profiles for:
   - Canon EOS 5D Mark III

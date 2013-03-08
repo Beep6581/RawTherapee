@@ -1201,7 +1201,7 @@ TP_RGBCURVES_CHANNEL;Channel
 TP_RGBCURVES_GREEN;G
 TP_RGBCURVES_LABEL;RGB Curves
 TP_RGBCURVES_LUMAMODE;Luminosity Mode
-TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.    
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.    
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degree
 TP_ROTATE_LABEL;Rotate
