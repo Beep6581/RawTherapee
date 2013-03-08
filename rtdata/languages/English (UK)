@@ -56,6 +56,7 @@ TP_COLORAPP_LABEL;CIE Colour Appearance Model 2002
 TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [output]:</b>\nRT's white balance is used for the scene, CIECAM02 is set to D50, the output device's white balance is set in <i>Preferences > Colour Management</i>\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's white balance settings are used by CAT02 and the output device's white balance is set in Preferences
 TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colours to take into account the viewing conditions of the output device\n\n<b>Average:</b>\nAverage light environment (standard)\nThe image will not change\n\n<b>Dim:</b>\nDim environment (TV)\nThe image will become slighty dark\n\n<b>Dark:</b>\nDark environment (projector)\nThe image will become more dark\n\n<b>Extremly Dark:</b>\nExtremly dark environment (cutsheet)\nThe image will become very dark
 TP_COLORAPP_TCMODE_COLORF;Colourfulness
+TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input colour profile. Gamma of sRGB is assumed, thus if input image is in colour profile of a different gamma, luminance noise reduction will vary.
 TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colourfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 TP_HLREC_COLOR;Colour Propagation
 TP_ICM_FILEDLGFILTERICM;Colour profiles
@@ -69,10 +70,12 @@ TP_ICM_LABEL;Colour Management
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid colour shift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colours into gamut of the working colour space and apply Munsell correction
 TP_RAW_FALSECOLOR;False Colour Suppression Steps
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image colour.    
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 TP_VIGNETTING_CENTER;Centre
 TP_VIGNETTING_CENTER_X;Centre X
 TP_VIGNETTING_CENTER_Y;Centre Y
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -381,7 +384,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_83;High Quality Shadows/Highlights
 !HISTORY_MSG_84;Perspective Correction
 !HISTORY_MSG_85;Lens Correction Profile
-!HISTORY_MSG_86;Wavelet Equalizer
+!HISTORY_MSG_86;RGB Curves - Luminosity Mode
 !HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR Threshold
 !HISTORY_MSG_89;Noise Reduction
@@ -490,6 +493,9 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_196;CAM02 - Tone curve 2
 !HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
 !HISTORY_MSG_200;CAMO2 - Tone mapping using CIECAM02 Q
+!HISTORY_MSG_201;NR - Delta Chrominance red
+!HISTORY_MSG_202;NR - Delta Chrominance blue
+!HISTORY_MSG_203;NR - Method
 !HISTORY_NEWSNAPSHOTAS;As...
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -578,8 +584,12 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_JOBSINQUEUE;job(s) in the queue
 !MAIN_MSG_NAVIGATOR;Navigator
+!MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
+!MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 !MAIN_MSG_PLACES;Places
 !MAIN_MSG_QOVERWRITE;Do you want to overwrite it?
+!MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
+!MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_BASIC;Basic
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
 !MAIN_TAB_DETAIL;Detail
@@ -711,14 +721,11 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !PREFERENCES_CACHECLEARALL;Clear All
 !PREFERENCES_CACHECLEARPROFILES;Clear Processing Profiles
 !PREFERENCES_CACHECLEARTHUMBS;Clear Thumbnails
-!PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
-!PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
 !PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 !PREFERENCES_CACHEOPTS;Cache Options
 !PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
 !PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
 !PREFERENCES_CACHESTRAT;Cache Strategy
-!PREFERENCES_CACHETHUMBFORM;Cache thumbnail format
 !PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
 !PREFERENCES_CIEART;CIECAM02 optimization
 !PREFERENCES_CIEART_LABEL;Use float precision instead of double
@@ -812,6 +819,8 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !PREFERENCES_PROFILESAVEINPUT;Save processing profile next to the input file
 !PREFERENCES_PROPERTY;Property
 !PREFERENCES_PSPATH;Adobe Photoshop installation directory
+!PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction
+!PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SELECTLANG;Select language
 !PREFERENCES_SELECTTHEME;Select theme
@@ -826,7 +835,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
-!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
+!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound).\nOn Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.\nOn Linux use "complete", "window-attention" etc. for system sounds.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
@@ -835,6 +844,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !PREFERENCES_TAB_GENERAL;General
 !PREFERENCES_TAB_IMPROC;Image Processing
 !PREFERENCES_TAB_OUTPUT;Output Options
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_THUMBSIZE;Thumbnail Size
 !PREFERENCES_TP_LABEL;Tool panel:
@@ -954,7 +964,8 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
 !TP_COLORAPP_DATACIE;Show CIECAM02 output histograms in curves
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
-!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf you check the "Automatic" box (to the right), RT will try to find the best value
+!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
+!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
 !TP_COLORAPP_EQUAL;Equal
 !TP_COLORAPP_GAMUT;Gamut control (Lab)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
@@ -1012,11 +1023,19 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_DEFRINGE_LABEL;Defringe (Lab/CIECAM02)
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
-!TP_DIRPYRDENOISE_CHROMA;Chrominance
+!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
+!TP_DIRPYRDENOISE_CHROMA;Chrominance (Master)
 !TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Noise Reduction (raw images only)
+!TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
+!TP_DIRPYRDENOISE_LAB;Lab
 !TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
 !TP_DIRPYRDENOISE_LUMA;Luminance
+!TP_DIRPYRDENOISE_METHOD;Method
+!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
+!TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
+!TP_DIRPYRDENOISE_RED;Delta chrominance Red
+!TP_DIRPYRDENOISE_RGB;RGB
 !TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels (Lab/CIECAM02)
 !TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 !TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
@@ -1192,6 +1211,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_RGBCURVES_CHANNEL;Channel
 !TP_RGBCURVES_GREEN;G
 !TP_RGBCURVES_LABEL;RGB Curves
+!TP_RGBCURVES_LUMAMODE;Luminosity Mode
 !TP_RGBCURVES_RED;R
 !TP_ROTATE_DEGREE;Degree
 !TP_ROTATE_LABEL;Rotate
