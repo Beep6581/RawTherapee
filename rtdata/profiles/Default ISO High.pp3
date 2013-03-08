@@ -1,16 +1,10 @@
-
 [Version]
-AppVersion=4.0.9
+AppVersion=4.0.10.0
 Version=306
-
-[General]
-Rank=0
-ColorLabel=0
-InTrash=false
 
 [Exposure]
 Auto=true
-Clip=0.0000
+Clip=0.02
 Compensation=0
 Brightness=0
 Contrast=20
@@ -20,7 +14,7 @@ HighlightCompr=0
 HighlightComprThreshold=33
 ShadowCompr=50
 CurveMode=Standard
-Curve=1;0;0;0.45754265471370759;0.57906737998843294;1;1;
+Curve=0;
 CurveMode2=Standard
 Curve2=0;
 
@@ -37,7 +31,7 @@ BWtoning=false
 AvoidColorShift=true
 RedAndSkinTonesProtection=0
 LCredsk=true
-LCurve=3;0;0;0.84892086330935235;0.69064748201438808;1;1;
+LCurve=0;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -47,7 +41,7 @@ LcCurve=0;
 [Sharpening]
 Enabled=false
 Method=usm
-Radius=0.5
+Radius=0.8
 Amount=125
 Threshold=20;80;2000;1200;
 OnlyEdges=false
@@ -107,6 +101,8 @@ RSTProtection=0
 AdaptScene=2000
 SurrSource=false
 Gamut=true
+Datacie=false
+Tonecie=false
 CurveMode=Lightness
 CurveMode2=Lightness
 CurveMode3=Chroma
@@ -116,7 +112,7 @@ Curve3=0;
 
 [Impulse Denoising]
 Enabled=false
-Threshold=50
+Threshold=80
 
 [Defringing]
 Enabled=false
@@ -124,11 +120,11 @@ Radius=2.0
 Threshold=25
 
 [Directional Pyramid Denoising]
-Enabled=false
+Enabled=true
 Method=RGB
-Luma=0
+Luma=50
 Ldetail=50
-Chroma=15
+Chroma=50
 Redchro=0
 Bluechro=0
 Gamma=1.7
@@ -211,20 +207,22 @@ Height=900
 
 [Color Management]
 InputProfile=(cameraICC)
+ToneCurve=false
 BlendCMSMatrix=true
+PreferredProfile=true
 WorkingProfile=sRGB
-OutputProfile=No ICM: sRGB output
+OutputProfile=RT_sRGB
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
 GammaSlope=4.5
 
 [Directional Pyramid Equalizer]
-Enabled=true
-Mult0=3
-Mult1=1
-Mult2=1
-Mult3=1
+Enabled=false
+Mult0=1
+Mult1=1.9
+Mult2=1.6
+Mult3=1.3
 Mult4=0.2
 
 [HSV Equalizer]

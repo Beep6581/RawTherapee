@@ -1,27 +1,21 @@
-
 [Version]
-AppVersion=4.0.9
+AppVersion=4.0.10.0
 Version=306
 
-[General]
-Rank=0
-ColorLabel=0
-InTrash=false
-
 [Exposure]
-Auto=true
-Clip=0.0000
-Compensation=0
+Auto=false
+Clip=0.02
+Compensation=2
 Brightness=0
 Contrast=0
 Saturation=0
 Black=0
-HighlightCompr=0
-HighlightComprThreshold=33
+HighlightCompr=70
+HighlightComprThreshold=0
 ShadowCompr=50
-CurveMode=Standard
-Curve=0;
+CurveMode=FilmLike
 CurveMode2=Standard
+Curve=3;0;0;0.14984709480122321;0;0.32721712538226283;0.40978593272171249;1;1;
 Curve2=0;
 
 [Channel Mixer]
@@ -31,13 +25,13 @@ Blue=0;0;100;
 
 [Luminance Curve]
 Brightness=0
-Contrast=-25
+Contrast=0
 Chromaticity=0
-BWtoning=true
 AvoidColorShift=true
 RedAndSkinTonesProtection=0
+BWtoning=false
 LCredsk=true
-LCurve=2;0.25;0.5;0.75;50;12;-12;-50;
+LCurve=0;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -45,17 +39,17 @@ chCurve=0;
 LcCurve=0;
 
 [Sharpening]
-Enabled=false
+Enabled=true
 Method=usm
-Radius=0.5
-Amount=125
+Radius=0.7
+Amount=150
 Threshold=20;80;2000;1200;
-OnlyEdges=false
+OnlyEdges=true
 EdgedetectionRadius=1.9
-EdgeTolerance=1800
+EdgeTolerance=1000
 HalocontrolEnabled=false
-HalocontrolAmount=85
-DeconvRadius=0.75
+HalocontrolAmount=75
+DeconvRadius=0.8
 DeconvAmount=75
 DeconvDamping=20
 DeconvIterations=30
@@ -84,17 +78,17 @@ Uniformity=50
 
 [White Balance]
 Setting=Camera
-Temperature=5745
-Green=1.0
+Temperature=6112
+Green=1.168
 
 [Color appearance]
-Enabled=false
-Degree=90
+Enabled=true
+Degree=100
 AutoDegree=true
 Surround=Average
 AdaptLum=16
 Model=RawT
-Algorithm=JC
+Algorithm=QM
 J-Light=0
 Q-Bright=0
 C-Chroma=0
@@ -107,55 +101,57 @@ RSTProtection=0
 AdaptScene=2000
 SurrSource=false
 Gamut=true
-CurveMode=Lightness
-CurveMode2=Lightness
-CurveMode3=Chroma
-Curve=0;
-Curve2=0;
-Curve3=0;
+Datacie=false
+Tonecie=true
+CurveMode=Brightness
+CurveMode2=Brightness
+CurveMode3=Colorfullness
+Curve=3;0;0;0.15575396825396834;0.08859126984126986;0.359375;0.49687500000000001;0.58412698412698638;1;1;1;
+Curve2=3;0;0;0.25396825396825384;0;0.47936507936507933;0.61904761904761851;1;1;
+Curve3=3;0;0;0.41904761904761922;0.53968253968253965;1;1;
 
 [Impulse Denoising]
-Enabled=false
+Enabled=true
 Threshold=50
 
 [Defringing]
-Enabled=false
-Radius=2.0
+Enabled=true
+Radius=2
 Threshold=25
 
 [Directional Pyramid Denoising]
 Enabled=false
+Luma=40
+Ldetail=80
+Chroma=25
 Method=RGB
-Luma=0
-Ldetail=50
-Chroma=15
 Redchro=0
 Bluechro=0
 Gamma=1.7
 
 [EPD]
-Enabled=false
+Enabled=true
 Strength=0.25
-EdgeStopping=1.4
-Scale=1
+EdgeStopping=2.4
+Scale=0.1
 ReweightingIterates=0
 
 [Shadows & Highlights]
 Enabled=false
 HighQuality=false
-Highlights=10
+Highlights=20
 HighlightTonalWidth=80
-Shadows=10
+Shadows=20
 ShadowTonalWidth=80
 LocalContrast=0
-Radius=30
+Radius=70
 
 [Crop]
 Enabled=false
 X=0
 Y=0
-W=7360
-H=4912
+W=3888
+H=2608
 FixedRatio=false
 Ratio=3:2
 Orientation=Landscape
@@ -179,7 +175,7 @@ Amount=0
 LCPFile=
 UseDistortion=true
 UseVignette=true
-UseCA=false
+UseCA=true
 
 [Perspective]
 Horizontal=0
@@ -190,19 +186,19 @@ Red=0
 Blue=0
 
 [Vignetting Correction]
-Amount=0
-Radius=50
-Strength=1
+Amount=-50
+Radius=15
+Strength=3
 CenterX=0
 CenterY=0
 
 [HLRecovery]
-Enabled=false
+Enabled=true
 Method=Blend
 
 [Resize]
 Enabled=false
-Scale=1
+Scale=0.23
 AppliesTo=Cropped area
 Method=Lanczos
 DataSpecified=3
@@ -211,44 +207,46 @@ Height=900
 
 [Color Management]
 InputProfile=(cameraICC)
+ToneCurve=false
 BlendCMSMatrix=true
+PreferredProfile=true
 WorkingProfile=sRGB
-OutputProfile=No ICM: sRGB output
+OutputProfile=RT_sRGB
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
 GammaSlope=4.5
 
 [Directional Pyramid Equalizer]
-Enabled=true
-Mult0=3
+Enabled=false
+Mult0=1
 Mult1=1
 Mult2=1
 Mult3=1
 Mult4=0.2
 
 [HSV Equalizer]
-HCurve=0;
-SCurve=0;
-VCurve=0;
+HCurve=1;0;0.5;0.34999999999999998;0.34999999999999998;0.16666666666666666;0.5;0.34999999999999998;0.34999999999999998;0.33333333333333331;0.5;0.34999999999999998;0.34999999999999998;0.5;0.5;0.34999999999999998;0.34999999999999998;0.66666666666666663;0.5;0.34999999999999998;0.34999999999999998;0.83333333333333326;0.5;0.34999999999999998;0.34999999999999998;
+SCurve=1;0;0.5;0.34999999999999998;0.34999999999999998;0.16666666666666666;0.5;0.34999999999999998;0.34999999999999998;0.33333333333333331;0.5;0.34999999999999998;0.34999999999999998;0.5;0.5;0.34999999999999998;0.34999999999999998;0.66666666666666663;0.5;0.34999999999999998;0.34999999999999998;0.83333333333333326;0.5;0.34999999999999998;0.34999999999999998;
+VCurve=1;0;0.5;0.34999999999999998;0.34999999999999998;0.16666666666666666;0.5;0.34999999999999998;0.34999999999999998;0.33333333333333331;0.5;0.34999999999999998;0.34999999999999998;0.5;0.5;0.34999999999999998;0.34999999999999998;0.66666666666666663;0.5;0.34999999999999998;0.34999999999999998;0.83333333333333326;0.5;0.34999999999999998;0.34999999999999998;
 
 [RGB Curves]
 LumaMode=false
-rCurve=0;
-gCurve=0;
-bCurve=0;
+rCurve=1;0;0;1;1;
+gCurve=1;0;0;0.25;0.25;0.5;0.5;0.75;0.75;1;1;
+bCurve=1;0;0;0.25;0.25;0.5;0.5;0.75;0.75;1;1;
 
 [RAW]
 DarkFrame=
 DarkFrameAuto=false
 FlatFieldFile=
 FlatFieldAutoSelect=false
-FlatFieldBlurRadius=32
+FlatFieldBlurRadius=2
 FlatFieldBlurType=Area Flatfield
-CA=false
+CA=true
 CARed=0
 CABlue=0
-HotDeadPixels=false
+HotDeadPixels=true
 HotDeadPixelThresh=40
 LineDenoise=0
 GreenEqThreshold=0
