@@ -387,7 +387,8 @@ WINDOWS
 
     METHOD 3:
       Here is a sample batch file to compile RawTherapee in Windows. Adjust
-      directory names to match your setup:
+      directory names to match your setup and change -j2 parameters in mingw32-make.exe
+      command line to reflect number of hardware threads in your CPU (E.g. -j12 for i7 6-core):
        set GTKMM_BASEPATH=C:\gtkmm64
        set GTKMM64_BASEPATH=C:\gtkmm64
        set MINGW_BASEPATH=C:\MinGW64
@@ -397,7 +398,7 @@ WINDOWS
        set RT_BUILD_PATH=C:\Users\YOURNAME\rt_builds\rt_default_release
        cd %RT_BUILD_PATH%
        cmake -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" -DPROC_TARGET_NUMBER:STRING=2 -C%RT_SOURCECODE_PATH%\Win32CMakeOptions-Sample.txt %RT_SOURCECODE_PATH%
-       mingw32-make -j12 install
+       mingw32-make.exe "MAKE=mingw32-make -j2" -j2 install
        pause
 
 LINUX
