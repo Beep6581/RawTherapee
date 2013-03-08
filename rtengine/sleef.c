@@ -1,3 +1,6 @@
+#ifndef _SLEEFC_
+#define _SLEEFC_
+
 #include <assert.h>
 #include <stdint.h>
 #include <math.h>
@@ -72,7 +75,7 @@ __inline int ilogbp1(double d) {
 
 __inline int xilogb(double d) {
   int e = ilogbp1(xfabs(d)) - 1;
-  e = d == 0 ? -2147483648 : e;
+  e = d == 0 ? -2147483648.0 : e;
   e = d == INFINITY || d == -INFINITY ? 2147483647 : e;
   return e;
 }
@@ -1209,3 +1212,4 @@ __inline float xexpf(float d) {
 //  if (xisminff(d)) u = 0;
   return u;
 }
+#endif
