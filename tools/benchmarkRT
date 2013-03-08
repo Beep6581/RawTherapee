@@ -4,6 +4,7 @@
 # v1  2012-02-10
 # v2  2013-02-15
 # v3  2013-03-04
+# v4  2013-03-07
 # www.rawtherapee.com
 
 revision="tip"
@@ -61,11 +62,31 @@ Examples:
 
 Further help:
   If you need further help, discover bugs or want to request new functionality
-  in this script, then tell us in the forum or on IRC:
+  rn this script, then tell us in the forum or on IRC:
     http://rawtherapee.com/forum/
     http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
 
 END
+}
+
+download () {
+  local retries=10
+  while [[ $retries -ne 0 ]]; do
+    wget --progress=dot:binary --continue --trust-server-names --tries=5 --timestamping "$1" 2>&1 | sed "s/^/\t/"
+    return=${PIPESTATUS[0]}
+    ((retries--))
+    if [[ $return -eq 0 ]]; then # I don't trust wget to only exit with 0 if it downloaded the file succesfully, so I check.
+      if [[ -f "`basename "$1"`" ]]; then
+        break
+      fi
+    fi
+    printf "%s\n\n" "Failed to download \"$1\"" "Retrying: "
+    sleep 1s
+  done
+  if [[ $retries -eq 0 ]]; then
+    printf "%s\n" "Tried to download \"$1\" 10 times but failed. Exiting."
+    exit 1
+  fi
 }
 
 while getopts "e:h?i:s:" opt; do
@@ -102,13 +123,13 @@ trap 'rm -rv "${tmpDir}"; exit 1' HUP INT QUIT ABRT TERM
 
 cd "$tmpDir"
 
-if [[ ${inFile} = http* ]]; then # if inFile is a url
-  [[ ! -e "${tmpDir}/${inFileName}" ]] && { # and if we haven't downloaded it already
-    printf "${inFileName} not found in ${tmpDir}, downloading it.\n"
+if [[ ${inFile} = http* ]]; then # if inFile is a url and if we haven't downloaded it already, then download it
+  [[ ! -e "${tmpDir}/${inFileName}" ]] && {
+    printf "%s\n\n" "${inFileName} not found in ${tmpDir}, downloading it."
     [[ ! -w /tmp ]] && { printf "Error: /tmp is not writable.\n"; exit 1; }
     [[ ! -e "$tmpDir" ]] && mkdir "$tmpDir"
     cd "$tmpDir"
-    wget -c --trust-server-names "$inFile" # then download it.
+    download "$inFile"
     echo
   }
 else # otherwise if inFile is not a url, check if it exists
@@ -119,16 +140,29 @@ else # otherwise if inFile is not a url, check if it exists
   cp "${inFile}" "${tmpDir}/${inFileName}"
 fi
 
+rtExeDirs=("${customExeDir}" "$HOME/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}_patched" "$HOME/rawtherapee/")
+for rtExeDir in "${rtExeDirs[@]}"; do
+  if [[ -x "${rtExeDir}/${rtExe}" ]]; then
+    printf "%s\n" "Using RawTherapee executable:" "${rtExeDir}/${rtExe}"
+    break
+  fi
+done
+
+if [[ ! -x "${rtExeDir}/${rtExe}" ]]; then
+  printf "%s\n" "Could not find the RawTherapee executable:" "${rtExeDir}/${rtExe}" "Re-run this script using the -e flag."
+  exit 0
+fi
+
 if [[ -n "${sidecarCustom}" ]]; then # if sidecarCustom was specified
   if [[ ${sidecarCustom} = http* ]]; then # and if sidecarCustom starts with an http
-    if [[ ! -e "${tmpDir}/${sidecarCustom##*/}" ]]; then # and if sidecarCustom hasn't been previously downloaded, then download it
+    if [[ ! -e "${tmpDir}/$/{sidecarCustom##*/}" ]]; then # and if sidecarCustom hasn't been previously downloaded, then download it
       printf "${sidecarCustom} not found in ${tmpDir}, downloading it.\n"
-      wget -c --trust-server-names "$sidecarCustom"
+      download "$sidecarCustom"
     fi
   else # else if sidecarCustom does not start with an http
     for sidecarFile in "${sidecarCustom[@]}"; do
       [[ ! -e "${sidecarFile}" ]] && { # then check if it exists
-      printf "You specified \"-s ${sidecarFile}\" but it does not exist. Make sure you wrote a full, absolute path, e.g.:" "-s /tmp/kittens_denoise.raw.pp3"
+      printf "You specified \"-s ${sidecarFile}\" but it does not exist. Make sure you wrote a full, absolute path, e.g.:" "  -s /tmp/kittens_denoise.raw.pp3"
       exit 1
     }
     done
@@ -136,56 +170,26 @@ if [[ -n "${sidecarCustom}" ]]; then # if sidecarCustom was specified
     sidecarDir=""
     sidecarFiles=("${sidecarCustom[@]}")
   fi
-else # if sidecarCustom was not specified, use the ones in sidecarDefault
-  sidecarDirs=("$HOME/rt_${branch}_${buildType}_patched/profiles/" "${tmpDir}/" "$HOME/.config/RawTherapee4/profiles/")
-  for dir in "${sidecarDirs[@]}"; do
-    for sidecar in "${sidecarDefault[@]}"; do
-      # echo "Checking for ${sidecar} in ${dir}"
-      if [[ -f "${dir}${sidecar}" ]]; then
-        sidecarDir="$dir"
-        found="true"
-      # echo "Found sidecar ${sidecar} in ${sidecarDir[@]}"
-      fi
-    done
-    [[ -n $found ]] && break
+else # if sidecarCustom was not specified, find the default ones
+  for sidecar in "${sidecarDefault[@]}"; do
+    if [[ -f "${rtExeDir}/profiles/${sidecar}" ]]; then
+      sidecarDir="${rtExeDir}/profiles/"
+    elif [[ -f "${tmpDir}/${sidecar}" ]]; then
+      sidecarDir="${tmpDir}/"
+    else
+      printf "%s\n" "" "Could not find \"${sidecar}\" in \"${rtExeDir}/profiles/\" where it was expected to be." "Downloading the latest \"${sidecar}\" from the repository." ""
+      download "https://rawtherapee.googlecode.com/hg/rtdata/profiles/${sidecar}"
+      sidecarDir="${tmpDir}/"
+    fi
   done
-  # if the loop above did not find a Neutral.pp3 anywhere, then we download one to $tmpDir
-  [[ -z $found ]] && {
-    wget -c --trust-server-names "http://code.google.com/p/rawtherapee/source/browse/rtdata/profiles/Neutral.pp3" "http://code.google.com/p/rawtherapee/source/browse/rtdata/profiles/Default.pp3"
-    sidecarDir="${tmpDir}/"
-  }
+  if [[ "${sidecarDir}" = "${tmpDir}/" ]]; then
+    printf "%s\n" "Beware that the downloaded processing profiles might not be entirely compatible with the RawTherapee version you're testing. For authentic and consistent results, make sure that the PP3 files match this RawTherapee version. You can use the -p flag to point benchmarkRT to the correct PP3 file(s)." | fold -s
+  fi
   sidecarFiles=("${sidecarDefault[@]}")
 fi
 
-rtExeDirs=("${customExeDir}" "$HOME/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}_patched" "$HOME/rawtherapee/")
-for rtExeDir in "${rtExeDirs[@]}"; do
-  # test below prevents looking for RT in empty rtExeDir variables, so the printf doesn't report "Checking for RawTherapee executable in " with no dir.
-  [[ $rtExeDir ]] && {
-  if [[ -x "${rtExeDir}/${rtExe}" ]]; then
-    printf "%s\n" "Using RawTherapee executable: ${rtExeDir}/${rtExe}"
-    break
-  else
-    printf "%s\n" "Checking for RawTherapee executable in $rtExeDir"
-  fi
-  }
-done
-
-if [[ ! -x "${rtExeDir}/${rtExe}" ]]; then
-  printf "%s\n" "Could not find the RawTherapee executable. Re-run this script using the -e flag." | fold -s
-  exit 0
-fi
-
-printf "%s\n" "--------------------------------------------------------------------------" "" "Benchmark of RawTherapee"
+printf "%s\n" "" "--------------------------------------------------------------------------------" "" "Benchmark of RawTherapee"
 printf "%s\n" "`uname -srvmpio`" ""
-
-#rtATBdirs=("${tmpDir}/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}" "${repo}/rt_${branch}_${buildType}" "${repo}/release" "$HOME/rawtherapee")
-#for rtATBdir in "${rtATBdirs[@]}"; do
-#  if [[ -f "${rtATBdir}/AboutThisBuild.txt" ]]; then
-#    printf "%s\n" "${rtATBdir}/AboutThisBuild.txt"
-#    cat "${rtATBdir}/AboutThisBuild.txt"
-#    break
-#  fi
-#done
 
 if [[ ! -f "${rtExeDir}/AboutThisBuild.txt" ]]; then
   printf "%s\n" "[Could not find ${rtExeDir}/AboutThisBuild.txt]" ""
@@ -200,15 +204,22 @@ done
 echo
 
 unset sidecar
+unset total
 for sidecar in "${sidecarFiles[@]}"; do
   unset benchmark
   for (( i=1; i<=${runs}; i++ )); do
     # printf "%s\n" "rtExe is $rtExe" "tmpDir is $tmpDir" "sidecarDir is $sidecarDir" "sidecar is $sidecar" "outFileFormat is $outFileFormat" "tmpDir is $tmpDir" "inFileName is $inFileName"
-    benchmark+=("`\time -f %e "${rtExeDir}/${rtExe}" -o "$tmpDir" -p "${sidecarDir}${sidecar}" "$outFileFormat" -Y -c "${tmpDir}/${inFileName}" 2>&1 >/dev/null`")
-    printf "%b\n" "Benchmark ${sidecar##*/} ${i}: ${benchmark[$i - 1]}"
+    runTime="$( { time "${rtExeDir}/${rtExe}" -o "$tmpDir" -p "${sidecarDir}${sidecar}" "$outFileFormat" -Y -c "${tmpDir}/${inFileName}"; } 2>&1 | grep ^real; )"
+    runTime=${runTime#*[[:blank:]]}
+    minOnly=${runTime%m*}
+    secOnly=${runTime#*m}; secOnly=${secOnly%s*}
+    t="$( printf "%s\n" "scale=3; $secOnly+$minOnly*60" | bc )"
+    benchmark+=("$t")
+    total+=("$t")
+    printf "%b\n" "Benchmark ${sidecar##*/} ${i}:\t${benchmark[$i - 1]}"
   done
-  avg=$( { printf "scale=2; ("; IFS="+"; printf %s "${benchmark[*]}"; echo ") / ${#benchmark[@]}"; } | bc)
+  avg=$( { printf "%s" "scale=3; ("; IFS="+"; printf "%s" "${benchmark[*]}"; printf "%s\n" ") / ${#benchmark[@]}"; } | bc );
   printf "%b\n" "Benchmark ${sidecar##*/} average:\t${avg}" "" 
 done
 
-printf "Total runtime:\t`IFS=+; bc -l <<< "${benchmark[*]}"`\n"
+printf "Benchmark total:\t`IFS=+; bc -l <<< "${total[*]}"`\n"
