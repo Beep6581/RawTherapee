@@ -1,32 +1,58 @@
-RAWTHERAPEE 4.0.9 RELEASE NOTES
+RAWTHERAPEE 4.0.10 RELEASE NOTES
 -------------------------------
 
 NEW FEATURES
 ------------
-- Support for Adobe LCP lens correction profiles 
-- Program plugger for Windows, to automatically find and be able to
-  open right-clicked photos with popular photography programs.
-- Support of Dual illuminant DCP profiles
-- Support for new cameras in addition to those already supported by dcraw:
-  - Nikon D800
+- Color Appearance Model 2002 (CIECAM02) support
+- New powerful Noise Reduction tool
+- New PP3 processing profiles
+- RGB Curve Luminosity mode
+- Support for HDR files in TIFF 32-bit format
+- Support for audio feedback in Linux (see Preferences)
+- Tone mapping using CIECAM02
+- Histogram backgrounds in curves
+- Two tone curves for finer adjustment
+- New tone curve modes:
+  - Weighted Standard
+  - Film-like
+  - Saturation and Value Blending
+- Support for artistic tone curves in DCP profiles
+- New Lab adjustments:
+  - CC Curve (chromaticity)
+  - CH Curve (chromaticity of hue)
+  - LC Curve (luminance of chromaticity)
+  - Avoid color shift
+  - Red and skin tones protection
+  - Black and white toning
+- JPEG subsampling slider
+- Colored bars in curves to aid in adjustment
+- Munsell correction
+- Skin tones correction in Vibrance tool
+- Keyboard shortcuts:
+  - Ctrl+Shift+s to quick-save PP3 in Image Editor tab
+  - Ctrl+w to close image tab
+  - Alt+s to take a snapshot
+  - + more, see tooltips and the manual for information
+- dcraw 9.17
+- New Unsharp Mask (USM) threshold curve widget
+- DCP profiles for:
   - Canon EOS 5D Mark III
-- New camera DCP profiles:
-  - Nikon D5100
-  - Nikon D7000
+  - Leaf Aptus 75
+  - Nikon D800
+  - Olympus E-510
+  - Olympus E-520
+  - Olympus E-M5i
+  - Olympus XZ-1
+  - Panasonic DMC-G5
+- Auto-fill & auto-crop support when using LCP profiles
+- Preview area background color shortcuts in top toolbar
 
-Most commits focused on squashing bugs and speeding up processing.
++ Loads of bugs fixed and speed improvements.
 
+See the revised manual for information about these tools and how to use them!
 
 CAVEATS
 -------
-- Risk of PP3 data loss - beware when running multiple RT versions
-RawTherapee cleans up obsolete or invalid tags from active PP3 files. This process is run in three situations:
-1- When you affect the PP3 file in any way, e.g. by tagging a photo,
-2- When you select another folder in the File Browser tab
-3- When you exit RawTherapee (equivalent to leaving the open album)
-This means that a more recent version of RawTherapee will delete obsolete tags which may have been used by an older version, and vice versa - if you use an old version of RawTherapee to browse photos edited with a newer version, it will delete the tags introduced in the new version. This issue is being worked on, and future versions of RawTherapee will support XMP sidecar files with concurrent embedded profile versions.
-http://code.google.com/p/rawtherapee/issues/detail?id=1335
-
 - Memory requirements
 Please read http://rawtherapee.com/blog/maximizing-memory-efficiency
 
@@ -59,217 +85,883 @@ The complete change log is available at
 http://code.google.com/p/rawtherapee/source/list
 
 
-CHANGELOG for 4.0.9
+CHANGELOG for 4.0.10
 -------------------
 
-  DATE          | CHANGESET     | COMMITTER 
-  --------------|---------------|-------------------------------------
-> 2012-06-03    | 599d1e925de0  | Hombre
-  Updated French strings
+  DATE        | CHANGESET     | COMMITTER 	
+--------------|---------------|-------------------------------------
+> 2013-03-08	| b19679cfe612	| DrSlony
+  RawTherapee Manual 4.0.10 PDF
 
-> 2012-06-03    | 2be4bff3f09b  | DrSlony
-  Updated PDF manual to 4.0.9
+> 2013-03-08	| 0676a1d71511	| DrSlony
+  Updated all language files prior to tagging 4.0.10
 
-> 2012-06-03    | 687bf6272b3a  | DrSlony
-  One more markup fix, this one's in the file deletion dialog,
-  rtgui/filecatalog.cc +724-5
+> 2013-03-08	| 5635512c7c02	| DrSlony
+  Revision of benchmarkRT
 
-> 2012-06-03    | 7660fe581dee  | DrSlony
-  Final update and consistency check of language files and processing
-  profiles for 4.0.9
+> 2013-03-08	| 94bab6a77cb4	| DrSlony
+  PP3 processing profiles - revision of and inclusion of new ones.
+  Issues 1737, 1738, 1748
 
-> 2012-06-03    | cc280dac0c73  | DrSlony
-  Added markup to popups when default raw and non-raw profiles are not
-  found
+> 2013-03-07	| 85347ce985a4	| DrSlony
+  Merged 141f6ec48c8a 773f913a3e2d
 
-> 2012-06-03    | f64a4ff5432f  | DrSlony
-  Fixes markup in Load/save/copy/paste Profile button tooltips, issue
-  1388
+> 2013-03-07	| 141f6ec48c8a	| DrSlony
+  Added mattintosh4 (Makoto Yoshida) to AUTHORS.txt for his work in
+  getting RT to once more build and run on Mac OS X
 
-> 2012-06-02    | 99de92c3b1f5  | DrSlony
-  Absolute paste of rotation value when using partial paste, issue
-  1386 committed on behalf of Dr.Hombre
+> 2013-03-07	| d7996117d068	| DrSlony
+  Cleaned up image files:
+  - Removed PNG icons from /tools/ as they were unused and some already
+  existed in /rtdata/images/
+  - Removed horizontal.svg and vertical.svg icons from /tools/ as they
+  were unused,
+  - Moved crossCursor.svg and histogramButtons.svg from /tools/ to
+  /tools/source_icons/
+  - Ran all PNG files through pngcrush to decrease their size and fix
+  any corruptions (sometimes RT generates a "libpng warning: gamma
+  table being rebuilt", maybe this will fix it)
 
-> 2012-06-02    | dbf84afb54af  | Hombre
-  Solving issue 872: "RT file-open/save windows should remember last
-  used dir", on behalf of Johannes Wienke
+> 2013-03-07	| 773f913a3e2d	| Hombre 510
+  Adding alert windows is Flat fFiled or Dark Frame default
+  directories are not set in preferences in some situations. (part of
+  issue 1713)
 
-> 2012-06-02    | df7d6e0cee30  | Hombre
-  Patch from issue 1384: "Speedup enhancement of the thumbnails'
-  browser"
+> 2013-03-07	| e89af5a81c54	| DrSlony
+  Make RT buildable again on Mac OS X. Courtesy of mattintosh4, issue
+  1628
 
-> 2012-06-01    | 758d8788f668  | Gyurkó M. 'Dualon' Dávid
-  Updated Hungarian translation: enabling it + some minor
-  enhancements.
+> 2013-03-07	| 2c13f1ae7574	| Hombre 510
+  Solving issue 1583: "Some tools always collapsed after restart"
 
-> 2012-06-01    | f83f1f2d4d11  | Gyurkó M. 'Dualon' Dávid
-  Update of Hungarian translation.
+> 2013-03-07	| a8fc3b7f061b	| DrSlony
+  Update of Deutsch translation committed on behalf of cytrinox, IRC
 
-> 2012-06-01    | f34c9eaf01d9  | DrSlony
-  Updated the default language file and merged in the corrections,
-  then ran generateTranslationDiffs to get the English file and ran
-  both through unix2dos to unify line endings. Issue 920
+> 2013-03-07	| 650cec0c44c1	| Ingo
+  Fixes burnt film artifacts, Issue 1754
 
-> 2012-05-31    | 9388f97ec767  | DrSlony
-  Committed Dutch language file on behalf of Willem Termeer and Paul
-  Matthijsse, issue 1367
+> 2013-03-05	| f2d78c97cedb	| Ingo
+  Added modified Sleef-Library to repository
 
-> 2012-05-31    | fdaf908f66a8  | Oliver Duis
-  LCP engine v3 see issue 1375
+> 2013-03-04	| dbd1f68e7e87	| Hombre 510
+  Solving issue 1719: "RT copies second-last row and column into the
+  last row and column in non-raw images".
 
-> 2012-05-29    | 28e942b60ba2  | Joker
-  Updated Sony EXIF metadata (added new lenses)
+> 2013-03-04	| bc9f15710362	| DrSlony
+  Fixed handling of custom input file names
 
-> 2012-05-28    | 15d96aaa0ed2  | Oliver Duis
-  Base color profiles for Nikon D800 and Canon 5D Mark III see issue
-  1378
+> 2013-03-04	| f88a1c9e2adb	| DrSlony
+  Revision of benchmarkRT
 
-> 2012-05-28    | 9404032dd479  | Philip Rinn
-  Unify generation of AboutThisBuild.txt and rtgui/version.h. See
-  issue 1377.
+> 2013-03-04	| b25cdc7c19c7	| DrSlony
+  Workaround for pink highlight issue with some Canon cameras using
+  "full" ISO values. Courtesy of aferrero, issue 1695
 
-> 2012-05-26    | fe160aa7d0a6  | Michael Ezra
-  Fix for crash when using "Auto distortion correction" (on behalf of
-  lebedev, see issue 1338)
+> 2013-03-03	| 84efce2dfbe2	| DrSlony
+  Updated Swedish language file on behalf of Johan, issue 1749
 
-> 2012-05-25    | 94c0419149e1  | Hombre
-  Solving bug reported in issue 1341: "PP3 file cleanup"
-  ...application's crash if the default raw or image profile didn't
-  exist
+> 2013-03-03	| 5014f3a10003	| Hombre 510
+  Updated French (and default) strings
 
-> 2012-05-23    | ea7275d3e647  | Oliver Duis
-  LCP engine v2 see issue 1343
+> 2013-03-03	| c1ab0ebd00f5	| Hombre 510
+  Solving issue 1730: "Long startup time / all files on all mounts are
+  scanned while opening". The ICC profile's directory scanning is no
+  more recursive.
 
-> 2012-05-20    | 506dd02c3789  | Michael Ezra
-  Enhancement: Placement of buttons below the curves (on behalf of
-  Wolfgang) see issue 227 (# 47)
+> 2013-03-03	| 33e331ed80b1	| Jacques Desmis
+  Noise Colour Chanels Lab mode see issue1734
 
-> 2012-05-18    | be1e798c7530  | Oliver Duis
-  DCP profile for Nikon D5100 thanks Glacort!
+> 2013-03-01	| 72a1415c8f41	| DrSlony
+  Small fix and revision of previewmode* images
 
-> 2012-05-18    | c52ab1597ab4  | Oliver Duis
-  Fixed compilation issues on Ubuntu Linux see issue 1343
+> 2013-03-01	| 1a415e4bee6a	| Jacques Desmis
+  Ciecam and sharpening see issue1711
 
-> 2012-05-18    | 9c4e2b7c4273  | Oliver Duis
-  Two files missing from last commit
+> 2013-02-27	| 00f29ab56c58	| Hombre 510
+  Solving issue 1704: "No error message saving profile to write
+  protected directory"
 
-> 2012-05-17    | 0a86d2537c55  | Oliver Duis
-  LCP (Lens Correction Profile) support see issue 1343
+> 2013-02-27	| 2636afb8a712	| Ingo
+  Fixes compilation problem with SSE-includes and mingw32 and Linux
 
-> 2012-05-17    | 6a0b40e2223f  | Oliver Duis
-  Removed warning for external program support see issue 1365
+> 2013-02-27	| e324613c1995	| DrSlony
+  Small update to Deutsch language file
+  (TP_ICM_INPUTCAMERAICC_TOOLTIP), big patch because it used different
+  line ending styles. Courtesy of Cytrinox
 
-> 2012-05-14    | b30fcbdfaa69  | DrSlony
-  Updated the RELEASE_NOTES.txt
+> 2013-02-26	| b1083a9faeae	| Hombre 510
+  Issue 1680: "FtblockDN.cc RGB_denoise": this patch add a Performance
+  tab to limit the number of core used for RGB denoising tool
 
-> 2012-05-14    | 6115629f57e4  | Hombre
-  Solving issue 607: Auto Crop disabled if Auto Fill off
+> 2013-02-25	| 5bbc5e3a8a6e	| Hombre 510
+  Updating French strings
 
-> 2012-05-12    | a42648a2f87f  | Michael Ezra
-  Enhancements: parsing for Leaf exif data & Phase One orientation;
-  Fix for Time in reading exif:DateTimeOriginal - REQUIRES CLEARING
-  CACHE to take an effect on images prviously viewed in RT;
- - on behalf of Torger (issue 766)
+> 2013-02-24	| 45f687fe34aa	| Hombre 510
+  Making RT buildable again by using intrin.h instead of xmmintrin.h
+  in gauss.h
 
-> 2012-05-08    | 9925deee5045  | Emil Martinec
-  Minor bugfix for AutoExposure
+> 2013-02-18	| 5f6595a5727f	| Michael Ezra
+  Appearance of ab curves (see issue 1729)
 
-> 2012-05-06    | 099cdb136980  | Oliver Duis
-  Backed out changeset: 159f9e7014f8
+> 2013-02-17	| 75663823e76a	| Jacques Desmis
+  RGB curves - gamut control in DEBUG mode
 
-> 2012-05-06    | 159f9e7014f8  | Oliver Duis
-  Code cleanups on behalf of Lebedev, see issue 1355
+> 2013-02-16	| 4066ab4dd4f9	| Michael Ezra
+  RGB curves: option for luminosity mode (issue 1607) Thanks for help,
+  Jacques!
 
-> 2012-05-05    | eea2f14d863f  | Emil Martinec
-  Bugfix for autoexposure on blackframes.
+> 2013-02-14	| b6f5843954db	| DrSlony
+  Fix for crash when zooming thumbs in/out in File Browser tab.
+  Committed on behalf of samtygier, issue 1675
 
-> 2012-05-05    | 957c5df1ac24  | Michael Ezra
-  Fix for thumbnail rotation for Leaf, Mamiya and Phase One (Thanks
-  Torger!); issue 766
+> 2013-02-14	| c6ff32635d06	| Ingo
+  SSE-Versions of gaussHorizontal and -Vertical used in RL-Sharpening
 
-> 2012-05-04    | d22bf9288e6c  | DrSlony
-  Updates and fixes to benchmarkRT
+> 2013-02-12	| fde5cdf6d1b0	| Philip Rinn
+  Fix some warnings given by clang, see issue 1718
 
-> 2012-05-02    | 8f7f3036f427  | Oliver Duis
-  Fix for Canon 5D Mark III on behalf Lebedev, issue 1347
+> 2013-02-09	| c018aa53e645	| Jacques Desmis
+  CIECAM-UI inconsistency and brightness curve issue1699 and issue1715
 
-> 2012-05-01    | bfffc520de3e  | DrSlony
-  PP3 files updated (full) and changes to options.cc, issue 1341
+> 2013-02-05	| 6a553b617717	| Ingo
+  Optimization for Tonemapping, issue 1670
 
-> 2012-04-29    | 08ef56d5b65d  | DrSlony
-  Updated Czech language file on behalf of mkyral, issue 1344.
+> 2013-02-05	| 5c2f057b74ed	| DrSlony
+  Fixed buildRT to once more correctly detect distributions that
+  appear alphabetically after Gentoo
 
-> 2012-04-29    | 207d8d272a91  | DrSlony
-  Updated German language file on behalf of maweso, issue 1348.
+> 2013-02-04	| 09bb65323197	| Hombre 510
+  Solving issue 1690: "ver 4.09.50 unable to save processing
+  profiles". There is now 2 new shortcut places when loading/saving a
+  profile, and 1 new place when "saving as.." an image in the dialog
+  box.
 
-> 2012-04-26    | 62cefcb38a24  | Oliver Duis
-  Nikon D7000 camera color profile in DCP format
+> 2013-02-03	| 07a41b0684b7	| Ingo
+  added myself to AUTHORS.txt
 
-> 2012-04-23    | c13a7add87ba  | Oliver Duis
-  DCP dual illuminant support see issue 1336
+> 2013-02-03	| 1599c6f37523	| Ingo
+  Fixes compilation on Linux, issue 1708
 
-> 2012-04-22    | 4ee4f75e86ac  | Oliver Duis
-  Code cleanups on behalf of Lebedev, see issue 1332
+> 2013-02-03	| 89f18384602d	| DrSlony
+  Cleaned up COMPILE.txt, removed old Italian translation file (new
+  one is called Italiano), benchmarkRT runs changed from 3 to 5
 
-> 2012-04-21    | 8a8a15242c21  | Hombre
-  The "Blend" HL recovery method was not remembered when modified in
-  the Batch Tool Panel editor
+> 2013-02-03	| 4c3ad47e0eb1	| DrSlony
+  Updated Italiano translation file on behalf of Andrea, issue 1700
 
-> 2012-04-21    | cc18bd2e902b  | Oliver Duis
-  Fixed Leaf .mos files wrong orientation and colors on behalf of
-  Torger, see issue 1327
+> 2013-02-02	| e7655e9f39e1	| Philip Rinn
+  Second (and last) stage of adding sound notifications on Linux (see
+  issue 469)
 
-> 2012-04-21    | 2b0fe3871615  | Oliver Duis
-  ICC camera and output profile speedups, cleanup see issue 1329
+> 2013-02-01	| 4d592ba1231f	| Philip Rinn
+  Adding Sound notifications for Linux (see issue 469)
 
-> 2012-04-20    | 704069c8877c  | Oliver Duis
-  Fixed compilation on 32bit Windows, cleanups see issue 1333
+> 2013-01-31	| ada0335e3f72	| Hombre 510
+  The "Grey value of the viewing's device" in Preferences were not
+  saved
 
-> 2012-04-19    | 2db6dae32b17  | Oliver Duis
-  Fixed auto profile detection in some cases see issue 1312
+> 2013-01-30	| 23f7b0b3b727	| Philip Rinn
+  Fix missing defined (closes issue 1687)
 
-> 2012-04-16    | ca7c7f52ff04  | Oliver Duis
-  Forgot to commit the added files (sorry)
+> 2013-01-28	| 125ccca48229	| Philip Rinn
+  Fix order of header files for gcc 4.7 (see issue 1575 and issue
+  1701)
 
-> 2012-04-16    | 9cab197f142f  | Oliver Duis
-  External programs plugger see issue 1323
+> 2013-01-27	| 3ba22fc952b4	| Hombre 510
+  Solving issue 1656: "CH and HSV curves lack copy/paste functions"
 
-> 2012-04-16    | 8e448d936bd7  | Oliver Duis
-  Fixed BitsPerSample tag in TIFF output header see issue 1311
+> 2013-01-27	| 9e8924d2f553	| Hombre 510
+  Merging the tiff32 branch
 
-> 2012-04-14    | 545f45f0e12b  | Jacques Desmis
-  Fix bug output gamma
+> 2013-01-26	| 572a875474cb	| Jacques Desmis
+  CIECAM02-CAT02 auto-degree display value issue1692
 
-> 2012-04-13    | 0a2016c66e5b  | Oliver Duis
-  Fixed NoICM would generate incompatible output image see issue 1320
+> 2013-01-23	| 81ac34c15a1c	| Philip Rinn
+  Add auto-detection of user language on Mac OS X (closes issue 1687)
 
-> 2012-04-10    | 5569030d30b2  | Oliver Duis
-  Fixed two crashes in DCP color engine see issue 1317
+> 2013-01-22	| 2f0e05a2a757	| Ingo
+  Performance optimization for impulse_nr on multi-core-systems (Issue
+  1671)
 
-> 2012-04-09    | 2493dd00b9f3  | Emil Martinec
-  Code cleanup for min/max functions. Committed on behalf of
-  lebedev.ri (thanks!).
+> 2013-01-22	| 94f0a75ab7f8	| Ingo
+  Performance optimization for amaze on multi-core-systems (Issue
+  1676)
 
-> 2012-04-07    | 952a99e79816  | Oliver Duis
-  Fixed auto DCP detection did not work with some camera makers see
-  issue 1312
+> 2013-01-22	| 2c7dd3de435f	| Ingo
+  Performance optimization of defringe (Issue1674)
 
-> 2012-04-07    | 766e816228fc  | Oliver Duis
-  Performance improvements, espc. using monitor profiles see issue
-  1310
+> 2013-01-22	| 9c1e0d072ff6	| Ingo
+  Performance optimization for impulse_nr on multi-core-systems
 
-> 2012-04-04    | 273d4edbff73  | Oliver Duis
-  Updated Japanese translation on behalf of a3novy, see issue 1302
+> 2013-01-22	| 5f3abf863cc5	| Philip Rinn
+  Add auto-detection of user language on Linux (see issue 1687)
 
-> 2012-04-03    | 03d965613b60  | Michael Ezra
-  Fixes for packahed profiles. Addition of neutral-UnchangedTransforms
-  profile.
+> 2013-01-21	| 924d2a8c79e0	| Jacques Desmis
+  Increase speed CIECAM02 - see issue1682
 
-> 2012-04-03    | be07005cd8ac  | Oliver Duis
-  Added renamed color profiles (US specific name)
+> 2013-01-20	| 0e71728f0dff	| Michael Ezra
+  FFTW packaging instructions for Windows
 
-> 2012-04-02    | 08422f013749  | DrSlony
-  Added tag 4.0.8 for changeset 4072ea5c0abd
+> 2013-01-20	| 5b8a66726308	| Michael Ezra
+  Update to windows compilation instructions and compilation of FFTW
+  dependency
 
-> 2012-04-02    | 4072ea5c0abd  | DrSlony
-  RELEASE_NOTES.txt for RawTherapee-4.0.8
+> 2013-01-20	| b4aa66ef5205	| Philip Rinn
+  Add ReleaseInfo.cmake to source tar-ball (closes issue 1684)
+
+> 2013-01-08	| b681d69af34d	| DrSlony
+  Updated buildRT, mainly improvement of "./buildRT -b" mode
+
+> 2013-01-08	| 6a9040d16f4e	| DrSlony
+  Revision of default and English UK/US language files
+
+> 2013-01-07	| e5f92c24993e	| Jacques Desmis
+  Tone-mapping and OpenMP see issue1670
+
+> 2013-01-01	| 21d5cc754b19	| Troy Sankey
+  add openSUSE build dependencies to COMPILE.txt
+
+> 2013-01-01	| 192e57a1280d	| Hombre 510
+  Solving issue 1650: "Image information not displayed when dir has &
+  in name"
+
+> 2013-01-01	| 98d0b037ee13	| Jacques Desmis
+  Reduce or eliminate some artifacts in CIECAM02 - and others bugs
+
+> 2012-12-29	| b726390164f3	| Hombre 510
+  French locale file quick fix (label was too long)
+
+> 2012-12-29	| 8ce112c98d6f	| Hombre 510
+  For anything than the Debug build, the toolchain now set the
+  _DNDEBUG and NDEBUG symbols. They were not set by default before,
+  which mean that all "assert" were still active even in Release
+  builds!
+
+> 2012-12-28	| ac1d8c52ae30	| Michael Ezra
+  Update to dcraw 9.17 (see issue 1627)
+
+> 2012-12-25	| 393b1debd800	| Troy Sankey
+  add close button to about dialog (issue 1659)
+
+> 2012-12-25	| 8bb10219547b	| Troy Sankey
+  add the word 'close' to the list of phrases (issue 1659)
+
+> 2012-12-22	| c399519bb5ea	| Michael Ezra
+  Updated Japanese translation (on behalf of a3novy, see issue 1655)
+
+> 2012-12-19	| 2fcdfd5d006f	| Jacques Desmis
+  CIECAM fix differences between algorithm colorfullness and chroma
+  see issue1649
+
+> 2012-12-15	| 7b0c630a2c62	| Jacques Desmis
+  Fix for 'avoid color shift' in Labadjustements and 'gamut control'
+  in CIECAM
+
+> 2012-12-15	| 813d01358ce4	| Jacques Desmis
+  Show histogram (curves) with tone-mapping in CIECAM
+
+> 2012-12-13	| 956a2d0552b5	| DrSlony
+  Updated buildRT to sort the branches, as now Google seems to list
+  them in a random order each time
+
+> 2012-12-13	| caa4df730768	| Michael Ezra
+  Fix for precision loss in opening 16 bit TIFF files (on behalf of
+  Torger see issue 1642)
+
+> 2012-12-13	| 08bde0937a32	| Jacques Desmis
+  Tone-mapping with CIECAM02 see issue1643
+
+> 2012-12-09	| 44f38c030de5	| DrSlony
+  Updated Catala translation on behalf of jmgum, issue 1601
+
+> 2012-12-06	| 89446a299dc3	| Michael Ezra
+  Extending integration to the latest version of Autopano Pro and
+  Autopano Giga 3.0+
+
+> 2012-12-05	| 98d62b27b5f2	| Jacques Desmis
+  Improvement histogram curves CIECAM see issue1640
+
+> 2012-11-30	| f61849c7fe5d	| Michael Ezra
+  Fix for enabling bwtoning (see issue 1633)
+
+> 2012-11-26	| 034798ae3a7c	| Michael Ezra
+  Adding histograms to curves in Lab and CIECAM; on behalf of Jacques
+  (see issue 1630)
+
+> 2012-11-17	| 553b1b936edf	| Jacques Desmis
+  another little bug fix CIECAM
+
+> 2012-11-17	| bec9ef9629dd	| Jacques Desmis
+  fix bug in output CIECAM
+
+> 2012-11-15	| 58f2000ceee7	| Jacques Desmis
+  three curves for CIECAM - see issue1620 and issue1623
+
+> 2012-11-13	| 9e8c2dff39e7	| DrSlony
+  Updated buildRT to correctly identify Gentoo again
+
+> 2012-11-13	| de85b2660fd6	| Michael Ezra
+  Adding a shortcut for saving snapshots and snapshot pane mod to be
+  resizable (issues 1124, 1580)
+
+> 2012-11-13	| 78c1f30fca57	| DrSlony
+  Updated buildRT script
+
+> 2012-11-11	| 19b26684b8a8	| Hombre 510
+  Solving issue 1611: "Tone curve in Weighted mode is producing
+  artifacts at overexposed areas."
+
+> 2012-11-09	| 4f2592eea57c	| Hombre 510
+  Solving issue 1618: "GUI freezes: Adjuster::sliderReleased" ; This
+  patch has been confirmed to solve the problem, but without warranty
+  of other side effect.
+
+> 2012-11-07	| 033d704cfb37	| Hombre 510
+  Color Appearance Model 2002 added (see issue 1572). Credits: JDesmis
+  for the core (and hard work!), Hombre for the GUI tuning
+
+> 2012-11-03	| e656bc2bbf99	| Michael Ezra
+  Change of clipped indicators in Luminosity Preview mode to be based
+  on the L values. ( Issue 1608)
+
+> 2012-10-31	| 2cc030dd6572	| Oliver Duis
+  DCP color profile for Olympus XZ-1 Thanks to sg4032 for the
+  reference shot
+
+> 2012-10-25	| 59508e3de7e5	| Hombre 510
+  Solving issue "Caption text obscured / hidden", from this forum
+  thread: http://rawtherapee.com/forum/viewtopic.php?p=30372#p30372
+
+> 2012-10-24	| 38ed2ac6404d	| DrSlony
+  Updated Catalan translation on behalf of josepmguasch, issue 1600
+
+> 2012-10-22	| 7965302450f7	| ejm 60657
+  Bugfix for FTblockDN.cc, removing tile pattern from output.
+
+> 2012-10-17	| 173f59691a7b	| Hombre 510
+  Solving issue 1567: "RT 4.0.9.137 hangs on OSX 10.6.8"
+
+> 2012-10-17	| 957375128d4e	| Hombre 510
+  Solving issue 1573: "Tone curve type order"
+
+> 2012-10-16	| d488b5c121a7	| Michael Ezra
+  Merge with 155640569d6262e5c53d882f0eee06a0f8afc7db
+
+> 2012-10-16	| 155640569d62	| DrSlony
+  Updated Czech language file on behalf of Marian.Kyral, issue 1588
+
+> 2012-10-16	| ffee9b41bbed	| Michael Ezra
+  Enhancement to Find by Filename filter - support for comma-separated
+  values (issue 1594)
+
+> 2012-10-08	| 1935e395dc6c	| DrSlony
+  Revised the default language file following the RawTherapee Style
+  Guide, Updated "English (US)" and "English (UK)" files accordingly,
+  removed "English file", Removed superfluous end-of-line whitespace
+  from a few text files, The Partial Paste dialog had one label that
+  wasn't its own, fixed.
+
+> 2012-10-05	| 9825a7d034c2	| Oliver Duis
+  Fixed crash on startup on behalf of Victor, see issue 1513
+
+> 2012-10-03	| f060e3101c73	| Oliver Duis
+  DCP color profile for Panasonic DMC-G5 Thanks to DoctorDruid for the
+  reference shot
+
+> 2012-10-02	| 18bc9b5a29d9	| Oliver Duis
+  Fixed auto-exposure on image with large overexposed areas on behalf
+  of Victor, see issue 1358
+
+> 2012-09-25	| 6bf8851ae739	| Oliver Duis
+  Updated spanish translation on behalf of p.lores, see issue 1569
+
+> 2012-09-21	| be7541256ba4	| Hombre 510
+  Solving issue 1529: "Better color handling of the Tone curve", adds
+  a second Exposure tone curve
+
+> 2012-09-19	| 2c381070d339	| Oliver Duis
+  Fixed large memleak/crash using RL Deconv. sharpening see issue 1564
+
+> 2012-09-19	| 9d503b577ae1	| Hombre 510
+  Solving issue 807 (to be confirmed): "g-key-file-error-quark occures
+  rather often and freeze RT"
+
+> 2012-09-16	| 8455885101c3	| Jacques Desmis
+  improvement Lab adjustements - Red and skin protection issue1514
+
+> 2012-09-16	| 39a28a931099	| Jacques Desmis
+  improvement gamut-control and conversions RGB<=>Lab see issue1551
+  and issue1552
+
+> 2012-09-10	| 8d54ee35ebf6	| DrSlony
+  Capitalization of denoise label
+
+> 2012-09-10	| 3aaed0bda748	| Oliver Duis
+  Fixed clipped areas become light gray using "avoid color shifts" see
+  issue 1552
+
+> 2012-09-09	| 642416380988	| DrSlony
+  Updated dependency versions in CMakeLists.txt and COMPILE.txt, issue
+  1547
+
+> 2012-09-09	| f7b323c8d4d8	| DrSlony
+  Swedish translation updated on behalf of Johan, issue 1553
+
+> 2012-09-09	| c53c6e8dc224	| DrSlony
+  Updated English UK translation, issue 1549
+
+> 2012-09-09	| 73b36115fc71	| DrSlony
+  Default options optimized, and a few minor formatting fixes. Issue
+  744
+
+> 2012-09-07	| dbc12f5c4076	| Michael Ezra
+  isRAW flag on behalf of Olli and Emil
+
+> 2012-09-07	| ef78c4241273	| Michael Ezra
+  Merge with DENOISE 5e1a36dc67d58539c4f884c747cb902300300d5d Thanks
+  to Emil for great work on NR. This revision supports NR on RAW
+  images ONLY
+
+> 2012-09-05	| e2be018293d8	| Jacques Desmis
+  Fix bug in Lab adjustements - Red and Skin tones protection - see
+  issue1514
+
+> 2012-09-02	| c3a84087d867	| Oliver Duis
+  Updated russian translation on behalf of Loooooker, see issue 1542
+
+> 2012-09-02	| fe41e7fe8fb1	| Hombre 510
+  Minor bug fix in the Resize tool panel
+
+> 2012-09-02	| f6656e0f0136	| Hombre
+  Solving issue 1529: "Better color handling of the Tone curve" + ICM
+  panel code cleanup
+
+> 2012-08-30	| 546e402de4e8	| Jacques Desmis
+  establishes the maximum range of rawblackpoint to 2048 instead of 50
+
+> 2012-08-27	| 601155433fb6	| Jacques Desmis
+  Fix bug in Lab adjustements - chromaticity negatives values see
+  #issue1514
+
+> 2012-08-23	| 1e7f968fa597	| Hombre
+  RedAndSkinTonesProtection was not stored correctly (was still using
+  the old name SaturationLimit, + code cleanup
+
+> 2012-08-20	| af2efff57d51	| Oliver Duis
+  Support for artistic tone curves in DCPs see issue 1527
+
+> 2012-08-19	| ebeb2888106a	| Hombre
+  Solving issue 1528: "HSV equalizer channels sometimes can't be
+  switched properly"
+
+> 2012-08-18	| 82aa7b34d179	| Oliver Duis
+  Fixed bug using non-bayer sensors/some compressed RAWs on behalf of
+  Ralf, see issue 1438
+
+> 2012-08-17	| ff93ee87aaa9	| Hombre
+  Bugfix: CurveEditor were possibly displayed one above the other
+  (introduced by the previous changeset)
+
+> 2012-08-16	| cd43c374f628	| Hombre
+  Completing issue 1514: "Lab adjustements : CC curve and LC Hskin
+  curve" + bugfix of the openIfNonlinear mechanism
+
+> 2012-08-15	| fa0b35ab44e3	| Oliver Duis
+  DCP color profiles for Olympus E-510 and E-520 Thanks to Maciej and
+  Jürgen for the reference shots
+
+> 2012-08-13	| bd2dd9adab9c	| Oliver Duis
+  DCRAW 9.16 v1.452 update see forum thread 4096
+
+> 2012-08-08	| 05f89d37039e	| Jacques Desmis
+  Lab adjustements- CC curve and LC curve see #issue1514
+
+> 2012-08-06	| d7200471faed	| Oliver Duis
+  Fixed black ring when using strenght+amount large 0 see 1507
+
+> 2012-08-06	| 04de202388e3	| Oliver Duis
+  DCP color profile for Nikon D800 thanks Robert for the reference
+  shot, see forum thread 4165
+
+> 2012-08-04	| 5df7eff999c4	| Troy Sankey
+  Histogram display should detect spikes, issue 1511
+
+> 2012-08-04	| 2d7244d15f21	| Hombre
+  Small bugfix: the tooltip of the curve's button was fully
+  initialized only after switching to another type
+
+> 2012-08-03	| cd72940bd8c9	| Philip Rinn
+  Don't show status message: 'Automatic Monitor Profile Detection not
+  supported on your OS'. See issue 1512.
+
+> 2012-07-30	| 158cb2501632	| DrSlony
+  Updated the man page. Issue 1418
+
+> 2012-07-29	| 9c3902690cfa	| DrSlony
+  Graceful recovery from EPD tone mapping cholesky segfault. Issue
+  1112, comment 169, committed on behalf of ralf.anderson
+
+> 2012-07-28	| 4870582583c8	| Michael Ezra
+  Ctrl-w shortcut to close an editor tab in multi-tab mode; bugfix for
+  multi-monitor mode (issue 732)
+
+> 2012-07-27	| 112447baea65	| Troy Sankey
+  make checkbox labels clickable in batch mode, issue 1414
+
+> 2012-07-24	| f1e80d00c309	| Gyurkó M. 'Dualon' Dávid
+  Right Panel filter options: bad height. Fixed, committed on behalf
+  of Hombre.
+
+> 2012-07-24	| 22e3b2a29603	| Oliver Duis
+  Lab display range in navigator see issue 1478
+
+> 2012-07-23	| fbda116dbc44	| Hombre
+  Solving issue 1410: "Save Current Profile does not save some values"
+  + shortcut keys are now also usable in single editor mode (when a
+  filename is specified in the command line)
+
+> 2012-07-23	| fa88c7afba58	| Hombre
+  Solving issue 1407: "Auto CA Correction in RAW page is not applied
+  when re-open 4.0.9.1"
+
+> 2012-07-21	| c583a60fc10c	| Hombre
+  French language file updated with jpeg sub-sampling strings
+
+> 2012-07-21	| a341b37b2fcc	| Hombre
+  Solving issue 451: "Preview not sharpened after enlarging to 100%"
+
+> 2012-07-21	| 79b68cc23a60	| Oliver Duis
+  JPG sub sampling setting see issue 1502
+
+> 2012-07-21	| 070a6c4e0566	| Hombre
+  Last minute minor bugfix of the patch from issue 1359
+
+> 2012-07-21	| 917dad3d2dc4	| Hombre
+  Patch from issue 1359: "Munsell correction - Lab adjustements"
+  credits: Jacques Desmis Bundled new features besid the Lab tool enhancement
+  (by Jacques Desmis) :
+   - curve to control skin tones in vibrance tool, credits: Jacques Desmis
+   - right click over SHCSelector (below the parametric curve) to reset
+  to default values, credits: Hombre
+   - colored bars around curves, credits: Hombre
+
+> 2012-07-18	| 2f36515ac2de	| Troy Sankey
+  Photo saved via queue from the Editor tab looks different to the one
+  saved from the File Browser tab, issue 1471
+
+> 2012-07-18	| 40e4f63a413a	| Troy Sankey
+  Updated COMPILE.txt with Fedora deps
+
+> 2012-07-18	| b43ccea5bb21	| DrSlony
+  COMPILE.txt update for fftw3, issue 1483
+
+> 2012-07-18	| 00ed93e49c79	| DrSlony
+  Removed "inode/directory;" from rtdata/icons/rawtherapee.desktop.in,
+  issue 1398
+
+> 2012-07-17	| e6abfc2956d8	| DrSlony
+  Updated Russian language file on behalf of Loooooker, issue 1498
+
+> 2012-07-17	| 963a54775d24	| Oliver Duis
+  Massive speedup on closing RT having a large image cache see issue
+  1494
+
+> 2012-07-17	| 7a871b91b322	| Michael Ezra
+  Shortcut (Ctrl-Shift-S) for saving processing profile in editor
+  (Issue 1170)
+
+> 2012-07-14	| 974db885820c	| Oliver Duis
+  Fixed File Operations -> Delete with output from queue does not
+  delete the associated *.pp3 file on behalf of Lebedev, see issue
+  1485
+
+> 2012-07-14	| 75332b899724	| Oliver Duis
+  Changed color sampler units see 1478
+
+> 2012-07-13	| 646b1841c866	| Oliver Duis
+  Updated Japanese translation + small typo on behalf of a3novy, see
+  issue 1484
+
+> 2012-07-12	| 08f846197adc	| Joker
+  Bugfix for [XXX.badpixels] file not working
+
+  Previous code cleanup changed int into size_t generating wrong
+  behaviour in the comparison line
+
+> 2012-07-11	| ead238a86b13	| Oliver Duis
+  Reworked color functions 2 see issue 1052
+
+> 2012-07-11	| 0dff5d94e123	| Oliver Duis
+  Small fix for LCP after Tokina patch see issue 1464
+
+> 2012-07-11	| 1d5d8727d144	| Oliver Duis
+  Reworked color functions see issue 1052
+
+> 2012-07-10	| 93a3efae328c	| Oliver Duis
+  DCP color profile for Leaf Aptus 75 thanks torger for the reference
+  shot, see issue 1465
+
+> 2012-07-10	| 8bc0049d076c	| Oliver Duis
+  DCP color profile for Canon EOS 5D Mark III thanks Lebedev for
+  reference shot, see issue 1467
+
+> 2012-07-09	| 291894fec9a1	| Oliver Duis
+  DCRAW 9.16 v1.451 update see issue 1461
+
+> 2012-07-08	| d6d5a8a81f7d	| Oliver Duis
+  Added support for some non-standard Tokina LCPs see issue 1464
+
+> 2012-07-07	| 4e0f46f25a71	| Michael Ezra
+  OMP speedup for icc profiles (see issue 1462)
+
+> 2012-07-08	| d09e5197b58b	| DrSlony
+  Removed hidden image files as nobody knows what they're for. Issue
+  1409
+
+> 2012-07-07	| ca606b4155dd	| DrSlony
+  Updated "rt" to "rawtherapee" in tools/osx/start. Issue 878
+
+> 2012-07-07	| 83c82562091a	| DrSlony
+  Enhancement of all file save dialogs. Committed on behalf of Sankey,
+  issue 1314
+
+> 2012-07-07	| 309ca797b96b	| Oliver Duis
+  Raw white point correction for LUT based profiles (DCP only) see
+  issue 1466
+
+> 2012-07-06	| 80a7b758b0a6	| Oliver Duis
+  Added non-bayer and compressed raw format support for Raw White
+  point see issue 1458
+
+> 2012-07-06	| d8cd8e8947ec	| Oliver Duis
+  LCP CA correction now usable on more RAW types see issue 1421
+
+> 2012-07-06	| e64b57efdeda	| Ilia Popov
+  Fix unclosed <b> tags in language files, which caused warnings to
+  appear in console
+
+> 2012-07-05	| 586a12c4d477	| Oliver Duis
+  DCRAW 9.16 update see issue 1461
+
+> 2012-07-05	| 4d509de08277	| Michael Ezra
+  Adding support for jpeg and tiff file extensions (on behalf of
+  sankeytms) see issue 1215. For existing RT installations - add
+  'jpeg' in Preferences/FileBrowser tab, Parsed extensions.
+
+> 2012-07-03	| e482a17a8e13	| Hombre
+  Solving issue 1444: " Better Vibrance tool's threshold handling"
+
+> 2012-07-03	| a942072d80ea	| Hombre
+  Addentum to bugfix of issue 1331: "BrowserToolPanel shrinks after
+  every RT restart", on behalf of sankeytms
+
+> 2012-07-03	| c379a5a7ba8b	| Hombre
+  Solving issue 1457: "Preview sometimes doesn't update, demozaicing
+  occure too often"
+
+> 2012-07-02	| 4b0418035d7b	| DrSlony
+  Fix for shrinking BrowserToolPanel when using vertical tabs mode.
+  Committed on behalf of Sankey, issue 1331
+
+> 2012-07-02	| ef748b4553fe	| Ilia Popov
+  Remove inclusion of unnecessary headers, which was introduced by
+  commit c148c40867dc and was breaking non-windows builds
+
+> 2012-07-02	| 24312a1a1375	| DrSlony
+  Revision of COMPILE.txt, issue 1431
+
+> 2012-07-01	| c148c40867dc	| Oliver Duis
+  Fixed multiprocessor sharpening bug see issue 1454
+
+> 2012-06-30	| c11c4c516fd8	| Oliver Duis
+  Fixed Nikon D800E image dimensions see issues 1452
+
+> 2012-06-30	| e190c52ab786	| DrSlony
+  Do not use system theme by default, and do not use single row file
+  browser toolbar by default. Issue 1451
+
+> 2012-06-29	| 8a37bfcf2057	| Philip Rinn
+  Make shure all C/C++ flags are set before we create
+  AboutThisBuild.txt.
+
+> 2012-06-28	| 9388472085de	| DrSlony
+  Fixed buildRT to work with the -b buildonly flag when building some
+  older versions
+
+> 2012-06-27	| ebdfb5011c72	| Philip Rinn
+  Change the compiler detection in AboutThisBuild.txt (not gcc
+  specific anymore). See issue 1441.
+
+> 2012-06-26	| ca684d56e7d7	| Oliver Duis
+  Fixed memleak when raw loading fails
+
+> 2012-06-26	| 3dea5940f635	| DrSlony
+  "Reset to default" values synchronized with the "Default" profile
+
+> 2012-06-26	| af68f04cc3fb	| DrSlony
+  Changed neutral shcompr value from 0 to 50, issue 1392
+
+> 2012-06-26	| 6c29998819f1	| DrSlony
+  buildRT header update
+
+> 2012-06-26	| af7be9d7f561	| DrSlony
+  Updated buildRT to make out-of-source builds
+
+> 2012-06-26	| 6c1c0da75979	| Oliver Duis
+  Fixed color pixels using HSV equalizer, S/H speedup and fix see
+  issue 1436
+
+> 2012-06-26	| a5b1fbceaf68	| Oliver Duis
+  Fixed pink tint on thumbs, espc. Canon files see issue 1437
+
+> 2012-06-26	| 1bede3d37331	| Philip Rinn
+  Fix corrupted Exif MakeNotes. On behalf of panlop, see issue 615.
+
+> 2012-06-25	| 067e362c6f28	| Philip Rinn
+  Make out-of-source build possible and encourage people to use it. On
+  behalf of lebedev.ri, see issue 1340.
+
+> 2012-06-25	| eaf7a549e4fb	| Oliver Duis
+  Improved Batch Queue stability see 1383
+
+> 2012-06-24	| 6520958748f4	| Philip Rinn
+  Remove unneeded special case for clang from CMakeLists.txt. See
+  issue 1432.
+
+> 2012-06-24	| d5336b818462	| Oliver Duis
+  Full image dimensions in navigator info see 1426
+
+> 2012-06-23	| c644b5738b09	| Philip Rinn
+  Add script to automatically build the release tarball for a given
+  tag.
+
+> 2012-06-23	| b468475b2c6a	| Oliver Duis
+  DCRAW 9.15 update see issue 1433
+
+> 2012-06-21	| cda5680cdce1	| DrSlony
+  Revision of COMPILE.txt. Issue 1431
+
+> 2012-06-19	| f956a9d036d6	| Michael Ezra
+  A small fix for a misbehaved copy/paste of code (Thanks, Hombre)
+
+> 2012-06-19	| cb6ddf201730	| Hombre
+  Patch from issue 1267: "New Threshold curve widget", used in USM
+  Sharpening and Vibrance
+
+> 2012-06-18	| 34a70b7e6c33	| Hombre
+  Solving issue 1427: "HSV equalizer: wrong color lines"
+
+> 2012-06-18	| abf0de39d03a	| Oliver Duis
+  DCP color profile for Olympus E-M5 thanks DaveL for the reference
+  shot
+
+> 2012-06-18	| 08778a3bd38c	| Philip Rinn
+  Document the change from issue 1342 in COMPILE.txt
+
+> 2012-06-18	| aeefd4e794fc	| Philip Rinn
+  Use windows style in clean.bat (fixes issue 1371, on behalf of
+  globetrotter.75d)
+
+> 2012-06-18	| 511c08882792	| Philip Rinn
+  Rearrange the way mercurial-less build works (see issue 1342): The
+  cmake option AUTOMATED_BUILD_SYSTEM is removed and replaced by an
+  automated detection. Now it is possible to ship source tarballs that
+  build without mercurial on all platforms. The needed information is
+  generated by the script tools/generateReleaseInfo.{sh,bat} before
+  the tarball is build.
+
+> 2012-06-17	| 6463e43a34ee	| Michael Ezra
+  Enhancement: BW toning in Lab (see issue 1424)
+
+> 2012-06-17	| 47a13f069761	| Michael Ezra
+  Speedups: luminanceCurve OMP (see issue 1423)
+
+> 2012-06-17	| ae8084e5c0c5	| DrSlony
+  Fix for file browser filter shortcuts and toggled state images.
+  Courtesy of Sankey. Issue 1403
+
+> 2012-06-16	| c8b149404c27	| Oliver Duis
+  Small LCP cleanup see issue 1422
+
+> 2012-06-16	| e54038935cfb	| Oliver Duis
+  Fixed Shadow/Highlights not working correctly when "High Quality"
+  was enabled see issue 1349
+
+> 2012-06-16	| 87fb49a4ffe2	| DrSlony
+  Moved doc/RawTherapeeManual.pdf to doc/RawTherapeeManual_en.pdf
+
+> 2012-06-16	| 73062c69c5f0	| DrSlony
+  Fixed JJJJMMDD issue in default and English* language files. Issue
+  1404
+
+> 2012-06-15	| 9cdef6edd16f	| Philip Rinn
+  Remove rtdata/Makefile on clean.
+
+> 2012-06-15	| c0dbe956db64	| Philip Rinn
+  Add manpage for Linux (see Issue 1418).
+
+> 2012-06-15	| c311d3ba3f67	| Philip Rinn
+  Remove old documnetation and make filename non versioned. See Issue
+  1417.
+
+> 2012-06-15	| df1dae6e13fa	| Oliver Duis
+  Auto-fill to reduce image to fit with LCP pincussion distortions see
+  issue 1415
+
+> 2012-06-15	| cfa9cb94c08d	| DrSlony
+  New guide type "Frame" for aiding in cropping dark photos against a
+  dark preview background. Issue 1391
+
+> 2012-06-14	| e1a018a9716f	| Oliver Duis
+  Fixed problem when cancelling SaveAs dialog see issue 1397
+
+> 2012-06-13	| ce7cf3b1cf03	| Oliver Duis
+  Removed "post mosaic artifact/noise reduction" since it harmed image
+  quality see issue 848
+
+> 2012-06-13	| 4d0ab8859c59	| DrSlony
+  Capitalization correction for "Auto Distortion Correction" button.
+
+> 2012-06-12	| 6e2a200e3844	| Oliver Duis
+  Improved LCP error correction see issue 1408
+
+> 2012-06-12	| faa68c81a3a3	| Oliver Duis
+  Performance improvements on some transformations see issue 1412
+
+> 2012-06-12	| 6d6d152248fd	| Oliver Duis
+  Fixed crashes and random colored dots after code cleanup on behalf
+  of Lebedev, see issue 1332
+
+> 2012-06-11	| 6afad57943b8	| Michael Ezra
+  Fix: Shadow Compression default set to 50 (issue 1392)
+
+> 2012-06-10	| 0d4fecf1a204	| Oliver Duis
+  Fixed random color dots in dark areas using some Canon DCP profiles
+  see issue 1406
+
+> 2012-06-10	| 4eb918a3d13f	| Oliver Duis
+  Fixed crash when reading some TIF files see issue 1389
+
+> 2012-06-10	| e1029a1d8cc6	| Oliver Duis
+  English translations for US and UK see issue 1404
+
+> 2012-06-09	| c28065fa6015	| Oliver Duis
+  LCP support for auto fill/auto crop see issue 1385
+
+> 2012-06-08	| 307dd5bc59cf	| Michael Ezra
+  Toolbar buttons for background color of the preview panel. (Issue
+  1391) Shortcuts: Theme-based - 8; Black - 9; White - 0
+
+> 2012-06-07	| 7394361f478c	| Oliver Duis
+  Fixed border color changed by double clicking on area surrounding
+  preview image not consistent See issue 1391
+
+> 2012-06-06	| 8360334e8597	| Oliver Duis
+  LCP error filtering see issue 1400
+
+> 2012-06-05	| 9b173fb69816	| Oliver Duis
+  Fix hang when directory contains unsupported file types see issue
+  1389
+
+> 2012-06-03	| 3612e73e0a69	| DrSlony
+  Added tag 4.0.9 for changeset 82929311cdce
