@@ -3,7 +3,7 @@ AppVersion=4.0.10.0
 Version=306
 
 [Exposure]
-Auto=false
+Auto=true
 Clip=0.02
 Compensation=0
 Brightness=0
@@ -11,7 +11,7 @@ Contrast=0
 Saturation=0
 Black=0
 HighlightCompr=0
-HighlightComprThreshold=0
+HighlightComprThreshold=33
 ShadowCompr=50
 CurveMode=Standard
 Curve=0;
@@ -25,13 +25,13 @@ Blue=0;0;100;
 
 [Luminance Curve]
 Brightness=0
-Contrast=0
+Contrast=-35
 Chromaticity=0
-BWtoning=false
-AvoidColorShift=false
+BWtoning=true
+AvoidColorShift=true
 RedAndSkinTonesProtection=0
 LCredsk=true
-LCurve=0;
+LCurve=3;0;0;0.18623481781376497;0.028340080971659902;0.50607287449392713;0.50607287449392713;0.77732793522267185;0.97975708502024295;1;1;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -39,7 +39,7 @@ chCurve=0;
 LcCurve=0;
 
 [Sharpening]
-Enabled=false
+Enabled=true
 Method=usm
 Radius=0.5
 Amount=200
@@ -118,6 +118,7 @@ Threshold=50
 Enabled=false
 Radius=2.0
 Threshold=25
+
 
 [Directional Pyramid Denoising]
 Enabled=false

@@ -1,26 +1,20 @@
-
 [Version]
-AppVersion=4.0.9
+AppVersion=4.0.10.0
 Version=306
-
-[General]
-Rank=0
-ColorLabel=0
-InTrash=false
 
 [Exposure]
 Auto=true
-Clip=0.0000
+Clip=0.02
 Compensation=0
 Brightness=0
-Contrast=0
-Saturation=-10
+Contrast=20
+Saturation=0
 Black=0
 HighlightCompr=0
 HighlightComprThreshold=33
 ShadowCompr=50
 CurveMode=Standard
-Curve=2;0.105;0.25;0.75;15;60;30;-70;
+Curve=1;0;0;0.04;0.03;0.17684498029510265;0.21732319394192093;0.70232558139534862;0.74883720930232545;1;1;
 CurveMode2=Standard
 Curve2=0;
 
@@ -31,8 +25,8 @@ Blue=0;0;100;
 
 [Luminance Curve]
 Brightness=0
-Contrast=5
-Chromaticity=-10
+Contrast=0
+Chromaticity=0
 BWtoning=false
 AvoidColorShift=true
 RedAndSkinTonesProtection=0
@@ -45,10 +39,10 @@ chCurve=0;
 LcCurve=0;
 
 [Sharpening]
-Enabled=false
+Enabled=true
 Method=usm
 Radius=0.5
-Amount=125
+Amount=200
 Threshold=20;80;2000;1200;
 OnlyEdges=false
 EdgedetectionRadius=1.9
@@ -107,6 +101,8 @@ RSTProtection=0
 AdaptScene=2000
 SurrSource=false
 Gamut=true
+Datacie=false
+Tonecie=false
 CurveMode=Lightness
 CurveMode2=Lightness
 CurveMode3=Chroma
@@ -211,17 +207,19 @@ Height=900
 
 [Color Management]
 InputProfile=(cameraICC)
+ToneCurve=false
 BlendCMSMatrix=true
+PreferredProfile=true
 WorkingProfile=sRGB
-OutputProfile=No ICM: sRGB output
+OutputProfile=RT_sRGB
 Gammafree=default
 Freegamma=false
 GammaValue=2.22
 GammaSlope=4.5
 
 [Directional Pyramid Equalizer]
-Enabled=true
-Mult0=3
+Enabled=false
+Mult0=1
 Mult1=1
 Mult2=1
 Mult3=1

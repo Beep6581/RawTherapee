@@ -3,15 +3,15 @@ AppVersion=4.0.10.0
 Version=306
 
 [Exposure]
-Auto=false
+Auto=true
 Clip=0.02
 Compensation=0
 Brightness=0
-Contrast=0
-Saturation=0
+Contrast=20
+Saturation=5
 Black=0
 HighlightCompr=0
-HighlightComprThreshold=0
+HighlightComprThreshold=33
 ShadowCompr=50
 CurveMode=Standard
 Curve=0;
@@ -26,9 +26,9 @@ Blue=0;0;100;
 [Luminance Curve]
 Brightness=0
 Contrast=0
-Chromaticity=0
+Chromaticity=5
 BWtoning=false
-AvoidColorShift=false
+AvoidColorShift=true
 RedAndSkinTonesProtection=0
 LCredsk=true
 LCurve=0;
@@ -39,10 +39,10 @@ chCurve=0;
 LcCurve=0;
 
 [Sharpening]
-Enabled=false
+Enabled=true
 Method=usm
-Radius=0.5
-Amount=200
+Radius=0.8
+Amount=150
 Threshold=20;80;2000;1200;
 OnlyEdges=false
 EdgedetectionRadius=1.9
@@ -120,11 +120,11 @@ Radius=2.0
 Threshold=25
 
 [Directional Pyramid Denoising]
-Enabled=false
+Enabled=true
 Method=RGB
-Luma=0
+Luma=20
 Ldetail=50
-Chroma=15
+Chroma=30
 Redchro=0
 Bluechro=0
 Gamma=1.7
@@ -220,9 +220,9 @@ GammaSlope=4.5
 [Directional Pyramid Equalizer]
 Enabled=false
 Mult0=1
-Mult1=1
-Mult2=1
-Mult3=1
+Mult1=1.9
+Mult2=1.6
+Mult3=1.3
 Mult4=0.2
 
 [HSV Equalizer]
