@@ -723,7 +723,7 @@ ZOOMBAR_SMALL;Txikia
 !HISTORY_MSG_83;High Quality Shadows/Highlights
 !HISTORY_MSG_84;Perspective Correction
 !HISTORY_MSG_85;Lens Correction Profile
-!HISTORY_MSG_86;Wavelet Equalizer
+!HISTORY_MSG_86;RGB Curves - Luminosity Mode
 !HISTORY_MSG_87;Impulse Noise Reduction
 !HISTORY_MSG_88;Impulse NR Threshold
 !HISTORY_MSG_89;Noise Reduction
@@ -828,7 +828,7 @@ ZOOMBAR_SMALL;Txikia
 !HISTORY_MSG_188;CAM02 - Brightness (Q)
 !HISTORY_MSG_189;CAM02 - Contrast (Q)
 !HISTORY_MSG_190;CAM02 - Saturation (S)
-!HISTORY_MSG_191;CAM02 - Colorfullness (M)
+!HISTORY_MSG_191;CAM02 - Colorfulness (M)
 !HISTORY_MSG_192;CAM02 - Hue (angle)
 !HISTORY_MSG_193;CAM02 - Tone curve 1
 !HISTORY_MSG_194;CAM02 - Tone curve 2
@@ -836,8 +836,11 @@ ZOOMBAR_SMALL;Txikia
 !HISTORY_MSG_196;CAM02 - Tone curve 2
 !HISTORY_MSG_197;CAM02 - Color curve
 !HISTORY_MSG_198;CAM02 - Color curve
-!HISTORY_MSG_199;CAM02 - Show CIECAM in histograms
-!HISTORY_MSG_200;CAM02 - Tone mapping with Q
+!HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
+!HISTORY_MSG_200;CAMO2 - Tone mapping using CIECAM02 Q
+!HISTORY_MSG_201;NR - Delta Chrominance red
+!HISTORY_MSG_202;NR - Delta Chrominance blue
+!HISTORY_MSG_203;NR - Method
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+Q</b>
@@ -853,7 +856,11 @@ ZOOMBAR_SMALL;Txikia
 !MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_NAVIGATOR;Navigator
+!MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
+!MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 !MAIN_MSG_PLACES;Places
+!MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
+!MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
 !MAIN_TAB_EXPORT; Export
@@ -948,6 +955,9 @@ ZOOMBAR_SMALL;Txikia
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
 !PREFERENCES_BEHAVIOR;Behavior
 !PREFERENCES_BLACKBODY;Tungsten
+!PREFERENCES_CIEART;CIECAM02 optimization
+!PREFERENCES_CIEART_LABEL;Use float precision instead of double
+!PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality
 !PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
 !PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
@@ -997,6 +1007,8 @@ ZOOMBAR_SMALL;Txikia
 !PREFERENCES_PANFACTORFRAME;Pan Rate Amplification
 !PREFERENCES_PANFACTORLABEL;Factor
 !PREFERENCES_PROPERTY;Property
+!PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction
+!PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
 !PREFERENCES_SELECTFONT;Select font
 !PREFERENCES_SET;Set
 !PREFERENCES_SHOWEXPOSURECOMPENSATION;Append exposure compensation
@@ -1005,17 +1017,18 @@ ZOOMBAR_SMALL;Txikia
 !PREFERENCES_SINGLETAB;Single Editor Tab Mode
 !PREFERENCES_SLIMUI;Slim interface
 !PREFERENCES_SND_BATCHQUEUEDONE;Queue processing done
-!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound). On Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.
+!PREFERENCES_SND_HELP;Either enter filepath or nothing (for no sound).\nOn Windows use "SystemDefault", "SystemAsterisk" etc. for system sounds.\nOn Linux use "complete", "window-attention" etc. for system sounds.
 !PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 !PREFERENCES_SND_TRESHOLDSECS;after secs
 !PREFERENCES_SQUAREDETAILWINDOW;Square detail window (faster)
+!PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
 !PREFERENCES_USESYSTEMTHEME;Use system theme
-!PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector,viewing...)
+!PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector, viewing, etc.)
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_LOADPPASTE;Parameters to load
@@ -1038,7 +1051,7 @@ ZOOMBAR_SMALL;Txikia
 !SAVEDLG_SUBSAMP_TOOLTIP;Best Compression: 4:1:1\nBalanced: 4:2:2\nBest Quality: 4:4:4
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 !SAVEDLG_WARNFILENAME;File will be named
-!SHCSELECTOR_TOOLTIP;Click right mouse button to reset\nthe position of those 3 sliders
+!SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders
 !THRESHOLDSELECTOR_BL;Bottom-left
 !THRESHOLDSELECTOR_BR;Bottom-right
 !THRESHOLDSELECTOR_B;Bottom
@@ -1047,71 +1060,74 @@ ZOOMBAR_SMALL;Txikia
 !THRESHOLDSELECTOR_TR;Top-right
 !THRESHOLDSELECTOR_T;Top
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
-!TP_COLORAPP_ADAPTSCENE;Adaptation luminosity (cd/m2)
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environnement\n(usually 2000cd/m2)
-!TP_COLORAPP_ADAPTVIEWING;Adaptation luminosity (cd/m2)
-!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m2)
+!TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity (cd/m²)
+!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environnement\n(usually 2000cd/m²)
+!TP_COLORAPP_ADAPTVIEWING;Adaptation viewing luminosity (cd/m²)
+!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²)
 !TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
 !TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
-!TP_COLORAPP_ALGO_QM;Brightness + Colorfullness (QM)
-!TP_COLORAPP_ALGO_TOOLTIP;Lets you chose between parameters subsets or all parameters
+!TP_COLORAPP_ALGO_QM;Brightness + Colorfulness (QM)
+!TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters
 !TP_COLORAPP_BRIGHT;Brightness (Q)
-!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 is different from Lab and RGB, take into account the white's luminosity
+!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from Lab and RGB brightness
 !TP_COLORAPP_CHROMA;Chroma (C)
-!TP_COLORAPP_CHROMA_M;Colorfullnes (M)
-!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfullness in CIECAM02 is different from Lab and RGB
+!TP_COLORAPP_CHROMA_M;Colorfulnes (M)
+!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from Lab and RGB colorfulness
 !TP_COLORAPP_CHROMA_S;Saturation (S)
-!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 is different from Lab and RGB
-!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 is different from Lab and RGB
+!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from Lab and RGB saturation
+!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from Lab and RGB chroma
 !TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
 !TP_COLORAPP_CONTRAST;Contrast (J)
 !TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; is different from Lab and RGB
-!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; is different from Lab and RGB
+!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from Lab and RGB contrast
+!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from Lab and RGB contrast
 !TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogram of L (Lab) before CIECAM.\n\n Histogram of J,Q after CIECAM, if checkbox Show CIECAM output is enabled.\n (J,Q) are not directly shown in histogram panel. \n\n For final output refer to the Histogram panel.
+!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel
 !TP_COLORAPP_CURVEEDITOR2;Tone curve 2
 !TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
 !TP_COLORAPP_CURVEEDITOR3;Color curve
-!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfullness.\n Histogram shows chromaticity (Lab) before CIECAM.\n Histogram shows  C,s,M after CIECAM if checkbox Show CIECAM output is enabled.\n (C,s,M) are not directly shown in histogram panel. \n For final output refer to the Histogram panel
-!TP_COLORAPP_DATACIE;Show CIECAM output histograms in curves
-!TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM curves show approximate values/ranges for J or Q, and C or s or M after the CIECAM adjustments.\n This selection does not impact the main histogram panel.\n\n When disabled, histograms in CIECAM curves show Lab values, that are before CIECAM adjustments
-!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002\nIf you check the " <i>Automatic</i> " box, RT will try to find the best value
+!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel
+!TP_COLORAPP_DATACIE;Show CIECAM02 output histograms in curves
+!TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
+!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
+!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
 !TP_COLORAPP_EQUAL;Equal
 !TP_COLORAPP_GAMUT;Gamut control (Lab)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 !TP_COLORAPP_HUE;Hue (h)
 !TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°
 !TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
-!TP_COLORAPP_LABEL_CAM02;Modifying image with CIECAM
-!TP_COLORAPP_LABEL_SCENE;Scene conditions
-!TP_COLORAPP_LABEL_VIEWING;Viewing conditions
+!TP_COLORAPP_LABEL_CAM02;Image Adjustments
+!TP_COLORAPP_LABEL_SCENE;Scene Conditions
+!TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 !TP_COLORAPP_LIGHT;Lightness (J)
-!TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 is different from Lab and RGB
+!TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from Lab and RGB lightness
 !TP_COLORAPP_MODEL;White-Point Model
-!TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [output]:</b>\nRT's WB is used for the scene, CIECAM is set to D50, the output device's white uses the value set in Preferences\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's WB settings are used by CAT02 and the output device's white uses the value set in Preferences
+!TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [output]:</b>\nRT's white balance is used for the scene, CIECAM02 is set to D50, the output device's white balance is set in <i>Preferences > Color Management</i>\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's white balance settings are used by CAT02 and the output device's white balance is set in Preferences
 !TP_COLORAPP_RSTPRO;Red & skin tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin tones protection (sliders and curves)
+!TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
+!TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
 !TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_AVER;Average
 !TP_COLORAPP_SURROUND_DARK;Dark
 !TP_COLORAPP_SURROUND_DIM;Dim
 !TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-!TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colors to take into account the viewing conditions of the output device\n\n<b>Average:</b>\nAverage light environment (standard)\nThe image will not change\n\n<b>Dim:</b>\nDim environment (TV)\nThe image will become slighty dark\n\n<b>Dark:</b>\nDark environment (projector)\nThe image will become much dark\n\n<b>Extremly Dark:</b>\nExtremly dark environment (Cutsheet)\nThe image will become very much dark
+!TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colors to take into account the viewing conditions of the output device\n\n<b>Average:</b>\nAverage light environment (standard)\nThe image will not change\n\n<b>Dim:</b>\nDim environment (TV)\nThe image will become slighty dark\n\n<b>Dark:</b>\nDark environment (projector)\nThe image will become more dark\n\n<b>Extremly Dark:</b>\nExtremly dark environment (cutsheet)\nThe image will become very dark
 !TP_COLORAPP_SURSOURCE;Dark surround
 !TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if source image has a dark border
 !TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
 !TP_COLORAPP_TCMODE_CHROMA;Chroma
-!TP_COLORAPP_TCMODE_COLORF;Colorfullness
+!TP_COLORAPP_TCMODE_COLORF;Colorfulness
 !TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
 !TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
 !TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
-!TP_COLORAPP_TONECIE;Tone-mapping with Q brightness CIECAM
-!TP_COLORAPP_TONECIE_TOOLTIP;Additional tone mapping adjustments are controlled in Tone Mapping section and must be enabled for tone mapping to engage.
+!TP_COLORAPP_TONECIE;Tone mapping using CIECAM02 brightness (Q)
+!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping (Lab/CIECAM02) tool must be enabled for this setting to take effect
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
 !TP_CROP_GTEPASSPORT;Biometric Passport
@@ -1120,15 +1136,24 @@ ZOOMBAR_SMALL;Txikia
 !TP_CROP_PPI;PPI=
 !TP_DARKFRAME_AUTOSELECT;Auto selection
 !TP_DARKFRAME_LABEL;Dark Frame
-!TP_DEFRINGE_LABEL;Defringe
+!TP_DEFRINGE_LABEL;Defringe (Lab/CIECAM02)
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
-!TP_DIRPYRDENOISE_CHROMA;Chrominance
+!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
+!TP_DIRPYRDENOISE_CHROMA;Chrominance (Master)
+!TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
 !TP_DIRPYRDENOISE_GAMMA;Gamma
-!TP_DIRPYRDENOISE_LABEL;Noise Reduction (raw images only)
+!TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
+!TP_DIRPYRDENOISE_LABEL;Noise Reduction
+!TP_DIRPYRDENOISE_LAB;Lab
 !TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
 !TP_DIRPYRDENOISE_LUMA;Luminance
-!TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
+!TP_DIRPYRDENOISE_METHOD;Method
+!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
+!TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
+!TP_DIRPYRDENOISE_RED;Delta chrominance Red
+!TP_DIRPYRDENOISE_RGB;RGB
+!TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels (Lab/CIECAM02)
 !TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 !TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
 !TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
@@ -1138,11 +1163,11 @@ ZOOMBAR_SMALL;Txikia
 !TP_DISTORTION_AUTO;Auto Distortion Correction
 !TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.)
 !TP_EPD_EDGESTOPPING;Edge Stopping
-!TP_EPD_LABEL;Tone Mapping [Lab] or [CIECAM02]
+!TP_EPD_LABEL;Tone Mapping (Lab/CIECAM02)
 !TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
 !TP_EPD_SCALE;Scale
 !TP_EPD_STRENGTH;Strength
-!TP_EPD_TOOLTIP;Tone mapping is possible via Lab (standard) mode or CIECAM02 mode.\n\n To engage CIECAM02 Tone mapping mode enable the following settings: \n 1. CIECAM\n 2. Algorithm="Brightness + Colorfullness (QM)"\n 3. "Tone-mapping with Q brightness CIECAM"
+!TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSCORR_LABEL;Raw White &amp; Black Points
 !TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
 !TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto level's operation
@@ -1195,7 +1220,7 @@ ZOOMBAR_SMALL;Txikia
 !TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 !TP_IMPULSEDENOISE_THRESH;Threshold
 !TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
-!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space\nand apply Munsell correction
+!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction
 !TP_LABCURVE_BRIGHTNESS;Lightness
 !TP_LABCURVE_BWTONING;B&W toning
 !TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
@@ -1215,15 +1240,15 @@ ZOOMBAR_SMALL;Txikia
 !TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
 !TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 !TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
-!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity C=f(C).\n Histogram of Chromaticity before Curve adjustements.\n For final output refer to the Histogram panel
+!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity C=f(C).\n\nShows the histogram of chromaticity before curve adjustements.\nFor final output refer to the main histogram panel
 !TP_LABCURVE_CURVEEDITOR_CH;CH
 !TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the hue
 !TP_LABCURVE_CURVEEDITOR_LC;LC
 !TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to the chromaticity
-!TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Histogram of L before Curve Lab adjustements.\n For final output refer to the Histogram panel
+!TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n\nShows the histogram of L before curve adjustements.\nnFor final output refer to the main histogram panel
 !TP_LABCURVE_LABEL;Lab Adjustments
 !TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
-!TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies on all tones
+!TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies to all tones
 !TP_LABCURVE_RSTPROTECTION;Red and Skin Tones Protection
 !TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
 !TP_LENSGEOM_AUTOCROP;Auto Crop
@@ -1235,7 +1260,7 @@ ZOOMBAR_SMALL;Txikia
 !TP_LENSPROFILE_USEDIST;Distortion correction
 !TP_LENSPROFILE_USEVIGN;Vignetting correction
 !TP_NEUTRAL;Neutral
-!TP_NEUTRAL_TIP;Reset exposure controls to neutral values
+!TP_NEUTRAL_TIP;Reset exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
 !TP_PERSPECTIVE_LABEL;Perspective
 !TP_PERSPECTIVE_VERTICAL;Vertical
@@ -1271,13 +1296,16 @@ ZOOMBAR_SMALL;Txikia
 !TP_RGBCURVES_CHANNEL;Channel
 !TP_RGBCURVES_GREEN;G
 !TP_RGBCURVES_LABEL;RGB Curves
+!TP_RGBCURVES_LUMAMODE;Luminosity Mode
+!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.
 !TP_RGBCURVES_RED;R
 !TP_SHARPENEDGE_AMOUNT;Quantity
 !TP_SHARPENEDGE_LABEL;Edges
 !TP_SHARPENEDGE_PASSES;Iterations
 !TP_SHARPENEDGE_THREE;Luminance only
+!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when used with CIECAM02. If difference is observed, adjust to taste.
 !TP_SHARPENMICRO_AMOUNT;Quantity
-!TP_SHARPENMICRO_LABEL;Microcontrast
+!TP_SHARPENMICRO_LABEL;Microcontrast (Lab/CIECAM02)
 !TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 !TP_SHARPENMICRO_UNIFORMITY;Uniformity
 !TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift

@@ -525,8 +525,8 @@ MAIN_MSG_IMAGEUNPROCESSED;Cette commande nécessite que toutes les images sélec
 MAIN_MSG_JOBSINQUEUE;travail(aux) en file d'attente
 MAIN_MSG_NAVIGATOR;Navigateur
 MAIN_MSG_OPERATIONCANCELLED;Opération annulée
-MAIN_MSG_PLACES;Emplacement
 MAIN_MSG_PATHDOESNTEXIST;Le chemin \n\n<b>%1</b>\n\nn'existe pas. S.V.P indiquez un chemin correct dans la fenêtre Préférences.
+MAIN_MSG_PLACES;Emplacement
 MAIN_MSG_QOVERWRITE;Voulez-vous l'écraser?
 MAIN_MSG_SETPATHFIRST;Vous devez d'abord choisir un dossier cible dans Préférences\npour pouvoir utiliser cette fonction!
 MAIN_MSG_WRITEFAILED;Échec de l'enregistrement du fichier\n\n<b>"%1"</b>\n\nAssurez-vous que le dossier existe et qu'il est permis d'y écrire.
@@ -682,6 +682,9 @@ PREFERENCES_CACHESTRAT1;Optimiser la vitesse au détriment de la consommation m�
 PREFERENCES_CACHESTRAT2;Optimiser la consommation mémoire au détriment de la vitesse
 PREFERENCES_CACHESTRAT;Stratégie de gestion du Cache
 PREFERENCES_CACHETHUMBHEIGHT;Hauteur maximale des vignettes
+PREFERENCES_CIEART;CIECAM02 optimisation
+PREFERENCES_CIEART_LABEL;Utilise la précision float au lieu de double pour CIECAM02
+PREFERENCES_CIEART_TOOLTIP;Si activé, les calculs CIECAM sont réalisés en précision float au lieu de précision double. Cela amène un léger accroissement de vitesse, et une légère réduction de qualité
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\nParamètres de ligne de commande pour permettre la génération d'un .pp3 basé sur des règles:\n[Chemin vers le fichier RAW/JPG] [Chemin vers le profil par défault] [ouverture f] [tps d'exposition en seconde] [longueur focale en mm] [ISO] [Objectif] [Appareil photo]
@@ -692,9 +695,6 @@ PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
 PREFERENCES_D65;6500K
-PREFERENCES_CIEART;CIECAM02 optimisation
-PREFERENCES_CIEART_LABEL;Utilise la précision float au lieu de double pour CIECAM02
-PREFERENCES_CIEART_TOOLTIP;Si activé, les calculs CIECAM sont réalisés en précision float au lieu de précision double. Cela amène un léger accroissement de vitesse, et une légère réduction de qualité
 PREFERENCES_DARKFRAMEFOUND;Trouvé
 PREFERENCES_DARKFRAMESHOTS;image(s)
 PREFERENCES_DARKFRAMETEMPLATES;modèle(s)
@@ -943,8 +943,8 @@ TP_COLORAPP_CURVEEDITOR3;Courbes chroma
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs.\n Histogramme affiche la chromaticité Lab avant CIECAM.\n On peut voir le résultat final dans la fenêtre histogramme.\n Histogramme de C,s,M avant/après si la cas à cocher "Données CIECAM" est activée.\n (C,s,M) ne sont pas affichés dans le panneau histogramme
 TP_COLORAPP_DATACIE;Histogrammes post CIECAM
 TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les histogrammes de fond des courbes CIECAM02 montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\nCette sélection n'a pas d'incidence sur l'histogramme général.\n\nQuand désactivé, les histogrammes de fond des courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
-TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Si la case est cochée (recommandé), RT calcule une valeur optimale, qui est utilisé par CAT02, mais aussi pour l'ensemble de CIECAM02.\nVous pouvez décocher la case et changer la valeur du curseur; (les valeurs supérieures à 65 sont recommandées)
+TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002
 TP_COLORAPP_EQUAL;Préservé
 TP_COLORAPP_GAMUT;Contrôle du gamut (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
@@ -1004,20 +1004,20 @@ TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Aberration chromatique (lab / ciecam02)
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
-TP_DIRPYRDENOISE_METHOD;Méthode
-TP_DIRPYRDENOISE_RGB;RVB
-TP_DIRPYRDENOISE_LAB;Lab
-TP_DIRPYRDENOISE_CHROMA;Chrominance (Maître)
-TP_DIRPYRDENOISE_RED;Delta chrominance Rouge
 TP_DIRPYRDENOISE_BLUE;Delta chrominance Bleu
-TP_DIRPYRDENOISE_PERF;Mode RVB (images raw)
+TP_DIRPYRDENOISE_CHROMA;Chrominance (Maître)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Peut être utilisé sur les images raw et non-raw.\n\nPour les images non-raw, la réduction de bruit de luminance dépend du gamma du profile couleur d'entée. Un gamma sRGB est supposé, c'est pourquoi si l'image a un profile couleur d'un gamma différent, la réduction de bruit de luminance variera.
-TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma fait varier la quantité de réduction de bruit sur l'échelle des tons. Les plus petites valeurs cibleront les ombres, les plus hautes valeurs ciblera les tons les plus clairs.
 TP_DIRPYRDENOISE_LABEL;Réduction du bruit
+TP_DIRPYRDENOISE_LAB;Lab
 TP_DIRPYRDENOISE_LDETAIL;Niveau de détails de Luminance
 TP_DIRPYRDENOISE_LUMA;Luminance
+TP_DIRPYRDENOISE_METHOD;Méthode
+TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
+TP_DIRPYRDENOISE_PERF;Mode RVB (images raw)
+TP_DIRPYRDENOISE_RED;Delta chrominance Rouge
+TP_DIRPYRDENOISE_RGB;RVB
 TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail (lab / ciecam02)
 TP_DIRPYREQUALIZER_LUMACOARSEST;les plus gros
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contraste-
@@ -1228,7 +1228,6 @@ TP_SHADOWSHLIGHTS_LOCALCONTR;Contraste local
 TP_SHADOWSHLIGHTS_RADIUS;Rayon
 TP_SHADOWSHLIGHTS_SHADOWS;Ombres
 TP_SHADOWSHLIGHTS_SHTONALW;Amplitude tonale des ombres
-TP_SHARPENING_TOOLTIP;Un effet légèrement différent peut être obtenu avec CIECAM02. Si différence observée, ajuster les réglages
 TP_SHARPENEDGE_AMOUNT;Quantité
 TP_SHARPENEDGE_LABEL;Bords
 TP_SHARPENEDGE_PASSES;Itérations
@@ -1247,6 +1246,7 @@ TP_SHARPENING_RLD_AMOUNT;Quantité
 TP_SHARPENING_RLD_DAMPING;Amortissement
 TP_SHARPENING_RLD_ITERATIONS;Itérations
 TP_SHARPENING_THRESHOLD;Seuil
+TP_SHARPENING_TOOLTIP;Un effet légèrement différent peut être obtenu avec CIECAM02. Si différence observée, ajuster les réglages
 TP_SHARPENING_USM;Masque flou
 TP_SHARPENMICRO_AMOUNT;Quantité
 TP_SHARPENMICRO_LABEL;Microcontraste (lab / ciecam02)
@@ -1332,3 +1332,12 @@ ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
+!TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
+!TP_RGBCURVES_LUMAMODE;Luminosity Mode
+!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.

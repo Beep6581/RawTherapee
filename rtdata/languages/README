@@ -64,4 +64,3 @@ you can use vim:
      :argdo w
   c) vim will process all language files. Once done, you can close it:
      :q
- 
