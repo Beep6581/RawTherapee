@@ -38,6 +38,8 @@
 #include "iccmatrices.h"
 #include "boxblur.h"
 #include "rt_math.h"
+#include "sleef.c"
+
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -102,7 +104,7 @@ namespace rtengine {
             memcpy(dst->data,src->data,dst->width*dst->height*3*sizeof(float));
 			return;
 		}
-		perf=false;		
+		perf=false;
 		if(dnparams.dmethod=="RGB") perf=true;//RGB mode
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// gamma transform for input data
@@ -110,7 +112,7 @@ namespace rtengine {
 		float gamthresh = 0.001f;
 		if(!isRAW) {//reduce gamma under 1 for Lab mode ==> TIF and JPG
 		 if(gam <1.9f) gam=1.f - (1.9f-gam)/3.f;//minimum gamma 0.7
-		 else if (gam >= 1.9f && gam <= 3.f) gam=(1.4f/1.1f)*gam - 1.41818f;  
+		 else if (gam >= 1.9f && gam <= 3.f) gam=(1.4f/1.1f)*gam - 1.41818f;
 		 }
 		float gamslope = exp(log((double)gamthresh)/gam)/gamthresh;
 
@@ -141,7 +143,7 @@ namespace rtengine {
 		for (int i=0; i<65536; i++) {
 			igamcurve[i] = (Color::gamman((float)i/32768.0f,igam) * 65535.0f);
 		}
-		
+
 		}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -151,7 +153,7 @@ namespace rtengine {
 		const float gain = pow (2.0f, dnparams.expcomp);
 		float incr=1.f;
 		float noisevar_Ldetail = SQR((SQR(100.f-dnparams.Ldetail) + 50.f*(100.f-dnparams.Ldetail)) * TS * 0.5f * incr);
-		
+
 				noisered=1.f;//chroma red
 				if(dnparams.redchro<0.1f) {noisered=0.001f+SQR((100.f + dnparams.redchro)/100.0f);}
 				if(dnparams.redchro>0.1f) {noisered=1.f+SQR((dnparams.redchro));}
@@ -159,7 +161,7 @@ namespace rtengine {
 				noiseblue=1.f;//chroma blue
 				if(dnparams.bluechro<0.1f) {noiseblue=0.001f+SQR((100.f + dnparams.bluechro)/100.0f);}
 				if(dnparams.bluechro>0.1f) {noiseblue=1.f+SQR((dnparams.bluechro));}
-				
+
 		array2D<float> tilemask_in(TS,TS);
 		array2D<float> tilemask_out(TS,TS);
 
@@ -274,9 +276,9 @@ namespace rtengine {
 		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
 		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
 	};
-		
-		
-	
+
+
+
 #ifdef _OPENMP
 #pragma omp critical
 #endif
@@ -298,12 +300,12 @@ namespace rtengine {
 				array2D<float> Lin(width,height);
 				//wavelet denoised image
 				LabImage * labdn = new LabImage(width,height);
-				
+
 				//residual between input and denoised L channel
 				array2D<float> Ldetail(width,height,ARRAY2D_CLEAR_DATA);
 				//pixel weight
 				array2D<float> totwt(width,height,ARRAY2D_CLEAR_DATA);//weight for combining DCT blocks
-				
+
 				//
 
 				//#ifdef _OPENMP
@@ -317,7 +319,7 @@ namespace rtengine {
 						int i1 = i - tiletop;
 						for (int j=tileleft/*, j1=0*/; j<tileright; j++/*, j1++*/) {
 							int j1 = j - tileleft;
-							//modification Jacques feb 2013	
+							//modification Jacques feb 2013
 							float R_ = gain*src->r(i,j);
 							float G_ = gain*src->g(i,j);
 							float B_ = gain*src->b(i,j);
@@ -327,19 +329,19 @@ namespace rtengine {
 							//finally I opted fot gamma_26_11
 							R_ = Color::igammatab_26_11[R_];
 							G_ = Color::igammatab_26_11[G_];
-							B_ = Color::igammatab_26_11[B_];	
-							//apply gamma noise	standard (slider)						
+							B_ = Color::igammatab_26_11[B_];
+							//apply gamma noise	standard (slider)
 							R_ = R_<65535.0f ? gamcurve[R_] : (Color::gamman((double)R_/65535.0, gam)*32768.0f);
 							G_ = G_<65535.0f ? gamcurve[G_] : (Color::gamman((double)G_/65535.0, gam)*32768.0f);
 							B_ = B_<65535.0f ? gamcurve[B_] : (Color::gamman((double)B_/65535.0, gam)*32768.0f);
 							//true conversion xyz=>Lab
 							float L,a,b;
 							float X,Y,Z;
-							Color::rgbxyz(R_,G_,B_,X,Y,Z,wp);							
-							
+							Color::rgbxyz(R_,G_,B_,X,Y,Z,wp);
+
 							//convert to Lab
 							Color::XYZ2Lab(X, Y, Z, L, a, b);
-							labdn->L[i1][j1] = L;						
+							labdn->L[i1][j1] = L;
 							labdn->a[i1][j1] = a;
 							labdn->b[i1][j1] = b;
 							Lin[i1][j1] = L;
@@ -370,7 +372,7 @@ namespace rtengine {
 //							totwt[i1][j1] = 0;
 						}
 					}
-					
+
 					}
 				} else {//image is not raw; use Lab parametrization
 					for (int i=tiletop/*, i1=0*/; i<tilebottom; i++/*, i1++*/) {
@@ -383,17 +385,17 @@ namespace rtengine {
 							// solution ==> save TIF with gamma sRGB and re open
 							float rtmp = Color::igammatab_srgb[ src->r(i,j) ];
 							float gtmp = Color::igammatab_srgb[ src->g(i,j) ];
-							float btmp = Color::igammatab_srgb[ src->b(i,j) ];	
-							//modification Jacques feb 2013	
+							float btmp = Color::igammatab_srgb[ src->b(i,j) ];
+							//modification Jacques feb 2013
 							// gamma slider different from raw
 							rtmp = rtmp<65535.0f ? gamcurve[rtmp] : (Color::gamman((double)rtmp/65535.0, gam)*32768.0f);
 							gtmp = gtmp<65535.0f ? gamcurve[gtmp] : (Color::gamman((double)gtmp/65535.0, gam)*32768.0f);
 							btmp = btmp<65535.0f ? gamcurve[btmp] : (Color::gamman((double)btmp/65535.0, gam)*32768.0f);
-							
-							
+
+
 							float X,Y,Z;
 							Color::rgbxyz(rtmp,gtmp,btmp,X,Y,Z,wp);
-							
+
 							//convert Lab
 							Color::XYZ2Lab(X, Y, Z, L, a, b);
 							labdn->L[i1][j1] = L;
@@ -402,7 +404,7 @@ namespace rtengine {
 
 //							Ldetail[i1][j1] = 0;
 							Lin[i1][j1] = L;
-							
+
 //							totwt[i1][j1] = 0;
 						}
 					}
@@ -424,13 +426,13 @@ namespace rtengine {
 				float noisevarL	 = SQR((dnparams.luma/125.0f)*(1+ dnparams.luma/25.0f));
 
 				float noisevarab = SQR(dnparams.chroma/10.0f);
-				
-				
+
+
                 { // enclosing this code in a block frees about 120 MB before allocating 20 MB after this block (measured with D700 NEF)
                 wavelet_decomposition* Ldecomp;
                 wavelet_decomposition* adecomp;
                 wavelet_decomposition* bdecomp;
-				
+
 				int levwav=5;
 			//	if(xxxx) levwav=7;
                 Ldecomp = new wavelet_decomposition (labdn->data, labdn->W, labdn->H, levwav/*maxlevels*/, 0/*subsampling*/ );
@@ -608,10 +610,10 @@ namespace rtengine {
 					for (int i=tiletop; i<tilebottom; i++){
 						int i1 = i-tiletop;
 						float X,Y,Z,L,a,b;
-						
+
 						for (int j=tileleft; j<tileright; j++) {
 							int j1=j-tileleft;
-							//modification Jacques feb 2013	
+							//modification Jacques feb 2013
 							//true conversion Lab==>xyz
 							L = labdn->L[i1][j1];
 							a = labdn->a[i1][j1];
@@ -628,8 +630,8 @@ namespace rtengine {
 							//readapt arbitrary gamma (inverse from beginning)
 							r_ = Color::gammatab_26_11[r_];
 							g_ = Color::gammatab_26_11[g_];
-							b_ = Color::gammatab_26_11[b_];	
-							
+							b_ = Color::gammatab_26_11[b_];
+
 							float factor = Vmask[i1]*Hmask[j1]/gain;
 
 							dsttmp->r(i,j) += factor*r_;
@@ -662,7 +664,7 @@ namespace rtengine {
 
 						}
 					}
-					
+
 					}
 				} else {
 #ifdef _OPENMP
@@ -673,7 +675,7 @@ namespace rtengine {
 						float X,Y,Z,L,a,b;
 						for (int j=tileleft; j<tileright; j++) {
 							int j1=j-tileleft;
-							//modification Jacques feb 2013	
+							//modification Jacques feb 2013
 							L = labdn->L[i1][j1];
 							a = labdn->a[i1][j1];
 							b = labdn->b[i1][j1];
@@ -686,7 +688,7 @@ namespace rtengine {
 							r_ = r_<32768.0f ? igamcurve[r_] : (Color::gamman((float)r_/32768.0f, igam) * 65535.0f);
 							g_ = g_<32768.0f ? igamcurve[g_] : (Color::gamman((float)g_/32768.0f, igam) * 65535.0f);
 							b_ = b_<32768.0f ? igamcurve[b_] : (Color::gamman((float)b_/32768.0f, igam) * 65535.0f);
-						
+
 							dsttmp->r(i,j) += factor*r_;
 							dsttmp->g(i,j) += factor*g_;
 							dsttmp->b(i,j) += factor*b_;
@@ -699,11 +701,11 @@ namespace rtengine {
 
 				delete labdn;
 			//	delete noiseh;
-				
+
 				delete[] Vmask;
 				delete[] Hmask;
-		
-				
+
+
 
 			}//end of tile row
 		}//end of tile loop
@@ -752,9 +754,10 @@ namespace rtengine {
 		int blkstart = hblproc*TS*TS;
 
 		boxabsblur(fLblox+blkstart, nbrwt, 3, 3, TS, TS);//blur neighbor weights for more robust estimation	//for DCT
+
 #pragma omp parallel for
 		for (int n=0; n<TS*TS; n++) {		//for DCT
-			fLblox[blkstart+n] *= (1-expf(-SQR(nbrwt[n])/noisevar_Ldetail));
+			fLblox[blkstart+n] *= (1-xexpf(-SQR(nbrwt[n])/noisevar_Ldetail));
 		}//output neighbor averaged result
 
 		delete[] nbrwt;
@@ -899,7 +902,7 @@ namespace rtengine {
 			//			  skip_L, skip_ab, skip_h, noisevar_L, noisevar_ab, NULL, NULL);//TODO: this implies redundant evaluation of MAD
 				ShrinkAll(WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, lvl, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,
 						  skip_L, skip_ab, noisevar_L, noisevar_ab, NULL);//TODO: this implies redundant evaluation of MAD
-						  
+
 			} else {
 
 				float ** WavPars_L = WaveletCoeffs_L.level_coeffs(lvl+1);
@@ -953,8 +956,8 @@ namespace rtengine {
 								//float satfactor_a = mad_a/(mad_a+0.5*SQR(WavCoeffs_a[0][coeffloc_ab]));
 								//float satfactor_b = mad_b/(mad_b+0.5*SQR(WavCoeffs_b[0][coeffloc_ab]));
 
-								WavCoeffs_a[dir][coeffloc_ab] *= SQR(1-exp(-(mag_a/mad_a)-(mag_L/(9*mad_L)))/*satfactor_a*/);
-								WavCoeffs_b[dir][coeffloc_ab] *= SQR(1-exp(-(mag_b/mad_b)-(mag_L/(9*mad_L)))/*satfactor_b*/);
+								WavCoeffs_a[dir][coeffloc_ab] *= SQR(1-xexpf(-(mag_a/mad_a)-(mag_L/(9*mad_L)))/*satfactor_a*/);
+								WavCoeffs_b[dir][coeffloc_ab] *= SQR(1-xexpf(-(mag_b/mad_b)-(mag_L/(9*mad_L)))/*satfactor_b*/);
 
 							}
 						}//now chrominance coefficients are denoised
@@ -972,7 +975,7 @@ namespace rtengine {
 								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
 								//float mag_Lpar = SQR(parfrac*WavPars_L[dir][coeffloc_Lpar]);
 								//float sf_L = SQR(1-expf(-(mag_L/mad_L)-(mag_Lpar/mad_L)));
-								float sf_L = mag_L/(mag_L+mad_L*exp(-mag_L/(9*mad_L))+eps);
+								float sf_L = mag_L/(mag_L+mad_L*xexpf(-mag_L/(9*mad_L))+eps);
 
 								sfave[coeffloc_L] = sf_L;
 
@@ -995,7 +998,7 @@ namespace rtengine {
 
 								float edgefactor = 1;//expf(-SQR(edge[i][j])/mad_L);
 
-								float sf_L = mag_L/(mag_L + edgefactor*mad_L*exp(-mag_L/(9*mad_L))+eps);
+								float sf_L = mag_L/(mag_L + edgefactor*mad_L*xexpf(-mag_L/(9*mad_L))+eps);
 
 								//use smoothed shrinkage unless local shrinkage is much less
 								WavCoeffs_L[dir][coeffloc_L] *= (SQR(edgefactor*sfave[coeffloc_L])+SQR(sf_L))/(edgefactor*sfave[coeffloc_L]+sf_L+eps);
@@ -1017,7 +1020,7 @@ namespace rtengine {
 
 	void ImProcFunctions::WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a,
 											wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab,  LabImage * noi)//mod JD
-											
+
 	{
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 //       printf("maxlevel = %d\n",maxlvl);
@@ -1033,19 +1036,19 @@ namespace rtengine {
 			int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
 			int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
 
-			
+
 			float skip_L = WaveletCoeffs_L.level_stride(lvl);
 			float skip_ab = WaveletCoeffs_a.level_stride(lvl);
 
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
-			
+
        //     printf("Hab : %d\n", Hlvl_ab);
         //    printf("Wab : %d\n", Wlvl_ab);
 			ShrinkAll(WavCoeffs_L, WavCoeffs_a, WavCoeffs_b, lvl, Wlvl_L, Hlvl_L, Wlvl_ab, Hlvl_ab,
 					  skip_L, skip_ab, noisevar_L, noisevar_ab, noi);
-					  
+
 		}
 //omp_set_nested(false);
 	}
@@ -1093,8 +1096,8 @@ namespace rtengine {
 						m_b=mad_b;
 						int coeffloc_ab = i*W_ab+j;
 						int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
-						//modification Jacques feb 2013	
-						
+						//modification Jacques feb 2013
+
 						float reduc=1.f;
 						float bluuc=1.f;
 						if(noisered!=0. || noiseblue !=0.) {
@@ -1102,17 +1105,17 @@ namespace rtengine {
 						//one can also use L or c (chromaticity) if necessary
 						if(hh > -0.4f && hh < 1.6f) reduc=noisered;//red from purple to next yellow
 						if(hh>-2.45f && hh <=-0.4f) bluuc=noiseblue;//blue
-						}	
+						}
 						mad_a*=reduc;
 						mad_a*=bluuc;
 						mad_b*=reduc;
 						mad_b*=bluuc;
-						
+
 						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
 						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
-						sfavea[coeffloc_ab] = (1-exp(-(mag_a/mad_a)-(mag_L/(9*madL))));
-						sfaveb[coeffloc_ab] = (1-exp(-(mag_b/mad_b)-(mag_L/(9*madL))));
+						sfavea[coeffloc_ab] = (1-xexpf(-(mag_a/mad_a)-(mag_L/(9*madL))));
+						sfaveb[coeffloc_ab] = (1-xexpf(-(mag_b/mad_b)-(mag_L/(9*madL))));
 						mad_a=m_a;
 						mad_b=m_b;
 						// 'firm' threshold of chroma coefficients
@@ -1137,26 +1140,26 @@ namespace rtengine {
 
 						int coeffloc_ab = i*W_ab+j;
 						int coeffloc_L	= ((i*skip_L)/skip_ab)*W_L + ((j*skip_L)/skip_ab);
-							//modification Jacques feb 2013	
-							
+							//modification Jacques feb 2013
+
 						float reduc=1.f;
 						float bluuc=1.f;
 						if(noisered!=0. || noiseblue !=0.) {
 						float hh=atan2(noi->b[2*i][2*j],noi->a[2*i][2*j]);
 						if(hh > -0.4f && hh < 1.6f) reduc=noisered;
 						if(hh>-2.45f && hh <=-0.4f) bluuc=noiseblue;
-						}						
+						}
 						mad_a*=reduc;
 						mad_a*=bluuc;
 						mad_b*=reduc;
 						mad_b*=bluuc;
-						
+
 						float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L ])+eps;
 						float mag_a = SQR(WavCoeffs_a[dir][coeffloc_ab])+eps;
 						float mag_b = SQR(WavCoeffs_b[dir][coeffloc_ab])+eps;
 
-						float sfa = (1-exp(-(mag_a/mad_a)-(mag_L/(9*madL))));
-						float sfb = (1-exp(-(mag_b/mad_b)-(mag_L/(9*madL))));
+						float sfa = (1-xexpf(-(mag_a/mad_a)-(mag_L/(9*madL))));
+						float sfb = (1-xexpf(-(mag_b/mad_b)-(mag_L/(9*madL))));
 
 						//use smoothed shrinkage unless local shrinkage is much less
 						WavCoeffs_a[dir][coeffloc_ab] *= (SQR(sfavea[coeffloc_ab])+SQR(sfa))/(sfavea[coeffloc_ab]+sfa+eps);
@@ -1175,7 +1178,7 @@ namespace rtengine {
 				for (int i=0; i<W_L*H_L; i++) {
 
 					float mag = SQR(WavCoeffs_L[dir][i]);
-					float shrinkfactor = mag/(mag+mad_L*exp(-mag/(9*mad_L))+eps);
+					float shrinkfactor = mag/(mag+mad_L*xexpf(-mag/(9*mad_L))+eps);
 
 					//WavCoeffs_L[dir][i] *= shrinkfactor;
 					sfave[i] = shrinkfactor;
@@ -1189,7 +1192,7 @@ namespace rtengine {
 
 
 					float mag = SQR(WavCoeffs_L[dir][i]);
-					float sf = mag/(mag+mad_L*exp(-mag/(9*mad_L))+eps);
+					float sf = mag/(mag+mad_L*xexpf(-mag/(9*mad_L))+eps);
 
 					//use smoothed shrinkage unless local shrinkage is much less
 					WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
