@@ -51,7 +51,7 @@ class ExportPanel : public Gtk::VBox {
 	    icm_gamma   = "default";
 */
 	    Gtk::CheckButton* bypass_dirpyrequalizer; // also could leave untouched but disable only small radius adjustments
-	    Gtk::CheckButton* bypass_raw_all_enhance;
+	    //Gtk::CheckButton* bypass_raw_all_enhance;
 
 	    Gtk::CheckButton* bypass_raw_ca; // wraps raw.cared, raw.cablue, raw.ca_autocorrect
 	    Gtk::CheckButton* bypass_raw_df; //wraps raw.dark_frame, raw.df_AutoSelect
@@ -83,7 +83,7 @@ class ExportPanel : public Gtk::VBox {
 		sigc::connection bypass_dirpyrDenoiseConn     ;
 		sigc::connection bypass_sh_hqConn             ;
 		sigc::connection bypass_dirpyrequalizerConn   ;
-		sigc::connection bypass_raw_all_enhanceConn   ;
+		//sigc::connection bypass_raw_all_enhanceConn   ;
 		sigc::connection bypass_raw_ccStepsConn       ;
 		sigc::connection bypass_raw_dcb_iterationsConn;
 		sigc::connection bypass_raw_dcb_enhanceConn   ;

@@ -171,7 +171,7 @@ enum ProcEvent {
 	EvSharpenEdgeThreechannels=146,
 	EvSharpenMicroEnabled=147,
 	EvSharpenMicroMatrix=148,
-	EvDemosaicALLEnhanced=149,
+	EvDemosaicALLEnhanced=149,    // Disabled but not removed for now, may be reintroduced some day
 	EvVibranceEnabled=150,
 	EvVibrancePastels=151,
 	EvVibranceSaturated=152,

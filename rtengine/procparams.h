@@ -729,8 +729,7 @@ class RAWParams {
         Glib::ustring dmethod;
         int dcb_iterations;
         bool dcb_enhance;
-        bool all_enhance;
-		
+        //bool all_enhance;
 };
 
 /**
