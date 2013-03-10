@@ -29,7 +29,9 @@
 
 
 #include "rt_math.h"
+#include "rawimagesource.h"
 
+namespace rtengine {
 
 //void green_equilibrate()//for dcraw implementation
 void RawImageSource::green_equilibrate(float thresh)
@@ -142,4 +144,6 @@ void RawImageSource::green_equilibrate(float thresh)
 	
 	
 }
+}
+
 #undef TS

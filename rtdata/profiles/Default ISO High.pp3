@@ -111,7 +111,7 @@ Curve2=0;
 Curve3=0;
 
 [Impulse Denoising]
-Enabled=false
+Enabled=true
 Threshold=80
 
 [Defringing]
@@ -251,7 +251,7 @@ HotDeadPixelThresh=40
 LineDenoise=0
 GreenEqThreshold=0
 CcSteps=0
-Method=amaze
+Method=igv
 DCBIterations=2
 DCBEnhance=false
 ALLEnhance=false

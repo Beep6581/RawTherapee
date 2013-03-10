@@ -689,8 +689,11 @@ class HSVEqualizerParams {
 class RAWParams {
 
     public:
-		enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,fast,
+	//	enum eMethod{eahd,hphd,vng4,dcb,amaze,ahd,IGV_noise,fast,
+	//				numMethods }; // This MUST be the last enum
+		enum eMethod{amaze,igv,lmmse,eahd,hphd,vng4,dcb,ahd,fast,
 					numMethods }; // This MUST be the last enum
+					
 		static const char *methodstring[numMethods];
 
 		enum eFlatFileBlurType{/*parametric,*/area_ff,v_ff,h_ff,vh_ff,

@@ -111,7 +111,7 @@ Curve2=0;
 Curve3=0;
 
 [Impulse Denoising]
-Enabled=false
+Enabled=true
 Threshold=50
 
 [Defringing]

@@ -27,6 +27,8 @@
 #include "rtengine.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
+#include "../rtgui/multilangmgr.h"
+#include "procparams.h"
 
 using namespace rtengine;
 
@@ -74,7 +76,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh) {
 // Issue 1676
 // Moved from inside the parallel section
 	if (plistener) {
-		plistener->setProgressStr ("AMaZE Demosaicing...");
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::amaze]));
 		plistener->setProgress (0.0);
 	}
 
