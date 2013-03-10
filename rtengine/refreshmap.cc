@@ -169,7 +169,7 @@ SHARPENING,       // EvSharpenEdgeEnabled
 SHARPENING,       // EvSharpenEdgeThreechannels
 SHARPENING,       // EvSharpenMicroEnabled
 SHARPENING,       // EvSharpenMicroMatrix
-DEMOSAIC,         // EvDemosaicALLEnhanced
+DEMOSAIC,         // EvDemosaicALLEnhanced  // Disabled but not removed for now, may be reintroduced some day
 RGBCURVE,         // EvVibranceEnabled
 RGBCURVE,         // EvVibrancePastels
 RGBCURVE,         // EvVibranceSaturated

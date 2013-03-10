@@ -327,7 +327,7 @@ void Options::setDefaults () {
     fastexport_bypass_dirpyrDenoise      = true;
     fastexport_bypass_sh_hq              = true;
     fastexport_bypass_dirpyrequalizer    = true;
-    fastexport_bypass_raw_all_enhance    = true;
+    //fastexport_bypass_raw_all_enhance    = true;
     fastexport_bypass_raw_ccSteps        = true;
     fastexport_bypass_raw_dcb_iterations = true;
     fastexport_bypass_raw_dcb_enhance    = true;
@@ -710,7 +710,7 @@ if (keyFile.has_group ("Fast Export")) {
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrDenoise"     ))  fastexport_bypass_dirpyrDenoise       = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"     );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_sh_hq"             ))  fastexport_bypass_sh_hq               = keyFile.get_boolean ("Fast Export", "fastexport_bypass_sh_hq"             );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_dirpyrequalizer"   ))  fastexport_bypass_dirpyrequalizer     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"   );
-    if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_all_enhance"   ))  fastexport_bypass_raw_all_enhance     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"   );
+    //if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_all_enhance"   ))  fastexport_bypass_raw_all_enhance     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"   );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_ccSteps"       ))  fastexport_bypass_raw_ccSteps         = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"       );
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_iterations"))  fastexport_bypass_raw_dcb_iterations  = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_iterations");
     if (keyFile.has_key ("Fast Export", "fastexport_bypass_raw_dcb_enhance"   ))  fastexport_bypass_raw_dcb_enhance     = keyFile.get_boolean ("Fast Export", "fastexport_bypass_raw_dcb_enhance"   );
@@ -956,7 +956,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrDenoise"      , fastexport_bypass_dirpyrDenoise     );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_sh_hq"              , fastexport_bypass_sh_hq             );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_dirpyrequalizer"    , fastexport_bypass_dirpyrequalizer   );
-    keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"    , fastexport_bypass_raw_all_enhance   );
+    //keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_all_enhance"    , fastexport_bypass_raw_all_enhance   );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_ccSteps"        , fastexport_bypass_raw_ccSteps       );
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_dcb_iterations" , fastexport_bypass_raw_dcb_iterations);
     keyFile.set_boolean ("Fast Export", "fastexport_bypass_raw_dcb_enhance"    , fastexport_bypass_raw_dcb_enhance   );

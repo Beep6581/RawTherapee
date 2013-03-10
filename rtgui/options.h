@@ -213,7 +213,7 @@ class Options {
     bool fastexport_bypass_dirpyrDenoise;
     bool fastexport_bypass_sh_hq;
     bool fastexport_bypass_dirpyrequalizer;
-    bool fastexport_bypass_raw_all_enhance;
+    //bool fastexport_bypass_raw_all_enhance;
     bool fastexport_bypass_raw_ccSteps;
     bool fastexport_bypass_raw_dcb_iterations;
     bool fastexport_bypass_raw_dcb_enhance;
