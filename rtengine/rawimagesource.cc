@@ -1102,6 +1102,10 @@ void RawImageSource::demosaic(const RAWParams &raw)
             dcb_demosaic(raw.dcb_iterations, raw.dcb_enhance);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::eahd])
             eahd_demosaic ();
+        else if (raw.dmethod == RAWParams::methodstring[RAWParams::igv])
+            igv_interpolate();
+        else if (raw.dmethod == RAWParams::methodstring[RAWParams::lmmse])
+            lmmse_interpolate_omp(W,H);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demosaic (0,0,W,H);
 			//nodemosaic();//for testing
@@ -2524,6 +2528,9 @@ void RawImageSource::inverse33 (const double (*rgb_cam)[3], double (*cam_rgb)[3]
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Emil's code 
+/*
+ * Now compiled separately
+ *
 #include "fast_demo.cc"//fast demosaic	
 #include "amaze_demosaic_RT.cc"//AMaZE demosaic	
 #include "CA_correct_RT.cc"//Emil's CA auto correction
@@ -2532,6 +2539,7 @@ void RawImageSource::inverse33 (const double (*rgb_cam)[3], double (*cam_rgb)[3]
 #include "hilite_recon.cc"//Emil's highlight reconstruction
 
 #include "expo_before_b.cc"//Jacques's exposure before interpolation
+*/
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #undef PIX_SORT

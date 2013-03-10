@@ -1175,6 +1175,9 @@ TP_RAW_ALLENHANCE;Post-Demosaic Artifact/Noise Reduction
 TP_RAW_DCBENHANCE;DCB Enhancement Step
 TP_RAW_DCBITERATIONS;Number of DCB Iterations
 TP_RAW_DMETHOD;Method
+TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
+TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
+TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
 TP_RAW_FALSECOLOR;False Color Suppression Steps
 TP_RAW_LABEL;Demosaicing
 TP_RESIZE_APPLIESTO;Applies to:

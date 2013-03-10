@@ -29,10 +29,12 @@ RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
    hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") +": ")),Gtk::PACK_SHRINK, 4);
    dmethod = Gtk::manage (new MyComboBoxText ());
-   for( size_t i=0; i< procparams::RAWParams::numMethods;i++)
+   for( size_t i=0; i<procparams::RAWParams::numMethods;i++)
 	   dmethod->append_text(procparams::RAWParams::methodstring[i]);
 
    dmethod->set_active(0);
+   hb1->set_tooltip_markup (M("TP_RAW_DMETHOD_TOOLTIP"));
+
    hb1->pack_end (*dmethod, Gtk::PACK_EXPAND_WIDGET, 4);
    pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 

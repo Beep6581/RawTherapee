@@ -142,7 +142,7 @@ class RawImageSource : public ImageSource {
         void        flushRawData      ();
         void        flushRGB          ();
         void        HLRecovery_Global (HRecParams hrp);
-        //void        refinement_lassus ();
+        void        refinement_lassus ();
 
         bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
 
@@ -224,11 +224,16 @@ class RawImageSource : public ImageSource {
         void hphd_demosaic();
         void vng4_demosaic();
         void ppg_demosaic();
+        void jdl_interpolate_omp();
+        void igv_interpolate();
+        void lmmse_interpolate_omp(int winw, int winh);
+
         void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
         void fast_demosaic(int winx, int winy, int winw, int winh);//Emil's code for fast demosaicing
         void dcb_demosaic(int iterations, bool dcb_enhance);
         void ahd_demosaic(int winx, int winy, int winw, int winh);
-        void border_interpolate(int border, float (*image)[4], int start = 0, int end = 0);
+        void border_interpolate(unsigned int border, float (*image)[4], unsigned int start = 0, unsigned int end = 0);
+        void border_interpolate2(unsigned int border, float (*image)[3], unsigned int start = 0, unsigned int end = 0);
         void dcb_initTileLimits(int &colMin, int &rowMin, int &colMax, int &rowMax, int x0, int y0, int border);
         void fill_raw( float (*cache )[4], int x0, int y0, float** rawData);
         void fill_border( float (*cache )[4], int border, int x0, int y0);

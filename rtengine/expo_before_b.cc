@@ -30,6 +30,16 @@
 //      exposure (linear): 2^(-8..0..8): currently 0.5 +3
 //      preserve (log)   : 0..8 : currently 0.1 1
 
+#include "rtengine.h"
+#include "rawimagesource.h"
+#include "mytime.h"
+#include "rt_math.h"
+#include "../rtgui/options.h"
+
+namespace rtengine {
+
+extern const Settings* settings;
+
 void RawImageSource::processRawWhitepoint(float expos, float preser) {
 	MyTime t1e,t2e;
 	t1e.set();
@@ -146,7 +156,9 @@ void RawImageSource::processRawWhitepoint(float expos, float preser) {
         delete[] luminosity;
     }
 	t2e.set();
-	if( settings->verbose )
+	if (settings->verbose)
 		printf("Exposure before  %d usec\n", t2e.etime(t1e));
 	
 }
+
+} //namespace

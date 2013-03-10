@@ -1190,6 +1190,9 @@ TP_RAW_ALLENHANCE;Réduction de bruit/artefact post-dématriçage
 TP_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 TP_RAW_DCBITERATIONS;Nombre d'itération de DCB
 TP_RAW_DMETHOD;Méthode
+TP_RAW_DMETHOD_PROGRESSBAR;Dématriçage %1...
+TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Affinage du dématriçage...
+TP_RAW_DMETHOD_TOOLTIP;Note: IGV et LMMSE sont dédiés aux images à haut ISO
 TP_RAW_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 TP_RAW_LABEL;Dématriçage
 TP_RESIZE_APPLIESTO;S'applique à:

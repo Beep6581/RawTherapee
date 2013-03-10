@@ -24,6 +24,13 @@
 
 #include <cmath>
 #include "rawimagesource.h"
+#include "../rtgui/multilangmgr.h"
+#include "procparams.h"
+
+/*#ifdef _OPENMP
+#include <omp.h>
+#endif*/
+
 using namespace std;
 using namespace rtengine;
 
@@ -48,7 +55,7 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 	//int winw=W, winh=H;
 	
 	if (plistener) {
-		plistener->setProgressStr ("Fast demosaicing...");
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::fast]));
 		plistener->setProgress (0.0);
 	}
 	float progress = 0.0;
@@ -59,9 +66,13 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 	int clip_pt = 4*65535*initialGain;
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
 #pragma omp parallel
+#endif
 	{
+#ifdef _OPENMP
 #pragma omp for
+#endif
 	//first, interpolate borders using bilinear
 	for (int i=0; i<H; i++) {
 
@@ -123,7 +134,9 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 	}//i
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#ifdef _OPENMP
 #pragma omp for
+#endif
 	for (int j=bord; j<W-bord; j++) {
         float sum[6];
 
@@ -186,9 +199,9 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-		
-
+#ifdef _OPENMP
 #pragma omp for 
+#endif
 		// interpolate G using gradient weights
 		for (int i=bord; i< H-bord; i++) {
 			float	wtu, wtd, wtl, wtr;
@@ -218,8 +231,9 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 		}
 		if(plistener) plistener->setProgress(0.4);
 
-		
-#pragma omp for 		
+#ifdef _OPENMP
+#pragma omp for
+#endif
 		for (int i=bord; i< H-bord; i++) {
 			for (int j=bord+(FC(i,2)&1); j < W-bord; j+=2) {
 				
@@ -241,9 +255,13 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 		}
 		if(plistener) plistener->setProgress(0.7);
 
+#ifdef _OPENMP
 #pragma omp barrier
-		
-#pragma omp for 		
+#endif
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
 
 	// interpolate R/B using color differences
 	for (int i=bord; i< H-bord; i++) {
@@ -259,8 +277,8 @@ void RawImageSource::fast_demosaic(int winx, int winy, int winw, int winh) {
 		//if(plistener) plistener->setProgress(progress);
 	}
 	if(plistener) plistener->setProgress(0.99);
-	}
+	} // End of parallelization
 	
 #undef bord
 	
-}//namespace
+}

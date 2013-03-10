@@ -37,6 +37,7 @@
 #endif
 
 #include "rt_math.h"
+#include "rawimagesource.h"
 
 
 
@@ -45,7 +46,7 @@
 
 //#include "RGBdefringe.cc"
 
-//namespace rtengine {
+namespace rtengine {
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -698,5 +699,5 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	}
 */
 	
-//}
+}
 

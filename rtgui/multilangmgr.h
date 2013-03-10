@@ -31,17 +31,16 @@ class MultiLangMgr {
     Glib::ustring TranslateRFC2Language(Glib::ustring rfcName);
 
     public: 
-	MultiLangMgr () : fallBack (NULL) {}
-	MultiLangMgr (Glib::ustring fname) : fallBack (NULL) { load (fname); }
-	MultiLangMgr (Glib::ustring fname, MultiLangMgr* fb) : fallBack (NULL) { load (fname, fb); }
+    MultiLangMgr () : fallBack (NULL) {}
+    MultiLangMgr (Glib::ustring fname) : fallBack (NULL) { load (fname); }
+    MultiLangMgr (Glib::ustring fname, MultiLangMgr* fb) : fallBack (NULL) { load (fname, fb); }
 
-        bool load (Glib::ustring fname, MultiLangMgr* fb = NULL);
-	bool save (Glib::ustring fname);
-        
+    bool load (Glib::ustring fname, MultiLangMgr* fb = NULL);
+    bool save (Glib::ustring fname);
+
     bool isOSLanguageDetectSupported();
     Glib::ustring getOSUserLanguage();
-
-        Glib::ustring getStr (std::string key);
+    Glib::ustring getStr (std::string key);
 };
 
 extern MultiLangMgr langMgr;
