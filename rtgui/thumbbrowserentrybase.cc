@@ -57,7 +57,12 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
 
     Gtk::Widget* w = parent->getDrawingArea ();
 
-    backBuffer = Gdk::Pixmap::create (w->get_window(), exp_width, exp_height);
+    Glib::RefPtr<Gdk::Window> win = w->get_window();
+    if (!win)
+        // Nothing to draw on, so we return
+        return;
+
+    backBuffer = Gdk::Pixmap::create (win, exp_width, exp_height);
 
     // If thumbnail is hidden by a filter drawing to it will crash
     int backbuffer_w=0, backbuffer_h=0;
