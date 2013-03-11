@@ -288,18 +288,20 @@ bool RTWindow::on_window_state_event(GdkEventWindowState* event) {
 }
 
 void RTWindow::on_mainNB_switch_page(GtkNotebookPage* page, guint page_num) {
-	if (page_num > 1) {
+    if (page_num > 1) {
         if (isSingleTabMode()) MoveFileBrowserToEditor();
 
-	EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
-		ep->setAspect();
-	} else {
+        EditorPanel *ep = static_cast<EditorPanel*>(mainNB->get_nth_page(page_num));
+        ep->setAspect();
+    } else {
         // in single tab mode with command line filename epanel does not exist yet
         if (isSingleTabMode() && epanel) {
             // Save profile on leaving the editor panel
             epanel->saveProfile();
 
-            MoveFileBrowserToMain();
+            // Moving the FileBrowser only if the user has switched to the FileBrowser tab
+            if (page_num==0)
+                MoveFileBrowserToMain();
         }
     }
 }

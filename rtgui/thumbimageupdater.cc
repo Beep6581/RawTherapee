@@ -26,7 +26,7 @@
 #include <omp.h>
 #endif 
 
-#define DEBUG(format,args...) 
+#define DEBUG(format,args...)
 //#define DEBUG(format,args...) printf("ThumbImageUpdate::%s: " format "\n", __FUNCTION__, ## args)
 
 class
@@ -138,7 +138,7 @@ public:
 
 			// remove so not run again
 			jobs_.erase(i);
-			DEBUG("%d job(s) remaining",jobs_.size());
+			DEBUG("%d job(s) remaining", int(jobs_.size()) );
 
 			++active_;
 		}
@@ -215,7 +215,7 @@ ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
 				i->listener_ == l &&
 				i->upgrade_ == upgrade )
 		{
-			DEBUG("updating job %s",tbe->getFileName().c_str());
+			DEBUG("updating job %s",tbe->shortname.c_str());
 			// we have one, update queue entry, will be picked up by thread when processed
 			/*i->pparams_ = params;
 			i->height_ = height; */
@@ -225,10 +225,10 @@ ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
 	}
 
 	// create a new job and append to queue
-	DEBUG("queing job %s",t->getFileName().c_str());
+	DEBUG("queing job %s",tbe->shortname.c_str());
 	impl_->jobs_.push_back(Impl::Job(tbe,priority,upgrade,l));
 
-	DEBUG("adding run request %s",t->getFileName().c_str());
+	DEBUG("adding run request %s",tbe->shortname.c_str());
 	impl_->threadPool_->push(sigc::mem_fun(*impl_, &ThumbImageUpdater::Impl::processNextJob));
 }
 
