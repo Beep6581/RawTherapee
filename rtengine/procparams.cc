@@ -260,7 +260,6 @@ void ProcParams::setDefaults () {
     dirpyrDenoise.redchro       = 0;
     dirpyrDenoise.bluechro      = 0;
     dirpyrDenoise.gamma         = 1.7;
-	dirpyrDenoise.expcomp       = 0.0;
     dirpyrDenoise.dmethod       = "RGB";
 
     edgePreservingDecompositionUI.enabled = false;

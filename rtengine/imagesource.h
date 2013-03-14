@@ -54,9 +54,10 @@ class ImageSource : public InitialImage {
         Glib::ustring fileName;
         ImageData* idata;
         ImageMatrices imatrices;
+        double dirpyrdenoiseExpComp;
 
     public:
-                            ImageSource () : references (1), embProfile(NULL), idata(NULL) {}
+                            ImageSource () : references (1), embProfile(NULL), idata(NULL), dirpyrdenoiseExpComp(INFINITY) {}
 
         virtual ~ImageSource            () {}
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
@@ -100,7 +101,7 @@ class ImageSource : public InitialImage {
         virtual void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) { 
             histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear(); // only some sources will supply this
         }
-
+        double getDirPyrDenoiseExpComp ( ) { return dirpyrdenoiseExpComp; }
         // functions inherited from the InitialImage interface
         virtual Glib::ustring getFileName ()        { return fileName; }
         virtual cmsHPROFILE getEmbeddedProfile ()   { return embProfile; }

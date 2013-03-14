@@ -464,7 +464,6 @@ class WBParams {
 		double	redchro;
 		double 	bluechro;
         double	gamma;
-        double	expcomp;
         Glib::ustring dmethod;
 		
     };

@@ -116,7 +116,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     LabImage* labView = new LabImage (fw,fh);
     if (params.dirpyrDenoise.enabled) {
-		ipf.RGB_denoise(baseImg, baseImg, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe);
+		ipf.RGB_denoise(baseImg, baseImg, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
     }
     imgsrc->convertColorSpace(baseImg, params.icm, params.raw);
 

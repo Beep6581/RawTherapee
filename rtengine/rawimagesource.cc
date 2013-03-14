@@ -1077,6 +1077,14 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 	
 	if ( raw.expos !=1 ) processRawWhitepoint(raw.expos, raw.preser);
 	
+	if(dirpyrdenoiseExpComp == INFINITY) {
+        LUTu aehist; int aehistcompr;
+        double clip=0;
+        int brightness, contrast, black, hlcompr, hlcomprthresh;
+        getAutoExpHistogram (aehist, aehistcompr);
+        ImProcFunctions::getAutoExp (aehist, aehistcompr, getDefGain(), clip, dirpyrdenoiseExpComp, brightness, contrast, black, hlcompr, hlcomprthresh);
+	}
+	
     t2.set();
     if( settings->verbose )
        printf("Preprocessing: %d usec\n", t2.etime(t1));
