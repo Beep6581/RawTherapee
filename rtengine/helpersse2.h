@@ -9,7 +9,12 @@
 #define INLINE inline
 #endif
 
-#include <intrin.h>
+#if defined( WIN32 ) && defined(__x86_64__)
+    #include <intrin.h>
+#else
+    #include <emmintrin.h>
+#endif
+
 #include <stdint.h>
 
 typedef __m128d vdouble;
