@@ -870,29 +870,71 @@ void RawImageSource::border_interpolate(unsigned int border, float (*image)[4], 
 	}
 }
 
-void RawImageSource::border_interpolate2(unsigned int border, float (*image)[3], unsigned int start, unsigned int end)
+void RawImageSource::border_interpolate2( int winw, int winh, int lborders)
 {
-	unsigned row, col, y, x, f, c, sum[8];
-	unsigned int width=W, height=H;
-	unsigned int colors=3;
+int bord=lborders;
+int width=winw;
+int height=winh;
+	for (int i=0; i<height; i++) {
 
-	if (end == 0 ) end=H;
-	for (row=start; row < end; row++)
-		for (col=0; col < width; col++) {
-			if (col==border && row >= border && row < height-border)
-				col = width-border;
-			memset (sum, 0, sizeof sum);
-			for (y=row-1; y != row+2; y++)
-				for (x=col-1; x != col+2; x++)
-					if (y < height && x < width) {
-						f = fc(y,x);
-						sum[f] += image[y*width+x][f];
-						sum[f+4]++;
+        float sum[6];
+
+		for (int j=0; j<bord; j++) {//first few columns
+			for (int c=0; c<6; c++) sum[c]=0;
+			for (int i1=i-1; i1<i+2; i1++)
+				for (int j1=j-1; j1<j+2; j1++) {
+					if ((i1 > -1) && (i1 < height) && (j1 > -1)) {
+						int c = FC(i1,j1);
+						sum[c] += rawData[i1][j1];
+						sum[c+3]++;
 					}
-			f = fc(row,col);
-			FORCC if (c != f && sum[c+4])
-				image[row*width+col][c] = sum[c] / sum[c+4];
-		}
+				}
+			int c=FC(i,j);
+			if (c==1) {
+				red[i][j]=sum[0]/sum[3];
+				green[i][j]=rawData[i][j];
+				blue[i][j]=sum[2]/sum[5];
+			} else {
+				green[i][j]=sum[1]/sum[4];
+				if (c==0) {
+					red[i][j]=rawData[i][j];
+					blue[i][j]=sum[2]/sum[5];
+				} else {
+					red[i][j]=sum[0]/sum[3];
+					blue[i][j]=rawData[i][j];
+				}
+			}
+		}//j
+		
+		for (int j=width-bord; j<width; j++) {//last few columns
+			for (int c=0; c<6; c++) sum[c]=0;
+			for (int i1=i-1; i1<i+2; i1++)
+				for (int j1=j-1; j1<j+2; j1++) {
+					if ((i1 > -1) && (i1 < height ) && (j1 < width)) {
+						int c = FC(i1,j1);
+						sum[c] += rawData[i1][j1];
+						sum[c+3]++;
+					}
+				}
+			int c=FC(i,j);
+			if (c==1) {
+				red[i][j]=sum[0]/sum[3];
+				green[i][j]=rawData[i][j];
+				blue[i][j]=sum[2]/sum[5];
+			} else {
+				green[i][j]=sum[1]/sum[4];
+				if (c==0) {
+					red[i][j]=rawData[i][j];
+					blue[i][j]=sum[2]/sum[5];
+				} else {
+					red[i][j]=sum[0]/sum[3];
+					blue[i][j]=rawData[i][j];
+				}
+			}
+		}//j
+	}//i
+
+
 }
 
 // Joint Demosaicing and Denoising using High Order Interpolation Techniques
@@ -1021,7 +1063,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 	float (*qix)[6];
 	float (*glut);
 
-	const bool applyGamma=true;
+	bool applyGamma=true;
 
 	char  *buffer;
 	const int width=winw, height=winh;
@@ -1053,14 +1095,20 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 	float maxdata=0.f;
 	// float epsil=0.00001f; unused
 	image = (float (*)[4]) calloc (width*height, sizeof *image);
-
+//	int curr0=0;
+//	int curr1=0;
+//	int curr2=0;
 	unsigned int a=0;
 	for (int ii=0; ii<height; ii++)
 		for (int jj=0; jj<width; jj++) {
-			float currData = rawData[ii][jj];
+			float currData = CLIP(rawData[ii][jj]);
 			image[a++][fc(ii,jj)] = currData;
+		//	if(fc(ii,jj)==0 && currData > 65535.f) curr0=1;
+		//	if(fc(ii,jj)==1 && currData > 65535.f) curr1=1;
+		//	if(fc(ii,jj)==2 && currData > 65535.f) curr2=1;
 			if (currData > maxdata) maxdata=currData;
 		}
+//	if(curr1==1 || curr2==1 || curr0==1) applyGamma=false;	// LMMSE without gamma = reduce artefact in highlight
 	if(maxdata<65535.f) maxdata=65535.f;
 	if (applyGamma)
 		buffer = (char *)malloc(rr1*cc1*6*sizeof(float)+(int)(maxdata+1.f)*sizeof(float));
@@ -1315,9 +1363,9 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 
 	for (int ii=0; ii<height; ii++) {
 		for (int jj=0; jj<width; jj++){
-			red[ii][jj]   = image[ii*width+jj][0];
-			green[ii][jj] = image[ii*width+jj][1];
-			blue[ii][jj]  = image[ii*width+jj][2];
+			red[ii][jj]   = (image[ii*width+jj][0]);
+			green[ii][jj] = (image[ii*width+jj][1]);
+			blue[ii][jj]  = (image[ii*width+jj][2]);
 		}
 	}
 
@@ -1347,22 +1395,24 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 ***/
 // Adapted to RT by Jacques Desmis 3/2013
 
-void RawImageSource::igv_interpolate()
+void RawImageSource::igv_interpolate(int winw, int winh)
 {
 	static const float eps=1e-5f, epssq=1e-10f;
 	static const int h1=1, h2=2, h3=3, h4=4, h5=5, h6=6;
-	const int width=W, height=H;
+	const int width=winw, height=winh;
 	const int v1=1*width, v2=2*width, v3=3*width, v4=4*width, v5=5*width, v6=6*width;
 	float (*rgb)[3], *vdif, *hdif, (*chr)[2];
 	rgb   = (float (*)[3]) calloc(width*height, sizeof *rgb);
 	vdif  = (float (*))    calloc(width*height, sizeof *vdif);
 	hdif  = (float (*))    calloc(width*height, sizeof *hdif);
 	chr   = (float (*)[2]) calloc(width*height, sizeof *chr);
+
+	border_interpolate2(winw,winh,7);
+	
 	if (plistener) {
 		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::igv]));
 		plistener->setProgress (0.0);
 	}
-
 #ifdef _OPENMP
 #pragma omp parallel default(none) shared(rgb,vdif,hdif,chr)
 #endif
@@ -1376,8 +1426,9 @@ void RawImageSource::igv_interpolate()
 	for (int row=0; row<height-0; row++)
 		for (int col=0, indx=row*width+col; col<width-0; col++, indx++) {
 			int c=FC(row,col);
-			rgb[indx][c]=(rawData[row][col]);	//rawData = RT datas
+			rgb[indx][c]=CLIP(rawData[row][col]);	//rawData = RT datas
 		}
+//	border_interpolate2(7, rgb);
 
 #ifdef _OPENMP
 #pragma omp single
@@ -1392,10 +1443,10 @@ void RawImageSource::igv_interpolate()
 	for (int row=5; row<height-5; row++)
 		for (int col=5+(FC(row,1)&1), indx=row*width+col, c=FC(row,col); col<width-5; col+=2, indx+=2) {
 			//N,E,W,S Gradients
-			ng=eps+(fabs(rgb[indx-v1][1]-rgb[indx-v3][1])+fabs(rgb[indx][c]-rgb[indx-v2][c]))/65535.f;
-			eg=eps+(fabs(rgb[indx+h1][1]-rgb[indx+h3][1])+fabs(rgb[indx][c]-rgb[indx+h2][c]))/65535.f;
-			wg=eps+(fabs(rgb[indx-h1][1]-rgb[indx-h3][1])+fabs(rgb[indx][c]-rgb[indx-h2][c]))/65535.f;
-			sg=eps+(fabs(rgb[indx+v1][1]-rgb[indx+v3][1])+fabs(rgb[indx][c]-rgb[indx+v2][c]))/65535.f;
+			ng=(eps+(fabs(rgb[indx-v1][1]-rgb[indx-v3][1])+fabs(rgb[indx][c]-rgb[indx-v2][c]))/65535.f);;
+			eg=(eps+(fabs(rgb[indx+h1][1]-rgb[indx+h3][1])+fabs(rgb[indx][c]-rgb[indx+h2][c]))/65535.f);
+			wg=(eps+(fabs(rgb[indx-h1][1]-rgb[indx-h3][1])+fabs(rgb[indx][c]-rgb[indx-h2][c]))/65535.f);
+			sg=(eps+(fabs(rgb[indx+v1][1]-rgb[indx+v3][1])+fabs(rgb[indx][c]-rgb[indx+v2][c]))/65535.f);
 			//N,E,W,S High Order Interpolation (Li & Randhawa)  
 			//N,E,W,S Hamilton Adams Interpolation
 			nv=LIM(((23.0f*rgb[indx-v1][1]+23.0f*rgb[indx-v3][1]+rgb[indx-v5][1]+rgb[indx+v1][1]+40.0f*rgb[indx][c]-32.0f*rgb[indx-v2][c]-8.0f*rgb[indx-v4][c])/48.0f)/65535.f, 0.0f, 1.0f);
@@ -1420,8 +1471,9 @@ void RawImageSource::igv_interpolate()
 	for (int row=7; row<height-7; row++)
 		for (int col=7+(FC(row,1)&1), indx=row*width+col, c=FC(row,col), d=c/2; col<width-7; col+=2, indx+=2) {
 			//H&V integrated gaussian vector over variance on color differences
-			ng=epssq+78.0f*SQR(vdif[indx])+69.0f*(SQR(vdif[indx-v2])+SQR(vdif[indx+v2]))+51.0f*(SQR(vdif[indx-v4])+SQR(vdif[indx+v4]))+21.0f*(SQR(vdif[indx-v6])+SQR(vdif[indx+v6]))-6.0f*SQR(vdif[indx-v2]+vdif[indx]+vdif[indx+v2])-10.0f*(SQR(vdif[indx-v4]+vdif[indx-v2]+vdif[indx])+SQR(vdif[indx]+vdif[indx+v2]+vdif[indx+v4]))-7.0f*(SQR(vdif[indx-v6]+vdif[indx-v4]+vdif[indx-v2])+SQR(vdif[indx+v2]+vdif[indx+v4]+vdif[indx+v6]));
-			eg=epssq+78.0f*SQR(hdif[indx])+69.0f*(SQR(hdif[indx-h2])+SQR(hdif[indx+h2]))+51.0f*(SQR(hdif[indx-h4])+SQR(hdif[indx+h4]))+21.0f*(SQR(hdif[indx-h6])+SQR(hdif[indx+h6]))-6.0f*SQR(hdif[indx-h2]+hdif[indx]+hdif[indx+h2])-10.0f*(SQR(hdif[indx-h4]+hdif[indx-h2]+hdif[indx])+SQR(hdif[indx]+hdif[indx+h2]+hdif[indx+h4]))-7.0f*(SQR(hdif[indx-h6]+hdif[indx-h4]+hdif[indx-h2])+SQR(hdif[indx+h2]+hdif[indx+h4]+hdif[indx+h6]));
+			//Mod Jacques 3/2013
+			ng=LIM(epssq+78.0f*SQR(vdif[indx])+69.0f*(SQR(vdif[indx-v2])+SQR(vdif[indx+v2]))+51.0f*(SQR(vdif[indx-v4])+SQR(vdif[indx+v4]))+21.0f*(SQR(vdif[indx-v6])+SQR(vdif[indx+v6]))-6.0f*SQR(vdif[indx-v2]+vdif[indx]+vdif[indx+v2])-10.0f*(SQR(vdif[indx-v4]+vdif[indx-v2]+vdif[indx])+SQR(vdif[indx]+vdif[indx+v2]+vdif[indx+v4]))-7.0f*(SQR(vdif[indx-v6]+vdif[indx-v4]+vdif[indx-v2])+SQR(vdif[indx+v2]+vdif[indx+v4]+vdif[indx+v6])),0.f,1.f);
+			eg=LIM(epssq+78.0f*SQR(hdif[indx])+69.0f*(SQR(hdif[indx-h2])+SQR(hdif[indx+h2]))+51.0f*(SQR(hdif[indx-h4])+SQR(hdif[indx+h4]))+21.0f*(SQR(hdif[indx-h6])+SQR(hdif[indx+h6]))-6.0f*SQR(hdif[indx-h2]+hdif[indx]+hdif[indx+h2])-10.0f*(SQR(hdif[indx-h4]+hdif[indx-h2]+hdif[indx])+SQR(hdif[indx]+hdif[indx+h2]+hdif[indx+h4]))-7.0f*(SQR(hdif[indx-h6]+hdif[indx-h4]+hdif[indx-h2])+SQR(hdif[indx+h2]+hdif[indx+h4]+hdif[indx+h6])),0.f,1.f);
 			//Limit chrominance using H/V neighbourhood
 			nv=ULIM(0.725f*vdif[indx]+0.1375f*vdif[indx-v2]+0.1375f*vdif[indx+v2],vdif[indx-v2],vdif[indx+v2]);
 			ev=ULIM(0.725f*hdif[indx]+0.1375f*hdif[indx-h2]+0.1375f*hdif[indx+h2],hdif[indx-h2],hdif[indx+h2]);
@@ -1472,15 +1524,15 @@ void RawImageSource::igv_interpolate()
 				wg=1.0f/(eps+fabs(chr[indx-h1][c]-chr[indx-h3][c])+fabs(chr[indx+h1][c]-chr[indx-h3][c]));
 				sg=1.0f/(eps+fabs(chr[indx+v1][c]-chr[indx+v3][c])+fabs(chr[indx-v1][c]-chr[indx+v3][c]));
 				//Interpolate chrominance: R@G and B@G
-				chr[indx][c]=(ng*chr[indx-v1][c]+eg*chr[indx+h1][c]+wg*chr[indx-h1][c]+sg*chr[indx+v1][c])/(ng+eg+wg+sg);
+				chr[indx][c]=((ng*chr[indx-v1][c]+eg*chr[indx+h1][c]+wg*chr[indx-h1][c]+sg*chr[indx+v1][c])/(ng+eg+wg+sg));
 			}
 
 	if (plistener) plistener->setProgress (0.8);
 
 	//Interpolate borders
-	border_interpolate2(7, rgb);
+//	border_interpolate2(7, rgb);
 }
-
+/*
 #ifdef _OPENMP
 #pragma omp for
 #endif	
@@ -1493,7 +1545,7 @@ void RawImageSource::igv_interpolate()
 			green[row][col] = rgb[indxc][1];
 			blue [row][col] = rgb[indxc][2];
 		}
-
+*/
 #ifdef _OPENMP
 #pragma omp single
 #endif
