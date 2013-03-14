@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "mytime.h"
+#include "sleef.c"
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
 #define CLIPQQ(a) ((a)>0?((a)<250?(a):250):0)
@@ -1879,9 +1880,9 @@ void  ColorTemp::calculate_ab( double &aa, double &bb, double h, double e, doubl
 }
 void  ColorTemp::calculate_abfloat( float &aa, float &bb, float h, float e, float t, float nbb, float a )
 {
-	float hrad = (h * M_PI) / 180.0f;
-	float sinh = sin( hrad );
-	float cosh = cos( hrad );
+	float2 sincosval = xsincosf((h * M_PI) / 180.0f);
+	float sinh = sincosval.x;
+	float cosh = sincosval.y;
 	float x = (a / nbb) + 0.305f;
 	float p3 = 21.0f/20.0f;	
 	if( fabs( sinh ) >= fabs( cosh ) ) {
@@ -2078,7 +2079,7 @@ void ColorTemp::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q
     ca = rpa - ((12.0f * gpa) / 11.0f) + (bpa / 11.0f);
     cb = (1.0f / 9.0f) * (rpa + gpa - (2.0f * bpa));
 
-    myh = (180.0f / M_PI) * atan2( cb, ca );
+    myh = (180.0f / M_PI) * xatan2f( cb, ca );
     if( myh < 0.0f ) myh += 360.0f;
 	//we can also calculate H, if necessary...but it's using time...for  what usage ?
 	/*double temp;
@@ -2107,7 +2108,7 @@ void ColorTemp::xyz2jchqms_ciecam02float( float &J, float &C, float &h, float &Q
 	if (gamu==1) a=MAXR(a,0.0f);//gamut correction M.H.Brill S.Susstrunk
     J = 100.0f * pow_F( a / aw, c * cz );
 
-    e = ((12500.0f / 13.0f) * nc * ncb) * (cos( ((myh * M_PI) / 180.0f) + 2.0f ) + 3.8f);
+    e = ((12500.0f / 13.0f) * nc * ncb) * (xcosf( ((myh * M_PI) / 180.0f) + 2.0f ) + 3.8f);
     t = (e * sqrt( (ca * ca) + (cb * cb) )) / (rpa + gpa + ((21.0f / 20.0f) * bpa));
 
     C = pow_F( t, 0.9f ) * sqrt( J / 100.0f )
@@ -2169,7 +2170,7 @@ void ColorTemp::jch2xyz_ciecam02float( float &x, float &y, float &z, float J, fl
     float e, t;
 	gamu=1;
     ColorTemp::xyz_to_cat02float( rw, gw, bw, xw, yw, zw, gamu );
-    e = ((12500.0f / 13.0f) * nc * ncb) * (cos( ((h * M_PI) / 180.0f) + 2.0f ) + 3.8f);
+    e = ((12500.0f / 13.0f) * nc * ncb) * (xcosf( ((h * M_PI) / 180.0f) + 2.0f ) + 3.8f);
     a = pow_F( J / 100.0f, 1.0f / (c * cz) ) * aw;
     t = pow_F( C / (sqrt( J / 100.f) * pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f )), 10.0f / 9.0f );
 
