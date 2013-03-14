@@ -21,10 +21,10 @@
 
 #include <gtkmm.h>
 #include <cmath>
-#include "colortemp.h"
+#include "sleef.c"
 #include "LUT.h"
 #define MAXR(a,b) ((a) > (b) ? (a) : (b))
-#define pow_F(a,b) (exp(b*log(a)))
+#define pow_F(a,b) (xexpf(b*xlogf(a)))
 
 
 namespace rtengine {
@@ -68,7 +68,7 @@ class ColorTemp {
 			return f * (1.0 - ((1.0 / 3.6) * exp((-la - 42.0) / 92.0)));
 		}
 		static float d_factorfloat( float f, float la ) {
-			return f * (1.0f - ((1.0f / 3.6f) * exp((-la - 42.0f) / 92.0f)));
+			return f * (1.0f - ((1.0f / 3.6f) * xexpf((-la - 42.0f) / 92.0f)));
 		}
 
 		static double calculate_fl_from_la_ciecam02( double la ) {
