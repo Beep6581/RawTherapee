@@ -21,6 +21,8 @@
 #include "gauss.h"
 #include "bilateral2.h"
 #include "rt_math.h"
+#include "sleef.c"
+#include "sleefsseavx.c"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -40,28 +42,75 @@ extern const Settings* settings;
 
 void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
 
-	const float dampingFac=2.0/(damping*damping);
+	const float dampingFac=-2.0/(damping*damping);
 
+#ifdef __SSE2__
+    __m128 Iv,Ov,Uv,zerov,onev,fourv,fivev,dampingFacv,Tv;
+    zerov = _mm_setzero_ps( );
+    onev = _mm_set1_ps( 1.0f );
+    fourv = _mm_set1_ps( 4.0f );
+    fivev = _mm_set1_ps( 5.0f );
+    dampingFacv = _mm_set1_ps( dampingFac );
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int i=0; i<H; i++)
+		for (int j=0; j<W-3; j+=4) {
+			Iv = _mm_loadu_ps( &aI[i][j] );
+			Ov = _mm_loadu_ps( &aO[i][j] );
+
+			Uv = (Ov * xlogf(Iv/Ov) - Iv + Ov) * dampingFacv;
+			Uv = _mm_min_ps(Uv,onev);
+			Tv = Uv*Uv;
+			Tv = Tv*Tv;
+			Uv = Tv*(fivev-Uv*fourv);
+			Uv = (Ov - Iv) / Iv * Uv + onev;
+			Uv = vself(vmaskf_ge(zerov, Iv), zerov, Uv);
+			Uv = vself(vmaskf_ge(zerov, Ov), zerov, Uv);
+
+			_mm_storeu_ps( &aI[i][j], Uv );
+		}
+// border pixels are done without SSE2
+    float I,O,U;
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int i=0; i<H; i++)
+		for(int j=W-(W%4);j<W;j++) {
+			I = aI[i][j];
+			O = aO[i][j];
+			if (O<=0.0 || I<=0.0) {
+				aI[i][j] = 0.0;
+				continue;
+			}
+			U = (O * xlogf(I/O) - I + O) * dampingFac;
+			U = min(U,1.0f);
+			U = U*U*U*U*(5.0-U*4.0);
+			aI[i][j] = (O - I) / I * U + 1.0;
+		}
+
+#else // without __SSE2__
+    float I,O,U;
 #ifdef _OPENMP
 #pragma omp for
 #endif
 	for (int i=0; i<H; i++)
 		for (int j=0; j<W; j++) {
-			float I = aI[i][j];
-			float O = aO[i][j];
+			I = aI[i][j];
+			O = aO[i][j];
 			if (O<=0.0 || I<=0.0) {
 				aI[i][j] = 0.0;
 				continue;
 			}
-			float U = -(O * log(I/O) - I + O) * dampingFac;
+			U = (O * xlogf(I/O) - I + O) * dampingFac;
 			U = min(U,1.0f);
 			U = U*U*U*U*(5.0-U*4.0);
 			aI[i][j] = (O - I) / I * U + 1.0;
 		}
+#endif
 }
 
 void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
-
 	if (params->sharpening.enabled==false || params->sharpening.deconvamount<1)
 		return;
 
@@ -128,7 +177,6 @@ void ImProcFunctions::deconvsharpening (LabImage* lab, float** b2) {
 	for (int i=0; i<H; i++)
 		delete [] tmpI[i];
 	delete [] tmpI;
-
 }
 
 void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
