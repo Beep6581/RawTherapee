@@ -83,7 +83,7 @@ namespace rtengine {
 
 
 
-	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe)
+	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp)
 	{
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +150,7 @@ namespace rtengine {
 
 		//srand((unsigned)time(0));//test with random data
 
-		const float gain = pow (2.0f, dnparams.expcomp);
+		const float gain = pow (2.0f, expcomp);
 		float incr=1.f;
 		float noisevar_Ldetail = SQR((SQR(100.f-dnparams.Ldetail) + 50.f*(100.f-dnparams.Ldetail)) * TS * 0.5f * incr);
 

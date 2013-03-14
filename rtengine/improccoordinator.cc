@@ -192,12 +192,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             highDetailRawComputed = false;
 		
 		
-		LUTu aehist; int aehistcompr;
-		double clip;
-		int brightness, contrast, black, hlcompr, hlcomprthresh;
-		
-		imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-		ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), clip, params.dirpyrDenoise.expcomp, brightness, contrast, black, hlcompr, hlcomprthresh);	
     }
 
 
@@ -239,7 +233,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if (todo & M_LINDENOISE) {
         	//printf("denoising!\n");
 			if (scale==1 && params.dirpyrDenoise.enabled) {
-				ipf.RGB_denoise(orig_prev, orig_prev, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe);
+				ipf.RGB_denoise(orig_prev, orig_prev, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
 			}
         }
         imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
