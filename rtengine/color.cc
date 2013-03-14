@@ -21,6 +21,7 @@
 #include "color.h"
 #include "iccmatrices.h"
 #include "mytime.h"
+#include "sleef.c"
 
 using namespace std;
 
@@ -805,8 +806,9 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
             inGamut=true;
 
             //Lprov1=LL;
-            float aprov1=Chprov1*cos(HH);
-            float bprov1=Chprov1*sin(HH);
+            float2  sincosval = xsincosf(HH);
+            float aprov1=Chprov1*sincosval.y;
+            float bprov1=Chprov1*sincosval.x;
 
             //conversion Lab RGB to limit Lab values - this conversion is useful before Munsell correction
             float fy = (0.00862069f *Lprov1 )+ 0.137932f;
@@ -896,11 +898,9 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
     #pragma omp for schedule(dynamic, 10)
         for (int i=0; i<height; i++)
             for (int j=0; j<width; j++) {
-                float LL=lab->L[i][j]/327.68f;
-                float CC=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
-                float HH=atan2(lab->b[i][j],lab->a[i][j]);
-                float Chprov1=CC;
-                float Lprov1=LL;
+                float HH=xatan2f(lab->b[i][j],lab->a[i][j]);
+                float Chprov1=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
+                float Lprov1=lab->L[i][j]/327.68f;
                 float Loldd, Coldd;
                 if(gamut) {
                     bool neg, more_rgb;
@@ -934,9 +934,10 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 
                 HH+=correctlum;        //hue Munsell luminance correction
 
-                correctlum = 0.0f;
-                lab->a[i][j] = Chprov1*cos(HH+correctionHuechroma)*327.68f;
-                lab->b[i][j] = Chprov1*sin(HH+correctionHuechroma)*327.68f;
+				correctlum = 0.0f;
+				float2 sincosval = xsincosf(HH+correctionHuechroma);
+				lab->a[i][j] = Chprov1*sincosval.y*327.68f;
+				lab->b[i][j] = Chprov1*sincosval.x*327.68f;
 
             }
     } // end of parallelization
