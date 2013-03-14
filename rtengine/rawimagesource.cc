@@ -1090,6 +1090,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
     if (ri->isBayer()) {
     	MyTime t1,t2;
     	t1.set();
+		bool nofast=true;
         if ( raw.dmethod == RAWParams::methodstring[RAWParams::hphd] )
                 hphd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::vng4] )
@@ -1103,7 +1104,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::eahd])
             eahd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::igv])
-            igv_interpolate();
+            igv_interpolate(W,H);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::lmmse])
             lmmse_interpolate_omp(W,H);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
