@@ -740,8 +740,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->lensProf.useCA)         keyFile.set_boolean  ("LensProfile", "UseCA", lensProf.useCA);
 
     // save perspective correction
-    if (!pedited || pedited->perspective.horizontal) keyFile.set_integer  ("Perspective", "Horizontal", perspective.horizontal);
-    if (!pedited || pedited->perspective.vertical)   keyFile.set_integer  ("Perspective", "Vertical",   perspective.vertical);
+    if (!pedited || pedited->perspective.horizontal) keyFile.set_double  ("Perspective", "Horizontal", perspective.horizontal);
+    if (!pedited || pedited->perspective.vertical)   keyFile.set_double  ("Perspective", "Vertical",   perspective.vertical);
 
     // save C/A correction
     if (!pedited || pedited->cacorrection.red)       keyFile.set_double  ("CACorrection", "Red",  cacorrection.red);
@@ -1270,8 +1270,8 @@ if (keyFile.has_group ("LensProfile")) {
     
     // load perspective correction
 if (keyFile.has_group ("Perspective")) {
-    if (keyFile.has_key ("Perspective", "Horizontal"))  { perspective.horizontal = keyFile.get_integer ("Perspective", "Horizontal"); if (pedited) pedited->perspective.horizontal = true; }
-    if (keyFile.has_key ("Perspective", "Vertical"))    { perspective.vertical   = keyFile.get_integer ("Perspective", "Vertical"); if (pedited) pedited->perspective.vertical = true; }
+    if (keyFile.has_key ("Perspective", "Horizontal"))  { perspective.horizontal = keyFile.get_double ("Perspective", "Horizontal"); if (pedited) pedited->perspective.horizontal = true; }
+    if (keyFile.has_key ("Perspective", "Vertical"))    { perspective.vertical   = keyFile.get_double ("Perspective", "Vertical"); if (pedited) pedited->perspective.vertical = true; }
 }
 
 // load c/a correction

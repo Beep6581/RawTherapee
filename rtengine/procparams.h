@@ -565,8 +565,8 @@ public:
 class PerspectiveParams {
 
     public:
-		int  horizontal;
-		int  vertical;
+		double  horizontal;
+		double  vertical;
 };
 
 /**
