@@ -33,7 +33,16 @@ set (PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list 
 # It were moved away from rtengine/CMakefiles.txt, because some users may want to remove -ffast_math :
 # this flag speeds up the floating-point operations, but with a little bite less precisions. This default value
 # gives the same result/behaviour as before.
-set (RTENGINE_CXX_FLAGS "-ffast-math -funroll-loops" CACHE STRING "Special compilation flags for RTEngine")
+# Due to a bug in GCC when using OpenMP+SSE, -mstackrealign will be added to your flags
+set (RTENGINE_CXX_FLAGS "-ffast-math -funroll-loops" CACHE STRING "Special compilation flags for RTEngine; -mstackrealign will be added to your flags")
+
+if (WIN32)
+	if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+		set (RTENGINE_CXX_FLAGS_MANDATORY "-mstackrealign")
+	elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+		set (RTENGINE_CXX_FLAGS_MANDATORY "")
+	endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+endif (WIN32)
 
 #loading the processor targets list
 include (ProcessorTargets.cmake)
