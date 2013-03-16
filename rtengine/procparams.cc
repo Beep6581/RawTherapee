@@ -368,8 +368,8 @@ void ProcParams::setDefaults () {
     raw.hotdeadpix_thresh = 40;
     raw.linenoise = 0;
     raw.greenthresh = 0;
-    raw.ccSteps = 1;
-    raw.dmethod = RAWParams::methodstring[RAWParams::hphd];;
+    raw.ccSteps = 0;
+    raw.dmethod = RAWParams::methodstring[RAWParams::amaze];;
     raw.dcb_iterations=2;
     raw.dcb_enhance=false;
     //raw.all_enhance=false;

@@ -97,27 +97,34 @@ DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 }
 
 void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
-	
+
     disableListener ();
-	
+    dmethodconn.block(true);
+    enaConn.block (true);
+
+    dmethod->set_active (0);
+    if (pp->dirpyrDenoise.dmethod=="RGB")
+        dmethod->set_active (0);
+    else if (pp->dirpyrDenoise.dmethod=="Lab")
+        dmethod->set_active (1);
+
     if (pedited) {
-    	luma->setEditedState      (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
-    	Ldetail->setEditedState   (pedited->dirpyrDenoise.Ldetail ? Edited : UnEdited);
-    	chroma->setEditedState    (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
-    	redchro->setEditedState    (pedited->dirpyrDenoise.redchro ? Edited : UnEdited);
-    	bluechro->setEditedState    (pedited->dirpyrDenoise.bluechro ? Edited : UnEdited);
-		
+        if (!pedited->dirpyrDenoise.dmethod)
+            dmethod->set_active (2);
+        luma->setEditedState      (pedited->dirpyrDenoise.luma ? Edited : UnEdited);
+        Ldetail->setEditedState   (pedited->dirpyrDenoise.Ldetail ? Edited : UnEdited);
+        chroma->setEditedState    (pedited->dirpyrDenoise.chroma ? Edited : UnEdited);
+        redchro->setEditedState    (pedited->dirpyrDenoise.redchro ? Edited : UnEdited);
+        bluechro->setEditedState    (pedited->dirpyrDenoise.bluechro ? Edited : UnEdited);
+
         gamma->setEditedState     (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
         enabled->set_inconsistent (!pedited->dirpyrDenoise.enabled);
   //      perform->set_inconsistent (!pedited->dirpyrDenoise.perform);
-		
     }
 //	perfconn.block (true);
-    enaConn.block (true);
     enabled->set_active (pp->dirpyrDenoise.enabled);
  //   perform->set_active (pp->dirpyrDenoise.perform);
-	
-    enaConn.block (false);
+
  //   perfconn.block (false);
     lastEnabled = pp->dirpyrDenoise.enabled;
 //	lastperform = pp->dirpyrDenoise.perform;	
@@ -126,19 +133,11 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
     chroma->setValue  (pp->dirpyrDenoise.chroma);
     redchro->setValue  (pp->dirpyrDenoise.redchro);
     bluechro->setValue  (pp->dirpyrDenoise.bluechro);
-	dmethodconn.block(true);
-	if (pedited && !pedited->dirpyrDenoise.dmethod)
-		dmethod->set_active (2);
-	else if (pp->dirpyrDenoise.dmethod=="RGB")
-		dmethod->set_active (0);
-	else if (pp->dirpyrDenoise.dmethod=="Lab")
-		dmethod->set_active (1);
-	dmethodconn.block(false);
-	// Have to be manually called to handle initial state update
-	dmethodChanged();
-	
+
     gamma->setValue   (pp->dirpyrDenoise.gamma);
 
+    enaConn.block (false);
+    dmethodconn.block(false);
     enableListener ();
 }
 
@@ -154,22 +153,22 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 //	pp->dirpyrDenoise.perform   = perform->get_active();
 	
     if (pedited) {
+        pedited->dirpyrDenoise.dmethod  = dmethod->get_active_row_number() != 2;
         pedited->dirpyrDenoise.luma     = luma->getEditedState ();
         pedited->dirpyrDenoise.Ldetail  = Ldetail->getEditedState ();
         pedited->dirpyrDenoise.chroma   = chroma->getEditedState ();
         pedited->dirpyrDenoise.redchro  = redchro->getEditedState ();
-        pedited->dirpyrDenoise.bluechro  = bluechro->getEditedState ();
+        pedited->dirpyrDenoise.bluechro = bluechro->getEditedState ();
         pedited->dirpyrDenoise.gamma    = gamma->getEditedState ();
         pedited->dirpyrDenoise.enabled  = !enabled->get_inconsistent();
     //    pedited->dirpyrDenoise.perform  = !perform->get_inconsistent();
-		}
-	if (dmethod->get_active_row_number()==0)
-		pp->dirpyrDenoise.dmethod = "RGB";
-	else if (dmethod->get_active_row_number()==1)
-		pp->dirpyrDenoise.dmethod = "Lab";
-		
-		
+    }
+    if (dmethod->get_active_row_number()==0)
+        pp->dirpyrDenoise.dmethod = "RGB";
+    else if (dmethod->get_active_row_number()==1)
+        pp->dirpyrDenoise.dmethod = "Lab";
 }
+
 void DirPyrDenoise::dmethodChanged () {
 
 	if (listener && (multiImage||enabled->get_active()) ) {
@@ -280,11 +279,10 @@ void DirPyrDenoise::setBatchMode (bool batchMode) {
     luma->showEditedCB ();
     Ldetail->showEditedCB ();
     chroma->showEditedCB ();
-   redchro->showEditedCB ();
+    redchro->showEditedCB ();
     bluechro->showEditedCB ();
     gamma->showEditedCB ();
-	dmethod->append_text (M("GENERAL_UNCHANGED"));
-	
+    dmethod->append_text (M("GENERAL_UNCHANGED"));
 }
 
 void DirPyrDenoise::setAdjusterBehavior (bool lumaadd, bool lumdetadd, bool chromaadd, bool chromaredadd, bool chromablueadd, bool gammaadd) {
