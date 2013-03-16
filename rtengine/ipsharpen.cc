@@ -22,8 +22,9 @@
 #include "bilateral2.h"
 #include "rt_math.h"
 #include "sleef.c"
+#ifdef __SSE2__
 #include "sleefsseavx.c"
-
+#endif
 #ifdef _OPENMP
 #include <omp.h>
 #endif
