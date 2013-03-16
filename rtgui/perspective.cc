@@ -25,10 +25,10 @@ PerspCorrection::PerspCorrection () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	set_border_width(4);
 
-	horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 1, 0));
+	horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 0.1, 0));
 	horiz->setAdjusterListener (this);
 
-	vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_VERTICAL"), -100, 100, 1, 0));
+	vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_VERTICAL"), -100, 100, 0.1, 0));
 	vert->setAdjusterListener (this);
 
     pack_start (*horiz);
