@@ -161,9 +161,9 @@ void Image8::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewP
                 convertTo(r(src_y, src_x), r_);
                 convertTo(g(src_y, src_x), g_);
                 convertTo(b(src_y, src_x), b_);
-                lineR[dst_x] = r_;
-                lineG[dst_x] = g_;
-                lineB[dst_x] = b_;
+                lineR[dst_x] = CLIP(rm2*r_);
+                lineG[dst_x] = CLIP(gm2*g_);
+                lineB[dst_x] = CLIP(bm2*b_);
             }
         }
         else {
