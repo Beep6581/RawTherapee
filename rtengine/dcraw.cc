@@ -6496,6 +6496,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
 	{ "Panasonic DMC-G3", 143, 0xfff,   /* RT - Colin Walker */
 	{ 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 } },
+	{ "Panasonic DMC-G5", 143, 0xfff,   /* RT */
+	{ 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 } },
 	{ "Panasonic DMC-GF1", 15, 0xf92, /* RT - Colin Walker */
 	{ 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 } },
 	{ "Panasonic DMC-GF2", 143, 0xfff, /* RT - Colin Walker */

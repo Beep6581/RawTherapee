@@ -1,5 +1,5 @@
 --- dcraw.c	2012-12-26 13:09:14 -0500
-+++ dcraw.cc	2012-12-26 19:18:16 -0500
++++ dcraw.cc	2013-03-16 08:12:11 -0400
 @@ -1,3 +1,15 @@
 +/*RT*/#include <glib.h>
 +/*RT*/#include <glib/gstdio.h>
@@ -1006,7 +1006,7 @@
      { "LEICA V-LUX 3", 143, 0xfff,
  	{ 11904,-4541,-1189,-2355,10899,1662,-296,1586,4289 } },
      { "Panasonic DMC-FZ200", 143, 0xfff,
-@@ -6879,28 +6488,26 @@
+@@ -6879,28 +6488,28 @@
  	{ 8112,-2563,-740,-3730,11784,2197,-941,2075,4933 } },
      { "Panasonic DMC-FX150", 15, 0xfff,
  	{ 9082,-2907,-925,-6119,13377,3058,-1797,2641,5609 } },
@@ -1034,6 +1034,8 @@
 +	{ 8310,-1811,-960,-4941,12990,2151,-1378,2468,6860 } },
 +	{ "Panasonic DMC-G3", 143, 0xfff,   /* RT - Colin Walker */
 +	{ 6051,-1406,-671,-4015,11505,2868,-1654,2667,6219 } },
++	{ "Panasonic DMC-G5", 143, 0xfff,   /* RT */
++	{ 7122,-2092,-419,-4643,11769,3283,-1363,2413,5944 } },
 +	{ "Panasonic DMC-GF1", 15, 0xf92, /* RT - Colin Walker */
 +	{ 7863,-2080,-668,-4623,12331,2578,-1020,2066,7266 } },
 +	{ "Panasonic DMC-GF2", 143, 0xfff, /* RT - Colin Walker */
@@ -1053,7 +1055,7 @@
      { "Panasonic DMC-GH3", 144, 0,
  	{ 6559,-1752,-491,-3672,11407,2586,-962,1875,5130 } },
      { "Panasonic DMC-GX1", 143, 0,
-@@ -6971,24 +6578,22 @@
+@@ -6971,24 +6580,22 @@
  	{ 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
      { "SONY DSLR-A5", 128, 0xfeb,
  	{ 4950,-580,-103,-5228,12542,3029,-709,1435,7371 } },
@@ -1090,7 +1092,7 @@
      { "SONY NEX-6", 128, 0,
  	{ 6129,-1545,-418,-4930,12490,2743,-977,1693,6615 } },
      { "SONY NEX-7", 128, 0,
-@@ -7004,13 +6609,13 @@
+@@ -7004,13 +6611,13 @@
      { "SONY SLT-A55", 128, 0,
  	{ 5932,-1492,-411,-4813,12285,2856,-741,1524,6739 } },
      { "SONY SLT-A57", 128, 0,
@@ -1108,7 +1110,7 @@
    };
    double cam_xyz[4][3];
    char name[130];
-@@ -7259,13 +6864,20 @@
+@@ -7259,13 +6866,20 @@
    fread (head, 1, 32, ifp);
    fseek (ifp, 0, SEEK_END);
    flen = fsize = ftell(ifp);
@@ -1131,7 +1133,7 @@
        parse_ciff (hlen, flen - hlen);
      } else if (parse_tiff(0)) apply_tiff();
    } else if (!memcmp (head,"\xff\xd8\xff\xe1",4) &&
-@@ -7310,6 +6922,7 @@
+@@ -7310,6 +6924,7 @@
      fseek (ifp, 100+28*(shot_select > 0), SEEK_SET);
      parse_tiff (data_offset = get4());
      parse_tiff (thumb_offset+12);
@@ -1139,7 +1141,7 @@
      apply_tiff();
    } else if (!memcmp (head,"RIFF",4)) {
      fseek (ifp, 0, SEEK_SET);
-@@ -7407,7 +7020,7 @@
+@@ -7407,7 +7022,7 @@
    if (height == 3136 && width == 4864)  /* Pentax K20D and Samsung GX20 */
      { height  = 3124;   width  = 4688; filters = 0x16161616; }
    if (width == 4352 && (!strcmp(model,"K-r") || !strcmp(model,"K-x")))
@@ -1148,7 +1150,7 @@
    if (width >= 4960 && !strncmp(model,"K-5",3))
      { left_margin = 10; width  = 4950; filters = 0x16161616; }
    if (width == 4736 && !strcmp(model,"K-7"))
-@@ -7854,7 +7467,7 @@
+@@ -7854,7 +7469,7 @@
      width -= 44;
    } else if (!strcmp(model,"D3200") ||
  	     !strcmp(model,"D600")  ||
@@ -1157,7 +1159,7 @@
      width -= 46;
    } else if (!strcmp(model,"D4")) {
      width -= 52;
-@@ -8766,194 +8379,7 @@
+@@ -8766,194 +8381,7 @@
  }
  #endif
  
@@ -1353,7 +1355,7 @@
  
  struct tiff_tag {
    ushort tag, type;
-@@ -8976,585 +8402,12 @@
+@@ -8976,585 +8404,12 @@
    unsigned gps[26];
    char desc[512], make[64], model[64], soft[32], date[20], artist[64];
  };
