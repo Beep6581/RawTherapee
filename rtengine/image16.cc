@@ -187,9 +187,9 @@ void Image16::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, Preview
                 if (src_x>=maxx)
                     continue;
 
-                lineR[dst_x] = r(src_y, src_x);
-                lineG[dst_x] = g(src_y, src_x);
-                lineB[dst_x] = b(src_y, src_x);
+                lineR[dst_x] = CLIP(rm2*r(src_y, src_x));
+                lineG[dst_x] = CLIP(gm2*g(src_y, src_x));
+                lineB[dst_x] = CLIP(bm2*b(src_y, src_x));
             }
         }
         else {
