@@ -8,7 +8,6 @@
 //#include "sleefsseavx.h"
 #ifdef __SSE2__
 #include "helpersse2.h"
-#endif
 
 #ifdef ENABLE_AVX
 #include "helperavx.h"
@@ -1292,4 +1291,5 @@ static INLINE vfloat xcbrtf(vfloat d) {
 
   return y;
 }
+#endif // __SSE2__
 #endif // SLEEFSSEAVX
