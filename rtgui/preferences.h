@@ -119,6 +119,8 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbmenuGroupProfileOperations;
     Gtk::CheckButton* ckbmenuGroupExtProg;
 
+    Gtk::Button*      behAddAll;
+    Gtk::Button*      behSetAll;
     Gtk::CheckButton* chOverwriteOutputFile;
 
     Gtk::CheckButton* saveParamsFile;
@@ -202,6 +204,9 @@ class Preferences : public Gtk::Dialog {
 
     void behAddRadioToggled (const Glib::ustring& path);
     void behSetRadioToggled (const Glib::ustring& path);
+    void behAddAllPressed ();
+    void behSetAllPressed ();
+
 //    void selectICCProfileDir ();
 //    void selectMonitorProfile ();
 };

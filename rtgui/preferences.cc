@@ -111,8 +111,10 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     behscrollw->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     behscrollw->set_border_width(8);
     behscrollw->set_size_request(-1, 60);
+    Gtk::VBox* vbbeh = Gtk::manage( new Gtk::VBox () );
+    vbbeh->pack_start (*behscrollw, Gtk::PACK_EXPAND_WIDGET);
     Gtk::Frame* behFrame = Gtk::manage (new Gtk::Frame (M("PREFERENCES_BEHAVIOR")));
-    behFrame->add (*behscrollw);
+    behFrame->add (*vbbeh);
     //mvbpp->pack_start (*behFrame);
     mvbpp->pack_start (*behFrame, Gtk::PACK_EXPAND_WIDGET, 4);
     Gtk::TreeView* behTreeView = Gtk::manage (new Gtk::TreeView ());
@@ -272,6 +274,20 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_RAWCACORR_CARED")+", "+M("TP_RAWCACORR_CABLUE"), ADDSET_RAWCACORR, true);
 
     behTreeView->expand_all ();
+
+    behAddAll = Gtk::manage( new Gtk::Button (M("PREFERENCES_BEHADDALL")) );
+    behSetAll = Gtk::manage( new Gtk::Button (M("PREFERENCES_BEHSETALL")) );
+    behAddAll->set_tooltip_markup (M("PREFERENCES_BEHADDALLHINT"));
+    behSetAll->set_tooltip_markup (M("PREFERENCES_BEHSETALLHINT"));
+
+    behAddAll->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::behAddAllPressed) );
+    behSetAll->signal_clicked().connect( sigc::mem_fun(*this, &Preferences::behSetAllPressed) );
+
+    Gtk::HBox* buttonpanel1 = Gtk::manage (new Gtk::HBox ());
+    //buttonpanel1->set_spacing(8);
+    buttonpanel1->pack_end (*behSetAll, Gtk::PACK_SHRINK, 4);
+    buttonpanel1->pack_end (*behAddAll, Gtk::PACK_SHRINK, 4);
+    vbbeh->pack_start (*buttonpanel1, Gtk::PACK_SHRINK, 4);
 
     chOverwriteOutputFile =  Gtk::manage( new Gtk::CheckButton (M("PREFERENCES_OVERWRITEOUTPUTFILE")) );
     mvbpp->pack_start(*chOverwriteOutputFile, Gtk::PACK_SHRINK, 4);
@@ -1583,4 +1599,32 @@ bool Preferences::splashClosed(GdkEventAny* event) {
 	delete splash;
 	splash = NULL;
 	return true;
+}
+
+void Preferences::behAddAllPressed () {
+
+    if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
+        for (size_t i=0; i<moptions.baBehav.size(); i++)
+            for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
+                for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++)
+                    if (adjs->get_value (behavColumns.addsetid) == i) {
+                        adjs->set_value (behavColumns.badd, true);
+                        adjs->set_value (behavColumns.bset, false);
+                        break;
+                    }
+    }
+}
+
+void Preferences::behSetAllPressed () {
+
+    if (moptions.baBehav.size() == ADDSET_PARAM_NUM) {
+        for (size_t i=0; i<moptions.baBehav.size(); i++)
+            for (Gtk::TreeIter sections=behModel->children().begin();  sections!=behModel->children().end(); sections++)
+                for (Gtk::TreeIter adjs=sections->children().begin();  adjs!=sections->children().end(); adjs++)
+                    if (adjs->get_value (behavColumns.addsetid) == i) {
+                        adjs->set_value (behavColumns.badd, false);
+                        adjs->set_value (behavColumns.bset, true);
+                        break;
+                    }
+    }
 }
