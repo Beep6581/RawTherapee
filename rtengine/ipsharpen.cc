@@ -314,6 +314,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 	float templab;
 	int iii,kkk;
 	width2 = 2*width;
+	const float epsil=0.001f;//prevent divide by zero
 	float amount;
 	amount = params->sharpenEdge.amount / 100.0f;
 	if (amount < 0.00001f)
@@ -355,7 +356,7 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 					wH = fabs(L[offset+1]-L[offset-1]);
 					wV = fabs(L[offset+width]-L[offset-width]);
 
-					s = 1.0+fabs(wH-wV)/2.0;
+					s = 1.0f+fabs(wH-wV)/2.0f;
 					wD1 = fabs(L[offset+width+1]-L[offset-width-1])/s;
 					wD2 = fabs(L[offset+width-1]-L[offset-width+1])/s;
 					s = wD1;
@@ -372,8 +373,8 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 
 					// contrast detection
 					contrast = sqrt(fabs(L[offset+1]-L[offset-1])*fabs(L[offset+1]-L[offset-1])+fabs(L[offset+width]-L[offset-width])*fabs(L[offset+width]-L[offset-width]))/chmax[c];
-					if (contrast>1.0)
-						contrast=1.0;
+					if (contrast>1.0f)
+						contrast=1.0f;
 
 					// new possible values
 					if (((L[offset]<L[offset-1])&&(L[offset]>L[offset+1])) || ((L[offset]>L[offset-1])&&(L[offset]<L[offset+1]))){
@@ -387,9 +388,9 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						f3 = fabs(L[offset+1]-L[offset-width])*fabs(L[offset+1]-L[offset+width]);
 						f4 = sqrt(fabs(L[offset+1]-L[offset-width2])*fabs(L[offset+1]-L[offset+width2]));
 						difR = f1*f2*f2*f3*f3*f4;
-						if ((difR!=0)&&(difL!=0)){
+						if ((difR>epsil)&&(difL>epsil)){
 							lumH = (L[offset-1]*difR+L[offset+1]*difL)/(difL+difR);
-							lumH = v*(1-contrast)+lumH*contrast;
+							lumH = v*(1.f-contrast)+lumH*contrast;
 						}
 					}
 
@@ -404,9 +405,9 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						f3 = fabs(L[offset+width]-L[offset-1])*fabs(L[offset+width]-L[offset+1]);
 						f4 = sqrt(fabs(L[offset+width]-L[offset-2])*fabs(L[offset+width]-L[offset+2]));
 						difB = f1*f2*f2*f3*f3*f4;
-						if ((difB!=0)&&(difT!=0)){
+						if ((difB>epsil)&&(difT>epsil)){
 							lumV = (L[offset-width]*difB+L[offset+width]*difT)/(difT+difB);
-							lumV = v*(1-contrast)+lumV*contrast;
+							lumV = v*(1.f-contrast)+lumV*contrast;
 						}
 					}
 
@@ -421,9 +422,9 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						f3 = fabs(L[offset+1+width]-L[offset-width+1])*fabs(L[offset+1+width]-L[offset+width-1]);
 						f4 = sqrt(fabs(L[offset+1+width]-L[offset-width2+2])*fabs(L[offset+1+width]-L[offset+width2-2]));
 						difRB = f1*f2*f2*f3*f3*f4;
-						if ((difLT!=0)&&(difRB!=0)) {
+						if ((difLT>epsil)&&(difRB>epsil)) {
 							lumD1 = (L[offset-1-width]*difRB+L[offset+1+width]*difLT)/(difLT+difRB);
-							lumD1 = v*(1-contrast)+lumD1*contrast;
+							lumD1 = v*(1.f-contrast)+lumD1*contrast;
 						}
 					}
 
@@ -438,9 +439,9 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						f3 = fabs(L[offset+1-width]-L[offset+width+1])*fabs(L[offset+1-width]-L[offset-width-1]);
 						f4 = sqrt(fabs(L[offset+1-width]-L[offset+width2+2])*fabs(L[offset+1-width]-L[offset-width2-2]));
 						difRT = f1*f2*f2*f3*f3*f4;
-						if ((difLB!=0)&&(difRT!=0)) {
+						if ((difLB>epsil)&&(difRT>epsil)) {
 							lumD2 = (L[offset+1-width]*difLB+L[offset-1+width]*difRT)/(difLB+difRT);
-							lumD2 = v*(1-contrast)+lumD2*contrast;
+							lumD2 = v*(1.f-contrast)+lumD2*contrast;
 						}
 					}
 
@@ -455,8 +456,8 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 						iii = offset/width;
 						kkk = offset-iii*width;
 						float provL=lab->L[iii][kkk]/327.68f;
-						if(c==0){ if(provL < 92.f) templab = v*(1-s)+(lumH*wH+lumV*wV+lumD1*wD1+lumD2*wD2)/(wH+wV+wD1+wD2)*s; else templab=provL;}
-						else templab = v*(1-s)+(lumH*wH+lumV*wV+lumD1*wD1+lumD2*wD2)/(wH+wV+wD1+wD2)*s;
+						if(c==0){ if(provL < 92.f) templab = v*(1.f-s)+(lumH*wH+lumV*wV+lumD1*wD1+lumD2*wD2)/(wH+wV+wD1+wD2)*s; else templab=provL;}
+						else templab = v*(1.f-s)+(lumH*wH+lumV*wV+lumD1*wD1+lumD2*wD2)/(wH+wV+wD1+wD2)*s;
 						if      (c==0) lab->L[iii][kkk] = fabs(327.68f*templab); // fabs because lab->L always >0
 						else if (c==1) lab->a[iii][kkk] =      327.68f*templab ;
 						else if (c==2) lab->b[iii][kkk] =      327.68f*templab ;
