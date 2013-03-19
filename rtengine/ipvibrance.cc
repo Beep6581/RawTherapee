@@ -207,7 +207,7 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 			//int pos = i*width+j;
 			float LL=lab->L[i][j]/327.68f;
 			float CC=sqrt(SQR(lab->a[i][j]/327.68f)+ SQR(lab->b[i][j]/327.68f));
-			float HH=atan2(lab->b[i][j],lab->a[i][j]);
+			float HH=xatan2f(lab->b[i][j],lab->a[i][j]);
 			//double pyramid: LL and HH
 			//I try to take into account: Munsell response (human vision) and Gamut..(less response for red): preferably using Prophoto or WideGamut
 			//blue: -1.80 -3.14  green = 2.1 3.14   green-yellow=1.4 2.1  red:0 1.4  blue-purple:-0.7  -1.4   purple: 0 -0.7
@@ -411,8 +411,9 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 					Color::AllMunsellLch(/*lumaMuns*/false, Lprov,Lprov,HH,Chprov,memChprov,correctionHue,correctlum);
 #endif
 				}
-				aprovn=Chprov*cos(HH+correctionHue);
-				bprovn=Chprov*sin(HH+correctionHue);
+				float2 sincosval = xsincosf(HH+correctionHue);				
+				aprovn=Chprov*sincosval.y;
+				bprovn=Chprov*sincosval.x;
 
 				float fyy = (0.00862069f *Lprov )+ 0.137932f;
 				float fxx = (0.002f * aprovn) + fyy;

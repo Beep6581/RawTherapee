@@ -1470,7 +1470,7 @@ if(params->colorappearance.enabled) {
 					float HH, Lprov1, Chprov1;
 					Lprov1=lab->L[i][j]/327.68f;
 					Chprov1=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
-					HH=atan2(lab->b[i][j],lab->a[i][j]);
+					HH=xatan2f(lab->b[i][j],lab->a[i][j]);
 
 #ifdef _DEBUG
 					bool neg=false;
@@ -1483,8 +1483,10 @@ if(params->colorappearance.enabled) {
 #endif
 
 					lab->L[i][j]=Lprov1*327.68f;
-					lab->a[i][j]=327.68f*Chprov1*cos(HH);
-					lab->b[i][j]=327.68f*Chprov1*sin(HH);
+					float2 sincosval = xsincosf(HH);
+					
+					lab->a[i][j]=327.68f*Chprov1*sincosval.y;
+					lab->b[i][j]=327.68f*Chprov1*sincosval.x;
 
 		}
 		}
@@ -1640,7 +1642,7 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 					float HH, Lprov1, Chprov1;
 					Lprov1=lab->L[i][j]/327.68f;
 					Chprov1=sqrt(SQR(lab->a[i][j]/327.68f) + SQR(lab->b[i][j]/327.68f));
-					HH=atan2(lab->b[i][j],lab->a[i][j]);
+					HH=xatan2f(lab->b[i][j],lab->a[i][j]);
 
 #ifdef _DEBUG
 					bool neg=false;
@@ -1651,10 +1653,11 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 					//gamut control : Lab values are in gamut
 					Color::gamutLchonly(HH,Lprov1,Chprov1, R, G, B, wipa, highlight, 0.15f, 0.96f);
 #endif
+					float2 sincosval = xsincosf(HH);
 
 					lab->L[i][j]=Lprov1*327.68f;
-					lab->a[i][j]=327.68f*Chprov1*cos(HH);
-					lab->b[i][j]=327.68f*Chprov1*sin(HH);
+					lab->a[i][j]=327.68f*Chprov1*sincosval.y;
+					lab->b[i][j]=327.68f*Chprov1*sincosval.x;
 						}
 										}
 
@@ -2390,7 +2393,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 		for (int j=0; j<W; j++) {
 			float LL=lold->L[i][j]/327.68f;
 			float CC=sqrt(SQR(lold->a[i][j]/327.68f) + SQR(lold->b[i][j]/327.68f));
-			float HH=atan2(lold->b[i][j],lold->a[i][j]);
+			float HH=xatan2f(lold->b[i][j],lold->a[i][j]);
 			float Chprov=CC;
 			float Chprov1=CC;
 			float memChprov=Chprov;
@@ -2613,8 +2616,10 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 					else if(fabs(correctionHue) < 0.1f) HH+=0.35f*correctlum;
 					else if(fabs(correctionHue) < 0.015f) HH+=correctlum;	// correct only if correct Munsell chroma very little.
 			*/
-					lnew->a[i][j]=327.68f*Chprov*cos(HH+correctionHue);// apply Munsell
-					lnew->b[i][j]=327.68f*Chprov*sin(HH+correctionHue);
+					float2 sincosval = xsincosf(HH+correctionHue);
+			
+					lnew->a[i][j]=327.68f*Chprov*sincosval.y;// apply Munsell
+					lnew->b[i][j]=327.68f*Chprov*sincosval.x;
 				}
 			}
 			else {
