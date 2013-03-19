@@ -93,7 +93,7 @@ namespace rtengine {
 		 plistener->setProgress (0.0);
 		 }*/
 
-		volatile double progress = 0.0;
+//		volatile double progress = 0.0;
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -154,13 +154,15 @@ namespace rtengine {
 		float incr=1.f;
 		float noisevar_Ldetail = SQR((SQR(100.f-dnparams.Ldetail) + 50.f*(100.f-dnparams.Ldetail)) * TS * 0.5f * incr);
 
-				noisered=1.f;//chroma red
-				if(dnparams.redchro<0.1f) {noisered=0.001f+SQR((100.f + dnparams.redchro)/100.0f);}
-				if(dnparams.redchro>0.1f) {noisered=1.f+SQR((dnparams.redchro));}
+		noisered=1.f;//chroma red
+		if(dnparams.redchro<-0.1f) {noisered=0.001f+SQR((100.f + dnparams.redchro)/100.0f);}
+		else if(dnparams.redchro>0.1f) {noisered=1.f+SQR((dnparams.redchro));}
+		else if (dnparams.redchro>= -0.1f && dnparams.redchro<=0.1f) noisered=0.f;
 
-				noiseblue=1.f;//chroma blue
-				if(dnparams.bluechro<0.1f) {noiseblue=0.001f+SQR((100.f + dnparams.bluechro)/100.0f);}
-				if(dnparams.bluechro>0.1f) {noiseblue=1.f+SQR((dnparams.bluechro));}
+		noiseblue=1.f;//chroma blue
+		if(dnparams.bluechro<-0.1f) {noiseblue=0.001f+SQR((100.f + dnparams.bluechro)/100.0f);}
+		else if(dnparams.bluechro>0.1f) {noiseblue=1.f+SQR((dnparams.bluechro));}
+		else if (dnparams.bluechro>= -0.1f && dnparams.bluechro<=0.1f) noiseblue=0.f;
 
 		array2D<float> tilemask_in(TS,TS);
 		array2D<float> tilemask_out(TS,TS);
@@ -485,15 +487,12 @@ namespace rtengine {
 				// Main detail recovery algorithm: Block loop
 				//OpenMP here
 				//adding omp here leads to artifacts
-                AlignedBufferMP<float> buffer(width + TS + 2*blkrad*offset);
+                AlignedBuffer<float> pBuf(width + TS + 2*blkrad*offset);
 				for (int vblk=0; vblk<numblox_H; vblk++) {
 					//printf("vblock=%d",vblk);
-					int vblkmod = vblk%8;
 
 					int top = (vblk-blkrad)*offset;
-                    AlignedBuffer<float>* pBuf = buffer.acquire();
-//					float * buffer = new float [width + TS + 2*blkrad*offset];
-					float * datarow = (float*)pBuf->data +blkrad*offset;
+					float * datarow = (float*)pBuf.data +blkrad*offset;
 
 					//#ifdef _OPENMP
 					//#pragma omp parallel for
@@ -534,7 +533,6 @@ namespace rtengine {
 							}
 						}
 					}//end of filling block row
-					buffer.release(pBuf);
 
 					//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 					//fftwf_print_plan (plan_forward_blox);
@@ -856,7 +854,7 @@ namespace rtengine {
 		int maxlvl = WaveletCoeffs_L.maxlevel();
 		const float eps = 0.01f;
 		int max;
-		float parfrac = 0.05;
+//		float parfrac = 0.05;
 
 		float madL[8][3], mada[8][3], madb[8][3];
 
@@ -892,7 +890,7 @@ namespace rtengine {
 
 			float skip_L = WaveletCoeffs_L.level_stride(lvl);
 			float skip_ab = WaveletCoeffs_a.level_stride(lvl);
-			float skip_h;
+//			float skip_h;
 			float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 			float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
 			float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
@@ -905,14 +903,13 @@ namespace rtengine {
 
 			} else {
 
-				float ** WavPars_L = WaveletCoeffs_L.level_coeffs(lvl+1);
+//				float ** WavPars_L = WaveletCoeffs_L.level_coeffs(lvl+1);
 				//float ** WavPars_a = WaveletCoeffs_a.level_coeffs(lvl+1);
 				//float ** WavPars_b = WaveletCoeffs_b.level_coeffs(lvl+1);
 
 				//simple wavelet shrinkage
 				float * sfave = new float[Wlvl_L*Hlvl_L];
 				array2D<float> edge(Wlvl_L,Hlvl_L);
-				AlignedBufferMP<double>* buffer = new AlignedBufferMP<double> (MAX(Wlvl_L,Hlvl_L));
 
 				//printf("\n level=%d  \n",lvl);
 
@@ -970,7 +967,7 @@ namespace rtengine {
 							for (int j=0; j<Wlvl_L; j++) {
 
 								int coeffloc_L = i*Wlvl_L+j;
-								int coeffloc_Lpar = (MAX(0,i-skip_L)*Wlvl_L+MAX(0,j-skip_L))/skip_L_ratio;
+//								int coeffloc_Lpar = (MAX(0,i-skip_L)*Wlvl_L+MAX(0,j-skip_L))/skip_L_ratio;
 
 								float mag_L = SQR(WavCoeffs_L[dir][coeffloc_L]);
 								//float mag_Lpar = SQR(parfrac*WavPars_L[dir][coeffloc_Lpar]);
@@ -1009,7 +1006,6 @@ namespace rtengine {
 
 				}
 				delete[] sfave;
-				delete buffer;
 
 			}
 		}
@@ -1101,7 +1097,7 @@ namespace rtengine {
 						float reduc=1.f;
 						float bluuc=1.f;
 						if(noisered!=0. || noiseblue !=0.) {
-						float hh=atan2(noi->b[2*i][2*j],noi->a[2*i][2*j]);
+						float hh=xatan2(noi->b[2*i][2*j],noi->a[2*i][2*j]);
 						//one can also use L or c (chromaticity) if necessary
 						if(hh > -0.4f && hh < 1.6f) reduc=noisered;//red from purple to next yellow
 						if(hh>-2.45f && hh <=-0.4f) bluuc=noiseblue;//blue
@@ -1145,7 +1141,7 @@ namespace rtengine {
 						float reduc=1.f;
 						float bluuc=1.f;
 						if(noisered!=0. || noiseblue !=0.) {
-						float hh=atan2(noi->b[2*i][2*j],noi->a[2*i][2*j]);
+						float hh=xatan2(noi->b[2*i][2*j],noi->a[2*i][2*j]);
 						if(hh > -0.4f && hh < 1.6f) reduc=noisered;
 						if(hh>-2.45f && hh <=-0.4f) bluuc=noiseblue;
 						}
