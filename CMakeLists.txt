@@ -30,19 +30,16 @@ set (CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix (leave
 set (PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
 
 # The following line set special compilation flags for RTEngine, and will be added to CMAKE_CXX_FLAGS
-# It were moved away from rtengine/CMakefiles.txt, because some users may want to remove -ffast_math :
-# this flag speeds up the floating-point operations, but with a little bite less precisions. This default value
-# gives the same result/behaviour as before.
 # Due to a bug in GCC when using OpenMP+SSE, -mstackrealign will be added to your flags
-set (RTENGINE_CXX_FLAGS "-ffast-math -funroll-loops" CACHE STRING "Special compilation flags for RTEngine; -mstackrealign will be added to your flags")
+set (RTENGINE_CXX_FLAGS "" CACHE STRING "Special compilation flags for RTEngine; -mstackrealign will be added to your flags")
 
-if (WIN32)
-	if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-		set (RTENGINE_CXX_FLAGS_MANDATORY "-mstackrealign")
-	elseif (CMAKE_SIZEOF_VOID_P EQUAL 8)
-		set (RTENGINE_CXX_FLAGS_MANDATORY "")
-	endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-endif (WIN32)
+# mandatory flags for rtengine for all platforms, depending on the bit depth
+set (RTENGINE_CXX_FLAGS_MANDATORY "-mstackrealign")
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+	set (RTENGINE_CXX_FLAGS_MANDATORY "${RTENGINE_CXX_FLAGS_MANDATORY} -mpreferred-stack-boundary=4")
+#else (CMAKE_SIZEOF_VOID_P EQUAL 8)
+#	set (RTENGINE_CXX_FLAGS_MANDATORY "${RTENGINE_CXX_FLAGS_MANDATORY} ")
+endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
 
 #loading the processor targets list
 include (ProcessorTargets.cmake)
@@ -283,12 +280,12 @@ else ()
   set(COMPILER_INFO "gcc ${GCC_VERSION}")
 endif ()
 
-# Get c++ and linker flags
-set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
+# Get c++ and linker flags for rtengine (the gui's c++ flags may have less flags)
+set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}} ${RTENGINE_CXX_FLAGS} ${RTENGINE_CXX_FLAGS_MANDATORY}")
 set(LFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
 
 set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
-							-DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
+                            -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
                             -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
                             -DPROC_LABEL:STRING="${PROC_LABEL}"
                             -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
