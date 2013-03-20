@@ -173,18 +173,19 @@ void MyFlatCurve::draw () {
             for (int i=0; i<(int)curve.x.size(); ++i) {
 
                 if (curve.x[i] != -1.) {
+                    int coloredLineWidth = min( max(75,graphW)/75, 8 );
 
-                    cr->set_line_width (1.0);
+                    cr->set_line_width (coloredLineWidth);
                     colorProvider->colorForValue(curve.x[i], 0.5, colorCallerId, this);
                     cr->set_source_rgb (ccRed, ccGreen, ccBlue);
 
                     if ( i==lit_point && (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointX)) ) {
-                        cr->set_line_width (4.0);
+                        cr->set_line_width (2*coloredLineWidth);
                     }
                     cr->move_to (double(graphX)+1 + innerW*curve.x[i], double(graphY-1));
                     cr->rel_line_to (0., -innerH);
                     cr->stroke ();
-                    cr->set_line_width (1.0);
+                    cr->set_line_width (coloredLineWidth);
 
                     // draw the lit_point's horizontal line
                     if (i == lit_point) {
@@ -192,7 +193,7 @@ void MyFlatCurve::draw () {
                         if ( (area&(FCT_Area_H|FCT_Area_V|FCT_Area_Point)) || editedHandle==FCT_EditedHandle_CPointUD) {
 
                             if (editedHandle&(FCT_EditedHandle_CPointUD|FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointY)) {
-                                cr->set_line_width (4.0);
+                                cr->set_line_width (2*coloredLineWidth);
                             }
 
                             colorProvider->colorForValue(curve.x[i], curve.y[i], colorCallerId, this);
@@ -566,8 +567,6 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				enum MouseOverAreas prevArea = area;
 				remove_modal_grab ();
 
-				int previous_lit_point = lit_point;
-
 				// Removing any deleted point if we were previously modifying the point position
 				if (editedHandle & (FCT_EditedHandle_CPoint|FCT_EditedHandle_CPointX|FCT_EditedHandle_CPointY)) {
 					/* delete inactive points: */
@@ -641,10 +640,8 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 					break;
 				}
 
-				if ((lit_point != previous_lit_point) || (prevArea != area)) {
-					setDirty(true);
-					draw ();
-				}
+				setDirty(true);
+				draw ();
 				retval = true;
 				//notifyListener ();
 			}
