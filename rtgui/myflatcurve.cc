@@ -881,8 +881,8 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 	int nbPoints = (int)curve.x.size();
 
 	// left and right bound rely on curve periodicity
-	leftBound         = (lit_point == 0         ) ? (periodic ? curve.x[nbPoints-1]-1. : 0.) : curve.x[lit_point-1];
-	rightBound        = (lit_point == nbPoints-1) ? (periodic ? curve.x[0]+1.          : 1.) : curve.x[lit_point+1];
+	leftBound         = (lit_point == 0         ) ? (periodic && !snapTo ? curve.x[nbPoints-1]-1. : 0.) : curve.x[lit_point-1];
+	rightBound        = (lit_point == nbPoints-1) ? (periodic && !snapTo ? curve.x[0]+1.          : 1.) : curve.x[lit_point+1];
 
 	double leftDeletionBound   = leftBound   - minDistanceX;
 	double rightDeletionBound  = rightBound  + minDistanceX;
@@ -895,7 +895,17 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 
 		// handling periodicity (the first and last point can reappear at the other side of the X range)
 		if (periodic) {
-			if (lit_point==0 && ugpX<0.) {
+			if (snapTo) {
+				if (lit_point==0) {
+					snapCoordinate(0.0, ugpX);
+					curve.x[0] = snapToVal;
+				}
+				else if (lit_point==(nbPoints-1)) {
+					snapCoordinate(1.0, ugpX);
+					curve.x[nbPoints-1] = snapToVal;
+				}
+			}
+			else if (lit_point==0 && ugpX<0.) {
 				// the first point has to be placed at the tail of the point list
 				std::vector<double>::iterator itx, ity, itlt, itrt;
 
@@ -961,10 +971,10 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 		}
 
 		// handling limitations along X axis
-		if (ugpX >= rightDeletionBound && nbPoints>2) {
+		if (ugpX >= rightDeletionBound && nbPoints>2 && !snapTo) {
 			curve.x[lit_point] = -1.;
 		}
-		else if (ugpX <= leftDeletionBound && nbPoints>2) {
+		else if (ugpX <= leftDeletionBound && nbPoints>2 && !snapTo) {
 			curve.x[lit_point] = -1.;
 		}
 		else
@@ -1143,7 +1153,7 @@ void MyFlatCurve::getMouseOverArea () {
 			if (curve.x[i] != -1) {
 				dX = curve.x[i] - preciseCursorX;
 				absDX = dX>0 ? dX : -dX;
-				if (absDX < minDistX) {
+				if ((absDX < minDistX) || (absDX == minDistX && dX<0)) {
 					minDistX = absDX;
 					closest_point = i;
 					lit_point = i;
