@@ -532,41 +532,39 @@ int ImageIO::getTIFFSampleFormat (Glib::ustring fname, IIOSampleFormat &sFormat,
 
     TIFFClose(in);
 
-    if (samplesperpixel==3) {
-        if (photometric == PHOTOMETRIC_RGB) {
-            if (sampleformat==SAMPLEFORMAT_UINT) {
-                if (bitspersample==8) {
-                    sFormat = IIOSF_UNSIGNED_CHAR;
-                    return IMIO_SUCCESS;
-                }
-                if (bitspersample==16) {
-                    sFormat = IIOSF_UNSIGNED_SHORT;
-                    return IMIO_SUCCESS;
-                }
+    if (photometric == PHOTOMETRIC_RGB) {
+        if ((samplesperpixel==3 || samplesperpixel==4) && sampleformat==SAMPLEFORMAT_UINT) {
+            if (bitspersample==8) {
+                sFormat = IIOSF_UNSIGNED_CHAR;
+                return IMIO_SUCCESS;
             }
-            else if (sampleformat==SAMPLEFORMAT_IEEEFP) {
-                /*
-                 * Not yet supported
-                 *
-                 if (bitspersample==16) {
-                    sFormat = IIOSF_HALF;
-                    return IMIO_SUCCESS;
-                }*/
-                if (bitspersample==32) {
-                	sFormat = IIOSF_FLOAT;
-                    return IMIO_SUCCESS;
-                }
+            if (bitspersample==16) {
+                sFormat = IIOSF_UNSIGNED_SHORT;
+                return IMIO_SUCCESS;
             }
         }
-        else if (photometric == PHOTOMETRIC_LOGLUV) {
-            if (compression==COMPRESSION_SGILOG24) {
-                sFormat = IIOSF_LOGLUV24;
+        else if (samplesperpixel==3 && sampleformat==SAMPLEFORMAT_IEEEFP) {
+            /*
+             * Not yet supported
+             *
+             if (bitspersample==16) {
+                sFormat = IIOSF_HALF;
+                return IMIO_SUCCESS;
+            }*/
+            if ((samplesperpixel==3 || samplesperpixel==4) && bitspersample==32) {
+                sFormat = IIOSF_FLOAT;
                 return IMIO_SUCCESS;
             }
-            else if (compression==COMPRESSION_SGILOG) {
-                sFormat = IIOSF_LOGLUV32;
-                return IMIO_SUCCESS;
-            }
+        }
+    }
+    else if (samplesperpixel==3 && photometric == PHOTOMETRIC_LOGLUV) {
+        if (compression==COMPRESSION_SGILOG24) {
+            sFormat = IIOSF_LOGLUV24;
+            return IMIO_SUCCESS;
+        }
+        else if (compression==COMPRESSION_SGILOG) {
+            sFormat = IIOSF_LOGLUV32;
+            return IMIO_SUCCESS;
         }
     }
     return IMIO_VARIANTNOTSUPPORTED;
