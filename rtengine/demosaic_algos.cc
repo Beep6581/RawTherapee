@@ -1397,7 +1397,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 
 void RawImageSource::igv_interpolate(int winw, int winh)
 {
-	static const float eps=1e-5f, epssq=1e-10f;
+	static const float eps=1e-5f, epssq=1e-5f;
 	static const int h1=1, h2=2, h3=3, h4=4, h5=5, h6=6;
 	const int width=winw, height=winh;
 	const int v1=1*width, v2=2*width, v3=3*width, v4=4*width, v5=5*width, v6=6*width;
