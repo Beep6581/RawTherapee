@@ -1935,7 +1935,7 @@ void ColorTemp::initcam1float(float gamu, float yb, float pilotd, float f, float
 	wh =( 4.0f / c ) * ( aw + 4.0f ) * pow_F( fl, 0.25f );
 	pfl = pow_F( fl, 0.25f );
 #ifdef _DEBUG
-	if (settings->verbose) printf("Source float d=%f aw=%f fl=%f wh=%f\n",d,aw,fl,wh);
+	if (settings->verbose) printf("Source float d=%f aw=%f fl=%f wh=%f c=%f  awc=%f\n",d,aw,fl,wh,c,(4.f/c)*(aw+4.f));
 #endif	
 
 }							

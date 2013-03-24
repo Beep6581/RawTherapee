@@ -548,24 +548,61 @@ if(params->colorappearance.enabled) {
 
 	 if (hasColCurve1) {//curve 1 with Lightness and Brightness
 		if (curveMode==ColorAppearanceParams::TC_MODE_LIGHT){
-		    float Jj=(float) Jpro*327.68;
+		  /*  float Jj=(float) Jpro*327.68;
 			float Jold=Jj;
 			const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve1);
 				userColCurve.Apply(Jj);
 				Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility
+			*/	
+		    float Jj=(float) Jpro*327.68f;
+			float Jold=Jj;
+			float Jold100=(float) Jpro;
+			float redu=25.f;
+			float reduc=1.f;		
+			const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
+				userColCurveJ1.Apply(Jj);
+				if(Jj>Jold)	{
+					if(Jj<65535.f)	{
+							if(Jold < 327.68f*redu) Jj=0.3f*(Jj-Jold)+Jold;//divide sensibility
+							else 		{
+										reduc=LIM((100.f-Jold100)/(100.f-redu),0.f,1.f);
+										Jj=0.3f*reduc*(Jj-Jold)+Jold;//reduct sensibility in highlights
+										}
+									}
+							}
+				else if(Jj>10.f) Jj=0.8f*(Jj-Jold)+Jold;
+				else if (Jj>=0.f) Jj=0.90f*(Jj-Jold)+Jold;// not zero ==>artifacts	
+				
+				
 			Jpro=(double)(Jj/327.68f);
 			t1L=true;
 		}
 	else if (curveMode==ColorAppearanceParams::TC_MODE_BRIGHT){
-			double coef=32760./wh;
-			float Qq=(float) Qpro*coef;
+			//attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
+			float coef=((aw+4.f)*(4.f/c))/100.f;
+			float Qq=(float) Qpro*327.68f*(1.f/coef);
+			float Qold100=(float) Qpro/coef;
+			
 			float Qold=Qq;
-			const Brightcurve& userColCurve = static_cast<const Brightcurve&>(customColCurve1);
-					userColCurve.Apply(Qq);
-					Qq=0.5f*(Qq-Qold)+Qold;//divide sensibility
-			Qpro=(double)(Qq/coef);
-			Jpro=(100.0* Qpro*Qpro) /(wh*wh);
-			t1B=true;
+			float redu=20.f;
+			float reduc=1.f;		
+			
+			const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
+					userColCurveB1.Apply(Qq);
+				if(Qq>Qold)	{
+					if(Qq<65535.f)	{
+						if(Qold < 327.68f*redu) Qq=0.25f*(Qq-Qold)+Qold;//divide sensibility
+						else 			{
+										reduc=LIM((100.f-Qold100)/(100.f-redu),0.f,1.f);
+										Qq=0.25f*reduc*(Qq-Qold)+Qold;//reduct sensibility in highlights
+										}
+									}
+							}
+				else if(Qq>10.f) Qq=0.5f*(Qq-Qold)+Qold;
+				else if (Qq>=0.f) Qq=0.7f*(Qq-Qold)+Qold;// not zero ==>artifacts
+			Qpro=(double)(Qq*(coef)/327.68f);
+			Jpro=100.*(Qpro*Qpro)/((4.0/c)*(4.0/c)*(aw+4.0)*(aw+4.0));
+			t1B=true;		
 		}
 	}
 
@@ -573,22 +610,68 @@ if(params->colorappearance.enabled) {
 		if (curveMode2==ColorAppearanceParams::TC_MODE_LIGHT){
 			float Jj=(float) Jpro*327.68;
 			float Jold=Jj;
+			/*
 			const Lightcurve& userColCurve = static_cast<const Lightcurve&>(customColCurve2);
 					userColCurve.Apply(Jj);
 					Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility
+					*/
+			float Jold100=(float) Jpro;
+			float redu=25.f;
+			float reduc=1.f;					
+			const Lightcurve& userColCurveJ2 = static_cast<const Lightcurve&>(customColCurve2);
+					userColCurveJ2.Apply(Jj);
+				if(Jj>Jold)	{
+					if(Jj<65535.f)	{
+							if(Jold < 327.68f*redu) Jj=0.3f*(Jj-Jold)+Jold;//divide sensibility
+							else 		{
+										reduc=LIM((100.f-Jold100)/(100.f-redu),0.f,1.f);
+										Jj=0.3f*reduc*(Jj-Jold)+Jold;//reduct sensibility in highlights
+										}
+									}
+							}
+				else if(Jj>10.f) {if(!t1L)Jj=0.8f*(Jj-Jold)+Jold;else Jj=0.4f*(Jj-Jold)+Jold;}
+				else if (Jj>=0.f){if(!t1L)Jj=0.90f*(Jj-Jold)+Jold;else Jj=0.5f*(Jj-Jold)+Jold;}// not zero ==>artifacts	
+					
 			Jpro=(double)(Jj/327.68f);
 			t2L=true;
 		}
 	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ //
-			double coef=32760./wh;
-			float Qq=(float) Qpro*coef;
-			float Qold = Qq;
-			const Brightcurve& userColCurve = static_cast<const Brightcurve&>(customColCurve2);
-					userColCurve.Apply(Qq);
-					Qq=0.5f*(Qq-Qold)+Qold;//divide sensibility
-			Qpro=(double)(Qq/coef);
-			Jpro=(100.0* Qpro*Qpro) /(wh*wh);
+			float coef=((aw+4.f)*(4.f/c))/100.f;
+			float Qq=(float) Qpro*327.68f*(1.f/coef);
+			float Qold100=(float) Qpro/coef;
+			
+			float Qold=Qq;
+			float redu=20.f;
+			float reduc=1.f;		
+			
+			const Brightcurve& userColCurveB2 = static_cast<const Brightcurve&>(customColCurve2);
+					userColCurveB2.Apply(Qq);
+				if(Qq>Qold)	{
+					if(Qq<65535.f)	{
+						if(Qold < 327.68f*redu) Qq=0.25f*(Qq-Qold)+Qold;//divide sensibility
+						else 			{
+										reduc=LIM((100.f-Qold100)/(100.f-redu),0.f,1.f);
+										Qq=0.25f*reduc*(Qq-Qold)+Qold;//reduct sensibility in highlights
+										}
+									}
+							}
+				else if(Qq>10.f) Qq=0.5f*(Qq-Qold)+Qold;
+				else if (Qq>=0.f) Qq=0.7f*(Qq-Qold)+Qold;// not zero ==>artifacts
+			Qpro=(double)(Qq*(coef)/327.68f);
+			Jpro=100.*(Qpro*Qpro)/((4.0/c)*(4.0/c)*(aw+4.0)*(aw+4.0));
 			t2B=true;
+			
+			if(t1L){//to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
+			coef=2.f;//adapt Q to J approximation
+			Qq=(float) Qpro*coef;
+			Qold=Qq;
+			const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
+				userColCurveJ1.Apply(Qq);
+				Qq=0.1f*(Qq-Qold)+Qold;//approximative adaptation	
+			Qpro=(double)(Qq/coef);
+			Jpro=100.*(Qpro*Qpro)/((4.0/c)*(4.0/c)*(aw+4.0)*(aw+4.0));			
+			} 
+			
 			}
 	}
 
@@ -1036,61 +1119,61 @@ if(params->colorappearance.enabled) {
 	}
 	//mean=(sum/((endh-begh)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
 	mean=(sum/((height)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
-	if     (mean<15.f) yb=3.0;
-	else if(mean<30.f) yb=5.0;
-	else if(mean<40.f) yb=10.0;
-	else if(mean<45.f) yb=15.0;
-	else if(mean<50.f) yb=18.0;
-	else if(mean<55.f) yb=23.0;
-	else if(mean<60.f) yb=30.0;
-	else if(mean<70.f) yb=40.0;
-	else if(mean<80.f) yb=60.0;
-	else if(mean<90.f) yb=80.0;
-	else               yb=90.0;
+	if     (mean<15.f) yb=3.0f;
+	else if(mean<30.f) yb=5.0f;
+	else if(mean<40.f) yb=10.0f;
+	else if(mean<45.f) yb=15.0f;
+	else if(mean<50.f) yb=18.0f;
+	else if(mean<55.f) yb=23.0f;
+	else if(mean<60.f) yb=30.0f;
+	else if(mean<70.f) yb=40.0f;
+	else if(mean<80.f) yb=60.0f;
+	else if(mean<90.f) yb=80.0f;
+	else               yb=90.0f;
 
 	bool ciedata=params->colorappearance.datacie;
 
 	ColorTemp::temp2mulxyz (params->wb.temperature, params->wb.green, params->wb.method, Xw, Zw); //compute white Xw Yw Zw  : white current WB
 	//viewing condition for surround
-	if(params->colorappearance.surround=="Average") { f  = 1.00; c  = 0.69; nc = 1.00;f2=1.0,c2=0.69,nc2=1.0;}
-	else if(params->colorappearance.surround=="Dim"){ f2  = 0.9; c2  = 0.59; nc2 = 0.9;f=1.0,c=0.69,nc=1.0;}
-	else if(params->colorappearance.surround=="Dark"){f2  = 0.8; c2  = 0.525;nc2 = 0.8;f=1.0,c=0.69,nc=1.0;}
-	else if(params->colorappearance.surround=="ExtremelyDark"){f2  = 0.8; c2  = 0.41;nc2 = 0.8;f=1.0,c=0.69,nc=1.0;}
+	if(params->colorappearance.surround=="Average") { f  = 1.00f; c  = 0.69f; nc = 1.00f;f2=1.0f,c2=0.69f,nc2=1.0f;}
+	else if(params->colorappearance.surround=="Dim"){ f2  = 0.9f; c2  = 0.59f; nc2 = 0.9f;f=1.0f,c=0.69f,nc=1.0f;}
+	else if(params->colorappearance.surround=="Dark"){f2  = 0.8f; c2  = 0.525f;nc2 = 0.8f;f=1.0f,c=0.69f,nc=1.0f;}
+	else if(params->colorappearance.surround=="ExtremelyDark"){f2  = 0.8f; c2  = 0.41f;nc2 = 0.8f;f=1.0f,c=0.69f,nc=1.0f;}
 
 	//scene condition for surround
-	if(params->colorappearance.surrsource==true)  {f  = 0.85; c  = 0.55; nc = 0.85;}// if user => source image has surround very dark
+	if(params->colorappearance.surrsource==true)  {f  = 0.85f; c  = 0.55f; nc = 0.85f;}// if user => source image has surround very dark
 	//with which algorithme
 	if     (params->colorappearance.algo=="JC")  alg=0;
 	else if(params->colorappearance.algo=="JS")  alg=1;
 	else if(params->colorappearance.algo=="QM")  {alg=2;algepd=true;}
 	else if(params->colorappearance.algo=="ALL") {alg=3;algepd=true;}
 	//settings white point of output device - or illuminant viewing
-	if(settings->viewingdevice==0) {xwd=96.42;ywd=100.0;zwd=82.52;}//5000K
-	else if(settings->viewingdevice==1) {xwd=95.68;ywd=100.0;zwd=92.15;}//5500
-	else if(settings->viewingdevice==2) {xwd=95.24;ywd=100.0;zwd=100.81;}//6000
-	else if(settings->viewingdevice==3)  {xwd=95.04;ywd=100.0;zwd=108.88;}//6500
-	else if(settings->viewingdevice==4)  {xwd=109.85;ywd=100.0;zwd=35.58;}//tungsten
-	else if(settings->viewingdevice==5)  {xwd=99.18;ywd=100.0;zwd=67.39;}//fluo F2
-	else if(settings->viewingdevice==6)  {xwd=95.04;ywd=100.0;zwd=108.75;}//fluo F7
-	else if(settings->viewingdevice==7)  {xwd=100.96;ywd=100.0;zwd=64.35;}//fluo F11
+	if(settings->viewingdevice==0) {xwd=96.42f;ywd=100.0f;zwd=82.52f;}//5000K
+	else if(settings->viewingdevice==1) {xwd=95.68f;ywd=100.0f;zwd=92.15f;}//5500
+	else if(settings->viewingdevice==2) {xwd=95.24f;ywd=100.0f;zwd=100.81f;}//6000
+	else if(settings->viewingdevice==3)  {xwd=95.04f;ywd=100.0f;zwd=108.88f;}//6500
+	else if(settings->viewingdevice==4)  {xwd=109.85f;ywd=100.0f;zwd=35.58f;}//tungsten
+	else if(settings->viewingdevice==5)  {xwd=99.18f;ywd=100.0f;zwd=67.39f;}//fluo F2
+	else if(settings->viewingdevice==6)  {xwd=95.04f;ywd=100.0f;zwd=108.75f;}//fluo F7
+	else if(settings->viewingdevice==7)  {xwd=100.96f;ywd=100.0f;zwd=64.35f;}//fluo F11
 
 
 	//settings mean Luminance Y of output device or viewing
-	if(settings->viewingdevicegrey==0) {yb2=5.0;}
-	else if(settings->viewingdevicegrey==1) {yb2=10.0;}
-	else if(settings->viewingdevicegrey==2) {yb2=15.0;}
-	else if(settings->viewingdevicegrey==3) {yb2=18.0;}
-	else if(settings->viewingdevicegrey==4) {yb2=23.0;}
-	else if(settings->viewingdevicegrey==5)  {yb2=30.0;}
-	else if(settings->viewingdevicegrey==6)  {yb2=40.0;}
+	if(settings->viewingdevicegrey==0) {yb2=5.0f;}
+	else if(settings->viewingdevicegrey==1) {yb2=10.0f;}
+	else if(settings->viewingdevicegrey==2) {yb2=15.0f;}
+	else if(settings->viewingdevicegrey==3) {yb2=18.0f;}
+	else if(settings->viewingdevicegrey==4) {yb2=23.0f;}
+	else if(settings->viewingdevicegrey==5)  {yb2=30.0f;}
+	else if(settings->viewingdevicegrey==6)  {yb2=40.0f;}
 
 	//La and la2 = ambiant luminosity scene and viewing
 	la=float(params->colorappearance.adapscen);
 	la2=float(params->colorappearance.adaplum);
 
 	// level of adaptation
-	float deg=(params->colorappearance.degree)/100.0;
-	float pilot=params->colorappearance.autodegree ? 2.0 : deg;
+	float deg=(params->colorappearance.degree)/100.0f;
+	float pilot=params->colorappearance.autodegree ? 2.0f : deg;
 
 	//algoritm's params
 	float jli=params->colorappearance.jlight;
@@ -1121,12 +1204,12 @@ if(params->colorappearance.enabled) {
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
 
 	if(params->colorappearance.gamut==true) gamu=1;//enabled gamut control
-	xw=100.0*Xw;
-	yw=100.0*Yw;
-	zw=100.0*Zw;
+	xw=100.0f*Xw;
+	yw=100.0f*Yw;
+	zw=100.0f*Zw;
 	float xw1,yw1,zw1,xw2,yw2,zw2;
 	// settings of WB: scene and viewing
-    if(params->colorappearance.wbmodel=="RawT") {xw1=96.46;yw1=100.0;zw1=82.445;xw2=xwd;yw2=ywd;zw2=zwd;}	//use RT WB; CAT 02 is used for output device (see prefreneces)
+    if(params->colorappearance.wbmodel=="RawT") {xw1=96.46f;yw1=100.0f;zw1=82.445f;xw2=xwd;yw2=ywd;zw2=zwd;}	//use RT WB; CAT 02 is used for output device (see prefreneces)
     else if(params->colorappearance.wbmodel=="RawTCAT02") {xw1=xw;yw1=yw;zw1=zw;xw2=xwd;yw2=ywd;zw2=zwd;}	// Settings RT WB are used for CAT02 => mix , CAT02 is use for output device (screen: D50 D65, projector: lamp, LED) see preferences
 	float cz,wh, pfl;
 	ColorTemp::initcam1float(gamu, yb, pilot, f, la,xw, yw, zw, n, d, nbb, ncb,cz, aw, wh, pfl, fl, c);
@@ -1157,7 +1240,7 @@ if(params->colorappearance.enabled) {
 			float b=lab->b[i][j];
 			float x1,y1,z1;
 			float x,y,z;
-			float epsil=0.0001;
+			float epsil=0.0001f;
 			//convert Lab => XYZ
 			Color::Lab2XYZ(L, a, b, x1, y1, z1);
 			float J, C, h, Q, M, s;
@@ -1205,7 +1288,7 @@ if(params->colorappearance.enabled) {
 				float dred=100.f;// in C mode
 				float protect_red=80.0f; // in C mode
 				dred = 100.0f * sqrt((dred*coe)/Qpro);
-				protect_red=100.0 * sqrt((protect_red*coe)/Qpro);
+				protect_red=100.0f * sqrt((protect_red*coe)/Qpro);
 				int sk=0;
 				float ko=100.f;
 				Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red,sk,rstprotection,ko, spro);
@@ -1235,13 +1318,13 @@ if(params->colorappearance.enabled) {
 				if(alg!=2) Jpro=(bright_curve[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
 				float Cp;
 				float Sp=spro/100.0f;
-				parsat=1.5;
+				parsat=1.5f;
 				if(schr==-100.0f) schr=-99.f;
 				if(schr==100.0f) schr=98.f;
-				if(alg==3) ColorTemp::curvecolorfloat(schr, Sp , sres, parsat);	else ColorTemp::curvecolorfloat(0.0, Sp , sres, parsat);	//saturation
+				if(alg==3) ColorTemp::curvecolorfloat(schr, Sp , sres, parsat);	else ColorTemp::curvecolorfloat(0.0f, Sp , sres, parsat);	//saturation
 				dred=100.f;// in C mode
 				protect_red=80.0f; // in C mode
-				dred = 100.0 * sqrt((dred*coe)/Q);
+				dred = 100.0f * sqrt((dred*coe)/Q);
 				protect_red=100.0f * sqrt((protect_red*coe)/Q);
 				sk=0;
 				Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red,sk,rstprotection,ko, spro);
@@ -1250,7 +1333,7 @@ if(params->colorappearance.enabled) {
 				Cp=Cpro/100.0f;
 				parsat=1.8f;//parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation : for not)
 				if(chr==-100.0f) chr=-99.8f;
-				if(alg!=2) ColorTemp::curvecolorfloat(chr, Cp , sres, parsat);else ColorTemp::curvecolorfloat(0.0, Cp , sres, parsat);	//chroma
+				if(alg!=2) ColorTemp::curvecolorfloat(chr, Cp , sres, parsat);else ColorTemp::curvecolorfloat(0.0f, Cp , sres, parsat);	//chroma
 				dred=55.f;
 				protect_red=30.0f;
 				sk=1;
@@ -1263,32 +1346,49 @@ if(params->colorappearance.enabled) {
 		if (curveMode==ColorAppearanceParams::TC_MODE_LIGHT){
 		    float Jj=(float) Jpro*327.68f;
 			float Jold=Jj;
+			float Jold100=(float) Jpro;
+			float redu=25.f;
+			float reduc=1.f;		
 			const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
 				userColCurveJ1.Apply(Jj);
-				Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility
-			Jpro=(float)(Jj/327.68f);
-			
-		/*	float coef=1.0;//32760.f/wh;
-			float Qq=(float) Qpro*coef;
-			float Qold=Qq;
-			const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
-				userColCurveJ1.Apply(Qq);
-				Qq=0.2*(Qq-Qold)+Qold;//divide sensibility
-			Qpro=(float)(Qq/coef);
-			Jpro=(100.0f* Qpro*Qpro) /(wh*wh);
-			*/	
-			
+				if(Jj>Jold)	{
+					if(Jj<65535.f)	{
+							if(Jold < 327.68f*redu) Jj=0.3f*(Jj-Jold)+Jold;//divide sensibility
+							else 		{
+										reduc=LIM((100.f-Jold100)/(100.f-redu),0.f,1.f);
+										Jj=0.3f*reduc*(Jj-Jold)+Jold;//reduct sensibility in highlights
+										}
+									}
+							}
+				else if(Jj>10.f) Jj=0.8f*(Jj-Jold)+Jold;
+				else if (Jj>=0.f) Jj=0.90f*(Jj-Jold)+Jold;// not zero ==>artifacts	
+			Jpro=(float)(Jj/327.68f);			
 			t1L=true;
 		}
 	else if (curveMode==ColorAppearanceParams::TC_MODE_BRIGHT){
-
-			float coef=32760.f/wh;
-			float Qq=(float) Qpro*coef;
+			//attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algoritms will be different
+			float coef=((aw+4.f)*(4.f/c))/100.f;
+			float Qq=(float) Qpro*327.68f*(1.f/coef);
+			float Qold100=(float) Qpro/coef;
+			
 			float Qold=Qq;
+			float redu=20.f;
+			float reduc=1.f;		
+			
 			const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
 					userColCurveB1.Apply(Qq);
-					Qq=0.3f*(Qq-Qold)+Qold;//divide sensibility
-			Qpro=(float)(Qq/coef);
+				if(Qq>Qold)	{
+					if(Qq<65535.f)	{
+						if(Qold < 327.68f*redu) Qq=0.25f*(Qq-Qold)+Qold;//divide sensibility
+						else 			{
+										reduc=LIM((100.f-Qold100)/(100.f-redu),0.f,1.f);
+										Qq=0.25f*reduc*(Qq-Qold)+Qold;//reduct sensibility in highlights
+										}
+									}
+							}
+				else if(Qq>10.f) Qq=0.5f*(Qq-Qold)+Qold;
+				else if (Qq>=0.f) Qq=0.7f*(Qq-Qold)+Qold;// not zero ==>artifacts
+			Qpro=(float)(Qq*(coef)/327.68f);
 			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));
 			t1B=true;		
 		}
@@ -1298,20 +1398,48 @@ if(params->colorappearance.enabled) {
 		if (curveMode2==ColorAppearanceParams::TC_MODE_LIGHT){
 			float Jj=(float) Jpro*327.68f;
 			float Jold=Jj;
+			float Jold100=(float) Jpro;
+			float redu=25.f;
+			float reduc=1.f;					
 			const Lightcurve& userColCurveJ2 = static_cast<const Lightcurve&>(customColCurve2);
 					userColCurveJ2.Apply(Jj);
-					Jj=0.7f*(Jj-Jold)+Jold;//divide sensibility
+				if(Jj>Jold)	{
+					if(Jj<65535.f)	{
+							if(Jold < 327.68f*redu) Jj=0.3f*(Jj-Jold)+Jold;//divide sensibility
+							else 		{
+										reduc=LIM((100.f-Jold100)/(100.f-redu),0.f,1.f);
+										Jj=0.3f*reduc*(Jj-Jold)+Jold;//reduct sensibility in highlights
+										}
+									}
+							}
+				else if(Jj>10.f) {if(!t1L)Jj=0.8f*(Jj-Jold)+Jold;else Jj=0.4f*(Jj-Jold)+Jold;}
+				else if (Jj>=0.f){if(!t1L)Jj=0.90f*(Jj-Jold)+Jold;else Jj=0.5f*(Jj-Jold)+Jold;}// not zero ==>artifacts	
 			Jpro=(float)(Jj/327.68f);
 			t2L=true;					
 		}
 	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ //
-			float coef=32760.f/wh;
-			float Qq=(float) Qpro*coef;
-			float Qold = Qq;
+			float coef=((aw+4.f)*(4.f/c))/100.f;
+			float Qq=(float) Qpro*327.68f*(1.f/coef);
+			float Qold100=(float) Qpro/coef;
+			
+			float Qold=Qq;
+			float redu=20.f;
+			float reduc=1.f;		
+			
 			const Brightcurve& userColCurveB2 = static_cast<const Brightcurve&>(customColCurve2);
 					userColCurveB2.Apply(Qq);
-					Qq=0.3f*(Qq-Qold)+Qold;//divide sensibility
-			Qpro=(float)(Qq/coef);
+				if(Qq>Qold)	{
+					if(Qq<65535.f)	{
+						if(Qold < 327.68f*redu) Qq=0.25f*(Qq-Qold)+Qold;//divide sensibility
+						else 			{
+										reduc=LIM((100.f-Qold100)/(100.f-redu),0.f,1.f);
+										Qq=0.25f*reduc*(Qq-Qold)+Qold;//reduct sensibility in highlights
+										}
+									}
+							}
+				else if(Qq>10.f) Qq=0.5f*(Qq-Qold)+Qold;
+				else if (Qq>=0.f) Qq=0.7f*(Qq-Qold)+Qold;// not zero ==>artifacts
+			Qpro=(float)(Qq*(coef)/327.68f);
 			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));
 			t2B=true;
 			
@@ -1321,10 +1449,11 @@ if(params->colorappearance.enabled) {
 			Qold=Qq;
 			const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
 				userColCurveJ1.Apply(Qq);
-				Qq=0.15f*(Qq-Qold)+Qold;//adaptation approx...	
+				Qq=0.05f*(Qq-Qold)+Qold;//approximative adaptation	
 			Qpro=(float)(Qq/coef);
 			Jpro=100.f*(Qpro*Qpro)/((4.0f/c)*(4.0f/c)*(aw+4.0f)*(aw+4.0f));			
 			} 
+			
 			}
 	}
 
@@ -1341,7 +1470,6 @@ if(params->colorappearance.enabled) {
 				float sk=1;
 				float ko=1.f/coef;
 				Color::skinredfloat(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);
-			//	Cpro=Cc/coef;
 				c1C=1;
 		}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ //
@@ -1355,12 +1483,12 @@ if(params->colorappearance.enabled) {
 				float coe=pow_F(fl,0.25f);
 				float dred=100.f;// in C mode
 				float protect_red=80.0f; // in C mode
-				dred = 100.0 * sqrt((dred*coe)/Qpro);
-				protect_red=100.0 * sqrt((protect_red*coe)/Qpro);
+				dred = 100.0f * sqrt((dred*coe)/Qpro);
+				protect_red=100.0f * sqrt((protect_red*coe)/Qpro);
 				int sk=0;
 				float ko=1.f/coef;
 				Color::skinredfloat(Jpro, hpro, Ss, Sold, dred, protect_red,sk,rstprotection,ko, spro);
-				Qpro= ( 4.0 / c ) * sqrt( Jpro / 100.0 ) * ( aw + 4.0 ) ;
+				Qpro= ( 4.0f / c ) * sqrt( Jpro / 100.0f ) * ( aw + 4.0f ) ;
 				Cpro=(spro*spro*Qpro)/(10000.0f);
 				c1s=1;
 
@@ -1385,7 +1513,6 @@ if(params->colorappearance.enabled) {
 			}
 	}
 			//to retrieve the correct values of variables
-		//	if(t2B && t1B) Jpro=(100.0f* Qpro*Qpro) /(wh*wh);// for brightness curve
 			
 			if(c1s==1) {
 				Qpro= ( 4.0f / c ) * sqrt( Jpro / 100.0f ) * ( aw + 4.0f ) ;//for saturation curve
@@ -1401,22 +1528,17 @@ if(params->colorappearance.enabled) {
 			s=spro;
 
 		if(params->colorappearance.tonecie  || settings->autocielab){//use pointer for tonemapping with CIECAM and also sharpening , defringe, contrast detail
-	//	if(params->colorappearance.tonecie  || params->colorappearance.sharpcie){//use pointer for tonemapping with CIECAM and also sharpening , defringe, contrast detail
 			float Qred= ( 4.0f / c)  * ( aw + 4.0f );//estimate Q max if J=100.0
 			ncie->Q_p[i][j]=(float)Q+epsil;//epsil to avoid Q=0
 			ncie->M_p[i][j]=(float)M+epsil;
 			ncie->J_p[i][j]=(float)J+epsil;
 			ncie->h_p[i][j]=(float)h;
 			ncie->C_p[i][j]=(float)C+epsil;
-	//		ncie->s_p[i][j]=(float)s;
 			ncie->sh_p[i][j]=(float) 32768.f*(( 4.0f / c )*sqrt( J / 100.0f ) * ( aw + 4.0f ))/Qred ;
-	//		ncie->ch_p[i][j]=(float) 327.68*C;
 			if(ncie->Q_p[i][j]<minQ) minQ=ncie->Q_p[i][j];//minima
 			if(ncie->Q_p[i][j]>maxQ) maxQ=ncie->Q_p[i][j];//maxima
 			}
 			if(!params->colorappearance.tonecie  || !settings->autocielab || !params->edgePreservingDecompositionUI.enabled){
-		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !settings->autocielab){
-		//	if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie  || !params->colorappearance.sharpcie){
 			int posl, posc;
 			float brli=327.f;
 			float chsacol=327.f;
@@ -1427,7 +1549,6 @@ if(params->colorappearance.enabled) {
 			if (curveMode3==ColorAppearanceParams::TC_MODE_CHROMA) {chsacol=327.f;colch=0;}
 			else if(curveMode3==ColorAppearanceParams::TC_MODE_SATUR) {chsacol=450.0f;colch=1;}
 			else if(curveMode3==ColorAppearanceParams::TC_MODE_COLORF) {chsacol=327.0f;colch=2;}
-//			if(!params->colorappearance.tonecie  || !settings->autocielab  || !params->edgePreservingDecompositionUI.enabled ){						
 			
 			if(ciedata) {
 			// Data for J Q M s and C histograms
@@ -1448,7 +1569,6 @@ if(params->colorappearance.enabled) {
 			}
 			float xx,yy,zz;
 			//process normal==> viewing
-			//float nj, nbbj, ncbj, flj, czj, dj, awj;
 
 			ColorTemp::jch2xyz_ciecam02float( xx, yy, zz,
 			                             J,  C, h,
@@ -1495,9 +1615,6 @@ if(params->colorappearance.enabled) {
 	// End of parallelization
 if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
 
-//if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie   || !settings->autocielab){//normal
-//if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.tonecie   || !params->colorappearance.sharpcie){//normal
-
 	if(ciedata) {
     //update histogram J
 	if(pW!=1){//only with improccoordinator
@@ -1531,7 +1648,6 @@ if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
 #endif
 
 if(settings->autocielab) {
-//if(params->colorappearance.sharpcie) {
 
 //all this treatments reduce artefacts, but can leed to slighty  different results
 if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
@@ -1584,18 +1700,17 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 		#pragma omp for schedule(dynamic, 10)
 #endif
 		for (int i=0; i<height; i++) // update CIECAM with new values after tone-mapping
-	//	for (int i=begh; i<endh; i++) 
 			for (int j=0; j<width; j++) {
 			float xx,yy,zz;
 			float x,y,z;
-			float eps=0.0001;
-			float co_e=(pow_F(f_l,0.25))+eps;
+			float eps=0.0001f;
+			float co_e=(pow_F(f_l,0.25f))+eps;
 			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
 			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
 			//show histogram in CIECAM mode (Q,J, M,s,C)
 			int posl, posc;
-			float brli=327.;
-			float chsacol=327.;
+			float brli=327.f;
+			float chsacol=327.f;
 			int libr=0;
 			int colch=0;
 			float sa_t;
