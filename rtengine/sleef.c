@@ -1212,4 +1212,18 @@ __inline float xexpf(float d) {
 //  if (xisminff(d)) u = 0;
   return u;
 }
+__inline float xmul2f(float d) {
+	if (*(int*)&d & 0x7FFFFFFF) { // if f==0 do nothing
+		*(int*)&d += 1 << 23; // add 1 to the exponent
+		}
+	return d;
+}
+
+__inline float xdiv2f(float d) {
+	if (*(int*)&d & 0x7FFFFFFF) { // if f==0 do nothing
+		*(int*)&d -= 1 << 23; // sub 1 from the exponent
+		}
+	return d;
+}
+
 #endif
