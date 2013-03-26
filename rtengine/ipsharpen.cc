@@ -314,7 +314,8 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 	float templab;
 	int iii,kkk;
 	width2 = 2*width;
-	const float epsil=0.001f;//prevent divide by zero
+	const float epsil=0.01f;//prevent divide by zero
+	const float eps2=0.001f;//prevent divide by zero
 	float amount;
 	amount = params->sharpenEdge.amount / 100.0f;
 	if (amount < 0.00001f)
@@ -353,12 +354,12 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 			for(j=2; j<height-2; j++)
 				for(i=2,offset=j*width+i; i<width-2; i++,offset++) {
 					// weight functions
-					wH = fabs(L[offset+1]-L[offset-1]);
-					wV = fabs(L[offset+width]-L[offset-width]);
+					wH = eps2 + fabs(L[offset+1]-L[offset-1]);
+					wV = eps2 + fabs(L[offset+width]-L[offset-width]);
 
 					s = 1.0f+fabs(wH-wV)/2.0f;
-					wD1 = fabs(L[offset+width+1]-L[offset-width-1])/s;
-					wD2 = fabs(L[offset+width-1]-L[offset-width+1])/s;
+					wD1 = eps2 + fabs(L[offset+width+1]-L[offset-width-1])/s;
+					wD2 = eps2 + fabs(L[offset+width-1]-L[offset-width+1])/s;
 					s = wD1;
 					wD1 /= wD2;
 					wD2 /= wD1;
