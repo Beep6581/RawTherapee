@@ -31,6 +31,7 @@ class ImageAreaToolListener {
     virtual void cropSelectionReady () {}
     virtual void rotateSelectionReady (double rotate_deg, Thumbnail* thm=NULL) {}
     virtual ToolBar* getToolBar () { return NULL; }
+    virtual void removeWbTool() =0;
     virtual CropGUIListener* startCropEditing (Thumbnail* thm=NULL) { return NULL; }
 };
 

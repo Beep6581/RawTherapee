@@ -108,9 +108,9 @@ class Thumbnail {
 
         const Glib::ustring&  getExifString ();
         const Glib::ustring&  getDateTimeString ();
-        void                  getCamWB (double& temp, double& green) { if (tpp) tpp->getCamWB (temp, green); }
-        void                  getAutoWB (double& temp, double& green) { if (tpp) tpp->getAutoWB (temp, green); }
-        void                  getSpotWB (int x, int y, int rect, double& temp, double& green) { if (tpp) tpp->getSpotWB (getProcParams(), x, y, rect, temp, green); }
+        void                  getCamWB  (double& temp, double& green) { if (tpp) tpp->getCamWB  (temp, green); else temp = green = -1.0; }
+        void                  getAutoWB (double& temp, double& green) { if (tpp) tpp->getAutoWB (temp, green); else temp = green = -1.0; }
+        void                  getSpotWB (int x, int y, int rect, double& temp, double& green) { if (tpp) tpp->getSpotWB (getProcParams(), x, y, rect, temp, green); else temp = green = -1.0; }
         void                  applyAutoExp (rtengine::procparams::ProcParams& pparams) { if (tpp) tpp->applyAutoExp (pparams); }
         
         ThFileType      getType ();

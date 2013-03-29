@@ -162,25 +162,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     {
 
         if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
-		
-		//TODO - denoise branch - is this code for WB params still necessary?
-		currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
-        if (params.wb.method=="Camera")
-            currWB = imgsrc->getWB ();
-        else if (params.wb.method=="Auto") {
-            if (!awbComputed) {
-                autoWB = imgsrc->getAutoWB ();
-                awbComputed = true;
-            }
-            currWB = autoWB;
-        }
-        params.wb.temperature = currWB.getTemp ();
-        params.wb.green = currWB.getGreen ();
-        
-        imgsrc->demosaic( rp );
-        //imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
 
-        //imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
+        imgsrc->demosaic( rp );
 
         if (highDetailNeeded) {
             highDetailRawComputed = true;
@@ -190,8 +173,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         }
         else
             highDetailRawComputed = false;
-		
-		
     }
 
 
