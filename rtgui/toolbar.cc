@@ -19,8 +19,7 @@
 #include "toolbar.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
-
-extern Glib::ustring argv0;
+#include "guiutils.h"
 
 ToolBar::ToolBar () : listener (NULL) {
 
@@ -82,11 +81,11 @@ void ToolBar::setTool (ToolMode tool) {
 
   handConn.block (true);
   cropConn.block (true);
-  wbConn.block (true);
+  if (wbTool) wbConn.block (true);
   straConn.block (true);
 
   handTool->set_active (false);
-  wbTool->set_active (false);
+  if (wbTool) wbTool->set_active (false);
   cropTool->set_active (false);
   straTool->set_active (false);
 
@@ -95,7 +94,7 @@ void ToolBar::setTool (ToolMode tool) {
     handTool->grab_focus();; // switch focus to the handTool button
   }
   else if (tool==TMSpotWB)
-    wbTool->set_active (true);
+    if (wbTool) wbTool->set_active (true);
   else if (tool==TMCropSelect)
     cropTool->set_active (true);
   else if (tool==TMStraighten)
@@ -105,7 +104,7 @@ void ToolBar::setTool (ToolMode tool) {
 
   handConn.block (false);
   cropConn.block (false);
-  wbConn.block (false);
+  if (wbTool) wbConn.block (false);
   straConn.block (false);
 }
 
@@ -113,10 +112,10 @@ void ToolBar::hand_pressed () {
 
   handConn.block (true);
   cropConn.block (true);
-  wbConn.block (true);
+  if (wbTool) wbConn.block (true);
   straConn.block (true);
   if (current!=TMHand) {
-    wbTool->set_active (false);
+    if (wbTool) wbTool->set_active (false);
     cropTool->set_active (false);
     straTool->set_active (false);
     current = TMHand;
@@ -124,7 +123,7 @@ void ToolBar::hand_pressed () {
   handTool->set_active (true);
   handConn.block (false);
   cropConn.block (false);
-  wbConn.block (false);
+  if (wbTool) wbConn.block (false);
   straConn.block (false);
 
   if (listener)
@@ -135,7 +134,7 @@ void ToolBar::wb_pressed () {
 
   handConn.block (true);
   cropConn.block (true);
-  wbConn.block (true);
+  if (wbTool) wbConn.block (true);
   straConn.block (true);
   if (current!=TMSpotWB) {
     handTool->set_active (false);
@@ -143,10 +142,10 @@ void ToolBar::wb_pressed () {
     straTool->set_active (false);
     current = TMSpotWB;
   }
-  wbTool->set_active (true);
+  if (wbTool) wbTool->set_active (true);
   handConn.block (false);
   cropConn.block (false);
-  wbConn.block (false);
+  if (wbTool) wbConn.block (false);
   straConn.block (false);
 
   if (listener)
@@ -157,11 +156,11 @@ void ToolBar::crop_pressed () {
 
   handConn.block (true);
   cropConn.block (true);
-  wbConn.block (true);
+  if (wbTool) wbConn.block (true);
   straConn.block (true);
   if (current!=TMCropSelect) {
     handTool->set_active (false);
-    wbTool->set_active (false);
+    if (wbTool) wbTool->set_active (false);
     straTool->set_active (false);
     current = TMCropSelect;
   }
@@ -179,18 +178,18 @@ void ToolBar::stra_pressed () {
 
   handConn.block (true);
   cropConn.block (true);
-  wbConn.block (true);
+  if (wbTool) wbConn.block (true);
   straConn.block (true);
   if (current!=TMStraighten) {
     handTool->set_active (false);
-    wbTool->set_active (false);
+    if (wbTool) wbTool->set_active (false);
     cropTool->set_active (false);
     current = TMStraighten;
   }
   straTool->set_active (true);
   handConn.block (false);
   cropConn.block (false);
-  wbConn.block (false);
+  if (wbTool) wbConn.block (false);
   straConn.block (false);
 
   if (listener)
@@ -229,5 +228,13 @@ bool ToolBar::handleShortcutKey (GdkEventKey* event) {
     }
     
     return false;
+}
+
+void ToolBar::removeWbTool() {
+    if (wbTool) {
+        wbConn.disconnect();
+        removeIfThere(this, wbTool, false);
+        wbTool = NULL;
+	}
 }
 

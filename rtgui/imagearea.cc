@@ -455,7 +455,7 @@ void ImageArea::setPointerMotionHListener (PointerMotionListener* pml) {
 
 ToolMode ImageArea::getToolMode () {
 
-    if (listener)
+    if (listener && listener->getToolBar())
         return listener->getToolBar()->getTool (); 
     else
         return TMHand;
@@ -463,7 +463,7 @@ ToolMode ImageArea::getToolMode () {
 
 void ImageArea::setToolHand () { 
     
-    if (listener)
+    if (listener && listener->getToolBar())
         listener->getToolBar()->setTool (TMHand); 
 }
 

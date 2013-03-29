@@ -57,6 +57,7 @@ class ToolBar : public Gtk::HBox {
     void stra_pressed ();
 
     bool handleShortcutKey (GdkEventKey* event);
+    void removeWbTool();
 };
 
 #endif

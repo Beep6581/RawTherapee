@@ -302,7 +302,8 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     img->getSpotWBData(reds, greens, blues, rn, gn, bn, red, green, blue, tran);
     double img_r, img_g, img_b;
     wb.getMultipliers (img_r, img_g, img_b);
-    printf ("AVG: %g %g %g\n", reds/rn, greens/gn, blues/bn);
+    if( settings->verbose )
+        printf ("AVG: %g %g %g\n", reds/rn, greens/gn, blues/bn);
 
     return ColorTemp (reds/rn*img_r, greens/gn*img_g, blues/bn*img_b);
 }

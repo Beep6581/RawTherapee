@@ -232,6 +232,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void cropSelectionReady ();
         void rotateSelectionReady (double rotate_deg, Thumbnail* thm=NULL);
         ToolBar* getToolBar () { return toolBar; }
+        void removeWbTool() { if (toolBar) toolBar->removeWbTool(); }
         int  getSpotWBRectSize ();
         CropGUIListener* startCropEditing (Thumbnail* thm=NULL) { return crop; }
 

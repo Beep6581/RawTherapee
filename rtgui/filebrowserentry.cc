@@ -324,6 +324,9 @@ bool FileBrowserEntry::pressNotify   (int button, int type, int bstate, int x, i
 
     bool b = ThumbBrowserEntryBase::pressNotify (button, type, bstate, x, y);
 
+    if (!iatlistener || !iatlistener->getToolBar())
+        return true;
+
     ToolMode tm = iatlistener->getToolBar()->getTool ();
     int ix = x - startx - ofsX;
     int iy = y - starty - ofsY;
@@ -407,13 +410,13 @@ bool FileBrowserEntry::releaseNotify (int button, int type, int bstate, int x, i
     if (!b) {
         if (state==SRotateSelecting) {
             iatlistener->rotateSelectionReady (rot_deg, thumbnail);
-            iatlistener->getToolBar()->setTool (TMHand);
+            if (iatlistener->getToolBar()) iatlistener->getToolBar()->setTool (TMHand);
         }
         else if (cropgl && (state==SCropSelecting || state==SResizeH1 || state==SResizeH2 || state==SResizeW1 || state==SResizeW2 || state==SCropMove)) {
             cropgl->cropManipReady ();
             cropgl = NULL;
             iatlistener->cropSelectionReady ();
-            iatlistener->getToolBar()->setTool (TMHand);
+            if (iatlistener->getToolBar()) iatlistener->getToolBar()->setTool (TMHand);
         }
         state = SNormal;
         if (parent)
@@ -472,7 +475,7 @@ bool FileBrowserEntry::onArea (CursorArea a, int x, int y) {
 
 void FileBrowserEntry::updateCursor (int x, int y) {
     
-    if (!iatlistener)
+    if (!iatlistener || !iatlistener->getToolBar())
         return;
         
     ToolMode tm = iatlistener->getToolBar()->getTool ();

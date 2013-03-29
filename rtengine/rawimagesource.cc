@@ -2222,7 +2222,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 	if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
 			int c  = FC(i, j);                        // three colors,  0=R, 1=G,  2=B
-			int c4 = ( c == 1 && !i&1 ) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
+			int c4 = ( c == 1 && !(i&1) ) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
 			idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[c4]/*+black_lev[c4]*/))));
 
 			switch (c) {
@@ -2279,35 +2279,31 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 				int end = min(H+W-fw-i, fw+i) - 32;
 				for (int j=start; j<end; j++) {
 					if (!ri->isBayer()) {
-						double d = CLIP(initialGain*(rawData[i][3*j]));
-						if (d>64000)
-							continue;
-						avg_r += d; rn++;
-						d = CLIP(initialGain*(rawData[i][3*j+1]));
-						if (d>64000)
-							continue;
-						avg_g += d; gn++;
-						d = CLIP(initialGain*(rawData[i][3*j+2]));
-						if (d>64000)
-							continue;
-						avg_b += d; bn++;
+						double dr = CLIP(initialGain*(rawData[i][3*j]  ));
+						double dg = CLIP(initialGain*(rawData[i][3*j+1]));
+						double db = CLIP(initialGain*(rawData[i][3*j+2]));
+						if (dr>64000. || dg>64000. || db>64000.) continue;
+						avg_r += dr;
+						avg_g += dg;
+						avg_b += db;
+						rn = gn = ++bn;
 					}
 					else {
 						int c = FC( i, j);
 						double d = CLIP(initialGain*(rawData[i][j]));
-						if (d>64000)
+						if (d>64000.)
 							continue;
-						double dp = d;
-						if (c==0) {
-							avg_r += dp;
-							rn++;
-						}
-						else if (c==1) {
-							avg_g += dp;
+						// Let's test green first, because they are more numerous
+						if (c==1) {
+							avg_g += d;
 							gn++;
 						}
-						else if (c==2) {
-							avg_b += dp;
+						else if (c==0) {
+							avg_r += d;
+							rn++;
+						}
+						else /*if (c==2)*/ {
+							avg_b += d;
 							bn++;
 						}
 					}
@@ -2318,10 +2314,12 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 			if (!ri->isBayer()) {
 				for (int i=32; i<H-32; i++)
 					for (int j=32; j<W-32; j++) {
+						// each loop read 1 rgb triplet value
+
 						double dr = CLIP(initialGain*(rawData[i][3*j]  ));
 						double dg = CLIP(initialGain*(rawData[i][3*j+1]));
 						double db = CLIP(initialGain*(rawData[i][3*j+2]));
-						if (dr>64000 || dg>64000 || db>64000) continue;
+						if (dr>64000. || dg>64000. || db>64000.) continue;
 						avg_r += dr; rn++;
 						avg_g += dg; 
 						avg_b += db; 
@@ -2338,19 +2336,28 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 				double d[2][2];
 				for (int i=32; i<H-32; i+=2)
 					for (int j=32; j<W-32; j+=2) {
-						//average a Bayer quartet if nobody is clipped
+						//average each Bayer quartet component individually if non-clipped
 						d[0][0] = CLIP(initialGain*(rawData[i][j]    ));
 						d[0][1] = CLIP(initialGain*(rawData[i][j+1]  ));
 						d[1][0] = CLIP(initialGain*(rawData[i+1][j]  ));
 						d[1][1] = CLIP(initialGain*(rawData[i+1][j+1]));
-						if ( d[0][0]>64000 || d[0][1]>64000 || d[1][0]>64000 || d[1][1]>64000 ) continue;
-						avg_r += d[ey][ex];
-						avg_g += d[1-ey][ex] + d[ey][1-ex];
-						avg_b += d[1-ey][1-ex];
-						rn++;
+						if (d[ey][ex] <= 64000.) {
+							avg_r += d[ey][ex];
+							rn++;
+						}
+						if (d[1-ey][ex] <= 64000.) {
+							avg_g += d[1-ey][ex];
+							gn++;
+						}
+						if (d[ey][1-ex] <= 64000.) {
+							avg_g += d[ey][1-ex];
+							gn++;
+						}
+						if (d[1-ey][1-ex] <= 64000.) {
+							avg_b += d[1-ey][1-ex];
+							bn++;
+						}
 					}
-				gn = 2*rn;
-				bn = rn;
 			}
 		}
 		if( settings->verbose )

@@ -124,7 +124,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     if (n>0) {
         ColorTemp cTemp;
-        cTemp.mul2temp (avg_r/n, avg_g/n, avg_b/n, tpp->autowbTemp, tpp->autowbGreen);
+        cTemp.mul2temp (avg_r/double(n), avg_g/double(n), avg_b/double(n), tpp->autowbTemp, tpp->autowbGreen);
     }
 
     tpp->init ();
@@ -435,21 +435,21 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 		for (int j = start; j < end; j++) {
 			if (FISGREEN(filter,i,j)) {
 				double d = tpp->defGain * image[i * width + j][1];
-				if (d > 64000)
+				if (d > 64000.)
 					continue;
 				avg_g += d;
 				gn++;
 			}
-			if (FISRED(filter,i,j)) {
+			else if (FISRED(filter,i,j)) {
 				double d = tpp->defGain * image[i * width + j][0];
-				if (d > 64000)
+				if (d > 64000.)
 					continue;
 				avg_r += d;
 				rn++;
 			}
-			if (FISBLUE(filter,i,j)) {
+			else if (FISBLUE(filter,i,j)) {
 				double d = tpp->defGain * image[i * width + j][2];
-				if (d > 64000)
+				if (d > 64000.)
 					continue;
 				avg_b += d;
 				bn++;
@@ -542,11 +542,8 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 
     Image8* baseImg = resizeTo<Image8>(rwidth, rheight, interp, thumbImg);
 
-    if (params.coarse.rotate) {
-    	printf("Thumbnail::quickProcessImage: demande la rotation de l'image de %d degres / %d(%d) x %d(%d) devient ", params.coarse.rotate, baseImg->getW(), baseImg->getWidth(), baseImg->getH(), baseImg->getHeight());
+    if (params.coarse.rotate)
         baseImg->rotate (params.coarse.rotate);
-    	printf("%d(%d) x %d(%d)\n", baseImg->getW(), baseImg->getWidth(), baseImg->getH(), baseImg->getHeight());
-    }
 
     if (params.coarse.hflip)
         baseImg->hflip ();
@@ -907,9 +904,6 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     if (params.coarse.vflip)       tr |= TR_VFLIP;
 
     // calculate spot wb (copy & pasted from stdimagesource)
-    unsigned short igammatab[256];
-    for (int i=0; i<256; i++)
-        igammatab[i] = (unsigned short)(255.0*pow(i/255.0,Color::sRGBGamma));
     double reds = 0, greens = 0, blues = 0;
     int rn = 0, gn = 0, bn = 0;
     thumbImg->getSpotWBData(reds, greens, blues, rn, gn, bn, red, green, blue, tr);

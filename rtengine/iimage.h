@@ -94,6 +94,10 @@ namespace rtengine {
         dstValue = (unsigned char)(srcValue >> 8);
     }
     template <>
+    inline void ImageDatas::convertTo<unsigned char, int> (unsigned char srcValue, int &dstValue) {
+        dstValue = (int)(srcValue) << 8;
+    }
+    template <>
     inline void ImageDatas::convertTo<unsigned char, unsigned short> (unsigned char srcValue, unsigned short &dstValue) {
         dstValue = (unsigned short)(srcValue) << 8;
     }
@@ -435,31 +439,40 @@ namespace rtengine {
 
             for (int i=0; i<height; i++)
                 for (int j=0; j<width; j++) {
-                    histogram[(int)Color::igamma_srgb (r(i,j))>>histcompr]++;
-                    histogram[(int)Color::igamma_srgb (g(i,j))>>histcompr]++;
-                    histogram[(int)Color::igamma_srgb (b(i,j))>>histcompr]++;
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i,j), r_);
+                    convertTo<T, float>(g(i,j), g_);
+                    convertTo<T, float>(b(i,j), b_);
+                    histogram[(int)Color::igamma_srgb (r_)>>histcompr]++;
+                    histogram[(int)Color::igamma_srgb (g_)>>histcompr]++;
+                    histogram[(int)Color::igamma_srgb (b_)>>histcompr]++;
                 }
         }
 
-        void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, int compression) {
+        void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) {
             histogram.clear();
+            avg_r = avg_g = avg_b = 0.;
+            n=0;
             for (unsigned int i=0; i<(unsigned int)(height); i++)
                 for (unsigned int j=0; j<(unsigned int)(width); j++) {
-                    int rtmp = Color::igamma_srgb (r(i,j));
-                    int gtmp = Color::igamma_srgb (g(i,j));
-                    int btmp = Color::igamma_srgb (b(i,j));
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i,j), r_);
+                    convertTo<T, float>(g(i,j), g_);
+                    convertTo<T, float>(b(i,j), b_);
+                    int rtemp = Color::igamma_srgb (r_);
+                    int gtemp = Color::igamma_srgb (g_);
+                    int btemp = Color::igamma_srgb (b_);
 
-                    histogram[rtmp>>compression]++;
-                    histogram[gtmp>>compression]+=2;
-                    histogram[btmp>>compression]++;
+                    histogram[rtemp>>compression]++;
+                    histogram[gtemp>>compression]+=2;
+                    histogram[btemp>>compression]++;
 
-                    if (rtmp<64000 && gtmp<64000 && btmp<64000) {
-                        // autowb computation
-                        avg_r += rtmp;
-                        avg_g += gtmp;
-                        avg_b += btmp;
-                        n++;
-                    }
+                    // autowb computation
+                    if (r_>64000.f || g_>64000.f || b_>64000.f) continue;
+                    avg_r += double(r_);
+                    avg_g += double(g_);
+                    avg_b += double(b_);
+                    n++;
                 }
         }
 
@@ -471,46 +484,23 @@ namespace rtengine {
             int n = 0;
             //int p = 6;
 
-            for (int i=1; i<height-1; i++)
-                for (int j=1; j<width-1; j++) {
-                    if (r(i, j)>64000 || g(i, j)>64000 || b(i, j)>64000)
-                        continue;
-                    avg_r += SQR(r(i, j));
-                    avg_g += SQR(g(i, j));
-                    avg_b += SQR(b(i, j));
+            for (unsigned int i=0; i<(unsigned int)(height); i++)
+                for (unsigned int j=0; j<(unsigned int)(width); j++) {
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i,j), r_);
+                    convertTo<T, float>(g(i,j), g_);
+                    convertTo<T, float>(b(i,j), b_);
+
+                    if (r_>64000.f || g_>64000.f || b_>64000.f) continue;
+                    avg_r += double(r_);
+                    avg_g += double(g_);
+                    avg_b += double(b_);
                     /*avg_r += intpow( (double)r(i, j), p);
                     avg_g += intpow( (double)g(i, j), p);
                     avg_b += intpow( (double)b(i, j), p);*/
-
                     n++;
                 }
-            for (int i=1; i<height-1; i++)
-                for (int j=1; j<width-1; j++) {
-                    if (r(i, j)>64000 || g(i, j)>64000 || b(i, j)>64000)
-                        continue;
-                    avg_r += SQR(r(i, j));
-                    avg_g += SQR(g(i, j));
-                    avg_b += SQR(b(i, j));
-                    /*avg_r += intpow((double)r(i, j), p);
-                    avg_g += intpow((double)g(i, j), p);
-                    avg_b += intpow((double)b(i, j), p);*/
-
-                    n++;
-                }
-            for (int i=1; i<height-1; i++)
-                for (int j=1; j<width-1; j++) {
-                    if (r(i, j)>64000 || g(i, j)>64000 || b(i, j)>64000)
-                        continue;
-                    avg_r += SQR(r(i, j));
-                    avg_g += SQR(g(i, j));
-                    avg_b += SQR(b(i, j));
-                    /*avg_r += intpow((double)r(i, j), p);
-                    avg_g += intpow((double)g(i, j), p);
-                    avg_b += intpow((double)b(i, j), p);*/
-
-                    n++;
-                }
-            return ColorTemp (sqrt(avg_r/n), sqrt(avg_g/n), sqrt(avg_b/n));
+            return ColorTemp (avg_r/double(n), avg_g/double(n), avg_b/double(n));
             //return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
         }
 
@@ -557,17 +547,23 @@ namespace rtengine {
             for (size_t i=0; i<red.size(); i++) {
                 transformPixel (red[i].x, red[i].y, tran, x, y);
                 if (x>=0 && y>=0 && x<width && y<height) {
-                    reds += this->r(y, x);
+                    float v;
+                    convertTo<T, float>(this->r(y, x), v);
+                    reds += double(v);
                     rn++;
                 }
                 transformPixel (green[i].x, green[i].y, tran, x, y);
                 if (x>=0 && y>=0 && x<width && y<height) {
-                    greens += this->g(y, x);
+                    float v;
+                    convertTo<T, float>(this->g(y, x), v);
+                    greens += double(v);
                     gn++;
                 }
                 transformPixel (blue[i].x, blue[i].y, tran, x, y);
                 if (x>=0 && y>=0 && x<width && y<height) {
-                    blues += this->b(y, x);
+                    float v;
+                    convertTo<T, float>(this->b(y, x), v);
+                    blues += double(v);
                     bn++;
                 }
             }
@@ -872,31 +868,40 @@ namespace rtengine {
 
             for (int i=0; i<height; i++)
                 for (int j=0; j<width; j++) {
-                    histogram[(int)Color::igamma_srgb (r(i,j))>>histcompr]++;
-                    histogram[(int)Color::igamma_srgb (g(i,j))>>histcompr]++;
-                    histogram[(int)Color::igamma_srgb (b(i,j))>>histcompr]++;
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i,j), r_);
+                    convertTo<T, float>(g(i,j), g_);
+                    convertTo<T, float>(b(i,j), b_);
+                    histogram[(int)Color::igamma_srgb (r_)>>histcompr]++;
+                    histogram[(int)Color::igamma_srgb (g_)>>histcompr]++;
+                    histogram[(int)Color::igamma_srgb (b_)>>histcompr]++;
                 }
         }
 
-        void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, int compression) {
+        void computeHistogramAutoWB (double &avg_r, double &avg_g, double &avg_b, int &n, LUTu &histogram, const int compression) {
             histogram.clear();
+            avg_r = avg_g = avg_b = 0.;
+            n=0;
             for (unsigned int i=0; i<(unsigned int)(height); i++)
                 for (unsigned int j=0; j<(unsigned int)(width); j++) {
-                    int rtmp = Color::igamma_srgb (r(i,j));
-                    int gtmp = Color::igamma_srgb (g(i,j));
-                    int btmp = Color::igamma_srgb (b(i,j));
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i,j), r_);
+                    convertTo<T, float>(g(i,j), g_);
+                    convertTo<T, float>(b(i,j), b_);
+                    int rtemp = Color::igamma_srgb (r_);
+                    int gtemp = Color::igamma_srgb (g_);
+                    int btemp = Color::igamma_srgb (b_);
 
-                    histogram[rtmp>>compression]++;
-                    histogram[gtmp>>compression]+=2;
-                    histogram[btmp>>compression]++;
+                    histogram[rtemp>>compression]++;
+                    histogram[gtemp>>compression]+=2;
+                    histogram[btemp>>compression]++;
 
-                    if (rtmp<64000 && gtmp<64000 && btmp<64000) {
-                        // autowb computation
-                        avg_r += rtmp;
-                        avg_g += gtmp;
-                        avg_b += btmp;
-                        n++;
-                    }
+                    // autowb computation
+                    if (r_>64000.f || g_>64000.f || b_>64000.f) continue;
+                    avg_r += double(r_);
+                    avg_g += double(g_);
+                    avg_b += double(b_);
+                    n++;
                 }
         }
 
@@ -908,46 +913,23 @@ namespace rtengine {
             int n = 0;
             //int p = 6;
 
-            for (int i=1; i<height-1; i++)
-                for (int j=1; j<width-1; j++) {
-                    if (r(i, j)>64000 || g(i, j)>64000 || b(i, j)>64000)
-                        continue;
-                    avg_r += SQR(r(i, j));
-                    avg_g += SQR(g(i, j));
-                    avg_b += SQR(b(i, j));
+            for (unsigned int i=0; i<(unsigned int)(height); i++)
+                for (unsigned int j=0; j<(unsigned int)(width); j++) {
+                    float r_, g_, b_;
+                    convertTo<T, float>(r(i,j), r_);
+                    convertTo<T, float>(g(i,j), g_);
+                    convertTo<T, float>(b(i,j), b_);
+
+                    if (r_>64000.f || g_>64000.f || b_>64000.f) continue;
+                    avg_r += double(r_);
+                    avg_g += double(g_);
+                    avg_b += double(b_);
                     /*avg_r += intpow( (double)r(i, j), p);
                     avg_g += intpow( (double)g(i, j), p);
                     avg_b += intpow( (double)b(i, j), p);*/
-
                     n++;
                 }
-            for (int i=1; i<height-1; i++)
-                for (int j=1; j<width-1; j++) {
-                    if (r(i, j)>64000 || g(i, j)>64000 || b(i, j)>64000)
-                        continue;
-                    avg_r += SQR(r(i, j));
-                    avg_g += SQR(g(i, j));
-                    avg_b += SQR(b(i, j));
-                    /*avg_r += intpow((double)r(i, j), p);
-                    avg_g += intpow((double)g(i, j), p);
-                    avg_b += intpow((double)b(i, j), p);*/
-
-                    n++;
-                }
-            for (int i=1; i<height-1; i++)
-                for (int j=1; j<width-1; j++) {
-                    if (r(i, j)>64000 || g(i, j)>64000 || b(i, j)>64000)
-                        continue;
-                    avg_r += SQR(r(i, j));
-                    avg_g += SQR(g(i, j));
-                    avg_b += SQR(b(i, j));
-                    /*avg_r += intpow((double)r(i, j), p);
-                    avg_g += intpow((double)g(i, j), p);
-                    avg_b += intpow((double)b(i, j), p);*/
-
-                    n++;
-                }
-            return ColorTemp (sqrt(avg_r/n), sqrt(avg_g/n), sqrt(avg_b/n));
+            return ColorTemp (avg_r/double(n), avg_g/double(n), avg_b/double(n));
             //return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
         }
 
@@ -994,17 +976,23 @@ namespace rtengine {
             for (size_t i=0; i<red.size(); i++) {
                 transformPixel (red[i].x, red[i].y, tran, x, y);
                 if (x>=0 && y>=0 && x<width && y<height) {
-                    reds += this->r(y, x);
+                    float v;
+                    convertTo<T, float>(this->r(y, x), v);
+                    reds += double(v);
                     rn++;
                 }
                 transformPixel (green[i].x, green[i].y, tran, x, y);
                 if (x>=0 && y>=0 && x<width && y<height) {
-                    greens += this->g(y, x);
+                    float v;
+                    convertTo<T, float>(this->g(y, x), v);
+                    greens += double(v);
                     gn++;
                 }
                 transformPixel (blue[i].x, blue[i].y, tran, x, y);
                 if (x>=0 && y>=0 && x<width && y<height) {
-                    blues += this->b(y, x);
+                    float v;
+                    convertTo<T, float>(this->b(y, x), v);
+                    blues += double(v);
                     bn++;
                 }
             }
