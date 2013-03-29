@@ -30,16 +30,7 @@ set (CACHE_NAME_SUFFIX "" CACHE STRING "RawTherapee's cache folder suffix (leave
 set (PROC_TARGET_NUMBER 0 CACHE STRING "Selected target processor from the list above (taken from ProcessorTargets.cmake)")
 
 # The following line set special compilation flags for RTEngine, and will be added to CMAKE_CXX_FLAGS
-# Due to a bug in GCC when using OpenMP+SSE, -mstackrealign will be added to your flags
-set (RTENGINE_CXX_FLAGS "" CACHE STRING "Special compilation flags for RTEngine; -mstackrealign will be added to your flags")
-
-# mandatory flags for rtengine for all platforms, depending on the bit depth
-set (RTENGINE_CXX_FLAGS_MANDATORY "-mstackrealign")
-if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-	set (RTENGINE_CXX_FLAGS_MANDATORY "${RTENGINE_CXX_FLAGS_MANDATORY} -mpreferred-stack-boundary=4")
-#else (CMAKE_SIZEOF_VOID_P EQUAL 8)
-#	set (RTENGINE_CXX_FLAGS_MANDATORY "${RTENGINE_CXX_FLAGS_MANDATORY} ")
-endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+set (RTENGINE_CXX_FLAGS "" CACHE STRING "Special compilation flags for RTEngine")
 
 #loading the processor targets list
 include (ProcessorTargets.cmake)
@@ -281,7 +272,7 @@ else ()
 endif ()
 
 # Get c++ and linker flags for rtengine (the gui's c++ flags may have less flags)
-set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}} ${RTENGINE_CXX_FLAGS} ${RTENGINE_CXX_FLAGS_MANDATORY}")
+set(CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${UPPER_CMAKE_BUILD_TYPE}} ${RTENGINE_CXX_FLAGS}")
 set(LFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${UPPER_CMAKE_BUILD_TYPE}}")
 
 set(ABOUT_COMMAND_WITH_ARGS ${CMAKE_COMMAND}
