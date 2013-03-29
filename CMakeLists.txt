@@ -229,7 +229,7 @@ get_filename_component(ABS_BINARY_DIR "${CMAKE_BINARY_DIR}" ABSOLUTE)
 set (OUT_OF_SOURCE_BUILD TRUE)
 if (ABS_SOURCE_DIR STREQUAL ABS_BINARY_DIR)
     set (OUT_OF_SOURCE_BUILD FALSE)
-    message (WARNING "You are performing an in-source build. This is discouraged. Please refer e.g. to http://www.cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F for advantages of o    ut of source builds.")
+    message (WARNING "You are performing an in-source build. This is discouraged. For an explanation and the advantages of out-of-source builds, please refer to http://www.cmake.org/Wiki/CMake_FAQ#What_is_an_.22out-of-source.22_build.3F")
 endif ()
 
 # XXX remove files triggering the below check to prevent every developer from
