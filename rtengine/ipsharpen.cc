@@ -40,8 +40,11 @@ namespace rtengine {
 
 
 extern const Settings* settings;
-
+#if defined( __SSE__ ) && defined( WIN32 )
+__attribute__((force_align_arg_pointer)) void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
+#else
 void ImProcFunctions::dcdamping (float** aI, float** aO, float damping, int W, int H) {
+#endif
 
 	const float dampingFac=-2.0/(damping*damping);
 

@@ -78,8 +78,11 @@ template<class T> void gaussVertical3 (T** src, T** dst, AlignedBufferMP<double>
 }
 
 #ifdef __SSE__
+#ifdef WIN32
+template<class T> __attribute__((force_align_arg_pointer)) void gaussVertical3Sse (T** src, T** dst, int W, int H, const float c0, const float c1) {
+#else
 template<class T> void gaussVertical3Sse (T** src, T** dst, int W, int H, const float c0, const float c1) {
-
+#endif
     __m128 Tv,Tm1v,Tp1v;
     __m128 c0v,c1v;
     c0v = _mm_set1_ps(c0);
@@ -115,9 +118,11 @@ template<class T> void gaussVertical3Sse (T** src, T** dst, int W, int H, const 
 }
 
 
-
+#ifdef WIN32
+template<class T> __attribute__((force_align_arg_pointer)) void gaussHorizontal3Sse (T** src, T** dst, int W, int H, const float c0, const float c1) {
+#else
 template<class T> void gaussHorizontal3Sse (T** src, T** dst, int W, int H, const float c0, const float c1) {
-
+#endif
     float tmp[W][4] __attribute__ ((aligned (16)));
 
     __m128 Tv,Tm1v,Tp1v;
@@ -170,8 +175,11 @@ template<class T> void gaussHorizontal3Sse (T** src, T** dst, int W, int H, cons
 
 
 // fast gaussian approximation if the support window is large
+#ifdef WIN32
+template<class T> __attribute__((force_align_arg_pointer)) void gaussHorizontalSse (T** src, T** dst, int W, int H, float sigma) {
+#else
 template<class T> void gaussHorizontalSse (T** src, T** dst, int W, int H, float sigma) {
-
+#endif
     if (sigma<0.25) {
         // dont perform filtering
         if (src!=dst)
@@ -407,8 +415,11 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
 }
 
 #ifdef __SSE__
+#ifdef WIN32
+template<class T> __attribute__((force_align_arg_pointer)) void gaussVerticalSse (T** src, T** dst, int W, int H, float sigma) {
+#else
 template<class T> void gaussVerticalSse (T** src, T** dst, int W, int H, float sigma) {
-
+#endif
     if (sigma<0.25) {
         // dont perform filtering
         if (src!=dst)
