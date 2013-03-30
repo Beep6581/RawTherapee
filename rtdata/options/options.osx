@@ -23,6 +23,9 @@ PathTemplate=%p1/converted/%f
 # Parameters: <Path to RAW/JPG> <Path to default profile> <fNumber> <expose in seconds> <focal length in mm> <ISO> <Lens> <Camera>
 CustomProfileBuilder=
 
+[GUI]
+Font=Sans 12
+
 # Set here an absolute or relative path (to the rawtherapee.exe file) to the directory containing your own profiles.
 # If MultiUser=true, each user will have their own "options" file, and can set a common or different absolu path
 #Directory=profiles
