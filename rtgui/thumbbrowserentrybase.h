@@ -133,7 +133,7 @@ protected:
     virtual bool    motionNotify  (int x, int y);
     virtual bool    pressNotify   (int button, int type, int bstate, int x, int y);
     virtual bool    releaseNotify (int button, int type, int bstate, int x, int y);
-    Glib::ustring getToolTip (int x, int y);   
+    virtual Glib::ustring getToolTip (int x, int y);
 };
 
 #endif

@@ -53,11 +53,6 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
     formatChanged (options.saveFormat.format);
 
-// Unique filename option
-// ~~~~~~~~~~~~~~~~~~~~~~
-    autoSuffix = Gtk::manage( new Gtk::CheckButton (M("SAVEDLG_AUTOSUFFIX")) );
-    autoSuffix->set_active(options.autoSuffix);
-
 // Output Options
 // ~~~~~~~~~~~~~~
     formatOpts = Gtk::manage( new SaveFormatPanel () );
@@ -65,7 +60,7 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     formatOpts->setListener (this);
 
 // queue/immediate
-// ~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~
     saveMethod[0]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_SAVEIMMEDIATELY")) );
     saveMethod[1]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUEHEAD")) );
     saveMethod[2]  = Gtk::manage( new Gtk::RadioButton (M("SAVEDLG_PUTTOQUEUETAIL")) );
@@ -77,8 +72,26 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     if (options.saveMethodNum >= 0 && options.saveMethodNum < 3)
         saveMethod[options.saveMethodNum]->set_active (true);
 
+    saveMethod[0]->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::saveImmediatlyClicked) );
+    saveMethod[1]->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::putToQueueClicked) );
+    saveMethod[2]->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::putToQueueClicked) );
+
+// Force output format option
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    forceFormatOpts = Gtk::manage( new Gtk::CheckButton (M("SAVEDLG_FORCEFORMATOPTS")) );
+    forceFormatOpts->set_active(options.forceFormatOpts);
+    forceFormatOpts->set_sensitive(options.saveMethodNum>0);
+    forceFormatOpts->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::forceFmtOptsSwitched) );
+    // update sensitivity of the SaveFormatPanel
+    formatOpts->set_sensitive(options.saveMethodNum==0 || options.forceFormatOpts);
+
+// Unique filename option
+// ~~~~~~~~~~~~~~~~~~~~~~
+    autoSuffix = Gtk::manage( new Gtk::CheckButton (M("SAVEDLG_AUTOSUFFIX")) );
+    autoSuffix->set_active(options.autoSuffix);
+
 // buttons
-// ~~~~~~    
+// ~~~~~~~
     Gtk::Button* ok     = Gtk::manage( new Gtk::Button (M("GENERAL_OK")) );
     Gtk::Button* cancel = Gtk::manage( new Gtk::Button (M("GENERAL_CANCEL")) );
 
@@ -98,6 +111,7 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
         vbox_bottomRight->pack_start (*saveMethod[2], Gtk::PACK_SHRINK, 2);
         vbox_bottomRight->pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 5);
     }
+    vbox_bottomRight->pack_start (*forceFormatOpts, Gtk::PACK_SHRINK, 4);
     vbox_bottomRight->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
 
     Gtk::HBox* hbox_bottom = Gtk::manage( new Gtk::HBox() );
@@ -114,6 +128,25 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     set_border_width (4);
     show_all_children ();
 
+}
+
+void SaveAsDialog::saveImmediatlyClicked () {
+    forceFormatOpts->set_sensitive(false);
+    formatOpts->set_sensitive(true);
+}
+
+void SaveAsDialog::putToQueueClicked () {
+    forceFormatOpts->set_sensitive(true);
+    formatOpts->set_sensitive(forceFormatOpts->get_active());
+}
+
+void SaveAsDialog::forceFmtOptsSwitched () {
+    formatOpts->set_sensitive(forceFormatOpts->get_active());
+}
+
+bool SaveAsDialog::getForceFormatOpts () {
+
+    return forceFormatOpts->get_active();
 }
 
 bool SaveAsDialog::getAutoSuffix () {

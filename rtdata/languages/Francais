@@ -5,6 +5,7 @@ ABOUT_TAB_RELEASENOTES;Notes de version
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Réglages par défaut
 BATCHQUEUE_AUTOSTART;Démarrage auto
+BATCHQUEUE_DESTFILENAME;Chemin et nom de fichier
 BATCH_PROCESSING;Traitement par lot
 CURVEEDITOR_CURVES;Courbes
 CURVEEDITOR_CURVE;Courbe
@@ -870,6 +871,7 @@ QINFO_LENS;Objectif
 QINFO_NOEXIF;Données EXIF non disponibles.
 SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
 SAVEDLG_FILEFORMAT;Format de fichier
+SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement
 SAVEDLG_JPEGQUAL;Qualité JPEG
 SAVEDLG_JPGFILTER;Fichiers JPEG
 SAVEDLG_PNGCOMPR;Compression PNG

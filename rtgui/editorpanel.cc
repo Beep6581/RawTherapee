@@ -1084,6 +1084,7 @@ void EditorPanel::saveAsPressed () {
 		lastSaveAsFileName = Glib::path_get_basename (removeExtension (fnameOut));
 		SaveFormat sf = saveAsDialog->getFormat ();
 		options.saveFormat = sf;
+		options.forceFormatOpts = saveAsDialog->getForceFormatOpts ();
 
 		if (result != Gtk::RESPONSE_OK)
 			break;
@@ -1132,6 +1133,7 @@ void EditorPanel::saveAsPressed () {
 			BatchQueueEntry* bqe = createBatchQueueEntry ();
 			bqe->outFileName = fnameOut;
 			bqe->saveFormat = saveAsDialog->getFormat ();
+			bqe->forceFormatOpts = saveAsDialog->getForceFormatOpts ();
 			parent->addBatchQueueJob (bqe, saveAsDialog->getToHeadOfQueue ());
 			fnameOK = true;
 		}

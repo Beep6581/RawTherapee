@@ -133,7 +133,7 @@ void ThumbBrowserEntryBase::updateBackBuffer () {
     if (!bbIcons.empty()) {
         int iwidth = igap;
         int iheight = 0;
-	for (size_t i=0; i<bbIcons.size(); i++) {
+        for (size_t i=0; i<bbIcons.size(); i++) {
             iwidth += bbIcons[i]->get_width() + igap;
             if (bbIcons[i]->get_height() > iheight)
                 iheight = bbIcons[i]->get_height();
