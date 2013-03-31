@@ -37,14 +37,19 @@ class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListen
     guint8* opreview;
     int origpw, origph;
     BatchQueueEntryIdleHelper* bqih;
-    
+    static bool iconsLoaded;
+
 public:
+
+    static Glib::RefPtr<Gdk::Pixbuf> savedAsIcon;
+
     rtengine::ProcessingJob* job;
     rtengine::procparams::ProcParams params;
     Glib::ustring savedParamsFile;
     double progress;
     Glib::ustring outFileName;
     SaveFormat saveFormat;
+    bool forceFormatOpts;
   
     BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thm=NULL);
     ~BatchQueueEntry ();
@@ -55,6 +60,10 @@ public:
     void drawProgressBar (Glib::RefPtr<Gdk::Window> win, Glib::RefPtr<Gdk::GC> gc, const Gdk::Color& foregr, const Gdk::Color& backgr, int x, int w, int y, int h);
 
     void removeButtonSet ();
+
+    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
+    virtual void getIconSize (int& w, int& h);
+    virtual Glib::ustring getToolTip (int x, int y);
 
     // bqentryupdatelistener interface
     void updateImage (guint8* img, int w, int h);

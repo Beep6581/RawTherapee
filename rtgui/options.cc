@@ -269,6 +269,7 @@ void Options::setDefaults () {
     maxCacheEntries = 20000;
     thumbInterp = 1;
     autoSuffix = false;
+    forceFormatOpts = false;
     saveMethodNum = 0;				// 0->immediate, 1->putToQueuHead, 2->putToQueueTail
     saveParamsFile = true;				// was false, but saving the procparams files next to the file make more sense when reorganizing file tree than in a cache
     saveParamsCache = false;			// there's no need to save the procparams files in a cache if saveParamsFile is true
@@ -493,7 +494,7 @@ int Options::readFromFile (Glib::ustring fname) {
         if (!keyFile.load_from_file (fname)) 
             return 1;
     }
-    catch (Glib::FileError) {
+    catch (Glib::FileError &err) {
         return 1;
     }
 
@@ -555,6 +556,7 @@ if (keyFile.has_group ("Output")) {
     if (keyFile.has_key ("Output", "PathTemplate"))     savePathTemplate           = keyFile.get_string ("Output", "PathTemplate");
     if (keyFile.has_key ("Output", "PathFolder"))       savePathFolder             = keyFile.get_string ("Output", "PathFolder");
     if (keyFile.has_key ("Output", "AutoSuffix"))       autoSuffix                 = keyFile.get_boolean("Output", "AutoSuffix");
+    if (keyFile.has_key ("Output", "ForceFormatOpts"))  forceFormatOpts            = keyFile.get_boolean("Output", "ForceFormatOpts");
     if (keyFile.has_key ("Output", "SaveMethodNum"))    saveMethodNum              = keyFile.get_integer("Output", "SaveMethodNum");
     if (keyFile.has_key ("Output", "UsePathTemplate"))  saveUsePathTemplate        = keyFile.get_boolean("Output", "UsePathTemplate");
     if (keyFile.has_key ("Output", "LastSaveAsPath"))   lastSaveAsPath             = keyFile.get_string ("Output", "LastSaveAsPath");
@@ -853,6 +855,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Output", "PathTemplate", savePathTemplate);
     keyFile.set_string  ("Output", "PathFolder", savePathFolder);
     keyFile.set_boolean ("Output", "AutoSuffix", autoSuffix);
+    keyFile.set_boolean ("Output", "ForceFormatOpts", forceFormatOpts);
     keyFile.set_integer ("Output", "SaveMethodNum", saveMethodNum);
     keyFile.set_boolean ("Output", "UsePathTemplate", saveUsePathTemplate);
     keyFile.set_string  ("Output", "LastSaveAsPath", lastSaveAsPath);

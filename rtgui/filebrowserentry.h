@@ -77,9 +77,9 @@ public:
     void refreshThumbnailImage ();
     void refreshQuickThumbnailImage ();
     void calcThumbnailSize ();
-    
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
-    void getIconSize (int& w, int& h);
+
+    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf> > getIconsOnImageArea ();
+    virtual void getIconSize (int& w, int& h);
 
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt);
@@ -87,9 +87,9 @@ public:
     void updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams);
     void _updateImage (rtengine::IImage8* img, double scale, rtengine::procparams::CropParams cropParams); // inside gtk thread
 
-    bool    motionNotify  (int x, int y);
-    bool    pressNotify   (int button, int type, int bstate, int x, int y);
-    bool    releaseNotify (int button, int type, int bstate, int x, int y);
+    virtual bool    motionNotify  (int x, int y);
+    virtual bool    pressNotify   (int button, int type, int bstate, int x, int y);
+    virtual bool    releaseNotify (int button, int type, int bstate, int x, int y);
 };
 
 #endif

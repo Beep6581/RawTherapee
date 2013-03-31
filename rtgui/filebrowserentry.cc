@@ -27,7 +27,7 @@
 
 #define CROPRESIZEBORDER 4
 
-bool FileBrowserEntry::iconsLoaded = false;
+bool FileBrowserEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;

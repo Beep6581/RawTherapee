@@ -141,6 +141,7 @@ class Options {
     bool useSystemTheme;
     static Glib::ustring cacheBaseDir;
     bool autoSuffix;
+    bool forceFormatOpts;
     int saveMethodNum;
     bool saveParamsFile;
     bool saveParamsCache;

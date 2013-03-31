@@ -129,16 +129,28 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 bool BatchQueue::saveBatchQueue( )
 {
     Glib::ustring savedQueueFile;
-    savedQueueFile = options.rtdir+"/batch/queue";
+    savedQueueFile = options.rtdir+"/batch/queue.csv";
     FILE *f = safe_g_fopen (savedQueueFile, "wt");
 
     if (f==NULL)
         return false;
 
-	// method is already running with entryLock, so no need to lock again
+    if (fd.size())
+        // The column's header is mandatory (the first line will be skipped when loaded)
+        fprintf(f,"input image full path|param file full path|output image full path|file format|jpeg quality|jpeg subsampling|"
+                  "png bit depth|png compression|tiff bit depth|uncompressed tiff|save output params|force format options|<end of line>\n");
+
+    // method is already running with entryLock, so no need to lock again
     for (std::vector<ThumbBrowserEntryBase*>::iterator pos=fd.begin(); pos!=fd.end(); pos++){
-    	BatchQueueEntry* bqe = reinterpret_cast<BatchQueueEntry*>(*pos);
-    	fprintf(f,"%s;%s\n", bqe->filename.c_str(),bqe->savedParamsFile.c_str() );
+        BatchQueueEntry* bqe = reinterpret_cast<BatchQueueEntry*>(*pos);
+        // Warning: for code's simplicity in loadBatchQueue, each field must end by the '|' character, safer than ';' or ',' since it can't be used in paths
+        fprintf(f,"%s|%s|%s|%s|%d|%d|%d|%d|%d|%d|%d|%d|\n",
+            bqe->filename.c_str(),bqe->savedParamsFile.c_str(), bqe->outFileName.c_str(), bqe->saveFormat.format.c_str(),
+            bqe->saveFormat.jpegQuality, bqe->saveFormat.jpegSubSamp,
+            bqe->saveFormat.pngBits, bqe->saveFormat.pngCompression,
+            bqe->saveFormat.tiffBits, bqe->saveFormat.tiffUncompressed,
+            bqe->saveFormat.saveParams, bqe->forceFormatOpts
+        );
     }
     fclose (f);
     return true;
@@ -153,22 +165,118 @@ void BatchQueue::loadBatchQueue( )
 #endif
 
         Glib::ustring savedQueueFile;
-        savedQueueFile = options.rtdir+"/batch/queue";
+        savedQueueFile = options.rtdir+"/batch/queue.csv";
         FILE *f = safe_g_fopen (savedQueueFile, "rt");
 
         if (f!=NULL) {
             char *buffer = new char[1024];
             unsigned numLoaded=0;
+            // skipping the first line
+            bool firstLine=true;
             while (fgets (buffer, 1024, f)){
-                char *p = strchr(buffer,';' );
-                if( p ){
-                    char *le = buffer + strlen(buffer);
-                    while( --le > buffer && (*le == '\n' || *le == '\r') );
-                    std::string _source(buffer, p-buffer );
-                    std::string _paramsFile(p+1, (le +1)- (p+1) );
-                    Glib::ustring source(_source);
-                    Glib::ustring paramsFile(_paramsFile);
 
+                if (firstLine) {
+                    // skipping the column's title line
+                    firstLine=false;
+                    continue;
+                }
+
+                size_t pos;
+                Glib::ustring source;
+                Glib::ustring paramsFile;
+                Glib::ustring outputFile;
+                Glib::ustring saveFmt(options.saveFormat.format);
+                int jpegQuality=options.saveFormat.jpegQuality, jpegSubSamp     =options.saveFormat.jpegSubSamp;
+                int pngBits    =options.saveFormat.pngBits,     pngCompression  =options.saveFormat.pngCompression;
+                int tiffBits   =options.saveFormat.tiffBits,    tiffUncompressed=options.saveFormat.tiffUncompressed;
+                int saveParams =options.saveFormat.saveParams;
+                int forceFormatOpts =options.forceFormatOpts;
+
+                Glib::ustring currLine(buffer);
+                int a = 0;
+                if (currLine.rfind('\n') != Glib::ustring::npos) a++;
+                if (currLine.rfind('\r') != Glib::ustring::npos) a++;
+                if (a)
+                    currLine = currLine.substr(0, currLine.length()-a);
+
+                // Looking for the image's full path
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                source = currLine.substr(0, pos);
+                currLine = currLine.substr(pos+1);
+
+                // Looking for the procparams' full path
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                paramsFile = currLine.substr(0, pos);
+                currLine = currLine.substr(pos+1);
+
+                // Looking for the full output path; if empty, it'll use the template string
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    outputFile = currLine.substr(0, pos);
+                    currLine = currLine.substr(pos+1);
+
+                // No need to bother reading the last options, they will be ignored if outputFile is empty!
+                if (!outputFile.empty()) {
+
+                    // Looking for the saving format
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        saveFmt = currLine.substr(0, pos);
+                        currLine = currLine.substr(pos+1);
+
+                    // Looking for the jpeg quality
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        jpegQuality = atoi(currLine.substr(0, pos).c_str());
+                        currLine = currLine.substr(pos+1);
+
+                    // Looking for the jpeg subsampling
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        jpegSubSamp = atoi(currLine.substr(0, pos).c_str());
+                        currLine = currLine.substr(pos+1);
+
+                    // Looking for the png bit depth
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        pngBits = atoi(currLine.substr(0, pos).c_str());
+                        currLine = currLine.substr(pos+1);
+
+                    // Looking for the png compression
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        pngCompression = atoi(currLine.substr(0, pos).c_str());
+                        currLine = currLine.substr(pos+1);
+
+                    // Looking for the tiff bit depth
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        tiffBits = atoi(currLine.substr(0, pos).c_str());
+                        currLine = currLine.substr(pos+1);
+
+                    // Looking for the tiff uncompression
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        tiffUncompressed = atoi(currLine.substr(0, pos).c_str());
+                        currLine = currLine.substr(pos+1);
+
+                    // Looking out if we have to save the procparams
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        saveParams = atoi(currLine.substr(0, pos).c_str());
+                        currLine = currLine.substr(pos+1);
+
+                    // Looking out if we have to to use the format options
+                    pos = currLine.find('|');
+                    if (pos != Glib::ustring::npos) {
+                        forceFormatOpts = atoi(currLine.substr(0, pos).c_str());
+                        // currLine = currLine.substr(pos+1);
+
+                }}}}}}}}}}}}}
+
+                if( !source.empty() && !paramsFile.empty() ){
                     rtengine::procparams::ProcParams pparams;
                     if( pparams.load( paramsFile ) )
                         continue;
@@ -194,6 +302,20 @@ void BatchQueue::loadBatchQueue( )
                         entry->resize(options.thumbSize);
                         entry->savedParamsFile = paramsFile;
                         entry->selected = false;
+                        entry->outFileName = outputFile;
+                        if (!outputFile.empty()) {
+                            entry->saveFormat.format = saveFmt;
+                            entry->saveFormat.jpegQuality = jpegQuality;
+                            entry->saveFormat.jpegSubSamp = jpegSubSamp;
+                            entry->saveFormat.pngBits = pngBits;
+                            entry->saveFormat.pngCompression = pngCompression;
+                            entry->saveFormat.tiffBits = tiffBits;
+                            entry->saveFormat.tiffUncompressed = tiffUncompressed!=0;
+                            entry->saveFormat.saveParams = saveParams!=0;
+                            entry->forceFormatOpts = forceFormatOpts!=0;
+                        }
+                        else
+                            entry->forceFormatOpts = false;
                         fd.push_back(entry);
 
                         BatchQueueButtonSet* bqbs = new BatchQueueButtonSet(entry);
@@ -379,8 +501,14 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         fname = autoCompleteFileName (s, saveFormat.format);
     }
     else {  // use the save-as filename with automatic completion for uniqueness
-        fname = autoCompleteFileName (removeExtension(processing->outFileName), getExtension(processing->outFileName));
-        saveFormat = processing->saveFormat;
+        if (processing->forceFormatOpts)
+            saveFormat = processing->saveFormat;
+        else
+            saveFormat = options.saveFormatBatch;
+        // The output filename's extension is forced to the current or selected output format,
+        // despite what the user have set in the fielneame's field of the "Save as" dialgo box
+        fname = autoCompleteFileName (removeExtension(processing->outFileName), saveFormat.format);
+        //fname = autoCompleteFileName (removeExtension(processing->outFileName), getExtension(processing->outFileName));
     }
     //printf ("fname=%s, %s\n", fname.c_str(), removeExtension(fname).c_str());
 

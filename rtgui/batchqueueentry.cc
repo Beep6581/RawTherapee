@@ -21,11 +21,16 @@
 
 #include <cstring>
 #include "guiutils.h"
+#include "../rtengine/safegtk.h"
+#include "multilangmgr.h"
+
+bool BatchQueueEntry::iconsLoaded(false);
+Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thm) 
     : ThumbBrowserEntryBase(fname),
       opreview(previmg), origpw(prevw), origph(prevh),
-      job(pjob), progress(0), outFileName("") {
+      job(pjob), progress(0), outFileName(""), forceFormatOpts(false) {
 
     thumbnail=thm;
     params = pparams;
@@ -38,8 +43,13 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
     bqih->pending = 0;
     #endif
 
+    if (!iconsLoaded) {
+        savedAsIcon = safe_create_from_file ("gtk-save.png");
+        iconsLoaded = true;
+    }
+
     if (thumbnail)
-        thumbnail->increaseRef ();       
+        thumbnail->increaseRef ();
 }
 
 BatchQueueEntry::~BatchQueueEntry () {
@@ -105,6 +115,55 @@ void BatchQueueEntry::removeButtonSet () {
 
     delete buttonSet;
     buttonSet = NULL;
+}
+
+std::vector<Glib::RefPtr<Gdk::Pixbuf> > BatchQueueEntry::getIconsOnImageArea () {
+
+    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
+
+    if (!outFileName.empty())
+        ret.push_back (savedAsIcon);
+
+   return ret;
+}
+
+void BatchQueueEntry::getIconSize (int& w, int& h) {
+
+    w = savedAsIcon->get_width ();
+    h = savedAsIcon->get_height ();
+}
+
+
+Glib::ustring BatchQueueEntry::getToolTip (int x, int y) {
+    // get the parent class' tooltip first
+    Glib::ustring tooltip = ThumbBrowserEntryBase::getToolTip(x, y);
+
+    // add the saving param options
+    if (!outFileName.empty()) {
+        tooltip += Glib::ustring::compose("\n\n%1: %2", M("BATCHQUEUE_DESTFILENAME"), outFileName);
+        if (forceFormatOpts) {
+            tooltip += Glib::ustring::compose("\n\n%1: %2 (%3 bits)", M("SAVEDLG_FILEFORMAT"), saveFormat.format,
+                       saveFormat.format == "png" ? saveFormat.pngBits :
+                                                    saveFormat.format == "tif" ? saveFormat.tiffBits : 8);
+            if (saveFormat.format == "jpg") {
+                tooltip += Glib::ustring::compose("\n%1: %2\n%3: %4",
+                           M("SAVEDLG_JPEGQUAL"), saveFormat.jpegQuality,
+                           M("SAVEDLG_SUBSAMP"),
+                           saveFormat.jpegSubSamp==1 ? M("SAVEDLG_SUBSAMP_1") :
+                                                      saveFormat.jpegSubSamp==2 ? M("SAVEDLG_SUBSAMP_2") :
+                                                                                  M("SAVEDLG_SUBSAMP_3"));
+            }
+            else if (saveFormat.format == "png")
+                tooltip += Glib::ustring::compose("\n%1: %2", M("SAVEDLG_PNGCOMPR"), saveFormat.pngCompression);
+            else if (saveFormat.format == "tif") {
+                if (saveFormat.tiffUncompressed)
+                tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));
+            }
+        }
+    }
+
+    return tooltip;
+
 }
 
 #ifndef WIN32
