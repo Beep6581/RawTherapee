@@ -1006,9 +1006,13 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
             Image8 *image = static_cast<Image8*>(thumbImg);
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
-                    int r= gammatab[min(static_cast<unsigned short>(image->r(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g= gammatab[min(static_cast<unsigned short>(image->g(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b= gammatab[min(static_cast<unsigned short>(image->b(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    unsigned short r_, g_, b_;
+                    image->convertTo(image->r(i,j), r_);
+                    image->convertTo(image->g(i,j), g_);
+                    image->convertTo(image->b(i,j), b_);
+                    int r= gammatab[min(r_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g= gammatab[min(g_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b= gammatab[min(b_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r*19595+g*38469+b*7472) >> 16;
                 }
         }
@@ -1016,9 +1020,13 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
             Image16 *image = static_cast<Image16*>(thumbImg);
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
-                    int r= gammatab[min(static_cast<unsigned short>(image->r(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g= gammatab[min(static_cast<unsigned short>(image->g(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b= gammatab[min(static_cast<unsigned short>(image->b(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    unsigned short r_, g_, b_;
+                    image->convertTo(image->r(i,j), r_);
+                    image->convertTo(image->g(i,j), g_);
+                    image->convertTo(image->b(i,j), b_);
+                    int r= gammatab[min(r_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g= gammatab[min(g_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b= gammatab[min(b_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r*19595+g*38469+b*7472) >> 16;
                 }
         }
@@ -1026,9 +1034,13 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
             Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
             for (int i=0; i<thumbImg->height; i++)
                 for (int j=(thumbImg->width-trim_width)/2; j<trim_width+(thumbImg->width-trim_width)/2; j++) {
-                    int r= gammatab[min(static_cast<unsigned short>(image->r(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int g= gammatab[min(static_cast<unsigned short>(image->g(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
-                    int b= gammatab[min(static_cast<unsigned short>(image->b(i,j)),static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    unsigned short r_, g_, b_;
+                    image->convertTo(image->r(i,j), r_);
+                    image->convertTo(image->g(i,j), g_);
+                    image->convertTo(image->b(i,j), b_);
+                    int r= gammatab[min(r_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int g= gammatab[min(g_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
+                    int b= gammatab[min(b_,static_cast<unsigned short>(max_)) * scaleForSave >> 13];
                     tmpdata[ix++] = (r*19595+g*38469+b*7472) >> 16;
                 }
         }
@@ -1039,13 +1051,15 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
 
         if (thumbImg->getType() == sImage8) {
             Image8 *image = static_cast<Image8*>(thumbImg);
+            unsigned char max_=0;
 
             for (int row=0; row<image->height; row++)
                 for (int col=0; col<image->width; col++) {
-                    if (image->r(row,col)>max) max = image->r(row,col);
-                    if (image->g(row,col)>max) max = image->g(row,col);
-                    if (image->b(row,col)>max) max = image->b(row,col);
+                    if (image->r(row,col)>max_) max_ = image->r(row,col);
+                    if (image->g(row,col)>max_) max_ = image->g(row,col);
+                    if (image->b(row,col)>max_) max_ = image->b(row,col);
                 }
+            image->convertTo(max_, max);
 
             if (max < 16384) max = 16384;
             scaleForSave = 65535*8192 / max;
@@ -1054,9 +1068,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
             for (int i=0; i<image->height; i++)
                 for (int j=(image->width-trim_width)/2; j<trim_width+(image->width-trim_width)/2; j++) {
                     unsigned short rtmp, gtmp, btmp;
-                    image->convertTo(image->r(i,j),   rtmp);
+                    image->convertTo(image->r(i,j), rtmp);
                     image->convertTo(image->g(i,j), gtmp);
-                    image->convertTo(image->b(i,j),  btmp);
+                    image->convertTo(image->b(i,j), btmp);
                     int r = rtmp * scaleForSave >> 21;
                     int g = gtmp * scaleForSave >> 21;
                     int b = btmp * scaleForSave >> 21;
@@ -1065,13 +1079,15 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
         }
         else if (thumbImg->getType() == sImage16) {
             Image16 *image = static_cast<Image16*>(thumbImg);
+            unsigned short max_=0;
 
             for (int row=0; row<image->height; row++)
                 for (int col=0; col<image->width; col++) {
-                    if (image->r(row,col)>max) max = image->r(row,col);
-                    if (image->g(row,col)>max) max = image->g(row,col);
-                    if (image->b(row,col)>max) max = image->b(row,col);
+                    if (image->r(row,col)>max_) max_ = image->r(row,col);
+                    if (image->g(row,col)>max_) max_ = image->g(row,col);
+                    if (image->b(row,col)>max_) max_ = image->b(row,col);
                 }
+            image->convertTo(max_, max);
 
             if (max < 16384) max = 16384;
             scaleForSave = 65535*8192 / max;
@@ -1080,9 +1096,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
             for (int i=0; i<image->height; i++)
                 for (int j=(image->width-trim_width)/2; j<trim_width+(image->width-trim_width)/2; j++) {
                     unsigned short rtmp, gtmp, btmp;
-                    image->convertTo(image->r(i,j),   rtmp);
+                    image->convertTo(image->r(i,j), rtmp);
                     image->convertTo(image->g(i,j), gtmp);
-                    image->convertTo(image->b(i,j),  btmp);
+                    image->convertTo(image->b(i,j), btmp);
                     int r = rtmp * scaleForSave >> 21;
                     int g = gtmp * scaleForSave >> 21;
                     int b = btmp * scaleForSave >> 21;
@@ -1091,13 +1107,15 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
        }
         else if (thumbImg->getType() == sImagefloat) {
             Imagefloat *image = static_cast<Imagefloat*>(thumbImg);
+            float max_=0.f;
 
             for (int row=0; row<image->height; row++)
                 for (int col=0; col<image->width; col++) {
-                    if (image->r(row,col)>max) max = image->r(row,col);
-                    if (image->g(row,col)>max) max = image->g(row,col);
-                    if (image->b(row,col)>max) max = image->b(row,col);
+                    if (image->r(row,col)>max_) max_ = image->r(row,col);
+                    if (image->g(row,col)>max_) max_ = image->g(row,col);
+                    if (image->b(row,col)>max_) max_ = image->b(row,col);
                 }
+            image->convertTo(max_, max);
 
             if (max < 16384) max = 16384;
             scaleForSave = 65535*8192 / max;
@@ -1106,9 +1124,9 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width) {
             for (int i=0; i<image->height; i++)
                 for (int j=(image->width-trim_width)/2; j<trim_width+(image->width-trim_width)/2; j++) {
                     unsigned short rtmp, gtmp, btmp;
-                    image->convertTo(image->r(i,j),   rtmp);
+                    image->convertTo(image->r(i,j), rtmp);
                     image->convertTo(image->g(i,j), gtmp);
-                    image->convertTo(image->b(i,j),  btmp);
+                    image->convertTo(image->b(i,j), btmp);
                     int r = rtmp * scaleForSave >> 21;
                     int g = gtmp * scaleForSave >> 21;
                     int b = btmp * scaleForSave >> 21;
