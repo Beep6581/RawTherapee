@@ -35,8 +35,13 @@ struct ZoomStep {
     int czoom;
 };
 
-ZoomStep zoomSteps[] = {{" 10%",  0.1,     10},
+ZoomStep zoomSteps[] = {
+		                {"  5%",  0.05,    20},
+		                {"6.7%",  1.0/15.0,15},
+		                {"  8%",  1.0/12.0,12},
+		                {" 10%",  0.1,     10},
                         {"12.5%", 0.125,   8},
+                        {" 14%",  1.0/7.0, 7},
                         {"16.6%", 1.0/6.0, 6},
                         {" 20%",  0.2,     5},
                         {" 25%",  0.25,    4},
@@ -50,8 +55,8 @@ ZoomStep zoomSteps[] = {{" 10%",  0.1,     10},
                         {"600%",  6.0,     6000},
                         {"700%",  7.0,     7000},
                         {"800%",  8.0,     8000}};
-#define MAXZOOMSTEPS 14
-#define ZOOM11INDEX  7
+#define MAXZOOMSTEPS 18
+#define ZOOM11INDEX  11
 
 CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_) 
     : onResizeArea(false), deleted(false), fitZoomEnabled(true), fitZoom(false), isLowUpdatePriority(isLowUpdatePriority_),
