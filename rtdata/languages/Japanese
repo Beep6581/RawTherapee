@@ -6,6 +6,7 @@ ABOUT_TAB_RELEASENOTES;リリースノート
 ABOUT_TAB_SPLASH;スプラッシュ
 ADJUSTER_RESET_TO_DEFAULT;既定値に戻す
 BATCHQUEUE_AUTOSTART;オートスタート
+BATCHQUEUE_DESTFILENAME;パスとファイル名
 BATCH_PROCESSING;バッチ処理
 CURVEEDITOR_CURVES;カーブ
 CURVEEDITOR_CURVE;カーブ
@@ -76,7 +77,7 @@ EXPORT_FASTEXPORTOPTIONS;<b>高速書き出しオプション</b>
 EXPORT_INSTRUCTIONS;時間とリソースを消費する処理を回避し、キューの処理実行を再定義します。この方法は速度を優先する場合や、保存されている現像パラメータを変更することなく、一つまたは複数の画像をリサイズ出力し低解像度画像をより速く生成する場合に推奨されます
 EXPORT_MAXHEIGHT;最大高: 
 EXPORT_MAXWIDTH;最大幅: 
-EXPORT_PUTTOQUEUEFAST;　高速書き出しのキューに追加
+EXPORT_PUTTOQUEUEFAST; 高速書き出しのキューに追加
 EXPORT_RAW_DMETHOD;デモザイクの方式
 EXPORT_RESIZEMETHOD;リサイズの方式
 EXTPROGTARGET_1;RAW
@@ -149,7 +150,7 @@ FILEBROWSER_POPUPUNTRASH;ゴミ箱から移動
 FILEBROWSER_PROCESSINGSETTINGSHINT;ファイル形式と出力ディレクトリを設定
 FILEBROWSER_PROCESSINGSETTINGS;設定
 FILEBROWSER_QUERYBUTTONHINT;検索クエリをクリア
-FILEBROWSER_QUERYHINT;検索する<i>ファイル名の一部を入力</i> または<i>カンマ区切りのリスト</i>\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> 検索テキストボックス（ファイルブラウザ内）にフォーカス\n<b>Enter</b> 検索を開始\n<b>Escape</b> クリア
+FILEBROWSER_QUERYHINT;検索する<i>ファイル名の一部を入力</i> または<i>カンマ区切りのリスト</i>\nE.g. <i>1001,1004,1199</i>\n\n<b>Ctrl-F</b> 検索テキストボックス（ファイルブラウザ内）にフォーカス\n<b>Enter</b> 検索を開始\n<b>Escape</b> クリア
 FILEBROWSER_QUERYLABEL; 検索:
 FILEBROWSER_RENAMEDLGLABEL;ファイル名変更
 FILEBROWSER_RENAMEDLGMSG;"%1" にファイル名変更:
@@ -180,7 +181,7 @@ FILEBROWSER_STARTPROCESSING;処理開始
 FILEBROWSER_STOPPROCESSINGHINT;画像処理の中止
 FILEBROWSER_STOPPROCESSING;処理中止
 FILEBROWSER_THUMBSIZE;サムネイル.サイズ
-FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいジョブがきたら自動的に処理を開始します
+FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいジョブが来たら自動的に処理を開始します
 FILEBROWSER_USETEMPLATE;テンプレート使用:
 FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;サムネイルサイズの縮小\nショートカット: <b>-</b>
@@ -189,6 +190,7 @@ GENERAL_AFTER;補正後
 GENERAL_AUTO;自動
 GENERAL_BEFORE;補正前
 GENERAL_CANCEL;キャンセル
+GENERAL_CLOSE;閉じる
 GENERAL_DISABLED;無効
 GENERAL_DISABLE;無効
 GENERAL_ENABLED;有効
@@ -227,7 +229,7 @@ HISTORY_DELSNAPSHOT;削除
 HISTORY_FROMCLIPBOARD;クリップボードから
 HISTORY_LABEL;履歴
 HISTORY_MSG_1;写真を読み込みました
-HISTORY_MSG_2;PP3を読みこみました
+HISTORY_MSG_2;PP3を読み込みました
 HISTORY_MSG_3;PP3変更
 HISTORY_MSG_4;履歴ブラウジング
 HISTORY_MSG_5;明度
@@ -310,8 +312,8 @@ HISTORY_MSG_81;リサイズ 有効
 HISTORY_MSG_82;プロファイル変更
 HISTORY_MSG_83;高画質 シャドウ/ハイライト
 HISTORY_MSG_84;パースペクティブ コレクション
-HISTORY_MSG_85;ウェーブレット係数
-HISTORY_MSG_86;ウェーブレット イコライザ
+HISTORY_MSG_85;レンズ補正 プロファイル
+HISTORY_MSG_86;RGB カーブ - 輝度モード
 HISTORY_MSG_87;インパルス ノイズ低減
 HISTORY_MSG_88;インパルス NR しきい値
 HISTORY_MSG_89;ノイズ低減
@@ -332,7 +334,7 @@ HISTORY_MSG_103;HSV EQ -- 明度
 HISTORY_MSG_104;HSV イコライザ
 HISTORY_MSG_105;フリンジ低減
 HISTORY_MSG_106;フリンジ低減 半径
-HISTORY_MSG_107;フリンジ低減　しきい値
+HISTORY_MSG_107;フリンジ低減 しきい値
 HISTORY_MSG_108;ハイライト復元 しきい値
 HISTORY_MSG_109;リサイズ バウンディングボックス
 HISTORY_MSG_110;リサイズ適用
@@ -346,7 +348,7 @@ HISTORY_MSG_117;色収差 Raw レッド
 HISTORY_MSG_118;色収差 Raw ブルー
 HISTORY_MSG_119;ラインノイズ フィルタ
 HISTORY_MSG_120;グリーン 平衡化
-HISTORY_MSG_121;Raw 色収差　自動
+HISTORY_MSG_121;Raw 色収差 自動
 HISTORY_MSG_122;ダークフレーム 自動
 HISTORY_MSG_123;ダークフレーム ファイル
 HISTORY_MSG_124;リニア露光補正
@@ -398,7 +400,7 @@ HISTORY_MSG_169;'CH' カーブ
 HISTORY_MSG_170;自然な彩度 - カーブ
 HISTORY_MSG_171;'LC' カーブ
 HISTORY_MSG_172;レッドと肌トーンのLC制限
-HISTORY_MSG_173;NR - 輝度詳細
+HISTORY_MSG_173;NR - 輝度ディテール
 HISTORY_MSG_174;色の見えモデル 2002
 HISTORY_MSG_175;CAM02 - 色度順応量
 HISTORY_MSG_176;CAM02 - 観視の周囲
@@ -424,8 +426,11 @@ HISTORY_MSG_195;CAM02 - トーンカーブ
 HISTORY_MSG_196;CAM02 - トーンカーブ 2
 HISTORY_MSG_197;CAM02 - カラー・カーブ
 HISTORY_MSG_198;CAM02 - カラー・カーブ
-HISTORY_MSG_199;CAM02 - ヒストグラムでCIECAMを表示
-HISTORY_MSG_200;CAM02 - Q でトーンマッピング
+HISTORY_MSG_199;CAM02 - カーブでCIECAM02出力のヒストグラムを表示
+HISTORY_MSG_200;CAM02 - CIECAM02 Q でトーンマッピング
+HISTORY_MSG_201;NR - 色差 レッド
+HISTORY_MSG_202;NR - 色差 ブルー
+HISTORY_MSG_203;NR - 方式
 HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
@@ -524,8 +529,12 @@ MAIN_MSG_EXITJOBSINQUEUEQUEST;キュー待ちの画像がありますが、終�
 MAIN_MSG_IMAGEUNPROCESSED;このコマンドは、先に選択されたすべての画像をキュー処理する必要があります
 MAIN_MSG_JOBSINQUEUE; キューの作業中・・・
 MAIN_MSG_NAVIGATOR;ナビゲータ
+MAIN_MSG_OPERATIONCANCELLED;操作キャンセル
+MAIN_MSG_PATHDOESNTEXIST;パス\n\n<b>%1</b>\n\がありません。設定ウィンドウで正しいパスを設定してください
 MAIN_MSG_PLACES;場所
 MAIN_MSG_QOVERWRITE;上書きしますか？
+MAIN_MSG_SETPATHFIRST;この関数を使用するには、最初に環境設定でターゲット・パスを設定する必要があります！
+MAIN_MSG_WRITEFAILED;書き込みに失敗しました\n\n<b>"%1"</b>\n\nフォルダが在るか書き込み権限を持っているか確認してください
 MAIN_TAB_BASIC;ベーシック
 MAIN_TAB_COLOR;カラー
 MAIN_TAB_COLOR_TOOLTIP;ショートカット: <b>Alt-C</b>
@@ -550,14 +559,14 @@ MAIN_TOGGLE_BEFORE_AFTER;補正 前|後
 MAIN_TOOLTIP_BACKCOLOR0;プレビューの背景色を指定します: <b>テーマに基づく</b>\nショートカット: <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;プレビューの背景色を指定します: <b>黒</b>\nショートカットt: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;プレビューの背景色を指定します: <b>白</b>\nショートカット: <b>0</b>
-MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>固定</b> / <b>固定解除</b> - <b>補正前</b> の表示設定\n\n<b>固定</b>: <b>補正前</b>をそのまま表示し変更されません。\n複数のツールの累積効果を評価するのに役立ちます。\nさらに、比較は履歴上のどこからでも行うことができます。\n\n<b>固定解除</b>: 現在使用のツールの効果が <b>補正後</b> に表示され、その1段階前が <b>補正前</b> に表示されます
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>固定</b> / <b>固定解除</b> - <b>補正前</b> の表示設定\n\n<b>固定</b>: <b>補正前</b>をそのまま表示し変更されません\n複数のツールの累積効果を評価するのに役立ちます\nさらに、比較は履歴上のどこからでも行うことができます\n\n<b>固定解除</b>: 現在使用のツールの効果が <b>補正後</b> に表示され、その1段階前が <b>補正前</b> に表示されます
 MAIN_TOOLTIP_HIDEFP;ボタンパネル 表示/非表示(ディレクトリとファイルブラウザ)\nショートカット: <b>F</b>
 MAIN_TOOLTIP_HIDEHP;左パネル 表示/非表示 (履歴含む)\nショートカット:  <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;ハイライト・クリッピング領域の表示\nショートカット: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;シャドウ・クリッピング領域の表示\nショートカット: <b>&gt;</b>
 MAIN_TOOLTIP_PREFERENCES;設定する
 MAIN_TOOLTIP_PREVIEWB;<b>ブルー チャンネル</b>表示\nショートカット: <b>b</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;<b>フォーカス・マスク</b>表示\nショートカット: <b>Shift-F</b>\n\n浅い被写界深度、低ノイズ、高ズームの画像の場合は、より正確に。\n\nノイズの多い画像に対しては、検出精度を向上させるため10から30%縮小して評価します。\n\nフォーカス・マスクをオンにすると表示に時間が掛かります
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;<b>フォーカス・マスク</b>表示\nショートカット: <b>Shift-F</b>\n\n浅い被写界深度、低ノイズ、高ズームの画像の場合は、より正確に\n\nノイズの多い画像に対しては、検出精度を向上させるため10から30%縮小して評価します\n\nフォーカス・マスクをオンにすると表示に時間が掛かります
 MAIN_TOOLTIP_PREVIEWG;<b>グリーン チャンネル</b>表示\nショートカット: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;<b>輝度</b>表示\nショートカット: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;<b>レッド チャンネル</b>表示\nショートカット: <b>r</b>
@@ -589,8 +598,8 @@ NAVIGATOR_V_NA;V = n/a
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_FULL;幅 = %1, 高さ = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
-OPTIONS_DEFIMG_MISSING;<b>RAWではない画像</b>のデフォルプロファイルが見つからないか、設定されていません。\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません。\n\nデフォルト設定値が使用されます
-OPTIONS_DEFRAW_MISSING;<b>RAW画像</b>のデフォル・プロファイルが見つからないか、設定されていません。\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません。\n\nデフォルト設定値が使用されます
+OPTIONS_DEFIMG_MISSING;<b>RAWではない画像</b>のデフォルプロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
+OPTIONS_DEFRAW_MISSING;<b>RAW画像</b>のデフォル・プロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
 PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
@@ -666,30 +675,34 @@ PREFERENCES_ADD;追加
 PREFERENCES_APPLNEXTSTARTUP;要再起動
 PREFERENCES_AUTOMONPROFILE;OSのメインモニター・プロファイルを使用
 PREFERENCES_BATCH_PROCESSING;バッチ処理
+PREFERENCES_BEHADDALLHINT;すべてのパラメータを <b>追加</b>モードにします\nバッチツールパネルのパラメータの調整は、格納されている値の<b>差分</b>になります
+PREFERENCES_BEHADDALL;すべて '追加'
 PREFERENCES_BEHAVIOR;ビヘイビア
+PREFERENCES_BEHSETALLHINT;すべてのパラメータを <b>設定</b>モードにします\nバッチツールパネルのパラメータの調整は<b>絶対</b>になり、実際の値が表示されます
+PREFERENCES_BEHSETALL;すべて '設定'
 PREFERENCES_BLACKBODY;タングステン
 PREFERENCES_BLINKCLIPPED;クリッピング領域の点滅
 PREFERENCES_CABLUE;色収差 ブルー 手動補正
 PREFERENCES_CACHECLEARALL;すべてクリア
 PREFERENCES_CACHECLEARPROFILES;プロファイルのクリア
 PREFERENCES_CACHECLEARTHUMBS;サムネイルのクリア
-PREFERENCES_CACHEFORMAT1;独自仕様 (速く 良質)
-PREFERENCES_CACHEFORMAT2;JPEG (少ないディスク占有)
 PREFERENCES_CACHEMAXENTRIES;最大キャッシュエントリー数
 PREFERENCES_CACHEOPTS;キャッシュ オプション
 PREFERENCES_CACHESTRAT1;スピード重視
 PREFERENCES_CACHESTRAT2;メモリ消費重視
 PREFERENCES_CACHESTRAT;キャッシュ運用の方針
-PREFERENCES_CACHETHUMBFORM;キャッシュのサムネイル形式
 PREFERENCES_CACHETHUMBHEIGHT;サムネイル縦の最大値
 PREFERENCES_CACORRECTION;色収差補正を適用
 PREFERENCES_CARED;色収差 レッド 手動補正
+PREFERENCES_CIEART;CIECAM02 最適化
+PREFERENCES_CIEART_LABEL;倍精度の代わりに単精度浮動小数点を使用
+PREFERENCES_CIEART_TOOLTIP;有効にした場合、 CIECAM02は倍精度浮動小数点形式の代わりに単精度で実行されます。これは品質を少し犠牲にし、速度を少し増加させます
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
 PREFERENCES_CMETRICINTENT;レンダリング・インテント
-PREFERENCES_CUSTPROFBUILDHINT;画像から新規のプロファイルを作成する際に呼び出される実行ファイル (またはスクリプト)\n.PP3生成のルールに基づいたコマンドライン・パラメータを受け取ります。\n[raw/JPG・パス] [デフォルトのプロファイルのパス] [f-数値] [露出時間 秒] [焦点距離 mm] [ISO] [レンズ] [カメラ]
+PREFERENCES_CUSTPROFBUILDHINT;画像から新規のプロファイルを作成する際に呼び出される実行ファイル (またはスクリプト)\n.PP3生成のルールに基づいたコマンドライン・パラメータを受け取ります\n[raw/JPG・パス] [デフォルトのプロファイルのパス] [f-数値] [露出時間 秒] [焦点距離 mm] [ISO] [レンズ] [カメラ]
 PREFERENCES_CUSTPROFBUILDPATH;実行ファイルのパス
 PREFERENCES_CUSTPROFBUILD;カスタム・イメージ・プロファイル・ビルダー
-PREFERENCES_CUTOVERLAYBRUSH;切り抜きマスクカラー　不透明度
+PREFERENCES_CUTOVERLAYBRUSH;切り抜きマスクカラー 不透明度
 PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
 PREFERENCES_D60;6000K
@@ -773,8 +786,8 @@ PREFERENCES_MULTITABDUALMON;マルチ タブモード, セカンド・モニタ�
 PREFERENCES_MULTITAB;マルチ タブモード
 PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
-PREFERENCES_OUTDIRHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます。\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます。\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
 PREFERENCES_OUTDIR;出力ディレクトリ
 PREFERENCES_OVERLAY_FILENAMES;サムネイル上でファイル名を透過表示する
@@ -794,12 +807,14 @@ PREFERENCES_PROFILESAVECACHE;後処理プロファイルのパラメータをキ
 PREFERENCES_PROFILESAVEINPUT;後処理プロファイルのパラメータを入力ファイルと同じディレクトリに保存
 PREFERENCES_PROPERTY;プロパティ
 PREFERENCES_PSPATH;Adobe Photoshop のインストール・ディレクトリ
+PREFERENCES_RGBDTL_LABEL;ノイズ低減のスレッドの最大数
+PREFERENCES_RGBDTL_TOOLTIP;ノイズ低減は、10メガピクセル画像では128MB程度、40メガピクセル画像では512MBを必要とします、そしてスレッドごと128MB追加する必要があります。複数のスレッドを同時に実行すると演算が速くなります。自動的にできる限り多くのスレッドを使用するには"0"に設定のままにします
 PREFERENCES_SELECTFONT;フォント選択
 PREFERENCES_SELECTICCDIRDLG;ICCプロファイル・ディレクトリ選択...
 PREFERENCES_SELECTLANG;言語選択
 PREFERENCES_SELECTMONITORPROFDLG;ディスプレイのICCプロファイルを選択...
 PREFERENCES_SELECTTHEME;テーマ選択
-PREFERENCES_SET;セット
+PREFERENCES_SET;設定
 PREFERENCES_SHOWBASICEXIF;基本Exif情報 表示
 PREFERENCES_SHOWDATETIME;日付表示
 PREFERENCES_SHOWEXPOSURECOMPENSATION;露光補正追加
@@ -810,7 +825,7 @@ PREFERENCES_SINGLETABVERTAB;シングル タブ, 垂直タブ
 PREFERENCES_SINGLETAB;シングル タブモード
 PREFERENCES_SLIMUI;スリムインタフェース
 PREFERENCES_SND_BATCHQUEUEDONE;キュー処理 終了
-PREFERENCES_SND_HELP;ファイルパスを入力か無し(無音). Windowsの場合システムサウンド "SystemDefault", "SystemAsterisk"など..
+PREFERENCES_SND_HELP;ファイルパスを入力 または空欄(無音).\nWindowsはシステムサウンドの "SystemDefault", "SystemAsterisk"など..\nLinuxはシステムサウンドの "complete", "window-attention"などを使用します
 PREFERENCES_SND_LNGEDITPROCDONE;編集処理 終了
 PREFERENCES_SND_TRESHOLDSECS;秒後
 PREFERENCES_SQUAREDETAILWINDOW;正方形のディテール・ウィンドウ（速い）
@@ -820,6 +835,7 @@ PREFERENCES_TAB_COLORMGR;カラーマネジメント
 PREFERENCES_TAB_GENERAL;一般
 PREFERENCES_TAB_IMPROC;画像処理
 PREFERENCES_TAB_OUTPUT;出力オプション
+PREFERENCES_TAB_PERFORMANCE;パフォーマンス
 PREFERENCES_TAB_SOUND;サウンド
 PREFERENCES_THUMBSIZE;サムネイル・サイズ
 PREFERENCES_TP_LABEL;ツール パネル:
@@ -843,10 +859,10 @@ PROFILEPANEL_PLASTSAVED;更新済
 PROFILEPANEL_PROFILE;プロファイル
 PROFILEPANEL_SAVEDLGLABEL;後処理プロファイルを保存...
 PROFILEPANEL_SAVEPPASTE;保存するパラメータ
-PROFILEPANEL_TOOLTIPCOPY;クリップボードに現在のプロファイルをコピーします。\nCtrl-クリックでコピーするパラメータを選択します
-PROFILEPANEL_TOOLTIPLOAD;ファイルからプロファイルを読み込みます。\nCtrl-クリックで読み込むパラメータを選択します
-PROFILEPANEL_TOOLTIPPASTE; クリップボードからプロファイルを貼り付けます。\nCtrl-クリックで貼り付けるパラメータを選択します
-PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存。\nCtrl-クリックで保存するパラメータを選択します
+PROFILEPANEL_TOOLTIPCOPY;クリップボードに現在のプロファイルをコピーします\nCtrl-クリックでコピーするパラメータを選択します
+PROFILEPANEL_TOOLTIPLOAD;ファイルからプロファイルを読み込みます\nCtrl-クリックで読み込むパラメータを選択します
+PROFILEPANEL_TOOLTIPPASTE; クリップボードからプロファイルを貼り付けます\nCtrl-クリックで貼り付けるパラメータを選択します
+PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存\nCtrl-クリックで保存するパラメータを選択します
 PROGRESSBAR_BADPIXELS;不良ピクセル...
 PROGRESSBAR_CACORRECTION;色収差補正...
 PROGRESSBAR_DARKFRAME;ダークフレーム...
@@ -876,6 +892,7 @@ QINFO_LENS;レンズ
 QINFO_NOEXIF;Exifデータがありません
 SAVEDLG_AUTOSUFFIX;ファイルが存在する場合、自動的に末尾に文字を加える
 SAVEDLG_FILEFORMAT;ファイル形式
+SAVEDLG_FORCEFORMATOPTS;強制保存オプション
 SAVEDLG_JPEGQUAL;JPEG 品質
 SAVEDLG_JPGFILTER;JPEG ファイル
 SAVEDLG_PNGCOMPR;PNG 圧縮
@@ -929,50 +946,53 @@ TP_COLORAPP_ALGO_JS;明度 + 彩度 (JS)
 TP_COLORAPP_ALGO_QM;明るさ + 鮮やかさ (QM)
 TP_COLORAPP_ALGO_TOOLTIP;サブセットかすべてのパラメータ使用か選択
 TP_COLORAPP_BRIGHT;明るさ (Q)
-TP_COLORAPP_BRIGHT_TOOLTIP;CIECAM02の明るさは LabやRGBとは異なり、白の輝度を考慮します
+TP_COLORAPP_BRIGHT_TOOLTIP;CIECAM02の明るさは LabやRGBとは異なり、白の輝度を計算に入れます
 TP_COLORAPP_CHROMA;色度 (C)
 TP_COLORAPP_CHROMA_M;鮮やかさ (M)
-TP_COLORAPP_CHROMA_M_TOOLTIP;CIECAM02の鮮やかさは LabやRGBとは異なります
+TP_COLORAPP_CHROMA_M_TOOLTIP;CIECAM02の鮮やかさは LabやRGBの鮮やかさとは異なります
 TP_COLORAPP_CHROMA_S;彩度 (S)
-TP_COLORAPP_CHROMA_S_TOOLTIP;CIECAM02の彩度は LabやRGBとは異なります
-TP_COLORAPP_CHROMA_TOOLTIP;CIECAM02の色度は LabやRGBとは異なります
+TP_COLORAPP_CHROMA_S_TOOLTIP;CIECAM02の彩度は LabやRGBの彩度とは異なります
+TP_COLORAPP_CHROMA_TOOLTIP;CIECAM02の色度は LabやRGBの色度とは異なります
 TP_COLORAPP_CIECAT_DEGREE;CAT02 順応
 TP_COLORAPP_CONTRAST;コントラスト (J)
 TP_COLORAPP_CONTRAST_Q;コントラスト (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;CIECAM02のコントラスト(明るさQ)スライダーは LabやRGBとは異なります
 TP_COLORAPP_CONTRAST_TOOLTIP;CIECAM02のコントラスト(明度J)スライダーは LabやRGBとは異なります
 TP_COLORAPP_CURVEEDITOR1;トーンカーブ1
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;CIECAM前のL（Lab）のヒストグラム\n\n CIECAM出力のヒストグラム表示チェックボックスが有効になっている場合のCIECAM後の J,Qヒストグラム\n\n（J、Q）は直接ヒストグラムパネルには表示されません\n\n最終出力のヒストグラムパネルを参照してください
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;CIECAM前のL（Lab）のヒストグラムを表示\n\n CIECAM出力のヒストグラム表示チェックボックスが有効になっている場合は、CIECAM後の JまたはQのヒストグラムを表示\n\n（J、Q）はメイン・ヒストグラムパネルには表示されません\n\n最終出力のヒストグラムパネルを参照してください
 TP_COLORAPP_CURVEEDITOR2;トーンカーブ2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;2番目の露光トーンカーブと同じ使い方
 TP_COLORAPP_CURVEEDITOR3;カラーカーブ
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;色度、彩度、鮮やかさのいずれかを調整します\nヒストグラムは、CIECAM前の色度(Lab)を表示します\n　CIECAM出力のヒストグラム表示チェックボックスが有効になっている場合、CIECAM後のC,s,M を表示します\n(C,s,M)は、直接ヒストグラムパネルには表示されません\n最終出力のヒストグラムパネルを参照してください
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;色度、彩度、鮮やかさのいずれかを調整します\n\nCIECAM02前の色度(Lab)のヒストグラムを表示します\nチェックボックスの"カーブにCIECAM02出力のヒストグラムを表示" が有効の場合、CIECAM02後のC,sまたはMのヒストグラムを表示します\n\nC, sとMは、メインのヒストグラム・パネルには表示されません\n最終的な出力は、メインのヒストグラム・パネルを参照してください
 TP_COLORAPP_DATACIE;カーブにCIECAM出力のヒストグラムを表示
-TP_COLORAPP_DATACIE_TOOLTIP;有効の場合、CIECAMカーブのヒストグラムは、JかQ、CIECAM調整後のCかs、またはMの値/範囲の近似値を表示します\nこの選択はメインヒストグラムパネルには影響を与えません\n\n無効の場合、CIECAM曲線のヒストグラムは、CIECAM調整前のLab値を表示します
-TP_COLORAPP_DEGREE_TOOLTIP;CIE色度順応変換2002の量\n" <i>自動</i> "チェックボックスをオンにした場合、RTは最適な値を設定します
+TP_COLORAPP_DATACIE_TOOLTIP;有効の場合、CIECAMカーブのヒストグラムは、JかQ、CIECAM調整後のCかs、またはMの値/範囲の近似値を表示します\nこの選択はメイン・ヒストグラムパネルには影響を与えません\n\n無効の場合、CIECAMカーブのヒストグラムは、CIECAM調整前のLab値を表示します
+TP_COLORAPP_DEGREE_AUTO_TOOLTIP;チェックボックスが有効の場合 (推奨)\nRTは、CAT02によって使用されたものとさらに全体のCIECAM02用の最適値を計算します\n手動で値を設定するには、チェックボックスを無効にします (65以上の値を推奨)
+TP_COLORAPP_DEGREE_TOOLTIP;CIE色度順応変換2002の量
 TP_COLORAPP_EQUAL;同等
 TP_COLORAPP_GAMUT;色域制御 (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Labモードの色域制御を許可
 TP_COLORAPP_HUE;色相 (h)
 TP_COLORAPP_HUE_TOOLTIP;色相 (h) - 0° から 360°の角度
 TP_COLORAPP_LABEL;CIE色の見えモデル2002
-TP_COLORAPP_LABEL_CAM02;CIECAM02で画像修正
+TP_COLORAPP_LABEL_CAM02;画像の調整
 TP_COLORAPP_LABEL_SCENE;撮影場面条件
 TP_COLORAPP_LABEL_VIEWING;観視条件
 TP_COLORAPP_LIGHT;明度 (J)
-TP_COLORAPP_LIGHT_TOOLTIP;CIECAM02の明度は LabやRGBとは異なります
+TP_COLORAPP_LIGHT_TOOLTIP;CIECAM02の明度は LabやRGBの明度とは異なります
 TP_COLORAPP_MODEL;白ポイント・モデル
-TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [出力]:</b>\nRTのWBは、撮影場面に使用されます。CIECAMはD50の設定, 出力デバイスのホワイトは環境設定の値を使用します\n\n<b>WB [RT+CAT02] + [出力]:</b>\nRTのWB設定は、CAT02で使用され、出力デバイスのホワイトは環境設定の値を使用します
+TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [出力]:</b>\nRTのホワイトバランスは、撮影場面に使用されます。CIECAM02はD50の設定, 出力デバイスのホワイトバランスは「環境設定」の「カラーマネジメント」の設定\n\n<b>WB [RT+CAT02] + [出力]:</b>\nRTのホワイトバランス設定は、CAT02で使用され、出力デバイスのホワイトバランスは環境設定の値を使用します
 TP_COLORAPP_RSTPRO;レッドと肌トーンを保護
 TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌トーンを保護 (スライダーとカーブ)
+TP_COLORAPP_SHARPCIE;シャープ化 & コントラスト(det/mic) & Q/Cでフリンジ低減
+TP_COLORAPP_SHARPCIE_TOOLTIP;シャープ追加 / ディテールのコントラスト / マイクロコントラスト / Defringe are controlled in appropriates sections and must be enabled to engage\n. ラベル参照 (lab / ciecam02)
 TP_COLORAPP_SURROUND;周囲
 TP_COLORAPP_SURROUND_AVER;普通
 TP_COLORAPP_SURROUND_DARK;暗い
 TP_COLORAPP_SURROUND_DIM;薄暗い
 TP_COLORAPP_SURROUND_EXDARK;非常に暗い (Cutsheet)
-TP_COLORAPP_SURROUND_TOOLTIP;トーンとカラーの変更は、出力デバイスの環視条件を考慮します\n\n<b>普通:</b>\n平均的な明るい環境 (標準)\n画像は変更されません\n\n<b>薄暗い:</b>\n薄暗い環境 (TV)\n画像は若干暗くなります\n\n<b>暗い:</b>\n暗い環境 (プロジェクター)\n画像はかなり暗くなります\n\n<b>非常に暗い:</b>\n非常に暗い環境 (Cutsheet)\n画像はとても暗くなります
+TP_COLORAPP_SURROUND_TOOLTIP;トーンとカラーの変更は、出力デバイスの環視条件を計算に入れます\n\n<b>普通:</b>\n平均的な明るい環境 (標準)\n画像は変更されません\n\n<b>薄暗い:</b>\n薄暗い環境 (TV)\n画像は若干暗くなります\n\n<b>暗い:</b>\n暗い環境 (プロジェクター)\n画像はかなり暗くなります\n\n<b>非常に暗い:</b>\n非常に暗い環境 (Cutsheet)\n画像はとても暗くなります
 TP_COLORAPP_SURSOURCE;暗い周囲
-TP_COLORAPP_SURSOURCE_TOOLTIP;ソース画像に暗いボーダーがある場合使用されます
+TP_COLORAPP_SURSOURCE_TOOLTIP;ソース画像に暗い縁がある場合使用されます
 TP_COLORAPP_TCMODE_BRIGHTNESS;明るさ
 TP_COLORAPP_TCMODE_CHROMA;色度
 TP_COLORAPP_TCMODE_COLORF;鮮やかさ
@@ -981,8 +1001,8 @@ TP_COLORAPP_TCMODE_LABEL2;カーブ・モード2
 TP_COLORAPP_TCMODE_LABEL3;カーブ・色度モード
 TP_COLORAPP_TCMODE_LIGHTNESS;明度
 TP_COLORAPP_TCMODE_SATUR;彩度
-TP_COLORAPP_TONECIE;CIECAM明るさ(Q)でトーンマッピング
-TP_COLORAPP_TONECIE_TOOLTIP;トーンマッピング調整の追加は「トーンマッピング」セクションで制御され「トーンマッピングを有効」にする必要があります
+TP_COLORAPP_TONECIE;CIECAM02 明るさ(Q)を使用してトーンマッピング
+TP_COLORAPP_TONECIE_TOOLTIP;このオプションが無効になっている場合、トーンマッピングはLab空間を使用します\nこのオプションが有効になっている場合、トーンマッピングは、CIECAM02を使用します\nトーンマッピング（Lab/CIECAM02）ツールを有効にするには、この設定を有効にする必要があります
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [出力]
 TP_COLORAPP_WBRT;WB [RT] + [出力]
 TP_CROP_FIXRATIO;縦横比固定
@@ -1006,15 +1026,23 @@ TP_CROP_X;X
 TP_CROP_Y;Y
 TP_DARKFRAME_AUTOSELECT;自動選択
 TP_DARKFRAME_LABEL;ダークフレーム
-TP_DEFRINGE_LABEL;フリンジ低減
+TP_DEFRINGE_LABEL;フリンジ低減 (Lab/CIECAM02)
 TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;しきい値
-TP_DIRPYRDENOISE_CHROMA;色度
+TP_DIRPYRDENOISE_BLUE;色差 ブルー
+TP_DIRPYRDENOISE_CHROMA;色度 (主)
+TP_DIRPYRDENOISE_ENABLED_TOOLTIP;RAWと非RAW画像に使用することができます\n\n非RAW画像の輝度ノイズ低減は、入力カラープロファイルのガンマに依存します。 sRGBのガンマは、入力画像が異なるガンマのカラープロファイルであれば、輝度ノイズ低減は異なりますが、このように仮定されます
 TP_DIRPYRDENOISE_GAMMA;ガンマ
-TP_DIRPYRDENOISE_LABEL;ノイズ低減（RAW画像のみ）
-TP_DIRPYRDENOISE_LDETAIL;輝度詳細
+TP_DIRPYRDENOISE_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
+TP_DIRPYRDENOISE_LABEL;ノイズ低減
+TP_DIRPYRDENOISE_LDETAIL;輝度ディテール
 TP_DIRPYRDENOISE_LUMA;輝度
-TP_DIRPYREQUALIZER_LABEL;ディテールのコントラスト
+TP_DIRPYRDENOISE_METHOD;方式
+TP_DIRPYRDENOISE_METHOD_TOOLTIP;RAW画像は、RGBまたはLab方式のいずれかを使用することができます。\n\n非RAW画像は、選択にかかわらずLab方式が使用されます
+TP_DIRPYRDENOISE_PERF;RGB モード(RAW画像)
+TP_DIRPYRDENOISE_RED;色差 レッド
+TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYREQUALIZER_LABEL;ディテールのコントラスト (Lab/CIECAM02)
 TP_DIRPYREQUALIZER_LUMACOARSEST;粗い
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;コントラスト－
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;コントラスト＋
@@ -1026,11 +1054,11 @@ TP_DISTORTION_AUTO;自動歪曲収差補正
 TP_DISTORTION_AUTO_TIP;(試用) 自動レンズ収差補正 (M4/3, 一部のコンデジ, etc.)
 TP_DISTORTION_LABEL;歪曲収差補正
 TP_EPD_EDGESTOPPING;エッジ停止
-TP_EPD_LABEL;トーンマッピング
+TP_EPD_LABEL;トーンマッピング (Lab/CIECAM02)
 TP_EPD_REWEIGHTINGITERATES;再加重反復
 TP_EPD_SCALE;スケール
 TP_EPD_STRENGTH;強さ
-TP_EPD_TOOLTIP;トーンマッピングは、Labモード(標準)またはCIECAM02モードを介して可能です\n\n CIECAM02トーンマッピングモードは以下の設定を有効にします: \n 1. CIECAM\n 2. アルゴリズム="明るさ + 鮮やかさ (QM)"\n 3. "CIECAM明るさ(Q)でトーンマッピング"
+TP_EPD_TOOLTIP;トーンマッピングは、Labモード(標準)またはCIECAM02モードを介して可能です\n\n CIECAM02トーンマッピングモードは以下の設定を有効にします:\n 1. CIECAM02\n 2. アルゴリズム="明るさ + 鮮やかさ (QM)"\n 3. "CIECAM02 明るさ(Q)でトーンマッピング"
 TP_EXPOSCORR_LABEL;Raw 白・黒・ポイント
 TP_EXPOSURE_AUTOLEVELS;自動露光補正
 TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定をします
@@ -1084,7 +1112,7 @@ TP_ICM_BLENDCMSMATRIX_TOOLTIP;LUTベースのICCプロファイルを使用す�
 TP_ICM_FILEDLGFILTERANY;すべてのファイル
 TP_ICM_FILEDLGFILTERICM;プロファイル ファイル
 TP_ICM_INPUTCAMERAICC;カメラの標準
-TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapeeのデフォルトのICCカラープロファイルを使用　シンプルなマトリクスより正確だが一部のカメラでのみ使用可能
+TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapeeのデフォルトのICCカラープロファイルを使用 シンプルなマトリクスより正確だが一部のカメラでのみ使用可能
 TP_ICM_INPUTCAMERA;カメラの標準値
 TP_ICM_INPUTCAMERA_TOOLTIP;dcrawのシンプルなカラー・マトリクス、RawTherapeeの拡張バージョン（カメラの機種によりどちらでも可能）またはDNGの埋め込みを使用
 TP_ICM_INPUTCUSTOM;カスタム
@@ -1093,7 +1121,7 @@ TP_ICM_INPUTDLGLABEL;DCP/ICC 入力プロファイルを選択...
 TP_ICM_INPUTEMBEDDED;埋め込み使用, 可能なら
 TP_ICM_INPUTEMBEDDED_TOOLTIP;非RAWファイルに埋め込まれたカラープロファイルを使用
 TP_ICM_INPUTNONE;プロファイルなし
-TP_ICM_INPUTNONE_TOOLTIP;すべてにカラープロファイルを使用しない　特殊な場合にのみ使用
+TP_ICM_INPUTNONE_TOOLTIP;すべてにカラープロファイルを使用しない 特殊な場合にのみ使用
 TP_ICM_INPUTPROFILE;入力プロファイル
 TP_ICM_LABEL;カラー・マネジメント
 TP_ICM_NOICM;No ICM: sRGB 出力
@@ -1115,7 +1143,7 @@ TP_LABCURVE_AVOIDCOLORSHIFT;色ずれを回避
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;作業色空間の色域に色を合わせ\nマンセル補正を適用します
 TP_LABCURVE_BRIGHTNESS;明度
 TP_LABCURVE_BWTONING;白黒トーン
-TP_LABCURVE_BWTONING_TIP;<b>白黒トーン</b> オプションを有効にすると、Lab調整の彩度は無効になります。\n色調は <b>a</b> と <b>b</b> カーブで調整することができます
+TP_LABCURVE_BWTONING_TIP;<b>白黒トーン</b> オプションを有効にすると、Lab調整の彩度は無効になります\n色調は <b>a</b> と <b>b</b> カーブで調整することができます
 TP_LABCURVE_CHROMATICITY;色度
 TP_LABCURVE_CONTRAST;コントラスト
 TP_LABCURVE_CURVEEDITOR;Lab 明度カーブ
@@ -1132,12 +1160,12 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;ニュートラル
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;濁色
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;中間色
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;純色
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;色度 C=f(C).\n カーブ調整前の色度のヒストグラム\n 最終出力のヒストグラムパネルを参照
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;色度 C=f(C).\n カーブ調整前の色度のヒストグラム\n 最終出力のメイン・ヒストグラムパネルを参照
 TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;色相に応じた色度
 TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;色度に応じた輝度
-TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;輝度 Lab L=f(L).\n  Labカーブを調整する前のLのヒストグラム\n 最終出力のヒストグラムパネルを参照
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;輝度 Lab L=f(L).\n  Labカーブを調整する前のLのヒストグラム\n 最終出力のメイン・ヒストグラムパネルを参照
 TP_LABCURVE_ENABLESATLIMITER;彩度制限・有効
 TP_LABCURVE_LABEL;Lab 調整
 TP_LABCURVE_LCREDSK;レッドと肌トーンにLCを制限します
@@ -1189,6 +1217,9 @@ TP_RAW_ALLENHANCE;デモザイク後 アーティファクト/ノイズ低減
 TP_RAW_DCBENHANCE;DCB拡張処置
 TP_RAW_DCBITERATIONS;DCB反復の数
 TP_RAW_DMETHOD;方式
+TP_RAW_DMETHOD_PROGRESSBAR;%1 デモザイク中...
+TP_RAW_DMETHOD_PROGRESSBAR_REFINE;デモザイク・リファイン中...
+TP_RAW_DMETHOD_TOOLTIP;注: IGVとLMMSEは高ISO画像に適しています
 TP_RAW_FALSECOLOR;偽色抑制の処理段階
 TP_RAW_LABEL;デモザイク
 TP_RESIZE_APPLIESTO;適用 :
@@ -1198,8 +1229,8 @@ TP_RESIZE_BICUBIC;バイキュービック
 TP_RESIZE_BILINEAR;バイリニア
 TP_RESIZE_CROPPEDAREA;切り抜き領域
 TP_RESIZE_FITBOX;バウンディング・ボックス
-TP_RESIZE_FULLIMAGE;フル・イメージ
-TP_RESIZE_FULLSIZE;フル 画像 サイズ:
+TP_RESIZE_FULLIMAGE;全画像
+TP_RESIZE_FULLSIZE;全画像サイズ:
 TP_RESIZE_HEIGHT;高さ
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;リサイズ
@@ -1214,6 +1245,8 @@ TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;チャンネル
 TP_RGBCURVES_GREEN;G
 TP_RGBCURVES_LABEL;RGB カーブ
+TP_RGBCURVES_LUMAMODE;輝度モード
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>輝度モード</b> 画像の色を変更させることなく、R、G、Bチャネルごとに画像の輝度を変化させることができます
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;角度
 TP_ROTATE_LABEL;回転
@@ -1234,7 +1267,7 @@ TP_SHARPENING_EDRADIUS;半径
 TP_SHARPENING_EDTOLERANCE;エッジ許容
 TP_SHARPENING_HALOCONTROL;ハロ抑制
 TP_SHARPENING_HCAMOUNT;適用量
-TP_SHARPENING_LABEL;シャープ化
+TP_SHARPENING_LABEL;シャープ化 (Lab/CIECAM02)
 TP_SHARPENING_METHOD;方式
 TP_SHARPENING_ONLYEDGES;エッジのみシャープ化
 TP_SHARPENING_RADIUS;半径
@@ -1243,9 +1276,10 @@ TP_SHARPENING_RLD_AMOUNT;適用量
 TP_SHARPENING_RLD_DAMPING;減衰
 TP_SHARPENING_RLD_ITERATIONS;繰返し
 TP_SHARPENING_THRESHOLD;しきい値
+TP_SHARPENING_TOOLTIP;CIECAM02で使用する場合、わずかに異なる効果が期待されます。違いが認められた場合、好みに合わせて調整します
 TP_SHARPENING_USM;アンシャープマスク
 TP_SHARPENMICRO_AMOUNT;適用量
-TP_SHARPENMICRO_LABEL;マイクロコントラスト
+TP_SHARPENMICRO_LABEL;マイクロコントラスト (Lab/CIECAM02)
 TP_SHARPENMICRO_MATRIX;3×3マトリクスの代わりに 5×5
 TP_SHARPENMICRO_UNIFORMITY;均等
 TP_VIBRANCE_AVOIDCOLORSHIFT;色ずれを回避
@@ -1262,7 +1296,7 @@ TP_VIBRANCE_PASTSATTOG;中間色と純色トーンをリンク
 TP_VIBRANCE_PROTECTSKINS;肌トーンを保護
 TP_VIBRANCE_PSTHRESHOLD;中間色/純色トーン しきい値
 TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;純色トーン しきい値
-TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;縦軸は下が中間色トーン,上が純色を表し。\n\n横軸は彩度の範囲を表しています
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;縦軸は下が中間色トーン,上が純色を表し\n\n横軸は彩度の範囲を表しています
 TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;中間色/純色トーン 移行の加重
 TP_VIBRANCE_SATURATED;純色トーン
 TP_VIGNETTING_AMOUNT;適用量
@@ -1326,44 +1360,17 @@ ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>1</b>
 ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>F</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
-#00 Japanese
-#01 Translated by a3novy <a3novy@gmail.com>
-#02 update: 2011-05-15
-#03 update: 2011-11-13, update: 2011-11-20 (for 4.0.5)
-#04 update: 2011-12-03 (for 4.0.6)
-#05 update: 2012-02-11 (for 4.0.7)
-#06 update: 2012-04-04 (for 4.0.8)
-#07 update: 2012-07-12 update: 2012-12-22(for 4.0.9)
+#01 a3novy: 2011-05-15
+#02 a3novy: 2011-11-13
+#03 a3novy: 2011-11-20 (for 4.0.5)
+#04 a3novy: 2011-12-03 (for 4.0.6)
+#05 a3novy: 2012-02-11 (for 4.0.7)
+#06 a3novy: 2012-04-04 (for 4.0.8)
+#07 a3novy: 2012-07-12
+#07 a3novy: 2013-04-01 (for 4.0.10)
+#08 a3novy: 2012-12-22 (for 4.0.9)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!GENERAL_CLOSE;Close
-!HISTORY_MSG_201;NR - Delta Chrominance red
-!HISTORY_MSG_202;NR - Delta Chrominance blue
-!HISTORY_MSG_203;NR - Method
-!MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
-!MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
-!MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
-!MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
-!PREFERENCES_CIEART;CIECAM02 optimization
-!PREFERENCES_CIEART_LABEL;Use float precision instead of double
-!PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality
-!PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction
-!PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
-!PREFERENCES_TAB_PERFORMANCE;Performance
-!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
-!TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
-!TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
-!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
-!TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
-!TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
-!TP_DIRPYRDENOISE_METHOD;Method
-!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
-!TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
-!TP_DIRPYRDENOISE_RED;Delta chrominance Red
-!TP_DIRPYRDENOISE_RGB;RGB
-!TP_RGBCURVES_LUMAMODE;Luminosity Mode
-!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.
-!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when used with CIECAM02. If difference is observed, adjust to taste.
