@@ -98,6 +98,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         Gtk::CheckButton* raw_dcb_iterations;
         Gtk::CheckButton* raw_dcb_enhance;
         //Gtk::CheckButton* raw_all_enhance;
+        Gtk::CheckButton* raw_lmmse_iterations;
 
         Gtk::CheckButton* df_file;
         Gtk::CheckButton* df_AutoSelect;
@@ -115,7 +116,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         sigc::connection coarserotConn, finerotConn, cropConn, resizeConn, perspectiveConn, commonTransConn;
         sigc::connection exifchConn, iptcConn, icmConn, gamcsconn;
         sigc::connection df_fileConn, df_AutoSelectConn, ff_fileConn, ff_AutoSelectConn, ff_BlurRadiusConn, ff_BlurTypeConn;
-        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn; //,raw_all_enhanceConn
+        sigc::connection raw_caredConn, raw_cablueConn, raw_ca_autocorrectConn, raw_hotdeadpix_filtConn, raw_linenoiseConn, raw_greenthreshConn, raw_ccStepsConn, raw_dmethodConn, raw_dcb_iterationsConn, raw_lmmse_iterationsConn, raw_dcb_enhanceConn, raw_exposConn, raw_preserConn, raw_blackConn; //,raw_all_enhanceConn
 
     public:
         PartialPasteDlg (Glib::ustring title);

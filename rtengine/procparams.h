@@ -727,6 +727,8 @@ class RAWParams {
         int ccSteps;
         Glib::ustring dmethod;
         int dcb_iterations;
+        int lmmse_iterations;
+		
         bool dcb_enhance;
         //bool all_enhance;
 };

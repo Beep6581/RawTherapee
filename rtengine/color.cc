@@ -35,10 +35,12 @@ namespace rtengine {
     LUTf Color::gammatab;
     LUTf Color::igammatab_srgb;
     LUTf Color::gammatab_srgb;
-  //  LUTf Color::igammatab_709;
-  // LUTf Color::gammatab_709;
+ //   LUTf Color::igammatab_709;
+//	LUTf Color::gammatab_709;
     LUTf Color::igammatab_26_11;
     LUTf Color::gammatab_26_11;
+    LUTf Color::igammatab_24_17;
+    LUTf Color::gammatab_24_17a;
 
     // Wikipedia sRGB: Unlike most other RGB color spaces, the sRGB gamma cannot be expressed as a single numerical value.
     // The overall gamma is approximately 2.2, consisting of a linear (gamma 1.0) section near black, and a non-linear section elsewhere involving a 2.4 exponent
@@ -136,10 +138,12 @@ namespace rtengine {
         gammatab(65536,0);
         igammatab_srgb(65536,0);
         gammatab_srgb(65536,0);
-   //     igammatab_709(65536,0);
-   //     gammatab_709(65536,0);
+     //   igammatab_709(65536,0);
+     //   gammatab_709(65536,0);
         igammatab_26_11(65536,0);
         gammatab_26_11(65536,0);
+        igammatab_24_17(65536,0);
+        gammatab_24_17a(65536,0);
 
         for (int i=0; i<65536; i++)
             gammatab_srgb[i] = (65535.0 * gamma2 (i/65535.0));
@@ -157,6 +161,12 @@ namespace rtengine {
             gammatab_26_11[i] = (65535.0 * gamma26_11 (i/65535.0));
         for (int i=0; i<65536; i++)
             igammatab_26_11[i] = (65535.0 * igamma26_11 (i/65535.0));
+        for (int i=0; i<65536; i++) {
+			float j = (float)i / 65535.0f;	
+            gammatab_24_17a[i] = gamma24_17(j);
+			}
+        for (int i=0; i<65536; i++)
+            igammatab_24_17[i] = (65535.0 * igamma24_17 (i/65535.0));
 			
         /*FILE* f = fopen ("c.txt", "wt");
         for (int i=0; i<256; i++)

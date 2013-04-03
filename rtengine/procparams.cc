@@ -372,6 +372,8 @@ void ProcParams::setDefaults () {
     raw.dmethod = RAWParams::methodstring[RAWParams::amaze];;
     raw.dcb_iterations=2;
     raw.dcb_enhance=false;
+    raw.lmmse_iterations=2;
+	
     //raw.all_enhance=false;
 	
     // exposure before interpolation
@@ -835,6 +837,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->raw.dmethod)            keyFile.set_string  ("RAW", "Method", raw.dmethod );
     if (!pedited || pedited->raw.dcbIterations)      keyFile.set_integer ("RAW", "DCBIterations", raw.dcb_iterations );
     if (!pedited || pedited->raw.dcbEnhance)         keyFile.set_boolean ("RAW", "DCBEnhance", raw.dcb_enhance );
+    if (!pedited || pedited->raw.lmmseIterations)    keyFile.set_integer ("RAW", "LMMSEIterations", raw.lmmse_iterations );
+	
     //if (!pedited || pedited->raw.allEnhance)         keyFile.set_boolean ("RAW", "ALLEnhance", raw.all_enhance );
 
     // save raw exposition
@@ -1366,6 +1370,7 @@ if (keyFile.has_group ("RAW")) {
     if (keyFile.has_key ("RAW", "Method"))           { raw.dmethod = keyFile.get_string ("RAW", "Method"); if (pedited) pedited->raw.dmethod = true; }
     if (keyFile.has_key ("RAW", "DCBIterations"))    { raw.dcb_iterations = keyFile.get_integer("RAW", "DCBIterations"); if (pedited) pedited->raw.dcbIterations = true; }
     if (keyFile.has_key ("RAW", "DCBEnhance"))       { raw.dcb_enhance =keyFile.get_boolean("RAW", "DCBEnhance"); if (pedited) pedited->raw.dcbEnhance = true; }
+    if (keyFile.has_key ("RAW", "LMMSEIterations"))  { raw.lmmse_iterations = keyFile.get_integer("RAW", "LMMSEIterations"); if (pedited) pedited->raw.lmmseIterations = true; }
     //if (keyFile.has_key ("RAW", "ALLEnhance"))       { raw.all_enhance =keyFile.get_boolean("RAW", "ALLEnhance"); if (pedited) pedited->raw.allEnhance = true; }
 
     if (keyFile.has_key ("RAW", "PreExposure"))   { raw.expos =keyFile.get_double("RAW", "PreExposure"); if (pedited) pedited->raw.exPos = true; }

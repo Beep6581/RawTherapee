@@ -65,6 +65,7 @@ ExportPanel::ExportPanel () : listener (NULL) {
 	bypass_raw_ff           = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_RAW_FF")));
 	bypass_raw_dcb_iterations = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_RAW_DCB_ITERATIONS")));
 	bypass_raw_dcb_enhance    = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_RAW_DCB_ENHANCE")));
+	bypass_raw_lmmse_iterations = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_RAW_LMMSE_ITERATIONS")));
 
 	Gtk::HBox* hb_raw_dmethod = Gtk::manage (new Gtk::HBox ());
 	hb_raw_dmethod->pack_start (*Gtk::manage (new Gtk::Label ( M("EXPORT_RAW_DMETHOD") +": ")),Gtk::PACK_SHRINK, 4);
@@ -94,6 +95,7 @@ ExportPanel::ExportPanel () : listener (NULL) {
 	pack_start(*bypass_raw_dcb_iterations, Gtk::PACK_SHRINK, 4);
 	pack_start(*bypass_raw_dcb_enhance   , Gtk::PACK_SHRINK, 4);
 	pack_start(*bypass_raw_ca         , Gtk::PACK_SHRINK, 4);
+	pack_start(*bypass_raw_lmmse_iterations, Gtk::PACK_SHRINK, 4);
 
 	pack_start(*bypass_raw_linenoise   , Gtk::PACK_SHRINK, 4);
 	pack_start(*bypass_raw_greenthresh , Gtk::PACK_SHRINK, 4);
@@ -172,6 +174,7 @@ ExportPanel::ExportPanel () : listener (NULL) {
 	bypass_raw_ccStepsConn        = bypass_raw_ccSteps->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_raw_dcb_iterationsConn = bypass_raw_dcb_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_raw_dcb_enhanceConn    = bypass_raw_dcb_enhance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
+	bypass_raw_lmmse_iterationsConn = bypass_raw_lmmse_iterations->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_raw_caConn             = bypass_raw_ca->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_raw_linenoiseConn      = bypass_raw_linenoise->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
 	bypass_raw_greenthreshConn    = bypass_raw_greenthresh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*bypass_ALL, &Gtk::CheckButton::set_inconsistent), true));
@@ -211,6 +214,7 @@ void ExportPanel::SaveSettingsAsDefault(){
 	options.fastexport_bypass_raw_ccSteps        = bypass_raw_ccSteps->get_active       ();
 	options.fastexport_bypass_raw_dcb_iterations = bypass_raw_dcb_iterations->get_active();
 	options.fastexport_bypass_raw_dcb_enhance    = bypass_raw_dcb_enhance->get_active   ();
+	options.fastexport_bypass_raw_lmmse_iterations = bypass_raw_lmmse_iterations->get_active();
 	options.fastexport_bypass_raw_ca             = bypass_raw_ca->get_active            ();
 	options.fastexport_bypass_raw_linenoise      = bypass_raw_linenoise->get_active     ();
 	options.fastexport_bypass_raw_greenthresh    = bypass_raw_greenthresh->get_active   ();
@@ -264,6 +268,7 @@ void ExportPanel::LoadDefaultSettings(){
 	bypass_raw_ccSteps->set_active       (options.fastexport_bypass_raw_ccSteps        );
 	bypass_raw_dcb_iterations->set_active(options.fastexport_bypass_raw_dcb_iterations );
 	bypass_raw_dcb_enhance->set_active   (options.fastexport_bypass_raw_dcb_enhance    );
+	bypass_raw_lmmse_iterations->set_active(options.fastexport_bypass_raw_lmmse_iterations );
 	bypass_raw_ca->set_active            (options.fastexport_bypass_raw_ca             );
 	bypass_raw_linenoise->set_active     (options.fastexport_bypass_raw_linenoise      );
 	bypass_raw_greenthresh->set_active   (options.fastexport_bypass_raw_greenthresh    );
@@ -333,6 +338,7 @@ void ExportPanel::bypassALL_Toggled(){
 	bypass_raw_ccStepsConn.block        (true);
 	bypass_raw_dcb_iterationsConn.block (true);
 	bypass_raw_dcb_enhanceConn.block    (true);
+	bypass_raw_lmmse_iterationsConn.block (true);
 	bypass_raw_caConn.block             (true);
 	bypass_raw_linenoiseConn.block      (true);
 	bypass_raw_greenthreshConn.block    (true);
@@ -354,6 +360,7 @@ void ExportPanel::bypassALL_Toggled(){
 	bypass_raw_ccSteps->set_active(bypass_ALL->get_active());
 	bypass_raw_dcb_iterations->set_active(bypass_ALL->get_active());
 	bypass_raw_dcb_enhance->set_active(bypass_ALL->get_active());
+	bypass_raw_lmmse_iterations->set_active(bypass_ALL->get_active());
 	bypass_raw_ca->set_active(bypass_ALL->get_active());
 	bypass_raw_linenoise->set_active(bypass_ALL->get_active());
 	bypass_raw_greenthresh->set_active(bypass_ALL->get_active());
@@ -373,6 +380,7 @@ void ExportPanel::bypassALL_Toggled(){
 	bypass_raw_ccStepsConn.block        (false);
 	bypass_raw_dcb_iterationsConn.block (false);
 	bypass_raw_dcb_enhanceConn.block    (false);
+	bypass_raw_lmmse_iterationsConn.block (false);
 	bypass_raw_caConn.block             (false);
 	bypass_raw_linenoiseConn.block      (false);
 	bypass_raw_greenthreshConn.block    (false);

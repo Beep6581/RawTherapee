@@ -1226,4 +1226,13 @@ __inline float xdiv2f(float d) {
 	return d;
 }
 
+__inline float xdivf( float d, int n){
+	if (*(int*)&d & 0x7FFFFFFF) { // if f==0 do nothing
+		*(int*)&d -= n << 23; // add n to the exponent
+		}
+	return d;
+}	
+
+
+
 #endif

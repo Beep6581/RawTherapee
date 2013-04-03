@@ -222,7 +222,8 @@ LUMINANCECURVE,    // EvCATdatacie
 LUMINANCECURVE,    // EvCATtonecie
 ALLNORAW,         // EvDPDNbluechro
 ALLNORAW,         // EvDPDNperform
-ALLNORAW         //EvDPDNmet
+ALLNORAW,         //EvDPDNmet
+DEMOSAIC         // EvDemosaicLMMSEIter
 
 //LUMINANCECURVE    // EvCATsharpcie
 

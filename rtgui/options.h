@@ -218,6 +218,7 @@ class Options {
     bool fastexport_bypass_raw_ccSteps;
     bool fastexport_bypass_raw_dcb_iterations;
     bool fastexport_bypass_raw_dcb_enhance;
+    bool fastexport_bypass_raw_lmmse_iterations;
     bool fastexport_bypass_raw_ca;
     bool fastexport_bypass_raw_linenoise;
     bool fastexport_bypass_raw_greenthresh;

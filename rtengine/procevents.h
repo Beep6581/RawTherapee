@@ -226,8 +226,9 @@ enum ProcEvent {
 	EvDPDNbluechro=201,
 	EvDPDNmet=202,
 //	EvDPDNperform=201,
-	
-	NUMOFEVENTS=203
+	EvDemosaicLMMSEIter=203,
+	NUMOFEVENTS=204
 };
 }
 #endif
+

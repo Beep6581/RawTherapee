@@ -34,6 +34,8 @@
 #include "color.h"
 #include "../rtgui/multilangmgr.h"
 #include "procparams.h"
+#include "sleef.c"
+
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -48,6 +50,12 @@ namespace rtengine {
 #define ABS(a) ((a)<0?-(a):(a))
 #define DIST(a,b) (ABS(a-b))
 #define CLIREF(x) LIM(x,-200000.0f,200000.0f) // avoid overflow : do not act directly on image[] or pix[]
+#define x1125(a) (a + xdivf(a, 3))
+#define x0875(a) (a - xdivf(a, 3))
+#define x0250(a) xdivf(a, 2)
+#define x00625(a) xdivf(a, 4)
+#define x0125(a) xdivf(a, 3)
+
 
 #define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
 extern const Settings* settings;
@@ -1053,17 +1061,14 @@ void RawImageSource::jdl_interpolate_omp()  // from "Lassus"
 // IEEE Trans. on Image Processing, vol. 14, pp. 2167-2178,
 // Dec. 2005.
 // Adapted to RT by Jacques Desmis 3/2013
-//TODO Tiles and OMP to reduce memory consumption and accelerate
-#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
-void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
+//TODO Tiles to reduce memory consumption
+void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 {
 	int c, ii;
 	float h0, h1, h2, h3, h4, hs;
 	float (*rix)[6];
 	float (*qix)[6];
-	float (*glut);
 
-	bool applyGamma=true;
 
 	char  *buffer;
 	const int width=winw, height=winh;
@@ -1074,7 +1079,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 	const int w2 = 2*w1;
 	const int w3 = 3*w1;
 	const int w4 = 4*w1;
-
+	int iter;
 	h0 = 1.0f;
 	h1 = exp( -1.0f/8.0f);
 	h2 = exp( -4.0f/8.0f);
@@ -1086,86 +1091,87 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 	h2 /= hs;
 	h3 /= hs;
 	h4 /= hs;
-
+	int passref;
+	if(iterations <=4) {iter = iterations-1;passref=0;}
+	else if (iterations <=6){iter=3;passref=iterations-4;}
+	else if (iterations <=8){iter=3;passref=iterations-6;}	
+	bool applyGamma=true;
+	if(iterations==0) {applyGamma=false;iter=0;} else applyGamma=true;
+	
 	if (plistener) {
 		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::lmmse]));
 		plistener->setProgress (0.0);
 	}
-	float (*image)[4];
+	float (*image)[3];
 	float maxdata=0.f;
-	// float epsil=0.00001f; unused
-	image = (float (*)[4]) calloc (width*height, sizeof *image);
-//	int curr0=0;
-//	int curr1=0;
-//	int curr2=0;
+	image = (float (*)[3]) calloc (width*height, sizeof *image);
 	unsigned int a=0;
+#ifdef _OPENMP	
+#pragma omp parallel for 
+#endif
 	for (int ii=0; ii<height; ii++)
 		for (int jj=0; jj<width; jj++) {
-			float currData = CLIP(rawData[ii][jj]);
-			image[a++][fc(ii,jj)] = currData;
-		//	if(fc(ii,jj)==0 && currData > 65535.f) curr0=1;
-		//	if(fc(ii,jj)==1 && currData > 65535.f) curr1=1;
-		//	if(fc(ii,jj)==2 && currData > 65535.f) curr2=1;
-			if (currData > maxdata) maxdata=currData;
+            image[ii*width+jj][fc(ii,jj)] = CLIP(rawData[ii][jj]);			
 		}
-//	if(curr1==1 || curr2==1 || curr0==1) applyGamma=false;	// LMMSE without gamma = reduce artefact in highlight
-	if(maxdata<65535.f) maxdata=65535.f;
+	maxdata=65535.f;
 	if (applyGamma)
-		buffer = (char *)malloc(rr1*cc1*6*sizeof(float)+(int)(maxdata+1.f)*sizeof(float));
+		buffer = (char *)malloc(rr1*cc1*6*sizeof(float)+(int)(maxdata)*sizeof(float));
 	else
 		buffer = (char *)malloc(rr1*cc1*6*sizeof(float));
 
 	qix = (float (*)[6])buffer;
-	if (applyGamma) {
-		glut = (float *)(buffer + rr1*cc1*6*sizeof(float));
-		for (ii=0; ii < 65536; ii++) {
-			float v0 = (float)ii / 65535.0f;
-			if (v0 <= 0.003041f)
-				glut[ii] = v0*12.92f;
-			else
-				glut[ii] = 1.055011f*(float)powf(v0,1.f/2.4f) - 0.055011f;
-		}
-	}// gamma sRGB
-
+{
 	if (plistener) plistener->setProgress (0.1);
+}
 
-/*#ifdef _OPENMP
-#pragma omp parallel firstprivate (image,rix,qix,h0,h1,h2,h3,h4,hs)
-#endif*/
-//{
+#ifdef _OPENMP
+#pragma omp parallel firstprivate (image,rix,qix,h0,h1,h2,h3,h4)
+#endif
+{
+#ifdef _OPENMP
+#pragma omp for  
+#endif
 	for (int rrr=0; rrr < rr1; rrr++)
 		for (int ccc=0, row=rrr-ba; ccc < cc1; ccc++) {
 			int col = ccc - ba;
 			rix = qix + rrr*cc1 + ccc;
 			if ((row >= 0) & (row < height) & (col >= 0) & (col < width)) {
 				if (applyGamma)
-					rix[0][4] = glut[(int)image[row*width+col][FC(row,col)]];
+					rix[0][4] = Color::gammatab_24_17a[image[row*width+col][FC(row,col)]];	
 				else
 					rix[0][4] = (float)image[row*width+col][FC(row,col)]/65535.0f;
 			}
 			else
 				rix[0][4] = 0.f;
 		}
-
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
 	if (plistener) plistener->setProgress (0.2);
+}
+
 
 	// G-R(B)
+#ifdef _OPENMP	
+#pragma omp for  	
+#endif
 	for (int rr=2; rr < rr1-2; rr++) {
 		// G-R(B) at R(B) location
 		for (int cc=2+(FC(rr,2)&1); cc < cc1-2; cc+=2) {
 			rix = qix + rr*cc1 + cc;
-			float v0 = 0.0625f*(rix[-w1-1][4]+rix[-w1+1][4]+rix[w1-1][4]+rix[w1+1][4]) +0.25f*rix[0][4];
+			float v0 = x00625(rix[-w1-1][4]+rix[-w1+1][4]+rix[w1-1][4]+rix[w1+1][4]) +x0250(rix[0][4]);
 			// horizontal
-			rix[0][0] = -0.25f*(rix[ -2][4] + rix[ 2][4])+ 0.5f*(rix[ -1][4] + rix[0][4] + rix[ 1][4]);
-			float Y = v0 + 0.5f*rix[0][0];
+			rix[0][0] = - x0250(rix[ -2][4] + rix[ 2][4])+ xdiv2f(rix[ -1][4] + rix[0][4] + rix[ 1][4]);
+			float Y = v0 + xdiv2f(rix[0][0]);
 			if (rix[0][4] > 1.75f*Y)
 				rix[0][0] = ULIM(rix[0][0],rix[ -1][4],rix[ 1][4]);
 			else
 				rix[0][0] = LIM(rix[0][0],0.0f,1.0f);
 			rix[0][0] -= rix[0][4];
 			// vertical
-			rix[0][1] = -0.25f*(rix[-w2][4] + rix[w2][4])+ 0.5f*(rix[-w1][4] + rix[0][4] + rix[w1][4]);
-			Y = v0 + 0.5f*rix[0][1];
+			rix[0][1] = -x0250(rix[-w2][4] + rix[w2][4])+ xdiv2f(rix[-w1][4] + rix[0][4] + rix[w1][4]);
+			Y = v0 + xdiv2f(rix[0][1]);
 			if (rix[0][4] > 1.75f*Y)
 				rix[0][1] = ULIM(rix[0][1],rix[-w1][4],rix[w1][4]);
 			else
@@ -1175,26 +1181,42 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 		// G-R(B) at G location
 		for (int ccc=2+(FC(rr,3)&1); ccc < cc1-2; ccc+=2) {
 			rix = qix + rr*cc1 + ccc;
-			rix[0][0] = 0.25f*(rix[ -2][4] + rix[ 2][4])- 0.5f*(rix[ -1][4] + rix[0][4] + rix[ 1][4]);
-			rix[0][1] = 0.25f*(rix[-w2][4] + rix[w2][4])- 0.5f*(rix[-w1][4] + rix[0][4] + rix[w1][4]);
+			rix[0][0] = x0250(rix[ -2][4] + rix[ 2][4])- xdiv2f(rix[ -1][4] + rix[0][4] + rix[ 1][4]);
+			rix[0][1] = x0250(rix[-w2][4] + rix[w2][4])- xdiv2f(rix[-w1][4] + rix[0][4] + rix[w1][4]);
 			rix[0][0] = LIM(rix[0][0],-1.0f,0.0f) + rix[0][4];
 			rix[0][1] = LIM(rix[0][1],-1.0f,0.0f) + rix[0][4];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
 	if (plistener) plistener->setProgress (0.25);
+}
+
 
 	// apply low pass filter on differential colors
+#ifdef _OPENMP	
+#pragma omp  for 
+#endif
 	for (int rr=4; rr < rr1-4; rr++)
 		for (int cc=4; cc < cc1-4; cc++) {
 			rix = qix + rr*cc1 + cc;
 			rix[0][2] = h0*rix[0][0] + h1*(rix[ -1][0] + rix[ 1][0]) + h2*(rix[ -2][0] + rix[ 2][0]) + h3*(rix[ -3][0] + rix[ 3][0]) + h4*(rix[ -4][0] + rix[ 4][0]);
 			rix[0][3] = h0*rix[0][1] + h1*(rix[-w1][1] + rix[w1][1]) + h2*(rix[-w2][1] + rix[w2][1]) + h3*(rix[-w3][1] + rix[w3][1]) + h4*(rix[-w4][1] + rix[w4][1]);
 		}
-
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
 	if (plistener) plistener->setProgress (0.3);
+}
+
 
 	// interpolate G-R(B) at R(B)
+#ifdef _OPENMP	
+#pragma omp  for 
+#endif	
 	for (int rr=4; rr < rr1-4; rr++)
 		for (int cc=4+(FC(rr,4)&1); cc < cc1-4; cc+=2) {
 			rix = qix + rr*cc1 + cc;
@@ -1249,10 +1271,18 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 			// interpolated G-R(B)
 			rix[0][4] = (xh*vv + xv*vh)/(vh + vv);
 		}
-
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
 	if (plistener) plistener->setProgress (0.4);
+}
+
 
 	// copy CFA values
+#ifdef _OPENMP	
+#pragma omp for 
+#endif 	
 	for (int rr=0; rr < rr1; rr++)
 		for (int cc=0, row=rr-ba; cc < cc1; cc++) {
 			int col=cc-ba;
@@ -1260,7 +1290,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 			int c = FC(rr,cc);
 			if ((row >= 0) & (row < height) & (col >= 0) & (col < width)) {
 				if (applyGamma)
-					rix[0][c] = glut[(int)image[row*width+col][c]];
+					rix[0][c] = Color::gammatab_24_17a[image[row*width+col][c]];	
 				else
 					rix[0][c] = (float)image[row*width+col][c]/65535.0f;
 				}
@@ -1268,38 +1298,63 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 				rix[0][c] = 0.f;
 			if (c != 1) rix[0][1] = rix[0][c] + rix[0][4];
 		}
-
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
 	if (plistener) plistener->setProgress (0.5);
+}
+
 
 	// bilinear interpolation for R/B
 	// interpolate R/B at G location
+#ifdef _OPENMP	
+#pragma omp for 
+#endif	
 	for (int rr=1; rr < rr1-1; rr++)
 		for (int cc=1+(FC(rr,2)&1), c=FC(rr,cc+1); cc < cc1-1; cc+=2) {
 			rix = qix + rr*cc1 + cc;
-			rix[0][c] = rix[0][1] + 0.5f*(rix[ -1][c] - rix[ -1][1] + rix[ 1][c] - rix[ 1][1]);
+			rix[0][c] = rix[0][1] + xdiv2f(rix[ -1][c] - rix[ -1][1] + rix[ 1][c] - rix[ 1][1]);
 			c = 2 - c;
-			rix[0][c] = rix[0][1]+ 0.5f*(rix[-w1][c] - rix[-w1][1] + rix[w1][c] - rix[w1][1]);
+			rix[0][c] = rix[0][1]+ xdiv2f(rix[-w1][c] - rix[-w1][1] + rix[w1][c] - rix[w1][1]);
 			c = 2 - c;
 		}
-
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
 	if (plistener) plistener->setProgress (0.6);
+}
+
 
 	// interpolate R/B at B/R location
+#ifdef _OPENMP	
+#pragma omp  for
+#endif  	
 	for (int rr=1; rr < rr1-1; rr++)
 		for (int cc=1+(FC(rr,1)&1), c=2-FC(rr,cc); cc < cc1-1; cc+=2) {
 			rix = qix + rr*cc1 + cc;
-			rix[0][c] = rix[0][1]+ 0.25f*(rix[-w1][c] - rix[-w1][1] + rix[ -1][c] - rix[ -1][1]+ rix[  1][c] - rix[  1][1] + rix[ w1][c] - rix[ w1][1]);
+			rix[0][c] = rix[0][1]+ x0250(rix[-w1][c] - rix[-w1][1] + rix[ -1][c] - rix[ -1][1]+ rix[  1][c] - rix[  1][1] + rix[ w1][c] - rix[ w1][1]);
 		}
-
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
 	if (plistener) plistener->setProgress (0.7);
+}
+
+}// End of parallelization 1
 
 	// median filter/
-	for (int pass=1; pass <= 3; pass++) {
+	for (int pass=0; pass < iter; pass++) {
 		for (int c=0; c < 3; c+=2) {
 			// Compute median(R-G) and median(B-G)
 			int d = c + 3;
 			for (int ii=0; ii < rr1*cc1; ii++) qix[ii][d] = qix[ii][c] - qix[ii][1];
 			// Apply 3x3 median filter
+#ifdef _OPENMP
+#pragma omp parallel for  firstprivate (rix,qix)
+#endif
 			for (int rr=1; rr < rr1-1; rr++)
 				for (int cc=1; cc < cc1-1; cc++) {
 					float temp;
@@ -1332,13 +1387,19 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 			for (int cc=(FC(rr,0)&1), c=2-FC(rr,cc),d=c+3; cc < cc1; cc+=2) {
 				rix = qix + rr*cc1 + cc;
 				rix[0][c] = rix[0][1] + rix[0][d];
-				rix[0][1] = 0.5f*(rix[0][0] - rix[0][3] + rix[0][2] - rix[0][5]);
+				rix[0][1] = xdiv2f(rix[0][0] - rix[0][3] + rix[0][2] - rix[0][5]);
 			}
 	}
 
 	if (plistener) plistener->setProgress (0.8);
-
+#ifdef _OPENMP	
+#pragma omp parallel firstprivate (image,rix,qix)
+#endif
+{
 	// copy result back to image matrix
+#ifdef _OPENMP	
+#pragma omp for 
+#endif
 	for (int row=0; row < height; row++)
 		for (int col=0, rr=row+ba; col < width; col++) {
 			int cc = col+ba;
@@ -1350,7 +1411,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 				for (int ii=0; ii < 3; ii++)
 					if (ii != c) {
 						v0 = 65535.f*rix[0][ii];
-						image[row*width+col][ii]=Color::igammatab_srgb[v0];
+						image[row*width+col][ii]=Color::igammatab_24_17[v0];
 					}
 			}
 			else
@@ -1358,9 +1419,9 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 					if (ii != c)
 						image[row*width+col][ii] = ((65535.0f*rix[0][ii] + 0.5f));
 		}
-
-	if (plistener) plistener->setProgress (0.9);
-
+#ifdef _OPENMP
+#pragma omp for
+#endif
 	for (int ii=0; ii<height; ii++) {
 		for (int jj=0; jj<width; jj++){
 			red[ii][jj]   = (image[ii*width+jj][0]);
@@ -1368,15 +1429,16 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh)
 			blue[ii][jj]  = (image[ii*width+jj][2]);
 		}
 	}
+}
+// End of parallelization 2
 
 	if (plistener) plistener->setProgress (1.0);
-
-
-//} // End of parallelization
-
-// Done
 	free(buffer);
 	free(image);
+	//if(iterations > 4) refinement_lassus(passref);
+	if(iterations > 4 && iterations <=6) refinement(passref);
+	else if(iterations > 6) refinement_lassus(passref);
+	
 }
 
 /***
@@ -1774,6 +1836,116 @@ void RawImageSource::nodemosaic()
     }
 }
 
+/* 
+   Refinement based on EECI demosaicing algorithm by L. Chang and Y.P. Tan
+   Paul Lee
+   Adapted for Rawtherapee - Jacques Desmis 04/2013
+*/
+
+void RawImageSource::refinement(int PassCount)
+{
+	MyTime t1e,t2e;
+    t1e.set();
+    float (*image)[3];
+	int width=W;
+	int height=H;
+	int w1 = width;
+	int w2 = 2*w1;
+	
+    image = (float(*)[3]) calloc(W*H, sizeof *image);
+#ifdef _OPENMP
+#pragma omp parallel shared(image)
+#endif
+    {
+#ifdef _OPENMP
+#pragma omp for
+#endif       
+	   for (int i=0;i<H;i++) {
+            for (int j=0;j<W;j++) {
+                image[i*W+j][0] = red  [i][j];
+                image[i*W+j][1] = green[i][j];
+                image[i*W+j][2] = blue [i][j];			 
+            }
+        }
+        for (int b=0; b<PassCount; b++) {
+            if (plistener) {
+                plistener->setProgressStr (M("TP_RAW_DMETHOD_PROGRESSBAR_REFINE"));
+                plistener->setProgress ((float)b/PassCount);
+            }
+
+  /* Reinforce interpolated green pixels on RED/BLUE pixel locations */
+ #ifdef _OPENMP
+#pragma omp for
+#endif 
+  for (int row=2; row < height-2; row++)
+    for (int col=2+(FC(row,2) & 1), c=FC(row,col); col < width-2; col+=2) {
+      int indx = row*width+col;
+      float (*pix)[3]= image + indx;
+      double dL = 1.0/(1.0+fabs(pix[ -2][c]-pix[0][c])+fabs(pix[ 1][1]-pix[ -1][1]));
+      double dR = 1.0/(1.0+fabs(pix[  2][c]-pix[0][c])+fabs(pix[ 1][1]-pix[ -1][1]));
+      double dU = 1.0/(1.0+fabs(pix[-w2][c]-pix[0][c])+fabs(pix[w1][1]-pix[-w1][1]));
+      double dD = 1.0/(1.0+fabs(pix[ w2][c]-pix[0][c])+fabs(pix[w1][1]-pix[-w1][1]));
+      float v0 = (float)((double)pix[0][c] + 0.5 +((double)(pix[ -1][1]-pix[ -1][c])*dL +(double)(pix[  1][1]-pix[  1][c])*dR +(double)(pix[-w1][1]-pix[-w1][c])*dU +
+		  (double)(pix[ w1][1]-pix[ w1][c])*dD ) / (dL+dR+dU+dD));
+      pix[0][1] = CLIP(v0);
+    }
+
+  /* Reinforce interpolated red/blue pixels on GREEN pixel locations */
+#ifdef _OPENMP
+#pragma omp for
+#endif  
+  for (int row=2; row < height-2; row++)
+    for (int col=2+(FC(row,3) & 1), c=FC(row,col+1); col < width-2; col+=2) {
+      int indx = row*width+col;
+      float (*pix)[3] = image + indx;
+      for (int i=0; i < 2; c=2-c, i++) {
+	double dL = 1.0/(1.0+fabs(pix[ -2][1]-pix[0][1])+fabs(pix[ 1][c]-pix[ -1][c]));
+	double dR = 1.0/(1.0+fabs(pix[  2][1]-pix[0][1])+fabs(pix[ 1][c]-pix[ -1][c]));
+	double dU = 1.0/(1.0+fabs(pix[-w2][1]-pix[0][1])+fabs(pix[w1][c]-pix[-w1][c]));
+	double dD = 1.0/(1.0+fabs(pix[ w2][1]-pix[0][1])+fabs(pix[w1][c]-pix[-w1][c]));
+	float v0 = (float)((double)pix[0][1] + 0.5 -((double)(pix[ -1][1]-pix[ -1][c])*dL + (double)(pix[  1][1]-pix[  1][c])*dR +(double)(pix[-w1][1]-pix[-w1][c])*dU +
+		    (double)(pix[ w1][1]-pix[ w1][c])*dD ) / (dL+dR+dU+dD));
+	pix[0][c] = CLIP(v0);
+      }
+	  }
+
+
+  /* Reinforce integrated red/blue pixels on BLUE/RED pixel locations */
+#ifdef _OPENMP
+#pragma omp for
+#endif  
+  for (int row=2; row < height-2; row++)
+    for (int col=2+(FC(row,2) & 1), c=2-FC(row,col); col < width-2; col+=2) {
+      int indx = row*width+col;
+      float (*pix)[3] = image + indx;
+      int d = 2 - c;
+      double dL = 1.0/(1.0+ABS(pix[ -2][d]-pix[0][d])+ABS(pix[ 1][1]-pix[ -1][1]));
+      double dR = 1.0/(1.0+ABS(pix[  2][d]-pix[0][d])+ABS(pix[ 1][1]-pix[ -1][1]));
+      double dU = 1.0/(1.0+ABS(pix[-w2][d]-pix[0][d])+ABS(pix[w1][1]-pix[-w1][1]));
+      double dD = 1.0/(1.0+ABS(pix[ w2][d]-pix[0][d])+ABS(pix[w1][1]-pix[-w1][1]));
+      float v0 = (float)((double)pix[0][1] + 0.5 -((double)(pix[ -1][1]-pix[ -1][c])*dL +(double)(pix[  1][1]-pix[  1][c])*dR +(double)(pix[-w1][1]-pix[-w1][c])*dU +
+		  (double)(pix[ w1][1]-pix[ w1][c])*dD ) / (dL+dR+dU+dD));
+      pix[0][c] = CLIP(v0);
+    }
+}
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+        for (int i=0;i<H;i++) {
+            for (int j=0; j<W; j++) {
+                red  [i][j] =image[i*W+j][0];
+                green[i][j] =image[i*W+j][1];
+                blue [i][j] =image[i*W+j][2];			 
+            }
+		} 
+	}		
+    free(image);
+    t2e.set();
+    if (settings->verbose) printf("Refinement Lee %d usec\n", t2e.etime(t1e));
+}
+
+
 // Refinement based on EECI demozaicing algorithm by L. Chang and Y.P. Tan
 // from "Lassus" : Luis Sanz Rodriguez, adapted by Jacques Desmis - JDC - and Oliver Duis for RawTherapee
 // increases the signal to noise ratio (PSNR) # +1 to +2 dB : tested with Dcraw : eg: Lighthouse + AMaZE : whitout refinement:39.96dB, with refinement:41.86 dB
@@ -1781,17 +1953,17 @@ void RawImageSource::nodemosaic()
 // but it's relatively slow
 //
 // Should be DISABLED if it decreases image quality by increases some image noise and generates blocky edges
-void RawImageSource::refinement_lassus()
+void RawImageSource::refinement_lassus(int PassCount)
 {  
-    const int PassCount=2;  // two passes EECI refine, slow but best results...
+   // const int PassCount=1; 
 
-    if (settings->verbose) printf("Refinement Lassus\n");
+   // if (settings->verbose) printf("Refinement\n");
 
     MyTime t1e,t2e;
     t1e.set();
     int u=W, v=2*u, w=3*u, x=4*u, y=5*u;
-    float (*image)[4];
-    image = (float(*)[4]) calloc(W*H, sizeof *image);
+    float (*image)[3];
+    image = (float(*)[3]) calloc(W*H, sizeof *image);
 #ifdef _OPENMP
 #pragma omp parallel shared(image)
 #endif
@@ -1820,21 +1992,21 @@ void RawImageSource::refinement_lassus()
 #endif
             for (int row=6; row<H-6; row++) {
                 for (int col=6+(FC(row,2)&1),c=FC(row,col); col<W-6; col+=2) {
-                    float (*pix)[4]=image+row*W+col;
+                    float (*pix)[3]=image+row*W+col;
 
                     // Cubic Spline Interpolation by Li and Randhawa, modified by Luis Sanz Rodriguez
 
                     float f[4];
-                    f[0]=1.0f/(1.0f+2.0f*fabs(1.125f*pix[-v][c]-0.875f*pix[0][c]-0.250f*pix[-x][c])+fabs(0.875f*pix[u][1]-1.125f*pix[-u][1]+0.250f*pix[-w][1])+fabs(0.875f*pix[-w][1]-1.125f*pix[-u][1]+0.250f*pix[-y][1]));   
-                    f[1]=1.0/(1.0f+2.0f*fabs(1.125f*pix[+2][c]-0.875f*pix[0][c]-0.250f*pix[+4][c])+fabs(0.875f*pix[1][1]-1.125f*pix[-1][1]+0.250f*pix[+3][1])+fabs(0.875f*pix[+3][1]-1.125f*pix[+1][1]+0.250f*pix[+5][1]));
-                    f[2]=1.0/(1.0+2.0f*fabs(1.125f*pix[-2][c]-0.875f*pix[0][c]-0.250f*pix[-4][c])+fabs(0.875f*pix[1][1]-1.125f*pix[-1][1]+0.250f*pix[-3][1])+fabs(0.875f*pix[-3][1]-1.125f*pix[-1][1]+0.250f*pix[-5][1]));
-                    f[3]=1.0/(1.0f+2.0f*fabs(1.125f*pix[+v][c]-0.875f*pix[0][c]-0.250f*pix[+x][c])+fabs(0.875f*pix[u][1]-1.125f*pix[-u][1]+0.250f*pix[+w][1])+fabs(0.875f*pix[+w][1]-1.125f*pix[+u][1]+0.250f*pix[+y][1])); 
+                    f[0]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-v][c])-x0875(pix[0][c])-x0250(pix[-x][c])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[-w][1]))+fabs(x0875(pix[-w][1])-x1125(pix[-u][1])+x0250(pix[-y][1])));   
+                    f[1]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+2][c])-x0875(pix[0][c])-x0250(pix[+4][c])))+fabs(x0875(pix[1][1])-x1125(pix[-1][1])+x0250(pix[+3][1]))+fabs(x0875(pix[+3][1])-x1125(pix[+1][1])+x0250(pix[+5][1])));
+                    f[2]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-2][c])-x0875(pix[0][c])-x0250(pix[-4][c])))+fabs(x0875(pix[1][1])-x1125(pix[-1][1])+x0250(pix[-3][1]))+fabs(x0875(pix[-3][1])-x1125(pix[-1][1])+x0250(pix[-5][1])));
+                    f[3]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+v][c])-x0875(pix[0][c])-x0250(pix[+x][c])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[+w][1]))+fabs(x0875(pix[+w][1])-x1125(pix[+u][1])+x0250(pix[+y][1]))); 
 
                     float g[4];//CLIREF avoid overflow
-                    g[0]=pix[0][c]+(0.875f*CLIREF(pix[-u][1]-pix[-u][c])+0.125f*CLIREF(pix[+u][1]-pix[+u][c]));
-                    g[1]=pix[0][c]+(0.875f*CLIREF(pix[+1][1]-pix[+1][c])+0.125f*CLIREF(pix[-1][1]-pix[-1][c]));
-                    g[2]=pix[0][c]+(0.875f*CLIREF(pix[-1][1]-pix[-1][c])+0.125f*CLIREF(pix[+1][1]-pix[+1][c]));
-                    g[3]=pix[0][c]+(0.875f*CLIREF(pix[+u][1]-pix[+u][c])+0.125f*CLIREF(pix[-u][1]-pix[-u][c]));
+                    g[0]=pix[0][c]+(x0875(CLIREF(pix[-u][1]-pix[-u][c]))+x0125(CLIREF(pix[+u][1]-pix[+u][c])));
+                    g[1]=pix[0][c]+(x0875(CLIREF(pix[+1][1]-pix[+1][c]))+x0125(CLIREF(pix[-1][1]-pix[-1][c])));
+                    g[2]=pix[0][c]+(x0875(CLIREF(pix[-1][1]-pix[-1][c]))+x0125(CLIREF(pix[+1][1]-pix[+1][c])));
+                    g[3]=pix[0][c]+(x0875(CLIREF(pix[+u][1]-pix[+u][c]))+x0125(CLIREF(pix[-u][1]-pix[-u][c])));
 
                     pix[0][1]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3]) / (f[0]+f[1]+f[2]+f[3]);
 
@@ -1846,13 +2018,13 @@ void RawImageSource::refinement_lassus()
 #endif
             for (int row=6; row<H-6; row++) {
                 for (int col=6+(FC(row,3)&1),c=FC(row,col+1); col<W-6; col+=2) {
-                    float (*pix)[4]=image+row*W+col;
+                    float (*pix)[3]=image+row*W+col;
                     for (int i=0; i<2; c=2-c,i++) {
                         float f[4];
-                        f[0]=1.0f/(1.0f+2.0f*fabs(0.875f*pix[-v][1]-1.125f*pix[0][1]+0.250f*pix[-x][1])+fabs(pix[u] [c]-pix[-u][c])+fabs(pix[-w][c]-pix[-u][c]));
-                        f[1]=1.0f/(1.0f+2.0f*fabs(0.875f*pix[+2][1]-1.125f*pix[0][1]+0.250f*pix[+4][1])+fabs(pix[+1][c]-pix[-1][c])+fabs(pix[+3][c]-pix[+1][c]));
-                        f[2]=1.0f/(1.0f+2.0f*fabs(0.875f*pix[-2][1]-1.125f*pix[0][1]+0.250f*pix[-4][1])+fabs(pix[+1][c]-pix[-1][c])+fabs(pix[-3][c]-pix[-1][c]));
-                        f[3]=1.0f/(1.0f+2.0f*fabs(0.875f*pix[+v][1]-1.125*pix[0][1]+0.250f*pix[+x][1])+fabs(pix[u] [c]-pix[-u][c])+fabs(pix[+w][c]-pix[+u][c]));
+                        f[0]=1.0f/(1.0f+xmul2f(fabs(x0875(pix[-v][1])-x1125(pix[0][1])+x0250(pix[-x][1])))+fabs(pix[u] [c]-pix[-u][c])+fabs(pix[-w][c]-pix[-u][c]));
+                        f[1]=1.0f/(1.0f+xmul2f(fabs(x0875(pix[+2][1])-x1125(pix[0][1])+x0250(pix[+4][1])))+fabs(pix[+1][c]-pix[-1][c])+fabs(pix[+3][c]-pix[+1][c]));
+                        f[2]=1.0f/(1.0f+xmul2f(fabs(x0875(pix[-2][1])-x1125(pix[0][1])+x0250(pix[-4][1])))+fabs(pix[+1][c]-pix[-1][c])+fabs(pix[-3][c]-pix[-1][c]));
+                        f[3]=1.0f/(1.0f+xmul2f(fabs(x0875(pix[+v][1])-x1125(pix[0][1])+x0250(pix[+x][1])))+fabs(pix[u] [c]-pix[-u][c])+fabs(pix[+w][c]-pix[+u][c]));
 
                         float g[5];//CLIREF avoid overflow
                         g[0]=CLIREF(pix[-u][1]-pix[-u][c]);
@@ -1870,19 +2042,19 @@ void RawImageSource::refinement_lassus()
 #endif
             for (int row=6; row<H-6; row++) {
                 for (int col=6+(FC(row,2)&1),c=2-FC(row,col),d=2-c; col<W-6; col+=2) {
-                    float (*pix)[4]=image+row*W+col;
+                    float (*pix)[3]=image+row*W+col;
 
                     float f[4];
-                    f[0]=1.0f/(1.0f+2.0f*fabs(1.125f*pix[-v][d]-0.875f*pix[0][d]-0.250f*pix[-x][d])+fabs(0.875f*pix[u][1]-1.125f*pix[-u][1]+0.250f*pix[-w][1])+fabs(0.875f*pix[-w][1]-1.125f*pix[-u][1]+0.250f*pix[-y][1]));   
-                    f[1]=1.0f/(1.0f+2.0f*fabs(1.125f*pix[+2][d]-0.875f*pix[0][d]-0.250f*pix[+4][d])+fabs(0.875f*pix[1][1]-1.125f*pix[-1][1]+0.250f*pix[+3][1])+fabs(0.875f*pix[+3][1]-1.125f*pix[+1][1]+0.250f*pix[+5][1]));
-                    f[2]=1.0f/(1.0f+2.0f*fabs(1.125f*pix[-2][d]-0.875f*pix[0][d]-0.250f*pix[-4][d])+fabs(0.875f*pix[1][1]-1.125f*pix[-1][1]+0.250f*pix[-3][1])+fabs(0.875f*pix[-3][1]-1.125f*pix[-1][1]+0.250f*pix[-5][1]));
-                    f[3]=1.0f/(1.0f+2.0f*fabs(1.125f*pix[+v][d]-0.875f*pix[0][d]-0.250f*pix[+x][d])+fabs(0.875f*pix[u][1]-1.125f*pix[-u][1]+0.250f*pix[+w][1])+fabs(0.875f*pix[+w][1]-1.125f*pix[+u][1]+0.250f*pix[+y][1])); 
+                    f[0]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-v][d])-x0875(pix[0][d])-x0250(pix[-x][d])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[-w][1]))+fabs(x0875(pix[-w][1])-x1125(pix[-u][1])+x0250(pix[-y][1])));   
+                    f[1]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+2][d])-x0875(pix[0][d])-x0250(pix[+4][d])))+fabs(x0875(pix[1][1])-x1125(pix[-1][1])+x0250(pix[+3][1]))+fabs(x0875(pix[+3][1])-x1125(pix[+1][1])+x0250(pix[+5][1])));
+                    f[2]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[-2][d])-x0875(pix[0][d])-x0250(pix[-4][d])))+fabs(x0875(pix[1][1])-x1125(pix[-1][1])+x0250(pix[-3][1]))+fabs(x0875(pix[-3][1])-x1125(pix[-1][1])+x0250(pix[-5][1])));
+                    f[3]=1.0f/(1.0f+xmul2f(fabs(x1125(pix[+v][d])-x0875(pix[0][d])-x0250(pix[+x][d])))+fabs(x0875(pix[u][1])-x1125(pix[-u][1])+x0250(pix[+w][1]))+fabs(x0875(pix[+w][1])-x1125(pix[+u][1])+x0250(pix[+y][1]))); 
 
                     float g[5];
-                    g[0]=(0.875f*(pix[-u][1]-pix[-u][c])+0.125f*(pix[-v][1]-pix[-v][c]));
-                    g[1]=(0.875f*(pix[+1][1]-pix[+1][c])+0.125f*(pix[+2][1]-pix[+2][c]));
-                    g[2]=(0.875f*(pix[-1][1]-pix[-1][c])+0.125f*(pix[-2][1]-pix[-2][c]));
-                    g[3]=(0.875f*(pix[+u][1]-pix[+u][c])+0.125f*(pix[+v][1]-pix[+v][c]));
+                    g[0]=(x0875((pix[-u][1]-pix[-u][c]))+x0125((pix[-v][1]-pix[-v][c])));
+                    g[1]=(x0875((pix[+1][1]-pix[+1][c]))+x0125((pix[+2][1]-pix[+2][c])));
+                    g[2]=(x0875((pix[-1][1]-pix[-1][c]))+x0125((pix[-2][1]-pix[-2][c])));
+                    g[3]=(x0875((pix[+u][1]-pix[+u][c]))+x0125((pix[+v][1]-pix[+v][c])));
 
                     g[4]=(f[0]*g[0]+f[1]*g[1]+f[2]*g[2]+f[3]*g[3]) / (f[0]+f[1]+f[2]+f[3]);
 
@@ -1923,7 +2095,7 @@ void RawImageSource::refinement_lassus()
     free(image);
 
     t2e.set();
-    if (settings->verbose) printf("Refinement %d usec\n", t2e.etime(t1e));
+    if (settings->verbose) printf("Refinement Lassus %d usec\n", t2e.etime(t1e));
 }
 
 
