@@ -61,6 +61,7 @@ class ExportPanel : public Gtk::VBox {
 
 	    Gtk::CheckButton* bypass_raw_dcb_iterations;
 	    Gtk::CheckButton* bypass_raw_dcb_enhance;
+	    Gtk::CheckButton* bypass_raw_lmmse_iterations;
 	    Gtk::CheckButton* bypass_raw_ccSteps;
 	    Gtk::CheckButton* raw_all_enhance;
 	    Gtk::CheckButton* bypass_raw_linenoise;
@@ -87,6 +88,7 @@ class ExportPanel : public Gtk::VBox {
 		sigc::connection bypass_raw_ccStepsConn       ;
 		sigc::connection bypass_raw_dcb_iterationsConn;
 		sigc::connection bypass_raw_dcb_enhanceConn   ;
+		sigc::connection bypass_raw_lmmse_iterationsConn;
 		sigc::connection bypass_raw_caConn            ;
 		sigc::connection bypass_raw_linenoiseConn     ;
 		sigc::connection bypass_raw_greenthreshConn   ;

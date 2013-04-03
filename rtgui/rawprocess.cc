@@ -51,6 +51,22 @@ RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
    pack_start( *dcbOptions, Gtk::PACK_SHRINK, 4);
    pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 4 );
 
+   lmmseOptions = Gtk::manage (new Gtk::VBox ());
+   lmmseOptions->set_border_width(4);
+
+   lmmseIterations = Gtk::manage (new Adjuster (M("TP_RAW_LMMSEITERATIONS"),0,6,1,2));
+   lmmseIterations->setAdjusterListener (this);
+   lmmseIterations->set_tooltip_markup (M("TP_RAW_LMMSE_TOOLTIP"));
+
+   if (lmmseIterations->delay < 1000) lmmseIterations->delay = 1000;
+   lmmseIterations->show();
+  // dcbEnhance = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_DCBENHANCE")));
+   lmmseOptions->pack_start(*lmmseIterations);
+  // dcbOptions->pack_start(*dcbEnhance);
+   pack_start( *lmmseOptions, Gtk::PACK_SHRINK, 4);
+   pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 4 );
+   
+   
    ccOptions = Gtk::manage (new Gtk::VBox ());
    ccOptions->set_border_width(4);
    ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"),0,5,1,0 ));
@@ -96,6 +112,12 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
    else
 	   dcbOptions->hide();
 
+   lmmseIterations->setValue (pp->raw.lmmse_iterations);
+   if (pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::lmmse])
+	   lmmseOptions->show();
+   else
+	   lmmseOptions->hide();
+	   
    if (pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::eahd] ||
 	   pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::hphd] ||
 	   pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::vng4])
@@ -111,6 +133,7 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 	   dcbIterations->setEditedState ( pedited->raw.dcbIterations ? Edited : UnEdited);
 	   dcbEnhance->set_inconsistent(!pedited->raw.dcbEnhance);
 	   //allEnhance->set_inconsistent(!pedited->raw.allEnhance);
+	   lmmseIterations->setEditedState ( pedited->raw.lmmseIterations ? Edited : UnEdited);
 	   
 	   if( !pedited->raw.dmethod )
 		   dmethod->set_active(procparams::RAWParams::numMethods); // No name
@@ -129,6 +152,7 @@ void RawProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 	pp->raw.dcb_iterations = dcbIterations->getIntValue();
 	pp->raw.dcb_enhance = dcbEnhance->get_active();
 	//pp->raw.all_enhance = allEnhance->get_active();
+	pp->raw.lmmse_iterations = lmmseIterations->getIntValue();
 
 	int currentRow = dmethod->get_active_row_number();
 	if( currentRow>=0 && currentRow < procparams::RAWParams::numMethods)
@@ -140,6 +164,7 @@ void RawProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 		pedited->raw.dcbIterations = dcbIterations->getEditedState ();
 		pedited->raw.dcbEnhance = !dcbEnhance->get_inconsistent();
 		//pedited->raw.allEnhance = !allEnhance->get_inconsistent();
+		pedited->raw.lmmseIterations = lmmseIterations->getEditedState ();
 		
 	}
 }
@@ -148,20 +173,26 @@ void RawProcess::setBatchMode(bool batchMode)
 {
    dmethod->set_active(procparams::RAWParams::numMethods); // No name
    dcbOptions->hide();
+   lmmseOptions->hide();
    ToolPanel::setBatchMode (batchMode);
    ccSteps->showEditedCB ();
    dcbIterations->showEditedCB ();
+   lmmseIterations->showEditedCB ();
+   
 }
 
 void RawProcess::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
 {
 	dcbIterations->setDefault( defParams->raw.dcb_iterations);
+	lmmseIterations->setDefault( defParams->raw.lmmse_iterations);
 	ccSteps->setDefault (defParams->raw.ccSteps);
 	if (pedited) {
 		dcbIterations->setDefaultEditedState( pedited->raw.dcbIterations ? Edited : UnEdited);
+		lmmseIterations->setDefaultEditedState( pedited->raw.lmmseIterations ? Edited : UnEdited);
 		ccSteps->setDefaultEditedState(pedited->raw.ccSteps ? Edited : UnEdited);
 	}else{
 		dcbIterations->setDefaultEditedState( Irrelevant );
+		lmmseIterations->setDefaultEditedState( Irrelevant );
 		ccSteps->setDefaultEditedState(Irrelevant );
 	}
 }
@@ -173,7 +204,10 @@ void RawProcess::adjusterChanged (Adjuster* a, double newval)
     		listener->panelChanged (EvDemosaicDCBIter, a->getTextValue() );
     	else if (a == ccSteps)
     		listener->panelChanged (EvDemosaicFalseColorIter, a->getTextValue() );
-    }
+    	else if (a == lmmseIterations)
+    		listener->panelChanged (EvDemosaicLMMSEIter, a->getTextValue() );
+
+			}
 }
 
 void RawProcess::methodChanged ()
@@ -184,6 +218,12 @@ void RawProcess::methodChanged ()
 	}else{
 		dcbOptions->hide();
 	}
+	if ( curSelection == procparams::RAWParams::lmmse){
+		lmmseOptions->show();
+	}else{
+		lmmseOptions->hide();
+	}
+	
 	Glib::ustring methodName="";
 	if( curSelection>=0 && curSelection < procparams::RAWParams::numMethods)
 	    methodName = procparams::RAWParams::methodstring[curSelection];

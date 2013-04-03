@@ -38,6 +38,8 @@ class RawProcess : public Gtk::VBox, public AdjusterListener, public FoldableToo
     Gtk::CheckButton* dcbEnhance;
     //Gtk::VBox *allOptions;
     //Gtk::CheckButton* allEnhance;
+    Gtk::VBox *lmmseOptions;
+    Adjuster* lmmseIterations;
 
     bool lastDCBen;
 	//bool lastALLen;

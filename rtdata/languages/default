@@ -430,6 +430,7 @@ HISTORY_MSG_200;CAMO2 - Tone mapping using CIECAM02 Q
 HISTORY_MSG_201;NR - Delta Chrominance red
 HISTORY_MSG_202;NR - Delta Chrominance blue
 HISTORY_MSG_203;NR - Method
+HISTORY_MSG_204;LMMSE enhancement steps
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -654,6 +655,7 @@ PARTIALPASTE_RAWGROUP;Raw Settings
 PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
+PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 PARTIALPASTE_RAW_DMETHOD;Demosaic method
 PARTIALPASTE_RAW_FALSECOLOR;Demosaic false color suppression steps
 PARTIALPASTE_RESIZE;Resize
@@ -1180,6 +1182,8 @@ TP_RAWEXPOS_TWOGREEN;Two greens together
 TP_RAW_ALLENHANCE;Post-Demosaic Artifact/Noise Reduction
 TP_RAW_DCBENHANCE;DCB Enhancement Step
 TP_RAW_DCBITERATIONS;Number of DCB Iterations
+TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 TP_RAW_DMETHOD;Method
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...

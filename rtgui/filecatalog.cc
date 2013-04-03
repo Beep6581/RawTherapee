@@ -885,6 +885,7 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 				if (options.fastexport_bypass_raw_ccSteps        ) params.raw.ccSteps                 = 0;
 				if (options.fastexport_bypass_raw_dcb_iterations ) params.raw.dcb_iterations          = 0;
 				if (options.fastexport_bypass_raw_dcb_enhance    ) params.raw.dcb_enhance             = false;
+				if (options.fastexport_bypass_raw_lmmse_iterations ) params.raw.lmmse_iterations          = 0;
 				if (options.fastexport_bypass_raw_ca             ) {params.raw.ca_autocorrect =false; params.raw.cared=0; params.raw.cablue=0;}
 				if (options.fastexport_bypass_raw_linenoise      ) params.raw.linenoise               = 0;
 				if (options.fastexport_bypass_raw_greenthresh    ) params.raw.greenthresh             = 0;

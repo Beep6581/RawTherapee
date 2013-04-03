@@ -104,6 +104,8 @@ public:
 //	static LUTf gammatab_709;
 	static LUTf igammatab_26_11;
 	static LUTf gammatab_26_11;
+	static LUTf igammatab_24_17;
+	static LUTf gammatab_24_17a;
 	
 	// look-up tables for the simple exponential gamma
 	static LUTf gammatab;
@@ -147,7 +149,14 @@ public:
 	static inline double igamma709    (double x) {
 										return x <= 0.0795 ? x/4.5 : exp(log((x+0.0954)/1.0954)*2.2);									
 									}	
-*/									
+*/	
+	static inline double gamma24_17     (double x) {
+											return x <= 0.001867 ? x*17.0 : 1.044445*exp(log(x)/2.4)-0.044445;
+									}
+	static inline double igamma24_17    (double x) {
+										return x <= 0.031746 ? x/17.0 : exp(log((x+0.044445)/1.044445)*2.4);									
+									}	
+									
 	static inline double gamma26_11     (double x) {
 											return x <= 0.004921 ? x*11.0 : 1.086603*exp(log(x)/2.6)-0.086603;
 									}

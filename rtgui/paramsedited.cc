@@ -224,6 +224,8 @@ void ParamsEdited::set (bool v) {
 	raw.dmethod = v;
 	raw.dcbIterations = v;
 	raw.dcbEnhance = v;
+	raw.lmmseIterations = v;
+	
 	//raw.allEnhance = v;
 	raw.caCorrection = v;
 	raw.caBlue  = v;
@@ -465,6 +467,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.dmethod = raw.dmethod && p.raw.dmethod == other.raw.dmethod;
         raw.dcbIterations = raw.dcbIterations && p.raw.dcb_iterations == other.raw.dcb_iterations;
         raw.dcbEnhance = raw.dcbEnhance && p.raw.dcb_enhance == other.raw.dcb_enhance;
+        raw.lmmseIterations = raw.lmmseIterations && p.raw.lmmse_iterations == other.raw.lmmse_iterations;
         //raw.allEnhance = raw.allEnhance && p.raw.all_enhance == other.raw.all_enhance;
         raw.caCorrection = raw.caCorrection && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
         raw.caRed = raw.caRed && p.raw.cared == other.raw.cared;
@@ -712,6 +715,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.dmethod)        toEdit.raw.dmethod      = mods.raw.dmethod;
     if (raw.dcbIterations)  toEdit.raw.dcb_iterations = mods.raw.dcb_iterations;
     if (raw.dcbEnhance)     toEdit.raw.dcb_enhance     = mods.raw.dcb_enhance;
+    if (raw.lmmseIterations)  toEdit.raw.lmmse_iterations = mods.raw.lmmse_iterations;
     //if (raw.allEnhance)     toEdit.raw.all_enhance     = mods.raw.all_enhance;
 	
     if (raw.caCorrection)   toEdit.raw.ca_autocorrect  = mods.raw.ca_autocorrect;
@@ -759,7 +763,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 }
 
 bool RAWParamsEdited::isUnchanged() const {
-    return ccSteps && dmethod && dcbIterations && dcbEnhance /*&& allEnhance*/ && caCorrection && caRed && caBlue && greenEq
+    return ccSteps && dmethod && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ && caCorrection && caRed && caBlue && greenEq
         && hotDeadPixelFilter && hotDeadPixelThresh && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
 	    && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
 }

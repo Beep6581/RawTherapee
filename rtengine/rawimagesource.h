@@ -142,7 +142,8 @@ class RawImageSource : public ImageSource {
         void        flushRawData      ();
         void        flushRGB          ();
         void        HLRecovery_Global (HRecParams hrp);
-        void        refinement_lassus ();
+        void        refinement_lassus (int PassCount);
+        void        refinement(int PassCount);
 
         bool        IsrgbSourceModified() {return rgbSourceModified;} // tracks whether cached rgb output of demosaic has been modified
 
@@ -226,7 +227,7 @@ class RawImageSource : public ImageSource {
         void ppg_demosaic();
         void jdl_interpolate_omp();
         void igv_interpolate(int winw, int winh);
-        void lmmse_interpolate_omp(int winw, int winh);
+        void lmmse_interpolate_omp(int winw, int winh, int iterations);
 
         void amaze_demosaic_RT(int winx, int winy, int winw, int winh);//Emil's code for AMaZE
         void fast_demosaic(int winx, int winy, int winw, int winh );//Emil's code for fast demosaicing

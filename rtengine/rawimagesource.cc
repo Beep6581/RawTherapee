@@ -1100,7 +1100,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
     	t1.set();
 		bool nofast=true;
         if ( raw.dmethod == RAWParams::methodstring[RAWParams::hphd] )
-                hphd_demosaic ();
+               hphd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::vng4] )
             vng4_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::ahd] )
@@ -1114,7 +1114,7 @@ void RawImageSource::demosaic(const RAWParams &raw)
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::igv])
             igv_interpolate(W,H);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::lmmse])
-            lmmse_interpolate_omp(W,H);
+            lmmse_interpolate_omp(W,H,raw.lmmse_iterations);
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::fast] )
             fast_demosaic (0,0,W,H);
 			//nodemosaic();//for testing
