@@ -74,6 +74,9 @@ class FileCatalog : public Gtk::VBox,
         int selectedDirectoryId;
         bool enabled;
         bool inTabMode;  // Tab mode has e.g. different progress bar handling
+        Glib::ustring imageToSelect_fname;
+        Glib::ustring refImageForOpen_fname; // Next/previous for Editor's perspective
+        eRTNav actionNextPrevious;
 
         FileSelectionListener* listener;
         FileSelectionChangeListener* fslistener;
@@ -223,6 +226,7 @@ class FileCatalog : public Gtk::VBox,
                 void zoomOut ();
 
                 void buttonBrowsePathPressed ();
+                bool BrowsePath_key_pressed (GdkEventKey *event);
                 void buttonQueryClearPressed ();
                 void executeQuery ();
                 bool Query_key_pressed(GdkEventKey *event);
@@ -234,7 +238,9 @@ class FileCatalog : public Gtk::VBox,
                 void tbRightPanel_1_visible (bool visible);
 
                 void openNextImage () { fileBrowser->openNextImage(); }
-                void openPrevImage () { fileBrowser->openPrevImage(); }               
+                void openPrevImage () { fileBrowser->openPrevImage(); }
+                void selectImage (Glib::ustring fname, bool clearFilters);
+                void openNextPreviousEditorImage (Glib::ustring fname, bool clearFilters, eRTNav nextPrevious);
 
                 bool handleShortcutKey (GdkEventKey* event);
 

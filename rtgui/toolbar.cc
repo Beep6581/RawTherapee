@@ -93,8 +93,9 @@ void ToolBar::setTool (ToolMode tool) {
     handTool->set_active (true);
     handTool->grab_focus();; // switch focus to the handTool button
   }
-  else if (tool==TMSpotWB)
+  else if (tool==TMSpotWB) {
     if (wbTool) wbTool->set_active (true);
+  }
   else if (tool==TMCropSelect)
     cropTool->set_active (true);
   else if (tool==TMStraighten)
@@ -199,7 +200,7 @@ void ToolBar::stra_pressed () {
 bool ToolBar::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
-    bool shift = event->state & GDK_SHIFT_MASK;
+    //bool shift = event->state & GDK_SHIFT_MASK;
     bool alt = event->state & GDK_MOD1_MASK;
     
     if (!ctrl && !alt) {

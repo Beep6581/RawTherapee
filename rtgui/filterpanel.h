@@ -24,8 +24,8 @@
 
 class FilterPanelListener {
 
-	public:
-		virtual void exifFilterChanged () {}
+    public:
+        virtual void exifFilterChanged () {}
 };
 
 class FilterPanel : public Gtk::VBox {
@@ -43,33 +43,33 @@ class FilterPanel : public Gtk::VBox {
         Gtk::Entry* focalTo;
         Gtk::Entry* isoFrom;
         Gtk::Entry* isoTo;
-		Gtk::CheckButton* enabled;
-		Gtk::CheckButton* enaFNumber;
-		Gtk::CheckButton* enaShutter;
-		Gtk::CheckButton* enaFocalLen;
-		Gtk::CheckButton* enaISO;
-		Gtk::CheckButton* enaExpComp;
-		Gtk::CheckButton* enaCamera;
-		Gtk::CheckButton* enaLens;
-		Gtk::CheckButton* enaFiletype;
+        Gtk::CheckButton* enabled;
+        Gtk::CheckButton* enaFNumber;
+        Gtk::CheckButton* enaShutter;
+        Gtk::CheckButton* enaFocalLen;
+        Gtk::CheckButton* enaISO;
+        Gtk::CheckButton* enaExpComp;
+        Gtk::CheckButton* enaCamera;
+        Gtk::CheckButton* enaLens;
+        Gtk::CheckButton* enaFiletype;
 
-		int conns;
-		sigc::connection sChange[22];
-		
-		ExifFilterSettings curefs;	
-		FilterPanelListener* listener;
-		
-	public:
-		FilterPanel ();
-		
-		void setFilterPanelListener (FilterPanelListener* l) { listener = l; }
-		
-		void setFilter (ExifFilterSettings& defefs, bool updateLists);
+        int conns;
+        sigc::connection sChange[22];
+
+        ExifFilterSettings curefs;
+        FilterPanelListener* listener;
+
+    public:
+        FilterPanel ();
+
+        void setFilterPanelListener (FilterPanelListener* l) { listener = l; }
+
+        void setFilter (ExifFilterSettings& defefs, bool updateLists);
         ExifFilterSettings getFilter ();
-		bool isEnabled				();
-		
-		
-		void valueChanged ();
+        bool isEnabled ();
+
+        void valueChanged ();
+        void setEnabled(bool enabledState){enabled->set_active(enabledState);}
 };
 
 #endif

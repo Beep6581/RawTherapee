@@ -187,6 +187,12 @@ enum TOITypes {
 	TOI_ICON
 };
 
+typedef enum RTNav {
+	NAV_NONE,
+	NAV_NEXT,
+	NAV_PREVIOUS
+} eRTNav;
+
 /**
  * @brief Handle the switch between text and image to be displayed in the HBox (to be used in a button/toolpanel)
  */

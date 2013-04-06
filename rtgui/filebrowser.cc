@@ -808,38 +808,51 @@ void FileBrowser::openDefaultViewer (int destination) {
 
 bool FileBrowser::keyPressed (GdkEventKey* event) {
 
-    if ((event->keyval==GDK_C || event->keyval==GDK_c) && event->state & GDK_CONTROL_MASK) {
+    bool ctrl  = event->state & GDK_CONTROL_MASK;
+    bool shift = event->state & GDK_SHIFT_MASK;
+    bool alt   = event->state & GDK_MOD1_MASK;
+
+    if ((event->keyval==GDK_C || event->keyval==GDK_c) && ctrl) {
         copyProfile ();
         return true;
     }
-    else if ((event->keyval==GDK_V || event->keyval==GDK_v) && event->state & GDK_CONTROL_MASK && !(event->state & GDK_SHIFT_MASK)) {
+    else if ((event->keyval==GDK_V || event->keyval==GDK_v) && ctrl && !shift) {
         pasteProfile ();
         return true;
     }
-    else if ((event->keyval==GDK_V || event->keyval==GDK_v) && event->state & GDK_CONTROL_MASK && event->state & GDK_SHIFT_MASK) {
+    else if ((event->keyval==GDK_V || event->keyval==GDK_v) && ctrl && shift) {
         partPasteProfile ();
         return true;
     }
-    else if (event->keyval==GDK_Delete && !(event->state & GDK_SHIFT_MASK)) {
+    else if (event->keyval==GDK_Delete && !shift) {
         menuItemActivated (trash);
         return true;
     }
-    else if (event->keyval==GDK_Delete && event->state & GDK_SHIFT_MASK) {
+    else if (event->keyval==GDK_Delete && shift) {
         menuItemActivated (untrash);
         return true;
     }
-    else if ((event->keyval==GDK_Q || event->keyval==GDK_q) && event->state & GDK_CONTROL_MASK) {
+    else if ((event->keyval==GDK_Q || event->keyval==GDK_q) && ctrl) {
         menuItemActivated (develop);
         return true;
     }
-    else if ((event->keyval==GDK_A || event->keyval==GDK_a) && event->state & GDK_CONTROL_MASK) {
+    else if ((event->keyval==GDK_A || event->keyval==GDK_a) && ctrl) {
         menuItemActivated (selall);
         return true;
     }
-    else if (event->keyval==GDK_F2 && !(event->state & GDK_CONTROL_MASK)) {
+    else if (event->keyval==GDK_F2 && !ctrl) {
         menuItemActivated (rename);
         return true;
     }
+    else if (event->keyval==GDK_F3 && !(ctrl || shift || alt)) {  // open Previous image from FileBrowser perspective
+    	FileBrowser::openPrevImage ();
+        return true;
+    }
+    else if (event->keyval==GDK_F4 && !(ctrl || shift || alt)) {  // open Next image from FileBrowser perspective
+    	FileBrowser::openNextImage ();
+        return true;
+    }
+
     else if (event->keyval==GDK_F5) {
         int dest = 1;
         if (event->state & GDK_SHIFT_MASK)
@@ -1103,49 +1116,149 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
 }
 
 void FileBrowser::openNextImage () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
-	#endif
+    // TODO: Check for Linux
+    #ifdef WIN32
+    Glib::RWLock::ReaderLock l(entryRW);
+    #endif
 
-    if (!fd.empty()) {
-	    for (size_t i=fd.size()-1; i>0; i--)
-            if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
-                if (i<fd.size()-1 && tbl) {
-                    std::vector<Thumbnail*> entries;
-		    entries.push_back ((static_cast<FileBrowserEntry*>(fd[i+1]))->thumbnail);
-                    tbl->openRequested (entries);
-                    return;
+    if (!fd.empty() && selected.size()>0 && !options.tabbedUI) {
+
+        for (size_t i=0; i<fd.size()-1; i++){
+            if (selected[0]->thumbnail->getFileName()==fd[i]->filename) {// located 1-st image in current selection
+                if (i<fd.size() && tbl) {
+                    // find the first not-filtered-out (next) image
+                    for (size_t k=i+1; k<fd.size(); k++){
+                        if (!fd[k]->filtered/*checkFilter (fd[k])*/){
+                            // clear current selection
+                            for (size_t j=0; j<selected.size(); j++)
+                                selected[j]->selected = false;
+                            selected.clear ();
+
+                            // set new selection
+                            fd[k]->selected = true;
+                            selected.push_back (fd[k]);
+                            //queue_draw ();
+                            notifySelectionListener ();
+
+                            // scroll to the selected position
+                            double h1, v1;
+                            getScrollPosition(h1,v1);
+
+                            double h2=selected[0]->getStartX();
+                            double v2=selected[0]->getStartY();
+
+                            // scroll only when selected[0] is outside of the displayed bounds
+                            if (h2+fd[k]->getMinimalWidth()-h1 > get_width())
+                                setScrollPosition(h2-(get_width()-fd[k]->getMinimalWidth()),v2);
+                            if (h1>h2)
+                                setScrollPosition(h2,v2);
+
+                            // open the selected image
+                            std::vector<Thumbnail*> entries;
+                            entries.push_back ((static_cast<FileBrowserEntry*>(fd[k]))->thumbnail);
+                            tbl->openRequested (entries);
+                            return;
+                        }
+                    }
                 }
-        if (tbl) {
-            std::vector<Thumbnail*> entries;
-	    entries.push_back ((static_cast<FileBrowserEntry*>(fd[0]))->thumbnail);
-            tbl->openRequested (entries);
+            }
         }
     }
 }
 
 void FileBrowser::openPrevImage () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
-	#endif
+    // TODO: Check for Linux
+    #ifdef WIN32
+    Glib::RWLock::ReaderLock l(entryRW);
+    #endif
 
-    if (!fd.empty()) {
-	    for (size_t i=0; i<fd.size(); i++)
-            if (editedFiles.find (fd[i]->filename)!=editedFiles.end()) 
+    if (!fd.empty() && selected.size()>0 && !options.tabbedUI) {
+
+        for (size_t i=1; i<fd.size(); i++){
+            if (selected[0]->thumbnail->getFileName()==fd[i]->filename) {// located 1-st image in current selection
                 if (i>0 && tbl) {
-                    std::vector<Thumbnail*> entries;
-		    entries.push_back ((static_cast<FileBrowserEntry*>(fd[i-1]))->thumbnail);
-                    tbl->openRequested (entries);
-                    return;
+                    // find the first not-filtered-out (previous) image
+                    for (size_t k=i-1; k>=0; k--){
+                        if (!fd[k]->filtered/*checkFilter (fd[k])*/){
+                            // clear current selection
+                            for (size_t j=0; j<selected.size(); j++)
+                                selected[j]->selected = false;
+                            selected.clear ();
+
+                            // set new selection
+                            fd[k]->selected = true;
+                            selected.push_back (fd[k]);
+                            //queue_draw ();
+                            notifySelectionListener ();
+
+                            // scroll to the selected position
+                            double h1, v1;
+                            getScrollPosition(h1,v1);
+
+                            double h2=selected[0]->getStartX();
+                            double v2=selected[0]->getStartY();
+
+                            // scroll only when selected[0] is outside of the displayed bounds
+                            if (h2+fd[k]->getMinimalWidth()-h1 > get_width())
+                                setScrollPosition(h2-(get_width()-fd[k]->getMinimalWidth()),v2);
+                            if (h1>h2)
+                                setScrollPosition(h2,v2);
+
+                            // open the selected image
+                            std::vector<Thumbnail*> entries;
+                            entries.push_back ((static_cast<FileBrowserEntry*>(fd[k]))->thumbnail);
+                            tbl->openRequested (entries);
+                            return;
+                        }
+                    }
                 }
-        if (tbl) {
-            std::vector<Thumbnail*> entries;
-	    entries.push_back ((static_cast<FileBrowserEntry*>(fd[fd.size()-1]))->thumbnail);
-            tbl->openRequested (entries);
+            }
         }
     }
+}
+
+
+void FileBrowser::selectImage (Glib::ustring fname) {
+
+    // need to clear the filter in filecatalog
+
+    if (!fd.empty() && !options.tabbedUI) {
+        for (size_t i=0; i<fd.size(); i++){
+            if (fname==fd[i]->filename && !fd[i]->filtered) {
+                // matching file found for sync
+
+                // clear current selection
+                for (size_t j=0; j<selected.size(); j++)
+                    selected[j]->selected = false;
+                selected.clear ();
+
+                // set new selection
+                fd[i]->selected = true;
+                selected.push_back (fd[i]);
+                queue_draw ();
+                notifySelectionListener ();
+
+                // scroll to the selected position
+                double h=selected[0]->getStartX();
+                double v=selected[0]->getStartY();
+                setScrollPosition(h,v);
+                
+                return;
+            }
+        }
+    }
+}
+
+void FileBrowser::openNextPreviousEditorImage (Glib::ustring fname, eRTNav nextPrevious) {
+
+    // let FileBrowser acquire Editor's perspective
+    selectImage (fname);
+
+    // now switch to the requested image
+    if (nextPrevious==NAV_NEXT)
+        openNextImage();
+    else if (nextPrevious==NAV_PREVIOUS)
+        openPrevImage();
 }
 
 int refreshThumbImagesUI (void* data) {

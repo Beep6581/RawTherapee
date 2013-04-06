@@ -78,6 +78,9 @@ class EditorPanel : public Gtk::VBox,
         Gtk::Button* queueimg;
         Gtk::Button* saveimgas;
         Gtk::Button* sendtogimp;
+        Gtk::Button* navSync;
+        Gtk::Button* navNext;
+        Gtk::Button* navPrev;
 
         ImageAreaPanel* iareapanel;
         PreviewHandler* previewHandler;
@@ -105,7 +108,7 @@ class EditorPanel : public Gtk::VBox,
         bool firstProcessingDone;
     
         Thumbnail* openThm;  // may get invalid on external delete event
-        Glib::ustring fname;  // must be safed seperately
+        Glib::ustring fname;  // must be saved separately
 
         rtengine::InitialImage* isrc;
         rtengine::StagedImageProcessor* ipc;
@@ -174,6 +177,9 @@ class EditorPanel : public Gtk::VBox,
         void saveAsPressed ();
         void queueImgPressed ();
         void sendToGimpPressed ();
+        void openNextEditorImage ();
+        void openPreviousEditorImage ();
+        void syncFileBrowser ();
 
         void tbTopPanel_1_visible (bool visible);
         bool CheckSidePanelsVisibility();
