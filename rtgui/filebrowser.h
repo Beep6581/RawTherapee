@@ -154,6 +154,8 @@ class FileBrowser  : public ThumbBrowserBase,
     void copyProfile ();
     void pasteProfile ();
     void partPasteProfile ();
+    void selectImage (Glib::ustring fname);
+    void openNextPreviousEditorImage (Glib::ustring fname, eRTNav eNextPrevious);
 
     void openDefaultViewer (int destination);
 

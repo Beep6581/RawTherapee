@@ -94,6 +94,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     hbToolBar1->pack_start (*hbBrowsePath, Gtk::PACK_EXPAND_WIDGET,0);
 
     BrowsePath->signal_activate().connect (sigc::mem_fun(*this, &FileCatalog::buttonBrowsePathPressed)); //respond to the Enter key
+    BrowsePath->signal_key_press_event().connect(sigc::mem_fun(*this, &FileCatalog::BrowsePath_key_pressed));
 
     //setup Query
     iQueryClear = new RTImage("gtk-close-small.png");
@@ -487,7 +488,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         previewsToLoad = 0;
         previewsLoaded = 0;
         // if openfile exists, we have to open it first (it is a command line argument)
-        if (openfile!="") 
+        if (!openfile.empty())
             addAndOpenFile (openfile);
 
 		selectedDirectory = dir->get_parse_name();
@@ -643,6 +644,17 @@ void FileCatalog::previewsFinishedUI () {
  	fileBrowser->applyFilter (getFilter());  // refresh total image count
     _refreshProgressBar();
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"),0);
+
+    if (!imageToSelect_fname.empty()){
+        fileBrowser->selectImage(imageToSelect_fname);
+        imageToSelect_fname = "";
+    }
+
+    if (!refImageForOpen_fname.empty() && actionNextPrevious!=NAV_NONE){
+        fileBrowser->openNextPreviousEditorImage(refImageForOpen_fname,actionNextPrevious);
+        refImageForOpen_fname = "";
+        actionNextPrevious = NAV_NONE;
+    }
 }
 
 void FileCatalog::previewsFinished (int dir_id) {
@@ -968,7 +980,7 @@ void FileCatalog::renameRequested  (std::vector<FileBrowserEntry*> tbe) {
 					continue;
 				// if no extension is given, concatenate the extension of the original file
 				Glib::ustring ext = getExtension (nBaseName);
-				if (ext=="")
+				if (ext.empty())
 					nBaseName += "." + getExtension (baseName);
 				Glib::ustring nfname = Glib::build_filename (dirName, nBaseName);
 
@@ -1060,6 +1072,9 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
 
     //was shift key pressed
     bool shift_down   = modifierKey & GDK_SHIFT_MASK;
+
+    // The event is process here, we can clear modifierKey now, it'll be set again on the next even
+    modifierKey = 0;
 
 	for (int i=0; i<18; i++)
 		bCateg[i].block (true);
@@ -1337,7 +1352,7 @@ void FileCatalog::filterChanged () {
 
 void FileCatalog::reparseDirectory () {
 
-    if (selectedDirectory=="")
+    if (selectedDirectory.empty())
         return;
 
     if (!safe_file_test (selectedDirectory, Glib::FILE_TEST_IS_DIR)) {
@@ -1528,14 +1543,19 @@ void FileCatalog::executeQuery(){
 }
 
 bool FileCatalog::Query_key_pressed (GdkEventKey *event){
-	switch (event->keyval)
-	  {
-	    case GDK_Escape:
-	    	// Clear Query if the Escape character is pressed within it
-	    	FileCatalog::buttonQueryClearPressed ();
-	        return true;
-	    default: return false;
-	  }
+
+    bool shift = event->state & GDK_SHIFT_MASK;
+
+    switch (event->keyval) {
+    case GDK_Escape:
+        // Clear Query if the Escape character is pressed within it
+        if (!shift){
+            FileCatalog::buttonQueryClearPressed ();
+            return true;
+        }
+    default:
+        return false;
+    }
 }
 
 void FileCatalog::updateFBQueryTB (bool singleRow) {
@@ -1573,7 +1593,7 @@ void FileCatalog::buttonBrowsePathPressed () {
 		DecodedPathPrefix = safe_get_user_picture_dir();
 	}
 
-	if (DecodedPathPrefix!=""){
+	if (!DecodedPathPrefix.empty()){
 		BrowsePathValue = Glib::ustring::compose ("%1%2",DecodedPathPrefix,BrowsePathValue.substr (1,BrowsePath->get_text_length()-1));
 		BrowsePath->set_text(BrowsePathValue);
 	}
@@ -1586,6 +1606,24 @@ void FileCatalog::buttonBrowsePathPressed () {
 	else
 		// error, likely path not found: show red arrow
 		buttonBrowsePath->set_image (*iRefreshRed);
+}
+
+bool FileCatalog::BrowsePath_key_pressed (GdkEventKey *event){
+
+    bool shift = event->state & GDK_SHIFT_MASK;
+
+    switch (event->keyval) {
+    case GDK_Escape:
+    // On Escape character Reset BrowsePath to selectedDirectory
+        if (!shift){
+            BrowsePath->set_text(selectedDirectory);
+            // place cursor at the end
+            BrowsePath->select_region(BrowsePath->get_text_length(), BrowsePath->get_text_length());
+            return true;
+        }
+    default:
+        return false;
+    }
 }
 
 void FileCatalog::tbLeftPanel_1_visible (bool visible){
@@ -1638,6 +1676,65 @@ void FileCatalog::toggleSidePanels(){
 	tbRightPanel_1->set_active (!bAllSidePanelsVisible);
 }
 
+void FileCatalog::selectImage (Glib::ustring fname, bool clearFilters) {
+
+	Glib::ustring dirname = Glib::path_get_dirname(fname);
+	if (!dirname.empty()){
+		BrowsePath->set_text(dirname);
+
+		
+		if (clearFilters){ // clear all filters
+			Query->set_text("");
+			categoryButtonToggled(bFilterClear,false);
+			// disable exif filters
+			if (filterPanel->isEnabled()) filterPanel->setEnabled (false);
+		}
+		
+		if (BrowsePath->get_text()!=selectedDirectory){
+			// reload or refresh thumbs and select image
+			buttonBrowsePathPressed ();
+			// the actual selection of image will be handled asynchronously at the end of FileCatalog::previewsFinishedUI
+			imageToSelect_fname = fname;
+		}
+		else{
+			// FileCatalog::filterChanged ();//this will be replaced by queue_draw() in fileBrowser->selectImage
+			fileBrowser->selectImage(fname);
+			imageToSelect_fname = "";
+		}
+	}
+}
+
+
+void FileCatalog::openNextPreviousEditorImage (Glib::ustring fname, bool clearFilters, eRTNav nextPrevious) {
+
+	Glib::ustring dirname = Glib::path_get_dirname(fname);
+	if (!dirname.empty()){
+		BrowsePath->set_text(dirname);
+
+
+		if (clearFilters){ // clear all filters
+			Query->set_text("");
+			categoryButtonToggled(bFilterClear,false);
+			// disable exif filters
+			if (filterPanel->isEnabled()) filterPanel->setEnabled (false);
+		}
+
+		if (BrowsePath->get_text()!=selectedDirectory){
+			// reload or refresh thumbs and select image
+			buttonBrowsePathPressed ();
+			// the actual selection of image will be handled asynchronously at the end of FileCatalog::previewsFinishedUI
+			refImageForOpen_fname = fname;
+			actionNextPrevious = nextPrevious;
+		}
+		else{
+			// FileCatalog::filterChanged ();//this was replace by queue_draw() in fileBrowser->selectImage
+			fileBrowser->openNextPreviousEditorImage(fname,nextPrevious);
+			refImageForOpen_fname = "";
+			actionNextPrevious = NAV_NONE;
+		}
+	}
+}
+
 bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 
     bool ctrl = event->state & GDK_CONTROL_MASK;
@@ -1659,6 +1756,17 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         case GDK_m:
         	if (!ctrl && !alt) toggleSidePanels();
 			return true;
+    }
+
+    if (shift){
+        switch(event->keyval) {
+            case GDK_Escape:
+                BrowsePath->set_text(selectedDirectory);
+                // set focus on something neutral, this is useful to remove focus from BrowsePath and Query
+                // when need to execute a shortcut, which otherwise will be typed into those fields
+                filepanel->grab_focus();
+                return true;
+        }
     }
 
     if (!alt) {
@@ -1690,8 +1798,10 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
 
             case GDK_Return:
             case GDK_KP_Enter:
-                FileCatalog::buttonBrowsePathPressed ();
-                return true;
+                if (BrowsePath->is_focus()){
+                    FileCatalog::buttonBrowsePathPressed ();
+                    return true;
+                }
         }
     }
     
@@ -1737,7 +1847,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         }
     }
 
-    if (!ctrl) {
+    if (!ctrl || (alt && !options.tabbedUI)) {
         switch(event->keyval) {
 
 			case GDK_bracketright:
@@ -1761,22 +1871,21 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
                 return true;
         }
     }
-    else { // with Ctrl
+    if (ctrl && !alt) { 
         switch (event->keyval) {
-			case GDK_o:
-				if (!alt){
-					BrowsePath->select_region(0, BrowsePath->get_text_length());
-					BrowsePath->grab_focus();
-					return true;
-				}
-			case GDK_f:
-				if (!alt){
-					Query->select_region(0, Query->get_text_length());
-					Query->grab_focus();
-					return true;
-				}
+            case GDK_o:
+                BrowsePath->select_region(0, BrowsePath->get_text_length());
+                BrowsePath->grab_focus();
+                return true;
+            case GDK_f:
+                Query->select_region(0, Query->get_text_length());
+                Query->grab_focus();
+                return true;
         }
     }
+
+    if (fileBrowser->keyPressed(event))
+        return true;
 
     return false;
 }

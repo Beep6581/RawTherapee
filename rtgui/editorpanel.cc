@@ -223,6 +223,35 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->pack_end (*iareapanel->imageArea->zoomPanel, Gtk::PACK_SHRINK, 1);
     iops->pack_end (*vsepz3, Gtk::PACK_SHRINK, 2);
 
+    // Navigation buttons
+    Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("nav-prev.png"));
+    navPrevImage->set_padding(0,0);
+    navPrev = Gtk::manage (new Gtk::Button ());
+    navPrev->add(*navPrevImage);
+    navPrev->set_relief(Gtk::RELIEF_NONE);
+    navPrev->set_tooltip_markup(M("MAIN_BUTTON_NAVPREV_TOOLTIP"));
+    
+    Gtk::Image *navNextImage = Gtk::manage (new RTImage ("nav-next.png"));
+    navNextImage->set_padding(0,0);
+    navNext = Gtk::manage (new Gtk::Button ());
+    navNext->add(*navNextImage);
+    navNext->set_relief(Gtk::RELIEF_NONE);
+    navNext->set_tooltip_markup(M("MAIN_BUTTON_NAVNEXT_TOOLTIP"));
+
+    Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("nav-sync.png"));
+    navSyncImage->set_padding(0,0);
+    navSync = Gtk::manage (new Gtk::Button ());
+    navSync->add(*navSyncImage);
+    navSync->set_relief(Gtk::RELIEF_NONE);
+    navSync->set_tooltip_markup(M("MAIN_BUTTON_NAVSYNC_TOOLTIP"));    
+    
+    if (!simpleEditor && !options.tabbedUI){
+	    iops->pack_end (*Gtk::manage(new Gtk::VSeparator()), Gtk::PACK_SHRINK, 0);
+        iops->pack_end (*navNext, Gtk::PACK_SHRINK, 0);
+        iops->pack_end (*navSync, Gtk::PACK_SHRINK, 0);
+        iops->pack_end (*navPrev, Gtk::PACK_SHRINK, 0);
+    }
+    
     editbox->pack_start (*Gtk::manage(new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0);
     editbox->pack_start (*iops, Gtk::PACK_SHRINK, 0);
     editbox->show_all ();
@@ -295,6 +324,10 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     saveimgas->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::saveAsPressed) );
     queueimg->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::queueImgPressed) );
     sendtogimp->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::sendToGimpPressed) );
+    navPrev->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::openPreviousEditorImage) );
+    navNext->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::openNextEditorImage) );
+    navSync->signal_pressed().connect( sigc::mem_fun(*this, &EditorPanel::syncFileBrowser) );
+
     ShowHideSidePanelsconn = tbShowHideSidePanels->signal_toggled().connect ( sigc::mem_fun(*this, &EditorPanel::toggleSidePanels), true);
     if (tbTopPanel_1)
         tbTopPanel_1->signal_toggled().connect( sigc::mem_fun(*this, &EditorPanel::tbTopPanel_1_toggled) );
@@ -866,7 +899,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				case GDK_underscore:
                     iareapanel->imageArea->zoomPanel->zoomOutClicked();
 					return true;
-				case GDK_1:
+				case GDK_z://GDK_1
                     iareapanel->imageArea->zoomPanel->zoom11Clicked();
 					return true;
 
@@ -909,6 +942,18 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				case GDK_F5:
 					openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
 					return true;
+				case GDK_y: // synchronize filebrowser with image in Editor
+			    	if (!simpleEditor && fPanel && fname!=""){
+	    				fPanel->fileCatalog->selectImage(fname, false);
+			    		return true;
+			    	}
+					break; // to avoid gcc complain
+			    case GDK_x: // clear filters and synchronize filebrowser with image in Editor
+			    	if (!simpleEditor && fPanel && fname!=""){
+	    				fPanel->fileCatalog->selectImage(fname, true);
+			    		return true;
+			    	}
+					break; // to avoid gcc complain
 			}
 		}
 		else {
@@ -949,11 +994,33 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				return true;
 		}
     }
+    
+    if (shift){
+    	switch (event->keyval) {
+			case GDK_F3: // open Previous image from Editor's perspective
+				if (!simpleEditor && fPanel && fname!=""){
+	    			EditorPanel::openPreviousEditorImage();
+		    		return true;
+		    	}
+				break; // to avoid gcc complain
+		    case GDK_F4: // open next image from Editor's perspective
+				if (!simpleEditor && fPanel && fname!=""){
+	    			EditorPanel::openNextEditorImage();
+		    		return true;
+		    	}
+				break; // to avoid gcc complain
+		}
+    }
 
-    if(tpc->getToolBar()->handleShortcutKey(event))
+    if(tpc->getToolBar() && tpc->getToolBar()->handleShortcutKey(event))
         return true;
     if(tpc->handleShortcutKey(event))
         return true;
+
+    if (!simpleEditor && fPanel){
+        if (fPanel->handleShortcutKey(event))
+        return true;
+    }
 
     return false;
 }
@@ -1161,6 +1228,22 @@ void EditorPanel::sendToGimpPressed () {
     		      sigc::bind(sigc::mem_fun( *this,&EditorPanel::idle_sendToGimp ),ld ));
     saveimgas->set_sensitive(false);
     sendtogimp->set_sensitive(false);
+}
+
+
+void EditorPanel::openPreviousEditorImage() {
+	if (!simpleEditor && fPanel && fname!="")
+		fPanel->fileCatalog->openNextPreviousEditorImage(fname, true, NAV_PREVIOUS);
+}
+
+void EditorPanel::openNextEditorImage() {
+	if (!simpleEditor && fPanel && fname!="")
+		fPanel->fileCatalog->openNextPreviousEditorImage(fname, true, NAV_NEXT);
+}
+
+void EditorPanel::syncFileBrowser() { // synchronize filebrowser with image in Editor
+	if (!simpleEditor && fPanel && fname!="")
+		fPanel->fileCatalog->selectImage(fname, true);
 }
 
 bool EditorPanel::idle_sendToGimp( ProgressConnector<rtengine::IImage16*> *pc){
