@@ -694,10 +694,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
 			bool showFocusMask  = iarea->previewModePanel->showFocusMask();
 			bool showclippedAny = (!showR && !showG && !showB && !showL); // will show clipping if any of RGB chanels is clipped
 
-            // If ALT was pressed, auto-enable highlight and shadow
+            // While the Right-side ALT is pressed, auto-enable highlight and shadow clipping indicators
             // TODO: Add linux/MacOS specific functions for alternative
             #ifdef WIN32
-            if (GetKeyState(VK_MENU)<0) {
+            if (GetKeyState(VK_RMENU)<0) {
                 showcs=true; showch=true;
             }
             #endif
