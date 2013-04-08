@@ -504,7 +504,11 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         }
 
         _refreshProgressBar ();
-        filepanel->loadingThumbs(M("PROGRESSBAR_LOADINGTHUMBS"),0);
+        if (previewsToLoad == 0) {
+        	filepanel->loadingThumbs(M("PROGRESSBAR_NOIMAGES"),0);
+        } else {
+        	filepanel->loadingThumbs(M("PROGRESSBAR_LOADINGTHUMBS"),0);
+        }
 
 #ifdef WIN32
       wdMonitor = new WinDirMonitor (selectedDirectory, this);
