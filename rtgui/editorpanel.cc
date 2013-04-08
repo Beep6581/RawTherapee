@@ -398,6 +398,8 @@ void EditorPanel::rightPaneButtonReleased(GdkEventButton *event) {
 }
 
 void EditorPanel::writeOptions() {
+	if (profilep)
+		profilep->writeOptions();
 	if (tpc)
 		tpc->writeOptions();
 }

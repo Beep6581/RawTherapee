@@ -877,7 +877,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
 
 void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
 
-    rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (ppname);
+    const rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (ppname);
     if (partProfile->pparams && !selected.empty()) {
 	    for (size_t i=0; i<selected.size(); i++)
             (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*partProfile->pparams, partProfile->pedited, FILEBROWSER);
@@ -890,7 +890,7 @@ void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 	if (!tbl || selected.empty())
 		return;
 
-	rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (ppname);
+	const rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (ppname);
 
 	if (srcProfiles->pparams) {
 		if (partialPasteDlg.run()==Gtk::RESPONSE_OK) {

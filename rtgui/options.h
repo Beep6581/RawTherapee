@@ -108,8 +108,8 @@ class Options {
     bool windowMaximized;
     int dirBrowserWidth;
     int dirBrowserHeight;
-	int preferencesWidth;
-	int preferencesHeight; 
+    int preferencesWidth;
+    int preferencesHeight;
     int lastScale;
     int panAccelFactor;
     int lastCropSize;
@@ -151,7 +151,7 @@ class Options {
     Glib::ustring psDir;
     Glib::ustring customEditorProg;
     Glib::ustring customProfileBuilder;
-    int editorToSendTo;   
+    int editorToSendTo;
     int maxThumbnailHeight;
     std::size_t maxCacheEntries;
     ThFileType thumbnailFormat;
@@ -197,6 +197,8 @@ class Options {
 
     // Performance options
     int rgbDenoiseThreadLimit; // maximum number of threads for the denoising tool ; 0 = use the maximum available
+
+    bool filledProfile;  // Used as reminder for the ProfilePanel "mode"
 
     bool menuGroupRank;
     bool menuGroupLabel;

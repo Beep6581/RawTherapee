@@ -307,6 +307,8 @@ void Options::setDefaults () {
 
     rgbDenoiseThreadLimit = 0;
 
+    filledProfile = false;
+
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
     hideTPVScrollbar = false;
@@ -571,6 +573,7 @@ if (keyFile.has_group ("Profiles")) {
     if (keyFile.has_key ("Profiles", "LoadSaveProfilePath"))    loadSaveProfilePath  = keyFile.get_string  ("Profiles", "LoadSaveProfilePath");
     if (keyFile.has_key ("Profiles", "RawDefault"))             defProfRaw           = keyFile.get_string  ("Profiles", "RawDefault");
     if (keyFile.has_key ("Profiles", "ImgDefault"))             defProfImg           = keyFile.get_string  ("Profiles", "ImgDefault");
+    if (keyFile.has_key ("Profiles", "FilledProfile"))          filledProfile        = keyFile.get_boolean ("Profiles", "FilledProfile");
     if (keyFile.has_key ("Profiles", "SaveParamsWithFile"))     saveParamsFile       = keyFile.get_boolean ("Profiles", "SaveParamsWithFile");
     if (keyFile.has_key ("Profiles", "SaveParamsToCache"))      saveParamsCache      = keyFile.get_boolean ("Profiles", "SaveParamsToCache");
     if (keyFile.has_key ("Profiles", "LoadParamsFromLocation")) paramsLoadLocation   = (PPLoadLocation)keyFile.get_integer ("Profiles", "LoadParamsFromLocation");
@@ -869,6 +872,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Profiles", "LoadSaveProfilePath", loadSaveProfilePath);
     keyFile.set_string  ("Profiles", "RawDefault", defProfRaw);
     keyFile.set_string  ("Profiles", "ImgDefault", defProfImg);
+    keyFile.set_boolean ("Profiles", "FilledProfile", filledProfile);
     keyFile.set_boolean ("Profiles", "SaveParamsWithFile", saveParamsFile);
     keyFile.set_boolean ("Profiles", "SaveParamsToCache", saveParamsCache);
     keyFile.set_integer ("Profiles", "LoadParamsFromLocation", paramsLoadLocation);

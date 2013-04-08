@@ -88,7 +88,7 @@ FILEBROWSER_ARRANGEMENTHINT;Permuter entre l'alignement vertical/horizontal des 
 FILEBROWSER_AUTODARKFRAME;Soustraction automatique de Trame Noire
 FILEBROWSER_AUTOFLATFIELD;Champ Uniforme auto
 FILEBROWSER_BROWSEPATHBUTTONHINT;Cliquez pour parcourir le chemin saisi
-FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir (<b>Ctrl-o</b> place le focus,<b>Ctrl-Entrée</b> pour naviguer dans le Navigateur de Fichier)
+FILEBROWSER_BROWSEPATHHINT;Saisissez le chemin à parcourir\n<b>Ctrl-O</b> pour placer le focus sur le champ de saisie.\n<b>Entrée</b> / <b>Ctrl-Entrée</b> pour y naviguer;\n<b>Esc</b> pour effacer les modifications.\n<b>Shift-Esc</b> pour enlever le focus.\n\n\nRaccourcis pour les chemins:\n  <b>~</b> - le dossier utilisateur\n  <b>!</b> - le dossier Images de l'utilisateur
 FILEBROWSER_CACHECLEARFROMFULL;Supprimer du cache (complet)
 FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache (partiel)
 FILEBROWSER_CACHE;Cache
@@ -149,7 +149,7 @@ FILEBROWSER_POPUPUNTRASH;Retirer de la corbeille
 FILEBROWSER_PROCESSINGSETTINGSHINT;Règle le format de fichier et le dossier de sortie
 FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_QUERYBUTTONHINT;Effacer la recherche
-FILEBROWSER_QUERYHINT;Taper la partie du nom du fichier à chercher. \n<b>Ctrl-f</b> Place le curseur dans le champ de saisie;\n<b>Entrée</b> pour lancer la recherche
+FILEBROWSER_QUERYHINT;Taper la <i>partie du nom</i> du fichier à chercher ou une <i>liste spéarée par des virgules</i>.\nEx: <i>1001.1004.1199</i>\n\n<b>Ctrl-F</b> pour placer le curseur dans le champ de saisie.\n<b>Entrée</b> pour lancer la recherche\n<b>Esc</b> pour effacer.\n<b>Shift-Esc</b> pour enlever le focus.
 FILEBROWSER_QUERYLABEL;Chercher:
 FILEBROWSER_RENAMEDLGLABEL;Renommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
@@ -163,7 +163,7 @@ FILEBROWSER_SHOWCOLORLABEL5HINT;Afficher les images avec un label Pourpre <b>Alt
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier <b>D</b>
 FILEBROWSER_SHOWEDITEDHINT;Afficher les images éditées <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Afficher les images non éditées <b>6</b>
-FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF <b>i</b>
+FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF.\nRaccourcis: <b>i</b>\n\nRaccourcis dans le mode Éditeur unique: <b>Alt-i</b>
 FILEBROWSER_SHOWQUEUEHINT;Voir le contenu de la file de traitement
 FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles <b>2</b>
@@ -182,8 +182,8 @@ FILEBROWSER_STOPPROCESSING;Arrêter le traitement
 FILEBROWSER_THUMBSIZE;Taille vign.
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
 FILEBROWSER_USETEMPLATE;Utiliser le modèle:
-FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes <b>+</b>
-FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes <b>-</b>
+FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes.\nRaccourcis: <b>+</b>\n\nRaccourcis dans le mode Éditeur unique:  <b>Alt +</b>
+FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes.\nRaccourcis: <b>-</b>\n\nRaccourcis dans le mode Éditeur unique:  <b>Alt -</b>
 GENERAL_ABOUT;À propos
 GENERAL_AFTER;Après
 GENERAL_AUTO;Automatique
@@ -430,6 +430,7 @@ HISTORY_MSG_200;CAM02 - Compression tonale avec Q
 HISTORY_MSG_201;Réd. de bruit - Delta chrom. rouge
 HISTORY_MSG_202;Réd. de bruit - Delta chrom. bleu
 HISTORY_MSG_203;Réd. de bruit - Méthode
+HISTORY_MSG_204;Niveau d'amélioration LMMSE
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourcis: <b>Alt-s</b>
@@ -496,6 +497,9 @@ IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission i
 IPTCPANEL_TRANSREFERENCE;Réf. transmission
 MAIN_BUTTON_EXIT;Sortie
 MAIN_BUTTON_FULLSCREEN;Plein écran
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigue à l'image Suivante relativement à l'image ouverte dans l'Éditeur\nRaccourcis: <b>Shift-F4</b>\n\nPour naviguer à l'image Suivante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourcis: <b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Navigue à l'image Précédante relativement à l'image ouverte dans l'Éditeur\nRaccourcis: <b>Shift-F3</b>\n\nPour naviguer à l'image Précédante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourcis: <b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronise le Navigateur de fichiers avec l'Éditeur pour révéler la vignette de l'image actuellement ouverte, et efface les filtres dans le Navigateur de fichiers\nRaccourcis: <b>x</b>\n\nComme ci-dessus, mais sans effacer les filtres dans le Navigateur de fichiers\nRaccourcis: <b>y</b>\n(Notez que la vignette ne sera pas visible si elle a été filtrée).
 MAIN_BUTTON_PREFERENCES;Préférences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Envoyer dans la file
@@ -654,6 +658,7 @@ PARTIALPASTE_RAWGROUP;Réglages RAW
 PARTIALPASTE_RAW_ALLENHANCE;Applique la réduction de bruit/artefact post-dématriçage
 PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
+PARTIALPASTE_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
 PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
 PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
 PARTIALPASTE_RESIZE;Redimentionnement
@@ -672,6 +677,10 @@ PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principal
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
 PREFERENCES_BEHAVIOR;Comportement
+PREFERENCES_BEHADDALL;Tout à 'Ajoute'
+PREFERENCES_BEHADDALLHINT;Règle tous les paramètres sur le mode <b>Ajoute</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera des <b>deltas</b> par-rapport aux valeurs existantes
+PREFERENCES_BEHSETALL;Tout à 'Remplace'
+PREFERENCES_BEHSETALLHINT;Règle tous les paramètres sur le mode <b>Remplace</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera <b>absolue</b>, les valeurs réelles seront affichées
 PREFERENCES_BLACKBODY;Tungstène
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
 PREFERENCES_CACHECLEARALL;Tout nettoyer
@@ -830,6 +839,7 @@ PROFILEPANEL_FILEDLGFILTERPP;Profils de post-traitement
 PROFILEPANEL_LABEL;Profils de post-traitement
 PROFILEPANEL_LOADDLGLABEL;Charger les paramètres de post-traitement...
 PROFILEPANEL_LOADPPASTE;Paramètres à charger
+PROFILEPANEL_MODE_TIP;Bouton pressé: les profils partiels seront convertis en profils complets; les valeurs manquantes seront remplacées par les valeurs internes par défaut\n\nBouton relevé: les profils seront appliqués tel quel, altérant seulement les paramètres qu'ils contiennent.
 PROFILEPANEL_PASTEPPASTE;Paramètres à coller
 PROFILEPANEL_PCUSTOM;Personnel
 PROFILEPANEL_PFILE;Depuis le fichier
@@ -911,8 +921,8 @@ TP_CHMIXER_RED;Rouge
 TP_CHROMATABERR_LABEL;Aberration Chromatique
 TP_COARSETRAF_DEGREE;degré:
 TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche\nRaccourcis: <b>[</b>\n\nRaccourcis en mode Éditeur unique: <b>Alt-[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite\nRaccourcis: <b>]</b>\n\nRaccourcis en mode Éditeur unique: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Symétriser / axe horizontal
 TP_COLORAPP_ADAPTSCENE;Luminosité d'adaptation (cd/m2)
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminance absolue de l'environnement de la scène\n(souvent 2000cd/m2)
@@ -1192,6 +1202,8 @@ TP_RAW_ALLENHANCE;Réduction de bruit/artefact post-dématriçage
 TP_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 TP_RAW_DCBITERATIONS;Nombre d'itération de DCB
 TP_RAW_DMETHOD;Méthode
+TP_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
+TP_RAW_LMMSE_TOOLTIP;Ajoute gamma (niveau 1) - ajoute médian (niveau 2,3,4), puis ajoute un affinage (niveau 5,6) pour réduire les artéfacts et améliorer le rapport signal/bruit
 TP_RAW_DMETHOD_PROGRESSBAR;Dématriçage %1...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Affinage du dématriçage...
 TP_RAW_DMETHOD_TOOLTIP;Note: IGV et LMMSE sont dédiés aux images à haut ISO
@@ -1331,7 +1343,7 @@ ZOOMBAR_SCALE;Échelle
 ZOOMBAR_SMALL;Petit
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Ouvrir une (nouvelle) vue détaillée
-ZOOMPANEL_ZOOM100;Zoom à 100% <b>1</b>
+ZOOMPANEL_ZOOM100;Zoom à 100%\nRaccourcis: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
@@ -1342,7 +1354,7 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
-!TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
-!TP_RGBCURVES_LUMAMODE;Luminosity Mode
-!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.
+TP_COLORAPP_SHARPCIE;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique avec Q/C
+TP_COLORAPP_SHARPCIE_TOOLTIP;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique utiliseront CIECAM02 si activé.
+TP_RGBCURVES_LUMAMODE;Mode Lominosité
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Mode Lominosité</b> permet de faire varier la contribution des canaux R, V et B à la luminosité de l'image, sans altérer les couleurs de l'image.

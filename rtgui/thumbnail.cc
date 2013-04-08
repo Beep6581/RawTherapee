@@ -233,7 +233,7 @@ void Thumbnail::loadProcParams () {
 
     pparamsValid = false;
     pparams.setDefaults();
-    PartialProfile *defaultPP = profileStore.getDefaultPartialProfile(getType()==FT_Raw);
+    const PartialProfile *defaultPP = profileStore.getDefaultPartialProfile(getType()==FT_Raw);
     defaultPP->applyTo(&pparams);
 
     if (options.paramsLoadLocation==PLL_Input) {

@@ -26,6 +26,7 @@
 #include "profilechangelistener.h"
 #include "partialpastedlg.h"
 #include "guiutils.h"
+#include "rtimage.h"
 
 class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
 
@@ -33,6 +34,11 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
 
     Glib::ustring lastFilename;
     Glib::ustring imagePath;
+    RTImage *profileFillModeOnImage;
+    RTImage *profileFillModeOffImage;
+    Gtk::ToggleButton* fillMode;
+
+    void profileFillModeToggled();
 
   protected:
 
@@ -50,7 +56,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     bool dontupdate;
     sigc::connection changeconn;
 
-    void changeTo (rtengine::procparams::PartialProfile* newpp, Glib::ustring profname);
+    void changeTo (const rtengine::procparams::PartialProfile* newpp, Glib::ustring profname);
     void refreshProfileList ();
 
   public:
@@ -75,6 +81,7 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     void copy_clicked (GdkEventButton* event);
     void paste_clicked (GdkEventButton* event);
     void selection_changed ();
+    void writeOptions();
 };
 
 #endif
