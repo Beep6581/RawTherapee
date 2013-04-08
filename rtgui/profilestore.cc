@@ -143,7 +143,7 @@ void ProfileStore::parseDir (const Glib::ustring& pdir) {
   }
 }
 
-PartialProfile* ProfileStore::getProfile (const Glib::ustring& profname) {
+const PartialProfile* ProfileStore::getProfile (const Glib::ustring& profname) {
 
     if (!init())
         // I don't even know if this situation can occur
@@ -177,14 +177,14 @@ std::vector<Glib::ustring> ProfileStore::getProfileNames () {
  * If the profile doesn't already exist in the profile list,
  * it will add it with default internal values, so this method never fails
  */
-ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
+const ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
 
     if (!init())
         // I don't even know if this situation can occur
         return NULL;
     //Note: the mutex is locked in getProfile, called below
 
-    PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
+    const PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
     // NOTE: pProf should not be NULL anymore, since init() should have created the default profiles already
     return pProf->pparams;
 }
@@ -194,14 +194,14 @@ ProcParams* ProfileStore::getDefaultProcParams (bool isRaw) {
  * If it doesn't already exist in the profile list, it will add it with default internal values,
  * so this method will never fails
  */
-PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw) {
+const PartialProfile* ProfileStore::getDefaultPartialProfile (bool isRaw) {
 
     if (!init())
         // I don't even know if this situation can occur
         return NULL;
     //Note: the mutex is locked in getProfile, called below
 
-    PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
+    const PartialProfile* pProf = getProfile (isRaw ? options.defProfRaw : options.defProfImg);
     // NOTE: pProf should not be NULL anymore, since init() should have created the default profiles already
     return pProf;
 }

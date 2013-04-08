@@ -853,7 +853,7 @@ class PartialProfile {
         void clearGeneral   ();
         int  load           (Glib::ustring fName);
         void set            (bool v);
-        void applyTo        (ProcParams *destParams) const ;
+        const void applyTo  (ProcParams *destParams) const ;
 };
 
 }

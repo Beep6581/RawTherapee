@@ -46,10 +46,10 @@ class ProfileStore {
         ~ProfileStore();
         bool init ();
         void parseProfiles ();
-        rtengine::procparams::PartialProfile* getProfile (const Glib::ustring& profname);
-        std::vector<Glib::ustring>            getProfileNames ();
-        rtengine::procparams::ProcParams*     getDefaultProcParams (bool isRaw);
-        rtengine::procparams::PartialProfile* getDefaultPartialProfile (bool isRaw);
+        const rtengine::procparams::PartialProfile* getProfile (const Glib::ustring& profname);
+        std::vector<Glib::ustring>                  getProfileNames ();
+        const rtengine::procparams::ProcParams*     getDefaultProcParams (bool isRaw);
+        const rtengine::procparams::PartialProfile* getDefaultPartialProfile (bool isRaw);
 };
 
 extern ProfileStore profileStore;

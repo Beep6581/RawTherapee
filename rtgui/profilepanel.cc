@@ -27,8 +27,6 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-extern Glib::ustring argv0;
-
 PartialPasteDlg* ProfilePanel::partialProfileDlg;
 
 
@@ -43,7 +41,15 @@ void ProfilePanel::cleanup () {
 ProfilePanel::ProfilePanel (bool readOnly) : lastFilename(""), imagePath("") {
 
     tpc = NULL;
-  
+
+    profileFillModeOnImage  = new RTImage("profile-filled.png");
+    profileFillModeOffImage = new RTImage("profile-partial.png");
+    fillMode = Gtk::manage (new Gtk::ToggleButton());
+    fillMode->set_active(options.filledProfile);
+    fillMode->add( options.filledProfile ? *profileFillModeOnImage : *profileFillModeOffImage );
+    fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
+    fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TIP"));
+
     profiles = Gtk::manage (new MyComboBoxText ());
     Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
     hbox->show ();
@@ -60,6 +66,7 @@ ProfilePanel::ProfilePanel (bool readOnly) : lastFilename(""), imagePath("") {
     paste = Gtk::manage (new Gtk::Button ());
     paste->add (*Gtk::manage (new RTImage ("edit-paste.png")));
 
+    hbox->pack_start (*fillMode, Gtk::PACK_SHRINK, 1);
     hbox->pack_start (*profiles);
     hbox->pack_start (*load, Gtk::PACK_SHRINK, 1);
     if (!readOnly) hbox->pack_start (*save, Gtk::PACK_SHRINK, 1);
@@ -93,6 +100,8 @@ ProfilePanel::~ProfilePanel () {
 
     if (custom)    { custom->deleteInstance();    delete custom;    }
     if (lastsaved) { lastsaved->deleteInstance(); delete lastsaved; }
+    delete profileFillModeOnImage;
+    delete profileFillModeOffImage;
 }
 
 void ProfilePanel::refreshProfileList () {
@@ -166,7 +175,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
 
             lastFilename = Glib::path_get_basename (fname);
 
-            PartialProfile* toSave = NULL;
+            const PartialProfile* toSave;
             if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")")
                 toSave = custom;
             else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")")
@@ -221,7 +230,7 @@ void ProfilePanel::copy_clicked (GdkEventButton* event) {
     if (event->button != 1)
         return;
 
-    PartialProfile* toSave = NULL;
+    const PartialProfile* toSave;
     if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PCUSTOM") + ")") 
         toSave = custom;
     else if (profiles->get_active_text() == Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")") 
@@ -379,7 +388,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event) {
     return;
 }
 
-void ProfilePanel::changeTo (PartialProfile* newpp, Glib::ustring profname) {
+void ProfilePanel::changeTo (const PartialProfile* newpp, Glib::ustring profname) {
 
     if (!newpp)
         return;
@@ -398,9 +407,17 @@ void ProfilePanel::selection_changed () {
     else if (profiles->get_active_text() == (entry = Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")"))
             changeTo (lastsaved, entry);
     else {
-    	PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
-        if (s)
-            changeTo (s, profiles->get_active_text());
+        const PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
+        if (s) {
+            if (fillMode->get_active() && s->pedited) {
+                ParamsEdited pe;
+                pe.set(true);
+                PartialProfile s2(s->pparams, &pe, false);
+                changeTo (&s2, profiles->get_active_text()+"+");
+            }
+            else
+                changeTo (s, profiles->get_active_text());
+        }
     }
     old = profiles->get_active_text ();
     dontupdate = false;
@@ -453,7 +470,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
     }
 
     Glib::ustring defline = profname;
-    PartialProfile* defprofile = profileStore.getProfile (profname);
+    const PartialProfile* defprofile = profileStore.getProfile (profname);
 
     if (lastsaved) {
         defline = Glib::ustring("(") + M("PROFILEPANEL_PLASTSAVED") + ")";
@@ -475,18 +492,17 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
             tpc->profileChange (defprofile, EvPhotoLoaded, defline);  
     }
     else {
-        bool dels = false;
         // select first valid profile
         old = "";
         profiles->set_active (0);
-        PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
+        const PartialProfile* s = profileStore.getProfile (profiles->get_active_text());
         if (!s) {
             changeconn.block (false);
-            s = new PartialProfile (true);
-            s->set(true);
-            dels = true;  // we've created a temporary PartialProfile, so we set a flag to destroy it
+            PartialProfile s2(true);
+            s2.pedited->set(true);
             if (tpc)
-                tpc->profileChange (s, EvPhotoLoaded, DEFPROFILE_INTERNAL);
+                tpc->profileChange (&s2, EvPhotoLoaded, DEFPROFILE_INTERNAL);
+            s2.deleteInstance();
         }
         else {
             Glib::ustring cProfile = profiles->get_active_text();
@@ -494,16 +510,26 @@ void ProfilePanel::initProfile (const Glib::ustring& profname, ProcParams* lastS
             if (tpc)
                 tpc->profileChange (s, EvPhotoLoaded, cProfile);
         }
-
-        if (dels) {
-            s->deleteInstance();
-            delete s;
-        }
     }
 }
 
 void ProfilePanel::setInitialFileName (const Glib::ustring& filename) {
     lastFilename = Glib::path_get_basename(filename) + paramFileExtension;
     imagePath = Glib::path_get_dirname(filename);
+}
+
+void ProfilePanel::profileFillModeToggled() {
+    if (fillMode->get_active()) {
+        // The button is pressed, we'll use the profileFillModeOnImage
+        fillMode->set_image(*profileFillModeOnImage);
+    }
+    else {
+        // The button is released, we'll use the profileFillModeOffImage
+        fillMode->set_image(*profileFillModeOffImage);
+    }
+}
+
+void ProfilePanel::writeOptions() {
+    options.filledProfile = fillMode->get_active();
 }
 

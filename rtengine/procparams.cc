@@ -1740,7 +1740,7 @@ void PartialProfile::clearGeneral () {
     }
 }
 
-void PartialProfile::applyTo(ProcParams *destParams) const {
+const void PartialProfile::applyTo(ProcParams *destParams) const {
     if (destParams && pparams && pedited) {
         pedited->combine(*destParams, *pparams, true);
     }
