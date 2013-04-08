@@ -931,7 +931,9 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 			float x,y,z;
 			const float eps=0.0001;
 			float co_e=(pow(f_l,0.25f))+eps;
-			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
+	//		if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
+			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0* ncie->Q_p[i][j]*ncie->Q_p[i][j])/SQR((4./c)*(aw+4.));
+			
 			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
 			//show histogram in CIECAM mode (Q,J, M,s,C)
 			int posl, posc;
@@ -1705,7 +1707,9 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 			float x,y,z;
 			float eps=0.0001f;
 			float co_e=(pow_F(f_l,0.25f))+eps;
-			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
+		//	if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/(w_h*w_h);
+			if(params->edgePreservingDecompositionUI.enabled) ncie->J_p[i][j]=(100.0f* ncie->Q_p[i][j]*ncie->Q_p[i][j])/SQR((4.f/c)*(aw+4.f));
+			
 			ncie->C_p[i][j]	=(ncie->M_p[i][j])/co_e;
 			//show histogram in CIECAM mode (Q,J, M,s,C)
 			int posl, posc;
