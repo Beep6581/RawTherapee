@@ -138,9 +138,23 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
     dialog.set_current_name (lastFilename);
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
-    dialog.add_shortcut_folder(options.getPreferredProfilePath());
+#ifdef WIN32
+    // Dirty workaround, waiting for a clean solution by using exceptions!
+    if (!safe_is_root_dir(options.getPreferredProfilePath()))
+#endif
+    try {
+        dialog.add_shortcut_folder(options.getPreferredProfilePath());
+    }
+    catch (Gtk::FileChooserError &err) {}
     //Add the image's path to the Shortcut list
-    dialog.add_shortcut_folder(imagePath);
+#ifdef WIN32
+    // Dirty workaround, waiting for a clean solution by using exceptions!
+    if (!safe_is_root_dir(imagePath))
+#endif
+    try {
+        dialog.add_shortcut_folder(imagePath);
+    }
+    catch (Gtk::FileChooserError &err) {}
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
@@ -272,9 +286,24 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     FileChooserLastFolderPersister persister( &dialog, options.loadSaveProfilePath );
 
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
-    dialog.add_shortcut_folder(options.getPreferredProfilePath());
+#ifdef WIN32
+    // Dirty workaround, waiting for a clean solution by using exceptions!
+    if (!safe_is_root_dir(options.getPreferredProfilePath()))
+#endif
+    try {
+        dialog.add_shortcut_folder(options.getPreferredProfilePath());
+    }
+    catch (Gtk::FileChooserError &err) {}
+
     //Add the image's path to the Shortcut list
-    dialog.add_shortcut_folder(imagePath);
+#ifdef WIN32
+    // Dirty workaround, waiting for a clean solution by using exceptions!
+    if (!safe_is_root_dir(imagePath))
+#endif
+    try {
+        dialog.add_shortcut_folder(imagePath);
+    }
+    catch (Gtk::FileChooserError &err) {}
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);

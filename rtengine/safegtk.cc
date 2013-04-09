@@ -406,3 +406,16 @@ Glib::ustring safe_get_user_picture_dir() {
 
     #endif
 }
+
+#ifdef WIN32
+/*
+ * Test if the path is a root path based on the content of the string
+ *
+ * Warning: this function is a workaround for Windows platform, and not necessarily bullet proof
+ */
+bool safe_is_root_dir (const Glib::ustring& path) {
+	Glib::ustring t = Glib::path_skip_root(path);
+	return t.empty();
+}
+#endif
+

@@ -255,6 +255,15 @@ void SaveAsDialog::setInitialFileName (Glib::ustring fname) {
 
 void SaveAsDialog::setImagePath (Glib::ustring ipath) {
 
+    Glib::ustring path = Glib::path_get_dirname(ipath);
+
     //Add the image's path to the Shortcut list
-    fchooser->add_shortcut_folder(Glib::path_get_dirname(ipath));
+#ifdef WIN32
+    // Dirty workaround, waiting for a clean solution by using exceptions!
+    if (!safe_is_root_dir(path))
+#endif
+    try {
+        fchooser->add_shortcut_folder(Glib::path_get_dirname(path));
+    }
+    catch (Gtk::FileChooserError &err) {}
 }
