@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande
 ABOUT_TAB_LICENSE;Licens
@@ -61,10 +60,13 @@ EXPORT_BYPASS_DIRPYREQUALIZER;Förbigå kontrast genom detaljnivåer
 EXPORT_BYPASS_LUMADENOISE;Förbigå luminansbrusreducering
 EXPORT_BYPASS_RAW_ALL_ENHANCE;Förbigå efter-demosaic artefakt- och brusreducering
 EXPORT_BYPASS_RAW_CA;Förbigå (rå) reducering av kromatiska abberationer
+EXPORT_BYPASS_RAW_CCSTEPS;Förbigå [raw] undertryckande av falska färger
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Förbigå [raw] förbättringssteg för DCB
 EXPORT_BYPASS_RAW_DCB_ITERATIONS;Förbigå (rå) DCB-iterationer
 EXPORT_BYPASS_RAW_DF;Förbigå (rå) svartbild
 EXPORT_BYPASS_RAW_FF;Förbigå (rå) plattfält
 EXPORT_BYPASS_RAW_GREENTHRESH;Förbigå (rå) grönbalansering
+EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Linjärt brusfilter
 EXPORT_BYPASS_SHARPENEDGE;Förbigå kantskärpning
 EXPORT_BYPASS_SHARPENING;Förbigå skärpning
 EXPORT_BYPASS_SHARPENMICRO;Förbigå mikrokontrast
@@ -180,6 +182,7 @@ FILEBROWSER_ZOOMINHINT;Förstora miniatyrbilderna
 FILEBROWSER_ZOOMOUTHINT;Förminska miniatyrbilderna
 GENERAL_ABOUT;Om
 GENERAL_AFTER;Efter
+GENERAL_AUTO;Automatisk
 GENERAL_BEFORE;Före
 GENERAL_CANCEL;Avbryt
 GENERAL_CLOSE;Stäng
@@ -384,10 +387,13 @@ HISTORY_MSG_163;RGB-kurvor - R
 HISTORY_MSG_164;RGB-kurvor - G
 HISTORY_MSG_165;RGB-kurvor - B
 HISTORY_MSG_166;Neutrala nivåer
+HISTORY_MSG_167;S/V toning
 HISTORY_MSG_168;'CC'-kurvan
 HISTORY_MSG_169;'CH'-kurvan
 HISTORY_MSG_170;Lyster-kurvan
 HISTORY_MSG_171;'LC'-kurvan
+HISTORY_MSG_172;Begränsa LC till röda färger och hudtoner
+HISTORY_MSG_173;Brusreducering - Luminansdetalj
 HISTORY_MSG_174;CIECAM02
 HISTORY_MSG_179;CAM02 - Modell
 HISTORY_MSG_180;CAM02 - Ljushet (J)
@@ -404,6 +410,7 @@ HISTORY_MSG_195;CAM02 - Tonkurva
 HISTORY_MSG_196;CAM02 - Tonkurva 2
 HISTORY_MSG_197;CAM02 - Färgkurva
 HISTORY_MSG_198;CAM02 - Färgkurva
+HISTORY_MSG_203;Brusreducering - metod
 HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOT_TOOLTIP;Kortkommando: <b>Alt-s</b>
@@ -502,8 +509,12 @@ MAIN_MSG_EXITJOBSINQUEUEQUEST;Är du säker på att du vill avsluta? Det finns o
 MAIN_MSG_IMAGEUNPROCESSED;Det här kommandot kräver att alla valda bilder behandlas i kön först.
 MAIN_MSG_JOBSINQUEUE;Arbete(n) i kö
 MAIN_MSG_NAVIGATOR;Översikt
+MAIN_MSG_OPERATIONCANCELLED;Åtgärden avbröts
+MAIN_MSG_PATHDOESNTEXIST;Sökvägen\n\n<b>%1</b>\n\nfinns ej. Var vänlig och ange en korrekt sökväg i inställningarna.
 MAIN_MSG_PLACES;Platser
 MAIN_MSG_QOVERWRITE;Vill du skriva över den?
+MAIN_MSG_SETPATHFIRST;Du måste först ange en sökväg i \ninställningarna för att använda denna funktion!
+MAIN_MSG_WRITEFAILED;Misslyckades att skriva\n\n<b>"%1"</b>\n\nFörsäkra dig om att katalogen existerar och att du har rättigheter att skriva dit.
 MAIN_TAB_BASIC;Grund
 MAIN_TAB_COLOR;Färger
 MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
@@ -753,6 +764,8 @@ PREFERENCES_PROFILESAVECACHE;Spara behandlingsparametrar till cachen
 PREFERENCES_PROFILESAVEINPUT;Spara behandlingsparametrar med indatabildfilen
 PREFERENCES_PROPERTY;Egenskaper
 PREFERENCES_PSPATH;Adobe Photoshops installationskatalog
+PREFERENCES_RGBDTL_LABEL;Maximalt antal trådar för brusreducering
+PREFERENCES_RGBDTL_TOOLTIP;Brusreduceringen kräver ungefär 128MB RAM för en 10MPix bild och 512MB för en 40 MPix, och ytterligare 128MB per tråd. Ju mer trådar som körs parallellt, desto snabbare går beräkningarna. Ange värdet "0" för att automatiskt använda så många trådar som möjligt.
 PREFERENCES_SELECTFONT;Välj typsnitt
 PREFERENCES_SELECTICCDIRDLG;Välj ICC-profil katalog...
 PREFERENCES_SELECTLANG;Välj språk
@@ -855,6 +868,7 @@ SHCSELECTOR_TOOLTIP;Klicka på höger musknapp för att återställa \nde tre re
 THRESHOLDSELECTOR_BL;Nederst till vänster
 THRESHOLDSELECTOR_BR;Nederst till höger
 THRESHOLDSELECTOR_B;Nederst
+THRESHOLDSELECTOR_HINT;Håll nere  <b>Shift</b> tangenten för att flytta individuella kontrollpunkter.
 THRESHOLDSELECTOR_TL;Överst till vänster
 THRESHOLDSELECTOR_TR;Överst till höger
 THRESHOLDSELECTOR_T;Överst
@@ -949,7 +963,12 @@ TP_DETAIL_AMOUNT;Mängd
 TP_DIRPYRDENOISE_CHROMA;Kroma
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_LABEL;Brusreducering
+TP_DIRPYRDENOISE_LDETAIL;Luminansdetalj
 TP_DIRPYRDENOISE_LUMA;Luminans
+TP_DIRPYRDENOISE_METHOD;Metod
+TP_DIRPYRDENOISE_METHOD_TOOLTIP;För råfiler kan antingen RGB- eller Labmetoder användas.\n\nFör icke-råfiler kommer Labmetoden att användas, oavsett vad som är valt.
+TP_DIRPYRDENOISE_PERF;RGB-läge (råfiler)
+TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_LABEL;Kontrast genom detaljnivåer
 TP_DIRPYREQUALIZER_LUMACOARSEST;Grövst
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Minska kontrasten
@@ -982,6 +1001,7 @@ TP_EXPOSURE_COMPRSHADOWS;Skuggåterställning
 TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR1;Tonkurva 1
 TP_EXPOSURE_CURVEEDITOR2;Tonkurva 2
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Var vänlig och se följande del i manualen för att lära dig hur man uppnår bästa resultat med dubbla kurvor:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_CURVEEDITOR;Tonkurva
 TP_EXPOSURE_EXPCOMP;Exponeringskompensation
 TP_EXPOSURE_LABEL;Exponering
@@ -989,7 +1009,9 @@ TP_EXPOSURE_SATURATION;Mättnad
 TP_EXPOSURE_TCMODE_FILMLIKE;Filmlik
 TP_EXPOSURE_TCMODE_LABEL1;Kurvläge 1
 TP_EXPOSURE_TCMODE_LABEL2;Kurvläge 2
+TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Mättnad och värdeblandning
 TP_EXPOSURE_TCMODE_STANDARD;Standard
+TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Viktad standard
 TP_EXPO_AFTER; Efter interpolation (före RGB-konvertering)
 TP_FLATFIELD_AUTOSELECT;Autoval
 TP_FLATFIELD_BLURRADIUS;Oskärperadie
@@ -1050,12 +1072,16 @@ TP_ICM_PREFERREDPROFILE_2;Glödlampa
 TP_ICM_PREFERREDPROFILE_3;Lysrör
 TP_ICM_PREFERREDPROFILE_4;Blixt
 TP_ICM_SAVEREFERENCE;Spara referensbild för profilering
+TP_ICM_TONECURVE;Använd DCP:s tonkurva
+TP_ICM_TONECURVE_TOOLTIP;Aktivera för att använda tonkurvor som kan finnas i DCP-profilen.
 TP_ICM_WORKINGPROFILE;Färgrymd
 TP_IMPULSEDENOISE_LABEL;Brusreducering mha av stegsvar
 TP_IMPULSEDENOISE_THRESH;Tröskelvärde
 TP_LABCURVE_AVOIDCOLORCLIP;Undvik att färgen klipper
 TP_LABCURVE_AVOIDCOLORSHIFT;Undvik färgskift
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Passa färger i färgrymden och applicera Munsell-korrigering
 TP_LABCURVE_BRIGHTNESS;Intensitet
+TP_LABCURVE_BWTONING;S/V-toning
 TP_LABCURVE_CHROMATICITY;Kroma
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Luminanskurva
@@ -1076,6 +1102,8 @@ TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Kroma enligt nyansen
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminans enligt kroma
 TP_LABCURVE_ENABLESATLIMITER;Slå på mättnadsbegränsare
 TP_LABCURVE_LABEL;Labkurvor
+TP_LABCURVE_LCREDSK;Begränsa LC till röda färger och hudtoner
+TP_LABCURVE_LCREDSK_TIP;Om aktiverad så är LC-kurvan (Luminance enligt kromaciteten) begränsad till röda färger och hudtoner.\nOm ej aktiverad så appliceras den till alla färger och toner.
 TP_LABCURVE_RSTPROTECTION;Skydda röda färger och hudtoner
 TP_LABCURVE_SATLIMIT;Mättnadsbegränsning
 TP_LABCURVE_SATURATION;Mättnad
@@ -1260,28 +1288,23 @@ ZOOMPANEL_ZOOM100;Förstora till 100%. Kortkommando: 1
 ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen. Kortkommando: F
 ZOOMPANEL_ZOOMIN;Förstora. Kortkommando: +
 ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
+
 #00 Swedish
 #01 Translated by Emil Ericsson
 #02 2008-01-22
 #03 Updated 2010 by Johan Thor.
 #04 Updated 2011 by Johan Thor.
-#05 Updated 2013-03-02 by Johan Thor.
+#05 Updated 2013-04-09 by Johan Thor.
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Color Suppression
-!EXPORT_BYPASS_RAW_DCB_ENHANCE;Bypass [raw] DCB Enhancement Steps
-!EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
+!BATCHQUEUE_DESTFILENAME;Path and file name
 !EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
 !FILEBROWSER_EXEC_CPB;Custom Profile Builder
-!GENERAL_AUTO;Automatic
 !HISTORY_MSG_161;Reweighting Iterates
 !HISTORY_MSG_162;Tone Mapping
-!HISTORY_MSG_167;B&amp;W toning
-!HISTORY_MSG_172;Restrict LC to red and skin tones
-!HISTORY_MSG_173;NR - Luminance Detail
 !HISTORY_MSG_175;CAM02 - Chrom. adaptation amount
 !HISTORY_MSG_176;CAM02 - Viewing's black surround
 !HISTORY_MSG_177;CAM02 - Scene's Lum. Adaptation
@@ -1295,23 +1318,27 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !HISTORY_MSG_200;CAMO2 - Tone mapping using CIECAM02 Q
 !HISTORY_MSG_201;NR - Delta Chrominance red
 !HISTORY_MSG_202;NR - Delta Chrominance blue
-!HISTORY_MSG_203;NR - Method
-!MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
-!MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
-!MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
-!MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
+!HISTORY_MSG_204;LMMSE enhancement steps
+!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
+!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
+!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on.
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 !PARTIALPASTE_EPD;Tone mapping
+!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values 
+!PREFERENCES_BEHADDALL;All to 'Add'
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
+!PREFERENCES_BEHSETALL;All to 'Set'
 !PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality
-!PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction
-!PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
 !PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector, viewing, etc.)
+!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+!PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
-!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
+!SAVEDLG_FORCEFORMATOPTS;Force saving options
 !TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity (cd/m²)
 !TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environnement\n(usually 2000cd/m²)
 !TP_COLORAPP_ADAPTVIEWING;Adaptation viewing luminosity (cd/m²)
@@ -1355,32 +1382,23 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
 !TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
-!TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
-!TP_DIRPYRDENOISE_METHOD;Method
-!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
-!TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 !TP_DIRPYRDENOISE_RED;Delta chrominance Red
-!TP_DIRPYRDENOISE_RGB;RGB
 !TP_EPD_LABEL;Tone Mapping (Lab/CIECAM02)
 !TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
 !TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
-!TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the following section of the manual to learn how to achieve the best results with double curves:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
-!TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
-!TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 !TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
-!TP_ICM_TONECURVE;Use DCP's tone curve
-!TP_ICM_TONECURVE_TOOLTIP;Enable to use tone curves that may be contained in DCP profiles.
-!TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction
-!TP_LABCURVE_BWTONING;B&W toning
 !TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
 !TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity C=f(C).\n\nShows the histogram of chromaticity before curve adjustements.\nFor final output refer to the main histogram panel
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n\nShows the histogram of L before curve adjustements.\nnFor final output refer to the main histogram panel
-!TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
-!TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies to all tones
 !TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
+!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
+!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
+!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 !TP_RGBCURVES_LUMAMODE;Luminosity Mode
-!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.
+!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.    
 !TP_SHARPENING_TOOLTIP;Expect a slightly different effect when used with CIECAM02. If difference is observed, adjust to taste.
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the hue
 !TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
