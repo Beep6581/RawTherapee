@@ -6252,6 +6252,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 7309,-1403,-519,-8474,16008,2622,-2433,2826,8064 } },
     { "NIKON D5100", 0, 0x3de6,
 	{ 8198,-2239,-724,-4871,12389,2798,-1043,2050,7181 } },
+	{ "NIKON D5200", 0, 0, // color matrix copied from D5200 DNG D65 matrix
+	{ 8322, -3112,-1047,-6367,14342,2179,-988,1638,6394 } },
     { "NIKON D50", 0, 0,
 	{ 7732,-2422,-789,-8238,15884,2498,-859,783,7330 } },
     { "NIKON D600", 0, 0x3e07,
@@ -6260,6 +6262,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8736,-2458,-935,-9075,16894,2251,-1354,1242,8263 } },
 	{ "NIKON D7000", 0, 0,  /* RT - Tanveer(tsk1979) */
 	{ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 } },
+	{ "NIKON D7100", 0, 0x3e00, // color matrix and WP copied from D7100 DNG D65 matrix
+	{ 8322,-3112,-1047,-6367,14342,2179,-988,1638,6394 } },
     { "NIKON D700", 0, 0,  /* RT */
 	{ 8364,-2503,-352,-6307,14026,2492,-1134,1512,8156 } },
     { "NIKON D70", 0, 0,
@@ -6296,6 +6300,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 8489,-2583,-1036,-8051,15583,2643,-1307,1407,7354 } },
     { "NIKON E8800", 0, 0,
 	{ 7971,-2314,-913,-8451,15762,2894,-1442,1520,7610 } },
+	{ "NIKON COOLPIX A", 0, 0x3e00, // color matrix and WP copied from "COOLPIX A" DNG D65 matrix
+	{ 8198,-2239,-724,-4871,12389,2798,-1043,205,7181 } },
     { "NIKON COOLPIX P6000", 0, 0,
 	{ 9698,-3367,-914,-4706,12584,2368,-837,968,5801 } },
     { "NIKON COOLPIX P7000", 0, 0,
@@ -7465,7 +7471,8 @@ canon_cr2:
 	     !strcmp(model,"D90")) {
     width -= 42;
   } else if (!strcmp(model,"D5100") ||
-	     !strcmp(model,"D7000")) {
+	     !strcmp(model,"D7000") ||
+	     !strcmp(model,"COOLPIX A")) {
     width -= 44;
   } else if (!strcmp(model,"D3200") ||
 	     !strcmp(model,"D600")  ||
