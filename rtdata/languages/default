@@ -835,7 +835,7 @@ PROFILEPANEL_FILEDLGFILTERPP;Processing profiles
 PROFILEPANEL_LABEL;Processing Profiles
 PROFILEPANEL_LOADDLGLABEL;Load Processing Parameters...
 PROFILEPANEL_LOADPPASTE;Parameters to load
-PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 PROFILEPANEL_PASTEPPASTE;Parameters to paste
 PROFILEPANEL_PCUSTOM;Custom
 PROFILEPANEL_PFILE;From file

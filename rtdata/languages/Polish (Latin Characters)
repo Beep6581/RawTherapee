@@ -1260,7 +1260,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrot: <b>-</b>
 !PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector, viewing, etc.)
-!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+!PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added

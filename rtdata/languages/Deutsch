@@ -1382,7 +1382,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !PREFERENCES_BEHADDALL;All to 'Add'
 !PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
 !PREFERENCES_BEHSETALL;All to 'Set'
-!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+!PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROGRESSBAR_NOIMAGES;No images found
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
