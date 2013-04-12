@@ -85,8 +85,9 @@ namespace rtengine {
 
 	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp)
 	{
-		static Glib::Mutex      FftwMutex;
-		FftwMutex.lock();
+		static Glib::Mutex FftwMutex;
+		Glib::Mutex::Lock lock(FftwMutex);
+
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 		/*if (plistener) {
@@ -737,7 +738,6 @@ namespace rtengine {
 	fftwf_destroy_plan( plan_forward_blox[1] );
 	fftwf_destroy_plan( plan_backward_blox[1] );
 	fftwf_cleanup();
-	FftwMutex.unlock();
 
 	}//end of main RGB_denoise
 
