@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.10.0
-Version=306
+AppVersion=4.0.11.0
+Version=307
 
 [Exposure]
 Auto=true

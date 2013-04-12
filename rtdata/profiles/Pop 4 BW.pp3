@@ -1,22 +1,22 @@
 [Version]
-AppVersion=4.0.10.0
-Version=306
+AppVersion=4.0.11.0
+Version=307
 
 [Exposure]
 Auto=false
 Clip=0.02
-Compensation=2
+Compensation=0.66
 Brightness=0
 Contrast=0
-Saturation=100
+Saturation=0
 Black=0
-HighlightCompr=250
+HighlightCompr=70
 HighlightComprThreshold=0
 ShadowCompr=50
 CurveMode=SatAndValueBlending
-CurveMode2=SatAndValueBlending
-Curve=3;0;0;0.14984709480122321;0;0.32721712538226283;0.40978593272171249;1;1;
-Curve2=3;0;0;0.18975903614457842;0.1536144578313253;0.56626506024096346;0.96686746987951844;0.69277108433734946;1;
+CurveMode2=Standard
+Curve=3;0;0;0.084;0;0.187;0.188;0.587;0.742;1;1;
+Curve2=0;
 
 [Channel Mixer]
 Red=100;0;0;
@@ -31,7 +31,7 @@ AvoidColorShift=true
 RedAndSkinTonesProtection=0
 BWtoning=true
 LCredsk=true
-LCurve=0;
+LCurve=3;0;0;0.212;0.119;0.674;0.773;1;1;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -78,8 +78,8 @@ Uniformity=50
 
 [White Balance]
 Setting=Camera
-Temperature=6112
-Green=1.168
+Temperature=7922
+Green=1.159
 
 [Color appearance]
 Enabled=true
@@ -103,12 +103,12 @@ SurrSource=false
 Gamut=true
 Datacie=false
 Tonecie=true
-CurveMode=Brightness
-CurveMode2=Brightness
+CurveMode=Lightness
+CurveMode2=Lightness
 CurveMode3=Colorfullness
-Curve=3;0;0;0.16825396825396829;0.069841269841269843;0.36250000000000004;0.49687500000000001;0.60912698412698452;1;1;1;
-Curve2=3;0;0;0.14375000000000004;0;0.47936507936507933;0.61904761904761851;1;1;
-Curve3=3;0;0;0.41904761904761922;0.53968253968253965;1;1;
+Curve=3;0;0;0.15;0;0.545;1;1;1;
+Curve2=0;
+Curve3=0;
 
 [Impulse Denoising]
 Enabled=true
@@ -140,7 +140,7 @@ ReweightingIterates=0
 Enabled=false
 HighQuality=false
 Highlights=20
-HighlightTonalWidth=90
+HighlightTonalWidth=80
 Shadows=20
 ShadowTonalWidth=80
 LocalContrast=0
@@ -150,8 +150,8 @@ Radius=70
 Enabled=false
 X=0
 Y=0
-W=3888
-H=2608
+W=7360
+H=4912
 FixedRatio=false
 Ratio=3:2
 Orientation=Landscape
@@ -226,39 +226,12 @@ Mult3=1
 Mult4=0.2
 
 [HSV Equalizer]
-HCurve=1;0;0.5;0.34999999999999998;0.34999999999999998;0.16666666666666666;0.5;0.34999999999999998;0.34999999999999998;0.33333333333333331;0.5;0.34999999999999998;0.34999999999999998;0.5;0.5;0.34999999999999998;0.34999999999999998;0.66666666666666663;0.5;0.34999999999999998;0.34999999999999998;0.83333333333333326;0.5;0.34999999999999998;0.34999999999999998;
-SCurve=1;0;0.5;0.34999999999999998;0.34999999999999998;0.16666666666666666;0.5;0.34999999999999998;0.34999999999999998;0.33333333333333331;0.5;0.34999999999999998;0.34999999999999998;0.5;0.5;0.34999999999999998;0.34999999999999998;0.66666666666666663;0.5;0.34999999999999998;0.34999999999999998;0.83333333333333326;0.5;0.34999999999999998;0.34999999999999998;
-VCurve=1;0;0.5;0.34999999999999998;0.34999999999999998;0.16666666666666666;0.5;0.34999999999999998;0.34999999999999998;0.33333333333333331;0.5;0.34999999999999998;0.34999999999999998;0.5;0.5;0.34999999999999998;0.34999999999999998;0.66666666666666663;0.5;0.34999999999999998;0.34999999999999998;0.83333333333333326;0.5;0.34999999999999998;0.34999999999999998;
+HCurve=0;
+SCurve=0;
+VCurve=0;
 
 [RGB Curves]
 LumaMode=false
-rCurve=0;
-gCurve=0;
-bCurve=0;
-
-[RAW]
-DarkFrame=
-DarkFrameAuto=false
-FlatFieldFile=
-FlatFieldAutoSelect=false
-FlatFieldBlurRadius=2
-FlatFieldBlurType=Area Flatfield
-CA=true
-CARed=0
-CABlue=0
-HotDeadPixels=true
-HotDeadPixelThresh=40
-LineDenoise=0
-GreenEqThreshold=0
-CcSteps=0
-Method=amaze
-DCBIterations=2
-DCBEnhance=false
-ALLEnhance=false
-PreExposure=1
-PrePreserv=0
-PreBlackzero=0
-PreBlackone=0
-PreBlacktwo=0
-PreBlackthree=0
-PreTwoGreen=true
+rCurve=1;0;0;1;1;
+gCurve=1;0;0;0.25;0.25;0.5;0.5;0.75;0.75;1;1;
+bCurve=1;0;0;0.25;0.25;0.5;0.5;0.75;0.75;1;1;
