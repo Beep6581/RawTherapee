@@ -707,11 +707,10 @@ ZOOMBAR_SCALE;Rozmer
 ZOOMBAR_SMALL;Malý
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Otvoriť (nové) okno s detailom
-ZOOMPANEL_ZOOM100;Priblíženie na 100% <b>1</b>
-ZOOMPANEL_ZOOMFITSCREEN;Prispôsobiť obrazovke <b>F</b>
+ZOOMPANEL_ZOOM100;Priblíženie na 100% <b>z</b>
+ZOOMPANEL_ZOOMFITSCREEN;Prispôsobiť obrazovke <b>f</b>
 ZOOMPANEL_ZOOMIN;Priblížiť <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
-
 #00 Slovenčina
 #01 08.05.2008
 #02 01.02.2009
@@ -727,6 +726,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !ABOUT_TAB_LICENSE;License
 !ABOUT_TAB_RELEASENOTES;Release Notes
 !ABOUT_TAB_SPLASH;Splash
+!BATCHQUEUE_DESTFILENAME;Path and file name
 !CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_CURVE;Curve
 !CURVEEDITOR_MINMAXCPOINTS;Minima/Maxima control points
@@ -767,7 +767,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
 !FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> (in the File Browser) to browse there;\n\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
+!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\n\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CACHE;Cache
@@ -794,7 +794,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-!FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box (in the File Browser).\n<b>Enter</b> to commence search.\n<b>Escape</b> to clear.
+!FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box.\n<b>Enter</b> to commence search.\n<b>Esc</b> to clear.\n<b>Shift-Esc</b> to remove focus.
 !FILEBROWSER_QUERYLABEL; Find:
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
@@ -931,7 +931,11 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !HISTORY_MSG_201;NR - Delta Chrominance red
 !HISTORY_MSG_202;NR - Delta Chrominance blue
 !HISTORY_MSG_203;NR - Method
+!HISTORY_MSG_204;LMMSE enhancement steps
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
+!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
+!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_FRAME_BATCHQUEUE_TOOLTIP;Processing Queue.\nShortcut: <b>Ctrl-F3</b>
 !MAIN_FRAME_EDITOR;Editor
@@ -1011,12 +1015,17 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic method
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic false color suppression steps
+!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
+!PREFERENCES_BEHADDALL;All to 'Add'
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
+!PREFERENCES_BEHSETALL;All to 'Set'
 !PREFERENCES_BLACKBODY;Tungsten
 !PREFERENCES_CIEART;CIECAM02 optimization
 !PREFERENCES_CIEART_LABEL;Use float precision instead of double
@@ -1086,6 +1095,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector, viewing, etc.)
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
@@ -1094,8 +1104,10 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !PROGRESSBAR_GREENEQUIL;Green equilibrating...
 !PROGRESSBAR_LINEDENOISE;Line denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
+!PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
+!SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP;Subsampling
 !SAVEDLG_SUBSAMP_1;Best Compression
 !SAVEDLG_SUBSAMP_2;Balanced
@@ -1304,7 +1316,12 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RAWEXPOS_PRESER;White Point: HL Preserving Corr. (EV)
 !TP_RAWEXPOS_TWOGREEN;Two greens together
 !TP_RAW_ALLENHANCE;Post-Demosaic Artifact/Noise Reduction
+!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
+!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
 !TP_RAW_LABEL;Demosaicing
+!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped Area
 !TP_RESIZE_FITBOX;Bounding Box
@@ -1315,7 +1332,7 @@ ZOOMPANEL_ZOOMOUT;Oddialiť <b>-</b>
 !TP_RGBCURVES_GREEN;G
 !TP_RGBCURVES_LABEL;RGB Curves
 !TP_RGBCURVES_LUMAMODE;Luminosity Mode
-!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.
+!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.
 !TP_RGBCURVES_RED;R
 !TP_SHARPENEDGE_AMOUNT;Quantity
 !TP_SHARPENEDGE_LABEL;Edges

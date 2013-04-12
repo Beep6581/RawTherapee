@@ -658,9 +658,9 @@ PARTIALPASTE_RAWGROUP;Raw Settings
 PARTIALPASTE_RAW_ALLENHANCE;Apply post demosaic artifact/noise reduction
 PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
-PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 PARTIALPASTE_RAW_DMETHOD;Demosaic method
 PARTIALPASTE_RAW_FALSECOLOR;Demosaic false color suppression steps
+PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_RGBCURVES;RGB curves
 PARTIALPASTE_ROTATION;Rotation
@@ -676,11 +676,11 @@ PREFERENCES_ADD;Add
 PREFERENCES_APPLNEXTSTARTUP;restart required
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
 PREFERENCES_BATCH_PROCESSING;Batch Processing
-PREFERENCES_BEHAVIOR;Behavior
-PREFERENCES_BEHADDALL;All to 'Add'
 PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values 
-PREFERENCES_BEHSETALL;All to 'Set'
+PREFERENCES_BEHADDALL;All to 'Add'
+PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
+PREFERENCES_BEHSETALL;All to 'Set'
 PREFERENCES_BLACKBODY;Tungsten
 PREFERENCES_BLINKCLIPPED;Blink clipped areas
 PREFERENCES_CACHECLEARALL;Clear All
@@ -1187,14 +1187,14 @@ TP_RAWEXPOS_TWOGREEN;Two greens together
 TP_RAW_ALLENHANCE;Post-Demosaic Artifact/Noise Reduction
 TP_RAW_DCBENHANCE;DCB Enhancement Step
 TP_RAW_DCBITERATIONS;Number of DCB Iterations
-TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
-TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 TP_RAW_DMETHOD;Method
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
 TP_RAW_FALSECOLOR;False Color Suppression Steps
 TP_RAW_LABEL;Demosaicing
+TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_BICUBICSF;Bicubic (Softer)
 TP_RESIZE_BICUBICSH;Bicubic (Sharper)

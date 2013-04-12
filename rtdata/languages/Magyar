@@ -1134,11 +1134,10 @@ ZOOMBAR_SCALE;Kicsinyítés
 ZOOMBAR_SMALL;KicsiHISTOGRAM_BUTTON_B;B
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;(Új) lupe megnyitása
-ZOOMPANEL_ZOOM100;Nagyítás 100%-ra <b>1</b>
-ZOOMPANEL_ZOOMFITSCREEN;Képernyő méretéhez igazítás <b>F</b>
+ZOOMPANEL_ZOOM100;Nagyítás 100%-ra <b>z</b>
+ZOOMPANEL_ZOOMFITSCREEN;Képernyő méretéhez igazítás <b>f</b>
 ZOOMPANEL_ZOOMIN;Nagyítás <b>+</b>
 ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
-
 #00 Magyar
 #01 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
 
@@ -1146,6 +1145,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!BATCHQUEUE_DESTFILENAME;Path and file name
 !EXTPROGTARGET_1;raw
 !EXTPROGTARGET_2;queue-processed
 !FILEBROWSER_EXTPROGMENU;Open with
@@ -1192,7 +1192,11 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_201;NR - Delta Chrominance red
 !HISTORY_MSG_202;NR - Delta Chrominance blue
 !HISTORY_MSG_203;NR - Method
+!HISTORY_MSG_204;LMMSE enhancement steps
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
+!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
+!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
+!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
 !MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
@@ -1206,6 +1210,11 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 !PARTIALPASTE_LENSPROFILE;Lens correction profile
+!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
+!PREFERENCES_BEHADDALL;All to 'Add'
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
+!PREFERENCES_BEHSETALL;All to 'Set'
 !PREFERENCES_BLACKBODY;Tungsten
 !PREFERENCES_CIEART;CIECAM02 optimization
 !PREFERENCES_CIEART_LABEL;Use float precision instead of double
@@ -1230,8 +1239,11 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
 !PREFERENCES_TAB_PERFORMANCE;Performance
 !PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector, viewing, etc.)
+!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+!PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
+!SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP;Subsampling
 !SAVEDLG_SUBSAMP_1;Best Compression
 !SAVEDLG_SUBSAMP_2;Balanced
@@ -1376,8 +1388,13 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LENSPROFILE_USECA;CA correction
 !TP_LENSPROFILE_USEDIST;Distortion correction
 !TP_LENSPROFILE_USEVIGN;Vignetting correction
+!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
+!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
+!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 !TP_RGBCURVES_LUMAMODE;Luminosity Mode
-!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.
+!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.
 !TP_SHARPENING_TOOLTIP;Expect a slightly different effect when used with CIECAM02. If difference is observed, adjust to taste.
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin tones

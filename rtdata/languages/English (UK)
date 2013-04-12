@@ -1,3 +1,4 @@
+
 EXPORT_BYPASS_COLORDENOISE;Bypass Colour denoise
 EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Colour Suppression
 FILEBROWSER_POPUPCOLORLABEL;Colour label
@@ -76,7 +77,6 @@ TP_VIGNETTING_CENTER;Centre
 TP_VIGNETTING_CENTER_X;Centre X
 TP_VIGNETTING_CENTER_Y;Centre Y
 
-
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -88,6 +88,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !ABOUT_TAB_SPLASH;Splash
 !ADJUSTER_RESET_TO_DEFAULT;Reset to default
 !BATCHQUEUE_AUTOSTART;Auto start
+!BATCHQUEUE_DESTFILENAME;Path and file name
 !BATCH_PROCESSING;Batch Processing
 !CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_CURVE;Curve
@@ -168,7 +169,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
 !FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> (in the File Browser) to browse there;\n\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
+!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\n\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CACHE;Cache
@@ -228,7 +229,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
 !FILEBROWSER_PROCESSINGSETTINGS;Settings
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-!FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box (in the File Browser).\n<b>Enter</b> to commence search.\n<b>Escape</b> to clear.
+!FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box.\n<b>Enter</b> to commence search.\n<b>Esc</b> to clear.\n<b>Shift-Esc</b> to remove focus.
 !FILEBROWSER_QUERYLABEL; Find:
 !FILEBROWSER_RENAMEDLGLABEL;Rename file
 !FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
@@ -242,7 +243,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !FILEBROWSER_SHOWDIRHINT;Clear all filters.\nShortcut: <b>D</b>
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
-!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>
+!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>\n\nShortcut in Single Editor Tab: <b>Alt-i</b>
 !FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
 !FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star.\nShortcut: <b>1</b>
 !FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star.\nShortcut: <b>2</b>
@@ -260,8 +261,8 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !FILEBROWSER_THUMBSIZE;Thumbnail size
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
 !FILEBROWSER_USETEMPLATE;Use template:
-!FILEBROWSER_ZOOMINHINT;Increase thumbnail size.\nShortcut: <b>+</b>
-!FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\nShortcut: <b>-</b>
+!FILEBROWSER_ZOOMINHINT;Increase thumbnail size.\nShortcut: <b>+</b>\n\nShortcut in Single Editor Tab: <b>Alt +</b>
+!FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\nShortcut: <b>-</b>\n\nShortcut in Single Editor Tab: <b>Alt -</b>
 !GENERAL_ABOUT;About
 !GENERAL_AFTER;After
 !GENERAL_AUTO;Automatic
@@ -305,25 +306,17 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_DELSNAPSHOT;Del
 !HISTORY_FROMCLIPBOARD;From Clipboard
 !HISTORY_LABEL;History
-!HISTORY_MSG_1;Photo Loaded
 !HISTORY_MSG_2;PP3 Loaded
-!HISTORY_MSG_3;PP3 Changed
-!HISTORY_MSG_4;History Browsing
 !HISTORY_MSG_5;Lightness
-!HISTORY_MSG_6;Contrast
-!HISTORY_MSG_7;Black
 !HISTORY_MSG_8;Exposure Compensation
 !HISTORY_MSG_9;Highlight Compression
 !HISTORY_MSG_10;Shadow Compression
-!HISTORY_MSG_11;Tone Curve 1
 !HISTORY_MSG_12;Auto Exposure
 !HISTORY_MSG_13;Exposure Clipping
 !HISTORY_MSG_14;Luminance Lightness
-!HISTORY_MSG_15;Luminance Contrast
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
 !HISTORY_MSG_18;Luminance Shadow Compr.
-!HISTORY_MSG_19;'L' Curve
 !HISTORY_MSG_20;Sharpening
 !HISTORY_MSG_21;Sharpening Radius
 !HISTORY_MSG_22;Sharpening Amount
@@ -496,6 +489,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_201;NR - Delta Chrominance red
 !HISTORY_MSG_202;NR - Delta Chrominance blue
 !HISTORY_MSG_203;NR - Method
+!HISTORY_MSG_204;LMMSE enhancement steps
 !HISTORY_NEWSNAPSHOTAS;As...
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -555,6 +549,9 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !IPTCPANEL_TRANSREFERENCE;Trans. reference
 !MAIN_BUTTON_EXIT;Exit
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
+!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
+!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
 !MAIN_BUTTON_PREFERENCES;Preferences
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+Q</b>
 !MAIN_BUTTON_QUEUE;Put to Queue
@@ -702,6 +699,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !PARTIALPASTE_RAW_DCBENHANCE;Apply DCB enhancement step
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic method
+!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PARTIALPASTE_RESIZE;Resize
 !PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_ROTATION;Rotation
@@ -716,6 +714,10 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !PREFERENCES_ADD;Add
 !PREFERENCES_APPLNEXTSTARTUP;restart required
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
+!PREFERENCES_BEHADDALL;All to 'Add'
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
+!PREFERENCES_BEHSETALL;All to 'Set'
 !PREFERENCES_BLACKBODY;Tungsten
 !PREFERENCES_BLINKCLIPPED;Blink clipped areas
 !PREFERENCES_CACHECLEARALL;Clear All
@@ -860,6 +862,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !PROFILEPANEL_LABEL;Processing Profiles
 !PROFILEPANEL_LOADDLGLABEL;Load Processing Parameters...
 !PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
 !PROFILEPANEL_PCUSTOM;Custom
 !PROFILEPANEL_PFILE;From file
@@ -884,9 +887,10 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !PROGRESSBAR_LOADJPEG;Loading JPEG file...
 !PROGRESSBAR_LOADPNG;Loading PNG file...
 !PROGRESSBAR_LOADTIFF;Loading TIFF file...
+!PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING;Processing image...
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
-!PROGRESSBAR_READY;Ready.
+!PROGRESSBAR_READY;Ready
 !PROGRESSBAR_SAVEJPEG;Saving JPEG file...
 !PROGRESSBAR_SAVEPNG;Saving PNG file...
 !PROGRESSBAR_SAVETIFF;Saving TIFF file...
@@ -898,6 +902,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !QINFO_NOEXIF;Exif data not available.
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
 !SAVEDLG_FILEFORMAT;File format
+!SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_JPEGQUAL;JPEG Quality
 !SAVEDLG_JPGFILTER;JPEG files
 !SAVEDLG_PNGCOMPR;PNG Compression
@@ -935,21 +940,19 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_CHMIXER_RED;Red Channel
 !TP_CHROMATABERR_LABEL;Chromatic Aberration
 !TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
-!TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\nShortcut: <b>[</b>
-!TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\nShortcut: <b>]</b>
+!TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\nShortcut: <b>[</b>\n\nShortcut in Single Editor Tab: <b>Alt-[</b>
+!TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\nShortcut: <b>]</b>\n\nShortcut in Single Editor Tab: <b>Alt-]</b>
 !TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
 !TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity (cd/m²)
 !TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environnement\n(usually 2000cd/m²)
 !TP_COLORAPP_ADAPTVIEWING;Adaptation viewing luminosity (cd/m²)
 !TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²)
-!TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
 !TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
 !TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters
 !TP_COLORAPP_BRIGHT;Brightness (Q)
 !TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from Lab and RGB brightness
-!TP_COLORAPP_CHROMA;Chroma (C)
 !TP_COLORAPP_CHROMA_S;Saturation (S)
 !TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from Lab and RGB saturation
 !TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from Lab and RGB chroma
@@ -976,12 +979,10 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 !TP_COLORAPP_LIGHT;Lightness (J)
 !TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from Lab and RGB lightness
-!TP_COLORAPP_MODEL;White-Point Model
 !TP_COLORAPP_RSTPRO;Red & skin tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin tones protection (sliders and curves)
 !TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
 !TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
-!TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_AVER;Average
 !TP_COLORAPP_SURROUND_DARK;Dark
 !TP_COLORAPP_SURROUND_DIM;Dim
@@ -1101,11 +1102,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_FILEDLGFILTERANY;Any files
-!TP_ICM_INPUTCAMERA;Camera standard
-!TP_ICM_INPUTCUSTOM;Custom
 !TP_ICM_INPUTDLGLABEL;Select Input DCP/ICC Profile...
-!TP_ICM_INPUTEMBEDDED;Use embedded, if possible
-!TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTPROFILE;Input Profile
 !TP_ICM_NOICM;No ICM: sRGB Output
 !TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
@@ -1187,7 +1184,12 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_RAW_DCBENHANCE;DCB Enhancement Step
 !TP_RAW_DCBITERATIONS;Number of DCB Iterations
 !TP_RAW_DMETHOD;Method
+!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
+!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
 !TP_RAW_LABEL;Demosaicing
+!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_BICUBICSF;Bicubic (Softer)
 !TP_RESIZE_BICUBICSH;Bicubic (Sharper)
@@ -1211,7 +1213,6 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_RGBCURVES_CHANNEL;Channel
 !TP_RGBCURVES_GREEN;G
 !TP_RGBCURVES_LABEL;RGB Curves
-!TP_RGBCURVES_LUMAMODE;Luminosity Mode
 !TP_RGBCURVES_RED;R
 !TP_ROTATE_DEGREE;Degree
 !TP_ROTATE_LABEL;Rotate
@@ -1317,7 +1318,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !ZOOMBAR_SMALL;Small
 !ZOOMPANEL_100;(100%)
 !ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
-!ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>1</b>
+!ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
 !ZOOMPANEL_ZOOMFITSCREEN;Fit to screen\nShortcut: <b>f</b>
 !ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 !ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>

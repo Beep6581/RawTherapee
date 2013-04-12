@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
@@ -658,9 +659,9 @@ PARTIALPASTE_RAWGROUP;Réglages RAW
 PARTIALPASTE_RAW_ALLENHANCE;Applique la réduction de bruit/artefact post-dématriçage
 PARTIALPASTE_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Nombre d'itération de DCB
-PARTIALPASTE_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
 PARTIALPASTE_RAW_DMETHOD;Algorithme de dématriçage
 PARTIALPASTE_RAW_FALSECOLOR;Nbr d'itération des fausses couleurs
+PARTIALPASTE_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
 PARTIALPASTE_RESIZE;Redimentionnement
 PARTIALPASTE_RGBCURVES;Courbes RVB
 PARTIALPASTE_ROTATION;Rotation
@@ -676,11 +677,11 @@ PREFERENCES_ADD;Ajoute
 PREFERENCES_APPLNEXTSTARTUP;appliqué au prochain lancement
 PREFERENCES_AUTOMONPROFILE;Utiliser automatiquement le profil de l'écran principal
 PREFERENCES_BATCH_PROCESSING;Traitement par lot
-PREFERENCES_BEHAVIOR;Comportement
-PREFERENCES_BEHADDALL;Tout à 'Ajoute'
 PREFERENCES_BEHADDALLHINT;Règle tous les paramètres sur le mode <b>Ajoute</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera des <b>deltas</b> par-rapport aux valeurs existantes
-PREFERENCES_BEHSETALL;Tout à 'Remplace'
+PREFERENCES_BEHADDALL;Tout à 'Ajoute'
+PREFERENCES_BEHAVIOR;Comportement
 PREFERENCES_BEHSETALLHINT;Règle tous les paramètres sur le mode <b>Remplace</b>.\nLa modification des paramètres dans le panneau d'édition en par lot sera <b>absolue</b>, les valeurs réelles seront affichées
+PREFERENCES_BEHSETALL;Tout à 'Remplace'
 PREFERENCES_BLACKBODY;Tungstène
 PREFERENCES_BLINKCLIPPED;Faire clignoter les zones hors domaine
 PREFERENCES_CACHECLEARALL;Tout nettoyer
@@ -972,6 +973,8 @@ TP_COLORAPP_MODEL;Modèle de Point Blanc
 TP_COLORAPP_MODEL_TOOLTIP;<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglé dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglé dans Préférences
 TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges 
 TP_COLORAPP_RSTPRO_TOOLTIP;Protection des tons chairs et rouges (curseurs et courbes)
+TP_COLORAPP_SHARPCIE;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique avec Q/C
+TP_COLORAPP_SHARPCIE_TOOLTIP;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique utiliseront CIECAM02 si activé.
 TP_COLORAPP_SURROUND;Entourage
 TP_COLORAPP_SURROUND_AVER;Moyen
 TP_COLORAPP_SURROUND_DARK;Sombre
@@ -1202,13 +1205,13 @@ TP_RAW_ALLENHANCE;Réduction de bruit/artefact post-dématriçage
 TP_RAW_DCBENHANCE;Appliquer la phase d'amélioration de DCB
 TP_RAW_DCBITERATIONS;Nombre d'itération de DCB
 TP_RAW_DMETHOD;Méthode
-TP_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
-TP_RAW_LMMSE_TOOLTIP;Ajoute gamma (niveau 1) - ajoute médian (niveau 2,3,4), puis ajoute un affinage (niveau 5,6) pour réduire les artéfacts et améliorer le rapport signal/bruit
 TP_RAW_DMETHOD_PROGRESSBAR;Dématriçage %1...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Affinage du dématriçage...
 TP_RAW_DMETHOD_TOOLTIP;Note: IGV et LMMSE sont dédiés aux images à haut ISO
 TP_RAW_FALSECOLOR;Itérations pour la suppression\ndes fausses couleurs
 TP_RAW_LABEL;Dématriçage
+TP_RAW_LMMSEITERATIONS;Niveau d'amélioration LMMSE
+TP_RAW_LMMSE_TOOLTIP;Ajoute gamma (niveau 1) - ajoute médian (niveau 2,3,4), puis ajoute un affinage (niveau 5,6) pour réduire les artéfacts et améliorer le rapport signal/bruit
 TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_BICUBICSF;Bicubique (Plus doux)
 TP_RESIZE_BICUBICSH;Bicubique (Plus net)
@@ -1234,6 +1237,8 @@ TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Canal
 TP_RGBCURVES_GREEN;V
 TP_RGBCURVES_LABEL;Courbes RVB
+TP_RGBCURVES_LUMAMODE;Mode Lominosité
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Mode Lominosité</b> permet de faire varier la contribution des canaux R, V et B à la luminosité de l'image, sans altérer les couleurs de l'image.
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation
@@ -1354,7 +1359,4 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-TP_COLORAPP_SHARPCIE;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique avec Q/C
-TP_COLORAPP_SHARPCIE_TOOLTIP;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique utiliseront CIECAM02 si activé.
-TP_RGBCURVES_LUMAMODE;Mode Lominosité
-TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Mode Lominosité</b> permet de faire varier la contribution des canaux R, V et B à la luminosité de l'image, sans altérer les couleurs de l'image.
+!PROGRESSBAR_NOIMAGES;No images found

@@ -16,6 +16,7 @@ if [[ $? != 0 ]]; then
 fi
 
 # First thing, we want to strip default of any "!" and duplicates.
+dos2unix *
 grep -v '^!' default | sort -Vu > "$tmp"
 mv "$tmp" "default"
 

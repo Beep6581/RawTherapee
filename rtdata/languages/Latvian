@@ -587,7 +587,6 @@ ZOOMBAR_NORMAL;Normāls
 ZOOMBAR_PREVIEW;Pirmsskats
 ZOOMBAR_SCALE;Mērogs
 ZOOMBAR_SMALL;Mazs
-
 #00 Latvian
 ﻿#
 
@@ -601,6 +600,7 @@ ZOOMBAR_SMALL;Mazs
 !ABOUT_TAB_RELEASENOTES;Release Notes
 !ABOUT_TAB_SPLASH;Splash
 !BATCHQUEUE_AUTOSTART;Auto start
+!BATCHQUEUE_DESTFILENAME;Path and file name
 !BATCH_PROCESSING;Batch Processing
 !CURVEEDITOR_CURVES;Curves
 !CURVEEDITOR_CURVE;Curve
@@ -652,7 +652,7 @@ ZOOMBAR_SMALL;Mazs
 !FILEBROWSER_AUTODARKFRAME;Auto Dark Frame
 !FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to browse to the chosen path
-!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> (in the File Browser) to browse there;\n\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
+!FILEBROWSER_BROWSEPATHHINT;Type a path to navigate to.\n<b>Ctrl-O</b> to focus to the path text box.\n<b>Enter</b> / <b>Ctrl-Enter</b> to browse there;\n<b>Esc</b> to clear changes.\n<b>Shift-Esc</b> to remove focus.\n\n\nPath shortcuts:\n  <b>~</b> - user's home directory\n  <b>!</b> - user's pictures directory
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CACHE;Cache
@@ -681,7 +681,7 @@ ZOOMBAR_SMALL;Mazs
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
 !FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
-!FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box (in the File Browser).\n<b>Enter</b> to commence search.\n<b>Escape</b> to clear.
+!FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box.\n<b>Enter</b> to commence search.\n<b>Esc</b> to clear.\n<b>Shift-Esc</b> to remove focus.
 !FILEBROWSER_QUERYLABEL; Find:
 !FILEBROWSER_SELECTDARKFRAME;Select dark frame...
 !FILEBROWSER_SELECTFLATFIELD;Select flat field...
@@ -692,7 +692,7 @@ ZOOMBAR_SMALL;Mazs
 !FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
 !FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
 !FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
-!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>
+!FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>\n\nShortcut in Single Editor Tab: <b>Alt-i</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
@@ -839,8 +839,12 @@ ZOOMBAR_SMALL;Mazs
 !HISTORY_MSG_201;NR - Delta Chrominance red
 !HISTORY_MSG_202;NR - Delta Chrominance blue
 !HISTORY_MSG_203;NR - Method
+!HISTORY_MSG_204;LMMSE enhancement steps
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
+!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
+!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
+!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+Q</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
@@ -943,6 +947,7 @@ ZOOMBAR_SMALL;Mazs
 !PARTIALPASTE_RAW_DCBITERATIONS;Number of DCB iterations
 !PARTIALPASTE_RAW_DMETHOD;Demosaic method
 !PARTIALPASTE_RAW_FALSECOLOR;Demosaic false color suppression steps
+!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PARTIALPASTE_RGBCURVES;RGB curves
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
@@ -951,7 +956,11 @@ ZOOMBAR_SMALL;Mazs
 !PREFERENCES_ADD;Add
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
+!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
+!PREFERENCES_BEHADDALL;All to 'Add'
 !PREFERENCES_BEHAVIOR;Behavior
+!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
+!PREFERENCES_BEHSETALL;All to 'Set'
 !PREFERENCES_BLACKBODY;Tungsten
 !PREFERENCES_CIEART;CIECAM02 optimization
 !PREFERENCES_CIEART_LABEL;Use float precision instead of double
@@ -1030,6 +1039,7 @@ ZOOMBAR_SMALL;Mazs
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_LOADPPASTE;Parameters to load
+!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
@@ -1038,10 +1048,12 @@ ZOOMBAR_SMALL;Mazs
 !PROGRESSBAR_GREENEQUIL;Green equilibrating...
 !PROGRESSBAR_LINEDENOISE;Line denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
+!PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 !PROGRESSDLG_PROFILECHANGEDINBROWSER;Processing profile changed in browser
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP;Subsampling
 !SAVEDLG_SUBSAMP_1;Best Compression
 !SAVEDLG_SUBSAMP_2;Balanced
@@ -1281,7 +1293,12 @@ ZOOMBAR_SMALL;Mazs
 !TP_RAW_ALLENHANCE;Post-Demosaic Artifact/Noise Reduction
 !TP_RAW_DCBENHANCE;DCB Enhancement Step
 !TP_RAW_DCBITERATIONS;Number of DCB Iterations
+!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
+!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
+!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
 !TP_RAW_LABEL;Demosaicing
+!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 !TP_RESIZE_APPLIESTO;Applies to:
 !TP_RESIZE_CROPPEDAREA;Cropped Area
 !TP_RESIZE_FITBOX;Bounding Box
@@ -1295,7 +1312,7 @@ ZOOMBAR_SMALL;Mazs
 !TP_RGBCURVES_GREEN;G
 !TP_RGBCURVES_LABEL;RGB Curves
 !TP_RGBCURVES_LUMAMODE;Luminosity Mode
-!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G an B channels to the Luminosity of the image, without altering image color.
+!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.
 !TP_RGBCURVES_RED;R
 !TP_SHARPENEDGE_AMOUNT;Quantity
 !TP_SHARPENEDGE_LABEL;Edges
@@ -1361,7 +1378,7 @@ ZOOMBAR_SMALL;Mazs
 !TP_WBALANCE_TUNGSTEN;Tungsten
 !ZOOMPANEL_100;(100%)
 !ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
-!ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>1</b>
+!ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
 !ZOOMPANEL_ZOOMFITSCREEN;Fit to screen\nShortcut: <b>f</b>
 !ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 !ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
