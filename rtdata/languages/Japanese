@@ -1356,8 +1356,8 @@ ZOOMBAR_SCALE;スケール
 ZOOMBAR_SMALL;小
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;新規ディテール ウィンドウを開く
-ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>1</b>
-ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>F</b>
+ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>z</b>
+ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>f</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 #01 a3novy: 2011-05-15
@@ -1374,3 +1374,12 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_204;LMMSE enhancement steps
+!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
+!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
+!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
+!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
+!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+!PROGRESSBAR_NOIMAGES;No images found
+!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
