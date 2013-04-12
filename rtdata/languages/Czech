@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -6,6 +5,7 @@ ABOUT_TAB_RELEASENOTES;Poznámky k vydání
 ABOUT_TAB_SPLASH;Úvodní obrazovka
 ADJUSTER_RESET_TO_DEFAULT;Vrátit se k původnímu
 BATCHQUEUE_AUTOSTART;Automatický start
+BATCHQUEUE_DESTFILENAME;Cesta a název souboru
 BATCH_PROCESSING;Dávkové zpracování
 CURVEEDITOR_CURVES;Křivky
 CURVEEDITOR_CURVE;Křivka
@@ -62,7 +62,7 @@ EXPORT_BYPASS_LUMADENOISE;Vynechat redukci jasového šumu
 EXPORT_BYPASS_RAW_ALL_ENHANCE;Vynechat redukci artefaktů a šumu po demozajkování
 EXPORT_BYPASS_RAW_CA;Vynechat [raw] korekci Chromatické aberace
 EXPORT_BYPASS_RAW_CCSTEPS;Vynechat [raw] potlačení chybných barev
-EXPORT_BYPASS_RAW_DCB_ENHANCE;Vynechat [raw] rozšířené kroky DCB
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Vynechat [raw] kroky rozšíření DCB
 EXPORT_BYPASS_RAW_DCB_ITERATIONS;Vynechat [raw] průchody DCB
 EXPORT_BYPASS_RAW_DF;Vynechat [raw] tmavé snímky
 EXPORT_BYPASS_RAW_FF;Vynechat [raw] Flat Field
@@ -88,7 +88,7 @@ FILEBROWSER_ARRANGEMENTHINT;Přepnout mezi vertikálním/horizontálním zarovn�
 FILEBROWSER_AUTODARKFRAME;Automatický tmavý snímek
 FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klikněte pro výběr cesty
-FILEBROWSER_BROWSEPATHHINT;Vložte cestu pro procházení.\n<b>Ctrl-O</b> pro přepnutí do adresního řádku\n<b>Enter</b>/ <b>Ctrl-Enter</b> (v prohlížeči souborů) pro procházení ;\n\nZkratky pro cesty:\n  <b>~</b> - domácí složka uživatele\n  <b>!</b> - složka s obrázky uživatele
+FILEBROWSER_BROWSEPATHHINT;Vložte cestu pro procházení.\n<b>Ctrl-O</b> pro přepnutí do adresního řádku\n<b>Enter</b>/ <b>Ctrl-Enter</b> pro procházení ;\n<b>Esc</b> pro zrušení změn.\n<b>Shift-Esc</b> pro zrušení přepnutí.\n\n\nZkratky pro cesty:\n  <b>~</b> - domácí složka uživatele\n  <b>!</b> - složka s obrázky uživatele
 FILEBROWSER_CACHECLEARFROMFULL;Vymazat z cache - úplně
 FILEBROWSER_CACHECLEARFROMPARTIAL;Vymazat z cache - částečně
 FILEBROWSER_CACHE;Cache
@@ -149,7 +149,7 @@ FILEBROWSER_POPUPUNTRASH;Vymazat z koše
 FILEBROWSER_PROCESSINGSETTINGSHINT;Nastavení formátu souboru a výstupní složky
 FILEBROWSER_PROCESSINGSETTINGS;Nastavení
 FILEBROWSER_QUERYBUTTONHINT;Smaže vyhledávací dotaz
-FILEBROWSER_QUERYHINT;Napište část jména hledaného souboru nebo <i>čárkami oddělený seznam</i>.\nNapříklad: <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> k přepnutí do pole hledání (v Prohlížeči souborů).\n<b>Enter</b> ke spuštění hledání\n<b>Escape</b> pro vyčištění.
+FILEBROWSER_QUERYHINT;Napište část jména hledaného souboru nebo <i>čárkami oddělený seznam</i>.\nNapříklad: <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> pro přepnutí do pole hledání .\n<b>Enter</b> pro zahájení hledání.\n<b>Esc</b> pro vyčištění.\n<b>Shift-Esc</b> pro zrušení přepnutí.
 FILEBROWSER_QUERYLABEL; Najít: 
 FILEBROWSER_RENAMEDLGLABEL;Přejmenování souboru
 FILEBROWSER_RENAMEDLGMSG;Přejmenovat soubor "%1" na:
@@ -163,7 +163,7 @@ FILEBROWSER_SHOWCOLORLABEL5HINT;Ukázat obrázky s růžovým štítkem.\nZkratk
 FILEBROWSER_SHOWDIRHINT;Smazat všechny filtry.\nZkratka: <b>D</b>
 FILEBROWSER_SHOWEDITEDHINT;Ukázat upravené obrázky.\nZkratka: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Ukázat neupravené obrázky.\nZkratka: <b>6</b>
-FILEBROWSER_SHOWEXIFINFO;Zobrazit Exif informace.\nZkratka: <b>i</b>
+FILEBROWSER_SHOWEXIFINFO;Zobrazit Exif informace.\nZkratka: <b>i</b>\n\nZkratka v módu jedné karty editoru: <b>Alt-i</b>
 FILEBROWSER_SHOWQUEUEHINT;Ukázat obsah fronty zpracování
 FILEBROWSER_SHOWRANK1HINT;Ukázat obrázky hodnocené 1 hvězdičkou.\nZkratka: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Ukázat obrázky hodnocené 2 hvězdičkami.\nZkratka: <b>2</b>
@@ -182,8 +182,8 @@ FILEBROWSER_STOPPROCESSING;Zastavit zpracovávaní
 FILEBROWSER_THUMBSIZE;Velikost náhledu
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Automatické spuštění zpracování po vložení nové úlohy
 FILEBROWSER_USETEMPLATE;Použít šablonu:
-FILEBROWSER_ZOOMINHINT;Zvětšit velikosti náhledů.\nZkratka:  <b>+</b>
-FILEBROWSER_ZOOMOUTHINT;Zmenšit velikosti náhledů.\nZkratka: <b>-</b>
+FILEBROWSER_ZOOMINHINT;Zvětšit velikosti náhledů.\nZkratka:  <b>+</b>\n\nZkratka v módu jedné karty editoru: <b>Alt +</b>
+FILEBROWSER_ZOOMOUTHINT;Zmenšit velikosti náhledů.\nZkratka: <b>-</b>\n\nZkratka v módu jedné karty editoru: <b>Alt -</b>
 GENERAL_ABOUT;O programu
 GENERAL_AFTER;Poté
 GENERAL_AUTO;Automaticky
@@ -430,6 +430,7 @@ HISTORY_MSG_200;CAM02 - Mapování tónů pomocí CIECAM02 (Q)
 HISTORY_MSG_201;Redukce šumu - rozdíl barevnosti - červená
 HISTORY_MSG_202;Redukce šumu - rozdíl barevnosti - modrá
 HISTORY_MSG_203;Redukce šumu - metoda
+HISTORY_MSG_204;Kroky rozšíření LMMSE
 HISTORY_NEWSNAPSHOTAS;Jako...
 HISTORY_NEWSNAPSHOT;Přidat
 HISTORY_NEWSNAPSHOT_TOOLTIP;Zkratka: <b>Alt-s</b>
@@ -496,6 +497,9 @@ IPTCPANEL_TRANSREFERENCEHINT;Kód místa, odkud byl převzat originální obráz
 IPTCPANEL_TRANSREFERENCE;Trans. reference
 MAIN_BUTTON_EXIT;Konec
 MAIN_BUTTON_FULLSCREEN;Celá obrazovka
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Přejít k dalšímu obrázku relativnímu k obrázku otevřenému v editoru\nZkratka: <b>Shift-F4</b>\n\nPřejít k dalšímu obrázku relativnímu k vybranému náhledu v prohlížeči souborů \nZkratka: <b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Přejít k předchozímu obrázku relativnímu k obrázku otevřenému v editoru\nZkratka: <b>Shift-F3</b>\n\nPřejít k předchozímu obrázku relativnímu k vybranému náhledu v prohlížeči souborů \nZkratka: <b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronizovat prohlížeč souborů s editorem pro zobrazení náhleduaktuálně otevřeného obrázku a smazání filtrů v prohlížeči souborů\nZkratka: <b>x</b>\n\nStejně jako výše, ale bez smazání filtrů v prohlížeči souborů\nZkratka: <b>y</b>\n(Náhled otevřeného obrázku nebude zobrazen pokud je filtrován).
 MAIN_BUTTON_PREFERENCES;Volby
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Vložit současný obrázek do fronty zpracování.\nZkratka: <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Vložit do fronty
@@ -652,10 +656,11 @@ PARTIALPASTE_RAWEXPOS_LINEAR;Bílý bod: Činitel lineární korekce
 PARTIALPASTE_RAWEXPOS_PRESER;Bílý bod: Kor. zachování světel (EV)
 PARTIALPASTE_RAWGROUP;Nastavení Raw
 PARTIALPASTE_RAW_ALLENHANCE;Aplikovat redukci artefaktů/šumu po demozajkování
-PARTIALPASTE_RAW_DCBENHANCE;Aplikovat kroky rozšířeného DCB
+PARTIALPASTE_RAW_DCBENHANCE;Aplikovat kroky rozšíření DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Počet průchodů DCB
 PARTIALPASTE_RAW_DMETHOD;Metoda demozajkování
 PARTIALPASTE_RAW_FALSECOLOR;Kroky potlačení falešných barev demozajkování
+PARTIALPASTE_RAW_LMMSEITERATIONS;Kroky rozšíření LMMSE
 PARTIALPASTE_RESIZE;Změna velikosti
 PARTIALPASTE_RGBCURVES;RGB křivky
 PARTIALPASTE_ROTATION;Otočení
@@ -671,7 +676,11 @@ PREFERENCES_ADD;Přidat
 PREFERENCES_APPLNEXTSTARTUP;vyžaduje restart aplikace
 PREFERENCES_AUTOMONPROFILE;Použít barevný profil hlavního monitoru z operačního systému
 PREFERENCES_BATCH_PROCESSING;Dávkové zpracování
+PREFERENCES_BEHADDALLHINT;Nastaví všechny parametry do módu <b>Přidat</b>.\nZměna parametrů v panelu dávkového zpracování se aplikuje jako <b>rozdíl</b> k uloženým hodnotám 
+PREFERENCES_BEHADDALL;Vše do 'Přidat'
 PREFERENCES_BEHAVIOR;Režim
+PREFERENCES_BEHSETALLHINT;Nastaví všechny parametry do módu <b>Nastavit</b>.\nZměna parametrů v panelu dávkového zpracování se aplikuje jako <b>absolutní</b>, budou zobrazeny aktuální hodnoty
+PREFERENCES_BEHSETALL;Vše do 'Nastavit'
 PREFERENCES_BLACKBODY;Wolfram
 PREFERENCES_BLINKCLIPPED;Blikání v oříznutých oblastech
 PREFERENCES_CACHECLEARALL;Vymazat vše
@@ -729,6 +738,13 @@ PREFERENCES_FLUOF11;Fluorescenční F11
 PREFERENCES_FORIMAGE;Pro ostatní fotografie
 PREFERENCES_FORRAW;Pro raw fotografie
 PREFERENCES_GIMPPATH;GIMP instalační složka
+PREFERENCES_GREY05;Yb=05 CIE L#30
+PREFERENCES_GREY10;Yb=10 CIE L#40
+PREFERENCES_GREY15;Yb=15 CIE L#45
+PREFERENCES_GREY18;Yb=18 CIE L#50
+PREFERENCES_GREY23;Yb=23 CIE L#55
+PREFERENCES_GREY30;Yb=30 CIE L#60
+PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Yb svítivost výstupního zařízení (%)
 PREFERENCES_GTKTHEME;GTK výchozí
 PREFERENCES_HINT;Nápověda
@@ -803,7 +819,7 @@ PREFERENCES_TAB_COLORMGR;Správa barev
 PREFERENCES_TAB_GENERAL;Obecné
 PREFERENCES_TAB_IMPROC;Zpracování obrázku
 PREFERENCES_TAB_OUTPUT;Volby výstupu
-PREFERENCES_TAB_PERFORMANCE;Výkonnost
+PREFERENCES_TAB_PERFORMANCE;Výkon
 PREFERENCES_TAB_SOUND;Zvuky
 PREFERENCES_THUMBSIZE;Velikost náhledu
 PREFERENCES_TP_LABEL;Panel nástrojů:
@@ -819,6 +835,7 @@ PROFILEPANEL_FILEDLGFILTERPP;Profily zpracování
 PROFILEPANEL_LABEL;Profily zpracování
 PROFILEPANEL_LOADDLGLABEL;Načíst parametry zpracování...
 PROFILEPANEL_LOADPPASTE;Parametry nahrávání
+PROFILEPANEL_MODE_TIP;Tlačítko je stisknuto: částečné profily budou aplikovány jako kompletní; chybějící hodnoty budou doplněny přednastavenými hodnotami.\n\nTlačítko není stisknuto: profily budou aplikovány tak jak jsou, změní se pouze v profilu obsažené hodnoty.
 PROFILEPANEL_PASTEPPASTE;Parametry pro vložení
 PROFILEPANEL_PCUSTOM;Vlastní
 PROFILEPANEL_PFILE;Ze souboru
@@ -858,6 +875,7 @@ QINFO_LENS;Objektiv
 QINFO_NOEXIF;Exif údaje nejsou k dispozici.
 SAVEDLG_AUTOSUFFIX;Automaticky přidat příponu pokud soubor již existuje
 SAVEDLG_FILEFORMAT;Formát souboru
+SAVEDLG_FORCEFORMATOPTS;Vynutit volby uložení
 SAVEDLG_JPEGQUAL;Kvalita JPEG
 SAVEDLG_JPGFILTER;Soubory JPEG
 SAVEDLG_PNGCOMPR;PNG Komprese
@@ -896,8 +914,8 @@ TP_CHMIXER_LABEL;Míchání kanálů
 TP_CHMIXER_RED;Červený kanál
 TP_CHROMATABERR_LABEL;Chromatická Aberace
 TP_COARSETRAF_TOOLTIP_HFLIP;Překlopit horizontálně
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočit doleva.\nZkratka: <b>[</b>
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Otočit doprava.\nZkratka: <b>]</b>
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Otočit doleva.\nZkratka: <b>[</b>\n\nZkratka v módu jedné karty editoru: <b>Alt-[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Otočit doprava.\nZkratka: <b>]</b>\n\nZkratka v módu jedné karty editoru:  <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Překlopit vertikálně
 TP_COLORAPP_ADAPTSCENE;Přizpůsobení světlosti scény (cd/m²)
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Maximální jas prostředí scény (obvykle 2000cd/m²)
@@ -1167,7 +1185,7 @@ TP_RAWEXPOS_LINEAR;Bílý bod: Faktor lineární korekce
 TP_RAWEXPOS_PRESER;Bílý bod: Kor. zachování světel (EV)
 TP_RAWEXPOS_TWOGREEN;Obě zelené zároveň
 TP_RAW_ALLENHANCE;Redukce artefaktů/šumu po demozajkování
-TP_RAW_DCBENHANCE;Kroky rozšířeného DCB
+TP_RAW_DCBENHANCE;Kroky rozšíření DCB
 TP_RAW_DCBITERATIONS;Počet průchodů DCB
 TP_RAW_DMETHOD;Metoda
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demozajkování...
@@ -1175,6 +1193,8 @@ TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Vylepšení demozajkování...
 TP_RAW_DMETHOD_TOOLTIP;Poznámka: IGV a LMMSE jsou určeny pro obrázky s vysokým ISO
 TP_RAW_FALSECOLOR;Počet kroků potlačování chybných barev
 TP_RAW_LABEL;Demozajkování
+TP_RAW_LMMSEITERATIONS;Kroky rozšíření LMMSE
+TP_RAW_LMMSE_TOOLTIP;Přidá gamu (krok 1)  - přidá mediány (kroky 2, 3, 4) a následně přidá (kroky 5 a 6) vyčištění artefaktů a vylepšení poměru signálu a šumu.
 TP_RESIZE_APPLIESTO;Aplikovat na:
 TP_RESIZE_BICUBICSF;Bikubická (Měkčí)
 TP_RESIZE_BICUBICSH;Bikubická (Ostřejší)
@@ -1337,29 +1357,9 @@ ZOOMPANEL_ZOOMOUT;Oddálit \nZkratka: <b>-</b>
 #21 10.10.2012: updated by mkyral
 #22 27.11.2012: updated by mkyral
 #23 12.03.2013: updated by mkyral
+#24 12.04.2013: updated by mkyral
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!BATCHQUEUE_DESTFILENAME;Path and file name
-!HISTORY_MSG_204;LMMSE enhancement steps
-!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
-!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
-!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
-!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
-!PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
-!PREFERENCES_BEHSETALL;All to 'Set'
-!PREFERENCES_GREY05;Yb=05 CIE L#30
-!PREFERENCES_GREY10;Yb=10 CIE L#40
-!PREFERENCES_GREY15;Yb=15 CIE L#45
-!PREFERENCES_GREY18;Yb=18 CIE L#50
-!PREFERENCES_GREY23;Yb=23 CIE L#55
-!PREFERENCES_GREY30;Yb=30 CIE L#60
-!PREFERENCES_GREY40;Yb=40 CIE L#70
-!PROFILEPANEL_MODE_TIP;Button pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
-!SAVEDLG_FORCEFORMATOPTS;Force saving options
-!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
-!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
