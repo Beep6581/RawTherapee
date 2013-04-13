@@ -341,6 +341,9 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
             custom->set(true);
             customCreated = true;
         }
+        else if (fillMode->get_active())
+            custom->pparams->setDefaults();
+
         int err = custom->load (fname);
         if (!err) {
             bool prevState = changeconn.block(true);
@@ -355,9 +358,13 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
                 PartialProfile ppTemp(true);
                 // the 2 next line modify custom->pedited without modifying custom->pparams
                 partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, custom->pparams, custom->pedited);
+                if (fillMode->get_active())
+                    *custom->pparams = *ppTemp.pparams;
                 *custom->pedited = *ppTemp.pedited;
                 ppTemp.deleteInstance();
             }
+            if (fillMode->get_active())
+                custom->pedited->set(true);
 
             changeTo (custom, M("PROFILEPANEL_PFILE"));
         }
