@@ -840,7 +840,7 @@ PROFILEPANEL_FILEDLGFILTERPP;Profils de post-traitement
 PROFILEPANEL_LABEL;Profils de post-traitement
 PROFILEPANEL_LOADDLGLABEL;Charger les paramètres de post-traitement...
 PROFILEPANEL_LOADPPASTE;Paramètres à charger
-PROFILEPANEL_MODE_TIP;Bouton pressé: les profils partiels seront convertis en profils complets; les valeurs manquantes seront remplacées par les valeurs internes par défaut\n\nBouton relevé: les profils seront appliqués tel quel, altérant seulement les paramètres qu'ils contiennent.
+PROFILEPANEL_MODE_TIP;Mode de complètement des profils de traitement.\n\nBouton pressé: les profils partiels seront convertis en profils complets; les valeurs manquantes seront remplacées par les valeurs internes par défaut\n\nBouton relevé: les profils seront appliqués tel quel, altérant seulement les paramètres qu'ils contiennent.
 PROFILEPANEL_PASTEPPASTE;Paramètres à coller
 PROFILEPANEL_PCUSTOM;Personnel
 PROFILEPANEL_PFILE;Depuis le fichier
