@@ -1773,7 +1773,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         }
     }
 
-    if (!alt) {
+    if (!alt && !shift) { // shift is reserved for ranking
         switch(event->keyval) {
 			case GDK_grave:
 				categoryButtonToggled(bUnRanked,false);
@@ -1809,7 +1809,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
         }
     }
     
-    if (alt) {
+    if (alt && !shift) { // shift is reserved for color labeling
         switch(event->keyval) {
             case GDK_grave:
                  categoryButtonToggled(bUnCLabeled,false);

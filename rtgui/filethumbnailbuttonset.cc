@@ -47,7 +47,7 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
 				unTrashIcon = safe_create_from_png ("undelete-thumbnail.png");
 				processIcon = safe_create_from_png ("processing-thumbnail.png");
 
-				colorLabelIcon_0 = safe_create_from_png ("nocolorlabel.png");
+				colorLabelIcon_0 = safe_create_from_png ("cglabel0.png"); //("nocolorlabel.png");
 				colorLabelIcon_1 = safe_create_from_png ("clabel1.png");
 				colorLabelIcon_2 = safe_create_from_png ("clabel2.png");
 				colorLabelIcon_3 = safe_create_from_png ("clabel3.png");
@@ -57,18 +57,18 @@ FileThumbnailButtonSet::FileThumbnailButtonSet (FileBrowserEntry* myEntry) {
     }
 
     add (new LWButton (processIcon, 6, myEntry, LWButton::Left, LWButton::Center, M("FILEBROWSER_POPUPPROCESS")));
-    add (new LWButton (unRankIcon, 0, myEntry, LWButton::Left, LWButton::Center, M("FILEBROWSER_POPUPUNRANK")));
+    add (new LWButton (unRankIcon, 0, myEntry, LWButton::Left, LWButton::Center, M("FILEBROWSER_UNRANK_TOOLTIP")));
     for (int i=0; i<5; i++)
         add (new LWButton (rankIcon, i+1, myEntry, LWButton::Left));    
     add (new LWButton (trashIcon, 7, myEntry, LWButton::Right, LWButton::Center, M("FILEBROWSER_POPUPTRASH")));
 
-    add (new LWButton (colorLabelIcon_0, 8, myEntry, LWButton::Right, LWButton::Center, M("FILEBROWSER_POPUPCOLORLABEL")));
+    add (new LWButton (colorLabelIcon_0, 8, myEntry, LWButton::Right, LWButton::Center, M("FILEBROWSER_COLORLABEL_TOOLTIP")));
 
-    buttons[2]->setToolTip (M("FILEBROWSER_POPUPRANK1"));
-    buttons[3]->setToolTip (M("FILEBROWSER_POPUPRANK2"));
-    buttons[4]->setToolTip (M("FILEBROWSER_POPUPRANK3"));
-    buttons[5]->setToolTip (M("FILEBROWSER_POPUPRANK4"));
-    buttons[6]->setToolTip (M("FILEBROWSER_POPUPRANK5"));
+    buttons[2]->setToolTip (M("FILEBROWSER_RANK1_TOOLTIP"));
+    buttons[3]->setToolTip (M("FILEBROWSER_RANK2_TOOLTIP"));
+    buttons[4]->setToolTip (M("FILEBROWSER_RANK3_TOOLTIP"));
+    buttons[5]->setToolTip (M("FILEBROWSER_RANK4_TOOLTIP"));
+    buttons[6]->setToolTip (M("FILEBROWSER_RANK5_TOOLTIP"));
 }
 
 void FileThumbnailButtonSet::setRank (int stars) {
