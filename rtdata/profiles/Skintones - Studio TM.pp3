@@ -10,13 +10,13 @@ InTrash=false
 
 [Exposure]
 Auto=false
-Clip=0.001
-Compensation=0
+Clip=0.02
+
 Brightness=0
 Contrast=0
 Saturation=0
 Black=-1500
-HighlightCompr=50
+HighlightCompr=40
 HighlightComprThreshold=0
 ShadowCompr=0
 CurveMode=WeightedStd
@@ -82,10 +82,7 @@ Matrix=false
 Strength=20
 Uniformity=50
 
-[White Balance]
-Setting=Camera
-Temperature=5970
-Green=1.0369999999999999
+
 
 [Color appearance]
 Enabled=true
@@ -145,28 +142,12 @@ ReweightingIterates=0
 [Shadows & Highlights]
 Enabled=false
 HighQuality=false
-Highlights=0
+Highlights=10
 HighlightTonalWidth=80
-Shadows=0
+Shadows=10
 ShadowTonalWidth=80
 LocalContrast=0
-Radius=40
-
-[Crop]
-Enabled=false
-X=0
-Y=0
-W=4276
-H=2836
-FixedRatio=false
-Ratio=3:2
-Orientation=Landscape
-Guide=None
-
-[Coarse Transformation]
-Rotate=0
-HorizontalFlip=false
-VerticalFlip=false
+Radius=30
 
 [Common Properties for Transformations]
 AutoFill=false
@@ -229,7 +210,7 @@ Mult0=1
 Mult1=1
 Mult2=1
 Mult3=1
-Mult4=0
+Mult4=0.2
 
 [HSV Equalizer]
 HCurve=0;

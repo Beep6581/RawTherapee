@@ -10,13 +10,13 @@ InTrash=false
 
 [Exposure]
 Auto=false
-Clip=0.001
+Clip=0.02
 Compensation=0
 Brightness=0
 Contrast=0
 Saturation=0
 Black=-1500
-HighlightCompr=70
+HighlightCompr=40
 HighlightComprThreshold=0
 ShadowCompr=50
 CurveMode=FilmLike
@@ -152,24 +152,8 @@ ShadowTonalWidth=80
 LocalContrast=0
 Radius=40
 
-[Crop]
-Enabled=false
-X=0
-Y=0
-W=4276
-H=2836
-FixedRatio=false
-Ratio=3:2
-Orientation=Landscape
-Guide=None
-
-[Coarse Transformation]
-Rotate=0
-HorizontalFlip=false
-VerticalFlip=false
-
 [Common Properties for Transformations]
-AutoFill=true
+AutoFill=false
 
 [Rotation]
 Degree=0

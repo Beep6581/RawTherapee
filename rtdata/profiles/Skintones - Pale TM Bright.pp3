@@ -16,7 +16,7 @@ Brightness=10
 Contrast=10
 Saturation=0
 Black=0
-HighlightCompr=70
+HighlightCompr=40
 HighlightComprThreshold=0
 ShadowCompr=50
 CurveMode=WeightedStd
@@ -106,7 +106,7 @@ H-Hue=0
 RSTProtection=0
 AdaptScene=2000
 SurrSource=false
-Gamut=false
+Gamut=true
 Datacie=false
 Tonecie=true
 CurveMode=Lightness
@@ -145,31 +145,15 @@ ReweightingIterates=0
 [Shadows & Highlights]
 Enabled=false
 HighQuality=false
-Highlights=0
+Highlights=10
 HighlightTonalWidth=80
-Shadows=0
+Shadows=10
 ShadowTonalWidth=80
 LocalContrast=0
-Radius=40
-
-[Crop]
-Enabled=false
-X=0
-Y=0
-W=4276
-H=2836
-FixedRatio=false
-Ratio=3:2
-Orientation=Landscape
-Guide=None
-
-[Coarse Transformation]
-Rotate=0
-HorizontalFlip=false
-VerticalFlip=false
+Radius=30
 
 [Common Properties for Transformations]
-AutoFill=true
+AutoFill=false
 
 [Rotation]
 Degree=0
@@ -214,7 +198,7 @@ Height=2836
 [Color Management]
 InputProfile=(cameraICC)
 ToneCurve=false
-BlendCMSMatrix=false
+BlendCMSMatrix=true
 PreferredProfile=true
 WorkingProfile=Adobe RGB
 OutputProfile=RT_sRGB
@@ -229,7 +213,7 @@ Mult0=1
 Mult1=1
 Mult2=1
 Mult3=1
-Mult4=0
+Mult4=0.2
 
 [HSV Equalizer]
 HCurve=0;
