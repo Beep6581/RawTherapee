@@ -105,6 +105,11 @@ class FileBrowser  : public ThumbBrowserBase,
     Gtk::MenuItem* clearFromCacheFull;
     Gtk::Menu* pmenu;
 
+    Gtk::ImageMenuItem* colorlabel_pop[6];
+    Gtk::Menu* pmenuColorLabels;
+    void* colorLabel_actionData;
+    void menuColorlabelActivated (Gtk::MenuItem* m); // use only when menu is invoked via FileBrowser::buttonPressed to pass actionData 
+
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
 
     FileBrowserListener* tbl;
@@ -117,6 +122,8 @@ class FileBrowser  : public ThumbBrowserBase,
     void fromTrashRequested (std::vector<FileBrowserEntry*> tbe);
     void rankingRequested   (std::vector<FileBrowserEntry*> tbe, int rank);
     void colorlabelRequested   (std::vector<FileBrowserEntry*> tbe, int colorlabel);
+    void requestRanking (int rank);
+    void requestColorLabel(int colorlabel);
     void notifySelectionListener ();
     
     ExportPanel* exportPanel;

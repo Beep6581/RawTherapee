@@ -94,7 +94,10 @@ FileBrowser::FileBrowser ()
     		pmenu->attach (*Gtk::manage(colorlabel[i] = new Gtk::ImageMenuItem (M(Glib::ustring::compose("%1%2","FILEBROWSER_POPUPCOLORLABEL",i)))), 0, 1, p, p+1); p++;
     	}
     }
-    for (int i=1; i<=5; i++){//set color label images
+
+   	//set color label images
+   	colorlabel[0]->set_image(*Gtk::manage(new RTImage ("cglabel0.png")));
+    for (int i=1; i<=5; i++){
     	colorlabel[i]->set_image(*Gtk::manage(new RTImage (Glib::ustring::compose("%1%2%3","clabel",i,".png"))));
     }
         
@@ -268,11 +271,31 @@ FileBrowser::FileBrowser ()
     execcustprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), execcustprof));    
     clearprof->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), clearprof));
     cachemenu->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), cachemenu));
+
+
+
+    // A separate pop-up menu for Color Labels
+    int c = 0;
+    pmenuColorLabels = new Gtk::Menu ();
+    for (int i=0; i<=5; i++){
+    	pmenuColorLabels->attach (*Gtk::manage(colorlabel_pop[i] = new Gtk::ImageMenuItem (M(Glib::ustring::compose("%1%2","FILEBROWSER_POPUPCOLORLABEL",i)))), 0, 1, c, c+1); c++;
+	}
+	//set color label images
+	colorlabel_pop[0]->set_image(*Gtk::manage(new RTImage ("cglabel0.png")));
+	for (int i=1; i<=5; i++){
+		colorlabel_pop[i]->set_image(*Gtk::manage(new RTImage (Glib::ustring::compose("%1%2%3","clabel",i,".png"))));
+	}
+	pmenuColorLabels->show_all ();
+
+    // Bind to event handlers
+    for (int i=0; i<=5; i++)
+    	colorlabel_pop[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuColorlabelActivated), colorlabel_pop[i]));
 }
 
 FileBrowser::~FileBrowser ()
 {
     delete pmenu;
+    delete pmenuColorLabels;
     delete[] amiExtProg;
 }
 
@@ -497,6 +520,18 @@ void FileBrowser::close () {
 	}
 
     lastClicked = NULL;
+}
+
+void FileBrowser::menuColorlabelActivated (Gtk::MenuItem* m) {
+
+    std::vector<FileBrowserEntry*> tbe;
+    tbe.push_back (static_cast<FileBrowserEntry*>(colorLabel_actionData));
+    
+    for (int i=0; i<6; i++)
+        if (m==colorlabel_pop[i]) {
+            colorlabelRequested (tbe, i);
+            return;
+        }
 }
 
 void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
@@ -871,7 +906,53 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         scrollPage(GDK_SCROLL_DOWN);
         return true;
     }
-        
+    
+    else if (shift && !ctrl && !alt) { // rank
+        switch(event->keyval) {
+            case GDK_asciitilde:
+                requestRanking (0);
+                return true;
+            case GDK_exclam:
+                requestRanking (1);
+                return true;
+            case GDK_at:
+                requestRanking (2);
+                return true;
+            case GDK_numbersign:
+                requestRanking (3);
+                return true;
+            case GDK_dollar:
+                requestRanking (4);
+                return true;
+            case GDK_percent:
+                requestRanking (5);
+                return true;
+        }
+    }
+    
+    else if (shift && ctrl && !alt) { // color labels
+        switch(event->keyval) {
+            case GDK_asciitilde:
+                requestColorLabel (0);
+                return true;
+            case GDK_exclam:
+                requestColorLabel (1);
+                return true;
+            case GDK_at:
+                requestColorLabel (2);
+                return true;
+            case GDK_numbersign:
+                requestColorLabel (3);
+                return true;
+            case GDK_dollar:
+                requestColorLabel (4);
+                return true;
+            case GDK_percent:
+                requestColorLabel (5);
+                return true;
+        }
+    }
+
     return false;
 }
 
@@ -1092,6 +1173,22 @@ void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int c
     applyFilter (filter);
 }
 
+void FileBrowser::requestRanking(int rank){
+    std::vector<FileBrowserEntry*> mselected;
+    for (size_t i=0; i<selected.size(); i++)
+      mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+
+    rankingRequested (mselected, rank);
+}
+
+void FileBrowser::requestColorLabel(int colorlabel){
+    std::vector<FileBrowserEntry*> mselected;
+    for (size_t i=0; i<selected.size(); i++)
+      mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+
+    colorlabelRequested (mselected, colorlabel);
+}
+
 void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionData) {
 
     if (actionCode>=0 && actionCode<=5) { // rank
@@ -1112,6 +1209,11 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
             toTrashRequested (tbe);
         else
             fromTrashRequested (tbe);
+    }
+    else if (actionCode==8 && tbl) { // color label
+    	// show popup menu
+    	colorLabel_actionData = actionData;// this will be reused when pmenuColorLabels is clicked
+    	pmenuColorLabels->popup (3, this->eventTime);
     }
 }
 
