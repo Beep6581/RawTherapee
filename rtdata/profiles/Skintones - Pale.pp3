@@ -152,24 +152,8 @@ ShadowTonalWidth=80
 LocalContrast=0
 Radius=30
 
-[Crop]
-Enabled=false
-X=0
-Y=0
-W=4276
-H=2836
-FixedRatio=false
-Ratio=3:2
-Orientation=Landscape
-Guide=None
-
-[Coarse Transformation]
-Rotate=0
-HorizontalFlip=false
-VerticalFlip=false
-
 [Common Properties for Transformations]
-AutoFill=true
+AutoFill=false
 
 [Rotation]
 Degree=0

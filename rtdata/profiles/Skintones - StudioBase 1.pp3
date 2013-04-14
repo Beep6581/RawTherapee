@@ -11,18 +11,18 @@ InTrash=false
 [Exposure]
 Auto=false
 Clip=0.02
-Compensation=0
+
 Brightness=0
 Contrast=0
 Saturation=0
-Black=-1500
-HighlightCompr=30
+Black=0
+HighlightCompr=20
 HighlightComprThreshold=0
 ShadowCompr=50
-CurveMode=FilmLike
-CurveMode2=FilmLike
-Curve=1;0;0;0.49802371541501977;0.49802371541501977;1;1;
-Curve2=1;0;0;0.097430830039525476;0.066798418972331866;0.12648221343873495;0.11067193675889311;1;0.95256916996047469;
+CurveMode=WeightedStd
+CurveMode2=SatAndValueBlending
+Curve=3;0;0;1;1;
+Curve2=3;0;0;1;1;
 
 [Channel Mixer]
 Red=100;0;0;
@@ -37,7 +37,7 @@ AvoidColorShift=true
 RedAndSkinTonesProtection=0
 BWtoning=false
 LCredsk=true
-LCurve=3;0;0;0.063241106719367585;6.9388939039072284e-018;0.49407114624505927;0.50197628458498023;0.92885375494071132;0.99604743083003922;1;1;
+LCurve=0;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -82,10 +82,7 @@ Matrix=false
 Strength=20
 Uniformity=50
 
-[White Balance]
-Setting=Camera
-Temperature=4500
-Green=1.073
+
 
 [Color appearance]
 Enabled=true
@@ -99,7 +96,7 @@ J-Light=0
 Q-Bright=0
 C-Chroma=0
 S-Chroma=0
-M-Chroma=8
+M-Chroma=0
 J-Contrast=0
 Q-Contrast=0
 H-Hue=0
@@ -112,9 +109,9 @@ Tonecie=true
 CurveMode=Lightness
 CurveMode2=Lightness
 CurveMode3=Chroma
-Curve=3;0;0;0.19753086419753088;0.18106995884773661;0.58847736625514402;0.79012345679012241;1;1;
-Curve2=3;0;0;0.056806920298983779;0.020475350634080798;0.69802637104224341;0.88816662467456142;1;1;
-Curve3=0;
+Curve=3;0;0;0.10699588477366252;0.049382716049382713;0.49382716049382719;0.49382716049382719;0.76131687242798285;0.95473251028806605;1;1;
+Curve2=0;
+Curve3=1;0;0;1;1;
 
 [Impulse Denoising]
 Enabled=false
@@ -137,7 +134,7 @@ Gamma=1.7
 
 [EPD]
 Enabled=false
-Strength=0.25
+Strength=0.14999999999999999
 EdgeStopping=1.3999999999999999
 Scale=0.25
 ReweightingIterates=0
@@ -151,6 +148,7 @@ Shadows=0
 ShadowTonalWidth=80
 LocalContrast=0
 Radius=40
+
 
 [Common Properties for Transformations]
 AutoFill=false
@@ -192,15 +190,15 @@ Scale=1
 AppliesTo=Cropped area
 Method=Bicubic
 DataSpecified=0
-Width=4276
-Height=2836
+Width=7370
+Height=4916
 
 [Color Management]
 InputProfile=(cameraICC)
 ToneCurve=false
 BlendCMSMatrix=false
 PreferredProfile=true
-WorkingProfile=Adobe RGB
+WorkingProfile=ProPhoto
 OutputProfile=RT_sRGB
 Gammafree=default
 Freegamma=false
@@ -230,7 +228,7 @@ bCurve=0;
 DarkFrame=
 DarkFrameAuto=false
 FlatFieldFile=
-FlatFieldAutoSelect=false
+FlatFieldAutoSelect=true
 FlatFieldBlurRadius=32
 FlatFieldBlurType=Area Flatfield
 CA=false
