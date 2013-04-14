@@ -61,14 +61,14 @@ DeconvDamping=20
 DeconvIterations=30
 
 [Vibrance]
-Enabled=true
+Enabled=false
 Pastels=0
 Saturated=0
 PSThreshold=0;75;
 ProtectSkins=false
 AvoidColorShift=true
 PastSatTog=true
-SkinTonesCurve=1;0;0;0.4705882352941182;0.53333333333333288;1;1;
+SkinTonesCurve=0;
 
 [SharpenEdge]
 Enabled=false
