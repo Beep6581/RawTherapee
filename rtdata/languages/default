@@ -68,6 +68,7 @@ EXPORT_BYPASS_RAW_DF;Bypass [raw] Dark Frame
 EXPORT_BYPASS_RAW_FF;Bypass [raw] Flat Field
 EXPORT_BYPASS_RAW_GREENTHRESH;Bypass [raw] Green Equilibration
 EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Line Noise Filter
+EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
 EXPORT_BYPASS_SHARPENEDGE;Bypass Edge Sharpening
 EXPORT_BYPASS_SHARPENING;Bypass Sharpening
 EXPORT_BYPASS_SHARPENMICRO;Bypass Microcontrast
@@ -437,7 +438,7 @@ HISTORY_MSG_200;CAMO2 - Tone mapping using CIECAM02 Q
 HISTORY_MSG_201;NR - Delta Chrominance red
 HISTORY_MSG_202;NR - Delta Chrominance blue
 HISTORY_MSG_203;NR - Method
-HISTORY_MSG_204;LMMSE enhancement steps
+HISTORY_MSG_204;LMMSE Enhancement Steps
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -1200,7 +1201,7 @@ TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
 TP_RAW_FALSECOLOR;False Color Suppression Steps
 TP_RAW_LABEL;Demosaicing
-TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+TP_RAW_LMMSEITERATIONS;LMMSE Enhancement Steps
 TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 TP_RESIZE_APPLIESTO;Applies to:
 TP_RESIZE_BICUBICSF;Bicubic (Softer)
