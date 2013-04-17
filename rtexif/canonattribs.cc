@@ -556,6 +556,7 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(169, "Sigma 18-200mm f/3.5-6.3 DC OS"));
             choices.insert(p_t(169, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"));
             choices.insert(p_t(169, "Sigma 18-50mm f/2.8 Macro"));
+            choices.insert(p_t(169, "Sigma 30mm f/1.4 EX DC HSM"));
             choices.insert(p_t(169, "Sigma 50mm f/1.4 EX DG HSM"));
             choices.insert(p_t(169, "Sigma 85mm f/1.4 EX DG HSM"));
             choices.insert(p_t(170, "Canon EF 200mm f/2.8L II"));

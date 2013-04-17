@@ -1926,6 +1926,9 @@ bool extractLensInfo(std::string &fullname,double &minFocal, double &maxFocal, d
 		    char *sp=pMM;
 		    while( *sp != ' ' && sp > buffer )sp--;
 		    sscanf(sp+1,"%lf-%lf",&minFocal,&maxFocal);
+		    if(maxFocal==0.) {
+		    	maxFocal = minFocal;
+		    }
 		    return true;
 		 }
 	 }
