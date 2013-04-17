@@ -262,7 +262,7 @@ void ImageData::extractInfo () {
                     lens = "Canon " + ldata;
                 }
             }
-            if( !found ){
+            if( !found || lens.substr(lens.find(' ')).length() < 7 ){
             	lt = mnote->findTag("LensID");
                 if ( lt ) {
                     std::string ldata = lt->valueToString ();
@@ -289,7 +289,7 @@ void ImageData::extractInfo () {
         }
     } else if (exif->getTag ("DNGLensInfo")) {
 		lens = exif->getTag ("DNGLensInfo")->valueToString ();
-    } if (exif->getTag ("LensModel")) {
+    } else if (exif->getTag ("LensModel")) {
 		lens = exif->getTag ("LensModel")->valueToString ();
 	} else if (exif->getTag ("LensInfo")) {
 		lens = exif->getTag ("LensInfo")->valueToString ();
