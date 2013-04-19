@@ -6,6 +6,7 @@ ABOUT_TAB_RELEASENOTES;Note di rilascio
 ABOUT_TAB_SPLASH;Emblema
 ADJUSTER_RESET_TO_DEFAULT;Ripristina
 BATCHQUEUE_AUTOSTART;Autoavvia
+BATCHQUEUE_DESTFILENAME;Percorso e nome file
 BATCH_PROCESSING;Sviluppo in serie
 CURVEEDITOR_CURVES;Curve
 CURVEEDITOR_CURVE;Curva
@@ -292,9 +293,9 @@ HISTORY_MSG_62;Correzione Distorsione dell'Obiettivo
 HISTORY_MSG_63;Istantanea selezionata
 HISTORY_MSG_64;Ritaglia
 HISTORY_MSG_65;Correzione Aberrazioni Cromatiche
-HISTORY_MSG_66;Recupero Alteluci
-HISTORY_MSG_67;Recupero Alteluci - Quantità
-HISTORY_MSG_68;Recupero Alteluci - Metodo
+HISTORY_MSG_66;Ricostruzione Alteluci
+HISTORY_MSG_67;Ricostruzione Alteluci - Quantità
+HISTORY_MSG_68;Ricostruzione Alteluci - Metodo
 HISTORY_MSG_69;Spazio colore di lavoro
 HISTORY_MSG_70;Spazio colore di uscita
 HISTORY_MSG_71;Spazio colore di ingresso
@@ -347,7 +348,7 @@ HISTORY_MSG_117;Correzione AC Rosso (Raw)
 HISTORY_MSG_118;Correzione AC Blu (Raw)
 HISTORY_MSG_119;Filtro rumore a bande
 HISTORY_MSG_120;Bilancam. verde - Soglia
-HISTORY_MSG_121;AC automatico (Raw)
+HISTORY_MSG_121;AC automatica (Raw)
 HISTORY_MSG_122;Dark Frame - Automatico
 HISTORY_MSG_123;Dark Frame - File
 HISTORY_MSG_124;Compensazione esp. lineare
@@ -430,6 +431,7 @@ HISTORY_MSG_200;CAM02 - Tone mapping con CIECAM02 Q
 HISTORY_MSG_201;Riduzione Rumore - Delta Crominanza Rosso
 HISTORY_MSG_202;Riduzione Rumore - Delta Crominanza Blu
 HISTORY_MSG_203;Riduzione Rumore - Metodo
+HISTORY_MSG_204;Passaggi di miglioramento LMMSE
 HISTORY_NEWSNAPSHOTAS;Come...
 HISTORY_NEWSNAPSHOT;Aggiungi
 HISTORY_NEWSNAPSHOT_TOOLTIP;Scorciatoia: <b>Alt-s</b>
@@ -496,6 +498,9 @@ IPTCPANEL_TRANSREFERENCEHINT;Un codice che rappresenta l'ubicazione da cui è av
 IPTCPANEL_TRANSREFERENCE;Riferimento Trasm.
 MAIN_BUTTON_EXIT;Esci
 MAIN_BUTTON_FULLSCREEN;Schermo intero
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Individua l'immagine successiva rispetto a un'immagine aperta per la Modifica\nScorciatoia: <b>Shift-F4</b>\n\nPer passare alla successiva immagine relativa alla miniatura selezionata nel Navigatore\nScorciatoia: <b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Individua l'immagine precedente rispetto a un'immagine aperta per la Modifica\nScorciatoia: <b>Shift-F3</b>\n\nPer passare all'immagine precedente relativa alla miniatura selezionata in Navigate\nScorciatoia: <b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Sincronizza il Navigatore con la scheda di Modifica per rivelare la miniatura dell'immagine attualmente aperta, e rimuovere i filtri nel Navigatore\nScorciatoia: <b>x</b>\n\nCome sopra, ma senza cancellare i filtri nel Navigatore\nScorciatoia: <b>y</b>\n(Nota che la miniatura del file aperto, se filtrato, non verrà mostrata).
 MAIN_BUTTON_PREFERENCES;Preferenze
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Aggiungi l'immagine corrente alla coda di sviluppo.\nScorciatoia: <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Accoda
@@ -656,6 +661,7 @@ PARTIALPASTE_RAW_DCBENHANCE;Fase di miglioramento per DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Numero di iterazioni DCB
 PARTIALPASTE_RAW_DMETHOD;Metodo di demosaicizzazione
 PARTIALPASTE_RAW_FALSECOLOR;Soppressione di falsi colori demosaicizzati
+PARTIALPASTE_RAW_LMMSEITERATIONS;Passaggi di miglioramento LMMSE
 PARTIALPASTE_RESIZE;Ridimensionamento
 PARTIALPASTE_RGBCURVES;Curve RGB
 PARTIALPASTE_ROTATION;Rotazione
@@ -671,7 +677,11 @@ PREFERENCES_ADD;Somma
 PREFERENCES_APPLNEXTSTARTUP;applicato al prossimo avvio
 PREFERENCES_AUTOMONPROFILE;Usa il profilo colore dello schermo principale del sistema operativo
 PREFERENCES_BATCH_PROCESSING;Sviluppo in serie
+PREFERENCES_BEHADDALLHINT;Imposta tutti i parametri nella modalità <b>Somma</b>.\nLe regolazioni dei parametri nel pannello strumenti batch saranno <b>differenze</b> dei valori memorizzati.
+PREFERENCES_BEHADDALL;Tutti a 'Somma'
 PREFERENCES_BEHAVIOR;Comportamento
+PREFERENCES_BEHSETALLHINT;Imposta tutti i parametri nella modalità <b>Imposta</b>.\nLe regolazioni dei parametri nel pannello strumenti batch saranno <b>assoluti</b>, verranno mostrati i valori reali.
+PREFERENCES_BEHSETALL;Tutti a 'Imposta'
 PREFERENCES_BLACKBODY;Tungsteno
 PREFERENCES_BLINKCLIPPED;Lampeggia le aree tosate
 PREFERENCES_CACHECLEARALL;Rimuovi tutto
@@ -826,6 +836,7 @@ PROFILEPANEL_FILEDLGFILTERPP;Profili di sviluppo
 PROFILEPANEL_LABEL;Profili di sviluppo
 PROFILEPANEL_LOADDLGLABEL;Carico i parametri di sviluppo...
 PROFILEPANEL_LOADPPASTE;Parametri da caricare
+PROFILEPANEL_MODE_TIP;Modalità di riempimento del Profilo di Sviluppo.\n\nPulsante premuto: i profili parziali verranno convertiti in profili completi; i valori mancanti verranno sostituiti con i valori predefiniti a livello di codice.\n\nPulsante rilasciato: i Profili saranno applicati così come sono, modificando solo i valori che contengono.
 PROFILEPANEL_PASTEPPASTE;Parametri da incollare
 PROFILEPANEL_PCUSTOM;Personalizzato
 PROFILEPANEL_PFILE;Da file
@@ -850,6 +861,7 @@ PROGRESSBAR_LOADING;Caricamento dell'immagine...
 PROGRESSBAR_LOADJPEG;Caricamento del file JPEG...
 PROGRESSBAR_LOADPNG;Caricamento del file PNG...
 PROGRESSBAR_LOADTIFF;Caricamento del file TIFF...
+PROGRESSBAR_NOIMAGES;Nessuna immagine trovata
 PROGRESSBAR_PROCESSING;Elaborazione dell'immagine...
 PROGRESSBAR_PROCESSING_PROFILESAVED;Profilo di sviluppo salvato
 PROGRESSBAR_READY;Pronto
@@ -864,6 +876,7 @@ QINFO_LENS;Obiettivo
 QINFO_NOEXIF;Dati Exif non disponibili.
 SAVEDLG_AUTOSUFFIX;Aggiungi automaticamente un suffisso se il file esiste già
 SAVEDLG_FILEFORMAT;Formato file
+SAVEDLG_FORCEFORMATOPTS;Opzioni di salvataggio forzato
 SAVEDLG_JPEGQUAL;Qualità JPEG
 SAVEDLG_JPGFILTER;File JPEG
 SAVEDLG_PNGCOMPR;Compressione PNG
@@ -1125,10 +1138,10 @@ TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blu Pastello
 TP_LABCURVE_CURVEEDITOR_B_RANGE3;Giallo Pastello
 TP_LABCURVE_CURVEEDITOR_B_RANGE4;Giallo Saturo
 TP_LABCURVE_CURVEEDITOR_CC;CC
-TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutrale
-TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Opaco
+TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutri
+TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Opachi
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastello
-TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturo
+TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturi
 TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Cromaticità C=f(C).\nIstogramma della Cromaticità prima delle reglazioni Curva.\nPer l'output finale fare riferimento al pannello Istogramma
 TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Cromaticità secondo tonalità
@@ -1176,8 +1189,13 @@ TP_RAW_ALLENHANCE;Limita rumore/artefatti dovuti alla demosaicizzazione
 TP_RAW_DCBENHANCE;Passaggio di miglioramento per DCB
 TP_RAW_DCBITERATIONS;Numero di iterazioni DCB
 TP_RAW_DMETHOD;Metodo
+TP_RAW_DMETHOD_PROGRESSBAR;Demosaicizzazione di %1...
+TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Perfezionamento della demosaicizzazione...
+TP_RAW_DMETHOD_TOOLTIP;Nota: IGV e LMMSE sono dedicati alle immagini ad alti ISO
 TP_RAW_FALSECOLOR;Stadi per soppressione di falsi colori
 TP_RAW_LABEL;Demosaicizzazione
+TP_RAW_LMMSEITERATIONS;Passaggi di miglioramento LMMSE
+TP_RAW_LMMSE_TOOLTIP;Aggiunge gamma (passo 1) - Aggiunge mediana (passi 2, 3, 4), poi aggiunge un perfezionamento (passi 5, 6) per ridurre gli artefatti e migliorare il rapporto segnale/rumore
 TP_RESIZE_APPLIESTO;Applica a:
 TP_RESIZE_BICUBICSF;Bicubico (più graduale)
 TP_RESIZE_BICUBICSH;Bicubico (più definito)
@@ -1331,21 +1349,11 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!BATCHQUEUE_DESTFILENAME;Path and file name
-!HISTORY_MSG_204;LMMSE enhancement steps
-!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
-!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
-!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
-!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
-!PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
-!PREFERENCES_BEHSETALL;All to 'Set'
-!PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
-!PROGRESSBAR_NOIMAGES;No images found
-!SAVEDLG_FORCEFORMATOPTS;Force saving options
-!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
-!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
-!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
-!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
+!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
+!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: Shift-1
+!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: Shift-2
+!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: Shift-3
+!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: Shift-4
+!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: Shift-5
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: Shift - ~
