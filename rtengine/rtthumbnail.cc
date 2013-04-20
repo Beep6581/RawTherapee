@@ -420,7 +420,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	double avg_r = 0;
 	double avg_g = 0;
 	double avg_b = 0;
-	float rn = 0.0, gn = 0.0, bn = 0.0;
+	const float eps=1e-5; //tolerance to avoid dividing by zero
+
+	float rn = eps, gn = eps, bn = eps;
 
 	for (int i = 32; i < height - 32; i++) {
 		int start, end;
