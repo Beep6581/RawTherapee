@@ -98,7 +98,9 @@ void ParamsEdited::set (bool v) {
 	colorappearance.autodegree = v;
 	colorappearance.surround     = v;
 	colorappearance.adapscen    = v;
+	colorappearance.autoadapscen = v;
 	colorappearance.adaplum    = v;
+	colorappearance.badpixsl    = v;
 	colorappearance.wbmodel    = v;
 	colorappearance.algo    = v;
 	
@@ -113,6 +115,7 @@ void ParamsEdited::set (bool v) {
 	colorappearance.rstprotection     = v;
 	colorappearance.surrsource = v;
 	colorappearance.gamut = v;
+//	colorappearance.badpix = v;
 	colorappearance.datacie = v;
 	colorappearance.tonecie = v;
 //	colorappearance.sharpcie = v;
@@ -338,7 +341,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.autodegree = colorappearance.autodegree && p.colorappearance.autodegree == other.colorappearance.autodegree;
         colorappearance.surround = colorappearance.surround && p.colorappearance.surround == other.colorappearance.surround;
         colorappearance.adapscen = colorappearance.adapscen && p.colorappearance.adapscen == other.colorappearance.adapscen;
+        colorappearance.autoadapscen = colorappearance.autoadapscen && p.colorappearance.autoadapscen == other.colorappearance.autoadapscen;
         colorappearance.adaplum = colorappearance.adaplum && p.colorappearance.adaplum == other.colorappearance.adaplum;
+        colorappearance.badpixsl = colorappearance.badpixsl && p.colorappearance.badpixsl == other.colorappearance.badpixsl;
         colorappearance.wbmodel = colorappearance.wbmodel && p.colorappearance.wbmodel == other.colorappearance.wbmodel;
         colorappearance.algo = colorappearance.algo && p.colorappearance.algo == other.colorappearance.algo;
         colorappearance.jlight = colorappearance.jlight && p.colorappearance.jlight == other.colorappearance.jlight;
@@ -352,6 +357,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.colorh = colorappearance.colorh && p.colorappearance.colorh == other.colorappearance.colorh;
         colorappearance.surrsource = colorappearance.surrsource && p.colorappearance.surrsource == other.colorappearance.surrsource;
         colorappearance.gamut = colorappearance.gamut && p.colorappearance.gamut == other.colorappearance.gamut;
+ //       colorappearance.badpix = colorappearance.badpix && p.colorappearance.badpix == other.colorappearance.badpix;
         colorappearance.datacie = colorappearance.datacie && p.colorappearance.datacie == other.colorappearance.datacie;
         colorappearance.tonecie = colorappearance.tonecie && p.colorappearance.tonecie == other.colorappearance.tonecie;
    //     colorappearance.sharpcie = colorappearance.sharpcie && p.colorappearance.sharpcie == other.colorappearance.sharpcie;
@@ -610,8 +616,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (colorappearance.degree)				toEdit.colorappearance.degree		= dontforceSet && options.baBehav[ADDSET_CAT_DEGREE] ? toEdit.colorappearance.degree + mods.colorappearance.degree : mods.colorappearance.degree;
 	if (colorappearance.autodegree)			toEdit.colorappearance.autodegree	= mods.colorappearance.autodegree;
 	if (colorappearance.surround)			toEdit.colorappearance.surround		= mods.colorappearance.surround;
+	if (colorappearance.autoadapscen)		toEdit.colorappearance.autoadapscen	= mods.colorappearance.autoadapscen;
 	if (colorappearance.adapscen)			toEdit.colorappearance.adapscen	= mods.colorappearance.adapscen;
 	if (colorappearance.adaplum)			toEdit.colorappearance.adaplum		= dontforceSet && options.baBehav[ADDSET_CAT_ADAPTVIEWING] ? toEdit.colorappearance.adaplum + mods.colorappearance.adaplum : mods.colorappearance.adaplum;
+	if (colorappearance.badpixsl)			toEdit.colorappearance.badpixsl		= dontforceSet && options.baBehav[ADDSET_CAT_BADPIX] ? toEdit.colorappearance.badpixsl + mods.colorappearance.badpixsl : mods.colorappearance.badpixsl;
 	if (colorappearance.wbmodel)			toEdit.colorappearance.wbmodel		= mods.colorappearance.wbmodel;
 	if (colorappearance.algo)				toEdit.colorappearance.algo		= mods.colorappearance.algo;
 
@@ -626,6 +634,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (colorappearance.rstprotection)		toEdit.colorappearance.rstprotection= dontforceSet && options.baBehav[ADDSET_CAT_RSTPRO] ? toEdit.colorappearance.rstprotection + mods.colorappearance.rstprotection : mods.colorappearance.rstprotection;
  	if (colorappearance.surrsource)			toEdit.colorappearance.surrsource = mods.colorappearance.surrsource;
  	if (colorappearance.gamut)				toEdit.colorappearance.gamut = mods.colorappearance.gamut;
+// 	if (colorappearance.badpix)				toEdit.colorappearance.badpix = mods.colorappearance.badpix;
  	if (colorappearance.datacie)			toEdit.colorappearance.datacie = mods.colorappearance.datacie;
  	if (colorappearance.tonecie)			toEdit.colorappearance.tonecie = mods.colorappearance.tonecie;
 // 	if (colorappearance.sharpcie)			toEdit.colorappearance.sharpcie = mods.colorappearance.sharpcie;

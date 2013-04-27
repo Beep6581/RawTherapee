@@ -52,6 +52,7 @@ namespace rtengine {
 			bool			ciecamfloat;
 			int             protectred;
 			double          protectredh;
+			bool			ciebadpixgauss;
 			int             CRI_color; // N° for display Lab value  ; 0 disabled
 
         /** Creates a new instance of Settings.

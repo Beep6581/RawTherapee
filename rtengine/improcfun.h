@@ -117,7 +117,10 @@ class ImProcFunctions {
 		void MLmicrocontrastcam(CieImage* ncie ); //Manuel's microcontrast
 
 		void impulsedenoise   (LabImage* lab);//Emil's impulse denoise
+		void impulsedenoisecam   (CieImage* ncie);
 		void impulse_nr (LabImage* lab, double thresh);
+		void impulse_nrcam (CieImage* ncie, double thresh);
+		
 		void dirpyrdenoise    (LabImage* src);//Emil's pyramid denoise
 		void dirpyrequalizer  (LabImage* lab);//Emil's equalizer
 		
@@ -166,10 +169,13 @@ class ImProcFunctions {
 		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  );
 		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );
 
-		void defringe         (LabImage* lab);
-		void defringecam      (CieImage* ncie);
+		void defringe       (LabImage* lab);
+		void defringecam    (CieImage* ncie);
+		void badpixcam     	(CieImage* ncie, double rad, int thr, int mode);
+		
 		void PF_correct_RT    (LabImage * src, LabImage * dst, double radius, int thresh);
 		void PF_correct_RTcam (CieImage * src, CieImage * dst, double radius, int thresh);
+		void Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode);
 
 		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
 		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6);// for gamma output		

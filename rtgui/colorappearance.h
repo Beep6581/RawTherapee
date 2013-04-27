@@ -39,6 +39,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     Adjuster* degree;
     Adjuster* adapscen;
     Adjuster* adaplum;
+    Adjuster* badpixsl;
     Adjuster* jlight;
     Adjuster* qbright;
     Adjuster* chroma;
@@ -55,6 +56,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     //Adjuster* edge;
     Gtk::CheckButton* surrsource;
     Gtk::CheckButton* gamut;
+ //   Gtk::CheckButton* badpix;
     Gtk::CheckButton* datacie;
     Gtk::CheckButton* tonecie;
   //  Gtk::CheckButton* sharpcie;
@@ -67,7 +69,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     MyComboBoxText*   algo;
     sigc::connection  algoconn;
     sigc::connection  surrconn;
-    sigc::connection  gamutconn, datacieconn, tonecieconn /*, sharpcieconn*/;
+    sigc::connection  gamutconn, datacieconn, tonecieconn /*,badpixconn , sharpcieconn*/;
     sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn;
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
@@ -76,12 +78,14 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     DiagonalCurveEditor* shape;
     DiagonalCurveEditor* shape2;
     DiagonalCurveEditor* shape3;
-	double nextCcam;
+	double nextCcam, nextCadap;
     bool lastEnabled;
     bool lastAutoDegree;
+	bool lastAutoAdapscen;
     sigc::connection enaConn;
     bool lastsurr;
     bool lastgamut;
+//	bool lastbadpix;
 	bool lastdatacie;
 	bool lasttonecie;
  //	bool lastsharpcie;
@@ -97,20 +101,23 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
-
     void adjusterChanged     (Adjuster* a, double newval);
     void adjusterAutoToggled (Adjuster* a, bool newval);
+//    void adjusterAdapToggled (Adjuster* a, bool newval);
     void enabledChanged      ();
     void surroundChanged     ();
     void wbmodelChanged      ();
     void algoChanged         ();
     void surrsource_toggled  ();
     void gamut_toggled       ();
+ //   void badpix_toggled       ();
     void datacie_toggled     ();
     void tonecie_toggled     ();
 //    void sharpcie_toggled     ();
     void autoCamChanged (double ccam);
     bool autoCamComputed_ ();
+    void adapCamChanged (double cadap);
+    bool adapCamComputed_ ();
 	
     void curveChanged        (CurveEditor* ce);
     void curveMode1Changed   ();
@@ -124,7 +131,7 @@ class ColorAppearance : public Gtk::VBox, public AdjusterListener, public Foldab
     bool isCurveExpanded     ();
     void autoOpenCurve       ();
 
-    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
+    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
     virtual void colorForValue (double valX, double valY, int callerId, ColorCaller *caller);

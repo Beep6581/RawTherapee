@@ -194,9 +194,11 @@ public:
     bool enabled;
     bool degree;
     bool autodegree;
+	bool autoadapscen;
     bool surround;
     bool adapscen;
     bool adaplum;
+	bool badpixsl;
     bool wbmodel;
 	bool algo;
     bool jlight;
@@ -210,6 +212,7 @@ public:
 	bool rstprotection;
 	bool surrsource;
 	bool gamut;
+//	bool badpix;
 	bool datacie;
 	bool tonecie;
 //	bool sharpcie;

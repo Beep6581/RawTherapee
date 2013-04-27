@@ -128,7 +128,7 @@ void BatchToolPanelCoordinator::initSession () {
 			whitebalance->setAdjusterBehavior (false, false);
 			vibrance->setAdjusterBehavior (false, false, false);
 			vignetting->setAdjusterBehavior (false, false, false, false);
-			colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false);
+			colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
 			rotate->setAdjusterBehavior (false);
 			distortion->setAdjusterBehavior (false);
 			perspective->setAdjusterBehavior (false);
@@ -155,7 +155,7 @@ void BatchToolPanelCoordinator::initSession () {
 			lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_CHROMATICITY]);
 			whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN]);
 			vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
-			colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA],options.baBehav[ADDSET_CAT_CONTRAST],options.baBehav[ADDSET_CAT_RSTPRO],options.baBehav[ADDSET_CAT_BRIGHT],options.baBehav[ADDSET_CAT_CONTRAST_Q],options.baBehav[ADDSET_CAT_CHROMA_S],options.baBehav[ADDSET_CAT_CHROMA_M],options.baBehav[ADDSET_CAT_HUE]);
+			colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING],options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA],options.baBehav[ADDSET_CAT_CONTRAST],options.baBehav[ADDSET_CAT_RSTPRO],options.baBehav[ADDSET_CAT_BRIGHT],options.baBehav[ADDSET_CAT_CONTRAST_Q],options.baBehav[ADDSET_CAT_CHROMA_S],options.baBehav[ADDSET_CAT_CHROMA_M],options.baBehav[ADDSET_CAT_HUE]);
 			rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
 			distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
 			perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
@@ -207,6 +207,7 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_CAT_DEGREE])  pparams.colorappearance.degree = 0;
 			if (options.baBehav[ADDSET_CAT_ADAPTSCENE])  pparams.colorappearance.adapscen = 0;
 			if (options.baBehav[ADDSET_CAT_ADAPTVIEWING])  pparams.colorappearance.adaplum = 0;
+			if (options.baBehav[ADDSET_CAT_BADPIX])  pparams.colorappearance.badpixsl = 0;
 			if (options.baBehav[ADDSET_CAT_LIGHT])  pparams.colorappearance.jlight = 0;
 			if (options.baBehav[ADDSET_CAT_BRIGHT])  pparams.colorappearance.qbright = 0;
 			if (options.baBehav[ADDSET_CAT_CHROMA])  pparams.colorappearance.chroma = 0;

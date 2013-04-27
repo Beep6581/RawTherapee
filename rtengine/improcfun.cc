@@ -874,7 +874,12 @@ if(settings->autocielab) {
 //if(params->colorappearance.sharpcie) {
 
 //all this treatments reduce artifacts, but can lead to slightly  different results
-if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
+if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);// 
+
+if(params->colorappearance.badpixsl > 0) { int mode=params->colorappearance.badpixsl;
+											ImProcFunctions::badpixcam (ncie, 3.4, 5, mode);//for bad pixels
+										}	
+
 
 if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastcam(ncie);
 
@@ -903,7 +908,8 @@ if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie
 }	
 
 if((params->colorappearance.tonecie || (params->colorappearance.tonecie && params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab)
-		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)) {
+		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
+		||  (params->colorappearance.badpixsl > 0 && settings->autocielab)) {
 		
 		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie  && algepd) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
 			//EPDToneMapCIE adapted to CIECAM
@@ -1651,8 +1657,17 @@ if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
 
 if(settings->autocielab) {
 
+
+
 //all this treatments reduce artefacts, but can leed to slighty  different results
+
 if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
+
+if(params->colorappearance.badpixsl > 0) { int mode=params->colorappearance.badpixsl;
+											ImProcFunctions::badpixcam (ncie, 3.0, 10, mode);//for bad pixels
+										}	
+
+if(params->impulseDenoise.enabled) if(execsharp) ImProcFunctions::impulsedenoisecam (ncie);//impulse adapted to CIECAM
 
 if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastcam(ncie);
 
@@ -1680,7 +1695,8 @@ if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie
 			}
 }
 if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.enabled)) || (params->sharpening.enabled && settings->autocielab) 
-		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)) {
+		|| (params->dirpyrequalizer.enabled && settings->autocielab) ||(params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
+		|| (params->impulseDenoise.enabled && settings->autocielab) ||  (params->colorappearance.badpixsl >0 && settings->autocielab)){
 		
 		if(params->edgePreservingDecompositionUI.enabled  && params->colorappearance.tonecie && algepd) ImProcFunctions::EPDToneMapCIE(ncie, a_w, c_, w_h, width, height, begh, endh, minQ, maxQ, Iterates, scale );
 			//EPDToneMapCIE adated to CIECAM
@@ -2868,6 +2884,13 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 			impulse_nr (lab, (float)params->impulseDenoise.thresh/20.0 );
 	}
 
+	void ImProcFunctions::impulsedenoisecam (CieImage* ncie) {
+
+		if (params->impulseDenoise.enabled && ncie->W>=8 && ncie->H>=8)
+
+			impulse_nrcam (ncie, (float)params->impulseDenoise.thresh/20.0 );
+	}
+	
 	void ImProcFunctions::defringe (LabImage* lab) {
 
 		if (params->defringe.enabled && lab->W>=8 && lab->H>=8)
@@ -2876,10 +2899,12 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 	}
 
 	void ImProcFunctions::defringecam (CieImage* ncie) {
-
-		if (params->defringe.enabled && ncie->W>=8 && ncie->H>=8)
-
-			PF_correct_RTcam(ncie, ncie, params->defringe.radius, params->defringe.threshold);
+		if (params->defringe.enabled && ncie->W>=8 && ncie->H>=8) PF_correct_RTcam(ncie, ncie, params->defringe.radius, params->defringe.threshold);
+		
+	}
+	
+	void ImProcFunctions::badpixcam(CieImage* ncie, double rad, int thr, int mode){
+		if(ncie->W>=8 && ncie->H>=8) Badpixelscam(ncie, ncie, rad, thr, mode);
 	}
 
 	void ImProcFunctions::dirpyrequalizer (LabImage* lab) {

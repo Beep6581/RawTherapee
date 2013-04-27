@@ -191,7 +191,8 @@ void Crop::update (int todo) {
 	//	parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
 		// for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
 		if (skip==1) {
-			parent->ipf.impulsedenoise (labnCrop);
+			if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {		
+			parent->ipf.impulsedenoise (labnCrop);}
 			if((params.colorappearance.enabled && !settings->autocielab) ||(!params.colorappearance.enabled) ) {parent->ipf.defringe (labnCrop);}
 			parent->ipf.MLsharpen (labnCrop);
 			if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {

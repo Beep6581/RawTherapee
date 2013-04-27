@@ -252,6 +252,8 @@ namespace rtengine {
 	class AutoCamListener {
 		public :
 			virtual void autoCamChanged (double ccam) {}
+			virtual void adapCamChanged (double cadap) {}
+			
 	};		
     /** This class represents a detailed part of the image (looking through a kind of window).
       * It can be created and destroyed with the appropriate members of StagedImageProcessor.

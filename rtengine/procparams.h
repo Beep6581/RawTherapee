@@ -375,7 +375,10 @@ class WBParams {
 
         Glib::ustring surround;
         double        adapscen;
+        bool          autoadapscen;
+		
         double        adaplum;
+		int			  badpixsl;
         Glib::ustring wbmodel;
         Glib::ustring algo;
         double        contrast;
@@ -389,6 +392,7 @@ class WBParams {
         double        rstprotection;
         bool          surrsource;
         bool          gamut;
+  //      bool          badpix;
         bool          datacie;
         bool          tonecie;
   //      bool          sharpcie;
