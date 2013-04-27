@@ -227,7 +227,10 @@ enum ProcEvent {
 	EvDPDNmet=202,
 //	EvDPDNperform=201,
 	EvDemosaicLMMSEIter=203,
-	NUMOFEVENTS=204
+	EvCATbadpix=204,
+	EvCATAutoAdap=205,
+	
+	NUMOFEVENTS=206
 };
 }
 #endif

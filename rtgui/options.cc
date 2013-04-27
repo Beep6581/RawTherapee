@@ -415,6 +415,7 @@ void Options::setDefaults () {
 			0,  // ADDSET_CAT_DEGREE
 			0,  // ADDSET_CAT_ADAPSCEN
 			0,  // ADDSET_CAT_ADAPLUM
+			0,  // ADDSET_CAT_BADPIX
 			0,  // ADDSET_CAT_JLIGHT
 			0,  // ADDSET_CAT_CHROMA
  			0,  // ADDSET_CAT_CONTRAST
@@ -458,6 +459,7 @@ void Options::setDefaults () {
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color =0;
 	rtSettings.autocielab=true;
+//	rtSettings.ciebadpixgauss=false;	
 	rtSettings.rgbcurveslumamode_gamut=true;
 	lastIccDir = rtSettings.iccDirectory;
 	lastDarkframeDir = rtSettings.darkFramesPath;
@@ -693,6 +695,8 @@ if (keyFile.has_group ("Color Management")) {
     if( keyFile.has_key ("Color Management", "GamutLch"))       rtSettings.gamutLch             = keyFile.get_boolean("Color Management", "GamutLch");
     if( keyFile.has_key ("Color Management", "ProtectRed"))     rtSettings.protectred           = keyFile.get_integer("Color Management", "ProtectRed");
     if( keyFile.has_key ("Color Management", "ProtectRedH"))    rtSettings.protectredh          = keyFile.get_double("Color Management", "ProtectRedH");
+//    if( keyFile.has_key ("Color Management", "Ciebadpixgauss")) rtSettings.ciebadpixgauss       = keyFile.get_boolean("Color Management", "Ciebadpixgauss");
+	
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -946,6 +950,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
     keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
     keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
+//    keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
 
     Glib::ArrayHandle<int> bab = baBehav;
     keyFile.set_integer_list ("Batch Processing", "AdjusterBehavior", bab);

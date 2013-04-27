@@ -28,6 +28,8 @@
 #include <iostream>
 #include "rawimagesource.h"
 #include "../rtgui/ppversion.h"
+//#include "mytime.h"
+
 #undef THREAD_PRIORITY_NORMAL
 #ifdef _OPENMP
 #include <omp.h>
@@ -90,6 +92,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			params.crop.h = fh-params.crop.y;
 		}
 	}
+//    MyTime t1,t2;
+//    t1.set();
 
     ImProcFunctions ipf (&params, true);
 
@@ -244,7 +248,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	ipf.vibrance(labView);
 
-	ipf.impulsedenoise (labView);
+	if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) ipf.impulsedenoise (labView);
 	// for all treatments Defringe, Sharpening, Contrast detail ,Microcontrast they are activated if "CIECAM" function are disabled
 
 	if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) ipf.defringe (labView);
@@ -616,6 +620,9 @@ else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,cust
              readyImg->setOutputProfile (NULL,0);
         }
     }
+//    t2.set();
+//    if( settings->verbose )
+//           printf("Total:- %d usec\n", t2.etime(t1));
 
     if (!job->initialImage)
         ii->decreaseRef ();

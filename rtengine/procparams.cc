@@ -218,7 +218,9 @@ void ProcParams::setDefaults () {
     colorappearance.autodegree    = true;
     colorappearance.surround      = "Average";
     colorappearance.adaplum       = 16;
+    colorappearance.badpixsl       = 0;
     colorappearance.adapscen      = 2000.0;
+    colorappearance.autoadapscen    = true;
     colorappearance.algo          = "JC";
     colorappearance.wbmodel       = "RawT";
     colorappearance.jlight        = 0.0;
@@ -232,6 +234,7 @@ void ProcParams::setDefaults () {
     colorappearance.colorh        = 0.0;
     colorappearance.surrsource    = false;
     colorappearance.gamut         = true;
+//    colorappearance.badpix        = false;
     colorappearance.datacie       = false;
     colorappearance.tonecie       = false;
  //   colorappearance.sharpcie      = false;
@@ -585,6 +588,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->colorappearance.surround)      keyFile.set_string  ("Color appearance", "Surround",      colorappearance.surround);
  // if (!pedited || pedited->colorappearance.backgrd)       keyFile.set_integer ("Color appearance", "Background",    colorappearance.backgrd);
     if (!pedited || pedited->colorappearance.adaplum)       keyFile.set_double  ("Color appearance", "AdaptLum",      colorappearance.adaplum);
+    if (!pedited || pedited->colorappearance.badpixsl)      keyFile.set_integer ("Color appearance", "Badpixsl",      colorappearance.badpixsl);
     if (!pedited || pedited->colorappearance.wbmodel)       keyFile.set_string  ("Color appearance", "Model",         colorappearance.wbmodel);
     if (!pedited || pedited->colorappearance.algo)          keyFile.set_string  ("Color appearance", "Algorithm",     colorappearance.algo);
 
@@ -599,8 +603,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->colorappearance.rstprotection) keyFile.set_double  ("Color appearance", "RSTProtection", colorappearance.rstprotection);
 
     if (!pedited || pedited->colorappearance.adapscen)      keyFile.set_double  ("Color appearance", "AdaptScene",    colorappearance.adapscen);
+    if (!pedited || pedited->colorappearance.autoadapscen)  keyFile.set_boolean ("Color appearance", "AutoAdapscen",  colorappearance.autoadapscen);
     if (!pedited || pedited->colorappearance.surrsource)    keyFile.set_boolean ("Color appearance", "SurrSource",    colorappearance.surrsource);
     if (!pedited || pedited->colorappearance.gamut)         keyFile.set_boolean ("Color appearance", "Gamut",         colorappearance.gamut);
+//    if (!pedited || pedited->colorappearance.badpix)        keyFile.set_boolean ("Color appearance", "Badpix",        colorappearance.badpix);
     if (!pedited || pedited->colorappearance.datacie)       keyFile.set_boolean ("Color appearance", "Datacie",       colorappearance.datacie);
     if (!pedited || pedited->colorappearance.tonecie)       keyFile.set_boolean ("Color appearance", "Tonecie",       colorappearance.tonecie);
 //    if (!pedited || pedited->colorappearance.sharpcie)      keyFile.set_boolean ("Color appearance", "Sharpcie",      colorappearance.sharpcie);
@@ -1121,6 +1127,7 @@ if (keyFile.has_group ("Color appearance")) {
     if (keyFile.has_key ("Color appearance", "Surround"))      {colorappearance.surround      = keyFile.get_string  ("Color appearance", "Surround"); if (pedited) pedited->colorappearance.surround = true; }
 //  if (keyFile.has_key ("Color appearance", "Background"))    {colorappearance.backgrd       = keyFile.get_integer ("Color appearance", "Background"); if (pedited) pedited->colorappearance.backgrd = true; }
     if (keyFile.has_key ("Color appearance", "AdaptLum"))      {colorappearance.adaplum       = keyFile.get_double  ("Color appearance", "AdaptLum"); if (pedited) pedited->colorappearance.adaplum = true; }
+    if (keyFile.has_key ("Color appearance", "Badpixsl"))      {colorappearance.badpixsl      = keyFile.get_integer ("Color appearance", "Badpixsl"); if (pedited) pedited->colorappearance.badpixsl = true; }
     if (keyFile.has_key ("Color appearance", "Model"))         {colorappearance.wbmodel       = keyFile.get_string  ("Color appearance", "Model"); if (pedited) pedited->colorappearance.wbmodel = true; }
     if (keyFile.has_key ("Color appearance", "Algorithm"))     {colorappearance.algo          = keyFile.get_string  ("Color appearance", "Algorithm"); if (pedited) pedited->colorappearance.algo = true; }
     if (keyFile.has_key ("Color appearance", "J-Light"))       {colorappearance.jlight        = keyFile.get_double  ("Color appearance", "J-Light"); if (pedited) pedited->colorappearance.jlight = true; }
@@ -1133,8 +1140,10 @@ if (keyFile.has_group ("Color appearance")) {
     if (keyFile.has_key ("Color appearance", "Q-Contrast"))    {colorappearance.qcontrast     = keyFile.get_double  ("Color appearance", "Q-Contrast"); if (pedited) pedited->colorappearance.qcontrast = true; }
     if (keyFile.has_key ("Color appearance", "H-Hue"))         {colorappearance.colorh        = keyFile.get_double  ("Color appearance", "H-Hue"); if (pedited) pedited->colorappearance.colorh = true; }
     if (keyFile.has_key ("Color appearance", "AdaptScene"))    {colorappearance.adapscen      = keyFile.get_double  ("Color appearance", "AdaptScene"); if (pedited) pedited->colorappearance.adapscen = true; }
+    if (keyFile.has_key ("Color appearance", "AutoAdapscen"))  {colorappearance.autoadapscen  = keyFile.get_boolean ("Color appearance", "AutoAdapscen"); if (pedited) pedited->colorappearance.autoadapscen = true; }
     if (keyFile.has_key ("Color appearance", "SurrSource"))    {colorappearance.surrsource    = keyFile.get_boolean ("Color appearance", "SurrSource"); if (pedited) pedited->colorappearance.surrsource = true; }
     if (keyFile.has_key ("Color appearance", "Gamut"))         {colorappearance.gamut         = keyFile.get_boolean ("Color appearance", "Gamut"); if (pedited) pedited->colorappearance.gamut = true; }
+//    if (keyFile.has_key ("Color appearance", "Badpix"))        {colorappearance.badpix        = keyFile.get_boolean ("Color appearance", "Badpix"); if (pedited) pedited->colorappearance.badpix = true; }
     if (keyFile.has_key ("Color appearance", "Datacie"))       {colorappearance.datacie       = keyFile.get_boolean ("Color appearance", "Datacie"); if (pedited) pedited->colorappearance.datacie = true; }
     if (keyFile.has_key ("Color appearance", "Tonecie"))       {colorappearance.tonecie       = keyFile.get_boolean ("Color appearance", "Tonecie"); if (pedited) pedited->colorappearance.tonecie = true; }
 //    if (keyFile.has_key ("Color appearance", "Sharpcie"))      {colorappearance.sharpcie      = keyFile.get_boolean ("Color appearance", "Sharpcie"); if (pedited) pedited->colorappearance.sharpcie = true; }
@@ -1539,7 +1548,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& colorappearance.autodegree == other.colorappearance.autodegree
 		&& colorappearance.surround == other.colorappearance.surround
 		&& colorappearance.adapscen == other.colorappearance.adapscen
+		&& colorappearance.autoadapscen == other.colorappearance.autoadapscen
 		&& colorappearance.adaplum == other.colorappearance.adaplum
+		&& colorappearance.badpixsl == other.colorappearance.badpixsl
 		&& colorappearance.wbmodel == other.colorappearance.wbmodel
 		&& colorappearance.algo == other.colorappearance.algo
         && colorappearance.curveMode == other.colorappearance.curveMode

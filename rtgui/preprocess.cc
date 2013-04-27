@@ -29,6 +29,7 @@ PreProcess::PreProcess () : Gtk::VBox(), FoldableToolPanel(this)
 	set_border_width(4);
 
 	hotDeadPixel = Gtk::manage(new Gtk::CheckButton((M("TP_PREPROCESS_HOTDEADPIXFILT"))));
+	hotDeadPixel->set_tooltip_markup (M("TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP"));
 
 	lineDenoise = Gtk::manage(new Adjuster (M("TP_PREPROCESS_LINEDENOISE"),0,1000,1,0));
 	lineDenoise->setAdjusterListener (this);

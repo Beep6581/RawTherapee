@@ -78,9 +78,10 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	wbmHBox->pack_start (*wbmodel);
 	p1VBox->pack_start (*wbmHBox);
 
-	adapscen = Gtk::manage (new Adjuster (M("TP_COLORAPP_ADAPTSCENE"), 0.1, 4000., 0.1, 2000.));
+	adapscen = Gtk::manage (new Adjuster (M("TP_COLORAPP_ADAPTSCENE"), 0.001, 16384., 0.001, 2000.));// EV -7  ==> EV 17
 	if (adapscen->delay < 1000) adapscen->delay = 1000;
 	adapscen->throwOnButtonRelease();
+	adapscen->addAutoButton(M("TP_COLORAPP_ADAP_AUTO_TOOLTIP"));
 	adapscen->set_tooltip_markup (M("TP_COLORAPP_ADAPTSCENE_TOOLTIP"));
 	p1VBox->pack_start (*adapscen);
 
@@ -342,6 +343,21 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	gamut->set_tooltip_markup (M("TP_COLORAPP_GAMUT_TOOLTIP"));
 	gamutconn = gamut->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::gamut_toggled) );
 	pack_start (*gamut, Gtk::PACK_SHRINK);
+	
+	// ------------------------ Bad pixel control
+
+/*
+	badpix = Gtk::manage (new Gtk::CheckButton (M("TP_COLORAPP_BADPIX")));
+	badpix->set_tooltip_markup (M("TP_COLORAPP_BADPIX_TOOLTIP"));
+	badpixconn = badpix->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::badpix_toggled) );
+	pack_start (*badpix, Gtk::PACK_SHRINK);
+*/	
+	badpixsl = Gtk::manage (new Adjuster (M("TP_COLORAPP_BADPIXSL"), 0,  2, 1,  0));
+	if (badpixsl->delay < 1000) badpixsl->delay = 1000;
+	badpixsl->throwOnButtonRelease();
+	badpixsl->set_tooltip_markup (M("TP_COLORAPP_BADPIXSL_TOOLTIP"));
+	pack_start (*badpixsl, Gtk::PACK_SHRINK);
+	
 	// ------------------------ Listening events
 
 
@@ -354,6 +370,7 @@ ColorAppearance::ColorAppearance () : Gtk::VBox(), FoldableToolPanel(this) {
 	degree->setAdjusterListener  (this);
 	adapscen->setAdjusterListener (this);
 	adaplum->setAdjusterListener (this);
+	badpixsl->setAdjusterListener (this);
 	jlight->setAdjusterListener  (this);
 	qbright->setAdjusterListener  (this);
 	colorh->setAdjusterListener  (this);
@@ -396,11 +413,11 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	toneCurveMode2->set_active(pp->colorappearance.curveMode2);
 	toneCurveMode3->set_active(pp->colorappearance.curveMode3);
 	curveMode3Changed(); // This will set the correct sensitive state of depending Adjusters
-
 	if (pedited) {
 		degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
 		adapscen->setEditedState      (pedited->colorappearance.adapscen ? Edited : UnEdited);
 		adaplum->setEditedState       (pedited->colorappearance.adaplum ? Edited : UnEdited);
+		badpixsl->setEditedState      (pedited->colorappearance.badpixsl ? Edited : UnEdited);
 		jlight->setEditedState        (pedited->colorappearance.jlight ? Edited : UnEdited);
 		qbright->setEditedState       (pedited->colorappearance.qbright ? Edited : UnEdited);
 		chroma->setEditedState        (pedited->colorappearance.chroma ? Edited : UnEdited);
@@ -412,11 +429,14 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		colorh->setEditedState        (pedited->colorappearance.colorh ? Edited : UnEdited);
 		surrsource->set_inconsistent  (!pedited->colorappearance.surrsource);
 		gamut->set_inconsistent       (!pedited->colorappearance.gamut);
+	//	badpix->set_inconsistent      (!pedited->colorappearance.badpix);
 		datacie->set_inconsistent     (!pedited->colorappearance.datacie);
 		tonecie->set_inconsistent     (!pedited->colorappearance.tonecie);
 	//	sharpcie->set_inconsistent    (!pedited->colorappearance.sharpcie);
 
 		degree->setAutoInconsistent   (multiImage && !pedited->colorappearance.autodegree);
+		adapscen->setAutoInconsistent   (multiImage && !pedited->colorappearance.autoadapscen);
+		
 		enabled->set_inconsistent     (multiImage && !pedited->colorappearance.enabled);
 		shape->setUnChanged (!pedited->colorappearance.curve);
 		shape2->setUnChanged (!pedited->colorappearance.curve2);
@@ -485,6 +505,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	gamutconn.block (true);
 	gamut->set_active (pp->colorappearance.gamut);
 	gamutconn.block (false);
+//	badpixconn.block (true);
+//	badpix->set_active (pp->colorappearance.badpix);
+//	badpixconn.block (false);
 	datacieconn.block (true);
 	datacie->set_active (pp->colorappearance.datacie);
 	datacieconn.block (false);
@@ -497,17 +520,22 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 	lastsurr=pp->colorappearance.surrsource;
 	lastgamut=pp->colorappearance.gamut;
+//	lastbadpix=pp->colorappearance.badpix;
 	lastdatacie=pp->colorappearance.datacie;
 	lasttonecie=pp->colorappearance.tonecie;
 //	lastsharpcie=pp->colorappearance.sharpcie;
 
 	lastEnabled = pp->colorappearance.enabled;
 	lastAutoDegree = pp->colorappearance.autodegree;
+	lastAutoAdapscen = pp->colorappearance.autoadapscen;
 
 	degree->setValue (pp->colorappearance.degree);
 	degree->setAutoValue(pp->colorappearance.autodegree);
 	adapscen->setValue (pp->colorappearance.adapscen);
+	adapscen->setAutoValue (pp->colorappearance.autoadapscen);
+	
 	adaplum->setValue (pp->colorappearance.adaplum);
+	badpixsl->setValue (pp->colorappearance.badpixsl);
 	jlight->setValue (pp->colorappearance.jlight);
 	qbright->setValue (pp->colorappearance.qbright);
 	chroma->setValue (pp->colorappearance.chroma);
@@ -537,7 +565,9 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->colorappearance.autodegree    = degree->getAutoValue ();
 	pp->colorappearance.enabled       = enabled->get_active();
 	pp->colorappearance.adapscen      = adapscen->getValue ();
+	pp->colorappearance.autoadapscen  = adapscen->getAutoValue ();
 	pp->colorappearance.adaplum       = adaplum->getValue ();
+	pp->colorappearance.badpixsl      = badpixsl->getValue ();
 	pp->colorappearance.jlight        = jlight->getValue ();
 	pp->colorappearance.qbright       = qbright->getValue ();
 	pp->colorappearance.chroma        = chroma->getValue ();
@@ -549,6 +579,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->colorappearance.rstprotection = rstprotection->getValue ();
 	pp->colorappearance.surrsource    = surrsource->get_active();
 	pp->colorappearance.gamut         = gamut->get_active();
+//	pp->colorappearance.badpix        = badpix->get_active();
 	pp->colorappearance.datacie       = datacie->get_active();
 	pp->colorappearance.tonecie       = tonecie->get_active();
 //	pp->colorappearance.sharpcie      = sharpcie->get_active();
@@ -573,6 +604,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorappearance.degree        = degree->getEditedState ();
 		pedited->colorappearance.adapscen      = adapscen->getEditedState ();
 		pedited->colorappearance.adaplum       = adaplum->getEditedState ();
+		pedited->colorappearance.badpixsl      = badpixsl->getEditedState ();
 		pedited->colorappearance.jlight        = jlight->getEditedState ();
 		pedited->colorappearance.qbright       = qbright->getEditedState ();
 		pedited->colorappearance.chroma        = chroma->getEditedState ();
@@ -583,12 +615,14 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->colorappearance.colorh        = colorh->getEditedState ();
 		pedited->colorappearance.rstprotection = rstprotection->getEditedState ();
 		pedited->colorappearance.autodegree    = !degree->getAutoInconsistent();
+		pedited->colorappearance.autoadapscen  = !adapscen->getAutoInconsistent();
 		pedited->colorappearance.enabled       = !enabled->get_inconsistent();
 		pedited->colorappearance.surround      = surround->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->colorappearance.wbmodel       = wbmodel->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->colorappearance.algo          = algo->get_active_text()!=M("GENERAL_UNCHANGED");
 		pedited->colorappearance.surrsource    = !surrsource->get_inconsistent();
 		pedited->colorappearance.gamut         = !gamut->get_inconsistent();
+	//	pedited->colorappearance.badpix        = !badpix->get_inconsistent();
 		pedited->colorappearance.datacie       = !datacie->get_inconsistent();
 		pedited->colorappearance.tonecie       = !tonecie->get_inconsistent();
 	//	pedited->colorappearance.sharpcie      = !sharpcie->get_inconsistent();
@@ -715,6 +749,31 @@ void ColorAppearance::gamut_toggled () {
 	
 
 }
+/*
+void ColorAppearance::badpix_toggled () {
+
+	if (batchMode) {
+		if (badpix->get_inconsistent()) {
+			badpix->set_inconsistent (false);
+			badpixconn.block (true);
+			badpix->set_active (false);
+			badpixconn.block (false);
+		}
+		else if (lastbadpix)
+			badpix->set_inconsistent (true);
+
+		lastbadpix = badpix->get_active ();
+	}
+	if (listener) {
+		if (badpix->get_active ())
+			listener->panelChanged (EvCATbadpix, M("GENERAL_ENABLED"));
+		else
+			listener->panelChanged (EvCATbadpix, M("GENERAL_DISABLED"));
+	}
+	
+
+}
+*/
 void ColorAppearance::datacie_toggled () {
 
 	if (batchMode) {
@@ -789,6 +848,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 	degree->setDefault (defParams->colorappearance.degree);
 	adapscen->setDefault (defParams->colorappearance.adapscen);
 	adaplum->setDefault (defParams->colorappearance.adaplum);
+	badpixsl->setDefault (defParams->colorappearance.badpixsl);
 	jlight->setDefault (defParams->colorappearance.jlight);
 	qbright->setDefault (defParams->colorappearance.qbright);
 	chroma->setDefault (defParams->colorappearance.chroma);
@@ -803,6 +863,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 		degree->setDefaultEditedState (pedited->colorappearance.degree ? Edited : UnEdited);
 		adapscen->setDefaultEditedState (pedited->colorappearance.adapscen ? Edited : UnEdited);
 		adaplum->setDefaultEditedState (pedited->colorappearance.adaplum ? Edited : UnEdited);
+		badpixsl->setDefaultEditedState (pedited->colorappearance.badpixsl ? Edited : UnEdited);
 		jlight->setDefaultEditedState (pedited->colorappearance.jlight ? Edited : UnEdited);
 		qbright->setDefaultEditedState (pedited->colorappearance.qbright ? Edited : UnEdited);
 		chroma->setDefaultEditedState (pedited->colorappearance.chroma ? Edited : UnEdited);
@@ -818,6 +879,7 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 		degree->setDefaultEditedState (Irrelevant);
 		adapscen->setDefaultEditedState (Irrelevant);
 		adaplum->setDefaultEditedState (Irrelevant);
+		badpixsl->setDefaultEditedState (Irrelevant);
 		jlight->setDefaultEditedState (Irrelevant);
 		qbright->setDefaultEditedState (Irrelevant);
 		chroma->setDefaultEditedState (Irrelevant);
@@ -850,6 +912,26 @@ bool ColorAppearance::autoCamComputed_ () {
 
     return false;
 }
+int adapCamChangedUI (void* data) {
+    (static_cast<ColorAppearance*>(data))->adapCamComputed_ ();
+    return 0;
+}
+void ColorAppearance::adapCamChanged (double cadap) 
+{
+    nextCadap = cadap;
+	g_idle_add (adapCamChangedUI, this);
+  //  Glib::signal_idle().connect (sigc::mem_fun(*this, &ColorAppearance::autoCamComputed_));
+}
+
+bool ColorAppearance::adapCamComputed_ () {
+
+    disableListener ();
+//	degree->setEnabled (true);
+	adapscen->setValue (nextCadap);
+    enableListener ();
+
+    return false;
+}
 
 
 void ColorAppearance::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {
@@ -876,6 +958,8 @@ void ColorAppearance::adjusterChanged (Adjuster* a, double newval) {
 			listener->panelChanged (EvCATAdapscen, a->getTextValue());
 		else if(a==adaplum)
 			listener->panelChanged (EvCATAdapLum, a->getTextValue());
+		else if(a==badpixsl)
+			listener->panelChanged (EvCATbadpix, a->getTextValue());			
 		else if(a==jlight)
 			listener->panelChanged (EvCATJLight, a->getTextValue());
 		else if(a==qbright)
@@ -909,6 +993,16 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval) {
 			degree->setAutoInconsistent(true);
 
 		lastAutoDegree = degree->getAutoValue();
+		
+		if (adapscen->getAutoInconsistent()) {
+			adapscen->setAutoInconsistent(false);
+			adapscen->setAutoValue(false);
+		}
+		else if (lastAutoAdapscen)
+			adapscen->setAutoInconsistent(true);
+
+		lastAutoAdapscen = adapscen->getAutoValue();
+		
 	}
 
 	if (listener && (multiImage||enabled->get_active()) ) {
@@ -921,9 +1015,18 @@ void ColorAppearance::adjusterAutoToggled (Adjuster* a, bool newval) {
 			else
 				listener->panelChanged (EvCATAutoDegree, M("GENERAL_DISABLED"));
 		}
+		if(a==adapscen) {
+			if (adapscen->getAutoInconsistent())
+				listener->panelChanged (EvCATAutoAdap, M("GENERAL_UNCHANGED"));
+			else if (adapscen->getAutoValue())
+				listener->panelChanged (EvCATAutoAdap, M("GENERAL_ENABLED"));
+			else
+				listener->panelChanged (EvCATAutoAdap, M("GENERAL_DISABLED"));
+		}
+		
+		
 	}
 }
-
 void ColorAppearance::enabledChanged () {
 
 	if (multiImage) {
@@ -1049,6 +1152,7 @@ void ColorAppearance::setBatchMode (bool batchMode) {
 	degree->showEditedCB ();
 	adapscen->showEditedCB ();
 	adaplum->showEditedCB ();
+	badpixsl->showEditedCB ();
 	jlight->showEditedCB ();
 	qbright->showEditedCB ();
 	chroma->showEditedCB ();
@@ -1080,11 +1184,12 @@ void ColorAppearance::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu
 
 
 
-void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd) {
+void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd) {
 
 	degree->setAddMode(degreeadd);
 	adapscen->setAddMode(adapscenadd);
 	adaplum->setAddMode(adaplumadd);
+	badpixsl->setAddMode(badpixsladd);
 	jlight->setAddMode(jlightadd);
 	qbright->setAddMode(qbrightadd);
 	chroma->setAddMode(chromaadd);
@@ -1101,6 +1206,7 @@ void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp) {
 	degree->trimValue(pp->colorappearance.degree);
 	adapscen->trimValue(pp->colorappearance.adapscen);
 	adaplum->trimValue(pp->colorappearance.adaplum);
+	badpixsl->trimValue(pp->colorappearance.badpixsl);
 	jlight->trimValue(pp->colorappearance.jlight);
 	qbright->trimValue(pp->colorappearance.qbright);
 	chroma->trimValue(pp->colorappearance.chroma);

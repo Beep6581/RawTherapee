@@ -216,6 +216,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_COLORAPP_CHROMA_M"),ADDSET_CAT_CHROMA_M, true);
     appendBehavList (mi, M("TP_COLORAPP_HUE"),ADDSET_CAT_HUE, true);
     appendBehavList (mi, M("TP_COLORAPP_ADAPTVIEWING"),ADDSET_CAT_ADAPTVIEWING, true);
+    appendBehavList (mi, M("TP_COLORAPP_BADPIXSL"),ADDSET_CAT_BADPIX, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_VIBRANCE_LABEL"));

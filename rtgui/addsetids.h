@@ -64,7 +64,9 @@
 #define ADDSET_CAT_CHROMA_S             56
 #define ADDSET_CAT_CHROMA_M             57
 #define ADDSET_CAT_HUE                  58
+#define ADDSET_CAT_BADPIX               59
+
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                59 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                60 // THIS IS USED AS A DELIMITER!!
 
 #endif
