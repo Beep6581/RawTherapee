@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #ifdef WIN32
 #include <windows.h>
+#include <Shlwapi.h>
 // for GCC32
 #ifndef _WIN32_IE
 #define _WIN32_IE 0x0600
@@ -414,8 +415,7 @@ Glib::ustring safe_get_user_picture_dir() {
  * Warning: this function is a workaround for Windows platform, and not necessarily bullet proof
  */
 bool safe_is_root_dir (const Glib::ustring& path) {
-	Glib::ustring t = Glib::path_skip_root(path);
-	return t.empty();
+	return PathIsRootA(path.c_str());
 }
 #endif
 
