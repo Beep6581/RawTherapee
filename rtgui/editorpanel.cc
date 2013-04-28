@@ -945,13 +945,13 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 					openThm->openDefaultViewer(event->state & GDK_SHIFT_MASK ? 2 : 1);
 					return true;
 				case GDK_y: // synchronize filebrowser with image in Editor
-			    	if (!simpleEditor && fPanel && fname!=""){
+			    	if (!simpleEditor && fPanel && !fname.empty()){
 	    				fPanel->fileCatalog->selectImage(fname, false);
 			    		return true;
 			    	}
 					break; // to avoid gcc complain
 			    case GDK_x: // clear filters and synchronize filebrowser with image in Editor
-			    	if (!simpleEditor && fPanel && fname!=""){
+			    	if (!simpleEditor && fPanel && !fname.empty()){
 	    				fPanel->fileCatalog->selectImage(fname, true);
 			    		return true;
 			    	}
@@ -1000,13 +1000,13 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
     if (shift){
     	switch (event->keyval) {
 			case GDK_F3: // open Previous image from Editor's perspective
-				if (!simpleEditor && fPanel && fname!=""){
+				if (!simpleEditor && fPanel && !fname.empty()){
 	    			EditorPanel::openPreviousEditorImage();
 		    		return true;
 		    	}
 				break; // to avoid gcc complain
 		    case GDK_F4: // open next image from Editor's perspective
-				if (!simpleEditor && fPanel && fname!=""){
+				if (!simpleEditor && fPanel && !fname.empty()){
 	    			EditorPanel::openNextEditorImage();
 		    		return true;
 		    	}
@@ -1234,17 +1234,17 @@ void EditorPanel::sendToGimpPressed () {
 
 
 void EditorPanel::openPreviousEditorImage() {
-	if (!simpleEditor && fPanel && fname!="")
+	if (!simpleEditor && fPanel && !fname.empty())
 		fPanel->fileCatalog->openNextPreviousEditorImage(fname, true, NAV_PREVIOUS);
 }
 
 void EditorPanel::openNextEditorImage() {
-	if (!simpleEditor && fPanel && fname!="")
+	if (!simpleEditor && fPanel && !fname.empty())
 		fPanel->fileCatalog->openNextPreviousEditorImage(fname, true, NAV_NEXT);
 }
 
 void EditorPanel::syncFileBrowser() { // synchronize filebrowser with image in Editor
-	if (!simpleEditor && fPanel && fname!="")
+	if (!simpleEditor && fPanel && !fname.empty())
 		fPanel->fileCatalog->selectImage(fname, true);
 }
 

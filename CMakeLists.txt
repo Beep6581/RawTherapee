@@ -179,7 +179,7 @@ if (WIN32)
         add_definitions (-D__MINGW32__)
     endif (MINGW)
 
-    set (EXTRA_LIB "-lws2_32")
+    set (EXTRA_LIB "-lws2_32 -lshlwapi")
 endif (WIN32)
 # you may need lcms v1.xx for older version : pkg_check_modules (LCMS REQUIRED lcms<=1.99)
 pkg_check_modules (LCMS REQUIRED lcms2)

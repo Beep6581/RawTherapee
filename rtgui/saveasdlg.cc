@@ -156,7 +156,7 @@ bool SaveAsDialog::getAutoSuffix () {
 
 bool SaveAsDialog::getImmediately () {
 
-    return saveMethod[0]->get_active ();
+    return simpleEditor ? true : saveMethod[0]->get_active ();
 }
 
 bool SaveAsDialog::getToHeadOfQueue () {
@@ -170,6 +170,8 @@ bool SaveAsDialog::getToTailOfQueue () {
 }
 
 int SaveAsDialog::getSaveMethodNum () {
+    if (simpleEditor)
+        return 0;
     for (int i = 0; i < 3; i++)
         if (saveMethod[i]->get_active())
             return i;
@@ -263,7 +265,7 @@ void SaveAsDialog::setImagePath (Glib::ustring ipath) {
     if (!safe_is_root_dir(path))
 #endif
     try {
-        fchooser->add_shortcut_folder(Glib::path_get_dirname(path));
+        fchooser->add_shortcut_folder(path);
     }
     catch (Gtk::FileChooserError &err) {}
 }
