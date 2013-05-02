@@ -185,15 +185,10 @@ Method=Blend
 
 [Resize]
 Enabled=false
-Scale=1
-AppliesTo=Cropped area
-Method=Bicubic
-DataSpecified=0
-Width=4276
-Height=2836
+
 
 [Color Management]
-InputProfile=(cameraICC)
+
 ToneCurve=false
 BlendCMSMatrix=false
 PreferredProfile=true

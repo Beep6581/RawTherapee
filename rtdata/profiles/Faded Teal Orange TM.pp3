@@ -49,6 +49,11 @@ AvoidColorShift=true
 PastSatTog=true
 SkinTonesCurve=0;
 
+
+[Color appearance]
+Enabled=false
+
+
 [Directional Pyramid Denoising]
 Enabled=true
 Luma=0

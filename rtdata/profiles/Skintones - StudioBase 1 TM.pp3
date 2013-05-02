@@ -186,15 +186,10 @@ Method=Blend
 
 [Resize]
 Enabled=false
-Scale=1
-AppliesTo=Cropped area
-Method=Bicubic
-DataSpecified=0
-Width=7370
-Height=4916
+
 
 [Color Management]
-InputProfile=(cameraICC)
+
 ToneCurve=false
 BlendCMSMatrix=false
 PreferredProfile=true
@@ -211,7 +206,7 @@ Mult0=1
 Mult1=1
 Mult2=1
 Mult3=1
-Mult4=0
+Mult4=0.2
 
 [HSV Equalizer]
 HCurve=0;
