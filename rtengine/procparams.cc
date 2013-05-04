@@ -128,7 +128,7 @@ void ProcParams::destroy (ProcParams* pp) {
 void ProcParams::setDefaults () {
 
     toneCurve.autoexp       = false;
-    toneCurve.clip          = 0.001;
+    toneCurve.clip          = 0.02;
     toneCurve.expcomp       = 0;
     toneCurve.brightness    = 0;
     toneCurve.contrast      = 0;
@@ -185,12 +185,12 @@ void ProcParams::setDefaults () {
     sharpenMicro.matrix         = false;
 
     sharpening.enabled          = false;
-    sharpening.radius           = 1.0;
-    sharpening.amount           = 90;
+    sharpening.radius           = 0.5;
+    sharpening.amount           = 200;
     sharpening.threshold.setValues(20, 80, 2000, 1200);
     sharpening.edgesonly        = false;
-    sharpening.edges_radius     = 3;
-    sharpening.edges_tolerance  = 1000;
+    sharpening.edges_radius     = 1.9;
+    sharpening.edges_tolerance  = 1800;
     sharpening.halocontrol      = false;
     sharpening.halocontrol_amount = 85;
     sharpening.method           = "usm";
@@ -257,9 +257,9 @@ void ProcParams::setDefaults () {
 
     dirpyrDenoise.enabled       = false;
  //   dirpyrDenoise.perform       = false;
-    dirpyrDenoise.luma          = 30;
+    dirpyrDenoise.luma          = 0;
     dirpyrDenoise.Ldetail       = 50;
-    dirpyrDenoise.chroma        = 30;
+    dirpyrDenoise.chroma        = 15;
     dirpyrDenoise.redchro       = 0;
     dirpyrDenoise.bluechro      = 0;
     dirpyrDenoise.gamma         = 1.7;
@@ -273,9 +273,9 @@ void ProcParams::setDefaults () {
 
     sh.enabled       = false;
     sh.hq            = false;
-    sh.highlights    = 0;
+    sh.highlights    = 10;
     sh.htonalwidth   = 80;
-    sh.shadows       = 0;
+    sh.shadows       = 10;
     sh.stonalwidth   = 80;
     sh.localcontrast = 0;
     sh.radius        = 40;
@@ -307,7 +307,7 @@ void ProcParams::setDefaults () {
     cacorrection.blue = 0;
     
     hlrecovery.enabled = false;
-    hlrecovery.method  = "Luminance";
+    hlrecovery.method  = "Blend";
 
     vignetting.amount = 0;
     vignetting.radius = 50;
@@ -337,7 +337,7 @@ void ProcParams::setDefaults () {
     resize.width = 800;
     resize.height = 600;
     
-    icm.input   = "";
+    icm.input   = "(cameraICC)";
     icm.blendCMSMatrix = false;
     icm.toneCurve = false;
     icm.preferredProfile = (short)rtengine::Daylight;
@@ -353,7 +353,7 @@ void ProcParams::setDefaults () {
     {
         dirpyrequalizer.mult[i] = 1.0;
     }
-    dirpyrequalizer.mult[4] = 0.0;
+    dirpyrequalizer.mult[4] = 0.2;
     hsvequalizer.hcurve.clear ();
     hsvequalizer.hcurve.push_back (FCT_Linear);
     hsvequalizer.scurve.clear ();
