@@ -116,8 +116,8 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 				indx1=numcols % 16;
 				for (int i=0; i<(16-indx1); i++) 
 					for (int rr=0; rr<numrows; rr++) 
-			
-						cfain[(rr)*TS+numcols+i+1]=cfain[(rr)*TS+numcols-i];
+						cfain[(rr)*TS+numcols+i]=cfain[(rr)*TS+numcols-i-1];
+
 				numcols += 16-indx1;
 			}
 			
@@ -125,8 +125,8 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 				indx1=numrows % 16;
 				for (int i=0; i<(16-indx1); i++)
 					for (int cc=0; cc<numcols; cc++)
-		
-						cfain[(numrows+i+1)*TS+cc]=cfain[(numrows-i)*TS+cc];
+						cfain[(numrows+i)*TS+cc]=cfain[(numrows-i-1)*TS+cc];
+
 				numrows += 16-indx1;
 			}
 			
