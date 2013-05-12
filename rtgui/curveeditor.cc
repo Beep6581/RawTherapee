@@ -97,7 +97,8 @@ void DiagonalCurveEditor::getRangeDefaultMilestones(double &m1, double &m2, doub
 
 FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, bool isPeriodic) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup) {
 
-	periodic = isPeriodic;
+    periodic = isPeriodic;
+    identityValue = 0.5;
 
     // Order set in the same order than "enum FlatCurveType". Shouldn't change, for compatibility reason
     curveType->addEntry("curveType-flatLinear.png",    M("CURVEEDITOR_LINEAR"));			// 0 Linear

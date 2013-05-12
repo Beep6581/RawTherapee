@@ -1238,12 +1238,12 @@ void MyFlatCurve::setType (FlatCurveType t) {
     setDirty(true);
 }
 
-void MyFlatCurve::reset() {
+void MyFlatCurve::reset(double identityValue) {
     calcDimensions();
 
     switch (curve.type) {
     case  FCT_MinMaxCPoints :
-        defaultCurve();
+        defaultCurve(identityValue);
         lit_point = -1;
         curveIsDirty = true;
         break;
@@ -1256,7 +1256,7 @@ void MyFlatCurve::reset() {
     draw();
 }
 
-void MyFlatCurve::defaultCurve () {
+void MyFlatCurve::defaultCurve (double iVal) {
 
     curve.x.resize(6);
     curve.y.resize(6);
@@ -1266,7 +1266,7 @@ void MyFlatCurve::defaultCurve () {
     // Point for RGBCMY colors
     for (int i=0; i<6; i++) {
         curve.x.at(i) = (1./6.)*i;
-        curve.y.at(i) = 0.5;
+        curve.y.at(i) = iVal;
         curve.leftTangent.at(i) = 0.35;
         curve.rightTangent.at(i) = 0.35;
     }

@@ -229,8 +229,8 @@ enum ProcEvent {
 	EvDemosaicLMMSEIter=203,
 	EvCATbadpix=204,
 	EvCATAutoAdap=205,
-	
-	NUMOFEVENTS=206
+	EvPFCurve=206,	
+	NUMOFEVENTS=207
 };
 }
 #endif

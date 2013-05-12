@@ -173,6 +173,7 @@ public:
     bool enabled;
     bool radius;
     bool threshold;
+    bool huecurve;
 };
 
 class ImpulseDenoiseParamsEdited {

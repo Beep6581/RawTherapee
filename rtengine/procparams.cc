@@ -239,13 +239,13 @@ void ProcParams::setDefaults () {
     colorappearance.tonecie       = false;
  //   colorappearance.sharpcie      = false;
     colorappearance.curve.clear ();
-	colorappearance.curve.push_back(DCT_Linear);
+    colorappearance.curve.push_back(DCT_Linear);
     colorappearance.curve2.clear ();
-	colorappearance.curve2.push_back(DCT_Linear);
+    colorappearance.curve2.push_back(DCT_Linear);
     colorappearance.curveMode     =ColorAppearanceParams::TC_MODE_LIGHT;
     colorappearance.curveMode2    = ColorAppearanceParams::TC_MODE_LIGHT;
     colorappearance.curve3.clear ();
-	colorappearance.curve3.push_back(DCT_Linear);
+    colorappearance.curve3.push_back(DCT_Linear);
     colorappearance.curveMode3    = ColorAppearanceParams::TC_MODE_CHROMA;
 
     impulseDenoise.enabled      = false;
@@ -254,6 +254,32 @@ void ProcParams::setDefaults () {
     defringe.enabled            = false;
     defringe.radius             = 2.0;
     defringe.threshold          = 25;
+    defringe.huecurve.resize (25);
+    defringe.huecurve.at(0)     = FCT_MinMaxCPoints;
+    defringe.huecurve.at(1)     = 0.166666667;
+    defringe.huecurve.at(2)     = 0.;
+    defringe.huecurve.at(3)     = 0.35;
+    defringe.huecurve.at(4)     = 0.35;
+    defringe.huecurve.at(5)     = 0.347;
+    defringe.huecurve.at(6)     = 0.;
+    defringe.huecurve.at(7)     = 0.35;
+    defringe.huecurve.at(8)     = 0.35;
+    defringe.huecurve.at(9)     = 0.513667426;
+    defringe.huecurve.at(10)    = 0;
+    defringe.huecurve.at(11)    = 0.35;
+    defringe.huecurve.at(12)    = 0.35;
+    defringe.huecurve.at(13)    = 0.668944571;
+    defringe.huecurve.at(14)    = 0.;
+    defringe.huecurve.at(15)    = 0.35;
+    defringe.huecurve.at(16)    = 0.35;
+    defringe.huecurve.at(17)    = 0.8287775246;
+    defringe.huecurve.at(18)    = 0.97835991;
+    defringe.huecurve.at(19)    = 0.35;
+    defringe.huecurve.at(20)    = 0.35;
+    defringe.huecurve.at(21)    = 0.9908883827;
+    defringe.huecurve.at(22)    = 0.;
+    defringe.huecurve.at(23)    = 0.35;
+    defringe.huecurve.at(24)    = 0.35;
 
     dirpyrDenoise.enabled       = false;
  //   dirpyrDenoise.perform       = false;
@@ -674,6 +700,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->defringe.enabled)       keyFile.set_boolean ("Defringing", "Enabled",   defringe.enabled);
     if (!pedited || pedited->defringe.radius)        keyFile.set_double  ("Defringing", "Radius",    defringe.radius);
     if (!pedited || pedited->defringe.threshold)     keyFile.set_integer ("Defringing", "Threshold", defringe.threshold);
+    if (!pedited || pedited->defringe.huecurve)  {
+        Glib::ArrayHandle<double> huecurve = defringe.huecurve;
+        keyFile.set_double_list("Defringing", "HueCurve", huecurve);
+    }
 
     // save dirpyrDenoise
     if (!pedited || pedited->dirpyrDenoise.enabled) keyFile.set_boolean ("Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled);
@@ -1118,6 +1148,7 @@ if (keyFile.has_group ("Defringing")) {
     if (keyFile.has_key ("Defringing", "Enabled"))        { defringe.enabled   = keyFile.get_boolean ("Defringing", "Enabled"); if (pedited) pedited->defringe.enabled = true; }
     if (keyFile.has_key ("Defringing", "Radius"))         { defringe.radius    = keyFile.get_double  ("Defringing", "Radius"); if (pedited) pedited->defringe.radius = true; }
     if (keyFile.has_key ("Defringing", "Threshold"))      { defringe.threshold = keyFile.get_integer ("Defringing", "Threshold"); if (pedited) pedited->defringe.threshold = true; }
+    if (keyFile.has_key ("Defringing", "HueCurve"))       { defringe.huecurve  = keyFile.get_double_list ("Defringing", "HueCurve"); if (pedited) pedited->defringe.huecurve = true; }
 }
     // load colorappearance
 if (keyFile.has_group ("Color appearance")) {
@@ -1584,6 +1615,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& defringe.enabled == other.defringe.enabled
 		&& defringe.radius == other.defringe.radius
 		&& defringe.threshold == other.defringe.threshold
+		&& defringe.huecurve == other.defringe.huecurve
+		
 		//&& lumaDenoise.enabled == other.lumaDenoise.enabled
 		//&& lumaDenoise.radius == other.lumaDenoise.radius
 		//&& lumaDenoise.edgetolerance == other.lumaDenoise.edgetolerance

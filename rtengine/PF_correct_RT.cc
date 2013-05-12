@@ -29,6 +29,7 @@
 #include "improcfun.h"
 #include "sleef.c"
 #include "mytime.h"
+#include "../rtgui/myflatcurve.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -57,6 +58,10 @@ void ImProcFunctions::PF_correct_RT(LabImage * src, LabImage * dst, double radiu
 	int halfwin = ceil(2*radius)+1;
 
 #include "rt_math.h"
+
+	FlatCurve* chCurve = NULL;
+	if (params->defringe.huecurve.size() && FlatCurveType(params->defringe.huecurve.at(0)) > FCT_Linear)
+		chCurve = new FlatCurve(params->defringe.huecurve);
 
 	// local variables
 	int width=src->W, height=src->H;
@@ -88,7 +93,16 @@ float chromave=0;
 #endif
 	for(int i = 0; i < height; i++ ) {
 		for(int j = 0; j < width; j++) {
-			float chroma = SQR(src->a[i][j]-tmp1->a[i][j])+SQR(src->b[i][j]-tmp1->b[i][j]);
+			float HH=xatan2f(src->b[i][j],src->a[i][j]);
+				double hr;
+				float chromaChfactor=1.0f;
+				if (chCurve) {
+					Color::huelab_to_huehsv (HH, hr);
+					float chparam = float((chCurve->getVal(hr)-0.5f) * 2.0f);//get C=f(H)
+					if(chparam > 0.f) chparam /=2.f; // reduced action if chparam > 0
+					chromaChfactor=1.0f+chparam;
+				}
+			float chroma = SQR(chromaChfactor*(src->a[i][j]-tmp1->a[i][j]))+SQR(chromaChfactor*(src->b[i][j]-tmp1->b[i][j]));//modulate chroma function hue
 			chromave += chroma;
 			fringe[i*width+j]=chroma;
 		}
@@ -144,12 +158,17 @@ float chromave=0;
 	}
 
 	delete tmp1;
+	if(chCurve) delete chCurve;
 	free(fringe);
 }
+
 void ImProcFunctions::PF_correct_RTcam(CieImage * src, CieImage * dst, double radius, int thresh) {
 	int halfwin = ceil(2*radius)+1;
 
 #include "rt_math.h"
+	FlatCurve* chCurve = NULL;
+	if (params->defringe.huecurve.size() && FlatCurveType(params->defringe.huecurve.at(0)) > FCT_Linear)
+		chCurve = new FlatCurve(params->defringe.huecurve);
 
 	// local variables
 	int width=src->W, height=src->H;
@@ -223,7 +242,20 @@ float chromave=0;
 #endif
 	for(int i = 0; i < height; i++ ) {
 		for(int j = 0; j < width; j++) {
-			float chroma =SQR(sraa[i][j]-tmaa[i][j])+SQR(srbb[i][j]-tmbb[i][j]);
+				float HH=xatan2f(srbb[i][j],sraa[i][j]); //piid*src->h_p[i][j];
+				float chromaChfactor=1.0f;
+				double hr;
+				if (chCurve) {
+					Color::huelab_to_huehsv (HH, hr);	//approximation Cam / Lab
+					float chparam = float((chCurve->getVal(hr)-0.5f) * 2.0f);//get C=f(H)
+					if(chparam > 0.f) chparam /=2.f; // reduced action if chparam > 0
+					chromaChfactor=1.0f+chparam;
+				}
+				float chroma = SQR(chromaChfactor*(sraa[i][j]-tmaa[i][j]))+SQR(chromaChfactor*(srbb[i][j]-tmbb[i][j]));//modulate chroma function hue
+		
+		
+		
+		//	float chroma =SQR(sraa[i][j]-tmaa[i][j])+SQR(srbb[i][j]-tmbb[i][j]);
 			chromave += chroma;
 			fringe[i*width+j]=chroma;
 		}
@@ -297,8 +329,10 @@ float chromave=0;
            /*     for (int i=0; i<height; i++)
                     delete [] tmL[i];
                 delete [] tmL;
-			*/
-	free(fringe);
+           */
+    if(chCurve) delete chCurve;
+
+    free(fringe);
 }
 void ImProcFunctions::Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode) {
 	#include "rt_math.h"

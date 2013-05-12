@@ -280,7 +280,7 @@ void CurveEditorGroup::curveChanged () {
  */
 void CurveEditorGroup::curveResetPressed () {
 	if (displayedCurve) {
-		if (displayedCurve->subGroup->curveReset(displayedCurve->selected)) {
+		if (displayedCurve->subGroup->curveReset(displayedCurve->selected, displayedCurve->getIdentityValue())) {
 			curveChanged();
 		}
 	}

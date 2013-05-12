@@ -22,10 +22,17 @@
 #include <gtkmm.h>
 #include "adjuster.h"
 #include "toolpanel.h"
+#include "guiutils.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
+#include "colorprovider.h"
 
-class Defringe : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel {
+class Defringe : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public CurveListener, public ColorProvider{
 
   protected:
+    CurveEditorGroup* curveEditorPF;
+    FlatCurveEditor*   chshape;
+
     Adjuster* radius;
     Adjuster* threshold;
     Gtk::CheckButton* enabled;
@@ -36,14 +43,17 @@ class Defringe : public Gtk::VBox, public AdjusterListener, public FoldableToolP
   public:
 
     Defringe ();
-
+    ~Defringe ();
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
+    void autoOpenCurve  ();
+    void curveChanged   ();
 
     void adjusterChanged (Adjuster* a, double newval);
-    void enabledChanged ();
+    void enabledChanged  ();
+    virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
 
 };
 

@@ -376,9 +376,9 @@ class WBParams {
         Glib::ustring surround;
         double        adapscen;
         bool          autoadapscen;
-		
+
         double        adaplum;
-		int			  badpixsl;
+        int           badpixsl;
         Glib::ustring wbmodel;
         Glib::ustring algo;
         double        contrast;
@@ -396,7 +396,6 @@ class WBParams {
         bool          datacie;
         bool          tonecie;
   //      bool          sharpcie;
-		
     };
 
 /**
@@ -432,54 +431,54 @@ class WBParams {
         int		amount;
 };*/
 
-    /**
-     * Parameters of defringing
-     */
-    class DefringeParams {
+/**
+ * Parameters of defringing
+ */
+class DefringeParams {
 
     public:
         bool    enabled;
         double  radius;
         int     threshold;
-    };
+        std::vector<double> huecurve;
+};
 
-    /**
-     * Parameters of impulse denoising
-     */
-    class ImpulseDenoiseParams {
+/**
+  * Parameters of impulse denoising
+  */
+class ImpulseDenoiseParams {
 
     public:
         bool    enabled;
         int     thresh;
 
-    };
+};
 
-    /**
-     * Parameters of the directional pyramid denoising
-     */
-    class DirPyrDenoiseParams {
+/**
+ * Parameters of the directional pyramid denoising
+ */
+class DirPyrDenoiseParams {
 
     public:
         bool    enabled;
         bool    perform;
-		double	luma;
-        double	Ldetail;
+        double  luma;
+        double  Ldetail;
         double  chroma;
-		double	redchro;
-		double 	bluechro;
-        double	gamma;
+        double  redchro;
+        double  bluechro;
+        double  gamma;
         Glib::ustring dmethod;
-		
-    };
+};
 
 //EPD related parameters.
 class EPDParams{
-public:
-	bool enabled;
-	double Strength;
-	double EdgeStopping;
-	double Scale;
-	int ReweightingIterates;
+    public:
+        bool   enabled;
+        double Strength;
+        double EdgeStopping;
+        double Scale;
+        int    ReweightingIterates;
 };
 
 /**

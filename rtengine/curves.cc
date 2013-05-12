@@ -37,12 +37,7 @@ using namespace std;
 
 namespace rtengine {
 
-	Curve::Curve () {
-		x = 0;
-		y = 0;
-		ypp = 0;
-		hashSize = 1000;  // has to be initialized to the maximum value
-	}
+	Curve::Curve () : N(0), x(NULL), y(NULL), ypp(NULL), hashSize(1000 /* has to be initialized to the maximum value */ ) {}
 	
 	void Curve::AddPolygons ()
 	{

@@ -113,7 +113,7 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		virtual std::vector<double> getPoints () = 0;
 		virtual void setPoints (const std::vector<double>& p) = 0;
 		virtual bool handleEvents (GdkEvent* event) = 0;
-		virtual void reset () = 0;
+		virtual void reset (double identityValue=0.5) = 0;
 
 		static int getBarWidth() { return options.slimUI ? CBAR_WIDTH_SLIM : CBAR_WIDTH_STD; }
 };

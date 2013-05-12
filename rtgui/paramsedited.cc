@@ -143,6 +143,7 @@ void ParamsEdited::set (bool v) {
 	defringe.enabled           = v;
 	defringe.radius            = v;
 	defringe.threshold         = v;
+	defringe.huecurve          = v;
 	impulseDenoise.enabled     = v;
 	impulseDenoise.thresh      = v;
 	dirpyrDenoise.enabled      = v;
@@ -385,6 +386,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         defringe.enabled = defringe.enabled && p.defringe.enabled == other.defringe.enabled;
         defringe.radius = defringe.radius && p.defringe.radius == other.defringe.radius;
         defringe.threshold = defringe.threshold && p.defringe.threshold == other.defringe.threshold;
+        defringe.huecurve = defringe.huecurve && p.defringe.huecurve == other.defringe.huecurve;
 
         impulseDenoise.enabled = impulseDenoise.enabled && p.impulseDenoise.enabled == other.impulseDenoise.enabled;
         impulseDenoise.thresh = impulseDenoise.thresh && p.impulseDenoise.thresh == other.impulseDenoise.thresh;
@@ -601,9 +603,10 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	//if (colorDenoise.enabled)				toEdit.colorDenoise.enabled 	= mods.colorDenoise.enabled;
 	//if (colorDenoise.amount)				toEdit.colorDenoise.amount 	= mods.colorDenoise.amount;
 	
-	if (defringe.enabled)					toEdit.defringe.enabled 	= mods.defringe.enabled;
-	if (defringe.radius)					toEdit.defringe.radius 	= mods.defringe.radius;	
-	if (defringe.threshold)					toEdit.defringe.threshold 	= mods.defringe.threshold;
+	if (defringe.enabled)					toEdit.defringe.enabled   = mods.defringe.enabled;
+	if (defringe.radius)					toEdit.defringe.radius    = mods.defringe.radius;
+	if (defringe.threshold)					toEdit.defringe.threshold = mods.defringe.threshold;
+	if (defringe.huecurve)					toEdit.defringe.huecurve  = mods.defringe.huecurve;
 	
 	if (colorappearance.curve)				toEdit.colorappearance.curve      = mods.colorappearance.curve;
 	if (colorappearance.curve2)				toEdit.colorappearance.curve2     = mods.colorappearance.curve2;

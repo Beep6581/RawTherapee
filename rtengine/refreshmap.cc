@@ -225,7 +225,8 @@ ALLNORAW,         // EvDPDNperform
 ALLNORAW,         //EvDPDNmet
 DEMOSAIC,         // EvDemosaicLMMSEIter
 LUMINANCECURVE,    // EvCATbadpix
-LUMINANCECURVE    // EvCATAutoadap
+LUMINANCECURVE,    // EvCATAutoadap
+DEFRINGE         // EvPFCurve,
 
 //LUMINANCECURVE    // EvCATsharpcie
 

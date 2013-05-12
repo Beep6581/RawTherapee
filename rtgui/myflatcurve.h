@@ -103,7 +103,7 @@ class MyFlatCurve : public MyCurve {
 
 		void draw ();
 		void movePoint(bool moveX, bool moveY);
-		void defaultCurve ();
+		void defaultCurve (double iVal=0.5);
 		void interpolate ();
 		void getCursorPosition(GdkEvent* event);
 		void getMouseOverArea ();
@@ -118,7 +118,7 @@ class MyFlatCurve : public MyCurve {
 		void setPoints (const std::vector<double>& p);
 		void setType (FlatCurveType t);
 		bool handleEvents (GdkEvent* event);
-		void reset ();
+		void reset (double identityValue=0.5);
 		//void updateBackgroundHistogram (unsigned int* hist);
 };
 
