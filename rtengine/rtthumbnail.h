@@ -74,7 +74,7 @@ namespace rtengine {
             void init ();
             
             IImage8* processImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, std::string camName,
-                                        double focalLen, double focalLen35mm, float focusDist, double& scale);
+                                        double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso, std::string expcomp_, double& scale);
             IImage8* quickProcessImage   (const procparams::ProcParams& pparams, int rheight, TypeInterpolation interp, double& scale);
             int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
             void     getDimensions  (int& w, int& h, double& scaleFac);

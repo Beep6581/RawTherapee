@@ -237,7 +237,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 }
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02 (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp, double &d)
+void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp, double &d)
 {
 if(params->colorappearance.enabled) {
 
@@ -368,6 +368,10 @@ if(params->colorappearance.enabled) {
 
 	//La and la2 = ambiant luminosity scene and viewing
 	la=double(params->colorappearance.adapscen);
+	if(pwb==2){
+	if(params->colorappearance.autoadapscen) la=adap;
+	}
+	
 	la2=double(params->colorappearance.adaplum);
 
 	// level of adaptation
@@ -1046,7 +1050,7 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02float (CieImage* ncie, int begh, int endh, int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp, float &d)
+void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp, float &d)
 {
 if(params->colorappearance.enabled) {
 //printf("ciecam float\n");
@@ -1070,6 +1074,7 @@ if(params->colorappearance.enabled) {
 	LUTu hist16_CCAM(65536);
 	bool chropC=false;
 	float valc;
+	
 	if(pW!=1){//only with improccoordinator
 	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
 			valc = (double)i / 47999.0;
@@ -1177,6 +1182,10 @@ if(params->colorappearance.enabled) {
 
 	//La and la2 = ambiant luminosity scene and viewing
 	la=float(params->colorappearance.adapscen);
+	if(pwb==2){
+	if(params->colorappearance.autoadapscen) la=adap;
+	}
+	
 	la2=float(params->colorappearance.adaplum);
 
 	// level of adaptation

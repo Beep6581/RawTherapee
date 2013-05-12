@@ -293,14 +293,33 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					customColCurve2,
 					customColCurve3, 					
 					1);
+	float adap2,adap;
+	double ada, ada2;
+	if(params.colorappearance.enabled){	
+	float fnum = imgsrc->getMetaData()->getFNumber  ();// F number
+	float fiso = imgsrc->getMetaData()->getISOSpeed () ;// ISO
+	float fspeed = imgsrc->getMetaData()->getShutterSpeed () ;//speed 
+	float fcomp = imgsrc->getMetaData()->getExpComp  ();//compensation + -
+	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap2=2000.f;ada=ada2=2000.;}//if no exif data or wrong
+	else {
+	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
+	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+	E_V += expo2;
+	float expo1;//exposure raw white point
+	expo1=log2(params.raw.expos);//log2 ==>linear to EV
+	E_V += expo1;
+	adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
+	ada=ada2=(double) adap;
+	}			
     if (params.sharpening.enabled) {
 		float d;
 		double dd;
+		
         float** buffer = new float*[fh];
         for (int i=0; i<fh; i++)
             buffer[i] = new float[fw];	
-	if(settings->ciecamfloat) ipf.ciecam_02float (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, d);
-	else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, dd);
+	if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, d);
+	else ipf.ciecam_02 (cieView, ada, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, dd);
 
 	        for (int i=0; i<fh; i++)
             delete [] buffer[i];
@@ -309,18 +328,19 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 			else {
 			int f_h=2,f_w=2;
 			float d;
+			
 			double dd;
 	        float** buffer = new float*[f_h];
 			for (int i=0; i<f_h; i++)
             buffer[i] = new float[f_w];
-if(settings->ciecamfloat) ipf.ciecam_02float (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, d);
-else ipf.ciecam_02 (cieView, begh, endh,1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, dd);
+if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, d);
+else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, dd);
 
 	        for (int i=0; i<f_h; i++)
             delete [] buffer[i];
 			delete [] buffer;
 			}
-		
+	}	
     delete cieView;
     cieView = NULL;
 	
