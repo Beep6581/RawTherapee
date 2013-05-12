@@ -3,11 +3,6 @@
 AppVersion=4.0.11
 Version=308
 
-[General]
-Rank=0
-ColorLabel=0
-InTrash=false
-
 [Exposure]
 Auto=false
 Clip=0.02
@@ -105,6 +100,7 @@ Q-Contrast=-5
 H-Hue=0
 RSTProtection=0
 AdaptScene=2000
+AutoAdapscen=true
 SurrSource=false
 Gamut=true
 Datacie=false

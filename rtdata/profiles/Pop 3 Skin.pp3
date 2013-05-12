@@ -99,6 +99,7 @@ Q-Contrast=20
 H-Hue=0
 RSTProtection=55
 AdaptScene=2000
+AutoAdapscen=true
 SurrSource=false
 Gamut=true
 Datacie=false
