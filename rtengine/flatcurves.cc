@@ -29,14 +29,11 @@
 
 namespace rtengine {
 
-FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn) : leftTangent(NULL), rightTangent(NULL) {
+FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn) : kind(FCT_Empty), leftTangent(NULL), rightTangent(NULL), identityValue(0.5), periodic(isPeriodic) {
 
     ppn = poly_pn > 65500 ? 65500 : poly_pn;
     poly_x.clear();
     poly_y.clear();
-
-    kind = FCT_Empty;
-    periodic = isPeriodic;
 
     bool identity = true;
 
@@ -55,8 +52,8 @@ FlatCurve::FlatCurve (const std::vector<double>& p, bool isPeriodic, int poly_pn
                 y[i] = p[ix++];
                 leftTangent[i] = p[ix++];
                 rightTangent[i] = p[ix++];
-                if (y[i] != 0.5f)
-                	identity = false;
+                if (y[i] >= identityValue+1.e-7 || y[i] <= identityValue-1.e-7)
+                    identity = false;
             }
             // The first point is copied to the end of the point list, to handle the curve periodicity
             if (periodic) {
@@ -89,6 +86,31 @@ FlatCurve::~FlatCurve () {
     delete [] ypp;
     poly_x.clear();
     poly_y.clear();
+}
+
+/*
+ * The nominal (identity) curve may not be 0.5, use this method to set it to whatever value in the 0.-1. range you want
+ * Return true if the curve is nominal
+ */
+bool FlatCurve::setIdentityValue (double iVal) {
+
+    if (identityValue == iVal)
+        return kind==FCT_Empty;
+
+    identityValue = iVal;
+    bool identity = true;
+    for (int i=0; i<N; i++) {
+        if (y[i] >= identityValue+1.e-7 || y[i] <= identityValue-1.e-7) {
+            identity = false;
+            break;
+        }
+    }
+    if (identity)
+        kind = FCT_Empty;
+    else
+        kind = FCT_MinMaxCPoints;
+
+    return kind==FCT_Empty;
 }
 
 void FlatCurve::CtrlPoints_set () {
@@ -274,7 +296,7 @@ void FlatCurve::CtrlPoints_set () {
 			poly_x.push_back(sc_x[j]);
 			poly_y.push_back(sc_y[j++]);
 		}
-	else {
+		else {
 			nbr_points = (int)(((double)(ppn) * sc_length[i] )/ total_length);
 			if (nbr_points<0){
 				for(size_t it=0;it < sc_x.size(); it+=3) printf("sc_length[%zd/3]=%f \n",it,sc_length[it/3]);
@@ -287,7 +309,7 @@ void FlatCurve::CtrlPoints_set () {
 			x2 = sc_x[j]; y2 = sc_y[j++];
 			x3 = sc_x[j]; y3 = sc_y[j++];
 			AddPolygons ();
-	}
+		}
     }
 
     // adding the final horizontal segment, always (see under)
@@ -344,7 +366,7 @@ double FlatCurve::getVal (double t) const {
     case FCT_Empty :
     case FCT_Linear :  // Linear doesn't exist yet and is then considered as identity
     default:
-		return 0.5;
+		return identityValue;
     }
 }
 

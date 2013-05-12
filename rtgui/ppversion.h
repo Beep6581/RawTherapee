@@ -2,7 +2,7 @@
 #define _PPVERSION_
 
 // This number have to be incremented whenever the PP3 file format is modified
-#define PPVERSION 307
+#define PPVERSION 308
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /* Log of version changes

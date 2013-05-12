@@ -810,7 +810,7 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
 
 }
 
-void MyDiagonalCurve::reset() {
+void MyDiagonalCurve::reset(double identityValue) {
 
     switch (curve.type) {
     case DCT_Spline :

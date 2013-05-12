@@ -1,6 +1,6 @@
 [Version]
 AppVersion=4.0.11.0
-Version=307
+Version=308
 
 [Exposure]
 Auto=false
@@ -118,6 +118,7 @@ Threshold=50
 Enabled=false
 Radius=2.0
 Threshold=25
+HueCurve=1;0.166666667;0;0.35;0.35;0.347;0;0.35;0.35;0.513667426;0;0.35;0.35;0.668944571;0;0.35;0.35;0.8287775246;0.97835991;0.35;0.35;0.9908883827;0;0.35;0.35;
 
 [Directional Pyramid Denoising]
 Enabled=false

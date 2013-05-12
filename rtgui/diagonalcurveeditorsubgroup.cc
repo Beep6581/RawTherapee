@@ -634,7 +634,7 @@ void DiagonalCurveEditorSubGroup::removeEditor () {
 	removeIfThere (parent, NURBSCurveBox, false);
 }
 
-bool DiagonalCurveEditorSubGroup::curveReset(int cType) {
+bool DiagonalCurveEditorSubGroup::curveReset(int cType, double iValue) {
 	switch ((DiagonalCurveType) cType) {
 	case (DCT_NURBS) :	// = Control cage
 		NURBSCurve->reset ();

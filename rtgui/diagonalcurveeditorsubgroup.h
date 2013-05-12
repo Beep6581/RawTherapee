@@ -75,7 +75,7 @@ protected:
 	void loadPressed ();
 	void copyPressed ();
 	void pastePressed ();
-	bool curveReset (int cType);
+	bool curveReset (int cType, double iValue);
 	void removeEditor ();
 	const std::vector<double> getCurveFromGUI (int type);
 	void shcChanged ();

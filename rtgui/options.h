@@ -245,6 +245,7 @@ class Options {
     Glib::ustring lastFlatfieldDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
+    Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;
     Glib::ustring lastVibranceCurvesDir;

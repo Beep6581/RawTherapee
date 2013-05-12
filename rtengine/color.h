@@ -135,6 +135,7 @@ public:
 	static void Yuv2Lab(float Y, float u, float v, float &L, float &a, float &b, double wp[3][3]);
     static double f2xyz(double f);
 	static void calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4,double &gamma5);
+	static void huelab_to_huehsv (float HH, double &hr);
 
 	// standard srgb gamma and its inverse
 	static inline double gamma2     (double x) {	

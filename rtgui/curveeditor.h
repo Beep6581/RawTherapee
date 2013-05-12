@@ -107,6 +107,8 @@ class CurveEditor {
 		bool openIfNonlinear();  // Open up the curve if it has modifications and it's not already opened
 
 		void setCurve (const std::vector<double>& p);
+		virtual void setIdentityValue (const double iValue=0.5) {};
+		virtual double getIdentityValue () { return 0.5; };
 		virtual std::vector<double> getCurve () = 0;
 		void setTooltip(Glib::ustring ttip);
 
@@ -157,9 +159,12 @@ class FlatCurveEditor : public CurveEditor {
 		// reflects the buttonType active selection ; used as a pre-'selectionChange' reminder value
 		std::vector<double> controlPointsCurveEd;
 		bool periodic;
+		double identityValue;
 
 	public:
 		FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup, bool isPeriodic = true);
+		virtual void setIdentityValue (const double iValue=0.5) { identityValue = iValue; }
+		virtual double getIdentityValue () { return identityValue; };
 		std::vector<double> getCurve ();
 };
 

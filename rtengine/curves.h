@@ -278,6 +278,7 @@ class FlatCurve : public Curve {
     FlatCurveType kind;
     double* leftTangent;
     double* rightTangent;
+    double identityValue;
     bool periodic;
 
     void CtrlPoints_set ();
@@ -289,6 +290,7 @@ class FlatCurve : public Curve {
 
     double getVal     (double t) const;
     void   getVal     (const std::vector<double>& t, std::vector<double>& res) const;
+    bool   setIdentityValue (double iVal);
     bool   isIdentity () const { return kind==FCT_Empty; };
 };
 
