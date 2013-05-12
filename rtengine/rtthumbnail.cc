@@ -52,7 +52,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     if (deg) {
         img->rotate(deg);
     }
-    
+  
     Thumbnail* tpp = new Thumbnail ();
 
     tpp->camwbRed = 1.0;
@@ -557,7 +557,7 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 
 // Full thumbnail processing, second stage if complete profile exists
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, 
-    double focalLen, double focalLen35mm, float focusDist, double& myscale) {
+    double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso,std::string expcomp_, double& myscale) {
 
     // compute WB multipliers
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
@@ -793,16 +793,40 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 					16);
 
 	int f_h=2,f_w=2;
+	if(params.colorappearance.enabled){
 	float** buffer = new float*[fh];
 	for (int i=0; i<fh; i++)
 		buffer[i] = new float[fw];
 	bool execsharp=false;
 	float d;
-	ipf.ciecam_02float (cieView, begh, endh, 1, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6, (float**)buffer, execsharp, d);
+	float fnum = fnumber;// F number
+	float fiso = iso;// ISO
+	float fspeed = shutter;//speed 
+	char * writ = new char[expcomp_.size() + 1];//convert expcomp_ to char
+	std::copy(expcomp_.begin(), expcomp_.end(), writ);
+	writ[expcomp_.size()] = '\0'; 
+	float fcomp = atof(writ); //compensation + -
+	delete[] writ;
+	float adap2,adap;
+	double ada, ada2;
+	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap=2000.f;ada=2000.;}//if no exif data or wrong
+	else {
+	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
+	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+	E_V += expo2;
+	float expo1;//exposure raw white point
+	expo1=log2(params.raw.expos);//log2 ==>linear to EV
+	E_V += expo1;
+	adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
+	ada=ada2=(double) adap;
+	//end calculation adaptation scene luminosity
+	}
+
+	ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6, (float**)buffer, execsharp, d);
 	for (int i=0; i<fh; i++)
 		delete [] buffer[i];
 	delete [] buffer; buffer=NULL;
-
+	}
     // color processing
     //ipf.colorCurve (labView, labView);
 

@@ -44,7 +44,6 @@ class CacheImageData {
         char  min;
         char  sec;
         char  msec;
-
         // exif info
         bool  exifValid;
         double fnumber;

@@ -99,8 +99,8 @@ class ImProcFunctions {
 		                       SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const ToneCurve & customToneCurve1, const ToneCurve & customToneCurve2,
 		                       double expcomp, int hlcompr, int hlcomprthresh);
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);
-		void ciecam_02float	 (CieImage* ncie, int begh, int endh,  int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale, float** buffer, bool execsharp, float &d);
-		void ciecam_02		 (CieImage* ncie, int begh, int endh,  int pW, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale, float** buffer, bool execsharp, double &d);
+		void ciecam_02float	 (CieImage* ncie, float adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale, float** buffer, bool execsharp, float &d);
+		void ciecam_02		 (CieImage* ncie, double adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale, float** buffer, bool execsharp, double &d);
 		void chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, LUTu &histCCurve);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
 		void colorCurve       (LabImage* lold, LabImage* lnew);

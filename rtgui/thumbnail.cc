@@ -463,9 +463,9 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 	else
 	{
 		// Full thumbnail: apply profile
- 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, scale );
+ 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
 	}
- 
+
     tpp->getDimensions(lastW,lastH,lastScale);
 
  	delete tpp;
@@ -488,7 +488,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
  		return 0;
  	}
  
- 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, scale );
+ 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist,cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
     tpp->getDimensions(lastW,lastH,lastScale);
  
  	delete tpp;
@@ -508,7 +508,6 @@ void Thumbnail::generateExifDateTimeStrings () {
 
     if (options.fbShowExpComp && cfs.expcomp!="0.00" && cfs.expcomp!="") // don't show exposure compensation if it is 0.00EV;old cache iles do not have ExpComp, so value will not be displayed. 
     	exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp); // append exposure compensation to exifString
-
     std::string dateFormat = options.dateFormat;
     std::ostringstream ostr;
     bool spec = false;
@@ -565,7 +564,7 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
     cfs.exifValid = false;
     if (idata->hasExif()) {
         cfs.shutter  = idata->getShutterSpeed ();
-        cfs.fnumber  = idata->getFNumber ();
+        cfs.fnumber  = idata->getFNumber ();		
         cfs.focalLen = idata->getFocalLen ();
         cfs.focalLen35mm = idata->getFocalLen35mm ();
         cfs.focusDist = idata->getFocusDist ();

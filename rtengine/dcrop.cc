@@ -183,7 +183,8 @@ void Crop::update (int todo) {
 	    bool butili=true;
 		bool ccutili=true;
 		bool cclutili=true;
-		
+
+ 
 		LUTu dummy;
 		parent->ipf.chromiLuminanceCurve (1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, dummy);
 		parent->ipf.vibrance (labnCrop);
@@ -201,14 +202,36 @@ void Crop::update (int todo) {
 					parent->ipf.dirpyrequalizer (labnCrop);
 					}
 		}
+		
+	if(params.colorappearance.enabled){		
+	float fnum = parent->imgsrc->getMetaData()->getFNumber  ();// F number
+	float fiso = parent->imgsrc->getMetaData()->getISOSpeed () ;// ISO
+	float fspeed = parent->imgsrc->getMetaData()->getShutterSpeed () ;//speed 
+	float fcomp = parent->imgsrc->getMetaData()->getExpComp  ();//compensation + -
+	float adap2,adap;
+	double ada, ada2;
+	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap=2000.f;ada=ada2=2000.;}//if no exif data or wrong
+	else {
+	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
+	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+	E_V += expo2;
+	float expo1;//exposure raw white point
+	expo1=log2(params.raw.expos);//log2 ==>linear to EV
+	E_V += expo1;
+	adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
+	ada=ada2=(double) adap;
+	//end calculation adaptation scene luminosity
+	}
+		
 	int begh = 0, endh = labnCrop->H;
 	bool execsharp=false;
 	float d;
 	double dd;
 	if(skip==1) execsharp=true;
-	if(settings->ciecamfloat) {parent->ipf.ciecam_02float (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, d);
+	if(settings->ciecamfloat) {parent->ipf.ciecam_02float (cieCrop, adap, begh, endh, 1, 2,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, d);
 	}
-	else {parent->ipf.ciecam_02 (cieCrop,begh, endh, 1,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, dd);}
+	else {parent->ipf.ciecam_02 (cieCrop,ada, begh, endh, 1, 2, labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, dd);}
+	}
 	}
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);

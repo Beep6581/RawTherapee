@@ -387,23 +387,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 if (y>=y1 && y<y2 && x>=x1 && x<x2) {lhist16CroppedCAM[pos]++;lhist16CroppedCCAM[posc]++;}
             }
 	LUTu dummy;
-	// exif data to calculate EV and adaptation scene luminosity cd/m2
-	float fnum = imgsrc->getMetaData()->getFNumber  ();// F number
-	float fiso = imgsrc->getMetaData()->getISOSpeed () ;// ISO
-	float fspeed = imgsrc->getMetaData()->getShutterSpeed () ;//speed 
-	float fcomp = imgsrc->getMetaData()->getExpComp  ();//compensation + -
-	float adap;
-	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) adap=2000.f;//if no exif data or wrong
-	else {
-	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
-	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-	E_V += expo2;
-	float expo1;//exposure raw white point
-	expo1=log2(params.raw.expos);//log2 ==>linear to EV
-	E_V += expo1;
-	adap = powf(2.f, E_V-3.f);//cd / m2
-	//end calculation adaptation scene luminosity
-	}
 	CurveFactory::curveLightBrightColor (
 					params.colorappearance.curveMode, params.colorappearance.curve,
 					params.colorappearance.curveMode2, params.colorappearance.curve2,
@@ -415,6 +398,25 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 					customColCurve3, 
 					scale==1 ? 1 : 1);
 	int  Iterates=0;
+	if(params.colorappearance.enabled){	
+	float fnum = imgsrc->getMetaData()->getFNumber  ();// F number
+	float fiso = imgsrc->getMetaData()->getISOSpeed () ;// ISO
+	float fspeed = imgsrc->getMetaData()->getShutterSpeed () ;//speed 
+	float fcomp = imgsrc->getMetaData()->getExpComp  ();//compensation + -
+	float adap2,adap;
+	double ada, ada2;
+	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap=2000.f;ada=2000.;}//if no exif data or wrong
+	else {
+	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
+	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+	E_V += expo2;
+	float expo1;//exposure raw white point
+	expo1=log2(params.raw.expos);//log2 ==>linear to EV
+	E_V += expo1;
+	adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
+	ada=ada2=(double) adap;
+	//end calculation adaptation scene luminosity
+	}	
 	int begh=0;
 	int endh=pH;
 	float d;
@@ -424,19 +426,20 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
          buffer[i] = new float[pW];
 	bool execsharp=false;
 	if(scale==1) execsharp=true;	
-	if(settings->ciecamfloat){ipf.ciecam_02float (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, d);
+	if(settings->ciecamfloat){ipf.ciecam_02float (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, d);
 	if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
-	if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);//real value of adapt scene luminosity
+	if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap2);//real value of adapt scene luminosity
 	}
-	else {ipf.ciecam_02 (ncie, begh, endh, pW, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, dd);
+	else {ipf.ciecam_02 (ncie, ada, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, dd);
 	if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);
-	if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);
+	if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(ada);
 	
 	}
 		for (int i=0; i<pH; i++)
 			delete [] buffer[i];
 			delete [] buffer;
 		readyphase++;
+	}
 	}
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)
