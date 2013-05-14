@@ -25,12 +25,12 @@
 #include <fcntl.h>
 #ifdef WIN32
 #include <windows.h>
-#include <Shlwapi.h>
 // for GCC32
 #ifndef _WIN32_IE
 #define _WIN32_IE 0x0600
 #endif
 #include <shlobj.h>
+#include <Shlwapi.h>
 #else
 #include <cstdio>
 #endif
