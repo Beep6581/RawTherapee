@@ -27,7 +27,7 @@ set(PROC_TARGET_NUMBER 0 CACHE STRING "Target Processor")
 #set (PROC_LABEL labelWithoutQuotes CACHE STRING "Target Processor label")
 
 # Important: MinGW-w64 user may need to specify the -m32 or -m64 flag in CMAKE_CXX_FLAGS,
-# CMAKE_C_FLAGS and CMAKE_EXE_LINKER_FLAGS to selectect between 32/64bit build
+# CMAKE_C_FLAGS and CMAKE_EXE_LINKER_FLAGS to select between 32/64bit build
 set(CMAKE_CXX_FLAGS "-mwin32 -mthreads" CACHE STRING "Compiler options for C++ source files")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g2" CACHE STRING "Compiler options for C++ source files and Debug target")
 set(CMAKE_CXX_FLAGS_RELEASE "-mwindows -DNDEBUG -O2" CACHE STRING "Compiler options for C++ source files and Release target")
@@ -43,7 +43,7 @@ set(CMAKE_C_FLAGS_RELEASE "-mwindows -DNDEBUG -O2" CACHE STRING "Compiler option
 set(CMAKE_C_FLAGS_MINSIZEREL "-mwindows -DNDEBUG -Os" CACHE STRING "Compiler options for C source files and MinSizeRel target")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Compiler options for C source files and RelWithDebInfo target")
 
-set(CMAKE_EXE_LINKER_FLAGS "-mwin32 -mthreads -mthread -static-libgcc -static-libstdc++ --large-address-aware" CACHE STRING "Linker options")
+set(CMAKE_EXE_LINKER_FLAGS "-mwin32 -mthreads -static-libgcc -Wl,--large-address-aware,--verbose" CACHE STRING "Linker options")
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-O0" CACHE STRING "Linkage options for the Debug target")
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-mwindows -s -O2" CACHE STRING "Linkage options for the Release target")
 set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "-mwindows -s -Os" CACHE STRING "Linkage options for the MinSizeRel target")
