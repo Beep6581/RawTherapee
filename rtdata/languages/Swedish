@@ -6,6 +6,7 @@ ABOUT_TAB_RELEASENOTES;Versionsnyheter
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Återställ till standard
 BATCHQUEUE_AUTOSTART;Autostart
+BATCHQUEUE_DESTFILENAME;Sökväg och filnamn
 BATCH_PROCESSING;Batchbehandling
 CURVEEDITOR_CURVES;Kurvor
 CURVEEDITOR_CURVE;Kurva
@@ -73,6 +74,7 @@ EXPORT_BYPASS_SHARPENING;Förbigå skärpning
 EXPORT_BYPASS_SHARPENMICRO;Förbigå mikrokontrast
 EXPORT_BYPASS_SH_HQ;Förbigå skuggor/högdagrar (hög kvalitet)
 EXPORT_FASTEXPORTOPTIONS;<b>Inställningar för snabbexport</b>
+EXPORT_INSTRUCTIONS;Snabbexport erbjuder snabbare konvertering genom att åsidosätta tidskrävande verktyg och framkallningsinställningar. Batchkön körs då med dessa inställningar istället, så länge det här alternativet är valt. Den här metoden rekommenderas för snabb konvertering där användningsområdet tillåter en lägre kvalitet på de färdiga bilderna. Genom att använda det här alternativet görs inga modifieringar till bildens framkallningsinställningar.
 EXPORT_MAXHEIGHT;Maximal höjd:
 EXPORT_MAXWIDTH;Maximal vidd:  
 EXPORT_PUTTOQUEUEFAST; Lägg till i kö för snabbexport
@@ -100,6 +102,7 @@ FILEBROWSER_DELETEDLGMSGINCLPROC;Är du säker på att du vill ta bort de valda 
 FILEBROWSER_DELETEDLGMSG;Är du säker på att du vill ta bort de valda %1 filerna?
 FILEBROWSER_EMPTYTRASHHINT;Ta bort papperskorgens filer permanent
 FILEBROWSER_EMPTYTRASH;Töm papperskorgen
+FILEBROWSER_EXEC_CPB;Egen profilskapare
 FILEBROWSER_EXIFFILTERAPPLYHINT;Visa/dölj EXIF-filtret i filhanteraren
 FILEBROWSER_EXIFFILTERAPPLY;Använd
 FILEBROWSER_EXIFFILTERLABEL;EXIF-filter
@@ -384,6 +387,8 @@ HISTORY_MSG_157;Lyster - Tröskelvärde för pastell- och mättade färger
 HISTORY_MSG_158;Styrka
 HISTORY_MSG_159;Stoppa vid kanter.
 HISTORY_MSG_160;Skala
+HISTORY_MSG_161;Återviktade iterationer
+HISTORY_MSG_162;Tone Mapping
 HISTORY_MSG_163;RGB-kurvor - R
 HISTORY_MSG_164;RGB-kurvor - G
 HISTORY_MSG_165;RGB-kurvor - B
@@ -402,6 +407,7 @@ HISTORY_MSG_181;CAM02 - Kroma (C)
 HISTORY_MSG_182;CAM02 - Automatisk CAT02
 HISTORY_MSG_183;CAM02 - Kontrast (J)
 HISTORY_MSG_186;CAM02 - Algoritm
+HISTORY_MSG_188;CAM02 - Ljushet (Q)
 HISTORY_MSG_189;CAM02 - Kontrast (Q)
 HISTORY_MSG_190;CAM02 - Mättnad (S)
 HISTORY_MSG_192;CAM02 - Nyans (vinkel)
@@ -412,6 +418,7 @@ HISTORY_MSG_196;CAM02 - Tonkurva 2
 HISTORY_MSG_197;CAM02 - Färgkurva
 HISTORY_MSG_198;CAM02 - Färgkurva
 HISTORY_MSG_203;Brusreducering - metod
+HISTORY_MSG_204;LMMSE förbättringssteg
 HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOT_TOOLTIP;Kortkommando: <b>Alt-s</b>
@@ -476,6 +483,9 @@ IPTCPANEL_TRANSREFERENCEHINT;En kod som representerar platsen för överföring
 IPTCPANEL_TRANSREFERENCE;Överföringsreferens
 MAIN_BUTTON_EXIT;Avsluta
 MAIN_BUTTON_FULLSCREEN;Helskärm
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Flytta till nästa bild relativt den bild som är öppen i redigeringsläget \nKortkommando: <b>Shift-F4</b>\n\nFlytta till nästa bild relativt den valda miniatyrbilden i filhanteraren\nKortkommando: <b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Flytta till föregående bild relativt den bild som är öppen i redigeringsläget \nKortkommando: <b>Shift-F3</b>\n\nFlytta till föregående bild relativt den valda miniatyrbilden i filhanteraren\nKortkommando: <b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Synkronisera filhanteraren med redigeringsläget för att uppdatera förhandsgranskningen av den nu öppna bilden, och för att nollställa filtren i filhanteraren \nKortkommando: <b>x</b>\n\nSom ovan, men utan att nollställa filtren i filhanteraren\nKortkommando: <b>y</b>\n(Notera att förhandsgranskningen av den öppna bildens  miniatyrbilder ej visas om den är filtrerad.).
 MAIN_BUTTON_PREFERENCES;Inställningar
 MAIN_BUTTON_PUTTOQUEUE;Behandla
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. Kortkommando: Ctrl+Q
@@ -540,12 +550,14 @@ MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_BACKCOLOR0;Bakgrundsfärg av förhandsgranskningen: <b>Temabaserad</b>\nKortkommando: <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;Bakgrundsfärg av förhandsgranskningen: <b>Svart</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Bakgrundsfärg av förhandsgranskningen: <b>Vit</b>\nKortkommando: <b>0</b>
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lås</b> / <b>Lås upp</b> <b>före-vyn</b> \n\n<b>Lås</b>: behåll <b>före-vyn</b> oförändrad.\nAnvändbart för att utvärdera den sammanlagda effekten av flera stegs redigering. Dessutom kan jämförelser göras gentemot varje annat steg i historiken. \n\n<b>Lås upp</b>: <b>Före-vyn</b> kommer hela tiden visa ett tidigare steg jämfört med <b>efter-vyn</b>, och visar därmed effekten av det verktyg som används för tillfället.
 MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen. Kortkommando: F
 MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen. Kortkommando: H
 MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdagerindikation
 MAIN_TOOLTIP_INDCLIPPEDS;Markerad skuggindikation
 MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
 MAIN_TOOLTIP_PREVIEWB;Förhandsgranska den <b>blå kanalen</b>.\nGenväg: <b>b</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Förhandsgranska <b>fokusmasken</b>.\nKortkommando: <b>Shift-F</b>\n\nNoggrannare på bilder med kort skärpedjup, lågt brus och med en vald hög zoom-grad.\n\nFör att förbättra detekteringen för brusiga bilder, utvärdera vid en zoom-faktor om 10-30%\n\nFörhandsvisningen görs långsammare med fokusmasken påslagen.
 MAIN_TOOLTIP_PREVIEWG;Förhandsgranska den <b>gröna kanalen</b>.\nGenväg: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Förhandsgranska <b>ljusstyrkan</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Förhandsgranska den <b>röda kanalen</b>.\nGenväg: <b>r</b>
@@ -577,10 +589,13 @@ NAVIGATOR_V_NA;V = -
 NAVIGATOR_V_VALUE;V = %1
 NAVIGATOR_XY_FULL;Bredd = %1, Höjd = %2
 NAVIGATOR_XY_NA;x = -, y = -
+OPTIONS_DEFIMG_MISSING;Standardprofilen för <b>icke-råbilder</b> kunde inte hittas eller är inte angiven.\n\nVar vänlig kontrollera din profilmapp, den kanske ej finns  eller är skadad.\n\nInterna värden kommer att användas som standard.
+OPTIONS_DEFRAW_MISSING;Standardprofilen för <b>råbilder</b> kunde inte hittas eller är inte angiven.\n\nVar vänlig kontrollera din profilmapp, den kanske ej finns  eller är skadad.\n\nInterna värden kommer att användas som standard.
 PARTIALPASTE_BASICGROUP;Grundläggande inställningar
 PARTIALPASTE_CACORRECTION;Reducera kromatiska abberationer
 PARTIALPASTE_CHANNELMIXER;Kanalmixer
 PARTIALPASTE_COARSETRANS;90-graders rotering
+PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 PARTIALPASTE_COLORBOOST;Förstärk färger
 PARTIALPASTE_COLORDENOISE;Reducera färgbrus
 PARTIALPASTE_COLORGROUP;Färgrelaterade inställningar
@@ -593,7 +608,7 @@ PARTIALPASTE_DARKFRAMEAUTOSELECT;Automatiskt val av svartbild
 PARTIALPASTE_DARKFRAMEFILE;Svartbildsfil
 PARTIALPASTE_DEFRINGE;Fyll ut överstrålning
 PARTIALPASTE_DETAILGROUP;Detaljinställningar
-PARTIALPASTE_DIALOGLABEL;Partiell inklistring av processprofiler
+PARTIALPASTE_DIALOGLABEL;Partiell inklistring av profiler
 PARTIALPASTE_DIRPYRDENOISE;Brusreducering
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast genom detaljnivåer
 PARTIALPASTE_DISTORTION;Distortionsrättning
@@ -636,6 +651,7 @@ PARTIALPASTE_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
 PARTIALPASTE_RAW_DCBITERATIONS;Antal DCB-iterationer
 PARTIALPASTE_RAW_DMETHOD;Metodi för demosaicing
 PARTIALPASTE_RAW_FALSECOLOR;Falskt färgbortträngningssteg
+PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE förbättringssteg
 PARTIALPASTE_RESIZE;Ändra storlek
 PARTIALPASTE_RGBCURVES;RGB-kurvor
 PARTIALPASTE_ROTATION;Rotering
@@ -651,7 +667,11 @@ PREFERENCES_ADD;Lägg till
 PREFERENCES_APPLNEXTSTARTUP;Ändras vid nästa uppstart
 PREFERENCES_AUTOMONPROFILE;Använd operativsystemets skärmprofil
 PREFERENCES_BATCH_PROCESSING;Batchbehandling
+PREFERENCES_BEHADDALLHINT;Sätt alla parametrar till <b>Lägg till</b>-läge.\nFörändringar i parametrar i panelen för batch-verktyget kommer att vara <b>skillnader</b> gentemot de lagrade värdena.
+PREFERENCES_BEHADDALL;Sätt allt till 'Lägg till'
 PREFERENCES_BEHAVIOR;Uppträdande
+PREFERENCES_BEHSETALLHINT;Sätt alla parametrar till <b>Ange</b>-läge.\nFörändringar i parametrar i panelen för batch-verktyget kommer att vara förändringar <b>absoluta</b> och de faktiska värdena visas.
+PREFERENCES_BEHSETALL;Sätt allt till 'Ange'
 PREFERENCES_BLACKBODY;Glödlampa
 PREFERENCES_BLINKCLIPPED;Blinka markerade områden
 PREFERENCES_CACHECLEARALL;Återställ alla
@@ -668,6 +688,7 @@ PREFERENCES_CACHETHUMBFORM;Miniatyrbildens format i cachen
 PREFERENCES_CACHETHUMBHEIGHT;Maximal storlek på miniatyrbilderna
 PREFERENCES_CIEART;CIECAM02 optimering
 PREFERENCES_CIEART_LABEL;Använd flyttalsprecision istället för dubbel
+PREFERENCES_CIEART_TOOLTIP;Om aktiverat, så kommer alla CIECAM02-beräkningar att utföras med enkel precision i flyttalsformatet istället för med dubbel precision. Detta ger en liten ökning i hastigheten, till en kostnad av en försumbar kvalitetsförsämring.
 PREFERENCES_CLEARDLG_LINE1;Rensa cache
 PREFERENCES_CLEARDLG_LINE2;Det här tar kanske ett par sekunder...
 PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
@@ -802,6 +823,7 @@ PREFERENCES_TP_USEICONORTEXT;Använd ikoner istället för text
 PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
 PREFERENCES_TUNNELMETADATA;Tunnla oförändrad IPTC/XMP till utfilen
 PREFERENCES_USESYSTEMTHEME;Använd systemtema
+PREFERENCES_VIEW;Utenhetens vitbalansvärde (datorskärm, TV, bildkanon, etc.)
 PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_COPYPPASTE;Parametrar att kopiera
 PROFILEPANEL_FILEDLGFILTERANY;Vilka filer som helst
@@ -809,6 +831,7 @@ PROFILEPANEL_FILEDLGFILTERPP;Efterbehandlingsprofiler
 PROFILEPANEL_LABEL;Efterbehandlingsprofiler
 PROFILEPANEL_LOADDLGLABEL;Ladda efterbehandlingsparametrar...
 PROFILEPANEL_LOADPPASTE;Parametrar att ladda
+PROFILEPANEL_MODE_TIP;Ifyllnadsläge för profil.\n\nKnappen nedtryckt: partiell profil konverteras till full profil; de saknade värdena kommer att fyllas i mha standardvärden. \n\nKnapp släppt: Profilen kommer att appliceras som den är, och förändrar bara de värden som den själv innehåller.
 PROFILEPANEL_PASTEPPASTE;Parametrar att klistra in
 PROFILEPANEL_PCUSTOM;Egen
 PROFILEPANEL_PFILE;Från fil
@@ -833,12 +856,14 @@ PROGRESSBAR_LOADING;Laddar bild...
 PROGRESSBAR_LOADJPEG;Laddar JPEG-fil...
 PROGRESSBAR_LOADPNG;Laddar PNG-fil...
 PROGRESSBAR_LOADTIFF;Laddar TIFF-fil...
+PROGRESSBAR_NOIMAGES;Inga bilder funna.
 PROGRESSBAR_PROCESSING;Bearbetar bild...
 PROGRESSBAR_PROCESSING_PROFILESAVED;Efterbehandlingsprofil sparad
 PROGRESSBAR_READY;Klar
 PROGRESSBAR_SAVEJPEG;Sparar JPEG-fil...
 PROGRESSBAR_SAVEPNG;Sparar PNG-fil...
 PROGRESSBAR_SAVETIFF;Sparar TIFF-fil...
+PROGRESSBAR_SNAPSHOT_ADDED;Bokmärke tillagt.
 PROGRESSDLG_LOADING;Laddar bilden...
 PROGRESSDLG_PROCESSING;Bearbetar bilden...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profilen har ändrats i filhanteraren
@@ -893,6 +918,7 @@ TP_COARSETRAF_TOOLTIP_VFLIP;Vänd vertikalt
 TP_COLORAPP_ALGO;Algoritm
 TP_COLORAPP_ALGO_ALL;Alla
 TP_COLORAPP_ALGO_JS;Ljushet + mättnad (JS)
+TP_COLORAPP_ALGO_TOOLTIP;Låter dig välja mellan delmängder av eller alla parametrar.
 TP_COLORAPP_BRIGHT;Ljushet(Q)
 TP_COLORAPP_CHROMA;Kroma (C)
 TP_COLORAPP_CHROMA_S;Kroma (S)
@@ -900,6 +926,7 @@ TP_COLORAPP_CONTRAST;Kontrast (J)
 TP_COLORAPP_CONTRAST_Q;Kontrast(Q)
 TP_COLORAPP_CURVEEDITOR1;Tonkurva 1
 TP_COLORAPP_CURVEEDITOR2;Tonkurva 2
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Används på samma sätt som med den andra tonkurvan.
 TP_COLORAPP_CURVEEDITOR3;Färgkurva
 TP_COLORAPP_EQUAL;Lika med
 TP_COLORAPP_HUE;Nyans(h)
@@ -913,12 +940,17 @@ TP_COLORAPP_RSTPRO_TOOLTIP;Bevara röda färger och hudtoner (reglage och kurvor
 TP_COLORAPP_SURROUND;Omgivning
 TP_COLORAPP_SURROUND_AVER;Medel
 TP_COLORAPP_SURROUND_DARK;Mörk
+TP_COLORAPP_SURROUND_DIM;Dunkelt
+TP_COLORAPP_SURROUND_EXDARK;Extremt mörkt
+TP_COLORAPP_SURSOURCE;Mörk omgivning
+TP_COLORAPP_SURSOURCE_TOOLTIP;Kan användas om källbilden har en mörk kant.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Ljushet
 TP_COLORAPP_TCMODE_CHROMA;Kroma
 TP_COLORAPP_TCMODE_LABEL1;Kurvläge 1
 TP_COLORAPP_TCMODE_LABEL2;Kurvläge 2
 TP_COLORAPP_TCMODE_LIGHTNESS;Ljushet
 TP_COLORAPP_TCMODE_SATUR;Mättnad
+TP_COLORAPP_TONECIE;Tone mapping som använder CIECAM02 ljushet (Q)
 TP_COLORBOOST_ACHANNEL;Kanal "a"
 TP_COLORBOOST_AMOUNT;Mängd
 TP_COLORBOOST_AVOIDCOLORCLIP;Undvik att färgen klipper
@@ -962,7 +994,9 @@ TP_DEFRINGE_RADIUS;Radie
 TP_DEFRINGE_THRESHOLD;Tröskelvärde
 TP_DETAIL_AMOUNT;Mängd
 TP_DIRPYRDENOISE_CHROMA;Kroma
+TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kan användas på rå- och icke-råbilder.\n\nFör icke-råbilder beror brusreduceringen (~luminans) på in-profilens gamma. Gamma hos sRGB antas, och därmed; om in-bildens profil har ett annat gammavärde, så kommer brusreduceringen att skilja sig åt.
 TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varierar brusreduceringens styrka över hela skalan av toner. Mindre värden riktar sig mot de mörka partierna i bilden, medan större värden utökar effekten till högdagrarna.
 TP_DIRPYRDENOISE_LABEL;Brusreducering
 TP_DIRPYRDENOISE_LDETAIL;Luminansdetalj
 TP_DIRPYRDENOISE_LUMA;Luminans
@@ -982,6 +1016,8 @@ TP_DISTORTION_AUTO;Automatisk distorsionskorrigering
 TP_DISTORTION_AUTO_TIP;(Experimentell) Korrigera automatiskt objektivdistorsion för vissa kameror (M4/3, vissa kompaktkameror, etc.)
 TP_DISTORTION_LABEL;Distorsion
 TP_EPD_EDGESTOPPING;Stoppa vid kanter
+TP_EPD_LABEL;Tone Mapping (Lab/CIECAM02)
+TP_EPD_REWEIGHTINGITERATES;Återviktade iterationer
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Styrka
 TP_EQUALIZER_CONTRAST_MINUS;Minska kontrasten
@@ -1053,6 +1089,7 @@ TP_ICM_FILEDLGFILTERANY;Vilka filer som helst
 TP_ICM_FILEDLGFILTERICM;ICC-profiler
 TP_ICM_GAMMABEFOREINPUT;Profilapplicerad gamma
 TP_ICM_INPUTCAMERAICC;Kamerastandard eller ICC
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Använd RawTherapees kameraspecifika DCP- eller ICC-färgprofiler. Dessa profiler är mer exakta än enkla matrisprofiler, men finns ej för alla kameror. Profilerna lagras i /iccprofiles/input och i /dcpprofiles katalogerna och hämtas automatiskt baserat på ett filnamn som exakt matchar kameramodellen.
 TP_ICM_INPUTCAMERA;Kameraval
 TP_ICM_INPUTCAMERA_TOOLTIP;Använd enkel färgmatris från dcraw, förbättrad version från RawTherapee (vilken som är tillgänglig baserad på kameramodell) eller inbäddad från DNG.
 TP_ICM_INPUTCUSTOM;Egen
@@ -1153,8 +1190,13 @@ TP_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
 TP_RAW_DCBITERATIONS;Antal DCB-iterationer
 TP_RAW_DMETHODBATCH;Batch
 TP_RAW_DMETHOD;Metod
+TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
+TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Förfining av demosaicing...
+TP_RAW_DMETHOD_TOOLTIP;Notera: IGV och LMMSE är avsedda för bilder med mycket brus i.
 TP_RAW_FALSECOLOR;Falskt färgbortträngningssteg
 TP_RAW_LABEL;Demosaicing
+TP_RAW_LMMSEITERATIONS;LMMSE förbättringssteg
+TP_RAW_LMMSE_TOOLTIP;Adderar gamma (steg 1) - adderar median (steg 2,3 och 4), slutligen adderas ett förfiningssteg (steg 5 och 6) för att reducera artefakter och för att förbättra signal-brusförhållandet.
 TP_RESIZE_APPLIESTO;Tillämpas på:
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
@@ -1211,6 +1253,7 @@ TP_SHARPENING_RLD_AMOUNT;Mängd
 TP_SHARPENING_RLD_DAMPING;Dämpning
 TP_SHARPENING_RLD_ITERATIONS;Upprepningar
 TP_SHARPENING_THRESHOLD;Tröskelvärde
+TP_SHARPENING_TOOLTIP;Förvänta dig en aningen annorlunda effekt när denna används tillsammans med CIECAM02. Om du ser en skillnad, justera efter tycke och smak.
 TP_SHARPENING_USM;Oskarp mask
 TP_SHARPENMICRO_AMOUNT;Mängd
 TP_SHARPENMICRO_LABEL;Mikrokontrast
@@ -1294,17 +1337,20 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 #02 2008-01-22
 #03 Updated 2010 by Johan Thor.
 #04 Updated 2011 by Johan Thor.
-#05 Updated 2013-04-09 by Johan Thor.
+#05 Updated 2013-05-19 by Johan Thor.
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!BATCHQUEUE_DESTFILENAME;Path and file name
-!EXPORT_INSTRUCTIONS;Fast Export options provide overrides to bypass time and resource consuming development settings and to run queue processing using the fast export settings instead. This method is recommended for quicker generation of lower resolution images when speed is a priority or when resized output is desired for one or many images without making modifications to their saved development parameters.
-!FILEBROWSER_EXEC_CPB;Custom Profile Builder
-!HISTORY_MSG_161;Reweighting Iterates
-!HISTORY_MSG_162;Tone Mapping
+!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
+!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: Shift-1
+!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: Shift-2
+!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: Shift-3
+!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: Shift-4
+!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: Shift-5
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: Shift - ~
 !HISTORY_MSG_175;CAM02 - Chrom. adaptation amount
 !HISTORY_MSG_176;CAM02 - Viewing's black surround
 !HISTORY_MSG_177;CAM02 - Scene's Lum. Adaptation
@@ -1312,40 +1358,25 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !HISTORY_MSG_184;CAM02 - Scene with dark surround
 !HISTORY_MSG_185;CAM02 - Gamut control
 !HISTORY_MSG_187;CAM02 - Red &amp; skin tones protection
-!HISTORY_MSG_188;CAM02 - Brightness (Q)
 !HISTORY_MSG_191;CAM02 - Colorfulness (M)
 !HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
 !HISTORY_MSG_200;CAMO2 - Tone mapping using CIECAM02 Q
 !HISTORY_MSG_201;NR - Delta Chrominance red
 !HISTORY_MSG_202;NR - Delta Chrominance blue
-!HISTORY_MSG_204;LMMSE enhancement steps
-!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
-!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
-!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
-!MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
-!MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>Focus Mask</b>.\nShortcut: <b>Shift-F</b>\n\nMore accurate on images with shallow depth of field, low noise and at higher zoom levels\n\nTo improve detection accuracy for noisy images evaluate at smaller zoom 10-30%\n\nPreview is rendered slower with Focus Mask turned on.
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
+!HISTORY_MSG_205;CAM02 hot/bad pixels
+!HISTORY_MSG_206;CAT02 - Adapt scene auto
+!HISTORY_MSG_207;Defringing Hue curve
 !PARTIALPASTE_EPD;Tone mapping
-!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
-!PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
-!PREFERENCES_BEHSETALL;All to 'Set'
-!PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality
-!PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector, viewing, etc.)
-!PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
-!PROGRESSBAR_NOIMAGES;No images found
-!PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
-!TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity (cd/m²)
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environnement\n(usually 2000cd/m²)
+!TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity
+!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement(cd/m²).\n 1)Calculated from the Exif data:\nShutter speed - ISO speed - F number - Camera exposure correction.\n 2)Calculated also from Raw White point and RT Exposure compensation
 !TP_COLORAPP_ADAPTVIEWING;Adaptation viewing luminosity (cd/m²)
 !TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²)
+!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
 !TP_COLORAPP_ALGO_QM;Brightness + Colorfulness (QM)
-!TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters
+!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
+!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
 !TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from Lab and RGB brightness
 !TP_COLORAPP_CHROMA_M;Colorfulnes (M)
 !TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from Lab and RGB colorfulness
@@ -1355,7 +1386,6 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from Lab and RGB contrast
 !TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from Lab and RGB contrast
 !TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel
-!TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
 !TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel
 !TP_COLORAPP_DATACIE;Show CIECAM02 output histograms in curves
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
@@ -1368,38 +1398,26 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !TP_COLORAPP_MODEL_TOOLTIP;<b>WB [RT] + [output]:</b>\nRT's white balance is used for the scene, CIECAM02 is set to D50, the output device's white balance is set in <i>Preferences > Color Management</i>\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's white balance settings are used by CAT02 and the output device's white balance is set in Preferences
 !TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
 !TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
-!TP_COLORAPP_SURROUND_DIM;Dim
-!TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
 !TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colors to take into account the viewing conditions of the output device\n\n<b>Average:</b>\nAverage light environment (standard)\nThe image will not change\n\n<b>Dim:</b>\nDim environment (TV)\nThe image will become slighty dark\n\n<b>Dark:</b>\nDark environment (projector)\nThe image will become more dark\n\n<b>Extremly Dark:</b>\nExtremly dark environment (cutsheet)\nThe image will become very dark
-!TP_COLORAPP_SURSOURCE;Dark surround
-!TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if source image has a dark border
 !TP_COLORAPP_TCMODE_COLORF;Colorfulness
 !TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
-!TP_COLORAPP_TONECIE;Tone mapping using CIECAM02 brightness (Q)
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping (Lab/CIECAM02) tool must be enabled for this setting to take effect
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
 !TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
-!TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
-!TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 !TP_DIRPYRDENOISE_RED;Delta chrominance Red
-!TP_EPD_LABEL;Tone Mapping (Lab/CIECAM02)
-!TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
 !TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 !TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
-!TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
 !TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
 !TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity C=f(C).\n\nShows the histogram of chromaticity before curve adjustements.\nFor final output refer to the main histogram panel
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n\nShows the histogram of L before curve adjustements.\nnFor final output refer to the main histogram panel
 !TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
-!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
-!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
-!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
-!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
+!TP_PFCURVE_CURVEEDITOR_CH;Hue
+!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
+!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Modulates the action depending on the color and radius. Lower values ​​reduce the action, the higher values ​​increase action, with reference to the radius
+!TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels
 !TP_RGBCURVES_LUMAMODE;Luminosity Mode
 !TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.
-!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when used with CIECAM02. If difference is observed, adjust to taste.
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the hue
 !TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
 !TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
