@@ -27,6 +27,7 @@
 #include "../rtengine/imagesource.h"
 #include "soundman.h"
 #include "rtimage.h"
+#include <iostream>
 
 using namespace rtengine::procparams;
 
@@ -1310,9 +1311,14 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 								if ( safe_file_test(executable, (Glib::FILE_TEST_EXISTS|Glib::FILE_TEST_IS_EXECUTABLE)) ) {
 									success = safe_spawn_command_line_async (cmdLine);
 								}
+#elif defined __APPLE__
+                cmdLine = Glib::ustring("open -a /Applications/GIMP.app \'") + filename + Glib::ustring("\'");
+                success = safe_spawn_command_line_async (cmdLine);
+                std::cout << cmdLine << std::endl;
 #else
-								cmdLine = Glib::ustring("gimp-remote ") + Glib::ustring(" \"") + filename + Glib::ustring("\"");
+								cmdLine = Glib::ustring("gimp \"") + filename + Glib::ustring("\"");
 								success = safe_spawn_command_line_async (cmdLine);
+                std::cout << cmdLine << std::endl;
 #endif
 								if (!success){
 #ifdef WIN32
@@ -1326,11 +1332,13 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 												ver--;
 										}
 #elif defined __APPLE__
-										cmdLine = Glib::ustring("gimp \"") + filename + Glib::ustring("\"");
+                    cmdLine = Glib::ustring("open -a /Applications/Gimp.app/Contents/Resources/start \'") + filename + Glib::ustring("\'");
 										success = safe_spawn_command_line_async (cmdLine);
+                    std::cout << cmdLine << std::endl;
 #else
-										cmdLine = Glib::ustring("gimp \"") + filename + Glib::ustring("\"");
+										cmdLine = Glib::ustring("gimp-remote \"") + filename + Glib::ustring("\"");
 										success = safe_spawn_command_line_async (cmdLine);
+                    std::cout << cmdLine << std::endl;
 #endif
 								}
 						}
@@ -1348,6 +1356,7 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 								cmdLine = Glib::ustring("\"") + Glib::build_filename(options.psDir,"Photoshop.exe") + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 		#endif
 								success = safe_spawn_command_line_async (cmdLine);
+                std::cout << cmdLine << std::endl;
 #endif
 						}
 						else if (options.editorToSendTo==3) {
@@ -1358,11 +1367,12 @@ bool EditorPanel::idle_sentToGimp(ProgressConnector<int> *pc,rtengine::IImage16*
 								}
 #else
 		#ifdef __APPLE__
-								cmdLine = options.customEditorProg + filename;
+								cmdLine = options.customEditorProg + Glib::ustring(" \"") + filename + Glib::ustring("\"");
 		#else
 								cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\" \"") + filename + Glib::ustring("\"");
 		#endif
 								success = safe_spawn_command_line_async (cmdLine);
+                std::cout << cmdLine << std::endl;
 #endif
 						}
 
