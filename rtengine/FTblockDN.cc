@@ -259,6 +259,9 @@ namespace rtengine {
         int numtiles = numtiles_W * numtiles_H;
         int numthreads = MIN(numtiles,omp_get_max_threads());
         if(options.rgbDenoiseThreadLimit > 0) numthreads = MIN(numthreads,options.rgbDenoiseThreadLimit);
+        // Issue 1887, overide setting of 1, if more than one thread is available. This way the inner omp-directives should become inactive
+        if(numthreads == 1 && omp_get_max_threads() > 1)
+			numthreads = 2;
 #pragma omp parallel num_threads(numthreads)
 #endif
         {
