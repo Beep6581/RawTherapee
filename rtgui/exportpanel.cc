@@ -35,16 +35,9 @@ ExportPanel::ExportPanel () : listener (NULL) {
 
 	Gtk::Label* labExportTitle = Gtk::manage ( new Gtk::Label (M("EXPORT_FASTEXPORTOPTIONS")) );
 	labExportTitle->set_use_markup (true);
+	labExportTitle->set_tooltip_text (M("EXPORT_INSTRUCTIONS"));
 	labExportTitle->set_alignment(Gtk::ALIGN_LEFT);
 	pack_start(*labExportTitle, Gtk::PACK_SHRINK, 4);
-
-	Gtk::Label* labInstructions = Gtk::manage ( new Gtk::Label (M("EXPORT_INSTRUCTIONS")) );
-	labInstructions->set_use_markup (true);
-	labInstructions->set_line_wrap (true);
-	labInstructions->set_alignment(Gtk::ALIGN_LEFT);
-	Gtk::HBox* hbInstructions = Gtk::manage (new Gtk::HBox ());
-	hbInstructions->pack_start(*labInstructions, Gtk::PACK_SHRINK, 4);
-	pack_start(*hbInstructions, Gtk::PACK_SHRINK, 4);
 
 	bypass_ALL              = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_ALL")));
 	bypass_sharpening       = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_BYPASS_SHARPENING")));

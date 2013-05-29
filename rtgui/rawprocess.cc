@@ -49,7 +49,6 @@ RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
    dcbOptions->pack_start(*dcbIterations);
    dcbOptions->pack_start(*dcbEnhance);
    pack_start( *dcbOptions, Gtk::PACK_SHRINK, 4);
-   pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 4 );
 
    lmmseOptions = Gtk::manage (new Gtk::VBox ());
    lmmseOptions->set_border_width(4);
@@ -60,23 +59,17 @@ RawProcess::RawProcess () : Gtk::VBox(), FoldableToolPanel(this)
 
    if (lmmseIterations->delay < 1000) lmmseIterations->delay = 1000;
    lmmseIterations->show();
-  // dcbEnhance = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_DCBENHANCE")));
    lmmseOptions->pack_start(*lmmseIterations);
-  // dcbOptions->pack_start(*dcbEnhance);
    pack_start( *lmmseOptions, Gtk::PACK_SHRINK, 4);
-   pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 4 );
-   
-   
-   ccOptions = Gtk::manage (new Gtk::VBox ());
-   ccOptions->set_border_width(4);
+
+   pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
    ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"),0,5,1,0 ));
    ccSteps->setAdjusterListener (this);
    if (ccSteps->delay < 1000) ccSteps->delay = 1000;
    ccSteps->show();
    pack_start( *ccSteps, Gtk::PACK_SHRINK, 4);
 
-   pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
-
+   //pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
    //allOptions = Gtk::manage (new Gtk::VBox ());
    //allOptions->set_border_width(2);
    //allEnhance = Gtk::manage (new Gtk::CheckButton(M("TP_RAW_ALLENHANCE")));
@@ -98,46 +91,50 @@ void RawProcess::read(const rtengine::procparams::ProcParams* pp, const ParamsEd
 
    dmethod->set_active(procparams::RAWParams::numMethods);
    for( size_t i=0; i< procparams::RAWParams::numMethods;i++)
-	   if( pp->raw.dmethod == procparams::RAWParams::methodstring[i]){
-		   dmethod->set_active(i);
-		   break;
-	   }
+       if( pp->raw.dmethod == procparams::RAWParams::methodstring[i]){
+           dmethod->set_active(i);
+           break;
+       }
+
+   if(pedited ){
+       ccSteps->setEditedState (pedited->raw.ccSteps ? Edited : UnEdited);
+       dcbIterations->setEditedState ( pedited->raw.dcbIterations ? Edited : UnEdited);
+       dcbEnhance->set_inconsistent(!pedited->raw.dcbEnhance);
+       //allEnhance->set_inconsistent(!pedited->raw.allEnhance);
+       lmmseIterations->setEditedState ( pedited->raw.lmmseIterations ? Edited : UnEdited);
+
+       if( !pedited->raw.dmethod )
+           dmethod->set_active(procparams::RAWParams::numMethods); // No name
+   }
+
    //allEnhance->set_active(pp->raw.all_enhance);
 
    dcbIterations->setValue (pp->raw.dcb_iterations);
    dcbEnhance->set_active(pp->raw.dcb_enhance);
    ccSteps->setValue (pp->raw.ccSteps);
-   if (pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::dcb])
-	   dcbOptions->show();
+   if (pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::dcb] ||
+       dmethod->get_active_row_number() == procparams::RAWParams::numMethods)
+       dcbOptions->show();
    else
-	   dcbOptions->hide();
+       dcbOptions->hide();
 
    lmmseIterations->setValue (pp->raw.lmmse_iterations);
-   if (pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::lmmse])
-	   lmmseOptions->show();
+   if (pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::lmmse] ||
+       dmethod->get_active_row_number() == procparams::RAWParams::numMethods)
+       lmmseOptions->show();
    else
-	   lmmseOptions->hide();
-	   
-   if (pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::eahd] ||
-	   pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::hphd] ||
-	   pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::vng4])
-	   ccOptions->show();
+       lmmseOptions->hide();
+
+   // Flase color suppression is applied to all demozaicing method, so don't hide anything
+   /*if (pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::eahd] ||
+       pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::hphd] ||
+       pp->raw.dmethod == procparams::RAWParams::methodstring[procparams::RAWParams::vng4])
+       ccSteps->show();
    else
-	   ccOptions->hide();
+       ccSteps->hide();*/
 
    lastDCBen = pp->raw.dcb_enhance;
    //lastALLen = pp->raw.all_enhance;
-
-   if(pedited ){
-	   ccSteps->setEditedState (pedited->raw.ccSteps ? Edited : UnEdited);
-	   dcbIterations->setEditedState ( pedited->raw.dcbIterations ? Edited : UnEdited);
-	   dcbEnhance->set_inconsistent(!pedited->raw.dcbEnhance);
-	   //allEnhance->set_inconsistent(!pedited->raw.allEnhance);
-	   lmmseIterations->setEditedState ( pedited->raw.lmmseIterations ? Edited : UnEdited);
-	   
-	   if( !pedited->raw.dmethod )
-		   dmethod->set_active(procparams::RAWParams::numMethods); // No name
-   }
 
    methodconn.block (false);
    dcbEnhconn.block (false);
@@ -171,6 +168,7 @@ void RawProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
 void RawProcess::setBatchMode(bool batchMode)
 {
+   dmethod->append_text (M("GENERAL_UNCHANGED"));
    dmethod->set_active(procparams::RAWParams::numMethods); // No name
    dcbOptions->hide();
    lmmseOptions->hide();

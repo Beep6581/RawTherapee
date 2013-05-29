@@ -1022,7 +1022,7 @@ TP_CROP_X;X
 TP_CROP_Y;Y
 TP_DARKFRAME_AUTOSELECT;Auto selection
 TP_DARKFRAME_LABEL;Dark Frame
-TP_DEFRINGE_LABEL;Defringe (Lab/CIECAM02)
+TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
 TP_PFCURVE_CURVEEDITOR_CH;Hue
@@ -1042,7 +1042,7 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be 
 TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
 TP_DIRPYRDENOISE_RED;Delta chrominance Red
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels (Lab/CIECAM02)
+TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
 TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+ 
@@ -1054,7 +1054,7 @@ TP_DISTORTION_AUTO;Auto Distortion Correction
 TP_DISTORTION_AUTO_TIP;(Exprimental) Correct lens distortion automatically for some cameras (Micro 4/3, some compact digital cameras, etc.)
 TP_DISTORTION_LABEL;Distortion
 TP_EPD_EDGESTOPPING;Edge Stopping
-TP_EPD_LABEL;Tone Mapping (Lab/CIECAM02)
+TP_EPD_LABEL;Tone Mapping
 TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
 TP_EPD_SCALE;Scale
 TP_EPD_STRENGTH;Strength
@@ -1135,7 +1135,7 @@ TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
 TP_ICM_TONECURVE;Use DCP's tone curve
 TP_ICM_TONECURVE_TOOLTIP;Enable to use tone curves that may be contained in DCP profiles.
 TP_ICM_WORKINGPROFILE;Working Profile
-TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction (Lab/CIECAM02)
+TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction
@@ -1258,7 +1258,7 @@ TP_SHARPENING_EDRADIUS;Radius
 TP_SHARPENING_EDTOLERANCE;Edge Tolerance
 TP_SHARPENING_HALOCONTROL;Halo control
 TP_SHARPENING_HCAMOUNT;Amount
-TP_SHARPENING_LABEL;Sharpening  (Lab/CIECAM02)
+TP_SHARPENING_LABEL;Sharpening
 TP_SHARPENING_METHOD;Method
 TP_SHARPENING_ONLYEDGES;Sharpen only edges
 TP_SHARPENING_RADIUS;Radius
@@ -1270,7 +1270,7 @@ TP_SHARPENING_THRESHOLD;Threshold
 TP_SHARPENING_TOOLTIP;Expect a slightly different effect when used with CIECAM02. If difference is observed, adjust to taste.
 TP_SHARPENING_USM;Unsharp Mask
 TP_SHARPENMICRO_AMOUNT;Quantity
-TP_SHARPENMICRO_LABEL;Microcontrast (Lab/CIECAM02)
+TP_SHARPENMICRO_LABEL;Microcontrast
 TP_SHARPENMICRO_MATRIX;3×3 matrix instead of 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformity
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift

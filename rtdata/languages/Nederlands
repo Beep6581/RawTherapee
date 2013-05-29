@@ -1000,7 +1000,7 @@ TP_CROP_X;X
 TP_CROP_Y;Y
 TP_DARKFRAME_AUTOSELECT;Automatische selectie
 TP_DARKFRAME_LABEL;Donkerframe
-TP_DEFRINGE_LABEL;Verzachten (Lab/CIECAM02)
+TP_DEFRINGE_LABEL;Verzachten
 TP_DEFRINGE_RADIUS;Straal
 TP_DEFRINGE_THRESHOLD;Drempel
 TP_DIRPYRDENOISE_BLUE;Delta Chrominantie Blauw
@@ -1016,7 +1016,7 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;Voor raw afbeeldingen kan RGB of Lab methode wor
 TP_DIRPYRDENOISE_PERF;RGB mode (raw afbeeldingen)
 TP_DIRPYRDENOISE_RED;Delta Chrominantie Rood
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYREQUALIZER_LABEL;Detailcontrast (Lab/CIECAM02)
+TP_DIRPYREQUALIZER_LABEL;Detailcontrast
 TP_DIRPYREQUALIZER_LUMACOARSEST;grofste
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrast+
@@ -1028,7 +1028,7 @@ TP_DISTORTION_AUTO; Automatische correctie lensvervorming
 TP_DISTORTION_AUTO_TIP;(Experimenteel) Automatische correctie lensvervorming voor sommige camera's (M4/3, enkele compacts, etc.)
 TP_DISTORTION_LABEL;Corrigeer lensvervorming
 TP_EPD_EDGESTOPPING;Randen
-TP_EPD_LABEL;Tonemapping (Lab/CIECAM02)
+TP_EPD_LABEL;Tonemapping
 TP_EPD_REWEIGHTINGITERATES;Herhaling
 TP_EPD_SCALE;Schaal
 TP_EPD_STRENGTH;Sterkte
@@ -1229,7 +1229,7 @@ TP_SHARPENING_EDRADIUS;Straal
 TP_SHARPENING_EDTOLERANCE;Randtolerantie
 TP_SHARPENING_HALOCONTROL;Halocontrole
 TP_SHARPENING_HCAMOUNT;Hoeveelheid
-TP_SHARPENING_LABEL;Verscherpen (Lab/CIECAM02)
+TP_SHARPENING_LABEL;Verscherpen
 TP_SHARPENING_METHOD;Methode
 TP_SHARPENING_ONLYEDGES;Alleen randen verscherpen
 TP_SHARPENING_RADIUS;Straal
@@ -1241,7 +1241,7 @@ TP_SHARPENING_THRESHOLD;Drempel
 TP_SHARPENING_TOOLTIP;Hou rekening met een enigszins ander effect in combinatie met CIECAM02. Aanpassen naar eigen smaak.
 TP_SHARPENING_USM;Onscherpmasker
 TP_SHARPENMICRO_AMOUNT;Hoeveelheid
-TP_SHARPENMICRO_LABEL;Microcontrast (Lab/CIECAM02)
+TP_SHARPENMICRO_LABEL;Microcontrast
 TP_SHARPENMICRO_MATRIX;3×3-matrix ipv. 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformiteit
 TP_VIBRANCE_AVOIDCOLORSHIFT;Vermijd kleurverschuiving

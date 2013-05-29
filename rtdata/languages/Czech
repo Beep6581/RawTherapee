@@ -1025,7 +1025,7 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pro Raw obrázky může být použita jak RGB ta
 TP_DIRPYRDENOISE_PERF;RGB režim (raw obrázky)
 TP_DIRPYRDENOISE_RED;Rozdíl barevnosti - Červená
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYREQUALIZER_LABEL;Kontrast dle detailu úrovní (Lab/CIECAM02)
+TP_DIRPYREQUALIZER_LABEL;Kontrast dle detailu úrovní
 TP_DIRPYREQUALIZER_LUMACOARSEST;Nejhrubší
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+ 
@@ -1037,7 +1037,7 @@ TP_DISTORTION_AUTO;Automatická korekce zkreslení
 TP_DISTORTION_AUTO_TIP;(Experimentální) Automatická korekce zkreslení objektivu pro některé fotoaparáty (Micro 4/3, některé kompakty a jiné).
 TP_DISTORTION_LABEL;Oprava zkreslení objektivu
 TP_EPD_EDGESTOPPING;Míra zachování hran
-TP_EPD_LABEL;Mapování tónů (Lab/CIECAM02)
+TP_EPD_LABEL;Mapování tónů
 TP_EPD_REWEIGHTINGITERATES;Počet průchodů převážení
 TP_EPD_SCALE;Měřítko
 TP_EPD_STRENGTH;Síla
@@ -1240,7 +1240,7 @@ TP_SHARPENING_EDRADIUS;Poloměr
 TP_SHARPENING_EDTOLERANCE;Tolerance okrajům
 TP_SHARPENING_HALOCONTROL;Omezení haló artefatů
 TP_SHARPENING_HCAMOUNT;Míra
-TP_SHARPENING_LABEL;Doostření (Lab/CIECAM02)
+TP_SHARPENING_LABEL;Doostření
 TP_SHARPENING_METHOD;Metoda
 TP_SHARPENING_ONLYEDGES;Doostřit pouze okraje
 TP_SHARPENING_RADIUS;Poloměr
@@ -1252,7 +1252,7 @@ TP_SHARPENING_THRESHOLD;Práh
 TP_SHARPENING_TOOLTIP;S CIECAM02 očekávejte mírně odlišný efekt. Pokud pozorujete rozdíly, upravte dle potřeby.
 TP_SHARPENING_USM;Maskování rozostření
 TP_SHARPENMICRO_AMOUNT;Kvantita
-TP_SHARPENMICRO_LABEL;Mikrokontrast (Lab/CIECAM02)
+TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;Matice 3x3 namísto 5x5
 TP_SHARPENMICRO_UNIFORMITY;Jednolitost
 TP_VIBRANCE_AVOIDCOLORSHIFT;Zabránit posunu barev
