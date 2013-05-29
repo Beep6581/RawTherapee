@@ -358,7 +358,7 @@ void ProcParams::setDefaults () {
     resize.enabled = false;
     resize.scale  = 1.0;
     resize.appliesTo = "Cropped area";
-    resize.method = "Bicubic";
+    resize.method = "Lanczos";
     resize.dataspec = 0;
     resize.width = 800;
     resize.height = 600;
@@ -370,8 +370,8 @@ void ProcParams::setDefaults () {
     icm.working = "sRGB";
     icm.output  = "sRGB";
     icm.gamma  = "default";
- 	icm.gampos =2.22;
-	icm.slpos=4.5;
+    icm.gampos =2.22;
+    icm.slpos=4.5;
     icm.freegamma = false;
   
 	dirpyrequalizer.enabled = false;    
