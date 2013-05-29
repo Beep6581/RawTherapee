@@ -928,11 +928,11 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\nShortcut: <b>[</b>\n\nShortcut in Single Editor Tab: <b>Alt-[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\nShortcut: <b>]</b>\n\nShortcut in Single Editor Tab: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
 TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity 
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement(cd/m²).\n 1)Calculated from the Exif data:\nShutter speed - ISO speed - F number - Camera exposure correction.\n 2)Calculated also from Raw White point and RT Exposure compensation 
 TP_COLORAPP_ADAPTVIEWING;Adaptation viewing luminosity (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²)
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
 TP_COLORAPP_ALGO;Algorithm
 TP_COLORAPP_ALGO_ALL;All
 TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -998,7 +998,7 @@ TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
 TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 TP_COLORAPP_TCMODE_SATUR;Saturation
 TP_COLORAPP_TONECIE;Tone mapping using CIECAM02 brightness (Q)
-TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping (Lab/CIECAM02) tool must be enabled for this setting to take effect
+TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 TP_COLORAPP_WBRT;WB [RT] + [output]
 TP_CROP_FIXRATIO;Fix ratio:
@@ -1025,9 +1025,6 @@ TP_DARKFRAME_LABEL;Dark Frame
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
-TP_PFCURVE_CURVEEDITOR_CH;Hue
-TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
-TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Modulates the action depending on the color and radius. Lower values ​​reduce the action, the higher values ​​increase action, with reference to the radius
 TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
 TP_DIRPYRDENOISE_CHROMA;Chrominance (Master)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
@@ -1185,6 +1182,8 @@ TP_NEUTRAL_TIP;Reset exposure sliders to neutral values.\nApplies to the same co
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PFCURVE_CURVEEDITOR_CH;Hue
+TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
 TP_PREPROCESS_GREENEQUIL;Green Equilibration
 TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead pixel filter
 TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels

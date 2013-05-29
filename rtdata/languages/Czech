@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -1025,7 +1026,7 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pro Raw obrázky může být použita jak RGB ta
 TP_DIRPYRDENOISE_PERF;RGB režim (raw obrázky)
 TP_DIRPYRDENOISE_RED;Rozdíl barevnosti - Červená
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYREQUALIZER_LABEL;Kontrast dle detailu úrovní
+TP_DIRPYREQUALIZER_LABEL;Kontrast dle detailu úrovní (Lab/CIECAM02)
 TP_DIRPYREQUALIZER_LUMACOARSEST;Nejhrubší
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast+ 
@@ -1037,7 +1038,7 @@ TP_DISTORTION_AUTO;Automatická korekce zkreslení
 TP_DISTORTION_AUTO_TIP;(Experimentální) Automatická korekce zkreslení objektivu pro některé fotoaparáty (Micro 4/3, některé kompakty a jiné).
 TP_DISTORTION_LABEL;Oprava zkreslení objektivu
 TP_EPD_EDGESTOPPING;Míra zachování hran
-TP_EPD_LABEL;Mapování tónů
+TP_EPD_LABEL;Mapování tónů (Lab/CIECAM02)
 TP_EPD_REWEIGHTINGITERATES;Počet průchodů převážení
 TP_EPD_SCALE;Měřítko
 TP_EPD_STRENGTH;Síla
@@ -1240,7 +1241,7 @@ TP_SHARPENING_EDRADIUS;Poloměr
 TP_SHARPENING_EDTOLERANCE;Tolerance okrajům
 TP_SHARPENING_HALOCONTROL;Omezení haló artefatů
 TP_SHARPENING_HCAMOUNT;Míra
-TP_SHARPENING_LABEL;Doostření
+TP_SHARPENING_LABEL;Doostření (Lab/CIECAM02)
 TP_SHARPENING_METHOD;Metoda
 TP_SHARPENING_ONLYEDGES;Doostřit pouze okraje
 TP_SHARPENING_RADIUS;Poloměr
@@ -1252,7 +1253,7 @@ TP_SHARPENING_THRESHOLD;Práh
 TP_SHARPENING_TOOLTIP;S CIECAM02 očekávejte mírně odlišný efekt. Pokud pozorujete rozdíly, upravte dle potřeby.
 TP_SHARPENING_USM;Maskování rozostření
 TP_SHARPENMICRO_AMOUNT;Kvantita
-TP_SHARPENMICRO_LABEL;Mikrokontrast
+TP_SHARPENMICRO_LABEL;Mikrokontrast (Lab/CIECAM02)
 TP_SHARPENMICRO_MATRIX;Matice 3x3 namísto 5x5
 TP_SHARPENMICRO_UNIFORMITY;Jednolitost
 TP_VIBRANCE_AVOIDCOLORSHIFT;Zabránit posunu barev
@@ -1363,3 +1364,20 @@ ZOOMPANEL_ZOOMOUT;Oddálit \nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
+!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: Shift-1
+!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: Shift-2
+!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: Shift-3
+!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: Shift-4
+!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: Shift-5
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: Shift - ~
+!HISTORY_MSG_205;CAM02 hot/bad pixels
+!HISTORY_MSG_206;CAT02 - Adapt scene auto
+!HISTORY_MSG_207;Defringing Hue curve
+!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
+!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
+!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
+!TP_PFCURVE_CURVEEDITOR_CH;Hue
+!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
+!TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels

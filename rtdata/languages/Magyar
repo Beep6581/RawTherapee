@@ -1146,10 +1146,18 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !BATCHQUEUE_DESTFILENAME;Path and file name
+!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
 !EXTPROGTARGET_1;raw
 !EXTPROGTARGET_2;queue-processed
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
 !FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
+!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: Shift-1
+!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: Shift-2
+!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: Shift-3
+!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: Shift-4
+!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: Shift-5
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: Shift - ~
 !GENERAL_AUTO;Automatic
 !GENERAL_CLOSE;Close
 !GENERAL_WARNING;Warning
@@ -1192,7 +1200,10 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_201;NR - Delta Chrominance red
 !HISTORY_MSG_202;NR - Delta Chrominance blue
 !HISTORY_MSG_203;NR - Method
-!HISTORY_MSG_204;LMMSE enhancement steps
+!HISTORY_MSG_204;LMMSE Enhancement Steps
+!HISTORY_MSG_205;CAM02 hot/bad pixels
+!HISTORY_MSG_206;CAT02 - Adapt scene auto
+!HISTORY_MSG_207;Defringing Hue curve
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
@@ -1258,16 +1269,19 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !THRESHOLDSELECTOR_TL;Top-left
 !THRESHOLDSELECTOR_TR;Top-right
 !THRESHOLDSELECTOR_T;Top
-!TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity (cd/m²)
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environnement\n(usually 2000cd/m²)
+!TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity
+!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement(cd/m²).\n 1)Calculated from the Exif data:\nShutter speed - ISO speed - F number - Camera exposure correction.\n 2)Calculated also from Raw White point and RT Exposure compensation
 !TP_COLORAPP_ADAPTVIEWING;Adaptation viewing luminosity (cd/m²)
 !TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²)
+!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
 !TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
 !TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
 !TP_COLORAPP_ALGO_QM;Brightness + Colorfulness (QM)
 !TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters
+!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
+!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
 !TP_COLORAPP_BRIGHT;Brightness (Q)
 !TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from Lab and RGB brightness
 !TP_COLORAPP_CHROMA;Chroma (C)
@@ -1325,7 +1339,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
 !TP_COLORAPP_TONECIE;Tone mapping using CIECAM02 brightness (Q)
-!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping (Lab/CIECAM02) tool must be enabled for this setting to take effect
+!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
 !TP_CROP_GTFRAME;Frame
@@ -1388,10 +1402,13 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LENSPROFILE_USECA;CA correction
 !TP_LENSPROFILE_USEDIST;Distortion correction
 !TP_LENSPROFILE_USEVIGN;Vignetting correction
+!TP_PFCURVE_CURVEEDITOR_CH;Hue
+!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
+!TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels
 !TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
-!TP_RAW_LMMSEITERATIONS;LMMSE enhancement Steps
+!TP_RAW_LMMSEITERATIONS;LMMSE Enhancement Steps
 !TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
 !TP_RGBCURVES_LUMAMODE;Luminosity Mode
 !TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.
