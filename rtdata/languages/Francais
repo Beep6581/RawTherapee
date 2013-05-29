@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
@@ -935,11 +936,11 @@ TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche\nRaccourcis: <b>[</b>\n\nRaccourcis en mode Éditeur unique: <b>Alt-[</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite\nRaccourcis: <b>]</b>\n\nRaccourcis en mode Éditeur unique: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Symétriser / axe horizontal
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Si la case est cochée (recommendé), une valeur optimum est calculée à partir des données Exif.\nPour régler la valeur manuellement, décochez d'abord la case
 TP_COLORAPP_ADAPTSCENE;Luminosité d'adaptation
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminance absolue de l'environnement de la scène(cd/m²).\n1)Calculé à partir des données Exif:\nVitess d'obturation - val. ISO - ouverture F - Correction d'expos. du boitier.\n2)Calculé aussi à partir du Point Blanc Raw et de la compensation d'Exposition de RawTherapee
 TP_COLORAPP_ADAPTVIEWING;Luminosité d'adaptation (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Luminance absolue de l'environnement de visionnage\n(souvent 16cd/m²)
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;Si la case est cochée (recommendé), une valeur optimum est calculée à partir des données Exif.\nPour régler la valeur manuellement, décochez d'abord la case
 TP_COLORAPP_ALGO;Algorithme
 TP_COLORAPP_ALGO_ALL;Tout
 TP_COLORAPP_ALGO_JC;Luminosité + Chroma (JC)
@@ -1032,8 +1033,6 @@ TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
-TP_PFCURVE_CURVEEDITOR_CH;Teinte
-TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controle la force du défrangeage en fonction de la couleur. En haut = action maxi, en bas = pas d'action sur la couleur.
 TP_DIRPYRDENOISE_BLUE;Delta chrominance Bleu
 TP_DIRPYRDENOISE_CHROMA;Chrominance (Maître)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Peut être utilisé sur les images raw et non-raw.\n\nPour les images non-raw, la réduction de bruit de luminance dépend du gamma du profile couleur d'entée. Un gamma sRGB est supposé, c'est pourquoi si l'image a un profile couleur d'un gamma différent, la réduction de bruit de luminance variera.
@@ -1199,6 +1198,8 @@ TP_NEUTRAL_TIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
 TP_PERSPECTIVE_HORIZONTAL;Horizontale
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Verticale
+TP_PFCURVE_CURVEEDITOR_CH;Teinte
+TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controle la force du défrangeage en fonction de la couleur. En haut = action maxi, en bas = pas d'action sur la couleur.
 TP_PREPROCESS_GREENEQUIL;Équilibrage du vert
 TP_PREPROCESS_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
 TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Essai de supprimer les pixels chauds/morts
