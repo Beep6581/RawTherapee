@@ -22,6 +22,7 @@ rtgui/rawtherapee
 rtgui/rawtherapee.exe
 install_manifest.txt
 AboutThisBuild.txt
+clean
 
 syntax: regexp
 ^Win32CMakeOptions-MK1\.txt$

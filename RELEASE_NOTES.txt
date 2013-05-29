@@ -54,10 +54,12 @@ Channel #rawtherapee
 http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
 http://rawtherapee.com/forum/viewtopic.php?f=1&t=945#p4603
 
+
 SOCIAL NETWORKS
 ---------------
 Google+
 http://plus.google.com/106783532637761598368
+
 
 REVISION HISTORY
 ----------------
@@ -66,11 +68,16 @@ https://code.google.com/p/rawtherapee/source/list
 
 
 CHANGELOG for 4.0.11
---------------------
-
+----------------------------------------------------------------------
 DATE      	| CHANGESET 	| COMMITTER 	
 ----------------|---------------|-------------------------------------
-> 2013-05-29	| 9ac597f34ae8	| DrSlony
+> 2013-05-29    | 470c29ed6a41  | DrSlony
+  Corrected black point for SONY NEX-5N
+
+> 2013-05-29    | fbb67a25a09a  | DrSlony
+  RELEASE_NOTES update and minor language fixes
+
+> 2013-05-29    | 9ac597f34ae8  | DrSlony
   Formatting fixed in AUTHORS.txt
 
 > 2013-05-29	| 1e4b86cf1395	| DrSlony
