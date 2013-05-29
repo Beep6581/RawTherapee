@@ -54,30 +54,30 @@ EXIFPANEL_RESETHINT;Réinitialise les données sélectionnées à la valeur init
 EXIFPANEL_RESET;Réinitialiser
 EXIFPANEL_SUBDIRECTORY;Sous-répertoire
 EXPORT_BYPASS_ALL;Sélectionner / Désélectionner tout
-EXPORT_BYPASS_COLORDENOISE;Forcer la réduction du bruit chromatique
-EXPORT_BYPASS_DEFRINGE;Forcer l'aberration chromatique
-EXPORT_BYPASS_DIRPYRDENOISE;Forcer la réduction du bruit
-EXPORT_BYPASS_DIRPYREQUALIZER;Forcer le contraste par niveaux de détail
-EXPORT_BYPASS_LUMADENOISE;Forcer la réduction du bruit de luminance
-EXPORT_BYPASS_RAW_ALL_ENHANCE;Forcer l'application de la réduction de bruit/artefact post-dématriçage
-EXPORT_BYPASS_RAW_CA;Forcer la correction d'aberration chromatique [raw]
-EXPORT_BYPASS_RAW_CCSTEPS;Forcer la suppression des fausses couleurs [raw]
-EXPORT_BYPASS_RAW_DCB_ENHANCE;Forcer l'application de la phase d'amélioration de DCB [raw]
-EXPORT_BYPASS_RAW_DCB_ITERATIONS;Forcer le nombre d'itération de DCB [raw]
-EXPORT_BYPASS_RAW_DF;Forcer la Trame Noire [raw]
-EXPORT_BYPASS_RAW_FF;Forcer le Champ Uniforme [raw]
-EXPORT_BYPASS_RAW_GREENTHRESH;Forcer l'équilibrage du vert [raw]
-EXPORT_BYPASS_RAW_LINENOISE;Forcer le filtre de bruit de ligne [raw]
-EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Forcer le niveau d'amélioration LMMSE [raw]
-EXPORT_BYPASS_SHARPENEDGE;Forcer netteté des bords
-EXPORT_BYPASS_SHARPENING;Forcer la netteté
-EXPORT_BYPASS_SHARPENMICRO;Forcer netteté des microcontrastes
-EXPORT_BYPASS_SH_HQ;Forcer Ombres/Hautes lumières (haute qualité)
+EXPORT_BYPASS_COLORDENOISE;Ignorer la réduction du bruit chromatique
+EXPORT_BYPASS_DEFRINGE;Ignorer la corr. d'aberration chromatique
+EXPORT_BYPASS_DIRPYRDENOISE;Ignorer la réduction du bruit
+EXPORT_BYPASS_DIRPYREQUALIZER;Ignorer le contraste par niveaux de détail
+EXPORT_BYPASS_LUMADENOISE;Ignorer la réduction du bruit de luminance
+EXPORT_BYPASS_RAW_ALL_ENHANCE;Ignorer la réduction de bruit/artefact post-dématriçage
+EXPORT_BYPASS_RAW_CA;Ignorer la corr. d'aberration chromatique [raw]
+EXPORT_BYPASS_RAW_CCSTEPS;Ignorer la suppr. des fausses couleurs [raw]
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Ignorer la phase d'amélioration de DCB [raw]
+EXPORT_BYPASS_RAW_DCB_ITERATIONS;Ignorer le nombre d'itération de DCB [raw]
+EXPORT_BYPASS_RAW_DF;Ignorer la Trame Noire [raw]
+EXPORT_BYPASS_RAW_FF;Ignorer le Champ Uniforme [raw]
+EXPORT_BYPASS_RAW_GREENTHRESH;Ignorer l'équilibrage du vert [raw]
+EXPORT_BYPASS_RAW_LINENOISE;Ignorer le filtre de bruit de ligne [raw]
+EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Ignorer le niveau d'amélioration LMMSE [raw]
+EXPORT_BYPASS_SHARPENEDGE;Ignorer netteté des bords
+EXPORT_BYPASS_SHARPENING;Ignorer la netteté
+EXPORT_BYPASS_SHARPENMICRO;Ignorer netteté des microcontrastes
+EXPORT_BYPASS_SH_HQ;Ignorer Ombres/Hautes lumières (HQ)
 EXPORT_FASTEXPORTOPTIONS;<b>Options d'Export Rapide</b>
 EXPORT_INSTRUCTIONS;Les options d'Export Rapide permettent de forcer des paramètres afin d'éviter d'utiliser des outils très consommateur de temps et de ressources, et d'utiliser ces options dans la file de traitement. Cette méthode est recommandée pour la génération rapide d'images de basse résolution quand la vitesse est une priorité ou lorsqu'on désir une version redimensionnée d'une ou plusieurs images de sortie sans avoir à modifier leurs paramètres de développement.
 EXPORT_MAXHEIGHT;Hauteur maximum:
 EXPORT_MAXWIDTH;Largeur maximum:
-EXPORT_PUTTOQUEUEFAST;  Mettre dans la file de traitement pour Export Rapide
+EXPORT_PUTTOQUEUEFAST;Mettre dans la file de traitement\npour Export Rapide
 EXPORT_RAW_DMETHOD;Méthode de dématriçage
 EXPORT_RESIZEMETHOD;Méthode de redimensionnement
 EXTPROGTARGET_1;raw
@@ -117,7 +117,7 @@ FILEBROWSER_NEW_NAME;Nouveau nom:
 FILEBROWSER_OPENDEFAULTVIEWER;Visualiseur par défaut de Windows (image déjà traitée) 
 FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
-FILEBROWSER_POPUPCANCELJOB;Abandonner la file de traitement
+FILEBROWSER_POPUPCANCELJOB;Retirer de la file de traitement
 FILEBROWSER_POPUPCOLORLABEL0;Label: Aucun
 FILEBROWSER_POPUPCOLORLABEL1;Label: Rouge
 FILEBROWSER_POPUPCOLORLABEL2;Label: Jaune
@@ -976,7 +976,7 @@ TP_COLORAPP_GAMUT;Contrôle du gamut (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
 TP_COLORAPP_HUE;Teinte (h)
 TP_COLORAPP_HUE_TOOLTIP;Teinte (h) - angle entre 0° et 360°
-TP_COLORAPP_LABEL;Modèle CIE d'Apparence de la Couleur (CAM02)
+TP_COLORAPP_LABEL;Apparence de la Couleur (CIECAM02)
 TP_COLORAPP_LABEL_CAM02;Édition de l'image avec CIECAM
 TP_COLORAPP_LABEL_SCENE;Conditions de la scène
 TP_COLORAPP_LABEL_VIEWING;Conditions de visionnage
@@ -984,7 +984,7 @@ TP_COLORAPP_LIGHT;Luminosité (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de Lab et RVB
 TP_COLORAPP_MODEL;Modèle de Point Blanc
 TP_COLORAPP_MODEL_TOOLTIP;<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglé dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglé dans Préférences
-TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges 
+TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges
 TP_COLORAPP_RSTPRO_TOOLTIP;Protection des tons chairs et rouges (curseurs et courbes)
 TP_COLORAPP_SHARPCIE;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique avec Q/C
 TP_COLORAPP_SHARPCIE_TOOLTIP;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique utiliseront CIECAM02 si activé.
@@ -1029,7 +1029,7 @@ TP_CROP_X;X
 TP_CROP_Y;Y
 TP_DARKFRAME_AUTOSELECT;Sélection automatique
 TP_DARKFRAME_LABEL;Trame Noire
-TP_DEFRINGE_LABEL;Aberration chromatique (lab / ciecam02)
+TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
 TP_PFCURVE_CURVEEDITOR_CH;Teinte
@@ -1048,7 +1048,7 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab pe
 TP_DIRPYRDENOISE_PERF;Mode RVB (images raw)
 TP_DIRPYRDENOISE_RED;Delta chrominance Rouge
 TP_DIRPYRDENOISE_RGB;RVB
-TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail (lab / ciecam02)
+TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail
 TP_DIRPYREQUALIZER_LUMACOARSEST;les plus gros
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contraste-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contraste+
@@ -1060,7 +1060,7 @@ TP_DISTORTION_AUTO;Correction auto de la distorsion
 TP_DISTORTION_AUTO_TIP;(Experimental) Corrige la distorsion de l'objectif automatiquement pour certains APN (M4/3, quelques compacts, etc.)
 TP_DISTORTION_LABEL;Distorsion
 TP_EPD_EDGESTOPPING;Arrêt des bords
-TP_EPD_LABEL;Compression tonale (lab / ciecam02)
+TP_EPD_LABEL;Compression tonale
 TP_EPD_REWEIGHTINGITERATES;Itérations de la pondération
 TP_EPD_SCALE;Échelle
 TP_EPD_STRENGTH;Force
@@ -1149,7 +1149,7 @@ TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
 TP_ICM_TONECURVE_TOOLTIP;Permet d'utiliser la courbe tonale contenue dans le profile DCP, si elle existe
 TP_ICM_WORKINGPROFILE;Profil de Travail
-TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion (Lab/CIECAM02)
+TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Ramènes les données dans le gamut de l'espace couleur de travail\npuis applique la correction de Munsell
@@ -1275,7 +1275,7 @@ TP_SHARPENING_EDRADIUS;Rayon
 TP_SHARPENING_EDTOLERANCE;Tolérance des bords
 TP_SHARPENING_HALOCONTROL;Contrôle du halo
 TP_SHARPENING_HCAMOUNT;Quantité
-TP_SHARPENING_LABEL;Netteté (lab / ciecam02)
+TP_SHARPENING_LABEL;Netteté
 TP_SHARPENING_METHOD;Méthode
 TP_SHARPENING_ONLYEDGES;Améliorer seulement les bords
 TP_SHARPENING_RADIUS;Rayon
@@ -1287,7 +1287,7 @@ TP_SHARPENING_THRESHOLD;Seuil
 TP_SHARPENING_TOOLTIP;Un effet légèrement différent peut être obtenu avec CIECAM02. Si différence observée, ajuster les réglages
 TP_SHARPENING_USM;Masque flou
 TP_SHARPENMICRO_AMOUNT;Quantité
-TP_SHARPENMICRO_LABEL;Microcontraste (lab / ciecam02)
+TP_SHARPENMICRO_LABEL;Microcontraste
 TP_SHARPENMICRO_MATRIX;Matrice 3×3 au lieu de 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformité
 TP_VIBRANCE_AVOIDCOLORSHIFT;Éviter les dérives de teinte

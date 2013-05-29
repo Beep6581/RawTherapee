@@ -1016,7 +1016,7 @@ TP_DISTORTION_AUTO;Automatisk distorsionskorrigering
 TP_DISTORTION_AUTO_TIP;(Experimentell) Korrigera automatiskt objektivdistorsion för vissa kameror (M4/3, vissa kompaktkameror, etc.)
 TP_DISTORTION_LABEL;Distorsion
 TP_EPD_EDGESTOPPING;Stoppa vid kanter
-TP_EPD_LABEL;Tone Mapping (Lab/CIECAM02)
+TP_EPD_LABEL;Tone Mapping
 TP_EPD_REWEIGHTINGITERATES;Återviktade iterationer
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Styrka

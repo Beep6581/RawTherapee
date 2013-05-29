@@ -1009,7 +1009,7 @@ TP_CROP_X;X
 TP_CROP_Y;Y
 TP_DARKFRAME_AUTOSELECT;Autoselezione
 TP_DARKFRAME_LABEL;Dark Frame
-TP_DEFRINGE_LABEL;Defringe (Lab/CIECAM02)
+TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Raggio
 TP_DEFRINGE_THRESHOLD;Soglia
 TP_DIRPYRDENOISE_BLUE;Delta di Crominanza - Blu
@@ -1026,7 +1026,7 @@ TP_DIRPYRDENOISE_METHOD_TOOLTIP;Per immagini raw può essere usato il metodo RGB
 TP_DIRPYRDENOISE_PERF;Modo RGB (immagini raw)
 TP_DIRPYRDENOISE_RED;Delta di Crominanza - Rosso
 TP_DIRPYRDENOISE_RGB;RGB
-TP_DIRPYREQUALIZER_LABEL;Contrasto per livelli di dettaglio (Lab/CIECAM02)
+TP_DIRPYREQUALIZER_LABEL;Contrasto per livelli di dettaglio
 TP_DIRPYREQUALIZER_LUMACOARSEST;Estesissimo
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contrasto-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contrasto+
@@ -1038,7 +1038,7 @@ TP_DISTORTION_AUTO; Autocorrezione Distorsione
 TP_DISTORTION_AUTO_TIP;(Sperimentale) Corregge la distorsione delle ottiche automaticamente per alcune fotocamere (Micro 4/3, alcune compatte, ecc.)
 TP_DISTORTION_LABEL;Distorsione
 TP_EPD_EDGESTOPPING;Blocco ai Bordi
-TP_EPD_LABEL;Tone Mapping (Lab/CIECAM02)
+TP_EPD_LABEL;Tone Mapping
 TP_EPD_REWEIGHTINGITERATES;Iterazioni di Ribilanciamento
 TP_EPD_SCALE;Scala
 TP_EPD_STRENGTH;Forza
@@ -1241,7 +1241,7 @@ TP_SHARPENING_EDRADIUS;Raggio
 TP_SHARPENING_EDTOLERANCE;Tolleranza bordi
 TP_SHARPENING_HALOCONTROL;Controllo dell'alone
 TP_SHARPENING_HCAMOUNT;Quantità
-TP_SHARPENING_LABEL;Nitidezza (Lab/CIECAM02)
+TP_SHARPENING_LABEL;Nitidezza
 TP_SHARPENING_METHOD;Metodo
 TP_SHARPENING_ONLYEDGES;Definisci solo i bordi
 TP_SHARPENING_RADIUS;Raggio
@@ -1253,7 +1253,7 @@ TP_SHARPENING_THRESHOLD;Soglia
 TP_SHARPENING_TOOLTIP;Aspettati un risultato leggermente diverso quando usato con CIECAM02. Se noti differenze, regola a tuo piacimento.
 TP_SHARPENING_USM;Maschera di contrasto
 TP_SHARPENMICRO_AMOUNT;Quantità
-TP_SHARPENMICRO_LABEL;Microcontrasto (Lab/CIECAM02)
+TP_SHARPENMICRO_LABEL;Microcontrasto
 TP_SHARPENMICRO_MATRIX;Matrice 3×3 invece di 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformità
 TP_VIBRANCE_AVOIDCOLORSHIFT;Evita il color shift
