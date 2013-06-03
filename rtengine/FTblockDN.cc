@@ -39,7 +39,9 @@
 #include "boxblur.h"
 #include "rt_math.h"
 #include "sleef.c"
-
+#ifdef __SSE2__
+	#include "sleefsseavx.c"
+#endif
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -750,19 +752,32 @@ namespace rtengine {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
+#if defined( __SSE2__ ) && defined( WIN32 )
+__attribute__((force_align_arg_pointer)) void ImProcFunctions::RGBtile_denoise (float * fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_Ldetail )	//for DCT
+#else
 	void ImProcFunctions::RGBtile_denoise (float * fLblox, int vblproc, int hblproc, int numblox_H, int numblox_W, float noisevar_Ldetail )	//for DCT
+#endif
 	{
 		float * nbrwt  = new float[TS*TS];	//for DCT
 		int blkstart = hblproc*TS*TS;
 
 		boxabsblur(fLblox+blkstart, nbrwt, 3, 3, TS, TS);//blur neighbor weights for more robust estimation	//for DCT
+		
+#ifdef __SSE2__
+		__m128	tempv;
+		__m128	noisevar_Ldetailv = _mm_set1_ps( noisevar_Ldetail );
+		__m128	onev = _mm_set1_ps( 1.0f );
+		for (int n=0; n<TS*TS; n+=4) {		//for DCT
+			tempv  = onev - xexpf( -SQRV( LVFU(nbrwt[n]))/noisevar_Ldetailv);
+			_mm_storeu_ps( &fLblox[blkstart+n], LVFU(fLblox[blkstart+n]) * tempv );
+		}//output neighbor averaged result
 
+#else
 #pragma omp parallel for
 		for (int n=0; n<TS*TS; n++) {		//for DCT
 			fLblox[blkstart+n] *= (1-xexpf(-SQR(nbrwt[n])/noisevar_Ldetail));
 		}//output neighbor averaged result
-
+#endif
 		delete[] nbrwt;
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -783,10 +798,10 @@ namespace rtengine {
 		int bottom = MIN( top+TS,height);
 		int imax = bottom - top;
 
+		//add row of tiles to output image
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-		//add row of tiles to output image
 		for (int hblk=0; hblk < numblox_W; hblk++) {
 			int left = (hblk-blkrad)*offset;
 			int right  = MIN(left+TS, width);
@@ -796,12 +811,10 @@ namespace rtengine {
 
 			for (int i=imin; i<imax; i++)
 				for (int j=jmin; j<jmax; j++) {
-
 					Ldetail[top+i][left+j] += tilemask_out[i][j]*bloxrow_L[(indx + i)*TS+j]*DCTnorm; //for DCT
 
 				}
 		}
-
 	}
 
 #undef TS
@@ -1056,10 +1069,13 @@ namespace rtengine {
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+#if defined( __SSE2__ ) && defined( WIN32 )
+__attribute__((force_align_arg_pointer))	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level,
+									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float noisevar_L, float noisevar_ab,  LabImage * noi)
+#else
 	void ImProcFunctions::ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level,
 									int W_L, int H_L, int W_ab, int H_ab,int skip_L, int skip_ab, float noisevar_L, float noisevar_ab,  LabImage * noi)
-
+#endif
 
 									{
 		//simple wavelet shrinkage
@@ -1172,7 +1188,20 @@ namespace rtengine {
 			}
 
 			if (noisevar_L>0.01) {
-//OpenMP here
+#ifdef __SSE2__
+				__m128	magv;
+				__m128  mad_Lv = _mm_set1_ps( mad_L );
+				__m128	ninev = _mm_set1_ps( 9.0f );
+				__m128 	epsv = _mm_set1_ps( eps );
+				for (int i=0; i<W_L*H_L-3; i+=4) {
+					magv = SQRV(LVFU(WavCoeffs_L[dir][i]));
+					_mm_storeu_ps( &sfave[i], magv / (magv + mad_Lv*xexpf(-magv/(ninev * mad_Lv)) + epsv));
+				}
+				for (int i=(W_L*H_L)-((W_L*H_L)%4); i<W_L*H_L; i++) {
+					float mag = SQR(WavCoeffs_L[dir][i]);
+					sfave[i] = mag/(mag+mad_L*xexpf(-mag/(9*mad_L))+eps);
+				}
+#else
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -1184,8 +1213,25 @@ namespace rtengine {
 					//WavCoeffs_L[dir][i] *= shrinkfactor;
 					sfave[i] = shrinkfactor;
 				}
-//OpenMP here
+#endif
 				boxblur(sfave, sfave, level+2, level+2, W_L, H_L);//increase smoothness by locally averaging shrinkage
+#ifdef __SSE2__
+				__m128	sfv;
+				for (int i=0; i<W_L*H_L-3; i+=4) {
+					magv = SQRV( LVFU(WavCoeffs_L[dir][i]));
+					sfv = magv/(magv + mad_Lv * xexpf( -magv / (ninev * mad_Lv)) + epsv );
+					//use smoothed shrinkage unless local shrinkage is much less
+					_mm_storeu_ps( &WavCoeffs_L[dir][i], _mm_loadu_ps( &WavCoeffs_L[dir][i]) * (SQRV( LVFU(sfave[i] )) + SQRV(sfv)) / (LVFU(sfave[i])+sfv+epsv));
+				}
+				for (int i=(W_L*H_L)-((W_L*H_L)%4); i<W_L*H_L; i++) {
+					float mag = SQR(WavCoeffs_L[dir][i]);
+					float sf = mag/(mag+mad_L*xexpf(-mag/(9*mad_L))+eps);
+
+					//use smoothed shrinkage unless local shrinkage is much less
+					WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
+				}//now luminance coefficients are denoised
+
+#else
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -1199,6 +1245,7 @@ namespace rtengine {
 					WavCoeffs_L[dir][i] *= (SQR(sfave[i])+SQR(sf))/(sfave[i]+sf+eps);
 
 				}//now luminance coefficients are denoised
+#endif
 			}
 
 

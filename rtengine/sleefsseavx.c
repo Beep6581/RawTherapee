@@ -1291,5 +1291,10 @@ static INLINE vfloat xcbrtf(vfloat d) {
 
   return y;
 }
+
+static INLINE vfloat SQRV(vfloat a){
+	return _mm_mul_ps( a,a );
+}
+
 #endif // __SSE2__
 #endif // SLEEFSSEAVX
