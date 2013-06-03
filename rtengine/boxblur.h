@@ -29,6 +29,10 @@
 #endif
 
 #include "rt_math.h"
+#ifdef __SSE2__
+	#include "sleefsseavx.c"
+#endif
+
 //using namespace rtengine;
 
 namespace rtengine {
@@ -116,15 +120,17 @@ template<class T, class A> void boxblur (T** src, A** dst, int radx, int rady, i
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+#if defined( __SSE2__ ) && defined( WIN32 )
+template<class T, class A> __attribute__((force_align_arg_pointer)) void boxblur (T* src, A* dst, int radx, int rady, int W, int H) {
+#else
 template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int W, int H) {
-	
+#endif
+//printf("boxblur\n");
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 	
 	AlignedBuffer<float>* buffer = new AlignedBuffer<float> (W*H);
 	float* temp = buffer->data;
-		
 	if (radx==0) {
 		for (int row=0; row<H; row++) 
 			for (int col=0; col<W; col++) {
@@ -137,10 +143,11 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 #endif
 		for (int row = 0; row < H; row++) {
 			int len = radx + 1;
-			temp[row*W+0] = (float)src[row*W+0]/len;
+			temp[row*W+0] = (float)src[row*W+0];
 			for (int j=1; j<=radx; j++) {
-				temp[row*W+0] += (float)src[row*W+j]/len;
+				temp[row*W+0] += (float)src[row*W+j];
 			}
+			temp[row*W+0] = temp[row*W+0]/len;
 			for (int col=1; col<=radx; col++) {
 				temp[row*W+col] = (temp[row*W+col-1]*len + src[row*W+col+radx])/(len+1);
 				len ++;
@@ -165,6 +172,50 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 			}
 	} else {
 		//vertical blur
+#ifdef __SSE2__
+		__m128	leninitv = _mm_set1_ps( (float)(rady+1));
+		__m128 	onev = _mm_set1_ps( 1.0f );
+		__m128	tempv,lenv,lenp1v,lenm1v;
+		for (int col = 0; col < W-3; col+=4) {
+			lenv = leninitv;
+			tempv = LVFU(temp[0*W+col]);
+			for (int i=1; i<=rady; i++) {
+				tempv = tempv + LVFU(temp[i*W+col]);
+			}
+			_mm_storeu_ps( &dst[0*W+col], tempv / lenv );
+			for (int row=1; row<=rady; row++) {
+				lenp1v = lenv + onev;
+				_mm_storeu_ps( &dst[row*W+col], (LVFU(dst[(row-1)*W+col])*lenv + LVFU(temp[(row+rady)*W+col]))/lenp1v);
+				lenv = lenp1v;
+			}
+			for (int row = rady+1; row < H-rady; row++) {
+				_mm_storeu_ps( &dst[row*W+col], LVFU(dst[(row-1)*W+col]) +(LVFU(temp[(row+rady)*W+col])-LVFU(temp[(row-rady-1)*W+col]))/lenv );
+			}
+			for (int row=H-rady; row<H; row++) {
+				lenm1v = lenv - onev;
+				_mm_storeu_ps( &dst[row*W+col], (LVFU(dst[(row-1)*W+col])*lenv - LVFU(temp[(row-rady-1)*W+col]))/lenm1v);
+				lenv = lenm1v;
+			}
+		}
+		for (int col = W-(W%4); col < W; col++) {
+			int len = rady + 1;
+			dst[0*W+col] = temp[0*W+col]/len;
+			for (int i=1; i<=rady; i++) {
+				dst[0*W+col] += temp[i*W+col]/len;
+			}
+			for (int row=1; row<=rady; row++) {
+				dst[row*W+col] = (dst[(row-1)*W+col]*len + temp[(row+rady)*W+col])/(len+1);
+				len ++;
+			}
+			for (int row = rady+1; row < H-rady; row++) {
+				dst[row*W+col] = dst[(row-1)*W+col] + (temp[(row+rady)*W+col] - temp[(row-rady-1)*W+col])/len;
+			}
+			for (int row=H-rady; row<H; row++) {
+				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
+				len --;
+			}
+		}
+#else
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -186,6 +237,7 @@ template<class T, class A> void boxblur (T* src, A* dst, int radx, int rady, int
 				len --;
 			}
 		}
+#endif
 	}
 	
 	delete buffer;
@@ -612,9 +664,12 @@ template<class T, class A> void boxcorrelate (T* src, A* dst, int dx, int dy, in
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+#if defined( __SSE2__ ) && defined( WIN32 )
+template<class T, class A> __attribute__((force_align_arg_pointer)) void boxabsblur (T* src, A* dst, int radx, int rady, int W, int H) {
+#else
 template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, int W, int H) {
-	
+#endif
+
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//box blur image; box range = (radx,rady) i.e. box size is (2*radx+1)x(2*rady+1)
 	
@@ -637,19 +692,20 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 #endif
 		for (int row = 0; row < H; row++) {
 			int len = radx + 1;
-			temp[row*W+0] = fabs((float)src[row*W+0])/len;
+			temp[row*W+0] = fabsf((float)src[row*W+0]);
 			for (int j=1; j<=radx; j++) {
-				temp[row*W+0] += fabs((float)src[row*W+j])/len;
+				temp[row*W+0] += fabsf((float)src[row*W+j]);
 			}
+			temp[row*W+0] = temp[row*W+0] / len;
 			for (int col=1; col<=radx; col++) {
-				temp[row*W+col] = (temp[row*W+col-1]*len + fabs(src[row*W+col+radx]))/(len+1);
+				temp[row*W+col] = (temp[row*W+col-1]*len + fabsf(src[row*W+col+radx]))/(len+1);
 				len ++;
 			}
 			for (int col = radx+1; col < W-radx; col++) {
-				temp[row*W+col] = temp[row*W+col-1] + ((float)(fabs(src[row*W+col+radx]) - fabs(src[row*W+col-radx-1])))/len;
+				temp[row*W+col] = temp[row*W+col-1] + ((float)(fabsf(src[row*W+col+radx]) - fabsf(src[row*W+col-radx-1])))/len;
 			}
 			for (int col=W-radx; col<W; col++) {
-				temp[row*W+col] = (temp[row*W+col-1]*len - fabs(src[row*W+col-radx-1]))/(len-1);
+				temp[row*W+col] = (temp[row*W+col-1]*len - fabsf(src[row*W+col-radx-1]))/(len-1);
 				len --;
 			}
 		}
@@ -665,6 +721,52 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 			}
 	} else {
 		//vertical blur
+#ifdef __SSE2__
+		__m128	leninitv = _mm_set1_ps( (float)(rady+1));
+		__m128 	onev = _mm_set1_ps( 1.0f );
+		__m128	tempv,lenv,lenp1v,lenm1v;
+		for (int col = 0; col < W-3; col+=4) {
+			lenv = leninitv;
+			tempv = LVFU(temp[0*W+col]);
+			for (int i=1; i<=rady; i++) {
+				tempv = tempv + LVFU(temp[i*W+col]);
+			}
+			_mm_storeu_ps( &dst[0*W+col], tempv / lenv );
+			for (int row=1; row<=rady; row++) {
+				lenp1v = lenv + onev;
+				_mm_storeu_ps( &dst[row*W+col],(LVFU(dst[(row-1)*W+col])*lenv + LVFU(temp[(row+rady)*W+col]))/lenp1v );
+				lenv = lenp1v;
+			}
+			for (int row = rady+1; row < H-rady; row++) {
+				_mm_storeu_ps( &dst[row*W+col], LVFU(dst[(row-1)*W+col]) + (LVFU(temp[(row+rady)*W+col])- LVFU(temp[(row-rady-1)*W+col]))/lenv);
+			}
+			for (int row=H-rady; row<H; row++) {
+				lenm1v = lenv - onev;
+				_mm_storeu_ps( &dst[row*W+col], (LVFU(dst[(row-1)*W+col])*lenv - LVFU(temp[(row-rady-1)*W+col]))/lenm1v);
+				lenv = lenm1v;
+			}
+	}
+		for (int col = W-(W%4); col < W; col++) {
+			int len = rady + 1;
+			dst[0*W+col] = temp[0*W+col]/len;
+			for (int i=1; i<=rady; i++) {
+				dst[0*W+col] += temp[i*W+col]/len;
+			}
+			for (int row=1; row<=rady; row++) {
+				dst[row*W+col] = (dst[(row-1)*W+col]*len + temp[(row+rady)*W+col])/(len+1);
+				len ++;
+			}
+			for (int row = rady+1; row < H-rady; row++) {
+				dst[row*W+col] = dst[(row-1)*W+col] + (temp[(row+rady)*W+col] - temp[(row-rady-1)*W+col])/len;
+			}
+			for (int row=H-rady; row<H; row++) {
+				dst[row*W+col] = (dst[(row-1)*W+col]*len - temp[(row-rady-1)*W+col])/(len-1);
+				len --;
+			}
+	}
+
+#else
+
 //OpenMP here		
 #ifdef _OPENMP
 #pragma omp parallel for
@@ -687,6 +789,7 @@ template<class T, class A> void boxabsblur (T* src, A* dst, int radx, int rady, 
 				len --;
 			}
 	}
+#endif
 }
 
 	delete buffer;

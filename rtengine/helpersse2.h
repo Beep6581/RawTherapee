@@ -26,6 +26,8 @@ typedef __m128i vint2;
 
 //
 
+#define LVFU(x) _mm_loadu_ps(&x)
+
 static INLINE vint vrint_vi_vd(vdouble vd) { return _mm_cvtpd_epi32(vd); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return _mm_cvttpd_epi32(vd); }
 static INLINE vdouble vcast_vd_vi(vint vi) { return _mm_cvtepi32_pd(vi); }
