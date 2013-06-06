@@ -35,6 +35,9 @@
 #include "../rtgui/multilangmgr.h"
 #include "procparams.h"
 #include "sleef.c"
+#ifdef __SSE2__
+#include "sleefsseavx.c"
+#endif
 
 
 #ifdef _OPENMP
@@ -1456,18 +1459,430 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 *
 ***/
 // Adapted to RT by Jacques Desmis 3/2013
+// Optimized by Ingo Weyrich 5/2013
+#ifdef __SSE2__
+#ifdef WIN32
+__attribute__((force_align_arg_pointer)) void RawImageSource::igv_interpolate(int winw, int winh)
+#else
+void RawImageSource::igv_interpolate(int winw, int winh)
+#endif
+{
+	static const float eps=1e-5f, epssq=1e-5f;//mod epssq -10f =>-5f Jacques 3/2013 to prevent artifact (divide by zero)
+	
+	static const int h1=1, h2=2, h3=3, h4=4, h5=5, h6=6;
+	const int width=winw, height=winh;
+	const int v1=1*width, v2=2*width, v3=3*width, v4=4*width, v5=5*width, v6=6*width;
+	float* rgb[3];
+	float* chr[2];
+	float *rgbarray, *vdif, *hdif, *chrarray;
 
+	rgbarray	= (float (*)) calloc(width*height*3, sizeof( float));
+	rgb[0] = rgbarray;
+	rgb[1] = rgbarray + (width*height);
+	rgb[2] = rgbarray + 2*(width*height);
+
+	chrarray	= (float (*)) calloc(width*height*2, sizeof( float));
+	chr[0] = chrarray;
+	chr[1] = chrarray + (width*height);
+	
+	vdif  = (float (*))    calloc(width*height/2, sizeof *vdif);
+	hdif  = (float (*))    calloc(width*height/2, sizeof *hdif);
+
+	border_interpolate2(winw,winh,7);
+	
+	if (plistener) {
+		plistener->setProgressStr (Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), RAWParams::methodstring[RAWParams::igv]));
+		plistener->setProgress (0.0);
+	}
+#ifdef _OPENMP
+#pragma omp parallel default(none) shared(rgb,vdif,hdif,chr)
+#endif
+{
+	__m128	ngv, egv, wgv, sgv, nvv, evv, wvv, svv, nwgv, negv, swgv, segv, nwvv, nevv, swvv, sevv,tempv,temp1v,temp2v,tempoldv;
+	__m128 epsv = _mm_set1_ps( eps );
+	__m128 epssqv = _mm_set1_ps( epssq );
+	__m128 c65535v = _mm_set1_ps( 65535.f );
+	__m128 c23v = _mm_set1_ps( 23.f );
+	__m128 c40v = _mm_set1_ps( 40.f );
+	__m128 c51v = _mm_set1_ps( 51.f );
+	__m128 c32v = _mm_set1_ps( 32.f );
+	__m128 c8v = _mm_set1_ps( 8.f );
+	__m128 c7v = _mm_set1_ps( 7.f );
+	__m128 c6v = _mm_set1_ps( 6.f );
+	__m128 c10v = _mm_set1_ps( 10.f );
+	__m128 c21v = _mm_set1_ps( 21.f );
+	__m128 c78v = _mm_set1_ps( 78.f );
+	__m128 c69v = _mm_set1_ps( 69.f );
+	__m128 c3145680v = _mm_set1_ps( 3145680.f );
+	__m128 onev = _mm_set1_ps ( 1.f );
+	__m128 zerov = _mm_set1_ps ( 0.f );
+	__m128 d725v = _mm_set1_ps ( 0.725f );
+	__m128 d1375v = _mm_set1_ps ( 0.1375f );
+
+	float ng, eg, wg, sg, nv, ev, wv, sv, nwg, neg, swg, seg, nwv, nev, swv, sev;
+	int	lastcol;
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int row=0; row<height-0; row++)
+		for (int col=0, indx=row*width+col; col<width-0; col++, indx++) {
+			int c=FC(row,col);
+			rgb[c][indx]=CLIP(rawData[row][col]);	//rawData = RT datas
+		}
+//	border_interpolate2(7, rgb);
+
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.13);
+}
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int row=5; row<height-5; row++) {
+		int col,indx,c;
+		for (col=5+(FC(row,1)&1),indx=row*width+col, c=FC(row,col); col<width-11; col+=8, indx+=8) {
+			//N,E,W,S Gradients
+			ngv=(epsv+(vabsf(LC2VFU(rgb[1][indx-v1])-LC2VFU(rgb[1][indx-v3]))+vabsf(LC2VFU(rgb[c][indx])-LC2VFU(rgb[c][indx-v2])))/c65535v);
+			egv=(epsv+(vabsf(LC2VFU(rgb[1][indx+h1])-LC2VFU(rgb[1][indx+h3]))+vabsf(LC2VFU(rgb[c][indx])-LC2VFU(rgb[c][indx+h2])))/c65535v);
+			wgv=(epsv+(vabsf(LC2VFU(rgb[1][indx-h1])-LC2VFU(rgb[1][indx-h3]))+vabsf(LC2VFU(rgb[c][indx])-LC2VFU(rgb[c][indx-h2])))/c65535v);
+			sgv=(epsv+(vabsf(LC2VFU(rgb[1][indx+v1])-LC2VFU(rgb[1][indx+v3]))+vabsf(LC2VFU(rgb[c][indx])-LC2VFU(rgb[c][indx+v2])))/c65535v);
+			//N,E,W,S High Order Interpolation (Li & Randhawa)  
+			//N,E,W,S Hamilton Adams Interpolation
+			// (48.f * 65535.f) = 3145680.f
+			tempv = c40v*LC2VFU(rgb[c][indx]);
+			nvv=LIMV(((c23v*LC2VFU(rgb[1][indx-v1])+c23v*LC2VFU(rgb[1][indx-v3])+LC2VFU(rgb[1][indx-v5])+LC2VFU(rgb[1][indx+v1])+tempv-c32v*LC2VFU(rgb[c][indx-v2])-c8v*LC2VFU(rgb[c][indx-v4])))/c3145680v, zerov, onev);
+			evv=LIMV(((c23v*LC2VFU(rgb[1][indx+h1])+c23v*LC2VFU(rgb[1][indx+h3])+LC2VFU(rgb[1][indx+h5])+LC2VFU(rgb[1][indx-h1])+tempv-c32v*LC2VFU(rgb[c][indx+h2])-c8v*LC2VFU(rgb[c][indx+h4])))/c3145680v, zerov, onev);
+			wvv=LIMV(((c23v*LC2VFU(rgb[1][indx-h1])+c23v*LC2VFU(rgb[1][indx-h3])+LC2VFU(rgb[1][indx-h5])+LC2VFU(rgb[1][indx+h1])+tempv-c32v*LC2VFU(rgb[c][indx-h2])-c8v*LC2VFU(rgb[c][indx-h4])))/c3145680v, zerov, onev);
+			svv=LIMV(((c23v*LC2VFU(rgb[1][indx+v1])+c23v*LC2VFU(rgb[1][indx+v3])+LC2VFU(rgb[1][indx+v5])+LC2VFU(rgb[1][indx-v1])+tempv-c32v*LC2VFU(rgb[c][indx+v2])-c8v*LC2VFU(rgb[c][indx+v4])))/c3145680v, zerov, onev);
+			//Horizontal and vertical color differences
+			tempv = LC2VFU( rgb[c][indx] ) / c65535v;
+			_mm_storeu_ps( &vdif[indx>>1], (sgv*nvv+ngv*svv)/(ngv+sgv)- tempv );
+			_mm_storeu_ps( &hdif[indx>>1], (wgv*evv+egv*wvv)/(egv+wgv)- tempv );
+		}
+		lastcol = col;
+		// borders without SSE
+		for (col=lastcol, indx=row*width+col, c=FC(row,col); col<width-5; col+=2, indx+=2) {
+			//N,E,W,S Gradients
+			ng=(eps+(fabsf(rgb[1][indx-v1]-rgb[1][indx-v3])+fabsf(rgb[c][indx]-rgb[c][indx-v2]))/65535.f);;
+			eg=(eps+(fabsf(rgb[1][indx+h1]-rgb[1][indx+h3])+fabsf(rgb[c][indx]-rgb[c][indx+h2]))/65535.f);
+			wg=(eps+(fabsf(rgb[1][indx-h1]-rgb[1][indx-h3])+fabsf(rgb[c][indx]-rgb[c][indx-h2]))/65535.f);
+			sg=(eps+(fabsf(rgb[1][indx+v1]-rgb[1][indx+v3])+fabsf(rgb[c][indx]-rgb[c][indx+v2]))/65535.f);
+			//N,E,W,S High Order Interpolation (Li & Randhawa)  
+			//N,E,W,S Hamilton Adams Interpolation
+			// (48.f * 65535.f) = 3145680.f
+			nv=LIM(((23.0f*rgb[1][indx-v1]+23.0f*rgb[1][indx-v3]+rgb[1][indx-v5]+rgb[1][indx+v1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx-v2]-8.0f*rgb[c][indx-v4]))/3145680.f, 0.0f, 1.0f);
+			ev=LIM(((23.0f*rgb[1][indx+h1]+23.0f*rgb[1][indx+h3]+rgb[1][indx+h5]+rgb[1][indx-h1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx+h2]-8.0f*rgb[c][indx+h4]))/3145680.f, 0.0f, 1.0f);
+			wv=LIM(((23.0f*rgb[1][indx-h1]+23.0f*rgb[1][indx-h3]+rgb[1][indx-h5]+rgb[1][indx+h1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx-h2]-8.0f*rgb[c][indx-h4]))/3145680.f, 0.0f, 1.0f);
+			sv=LIM(((23.0f*rgb[1][indx+v1]+23.0f*rgb[1][indx+v3]+rgb[1][indx+v5]+rgb[1][indx-v1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx+v2]-8.0f*rgb[c][indx+v4]))/3145680.f, 0.0f, 1.0f);
+			//Horizontal and vertical color differences
+			vdif[indx>>1]=(sg*nv+ng*sv)/(ng+sg)-(rgb[c][indx])/65535.f;
+			hdif[indx>>1]=(wg*ev+eg*wv)/(eg+wg)-(rgb[c][indx])/65535.f;
+		}
+	}
+
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.26);
+}
+
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int row=7; row<height-7; row++) {
+		int col,indx,c,d,indx1;
+		for (col=7+(FC(row,1)&1), indx=row*width+col, indx1=indx>>1, c=FC(row,col), d=c/2; col<width-13; col+=8, indx+=8, indx1+=4) {
+			//H&V integrated gaussian vector over variance on color differences
+			//Mod Jacques 3/2013
+			ngv=LIMV(epssqv+c78v*SQRV(LVFU(vdif[indx1]))+c69v*(SQRV(LVFU(vdif[indx1-v1]))+SQRV(LVFU(vdif[indx1+v1])))+c51v*(SQRV(LVFU(vdif[indx1-v2]))+SQRV(LVFU(vdif[indx1+v2])))+c21v*(SQRV(LVFU(vdif[indx1-v3]))+SQRV(LVFU(vdif[indx1+v3])))-c6v*SQRV(LVFU(vdif[indx1-v1])+LVFU(vdif[indx1])+LVFU(vdif[indx1+v1]))
+			  -c10v*(SQRV(LVFU(vdif[indx1-v2])+LVFU(vdif[indx1-v1])+LVFU(vdif[indx1]))+SQRV(LVFU(vdif[indx1])+LVFU(vdif[indx1+v1])+LVFU(vdif[indx1+v2])))-c7v*(SQRV(LVFU(vdif[indx1-v3])+LVFU(vdif[indx1-v2])+LVFU(vdif[indx1-v1]))+SQRV(LVFU(vdif[indx1+v1])+LVFU(vdif[indx1+v2])+LVFU(vdif[indx1+v3]))),zerov,onev);
+			egv=LIMV(epssqv+c78v*SQRV(LVFU(hdif[indx1]))+c69v*(SQRV(LVFU(hdif[indx1-h1]))+SQRV(LVFU(hdif[indx1+h1])))+c51v*(SQRV(LVFU(hdif[indx1-h2]))+SQRV(LVFU(hdif[indx1+h2])))+c21v*(SQRV(LVFU(hdif[indx1-h3]))+SQRV(LVFU(hdif[indx1+h3])))-c6v*SQRV(LVFU(hdif[indx1-h1])+LVFU(hdif[indx1])+LVFU(hdif[indx1+h1]))
+			  -c10v*(SQRV(LVFU(hdif[indx1-h2])+LVFU(hdif[indx1-h1])+LVFU(hdif[indx1]))+SQRV(LVFU(hdif[indx1])+LVFU(hdif[indx1+h1])+LVFU(hdif[indx1+h2])))-c7v*(SQRV(LVFU(hdif[indx1-h3])+LVFU(hdif[indx1-h2])+LVFU(hdif[indx1-h1]))+SQRV(LVFU(hdif[indx1+h1])+LVFU(hdif[indx1+h2])+LVFU(hdif[indx1+h3]))),zerov,onev);
+			//Limit chrominance using H/V neighbourhood
+			nvv=ULIMV(d725v*LVFU(vdif[indx1])+d1375v*LVFU(vdif[indx1-v1])+d1375v*LVFU(vdif[indx1+v1]),LVFU(vdif[indx1-v1]),LVFU(vdif[indx1+v1]));
+			evv=ULIMV(d725v*LVFU(hdif[indx1])+d1375v*LVFU(hdif[indx1-h1])+d1375v*LVFU(hdif[indx1+h1]),LVFU(hdif[indx1-h1]),LVFU(hdif[indx1+h1]));
+			//Chrominance estimation
+			tempv = (egv*nvv+ngv*evv)/(ngv+egv);
+
+			temp1v = _mm_shuffle_ps(tempv,zerov, _MM_SHUFFLE( 1, 0, 1, 0) );
+			temp1v = _mm_shuffle_ps(temp1v,temp1v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			
+			temp2v = _mm_shuffle_ps(tempv,zerov, _MM_SHUFFLE( 3, 2, 3, 2) );
+			temp2v = _mm_shuffle_ps(temp2v,temp2v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			
+			_mm_storeu_ps(&(chr[d][indx]), temp1v);
+			_mm_storeu_ps(&(chr[d][indx+4]), temp2v);
+			//Green channel population
+			tempv = c65535v * tempv + LC2VFU(rgb[c][indx]);
+			tempoldv = LVFU( rgb[1][indx] );
+			temp1v = tempv;
+			temp1v = _mm_shuffle_ps(temp1v,tempoldv, _MM_SHUFFLE( 3, 1, 1, 0) );
+			temp1v = _mm_shuffle_ps(temp1v,temp1v, _MM_SHUFFLE( 3, 1, 2, 0) );
+
+			tempoldv = LVFU( rgb[1][indx+4] );
+			temp2v = tempv;
+			temp2v = _mm_shuffle_ps(temp2v,tempoldv, _MM_SHUFFLE( 3, 1, 3, 2) );
+			temp2v = _mm_shuffle_ps(temp2v,temp2v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			
+			_mm_storeu_ps( &(rgb[1][indx]), temp1v);
+			_mm_storeu_ps( &(rgb[1][indx+4]), temp2v);
+		}
+		lastcol = col;
+		for (col=lastcol, indx=row*width+col, indx1=indx>>1, c=FC(row,col), d=c/2; col<width-7; col+=2, indx+=2, indx1++) {
+			//H&V integrated gaussian vector over variance on color differences
+			//Mod Jacques 3/2013
+			ng=LIM(epssq+78.0f*SQR(vdif[indx1])+69.0f*(SQR(vdif[indx1-v1])+SQR(vdif[indx1+v1]))+51.0f*(SQR(vdif[indx1-v2])+SQR(vdif[indx1+v2]))+21.0f*(SQR(vdif[indx1-v3])+SQR(vdif[indx1+v3]))-6.0f*SQR(vdif[indx1-v1]+vdif[indx1]+vdif[indx1+v1])
+			  -10.0f*(SQR(vdif[indx1-v2]+vdif[indx1-v1]+vdif[indx1])+SQR(vdif[indx1]+vdif[indx1+v1]+vdif[indx1+v2]))-7.0f*(SQR(vdif[indx1-v3]+vdif[indx1-v2]+vdif[indx1-v1])+SQR(vdif[indx1+v1]+vdif[indx1+v2]+vdif[indx1+v3])),0.f,1.f);
+			eg=LIM(epssq+78.0f*SQR(hdif[indx1])+69.0f*(SQR(hdif[indx1-h1])+SQR(hdif[indx1+h1]))+51.0f*(SQR(hdif[indx1-h2])+SQR(hdif[indx1+h2]))+21.0f*(SQR(hdif[indx1-h3])+SQR(hdif[indx1+h3]))-6.0f*SQR(hdif[indx1-h1]+hdif[indx1]+hdif[indx1+h1])
+			  -10.0f*(SQR(hdif[indx1-h2]+hdif[indx1-h1]+hdif[indx1])+SQR(hdif[indx1]+hdif[indx1+h1]+hdif[indx1+h2]))-7.0f*(SQR(hdif[indx1-h3]+hdif[indx1-h2]+hdif[indx1-h1])+SQR(hdif[indx1+h1]+hdif[indx1+h2]+hdif[indx1+h3])),0.f,1.f);
+			//Limit chrominance using H/V neighbourhood
+			nv=ULIM(0.725f*vdif[indx1]+0.1375f*vdif[indx1-v1]+0.1375f*vdif[indx1+v1],vdif[indx1-v1],vdif[indx1+v1]);
+			ev=ULIM(0.725f*hdif[indx1]+0.1375f*hdif[indx1-h1]+0.1375f*hdif[indx1+h1],hdif[indx1-h1],hdif[indx1+h1]);
+			//Chrominance estimation
+			chr[d][indx]=(eg*nv+ng*ev)/(ng+eg);
+			//Green channel population
+			rgb[1][indx]=rgb[c][indx]+65535.f*chr[d][indx];
+		}
+	}
+
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.39);
+}
+
+//	free(vdif); free(hdif);
+
+#pragma omp for
+	for (int row=7; row<height-7; row+=2) {
+		int col,indx,c;
+		for (col=7+(FC(row,1)&1), indx=row*width+col, c=1-FC(row,col)/2; col<width-13; col+=8, indx+=8) {
+			//NW,NE,SW,SE Gradients
+			nwgv=onev/(epsv+vabsf(LC2VFU(chr[c][indx-v1-h1])-LC2VFU(chr[c][indx-v3-h3]))+vabsf(LC2VFU(chr[c][indx+v1+h1])-LC2VFU(chr[c][indx-v3-h3])));
+			negv=onev/(epsv+vabsf(LC2VFU(chr[c][indx-v1+h1])-LC2VFU(chr[c][indx-v3+h3]))+vabsf(LC2VFU(chr[c][indx+v1-h1])-LC2VFU(chr[c][indx-v3+h3])));
+			swgv=onev/(epsv+vabsf(LC2VFU(chr[c][indx+v1-h1])-LC2VFU(chr[c][indx+v3+h3]))+vabsf(LC2VFU(chr[c][indx-v1+h1])-LC2VFU(chr[c][indx+v3-h3])));
+			segv=onev/(epsv+vabsf(LC2VFU(chr[c][indx+v1+h1])-LC2VFU(chr[c][indx+v3-h3]))+vabsf(LC2VFU(chr[c][indx-v1-h1])-LC2VFU(chr[c][indx+v3+h3])));
+			//Limit NW,NE,SW,SE Color differences
+			nwvv=ULIMV(LC2VFU(chr[c][indx-v1-h1]),LC2VFU(chr[c][indx-v3-h1]),LC2VFU(chr[c][indx-v1-h3]));
+			nevv=ULIMV(LC2VFU(chr[c][indx-v1+h1]),LC2VFU(chr[c][indx-v3+h1]),LC2VFU(chr[c][indx-v1+h3]));
+			swvv=ULIMV(LC2VFU(chr[c][indx+v1-h1]),LC2VFU(chr[c][indx+v3-h1]),LC2VFU(chr[c][indx+v1-h3]));
+			sevv=ULIMV(LC2VFU(chr[c][indx+v1+h1]),LC2VFU(chr[c][indx+v3+h1]),LC2VFU(chr[c][indx+v1+h3]));
+			//Interpolate chrominance: R@B and B@R
+			tempv = (nwgv*nwvv+negv*nevv+swgv*swvv+segv*sevv)/(nwgv+negv+swgv+segv);
+			tempoldv = LC2VFU( chr[c][indx] );
+			temp1v = tempv;
+			temp1v = _mm_shuffle_ps(temp1v,tempoldv, _MM_SHUFFLE( 3, 1, 1, 0) );
+			temp1v = _mm_shuffle_ps(temp1v,temp1v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			_mm_storeu_ps( &(chr[c][indx]), temp1v);
+			
+			temp2v = tempv;
+			temp2v = _mm_shuffle_ps(temp2v,tempoldv, _MM_SHUFFLE( 3, 1, 3, 2) );
+			temp2v = _mm_shuffle_ps(temp2v,temp2v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			_mm_storeu_ps( &(chr[c][indx+4]), temp2v);
+		}
+		lastcol = col;
+		for (col=lastcol, indx=row*width+col, c=1-FC(row,col)/2; col<width-7; col+=2, indx+=2) {
+			//NW,NE,SW,SE Gradients
+			nwg=1.0f/(eps+fabsf(chr[c][indx-v1-h1]-chr[c][indx-v3-h3])+fabsf(chr[c][indx+v1+h1]-chr[c][indx-v3-h3]));
+			neg=1.0f/(eps+fabsf(chr[c][indx-v1+h1]-chr[c][indx-v3+h3])+fabsf(chr[c][indx+v1-h1]-chr[c][indx-v3+h3]));
+			swg=1.0f/(eps+fabsf(chr[c][indx+v1-h1]-chr[c][indx+v3+h3])+fabsf(chr[c][indx-v1+h1]-chr[c][indx+v3-h3]));
+			seg=1.0f/(eps+fabsf(chr[c][indx+v1+h1]-chr[c][indx+v3-h3])+fabsf(chr[c][indx-v1-h1]-chr[c][indx+v3+h3]));
+			//Limit NW,NE,SW,SE Color differences
+			nwv=ULIM(chr[c][indx-v1-h1],chr[c][indx-v3-h1],chr[c][indx-v1-h3]);
+			nev=ULIM(chr[c][indx-v1+h1],chr[c][indx-v3+h1],chr[c][indx-v1+h3]);
+			swv=ULIM(chr[c][indx+v1-h1],chr[c][indx+v3-h1],chr[c][indx+v1-h3]);
+			sev=ULIM(chr[c][indx+v1+h1],chr[c][indx+v3+h1],chr[c][indx+v1+h3]);
+			//Interpolate chrominance: R@B and B@R
+			chr[c][indx]=(nwg*nwv+neg*nev+swg*swv+seg*sev)/(nwg+neg+swg+seg);
+		}
+	}
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.52);
+}
+
+#pragma omp for	
+	for (int row=8; row<height-7; row+=2){
+		int col,indx,c;
+		for (col=7+(FC(row,1)&1), indx=row*width+col, c=1-FC(row,col)/2; col<width-13; col+=8, indx+=8) {
+			//NW,NE,SW,SE Gradients
+			nwgv=onev/(epsv+vabsf(LC2VFU(chr[c][indx-v1-h1])-LC2VFU(chr[c][indx-v3-h3]))+vabsf(LC2VFU(chr[c][indx+v1+h1])-LC2VFU(chr[c][indx-v3-h3])));
+			negv=onev/(epsv+vabsf(LC2VFU(chr[c][indx-v1+h1])-LC2VFU(chr[c][indx-v3+h3]))+vabsf(LC2VFU(chr[c][indx+v1-h1])-LC2VFU(chr[c][indx-v3+h3])));
+			swgv=onev/(epsv+vabsf(LC2VFU(chr[c][indx+v1-h1])-LC2VFU(chr[c][indx+v3+h3]))+vabsf(LC2VFU(chr[c][indx-v1+h1])-LC2VFU(chr[c][indx+v3-h3])));
+			segv=onev/(epsv+vabsf(LC2VFU(chr[c][indx+v1+h1])-LC2VFU(chr[c][indx+v3-h3]))+vabsf(LC2VFU(chr[c][indx-v1-h1])-LC2VFU(chr[c][indx+v3+h3])));
+			//Limit NW,NE,SW,SE Color differences
+			nwvv=ULIMV(LC2VFU(chr[c][indx-v1-h1]),LC2VFU(chr[c][indx-v3-h1]),LC2VFU(chr[c][indx-v1-h3]));
+			nevv=ULIMV(LC2VFU(chr[c][indx-v1+h1]),LC2VFU(chr[c][indx-v3+h1]),LC2VFU(chr[c][indx-v1+h3]));
+			swvv=ULIMV(LC2VFU(chr[c][indx+v1-h1]),LC2VFU(chr[c][indx+v3-h1]),LC2VFU(chr[c][indx+v1-h3]));
+			sevv=ULIMV(LC2VFU(chr[c][indx+v1+h1]),LC2VFU(chr[c][indx+v3+h1]),LC2VFU(chr[c][indx+v1+h3]));
+			//Interpolate chrominance: R@B and B@R
+			tempv = (nwgv*nwvv+negv*nevv+swgv*swvv+segv*sevv)/(nwgv+negv+swgv+segv);
+			tempoldv = LC2VFU( chr[c][indx] );
+			
+			temp1v = tempv;
+			temp1v = _mm_shuffle_ps(temp1v,tempoldv, _MM_SHUFFLE( 3, 1, 1, 0) );
+			temp1v = _mm_shuffle_ps(temp1v,temp1v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			_mm_storeu_ps( &(chr[c][indx]), temp1v);
+			
+			temp2v = tempv;
+			temp2v = _mm_shuffle_ps(temp2v,tempoldv, _MM_SHUFFLE( 3, 1, 3, 2) );
+			temp2v = _mm_shuffle_ps(temp2v,temp2v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			_mm_storeu_ps( &(chr[c][indx+4]), temp2v);
+		}
+		lastcol = col;
+		for (col=lastcol, indx=row*width+col, c=1-FC(row,col)/2; col<width-7; col+=2, indx+=2) {
+			//NW,NE,SW,SE Gradients
+			nwg=1.0f/(eps+fabsf(chr[c][indx-v1-h1]-chr[c][indx-v3-h3])+fabsf(chr[c][indx+v1+h1]-chr[c][indx-v3-h3]));
+			neg=1.0f/(eps+fabsf(chr[c][indx-v1+h1]-chr[c][indx-v3+h3])+fabsf(chr[c][indx+v1-h1]-chr[c][indx-v3+h3]));
+			swg=1.0f/(eps+fabsf(chr[c][indx+v1-h1]-chr[c][indx+v3+h3])+fabsf(chr[c][indx-v1+h1]-chr[c][indx+v3-h3]));
+			seg=1.0f/(eps+fabsf(chr[c][indx+v1+h1]-chr[c][indx+v3-h3])+fabsf(chr[c][indx-v1-h1]-chr[c][indx+v3+h3]));
+			//Limit NW,NE,SW,SE Color differences
+			nwv=ULIM(chr[c][indx-v1-h1],chr[c][indx-v3-h1],chr[c][indx-v1-h3]);
+			nev=ULIM(chr[c][indx-v1+h1],chr[c][indx-v3+h1],chr[c][indx-v1+h3]);
+			swv=ULIM(chr[c][indx+v1-h1],chr[c][indx+v3-h1],chr[c][indx+v1-h3]);
+			sev=ULIM(chr[c][indx+v1+h1],chr[c][indx+v3+h1],chr[c][indx+v1+h3]);
+			//Interpolate chrominance: R@B and B@R
+			chr[c][indx]=(nwg*nwv+neg*nev+swg*swv+seg*sev)/(nwg+neg+swg+seg);
+		}
+	}
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.65);
+}
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int row=7; row<height-7; row++) {
+		int col,indx;
+		for (col=7+(FC(row,0)&1), indx=row*width+col; col<width-13; col+=8, indx+=8) {
+			//N,E,W,S Gradients
+			ngv=onev/(epsv+vabsf(LC2VFU(chr[0][indx-v1])-LC2VFU(chr[0][indx-v3]))+vabsf(LC2VFU(chr[0][indx+v1])-LC2VFU(chr[0][indx-v3])));
+			egv=onev/(epsv+vabsf(LC2VFU(chr[0][indx+h1])-LC2VFU(chr[0][indx+h3]))+vabsf(LC2VFU(chr[0][indx-h1])-LC2VFU(chr[0][indx+h3])));
+			wgv=onev/(epsv+vabsf(LC2VFU(chr[0][indx-h1])-LC2VFU(chr[0][indx-h3]))+vabsf(LC2VFU(chr[0][indx+h1])-LC2VFU(chr[0][indx-h3])));
+			sgv=onev/(epsv+vabsf(LC2VFU(chr[0][indx+v1])-LC2VFU(chr[0][indx+v3]))+vabsf(LC2VFU(chr[0][indx-v1])-LC2VFU(chr[0][indx+v3])));
+			//Interpolate chrominance: R@G and B@G
+			tempv = ((ngv*LC2VFU(chr[0][indx-v1])+egv*LC2VFU(chr[0][indx+h1])+wgv*LC2VFU(chr[0][indx-h1])+sgv*LC2VFU(chr[0][indx+v1]))/(ngv+egv+wgv+sgv));
+
+			tempoldv = LVFU( chr[0][indx] );
+			temp1v = tempv;
+			temp1v = _mm_shuffle_ps(temp1v,tempoldv, _MM_SHUFFLE( 3, 1, 1, 0) );
+			temp1v = _mm_shuffle_ps(temp1v,temp1v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			_mm_storeu_ps( &chr[0][indx], temp1v);
+			
+			tempoldv = LVFU( chr[0][indx+4] );
+			temp1v = tempv;
+			temp1v = _mm_shuffle_ps(temp1v,tempoldv, _MM_SHUFFLE( 3, 1, 3, 2) );
+			temp1v = _mm_shuffle_ps(temp1v,temp1v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			_mm_storeu_ps( &chr[0][indx+4], temp1v);
+			}
+		lastcol = col;
+		for (col=lastcol, indx=row*width+col; col<width-7; col+=2, indx+=2) {
+			//N,E,W,S Gradients
+			ng=1.0f/(eps+fabsf(chr[0][indx-v1]-chr[0][indx-v3])+fabsf(chr[0][indx+v1]-chr[0][indx-v3]));
+			eg=1.0f/(eps+fabsf(chr[0][indx+h1]-chr[0][indx+h3])+fabsf(chr[0][indx-h1]-chr[0][indx+h3]));
+			wg=1.0f/(eps+fabsf(chr[0][indx-h1]-chr[0][indx-h3])+fabsf(chr[0][indx+h1]-chr[0][indx-h3]));
+			sg=1.0f/(eps+fabsf(chr[0][indx+v1]-chr[0][indx+v3])+fabsf(chr[0][indx-v1]-chr[0][indx+v3]));
+			//Interpolate chrominance: R@G and B@G
+			chr[0][indx]=((ng*chr[0][indx-v1]+eg*chr[0][indx+h1]+wg*chr[0][indx-h1]+sg*chr[0][indx+v1])/(ng+eg+wg+sg));
+			}
+	}
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.78);
+}
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int row=7; row<height-7; row++) {
+		int col,indx;
+		for (col=7+(FC(row,0)&1), indx=row*width+col; col<width-13; col+=8, indx+=8) {
+			//N,E,W,S Gradients
+			ngv=onev/(epsv+vabsf(LC2VFU(chr[1][indx-v1])-LC2VFU(chr[1][indx-v3]))+vabsf(LC2VFU(chr[1][indx+v1])-LC2VFU(chr[1][indx-v3])));
+			egv=onev/(epsv+vabsf(LC2VFU(chr[1][indx+h1])-LC2VFU(chr[1][indx+h3]))+vabsf(LC2VFU(chr[1][indx-h1])-LC2VFU(chr[1][indx+h3])));
+			wgv=onev/(epsv+vabsf(LC2VFU(chr[1][indx-h1])-LC2VFU(chr[1][indx-h3]))+vabsf(LC2VFU(chr[1][indx+h1])-LC2VFU(chr[1][indx-h3])));
+			sgv=onev/(epsv+vabsf(LC2VFU(chr[1][indx+v1])-LC2VFU(chr[1][indx+v3]))+vabsf(LC2VFU(chr[1][indx-v1])-LC2VFU(chr[1][indx+v3])));
+			//Interpolate chrominance: R@G and B@G
+			tempv = ((ngv*LC2VFU(chr[1][indx-v1])+egv*LC2VFU(chr[1][indx+h1])+wgv*LC2VFU(chr[1][indx-h1])+sgv*LC2VFU(chr[1][indx+v1]))/(ngv+egv+wgv+sgv));
+
+			tempoldv = LVFU( chr[1][indx] );
+			temp1v = tempv;
+			temp1v = _mm_shuffle_ps(temp1v,tempoldv, _MM_SHUFFLE( 3, 1, 1, 0) );
+			temp1v = _mm_shuffle_ps(temp1v,temp1v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			_mm_storeu_ps( &chr[1][indx], temp1v);
+			
+			tempoldv = LVFU( chr[1][indx+4] );
+			temp1v = tempv;
+			temp1v = _mm_shuffle_ps(temp1v,tempoldv, _MM_SHUFFLE( 3, 1, 3, 2) );
+			temp1v = _mm_shuffle_ps(temp1v,temp1v, _MM_SHUFFLE( 3, 1, 2, 0) );
+			_mm_storeu_ps( &chr[1][indx+4], temp1v);
+			}
+		lastcol = col;
+		for (col=lastcol, indx=row*width+col; col<width-7; col+=2, indx+=2) {
+			//N,E,W,S Gradients
+			ng=1.0f/(eps+fabsf(chr[1][indx-v1]-chr[1][indx-v3])+fabsf(chr[1][indx+v1]-chr[1][indx-v3]));
+			eg=1.0f/(eps+fabsf(chr[1][indx+h1]-chr[1][indx+h3])+fabsf(chr[1][indx-h1]-chr[1][indx+h3]));
+			wg=1.0f/(eps+fabsf(chr[1][indx-h1]-chr[1][indx-h3])+fabsf(chr[1][indx+h1]-chr[1][indx-h3]));
+			sg=1.0f/(eps+fabsf(chr[1][indx+v1]-chr[1][indx+v3])+fabsf(chr[1][indx-v1]-chr[1][indx+v3]));
+			//Interpolate chrominance: R@G and B@G
+			chr[1][indx]=((ng*chr[1][indx-v1]+eg*chr[1][indx+h1]+wg*chr[1][indx-h1]+sg*chr[1][indx+v1])/(ng+eg+wg+sg));
+			}
+	}
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.91);
+}
+#ifdef _OPENMP
+#pragma omp for
+#endif	
+	for(int row=7; row<height-7; row++)
+		for(int col=7, indx=row*width+col; col<width-7; col++, indx++) {
+			red  [row][col] = CLIP(rgb[1][indx]-65535.f*chr[0][indx]);
+			green[row][col] = CLIP(rgb[1][indx]);
+			blue [row][col] = CLIP(rgb[1][indx]-65535.f*chr[1][indx]);
+		}
+}// End of parallelization
+
+	if (plistener) plistener->setProgress (1.0);
+
+	free(chrarray); free(rgbarray);
+	free(vdif); free(hdif);
+}
+
+#else
 void RawImageSource::igv_interpolate(int winw, int winh)
 {
 	static const float eps=1e-5f, epssq=1e-5f;//mod epssq -10f =>-5f Jacques 3/2013 to prevent artifact (divide by zero)
 	static const int h1=1, h2=2, h3=3, h4=4, h5=5, h6=6;
 	const int width=winw, height=winh;
 	const int v1=1*width, v2=2*width, v3=3*width, v4=4*width, v5=5*width, v6=6*width;
-	float (*rgb)[3], *vdif, *hdif, (*chr)[2];
-	rgb   = (float (*)[3]) calloc(width*height, sizeof *rgb);
-	vdif  = (float (*))    calloc(width*height, sizeof *vdif);
-	hdif  = (float (*))    calloc(width*height, sizeof *hdif);
-	chr   = (float (*)[2]) calloc(width*height, sizeof *chr);
+	float* rgb[3];
+	float* chr[2];
+	float (*rgbarray), *vdif, *hdif, (*chrarray);
+
+	rgbarray	= (float (*)) calloc(width*height*3, sizeof( float));
+	rgb[0] = rgbarray;
+	rgb[1] = rgbarray + (width*height);
+	rgb[2] = rgbarray + 2*(width*height);
+
+	chrarray	= (float (*)) calloc(width*height*2, sizeof( float));
+	chr[0] = chrarray;
+	chr[1] = chrarray + (width*height);
+	
+	vdif  = (float (*))    calloc(width*height/2, sizeof *vdif);
+	hdif  = (float (*))    calloc(width*height/2, sizeof *hdif);
 
 	border_interpolate2(winw,winh,7);
 	
@@ -1488,7 +1903,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 	for (int row=0; row<height-0; row++)
 		for (int col=0, indx=row*width+col; col<width-0; col++, indx++) {
 			int c=FC(row,col);
-			rgb[indx][c]=CLIP(rawData[row][col]);	//rawData = RT datas
+			rgb[c][indx]=CLIP(rawData[row][col]);	//rawData = RT datas
 		}
 //	border_interpolate2(7, rgb);
 
@@ -1496,7 +1911,7 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 #pragma omp single
 #endif
 {
-	if (plistener) plistener->setProgress (0.1);
+	if (plistener) plistener->setProgress (0.13);
 }
 
 #ifdef _OPENMP
@@ -1505,26 +1920,27 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 	for (int row=5; row<height-5; row++)
 		for (int col=5+(FC(row,1)&1), indx=row*width+col, c=FC(row,col); col<width-5; col+=2, indx+=2) {
 			//N,E,W,S Gradients
-			ng=(eps+(fabs(rgb[indx-v1][1]-rgb[indx-v3][1])+fabs(rgb[indx][c]-rgb[indx-v2][c]))/65535.f);;
-			eg=(eps+(fabs(rgb[indx+h1][1]-rgb[indx+h3][1])+fabs(rgb[indx][c]-rgb[indx+h2][c]))/65535.f);
-			wg=(eps+(fabs(rgb[indx-h1][1]-rgb[indx-h3][1])+fabs(rgb[indx][c]-rgb[indx-h2][c]))/65535.f);
-			sg=(eps+(fabs(rgb[indx+v1][1]-rgb[indx+v3][1])+fabs(rgb[indx][c]-rgb[indx+v2][c]))/65535.f);
+			ng=(eps+(fabsf(rgb[1][indx-v1]-rgb[1][indx-v3])+fabsf(rgb[c][indx]-rgb[c][indx-v2]))/65535.f);;
+			eg=(eps+(fabsf(rgb[1][indx+h1]-rgb[1][indx+h3])+fabsf(rgb[c][indx]-rgb[c][indx+h2]))/65535.f);
+			wg=(eps+(fabsf(rgb[1][indx-h1]-rgb[1][indx-h3])+fabsf(rgb[c][indx]-rgb[c][indx-h2]))/65535.f);
+			sg=(eps+(fabsf(rgb[1][indx+v1]-rgb[1][indx+v3])+fabsf(rgb[c][indx]-rgb[c][indx+v2]))/65535.f);
 			//N,E,W,S High Order Interpolation (Li & Randhawa)  
 			//N,E,W,S Hamilton Adams Interpolation
-			nv=LIM(((23.0f*rgb[indx-v1][1]+23.0f*rgb[indx-v3][1]+rgb[indx-v5][1]+rgb[indx+v1][1]+40.0f*rgb[indx][c]-32.0f*rgb[indx-v2][c]-8.0f*rgb[indx-v4][c])/48.0f)/65535.f, 0.0f, 1.0f);
-			ev=LIM(((23.0f*rgb[indx+h1][1]+23.0f*rgb[indx+h3][1]+rgb[indx+h5][1]+rgb[indx-h1][1]+40.0f*rgb[indx][c]-32.0f*rgb[indx+h2][c]-8.0f*rgb[indx+h4][c])/48.0f)/65535.f, 0.0f, 1.0f);
-			wv=LIM(((23.0f*rgb[indx-h1][1]+23.0f*rgb[indx-h3][1]+rgb[indx-h5][1]+rgb[indx+h1][1]+40.0f*rgb[indx][c]-32.0f*rgb[indx-h2][c]-8.0f*rgb[indx-h4][c])/48.0f)/65535.f, 0.0f, 1.0f);
-			sv=LIM(((23.0f*rgb[indx+v1][1]+23.0f*rgb[indx+v3][1]+rgb[indx+v5][1]+rgb[indx-v1][1]+40.0f*rgb[indx][c]-32.0f*rgb[indx+v2][c]-8.0f*rgb[indx+v4][c])/48.0f)/65535.f, 0.0f, 1.0f);
+			// (48.f * 65535.f) = 3145680.f
+			nv=LIM(((23.0f*rgb[1][indx-v1]+23.0f*rgb[1][indx-v3]+rgb[1][indx-v5]+rgb[1][indx+v1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx-v2]-8.0f*rgb[c][indx-v4]))/3145680.f, 0.0f, 1.0f);
+			ev=LIM(((23.0f*rgb[1][indx+h1]+23.0f*rgb[1][indx+h3]+rgb[1][indx+h5]+rgb[1][indx-h1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx+h2]-8.0f*rgb[c][indx+h4]))/3145680.f, 0.0f, 1.0f);
+			wv=LIM(((23.0f*rgb[1][indx-h1]+23.0f*rgb[1][indx-h3]+rgb[1][indx-h5]+rgb[1][indx+h1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx-h2]-8.0f*rgb[c][indx-h4]))/3145680.f, 0.0f, 1.0f);
+			sv=LIM(((23.0f*rgb[1][indx+v1]+23.0f*rgb[1][indx+v3]+rgb[1][indx+v5]+rgb[1][indx-v1]+40.0f*rgb[c][indx]-32.0f*rgb[c][indx+v2]-8.0f*rgb[c][indx+v4]))/3145680.f, 0.0f, 1.0f);
 			//Horizontal and vertical color differences
-			vdif[indx]=(sg*nv+ng*sv)/(ng+sg)-(rgb[indx][c])/65535.f;
-			hdif[indx]=(wg*ev+eg*wv)/(eg+wg)-(rgb[indx][c])/65535.f;
+			vdif[indx>>1]=(sg*nv+ng*sv)/(ng+sg)-(rgb[c][indx])/65535.f;
+			hdif[indx>>1]=(wg*ev+eg*wv)/(eg+wg)-(rgb[c][indx])/65535.f;
 		}
 
 #ifdef _OPENMP
 #pragma omp single
 #endif
 {
-	if (plistener) plistener->setProgress (0.25);
+	if (plistener) plistener->setProgress (0.26);
 }
 
 #ifdef _OPENMP
@@ -1534,62 +1950,113 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 		for (int col=7+(FC(row,1)&1), indx=row*width+col, c=FC(row,col), d=c/2; col<width-7; col+=2, indx+=2) {
 			//H&V integrated gaussian vector over variance on color differences
 			//Mod Jacques 3/2013
-			ng=LIM(epssq+78.0f*SQR(vdif[indx])+69.0f*(SQR(vdif[indx-v2])+SQR(vdif[indx+v2]))+51.0f*(SQR(vdif[indx-v4])+SQR(vdif[indx+v4]))+21.0f*(SQR(vdif[indx-v6])+SQR(vdif[indx+v6]))-6.0f*SQR(vdif[indx-v2]+vdif[indx]+vdif[indx+v2])-10.0f*(SQR(vdif[indx-v4]+vdif[indx-v2]+vdif[indx])+SQR(vdif[indx]+vdif[indx+v2]+vdif[indx+v4]))-7.0f*(SQR(vdif[indx-v6]+vdif[indx-v4]+vdif[indx-v2])+SQR(vdif[indx+v2]+vdif[indx+v4]+vdif[indx+v6])),0.f,1.f);
-			eg=LIM(epssq+78.0f*SQR(hdif[indx])+69.0f*(SQR(hdif[indx-h2])+SQR(hdif[indx+h2]))+51.0f*(SQR(hdif[indx-h4])+SQR(hdif[indx+h4]))+21.0f*(SQR(hdif[indx-h6])+SQR(hdif[indx+h6]))-6.0f*SQR(hdif[indx-h2]+hdif[indx]+hdif[indx+h2])-10.0f*(SQR(hdif[indx-h4]+hdif[indx-h2]+hdif[indx])+SQR(hdif[indx]+hdif[indx+h2]+hdif[indx+h4]))-7.0f*(SQR(hdif[indx-h6]+hdif[indx-h4]+hdif[indx-h2])+SQR(hdif[indx+h2]+hdif[indx+h4]+hdif[indx+h6])),0.f,1.f);
+			ng=LIM(epssq+78.0f*SQR(vdif[indx>>1])+69.0f*(SQR(vdif[(indx-v2)>>1])+SQR(vdif[(indx+v2)>>1]))+51.0f*(SQR(vdif[(indx-v4)>>1])+SQR(vdif[(indx+v4)>>1]))+21.0f*(SQR(vdif[(indx-v6)>>1])+SQR(vdif[(indx+v6)>>1]))-6.0f*SQR(vdif[(indx-v2)>>1]+vdif[indx>>1]+vdif[(indx+v2)>>1])
+			  -10.0f*(SQR(vdif[(indx-v4)>>1]+vdif[(indx-v2)>>1]+vdif[indx>>1])+SQR(vdif[indx>>1]+vdif[(indx+v2)>>1]+vdif[(indx+v4)>>1]))-7.0f*(SQR(vdif[(indx-v6)>>1]+vdif[(indx-v4)>>1]+vdif[(indx-v2)>>1])+SQR(vdif[(indx+v2)>>1]+vdif[(indx+v4)>>1]+vdif[(indx+v6)>>1])),0.f,1.f);
+			eg=LIM(epssq+78.0f*SQR(hdif[indx>>1])+69.0f*(SQR(hdif[(indx-h2)>>1])+SQR(hdif[(indx+h2)>>1]))+51.0f*(SQR(hdif[(indx-h4)>>1])+SQR(hdif[(indx+h4)>>1]))+21.0f*(SQR(hdif[(indx-h6)>>1])+SQR(hdif[(indx+h6)>>1]))-6.0f*SQR(hdif[(indx-h2)>>1]+hdif[indx>>1]+hdif[(indx+h2)>>1])
+			  -10.0f*(SQR(hdif[(indx-h4)>>1]+hdif[(indx-h2)>>1]+hdif[indx>>1])+SQR(hdif[indx>>1]+hdif[(indx+h2)>>1]+hdif[(indx+h4)>>1]))-7.0f*(SQR(hdif[(indx-h6)>>1]+hdif[(indx-h4)>>1]+hdif[(indx-h2)>>1])+SQR(hdif[(indx+h2)>>1]+hdif[(indx+h4)>>1]+hdif[(indx+h6)>>1])),0.f,1.f);
 			//Limit chrominance using H/V neighbourhood
-			nv=ULIM(0.725f*vdif[indx]+0.1375f*vdif[indx-v2]+0.1375f*vdif[indx+v2],vdif[indx-v2],vdif[indx+v2]);
-			ev=ULIM(0.725f*hdif[indx]+0.1375f*hdif[indx-h2]+0.1375f*hdif[indx+h2],hdif[indx-h2],hdif[indx+h2]);
+			nv=ULIM(0.725f*vdif[indx>>1]+0.1375f*vdif[(indx-v2)>>1]+0.1375f*vdif[(indx+v2)>>1],vdif[(indx-v2)>>1],vdif[(indx+v2)>>1]);
+			ev=ULIM(0.725f*hdif[indx>>1]+0.1375f*hdif[(indx-h2)>>1]+0.1375f*hdif[(indx+h2)>>1],hdif[(indx-h2)>>1],hdif[(indx+h2)>>1]);
 			//Chrominance estimation
-			chr[indx][d]=(eg*nv+ng*ev)/(ng+eg);
+			chr[d][indx]=(eg*nv+ng*ev)/(ng+eg);
 			//Green channel population
-			rgb[indx][1]=rgb[indx][c]+65535.f*chr[indx][d];
+			rgb[1][indx]=rgb[c][indx]+65535.f*chr[d][indx];
 		}
 
 #ifdef _OPENMP
 #pragma omp single
 #endif
 {
-	if (plistener) plistener->setProgress (0.45);
+	if (plistener) plistener->setProgress (0.39);
 }
 
 //	free(vdif); free(hdif);
-
-	// The following block has to be executed by only one thread, because of memory access "collision"
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int row=7; row<height-7; row+=2)
+		for (int col=7+(FC(row,1)&1), indx=row*width+col, c=1-FC(row,col)/2; col<width-7; col+=2, indx+=2) {
+			//NW,NE,SW,SE Gradients
+			nwg=1.0f/(eps+fabsf(chr[c][indx-v1-h1]-chr[c][indx-v3-h3])+fabsf(chr[c][indx+v1+h1]-chr[c][indx-v3-h3]));
+			neg=1.0f/(eps+fabsf(chr[c][indx-v1+h1]-chr[c][indx-v3+h3])+fabsf(chr[c][indx+v1-h1]-chr[c][indx-v3+h3]));
+			swg=1.0f/(eps+fabsf(chr[c][indx+v1-h1]-chr[c][indx+v3+h3])+fabsf(chr[c][indx-v1+h1]-chr[c][indx+v3-h3]));
+			seg=1.0f/(eps+fabsf(chr[c][indx+v1+h1]-chr[c][indx+v3-h3])+fabsf(chr[c][indx-v1-h1]-chr[c][indx+v3+h3]));
+			//Limit NW,NE,SW,SE Color differences
+			nwv=ULIM(chr[c][indx-v1-h1],chr[c][indx-v3-h1],chr[c][indx-v1-h3]);
+			nev=ULIM(chr[c][indx-v1+h1],chr[c][indx-v3+h1],chr[c][indx-v1+h3]);
+			swv=ULIM(chr[c][indx+v1-h1],chr[c][indx+v3-h1],chr[c][indx+v1-h3]);
+			sev=ULIM(chr[c][indx+v1+h1],chr[c][indx+v3+h1],chr[c][indx+v1+h3]);
+			//Interpolate chrominance: R@B and B@R
+			chr[c][indx]=(nwg*nwv+neg*nev+swg*swv+seg*sev)/(nwg+neg+swg+seg);
+		}
 #ifdef _OPENMP
 #pragma omp single
 #endif
 {
-	for (int row=7; row<height-7; row++)
+	if (plistener) plistener->setProgress (0.52);
+}
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int row=8; row<height-7; row+=2)
 		for (int col=7+(FC(row,1)&1), indx=row*width+col, c=1-FC(row,col)/2; col<width-7; col+=2, indx+=2) {
 			//NW,NE,SW,SE Gradients
-			nwg=1.0f/(eps+fabs(chr[indx-v1-h1][c]-chr[indx-v3-h3][c])+fabs(chr[indx+v1+h1][c]-chr[indx-v3-h3][c]));
-			neg=1.0f/(eps+fabs(chr[indx-v1+h1][c]-chr[indx-v3+h3][c])+fabs(chr[indx+v1-h1][c]-chr[indx-v3+h3][c]));
-			swg=1.0f/(eps+fabs(chr[indx+v1-h1][c]-chr[indx+v3+h3][c])+fabs(chr[indx-v1+h1][c]-chr[indx+v3-h3][c]));
-			seg=1.0f/(eps+fabs(chr[indx+v1+h1][c]-chr[indx+v3-h3][c])+fabs(chr[indx-v1-h1][c]-chr[indx+v3+h3][c]));
+			nwg=1.0f/(eps+fabsf(chr[c][indx-v1-h1]-chr[c][indx-v3-h3])+fabsf(chr[c][indx+v1+h1]-chr[c][indx-v3-h3]));
+			neg=1.0f/(eps+fabsf(chr[c][indx-v1+h1]-chr[c][indx-v3+h3])+fabsf(chr[c][indx+v1-h1]-chr[c][indx-v3+h3]));
+			swg=1.0f/(eps+fabsf(chr[c][indx+v1-h1]-chr[c][indx+v3+h3])+fabsf(chr[c][indx-v1+h1]-chr[c][indx+v3-h3]));
+			seg=1.0f/(eps+fabsf(chr[c][indx+v1+h1]-chr[c][indx+v3-h3])+fabsf(chr[c][indx-v1-h1]-chr[c][indx+v3+h3]));
 			//Limit NW,NE,SW,SE Color differences
-			nwv=ULIM(chr[indx-v1-h1][c],chr[indx-v3-h1][c],chr[indx-v1-h3][c]);
-			nev=ULIM(chr[indx-v1+h1][c],chr[indx-v3+h1][c],chr[indx-v1+h3][c]);
-			swv=ULIM(chr[indx+v1-h1][c],chr[indx+v3-h1][c],chr[indx+v1-h3][c]);
-			sev=ULIM(chr[indx+v1+h1][c],chr[indx+v3+h1][c],chr[indx+v1+h3][c]);
+			nwv=ULIM(chr[c][indx-v1-h1],chr[c][indx-v3-h1],chr[c][indx-v1-h3]);
+			nev=ULIM(chr[c][indx-v1+h1],chr[c][indx-v3+h1],chr[c][indx-v1+h3]);
+			swv=ULIM(chr[c][indx+v1-h1],chr[c][indx+v3-h1],chr[c][indx+v1-h3]);
+			sev=ULIM(chr[c][indx+v1+h1],chr[c][indx+v3+h1],chr[c][indx+v1+h3]);
 			//Interpolate chrominance: R@B and B@R
-			chr[indx][c]=(nwg*nwv+neg*nev+swg*swv+seg*sev)/(nwg+neg+swg+seg);
+			chr[c][indx]=(nwg*nwv+neg*nev+swg*swv+seg*sev)/(nwg+neg+swg+seg);
 		}
-
-	if (plistener) plistener->setProgress (0.6);
-
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.65);
+}
+#ifdef _OPENMP
+#pragma omp for
+#endif
 	for (int row=7; row<height-7; row++)
-		for (int col=7+(FC(row,0)&1), indx=row*width+col; col<width-7; col+=2, indx+=2)
-			for(int c=0; c<2; c++) {
-				//N,E,W,S Gradients
-				ng=1.0f/(eps+fabs(chr[indx-v1][c]-chr[indx-v3][c])+fabs(chr[indx+v1][c]-chr[indx-v3][c]));
-				eg=1.0f/(eps+fabs(chr[indx+h1][c]-chr[indx+h3][c])+fabs(chr[indx-h1][c]-chr[indx+h3][c]));
-				wg=1.0f/(eps+fabs(chr[indx-h1][c]-chr[indx-h3][c])+fabs(chr[indx+h1][c]-chr[indx-h3][c]));
-				sg=1.0f/(eps+fabs(chr[indx+v1][c]-chr[indx+v3][c])+fabs(chr[indx-v1][c]-chr[indx+v3][c]));
-				//Interpolate chrominance: R@G and B@G
-				chr[indx][c]=((ng*chr[indx-v1][c]+eg*chr[indx+h1][c]+wg*chr[indx-h1][c]+sg*chr[indx+v1][c])/(ng+eg+wg+sg));
-			}
+		for (int col=7+(FC(row,0)&1), indx=row*width+col; col<width-7; col+=2, indx+=2) {
+			//N,E,W,S Gradients
+			ng=1.0f/(eps+fabsf(chr[0][indx-v1]-chr[0][indx-v3])+fabsf(chr[0][indx+v1]-chr[0][indx-v3]));
+			eg=1.0f/(eps+fabsf(chr[0][indx+h1]-chr[0][indx+h3])+fabsf(chr[0][indx-h1]-chr[0][indx+h3]));
+			wg=1.0f/(eps+fabsf(chr[0][indx-h1]-chr[0][indx-h3])+fabsf(chr[0][indx+h1]-chr[0][indx-h3]));
+			sg=1.0f/(eps+fabsf(chr[0][indx+v1]-chr[0][indx+v3])+fabsf(chr[0][indx-v1]-chr[0][indx+v3]));
+			//Interpolate chrominance: R@G and B@G
+			chr[0][indx]=((ng*chr[0][indx-v1]+eg*chr[0][indx+h1]+wg*chr[0][indx-h1]+sg*chr[0][indx+v1])/(ng+eg+wg+sg));
+		}
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.78);
+}
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for (int row=7; row<height-7; row++)
+		for (int col=7+(FC(row,0)&1), indx=row*width+col; col<width-7; col+=2, indx+=2) {
 
-	if (plistener) plistener->setProgress (0.8);
+			//N,E,W,S Gradients
+			ng=1.0f/(eps+fabsf(chr[1][indx-v1]-chr[1][indx-v3])+fabsf(chr[1][indx+v1]-chr[1][indx-v3]));
+			eg=1.0f/(eps+fabsf(chr[1][indx+h1]-chr[1][indx+h3])+fabsf(chr[1][indx-h1]-chr[1][indx+h3]));
+			wg=1.0f/(eps+fabsf(chr[1][indx-h1]-chr[1][indx-h3])+fabsf(chr[1][indx+h1]-chr[1][indx-h3]));
+			sg=1.0f/(eps+fabsf(chr[1][indx+v1]-chr[1][indx+v3])+fabsf(chr[1][indx-v1]-chr[1][indx+v3]));
+			//Interpolate chrominance: R@G and B@G
+			chr[1][indx]=((ng*chr[1][indx-v1]+eg*chr[1][indx+h1]+wg*chr[1][indx-h1]+sg*chr[1][indx+v1])/(ng+eg+wg+sg));
+			}
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+	if (plistener) plistener->setProgress (0.91);
 
 	//Interpolate borders
 //	border_interpolate2(7, rgb);
@@ -1608,29 +2075,24 @@ void RawImageSource::igv_interpolate(int winw, int winh)
 			blue [row][col] = rgb[indxc][2];
 		}
 */
-#ifdef _OPENMP
-#pragma omp single
-#endif
-{
-	if (plistener) plistener->setProgress (0.9);
-}
 
 #ifdef _OPENMP
 #pragma omp for
 #endif	
 	for(int row=7; row<height-7; row++)
 		for(int col=7, indx=row*width+col; col<width-7; col++, indx++) {
-			red  [row][col] = CLIP(rgb[indx][1]-65535.f*chr[indx][0]);
-			green[row][col] = CLIP(rgb[indx][1]);
-			blue [row][col] = CLIP(rgb[indx][1]-65535.f*chr[indx][1]);
+			red  [row][col] = CLIP(rgb[1][indx]-65535.f*chr[0][indx]);
+			green[row][col] = CLIP(rgb[1][indx]);
+			blue [row][col] = CLIP(rgb[1][indx]-65535.f*chr[1][indx]);
 		}
 }// End of parallelization
 
 	if (plistener) plistener->setProgress (1.0);
 
-	free(chr); free(rgb);
+	free(chrarray); free(rgbarray);
 	free(vdif); free(hdif);
 }
+#endif
 
 
 /*
