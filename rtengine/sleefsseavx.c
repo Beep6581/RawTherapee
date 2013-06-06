@@ -1292,6 +1292,14 @@ static INLINE vfloat xcbrtf(vfloat d) {
   return y;
 }
 
+static INLINE vfloat LIMV( vfloat a, vfloat b, vfloat c ) {
+return _mm_max_ps( b, _mm_min_ps(a,c));
+}
+
+static INLINE vfloat ULIMV( vfloat a, vfloat b, vfloat c  ){
+	return vself( vmaskf_lt(b,c), LIMV(a,b,c), LIMV(a,c,b));
+}
+
 static INLINE vfloat SQRV(vfloat a){
 	return _mm_mul_ps( a,a );
 }
