@@ -27,6 +27,8 @@ typedef __m128i vint2;
 //
 
 #define LVFU(x) _mm_loadu_ps(&x)
+#define LC2VFU(a) _mm_shuffle_ps( LVFU(a),  _mm_loadu_ps(  (&a) + 4 ), _MM_SHUFFLE( 2,0,2,0 ) )
+
 
 static INLINE vint vrint_vi_vd(vdouble vd) { return _mm_cvtpd_epi32(vd); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return _mm_cvttpd_epi32(vd); }
