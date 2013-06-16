@@ -26,7 +26,8 @@
 class BQEntryUpdateListener {
 
     public:
-        virtual void updateImage (guint8* img, int w, int h) {}
+        virtual ~BQEntryUpdateListener () {}
+        virtual void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) {}
 };
 
 class BatchQueueEntryUpdater {
@@ -35,6 +36,8 @@ class BatchQueueEntryUpdater {
         guint8* oimg;
         int ow, oh, newh;
         BQEntryUpdateListener* listener;
+        rtengine::ProcParams* pparams;
+        Thumbnail* thumbnail;
     };
 
   protected:
@@ -47,7 +50,7 @@ class BatchQueueEntryUpdater {
   public:
     BatchQueueEntryUpdater ();
 
-    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener);
+    void process    (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams=NULL, Thumbnail* thumbnail=NULL);
     void removeJobs (BQEntryUpdateListener* listener);
     void terminate  ();
 

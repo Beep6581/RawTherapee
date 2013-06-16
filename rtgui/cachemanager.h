@@ -24,6 +24,7 @@
 #include <glibmm.h>
 #include "thumbnail.h"
 #include <cstdio>
+#include "../rtengine/procparams.h"
 
 class Thumbnail;
 
@@ -45,7 +46,7 @@ class CacheManager {
 		static CacheManager* getInstance(void);
 
         void        init        ();
-        Thumbnail*  getEntry    (const Glib::ustring& fname);
+        Thumbnail*  getEntry    (const Glib::ustring& fname, const rtengine::procparams::ProcParams *pparams=NULL);
         void        deleteEntry (const Glib::ustring& fname);
         void        renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename);
         

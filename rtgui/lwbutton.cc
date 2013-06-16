@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "lwbutton.h"
+#include "guiutils.h"
 
 LWButton::LWButton (Cairo::RefPtr<Cairo::ImageSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring tooltip) 
     : halign(ha), valign(va), icon(i), state(Normal), listener(NULL), actionCode(aCode), actionData(aData), toolTip(tooltip) {
@@ -145,6 +146,7 @@ bool LWButton::releaseNotify (int x, int y) {
 
 void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context) {
 
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     context->set_line_width (1.0);
     context->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
     context->rectangle (xpos+0.5, ypos+0.5, w-1.0, h-1.0);
@@ -162,10 +164,10 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context) {
     if (state==Pressed_In)
         dilat++;
 
-		if (icon)		{
-			context->set_source (icon, xpos+dilat, ypos+dilat);
-			context->paint ();
-		}
+    if (icon) {
+        context->set_source (icon, xpos+dilat, ypos+dilat);
+        context->paint ();
+    }
 }
 
 void LWButton::getAlignment (Alignment& ha, Alignment& va) {

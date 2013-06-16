@@ -29,6 +29,7 @@
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "rtimage.h"
+#include "guiutils.h"
 
 extern Options options;
 
@@ -106,7 +107,7 @@ FileBrowser::FileBrowser ()
     /***********************
      * external programs
      * *********************/
-#ifdef WIN32
+#if PROTECT_VECTORS
     Gtk::manage(miOpenDefaultViewer=new Gtk::MenuItem (M("FILEBROWSER_OPENDEFAULTVIEWER")));
 #else
     miOpenDefaultViewer=NULL;
@@ -301,6 +302,12 @@ FileBrowser::~FileBrowser ()
 
 void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
 
+    {
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
+
     trash->set_sensitive (false);
     untrash->set_sensitive (false);
     for (size_t i=0; i<selected.size(); i++)
@@ -318,6 +325,7 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
     partpasteprof->set_sensitive (clipboard.hasProcParams());
     copyprof->set_sensitive (selected.size()==1);
     clearprof->set_sensitive (!selected.empty());
+    }
 
     // submenu applmenu
     int p = 0;
@@ -336,10 +344,10 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
     Gtk::Menu* applpartmenu = Gtk::manage (new Gtk::Menu ());
     //std::vector<Glib::ustring> profnames = profileStore.getProfileNames (); // this is already created for submenu applmenu above
     for (size_t i=0; i<profnames.size(); i++) {
-	    Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (profnames[i]));
-	    applpartmenu->attach (*mi, 0, 1, p, p+1); p++;
-	    mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyPartialMenuItemActivated), profnames[i]));
-	    mi->show ();
+        Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (profnames[i]));
+        applpartmenu->attach (*mi, 0, 1, p, p+1); p++;
+        mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyPartialMenuItemActivated), profnames[i]));
+        mi->show ();
     }
     applypartprof->set_submenu (*applpartmenu);
 
@@ -428,7 +436,7 @@ void FileBrowser::addEntry (FileBrowserEntry* entry) {
 }
 
 void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
-
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     entry->selected = false;
     entry->drawable = false;
     entry->framed = editedFiles.find (entry->filename)!=editedFiles.end();
@@ -439,14 +447,14 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
     entry->getThumbButtonSet()->setColorLabel (entry->thumbnail->getColorLabel());
     entry->getThumbButtonSet()->setInTrash (entry->thumbnail->getStage()==1);
     entry->getThumbButtonSet()->setButtonListener (this);
-    entry->resize (getCurrentThumbSize());
+    entry->resize (getThumbnailHeight());
 
     // find place in abc order
-	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::WriterLock l(entryRW);
-		#endif
+    {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
 
         std::vector<ThumbBrowserEntryBase*>::iterator i = fd.begin();
         while (i!=fd.end() && *entry < *((FileBrowserEntry*)*i))
@@ -455,15 +463,15 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
         fd.insert (i, entry);
 
         initEntry (entry);
-	}
+    }
     redraw ();
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::WriterLock l(entryRW);
-	#endif
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
 
     for (std::vector<ThumbBrowserEntryBase*>::iterator i=fd.begin(); i!=fd.end(); i++) 
         if ((*i)->filename==fname) {
@@ -472,8 +480,8 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
             fd.erase (i);
             std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), entry);
 
-            #ifdef WIN32
-            l.release();
+            #if PROTECT_VECTORS
+            MYWRITERLOCK_RELEASE(l);
             #endif
 
             if (j!=selected.end()) {
@@ -486,7 +494,7 @@ FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
                 lastClicked = NULL;
             redraw ();
 
-	    return (static_cast<FileBrowserEntry*>(entry));
+            return (static_cast<FileBrowserEntry*>(entry));
         }
     return NULL;
 }
@@ -502,22 +510,33 @@ void FileBrowser::close () {
     fbih->destroyed = false;
     fbih->pending = 0;
 
-	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::WriterLock l(entryRW);
-		#endif
-        
-		selected.clear ();
-		notifySelectionListener ();
+    {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
+
+        selected.clear ();
+
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYWRITERLOCK_RELEASE(l); // notifySelectionListener will need read access!
+        #endif
+
+        notifySelectionListener ();
+
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYWRITERLOCK_ACQUIRE(l);
+        #endif
 
         // The listener merges parameters with old values, so delete afterwards
-		for (size_t i=0; i<fd.size(); i++)
+        for (size_t i=0; i<fd.size(); i++)
         {
-            delete fd[i];
+            delete fd.at(i);
         }
         fd.clear ();
-	}
+    }
 
     lastClicked = NULL;
 }
@@ -537,8 +556,17 @@ void FileBrowser::menuColorlabelActivated (Gtk::MenuItem* m) {
 void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 
     std::vector<FileBrowserEntry*> mselected;
+
+    {
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
+
     for (size_t i=0; i<selected.size(); i++)
-      mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+        mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+    }
+
 
     if (!tbl || (m!=selall && mselected.empty()) )
         return;
@@ -560,8 +588,8 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 
             // Build vector of all file names
             std::vector<Glib::ustring> selFileNames;
-            for (int i=0; i<selected.size(); i++) {
-                Glib::ustring fn=selected[i]->thumbnail->getFileName();
+            for (int i=0; i<mselected.size(); i++) {
+                Glib::ustring fn=mselected[i]->thumbnail->getFileName();
 
                 // Maybe batch processed version
                 if (pAct->target==2) fn = Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fn), options.saveFormatBatch.format);
@@ -576,7 +604,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 
     if (m==open) {
         std::vector<Thumbnail*> entries;
-	for (size_t i=0; i<mselected.size(); i++)
+        for (size_t i=0; i<mselected.size(); i++)
             entries.push_back (mselected[i]->thumbnail);
         tbl->openRequested (entries);
      }
@@ -598,19 +626,19 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
         tbl->renameRequested (mselected);
     else if (m==selall) {
         lastClicked = NULL;
-		{
-			// TODO: Check for Linux
-			#ifdef WIN32
-			Glib::RWLock::ReaderLock l(entryRW);
-			#endif
+        {
+            // TODO: Check for Linux
+            #if PROTECT_VECTORS
+            MYWRITERLOCK(l, entryRW);
+            #endif
 
             selected.clear ();
-	    for (size_t i=0; i<fd.size(); i++)
+            for (size_t i=0; i<fd.size(); i++)
                 if (checkFilter (fd[i])) {
                     fd[i]->selected = true;
                     selected.push_back (fd[i]);
                 }
-		}
+        }
         queue_draw ();
         notifySelectionListener ();
     }
@@ -623,86 +651,103 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     }
 
     else if (m==autoDF){
-	    for (size_t i=0; i<mselected.size(); i++){
-			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
-			pp.raw.df_autoselect= true;
-			pp.raw.dark_frame.clear();
-			mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
-		}
+        if (!mselected.empty() && bppcl)
+            bppcl->beginBatchPParamsChange(mselected.size());
+        for (size_t i=0; i<mselected.size(); i++){
+            rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
+            pp.raw.df_autoselect= true;
+            pp.raw.dark_frame.clear();
+            mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
+        }
+        if (!mselected.empty() && bppcl)
+            bppcl->endBatchPParamsChange();
+
     }else if (m==selectDF){
-    	if( !mselected.empty() ){
-    		rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
-    		Gtk::FileChooserDialog fc("Dark Frame",Gtk::FILE_CHOOSER_ACTION_OPEN );
-    		FileChooserLastFolderPersister persister(&fc, options.lastDarkframeDir);
-    		fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    		fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
-    		if(!pp.raw.dark_frame.empty())
-    		   fc.set_filename( pp.raw.dark_frame );
-    		if( fc.run() == Gtk::RESPONSE_APPLY ){
-			for (size_t i=0; i<mselected.size(); i++){
-    				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
-					pp.raw.dark_frame= fc.get_filename();
-					pp.raw.df_autoselect= false;
-					mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
-				}
-			}
-    	}
+        if( !mselected.empty() ){
+            rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
+            Gtk::FileChooserDialog fc("Dark Frame",Gtk::FILE_CHOOSER_ACTION_OPEN );
+            FileChooserLastFolderPersister persister(&fc, options.lastDarkframeDir);
+            fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+            fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
+            if(!pp.raw.dark_frame.empty())
+                fc.set_filename( pp.raw.dark_frame );
+            if( fc.run() == Gtk::RESPONSE_APPLY ) {
+                if (bppcl)
+                    bppcl->beginBatchPParamsChange(mselected.size());
+                for (size_t i=0; i<mselected.size(); i++){
+                    rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
+                    pp.raw.dark_frame= fc.get_filename();
+                    pp.raw.df_autoselect= false;
+                    mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
+                }
+                if (bppcl)
+                    bppcl->endBatchPParamsChange();
+            }
+        }
     }else if( m==thisIsDF){
-    	if( !options.rtSettings.darkFramesPath.empty()) {
-    		if (Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
-    			for (size_t i=0; i<mselected.size(); i++){
-					Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
-					if( !file )continue;
-					Glib::ustring destName = options.rtSettings.darkFramesPath+ "/" + file->get_basename();
-					Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
-					file->move(  dest );
-				}
-				// Reinit cache
-				rtengine::dfm.init( options.rtSettings.darkFramesPath );
-			}
-			else {
-				// Target directory creation failed, we clear the darkFramesPath setting
-				options.rtSettings.darkFramesPath.clear();
-				Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.darkFramesPath)
-				                     +"\n\n"+M("MAIN_MSG_OPERATIONCANCELLED");
-				Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-				msgd.set_title(M("TP_DARKFRAME_LABEL"));
-				msgd.run ();
-    		}
-    	}
-    	else {
-			Glib::ustring msg_ = M("MAIN_MSG_SETPATHFIRST")+"\n\n"+M("MAIN_MSG_OPERATIONCANCELLED");
-			Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-			msgd.set_title(M("TP_DARKFRAME_LABEL"));
-			msgd.run ();
-    	}
+        if( !options.rtSettings.darkFramesPath.empty()) {
+            if (Gio::File::create_for_path(options.rtSettings.darkFramesPath)->query_exists() ){
+                for (size_t i=0; i<mselected.size(); i++){
+                    Glib::RefPtr<Gio::File> file = Gio::File::create_for_path ( mselected[i]->filename );
+                    if( !file )continue;
+                    Glib::ustring destName = options.rtSettings.darkFramesPath+ "/" + file->get_basename();
+                    Glib::RefPtr<Gio::File> dest = Gio::File::create_for_path ( destName );
+                    file->move(  dest );
+                }
+                // Reinit cache
+                rtengine::dfm.init( options.rtSettings.darkFramesPath );
+            }
+            else {
+                // Target directory creation failed, we clear the darkFramesPath setting
+                options.rtSettings.darkFramesPath.clear();
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.darkFramesPath)
+                                     +"\n\n"+M("MAIN_MSG_OPERATIONCANCELLED");
+                Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+                msgd.set_title(M("TP_DARKFRAME_LABEL"));
+                msgd.run ();
+            }
+        }
+        else {
+            Glib::ustring msg_ = M("MAIN_MSG_SETPATHFIRST")+"\n\n"+M("MAIN_MSG_OPERATIONCANCELLED");
+            Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+            msgd.set_title(M("TP_DARKFRAME_LABEL"));
+            msgd.run ();
+        }
     }
     else if (m==autoFF){
-	    for (size_t i=0; i<mselected.size(); i++){
-			rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
-			pp.raw.ff_AutoSelect= true;
-			pp.raw.ff_file.clear();
-			mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
-		}
+        if (!mselected.empty() && bppcl)
+            bppcl->beginBatchPParamsChange(mselected.size());
+        for (size_t i=0; i<mselected.size(); i++){
+            rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
+            pp.raw.ff_AutoSelect= true;
+            pp.raw.ff_file.clear();
+            mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
+        }
+        if (!mselected.empty() && bppcl)
+            bppcl->endBatchPParamsChange();
     }
     else if (m==selectFF){
-    	if( !mselected.empty() ){
-    		rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
-    		Gtk::FileChooserDialog fc("Flat Field",Gtk::FILE_CHOOSER_ACTION_OPEN );
-    		FileChooserLastFolderPersister persister(&fc, options.lastFlatfieldDir);
-    		fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
-    		fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
-    		if(!pp.raw.ff_file.empty())
-    		   fc.set_filename( pp.raw.ff_file );
-    		if( fc.run() == Gtk::RESPONSE_APPLY ){
-			for (size_t i=0; i<mselected.size(); i++){
-    				rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
-					pp.raw.ff_file= fc.get_filename();
-					pp.raw.ff_AutoSelect= false;
-					mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
-				  }
-			  }
-    	}
+        if( !mselected.empty() ){
+            rtengine::procparams::ProcParams pp=mselected[0]->thumbnail->getProcParams();
+            Gtk::FileChooserDialog fc("Flat Field",Gtk::FILE_CHOOSER_ACTION_OPEN );
+            FileChooserLastFolderPersister persister(&fc, options.lastFlatfieldDir);
+            fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+            fc.add_button( Gtk::StockID("gtk-apply"), Gtk::RESPONSE_APPLY);
+            if(!pp.raw.ff_file.empty())
+                fc.set_filename( pp.raw.ff_file );
+            if( fc.run() == Gtk::RESPONSE_APPLY ) {
+                if (bppcl)
+                    bppcl->beginBatchPParamsChange(mselected.size());
+                for (size_t i=0; i<mselected.size(); i++){
+                    rtengine::procparams::ProcParams pp=mselected[i]->thumbnail->getProcParams();
+                    pp.raw.ff_file= fc.get_filename();
+                    pp.raw.ff_AutoSelect= false;
+                    mselected[i]->thumbnail->setProcParams(pp,NULL,FILEBROWSER,false);
+                }
+                if (bppcl)
+                    bppcl->endBatchPParamsChange();
+            }
+        }
     }
     else if( m==thisIsFF){
     	if( !options.rtSettings.flatFieldsPath.empty()) {
@@ -745,13 +790,17 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
             mselected[i]->thumbnail->clearProcParams (FILEBROWSER);
         queue_draw ();
     } else if (m==execcustprof) {
-	    for (size_t i=0; i<mselected.size(); i++)  {
+        if (!mselected.empty() && bppcl)
+            bppcl->beginBatchPParamsChange(mselected.size());
+        for (size_t i=0; i<mselected.size(); i++)  {
             mselected[i]->thumbnail->createProcParamsForUpdate (false, true);
 
             // Empty run to update the thumb
             rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
             mselected[i]->thumbnail->setProcParams (params, NULL, FILEBROWSER);
-    }
+        }
+        if (!mselected.empty() && bppcl)
+            bppcl->endBatchPParamsChange();
     } else if (m==clearFromCache) {
 	    for (size_t i=0; i<mselected.size(); i++)
 			tbl->clearFromCacheRequested (mselected, false);
@@ -767,6 +816,10 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 }
 
 void FileBrowser::copyProfile () {
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
 
     if (selected.size()==1)
       clipboard.setProcParams ((static_cast<FileBrowserEntry*>(selected[0]))->thumbnail->getProcParams());
@@ -776,12 +829,21 @@ void FileBrowser::pasteProfile () {
 
     if (clipboard.hasProcParams()) {
         std::vector<FileBrowserEntry*> mselected;
+        {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYREADERLOCK(l, entryRW);
+        #endif
+
         for (unsigned int i=0; i<selected.size(); i++)
             mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+        }
 
         if (!tbl || mselected.empty())
             return;
 
+        if (!mselected.empty() && bppcl)
+            bppcl->beginBatchPParamsChange(mselected.size());
         for (unsigned int i=0; i<mselected.size(); i++) {
             // copying read only clipboard PartialProfile to a temporary one
             rtengine::procparams::PartialProfile cbPartProf = clipboard.getPartialProfile();
@@ -791,6 +853,8 @@ void FileBrowser::pasteProfile () {
             mselected[i]->thumbnail->setProcParams (*pastedPartProf.pparams, pastedPartProf.pedited, FILEBROWSER);
             pastedPartProf.deleteInstance();
         }
+        if (!mselected.empty() && bppcl)
+            bppcl->endBatchPParamsChange();
 
         queue_draw ();
     }
@@ -801,8 +865,15 @@ void FileBrowser::partPasteProfile () {
     if (clipboard.hasProcParams()) {
 
         std::vector<FileBrowserEntry*> mselected;
+        {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYREADERLOCK(l, entryRW);
+        #endif
+
         for (unsigned int i=0; i<selected.size(); i++)
             mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+        }
 
         if (!tbl || mselected.empty())
             return;
@@ -810,6 +881,8 @@ void FileBrowser::partPasteProfile () {
         int i = partialPasteDlg.run ();
         if (i == Gtk::RESPONSE_OK) {
 
+            if (!mselected.empty() && bppcl)
+                bppcl->beginBatchPParamsChange(mselected.size());
             for (unsigned int i=0; i<mselected.size(); i++) {
                 // copying read only clipboard PartialProfile to a temporary one, initialized to the thumb's ProcParams
                 mselected[i]->thumbnail->createProcParamsForUpdate(false,false);  // this can execute customprofilebuilder to generate param file
@@ -823,6 +896,8 @@ void FileBrowser::partPasteProfile () {
                 mselected[i]->thumbnail->setProcParams (*pastedPartProf.pparams, pastedPartProf.pedited, FILEBROWSER);
                 pastedPartProf.deleteInstance();
             }
+            if (!mselected.empty() && bppcl)
+                bppcl->endBatchPParamsChange();
 
             queue_draw ();
         }
@@ -832,9 +907,17 @@ void FileBrowser::partPasteProfile () {
 
 void FileBrowser::openDefaultViewer (int destination) {
     bool success=true;
+
+    {
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
+
     if (selected.size()==1)
       success=(static_cast<FileBrowserEntry*>(selected[0]))->thumbnail->openDefaultViewer(destination);
-    
+    }
+
     if (!success) {
         Gtk::MessageDialog msgd (M("MAIN_MSG_IMAGEUNPROCESSED"), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
@@ -956,17 +1039,46 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
     return false;
 }
 
+void FileBrowser::saveThumbnailHeight (int height) {
+    if (!options.sameThumbSize && inTabMode)
+        options.thumbSizeTab = height;
+    else
+        options.thumbSize = height;
+}
+
+int FileBrowser::getThumbnailHeight () {
+    // The user could have manually forced the option to a too big value
+    if (!options.sameThumbSize && inTabMode)
+        return std::max(std::min(options.thumbSizeTab, 200), 10);
+    else
+        return std::max(std::min(options.thumbSize, 200), 10);
+}
+
 void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
+
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
 
     const rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (ppname);
     if (partProfile->pparams && !selected.empty()) {
-	    for (size_t i=0; i<selected.size(); i++)
+        if (bppcl)
+            bppcl->beginBatchPParamsChange(selected.size());
+        for (size_t i=0; i<selected.size(); i++)
             (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*partProfile->pparams, partProfile->pedited, FILEBROWSER);
+        if (bppcl)
+            bppcl->endBatchPParamsChange();
         queue_draw ();
     }
 }
 
 void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
+
+	// TODO: Check for Linux
+	#if PROTECT_VECTORS
+	MYREADERLOCK(l, entryRW);
+	#endif
 
 	if (!tbl || selected.empty())
 		return;
@@ -976,6 +1088,8 @@ void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 	if (srcProfiles->pparams) {
 		if (partialPasteDlg.run()==Gtk::RESPONSE_OK) {
 
+			if (bppcl)
+				bppcl->beginBatchPParamsChange(selected.size());
 			for (size_t i=0; i<selected.size(); i++) {
 				selected[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
 
@@ -986,6 +1100,8 @@ void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 				(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*dstProfile.pparams, dstProfile.pedited, FILEBROWSER);
 				dstProfile.deleteInstance();
 			}
+			if (bppcl)
+				bppcl->endBatchPParamsChange();
 			queue_draw ();
 		}
 		partialPasteDlg.hide ();
@@ -999,16 +1115,16 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
     // remove items not complying the filter from the selection
     bool selchanged = false;
     numFiltered=0;
-	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::ReaderLock l(entryRW);  // Don't make this a writer lock!
-		#endif
+    {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);  // Don't make this a writer lock!  HOMBRE: Why? 'selected' is modified here
+        #endif
 
-		for (size_t i=0; i<fd.size(); i++) {
-    	    if (checkFilter (fd[i]))
-    		    numFiltered++;
-    	    else if (fd[i]->selected ) {
+        for (size_t i=0; i<fd.size(); i++) {
+            if (checkFilter (fd[i]))
+                numFiltered++;
+            else if (fd[i]->selected ) {
                 fd[i]->selected = false;
                 std::vector<ThumbBrowserEntryBase*>::iterator j = std::find (selected.begin(), selected.end(), fd[i]);
                 selected.erase (j);
@@ -1017,7 +1133,7 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
                 selchanged = true;
             }
         }
-	}
+    }
 
     if (selchanged)
         notifySelectionListener ();
@@ -1138,42 +1254,59 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
 void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank) {
 
-	for (size_t i=0; i<tbe.size(); i++) {
-    	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+    if (!tbe.empty() && bppcl)
+        bppcl->beginBatchPParamsChange(tbe.size());
 
-    	// notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
-    	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
+    for (size_t i=0; i<tbe.size(); i++) {
+
+        // try to load the last saved parameters from the cache or from the paramfile file
+        tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+
+        // notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
+        tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
 
         tbe[i]->thumbnail->setRank (rank);
         tbe[i]->thumbnail->updateCache (); // needed to save the colorlabel to disk in the procparam file(s) and the cache image data file
         //TODO? - should update pparams instead?
 
         if (tbe[i]->getThumbButtonSet())
-                tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
+            tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
     }
     applyFilter (filter);
+
+    if (!tbe.empty() && bppcl)
+        bppcl->endBatchPParamsChange();
 }
 
 void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int colorlabel) {
 
-	for (size_t i=0; i<tbe.size(); i++) {
-    	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+    if (!tbe.empty() && bppcl)
+        bppcl->beginBatchPParamsChange(tbe.size());
 
-    	// notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
-    	tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
+    for (size_t i=0; i<tbe.size(); i++) {
+        // try to load the last saved parameters from the cache or from the paramfile file
+        tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+
+        // notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
+        tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
 
         tbe[i]->thumbnail->setColorLabel (colorlabel);
         tbe[i]->thumbnail->updateCache(); // needed to save the colorlabel to disk in the procparam file(s) and the cache image data file
         //TODO? - should update pparams instead?
         if (tbe[i]->getThumbButtonSet())
-                tbe[i]->getThumbButtonSet()->setColorLabel (tbe[i]->thumbnail->getColorLabel());
+            tbe[i]->getThumbButtonSet()->setColorLabel (tbe[i]->thumbnail->getColorLabel());
     }
     applyFilter (filter);
+
+    if (!tbe.empty() && bppcl)
+        bppcl->endBatchPParamsChange();
 }
 
 void FileBrowser::requestRanking(int rank){
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
     std::vector<FileBrowserEntry*> mselected;
     for (size_t i=0; i<selected.size(); i++)
       mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
@@ -1182,6 +1315,10 @@ void FileBrowser::requestRanking(int rank){
 }
 
 void FileBrowser::requestColorLabel(int colorlabel){
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
     std::vector<FileBrowserEntry*> mselected;
     for (size_t i=0; i<selected.size(); i++)
       mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
@@ -1219,8 +1356,8 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
 
 void FileBrowser::openNextImage () {
     // TODO: Check for Linux
-    #ifdef WIN32
-    Glib::RWLock::ReaderLock l(entryRW);
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
     #endif
 
     if (!fd.empty() && selected.size()>0 && !options.tabbedUI) {
@@ -1240,7 +1377,17 @@ void FileBrowser::openNextImage () {
                             fd[k]->selected = true;
                             selected.push_back (fd[k]);
                             //queue_draw ();
+
+                            #if PROTECT_VECTORS
+                            MYWRITERLOCK_RELEASE(l);
+                            #endif
+
+                            // this will require a read access
                             notifySelectionListener ();
+
+                            #if PROTECT_VECTORS
+                            MYWRITERLOCK_ACQUIRE(l);
+                            #endif
 
                             // scroll to the selected position
                             double h1, v1;
@@ -1249,15 +1396,22 @@ void FileBrowser::openNextImage () {
                             double h2=selected[0]->getStartX();
                             double v2=selected[0]->getStartY();
 
+                            Thumbnail* thumb = (static_cast<FileBrowserEntry*>(fd[k]))->thumbnail;
+                            int minWidth = get_width()-fd[k]->getMinimalWidth();
+
+                            #if PROTECT_VECTORS
+                            MYWRITERLOCK_RELEASE(l);
+                            #endif
+
                             // scroll only when selected[0] is outside of the displayed bounds
-                            if (h2+fd[k]->getMinimalWidth()-h1 > get_width())
-                                setScrollPosition(h2-(get_width()-fd[k]->getMinimalWidth()),v2);
+                            if (h2+minWidth-h1 > get_width())
+                                setScrollPosition(h2-minWidth,v2);
                             if (h1>h2)
                                 setScrollPosition(h2,v2);
 
                             // open the selected image
                             std::vector<Thumbnail*> entries;
-                            entries.push_back ((static_cast<FileBrowserEntry*>(fd[k]))->thumbnail);
+                            entries.push_back (thumb);
                             tbl->openRequested (entries);
                             return;
                         }
@@ -1270,8 +1424,8 @@ void FileBrowser::openNextImage () {
 
 void FileBrowser::openPrevImage () {
     // TODO: Check for Linux
-    #ifdef WIN32
-    Glib::RWLock::ReaderLock l(entryRW);
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
     #endif
 
     if (!fd.empty() && selected.size()>0 && !options.tabbedUI) {
@@ -1291,7 +1445,17 @@ void FileBrowser::openPrevImage () {
                             fd[k]->selected = true;
                             selected.push_back (fd[k]);
                             //queue_draw ();
+
+                            #if PROTECT_VECTORS
+                            MYWRITERLOCK_RELEASE(l);
+                            #endif
+
+                            // this will require a read access
                             notifySelectionListener ();
+
+                            #if PROTECT_VECTORS
+                            MYWRITERLOCK_ACQUIRE(l);
+                            #endif
 
                             // scroll to the selected position
                             double h1, v1;
@@ -1300,15 +1464,22 @@ void FileBrowser::openPrevImage () {
                             double h2=selected[0]->getStartX();
                             double v2=selected[0]->getStartY();
 
+                            Thumbnail* thumb = (static_cast<FileBrowserEntry*>(fd[k]))->thumbnail;
+                            int minWidth = get_width()-fd[k]->getMinimalWidth();
+
+                            #if PROTECT_VECTORS
+                            MYWRITERLOCK_RELEASE(l);
+                            #endif
+
                             // scroll only when selected[0] is outside of the displayed bounds
-                            if (h2+fd[k]->getMinimalWidth()-h1 > get_width())
-                                setScrollPosition(h2-(get_width()-fd[k]->getMinimalWidth()),v2);
+                            if (h2+minWidth-h1 > get_width())
+                                setScrollPosition(h2-minWidth,v2);
                             if (h1>h2)
                                 setScrollPosition(h2,v2);
 
                             // open the selected image
                             std::vector<Thumbnail*> entries;
-                            entries.push_back ((static_cast<FileBrowserEntry*>(fd[k]))->thumbnail);
+                            entries.push_back (thumb);
                             tbl->openRequested (entries);
                             return;
                         }
@@ -1324,6 +1495,11 @@ void FileBrowser::selectImage (Glib::ustring fname) {
 
     // need to clear the filter in filecatalog
 
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
     if (!fd.empty() && !options.tabbedUI) {
         for (size_t i=0; i<fd.size(); i++){
             if (fname==fd[i]->filename && !fd[i]->filtered) {
@@ -1338,11 +1514,26 @@ void FileBrowser::selectImage (Glib::ustring fname) {
                 fd[i]->selected = true;
                 selected.push_back (fd[i]);
                 queue_draw ();
+
+                #if PROTECT_VECTORS
+                MYWRITERLOCK_RELEASE(l);
+                #endif
+
+                // this will require a read access
                 notifySelectionListener ();
+
+                #if PROTECT_VECTORS
+                MYWRITERLOCK_ACQUIRE(l);
+                #endif
 
                 // scroll to the selected position
                 double h=selected[0]->getStartX();
                 double v=selected[0]->getStartY();
+
+                #if PROTECT_VECTORS
+                MYWRITERLOCK_RELEASE(l);
+                #endif
+
                 setScrollPosition(h,v);
                 
                 return;
@@ -1373,6 +1564,7 @@ void FileBrowser::_thumbRearrangementNeeded () {
 }
 
 void FileBrowser::thumbRearrangementNeeded () {
+    // refreshThumbImagesUI will handle thread safety itself
     g_idle_add (refreshThumbImagesUI, this);
 }
 
@@ -1384,15 +1576,20 @@ void FileBrowser::selectionChanged () {
 void FileBrowser::notifySelectionListener () {
 
     if (tbl) {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYREADERLOCK(l, entryRW);
+        #endif
+
         std::vector<Thumbnail*> thm;
-	for (size_t i=0; i<selected.size(); i++)
-	  thm.push_back ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail);
+        for (size_t i=0; i<selected.size(); i++)
+            thm.push_back ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail);
         tbl->selectionChanged (thm);
-    }    
+    }
 }
 
 void FileBrowser::redrawNeeded (LWButton* button) {
-    
+    GThreadLock lock;
     queue_draw ();
 }
 FileBrowser::type_trash_changed FileBrowser::trash_changed () {

@@ -29,9 +29,12 @@
 #include "rtimage.h"
 
 #define CHECKTIME 5000
-extern Glib::ustring argv0;
 
-DirBrowser::DirBrowser () {
+DirBrowser::DirBrowser () : expandSuccess(false)
+                            #ifdef WIN32
+                            , volumes(0)
+                            #endif
+{
 
    dirtree = Gtk::manage ( new Gtk::TreeView() );
    scrolledwindow4 = Gtk::manage ( new Gtk::ScrolledWindow() );
@@ -144,7 +147,7 @@ void DirBrowser::updateVolumes () {
 
     int nvolumes = GetLogicalDrives ();
     if (nvolumes!=volumes) {
-		GThreadLock lock;
+        GThreadLock lock;
 
         for (int i=0; i<32; i++) 
             if (((volumes >> i) & 1) && !((nvolumes >> i) & 1)) { // volume i has been deleted
@@ -237,23 +240,26 @@ void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter) {
         for (Gtk::TreeModel::iterator it=iter->children().begin(); it!=iter->children().end(); it++)
             if (!safe_file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_EXISTS) 
              || !safe_file_test (it->get_value (dtColumns.dirname), Glib::FILE_TEST_IS_DIR)) {
+                GThreadLock lock;
                 dirTreeModel->erase (it);
                 change = true;
                 break;
             }
     }
     // test if new files are created
-		std::vector<Glib::ustring> subDirs;
+    std::vector<Glib::ustring> subDirs;
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (iter->get_value (dtColumns.dirname));
-		safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
+    safe_build_subdir_list (dir, subDirs, options.fbShowHidden);
 
     for (int i=0; i<subDirs.size(); i++) {
         bool found = false;
         for (Gtk::TreeModel::iterator it=iter->children().begin(); it!=iter->children().end() && !found ; it++) 
             found = (it->get_value (dtColumns.filename)==subDirs[i]);
 
-        if (!found)
+        if (!found) {
+            GThreadLock lock;
             addDir (iter, subDirs[i]);
+        }
     }
 }
 
@@ -353,9 +359,7 @@ void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::
     if (!file || !safe_file_test (dirName, Glib::FILE_TEST_IS_DIR) || event_type==Gio::FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED) 
         return;
 
-    gdk_threads_enter();
     updateDir (iter);
-    gdk_threads_leave();
 }
 
 void DirBrowser::selectDir (Glib::ustring dir) {

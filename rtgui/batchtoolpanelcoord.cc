@@ -27,6 +27,7 @@ using namespace rtengine::procparams;
 
 BatchToolPanelCoordinator::BatchToolPanelCoordinator (FilePanel* parent) : ToolPanelCoordinator(), parent(parent) {
 
+	blockedUpdate = false;
 	// remove exif panel and iptc panel
 	std::vector<ToolPanel*>::iterator epi = std::find (toolPanels.begin(), toolPanels.end(), exifpanel);
 	if (epi!=toolPanels.end())
@@ -56,13 +57,13 @@ void BatchToolPanelCoordinator::selectionChanged (const std::vector<Thumbnail*>&
 
 void BatchToolPanelCoordinator::closeSession (bool save) {
 
-    pparamsEdited.set (false);        
+    pparamsEdited.set (false);
 
     for (size_t i=0; i<selected.size(); i++)
         selected[i]->removeThumbnailListener (this);
 
     if (somethingChanged && save) {
-        
+
         // read new values from the gui
         for (size_t i=0; i<toolPanels.size(); i++)
             toolPanels[i]->write (&pparams, &pparamsEdited);
@@ -73,11 +74,11 @@ void BatchToolPanelCoordinator::closeSession (bool save) {
             newParams = initialPP[i];
             pparamsEdited.combine (newParams, pparams, selected.size()==1);
 
-    		// trim new adjuster's values to the adjuster's limits
-    		for (unsigned int j=0; j<toolPanels.size(); j++)
-    			toolPanels[j]->trimValues (&newParams);
+            // trim new adjuster's values to the adjuster's limits
+            for (unsigned int j=0; j<toolPanels.size(); j++)
+                toolPanels[j]->trimValues (&newParams);
 
-    		selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, true);
+            selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, true);
         }
     }
     for (size_t i=0; i<paramcListeners.size(); i++)
@@ -333,10 +334,26 @@ void BatchToolPanelCoordinator::optionsChanged () {
 
 void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChangedIt) {
 
-    if (whoChangedIt!=BATCHEDITOR) {
+    if (whoChangedIt!=BATCHEDITOR && !blockedUpdate) {
         closeSession (false);
         initSession ();
     }
+}
+
+void BatchToolPanelCoordinator::beginBatchPParamsChange(int numberOfEntries) {
+
+    blockedUpdate = true;
+    if (numberOfEntries > 50) // Arbitrary amount
+        parent->set_sensitive(false);
+}
+
+// The end of a batch pparams change triggers a close/initsession
+void BatchToolPanelCoordinator::endBatchPParamsChange() {
+    //printf("BatchToolPanelCoordinator::endBatchPParamsChange  /  Nouvelle session!\n");
+    closeSession (false);
+    initSession ();
+    blockedUpdate = false;
+    parent->set_sensitive(true);
 }
 
 /*

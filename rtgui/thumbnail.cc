@@ -33,13 +33,18 @@
 
 using namespace rtengine::procparams;
 
-Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) 
+Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf, const rtengine::procparams::ProcParams *pparams)
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
-		lastW(0), lastH(0), lastScale(0), initial_(false) {
+      lastW(0), lastH(0), lastScale(0), initial_(false)
+{
 
-    cfs.load (getCacheFileName ("data")+".txt");
-    loadProcParams ();
+    if (pparams) {
+        this->pparams = *pparams;
+        pparamsValid = true;
+    }
+    else
+        loadProcParams ();
     _loadThumbnail ();
     generateExifDateTimeStrings ();
 
@@ -55,25 +60,31 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
         setStage(cfs.inTrashOld);
     }
 
- 	delete tpp;
- 	tpp = 0;
+    delete tpp;
+    tpp = 0;
 }
 
-Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
+Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const rtengine::procparams::ProcParams *pparams)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
       needsReProcessing(true),imageLoading(false), lastImg(NULL),
-		initial_(true) {
+      initial_(true)
+{
 
 
     cfs.md5 = md5;
     _generateThumbnailImage ();
-    loadProcParams ();
+    if (pparams) {
+        this->pparams = *pparams;
+        pparamsValid = true;
+    }
+    else
+        loadProcParams ();
     cfs.recentlySaved = false;
 
-	initial_ = false;
- 
- 	delete tpp;
- 	tpp = 0;
+    initial_ = false;
+
+    delete tpp;
+    tpp = 0;
 }
 
 void Thumbnail::_generateThumbnailImage () {
@@ -96,7 +107,7 @@ void Thumbnail::_generateThumbnailImage () {
 	cfs.timeValid = false;
 
 	if (ext.lowercase()=="jpg" || ext.lowercase()=="jpeg") {
-		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, infoFromImage (fname));
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
 		if (tpp)
 			cfs.format = FT_Jpeg;
 	}
@@ -106,8 +117,7 @@ void Thumbnail::_generateThumbnailImage () {
 			cfs.format = FT_Png;
 	}
 	else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-		int deg = infoFromImage (fname);
-		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, deg);
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
 		if (tpp)
 			cfs.format = FT_Tiff;
 	}

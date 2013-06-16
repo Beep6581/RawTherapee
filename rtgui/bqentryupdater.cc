@@ -23,12 +23,17 @@
 BatchQueueEntryUpdater batchQueueEntryUpdater;
 
 BatchQueueEntryUpdater::BatchQueueEntryUpdater () 
-    : tostop(false), stopped(true), qMutex(NULL) {
+    : tostop(false), stopped(true), thread(NULL), qMutex(NULL) {
 }
 
-void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener) {
+void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQEntryUpdateListener* listener, rtengine::ProcParams* pparams, Thumbnail* thumbnail) {
+    if (!oimg && (!pparams || !thumbnail)) {
+        //printf("WARNING! !oimg && (!pparams || !thumbnail)\n");
+        return;
+    }
+
     if (!qMutex)
-        qMutex = new Glib::Mutex ();    
+        qMutex = new Glib::Mutex ();
 
     qMutex->lock ();
     // look up if an older version is in the queue
@@ -39,6 +44,8 @@ void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQ
             i->oh = oh;
             i->newh = newh;
             i->listener = listener;
+            i->pparams = pparams;
+            i->thumbnail = thumbnail;
             break;
         }
 
@@ -50,6 +57,8 @@ void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQ
         j.oh = oh;
         j.newh = newh;
         j.listener = listener;
+        j.pparams = pparams;
+        j.thumbnail = thumbnail;
         jqueue.push_back (j);
     }
     qMutex->unlock ();
@@ -79,11 +88,37 @@ void BatchQueueEntryUpdater::processThread () {
         }
         qMutex->unlock ();
 
-        if (!isEmpty && current.listener) {
+        rtengine::IImage8* img = NULL;
+        bool newBuffer = false;
+        if (current.thumbnail && current.pparams) {
+            // the thumbnail and the pparams are provided, it means that we have to build the original preview image
+            double tmpscale;
+            img = current.thumbnail->processThumbImage (*current.pparams, current.oh, tmpscale);
+            //current.thumbnail->decreaseRef (); // WARNING: decreasing refcount (and maybe deleting) thumbnail, with or without processed image
+            if (img) {
+                int prevw = img->getWidth();
+                int prevh = img->getHeight();
+#ifndef NDEBUG
+                if (current.ow != img->getW() || current.oh != img->getH())
+                    printf("WARNING!  Expected image size: %dx%d ; image size is: %dx%d\n", current.ow, current.oh, img->getW(), img->getH());
+                assert ((current.ow+1)*current.oh >= img->getW()*img->getH());
+#endif
+                current.ow = prevw;
+                current.oh = prevh;
+                if (!current.oimg) {
+                    current.oimg = new guint8[prevw*prevh*3];
+                    newBuffer = true;
+                }
+                memcpy(current.oimg, img->getData(), prevw * prevh * 3);
+                img->free();
+            }
+        }
+
+        if (current.oimg && !isEmpty && current.listener) {
             int neww = current.newh * current.ow / current.oh;
             guint8* img = new guint8 [current.newh*neww*3];
             thumbInterp (current.oimg, current.ow, current.oh, img, neww, current.newh);
-            current.listener->updateImage (img, neww, current.newh);
+            current.listener->updateImage (img, neww, current.newh, current.ow, current.oh, newBuffer?current.oimg:NULL);
         }
     }
 
@@ -114,12 +149,11 @@ void BatchQueueEntryUpdater::terminate  () {
     if (!qMutex || stopped) return;
 
     if (!stopped) {
-        // Yield to currenly running thread and wait till it's finished
-        gdk_threads_leave(); 
-        tostop = true; 
+        // Yield to currently running thread and wait till it's finished
+        GThreadUnLock();
+        tostop = true;
         Glib::Thread::self()->yield(); 
         if (!stopped) thread->join ();
-        gdk_threads_enter();
     }
 
     // Remove remaining jobs

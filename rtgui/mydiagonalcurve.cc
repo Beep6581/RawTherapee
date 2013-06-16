@@ -806,6 +806,7 @@ void MyDiagonalCurve::updateBackgroundHistogram (LUTu & hist) {
         bghistvalid = false;
 
     mcih->pending++;
+    // Can be done outside of the GUI thread
     g_idle_add (diagonalmchistupdateUI, mcih);
 
 }

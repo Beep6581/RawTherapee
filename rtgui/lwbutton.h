@@ -25,6 +25,7 @@ class LWButton;
 class LWButtonListener {
 
     public:
+        virtual ~LWButtonListener () {}
         virtual void buttonPressed (LWButton* button, int actionCode, void* actionData) {}
         virtual void redrawNeeded  (LWButton* button) {}
 };

@@ -76,8 +76,8 @@ class Thumbnail {
         Glib::ustring    getCacheFileName (Glib::ustring subdir);
         
     public:
-        Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
-        Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
+        Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf, const rtengine::procparams::ProcParams *pparams=NULL);
+        Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const rtengine::procparams::ProcParams *pparams=NULL);
         ~Thumbnail ();
         
         bool              hasProcParams ();

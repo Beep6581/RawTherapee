@@ -25,6 +25,7 @@
 #include "exiffiltersettings.h"
 #include "filebrowserentry.h"
 #include "browserfilter.h"
+#include "pparamschangelistener.h"
 #include "partialpastedlg.h"
 #include "exportpanel.h"
 #include "extprog.h"
@@ -34,6 +35,7 @@ class FileBrowserEntry;
 class FileBrowserListener {
 
     public:
+        virtual     ~FileBrowserListener    () {}
         virtual void openRequested          (std::vector<Thumbnail*> tbe) {}
         virtual void developRequested       (std::vector<FileBrowserEntry*> tbe, bool fastmode) {}
         virtual void renameRequested        (std::vector<FileBrowserEntry*> tbe) {}
@@ -112,6 +114,7 @@ class FileBrowser  : public ThumbBrowserBase,
 
     Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
 
+    BatchPParamsChangeListener* bppcl;
     FileBrowserListener* tbl;
     BrowserFilter filter;
     int numFiltered;
@@ -140,6 +143,7 @@ class FileBrowser  : public ThumbBrowserBase,
     FileBrowserEntry*  delEntry (const Glib::ustring& fname);    // return the entry if found here return NULL otherwise
     void close ();
     
+    void setBatchPParamsChangeListener (BatchPParamsChangeListener* l) { bppcl = l; }
     void setFileBrowserListener (FileBrowserListener* l) { tbl = l; }
      
     void menuItemActivated (Gtk::MenuItem* m);
@@ -155,6 +159,9 @@ class FileBrowser  : public ThumbBrowserBase,
     void rightClicked (ThumbBrowserEntryBase* entry);
     void doubleClicked (ThumbBrowserEntryBase* entry);
     bool keyPressed (GdkEventKey* event);
+
+    void saveThumbnailHeight (int height);
+    int  getThumbnailHeight ();
 
     void openNextImage ();
     void openPrevImage ();

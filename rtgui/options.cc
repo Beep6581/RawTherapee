@@ -250,6 +250,8 @@ void Options::setDefaults () {
     version = "0.0.0.0";				// temporary value; will be correctly set in RTWindow::on_realize
     thumbSize = 240;
     thumbSizeTab = 80;
+    thumbSizeQueue = 100;
+    sameThumbSize = true;				// preferring speed of switch between file browser and single editor tab
     showHistory = true;
     showFilePanelState = 0;				// Not used anymore ; was the thumb strip state
     showInfo = true;
@@ -588,6 +590,8 @@ if (keyFile.has_group ("Profiles")) {
 if (keyFile.has_group ("File Browser")) { 
     if (keyFile.has_key ("File Browser", "ThumbnailSize"))      thumbSize          = keyFile.get_integer ("File Browser", "ThumbnailSize");
     if (keyFile.has_key ("File Browser", "ThumbnailSizeTab"))   thumbSizeTab       = keyFile.get_integer ("File Browser", "ThumbnailSizeTab");
+    if (keyFile.has_key ("File Browser", "ThumbnailSizeQueue")) thumbSizeQueue     = keyFile.get_integer ("File Browser", "ThumbnailSizeQueue");
+    if (keyFile.has_key ("File Browser", "SameThumbSize"))      sameThumbSize      = keyFile.get_integer ("File Browser", "SameThumbSize");
     if (keyFile.has_key ("File Browser", "BrowseOnlyRaw"))      fbOnlyRaw          = keyFile.get_boolean ("File Browser", "BrowseOnlyRaw");
     if (keyFile.has_key ("File Browser", "BrowserShowsDate"))   fbShowDateTime     = keyFile.get_boolean ("File Browser", "BrowserShowsDate");
     if (keyFile.has_key ("File Browser", "BrowserShowsExif"))   fbShowBasicExif    = keyFile.get_boolean ("File Browser", "BrowserShowsExif");
@@ -816,6 +820,8 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("File Browser", "BrowserShowsHidden", fbShowHidden);
     keyFile.set_integer ("File Browser", "ThumbnailSize", thumbSize);
     keyFile.set_integer ("File Browser", "ThumbnailSizeTab", thumbSizeTab);
+    keyFile.set_integer ("File Browser", "ThumbnailSizeQueue", thumbSizeQueue);
+    keyFile.set_integer ("File Browser", "SameThumbSize", sameThumbSize);
     keyFile.set_integer ("File Browser", "MaxPreviewHeight", maxThumbnailHeight);
     keyFile.set_integer ("File Browser", "MaxCacheEntries", maxCacheEntries);
     Glib::ArrayHandle<Glib::ustring> pext = parseExtensions;

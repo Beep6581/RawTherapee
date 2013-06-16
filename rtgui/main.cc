@@ -24,6 +24,7 @@
 // This file is for your program, I won't touch it again!
 
 #include "config.h"
+#include <glibmm/thread.h>
 #include <gtkmm.h>
 #include <giomm.h>
 #include <iostream>
@@ -53,6 +54,22 @@ Glib::ustring creditsPath;
 Glib::ustring licensePath;
 Glib::ustring argv1;
 bool simpleEditor;
+Glib::Thread* mainThread;
+
+
+// This recursive mutex will be used by g_thread_enter/leave instead of a simple mutex
+static Glib::RecMutex myGdkRecMutex;
+
+static void myGdkLockEnter() { myGdkRecMutex.lock(); }
+static void myGdkLockLeave() {
+	// Automatic gdk_flush for non main tread
+	#if AUTO_GDK_FLUSH
+	if (Glib::Thread::self() != mainThread) {
+		gdk_flush();
+	}
+	#endif
+	myGdkRecMutex.unlock();
+}
 
 /* Process line command options
  * Returns
@@ -105,8 +122,11 @@ int main(int argc, char **argv)
 #endif
   
    Glib::thread_init();
+   gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), ((GCallback) (myGdkLockLeave)));
    gdk_threads_init();
    Gio::init ();
+
+   mainThread = Glib::Thread::self();
 
    Options::load ();
    extProgStore->init();
@@ -158,9 +178,8 @@ int main(int argc, char **argv)
       printf("Error: no default settings to update!\n");
 #endif
 
-
-   RTWindow *rtWindow = new class RTWindow();
    gdk_threads_enter ();
+   RTWindow *rtWindow = new class RTWindow();
 
    // alerting users if the default raw and image profiles are missing
    if (options.is_defProfRawMissing()) {

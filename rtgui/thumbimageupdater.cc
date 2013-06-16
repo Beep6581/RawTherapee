@@ -48,6 +48,8 @@ public:
 
 		Job():
 			tbe_(0),
+			priority_(NULL),
+			upgrade_(false),
 			listener_(0)
 		{}
 
@@ -86,7 +88,7 @@ public:
 	Glib::Cond inactive_;
 
 	void
-	processNextJob(void)
+	processNextJob()
 	{ 
 		Job j;
 

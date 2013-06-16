@@ -30,6 +30,7 @@ class FilePanel;
 class BatchToolPanelCoordinator : 
                                 public ToolPanelCoordinator, 
                                 public FileSelectionChangeListener,
+                                public BatchPParamsChangeListener,
                                 public ThumbnailListener
 {
     protected:
@@ -39,6 +40,7 @@ class BatchToolPanelCoordinator :
         std::vector<Glib::ustring> selFileNames;
         std::vector<rtengine::procparams::ProcParams> initialPP;
         bool somethingChanged;
+        bool blockedUpdate;
         FilePanel* parent;
 
         void closeSession (bool save=true);
@@ -63,7 +65,11 @@ class BatchToolPanelCoordinator :
 
         // thumbnaillistener interface
         void procParamsChanged (Thumbnail* thm, int whoChangedIt);
-        
+
+        // batchpparamschangelistener interface
+        void beginBatchPParamsChange(int numberOfEntries);
+        void endBatchPParamsChange();
+
         // imageareatoollistener interface
         void spotWBselected (int x, int y, Thumbnail* thm=NULL);
         void cropSelectionReady ();

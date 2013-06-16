@@ -203,11 +203,14 @@ void FileBrowserEntry::updateImage (rtengine::IImage8* img, double scale, rtengi
     param->img = img;
     param->scale = scale;
     param->cropParams = cropParams;
-    g_idle_add (updateImageUI, param);
+    g_idle_add_full (G_PRIORITY_LOW, updateImageUI, param, NULL);
 }
 
 void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine::procparams::CropParams cropParams) {
-    Glib::RWLock::WriterLock l(lockRW);
+
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, lockRW);
+    #endif
 
     redrawRequests--; 
     scale = s;
@@ -218,6 +221,8 @@ void FileBrowserEntry::_updateImage (rtengine::IImage8* img, double s, rtengine:
 
     if (preh == img->getHeight ()) {
         prew = img->getWidth ();
+
+        GThreadLock lock;
 
         // Check if image has been rotated since last time
         rotated = preview!=NULL && newLandscape!=landscape;

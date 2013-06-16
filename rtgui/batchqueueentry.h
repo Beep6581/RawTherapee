@@ -37,6 +37,7 @@ class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListen
     guint8* opreview;
     int origpw, origph;
     BatchQueueEntryIdleHelper* bqih;
+    bool opreviewDone;
     static bool iconsLoaded;
 
 public:
@@ -51,7 +52,7 @@ public:
     SaveFormat saveFormat;
     bool forceFormatOpts;
   
-    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thm=NULL);
+    BatchQueueEntry (rtengine::ProcessingJob* job, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm=NULL);
     ~BatchQueueEntry ();
 
     void refreshThumbnailImage ();
@@ -66,7 +67,7 @@ public:
     virtual Glib::ustring getToolTip (int x, int y);
 
     // bqentryupdatelistener interface
-    void updateImage (guint8* img, int w, int h);
+    void updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview);
     void _updateImage (guint8* img, int w, int h); // inside gtk thread
 };
 

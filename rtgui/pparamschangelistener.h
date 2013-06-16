@@ -26,8 +26,17 @@
 class PParamsChangeListener {
 
     public:
+        virtual     ~PParamsChangeListener() {}
         virtual void procParamsChanged (rtengine::procparams::ProcParams* params, rtengine::ProcEvent ev, Glib::ustring descr, ParamsEdited* paramsEdited=NULL) {}
         virtual void clearParamChanges () {}
+};
+
+class BatchPParamsChangeListener {
+
+    public:
+        virtual     ~BatchPParamsChangeListener() {}
+        virtual void beginBatchPParamsChange(int numberOfEntries) {}
+        virtual void endBatchPParamsChange() {}
 };
 
 #endif

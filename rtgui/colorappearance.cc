@@ -893,14 +893,14 @@ void ColorAppearance::setDefaults (const ProcParams* defParams, const ParamsEdit
 	}
 }
 int autoCamChangedUI (void* data) {
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     (static_cast<ColorAppearance*>(data))->autoCamComputed_ ();
     return 0;
 }
 void ColorAppearance::autoCamChanged (double ccam) 
 {
     nextCcam = ccam;
-	g_idle_add (autoCamChangedUI, this);
-  //  Glib::signal_idle().connect (sigc::mem_fun(*this, &ColorAppearance::autoCamComputed_));
+    g_idle_add (autoCamChangedUI, this);
 }
 
 bool ColorAppearance::autoCamComputed_ () {
@@ -913,14 +913,14 @@ bool ColorAppearance::autoCamComputed_ () {
     return false;
 }
 int adapCamChangedUI (void* data) {
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     (static_cast<ColorAppearance*>(data))->adapCamComputed_ ();
     return 0;
 }
 void ColorAppearance::adapCamChanged (double cadap) 
 {
     nextCadap = cadap;
-	g_idle_add (adapCamChangedUI, this);
-  //  Glib::signal_idle().connect (sigc::mem_fun(*this, &ColorAppearance::autoCamComputed_));
+    g_idle_add (adapCamChangedUI, this);
 }
 
 bool ColorAppearance::adapCamComputed_ () {

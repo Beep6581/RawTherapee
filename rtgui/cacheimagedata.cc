@@ -33,8 +33,13 @@ int CacheImageData::load (const Glib::ustring& fname) {
     rtengine::SafeKeyFile keyFile;
     
     try {
-        if (!keyFile.load_from_file (fname)) 
+        bool loaded = keyFile.load_from_file (fname);
+        if (!loaded) {
+#ifndef NDEBUG
+            printf("Failed to load_from_file(%s)\n", fname.c_str());
+#endif
             return 1;
+        }
 
         if (keyFile.has_group ("General")) { 
             if (keyFile.has_key ("General", "MD5"))             md5         = keyFile.get_string ("General", "MD5");
@@ -58,32 +63,31 @@ int CacheImageData::load (const Glib::ustring& fname) {
             if (keyFile.has_key ("DateTime", "MSec"))   msec    = keyFile.get_integer ("DateTime", "MSec");
         }
 
-		exifValid = false;
-        
-		if (keyFile.has_group ("ExifInfo")) {
-			exifValid = true;
-			if (keyFile.has_key ("ExifInfo", "Valid")) exifValid = keyFile.get_boolean ("ExifInfo", "Valid");
+        exifValid = false;
 
-			if (exifValid) { 
-				if (keyFile.has_key ("ExifInfo", "FNumber"))    fnumber     = keyFile.get_double ("ExifInfo", "FNumber");
-				if (keyFile.has_key ("ExifInfo", "Shutter"))    shutter     = keyFile.get_double ("ExifInfo", "Shutter");
-				if (keyFile.has_key ("ExifInfo", "FocalLen"))   focalLen    = keyFile.get_double ("ExifInfo", "FocalLen");
+        if (keyFile.has_group ("ExifInfo")) {
+            exifValid = true;
+            if (keyFile.has_key ("ExifInfo", "Valid")) exifValid = keyFile.get_boolean ("ExifInfo", "Valid");
+
+            if (exifValid) {
+                if (keyFile.has_key ("ExifInfo", "FNumber"))    fnumber     = keyFile.get_double ("ExifInfo", "FNumber");
+                if (keyFile.has_key ("ExifInfo", "Shutter"))    shutter     = keyFile.get_double ("ExifInfo", "Shutter");
+                if (keyFile.has_key ("ExifInfo", "FocalLen"))   focalLen    = keyFile.get_double ("ExifInfo", "FocalLen");
                 if (keyFile.has_key ("ExifInfo", "FocalLen35mm"))   focalLen35mm = keyFile.get_double ("ExifInfo", "FocalLen35mm");
                 else focalLen35mm=focalLen;  // prevent crashes on old files
                 if (keyFile.has_key ("ExifInfo", "FocusDist"))   focusDist = keyFile.get_double ("ExifInfo", "FocusDist");
                 else focusDist=0;
-				if (keyFile.has_key ("ExifInfo", "ISO"))        iso         = keyFile.get_integer ("ExifInfo", "ISO");
-				if (keyFile.has_key ("ExifInfo", "ExpComp"))    expcomp     = keyFile.get_string ("ExifInfo", "ExpComp");
-			}
-			if (keyFile.has_key ("ExifInfo", "Lens"))       lens        = keyFile.get_string ("ExifInfo", "Lens");
-			if (keyFile.has_key ("ExifInfo", "Camera"))     camera      = keyFile.get_string ("ExifInfo", "Camera");
-		}
-		
-		if (keyFile.has_group ("FileInfo")) {
-			if (keyFile.has_key ("FileInfo", "Filetype"))   filetype    = keyFile.get_string ("FileInfo", "Filetype");
-		}
-			
-			
+                if (keyFile.has_key ("ExifInfo", "ISO"))        iso         = keyFile.get_integer ("ExifInfo", "ISO");
+                if (keyFile.has_key ("ExifInfo", "ExpComp"))    expcomp     = keyFile.get_string ("ExifInfo", "ExpComp");
+            }
+            if (keyFile.has_key ("ExifInfo", "Lens"))       lens        = keyFile.get_string ("ExifInfo", "Lens");
+            if (keyFile.has_key ("ExifInfo", "Camera"))     camera      = keyFile.get_string ("ExifInfo", "Camera");
+        }
+
+        if (keyFile.has_group ("FileInfo")) {
+            if (keyFile.has_key ("FileInfo", "Filetype"))   filetype    = keyFile.get_string ("FileInfo", "Filetype");
+        }
+
         if (format==FT_Raw && keyFile.has_group ("ExtraRawInfo")) {
             if (keyFile.has_key ("ExtraRawInfo", "ThumbImageType"))     thumbImgType    = keyFile.get_integer ("ExtraRawInfo", "ThumbImageType");
             if (keyFile.has_key ("ExtraRawInfo", "ThumbImageOffset"))   thumbOffset     = keyFile.get_integer ("ExtraRawInfo", "ThumbImageOffset");
@@ -94,9 +98,10 @@ int CacheImageData::load (const Glib::ustring& fname) {
         }
         return 0;
     }
-    catch (Glib::Error) {
-        return 1;
+    catch (Glib::Error &err) {
+        printf("Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
     }
+    return 1;
 }
 
 int CacheImageData::save (const Glib::ustring& fname) {
@@ -151,5 +156,6 @@ int CacheImageData::save (const Glib::ustring& fname) {
         fprintf (f, "%s", keyFile.to_data().c_str());
         fclose (f);
         return 0;
-    }}
+    }
+}
 

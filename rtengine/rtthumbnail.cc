@@ -40,7 +40,7 @@
 
 namespace rtengine {
 
-Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, int deg) {
+Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh) {
 
     StdImageSource imgSrc;
     if (imgSrc.load(fname)) {
@@ -48,10 +48,6 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
     }
 
     ImageIO* img = imgSrc.getImageIO();
-
-    if (deg) {
-        img->rotate(deg);
-    }
   
     Thumbnail* tpp = new Thumbnail ();
 
@@ -607,10 +603,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     int rwidth;
     if (params.coarse.rotate==90 || params.coarse.rotate==270) {
         rwidth = rheight;
-        rheight = thumbImg->height * rwidth / thumbImg->width;
+        rheight = int(size_t(thumbImg->height) * size_t(rwidth) / size_t(thumbImg->width));
     }
     else 
-        rwidth = thumbImg->width * rheight / thumbImg->height;
+        rwidth = int(size_t(thumbImg->width) * size_t(rheight) / size_t(thumbImg->height));
 
     Imagefloat* baseImg = resizeTo<Imagefloat>(rwidth, rheight, interp, thumbImg);
 

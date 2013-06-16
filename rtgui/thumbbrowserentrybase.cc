@@ -22,26 +22,18 @@
 #include "../rtengine/mytime.h"
 
 ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) 
-    : preh(0), preview(NULL), buttonSet(NULL), exp_width(0), exp_height(0), redrawRequests(0),
-      parent(NULL), filename(fname), exifline(""), datetimeline(""), selected(false),
-      drawable(false),framed(false), processing(false), italicstyle(false),
-      updatepriority(false) {
-
-    shortname = Glib::path_get_basename (fname);
-    dispname = shortname;
-
-    upperMargin = 6;
-    borderWidth = 1;
-    sideMargin = 8;
-    lowerMargin = 8;
-    textGap = 6;
-    
-    ofsX = ofsY = 0;
-}
+    : fnlabw(0), fnlabh(0), dtlabw(0), dtlabh(0), exlabw(0), exlabh(0), prew(0), preh(0),
+      prex(0), prey(0), upperMargin(6), borderWidth(1), textGap(6), sideMargin(8), lowerMargin(8),
+      preview(NULL), dispname(Glib::path_get_basename (fname)), buttonSet(NULL), width(0), height(0),
+      exp_width(0), exp_height(0), startx(0), starty(0), ofsX(0), ofsY(0), redrawRequests(0),
+      parent(NULL), bbSelected(false), bbFramed(false), bbPreview(NULL),
+      thumbnail(NULL), filename(fname), shortname(dispname), exifline(""), datetimeline(""),
+      selected(false), drawable(false), filtered(false), framed(false), processing(false), italicstyle(false),
+      edited(false), recentlysaved(false), updatepriority(false) {}
 
 ThumbBrowserEntryBase::~ThumbBrowserEntryBase () {
 
-    delete [] preview;
+    if (preview) delete [] preview;
     delete buttonSet;
 }
 
@@ -259,7 +251,10 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh) {
 }
 
 void ThumbBrowserEntryBase::resize (int h) {
-    Glib::RWLock::WriterLock l(lockRW);
+
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, lockRW);
+    #endif
 
     height = h;
     int old_preh = preh, old_width = width;
@@ -348,7 +343,9 @@ void ThumbBrowserEntryBase::draw () {
     if (!drawable || !parent)
         return;
 
-    Glib::RWLock::ReaderLock l(lockRW);  // No resizes, position moves etc. inbetween
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, lockRW);  // No resizes, position moves etc. inbetween
+    #endif
 
     int bbWidth, bbHeight;
     if (backBuffer)
@@ -376,12 +373,16 @@ void ThumbBrowserEntryBase::draw () {
     // redraw button set above the thumbnail   
     if (buttonSet) {
         buttonSet->setColors (selected ? bgs : bgn, selected ? bgn : bgs);
-        buttonSet->redraw (w->get_window()->create_cairo_context());
+        Cairo::RefPtr<Cairo::Context> cc = w->get_window()->create_cairo_context();
+        buttonSet->redraw (cc);
     }
 }
 
 void ThumbBrowserEntryBase::setPosition (int x, int y, int w, int h) {
-    Glib::RWLock::WriterLock l(lockRW);
+
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, lockRW);
+    #endif
 
     exp_width = w;
     exp_height = h;
@@ -393,7 +394,10 @@ void ThumbBrowserEntryBase::setPosition (int x, int y, int w, int h) {
 }
 
 void ThumbBrowserEntryBase::setOffset (int x, int y) {
-    Glib::RWLock::WriterLock l(lockRW);
+
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, lockRW);
+    #endif
 
     ofsX = -x;
     ofsY = -y;

@@ -38,8 +38,6 @@ using namespace std;
 
 #define CHECKTIME 2000
 
-extern Glib::ustring argv0;
-
 FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 		filepanel(filepanel),
 		selectedDirectoryId(1),
@@ -462,9 +460,12 @@ void FileCatalog::closeDir () {
     // remove entries
     selectedDirectory = "";
     fileBrowser->close ();  
-	fileNameList.clear ();
-	
+    fileNameList.clear ();
+
+    {
+    Glib::Mutex::Lock lock(filterMutex);
     dirEFS.clear ();
+    }
     hasValidCurrentEFS = false;
     redrawAll ();
 }
@@ -537,13 +538,15 @@ void FileCatalog::_refreshProgressBar () {
     // Also mention that this progress bar only measures the FIRST pass (quick thumbnails)
     // The second, usually longer pass is done multithreaded down in the single entries and is NOT measured by this
     if (!inTabMode) {
-    	Gtk::Notebook *nb =(Gtk::Notebook *)(filepanel->get_parent());
-    	Gtk::Box* hbb=NULL;
-    	Gtk::Label *label=NULL;
-    	if( options.mainNBVertical )
-           hbb = Gtk::manage (new Gtk::VBox ());
-    	else
-    	   hbb = Gtk::manage (new Gtk::HBox ());
+        GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+
+        Gtk::Notebook *nb =(Gtk::Notebook *)(filepanel->get_parent());
+        Gtk::Box* hbb=NULL;
+        Gtk::Label *label=NULL;
+        if( options.mainNBVertical )
+            hbb = Gtk::manage (new Gtk::VBox ());
+        else
+            hbb = Gtk::manage (new Gtk::HBox ());
         if (!previewsToLoad ) {
             hbb->pack_start (*Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU)));
             int filteredCount=fileBrowser->getNumFiltered();
@@ -573,17 +576,9 @@ int refreshProgressBarUI (void* data) {
 }
 
 void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
-    GThreadLock lock;
-    previewReadyUI (dir_id,fdn);
-}
 
-// Called WITHIN gtk thread
-void FileCatalog::previewReadyUI (int dir_id, FileBrowserEntry* fdn) {
-
-	if ( dir_id != selectedDirectoryId )
-	{
-		return;
-	}
+    if ( dir_id != selectedDirectoryId )
+        return;
 
     // put it into the "full directory" browser
     fdn->setImageAreaToolListener (iatlistener);
@@ -591,6 +586,9 @@ void FileCatalog::previewReadyUI (int dir_id, FileBrowserEntry* fdn) {
     
     // update exif filter settings (minimal & maximal values of exif tags, cameras, lenses, etc...)
     const CacheImageData* cfs = fdn->thumbnail->getCacheImageData();
+
+    {
+    Glib::Mutex::Lock lock(filterMutex);
     if (cfs->exifValid) {
         if (cfs->fnumber < dirEFS.fnumberFrom)
             dirEFS.fnumberFrom = cfs->fnumber;
@@ -613,13 +611,14 @@ void FileCatalog::previewReadyUI (int dir_id, FileBrowserEntry* fdn) {
     dirEFS.cameras.insert (cfs->camera);
     dirEFS.lenses.insert (cfs->lens);
     dirEFS.expcomp.insert (cfs->expcomp);
+    }
+
     previewsLoaded++;
 
     g_idle_add (refreshProgressBarUI, this);
 }
 
 int prevfinished (void* data) {
- 	GThreadLock lock;
     (static_cast<FileCatalog*>(data))->previewsFinishedUI ();
     return 0;
 }
@@ -627,26 +626,30 @@ int prevfinished (void* data) {
 // Called within GTK UI thread
 void FileCatalog::previewsFinishedUI () {
 
-    redrawAll ();
-    previewsToLoad = 0;
+    {
+        GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+        redrawAll ();
+        previewsToLoad = 0;
 
-	if (filterPanel) {
-		filterPanel->set_sensitive (true);
-	    if ( !hasValidCurrentEFS ){
-	        currentEFS = dirEFS;
-		    filterPanel->setFilter ( dirEFS,true );
-	    }else {
-		    filterPanel->setFilter ( currentEFS,false );
-	    }
-	}
-	
-	if (exportPanel)
-		exportPanel->set_sensitive (true);
+        if (filterPanel) {
+            filterPanel->set_sensitive (true);
+            Glib::Mutex::Lock lock(filterMutex);
+            if ( !hasValidCurrentEFS ){
+                currentEFS = dirEFS;
+                filterPanel->setFilter ( dirEFS,true );
+            }else {
+                filterPanel->setFilter ( currentEFS,false );
+            }
+        }
 
- 	// restart anything that might have been loaded low quality
- 	fileBrowser->refreshQuickThumbImages();
- 	fileBrowser->applyFilter (getFilter());  // refresh total image count
-    _refreshProgressBar();
+        if (exportPanel)
+            exportPanel->set_sensitive (true);
+
+        // restart anything that might have been loaded low quality
+        fileBrowser->refreshQuickThumbImages();
+        fileBrowser->applyFilter (getFilter());  // refresh total image count
+        _refreshProgressBar();
+    }
     filepanel->loadingThumbs(M("PROGRESSBAR_READY"),0);
 
     if (!imageToSelect_fname.empty()){
@@ -668,8 +671,10 @@ void FileCatalog::previewsFinished (int dir_id) {
 		return;
 	}
 
-    if (!hasValidCurrentEFS) 
+    if (!hasValidCurrentEFS) {
+        Glib::Mutex::Lock lock(filterMutex);
         currentEFS = dirEFS;
+    }
 
     g_idle_add (prevfinished, this);
 }
@@ -689,9 +694,9 @@ void FileCatalog::refreshThumbImages () {
 void FileCatalog::refreshHeight () {
     int newHeight=fileBrowser->getEffectiveHeight() + buttonBar->get_height();
     if (!options.FileBrowserToolbarSingleRow) {
-    	newHeight += hbToolBar1->get_height();
+        newHeight += hbToolBar1->get_height();
     }
-    set_size_request(0, newHeight);
+    set_size_request(0, newHeight+2); // HOMBRE: yeah, +2, there's always 2 pixels missing... sorry for this dirty hack O:)
 }
 
 void FileCatalog::_openImage (std::vector<Thumbnail*> tmb) {
@@ -879,11 +884,14 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
     if (listener) {
     	std::vector<BatchQueueEntry*> entries;
 
-        #pragma omp parallel for ordered
+        // TODO: (HOMBRE) should we still use parallelization here, now that thumbnails are processed asynchronously...?
+        //#pragma omp parallel for ordered
         for (size_t i=0; i<tbe.size(); i++) {
-            rtengine::procparams::ProcParams params = tbe[i]->thumbnail->getProcParams();
+            FileBrowserEntry* fbe = tbe[i];
+            Thumbnail* th = fbe->thumbnail;
+            rtengine::procparams::ProcParams params = th->getProcParams();
 
-            // if fast mode is selected, override (disable) prams
+            // if fast mode is selected, override (disable) params
             // controlling time and resource consuming tasks
             // and also those which effect is not pronounced after reducing the image size
             // TODO!!! could expose selections below via preferences
@@ -921,30 +929,19 @@ void FileCatalog::developRequested (std::vector<FileBrowserEntry*> tbe, bool fas
 				params.resize.height     = options.fastexport_resize_height   ;
             }
 
-            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (tbe[i]->filename, tbe[i]->thumbnail->getType()==FT_Raw, params);
-            double tmpscale;
-            rtengine::IImage8* img = tbe[i]->thumbnail->processThumbImage (params, BatchQueue::calcMaxThumbnailHeight(), tmpscale);
+            rtengine::ProcessingJob* pjob = rtengine::ProcessingJob::create (fbe->filename, th->getType()==FT_Raw, params);
 
-            int pw, ph;
-            guint8* prev=NULL;
-
-            if (img) {
-                pw = img->getWidth ();
-                ph = img->getHeight ();
-                prev = new guint8 [pw*ph*3];
-                memcpy (prev, img->getData (), pw*ph*3);
-                img->free();
- 
-            } else {
-                tbe[i]->thumbnail->getThumbnailSize (pw, ph);
-            }
+            int pw;
+            int ph = BatchQueue::calcMaxThumbnailHeight();
+            th->getThumbnailSize (pw, ph);
 
             // processThumbImage is the processing intensive part, but adding to queue must be ordered
-            #pragma omp ordered
-            {
-                entries.push_back(new BatchQueueEntry (pjob, params, tbe[i]->filename, prev, pw, ph, tbe[i]->thumbnail));
-            }
-            }
+            //#pragma omp ordered
+            //{
+                BatchQueueEntry* bqh = new BatchQueueEntry (pjob, params, fbe->filename, pw, ph, th);
+                entries.push_back(bqh);
+            //}
+        }
 
         listener->addBatchQueueJobs( entries );
     }
@@ -1324,8 +1321,10 @@ BrowserFilter FileCatalog::getFilter () {
     if (!filterPanel)
 		filter.exifFilterEnabled = false;
 	else {
-		if (!hasValidCurrentEFS)
+		Glib::Mutex::Lock lock(filterMutex);
+		if (!hasValidCurrentEFS) {
 			filter.exifFilter = dirEFS;
+		}
 		else
 			filter.exifFilter = currentEFS;
 		filter.exifFilterEnabled = filterPanel->isEnabled ();
@@ -1408,15 +1407,14 @@ void FileCatalog::winDirChanged () {
 
 void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal) {
 
-	if (options.has_retained_extention(file->get_parse_name())) {
-		if (!internal)
-			gdk_threads_enter();
-
-		if (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED)
-			reparseDirectory ();
-
-		if (!internal)
-			gdk_threads_leave();
+	if (options.has_retained_extention(file->get_parse_name())
+	&& (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED)) {
+			if (!internal) {
+				GThreadLock lock;
+				reparseDirectory ();
+			}
+			else
+				reparseDirectory ();
 	}
 }
 
@@ -1454,7 +1452,7 @@ void FileCatalog::addAndOpenFile (const Glib::ustring& fname) {
         Thumbnail* tmb = cacheMgr->getEntry (file->get_parse_name());
         if (tmb) {
             FileBrowserEntry* entry = new FileBrowserEntry (tmb, file->get_parse_name());
-			previewReadyUI (selectedDirectoryId,entry);
+            previewReady (selectedDirectoryId,entry);
             // open the file
             FCOIParams* params = new FCOIParams;
             params->catalog = this;
@@ -1511,7 +1509,9 @@ void FileCatalog::selectionChanged (std::vector<Thumbnail*> tbe) {
 
 void FileCatalog::exifFilterChanged () {
 
-	currentEFS = filterPanel->getFilter ();
+    // not sure that locking is necessary here...
+    Glib::Mutex::Lock lock(filterMutex);
+    currentEFS = filterPanel->getFilter ();
     hasValidCurrentEFS = true;
     fileBrowser->applyFilter (getFilter ());
     _refreshProgressBar();
@@ -1557,9 +1557,11 @@ bool FileCatalog::Query_key_pressed (GdkEventKey *event){
             FileCatalog::buttonQueryClearPressed ();
             return true;
         }
+        break;
     default:
-        return false;
+        break;
     }
+    return false;
 }
 
 void FileCatalog::updateFBQueryTB (bool singleRow) {
@@ -1625,9 +1627,11 @@ bool FileCatalog::BrowsePath_key_pressed (GdkEventKey *event){
             BrowsePath->select_region(BrowsePath->get_text_length(), BrowsePath->get_text_length());
             return true;
         }
+        break;
     default:
-        return false;
+        break;
     }
+    return false;
 }
 
 void FileCatalog::tbLeftPanel_1_visible (bool visible){
@@ -1806,6 +1810,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event) {
                     FileCatalog::buttonBrowsePathPressed ();
                     return true;
                 }
+                break;
         }
     }
     

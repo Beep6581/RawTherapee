@@ -469,11 +469,13 @@ void Crop::enabledChanged () {
 }
 
 int notifyListenerUI (void* data) {
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     (static_cast<Crop*>(data))->notifyListener ();
     return 0;
 }
 
 int refreshSpinsUI (void* data) {
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     RefreshSpinHelper* rsh = static_cast<RefreshSpinHelper*>(data);
     rsh->crop->refreshSpins (rsh->notify);
     delete rsh;
@@ -587,23 +589,23 @@ void Crop::ratioChanged () {
 
 // Correct current crop if it doesn't fit
 void Crop::adjustCropToRatio() {
-  if (fixr->get_active() && !fixr->get_inconsistent()) {
+    if (fixr->get_active() && !fixr->get_inconsistent()) {
  
-//    int W = w->get_value ();
-//    int H = h->get_value ();
-    int W = nw;
-    int H = nh;
-    int X = nx;
-    int Y = ny;
-    if (W>=H)
-      cropWidth2Resized (X, Y, W, H);
-    else 
-      cropHeight2Resized (X, Y, W, H);
+//        int W = w->get_value ();
+//        int H = h->get_value ();
+        int W = nw;
+        int H = nh;
+        int X = nx;
+        int Y = ny;
+        if (W>=H)
+          cropWidth2Resized (X, Y, W, H);
+        else
+          cropHeight2Resized (X, Y, W, H);
     }
 
-    // This will safe the options
+    // This will save the options
     g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, true));
-  }
+}
 
 void Crop::refreshSize () {
 
@@ -667,6 +669,7 @@ struct setdimparams {
 };
 
 int sizeChangedUI (void* data) {
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     setdimparams* params = static_cast<setdimparams*>(data);
     params->crop->setDimensions (params->x, params->y);
     delete params;
@@ -958,12 +961,11 @@ void Crop::cropResized (int &x, int &y, int& x2, int& y2) {
   nh = H;
 
   g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
-//  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
 }
 
 void Crop::cropManipReady () {
 
-    g_idle_add (notifyListenerUI, this);
+  g_idle_add (notifyListenerUI, this);
 }
 
 double Crop::getRatio () {

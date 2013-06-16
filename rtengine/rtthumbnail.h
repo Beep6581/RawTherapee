@@ -81,7 +81,7 @@ namespace rtengine {
             
             static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);
             static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate);
-            static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, int deg=0);           
+            static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh);
             
             void getCamWB     (double& temp, double& green);
             void getAutoWB    (double& temp, double& green);

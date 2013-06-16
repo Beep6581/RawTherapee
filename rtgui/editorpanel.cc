@@ -597,6 +597,7 @@ struct spparams {
 
 int setprogressStrUI( void *p )
 {
+	GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 	spparams *s= static_cast<spparams*>(p);
 
 	if( ! s->str.empty() )
@@ -662,6 +663,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP) {
     	s->val = 1.0;
 
 #ifdef WIN32
+    // Maybe accessing "parent", which is a Gtk object, can justify to get the Gtk lock...
 	if (!firstProcessingDone && static_cast<RTWindow*>(parent)->getIsFullscreen()) { parent->fullscreen(); }
 #endif
         firstProcessingDone = true;
@@ -1108,19 +1110,11 @@ BatchQueueEntry* EditorPanel::createBatchQueueEntry () {
     ipc->getParams (&pparams);
     //rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (openThm->getFileName (), openThm->getType()==FT_Raw, pparams);
-    int prevh = options.maxThumbnailHeight;
-    int prevw = prevh;
-    guint8* prev = NULL;//(guint8*) previewHandler->getImagePreview (prevw, prevh);
-    double tmpscale;
-    rtengine::IImage8* img = openThm->processThumbImage (pparams, options.maxThumbnailHeight, tmpscale);
-    if (img) {
-    	prevw = img->getWidth ();
-    	prevh = img->getHeight ();
-        prev = new guint8 [prevw*prevh*3];
-        memcpy (prev, img->getData (), prevw*prevh*3);
-        img->free();
-    }
-    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prev, prevw, prevh, openThm);
+    int fullW=0, fullH=0;
+    isrc->getImageSource()->getFullSize(fullW, fullH, pparams.coarse.rotate==90 || pparams.coarse.rotate==270 ? TR_R90 : TR_NONE);
+    int prevh = BatchQueue::calcMaxThumbnailHeight();
+    int prevw = int((size_t)fullW * (size_t)prevh / (size_t)fullH);
+    return new BatchQueueEntry (job, pparams, openThm->getFileName(), prevw, prevh, openThm);
 }
 
 
