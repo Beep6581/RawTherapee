@@ -133,6 +133,7 @@ class FileCatalog : public Gtk::VBox,
         Gtk::Button* zoomInButton;
         Gtk::Button* zoomOutButton;
 
+        Glib::Mutex filterMutex;
         ExifFilterSettings dirEFS;
         ExifFilterSettings currentEFS;
         bool hasValidCurrentEFS;  
@@ -172,21 +173,20 @@ class FileCatalog : public Gtk::VBox,
                 void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile="");
                 void closeDir    ();
                 void refreshEditedState (const std::set<Glib::ustring>& efiles);
-                
+
                 // previewloaderlistener interface
-				void previewReadyUI (int dir_id, FileBrowserEntry* fdn);
-				void previewReady (int dir_id, FileBrowserEntry* fdn);
-				void previewsFinished (int dir_id);
+                void previewReady (int dir_id, FileBrowserEntry* fdn);
+                void previewsFinished (int dir_id);
                 void previewsFinishedUI ();
                 void _refreshProgressBar ();
 
-				// filterpanel interface
-				void exifFilterChanged ();
-				
-				// exportpanel interface
-				void exportRequested();
-				
-				Glib::ustring lastSelectedDir () { return selectedDirectory; }
+                // filterpanel interface
+                void exifFilterChanged ();
+
+                // exportpanel interface
+                void exportRequested();
+
+                Glib::ustring lastSelectedDir () { return selectedDirectory; }
                 void setEnabled (bool e);   // if not enabled, it does not open image
                 void enableTabMode(bool enable);  // sets progress bar
 
@@ -210,18 +210,18 @@ class FileCatalog : public Gtk::VBox,
                 void setImageAreaToolListener (ImageAreaToolListener* l) { iatlistener = l; }
                 void setDirBrowserRemoteInterface (DirBrowserRemoteInterface* l) { dirlistener = l; }
 
-				void setFilterPanel (FilterPanel* fpanel);
-				void setExportPanel (ExportPanel* expanel);
-				void exifInfoButtonToggled();
+                void setFilterPanel (FilterPanel* fpanel);
+                void setExportPanel (ExportPanel* expanel);
+                void exifInfoButtonToggled();
                 void categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick);
                 bool capture_event(GdkEventButton* event);
                 void filterChanged ();
                 void runFilterDialog ();
 
                 void on_realize();
-				void reparseDirectory ();
+                void reparseDirectory ();
                 void _openImage (std::vector<Thumbnail*> tmb);
-                
+
                 void zoomIn ();
                 void zoomOut ();
 

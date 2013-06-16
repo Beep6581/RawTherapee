@@ -72,7 +72,9 @@ option (BUILD_SHARED "Build rawtherapee with shared libraries" OFF)
 option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
-option (BUILD_BUNDLE "Self-contained build" OFF)
+option (PROTECT_VECTORS "Protect critical vectors by custom R/W Mutex, recommanded even if your std::vector is thread safe" ON)
+option (TRACE_MYRWMUTEX "Trace RT's custom R/W Mutex (Debug builds only); redirecting std::out to a file is strongly recommended!" OFF)
+option (AUTO_GDK_FLUSH "Use gdk_flush on all gdk_thread_leave other than the GUI thread; set it ON if you experience X Server warning/errors" OFF)
 
 # set install directories
 if (WIN32 OR APPLE)
@@ -159,6 +161,25 @@ if (NOT BUILD_BUNDLE AND
     IS_ABSOLUTE "${DOCDIR}" AND IS_ABSOLUTE "${CREDITSDIR}" AND IS_ABSOLUTE "${LICENCEDIR}"))
     message (FATAL_ERROR "The paths has to be absolute or use -DBUILD_BUNDLE=ON")
 endif ()
+
+# MyRWMutex
+if (PROTECT_VECTORS)
+    add_definitions (-DPROTECT_VECTORS=1)
+else (PROTECT_VECTORS)
+    add_definitions (-DPROTECT_VECTORS=0)
+endif (PROTECT_VECTORS)
+if (TRACE_MYRWMUTEX)
+    # Note: it will be set to 0 for Debug builds (rtgui/guiutils.h)
+    add_definitions (-DTRACE_MYRWMUTEX=1)
+else (TRACE_MYRWMUTEX)
+    add_definitions (-DTRACE_MYRWMUTEX=0)
+endif (TRACE_MYRWMUTEX)
+
+if (AUTO_GDK_FLUSH)
+    add_definitions (-DAUTO_GDK_FLUSH=1)
+else (AUTO_GDK_FLUSH)
+    add_definitions (-DAUTO_GDK_FLUSH=0)
+endif (AUTO_GDK_FLUSH)
 
 # check for libraries
 find_package(PkgConfig)

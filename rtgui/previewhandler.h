@@ -26,6 +26,7 @@
 class PreviewListener {
     
     public:
+        virtual ~PreviewListener () {}
         virtual void previewImageChanged () {}
 };
 
@@ -43,7 +44,7 @@ class PreviewHandler : public rtengine::PreviewImageListener {
     friend int imageReadyUI (void* data);
 
     protected:
-        rtengine::IImage8* image;       
+        rtengine::IImage8* image;
         rtengine::procparams::CropParams cropParams;
         double previewScale;
         PreviewHandlerIdleHelper* pih;

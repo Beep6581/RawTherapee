@@ -494,8 +494,6 @@ void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black
     nextHlcompr = hlcompr;
     nextHlcomprthresh = hlcomprthresh;
     g_idle_add (autoExpChangedUI, this);
-
-//    Glib::signal_idle().connect (sigc::mem_fun(*this, &ToneCurve::autoExpComputed_));
 }
 
 void ToneCurve::enableAll () {
@@ -515,6 +513,7 @@ void ToneCurve::enableAll () {
 
 bool ToneCurve::autoExpComputed_ () {
 
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     disableListener ();
     enableAll ();
     expcomp->setValue (nextExpcomp);

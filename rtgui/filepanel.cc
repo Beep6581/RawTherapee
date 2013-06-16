@@ -87,6 +87,7 @@ FilePanel::FilePanel () : parent(NULL) {
 	fileCatalog->setFilterPanel (filterPanel);
 	fileCatalog->setExportPanel (exportPanel);
     fileCatalog->setImageAreaToolListener (tpc);
+    fileCatalog->fileBrowser->setBatchPParamsChangeListener (tpc);
 
     //------------------
 
@@ -134,6 +135,7 @@ void FilePanel::setAspect () {
 
 void FilePanel::init () {
   
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     dirBrowser->fillDirTree ();
     placesBrowser->refreshPlacesList ();
 
@@ -170,40 +172,49 @@ bool FilePanel::fileSelected (Thumbnail* thm) {
 
     ProgressConnector<rtengine::InitialImage*> *ld = new ProgressConnector<rtengine::InitialImage*>();
     ld->startFunc (sigc::bind(sigc::ptr_fun(&rtengine::InitialImage::load), thm->getFileName (), thm->getType()==FT_Raw, &error, parent->getProgressListener()),
-   		           sigc::bind(sigc::mem_fun(*this,&FilePanel::imageLoaded), thm, ld) );
+                   sigc::bind(sigc::mem_fun(*this,&FilePanel::imageLoaded), thm, ld) );
     return true;
 }
 bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> *pc ){
 
-	if (pc->returnValue() && thm) {
-               
+    if (pc->returnValue() && thm) {
+
         if (options.tabbedUI) {
-            EditorPanel* epanel = Gtk::manage (new EditorPanel ());
+            EditorPanel* epanel;
+            {
+            GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
+            epanel = Gtk::manage (new EditorPanel ());
             parent->addEditorPanel (epanel,Glib::path_get_basename (thm->getFileName()));
+            }
             epanel->open(thm, pc->returnValue() );
         } else {
+            {
+            GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
             parent->SetEditorCurrent();
-            parent->epanel->open(thm, pc->returnValue() );                     
+            }
+            parent->epanel->open(thm, pc->returnValue() );
         }
+    } else {
+        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
+        Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
+    }
+    delete pc;
 
-	} else {
-		Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
-		Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-		msgd.run ();
-	}
-	delete pc;
-        
-	parent->setProgress(0.);
-	parent->setProgressStr("");
-	thm->imageLoad( false );
+    {
+    GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
+    parent->setProgress(0.);
+    parent->setProgressStr("");
+    }
+    thm->imageLoad( false );
 
-	return false; // MUST return false from idle function
+    return false; // MUST return false from idle function
 }
 
 void FilePanel::saveOptions () { 
 
-	int winW, winH;
-	parent->get_size(winW, winH);
+    int winW, winH;
+    parent->get_size(winW, winH);
     options.dirBrowserWidth = dirpaned->get_position ();
     options.dirBrowserHeight = placespaned->get_position ();
     options.browserToolPanelWidth = winW - get_position();
@@ -262,6 +273,7 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event) {
 
 void FilePanel::loadingThumbs(Glib::ustring str, double rate)
 {
+	GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 	if( !str.empty())
 		parent->setProgressStr(str);
 	parent->setProgress( rate );

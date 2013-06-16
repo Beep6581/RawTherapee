@@ -25,6 +25,16 @@
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
+struct BQProcessLoaded {
+    BatchQueue* bq;
+};
+
+int processLoadedBatchQueueUIThread (void* data) {
+
+    BatchQueue* bq = static_cast<BatchQueue*>(data);
+    bq->resizeLoadedQueue();
+    return 0;
+}
 
 BatchQueuePanel::BatchQueuePanel () {
 
@@ -132,7 +142,9 @@ BatchQueuePanel::BatchQueuePanel () {
     batchQueue->setBatchQueueListener (this);
 
     show_all ();
-    batchQueue->loadBatchQueue ();
+    if (batchQueue->loadBatchQueue ()) {
+        g_idle_add_full (G_PRIORITY_LOW, processLoadedBatchQueueUIThread, batchQueue, NULL);
+    }
 }
 
 

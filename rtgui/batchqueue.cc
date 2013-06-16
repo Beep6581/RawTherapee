@@ -65,6 +65,17 @@ BatchQueue::~BatchQueue ()
 	delete pmenu;
 }
 
+void BatchQueue::resizeLoadedQueue() {
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    for (size_t i=0; i<fd.size(); i++) {
+        fd.at(i)->resize(getThumbnailHeight());
+    }
+}
+
 // Reduce the max size of a thumb, since thumb is processed synchronously on adding to queue
 // leading to very long waiting when adding more images
 int BatchQueue::calcMaxThumbnailHeight() {
@@ -76,23 +87,37 @@ int BatchQueue::getMaxThumbnailHeight() const {
     return calcMaxThumbnailHeight();
 }
 
+void BatchQueue::saveThumbnailHeight (int height) {
+    options.thumbSizeQueue = height;
+}
+
+int BatchQueue::getThumbnailHeight () {
+    // The user could have manually forced the option to a too big value
+    return std::max(std::min(options.thumbSizeQueue, 200), 10);
+}
 
 void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry) {
 
     pmenu->popup (3, this->eventTime);
 }
 
-void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
+void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head, bool save)
 {
 	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-        Glib::RWLock::WriterLock l(entryRW);
-		#endif
+	// TODO: Check for Linux
+	#if PROTECT_VECTORS
+	MYWRITERLOCK(l, entryRW);
+	#endif
 
 	for( std::vector<BatchQueueEntry*>::iterator entry = entries.begin(); entry != entries.end();entry++ ){
 		(*entry)->setParent (this);
-		(*entry)->resize (std::min(options.thumbSize, getMaxThumbnailHeight()));  // batch queue might have smaller, restricted size
+
+		// BatchQueueButtonSet HAVE TO be added before resizing to take them into account
+		BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (*entry);
+		bqbs->setButtonListener (this);
+		(*entry)->addButtonSet (bqbs);
+
+		(*entry)->resize (getThumbnailHeight());  // batch queue might have smaller, restricted size
 		Glib::ustring tempFile = getTempFilenameForParams( (*entry)->filename );
 
 		// recovery save
@@ -114,13 +139,11 @@ void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head)
 		}
 		if ((*entry)->thumbnail)
 			(*entry)->thumbnail->imageEnqueued ();
+	}
+	}
 
-		BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (*entry);
-		bqbs->setButtonListener (this);
-		(*entry)->addButtonSet (bqbs);
-	}
-    saveBatchQueue( );
-	}
+	if (save)
+		saveBatchQueue( );
 
     redraw();
     notifyListener (false);
@@ -134,6 +157,12 @@ bool BatchQueue::saveBatchQueue( )
 
     if (f==NULL)
         return false;
+
+    {
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
 
     if (fd.size())
         // The column's header is mandatory (the first line will be skipped when loaded)
@@ -152,186 +181,186 @@ bool BatchQueue::saveBatchQueue( )
             bqe->saveFormat.saveParams, bqe->forceFormatOpts
         );
     }
+    }
     fclose (f);
     return true;
 }
 
-void BatchQueue::loadBatchQueue( )
+bool BatchQueue::loadBatchQueue( )
 {
-    {
+    Glib::ustring savedQueueFile;
+    savedQueueFile = options.rtdir+"/batch/queue.csv";
+    FILE *f = safe_g_fopen (savedQueueFile, "rt");
+
+    if (f!=NULL) {
+        char *buffer = new char[1024];
+        unsigned numLoaded=0;
+        // skipping the first line
+        bool firstLine=true;
+
+        // Yes, it's better to get the lock for the whole file reading,
+        // to update the list in one shot without any other concurrent access!
+
         // TODO: Check for Linux
-#ifdef WIN32
-        Glib::RWLock::WriterLock l(entryRW);
-#endif
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
 
-        Glib::ustring savedQueueFile;
-        savedQueueFile = options.rtdir+"/batch/queue.csv";
-        FILE *f = safe_g_fopen (savedQueueFile, "rt");
+        while (fgets (buffer, 1024, f)){
 
-        if (f!=NULL) {
-            char *buffer = new char[1024];
-            unsigned numLoaded=0;
-            // skipping the first line
-            bool firstLine=true;
-            while (fgets (buffer, 1024, f)){
+            if (firstLine) {
+                // skipping the column's title line
+                firstLine=false;
+                continue;
+            }
 
-                if (firstLine) {
-                    // skipping the column's title line
-                    firstLine=false;
-                    continue;
-                }
+            size_t pos;
+            Glib::ustring source;
+            Glib::ustring paramsFile;
+            Glib::ustring outputFile;
+            Glib::ustring saveFmt(options.saveFormat.format);
+            int jpegQuality=options.saveFormat.jpegQuality, jpegSubSamp     =options.saveFormat.jpegSubSamp;
+            int pngBits    =options.saveFormat.pngBits,     pngCompression  =options.saveFormat.pngCompression;
+            int tiffBits   =options.saveFormat.tiffBits,    tiffUncompressed=options.saveFormat.tiffUncompressed;
+            int saveParams =options.saveFormat.saveParams;
+            int forceFormatOpts =options.forceFormatOpts;
 
-                size_t pos;
-                Glib::ustring source;
-                Glib::ustring paramsFile;
-                Glib::ustring outputFile;
-                Glib::ustring saveFmt(options.saveFormat.format);
-                int jpegQuality=options.saveFormat.jpegQuality, jpegSubSamp     =options.saveFormat.jpegSubSamp;
-                int pngBits    =options.saveFormat.pngBits,     pngCompression  =options.saveFormat.pngCompression;
-                int tiffBits   =options.saveFormat.tiffBits,    tiffUncompressed=options.saveFormat.tiffUncompressed;
-                int saveParams =options.saveFormat.saveParams;
-                int forceFormatOpts =options.forceFormatOpts;
+            Glib::ustring currLine(buffer);
+            int a = 0;
+            if (currLine.rfind('\n') != Glib::ustring::npos) a++;
+            if (currLine.rfind('\r') != Glib::ustring::npos) a++;
+            if (a)
+                currLine = currLine.substr(0, currLine.length()-a);
 
-                Glib::ustring currLine(buffer);
-                int a = 0;
-                if (currLine.rfind('\n') != Glib::ustring::npos) a++;
-                if (currLine.rfind('\r') != Glib::ustring::npos) a++;
-                if (a)
-                    currLine = currLine.substr(0, currLine.length()-a);
+            // Looking for the image's full path
+            pos = currLine.find('|');
+            if (pos != Glib::ustring::npos) {
+            source = currLine.substr(0, pos);
+            currLine = currLine.substr(pos+1);
 
-                // Looking for the image's full path
-                pos = currLine.find('|');
-                if (pos != Glib::ustring::npos) {
-                source = currLine.substr(0, pos);
+            // Looking for the procparams' full path
+            pos = currLine.find('|');
+            if (pos != Glib::ustring::npos) {
+            paramsFile = currLine.substr(0, pos);
+            currLine = currLine.substr(pos+1);
+
+            // Looking for the full output path; if empty, it'll use the template string
+            pos = currLine.find('|');
+            if (pos != Glib::ustring::npos) {
+                outputFile = currLine.substr(0, pos);
                 currLine = currLine.substr(pos+1);
 
-                // Looking for the procparams' full path
-                pos = currLine.find('|');
-                if (pos != Glib::ustring::npos) {
-                paramsFile = currLine.substr(0, pos);
-                currLine = currLine.substr(pos+1);
+            // No need to bother reading the last options, they will be ignored if outputFile is empty!
+            if (!outputFile.empty()) {
 
-                // Looking for the full output path; if empty, it'll use the template string
+                // Looking for the saving format
                 pos = currLine.find('|');
                 if (pos != Glib::ustring::npos) {
-                    outputFile = currLine.substr(0, pos);
+                    saveFmt = currLine.substr(0, pos);
                     currLine = currLine.substr(pos+1);
 
-                // No need to bother reading the last options, they will be ignored if outputFile is empty!
-                if (!outputFile.empty()) {
+                // Looking for the jpeg quality
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    jpegQuality = atoi(currLine.substr(0, pos).c_str());
+                    currLine = currLine.substr(pos+1);
 
-                    // Looking for the saving format
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        saveFmt = currLine.substr(0, pos);
-                        currLine = currLine.substr(pos+1);
+                // Looking for the jpeg subsampling
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    jpegSubSamp = atoi(currLine.substr(0, pos).c_str());
+                    currLine = currLine.substr(pos+1);
 
-                    // Looking for the jpeg quality
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        jpegQuality = atoi(currLine.substr(0, pos).c_str());
-                        currLine = currLine.substr(pos+1);
+                // Looking for the png bit depth
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    pngBits = atoi(currLine.substr(0, pos).c_str());
+                    currLine = currLine.substr(pos+1);
 
-                    // Looking for the jpeg subsampling
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        jpegSubSamp = atoi(currLine.substr(0, pos).c_str());
-                        currLine = currLine.substr(pos+1);
+                // Looking for the png compression
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    pngCompression = atoi(currLine.substr(0, pos).c_str());
+                    currLine = currLine.substr(pos+1);
 
-                    // Looking for the png bit depth
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        pngBits = atoi(currLine.substr(0, pos).c_str());
-                        currLine = currLine.substr(pos+1);
+                // Looking for the tiff bit depth
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    tiffBits = atoi(currLine.substr(0, pos).c_str());
+                    currLine = currLine.substr(pos+1);
 
-                    // Looking for the png compression
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        pngCompression = atoi(currLine.substr(0, pos).c_str());
-                        currLine = currLine.substr(pos+1);
+                // Looking for the tiff uncompression
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    tiffUncompressed = atoi(currLine.substr(0, pos).c_str());
+                    currLine = currLine.substr(pos+1);
 
-                    // Looking for the tiff bit depth
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        tiffBits = atoi(currLine.substr(0, pos).c_str());
-                        currLine = currLine.substr(pos+1);
+                // Looking out if we have to save the procparams
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    saveParams = atoi(currLine.substr(0, pos).c_str());
+                    currLine = currLine.substr(pos+1);
 
-                    // Looking for the tiff uncompression
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        tiffUncompressed = atoi(currLine.substr(0, pos).c_str());
-                        currLine = currLine.substr(pos+1);
+                // Looking out if we have to to use the format options
+                pos = currLine.find('|');
+                if (pos != Glib::ustring::npos) {
+                    forceFormatOpts = atoi(currLine.substr(0, pos).c_str());
+                    // currLine = currLine.substr(pos+1);
 
-                    // Looking out if we have to save the procparams
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        saveParams = atoi(currLine.substr(0, pos).c_str());
-                        currLine = currLine.substr(pos+1);
+            }}}}}}}}}}}}}
 
-                    // Looking out if we have to to use the format options
-                    pos = currLine.find('|');
-                    if (pos != Glib::ustring::npos) {
-                        forceFormatOpts = atoi(currLine.substr(0, pos).c_str());
-                        // currLine = currLine.substr(pos+1);
+            if( !source.empty() && !paramsFile.empty() ){
+                rtengine::procparams::ProcParams pparams;
+                if( pparams.load( paramsFile ) )
+                    continue;
 
-                }}}}}}}}}}}}}
+                ::Thumbnail *thumb = cacheMgr->getEntry( source, &pparams );
+                if( thumb ){
+                    rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
 
-                if( !source.empty() && !paramsFile.empty() ){
-                    rtengine::procparams::ProcParams pparams;
-                    if( pparams.load( paramsFile ) )
-                        continue;
+                    int prevh = getMaxThumbnailHeight();
+                    int prevw = prevh;
+                    thumb->getThumbnailSize (prevw, prevh);
 
-                    ::Thumbnail *thumb = cacheMgr->getEntry( source );
-                    if( thumb ){
-                        rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
+                    BatchQueueEntry *entry = new BatchQueueEntry(job, pparams,source, prevw, prevh, thumb);
+                    entry->setParent(this);
 
-                        int prevh = getMaxThumbnailHeight();
-                        int prevw = prevh;
-                        guint8* prev = NULL;
-                        double tmpscale;
-                        rtengine::IImage8* img = thumb->processThumbImage(pparams, prevh, tmpscale);
-                        if (img) {
-                            prevw = img->getWidth();
-                            prevh = img->getHeight();
-                            prev = new guint8[prevw * prevh * 3];
-                            memcpy(prev, img->getData(), prevw * prevh * 3);
-                            img->free();
-                        }
-                        BatchQueueEntry *entry = new BatchQueueEntry(job, pparams,source, prev, prevw, prevh, thumb);
-                        entry->setParent(this);
-                        entry->resize(options.thumbSize);
-                        entry->savedParamsFile = paramsFile;
-                        entry->selected = false;
-                        entry->outFileName = outputFile;
-                        if (!outputFile.empty()) {
-                            entry->saveFormat.format = saveFmt;
-                            entry->saveFormat.jpegQuality = jpegQuality;
-                            entry->saveFormat.jpegSubSamp = jpegSubSamp;
-                            entry->saveFormat.pngBits = pngBits;
-                            entry->saveFormat.pngCompression = pngCompression;
-                            entry->saveFormat.tiffBits = tiffBits;
-                            entry->saveFormat.tiffUncompressed = tiffUncompressed!=0;
-                            entry->saveFormat.saveParams = saveParams!=0;
-                            entry->forceFormatOpts = forceFormatOpts!=0;
-                        }
-                        else
-                            entry->forceFormatOpts = false;
-                        fd.push_back(entry);
+                    // BatchQueueButtonSet HAVE TO be added before resizing to take them into account
+                    BatchQueueButtonSet* bqbs = new BatchQueueButtonSet(entry);
+                    bqbs->setButtonListener(this);
+                    entry->addButtonSet(bqbs);
 
-                        BatchQueueButtonSet* bqbs = new BatchQueueButtonSet(entry);
-                        bqbs->setButtonListener(this);
-                        entry->addButtonSet(bqbs);
-                        numLoaded++;
+                    //entry->resize(getThumbnailHeight());
+                    entry->savedParamsFile = paramsFile;
+                    entry->selected = false;
+                    entry->outFileName = outputFile;
+                    if (!outputFile.empty()) {
+                        entry->saveFormat.format = saveFmt;
+                        entry->saveFormat.jpegQuality = jpegQuality;
+                        entry->saveFormat.jpegSubSamp = jpegSubSamp;
+                        entry->saveFormat.pngBits = pngBits;
+                        entry->saveFormat.pngCompression = pngCompression;
+                        entry->saveFormat.tiffBits = tiffBits;
+                        entry->saveFormat.tiffUncompressed = tiffUncompressed!=0;
+                        entry->saveFormat.saveParams = saveParams!=0;
+                        entry->forceFormatOpts = forceFormatOpts!=0;
                     }
+                    else
+                        entry->forceFormatOpts = false;
+                    fd.push_back(entry);
+
+                    numLoaded++;
                 }
             }
-            delete [] buffer;
-            fclose(f);
         }
+        delete [] buffer;
+        fclose(f);
     }
 
     redraw();
     notifyListener(false);
+
+    return !fd.empty();
 }
 
 Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring filename )
@@ -359,13 +388,13 @@ int cancelItemUI (void* data)
 }
 
 void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
-	{
+    {
         // TODO: Check for Linux
-#ifdef WIN32
-        Glib::RWLock::WriterLock l(entryRW);
-#endif
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
 
-	for (size_t i=0; i<items->size(); i++) {
+        for (size_t i=0; i<items->size(); i++) {
             BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
             if (entry->processing)
                 continue;
@@ -382,59 +411,61 @@ void BatchQueue::cancelItems (std::vector<ThumbBrowserEntryBase*>* items) {
             fd[i]->selected = false;
         lastClicked = NULL;
         selected.clear ();
-
-        saveBatchQueue( );
     }
+
+    saveBatchQueue( );
 
     redraw ();
     notifyListener (false);
 }
 
 void BatchQueue::headItems (std::vector<ThumbBrowserEntryBase*>* items) {
-	{
-        // TODO: Check for Linux
-#ifdef WIN32
-        Glib::RWLock::WriterLock l(entryRW);
-#endif
-        for (int i=items->size()-1; i>=0; i--) {
-            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
-            if (entry->processing)
-                continue;
-            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
-            if (pos!=fd.end() && pos!=fd.begin()) {
-                fd.erase (pos);
-                // find the first item that is not under processing
-                for (pos=fd.begin(); pos!=fd.end(); pos++) 
-                    if (!(*pos)->processing) {
-                        fd.insert (pos, entry);
-                        break;
-                    }
-            }
+    {
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    for (int i=items->size()-1; i>=0; i--) {
+        BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+        if (entry->processing)
+            continue;
+        std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
+        if (pos!=fd.end() && pos!=fd.begin()) {
+            fd.erase (pos);
+            // find the first item that is not under processing
+            for (pos=fd.begin(); pos!=fd.end(); pos++)
+                if (!(*pos)->processing) {
+                    fd.insert (pos, entry);
+                    break;
+                }
         }
-        saveBatchQueue( );
     }
+    }
+    saveBatchQueue( );
 
     redraw ();
 }
 
 void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
-	{
-        // TODO: Check for Linux
-#ifdef WIN32
-        Glib::RWLock::WriterLock l(entryRW);
-#endif
-	for (size_t i=0; i<items->size(); i++) {
-            BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
-            if (entry->processing)
-                continue;
-            std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
-            if (pos!=fd.end()) {
-                fd.erase (pos);
-                fd.push_back (entry);
-            }
+    {
+    // TODO: Check for Linux
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    for (size_t i=0; i<items->size(); i++) {
+        BatchQueueEntry* entry = (BatchQueueEntry*)(*items)[i];
+        if (entry->processing)
+            continue;
+        std::vector<ThumbBrowserEntryBase*>::iterator pos = std::find (fd.begin(), fd.end(), entry);
+        if (pos!=fd.end()) {
+            fd.erase (pos);
+            fd.push_back (entry);
         }
-        saveBatchQueue( );
     }
+    }
+    saveBatchQueue( );
 
     redraw ();
 }
@@ -442,13 +473,13 @@ void BatchQueue::tailItems (std::vector<ThumbBrowserEntryBase*>* items) {
 void BatchQueue::selectAll () {
     {
         // TODO: Check for Linux
-#ifdef WIN32
-        Glib::RWLock::ReaderLock l(entryRW);
-#endif
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
 
         lastClicked = NULL;
         selected.clear ();
-	for (size_t i=0; i<fd.size(); i++) {
+        for (size_t i=0; i<fd.size(); i++) {
             if (fd[i]->processing)
                 continue;
             fd[i]->selected = true;
@@ -459,17 +490,18 @@ void BatchQueue::selectAll () {
 }
 
 void BatchQueue::startProcessing () {
-    if (!processing && !fd.empty()) {
-        BatchQueueEntry* next;
 
-        {
-            // TODO: Check for Linux
-	        #ifdef WIN32
-	        Glib::RWLock::WriterLock l(entryRW);
-	        #endif
+    if (!processing) {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
 
-	    next = static_cast<BatchQueueEntry*>(fd[0]);
-            // tag it as processing        
+        if (!fd.empty()) {
+            BatchQueueEntry* next;
+
+            next = static_cast<BatchQueueEntry*>(fd[0]);
+            // tag it as processing
             next->processing = true;
             processing = next;
             // remove from selection
@@ -480,13 +512,17 @@ void BatchQueue::startProcessing () {
                 processing->selected = false;
             }
 
+            #if PROTECT_VECTORS
+            MYWRITERLOCK_RELEASE(l);
+            #endif
+
             // remove button set
             next->removeButtonSet ();
-        }
 
-        // start batch processing
-        rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
-        queue_draw ();
+            // start batch processing
+            rtengine::startBatchProcessing (next->job, this, options.tunnelMetaData);
+            queue_draw ();
+        }
     }
 }
 
@@ -522,11 +558,11 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality, saveFormat.jpegSubSamp);
         img->free ();
 
-		if (err) throw "Unable to save output file";
+        if (err) throw "Unable to save output file";
 
         if (saveFormat.saveParams) {
-			// We keep the extension to avoid overwriting the profile when we have
-			// the same output filename with different extension
+            // We keep the extension to avoid overwriting the profile when we have
+            // the same output filename with different extension
             //processing->params.save (removeExtension(fname) + paramFileExtension);
             processing->params.save (fname + ".out" + paramFileExtension);
         }
@@ -542,11 +578,11 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     // delete from the queue
     delete processing; processing = NULL;
     bool queueEmptied=false;
-	{
+    {
         // TODO: Check for Linux
-#ifdef WIN32
-        Glib::RWLock::WriterLock l(entryRW);
-#endif
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
 
         fd.erase (fd.begin());
 
@@ -555,8 +591,8 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             queueEmptied=true;
         }
         else if (listener && listener->canStartNext ()) {
-	    BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
-            // tag it as selected        
+            BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
+            // tag it as selected
             next->processing = true;
             processing = next;
             // remove from selection
@@ -567,19 +603,32 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
                 processing->selected = false;
             }
             // remove button set
+            {
+            // ButtonSet have Cairo::Surface which might be rendered while we're trying to delete them
+            GThreadLock lock;
             next->removeButtonSet ();
-        }
-        if (saveBatchQueue( )) {
-            safe_g_remove( processedParams );
-            // Delete all files in directory \batch when finished, just to be sure to remove zombies
-            if( fd.empty() ){
-                std::vector<Glib::ustring> names;
-                Glib::ustring batchdir = options.rtdir+"/batch/";
-                Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
-                safe_build_file_list (dir, names, batchdir);
-                for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
-                    safe_g_remove( *iter );
             }
+        }
+    }
+    if (saveBatchQueue( )) {
+        safe_g_remove( processedParams );
+        // Delete all files in directory \batch when finished, just to be sure to remove zombies
+
+        // Not sure that locking is necessary, but it should be safer
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYREADERLOCK(l, entryRW);
+        #endif
+        if( fd.empty() ){
+            #if PROTECT_VECTORS
+            MYREADERLOCK_RELEASE(l);
+            #endif
+            std::vector<Glib::ustring> names;
+            Glib::ustring batchdir = options.rtdir+"/batch/";
+            Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
+            safe_build_file_list (dir, names, batchdir);
+            for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
+                safe_g_remove( *iter );
         }
     }
 
@@ -728,6 +777,7 @@ void BatchQueue::setProgress (double p) {
     if (processing)
         processing->progress = p;
 
+    // No need to acquire the GUI, setProgressUI will do it
     g_idle_add (setProgressUI, this);
 }
 
@@ -751,6 +801,7 @@ struct NLParams {
 };
 
 int bqnotifylistenerUI (void* data) {
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     NLParams* params = static_cast<NLParams*>(data);
     params->listener->queueSizeChanged (params->qsize, params->queueEmptied);
     delete params;
@@ -762,13 +813,19 @@ void BatchQueue::notifyListener (bool queueEmptied) {
     if (listener) {
         NLParams* params = new NLParams;
         params->listener = listener;
+        {
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYREADERLOCK(l, entryRW);
+        #endif
         params->qsize = fd.size();
+        }
         params->queueEmptied = queueEmptied;
         g_idle_add (bqnotifylistenerUI, params);
     }
 }
 
 void BatchQueue::redrawNeeded (LWButton* button) {
-    
+    GThreadLock lock;
     queue_draw ();
 }

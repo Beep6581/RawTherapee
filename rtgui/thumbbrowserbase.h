@@ -23,6 +23,7 @@
 #include "thumbbrowserentrybase.h"
 #include <set>
 #include "options.h"
+#include "guiutils.h"
 
 /*
  * Class handling the list of ThumbBrowserEntry objects and their position in it's allocated space
@@ -54,6 +55,8 @@ class ThumbBrowserBase  :  public Gtk::VBox {
 
   protected:
     virtual int getMaxThumbnailHeight() const { return options.maxThumbnailHeight; }  // Differs between batch and file
+    virtual void saveThumbnailHeight (int height)=0;
+    virtual int  getThumbnailHeight ()=0;
 
     Internal internal;
     Gtk::HScrollbar hscroll;
@@ -62,7 +65,6 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     int inW, inH;
 
     bool inTabMode;  // Tab mode has e.g. different preview heights
-    int getCurrentThumbSize();  // depending on filmstrip/file browser mode
 
     void resizeThumbnailArea (int w, int h);
     void internalAreaResized (Gtk::Allocation& req);
@@ -80,7 +82,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
 
     int eventTime;
 
-	Glib::RWLock entryRW;  // Locks access to following vectors
+    MyRWMutex entryRW;  // Locks access to following 'fd' AND 'selected'
     std::vector<ThumbBrowserEntryBase*> fd;
     std::vector<ThumbBrowserEntryBase*> selected;
     ThumbBrowserEntryBase* lastClicked;

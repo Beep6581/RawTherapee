@@ -28,6 +28,11 @@
 
 using namespace std;
 
+#if TRACE_MYRWMUTEX==1 && !defined NDEBUG
+unsigned int MyReaderLock::readerLockCounter = 0;
+unsigned int MyWriterLock::writerLockCounter = 0;
+#endif
+
 Glib::ustring escapeHtmlChars(const Glib::ustring &src) {
 
     // Sources chars to be escaped

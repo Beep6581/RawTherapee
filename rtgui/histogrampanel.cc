@@ -353,6 +353,9 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b) {
         return;
   }
 
+  // Mostly not necessary, but should be in some case
+  GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+
   Glib::RefPtr<Gdk::Window> window = get_window();
   int winx, winy, winw, winh, wind;
   window->get_geometry(winx, winy, winw, winh, wind);
@@ -420,8 +423,6 @@ void HistogramRGBArea::renderRGBMarks (int r, int g, int b) {
 
 int histrgbupdate (void* data) {
 
-    gdk_threads_enter ();
-
     HistogramRGBAreaIdleHelper* harih = static_cast<HistogramRGBAreaIdleHelper*>(data);
 
     if (harih->destroyed) {
@@ -429,7 +430,6 @@ int histrgbupdate (void* data) {
             delete harih;
         else    
             harih->pending--;
-        gdk_threads_leave ();
         return 0;
     }
     
@@ -437,7 +437,6 @@ int histrgbupdate (void* data) {
     harih->harea->queue_draw ();
 
     harih->pending--;
-    gdk_threads_leave ();
 
     return 0;
 }
@@ -453,7 +452,7 @@ void HistogramRGBArea::update (int valh, int rh, int  gh, int bh) {
     }
     else
         valid = false;
-	
+
     harih->pending++;
     g_idle_add (histrgbupdate, harih);
 }
@@ -618,8 +617,9 @@ void HistogramArea::update (LUTu &histRed, LUTu &histGreen, LUTu &histBlue, LUTu
     }
     else
         valid = false;
-	
+
     haih->pending++;
+    // Can be done outside of the GUI thread
     g_idle_add (histupdateUI, haih);
 }
 

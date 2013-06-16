@@ -20,7 +20,10 @@
 #define __GUI_UTILS_
 
 #include <gtkmm.h>
+#include <glibmm.h>
 #include "../rtengine/rtengine.h"
+#include <sstream>
+#include <iostream>
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src);
 bool removeIfThere (Gtk::Container* cont, Gtk::Widget* w, bool increference=true);
@@ -73,6 +76,455 @@ public:
 		gdk_threads_enter();
 	}
 };
+
+#ifdef NDEBUG
+    // We don't trace mutex
+    #undef TRACE_MYRWMUTEX
+    #define TRACE_MYRWMUTEX 0
+#endif
+
+
+// Uncomment this if you want to bypass the CMakeList options and force the values
+// Of course, DO NOT COMMIT! :)
+
+//#undef PROTECT_VECTORS
+//#define PROTECT_VECTORS 1
+//#undef TRACE_MYRWMUTEX
+//#define TRACE_MYRWMUTEX 1
+
+
+/**
+ * @brief Custom RWLock with debugging feature, to replace the buggy Glib::RWLock (can have negative reader_count value!)
+ *
+ * It may be slower, but thread safe!
+ */
+class MyRWMutex {
+public:
+	Glib::Mutex handlerMutex;
+	Glib::Cond  access;
+	size_t      writerCount;
+	size_t      readerCount;
+#if TRACE_MYRWMUTEX
+	Glib::ustring lastWriterFile;
+	int           lastWriterLine;
+	// Unfortunately, ownerThread may not be the culprit of a deadlock, it can be another concurrent Reader...
+	void*         ownerThread;
+
+	MyRWMutex() : writerCount(0), readerCount(0), lastWriterLine(0), ownerThread(NULL) {}
+#else
+	MyRWMutex() : writerCount(0), readerCount(0) {}
+#endif
+};
+
+/**
+ * @brief Custom ReaderLock with debugging feature, to replace the buggy Glib::RWLock (can have negative reader_count value!)
+ *
+ */
+class MyReaderLock {
+
+	MyRWMutex& rwMutex;
+	bool locked;
+
+	#if TRACE_MYRWMUTEX
+	static unsigned int readerLockCounter;
+	int locknumber;
+
+public:
+	inline MyReaderLock(MyRWMutex& mutex, const char* name, const char* file, const int line) : rwMutex(mutex), locked(false), locknumber(0)
+	#else
+public:
+	inline MyReaderLock(MyRWMutex& mutex) : rwMutex(mutex)
+	#endif
+
+	{
+		// to operate safely
+		rwMutex.handlerMutex.lock();
+
+		#if TRACE_MYRWMUTEX
+		locknumber = readerLockCounter++;
+		void* thread = Glib::Thread::self();
+		std::cout << thread << "/" << locknumber << ":" << name <<  " / " << file << " : " << line << " - locking - R";
+		#endif
+
+		if (!rwMutex.writerCount) {
+			// There's no writer operating, we can increment the writer count which will lock writers
+			++rwMutex.writerCount;
+			#if TRACE_MYRWMUTEX
+			std::cout << " ++ new owner";
+			#endif
+		}
+		else {
+			// The writer count is non null, but we can be the owner of the writer lock
+			// It will be the case if the reader count is non null too.
+			if (!rwMutex.readerCount) {
+				// the mutex is in real write mode, we're waiting to see it null
+				#if TRACE_MYRWMUTEX
+				std::cout << "  waiting..." << std::endl << "Current writer owner: " << rwMutex.lastWriterFile << " : " << rwMutex.lastWriterLine << std::endl;
+				#endif
+				while (rwMutex.writerCount)
+					rwMutex.access.wait(rwMutex.handlerMutex);
+				++rwMutex.writerCount;
+				#if TRACE_MYRWMUTEX
+				rwMutex.lastWriterFile = file;
+				rwMutex.lastWriterLine = line;
+				rwMutex.ownerThread = thread;
+				std::cout << thread << "/" << locknumber << ":" << name <<  " / " << file << " : " << line << " - locking - R ++ new owner";
+				#endif
+			}
+		}
+		// then we can increment the reader count
+		++rwMutex.readerCount;
+
+		#if TRACE_MYRWMUTEX
+		std::cout << " - ReaderCount: " << rwMutex.readerCount << " - WriterCount: " << rwMutex.writerCount << std::endl;
+		#endif
+
+		rwMutex.handlerMutex.unlock();
+
+		locked = true;
+	}
+	#if TRACE_MYRWMUTEX
+	// locks the MyRWMutex with Read access if this MyReaderLock has not already locked it, otherwise return safely
+	inline void acquire(const char* file, const int line)
+	#else
+	// locks the MyRWMutex with Read access if this MyReaderLock has not already locked it, otherwise return safely
+	inline void acquire()
+	#endif
+	{
+		#if TRACE_MYRWMUTEX
+		void* thread = Glib::Thread::self();
+		#endif
+		if (!locked) {
+			// to operate safely
+			rwMutex.handlerMutex.lock();
+
+			#if TRACE_MYRWMUTEX
+			std::cout << thread << "/" << locknumber << ":" << file << " : " << line << " - locking - R (lock)";
+			#endif
+
+			if (!rwMutex.writerCount) {
+				// There's no writer operating, we can increment the writer count which will lock writers
+				++rwMutex.writerCount;
+				#if TRACE_MYRWMUTEX
+				std::cout << " ++ new owner";
+				#endif
+			}
+			else {
+				// The writer count is non null, but a reader can be the owner of the writer lock,
+				// it will be the case if the reader count is non null too.
+				if (!rwMutex.readerCount) {
+					// the mutex is in real write mode, we're waiting to see it null
+					#if TRACE_MYRWMUTEX
+					std::cout << "  waiting..." << std::endl << "Current writer owner: " << rwMutex.lastWriterFile << " : " << rwMutex.lastWriterLine << std::endl;
+					#endif
+					while (rwMutex.writerCount)
+						rwMutex.access.wait(rwMutex.handlerMutex);
+					++rwMutex.writerCount;
+					#if TRACE_MYRWMUTEX
+					rwMutex.lastWriterFile = file;
+					rwMutex.lastWriterLine = line;
+					rwMutex.ownerThread = thread;
+					std::cout << thread << "/" << locknumber << ":" << file << " : " << line << " - locking - R (lock) ++ new owner";
+					#endif
+				}
+			}
+			// then we can increment the reader count
+			++rwMutex.readerCount;
+
+			#if TRACE_MYRWMUTEX
+			std::cout << " - ReaderCount: " << rwMutex.readerCount << " - WriterCount: " << rwMutex.writerCount << std::endl;
+			#endif
+
+			rwMutex.handlerMutex.unlock();
+
+			locked = true;
+		}
+		#if TRACE_MYRWMUTEX
+		else std::cout << thread << "/" << locknumber << " / already locked by this object - R (lock)" << std::endl;
+		#endif
+	}
+	inline ~MyReaderLock() {
+		#if TRACE_MYRWMUTEX
+		void* thread = Glib::Thread::self();
+		#endif
+		if (locked) {
+			// to operate safely
+			rwMutex.handlerMutex.lock();
+
+			// decrement the writer number first
+			--rwMutex.readerCount;
+
+			#if TRACE_MYRWMUTEX
+			std::cout << thread << "/" << locknumber << " / unlocking - R - ReaderCount: " << rwMutex.readerCount;
+			#endif
+
+			if (!rwMutex.readerCount) {
+				// no more reader, so we decrement the writer count
+				--rwMutex.writerCount;
+				#if TRACE_MYRWMUTEX
+				rwMutex.lastWriterFile = "";
+				rwMutex.lastWriterLine = 0;
+				rwMutex.ownerThread = NULL;
+				std::cout << " -- new owner possible!" << " >>> ReaderCount: " << rwMutex.readerCount << " - WriterCount: " << rwMutex.writerCount;
+				#endif
+				// and signal the next waiting reader/writer that it's free
+				rwMutex.access.broadcast();
+			}
+			#if TRACE_MYRWMUTEX
+			std::cout << std::endl;
+			#endif
+
+			rwMutex.handlerMutex.unlock();
+		}
+		#if TRACE_MYRWMUTEX
+		else std::cout << thread << "/" << locknumber << " / already unlocked by this object - R" << std::endl;
+		#endif
+	}
+	#if TRACE_MYRWMUTEX
+	// releases the MyRWMutex with Write access if this MyWriterLock has already locked it, otherwise return safely
+	inline void release(const char* file, const int line)
+	#else
+	// releases the MyRWMutex with Write access if this MyWriterLock has already locked it, otherwise return safely
+	inline void release()
+	#endif
+	{
+		#if TRACE_MYRWMUTEX
+		void* thread = Glib::Thread::self();
+		#endif
+		if (locked) {
+			// to operate safely
+			rwMutex.handlerMutex.lock();
+
+			// decrement the writer number first
+			--rwMutex.readerCount;
+
+			#if TRACE_MYRWMUTEX
+			std::cout << thread << "/" << locknumber << " / unlocking - R (release) - ReaderCount: " << rwMutex.readerCount;
+			#endif
+
+			if (!rwMutex.readerCount) {
+				// no more reader, so we decrement the writer count
+				--rwMutex.writerCount;
+				#if TRACE_MYRWMUTEX
+				rwMutex.lastWriterFile = "";
+				rwMutex.lastWriterLine = 0;
+				rwMutex.ownerThread = NULL;
+				std::cout << " -- new owner possible!" << " >>> ReaderCount: " << rwMutex.readerCount << " - WriterCount: " << rwMutex.writerCount;
+				#endif
+				// and signal the next waiting reader/writer that it's free
+				rwMutex.access.broadcast();
+			}
+			#if TRACE_MYRWMUTEX
+			std::cout << std::endl;
+			#endif
+
+			rwMutex.handlerMutex.unlock();
+
+			locked = false;
+		}
+		#if TRACE_MYRWMUTEX
+		else std::cout << thread << "/" << locknumber << " / already unlocked - R (release)" << std::endl;
+		#endif
+	}
+};
+
+/**
+ * @brief Custom WriterLock with debugging feature, to replace the buggy Glib::RWLock (can have negative reader_count value!)
+ *
+ */
+class MyWriterLock {
+
+	MyRWMutex& rwMutex;
+	bool locked;
+
+	#if TRACE_MYRWMUTEX
+	static unsigned int writerLockCounter;
+	int locknumber;
+public:
+	inline MyWriterLock(MyRWMutex& mutex, const char* name, const char* file, const int line) : rwMutex(mutex), locked(false), locknumber(0)
+	#else
+public:
+	inline MyWriterLock(MyRWMutex& mutex) : rwMutex(mutex)
+	#endif
+	{
+		// to operate safely
+		rwMutex.handlerMutex.lock();
+
+		#if TRACE_MYRWMUTEX
+		locknumber = writerLockCounter++;
+		void* thread = Glib::Thread::self();
+		std::cout << thread << "/" << locknumber << ":" << name <<  " / " << file << " : " << line << " - locking - W";
+		#endif
+
+		if (rwMutex.writerCount) {
+			// The writer count is non null, so we have to wait for it to be null again
+			#if TRACE_MYRWMUTEX
+			std::cout << "  waiting..." << std::endl << "Current writer owner: " << rwMutex.lastWriterFile << " : " << rwMutex.lastWriterLine << std::endl;
+			#endif
+			while (rwMutex.writerCount)
+				rwMutex.access.wait(rwMutex.handlerMutex);
+			#if TRACE_MYRWMUTEX
+			std::cout << thread << "/" << locknumber << ":" << file << " : " << line << " - locking - W";
+			#endif
+		}
+		// then we can increment the writer count
+		++rwMutex.writerCount;
+
+		#if TRACE_MYRWMUTEX
+		rwMutex.lastWriterFile = file;
+		rwMutex.lastWriterLine = line;
+		rwMutex.ownerThread = thread;
+		std::cout << " ++ new owner <<< ReaderCount: " << rwMutex.readerCount << " - WriterCount: " << rwMutex.writerCount << std::endl;
+		#endif
+
+		rwMutex.handlerMutex.unlock();
+
+		locked = true;
+	}
+	#if TRACE_MYRWMUTEX
+	// locks the MyRWMutex with Read access if this MyReaderLock has not already locked it, otherwise return safely
+	inline void acquire(const char* file, const int line)
+	#else
+	// locks the MyRWMutex with Read access if this MyReaderLock has not already locked it, otherwise return safely
+	inline void acquire()
+	#endif
+	{
+		#if TRACE_MYRWMUTEX
+		void* thread = Glib::Thread::self();
+		#endif
+		if (!locked) {
+			// to operate safely
+			rwMutex.handlerMutex.lock();
+
+			#if TRACE_MYRWMUTEX
+			std::cout << thread << "/" << locknumber << ":" << file << " : " << line << " - locking - W (lock)";
+			#endif
+
+			if (rwMutex.writerCount) {
+				// The writer count is non null, so we have to wait for it to be null again
+				#if TRACE_MYRWMUTEX
+				std::cout << "  waiting..." << std::endl << "Current writer owner: " << rwMutex.lastWriterFile << " : " << rwMutex.lastWriterLine << std::endl;
+				#endif
+				while (rwMutex.writerCount)
+					rwMutex.access.wait(rwMutex.handlerMutex);
+				#if TRACE_MYRWMUTEX
+				std::cout << thread << "/" << locknumber << ":" << file << " : " << line << " - locking - W (lock)";
+				#endif
+			}
+			// then we can increment the reader count
+			++rwMutex.writerCount;
+
+			#if TRACE_MYRWMUTEX
+			rwMutex.lastWriterFile = file;
+			rwMutex.lastWriterLine = line;
+			rwMutex.ownerThread = thread;
+			std::cout << " ++ new owner <<< ReaderCount: " << rwMutex.readerCount << " - WriterCount: " << rwMutex.writerCount << std::endl;
+			#endif
+
+			rwMutex.handlerMutex.unlock();
+
+			locked = true;
+		}
+		#if TRACE_MYRWMUTEX
+		else std::cout << thread << "/" << locknumber << " / already locked by this object - W (lock)" << std::endl;
+		#endif
+	}
+	inline ~MyWriterLock() {
+		#if TRACE_MYRWMUTEX
+		void* thread = Glib::Thread::self();
+		#endif
+		if (locked) {
+			// to operate safely
+			rwMutex.handlerMutex.lock();
+
+			// decrement the writer number first
+			--rwMutex.writerCount;
+
+			#if TRACE_MYRWMUTEX
+			std::cout << thread << "/" << locknumber << " / unlocking - W";
+			#endif
+
+			if (!rwMutex.writerCount) {
+				#if TRACE_MYRWMUTEX
+				rwMutex.lastWriterFile = "";
+				rwMutex.lastWriterLine = 0;
+				rwMutex.ownerThread = NULL;
+				std::cout << " -- new owner possible!";
+				#endif
+				// The writer count is null again, so we can wake up the next writer or reader
+				rwMutex.access.broadcast();
+			}
+			#if TRACE_MYRWMUTEX
+			std::cout << " <<< ReaderCount: " << rwMutex.readerCount << " - WriterCount: " << rwMutex.writerCount << std::endl;
+			#endif
+
+			rwMutex.handlerMutex.unlock();
+		}
+		#if TRACE_MYRWMUTEX
+		else std::cout << thread << "/" << locknumber << " / already unlocked by this object - W" << std::endl;
+		#endif
+	}
+	#if TRACE_MYRWMUTEX
+	// releases the MyRWMutex with Write access if this MyWriterLock has already locked it, otherwise return safely
+	inline void release(const char* file, const int line)
+	#else
+	// releases the MyRWMutex with Write access if this MyWriterLock has already locked it, otherwise return safely
+	inline void release()
+	#endif
+	{
+		#if TRACE_MYRWMUTEX
+		void* thread = Glib::Thread::self();
+		#endif
+		if (locked) {
+			// to operate safely
+			rwMutex.handlerMutex.lock();
+
+			// decrement the writer number first
+			--rwMutex.writerCount;
+
+			#if TRACE_MYRWMUTEX
+			std::cout << thread << "/" << locknumber << " / unlocking - W (release)";
+			#endif
+
+			if (!rwMutex.writerCount) {
+				#if TRACE_MYRWMUTEX
+				rwMutex.lastWriterFile = "";
+				rwMutex.lastWriterLine = 0;
+				rwMutex.ownerThread = NULL;
+				std::cout << " -- new owner possible!";
+				#endif
+				// The writer count is null again, so we can wake up the next writer or reader
+				rwMutex.access.broadcast();
+			}
+			#if TRACE_MYRWMUTEX
+			std::cout << " <<< ReaderCount: " << rwMutex.readerCount << " - WriterCount: " << rwMutex.writerCount << std::endl;
+			#endif
+
+			rwMutex.handlerMutex.unlock();
+
+			locked = false;
+		}
+		#if TRACE_MYRWMUTEX
+		else std::cout << thread << "/" << locknumber << " / already unlocked by this object - W (release)" << std::endl;
+		#endif
+	}
+};
+
+#if TRACE_MYRWMUTEX
+#define MYREADERLOCK(ln, e) MyReaderLock ln(e, #e, __FILE__, __LINE__);
+#define MYWRITERLOCK(ln, e) MyWriterLock ln(e, #e, __FILE__, __LINE__);
+#define MYREADERLOCK_ACQUIRE(ln) ln.acquire(__FILE__, __LINE__);
+#define MYWRITERLOCK_ACQUIRE(ln) ln.acquire(__FILE__, __LINE__);
+#define MYREADERLOCK_RELEASE(ln) ln.release(__FILE__, __LINE__);
+#define MYWRITERLOCK_RELEASE(ln) ln.release(__FILE__, __LINE__);
+#else
+#define MYREADERLOCK(ln, e) MyReaderLock ln(e);
+#define MYWRITERLOCK(ln, e) MyWriterLock ln(e);
+#define MYREADERLOCK_ACQUIRE(ln) ln.acquire();
+#define MYWRITERLOCK_ACQUIRE(ln) ln.acquire();
+#define MYREADERLOCK_RELEASE(ln) ln.release();
+#define MYWRITERLOCK_RELEASE(ln) ln.release();
+#endif
 
 /**
  * @brief subclass of Gtk::ScrolledWindow in order to handle the scrollwheel

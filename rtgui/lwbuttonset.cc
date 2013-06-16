@@ -85,7 +85,7 @@ void LWButtonSet::arrangeButtons (int x, int y, int w, int h) {
 
 void LWButtonSet::move (int nx, int ny) {
 
-	for (size_t i=0; i<buttons.size(); i++) {
+    for (size_t i=0; i<buttons.size(); i++) {
         int x, y;
         buttons[i]->getPosition (x, y);
         buttons[i]->setPosition (x+nx-ax, y+ny-ay);
@@ -97,7 +97,7 @@ void LWButtonSet::move (int nx, int ny) {
 
 void LWButtonSet::redraw (Cairo::RefPtr<Cairo::Context> context) {
 
-	for (size_t i=0; i<buttons.size(); i++)
+    for (size_t i=0; i<buttons.size(); i++)
         buttons[i]->redraw (context);
 }
 

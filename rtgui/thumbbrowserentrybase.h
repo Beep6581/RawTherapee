@@ -22,6 +22,7 @@
 #include <gtkmm.h>
 #include "lwbuttonset.h"
 #include "thumbnail.h"
+#include "guiutils.h"
 
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase {
@@ -42,7 +43,7 @@ protected:
     int lowerMargin;
 
     
-    Glib::RWLock lockRW;  // Locks access to all image thumb changing actions
+    MyRWMutex lockRW;  // Locks access to all image thumb changing actions
 
     guint8* preview;  // holds the preview image. used in updateBackBuffer. TODO Olli: Make a cache to reduce mem significantly
 

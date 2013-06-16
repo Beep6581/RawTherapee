@@ -122,7 +122,8 @@ class Options {
     bool multiUser;
     static Glib::ustring rtdir;
     Glib::ustring version;
-    int thumbSize,thumbSizeTab;
+    int thumbSize,thumbSizeTab, thumbSizeQueue;
+    bool sameThumbSize;     // Will use only one thumb size for the file browser and the single editor tab, and avoid recomputing them
     bool showHistory;
     int showFilePanelState; // 0: normal, 1: maximized, 2: normal, 3: hidden
     bool showInfo;

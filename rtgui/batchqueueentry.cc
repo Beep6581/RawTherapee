@@ -27,16 +27,16 @@
 bool BatchQueueEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 
-BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, guint8* previmg, int prevw, int prevh, Thumbnail* thm) 
+BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm)
     : ThumbBrowserEntryBase(fname),
-      opreview(previmg), origpw(prevw), origph(prevh),
+      opreview(NULL), origpw(prevw), origph(prevh), opreviewDone(false),
       job(pjob), progress(0), outFileName(""), forceFormatOpts(false) {
 
     thumbnail=thm;
     params = pparams;
 
-    #ifndef WIN32
-	// The BatchQueueEntryIdleHelper tracks if an entry has been deleted while it was sitting wating for "idle"
+    #if 1 //ndef WIN32
+    // The BatchQueueEntryIdleHelper tracks if an entry has been deleted while it was sitting waiting for "idle"
     bqih = new BatchQueueEntryIdleHelper;
     bqih->bqentry = this;
     bqih->destroyed = false;
@@ -55,24 +55,28 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 BatchQueueEntry::~BatchQueueEntry () {
 
     batchQueueEntryUpdater.removeJobs (this);
-    delete [] opreview; opreview=NULL;
+    if (opreview) delete [] opreview; opreview=NULL;
     if (thumbnail)
         thumbnail->decreaseRef ();
 
-    #ifndef WIN32
     if (bqih->pending)
         bqih->destroyed = true;
     else
         delete bqih;
-    #endif
 }
 
 void BatchQueueEntry::refreshThumbnailImage () {
 
-    if (!opreview)
-        return;
-
-    batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);  // this will asynchronously land at this.updateImage
+    if (!opreviewDone) {
+        // creating the image buffer first
+        //if (!opreview) opreview = new guint8[(origpw+1) * origph * 3];
+        // this will asynchronously compute the original preview and land at this.updateImage
+        batchQueueEntryUpdater.process (NULL, origpw, origph, preh, this, &params, thumbnail);
+    }
+    else {
+        // this will asynchronously land at this.updateImage
+        batchQueueEntryUpdater.process (opreview, origpw, origph, preh, this);
+    }
 }
 
 void BatchQueueEntry::calcThumbnailSize () {
@@ -166,8 +170,6 @@ Glib::ustring BatchQueueEntry::getToolTip (int x, int y) {
 
 }
 
-#ifndef WIN32
-
 struct BQUpdateParam {
     BatchQueueEntryIdleHelper* bqih;
     guint8* img;
@@ -180,11 +182,13 @@ int updateImageUIThread (void* data) {
 
     BatchQueueEntryIdleHelper* bqih = params->bqih;
 
-	// If the BQEntry was destroyed meanwhile, remove all the IdleHelper if all entries came through
+    GThreadLock tLock; // Acquire the GUI
+
+    // If the BQEntry was destroyed meanwhile, remove all the IdleHelper if all entries came through
     if (bqih->destroyed) {
         if (bqih->pending == 1)
             delete bqih;
-        else    
+        else
             bqih->pending--;
         delete [] params->img;
         delete params;
@@ -198,35 +202,29 @@ int updateImageUIThread (void* data) {
     delete params;
     return 0;
 }
-#endif
 
 // Starts a copy of img->preview via GTK thread
-void BatchQueueEntry::updateImage (guint8* img, int w, int h) {
-    // TODO: Check for Linux/Mac
-#ifdef WIN32
+void BatchQueueEntry::updateImage (guint8* img, int w, int h, int origw, int origh, guint8* newOPreview) {
+
     // since the update itself is already called in an async thread and there are problem with accessing opreview in thumbbrowserbase,
-    // it's safer to do this synchrously
+    // it's safer to do this synchronously
     {
         GThreadLock lock;
 
         _updateImage(img,w,h);
     }
-#else
-    bqih->pending++;
-
-    BQUpdateParam* param = new BQUpdateParam ();
-    param->bqih = bqih;
-    param->img = img;
-    param->w = w;
-    param->h = h;
-    g_idle_add (updateImageUIThread, param);
-#endif
 }
 
 void BatchQueueEntry::_updateImage (guint8* img, int w, int h) {
 
     if (preh == h) {
+
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, lockRW);
+        #endif
+
         prew = w;
+        assert (preview == NULL);
         preview = new guint8 [prew*preh*3];
         memcpy (preview, img, prew*preh*3);
         if (parent)

@@ -23,8 +23,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PreviewHandler::PreviewHandler () : image(NULL) {
-    
+PreviewHandler::PreviewHandler () : image(NULL), previewScale(1.) {
+
     pih = new PreviewHandlerIdleHelper;
     pih->phandler = this;
     pih->destroyed = false;

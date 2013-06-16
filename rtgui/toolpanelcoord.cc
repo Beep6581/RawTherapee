@@ -580,6 +580,7 @@ bool ToolPanelCoordinator::handleShortcutKey (GdkEventKey* event) {
 }
 
 void ToolPanelCoordinator::updateVScrollbars (bool hide) {
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     Gtk::PolicyType policy = hide ? Gtk::POLICY_NEVER : Gtk::POLICY_AUTOMATIC;
     exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
     detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
@@ -589,9 +590,10 @@ void ToolPanelCoordinator::updateVScrollbars (bool hide) {
 }
 
 void ToolPanelCoordinator::updateTabsHeader (bool useIcons) {
-	TOITypes type = useIcons ? TOI_ICON : TOI_TEXT;
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
+    TOITypes type = useIcons ? TOI_ICON : TOI_TEXT;
 
-	toiE->switchTo(type);
+    toiE->switchTo(type);
     toiD->switchTo(type);
     toiC->switchTo(type);
     toiT->switchTo(type);
@@ -609,6 +611,7 @@ void ToolPanelCoordinator::updateTabsUsesIcons (bool useIcons) {
 }
 
 void ToolPanelCoordinator::toolSelected (ToolMode tool) {
+    GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
 	switch (tool) {
 	case TMCropSelect:
 		crop->exp->set_expanded(true);

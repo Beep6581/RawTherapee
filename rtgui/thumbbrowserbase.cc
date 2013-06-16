@@ -58,19 +58,25 @@ ThumbBrowserBase::ThumbBrowserBase ()
 }
 
 void ThumbBrowserBase::scrollChanged () {
-	for (size_t i=0; i<fd.size(); i++)
+    {
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    for (size_t i=0; i<fd.size(); i++)
         fd[i]->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
+    }
 
     internal.setPosition ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
 
-    if (!internal.isDirty()) {    
+    if (!internal.isDirty()) {
         internal.setDirty ();
         internal.queue_draw ();
-//        gdk_window_process_updates (get_window()->gobj(), true);
     }
 }
 
 void ThumbBrowserBase::scroll (int direction) {
+    // GUI already acquired when here
     if (arrangement==TB_Vertical)
         vscroll.set_value (vscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_step_increment());
     else
@@ -78,6 +84,7 @@ void ThumbBrowserBase::scroll (int direction) {
 }
 
 void ThumbBrowserBase::scrollPage (int direction) {
+    // GUI already acquired when here
     if (arrangement==TB_Vertical)
         vscroll.set_value (vscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_page_increment());
     else
@@ -106,6 +113,9 @@ void ThumbBrowserBase::internalAreaResized (Gtk::Allocation& req) {
 }
 
 void ThumbBrowserBase::configScrollBars () {
+
+    // HOMBRE:DELETE ME?
+    GThreadLock tLock; // Acquire the GUI
 
     if (inW>0 && inH>0) {
   
@@ -136,10 +146,14 @@ void ThumbBrowserBase::configScrollBars () {
 }
 
 void ThumbBrowserBase::arrangeFiles () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(entryRW);
-	#endif
+
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
+
+    // GUI already locked by ::redraw, the only caller of this method for now.
+    // We could lock it one more time, there's no harm excepted (negligible) speed penalty
+    //GThreadLock lock;
 
     int N = fd.size ();
     // apply filter
@@ -152,7 +166,7 @@ void ThumbBrowserBase::arrangeFiles () {
         if (!fd[i]->filtered && fd[i]->getMinimalHeight() > rowHeight)
             rowHeight = fd[i]->getMinimalHeight ();
     
-    if (arrangement==TB_Horizontal) {            
+    if (arrangement==TB_Horizontal) {
 
         int numOfRows = 1;
 //        if (rowHeight>0) {
@@ -183,6 +197,10 @@ void ThumbBrowserBase::arrangeFiles () {
             }
             currx += maxw;
         }
+        #if PROTECT_VECTORS
+        MYREADERLOCK_RELEASE(l);
+        #endif
+        // This will require a Writer access
         resizeThumbnailArea (currx, numOfRows*rowHeight);
     }
     else {
@@ -234,13 +252,17 @@ void ThumbBrowserBase::arrangeFiles () {
             if (currx>0) // there were thumbnails placed in the row
                 curry += rowHeight;
         }
+        #if PROTECT_VECTORS
+        MYREADERLOCK_RELEASE(l);
+        #endif
+        // This will require a Writer access
         resizeThumbnailArea (colsWidth, curry);
     }
 }
 
 
-void ThumbBrowserBase::Internal::on_realize()
-{
+void ThumbBrowserBase::Internal::on_realize() {
+  // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
   Cairo::FontOptions cfo;
   cfo.set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
   get_pango_context()->set_cairo_font_options (cfo);
@@ -255,12 +277,20 @@ void ThumbBrowserBase::Internal::on_realize()
 }
 
 bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip) {
+    // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
     Glib::ustring ttip = "";
+
+    {
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, parent->entryRW);
+    #endif
+
     for (size_t i=0; i<parent->fd.size(); i++)
         if (parent->fd[i]->drawable && parent->fd[i]->inside (x, y)) {
             ttip = parent->fd[i]->getToolTip (x, y);
             break;
         }
+    }
     if (ttip!="") {
         tooltip->set_text (ttip);
         return true;
@@ -270,8 +300,8 @@ bool ThumbBrowserBase::Internal::on_query_tooltip (int x, int y, bool keyboard_t
 }
 
 void ThumbBrowserBase::styleChanged (const Glib::RefPtr<Gtk::Style>& style) {
-
-  refreshThumbImages ();
+    // GUI will be acquired by refreshThumbImages
+    refreshThumbImages ();
 }
 
 ThumbBrowserBase::Internal::Internal () : ofsX(0), ofsY(0), parent(NULL), dirty(true) {
@@ -287,10 +317,12 @@ void ThumbBrowserBase::Internal::setPosition (int x, int y) {
 }
 
 bool ThumbBrowserBase::Internal::on_key_press_event (GdkEventKey* event) {
+    // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
     return parent->keyPressed (event);
 }
 
 bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event) {
+    // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
     grab_focus ();
 
     parent->eventTime = event->time;
@@ -310,30 +342,43 @@ bool ThumbBrowserBase::Internal::on_button_press_event (GdkEventButton* event) {
 }
 
 void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType type, int state, int clx, int cly, int clw, int clh) {
+    // GUI already acquired
+
     ThumbBrowserEntryBase* fileDescr = NULL;
     bool handled = false;
-	
+
     {
-	    for (size_t i=0; i<fd.size(); i++)
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
+        for (size_t i=0; i<fd.size(); i++)
             if (fd[i]->drawable) {
-                if (fd[i]->inside (x, y) && fd[i]->insideWindow (clx, cly, clw, clh))            
+                if (fd[i]->inside (x, y) && fd[i]->insideWindow (clx, cly, clw, clh))
                     fileDescr = fd[i];
                 bool b = fd[i]->pressNotify (button, type, state, x, y);
                 handled = handled || b;
-            }   
+            }
     }
 
     if (handled || (fileDescr && fileDescr->processing))
         return;
-        
+
+    {
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
     if (selected.size()==1 && type==GDK_2BUTTON_PRESS && button==1) 
         doubleClicked (selected[0]);
     else if (button==1 && type==GDK_BUTTON_PRESS) {
-        if (fileDescr && state & GDK_SHIFT_MASK) {
+        if (fileDescr && (state & GDK_SHIFT_MASK)) {
             if (selected.empty()) {
                 selected.push_back (fileDescr);
                 fileDescr->selected = true;
                 lastClicked = fileDescr;
+                #if PROTECT_VECTORS
+                MYWRITERLOCK_RELEASE(l);
+                #endif
                 selectionChanged ();
             }
             else {
@@ -363,16 +408,19 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
                     selected[i]->selected = false;
                 selected.clear ();
                 // select thumbnails in the interval
-		for (size_t i=startx; i<=endx; i++) {
+                for (size_t i=startx; i<=endx; i++) {
                     if (!fd[i]->filtered) {
                         fd[i]->selected = true;
                         selected.push_back (fd[i]);
                     }
                 }
+                #if PROTECT_VECTORS
+                MYWRITERLOCK_RELEASE(l);
+                #endif
                 selectionChanged ();
             }
         }
-        else if (fileDescr && state & GDK_CONTROL_MASK) {
+        else if (fileDescr && (state & GDK_CONTROL_MASK)) {
             std::vector<ThumbBrowserEntryBase*>::iterator i = std::find (selected.begin(), selected.end(), fileDescr);
             if (i!=selected.end()) {
                 (*i)->selected = false;
@@ -383,10 +431,13 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
                 fileDescr->selected = true;
             }
             lastClicked = fileDescr;
+            #if PROTECT_VECTORS
+            MYWRITERLOCK_RELEASE(l);
+            #endif
             selectionChanged ();
         }
         else {
-		for (size_t i=0; i<selected.size(); i++)
+            for (size_t i=0; i<selected.size(); i++)
                 selected[i]->selected = false;
             selected.clear ();
             if (fileDescr) {
@@ -394,28 +445,36 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
                 fileDescr->selected = true;
             }
             lastClicked = fileDescr;
+            #if PROTECT_VECTORS
+            MYWRITERLOCK_RELEASE(l);
+            #endif
             selectionChanged ();
         }
     }
     else if (fileDescr && button==3 && type==GDK_BUTTON_PRESS) {
         if (!fileDescr->selected) {
-		for (size_t i=0; i<selected.size(); i++)
+            for (size_t i=0; i<selected.size(); i++)
                 selected[i]->selected = false;
             selected.clear ();
             fileDescr->selected = true;
             selected.push_back (fileDescr);
             lastClicked = fileDescr;
+            #if PROTECT_VECTORS
+            MYWRITERLOCK_RELEASE(l);
+            #endif
             selectionChanged ();
         }
+        #if PROTECT_VECTORS
+        MYWRITERLOCK_RELEASE(l);
+        #endif
         rightClicked (fileDescr);
     }
+    } // end of MYWRITERLOCK(l, entryRW);
+
 }
 
 bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
-    // TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::ReaderLock l(parent->entryRW);
-	#endif
+    // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
 
     dirty = false;
 
@@ -428,6 +487,12 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
     // draw thumbnails
     Glib::RefPtr<Pango::Context> context = get_pango_context ();
     context->set_font_description (get_style()->get_font());
+
+    {
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, parent->entryRW);
+    #endif
+
     for (size_t i=0; i<parent->fd.size() && !dirty; i++) {  // if dirty meanwhile, cancel and wait for next redraw
         if (!parent->fd[i]->drawable || !parent->fd[i]->insideWindow (0, 0, w, h))
             parent->fd[i]->updatepriority = false;
@@ -436,36 +501,56 @@ bool ThumbBrowserBase::Internal::on_expose_event(GdkEventExpose* event) {
             parent->fd[i]->draw ();
         }
     }
+    }
 
     return true;
 }
 
 bool ThumbBrowserBase::Internal::on_button_release_event (GdkEventButton* event) {
+    // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
     int w = get_width();
     int h = get_height();
 
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, parent->entryRW);
+    #endif
+
     for (size_t i=0; i<parent->fd.size(); i++)
         if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) {
-            parent->fd[i]->releaseNotify (event->button, event->type, event->state, (int)event->x, (int)event->y);
+            ThumbBrowserEntryBase* tbe = parent->fd[i];
+            #if PROTECT_VECTORS
+            MYREADERLOCK_RELEASE(l);
+            #endif
+            // This will require a Writer access...
+            tbe->releaseNotify (event->button, event->type, event->state, (int)event->x, (int)event->y);
+            #if PROTECT_VECTORS
+            MYREADERLOCK_ACQUIRE(l);
+            #endif
         }
     return true;
 }
 
 bool ThumbBrowserBase::Internal::on_motion_notify_event (GdkEventMotion* event) {
+    // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
     int w = get_width();
     int h = get_height();
 
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, parent->entryRW);
+    #endif
+
     for (size_t i=0; i<parent->fd.size(); i++)
         if (parent->fd[i]->drawable && parent->fd[i]->insideWindow (0, 0, w, h)) {
-            #ifdef WIN32
-	        //l.release();  // motionNotify calls the queue, which locks
-	        #endif
+            /*#if PROTECT_VECTORS
+            MYREADERLOCK_RELEASE(l); // motionNotify calls the queue, which locks
+            #endif*/
             parent->fd[i]->motionNotify ((int)event->x, (int)event->y);
         }
     return true;
 }
 
 bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event) {
+    // Gtk signals automatically acquire the GUI (i.e. this method is enclosed by gdk_thread_enter and gdk_thread_leave)
 
     parent->scroll (event->direction);
     return true;
@@ -474,6 +559,7 @@ bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event) {
 
 void ThumbBrowserBase::redraw () {
 
+    GThreadLock lock;
     arrangeFiles ();
     queue_draw ();
 }
@@ -481,30 +567,31 @@ void ThumbBrowserBase::redraw () {
 void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 
     int newHeight=0;
-    int optThumbSize=getCurrentThumbSize();
+    int optThumbSize=getThumbnailHeight();
     if (zoomIn)
-	    for (size_t i=0; i<options.thumbnailZoomRatios.size(); i++) {
+        for (size_t i=0; i<options.thumbnailZoomRatios.size(); i++) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * getMaxThumbnailHeight());
             if (newHeight > optThumbSize)
                 break;
         }
     else
-	    for (size_t i=options.thumbnailZoomRatios.size()-1; i>0; i--) {
+        for (size_t i=options.thumbnailZoomRatios.size()-1; i>0; i--) {
             newHeight = (int)(options.thumbnailZoomRatios[i] * getMaxThumbnailHeight());
             if (newHeight < optThumbSize)
                 break;
         }
     previewHeight = newHeight;
-    if (inTabMode) options.thumbSizeTab = newHeight; else options.thumbSize = newHeight;
 
-	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::WriterLock l(entryRW);
-		#endif
+    saveThumbnailHeight(newHeight);
 
-		for (size_t i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
-	}
+    {
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
+
+        for (size_t i=0; i<fd.size(); i++)
+            fd[i]->resize (previewHeight);
+    }
 
     redraw ();
 #ifdef WIN32
@@ -512,44 +599,46 @@ void ThumbBrowserBase::zoomChanged (bool zoomIn) {
 #endif    
 }
 
-int ThumbBrowserBase::getCurrentThumbSize() { return inTabMode ? options.thumbSizeTab : options.thumbSize; }
-
 void ThumbBrowserBase::refreshThumbImages () {
-	{
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::WriterLock l(entryRW);
-		#endif
 
-        int previewHeight = getCurrentThumbSize();
-	for (size_t i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
-	}
+    int previewHeight = getThumbnailHeight();
+    {
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
+
+        for (size_t i=0; i<fd.size(); i++) fd[i]->resize (previewHeight);
+    }
 
     redraw ();
 }
 
 void ThumbBrowserBase::refreshQuickThumbImages () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::RWLock::WriterLock l(entryRW);
-	#endif
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
 
-	for (size_t i=0; i<fd.size(); ++i) fd[i]->refreshQuickThumbnailImage ();
+    for (size_t i=0; i<fd.size(); ++i) fd[i]->refreshQuickThumbnailImage ();
 }
 
 void ThumbBrowserBase::refreshEditedState (const std::set<Glib::ustring>& efiles) {
 
     editedFiles = efiles;
+    {
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
+
     for (size_t i=0; i<fd.size(); i++)
         fd[i]->framed = editedFiles.find (fd[i]->filename)!=editedFiles.end();
+    }
 
     queue_draw ();
 }
-    
 
 void ThumbBrowserBase::setArrangement (Arrangement a) {
 
-    arrangement = a;    
+    arrangement = a;
     redraw ();
 }
 
@@ -557,31 +646,40 @@ void ThumbBrowserBase::enableTabMode(bool enable) {
     inTabMode = enable;
     arrangement = inTabMode ? ThumbBrowserBase::TB_Horizontal : ThumbBrowserBase::TB_Vertical;
     
-    if (options.thumbSizeTab!=options.thumbSize) {
-		// TODO: Check for Linux
-		#ifdef WIN32
-		Glib::RWLock::WriterLock l(entryRW);
-		#endif
+    if (!options.sameThumbSize && (options.thumbSizeTab!=options.thumbSize)) {
+        #if PROTECT_VECTORS
+        MYWRITERLOCK(l, entryRW);
+        #endif
 
-		for (size_t i=0; i<fd.size(); i++)
-            fd[i]->resize (getCurrentThumbSize());
+        for (size_t i=0; i<fd.size(); i++)
+            fd[i]->resize (getThumbnailHeight());
     }
 
     redraw ();
 
     // Scroll to selected position if going into ribbon mode or back
     // Tab mode is horizontal, file browser is vertical
+    {
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
+
     if (!selected.empty()) {
         if (inTabMode) {
             double h=selected[0]->getStartX();
+            #if PROTECT_VECTORS
+            MYREADERLOCK_RELEASE(l);
+            #endif
             hscroll.set_value (min(h, hscroll.get_adjustment()->get_upper()));
         } else {
             double v=selected[0]->getStartY();
+            #if PROTECT_VECTORS
+            MYREADERLOCK_RELEASE(l);
+            #endif
             vscroll.set_value (min(v, vscroll.get_adjustment()->get_upper()));
         }
     }
-
- 
+    }
 }
 
 void ThumbBrowserBase::initEntry (ThumbBrowserEntryBase* entry) {
@@ -602,6 +700,10 @@ void ThumbBrowserBase::setScrollPosition (double h, double v) {
 int ThumbBrowserBase::getEffectiveHeight() { 
     int h=hscroll.get_height() + 2;  // have 2 pixels rounding error for scroll bars to appear
 
+    #if PROTECT_VECTORS
+    MYREADERLOCK(l, entryRW);
+    #endif
+
     // Filtered items do not change in size, so take a non-filtered
     for (size_t i=0;i<fd.size();i++)
         if (!fd[i]->filtered) {
@@ -610,9 +712,12 @@ int ThumbBrowserBase::getEffectiveHeight() {
         }
 
     return h;
-}  
+}
 
 void ThumbBrowserBase::redrawNeeded (ThumbBrowserEntryBase* entry) {
+
+    // HOMBRE:DELETE ME?
+    GThreadLock tLock; // Acquire the GUI
 
     if (entry->insideWindow (0, 0, internal.get_width(), internal.get_height())) {
         if (!internal.isDirty ()) {

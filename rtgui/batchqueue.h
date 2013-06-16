@@ -28,6 +28,7 @@
 class BatchQueueListener {
 
     public:
+        virtual ~BatchQueueListener () {}
         virtual void queueSizeChanged     (int qsize, bool queueEmptied) =0;
         virtual bool canStartNext         () =0;
 };
@@ -39,6 +40,8 @@ class BatchQueue  : public ThumbBrowserBase,
 
   protected:
     int getMaxThumbnailHeight() const;
+    void saveThumbnailHeight (int height);
+    int  getThumbnailHeight ();
 
     BatchQueueEntry* processing;  // holds the currently processed image
 
@@ -61,15 +64,22 @@ class BatchQueue  : public ThumbBrowserBase,
     BatchQueue ();
     ~BatchQueue ();
 
-    void addEntries (std::vector<BatchQueueEntry*> &entries, bool head=false);
+    void addEntries (std::vector<BatchQueueEntry*> &entries, bool head=false, bool save=true);
     void cancelItems (std::vector<ThumbBrowserEntryBase*>* items);
     void headItems (std::vector<ThumbBrowserEntryBase*>* items);
     void tailItems (std::vector<ThumbBrowserEntryBase*>* items);
     void selectAll ();
 
     void startProcessing ();
-    
-    bool hasJobs () { return (!fd.empty()); }
+
+    bool hasJobs () {
+        // not sure that this lock is necessary, but it's safer to keep it...
+        // TODO: Check for Linux
+        #if PROTECT_VECTORS
+        MYREADERLOCK(l, entryRW);
+        #endif
+        return (!fd.empty());
+    }
 
     rtengine::ProcessingJob* imageReady (rtengine::IImage16* img);
     void setProgress (double p);
@@ -79,7 +89,8 @@ class BatchQueue  : public ThumbBrowserBase,
     
     void setBatchQueueListener (BatchQueueListener* l) { listener = l; }
 
-    void loadBatchQueue ();
+    bool loadBatchQueue ();
+    void resizeLoadedQueue();
 
     static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName);
     static int calcMaxThumbnailHeight();
