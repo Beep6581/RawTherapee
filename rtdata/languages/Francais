@@ -95,7 +95,7 @@ FILEBROWSER_CACHECLEARFROMFULL;Supprimer du cache (complet)
 FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache (partiel)
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
-FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou le raccourcis clavier:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
+FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou le raccourci clavier:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
 FILEBROWSER_DARKFRAME;Trame Noire
@@ -154,11 +154,11 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_QUERYBUTTONHINT;Effacer la recherche
 FILEBROWSER_QUERYHINT;Taper la <i>partie du nom</i> du fichier à chercher ou une <i>liste spéarée par des virgules</i>.\nEx: <i>1001.1004.1199</i>\n\n<b>Ctrl-F</b> pour placer le curseur dans le champ de saisie.\n<b>Entrée</b> pour lancer la recherche\n<b>Esc</b> pour effacer.\n<b>Shift-Esc</b> pour enlever le focus.
 FILEBROWSER_QUERYLABEL;Chercher: 
-FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nRaccourcis: Shift-1
-FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nRaccourcis: Shift-2
-FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nRaccourcis: Shift-3
-FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nRaccourcis: Shift-4
-FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nRaccourcis: Shift-5
+FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nRaccourci: Shift-1
+FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nRaccourci: Shift-2
+FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nRaccourci: Shift-3
+FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nRaccourci: Shift-4
+FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nRaccourci: Shift-5
 FILEBROWSER_RENAMEDLGLABEL;Renommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
 FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
@@ -189,7 +189,7 @@ FILEBROWSER_STOPPROCESSINGHINT;Arrête le traitement des images
 FILEBROWSER_STOPPROCESSING;Arrêter le traitement
 FILEBROWSER_THUMBSIZE;Taille vign.
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
-FILEBROWSER_UNRANK_TOOLTIP;Effacer le rang\nRaccourcis: Shift - ~
+FILEBROWSER_UNRANK_TOOLTIP;Effacer le rang\nRaccourci: Shift - ~
 FILEBROWSER_USETEMPLATE;Utiliser le modèle:
 FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes.\nRaccourcis: <b>+</b>\n\nRaccourcis dans le mode Éditeur unique:  <b>Alt +</b>
 FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes.\nRaccourcis: <b>-</b>\n\nRaccourcis dans le mode Éditeur unique:  <b>Alt -</b>
@@ -225,7 +225,7 @@ HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogramme
 HISTOGRAM_TOOLTIP_BAR;Montrer/Cacher l'indicateur RVB du pixel pointé\nCliquer le bouton droit de la souris sur l'image de prévisualisation pour geler/dégeler
 HISTOGRAM_TOOLTIP_B;Montrer/cacher l'histogramme BLEU
-HISTOGRAM_TOOLTIP_CHRO;Montrer/Cacher l'histograme de Chromaticité
+HISTOGRAM_TOOLTIP_CHRO;Montrer/Cacher l'histogramme de Chromaticité
 HISTOGRAM_TOOLTIP_FULL;Basculer la vue de l'histogramme : complet / zoomé
 HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
@@ -445,7 +445,7 @@ HISTORY_MSG_206;CAT02 - Adapt. auto à la scène
 HISTORY_MSG_207;A.C. - Teinte
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
-HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourcis: <b>Alt-s</b>
+HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
 HISTORY_NEWSSDIALOGLABEL;Label de la capture:
 HISTORY_NEWSSDIALOGTITLE;Ajouter une nouvelle capture
 HISTORY_SETTO;Réglé à
@@ -509,9 +509,9 @@ IPTCPANEL_TRANSREFERENCEHINT;Un code représentant le lieux de la transmission i
 IPTCPANEL_TRANSREFERENCE;Réf. transmission
 MAIN_BUTTON_EXIT;Sortie
 MAIN_BUTTON_FULLSCREEN;Plein écran
-MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigue à l'image Suivante relativement à l'image ouverte dans l'Éditeur\nRaccourcis: <b>Shift-F4</b>\n\nPour naviguer à l'image Suivante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourcis: <b>F4</b>
-MAIN_BUTTON_NAVPREV_TOOLTIP;Navigue à l'image Précédante relativement à l'image ouverte dans l'Éditeur\nRaccourcis: <b>Shift-F3</b>\n\nPour naviguer à l'image Précédante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourcis: <b>F3</b>
-MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronise le Navigateur de fichiers avec l'Éditeur pour révéler la vignette de l'image actuellement ouverte, et efface les filtres dans le Navigateur de fichiers\nRaccourcis: <b>x</b>\n\nComme ci-dessus, mais sans effacer les filtres dans le Navigateur de fichiers\nRaccourcis: <b>y</b>\n(Notez que la vignette ne sera pas visible si elle a été filtrée).
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigue à l'image Suivante relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F4</b>\n\nPour naviguer à l'image Suivante relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Navigue à l'image Précédente relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F3</b>\n\nPour naviguer à l'image Précédente relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronise le Navigateur de fichiers avec l'Éditeur pour révéler la vignette de l'image actuellement ouverte, et efface les filtres dans le Navigateur de fichiers\nRaccourci: <b>x</b>\n\nComme ci-dessus, mais sans effacer les filtres dans le Navigateur de fichiers\nRaccourci: <b>y</b>\n(Notez que la vignette ne sera pas visible si elle a été filtrée).
 MAIN_BUTTON_PREFERENCES;Préférences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
 MAIN_BUTTON_QUEUE;Envoyer dans la file
@@ -571,7 +571,7 @@ MAIN_TOGGLE_BEFORE_AFTER;Av|Ap
 MAIN_TOOLTIP_BACKCOLOR0;Couleur de fond de l'aperçu: <b>Selon le thème</b>\nRaccourci : <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;Couleur de fond de l'aperçu: <b>Noir</b>\nRaccourci : <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Couleur de fond de l'aperçu: <b>Blanc</b>\nRaccourci: <b>0</b>
-MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumultaif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vérouille</b> / <b>déverouille</b> la vue <b>Avant</b>\n\n<b>Vérouille</b>: garde la vue <b>Avant</b> inchangée - \nutile pour évaluer l'effet cumulatif de plusieurs outils.\nDe plus, une comparaison peut être faite à partir de n'importe quelle étape de l'historique\n\n<b>Déverouille</b>: la vue <b>Avant</b> représentera l'étape précédant la vue <b>Après</b>, montrant l'effet qui vient d'être modifié
 MAIN_TOOLTIP_HIDEFP;Montrer/cacher le panneau inférieur (navigateur de dossiers et de fichiers) <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Montrer/cacher le panneau gauche (incluant l'historique) <b>H</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Indication hautes lumières hors domaine
@@ -808,7 +808,7 @@ PREFERENCES_PROFILESAVEINPUT;Enregistrer la paramètres de traitement accolé au
 PREFERENCES_PROPERTY;Propriété
 PREFERENCES_PSPATH;Dossier d'installation d'Adobe Photoshop
 PREFERENCES_RGBDTL_LABEL;Nombre maximum d'unités de calcul pour la Réduction du bruit
-PREFERENCES_RGBDTL_TOOLTIP;La réduction du bruit nécessite un minimum d'à peu près 128Mo de RAM pour une image de 10MPix ou 512Mo pour une image de 40MPix, ainsi que 128Mo de RAM supplémentaire par unité de calcul. Plus il y aura d'unité de calcul travaillant en parallèle, plus ce sera rapide. Laissez la valeur à "0" pour utiliser automatiquement autant d'unité de calcul que possible.
+PREFERENCES_RGBDTL_TOOLTIP;La réduction du bruit nécessite un minimum d'à peu près 128Mo de RAM pour une image de 10MPix ou 512Mo pour une image de 40MPix, ainsi que 128Mo de RAM supplémentaire par unité de calcul. Plus il y aura d'unités de calcul travaillant en parallèle, plus ce sera rapide. Laissez la valeur à "0" pour utiliser automatiquement autant d'unités de calcul que possible.
 PREFERENCES_SELECTFONT;Police de caractère
 PREFERENCES_SELECTICCDIRDLG;Choix du dossier des profils ICC...
 PREFERENCES_SELECTLANG;Choix de la langue
@@ -876,6 +876,7 @@ PROGRESSBAR_LOADING;Chargement de l'Image...
 PROGRESSBAR_LOADJPEG;Chargement du fichier JPEG...
 PROGRESSBAR_LOADPNG;Chargement du fichier PNG...
 PROGRESSBAR_LOADTIFF;Chargement du fichier TIFF...
+PROGRESSBAR_NOIMAGES;Pas d'image trouvée
 PROGRESSBAR_PROCESSING;Traitement de l'Image...
 PROGRESSBAR_PROCESSING_PROFILESAVED;Profil de traitement sauvegardé
 PROGRESSBAR_READY;Prêt
@@ -911,7 +912,7 @@ SAVEDLG_SUBSAMP_TOOLTIP;Compression: 4:1:1\nÉquilibré: 4:2:2\nQualité: 4:4:4
 SAVEDLG_TIFFFILTER;Fichiers TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF non compressé
 SAVEDLG_WARNFILENAME;Le fichier sera nommé
-SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitiliser la position de ces 3 curseurs
+SHCSELECTOR_TOOLTIP;Cliquez le bouton droit de la souris\npour réinitialiser la position de ces 3 curseurs
 THRESHOLDSELECTOR_BL;Bas-gauche
 THRESHOLDSELECTOR_BR;Bas-droite
 THRESHOLDSELECTOR_B;Bas
@@ -933,22 +934,22 @@ TP_CHMIXER_RED;Rouge
 TP_CHROMATABERR_LABEL;Aberration Chromatique
 TP_COARSETRAF_DEGREE;degré:
 TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche\nRaccourcis: <b>[</b>\n\nRaccourcis en mode Éditeur unique: <b>Alt-[</b>
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite\nRaccourcis: <b>]</b>\n\nRaccourcis en mode Éditeur unique: <b>Alt-]</b>
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche\nRaccourci: <b>[</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotation vers la droite\nRaccourci: <b>]</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Symétriser / axe horizontal
 TP_COLORAPP_ADAPTSCENE;Luminosité d'adaptation
-TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminance absolue de l'environnement de la scène(cd/m²).\n1)Calculé à partir des données Exif:\nVitess d'obturation - val. ISO - ouverture F - Correction d'expos. du boitier.\n2)Calculé aussi à partir du Point Blanc Raw et de la compensation d'Exposition de RawTherapee
+TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminance absolue de l'environnement de la scène(cd/m²).\n1)Calculé à partir des données Exif:\nVitesse d'obturation - val. ISO - ouverture F - Correction d'expos. du boitier.\n2)Calculé aussi à partir du Point Blanc Raw et de la compensation d'Exposition de RawTherapee
 TP_COLORAPP_ADAPTVIEWING;Luminosité d'adaptation (cd/m²)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Luminance absolue de l'environnement de visionnage\n(souvent 16cd/m²)
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;Si la case est cochée (recommendé), une valeur optimum est calculée à partir des données Exif.\nPour régler la valeur manuellement, décochez d'abord la case
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;Si la case est cochée (recommandé), une valeur optimum est calculée à partir des données Exif.\nPour régler la valeur manuellement, décochez d'abord la case
 TP_COLORAPP_ALGO;Algorithme
 TP_COLORAPP_ALGO_ALL;Tout
 TP_COLORAPP_ALGO_JC;Luminosité + Chroma (JC)
 TP_COLORAPP_ALGO_JS;Luminosité + Saturation (JS)
 TP_COLORAPP_ALGO_QM;Brillance + Niveau de couleur (QM)
-TP_COLORAPP_ALGO_TOOLTIP;Permet de choisir entre des jeux réduits de paramètre ou tout les paramètres
+TP_COLORAPP_ALGO_TOOLTIP;Permet de choisir entre des jeux réduits de paramètres ou tous les paramètres
 TP_COLORAPP_BADPIXSL;Filtrer les pixels chauds/morts
-TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression des pixels chauds/morts (colorés de manière intense).\n0=Aucun effet 1=Médian 2=Gaussien.\n\nCes artefacts sont dues aux limitations de CIECAM02. Vous pouvez également adjuster l'image afin d'éviter les ombres très sombres.
+TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression des pixels chauds/morts (colorés de manière intense).\n0=Aucun effet 1=Médian 2=Gaussien.\n\nCes artefacts sont dus aux limitations de CIECAM02. Vous pouvez également adjuster l'image afin d'éviter les ombres très sombres.
 TP_COLORAPP_BRIGHT;Brillance (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;Brillance dans CIECAM02 est différent de Lab et RVB, prend en compte la luminosité du blanc
 TP_COLORAPP_CHROMA;Chroma (C)
@@ -963,14 +964,14 @@ TP_COLORAPP_CONTRAST_Q;Contraste (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contraste dans CIECAM02 pour le curseur (Q); est différent du contraste Lab et RVB
 TP_COLORAPP_CONTRAST_TOOLTIP;Contraste dans CIECAM02 pour le curseur (J); est différent du contraste Lab et RVB
 TP_COLORAPP_CURVEEDITOR1;Courbe tonale 1
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogramme affiche L (lab) avant CIECAM02.\nOn peut voir le résultat dans la fenêtre histogramme.\n Histogramme de J/Q avant/après si la cas à cocher "Données CIECAM" est activée.\n (J,Q) ne sont pas affichés dans le panneau histogramme
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogramme affiche L (lab) avant CIECAM02.\nOn peut voir le résultat dans la fenêtre histogramme.\n Histogramme de J/Q avant/après si la case à cocher "Données CIECAM" est activée.\n (J,Q) ne sont pas affichés dans le panneau histogramme
 TP_COLORAPP_CURVEEDITOR2;Courbe tonale 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;usage similaire aux courbes tonales exposition
 TP_COLORAPP_CURVEEDITOR3;Courbes chroma
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs.\n Histogramme affiche la chromaticité Lab avant CIECAM.\n On peut voir le résultat final dans la fenêtre histogramme.\n Histogramme de C,s,M avant/après si la cas à cocher "Données CIECAM" est activée.\n (C,s,M) ne sont pas affichés dans le panneau histogramme
 TP_COLORAPP_DATACIE;Histogrammes post CIECAM
 TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les histogrammes de fond des courbes CIECAM02 montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\nCette sélection n'a pas d'incidence sur l'histogramme général.\n\nQuand désactivé, les histogrammes de fond des courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
-TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Si la case est cochée (recommandé), RT calcule une valeur optimale, qui est utilisé par CAT02, mais aussi pour l'ensemble de CIECAM02.\nVous pouvez décocher la case et changer la valeur du curseur; (les valeurs supérieures à 65 sont recommandées)
+TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Si la case est cochée (recommandé), RT calcule une valeur optimale, qui est utilisée par CAT02, mais aussi pour l'ensemble de CIECAM02.\nVous pouvez décocher la case et changer la valeur du curseur; (les valeurs supérieures à 65 sont recommandées)
 TP_COLORAPP_DEGREE_TOOLTIP;Niveau d'adaptation chromatique CIE CAT 2002
 TP_COLORAPP_EQUAL;Préservé
 TP_COLORAPP_GAMUT;Contrôle du gamut (Lab)
@@ -984,7 +985,7 @@ TP_COLORAPP_LABEL_VIEWING;Conditions de visionnage
 TP_COLORAPP_LIGHT;Luminosité (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de Lab et RVB
 TP_COLORAPP_MODEL;Modèle de Point Blanc
-TP_COLORAPP_MODEL_TOOLTIP;<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglé dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglé dans Préférences
+TP_COLORAPP_MODEL_TOOLTIP;<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglée dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglée dans Préférences
 TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges
 TP_COLORAPP_RSTPRO_TOOLTIP;Protection des tons chairs et rouges (curseurs et courbes)
 TP_COLORAPP_SHARPCIE;Netteté, Contraste par niveau de détails, Microcontraste & Aberration chromatique avec Q/C
@@ -994,7 +995,7 @@ TP_COLORAPP_SURROUND_AVER;Moyen
 TP_COLORAPP_SURROUND_DARK;Sombre
 TP_COLORAPP_SURROUND_DIM;Tamisé
 TP_COLORAPP_SURROUND_EXDARK;Extrêmement Sombre (Transparent)
-TP_COLORAPP_SURROUND_TOOLTIP;Changes les tons et couleurs pour prendre en compte les conditions de visionnage du périphérique de sortie\n\n<b>Moyen:</b>\nLuminance de l'entourage moyen (standard)\nL'image ne vas pas changer\n\n<b>Tamisé:</b>\nEntourage légèrement sombre (TV)\nL'image va devenir un peu plus sombre\n\n<b>Sombre:</b>\nEntourage sombre (projecteur)\nL'image va devenir plus sombre\n\n<b>Extrêmement sombre:</b>\nEntourage noir (transparents)\nL'image va devenir encore plus sombre
+TP_COLORAPP_SURROUND_TOOLTIP;Change les tons et couleurs pour prendre en compte les conditions de visionnage du périphérique de sortie\n\n<b>Moyen:</b>\nLuminance de l'entourage moyen (standard)\nL'image ne va pas changer\n\n<b>Tamisé:</b>\nEntourage légèrement sombre (TV)\nL'image va devenir un peu plus sombre\n\n<b>Sombre:</b>\nEntourage sombre (projecteur)\nL'image va devenir plus sombre\n\n<b>Extrêmement sombre:</b>\nEntourage noir (transparents)\nL'image va devenir encore plus sombre
 TP_COLORAPP_SURSOURCE;Entourage sombre
 TP_COLORAPP_SURSOURCE_TOOLTIP;Peut être utilisé si l'image source a un bord noir.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Brillance
@@ -1035,9 +1036,9 @@ TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
 TP_DIRPYRDENOISE_BLUE;Delta chrominance Bleu
 TP_DIRPYRDENOISE_CHROMA;Chrominance (Maître)
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Peut être utilisé sur les images raw et non-raw.\n\nPour les images non-raw, la réduction de bruit de luminance dépend du gamma du profile couleur d'entée. Un gamma sRGB est supposé, c'est pourquoi si l'image a un profile couleur d'un gamma différent, la réduction de bruit de luminance variera.
+TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Peut être utilisé sur les images raw et non-raw.\n\nPour les images non-raw, la réduction de bruit de luminance dépend du gamma du profil couleur d'entée. Un gamma sRGB est supposé, c'est pourquoi si l'image a un profil couleur d'un gamma différent, la réduction de bruit de luminance variera.
 TP_DIRPYRDENOISE_GAMMA;Gamma
-TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma fait varier la quantité de réduction de bruit sur l'échelle des tons. Les plus petites valeurs cibleront les ombres, les plus hautes valeurs ciblera les tons les plus clairs.
+TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma fait varier la quantité de réduction de bruit sur l'échelle des tons. Les plus petites valeurs cibleront les ombres, les plus hautes valeurs cibleront les tons les plus clairs.
 TP_DIRPYRDENOISE_LABEL;Réduction du bruit
 TP_DIRPYRDENOISE_LAB;Lab
 TP_DIRPYRDENOISE_LDETAIL;Niveau de détails de Luminance
@@ -1124,9 +1125,9 @@ TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil
 TP_ICM_GAMMABEFOREINPUT;Appliquer le Gamma du profil
 TP_ICM_INPUTCAMERAICC;Profil spécifique à l'APN\nsélectionné automatiquement
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils d'entrée DCP ou ICC spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareil photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Utilise les profils d'entrée DCP ou ICC spécifiques à RawTherapee, qui sont plus précis qu'une simple matrice.\nDisponible pour certains appareils photo, ces profils sont stoqués dans le dossier /iccprofiles/input.\nCelui dont le nom de fichier correspond au champ EXIF "Modèle" (de l'appareil) est automatiquement sélectionné.
 TP_ICM_INPUTCAMERA;Celui de l'appareil photo
-TP_ICM_INPUTCAMERA_TOOLTIP;Par ordre de préférence, utilise les matrices de couleur inclus dans le fichier RAW, les matrices de couleur simple fournis par RawTherapee ou celles de DCRaw
+TP_ICM_INPUTCAMERA_TOOLTIP;Par ordre de préférence, utilise les matrices de couleur incluses dans le fichier RAW, les matrices de couleur simple fournies par RawTherapee ou celles de DCRaw
 TP_ICM_INPUTCUSTOM;Personnel
 TP_ICM_INPUTCUSTOM_TOOLTIP;Sélectionez votre propre profil DCP/ICC pour votre appareil photo
 TP_ICM_INPUTDLGLABEL;Choix du profil DCP/ICC d'entrée...
@@ -1146,7 +1147,7 @@ TP_ICM_PREFERREDPROFILE_3;Fluorescent
 TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
-TP_ICM_TONECURVE_TOOLTIP;Permet d'utiliser la courbe tonale contenue dans le profile DCP, si elle existe
+TP_ICM_TONECURVE_TOOLTIP;Permet d'utiliser la courbe tonale contenue dans le profil DCP, si elle existe
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
@@ -1181,7 +1182,7 @@ TP_LABCURVE_LABEL;Ajustements Lab
 TP_LABCURVE_LCREDSK;Restreindre LC aux tons rouge et peau
 TP_LABCURVE_LCREDSK_TIP;Si activé, la courbe 'LC' est limitée au tons rouge et peau\nSi désactivé, s'applique à toutes les teintes
 TP_LABCURVE_RSTPROTECTION;Protection des tons rouges et chair
-TP_LABCURVE_RSTPRO_TOOLTIP;Peut être tutilisé avec le curseur Chromaticité et la courbe CC.
+TP_LABCURVE_RSTPRO_TOOLTIP;Peut être utilisé avec le curseur Chromaticité et la courbe CC.
 TP_LENSGEOM_AUTOCROP;Recadrage auto
 TP_LENSGEOM_FILL;Remplir
 TP_LENSGEOM_LABEL;Objectif / Géométrie
@@ -1199,10 +1200,10 @@ TP_PERSPECTIVE_HORIZONTAL;Horizontale
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Verticale
 TP_PFCURVE_CURVEEDITOR_CH;Teinte
-TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controle la force du défrangeage en fonction de la couleur. En haut = action maxi, en bas = pas d'action sur la couleur.
+TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Contrôle la force du défrangeage en fonction de la couleur. En haut = action maxi, en bas = pas d'action sur la couleur.
 TP_PREPROCESS_GREENEQUIL;Équilibrage du vert
 TP_PREPROCESS_HOTDEADPIXFILT;Filtrer les pixels chauds/morts
-TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Essai de supprimer les pixels chauds/morts
+TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Essaie de supprimer les pixels chauds/morts
 TP_PREPROCESS_HOTDEADPIXTHRESH;Seuil de détection des pixels morts
 TP_PREPROCESS_LABEL;Traitement pre-dématriçage
 TP_PREPROCESS_LINEDENOISE;Filtre de bruit de ligne
@@ -1305,7 +1306,7 @@ TP_VIBRANCE_PASTSATTOG;Lier Pastels et Saturés
 TP_VIBRANCE_PROTECTSKINS;Protéger les tons chairs
 TP_VIBRANCE_PSTHRESHOLD;Seuil entre tons pastels/saturés
 TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Seuil de saturation
-TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;L'axe vertical represente les tons pastel en bas et le tons saturés en haut.\nL'axe horizontal represente l'échelle de la saturation.
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;L'axe vertical représente les tons pastels en bas et les tons saturés en haut.\nL'axe horizontal représente l'échelle de la saturation.
 TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pondération de la transition pastels/saturés
 TP_VIBRANCE_SATURATED;Tons saturés
 TP_VIGNETTING_AMOUNT;Quantité
@@ -1372,8 +1373,3 @@ ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!PROGRESSBAR_NOIMAGES;No images found
