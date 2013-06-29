@@ -24,7 +24,6 @@
 // This file is for your program, I won't touch it again!
 
 #include "config.h"
-#include <glibmm/thread.h>
 #include <gtkmm.h>
 #include <giomm.h>
 #include <iostream>
@@ -42,6 +41,9 @@
 #include <glibmm/fileutils.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <glibmm/threads.h>
+#else
+#include <glibmm/thread.h>
 #endif
 
 #include "../rtengine/safegtk.h"
@@ -57,8 +59,12 @@ bool simpleEditor;
 Glib::Thread* mainThread;
 
 
-// This recursive mutex will be used by g_thread_enter/leave instead of a simple mutex
+// This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
+#ifdef WIN32
 static Glib::RecMutex myGdkRecMutex;
+#else
+static Glib::Threads::RecMutex myGdkRecMutex;
+#endif
 
 static void myGdkLockEnter() { myGdkRecMutex.lock(); }
 static void myGdkLockLeave() {
@@ -122,7 +128,8 @@ int main(int argc, char **argv)
 #endif
   
    Glib::thread_init();
-   gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), ((GCallback) (myGdkLockLeave)));
+   gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
+   gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
    gdk_threads_init();
    Gio::init ();
 
