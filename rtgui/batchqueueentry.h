@@ -49,6 +49,7 @@ public:
     Glib::ustring savedParamsFile;
     double progress;
     Glib::ustring outFileName;
+    int sequence;
     SaveFormat saveFormat;
     bool forceFormatOpts;
   

@@ -44,6 +44,7 @@ class BatchQueue  : public ThumbBrowserBase,
     int  getThumbnailHeight ();
 
     BatchQueueEntry* processing;  // holds the currently processed image
+    int sequence; // holds the current sequence index
 
     Glib::ustring nameTemplate;
     
@@ -52,6 +53,8 @@ class BatchQueue  : public ThumbBrowserBase,
     Gtk::ImageMenuItem* tail;
     Gtk::MenuItem* selall;
     Gtk::Menu* pmenu;
+    
+    Glib::RefPtr<Gtk::AccelGroup> pmaccelgroup;
 
     BatchQueueListener* listener;
 
@@ -84,6 +87,7 @@ class BatchQueue  : public ThumbBrowserBase,
     rtengine::ProcessingJob* imageReady (rtengine::IImage16* img);
     void setProgress (double p);
     void rightClicked (ThumbBrowserEntryBase* entry);
+    bool keyPressed (GdkEventKey* event);
     void buttonPressed (LWButton* button, int actionCode, void* actionData);
     void redrawNeeded  (LWButton* button);
     
@@ -92,7 +96,7 @@ class BatchQueue  : public ThumbBrowserBase,
     bool loadBatchQueue ();
     void resizeLoadedQueue();
 
-    static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName);
+    static Glib::ustring calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence = 0);
     static int calcMaxThumbnailHeight();
 };
 

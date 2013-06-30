@@ -421,7 +421,7 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
         return fpanel->handleShortcutKey (event);
     }
     else if (mainNB->get_current_page() == mainNB->page_num(*bpanel)) {
-        return false;
+        return bpanel->handleShortcutKey (event);
     }
     else {
         EditorPanel* ep = static_cast<EditorPanel*>(mainNB->get_nth_page (mainNB->get_current_page()));

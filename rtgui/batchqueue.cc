@@ -21,6 +21,10 @@
 #include <cstring>
 #include "../rtengine/rt_math.h"
 
+#include <iomanip>
+#include <sstream>
+#include <string> 
+
 #include "batchqueue.h"
 #include "multilangmgr.h"
 #include "filecatalog.h"
@@ -32,7 +36,7 @@
 using namespace std;
 using namespace rtengine;
 
-BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
+BatchQueue::BatchQueue () : processing(NULL), sequence(0), listener(NULL)  {
 
     int p = 0;
     pmenu = new Gtk::Menu ();
@@ -51,6 +55,14 @@ BatchQueue::BatchQueue () : processing(NULL), listener(NULL)  {
     cancel->set_image(*Gtk::manage(new RTImage ("gtk-close.png")));
 
     pmenu->show_all ();
+    
+    // Accelerators
+    pmaccelgroup = Gtk::AccelGroup::create ();
+    pmenu->set_accel_group (pmaccelgroup);
+    selall->add_accelerator ("activate", pmenu->get_accel_group(), GDK_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    head->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Home, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    tail->add_accelerator ("activate", pmenu->get_accel_group(), GDK_End, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    cancel->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
 
     cancel->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::cancelItems), &selected));    
     head->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &BatchQueue::headItems), &selected));    
@@ -99,6 +111,29 @@ int BatchQueue::getThumbnailHeight () {
 void BatchQueue::rightClicked (ThumbBrowserEntryBase* entry) {
 
     pmenu->popup (3, this->eventTime);
+}
+
+bool BatchQueue::keyPressed (GdkEventKey* event) {
+	bool ctrl  = event->state & GDK_CONTROL_MASK;
+	
+    if ((event->keyval==GDK_A || event->keyval==GDK_a) && ctrl) {
+        selectAll ();
+        return true;
+    }
+    else if (event->keyval==GDK_Home) {
+        headItems (&selected);
+        return true;
+    }
+    else if (event->keyval==GDK_End) {
+        tailItems (&selected);
+        return true;
+    }
+    else if (event->keyval==GDK_Delete) {
+        cancelItems (&selected);
+        return true;
+    }
+    
+	return false;
 }
 
 void BatchQueue::addEntries ( std::vector<BatchQueueEntry*> &entries, bool head, bool save)
@@ -501,8 +536,9 @@ void BatchQueue::startProcessing () {
             BatchQueueEntry* next;
 
             next = static_cast<BatchQueueEntry*>(fd[0]);
-            // tag it as processing
+            // tag it as processing and set sequence
             next->processing = true;
+            next->sequence = sequence = 1;
             processing = next;
             // remove from selection
             if (processing->selected) {
@@ -532,7 +568,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
     Glib::ustring fname;
     SaveFormat saveFormat;
     if (processing->outFileName=="") {   // auto file name
-        Glib::ustring s = calcAutoFileNameBase (processing->filename);
+        Glib::ustring s = calcAutoFileNameBase (processing->filename, processing->sequence);
         saveFormat = options.saveFormatBatch;
         fname = autoCompleteFileName (s, saveFormat.format);
     }
@@ -592,8 +628,9 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
         }
         else if (listener && listener->canStartNext ()) {
             BatchQueueEntry* next = static_cast<BatchQueueEntry*>(fd[0]);
-            // tag it as selected
+            // tag it as selected and set sequence
             next->processing = true;
+            next->sequence = ++sequence;
             processing = next;
             // remove from selection
             if (processing->selected) {
@@ -640,7 +677,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
 
 // Calculates automatic filename of processed batch entry, but just the base name
 // example output: "c:\out\converted\dsc0121"
-Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName) {
+Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence) {
 
     std::vector<Glib::ustring> pa;
     std::vector<Glib::ustring> da;
@@ -716,6 +753,19 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
 					else
 						rank = '0'; // if param file not loaded (e.g. does not exist), default to rank=0
 					path += rank;
+                }
+                else if (options.savePathTemplate[ix]=='s') { // sequence
+                    std::ostringstream seqstr;
+
+                    int w = options.savePathTemplate[ix+1]-'0';
+
+                    if (w>=1 && w<=9) {
+                        ix++;
+                        seqstr << std::setw (w) << std::setfill ('0');
+                    }
+
+                    seqstr << sequence;
+                    path += seqstr.str ();
                 }
             }
 

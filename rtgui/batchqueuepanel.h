@@ -68,6 +68,8 @@ class BatchQueuePanel : public Gtk::VBox,
         void pathFolderChanged ();
         void formatChanged (Glib::ustring f);
         void updateTab (int qsize);
+        
+        bool handleShortcutKey (GdkEventKey* event);
 };
 #endif
 

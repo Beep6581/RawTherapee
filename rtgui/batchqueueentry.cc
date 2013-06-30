@@ -30,7 +30,7 @@ Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm)
     : ThumbBrowserEntryBase(fname),
       opreview(NULL), origpw(prevw), origph(prevh), opreviewDone(false),
-      job(pjob), progress(0), outFileName(""), forceFormatOpts(false) {
+      job(pjob), progress(0), outFileName(""), sequence(0), forceFormatOpts(false) {
 
     thumbnail=thm;
     params = pparams;
