@@ -129,7 +129,6 @@ int main(int argc, char **argv)
   
    Glib::thread_init();
    gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
-   gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
    gdk_threads_init();
    Gio::init ();
 
