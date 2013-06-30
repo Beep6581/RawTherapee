@@ -274,3 +274,7 @@ void BatchQueuePanel::formatChanged (Glib::ustring f) {
     options.saveFormatBatch = saveFormatPanel->getFormat ();
     
 }
+
+bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event) {
+	return batchQueue->keyPressed (event);
+}
