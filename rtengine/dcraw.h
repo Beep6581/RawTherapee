@@ -71,7 +71,7 @@ protected:
     FILE *ofp;
     short order;
     const char *ifname;
-    char *meta_data;
+    char *meta_data, xtrans[6][6];
     char cdesc[5], desc[512], make[64], model[64], model2[64], artist[64];
     float flash_used, canon_ev, iso_speed, shutter, aperture, focal_len;
     time_t timestamp;
@@ -264,11 +264,13 @@ private:
 };
 pana_bits_t pana_bits;
 
+void canon_rmf_load_raw();
 void panasonic_load_raw();
 void olympus_load_raw();
 void minolta_rd175_load_raw();
 void quicktake_100_load_raw();
 void kodak_radc_load_raw();
+void samsung_load_raw();
 
 void kodak_jpeg_load_raw();
 void lossy_dng_load_raw();
@@ -317,6 +319,9 @@ void foveon_make_curves(short **curvep, float dq[3], float div[3], float filt);
 int foveon_apply_curve (short *curve, int i);
 void foveon_interpolate();
 
+void xtrans_interpolate (int passes);
+void cielab (ushort rgb[3], short lab[3]);
+
 void remove_zeroes();
 void bad_pixels (const char *cfname);
 void subtract (const char *fname);
@@ -350,7 +355,7 @@ int  parse_tiff (int base);
 void apply_tiff();
 void parse_external_jpeg();
 void ciff_block_1030();
-void parse_ciff (int offset, int length);
+void parse_ciff (int offset, int length, int depth);
 void parse_rollei();
 void parse_sinar_ia();
 void parse_phase_one (int base);
