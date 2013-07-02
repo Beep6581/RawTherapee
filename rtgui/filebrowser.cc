@@ -970,6 +970,22 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
     	FileBrowser::openNextImage ();
         return true;
     }
+    else if (event->keyval==GDK_Left) {
+        selectPrev (1, shift);
+        return true;
+    }
+    else if (event->keyval==GDK_Right) {
+        selectNext (1, shift);
+        return true;
+    }
+    else if (event->keyval==GDK_Up) {
+        selectPrev (numOfCols, shift);
+        return true;
+    }
+    else if (event->keyval==GDK_Down) {
+        selectNext (numOfCols, shift);
+        return true;
+    }
 
     else if (event->keyval==GDK_F5) {
         int dest = 1;

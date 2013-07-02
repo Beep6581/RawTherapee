@@ -110,10 +110,13 @@ protected:
     int getMinimalHeight    () { return height; }
     int getMinimalWidth     () { return width; }
 
+    int getEffectiveWidth   () const { return exp_width; }
     int getEffectiveHeight  () const { return exp_height; }
     int getPreviewHeight    () const { return preh; }
     int getStartX           () const { return startx; }
     int getStartY           () const { return starty; }
+    int getX                () const { return ofsX+startx; }
+    int getY                () const { return ofsY+starty; }
 
     bool inside             (int x, int y);
     bool insideWindow       (int x, int y, int w, int h);

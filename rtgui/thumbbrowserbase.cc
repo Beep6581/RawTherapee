@@ -25,7 +25,7 @@
 using namespace std;
 
 ThumbBrowserBase::ThumbBrowserBase () 
-    : lastClicked(NULL), previewHeight(options.thumbSize) {
+    : lastClicked(NULL), previewHeight(options.thumbSize), numOfCols(1) {
     inTabMode=false;  // corresponding to take thumbSize
     inW = -1; inH = -1;
 
@@ -89,6 +89,137 @@ void ThumbBrowserBase::scrollPage (int direction) {
         vscroll.set_value (vscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * vscroll.get_adjustment()->get_page_increment());
     else
         hscroll.set_value (hscroll.get_value() + (direction==GDK_SCROLL_DOWN ? +1 : -1) * hscroll.get_adjustment()->get_page_increment());
+}
+
+static void scrollToEntry (double& h, double& v, int iw, int ih, ThumbBrowserEntryBase* entry) {
+    const int hmin = entry->getX ();
+    const int hmax = hmin + entry->getEffectiveWidth () - iw;
+    const int vmin = entry->getY ();
+    const int vmax = vmin + entry->getEffectiveHeight () - ih;
+
+    if (hmin < 0)
+        h += hmin;
+    else if (hmax > 0)
+        h += hmax;
+
+    if(vmin < 0)
+        v += vmin;
+    else if (vmax > 0)
+        v += vmax;
+}
+
+void ThumbBrowserBase::selectPrev (int distance, bool enlarge) {
+    double h, v;
+    getScrollPosition (h, v);
+
+    {
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    if (!selected.empty ()) {
+        std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), selected.front ());
+        std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), selected.back ());
+
+        if(front > back)
+            std::swap(front, back);
+
+        // find next thumbnail at filtered distance before 'front'
+        for (; front >= fd.begin (); --front) {
+            if(!(*front)->filtered) {
+                if (distance-- == 0) {
+                    // clear current selection
+                    for (size_t i=0; i<selected.size (); ++i) {
+                        selected[i]->selected = false;
+                        redrawNeeded (selected[i]);
+                    }
+                    selected.clear ();
+
+                    // make sure the newly selected thumbnail is visible
+                    scrollToEntry (h, v, internal.get_width (), internal.get_height (), *front);
+
+                    // either enlarge current selection or set new selection
+                    for(; front <= back; ++front) {
+                        if(!(*front)->filtered) {
+                            (*front)->selected = true;
+                            redrawNeeded (*front);
+                            selected.push_back (*front);
+                        }
+
+                        if(!enlarge)
+                            break;
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    #if PROTECT_VECTORS
+    MYWRITERLOCK_RELEASE(l);
+    #endif
+    selectionChanged ();
+    }
+
+    setScrollPosition (h, v);
+}
+
+void ThumbBrowserBase::selectNext (int distance, bool enlarge) {
+    double h, v;
+    getScrollPosition (h, v);
+
+    {
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    if (!selected.empty ()) {
+        std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), selected.front ());
+        std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), selected.back ());
+
+        if(front > back)
+            std::swap(front, back);
+
+        // find next thumbnail at filtered distance after 'back'
+        for (; back < fd.end (); ++back) {
+            if(!(*back)->filtered) {
+                if (distance-- == 0) {
+                    // clear current selection
+                    for (size_t i=0; i<selected.size (); ++i) {
+                        selected[i]->selected = false;
+                        redrawNeeded (selected[i]);
+                    }
+                    selected.clear ();
+
+                    // make sure the newly selected thumbnail is visible
+                    scrollToEntry (h, v, internal.get_width (), internal.get_height (), *back);
+
+                    // either enlarge current selection or set new selection
+                    for(; back >= front; --back) {
+                        if(!(*back)->filtered) {
+                            (*back)->selected = true;
+                            redrawNeeded (*back);
+                            selected.push_back (*back);
+                        }
+
+                        if(!enlarge)
+                            break;
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    #if PROTECT_VECTORS
+    MYWRITERLOCK_RELEASE(l);
+    #endif
+    selectionChanged ();
+    }
+
+    setScrollPosition (h, v);
 }
 
 void ThumbBrowserBase::resizeThumbnailArea (int w, int h) {
@@ -167,7 +298,7 @@ void ThumbBrowserBase::arrangeFiles () {
             rowHeight = fd[i]->getMinimalHeight ();
     
     if (arrangement==TB_Horizontal) {
-
+        numOfCols = 1;
         int numOfRows = 1;
 //        if (rowHeight>0) {
 //            numOfRows = (internal.get_height()+rowHeight/2)/rowHeight;
@@ -206,7 +337,7 @@ void ThumbBrowserBase::arrangeFiles () {
     else {
         int availWidth = internal.get_width();
         // initial number of columns
-        int numOfCols = 0;
+        numOfCols = 0;
         int colsWidth = 0;
         for (int i=0; i<N; i++)
             if (!fd[i]->filtered && colsWidth + fd[i]->getMinimalWidth() <= availWidth) {
