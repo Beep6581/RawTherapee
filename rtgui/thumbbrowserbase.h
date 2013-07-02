@@ -78,6 +78,9 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void scroll (int direction);
     void scrollPage (int direction);
 
+    void selectPrev(int distance, bool enlarge);
+    void selectNext(int distance, bool enlarge);
+
   protected:
 
     int eventTime;
@@ -88,6 +91,7 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     ThumbBrowserEntryBase* lastClicked;
     
     int previewHeight;
+    int numOfCols;
 
     Arrangement arrangement;
 
