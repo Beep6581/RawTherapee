@@ -986,6 +986,14 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         selectNext (numOfCols, shift);
         return true;
     }
+    else if (event->keyval==GDK_Home) {
+        selectFirst (shift);
+        return true;
+    }
+    else if (event->keyval==GDK_End) {
+        selectLast (shift);
+        return true;
+    }
 
     else if (event->keyval==GDK_F5) {
         int dest = 1;

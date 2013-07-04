@@ -78,8 +78,10 @@ class ThumbBrowserBase  :  public Gtk::VBox {
     void scroll (int direction);
     void scrollPage (int direction);
 
-    void selectPrev(int distance, bool enlarge);
-    void selectNext(int distance, bool enlarge);
+    void selectPrev (int distance, bool enlarge);
+    void selectNext (int distance, bool enlarge);
+    void selectFirst (bool enlarge);
+    void selectLast (bool enlarge);
 
   protected:
 
