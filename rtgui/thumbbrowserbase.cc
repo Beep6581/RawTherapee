@@ -121,12 +121,12 @@ void ThumbBrowserBase::selectPrev (int distance, bool enlarge) {
         std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), selected.front ());
         std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), selected.back ());
 
-        if(front > back)
+        if (front > back)
             std::swap(front, back);
 
         // find next thumbnail at filtered distance before 'front'
         for (; front >= fd.begin (); --front) {
-            if(!(*front)->filtered) {
+            if (!(*front)->filtered) {
                 if (distance-- == 0) {
                     // clear current selection
                     for (size_t i=0; i<selected.size (); ++i) {
@@ -139,14 +139,14 @@ void ThumbBrowserBase::selectPrev (int distance, bool enlarge) {
                     scrollToEntry (h, v, internal.get_width (), internal.get_height (), *front);
 
                     // either enlarge current selection or set new selection
-                    for(; front <= back; ++front) {
-                        if(!(*front)->filtered) {
+                    for (; front <= back; ++front) {
+                        if (!(*front)->filtered) {
                             (*front)->selected = true;
                             redrawNeeded (*front);
                             selected.push_back (*front);
                         }
 
-                        if(!enlarge)
+                        if (!enlarge)
                             break;
                     }
 
@@ -178,12 +178,12 @@ void ThumbBrowserBase::selectNext (int distance, bool enlarge) {
         std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), selected.front ());
         std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), selected.back ());
 
-        if(front > back)
+        if (front > back)
             std::swap(front, back);
 
         // find next thumbnail at filtered distance after 'back'
         for (; back < fd.end (); ++back) {
-            if(!(*back)->filtered) {
+            if (!(*back)->filtered) {
                 if (distance-- == 0) {
                     // clear current selection
                     for (size_t i=0; i<selected.size (); ++i) {
@@ -196,20 +196,148 @@ void ThumbBrowserBase::selectNext (int distance, bool enlarge) {
                     scrollToEntry (h, v, internal.get_width (), internal.get_height (), *back);
 
                     // either enlarge current selection or set new selection
-                    for(; back >= front; --back) {
-                        if(!(*back)->filtered) {
+                    for (; back >= front; --back) {
+                        if (!(*back)->filtered) {
                             (*back)->selected = true;
                             redrawNeeded (*back);
                             selected.push_back (*back);
                         }
 
-                        if(!enlarge)
+                        if (!enlarge)
                             break;
                     }
+
+                    std::reverse(selected.begin (), selected.end ());
 
                     break;
                 }
             }
+        }
+    }
+
+    #if PROTECT_VECTORS
+    MYWRITERLOCK_RELEASE(l);
+    #endif
+    selectionChanged ();
+    }
+
+    setScrollPosition (h, v);
+}
+
+void ThumbBrowserBase::selectFirst (bool enlarge) {
+    double h, v;
+    getScrollPosition (h, v);
+
+    {
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    if (!fd.empty ()) {
+        // find first unfiltered entry
+        std::vector<ThumbBrowserEntryBase*>::iterator first = fd.begin ();
+
+        for (; first < fd.end (); ++first) {
+            if (!(*first)->filtered) {
+                break;
+            }
+        }
+
+        scrollToEntry (h, v, internal.get_width (), internal.get_height (), *first);
+
+        if(selected.empty ()) {
+            (*first)->selected = true;
+            redrawNeeded (*first);
+            selected.push_back (*first);
+        }
+        else {
+            std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), selected.back ());
+
+            if (first > back)
+                std::swap(first, back);
+
+            // clear current selection
+            for (size_t i=0; i<selected.size (); ++i) {
+                selected[i]->selected = false;
+                redrawNeeded (selected[i]);
+            }
+            selected.clear ();
+
+            // either enlarge current selection or set new selection
+            for (; first <= back; ++first) {
+                if (!(*first)->filtered) {
+                    (*first)->selected = true;
+                    redrawNeeded (*first);
+                    selected.push_back (*first);
+                }
+
+                if (!enlarge)
+                    break;
+            }
+        }
+    }
+
+    #if PROTECT_VECTORS
+    MYWRITERLOCK_RELEASE(l);
+    #endif
+    selectionChanged ();
+    }
+
+    setScrollPosition (h, v);
+}
+
+void ThumbBrowserBase::selectLast (bool enlarge) {
+    double h, v;
+    getScrollPosition (h, v);
+
+    {
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    if (!fd.empty ()) {
+        // find last unfiltered entry
+        std::vector<ThumbBrowserEntryBase*>::iterator last = fd.end () - 1;
+
+        for (; last >= fd.begin (); --last) {
+            if (!(*last)->filtered) {
+                break;
+            }
+        }
+
+        scrollToEntry (h, v, internal.get_width (), internal.get_height (), *last);
+
+        if(selected.empty()) {
+            (*last)->selected = true;
+            redrawNeeded (*last);
+            selected.push_back (*last);
+        }
+        else {
+            std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), selected.front ());
+
+            if (last < front)
+                std::swap(last, front);
+
+            // clear current selection
+            for (size_t i=0; i<selected.size (); ++i) {
+                selected[i]->selected = false;
+                redrawNeeded (selected[i]);
+            }
+            selected.clear ();
+
+            // either enlarge current selection or set new selection
+            for (; front <= last; --last) {
+                if (!(*last)->filtered) {
+                    (*last)->selected = true;
+                    redrawNeeded (*last);
+                    selected.push_back (*last);
+                }
+
+                if (!enlarge)
+                    break;
+            }
+
+            std::reverse(selected.begin (), selected.end ());
         }
     }
 
