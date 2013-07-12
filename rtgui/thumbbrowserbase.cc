@@ -120,13 +120,16 @@ void ThumbBrowserBase::selectPrev (int distance, bool enlarge) {
     if (!selected.empty ()) {
         std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), selected.front ());
         std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), selected.back ());
+        std::vector<ThumbBrowserEntryBase*>::iterator last = std::find (fd.begin (), fd.end (), lastClicked);
 
         if (front > back)
             std::swap(front, back);
 
-        // find next thumbnail at filtered distance before 'front'
-        for (; front >= fd.begin (); --front) {
-            if (!(*front)->filtered) {
+        std::vector<ThumbBrowserEntryBase*>::iterator& curr = last == front ? front : back;
+
+        // find next thumbnail at filtered distance before current
+        for (; curr >= fd.begin (); --curr) {
+            if (!(*curr)->filtered) {
                 if (distance-- == 0) {
                     // clear current selection
                     for (size_t i=0; i<selected.size (); ++i) {
@@ -135,19 +138,28 @@ void ThumbBrowserBase::selectPrev (int distance, bool enlarge) {
                     }
                     selected.clear ();
 
-                    // make sure the newly selected thumbnail is visible
-                    scrollToEntry (h, v, internal.get_width (), internal.get_height (), *front);
+                    // make sure the newly selected thumbnail is visible and make it current
+                    scrollToEntry (h, v, internal.get_width (), internal.get_height (), *curr);
+                    lastClicked = *curr;
 
                     // either enlarge current selection or set new selection
-                    for (; front <= back; ++front) {
-                        if (!(*front)->filtered) {
-                            (*front)->selected = true;
-                            redrawNeeded (*front);
-                            selected.push_back (*front);
-                        }
+                    if(enlarge) {
+                        // reverse direction if distance is too large
+                        if(front > back)
+                            std::swap(front, back);
 
-                        if (!enlarge)
-                            break;
+                        for (; front <= back; ++front) {
+                            if (!(*front)->filtered) {
+                                (*front)->selected = true;
+                                redrawNeeded (*front);
+                                selected.push_back (*front);
+                            }
+                        }
+                    }
+                    else {
+                        (*curr)->selected = true;
+                        redrawNeeded (*curr);
+                        selected.push_back (*curr);
                     }
 
                     break;
@@ -177,13 +189,16 @@ void ThumbBrowserBase::selectNext (int distance, bool enlarge) {
     if (!selected.empty ()) {
         std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), selected.front ());
         std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), selected.back ());
+        std::vector<ThumbBrowserEntryBase*>::iterator last = std::find (fd.begin (), fd.end (), lastClicked);
 
         if (front > back)
             std::swap(front, back);
 
-        // find next thumbnail at filtered distance after 'back'
-        for (; back < fd.end (); ++back) {
-            if (!(*back)->filtered) {
+        std::vector<ThumbBrowserEntryBase*>::iterator& curr = last == back ? back : front;
+
+        // find next thumbnail at filtered distance after current
+        for (; curr < fd.end (); ++curr) {
+            if (!(*curr)->filtered) {
                 if (distance-- == 0) {
                     // clear current selection
                     for (size_t i=0; i<selected.size (); ++i) {
@@ -192,22 +207,29 @@ void ThumbBrowserBase::selectNext (int distance, bool enlarge) {
                     }
                     selected.clear ();
 
-                    // make sure the newly selected thumbnail is visible
-                    scrollToEntry (h, v, internal.get_width (), internal.get_height (), *back);
+                    // make sure the newly selected thumbnail is visible and make it current
+                    scrollToEntry (h, v, internal.get_width (), internal.get_height (), *curr);
+                    lastClicked = *curr;
 
                     // either enlarge current selection or set new selection
-                    for (; back >= front; --back) {
-                        if (!(*back)->filtered) {
-                            (*back)->selected = true;
-                            redrawNeeded (*back);
-                            selected.push_back (*back);
+                    if(enlarge) {
+                        // reverse direction if distance is too large
+                        if(front > back)
+                            std::swap(front, back);
+
+                        for (; front <= back; ++front) {
+                            if (!(*front)->filtered) {
+                                (*front)->selected = true;
+                                redrawNeeded (*front);
+                                selected.push_back (*front);
+                            }
                         }
-
-                        if (!enlarge)
-                            break;
                     }
-
-                    std::reverse(selected.begin (), selected.end ());
+                    else {
+                        (*curr)->selected = true;
+                        redrawNeeded (*curr);
+                        selected.push_back (*curr);
+                    }
 
                     break;
                 }
@@ -245,13 +267,16 @@ void ThumbBrowserBase::selectFirst (bool enlarge) {
 
         scrollToEntry (h, v, internal.get_width (), internal.get_height (), *first);
 
+        ThumbBrowserEntryBase* lastEntry = lastClicked;
+        lastClicked = *first;
+
         if(selected.empty ()) {
             (*first)->selected = true;
             redrawNeeded (*first);
             selected.push_back (*first);
         }
         else {
-            std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), selected.back ());
+            std::vector<ThumbBrowserEntryBase*>::iterator back = std::find (fd.begin (), fd.end (), lastEntry ? lastEntry : selected.back ());
 
             if (first > back)
                 std::swap(first, back);
@@ -307,13 +332,16 @@ void ThumbBrowserBase::selectLast (bool enlarge) {
 
         scrollToEntry (h, v, internal.get_width (), internal.get_height (), *last);
 
+        ThumbBrowserEntryBase* lastEntry = lastClicked;
+        lastClicked = *last;
+
         if(selected.empty()) {
             (*last)->selected = true;
             redrawNeeded (*last);
             selected.push_back (*last);
         }
         else {
-            std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), selected.front ());
+            std::vector<ThumbBrowserEntryBase*>::iterator front = std::find (fd.begin (), fd.end (), lastEntry ? lastEntry : selected.front ());
 
             if (last < front)
                 std::swap(last, front);
@@ -673,6 +701,7 @@ void ThumbBrowserBase::buttonPressed (int x, int y, int button, GdkEventType typ
                         selected.push_back (fd[i]);
                     }
                 }
+                lastClicked = fileDescr;
                 #if PROTECT_VECTORS
                 MYWRITERLOCK_RELEASE(l);
                 #endif
