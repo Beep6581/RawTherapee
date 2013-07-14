@@ -1073,9 +1073,9 @@ void FileBrowser::saveThumbnailHeight (int height) {
 int FileBrowser::getThumbnailHeight () {
     // The user could have manually forced the option to a too big value
     if (!options.sameThumbSize && inTabMode)
-        return std::max(std::min(options.thumbSizeTab, 200), 10);
+        return std::max(std::min(options.thumbSizeTab, 800), 10);
     else
-        return std::max(std::min(options.thumbSize, 200), 10);
+        return std::max(std::min(options.thumbSize, 800), 10);
 }
 
 void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
