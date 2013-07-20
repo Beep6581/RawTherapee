@@ -40,7 +40,7 @@
 
 namespace rtengine {
 
-Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh) {
+Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq) {
 
     StdImageSource imgSrc;
     if (imgSrc.load(fname)) {
@@ -51,26 +51,13 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
   
     Thumbnail* tpp = new Thumbnail ();
 
-    tpp->camwbRed = 1.0;
-    tpp->camwbGreen = 1.0;
-    tpp->camwbBlue = 1.0;
-
-    tpp->embProfileLength = 0;
     unsigned char* data;
     img->getEmbeddedProfileData (tpp->embProfileLength, data);
     if (data && tpp->embProfileLength) {
         tpp->embProfileData = new unsigned char [tpp->embProfileLength];
         memcpy (tpp->embProfileData, data, tpp->embProfileLength);
     }
-    else {
-        tpp->embProfileLength = 0;
-        tpp->embProfileData = NULL;
-    }
     
-    tpp->redMultiplier = 1.0;
-    tpp->greenMultiplier = 1.0;
-    tpp->blueMultiplier = 1.0;
-
     tpp->scaleForSave = 8192;
     tpp->defGain = 1.0;
     tpp->gammaCorrected = false;
@@ -120,7 +107,13 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     if (n>0) {
         ColorTemp cTemp;
-        cTemp.mul2temp (avg_r/double(n), avg_g/double(n), avg_b/double(n), tpp->autowbTemp, tpp->autowbGreen);
+
+        tpp->redAWBMul   = avg_r/double(n);
+        tpp->greenAWBMul = avg_g/double(n);
+        tpp->blueAWBMul  = avg_b/double(n);
+        tpp->wbEqual = wbEq;
+
+        cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
     }
 
     tpp->init ();
@@ -174,21 +167,6 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
     Thumbnail* tpp = new Thumbnail ();
 
-    tpp->camwbRed = 1.0;
-    tpp->camwbGreen = 1.0;
-    tpp->camwbBlue = 1.0;
-
-    tpp->embProfileLength = 0;
-    tpp->embProfile = NULL;
-    tpp->embProfileData = NULL;
-
-    tpp->redMultiplier = 1.0;
-    tpp->greenMultiplier = 1.0;
-    tpp->blueMultiplier = 1.0;
-
-    tpp->scaleForSave = 8192;
-    tpp->defGain = 1.0;
-    tpp->gammaCorrected = false;
     tpp->isRaw = 1;
     memset (tpp->colorMatrix, 0, sizeof(tpp->colorMatrix));
     tpp->colorMatrix[0][0] = 1.0;
@@ -207,9 +185,6 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     if (tpp->thumbImg) delete tpp->thumbImg; tpp->thumbImg = NULL;
     tpp->thumbImg = resizeTo<Image8>(w, h, TI_Nearest, img);
     delete img;
-
-    tpp->autowbTemp=2700;
-    tpp->autowbGreen=1.0;
 
     if (rotate && ri->get_rotateDegree() > 0) {
         // Leaf .mos, Mamiya .mef and Phase One files have thumbnails already rotated.
@@ -231,7 +206,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 #define FISBLUE(filter,row,col) \
 	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, bool rotate)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate)
 {
 	RawImage *ri= new RawImage (fname);
 	int r = ri->loadRaw(1,0);
@@ -459,12 +434,13 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 	double greens = avg_g / gn * tpp->camwbGreen;
 	double blues = avg_b / bn * tpp->camwbBlue;
 
-	double rm = ri->get_rgb_cam(0, 0) * reds + ri->get_rgb_cam(0, 1) * greens + ri->get_rgb_cam(0, 2) * blues;
-	double gm = ri->get_rgb_cam(1, 0) * reds + ri->get_rgb_cam(1, 1) * greens + ri->get_rgb_cam(1, 2) * blues;
-	double bm = ri->get_rgb_cam(2, 0) * reds + ri->get_rgb_cam(2, 1) * greens + ri->get_rgb_cam(2, 2) * blues;
+	tpp->redAWBMul   = ri->get_rgb_cam(0, 0) * reds + ri->get_rgb_cam(0, 1) * greens + ri->get_rgb_cam(0, 2) * blues;
+	tpp->greenAWBMul = ri->get_rgb_cam(1, 0) * reds + ri->get_rgb_cam(1, 1) * greens + ri->get_rgb_cam(1, 2) * blues;
+	tpp->blueAWBMul  = ri->get_rgb_cam(2, 0) * reds + ri->get_rgb_cam(2, 1) * greens + ri->get_rgb_cam(2, 2) * blues;
+	tpp->wbEqual = wbEq;
 
 	ColorTemp cTemp;
-	cTemp.mul2temp(rm, gm, bm, tpp->autowbTemp, tpp->autowbGreen);
+	cTemp.mul2temp(tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
 
 	if (rotate && ri->get_rotateDegree() > 0) {
 		tpp->thumbImg->rotate(ri->get_rotateDegree());
@@ -513,7 +489,15 @@ void Thumbnail::init () {
 }
 
 Thumbnail::Thumbnail () :
-    camProfile(NULL), thumbImg(NULL),  embProfileData(NULL), embProfile(NULL) {
+    camProfile(NULL), thumbImg(NULL),
+    camwbRed(1.0), camwbGreen(1.0), camwbBlue(1.0),
+    redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0),
+    autoWBTemp(2700), autoWBGreen(1.0), wbEqual(-1.0),
+    embProfileLength(0), embProfileData(NULL), embProfile(NULL),
+    redMultiplier(1.0), greenMultiplier(1.0), blueMultiplier(1.0),
+    defGain(1.0),
+    scaleForSave(8192),
+    gammaCorrected(false) {
 }
 
 Thumbnail::~Thumbnail () {
@@ -555,17 +539,25 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rheight, TypeInterpolation interp, std::string camName, 
     double focalLen, double focalLen35mm, float focusDist, float shutter, float fnumber, float iso,std::string expcomp_, double& myscale) {
 
+    // check if the WB's equalizer value has changed
+    if (wbEqual < (params.wb.equal-5e-4) || wbEqual > (params.wb.equal+5e-4)) {
+        wbEqual = params.wb.equal;
+        // recompute the autoWB
+        ColorTemp cTemp;
+        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+    }
+
     // compute WB multipliers
-    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
+    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal,params.wb.method);
     if (params.wb.method=="Camera") {
         //recall colorMatrix is rgb_cam
         double cam_r = colorMatrix[0][0]*camwbRed + colorMatrix[0][1]*camwbGreen + colorMatrix[0][2]*camwbBlue;
         double cam_g = colorMatrix[1][0]*camwbRed + colorMatrix[1][1]*camwbGreen + colorMatrix[1][2]*camwbBlue;
         double cam_b = colorMatrix[2][0]*camwbRed + colorMatrix[2][1]*camwbGreen + colorMatrix[2][2]*camwbBlue;
-        currWB = ColorTemp (cam_r, cam_g, cam_b);
+        currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal);
     }
     else if (params.wb.method=="Auto")
-        currWB = ColorTemp (autowbTemp, autowbGreen, "Custom");
+        currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom");
     double r, g, b;
     currWB.getMultipliers (r, g, b);
     //iColorMatrix is cam_rgb
@@ -884,15 +876,28 @@ void Thumbnail::getCamWB (double& temp, double& green) {
     double cam_r = colorMatrix[0][0]*camwbRed + colorMatrix[0][1]*camwbGreen + colorMatrix[0][2]*camwbBlue;
     double cam_g = colorMatrix[1][0]*camwbRed + colorMatrix[1][1]*camwbGreen + colorMatrix[1][2]*camwbBlue;
     double cam_b = colorMatrix[2][0]*camwbRed + colorMatrix[2][1]*camwbGreen + colorMatrix[2][2]*camwbBlue;
-    ColorTemp currWB = ColorTemp (cam_r, cam_g, cam_b);
+    ColorTemp currWB = ColorTemp (cam_r, cam_g, cam_b, 1.0);  // we do not take the equalizer into account here, because we want camera's WB
     temp = currWB.getTemp ();
     green = currWB.getGreen ();
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green) {
-    
-    temp = autowbTemp;
-    green = autowbGreen;
+void Thumbnail::getAutoWB (double& temp, double& green, double equal) {
+
+    if (equal != wbEqual) {
+        // compute the values depending on equal
+        ColorTemp cTemp;
+        wbEqual = equal;
+        // compute autoWBTemp and autoWBGreen
+        cTemp.mul2temp(redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+    }
+    temp = autoWBTemp;
+    green = autoWBGreen;
+}
+
+void Thumbnail::getAutoWBMultipliers (double& rm, double& gm, double& bm) {
+    rm = redAWBMul;
+    gm = greenAWBMul;
+    bm = blueAWBMul;
 }
 
 void Thumbnail::applyAutoExp (procparams::ProcParams& params) {
@@ -937,7 +942,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     double gm = colorMatrix[1][0]*reds + colorMatrix[1][1]*greens + colorMatrix[1][2]*blues;
     double bm = colorMatrix[2][0]*reds + colorMatrix[2][1]*greens + colorMatrix[2][2]*blues;
 
-    ColorTemp ct (rm, gm, bm);
+    ColorTemp ct (rm, gm, bm, params.wb.equal);
     rtemp = ct.getTemp ();
     rgreen = ct.getGreen ();
 }
@@ -1283,8 +1288,9 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
             if (keyFile.has_key ("LiveThumbData", "CamWBRed"))          camwbRed            = keyFile.get_double ("LiveThumbData", "CamWBRed");
             if (keyFile.has_key ("LiveThumbData", "CamWBGreen"))        camwbGreen          = keyFile.get_double ("LiveThumbData", "CamWBGreen");
             if (keyFile.has_key ("LiveThumbData", "CamWBBlue"))         camwbBlue           = keyFile.get_double ("LiveThumbData", "CamWBBlue");
-            if (keyFile.has_key ("LiveThumbData", "AutoWBTemp"))        autowbTemp          = keyFile.get_double ("LiveThumbData", "AutoWBTemp");
-            if (keyFile.has_key ("LiveThumbData", "AutoWBGreen"))       autowbGreen         = keyFile.get_double ("LiveThumbData", "AutoWBGreen");
+            if (keyFile.has_key ("LiveThumbData", "RedAWBMul"))         redAWBMul           = keyFile.get_double ("LiveThumbData", "RedAWBMul");
+            if (keyFile.has_key ("LiveThumbData", "GreenAWBMul"))       greenAWBMul         = keyFile.get_double ("LiveThumbData", "GreenAWBMul");
+            if (keyFile.has_key ("LiveThumbData", "BlueAWBMul"))        blueAWBMul          = keyFile.get_double ("LiveThumbData", "BlueAWBMul");
             if (keyFile.has_key ("LiveThumbData", "AEHistCompression")) aeHistCompression   = keyFile.get_integer ("LiveThumbData", "AEHistCompression");
             if (keyFile.has_key ("LiveThumbData", "RedMultiplier"))     redMultiplier       = keyFile.get_double ("LiveThumbData", "RedMultiplier");
             if (keyFile.has_key ("LiveThumbData", "GreenMultiplier"))   greenMultiplier     = keyFile.get_double ("LiveThumbData", "GreenMultiplier");
@@ -1301,12 +1307,11 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
                         colorMatrix[i][j] = cm[ix++];
             }
         }
+        return true;
     }
-    catch (Glib::Error &err) {
-        return false;
-    }
+    catch (Glib::Error &err) {}
 
-    return true;
+    return false;
 }
 
 bool Thumbnail::writeData  (const Glib::ustring& fname) {
@@ -1323,8 +1328,9 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     keyFile.set_double  ("LiveThumbData", "CamWBRed", camwbRed);
     keyFile.set_double  ("LiveThumbData", "CamWBGreen", camwbGreen);
     keyFile.set_double  ("LiveThumbData", "CamWBBlue", camwbBlue);
-    keyFile.set_double  ("LiveThumbData", "AutoWBTemp", autowbTemp);
-    keyFile.set_double  ("LiveThumbData", "AutoWBGreen", autowbGreen);
+    keyFile.set_double  ("LiveThumbData", "RedAWBMul", redAWBMul);
+    keyFile.set_double  ("LiveThumbData", "GreenAWBMul", greenAWBMul);
+    keyFile.set_double  ("LiveThumbData", "BlueAWBMul", blueAWBMul);
     keyFile.set_integer ("LiveThumbData", "AEHistCompression", aeHistCompression);
     keyFile.set_double  ("LiveThumbData", "RedMultiplier", redMultiplier);
     keyFile.set_double  ("LiveThumbData", "GreenMultiplier", greenMultiplier);

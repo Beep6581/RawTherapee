@@ -133,6 +133,7 @@ void ParamsEdited::set (bool v) {
 	wb.method                  = v;
 	wb.green                   = v;
 	wb.temperature             = v;
+	wb.equal                   = v;
 	//colorShift.a               = v;
 	//colorShift.b               = v;
 	//lumaDenoise.enabled        = v;
@@ -375,6 +376,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         //colorBoost.saturationlimit = colorBoost.saturationlimit && p.colorBoost.saturationlimit == other.colorBoost.saturationlimit;
         wb.method = wb.method && p.wb.method == other.wb.method;
         wb.green = wb.green && p.wb.green == other.wb.green;
+        wb.equal = wb.equal && p.wb.equal == other.wb.equal;
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
         //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
         //colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
@@ -593,6 +595,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	//if (colorBoost.enable_saturationlimiter)toEdit.colorBoost.enable_saturationlimiter 	= mods.colorBoost.enable_saturationlimiter;
 	//if (colorBoost.saturationlimit)			toEdit.colorBoost.saturationlimit 	= mods.colorBoost.saturationlimit;
 	if (wb.method)							toEdit.wb.method 	= mods.wb.method;
+	if (wb.equal)							toEdit.wb.equal 	= dontforceSet && options.baBehav[ADDSET_WB_EQUAL] ? toEdit.wb.equal + mods.wb.equal : mods.wb.equal;
 	if (wb.green)							toEdit.wb.green 	= dontforceSet && options.baBehav[ADDSET_WB_GREEN] ? toEdit.wb.green + mods.wb.green : mods.wb.green;
 	if (wb.temperature)						toEdit.wb.temperature 	= dontforceSet && options.baBehav[ADDSET_WB_TEMPERATURE] ? toEdit.wb.temperature + mods.wb.temperature : mods.wb.temperature;
 	//if (colorShift.a)						toEdit.colorShift.a 	= dontforceSet && options.baBehav[ADDSET_CS_BLUEYELLOW] ? toEdit.colorShift.a + mods.colorShift.a : mods.colorShift.a;

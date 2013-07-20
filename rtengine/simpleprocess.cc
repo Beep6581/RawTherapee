@@ -105,11 +105,14 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     imgsrc->HLRecovery_Global( params.hlrecovery );
     if (pl) pl->setProgress (0.40);
 	// set the color temperature
-    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
+    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
     if (params.wb.method=="Camera")
         currWB = imgsrc->getWB ();
-    else if (params.wb.method=="Auto")
-        currWB = imgsrc->getAutoWB ();
+    else if (params.wb.method=="Auto") {
+        double rm, bm, gm;
+        imgsrc->getAutoWBMultipliers(rm, bm, gm);
+        currWB.update(rm, bm, gm, params.wb.equal);
+    }
     Imagefloat* baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);

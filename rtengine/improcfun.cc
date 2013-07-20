@@ -3286,7 +3286,7 @@ fclose(f);*/
 			if (thumb == NULL)
 				return 0.0;
 
-			Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1, FALSE);
+			Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw      (fname, ri, w_raw, h_raw, 1, 1.0, FALSE);
 			if (raw == NULL) {
 				delete thumb;
 				return 0.0;

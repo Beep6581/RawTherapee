@@ -84,7 +84,7 @@ namespace rtengine {
         virtual void getSpotWBData (double &reds, double &greens, double &blues, int &rn, int &gn, int &bn,
                                     std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue,
                                     int tran) {}
-        virtual ColorTemp getAutoWB () { return ColorTemp(); }
+        virtual void getAutoWBMultipliers (double &rm, double &gm, double &bm) { rm=1.0; bm=1.0; gm=1.0; }
         virtual const char* getType () const { return "unknown"; }
 
     };
@@ -476,7 +476,7 @@ namespace rtengine {
                 }
         }
 
-        ColorTemp getAutoWB () {
+        void getAutoWBMultipliers (double &rm, double &gm, double &bm) {
 
             double avg_r = 0.;
             double avg_g = 0.;
@@ -500,8 +500,9 @@ namespace rtengine {
                     avg_b += intpow( (double)b(i, j), p);*/
                     n++;
                 }
-            return ColorTemp (avg_r/double(n), avg_g/double(n), avg_b/double(n));
-            //return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
+            rm = avg_r/double(n);
+            gm = avg_g/double(n);
+            bm = avg_b/double(n);
         }
 
         void transformPixel (int x, int y, int tran, int& tx, int& ty) {
@@ -905,7 +906,7 @@ namespace rtengine {
                 }
         }
 
-        ColorTemp getAutoWB () {
+        void getAutoWBMultipliers (double &rm, double &gm, double &bm) {
 
             double avg_r = 0.;
             double avg_g = 0.;
@@ -929,8 +930,9 @@ namespace rtengine {
                     avg_b += intpow( (double)b(i, j), p);*/
                     n++;
                 }
-            return ColorTemp (avg_r/double(n), avg_g/double(n), avg_b/double(n));
-            //return ColorTemp (pow(avg_r/n, 1.0/p), pow(avg_g/n, 1.0/p), pow(avg_b/n, 1.0/p));
+            rm = avg_r/double(n);
+            gm = avg_g/double(n);
+            bm = avg_b/double(n);
         }
 
         void transformPixel (int x, int y, int tran, int& tx, int& ty) {

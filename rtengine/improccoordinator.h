@@ -56,7 +56,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         ColorTemp currWB;
         ColorTemp autoWB;
 
-        bool awbComputed;
+        double lastAwbEqual;
 
         ImProcFunctions ipf;
 
@@ -174,7 +174,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         DetailedCrop* createCrop  ();
 
-        bool getAutoWB   (double& temp, double& green);
+        bool getAutoWB   (double& temp, double& green, double equal);
         void getCamWB    (double& temp, double& green);
         void getSpotWB   (int x, int y, int rectSize, double& temp, double& green);
         void getAutoCrop (double ratio, int &x, int &y, int &w, int &h);

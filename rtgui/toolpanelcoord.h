@@ -179,7 +179,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         virtual ~ToolPanelCoordinator ();
 
         bool getChangedState                ()                                      { return hasChanged; }
-		void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve,LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
+        void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve,LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
         void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
 
         // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
@@ -195,16 +195,19 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         // to support the GUI:
         CropGUIListener* getCropGUIListener (); // through the CropGUIListener the editor area can notify the "crop" ToolPanel when the crop selection changes
         
-        // init the toolpanelcoordinator with an image & close it        
+        // init the toolpanelcoordinator with an image & close it
         void initImage          (rtengine::StagedImageProcessor* ipc_, bool israw);
         void closeImage         ();
 
         // read/write the "expanded" state of the expanders & read/write the crop panel settings (ratio, guide type, etc.)
         void readOptions        ();
-        void writeOptions       ();       
+        void writeOptions       ();
 
         // wbprovider interface
-        void getAutoWB (double& temp, double& green) { if (ipc) ipc->getAutoWB (temp, green); }
+        void getAutoWB (double& temp, double& green, double equal) {
+            if (ipc)
+                ipc->getAutoWB (temp, green, equal);
+        }
         void getCamWB (double& temp, double& green)  { if (ipc) ipc->getCamWB (temp, green); }
 
         //DFProvider interface

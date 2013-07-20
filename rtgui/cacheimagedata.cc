@@ -25,9 +25,12 @@
 
 CacheImageData::CacheImageData () 
     : md5(""), supported(false), format(FT_Invalid), rankOld(-1), inTrashOld(false), recentlySaved(false),
-    timeValid(false), exifValid(false), thumbImgType(0) {
+    timeValid(false), exifValid(false), redAWBMul(-1.0), greenAWBMul(-1.0), blueAWBMul(-1.0), thumbImgType(0) {
 }
 
+/*
+ * Load the General, DateTime, ExifInfo, File info and ExtraRawInfo sections of the image data file
+ */
 int CacheImageData::load (const Glib::ustring& fname) {
 
     rtengine::SafeKeyFile keyFile;
@@ -104,6 +107,9 @@ int CacheImageData::load (const Glib::ustring& fname) {
     return 1;
 }
 
+/*
+ * Save the General, DateTime, ExifInfo, File info and ExtraRawInfo sections of the image data file
+ */
 int CacheImageData::save (const Glib::ustring& fname) {
 
     rtengine::SafeKeyFile keyFile;

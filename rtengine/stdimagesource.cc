@@ -188,7 +188,7 @@ int StdImageSource::load (Glib::ustring fname, bool batch) {
         plistener->setProgress (1.0);
     }
 
-    wb = ColorTemp (1.0,1.0,1.0);
+    wb = ColorTemp (1.0,1.0,1.0,1.0);
     //this is probably a mistake if embedded profile is not D65
 
     return 0;
@@ -292,11 +292,22 @@ void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
     }
 }
 
-ColorTemp StdImageSource::getAutoWB () {
-    return img->getAutoWB();
+void StdImageSource::getAutoWBMultipliers (double &rm, double &bm, double &gm) {
+    if (redAWBMul != -1.) {
+        rm = redAWBMul;
+        gm = greenAWBMul;
+        bm = blueAWBMul;
+        return;
+    }
+
+    img->getAutoWBMultipliers(rm, gm, bm);
+
+    redAWBMul   = rm;
+    greenAWBMul = gm;
+    blueAWBMul  = bm;
 }
 
-ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D>& blue, int tran) {
+ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D>& blue, int tran, double equal) {
     int rn, gn, bn;
     double reds, greens, blues;
     img->getSpotWBData(reds, greens, blues, rn, gn, bn, red, green, blue, tran);
@@ -305,7 +316,7 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     if( settings->verbose )
         printf ("AVG: %g %g %g\n", reds/rn, greens/gn, blues/bn);
 
-    return ColorTemp (reds/rn*img_r, greens/gn*img_g, blues/bn*img_b);
+    return ColorTemp (reds/rn*img_r, greens/gn*img_g, blues/bn*img_b, equal);
 }
 
 }

@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.11.0
-Version=308
+AppVersion=4.0.11.20
+Version=309
 
 [Exposure]
 Auto=true
@@ -80,6 +80,7 @@ Uniformity=50
 Setting=Camera
 Temperature=5745
 Green=1.0
+Equal=1.0
 
 [Color appearance]
 Enabled=false

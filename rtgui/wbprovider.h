@@ -23,7 +23,8 @@
 class WBProvider {
 
   public:
-    virtual void getAutoWB (double& temp, double& green) {}
+    virtual ~WBProvider() {}
+    virtual void getAutoWB (double& temp, double& green, double equal) {}
     virtual void getCamWB (double& temp, double& green) {}
     virtual void spotWBRequested (int size) {}
 };

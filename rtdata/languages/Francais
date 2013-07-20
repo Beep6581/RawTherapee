@@ -443,6 +443,7 @@ HISTORY_MSG_204;Niveau d'amélioration LMMSE
 HISTORY_MSG_205;CAM02 pixels chauds/morts
 HISTORY_MSG_206;CAT02 - Adapt. auto à la scène
 HISTORY_MSG_207;A.C. - Teinte
+HISTORY_MSG_208;Égaliseur Bleu/Rouge
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
@@ -554,7 +555,7 @@ MAIN_TAB_DETAIL;Détail
 MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
 MAIN_TAB_DEVELOP; Développer 
 MAIN_TAB_EXIF;EXIF
-MAIN_TAB_EXPORT; Exporter 
+MAIN_TAB_EXPORT;Export Rapide
 MAIN_TAB_EXPOSURE;Exposition
 MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
 MAIN_TAB_FILTER; Filtrer 
@@ -787,8 +788,8 @@ PREFERENCES_MULTITABDUALMON;Éditeurs multiple, si possible sur un second monite
 PREFERENCES_MULTITAB;Éditeurs multiple
 PREFERENCES_OUTDIRFOLDERHINT;Place les images traitées dans le dossier selectionné
 PREFERENCES_OUTDIRFOLDER;Dossier de sauvegarde
-PREFERENCES_OUTDIRHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'originale, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
-PREFERENCES_OUTDIRTEMPLATEHINT;<i>Vous pouvez utiliser les paramètres de chaîne formatées suivants:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nCes paramètres de chaînes formatées se réfèrent aux dossiers et sous-chemins du chemin du fichier RAW.\n\nPar exemple, si </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>a été ouvert, la signification des paramètres est:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n</i><b>%p1/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans un dossier 'convertis' situé dans le dossier de l'originale, écrivez:\n</i><b>%p1/convertis/%f\n</b><i>\nSi vous voulez enregistrer l'image de sortie dans le dossier '/home/tom/convertis' en conservant le même sous-dossier de dates, écrivez:\n</i><b>%p2/convertis/%d1/%f</b>
+PREFERENCES_OUTDIRHINT;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo ou certains de ses attributs.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/image/02-09-2006/dsc0012.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
+PREFERENCES_OUTDIRTEMPLATEHINT;Vous pouvez utiliser les paramètres de chaîne formatées suivants:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nCes chaînes de formattage se réfèrent aux différentes parties du chemin de la photo, certains de ses attributs ou un numéro de séquence arbitraire dans le traitement par lot.\n\nPar exemple, si la photo en cours de traitement a le chemin suivant:\n<b><i>/home/tom/image/02-09-2006/dsc0012.nef</i></b>\nla signification des chaînes de formattage est:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> sera remplacé par le rang de la photo. Si la photo n'a pas de rang, %r sera remplacé par '0'. Si la photo est dans la corbeille de RawTherapee, %r sera remplacé par 'x'.\n\n<b>%s1</b>, <b>%s2</b>, etc. sera remplacé par un index de séquence constitué de 1 à 9 chiffre. L'index de la séquence commencera à 1 à chaque fois que le file de traitement est démarrée, et est incrémenté de 1 pour chaque image traitée.\n\nSi vous voulez enregistrer l'image de sortie là où se trouve l'originale, écrivez:\n<b>%p1/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>convertis</i>" situé dans le dossier de l'originale, écrivez:\n<b>%p1/convertis/%f</b>\n\nSi vous voulez enregistrer l'image de sortie dans un dossier nommé "<i>/home/tom/photos/convertis/2010-10-31</i>", écrivez:\n<b>%p2/convertis/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Utiliser le modèle
 PREFERENCES_OUTDIR;Dossier de sortie
 PREFERENCES_OVERLAY_FILENAMES;Superposer les noms de fichier sur les vignettes
@@ -979,11 +980,11 @@ TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
 TP_COLORAPP_HUE;Teinte (h)
 TP_COLORAPP_HUE_TOOLTIP;Teinte (h) - angle entre 0° et 360°
 TP_COLORAPP_LABEL;Apparence de la Couleur (CIECAM02)
-TP_COLORAPP_LABEL_CAM02;Édition de l'image avec CIECAM
+TP_COLORAPP_LABEL_CAM02;Édition de l'image avec CIE-CAM 2002
 TP_COLORAPP_LABEL_SCENE;Conditions de la scène
 TP_COLORAPP_LABEL_VIEWING;Conditions de visionnage
 TP_COLORAPP_LIGHT;Luminosité (J)
-TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de Lab et RVB
+TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de celui de Lab et RVB
 TP_COLORAPP_MODEL;Modèle de Point Blanc
 TP_COLORAPP_MODEL_TOOLTIP;<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglée dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglée dans Préférences
 TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges
@@ -1006,8 +1007,8 @@ TP_COLORAPP_TCMODE_LABEL2;Courbe mode 2
 TP_COLORAPP_TCMODE_LABEL3;Courbe chroma mode
 TP_COLORAPP_TCMODE_LIGHTNESS;Luminosité
 TP_COLORAPP_TCMODE_SATUR;Saturation
-TP_COLORAPP_TONECIE;Compression tonale avec brillance Q CIECAM
-TP_COLORAPP_TONECIE_TOOLTIP;Si vous choisissez cette option, tous les réglages "compression tonale" (si activé) seront utilisés par CIECAM 
+TP_COLORAPP_TONECIE;Compression Tonale utilisant la Brillance CIECAM02 (Q)
+TP_COLORAPP_TONECIE_TOOLTIP;Si cette option est désactivée, la compression tonale est faite dans l'espace Lab.\nSi cette options est activée, la compression tonale est faite en utilisant CIECAM02.\nL'outil Compression Tonale doit être activé pour que ce réglage prenne effet
 TP_COLORAPP_WBCAM;BB [RT+CAT02] + [sortie]
 TP_COLORAPP_WBRT;BB [RT] + [sortie]
 TP_CROP_FIXRATIO;Ratio fixe:
@@ -1317,10 +1318,14 @@ TP_VIGNETTING_LABEL;Correction vignettage
 TP_VIGNETTING_RADIUS;Rayon
 TP_VIGNETTING_STRENGTH;Force
 TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_EQBLUERED;Égaliseur Bleu/Rouge
+TP_WBALANCE_EQBLUERED_TOOLTIP;Permet de dévier du comportement normal de la "balance des blancs" en modulant la balance bleu/rouge.\nCeci peut être utile lorsque les conditions de prise de vue:\na) sont loins de l'illuminant strandard (ex: sous-marin)\nb) sont loins des conditions où a été réalisé le calibrage\nc) où les matrices ou les profiles ICC sont incorrect
 TP_WBALANCE_CAMERA;Appareil photo
 TP_WBALANCE_CLOUDY;Nuageux
 TP_WBALANCE_CUSTOM;Personnalisé
 TP_WBALANCE_DAYLIGHT;Lumière du jour (ensoleillé)
+TP_WBALANCE_WATER1;Sous-marin 1
+TP_WBALANCE_WATER2;Sous-marin 2
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
@@ -1338,6 +1343,7 @@ TP_WBALANCE_FLUO10;F10 - Philips TL85
 TP_WBALANCE_FLUO11;F11 - Philips TL84
 TP_WBALANCE_FLUO12;F12 - Philips TL83
 TP_WBALANCE_FLUO_HEADER;Fluorescent
+TP_WBALANCE_WATER_HEADER;Sous-marin
 TP_WBALANCE_GREEN;Teinte
 TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI

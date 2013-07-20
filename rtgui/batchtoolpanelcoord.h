@@ -60,7 +60,7 @@ class BatchToolPanelCoordinator :
         void profileChange  (const rtengine::procparams::PartialProfile* nparams, rtengine::ProcEvent event, const Glib::ustring& descr, const ParamsEdited* paramsEdited=NULL);
 
         // wbprovider interface
-        void getAutoWB (double& temp, double& green);
+        void getAutoWB (double& temp, double& green, double equal);
         void getCamWB (double& temp, double& green);
 
         // thumbnaillistener interface
