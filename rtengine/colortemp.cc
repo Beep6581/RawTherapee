@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include "mytime.h"
 #include "sleef.c"
+#include "../rtgui/options.h"
+
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0?((a)<1.0?(a):1.0):0.0)
 #define CLIPQQ(a) ((a)>0?((a)<250?(a):250):0)
@@ -34,7 +36,7 @@
 namespace rtengine {
     using namespace procparams;
 
-extern const Settings* settings;
+    extern const Settings* settings;
 
     static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis observer 2°
         {0.0000000,0.000000,0.000000}, {0.0000000,0.000000,0.000000}, {0.0001299,0.0003917,0.0006061},
@@ -72,9 +74,9 @@ extern const Settings* settings;
         {0.000001251141,0.00000045181,0.000000}
     };
 
-ColorTemp::ColorTemp (double t, double g, Glib::ustring m) : temp(t), green(g), method(m) {
+ColorTemp::ColorTemp (double t, double g, double e, Glib::ustring m) : temp(t), green(g), equal(e), method(m) {
 
-    clip (temp, green);
+    clip (temp, green, equal);
 }
 
 void ColorTemp::clip (double &temp, double &green) {
@@ -83,26 +85,44 @@ void ColorTemp::clip (double &temp, double &green) {
         temp = MINTEMP;
     else if (temp > MAXTEMP)
         temp = MAXTEMP;
-        
+
     if (green < MINGREEN)
         green = MINGREEN;
     else if (green > MAXGREEN)
         green = MAXGREEN;
 }
 
-ColorTemp::ColorTemp (double mulr, double mulg, double mulb) {
-    method = "Custom";
-    mul2temp (mulr, mulg, mulb, temp, green);
+void ColorTemp::clip (double &temp, double &green, double &equal) {
+
+    if (temp < MINTEMP)
+        temp = MINTEMP;
+    else if (temp > MAXTEMP)
+        temp = MAXTEMP;
+
+    if (green < MINGREEN)
+        green = MINGREEN;
+    else if (green > MAXGREEN)
+        green = MAXGREEN;
+
+    if(equal < MINEQUAL)
+        equal = MINEQUAL;
+    else if(equal > MAXEQUAL)
+        equal = MAXEQUAL;
 }
 
-void ColorTemp::mul2temp (double rmul, double gmul, double bmul, double& temp, double& green) {
+ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e) {
+    method = "Custom";
+    mul2temp (mulr, mulg, mulb, equal, temp, green);
+}
 
-    double maxtemp=(double)MAXTEMP, mintemp=(double)MINTEMP;
+void ColorTemp::mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green) {
+
+    double maxtemp=double(MAXTEMP), mintemp=double(MINTEMP);
     double tmpr, tmpg, tmpb;
     temp=(maxtemp+mintemp)/2;
 
     while (maxtemp-mintemp>1) {
-        temp2mul (temp, 1.0, tmpr, tmpg, tmpb);
+        temp2mul (temp, 1.0, equal, tmpr, tmpg, tmpb);
         if (tmpb/tmpr > bmul/rmul)
             maxtemp = temp;
         else
@@ -114,7 +134,7 @@ void ColorTemp::mul2temp (double rmul, double gmul, double bmul, double& temp, d
 }
 
 
-// spectral data for Daylight direct Sun: I have choose 5300K beacuse Nikon=5200K, Olympus=5300K, Panasonic=5500K, Leica=5400K, Minolta=5100K
+// spectral data for Daylight direct Sun: I have choose 5300K because Nikon=5200K, Olympus=5300K, Panasonic=5500K, Leica=5400K, Minolta=5100K
 const double ColorTemp::Daylight5300_spect[97] = {
     24.82,26.27,27.72,28.97,30.22,29.71,29.19,31.95,34.71,45.49,56.26,59.97,63.68,65.30,66.92,65.39,63.86,72.59,81.32,87.53,93.73,95.15,96.56,96.55,96.54,98.13,99.73,97.70,95.66,97.19,98.72,
     98.90,99.08,98.98,98.87,101.13,103.39,102.48,101.57,102.14,102.71,101.36,100.00,98.71,97.42,97.81,98.21,95.20,92.20,93.92,95.63,96.15,96.67,96.34,96.01,94.21,92.41,93.58,94.74,93.05,91.36,92.29,
@@ -122,7 +142,7 @@ const double ColorTemp::Daylight5300_spect[97] = {
     63.88,67.13,68.85,70.57
 };
 
-//spectral data for Daylight Cloudy: I have choose 6200K beacuse Nikon=6000K, Olympus=6000K, Panasonic=6200K, Leica=6400K, Minolta=6500K
+//spectral data for Daylight Cloudy: I have choose 6200K because Nikon=6000K, Olympus=6000K, Panasonic=6200K, Leica=6400K, Minolta=6500K
 const double ColorTemp::Cloudy6200_spect[97] = {
     39.50,40.57,41.63,43.85,46.08,45.38,44.69,47.20,49.71,63.06,76.41,80.59,84.77,85.91,87.05,84.14,81.23,90.29,99.35,105.47,111.58,112.23,112.87,111.74,110.62,111.41,112.20,108.98,105.76,106.32,
     106.89,106.34,105.79,104.62,103.45,105.09,106.72,105.24,103.76,103.75,103.75,101.87,100.00,98.29,96.58,96.46,96.34,92.85,89.37,90.25,91.12,91.06,90.99,90.17,89.35,87.22,85.10,85.48,85.85,
@@ -130,7 +150,7 @@ const double ColorTemp::Cloudy6200_spect[97] = {
     53.63,56.47,59.31,60.80,62.29
 };
 
-//spectral data for Daylight Shade: I have choose 7600K beacuse Nikon=8000K, Olympus=7500K, Panasonic=7500K, Leica=7500K, Minolta=7500K
+//spectral data for Daylight Shade: I have choose 7600K because Nikon=8000K, Olympus=7500K, Panasonic=7500K, Leica=7500K, Minolta=7500K
 const double ColorTemp::Shade7600_spect[97] = {
     64.42,64.46,64.51,68.35,72.20,70.22,68.24,69.79,71.35,87.49,103.64,108.68,113.72,114.12,114.53,109.54,104.55,113.59,122.63,128.52,134.41,134.02,133.63,131.02,128.41,128.08,127.75,123.16,
     118.57,117.89,117.22,115.72,114.22,111.60,108.99,109.84,110.68,108.57,106.45,105.71,104.98,102.49,100.00,97.78,95.55,94.82,94.08,90.47,86.87,86.94,87.01,86.45,85.88,84.57,83.27,80.83,78.40,78.21,
@@ -1229,8 +1249,10 @@ void ColorTemp::temp2mulxyz (double tem, double gree, Glib::ustring method ,doub
             double m1, m2;
             if (tem<=7000)
                 x_D = -4.6070e9/(tem*tem*tem) + 2.9678e6/(tem*tem) + 0.09911e3/tem + 0.244063;
-            else
-                x_D = -2.0064e9/(tem*tem*tem) + 1.9018e6/(tem*tem) + 0.24748e3/tem + 0.237040;
+            else if (tem <=25000)
+                x_D = -2.0064e9/(tem*tem*tem) + 1.9018e6/(tem*tem) + 0.24748e3/tem + 0.237040;		
+            else if (tem >25000)
+                x_D = -2.0064e9/(tem*tem*tem) + 1.9018e6/(tem*tem) + 0.24748e3/tem + 0.237040 - ((tem-25000)/25000)*0.025;//Jacques empirical adjustemnt for very high temp (underwater !)
 
             y_D = -3.0*x_D*x_D + 2.87*x_D - 0.275;
             //calculate D -daylight in function of s0, s1, s2 and temp ==> x_D y_D
@@ -1253,9 +1275,12 @@ void ColorTemp::temp2mulxyz (double tem, double gree, Glib::ustring method ,doub
     //printf("Xxyz=%f Zxyz=%f\n",Xxyz,Zxyz);
 }
 
-void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul, double& bmul) {
+void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul) {
 
-    clip (temp, green);
+    clip (temp, green, equal);
+
+    //printf("temp=%d  green=%.3f  equal=%.3f\n", (int)temp, (float) green, (float) equal);
+
     //variables for CRI and display Lab, and palette
     bool CRI_type=false;
     double xD, yD, x_D, y_D, interm;
@@ -1281,10 +1306,6 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
     double Lbb[50],abb[50],bbb[50];
     double Lpal[50],apal[50],bpal[50];
 
-    float DeltaE[50], DeltaEs[8];
-    float quadCRI=0.0f,quadCRIs=0.0f;
-    float CRI_RT=0.0, CRI[50];
-    float CRI_RTs=0.0, CRIs[8];
     int palet=-1;
     bool palette=true;
     // double tempalet; // correlated temperature
@@ -1330,10 +1351,12 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
             palet=29;
             if (temp<=7000)
                 x_D = -4.6070e9/(temp*temp*temp) + 2.9678e6/(temp*temp) + 0.09911e3/temp + 0.244063;
-            else
+            else if (temp <=25000)
                 x_D = -2.0064e9/(temp*temp*temp) + 1.9018e6/(temp*temp) + 0.24748e3/temp + 0.237040;
+            else if (temp >25000) // above 25000 it's unknown..then I have modified to adjust for underwater
+                x_D = -2.0064e9/(temp*temp*temp) + 1.9018e6/(temp*temp) + 0.24748e3/temp + 0.237040 - ((temp-25000)/25000)*0.025;//Jacques empirical adjustemnt for very high temp (underwater !)
 
-            y_D = -3.0*x_D*x_D + 2.87*x_D - 0.275;
+            y_D = (-3.0*x_D*x_D + 2.87*x_D - 0.275);//modify blue / red action
             //calculate D -daylight in function of s0, s1, s2 and temp ==> x_D y_D
             //S(lamda)=So(lambda)+m1*s1(lambda)+m2*s2(lambda)
             interm=(0.0241+0.2562*x_D-0.734*y_D);
@@ -1345,6 +1368,11 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
     }
 
     xD=x; yD=y;
+    float adj=1.f;
+    if(equal < 0.9999 || equal > 1.0001 ){
+        adj=(100.f+( 1000.f-(1000.f*(float)equal) )/20.f)/100.f;
+    }
+    //printf("adj=%f\n",adj);
     double Xwb = xD/yD;
     double Ywb = 1.0;
     double Zwb = (1.0-xD-yD)/yD;
@@ -1365,12 +1393,12 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
         bmul = sRGB_xyz[2][0]*X + sRGB_xyz[2][1]*Y + sRGB_xyz[2][2]*Z;
     } else {*/
     //recalculate channels multipliers with new values of XYZ tue to whitebalance
-        rmul = sRGBd65_xyz[0][0]*Xwb + sRGBd65_xyz[0][1]*Ywb + sRGBd65_xyz[0][2]*Zwb;
-        gmul = sRGBd65_xyz[1][0]*Xwb + sRGBd65_xyz[1][1]*Ywb + sRGBd65_xyz[1][2]*Zwb;
-        bmul = sRGBd65_xyz[2][0]*Xwb + sRGBd65_xyz[2][1]*Ywb + sRGBd65_xyz[2][2]*Zwb;
+        rmul = sRGBd65_xyz[0][0]*Xwb*adj + sRGBd65_xyz[0][1]*Ywb + sRGBd65_xyz[0][2]*Zwb/adj; // Jacques' empirical modification 5/2013
+        gmul = sRGBd65_xyz[1][0]*Xwb     + sRGBd65_xyz[1][1]*Ywb + sRGBd65_xyz[1][2]*Zwb;
+        bmul = sRGBd65_xyz[2][0]*Xwb*adj + sRGBd65_xyz[2][1]*Ywb + sRGBd65_xyz[2][2]*Zwb/adj;
     //};
     gmul /= green;
-
+    //printf("rmul=%f gmul=%f bmul=%f\n",rmul, gmul, bmul);
     double max = rmul;
     if (gmul>max) max = gmul;
     if (bmul>max) max = bmul;
@@ -1526,6 +1554,11 @@ void ColorTemp::temp2mul (double temp, double green, double& rmul, double& gmul,
 		else                                       {CRI_type=false;}
 
 		if (CRI_type) {
+			float DeltaE[50], DeltaEs[8];
+			float quadCRI=0.0f,quadCRIs=0.0f;
+			float CRI_RT=0.0, CRI[50];
+			float CRI_RTs=0.0, CRIs[8];
+
 			for(int i=0;i<N_c;i++) {
 				spectrum_to_color_xyz_preset(spec_color[i],spect_illum[illum+3], xx,yy,zz);
 				XchkLamp[i]=xx;YchkLamp[i]=yy;ZchkLamp[i]=zz;

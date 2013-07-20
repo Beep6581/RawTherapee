@@ -55,18 +55,23 @@ class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableT
     MyComboBoxText* spotsize;
     Adjuster* temp;
     Adjuster* green;
+    Adjuster* equal;
+
     Gtk::Button* spotbutton;
     int opt;
     double nextTemp;
     double nextGreen;
-    WBProvider *wbp;
+    WBProvider *wbp;  // pointer to a ToolPanelCoordinator object, or its subclass BatchToolPanelCoordinator
     SpotWBListener* wblistener;
     sigc::connection methconn;
     int custom_temp;
-    double* custom_green;
+    double custom_green;
+    double custom_equal;
     void cache_customWB    (int temp, double green); //cache custom WB setting to allow its recall
     void cache_customTemp  (int temp);               //cache Temperature only to allow its recall
     void cache_customGreen (double green);           //cache Green only to allow its recall
+    void cache_customEqual (double equal);           //cache Equal only to allow its recall
+
     int  setActiveMethod   (Glib::ustring label);
     int _setActiveMethod   (Glib::ustring &label, Gtk::TreeModel::Children &children);
 
@@ -77,7 +82,7 @@ class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableT
   public:
 
     WhiteBalance ();
-    ~WhiteBalance ();
+    ~WhiteBalance () {};
 
     static void init    ();
     static void cleanup ();
@@ -85,7 +90,6 @@ class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableT
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
-    
     
     void optChanged ();
     void spotPressed ();
@@ -96,7 +100,7 @@ class WhiteBalance : public Gtk::VBox, public AdjusterListener, public FoldableT
     void setSpotWBListener (SpotWBListener* l) { wblistener = l; }
     void setWB (int temp, double green);
     
-    void setAdjusterBehavior (bool tempadd, bool greenadd);
+    void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 };
 

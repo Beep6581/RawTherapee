@@ -56,6 +56,11 @@ class CacheImageData {
         Glib::ustring filetype;
         Glib::ustring expcomp;
 
+        // store a copy of the autoWB's multipliers computed in Thumbnail::_generateThumbnailImage
+        // they are not stored in the cache file by this class, but by rtengine::Thumbnail
+        // -1 = Unknown
+        double redAWBMul, greenAWBMul, blueAWBMul;
+
         // additional info on raw images
         int   rotate;
         int   thumbImgType;

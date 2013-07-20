@@ -143,6 +143,7 @@ class WBParamsEdited {
         bool method;
         bool temperature;
         bool green;
+        bool equal;
 };
 
 /*class ColorShiftParamsEdited {

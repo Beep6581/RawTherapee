@@ -321,7 +321,7 @@ namespace rtengine {
             /** Creates and returns a Crop instance that acts as a window on the image */
             virtual DetailedCrop* createCrop  () =0;
 
-            virtual bool        getAutoWB   (double& temp, double& green) =0;
+            virtual bool        getAutoWB   (double& temp, double& green, double equal) =0;
             virtual void        getCamWB    (double& temp, double& green) =0;
             virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) =0;
             virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) =0;

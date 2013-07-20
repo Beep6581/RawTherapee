@@ -891,7 +891,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     double cam_g = imatrices.rgb_cam[1][0]*camwb_red + imatrices.rgb_cam[1][1]*camwb_green + imatrices.rgb_cam[1][2]*camwb_blue;
     double cam_b = imatrices.rgb_cam[2][0]*camwb_red + imatrices.rgb_cam[2][1]*camwb_green + imatrices.rgb_cam[2][2]*camwb_blue;
 
-    wb = ColorTemp (cam_r, cam_g, cam_b);
+    wb = ColorTemp (cam_r, cam_g, cam_b, 1.);
 
     ri->set_prefilters();
 
@@ -2265,8 +2265,22 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	ColorTemp RawImageSource::getAutoWB () {
-		
+	void RawImageSource::getAutoWBMultipliers (double &rm, double &bm, double &gm) {
+
+		if (redAWBMul != -1.) {
+			rm = redAWBMul;
+			gm = greenAWBMul;
+			bm = blueAWBMul;
+			return;
+		}
+
+		if (!isWBProviderReady()) {
+			rm = -1.0;
+			gm = -1.0;
+			bm = -1.0;
+			return;
+		}
+
 		double avg_r = 0;
 		double avg_g = 0;
 		double avg_b = 0;
@@ -2369,17 +2383,15 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 		double greens = avg_g/gn * camwb_green;
 		double blues  = avg_b/bn * camwb_blue;
 		
-		double rm = imatrices.rgb_cam[0][0]*reds + imatrices.rgb_cam[0][1]*greens + imatrices.rgb_cam[0][2]*blues;
-		double gm = imatrices.rgb_cam[1][0]*reds + imatrices.rgb_cam[1][1]*greens + imatrices.rgb_cam[1][2]*blues;
-		double bm = imatrices.rgb_cam[2][0]*reds + imatrices.rgb_cam[2][1]*greens + imatrices.rgb_cam[2][2]*blues;
-		
-		return ColorTemp (rm, gm, bm);
+		redAWBMul   = rm = imatrices.rgb_cam[0][0]*reds + imatrices.rgb_cam[0][1]*greens + imatrices.rgb_cam[0][2]*blues;
+		greenAWBMul = gm = imatrices.rgb_cam[1][0]*reds + imatrices.rgb_cam[1][1]*greens + imatrices.rgb_cam[1][2]*blues;
+		blueAWBMul  = bm = imatrices.rgb_cam[2][0]*reds + imatrices.rgb_cam[2][1]*greens + imatrices.rgb_cam[2][2]*blues;
 	}
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	
-	ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran) {
+	ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) {
 		
 		int x; int y;
 		double reds = 0, greens = 0, blues = 0;
@@ -2410,7 +2422,8 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 		} else {
 			
 			int d[9][2] = {{0,0}, {-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
-			int rloc, gloc, bloc, rnbrs, gnbrs, bnbrs;
+			double rloc, gloc, bloc;
+			int rnbrs, gnbrs, bnbrs;
 			for (size_t i=0; i<red.size(); i++) {
 				transformPosition (red[i].x, red[i].y, tran, x, y);
 				rloc=gloc=bloc=rnbrs=gnbrs=bnbrs=0;
@@ -2431,19 +2444,66 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 						gnbrs++;
 						continue;
 					}
+				}
+				rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
+				if (rloc*initialGain<64000. && gloc*initialGain<64000. && bloc*initialGain<64000.) {
+					reds += rloc; greens += gloc; blues += bloc; rn++;
+				}
+				transformPosition (green[i].x, green[i].y, tran, x, y);//these are redundant now ??? if not, repeat for these blocks same as for red[]
+				rloc=gloc=bloc=rnbrs=gnbrs=bnbrs=0;
+				for (int k=0; k<9; k++) {
+					int xv = x + d[k][0];
+					int yv = y + d[k][1];
+					int c = FC(yv,xv);
+					if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
+						rloc += (rawData[yv][xv]);
+						rnbrs++;
+						continue;
+					}else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
+						bloc += (rawData[yv][xv]);
+						bnbrs++;
+						continue;
+					} else { // GREEN
+						gloc += (rawData[yv][xv]);
+						gnbrs++;
+						continue;
+					}
+				}
+				rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
+				if (rloc*initialGain<64000. && gloc*initialGain<64000. && bloc*initialGain<64000.) {
+					reds += rloc; greens += gloc; blues += bloc; rn++;
+				}
+
+				transformPosition (blue[i].x, blue[i].y, tran, x, y);
+				rloc=gloc=bloc=rnbrs=gnbrs=bnbrs=0;
+				for (int k=0; k<9; k++) {
+					int xv = x + d[k][0];
+					int yv = y + d[k][1];
+					int c = FC(yv,xv);
+					if (c==0 && xv>=0 && yv>=0 && xv<W && yv<H) { //RED
+						rloc += (rawData[yv][xv]);
+						rnbrs++;
+						continue;
+					} else if (c==2 && xv>=0 && yv>=0 && xv<W && yv<H) { //BLUE
+						bloc += (rawData[yv][xv]);
+						bnbrs++;
+						continue;
+					} else { // GREEN
+						gloc += (rawData[yv][xv]);
+						gnbrs++;
+						continue;
+					}
 					
 				}
 				rloc /= rnbrs; gloc /= gnbrs; bloc /= bnbrs;
-				if (rloc*initialGain<64000 && gloc*initialGain<64000 && bloc*initialGain<64000) {
+				if (rloc*initialGain<64000. && gloc*initialGain<64000. && bloc*initialGain<64000.) {
 					reds += rloc; greens += gloc; blues += bloc; rn++;
 				}
-				//transformPosition (green[i].x, green[i].y, tran, x, y);//these are redundant now ??? if not, repeat for these blocks same as for red[]
-				//transformPosition (blue[i].x, blue[i].y, tran, x, y);
 			}
 		}
 		
 		if (2*rn < red.size()) {
-			return ColorTemp ();
+			return ColorTemp (equal);
 		}
 		else {
 			reds = reds/rn * camwb_red;
@@ -2454,7 +2514,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 			double gm = imatrices.rgb_cam[1][0]*reds + imatrices.rgb_cam[1][1]*greens + imatrices.rgb_cam[1][2]*blues;
 			double bm = imatrices.rgb_cam[2][0]*reds + imatrices.rgb_cam[2][1]*greens + imatrices.rgb_cam[2][2]*blues;
 			
-			return ColorTemp (rm, gm, bm);
+			return ColorTemp (rm, gm, bm, equal);
 		}
 	}
 	

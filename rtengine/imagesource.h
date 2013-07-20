@@ -50,6 +50,7 @@ class ImageSource : public InitialImage {
         int references;
 
     protected:
+        double redAWBMul, greenAWBMul, blueAWBMul; // local copy of the multipliers, to avoid recomputing the values
         cmsHPROFILE embProfile;
         Glib::ustring fileName;
         ImageData* idata;
@@ -57,7 +58,8 @@ class ImageSource : public InitialImage {
         double dirpyrdenoiseExpComp;
 
     public:
-                            ImageSource () : references (1), embProfile(NULL), idata(NULL), dirpyrdenoiseExpComp(INFINITY) {}
+                            ImageSource () : references (1), redAWBMul(-1.), greenAWBMul(-1.), blueAWBMul(-1.),
+                                             embProfile(NULL), idata(NULL), dirpyrdenoiseExpComp(INFINITY) {}
 
         virtual ~ImageSource            () {}
         virtual int         load        (Glib::ustring fname, bool batch = false) =0;
@@ -75,10 +77,10 @@ class ImageSource : public InitialImage {
         // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
         virtual bool        isWBProviderReady () =0;
 
-        virtual void        convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) =0;// DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
+        virtual void        convertColorSpace    (Imagefloat* image, ColorManagementParams cmp, RAWParams raw) =0;// DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
+        virtual void        getAutoWBMultipliers (double &rm, double &bm, double &gm) =0;
         virtual ColorTemp   getWB       () =0;
-        virtual ColorTemp   getAutoWB   () =0;
-        virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran) =0;
+        virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) =0;
 
         virtual double      getDefGain  () { return 1.0; }
 

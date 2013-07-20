@@ -442,6 +442,7 @@ HISTORY_MSG_204;LMMSE Enhancement Steps
 HISTORY_MSG_205;CAM02 hot/bad pixels
 HISTORY_MSG_206;CAT02 - Adapt scene auto
 HISTORY_MSG_207;Defringing Hue curve
+HISTORY_MSG_208;Blue/Red Equalizer
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -1297,10 +1298,14 @@ TP_VIGNETTING_LABEL;Vignetting Correction
 TP_VIGNETTING_RADIUS;Radius
 TP_VIGNETTING_STRENGTH;Strength
 TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
+TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy
 TP_WBALANCE_CUSTOM;Custom
 TP_WBALANCE_DAYLIGHT;Daylight (sunny)
+TP_WBALANCE_WATER1;UnderWater 1
+TP_WBALANCE_WATER2;UnderWater 2
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
@@ -1318,6 +1323,7 @@ TP_WBALANCE_FLUO10;F10 - Philips TL85
 TP_WBALANCE_FLUO11;F11 - Philips TL84
 TP_WBALANCE_FLUO12;F12 - Philips TL83
 TP_WBALANCE_FLUO_HEADER;Fluorescent
+TP_WBALANCE_WATER_HEADER;UnderWater
 TP_WBALANCE_GREEN;Tint
 TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI

@@ -45,8 +45,8 @@ class StdImageSource : public ImageSource {
         int         load        (Glib::ustring fname, bool batch = false);
         void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return wb; }
-        ColorTemp   getAutoWB   ();
-        ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran);
+        void        getAutoWBMultipliers (double &rm, double &bm, double &gm);
+        ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
 
         bool        isWBProviderReady () { return true; };
 

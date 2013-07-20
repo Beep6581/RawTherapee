@@ -72,13 +72,13 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::s
 
 
     cfs.md5 = md5;
-    _generateThumbnailImage ();
     if (pparams) {
         this->pparams = *pparams;
         pparamsValid = true;
     }
     else
         loadProcParams ();
+    _generateThumbnailImage ();
     cfs.recentlySaved = false;
 
     initial_ = false;
@@ -107,17 +107,17 @@ void Thumbnail::_generateThumbnailImage () {
 	cfs.timeValid = false;
 
 	if (ext.lowercase()=="jpg" || ext.lowercase()=="jpeg") {
-		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams.wb.equal);
 		if (tpp)
 			cfs.format = FT_Jpeg;
 	}
 	else if (ext.lowercase()=="png") {
-		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams.wb.equal);
 		if (tpp)
 			cfs.format = FT_Png;
 	}
 	else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
-		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1);
+		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams.wb.equal);
 		if (tpp)
 			cfs.format = FT_Tiff;
 	}
@@ -136,7 +136,7 @@ void Thumbnail::_generateThumbnailImage () {
 		if ( tpp == NULL )
 		{
 			quick = false;
-			tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, TRUE);
+			tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, tw, th, 1, pparams.wb.equal, TRUE);
 		}
 		if (tpp) {
 			cfs.format = FT_Raw;
@@ -146,7 +146,8 @@ void Thumbnail::_generateThumbnailImage () {
 	}
 
     if (tpp)
-	{
+    {
+        tpp->getAutoWBMultipliers(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul);
         _saveThumbnail ();
         cfs.supported = true;
         needsReProcessing = true;
@@ -178,7 +179,7 @@ const ProcParams& Thumbnail::getProcParams () {
         }
         else if (pparams.wb.method=="Auto") {
             double ct;
-            getAutoWB (ct, pparams.wb.green);
+            getAutoWB (ct, pparams.wb.green, pparams.wb.equal);
             pparams.wb.temperature = ct;
         }
     }
@@ -558,6 +559,17 @@ const Glib::ustring& Thumbnail::getDateTimeString () {
     return dateTimeString;
 }
 
+void Thumbnail::getAutoWB (double& temp, double& green, double equal) {
+	if (cfs.redAWBMul != -1.0) {
+		rtengine::ColorTemp ct(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul, equal);
+		temp = ct.getTemp();
+		green = ct.getGreen();
+	}
+	else
+		temp = green = -1.0;
+}
+
+
 ThFileType Thumbnail::getType () {
 
     return (ThFileType) cfs.format;
@@ -615,6 +627,14 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
     return deg;
 }
 
+/*
+ * Read all thumbnail's data from the cache; build and save them if doesn't exist - NON PROTECTED
+ * This includes:
+ *  - image's bitmap (*.rtti)
+ *  - auto exposure's histogram (full thumbnail only)
+ *  - embedded profile (full thumbnail only)
+ *  - LiveThumbData section of the data file
+ */
 void Thumbnail::_loadThumbnail(bool firstTrial) {
 
     needsReProcessing = true;
@@ -626,7 +646,10 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
 
     // load supplementary data
     bool succ = tpp->readData (getCacheFileName ("data")+".txt");
-    
+
+    if (succ)
+        tpp->getAutoWBMultipliers(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul);
+
     // thumbnail image
     succ = succ && tpp->readImage (getCacheFileName ("images"));
 
@@ -656,11 +679,27 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
     if (!initial_ && tpp) tw = tpp->getImageWidth (getProcParams(), th, imgRatio);  // this might return 0 if image was just building
 }
 
+/*
+ * Read all thumbnail's data from the cache; build and save them if doesn't exist - MUTEX PROTECTED
+ * This includes:
+ *  - image's bitmap (*.rtti)
+ *  - auto exposure's histogram (full thumbnail only)
+ *  - embedded profile (full thumbnail only)
+ *  - LiveThumbData section of the data file
+ */
 void Thumbnail::loadThumbnail (bool firstTrial) {
     Glib::Mutex::Lock lock(mutex);
     _loadThumbnail(firstTrial);
 }
 
+/*
+ * Save thumbnail's data to the cache - NON PROTECTED
+ * This includes:
+ *  - image's bitmap (*.rtti)
+ *  - auto exposure's histogram (full thumbnail only)
+ *  - embedded profile (full thumbnail only)
+ *  - LiveThumbData section of the data file
+ */
 void Thumbnail::_saveThumbnail () {
 
     if (!tpp)
@@ -686,12 +725,26 @@ void Thumbnail::_saveThumbnail () {
     tpp->writeData (getCacheFileName ("data")+".txt");
 }
 
+/*
+ * Save thumbnail's data to the cache - MUTEX PROTECTED
+ * This includes:
+ *  - image's bitmap (*.rtti)
+ *  - auto exposure's histogram (full thumbnail only)
+ *  - embedded profile (full thumbnail only)
+ *  - LiveThumbData section of the data file
+ */
 void Thumbnail::saveThumbnail () 
 {
    	Glib::Mutex::Lock lock(mutex);
     _saveThumbnail();
 }
 
+/*
+ * Update the cached files
+ *  - updatePParams==true (default)        : write the procparams file (sidecar or cache, depending on the options)
+ *  - updateCacheImageData==true (default) : write the CacheImageData values in the cache folder,
+ *                                           i.e. some General, DateTime, ExifInfo, File info and ExtraRawInfo,
+ */
 void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData) {
 
     if (updatePParams && pparamsValid) {

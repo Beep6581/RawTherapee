@@ -29,7 +29,7 @@ namespace rtengine {
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : workimg(NULL), awbComputed(false), ipf(&params, true), scale(10), highDetailPreprocessComputed(false),
+    : workimg(NULL), lastAwbEqual(0.), ipf(&params, true), scale(10), highDetailPreprocessComputed(false),
       highDetailRawComputed(false), allocated(false),
 
       hltonecurve(65536,0),
@@ -182,13 +182,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         imgsrc->HLRecovery_Global( params.hlrecovery ); // this handles Color HLRecovery
 
         if (settings->verbose) printf ("Applying white balance, color correction & sRBG conversion...\n");
-        currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
+        currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
         if (params.wb.method=="Camera")
             currWB = imgsrc->getWB ();
         else if (params.wb.method=="Auto") {
-            if (!awbComputed) {
-                autoWB = imgsrc->getAutoWB ();
-                awbComputed = true;
+            if (lastAwbEqual != params.wb.equal) {
+                double rm, gm, bm;
+                imgsrc->getAutoWBMultipliers(rm, gm, bm);
+                if (rm != -1.) {
+                    autoWB.update(rm, bm, gm, params.wb.equal);
+                    lastAwbEqual = params.wb.equal;
+                }
+                else {
+                    lastAwbEqual = -1.;
+                    autoWB.useDefaults(params.wb.equal);
+                }
+                //double rr,gg,bb;
+                //autoWB.getMultipliers(rr,gg,bb);
             }
             currWB = autoWB;
         }
@@ -609,20 +619,28 @@ void ImProcCoordinator::progress (Glib::ustring str, int pr) {
   }*/
 }
 
-bool ImProcCoordinator::getAutoWB (double& temp, double& green) {
+bool ImProcCoordinator::getAutoWB (double& temp, double& green, double equal) {
 
-    if (imgsrc && imgsrc->isWBProviderReady()) {
-        if (!awbComputed) {
-            minit.lock ();
-            autoWB = imgsrc->getAutoWB ();
-            minit.unlock ();
-            awbComputed = true;
+    if (imgsrc) {
+        if (lastAwbEqual != equal) {
+            Glib::Mutex::Lock lock(minit);  // Also used in crop window
+            double rm, gm, bm;
+            imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            if (rm != -1) {
+                autoWB.update(rm, bm, gm, equal);
+                lastAwbEqual = equal;
+            }
+            else {
+                lastAwbEqual = -1.;
+                autoWB.useDefaults(equal);
+            }
         }
         temp = autoWB.getTemp ();
         green = autoWB.getGreen ();
         return true;
     }
     else {
+        //temp = autoWB.getTemp();
         temp = -1.0;
         green = -1.0;
         return false;
@@ -652,9 +670,11 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
     if (params.coarse.rotate==270) tr |= TR_R270;
     if (params.coarse.hflip)       tr |= TR_HFLIP;
     if (params.coarse.vflip)       tr |= TR_VFLIP;
-    
-    ColorTemp ret = imgsrc->getSpotWB (red, green, blue, tr);
-	currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
+    ColorTemp ret = imgsrc->getSpotWB (red, green, blue, tr, params.wb.equal);
+    currWB = ColorTemp (params.wb.temperature, params.wb.green,params.wb.equal, params.wb.method);
+    //double rr,gg,bb;
+    //currWB.getMultipliers(rr,gg,bb);
+ 
     mProcessing.unlock ();
 
 	if (ret.getTemp() > 0) {
@@ -711,13 +731,21 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	imgsrc->preprocess( ppar.raw, ppar.lensProf, ppar.coarse );
 	imgsrc->demosaic(ppar.raw );
 	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
-	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.method);
+	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 	if (params.wb.method=="Camera")
 		currWB = imgsrc->getWB ();
 	else if (params.wb.method=="Auto") {
-		if (!awbComputed) {
-			autoWB = imgsrc->getAutoWB ();
-			awbComputed = true;
+		if (lastAwbEqual != params.wb.equal) {
+			double rm, gm, bm;
+			imgsrc->getAutoWBMultipliers(rm, gm, bm);
+			if (rm != -1.) {
+				autoWB.update(rm, bm, gm, params.wb.equal);
+				lastAwbEqual = params.wb.equal;
+			}
+			else {
+				lastAwbEqual = -1.;
+				autoWB.useDefaults(params.wb.equal);
+			}
 		}
 		currWB = autoWB;
 	}

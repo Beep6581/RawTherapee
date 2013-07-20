@@ -315,6 +315,7 @@ enum WBTypes {
     WBT_DAYLIGHT,
     WBT_CLOUDY,
     WBT_SHADE,
+    WBT_WATER,
     WBT_TUNGSTEN,
     WBT_FLUORESCENT,
     WBT_LAMP,
@@ -330,8 +331,10 @@ public:
     enum WBTypes type;
     Glib::ustring GUILabel;
     int temperature;
+    double green;
+    double equal;
 
-    WBEntry(Glib::ustring p, enum WBTypes t, Glib::ustring l, int temp) : ppLabel(p), type(t), GUILabel(l), temperature(temp) {};
+    WBEntry(Glib::ustring p, enum WBTypes t, Glib::ustring l, int temp, double green, double equal) : ppLabel(p), type(t), GUILabel(l), temperature(temp), green(green), equal(equal) {};
 };
 
 class WBParams {
@@ -341,6 +344,7 @@ class WBParams {
         Glib::ustring   method;
         int             temperature;
         double          green;
+        double          equal;
 
         static void     init();
         static void     cleanup();

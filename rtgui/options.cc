@@ -423,6 +423,7 @@ void Options::setDefaults () {
 			0,  // ADDSET_CAT_JLIGHT
 			0,  // ADDSET_CAT_CHROMA
  			0,  // ADDSET_CAT_CONTRAST
+			0,  // ADDSET_WB_EQUAL
 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);
@@ -679,7 +680,6 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "MonitorProfile")) rtSettings.monitorProfile       = keyFile.get_string ("Color Management", "MonitorProfile");
     if (keyFile.has_key ("Color Management", "AutoMonitorProfile")) rtSettings.autoMonitorProfile = keyFile.get_boolean ("Color Management", "AutoMonitorProfile");
     if (keyFile.has_key ("Color Management", "Autocielab")) rtSettings.autocielab = keyFile.get_boolean ("Color Management", "Autocielab");
-    if (keyFile.has_key ("Color Management", "Ciencamfloat")) rtSettings.ciecamfloat = keyFile.get_boolean ("Color Management", "Ciecamfloat");
     if (keyFile.has_key ("Color Management", "RGBcurvesLumamode_Gamut")) rtSettings.rgbcurveslumamode_gamut = keyFile.get_boolean ("Color Management", "RGBcurvesLumamode_Gamut");
 
     if (keyFile.has_key ("Color Management", "Intent"))         rtSettings.colorimetricIntent   = keyFile.get_integer("Color Management", "Intent");

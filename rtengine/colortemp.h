@@ -18,6 +18,7 @@
  */
 #ifndef _COLORTEMP_
 #define _COLORTEMP_
+#include "procparams.h"
 
 #include <gtkmm.h>
 #include <cmath>
@@ -28,35 +29,47 @@
 
 
 namespace rtengine {
+using namespace procparams;
 
-#define MINTEMP 2000
-#define MAXTEMP 25000
+
+#define MINTEMP 1500
+#define MAXTEMP 60000
 #define MINGREEN 0.02
 #define MAXGREEN 5.0
+#define MINEQUAL 0.8
+#define MAXEQUAL 1.5
+
 #define INITIALBLACKBODY 4000
+
 
 class ColorTemp {
 
 	private:
 		double temp;
 		double green;
+		double equal;
 		Glib::ustring method;
-
 		static void clip (double &temp, double &green);
+		static void clip (double &temp, double &green, double &equal);
 
 	public:
+ 
+		ColorTemp () : temp(-1.), green(-1.), equal (1.), method("Custom") {}
+		ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
+		ColorTemp (double t, double g, double e, Glib::ustring m);
+		ColorTemp (double mulr, double mulg, double mulb, double e);
 
-		ColorTemp () : temp(-1), green(-1), method("Custom") {}
-		ColorTemp (double t, double g, Glib::ustring m);
-		ColorTemp (double mulr, double mulg, double mulb);
+		void update (const double rmul, const double gmul, const double bmul, const double equal) { this->equal = equal; mul2temp (rmul, gmul, bmul, this->equal, temp, green); }
+		void useDefaults (const double equal) { temp = 6504; green = 1.0; this->equal = equal; } // Values copied from procparams.cc
 
 		inline double getTemp ()    { return temp;  }
 		inline double getGreen ()   { return green; }
+		inline double getEqual ()   { return equal; }
 
-		void   getMultipliers (double &mulr, double &mulg, double &mulb) { temp2mul (temp, green, mulr, mulg, mulb); }
+		void  getMultipliers (double &mulr, double &mulg, double &mulb) { temp2mul (temp, green, equal, mulr, mulg, mulb); }
 
-		void mul2temp (double rmul, double gmul, double bmul, double& temp, double& green);
-		void temp2mul (double temp, double green, double& rmul, double& gmul, double& bmul);
+		void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green);
+		void temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul);
 		static void temp2mulxyz (double tem, double gree, Glib::ustring method, double &Xxyz, double &Zxyz);
 
 		int XYZtoCorColorTemp(double x0,double y0 ,double z0, double &temp);
