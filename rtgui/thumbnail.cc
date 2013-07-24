@@ -107,6 +107,7 @@ void Thumbnail::_generateThumbnailImage () {
 	cfs.timeValid = false;
 
 	if (ext.lowercase()=="jpg" || ext.lowercase()=="jpeg") {
+		infoFromImage (fname);
 		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams.wb.equal);
 		if (tpp)
 			cfs.format = FT_Jpeg;
@@ -117,6 +118,7 @@ void Thumbnail::_generateThumbnailImage () {
 			cfs.format = FT_Png;
 	}
 	else if (ext.lowercase()=="tif" || ext.lowercase()=="tiff") {
+		infoFromImage (fname);
 		tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams.wb.equal);
 		if (tpp)
 			cfs.format = FT_Tiff;
