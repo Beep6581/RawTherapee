@@ -212,6 +212,7 @@ class ExifManager {
 class Interpreter {
     public:
         Interpreter () {}
+        virtual ~Interpreter() {};
         virtual std::string toString (Tag* t) { return ""; }
         virtual void fromString (Tag* t, const std::string& value) {}
 };

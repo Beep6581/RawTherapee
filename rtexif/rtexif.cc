@@ -849,7 +849,7 @@ void Tag::toRational (int& num, int& denom, int ofs) {
     case RATIONAL: num = (int)sget4 (value+ofs, getOrder()); denom = (int)sget4 (value+ofs+4, getOrder()); break;
     case FLOAT:   num = 0; denom = 0; break;
     case UNDEFINED: num = 0; denom = 0; break;
-    default: num = 0; denom = 0; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
+    default: num = 0; denom = 0; break; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
 }
 

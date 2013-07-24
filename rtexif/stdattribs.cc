@@ -325,18 +325,21 @@ class UserCommentInterpreter : public Interpreter {
     public:
         UserCommentInterpreter () {}
         virtual std::string toString (Tag* t) {
-        	char buffer[1024];
+            char *buffer = new char[t->getCount()];
             if (!strncmp((char*)t->getValue(), "ASCII\0\0\0",8))
                 strncpy (buffer, (char*)t->getValue()+8, t->getCount()-8);
             else
                 buffer[0]=0;
-            return buffer;
+            std::string retVal(buffer);
+            delete [] buffer;
+            return retVal;
         }
         virtual void fromString (Tag* t, const std::string& value) {
-        	char buffer[1024];
+            char *buffer = new char[t->getCount()];
             memcpy (buffer, "ASCII\0\0\0", 8);
             strcpy (buffer+8, value.c_str());
             t->fromString (buffer, value.size() + 9);
+            delete [] buffer;
         }
 };
 UserCommentInterpreter userCommentInterpreter;
