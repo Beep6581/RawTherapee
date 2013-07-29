@@ -109,9 +109,9 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (params.wb.method=="Camera")
         currWB = imgsrc->getWB ();
     else if (params.wb.method=="Auto") {
-        double rm, bm, gm;
-        imgsrc->getAutoWBMultipliers(rm, bm, gm);
-        currWB.update(rm, bm, gm, params.wb.equal);
+        double rm, gm, bm;
+        imgsrc->getAutoWBMultipliers(rm, gm, bm);
+        currWB.update(rm, gm, bm, params.wb.equal);
     }
     Imagefloat* baseImg = new Imagefloat (fw, fh);
     imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
@@ -218,7 +218,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	if(params.labCurve.contrast !=0) {//only use hist16 for contrast
 	
 #ifdef _OPENMP
-#pragma omp parallel shared(hist16,labView, fh, fw)
+#pragmaï¿½ompï¿½parallelï¿½shared(hist16,labView, fh, fw)
 #endif
 {
 #ifdef _OPENMP	

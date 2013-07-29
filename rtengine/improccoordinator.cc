@@ -190,7 +190,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 double rm, gm, bm;
                 imgsrc->getAutoWBMultipliers(rm, gm, bm);
                 if (rm != -1.) {
-                    autoWB.update(rm, bm, gm, params.wb.equal);
+                    autoWB.update(rm, gm, bm, params.wb.equal);
                     lastAwbEqual = params.wb.equal;
                 }
                 else {
@@ -627,7 +627,7 @@ bool ImProcCoordinator::getAutoWB (double& temp, double& green, double equal) {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
             if (rm != -1) {
-                autoWB.update(rm, bm, gm, equal);
+                autoWB.update(rm, gm, bm, equal);
                 lastAwbEqual = equal;
             }
             else {
@@ -739,7 +739,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 			double rm, gm, bm;
 			imgsrc->getAutoWBMultipliers(rm, gm, bm);
 			if (rm != -1.) {
-				autoWB.update(rm, bm, gm, params.wb.equal);
+				autoWB.update(rm, gm, bm, params.wb.equal);
 				lastAwbEqual = params.wb.equal;
 			}
 			else {
