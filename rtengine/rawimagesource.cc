@@ -2265,7 +2265,7 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	void RawImageSource::getAutoWBMultipliers (double &rm, double &bm, double &gm) {
+	void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm) {
 
 		if (redAWBMul != -1.) {
 			rm = redAWBMul;

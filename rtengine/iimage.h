@@ -84,7 +84,7 @@ namespace rtengine {
         virtual void getSpotWBData (double &reds, double &greens, double &blues, int &rn, int &gn, int &bn,
                                     std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue,
                                     int tran) {}
-        virtual void getAutoWBMultipliers (double &rm, double &gm, double &bm) { rm=1.0; bm=1.0; gm=1.0; }
+        virtual void getAutoWBMultipliers (double &rm, double &gm, double &bm) { rm=gm=bm=1.0; }
         virtual const char* getType () const { return "unknown"; }
 
     };

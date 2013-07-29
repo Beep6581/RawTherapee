@@ -292,7 +292,7 @@ void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
     }
 }
 
-void StdImageSource::getAutoWBMultipliers (double &rm, double &bm, double &gm) {
+void StdImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm) {
     if (redAWBMul != -1.) {
         rm = redAWBMul;
         gm = greenAWBMul;
