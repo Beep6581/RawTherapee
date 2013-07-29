@@ -463,7 +463,7 @@ void FileCatalog::closeDir () {
     fileNameList.clear ();
 
     {
-    Glib::Mutex::Lock lock(filterMutex);
+    Glib::Mutex::Lock lock(dirEFSMutex);
     dirEFS.clear ();
     }
     hasValidCurrentEFS = false;
@@ -588,7 +588,7 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
     const CacheImageData* cfs = fdn->thumbnail->getCacheImageData();
 
     {
-    Glib::Mutex::Lock lock(filterMutex);
+    Glib::Mutex::Lock lock(dirEFSMutex);
     if (cfs->exifValid) {
         if (cfs->fnumber < dirEFS.fnumberFrom)
             dirEFS.fnumberFrom = cfs->fnumber;
@@ -633,8 +633,8 @@ void FileCatalog::previewsFinishedUI () {
 
         if (filterPanel) {
             filterPanel->set_sensitive (true);
-            Glib::Mutex::Lock lock(filterMutex);
             if ( !hasValidCurrentEFS ){
+                Glib::Mutex::Lock lock(dirEFSMutex);
                 currentEFS = dirEFS;
                 filterPanel->setFilter ( dirEFS,true );
             }else {
@@ -672,7 +672,7 @@ void FileCatalog::previewsFinished (int dir_id) {
 	}
 
     if (!hasValidCurrentEFS) {
-        Glib::Mutex::Lock lock(filterMutex);
+        Glib::Mutex::Lock lock(dirEFSMutex);
         currentEFS = dirEFS;
     }
 
@@ -1321,8 +1321,8 @@ BrowserFilter FileCatalog::getFilter () {
     if (!filterPanel)
 		filter.exifFilterEnabled = false;
 	else {
-		Glib::Mutex::Lock lock(filterMutex);
 		if (!hasValidCurrentEFS) {
+			Glib::Mutex::Lock lock(dirEFSMutex);
 			filter.exifFilter = dirEFS;
 		}
 		else
@@ -1507,10 +1507,9 @@ void FileCatalog::selectionChanged (std::vector<Thumbnail*> tbe) {
         fslistener->selectionChanged (tbe);
 }
 
+// Called within GTK UI thread
 void FileCatalog::exifFilterChanged () {
 
-    // not sure that locking is necessary here...
-    Glib::Mutex::Lock lock(filterMutex);
     currentEFS = filterPanel->getFilter ();
     hasValidCurrentEFS = true;
     fileBrowser->applyFilter (getFilter ());
@@ -1531,11 +1530,14 @@ void FileCatalog::trashChanged () {
         bTrash->set_image(*iTrashFull);
     }
 }
+
+// Called within GTK UI thread
 void FileCatalog::buttonQueryClearPressed () {
 	Query->set_text("");
 	FileCatalog::executeQuery ();
 }
 
+// Called within GTK UI thread
 void FileCatalog::executeQuery(){
 	// if BrowsePath text was changed, do a full browse;
 	// otherwise filter only
