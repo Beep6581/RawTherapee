@@ -32,6 +32,7 @@
 #define MySourceBasePath "${PROJECT_SOURCE_DIR}"
 #define MyBitDepth "${BUILD_BIT_DEPTH}"
 #define MyTargetArchitecture "${ARCHITECTURE_ALLOWED}"
+#define MyInstallMode "${INSTALL_MODE}"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -58,7 +59,7 @@ WizardImageBackColor=$2A2A2A
 Compression=lzma
 SolidCompression=yes
 ArchitecturesAllowed={#MyTargetArchitecture}
-ArchitecturesInstallIn64BitMode=x64
+ArchitecturesInstallIn64BitMode={#MyInstallMode}
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
