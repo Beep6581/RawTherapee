@@ -322,6 +322,7 @@ ExifFilterSettings FilterPanel::getFilter () {
     return efs;
 }
 
+// Called within GTK UI thread
 void FilterPanel::valueChanged () {
 
 	if (listener)

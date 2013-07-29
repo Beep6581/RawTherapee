@@ -133,7 +133,7 @@ class FileCatalog : public Gtk::VBox,
         Gtk::Button* zoomInButton;
         Gtk::Button* zoomOutButton;
 
-        Glib::Mutex filterMutex;
+        Glib::Mutex dirEFSMutex;
         ExifFilterSettings dirEFS;
         ExifFilterSettings currentEFS;
         bool hasValidCurrentEFS;  
