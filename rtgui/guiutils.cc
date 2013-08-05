@@ -394,7 +394,7 @@ MySpinButton::MySpinButton () {
 	border.right = 3;
 	set_inner_border(border);
 	set_numeric(true);
-	set_wrap(true);
+	set_wrap(false);
 	set_alignment(Gtk::ALIGN_RIGHT);
 }
 
