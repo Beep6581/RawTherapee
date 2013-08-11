@@ -395,7 +395,7 @@ Glib::ustring safe_get_user_picture_dir() {
     // get_user_special_dir/pictures crashes on some Windows configurations.
     // so we use the safe native functions here
     WCHAR pathW[MAX_PATH]={0};
-	if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_MYPICTURES,false)) {
+    if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_MYPICTURES,false)) {
         char pathA[MAX_PATH];
         WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
         return Glib::ustring(pathA);
@@ -408,14 +408,49 @@ Glib::ustring safe_get_user_picture_dir() {
     #endif
 }
 
+Glib::ustring safe_get_user_home_dir() {
+    #ifdef WIN32
+    // get_user_special_dir/pictures crashes on some Windows configurations.
+    // so we use the safe native functions here
+    WCHAR pathW[MAX_PATH]={0};
+    if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_PERSONAL,false)) {
+        char pathA[MAX_PATH];
+        WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
+        return Glib::ustring(pathA);
+    } else return Glib::ustring("C:\\");
+
+    #else
+
+    return Glib::get_home_dir();
+
+    #endif
+}
+
+Glib::ustring safe_get_user_desktop_dir() {
+    #ifdef WIN32
+    // get_user_special_dir/pictures crashes on some Windows configurations.
+    // so we use the safe native functions here
+    WCHAR pathW[MAX_PATH]={0};
+    if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_DESKTOP,false)) {
+        char pathA[MAX_PATH];
+        WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
+        return Glib::ustring(pathA);
+    } else return Glib::ustring("C:\\");
+
+    #else
+
+    return Glib::get_user_special_dir (G_USER_DIRECTORY_DESKTOP);
+
+    #endif
+}
+
 #ifdef WIN32
 /*
  * Test if the path is a root path based on the content of the string
  *
  * Warning: this function is a workaround for Windows platform, and not necessarily bullet proof
  */
-bool safe_is_root_dir (const Glib::ustring& path) {
-	return PathIsRootA(path.c_str());
+bool safe_is_shortcut_dir (const Glib::ustring& path) {
+    return PathIsRootA(path.c_str()) || safe_get_user_home_dir() == path || safe_get_user_desktop_dir() == path; // || safe_get_user_picture_dir() == path;
 }
 #endif
-
