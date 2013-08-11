@@ -73,6 +73,7 @@ option (WITH_BZIP "Build with Bzip2 support" ON)
 option (WITH_MYFILE_MMAP "Build using memory mapped file" ON)
 option (OPTION_OMP "Build with OpenMP support" ON)
 option (PROTECT_VECTORS "Protect critical vectors by custom R/W Mutex, recommanded even if your std::vector is thread safe" ON)
+option (STRICT_MUTEX "True (recommended): MyMutex will behave like POSIX Mutex; False: MyMutex will behave like POSIX RecMutex; Note: forced to ON for Debug builds" ON)
 option (TRACE_MYRWMUTEX "Trace RT's custom R/W Mutex (Debug builds only); redirecting std::out to a file is strongly recommended!" OFF)
 option (AUTO_GDK_FLUSH "Use gdk_flush on all gdk_thread_leave other than the GUI thread; set it ON if you experience X Server warning/errors" OFF)
 
@@ -161,6 +162,13 @@ if (NOT BUILD_BUNDLE AND
     IS_ABSOLUTE "${DOCDIR}" AND IS_ABSOLUTE "${CREDITSDIR}" AND IS_ABSOLUTE "${LICENCEDIR}"))
     message (FATAL_ERROR "The paths has to be absolute or use -DBUILD_BUNDLE=ON")
 endif ()
+
+# MyMutex
+if (STRICT_MUTEX OR UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+    add_definitions (-DSTRICT_MUTEX=1)
+else (STRICT_MUTEX OR UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+    add_definitions (-DSTRICT_MUTEX=0)
+endif (STRICT_MUTEX OR UPPER_CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
 # MyRWMutex
 if (PROTECT_VECTORS)

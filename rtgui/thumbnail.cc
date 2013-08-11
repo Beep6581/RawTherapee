@@ -45,6 +45,8 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
     }
     else
         loadProcParams ();
+
+    // should be safe to use the unprotected version of loadThumbnail, since we are in the constructor
     _loadThumbnail ();
     generateExifDateTimeStrings ();
 
@@ -165,11 +167,12 @@ bool Thumbnail::isSupported () {
 }
 
 const ProcParams& Thumbnail::getProcParams () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(mutex);
-	#endif
+    MyMutex::MyLock lock(mutex);
+    return getProcParamsU();
+}
 
+// Unprotected version of getProcParams, when
+const ProcParams& Thumbnail::getProcParamsU () {
     if (pparamsValid)
         return pparams;
     else {
@@ -239,10 +242,7 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt){
  * ProcParams (sidecar or cache file).
  */
 void Thumbnail::loadProcParams () {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(mutex);
-	#endif
+    MyMutex::MyLock lock(mutex);
 
     pparamsValid = false;
     pparams.setDefaults();
@@ -278,11 +278,9 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
     the "clear profile" will lead to execution of ProcParams::setDefaults 
     (the CPB is NOT called) to set the params values and will preserve 
     rank/colorlabel/inTrash in the param file. */
-    
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(mutex);
-	#endif
+
+	{
+    MyMutex::MyLock lock(mutex);
 
     // preserve rank, colorlabel and inTrash across clear
     int rank = getRank();
@@ -326,6 +324,8 @@ void Thumbnail::clearProcParams (int whoClearedIt) {
             safe_g_remove (fname_);
     }
 
+	} // end of mutex lock
+
     for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoClearedIt);
 }
@@ -336,15 +336,14 @@ bool Thumbnail::hasProcParams () {
 }
 
 void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow) {
-	// TODO: Check for Linux
-	#ifdef WIN32
-	Glib::Mutex::Lock lock(mutex);
-	#endif
-    
-	if (pparams.sharpening.threshold.isDouble() != pp.sharpening.threshold.isDouble())
-		printf("WARNING: Sharpening different!\n");
-	if (pparams.vibrance.psthreshold.isDouble() != pp.vibrance.psthreshold.isDouble())
-		printf("WARNING: Vibrance different!\n");
+
+	{
+    MyMutex::MyLock lock(mutex);
+
+    if (pparams.sharpening.threshold.isDouble() != pp.sharpening.threshold.isDouble())
+        printf("WARNING: Sharpening different!\n");
+    if (pparams.vibrance.psthreshold.isDouble() != pp.vibrance.psthreshold.isDouble())
+        printf("WARNING: Vibrance different!\n");
 
     if (pparams!=pp) 
         cfs.recentlySaved = false;
@@ -367,6 +366,8 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 
     if (updateCacheNow)
         updateCache ();
+
+	} // end of mutex lock
 
     for (size_t i=0; i<listeners.size(); i++)
         listeners[i]->procParamsChanged (this, whoChangedIt);
@@ -401,14 +402,14 @@ bool Thumbnail::isEnqueued () {
 
 void Thumbnail::increaseRef ()
 {
-	Glib::Mutex::Lock lock(mutex);
-   	++ref;
+    MyMutex::MyLock lock(mutex);
+    ++ref;
 }
 
 void Thumbnail::decreaseRef () 
 {
 	{
-		Glib::Mutex::Lock lock(mutex);
+		MyMutex::MyLock lock(mutex);
 		if ( ref == 0 )
 		{
 			return;
@@ -429,10 +430,7 @@ void Thumbnail::getThumbnailSize (int &w, int &h) {
 }
 
 void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, int& w, int& h) {
-    // TODO: Check for Linux
-    #ifdef WIN32
-    Glib::Mutex::Lock lock(mutex);
-    #endif
+    MyMutex::MyLock lock(mutex);
 
     // WARNING: When downscaled, the ratio have loosed a lot of precision, so we can't get back the exact initial dimensions
     double fw = lastW*lastScale;
@@ -455,40 +453,35 @@ void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, i
 
 rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale) {
 
-	Glib::Mutex::Lock lock(mutex);
+    MyMutex::MyLock lock(mutex);
 
-     if ( tpp == 0 )
- 	{
- 		_loadThumbnail();
- 		if ( tpp == 0 )
- 		{
- 			return 0;
- 		}
- 	}
- 
- 	rtengine::IImage8* image = 0;
+    if ( tpp == 0 ) {
+        _loadThumbnail();
+        if ( tpp == 0 )
+            return 0;
+    }
 
-	if ( cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL )
-	{
-		// RAW internal thumbnail, no profile yet: just do some rotation etc.
- 		image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
-	}
-	else
-	{
-		// Full thumbnail: apply profile
- 		image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
-	}
+    rtengine::IImage8* image = 0;
+
+    if ( cfs.thumbImgType == CacheImageData::QUICK_THUMBNAIL ) {
+        // RAW internal thumbnail, no profile yet: just do some rotation etc.
+        image = tpp->quickProcessImage (pparams, h, rtengine::TI_Nearest, scale);
+    }
+    else {
+        // Full thumbnail: apply profile
+        image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
+    }
 
     tpp->getDimensions(lastW,lastH,lastScale);
 
- 	delete tpp;
- 	tpp = 0;
- 	return image;
+    delete tpp;
+    tpp = 0;
+    return image;
 }
 
 rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale) {
 
-	Glib::Mutex::Lock lock(mutex);
+	MyMutex::MyLock lock(mutex);
 
 	if ( cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL )
 	{
@@ -678,7 +671,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
         tpp->init ();
     }
  
-    if (!initial_ && tpp) tw = tpp->getImageWidth (getProcParams(), th, imgRatio);  // this might return 0 if image was just building
+    if (!initial_ && tpp) tw = tpp->getImageWidth (getProcParamsU(), th, imgRatio);  // this might return 0 if image was just building
 }
 
 /*
@@ -690,7 +683,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial) {
  *  - LiveThumbData section of the data file
  */
 void Thumbnail::loadThumbnail (bool firstTrial) {
-    Glib::Mutex::Lock lock(mutex);
+    MyMutex::MyLock lock(mutex);
     _loadThumbnail(firstTrial);
 }
 
@@ -737,7 +730,7 @@ void Thumbnail::_saveThumbnail () {
  */
 void Thumbnail::saveThumbnail () 
 {
-   	Glib::Mutex::Lock lock(mutex);
+   	MyMutex::MyLock lock(mutex);
     _saveThumbnail();
 }
 
@@ -760,13 +753,11 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData) {
 }
 
 Thumbnail::~Thumbnail () {
-    // TODO: Check for Linux
-    #ifdef WIN32
-    Glib::Mutex::Lock lock(mutex);
-    #endif
+    mutex.lock();
 
     delete [] lastImg;
     delete tpp;
+    mutex.unlock();
 }
 
 Glib::ustring Thumbnail::getCacheFileName (Glib::ustring subdir) {
@@ -860,7 +851,7 @@ bool Thumbnail::openDefaultViewer(int destination) {
 
 bool Thumbnail::imageLoad(bool loading)
 {
-    Glib::Mutex::Lock lock(mutex);
+    MyMutex::MyLock lock(mutex);
     bool previous = imageLoading;
     if( loading && !previous ){
         imageLoading = true;

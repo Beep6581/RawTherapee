@@ -20,6 +20,7 @@
 #include <set>
 #include "previewloader.h"
 #include "guiutils.h"
+#include "threadutils.h"
 #include "../rtengine/safegtk.h"
 
 #ifdef _OPENMP
@@ -75,7 +76,7 @@ public:
 	}
 
 	Glib::ThreadPool* threadPool_;
-	Glib::Mutex mutex_;
+	MyMutex mutex_;
 	JobSet jobs_;
 	gint nConcurrentThreads;
 
@@ -83,7 +84,7 @@ public:
 	{ 
 		Job j;
 		{
-			Glib::Mutex::Lock lock(mutex_);
+			MyMutex::MyLock lock(mutex_);
 
 			// nothing to do; could be jobs have been removed
 			if ( jobs_.empty() )
@@ -137,8 +138,8 @@ PreviewLoader* PreviewLoader::getInstance(void)
 	static PreviewLoader* instance_ = NULL;
 	if ( instance_ == NULL )
 	{
-        static Glib::Mutex smutex_;
-        Glib::Mutex::Lock lock(smutex_);
+        static MyMutex smutex_;
+        MyMutex::MyLock lock(smutex_);
 
         if ( instance_ == NULL ) instance_ = new PreviewLoader();
 	}
@@ -152,7 +153,7 @@ void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoade
 	if ( l != 0 )
 	{
         {
-            Glib::Mutex::Lock lock(impl_->mutex_);
+            MyMutex::MyLock lock(impl_->mutex_);
 
             // create a new job and append to queue
             DEBUG("saving job %s",dir_entry.c_str());
@@ -168,7 +169,7 @@ void PreviewLoader::add(int dir_id, const Glib::ustring& dir_entry, PreviewLoade
 void PreviewLoader::removeAllJobs(void) 
 { 
 	DEBUG("stop %d",impl_->nConcurrentThreads);
-	Glib::Mutex::Lock lock(impl_->mutex_);
+	MyMutex::MyLock lock(impl_->mutex_);
 	impl_->jobs_.clear();
 }
 

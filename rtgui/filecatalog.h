@@ -36,6 +36,7 @@
 #include "exportpanel.h"
 #include "previewloader.h"
 #include "multilangmgr.h"
+#include "threadutils.h"
 
 
 class DirEntry {
@@ -133,7 +134,7 @@ class FileCatalog : public Gtk::VBox,
         Gtk::Button* zoomInButton;
         Gtk::Button* zoomOutButton;
 
-        Glib::Mutex dirEFSMutex;
+        MyMutex dirEFSMutex;
         ExifFilterSettings dirEFS;
         ExifFilterSettings currentEFS;
         bool hasValidCurrentEFS;  

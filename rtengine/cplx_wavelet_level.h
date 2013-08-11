@@ -556,17 +556,17 @@ namespace rtengine {
 		for (int i=0; i<m_h2; i++) {
 			
 			if (subsamp_out) {
-				SynthesisFilterSubsamp (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,  \
+				SynthesisFilterSubsamp (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,
 										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
-				SynthesisFilterSubsamp (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,  \
+				SynthesisFilterSubsamp (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,
 										filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
 				//SynthesisFilterSubsampHaar (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, 1, m_w);//TODO: this is buggy
 				//SynthesisFilterSubsampHaar (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, 1, m_w);
 			} else {
-				//SynthesisFilter (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi, \
-								 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
-				//SynthesisFilter (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi, \
-								 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+				//SynthesisFilter (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi,
+				//				 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
+				//SynthesisFilter (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi,
+				//				 filterH, filterH+taps, taps, offset, 1/*pitch*/, m_w/*dstlen*/);
 				SynthesisFilterHaar (wavcoeffs[0]+i*m_w2, wavcoeffs[1]+i*m_w2, tmpLo+i*m_w, bufferLo, bufferHi, 1, m_w);
 				SynthesisFilterHaar (wavcoeffs[2]+i*m_w2, wavcoeffs[3]+i*m_w2, tmpHi+i*m_w, bufferLo, bufferHi, 1, m_w);
 			}
@@ -576,12 +576,12 @@ namespace rtengine {
 //OpenMP here		
 		for (int j=0; j<m_w; j++) {
 			if (subsamp_out) {
-				SynthesisFilterSubsamp (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, \
+				SynthesisFilterSubsamp (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi,
 										filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
 				//SynthesisFilterSubsampHaar (tmpLo+j, tmpHi+j, dst+j, m_w, m_h);
 			} else {
-				//SynthesisFilter (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, \
-								 filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
+				//SynthesisFilter (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi,
+				//				 filterV, filterV+taps, taps, offset, m_w/*pitch*/, m_h/*dstlen*/);
 				SynthesisFilterHaar (tmpLo+j, tmpHi+j, dst+j, bufferLo, bufferHi, m_w, m_h);
 			}
 		}

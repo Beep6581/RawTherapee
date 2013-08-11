@@ -177,7 +177,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
 
     if (todo & (M_INIT|M_LINDENOISE)) {
-        Glib::Mutex::Lock lock(minit);  // Also used in crop window
+        MyMutex::MyLock lock(minit);  // Also used in crop window
 
         imgsrc->HLRecovery_Global( params.hlrecovery ); // this handles Color HLRecovery
 
@@ -623,7 +623,7 @@ bool ImProcCoordinator::getAutoWB (double& temp, double& green, double equal) {
 
     if (imgsrc) {
         if (lastAwbEqual != equal) {
-            Glib::Mutex::Lock lock(minit);  // Also used in crop window
+            MyMutex::MyLock lock(minit);  // Also used in crop window
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
             if (rm != -1) {

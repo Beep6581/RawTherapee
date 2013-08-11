@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <vector>
 #include <glibmm.h>
+#include "../rtgui/threadutils.h"
 
 // Aligned buffer that should be faster
 template <class T> class AlignedBuffer {
@@ -107,7 +108,7 @@ public:
 // Multi processor version, use with OpenMP
 template <class T> class AlignedBufferMP {
 private:
-    Glib::Mutex mtx;
+    MyMutex mtx;
     std::vector<AlignedBuffer<T>*> buffers;
     size_t size;
 
@@ -121,7 +122,7 @@ public:
     }
 
     AlignedBuffer<T>* acquire() {
-        Glib::Mutex::Lock lock(mtx);
+        MyMutex::MyLock lock(mtx);
 
         // Find available buffer
         for (int i;i<buffers.size();i++) {
@@ -139,7 +140,7 @@ public:
     }
 
     void release(AlignedBuffer<T>* buffer) {
-        Glib::Mutex::Lock lock(mtx);
+    	MyMutex::MyLock lock(mtx);
 
         buffer->inUse=false;
     }

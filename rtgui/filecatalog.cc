@@ -463,7 +463,7 @@ void FileCatalog::closeDir () {
     fileNameList.clear ();
 
     {
-    Glib::Mutex::Lock lock(dirEFSMutex);
+    MyMutex::MyLock lock(dirEFSMutex);
     dirEFS.clear ();
     }
     hasValidCurrentEFS = false;
@@ -588,7 +588,7 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
     const CacheImageData* cfs = fdn->thumbnail->getCacheImageData();
 
     {
-    Glib::Mutex::Lock lock(dirEFSMutex);
+    MyMutex::MyLock lock(dirEFSMutex);
     if (cfs->exifValid) {
         if (cfs->fnumber < dirEFS.fnumberFrom)
             dirEFS.fnumberFrom = cfs->fnumber;
@@ -634,7 +634,7 @@ void FileCatalog::previewsFinishedUI () {
         if (filterPanel) {
             filterPanel->set_sensitive (true);
             if ( !hasValidCurrentEFS ){
-                Glib::Mutex::Lock lock(dirEFSMutex);
+                MyMutex::MyLock lock(dirEFSMutex);
                 currentEFS = dirEFS;
                 filterPanel->setFilter ( dirEFS,true );
             }else {
@@ -672,7 +672,7 @@ void FileCatalog::previewsFinished (int dir_id) {
 	}
 
     if (!hasValidCurrentEFS) {
-        Glib::Mutex::Lock lock(dirEFSMutex);
+        MyMutex::MyLock lock(dirEFSMutex);
         currentEFS = dirEFS;
     }
 
@@ -1322,7 +1322,7 @@ BrowserFilter FileCatalog::getFilter () {
 		filter.exifFilterEnabled = false;
 	else {
 		if (!hasValidCurrentEFS) {
-			Glib::Mutex::Lock lock(dirEFSMutex);
+			MyMutex::MyLock lock(dirEFSMutex);
 			filter.exifFilter = dirEFS;
 		}
 		else

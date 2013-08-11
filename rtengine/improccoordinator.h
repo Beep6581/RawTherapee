@@ -27,6 +27,7 @@
 #include "procevents.h"
 #include "dcrop.h"
 #include "LUT.h"
+#include "../rtgui/threadutils.h"
 
 namespace rtengine {
 
@@ -123,7 +124,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         bool resultValid;
 
-        Glib::Mutex minit;
+        MyMutex minit;
 
         void progress (Glib::ustring str, int pr);
         void reallocAll ();
@@ -131,13 +132,13 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setScale (int prevscale);
         void updatePreviewImage (int todo, Crop* cropCall= NULL);
 
-        Glib::Mutex mProcessing;
+        MyMutex mProcessing;
         ProcParams params;
 
         // members of the updater:
         Glib::Thread* thread;
-        Glib::Mutex updaterThreadStart;
-        Glib::Mutex paramsUpdateMutex;
+        MyMutex updaterThreadStart;
+        MyMutex paramsUpdateMutex;
         int  changeSinceLast;
         bool updaterRunning;
         ProcParams nextParams;

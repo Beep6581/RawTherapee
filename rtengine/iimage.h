@@ -23,6 +23,7 @@
 #include <glib/gstdio.h>
 #include <glibmm.h>
 #include <vector>
+#include "../rtgui/threadutils.h"
 #include "rt_math.h"
 #include "alignedbuffer.h"
 #include "imagedimensions.h"
@@ -1021,7 +1022,7 @@ namespace rtengine {
         virtual ~IImage() {}
         /** Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
           * @return The mutex */
-            virtual Glib::Mutex& getMutex ()=0;
+            virtual MyMutex& getMutex ()=0;
             virtual cmsHPROFILE getProfile ()=0;
         /** Returns the bits per pixel of the image.
           * @return The bits per pixel of the image */

@@ -21,6 +21,7 @@
 #include "cursormanager.h"
 #include <iomanip>
 #include "guiutils.h"
+#include "threadutils.h"
 #include "../rtengine/safegtk.h"
 
 #include <cstring>

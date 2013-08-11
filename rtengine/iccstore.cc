@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "iccstore.h"
 #ifdef WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
+#include "iccstore.h"
 #include "iccmatrices.h"
 #include <glib/gstdio.h>
 #include "safegtk.h"
@@ -62,7 +62,7 @@ std::vector<std::string> getWorkingProfiles () {
 
 std::vector<std::string> ICCStore::getOutputProfiles () {
 
-	Glib::Mutex::Lock lock(mutex_);
+	MyMutex::MyLock lock(mutex_);
 
     std::vector<std::string> res;
     for (std::map<std::string, cmsHPROFILE>::iterator i=fileProfiles.begin(); i!=fileProfiles.end(); i++){
@@ -83,8 +83,8 @@ ICCStore::getInstance(void)
 	static ICCStore* instance_ = 0;
 	if ( instance_ == 0 )
 	{
-		static Glib::Mutex smutex_;
-		Glib::Mutex::Lock lock(smutex_);
+		static MyMutex smutex_;
+		MyMutex::MyLock lock(smutex_);
 		if ( instance_ == 0 )
 		{
 			instance_ = new ICCStore();
@@ -153,7 +153,7 @@ cmsHPROFILE ICCStore::workingSpaceGamma (Glib::ustring name) {
 
 cmsHPROFILE ICCStore::getProfile (Glib::ustring name) {
 
-	Glib::Mutex::Lock lock(mutex_);
+	MyMutex::MyLock lock(mutex_);
 
     std::map<std::string, cmsHPROFILE>::iterator r = fileProfiles.find (name);
     if (r!=fileProfiles.end()) 
@@ -176,7 +176,7 @@ cmsHPROFILE ICCStore::getProfile (Glib::ustring name) {
 
 cmsHPROFILE ICCStore::getStdProfile (Glib::ustring name) {
 
-	Glib::Mutex::Lock lock(mutex_);
+	MyMutex::MyLock lock(mutex_);
 
 
     std::map<std::string, cmsHPROFILE>::iterator r = fileStdProfiles.find (name.uppercase());
@@ -187,7 +187,7 @@ cmsHPROFILE ICCStore::getStdProfile (Glib::ustring name) {
 
 ProfileContent ICCStore::getContent (Glib::ustring name) {
 
-	Glib::Mutex::Lock lock(mutex_);
+	MyMutex::MyLock lock(mutex_);
 
     return fileProfileContents[name];
 }
@@ -195,7 +195,7 @@ ProfileContent ICCStore::getContent (Glib::ustring name) {
 // Reads all profiles from the given profiles dir
 void ICCStore::init (Glib::ustring usrICCDir, Glib::ustring rtICCDir) {
 
-	Glib::Mutex::Lock lock(mutex_);
+	MyMutex::MyLock lock(mutex_);
 
 	//
     fileProfiles.clear();

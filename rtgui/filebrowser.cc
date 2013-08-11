@@ -29,7 +29,7 @@
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "rtimage.h"
-#include "guiutils.h"
+#include "threadutils.h"
 
 extern Options options;
 

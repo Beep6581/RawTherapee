@@ -21,6 +21,7 @@
 #define _LCP_
 
 #include "imagefloat.h"
+#include "../rtgui/threadutils.h"
 #include <glibmm.h>
 #include <map>
 #include <list>
@@ -92,7 +93,7 @@ namespace rtengine {
     };
 
     class LCPStore {
-        Glib::Mutex mtx;
+        MyMutex mtx;
 
         // Maps file name to profile as cache
         std::map<Glib::ustring, LCPProfile*> profileCache;

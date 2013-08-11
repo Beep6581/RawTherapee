@@ -25,12 +25,13 @@
 #include "ffmanager.h"
 #include "rtthumbnail.h"
 #include "../rtgui/profilestore.h"
+#include "../rtgui/threadutils.h"
 
 namespace rtengine {
 
 const Settings* settings;
 
-Glib::Mutex* lcmsMutex = NULL;
+MyMutex* lcmsMutex = NULL;
 
 int init (const Settings* s, Glib::ustring baseDir) {
 
@@ -46,7 +47,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;
-    lcmsMutex = new Glib::Mutex;
+    lcmsMutex = new MyMutex;
     dfm.init( s->darkFramesPath );
     ffm.init( s->flatFieldsPath );
 	return 0;

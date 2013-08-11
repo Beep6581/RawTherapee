@@ -168,11 +168,11 @@ void PreviewHandler::imageReady (CropParams cp) {
     iaimgpar* iap = new iaimgpar;
     iap->pih      = pih;
     iap->cp       = cp;
-	g_idle_add (imageReadyUI, iap);
+    g_idle_add (imageReadyUI, iap);
 }
 
 Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, int h, double zoom) {
-	Glib::Mutex::Lock lock(previewImgMutex);
+    MyMutex::MyLock lock(previewImgMutex);
 
     Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
 
@@ -201,7 +201,7 @@ Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int x, int y, int w, in
 }
 
 Glib::RefPtr<Gdk::Pixbuf> PreviewHandler::getRoughImage (int desiredW, int desiredH, double& zoom_) {
-	Glib::Mutex::Lock lock(previewImgMutex);
+    MyMutex::MyLock lock(previewImgMutex);
 
     Glib::RefPtr<Gdk::Pixbuf> resPixbuf;
 

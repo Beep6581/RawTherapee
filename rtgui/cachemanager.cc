@@ -33,8 +33,8 @@ CacheManager::getInstance(void)
 	static CacheManager* instance_ = 0;
 	if ( instance_ == 0 )
 	{
-		static Glib::Mutex smutex_;
-		Glib::Mutex::Lock lock(smutex_);
+		static MyMutex smutex_;
+		MyMutex::MyLock lock(smutex_);
 		if ( instance_ == 0 )
 		{
 			instance_ = new CacheManager();
@@ -45,7 +45,7 @@ CacheManager::getInstance(void)
 
 void CacheManager::init () {
 
-    Glib::Mutex::Lock lock(mutex_);
+    MyMutex::MyLock lock(mutex_);
 
     openEntries.clear ();
     baseDir = options.cacheBaseDir;
@@ -75,7 +75,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname, const rtengine::p
     // take manager lock and search for entry, if found return it else release
     // lock and create it
 	{
-        Glib::Mutex::Lock lock(mutex_);
+        MyMutex::MyLock lock(mutex_);
 
 		string_thumb_map::iterator r = openEntries.find (fname);
 		// if it is open, return it
@@ -119,7 +119,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname, const rtengine::p
     // was use it over our version. if not added we create the cache entry
     if (res)
 	{
-		Glib::Mutex::Lock lock(mutex_);
+		MyMutex::MyLock lock(mutex_);
 
 		string_thumb_map::iterator r = openEntries.find (fname);
 		if (r!=openEntries.end()) {
@@ -138,7 +138,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname, const rtengine::p
 
 void CacheManager::deleteEntry (const Glib::ustring& fname) {
 
-    Glib::Mutex::Lock lock(mutex_);
+    MyMutex::MyLock lock(mutex_);
 
     // check if it is opened
     string_thumb_map::iterator r = openEntries.find (fname);
@@ -200,7 +200,7 @@ void CacheManager::clearFromCache (const Glib::ustring& fname, bool leavenotrace
 
 void CacheManager::renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename) {
 
-    Glib::Mutex::Lock lock(mutex_);
+    MyMutex::MyLock lock(mutex_);
 
     std::string newmd5 = getMD5 (newfilename);
 
@@ -228,7 +228,7 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
 
 void CacheManager::closeThumbnail (Thumbnail* t) {
 
-    Glib::Mutex::Lock lock(mutex_);
+    MyMutex::MyLock lock(mutex_);
 
     t->updateCache ();
     string_thumb_map::iterator r = openEntries.find (t->getFileName());
@@ -239,14 +239,14 @@ void CacheManager::closeThumbnail (Thumbnail* t) {
 
 void CacheManager::closeCache () {
 
-    Glib::Mutex::Lock lock(mutex_);
+    MyMutex::MyLock lock(mutex_);
 
     applyCacheSizeLimitation ();
 }
 
 void CacheManager::clearAll () {
 
-    Glib::Mutex::Lock lock(mutex_);
+    MyMutex::MyLock lock(mutex_);
 
     deleteDir ("images");
     deleteDir ("aehistograms");
@@ -264,7 +264,7 @@ void CacheManager::clearAll () {
 }
 void CacheManager::clearThumbImages () {
 
-    Glib::Mutex::Lock lock(mutex_);
+    MyMutex::MyLock lock(mutex_);
 
     deleteDir ("images");
     deleteDir ("aehistograms");
@@ -272,7 +272,7 @@ void CacheManager::clearThumbImages () {
 }
 
 void CacheManager::clearProfiles () {
-    Glib::Mutex::Lock lock(mutex_);
+    MyMutex::MyLock lock(mutex_);
 
     deleteDir ("profiles");
 }

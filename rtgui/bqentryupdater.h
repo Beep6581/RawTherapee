@@ -21,6 +21,7 @@
 
 #include <glibmm.h>
 #include "../rtengine/rtengine.h"
+#include "threadutils.h"
 #include "thumbnail.h"
 
 class BQEntryUpdateListener {
@@ -45,7 +46,7 @@ class BatchQueueEntryUpdater {
     bool stopped;
     std::list<Job> jqueue;
     Glib::Thread* thread;
-    Glib::Mutex* qMutex;
+    MyMutex* qMutex;
 
   public:
     BatchQueueEntryUpdater ();

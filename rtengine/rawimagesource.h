@@ -28,6 +28,7 @@
 #include "color.h"
 #include "iimage.h"
 #include "../rtgui/cacheimagedata.h"
+#include "../rtgui/threadutils.h"
 
 #define HR_SCALE 2
 
@@ -68,7 +69,7 @@ class RawImageSource : public ImageSource {
         static void colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
 
     protected:
-        Glib::Mutex getImageMutex;  // locks getImage
+        MyMutex getImageMutex;  // locks getImage
 
         int W, H;
         ColorTemp wb;

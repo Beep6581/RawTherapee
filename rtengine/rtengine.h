@@ -30,6 +30,7 @@
 #include "rawmetadatalocation.h"
 #include "iimage.h"
 #include "utils.h"
+#include "../rtgui/threadutils.h"
 #include "settings.h"
 #include "LUT.h"
 /**
@@ -417,7 +418,7 @@ namespace rtengine {
     void startBatchProcessing (ProcessingJob* job, BatchProcessingListener* bpl, bool tunnelMetaData);
 
 
-    extern Glib::Mutex* lcmsMutex;
+    extern MyMutex* lcmsMutex;
 }
 
 #endif

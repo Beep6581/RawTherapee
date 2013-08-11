@@ -22,6 +22,7 @@
 #include "rtwindow.h"
 #include <gtk/gtk.h>
 #include "rtimage.h"
+#include "threadutils.h"
 
 static EditWindow* editWnd = NULL;
 
@@ -36,16 +37,16 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
 
     if ( editWnd == NULL )
     {
-        static Glib::Mutex smutex_;
-        Glib::Mutex::Lock lock(smutex_);
+        static MyMutex smutex_;
+        MyMutex::MyLock lock(smutex_);
         if ( editWnd == 0 )
         {
             editWnd = new EditWindow(p);
 
             // Determine the other display and maximize the window on that
-						const Glib::RefPtr< Gdk::Window >& wnd=p->get_window();
+            const Glib::RefPtr< Gdk::Window >& wnd=p->get_window();
             int monNo=p->get_screen()->get_monitor_at_window (wnd);
-            
+
             Gdk::Rectangle lMonitorRect;
             editWnd->get_screen()->get_monitor_geometry(monNo==0 ? 1:0, lMonitorRect);
             editWnd->move(lMonitorRect.get_x(), lMonitorRect.get_y());

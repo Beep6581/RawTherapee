@@ -33,7 +33,7 @@ void BatchQueueEntryUpdater::process (guint8* oimg, int ow, int oh, int newh, BQ
     }
 
     if (!qMutex)
-        qMutex = new Glib::Mutex ();
+        qMutex = new MyMutex ();
 
     qMutex->lock ();
     // look up if an older version is in the queue

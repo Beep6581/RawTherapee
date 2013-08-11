@@ -55,7 +55,7 @@ class Imagefloat : public IImagefloat, public ImageIO {
         virtual void         setScanline (int row, unsigned char* buffer, int bps, float *minValue=NULL, float *maxValue=NULL);
 
         // functions inherited from IImagefloat:
-        virtual Glib::Mutex& getMutex () { return mutex (); }
+        virtual MyMutex&     getMutex () { return mutex (); }
         virtual cmsHPROFILE  getProfile () { return getEmbeddedProfile (); }
         virtual int          getBitsPerPixel () { return 8*sizeof(float); }
         virtual int          saveToFile (Glib::ustring fname) { return save (fname); }

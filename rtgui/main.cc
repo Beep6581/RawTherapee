@@ -90,6 +90,12 @@ int processLineParams( int argc, char **argv );
 int main(int argc, char **argv)
 {
     setlocale(LC_ALL,"");
+
+    Glib::thread_init();
+    gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
+    gdk_threads_init();
+    Gio::init ();
+
 #ifdef BUILD_BUNDLE
     char exname[512] = {0};
     Glib::ustring exePath;
@@ -127,11 +133,6 @@ int main(int argc, char **argv)
     licensePath = LICENCE_SEARCH_PATH;
 #endif
   
-   Glib::thread_init();
-   gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
-   gdk_threads_init();
-   Gio::init ();
-
    mainThread = Glib::Thread::self();
 
    Options::load ();

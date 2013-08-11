@@ -26,6 +26,7 @@
 #include "image16.h"
 #include "imagesource.h"
 #include "procevents.h"
+#include "../rtgui/threadutils.h"
 
 namespace rtengine {
 
@@ -36,11 +37,11 @@ class ImProcCoordinator;
 class Crop : public DetailedCrop {
 
     protected:
-		Imagefloat* origCrop, *baseCrop;
+        Imagefloat* origCrop, *baseCrop;
         Imagefloat* *resizeCrop, *transCrop;
         LabImage *laboCrop, *labnCrop;
         Image8 *cropImg;  // permanently allocated in RAM and only renewed on size changes
-		CieImage *cieCrop;
+        CieImage *cieCrop;
         float** cbuffer;
         float * cbuf_real;
         SHMap* cshmap;
@@ -51,28 +52,27 @@ class Crop : public DetailedCrop {
         int trafx, trafy, trafw, trafh;         // the size and position to get from the imagesource that is transformed to the requested crop area
         int rqcropx, rqcropy, rqcropw, rqcroph; // size of the requested detail crop image (the image might be smaller) (without border)
         int borderRequested, upperBorder, leftBorder;
-        
 
         bool cropAllocated;
         DetailedCropListener* cropImageListener;
-		
-        Glib::Mutex cropMutex;
+
+        MyMutex cropMutex;
         ImProcCoordinator* parent;
 
         bool setCropSizes (int cx, int cy, int cw, int ch, int skip, bool internal);
         void freeAll ();
-        
+
     public:
-             Crop        (ImProcCoordinator* parent);
-            virtual ~Crop        ();
+        Crop             (ImProcCoordinator* parent);
+        virtual ~Crop    ();
     
         bool hasListener () { return cropImageListener; }
         void update      (int todo);
         void setWindow   (int cx, int cy, int cw, int ch, int skip) { setCropSizes (cx, cy, cw, ch, skip, false); }
-		
-		bool tryUpdate   ();  // First try, only make fullUpdate if this returns false
-		void fullUpdate  ();  // called via thread
-	
+
+        bool tryUpdate   ();  // First try, only make fullUpdate if this returns false
+        void fullUpdate  ();  // called via thread
+
         void setListener (DetailedCropListener* il);
         void destroy     () {}
         int  get_skip    () { return skip;}

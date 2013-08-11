@@ -499,22 +499,20 @@ int Options::readFromFile (Glib::ustring fname) {
 
     rtengine::SafeKeyFile keyFile;
 
-    try {
-    	if( !safe_file_test(fname,Glib::FILE_TEST_EXISTS))
-    		return 1;
-        if (!keyFile.load_from_file (fname)) 
-            return 1;
-    }
-    catch (Glib::FileError &err) {
+    if( !safe_file_test(fname,Glib::FILE_TEST_EXISTS))
         return 1;
-    }
 
-    setDefaults ();
+    try {
+        if (keyFile.load_from_file (fname)) {
+
+            setDefaults ();
     
+// --------------------------------------------------------------------------------------------------------
+
 if (keyFile.has_group ("General")) {
     if (keyFile.has_key ("General", "TabbedEditor"))    tabbedUI= keyFile.get_boolean ("General", "TabbedEditor");    
     if (keyFile.has_key ("General", "StartupDirectory")){
-    	if( keyFile.get_string ("General", "StartupDirectory") == "home")          startupDir = STARTUPDIR_HOME;
+        if      ( keyFile.get_string ("General", "StartupDirectory") == "home")    startupDir = STARTUPDIR_HOME;
         else if ( keyFile.get_string ("General", "StartupDirectory") == "current") startupDir = STARTUPDIR_CURRENT;
         else if ( keyFile.get_string ("General", "StartupDirectory") == "last")    startupDir = STARTUPDIR_LAST;
         else if ( keyFile.get_string ("General", "StartupDirectory") == "custom")  startupDir = STARTUPDIR_CUSTOM;
@@ -669,8 +667,6 @@ if (keyFile.has_group ("GUI")) {
     if (keyFile.has_key ("GUI", "UseIconNoText"))    UseIconNoText    = keyFile.get_boolean ("GUI", "UseIconNoText");
 }
 
-
-
 if (keyFile.has_group ("Crop Settings")) { 
     if (keyFile.has_key ("Crop Settings", "PPI"))       cropPPI      = keyFile.get_integer ("Crop Settings", "PPI");
 }
@@ -703,7 +699,7 @@ if (keyFile.has_group ("Color Management")) {
     if( keyFile.has_key ("Color Management", "ProtectRed"))     rtSettings.protectred           = keyFile.get_integer("Color Management", "ProtectRed");
     if( keyFile.has_key ("Color Management", "ProtectRedH"))    rtSettings.protectredh          = keyFile.get_double("Color Management", "ProtectRedH");
 //    if( keyFile.has_key ("Color Management", "Ciebadpixgauss")) rtSettings.ciebadpixgauss       = keyFile.get_boolean("Color Management", "Ciebadpixgauss");
-	
+
 }
 
 if (keyFile.has_group ("Batch Processing")) { 
@@ -764,9 +760,25 @@ if (keyFile.has_group ("Dialogs")) {
     safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 }
 
-        filterOutParsedExtensions ();
+// --------------------------------------------------------------------------------------------------------
 
-        return 0;
+            filterOutParsedExtensions ();
+
+            return 0;
+
+        }
+    }
+    catch (Glib::Error &err) {
+        if (options.rtSettings.verbose)
+            printf("Options::readFromFile / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+    }
+    catch (...) {
+        if (options.rtSettings.verbose)
+            printf("Options::readFromFile / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
+    }
+
+    return 1;
+
 }
 
 bool Options::safeDirGet(const rtengine::SafeKeyFile& keyFile, const Glib::ustring& section,
@@ -1015,8 +1027,11 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
 
     FILE *f = safe_g_fopen (fname, "wt");
-    if (f==NULL)
+    if (f==NULL) {
+        if (options.rtSettings.verbose)
+            printf("Options::saveToFile / Error: unable to open file \"\" with write access!\n", fname.c_str());
         return 1;
+    }
     else {
         fprintf (f, "%s", keyFile.to_data().c_str());
         fclose (f);

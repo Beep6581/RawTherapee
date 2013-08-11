@@ -21,6 +21,7 @@
 #include "cropwindow.h"
 #include "options.h"
 #include "guiutils.h"
+#include "threadutils.h"
 #include "../rtengine/mytime.h"
 #include "imagearea.h"
 #include "cursormanager.h"
@@ -488,7 +489,7 @@ void CropWindow::pointerMoved (int x, int y) {
             if (pmhlistener) pmhlistener->pointerMoved (false, cropHandler.colorParams.working, mx, my, -1, -1, -1);
                 }
 		else {
-			/*Glib::Mutex::Lock lock(cropHandler.cimg);
+			/*MyMutex::MyLock lock(cropHandler.cimg);
 
 			int vx = x - xpos - imgX;
 			int vy = y - ypos - imgY;
@@ -630,7 +631,7 @@ void CropWindow::updateCursor (int x, int y) {
 }
 
 void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
-	Glib::Mutex::Lock lock(cropHandler.cimg);
+    MyMutex::MyLock lock(cropHandler.cimg);
 
     //MyTime t1, t2, t3, t4;
     
