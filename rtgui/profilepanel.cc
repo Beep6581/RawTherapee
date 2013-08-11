@@ -140,7 +140,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
 #ifdef WIN32
     // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_root_dir(options.getPreferredProfilePath()))
+    if (!safe_is_shortcut_dir(options.getPreferredProfilePath()))
 #endif
     try {
         dialog.add_shortcut_folder(options.getPreferredProfilePath());
@@ -149,7 +149,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
     //Add the image's path to the Shortcut list
 #ifdef WIN32
     // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_root_dir(imagePath))
+    if (!safe_is_shortcut_dir(imagePath))
 #endif
     try {
         dialog.add_shortcut_folder(imagePath);
@@ -288,7 +288,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     //Add the user's default (or global if multiuser=false) profile path to the Shortcut list
 #ifdef WIN32
     // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_root_dir(options.getPreferredProfilePath()))
+    if (!safe_is_shortcut_dir(options.getPreferredProfilePath()))
 #endif
     try {
         dialog.add_shortcut_folder(options.getPreferredProfilePath());
@@ -298,7 +298,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event) {
     //Add the image's path to the Shortcut list
 #ifdef WIN32
     // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_root_dir(imagePath))
+    if (!safe_is_shortcut_dir(imagePath))
 #endif
     try {
         dialog.add_shortcut_folder(imagePath);

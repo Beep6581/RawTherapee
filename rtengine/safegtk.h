@@ -41,9 +41,11 @@ int safe_g_rename(const Glib::ustring& oldFilename, const Glib::ustring& newFile
 int safe_g_mkdir_with_parents(const Glib::ustring& dirName, int mode);
 
 Glib::ustring safe_get_user_picture_dir();
+Glib::ustring safe_get_user_home_dir();
+Glib::ustring safe_get_user_desktop_dir();
 
 #ifdef WIN32
-bool safe_is_root_dir (const Glib::ustring& filename);
+bool safe_is_shortcut_dir (const Glib::ustring& filename);
 #endif
 
 #endif

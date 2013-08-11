@@ -262,7 +262,7 @@ void SaveAsDialog::setImagePath (Glib::ustring ipath) {
     //Add the image's path to the Shortcut list
 #ifdef WIN32
     // Dirty workaround, waiting for a clean solution by using exceptions!
-    if (!safe_is_root_dir(path))
+    if (!safe_is_shortcut_dir(path))
 #endif
     try {
         fchooser->add_shortcut_folder(path);
