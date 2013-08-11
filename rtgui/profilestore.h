@@ -22,6 +22,7 @@
 #include <map>
 #include <vector>
 #include "../rtengine/rtengine.h"
+#include "threadutils.h"
 #include "paramsedited.h"
 #include <glibmm.h>
 
@@ -34,7 +35,7 @@ class ProfileStore {
             STORESTATE_DELETED
         } StoreState;
 
-        Glib::Mutex *parseMutex;
+        MyMutex *parseMutex;
         StoreState storeState;
         std::map<Glib::ustring, rtengine::procparams::PartialProfile*> partProfiles;
         void parseDir (const Glib::ustring& pdir);

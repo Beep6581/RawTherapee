@@ -21,6 +21,7 @@
 
 #include <cstring>
 #include "guiutils.h"
+#include "threadutils.h"
 #include "../rtengine/safegtk.h"
 #include "multilangmgr.h"
 

@@ -18,6 +18,7 @@
  */
 #include "rtengine.h"
 #include "rtthumbnail.h"
+#include "../rtgui/options.h"
 #include "image8.h"
 #include <lcms2.h>
 #include "curves.h"
@@ -37,6 +38,8 @@
 #include "rawimage.h"
 #include "jpeg.h"
 #include "../rtgui/ppversion.h"
+
+extern Options options;
 
 namespace rtengine {
 
@@ -1280,7 +1283,7 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
     SafeKeyFile keyFile;
     
     try {
-        Glib::Mutex::Lock thmbLock(thumbMutex);
+        MyMutex::MyLock thmbLock(thumbMutex);
         if (!keyFile.load_from_file (fname)) 
             return false;
 
@@ -1309,7 +1312,14 @@ bool Thumbnail::readData  (const Glib::ustring& fname) {
         }
         return true;
     }
-    catch (Glib::Error &err) {}
+    catch (Glib::Error &err) {
+        if (options.rtSettings.verbose)
+            printf("Thumbnail::readData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+    }
+    catch (...) {
+        if (options.rtSettings.verbose)
+            printf("Thumbnail::readData / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
+    }
 
     return false;
 }
@@ -1318,12 +1328,20 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
 
     SafeKeyFile keyFile;
 
-    Glib::Mutex::Lock thmbLock(thumbMutex);
+    MyMutex::MyLock thmbLock(thumbMutex);
 
     try {
-    if( safe_file_test(fname,Glib::FILE_TEST_EXISTS) )
-        keyFile.load_from_file (fname); 
-    } catch (...) {}
+        if( safe_file_test(fname,Glib::FILE_TEST_EXISTS) )
+            keyFile.load_from_file (fname);
+    }
+    catch (Glib::Error &err) {
+        if (options.rtSettings.verbose)
+            printf("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+    }
+    catch (...) {
+        if (options.rtSettings.verbose)
+            printf("Thumbnail::writeData / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
+    }
 
     keyFile.set_double  ("LiveThumbData", "CamWBRed", camwbRed);
     keyFile.set_double  ("LiveThumbData", "CamWBGreen", camwbGreen);
@@ -1343,8 +1361,11 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
 
     FILE *f = safe_g_fopen (fname, "wt");
-    if (!f)
+    if (!f) {
+        if (options.rtSettings.verbose)
+            printf("Thumbnail::writeData / Error: unable to open file \"\" with write access!\n", fname.c_str());
         return false;
+    }
     else {
         fprintf (f, "%s", keyFile.to_data().c_str());
         fclose (f);

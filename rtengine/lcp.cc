@@ -629,8 +629,8 @@ LCPStore* LCPStore::getInstance()
     static LCPStore* instance_ = 0;
     if ( instance_ == 0 )
     {
-        static Glib::Mutex smutex_;
-        Glib::Mutex::Lock lock(smutex_);
+        static MyMutex smutex_;
+        MyMutex::MyLock lock(smutex_);
         if ( instance_ == 0 )
         {
             instance_ = new LCPStore();
@@ -642,7 +642,7 @@ LCPStore* LCPStore::getInstance()
 LCPProfile* LCPStore::getProfile (Glib::ustring filename) {
     if (filename.length()==0 || !isValidLCPFileName(filename)) return NULL;
 
-    Glib::Mutex::Lock lock(mtx);
+    MyMutex::MyLock lock(mtx);
 
     std::map<Glib::ustring, LCPProfile*>::iterator r = profileCache.find (filename);
     if (r!=profileCache.end()) return r->second;

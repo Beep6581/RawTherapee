@@ -23,6 +23,7 @@
 #include <glibmm.h>
 #include <map>
 #include <string>
+#include "../rtgui/threadutils.h"
 
 namespace rtengine {
 
@@ -61,7 +62,7 @@ class ICCStore {
         cmsHPROFILE xyz;
         cmsHPROFILE srgb;
 
-        Glib::Mutex mutex_;
+        MyMutex mutex_;
 
         ICCStore (); 
         void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents);

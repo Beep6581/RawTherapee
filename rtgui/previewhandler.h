@@ -20,6 +20,7 @@
 #define _PREVIEWHANDLER_
 
 #include "../rtengine/rtengine.h"
+#include "threadutils.h"
 #include <gtkmm.h>
 #include <list>
 
@@ -49,10 +50,9 @@ class PreviewHandler : public rtengine::PreviewImageListener {
         double previewScale;
         PreviewHandlerIdleHelper* pih;
         std::list<PreviewListener*> listeners;
-        Glib::Mutex previewImgMutex;
+        MyMutex previewImgMutex;
         Glib::RefPtr<Gdk::Pixbuf> previewImg;
-        
-    
+
     public:
 
         PreviewHandler ();    

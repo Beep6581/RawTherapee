@@ -22,6 +22,7 @@
 
 #include "imagefloat.h"
 #include "curves.h"
+#include "../rtgui/threadutils.h"
 #include <glibmm.h>
 #include <map>
 #include <string>
@@ -65,7 +66,7 @@ namespace rtengine {
     };
 
     class DCPStore {
-        Glib::Mutex mtx;
+        MyMutex mtx;
 
         // these contain standard profiles from RT. keys are all in uppercase, file path is value
         std::map<Glib::ustring, Glib::ustring> fileStdProfiles;

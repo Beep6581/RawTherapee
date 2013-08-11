@@ -205,7 +205,7 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
 
 void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw )
 {
-    Glib::Mutex::Lock lock(getImageMutex);
+    MyMutex::MyLock lock(getImageMutex);
 
     tran = defTransform (tran);
 

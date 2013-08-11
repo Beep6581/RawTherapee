@@ -20,6 +20,7 @@
 #define __CROPHANDLER__
 
 #include "../rtengine/rtengine.h"
+#include "threadutils.h"
 #include <gtkmm.h>
 
 class CropHandlerListener {
@@ -48,7 +49,7 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         int cropX, cropY, cropW, cropH; // position and size of the crop corresponding to cropPixbuf
         bool enabled;
         unsigned char* cropimg;
-		unsigned char* cropimgtrue;
+        unsigned char* cropimgtrue;
         int cropimg_width, cropimg_height, cix, ciy, ciw, cih, cis;
         bool initial;
         bool isLowUpdatePriority;
@@ -60,24 +61,24 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         CropHandlerIdleHelper* chi;
 
         void    compDim ();
-	
+
     public:
 
-		void    update  ();
+        void    update  ();
 
 
         rtengine::procparams::CropParams cropParams;
-		rtengine::procparams::ColorManagementParams colorParams;
+        rtengine::procparams::ColorManagementParams colorParams;
         Glib::RefPtr<Gdk::Pixbuf> cropPixbuf;
-		Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
+        Glib::RefPtr<Gdk::Pixbuf> cropPixbuftrue;
 
-        Glib::Mutex cimg;
+        MyMutex cimg;
 
         CropHandler ();
         ~CropHandler ();
-      
+
         void    setCropHandlerListener (CropHandlerListener* l) { listener = l; }
-        
+
         void    newImage    (rtengine::StagedImageProcessor* ipc_);
         void    setZoom     (int z, int centerx=-1, int centery=-1);
         double  getFitZoom  ();
@@ -93,11 +94,11 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
 
         // DetailedCropListener interface
         void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking,rtengine::procparams::ColorManagementParams cmp,
-								 rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
+                                 rtengine::procparams::CropParams cp, int cx, int cy, int cw, int ch, int skip);
         bool    getWindow (int& cwx, int& cwy, int& cww, int& cwh, int& cskip);
         // SizeListener interface
         void    sizeChanged  (int w, int h, int ow, int oh);
-        
+
         void    cutRectToImgBounds (int& x, int& y, int& w, int& h);
 };
 

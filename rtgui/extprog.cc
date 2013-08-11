@@ -68,8 +68,8 @@ ExtProgStore* ExtProgStore::getInstance()
     static ExtProgStore* instance_ = 0;
     if ( instance_ == 0 )
     {
-        static Glib::Mutex smutex_;
-        Glib::Mutex::Lock lock(smutex_);
+        static MyMutex smutex_;
+        MyMutex::MyLock lock(smutex_);
         if ( instance_ == 0 )
         {
             instance_ = new ExtProgStore();
@@ -84,7 +84,7 @@ ExtProgStore::~ExtProgStore() {
 
 // Reads all profiles from the given profiles dir
 void ExtProgStore::init () {
-    Glib::Mutex::Lock lock(mtx);
+    MyMutex::MyLock lock(mtx);
 
     lActions.clear();
 

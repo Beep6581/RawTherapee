@@ -44,8 +44,8 @@ DCPProfile::DCPProfile(Glib::ustring fname, bool isRTProfile) {
 
     TagDirectory *tagDir=ExifManager::parseTIFF(pFile, false);
 
-    Tag* tag = tagDir->getTag(TagCalibrationIlluminant1); iLightSource1 = (tag!=NULL ? tag->toInt(0,SHORT) : -1);  
-    tag = tagDir->getTag(TagCalibrationIlluminant2); iLightSource2 = (tag!=NULL ? tag->toInt(0,SHORT) : -1);
+    Tag* tag = tagDir->getTag(TagCalibrationIlluminant1); iLightSource1 = (tag!=NULL ? tag->toInt(0,rtexif::SHORT) : -1);
+    tag = tagDir->getTag(TagCalibrationIlluminant2); iLightSource2 = (tag!=NULL ? tag->toInt(0,rtexif::SHORT) : -1);
 
     bool hasSecondHueSat = tagDir->getTag(TagProfileHueSatMapData2)!=NULL;  // some profiles have two matrices, but just one huesat
 
@@ -495,8 +495,8 @@ DCPStore* DCPStore::getInstance()
     static DCPStore* instance_ = 0;
     if ( instance_ == 0 )
     {
-        static Glib::Mutex smutex_;
-        Glib::Mutex::Lock lock(smutex_);
+        static MyMutex smutex_;
+        MyMutex::MyLock lock(smutex_);
         if ( instance_ == 0 )
         {
             instance_ = new DCPStore();
@@ -507,7 +507,7 @@ DCPStore* DCPStore::getInstance()
 
 // Reads all profiles from the given profiles dir
 void DCPStore::init (Glib::ustring rtProfileDir) {
-    Glib::Mutex::Lock lock(mtx);
+    MyMutex::MyLock lock(mtx);
 
     fileStdProfiles.clear();
 
@@ -550,7 +550,7 @@ void DCPStore::init (Glib::ustring rtProfileDir) {
 }
 
 DCPProfile* DCPStore::getProfile (Glib::ustring filename, bool isRTProfile) {
-    Glib::Mutex::Lock lock(mtx);
+    MyMutex::MyLock lock(mtx);
 
     std::map<Glib::ustring, DCPProfile*>::iterator r = profileCache.find (filename);
     if (r!=profileCache.end()) return r->second;

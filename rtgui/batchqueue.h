@@ -19,6 +19,7 @@
 #define _BATCHQUEUE_
 
 #include <gtkmm.h>
+#include "threadutils.h"
 #include "batchqueueentry.h"
 #include "../rtengine/rtengine.h"
 #include "options.h"

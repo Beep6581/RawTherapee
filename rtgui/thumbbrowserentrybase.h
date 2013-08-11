@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 #include "lwbuttonset.h"
 #include "thumbnail.h"
-#include "guiutils.h"
+#include "threadutils.h"
 
 class ThumbBrowserBase;
 class ThumbBrowserEntryBase {

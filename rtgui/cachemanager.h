@@ -25,6 +25,7 @@
 #include "thumbnail.h"
 #include <cstdio>
 #include "../rtengine/procparams.h"
+#include "threadutils.h"
 
 class Thumbnail;
 
@@ -35,7 +36,7 @@ class CacheManager {
 
         string_thumb_map openEntries;
         Glib::ustring    baseDir;
-		Glib::Mutex      mutex_;
+        MyMutex          mutex_;
 
         void deleteDir (const Glib::ustring& dirName);
 
@@ -43,20 +44,20 @@ class CacheManager {
 
     public:
 
-		static CacheManager* getInstance(void);
+        static CacheManager* getInstance(void);
 
         void        init        ();
         Thumbnail*  getEntry    (const Glib::ustring& fname, const rtengine::procparams::ProcParams *pparams=NULL);
         void        deleteEntry (const Glib::ustring& fname);
         void        renameEntry (const std::string& oldfilename, const std::string& oldmd5, const std::string& newfilename);
-        
+
         void        closeThumbnail (Thumbnail* t);
-        
-        const Glib::ustring& getBaseDir     ()       { Glib::Mutex::Lock lock(mutex_); return baseDir; }
+
+        const Glib::ustring& getBaseDir     ()       { MyMutex::MyLock lock(mutex_); return baseDir; }
         void  closeCache ();
 
         static std::string getMD5 (const Glib::ustring& fname);
-        
+
         void clearAll ();
         void clearThumbImages ();
         void clearProfiles ();

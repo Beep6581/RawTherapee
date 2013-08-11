@@ -1,5 +1,4 @@
 /*
-/*
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -53,15 +52,15 @@ Crop::~Crop () {
 }
 
 void Crop::setListener (DetailedCropListener* il) { 
-	// We can make reads in the IF, because the mProcessing lock is only needed for change
-	if (cropImageListener!=il) {
-		Glib::Mutex::Lock lock(cropMutex);
-        cropImageListener = il; 
-    }       
-}       
+    // We can make reads in the IF, because the mProcessing lock is only needed for change
+    if (cropImageListener!=il) {
+        MyMutex::MyLock lock(cropMutex);
+        cropImageListener = il;
+    }
+}
 
 void Crop::update (int todo) {
-	Glib::Mutex::Lock lock(cropMutex);
+    MyMutex::MyLock lock(cropMutex);
 
     ProcParams& params = parent->params;
 
@@ -89,7 +88,7 @@ void Crop::update (int todo) {
     bool needstransform  = parent->ipf.needsTransform();
 
     if (todo & (M_INIT|M_LINDENOISE)) {
-        Glib::Mutex::Lock lock(parent->minit);  // Also used in improccoord
+        MyMutex::MyLock lock(parent->minit);  // Also used in improccoord
 
         int tr = TR_NONE;
         if (params.coarse.rotate==90)  tr |= TR_R90;

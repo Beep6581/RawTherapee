@@ -36,7 +36,7 @@ bool ProfileStore::init () {
         return false;
     if (storeState == STORESTATE_NOTINITIALIZED) {
         storeState = STORESTATE_BEINGINITIALIZED;
-        parseMutex = new Glib::Mutex();
+        parseMutex = new MyMutex();
         _parseProfiles ();
         storeState = STORESTATE_INITIALIZED;
     }
@@ -47,7 +47,7 @@ ProfileStore::~ProfileStore () {
 
     // This lock prevent object's suppression while scanning the directories
     storeState = STORESTATE_DELETED;
-    Glib::Mutex::Lock lock(*parseMutex);
+    MyMutex::MyLock lock(*parseMutex);
 
     for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++) {
         if (i->second->pparams) delete i->second->pparams;
@@ -71,7 +71,7 @@ void ProfileStore::parseProfiles () {
     if (!init())
         // I don't even know if this situation can occur
         return;
-    Glib::Mutex::Lock lock(*parseMutex);
+    MyMutex::MyLock lock(*parseMutex);
 
     _parseProfiles ();
 }
@@ -148,7 +148,7 @@ const PartialProfile* ProfileStore::getProfile (const Glib::ustring& profname) {
     if (!init())
         // I don't even know if this situation can occur
         return NULL;
-    Glib::Mutex::Lock lock(*parseMutex);
+    MyMutex::MyLock lock(*parseMutex);
 
     if (partProfiles.find(profname) != partProfiles.end()) {
         return partProfiles[profname];
@@ -165,7 +165,7 @@ std::vector<Glib::ustring> ProfileStore::getProfileNames () {
     if (!init())
         // I don't even know if this situation can occur
         return ret;
-    Glib::Mutex::Lock lock(*parseMutex);
+    MyMutex::MyLock lock(*parseMutex);
 
     for (std::map<Glib::ustring,PartialProfile*>::iterator i = partProfiles.begin(); i!=partProfiles.end(); i++)
         ret.push_back (i->first);

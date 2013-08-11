@@ -34,6 +34,7 @@
 #include "../rtexif/rtexif.h"
 #include "imagedimensions.h"
 #include "iimage.h"
+#include "../rtgui/threadutils.h"
 
 namespace rtengine {
 
@@ -69,7 +70,7 @@ class ImageIO : virtual public ImageDatas {
         procparams::ExifPairs exifChange;
         IptcData* iptc;
         const rtexif::TagDirectory* exifRoot;
-        Glib::Mutex imutex;
+        MyMutex imutex;
         IIOSampleFormat sampleFormat;
         IIOSampleArrangement sampleArrangement;
 
@@ -122,7 +123,7 @@ class ImageIO : virtual public ImageDatas {
         void setMetadata (const rtexif::TagDirectory* eroot);
         void setMetadata (const rtexif::TagDirectory* eroot, const rtengine::procparams::ExifPairs& exif, const rtengine::procparams::IPTCPairs& iptcc);
         void setOutputProfile  (char* pdata, int plen);
-        Glib::Mutex& mutex () { return imutex; }
+        MyMutex& mutex () { return imutex; }
 };
 
 }

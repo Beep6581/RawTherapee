@@ -22,6 +22,7 @@
 
 #include <glibmm.h>
 #include <list>
+#include "threadutils.h"
 
 class ExtProgAction {
 public:
@@ -40,7 +41,7 @@ public:
 
 // Stores all external programs that could be called by the user
 class ExtProgStore {
-    Glib::Mutex mtx;  // covers actions
+    MyMutex mtx;  // covers actions
 
     bool SearchProg(Glib::ustring name, Glib::ustring exePath, Glib::ustring exePath86, int maxVer, bool allowRaw, bool allowQueueProcess);
 

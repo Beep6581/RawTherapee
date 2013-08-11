@@ -27,11 +27,12 @@
 #include "../rtengine/rtthumbnail.h"
 #include "cacheimagedata.h"
 #include "thumbnaillistener.h"
+#include "threadutils.h"
 
 class CacheManager;
 class Thumbnail {
 
-        Glib::Mutex    mutex;
+        MyMutex         mutex;
 
         Glib::ustring   fname;              // file name corresponding to the thumbnail
         CacheImageData  cfs;                // cache entry corresponding to the thumbnail
@@ -82,6 +83,7 @@ class Thumbnail {
         
         bool              hasProcParams ();
         const rtengine::procparams::ProcParams& getProcParams ();
+        const rtengine::procparams::ProcParams& getProcParamsU ();  // Unprotected version
 
         // Use this to create params on demand for update
         rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB);

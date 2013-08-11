@@ -27,6 +27,7 @@
 
 #include <math.h>
 #include <fftw3.h>
+#include "../rtgui/threadutils.h"
 
 //#include "bilateral2.h"
 #include "gauss.h"
@@ -87,8 +88,8 @@ namespace rtengine {
 
 	void ImProcFunctions::RGB_denoise(Imagefloat * src, Imagefloat * dst, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const procparams::DefringeParams & defringe, const double expcomp)
 	{
-		static Glib::Mutex FftwMutex;
-		Glib::Mutex::Lock lock(FftwMutex);
+		static MyMutex FftwMutex;
+		MyMutex::MyLock lock(FftwMutex);
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

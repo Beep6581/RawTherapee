@@ -26,12 +26,13 @@
 #include "image8.h"
 #include "image16.h"
 #include "imagefloat.h"
+#include "../rtgui/threadutils.h"
 
 namespace rtengine {
 
     class Thumbnail {
 
-            Glib::Mutex thumbMutex;
+            MyMutex thumbMutex;
 
             cmsHPROFILE camProfile;
             double iColorMatrix[3][3];

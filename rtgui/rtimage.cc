@@ -100,12 +100,22 @@ void RTImage::setPaths(Options &opt) {
 	else {
 		configFilename = Glib::build_filename(argv0, Glib::build_filename("themes", Glib::ustring::format(opt.theme, ".iconset")));
 	}
-	if (!safe_file_test(configFilename, Glib::FILE_TEST_EXISTS) || !keyFile.load_from_file (configFilename)) {
-		// ...otherwise fallback to the iconset set in default.iconset
-		configFilename = Glib::build_filename(argv0, Glib::build_filename("themes", "Default.iconset"));
-		if (!keyFile.load_from_file (configFilename)) {
-			hasKeyFile = false;
+	try {
+		if (!safe_file_test(configFilename, Glib::FILE_TEST_EXISTS) || !keyFile.load_from_file (configFilename)) {
+			// ...otherwise fallback to the iconset set in default.iconset
+			configFilename = Glib::build_filename(argv0, Glib::build_filename("themes", "Default.iconset"));
+			if (!keyFile.load_from_file (configFilename)) {
+				hasKeyFile = false;
+			}
 		}
+	}
+	catch (Glib::Error &err) {
+		if (options.rtSettings.verbose)
+			printf("RTImage::setPaths / Error code %d while reading values from \"%s\":\n%s\n", err.code(), configFilename.c_str(), err.what().c_str());
+	}
+	catch (...) {
+		if (options.rtSettings.verbose)
+			printf("RTImage::setPaths / Unknown exception while trying to load \"%s\"!\n", configFilename.c_str());
 	}
 
 	if (hasKeyFile && keyFile.has_group ("General")) {
