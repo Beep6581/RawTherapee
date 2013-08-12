@@ -1029,7 +1029,7 @@ int Options::saveToFile (Glib::ustring fname) {
     FILE *f = safe_g_fopen (fname, "wt");
     if (f==NULL) {
         if (options.rtSettings.verbose)
-            printf("Options::saveToFile / Error: unable to open file \"\" with write access!\n", fname.c_str());
+            printf("Options::saveToFile / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         return 1;
     }
     else {

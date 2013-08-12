@@ -1363,7 +1363,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname) {
     FILE *f = safe_g_fopen (fname, "wt");
     if (!f) {
         if (options.rtSettings.verbose)
-            printf("Thumbnail::writeData / Error: unable to open file \"\" with write access!\n", fname.c_str());
+            printf("Thumbnail::writeData / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         return false;
     }
     else {
