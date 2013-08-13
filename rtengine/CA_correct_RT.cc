@@ -962,20 +962,18 @@ if(processpasstwo) {
 				plistener->setProgress(progress);
 			}
 		}
-	}
-	free(buffer);
 
 #pragma omp barrier
-
 // copy temporary image matrix back to image matrix
 #pragma omp for
 	for(row=0;row<height;row++)
 		for(col=0+(FC(row,0)&1),indx=(row*width+col)>>1;col<width;col+=2,indx++)
 			rawData[row][col] = RawDataTmp[indx];
-	
-	
-	
+
+	}
 	// clean up
+	free(buffer);
+	
 
 }
 	
