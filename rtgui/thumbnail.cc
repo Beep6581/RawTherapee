@@ -195,7 +195,7 @@ const ProcParams& Thumbnail::getProcParamsU () {
  *  Create default params on demand and returns a new updatable object
  *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
  */
-rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB) {
+rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB, bool flaggingMode) {
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = NULL;
 
@@ -210,10 +210,15 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
         // ustring doesn't know int etc formatting, so take these via (unsafe) stream
         std::ostringstream strm;
+        strm << Glib::ustring("\"") << options.cacheBaseDir.c_str() << Glib::ustring("\" ");
+        strm << flaggingMode << Glib::ustring(" ");
         strm << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
         strm << cfs->focalLen << Glib::ustring(" ") << cfs->iso << Glib::ustring(" \"");
-        strm << cfs->lens << Glib::ustring("\" \"") << cfs->camera << Glib::ustring("\"");
+        strm << cfs->lens << Glib::ustring("\" \"") << cfs->camMake << Glib::ustring("\"");
+        strm << Glib::ustring(" \"") << cfs->camModel << Glib::ustring("\"");
  
+        if (options.rtSettings.verbose)
+            printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine + strm.str()).c_str());
         bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
 
         // Now they SHOULD be there (and potentially "partial"), so try to load them and store it as a full procparam
@@ -469,7 +474,7 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
     }
     else {
         // Full thumbnail: apply profile
-        image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
+        image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist, cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp, scale );
     }
 
     tpp->getDimensions(lastW,lastH,lastScale);
@@ -494,7 +499,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
  		return 0;
  	}
  
- 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.camera, cfs.focalLen, cfs.focalLen35mm, cfs.focusDist,cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
+ 	rtengine::IImage8* image = tpp->processImage (pparams, h, rtengine::TI_Bilinear, cfs.getCamera(), cfs.focalLen, cfs.focalLen35mm, cfs.focusDist,cfs.shutter, cfs.fnumber, cfs.iso, cfs.expcomp,  scale );
     tpp->getDimensions(lastW,lastH,lastScale);
  
  	delete tpp;
@@ -595,8 +600,9 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
         cfs.sec      = idata->getDateTime().tm_sec;
         cfs.timeValid = true;
         cfs.exifValid = true;
-        cfs.lens     = idata->getLens();
-        cfs.camera   = idata->getCamera();
+        cfs.lens      = idata->getLens();
+        cfs.camMake   = idata->getMake();
+        cfs.camModel  = idata->getModel();
 
         if (idata->getOrientation()=="Rotate 90 CW") {
             deg = 90;
@@ -610,7 +616,8 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, rtengine::RawMetaDataL
     }
     else {
         cfs.lens     = "Unknown";
-        cfs.camera   = "Unknown";
+        cfs.camMake  = "Unknown";
+        cfs.camModel = "Unknown";
     }
     // get image filetype
     std::string::size_type idx;

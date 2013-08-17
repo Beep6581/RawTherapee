@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Specialized;
 #endregion
 
-// *** Raw Therapee sample Custom Profile builder (version 2010-11-15) ***
+// *** Raw Therapee sample Custom Profile builder (version 2013-08-12) ***
 // WARNING: PP3 format may change in the future versions! If this happens there will probably be no automatic migration path, you'll have to adjust on your own.
 // This is a sample, and therefore not supported by the RT team (just by oduis)
 //
@@ -153,6 +153,13 @@ namespace RTProfilerBuilder {
 				// What the user selected as his base profile
 				string defaultProfileFilePath = args[argNo++];
 
+				// Cache directory, for any logging file
+				string cachePath = args[argNo++];
+
+
+				// True if the image is only being flagged as inTrash, rank or colorLabel but still need valid PP3 - actually not used by this script
+				bool forFlaggingPurpose = bool.Parse(args[argNo++], CultureInfo.InvariantCulture);
+
 				// Note that old C++ has no automatic number globalization
 				double fNumber = double.Parse(args[argNo++], CultureInfo.InvariantCulture);
 				double exposureSecs = double.Parse(args[argNo++], CultureInfo.InvariantCulture);
@@ -160,7 +167,9 @@ namespace RTProfilerBuilder {
 				long iso = long.Parse(args[argNo++], CultureInfo.InvariantCulture);
 
 				string lens = args[argNo++];
-				string camera = args[argNo++];
+				string cameraMake  = args[argNo++];
+				string cameraModel = args[argNo++];
+				string camera = cameraMake + " " + cameraModel;
 				#endregion
 
 				// Read default file as basis

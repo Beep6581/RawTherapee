@@ -52,7 +52,8 @@ class CacheImageData {
         float focusDist;
         unsigned iso;
         Glib::ustring lens;
-        Glib::ustring camera;
+        Glib::ustring camMake;
+        Glib::ustring camModel;
         Glib::ustring filetype;
         Glib::ustring expcomp;
 
@@ -76,5 +77,7 @@ class CacheImageData {
         
         int load (const Glib::ustring& fname);
         int save (const Glib::ustring& fname);
+
+        Glib::ustring getCamera() const { return Glib::ustring(camMake+" "+camModel); }
 };
 #endif

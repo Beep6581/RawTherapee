@@ -78,7 +78,8 @@ int CacheImageData::load (const Glib::ustring& fname) {
                     if (keyFile.has_key ("ExifInfo", "ExpComp"))    expcomp     = keyFile.get_string ("ExifInfo", "ExpComp");
                 }
                 if (keyFile.has_key ("ExifInfo", "Lens"))       lens        = keyFile.get_string ("ExifInfo", "Lens");
-                if (keyFile.has_key ("ExifInfo", "Camera"))     camera      = keyFile.get_string ("ExifInfo", "Camera");
+                if (keyFile.has_key ("ExifInfo", "CamMake"))    camMake     = keyFile.get_string ("ExifInfo", "CamMake");
+                if (keyFile.has_key ("ExifInfo", "CamModel"))   camModel    = keyFile.get_string ("ExifInfo", "CamModel");
             }
 
             if (keyFile.has_group ("FileInfo")) {
@@ -159,7 +160,8 @@ int CacheImageData::save (const Glib::ustring& fname) {
         keyFile.set_string  ("ExifInfo", "ExpComp", expcomp);
     }
     keyFile.set_string  ("ExifInfo", "Lens", lens);
-    keyFile.set_string  ("ExifInfo", "Camera", camera);
+    keyFile.set_string  ("ExifInfo", "CameraMake", camMake);
+    keyFile.set_string  ("ExifInfo", "CameraModel", camModel);
     keyFile.set_string  ("FileInfo", "Filetype", filetype);
 
     if (format==FT_Raw) {

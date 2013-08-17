@@ -1218,8 +1218,10 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
 	if (!filter.exifFilterEnabled)
 		return true;
 	
+	Glib::ustring camera(cfs->getCamera());
+
 	if (!cfs->exifValid)
-		return (!filter.exifFilter.filterCamera || filter.exifFilter.cameras.count(cfs->camera)>0) 
+		return (!filter.exifFilter.filterCamera || filter.exifFilter.cameras.count(camera)>0)
 			&& (!filter.exifFilter.filterLens || filter.exifFilter.lenses.count(cfs->lens)>0)
 			&& (!filter.exifFilter.filterFiletype || filter.exifFilter.filetypes.count(cfs->filetype)>0)
 			&& (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp)>0);
@@ -1230,7 +1232,7 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) { // true -> entry
       && (!filter.exifFilter.filterFocalLen || (cfs->focalLen >= filter.exifFilter.focalFrom-tol && cfs->focalLen <= filter.exifFilter.focalTo+tol))
 	  && (!filter.exifFilter.filterISO     || (cfs->iso >= filter.exifFilter.isoFrom && cfs->iso <= filter.exifFilter.isoTo))
 	  && (!filter.exifFilter.filterExpComp || filter.exifFilter.expcomp.count(cfs->expcomp)>0)
-      && (!filter.exifFilter.filterCamera  || filter.exifFilter.cameras.count(cfs->camera)>0)
+      && (!filter.exifFilter.filterCamera  || filter.exifFilter.cameras.count(camera)>0)
 	  && (!filter.exifFilter.filterLens    || filter.exifFilter.lenses.count(cfs->lens)>0)
 	  && (!filter.exifFilter.filterFiletype  || filter.exifFilter.filetypes.count(cfs->filetype)>0);
 }
@@ -1239,7 +1241,7 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe) {
 
 	for (size_t i=0; i<tbe.size(); i++) {
     	// try to load the last saved parameters from the cache or from the paramfile file
-    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+    	tbe[i]->thumbnail->createProcParamsForUpdate(false, false, true);  // this can execute customprofilebuilder to generate param file in "flagging" mode
 
     	// no need to notify listeners as item goes to trash, likely to be deleted
 
@@ -1284,7 +1286,7 @@ void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank
     for (size_t i=0; i<tbe.size(); i++) {
 
         // try to load the last saved parameters from the cache or from the paramfile file
-        tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+        tbe[i]->thumbnail->createProcParamsForUpdate(false, false, true);  // this can execute customprofilebuilder to generate param file in "flagging" mode
 
         // notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
         tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
@@ -1309,7 +1311,7 @@ void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int c
 
     for (size_t i=0; i<tbe.size(); i++) {
         // try to load the last saved parameters from the cache or from the paramfile file
-        tbe[i]->thumbnail->createProcParamsForUpdate(false, false);  // this can execute customprofilebuilder to generate param file
+        tbe[i]->thumbnail->createProcParamsForUpdate(false, false, true);  // this can execute customprofilebuilder to generate param file in "flagging" mode
 
         // notify listeners TODO: should do this ONLY when params changed by customprofilebuilder?
         tbe[i]->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);

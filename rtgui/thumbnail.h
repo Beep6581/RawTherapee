@@ -85,8 +85,8 @@ class Thumbnail {
         const rtengine::procparams::ProcParams& getProcParams ();
         const rtengine::procparams::ProcParams& getProcParamsU ();  // Unprotected version
 
-        // Use this to create params on demand for update
-        rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB);
+        // Use this to create params on demand for update ; if flaggingMode=true, the procparams is created for a file being flagged (inTrash, rank, colorLabel)
+        rtengine::procparams::ProcParams* createProcParamsForUpdate (bool returnParams, bool forceCPB, bool flaggingMode=false);
 
         void              setProcParams (const rtengine::procparams::ProcParams& pp, ParamsEdited* pe=NULL, int whoChangedIt=-1, bool updateCacheNow=true);
         void              clearProcParams (int whoClearedIt=-1);
