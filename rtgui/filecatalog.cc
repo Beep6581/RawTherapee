@@ -608,7 +608,7 @@ void FileCatalog::previewReady (int dir_id, FileBrowserEntry* fdn) {
             dirEFS.focalTo = cfs->focalLen;
     }
     dirEFS.filetypes.insert (cfs->filetype);
-    dirEFS.cameras.insert (cfs->camera);
+    dirEFS.cameras.insert (cfs->getCamera());
     dirEFS.lenses.insert (cfs->lens);
     dirEFS.expcomp.insert (cfs->expcomp);
     }
