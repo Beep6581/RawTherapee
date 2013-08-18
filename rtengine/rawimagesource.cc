@@ -479,16 +479,19 @@ int RawImageSource::cfaCleanFromMap( PixelsMap &bitmapBads )
 /*  Search for hot or dead pixels in the image and update the map
  *  For each pixel compare its value to the average of similar color surrounding
  *  (Taken from Emil Martinec idea)
+ *  (Optimized by Ingo Weyrich 2013)
  */
 int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 {
-	volatile int counter=0;
+	// counter for dead or hot pixels
+	int counter=0;
 	
+	// allocate temporary buffer
 	float (*cfablur);
-	cfablur = (float (*)) calloc (H*W, sizeof *cfablur);
+	cfablur = (float (*)) malloc (H*W * sizeof *cfablur);
 	
 #pragma omp parallel
-	{
+{
 #pragma omp for
 	for (int i=0; i<H; i++) {
 		int iprev,inext,jprev,jnext;
@@ -500,44 +503,37 @@ int RawImageSource::findHotDeadPixel( PixelsMap &bpMap, float thresh)
 			if (j>W-3) {jnext=j-2;} else {jnext=j+2;}
 			med3x3(rawData[iprev][jprev],rawData[iprev][j],rawData[iprev][jnext],
 				   rawData[i][jprev],rawData[i][j],rawData[i][jnext],
-				   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],cfablur[i*W+j]);
+				   rawData[inext][jprev],rawData[inext][j],rawData[inext][jnext],temp);
+			cfablur[i*W+j] = fabs(rawData[i][j]-temp);
 		}
 	}
-	
-#pragma omp  for
+#pragma omp for reduction(+:counter) schedule (dynamic,16)
 	//cfa pixel heat/death evaluation
 	for (int rr=0; rr < H; rr++) {
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		for (int cc=0; cc < W; cc++) {
-			//rawData[rr][cc] = cfablur[rr*W+cc];//diagnostic
-
+		int top=max(0,rr-2);
+		int bottom=min(H-1,rr+2);
+		int rrmWpcc = rr*W;
+		for (int cc=0; cc < W; cc++,rrmWpcc++) {
 			//evaluate pixel for heat/death
-			float pixdev = fabs(rawData[rr][cc]-cfablur[rr*W+cc]);
-			float hfnbrave=0;
-			int top=max(0,rr-2);
-			int bottom=min(H-1,rr+2);
+			float pixdev = cfablur[rrmWpcc];
+			float hfnbrave = -pixdev;
 			int left=max(0,cc-2);
 			int right=min(W-1,cc+2);
-			for (int mm=top; mm<=bottom; mm++)
-				for (int nn=left; nn<=right; nn++) {
-					hfnbrave += fabs(rawData[mm][nn]-cfablur[mm*W+nn]);
+			for (int mm=top; mm<=bottom; mm++) {
+				int mmmWpnn = mm*W+left;
+				for (int nn=left; nn<=right; nn++,mmmWpnn++) {
+					hfnbrave += cfablur[mmmWpnn];
 				}
-			hfnbrave = (hfnbrave-pixdev)/((bottom-top+1)*(right-left+1)-1);
-			
-			if (pixdev > thresh*hfnbrave) {
+			}
+			if (pixdev * ((bottom-top+1)*(right-left+1)-1) > thresh*hfnbrave) {
 				// mark the pixel as "bad"
-				bpMap.set(cc,rr );
+				bpMap.set(cc,rr);
 				counter++;
 			}
 		}//end of pixel evaluation
-		
-		
 	}
-	}//end pragma
+}//end of parallel processing
 	free (cfablur);
-	//printf ("counter %d \n",counter);
 	return counter;
 }
 
