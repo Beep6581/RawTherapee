@@ -44,43 +44,29 @@ SHMap::~SHMap () {
 }
 
 void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip) {
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-    {
+
     // fill with luminance
-    #pragma omp for
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
     for (int i=0; i<H; i++)
         for (int j=0; j<W; j++) {
             map[i][j] = lumi[0]*std::max(img->r(i,j),0.f) + lumi[1]*std::max(img->g(i,j),0.f) + lumi[2]*std::max(img->b(i,j),0.f);
 		}
 
     if (!hq) {
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
         AlignedBufferMP<double>* pBuffer = new AlignedBufferMP<double> (max(W,H));
     	gaussHorizontal<float> (map, map, *pBuffer, W, H, radius);
 		gaussVertical<float>   (map, map, *pBuffer, W, H, radius);
         delete pBuffer;
+}
     }
-    else {
-/*		
-#if 0
-// the new OpenMP method does not need thread number specific code.
-//    	#ifdef _OPENMP
-		#pragma omp parallel if (multiThread)
-    	{
-    		int tid = omp_get_thread_num();
-    		int nthreads = omp_get_num_threads();
-    		int blk = H/nthreads;
 
-    		if (tid<nthreads-1)
-    			bilateral<float> (map, buffer, W, H, 8000, radius, tid*blk, (tid+1)*blk);
-    		else
-    			bilateral<float> (map, buffer, W, H, 8000, radius, tid*blk, H);
-		}
-#else
-    	bilateral<float> (map, buffer, W, H, 8000, radius, 0, H);
-#endif
-*/
+    else {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//experimental dirpyr shmap
 		
@@ -91,7 +77,6 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 		int intfactor = 1024;//16384;
 		
 		//set up range functions
-		
 		for (int i=0; i<0x10000; i++) {
 			//rangefn[i] = (int)(((thresh)/((double)(i) + (thresh)))*intfactor);
 			rangefn[i] = static_cast<int>(exp(-(min(10.0f,(static_cast<float>(i)*i) / (thresh*thresh))))*intfactor);
@@ -137,23 +122,43 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 */		
 		
     }
-    } // end parallel enclosure
     // update average, minimum, maximum
-    double _avg = 0;
-    int n = 1;
+
+    float _avg = 0.0f;
     min_f = 65535;
     max_f = 0;
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+    float _min_f = 65535.0f;
+    float _max_f = 0.0f;
+    float _val;
+#ifdef _OPENMP
+#pragma omp for reduction(+:_avg) nowait
+#endif
     for (int i=32; i<H-32; i++)
         for (int j=32; j<W-32; j++) {
-            int val = map[i][j];
-            if (val < min_f)
-                min_f = val;
-            if (val > max_f)
-                max_f = val;
-            _avg = 1.0/n * val + (1.0 - 1.0/n) * _avg;
-            n++;
+            _val = map[i][j];
+            if (_val < _min_f)
+                _min_f = _val;
+            if (_val > _max_f)
+                _max_f = _val;
+            _avg += _val;
         }
-    avg = (int) _avg;
+#ifdef _OPENMP
+#pragma omp critical
+#endif
+{
+	if(_min_f < min_f )
+		min_f = _min_f;
+	if(_max_f > max_f )
+		max_f = _max_f;
+}
+}
+    _avg /= ((H-64)*(W-64));
+    avg = _avg;
+
 }
 
 void SHMap::forceStat (float max_, float min_, float avg_) {
@@ -179,7 +184,6 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 		halfwin = 1;
 		domker[1][1]=domker[1][2]=domker[2][1]=domker[2][2]=1;
 	}
-	
 	
 	int scalewin = halfwin*scale;
 	
@@ -215,6 +219,5 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 	}
 	
 }
-	
 	
 }//end of SHMap
