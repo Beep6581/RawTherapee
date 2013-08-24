@@ -3,7 +3,7 @@
 //			CFA line denoise by DCT filtering
 //
 //	copyright (c) 2008-2010  Emil Martinec <ejmartin@uchicago.edu>
-//
+//	parallelized 2013 by Ingo Weyrich
 //
 // code dated: June 7, 2010
 //
@@ -28,7 +28,7 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 
-#define TS 512		// Tile size
+#define TS 224		// Tile size of 224 instead of 512 speeds up processing
 
 #define CLASS
 
@@ -40,7 +40,7 @@ using namespace rtengine;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::CLASS cfa_linedn(float noise)
-{  
+{
 	// local variables
 	int height=H, width=W;
 	
@@ -51,15 +51,6 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	const float gauss[5] = {0.20416368871516755, 0.18017382291138087, 0.1238315368057753, 0.0662822452863612, 0.02763055063889883};
 	const float rolloff[8] = {0, 0.135335, 0.249352, 0.411112, 0.606531, 0.800737, 0.945959, 1}; //gaussian with sigma=3
 	const float window[8] = {0, .25, .75, 1, 1, .75, .25, 0}; //sine squared
-	
-	
-	float aarr[4][8][8], *bbrr[4][8], **dctblock[4];
-	for (int j=0; j<4; j++) {
-		for (int i = 0; i < 8; i++) 
-			bbrr[j][i] = aarr[j][i];
-		dctblock[j] = bbrr[j];
-	}
-
 
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
@@ -70,32 +61,30 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 	
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	float noisevar=SQR(3*noise*65535); // _noise_ (as a fraction of saturation) is input to the algorithm
+	float noisevarm4 = 4.0f * noisevar;
 	volatile double progress = 0.0;
-	
+	float* RawDataTmp = (float*)malloc( width*height*sizeof(float));
 #pragma omp parallel
 	{	
+	
+	// allocate memory and assure the arrays don't have same 64 byte boundary to avoid L1 conflict misses
+	char *buffer = (char*)malloc(4 * TS * TS * sizeof(float)+ 3*64);
+	float *cfain = (float*)(buffer);
+	float *cfablur =(float*)(buffer+(TS*TS*sizeof(float))+ 1 * 64);
+	float *cfadiff =(float*)(buffer+(2*TS*TS*sizeof(float))+ 2 * 64);
+	float *cfadn =(float*)(buffer+(3*TS*TS*sizeof(float))+ 3 * 64);
 
-	float *cfain= new float[TS*TS];
-	float *cfablur= new float[TS*TS];
-	float *cfadiff= new float[TS*TS];
-	float *cfadn= new float[TS*TS];
 
-/*
-	char			*buffer;			// TS*TS*16
-	float        	(*cfain);			// TS*TS*4
-	float         	(*cfablur);		// TS*TS*4
-	float         	(*cfadiff);		// TS*TS*4
-	float         	(*cfadn);			// TS*TS*4
-	buffer = (char *) calloc((3*sizeof(float)+sizeof(int))*TS*TS,1);// 16
-//	merror(buffer,"cfa_linedn()");
-//	memset(buffer,0,16*TS*TS);
-	cfain			= (float (*))		buffer; //pointers to rows of array
- 	cfablur			= (float (*))			(buffer +  sizeof(float)*TS*TS); //4
-	cfadiff			= (float (*))			(buffer +  2*sizeof(float)*TS*TS);//8
-	cfadn			= (float (*))			(buffer +  3*sizeof(float)*TS*TS);//12
-*/
+	float linehvar[4], linevvar[4], noisefactor[4][8][2], coeffsq;
+	float dctblock[4][8][8];
+
+#pragma omp for
+	for(int i=0;i<height;i++)
+		for(int j=0;j<width;j++)
+			RawDataTmp[i*width+j] = rawData[i][j];
+
 	// Main algorithm: Tile loop
-#pragma omp for schedule(dynamic) nowait
+#pragma omp for schedule(dynamic) collapse(2)
 	for (int top=0; top < height-16; top += TS-32)
 		for (int left=0; left < width-16; left += TS-32) {
 	
@@ -107,7 +96,6 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 			// load CFA data; data should be in linear gamma space, before white balance multipliers are applied
 			for (int rr=top; rr < top+numrows; rr++)
 				for (int cc=left, indx=(rr-top)*TS; cc < left+numcols; cc++, indx++) {
-			
 					cfain[indx] = rawData[rr][cc];
 				}
 			//pad the block to a multiple of 16 on both sides
@@ -132,41 +120,32 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 			
 			//The cleaning algorithm starts here
 			
-			
 			//gaussian blur of CFA data
-			for (int rr=8; rr < numrows-8; rr++)
+			for (int rr=8; rr < numrows-8; rr++){
 				for (int indx=rr*TS; indx < rr*TS+numcols; indx++) {
-					
 					cfablur[indx]=gauss[0]*cfain[indx];
 					for (int i=1; i<5; i++) {
 						cfablur[indx] += gauss[i]*(cfain[indx-(2*i)*TS]+cfain[indx+(2*i)*TS]);
 					}
 				}
-			for (int rr=8; rr < numrows-8; rr++)
 				for (int indx=rr*TS+8; indx < rr*TS+numcols-8; indx++) {
-					
 					cfadn[indx] = gauss[0]*cfablur[indx];
 					for (int i=1; i<5; i++) {
 						cfadn[indx] += gauss[i]*(cfablur[indx-2*i]+cfablur[indx+2*i]);
 					}
 					cfadiff[indx]=cfain[indx]-cfadn[indx]; // hipass cfa data
 				}
-			
+			}
+
 			//begin block DCT
-			float linehvar[4], linevvar[4], noisefactor[4][8][2], coeffsq;
-#pragma omp critical
-		{	
 			for (int rr=8; rr < numrows-22; rr+=8) // (rr,cc) shift by 8 to overlap blocks
 				for (int cc=8; cc < numcols-22; cc+=8) {
-
 					for (int ey=0; ey<2; ey++) // (ex,ey) specify RGGB subarray
 						for (int ex=0; ex<2; ex++) {
-	
 							//grab an 8x8 block of a given RGGB channel
 							for (int i=0; i<8; i++) 
 								for (int j=0; j<8; j++) {
 									dctblock[2*ey+ex][i][j]=cfadiff[(rr+2*i+ey)*TS+cc+2*j+ex];
-		
 								}
 							
 							ddct8x8s(-1, dctblock[2*ey+ex]); //forward DCT
@@ -177,7 +156,6 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 							for (int i=4; i<8; i++) {
 								linehvar[2*ey+ex] += SQR(dctblock[2*ey+ex][0][i]);
 								linevvar[2*ey+ex] += SQR(dctblock[2*ey+ex][i][0]);
-							 
 							}
 							//Wiener filter for line denoising; roll off low frequencies
 							for (int i=1; i<8; i++) {
@@ -186,77 +164,78 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 								coeffsq = SQR(dctblock[2*ey+ex][0][i]);//horizontal
 								noisefactor[2*ey+ex][i][1] = coeffsq/(coeffsq+rolloff[i]*noisevar+eps);
 								// noisefactor labels are [RGGB subarray][row/col position][0=vert,1=hor]
-					
 								}
 							}
 					//horizontal lines
-					if (4*noisevar>(linehvar[0]+linehvar[1])) {//horizontal lines
+					if (noisevarm4>(linehvar[0]+linehvar[1])) {//horizontal lines
 						for (int i=1; i<8; i++) {
-							dctblock[0][0][i] *= 0.5*(noisefactor[0][i][1]+noisefactor[1][i][1]);//or should we use MIN???
-							dctblock[1][0][i] *= 0.5*(noisefactor[0][i][1]+noisefactor[1][i][1]);//or should we use MIN???
+							dctblock[0][0][i] *= 0.5f*(noisefactor[0][i][1]+noisefactor[1][i][1]);//or should we use MIN???
+							dctblock[1][0][i] *= 0.5f*(noisefactor[0][i][1]+noisefactor[1][i][1]);//or should we use MIN???
 						}
 					}
-					if (4*noisevar>(linehvar[2]+linehvar[3])) {//horizontal lines
+					if (noisevarm4>(linehvar[2]+linehvar[3])) {//horizontal lines
 						for (int i=1; i<8; i++) {
-							dctblock[2][0][i] *= 0.5*(noisefactor[2][i][1]+noisefactor[3][i][1]);//or should we use MIN???
-							dctblock[3][0][i] *= 0.5*(noisefactor[2][i][1]+noisefactor[3][i][1]);//or should we use MIN???
+							dctblock[2][0][i] *= 0.5f*(noisefactor[2][i][1]+noisefactor[3][i][1]);//or should we use MIN???
+							dctblock[3][0][i] *= 0.5f*(noisefactor[2][i][1]+noisefactor[3][i][1]);//or should we use MIN???
 								}
 							}
 							
 					//vertical lines
-					if (4*noisevar>(linevvar[0]+linevvar[2])) {//vertical lines
+					if (noisevarm4>(linevvar[0]+linevvar[2])) {//vertical lines
 						for (int i=1; i<8; i++) {
-							dctblock[0][i][0] *= 0.5*(noisefactor[0][i][0]+noisefactor[2][i][0]);//or should we use MIN???
-							dctblock[2][i][0] *= 0.5*(noisefactor[0][i][0]+noisefactor[2][i][0]);//or should we use MIN???
+							dctblock[0][i][0] *= 0.5f*(noisefactor[0][i][0]+noisefactor[2][i][0]);//or should we use MIN???
+							dctblock[2][i][0] *= 0.5f*(noisefactor[0][i][0]+noisefactor[2][i][0]);//or should we use MIN???
 						}
 					}
-					if (4*noisevar>(linevvar[1]+linevvar[3])) {//vertical lines
+					if (noisevarm4>(linevvar[1]+linevvar[3])) {//vertical lines
 						for (int i=1; i<8; i++) {
-							dctblock[1][i][0] *= 0.5*(noisefactor[1][i][0]+noisefactor[3][i][0]);//or should we use MIN???
-							dctblock[3][i][0] *= 0.5*(noisefactor[1][i][0]+noisefactor[3][i][0]);//or should we use MIN???
+							dctblock[1][i][0] *= 0.5f*(noisefactor[1][i][0]+noisefactor[3][i][0]);//or should we use MIN???
+							dctblock[3][i][0] *= 0.5f*(noisefactor[1][i][0]+noisefactor[3][i][0]);//or should we use MIN???
 						}
 					}
 					
 					for (int ey=0; ey<2; ey++) // (ex,ey) specify RGGB subarray
 						for (int ex=0; ex<2; ex++) {
 							ddct8x8s(1, dctblock[2*ey+ex]); //inverse DCT
-							
 							//multiply by window fn and add to output (cfadn)
 							for (int i=0; i<8; i++) 
 								for (int j=0; j<8; j++) {
 									cfadn[(rr+2*i+ey)*TS+cc+2*j+ex] += window[i]*window[j]*dctblock[2*ey+ex][i][j];
-
 								}
 						}	
-			}
-		}
+				}
+		
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			// copy smoothed results back to image matrix
+			// copy smoothed results to temporary buffer
 			for (int rr=16; rr < numrows-16; rr++) {
 				int row = rr + top; 
 				for (int col=16+left, indx=rr*TS+16; indx < rr*TS+numcols-16; indx++, col++) {
-
 					if (rawData[row][col]<clip_pt && cfadn[indx]<clip_pt) 
-					   rawData[row][col] = CLIP((int)(cfadn[indx]+ 0.5));
+					   RawDataTmp[row*width+col] = CLIP((int)(cfadn[indx]+ 0.5f));
 				}
 			}
-			progress+=(double)((TS-32)*(TS-32))/(height*width);
-			if (progress>1.0)
-			{
-				progress=1.0;
+			if(plistener) {
+				progress+=(double)((TS-32)*(TS-32))/(height*width);
+				if (progress>1.0)
+				{
+					progress=1.0;
+				}
+				plistener->setProgress(progress);
 			}
-			if(plistener) plistener->setProgress(progress);
 			
-			//if(plistener) plistener->setProgress(fabs((float)top/height));
 		}
 	// clean up
-	delete [] cfain;
-	delete [] cfablur;
-	delete [] cfadiff;
-	delete [] cfadn;
-	//free(buffer);
-	}
+	free(buffer);
 
+// copy temporary buffer back to image matrix
+#pragma omp for
+	for(int i=0;i<height;i++)
+		for(int j=0;j<width;j++)
+			rawData[i][j] = RawDataTmp[i*width+j];
+
+	} // end of parallel processing
+
+	free(RawDataTmp);
 }
 #undef TS
 
@@ -323,7 +302,7 @@ void RawImageSource::CLASS cfa_linedn(float noise)
 #define W8_4R   0.70710678118654752440
 
 
-void RawImageSource::ddct8x8s(int isgn, float **a)
+void RawImageSource::ddct8x8s(int isgn, float a[8][8])
 {
     int j;
     float x0r, x0i, x1r, x1i, x2r, x2i, x3r, x3i;
