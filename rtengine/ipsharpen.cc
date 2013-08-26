@@ -481,7 +481,11 @@ void ImProcFunctions::MLsharpen (LabImage* lab) {
 // has waived all copyright and related or neighboring rights to this work.
 // This code is licensed under CC0 v1.0, see license information at
 // http://creativecommons.org/publicdomain/zero/1.0/
-// addition from JD : pyramid  + pondered contrast with matrix 5x5
+
+//! MicroContrast is a sharpening method developed by Manuel Llorens and documented here: http://www.rawness.es/sharpening/?lang=en
+//! <BR>The purpose is maximize clarity of the image without creating halo's.
+//! <BR>Addition from JD : pyramid  + pondered contrast with matrix 5x5
+//! \param lab LabImage Image in the CIELab colour space
 void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 	if (params->sharpenMicro.enabled==false)
 		return;
@@ -591,13 +595,14 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 
 			n=0;
 
-			for(row=j-k; row<=j+k; row++)
+			for(row=j-k; row<=j+k; row++){
 				for(col=i-k,offset2=row*width+col; col<=i+k; col++,offset2++){
 					if (((v<LM[offset2])&&(signs[n]>0))||((v>LM[offset2])&&(signs[n]<0))) {
 						temp = v*0.75f+LM[offset2]*0.25f;// 0.75 0.25
-						n++;
 					}
+                    n++;
 				}
+            }
 			if (LM[offset]>95.0f || LM[offset]<5.0f)
 				contrast *= Cont0[unif]; //+ JD : luminance  pyramid to adjust contrast by evaluation of LM[offset]
 			else if (LM[offset]>90.0f || LM[offset]<10.0f)
@@ -675,6 +680,10 @@ void ImProcFunctions::MLmicrocontrast(LabImage* lab) {
 
 }
 
+//! MicroContrast is a sharpening method developed by Manuel Llorens and documented here: http://www.rawness.es/sharpening/?lang=en
+//! <BR>The purpose is maximize clarity of the image without creating halo's.
+//! <BR>Addition from JD : pyramid  + pondered contrast with matrix 5x5
+//! \param ncie CieImage Image in the CIECAM02 colour space
 void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie) {
 	if (params->sharpenMicro.enabled==false)
 		return;
@@ -784,13 +793,14 @@ void ImProcFunctions::MLmicrocontrastcam(CieImage* ncie) {
 
 			n=0;
 
-			for(row=j-k; row<=j+k; row++)
+			for(row=j-k; row<=j+k; row++){
 				for(col=i-k,offset2=row*width+col; col<=i+k; col++,offset2++){
 					if (((v<LM[offset2])&&(signs[n]>0))||((v>LM[offset2])&&(signs[n]<0))) {
 						temp = v*0.75f+LM[offset2]*0.25f;// 0.75 0.25
-						n++;
 					}
+                    n++;
 				}
+            }
 			if (LM[offset]>95.0f || LM[offset]<5.0f)
 				contrast *= Cont0[unif]; //+ JD : luminance  pyramid to adjust contrast by evaluation of LM[offset]
 			else if (LM[offset]>90.0f || LM[offset]<10.0f)
