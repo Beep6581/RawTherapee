@@ -77,9 +77,9 @@ int CacheImageData::load (const Glib::ustring& fname) {
                     if (keyFile.has_key ("ExifInfo", "ISO"))        iso         = keyFile.get_integer ("ExifInfo", "ISO");
                     if (keyFile.has_key ("ExifInfo", "ExpComp"))    expcomp     = keyFile.get_string ("ExifInfo", "ExpComp");
                 }
-                if (keyFile.has_key ("ExifInfo", "Lens"))       lens        = keyFile.get_string ("ExifInfo", "Lens");
-                if (keyFile.has_key ("ExifInfo", "CamMake"))    camMake     = keyFile.get_string ("ExifInfo", "CamMake");
-                if (keyFile.has_key ("ExifInfo", "CamModel"))   camModel    = keyFile.get_string ("ExifInfo", "CamModel");
+                if (keyFile.has_key ("ExifInfo", "Lens"))           lens        = keyFile.get_string ("ExifInfo", "Lens");
+                if (keyFile.has_key ("ExifInfo", "CameraMake"))     camMake     = keyFile.get_string ("ExifInfo", "CameraMake");
+                if (keyFile.has_key ("ExifInfo", "CameraModel"))    camModel    = keyFile.get_string ("ExifInfo", "CameraModel");
             }
 
             if (keyFile.has_group ("FileInfo")) {
