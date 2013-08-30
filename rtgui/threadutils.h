@@ -23,7 +23,7 @@
 
 #include <glibmm.h>
 #include <csignal>  // for raise()
-#include <cstdio>
+#include <iostream>
 
 #ifdef WIN32
 #include <windows.h>
@@ -87,7 +87,7 @@ public:
 		#if STRICT_MUTEX || !defined(NDEBUG)
 		if (alreadyLocked) {
 			#ifndef NDEBUG
-			printf("Warning: MyMutex already locked!\n"); // breakpoint
+			std::cout << "Warning: MyMutex already locked!" << std::endl; // breakpoint
 			#endif
 			#if STRICT_MUTEX
 				#ifndef NDEBUG
@@ -115,7 +115,7 @@ public:
 			#if STRICT_MUTEX || !defined(NDEBUG)
 			if (alreadyLocked) {
 				#ifndef NDEBUG
-				printf("Warning: MyMutex already locked!\n"); // breakpoint
+				std::cout << "Warning: MyMutex already locked!" << std::endl; // breakpoint
 				#endif
 				#if STRICT_MUTEX
 					#ifndef NDEBUG
