@@ -1099,18 +1099,23 @@ void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
 
 void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 
-	// TODO: Check for Linux
+	{
 	#if PROTECT_VECTORS
 	MYREADERLOCK(l, entryRW);
 	#endif
 
 	if (!tbl || selected.empty())
 		return;
+	}
 
 	const rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (ppname);
 
 	if (srcProfiles->pparams) {
 		if (partialPasteDlg.run()==Gtk::RESPONSE_OK) {
+
+			#if PROTECT_VECTORS
+			MYREADERLOCK(l, entryRW);
+			#endif
 
 			if (bppcl)
 				bppcl->beginBatchPParamsChange(selected.size());
