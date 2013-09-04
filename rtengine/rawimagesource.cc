@@ -36,7 +36,6 @@
 #include "dcp.h"
 #include "rt_math.h"
 #include "improcfun.h"
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -1369,7 +1368,6 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 {
 	chmax[0]=chmax[1]=chmax[2]=chmax[3]=0;//channel maxima
 	float black_lev[4];//black level
-	
 
 	//adjust black level  (eg Canon)
 	black_lev[0]=raw.blackone;//R
@@ -1383,6 +1381,12 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 		// scale image colors
 		
 	if( ri->isBayer() ){
+#pragma omp parallel
+{
+		float tmpchmax[3];
+		tmpchmax[0] = tmpchmax[1] = tmpchmax[2] = 0.0f;
+
+#pragma omp for nowait
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
 				float val = rawData[row][col];				
@@ -1392,10 +1396,23 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 				val*=scale_mul[c4];
 				
 				rawData[row][col] = (val);
-				chmax[c] = max(chmax[c],val);
+				tmpchmax[c] = max(tmpchmax[c],val);
 			}
 		}
+#pragma omp critical
+{
+		chmax[0] = max(tmpchmax[0],chmax[0]);
+		chmax[1] = max(tmpchmax[1],chmax[1]);
+		chmax[2] = max(tmpchmax[2],chmax[2]);
+}
+}
 	}else{
+#pragma omp parallel
+{
+		float tmpchmax[3];
+		tmpchmax[0] = tmpchmax[1] = tmpchmax[2] = 0.0f;
+
+#pragma omp for nowait
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
 				for (int c=0; c<3; c++) {                     // three colors,  0=R, 1=G,  2=B
@@ -1403,10 +1420,18 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 					val -= cblacksom[c];
 					val *= scale_mul[c];
 					rawData[row][3*col+c] = (val);
-					chmax[c] = max(chmax[c],val);
+					tmpchmax[c] = max(tmpchmax[c],val);
 				}
 			}
 		}
+#pragma omp critical
+{
+		chmax[0] = max(tmpchmax[0],chmax[0]);
+		chmax[1] = max(tmpchmax[1],chmax[1]);
+		chmax[2] = max(tmpchmax[2],chmax[2]);
+}
+}
+
 		
 		chmax[3]=chmax[1];
 	}
@@ -2180,36 +2205,53 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
     histogram(65536>>histcompr);
     histogram.clear();
-
+#pragma omp parallel
+{
+	LUTu tmphistogram(65536>>histcompr);
+	tmphistogram.clear();
+	
+#pragma omp for nowait
     for (int i=border; i<H-border; i++) {
         int start, end;
         getRowStartEnd (i, start, end);
 
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
-			if (ri->ISGREEN(i,j))     histogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
-			else if (ri->ISRED(i,j))  histogram[CLIP((int)(camwb_red*  rawData[i][j]))>>histcompr]+=4;
-			else if (ri->ISBLUE(i,j)) histogram[CLIP((int)(camwb_blue* rawData[i][j]))>>histcompr]+=4;
+			if (ri->ISGREEN(i,j))     tmphistogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
+			else if (ri->ISRED(i,j))  tmphistogram[CLIP((int)(camwb_red*  rawData[i][j]))>>histcompr]+=4;
+			else if (ri->ISBLUE(i,j)) tmphistogram[CLIP((int)(camwb_blue* rawData[i][j]))>>histcompr]+=4;
 			} 
 			} else {
 		for (int j=start; j<end; j++) {
-                    histogram[CLIP((int)(camwb_red*  rawData[i][3*j+0]))>>histcompr]++;
-                    histogram[CLIP((int)(camwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
-                    histogram[CLIP((int)(camwb_blue* rawData[i][3*j+2]))>>histcompr]++;
+                    tmphistogram[CLIP((int)(camwb_red*  rawData[i][3*j+0]))>>histcompr]++;
+                    tmphistogram[CLIP((int)(camwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
+                    tmphistogram[CLIP((int)(camwb_blue* rawData[i][3*j+2]))>>histcompr]++;
 				}
 			}
     }
+#pragma omp critical
+{
+	for(int i=0; i<(65536>>histcompr);i++)
+		histogram[i] += tmphistogram[i];
+}
+}
 }
 		
 // Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
-
     histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
 	float mult = 65535.0 / ri->get_white();
 
-	// WARNING: This parallelization is not thread-safe because it R/W in histRedRaw, histGreenRaw, histBlueRaw
-	// which are defined before the parallel section and must survive after it
-    #pragma omp parallel for
+#pragma omp parallel
+{
+	LUTu tmphistRedRaw( 256 );
+	LUTu tmphistGreenRaw( 256 );
+	LUTu tmphistBlueRaw( 256 );
+	tmphistRedRaw.clear();
+	tmphistGreenRaw.clear();
+	tmphistBlueRaw.clear();
+	
+#pragma omp for nowait
     for (int i=border; i<H-border; i++) {
         int start, end, idx;
         getRowStartEnd (i, start, end);
@@ -2222,9 +2264,9 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 			idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[c4]/*+black_lev[c4]*/))));
 
 			switch (c) {
-				case 0: histRedRaw[idx>>8]++;   break;
-				case 1: histGreenRaw[idx>>8]++; break;
-				case 2: histBlueRaw[idx>>8]++;  break;
+				case 0: tmphistRedRaw[idx>>8]++;   break;
+				case 1: tmphistGreenRaw[idx>>8]++; break;
+				case 2: tmphistBlueRaw[idx>>8]++;  break;
 			}
             }
 	} else {
@@ -2233,14 +2275,23 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 				idx = CLIP((int)Color::gamma(mult*(ri->data[i][3*j+c]-cblacksom[c])));
 
 				switch (c) {
-					case 0: histRedRaw[idx>>8]++;   break;
-					case 1: histGreenRaw[idx>>8]++; break;
-					case 2: histBlueRaw[idx>>8]++;  break;
+					case 0: tmphistRedRaw[idx>>8]++;   break;
+					case 1: tmphistGreenRaw[idx>>8]++; break;
+					case 2: tmphistBlueRaw[idx>>8]++;  break;
 				}
                         }
 		}
 	}
     }
+#pragma omp critical
+{
+	for(int i=0;i<256;i++){
+		histRedRaw[i] += tmphistRedRaw[i];
+		histGreenRaw[i] += tmphistGreenRaw[i];
+		histBlueRaw[i] += tmphistBlueRaw[i];
+	}
+}
+}
 
     // since there are twice as many greens, correct for it
     if (ri->isBayer()) for (int i=0;i<256;i++) histGreenRaw[i]>>=1;
