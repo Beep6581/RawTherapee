@@ -122,7 +122,7 @@ public:
 		clip = flags;
 	}
 
-	LUT<T> & operator=(const LUT<T> &rhs) {
+	LUT<T> & operator=(LUT<T> &rhs) {
 	    if (this != &rhs) {
 	      if (rhs.size>this->size)
 	      {

@@ -746,7 +746,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++){
             hist16[CLIP((int)((labView->L[i][j])))]++;
-            hist16C=CLIP((int)sqrt(labView->a[i][j]*labView->a[i][j] + labView->b[i][j]*labView->b[i][j]));
+            hist16C[CLIP((int)sqrt(labView->a[i][j]*labView->a[i][j] + labView->b[i][j]*labView->b[i][j]))]++;
 			}
     // luminance processing
 //	ipf.EPDToneMap(labView,0,6);
