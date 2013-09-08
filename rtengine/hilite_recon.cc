@@ -171,7 +171,7 @@ void RawImageSource::boxblur2(float** src, float** dst, int H, int W, int box )
 void RawImageSource::boxblur_resamp(float **src, float **dst, float & max_f, int H, int W, int box, int samp )
 {
 	
-	array2D<float> temp(W/samp,H);
+	array2D<float> temp((W/samp)+ ((W%samp)==0 ? 0 : 1),H);
 	
 	float maxtmp=0.0f;
 
@@ -317,7 +317,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	//halfsize demosaic
 	
 	
-	multi_array2D<float,3> hfsize (hfw,hfh,ARRAY2D_CLEAR_DATA);
+	multi_array2D<float,3> hfsize (hfw+1,hfh+1,ARRAY2D_CLEAR_DATA);
 	
 	boxblur_resamp(red,hfsize[0],chmaxalt[0],height,width,range,pitch);
 	if(plistener){
@@ -450,7 +450,7 @@ void RawImageSource :: HLRecovery_inpaint (float** red, float** green, float** b
 	
 	for (int c=0; c<3; c++) channelblur[c](1,1);//free up some memory
 	
-	multi_array2D<float,4> hilite(hfw,hfh,ARRAY2D_CLEAR_DATA);
+	multi_array2D<float,4> hilite(hfw+1,hfh+1,ARRAY2D_CLEAR_DATA);
 		
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// blur and resample highlight data; range=size of blur, pitch=sample spacing
