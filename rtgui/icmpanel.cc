@@ -125,7 +125,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     wnames = Gtk::manage (new MyComboBoxText ());
     wVBox->pack_start (*wnames, Gtk::PACK_SHRINK);
 
-    std::vector<std::string> wpnames = rtengine::getWorkingProfiles ();
+    std::vector<Glib::ustring> wpnames = rtengine::getWorkingProfiles ();
     for (size_t i=0; i<wpnames.size(); i++)
         wnames->append_text (wpnames[i]);
 
@@ -152,7 +152,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     onames->append_text (M("TP_ICM_NOICM"));
     onames->set_active (0);
 
-    std::vector<std::string> opnames = iccStore->getOutputProfiles ();
+    std::vector<Glib::ustring> opnames = iccStore->getOutputProfiles ();
     for (size_t i=0; i<opnames.size(); i++)
         onames->append_text (opnames[i]);
 
@@ -170,7 +170,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     oVBox->pack_start(*gaHBox, Gtk::PACK_EXPAND_WIDGET,2);
 
-    std::vector<std::string> wpgamma = rtengine::getGamma ();
+    std::vector<Glib::ustring> wpgamma = rtengine::getGamma ();
     for (size_t i=0; i<wpgamma.size(); i++)
         wgamma->append_text (wpgamma[i]);
 

@@ -357,9 +357,10 @@ namespace rtengine {
 
 /** Returns the available working profile names
   * @return a vector of the available working profile names */
-    std::vector<std::string> getWorkingProfiles ();
-/** return gamma	*/
-    std::vector<std::string> getGamma ();
+    std::vector<Glib::ustring> getWorkingProfiles ();
+/** Returns the available output gammas
+  * @return a vector of the available gamma names */
+    std::vector<Glib::ustring> getGamma ();
 
     /** This class  holds all the necessary informations to accomplish the full processing of the image */
     class ProcessingJob {
