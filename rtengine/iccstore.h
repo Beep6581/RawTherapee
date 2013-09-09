@@ -46,18 +46,18 @@ class ProfileContent {
 
 class ICCStore {
 
-        std::map<std::string, cmsHPROFILE> wProfiles;
-        std::map<std::string, cmsHPROFILE> wProfilesGamma;
-        std::map<std::string, TMatrix> wMatrices;
-        std::map<std::string, TMatrix> iwMatrices;
+        std::map<Glib::ustring, cmsHPROFILE> wProfiles;
+        std::map<Glib::ustring, cmsHPROFILE> wProfilesGamma;
+        std::map<Glib::ustring, TMatrix> wMatrices;
+        std::map<Glib::ustring, TMatrix> iwMatrices;
         
         // these contain profiles from user/system directory (supplied on init)
-        std::map<std::string, cmsHPROFILE>    fileProfiles;
-        std::map<std::string, ProfileContent> fileProfileContents;
+        std::map<Glib::ustring, cmsHPROFILE>    fileProfiles;
+        std::map<Glib::ustring, ProfileContent> fileProfileContents;
 
         // these contain standard profiles from RT. keys are all in uppercase
-        std::map<std::string, cmsHPROFILE>    fileStdProfiles;
-        std::map<std::string, ProfileContent> fileStdProfileContents;
+        std::map<Glib::ustring, cmsHPROFILE>    fileStdProfiles;
+        std::map<Glib::ustring, ProfileContent> fileStdProfileContents;
 
         cmsHPROFILE xyz;
         cmsHPROFILE srgb;
@@ -65,7 +65,7 @@ class ICCStore {
         MyMutex mutex_;
 
         ICCStore (); 
-        void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<std::string, cmsHPROFILE>& resultProfiles, std::map<std::string, ProfileContent> &resultProfileContents);
+        void             loadICCs(Glib::ustring rootDirName, bool nameUpper, std::map<Glib::ustring, cmsHPROFILE>& resultProfiles, std::map<Glib::ustring, ProfileContent> &resultProfileContents);
         
     public:
 
@@ -89,7 +89,7 @@ class ICCStore {
 
         cmsHPROFILE      getXYZProfile ()  { return xyz;  }
         cmsHPROFILE      getsRGBProfile () { return srgb; }
-        std::vector<std::string> getOutputProfiles ();
+        std::vector<Glib::ustring> getOutputProfiles ();
 };
 
 #define iccStore ICCStore::getInstance()

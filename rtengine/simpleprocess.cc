@@ -395,7 +395,7 @@ else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCu
         bool pro=false;
         Glib::ustring chpro, outProfile;
         bool present_space[9]={false,false,false,false,false,false,false,false,false};
-        std::vector<std::string> opnames = iccStore->getOutputProfiles ();
+        std::vector<Glib::ustring> opnames = iccStore->getOutputProfiles ();
         //test if files are in system
         for (int j=0; j<9; j++) {
             // one can modify "option" [Color Management] to adapt the profile's name if they are different for windows, MacOS, Linux ??
