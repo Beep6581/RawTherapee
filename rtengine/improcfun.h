@@ -166,7 +166,7 @@ class ImProcFunctions {
 		// pyramid equalizer
 		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult);//Emil's directional pyramid equalizer
 		void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, bool execdir );//Emil's directional pyramid equalizer
-		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  );
+		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, const double * mult  );
 		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );
 
 		void defringe       (LabImage* lab);
