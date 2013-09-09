@@ -26,14 +26,17 @@
 #include "rawimagesource.h"
 #include "array2D.h"
 #include "rt_math.h"
-
+#ifdef __SSE2__
+#include "sleefsseavx.c"
+#endif
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 #define CLIPI(a) ((a)>0 ?((a)<32768 ?(a):32768):0)
 
+#define RANGEFN(i) ((1000.0f / (i + 1000.0f)))
 #define CLIPC(a) ((a)>-32000?((a)<32000?(a):32000):-32000)
-#define DIRWT(i1,j1,i,j) ( domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] * rangefn[abs((int)data_fine[i1][j1]-data_fine[i][j])] )
+#define DIRWT(i1,j1,i,j) ( domker[(i1-i)/scale+halfwin][(j1-j)/scale+halfwin] * RANGEFN(fabsf((data_fine[i1][j1]-data_fine[i][j]))) )
 
 namespace rtengine {
 	
@@ -59,41 +62,17 @@ namespace rtengine {
 		}
 		if (lastlevel==0) return;
 		
-
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		LUTf rangefn(0x10000);
-				
-		int intfactor = 1024;//16384;
-		
-		
-		//set up range functions
-		
-		for (int i=0; i<0x10000; i++) {
-			rangefn[i] = (int)((thresh/((double)(i) + thresh))*intfactor);
-		}
-				
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		
 		int level;
-		array2D<float> buffer (srcwidth, srcheight);
+		array2D<float> buffer (srcwidth, srcheight, ARRAY2D_CLEAR_DATA);
 		
 		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
 
-				
-		for (int i=0; i<srcheight; i++)
-			for (int j=0; j<srcwidth; j++) {
-				buffer[i][j]=0;
-			}
-		
 		level = 0;
 		
 		int scale = scales[level];
 		//int thresh = 100 * mult[5];
 				
-		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, rangefn, 0, scale, mult );
+		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale, mult );
 		
 		level = 1;
 		
@@ -101,7 +80,7 @@ namespace rtengine {
 		{
 			scale = scales[level];
 						
-			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, rangefn, level, scale, mult );
+			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale, mult );
 			
 			level ++;
 		}
@@ -110,10 +89,8 @@ namespace rtengine {
 		//initiate buffer for final image
 		for(int i = 0; i < srcheight; i++)
 			for(int j = 0; j < srcwidth; j++) {
-				
 				//copy pixels
 				buffer[i][j] = dirpyrlo[lastlevel-1][i][j];
-				
 			}
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,13 +110,11 @@ namespace rtengine {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
-		
 		for (int i=0; i<srcheight; i++) 
 			for (int j=0; j<srcwidth; j++) {
 				dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?		
 								
 			}
-		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		
@@ -160,41 +135,17 @@ namespace rtengine {
 		}
 		if (lastlevel==0) return;
 		
-
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		LUTf rangefn(0x10000);
-				
-		int intfactor = 1024;//16384;
-		
-		
-		//set up range functions
-		
-		for (int i=0; i<0x10000; i++) {
-			rangefn[i] = (int)((thresh/((double)(i) + thresh))*intfactor);
-		}
-				
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		
 		int level;
-		array2D<float> buffer (srcwidth, srcheight);
+		array2D<float> buffer (srcwidth, srcheight, ARRAY2D_CLEAR_DATA);
 		
 		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
 
-				
-		for (int i=0; i<srcheight; i++)
-			for (int j=0; j<srcwidth; j++) {
-				buffer[i][j]=0;
-			}
-		
 		level = 0;
 		
 		int scale = scales[level];
 		//int thresh = 100 * mult[5];
 				
-		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, rangefn, 0, scale, mult );
+		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale, mult );
 		
 		level = 1;
 		
@@ -202,7 +153,7 @@ namespace rtengine {
 		{
 			scale = scales[level];
 						
-			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, rangefn, level, scale, mult );
+			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale, mult );
 			
 			level ++;
 		}
@@ -211,10 +162,8 @@ namespace rtengine {
 		//initiate buffer for final image
 		for(int i = 0; i < srcheight; i++)
 			for(int j = 0; j < srcwidth; j++) {
-				
 				//copy pixels
 				buffer[i][j] = dirpyrlo[lastlevel-1][i][j];
-				
 			}
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,59 +182,125 @@ namespace rtengine {
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		
-		for (int i=0; i<srcheight; i++) 
-			for (int j=0; j<srcwidth; j++) {
-				if(execdir) {if(ncie->J_p[i][j] > 8.f && ncie->J_p[i][j] < 92.f) dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?
-							else dst[i][j]=src[i][j];}
-				else dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?		
-								
-			}
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		
-				
-		
+		if(execdir)
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+			for (int i=0; i<srcheight; i++) 
+				for (int j=0; j<srcwidth; j++) {
+					if(ncie->J_p[i][j] > 8.f && ncie->J_p[i][j] < 92.f) dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?
+								else dst[i][j]=src[i][j];
+				}
+		else
+			for (int i=0; i<srcheight; i++) 
+				for (int j=0; j<srcwidth; j++) {
+					dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?		
+				}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	}
 
 
-	
-	
-	
-	void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale, const double * mult  )
-	{
+#if defined( __SSE2__ ) && defined( WIN32 )
+__attribute__((force_align_arg_pointer)) void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, const double * mult  )
+#else
+void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, const double * mult  )
+#endif
+{
 		//scale is spacing of directional averaging weights
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// calculate weights, compute directionally weighted average
 		
-		int halfwin=2;
-		int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
+	int halfwin;
+	int scalewin;
 		
+	if(level > 1) {
 		//generate domain kernel 
-		if (level<2) {
-			halfwin = 1;
-			domker[1][1]=domker[1][2]=domker[2][1]=domker[2][2]=1;
-		}
-		
-		
-		int scalewin = halfwin*scale;
-		
+		int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
+		halfwin=2;
+		scalewin = halfwin*scale;
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel
+#endif
+{
+#ifdef __SSE2__
+	__m128 thousandv = _mm_set1_ps( 1000.0f );
+	__m128 dirwtv, valv, normv;
+	float domkerv[5][5][4] = {{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}}};
+#endif // __SSE2__
+	int j;
+#ifdef _OPENMP
+#pragma omp for
 #endif
 		for(int i = 0; i < height; i++) {
-			for(int j = 0; j < width; j++)
+			float dirwt;
+			for(j = 0; j < scalewin; j++)
 			{
 				float val=0;
 				float norm=0;
 				
 				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
-					for (int jnbr=max(0,j-scalewin); jnbr<=min(width-1,j+scalewin); jnbr+=scale) {
-						float dirwt = DIRWT(inbr, jnbr, i, j);
+					for (int jnbr=max(0,j-scalewin); jnbr<=j+scalewin; jnbr+=scale) {
+						dirwt = DIRWT(inbr, jnbr, i, j);
+						val += dirwt*data_fine[inbr][jnbr];
+						norm += dirwt;
+					}
+				}
+				data_coarse[i][j]=val/norm;//low pass filter
+			}
+#ifdef __SSE2__
+			for(; j < width-scalewin-3; j+=4)
+			{
+				valv = _mm_setzero_ps();
+				normv = _mm_setzero_ps();
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+						dirwtv = _mm_loadu_ps((float*)&domkerv[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin]) * (thousandv / (vabsf(LVFU(data_fine[inbr][jnbr])-(LVFU(data_fine[i][j]))) + thousandv));
+						valv += dirwtv*LVFU(data_fine[inbr][jnbr]);
+						normv += dirwtv;
+					}
+				}
+				_mm_storeu_ps( &data_coarse[i][j],valv/normv);//low pass filter
+			}
+			for(; j < width-scalewin; j++)
+			{
+				float val=0;
+				float norm=0;
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+						dirwt = DIRWT(inbr, jnbr, i, j);
+						val += dirwt*data_fine[inbr][jnbr];
+						norm += dirwt;
+					}
+				}
+				data_coarse[i][j]=val/norm;//low pass filter
+			}
+#else
+			for(; j < width-scalewin; j++)
+			{
+				float val=0;
+				float norm=0;
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+						dirwt = DIRWT(inbr, jnbr, i, j);
+						val += dirwt*data_fine[inbr][jnbr];
+						norm += dirwt;
+					}
+				}
+				data_coarse[i][j]=val/norm;//low pass filter
+			}
+#endif
+			for(; j < width; j++)
+			{
+				float val=0;
+				float norm=0;
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=j-scalewin; jnbr<=min(width-1,j+scalewin); jnbr+=scale) {
+						dirwt = DIRWT(inbr, jnbr, i, j);
 						val += dirwt*data_fine[inbr][jnbr];
 						norm += dirwt;
 					}
@@ -293,11 +308,102 @@ namespace rtengine {
 				data_coarse[i][j]=val/norm;//low pass filter
 			}
 		}
-		
-		
-		
-		
+}
+	} else {	// level <=1 means that all values of domker would be 1.0f, so no need for multiplication
+		halfwin = 1;
+		scalewin = halfwin*scale;
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+#ifdef __SSE2__
+	__m128 thousandv = _mm_set1_ps( 1000.0f );
+	__m128 dirwtv, valv, normv;
+#endif // __SSE2__
+	int j;
+#ifdef _OPENMP
+#pragma omp for
+#endif
+		for(int i = 0; i < height; i++) {
+			float dirwt;
+			for(j = 0; j < scalewin; j++)
+			{
+				float val=0;
+				float norm=0;
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=max(0,j-scalewin); jnbr<=j+scalewin; jnbr+=scale) {
+						dirwt = RANGEFN(fabsf(data_fine[inbr][jnbr]-data_fine[i][j]));
+						val += dirwt*data_fine[inbr][jnbr];
+						norm += dirwt;
+					}
+				}
+				data_coarse[i][j]=val/norm;//low pass filter
+			}
+#ifdef __SSE2__
+			for(; j < width-scalewin-3; j+=4)
+			{
+				valv = _mm_setzero_ps();
+				normv = _mm_setzero_ps();
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+						dirwtv = thousandv / (vabsf(LVFU(data_fine[inbr][jnbr])-(LVFU(data_fine[i][j]))) + thousandv);
+						valv += dirwtv*LVFU(data_fine[inbr][jnbr]);
+						normv += dirwtv;
+					}
+				}
+				_mm_storeu_ps( &data_coarse[i][j], valv/normv);//low pass filter
+			}
+
+			for(; j < width-scalewin; j++)
+			{
+				float val=0;
+				float norm=0;
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+						dirwt = RANGEFN(fabsf(data_fine[inbr][jnbr]-data_fine[i][j]));
+						val += dirwt*data_fine[inbr][jnbr];
+						norm += dirwt;
+					}
+				}
+				data_coarse[i][j]=val/norm;//low pass filter
+			}
+#else
+			for(; j < width-scalewin; j++)
+			{
+				float val=0;
+				float norm=0;
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+						dirwt = RANGEFN(fabsf(data_fine[inbr][jnbr]-data_fine[i][j]));
+						val += dirwt*data_fine[inbr][jnbr];
+						norm += dirwt;
+					}
+				}
+				data_coarse[i][j]=val/norm;//low pass filter
+			}
+#endif
+			for(; j < width; j++)
+			{
+				float val=0;
+				float norm=0;
+				
+				for(int inbr=max(0,i-scalewin); inbr<=min(height-1,i+scalewin); inbr+=scale) {
+					for (int jnbr=j-scalewin; jnbr<=min(width-1,j+scalewin); jnbr+=scale) {
+						dirwt = RANGEFN(fabsf(data_fine[inbr][jnbr]-data_fine[i][j]));
+						val += dirwt*data_fine[inbr][jnbr];
+						norm += dirwt;
+					}
+				}
+				data_coarse[i][j]=val/norm;//low pass filter
+			}
+		}
+}
 	}
+}
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
@@ -317,7 +423,6 @@ namespace rtengine {
 				}
 			}
 		}
-		
 		
 #ifdef _OPENMP
 #pragma omp parallel for
