@@ -129,11 +129,11 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
     if (d1x) {
         if ((tran & TR_ROT) == TR_R90 || (tran & TR_ROT) == TR_R270) {
             pp.x /= 2;
-            pp.w = pp.w/2+1;   
+            pp.w = pp.w/2+1;
         }
         else {
             pp.y /= 2;
-            pp.h = pp.h/2+1;   
+            pp.h = pp.h/2+1;
         }
     }
 
@@ -156,34 +156,34 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
         ppx = sw - pp.x - pp.w;
     if (tran & TR_VFLIP) 
         ppy = sh - pp.y - pp.h;
-       
-    int sx1 = ppx;
-    int sy1 = ppy;
-    int sx2 = ppx + pp.w;
-    int sy2 = ppy + pp.h;
-    
+
+    int sx1 = ppx;        // assuming it's >=0
+    int sy1 = ppy;        // assuming it's >=0
+    int sx2 = max(ppx + pp.w, w-1);
+    int sy2 = max(ppy + pp.h, h-1);
+
     if ((tran & TR_ROT) == TR_R180) {
-        sx1 = w - ppx - pp.w;
-        sy1 = h - ppy - pp.h;
-        sx2 = sx1 + pp.w;
-        sy2 = sy1 + pp.h;
+        sx1 = max(w - ppx - pp.w, 0);
+        sy1 = max(h - ppy - pp.h, 0);
+        sx2 = min(sx1 + pp.w, w-1);
+        sy2 = min(sy1 + pp.h, h-1);
     }
     else if ((tran & TR_ROT) == TR_R90) {
         sx1 = ppy;
-        sy1 = h - ppx - pp.w;
-        sx2 = sx1 + pp.h;
-        sy2 = sy1 + pp.w;
+        sy1 = max(h - ppx - pp.w, 0);
+        sx2 = min(sx1 + pp.h, w-1);
+        sy2 = min(sy1 + pp.w, h-1);
     }
     else if ((tran & TR_ROT) == TR_R270) {
-        sx1 = w - ppy - pp.h;
+        sx1 = max(w - ppy - pp.h, 0);
         sy1 = ppx;
-        sx2 = sx1 + pp.h;
-        sy2 = sy1 + pp.w;
-    }   
+        sx2 = min(sx1 + pp.h, w-1);
+        sy2 = min(sy1 + pp.w, h-1);
+    }
 
     if (fuji) {
         // atszamoljuk a koordinatakat fuji-ra:
-		// recalculate the coordinates fuji-ra:
+        // recalculate the coordinates fuji-ra:
         ssx1 = (sx1+sy1) / 2;
         ssy1 = (sy1 - sx2 ) / 2 + ri->get_FujiWidth();
         int ssx2 = (sx2+sy2) / 2 + 1;
@@ -197,9 +197,9 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
         ssy1 = sy1;
         width  = (sx2 - sx1) / pp.skip + ((sx2 - sx1) % pp.skip > 0);
         height = (sy2 - sy1) / pp.skip + ((sy2 - sy1) % pp.skip > 0); 
-    }      
+    }
 }
-	
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw )
@@ -1093,7 +1093,6 @@ void RawImageSource::demosaic(const RAWParams &raw)
     if (ri->isBayer()) {
     	MyTime t1,t2;
     	t1.set();
-		bool nofast=true;
         if ( raw.dmethod == RAWParams::methodstring[RAWParams::hphd] )
                hphd_demosaic ();
         else if (raw.dmethod == RAWParams::methodstring[RAWParams::vng4] )
@@ -1389,9 +1388,9 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 #pragma omp for nowait
 		for (int row = winy; row < winy+winh; row ++){
 			for (int col = winx; col < winx+winw; col++) {
-				float val = rawData[row][col];				
+				float val = rawData[row][col];
 				int c  = FC(row, col);                        // three colors,  0=R, 1=G,  2=B
-				int c4 = ( c == 1 && !row&1 ) ? 3 : c;        // four  colors,  0=R, 1=G1, 2=B, 3=G2
+				int c4 = ( c == 1 && !(row&1) ) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
 				val-=cblacksom[c4];
 				val*=scale_mul[c4];
 				
@@ -1493,7 +1492,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
   float middle_Q[6];
   float* tmp;
 
-  int ppx=0, px=(row_from-1)%3, cx=row_from%3, nx=0;
+  int px=(row_from-1)%3, cx=row_from%3, nx=0;
   
     convert_row_to_YIQ (im->r(row_from-1), im->g(row_from-1), im->b(row_from-1), rbconv_Y[px], rbconv_I[px], rbconv_Q[px], W);
     convert_row_to_YIQ (im->r(row_from), im->g(row_from), im->b(row_from), rbconv_Y[cx], rbconv_I[cx], rbconv_Q[cx], W);
@@ -1505,7 +1504,6 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, int row
 
     for (int i=row_from; i<row_to; i++) {
        
-      ppx = (i-2)%3;
       px = (i-1)%3;
       cx = i%3;
       nx = (i+1)%3;
@@ -2020,9 +2018,6 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
 			int c;
 			for (c=0; c<ColorCount; c++) { if (rgb[c] > clippt) break; }
 			if (c == ColorCount) continue;
-			
-			float clipfrac[3];
-			FOREACHCOLOR clipfrac[c] = min(1.0f,rgb[c]/maxave);
 			
 			// Initialize cam with raw input [0] and potentially clipped input [1]
 			FOREACHCOLOR {
