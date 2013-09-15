@@ -24,21 +24,31 @@
 #include "../rtengine/rtengine.h"
 #include "pparamschangelistener.h"
 #include "profilechangelistener.h"
+#include "profilestore.h"
 #include "partialpastedlg.h"
 #include "guiutils.h"
 #include "rtimage.h"
 
-class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
+class ProfilePanel : public Gtk::VBox, public PParamsChangeListener, public ProfileStoreListener {
 
   private:
 
+    rtengine::procparams::PartialProfile* storedPProfile;
+    Glib::ustring storedValue;
     Glib::ustring lastFilename;
     Glib::ustring imagePath;
     RTImage *profileFillModeOnImage;
     RTImage *profileFillModeOffImage;
     Gtk::ToggleButton* fillMode;
+    Gtk::TreeIter currRow;
 
-    void profileFillModeToggled();
+    void          profileFillModeToggled ();
+    bool          isCustomSelected ();
+    bool          isLastSavedSelected ();
+    Gtk::TreeIter getCustomRow ();
+    Gtk::TreeIter getLastSavedRow ();
+    Gtk::TreeIter addCustomRow ();
+    Gtk::TreeIter addLastSavedRow ();
 
   protected:
 
@@ -47,17 +57,14 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
     Gtk::Button* load;
     Gtk::Button* copy;
     Gtk::Button* paste;
-    MyComboBoxText* profiles;
-    std::vector<Glib::ustring> pparams;
+    ProfileStoreComboBox* profiles;
     rtengine::procparams::PartialProfile* custom;
     rtengine::procparams::PartialProfile* lastsaved;
-    Glib::ustring old;
     ProfileChangeListener* tpc;
     bool dontupdate;
     sigc::connection changeconn;
 
     void changeTo (const rtengine::procparams::PartialProfile* newpp, Glib::ustring profname);
-    void refreshProfileList ();
 
   public:
 
@@ -68,8 +75,11 @@ class ProfilePanel : public Gtk::VBox, public PParamsChangeListener {
 
     static void init ();
     static void cleanup ();
+    void storeCurrentValue();
+    void updateProfileList ();
+    void restoreValue();
 
-    void initProfile (const Glib::ustring& profname, rtengine::procparams::ProcParams* lastSaved);
+    void initProfile (const Glib::ustring& profileFullPath, rtengine::procparams::ProcParams* lastSaved);
     void setInitialFileName (const Glib::ustring& filename);
 
     // PParamsChangeListener interface

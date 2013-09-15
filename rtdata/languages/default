@@ -838,19 +838,23 @@ PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
+PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 PREFERENCES_USESYSTEMTHEME;Use system theme
 PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector, viewing, etc.)
 PREFERENCES_WORKFLOW;Layout
 PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_FILEDLGFILTERANY;Any files
 PROFILEPANEL_FILEDLGFILTERPP;Processing profiles
+PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 PROFILEPANEL_LABEL;Processing Profiles
 PROFILEPANEL_LOADDLGLABEL;Load Processing Parameters...
 PROFILEPANEL_LOADPPASTE;Parameters to load
 PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+PROFILEPANEL_MYPROFILES;My profiles
 PROFILEPANEL_PASTEPPASTE;Parameters to paste
 PROFILEPANEL_PCUSTOM;Custom
 PROFILEPANEL_PFILE;From file
+PROFILEPANEL_PINTERNAL;Neutral
 PROFILEPANEL_PLASTPHOTO;Last Photo
 PROFILEPANEL_PLASTSAVED;Last Saved
 PROFILEPANEL_PROFILE;Profile

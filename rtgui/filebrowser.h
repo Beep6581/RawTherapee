@@ -29,7 +29,9 @@
 #include "partialpastedlg.h"
 #include "exportpanel.h"
 #include "extprog.h"
+#include "profilestore.h"
 
+class ProfileStoreLabel;
 class FileBrowser;
 class FileBrowserEntry;
 class FileBrowserListener {
@@ -56,7 +58,8 @@ struct FileBrowserIdleHelper {
  */
 class FileBrowser  : public ThumbBrowserBase,
                      public LWButtonListener,
-                     public ExportPanelListener{
+                     public ExportPanelListener,
+                     public ProfileStoreListener {
 
     typedef sigc::signal<void> type_trash_changed;
 
@@ -147,8 +150,8 @@ class FileBrowser  : public ThumbBrowserBase,
     void setFileBrowserListener (FileBrowserListener* l) { tbl = l; }
      
     void menuItemActivated (Gtk::MenuItem* m);
-    void applyMenuItemActivated (Glib::ustring ppname);
-    void applyPartialMenuItemActivated (Glib::ustring ppname);
+    void applyMenuItemActivated (ProfileStoreLabel *label);
+    void applyPartialMenuItemActivated (ProfileStoreLabel *label);
 
     void applyFilter (const BrowserFilter& filter);
     int getNumFiltered(){ return numFiltered;}
@@ -181,6 +184,8 @@ class FileBrowser  : public ThumbBrowserBase,
     void setExportPanel (ExportPanel* expanel);
 	// exportpanel interface
 	void exportRequested();
+
+    void updateProfileList ();
 
     type_trash_changed trash_changed();
 };
