@@ -31,7 +31,7 @@
 extern Options options;
 extern Glib::ustring argv0;
 
-Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
+Preferences::Preferences  (RTWindow *rtwindow) : rprofiles(NULL), iprofiles(NULL), parent(rtwindow) {
   
 	splash = NULL;
 
@@ -89,6 +89,8 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
 #endif
     nb->set_current_page (0);
 
+    profileStore.addListener(this);
+
     fillPreferences ();
 
     show_all_children ();
@@ -98,6 +100,7 @@ Preferences::Preferences  (RTWindow *rtwindow):parent(rtwindow)  {
 
 Preferences::~Preferences () {
 
+    profileStore.removeListener(this);
     options.preferencesWidth = get_width();
     options.preferencesHeight = get_height();
 }
@@ -328,23 +331,26 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     Gtk::VBox* mvbpp = Gtk::manage (new Gtk::VBox ());
 
     Gtk::Frame* fpp = Gtk::manage (new Gtk::Frame (M("PREFERENCES_IMPROCPARAMS")));
+    Gtk::VBox* vbpp = Gtk::manage (new Gtk::VBox ());
+    vbpp->set_border_width(4);
     Gtk::Label* drlab = Gtk::manage (new Gtk::Label (M("PREFERENCES_FORRAW")+":", Gtk::ALIGN_LEFT));
-    rprofiles = Gtk::manage (new Gtk::ComboBoxText ());
+    rprofiles = Gtk::manage (new ProfileStoreComboBox ());
     rprofiles->set_size_request(50, -1);
-    rprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forRAWComboChanged) );
-    forRAWComboChanged(); // update the tooltip
+    rpconn = rprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forRAWComboChanged) );
     Gtk::Label* drimg = Gtk::manage (new Gtk::Label (M("PREFERENCES_FORIMAGE")+":", Gtk::ALIGN_LEFT));
-    iprofiles = Gtk::manage (new Gtk::ComboBoxText ());
+    iprofiles = Gtk::manage (new ProfileStoreComboBox ());
     iprofiles->set_size_request(50, -1);
-    iprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forImageComboChanged) );
-    forImageComboChanged(); // update the tooltip
+    ipconn = iprofiles->signal_changed().connect( sigc::mem_fun(*this, &Preferences::forImageComboChanged) );
     Gtk::Table* defpt = Gtk::manage (new Gtk::Table (2, 2));
     defpt->attach (*drlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
     defpt->attach (*rprofiles, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     defpt->attach (*drimg, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     defpt->attach (*iprofiles, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    fpp->add (*defpt);
-
+    vbpp->pack_start (*defpt, Gtk::PACK_SHRINK, 4);
+    useBundledProfiles = Gtk::manage (new Gtk::CheckButton (M("PREFERENCES_USEBUNDLEDPROFILES")));
+    bpconn = useBundledProfiles->signal_clicked().connect ( sigc::mem_fun(*this, &Preferences::bundledProfilesChanged) );
+    vbpp->pack_start (*useBundledProfiles, Gtk::PACK_SHRINK, 4);
+    fpp->add (*vbpp);
     mvbpp->pack_start (*fpp, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* fdp = Gtk::manage (new Gtk::Frame (M("PREFERENCES_PROFILEHANDLING")));
@@ -400,14 +406,6 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
 
     //ffconn = flatFieldDir->signal_file_set().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
     ffconn = flatFieldDir->signal_current_folder_changed().connect ( sigc::mem_fun(*this, &Preferences::flatFieldChanged), true);
-	
-    std::vector<Glib::ustring> pnames;
-    parseDir (options.getUserProfilePath(), pnames, paramFileExtension);
-    parseDir (options.getGlobalProfilePath(), pnames, paramFileExtension);
-    for (size_t i=0; i<pnames.size(); i++) {
-        rprofiles->append_text (pnames[i]);
-        iprofiles->append_text (pnames[i]);
-    }
 
     Gtk::Frame* fmd = Gtk::manage (new Gtk::Frame (M("PREFERENCES_METADATA")));
     Gtk::VBox* vbmd = Gtk::manage (new Gtk::VBox ());
@@ -1073,10 +1071,14 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
 
 void Preferences::storePreferences () {
 
-    moptions.defProfRaw          = rprofiles->get_active_text();
-    if (moptions.defProfRaw.empty()) moptions.defProfRaw = DEFPROFILE_RAW;
-    moptions.defProfImg          = iprofiles->get_active_text();
-    if (moptions.defProfImg.empty()) moptions.defProfImg = DEFPROFILE_IMG;
+    // With the new mechanism, we can't be sure of the availability of the DEFPROFILE_RAW & DEFPROFILE_IMG profiles,
+    // because useBundledProfiles may be false. We're now using DEFPROFILE_INTERNAL instead, which is always available.
+    moptions.defProfRaw          = rprofiles->getFullPathFromActiveRow();
+    if (moptions.defProfRaw.empty()) moptions.defProfRaw = DEFPROFILE_INTERNAL;
+    moptions.defProfImg          = iprofiles->getFullPathFromActiveRow();
+    if (moptions.defProfImg.empty()) moptions.defProfImg = DEFPROFILE_INTERNAL;
+
+
     moptions.dateFormat          = dateformat->get_text();
     moptions.panAccelFactor      = (int)panFactor->get_value();
     moptions.fbShowDateTime  = showDateTime->get_active ();
@@ -1160,6 +1162,7 @@ void Preferences::storePreferences () {
     moptions.saveParamsFile = saveParamsFile->get_active ();
     moptions.saveParamsCache = saveParamsCache->get_active ();
     moptions.paramsLoadLocation = (PPLoadLocation)loadParamsPreference->get_active_row_number ();
+    moptions.useBundledProfiles = useBundledProfiles->get_active ();
 
     moptions.tunnelMetaData = ckbTunnelMetaData->get_active ();
 
@@ -1201,9 +1204,14 @@ void Preferences::fillPreferences () {
     sconn.block (true);
     dfconn.block (true);
     ffconn.block (true);
+    rpconn.block(true);
+    ipconn.block(true);
+    bpconn.block(true);
 
-    rprofiles->set_active_text (moptions.defProfRaw);
-    iprofiles->set_active_text (moptions.defProfImg);
+    rprofiles->setActiveRowFromFullPath (moptions.defProfRaw);
+    forRAWComboChanged(); // update the tooltip
+    iprofiles->setActiveRowFromFullPath (moptions.defProfImg);
+    forImageComboChanged(); // update the tooltip
     dateformat->set_text (moptions.dateFormat);
     panFactor->set_value(moptions.panAccelFactor);
     if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
@@ -1286,7 +1294,8 @@ void Preferences::fillPreferences () {
     
     saveParamsFile->set_active (moptions.saveParamsFile);
     saveParamsCache->set_active (moptions.saveParamsCache);
-    loadParamsPreference->set_active (moptions.paramsLoadLocation);    
+    loadParamsPreference->set_active (moptions.paramsLoadLocation);
+    useBundledProfiles->set_active (moptions.useBundledProfiles);
 
     ckbTunnelMetaData->set_active (moptions.tunnelMetaData); 
 
@@ -1332,6 +1341,9 @@ void Preferences::fillPreferences () {
     sconn.block (false);
     dfconn.block (false);
     ffconn.block (false);
+    rpconn.block(true);
+    ipconn.block(true);
+    bpconn.block(false);
 
     chOverwriteOutputFile->set_active (moptions.overwriteOutputFile);
 
@@ -1399,7 +1411,17 @@ void Preferences::cancelPressed () {
 	// set the initial font back
 	if (fontbutton->get_font_name() != options.font)
 		switchFontTo(options.font);
-    hide ();
+
+	// update the profileStore
+	if (useBundledProfiles->get_active () != options.useBundledProfiles) {
+		// we have to rescan with the old value;
+		bpconn.block(true);
+		useBundledProfiles->set_active (false);
+		bundledProfilesChanged();
+		bpconn.block(false);
+	}
+
+	hide ();
 }
 
 void Preferences::selectStartupDir () {
@@ -1435,15 +1457,92 @@ void Preferences::themeChanged () {
 }
 
 void Preferences::forRAWComboChanged () {
-	rprofiles->set_tooltip_text(rprofiles->get_active_text());
+	if (!rprofiles)
+		return;
+	const ProfileStoreEntry *selectedEntry = rprofiles->getSelectedEntry();
+	if (!selectedEntry)
+		return;
+
+	if (selectedEntry->type == PSET_FOLDER) {
+		rpconn.block(true);
+		rprofiles->set_active(currRawRow);
+		rpconn.block(false);
+	}
+	else
+		currRawRow = rprofiles->get_active();
+
+	rprofiles->set_tooltip_text(selectedEntry->label);
 }
 
 void Preferences::forImageComboChanged () {
-	iprofiles->set_tooltip_text(iprofiles->get_active_text());
+	if (!iprofiles)
+		return;
+	const ProfileStoreEntry *selectedEntry = iprofiles->getSelectedEntry();
+	if (!selectedEntry)
+		return;
+
+	if (selectedEntry->type == PSET_FOLDER) {
+		ipconn.block(true);
+		iprofiles->set_active(currImgRow);
+		ipconn.block(false);
+	}
+	else
+		currImgRow = rprofiles->get_active();
+	iprofiles->set_tooltip_text(iprofiles->getSelectedEntry()->label);
 }
 
 void Preferences::layoutComboChanged () {
 	editorLayout->set_tooltip_text(editorLayout->get_active_text());
+}
+
+void Preferences::bundledProfilesChanged () {
+	rpconn.block (true);
+	ipconn.block (true);
+
+	// parseProfiles does use options.useBundledProfiles, so we temporarily change its value
+	bool currValue = options.useBundledProfiles;
+	options.useBundledProfiles = useBundledProfiles->get_active ();
+
+	// rescan the file's tree
+	profileStore.parseProfiles(); // This will call Preferences::updateProfileList in return
+
+	// restoring back the old value
+	options.useBundledProfiles = currValue;
+
+	ipconn.block (false);
+	rpconn.block (false);
+}
+
+void Preferences::storeCurrentValue() {
+	// TODO: Find a way to get and restore the current selection; the following line can't work anymore
+	storedValueRaw = rprofiles->getFullPathFromActiveRow();
+	storedValueImg = iprofiles->getFullPathFromActiveRow();
+}
+
+void Preferences::updateProfileList() {
+	rprofiles->updateProfileList();
+	iprofiles->updateProfileList();
+}
+
+void Preferences::restoreValue() {
+	if (!rprofiles->setActiveRowFromFullPath(storedValueRaw)) {
+		moptions.defProfRaw = DEFPROFILE_INTERNAL;
+		rpconn.block(true);
+		rprofiles->setInternalEntry();
+		rpconn.block(false);
+	}
+	currRawRow = rprofiles->get_active();
+
+	if (!iprofiles->setActiveRowFromFullPath(storedValueImg)) {
+		moptions.defProfImg = DEFPROFILE_INTERNAL;
+		ipconn.block(true);
+		iprofiles->setInternalEntry();
+		ipconn.block(false);
+	}
+	currImgRow = iprofiles->get_active();
+
+	storedValueRaw = "";
+	storedValueImg = "";
 }
 
 void Preferences::fontChanged () {

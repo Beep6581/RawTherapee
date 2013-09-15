@@ -95,12 +95,10 @@ void Options::updatePaths() {
         if (checkDirPath (profilePath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
             if (multiUser) {
                 userProfilePath = profilePath;
-                if (useBundledProfiles) {
-                    tmpPath = Glib::build_filename(argv0, "profiles");
-                    if(checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
-                        if (userProfilePath != tmpPath)
-                            globalProfilePath = tmpPath;
-                    }
+                tmpPath = Glib::build_filename(argv0, "profiles");
+                if(checkDirPath (tmpPath, "Error: the global's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+                    if (userProfilePath != tmpPath)
+                        globalProfilePath = tmpPath;
                 }
             }
             else {
@@ -121,16 +119,14 @@ void Options::updatePaths() {
             if (!checkDirPath (tmpPath, "")) {
                 int retVal = safe_g_mkdir_with_parents (tmpPath, 511);
                 if (!retVal)
-                	printf("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
+                    printf("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
             }
             if(checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory!\n")) {
                	userProfilePath = tmpPath;
             }
-            if (useBundledProfiles) {
-                tmpPath = Glib::build_filename(argv0, "profiles");
-                if(checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
-                    globalProfilePath = tmpPath;
-                }
+            tmpPath = Glib::build_filename(argv0, "profiles");
+            if(checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
+                globalProfilePath = tmpPath;
             }
         }
         else {
@@ -172,21 +168,53 @@ Glib::ustring Options::getPreferredProfilePath() {
         return "";
 }
 
+/** @brief Get the absolute path of the given filename or the "Internal" special value
+  *
+  *@param profName  path + filename of the procparam to look for. A filename without path can be provided for backward compatibility.
+  *                 In this case, this parameter will be update with the new format.
+  *@return Send back the absolute path of the given filename or "Internal" if "Internal" has been set to profName. Implementor will have
+  *        to test for this particular value. If the absolute path is invalid (e.g. the file doesn't exist), it will return an empty string.
+  */
 Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
     if (profName.empty())
         return "";
 
-    Glib::ustring p = getUserProfilePath();
-    Glib::ustring fullPath = Glib::build_filename(p, profName + paramFileExtension);
-    if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
-        return p;
+    if (profName == DEFPROFILE_INTERNAL)
+        return profName;
 
-    p = getGlobalProfilePath();
-    fullPath = Glib::build_filename(p, profName + paramFileExtension);
-    if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
-        return p;
-    else
-    	return "";
+    Glib::ustring p = profName.substr(0, 4);
+    if (p=="${U}") {
+        // the path starts by the User virtual path
+        p = getUserProfilePath();
+        Glib::ustring fullPath = p + profName.substr(4) + paramFileExtension;
+        if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
+            return Glib::path_get_dirname(fullPath);
+    }
+    else if (p=="${G}") {
+        // the path starts by the User virtual path
+        p = getGlobalProfilePath();
+        Glib::ustring fullPath = p + profName.substr(4) + paramFileExtension;
+        if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
+            return Glib::path_get_dirname(fullPath);
+    }
+    else {
+        // compatibility case -> convert the path to the new format
+        p = getUserProfilePath();
+        Glib::ustring fullPath = Glib::build_filename(p, profName + paramFileExtension);
+        if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
+            // update the profile path
+            profName = Glib::build_filename("${U}", profName);
+            return Glib::path_get_dirname(fullPath);
+        }
+
+        p = getGlobalProfilePath();
+        fullPath = Glib::build_filename(p, profName + paramFileExtension);
+        if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS)) {
+            profName = Glib::build_filename("${G}", profName);
+            return Glib::path_get_dirname(fullPath);
+        }
+    }
+    return "";
 
 }
 
@@ -1076,7 +1104,7 @@ void Options::load () {
         // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
         if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
             // Save the option file
-        	options.saveToFile (rtdir + "/options");
+            options.saveToFile (rtdir + "/options");
         }
         // Modify the path of the cache folder to the user's personal folder
 #ifdef WIN32
@@ -1091,7 +1119,7 @@ void Options::load () {
 
     // Check default Raw and Img procparams existence
     if (options.defProfRaw.empty())
-    	options.defProfRaw = DEFPROFILE_INTERNAL;
+        options.defProfRaw = DEFPROFILE_INTERNAL;
     else {
         Glib::ustring tmpFName = options.findProfilePath(options.defProfRaw);
         if (!tmpFName.empty()) {

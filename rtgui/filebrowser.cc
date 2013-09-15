@@ -23,7 +23,6 @@
 #include "options.h"
 #include "multilangmgr.h"
 #include "clipboard.h"
-#include "profilestore.h"
 #include "procparamchangers.h"
 #include "batchqueue.h"
 #include "../rtengine/dfmanager.h"
@@ -40,6 +39,8 @@ FileBrowser::FileBrowser ()
     fbih->fbrowser = this;
     fbih->destroyed = false;
     fbih->pending = 0;
+
+    profileStore.addListener(this);
 
     signal_style_changed().connect( sigc::mem_fun(*this, &FileBrowser::styleChanged) );
     
@@ -288,6 +289,9 @@ FileBrowser::FileBrowser ()
 	}
 	pmenuColorLabels->show_all ();
 
+    // Has to be located after creation of applyprof and applypartprof
+    updateProfileList ();
+
     // Bind to event handlers
     for (int i=0; i<=5; i++)
     	colorlabel_pop[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuColorlabelActivated), colorlabel_pop[i]));
@@ -295,6 +299,7 @@ FileBrowser::FileBrowser ()
 
 FileBrowser::~FileBrowser ()
 {
+    profileStore.removeListener(this);
     delete pmenu;
     delete pmenuColorLabels;
     delete[] amiExtProg;
@@ -303,7 +308,6 @@ FileBrowser::~FileBrowser ()
 void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
 
     {
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
@@ -327,32 +331,8 @@ void FileBrowser::rightClicked (ThumbBrowserEntryBase* entry) {
     clearprof->set_sensitive (!selected.empty());
     }
 
-    // submenu applmenu
-    int p = 0;
-    Gtk::Menu* applmenu = Gtk::manage (new Gtk::Menu ());
-    std::vector<Glib::ustring> profnames = profileStore.getProfileNames ();
-    for (size_t i=0; i<profnames.size(); i++) {
-        Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (profnames[i]));
-        applmenu->attach (*mi, 0, 1, p, p+1); p++;
-        mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyMenuItemActivated), profnames[i]));    
-        mi->show ();
-    }
-    applyprof->set_submenu (*applmenu);
-
-    // submenu applpartmenu
-    p = 0;
-    Gtk::Menu* applpartmenu = Gtk::manage (new Gtk::Menu ());
-    //std::vector<Glib::ustring> profnames = profileStore.getProfileNames (); // this is already created for submenu applmenu above
-    for (size_t i=0; i<profnames.size(); i++) {
-        Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (profnames[i]));
-        applpartmenu->attach (*mi, 0, 1, p, p+1); p++;
-        mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyPartialMenuItemActivated), profnames[i]));
-        mi->show ();
-    }
-    applypartprof->set_submenu (*applpartmenu);
-
     // submenuDF
-    p = 0;
+    int p = 0;
     Gtk::Menu* submenuDF = Gtk::manage (new Gtk::Menu ());
     submenuDF->attach (*Gtk::manage(selectDF = new Gtk::MenuItem (M("FILEBROWSER_SELECTDARKFRAME"))), 0, 1, p, p+1); p++;
     submenuDF->attach (*Gtk::manage(autoDF = new Gtk::MenuItem (M("FILEBROWSER_AUTODARKFRAME"))), 0, 1, p, p+1); p++;
@@ -451,7 +431,6 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
 
     // find place in abc order
     {
-        // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
         #endif
@@ -468,7 +447,6 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry) {
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname) {
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYWRITERLOCK(l, entryRW);
     #endif
@@ -511,21 +489,18 @@ void FileBrowser::close () {
     fbih->pending = 0;
 
     {
-        // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);
         #endif
 
         selected.clear ();
 
-        // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYWRITERLOCK_RELEASE(l); // notifySelectionListener will need read access!
         #endif
 
         notifySelectionListener ();
 
-        // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYWRITERLOCK_ACQUIRE(l);
         #endif
@@ -558,7 +533,6 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     std::vector<FileBrowserEntry*> mselected;
 
     {
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
@@ -627,7 +601,6 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
     else if (m==selall) {
         lastClicked = NULL;
         {
-            // TODO: Check for Linux
             #if PROTECT_VECTORS
             MYWRITERLOCK(l, entryRW);
             #endif
@@ -816,7 +789,6 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m) {
 }
 
 void FileBrowser::copyProfile () {
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
@@ -830,7 +802,6 @@ void FileBrowser::pasteProfile () {
     if (clipboard.hasProcParams()) {
         std::vector<FileBrowserEntry*> mselected;
         {
-        // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
         #endif
@@ -866,7 +837,6 @@ void FileBrowser::partPasteProfile () {
 
         std::vector<FileBrowserEntry*> mselected;
         {
-        // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
         #endif
@@ -909,7 +879,6 @@ void FileBrowser::openDefaultViewer (int destination) {
     bool success=true;
 
     {
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
@@ -1078,14 +1047,13 @@ int FileBrowser::getThumbnailHeight () {
         return std::max(std::min(options.thumbSize, 800), 10);
 }
 
-void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
+void FileBrowser::applyMenuItemActivated (ProfileStoreLabel *label) {
 
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
 
-    const rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (ppname);
+    const rtengine::procparams::PartialProfile* partProfile = profileStore.getProfile (label->entry);
     if (partProfile->pparams && !selected.empty()) {
         if (bppcl)
             bppcl->beginBatchPParamsChange(selected.size());
@@ -1097,7 +1065,7 @@ void FileBrowser::applyMenuItemActivated (Glib::ustring ppname) {
     }
 }
 
-void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
+void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label) {
 
 	{
 	#if PROTECT_VECTORS
@@ -1108,7 +1076,7 @@ void FileBrowser::applyPartialMenuItemActivated (Glib::ustring ppname) {
 		return;
 	}
 
-	const rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (ppname);
+	const rtengine::procparams::PartialProfile* srcProfiles = profileStore.getProfile (label->entry);
 
 	if (srcProfiles->pparams) {
 		if (partialPasteDlg.run()==Gtk::RESPONSE_OK) {
@@ -1145,7 +1113,6 @@ void FileBrowser::applyFilter (const BrowserFilter& filter) {
     bool selchanged = false;
     numFiltered=0;
     {
-        // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYWRITERLOCK(l, entryRW);  // Don't make this a writer lock!  HOMBRE: Why? 'selected' is modified here
         #endif
@@ -1334,7 +1301,6 @@ void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int c
 }
 
 void FileBrowser::requestRanking(int rank){
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
@@ -1346,7 +1312,6 @@ void FileBrowser::requestRanking(int rank){
 }
 
 void FileBrowser::requestColorLabel(int colorlabel){
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
@@ -1386,7 +1351,6 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
 }
 
 void FileBrowser::openNextImage () {
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYWRITERLOCK(l, entryRW);
     #endif
@@ -1454,7 +1418,6 @@ void FileBrowser::openNextImage () {
 }
 
 void FileBrowser::openPrevImage () {
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYWRITERLOCK(l, entryRW);
     #endif
@@ -1526,7 +1489,6 @@ void FileBrowser::selectImage (Glib::ustring fname) {
 
     // need to clear the filter in filecatalog
 
-    // TODO: Check for Linux
     #if PROTECT_VECTORS
     MYWRITERLOCK(l, entryRW);
     #endif
@@ -1607,7 +1569,6 @@ void FileBrowser::selectionChanged () {
 void FileBrowser::notifySelectionListener () {
 
     if (tbl) {
-        // TODO: Check for Linux
         #if PROTECT_VECTORS
         MYREADERLOCK(l, entryRW);
         #endif
@@ -1638,4 +1599,83 @@ void FileBrowser::setExportPanel (ExportPanel* expanel) {
 	exportPanel = expanel;
 	exportPanel->set_sensitive (false);
 	exportPanel->setExportPanelListener (this);
+}
+
+void FileBrowser::updateProfileList () {
+    // submenu applmenu
+    int p = 0;
+
+    const std::vector<const ProfileStoreEntry*> *profEntries = profileStore.getFileList();  // lock and get a pointer to the profiles' list
+
+    std::map<unsigned short /* folderId */, Gtk::Menu*> subMenuList;  // store the Gtk::Menu that Gtk::MenuItem will have to be attached to
+
+    subMenuList[0] = Gtk::manage (new Gtk::Menu ()); // adding the root submenu
+
+    // iterate the profile store's profile list
+    for (size_t i=0; i<profEntries->size(); i++) {
+        // create a new label for the current entry (be it a folder or file)
+        ProfileStoreLabel *currLabel = Gtk::manage(new ProfileStoreLabel( profEntries->at(i) ));
+
+        // create the MenuItem object
+        Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (*currLabel));
+
+        // create a new Menu object if the entry is a folder and not the root one
+        if (currLabel->entry->type == PSET_FOLDER) {
+            // creating the new sub-menu
+            Gtk::Menu* subMenu = Gtk::manage (new Gtk::Menu ());
+
+            // add it to the menu list
+            subMenuList[currLabel->entry->folderId] = subMenu;
+
+            // add it to the parent MenuItem
+            mi->set_submenu(*subMenu);
+        }
+
+        // Hombre: ... does parentMenuId sounds like a hack?         ... Yes.
+        int parentMenuId = !options.useBundledProfiles && currLabel->entry->parentFolderId==1 ? 0 : currLabel->entry->parentFolderId;
+        subMenuList[parentMenuId]->attach (*mi, 0, 1, p, p+1); p++;
+        if (currLabel->entry->type == PSET_FILE)
+            mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyMenuItemActivated), currLabel));
+        mi->show ();
+    }
+
+    if (subMenuList.size() && applyprof)
+        // TODO: Check that the previous one has been deleted, including all childrens
+        applyprof->set_submenu (*(subMenuList.at(0)));
+
+    subMenuList.clear();
+    subMenuList[0] = Gtk::manage (new Gtk::Menu ()); // adding the root submenu
+    // keep profEntries list
+
+    // submenu applpartmenu
+    p = 0;
+    for (size_t i=0; i<profEntries->size(); i++) {
+        ProfileStoreLabel *currLabel = Gtk::manage(new ProfileStoreLabel( profEntries->at(i) ));
+
+        Gtk::MenuItem* mi = Gtk::manage (new Gtk::MenuItem (*currLabel));
+
+        if (currLabel->entry->type == PSET_FOLDER) {
+            // creating the new sub-menu
+            Gtk::Menu* subMenu = Gtk::manage (new Gtk::Menu ());
+
+            // add it to the menu list
+            subMenuList[currLabel->entry->folderId] = subMenu;
+
+            // add it to the parent MenuItem
+            mi->set_submenu(*subMenu);
+        }
+        // Hombre: ... does parentMenuId sounds like a hack?         ... yes.
+        int parentMenuId = !options.useBundledProfiles && currLabel->entry->parentFolderId==1 ? 0 : currLabel->entry->parentFolderId;
+        subMenuList[parentMenuId]->attach (*mi, 0, 1, p, p+1); p++;
+        if (currLabel->entry->type == PSET_FILE)
+            mi->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::applyPartialMenuItemActivated), currLabel));
+        mi->show ();
+    }
+
+    if (subMenuList.size() && applypartprof)
+        // TODO: Check that the previous one has been deleted, including all childrens
+        applypartprof->set_submenu (*(subMenuList.at(0)));
+
+    profileStore.releaseFileList();
+    subMenuList.clear();
 }

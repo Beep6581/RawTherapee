@@ -25,7 +25,7 @@
 #include <vector>
 #include "rtwindow.h"
 
-class Preferences : public Gtk::Dialog {
+class Preferences : public Gtk::Dialog, public ProfileStoreListener {
 
         class ExtensionColumns : public Gtk::TreeModel::ColumnRecord {
             public:
@@ -52,8 +52,10 @@ class Preferences : public Gtk::Dialog {
 
   protected:
     Splash* splash;
-    Gtk::ComboBoxText* rprofiles;
-    Gtk::ComboBoxText* iprofiles;
+    ProfileStoreComboBox* rprofiles;
+    Gtk::TreeIter currRawRow; // :)
+    ProfileStoreComboBox* iprofiles;
+    Gtk::TreeIter currImgRow;
     Gtk::ComboBoxText* languages;
     Gtk::CheckButton* ckbLangAutoDetect;
     Gtk::Entry* dateformat;
@@ -125,6 +127,7 @@ class Preferences : public Gtk::Dialog {
 
     Gtk::CheckButton* saveParamsFile;
     Gtk::CheckButton* saveParamsCache;
+    Gtk::CheckButton* useBundledProfiles;
     Gtk::ComboBoxText* loadParamsPreference;
     Gtk::ComboBoxText* editorLayout;
     RTWindow* parent;
@@ -146,9 +149,11 @@ class Preferences : public Gtk::Dialog {
     Gtk::CheckButton* ckbSquareDetailWindow;
     Gtk::CheckButton* ckbUseIconNoText;
 
+    Glib::ustring storedValueRaw;
+    Glib::ustring storedValueImg;
 
     Options moptions;
-    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn;
+    sigc::connection tconn, sconn, fconn, usethcon, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
     sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
     Glib::ustring initialTheme;
     Glib::ustring initialFont;
@@ -165,6 +170,7 @@ class Preferences : public Gtk::Dialog {
     void forRAWComboChanged ();
     void forImageComboChanged ();
     void layoutComboChanged ();
+    void bundledProfilesChanged();
     void switchThemeTo (Glib::ustring newTheme, bool slimInterface);
     void switchFontTo  (Glib::ustring newFont);
     bool splashClosed(GdkEventAny* event);
@@ -206,6 +212,10 @@ class Preferences : public Gtk::Dialog {
     void behSetRadioToggled (const Glib::ustring& path);
     void behAddAllPressed ();
     void behSetAllPressed ();
+
+    virtual void storeCurrentValue();
+    virtual void updateProfileList();
+    virtual void restoreValue();
 
 //    void selectICCProfileDir ();
 //    void selectMonitorProfile ();

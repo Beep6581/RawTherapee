@@ -843,19 +843,23 @@ PREFERENCES_TP_LABEL;Panneau des outils:
 PREFERENCES_TP_USEICONORTEXT;Utiliser des icônes au lieu de textes
 PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale
 PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
+PREFERENCES_USEBUNDLEDPROFILES;Utiliser les profiles fournis
 PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_VIEW;Réglage du point blanc du périphérique sortie (moniteur, TV, projecteur,...)
 PREFERENCES_WORKFLOW;Habitudes de travail
 PROFILEPANEL_COPYPPASTE;Paramètres à copier
 PROFILEPANEL_FILEDLGFILTERANY;Tous les fichiers
 PROFILEPANEL_FILEDLGFILTERPP;Profils de post-traitement
+PROFILEPANEL_GLOBALPROFILES;Profils fournis
 PROFILEPANEL_LABEL;Profils de post-traitement
 PROFILEPANEL_LOADDLGLABEL;Charger les paramètres de post-traitement...
 PROFILEPANEL_LOADPPASTE;Paramètres à charger
 PROFILEPANEL_MODE_TIP;Mode de complètement des profils de traitement.\n\nBouton pressé: les profils partiels seront convertis en profils complets; les valeurs manquantes seront remplacées par les valeurs internes par défaut\n\nBouton relevé: les profils seront appliqués tel quel, altérant seulement les paramètres qu'ils contiennent.
+PROFILEPANEL_MYPROFILES;Mes profils
 PROFILEPANEL_PASTEPPASTE;Paramètres à coller
 PROFILEPANEL_PCUSTOM;Personnel
 PROFILEPANEL_PFILE;Depuis le fichier
+PROFILEPANEL_PINTERNAL;Neutre
 PROFILEPANEL_PLASTPHOTO;Photo précédente
 PROFILEPANEL_PLASTSAVED;Dernière sauvegarde
 PROFILEPANEL_PROFILE;Profil

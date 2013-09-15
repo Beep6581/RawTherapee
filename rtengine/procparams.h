@@ -863,6 +863,17 @@ class PartialProfile {
         const void applyTo  (ProcParams *destParams) const ;
 };
 
+/**
+  * This class automatically create the pparams and pedited instance in the constructor,
+  * and automatically delete them in the destructor. This class has been mostly created
+  * to be used with vectors, which use the default constructor/destructor
+  */
+class AutoPartialProfile : public PartialProfile {
+    public:
+        AutoPartialProfile() : PartialProfile(true) {}
+        ~AutoPartialProfile() { deleteInstance(); }
+};
+
 }
 }
 #endif

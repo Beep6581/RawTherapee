@@ -28,11 +28,11 @@
 #define STARTUPDIR_LAST    3
 
 // Default bundled profile name to use for Raw images
-#define DEFPROFILE_RAW      "Default"
+#define DEFPROFILE_RAW      "${G}\\Default"
 // Default bundled profile name to use for Standard images
 #define DEFPROFILE_IMG      "Neutral"
 // Profile name to use for internal values' profile
-#define DEFPROFILE_INTERNAL "Internal"
+#define DEFPROFILE_INTERNAL "Neutral"
 
 class SaveFormat {
 
@@ -271,6 +271,8 @@ class Options {
     bool        is_extention_enabled(Glib::ustring ext);
     bool        is_defProfRawMissing() { return defProfRawMissing; }
     bool        is_defProfImgMissing() { return defProfImgMissing; }
+    void        setDefProfRawMissing(bool value) { defProfRawMissing = value; }
+    void        setDefProfImgMissing(bool value) { defProfImgMissing = value; }
 };
 
 extern Options options;
