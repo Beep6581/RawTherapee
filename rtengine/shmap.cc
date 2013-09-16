@@ -18,12 +18,14 @@
  */
 #include "shmap.h"
 #include "gauss.h"
-#include "bilateral2.h"
 #include "rtengine.h"
 #include "rt_math.h"
 #include "rawimagesource.h"
-
+#include "sleef.c"
 #undef THREAD_PRIORITY_NORMAL
+#ifdef __SSE2__
+#include "sleefsseavx.c"
+#endif // __SSE2__
 
 namespace rtengine {
 
@@ -79,10 +81,11 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 		//set up range functions
 		for (int i=0; i<0x10000; i++) {
 			//rangefn[i] = (int)(((thresh)/((double)(i) + (thresh)))*intfactor);
-			rangefn[i] = static_cast<int>(exp(-(min(10.0f,(static_cast<float>(i)*i) / (thresh*thresh))))*intfactor);
+			rangefn[i] = static_cast<int>(xexpf(-(min(10.0f,(static_cast<float>(i)*i) / (thresh*thresh))))*intfactor);
 			//if (rangefn[i]<0 || rangefn[i]>intfactor) 
 				//printf("i=%d rangefn=%d arg=%f \n",i,rangefn[i], float(i*i) / (thresh*thresh));
 		}
+
 		dirpyrlo[0] = allocArray<float> (W, H);
 		dirpyrlo[1] = allocArray<float> (W, H);
 
@@ -168,55 +171,212 @@ void SHMap::forceStat (float max_, float min_, float avg_) {
     avg = avg_;
 }
 
-
+#if defined( __SSE__ ) && defined( WIN32 )
+__attribute__((force_align_arg_pointer)) void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
+#else
 void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, LUTf & rangefn, int level, int scale)
+#endif
 {
 	//scale is spacing of directional averaging weights
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// calculate weights, compute directionally weighted average
 	
-	int halfwin=2;
-	int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
-	
-	//generate domain kernel 
-	if (level<2) {
+	int scalewin, halfwin;
+
+	if(level < 2) {
 		halfwin = 1;
-		domker[1][1]=domker[1][2]=domker[2][1]=domker[2][2]=1;
-	}
-	
-	int scalewin = halfwin*scale;
-	
+		scalewin = halfwin*scale;
+			
 #ifdef _OPENMP
-#pragma omp parallel for
+#pragma omp parallel
+#endif
+{
+#ifdef __SSE2__
+	__m128 dirwtv, valv, normv;
+#endif // __SSE2__
+	int j;
+#ifdef _OPENMP
+#pragma omp for
 #endif
 	for(int i = 0; i < height; i++) {
-		for(int j = 0; j < width; j++)
+		float dirwt;
+		for(j = 0; j < scalewin; j++)
 		{
 			float val=0;
 			float norm=0;
 			
-			for(int inbr=(i-scalewin); inbr<=(i+scalewin); inbr+=scale) {
-				if (inbr<0 || inbr>height-1) continue;
-				for (int jnbr=(j-scalewin); jnbr<=(j+scalewin); jnbr+=scale) {
-					if (jnbr<0 || jnbr>width-1) continue;
-					float dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j%scale; jnbr<=j+scalewin; jnbr+=scale) {
+					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
 					val += dirwt*data_fine[inbr][jnbr];
 					norm += dirwt;
-					/*if (val<0 || norm<0) {
-						printf("val=%f norm=%f \n",val,norm);
-						printf("i=%d j=%d inbr=%d jnbr=%d domker=%d val=%d nbrval=%d rangefn=%d \n",i,j,inbr,jnbr, \
-							   domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin], \
-							   data_fine[i][j], data_fine[inbr][jnbr], \
-							   rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])]);
-					}*/
 				}
 			}
 			data_coarse[i][j] = val/norm; // low pass filter
-			/*if (val<=0 || norm<=0)
-				printf("val=%f norm=%f \n",val,norm); */
+		}
+#ifdef __SSE2__
+		for(; j < (width-scalewin)-3; j+=4)
+		{
+			valv= _mm_setzero_ps();
+			normv= _mm_setzero_ps();
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+					dirwtv = ( rangefn[_mm_cvttps_epi32(vabsf(LVFU(data_fine[inbr][jnbr])-LVFU(data_fine[i][j])))] );
+					valv += dirwtv*LVFU(data_fine[inbr][jnbr]);
+					normv += dirwtv;
+				}
+			}
+			_mm_storeu_ps( &data_coarse[i][j], valv/normv);
+		}
+		for(; j < width-scalewin; j++)
+		{
+			float val=0;
+			float norm=0;
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
+					val += dirwt*data_fine[inbr][jnbr];
+					norm += dirwt;
+				}
+			}
+			data_coarse[i][j] = val/norm; // low pass filter
+		}
+
+#else
+		for(; j < width-scalewin; j++)
+		{
+			float val=0;
+			float norm=0;
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
+					val += dirwt*data_fine[inbr][jnbr];
+					norm += dirwt;
+				}
+			}
+			data_coarse[i][j] = val/norm; // low pass filter
+		}
+#endif
+		for(; j < width; j++)
+		{
+			float val=0;
+			float norm=0;
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j-scalewin; jnbr<width; jnbr+=scale) {
+					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
+					val += dirwt*data_fine[inbr][jnbr];
+					norm += dirwt;
+				}
+			}
+			data_coarse[i][j] = val/norm; // low pass filter
 		}
 	}
+}
+}
+else {
+	halfwin=2;	
+	scalewin = halfwin*scale;
+	int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
+	//generate domain kernel 
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+#ifdef __SSE2__
+	__m128 dirwtv, valv, normv;
+	float domkerv[5][5][4] __attribute__ ((aligned (16))) = {{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}}};
+
+#endif // __SSE2__
+	int j;
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for(int i = 0; i < height; i++) {
+		float dirwt;
+		for(j = 0; j < scalewin; j++)
+		{
+			float val=0;
+			float norm=0;
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j%scale; jnbr<=j+scalewin; jnbr+=scale) {
+					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
+					val += dirwt*data_fine[inbr][jnbr];
+					norm += dirwt;
+				}
+			}
+			data_coarse[i][j] = val/norm; // low pass filter
+		}
+#ifdef __SSE2__
+		for(; j < width-scalewin-3; j+=4)
+		{
+			valv = _mm_setzero_ps();
+			normv = _mm_setzero_ps();
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+					dirwtv = ( _mm_load_ps((float*)&domkerv[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin]) * rangefn[_mm_cvttps_epi32(vabsf(LVFU(data_fine[inbr][jnbr])-LVFU(data_fine[i][j])))] );
+					valv += dirwtv*LVFU(data_fine[inbr][jnbr]);
+					normv += dirwtv;
+				}
+			}
+			_mm_storeu_ps( &data_coarse[i][j], valv/normv);
+		}
+		for(; j < width-scalewin; j++)
+		{
+			float val=0;
+			float norm=0;
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
+					val += dirwt*data_fine[inbr][jnbr];
+					norm += dirwt;
+				}
+			}
+			data_coarse[i][j] = val/norm; // low pass filter
+		}
+
+#else
+		for(; j < width-scalewin; j++)
+		{
+			float val=0;
+			float norm=0;
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
+					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
+					val += dirwt*data_fine[inbr][jnbr];
+					norm += dirwt;
+				}
+			}
+			data_coarse[i][j] = val/norm; // low pass filter
+		}
+#endif
+		for(; j < width; j++)
+		{
+			float val=0;
+			float norm=0;
+			
+			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
+				for (int jnbr=j-scalewin; jnbr<width; jnbr+=scale) {
+					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
+					val += dirwt*data_fine[inbr][jnbr];
+					norm += dirwt;
+				}
+			}
+			data_coarse[i][j] = val/norm; // low pass filter
+		}
+	}
+}
+	
+}
 	
 }
 	

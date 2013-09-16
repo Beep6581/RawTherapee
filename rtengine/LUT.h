@@ -71,7 +71,9 @@
 #include <glibmm.h>
 #include <fstream>
 #endif
-
+#ifdef __SSE2__
+#include "sleefsseavx.c"
+#endif
 template<typename T>
 class LUT {
 private:
@@ -79,6 +81,12 @@ private:
 	unsigned int maxs; 
 	T * data;
 	unsigned int clip, size, owner;
+#ifdef __SSE2__
+	__m128 maxsv __attribute__ ((aligned (16)));
+	__m128 sizev __attribute__ ((aligned (16)));
+	__m128i maxsiv __attribute__ ((aligned (16)));
+	__m128i sizeiv __attribute__ ((aligned (16)));
+#endif
 public:
 	LUT(int s, int flags = 0xfffffff) {
 		clip = flags;
@@ -86,6 +94,12 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
+#ifdef __SSE2__
+		maxsv =  _mm_set1_ps( maxs );
+		maxsiv = _mm_cvttps_epi32( maxsv );
+		sizeiv =  _mm_set1_epi32( (int)(size-1) );
+		sizev = _mm_set1_ps( size-1 );
+#endif
 	}
 	void operator ()(int s, int flags = 0xfffffff) {
 		if (owner&&data)
@@ -95,6 +109,12 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
+#ifdef __SSE2__
+		maxsv =  _mm_set1_ps( maxs );
+		maxsiv = _mm_cvttps_epi32( maxsv );
+		sizeiv =  _mm_set1_epi32( (int)(size-1) );
+		sizev = _mm_set1_ps( size-1 );
+#endif
 	}
 
 	LUT(int s, T * source, int flags = 0xfffffff) {
@@ -103,6 +123,12 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
+#ifdef __SSE2__
+		maxsv =  _mm_set1_ps( size - 2);
+		maxsiv = _mm_cvttps_epi32( maxsv );
+		sizeiv =  _mm_set1_epi32( (int)(size-1) );
+		sizev = _mm_set1_ps( size-1 );
+#endif
 		for (int i = 0; i < s; i++) {
 			data[i] = source[i];
 		}
@@ -135,6 +161,12 @@ public:
 	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));
 	      this->size=rhs.size;
 	      this->maxs=this->size-2;
+#ifdef __SSE2__
+		  this->maxsv =  _mm_set1_ps( this->size - 2);
+		  this->maxsiv = _mm_cvttps_epi32( this->maxsv );
+		  this->sizeiv =  _mm_set1_epi32( (int)(this->size-1) );
+		  this->sizev = _mm_set1_ps( this->size-1 );
+#endif
 	    }
 
 	    return *this;
@@ -151,6 +183,117 @@ public:
 		}
 		
 	}
+	
+#ifdef __SSE2__
+	__m128 operator[](__m128 indexv ) const {
+		printf("don't use this operator. It's not ready for production");
+		return _mm_setzero_ps();
+		
+		// convert floats to ints
+		__m128i	idxv =  _mm_cvttps_epi32( indexv );
+		__m128 tempv, resultv, p1v, p2v;
+		vmask maxmask = vmaskf_gt(indexv, maxsv);
+		idxv = _mm_castps_si128(vself(maxmask, maxsv, _mm_castsi128_ps(idxv)));
+		vmask minmask = vmaskf_lt(indexv, _mm_setzero_ps());
+		idxv = _mm_castps_si128(vself(minmask, _mm_setzero_ps(), _mm_castsi128_ps(idxv)));
+		// access the LUT 4 times and shuffle the values into p1v and p2v
+
+		int idx;
+
+		// get 4th value
+		idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv,_MM_SHUFFLE(3,3,3,3)));
+		tempv = LVFU(data[idx]);
+		p1v = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(0,0,0,0));
+		p2v = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1,1,1,1));
+		// now p1v is 3 3 3 3
+		//     p2v is 3 3 3 3
+
+		// get 3rd value
+		idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv,_MM_SHUFFLE(2,2,2,2)));
+		tempv = LVFU(data[idx]);
+		p1v = _mm_move_ss( p1v, tempv);
+		tempv = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1,1,1,1));
+		p2v = _mm_move_ss( p2v, tempv);
+		// now p1v is 3 3 3 2
+		//     p2v is 3 3 3 2
+
+		// get 2nd value
+		idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv,_MM_SHUFFLE(1,1,1,1)));
+		tempv = LVFU(data[idx]);
+		p1v = _mm_shuffle_ps( p1v, p1v, _MM_SHUFFLE(1,0,1,0));
+		p2v = _mm_shuffle_ps( p2v, p2v, _MM_SHUFFLE(1,0,1,0));
+		// now p1v is 3 2 3 2
+		// now p2v is 3 2 3 2
+		p1v = _mm_move_ss( p1v, tempv );
+		// now p1v is 3 2 3 1
+		tempv = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1,1,1,1));
+		p2v = _mm_move_ss( p2v, tempv);
+		// now p1v is 3 2 3 1
+		
+		// get 1st value
+		idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv,_MM_SHUFFLE(0,0,0,0)));
+		tempv = LVFU(data[idx]);
+		p1v = _mm_shuffle_ps( p1v, p1v, _MM_SHUFFLE(3,2,0,0));
+		// now p1v is 3 2 1 1
+		p2v = _mm_shuffle_ps( p2v, p2v, _MM_SHUFFLE(3,2,0,0));
+		// now p2v is 3 2 1 1
+		p1v = _mm_move_ss( p1v, tempv );
+		// now p1v is 3 2 1 0
+		tempv = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1,1,1,1));
+		p2v = _mm_move_ss( p2v, tempv);
+		// now p2v is 3 2 1 0
+
+		__m128 diffv = indexv - _mm_cvtepi32_ps ( idxv );
+		diffv = vself(vorm(maxmask,minmask), _mm_setzero_ps(), diffv);
+		resultv = p1v + p2v * diffv;
+		return resultv	;
+	}
+
+#if defined( __SSE2__ ) && defined( WIN32 )
+	__attribute__((force_align_arg_pointer)) __m128 operator[](__m128i idxv ) const
+#else
+	__m128 operator[](__m128i idxv ) const
+#endif
+	 {
+		__m128 tempv, p1v;
+		tempv = _mm_cvtepi32_ps(idxv);
+		tempv = _mm_min_ps( tempv, sizev );
+		idxv = _mm_cvttps_epi32(_mm_max_ps( tempv, _mm_setzero_ps( )  ));
+		// access the LUT 4 times and shuffle the values into p1v
+
+		int idx;
+
+		// get 4th value
+		idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv,_MM_SHUFFLE(3,3,3,3)));
+		tempv = _mm_load_ss(&data[idx]);
+		p1v = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(0,0,0,0));
+		// now p1v is 3 3 3 3
+
+		// get 3rd value
+		idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv,_MM_SHUFFLE(2,2,2,2)));
+		tempv = _mm_load_ss(&data[idx]);
+		p1v = _mm_move_ss( p1v, tempv);
+		// now p1v is 3 3 3 2
+
+		// get 2nd value
+		idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv,_MM_SHUFFLE(1,1,1,1)));
+		tempv = _mm_load_ss(&data[idx]);
+		p1v = _mm_shuffle_ps( p1v, p1v, _MM_SHUFFLE(1,0,1,0));
+		// now p1v is 3 2 3 2
+		p1v = _mm_move_ss( p1v, tempv );
+		// now p1v is 3 2 3 1
+		
+		// get 1st value
+		idx = _mm_cvtsi128_si32 (idxv);
+		tempv = _mm_load_ss(&data[idx]);
+		p1v = _mm_shuffle_ps( p1v, p1v, _MM_SHUFFLE(3,2,0,0));
+		// now p1v is 3 2 1 1
+		p1v = _mm_move_ss( p1v, tempv );
+		// now p1v is 3 2 1 0
+
+		return p1v;
+	}
+#endif
 	// use with float indices
 	T operator[](float index) const {
 		int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
