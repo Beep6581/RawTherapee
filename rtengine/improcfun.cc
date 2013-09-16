@@ -880,7 +880,7 @@ if(settings->autocielab) {
 //all this treatments reduce artifacts, but can lead to slightly  different results
 if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);// 
 
-if(params->colorappearance.badpixsl > 0) { int mode=params->colorappearance.badpixsl;
+if(params->colorappearance.badpixsl > 0) if(execsharp){ int mode=params->colorappearance.badpixsl;
 											ImProcFunctions::badpixcam (ncie, 3.4, 5, mode);//for bad pixels
 										}	
 
@@ -1672,7 +1672,7 @@ if(settings->autocielab) {
 
 if(params->defringe.enabled) if(execsharp) ImProcFunctions::defringecam (ncie);//defringe adapted to CIECAM
 
-if(params->colorappearance.badpixsl > 0) { int mode=params->colorappearance.badpixsl;
+if(params->colorappearance.badpixsl > 0) if(execsharp){ int mode=params->colorappearance.badpixsl;
 											ImProcFunctions::badpixcam (ncie, 3.0, 10, mode);//for bad pixels
 										}	
 
