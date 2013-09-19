@@ -192,7 +192,7 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 #pragma omp parallel
 #endif
 {
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 	__m128 dirwtv, valv, normv;
 #endif // __SSE2__
 	int j;
@@ -215,7 +215,7 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 			}
 			data_coarse[i][j] = val/norm; // low pass filter
 		}
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 		for(; j < (width-scalewin)-3; j+=4)
 		{
 			valv= _mm_setzero_ps();
@@ -288,7 +288,7 @@ else {
 #pragma omp parallel
 #endif
 {
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 	__m128 dirwtv, valv, normv;
 	float domkerv[5][5][4] __attribute__ ((aligned (16))) = {{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}}};
 
@@ -313,7 +313,7 @@ else {
 			}
 			data_coarse[i][j] = val/norm; // low pass filter
 		}
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 		for(; j < width-scalewin-3; j+=4)
 		{
 			valv = _mm_setzero_ps();

@@ -81,7 +81,7 @@ private:
 	unsigned int maxs; 
 	T * data;
 	unsigned int clip, size, owner;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 	__m128 maxsv __attribute__ ((aligned (16)));
 	__m128 sizev __attribute__ ((aligned (16)));
 	__m128i maxsiv __attribute__ ((aligned (16)));
@@ -94,7 +94,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 		maxsv =  _mm_set1_ps( maxs );
 		maxsiv = _mm_cvttps_epi32( maxsv );
 		sizeiv =  _mm_set1_epi32( (int)(size-1) );
@@ -109,7 +109,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 		maxsv =  _mm_set1_ps( maxs );
 		maxsiv = _mm_cvttps_epi32( maxsv );
 		sizeiv =  _mm_set1_epi32( (int)(size-1) );
@@ -123,7 +123,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 		maxsv =  _mm_set1_ps( size - 2);
 		maxsiv = _mm_cvttps_epi32( maxsv );
 		sizeiv =  _mm_set1_epi32( (int)(size-1) );
@@ -161,7 +161,7 @@ public:
 	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));
 	      this->size=rhs.size;
 	      this->maxs=this->size-2;
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 		  this->maxsv =  _mm_set1_ps( this->size - 2);
 		  this->maxsiv = _mm_cvttps_epi32( this->maxsv );
 		  this->sizeiv =  _mm_set1_epi32( (int)(this->size-1) );
@@ -184,7 +184,7 @@ public:
 		
 	}
 	
-#ifdef __SSE2__
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 	__m128 operator[](__m128 indexv ) const {
 		printf("don't use this operator. It's not ready for production");
 		return _mm_setzero_ps();
@@ -249,7 +249,7 @@ public:
 		return resultv	;
 	}
 
-#if defined( __SSE2__ ) && defined( WIN32 )
+#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
 	__attribute__((force_align_arg_pointer)) __m128 operator[](__m128i idxv ) const
 #else
 	__m128 operator[](__m128i idxv ) const
