@@ -57,7 +57,7 @@ Defringe::Defringe () : Gtk::VBox(), FoldableToolPanel(this)  {
   //edgConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &Defringe::edgeChanged) );
 
   radius  = Gtk::manage (new Adjuster (M("TP_DEFRINGE_RADIUS"), 0.5, 5.0, 0.1, 2.0));
-  threshold    = Gtk::manage (new Adjuster (M("TP_DEFRINGE_THRESHOLD"), 0, 100, 1, 25));
+  threshold    = Gtk::manage (new Adjuster (M("TP_DEFRINGE_THRESHOLD"), 0, 100, 1, 13));
   radius->setAdjusterListener (this);
   threshold->setAdjusterListener (this); 
   radius->show();

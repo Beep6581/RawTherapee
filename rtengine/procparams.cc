@@ -255,7 +255,7 @@ void ProcParams::setDefaults () {
 
     defringe.enabled            = false;
     defringe.radius             = 2.0;
-    defringe.threshold          = 25;
+    defringe.threshold          = 13;
     defringe.huecurve.resize (25);
     defringe.huecurve.at(0)     = FCT_MinMaxCPoints;
     defringe.huecurve.at(1)     = 0.166666667;
@@ -1154,7 +1154,10 @@ if (keyFile.has_group ("White Balance")) {
 if (keyFile.has_group ("Defringing")) {
     if (keyFile.has_key ("Defringing", "Enabled"))        { defringe.enabled   = keyFile.get_boolean ("Defringing", "Enabled"); if (pedited) pedited->defringe.enabled = true; }
     if (keyFile.has_key ("Defringing", "Radius"))         { defringe.radius    = keyFile.get_double  ("Defringing", "Radius"); if (pedited) pedited->defringe.radius = true; }
-    if (keyFile.has_key ("Defringing", "Threshold"))      { defringe.threshold = keyFile.get_integer ("Defringing", "Threshold"); if (pedited) pedited->defringe.threshold = true; }
+    if (keyFile.has_key ("Defringing", "Threshold"))      { defringe.threshold = (float)keyFile.get_integer ("Defringing", "Threshold"); if (pedited) pedited->defringe.threshold = true; }
+    if (ppVersion < 310) {
+    	 defringe.threshold =  sqrt(defringe.threshold * 33.f/5.f);
+    }
     if (keyFile.has_key ("Defringing", "HueCurve"))       { defringe.huecurve  = keyFile.get_double_list ("Defringing", "HueCurve"); if (pedited) pedited->defringe.huecurve = true; }
 }
     // load colorappearance
