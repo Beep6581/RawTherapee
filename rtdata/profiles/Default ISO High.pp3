@@ -119,7 +119,7 @@ Threshold=80
 [Defringing]
 Enabled=false
 Radius=2.0
-Threshold=25
+Threshold=13
 
 [Directional Pyramid Denoising]
 Enabled=true

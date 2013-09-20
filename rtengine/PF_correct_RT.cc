@@ -108,7 +108,7 @@ float chromave=0;
 		}
 	}
 	chromave /= (height*width);
-	float threshfactor = (thresh*chromave)/33.f;      // Calculated once to eliminate mult inside the next loop
+	float threshfactor = SQR(thresh/33.f)*chromave*5.0f;
 //	printf("Chro %f \n",chromave);
 
 // Issue 1674:
@@ -261,7 +261,7 @@ float chromave=0;
 		}
 	}
 	chromave /= (height*width);
-	float threshfactor = (thresh*chromave)/33.f;      // Calculated once to eliminate mult inside the next loop
+	float threshfactor = SQR(thresh/33.f)*chromave*5.0f; // Calculated once to eliminate mult inside the next loop
 	//	printf("Chromave CAM %f \n",chromave);
 
 // Issue 1674:

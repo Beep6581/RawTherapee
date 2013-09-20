@@ -2,7 +2,7 @@
 #define _PPVERSION_
 
 // This number have to be incremented whenever the PP3 file format is modified
-#define PPVERSION 309
+#define PPVERSION 310
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /* Log of version changes
@@ -10,6 +10,8 @@
  * 		[Perspective] Horizontal and Vertical changed from int to double
  * 		added  [Directional Pyramid Denoising] Method, Redchro, Bluechro
  * 		added [RGB Curves] LumaMode
+ * 	310 2013-09-16
+ *   	Defringing /Threshold - changed calculation, issue 1801
  */
 
 #endif

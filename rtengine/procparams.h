@@ -443,7 +443,7 @@ class DefringeParams {
     public:
         bool    enabled;
         double  radius;
-        int     threshold;
+        float   threshold;
         std::vector<double> huecurve;
 };
 
