@@ -80,11 +80,13 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 {
     disableListener ();
 
-    if (pp->lensProf.lcpFile.length()>0 && lcpStore->isValidLCPFileName(pp->lensProf.lcpFile)) {
+    if (!pp->lensProf.lcpFile.empty() && lcpStore->isValidLCPFileName(pp->lensProf.lcpFile)) {
         fcbLCPFile->set_filename (pp->lensProf.lcpFile);
         updateDisabled(true);
     } else {
-        fcbLCPFile->unselect_filename(fcbLCPFile->get_filename());
+        Glib::ustring fname = fcbLCPFile->get_filename();
+        if (!pp->lensProf.lcpFile.empty())
+            fcbLCPFile->unselect_filename(fname);
         updateDisabled(false);
     }
 
