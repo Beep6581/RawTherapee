@@ -710,7 +710,6 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     hb6->set_border_width (4);
     hb6->set_spacing (4);
     Gtk::Label* dflab = Gtk::manage( new Gtk::Label (M("PREFERENCES_DATEFORMAT")+":", Gtk::ALIGN_LEFT));
-    hb6->pack_start (*dflab, Gtk::PACK_SHRINK,4);
     dateformat = Gtk::manage( new Gtk::Entry () );
     dateformat->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
     dflab->set_tooltip_markup (M("PREFERENCES_DATEFORMATHINT"));
