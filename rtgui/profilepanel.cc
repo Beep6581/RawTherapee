@@ -167,7 +167,7 @@ void ProfilePanel::storeCurrentValue () {
  */
 void ProfilePanel::updateProfileList () {
 
-    changeconn.block (true);
+    bool ccPrevState = changeconn.block(true);
 
     // rescan file tree
     profiles->updateProfileList();
@@ -178,11 +178,11 @@ void ProfilePanel::updateProfileList () {
     if (lastsaved)
         addLastSavedRow();
 
-    changeconn.block (false);
+    changeconn.block (ccPrevState);
 }
 
 void ProfilePanel::restoreValue () {
-    changeconn.block (true);
+    bool ccPrevState = changeconn.block(true);
 
     if (!profiles->setActiveRowFromFullPath(storedValue) && storedPProfile) {
         if (custom) delete custom;
@@ -196,7 +196,7 @@ void ProfilePanel::restoreValue () {
 
     currRow = profiles->get_active();
 
-    changeconn.block (false);
+    changeconn.block (ccPrevState);
 
     storedValue = "";
 
@@ -296,9 +296,9 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
                         writeFailed(dialog, fname);
                     else {
                         done=true;
-                        changeconn.block (true);
+                        bool ccPrevState = changeconn.block(true);
                         profileStore.parseProfiles();
-                        changeconn.block (false);
+                        changeconn.block (ccPrevState);
                     }
                 }
                 else {
@@ -308,9 +308,9 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
                         writeFailed(dialog, fname);
                     else {
                         done=true;
-                        changeconn.block (true);
+                        bool ccPrevState = changeconn.block(true);
                         profileStore.parseProfiles();
-                        changeconn.block (false);
+                        changeconn.block (ccPrevState);
                     }
                 }
             }
@@ -533,9 +533,9 @@ void ProfilePanel::selection_changed () {
         const ProfileStoreEntry *pse = profiles->getSelectedEntry();
         if (pse->type == PSET_FOLDER) {
             // this entry is invalid, restoring the old value
-            changeconn.block(true);
+            bool ccPrevState = changeconn.block(true);
             profiles->set_active(currRow);
-            changeconn.block(false);
+            changeconn.block(ccPrevState);
             dontupdate = false;
             return;
         }
@@ -591,7 +591,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
     const ProfileStoreEntry *pse = NULL;
     const PartialProfile *defprofile = NULL;
 
-    changeconn.block (true);
+    bool ccPrevState = changeconn.block(true);
 
     if (custom) {
         custom->deleteInstance();
@@ -648,7 +648,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
             tpc->profileChange (defprofile, EvPhotoLoaded, profiles->getSelectedEntry()->label);
         }
     }
-    changeconn.block (false);
+    changeconn.block (ccPrevState);
 }
 
 void ProfilePanel::setInitialFileName (const Glib::ustring& filename) {
