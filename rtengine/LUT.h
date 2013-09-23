@@ -249,11 +249,7 @@ public:
 		return resultv	;
 	}
 
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
-	__attribute__((force_align_arg_pointer)) __m128 operator[](__m128i idxv ) const
-#else
 	__m128 operator[](__m128i idxv ) const
-#endif
 	 {
 		__m128 tempv, p1v;
 		tempv = _mm_cvtepi32_ps(idxv);
@@ -294,6 +290,7 @@ public:
 		return p1v;
 	}
 #endif
+
 	// use with float indices
 	T operator[](float index) const {
 		int idx = (int)index;  // don't use floor! The difference in negative space is no problems here
