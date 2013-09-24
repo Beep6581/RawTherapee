@@ -1,4 +1,4 @@
-﻿
+
 ABOUT_TAB_BUILD;ヴァージョン
 ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
@@ -440,6 +440,9 @@ HISTORY_MSG_201;NR - 色差 レッド
 HISTORY_MSG_202;NR - 色差 ブルー
 HISTORY_MSG_203;NR - 方式
 HISTORY_MSG_204;LMMSE 拡張処理
+HISTORY_MSG_205;CAM02 ホット／バッドピクセル
+HISTORY_MSG_206;CAT02 - 自動で順応
+HISTORY_MSG_207;色相カーブの変更
 HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
@@ -954,12 +957,15 @@ TP_COLORAPP_ADAPTSCENE;順応輝度 (cd/m2)
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;撮影環境の絶対輝度\n(通常 2000cd/m2)
 TP_COLORAPP_ADAPTVIEWING;順応輝度 (cd/m2)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;観視環境の絶対輝度\n(通常 16cd/m2)
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;チェックボックッスが有効の場合（推奨）はRTがExif情報に基づいて最適値を計算します￥nto手動で行う場合はチェックボックスを無効にします
 TP_COLORAPP_ALGO;アルゴリズム
 TP_COLORAPP_ALGO_ALL;すべて
 TP_COLORAPP_ALGO_JC;明度 + 色度 (JC)
 TP_COLORAPP_ALGO_JS;明度 + 彩度 (JS)
 TP_COLORAPP_ALGO_QM;明るさ + 鮮やかさ (QM)
 TP_COLORAPP_ALGO_TOOLTIP;サブセットかすべてのパラメータ使用か選択
+TP_COLORAPP_BADPIXSL;ホット／バッドピクセルフィルター
+TP_COLORAPP_BADPIXSL_TOOLTIP;明るい部分のホット／バッドピクセルを圧縮します\n 0は効果なし 1は中間 2はガウスほかし\n\nこれらの人工的な調整がCIE表色モデル02の限界です。代わりに、イメージが極端に暗くなるのを防ぎます
 TP_COLORAPP_BRIGHT;明るさ (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;CIECAM02の明るさは LabやRGBとは異なり、白の輝度を計算に入れます
 TP_COLORAPP_CHROMA;色度 (C)
@@ -1205,6 +1211,8 @@ TP_NEUTRAL_TIP;露光量の制御をニュートラルな値にリセットし�
 TP_PERSPECTIVE_HORIZONTAL;水平
 TP_PERSPECTIVE_LABEL;パースペクティブ
 TP_PERSPECTIVE_VERTICAL;垂直
+TP_PFCURVE_CURVEEDITOR_CH;色相
+TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;デフリンジの強さをコントロールします。値が高いと効果が強まり、低いと弱まります
 TP_PREPROCESS_DARKFRAME;ダークフレーム
 TP_PREPROCESS_DFAUTOSELECT;自動選択
 TP_PREPROCESS_FLATFIELDAUTOSELECT;フラットフィールド自動選択
@@ -1213,6 +1221,7 @@ TP_PREPROCESS_FLATFIELDBLURTYPE;フラットフィールド・ぼかしタイプ
 TP_PREPROCESS_FLATFIELDFILE;フラットフィールド
 TP_PREPROCESS_GREENEQUIL;グリーン 平衡化
 TP_PREPROCESS_HOTDEADPIXFILT;ホット/デッド ピクセル・フィルタ
+TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;ホット／バッドピクセルの圧縮を試みます
 TP_PREPROCESS_LABEL;前処理
 TP_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
 TP_PREPROCESS_NO_FOUND;未検出
@@ -1385,17 +1394,19 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 #06 a3novy: 2012-04-04 (for 4.0.8)
 #07 a3novy: 2012-07-12, 2012-12-22 (for 4.0.9)
 #08 a3novy: 2013-04-01, 2013-04-19 (for 4.0.10)
+﻿
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_205;CAM02 hot/bad pixels
-!HISTORY_MSG_206;CAT02 - Adapt scene auto
-!HISTORY_MSG_207;Defringing Hue curve
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
-!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
-!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
-!TP_PFCURVE_CURVEEDITOR_CH;Hue
-!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
-!TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels
+!HISTORY_MSG_208;Blue/Red Equalizer
+!PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
+!PROFILEPANEL_GLOBALPROFILES;Bundled profiles
+!PROFILEPANEL_MYPROFILES;My profiles
+!PROFILEPANEL_PINTERNAL;Neutral
+!TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
+!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
+!TP_WBALANCE_WATER1;UnderWater 1
+!TP_WBALANCE_WATER2;UnderWater 2
+!TP_WBALANCE_WATER_HEADER;UnderWater

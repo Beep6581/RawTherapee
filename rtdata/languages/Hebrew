@@ -852,6 +852,7 @@ ZOOMBAR_SMALL;קטן
 !HISTORY_MSG_205;CAM02 hot/bad pixels
 !HISTORY_MSG_206;CAT02 - Adapt scene auto
 !HISTORY_MSG_207;Defringing Hue curve
+!HISTORY_MSG_208;Blue/Red Equalizer
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
@@ -877,7 +878,7 @@ ZOOMBAR_SMALL;קטן
 !MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-C</b>
 !MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-D</b>
-!MAIN_TAB_EXPORT; Export
+!MAIN_TAB_EXPORT; Fast Export
 !MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-E</b>
 !MAIN_TAB_METADATA_TOOLTIP;Shortcut: <b>Alt-M</b>
 !MAIN_TAB_RAW;Raw
@@ -1046,13 +1047,17 @@ ZOOMBAR_SMALL;קטן
 !PREFERENCES_TP_USEICONORTEXT;Use tab icons instead of text
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_TUNNELMETADATA;Copy IPTC/XMP unchanged to output file (when tagging with other program)
+!PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PREFERENCES_USESYSTEMTHEME;Use system theme
 !PREFERENCES_VIEW;Output device's white balance setting (monitor, TV, projector, viewing, etc.)
 !PREFERENCES_WORKFLOW;Layout
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
+!PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_LOADPPASTE;Parameters to load
 !PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+!PROFILEPANEL_MYPROFILES;My profiles
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
+!PROFILEPANEL_PINTERNAL;Neutral
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
 !PROGRESSBAR_BADPIXELS;Bad pixels...
 !PROGRESSBAR_CACORRECTION;CA correction...
@@ -1364,6 +1369,8 @@ ZOOMBAR_SMALL;קטן
 !TP_VIGNETTING_STRENGTH;Strength
 !TP_WBALANCE_CLOUDY;Cloudy
 !TP_WBALANCE_DAYLIGHT;Daylight (sunny)
+!TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
+!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
 !TP_WBALANCE_FLASH55;Leica
 !TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 !TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
@@ -1394,6 +1401,9 @@ ZOOMBAR_SMALL;קטן
 !TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 !TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 !TP_WBALANCE_TUNGSTEN;Tungsten
+!TP_WBALANCE_WATER1;UnderWater 1
+!TP_WBALANCE_WATER2;UnderWater 2
+!TP_WBALANCE_WATER_HEADER;UnderWater
 !ZOOMPANEL_100;(100%)
 !ZOOMPANEL_NEWCROPWINDOW;Open (new) detail window
 !ZOOMPANEL_ZOOM100;Zoom to 100%\nShortcut: <b>z</b>
