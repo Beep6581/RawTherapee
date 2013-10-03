@@ -386,13 +386,13 @@ HISTORY_MSG_147;エッジ シャープ化 - 輝度のみ
 HISTORY_MSG_148;マイクロコントラスト
 HISTORY_MSG_149;マイクロコントラスト - 3x3 マトリクス
 HISTORY_MSG_150;デモザイク後にアーティファクト/ノイズ低減
-HISTORY_MSG_151;視覚に合わせた彩度
-HISTORY_MSG_152;視覚に合わせた彩度 - 中間色トーン
-HISTORY_MSG_153;視覚に合わせた彩度 - 純色トーン
-HISTORY_MSG_154;視覚に合わせた彩度 - 肌色トーンを保護
-HISTORY_MSG_155;視覚に合わせた彩度 - 色ずれを回避
-HISTORY_MSG_156;視覚に合わせた彩度 - 中間色と純色トーンをリンク
-HISTORY_MSG_157;視覚に合わせた彩度 - 中間色/純色トーン しきい値
+HISTORY_MSG_151;自然な彩度
+HISTORY_MSG_152;自然な彩度 - 中間色トーン
+HISTORY_MSG_153;自然な彩度 - 純色トーン
+HISTORY_MSG_154;自然な彩度 - 肌色トーンを保護
+HISTORY_MSG_155;自然な彩度 - 色ずれを回避
+HISTORY_MSG_156;自然な彩度 - 中間色と純色トーンをリンク
+HISTORY_MSG_157;自然な彩度 - 中間色/純色トーン しきい値
 HISTORY_MSG_158;強さ
 HISTORY_MSG_159;エッジ停止
 HISTORY_MSG_160;スケール
@@ -405,7 +405,7 @@ HISTORY_MSG_166;ニュートラル・レベル
 HISTORY_MSG_167;白黒トーン
 HISTORY_MSG_168;'CC' カーブ
 HISTORY_MSG_169;'CH' カーブ
-HISTORY_MSG_170;視覚に合わせた彩度 - カーブ
+HISTORY_MSG_170;自然な彩度 - カーブ
 HISTORY_MSG_171;'LC' カーブ
 HISTORY_MSG_172;レッドと肌色トーンに対するLCの制限
 HISTORY_MSG_173;NR - 輝度ディテール
@@ -443,6 +443,7 @@ HISTORY_MSG_204;LMMSE 拡張処理
 HISTORY_MSG_205;CAM02 ホット／バッドピクセル
 HISTORY_MSG_206;CAT02 - 自動で順応
 HISTORY_MSG_207;色相カーブの変更
+HISTORY_MSG_208;ブルー／レッド　イコライザー
 HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
@@ -619,7 +620,7 @@ PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
 PARTIALPASTE_COARSETRANS;90° 回転 / 反転
-PARTIALPASTE_COLORAPP;CIE表色モデル2002
+PARTIALPASTE_COLORAPP;CIE色の見えモデル2002
 PARTIALPASTE_COLORBOOST;発色補正
 PARTIALPASTE_COLORDENOISE;カラー ノイズ低減
 PARTIALPASTE_COLORGROUP;カラー 設定
@@ -683,7 +684,7 @@ PARTIALPASTE_SHADOWSHIGHLIGHTS;シャドウ/ハイライト
 PARTIALPASTE_SHARPENEDGE;エッジ
 PARTIALPASTE_SHARPENING;シャープ化 (USM/RL)
 PARTIALPASTE_SHARPENMICRO;マイクロコントラスト
-PARTIALPASTE_VIBRANCE;視覚に合わせた彩度
+PARTIALPASTE_VIBRANCE;自然な彩度
 PARTIALPASTE_VIGNETTING;周辺光量補正
 PARTIALPASTE_WAVELETEQUALIZER;ウェーブレット・イコライザ
 PARTIALPASTE_WHITEBALANCE;ホワイトバランス
@@ -858,19 +859,23 @@ PREFERENCES_TP_LABEL;ツール パネル:
 PREFERENCES_TP_USEICONORTEXT;テキストの代わりにタブアイコンを使用
 PREFERENCES_TP_VSCROLLBAR;ツールパネルの垂直スクロール・バーを隠す
 PREFERENCES_TUNNELMETADATA;IPTC/XMPの項目は出力するファイルに変更を加えない
+PREFERENCES_USEBUNDLEDPROFILES;付属のプロファイルを使用
 PREFERENCES_USESYSTEMTHEME;システムが設定した背景色を使う
 PREFERENCES_VIEW;出力デバイスのホワイトバランス設定 (モニター, TV, プロジェクター,観視...)
 PREFERENCES_WORKFLOW;レイアウト
 PROFILEPANEL_COPYPPASTE;コピーするパラメータ
 PROFILEPANEL_FILEDLGFILTERANY;すべてのファイル
 PROFILEPANEL_FILEDLGFILTERPP;処理プロファイル
+PROFILEPANEL_GLOBALPROFILES;付属のプロファイル
 PROFILEPANEL_LABEL;処理プロファイル
 PROFILEPANEL_LOADDLGLABEL;処理プロファイルを読み込む...
 PROFILEPANEL_LOADPPASTE;読み込むパラメータ
 PROFILEPANEL_MODE_TIP;プロファイルの補完処理\n\nボタンが押された: 不完全なプロファイルは完全なプロファイルに変換され、不足している値はハードコーディングされたデフォルト値に置き換えられます\n\nボタンが離された: プロファイルに含まれる値だけをそのまま変更し適用します
+PROFILEPANEL_MYPROFILES;自分のプロファイル!
 PROFILEPANEL_PASTEPPASTE;貼り付けるパラメータ
 PROFILEPANEL_PCUSTOM;カスタム
 PROFILEPANEL_PFILE;ファイルから
+PROFILEPANEL_PINTERNAL;ニュートラル
 PROFILEPANEL_PLASTPHOTO;更新済の写真
 PROFILEPANEL_PLASTSAVED;更新済
 PROFILEPANEL_PROFILE;プロファイル
@@ -965,7 +970,7 @@ TP_COLORAPP_ALGO_JS;明度 + 彩度 (JS)
 TP_COLORAPP_ALGO_QM;明るさ + 鮮やかさ (QM)
 TP_COLORAPP_ALGO_TOOLTIP;サブセットかすべてのパラメータ使用か選択
 TP_COLORAPP_BADPIXSL;ホット／バッドピクセルフィルター
-TP_COLORAPP_BADPIXSL_TOOLTIP;明るい部分のホット／バッドピクセルを圧縮します\n 0は効果なし 1は中間 2はガウスほかし\n\nこれらの人工的な調整がCIE表色モデル02の限界です。代わりに、イメージが極端に暗くなるのを防ぎます
+TP_COLORAPP_BADPIXSL_TOOLTIP;明るい部分のホット／バッドピクセルを圧縮します\n 0は効果なし 1は中間 2はガウスほかし\n\nこれらの人工的な調整がCIE色の見えモデル02の限界です。代わりに、イメージが極端に暗くなるのを防ぎます
 TP_COLORAPP_BRIGHT;明るさ (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;CIECAM02の明るさは LabやRGBとは異なり、白の輝度を計算に入れます
 TP_COLORAPP_CHROMA;色度 (C)
@@ -994,7 +999,7 @@ TP_COLORAPP_GAMUT;色域制御 (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Labモードの色域制御を許可
 TP_COLORAPP_HUE;色相 (h)
 TP_COLORAPP_HUE_TOOLTIP;色相 (h) - 0° から 360°の角度
-TP_COLORAPP_LABEL;CIE表色モデル2002
+TP_COLORAPP_LABEL;CIE色の見えモデル2002
 TP_COLORAPP_LABEL_CAM02;画像の調整
 TP_COLORAPP_LABEL_SCENE;撮影環境条件
 TP_COLORAPP_LABEL_VIEWING;観視条件
@@ -1316,7 +1321,7 @@ TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;レッド
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;レッド/イエロー
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;イエロー
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;色相による色相
-TP_VIBRANCE_LABEL;視覚に合わせた彩度
+TP_VIBRANCE_LABEL;自然な彩度
 TP_VIBRANCE_PASTELS;中間色トーン
 TP_VIBRANCE_PASTSATTOG;中間色と純色トーンをリンク
 TP_VIBRANCE_PROTECTSKINS;肌色トーンを保護
@@ -1337,6 +1342,8 @@ TP_WBALANCE_CAMERA;カメラ
 TP_WBALANCE_CLOUDY;曇天
 TP_WBALANCE_CUSTOM;カスタム
 TP_WBALANCE_DAYLIGHT;昼光 (晴天)
+TP_WBALANCE_EQBLUERED;ブルー／レッド　イコライザー
+TP_WBALANCE_EQBLUERED_TOOLTIP;赤と青を調整することで、ホワイトバランスの作用を通常とは異なるものにします。\nこれは次のような撮影条件の場合に役立つでしょう：\na)光源が標準的なものと大きく異なる場合（例、水中）\nb)キャリブレーションの範囲から大きく外れている場合\nc)カラーマトリクスやICCプロファイルが不適当な場合
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;標準, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
@@ -1373,6 +1380,9 @@ TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;スポットWB
 TP_WBALANCE_TEMPERATURE;色温度
 TP_WBALANCE_TUNGSTEN;タングステン
+TP_WBALANCE_WATER1;水中 1
+TP_WBALANCE_WATER2;水中 2
+TP_WBALANCE_WATER_HEADER;水中
 ZOOMBAR_DETAIL;ディテール
 ZOOMBAR_HUGE;特大
 ZOOMBAR_LARGE;大
@@ -1399,14 +1409,3 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_208;Blue/Red Equalizer
-!PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
-!PROFILEPANEL_GLOBALPROFILES;Bundled profiles
-!PROFILEPANEL_MYPROFILES;My profiles
-!PROFILEPANEL_PINTERNAL;Neutral
-!TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
-!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
-!TP_WBALANCE_WATER1;UnderWater 1
-!TP_WBALANCE_WATER2;UnderWater 2
-!TP_WBALANCE_WATER_HEADER;UnderWater
