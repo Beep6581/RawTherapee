@@ -206,7 +206,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
     if (!options.customProfileBuilder.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine=Glib::ustring("\"") + options.customProfileBuilder + Glib::ustring("\" \"") + fname + Glib::ustring("\" \"")
-        + (defaultPparamsPath == DEFPROFILE_INTERNAL ? "Neutral" : Glib::build_filename(defaultPparamsPath, defProf + paramFileExtension)) + Glib::ustring("\" ");
+        + (defaultPparamsPath == DEFPROFILE_INTERNAL ? "Neutral" : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension)) + Glib::ustring("\" ");
 
         // ustring doesn't know int etc formatting, so take these via (unsafe) stream
         std::ostringstream strm;
