@@ -169,7 +169,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
             if (safe_file_test (fname, Glib::FILE_TEST_IS_DIR)) {
                 Glib::ustring vp(Glib::build_filename(virtualPath, currDir));
                 Glib::ustring rp(Glib::build_filename(realPath,    currDir));
-                parseDir (rp, vp, currDir, folder, level+1, 0);
+                fileFound = parseDir (rp, vp, currDir, folder, level+1, 0);
             }
             else {
                 size_t lastdot = currDir.find_last_of ('.');
@@ -396,6 +396,14 @@ void ProfileStore::removeListener(ProfileStoreListener *listener) {
     listeners.remove(listener);
 }
 
+void ProfileStore::dumpFolderList() {
+    printf("Folder list:\n------------\n");
+    for (unsigned int i=0; i<folders.size(); i++) {
+        printf(" #%3d - %s\n", i, folders.at(i).c_str());
+    }
+    printf("\n");
+}
+
 ProfileStoreEntry::ProfileStoreEntry() : label(""), type(PSET_FOLDER), parentFolderId(0), folderId(0) {}
 
 ProfileStoreEntry::ProfileStoreEntry(Glib::ustring label, PSEType type, unsigned short parentFolder, unsigned short folder) : label(label), type(type), parentFolderId(parentFolder), folderId(folder) {}
@@ -495,6 +503,7 @@ void ProfileStoreComboBox::updateProfileList () {
     const std::vector<const ProfileStoreEntry*> *entryList = profileStore.getFileList();
 
     Gtk::TreeModel::Row root;
+    //profileStore.dumpFolderList();
     refreshProfileList_ (&root, entryList->at(0)->parentFolderId, true, entryList);
 
     if (entryList->at(0)->parentFolderId != 0) {

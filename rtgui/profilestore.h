@@ -182,6 +182,8 @@ class ProfileStore {
         void addListener(ProfileStoreListener *listener);
         void removeListener(ProfileStoreListener *listener);
 
+        void dumpFolderList();
+
 };
 
 class ProfileStoreComboBox : public MyComboBox {
