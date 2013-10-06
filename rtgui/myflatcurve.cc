@@ -654,8 +654,8 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 			int previous_lit_point = lit_point;
 			enum MouseOverAreas prevArea = area;
 
-			snapToMinDist = 10.;
-			snapToVal = 0.;
+			snapToMinDistY = snapToMinDistX = 10.;
+			snapToValY = snapToValX = 0.;
 			snapToElmt = -100;
 
 			// get the pointer position
@@ -788,11 +788,12 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				ugpX -= deltaX*3;
 				ugpX = CLAMP(ugpX, 0., 1.);
 				if (snapTo) {
-					snapCoordinate(0.0,  ugpX);
-					snapCoordinate(0.35, ugpX);
-					snapCoordinate(0.5,  ugpX);
-					snapCoordinate(1.0,  ugpX);
-					curve.leftTangent[lit_point] = snapToVal;
+					// since this handle can only move in one direction, we can reuse the snapCoordinateX mechanism
+					snapCoordinateX(0.0,  ugpX);
+					snapCoordinateX(0.35, ugpX);
+					snapCoordinateX(0.5,  ugpX);
+					snapCoordinateX(1.0,  ugpX);
+					curve.leftTangent[lit_point] = snapToValX;
 				}
 				else {
 					curve.leftTangent[lit_point] = ugpX;
@@ -813,11 +814,12 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				ugpX += deltaX*3;
 				ugpX = CLAMP(ugpX, 0., 1.);
 				if (snapTo) {
-					snapCoordinate(0.0,  ugpX);
-					snapCoordinate(0.35, ugpX);
-					snapCoordinate(0.5,  ugpX);
-					snapCoordinate(1.0,  ugpX);
-					curve.rightTangent[lit_point] = snapToVal;
+					// since this handle can only move in one direction, we can reuse the snapCoordinateX mechanism
+					snapCoordinateX(0.0,  ugpX);
+					snapCoordinateX(0.35, ugpX);
+					snapCoordinateX(0.5,  ugpX);
+					snapCoordinateX(1.0,  ugpX);
+					curve.rightTangent[lit_point] = snapToValX;
 				}
 				else {
 					curve.rightTangent[lit_point] = ugpX;
@@ -897,12 +899,12 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 		if (periodic) {
 			if (snapTo) {
 				if (lit_point==0) {
-					snapCoordinate(0.0, ugpX);
-					curve.x[0] = snapToVal;
+					snapCoordinateX(0.0, ugpX);
+					curve.x[0] = snapToValX;
 				}
 				else if (lit_point==(nbPoints-1)) {
-					snapCoordinate(1.0, ugpX);
-					curve.x[nbPoints-1] = snapToVal;
+					snapCoordinateX(1.0, ugpX);
+					curve.x[nbPoints-1] = snapToValX;
 				}
 			}
 			else if (lit_point==0 && ugpX<0.) {
@@ -995,27 +997,27 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 
 			if (lit_point == 0) {
 				int prevP = curve.y.size()-1;
-				if (snapCoordinate(curve.y[prevP], ugpY)) snapToElmt = prevP;
+				if (snapCoordinateY(curve.y[prevP], ugpY)) snapToElmt = prevP;
 			}
 			else {
 				int prevP = lit_point-1;
-				if (snapCoordinate(curve.y[prevP], ugpY)) snapToElmt = prevP;
+				if (snapCoordinateY(curve.y[prevP], ugpY)) snapToElmt = prevP;
 			}
 
 			if (curve.y.size() > 2) {
 				if (lit_point == (curve.y.size()-1)) {
-					if (snapCoordinate(curve.y[0], ugpY)) snapToElmt = 0;
+					if (snapCoordinateY(curve.y[0], ugpY)) snapToElmt = 0;
 				}
 				else {
 					int nextP = lit_point+1;
-					if (snapCoordinate(curve.y[nextP], ugpY)) snapToElmt = nextP;
+					if (snapCoordinateY(curve.y[nextP], ugpY)) snapToElmt = nextP;
 				}
 			}
-			if (snapCoordinate(1.0, ugpY)) snapToElmt = -3;
-			if (snapCoordinate(0.5, ugpY)) snapToElmt = -2;
-			if (snapCoordinate(0.0, ugpY)) snapToElmt = -1;
+			if (snapCoordinateY(1.0, ugpY)) snapToElmt = -3;
+			if (snapCoordinateY(0.5, ugpY)) snapToElmt = -2;
+			if (snapCoordinateY(0.0, ugpY)) snapToElmt = -1;
 
-			curve.y[lit_point] = snapToVal;
+			curve.y[lit_point] = snapToValY;
 		}
 
 		// Handling limitations along Y axis
@@ -1153,7 +1155,7 @@ void MyFlatCurve::getMouseOverArea () {
 			if (curve.x[i] != -1) {
 				dX = curve.x[i] - preciseCursorX;
 				absDX = dX>0 ? dX : -dX;
-				if ((absDX < minDistX) || (absDX == minDistX && dX<0)) {
+				if (absDX < minDistX) {
 					minDistX = absDX;
 					closest_point = i;
 					lit_point = i;

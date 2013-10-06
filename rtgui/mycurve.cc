@@ -83,14 +83,27 @@ void MyCurve::notifyListener () {
         listener->curveChanged ();
 }
 
-bool MyCurve::snapCoordinate(double testedVal, double realVal) {
+bool MyCurve::snapCoordinateX(double testedVal, double realVal) {
 
-	double distY = realVal - testedVal;
+	double dist = realVal - testedVal;
 
-	if (distY < 0.) distY = -distY;
-	if (distY < snapToMinDist) {
-		snapToMinDist = distY;
-		snapToVal = testedVal;
+	if (dist < 0.) dist = -dist;
+	if (dist < snapToMinDistX) {
+		snapToMinDistX = dist;
+		snapToValX = testedVal;
+		return true;
+	}
+	return false;
+}
+
+bool MyCurve::snapCoordinateY(double testedVal, double realVal) {
+
+	double dist = realVal - testedVal;
+
+	if (dist < 0.) dist = -dist;
+	if (dist < snapToMinDistY) {
+		snapToMinDistY = dist;
+		snapToValY = testedVal;
 		return true;
 	}
 	return false;

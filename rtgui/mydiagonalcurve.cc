@@ -494,8 +494,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 		snapToElmt = -100;
 		if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS) {
 
-			snapToMinDist = 10.;
-			snapToVal = 0.;
+			snapToMinDistY = snapToMinDistX = 10.;
+			snapToValY = snapToValX = 0.;
 			snapToElmt = -100;
 
 			// get the pointer position
@@ -578,21 +578,21 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event) {
 							double ratio = (curve.x[grab_point]-prevX)/(nextX-prevX);
 							double y = (nextY-prevY) * ratio + prevY;
 
-							if (snapCoordinate(y, ugpY)) snapToElmt = 1000+grab_point;
+							if (snapCoordinateY(y, ugpY)) snapToElmt = 1000+grab_point;
 						}
 						if (grab_point > 0) {
 							int prevP = grab_point-1;
-							if (snapCoordinate(curve.y[prevP], ugpY)) snapToElmt = prevP;
+							if (snapCoordinateY(curve.y[prevP], ugpY)) snapToElmt = prevP;
 						}
 						if (grab_point < (curve.y.size()-1)) {
 							int nextP = grab_point+1;
-							if (snapCoordinate(curve.y[nextP], ugpY)) snapToElmt = nextP;
+							if (snapCoordinateY(curve.y[nextP], ugpY)) snapToElmt = nextP;
 						}
-						if (snapCoordinate(1.0,                 ugpY)) snapToElmt = -3;
-						if (snapCoordinate(curve.x[grab_point], ugpY)) snapToElmt = -2;
-						if (snapCoordinate(0.0,                 ugpY)) snapToElmt = -1;
+						if (snapCoordinateY(1.0,                 ugpY)) snapToElmt = -3;
+						if (snapCoordinateY(curve.x[grab_point], ugpY)) snapToElmt = -2;
+						if (snapCoordinateY(0.0,                 ugpY)) snapToElmt = -1;
 
-						curve.y[grab_point] = snapToVal;
+						curve.y[grab_point] = snapToValY;
 					}
 					else {
 						// nextPosY is in the bounds
