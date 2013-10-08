@@ -125,6 +125,12 @@ class ProfileStore {
         } StoreState;
 
     private:
+        struct SortProfiles {
+            bool operator ()(const ProfileStoreEntry* const a1, const ProfileStoreEntry* const a2) {
+                return a1->parentFolderId == a2->parentFolderId ? a1->label < a2->label :  a1->parentFolderId < a2->parentFolderId;
+            }
+        };
+
         MyMutex *parseMutex;
         StoreState storeState;
         rtengine::procparams::AutoPartialProfile *internalDefaultProfile;

@@ -113,6 +113,10 @@ void ProfileStore::_parseProfiles () {
         currDir = "${G}";
         parseDir (p2, virtualPath, currDir, 0, 0, displayLevel0);
     }
+
+    // sort profiles
+    std::sort(entries.begin(), entries.end(), SortProfiles() );
+
     // entries and partProfiles are empty, but the entry and profiles already exist (they have survived to clearFileList and clearProfileList)
     if (!internalDefaultEntry)
         internalDefaultEntry = new ProfileStoreEntry(Glib::ustring("(") + M("PROFILEPANEL_PINTERNAL") + Glib::ustring(")"), PSET_FILE, 0, 0);
@@ -195,7 +199,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
 
                         // map the partial profile
                         partProfiles[filePSE] = pProf;
-                        //partProfiles.insert( std::pair<ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*> (folderPSE, pProf) );
+                        //partProfiles.insert( std::pair<ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*> (filePSE, pProf) );
                     }
                     else if( options.rtSettings.verbose ) {
                         printf ("failed!\n");

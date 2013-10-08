@@ -1065,6 +1065,7 @@ void Preferences::parseDir (Glib::ustring dirname, std::vector<Glib::ustring>& i
       if (!safe_file_test (fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= ext.size() && sname.substr (sname.size()-ext.size(), ext.size()).casefold() == ext) 
             items.push_back (sname.substr(0,sname.size()-ext.size()));
     }
+    std::sort(items.begin(), items.end());
     delete dir;
 }
 
