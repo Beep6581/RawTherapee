@@ -4,6 +4,11 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include "sleef.c"
+#define pow_F(a,b) (xexpf(b*xlogf(a)))
+
+#define DIAGONALS 5
+#define DIAGONALSP1 6
 
 /* Solves A x = b by the conjugate gradient method, where instead of feeding it the matrix A you feed it a function which
 calculates A x where x is some vector. Stops when rms residual < RMSResidual or when maximum iterates is reached.
@@ -11,39 +16,42 @@ Stops at n iterates if MaximumIterates = 0 since that many iterates gives exact 
 definite problems only, which is what unconstrained smooth optimization pretty much always is.
 Parameter pass can be passed through, containing whatever info you like it to contain (matrix info?).
 Takes less memory with OkToModify_b = true, and Preconditioner = NULL. */
-float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, unsigned int n, bool OkToModify_b,
-	float *x, float RMSResidual, void *Pass, unsigned int MaximumIterates, void Preconditioner(float *Product, float *x, void *Pass)){
-	unsigned int iterate, i;
+float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), float *b, int n, bool OkToModify_b,
+	float *x, float RMSResidual, void *Pass, int MaximumIterates, void Preconditioner(float *Product, float *x, void *Pass)){
+	int iterate, i;
 
-	float *r = new float[n];
-
+	char* buffer = (char*)malloc(2*n*sizeof(float)+128);
+	float *r = (float*)(buffer+64);
 	//Start r and x.
 	if(x == NULL){
 		x = new float[n];
+
 		memset(x, 0, sizeof(float)*n);		//Zero initial guess if x == NULL.
 		memcpy(r, b, sizeof(float)*n);
 	}else{
 		Ax(r, x, Pass);
-		#ifdef _OPENMP
-		#pragma omp  parallel for           // removed schedule(dynamic,10)
-		#endif
-		for(int ii = 0; ii < n; ii++) r[ii] = b[ii] - r[ii];		//r = b - A x.
+#ifdef _OPENMP
+#pragma omp parallel for           // removed schedule(dynamic,10)
+#endif
+		for(int ii = 0; ii < n; ii++)
+			r[ii] = b[ii] - r[ii];		//r = b - A x.
 	}
 	//s is preconditionment of r. Without, direct to r.
-	float *s = r, rs = 0.0f, fp=0.f;
+	float *s = r, rs = 0.0f;
 	if(Preconditioner != NULL){
 		s = new float[n];
+
 		Preconditioner(s, r, Pass);
 	}
-	#ifdef _OPENMP
-	#pragma omp  parallel for firstprivate(fp) reduction(+:rs)  // removed schedule(dynamic,10)
-	#endif
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:rs)  // removed schedule(dynamic,10)
+#endif
 	for(int ii = 0; ii < n; ii++) {
-		fp = r[ii]*s[ii];
-		rs=rs+fp;
+		rs += r[ii]*s[ii];
 		}
 	//Search direction d.
-	float *d = new float[n];
+	float *d = (float*)(buffer + n*sizeof(float) + 128);
+	
 	memcpy(d, s, sizeof(float)*n);
 
 	//Store calculations of Ax in this.
@@ -56,22 +64,26 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 		//Get step size alpha, store ax while at it.
 		float ab = 0.0f;
 		Ax(ax, d, Pass);
+#ifdef _OPENMP
 #pragma omp parallel for reduction(+:ab)
-		for(int ii = 0; ii < n; ii++) ab += d[ii]*ax[ii];
+#endif
+		for(int ii = 0; ii < n; ii++)
+			ab += d[ii]*ax[ii];
 
 		if(ab == 0.0f) break;	//So unlikely. It means perfectly converged or singular, stop either way.
 		ab = rs/ab;
 
 		//Update x and r with this step size.
 		float rms = 0.0;
-//#pragma omp parallel for reduction(+:rms)                        // Omp makes it slower here. Don't know why
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:rms)
+#endif
 		for(int ii = 0; ii < n; ii++){
 			x[ii] += ab*d[ii];
 			r[ii] -= ab*ax[ii];	//"Fast recursive formula", use explicit r = b - Ax occasionally?
 			rms += r[ii]*r[ii];
 		}
 		rms = sqrtf(rms/n);
-//printf("%f\n", rms);
 		//Quit? This probably isn't the best stopping condition, but ok.
 		if(rms < RMSResidual) break;
 
@@ -80,12 +92,39 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 		//Get beta.
 		ab = rs;
 		rs = 0.0f;
-//#pragma omp parallel for reduction(+:rs)                            // Omp makes it slower here. Don't know why
-		for(int ii = 0; ii < n; ii++) rs += r[ii]*s[ii];
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+		float c = 0.0f;
+		float t;
+		float temp;
+#ifdef _OPENMP
+#pragma omp for reduction(+:rs)                            // Summation with error correction
+#endif
+		for(int ii = 0; ii < n; ii++) {
+			temp = r[ii]*s[ii];
+			t = rs + temp;
+			if( fabsf(rs) >= fabsf(temp) )
+				c += ((rs-t) + temp);
+			else
+				c += ((temp-t)+rs);
+			rs = t;
+		}
+		rs += c;
+}
+
 		ab = rs/ab;
 
 		//Update search direction p.
-		for(int ii = 0; ii < n; ii++) d[ii] = s[ii] + ab*d[ii];
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+		for(int ii = 0; ii < n; ii++)
+			d[ii] = s[ii] + ab*d[ii];
+
+
 	}
 
 	if(iterate == MaximumIterates)
@@ -94,29 +133,46 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
 	if(ax != b) delete[] ax;
 	if(s != r) delete[] s;
-	delete[] r;
-	delete[] d;
+	free(buffer);
 	return x;
 }
 
-MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(unsigned int Dimension, unsigned int NumberOfDiagonalsInLowerTriangle){
+MultiDiagonalSymmetricMatrix::MultiDiagonalSymmetricMatrix(int Dimension, int NumberOfDiagonalsInLowerTriangle){
 	n = Dimension;
 	m = NumberOfDiagonalsInLowerTriangle;
 	IncompleteCholeskyFactorization = NULL;
 
 	Diagonals = new float *[m];
-	StartRows = new unsigned int [m];
+	StartRows = new int [m+1];
 	memset(Diagonals, 0, sizeof(float *)*m);
-	memset(StartRows, 0, sizeof(unsigned int)*m);
+	memset(StartRows, 0, sizeof(int)*(m+1));
+	StartRows[m] = n+1;
 }
 
 MultiDiagonalSymmetricMatrix::~MultiDiagonalSymmetricMatrix(){
-	for(unsigned int i = 0; i != m; i++) delete[] Diagonals[i];
+	if(DiagBuffer != NULL)
+		free(buffer);
+	else
+		for(int i=0;i<m;i++)
+			delete[] Diagonals[i];
+	
 	delete[] Diagonals;
 	delete[] StartRows;
 }
 
-bool MultiDiagonalSymmetricMatrix::CreateDiagonal(unsigned int index, unsigned int StartRow){
+bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow){
+	// Changed memory allocation for diagonals to avoid L1 conflict misses
+	// Falls back to original version if big block could not be allocated
+	int padding = 4096 - ((n*m*sizeof(float)) % 4096);
+	if(index == 0){
+		buffer = (char*)malloc( (n+padding) * m * sizeof(float)+ (m+16)*64 + 63);
+		if(buffer == NULL)
+			// no big memory block available => try to allocate smaller blocks
+			DiagBuffer = NULL;
+		else {
+			DiagBuffer = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
+		}
+	}
 	if(index >= m){
 		printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: invalid index.\n");
 		return false;
@@ -127,27 +183,32 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(unsigned int index, unsigned i
 			return false;
 		}
 
-	delete[] Diagonals[index];
-	Diagonals[index] = new float[DiagonalLength(StartRow)];
-	if(Diagonals[index] == NULL){
-		printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: memory allocation failed. Out of memory?\n");
-		return false;
+	if(DiagBuffer != NULL)
+		Diagonals[index] = (float*)(DiagBuffer+(index*(n+padding)*sizeof(float))+((index+16)*64));
+	else {
+		Diagonals[index] = new float[DiagonalLength(StartRow)];
+		if(Diagonals[index] == NULL) {
+			printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: memory allocation failed. Out of memory?\n");
+			return false;
+		}
 	}
-
+		
 	StartRows[index] = StartRow;
 	memset(Diagonals[index], 0, sizeof(float)*DiagonalLength(StartRow));
 	return true;
 }
 
-int MultiDiagonalSymmetricMatrix::FindIndex(unsigned int StartRow){
+inline int MultiDiagonalSymmetricMatrix::FindIndex(int StartRow) {
 	//There's GOT to be a better way to do this. "Bidirectional map?"
-	for(unsigned int i = 0; i != m; i++)
+	// Issue 1895 : Changed start of loop from zero to one
+	// m is small (5 or 6)
+	for(int i = 1; i < m; i++)
 		if(StartRows[i] == StartRow)
 			return i;
 	return -1;
 }
 
-bool MultiDiagonalSymmetricMatrix::LazySetEntry(float value, unsigned int row, unsigned int column){
+bool MultiDiagonalSymmetricMatrix::LazySetEntry(float value, int row, int column){
 	//On the strict upper triangle? Swap, this is ok due to symmetry.
 	int i, sr;
 	if(column > row)
@@ -165,35 +226,55 @@ bool MultiDiagonalSymmetricMatrix::LazySetEntry(float value, unsigned int row, u
 	return true;
 }
 
-void MultiDiagonalSymmetricMatrix::VectorProduct(float *Product, float *x){
-	//Initialize to zero.
-	memset(Product, 0, n*sizeof(float));
+void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float* RESTRICT x){
 
 	//Loop over the stored diagonals.
-	for(unsigned int i = 0; i != m; i++){
-		unsigned int sr = StartRows[i];
+	for(int i = 0; i < m; i++){
+		int sr = StartRows[i];
 		float *a = Diagonals[i];	//One fewer dereference.
-		unsigned int j, l = DiagonalLength(sr);
+		int l = DiagonalLength(sr);
 
 		if(sr == 0)
+#ifdef _OPENMP
 #pragma omp parallel for
-			for(j = 0; j < l; j++)
-				Product[j] += a[j]*x[j];		//Separate, fairly simple treatment for the main diagonal.
+#endif
+			for(int j = 0; j < l; j++)
+				Product[j] = a[j]*x[j];		//Separate, fairly simple treatment for the main diagonal.
 		else {
-// Split the loop in 2 parts, so now it can be parallelized without race conditions
-#pragma omp parallel for
-			for(j = 0; j < l; j++) {
-				Product[j + sr] += a[j]*x[j];	//Contribution from lower...
+// Split the loop in 3 parts, so now the big one in the middle can be parallelized without race conditions
+
+			// updates 0 to sr - 1. Because sr is small (in the range of image-width) no benefit by omp
+			for(int j=0;j<sr;j++) {
+				Product[j] += a[j]*x[j + sr];		//Contribution from upper triangle
 			}
-#pragma omp parallel for
-			for(j = 0; j < l; j++) {
-				Product[j] += a[j]*x[j + sr];	//...and upper triangle.
+				
+			// Updates sr to l - 1. Because sr is small and l is big, this loop is parallelized
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+#ifdef _OPENMP
+#pragma omp for nowait
+#endif
+			for(int j = sr; j < l; j++) {
+				Product[j] += a[j - sr]*x[j - sr] + a[j]*x[j + sr];		//Contribution from lower and upper triangle
 			}
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+			// Updates l to l + sr - 1. Because sr is small (in the range of image-width) no benefit by omp
+			for(int j = l; j < l + sr; j++) {
+				Product[j] += a[j-sr]*x[j - sr];	//Contribution from lower triangle
+			}
+}
+}
 		}
 	}
-}
 
-bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(unsigned int MaxFillAbove){
+} 
+
+bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int MaxFillAbove){
 	if(m == 1){
 		printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: just one diagonal? Can you divide?\n");
 		return false;
@@ -202,20 +283,17 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(unsigne
 		printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: main diagonal required to exist for this math.\n");
 		return false;
 	}
-
 	//How many diagonals in the decomposition?
 	MaxFillAbove++;	//Conceptually, now "fill" includes an existing diagonal. Simpler in the math that follows.
-	unsigned int i, j, mic, fp;
+	int i, j, mic, fp;
 	mic=1;
 	fp=1;
-	#ifdef _OPENMP
-	#pragma omp parallel for firstprivate(fp) reduction(+:mic)                  // removed schedule(dynamic,10)
-	#endif
 	for(int ii = 1; ii < m; ii++) {
 		fp = rtengine::min(StartRows[ii] - StartRows[ii - 1], MaxFillAbove);	//Guarunteed positive since StartRows must be created in increasing order.
 		mic=mic+fp;
 		}
 	//Initialize the decomposition - setup memory, start rows, etc.
+
 	MultiDiagonalSymmetricMatrix *ic = new MultiDiagonalSymmetricMatrix(n, mic);
 	ic->CreateDiagonal(0, 0);	//There's always a main diagonal in this type of decomposition.
 	mic=1;
@@ -233,67 +311,96 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(unsigne
 			}
 	}
 
-
 	//It's all initialized? Uhkay. Do the actual math then.
 	int sss, ss, s;
-	unsigned int k, MaxStartRow = StartRows[m - 1];	//Handy number.
+	int k, MaxStartRow = StartRows[m - 1];	//Handy number.
 	float **l = ic->Diagonals;
 	float  *d = ic->Diagonals[0];		//Describes D in LDLt.
+	int icm = ic->m;
+	int icn = ic->n;
+	int* RESTRICT icStartRows = ic->StartRows;
 
 	//Loop over the columns.
-	for(j = 0; j != n; j++){
+
+	// create array for quicker access to ic->StartRows
+	struct s_diagmap {
+		int sss;
+		int ss;
+		int k;
+	};
+
+
+	// Pass one: count number of needed entries
+	int	entrycount = 0;
+	for(int i=1;i<icm;i++) {
+		for(int j=1;j<icm;j++) {
+			if(ic->FindIndex( icStartRows[i] + icStartRows[j]) > 0)
+				entrycount ++;
+		}
+	}
+
+	// now we can create the array
+	struct s_diagmap* RESTRICT DiagMap = new s_diagmap[entrycount];
+	// we also need the maxvalues
+	int	entrynumber = 0;
+	int index;
+	int* RESTRICT MaxIndizes = new int[icm];
+
+	for(int i=1;i<icm;i++) {
+		for(int j=1;j<icm;j++){
+			index = ic->FindIndex( icStartRows[i] + icStartRows[j]);
+			if(index > 0) {
+				DiagMap[entrynumber].ss = j;
+				DiagMap[entrynumber].sss = index;
+				DiagMap[entrynumber].k = icStartRows[j];
+				entrynumber ++;
+			}
+		}
+		MaxIndizes[i] = entrynumber - 1;
+	}
+
+	int* RESTRICT findmap = new int[icm];
+		for(int j=0;j<icm;j++)
+			findmap[j] = FindIndex( icStartRows[j]);
+	
+	for(j = 0; j < n; j++){
 		//Calculate d for this column.
 		d[j] = Diagonals[0][j];
 
 		//This is a loop over k from 1 to j, inclusive. We'll cover that by looping over the index of the diagonals (s), and get k from it.
 		//The first diagonal is d (k = 0), so skip that and have s start at 1. Cover all available s but stop if k exceeds j.
-		for(s = 1; s != ic->m; s++){
-			k = ic->StartRows[s];
-			if(k > j) break;
+		s=1;
+		k=icStartRows[s];
+		while(k<=j) {
 			d[j] -= l[s][j - k]*l[s][j - k]*d[j - k];
+			s++;
+			k=icStartRows[s];
 		}
-
-		if(d[j] == 0.0f){
+		if(UNLIKELY(d[j] == 0.0f)){
 			printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: division by zero. Matrix not decomposable.\n");
 			delete ic;
 			return false;
 		}
 		float id = 1.0f/d[j];
-
 		//Now, calculate l from top down along this column.
-		for(s = 1; s != ic->m; s++){
-			i = ic->StartRows[s];		//Start row for this entry.
-			if(j >= ic->n - i) break;	//Possible values of j are limited.
 
-			//Quicker access for an element of l.
-			float *lij = &l[s][j];
-			sss = FindIndex(i);	//Find element in same spot in the source matrix. It might be a zero.
-			*lij = sss < 0 ? 0.0f : Diagonals[sss][j];
+		int mapindex = 0;
+		for(s = 1; s < icm; s++){
+			if(j >= icn - icStartRows[s]) break;	//Possible values of j are limited.
 
-			//Similar to the loop involving d, convoluted by the fact that two l are involved.
-			for(ss = 1; ss != ic->m; ss++){
-				k = ic->StartRows[ss];
-				if(k > j) break;
-				if(i + k > MaxStartRow) break;	//Quick exit once k to big.
-
-				int sss = ic->FindIndex(i + k);
-				if(sss < 0) continue;			//Asked for diagonal nonexistant. But there may be something later, so don't break.
-
-				/* Let's think about the factors in the term below for a moment.
-				j varies from 0 to n - 1, so j - k is bounded inclusive by 0 and j - 1. So d[j - k] is always in the matrix.
-
-				l[sss] and l[ss] are diagonals with corresponding start rows i + k and k.
-				For l[sss][j - k] to exist, we must have j - k < n - (i + k) -> j < n - i, which was checked outside this loop and true at this point.
-				For l[ ss][j - k] to exist, we must have j - k < n - k -> j < n, which is true straight from definition.
-
-				So, no additional checks, all is good and within bounds at this point.*/
-				*lij -= l[sss][j - k]*l[ss][j - k]*d[j - k];
+			float temp = 0.0f;
+			
+			while(mapindex <= MaxIndizes[s] && ( k = DiagMap[mapindex].k) <= j) {
+				temp -= l[DiagMap[mapindex].sss][j - k]*l[DiagMap[mapindex].ss][j - k]*d[j - k];
+				mapindex ++;
 			}
-
-			*lij *= id;
+			sss = findmap[s];
+			l[s][j] = sss < 0 ? temp * id : (Diagonals[sss][j] + temp) * id;
 		}
 	}
-
+	delete[] DiagMap;
+	delete[] MaxIndizes;
+	delete[] findmap;
 	IncompleteCholeskyFactorization = ic;
 	return true;
 }
@@ -302,58 +409,96 @@ void MultiDiagonalSymmetricMatrix::KillIncompleteCholeskyFactorization(void){
 	delete IncompleteCholeskyFactorization;
 }
 
-void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float *x, float *b){
+void MultiDiagonalSymmetricMatrix::CholeskyBackSolve(float* RESTRICT x, float* RESTRICT b){
 	//We want to solve L D Lt x = b where D is a diagonal matrix described by Diagonals[0] and L is a unit lower triagular matrix described by the rest of the diagonals.
 	//Let D Lt x = y. Then, first solve L y = b.
-	float *y = new float[n];
-	float **d = IncompleteCholeskyFactorization->Diagonals;
-	unsigned int *s = IncompleteCholeskyFactorization->StartRows;
-	unsigned int M = IncompleteCholeskyFactorization->m, N = IncompleteCholeskyFactorization->n;
-	unsigned int i, j;
-	for(j = 0; j != N; j++){
-        float sub = 0;              // using local var to reduce memory writes, gave a big speedup
-		for(i = 1; i != M; i++){	//Start at 1 because zero is D.
-
-			int c = (int)j - (int)s[i];
-			if(c < 0) break;		//Due to ordering of StartRows, no further contributions.
-			if(c==j) {
-                sub += d[i][c]*b[c];    //Because y is not filled yet, we have to access b
+	float* RESTRICT  *d = IncompleteCholeskyFactorization->Diagonals;
+	int* RESTRICT s = IncompleteCholeskyFactorization->StartRows;
+	int M = IncompleteCholeskyFactorization->m, N = IncompleteCholeskyFactorization->n;
+	int i, j;
+	
+	if(M != DIAGONALSP1){					// can happen in theory
+		for(j = 0; j < N; j++){
+			float sub = b[j];					// using local var to reduce memory writes, gave a big speedup
+			i = 1;
+			int c = j - s[i];
+			while(c >= 0) {
+				sub -= d[i][c]*x[c];
+				i++;
+				c = j - s[i];
 			}
-			else {
-                sub += d[i][c]*y[c];
-			}
+			x[j] = sub;							// only one memory-write per j
 		}
-		y[j] = b[j] - sub;          // only one memory-write per j
+	} else {							   // that's the case almost every time
+		for(j = 0; j <= s[M-1]; j++){
+			float sub = b[j];					// using local var to reduce memory writes, gave a big speedup
+			i = 1;
+			int c = j - s[1];
+			while(c >= 0) {
+				sub -= d[i][c]*x[c];
+				i++;
+				c = j - s[i];
+			}
+			x[j] = sub;							// only one memory-write per j
+		}
+		for(j = s[M-1]+1; j<N; j++){
+			float sub = b[j];              		// using local var to reduce memory writes, gave a big speedup
+			for(int i=1;i<DIAGONALSP1;i++){		// using a constant upperbound allows the compiler to unroll this loop (gives a good speedup)
+				sub -= d[i][j-s[i]]*x[j-s[i]];
+			}
+			x[j] = sub;							// only one memory-write per j
+		}
 	}
 
 	//Now, solve x from D Lt x = y -> Lt x = D^-1 y
 // Took this one out of the while, so it can be parallelized now, which speeds up, because division is expensive
+#ifdef _OPENMP
 #pragma omp parallel for
+#endif
     for(j = 0; j < N; j++)
-		x[j] = y[j]/d[0][j];
+		x[j] = x[j]/d[0][j];
 
-	while(j-- != 0){
-        float sub = 0;                      // using local var to reduce memory writes, gave a big speedup
-		for(i = 1; i != M; i++){
-			if(j + s[i] >= N) break;
-			sub += d[i][j]*x[j + s[i]];
+	if(M != DIAGONALSP1){					// can happen in theory
+		while(j-- > 0){
+			float sub = x[j];					// using local var to reduce memory writes, gave a big speedup
+			i=1;
+			int c = j+s[1];
+			while(c < N) {
+				sub -= d[i][j]*x[c];
+				i++;
+				c = j+s[i];
+			}
+			x[j] = sub;							// only one memory-write per j
 		}
-		x[j] -= sub;                        // only one memory-write per j
+	} else {								// that's the case almost every time
+		for(j=N-1;j>=(N-1)-s[M-1];j--) {
+			float sub = x[j];					// using local var to reduce memory writes, gave a big speedup
+			i=1;
+			int c = j+s[1];
+			while(c < N) {
+				sub -= d[i][j]*x[j+s[i]];
+				i++;
+				c = j+s[i];
+			}
+			x[j] = sub;							// only one memory-write per j
+		}
+		for(j=(N-2)-s[M-1];j>=0;j--) {
+			float sub = x[j];					// using local var to reduce memory writes, gave a big speedup
+			for(int i=1;i<DIAGONALSP1;i++){		// using a constant upperbound allows the compiler to unroll this loop (gives a good speedup)
+				sub -= d[i][j]*x[j + s[i]];
+			}
+			x[j] = sub;							// only one memory-write per j
+		}
 	}
-
-	delete[] y;
 }
 
-
-
-
-EdgePreservingDecomposition::EdgePreservingDecomposition(unsigned int width, unsigned int height){
+EdgePreservingDecomposition::EdgePreservingDecomposition(int width, int height){
 	w = width;
 	h = height;
 	n = w*h;
 
 	//Initialize the matrix just once at construction.
-	A = new MultiDiagonalSymmetricMatrix(n, 5);
+	A = new MultiDiagonalSymmetricMatrix(n, DIAGONALS);
 	if(!(
 		A->CreateDiagonal(0, 0) &&
 		A->CreateDiagonal(1, 1) &&
@@ -376,41 +521,76 @@ EdgePreservingDecomposition::~EdgePreservingDecomposition(){
 	delete A;
 }
 
-float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float EdgeStopping, unsigned int Iterates, float *Blur, bool UseBlurForEdgeStop){
+SSEFUNCTION float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float EdgeStopping, int Iterates, float *Blur, bool UseBlurForEdgeStop){
+
 	if(Blur == NULL)
 		UseBlurForEdgeStop = false,	//Use source if there's no supplied Blur.
 		Blur = new float[n];
+
 	if(Scale == 0.0f){
 		memcpy(Blur, Source, n*sizeof(float));
 		return Blur;
 	}
 
 	//Create the edge stopping function a, rotationally symmetric and just one instead of (ax, ay). Maybe don't need Blur yet, so use its memory.
-	float *a, *g;
+	float* RESTRICT a;
+	float* RESTRICT g;
 	if(UseBlurForEdgeStop) a = new float[n], g = Blur;
 	else a = Blur, g = Source;
 
-	//unsigned int x, y;
-	unsigned int i;
-	unsigned int w1 = w - 1, h1 = h - 1;
+	int i;
+	int w1 = w - 1, h1 = h - 1;
 //	float eps = 0.02f;
 	const float sqreps = 0.0004f;                           // removed eps*eps from inner loop
-//	float ScaleConstant = Scale * powf(0.5f,-EdgeStopping);
-	#ifdef _OPENMP
-	#pragma omp parallel for                // removed schedule(dynamic,10)
-	#endif
+
+
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+#ifdef __SSE2__
+	int x;
+	__m128 gxv,gyv;
+	__m128 Scalev = _mm_set1_ps( Scale );
+	__m128 sqrepsv = _mm_set1_ps( sqreps );
+	__m128 EdgeStoppingv = _mm_set1_ps( -EdgeStopping );
+	__m128 zd5v = _mm_set1_ps( 0.5f );
+	__m128 temp1v, temp2v;
+#endif
+#ifdef _OPENMP
+#pragma omp for
+#endif
 	for(int y = 0; y < h1; y++){
 		float *rg = &g[w*y];
+#ifdef __SSE2__
+		for(x = 0; x < w1-3; x+=4){
+			//Estimate the central difference gradient in the center of a four pixel square. (gx, gy) is actually 2*gradient.
+			gxv = (LVFU(rg[x + 1]) -  LVFU(rg[x])) + (LVFU(rg[x + w + 1]) - LVFU(rg[x + w]));
+			gyv = (LVFU(rg[x + w]) -  LVFU(rg[x])) + (LVFU(rg[x + w + 1]) - LVFU(rg[x + 1]));
+			//Apply power to the magnitude of the gradient to get the edge stopping function.
+			_mm_storeu_ps( &a[x + w*y], Scalev * pow_F((zd5v*_mm_sqrt_ps(gxv*gxv + gyv*gyv + sqrepsv)), EdgeStoppingv) );
+		}
+		for(; x < w1; x++){
+			//Estimate the central difference gradient in the center of a four pixel square. (gx, gy) is actually 2*gradient.
+			float gx = (rg[x + 1] - rg[x]) + (rg[x + w + 1] - rg[x + w]);
+			float gy = (rg[x + w] - rg[x]) + (rg[x + w + 1] - rg[x + 1]);
+			//Apply power to the magnitude of the gradient to get the edge stopping function.
+			a[x + w*y] = Scale*pow_F(0.5f*sqrtf(gx*gx + gy*gy + sqreps), -EdgeStopping);
+		}
+#else
 		for(int x = 0; x < w1; x++){
 			//Estimate the central difference gradient in the center of a four pixel square. (gx, gy) is actually 2*gradient.
 			float gx = (rg[x + 1] - rg[x]) + (rg[x + w + 1] - rg[x + w]);
 			float gy = (rg[x + w] - rg[x]) + (rg[x + w + 1] - rg[x + 1]);
 
 			//Apply power to the magnitude of the gradient to get the edge stopping function.
-			a[x + w*y] = Scale*powf(0.5f*sqrtf(gx*gx + gy*gy + sqreps), -EdgeStopping);
+			a[x + w*y] = Scale*pow_F(0.5f*sqrtf(gx*gx + gy*gy + sqreps), -EdgeStopping);
 		}
+#endif
 	}
-//unsigned int x,y;
+}
+
+
 	/* Now setup the linear problem. I use the Maxima CAS, here's code for making an FEM formulation for the smoothness term:
 		p(x, y) := (1 - x)*(1 - y);
 		P(m, n) := A[m][n]*p(x, y) + A[m + 1][n]*p(1 - x, y) + A[m + 1][n + 1]*p(1 - x, 1 - y) + A[m][n + 1]*p(x, 1 - y);
@@ -421,11 +601,12 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 		Integrate(diff(P(u - 1, v - 1), x)*diff(p(1 - x, 1 - y), x) + diff(P(u - 1, v - 1), y)*diff(p(1 - x, 1 - y), y));
 		Integrate(diff(P(u, v - 1), x)*diff(p(x, 1 - y), x) + diff(P(u, v - 1), y)*diff(p(x, 1 - y), y));
 	So yeah. Use the numeric results of that to fill the matrix A.*/
+
 	memset(a_1, 0, A->DiagonalLength(1)*sizeof(float));
 	memset(a_w1, 0, A->DiagonalLength(w - 1)*sizeof(float));
 	memset(a_w, 0, A->DiagonalLength(w)*sizeof(float));
 	memset(a_w_1, 0, A->DiagonalLength(w + 1)*sizeof(float));
-//	unsigned int x, y;
+
 
 // checked for race condition here
 // a0[] is read and write but adressed by i only
@@ -435,35 +616,42 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
 // a_w1 is write only
 // a_1 is write only
 // So, there should be no race conditions
+
+#ifdef _OPENMP
 #pragma omp parallel for
+#endif
 	for(int y = 0; y < h; y++){
-        unsigned int i = y*w;
-		for(int x = 0; x != w; x++, i++){
-			float ac;
-			a0[i] = 1.0;
+        int i = y*w;
+		for(int x = 0; x < w; x++, i++){
+			float ac,a0temp;
+			a0temp = 0.25f;
 
 			//Remember, only fill the lower triangle. Memory for upper is never made. It's symmetric. Trust.
-			if(x > 0 && y > 0)
-				ac = a[i - w - 1]/6.0f,
-				a_w_1[i - w - 1] -= 2.0f*ac, a_w[i - w] -= ac,
-				a_1[i - 1]       -=      ac, a0[i] += 4.0f*ac;
-
-			if(x < w1 && y > 0)
-				ac = a[i - w]/6.0f,
-				a_w[i - w] -= ac, a_w1[i - w + 1] -= 2.0f*ac,
-				a0[i] += 4.0f*ac;
-
-			if(x > 0 && y < h1)
-				ac = a[i - 1]/6.0f,
-				a_1[i - 1] -= ac, a0[i] += 4.0f*ac;
-
+			if(x > 0 && y > 0) {						
+				ac = a[i - w - 1]/6.0f;
+				a_w_1[i - w - 1] -= 2.0f*ac;
+				a_w[i - w] -= ac;
+				a_1[i - 1] -= ac;
+				a0temp += ac;
+			}
+			if(x < w1 && y > 0) {
+				ac = a[i - w]/6.0f;
+				a_w[i - w] -= ac;
+				a_w1[i - w + 1] -= 2.0f*ac;
+				a0temp += ac;
+			}
+			if(x > 0 && y < h1) {
+				ac = a[i - 1]/6.0f;
+				a_1[i - 1] -= ac;
+				a0temp += ac;
+			}
 			if(x < w1 && y < h1)
-				a0[i] += 4.0f*a[i]/6.0f;
+				a0temp += a[i]/6.0f;
+			a0[i] = 4.0f*a0temp;
 		}
 	}
 
   if(UseBlurForEdgeStop) delete[] a;
-
   //Solve & return.
   bool success=A->CreateIncompleteCholeskyFactorization(1); //Fill-in of 1 seems to work really good. More doesn't really help and less hurts (slightly).
   if(!success) {
@@ -477,7 +665,7 @@ float *EdgePreservingDecomposition::CreateBlur(float *Source, float Scale, float
   return Blur;
 }
 
-float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scale, float EdgeStopping, unsigned int Iterates, unsigned int Reweightings, float *Blur){
+float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scale, float EdgeStopping, int Iterates, int Reweightings, float *Blur){
 	//Simpler outcome?
 	if(Reweightings == 0) return CreateBlur(Source, Scale, EdgeStopping, Iterates, Blur);
 
@@ -487,38 +675,85 @@ float *EdgePreservingDecomposition::CreateIteratedBlur(float *Source, float Scal
 
 	//Iteratively improve the blur.
 	Reweightings++;
-	for(unsigned int i = 0; i < Reweightings; i++)
+	for(int i = 0; i < Reweightings; i++)
 		CreateBlur(Source, Scale, EdgeStopping, Iterates, Blur, true);
 
 	return Blur;
 }
 
-float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, unsigned int Iterates, unsigned int Reweightings, float *Compressed){
+SSEFUNCTION float *EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scale, float EdgeStopping, float CompressionExponent, float DetailBoost, int Iterates, int Reweightings, float *Compressed){
 	//Small number intended to prevent division by zero. This is different from the eps in CreateBlur.
 	const float eps = 0.0001f;
 
 	//We're working with luminance, which does better logarithmic.
-	unsigned int i;
-	#ifdef _OPENMP
-	#pragma omp parallel for                        // removed schedule(dynamic,10)
-	#endif
-	for(int ii = 0; ii < n; ii++)
-		Source[ii] = logf(Source[ii] + eps);
+#ifdef __SSE2__
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+	__m128 epsv = _mm_set1_ps( eps );
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for(int ii = 0; ii < n-3; ii+=4)
+		_mm_storeu_ps( &Source[ii], xlogf(LVFU(Source[ii]) + epsv));
+}
+	for(int ii = n-(n%4); ii < n; ii++)
+		Source[ii] = xlogf(Source[ii] + eps);
 
+#else
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+	for(int ii = 0; ii < n; ii++)
+		Source[ii] = xlogf(Source[ii] + eps);
+#endif
+	
 	//Blur. Also setup memory for Compressed (we can just use u since each element of u is used in one calculation).
 	float *u = CreateIteratedBlur(Source, Scale, EdgeStopping, Iterates, Reweightings);
 	if(Compressed == NULL) Compressed = u;
 
 	//Apply compression, detail boost, unlogging. Compression is done on the logged data and detail boost on unlogged.
-	#ifdef _OPENMP
-	#pragma omp parallel for                        // removed schedule(dynamic,10)
-	#endif
-	for(int i = 0; i < n; i++){
-		float ce = expf(Source[i] + u[i]*(CompressionExponent - 1.0f)) - eps;
-		float ue = expf(u[i]) - eps;
-		Source[i] = expf(Source[i]) - eps;
+	float temp = CompressionExponent - 1.0f;
+
+#ifdef __SSE2__
+#ifdef _OPENMP
+#pragma omp parallel
+#endif
+{
+	__m128 cev, uev, sourcev;
+	__m128 epsv = _mm_set1_ps( eps );
+	__m128 DetailBoostv = _mm_set1_ps( DetailBoost );
+	__m128 tempv = _mm_set1_ps( temp );
+#ifdef _OPENMP
+#pragma omp for
+#endif
+	for(int i = 0; i < n-3; i+=4){
+		cev = xexpf(LVFU(Source[i]) + LVFU(u[i])*(tempv)) - epsv;
+		uev = xexpf(LVFU(u[i])) - epsv;
+		sourcev = xexpf(LVFU(Source[i])) - epsv;
+		_mm_storeu_ps( &Source[i], sourcev);
+		_mm_storeu_ps( &Compressed[i], cev + DetailBoostv * (sourcev - uev) );
+	}
+}
+	for(int i=n-(n%4); i < n; i++){
+		float ce = xexpf(Source[i] + u[i]*(temp)) - eps;
+		float ue = xexpf(u[i]) - eps;
+		Source[i] = xexpf(Source[i]) - eps;
 		Compressed[i] = ce + DetailBoost*(Source[i] - ue);
 	}
+	
+#else
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+	for(int i = 0; i < n; i++){
+		float ce = xexpf(Source[i] + u[i]*(temp)) - eps;
+		float ue = xexpf(u[i]) - eps;
+		Source[i] = xexpf(Source[i]) - eps;
+		Compressed[i] = ce + DetailBoost*(Source[i] - ue);
+	}
+#endif
 
 	if(Compressed != u) delete[] u;
 	return Compressed;
