@@ -453,7 +453,9 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
   keep = false;
 
   // filter out invalid tags
-  if ((int)type<1 || (int)type>14 || count>900000) {
+  // note the large count is to be able to pass LeafData ASCII tag which can be up to almost 10 megabytes,
+  // (only a small part of it will actually be parsed though)
+  if ((int)type<1 || (int)type>14 || count>10*1024*1024) {
     type = INVALID;
     return;
   }
@@ -1364,7 +1366,8 @@ parse_leafdata(TagDirectory* root, ByteOrder order) {
     int valuesize = leafdata->getValueSize();
 
     // parse LeafData tag, a tag specific to Leaf digital backs, and has a custom
-    // format with 52 byte tag headers starting with "PKTS".
+    // format with 52 byte tag headers starting with "PKTS"
+    const char *PKTS_tag = (order == MOTOROLA) ? "PKTS" : "STKP";
     char *hdr;
     int pos = 0;
 
@@ -1376,13 +1379,13 @@ parse_leafdata(TagDirectory* root, ByteOrder order) {
     int found_count = 0;
     while (pos + sizeof(hdr) <= valuesize && found_count < 2) {
         hdr = (char *)&value[pos];
-        if (strncmp(hdr, "PKTS", 4) != 0) {
+        if (strncmp(hdr, PKTS_tag, 4) != 0) {
             // in a few cases the header can be offset a few bytes, don't know why
             // it does not seem to be some sort of alignment, it appears random,
             // this check takes care of it, restart if we find an offset match.
             int offset = 1;
             for (; offset <= 3; offset++) {
-                if (strncmp(&hdr[offset], "PKTS", 4) == 0) {
+                if (strncmp(&hdr[offset], PKTS_tag, 4) == 0) {
                     pos += offset;
                     break;
                 }
@@ -1407,10 +1410,10 @@ parse_leafdata(TagDirectory* root, ByteOrder order) {
         } else {
             // check if this is a sub-directory, include test for that strange offset of next header
             if (size >= 8 &&
-                (strncmp(val, "PKTS", 4) == 0 ||
-                 strncmp(&val[1], "PKTS", 4) == 0 ||
-                 strncmp(&val[2], "PKTS", 4) == 0 ||
-                 strncmp(&val[3], "PKTS", 4) == 0))
+                (strncmp(val, PKTS_tag, 4) == 0 ||
+                 strncmp(&val[1], PKTS_tag, 4) == 0 ||
+                 strncmp(&val[2], PKTS_tag, 4) == 0 ||
+                 strncmp(&val[3], PKTS_tag, 4) == 0))
             {
                 // start of next hdr, this is a sub-directory, we skip those for now.
                 size = 0;
@@ -1476,7 +1479,27 @@ parse_leafdata(TagDirectory* root, ByteOrder order) {
                 if (strcmp(tag, "Make") == 0 ||
                     strcmp(tag, "Model") == 0)
                 {
-                    t->initString (val);
+                    if (strcmp(tag, "Model") == 0) {
+                        // Leaf adds back serial number and camera model to the 'Model'
+                        // tag, we strip that away here so the back can be recognized
+                        // and matched against DCP profile
+                        char *p1 = strchr(val, '(');
+                        if (p1 != NULL) {
+                            *p1 = '\0';
+                        }
+                        // Model name also contains a leading "Leaf " which we already
+                        // have in the Make name, remove that.
+                        if (strstr(val, "Leaf ") == val) {
+                            t->initString (&val[5]);
+                        } else {
+                            t->initString (val);
+                        }
+                        if (p1 != NULL) {
+                            *p1 = '(';
+                        }
+                    } else {
+                        t->initString (val);
+                    }
                     root->addTagFront (t);
                 } else {
                     delete t;
@@ -1572,8 +1595,12 @@ parse_leafdata(TagDirectory* root, ByteOrder order) {
                     t->initRational (num, denom);
                     exif->getDirectory()->addTagFront (t);
                 } else if (strcmp(tag, "ISOSpeedRatings") == 0) {
-                    t->initInt (atoi(val), LONG);
-                    exif->getDirectory()->addTagFront (t);
+                    char *p1 = val;
+                    while (*p1 != '\0' && !isdigit(*p1)) p1++;
+                    if (*p1 != '\0') {
+                        t->initInt (atoi(p1), LONG);
+                        exif->getDirectory()->addTagFront (t);
+                    }
                 } else if (strcmp(tag, "DateTimeOriginal") == 0 &&
                            sscanf(val, "%d-%d-%dT%d:%d:%dZ",
                                   &tm.tm_year, &tm.tm_mon,
@@ -1581,7 +1608,7 @@ parse_leafdata(TagDirectory* root, ByteOrder order) {
                                   &tm.tm_min, &tm.tm_sec) == 6)
                 {
                     char tstr[64];
-                    sprintf(tstr, "%02d:%02d:%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon,
+                    sprintf(tstr, "%04d:%02d:%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon,
                             tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
                     t->initString (tstr);
                     exif->getDirectory()->addTagFront (t);
