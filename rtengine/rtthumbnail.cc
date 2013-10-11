@@ -190,9 +190,15 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     delete img;
 
     if (rotate && ri->get_rotateDegree() > 0) {
-        // Leaf .mos, Mamiya .mef and Phase One files have thumbnails already rotated.
-        if (ri->get_maker() != "Leaf" && ri->get_maker() != "Mamiya" && ri->get_maker() != "Phase One")  {
+        std::string fname = ri->get_filename();
+        std::string suffix = fname.length() > 4 ? fname.substr(fname.length()-3) : "";
+        for (int i = 0; i < suffix.length(); i++) suffix[i] = std::tolower(suffix[i]);
+        // Leaf .mos, Mamiya .mef and Phase One .iiq files have thumbnails already rotated.
+        if (suffix != "mos" && suffix != "mef" && suffix != "iiq")  {
             tpp->thumbImg->rotate(ri->get_rotateDegree());
+            // width/height may have changed after rotating
+            w = tpp->thumbImg->width;
+            h = tpp->thumbImg->height;
         }
     }
 
