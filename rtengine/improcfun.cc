@@ -192,14 +192,12 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
         lcmsMutex->unlock ();
 	}
 
-	//chroma_scale = 1;
-
 	// calculate histogram of the y channel needed for contrast curve calculation in exposure adjustments
 
+	int T = 1;
 #ifdef _OPENMP
-    int T = omp_get_max_threads();
-#else
-    int T = 1;
+	if(multiThread)
+		T = omp_get_max_threads();
 #endif
 
     unsigned int** hist = new unsigned int* [T];
@@ -211,7 +209,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 #ifdef _OPENMP
 	#pragma omp parallel if (multiThread)
     {
-	        int H = original->height;
+        int H = original->height;
 		int tid = omp_get_thread_num();
 		int nthreads = omp_get_num_threads();
 		int blk = H/nthreads;
@@ -226,14 +224,13 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 #endif
 
 	histogram.clear();
-    for (int i=0; i<65536; i++)
-    	for (int j=0; j<T; j++)
-    		histogram[i] += hist[j][i];
+	for (int j=0; j<T; j++)
+		for (int i=0; i<65536; i++)
+			histogram[i] += hist[j][i];
 
     for (int i=0; i<T; i++)
     	delete [] hist[i];
     delete [] hist;
-
 }
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
