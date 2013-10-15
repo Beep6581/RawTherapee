@@ -689,9 +689,7 @@ namespace rtengine {
             assert (dest!=NULL);
             // Make sure that the size is the same, reallocate if necessary
             dest->allocate(width, height);
-            for (int i=0; i<height; i++) {
-                memcpy (dest->data, data, 3*width*height*sizeof(T));
-            }
+            memcpy (dest->data, data, 3*width*height*sizeof(T));
         }
 
         void rotate (int deg) {
