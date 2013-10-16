@@ -86,6 +86,39 @@ Examples:
 */
 {"camera_constants": [
 
+    {
+        "make_model": "Canon EOS 5D Mark II",
+        "dcraw_matrix": [ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 ],
+        "ranges": {
+            // black levels are read from raw masked pixels
+	    // white levels are same for all colors, but vary on ISO
+            "white": [
+                { "iso": 50,  "levels": 15760 },
+                { "iso": 100, "levels": 15760 },
+                { "iso": 125, "levels": 15760 },
+                { "iso": 160, "levels": 12810 },
+                { "iso": 200, "levels": 15760 },
+                { "iso": 250, "levels": 15760 },
+                { "iso": 320, "levels": 12810 },
+                { "iso": 400, "levels": 15760 },
+                { "iso": 500, "levels": 15760 },
+                { "iso": 640, "levels": 12810 },
+                { "iso": 800, "levels": 15760 },
+                { "iso": 1000, "levels": 15760 },
+                { "iso": 1250, "levels": 12810 },
+                { "iso": 1600, "levels": 15760 },
+                { "iso": 2000, "levels": 15760 },
+                { "iso": 2500, "levels": 15760 },
+                { "iso": 3200, "levels": 15760 },
+                { "iso": 4000, "levels": 15760 },
+                { "iso": 5000, "levels": 15760 },
+                { "iso": 6400, "levels": 16383 },
+                { "iso": 12800, "levels": 16383 },
+                { "iso": 25600, "levels": 16383 }
+            ]
+        }
+    },
+
     // Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files
     {
         "make_model": "Phase One P40+",
