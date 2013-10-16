@@ -19,6 +19,7 @@
 #include "rtengine.h"
 #include "iccstore.h"
 #include "dcp.h"
+#include "camconst.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
 #include "dfmanager.h"
@@ -33,7 +34,7 @@ const Settings* settings;
 
 MyMutex* lcmsMutex = NULL;
 
-int init (const Settings* s, Glib::ustring baseDir) {
+int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir) {
 
     settings = s;
     iccStore->init (s->iccDirectory, baseDir + "/iccprofiles");
@@ -41,6 +42,7 @@ int init (const Settings* s, Glib::ustring baseDir) {
 
     dcpStore->init (baseDir + "/dcpprofiles");
 
+    CameraConstantsStore::initCameraConstants (baseDir, userSettingsDir);
     profileStore.init ();
     ProcParams::init ();
     Color::init();

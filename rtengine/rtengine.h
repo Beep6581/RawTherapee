@@ -348,9 +348,11 @@ namespace rtengine {
 
 
 /** 
-  *  Initializes the RT engine
-  * @param s is a struct of basic settings, baseDir of RT */
-    int init (const Settings* s, Glib::ustring baseDir);
+  * @brief Initializes the RT engine
+  * @param s is a struct of basic settings
+  * @param baseDir base directory of RT's installation dir
+  * @param userSettingsDir RT's base directory in the user's settings dir */
+    int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDir);
 
 /** Cleanup the RT engine (static variables) */
     void cleanup ();

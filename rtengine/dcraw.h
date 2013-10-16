@@ -52,6 +52,9 @@ public:
     ,bright(1.),threshold(0.)
     ,half_size(0),four_color_rgb(0),document_mode(0),highlight(0)
     ,verbose(0)
+    ,RT_whitelevel_from_constant(0)
+    ,RT_blacklevel_from_constant(0)
+    ,RT_matrix_from_constant(0)
     ,use_auto_wb(0),use_camera_wb(0),use_camera_matrix(-1)
     ,output_color(1),output_bps(8),output_tiff(0),med_passes(0),no_auto_bright(0)
 	,getbithuff(this,ifp,zero_after_ff)
@@ -100,6 +103,9 @@ protected:
     int output_color, output_bps, output_tiff, med_passes;
     int no_auto_bright;
     unsigned greybox[4] ;
+    int RT_matrix_from_constant;
+    int RT_blacklevel_from_constant;
+    int RT_whitelevel_from_constant;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
     
@@ -374,6 +380,7 @@ float find_green (int bps, int bite, int off0, int off1);
 void identify();
 void apply_profile (const char *input, const char *output);
 void jpeg_thumb() {}  // not needed
+bool dcraw_coeff_overrides(const char make[], const char model[], int iso_speed, short trans[12], int *black_level, int *white_level);
 
 };
 
