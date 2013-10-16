@@ -1167,7 +1167,7 @@ void RawImageSource::HLRecovery_Global(HRecParams hrp )
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile )
 {
-    unsigned short black=ri->get_calcblack();
+	unsigned short black[4]={ri->get_cblack(0),ri->get_cblack(1),ri->get_cblack(2),ri->get_cblack(3)};
 
 	if (ri->isBayer()) {
 		if (!rawData)
@@ -1175,7 +1175,9 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
-					rawData[row][col]	= max(src->data[row][col]+black - riDark->data[row][col], 0);
+					int c  = FC(row, col);
+					int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+					rawData[row][col]	= max(src->data[row][col]+black[c4] - riDark->data[row][col], 0);
 				}
 			}
 		}else{
@@ -1211,15 +1213,21 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 			//find center ave values by channel
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
-					refcolor[m][n] = max(0.0f,cfablur[(2*(H>>2)+m)*W+2*(W>>2)+n] - black);
+					int row = 2*(H>>2)+m;
+					int col = 2*(W>>2)+n;
+					int c  = FC(row, col);
+					int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+					refcolor[m][n] = max(0.0f,cfablur[row*W+col] - black[c4]);
 				}
 			
 			for (int m=0; m<2; m++)
 				for (int n=0; n<2; n++) {
 					for (int row = 0; row+m < H; row+=2) 
 						for (int col = 0; col+n < W; col+=2) {
-							vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black) );
-							rawData[row+m][col+n] = (rawData[row+m][col+n]-black) * vignettecorr + black; 	
+							int c  = FC(row, col);
+							int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+							vignettecorr = ( refcolor[m][n]/max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4]) );
+							rawData[row+m][col+n] = (rawData[row+m][col+n]-black[c4]) * vignettecorr + black[c4]; 	
 						}
 				}
 			
@@ -1238,9 +1246,11 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 					for (int n=0; n<2; n++) {
 						for (int row = 0; row+m < H; row+=2) 
 							for (int col = 0; col+n < W; col+=2) {
-								hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black)/max(1e-5f,cfablur1[(row+m)*W+col+n]-black) );
-								vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black)/max(1e-5f,cfablur2[(row+m)*W+col+n]-black) );
-								rawData[row+m][col+n] = ((rawData[row+m][col+n]-black) * hlinecorr * vlinecorr + black); 
+								int c  = FC(row, col);
+								int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+								hlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur1[(row+m)*W+col+n]-black[c4]) );
+								vlinecorr = (max(1e-5f,cfablur[(row+m)*W+col+n]-black[c4])/max(1e-5f,cfablur2[(row+m)*W+col+n]-black[c4]) );
+								rawData[row+m][col+n] = ((rawData[row+m][col+n]-black[c4]) * hlinecorr * vlinecorr + black[c4]); 
 							}
 					}
 				free (cfablur1);
@@ -1261,9 +1271,11 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 		if (riDark && W == riDark->get_width() && H == riDark->get_height()) {
 			for (int row = 0; row < H; row++) {
 				for (int col = 0; col < W; col++) {
-					rawData[row][3*col+0] = max(src->data[row][3*col+0]+black - riDark->data[row][3*col+0], 0);
-					rawData[row][3*col+1] = max(src->data[row][3*col+1]+black - riDark->data[row][3*col+1], 0);
-					rawData[row][3*col+2] = max(src->data[row][3*col+2]+black - riDark->data[row][3*col+2], 0);
+					int c  = FC(row, col);
+					int c4 = ( c == 1 && !(row&1) ) ? 3 : c;
+					rawData[row][3*col+0] = max(src->data[row][3*col+0]+black[c4] - riDark->data[row][3*col+0], 0);
+					rawData[row][3*col+1] = max(src->data[row][3*col+1]+black[c4] - riDark->data[row][3*col+1], 0);
+					rawData[row][3*col+2] = max(src->data[row][3*col+2]+black[c4] - riDark->data[row][3*col+2], 0);
 				}
 			}
 		} else {
@@ -2234,8 +2246,8 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 		
 // Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) {
-    histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
-	float mult = 65535.0 / ri->get_white();
+	histRedRaw.clear(); histGreenRaw.clear(); histBlueRaw.clear();
+	float mult[4] = { 65535.0 / ri->get_white(0), 65535.0 / ri->get_white(1), 65535.0 / ri->get_white(2), 65535.0 / ri->get_white(3) };
 
 #pragma omp parallel
 {
@@ -2247,37 +2259,37 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 	tmphistBlueRaw.clear();
 	
 #pragma omp for nowait
-    for (int i=border; i<H-border; i++) {
-        int start, end, idx;
-        getRowStartEnd (i, start, end);
+	for (int i=border; i<H-border; i++) {
+		int start, end, idx;
+		getRowStartEnd (i, start, end);
 
-	
-	if (ri->isBayer()) {
-            for (int j=start; j<end; j++) {
-			int c  = FC(i, j);                        // three colors,  0=R, 1=G,  2=B
-			int c4 = ( c == 1 && !(i&1) ) ? 3 : c;      // four  colors,  0=R, 1=G1, 2=B, 3=G2
-			idx = CLIP((int)Color::gamma(mult*(ri->data[i][j]-(cblacksom[c4]/*+black_lev[c4]*/))));
 
-			switch (c) {
-				case 0: tmphistRedRaw[idx>>8]++;   break;
-				case 1: tmphistGreenRaw[idx>>8]++; break;
-				case 2: tmphistBlueRaw[idx>>8]++;  break;
-			}
-            }
-	} else {
-		for (int j=start; j<end; j++) {
-			for (int c=0; c<3; c++){
-				idx = CLIP((int)Color::gamma(mult*(ri->data[i][3*j+c]-cblacksom[c])));
+		if (ri->isBayer()) {
+			for (int j=start; j<end; j++) {
+				int c  = FC(i, j);                        // three colors,  0=R, 1=G,  2=B
+				int c4 = ( c == 1 && !(i&1) ) ? 3 : c;    // four  colors,  0=R, 1=G1, 2=B, 3=G2
+				idx = CLIP((int)Color::gamma(mult[c4]*(ri->data[i][j]-(cblacksom[c4]/*+black_lev[c4]*/))));
 
 				switch (c) {
 					case 0: tmphistRedRaw[idx>>8]++;   break;
 					case 1: tmphistGreenRaw[idx>>8]++; break;
 					case 2: tmphistBlueRaw[idx>>8]++;  break;
 				}
-                        }
+			}
+		} else {
+			for (int j=start; j<end; j++) {
+				for (int c=0; c<3; c++){
+					idx = CLIP((int)Color::gamma(mult[c]*(ri->data[i][3*j+c]-cblacksom[c])));
+
+					switch (c) {
+						case 0: tmphistRedRaw[idx>>8]++;   break;
+						case 1: tmphistGreenRaw[idx>>8]++; break;
+						case 2: tmphistBlueRaw[idx>>8]++;  break;
+					}
+				}
+			}
 		}
 	}
-    }
 #pragma omp critical
 {
 	for(int i=0;i<256;i++){

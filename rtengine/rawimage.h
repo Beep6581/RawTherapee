@@ -106,11 +106,11 @@ protected:
   int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif
   char* profile_data; // Embedded ICC color profile
   unsigned short* allocation; // pointer to allocated memory
-
-  unsigned calcBlack;  // calculated black, like DCRAW  before 9.15
+  int maximum_c4[4];
 
 public:
 
+  static void initCameraConstants(Glib::ustring baseDir);
   std::string get_filename() const { return filename;}
   int get_width()  const { return width; }
   int get_height() const { return height; }
@@ -118,10 +118,8 @@ public:
   bool isBayer() const { return filters!=0; }
   unsigned get_filters() const { return filters; }
   int get_colors() const { return colors;}
-  int get_black()  const { return black;}  // from DCRAW 9.15 =0, but reflected in cblack
-  int get_calcblack()  const { return calcBlack;}  // simulated like DCRAW before 9.15
   int get_cblack(int i) const {return cblack[i];}
-  int get_white() const { return maximum;}
+  int get_white(int i) const { if (maximum_c4[0] > 0) return maximum_c4[i]; else return maximum;}
   unsigned short get_whiteSample( int r, int c ) const { return white[r][c];}
 
   double get_ISOspeed() const {return iso_speed;}
