@@ -33,6 +33,7 @@
 #define MyBitDepth "${BUILD_BIT_DEPTH}"
 #define MyTargetArchitecture "${ARCHITECTURE_ALLOWED}"
 #define MyInstallMode "${INSTALL_MODE}"
+#define MySystemName "${SYSTEM_NAME}"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -47,12 +48,12 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName} {#MyAppFullVersion}
+DefaultDirName={pf}\{#MyAppName}-{#MyAppFullVersion}
 DefaultGroupName={#MyAppName} {#MyAppFullVersion}
 AllowNoIcons=yes
 LicenseFile={#MyBuildBasePath}\LICENSE.txt
 OutputDir={#MyBuildBasePath}\..\
-OutputBaseFilename={#MyAppName}{#MyAppVersion}-Win{#MyBitDepth}
+OutputBaseFilename={#MyAppName}_{#MySystemName}_{#MyBitDepth}_{#MyAppFullVersion}
 SetupIconFile={#MySourceBasePath}\rtgui\RT.ico
 WizardImageFile={#MySourceBasePath}\rtdata\win\InnoSetup\installerStrip.bmp
 WizardImageBackColor=$2A2A2A
@@ -60,6 +61,7 @@ Compression=lzma
 SolidCompression=yes
 ArchitecturesAllowed={#MyTargetArchitecture}
 ArchitecturesInstallIn64BitMode={#MyInstallMode}
+PrivilegesRequired=none
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
