@@ -58,7 +58,7 @@ CameraConst::parseLevels(CameraConst *cc, int bw, void *ji_)
 		}
 		struct camera_const_levels lvl;
 		if (js->type == cJSON_Number) {
-			lvl.levels[0] = lvl.levels[1] = lvl.levels[2] = lvl.levels[3] = ji->valueint;
+			lvl.levels[0] = lvl.levels[1] = lvl.levels[2] = lvl.levels[3] = js->valueint;
 		} else if (js->type == cJSON_Array) {
 			int i;
 			for (js = js->child, i = 0; js != NULL && i < 4; js = js->next, i++) {
