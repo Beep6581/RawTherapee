@@ -112,6 +112,9 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 				c += ((temp-t)+rs);
 			rs = t;
 		}
+#ifdef _OPENMP
+#pragma omp critical
+#endif
 		rs += c;
 }
 
