@@ -41,7 +41,6 @@
 #include "rt_math.h"
 #include "EdgePreservingDecomposition.h"
 #include "improccoordinator.h"
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -2422,7 +2421,6 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 
 void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, LUTu &histCCurve) {
-
 	int W = lold->W;
 	int H = lold->H;
    // lhskcurve.dump("lh_curve");
@@ -2441,11 +2439,12 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	float val;
 	//preparate for histograms CIECAM
 	if(pW!=1){//only with improccoordinator
-	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
-			val = (double)i / 47999.0;
-			dCcurve[i] = CLIPD(val);
-		}
-	hist16Clad.clear();
+		chrop = true;
+		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+				val = (double)i / 47999.0;
+				dCcurve[i] = CLIPD(val);
+			}
+		hist16Clad.clear();
 	}
 #ifdef _DEBUG
 	MyTime t1e,t2e, t3e, t4e;
@@ -2464,7 +2463,10 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	float adjustr=1.0f, adjustbg=1.0f;
 
 //	if(params->labCurve.avoidclip ){
-	for (unsigned int j=0; j!=N; j++){
+#ifdef _OPENMP
+#pragma omp parallel for if (multiThread)
+#endif // _OPENMP
+	for (unsigned int j=0; j<N; j++){
 		Lold[j]=L[j]/327.68f;
 		Cold[j]=sqrt(SQR(a[j]/327.68f)+SQR(b[j]/327.68f));
 //		Hr=atan2(b[j],a[j]);
@@ -2612,10 +2614,9 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 
  			}
 				//update histogram C
-				chrop=true;
                 if(pW!=1){//only with improccoordinator
-				posp=CLIP((int)sqrt((atmp*atmp + btmp*btmp)));
-				hist16Clad[posp]++;
+					posp=CLIP((int)sqrt((atmp*atmp + btmp*btmp)));
+					hist16Clad[posp]++;
 				}
 
 			// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
