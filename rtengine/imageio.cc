@@ -299,12 +299,6 @@ int ImageIO::loadPNG  (Glib::ustring fname) {
     png_read_update_info(png,info);
     png_get_IHDR(png,info,&width,&height,&bit_depth,&color_type,&interlace_type,&compression_type, &filter_method);
 
-        if (color_type & PNG_COLOR_MASK_ALPHA)
-          png_set_strip_alpha(png);
-
-    png_read_update_info(png,info);
-    png_get_IHDR(png,info,&width,&height,&bit_depth,&color_type,&interlace_type,&compression_type, &filter_method);
-
     allocate (width, height);
 
     int rowlen = width*3*bit_depth/8;
