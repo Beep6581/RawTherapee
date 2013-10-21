@@ -28,6 +28,9 @@ RawImage::RawImage(  const Glib::ustring name )
 ,allocation(NULL)
 {
 	memset(maximum_c4, 0, sizeof(maximum_c4));
+	RT_matrix_from_constant = 0;
+	RT_blacklevel_from_constant = 0;
+	RT_whitelevel_from_constant = 0;
 }
 
 RawImage::~RawImage()
@@ -108,6 +111,27 @@ skip_block: ;
 	}
 	if (pre_mul_[3] == 0)
 		pre_mul_[3] = this->get_colors() < 4 ? pre_mul_[1] : 1;
+
+	bool multiple_whites = false;
+	int largest_white = this->get_white(0);
+	for (c = 1; c < 4; c++) {
+		if (this->get_white(c) != this->get_white(0)) {
+			multiple_whites = true;
+			if (this->get_white(c) > largest_white) {
+				largest_white = this->get_white(0);
+			}
+		}
+	}
+	if (multiple_whites) {
+		// dcraw's pre_mul/cam_mul expects a single white, so if we have provided multiple whites we need
+		// to adapt scaling to avoid color shifts.
+		for (c = 0; c < 4; c++) {
+			// we don't really need to do the largest_white division but do so just to keep pre_mul in similar
+			// range as before adjustment so they don't look strangely large if someone would print them
+			pre_mul_[c] *= (float)this->get_white(c) / largest_white;
+		}
+	}
+
 	for (dmin = DBL_MAX, dmax = c = 0; c < 4; c++) {
 		if (dmin > pre_mul_[c])
 			dmin = pre_mul_[c];
@@ -118,7 +142,7 @@ skip_block: ;
 	for (c = 0; c < 4; c++) {
 		int sat = this->get_white(c) - this->get_cblack(c);
 		scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
-		}
+	}
 }
 
 int RawImage::loadRaw (bool loadData, bool closeFile)
@@ -218,11 +242,11 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
       if (cc) {
            for (int i = 0; i < 4; i++) {
                  if (RT_blacklevel_from_constant) {
-                     black_c4[i] = cc->get_BlackLevel(i, iso_speed);
+                     black_c4[i] = cc->get_BlackLevel(i, iso_speed, aperture);
                  }
                  // load 4 channel white level here, will be used if available
                  if (RT_whitelevel_from_constant) {
-                 maximum_c4[i] = cc->get_WhiteLevel(i, iso_speed);
+                     maximum_c4[i] = cc->get_WhiteLevel(i, iso_speed, aperture);
              }
          }
       }
@@ -304,6 +328,7 @@ RawImage::get_thumbSwap() const
 bool
 DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int iso_speed, short trans[12], int *black_level, int *white_level)
 {
+    static const int dcraw_arw2_scaling_bugfix_shift = 0; // not yet enabled, should be 2 when enabled
     static const struct {
         const char *prefix;
         int black_level, white_level; // set to -1 for no change
@@ -415,21 +440,21 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
           { 7181,-1706,-55,-3557,11409,2450,-621,2072,7533 } },
 
 
-        { "Sony DSLR-A700", 126, 0, /* RT */
+        { "Sony DSLR-A700", 126 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT */
           { 6509,-1333,-137,-6171,13621,2824,-1490,2226,6952 } },
-        { "Sony DSLR-A900", 128, 0, /* RT */
+        { "Sony DSLR-A900", 128 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT */
           { 5715,-1433,-410,-5603,12937,2989,-644,1247,8372 } },
-        { "SONY NEX-3", 128, 0, /* RT - Colin Walker */
+        { "SONY NEX-3", 128 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT - Colin Walker */
           { 5145,-741,-123,-4915,12310,2945,-794,1489,6906 } },
-        { "SONY NEX-5", 128, 0, /* RT - Colin Walker */
+        { "SONY NEX-5", 128 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT - Colin Walker */
           { 5154,-716,-115,-5065,12506,2882,-988,1715,6800 } },
-        { "Sony NEX-5N", 128, 0, /* RT - Colin Walker */
+        { "Sony NEX-5N", 128 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT - Colin Walker */
           { 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
-        { "Sony NEX-5R", 128, 0,
+        { "Sony NEX-5R", 128 << dcraw_arw2_scaling_bugfix_shift, 0,
           { 6129,-1545,-418,-4930,12490,2743,-977,1693,6615 } },
-        { "SONY NEX-C3", 128, 0,  /* RT - Colin Walker */
+        { "SONY NEX-C3", 128 << dcraw_arw2_scaling_bugfix_shift, 0,  /* RT - Colin Walker */
           { 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
-        { "Sony SLT-A77", 128, 0,  /* RT - Colin Walker */
+        { "Sony SLT-A77", 128 << dcraw_arw2_scaling_bugfix_shift, 0,  /* RT - Colin Walker */
           { 5126,-830,-261,-4788,12196,2934,-948,1602,7068 } },
     };
 
@@ -450,8 +475,8 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
         rtengine::CameraConstantsStore* ccs = rtengine::CameraConstantsStore::getInstance();
         rtengine::CameraConst *cc = ccs->get(make, model);
         if (cc) {
-            *black_level = cc->get_BlackLevel(0, iso_speed);
-            *white_level = cc->get_WhiteLevel(0, iso_speed);
+            *black_level = cc->get_BlackLevel(0, iso_speed, aperture);
+            *white_level = cc->get_WhiteLevel(0, iso_speed, aperture);
             if (cc->has_dcrawMatrix()) {
                 const short *mx = cc->get_dcrawMatrix();
                 for (int j = 0; j < 12; j++) {
