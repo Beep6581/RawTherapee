@@ -19,10 +19,43 @@ namespace rtengine {
 CameraConst::CameraConst()
 {
 	memset(dcraw_matrix, 0, sizeof(dcraw_matrix));
+	white_max = 0;
 }
 
 CameraConst::~CameraConst()
 {
+}
+
+bool
+CameraConst::parseApertureScaling(CameraConst *cc, void *ji_)
+{
+	cJSON *ji = (cJSON *)ji_;
+	if (ji->type != cJSON_Array) {
+		fprintf(stderr, "\"ranges\":\"aperture_scaling\" must be an array\n");
+		return false;
+	}
+	for (ji = ji->child; ji != NULL; ji = ji->next) {
+		cJSON *js = cJSON_GetObjectItem(ji, "aperture");
+		if (!js) {
+			fprintf(stderr, "missing \"ranges\":\"aperture_scaling\":\"aperture\" object item.\n");
+			return false;
+		} else if (js->type != cJSON_Number) {
+			fprintf(stderr, "\"ranges\":\"aperture_scaling\":\"aperture\" must be a number.\n");
+			return false;
+		}
+		float aperture = (float)js->valuedouble;
+		js = cJSON_GetObjectItem(ji, "scale_factor");
+		if (!js) {
+			fprintf(stderr, "missing \"ranges\":\"aperture_scaling\":\"scale_factor\" object item.\n");
+			return false;
+		} else if (js->type != cJSON_Number) {
+			fprintf(stderr, "\"ranges\":\"aperture_scaling\":\"scale_factor\" must be a number.\n");
+			return false;
+		}
+		float scale_factor = (float)js->valuedouble;
+		cc->mApertureScaling.insert(std::pair<float,float>(aperture, scale_factor));
+	}
+	return true;
 }
 
 bool
@@ -36,8 +69,27 @@ CameraConst::parseLevels(CameraConst *cc, int bw, void *ji_)
 		cc->mLevels[bw].insert(std::pair<int,struct camera_const_levels>(0, lvl));
 		return true;
 	} else if (ji->type != cJSON_Array) {
-		fprintf(stderr, "\"ranges\":\"black\" must be a number or an array\n");
+		fprintf(stderr, "\"ranges\":\"%s\" must be a number or an array\n", bw ? "white" : "black");
 		return false;
+	}
+
+	if (ji->child->type == cJSON_Number) {
+		struct camera_const_levels lvl;
+		int i;
+		cJSON *js;
+		for (js = ji->child, i = 0; js != NULL && i < 4; js = js->next, i++) {
+			lvl.levels[i] = js->valueint;
+		}
+		if (i == 3) {
+			lvl.levels[3] = lvl.levels[1]; // G2 = G1
+		} else if (i == 1) {
+			lvl.levels[3] = lvl.levels[2] = lvl.levels[1] = lvl.levels[0];
+		} else if (i != 4 || js != NULL) {
+			fprintf(stderr, "\"ranges\":\"%s\" array must have 1, 3 or 4 numbers.\n", bw ? "white" : "black");
+			return false;
+		}
+		cc->mLevels[bw].insert(std::pair<int,struct camera_const_levels>(0, lvl));
+		return true;
 	}
 
 	for (ji = ji->child; ji != NULL; ji = ji->next) {
@@ -129,9 +181,24 @@ CameraConst::parseEntry(void *cJSON_)
 				goto parse_error;
 			}
 		}
+		ji = cJSON_GetObjectItem(jranges, "white_max");
+		if (ji) {
+			if (ji->type != cJSON_Number) {
+				fprintf(stderr, "\"ranges\":\"white_max\" must be a number\n");
+				goto parse_error;
+			}
+			cc->white_max = (int)ji->valueint;
+		}
+		ji = cJSON_GetObjectItem(jranges, "aperture_scaling");
+		if (ji) {
+			if (!parseApertureScaling(cc, ji)) {
+				goto parse_error;
+			}
+		}
 	}
 	for (int bw = 0; bw < 2; bw++) {
-		if (!cc->get_Levels(bw, 0)) {
+		struct camera_const_levels lvl;
+		if (!cc->get_Levels(lvl, bw, 0, 0)) {
 			std::map<int, struct camera_const_levels>::iterator it;
 			it = cc->mLevels[bw].begin();
 			if (it != cc->mLevels[bw].end()) {
@@ -184,13 +251,19 @@ CameraConst::update_Levels(const CameraConst *other) {
 		mLevels[1].clear();
 		mLevels[1] = other->mLevels[1];
 	}
+	if (other->mApertureScaling.size()) {
+		mApertureScaling.clear();
+		mApertureScaling = other->mApertureScaling;
+	}
+	if (other->white_max)
+		white_max = other->white_max;
 
 //	for (std::map<int, struct camera_const_levels>::iterator i=other->mLevels[0].begin(); i!=other->mLevels[0].end(); i++) {
 //	}
 }
 
-const struct camera_const_levels *
-CameraConst::get_Levels(int bw, int iso)
+bool
+CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float fnumber)
 {
 	std::map<int, struct camera_const_levels>::iterator it;
 	it = mLevels[bw].find(iso);
@@ -207,26 +280,88 @@ CameraConst::get_Levels(int bw, int iso)
 		}
 		it = best_it;
 		if (it == mLevels[bw].end()) {
-			return 0;
+			return false;
 		}
 	}
-	return &it->second;
+	lvl = it->second;
+
+	if (fnumber > 0 && mApertureScaling.size() > 0) {
+		std::map<float, float>::iterator it;
+		it = mApertureScaling.find(fnumber);
+		if (it == mApertureScaling.end()) {
+			// fnumber may be an exact aperture, eg 1.414, or a rounded eg 1.4. In our map we
+			// should have rounded numbers so we translate and retry the lookup
+
+			// table with traditional 1/3 stop f-number rounding used by most cameras, we only
+			// have in the range 0.7 - 10.0, but aperture scaling rarely happen past f/4.0
+			const float fn_tab[8][3] = {
+				{ 0.7, 0.8, 0.9 },
+				{ 1.0, 1.1, 1.2 },
+				{ 1.4, 1.6, 1.8 },
+				{ 2.0, 2.2, 2.5 },
+				{ 2.8, 3.2, 3.5 },
+				{ 4.0, 4.5, 5.0 },
+				{ 5.6, 6.3, 7.1 },
+				{ 8.0, 9.0, 10.0 }
+			};
+			for (int avh = 0; avh < 8; avh++) {
+				for (int k = 0; k < 3; k++) {
+					float av = (avh-1) + (float)k / 3;
+					float aperture = sqrtf(powf(2, av));
+					if (fnumber > aperture*0.97 && fnumber < aperture/0.97) {
+						fnumber = fn_tab[avh][k];
+						it = mApertureScaling.find(fnumber);
+						avh = 7;
+						break;
+					}
+				}
+			}
+		}
+		float scaling = 1.0;
+		if (it == mApertureScaling.end()) {
+			std::map<float, float>::reverse_iterator it;
+			for (it = mApertureScaling.rbegin(); it != mApertureScaling.rend(); it++) {
+				if (it->first > fnumber) {
+					scaling = it->second;
+				} else {
+					break;
+				}
+			}
+		} else {
+			scaling = it->second;
+		}
+		if (scaling > 1.0) {
+			for (int i = 0; i < 4; i++) {
+				lvl.levels[i] *= scaling;
+				if (white_max > 0 && lvl.levels[i] > white_max) {
+					lvl.levels[i] = white_max;
+				}
+			}
+		}
+	}
+	return true;
 }
 
 int
-CameraConst::get_BlackLevel(const int idx, const int iso_speed)
+CameraConst::get_BlackLevel(const int idx, const int iso_speed, const float fnumber)
 {
 	assert(idx >= 0 && idx <= 3);
-	const struct camera_const_levels *lvl = get_Levels(0, iso_speed);
-	return (lvl) ? lvl->levels[idx] : -1;
+	struct camera_const_levels lvl;
+	if (!get_Levels(lvl, 0, iso_speed, fnumber)) {
+		return -1;
+	}
+	return lvl.levels[idx];
 }
 
 int
-CameraConst::get_WhiteLevel(const int idx, const int iso_speed)
+CameraConst::get_WhiteLevel(const int idx, const int iso_speed, const float fnumber)
 {
 	assert(idx >= 0 && idx <= 3);
-	const struct camera_const_levels *lvl = get_Levels(1, iso_speed);
-	return (lvl) ? lvl->levels[idx] : -1;
+	struct camera_const_levels lvl;
+	if (!get_Levels(lvl, 1, iso_speed, fnumber)) {
+		return -1;
+	}
+	return lvl.levels[idx];
 }
 
 bool
@@ -239,11 +374,11 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 		fprintf(stderr, "Could not open camera constants file \"%s\": %s\n", filename, strerror(errno));
 		return false;
 	}
-	size_t bufsize = 64; // use small initial size just to make sure to test realloc() case
+	size_t bufsize = 4096;
 	size_t datasize = 0, ret;
 	char *buf = (char *)malloc(bufsize);
 	while ((ret = fread(&buf[datasize], 1, bufsize - datasize, stream)) != 0) {
-		datasize += bufsize - datasize;
+		datasize += ret;
 		if (datasize == bufsize) {
 			bufsize += 4096;
 			buf = (char *)realloc(buf, bufsize);
@@ -256,7 +391,6 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 		return false;
 	}
 	fclose(stream);
-	datasize += ret;
 	buf = (char *)realloc(buf, datasize + 1);
 	buf[datasize] = '\0';
 

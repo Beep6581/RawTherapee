@@ -83,6 +83,132 @@ Examples:
         }
     }
 
+How to measure white levels:
+----------------------------
+
+Dcraw which provides the default values to RawTherapee often provides too high
+white levels, and only provides a single value regardless of color channel, ISO
+or aperture. If you open an image with a large clipped area and that is
+rendered in a pink/magenta color rather than white it usually means that the
+white level constant is too high. You can fix this by adjusting the
+"Raw White Point" in the raw tab inside RawTherapee, or permanently fix it by
+measuring and providing a more exact white level in camconst.json so
+RawTherapee gets to know from start where the camera actually clips.
+
+Here's a guide how to do it.
+
+Shoot with your camera into a bright light source, such as a lamp, and make
+sure the shutter speed is long enough to get overexposure (we want
+clipping!). Some cameras have fuzzy white levels and may look less fuzzy with
+strong over-exposure (most samples are then pushed to some hard raw limit), if
+you measure such a camera you'd want to over-expose softly (ie one-two stops or
+so) so you can more correctly see where the camera stops providing sane
+information.
+
+Use f/5.6 or smaller aperture (=larger f-number) to avoid any raw scaling
+the camera might have for large apertures. Open the file in a raw analyzer
+such as Rawdigger and check the pixel values for the clipped areas (if you
+are using Rawdigger, make sure you have disabled "subtract black" in
+preferences or else sample values can be wrong). In this stage we always look
+at white level before black level subtraction! White levels can be different on
+color channel (R, G1, B, G2, note the two greens, most often both green
+channels have the same white level though) and vary depending on ISO setting,
+so make one shoot for each ISO (even 1/3 steps, so yes it can be quite a lot of
+pictures to shoot and check).
+
+In addition, many cameras scale the raw values for large apertures. It's
+generally not that important to cover this, but if you want to extract most
+out of the camera you should cover this too. Then you need to shoot with a
+wide aperture lens (ideally the widest available from the manufacturer) and
+test each aperture (1/3 steps) from the widest (say f/1.2) until the camera
+stops scaling the raw values (usually f/2.8 or f/4.0). If the camera also
+have ISO scaling you need to shoot at these different ISOs to detect any
+differences in scaling, there can be a bit of variation. If you don't have
+access to the widest lens available for the system (say only an f/1.8 lens
+instead of an f/1.2) it can still be valuable to have the values down to
+what you can provide.
+
+PROVIDE CONSERVATIVE VALUES. Most cameras have a little noise at the white
+level, and some can have a lot. In your raw analyzer, move around and look at
+the values in the clipped areas to get a sense of the variation, and/or look
+at the histogram. White it's common to have very little variation, say only
++/-2 units, some can have +/-500 or more. There can also be camera-to-camera
+variation.
+
+If the white level is set too high RawTherapee will not think the pixels are
+clipped and you can get discoloured highlights (usually pink), this is what
+we want to avoid. If white level is set too low RawTherapee will clip early, ie
+you lose a little highlight detail, but the color is rendered correctly and
+highlight reconstruction can work properly, so this is not as bad. This is why
+we want conservative values.
+
+By conservative values we mean that if you see a clipping level of most often
+15760 and occassionally 15759 (ie very small variation of clipping level which
+is a common case), you set the white level 10 - 20 units below, say at 15750 in
+this example, this way we get a little margin from noise and camera variation.
+Since sensor raw values are linear you lose in this example log2(1-10/15760) =
+-0.001 stop of detail, ie irrelevant. Thus it's better to provide RawTherapee
+with knowledge where the image clips rather than keeping that last 0.001 stop
+of highlight information and risking that clipping will not be detected
+properly.
+
+If you have a fuzzy white level look at the linear histogram; you will probably
+see a normal/gaussian distribution (bell shape) noise peak at clipping and
+probably also a peak at a hard raw data clip level usually at a power of
+two - 1, such as 4095 or 16383. Then you pick a value just before the bell
+shape rises, ie to the left of the bell meaning that you cut away the whole
+fuzzy noise peak. If a little of the starting edge of the noise will be
+included it's not harmful, but 99% of it should be above.
+
+If you have used Adobe's DNG Converter and analyzed it's output you may have
+noticed that it's very conservative regarding white levels, ie it cuts away
+quite a lot from the top. While we also recommend to be conservative, you can
+generally be a little bit less conservative than Adobe's DNG Converter.
+RawTherapee is meant to max out what you can get from your camera, and the
+white levels should (within reason) mirror that.
+
+The aperture scaling feature is meant to raise the white level to not miss out
+on highlight detail when the camera has scaled the raw values (and thus
+raised white levels). Many cameras do this, but not all, and can only do it
+for lenses that report aperture to the camera (ie you see it in the EXIF
+data). Providing proper aperture scaling values is a bit more advanced task,
+so if you are unsure we recommend to skip that part.
+
+Beware that the raw format may have a ceiling so that it clips scaled values,
+for example the Canon 5D mark II maxes out at 16383 which happens at f/1.8
+for ISOs with the white level at 15750, but for ISO160 when the white level
+is 12800 it does not max out. If there is such a raw limit it must also be
+provided ("ranges":"white_max"). Usually you will not need a margin on
+white_max as it clipping is a result of an in-camera math operation.
+
+Note that aperture scaling can be quite small, for the 5D mark II it's only
+0.1 stop down to f/1.4 and then it can be discussed if it's worthwhile to care.
+The "worst" cameras scale about 0.6 stops though, and then it's more
+valuable to compensate. If you skip aperture scaling you will clip too early
+and miss that highlight detail, but you get no processing problems. Setting
+unconservative scale factors can on the other hand cause a too high
+whitelevel and break highlight processing, so be careful. Scaling can vary
+sligthly depending on ISO (if white levels vary) so make sure to provide
+conservative scalings so regardless of ISO you don't get a too high white
+level. We recommend to keep a wider margin here than on the white levels,
+ie 0.5-1% lower or so. For example if base (conservative!) white level is
+15750 and the scaled is 16221 we have a scaling factor of 16221/15750=1.0299
+ie +2.9% we set the factor to 1.02 or +2% to keep a margin.
+
+Scaling takes place on the raw values before black level subtraction, and if
+a black level constant is provided also that will be scaled.
+
+If RawTherapee doesn't find an entry for the aperture used in the image, it
+will pick the closest above. Ie if the apertures 1.0 and 2.0 is in the table
+and the image has aperture 1.2, it will pick scaling for 2.0, even if 1.0 is
+the closer aperture. The reason for always checking the closest above is that
+we rather get a bit low white level than too high, as discussed before.
+
+Some cameras have different white levels on different color channels. Note
+that some cameras with different white levels per color have so small
+differences that you may just provide a single value instead, then pick
+the lowest white level and make a conservative margin as always.
+
 */
 {"camera_constants": [
 
@@ -93,30 +219,55 @@ Examples:
             // black levels are read from raw masked pixels
 	    // white levels are same for all colors, but vary on ISO
             "white": [
-                { "iso": 50,  "levels": 15760 },
-                { "iso": 100, "levels": 15760 },
-                { "iso": 125, "levels": 15760 },
-                { "iso": 160, "levels": 12810 },
-                { "iso": 200, "levels": 15760 },
-                { "iso": 250, "levels": 15760 },
-                { "iso": 320, "levels": 12810 },
-                { "iso": 400, "levels": 15760 },
-                { "iso": 500, "levels": 15760 },
-                { "iso": 640, "levels": 12810 },
-                { "iso": 800, "levels": 15760 },
-                { "iso": 1000, "levels": 15760 },
-                { "iso": 1250, "levels": 12810 },
-                { "iso": 1600, "levels": 15760 },
-                { "iso": 2000, "levels": 15760 },
-                { "iso": 2500, "levels": 15760 },
-                { "iso": 3200, "levels": 15760 },
-                { "iso": 4000, "levels": 15760 },
-                { "iso": 5000, "levels": 15760 },
-                { "iso": 6400, "levels": 16383 },
-                { "iso": 12800, "levels": 16383 },
-                { "iso": 25600, "levels": 16383 }
+                { "iso": 50,  "levels": 15750 }, // typical: 15760
+                { "iso": 100, "levels": 15750 },
+                { "iso": 125, "levels": 15750 },
+                { "iso": 160, "levels": 12800 },
+                { "iso": 200, "levels": 15750 },
+                { "iso": 250, "levels": 15750 },
+                { "iso": 320, "levels": 12800 }, // typical: 12810
+                { "iso": 400, "levels": 15750 },
+                { "iso": 500, "levels": 15750 },
+                { "iso": 640, "levels": 12800 },
+                { "iso": 800, "levels": 15750 },
+                { "iso": 1000, "levels": 15750 },
+                { "iso": 1250, "levels": 12800 },
+                { "iso": 1600, "levels": 15750 },
+                { "iso": 2000, "levels": 15750 },
+                { "iso": 2500, "levels": 15750 },
+                { "iso": 3200, "levels": 15750 },
+                { "iso": 4000, "levels": 15750 },
+                { "iso": 5000, "levels": 15750 },
+                { "iso": 6400, "levels": 16370 }, // typical: 16383
+                { "iso": 12800, "levels": 16370 },
+                { "iso": 25600, "levels": 16370 }
+            ],
+	    "white_max": 16383,
+            "aperture_scaling": [
+		/* note: no scale factors known for f/1.2 and f/1.0 (had no lenses to test with), but the
+		   typical 15750 white level maxes out at "white_max" for f/1.8 and below anyway. */
+		{ "aperture": 1.4, "scale_factor": 1.077 },
+		{ "aperture": 1.6, "scale_factor": 1.054 },
+		{ "aperture": 1.8, "scale_factor": 1.039 },
+		{ "aperture": 2.0, "scale_factor": 1.031 },
+		{ "aperture": 2.2, "scale_factor": 1.021 },
+		{ "aperture": 2.5, "scale_factor": 1.016 },
+		{ "aperture": 2.8, "scale_factor": 1.010 },
+		{ "aperture": 3.2, "scale_factor": 1.0046 },
+		{ "aperture": 3.5, "scale_factor": 1.0031 }
             ]
         }
+    },
+
+    {
+        "make_model": "Nikon D7000",
+        "dcraw_matrix": [ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 ], // matrix provided by Tanveer(tsk1979)
+        /* Haven't tested the camera for aperture scaling or ISO differences on white levels, ie there may
+	   be further improvements to make. Differences between white levels on the channels are so small
+	   that there's little value to provide for each (rather than just set a single value at 15760), but
+	   we do this anyway as this is the first entry after the separate-white-level code was added, and
+	   we wanted an entry to show the concept. G1 and G2 have the same level, thus only 3 numbers in the array. */
+        "ranges": { "white": [ 16370, 15760, 16370 ] }
     },
 
     // Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files
@@ -201,6 +352,10 @@ Examples:
         "make_model": "DummyMake DummyModel",
         "dcraw_matrix": [ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 ],
         "ranges": {
+	    "aperture_scaling": [
+	        { "aperture": 1.2, "scale_factor": 1.1 },
+	        { "aperture": 1.4, "scale_factor": 1.08 }
+	    ],
             "black": [
                 { "iso": 100 , "levels": [ 10, 20, 10, 20 ] },
                 { "iso": 3200, "levels": [ 50, 60, 50, 60 ] }
@@ -208,7 +363,8 @@ Examples:
             "white": [
                 { "iso": 100 , "levels": [ 10000, 11000, 10000, 11000 ] },
                 { "iso": 3200, "levels": [ 11000, 11000, 10000, 11000 ] }
-            ]
+            ],
+	    "white_max": 16383
         }
     }
 ]}
