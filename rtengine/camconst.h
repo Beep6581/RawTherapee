@@ -28,11 +28,11 @@ class CameraConst {
     bool get_Levels(struct camera_const_levels & lvl, int bw, int iso, float fnumber);
 
   public:
-    static CameraConst *parseEntry(void *cJSON);
+    static CameraConst *parseEntry(void *cJSON, const char *make_model);
     bool has_dcrawMatrix(void);
     void update_dcrawMatrix(const short *other);
     const short *get_dcrawMatrix(void);
-    int get_BlackLevel(int idx, int iso_speed, float fnumber);
+    int get_BlackLevel(int idx, int iso_speed);
     int get_WhiteLevel(int idx, int iso_speed, float fnumber);
     void update_Levels(const CameraConst *other);
 };

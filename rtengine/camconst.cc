@@ -138,19 +138,14 @@ CameraConst::parseLevels(CameraConst *cc, int bw, void *ji_)
 }
 
 CameraConst *
-CameraConst::parseEntry(void *cJSON_)
+CameraConst::parseEntry(void *cJSON_, const char *make_model)
 {
 	CameraConst *cc = 0;
 	cJSON *js, *ji, *jranges;
 	js = (cJSON *)cJSON_;
 
-	ji = cJSON_GetObjectItem(js, "make_model");
-	if (!ji || ji->type != cJSON_String) {
-		fprintf(stderr, "missing \"make_model\" object item\n");
-		goto parse_error;
-	}
 	cc = new CameraConst;
-	cc->make_model = Glib::ustring(ji->valuestring);
+	cc->make_model = Glib::ustring(make_model);
 
 	ji = cJSON_GetObjectItem(js, "dcraw_matrix");
 	if (ji) {
@@ -285,7 +280,7 @@ CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float
 	}
 	lvl = it->second;
 
-	if (fnumber > 0 && mApertureScaling.size() > 0) {
+	if (bw == 1 && fnumber > 0 && mApertureScaling.size() > 0) {
 		std::map<float, float>::iterator it;
 		it = mApertureScaling.find(fnumber);
 		if (it == mApertureScaling.end()) {
@@ -343,11 +338,11 @@ CameraConst::get_Levels(struct camera_const_levels & lvl, int bw, int iso, float
 }
 
 int
-CameraConst::get_BlackLevel(const int idx, const int iso_speed, const float fnumber)
+CameraConst::get_BlackLevel(const int idx, const int iso_speed)
 {
 	assert(idx >= 0 && idx <= 3);
 	struct camera_const_levels lvl;
-	if (!get_Levels(lvl, 0, iso_speed, fnumber)) {
+	if (!get_Levels(lvl, 0, iso_speed, 0.0)) {
 		return -1;
 	}
 	return lvl.levels[idx];
@@ -424,29 +419,44 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 	}
 	for (js = js->child; js != NULL; js = js->next) {
 		cJSON *ji = cJSON_GetObjectItem(js, "make_model");
-		if (!ji || ji->type != cJSON_String) {
+		if (!ji) {
 			fprintf(stderr, "missing \"make_model\" object item\n");
 			goto parse_error;
 		}
-		CameraConst *cc = CameraConst::parseEntry((void *)js);
-		if (!cc) {
-			goto parse_error;
+		bool is_array = false;
+		if (ji->type == cJSON_Array) {
+			ji = ji->child;
+			is_array = true;
 		}
+		while (ji != NULL) {
+			if (ji->type != cJSON_String) {
+				fprintf(stderr, "\"make_model\" must be a string or an array of strings\n");
+				goto parse_error;
+			}
+			CameraConst *cc = CameraConst::parseEntry((void *)js, ji->valuestring);
+			if (!cc) {
+				goto parse_error;
+			}
+			Glib::ustring make_model(ji->valuestring);
+			std::map<Glib::ustring, CameraConst *>::iterator existingccIter = mCameraConstants.find(make_model);
 
-		Glib::ustring make_model(ji->valuestring);
-		std::map<Glib::ustring, CameraConst *>::iterator existingccIter = mCameraConstants.find(make_model);
+			if (existingccIter == mCameraConstants.end())
+				// add the new CamConst to the map
+				mCameraConstants.insert(std::pair<Glib::ustring,CameraConst *>(make_model, cc));
+			else {
+				// The CameraConst already exist for this camera make/model -> we merge the values
+				CameraConst *existingcc = existingccIter->second;
 
-		if (existingccIter == mCameraConstants.end())
-			// add the new CamConst to the map
-			mCameraConstants.insert(std::pair<Glib::ustring,CameraConst *>(make_model, cc));
-		else {
-			// The CameraConst already exist for this camera make/model -> we merge the values
-			CameraConst *existingcc = existingccIter->second;
-
-			// updating the dcraw matrix
-			existingcc->update_dcrawMatrix(cc->get_dcrawMatrix());
-			// deleting all the existing levels, replaced by the new ones
-			existingcc->update_Levels(cc);
+				// updating the dcraw matrix
+				existingcc->update_dcrawMatrix(cc->get_dcrawMatrix());
+				// deleting all the existing levels, replaced by the new ones
+				existingcc->update_Levels(cc);
+			}
+			if (is_array) {
+				ji = ji->next;
+			} else {
+				ji = NULL;
+			}
 		}
 	}
 	cJSON_Delete(jsroot);
