@@ -752,12 +752,20 @@ void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H) {
   }
   if (fixr->get_active()) {
     double r = getRatio();
-    int W2max = (int)round(r*(maxh-Y));
+    int W2max = min(maxw, (int)round(r*maxh));
     if (W>W2max) {
       X += W - W2max;
       W = W2max;  
     }
+    int oldH = H;
     H = (int)round(W / r);
+    Y = Y - (H - oldH) / 2;
+    if (X + W > maxw)
+      X = maxw - W;
+    if (Y + H > maxh)
+      Y = maxh - H;
+    else if (Y < 0)
+      Y = 0;
   }
 
   nx = X;
@@ -786,10 +794,18 @@ void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H) {
 
   if (fixr->get_active()) {
     double r = getRatio();
-    int W2max = (int)round(r*(maxh-Y));
+    int W2max = min(maxw, (int)round(r*maxh));
     if (W>W2max)
       W = W2max;  
+    int oldH = H;
     H = (int)round(W / r);
+    Y = Y - (H - oldH) / 2;
+    if (X + W > maxw)
+      X = maxw - W;
+    if (Y + H > maxh)
+      Y = maxh - H;
+    else if (Y < 0)
+      Y = 0;
   }
 
   nx = X;
@@ -815,12 +831,20 @@ void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H) {
 
   if (fixr->get_active()) {
     double r = getRatio();
-    int H2max = (int)round((maxw-X) / r);
+    int H2max = min(maxh, (int)round(maxw / r));
     if (H>H2max) {
       Y += H - H2max;
       H = H2max;  
     }
+    int oldW = W;
     W = (int)round(H * r);
+    X = X - (W - oldW) / 2;
+    if (X + W > maxw)
+      X = maxw - W;
+    else if (X < 0)
+      X = 0;
+    if (Y + H > maxh)
+      Y = maxh - H;
   }
 
   nx = X;
@@ -848,10 +872,18 @@ void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H) {
     H = H1max;
   if (fixr->get_active()) {
     double r = getRatio ();
-    int H2max = (int)round ((maxw-X) / r);
+    int H2max = min(maxh, (int)round (maxw / r));
     if (H>H2max)
       H = H2max;  
+    int oldW = W;
     W = (int)round(H * r);
+    X = X - (W - oldW) / 2;
+    if (X + W > maxw)
+      X = maxw - W;
+    else if (X < 0)
+      X = 0;
+    if (Y + H > maxh)
+      Y = maxh - H;
   }
 
   nx = X;
