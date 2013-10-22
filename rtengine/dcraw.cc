@@ -2408,7 +2408,8 @@ void CLASS sony_arw2_load_raw()
   ushort pix[16];
   int row, col, val, max, min, imax, imin, sh, bit, i;
 
-  data = (uchar *) malloc (raw_width);
+  //data = (uchar *) malloc (raw_width);
+  data = (uchar *) malloc (raw_width + 1); // RT: added +1 to avoid buffer overrun
   merror (data, "sony_arw2_load_raw()");
   for (row=0; row < height; row++) {
     fread (data, 1, raw_width, ifp);
@@ -2427,11 +2428,12 @@ void CLASS sony_arw2_load_raw()
 	  bit += 7;
 	}
       for (i=0; i < 16; i++, col+=2)
-	RAW(row,col) = curve[pix[i] << 1] >> 2;
+       RAW(row,col) = curve[pix[i] << 1]; // >> 2; RT: disabled shifting to avoid precision loss
       col -= col & 1 ? 1:31;
     }
   }
   free (data);
+  maximum = curve[0x7ff << 1]; // RT: fix maximum.
 }
 
 void CLASS samsung_load_raw()
@@ -4804,7 +4806,7 @@ void CLASS parse_mos (int offset)
   { "","DCB2","Volare","Cantare","CMost","Valeo 6","Valeo 11","Valeo 22",
     "Valeo 11p","Valeo 17","","Aptus 17","Aptus 22","Aptus 75","Aptus 65",
     "Aptus 54S","Aptus 65S","Aptus 75S","AFi 5","AFi 6","AFi 7",
-    "","","","","","","","","","","","","","","","","","AFi-II 12" };
+    "AFi-II 7","","","Aptus-II 6","","","Aptus-II 10","Aptus-II 5","","","","","Aptus-II 10R","Aptus-II 8","","Aptus-II 12","","AFi-II 12" };  // RT: added missing model names
   float romm_cam[3][3];
 
   fseek (ifp, offset, SEEK_SET);
@@ -7018,6 +7020,9 @@ void CLASS adobe_coeff (const char *make, const char *model)
       }
       break;
     }
+  if (strcmp(make, "Sony") == 0 && table[i].black > 0 && table[i].black < 400) { // RT: arw2 scale fix
+      black <<= 2;
+  }
   { /* Check for RawTherapee table overrides and extensions */
       int black_level, white_level;
       short trans[12];

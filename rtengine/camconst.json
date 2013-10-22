@@ -95,25 +95,43 @@ white level constant is too high. You can fix this by adjusting the
 measuring and providing a more exact white level in camconst.json so
 RawTherapee gets to know from start where the camera actually clips.
 
-Here's a guide how to do it.
+Providing a complete and detailed white-level profile can be a quite large
+and complicated effort. As an alternative you can provide a simpler profile.
+We suggest one of the following alternatives in rising difficulty (and
+generally diminishing return):
+
+A) Provide a single white-level value measured on the native ISO (base ISO).
+   For many cameras this will actually be complete information, those that
+   don't vary on channel, ISO or aperture.
+B) Check through all ISOs and if there are differences in white level provide
+   an array with white level per ISO.
+C) In addition to ISO, check for aperture scaling and add that.
+D) In addition to ISO and aperture scaling check for color channel
+   differences and add that.
+
+Doing A) is often better than nothing, as dcraw's default is often too high.
+B) can also be worthwhile for some cameras (or else you'll get pink highlights
+for some ISOs), while C) and D) can generally be seen as fine-tuning.
+
+Here follows a guide how to measure white levels (clipping levels):
 
 Shoot with your camera into a bright light source, such as a lamp, and make
 sure the shutter speed is long enough to get overexposure (we want
-clipping!). Some cameras have fuzzy white levels and may look less fuzzy with
-strong over-exposure (most samples are then pushed to some hard raw limit), if
-you measure such a camera you'd want to over-expose softly (ie one-two stops or
-so) so you can more correctly see where the camera stops providing sane
-information.
+clipping!). Preferably overexpose lightly, say 1 or 2 stops if you can. The
+reason for this is that some cameras with fuzzy white levels may look less
+fuzzy than they actually are if over-exposure is heavy.
 
 Use f/5.6 or smaller aperture (=larger f-number) to avoid any raw scaling
-the camera might have for large apertures. Open the file in a raw analyzer
-such as Rawdigger and check the pixel values for the clipped areas (if you
-are using Rawdigger, make sure you have disabled "subtract black" in
-preferences or else sample values can be wrong). In this stage we always look
-at white level before black level subtraction! White levels can be different on
-color channel (R, G1, B, G2, note the two greens, most often both green
-channels have the same white level though) and vary depending on ISO setting,
-so make one shoot for each ISO (even 1/3 steps, so yes it can be quite a lot of
+the camera might have for large apertures.
+
+Open the file in a raw analyzer such as Rawdigger and check the pixel values
+for the clipped areas (if you are using Rawdigger, make sure you have disabled
+"subtract black" in preferences or else sample values can be wrong). In this
+stage we always look at white level before black level subtraction! White
+levels can be different on color channel (R, G1, B, G2, note the two greens,
+most often both green channels have the same white level though) and vary
+depending on ISO setting, so if you want to provide a complete profile make
+one shoot for each ISO (even 1/3 steps, so yes it can be quite a lot of
 pictures to shoot and check).
 
 In addition, many cameras scale the raw values for large apertures. It's
@@ -126,14 +144,15 @@ have ISO scaling you need to shoot at these different ISOs to detect any
 differences in scaling, there can be a bit of variation. If you don't have
 access to the widest lens available for the system (say only an f/1.8 lens
 instead of an f/1.2) it can still be valuable to have the values down to
-what you can provide.
+what you can provide. Brands known to have models that have aperture scaling
+include Canon, Nikon and Sony.
 
 PROVIDE CONSERVATIVE VALUES. Most cameras have a little noise at the white
 level, and some can have a lot. In your raw analyzer, move around and look at
 the values in the clipped areas to get a sense of the variation, and/or look
-at the histogram. White it's common to have very little variation, say only
-+/-2 units, some can have +/-500 or more. There can also be camera-to-camera
-variation.
+at the histogram. While it's common to with very little variation, say only
++/-2 units, some can have +/-500 or more (some may have different variation
+depending on ISO). There can also be camera-to-camera variation.
 
 If the white level is set too high RawTherapee will not think the pixels are
 clipped and you can get discoloured highlights (usually pink), this is what
@@ -142,8 +161,8 @@ you lose a little highlight detail, but the color is rendered correctly and
 highlight reconstruction can work properly, so this is not as bad. This is why
 we want conservative values.
 
-By conservative values we mean that if you see a clipping level of most often
-15760 and occassionally 15759 (ie very small variation of clipping level which
+By conservative values we mean that if you see a white level of most often
+15760 and occassionally 15759 (ie very small variation of white level which
 is a common case), you set the white level 10 - 20 units below, say at 15750 in
 this example, this way we get a little margin from noise and camera variation.
 Since sensor raw values are linear you lose in this example log2(1-10/15760) =
@@ -154,18 +173,18 @@ properly.
 
 If you have a fuzzy white level look at the linear histogram; you will probably
 see a normal/gaussian distribution (bell shape) noise peak at clipping and
-probably also a peak at a hard raw data clip level usually at a power of
-two - 1, such as 4095 or 16383. Then you pick a value just before the bell
-shape rises, ie to the left of the bell meaning that you cut away the whole
-fuzzy noise peak. If a little of the starting edge of the noise will be
+probably also a peak at a hard raw data clip level usually at or close to a
+power of two - 1, such as 4095 or 16383. Then you pick a value just before the
+bell shape rises, ie to the left of the bell meaning that you cut away the
+whole fuzzy noise peak. If a little of the starting edge of the noise will be
 included it's not harmful, but 99% of it should be above.
 
 If you have used Adobe's DNG Converter and analyzed it's output you may have
 noticed that it's very conservative regarding white levels, ie it cuts away
 quite a lot from the top. While we also recommend to be conservative, you can
-generally be a little bit less conservative than Adobe's DNG Converter.
-RawTherapee is meant to max out what you can get from your camera, and the
-white levels should (within reason) mirror that.
+generally be a little bit less so than Adobe's DNG Converter. RawTherapee is
+meant to max out what you can get from your camera, and the white levels should
+mirror that, within reason.
 
 The aperture scaling feature is meant to raise the white level to not miss out
 on highlight detail when the camera has scaled the raw values (and thus
@@ -179,35 +198,41 @@ for example the Canon 5D mark II maxes out at 16383 which happens at f/1.8
 for ISOs with the white level at 15750, but for ISO160 when the white level
 is 12800 it does not max out. If there is such a raw limit it must also be
 provided ("ranges":"white_max"). Usually you will not need a margin on
-white_max as it clipping is a result of an in-camera math operation.
+white_max as it clips there as a result of an in-camera math operation.
 
 Note that aperture scaling can be quite small, for the 5D mark II it's only
 0.1 stop down to f/1.4 and then it can be discussed if it's worthwhile to care.
 The "worst" cameras scale about 0.6 stops though, and then it's more
-valuable to compensate. If you skip aperture scaling you will clip too early
-and miss that highlight detail, but you get no processing problems. Setting
-unconservative scale factors can on the other hand cause a too high
-whitelevel and break highlight processing, so be careful. Scaling can vary
-sligthly depending on ISO (if white levels vary) so make sure to provide
-conservative scalings so regardless of ISO you don't get a too high white
-level. We recommend to keep a wider margin here than on the white levels,
-ie 0.5-1% lower or so. For example if base (conservative!) white level is
-15750 and the scaled is 16221 we have a scaling factor of 16221/15750=1.0299
-ie +2.9% we set the factor to 1.02 or +2% to keep a margin.
+valuable to compensate. If you skip aperture scaling RawTherapee will clip the
+files a little bit too early and you miss that last fraction of highlight
+detail, but you get no processing problems. Setting unconservative scale
+factors can on the other hand cause a too high whitelevel and break highlight
+processing, so be careful.
 
-Scaling takes place on the raw values before black level subtraction, and if
-a black level constant is provided also that will be scaled.
+Scaling can vary sligthly depending on ISO (if white levels vary) so make
+sure to provide conservative scalings so regardless of ISO you don't get a
+too high white level. We recommend to keep a wider margin here than on the
+white levels, ie 0.5-1% lower or so. For example if base (conservative!)
+white level is 15750 and the scaled is 16221 we have a scaling factor of
+16221/15750=1.0299 ie +2.9% we set the factor to 1.02 or +2% to keep a
+margin.
+
+The scale factor you provide here is applied on the white level before black
+level subtraction (if any), ie directly on the white level value you provide in
+the camconst.json file. Black level (if provided) is not scaled. Please report
+to us if you come across a camera which scales black levels, then we can add
+that as an option. Usually the camera applies an offset to shift back the
+black level to the standard level after scaling.
 
 If RawTherapee doesn't find an entry for the aperture used in the image, it
 will pick the closest above. Ie if the apertures 1.0 and 2.0 is in the table
 and the image has aperture 1.2, it will pick scaling for 2.0, even if 1.0 is
 the closer aperture. The reason for always checking the closest above is that
-we rather get a bit low white level than too high, as discussed before.
+we rather get a bit too low white level than too high, as discussed before.
 
-Some cameras have different white levels on different color channels. Note
-that some cameras with different white levels per color have so small
-differences that you may just provide a single value instead, then pick
-the lowest white level and make a conservative margin as always.
+Some cameras have different white levels on different color channels. When
+this is the case the difference is often so small so you can just provide a
+single value instead, ie a conservative value based on the lowest clipping.
 
 */
 {"camera_constants": [
@@ -258,6 +283,52 @@ the lowest white level and make a conservative margin as always.
             ]
         }
     },
+    {
+        "make_model": "Canon EOS 5D Mark III",
+        "dcraw_matrix": [ 6722,-635,-963,-4287,12460,2028,-908,2162,5668 ],
+        "ranges": {
+            // black levels are read from raw masked pixels
+	    // white levels are same for all colors, but vary on ISO
+            "white": [
+                { "iso": 50,  "levels": 15270 }, // typical: 15282
+                { "iso": 100, "levels": 15270 },
+                { "iso": 125, "levels": 15270 },
+                { "iso": 160, "levels": 13300 }, // typical: 13306
+                { "iso": 200, "levels": 15270 },
+                { "iso": 250, "levels": 15270 },
+                { "iso": 320, "levels": 13300 },
+                { "iso": 400, "levels": 15270 },
+                { "iso": 500, "levels": 15270 },
+                { "iso": 640, "levels": 13300 },
+                { "iso": 800, "levels": 15270 },
+                { "iso": 1000, "levels": 15270 },
+                { "iso": 1250, "levels": 13300 },
+                { "iso": 1600, "levels": 15270 },
+                { "iso": 2000, "levels": 15270 },
+                { "iso": 2500, "levels": 13300 },
+                { "iso": 3200, "levels": 15270 },
+                { "iso": 4000, "levels": 15270 },
+                { "iso": 5000, "levels": 13300 },
+                { "iso": 6400, "levels": 15270 },
+                { "iso": 8000, "levels": 15270 },
+                { "iso": 10000, "levels": 13300 }, // no data, guessed
+                { "iso": 12800, "levels": 15270 },
+                { "iso": 16000, "levels": 15270 },
+                { "iso": 20000, "levels": 15270 },
+                { "iso": 25600, "levels": 16300 },
+                { "iso": 32000, "levels": 16300 },
+                { "iso": 40000, "levels": 16300 },
+                { "iso": 51200, "levels": 16300 },
+                { "iso": 102400, "levels": 16300 }
+            ],
+	    "white_max": 16383,
+            "aperture_scaling": [
+	        // limited scaling info available, please provide more
+		{ "aperture": 2.0, "scale_factor": 1.024 },
+		{ "aperture": 2.8, "scale_factor": 1.010 }
+            ]
+        }
+    },
 
     {
         "make_model": "Nikon D7000",
@@ -270,24 +341,21 @@ the lowest white level and make a conservative margin as always.
         "ranges": { "white": [ 16370, 15760, 16370 ] }
     },
 
+    {
+        "make_model": "Sony SLT-A77",
+        "dcraw_matrix": [ 5126,-830,-261,-4788,12196,2934,-948,1602,7068 ], // matrix provided by Colin Walker
+	// note: Sony ARW2 file format gets 14 bit values, not 12 bit like in dcraw 9.19
+        "ranges": { "black": 512, "white": 16350 }
+    },
+    {
+        "make_model": [ "Sony SLT-A99", "Sony SLT-A99V" ],
+        "dcraw_matrix": [ 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 ],
+        "ranges": { "black": 512, "white": 16350 }
+    },
+
     // Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files
     {
-        "make_model": "Phase One P40+",
-        "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One IQ140",
-        "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One P65+",
-        "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One IQ160",
+        "make_model": [ "Phase One P40+", "Phase One IQ140", "Phase One P65+", "Phase One IQ160" ],
         "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
         "ranges": { "black": 0, "white": 64400 }
     },
@@ -297,52 +365,22 @@ the lowest white level and make a conservative margin as always.
         "ranges": { "black": 0, "white": 64400 }
     },
     {
-        "make_model": "Phase One P20",
+        "make_model": [ "Phase One P20", "Phase One P20+", "Phase One P25", "Phase One P25+" ],
         "dcraw_matrix": [ 2905,732,-237,-8135,16626,1476,-3038,4253,7517 ],
         "ranges": { "black": 0, "white": 64400 }
     },
     {
-        "make_model": "Phase One P20+",
-        "dcraw_matrix": [ 2905,732,-237,-8135,16626,1476,-3038,4253,7517 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One P21",
+        "make_model": [ "Phase One P21", "Phase One P21+" ],
         "dcraw_matrix": [ 6516,-2050,-507,-8217,16703,1479,-3492,4741,8489 ],
         "ranges": { "black": 0, "white": 64400 }
     },
     {
-        "make_model": "Phase One P21+",
-        "dcraw_matrix": [ 6516,-2050,-507,-8217,16703,1479,-3492,4741,8489 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One P25",
-        "dcraw_matrix": [ 2905,732,-237,-8135,16626,1476,-3038,4253,7517 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One P25+",
-        "dcraw_matrix": [ 2905,732,-237,-8135,16626,1476,-3038,4253,7517 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One P30",
+        "make_model": [ "Phase One P30", "Phase One P30+"],
         "dcraw_matrix": [ 4516,-244,-36,-7020,14976,2174,-3206,4670,7087 ],
         "ranges": { "black": 0, "white": 64400 }
     },
     {
-        "make_model": "Phase One P30+",
-        "dcraw_matrix": [ 4516,-244,-36,-7020,14976,2174,-3206,4670,7087 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One 45",
-        "dcraw_matrix": [ 5053,-24,-117,-5685,14077,1703,-2619,4491,5850 ],
-        "ranges": { "black": 0, "white": 64400 }
-    },
-    {
-        "make_model": "Phase One 45+",
+        "make_model": [ "Phase One 45", "Phase One 45+" ],
         "dcraw_matrix": [ 5053,-24,-117,-5685,14077,1703,-2619,4491,5850 ],
         "ranges": { "black": 0, "white": 64400 }
     },

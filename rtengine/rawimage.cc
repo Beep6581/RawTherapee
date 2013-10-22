@@ -242,7 +242,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
       if (cc) {
            for (int i = 0; i < 4; i++) {
                  if (RT_blacklevel_from_constant) {
-                     black_c4[i] = cc->get_BlackLevel(i, iso_speed, aperture);
+                     black_c4[i] = cc->get_BlackLevel(i, iso_speed);
                  }
                  // load 4 channel white level here, will be used if available
                  if (RT_whitelevel_from_constant) {
@@ -328,7 +328,7 @@ RawImage::get_thumbSwap() const
 bool
 DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int iso_speed, short trans[12], int *black_level, int *white_level)
 {
-    static const int dcraw_arw2_scaling_bugfix_shift = 0; // not yet enabled, should be 2 when enabled
+    static const int dcraw_arw2_scaling_bugfix_shift = 2;
     static const struct {
         const char *prefix;
         int black_level, white_level; // set to -1 for no change
@@ -475,7 +475,7 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
         rtengine::CameraConstantsStore* ccs = rtengine::CameraConstantsStore::getInstance();
         rtengine::CameraConst *cc = ccs->get(make, model);
         if (cc) {
-            *black_level = cc->get_BlackLevel(0, iso_speed, aperture);
+            *black_level = cc->get_BlackLevel(0, iso_speed);
             *white_level = cc->get_WhiteLevel(0, iso_speed, aperture);
             if (cc->has_dcrawMatrix()) {
                 const short *mx = cc->get_dcrawMatrix();
