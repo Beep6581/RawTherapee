@@ -710,8 +710,9 @@ PREFERENCES_CIEART_LABEL;Utilise la précision float au lieu de double pour CIEC
 PREFERENCES_CIEART_TOOLTIP;Si activé, les calculs CIECAM sont réalisés en précision float au lieu de précision double. Cela amène un léger accroissement de vitesse, et une légère réduction de qualité
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
-PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\nParamètres de ligne de commande pour permettre la génération d'un .pp3 basé sur des règles:\n[Chemin vers le fichier RAW/JPG] [Chemin vers le profil par défault] [ouverture f] [tps d'exposition en seconde] [longueur focale en mm] [ISO] [Objectif] [Appareil photo]
-PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
+PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\nParamètres de ligne de commande pour permettre la génération d'un .pp3 basé sur des règles:\n[Chemin vers le fichier RAW/JPG] [Chemin vers le profil par défault] [Chemin de le répertoire Cache de RT] [ouverture f] [tps d'exposition en seconde] [longueur focale en mm] [ISO] [Objectif] [Fabricant de l'appareil photo] [Modèle de l'appareil photo]\n\n<b>ATTENTION:</b> Il vous appartient d'utiliser ou non des guillemts double pour spécifier des chemins si ceux-ci contiennent des espaces
+REFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
+PREFERENCES_CUSTPROFBUILDPATH_TOOLTIP;
 PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'image personnalisé
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
 PREFERENCES_D50;5000K

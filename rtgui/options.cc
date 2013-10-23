@@ -1083,34 +1083,34 @@ void Options::load () {
 
         if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_LOCAL_APPDATA,false)) {
             WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
-            rtdir = Glib::ustring(pathA) + Glib::ustring("\\") + Glib::ustring(CACHEFOLDERNAME);
+            rtdir = Glib::build_filename(Glib::ustring(pathA), Glib::ustring(CACHEFOLDERNAME));
 		}
 	}
 #else
-    rtdir = Glib::ustring(g_get_user_config_dir ()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
+    rtdir = Glib::build_filename(Glib::ustring(g_get_user_config_dir ()), Glib::ustring(CACHEFOLDERNAME));
 #endif
 
     // Set the cache folder in RT's base folder
-    cacheBaseDir = argv0 + "/cache";
+    cacheBaseDir = Glib::build_filename(argv0, "cache");
 
     // Read the global option file (the one located in the application's base folder)
-    options.readFromFile (argv0+"/options");
+    options.readFromFile (Glib::build_filename(argv0, "options"));
 
     // Check if RT is installed in Multi-User mode
     if (options.multiUser) {
         // Read the user option file (the one located somewhere in the user's home folder)
         // Those values supersets those of the global option file
-        int r = options.readFromFile (rtdir + "/options");
+        int r = options.readFromFile (Glib::build_filename(rtdir, "options"));
         // If the local option file does not exist or is broken, and the local cache folder does not exist, recreate it
         if (r && !safe_g_mkdir_with_parents (rtdir, 511)) {
             // Save the option file
-            options.saveToFile (rtdir + "/options");
+            options.saveToFile (Glib::build_filename(rtdir, "options"));
         }
         // Modify the path of the cache folder to the user's personal folder
 #ifdef WIN32
-        cacheBaseDir = rtdir + "/cache";
+        cacheBaseDir = Glib::build_filename(rtdir, "cache");
 #else
-        cacheBaseDir = Glib::ustring(g_get_user_cache_dir()) + Glib::ustring("/") + Glib::ustring(CACHEFOLDERNAME);
+        cacheBaseDir = Glib::build_filename(Glib::ustring(g_get_user_cache_dir()), Glib::ustring(CACHEFOLDERNAME));
 #endif
     }
 
@@ -1185,10 +1185,10 @@ void Options::load () {
 void Options::save () {
 
     if (options.multiUser==false) {
-        options.saveToFile (argv0+"/options");
+        options.saveToFile (Glib::build_filename(argv0, "options"));
     }
     else {
-        options.saveToFile (rtdir + "/options");
+        options.saveToFile (Glib::build_filename(rtdir, "options"));
     }
 }
 
