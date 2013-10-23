@@ -248,6 +248,29 @@ complete info):
  - Sony ARW2: no scaling. Generally black level around 512, and white level
    16350.
 
+Note that some raw formats may go through a certain amount of pre-processing
+based on meta data, such as curve and levels adjustments and various
+calibrations. The Phase One IIQ is one example, and this means that if you
+look at the data in a raw analyzer such as RawDigger it may perform a
+different type of preprocessing than RawTherapee's loader does, and you may
+end up providing incompatible black/white levels.
+
+You can use RawTherapee for analysis too, it's safer as you are using it's
+own raw decoder but it's not as user-friendly: enable verbose mode in options
+so you get output on the console (you need to start RT from a console to see
+the output). When you load a file you will see a message of current black
+and white levels and if they came from dcraw or camconst.json. If you're
+adjusting an existing camconst.json value you can just read what it is in
+the file and not need to enable verbose output. Reset exposure sliders to
+neutral, and zoom in on a clipped highlight. Move around the mouse pointer,
+it should show stable 100% on R G B. If so, the white level is not too high,
+it could however be too low. To test that, go to the raw tab and adjust the
+"whitepoint linear correction factor", reduce it until one of the channels
+is no longer 100%, and then increase 0.01 so all are 100 again. Usually you
+play around in the range 0.90 to 0.99, ie very small adjustment. Then divide
+the original white level with your adjustment to get a new larger white level,
+which you then enter in your camconst.json file.
+
 */
 {"camera_constants": [
 
@@ -384,38 +407,39 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     },
 
     /* Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files.
-       Note: the dcraw decoder makes black level subtraction when decoding from metadata in the IIQ format, so
-       what we see here is the result after that, ie black level is 0. (The actual black level is about 1024 with
-       white level at 0xfffc=65532) */
+       Note: the dcraw decoder makes black level subtraction and various corrections to the raw values based on
+       metadata embedded in the IIQ format, so what we see here is the result after that, ie black level is 0,
+       and white level is typically at or close to 65535. However sensors vary a bit and can be noisy around clip
+       so we cut away 0.05 stop from top down to 63300 to be a bit conservative. */
     { // quality A
         "make_model": [ "Phase One P40+", "Phase One IQ140", "Phase One P65+", "Phase One IQ160" ],
         "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
-        "ranges": { "black": 0, "white": 64400 }
+        "ranges": { "black": 0, "white": 63300 }
     },
     { // quality A
         "make_model": [ "Phase One IQ180", "Phase One IQ280" ],
         "dcraw_matrix": [ 6294,686,-712,-5435,13417,2211,-1006,2435,5042 ],
-        "ranges": { "black": 0, "white": 64400 }
+        "ranges": { "black": 0, "white": 63300 }
     },
     { // quality A
         "make_model": [ "Phase One P20", "Phase One P20+", "Phase One P25", "Phase One P25+" ],
         "dcraw_matrix": [ 2905,732,-237,-8135,16626,1476,-3038,4253,7517 ],
-        "ranges": { "black": 0, "white": 64400 }
+        "ranges": { "black": 0, "white": 63300 }
     },
     { // quality A
         "make_model": [ "Phase One P21", "Phase One P21+" ],
         "dcraw_matrix": [ 6516,-2050,-507,-8217,16703,1479,-3492,4741,8489 ],
-        "ranges": { "black": 0, "white": 64400 }
+        "ranges": { "black": 0, "white": 63300 }
     },
     { // quality A
         "make_model": [ "Phase One P30", "Phase One P30+"],
         "dcraw_matrix": [ 4516,-244,-36,-7020,14976,2174,-3206,4670,7087 ],
-        "ranges": { "black": 0, "white": 64400 }
+        "ranges": { "black": 0, "white": 63300 }
     },
     { // quality A
         "make_model": [ "Phase One P45", "Phase One P45+" ],
         "dcraw_matrix": [ 5053,-24,-117,-5685,14077,1703,-2619,4491,5850 ],
-        "ranges": { "black": 0, "white": 64400 }
+        "ranges": { "black": 0, "white": 63300 }
     },
 
     // dummy test entry to test the parser and show the format with all entries active
