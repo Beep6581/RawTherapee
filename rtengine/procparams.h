@@ -802,12 +802,10 @@ class ProcParams {
         * save the same file in two different location, i.e. the cache and the image's directory
         * @param fname   the name of the first file (can be an empty string)
         * @param fname2  the name of the second file (can be an empty string) (optional)
-        * @param fnameAbsolute set to false if embedded filenames (if any, darkframe/flatfield) should be stored as relative
-        * filenames if they are inside the same directory or in a sub-directory to fname's directory.
         * @param pedited pointer to a ParamsEdited object (optional) to store which values has to be saved
         * @return Error code (=0 if all supplied filenames where created correctly)
         */
-        int     save        (Glib::ustring fname, Glib::ustring fname2 = "", bool fnameAbsolute = true, ParamsEdited* pedited=NULL) const;
+        int     save        (Glib::ustring fname, Glib::ustring fname2 = "", ParamsEdited* pedited=NULL) const;
       /**
         * Loads the parameters from a file.
         * @param fname the name of the file

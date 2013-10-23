@@ -751,9 +751,8 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData) {
 
     if (updatePParams && pparamsValid) {
         pparams.save (
-            options.saveParamsFile  ? fname + paramFileExtension : "",
             options.saveParamsCache ? getCacheFileName ("profiles")+paramFileExtension : "",
-            options.saveParamsCache
+            options.saveParamsFile  ? fname + paramFileExtension : ""
         );
     }
     if (updateCacheImageData)
