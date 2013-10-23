@@ -239,6 +239,8 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 
       CameraConstantsStore* ccs = CameraConstantsStore::getInstance();
       CameraConst *cc = ccs->get(make, model);
+      bool white_from_cc = false;
+      bool black_from_cc = false;
       if (cc) {
            for (int i = 0; i < 4; i++) {
                  if (RT_blacklevel_from_constant) {
@@ -253,11 +255,28 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
       if (black_c4[0] == -1) {
           // RT constants not set, bring in the DCRAW single channel black constant
           for (int c=0; c < 4; c++) black_c4[c] = black;
+      } else {
+	      black_from_cc = true;
+      }
+      if (maximum_c4[0] > 0) {
+	      white_from_cc = true;
       }
       for (int c=0; c < 4; c++) {
           if (cblack[c] < black_c4[c]) {
               cblack[c] = black_c4[c];
           }
+      }
+      if (settings->verbose) {
+	      if (cc) {
+		      printf("constants exists for \"%s %s\" in camconst.json\n", make, model);
+	      } else {
+		      printf("no constants in camconst.json exists for \"%s %s\" (relying only on dcraw defaults)\n", make, model);
+	      }
+	      printf("black levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_cblack(0), get_cblack(1), get_cblack(2), get_cblack(3),
+		     black_from_cc ? "provided by camconst.json" : "provided by dcraw");
+	      printf("white levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_white(0), get_white(1), get_white(2), get_white(3),
+		     white_from_cc ? "provided by camconst.json" : "provided by dcraw");
+	      printf("color matrix provided by %s\n", (cc && cc->has_dcrawMatrix()) ? "camconst.json" : "dcraw");
       }
   }
 
