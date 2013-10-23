@@ -362,7 +362,6 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
     }
-    flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
 
     icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData); 
     lensProf->setRawMeta (raw, pMetaData); 
@@ -630,9 +629,4 @@ void ToolPanelCoordinator::toolSelected (ToolMode tool) {
 	default:
 		break;
 	}
-}
-
-void ToolPanelCoordinator::dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile) {
-
-    flatfield->setShortcutPath(dirname);
 }
