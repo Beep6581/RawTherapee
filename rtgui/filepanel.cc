@@ -61,6 +61,7 @@ FilePanel::FilePanel () : parent(NULL) {
     dirBrowser->addDirSelectionListener (fileCatalog);
     dirBrowser->addDirSelectionListener (recentBrowser);
     dirBrowser->addDirSelectionListener (placesBrowser);
+    dirBrowser->addDirSelectionListener (tpc);
     fileCatalog->setFileSelectionListener (this);
     fileCatalog->setDirBrowserRemoteInterface (dirBrowser);
 

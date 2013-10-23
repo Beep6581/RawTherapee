@@ -145,7 +145,9 @@ differences in scaling, there can be a bit of variation. If you don't have
 access to the widest lens available for the system (say only an f/1.8 lens
 instead of an f/1.2) it can still be valuable to have the values down to
 what you can provide. Brands known to have models that have aperture scaling
-include Canon, Nikon and Sony.
+of white levels include Canon and Nikon. Note that if white levels are not
+scaled the camera may have raw scaling anyway (Sony for example), but as
+such scaling will not affect raw decoding we don't need to care about that.
 
 PROVIDE CONSERVATIVE VALUES. Most cameras have a little noise at the white
 level, and some can have a lot. In your raw analyzer, move around and look at
@@ -234,10 +236,35 @@ Some cameras have different white levels on different color channels. When
 this is the case the difference is often so small so you can just provide a
 single value instead, ie a conservative value based on the lowest clipping.
 
+What we know at the time of writing about different brands/models (not
+complete info):
+
+ - Canon CR2: typically same clipping per channel, but significant variations
+   on ISO and aperture. Maxes out at 16383, black level measured on masked
+   black pixels, ie don't provide that.
+ - Nikon NEF: sometimes different clipping per color (most often negligible
+   though). Will do aperture and ISO scaling, but often to a lesser extent
+   than Canon files, ie not as much to gain.
+ - Sony ARW2: no scaling. Generally black level around 512, and white level
+   16350.
+
 */
 {"camera_constants": [
 
-    {
+/*
+
+When adding camera constants please set a quality level so we know the status for future updates
+
+Quality A: complete information, no need to add more, to the best of our knowledge
+Quality B: not complete, but very little to gain from adding more
+Quality C: complementing with additional information would provide significant gain
+Quality X: unknown, ie we knowing to little about the camera properties to know if
+           we have enough info or not.
+
+*/
+
+
+    { // quality A (only aperture scaling for f/1.2 missing)
         "make_model": "Canon EOS 5D Mark II",
         "dcraw_matrix": [ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 ],
         "ranges": {
@@ -283,7 +310,7 @@ single value instead, ie a conservative value based on the lowest clipping.
             ]
         }
     },
-    {
+    { // quality B, more aperture scalings desired
         "make_model": "Canon EOS 5D Mark III",
         "dcraw_matrix": [ 6722,-635,-963,-4287,12460,2028,-908,2162,5668 ],
         "ranges": {
@@ -330,56 +357,59 @@ single value instead, ie a conservative value based on the lowest clipping.
         }
     },
 
-    {
+    { // quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
         "make_model": "Nikon D7000",
         "dcraw_matrix": [ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 ], // matrix provided by Tanveer(tsk1979)
-        /* Haven't tested the camera for aperture scaling or ISO differences on white levels, ie there may
-	   be further improvements to make. Differences between white levels on the channels are so small
-	   that there's little value to provide for each (rather than just set a single value at 15760), but
-	   we do this anyway as this is the first entry after the separate-white-level code was added, and
-	   we wanted an entry to show the concept. G1 and G2 have the same level, thus only 3 numbers in the array. */
-        "ranges": { "white": [ 16370, 15760, 16370 ] }
+        "ranges": {
+	    // measured at ISO 100. ISO differences not measured, but known to exist
+	    "white": [ 16370, // 16383 typical
+	               15760, // 15778 typical
+		       16370  // 16383 typical
+		     ],
+	    "white_max": 16383
+	    // aperture scaling not measured, but known to exist, at f/1.8 the G channels hits white_max
+	}
     },
 
-    {
+    { // quality A
         "make_model": "Sony SLT-A77",
         "dcraw_matrix": [ 5126,-830,-261,-4788,12196,2934,-948,1602,7068 ], // matrix provided by Colin Walker
 	// note: Sony ARW2 file format gets 14 bit values, not 12 bit like in dcraw 9.19
         "ranges": { "black": 512, "white": 16350 }
     },
-    {
+    { // quality A
         "make_model": [ "Sony SLT-A99", "Sony SLT-A99V" ],
         "dcraw_matrix": [ 6344,-1612,-462,-4863,12477,2681,-865,1786,6899 ],
         "ranges": { "black": 512, "white": 16350 }
     },
 
     // Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files
-    {
+    { // quality A
         "make_model": [ "Phase One P40+", "Phase One IQ140", "Phase One P65+", "Phase One IQ160" ],
         "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
         "ranges": { "black": 0, "white": 64400 }
     },
-    {
+    { // quality A
         "make_model": "Phase One IQ180",
         "dcraw_matrix": [ 6294,686,-712,-5435,13417,2211,-1006,2435,5042 ],
         "ranges": { "black": 0, "white": 64400 }
     },
-    {
+    { // quality A
         "make_model": [ "Phase One P20", "Phase One P20+", "Phase One P25", "Phase One P25+" ],
         "dcraw_matrix": [ 2905,732,-237,-8135,16626,1476,-3038,4253,7517 ],
         "ranges": { "black": 0, "white": 64400 }
     },
-    {
+    { // quality A
         "make_model": [ "Phase One P21", "Phase One P21+" ],
         "dcraw_matrix": [ 6516,-2050,-507,-8217,16703,1479,-3492,4741,8489 ],
         "ranges": { "black": 0, "white": 64400 }
     },
-    {
+    { // quality A
         "make_model": [ "Phase One P30", "Phase One P30+"],
         "dcraw_matrix": [ 4516,-244,-36,-7020,14976,2174,-3206,4670,7087 ],
         "ranges": { "black": 0, "white": 64400 }
     },
-    {
+    { // quality A
         "make_model": [ "Phase One 45", "Phase One 45+" ],
         "dcraw_matrix": [ 5053,-24,-117,-5685,14077,1703,-2619,4491,5850 ],
         "ranges": { "black": 0, "white": 64400 }

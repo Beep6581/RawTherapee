@@ -49,6 +49,7 @@ protected:
 	bool lastFFAutoSelect;
 	FFProvider *ffp;
 	sigc::connection flatFieldFileconn, flatFieldAutoSelectconn, flatFieldBlurTypeconn;
+        Glib::ustring lastShortcutPath;
 
 public:
 
@@ -64,6 +65,7 @@ public:
     void flatFieldFile_Reset        ();
     void flatFieldAutoSelectChanged ();
     void flatFieldBlurTypeChanged   ();
+    void setShortcutPath(Glib::ustring path);
     void setFFProvider              (FFProvider* p) { ffp = p; };
 };
 
