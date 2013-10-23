@@ -425,7 +425,46 @@ void ProcParams::setDefaults () {
     ppVersion = PPVERSION;
 }
 
-int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* pedited) const {
+static Glib::ustring expandRelativePath(Glib::ustring procparams_fname, Glib::ustring prefix, Glib::ustring embedded_fname) {
+    if (embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
+        return embedded_fname;
+    }
+    if (prefix != "") {
+        if (embedded_fname.length() < prefix.length() || embedded_fname.substr(0, prefix.length()) != prefix) {
+            return embedded_fname;
+        }
+        embedded_fname = embedded_fname.substr(prefix.length());
+    }
+    if (Glib::path_is_absolute(embedded_fname)) {
+        return prefix + embedded_fname;
+    }
+    Glib::ustring absPath = prefix + Glib::path_get_dirname(procparams_fname) + G_DIR_SEPARATOR_S + embedded_fname;
+    return absPath;
+}
+
+static Glib::ustring relativePathIfInside(Glib::ustring procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname) {
+    if (fnameAbsolute || embedded_fname == "" || !Glib::path_is_absolute(procparams_fname)) {
+        return embedded_fname;
+    }
+    Glib::ustring prefix = "";
+    if (embedded_fname.length() > 5 && embedded_fname.substr(0, 5) == "file:") {
+        embedded_fname = embedded_fname.substr(5);
+        prefix = "file:";
+    }
+    if (!Glib::path_is_absolute(embedded_fname)) {
+        return prefix + embedded_fname;
+    }
+    Glib::ustring dir1 = Glib::path_get_dirname(procparams_fname) + G_DIR_SEPARATOR_S;
+    Glib::ustring dir2 = Glib::path_get_dirname(embedded_fname) + G_DIR_SEPARATOR_S;
+    size_t find = dir2.find(dir1);
+    if (dir2.substr(0, dir1.length()) != dir1) {
+        // it's in a different directory, ie not inside
+        return prefix + embedded_fname;
+    }
+    return prefix + embedded_fname.substr(dir1.length());
+}
+
+int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsolute, ParamsEdited* pedited) const {
 
     if (!fname.length() && !fname2.length())
         return 0;
@@ -775,7 +814,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->distortion.amount)      keyFile.set_double  ("Distortion", "Amount", distortion.amount);
 
     // lens profile
-    if (!pedited || pedited->lensProf.lcpFile)       keyFile.set_string  ("LensProfile", "LCPFile", lensProf.lcpFile);
+    if (!pedited || pedited->lensProf.lcpFile)       keyFile.set_string  ("LensProfile", "LCPFile", relativePathIfInside(fname, fnameAbsolute, lensProf.lcpFile));
     if (!pedited || pedited->lensProf.useDist)       keyFile.set_boolean  ("LensProfile", "UseDistortion", lensProf.useDist);
     if (!pedited || pedited->lensProf.useVign)       keyFile.set_boolean  ("LensProfile", "UseVignette", lensProf.useVign);
     if (!pedited || pedited->lensProf.useCA)         keyFile.set_boolean  ("LensProfile", "UseCA", lensProf.useCA);
@@ -808,7 +847,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     if (!pedited || pedited->resize.height)          keyFile.set_integer ("Resize", "Height", resize.height);
 
     // save color management settings
-    if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   icm.input);
+    if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   relativePathIfInside(fname, fnameAbsolute, icm.input));
     if (!pedited || pedited->icm.toneCurve)          keyFile.set_boolean ("Color Management", "ToneCurve",   icm.toneCurve);
     if (!pedited || pedited->icm.blendCMSMatrix)     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
     if (!pedited || pedited->icm.preferredProfile)   keyFile.set_boolean ("Color Management", "PreferredProfile",   icm.preferredProfile);
@@ -859,9 +898,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     }
 
     // save raw parameters
-    if (!pedited || pedited->raw.darkFrame)          keyFile.set_string  ("RAW", "DarkFrame", raw.dark_frame );
+    if (!pedited || pedited->raw.darkFrame)          keyFile.set_string  ("RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame) );
     if (!pedited || pedited->raw.dfAuto)             keyFile.set_boolean ("RAW", "DarkFrameAuto", raw.df_autoselect );
-    if (!pedited || pedited->raw.ff_file)            keyFile.set_string  ("RAW", "FlatFieldFile", raw.ff_file );
+    if (!pedited || pedited->raw.ff_file)            keyFile.set_string  ("RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file) );
     if (!pedited || pedited->raw.ff_AutoSelect)      keyFile.set_boolean ("RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect );
     if (!pedited || pedited->raw.ff_BlurRadius)      keyFile.set_integer ("RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius );
     if (!pedited || pedited->raw.ff_BlurType)        keyFile.set_string  ("RAW", "FlatFieldBlurType", raw.ff_BlurType );
@@ -908,6 +947,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, ParamsEdited* p
     int error1, error2;
     error1 = write (fname , sPParams);
     if (fname2.length()) {
+
         error2 = write (fname2, sPParams);
         // If at least one file has been saved, it's a success
         return error1 & error2;
@@ -1316,7 +1356,7 @@ if (keyFile.has_group ("Distortion")) {
 
     // lens profile
 if (keyFile.has_group ("LensProfile")) {
-    if (keyFile.has_key ("LensProfile", "LCPFile")) { lensProf.lcpFile = keyFile.get_string ("LensProfile", "LCPFile"); if (pedited) pedited->lensProf.lcpFile = true; }
+    if (keyFile.has_key ("LensProfile", "LCPFile")) { lensProf.lcpFile = expandRelativePath(fname, "", keyFile.get_string ("LensProfile", "LCPFile")); if (pedited) pedited->lensProf.lcpFile = true; }
     if (keyFile.has_key ("LensProfile", "UseDistortion")) { lensProf.useDist = keyFile.get_boolean ("LensProfile", "UseDistortion"); if (pedited) pedited->lensProf.useDist = true; }
     if (keyFile.has_key ("LensProfile", "UseVignette")) { lensProf.useVign = keyFile.get_boolean ("LensProfile", "UseVignette"); if (pedited) pedited->lensProf.useVign = true; }
     if (keyFile.has_key ("LensProfile", "UseCA")) { lensProf.useCA = keyFile.get_boolean ("LensProfile", "UseCA"); if (pedited) pedited->lensProf.useCA = true; }
@@ -1361,7 +1401,7 @@ if (keyFile.has_group ("Resize")) {
 
     // load color management settings
 if (keyFile.has_group ("Color Management")) {
-    if (keyFile.has_key ("Color Management", "InputProfile"))   { icm.input          = keyFile.get_string ("Color Management", "InputProfile"); if (pedited) pedited->icm.input = true; }
+    if (keyFile.has_key ("Color Management", "InputProfile"))   { icm.input          = expandRelativePath(fname, "file:", keyFile.get_string ("Color Management", "InputProfile")); if (pedited) pedited->icm.input = true; }
     if (keyFile.has_key ("Color Management", "ToneCurve"))      { icm.toneCurve      = keyFile.get_boolean ("Color Management", "ToneCurve"); if (pedited) pedited->icm.toneCurve = true; }
     if (keyFile.has_key ("Color Management", "BlendCMSMatrix")) { icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix"); if (pedited) pedited->icm.blendCMSMatrix = true; }
     if (keyFile.has_key ("Color Management", "PreferredProfile")) { icm.preferredProfile = keyFile.get_boolean ("Color Management", "PreferredProfile"); if (pedited) pedited->icm.preferredProfile = true; }
@@ -1403,9 +1443,9 @@ if (keyFile.has_group ("RGB Curves")) {
 
     // load raw settings
 if (keyFile.has_group ("RAW")) {
-    if (keyFile.has_key ("RAW", "DarkFrame"))        { raw.dark_frame = keyFile.get_string  ("RAW", "DarkFrame" ); if (pedited) pedited->raw.darkFrame = true; }
+    if (keyFile.has_key ("RAW", "DarkFrame"))        { raw.dark_frame = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "DarkFrame" )); if (pedited) pedited->raw.darkFrame = true; }
     if (keyFile.has_key ("RAW", "DarkFrameAuto"))    { raw.df_autoselect = keyFile.get_boolean ("RAW", "DarkFrameAuto" ); if (pedited) pedited->raw.dfAuto = true; }
-    if (keyFile.has_key ("RAW", "FlatFieldFile"))       { raw.ff_file = keyFile.get_string  ("RAW", "FlatFieldFile" ); if (pedited) pedited->raw.ff_file = true; }
+    if (keyFile.has_key ("RAW", "FlatFieldFile"))       { raw.ff_file = expandRelativePath(fname, "", keyFile.get_string  ("RAW", "FlatFieldFile" )); if (pedited) pedited->raw.ff_file = true; }
     if (keyFile.has_key ("RAW", "FlatFieldAutoSelect")) { raw.ff_AutoSelect = keyFile.get_boolean  ("RAW", "FlatFieldAutoSelect" );  if (pedited) pedited->raw.ff_AutoSelect = true; }
     if (keyFile.has_key ("RAW", "FlatFieldBlurRadius")) { raw.ff_BlurRadius = keyFile.get_integer  ("RAW", "FlatFieldBlurRadius" ); if (pedited) pedited->raw.ff_BlurRadius = true; }
     if (keyFile.has_key ("RAW", "FlatFieldBlurType"))   { raw.ff_BlurType = keyFile.get_string  ("RAW", "FlatFieldBlurType" ); if (pedited) pedited->raw.ff_BlurType = true; }
