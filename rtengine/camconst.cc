@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  */
 #include "camconst.h"
+#include "settings.h"
 #include "safegtk.h"
 #include "rt_math.h"
 #include <cstdio>
@@ -15,6 +16,8 @@
 #include <inttypes.h>
 
 namespace rtengine {
+
+extern const Settings* settings;
 
 CameraConst::CameraConst()
 {
@@ -438,12 +441,16 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 				goto parse_error;
 			}
 			Glib::ustring make_model(ji->valuestring);
+			make_model = make_model.uppercase();
 			std::map<Glib::ustring, CameraConst *>::iterator existingccIter = mCameraConstants.find(make_model);
 
-			if (existingccIter == mCameraConstants.end())
+			if (existingccIter == mCameraConstants.end()) {
 				// add the new CamConst to the map
 				mCameraConstants.insert(std::pair<Glib::ustring,CameraConst *>(make_model, cc));
-			else {
+				if (settings->verbose) {
+					printf("Add camera constants for \"%s\"\n", make_model.c_str());
+				}
+			} else {
 				// The CameraConst already exist for this camera make/model -> we merge the values
 				CameraConst *existingcc = existingccIter->second;
 
@@ -451,6 +458,9 @@ CameraConstantsStore::parse_camera_constants_file(Glib::ustring filename_)
 				existingcc->update_dcrawMatrix(cc->get_dcrawMatrix());
 				// deleting all the existing levels, replaced by the new ones
 				existingcc->update_Levels(cc);
+				if (settings->verbose) {
+					printf("Merging camera constants for \"%s\"\n", make_model.c_str());
+				}
 			}
 			if (is_array) {
 				ji = ji->next;
@@ -501,6 +511,7 @@ CameraConstantsStore::get(const char make[], const char model[])
 	Glib::ustring key(make);
 	key += " ";
 	key += model;
+	key = key.uppercase();
 	std::map<Glib::ustring, CameraConst *>::iterator it;
 	it = mCameraConstants.find(key);
 	if (it == mCameraConstants.end()) {

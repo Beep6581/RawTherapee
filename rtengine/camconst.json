@@ -383,14 +383,17 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 512, "white": 16350 }
     },
 
-    // Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files
+    /* Phase One: color matrices borrowed from Adobe DNG Converter, black/white levels tested on actual raw files.
+       Note: the dcraw decoder makes black level subtraction when decoding from metadata in the IIQ format, so
+       what we see here is the result after that, ie black level is 0. (The actual black level is about 1024 with
+       white level at 0xfffc=65532) */
     { // quality A
         "make_model": [ "Phase One P40+", "Phase One IQ140", "Phase One P65+", "Phase One IQ160" ],
         "dcraw_matrix": [ 8035,435,-962,-6001,13872,2320,-1159,3065,5434 ],
         "ranges": { "black": 0, "white": 64400 }
     },
     { // quality A
-        "make_model": "Phase One IQ180",
+        "make_model": [ "Phase One IQ180", "Phase One IQ280" ],
         "dcraw_matrix": [ 6294,686,-712,-5435,13417,2211,-1006,2435,5042 ],
         "ranges": { "black": 0, "white": 64400 }
     },
@@ -410,7 +413,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
         "ranges": { "black": 0, "white": 64400 }
     },
     { // quality A
-        "make_model": [ "Phase One 45", "Phase One 45+" ],
+        "make_model": [ "Phase One P45", "Phase One P45+" ],
         "dcraw_matrix": [ 5053,-24,-117,-5685,14077,1703,-2619,4491,5850 ],
         "ranges": { "black": 0, "white": 64400 }
     },
