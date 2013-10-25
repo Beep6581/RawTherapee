@@ -2148,7 +2148,7 @@ void RawImageSource::ahd_demosaic(int winx, int winy, int winw, int winh)
                             val = rix[0][1] + (0.25*( pix[-width-1][c] + pix[-width+1][c]
                                   + pix[+width-1][c] + pix[+width+1][c]
                                   - rix[-TS-1][1] - rix[-TS+1][1]
-                                  - rix[+TS-1][1] - rix[+TS+1][1] + 1) );
+                                  - rix[+TS-1][1] - rix[+TS+1][1]) );
                         rix[0][c] = CLIP(val);
                         c = FC(row,col);
                         rix[0][c] = pix[0][c];
