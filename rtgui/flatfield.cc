@@ -67,6 +67,7 @@ FlatField::FlatField () : Gtk::VBox(), FoldableToolPanel(this)
 	flatFieldFileReset->signal_clicked().connect( sigc::mem_fun(*this, &FlatField::flatFieldFile_Reset), true );
 	flatFieldAutoSelectconn = flatFieldAutoSelect->signal_toggled().connect ( sigc::mem_fun(*this, &FlatField::flatFieldAutoSelectChanged), true);
 	flatFieldBlurTypeconn = flatFieldBlurType->signal_changed().connect( sigc::mem_fun(*this, &FlatField::flatFieldBlurTypeChanged) );
+	lastShortcutPath = "";
 }
 
 void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -227,4 +228,23 @@ void FlatField::flatFieldAutoSelectChanged()
     if (listener)
         listener->panelChanged (EvFlatFieldAutoSelect, flatFieldAutoSelect->get_active()?M("GENERAL_ENABLED"):M("GENERAL_DISABLED"));
 
+}
+
+void FlatField::setShortcutPath(Glib::ustring path)
+{
+	if (path == "") return;
+#ifdef WIN32
+	// Dirty workaround, waiting for a clean solution by using exceptions!
+	if (!safe_is_shortcut_dir(path))
+#endif
+	{
+		if (lastShortcutPath != "") {
+			flatFieldFile->remove_shortcut_folder(lastShortcutPath);
+		}
+		lastShortcutPath = path;
+		try {
+			flatFieldFile->add_shortcut_folder(path);
+		}
+		catch (Gtk::FileChooserError &err) {}
+	}
 }
