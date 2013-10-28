@@ -35,10 +35,7 @@
 #include "../rtgui/multilangmgr.h"
 #include "procparams.h"
 #include "sleef.c"
-#ifdef __SSE2__
-#include "sleefsseavx.c"
-#endif
-
+#include "opthelper.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -886,7 +883,6 @@ void RawImageSource::border_interpolate2( int winw, int winh, int lborders)
 int bord=lborders;
 int width=winw;
 int height=winh;
-//#pragma omp parallel for
 	for (int i=0; i<height; i++) {
 
         float sum[6];
@@ -945,7 +941,69 @@ int height=winh;
 			}
 		}//j
 	}//i
+	for (int i=0; i<bord; i++) {
 
+        float sum[6];
+
+		for (int j=bord; j<width-bord; j++) {//first few rows
+			for (int c=0; c<6; c++) sum[c]=0;
+			for (int i1=i-1; i1<i+2; i1++)
+				for (int j1=j-1; j1<j+2; j1++) {
+					if ((i1 > -1) && (i1 < height) && (j1 > -1)) {
+						int c = FC(i1,j1);
+						sum[c] += rawData[i1][j1];
+						sum[c+3]++;
+					}
+				}
+			int c=FC(i,j);
+			if (c==1) {
+				red[i][j]=sum[0]/sum[3];
+				green[i][j]=rawData[i][j];
+				blue[i][j]=sum[2]/sum[5];
+			} else {
+				green[i][j]=sum[1]/sum[4];
+				if (c==0) {
+					red[i][j]=rawData[i][j];
+					blue[i][j]=sum[2]/sum[5];
+				} else {
+					red[i][j]=sum[0]/sum[3];
+					blue[i][j]=rawData[i][j];
+				}
+			}
+		}//j
+	}
+		
+	for (int i=height-bord; i<height; i++) {
+
+        float sum[6];
+
+		for (int j=bord; j<width-bord; j++) {//last few rows
+			for (int c=0; c<6; c++) sum[c]=0;
+			for (int i1=i-1; i1<i+2; i1++)
+				for (int j1=j-1; j1<j+2; j1++) {
+					if ((i1 > -1) && (i1 < height) && (j1 < width)) {
+						int c = FC(i1,j1);
+						sum[c] += rawData[i1][j1];
+						sum[c+3]++;
+					}
+				}
+			int c=FC(i,j);
+			if (c==1) {
+				red[i][j]=sum[0]/sum[3];
+				green[i][j]=rawData[i][j];
+				blue[i][j]=sum[2]/sum[5];
+			} else {
+				green[i][j]=sum[1]/sum[4];
+				if (c==0) {
+					red[i][j]=rawData[i][j];
+					blue[i][j]=sum[2]/sum[5];
+				} else {
+					red[i][j]=sum[0]/sum[3];
+					blue[i][j]=rawData[i][j];
+				}
+			}
+		}//j
+	}
 
 }
 
@@ -1463,11 +1521,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, int iterations)
 // SSE version by Ingo Weyrich 5/2013
 #ifdef __SSE2__
 #define CLIPV(a) LIMV(a,zerov,c65535v)
-#ifdef WIN32
-__attribute__((force_align_arg_pointer)) void RawImageSource::igv_interpolate(int winw, int winh)
-#else
-void RawImageSource::igv_interpolate(int winw, int winh)
-#endif
+SSEFUNCTION void RawImageSource::igv_interpolate(int winw, int winh)
 {
 	static const float eps=1e-5f, epssq=1e-5f;//mod epssq -10f =>-5f Jacques 3/2013 to prevent artifact (divide by zero)
 	
