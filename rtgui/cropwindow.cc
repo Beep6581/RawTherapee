@@ -543,28 +543,32 @@ bool CropWindow::onArea (CursorArea a, int x, int y) {
                 x1>cropHandler.cropParams.x+CROPRESIZEBORDER && 
                 x1<cropHandler.cropParams.x+cropHandler.cropParams.w-1-CROPRESIZEBORDER && 
                 y1>cropHandler.cropParams.y-CROPRESIZEBORDER && 
-                y1<cropHandler.cropParams.y+CROPRESIZEBORDER;
+                y1<cropHandler.cropParams.y+CROPRESIZEBORDER &&
+                y>=ypos+imgY;
         case CropBottom:
             translateCoord (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 x1>cropHandler.cropParams.x+CROPRESIZEBORDER && 
                 x1<cropHandler.cropParams.x+cropHandler.cropParams.w-1-CROPRESIZEBORDER && 
                 y1>cropHandler.cropParams.y+cropHandler.cropParams.h-1-CROPRESIZEBORDER && 
-                y1<cropHandler.cropParams.y+cropHandler.cropParams.h-1+CROPRESIZEBORDER;
+                y1<cropHandler.cropParams.y+cropHandler.cropParams.h-1+CROPRESIZEBORDER &&
+                y<ypos+imgY+imgH;
         case CropLeft:
             translateCoord (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>cropHandler.cropParams.y+CROPRESIZEBORDER && 
                 y1<cropHandler.cropParams.y+cropHandler.cropParams.h-1-CROPRESIZEBORDER && 
                 x1>cropHandler.cropParams.x-CROPRESIZEBORDER && 
-                x1<cropHandler.cropParams.x+CROPRESIZEBORDER;
+                x1<cropHandler.cropParams.x+CROPRESIZEBORDER &&
+                x>=xpos+imgX;
         case CropRight:
             translateCoord (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
                 y1>cropHandler.cropParams.y+CROPRESIZEBORDER && 
                 y1<cropHandler.cropParams.y+cropHandler.cropParams.h-1-CROPRESIZEBORDER && 
                 x1>cropHandler.cropParams.x+cropHandler.cropParams.w-1-CROPRESIZEBORDER && 
-                x1<cropHandler.cropParams.x+cropHandler.cropParams.w-1+CROPRESIZEBORDER;
+                x1<cropHandler.cropParams.x+cropHandler.cropParams.w-1+CROPRESIZEBORDER &&
+                x<xpos+imgX+imgW;
         case CropInside:
             translateCoord (x, y, x1, y1);
             return cropHandler.cropParams.enabled && 
