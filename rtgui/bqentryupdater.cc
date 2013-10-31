@@ -87,7 +87,8 @@ void BatchQueueEntryUpdater::processThread () {
             jqueue.pop_front ();
         }
         qMutex->unlock ();
-
+		if(isEmpty)
+			break;
         rtengine::IImage8* img = NULL;
         bool newBuffer = false;
         if (current.thumbnail && current.pparams) {
