@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=RawTherapee
+GenericName=Raw photo editor
+GenericName[cs]=Editor raw obrázků
+GenericName[fr]=Éditeur d'images raw
+GenericName[pl]=Edytor zdjęć raw
+Comment=An advanced photo development program
+Comment[cs]=Program pro konverzi a zpracování digitálních RAW fotografií.
+Comment[fr]=Logiciel de conversion et de traitement de photos numériques de format RAW (but de capteur).
+Comment[pl]=Zaawansowany program do wywoływania zdjęć
+Icon=rawtherapee
+Exec=rawtherapee %f
+Terminal=false
+MimeType=image/jpeg;image/png;image/tiff;image/x-adobe-dng;image/x-canon-cr2;image/x-canon-crf;image/x-canon-crw;image/x-fuji-raf;image/x-jpg;image/x-kodak-dcr;image/x-kodak-k25;image/x-kodak-kdc;image/x-mamiya-mef;image/x-minolta-mrw;image/x-nikon-nef;image/x-nikon-nrw;image/x-olympus-orf;image/x-panasonic-raw;image/x-panasonic-rw2;image/x-pentax-pef;image/x-pentax-raw;image/x-raw;image/x-rwz;image/x-samsung-srw;image/x-sony-arw;image/x-sony-sr2;image/x-sony-srf;image/x-hasselblad-3fr;image/x-hasselblad-fff;image/x-leaf-mos;image/x-phaseone-iiq;image/x-tif;
+Categories=Photography;Graphics;2DGraphics;RasterGraphics;GTK;
