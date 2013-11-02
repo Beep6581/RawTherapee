@@ -21,6 +21,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstring> /* memcpy() */
 #include <string>
 #include <sstream>
 
@@ -204,9 +205,27 @@ class PAISOInterpreter : public ChoiceInterpreter {
             choices[19] = "2000";
             choices[20] = "2500";
             choices[21] = "3200";
+            choices[22] = "4000";
+            choices[23] = "5000";
+            choices[24] = "6400";
+            choices[25] = "8000";
+            choices[26] = "10000";
+            choices[27] = "12800";
+            choices[28] = "16000";
+            choices[29] = "20000";
+            choices[30] = "25600";
+            choices[31] = "32000";
+            choices[32] = "40000";
+            choices[33] = "51200";
+
             choices[50] = "50";
             choices[100] = "100";
             choices[200] = "200";
+          /*choices[400] = "400";
+            choices[800] = "800";
+            choices[1600] = "1600";
+            choices[3200] = "3200";  Moved to tail for sorting reasons */
+
             choices[258] = "50";
             choices[259] = "70";
             choices[260] = "100";
@@ -220,10 +239,22 @@ class PAISOInterpreter : public ChoiceInterpreter {
             choices[268] = "1600";
             choices[269] = "2200";
             choices[270] = "3200";
+            choices[271] = "4500";
+            choices[272] = "6400";
+            choices[273] = "9000";
+            choices[274] = "12800";
+            choices[275] = "18000";
+            choices[276] = "25600";
+            choices[277] = "36000";
+            choices[278] = "51200";
+
             choices[400] = "400";
             choices[800] = "800";
             choices[1600] = "1600";
             choices[3200] = "3200";
+
+            //choices[65534] = "Auto"; ??
+            //choices[65535] = "Auto"; ??
         }
 };
 PAISOInterpreter paISOInterpreter;
@@ -448,10 +479,10 @@ PAColorSpaceInterpreter paColorSpaceInterpreter;
 
 class PALensTypeInterpreter : public IntLensInterpreter< int > {
     public:
-        PALensTypeInterpreter () {
-            choices.insert(p_t( 0,"M-42 or No Lens"));
-            choices.insert(p_t(256*1, "K,M Lens"));
-            choices.insert(p_t(256*2, "A Series Lens"));
+        PALensTypeInterpreter () {  // From EXIFTOOL database 'Pentax.pm' V2.65
+            choices.insert(p_t(    0+ 0, "M-42 or No Lens"));
+            choices.insert(p_t(256*1+ 0, "K,M Lens"));
+            choices.insert(p_t(256*2+ 0, "A Series Lens"));
             choices.insert(p_t(256*3+ 0, "Sigma Lens"));
             choices.insert(p_t(256*3+ 17, "smc PENTAX-FA SOFT 85mm f/2.8"));
             choices.insert(p_t(256*3+ 18, "smc PENTAX-F 1.7X AF ADAPTER"));
@@ -466,14 +497,14 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*3+ 25, "smc PENTAX-F 35-105mm f/4-5.6"));
             choices.insert(p_t(256*3+ 25, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
             choices.insert(p_t(256*3+ 25, "Sigma 55-200mm f/4-5.6 DC"));
-            choices.insert(p_t(256*3+ 25, "Sigma AF 28-300mm f/3.5-5.6 DL IF"));
             choices.insert(p_t(256*3+ 25, "Sigma AF 28-300mm f/3.5-6.3 DG IF Macro"));
             choices.insert(p_t(256*3+ 25, "Tokina 80-200mm f/2.8 ATX-Pro"));
             choices.insert(p_t(256*3+ 26, "smc PENTAX-F* 250-600mm f/5.6 ED[IF]"));
             choices.insert(p_t(256*3+ 27, "smc PENTAX-F 28-80mm f/3.5-4.5"));
-            choices.insert(p_t(256*3+ 27, "Tokina AT-X PRO AF 28-70mm f/2.6-2.8"));
+            choices.insert(p_t(256*3+ 27, "Tokina AT-X Pro AF 28-70mm f/2.6-2.8"));
             choices.insert(p_t(256*3+ 28, "smc PENTAX-F 35-70mm f/3.5-4.5"));
             choices.insert(p_t(256*3+ 28, "Tokina 19-35mm f/3.5-4.5 AF"));
+            choices.insert(p_t(256*3+ 28, "Tokina AT-X AF 400mm f/5.6"));
             choices.insert(p_t(256*3+ 29, "PENTAX-F 28-80mm f/3.5-4.5"));
             choices.insert(p_t(256*3+ 29, "Sigma AF 18-125mm f/3.5-5.6 DC"));
             choices.insert(p_t(256*3+ 29, "Tokina AT-X PRO 28-70mm f/2.6-2.8"));
@@ -485,21 +516,22 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*3+ 33, "smc PENTAX-F 50mm f/1.7"));
             choices.insert(p_t(256*3+ 34, "smc PENTAX-F 135mm f/2.8 [IF]"));
             choices.insert(p_t(256*3+ 35, "smc PENTAX-F 28mm f/2.8"));
-            choices.insert(p_t(256*3+ 36, "Sigma 20mm f/1.8 EX DG ASPHERICAL RF"));
+            choices.insert(p_t(256*3+ 36, "Sigma 20mm f/1.8 EX DG Aspherical RF"));
             choices.insert(p_t(256*3+ 38, "smc PENTAX-F* 300mm f/4.5 ED[IF]"));
             choices.insert(p_t(256*3+ 39, "smc PENTAX-F* 600mm f/4 ED[IF]"));
-            choices.insert(p_t(256*3+ 40, "smc PENTAX-F MACRO 100mm f/2.8"));
-            choices.insert(p_t(256*3+ 41, "smc PENTAX-F MACRO 50mm f/2.8"));
+            choices.insert(p_t(256*3+ 40, "smc PENTAX-F Macro 100mm f/2.8"));
+            choices.insert(p_t(256*3+ 41, "smc PENTAX-F Macro 50mm f/2.8"));
             choices.insert(p_t(256*3+ 41, "Sigma 50mm f/2.8 Macro"));
             choices.insert(p_t(256*3+ 44, "Sigma AF 10-20mm f/4-5.6 EX DC"));
-            choices.insert(p_t(256*3+ 44, "Sigma 12-24mm f/4.5 EX DG"));
+            choices.insert(p_t(256*3+ 44, "Sigma 12-24mm f/4.5-5.6 EX DG"));
             choices.insert(p_t(256*3+ 44, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
             choices.insert(p_t(256*3+ 44, "Sigma 18-50mm f/3.5-5.6 DC"));
             choices.insert(p_t(256*3+ 44, "Tamron 35-90mm f/4 AF"));
             choices.insert(p_t(256*3+ 46, "Sigma APO 70-200mm f/2.8 EX"));
             choices.insert(p_t(256*3+ 46, "Sigma EX APO 100-300mm f/4 IF"));
-            choices.insert(p_t(256*3+ 50, "smc PENTAX-FA 28-70 f/4 AL"));
-            choices.insert(p_t(256*3+ 51, "Sigma 28mm f/1.8 EX DG ASPHERICAL MACRO"));
+            choices.insert(p_t(256*3+ 46, "Samsung/Schneider D-XENON 50-200mm f/4-5.6 ED"));
+            choices.insert(p_t(256*3+ 50, "smc PENTAX-FA 28-70mm f/4 AL"));
+            choices.insert(p_t(256*3+ 51, "Sigma 28mm f/1.8 EX DG Aspherical Macro"));
             choices.insert(p_t(256*3+ 52, "smc PENTAX-FA 28-200mm f/3.8-5.6 AL[IF]"));
             choices.insert(p_t(256*3+ 52, "Tamron AF LD 28-200mm f/3.8-5.6 [IF] Aspherical (171D)"));
             choices.insert(p_t(256*3+ 53, "smc PENTAX-FA 28-80mm f/3.5-5.6 AL"));
@@ -510,15 +542,15 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*3+ 252,"smc PENTAX-DA 18-55mm f/3.5-5.6 AL"));
             choices.insert(p_t(256*3+ 253,"smc PENTAX-DA 14mm f/2.8 ED[IF]"));
             choices.insert(p_t(256*3+ 254,"smc PENTAX-DA 16-45mm f/4 ED AL"));
-            choices.insert(p_t(256*3+ 255, "Sigma 18-200mm f/3.5-6.3 DC"));
-            choices.insert(p_t(256*3+ 255, "Sigma DL-II 35-80mm f/4-5.6"));
-            choices.insert(p_t(256*3+ 255, "Sigma DL Zoom 75-300mm f/4-5.6"));
-            choices.insert(p_t(256*3+ 255, "Sigma DF EX Aspherical 28-70mm f/2.8"));
-            choices.insert(p_t(256*3+ 255, "Sigma AF Tele 400mm f/5.6 Multi-coated"));
-            choices.insert(p_t(256*3+ 255, "Sigma 24-60mm f/2.8 EX DG"));
-            choices.insert(p_t(256*3+ 255, "Sigma 70-300mm f/4-5.6 Macro"));
-            choices.insert(p_t(256*3+ 255, "Sigma 55-200mm f/4-5.6 DC"));
-            choices.insert(p_t(256*3+ 255, "Sigma 18-50mm f/2.8 EX DC"));
+            choices.insert(p_t(256*3+ 255,"Sigma 18-200mm f/3.5-6.3 DC"));
+            choices.insert(p_t(256*3+ 255,"Sigma DL-II 35-80mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 255,"Sigma DL Zoom 75-300mm f/4-5.6"));
+            choices.insert(p_t(256*3+ 255,"Sigma DF EX Aspherical 28-70mm f/2.8"));
+            choices.insert(p_t(256*3+ 255,"Sigma AF Tele 400mm f/5.6 Multi-coated"));
+            choices.insert(p_t(256*3+ 255,"Sigma 24-60mm f/2.8 EX DG"));
+            choices.insert(p_t(256*3+ 255,"Sigma 70-300mm f/4-5.6 Macro"));
+            choices.insert(p_t(256*3+ 255,"Sigma 55-200mm f/4-5.6 DC"));
+            choices.insert(p_t(256*3+ 255,"Sigma 18-50mm f/2.8 EX DC"));
             choices.insert(p_t(256*4+ 1,  "smc PENTAX-FA SOFT 28mm f/2.8"));
             choices.insert(p_t(256*4+ 2,  "smc PENTAX-FA 80-320mm f/4.5-5.6"));
             choices.insert(p_t(256*4+ 3,  "smc PENTAX-FA 43mm f/1.9 Limited"));
@@ -529,22 +561,22 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*4+ 19, "Tamron SP AF 90mm f/2.8 (172E)"));
             choices.insert(p_t(256*4+ 20, "smc PENTAX-FA 28-80mm f/3.5-5.6"));
             choices.insert(p_t(256*4+ 21, "Cosina AF 100-300mm f/5.6-6.7"));
-            choices.insert(p_t(256*4+ 22, "TOKINA 28-80mm f/3.5-5.6"));
+            choices.insert(p_t(256*4+ 22, "Tokina 28-80mm f/3.5-5.6"));
             choices.insert(p_t(256*4+ 23, "smc PENTAX-FA 20-35mm f/4 AL"));
             choices.insert(p_t(256*4+ 24, "smc PENTAX-FA 77mm f/1.8 Limited"));
             choices.insert(p_t(256*4+ 25, "Tamron SP AF 14mm f/2.8"));
-            choices.insert(p_t(256*4+ 26, "smc PENTAX-FA MACRO 100mm f/3.5"));
+            choices.insert(p_t(256*4+ 26, "smc PENTAX-FA Macro 100mm f/3.5"));
             choices.insert(p_t(256*4+ 26, "Cosina 100mm f/3.5 Macro"));
-            choices.insert(p_t(256*4+ 27, "Tamron AF 28-300mm f/3.5-6.3 LD Aspherical[IF] MACRO (285D)"));
+            choices.insert(p_t(256*4+ 27, "Tamron AF 28-300mm f/3.5-6.3 LD Aspherical[IF] Macro (185D/285D)"));
             choices.insert(p_t(256*4+ 28, "smc PENTAX-FA 35mm f/2 AL"));
-            choices.insert(p_t(256*4+ 29, "Tamron AF 28-200mm f/3.8-5.6 LD Super II MACRO (371D)"));
+            choices.insert(p_t(256*4+ 29, "Tamron AF 28-200mm f/3.8-5.6 LD Super II Macro (371D)"));
             choices.insert(p_t(256*4+ 34, "smc PENTAX-FA 24-90mm f/3.5-4.5 AL[IF]"));
             choices.insert(p_t(256*4+ 35, "smc PENTAX-FA 100-300mm f/4.7-5.8"));
-            choices.insert(p_t(256*4+ 36, "Tamron AF 70-300mm f/4-5.6 LD MACRO"));
+            choices.insert(p_t(256*4+ 36, "Tamron AF70-300mm f/4-5.6 LD Macro"));
             choices.insert(p_t(256*4+ 37, "Tamron SP AF 24-135mm f/3.5-5.6 AD AL (190D)"));
             choices.insert(p_t(256*4+ 38, "smc PENTAX-FA 28-105mm f/3.2-4.5 AL[IF]"));
             choices.insert(p_t(256*4+ 39, "smc PENTAX-FA 31mm f/1.8 AL Limited"));
-            choices.insert(p_t(256*4+ 41, "Tamron AF 28-200mm Super Zoom f/3.8-5.6 Aspherical XR [IF] MACRO (A03)"));
+            choices.insert(p_t(256*4+ 41, "Tamron AF 28-200mm Super Zoom f/3.8-5.6 Aspherical XR [IF] Macro (A03)"));
             choices.insert(p_t(256*4+ 43, "smc PENTAX-FA 28-90mm f/3.5-5.6"));
             choices.insert(p_t(256*4+ 44, "smc PENTAX-FA J 75-300mm f/4.5-5.8 AL"));
             choices.insert(p_t(256*4+ 45, "Tamron 28-300mm f/3.5-6.3 Ultra zoom XR"));
@@ -552,18 +584,22 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*4+ 46, "smc PENTAX-FA J 28-80mm f/3.5-5.6 AL"));
             choices.insert(p_t(256*4+ 47, "smc PENTAX-FA J 18-35mm f/4-5.6 AL"));
             choices.insert(p_t(256*4+ 49, "Tamron SP AF 28-75mm f/2.8 XR Di (A09)"));
-            choices.insert(p_t(256*4+ 51, "smc PENTAX-D FA 50mm f/2.8 MACRO"));
-            choices.insert(p_t(256*4+ 52, "smc PENTAX-D FA 100mm f/2.8 MACRO"));
-            choices.insert(p_t(256*4+ 75, "Tamron SP AF 70-200 f/2.8 Di LD [IF] Macro (A001)"));
+            choices.insert(p_t(256*4+ 51, "smc PENTAX-D FA 50mm f/2.8 Macro"));
+            choices.insert(p_t(256*4+ 52, "smc PENTAX-D FA 100mm f/2.8 Macro"));
+            choices.insert(p_t(256*4+ 55, "Samsung/Schneider D-XENOGON 35mm f/2"));
+            choices.insert(p_t(256*4+ 56, "Samsung/Schneider D-XENON 100mm f/2.8 Macro"));
+            choices.insert(p_t(256*4+ 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
+            choices.insert(p_t(256*4+ 214, "smc PENTAX-DA 35mm f/2.4 AL"));
             choices.insert(p_t(256*4+ 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
             choices.insert(p_t(256*4+ 230, "Tamron SP AF 17-50mm f/2.8 XR Di II"));
             choices.insert(p_t(256*4+ 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
             choices.insert(p_t(256*4+ 237, "Samsung/Schneider D-XENOGON 10-17mm f/3.5-4.5"));
-            choices.insert(p_t(256*4+ 239, "Samsung D-XENON 12-24mm f/4 ED AL [IF]"));
+            choices.insert(p_t(256*4+ 239, "Samsung/Schneider D-XENON 12-24mm f/4 ED AL [IF]"));
+            choices.insert(p_t(256*4+ 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM (SDM unused)"));
             choices.insert(p_t(256*4+ 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
             choices.insert(p_t(256*4+ 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
-            choices.insert(p_t(256*4+ 245, "Schneider D-XENON 50-200mm"));
-            choices.insert(p_t(256*4+ 246, "Schneider D-XENON 18-55mm"));
+            choices.insert(p_t(256*4+ 245, "Samsung/Schneider D-XENON 50-200mm f/4-5.6"));
+            choices.insert(p_t(256*4+ 246, "Samsung/Schneider D-XENON 18-55mm f/3.5-5.6"));
             choices.insert(p_t(256*4+ 247, "smc PENTAX-DA 10-17mm f/3.5-4.5 ED [IF] Fisheye zoom"));
             choices.insert(p_t(256*4+ 248, "smc PENTAX-DA 12-24mm f/4 ED AL [IF]"));
             choices.insert(p_t(256*4+ 249, "Tamron 18-200mm f/3.5-6.3 XR DiII (A14)"));
@@ -579,8 +615,8 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*5+ 5, "smc PENTAX-FA* 600mm f/4 ED[IF]"));
             choices.insert(p_t(256*5+ 6, "smc PENTAX-FA* 300mm f/4.5 ED[IF]"));
             choices.insert(p_t(256*5+ 7, "smc PENTAX-FA 135mm f/2.8 [IF]"));
-            choices.insert(p_t(256*5+ 8, "smc PENTAX-FA MACRO 50mm f/2.8"));
-            choices.insert(p_t(256*5+ 9, "smc PENTAX-FA MACRO 100mm f/2.8"));
+            choices.insert(p_t(256*5+ 8, "smc PENTAX-FA Macro 50mm f/2.8"));
+            choices.insert(p_t(256*5+ 9, "smc PENTAX-FA Macro 100mm f/2.8"));
             choices.insert(p_t(256*5+ 10, "smc PENTAX-FA* 85mm f/1.4 [IF]"));
             choices.insert(p_t(256*5+ 11, "smc PENTAX-FA* 200mm f/2.8 ED[IF]"));
             choices.insert(p_t(256*5+ 12, "smc PENTAX-FA 28-80mm f/3.5-4.7"));
@@ -600,21 +636,31 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*6+ 9, "smc PENTAX-FA 20mm f/2.8"));
             choices.insert(p_t(256*6+ 10, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
             choices.insert(p_t(256*6+ 13, "smc PENTAX-FA* 400mm f/5.6 ED[IF]"));
-            choices.insert(p_t(256*6+ 14, "smc PENTAX-FA* MACRO 200mm f/4 ED[IF]"));
+            choices.insert(p_t(256*6+ 14, "smc PENTAX-FA* Macro 200mm f/4 ED[IF]"));
             choices.insert(p_t(256*7+ 0, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
-            choices.insert(p_t(256*7+ 58, "smc PENTAX-D FA MACRO 100mm f/2.8 WR"));
+            choices.insert(p_t(256*7+ 58, "smc PENTAX-D FA Macro 100mm f/2.8 WR"));
             choices.insert(p_t(256*7+ 75, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro (A001)"));
+            choices.insert(p_t(256*7+ 202, "smc PENTAX-DA L 18-55mm f/3.5-5.6 AL WR"));
+            choices.insert(p_t(256*7+ 204, "HD PENTAX-DA 15mm f/4 ED AL Limited"));
+            choices.insert(p_t(256*7+ 205, "HD PENTAX-DA 35mm f/2.8 Macro Limited"));
+            choices.insert(p_t(256*7+ 206, "HD PENTAX-DA 70mm f/2.4 Limited"));
+            choices.insert(p_t(256*7+ 207, "HD PENTAX-DA 21mm f/3.2 ED AL Limited"));
+            choices.insert(p_t(256*7+ 208, "HD PENTAX-DA 40mm f/2.8 Limited"));
+            choices.insert(p_t(256*7+ 212, "smc PENTAX-DA 50mm f/1.8"));
+            choices.insert(p_t(256*7+ 213, "smc PENTAX-DA 40mm f/2.8 XS"));
             choices.insert(p_t(256*7+ 214, "smc PENTAX-DA 35mm f/2.4 AL"));
             choices.insert(p_t(256*7+ 216, "smc PENTAX-DA L 55-300mm f/4-5.8 ED"));
             choices.insert(p_t(256*7+ 217, "smc PENTAX-DA 50-200mm f/4-5.6 ED WR"));
             choices.insert(p_t(256*7+ 218, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL WR"));
             choices.insert(p_t(256*7+ 220, "Tamron SP AF 10-24mm f/3.5-4.5 Di II LD Aspherical [IF]"));
-            choices.insert(p_t(256*7+ 222, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
-            choices.insert(p_t(256*7+ 223, "Samsung D-XENON 18-55mm f/3.5-5.6 II"));
+            choices.insert(p_t(256*7+ 221, "smc PENTAX-DA L 50-200mm f/4-5.6 ED"));
+            choices.insert(p_t(256*7+ 222, "smc PENTAX-DA L 18-55mm f/3.5-5.6"));
+            choices.insert(p_t(256*7+ 223, "Samsung/Schneider D-XENON 18-55mm f/3.5-5.6 II"));
             choices.insert(p_t(256*7+ 224, "smc PENTAX-DA 15mm f/4 ED AL Limited"));
-            choices.insert(p_t(256*7+ 225, "Samsung D-XENON 18-250mm f/3.5-6.3"));
+            choices.insert(p_t(256*7+ 225, "Samsung/Schneider D-XENON 18-250mm f/3.5-6.3"));
             choices.insert(p_t(256*7+ 226, "smc PENTAX-DA* 55mm f/1.4 SDM (SDM unused)"));
-            choices.insert(p_t(256*7+ 227, "smc PENTAX DA* 60-250mm f/4 [IF] SDM (SDM unused)"));
+            choices.insert(p_t(256*7+ 227, "smc PENTAX-DA* 60-250mm f/4 [IF] SDM (SDM unused)"));
+            choices.insert(p_t(256*7+ 228, "Samsung 16-45mm f/4 ED"));
             choices.insert(p_t(256*7+ 229, "smc PENTAX-DA 18-55mm f/3.5-5.6 AL II"));
             choices.insert(p_t(256*7+ 230, "Tamron AF 17-50mm f/2.8 XR Di-II LD (Model A16)"));
             choices.insert(p_t(256*7+ 231, "smc PENTAX-DA 18-250mm f/3.5-6.3 ED AL [IF]"));
@@ -622,45 +668,113 @@ class PALensTypeInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(256*7+ 234, "smc PENTAX-DA* 300mm f/4 ED [IF] SDM (SDM unused)"));
             choices.insert(p_t(256*7+ 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM (SDM unused)"));
             choices.insert(p_t(256*7+ 236, "smc PENTAX-DA 55-300mm f/4-5.8 ED"));
-            choices.insert(p_t(256*7+ 238, "Tamron AF 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] MACRO"));
+            choices.insert(p_t(256*7+ 238, "Tamron AF 18-250mm f/3.5-6.3 Di II LD Aspherical [IF] Macro"));
             choices.insert(p_t(256*7+ 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM (SDM unused)"));
             choices.insert(p_t(256*7+ 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM (SDM unused)"));
             choices.insert(p_t(256*7+ 243, "smc PENTAX-DA 70mm f/2.4 Limited"));
             choices.insert(p_t(256*7+ 244, "smc PENTAX-DA 21mm f/3.2 AL Limited"));
-            choices.insert(p_t(256*8+  14, "Sigma 17-70mm f/2.8-4.0 DC Macro OS HSM"));
+            choices.insert(p_t(256*8+ 3, "Sigma AF 18-125mm f/3.5-5.6 DC"));
+            choices.insert(p_t(256*8+ 4, "Sigma 50mm f/1.4 EX DG HSM"));
+            choices.insert(p_t(256*8+ 8, "Sigma 18-250mm f/3.5-6.3 DC OS HSM"));
+            choices.insert(p_t(256*8+ 11, "Sigma 10-20mm f/3.5 EX DC HSM"));
+            choices.insert(p_t(256*8+ 12, "Sigma 70-300mm f/4-5.6 DG OS"));
+            choices.insert(p_t(256*8+ 13, "Sigma 120-400mm f/4.5-5.6 APO DG OS HSM"));
+            choices.insert(p_t(256*8+ 14, "Sigma 17-70mm f/2.8-4.0 DC Macro OS HSM"));
+            choices.insert(p_t(256*8+ 15, "Sigma 150-500mm f/5-6.3 APO DG OS HSM"));
+            choices.insert(p_t(256*8+ 16, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
+            choices.insert(p_t(256*8+ 17, "Sigma 50-500mm f/4.5-6.3 DG OS HSM"));
+            choices.insert(p_t(256*8+ 18, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
+            choices.insert(p_t(256*8+ 21, "Sigma 17-50mm f/2.8 EX DC OS HSM"));
+            choices.insert(p_t(256*8+ 22, "Sigma 85mm f/1.4 EX DG HSM"));
+            choices.insert(p_t(256*8+ 23, "Sigma 70-200mm f/2.8 APO EX DG OS HSM"));
+            choices.insert(p_t(256*8+ 27, "Sigma 18-200mm f/3.5-6.3 II DC HSM"));
+            choices.insert(p_t(256*8+ 28, "Sigma 18-250mm f/3.5-6.3 DC Macro HSM"));
+            choices.insert(p_t(256*8+ 30, "Sigma 17-70mm f/2.8-4 DC Macro HSM | C")); // "| C" stands for "Contemporary" product line
+            choices.insert(p_t(256*8+ 210, "smc PENTAX-DA 18-270mm f/3.5-6.3 ED SDM"));
+            choices.insert(p_t(256*8+ 211, "HD PENTAX-DA 560mm f/5.6 ED AW"));
             choices.insert(p_t(256*8+ 215, "smc PENTAX-DA 18-135mm f/3.5-5.6 ED AL [IF] DC WR"));
             choices.insert(p_t(256*8+ 226, "smc PENTAX-DA* 55mm f/1.4 SDM"));
-            choices.insert(p_t(256*8+ 227, "smc PENTAX DA* 60-250mm f/4 [IF] SDM"));
+            choices.insert(p_t(256*8+ 227, "smc PENTAX-DA* 60-250mm f/4 [IF] SDM"));
             choices.insert(p_t(256*8+ 232, "smc PENTAX-DA 17-70mm f/4 AL [IF] SDM"));
             choices.insert(p_t(256*8+ 234, "smc PENTAX-DA* 300mm f/4 ED [IF] SDM"));
             choices.insert(p_t(256*8+ 235, "smc PENTAX-DA* 200mm f/2.8 ED [IF] SDM"));
             choices.insert(p_t(256*8+ 241, "smc PENTAX-DA* 50-135mm f/2.8 ED [IF] SDM"));
             choices.insert(p_t(256*8+ 242, "smc PENTAX-DA* 16-50mm f/2.8 ED AL [IF] SDM"));
             choices.insert(p_t(256*8+ 255, "Sigma 70-200mm f/2.8 EX DG Macro HSM II"));
-            choices.insert(p_t(256*8+ 255, "Sigma APO 150-500mm f/5-6.3 DG OS HSM"));
-            choices.insert(p_t(256*11+  4, "smc PENTAX-FA 645 45-85mm f/4.5"));
-            choices.insert(p_t(256*11+  8, "smc PENTAX-FA 645 80-160mm f/4.5"));
+            choices.insert(p_t(256*8+ 255, "Sigma 150-500mm f/5-6.3 DG APO [OS] HSM"));
+            choices.insert(p_t(256*8+ 255, "Sigma 50-150mm f/2.8 II APO EX DC HSM"));
+            choices.insert(p_t(256*8+ 255, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
+            choices.insert(p_t(256*8+ 255, "Sigma 50-200mm f/4-5.6 DC OS"));
+            choices.insert(p_t(256*8+ 255, "Sigma 24-70mm f/2.8 EX DG HSM"));
+            choices.insert(p_t(256*9+ 0, "645 Manual Lens"));
+            choices.insert(p_t(256*10+ 0, "645 A Series Lens"));
+            choices.insert(p_t(256*11+ 1, "smc PENTAX-FA 645 75mm f/2.8"));
+            choices.insert(p_t(256*11+ 2, "smc PENTAX-FA 645 45mm f/2.8"));
+            choices.insert(p_t(256*11+ 3, "smc PENTAX-FA* 645 300mm f/4 ED [IF]"));
+            choices.insert(p_t(256*11+ 4, "smc PENTAX-FA 645 45-85mm f/4.5"));
+            choices.insert(p_t(256*11+ 5, "smc PENTAX-FA 645 400mm f/5.6 ED [IF]"));
+            choices.insert(p_t(256*11+ 7, "smc PENTAX-FA 645 Macro 120mm f/4"));
+            choices.insert(p_t(256*11+ 8, "smc PENTAX-FA 645 80-160mm f/4.5"));
+            choices.insert(p_t(256*11+ 9, "smc PENTAX-FA 645 200mm f/4 [IF]"));
+            choices.insert(p_t(256*11+ 10, "smc PENTAX-FA 645 150mm f/2.8 [IF]"));
             choices.insert(p_t(256*11+ 11, "smc PENTAX-FA 645 35mm f/3.5 AL [IF]"));
+            choices.insert(p_t(256*11+ 12, "smc PENTAX-FA 645 300mm f/5.6 ED [IF]"));
+            choices.insert(p_t(256*11+ 14, "smc PENTAX-FA 645 55-110mm f/5.6"));
+            choices.insert(p_t(256*11+ 16, "smc PENTAX-FA 645 33-55mm f/4.5 AL"));
             choices.insert(p_t(256*11+ 17, "smc PENTAX-FA 645 150-300mm f/5.6 ED [IF]"));
             choices.insert(p_t(256*13+ 18, "smc PENTAX-D FA 645 55mm f/2.8 AL [IF] SDM AW"));
+            choices.insert(p_t(256*13+ 19, "smc PENTAX-D FA 645 25mm f/4 AL [IF] SDM AW"));
+            choices.insert(p_t(256*13+ 20, "HD PENTAX-D FA 645 90mm f/2.8 ED AW SR"));
+            choices.insert(p_t(256*21+ 0, "Pentax Q Manual Lens"));
+            choices.insert(p_t(256*21+ 1, "01 Standard Prime 8.5mm f/1.9"));
+            choices.insert(p_t(256*21+ 2, "02 Standard Zoom 5-15mm f/2.8-4.5"));
+            choices.insert(p_t(256*21+ 6, "06 Telephoto Zoom 15-45mm f/2.8"));
+            choices.insert(p_t(256*21+ 7, "07 Mount Shield 11.5mm f/9"));
+            choices.insert(p_t(256*22+ 3, "03 Fish-eye 3.2mm f/5.6"));
+            choices.insert(p_t(256*22+ 4, "04 Toy Lens Wide 6.3mm f/7.1"));
+            choices.insert(p_t(256*22+ 5, "05 Toy Lens Telephoto 18mm f/8"));
         }
         virtual std::string toString (Tag* t) {
-       	   double maxApertureAtFocal = 0;
-       	   double focalLength = 0;
+           double *liArray = NULL;
+           double maxApertureAtFocal = 0.;
+           double focalLength = 0.;
            int lensID = 256*t->toInt(0,BYTE) + t->toInt(1,BYTE);
            TagDirectory *root=t->getParent()->getRoot();
            if (root){
-       	      Tag *t1;
-              t1 = root->findTag("FocalLength");
-        	  if( t1)
-      	         focalLength = t1->toDouble(); // Focal Length
-        	  t1 = root->findTag("MaxAperture");
-        	  if( t1){
-        		  int a=t1->toInt(0,BYTE)&0x7F;
-   	              maxApertureAtFocal = pow(2.0, (a-1)/32.0) ; // MaxApertureValue at focal Length
-        	  }
+
+              Tag *t1;
+              t1 = root->findTag("FocalLength");  // Should get tag 0x920A (rational64u) from the standard Exif tag list
+              if( t1)
+                  focalLength = t1->toDouble(); // Focal Length
+
+              t1 = root->findTag("MaxAperture");
+              if(t1){
+                  double maxAperture = t1->toDouble(); // MaxApertureValue at focal Length
+                  if (maxAperture != 0.)
+                      maxApertureAtFocal = maxAperture;
+                  else {
+                      t1 = root->findTag("NominalMaxAperture");
+                      if(t1)
+                          maxApertureAtFocal = t1->toDouble();
+                  }
+              }
+
+              t1 = root->getTagP("LensInfo");
+              if(t1)
+                  liArray = t1->toDoubleArray();
+
+              // Focal length below 10mm are set to 0 by the camera in the standard Exif tag, so we'll look into the makernotes
+              // This value will have decimals, which reflects more precision... or imprecision, due to the packed form of this value, who knows?
+              if (focalLength == 0.) {
+                  rtexif::TagDirectory* mnote = root->findTag("MakerNote")->getDirectory();
+                  rtexif::Tag* flt=mnote->getTagP("LensInfo/FocalLength");
+                  if (flt)
+                      focalLength = flt->toDouble ();
+                  else if ((flt = mnote->getTagP ("FocalLength")))
+                      focalLength = flt->toDouble();
+              }
            }
-       	   return guess( lensID, focalLength, maxApertureAtFocal);
+           return guess( lensID, focalLength, maxApertureAtFocal, liArray);
         }
 };
 PALensTypeInterpreter paLensTypeInterpreter;
@@ -703,6 +817,84 @@ public:
 };
 PAPowerSourceInterpreter paPowerSourceInterpreter;
 
+class PALensModelQInterpreter: public Interpreter {
+public:
+    PALensModelQInterpreter(){}
+    virtual std::string toString (Tag* t){
+        char buffer[31];
+        buffer[0] = 0;  //
+        return buffer;  // TODO: how to get the string content!?
+
+        // normal path below (copy the content of the string), but has to be bug fixed
+        memcpy(buffer, t->getValue(), 30);
+        buffer[30] = 0;
+        return buffer;
+    }
+};
+PALensModelQInterpreter paLensModelQInterpreter;
+
+class PALensInfoQInterpreter: public Interpreter {
+public:
+    PALensInfoQInterpreter(){}
+    virtual std::string toString (Tag* t){
+        char buffer[21];
+        buffer[0] = 0;
+        return buffer;  // TODO: how to get the string content!?
+
+        // normal path below (copy the content of the string), but has to be bug fixed
+        memcpy(buffer, t->getValue(), 20);
+        buffer[20] = 0;
+        return buffer;
+    }
+};
+PALensInfoQInterpreter paLensInfoQInterpreter;
+
+class PAFocalLengthInterpreter: public Interpreter {
+public:
+    PAFocalLengthInterpreter(){}
+    virtual std::string toString (Tag* t){
+        double a = double(t->toInt(0,LONG));
+        if(a>1.){
+            char buffer[10];
+            sprintf (buffer, "%.2f", a/100. );
+            return buffer;
+        }else
+            return "n/a";
+    }
+    virtual double toDouble (Tag* t, int ofs){
+        double a = double(t->toInt(0,LONG));
+        if(a>1.)
+            return a/100.;
+        else
+            return 0.;
+    }
+};
+PAFocalLengthInterpreter paFocalLengthInterpreter;
+
+class PALensDataFocalLengthInterpreter: public Interpreter {
+public:
+    PALensDataFocalLengthInterpreter(){}
+    virtual std::string toString (Tag* t){
+        int a = t->toInt(0,BYTE);
+        float b = float(10*int(a>>2)) * pow(4.f, float(int(a&0x03)-2));
+        if(b>1.f){
+            char buffer[10];
+            sprintf (buffer, "%.2f", b );
+            return buffer;
+        }else
+            return "n/a";
+    }
+    virtual double toDouble (Tag* t, int ofs){
+        int a = t->toInt(ofs,BYTE);
+        float b = float(10*int(a>>2)) * pow(4.f, float(int(a&0x03)-2));
+        if(b>1.f)
+            return b;
+        else
+            return 0.;
+    }
+};
+PALensDataFocalLengthInterpreter paLensDataFocalLengthInterpreter;
+
 class PAMaxApertureInterpreter: public Interpreter {
 	public:
 	   PAMaxApertureInterpreter(){}
@@ -718,23 +910,50 @@ class PAMaxApertureInterpreter: public Interpreter {
     	   }else
     		  return "n/a";
        }
+       virtual double toDouble (Tag* t, int ofs){
+           int a = t->toInt(0,BYTE);
+           a &= 0x7F;
+           if(a>1)
+               return pow(2.0, double(a-1)/32.0);
+           else
+               return 0.;
+       }
 };
 PAMaxApertureInterpreter paMaxApertureInterpreter;
 
-class PANominalMinMaxApertureInterpreter: public Interpreter {
+class PANominalMinApertureInterpreter: public Interpreter {
 public:
-	PANominalMinMaxApertureInterpreter(){}
+    PANominalMinApertureInterpreter(){}
     virtual std::string toString (Tag* t){
-       char buffer[1024];
- 	   int a = t->toInt(0,BYTE);
- 	   int mina = a & 0x0F;
- 	   int maxa = (a & 0xF0)>>4;
-       sprintf (buffer, "%.1f - %.0f", pow(2.0, maxa/4.0), pow(2.0, (mina+10)/4.0));
+       char buffer[32];
+       int a = t->toInt(0,BYTE);
+       int mina = a & 0x0F;
+       sprintf (buffer, "%.1f", double(int(pow(2.0, double(mina+10)/4.0)+0.2)));
        return buffer;
-
+    }
+    virtual double toDouble (Tag* t, int ofs){
+        int a = t->toInt(0,BYTE) & 0x0F;
+        return double(int(pow(2.0, double(a+10)/4.0)+0.2));
     }
 };
-PANominalMinMaxApertureInterpreter paNominalMinMaxApertureInterpreter;
+PANominalMinApertureInterpreter paNominalMinApertureInterpreter;
+
+class PANominalMaxApertureInterpreter: public Interpreter {
+public:
+    PANominalMaxApertureInterpreter(){}
+    virtual std::string toString (Tag* t){
+       char buffer[32];
+       int a = t->toInt(0,BYTE);
+       int maxa = (a & 0xF0)>>4;
+       sprintf (buffer, "%.1f", double(int(pow(2.0, double(maxa)/4.0)+0.2)) );
+       return buffer;
+    }
+    virtual double toDouble (Tag* t, int ofs){
+        int a = ( t->toInt(0,BYTE) & 0xF0)>>4;
+        return double(int(pow(2.0, double(a)/4.0)+0.2));
+    }
+};
+PANominalMaxApertureInterpreter paNominalMaxApertureInterpreter;
 
 class PAFlashStatusInterpreter: public ChoiceInterpreter {
 public:
@@ -1037,167 +1256,175 @@ public:
 PADriveMode2Interpreter paDriveMode2Interpreter;
 
 const TagAttrib pentaxAttribs[] = {
- {0, 1, 0, 0, 0x0000, "PentaxVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0001, "PentaxModelType", &stdInterpreter},
- {0, 2, 0, 0, 0x0002, "PreviewImageSize", &stdInterpreter},
- {0, 2, 0, 0, 0x0003, "PreviewImageLength", &stdInterpreter},
- {0, 2, 0, 0, 0x0004, "PreviewImageStart", &stdInterpreter},
- {0, 1, 0, 0, 0x0005, "PentaxModelID", &stdInterpreter},
- {0, 1, 0, 0, 0x0006, "Date", &stdInterpreter},
- {0, 1, 0, 0, 0x0007, "Time", &stdInterpreter},
- {0, 1, 0, 0, 0x0008, "Quality", &paQualityInterpreter},
- {0, 1, 0, 0, 0x0009, "PentaxImageSize", &stdInterpreter},
- {0, 1, 0, 0, 0x000b, "PictureMode", &paPictureModeInterpreter},
- {0, 1, 0, 0, 0x000c, "FlashMode", &paFlashModeInterpreter},
- {0, 1, 0, 0, 0x000d, "FocusMode", &paFocusModeInterpreter},
- {0, 1, 0, 0, 0x000e, "AFPointSelected", &paAFPointInterpreter},
- {0, 1, 0, 0, 0x000f, "AFPointsInFocus", &paAFFocusInterpreter},
- {0, 1, 0, 0, 0x0010, "FocusPosition", &stdInterpreter},
- {0, 1, 0, 0, 0x0012, "ExposureTime", &stdInterpreter},
- {0, 1, 0, 0, 0x0013, "FNumber", &paFNumberInterpreter},
- {0, 1, 0, 0, 0x0014, "ISO", &paISOInterpreter},
- {0, 1, 0, 0, 0x0015, "LightReading", &stdInterpreter},
- {0, 1, 0, 0, 0x0016, "ExposureCompensation", &stdInterpreter},
- {0, 1, 0, 0, 0x0017, "MeteringMode", &paMeteringModeInterpreter},
- {0, 1, 0, 0, 0x0018, "AutoBracketing", &stdInterpreter},
- {0, 1, 0, 0, 0x0019, "WhiteBalance", &paWhiteBalanceInterpreter},
- {0, 1, 0, 0, 0x001a, "WhiteBalanceMode", &paWhiteBalanceModeInterpreter},
- {0, 1, 0, 0, 0x001b, "BlueBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x001c, "RedBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x001d, "FocalLength", &stdInterpreter},
- {0, 1, 0, 0, 0x001e, "DigitalZoom", &stdInterpreter},
- {0, 1, 0, 0, 0x001f, "Saturation", &paSaturationInterpreter},
- {0, 1, 0, 0, 0x0020, "Contrast", &paContrastInterpreter},
- {0, 1, 0, 0, 0x0021, "Sharpness", &paSharpnessInterpreter},
- {0, 1, 0, 0, 0x0022, "WorldTimeLocation", &stdInterpreter},
- {0, 1, 0, 0, 0x0023, "HometownCity", &stdInterpreter},
- {0, 3, 0, 0, 0x0024, "DestinationCity", &stdInterpreter},
- {0, 3, 0, 0, 0x0025, "HometownDST", &stdInterpreter},
- {0, 1, 0, 0, 0x0026, "DestinationDST", &stdInterpreter},
- {0, 1, 0, 0, 0x0027, "DSPFirmwareVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0028, "CPUFirmwareVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0029, "FrameNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x002d, "EffectiveLV", &stdInterpreter},
- {0, 1, 0, 0, 0x0032, "ImageProcessing", &stdInterpreter},
- {0, 1, 0, 0, 0x0033, "PictureMode", &paPictureModeInterpreter2},
- {0, 1, 0, 0, 0x0034, "DriveMode", &paDriveModeInterpreter},
- {0, 1, 0, 0, 0x0037, "ColorSpace", &paColorSpaceInterpreter},
- {0, 1, 0, 0, 0x0038, "ImageAreaOffset", &stdInterpreter},
- {0, 1, 0, 0, 0x0039, "RawImageSize", &stdInterpreter},
- {0, 1, 0, 0, 0x003c, "AFPointsInFocus", &stdInterpreter},
- {0, 1, 0, 0, 0x003e, "PreviewImageBorders", &stdInterpreter},
- {0, 1, 0, 0, 0x003f, "LensType", &paLensTypeInterpreter},
- {0, 1, 0, 0, 0x0040, "SensitivityAdjust", &stdInterpreter},
- {0, 1, 0, 0, 0x0041, "ImageProcessingCount", &stdInterpreter},
- {0, 1, 0, 0, 0x0047, "CameraTemperature", &stdInterpreter},
- {0, 1, 0, 0, 0x0048, "AELock", &paOnOffInterpreter},
- {0, 1, 0, 0, 0x0049, "NoiseReduction", &paOnOffInterpreter},
- {0, 1, 0, 0, 0x004d, "FlashExposureComp", &stdInterpreter},
- {0, 1, 0, 0, 0x004f, "ImageTone", &stdInterpreter},
- {0, 1, 0, 0, 0x0050, "ColorTemperature", &stdInterpreter},
- {0, 1, 0, pentaxSRInfoAttribs, 0x005c, "ShakeReductionInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x005d, "ShutterCount", &stdInterpreter},
- {0, 1, 0, 0, 0x0069, "DynamicRangeExpansion", &paOnOffInterpreter},
- {0, 1, 0, 0, 0x0071, "HighISONoiseReduction", &paHighISONoiseInterpreter},
- {0, 1, 0, 0, 0x0072, "AFAdjustment", &stdInterpreter},
- {0, 1, 0, 0, 0x0200, "BlackPoint", &stdInterpreter},
- {0, 1, 0, 0, 0x0201, "WhitePoint", &stdInterpreter},
- {0, 1, 0, 0, 0x0203, "ColorMatrixA", &stdInterpreter},
- {0, 1, 0, 0, 0x0204, "ColorMatrixB", &stdInterpreter},
- {0, 1, 0, pentaxCameraSettingsAttribs, 0x0205, "CameraSettings", &stdInterpreter},
- {0, 1, 0, pentaxAEInfoAttribs, 0x0206, "AEInfo", &stdInterpreter},
- {0, 1, 0, pentaxLensDataAttribs, 0x0207, "LensInfo", &stdInterpreter},
- {0, 1, 0, pentaxFlashInfoAttribs, 0x0208, "FlashInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0209, "AEMeteringSegments", &stdInterpreter},
- {0, 1, 0, 0, 0x020a, "FlashADump", &stdInterpreter},
- {0, 1, 0, 0, 0x020b, "FlashBDump", &stdInterpreter},
- {0, 1, 0, 0, 0x020d, "WB_RGGBLevelsDaylight", &stdInterpreter},
- {0, 1, 0, 0, 0x020e, "WB_RGGBLevelsShade", &stdInterpreter},
- {0, 1, 0, 0, 0x020f, "WB_RGGBLevelsCloudy", &stdInterpreter},
- {0, 1, 0, 0, 0x0210, "WB_RGGBLevelsTungsten", &stdInterpreter},
- {0, 1, 0, 0, 0x0211, "WB_RGGBLevelsFluorescentD", &stdInterpreter},
- {0, 1, 0, 0, 0x0212, "WB_RGGBLevelsFluorescentN", &stdInterpreter},
- {0, 1, 0, 0, 0x0213, "WB_RGGBLevelsFluorescentW", &stdInterpreter},
- {0, 1, 0, 0, 0x0214, "WB_RGGBLevelsFlash", &stdInterpreter},
- {0, 1, 0, pentaxCameraInfoAttribs, 0x0215, "CameraInfo", &stdInterpreter},
- {0, 1, 0, pentaxBatteryInfoAttribs, 0x0216, "BatteryInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x021f, "AFInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0222, "ColorInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x03fe, "DataDump", &stdInterpreter},
- {0, 1, 0, 0, 0x03ff, "UnknownInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0402, "ToneCurve", &stdInterpreter},
- {0, 1, 0, 0, 0x0403, "ToneCurves", &stdInterpreter},
- {0, 1, 0, 0, 0x0e00, "PrintIM", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE,  0, 0, 0x0000, AUTO, "PentaxVersion", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0001, AUTO, "PentaxModelType", &stdInterpreter},
+ {0, AC_SYSTEM, 0, 0, 0x0002, AUTO, "PreviewImageSize", &stdInterpreter},
+ {0, AC_SYSTEM, 0, 0, 0x0003, AUTO, "PreviewImageLength", &stdInterpreter},
+ {0, AC_SYSTEM, 0, 0, 0x0004, AUTO, "PreviewImageStart", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0005, AUTO, "PentaxModelID", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0006, AUTO, "Date", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0007, AUTO, "Time", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0008, AUTO, "Quality", &paQualityInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0009, AUTO, "PentaxImageSize", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x000b, AUTO, "PictureMode", &paPictureModeInterpreter},
+ {0, AC_WRITE,  0, 0, 0x000c, AUTO, "FlashMode", &paFlashModeInterpreter},
+ {0, AC_WRITE,  0, 0, 0x000d, AUTO, "FocusMode", &paFocusModeInterpreter},
+ {0, AC_WRITE,  0, 0, 0x000e, AUTO, "AFPointSelected", &paAFPointInterpreter},
+ {0, AC_WRITE,  0, 0, 0x000f, AUTO, "AFPointsInFocus", &paAFFocusInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0010, AUTO, "FocusPosition", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0012, AUTO, "ExposureTime", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0013, AUTO, "FNumber", &paFNumberInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0014, AUTO, "ISO", &paISOInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0015, AUTO, "LightReading", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0016, AUTO, "ExposureCompensation", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0017, AUTO, "MeteringMode", &paMeteringModeInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0018, AUTO, "AutoBracketing", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0019, AUTO, "WhiteBalance", &paWhiteBalanceInterpreter},
+ {0, AC_WRITE,  0, 0, 0x001a, AUTO, "WhiteBalanceMode", &paWhiteBalanceModeInterpreter},
+ {0, AC_WRITE,  0, 0, 0x001b, AUTO, "BlueBalance", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x001c, AUTO, "RedBalance", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x001d, AUTO, "FocalLength", &paFocalLengthInterpreter},
+ {0, AC_WRITE,  0, 0, 0x001e, AUTO, "DigitalZoom", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x001f, AUTO, "Saturation", &paSaturationInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0020, AUTO, "Contrast", &paContrastInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0021, AUTO, "Sharpness", &paSharpnessInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0022, AUTO, "WorldTimeLocation", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0023, AUTO, "HometownCity", &stdInterpreter},
+ {0, AC_NEW,    0, 0, 0x0024, AUTO, "DestinationCity", &stdInterpreter},
+ {0, AC_NEW,    0, 0, 0x0025, AUTO, "HometownDST", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0026, AUTO, "DestinationDST", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0027, AUTO, "DSPFirmwareVersion", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0028, AUTO, "CPUFirmwareVersion", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0029, AUTO, "FrameNumber", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x002d, AUTO, "EffectiveLV", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0032, AUTO, "ImageProcessing", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0033, AUTO, "PictureMode", &paPictureModeInterpreter2},
+ {0, AC_WRITE,  0, 0, 0x0034, AUTO, "DriveMode", &paDriveModeInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0037, AUTO, "ColorSpace", &paColorSpaceInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0038, AUTO, "ImageAreaOffset", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0039, AUTO, "RawImageSize", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x003c, AUTO, "AFPointsInFocus", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x003e, AUTO, "PreviewImageBorders", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x003f, AUTO, "LensType", &paLensTypeInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0040, AUTO, "SensitivityAdjust", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0041, AUTO, "ImageProcessingCount", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0047, AUTO, "CameraTemperature", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0048, AUTO, "AELock", &paOnOffInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0049, AUTO, "NoiseReduction", &paOnOffInterpreter},
+ {0, AC_WRITE,  0, 0, 0x004d, AUTO, "FlashExposureComp", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x004f, AUTO, "ImageTone", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0050, AUTO, "ColorTemperature", &stdInterpreter},
+ {0, AC_WRITE,  0, pentaxSRInfoAttribs, 0x005c, AUTO, "ShakeReductionInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x005d, AUTO, "ShutterCount", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0069, AUTO, "DynamicRangeExpansion", &paOnOffInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0071, AUTO, "HighISONoiseReduction", &paHighISONoiseInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0072, AUTO, "AFAdjustment", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0200, AUTO, "BlackPoint", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0201, AUTO, "WhitePoint", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0203, AUTO, "ColorMatrixA", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0204, AUTO, "ColorMatrixB", &stdInterpreter},
+ {0, AC_WRITE,  0, pentaxCameraSettingsAttribs, 0x0205, AUTO, "CameraSettings", &stdInterpreter},
+ {0, AC_WRITE,  0, pentaxAEInfoAttribs, 0x0206, AUTO, "AEInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, pentaxLensDataAttribs, 0x0207, AUTO, "LensInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, pentaxFlashInfoAttribs, 0x0208, AUTO, "FlashInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0209, AUTO, "AEMeteringSegments", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x020a, AUTO, "FlashADump", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x020b, AUTO, "FlashBDump", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x020d, AUTO, "WB_RGGBLevelsDaylight", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x020e, AUTO, "WB_RGGBLevelsShade", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x020f, AUTO, "WB_RGGBLevelsCloudy", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0210, AUTO, "WB_RGGBLevelsTungsten", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0211, AUTO, "WB_RGGBLevelsFluorescentD", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0212, AUTO, "WB_RGGBLevelsFluorescentN", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0213, AUTO, "WB_RGGBLevelsFluorescentW", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0214, AUTO, "WB_RGGBLevelsFlash", &stdInterpreter},
+ {0, AC_WRITE,  0, pentaxCameraInfoAttribs, 0x0215, AUTO, "CameraInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, pentaxBatteryInfoAttribs, 0x0216, AUTO, "BatteryInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x021f, AUTO, "AFInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0222, AUTO, "ColorInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, pentaxLensInfoQAttribs, 0x0239, AUTO, "LensInfoQ", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x03fe, AUTO, "DataDump", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x03ff, AUTO, "UnknownInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0402, AUTO, "ToneCurve", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0403, AUTO, "ToneCurves", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0e00, AUTO, "PrintIM", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxSRInfoAttribs[] = {
- {0, 1, 0, 0,  0, "SRResult", &paSRResultInterpreter},
- {0, 1, 0, 0,  1, "ShakeReduction", &paOnOffInterpreter},
- {0, 1, 0, 0,  2, "SRHalfPressTime", &stdInterpreter},
- {0, 1, 0, 0,  3, "SRFocalLength", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0,  0, AUTO, "SRResult", &paSRResultInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "ShakeReduction", &paOnOffInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "SRHalfPressTime", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  3, AUTO, "SRFocalLength", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxLensDataAttribs[] = {
- {0, 1, 0, 0, 10, "NominalMinMaxAperture", &paNominalMinMaxApertureInterpreter},
- {0, 1, 0, 0, 14, "MaxAperture", &paMaxApertureInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 9,  AUTO, "FocalLength", &paLensDataFocalLengthInterpreter},
+ {0, AC_WRITE, 0, 0, 10, AUTO, "NominalMaxAperture", &paNominalMaxApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 10, AUTO, "NominalMinAperture", &paNominalMinApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 14, AUTO, "MaxAperture", &paMaxApertureInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
+
+const TagAttrib pentaxLensInfoQAttribs[] = {
+ {0, AC_WRITE, 0, 0, 12, AUTO, "LensModel", &paLensModelQInterpreter},
+ {0, AC_WRITE, 0, 0, 42, AUTO, "LensInfo", &paLensInfoQInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxCameraSettingsAttribs[] = {
- {0, 1, 0, 0,  0, "PictureMode2", &paPictureMode2Interpreter},
- {0, 1, 0, 0,  1, "ProgramLine", &paProgramLineInterpreter},
- {0, 1, 0, 0,  1, "EVSteps", &paEVStepsInterpreter},
- {0, 1, 0, 0,  1, "E-DialinProgram", &paEDialinInterpreter},
- {0, 1, 0, 0,  1, "ApertureRing", &paApertureRingUseInterpreter},
- {0, 1, 0, 0,  2, "FlashOptions", &paFlashOptionInterpreter},
- {0, 1, 0, 0,  2, "MeteringMode2", &paMeteringMode2Interpreter},
- {0, 1, 0, 0,  3, "AFMode", &paAFModeInterpreter},
- {0, 1, 0, 0,  4, "AFPointSelected2", &paAFPointSelectedInterpreter},
- {0, 1, 0, 0,  7, "DriveMode2", &paDriveMode2Interpreter},
- {0, 1, 0, 0,  8, "ExposureBracketStepSize", &paExposureBracketStepSizeInterpreter},
- {0, 1, 0, 0,  9, "BracketShotNumber", &stdInterpreter},
- {0, 1, 0, 0, 10, "WhiteBalanceSet", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0,  0, AUTO, "PictureMode2", &paPictureMode2Interpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "ProgramLine", &paProgramLineInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "EVSteps", &paEVStepsInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "E-DialinProgram", &paEDialinInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "ApertureRing", &paApertureRingUseInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "FlashOptions", &paFlashOptionInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "MeteringMode2", &paMeteringMode2Interpreter},
+ {0, AC_WRITE, 0, 0,  3, AUTO, "AFMode", &paAFModeInterpreter},
+ {0, AC_WRITE, 0, 0,  4, AUTO, "AFPointSelected2", &paAFPointSelectedInterpreter},
+ {0, AC_WRITE, 0, 0,  7, AUTO, "DriveMode2", &paDriveMode2Interpreter},
+ {0, AC_WRITE, 0, 0,  8, AUTO, "ExposureBracketStepSize", &paExposureBracketStepSizeInterpreter},
+ {0, AC_WRITE, 0, 0,  9, AUTO, "BracketShotNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 10, AUTO, "WhiteBalanceSet", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxAEInfoAttribs[] = {
- {0, 1, 0, 0,  0, "AEExposureTime", &stdInterpreter},
- {0, 1, 0, 0,  1, "AEAperture", &stdInterpreter},
- {0, 1, 0, 0,  2, "AE_ISO", &stdInterpreter},
- {0, 1, 0, 0,  3, "AEXv", &stdInterpreter},
- {0, 1, 0, 0,  4, "AEBXv", &stdInterpreter},
- {0, 1, 0, 0,  5, "AEMinExposureTime", &stdInterpreter},
- {0, 1, 0, 0,  6, "AEProgramMode", &stdInterpreter},
- {0, 1, 0, 0,  9, "AEMaxAperture", &stdInterpreter},
- {0, 1, 0, 0, 10, "AEMaxAperture2", &stdInterpreter},
- {0, 1, 0, 0, 11, "AEMinAperture", &stdInterpreter},
- {0, 1, 0, 0, 12, "AEMeteringMode", &stdInterpreter},
- {0, 1, 0, 0, 14, "FlashExposureCompSet", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0,  0, AUTO, "AEExposureTime", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "AEAperture", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "AE_ISO", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  3, AUTO, "AEXv", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  4, AUTO, "AEBXv", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  5, AUTO, "AEMinExposureTime", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  6, AUTO, "AEProgramMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  9, AUTO, "AEMaxAperture", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 10, AUTO, "AEMaxAperture2", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 11, AUTO, "AEMinAperture", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 12, AUTO, "AEMeteringMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 14, AUTO, "FlashExposureCompSet", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxFlashInfoAttribs[] = {
- {0, 1, 0, 0,  0, "FlashStatus", &paFlashStatusInterpreter},
- {0, 1, 0, 0,  1, "InternalFlashMode", &paInternalFlashModeInterpreter},
- {0, 1, 0, 0,  2, "ExternalFlashMode", &paExternalFlashModeInterpreter},
- {0, 1, 0, 0,  3, "InternalFlashStrength", &stdInterpreter},
- {0, 1, 0, 0, 24, "ExternalFlashGuideNumber", &paExternalFlashGNInterpreter},
- {0, 1, 0, 0, 25, "ExternalFlashExposureComp", &paExternalFlashExposureCompInterpreter},
- {0, 1, 0, 0, 26, "ExternalFlashBounce", &paExternalFlashBounceInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0,  0, AUTO, "FlashStatus", &paFlashStatusInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "InternalFlashMode", &paInternalFlashModeInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "ExternalFlashMode", &paExternalFlashModeInterpreter},
+ {0, AC_WRITE, 0, 0,  3, AUTO, "InternalFlashStrength", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 24, AUTO, "ExternalFlashGuideNumber", &paExternalFlashGNInterpreter},
+ {0, AC_WRITE, 0, 0, 25, AUTO, "ExternalFlashExposureComp", &paExternalFlashExposureCompInterpreter},
+ {0, AC_WRITE, 0, 0, 26, AUTO, "ExternalFlashBounce", &paExternalFlashBounceInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxBatteryInfoAttribs[] = {
- {0, 1, 0, 0,  0, "PowerSource", &paPowerSourceInterpreter},
- {0, 1, 0, 0,  1, "BatteryStates", &stdInterpreter},
- {0, 1, 0, 0,  2, "BatteryADBodyNoLoad", &stdInterpreter},
- {0, 1, 0, 0,  3, "BatteryADBodyLoad", &stdInterpreter},
- {0, 1, 0, 0,  4, "BatteryADGripNoLoad", &stdInterpreter},
- {0, 1, 0, 0,  5, "BatteryADGripLoad", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0,  0, AUTO, "PowerSource", &paPowerSourceInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "BatteryStates", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "BatteryADBodyNoLoad", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  3, AUTO, "BatteryADBodyLoad", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  4, AUTO, "BatteryADGripNoLoad", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  5, AUTO, "BatteryADGripLoad", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxCameraInfoAttribs[] = {
- {0, 1, 0, 0,  0, "PentaxModelID", &stdInterpreter},
- {0, 1, 0, 0,  1, "ManufactureDate", &stdInterpreter},
- {0, 1, 0, 0,  2, "ProductionCode", &stdInterpreter},
- {0, 1, 0, 0,  4, "InternalSerialNumber", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0,  0, AUTO, "PentaxModelID", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "ManufactureDate", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "ProductionCode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  4, AUTO, "InternalSerialNumber", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 }
 #endif

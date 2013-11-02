@@ -34,12 +34,68 @@ class NAISOInterpreter : public Interpreter {
     public:
         NAISOInterpreter () {}
         virtual std::string toString (Tag* t) {
-        	char buffer[32];
+            char buffer[32];
             sprintf (buffer, "%d", t->toInt(2));
             return buffer;
         }
 };
 NAISOInterpreter naISOInterpreter;
+
+class NAISOInfoISOInterpreter : public Interpreter {
+    public:
+        NAISOInfoISOInterpreter () {}
+        virtual std::string toString (Tag* t) {
+            char buffer[32];
+            int a = t->toInt();
+            sprintf (buffer, "%d", a);
+            return buffer;
+        }
+        virtual double toDouble (Tag* t, int ofs){
+            int a = t->getValue()[ofs];
+            if(a>1) {
+                double i = pow(2., double(a)/12. - 5.) * 100.;
+                return i;
+            }
+            else
+                return 0.;
+        }
+        virtual int toInt (Tag* t, int ofs, TagType astype){
+            int a = t->getValue()[ofs];
+            if(a>1) {
+                int i = int(double(powf(2.f, float(a)/12.f - 5.f)) * 100.f +0.5f);
+                return i;
+            }
+            else
+                return 0;
+        }
+};
+NAISOInfoISOInterpreter naISOInfoISOInterpreter;
+
+class NAISOExpansionInterpreter : public Interpreter {
+    public:
+        NAISOExpansionInterpreter () {}
+        virtual std::string toString (Tag* t) {
+            int a = t->toInt();
+            // unclear if this interpretation is correct!
+            switch (a) {
+            case 0x0: return "Off";
+            case 0x101: return "Hi 0.3";
+            case 0x102: return "Hi 0.5";
+            case 0x103: return "Hi 0.7";
+            case 0x104: return "Hi 1.0";
+            case 0x105: return "Hi 1.3";
+            case 0x106: return "Hi 1.5";
+            case 0x107: return "Hi 1.7";
+            case 0x108: return "Hi 2.0";
+            case 0x201: return "Lo 0.3";
+            case 0x202: return "Lo 0.5";
+            case 0x203: return "Lo 0.7";
+            case 0x204: return "Lo 1.0";
+            default: { char buffer[32]; sprintf(buffer, "0x%04X", a); return buffer; }
+            }
+        }
+};
+NAISOExpansionInterpreter naISOExpansionInterpreter;
 
 class NALensTypeInterpreter : public Interpreter {
     public:
@@ -174,19 +230,21 @@ NAAFInfoInterpreter naAFInfoInterpreter;
 class NALensDataInterpreter : public Interpreter {
         std::map<std::string,std::string> lenses;
     public:
-        NALensDataInterpreter () {
+        NALensDataInterpreter () {  // From EXIFTOOL database 'Nikon.pm' V2.80
 /*  The key is a composite string made of 8 HEX bytes
  *  LensIDNumber LensFStops MinFocalLength MaxFocalLength MaxApertureAtMinFocal MaxApertureAtMaxFocal MCUVersion and LensType */
-            lenses["00 00 00 00 00 00 00 01"] = "Manual Lens No CPU ";
-            lenses["00 00 00 00 00 00 E1 12"] = "TC-17E II ";
+            lenses["00 00 00 00 00 00 00 01"] = "Manual Lens No CPU";
+            lenses["00 00 00 00 00 00 E1 12"] = "TC-17E II";
             lenses["00 00 00 00 00 00 F1 0C"] = "TC-14E [II] or Sigma APO Tele Converter 1.4x EX DG or Kenko Teleplus PRO 300 DG 1.4x";
             lenses["00 00 00 00 00 00 F2 18"] = "TC-20E [II] or Sigma APO Tele Converter 2x EX DG or Kenko Teleplus PRO 300 DG 2.0x";
-            lenses["00 36 1C 2D 34 3C 00 06"] = "Tamron SP AF11-18mm f/4.5-5.6 Di II LD Aspherical (IF)";
+            lenses["00 00 48 48 53 53 00 01"] = "Loreo 40mm f/11-22 3D Lens in a Cap 9005";
+            lenses["00 36 1C 2D 34 3C 00 06"] = "Tamron SP AF 11-18mm f/4.5-5.6 Di II LD Aspherical (IF)";
             lenses["00 3C 1F 37 30 30 00 06"] = "Tokina AT-X 124 PRO DX AF 12-24mm f/4";
             lenses["00 3E 80 A0 38 3F 00 02"] = "Tamron SP AF 200-500mm f/5-6.3 Di LD (IF)";
             lenses["00 3F 2D 80 2B 40 00 06"] = "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical (IF)";
             lenses["00 3F 2D 80 2C 40 00 06"] = "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical (IF) Macro";
             lenses["00 3F 80 A0 38 3F 00 02"] = "Tamron SP AF 200-500mm f/5-6.3 Di";
+            lenses["00 40 11 11 2C 2C 00 00"] = "Samyang 8mm f/3.5 Fish-Eye";
             lenses["00 40 18 2B 2C 34 00 06"] = "Tokina AT-X 107 DX Fish-Eye AF 10-17mm f/3.5-4.5";
             lenses["00 40 2A 72 2C 3C 00 06"] = "Tokina AT-X 16.5-135 DX AF 16.5-135mm f/3.5-5.6";
             lenses["00 40 2B 2B 2C 2C 00 02"] = "Tokina AT-X 17 PRO AF 17mm f/3.5";
@@ -201,7 +259,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["00 47 10 10 24 24 00 00"] = "Fisheye Nikkor 8mm f/2.8 AiS";
             lenses["00 47 25 25 24 24 00 02"] = "Tamron SP AF 14mm f/2.8 Aspherical (IF) (69E)";
             lenses["00 47 44 44 24 24 00 06"] = "Tokina AT-X M35 PRO DX (AF 35mm f/2.8 Macro)";
-            lenses["00 47 53 80 30 3C 00 06"] = "Tamron AF55-200mm f/4-5.6 Di II LD";
+            lenses["00 47 53 80 30 3C 00 06"] = "Tamron AF 55-200mm f/4-5.6 Di II LD";
             lenses["00 48 1C 29 24 24 00 06"] = "Tokina AT-X 116 PRO DX AF 11-16mm f/2.8";
             lenses["00 48 29 3C 24 24 00 06"] = "Tokina AT-X 16-28 PRO FX AF 16-28mm f/2.8";
             lenses["00 48 29 50 24 24 00 06"] = "Tokina AT-X 165 PRO DX AF 16-50mm f/2.8";
@@ -215,7 +273,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["00 48 80 80 30 30 00 00"] = "Nikkor 200mm f/4 AiS";
             lenses["00 49 30 48 22 2B 00 02"] = "Tamron SP AF 20-40mm f/2.7-3.5";
             lenses["00 4C 6A 6A 20 20 00 00"] = "Nikkor 105mm f/2.5 AiS";
-            lenses["00 4C 7C 7C 2C 2C 00 02"] = "Tamron SP AF 180mm f/3.5 Di Model B01";
+            lenses["00 4C 7C 7C 2C 2C 00 02"] = "Tamron SP AF 180mm f/3.5 Di Model (B01)";
             lenses["00 53 2B 50 24 24 00 06"] = "Tamron SP AF 17-50mm f/2.8 (A16)";
             lenses["00 54 2B 50 24 24 00 06"] = "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical (IF) (A16NII)";
             lenses["00 54 3C 3C 18 18 00 00"] = "Carl Zeiss Distagon T* 28mm f/2 ZF.2";
@@ -228,7 +286,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["00 54 56 56 30 30 00 00"] = "Coastal Optical Systems 60mm f/4 UV-VIS-IR Macro Apo";
             lenses["00 54 62 62 0C 0C 00 00"] = "Carl Zeiss Planar T* 85mm f/1.4 ZF.2";
             lenses["00 54 68 68 18 18 00 00"] = "Carl Zeiss Makro-Planar T* 100mm f/2 ZF.2";
-            lenses["00 54 68 68 24 24 00 02"] = "Tokina AT-X M100 PRO D 100mm f/2.8";
+            lenses["00 54 68 68 24 24 00 02"] = "Tokina AT-X M100 PRO D 100mm f/2.8 Macro";
             lenses["00 54 8E 8E 24 24 00 02"] = "Tokina AT-X 300 PRO AF 300mm f/2.8";
             lenses["00 58 64 64 20 20 00 00"] = "Soligor C/D Macro MC 90mm f/2.5";
             lenses["01 00 00 00 00 00 02 00"] = "AF Teleconverter TC-16A 1.6x";
@@ -247,24 +305,25 @@ class NALensDataInterpreter : public Interpreter {
             lenses["02 40 44 73 2B 36 02 00"] = "Sigma 35-135mm f/3.5-4.5 a";
             lenses["02 42 44 5C 2A 34 02 00"] = "AF Zoom-Nikkor 35-70mm f/3.3-4.5";
             lenses["02 42 44 5C 2A 34 08 00"] = "AF Zoom-Nikkor 35-70mm f/3.3-4.5";
-            lenses["02 46 37 37 25 25 02 00"] = "Sigma 24mm f/2.8 Macro";
+            lenses["02 46 37 37 25 25 02 00"] = "Sigma 24mm f/2.8 Super Wide II Macro";
             lenses["02 46 3C 5C 25 25 02 00"] = "Sigma 28-70mm f/2.8";
-            lenses["02 46 5C 82 25 25 02 00"] = "Sigma APO 70-210mm f/2.8";
+            lenses["02 46 5C 82 25 25 02 00"] = "Sigma 70-210mm f/2.8 APO";
+            lenses["02 48 50 50 24 24 02 00"] = "Sigma 50mm f/2.8 Macro";
             lenses["02 48 65 65 24 24 02 00"] = "Sigma 90mm f/2.8 Macro";
-            lenses["03 43 5C 81 35 35 02 00"] = "Soligor AF C/D ZOOM UMCS 70-210mm f/4.5";
+            lenses["03 43 5C 81 35 35 02 00"] = "Soligor AF C/D Zoom UMCS 70-210mm f/4.5";
             lenses["03 48 5C 81 30 30 02 00"] = "AF Zoom-Nikkor 70-210mm f/4";
             lenses["04 48 3C 3C 24 24 03 00"] = "AF Nikkor 28mm f/2.8";
             lenses["05 54 50 50 0C 0C 04 00"] = "AF Nikkor 50mm f/1.4";
-            lenses["06 3F 68 68 2C 2C 06 00"] = "Cosina 100mm f/3.5 Macro";
+            lenses["06 3F 68 68 2C 2C 06 00"] = "Cosina AF 100mm f/3.5 Macro";
             lenses["06 54 53 53 24 24 06 00"] = "AF Micro-Nikkor 55mm f/2.8";
             lenses["07 36 3D 5F 2C 3C 03 00"] = "Cosina AF Zoom 28-80mm f/3.5-5.6 MC Macro";
             lenses["07 3E 30 43 2D 35 03 00"] = "Soligor AF Zoom 19-35mm f/3.5-4.5 MC";
-            lenses["07 40 2F 44 2C 34 03 02"] = "Tamron AF 19-35mm f/3.5-4.5 N";
-            lenses["07 40 30 45 2D 35 03 02"] = "Tamron AF 19-35mm f/3.5-4.5";
-            lenses["07 40 3C 5C 2C 35 03 00"] = "Tokina AF 270 II AF 28-70mm f/3.5-4.5";
+            lenses["07 40 2F 44 2C 34 03 02"] = "Tamron AF 19-35mm f/3.5-4.5 (A10)";
+            lenses["07 40 30 45 2D 35 03 02"] = "Tamron AF 19-35mm f/3.5-4.5 (A10)";
+            lenses["07 40 3C 5C 2C 35 03 00"] = "Tokina AF 270 II (AF 28-70mm f/3.5-4.5)";
             lenses["07 40 3C 62 2C 34 03 00"] = "AF Zoom-Nikkor 28-85mm f/3.5-4.5";
             lenses["07 46 2B 44 24 30 03 02"] = "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical (IF) (A05)";
-            lenses["07 46 3D 6A 25 2F 03 00"] = "Cosina AF Zoom 28-105mm F2.8-3.8 MC";
+            lenses["07 46 3D 6A 25 2F 03 00"] = "Cosina AF Zoom 28-105mm f/2.8-3.8 MC";
             lenses["07 47 3C 5C 25 35 03 00"] = "Tokina AF 287 SD AF 28-70mm f/2.8-4.5";
             lenses["07 48 3C 5C 24 24 03 00"] = "Tokina AT-X 287 AF 28-70mm f/2.8";
             lenses["08 40 44 6A 2C 34 04 00"] = "AF Zoom-Nikkor 35-105mm f/3.5-4.5";
@@ -282,6 +341,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["10 48 8E 8E 30 30 08 00"] = "AF Nikkor 300mm f/4 IF-ED";
             lenses["11 48 44 5C 24 24 08 00"] = "AF Zoom-Nikkor 35-70mm f/2.8";
             lenses["12 36 5C 81 35 3D 09 00"] = "Cosina AF Zoom 70-210mm f/4.5-5.6 MC Macro";
+            lenses["12 36 69 97 35 42 09 00"] = "Soligor AF Zoom 100-400mm f/4.5-6.7 MC";
             lenses["12 39 5C 8E 34 3D 08 02"] = "Cosina AF Zoom 70-300mm f/4.5-5.6 MC Macro";
             lenses["12 3B 68 8D 3D 43 09 02"] = "Cosina AF Zoom 100-300mm f/5.6-6.7 MC Macro";
             lenses["12 3B 98 98 3D 3D 09 00"] = "Tokina AT-X 400 SD AF 400mm f/5.6";
@@ -306,14 +366,17 @@ class NALensDataInterpreter : public Interpreter {
             lenses["1F 54 6A 6A 24 24 14 00"] = "AF Micro-Nikkor 105mm f/2.8";
             lenses["20 3C 80 98 3D 3D 1E 02"] = "Tamron AF 200-400mm f/5.6 LD IF (75D)";
             lenses["20 48 60 80 24 24 15 00"] = "AF Zoom-Nikkor 80-200mm f/2.8 ED";
+            lenses["20 5A 64 64 20 20 14 00"] = "Tamron SP AF 90mm f/2.5 Macro (152E)";
             lenses["21 40 3C 5C 2C 34 16 00"] = "AF Zoom-Nikkor 28-70mm f/3.5-4.5";
             lenses["21 56 8E 8E 24 24 14 00"] = "Tamron SP AF 300mm f/2.8 LD-IF (60E)";
             lenses["22 48 72 72 18 18 16 00"] = "AF DC-Nikkor 135mm f/2";
             lenses["22 53 64 64 24 24 E0 02"] = "Tamron SP AF 90mm f/2.8 Macro 1:1 (72E)";
             lenses["23 30 BE CA 3C 48 17 00"] = "Zoom-Nikkor 1200-1700mm f/5.6-8 P ED IF";
             lenses["24 44 60 98 34 3C 1A 02"] = "Tokina AT-X 840 AF II 80-400mm f/4.5-5.6";
-            lenses["24 48 60 80 24 24 1A 02"] = "AF Zoom-Nikkor ED 80-200mm f/2.8D ED";
+            lenses["24 48 60 80 24 24 1A 02"] = "AF Zoom-Nikkor 80-200mm f/2.8D ED";
             lenses["24 54 60 80 24 24 1A 02"] = "Tokina AT-X 828 AF PRO 80-200mm f/2.8";
+            lenses["25 44 44 8E 34 42 1B 02"] = "Tokina AF 353 (AF 35-300mm f/4.5-6.7)";
+            lenses["25 48 3C 5C 24 24 1B 02"] = "Tokina AT-X 270 AF PRO II 28-70mm f/2.6-2.8";
             lenses["25 48 3C 5C 24 24 1B 02"] = "Tokina AT-X 287 AF PRO SV 28-70mm f/2.8";
             lenses["25 48 44 5C 24 24 1B 02"] = "AF Zoom-Nikkor 35-70mm f/2.8D";
             lenses["25 48 44 5C 24 24 52 02"] = "AF Zoom-Nikkor 35-70mm f/2.8D";
@@ -344,9 +407,9 @@ class NALensDataInterpreter : public Interpreter {
             lenses["26 48 31 49 24 24 1C 02"] = "Sigma 20-40mm f/2.8";
             lenses["26 48 37 56 24 24 1C 02"] = "Sigma 24-60mm f/2.8 EX DG";
             lenses["26 48 3C 5C 24 24 1C 06"] = "Sigma 28-70mm f/2.8 EX DG";
-            lenses["26 48 3C 5C 24 30 1C 02"] = "Sigma 28-70mm f/2.8-4 High Speed Zoom";
+            lenses["26 48 3C 5C 24 30 1C 02"] = "Sigma 28-70mm f/2.8-4 DG High Speed Zoom";
             lenses["26 48 3C 6A 24 30 1C 02"] = "Sigma 28-105mm f/2.8-4 Aspherical";
-            lenses["26 48 8E 8E 30 30 1C 02"] = "Sigma APO TELE MACRO 300mm f/4";
+            lenses["26 48 8E 8E 30 30 1C 02"] = "Sigma APO Tele Macro 300mm f/4";
             lenses["26 54 2B 44 24 30 1C 02"] = "Sigma 17-35mm f/2.8-4 EX Aspherical";
             lenses["26 54 37 5C 24 24 1C 02"] = "Sigma 24-70mm f/2.8 EX DG Macro";
             lenses["26 54 37 73 24 34 1C 02"] = "Sigma 24-135mm f/2.8-4.5";
@@ -370,18 +433,21 @@ class NALensDataInterpreter : public Interpreter {
             lenses["2D 48 80 80 30 30 21 02"] = "AF Micro-Nikkor 200mm f/4D IF-ED";
             lenses["2E 48 5C 82 30 3C 22 02"] = "AF Nikkor 70-210mm f/4-5.6D";
             lenses["2E 48 5C 82 30 3C 28 02"] = "AF Nikkor 70-210mm f/4-5.6D";
-            lenses["2F 40 30 44 2C 34 29 02"] = "Tokina AF 235 II AF 20-35mm f/3.5-4.5";
+            lenses["2F 40 30 44 2C 34 29 02"] = "Tokina AF 235 II 20-35mm f/3.5-4.5";
+            lenses["2F 40 30 44 2C 34 29 02"] = "Tokina AF 193 19-35mm f/3.5-4.5";
             lenses["2F 48 30 44 24 24 29 02"] = "AF Zoom-Nikkor 20-35mm f/2.8D IF";
+            lenses["2F 48 30 44 24 24 29 02"] = "Tokina AT-X 235 AF PRO (AF 20-35mm f/2.8)";
             lenses["30 48 98 98 24 24 24 02"] = "AF-I Nikkor 400mm f/2.8D IF-ED";
             lenses["30 48 98 98 24 24 E1 02"] = "AF-I Nikkor 400mm f/2.8D IF-ED + TC-17E";
             lenses["30 48 98 98 24 24 F1 02"] = "AF-I Nikkor 400mm f/2.8D IF-ED + TC-14E";
             lenses["30 48 98 98 24 24 F2 02"] = "AF-I Nikkor 400mm f/2.8D IF-ED + TC-20E";
             lenses["31 54 56 56 24 24 25 02"] = "AF Micro-Nikkor 60mm f/2.8D";
-            lenses["32 53 64 64 24 24 35 02"] = "Tamron SP AF 90mm f/2.8 Di Macro 1:2 (172/272E)";
+            lenses["32 53 64 64 24 24 35 02"] = "Tamron SP AF 90mm f/2.8 Di Macro 1:1 (172E/272E)";
             lenses["32 54 50 50 24 24 35 02"] = "Sigma 50mm f/2.8 EX DG Macro";
             lenses["32 54 6A 6A 24 24 35 02"] = "AF Micro-Nikkor 105mm f/2.8D";
+            lenses["32 54 6A 6A 24 24 35 02"] = "Sigma Macro 105mm f/2.8 EX DG";
             lenses["33 48 2D 2D 24 24 31 02"] = "AF Nikkor 18mm f/2.8D";
-            lenses["33 54 3C 5E 24 24 62 02"] = "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical (IF) Macro";
+            lenses["33 54 3C 5E 24 24 62 02"] = "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical (IF) Macro (A09)";
             lenses["34 48 29 29 24 24 32 02"] = "AF Fisheye Nikkor 16mm f/2.8D";
             lenses["35 3C A0 A0 30 30 33 02"] = "AF-I Nikkor 500mm f/4D IF-ED";
             lenses["35 3C A0 A0 30 30 E1 02"] = "AF-I Nikkor 500mm f/4D IF-ED + TC-17E";
@@ -399,7 +465,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["41 48 7C 7C 24 24 43 02"] = "AF Nikkor 180mm f/2.8D IF-ED";
             lenses["42 54 44 44 18 18 44 02"] = "AF Nikkor 35mm f/2D";
             lenses["43 54 50 50 0C 0C 46 02"] = "AF Nikkor 50mm f/1.4D";
-            lenses["44 44 60 80 34 3C 47 02"] = "AF Zoom-Nikkor 80-200mm f/4.5-5.6D ";
+            lenses["44 44 60 80 34 3C 47 02"] = "AF Zoom-Nikkor 80-200mm f/4.5-5.6D";
             lenses["45 3D 3C 60 2C 3C 48 02"] = "Tamron AF 28-80mm f/3.5-5.6 Aspherical (177D)";
             lenses["45 40 3C 60 2C 3C 48 02"] = "AF Zoom-Nikkor 28-80mm f/3.5-5.6D";
             lenses["45 41 37 72 2C 3C 48 02"] = "Tamron SP AF 24-135mm f/3.5-5.6 AD Aspherical (IF) Macro (190D)";
@@ -408,7 +474,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["48 38 1F 37 34 3C 4B 06"] = "Sigma 12-24mm f/4.5-5.6 EX Aspherical DG HSM";
             lenses["48 3C 19 31 30 3C 4B 06"] = "Sigma 10-20mm f/4-5.6 EX DC HSM";
             lenses["48 3C 50 A0 30 40 4B 02"] = "Sigma 50-500mm f/4-6.3 EX APO RF HSM";
-            lenses["48 3C 8E B0 3C 3C 4B 02"] = "Sigma APO 300-800 f/5.6 EX DG HSM";
+            lenses["48 3C 8E B0 3C 3C 4B 02"] = "Sigma APO 300-800mm f/5.6 EX DG HSM";
             lenses["48 3C B0 B0 3C 3C 4B 02"] = "Sigma APO 800mm f/5.6 EX HSM";
             lenses["48 44 A0 A0 34 34 4B 02"] = "Sigma APO 500mm f/4.5 EX HSM";
             lenses["48 48 24 24 24 24 4B 02"] = "Sigma 14mm f/2.8 EX Aspherical HSM";
@@ -420,7 +486,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["48 48 8E 8E 24 24 F1 02"] = "AF-S Nikkor 300mm f/2.8D IF-ED + TC-14E";
             lenses["48 48 8E 8E 24 24 F2 02"] = "AF-S Nikkor 300mm f/2.8D IF-ED + TC-20E";
             lenses["48 4C 7C 7C 2C 2C 4B 02"] = "Sigma 180mm f/3.5 EX DG Macro";
-            lenses["48 4C 7D 7D 2C 2C 4B 02"] = "Sigma APO MACRO 180mm f/3.5 EX DG HSM";
+            lenses["48 4C 7D 7D 2C 2C 4B 02"] = "Sigma APO Macro 180mm f/3.5 EX DG HSM";
             lenses["48 54 3E 3E 0C 0C 4B 06"] = "Sigma 30mm f/1.4 EX DC HSM";
             lenses["48 54 5C 80 24 24 4B 02"] = "Sigma 70-200mm f/2.8 EX APO IF HSM";
             lenses["48 54 6F 8E 24 24 4B 02"] = "Sigma APO 120-300mm f/2.8 EX DG HSM";
@@ -429,7 +495,10 @@ class NALensDataInterpreter : public Interpreter {
             lenses["49 3C A6 A6 30 30 E1 02"] = "AF-S Nikkor 600mm f/4D IF-ED + TC-17E";
             lenses["49 3C A6 A6 30 30 F1 02"] = "AF-S Nikkor 600mm f/4D IF-ED + TC-14E";
             lenses["49 3C A6 A6 30 30 F2 02"] = "AF-S Nikkor 600mm f/4D IF-ED + TC-20E";
+            lenses["4A 40 11 11 2C 0C 4D 02"] = "Samyang 8mm f/3.5 Fish-Eye CS";
+            lenses["4A 48 24 24 24 0C 4D 02"] = "Samyang AE 14mm f/2.8 ED AS IF UMC";
             lenses["4A 54 62 62 0C 0C 4D 02"] = "AF Nikkor 85mm f/1.4D IF";
+            lenses["4A 60 44 44 0C 0C 4D 02"] = "Samyang 35mm f/1.4 AS UMC";
             lenses["4A 60 62 62 0C 0C 4D 02"] = "Samyang AE 85mm f/1.4 AS IF UMC";
             lenses["4B 3C A0 A0 30 30 4E 02"] = "AF-S Nikkor 500mm f/4D IF-ED";
             lenses["4B 3C A0 A0 30 30 E1 02"] = "AF-S Nikkor 500mm f/4D IF-ED + TC-17E";
@@ -445,6 +514,7 @@ class NALensDataInterpreter : public Interpreter {
             lenses["53 48 60 80 24 24 57 02"] = "AF Zoom-Nikkor 80-200mm f/2.8D ED";
             lenses["53 48 60 80 24 24 60 02"] = "AF Zoom-Nikkor 80-200mm f/2.8D ED";
             lenses["54 44 5C 7C 34 3C 58 02"] = "AF Zoom-Micro Nikkor 70-180mm f/4.5-5.6D ED";
+            lenses["54 44 5C 7C 34 3C 61 02"] = "AF Zoom-Micro Nikkor 70-180mm f/4.5-5.6D ED";
             lenses["56 3C 5C 8E 30 3C 1C 02"] = "Sigma 70-300mm f/4-5.6 APO Macro Super II";
             lenses["56 48 5C 8E 30 3C 5A 02"] = "AF Zoom-Nikkor 70-300mm f/4-5.6D ED";
             lenses["59 48 98 98 24 24 5D 02"] = "AF-S Nikkor 400mm f/2.8D IF-ED";
@@ -486,13 +556,14 @@ class NALensDataInterpreter : public Interpreter {
             lenses["79 48 5C 5C 24 24 1C 06"] = "Sigma 70mm f/2.8 EX DG Macro";
             lenses["7A 3B 53 80 30 3C 4B 06"] = "Sigma 55-200mm f/4-5.6 DC HSM";
             lenses["7A 3C 1F 37 30 30 7E 06"] = "AF-S DX Zoom-Nikkor 12-24mm f/4G IF-ED";
+            lenses["7A 3C 1F 37 30 30 7E 06"] = "Tokina AT-X 124 AF PRO DX II (AF 12-24mm f/4)";
             lenses["7A 40 2D 50 2C 3C 4B 06"] = "Sigma 18-50mm f/3.5-5.6 DC HSM";
             lenses["7A 40 2D 80 2C 40 4B 0E"] = "Sigma 18-200mm f/3.5-6.3 DC OS HSM";
             lenses["7A 47 2B 5C 24 34 4B 06"] = "Sigma 17-70mm f/2.8-4.5 DC Macro Asp. IF HSM";
-            lenses["7A 47 50 76 24 24 4B 06"] = "Sigma APO 50-150mm f/2.8 EX DC HSM";
+            lenses["7A 47 50 76 24 24 4B 06"] = "Sigma 50-150mm f/2.8 EX APO DC HSM";
             lenses["7A 48 2B 5C 24 34 4B 06"] = "Sigma 17-70mm f/2.8-4.5 DC Macro Asp. IF HSM";
-            lenses["7A 48 2D 50 24 24 4B 06"] = "Sigma 18-50mm f/2.8 EX DC HSM";
-            lenses["7A 48 5C 80 24 24 4B 06"] = "Sigma APO 70-200mm f/2.8 EX DG Macro HSM II";
+            lenses["7A 48 2D 50 24 24 4B 06"] = "Sigma 18-50mm f/2.8 EX DC Macro";
+            lenses["7A 48 5C 80 24 24 4B 06"] = "Sigma 70-200mm f/2.8 EX APO DG Macro HSM II";
             lenses["7A 54 6E 8E 24 24 4B 02"] = "Sigma APO 120-300mm f/2.8 EX DG HSM";
             lenses["7B 48 80 98 30 30 80 0E"] = "AF-S VR Zoom-Nikkor 200-400mm f/4G IF-ED";
             lenses["7D 48 2B 53 24 24 82 06"] = "AF-S DX Zoom-Nikkor 17-55mm f/2.8G IF-ED";
@@ -506,16 +577,20 @@ class NALensDataInterpreter : public Interpreter {
             lenses["89 3C 53 80 30 3C 8B 06"] = "AF-S DX Zoom-Nikkor 55-200mm f/4-5.6G ED";
             lenses["8A 54 6A 6A 24 24 8C 0E"] = "AF-S VR Micro-Nikkor 105mm f/2.8G IF-ED";
             lenses["8B 40 2D 80 2C 3C 8D 0E"] = "AF-S DX VR Zoom-Nikkor 18-200mm f/3.5-5.6G IF-ED";
-            lenses["8B 40 2D 80 2C 3C FD 0E"] = "AF-S DX VR Zoom-Nikkor 18-200mm f/3.5-5.6G IF-ED";
+            lenses["8B 40 2D 80 2C 3C FD 0E"] = "AF-S DX VR Zoom-Nikkor 18-200mm f/3.5-5.6G IF-ED [II]";
             lenses["8C 40 2D 53 2C 3C 8E 06"] = "AF-S DX Zoom-Nikkor 18-55mm f/3.5-5.6G ED";
             lenses["8D 44 5C 8E 34 3C 8F 0E"] = "AF-S VR Zoom-Nikkor 70-300mm f/4.5-5.6G IF-ED";
+            lenses["8E 3C 2B 5C 24 30 4B 0E"] = "Sigma 17-70mm f/2.8-4 DC Macro OS HSM Contemporary";
             lenses["8F 40 2D 72 2C 3C 91 06"] = "AF-S DX Zoom-Nikkor 18-135mm f/3.5-5.6G IF-ED";
             lenses["90 3B 53 80 30 3C 92 0E"] = "AF-S DX VR Zoom-Nikkor 55-200mm f/4-5.6G IF-ED";
+            lenses["91 54 44 44 0C 0C 4B 06"] = "Sigma 35mm f/1.4 DG HSM | A";
+            lenses["92 2C 2D 88 2C 40 4B 0E"] = "Sigma 18-250mm f/3.5-6.3 DC Macro OS HSM";
             lenses["92 48 24 37 24 24 94 06"] = "AF-S Zoom-Nikkor 14-24mm f/2.8G ED";
             lenses["93 48 37 5C 24 24 95 06"] = "AF-S Zoom-Nikkor 24-70mm f/2.8G ED";
             lenses["94 40 2D 53 2C 3C 96 06"] = "AF-S DX Zoom-Nikkor 18-55mm f/3.5-5.6G ED II";
             lenses["95 00 37 37 2C 2C 97 06"] = "PC-E Nikkor 24mm f/3.5D ED";
             lenses["95 4C 37 37 2C 2C 97 02"] = "PC-E Nikkor 24mm f/3.5D ED";
+            lenses["96 38 1F 37 34 3C 4B 06"] = "Sigma 12-24mm f/4.5-5.6 II DG HSM";
             lenses["96 48 98 98 24 24 98 0E"] = "AF-S VR Nikkor 400mm f/2.8G ED";
             lenses["97 3C A0 A0 30 30 99 0E"] = "AF-S VR Nikkor 500mm f/4G ED";
             lenses["98 3C A6 A6 30 30 9A 0E"] = "AF-S VR Nikkor 600mm f/4G ED";
@@ -523,12 +598,19 @@ class NALensDataInterpreter : public Interpreter {
             lenses["9A 40 2D 53 2C 3C 9C 0E"] = "AF-S DX VR Zoom-Nikkor 18-55mm f/3.5-5.6G";
             lenses["9B 00 4C 4C 24 24 9D 06"] = "PC-E Micro Nikkor 45mm f/2.8D ED";
             lenses["9B 54 4C 4C 24 24 9D 02"] = "PC-E Micro Nikkor 45mm f/2.8D ED";
+            lenses["9B 54 62 62 0C 0C 4B 06"] = "Sigma 85mm f/1.4 EX DG HSM";
+            lenses["9C 48 5C 80 24 24 4B 0E"] = "Sigma 70-200mm f/2.8 EX DG OS HSM";
             lenses["9C 54 56 56 24 24 9E 06"] = "AF-S Micro Nikkor 60mm f/2.8G ED";
             lenses["9D 00 62 62 24 24 9F 06"] = "PC-E Micro Nikkor 85mm f/2.8D";
+            lenses["9D 48 2B 50 24 24 4B 0E"] = "Sigma 17-50mm f/2.8 EX DC OS HSM";
             lenses["9D 54 62 62 24 24 9F 02"] = "PC-E Micro Nikkor 85mm f/2.8D";
+            lenses["9E 38 11 29 34 3C 4B 06"] = "Sigma 8-16mm f/4.5-5.6 DC HSM";
             lenses["9E 40 2D 6A 2C 3C A0 0E"] = "AF-S DX VR Zoom-Nikkor 18-105mm f/3.5-5.6G ED";
             lenses["9F 37 50 A0 34 40 4B 0E"] = "Sigma 50-500mm f/4.5-6.3 DG OS HSM";
             lenses["9F 58 44 44 14 14 A1 06"] = "AF-S DX Nikkor 35mm f/1.8G";
+            lenses["A0 48 2A 5C 24 30 4B 0E"] = "Sigma 17-70mm f/2.8-4 DC Macro OS HSM";
+            lenses["26 40 2D 44 2B 34 1C 02"] = "Sigma 18-35mm f/3.5-4.5 Aspherical";
+            lenses["8B 4C 2D 44 14 14 4B 06"] = "Sigma 18-35mm f/1.8 DC HSM";
             lenses["A0 54 50 50 0C 0C A2 06"] = "AF-S Nikkor 50mm f/1.4G";
             lenses["A1 40 18 37 2C 34 A3 06"] = "AF-S DX Nikkor 10-24mm f/3.5-4.5G ED";
             lenses["A1 41 19 31 2C 2C 4B 06"] = "Sigma 10-20mm f/3.5 EX DC HSM";
@@ -543,24 +625,37 @@ class NALensDataInterpreter : public Interpreter {
             lenses["A6 48 8E 8E 24 24 A8 0E"] = "AF-S VR Nikkor 300mm f/2.8G IF-ED II";
             lenses["A7 49 80 A0 24 24 4B 06"] = "Sigma APO 200-500mm f/2.8 EX DG";
             lenses["A7 4B 62 62 2C 2C A9 0E"] = "AF-S DX Micro Nikkor 85mm f/3.5G ED VR";
+            lenses["A8 48 80 98 30 30 AA 0E"] = "AF-S VR Zoom-Nikkor 200-400mm f/4G IF-ED II";
             lenses["A9 54 80 80 18 18 AB 0E"] = "AF-S Nikkor 200mm f/2G ED VR II";
             lenses["AA 3C 37 6E 30 30 AC 0E"] = "AF-S Nikkor 24-120mm f/4G ED VR";
             lenses["AC 38 53 8E 34 3C AE 0E"] = "AF-S DX VR Nikkor 55-300mm f/4.5-5.6G ED";
+            lenses["AD 3C 2D 8E 2C 3C AF 0E"] = "AF-S DX Nikkor 18-300mm 3.5-5.6G ED VR";
             lenses["AE 54 62 62 0C 0C B0 06"] = "AF-S Nikkor 85mm f/1.4G";
             lenses["AF 54 44 44 0C 0C B1 06"] = "AF-S Nikkor 35mm f/1.4G";
+            lenses["B0 4C 50 50 14 14 B2 06"] = "AF-S Nikkor 50mm f/1.8G";
+            lenses["B1 48 48 48 24 24 B3 06"] = "AF-S DX Micro Nikkor 40mm f/2.8G";
+            lenses["B2 48 5C 80 30 30 B4 0E"] = "AF-S Nikkor 70-200mm f/4G ED VR";
+            lenses["B3 4C 62 62 14 14 B5 06"] = "AF-S Nikkor 85mm f/1.8G";
+            lenses["B4 40 37 62 2C 34 B6 0E"] = "AF-S VR Zoom-Nikkor 24-85mm f/3.5-4.5G IF-ED";
+            lenses["B5 4C 3C 3C 14 14 B7 06"] = "AF-S Nikkor 28mm f/1.8G";
             lenses["B6 48 37 56 24 24 1C 02"] = "Sigma 24-60mm f/2.8 EX DG";
+            lenses["B7 44 60 98 34 3C B9 0E"] = "AF-S Nikkor 80-400mm f/4.5-5.6G ED VR";
+            lenses["B8 40 2D 44 2C 34 BA 06"] = "AF-S Nikkor 18-35mm f/3.5-4.5G ED";
             lenses["CD 3D 2D 70 2E 3C 4B 0E"] = "Sigma 18-125mm f/3.8-5.6 DC OS HSM";
-            lenses["CE 34 76 A0 38 40 4B 0E"] = "Sigma APO 150-500mm f/5-6.3 DG OS HSM";
+            lenses["CE 34 76 A0 38 40 4B 0E"] = "Sigma 150-500mm f/5-6.3 DG OS APO HSM";
             lenses["CF 38 6E 98 34 3C 4B 0E"] = "Sigma APO 120-400mm f/4.5-5.6 DG OS HSM";
             lenses["DC 48 19 19 24 24 4B 06"] = "Sigma 10mm f/2.8 EX DC HSM Fisheye";
             lenses["DE 54 50 50 0C 0C 4B 06"] = "Sigma 50mm f/1.4 EX DG HSM";
-            lenses["E0 3C 5C 8E 30 3C 4B 06"] = "Sigma APO 70-300mm f/4-5.6 DG Macro HSM";
+            lenses["E0 3C 5C 8E 30 3C 4B 06"] = "Sigma 70-300mm f/4-5.6 APO DG Macro HSM";
             lenses["E1 58 37 37 14 14 1C 02"] = "Sigma 24mm f/1.8 EX DG Aspherical Macro";
+            lenses["E3 54 50 50 24 24 35 02"] = "Sigma 50mm f/2.8 EX DG Macro";
             lenses["E5 54 6A 6A 24 24 35 02"] = "Sigma 105mm f/2.8 EX DG Macro";
+            lenses["E6 41 3C 8E 2C 40 1C 02"] = "Sigma 28-300mm f/3.5-6.3 DG Macro";
             lenses["E9 54 37 5C 24 24 1C 02"] = "Sigma 24-70mm f/2.8 EX DG Macro";
             lenses["ED 40 2D 80 2C 40 4B 0E"] = "Sigma 18-200mm f/3.5-6.3 DC OS HSM";
-            lenses["EE 48 5C 80 24 24 4B 06"] = "Sigma APO 70-200mm f/2.8 EX DG Macro HSM II";
+            lenses["EE 48 5C 80 24 24 4B 06"] = "Sigma 70-200mm f/2.8 EX APO DG Macro HSM II";
             lenses["F0 38 1F 37 34 3C 4B 06"] = "Sigma 12-24mm f/4.5-5.6 EX DG Aspherical HSM";
+            lenses["F0 3F 2D 8A 2C 40 DF 0E"] = "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD (B008)";
             lenses["F1 44 A0 A0 34 34 4B 02"] = "Sigma APO 500mm f/4.5 EX DG HSM";
             lenses["F1 47 5C 8E 30 3C DF 0E"] = "Tamron SP 70-300mm f/4-5.6 Di VC USD (A005)";
             lenses["F3 48 68 8E 30 30 4B 02"] = "Sigma APO 100-300mm f/4 EX IF HSM";
@@ -570,17 +665,25 @@ class NALensDataInterpreter : public Interpreter {
             lenses["F5 48 76 76 24 24 4B 06"] = "Sigma 150mm f/2.8 EX DG APO Macro HSM";
             lenses["F6 3F 18 37 2C 34 84 06"] = "Tamron SP AF 10-24mm f/3.5-4.5 Di II LD Aspherical (IF) (B001)";
             lenses["F6 48 2D 50 24 24 4B 06"] = "Sigma 18-50mm f/2.8 EX DC Macro";
+            lenses["F7 53 5C 80 24 24 40 06"] = "Tamron SP AF 70-200mm f/2.8 Di LD (IF) Macro (A001)";
             lenses["F7 53 5C 80 24 24 84 06"] = "Tamron SP AF 70-200mm f/2.8 Di LD (IF) Macro (A001)";
             lenses["F8 54 3E 3E 0C 0C 4B 06"] = "Sigma 30mm f/1.4 EX DC HSM";
-            lenses["F8 55 64 64 24 24 84 06"] = "Tamron SP AF 90mm f/2.8 Di Macro 1:1 (272NII)";
+            lenses["F8 54 64 64 24 24 DF 06"] = "Tamron SP AF 90mm f/2.8 Di Macro 1:1 (272NII)";
             lenses["F8 55 64 64 24 24 84 06"] = "Tamron SP AF 90mm f/2.8 Di Macro 1:1 (272NII)";
             lenses["F9 3C 19 31 30 3C 4B 06"] = "Sigma 10-20mm f/4-5.6 EX DC HSM";
             lenses["F9 40 3C 8E 2C 40 40 0E"] = "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical (IF) Macro (A20)";
             lenses["FA 54 3C 5E 24 24 84 06"] = "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical (IF) Macro (A09NII)";
+            lenses["FA 54 3C 5E 24 24 DF 06"] = "Tamron SP AF 28-75mm f//2.8 XR Di LD Aspherical (IF) Macro (A09NII)";
+            lenses["FA 54 6E 8E 24 24 4B 02"] = "Sigma APO 120-300mm f/2.8 EX DG HSM";
+            lenses["FB 54 2B 50 24 24 84 06"] = "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical (IF) (A16NII)";
             lenses["FB 54 8E 8E 24 24 4B 02"] = "Sigma APO 300mm f/2.8 EX DG HSM";
-            lenses["FD 47 50 76 24 24 4B 06"] = "Sigma APO 50-150mm f/2.8 EX DC HSM II";
+            lenses["FC 40 2D 80 2C 40 DF 06"] = "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical (IF) Macro (A14NII)";
+            lenses["FD 47 50 76 24 24 4B 06"] = "Sigma 50-150mm f/2.8 EX APO DC HSM II";
             lenses["FE 47 00 00 24 24 4B 06"] = "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye";
+            lenses["FE 48 37 5C 24 24 DF 0E"] = "Tamron SP 24-70mm f/2.8 Di VC USD";
             lenses["FE 53 5C 80 24 24 84 06"] = "Tamron SP AF 70-200mm f/2.8 Di LD (IF) Macro (A001)";
+            lenses["FE 54 5C 80 24 24 DF 0E"] = "Tamron SP AF 70-200mm f//2.8 Di VC USD (A009)";
+            lenses["FE 54 64 64 24 24 DF 0E"] = "Tamron SP 90mm f/2.8 Di VC USD Macro 1:1";
         }
         virtual std::string toString (Tag* t) {
 
@@ -629,7 +732,8 @@ class NALensDataInterpreter : public Interpreter {
             lid.setf (std::ios_base::hex, std::ios_base::basefield);
             lid.setf (std::ios_base::uppercase);
 
-            std::string model = t->getParent()->getParent()->getParent()->getTag(0x0110)->valueToString();
+            Tag *modelTag = t->getParent()->getRoot()->findTag("Model");
+            std::string model( modelTag?  modelTag->valueToString():"");
             int lidoffs = 7;
             bool d100 = false;
             if (model.substr(0,10)=="NIKON D100" || model.substr(0,9)=="NIKON D1X") {
@@ -700,90 +804,98 @@ class NALensDataInterpreter : public Interpreter {
 };
 NALensDataInterpreter naLensDataInterpreter;
 
+const TagAttrib nikonISOInfoAttribs[] = {
+ {0, AC_WRITE, 0, 0, 0x0000, AUTO, "ISO", &naISOInfoISOInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0004, SHORT, "ISOExpansion", &naISOExpansionInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0006, AUTO, "ISO2", &naISOInfoISOInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000a, SHORT, "ISOExpansion2", &naISOExpansionInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
+
 const TagAttrib nikon2Attribs[] = {
- {0, 1, 0, 0, 0x0002, "Unknown", &stdInterpreter},
- {0, 1, 0, 0, 0x0003, "Quality", &stdInterpreter},
- {0, 1, 0, 0, 0x0004, "ColorMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0005, "ImageAdjustment", &stdInterpreter},
- {0, 1, 0, 0, 0x0006, "ISOSpeed", &naISOInterpreter},
- {0, 1, 0, 0, 0x0007, "WhiteBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x0008, "Focus", &stdInterpreter},
- {0, 1, 0, 0, 0x0009, "Unknown", &stdInterpreter},
- {0, 1, 0, 0, 0x000a, "DigitalZoom", &stdInterpreter},
- {0, 1, 0, 0, 0x000b, "AuxiliaryLens", &stdInterpreter},
- {0, 1, 0, 0, 0x0f00, "Unknown", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 0x0002, AUTO, "Unknown", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0003, AUTO, "Quality", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0004, AUTO, "ColorMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0005, AUTO, "ImageAdjustment", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0006, AUTO, "ISOSpeed", &naISOInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0007, AUTO, "WhiteBalance", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0008, AUTO, "Focus", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0009, AUTO, "Unknown", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000a, AUTO, "DigitalZoom", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000b, AUTO, "AuxiliaryLens", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0f00, AUTO, "Unknown", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib nikon3Attribs[] = {
- {0, 1, 0, 0, 0x0001, "MakerNoteVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0002, "ISOSpeed", &naISOInterpreter},
- {0, 1, 0, 0, 0x0003, "ColorMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0004, "Quality", &stdInterpreter},
- {0, 1, 0, 0, 0x0005, "WhiteBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x0006, "Sharpness", &stdInterpreter},
- {0, 1, 0, 0, 0x0007, "FocusMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0008, "FlashSetting", &stdInterpreter},
- {0, 1, 0, 0, 0x0009, "FlashType", &stdInterpreter},
- {0, 1, 0, 0, 0x000b, "WhiteBalanceFineTune", &stdInterpreter},
- {0, 3, 0, 0, 0x000c, "ColorBalance1", &stdInterpreter},
- {0, 1, 0, 0, 0x000d, "ProgramShift", &stdInterpreter},
- {0, 1, 0, 0, 0x000e, "ExposureDifference", &stdInterpreter},
- {0, 1, 0, 0, 0x000f, "ISOSelection", &naISOInterpreter},
- {0, 1, 0, 0, 0x0010, "DataDump", &stdInterpreter},
- {1, 1, 0, 0, 0x0011, "NikonPreview", &stdInterpreter},
- {0, 1, 0, 0, 0x0012, "FlashExposureComp", &stdInterpreter},
- {0, 1, 0, 0, 0x0013, "ISOSetting", &stdInterpreter},
- {0, 1, 0, 0, 0x0016, "ImageBoundary", &stdInterpreter},
- {0, 1, 0, 0, 0x0018, "FlashExposureBracketValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0019, "ExposureBracketValue", &stdInterpreter},
- {0, 1, 0, 0, 0x001a, "ImageProcessing", &stdInterpreter},
- {0, 1, 0, 0, 0x001b, "CropHiSpeed", &stdInterpreter},
- {0, 1, 0, 0, 0x001d, "SerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x001e, "ColorSpace", &stdInterpreter},
- {0, 1, 0, 0, 0x0020, "ImageAuthentication", &stdInterpreter},
- {0, 1, 0, 0, 0x0080, "ImageAdjustment", &stdInterpreter},
- {0, 1, 0, 0, 0x0081, "ToneComp", &stdInterpreter},
- {0, 1, 0, 0, 0x0082, "AuxiliaryLens", &stdInterpreter},
- {0, 1, 0, 0, 0x0083, "LensType", &naLensTypeInterpreter},
- {0, 1, 0, 0, 0x0084, "Lens", &stdInterpreter},
- {0, 1, 0, 0, 0x0085, "ManualFocusDistance", &stdInterpreter},
- {0, 1, 0, 0, 0x0086, "DigitalZoom", &stdInterpreter},
- {0, 1, 0, 0, 0x0087, "FlashMode", &naFlashModeInterpreter},
- {0, 1, 0, 0, 0x0088, "AFInfo", &naAFInfoInterpreter},
- {0, 1, 0, 0, 0x0089, "ShootingMode", &naShootingModeInterpreter},
- {0, 1, 0, 0, 0x008a, "AutoBracketRelease", &stdInterpreter},
- {0, 1, 0, 0, 0x008b, "LensFStops", &stdInterpreter},
- {0, 1, 0, 0, 0x008c, "NEFCurve1", &stdInterpreter},
- {0, 1, 0, 0, 0x008d, "ColorHue", &stdInterpreter},
- {0, 1, 0, 0, 0x008f, "SceneMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0090, "LightSource", &stdInterpreter},
- {0, 1, 0, 0, 0x0091, "ShotInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0092, "HueAdjustment", &stdInterpreter},
- {0, 1, 0, 0, 0x0094, "Saturation", &stdInterpreter},
- {0, 1, 0, 0, 0x0095, "NoiseReduction", &stdInterpreter},
- {0, 1, 0, 0, 0x0096, "NEFCurve2", &stdInterpreter},
- {0, 3, 0, 0, 0x0097, "ColorBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x0098, "LensData", &naLensDataInterpreter},
- {0, 1, 0, 0, 0x0099, "RawImageCenter", &stdInterpreter},
- {0, 1, 0, 0, 0x009a, "SensorPixelSize", &stdInterpreter},
- {0, 1, 0, 0, 0x00a0, "SerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x00a2, "ImageDataSize", &stdInterpreter},
- {0, 1, 0, 0, 0x00a5, "ImageCount", &stdInterpreter},
- {0, 1, 0, 0, 0x00a6, "DeletedImageCount", &stdInterpreter},
- {0, 1, 0, 0, 0x00a7, "ShutterCount", &stdInterpreter},
- {0, 1, 0, 0, 0x00a9, "ImageOptimization", &stdInterpreter},
- {0, 1, 0, 0, 0x00aa, "Saturation", &stdInterpreter},
- {0, 1, 0, 0, 0x00ab, "VariProgram", &stdInterpreter},
- {0, 1, 0, 0, 0x00ac, "ImageStabilization", &stdInterpreter},
- {0, 1, 0, 0, 0x00ad, "AFResponse", &stdInterpreter},
- {0, 1, 0, 0, 0x00b0, "MultiExposure", &stdInterpreter},
- {0, 1, 0, 0, 0x00b1, "HighISONoiseReduction", &naHiISONRInterpreter},
- {0, 1, 0, 0, 0x0e00, "PrintIM", &stdInterpreter},
- {0, 0, 0, 0, 0x0e01, "NikonCaptureData", &stdInterpreter},
- {0, 0, 0, 0, 0x0e09, "NikonCaptureVersion", &stdInterpreter},
- {0, 0, 0, 0, 0x0e0e, "NikonCaptureOffsets", &stdInterpreter},
- {0, 0, 0, 0, 0x0e10, "NikonScanIFD", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 0x0001, AUTO, "MakerNoteVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0002, AUTO, "ISOSpeed", &naISOInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0003, AUTO, "ColorMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0004, AUTO, "Quality", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0005, AUTO, "WhiteBalance", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0006, AUTO, "Sharpness", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0007, AUTO, "FocusMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0008, AUTO, "FlashSetting", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0009, AUTO, "FlashType", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000b, AUTO, "WhiteBalanceFineTune", &stdInterpreter},
+ {0, AC_NEW,   0, 0, 0x000c, AUTO, "ColorBalance1", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000d, AUTO, "ProgramShift", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000e, AUTO, "ExposureDifference", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000f, AUTO, "ISOSelection", &naISOInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0010, AUTO, "DataDump", &stdInterpreter},
+ {1, AC_WRITE, 0, 0, 0x0011, AUTO, "NikonPreview", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0012, AUTO, "FlashExposureComp", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0013, AUTO, "ISOSetting", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0016, AUTO, "ImageBoundary", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0018, AUTO, "FlashExposureBracketValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0019, AUTO, "ExposureBracketValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x001a, AUTO, "ImageProcessing", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x001b, AUTO, "CropHiSpeed", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x001d, AUTO, "SerialNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x001e, AUTO, "ColorSpace", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0020, AUTO, "ImageAuthentication", &stdInterpreter},
+ {0, AC_WRITE, 0, nikonISOInfoAttribs, 0x0025, AUTO, "ISOInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0080, AUTO, "ImageAdjustment", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0081, AUTO, "ToneComp", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0082, AUTO, "AuxiliaryLens", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0083, AUTO, "LensType", &naLensTypeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0084, AUTO, "Lens", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0085, AUTO, "ManualFocusDistance", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0086, AUTO, "DigitalZoom", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0087, AUTO, "FlashMode", &naFlashModeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0088, AUTO, "AFInfo", &naAFInfoInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0089, AUTO, "ShootingMode", &naShootingModeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x008a, AUTO, "AutoBracketRelease", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x008b, AUTO, "LensFStops", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x008c, AUTO, "NEFCurve1", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x008d, AUTO, "ColorHue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x008f, AUTO, "SceneMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0090, AUTO, "LightSource", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0091, AUTO, "ShotInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0092, AUTO, "HueAdjustment", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0094, AUTO, "Saturation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0095, AUTO, "NoiseReduction", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0096, AUTO, "NEFCurve2", &stdInterpreter},
+ {0, AC_NEW,   0, 0, 0x0097, AUTO, "ColorBalance", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0098, AUTO, "LensData", &naLensDataInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0099, AUTO, "RawImageCenter", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x009a, AUTO, "SensorPixelSize", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a0, AUTO, "SerialNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a2, AUTO, "ImageDataSize", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a5, AUTO, "ImageCount", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a6, AUTO, "DeletedImageCount", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a7, AUTO, "ShutterCount", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a9, AUTO, "ImageOptimization", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00aa, AUTO, "Saturation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00ab, AUTO, "VariProgram", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00ac, AUTO, "ImageStabilization", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00ad, AUTO, "AFResponse", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00b0, AUTO, "MultiExposure", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00b1, AUTO, "HighISONoiseReduction", &naHiISONRInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0e00, AUTO, "PrintIM", &stdInterpreter},
+ {0, AC_DONTWRITE, 0, 0, 0x0e01, AUTO, "NikonCaptureData", &stdInterpreter},
+ {0, AC_DONTWRITE, 0, 0, 0x0e09, AUTO, "NikonCaptureVersion", &stdInterpreter},
+ {0, AC_DONTWRITE, 0, 0, 0x0e0e, AUTO, "NikonCaptureOffsets", &stdInterpreter},
+ {0, AC_DONTWRITE, 0, 0, 0x0e10, AUTO, "NikonScanIFD", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 }
 #endif

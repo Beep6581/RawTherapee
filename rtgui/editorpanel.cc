@@ -737,7 +737,7 @@ void EditorPanel::info_toggled () {
         		Glib::ustring(idata->apertureToString(idata->getFNumber())),
 				Glib::ustring(idata->shutterToString(idata->getShutterSpeed())),
 				M("QINFO_ISO"), idata->getISOSpeed(),
-				idata->getFocalLen());
+				Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), idata->getFocalLen()));
 
         expcomp = Glib::ustring(idata->expcompToString(idata->getExpComp(),true)); // maskZeroexpcomp
         if (expcomp!=""){

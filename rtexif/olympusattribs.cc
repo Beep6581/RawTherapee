@@ -67,8 +67,8 @@ OLApertureInterpreter olApertureInterpreter;
 class OLLensTypeInterpreter : public Interpreter {
         std::map<std::string, std::string> lenses;
     public:
-        OLLensTypeInterpreter () {
-        	// exadecimal bytes
+        OLLensTypeInterpreter () {  // From EXIFTOOL database 'Olympus.pm' V2.09
+            // exadecimal bytes
             lenses["00 01 00"] = "Zuiko Digital ED 50mm f/2 Macro";
             lenses["00 01 01"] = "Zuiko Digital 40-150mm f/3.5-4.5";
             lenses["00 01 10"] = "Zuiko Digital ED 14-42mm f/3.5-5.6";
@@ -79,15 +79,29 @@ class OLLensTypeInterpreter : public Interpreter {
             lenses["00 04 10"] = "Zuiko Digital ED 9-18mm f/4-5.6";
             lenses["00 05 00"] = "Zuiko Digital 14-54mm f/2.8-3.5";
             lenses["00 05 01"] = "Zuiko Digital Pro ED 90-250mm f/2.8";
-            lenses["00 05 10"] = "Zuiko Digital ED 14-42mm f/3.5-5.6 ";
+            lenses["00 05 10"] = "Zuiko Digital ED 14-42mm f/3.5-5.6 L";
             lenses["00 06 00"] = "Zuiko Digital ED 50-200mm f/2.8-3.5";
             lenses["00 06 01"] = "Zuiko Digital ED 8mm f/3.5 Fisheye";
+            lenses["00 06 10"] = "Zuiko Digital ED 40-150mm f/4-5.6";
             lenses["00 07 00"] = "Zuiko Digital 11-22mm f/2.8-3.5";
             lenses["00 07 01"] = "Zuiko Digital 18-180mm f/3.5-6.3";
+            lenses["00 07 10"] = "Zuiko Digital ED 12mm f/2";
             lenses["00 08 01"] = "Zuiko Digital 70-300mm f/4-5.6";
+            lenses["00 08 10"] = "Zuiko Digital ED 75-300mm f/4.8-6.7";
+            lenses["00 09 10"] = "Zuiko Digital 14-42mm f/3.5-5.6 II";
+            lenses["00 10 01"] = "Kenko Tokina Reflex 300mm f/6.3 MF Macro";
+            lenses["00 10 10"] = "Zuiko Digital ED 12-50mm f/3.5-6.3 EZ";
+            lenses["00 11 10"] = "Zuiko Digital 45mm f/1.8";
+            lenses["00 12 10"] = "Zuiko Digital ED 60mm f/2.8 Macro";
+            lenses["00 13 10"] = "Zuiko Digital ED 14-42mm f/3.5-5.6 II R";
+            lenses["00 14 10"] = "Zuiko Digital ED 40-150mm f/4-5.6 R";
             lenses["00 15 00"] = "Zuiko Digital ED 7-14mm f/4";
+            lenses["00 15 10"] = "Zuiko Digital ED 75mm f/1.8";
+            lenses["00 16 10"] = "Zuiko Digital 17mm f/1.8";
             lenses["00 17 00"] = "Zuiko Digital Pro ED 35-100mm f/2";
             lenses["00 18 00"] = "Zuiko Digital 14-45mm f/3.5-5.6";
+            lenses["00 18 10"] = "Zuiko Digital ED 75-300mm f/4.8-6.7 II";
+            lenses["00 19 10"] = "Zuiko Digital ED 12-40mm f/2.8 Pro";
             lenses["00 20 00"] = "Zuiko Digital 35mm f/3.5 Macro";
             lenses["00 22 00"] = "Zuiko Digital 17.5-45mm f/3.5-5.6";
             lenses["00 23 00"] = "Zuiko Digital ED 14-42mm f/3.5-5.6";
@@ -98,31 +112,52 @@ class OLLensTypeInterpreter : public Interpreter {
             lenses["00 33 00"] = "Zuiko Digital 25mm f/2.8";
             lenses["00 34 00"] = "Zuiko Digital ED 9-18mm f/4-5.6";
             lenses["00 35 00"] = "Zuiko Digital 14-54mm f/2.8-3.5 II";
-            lenses["01 01 00"] = "Sigma 18-50mm f/3.5-5.6";
+            lenses["01 01 00"] = "Sigma 18-50mm f/3.5-5.6 DC";
+            lenses["01 01 10"] = "Sigma 30mm f/2.8 EX DN";
             lenses["01 02 00"] = "Sigma 55-200mm f/4-5.6 DC";
+            lenses["01 02 10"] = "Sigma 19mm f/2.8 EX DN";
             lenses["01 03 00"] = "Sigma 18-125mm f/3.5-5.6 DC";
-            lenses["01 04 00"] = "Sigma 18-125mm f/3.5-5.6";
-            lenses["01 05 00"] = "Sigma 30mm f/1.4 DC";
+            lenses["01 03 10"] = "Sigma 30mm f/2.8 DN | A";
+            lenses["01 04 00"] = "Sigma 18-125mm f/3.5-5.6 DC";
+            lenses["01 04 10"] = "Sigma 19mm f/2.8 DN | A";
+            lenses["01 05 00"] = "Sigma 30mm f/1.4 EX DC HSM";
+            lenses["01 05 10"] = "Sigma 60mm f/2.8 DN | A";
             lenses["01 06 00"] = "Sigma 50-500mm f/4-6.3 EX DG APO HSM RF";
-            lenses["01 07 00"] = "Sigma 105mm f/2.8 DG";
-            lenses["01 08 00"] = "Sigma 150mm f/2.8 DG HSM";
+            lenses["01 07 00"] = "Sigma 105mm f/2.8 EX DG Macro";
+            lenses["01 08 00"] = "Sigma 150mm f/2.8 EX DG APO HSM Macro";
+            lenses["01 09 00"] = "Sigma 18-50mm f/2.8 EX DC Macro";
             lenses["01 10 00"] = "Sigma 24mm f/1.8 EX DG Aspherical Macro";
-            lenses["01 11 00"] = "Sigma 135-400mm f/4.5-5.6 DG ASP APO RF";
-            lenses["01 12 00"] = "Sigma 300-800mm f/5.6 EX DG APO";
-            lenses["01 14 00"] = "Sigma 50-500mm f/4-6.3 EX DG APO HSM RF";
+            lenses["01 11 00"] = "Sigma 135-400mm f/4.5-5.6 DG APO";
+            lenses["01 12 00"] = "Sigma 300-800mm f/5.6 EX DG APO HSM";
+            lenses["01 13 00"] = "Sigma 30mm f/1.4 EX DC HSM";
+            lenses["01 14 00"] = "Sigma 50-500mm f/4-6.3 EX DG APO HSM";
             lenses["01 15 00"] = "Sigma 10-20mm f/4-5.6 EX DC HSM";
-            lenses["01 16 00"] = "Sigma 70-200mm f/2.8 EX DG Macro HSM II";
+            lenses["01 16 00"] = "Sigma 70-200mm f/2.8 II EX DG APO HSM Macro";
             lenses["01 17 00"] = "Sigma 50mm f/1.4 EX DG HSM";
             lenses["02 01 00"] = "Leica D Vario Elmarit 14-50mm f/2.8-3.5 Asph.";
             lenses["02 01 10"] = "Lumix G Vario 14-45mm f/3.5-5.6 Asph. Mega OIS";
             lenses["02 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
             lenses["02 02 10"] = "Lumix G Vario 45-200mm f/4-5.6 Mega OIS";
+            lenses["02 03 00"] = "Leica D Vario Elmar 14-50mm f/3.8-5.6 Asph. Mega OIS";
             lenses["02 03 01"] = "Leica D Vario Elmar 14-50mm f/3.8-5.6 Asph.";
-            lenses["02 03 10"] = "Lumix G Vario HD 14-140mm f(4-5.8 Asph. Mega OIS ";
+            lenses["02 03 10"] = "Lumix G Vario HD 14-140mm f/4-5.8 Asph. Mega OIS";
             lenses["02 04 00"] = "Leica D Vario Elmar 14-150mm f/3.5-5.6";
             lenses["02 04 10"] = "Lumix G Vario 7-14mm f/4 Asph.";
             lenses["02 05 10"] = "Lumix G 20mm f/1.7 Asph.";
-            lenses["02 08 10"] = "Lumix G Fisheye 8mm f/3.5 ";
+            lenses["02 06 10"] = "Leica DG Macro-Elmarit 45mm f/2.8 Asph. Mega OIS";
+            lenses["02 07 10"] = "Lumix G Vario 14-42mm f/3.5-5.6 Asph. Mega OIS";
+            lenses["02 08 10"] = "Lumix G Fisheye 8mm f/3.5";
+            lenses["02 09 10"] = "Lumix G Vario 100-300mm f/4-5.6 Mega OIS";
+            lenses["02 10 10"] = "Lumix G 14mm f/2.5 Asph.";
+            lenses["02 11 10"] = "Lumix G 12.5mm f/12 3D";
+            lenses["02 12 10"] = "Leica DG Summilux 25mm f/1.4 Asph.";
+            lenses["02 13 10"] = "Lumix G X Vario PZ 45-175mm f/4-5.6 Asph. Power OIS";
+            lenses["02 14 10"] = "Lumix G X Vario PZ 14-42mm f/3.5-5.6 Asph. Power OIS";
+            lenses["02 15 10"] = "Lumix G X Vario 12-35mm f/2.8 Asph. Power OIS";
+            lenses["02 16 10"] = "Lumix G Vario 45-150mm f/4-5.6 Asph. Mega OIS";
+            lenses["02 17 10"] = "Lumix G X Vario 35-100mm f/2.8 Power OIS";
+            lenses["02 18 10"] = "Lumix G Vario 14-42mm f/3.5-5.6 II Asph. Mega OIS";
+            lenses["02 19 10"] = "Lumix G Vario 14-140mm f/3.5-5.6 Asph. Power OIS";
             lenses["03 01 00"] = "Leica D Vario Elmarit 14-50mm f/2.8-3.5 Asph.";
             lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         }
@@ -404,298 +439,298 @@ class OLFlashModelInterpreter : public ChoiceInterpreter {
 OLFlashModelInterpreter olFlashModelInterpreter;
 
 const TagAttrib olyFocusInfoAttribs[] = {
- {0, 1, 0, 0, 0x0000, "FocusInfoVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0209, "AutoFocus", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x0210, "SceneDetect", &stdInterpreter},
- {0, 1, 0, 0, 0x0211, "SceneArea", &stdInterpreter},
- {0, 1, 0, 0, 0x0212, "SceneDetectData", &stdInterpreter},
- {0, 1, 0, 0, 0x0300, "ZoomStepCount", &stdInterpreter},
- {0, 1, 0, 0, 0x0301, "FocusStepCount", &stdInterpreter},
- {0, 1, 0, 0, 0x0303, "FocusStepInfinity", &stdInterpreter},
- {0, 1, 0, 0, 0x0304, "FocusStepNear", &stdInterpreter},
- {0, 1, 0, 0, 0x0305, "FocusDistance", &stdInterpreter},
- {0, 1, 0, 0, 0x0308, "AFPoint", &stdInterpreter},
- {0, 1, 0, 0, 0x1201, "ExternalFlash", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x1203, "ExternalFlashGuideNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x1204, "ExternalFlashBounce", &stdInterpreter},
- {0, 1, 0, 0, 0x1205, "ExternalFlashZoom", &stdInterpreter},
- {0, 1, 0, 0, 0x1208, "InternalFlash", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x1209, "ManualFlash", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x1500, "SensorTemperature", &stdInterpreter},
- {0, 1, 0, 0, 0x1600, "ImageStabilization", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 0x0000, AUTO, "FocusInfoVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0209, AUTO, "AutoFocus", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0210, AUTO, "SceneDetect", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0211, AUTO, "SceneArea", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0212, AUTO, "SceneDetectData", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0300, AUTO, "ZoomStepCount", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0301, AUTO, "FocusStepCount", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0303, AUTO, "FocusStepInfinity", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0304, AUTO, "FocusStepNear", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0305, AUTO, "FocusDistance", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0308, AUTO, "AFPoint", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1201, AUTO, "ExternalFlash", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1203, AUTO, "ExternalFlashGuideNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1204, AUTO, "ExternalFlashBounce", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1205, AUTO, "ExternalFlashZoom", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1208, AUTO, "InternalFlash", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1209, AUTO, "ManualFlash", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1500, AUTO, "SensorTemperature", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1600, AUTO, "ImageStabilization", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib olyImageProcessingAttribs[] = {
- {0, 1, 0, 0, 0x0000, "ImageProcessingVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0100, "WB_RBLevels", &stdInterpreter},
- {0, 1, 0, 0, 0x0102, "WB_RBLevels3000K", &stdInterpreter},
- {0, 1, 0, 0, 0x0103, "WB_RBLevels3300K", &stdInterpreter},
- {0, 1, 0, 0, 0x0104, "WB_RBLevels3600K", &stdInterpreter},
- {0, 1, 0, 0, 0x0105, "WB_RBLevels3900K", &stdInterpreter},
- {0, 1, 0, 0, 0x0106, "WB_RBLevels4000K", &stdInterpreter},
- {0, 1, 0, 0, 0x0107, "WB_RBLevels4300K", &stdInterpreter},
- {0, 1, 0, 0, 0x0108, "WB_RBLevels4500K", &stdInterpreter},
- {0, 1, 0, 0, 0x0109, "WB_RBLevels4800K", &stdInterpreter},
- {0, 1, 0, 0, 0x010a, "WB_RBLevels5300K", &stdInterpreter},
- {0, 1, 0, 0, 0x010b, "WB_RBLevels6000K", &stdInterpreter},
- {0, 1, 0, 0, 0x010c, "WB_RBLevels6600K", &stdInterpreter},
- {0, 1, 0, 0, 0x010d, "WB_RBLevels7500K", &stdInterpreter},
- {0, 1, 0, 0, 0x010e, "WB_RBLevelsCWB1", &stdInterpreter},
- {0, 1, 0, 0, 0x010f, "WB_RBLevelsCWB2", &stdInterpreter},
- {0, 1, 0, 0, 0x0110, "WB_RBLevelsCWB3", &stdInterpreter},
- {0, 1, 0, 0, 0x0111, "WB_RBLevelsCWB4", &stdInterpreter},
- {0, 1, 0, 0, 0x0113, "WB_GLevel3000K", &stdInterpreter},
- {0, 1, 0, 0, 0x0114, "WB_GLevel3300K", &stdInterpreter},
- {0, 1, 0, 0, 0x0115, "WB_GLevel3600K", &stdInterpreter},
- {0, 1, 0, 0, 0x0116, "WB_GLevel3900K", &stdInterpreter},
- {0, 1, 0, 0, 0x0117, "WB_GLevel4000K", &stdInterpreter},
- {0, 1, 0, 0, 0x0118, "WB_GLevel4300K", &stdInterpreter},
- {0, 1, 0, 0, 0x0119, "WB_GLevel4500K", &stdInterpreter},
- {0, 1, 0, 0, 0x011a, "WB_GLevel4800K", &stdInterpreter},
- {0, 1, 0, 0, 0x011b, "WB_GLevel5300K", &stdInterpreter},
- {0, 1, 0, 0, 0x011c, "WB_GLevel6000K", &stdInterpreter},
- {0, 1, 0, 0, 0x011d, "WB_GLevel6600K", &stdInterpreter},
- {0, 1, 0, 0, 0x011e, "WB_GLevel7500K", &stdInterpreter},
- {0, 1, 0, 0, 0x011f, "WB_GLevel", &stdInterpreter},
- {0, 1, 0, 0, 0x0200, "ColorMatrix", &stdInterpreter},
- {0, 1, 0, 0, 0x0300, "Enhancer", &stdInterpreter},
- {0, 1, 0, 0, 0x0301, "EnhancerValues", &stdInterpreter},
- {0, 1, 0, 0, 0x0310, "CoringFilter", &stdInterpreter},
- {0, 1, 0, 0, 0x0311, "CoringValues", &stdInterpreter},
- {0, 1, 0, 0, 0x0600, "BlackLevel2", &stdInterpreter},
- {0, 1, 0, 0, 0x0610, "GainBase", &stdInterpreter},
- {0, 1, 0, 0, 0x0611, "ValidBits", &stdInterpreter},
- {0, 1, 0, 0, 0x0612, "CropLeft", &stdInterpreter},
- {0, 1, 0, 0, 0x0613, "CropTop", &stdInterpreter},
- {0, 1, 0, 0, 0x0614, "CropWidth", &stdInterpreter},
- {0, 1, 0, 0, 0x0615, "CropHeight", &stdInterpreter},
- {0, 1, 0, 0, 0x1010, "NoiseReduction2", &stdInterpreter},
- {0, 1, 0, 0, 0x1011, "DistortionCorrection2", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x1012, "ShadingCompensation2", &olOnOffInterpreter},
- {1, 1, 0, 0, 0x1103, "UnknownBlock", &stdInterpreter},
- {0, 1, 0, 0, 0x1200, "FaceDetect", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x1201, "FaceDetectArea", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 0x0000, AUTO, "ImageProcessingVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0100, AUTO, "WB_RBLevels", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0102, AUTO, "WB_RBLevels3000K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0103, AUTO, "WB_RBLevels3300K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0104, AUTO, "WB_RBLevels3600K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0105, AUTO, "WB_RBLevels3900K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0106, AUTO, "WB_RBLevels4000K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0107, AUTO, "WB_RBLevels4300K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0108, AUTO, "WB_RBLevels4500K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0109, AUTO, "WB_RBLevels4800K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010a, AUTO, "WB_RBLevels5300K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010b, AUTO, "WB_RBLevels6000K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010c, AUTO, "WB_RBLevels6600K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010d, AUTO, "WB_RBLevels7500K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010e, AUTO, "WB_RBLevelsCWB1", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010f, AUTO, "WB_RBLevelsCWB2", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0110, AUTO, "WB_RBLevelsCWB3", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0111, AUTO, "WB_RBLevelsCWB4", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0113, AUTO, "WB_GLevel3000K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0114, AUTO, "WB_GLevel3300K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0115, AUTO, "WB_GLevel3600K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0116, AUTO, "WB_GLevel3900K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0117, AUTO, "WB_GLevel4000K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0118, AUTO, "WB_GLevel4300K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0119, AUTO, "WB_GLevel4500K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x011a, AUTO, "WB_GLevel4800K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x011b, AUTO, "WB_GLevel5300K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x011c, AUTO, "WB_GLevel6000K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x011d, AUTO, "WB_GLevel6600K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x011e, AUTO, "WB_GLevel7500K", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x011f, AUTO, "WB_GLevel", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0200, AUTO, "ColorMatrix", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0300, AUTO, "Enhancer", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0301, AUTO, "EnhancerValues", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0310, AUTO, "CoringFilter", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0311, AUTO, "CoringValues", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0600, AUTO, "BlackLevel2", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0610, AUTO, "GainBase", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0611, AUTO, "ValidBits", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0612, AUTO, "CropLeft", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0613, AUTO, "CropTop", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0614, AUTO, "CropWidth", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0615, AUTO, "CropHeight", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1010, AUTO, "NoiseReduction2", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1011, AUTO, "DistortionCorrection2", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1012, AUTO, "ShadingCompensation2", &olOnOffInterpreter},
+ {1, AC_WRITE, 0, 0, 0x1103, AUTO, "UnknownBlock", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1200, AUTO, "FaceDetect", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1201, AUTO, "FaceDetectArea", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib olyRawDevelopmentAttribs[] = {
- {0, 1, 0, 0, 0x0000, "RawDevVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0100, "RawDevExposureBiasValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0101, "RawDevWhiteBalanceValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0102, "RawDevWBFineAdjustment", &stdInterpreter},
- {0, 1, 0, 0, 0x0103, "RawDevGrayPoint", &stdInterpreter},
- {0, 1, 0, 0, 0x0104, "RawDevSaturationEmphasis", &stdInterpreter},
- {0, 1, 0, 0, 0x0105, "RawDevMemoryColorEmphasis", &stdInterpreter},
- {0, 1, 0, 0, 0x0106, "RawDevContrastValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0107, "RawDevSharpnessValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0108, "RawDevColorSpace", &olColorSpaceInterpreter},
- {0, 1, 0, 0, 0x0109, "RawDevEngine", &olDevEngineInterpreter},
- {0, 1, 0, 0, 0x010a, "RawDevNoiseReduction", &olNoiseReductionInterpreter},
- {0, 1, 0, 0, 0x010b, "RawDevEditStatus", &stdInterpreter},
- {0, 1, 0, 0, 0x010c, "RawDevSettings", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 0x0000, AUTO, "RawDevVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0100, AUTO, "RawDevExposureBiasValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0101, AUTO, "RawDevWhiteBalanceValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0102, AUTO, "RawDevWBFineAdjustment", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0103, AUTO, "RawDevGrayPoint", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0104, AUTO, "RawDevSaturationEmphasis", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0105, AUTO, "RawDevMemoryColorEmphasis", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0106, AUTO, "RawDevContrastValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0107, AUTO, "RawDevSharpnessValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0108, AUTO, "RawDevColorSpace", &olColorSpaceInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0109, AUTO, "RawDevEngine", &olDevEngineInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010a, AUTO, "RawDevNoiseReduction", &olNoiseReductionInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010b, AUTO, "RawDevEditStatus", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010c, AUTO, "RawDevSettings", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib olyRawDevelopment2Attribs[] = {
- {0, 1, 0, 0, 0x0000, "RawDevVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0100, "RawDevExposureBiasValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0101, "RawDevWhiteBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x0102, "RawDevWhiteBalanceValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0103, "RawDevWBFineAdjustment", &stdInterpreter},
- {0, 1, 0, 0, 0x0104, "RawDevGrayPoint", &stdInterpreter},
- {0, 1, 0, 0, 0x0105, "RawDevContrastValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0106, "RawDevSharpnessValue", &stdInterpreter},
- {0, 1, 0, 0, 0x0107, "RawDevSaturationEmphasis", &stdInterpreter},
- {0, 1, 0, 0, 0x0108, "RawDevMemoryColorEmphasis", &stdInterpreter},
- {0, 1, 0, 0, 0x0109, "RawDevColorSpace", &olColorSpaceInterpreter},
- {0, 1, 0, 0, 0x010a, "RawDevNoiseReduction", &olNoiseReductionInterpreter},
- {0, 1, 0, 0, 0x010b, "RawDevEngine", &olDevEngineInterpreter},
- {0, 1, 0, 0, 0x010c, "RawDevPictureMode", &olPictureModeInterpreter},
- {0, 1, 0, 0, 0x010d, "RawDevPMSaturation", &stdInterpreter},
- {0, 1, 0, 0, 0x010e, "RawDevPMContrast", &stdInterpreter},
- {0, 1, 0, 0, 0x010f, "RawDevPMSharpness", &stdInterpreter},
- {0, 1, 0, 0, 0x0110, "RawDevPM_BWFilter", &olPictureModeBWFilterInterpreter},
- {0, 1, 0, 0, 0x0111, "RawDevPMPictureTone", &olPictureModeToneInterpreter},
- {0, 1, 0, 0, 0x0112, "RawDevGradation", &stdInterpreter},
- {0, 1, 0, 0, 0x0113, "RawDevSaturation3", &stdInterpreter},
- {0, 1, 0, 0, 0x0119, "RawDevAutoGradation", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x0120, "RawDevPMNoiseFilter", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 0x0000, AUTO, "RawDevVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0100, AUTO, "RawDevExposureBiasValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0101, AUTO, "RawDevWhiteBalance", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0102, AUTO, "RawDevWhiteBalanceValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0103, AUTO, "RawDevWBFineAdjustment", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0104, AUTO, "RawDevGrayPoint", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0105, AUTO, "RawDevContrastValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0106, AUTO, "RawDevSharpnessValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0107, AUTO, "RawDevSaturationEmphasis", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0108, AUTO, "RawDevMemoryColorEmphasis", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0109, AUTO, "RawDevColorSpace", &olColorSpaceInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010a, AUTO, "RawDevNoiseReduction", &olNoiseReductionInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010b, AUTO, "RawDevEngine", &olDevEngineInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010c, AUTO, "RawDevPictureMode", &olPictureModeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010d, AUTO, "RawDevPMSaturation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010e, AUTO, "RawDevPMContrast", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x010f, AUTO, "RawDevPMSharpness", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0110, AUTO, "RawDevPM_BWFilter", &olPictureModeBWFilterInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0111, AUTO, "RawDevPMPictureTone", &olPictureModeToneInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0112, AUTO, "RawDevGradation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0113, AUTO, "RawDevSaturation3", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0119, AUTO, "RawDevAutoGradation", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0120, AUTO, "RawDevPMNoiseFilter", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib olyCameraSettingsAttribs[] = {
- {0, 1, 0, 0, 0x0000, "CameraSettingsVersion", &stdInterpreter},
- {1, 1, 0, 0, 0x0100, "PreviewImageValid", &olYesNoInterpreter},
- {1, 1, 0, 0, 0x0101, "PreviewImageStart", &stdInterpreter},
- {1, 1, 0, 0, 0x0102, "PreviewImageLength", &stdInterpreter},
- {0, 1, 0, 0, 0x0200, "ExposureMode", &olExposureModeInterpreter},
- {0, 1, 0, 0, 0x0201, "AELock", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x0202, "MeteringMode", &olMeteringModeInterpreter},
- {0, 1, 0, 0, 0x0300, "MacroMode", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x0301, "FocusMode", &olFocusModeInterpreter},
- {0, 1, 0, 0, 0x0302, "FocusProcess", &stdInterpreter},
- {0, 1, 0, 0, 0x0303, "AFSearch", &stdInterpreter},
- {0, 1, 0, 0, 0x0304, "AFAreas", &stdInterpreter},
- {0, 1, 0, 0, 0x0400, "FlashMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0401, "FlashExposureComp", &stdInterpreter},
- {0, 1, 0, 0, 0x0500, "WhiteBalance2", &olWhitebalance2Interpreter},
- {0, 1, 0, 0, 0x0501, "WhiteBalanceTemperature", &stdInterpreter},
- {0, 1, 0, 0, 0x0502, "WhiteBalanceBracket", &stdInterpreter},
- {0, 1, 0, 0, 0x0503, "CustomSaturation", &stdInterpreter},
- {0, 1, 0, 0, 0x0504, "ModifiedSaturation", &stdInterpreter},
- {0, 1, 0, 0, 0x0505, "ContrastSetting", &stdInterpreter},
- {0, 1, 0, 0, 0x0506, "SharpnessSetting", &stdInterpreter},
- {0, 1, 0, 0, 0x0507, "ColorSpace", &olColorSpaceInterpreter},
- {0, 1, 0, 0, 0x0509, "SceneMode", &olSceneModeInterpreter},
- {0, 1, 0, 0, 0x050a, "NoiseReduction", &olNoiseReductionInterpreter},
- {0, 1, 0, 0, 0x050b, "DistortionCorrection", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x050c, "ShadingCompensation", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x050d, "CompressionFactor", &stdInterpreter},
- {0, 1, 0, 0, 0x050f, "Gradation", &stdInterpreter},
- {0, 1, 0, 0, 0x0520, "PictureMode", &olPictureModeInterpreter},
- {0, 1, 0, 0, 0x0521, "PictureModeSaturation", &stdInterpreter},
- {0, 1, 0, 0, 0x0522, "PictureModeHue", &stdInterpreter},
- {0, 1, 0, 0, 0x0523, "PictureModeContrast", &stdInterpreter},
- {0, 1, 0, 0, 0x0524, "PictureModeSharpness", &stdInterpreter},
- {0, 1, 0, 0, 0x0525, "PictureModeBWFilter", &olPictureModeBWFilterInterpreter},
- {0, 1, 0, 0, 0x0526, "PictureModeTone", &olPictureModeToneInterpreter},
- {0, 1, 0, 0, 0x0527, "NoiseFilter", &olNoiseFilterInterpreter},
- {0, 1, 0, 0, 0x0600, "DriveMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0601, "PanoramaMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0603, "ImageQuality2", &olImageQuality2Interpreter},
- {0, 1, 0, 0, 0x0900, "ManometerPressure", &stdInterpreter},
- {0, 1, 0, 0, 0x0901, "ManometerReading", &stdInterpreter},
- {0, 1, 0, 0, 0x0902, "ExtendedWBDetect", &olOnOffInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 0x0000, AUTO, "CameraSettingsVersion", &stdInterpreter},
+ {1, AC_WRITE, 0, 0, 0x0100, AUTO, "PreviewImageValid", &olYesNoInterpreter},
+ {1, AC_WRITE, 0, 0, 0x0101, AUTO, "PreviewImageStart", &stdInterpreter},
+ {1, AC_WRITE, 0, 0, 0x0102, AUTO, "PreviewImageLength", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0200, AUTO, "ExposureMode", &olExposureModeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0201, AUTO, "AELock", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0202, AUTO, "MeteringMode", &olMeteringModeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0300, AUTO, "MacroMode", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0301, AUTO, "FocusMode", &olFocusModeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0302, AUTO, "FocusProcess", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0303, AUTO, "AFSearch", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0304, AUTO, "AFAreas", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0400, AUTO, "FlashMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0401, AUTO, "FlashExposureComp", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0500, AUTO, "WhiteBalance2", &olWhitebalance2Interpreter},
+ {0, AC_WRITE, 0, 0, 0x0501, AUTO, "WhiteBalanceTemperature", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0502, AUTO, "WhiteBalanceBracket", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0503, AUTO, "CustomSaturation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0504, AUTO, "ModifiedSaturation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0505, AUTO, "ContrastSetting", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0506, AUTO, "SharpnessSetting", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0507, AUTO, "ColorSpace", &olColorSpaceInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0509, AUTO, "SceneMode", &olSceneModeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x050a, AUTO, "NoiseReduction", &olNoiseReductionInterpreter},
+ {0, AC_WRITE, 0, 0, 0x050b, AUTO, "DistortionCorrection", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x050c, AUTO, "ShadingCompensation", &olOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 0x050d, AUTO, "CompressionFactor", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x050f, AUTO, "Gradation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0520, AUTO, "PictureMode", &olPictureModeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0521, AUTO, "PictureModeSaturation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0522, AUTO, "PictureModeHue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0523, AUTO, "PictureModeContrast", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0524, AUTO, "PictureModeSharpness", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0525, AUTO, "PictureModeBWFilter", &olPictureModeBWFilterInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0526, AUTO, "PictureModeTone", &olPictureModeToneInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0527, AUTO, "NoiseFilter", &olNoiseFilterInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0600, AUTO, "DriveMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0601, AUTO, "PanoramaMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0603, AUTO, "ImageQuality2", &olImageQuality2Interpreter},
+ {0, AC_WRITE, 0, 0, 0x0900, AUTO, "ManometerPressure", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0901, AUTO, "ManometerReading", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0902, AUTO, "ExtendedWBDetect", &olOnOffInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib olyEquipmentAttribs[] = {
- {0, 1, 0, 0, 0x0000, "EquipmentVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0100, "CameraType2", &stdInterpreter},
- {0, 1, 0, 0, 0x0101, "SerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x0102, "InternalSerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x0103, "FocalPlaneDiagonal", &stdInterpreter},
- {0, 1, 0, 0, 0x0104, "BodyFirmwareVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0201, "LensType", &olLensTypeInterpreter},
- {0, 1, 0, 0, 0x0202, "LensSerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x0204, "LensFirmwareVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0205, "MaxApertureAtMinFocal", &olApertureInterpreter},
- {0, 1, 0, 0, 0x0206, "MaxApertureAtMaxFocal", &olApertureInterpreter},
- {0, 1, 0, 0, 0x0207, "MinFocalLength", &stdInterpreter},
- {0, 1, 0, 0, 0x0208, "MaxFocalLength", &stdInterpreter},
- {0, 1, 0, 0, 0x020a, "MaxApertureAtCurrentFocal", &olApertureInterpreter},
- {0, 1, 0, 0, 0x020b, "LensProperties", &stdInterpreter},
- {0, 1, 0, 0, 0x0301, "Extender", &stdInterpreter},
- {0, 1, 0, 0, 0x0302, "ExtenderSerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x0303, "ExtenderModel", &stdInterpreter},
- {0, 1, 0, 0, 0x0304, "ExtenderFirmwareVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x1000, "FlashType", &olFlashTypeInterpreter},
- {0, 1, 0, 0, 0x1001, "FlashModel", &olFlashModelInterpreter},
- {0, 1, 0, 0, 0x1002, "FlashFirmwareVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x1003, "FlashSerialNumber", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, 0, 0x0000, AUTO, "EquipmentVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0100, AUTO, "CameraType2", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0101, AUTO, "SerialNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0102, AUTO, "InternalSerialNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0103, AUTO, "FocalPlaneDiagonal", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0104, AUTO, "BodyFirmwareVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0201, AUTO, "LensType", &olLensTypeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0202, AUTO, "LensSerialNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0204, AUTO, "LensFirmwareVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0205, AUTO, "MaxApertureAtMinFocal", &olApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0206, AUTO, "MaxApertureAtMaxFocal", &olApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0207, AUTO, "MinFocalLength", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0208, AUTO, "MaxFocalLength", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x020a, AUTO, "MaxApertureAtCurrentFocal", &olApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 0x020b, AUTO, "LensProperties", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0301, AUTO, "Extender", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0302, AUTO, "ExtenderSerialNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0303, AUTO, "ExtenderModel", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0304, AUTO, "ExtenderFirmwareVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1000, AUTO, "FlashType", &olFlashTypeInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1001, AUTO, "FlashModel", &olFlashModelInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1002, AUTO, "FlashFirmwareVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x1003, AUTO, "FlashSerialNumber", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib olympusAttribs[] = {
- {0, 1, 0, 0, 0x0104, "BodyFirmwareVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0200, "SpecialMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0201, "Quality", &stdInterpreter},
- {0, 1, 0, 0, 0x0202, "Macro", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x0203, "BWMode", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x0204, "DigitalZoom", &stdInterpreter},
- {0, 1, 0, 0, 0x0205, "FocalPlaneDiagonal", &stdInterpreter},
- {0, 1, 0, 0, 0x0206, "LensDistortionParams", &stdInterpreter},
- {0, 1, 0, 0, 0x0207, "CameraType", &stdInterpreter},
- {1, 1, 0, 0, 0x0208, "TextInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0209, "CameraID", &stdInterpreter},
- {0, 1, 0, 0, 0x020b, "EpsonImageWidth", &stdInterpreter},
- {0, 1, 0, 0, 0x020c, "EpsonImageHeight", &stdInterpreter},
- {0, 1, 0, 0, 0x020d, "EpsonSoftware", &stdInterpreter},
- {0, 2, 0, 0, 0x0280, "PreviewImage", &stdInterpreter},
- {0, 1, 0, 0, 0x0300, "PreCaptureFrames", &stdInterpreter},
- {0, 1, 0, 0, 0x0301, "WhiteBoard", &stdInterpreter},
- {0, 1, 0, 0, 0x0302, "OneTouchWB", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x0303, "WhiteBalanceBracket", &stdInterpreter},
- {0, 1, 0, 0, 0x0304, "WhiteBalanceBias", &stdInterpreter},
- {0, 1, 0, 0, 0x0403, "SceneMode", &stdInterpreter},
- {0, 1, 0, 0, 0x0404, "SerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x0405, "Firmware", &stdInterpreter},
- {1, 1, 0, 0, 0x0e00, "PrintIM", &stdInterpreter},
- {0, 1, 0, 0, 0x0f00, "DataDump", &stdInterpreter},
- {0, 1, 0, 0, 0x0f01, "DataDump2", &stdInterpreter},
- {0, 1, 0, 0, 0x1000, "ShutterSpeedValue", &stdInterpreter},
- {0, 1, 0, 0, 0x1001, "ISOValue", &stdInterpreter},
- {0, 1, 0, 0, 0x1002, "ApertureValue", &stdInterpreter},
- {0, 1, 0, 0, 0x1003, "BrightnessValue", &stdInterpreter},
- {0, 1, 0, 0, 0x1004, "FlashMode", &stdInterpreter},
- {0, 1, 0, 0, 0x1005, "FlashDevice", &stdInterpreter},
- {0, 1, 0, 0, 0x1006, "ExposureCompensation", &stdInterpreter},
- {0, 1, 0, 0, 0x1007, "SensorTemperature", &stdInterpreter},
- {0, 1, 0, 0, 0x1008, "LensTemperature", &stdInterpreter},
- {0, 1, 0, 0, 0x1009, "LightCondition", &stdInterpreter},
- {0, 1, 0, 0, 0x100a, "FocusRange", &stdInterpreter},
- {0, 1, 0, 0, 0x100b, "FocusMode", &stdInterpreter},
- {0, 1, 0, 0, 0x100c, "ManualFocusDistance", &stdInterpreter},
- {0, 1, 0, 0, 0x100d, "ZoomStepCount", &stdInterpreter},
- {0, 1, 0, 0, 0x100e, "FocusStepCount", &stdInterpreter},
- {0, 1, 0, 0, 0x100f, "Sharpness", &stdInterpreter},
- {0, 1, 0, 0, 0x1010, "FlashChargeLevel", &stdInterpreter},
- {0, 1, 0, 0, 0x1011, "ColorMatrix", &stdInterpreter},
- {0, 1, 0, 0, 0x1012, "BlackLevel", &stdInterpreter},
- {0, 1, 0, 0, 0x1013, "ColorTemperatureBG", &stdInterpreter},
- {0, 1, 0, 0, 0x1014, "ColorTemperatureRG", &stdInterpreter},
- {0, 1, 0, 0, 0x1015, "WBMode", &stdInterpreter},
- {0, 1, 0, 0, 0x1017, "RedBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x1018, "BlueBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x1019, "ColorMatrixNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x101a, "SerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x101b, "ExternalFlashAE1_0", &stdInterpreter},
- {0, 1, 0, 0, 0x101c, "ExternalFlashAE2_0", &stdInterpreter},
- {0, 1, 0, 0, 0x101d, "InternalFlashAE1_0", &stdInterpreter},
- {0, 1, 0, 0, 0x101e, "InternalFlashAE2_0", &stdInterpreter},
- {0, 1, 0, 0, 0x101f, "ExternalFlashAE1", &stdInterpreter},
- {0, 1, 0, 0, 0x1020, "ExternalFlashAE2", &stdInterpreter},
- {0, 1, 0, 0, 0x1021, "InternalFlashAE1", &stdInterpreter},
- {0, 1, 0, 0, 0x1022, "InternalFlashAE2", &stdInterpreter},
- {0, 1, 0, 0, 0x1023, "FlashExposureComp", &stdInterpreter},
- {0, 1, 0, 0, 0x1024, "InternalFlashTable", &stdInterpreter},
- {0, 1, 0, 0, 0x1025, "ExternalFlashGValue", &stdInterpreter},
- {0, 1, 0, 0, 0x1026, "ExternalFlashBounce", &olYesNoInterpreter},
- {0, 1, 0, 0, 0x1027, "ExternalFlashZoom", &stdInterpreter},
- {0, 1, 0, 0, 0x1028, "ExternalFlashMode", &stdInterpreter},
- {0, 1, 0, 0, 0x1029, "Contrast", &stdInterpreter},
- {0, 1, 0, 0, 0x102a, "SharpnessFactor", &stdInterpreter},
- {0, 1, 0, 0, 0x102b, "ColorControl", &stdInterpreter},
- {0, 1, 0, 0, 0x102c, "ValidBits", &stdInterpreter},
- {0, 1, 0, 0, 0x102d, "CoringFilter", &stdInterpreter},
- {0, 1, 0, 0, 0x102e, "OlympusImageWidth", &stdInterpreter},
- {0, 1, 0, 0, 0x102f, "OlympusImageHeight", &stdInterpreter},
- {0, 1, 0, 0, 0x1030, "SceneDetect", &stdInterpreter},
- {0, 1, 0, 0, 0x1031, "SceneArea", &stdInterpreter},
- {0, 1, 0, 0, 0x1033, "SceneDetectData", &stdInterpreter},
- {0, 1, 0, 0, 0x1034, "CompressionRatio", &stdInterpreter},
- {1, 1, 0, 0, 0x1035, "PreviewImageValid", &olYesNoInterpreter},
- {1, 1, 0, 0, 0x1036, "PreviewImageStart", &stdInterpreter},
- {1, 1, 0, 0, 0x1037, "PreviewImageLength", &stdInterpreter},
- {0, 1, 0, 0, 0x1038, "AFResult", &stdInterpreter},
- {0, 1, 0, 0, 0x1039, "CCDScanMode", &stdInterpreter},
- {0, 1, 0, 0, 0x103a, "NoiseReduction", &olOnOffInterpreter},
- {0, 1, 0, 0, 0x103b, "InfinityLensStep", &stdInterpreter},
- {0, 1, 0, 0, 0x103c, "NearLensStep", &stdInterpreter},
- {0, 1, 0, 0, 0x103d, "LightValueCenter", &stdInterpreter},
- {0, 1, 0, 0, 0x103e, "LightValuePeriphery", &stdInterpreter},
- {0, 1, 0, 0, 0x103f, "FieldCount", &stdInterpreter},
- {0, 1, 0, olyEquipmentAttribs, 0x2010, "Equipment", &stdInterpreter},
- {0, 1, 0, olyCameraSettingsAttribs, 0x2020, "CameraSettings", &stdInterpreter},
- {0, 1, 0, olyRawDevelopmentAttribs, 0x2030, "RawDevelopment", &stdInterpreter},
- {0, 1, 0, olyRawDevelopment2Attribs, 0x2031, "RawDev2", &stdInterpreter},
- {0, 1, 0, olyImageProcessingAttribs, 0x2040, "ImageProcessing", &stdInterpreter},
- {0, 1, 0, olyFocusInfoAttribs, 0x2050, "FocusInfo", &stdInterpreter},
- {1, 1, 0, 0, 0x2100, "Olympus2100", &stdInterpreter},
- {1, 1, 0, 0, 0x2300, "Olympus2300", &stdInterpreter},
- {1, 1, 0, 0, 0x2400, "Olympus2400", &stdInterpreter},
- {1, 1, 0, 0, 0x2500, "Olympus2500", &stdInterpreter},
- {1, 1, 0, 0, 0x2600, "Olympus2600", &stdInterpreter},
- {1, 1, 0, 0, 0x2700, "Olympus2700", &stdInterpreter},
- {1, 1, 0, 0, 0x2800, "Olympus2800", &stdInterpreter},
- {1, 1, 0, 0, 0x2900, "Olympus2900", &stdInterpreter},
- {0, 1, 0, 0, 0x3000, "RawInfo", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE,  0, 0, 0x0104, AUTO, "BodyFirmwareVersion", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0200, AUTO, "SpecialMode", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0201, AUTO, "Quality", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0202, AUTO, "Macro", &olOnOffInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0203, AUTO, "BWMode", &olOnOffInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0204, AUTO, "DigitalZoom", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0205, AUTO, "FocalPlaneDiagonal", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0206, AUTO, "LensDistortionParams", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0207, AUTO, "CameraType", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x0208, AUTO, "TextInfo", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0209, AUTO, "CameraID", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x020b, AUTO, "EpsonImageWidth", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x020c, AUTO, "EpsonImageHeight", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x020d, AUTO, "EpsonSoftware", &stdInterpreter},
+ {0, AC_SYSTEM, 0, 0, 0x0280, AUTO, "PreviewImage", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0300, AUTO, "PreCaptureFrames", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0301, AUTO, "WhiteBoard", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0302, AUTO, "OneTouchWB", &olOnOffInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0303, AUTO, "WhiteBalanceBracket", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0304, AUTO, "WhiteBalanceBias", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0403, AUTO, "SceneMode", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0404, AUTO, "SerialNumber", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0405, AUTO, "Firmware", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x0e00, AUTO, "PrintIM", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0f00, AUTO, "DataDump", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0f01, AUTO, "DataDump2", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1000, AUTO, "ShutterSpeedValue", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1001, AUTO, "ISOValue", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1002, AUTO, "ApertureValue", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1003, AUTO, "BrightnessValue", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1004, AUTO, "FlashMode", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1005, AUTO, "FlashDevice", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1006, AUTO, "ExposureCompensation", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1007, AUTO, "SensorTemperature", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1008, AUTO, "LensTemperature", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1009, AUTO, "LightCondition", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x100a, AUTO, "FocusRange", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x100b, AUTO, "FocusMode", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x100c, AUTO, "ManualFocusDistance", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x100d, AUTO, "ZoomStepCount", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x100e, AUTO, "FocusStepCount", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x100f, AUTO, "Sharpness", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1010, AUTO, "FlashChargeLevel", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1011, AUTO, "ColorMatrix", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1012, AUTO, "BlackLevel", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1013, AUTO, "ColorTemperatureBG", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1014, AUTO, "ColorTemperatureRG", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1015, AUTO, "WBMode", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1017, AUTO, "RedBalance", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1018, AUTO, "BlueBalance", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1019, AUTO, "ColorMatrixNumber", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x101a, AUTO, "SerialNumber", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x101b, AUTO, "ExternalFlashAE1_0", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x101c, AUTO, "ExternalFlashAE2_0", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x101d, AUTO, "InternalFlashAE1_0", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x101e, AUTO, "InternalFlashAE2_0", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x101f, AUTO, "ExternalFlashAE1", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1020, AUTO, "ExternalFlashAE2", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1021, AUTO, "InternalFlashAE1", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1022, AUTO, "InternalFlashAE2", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1023, AUTO, "FlashExposureComp", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1024, AUTO, "InternalFlashTable", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1025, AUTO, "ExternalFlashGValue", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1026, AUTO, "ExternalFlashBounce", &olYesNoInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1027, AUTO, "ExternalFlashZoom", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1028, AUTO, "ExternalFlashMode", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1029, AUTO, "Contrast", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x102a, AUTO, "SharpnessFactor", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x102b, AUTO, "ColorControl", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x102c, AUTO, "ValidBits", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x102d, AUTO, "CoringFilter", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x102e, AUTO, "OlympusImageWidth", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x102f, AUTO, "OlympusImageHeight", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1030, AUTO, "SceneDetect", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1031, AUTO, "SceneArea", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1033, AUTO, "SceneDetectData", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1034, AUTO, "CompressionRatio", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x1035, AUTO, "PreviewImageValid", &olYesNoInterpreter},
+ {1, AC_WRITE,  0, 0, 0x1036, AUTO, "PreviewImageStart", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x1037, AUTO, "PreviewImageLength", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1038, AUTO, "AFResult", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x1039, AUTO, "CCDScanMode", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x103a, AUTO, "NoiseReduction", &olOnOffInterpreter},
+ {0, AC_WRITE,  0, 0, 0x103b, AUTO, "InfinityLensStep", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x103c, AUTO, "NearLensStep", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x103d, AUTO, "LightValueCenter", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x103e, AUTO, "LightValuePeriphery", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x103f, AUTO, "FieldCount", &stdInterpreter},
+ {0, AC_WRITE,  0, olyEquipmentAttribs, 0x2010, AUTO, "Equipment", &stdInterpreter},
+ {0, AC_WRITE,  0, olyCameraSettingsAttribs, 0x2020, AUTO, "CameraSettings", &stdInterpreter},
+ {0, AC_WRITE,  0, olyRawDevelopmentAttribs, 0x2030, AUTO, "RawDevelopment", &stdInterpreter},
+ {0, AC_WRITE,  0, olyRawDevelopment2Attribs, 0x2031, AUTO, "RawDev2", &stdInterpreter},
+ {0, AC_WRITE,  0, olyImageProcessingAttribs, 0x2040, AUTO, "ImageProcessing", &stdInterpreter},
+ {0, AC_WRITE,  0, olyFocusInfoAttribs, 0x2050, AUTO, "FocusInfo", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x2100, AUTO, "Olympus2100", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x2300, AUTO, "Olympus2300", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x2400, AUTO, "Olympus2400", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x2500, AUTO, "Olympus2500", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x2600, AUTO, "Olympus2600", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x2700, AUTO, "Olympus2700", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x2800, AUTO, "Olympus2800", &stdInterpreter},
+ {1, AC_WRITE,  0, 0, 0x2900, AUTO, "Olympus2900", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x3000, AUTO, "RawInfo", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 }
 #endif
 

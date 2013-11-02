@@ -31,7 +31,7 @@ using namespace std;
 
 namespace rtexif {
 
-StdInterpreter stdInterpreter;
+Interpreter stdInterpreter;
 
 //--------------- class TagDirectory ------------------------------------------
 // this class is a collection (an array) of tags
@@ -45,12 +45,10 @@ TagDirectory::TagDirectory ()
 TagDirectory::TagDirectory (TagDirectory* p, const TagAttrib* ta, ByteOrder border) 
     : attribs(ta), order(border), parent(p) {}
 
-TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored) {
+TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib* ta, ByteOrder border, bool skipIgnored)
+  : attribs(ta), order(border), parent(p)
+{
 
-  attribs = ta;
-  order = border;
-  parent = p;
-  
   int numOfTags = get2 (f, order);
   if (numOfTags<=0 || numOfTags>200)
     return;
@@ -106,8 +104,8 @@ void TagDirectory::sort () {
 }
 TagDirectory*  TagDirectory::getRoot()
 {
-	if(parent) return parent->getRoot();
-	else return this;
+    if(parent) return parent->getRoot();
+    else return this;
 }
 
 const TagAttrib* TagDirectory::getAttrib (int id) {
@@ -130,20 +128,49 @@ const TagAttrib* TagDirectory::getAttrib (const char* name) {
     return NULL;
 }
 
-void TagDirectory::printAll () const {
-  
+const TagAttrib* TagDirectory::getAttribP (const char* name) {
+
+  if (attribs)
+      for (int i=0; attribs[i].ignore!=-1; i++) {
+          // Yeah, self made comparison!
+          const char *n = name;
+          const char *a = attribs[i].name;
+          while (*n && *a && *n==*a) { n++; a++; };
+          if (!*a && (!*n || *n=='/')) {
+              // we reached the end of the subpart of name and the end of attribs->name, so they match
+              if (*n=='/') {
+                  Tag* tag = getTag (attribs[i].ID);
+                  TagDirectory *tagDir;
+                  if (attribs[i].subdirAttribs && tag && (tagDir=tag->getDirectory()))
+                      return tagDir->getAttribP(n+1);
+                  else
+                      return NULL;
+              }
+              else
+                  return &attribs[i];
+          }
+      }
+  return NULL;
+}
+
+void TagDirectory::printAll (unsigned int level) const {
+
+  // set the spacer prefix string
+  char prefixStr[level*4+1];
+  unsigned int i;
+  for (i=0; i<level*4; i++)
+    prefixStr[i] = ' ';
+  prefixStr[i] = '\0';
+
+  // recursively iterate over the tag list
   for (size_t i=0; i<tags.size(); i++) {
     std::string name = tags[i]->nameToString ();
     if (tags[i]->isDirectory())
         for (int j=0; tags[i]->getDirectory(j); j++) {
-            printf ("==== DIRECTORY %s[%d]: ====\n", name.c_str(), j);
-            tags[i]->getDirectory(j)->printAll ();
-            printf ("==== END OF DIRECTORY %s[%d] ====\n", name.c_str(), j);
+            tags[i]->getDirectory(j)->printAll (level+1);
         }
-    else { 
+    else
         std::string value = tags[i]->valueToString ();
-        printf ("%s: %s\n", name.c_str(), value.c_str());
-     }
   }
 }
 
@@ -195,22 +222,47 @@ Tag* TagDirectory::getTag (const char* name) const {
   return NULL;
 }
 
+Tag* TagDirectory::getTagP (const char* name) const {
+
+  if (attribs)
+      for (int i=0; attribs[i].ignore!=-1; i++) {
+          // Yeah, self made comparison!
+          const char *n = name;
+          const char *a = attribs[i].name;
+          while (*n && *a && *n==*a) { n++; a++; };
+          if (!*a && (!*n || *n=='/')) {
+              // we reached the end of the subpart of name and the end of attribs->name, so they match
+              if (*n=='/') {
+                  Tag* tag = getTag (attribs[i].ID);
+                  TagDirectory *tagDir;
+                  if (attribs[i].subdirAttribs && tag && (tagDir=tag->getDirectory()))
+                      return tagDir->getTagP(n+1);
+                  else
+                      return NULL;
+              }
+              else
+                  return getTag (attribs[i].ID);
+          }
+      }
+  return NULL;
+}
+
 Tag* TagDirectory::findTag (const char* name) const {
-	  if (attribs) {
-		for (int i=0; attribs[i].ignore!=-1; i++)
-			if (!strcmp (attribs[i].name, name)){
-				Tag* t= getTag (attribs[i].ID);
-				if(t) return t;
-				else break;
-			}
-	  }
-	  for (size_t i=0; i<tags.size(); i++)
-	     if(tags[i]->isDirectory()){
-	    	 TagDirectory *dir = tags[i]->getDirectory();
-	    	 Tag* t=dir->findTag(name);
-	    	 if(t) return t;
-	     }
-	  return NULL;
+  if (attribs) {
+    for (int i=0; attribs[i].ignore!=-1; i++)
+        if (!strcmp (attribs[i].name, name)){
+            Tag* t= getTag (attribs[i].ID);
+            if(t) return t;
+            else break;
+        }
+  }
+  for (size_t i=0; i<tags.size(); i++)
+     if(tags[i]->isDirectory()){
+     TagDirectory *dir = tags[i]->getDirectory();
+     Tag* t=dir->findTag(name);
+     if(t) return t;
+     }
+  return NULL;
 }
 
 // Searches a simple value, as either attribute or element
@@ -395,24 +447,24 @@ TagDirectoryTable::TagDirectoryTable ()
 TagDirectoryTable::TagDirectoryTable (TagDirectory* p, unsigned char *v,int memsize,int offs, TagType type, const TagAttrib* ta, ByteOrder border)
 :TagDirectory(p,ta,border),zeroOffset(offs),valuesSize(memsize),defaultType( type )
 {
-	  values = new unsigned char[valuesSize];
-	  memcpy(values,v,valuesSize);
-	  for( const TagAttrib* tattr = ta; tattr->ignore != -1; tattr++){
-		  Tag* newTag = new Tag (this, tattr, (values + zeroOffset+ tattr->ID*getTypeSize(type)),type);
-		  tags.push_back(newTag); // Here we can insert more tag in the same offset because of bitfield meaning
-	  }
+    values = new unsigned char[valuesSize];
+    memcpy(values,v,valuesSize);
+    for( const TagAttrib* tattr = ta; tattr->ignore != -1; tattr++){
+        Tag* newTag = new Tag (this, tattr, (values + zeroOffset+ tattr->ID*getTypeSize(type)), tattr->type == AUTO ? type : tattr->type);
+        tags.push_back(newTag); // Here we can insert more tag in the same offset because of bitfield meaning
+    }
 }
 
 TagDirectoryTable::TagDirectoryTable (TagDirectory* p, FILE* f, int memsize,int offs, TagType type, const TagAttrib* ta, ByteOrder border)
 :TagDirectory(p,ta,border),zeroOffset(offs),valuesSize(memsize),defaultType( type )
 {
-	  values = new unsigned char[valuesSize];
-	  fread (values, 1, valuesSize, f);
+    values = new unsigned char[valuesSize];
+    fread (values, 1, valuesSize, f);
 
-	  for( const TagAttrib* tattr = ta; tattr->ignore != -1; tattr++){
-		  Tag* newTag = new Tag (this, tattr, (values + zeroOffset+ tattr->ID*getTypeSize(type)),type);
-		  tags.push_back(newTag); // Here we can insert more tag in the same offset because of bitfield meaning
-	  }
+    for( const TagAttrib* tattr = ta; tattr->ignore != -1; tattr++){
+        Tag* newTag = new Tag (this, tattr, (values + zeroOffset+ tattr->ID*getTypeSize(type)), tattr->type == AUTO ? type : tattr->type);
+        tags.push_back(newTag); // Here we can insert more tag in the same offset because of bitfield meaning
+    }
 }
 TagDirectory* TagDirectoryTable::clone (TagDirectory* parent) {
 
@@ -422,20 +474,20 @@ TagDirectory* TagDirectoryTable::clone (TagDirectory* parent) {
 
 TagDirectoryTable::~TagDirectoryTable()
 {
-	if(values)
-		delete [] values;
+    if(values)
+        delete [] values;
 }
 int TagDirectoryTable::calculateSize ()
 {
-	return valuesSize;
+    return valuesSize;
 }
 
 int TagDirectoryTable::write (int start, unsigned char* buffer) {
-	if( values && valuesSize){
+    if( values && valuesSize){
         memcpy(buffer+start,values,valuesSize);
         return start+valuesSize;
-	}else
-		return start;
+    }else
+        return start;
 }
 
 //--------------- class Tag ---------------------------------------------------
@@ -445,67 +497,280 @@ int TagDirectoryTable::write (int start, unsigned char* buffer) {
 Tag::Tag (TagDirectory* p, FILE* f, int base) 
   : type(INVALID), count(0), value(NULL), allocOwnMemory(true), attrib(NULL), parent(p), directory(NULL) {
 
-  tag   = get2 (f, getOrder());
-  type  = (TagType)get2 (f, getOrder());
-  count = get4 (f, getOrder());
+    ByteOrder order = getOrder();
 
-  makerNoteKind = NOMK;
-  keep = false;
+    tag   = get2 (f, order);
+    type  = (TagType)get2 (f, order);
+    count = get4 (f, order);
 
-  // filter out invalid tags
-  // note the large count is to be able to pass LeafData ASCII tag which can be up to almost 10 megabytes,
-  // (only a small part of it will actually be parsed though)
-  if ((int)type<1 || (int)type>14 || count>10*1024*1024) {
-    type = INVALID;
+    makerNoteKind = NOMK;
+    keep = false;
+
+    // filter out invalid tags
+    // note the large count is to be able to pass LeafData ASCII tag which can be up to almost 10 megabytes,
+    // (only a small part of it will actually be parsed though)
+    if ((int)type<1 || (int)type>14 || count>10*1024*1024) {
+        type = INVALID;
+        return;
+    }
+
+    // store next Tag's position in file
+    int save = ftell(f) + 4;
+
+    // load value field (possibly seek before)
+    valuesize = count * getTypeSize(type);
+
+    if (valuesize > 4) 
+        fseek (f, get4(f, getOrder()) + base, SEEK_SET);
+
+    attrib = parent->getAttrib (tag);
+
+    if (attrib && (attrib->action==AC_WRITE || attrib->action==AC_NEW))
+        keep = true;
+
+    if( tag == 0xc634 ){ // DNGPrivateData
+        int currPos = ftell(f);
+        char buffer[32],*p=buffer;
+        while( fread (p, 1, 1, f ) && *p != 0 && p-buffer<sizeof(buffer)-1 )p++;
+        *p=0;
+        if( !strncmp(buffer,"Adobe",5) ){
+            fread (buffer, 1, 14, f );
+            if( !strncmp( buffer,"MakN",4) ){
+                ByteOrder bom = ((buffer[8]=='M' && buffer[9]=='M')?MOTOROLA:INTEL) ;
+                Tag* tmake = parent->getRoot()->findTag("Make");
+                std::string make( tmake ? tmake->valueToString():"");
+                int save = ftell(f);
+                int originalOffset = sget4( (unsigned char*)&buffer[10], ( make.find("SONY") != std::string::npos ) || ( make.find("Canon") != std::string::npos ) || ( make.find("OLYMPUS") != std::string::npos ) ?MOTOROLA:bom );
+
+                if( !parseMakerNote(f, save - originalOffset , bom ))
+                    type = INVALID;
+            }
+        }else if( !strncmp(buffer,"PENTAX",6) ){
+            makerNoteKind = HEADERIFD;
+            fread (buffer, 1, 2, f);
+            directory = new TagDirectory*[2];
+            directory[0] = new TagDirectory (parent, f, currPos, pentaxAttribs, strncmp(buffer,"MM",2)? INTEL:MOTOROLA);
+            directory[1] = NULL;
+         }else
+             /* SONY uses this tag to write hidden info and pointer to private encrypted tags
+          {
+              unsigned offset =sget4((unsigned char*)buffer, order);
+              fseek(f,offset,SEEK_SET);
+              makerNoteKind = TABLESUBDIR;
+              directory = new TagDirectory*[2];
+              directory[0] = new TagDirectory (parent, f, base, sonyDNGMakerNote, order);
+              directory[1] = NULL;
+              fseek (f, save, SEEK_SET);
+              return;
+          }*/
+              type = INVALID;
+    }
+    // if this tag is the makernote, it needs special treatment (brand specific parsing)
+    if (tag==0x927C && attrib && !strcmp (attrib->name, "MakerNote") ) {
+        if( !parseMakerNote(f,base,order )){
+            type = INVALID;
+            fseek (f, save, SEEK_SET);
+            return;
+        }
+    }
+    else if (attrib && attrib->subdirAttribs) {
+      // Some subdirs are specific of maker and model
+      char make[128], model[128];
+      make[0]=0;
+      model[0]=0;
+      Tag* tmake = parent->getRoot()->getTag ("Make");
+      if (tmake) tmake->toString (make);
+      Tag* tmodel = parent->getRoot()->getTag ("Model");
+      if (tmodel) tmodel->toString (model);
+          if (!strncmp(make, "SONY", 4)) {
+              switch( tag ){
+              case 0x0010:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  if (count == 15360)
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , sonyCameraInfoAttribs, order);
+                  else
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , sonyCameraInfo2Attribs, order);
+                  break;
+              case 0x0114:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  if (count == 280 || count == 364)
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,SHORT , sonyCameraSettingsAttribs, MOTOROLA);
+                  else if (count == 332)
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,SHORT , sonyCameraSettingsAttribs2, MOTOROLA);
+                  else if(count == 1536 || count == 2048)
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE  , sonyCameraSettingsAttribs3, INTEL);
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              case 0x9405:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  directory[0] = new TagDirectoryTable (parent, f, valuesize,0,SHORT , attrib->subdirAttribs, order);
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              default:
+                  goto defsubdirs;
+              }
+          }else if (!strncmp(make, "PENTAX", 6)) {
+              switch( tag ){
+              case 0x005c:
+              case 0x0205:
+              case 0x0206:
+              case 0x0208:
+              case 0x0216:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , attrib->subdirAttribs, order);
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              case 0x0215:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  directory[0] = new TagDirectoryTable (parent, f, valuesize,0,LONG , attrib->subdirAttribs, order);
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              case 0x0207:
+              {   // There are 2 format pentaxLensDataAttribs
+                  int offsetFirst = 4;  // LensInfo2
+                  if( strstr(model, "*ist") || strstr(model, "GX-1") || strstr(model, "K100D") || strstr(model, "K110D") )
+                      offsetFirst = 3;  // LensInfo
+                  else if( strstr(model, "645D") )
+                      offsetFirst = 13;  // LensInfo3
+                  else if( strstr(model, "K-5") || strstr(model, "K-r") )
+                      offsetFirst = 12;  // LensInfo4
+                  else if( strstr(model, "K-01") )
+                      offsetFirst = 15;  // LensInfo5
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  directory[0] = new TagDirectoryTable (parent, f, valuesize,offsetFirst,BYTE , attrib->subdirAttribs, order);
+                  makerNoteKind = TABLESUBDIR;
+              }
+                  break;
+              case 0x0239:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , attrib->subdirAttribs, order);
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              default:
+                  goto defsubdirs;
+              }
+          }else if (!strncmp(make, "Canon", 5)) {
+              switch( tag ){
+              case 0x0001:
+              case 0x0002:
+              case 0x0004:
+              case 0x0005:
+              case 0x0093:
+              case 0x0098:
+              case 0x00a0:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  directory[0] = new TagDirectoryTable (parent, f, valuesize,0,SSHORT , attrib->subdirAttribs, order);
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              case 0x009a:
+              case 0x4013:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  directory[0] = new TagDirectoryTable (parent, f, valuesize,0,LONG , attrib->subdirAttribs, order);
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              default:
+                  goto defsubdirs;
+              }
+          }else if (!strncmp(make, "NIKON", 5)) {
+              switch (tag) {
+              case 0x0025: {
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , attrib->subdirAttribs, order);
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              }
+              default:
+                  goto defsubdirs;
+              }
+          }else if(type==UNDEFINED){
+              count = 1;
+              type = LONG;
+              directory = new TagDirectory*[2];
+              directory[0] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
+              directory[1] = NULL;
+          }else
+              goto defsubdirs;
+    }
+    else {
+      // read value
+      value = new unsigned char [valuesize];
+      fread (value, 1, valuesize, f);
+    }
+    // seek back to the saved position
+    fseek (f, save, SEEK_SET);
     return;
-  }
 
-  // save file position
-  int save = ftell(f) + 4;
+defsubdirs:
+    // read value
+    value = new unsigned char [valuesize];
+    fread (value, 1, valuesize, f);
+    int pos = ftell (f);
+    // count the number of valid subdirs
+    int sdcount = count;
+    if (sdcount>0) {
+        if (parent->getAttribTable()==olympusAttribs)
+            sdcount = 1;
+        // allocate space
+        directory = new TagDirectory*[sdcount+1];
+        // load directories
+        for (size_t j=0,i=0; j<count; j++,i++) {
+            int newpos = base + toInt(j*4, LONG);
+            fseek (f, newpos, SEEK_SET);
+            directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, order);
+            fseek (f, pos, SEEK_SET);
+        }
+        // set the terminating NULL
+        directory[sdcount] = NULL;
+     }
+     else
+        type = INVALID;
 
-  // load value field (possibly seek before)
-  valuesize = count * getTypeSize(type);
+    // seek back to the saved position
+    fseek (f, save, SEEK_SET);
+    return;
 
-  if (valuesize > 4) 
-    fseek (f, get4(f, getOrder()) + base, SEEK_SET);
+}
 
-  attrib = parent->getAttrib (tag); 
-
-  if (attrib && (attrib->action==1 || attrib->action==3))
-    keep = true;
-
-  // if this tag is the makernote, it needs special treatment (brand specific parsing)
-  if (tag==0x927C && attrib && !strcmp (attrib->name, "MakerNote")) {
+bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
+{
     value = NULL;
-    // select format of makernote
-    char make[128], model[128];
-    Tag* tmake = parent->getParent()->getTag ("Make");
-    if (tmake) 
-        tmake->toString (make);
-    else
-        make[0] = 0;
-    Tag* tmodel = parent->getParent()->getTag ("Model");
-    if (tmodel)
-        tmodel->toString (model);
-    else
-        model[0] = 0;
-    if (!strncmp(make, "NIKON", 5)) {
-        if (!strncmp(model, "NIKON E700",10)||!strncmp(model, "NIKON E800",10)||!strncmp(model, "NIKON E900",10)||!strncmp(model, "NIKON E900S",11)||!strncmp(model, "NIKON E910", 10)||!strncmp(model, "NIKON E950", 10)) {
+    Tag* tmake = parent->getRoot()->findTag("Make");
+    std::string make( tmake ? tmake->valueToString():"");
+
+    Tag* tmodel = parent->getRoot()->findTag ("Model");
+    std::string model( tmodel ? tmodel->valueToString():"");
+
+    if ( make.find( "NIKON" ) != std::string::npos ) {
+        if ( model.find("NIKON E700")!= std::string::npos ||
+             model.find("NIKON E800")!= std::string::npos ||
+             model.find("NIKON E900")!= std::string::npos ||
+             model.find("NIKON E900S")!= std::string::npos ||
+             model.find("NIKON E910")!= std::string::npos ||
+             model.find("NIKON E950")!= std::string::npos ) {
             makerNoteKind = HEADERIFD;
             valuesize = 8;
             value = new unsigned char[8];
             fread (value, 1, 8, f);
             directory = new TagDirectory*[2];
-            directory[0] = new TagDirectory (parent, f, base, nikon2Attribs, getOrder());
+            directory[0] = new TagDirectory (parent, f, base, nikon2Attribs, bom);
             directory[1] = NULL;
-        }
-        else if (!strncmp(model, "NIKON E990",10)||(!strncmp(model, "NIKON D1",8) && model[8]!='0')) {
+        } else if ( model.find("NIKON E990")!= std::string::npos ||
+                   (model.find("NIKON D1")!= std::string::npos && model.size()>8 && model.at(8)!='0')) {
             makerNoteKind = IFD;
             directory = new TagDirectory*[2];
-            directory[0] = new TagDirectory (parent, f, base, nikon3Attribs, getOrder());
+            directory[0] = new TagDirectory (parent, f, base, nikon3Attribs, bom);
             directory[1] = NULL;
-        }
-        else {
+        } else {
             // needs refinement! (embedded tiff header parsing)
             makerNoteKind = NIKON3;
             valuesize = 18;
@@ -513,26 +778,23 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             int basepos = ftell (f);
             fread (value, 1, 18, f);
             directory = new TagDirectory*[2];
-            directory[0] = new TagDirectory (parent, f, basepos+10, nikon3Attribs, getOrder());
+            directory[0] = new TagDirectory (parent, f, basepos+10, nikon3Attribs, bom);
             directory[1] = NULL;
         }
-    }
-    else if (!strncmp(make, "Canon", 5)) {
+    } else if ( make.find( "Canon" ) != std::string::npos  ) {
         makerNoteKind = IFD;
         directory = new TagDirectory*[2];
-        directory[0] = new TagDirectory (parent, f, base, canonAttribs, getOrder());
+        directory[0] = new TagDirectory (parent, f, base, canonAttribs, bom);
         directory[1] = NULL;
-    }
-    else if (!strncmp(make, "PENTAX", 6)) {
+    } else if ( make.find( "PENTAX" ) != std::string::npos ) {
         makerNoteKind = HEADERIFD;
         valuesize = 6;
         value = new unsigned char[6];
         fread (value, 1, 6, f);
         directory = new TagDirectory*[2];
-        directory[0] = new TagDirectory (parent, f, base, pentaxAttribs, getOrder());
+        directory[0] = new TagDirectory (parent, f, base, pentaxAttribs, bom);
         directory[1] = NULL;
-    }    
-    else if (!strncmp(make, "FUJIFILM", 8)) {
+    } else if ( make.find( "FUJIFILM" ) != std::string::npos ) {
         makerNoteKind = FUJI;
         valuesize = 12;
         value = new unsigned char[12];
@@ -540,28 +802,25 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
         directory = new TagDirectory*[2];
         directory[0] = new TagDirectory (parent, f, ftell(f)-12, fujiAttribs, INTEL);
         directory[1] = NULL;
-    }    
-    else if (!strncmp(make, "KONICA MINOLTA", 14) || !strncmp(make, "Minolta", 7)) {
+    } else if ( make.find( "KONICA MINOLTA" ) != std::string::npos || make.find( "Minolta" ) != std::string::npos ) {
         makerNoteKind = IFD;
         directory = new TagDirectory*[2];
-        directory[0] = new TagDirectory (parent, f, base, minoltaAttribs, getOrder());
+        directory[0] = new TagDirectory (parent, f, base, minoltaAttribs, bom);
         directory[1] = NULL;
-    }    
-    else if (!strncmp(make, "SONY", 4)) {
+    } else if ( make.find( "SONY" ) != std::string::npos ) {
         valuesize = 12;
         value = new unsigned char[12];
         fread (value, 1, 12, f);
-        if (!strncmp((char*)value, "SONY DSC", 8)) 
+        if (!strncmp((char*)value, "SONY DSC", 8))
             makerNoteKind = HEADERIFD;
         else {
             makerNoteKind = IFD;
             fseek (f, -12, SEEK_CUR);
         }
         directory = new TagDirectory*[2];
-        directory[0] = new TagDirectory (parent, f, base, sonyAttribs, getOrder());
+        directory[0] = new TagDirectory (parent, f, base, sonyAttribs, bom );
         directory[1] = NULL;
-    }    
-    else if (!strncmp(make, "OLYMPUS", 7)) {
+    } else if ( make.find( "OLYMPUS" ) != std::string::npos ) {
         makerNoteKind = HEADERIFD;
         valuesize = 8;
         value = new unsigned char[12];
@@ -573,147 +832,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             fread (value+8, 1, 4, f);
             valuesize = 12;
             directory[0] = new TagDirectory (parent, f, ftell(f)-12, olympusAttribs, value[8]=='I' ? INTEL : MOTOROLA);
-        }
-        else 
-            directory[0] = new TagDirectory (parent, f, base, olympusAttribs, getOrder());
-    }    
-    else {
-        type = INVALID;
-        fseek (f, save, SEEK_SET);
-        return;
-    }
-  }
-  else if (attrib && attrib->subdirAttribs) {
-	    // Some subdirs are specific of maker and model
-	    char make[128], model[128];
-	    Tag* tmake = parent->getRoot()->getTag ("Make");
-	    if (tmake) tmake->toString (make);
-	    else       make[0] = 0;
-	    Tag* tmodel = parent->getRoot()->getTag ("Model");
-	    if (tmodel) tmodel->toString (model);
-	    else        model[0] = 0;
-
-
-        if (!strncmp(make, "SONY", 4)) {
-			switch( tag ){
-			case 0x0114:
-				{
-			        directory = new TagDirectory*[2];
-			        directory[1] = NULL;
-					if( strstr(model, "A330")  || strstr(model, "A380") )
-					   directory[0] = new TagDirectoryTable (parent, f, valuesize*2,0,SHORT , sonyCameraSettingsAttribs2, MOTOROLA);
-					else
-					   directory[0] = new TagDirectoryTable (parent, f, valuesize*2,0,SHORT , sonyCameraSettingsAttribs, MOTOROLA);
-					makerNoteKind = TABLESUBDIR;
-				}
-				break;
-			default:
-				goto defsubdirs;
-			}
-        }else if (!strncmp(make, "PENTAX", 6)) {
-			switch( tag ){
-			case 0x005c:
-			case 0x0205:
-			case 0x0206:
-			case 0x0208:
-			case 0x0216:
-		        directory = new TagDirectory*[2];
-		        directory[1] = NULL;
-		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , attrib->subdirAttribs, getOrder());
-		        makerNoteKind = TABLESUBDIR;
-				break;
-			case 0x0215:
-		        directory = new TagDirectory*[2];
-		        directory[1] = NULL;
-		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,LONG , attrib->subdirAttribs, getOrder());
-		        makerNoteKind = TABLESUBDIR;
-				break;
-			case 0x0207:
-				{   // There are 2 format pentaxLensDataAttribs
-					int offsetFirst = 4;
-					if( strstr(model, "*ist") || strstr(model, "GX-1") || strstr(model, "K100D") || strstr(model, "K110D") )
-						offsetFirst = 3;
-					if( strstr(model, "K-5") || strstr(model, "K-r") )
-						offsetFirst = 12;
-			        directory = new TagDirectory*[2];
-			        directory[1] = NULL;
-					directory[0] = new TagDirectoryTable (parent, f, valuesize,offsetFirst,BYTE , attrib->subdirAttribs, getOrder());
-					makerNoteKind = TABLESUBDIR;
-				}
-				break;
-			default:
-				goto defsubdirs;
-			}
-        }else if (!strncmp(make, "Canon", 5)) {
-			switch( tag ){
-			case 0x0001:
-			case 0x0002:
-			case 0x0004:
-			case 0x0005:
-			case 0x0093:
-			case 0x0098:
-			case 0x00a0:
-		        directory = new TagDirectory*[2];
-		        directory[1] = NULL;
-		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,SSHORT , attrib->subdirAttribs, getOrder());
-		        makerNoteKind = TABLESUBDIR;
-				break;
-			case 0x009a:
-			case 0x4013:
-		        directory = new TagDirectory*[2];
-		        directory[1] = NULL;
-		        directory[0] = new TagDirectoryTable (parent, f, valuesize,0,LONG , attrib->subdirAttribs, getOrder());
-		        makerNoteKind = TABLESUBDIR;
-				break;
-			default:
-				goto defsubdirs;
-			}
-        }else if(type==UNDEFINED){
-            count = 1;
-            type = LONG;
-		directory = new TagDirectory*[2];
-        	directory[0] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
-        	directory[1] = NULL;
-        }else
-        	goto defsubdirs;
-  }
-  else {
-    // read value
-    value = new unsigned char [valuesize];
-    fread (value, 1, valuesize, f);
-  }
-  // seek back to the saved position
-  fseek (f, save, SEEK_SET);
-  return;
-defsubdirs:
-		// read value
-		value = new unsigned char [valuesize];
-		fread (value, 1, valuesize, f);
-          int pos = ftell (f);
-          // count the number of valid subdirs
-          int sdcount = count;
-          if (sdcount>0) {
-              if (parent->getAttribTable()==olympusAttribs)
-                  sdcount = 1;
-              // allocate space
-              directory = new TagDirectory*[sdcount+1];
-              // load directories
-              for (size_t j=0,i=0; j<count; j++,i++) {
-                  int newpos = base + toInt(j*4, LONG);
-                  fseek (f, newpos, SEEK_SET);
-                  directory[i] = new TagDirectory (parent, f, base, attrib->subdirAttribs, getOrder());
-                  fseek (f, pos, SEEK_SET);
-              }
-              // set the terminating NULL
-              directory[sdcount] = NULL;
-           }
-           else
-              type = INVALID;
-
-// seek back to the saved position
-fseek (f, save, SEEK_SET);
-return;
-
+        } else
+            directory[0] = new TagDirectory (parent, f, base, olympusAttribs, bom);
+    } else
+        return false;
+    return true;
 }
 
 Tag* Tag::clone (TagDirectory* parent) {
@@ -782,7 +905,7 @@ void Tag::fromInt (int v) {
 
 void Tag::fromString (const char* v, int size) {
 
-	if( value && allocOwnMemory)
+    if( value && allocOwnMemory)
         delete [] value;
     if (size<0)
         valuesize = strlen (v) + 1;
@@ -795,6 +918,8 @@ void Tag::fromString (const char* v, int size) {
 }
 
 int Tag::toInt (int ofs, TagType astype) {
+  if (attrib)
+    return attrib->interpreter->toInt(this, ofs, astype);
 
   int a;
   if (astype == INVALID)
@@ -816,6 +941,9 @@ int Tag::toInt (int ofs, TagType astype) {
 }
 
 double Tag::toDouble (int ofs) {
+  if (attrib)
+    return attrib->interpreter->toDouble(this, ofs);
+
   union IntFloat { uint32_t i; float f; } conv;
 
   double ud, dd;
@@ -836,6 +964,17 @@ double Tag::toDouble (int ofs) {
     default: return 0.; // Quick fix for missing cases (INVALID, DOUBLE, OLYUNDEF, SUBDIR)
   }
   return 0.;
+}
+
+/**
+ * @brief Create an array of the elements
+ */
+double *Tag::toDoubleArray(int ofs) {
+    double *values = new double[count];
+    for (int i=0; i<count; ++i) {
+        values[i] = toDouble(ofs+i*getTypeSize(type));
+    }
+    return values;
 }
 
 void Tag::toRational (int& num, int& denom, int ofs) {
@@ -899,7 +1038,7 @@ void Tag::toString (char* buffer, int ofs) {
         case SRATIONAL: 
         case RATIONAL: sprintf (b, "%d/%d", (int)sget4 (value+8*i+ofs, getOrder()), (int)sget4 (value+8*i+ofs+4, getOrder())); break; 
         case FLOAT:    sprintf (b, "%g", toDouble(8*i+ofs)); break;
-	default: break;
+    default: break;
     }
   }
   if (count > maxcount)
@@ -1005,7 +1144,7 @@ int Tag::write (int offs, int dataOffs, unsigned char* buffer) {
         return dataOffs;
     }
     else if( makerNoteKind==TABLESUBDIR){
-    	sset4 (dataOffs, buffer+offs, parent->getOrder());
+        sset4 (dataOffs, buffer+offs, parent->getOrder());
         dataOffs = directory[0]->write (dataOffs, buffer);
         return dataOffs;
     }
@@ -1057,7 +1196,7 @@ void Tag::initType (unsigned char *data, TagType type)
        value = new unsigned char[valuesize];
        memcpy ((char*)value, data, valuesize);
     }else
-    	value = data;
+        value = data;
 }
 
 void Tag::initInt (int data, TagType t, int cnt) {
@@ -1067,6 +1206,8 @@ void Tag::initInt (int data, TagType t, int cnt) {
         valuesize = 4;
     else if (t==SHORT) 
         valuesize = 2;
+    else if (t==BYTE)
+        valuesize = 1;
     else if (t==RATIONAL) 
         valuesize = 8;
 
@@ -1187,7 +1328,7 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root) 
   if (numOfTags > 100) return;
   
   float exptime, shutter, aperture, fnumber, ev;
-  exptime = fnumber = shutter = aperture = ev = -1000;
+  exptime = fnumber = shutter = aperture = ev = -1000.f;
   int focal_len, iso;
   focal_len = iso = -1;
   
@@ -1285,12 +1426,12 @@ void ExifManager::parseCIFF (FILE* f, int base, int length, TagDirectory* root) 
         saveCIFFMNTag (f, root, len, "CanonShotInfo");
 
         iso = pow (2, (get4(f, INTEL),get2(f, INTEL))/32.0 - 4) * 50;
-        aperture  = ((get2(f, INTEL),(short)get2(f, INTEL))/32.0);
+        aperture  = (get2(f, INTEL),(short)get2(f, INTEL))/32.0f;
         fnumber = pow (2, aperture/2);
-        shutter = ((short)get2(f, INTEL))/32.0;
-        ev = ((short)get2(f, INTEL))/32.0;
+        shutter = ((short)get2(f, INTEL))/32.0f;
+        ev = ((short)get2(f, INTEL))/32.0f;
         fseek (f, 34, SEEK_CUR);
-        if (shutter > 1e6) shutter = get2 (f, INTEL) / 10.0; 
+        if (shutter > 1e6) shutter = get2 (f, INTEL) / 10.0f;
         exptime   = pow (2,-shutter);
     }
     if (type == 0x5029) {
@@ -1862,13 +2003,13 @@ unsigned short sget2 (unsigned char *s, rtexif::ByteOrder order) {
   else			return s[0] << 8 | s[1];
 }
 
-int sget4 (unsigned char *s, rtexif::ByteOrder order) {
+inline int sget4 (unsigned char *s, rtexif::ByteOrder order) {
 
   if (order == rtexif::INTEL)   return s[0] | s[1] << 8 | s[2] << 16 | s[3] << 24;
   else                  return s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3];
 }
 
-unsigned short get2 (FILE* f, rtexif::ByteOrder order) {
+inline unsigned short get2 (FILE* f, rtexif::ByteOrder order) {
 
   unsigned char str[2] = { 0xff,0xff };
   fread (str, 1, 2, f);
