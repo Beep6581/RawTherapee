@@ -406,30 +406,31 @@ CAFocalInterpreter caFocalInterpreter;
 
 class CALensInterpreter : public IntLensInterpreter< int > {
     public:
-	    CALensInterpreter () {
-	    	choices.insert(p_t(1, "Canon EF 50mm f/1.8"));
+        CALensInterpreter () {  // From EXIFTOOL database 'Canon.pm' V3.19
+            choices.insert(p_t(1, "Canon EF 50mm f/1.8"));
             choices.insert(p_t(2, "Canon EF 28mm f/2.8"));
             choices.insert(p_t(3, "Canon EF 135mm f/2.8 Soft"));
             choices.insert(p_t(4, "Canon EF 35-105mm f/3.5-4.5"));
-            choices.insert(p_t(4, "Sigma UC Zoom 35.135mm f/4-5.6"));
+            choices.insert(p_t(4, "Sigma UC Zoom 35-135mm f/4-5.6"));
             choices.insert(p_t(5, "Canon EF 35-70mm f/3.5-4.5"));
             choices.insert(p_t(6, "Canon EF 28-70mm f/3.5-4.5"));
             choices.insert(p_t(6, "Sigma 18-50mm f/3.5-5.6 DC"));
             choices.insert(p_t(6, "Sigma 18-125mm f/3.5-5.6 DC IF ASP"));
-            choices.insert(p_t(6, "Sigma 28-80mm f/3.5-5.6 II Macro"));
             choices.insert(p_t(6, "Tokina AF 193-2 19-35mm f/3.5-4.5"));
+            choices.insert(p_t(6, "Sigma 28-80mm f/3.5-5.6 II Macro"));
             choices.insert(p_t(7, "Canon EF 100-300mm f/5.6L"));
             choices.insert(p_t(8, "Canon EF 100-300mm f/5.6"));
-            choices.insert(p_t(8, "Sigma 70-300mm f/4-5.6 APO DG Macro"));
-            choices.insert(p_t(8, "Tokina AT-X242AF 24-200mm f/3.5-5.6"));
+            choices.insert(p_t(8, "Sigma 70-300mm f/4-5.6 [APO] DG Macro"));
+            choices.insert(p_t(8, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"));
             choices.insert(p_t(9, "Canon EF 70-210mm f/4"));
             choices.insert(p_t(9, "Sigma 55-200mm f/4-5.6 DC"));
             choices.insert(p_t(10, "Canon EF 50mm f/2.5 Macro"));
             choices.insert(p_t(10, "Sigma 50mm f/2.8 EX"));
             choices.insert(p_t(10, "Sigma 28mm f/1.8"));
             choices.insert(p_t(10, "Sigma 105mm f/2.8 Macro EX"));
+            choices.insert(p_t(10, "Sigma 70mm f/2.8 EX DG Macro EF"));
             choices.insert(p_t(11, "Canon EF 35mm f/2"));
-            choices.insert(p_t(13, "Canon EF 15mm f/2.8"));
+            choices.insert(p_t(13, "Canon EF 15mm f/2.8 Fisheye"));
             choices.insert(p_t(14, "Canon EF 50-200mm f/3.5-4.5L"));
             choices.insert(p_t(15, "Canon EF 50-200mm f/3.5-4.5"));
             choices.insert(p_t(16, "Canon EF 35-135mm f/3.5-4.5"));
@@ -438,7 +439,7 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(20, "Canon EF 100-200mm f/4.5A"));
             choices.insert(p_t(21, "Canon EF 80-200mm f/2.8L"));
             choices.insert(p_t(22, "Canon EF 20-35mm f/2.8L"));
-            choices.insert(p_t(22, "Tokina AT-X280AF PRO 28-80mm f/2.8 Aspherical"));
+            choices.insert(p_t(22, "Tokina AT-X 280 AF Pro 28-80mm f/2.8 Aspherical"));
             choices.insert(p_t(23, "Canon EF 35-105mm f/3.5-4.5"));
             choices.insert(p_t(24, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
             choices.insert(p_t(25, "Canon EF 35-80mm f/4-5.6 Power Zoom"));
@@ -459,7 +460,12 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(31, "Tamron SP AF 300mm f/2.8 LD IF"));
             choices.insert(p_t(32, "Canon EF 24mm f/2.8"));
             choices.insert(p_t(32, "Sigma 15mm f/2.8 EX Fisheye"));
+            choices.insert(p_t(33, "Voigtlander or Carl Zeiss Lens"));
             choices.insert(p_t(33, "Voigtlander Ultron 40mm f/2 SLII Aspherical"));
+            choices.insert(p_t(33, "Carl Zeiss Distagon T* 15mm f/2.8 ZE"));
+            choices.insert(p_t(33, "Carl Zeiss Distagon T* 18mm f/3.5 ZE"));
+            choices.insert(p_t(33, "Carl Zeiss Distagon T* 21mm f/2.8 ZE"));
+            choices.insert(p_t(33, "Carl Zeiss Distagon T* 28mm f/2 ZE"));
             choices.insert(p_t(33, "Carl Zeiss Distagon T* 35mm f/2 ZE"));
             choices.insert(p_t(35, "Canon EF 35-80mm f/4-5.6"));
             choices.insert(p_t(36, "Canon EF 38-76mm f/4.5-5.6"));
@@ -476,12 +482,15 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(42, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical IF Macro (A20)"));
             choices.insert(p_t(43, "Canon EF 28-105mm f/4-5.6"));
             choices.insert(p_t(44, "Canon EF 90-300mm f/4.5-5.6"));
-            choices.insert(p_t(45, "Canon EF-S 18-55mm f/3.5-5.6"));
+            choices.insert(p_t(45, "Canon EF-S 18-55mm f/3.5-5.6 II"));
             choices.insert(p_t(46, "Canon EF 28-90mm f/4-5.6"));
             choices.insert(p_t(48, "Canon EF-S 18-55mm f/3.5-5.6 IS"));
             choices.insert(p_t(49, "Canon EF-S 55-250mm f/4-5.6 IS"));
             choices.insert(p_t(50, "Canon EF-S 18-200mm f/3.5-5.6 IS"));
             choices.insert(p_t(51, "Canon EF-S 18-135mm f/3.5-5.6 IS"));
+            choices.insert(p_t(52, "Canon EF-S 18-55mm f/3.5-5.6 IS II"));
+            choices.insert(p_t(53, "Canon EF-S 18-55mm f/3.5-5.6 III"));
+            choices.insert(p_t(54, "Canon EF-S 55-250mm f/4-5.6 IS II"));
             choices.insert(p_t(94, "Canon TS-E 17mm f/4L"));
             choices.insert(p_t(95, "Canon TS-E 24mm f/3.5 L II"));
             choices.insert(p_t(124, "Canon MP-E 65mm f/2.8 1-5x Macro Photo"));
@@ -496,6 +505,8 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(131, "Sigma 17-70mm f/2.8-4.5 DC Macro"));
             choices.insert(p_t(131, "Sigma APO 50-150mm f/2.8 EX DC HSM II"));
             choices.insert(p_t(131, "Sigma APO 120-300mm f/2.8 EX DG HSM"));
+            choices.insert(p_t(131, "Sigma 4.5mm f/2.8 EX DC HSM Circular Fisheye"));
+            choices.insert(p_t(131, "Sigma 70-200mm f/2.8 APO EX HSM"));
             choices.insert(p_t(132, "Canon EF 1200mm f/5.6L"));
             choices.insert(p_t(134, "Canon EF 600mm f/4L IS"));
             choices.insert(p_t(135, "Canon EF 200mm f/1.8L"));
@@ -507,6 +518,14 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(137, "Sigma 24-70mm f/2.8 IF EX DG HSM"));
             choices.insert(p_t(137, "Sigma 18-125mm f/3.8-5.6 DC OS HSM"));
             choices.insert(p_t(137, "Sigma 17-70mm f/2.8-4 DC Macro OS HSM"));
+            choices.insert(p_t(137, "Sigma 17-50mm f/2.8 OS HSM"));
+            choices.insert(p_t(137, "Sigma 18-200mm f/3.5-6.3 II DC OS HSM"));
+            choices.insert(p_t(137, "Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD"));
+            choices.insert(p_t(137, "Sigma 8-16mm f/4.5-5.6 DC HSM"));
+            choices.insert(p_t(137, "Tamron SP 17-50mm f/2.8 XR Di II VC"));
+            choices.insert(p_t(137, "Tamron SP 60mm f/2 Macro Di II"));
+            choices.insert(p_t(137, "Sigma 10-20mm f/3.5 EX DC HSM"));
+            choices.insert(p_t(137, "Tamron SP 24-70mm f/2.8 Di VC USD"));
             choices.insert(p_t(138, "Canon EF 28-80mm f/2.8-4L"));
             choices.insert(p_t(139, "Canon EF 400mm f/2.8L"));
             choices.insert(p_t(140, "Canon EF 500mm f/4.5L"));
@@ -518,7 +537,7 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(146, "Canon EF 70-210mm f/3.5-4.5 USM"));
             choices.insert(p_t(147, "Canon EF 35-135mm f/4-5.6 USM"));
             choices.insert(p_t(148, "Canon EF 28-80mm f/3.5-5.6 USM"));
-            choices.insert(p_t(149, "Canon EF 100mm f/2"));
+            choices.insert(p_t(149, "Canon EF 100mm f/2 USM"));
             choices.insert(p_t(150, "Canon EF 14mm f/2.8L"));
             choices.insert(p_t(150, "Sigma 20mm f/1.8 EX"));
             choices.insert(p_t(150, "Sigma 24mm f/1.8 DG Macro EX"));
@@ -530,7 +549,7 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(152, "Sigma 10-20mm f/4-5.6"));
             choices.insert(p_t(152, "Sigma 100-300mm f/4"));
             choices.insert(p_t(153, "Canon EF 35-350mm f/3.5-5.6L"));
-            choices.insert(p_t(153, "Sigma APO 50-500mm f/4-6.3 HSM EX"));
+            choices.insert(p_t(153, "Sigma 50-500mm f/4-6.3 APO HSM EX"));
             choices.insert(p_t(153, "Tamron AF 28-300mm f/3.5-6.3 XR LD Aspherical IF Macro"));
             choices.insert(p_t(153, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical IF Macro (A14)"));
             choices.insert(p_t(153, "Tamron 18-250mm f/3.5-6.3 Di II LD Aspherical IF Macro"));
@@ -540,11 +559,15 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(156, "Tamron SP 70-300mm f/4-5.6 Di VC USD"));
             choices.insert(p_t(160, "Canon EF 20-35mm f/3.5-4.5 USM"));
             choices.insert(p_t(160, "Tamron AF 19-35mm f/3.5-4.5"));
+            choices.insert(p_t(160, "Tokina AT-X 124 AF Pro DX 12-24mm f/4"));
+            choices.insert(p_t(160, "Tokina AT-X 107 AF DX 10-17mm f/3.5-4.5 Fisheye"));
+            choices.insert(p_t(160, "Tokina AT-X 116 AF Pro DX 11-16mm f/2.8"));
             choices.insert(p_t(161, "Canon EF 28-70mm f/2.8L"));
             choices.insert(p_t(161, "Sigma 24-70mm f/2.8 EX"));
             choices.insert(p_t(161, "Sigma 28-70mm f/2.8 EX"));
             choices.insert(p_t(161, "Tamron AF 17-50mm f/2.8 Di-II LD Aspherical"));
             choices.insert(p_t(161, "Tamron 90mm f/2.8"));
+            choices.insert(p_t(161, "Sigma 24-60mm f/2.8 EX DG"));
             choices.insert(p_t(162, "Canon EF 200mm f/2.8L"));
             choices.insert(p_t(163, "Canon EF 300mm f/4L"));
             choices.insert(p_t(164, "Canon EF 400mm f/5.6L"));
@@ -559,6 +582,7 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(169, "Sigma 30mm f/1.4 EX DC HSM"));
             choices.insert(p_t(169, "Sigma 50mm f/1.4 EX DG HSM"));
             choices.insert(p_t(169, "Sigma 85mm f/1.4 EX DG HSM"));
+            choices.insert(p_t(169, "Sigma 35mm f/1.4 DG HSM"));
             choices.insert(p_t(170, "Canon EF 200mm f/2.8L II"));
             choices.insert(p_t(171, "Canon EF 300mm f/4L"));
             choices.insert(p_t(172, "Canon EF 400mm f/5.6L"));
@@ -566,16 +590,19 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(173, "Sigma 180mm f/3.5 EX HSM Macro"));
             choices.insert(p_t(173, "Sigma APO 150mm f/2.8 EX DG HSM Macro"));
             choices.insert(p_t(174, "Canon EF 135mm f/2L"));
-            choices.insert(p_t(174, "Sigma APO 70-200mm f/2.8 EX DG OS HSM"));
+            choices.insert(p_t(174, "Sigma 70-200mm f/2.8 EX DG APO OS HSM"));
+            choices.insert(p_t(174, "Sigma 50-500mm f/4.5-6.3 APO DG OS HSM"));
             choices.insert(p_t(175, "Canon EF 400mm f/2.8L"));
             choices.insert(p_t(176, "Canon EF 24-85mm f/3.5-4.5 USM"));
             choices.insert(p_t(177, "Canon EF 300mm f/4L IS"));
             choices.insert(p_t(178, "Canon EF 28-135mm f/3.5-5.6 IS"));
-            choices.insert(p_t(179, "Canon EF 24mm f/1.4L USM"));
+            choices.insert(p_t(179, "Canon EF 24mm f/1.4L"));
             choices.insert(p_t(180, "Canon EF 35mm f/1.4L"));
             choices.insert(p_t(181, "Canon EF 100-400mm f/4.5-5.6L IS + x1.4"));
             choices.insert(p_t(182, "Canon EF 100-400mm f/4.5-5.6L IS + x2"));
             choices.insert(p_t(183, "Canon EF 100-400mm f/4.5-5.6L IS"));
+            choices.insert(p_t(183, "Sigma 150mm f/2.8 EX DG OS HSM APO Macro"));
+            choices.insert(p_t(183, "Sigma 105mm f/2.8 EX DG OS HSM Macro"));
             choices.insert(p_t(184, "Canon EF 400mm f/2.8L + x2"));
             choices.insert(p_t(185, "Canon EF 600mm f/4L IS"));
             choices.insert(p_t(186, "Canon EF 70-200mm f/4L"));
@@ -588,7 +615,7 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(194, "Canon EF 80-200mm f/4.5-5.6 USM"));
             choices.insert(p_t(195, "Canon EF 35-105mm f/4.5-5.6 USM"));
             choices.insert(p_t(196, "Canon EF 75-300mm f/4-5.6 USM"));
-            choices.insert(p_t(197, "Canon EF 75-300mm f/4-5.6 IS"));
+            choices.insert(p_t(197, "Canon EF 75-300mm f/4-5.6 IS USM"));
             choices.insert(p_t(198, "Canon EF 50mm f/1.4 USM"));
             choices.insert(p_t(199, "Canon EF 28-80mm f/3.5-5.6 USM"));
             choices.insert(p_t(200, "Canon EF 75-300mm f/4-5.6 USM"));
@@ -597,15 +624,15 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(208, "Canon EF 22-55mm f/4-5.6 USM"));
             choices.insert(p_t(209, "Canon EF 55-200mm f/4.5-5.6"));
             choices.insert(p_t(210, "Canon EF 28-90mm f/4-5.6 USM"));
-            choices.insert(p_t(211, "Canon EF 28-200mm f/3.5-5.6"));
+            choices.insert(p_t(211, "Canon EF 28-200mm f/3.5-5.6 USM"));
             choices.insert(p_t(212, "Canon EF 28-105mm f/4-5.6 USM"));
-            choices.insert(p_t(213, "Canon EF 90-300mm f/4.5-5.6"));
-            choices.insert(p_t(214, "Canon EF-S 18-55mm f/3.5-4.5 USM"));
+            choices.insert(p_t(213, "Canon EF 90-300mm f/4.5-5.6 USM"));
+            choices.insert(p_t(214, "Canon EF-S 18-55mm f/3.5-5.6 USM"));
             choices.insert(p_t(215, "Canon EF 55-200mm f/4.5-5.6 II USM"));
-            choices.insert(p_t(224, "Canon EF 70-200mm f/2.8L IS USM"));
-            choices.insert(p_t(225, "Canon EF 70-200mm f/2.8L IS USM + x1.4"));
-            choices.insert(p_t(226, "Canon EF 70-200mm f/2.8L IS USM + x2"));
-            choices.insert(p_t(227, "Canon EF 70-200mm f/2.8L IS + 2.8x"));
+            choices.insert(p_t(224, "Canon EF 70-200mm f/2.8L IS"));
+            choices.insert(p_t(225, "Canon EF 70-200mm f/2.8L IS + x1.4"));
+            choices.insert(p_t(226, "Canon EF 70-200mm f/2.8L IS + x2"));
+            choices.insert(p_t(227, "Canon EF 70-200mm f/2.8L IS + x2.8"));
             choices.insert(p_t(228, "Canon EF 28-105mm f/3.5-4.5 USM"));
             choices.insert(p_t(229, "Canon EF 16-35mm f/2.8L"));
             choices.insert(p_t(230, "Canon EF 24-70mm f/2.8L"));
@@ -617,10 +644,10 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(236, "Canon EF-S 60mm f/2.8 Macro USM"));
             choices.insert(p_t(237, "Canon EF 24-105mm f/4L IS"));
             choices.insert(p_t(238, "Canon EF 70-300mm f/4-5.6 IS USM"));
-            choices.insert(p_t(239, "Canon EF 85mm f/1.2L II USM"));
+            choices.insert(p_t(239, "Canon EF 85mm f/1.2L II"));
             choices.insert(p_t(240, "Canon EF-S 17-55mm f/2.8 IS USM"));
-            choices.insert(p_t(241, "Canon EF 50mm f/1.2L USM"));
-            choices.insert(p_t(242, "Canon EF 70-200mm f/4L IS USM"));
+            choices.insert(p_t(241, "Canon EF 50mm f/1.2L"));
+            choices.insert(p_t(242, "Canon EF 70-200mm f/4L IS"));
             choices.insert(p_t(243, "Canon EF 70-200mm f/4L IS + 1.4x"));
             choices.insert(p_t(244, "Canon EF 70-200mm f/4L IS + 2x"));
             choices.insert(p_t(245, "Canon EF 70-200mm f/4L IS + 2.8x"));
@@ -630,8 +657,28 @@ class CALensInterpreter : public IntLensInterpreter< int > {
             choices.insert(p_t(249, "Canon EF 800mm f/5.6L IS"));
             choices.insert(p_t(250, "Canon EF 24mm f/1.4L II"));
             choices.insert(p_t(251, "Canon EF 70-200mm f/2.8L IS II USM"));
+            choices.insert(p_t(252, "Canon EF 70-200mm f/2.8L IS II USM + x1.4"));
+            choices.insert(p_t(253, "Canon EF 70-200mm f/2.8L IS II USM + x2"));
             choices.insert(p_t(254, "Canon EF 100mm f/2.8L Macro IS USM"));
             choices.insert(p_t(488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"));
+            choices.insert(p_t(489, "Canon EF 70-300mm f/4-5.6L IS USM"));
+            choices.insert(p_t(490, "Canon EF 8-15mm f/4L USM"));
+            choices.insert(p_t(491, "Canon EF 300mm f/2.8L IS II USM"));
+            choices.insert(p_t(492, "Canon EF 400mm f/2.8L IS II USM"));
+            choices.insert(p_t(493, "Canon EF 24-105mm f/4L IS USM"));
+            choices.insert(p_t(494, "Canon EF 600mm f/4.0L IS II USM"));
+            choices.insert(p_t(495, "Canon EF 24-70mm f/2.8L II USM"));
+            choices.insert(p_t(496, "Canon EF 200-400mm f/4L IS USM"));
+            choices.insert(p_t(502, "Canon EF 28mm f/2.8 IS USM"));
+            choices.insert(p_t(503, "Canon EF 24mm f/2.8 IS USM"));
+            choices.insert(p_t(504, "Canon EF 24-70mm f/4L IS USM"));
+            choices.insert(p_t(505, "Canon EF 35mm f/2 IS USM"));
+            choices.insert(p_t(4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"));
+            choices.insert(p_t(4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM"));
+            choices.insert(p_t(4144, "Canon EF 40mm f/2.8 STM"));
+            choices.insert(p_t(4145, "Canon EF-M 22mm f/2 STM"));
+            choices.insert(p_t(4146, "Canon EF-S 18-55mm f/3.5-5.6 IS STM"));
+            choices.insert(p_t(4147, "Canon EF-M 11-22mm f/4-5.6 IS STM"));
         }
 
         virtual std::string toString (Tag* t)
@@ -1256,205 +1303,205 @@ public:
 CAAspectRatioInterpreter caAspectRatioInterpreter;
 
 const TagAttrib canonCameraSettingsAttribs[] = {
- {0, 1, 0, 0,  1, "MacroMode", &caMacroModeInterpreter},
- {0, 1, 0, 0,  2, "SelfTimer", &caSelfTimerInterpreter},
- {0, 1, 0, 0,  3, "Quality", &caQualityInterpreter},
- {0, 1, 0, 0,  4, "CanonFlashMode", &caFlashModeInterpreter},
- {0, 1, 0, 0,  5, "ContinuousDrive", &caContinuousDriveInterpreter},
- {0, 1, 0, 0,  7, "FocusMode", &caFocusModeInterpreter},
- {0, 1, 0, 0,  9, "RecordMode", &caRecordModeInterpreter},
- {0, 1, 0, 0, 10, "CanonImageSize", &caImageSizeInterpreter},
- {0, 1, 0, 0, 11, "EasyMode", &caEasyModeInterpreter},
- {0, 1, 0, 0, 12, "DigitalZoom", &caDigitalZoomInterpreter},
- {0, 1, 0, 0, 13, "Contrast", &stdInterpreter},
- {0, 1, 0, 0, 14, "Saturation", &stdInterpreter},
- {0, 1, 0, 0, 15, "Sharpness", &stdInterpreter},
- {0, 1, 0, 0, 16, "CameraISO", &stdInterpreter},
- {0, 1, 0, 0, 17, "MeteringMode", &caMeteringModeInterpreter},
- {0, 1, 0, 0, 18, "FocusRange", &caFocusRangeInterpreter},
- {0, 1, 0, 0, 19, "AFPoint", &caAFPointInterpreter},
- {0, 1, 0, 0, 20, "CanonExposureMode", &caExposureModeInterpreter},
- {0, 1, 0, 0, 22, "LensID", &caLensInterpreter},
- {0, 1, 0, 0, 23, "LongFocal", &caFocalInterpreter},
- {0, 1, 0, 0, 24, "ShortFocal", &caFocalInterpreter},
- {0, 1, 0, 0, 25, "FocalUnits", &stdInterpreter},
- {0, 1, 0, 0, 26, "MaxAperture", &caApertureInterpreter},
- {0, 1, 0, 0, 27, "MinAperture", &caApertureInterpreter},
- {0, 1, 0, 0, 28, "FlashActivity", &stdInterpreter},
- {0, 1, 0, 0, 29, "FlashBits", &caFlashBitsInterpreter},
- {0, 1, 0, 0, 32, "FocusContinuous", &caFocusContinuousInterpreter},
- {0, 1, 0, 0, 33, "AESetting", &caAESettingsInterpreter},
- {0, 1, 0, 0, 34, "ImageStabilization", &caStabilizationInterpreter},
- {0, 1, 0, 0, 35, "DisplayAperture", &stdInterpreter},
- {0, 1, 0, 0, 36, "ZoomSourceWidth", &stdInterpreter},
- {0, 1, 0, 0, 37, "ZoomTargetWidth", &stdInterpreter},
- {0, 1, 0, 0, 39, "SpotMeteringMode", &caSpotMeteringInterpreter},
- {0, 1, 0, 0, 40, "PhotoEffect", &caPhotoEffectInterpreter},
- {0, 1, 0, 0, 41, "ManualFlashOutput", &caManualFlashInterpreter},
- {0, 1, 0, 0, 42, "ColorTone", &stdInterpreter},
- {0, 1, 0, 0, 46, "SRAWQuality", &caRAWQualityInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}
+ {0, AC_WRITE, 0, 0,  1, AUTO, "MacroMode", &caMacroModeInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "SelfTimer", &caSelfTimerInterpreter},
+ {0, AC_WRITE, 0, 0,  3, AUTO, "Quality", &caQualityInterpreter},
+ {0, AC_WRITE, 0, 0,  4, AUTO, "CanonFlashMode", &caFlashModeInterpreter},
+ {0, AC_WRITE, 0, 0,  5, AUTO, "ContinuousDrive", &caContinuousDriveInterpreter},
+ {0, AC_WRITE, 0, 0,  7, AUTO, "FocusMode", &caFocusModeInterpreter},
+ {0, AC_WRITE, 0, 0,  9, AUTO, "RecordMode", &caRecordModeInterpreter},
+ {0, AC_WRITE, 0, 0, 10, AUTO, "CanonImageSize", &caImageSizeInterpreter},
+ {0, AC_WRITE, 0, 0, 11, AUTO, "EasyMode", &caEasyModeInterpreter},
+ {0, AC_WRITE, 0, 0, 12, AUTO, "DigitalZoom", &caDigitalZoomInterpreter},
+ {0, AC_WRITE, 0, 0, 13, AUTO, "Contrast", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 14, AUTO, "Saturation", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 15, AUTO, "Sharpness", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 16, AUTO, "CameraISO", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 17, AUTO, "MeteringMode", &caMeteringModeInterpreter},
+ {0, AC_WRITE, 0, 0, 18, AUTO, "FocusRange", &caFocusRangeInterpreter},
+ {0, AC_WRITE, 0, 0, 19, AUTO, "AFPoint", &caAFPointInterpreter},
+ {0, AC_WRITE, 0, 0, 20, AUTO, "CanonExposureMode", &caExposureModeInterpreter},
+ {0, AC_WRITE, 0, 0, 22, AUTO, "LensID", &caLensInterpreter},
+ {0, AC_WRITE, 0, 0, 23, AUTO, "LongFocal", &caFocalInterpreter},
+ {0, AC_WRITE, 0, 0, 24, AUTO, "ShortFocal", &caFocalInterpreter},
+ {0, AC_WRITE, 0, 0, 25, AUTO, "FocalUnits", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 26, AUTO, "MaxAperture", &caApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 27, AUTO, "MinAperture", &caApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 28, AUTO, "FlashActivity", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 29, AUTO, "FlashBits", &caFlashBitsInterpreter},
+ {0, AC_WRITE, 0, 0, 32, AUTO, "FocusContinuous", &caFocusContinuousInterpreter},
+ {0, AC_WRITE, 0, 0, 33, AUTO, "AESetting", &caAESettingsInterpreter},
+ {0, AC_WRITE, 0, 0, 34, AUTO, "ImageStabilization", &caStabilizationInterpreter},
+ {0, AC_WRITE, 0, 0, 35, AUTO, "DisplayAperture", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 36, AUTO, "ZoomSourceWidth", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 37, AUTO, "ZoomTargetWidth", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 39, AUTO, "SpotMeteringMode", &caSpotMeteringInterpreter},
+ {0, AC_WRITE, 0, 0, 40, AUTO, "PhotoEffect", &caPhotoEffectInterpreter},
+ {0, AC_WRITE, 0, 0, 41, AUTO, "ManualFlashOutput", &caManualFlashInterpreter},
+ {0, AC_WRITE, 0, 0, 42, AUTO, "ColorTone", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 46, AUTO, "SRAWQuality", &caRAWQualityInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
 };
 
 const TagAttrib canonFocalLengthAttribs[] = {
- {0, 1, 0, 0, 0, "FocalType", &caFocalTypeInterpreter},
- {0, 1, 0, 0, 1, "FocalLength", &caFocalInterpreter},
- {0, 1, 0, 0, 2, "FocalPlaneXSize", &caFocalPlaneInterpreter},
- {0, 1, 0, 0, 3, "FocalPlaneYSize", &caFocalPlaneInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}
+ {0, AC_WRITE, 0, 0, 0, AUTO, "FocalType", &caFocalTypeInterpreter},
+ {0, AC_WRITE, 0, 0, 1, AUTO, "FocalLength", &caFocalInterpreter},
+ {0, AC_WRITE, 0, 0, 2, AUTO, "FocalPlaneXSize", &caFocalPlaneInterpreter},
+ {0, AC_WRITE, 0, 0, 3, AUTO, "FocalPlaneYSize", &caFocalPlaneInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}
 };
 
 const TagAttrib canonShotInfoAttribs[] = {
- {0, 1, 0, 0, 1, "AutoISO", &stdInterpreter},
- {0, 1, 0, 0, 2, "BaseISO" ,&caBaseISOInterpreter},
- {0, 1, 0, 0, 3, "MeasuredEV", &stdInterpreter},
- {0, 1, 0, 0, 4, "TargetAperture", &caApertureInterpreter},
- {0, 1, 0, 0, 5, "TargetExposureTime",&caExposureTimeInterpreter},
- {0, 1, 0, 0, 6, "ExposureCompensation",&caEVInterpreter},
- {0, 1, 0, 0, 7, "WhiteBalance",&caWhiteBalanceInterpreter},
- {0, 1, 0, 0, 8, "SlowShutter",&caSlowShutterInterpreter},
- {0, 1, 0, 0, 9, "SequenceNumber", &stdInterpreter},
- {0, 1, 0, 0,10, "OpticalZoomCode", &stdInterpreter},
- {0, 1, 0, 0,13, "FlashGuideNumber" , &caFlashGuideNumberInterpreter},
- {0, 1, 0, 0,14, "AFPointsInFocus", &caAFPointsInFocusInterpreter},
- {0, 1, 0, 0,15, "FlashExposureComp", &stdInterpreter},
- {0, 1, 0, 0,16, "AutoExposureBracketing",&caAutoExposureBracketingInterpreter},
- {0, 1, 0, 0,17, "AEBBracketValue", &stdInterpreter},
- {0, 1, 0, 0,18, "ControlMode", &caControModeInterpreter},
- {0, 1, 0, 0,19, "FocusDistanceUpper", &caFocusDistanceInterpreter},
- {0, 1, 0, 0,20, "FocusDistanceLower", &caFocusDistanceInterpreter},
- {0, 1, 0, 0,21, "FNumber" ,&caApertureInterpreter},
- {0, 1, 0, 0,22, "ExposureTime",&caExposureTimeInterpreter},
- {0, 1, 0, 0,24, "BulbDuration", &stdInterpreter},
- {0, 1, 0, 0,24, "MeasuredEV2", &caMeasuredEVInterpreter},
- {0, 1, 0, 0,26, "CameraType", &caCameraTypeInterpreter},
- {0, 1, 0, 0,27, "AutoRotate",&caAutoRotateInterpreter},
- {0, 1, 0, 0,28, "NDFilter",&caOnOffInterpreter},
- {0, 1, 0, 0,29, "Self-timer2", &stdInterpreter},
- {0, 1, 0, 0,33, "FlashOutput", &stdInterpreter},
- {-1, 0, 0, 0, 0, "", NULL},
+ {0, AC_WRITE, 0, 0, 1, AUTO, "AutoISO", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 2, AUTO, "BaseISO" ,&caBaseISOInterpreter},
+ {0, AC_WRITE, 0, 0, 3, AUTO, "MeasuredEV", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 4, AUTO, "TargetAperture", &caApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 5, AUTO, "TargetExposureTime",&caExposureTimeInterpreter},
+ {0, AC_WRITE, 0, 0, 6, AUTO, "ExposureCompensation",&caEVInterpreter},
+ {0, AC_WRITE, 0, 0, 7, AUTO, "WhiteBalance",&caWhiteBalanceInterpreter},
+ {0, AC_WRITE, 0, 0, 8, AUTO, "SlowShutter",&caSlowShutterInterpreter},
+ {0, AC_WRITE, 0, 0, 9, AUTO, "SequenceNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,10, AUTO, "OpticalZoomCode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,13, AUTO, "FlashGuideNumber" , &caFlashGuideNumberInterpreter},
+ {0, AC_WRITE, 0, 0,14, AUTO, "AFPointsInFocus", &caAFPointsInFocusInterpreter},
+ {0, AC_WRITE, 0, 0,15, AUTO, "FlashExposureComp", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,16, AUTO, "AutoExposureBracketing",&caAutoExposureBracketingInterpreter},
+ {0, AC_WRITE, 0, 0,17, AUTO, "AEBBracketValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,18, AUTO, "ControlMode", &caControModeInterpreter},
+ {0, AC_WRITE, 0, 0,19, AUTO, "FocusDistanceUpper", &caFocusDistanceInterpreter},
+ {0, AC_WRITE, 0, 0,20, AUTO, "FocusDistanceLower", &caFocusDistanceInterpreter},
+ {0, AC_WRITE, 0, 0,21, AUTO, "FNumber" ,&caApertureInterpreter},
+ {0, AC_WRITE, 0, 0,22, AUTO, "ExposureTime",&caExposureTimeInterpreter},
+ {0, AC_WRITE, 0, 0,24, AUTO, "BulbDuration", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,24, AUTO, "MeasuredEV2", &caMeasuredEVInterpreter},
+ {0, AC_WRITE, 0, 0,26, AUTO, "CameraType", &caCameraTypeInterpreter},
+ {0, AC_WRITE, 0, 0,27, AUTO, "AutoRotate",&caAutoRotateInterpreter},
+ {0, AC_WRITE, 0, 0,28, AUTO, "NDFilter",&caOnOffInterpreter},
+ {0, AC_WRITE, 0, 0,29, AUTO, "Self-timer2", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,33, AUTO, "FlashOutput", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0, 0, 0, AUTO, "", NULL},
 };
 
 const TagAttrib canonFileInfoAttribs[] = {
- {0, 1, 0, 0, 1, "FileNumber",  &caFileNumberInterpreter},
- {0, 1, 0, 0, 3, "BracketMode", &caBracketModeInterpreter},
- {0, 1, 0, 0, 4, "BracketValue", &stdInterpreter},
- {0, 1, 0, 0, 5, "BracketShotNumber", &stdInterpreter},
- {0, 1, 0, 0, 6, "RawJpgQuality",&caRAWJpegQualityInterpreter},
- {0, 1, 0, 0, 7, "RawJpgSize",&caJpegSizeInterpreter},
- {0, 1, 0, 0, 8, "NoiseReduction",&stdInterpreter},
- {0, 1, 0, 0, 9, "WBBracketMode" ,&caWBBracketModeInterpreter},
- {0, 1, 0, 0,12, "WBBracketValueAB", &stdInterpreter},
- {0, 1, 0, 0,13, "WBBracketValueGM", &stdInterpreter},
- {0, 1, 0, 0,14, "FilterEffect" ,&caFilterEffectInterpreter},
- {0, 1, 0, 0,15, "ToningEffect" ,&caToningEffectInterpreter},
- {0, 1, 0, 0,19, "LiveViewShooting" ,&caOnOffInterpreter},
- {0, 1, 0, 0,25, "FlashExposureLock" ,&caOnOffInterpreter},
- {-1,0, 0, 0, 0, "", NULL},
+ {0, AC_WRITE, 0, 0, 1, AUTO, "FileNumber",  &caFileNumberInterpreter},
+ {0, AC_WRITE, 0, 0, 3, AUTO, "BracketMode", &caBracketModeInterpreter},
+ {0, AC_WRITE, 0, 0, 4, AUTO, "BracketValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 5, AUTO, "BracketShotNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 6, AUTO, "RawJpgQuality",&caRAWJpegQualityInterpreter},
+ {0, AC_WRITE, 0, 0, 7, AUTO, "RawJpgSize",&caJpegSizeInterpreter},
+ {0, AC_WRITE, 0, 0, 8, AUTO, "NoiseReduction",&stdInterpreter},
+ {0, AC_WRITE, 0, 0, 9, AUTO, "WBBracketMode" ,&caWBBracketModeInterpreter},
+ {0, AC_WRITE, 0, 0,12, AUTO, "WBBracketValueAB", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,13, AUTO, "WBBracketValueGM", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,14, AUTO, "FilterEffect" ,&caFilterEffectInterpreter},
+ {0, AC_WRITE, 0, 0,15, AUTO, "ToningEffect" ,&caToningEffectInterpreter},
+ {0, AC_WRITE, 0, 0,19, AUTO, "LiveViewShooting" ,&caOnOffInterpreter},
+ {0, AC_WRITE, 0, 0,25, AUTO, "FlashExposureLock" ,&caOnOffInterpreter},
+ {-1, AC_DONTWRITE, 0, 0, 0, AUTO, "", NULL},
 };
 
 const TagAttrib canonProcessingInfoAttribs[] = {
- {0, 1, 0, 0, 1,"ToneCurve", &caToneCurveInterpreter},
- {0, 1, 0, 0, 2,"Sharpness", &stdInterpreter},
- {0, 1, 0, 0, 3,"SharpnessFrequency", &caSharpnessFrequencyInterpreter},
- {0, 1, 0, 0, 4,"SensorRedLevel", &stdInterpreter},
- {0, 1, 0, 0, 5,"SensorBlueLevel", &stdInterpreter},
- {0, 1, 0, 0, 6,"WhiteBalanceRed", &stdInterpreter},
- {0, 1, 0, 0, 7,"WhiteBalanceBlue", &stdInterpreter},
- {0, 1, 0, 0, 8,"WhiteBalance", &caWhiteBalanceInterpreter},
- {0, 1, 0, 0, 9,"ColorTemperature", &stdInterpreter},
- {0, 1, 0, 0,10,"PictureStyle", &caPictureStyleInterpreter},
- {0, 1, 0, 0,11,"DigitalGain", &stdInterpreter},
- {0, 1, 0, 0,12,"WBShiftAB", &stdInterpreter},
- {0, 1, 0, 0,13,"WBShiftGM", &stdInterpreter},
- {-1,0, 0, 0, 0, "", NULL},
+ {0, AC_WRITE, 0, 0, 1, AUTO, "ToneCurve", &caToneCurveInterpreter},
+ {0, AC_WRITE, 0, 0, 2, AUTO, "Sharpness", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 3, AUTO, "SharpnessFrequency", &caSharpnessFrequencyInterpreter},
+ {0, AC_WRITE, 0, 0, 4, AUTO, "SensorRedLevel", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 5, AUTO, "SensorBlueLevel", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 6, AUTO, "WhiteBalanceRed", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 7, AUTO, "WhiteBalanceBlue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 8, AUTO, "WhiteBalance", &caWhiteBalanceInterpreter},
+ {0, AC_WRITE, 0, 0, 9, AUTO, "ColorTemperature", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,10, AUTO, "PictureStyle", &caPictureStyleInterpreter},
+ {0, AC_WRITE, 0, 0,11, AUTO, "DigitalGain", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,12, AUTO, "WBShiftAB", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,13, AUTO, "WBShiftGM", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0, 0, 0, AUTO, "", NULL},
 };
 
 const TagAttrib canonPanoramaInfoAttribs[] = {
- {0, 1, 0, 0, 2,"PanoramaFrameNumber", &stdInterpreter},
- {0, 1, 0, 0, 5,"PanoramaDirection", &caPanoramaDirectionInterpreter},
- {-1,0, 0, 0, 0, "", NULL},
+ {0, AC_WRITE, 0, 0, 2, AUTO, "PanoramaFrameNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 5, AUTO, "PanoramaDirection", &caPanoramaDirectionInterpreter},
+ {-1, AC_DONTWRITE, 0, 0, 0, AUTO, "", NULL},
 };
 
 const TagAttrib canonCropInfoAttribs[] = {
- {0, 1, 0, 0, 0,"CropLeftMargin", &stdInterpreter},
- {0, 1, 0, 0, 1,"CropRightMargin", &stdInterpreter},
- {0, 1, 0, 0, 2,"CropTopMargin", &stdInterpreter},
- {0, 1, 0, 0, 3,"CropBottomMargin", &stdInterpreter},
- {-1,0, 0, 0, 0, "", NULL},
+ {0, AC_WRITE, 0, 0, 0, AUTO, "CropLeftMargin", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 1, AUTO, "CropRightMargin", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 2, AUTO, "CropTopMargin", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 3, AUTO, "CropBottomMargin", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0, 0, 0, AUTO, "", NULL},
 };
 
 const TagAttrib canonAspectInfoAttribs[] = {
- {0, 1, 0, 0, 0,"AspectRatio", &caAspectRatioInterpreter},
- {0, 1, 0, 0, 1,"CroppedImageWidth", &stdInterpreter},
- {0, 1, 0, 0, 2,"CroppedImageHeight", &stdInterpreter},
- {-1,0, 0, 0, 0, "", NULL},
+ {0, AC_WRITE, 0, 0, 0, AUTO, "AspectRatio", &caAspectRatioInterpreter},
+ {0, AC_WRITE, 0, 0, 1, AUTO, "CroppedImageWidth", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 2, AUTO, "CroppedImageHeight", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0, 0, 0, AUTO, "", NULL},
 };
 
 const TagAttrib canonMicroAdjustAttrib[] = {
- {0, 1, 0, 0, 1,"AFMicroAdjActive", &caOnOffInterpreter},
- {-1,0, 0, 0, 2,"AFMicroAdjValue", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 1, AUTO, "AFMicroAdjActive", &caOnOffInterpreter},
+ {-1, AC_DONTWRITE, 0, 0, 2, AUTO, "", NULL},
 };
 
 const TagAttrib canonAttribs[] = {
- {0, 1, 0, canonCameraSettingsAttribs, 0x0001, "CanonCameraSettings", &stdInterpreter},
- {0, 1, 0, canonFocalLengthAttribs, 0x0002, "CanonFocalLength", &stdInterpreter},
- {0, 1, 0, 0, 0x0003, "CanonFlashInfo", &stdInterpreter},
- {0, 1, 0, canonShotInfoAttribs, 0x0004, "CanonShotInfo", &stdInterpreter},
- {0, 1, 0, canonPanoramaInfoAttribs, 0x0005, "CanonPanorama", &stdInterpreter},
- {0, 1, 0, 0, 0x0006, "CanonImageType", &stdInterpreter},
- {0, 1, 0, 0, 0x0007, "CanonFirmwareVersion", &stdInterpreter},
- {0, 1, 0, 0, 0x0008, "FileNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x0009, "OwnerName", &stdInterpreter},
- {0, 1, 0, 0, 0x000a, "ColorInfoD30", &stdInterpreter},
- {0, 1, 0, 0, 0x000c, "SerialNumber", &stdInterpreter},
- {0, 1, 0, 0, 0x000d, "CanonCameraInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x000e, "CanonFileLength", &stdInterpreter},
- {0, 1, 0, 0, 0x000f, "CustomFunctions", &stdInterpreter},
- {0, 1, 0, 0, 0x0010, "CanonModelID", &caModelIDInterpreter},
- {0, 1, 0, 0, 0x0012, "CanonAFInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0015, "SerialNumberFormat", &stdInterpreter},
- {0, 1, 0, 0, 0x001c, "DateStampMode", &stdInterpreter},
- {0, 1, 0, 0, 0x001d, "MyColors", &stdInterpreter},
- {0, 1, 0, 0, 0x001e, "FirmwareRevision", &stdInterpreter},
- {0, 3, 0, 0, 0x0024, "FaceDetect1", &stdInterpreter},
- {0, 3, 0, 0, 0x0025, "FaceDetect2", &stdInterpreter},
- {0, 1, 0, 0, 0x0026, "CanonAFInfo2", &stdInterpreter},
- {0, 1, 0, 0, 0x0083, "OriginalDecisionData", &stdInterpreter},
- {0, 1, 0, 0, 0x0090, "CustomFunctions1D", &stdInterpreter},
- {0, 1, 0, 0, 0x0091, "PersonalFunctions", &stdInterpreter},
- {0, 1, 0, 0, 0x0092, "PersonalFunctionValues", &stdInterpreter},
- {0, 1, 0, canonFileInfoAttribs, 0x0093, "CanonFileInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0094, "AFPointsInFocus1D", &stdInterpreter},
- {0, 1, 0, 0, 0x0095, "LensType", &stdInterpreter},
- {0, 1, 0, 0, 0x0096, "InternalSerialNumber", &caIntSerNumInterpreter},
- {0, 1, 0, 0, 0x0097, "DustRemovalData", &stdInterpreter},
- {0, 1, 0, canonCropInfoAttribs, 0x0098, "CropInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x0099, "CustomFunctions2", &stdInterpreter},
- {0, 1, 0, canonAspectInfoAttribs, 0x009a, "AspectInfo", &stdInterpreter},
- {0, 1, 0, canonProcessingInfoAttribs, 0x00a0, "ProcessingInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x00a1, "ToneCurveTable", &stdInterpreter},
- {0, 1, 0, 0, 0x00a2, "SharpnessTable", &stdInterpreter},
- {0, 1, 0, 0, 0x00a3, "SharpnessFreqTable", &stdInterpreter},
- {0, 1, 0, 0, 0x00a4, "WhiteBalanceTable", &stdInterpreter},
- {0, 1, 0, 0, 0x00a9, "ColorBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x00aa, "MeasuredColor", &stdInterpreter},
- {0, 1, 0, 0, 0x00ae, "ColorTemperature", &stdInterpreter},
- {0, 3, 0, 0, 0x00b0, "CanonFlags", &stdInterpreter},
- {0, 1, 0, 0, 0x00b1, "ModifiedInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x00b2, "ToneCurveMatching", &stdInterpreter},
- {0, 1, 0, 0, 0x00b3, "WhiteBalanceMatching", &stdInterpreter},
- {0, 1, 0, 0, 0x00b4, "ColorSpace", &stdInterpreter},
- {1, 1, 0, 0, 0x00b6, "PreviewImageInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x00d0, "VRDOffset", &stdInterpreter},
- {0, 1, 0, 0, 0x00e0, "SensorInfo", &stdInterpreter},
- {0, 1, 0, 0, 0x4001, "ColorBalance", &stdInterpreter},
- {0, 1, 0, 0, 0x4002, "UnknownBlock1", &stdInterpreter},
- {0, 1, 0, 0, 0x4003, "ColorInfo", &stdInterpreter},
- {1, 1, 0, 0, 0x4005, "UnknownBlock2", &stdInterpreter},
- {1, 1, 0, 0, 0x4008, "BlackLevel", &stdInterpreter},
- {1, 1, 0, canonMicroAdjustAttrib, 0x4013, "AFMicroAdj", &stdInterpreter},
- {-1, 0, 0,  0, 0, "", NULL}};
+ {0, AC_WRITE, 0, canonCameraSettingsAttribs, 0x0001, AUTO, "CanonCameraSettings", &stdInterpreter},
+ {0, AC_WRITE, 0, canonFocalLengthAttribs, 0x0002, AUTO, "CanonFocalLength", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0003, AUTO, "CanonFlashInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, canonShotInfoAttribs, 0x0004, AUTO, "CanonShotInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, canonPanoramaInfoAttribs, 0x0005, AUTO, "CanonPanorama", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0006, AUTO, "CanonImageType", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0007, AUTO, "CanonFirmwareVersion", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0008, AUTO, "FileNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0009, AUTO, "OwnerName", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000a, AUTO, "ColorInfoD30", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000c, AUTO, "SerialNumber", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000d, AUTO, "CanonCameraInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000e, AUTO, "CanonFileLength", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x000f, AUTO, "CustomFunctions", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0010, AUTO, "CanonModelID", &caModelIDInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0012, AUTO, "CanonAFInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0015, AUTO, "SerialNumberFormat", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x001c, AUTO, "DateStampMode", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x001d, AUTO, "MyColors", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x001e, AUTO, "FirmwareRevision", &stdInterpreter},
+ {0, AC_NEW,   0, 0, 0x0024, AUTO, "FaceDetect1", &stdInterpreter},
+ {0, AC_NEW,   0, 0, 0x0025, AUTO, "FaceDetect2", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0026, AUTO, "CanonAFInfo2", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0083, AUTO, "OriginalDecisionData", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0090, AUTO, "CustomFunctions1D", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0091, AUTO, "PersonalFunctions", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0092, AUTO, "PersonalFunctionValues", &stdInterpreter},
+ {0, AC_WRITE, 0, canonFileInfoAttribs, 0x0093, AUTO, "CanonFileInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0094, AUTO, "AFPointsInFocus1D", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0095, AUTO, "LensType", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0096, AUTO, "InternalSerialNumber", &caIntSerNumInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0097, AUTO, "DustRemovalData", &stdInterpreter},
+ {0, AC_WRITE, 0, canonCropInfoAttribs, 0x0098, AUTO, "CropInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x0099, AUTO, "CustomFunctions2", &stdInterpreter},
+ {0, AC_WRITE, 0, canonAspectInfoAttribs, 0x009a, AUTO, "AspectInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, canonProcessingInfoAttribs, 0x00a0, AUTO, "ProcessingInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a1, AUTO, "ToneCurveTable", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a2, AUTO, "SharpnessTable", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a3, AUTO, "SharpnessFreqTable", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a4, AUTO, "WhiteBalanceTable", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00a9, AUTO, "ColorBalance", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00aa, AUTO, "MeasuredColor", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00ae, AUTO, "ColorTemperature", &stdInterpreter},
+ {0, AC_NEW  , 0, 0, 0x00b0, AUTO, "CanonFlags", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00b1, AUTO, "ModifiedInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00b2, AUTO, "ToneCurveMatching", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00b3, AUTO, "WhiteBalanceMatching", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00b4, AUTO, "ColorSpace", &stdInterpreter},
+ {1, AC_WRITE, 0, 0, 0x00b6, AUTO, "PreviewImageInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00d0, AUTO, "VRDOffset", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x00e0, AUTO, "SensorInfo", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x4001, AUTO, "ColorBalance", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x4002, AUTO, "UnknownBlock1", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 0x4003, AUTO, "ColorInfo", &stdInterpreter},
+ {1, AC_WRITE, 0, 0, 0x4005, AUTO, "UnknownBlock2", &stdInterpreter},
+ {1, AC_WRITE, 0, 0, 0x4008, AUTO, "BlackLevel", &stdInterpreter},
+ {1, AC_WRITE, 0, canonMicroAdjustAttrib, 0x4013, AUTO, "AFMicroAdj", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 }
 #endif
 

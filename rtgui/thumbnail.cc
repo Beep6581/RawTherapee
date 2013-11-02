@@ -515,7 +515,7 @@ void Thumbnail::generateExifDateTimeStrings () {
     if (!cfs.exifValid)
         return;
 
-    exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm", Glib::ustring(rtengine::ImageData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::ImageData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso, cfs.focalLen);
+    exifString = Glib::ustring::compose ("f/%1 %2s %3%4 %5mm", Glib::ustring(rtengine::ImageData::apertureToString(cfs.fnumber)), Glib::ustring(rtengine::ImageData::shutterToString(cfs.shutter)), M("QINFO_ISO"), cfs.iso, Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), cfs.focalLen));
 
     if (options.fbShowExpComp && cfs.expcomp!="0.00" && cfs.expcomp!="") // don't show exposure compensation if it is 0.00EV;old cache iles do not have ExpComp, so value will not be displayed. 
     	exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp); // append exposure compensation to exifString

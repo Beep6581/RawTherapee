@@ -213,11 +213,17 @@ void ImageData::extractInfo () {
     // guess lens...
     lens = "Unknown";
 
-	// Sometimes (e.g. DNG) EXIF already contains lens data
-	
-	if (exif->getTag ("MakerNote")) {
-        rtexif::TagDirectory* mnote = exif->getTag ("MakerNote")->getDirectory();
+    // Sometimes (e.g. DNG) EXIF already contains lens data
+
+    if (root->findTag("MakerNote")) {
+        rtexif::TagDirectory* mnote = root->findTag("MakerNote")->getDirectory();
         if (mnote && !make.compare (0, 5, "NIKON")) {
+            // ISO at max value supported, check manufacturer specific
+            if (iso_speed == 65535 || iso_speed == 0) {
+                rtexif::Tag* isoTag = mnote->getTagP("ISOInfo/ISO");
+                if (isoTag)
+                    iso_speed = isoTag->toInt();
+            }
             bool lensOk = false;
             if (mnote->getTag ("LensData")) {
                 std::string ldata = mnote->getTag ("LensData")->valueToString ();
@@ -252,22 +258,28 @@ void ImageData::extractInfo () {
             }
         }
         else if (mnote && !make.compare (0, 5, "Canon")) {
-        	int found=false;
-        	// canon EXIF have a string for lens model
-        	rtexif::Tag *lt = mnote->getTag("LensType");
+            // ISO at max value supported, check manufacturer specific
+            if (iso_speed == 65535 || iso_speed == 0) {
+                rtexif::Tag* baseIsoTag = mnote->getTagP("CanonShotInfo/BaseISO");
+                if (baseIsoTag)
+                    iso_speed = baseIsoTag->toInt();
+            }
+            int found=false;
+            // canon EXIF have a string for lens model
+            rtexif::Tag *lt = mnote->getTag("LensType");
             if ( lt ) {
                 std::string ldata = lt->valueToString ();
                 if (ldata.size()>1) {
-                	found=true;
+                    found=true;
                     lens = "Canon " + ldata;
                 }
             }
             if( !found || lens.substr(lens.find(' ')).length() < 7 ){
-            	lt = mnote->findTag("LensID");
+                lt = mnote->findTag("LensID");
                 if ( lt ) {
                     std::string ldata = lt->valueToString ();
                     if (ldata.size()>1) {
-                    	lens = ldata;
+                        lens = ldata;
                     }
                 }
             }
@@ -275,6 +287,18 @@ void ImageData::extractInfo () {
         else if (mnote && !make.compare (0, 6, "PENTAX")) {
             if (mnote->getTag ("LensType")) 
                 lens = mnote->getTag ("LensType")->valueToString ();
+
+            // Try to get the FocalLength from the LensInfo structure, where length below 10mm will be correctly set
+            rtexif::Tag* flt=mnote->getTagP ("LensInfo/FocalLength");
+            if (flt)
+                focal_len = flt->toDouble ();
+            else if ((flt = mnote->getTagP ("FocalLength"))) {
+                rtexif::Tag* flt = mnote->getTag ("FocalLength");
+                focal_len = flt->toDouble ();
+            }
+
+            if (mnote->getTag ("FocalLengthIn35mmFilm"))
+                focal_len35mm = mnote->getTag ("FocalLengthIn35mmFilm")->toDouble ();
         }
         else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
             if (mnote->getTag ("LensID")) 
@@ -288,11 +312,11 @@ void ImageData::extractInfo () {
             }
         }
     } else if (exif->getTag ("DNGLensInfo")) {
-		lens = exif->getTag ("DNGLensInfo")->valueToString ();
+        lens = exif->getTag ("DNGLensInfo")->valueToString ();
     } else if (exif->getTag ("LensModel")) {
-		lens = exif->getTag ("LensModel")->valueToString ();
-	} else if (exif->getTag ("LensInfo")) {
-		lens = exif->getTag ("LensInfo")->valueToString ();
+        lens = exif->getTag ("LensModel")->valueToString ();
+    } else if (exif->getTag ("LensInfo")) {
+        lens = exif->getTag ("LensInfo")->valueToString ();
     }
   }
 }

@@ -24,7 +24,6 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 using namespace rtexif;
-extern Glib::ustring argv0;
 
 ExifPanel::ExifPanel () : idata(NULL) {
 
@@ -154,9 +153,9 @@ void ExifPanel::setImageData (const ImageMetaData* id) {
     const std::vector<Tag*>& defTags = ExifManager::getDefaultTIFFTags (NULL);
     for (size_t i=0; i<defTags.size(); i++)
         if (defTags[i]->nameToString() == "ImageWidth" || defTags[i]->nameToString() == "ImageHeight" || defTags[i]->nameToString() == "BitsPerSample")
-            addTag (exifTreeModel->children(), defTags[i]->nameToString(), "?", SYSTEM, false);     
+            addTag (exifTreeModel->children(), defTags[i]->nameToString(), "?", AC_SYSTEM, false);
         else
-            addTag (exifTreeModel->children(), defTags[i]->nameToString(), defTags[i]->valueToString(), SYSTEM, false);     
+            addTag (exifTreeModel->children(), defTags[i]->nameToString(), defTags[i]->valueToString(), AC_SYSTEM, false);
     
     if (id && id->getExifData ()) {
 //        id->getExifData ()->printAll ();     
@@ -164,7 +163,7 @@ void ExifPanel::setImageData (const ImageMetaData* id) {
     }
 }
 
-Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root, Glib::ustring field, Glib::ustring value, int action, bool editable) {
+Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root, Glib::ustring field, Glib::ustring value, rtexif::ActionCode action, bool editable) {
 
     Gtk::TreeModel::Row row = *(exifTreeModel->append(root));
     row[exifColumns.action]   = action;
@@ -174,22 +173,22 @@ Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root
     row[exifColumns.value_nopango] = value;
     row[exifColumns.orig_value]    = value;
     
-    if (action==WRITE)
+    if (action==AC_WRITE)
         row[exifColumns.icon] = keepicon;
-    else if (action==DONTWRITE)
+    else if (action==AC_DONTWRITE)
         row[exifColumns.icon] = delicon;
     
     if (editable) {
-        row[exifColumns.field] = Glib::ustring("<b>") + field + "</b>";
-        row[exifColumns.value] = Glib::ustring("<b>") + value + "</b>";
+        row[exifColumns.field] = Glib::ustring("<b>") + escapeHtmlChars(field) + "</b>";
+        row[exifColumns.value] = Glib::ustring("<b>") + escapeHtmlChars(value) + "</b>";
     }
-    else if (action==SYSTEM) {
-        row[exifColumns.field] = Glib::ustring("<i>") + field + "</i>";
-        row[exifColumns.value] = Glib::ustring("<i>") + value + "</i>";
+    else if (action==AC_SYSTEM) {
+        row[exifColumns.field] = Glib::ustring("<i>") + escapeHtmlChars(field) + "</i>";
+        row[exifColumns.value] = Glib::ustring("<i>") + escapeHtmlChars(value) + "</i>";
     }
     else {
-        row[exifColumns.field] = field;
-        row[exifColumns.value] = value;
+        row[exifColumns.field] = escapeHtmlChars(field);
+        row[exifColumns.value] = escapeHtmlChars(value);
     }
     
     return row.children();
@@ -199,15 +198,15 @@ void ExifPanel::addDirectory (const TagDirectory* dir, Gtk::TreeModel::Children 
 
     for (int i=0; i<dir->getCount(); i++) {
 	Tag* t = (const_cast<TagDirectory*>(dir))->getTagByIndex (i);
-        if (t->getAttrib() && t->getAttrib()->action==SYSTEM)
+        if (t->getAttrib() && t->getAttrib()->action==AC_SYSTEM)
             continue;
         if (t->isDirectory()) 
             for (int j=0; t->getDirectory(j); j++) {
-                Gtk::TreeModel::Children ch = addTag (root, t->nameToString (j), M("EXIFPANEL_SUBDIRECTORY"), t->getAttrib() ? t->getAttrib()->action : 0, t->getAttrib() && t->getAttrib()->editable);
+                Gtk::TreeModel::Children ch = addTag (root, t->nameToString (j), M("EXIFPANEL_SUBDIRECTORY"), t->getAttrib() ? t->getAttrib()->action : AC_DONTWRITE, t->getAttrib() && t->getAttrib()->editable);
                 addDirectory (t->getDirectory(j), ch);
             }
         else 
-            addTag (root, t->nameToString (), t->valueToString (), t->getAttrib() ? (t->getOwnMemory()?t->getAttrib()->action:SYSTEM) : 0, t->getAttrib() && t->getAttrib()->editable);
+            addTag (root, t->nameToString (), t->valueToString (), t->getAttrib() ? (t->getOwnMemory()?t->getAttrib()->action:AC_SYSTEM) : AC_DONTWRITE, t->getAttrib() && t->getAttrib()->editable);
     }
 }
 
@@ -222,7 +221,7 @@ void ExifPanel::exifSelectionChanged () {
     }
     else if (sel.size()==1) {
         Gtk::TreeModel::iterator iter = exifTreeModel->get_iter (sel[0]);
-        if (iter->get_value (exifColumns.action)==SYSTEM) {
+        if (iter->get_value (exifColumns.action)==AC_SYSTEM) {
             remove->set_sensitive (0);
             keep->set_sensitive (0);
             reset->set_sensitive (0);
@@ -255,7 +254,7 @@ void ExifPanel::delIt (Gtk::TreeModel::iterator iter) {
     if (!iter)
         return;
 
-    if (iter->get_value (exifColumns.action) != SYSTEM)
+    if (iter->get_value (exifColumns.action) != AC_SYSTEM)
         iter->set_value (exifColumns.icon, delicon);
     if (recursiveOp)
         for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); i++)
@@ -278,7 +277,7 @@ void ExifPanel::keepIt (Gtk::TreeModel::iterator iter) {
     if (!iter)
         return;
 
-    if (iter->get_value (exifColumns.action) != SYSTEM)
+    if (iter->get_value (exifColumns.action) != AC_SYSTEM)
         iter->set_value (exifColumns.icon, iter->get_value (exifColumns.edited) ? editicon : keepicon);
     if (recursiveOp)
         for (Gtk::TreeModel::iterator i=iter->children().begin(); i!=iter->children().end(); i++)
@@ -301,14 +300,14 @@ void ExifPanel::keepPressed () {
     if (!iter)
         return;
 
-    if (iter->get_value (exifColumns.action)!=SYSTEM)
+    if (iter->get_value (exifColumns.action)!=AC_SYSTEM)
         iter->set_value (exifColumns.icon, iter->get_value (exifColumns.action) ? keepicon : delicon);
     if (iter->get_value (exifColumns.edited)) {
         iter->set_value (exifColumns.value, Glib::ustring("<b>") + iter->get_value(exifColumns.orig_value) + "</b>");
         iter->set_value (exifColumns.value_nopango, iter->get_value(exifColumns.orig_value));
-        iter->set_value (exifColumns.edited, false);            
+        iter->set_value (exifColumns.edited, false);
     }
-    if (iter->get_value (exifColumns.action)==100)
+    if (iter->get_value (exifColumns.action)==AC_INVALID)
         exifTreeModel->erase (iter);
     else 
     if (recursiveOp)
@@ -320,14 +319,14 @@ Gtk::TreeModel::iterator ExifPanel::resetIt (Gtk::TreeModel::iterator  iter) {
     if (!iter)
         return iter;
 
-    if (iter->get_value (exifColumns.action)!=SYSTEM)
+    if (iter->get_value (exifColumns.action)!=AC_SYSTEM)
         iter->set_value (exifColumns.icon, iter->get_value (exifColumns.action) ? keepicon : delicon);
     if (iter->get_value (exifColumns.edited)) {
         iter->set_value (exifColumns.value, Glib::ustring("<b>") + iter->get_value(exifColumns.orig_value) + "</b>");
         iter->set_value (exifColumns.value_nopango, iter->get_value(exifColumns.orig_value));
-        iter->set_value (exifColumns.edited, false);            
+        iter->set_value (exifColumns.edited, false);
     }
-    if (iter->get_value (exifColumns.action)==100) {
+    if (iter->get_value (exifColumns.action)==AC_INVALID) {
         return exifTreeModel->erase (iter);
     }
     else 
@@ -434,7 +433,7 @@ void ExifPanel::editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib
     if (iter==root.end() && value!="#keep" && value!="#delete") {
         iter = exifTreeModel->append(root);
         iter->set_value (exifColumns.field_nopango, fseg);
-        iter->set_value (exifColumns.action, 100);
+        iter->set_value (exifColumns.action, AC_INVALID);
         if (dp==Glib::ustring::npos) {
             iter->set_value (exifColumns.value, Glib::ustring("<b>") + value + "</b>");
             iter->set_value (exifColumns.value_nopango, value);
@@ -454,9 +453,9 @@ void ExifPanel::editTag (Gtk::TreeModel::Children root, Glib::ustring name, Glib
     }
     
     if (dp==Glib::ustring::npos) {
-        if (value=="#keep" && iter->get_value (exifColumns.action)!=SYSTEM)
+        if (value=="#keep" && iter->get_value (exifColumns.action)!=AC_SYSTEM)
             iter->set_value (exifColumns.icon, iter->get_value (exifColumns.edited) ? editicon : keepicon);
-        else if (value=="#delete" && iter->get_value (exifColumns.action)!=SYSTEM)
+        else if (value=="#delete" && iter->get_value (exifColumns.action)!=AC_SYSTEM)
             iter->set_value (exifColumns.icon, delicon);
         else {
             iter->set_value (exifColumns.value, Glib::ustring("<b>") + value + "</b>");
@@ -516,9 +515,9 @@ void ExifPanel::updateChangeList (Gtk::TreeModel::Children root, std::string pre
     for (iter = root.begin(); iter!=root.end(); iter++)  {
         if (iter->get_value (exifColumns.edited) == true)
             changeList[ prefix+iter->get_value (exifColumns.field_nopango) ] = iter->get_value (exifColumns.value_nopango);
-        else if (iter->get_value (exifColumns.action) == WRITE && iter->get_value (exifColumns.icon) == delicon)
+        else if (iter->get_value (exifColumns.action) == AC_WRITE && iter->get_value (exifColumns.icon) == delicon)
             changeList[ prefix+iter->get_value (exifColumns.field_nopango) ] = "#delete";
-        else if (iter->get_value (exifColumns.action) == DONTWRITE && iter->get_value (exifColumns.icon) == keepicon)
+        else if (iter->get_value (exifColumns.action) == AC_DONTWRITE && iter->get_value (exifColumns.icon) == keepicon)
             changeList[ prefix+iter->get_value (exifColumns.field_nopango) ] = "#keep";
         if (iter->get_value (exifColumns.icon) == keepicon)
             updateChangeList (iter->children(), prefix + iter->get_value (exifColumns.field_nopango));
