@@ -167,6 +167,7 @@ void TagDirectory::printAll (unsigned int level) const {
     std::string name = tags[i]->nameToString ();
     if (tags[i]->isDirectory())
         for (int j=0; tags[i]->getDirectory(j); j++) {
+            printf ("%s+-- DIRECTORY %s[%d]:\n", prefixStr, name.c_str(), j);
             tags[i]->getDirectory(j)->printAll (level+1);
         }
     else
