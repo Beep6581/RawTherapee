@@ -822,11 +822,30 @@ CAEVInterpreter caEVInterpreter;
 
 class CABaseISOInterpreter : public Interpreter {
 public:
-	virtual std::string toString (Tag* t) {
-    	char buffer[1024];
-        sprintf (buffer, "%.0f", pow (2, t->toInt()/32.0 - 4) * 50 );
-        return buffer;
-	}
+        virtual std::string toString (Tag* t) {
+            char buffer[32];
+            int a = t->toInt();
+            sprintf (buffer, "%d", a);
+            return buffer;
+        }
+        virtual double toDouble (Tag* t, int ofs){
+            int a = Interpreter::toInt(t, ofs);
+            if(a>1) {
+                double i = pow(2., double(a)/32. - 4.) * 50.;
+                return i;
+            }
+            else
+                return 0.;
+        }
+        virtual int toInt (Tag* t, int ofs, TagType astype){
+            int a = Interpreter::toInt(t, ofs, astype);
+            if(a>1) {
+                int i = int(double(powf(2.f, float(a)/32.f - 4.f)) * 50.f +0.5f);
+                return i;
+            }
+            else
+                return 0;
+        }
 };
 CABaseISOInterpreter caBaseISOInterpreter;
 
