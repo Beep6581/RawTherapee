@@ -4894,6 +4894,8 @@ void CLASS parse_kodak_ifd (int base)
       wbi = -2;
     }
     if (tag == 2118) wbtemp = getint(type);
+    if (tag == 2120 + wbi)                        /* RT: wb tag for DCS760 */
+      FORC3 cam_mul[c] = 2048.0 / getreal(type);  /* RT: wb tag for DCS760 */
     if (tag == 2130 + wbi)
       FORC3 mul[c] = getreal(type);
     if (tag == 2140 + wbi && wbi >= 0)
