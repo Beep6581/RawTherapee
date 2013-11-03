@@ -51,9 +51,9 @@ class ImProcFunctions {
 
         void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul);
 
-		void transformPreview      (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap);
-		void transformVignetteOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH);
-		void transformHighQuality  (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap, bool fullImage);
+		void transformPreview       (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap);
+		void transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH);
+		void transformHighQuality   (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap, bool fullImage);
 
 		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
 		void sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H);
@@ -64,6 +64,7 @@ class ImProcFunctions {
 		bool needsDistortion    ();
 		bool needsRotation      ();
 		bool needsPerspective   ();
+		bool needsGradient      ();
 		bool needsVignetting    ();
         bool needsLCP           ();
  //   static cmsUInt8Number* Mempro = NULL;		

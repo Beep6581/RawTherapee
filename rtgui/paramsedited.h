@@ -313,6 +313,17 @@ class PerspectiveParamsEdited {
 		bool vertical;
 };
 
+class GradientParamsEdited {
+
+    public:
+        bool enabled;
+        bool degree;
+        bool feather;
+        bool strength;
+        bool centerX;
+        bool centerY;
+};
+
 class VignettingParamsEdited {
 
     public:
@@ -450,6 +461,7 @@ class ParamsEdited {
         DistortionParamsEdited        distortion;
         LensProfParamsEdited          lensProf;
         PerspectiveParamsEdited       perspective;
+        GradientParamsEdited          gradient;
         CACorrParamsEdited            cacorrection;
         VignettingParamsEdited        vignetting;
         ChannelMixerParamsEdited      chmixer;

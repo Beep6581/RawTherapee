@@ -59,6 +59,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     colorappearance     = Gtk::manage (new ColorAppearance ());
     whitebalance        = Gtk::manage (new WhiteBalance ());
     vignetting          = Gtk::manage (new Vignetting ());
+    gradient            = Gtk::manage (new Gradient ());
     perspective         = Gtk::manage (new PerspCorrection ());
     cacorrection        = Gtk::manage (new CACorrection ());
     hlrecovery          = Gtk::manage (new HLRecovery ());
@@ -89,6 +90,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (colorPanel, hsvequalizer,         M("TP_HSVEQUALIZER_LABEL"));   toolPanels.push_back (hsvequalizer);
     addPanel (colorPanel, rgbcurves,            M("TP_RGBCURVES_LABEL"));      toolPanels.push_back (rgbcurves);
     addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));  toolPanels.push_back (edgePreservingDecompositionUI);
+    addPanel (exposurePanel, gradient,          M("TP_GRADIENT_LABEL"));       toolPanels.push_back (gradient);
     addPanel (exposurePanel, lcurve,            M("TP_LABCURVE_LABEL"));	   toolPanels.push_back (lcurve);
 //    addPanel (exposurePanel, edgePreservingDecompositionUI,      M("TP_EPD_LABEL"));  toolPanels.push_back (edgePreservingDecompositionUI);
     addPanel (exposurePanel, colorappearance,   M("TP_COLORAPP_LABEL"));       toolPanels.push_back (colorappearance);

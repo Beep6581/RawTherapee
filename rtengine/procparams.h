@@ -577,6 +577,20 @@ class PerspectiveParams {
 };
 
 /**
+  * Parameters of the gradient filter
+  */
+class GradientParams {
+
+    public:
+        bool   enabled;
+        double degree;
+        int    feather;
+	double strength;
+	int    centerX;
+	int    centerY;
+};
+
+/**
   * Parameters of the vignetting correction
   */
 class VignettingParams {
@@ -771,6 +785,7 @@ class ProcParams {
         DistortionParams        distortion;      ///< Lens distortion correction parameters
         LensProfParams          lensProf;        ///< Lens correction profile parameters
         PerspectiveParams       perspective;     ///< Perspective correction parameters
+        GradientParams          gradient;        ///< Gradient filter parameters
         CACorrParams            cacorrection;    ///< Lens c/a correction parameters
         VignettingParams        vignetting;      ///< Lens vignetting correction parameters
         ChannelMixerParams      chmixer;         ///< Channel mixer parameters

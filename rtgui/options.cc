@@ -452,6 +452,10 @@ void Options::setDefaults () {
 			0,  // ADDSET_CAT_CHROMA
  			0,  // ADDSET_CAT_CONTRAST
 			0,  // ADDSET_WB_EQUAL
+			0,  // ADDSET_GRADIENT_AMOUNT
+			0,  // ADDSET_GRADIENT_RADIUS
+			0,  // ADDSET_GRADIENT_STRENGTH
+			0,  // ADDSET_GRADIENT_CENTER
 
 	};
     baBehav = std::vector<int> (babehav, babehav+ADDSET_PARAM_NUM);

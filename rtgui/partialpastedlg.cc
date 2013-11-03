@@ -49,6 +49,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     hlrec       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_HLRECONSTRUCTION")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
     epd         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
+    gradient    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_GRADIENT")));
     labcurve    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LABCURVE")));
     colorappearance= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_COLORAPP")));
     // options in detail:
@@ -126,6 +127,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[0]->pack_start (*hlrec, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*epd, Gtk::PACK_SHRINK, 2);
+    vboxes[0]->pack_start (*gradient, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*labcurve, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*colorappearance, Gtk::PACK_SHRINK, 2);
 
@@ -246,6 +248,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     hlrecConn       = hlrec->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    gradientConn    = gradient->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     colorappearanceConn=colorappearance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
 
@@ -427,6 +430,7 @@ void PartialPasteDlg::basicToggled () {
     hlrecConn.block (true);
     shConn.block (true);
     epdConn.block(true);
+    gradientConn.block (true);
     labcurveConn.block (true);
     colorappearanceConn.block (true);
 
@@ -437,6 +441,7 @@ void PartialPasteDlg::basicToggled () {
     hlrec->set_active (basic->get_active ());
     sh->set_active (basic->get_active ());
     epd->set_active (basic->get_active ());
+    gradient->set_active (basic->get_active ());
     labcurve->set_active (basic->get_active ());
     colorappearance->set_active (basic->get_active ());
 
@@ -445,6 +450,7 @@ void PartialPasteDlg::basicToggled () {
     hlrecConn.block (false);
     shConn.block (false);
     epdConn.block (false);
+    gradientConn.block (false);
     labcurveConn.block (false);
     colorappearanceConn.block (false);
 }
@@ -598,6 +604,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!hlrec->get_active ())       filterPE.hlrecovery = falsePE.hlrecovery;
     if (!sh->get_active ())          filterPE.sh         = falsePE.sh;
     if (!epd->get_active ())         filterPE.edgePreservingDecompositionUI = falsePE.edgePreservingDecompositionUI;
+    if (!gradient->get_active ())    filterPE.gradient   = falsePE.gradient;
     if (!labcurve->get_active ())    filterPE.labCurve   = falsePE.labCurve;
     if (!colorappearance->get_active ()) filterPE.colorappearance= falsePE.colorappearance;
 

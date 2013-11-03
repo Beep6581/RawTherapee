@@ -66,8 +66,12 @@
 #define ADDSET_CAT_HUE                  58
 #define ADDSET_CAT_BADPIX               59
 #define ADDSET_WB_EQUAL                 60
+#define ADDSET_GRADIENT_DEGREE          61
+#define ADDSET_GRADIENT_FEATHER         62
+#define ADDSET_GRADIENT_STRENGTH        63
+#define ADDSET_GRADIENT_CENTER          64
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                61 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                65 // THIS IS USED AS A DELIMITER!!
 
 #endif
