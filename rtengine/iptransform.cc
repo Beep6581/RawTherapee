@@ -388,16 +388,16 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 		for (int x=0; x<transformed->width; x++) {
 			double vig_x_d = (double) (x + cx) - vig_w2 ;
 			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
-			double mul = 1.0;
+			double factor = 1.0;
 			if (applyVignetting) {
-				mul /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
+				factor /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
 			}
 			if (applyGradient) {
-				mul *= calcGradientFactor(gp, x, y);
+				factor *= calcGradientFactor(gp, x, y);
                         }
-			transformed->r(y,x) = original->r(y,x) * mul;
-			transformed->g(y,x) = original->g(y,x) * mul;
-			transformed->b(y,x) = original->b(y,x) * mul;
+			transformed->r(y,x) = original->r(y,x) * factor;
+			transformed->g(y,x) = original->g(y,x) * factor;
+			transformed->b(y,x) = original->b(y,x) * factor;
 		}
 	}
 }
