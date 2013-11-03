@@ -50,7 +50,7 @@ TagDirectory::TagDirectory (TagDirectory* p, FILE* f, int base, const TagAttrib*
 {
 
   int numOfTags = get2 (f, order);
-  if (numOfTags<=0 || numOfTags>200)
+  if (numOfTags<=0 || numOfTags>1000) // KodakIfd has lots of tags, thus 1000 as the limit
     return;
     
   bool thumbdescr = false;
@@ -1238,6 +1238,17 @@ void Tag::initSubDir () {
     directory[1] = NULL;
 }
 
+void Tag::initSubDir (TagDirectory* dir) {
+    type = LONG;
+    valuesize = 4;
+    count = 1;
+    value = new unsigned char[4];
+    setInt (0);
+    directory = new TagDirectory*[2];
+    directory[0] = dir;
+    directory[1] = NULL;
+}
+
 void Tag::initMakerNote (MNKind mnk, const TagAttrib* ta) {
     type = UNDEFINED;
     valuesize = 4;
@@ -1806,6 +1817,27 @@ TagDirectory* ExifManager::parse (FILE* f, int base, bool skipIgnored) {
             exif->getDirectory()->addTagFront (niso);
         }
     }
+  }
+  if (make && !strncmp((char*)make->getValue(), "Kodak", 5)) {
+	  if (!exif) {
+		  // old Kodak cameras may have exif tags in IFD0, reparse and create an exif subdir
+		  fseek (f, base+firstifd, SEEK_SET);
+		  TagDirectory* exifdir =  new TagDirectory (NULL, f, base, exifAttribs, order, true);
+
+		  exif = new Tag (root, root->getAttrib ("Exif"));
+		  exif->initSubDir(exifdir);
+		  root->addTagFront (exif);
+
+		  if (!exif->getDirectory()->getTag("ISOSpeedRatings") && exif->getDirectory()->getTag ("ExposureIndex")) {
+			  Tag* niso = new Tag (exif->getDirectory(), exif->getDirectory()->getAttrib ("ISOSpeedRatings"));
+			  niso->initInt (exif->getDirectory()->getTag ("ExposureIndex")->toInt(), SHORT);
+			  exif->getDirectory()->addTagFront (niso);
+		  }
+	  }
+	  Tag *kodakIFD = root->getTag("KodakIFD");
+	  if (kodakIFD && kodakIFD->getDirectory()->getTag("TextualInfo")) {
+		  parseKodakIfdTextualInfo(kodakIFD->getDirectory()->getTag("TextualInfo"), exif);
+	  }
   }
 
   parse_leafdata(root, order);

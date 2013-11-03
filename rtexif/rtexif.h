@@ -82,6 +82,8 @@ struct TagAttrib {
     Interpreter*        interpreter; // Call back hook
 };
 
+const TagAttrib* lookupAttrib (const TagAttrib* dir, const char* field);
+
 /// A directory of tags
 class TagDirectory {
 
@@ -173,6 +175,7 @@ class Tag {
    void initInt        (int data, TagType t, int count=1);
    void initString     (const char* text);
    void initSubDir     ();
+   void initSubDir     (TagDirectory* dir);
    void initMakerNote  (MNKind mnk, const TagAttrib* ta);
    void initUndefArray (const char* data, int len);
    void initLongArray  (const char* data, int len);
@@ -216,7 +219,7 @@ class Tag {
    
     // get subdirectory (there can be several, the last is NULL)
     bool           isDirectory  ()        { return directory!=NULL; }
-    TagDirectory*  getDirectory (int i=0) { return directory[i]; }
+    TagDirectory*  getDirectory (int i=0) { return (directory) ? directory[i] : 0; }
 
     MNKind getMakerNoteFormat () { return makerNoteKind; }
  };
@@ -449,5 +452,7 @@ extern const TagAttrib sonyCameraSettingsAttribs2[];
 extern const TagAttrib sonyCameraSettingsAttribs3[];
 //extern const TagAttrib sonyDNGMakerNote[];
 extern const TagAttrib olympusAttribs[];
+extern const TagAttrib kodakIfdAttribs[];
+void parseKodakIfdTextualInfo(Tag *textualInfo, Tag* exif);
 }
 #endif

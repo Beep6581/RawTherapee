@@ -143,6 +143,26 @@ skip_block: ;
 		int sat = this->get_white(c) - this->get_cblack(c);
 		scale_mul_[c] = (pre_mul_[c] /= dmax) * 65535.0 / sat;
 	}
+	if (settings->verbose) {
+		float asn[4] = { 1/cam_mul[0], 1/cam_mul[1], 1/cam_mul[2], 1/cam_mul[3] };
+		for (dmax = c = 0; c < 4; c++) {
+			if (cam_mul[c] == 0) asn[c] = 0;
+			if (asn[c] > dmax) dmax = asn[c];
+		}
+		for (c = 0; c < 4; c++) asn[c] /= dmax;
+		printf("cam_mul:[%f %f %f %f], AsShotNeutral:[%f %f %f %f]\n",
+		       cam_mul[0], cam_mul[1], cam_mul[2], cam_mul[3], asn[0], asn[1], asn[2], asn[3]);
+		printf("pre_mul:[%f %f %f %f], scale_mul:[%f %f %f %f], cblack:[%f %f %f %f]\n",
+		       pre_mul_[0], pre_mul_[1], pre_mul_[2], pre_mul_[3],
+		       scale_mul_[0], scale_mul_[1], scale_mul_[2], scale_mul_[3],
+		       cblack_[0], cblack_[1], cblack_[2], cblack_[3]);
+		printf("rgb_cam:[ [ %f %f %f], [%f %f %f], [%f %f %f] ]%s\n",
+		       rgb_cam[0][0], rgb_cam[1][1], rgb_cam[2][2],
+		       rgb_cam[0][0], rgb_cam[1][1], rgb_cam[2][2],
+		       rgb_cam[0][0], rgb_cam[1][1], rgb_cam[2][2],
+		       (!this->isBayer()) ? " (not bayer)" : "");
+
+	}
 }
 
 int RawImage::loadRaw (bool loadData, bool closeFile)
@@ -331,9 +351,9 @@ bool
 RawImage::is_supportedThumb() const 
 {
     return ( (thumb_width * thumb_height) > 0 &&
-    		   ( write_thumb == &rtengine::RawImage::jpeg_thumb ||
-                 write_thumb == &rtengine::RawImage::ppm_thumb ||
-                 thumb_load_raw == &rtengine::RawImage::kodak_thumb_load_raw ));
+	     ( write_thumb == &rtengine::RawImage::jpeg_thumb ||
+	       write_thumb == &rtengine::RawImage::ppm_thumb) &&
+	     !thumb_load_raw );
 }
 
 bool 

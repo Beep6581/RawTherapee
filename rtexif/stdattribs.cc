@@ -371,6 +371,8 @@ public:
         choices[6] = "Rotate 90 CW";
         choices[7] = "Mirror horizontal and rotate 90 CW";
         choices[8] = "Rotate 270 CW";
+        // '9' is an "unofficial" value for Orientation but used by some older cameras that lacks orientation sensor, such as Kodak DCS
+        choices[9] = "Unknown";
 	}
 };
 OrientationInterpreter orientationInterpreter;
@@ -420,6 +422,7 @@ const TagAttrib exifAttribs[] = {
  {0, AC_WRITE,     0, 0, 0x9209, AUTO, "Flash", &flashInterpreter},
  {0, AC_WRITE,     0, 0, 0x920A, AUTO, "FocalLength", &focalLengthInterpreter},
  {0, AC_WRITE,     0, 0, 0x9214, AUTO, "SubjectArea", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0x9215, AUTO, "ExposureIndex", &stdInterpreter}, // Note: exists as 0xA215 too, it should be that way
  {0, AC_DONTWRITE, 0, 0, 0x9216, AUTO, "TIFFEPSStandardID", &stdInterpreter},
  {0, AC_WRITE,     0, 0, 0x9217, AUTO, "SensingMethod", &stdInterpreter},
  {0, AC_WRITE,     0, 0, 0x927C, AUTO, "MakerNote", &stdInterpreter},
@@ -542,6 +545,7 @@ const TagAttrib iopAttribs[] = {
  {0, AC_WRITE,     0, 0, 0x4749, AUTO, "RatingPercent",&stdInterpreter},
  {0, AC_WRITE,     0, 0, 0x828d, AUTO, "CFAPatternDim", &stdInterpreter},
  {0, AC_WRITE,     0, 0, 0x828e, AUTO, "CFAPattern", &cfaInterpreter},
+ {0, AC_WRITE,     0, kodakIfdAttribs, 0x8290, AUTO, "KodakIFD", &stdInterpreter},
  {0, AC_WRITE,     1, 0, 0x8298, AUTO, "Copyright", &stdInterpreter},
  {0, AC_DONTWRITE, 0, 0, 0x8606, AUTO, "LeafData", &stdInterpreter}, // is actually a subdir, but a proprietary format
  {0, AC_WRITE,     0, exifAttribs, 0x8769, AUTO, "Exif", &stdInterpreter},
