@@ -331,6 +331,13 @@ void ProcParams::setDefaults () {
     perspective.horizontal = 0;
     perspective.vertical   = 0;
 
+    gradient.enabled = false;
+    gradient.degree = 0;
+    gradient.feather = 25;
+    gradient.strength = 0;
+    gradient.centerX = 0;
+    gradient.centerY = 0;
+
     cacorrection.red  = 0;
     cacorrection.blue = 0;
     
@@ -822,6 +829,14 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     // save perspective correction
     if (!pedited || pedited->perspective.horizontal) keyFile.set_double  ("Perspective", "Horizontal", perspective.horizontal);
     if (!pedited || pedited->perspective.vertical)   keyFile.set_double  ("Perspective", "Vertical",   perspective.vertical);
+
+    // save gradient
+    if (!pedited || pedited->gradient.enabled)       keyFile.set_boolean ("Gradient", "Enabled", gradient.enabled);
+    if (!pedited || pedited->gradient.degree)        keyFile.set_double  ("Gradient", "Degree", gradient.degree);
+    if (!pedited || pedited->gradient.feather)       keyFile.set_integer ("Gradient", "Feather", gradient.feather);
+    if (!pedited || pedited->gradient.strength)      keyFile.set_double  ("Gradient", "Strength", gradient.strength);
+    if (!pedited || pedited->gradient.centerX)       keyFile.set_integer ("Gradient", "CenterX", gradient.centerX);
+    if (!pedited || pedited->gradient.centerY)       keyFile.set_integer ("Gradient", "CenterY", gradient.centerY);
 
     // save C/A correction
     if (!pedited || pedited->cacorrection.red)       keyFile.set_double  ("CACorrection", "Red",  cacorrection.red);
@@ -1368,6 +1383,16 @@ if (keyFile.has_group ("Perspective")) {
     if (keyFile.has_key ("Perspective", "Vertical"))    { perspective.vertical   = keyFile.get_double ("Perspective", "Vertical"); if (pedited) pedited->perspective.vertical = true; }
 }
 
+    // load gradient
+if (keyFile.has_group ("Gradient")) {
+    if (keyFile.has_key ("Gradient", "Enabled"))  { gradient.enabled  = keyFile.get_boolean ("Gradient", "Enabled"); if (pedited) pedited->gradient.enabled = true; }
+    if (keyFile.has_key ("Gradient", "Degree"))   { gradient.degree   = keyFile.get_double  ("Gradient", "Degree");  if (pedited) pedited->gradient.degree = true; }
+    if (keyFile.has_key ("Gradient", "Feather"))  { gradient.feather  = keyFile.get_integer ("Gradient", "Feather"); if (pedited) pedited->gradient.feather = true; }
+    if (keyFile.has_key ("Gradient", "Strength")) { gradient.strength = keyFile.get_double  ("Gradient", "Strength");if (pedited) pedited->gradient.strength = true; }
+    if (keyFile.has_key ("Gradient", "CenterX"))  { gradient.centerX  = keyFile.get_integer ("Gradient", "CenterX"); if (pedited) pedited->gradient.centerX = true; }
+    if (keyFile.has_key ("Gradient", "CenterY"))  { gradient.centerY  = keyFile.get_integer ("Gradient", "CenterY"); if (pedited) pedited->gradient.centerY = true; }
+}
+
 // load c/a correction
 if (keyFile.has_group ("CACorrection")) {
     if (keyFile.has_key ("CACorrection", "Red"))  { cacorrection.red  = keyFile.get_double ("CACorrection", "Red"); if (pedited) pedited->cacorrection.red = true; }
@@ -1703,6 +1728,12 @@ bool ProcParams::operator== (const ProcParams& other) {
         && lensProf.useCA == other.lensProf.useCA
 		&& perspective.horizontal == other.perspective.horizontal
 		&& perspective.vertical == other.perspective.vertical
+		&& gradient.enabled == other.gradient.enabled
+		&& gradient.degree == other.gradient.degree
+		&& gradient.feather == other.gradient.feather
+		&& gradient.strength == other.gradient.strength
+		&& gradient.centerX == other.gradient.centerX
+		&& gradient.centerY == other.gradient.centerY
 		&& cacorrection.red == other.cacorrection.red
 		&& cacorrection.blue == other.cacorrection.blue
 		&& vignetting.amount == other.vignetting.amount

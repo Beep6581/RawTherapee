@@ -443,6 +443,8 @@ HISTORY_MSG_205;CAM02 hot/bad pixels
 HISTORY_MSG_206;CAT02 - Adapt scene auto
 HISTORY_MSG_207;Defringing Hue curve
 HISTORY_MSG_208;Blue/Red Equalizer
+HISTORY_MSG_210;Gradient Filter
+HISTORY_MSG_211;Gradient Filter
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -633,6 +635,7 @@ PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
 PARTIALPASTE_DIRPYRDENOISE;Noise reduction
 PARTIALPASTE_DIRPYREQUALIZER;Contrast by detail levels
 PARTIALPASTE_DISTORTION;Distortion correction
+PARTIALPASTE_GRADIENT;Graduated Filter
 PARTIALPASTE_EPD;Tone mapping
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Changes to Exif data
@@ -1301,6 +1304,18 @@ TP_VIGNETTING_CENTER_Y;Center Y
 TP_VIGNETTING_LABEL;Vignetting Correction
 TP_VIGNETTING_RADIUS;Radius
 TP_VIGNETTING_STRENGTH;Strength
+TP_GRADIENT_DEGREE;Angle
+TP_GRADIENT_CENTER;Center
+TP_GRADIENT_CENTER_X;Center X
+TP_GRADIENT_CENTER_Y;Center Y
+TP_GRADIENT_LABEL;Graduated Filter
+TP_GRADIENT_FEATHER;Feather
+TP_GRADIENT_STRENGTH;Strength
+TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
+TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
+TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
+TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
+TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy

@@ -228,7 +228,9 @@ LUMINANCECURVE,   // EvCATbadpix
 LUMINANCECURVE,   // EvCATAutoadap
 DEFRINGE,         // EvPFCurve,
 WHITEBALANCE,     // EvWBequal,
-WHITEBALANCE      // EvWBequalbo,
+WHITEBALANCE,     // EvWBequalbo,
+TRANSFORM,        // EvGradient
+TRANSFORM         // EvGradientEnabled
 
 //LUMINANCECURVE    // EvCATsharpcie
 

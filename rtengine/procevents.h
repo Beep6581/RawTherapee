@@ -232,7 +232,9 @@ enum ProcEvent {
 	EvPFCurve=206,	
 	EvWBequal=207,
 	EvWBequalbo=208,
-	NUMOFEVENTS=209
+        EvGradient=209,
+        EvGradientEnabled=210,
+	NUMOFEVENTS=211
 };
 }
 #endif

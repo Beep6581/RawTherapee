@@ -211,8 +211,8 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
             original->width, original->height, params->coarse, rawRotationDeg);
     }
 
-	if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && needsVignetting())
-		transformVignetteOnly (original, transformed, cx, cy, oW, oH);
+    if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsGradient()))
+		transformLuminanceOnly (original, transformed, cx, cy, oW, oH);
 	else if (!needsCA() && scale!=1)
 		transformPreview (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap);
 		else
@@ -241,11 +241,146 @@ void ImProcFunctions::calcVignettingParams(int oW, int oH, const VignettingParam
 	mul = (1.0-v) / tanh(b);
 }
 
+struct grad_params {
+	bool angle_is_zero, transpose, bright_top;
+	float ta, yc, xc;
+	float ys, ys_inv;
+	float scale, botmul, topmul;
+	float gamma;
+	float top_edge_0;
+	int h;
+};
+static void calcGradientParams(int oW, int oH, const GradientParams& gradient, struct grad_params& gp)
+{
+	int w = oW;
+	int h = oH;
+	double gradient_stops = gradient.strength;
+	double gradient_span = gradient.feather / 100.0;
+	double gradient_center_x = gradient.centerX / 200.0 + 0.5;
+	double gradient_center_y = gradient.centerY / 200.0 + 0.5;
+	double gradient_angle = gradient.degree / 180.0 * M_PI;
+	//fprintf(stderr, "%f %f %f %f %f %d %d\n", gradient_stops, gradient_span, gradient_center_x, gradient_center_y, gradient_angle, w, h);
+
+	// make 0.0 <= gradient_angle < 2 * M_PI
+	gradient_angle = fmod(gradient_angle, 2 * M_PI);
+	if (gradient_angle < 0.0) {
+		gradient_angle += 2.0 * M_PI;
+	}
+
+	gp.bright_top = false;
+	gp.transpose = false;
+	gp.angle_is_zero = false;
+	gp.h = h;
+	double cosgrad = cos(gradient_angle);
+	if (fabs(cosgrad) < 0.707) {
+		// we transpose to avoid division by zero at 90 degrees
+		// (actually we could transpose only for 90 degrees, but this way we avoid
+		// division with extremely small numbers
+		gp.transpose = true;
+		gradient_angle += 0.5 * M_PI;
+		cosgrad = cos(gradient_angle);
+		double gxc = gradient_center_x;
+		gradient_center_x = 1.0 - gradient_center_y;
+		gradient_center_y = gxc;
+	}
+	gradient_angle = fmod(gradient_angle, 2 * M_PI);
+	if (gradient_angle > 0.5 * M_PI && gradient_angle < M_PI) {
+		gradient_angle += M_PI;
+		gp.bright_top = true;
+	} else if (gradient_angle >= M_PI && gradient_angle < 1.5 * M_PI) {
+		gradient_angle -= M_PI;
+		gp.bright_top = true;
+	}
+	if (fabs(gradient_angle) < 0.001 || fabs(gradient_angle - 2 * M_PI) < 0.001) {
+		gradient_angle = 0;
+		gp.angle_is_zero = true;
+	}
+	if (gp.transpose) {
+		gp.bright_top = !gp.bright_top;
+	}
+	float *grad = (float *)malloc(w * h * sizeof(float));
+	if (gp.transpose) {
+		int tmp = w;
+		w = h;
+		h = tmp;
+	}
+	gp.scale = 1.0 / pow(2, gradient_stops);
+	if (gp.bright_top) {
+		gp.topmul = 1.0;
+		gp.botmul = gp.scale;
+	} else {
+		gp.topmul = gp.scale;
+		gp.botmul = 1.0;
+	}
+	gp.ta = tan(gradient_angle);
+	gp.xc = w * gradient_center_x;
+	gp.yc = h * gradient_center_y;
+	gp.ys = sqrt((float)h * h + (float)w * w) * (gradient_span / cos(gradient_angle));
+	gp.ys_inv = 1.0 / gp.ys;
+	gp.top_edge_0 = gp.yc - gp.ys/2.0;
+	if (gp.ys < 1.0 / h) {
+		gp.ys_inv = 0;
+		gp.ys = 0;
+	}
+	gp.gamma = 1.5; // tested to be "visually pleasing"
+}
+
+static float calcGradientFactor(const struct grad_params& gp, int x, int y) {
+	if (gp.angle_is_zero) {
+		int gy = gp.transpose ? x : y;
+		int gx = gp.transpose ? y : x;
+		if (gy < gp.top_edge_0) {
+			return gp.topmul;
+		} else if (gy >= gp.top_edge_0 + gp.ys) {
+			return gp.botmul;
+		} else {
+			float val = ((float)(gy - gp.top_edge_0) * gp.ys_inv);
+			if (gp.bright_top) {
+				val = 1.0 - val;
+			}
+			val = 2 * val - 1.0; // adjust range to -1 to 1
+			val = 0.5 * (3 * val - powf(val, 3)); // s-curve
+			val = 0.5 * (1.0 + val); // adjust range back to 0 to 1
+			val = powf(val, gp.gamma); // apply gamma
+			return gp.scale + val * (1.0 - gp.scale);
+		}
+	} else {
+		int gy = gp.transpose ? x : y;
+		int gx = gp.transpose ? gp.h - y - 1 : x;
+		float top_edge = gp.yc - gp.ys/2.0 - gp.ta * (gx - gp.xc);
+		if (gy < top_edge) {
+			return gp.topmul;
+		} else if (gy >= top_edge + gp.ys) {
+			return gp.botmul;
+		} else {
+			float val = ((float)(gy - top_edge) * gp.ys_inv);
+			if (gp.bright_top) {
+				val = 1.0 - val;
+			}
+			val = 2 * val - 1.0;
+			val = 0.5 * (3 * val - powf(val, 3));
+			val = 0.5 * (1.0 + val);
+			val = powf(val, gp.gamma);
+			return gp.scale + val * (1.0 - gp.scale);
+		}
+	}
+}
+
 // Transform vignetting only
-void ImProcFunctions::transformVignetteOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH) {
+void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH) {
+
+	const bool applyVignetting = needsVignetting();
+	const bool applyGradient = needsGradient();
 
 	double vig_w2, vig_h2, maxRadius, v, b, mul;
-	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
+	if (applyVignetting) {
+		calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
+	}
+
+        struct grad_params gp;
+        if (applyGradient) {
+            calcGradientParams(transformed->width, transformed->height, params->gradient, gp);
+        }
 
 	#pragma omp parallel for if (multiThread)
 	for (int y=0; y<transformed->height; y++) {
@@ -253,10 +388,16 @@ void ImProcFunctions::transformVignetteOnly (Imagefloat* original, Imagefloat* t
 		for (int x=0; x<transformed->width; x++) {
 			double vig_x_d = (double) (x + cx) - vig_w2 ;
 			double r = sqrt(vig_x_d*vig_x_d + vig_y_d*vig_y_d);
-			double vign = std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
-			transformed->r(y,x) = original->r(y,x) / vign;
-			transformed->g(y,x) = original->g(y,x) / vign;
-			transformed->b(y,x) = original->b(y,x) / vign;
+			double mul = 1.0;
+			if (applyVignetting) {
+				mul /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
+			}
+			if (applyGradient) {
+				mul *= calcGradientFactor(gp, x, y);
+                        }
+			transformed->r(y,x) = original->r(y,x) * mul;
+			transformed->g(y,x) = original->g(y,x) * mul;
+			transformed->b(y,x) = original->b(y,x) * mul;
 		}
 	}
 }
@@ -273,6 +414,11 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 
 	double vig_w2,vig_h2,maxRadius,v,b,mul;
 	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
+
+        struct grad_params gp;
+        if (needsGradient()) {
+		calcGradientParams(transformed->width, transformed->height, params->gradient, gp);
+	}
 
     float** chOrig[3];
     chOrig[0] = original->r.ptrs;
@@ -385,6 +531,9 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 					double vignmul = 1.0;
 					if (needsVignetting())
 						vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+					if (needsGradient()) {
+						vignmul *= calcGradientFactor(gp, x, y);
+					}
 
 					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2) {
                         // all interpolation pixels inside image
@@ -431,6 +580,11 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 
 	double vig_w2, vig_h2, maxRadius, v, b, mul;
 	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
+
+        struct grad_params gp;
+        if (needsGradient()) {
+		calcGradientParams(transformed->width, transformed->height, params->gradient, gp);
+	}
 
 	// auxiliary variables for distortion correction
     bool needsDist = needsDistortion();  // for performance
@@ -514,6 +668,8 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
             	double vignmul = 1.0;
                 if (needsVignetting())
                 	vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+		if (needsGradient())
+			vignmul *= calcGradientFactor(gp, x, y);
 
                 if (yc < original->height-1 && xc < original->width-1) {  
                     // all interpolation pixels inside image
@@ -579,6 +735,10 @@ bool ImProcFunctions::needsPerspective () {
 	return params->perspective.horizontal || params->perspective.vertical;
 }
 
+bool ImProcFunctions::needsGradient () {
+	return params->gradient.enabled && fabs(params->gradient.strength) > 1e-15;
+}
+
 bool ImProcFunctions::needsVignetting () {
 	return params->vignetting.amount;
 }
@@ -588,7 +748,7 @@ bool ImProcFunctions::needsLCP () {
 }
 
 bool ImProcFunctions::needsTransform () {
-	return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsVignetting () || needsLCP();
+	return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsVignetting () || needsLCP();
 }
 
 
