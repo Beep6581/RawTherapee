@@ -379,7 +379,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 
         struct grad_params gp;
         if (applyGradient) {
-            calcGradientParams(transformed->width, transformed->height, params->gradient, gp);
+            calcGradientParams(oW, oH, params->gradient, gp);
         }
 
 	#pragma omp parallel for if (multiThread)
@@ -393,7 +393,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 				factor /= std::max(v + mul * tanh (b*(maxRadius-r) / maxRadius), 0.001);
 			}
 			if (applyGradient) {
-				factor *= calcGradientFactor(gp, x, y);
+				factor *= calcGradientFactor(gp, cx+x, cy+y);
                         }
 			transformed->r(y,x) = original->r(y,x) * factor;
 			transformed->g(y,x) = original->g(y,x) * factor;
@@ -417,7 +417,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 
         struct grad_params gp;
         if (needsGradient()) {
-		calcGradientParams(transformed->width, transformed->height, params->gradient, gp);
+		calcGradientParams(oW, oH, params->gradient, gp);
 	}
 
     float** chOrig[3];
@@ -532,7 +532,7 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 					if (needsVignetting())
 						vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
 					if (needsGradient()) {
-						vignmul *= calcGradientFactor(gp, x, y);
+						vignmul *= calcGradientFactor(gp, cx+x, cy+y);
 					}
 
 					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2) {
@@ -583,7 +583,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 
         struct grad_params gp;
         if (needsGradient()) {
-		calcGradientParams(transformed->width, transformed->height, params->gradient, gp);
+		calcGradientParams(oW, oH, params->gradient, gp);
 	}
 
 	// auxiliary variables for distortion correction
@@ -669,7 +669,7 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
                 if (needsVignetting())
                 	vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
 		if (needsGradient())
-			vignmul *= calcGradientFactor(gp, x, y);
+			vignmul *= calcGradientFactor(gp, cx+x, cy+y);
 
                 if (yc < original->height-1 && xc < original->width-1) {  
                     // all interpolation pixels inside image
