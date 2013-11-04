@@ -444,6 +444,8 @@ HISTORY_MSG_205;CAM02 pixels chauds/morts
 HISTORY_MSG_206;CAT02 - Adapt. auto à la scène
 HISTORY_MSG_207;A.C. - Teinte
 HISTORY_MSG_208;Égaliseur Bleu/Rouge
+HISTORY_MSG_210;Filtre Dégradé
+HISTORY_MSG_211;Filtre Dégradé
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
@@ -642,6 +644,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Sélection auto du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURRADIUS;Rayon de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDBLURTYPE;Type de floutage du Champ Uniforme
 PARTIALPASTE_FLATFIELDFILE;Fichier de Champ Uniforme
+PARTIALPASTE_GRADIENT;Filtre Dégradé
 PARTIALPASTE_HLRECONSTRUCTION;Reconstruction des hautes lumières
 PARTIALPASTE_HLRECOVERYAMOUNT;Quantité de récup. des hautes lumières
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Seuil de récup. hautes lumières
@@ -711,7 +714,6 @@ PREFERENCES_CIEART_TOOLTIP;Si activé, les calculs CIECAM sont réalisés en pr�
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\nParamètres de ligne de commande pour permettre la génération d'un .pp3 basé sur des règles:\n[Chemin vers le fichier RAW/JPG] [Chemin vers le profil par défault] [Chemin de le répertoire Cache de RT] [ouverture f] [tps d'exposition en seconde] [longueur focale en mm] [ISO] [Objectif] [Fabricant de l'appareil photo] [Modèle de l'appareil photo]\n\n<b>ATTENTION:</b> Il vous appartient d'utiliser ou non des guillemts double pour spécifier des chemins si ceux-ci contiennent des espaces
-REFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
 PREFERENCES_CUSTPROFBUILDPATH_TOOLTIP;
 PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'image personnalisé
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
@@ -898,6 +900,7 @@ QINFO_FOCALLENGTH;Longueur focale
 QINFO_ISO;ISO
 QINFO_LENS;Objectif
 QINFO_NOEXIF;Données EXIF non disponibles.
+REFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
 SAVEDLG_AUTOSUFFIX;Ajouter automatiquement un suffixe si le fichier existe déjà
 SAVEDLG_FILEFORMAT;Format de fichier
 SAVEDLG_FORCEFORMATOPTS;Forcer les options d'enregistrement
@@ -1113,6 +1116,18 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Manuel
 TP_GAMMA_OUTPUT;Gamma de sortie
 TP_GAMMA_SLOP;Pente (linéaire)
+TP_GRADIENT_CENTER;Centre
+TP_GRADIENT_CENTER_X;Centre X
+TP_GRADIENT_CENTER_X_TOOLTIP;Coord. X du point d'ancrage de la rotation: -100=bord gauche, 0=centre, +100=bord droit
+TP_GRADIENT_CENTER_Y;Centre Y
+TP_GRADIENT_CENTER_Y_TOOLTIP;Coord. Y du point d'ancrage de la rotation: -100=bord supérieur, 0=centre, +100=bord inférieur
+TP_GRADIENT_DEGREE;Angle
+TP_GRADIENT_DEGREE_TOOLTIP;Angle de rotation (degré)
+TP_GRADIENT_FEATHER;Adoucissement
+TP_GRADIENT_FEATHER_TOOLTIP;Largeur du dégradé (pourcentage de la diagonal de l'image)
+TP_GRADIENT_LABEL;Filtre Dégradé
+TP_GRADIENT_STRENGTH;Force
+TP_GRADIENT_STRENGTH_TOOLTIP;Force de l'effet (EV)
 TP_HLREC_BLEND;Blend (mélange)
 TP_HLREC_CIELAB;Mélange CIELab
 TP_HLREC_COLOR;Propagation de la couleur

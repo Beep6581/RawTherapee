@@ -1229,6 +1229,8 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_206;CAT02 - Adapt scene auto
 !HISTORY_MSG_207;Defringing Hue curve
 !HISTORY_MSG_208;Blue/Red Equalizer
+!HISTORY_MSG_210;Gradient Filter
+!HISTORY_MSG_211;Gradient Filter
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
@@ -1238,6 +1240,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
 !MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
+!PARTIALPASTE_GRADIENT;Graduated Filter
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
 !PREFERENCES_BEHADDALL;All to 'Add'
@@ -1356,6 +1359,18 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_DIRPYRDENOISE_RED;Delta chrominance Red
 !TP_DIRPYRDENOISE_RGB;RGB
 !TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
+!TP_GRADIENT_CENTER;Center
+!TP_GRADIENT_CENTER_X;Center X
+!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
+!TP_GRADIENT_CENTER_Y;Center Y
+!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
+!TP_GRADIENT_DEGREE;Angle
+!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
+!TP_GRADIENT_FEATHER;Feather
+!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
+!TP_GRADIENT_LABEL;Graduated Filter
+!TP_GRADIENT_STRENGTH;Strength
+!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n\nShows the histogram of L before curve adjustements.\nnFor final output refer to the main histogram panel
 !TP_PFCURVE_CURVEEDITOR_CH;Hue
 !TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
