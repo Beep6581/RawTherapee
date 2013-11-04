@@ -1205,6 +1205,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_206;CAT02 - Adapt scene auto
 !HISTORY_MSG_207;Defringing Hue curve
 !HISTORY_MSG_208;Blue/Red Equalizer
+!HISTORY_MSG_210;Gradient Filter
+!HISTORY_MSG_211;Gradient Filter
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
@@ -1221,6 +1223,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
+!PARTIALPASTE_GRADIENT;Graduated Filter
 !PARTIALPASTE_LENSPROFILE;Lens correction profile
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
@@ -1367,6 +1370,18 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Saturation and Value Blending
 !TP_EXPOSURE_TCMODE_STANDARD;Standard
 !TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
+!TP_GRADIENT_CENTER;Center
+!TP_GRADIENT_CENTER_X;Center X
+!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
+!TP_GRADIENT_CENTER_Y;Center Y
+!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
+!TP_GRADIENT_DEGREE;Angle
+!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
+!TP_GRADIENT_FEATHER;Feather
+!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
+!TP_GRADIENT_LABEL;Graduated Filter
+!TP_GRADIENT_STRENGTH;Strength
+!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
 !TP_ICM_PREFERREDPROFILE;Preferred DCP profile
 !TP_ICM_PREFERREDPROFILE_1;Daylight
 !TP_ICM_PREFERREDPROFILE_2;Tungsten

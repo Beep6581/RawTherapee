@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
 ABOUT_TAB_LICENSE;Licence
@@ -1392,3 +1393,18 @@ ZOOMPANEL_ZOOMOUT;Oddálit \nZkratka: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_210;Gradient Filter
+!HISTORY_MSG_211;Gradient Filter
+!PARTIALPASTE_GRADIENT;Graduated Filter
+!TP_GRADIENT_CENTER;Center
+!TP_GRADIENT_CENTER_X;Center X
+!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
+!TP_GRADIENT_CENTER_Y;Center Y
+!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
+!TP_GRADIENT_DEGREE;Angle
+!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
+!TP_GRADIENT_FEATHER;Feather
+!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
+!TP_GRADIENT_LABEL;Graduated Filter
+!TP_GRADIENT_STRENGTH;Strength
+!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops

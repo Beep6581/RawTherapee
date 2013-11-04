@@ -188,7 +188,7 @@ FILEBROWSER_STARTPROCESSING;処理開始
 FILEBROWSER_STOPPROCESSINGHINT;画像処理の中止
 FILEBROWSER_STOPPROCESSING;処理中止
 FILEBROWSER_THUMBSIZE;サムネイル.サイズ
-FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいジョブが来たら自動的に処理を開始します
+FILEBROWSER_TOOLTIP_STOPPROCESSING;新しいRAWファイルが送られて来たら自動的に現像処理を開始します
 FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: Shift - ~
 FILEBROWSER_USETEMPLATE;テンプレート使用:
 FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt +</b>
@@ -319,7 +319,7 @@ HISTORY_MSG_80;リサイズ 高さ
 HISTORY_MSG_81;リサイズ 有効
 HISTORY_MSG_82;プロファイル変更
 HISTORY_MSG_83;高画質 シャドウ/ハイライト
-HISTORY_MSG_84;遠近補正
+HISTORY_MSG_84;パースペクティブの補正
 HISTORY_MSG_85;レンズ補正 プロファイル
 HISTORY_MSG_86;RGB カーブ - 輝度モード
 HISTORY_MSG_87;インパルス ノイズ低減
@@ -409,8 +409,8 @@ HISTORY_MSG_170;自然な彩度 - カーブ
 HISTORY_MSG_171;'LC' カーブ
 HISTORY_MSG_172;レッドと肌色トーンに対するLCの制限
 HISTORY_MSG_173;NR - 輝度ディテール
-HISTORY_MSG_174;表色モデル2002
-HISTORY_MSG_175;CAM02 - 色度順応量
+HISTORY_MSG_174;CIE色の見えモデル2002
+HISTORY_MSG_175;CAM02 - 色順応量
 HISTORY_MSG_176;CAM02 - 観視の暗い周囲環境
 HISTORY_MSG_177;CAM02 - 撮影環境の順応輝度
 HISTORY_MSG_178;CAM02 - 観視の順応輝度
@@ -660,7 +660,7 @@ PARTIALPASTE_LENSPROFILE;レンズ補正プロファイル
 PARTIALPASTE_LUMADENOISE;輝度 ノイズ低減
 PARTIALPASTE_LUMINANCEGROUP;輝度設定
 PARTIALPASTE_METAICMGROUP;メタデータ/ICM 設定
-PARTIALPASTE_PERSPECTIVE;遠近補正
+PARTIALPASTE_PERSPECTIVE;パースペクティブの補正
 PARTIALPASTE_PREPROCESS_GREENEQUIL;グリーン 平衡化
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;ホット/デッド ピクセル・フィルタを適用
 PARTIALPASTE_PREPROCESS_LINEDENOISE;ラインノイズ フィルタ
@@ -825,7 +825,7 @@ PREFERENCES_PROFILESAVEINPUT;処理プロファイルのパラメータを入力
 PREFERENCES_PROPERTY;プロパティ
 PREFERENCES_PSPATH;Adobe Photoshop のインストール・ディレクトリ
 PREFERENCES_RGBDTL_LABEL;ノイズ低減のスレッドの最大数
-PREFERENCES_RGBDTL_TOOLTIP;ノイズ低減は、10メガピクセル画像では128MB程度、40メガピクセル画像では512MBを必要とします、そしてスレッドごと128MB追加する必要があります。複数のスレッドを同時に実行すると演算が速くなります。自動的にできる限り多くのスレッドを使用するには"0"に設定のままにします
+PREFERENCES_RGBDTL_TOOLTIP;ノイズ低減は、10メガピクセル画像では128MB程度、40メガピクセル画像では512MBを必要とします、そして更にスレッドごとに128MBが必要です。複数のスレッドを同時に実行すると演算が速くなります。自動的にできる限り多くのスレッドを使用するには"0"の設定のままにします
 PREFERENCES_SELECTFONT;フォント選択
 PREFERENCES_SELECTICCDIRDLG;ICCプロファイル・ディレクトリ選択...
 PREFERENCES_SELECTLANG;言語選択
@@ -970,7 +970,7 @@ TP_COLORAPP_ALGO_JS;明度 + 彩度 (JS)
 TP_COLORAPP_ALGO_QM;明るさ + 鮮やかさ (QM)
 TP_COLORAPP_ALGO_TOOLTIP;サブセットかすべてのパラメータ使用か選択
 TP_COLORAPP_BADPIXSL;ホット／バッドピクセルフィルター
-TP_COLORAPP_BADPIXSL_TOOLTIP;明るい部分のホット／バッドピクセルを圧縮します\n 0は効果なし 1は中間 2はガウスほかし\n\nこれらの人工的な調整がCIE色の見えモデル02の限界です。代わりに、イメージが極端に暗くなるのを防ぎます
+TP_COLORAPP_BADPIXSL_TOOLTIP;明るい部分のホット／バッドピクセルを圧縮します\n 0は効果なし 1は中間 2はガウスほかし\n\nこれらアーティファクトはCIECAM02の限界に起因するものです。色域を抑制する代わりに、イメージに暗い影が現れるのを防ぎます
 TP_COLORAPP_BRIGHT;明るさ (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;CIECAM02の明るさは LabやRGBとは異なり、白の輝度を計算に入れます
 TP_COLORAPP_CHROMA;色度 (C)
@@ -993,7 +993,7 @@ TP_COLORAPP_CURVEEDITOR3_TOOLTIP;色度、彩度、鮮やかさのいずれか�
 TP_COLORAPP_DATACIE;カーブにCIECAM出力のヒストグラムを表示
 TP_COLORAPP_DATACIE_TOOLTIP;有効の場合、CIECAMカーブのヒストグラムは、JかQ、CIECAM調整後のCかs、またはMの値/範囲の近似値を表示します\nこの選択はメイン・ヒストグラムパネルには影響を与えません\n\n無効の場合、CIECAMカーブのヒストグラムは、CIECAM調整前のLab値を表示します
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;チェックボックスが有効の場合 (推奨)\nRTは、CAT02で使用されるものとさらに全体のCIECAM02用の最適値を算出します\n手動で値を設定するには、チェックボックスを無効にします (65以上の値を推奨)
-TP_COLORAPP_DEGREE_TOOLTIP;CIE色度順応変換2002の量
+TP_COLORAPP_DEGREE_TOOLTIP;CIE色順応変換2002の量
 TP_COLORAPP_EQUAL;同等
 TP_COLORAPP_GAMUT;色域制御 (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Labモードの色域制御を許可
@@ -1137,12 +1137,12 @@ TP_ICM_BLENDCMSMATRIX;マトリクスとハイライト・ブレンド
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;LUTベースのICCプロファイルを使用するときに白トビを修復
 TP_ICM_FILEDLGFILTERANY;すべてのファイル
 TP_ICM_FILEDLGFILTERICM;プロファイル ファイル
-TP_ICM_INPUTCAMERAICC;カメラの標準的プロファイル
-TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapeeのデフォルトのICCカラープロファイルを使用 シンプルなマトリクスより正確だが一部のカメラでのみ使用可能
-TP_ICM_INPUTCAMERA;カメラ固有のプロファイル
+TP_ICM_INPUTCAMERAICC;カメラ固有のプロファイル
+TP_ICM_INPUTCAMERAICC_TOOLTIP;RawTherapeeが持っているカメラ固有のICCプロファイルを使用 シンプルなマトリクスより正確だが一部のカメラでのみ使用可能
+TP_ICM_INPUTCAMERA;カメラの標準的プロファイル
 TP_ICM_INPUTCAMERA_TOOLTIP;dcrawのシンプルなカラー・マトリクス、RawTherapeeの拡張バージョン（カメラの機種によりどちらでも可能）またはDNGの埋め込みを使用
 TP_ICM_INPUTCUSTOM;カスタム
-TP_ICM_INPUTCUSTOM_TOOLTIP;カメラ用の独自の DCP/ICCカラープロファイルのファイルを選択
+TP_ICM_INPUTCUSTOM_TOOLTIP;独自の DCP/ICCプロファイルのファイルを選択
 TP_ICM_INPUTDLGLABEL;DCP/ICC 入力プロファイルを選択...
 TP_ICM_INPUTEMBEDDED;埋め込み使用, 可能なら
 TP_ICM_INPUTEMBEDDED_TOOLTIP;非RAWファイルに埋め込まれたカラープロファイルを使用
@@ -1404,8 +1404,25 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 #06 a3novy: 2012-04-04 (for 4.0.8)
 #07 a3novy: 2012-07-12, 2012-12-22 (for 4.0.9)
 #08 a3novy: 2013-04-01, 2013-04-19 (for 4.0.10)
+#09 firefly: 2013-09-10, 2013-10-28 (for 4.0.11)
 ﻿
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_210;Gradient Filter
+!HISTORY_MSG_211;Gradient Filter
+!PARTIALPASTE_GRADIENT;Graduated Filter
+!TP_GRADIENT_CENTER;Center
+!TP_GRADIENT_CENTER_X;Center X
+!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
+!TP_GRADIENT_CENTER_Y;Center Y
+!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
+!TP_GRADIENT_DEGREE;Angle
+!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
+!TP_GRADIENT_FEATHER;Feather
+!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
+!TP_GRADIENT_LABEL;Graduated Filter
+!TP_GRADIENT_STRENGTH;Strength
+!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops

@@ -1351,9 +1351,12 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_206;CAT02 - Adapt scene auto
 !HISTORY_MSG_207;Defringing Hue curve
 !HISTORY_MSG_208;Blue/Red Equalizer
+!HISTORY_MSG_210;Gradient Filter
+!HISTORY_MSG_211;Gradient Filter
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
+!PARTIALPASTE_GRADIENT;Graduated Filter
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PREFERENCES_TAB_SOUND;Sounds
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
@@ -1366,6 +1369,18 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
 !TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
 !TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
+!TP_GRADIENT_CENTER;Center
+!TP_GRADIENT_CENTER_X;Center X
+!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
+!TP_GRADIENT_CENTER_Y;Center Y
+!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
+!TP_GRADIENT_DEGREE;Angle
+!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
+!TP_GRADIENT_FEATHER;Feather
+!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
+!TP_GRADIENT_LABEL;Graduated Filter
+!TP_GRADIENT_STRENGTH;Strength
+!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
 !TP_LABCURVE_LABEL;Lab Adjustments
 !TP_PFCURVE_CURVEEDITOR_CH;Hue
 !TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.

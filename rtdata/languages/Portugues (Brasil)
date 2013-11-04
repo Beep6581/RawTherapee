@@ -853,6 +853,8 @@ ZOOMBAR_SMALL;Pequeno
 !HISTORY_MSG_206;CAT02 - Adapt scene auto
 !HISTORY_MSG_207;Defringing Hue curve
 !HISTORY_MSG_208;Blue/Red Equalizer
+!HISTORY_MSG_210;Gradient Filter
+!HISTORY_MSG_211;Gradient Filter
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_FULLSCREEN;Fullscreen
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
@@ -936,6 +938,7 @@ ZOOMBAR_SMALL;Pequeno
 !PARTIALPASTE_FLATFIELDBLURRADIUS;FF blur radius
 !PARTIALPASTE_FLATFIELDBLURTYPE;FF blur type
 !PARTIALPASTE_FLATFIELDFILE;Flat field (FF) File
+!PARTIALPASTE_GRADIENT;Graduated Filter
 !PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
 !PARTIALPASTE_HLRECOVERYAMOUNT;Highlight recovery amount
 !PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight recovery threshold
@@ -978,7 +981,7 @@ ZOOMBAR_SMALL;Pequeno
 !PREFERENCES_CIEART;CIECAM02 optimization
 !PREFERENCES_CIEART_LABEL;Use float precision instead of double
 !PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality
-!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera]
+!PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [RT's cache folder path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera make] [camera model]\n\n<b>WARNING:</b> You are responsible of using double quotes where necessary if you're using paths containing spaces.
 !PREFERENCES_CUSTPROFBUILDPATH;Executable path
 !PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 !PREFERENCES_CUTOVERLAYBRUSH;Crop mask color/transparency
@@ -1224,6 +1227,18 @@ ZOOMBAR_SMALL;Pequeno
 !TP_GAMMA_FREE;Free gamma
 !TP_GAMMA_OUTPUT;Output Gamma
 !TP_GAMMA_SLOP;Slope (linear)
+!TP_GRADIENT_CENTER;Center
+!TP_GRADIENT_CENTER_X;Center X
+!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
+!TP_GRADIENT_CENTER_Y;Center Y
+!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
+!TP_GRADIENT_DEGREE;Angle
+!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
+!TP_GRADIENT_FEATHER;Feather
+!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
+!TP_GRADIENT_LABEL;Graduated Filter
+!TP_GRADIENT_STRENGTH;Strength
+!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
 !TP_HLREC_BLEND;Blend
 !TP_HSVEQUALIZER_CHANNEL;HSV Channel
 !TP_HSVEQUALIZER_HUE;H
