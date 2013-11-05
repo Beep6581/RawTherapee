@@ -269,7 +269,11 @@ it could however be too low. To test that, go to the raw tab and adjust the
 is no longer 100%, and then increase 0.01 so all are 100 again. Usually you
 play around in the range 0.90 to 0.99, ie very small adjustment. Then divide
 the original white level with your adjustment to get a new larger white level,
-which you then enter in your camconst.json file.
+which you then enter in your camconst.json file. The same procedure can be
+used if the white level is too high, ie if you see pink highlights, then
+increase the correction factor above 1.0 until you just start seeing stable
+100% on all channels, and then divide the original white level to get a new
+smaller one.
 
 */
 {"camera_constants": [
