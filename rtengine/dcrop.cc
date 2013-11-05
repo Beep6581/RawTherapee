@@ -30,25 +30,35 @@ namespace rtengine {
 extern const Settings* settings;
 
 Crop::Crop (ImProcCoordinator* parent)
-    : resizeCrop(NULL), transCrop(NULL), updating(false),
-    skip(10),cropw(-1), croph(-1), trafw(-1), trafh(-1),
-    borderRequested(32), cropAllocated(false),
-    cropImageListener(NULL), parent(parent)
+    : origCrop(NULL), transCrop(NULL), laboCrop(NULL), labnCrop(NULL),
+      cropImg(NULL), cieCrop(NULL), cbuf_real(NULL), cshmap(NULL),
+      cbuffer(NULL), updating(false), newUpdatePending(false),
+      skip(10),
+      cropx(0), cropy(0), cropw(-1), croph(-1),
+      trafx(0), trafy(0), trafw(-1), trafh(-1),
+      rqcropx(0), rqcropy(0), rqcropw(-1), rqcroph(-1),
+      borderRequested(32), upperBorder(0), leftBorder(0),
+      cropAllocated(false),
+      cropImageListener(NULL), parent(parent)
 {
     parent->crops.push_back (this);
 }
 
 Crop::~Crop () {
 
-    cropMutex.lock ();
-    parent->mProcessing.lock (); 
+    MyMutex::MyLock cropLock(cropMutex);
+    MyMutex::MyLock processingLock(parent->mProcessing);
+
     std::vector<Crop*>::iterator i = std::find (parent->crops.begin(), parent->crops.end(), this);
     if (i!=parent->crops.end ())
         parent->crops.erase (i);
-        
     freeAll ();
-    parent->mProcessing.unlock (); 
-    cropMutex.unlock ();
+}
+
+void Crop::destroy () {
+    MyMutex::MyLock lock(cropMutex);
+    MyMutex::MyLock processingLock(parent->mProcessing);   /////////         RETESTER MAINTENANT QUE CE VERROU EST AJOUTE!!!
+    freeAll();
 }
 
 void Crop::setListener (DetailedCropListener* il) { 
@@ -80,10 +90,10 @@ void Crop::update (int todo) {
     if (needsinitupdate || (todo & M_HIGHQUAL))
         todo = ALL;
 
-    // set improcfuncions' scale now that skip has been updated
+    // Tells to the ImProcFunctions' tool what is the preview scale, which may lead to some simplifications
     parent->ipf.setScale (skip);
 
-    baseCrop = origCrop;
+    Imagefloat* baseCrop = origCrop;
 
     bool needstransform  = parent->ipf.needsTransform();
 
@@ -104,171 +114,181 @@ void Crop::update (int todo) {
         parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
         //ColorTemp::CAT02 (origCrop, &params)	;
 
-		//parent->imgsrc->convertColorSpace(origCrop, params.icm);
+        //parent->imgsrc->convertColorSpace(origCrop, params.icm);
 
         if (todo & M_LINDENOISE) {
-			if (skip==1 && params.dirpyrDenoise.enabled) {
-				parent->ipf.RGB_denoise(origCrop, origCrop, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp());
-			}
+            if (skip==1 && params.dirpyrDenoise.enabled)
+                parent->ipf.RGB_denoise(origCrop, origCrop, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp());
         }
         parent->imgsrc->convertColorSpace(origCrop, params.icm, params.raw);
-}
+    }
 
     // transform
-    if ((!needstransform && transCrop) || (transCrop && (transCrop->width!=cropw || transCrop->height!=croph))) {
-        delete transCrop;
+    if (needstransform) {
+        if (!transCrop)
+            transCrop = new Imagefloat (cropw, croph);
+
+        if ((todo & M_TRANSFORM) && needstransform)
+            parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip),
+                                   parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getMetaData()->getFocalLen35mm(),
+                                   parent->imgsrc->getMetaData()->getFocusDist(), parent->imgsrc->getRotateDegree(), false);
+        if (transCrop)
+            baseCrop = transCrop;
+    }
+    else {
+        if (transCrop) delete transCrop;
         transCrop = NULL;
     }
-    if (needstransform && !transCrop)
-        transCrop = new Imagefloat (cropw, croph);
-    if ((todo & M_TRANSFORM) && needstransform)
-    	parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip),
-            parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getMetaData()->getFocalLen35mm(),
-            parent->imgsrc->getMetaData()->getFocusDist(), parent->imgsrc->getRotateDegree(), false);
-    if (transCrop)
-        baseCrop = transCrop;
 
     // blurmap for shadow & highlights
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(SKIPS(parent->fw,skip)*SKIPS(parent->fw,skip)+SKIPS(parent->fh,skip)*SKIPS(parent->fh,skip))) / 2.0;
-		double shradius = params.sh.radius;
-		if (!params.sh.hq) shradius *= radius / 1800.0;        
-		cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
+        double shradius = params.sh.radius;
+        if (!params.sh.hq) shradius *= radius / 1800.0;
+        cshmap->update (baseCrop, shradius, parent->ipf.lumimul, params.sh.hq, skip);
         cshmap->forceStat (parent->shmap->max_f, parent->shmap->min_f, parent->shmap->avg);
     }
 
     // shadows & highlights & tone curve & convert to cielab
-	/*int xref,yref;
-	xref=000;yref=000;
-	if (colortest && cropw>115 && croph>115) 
-		for(int j=1;j<5;j++){	
-			xref+=j*30;yref+=j*30;
-			if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip,
-				   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
-				   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
-				   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
-				   parent->imgsrc->getGamma());
-		}*/
-	
+    /*int xref,yref;
+    xref=000;yref=000;
+    if (colortest && cropw>115 && croph>115)
+        for(int j=1;j<5;j++){
+            xref+=j*30;yref+=j*30;
+            if (settings->verbose) printf("before rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f gamma=%f  \n",xref,yref,skip,
+                   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
+                   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
+                   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
+                   parent->imgsrc->getGamma());
+        }*/
+
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1, parent->customToneCurve2 );
+                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1, parent->customToneCurve2 );
 
-	/*xref=000;yref=000;
-	if (colortest && cropw>115 && croph>115) 
-	for(int j=1;j<5;j++){	
-		xref+=j*30;yref+=j*30;
-		if (settings->verbose) {
+    /*xref=000;yref=000;
+    if (colortest && cropw>115 && croph>115)
+    for(int j=1;j<5;j++){
+        xref+=j*30;yref+=j*30;
+        if (settings->verbose) {
             printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
-			       baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
-			       baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
-			       baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
-		    printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, 
-			       laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
-			       laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
-			       laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+                   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
+                   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
+                   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
+            printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
+                   laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
+                   laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
+                   laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
         }
-	}*/
-	
-	// apply luminance operations
-	if (todo & (M_LUMINANCE+M_COLOR)) {
-		//I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
-		labnCrop->CopyFrom(laboCrop);
+    }*/
+
+    // apply luminance operations
+    if (todo & (M_LUMINANCE+M_COLOR)) {
+        //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
+        labnCrop->CopyFrom(laboCrop);
 
 
-	//	parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
-	    bool utili=true;
-	    bool autili=true;
-	    bool butili=true;
-		bool ccutili=true;
-		bool cclutili=true;
+        //parent->ipf.luminanceCurve (labnCrop, labnCrop, parent->lumacurve);
+        bool utili=true;
+        bool autili=true;
+        bool butili=true;
+        bool ccutili=true;
+        bool cclutili=true;
 
  
-		LUTu dummy;
-		parent->ipf.chromiLuminanceCurve (1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, dummy);
-		parent->ipf.vibrance (labnCrop);
-		if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) parent->ipf.EPDToneMap(labnCrop,5,1);
-	//	parent->ipf.EPDToneMap(labnCrop, 5, 1);	//Go with much fewer than normal iterates for fast redisplay.
-		// for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
-		if (skip==1) {
-			if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {		
-			parent->ipf.impulsedenoise (labnCrop);}
-			if((params.colorappearance.enabled && !settings->autocielab) ||(!params.colorappearance.enabled) ) {parent->ipf.defringe (labnCrop);}
-			parent->ipf.MLsharpen (labnCrop);
-			if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
-					parent->ipf.MLmicrocontrast (labnCrop);
-					parent->ipf.sharpening (labnCrop, (float**)cbuffer);
-					parent->ipf.dirpyrequalizer (labnCrop);
-					}
-		}
-		
-	if(params.colorappearance.enabled){		
-	float fnum = parent->imgsrc->getMetaData()->getFNumber  ();// F number
-	float fiso = parent->imgsrc->getMetaData()->getISOSpeed () ;// ISO
-	float fspeed = parent->imgsrc->getMetaData()->getShutterSpeed () ;//speed 
-	float fcomp = parent->imgsrc->getMetaData()->getExpComp  ();//compensation + -
-	float adap2,adap;
-	double ada, ada2;
-	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap=2000.f;ada=ada2=2000.;}//if no exif data or wrong
-	else {
-	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
-	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-	E_V += expo2;
-	float expo1;//exposure raw white point
-	expo1=log2(params.raw.expos);//log2 ==>linear to EV
-	E_V += expo1;
-	adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
-	ada=ada2=(double) adap;
-	//end calculation adaptation scene luminosity
-	}
-		
-	int begh = 0, endh = labnCrop->H;
-	bool execsharp=false;
-	float d;
-	double dd;
-	if(skip==1) execsharp=true;
-	if(settings->ciecamfloat) {parent->ipf.ciecam_02float (cieCrop, adap, begh, endh, 1, 2,labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, d);
-	}
-	else {parent->ipf.ciecam_02 (cieCrop,ada, begh, endh, 1, 2, labnCrop, &params,parent->customColCurve1,parent->customColCurve2,parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, dd);}
-	}
-	}
+        LUTu dummy;
+        parent->ipf.chromiLuminanceCurve (1,labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve, parent->lumacurve, utili, autili, butili, ccutili,cclutili, dummy);
+        parent->ipf.vibrance (labnCrop);
+        if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) parent->ipf.EPDToneMap(labnCrop,5,1);
+        //parent->ipf.EPDToneMap(labnCrop, 5, 1);    //Go with much fewer than normal iterates for fast redisplay.
+        // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
+        if (skip==1) {
+            if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
+            parent->ipf.impulsedenoise (labnCrop);}
+            if((params.colorappearance.enabled && !settings->autocielab) ||(!params.colorappearance.enabled) ) {parent->ipf.defringe (labnCrop);}
+            parent->ipf.MLsharpen (labnCrop);
+            if((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
+                    parent->ipf.MLmicrocontrast (labnCrop);
+                    parent->ipf.sharpening (labnCrop, (float**)cbuffer);
+                    parent->ipf.dirpyrequalizer (labnCrop);
+                    }
+        }
+
+        if(params.colorappearance.enabled){
+            float fnum = parent->imgsrc->getMetaData()->getFNumber  ();        // F number
+            float fiso = parent->imgsrc->getMetaData()->getISOSpeed () ;       // ISO
+            float fspeed = parent->imgsrc->getMetaData()->getShutterSpeed () ; // Speed
+            double fcomp = parent->imgsrc->getMetaData()->getExpComp  ();      // Compensation +/-
+            double adap; // Scene's luminosity adaptation factor
+            if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
+                adap=2000.;
+            }
+            else {
+                double E_V = fcomp + log2 (double((fnum*fnum) / fspeed / (fiso/100.f)));
+                E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+                E_V += log2(params.raw.expos);// exposure raw white point ; log2 ==> linear to EV
+                adap= pow(2., E_V-3.);// cd / m2
+                // end calculation adaptation scene luminosity
+            }
+
+            int begh = 0, endh = labnCrop->H;
+            bool execsharp=false;
+            if(skip==1) execsharp=true;
+
+            if (!cieCrop)
+                cieCrop = new CieImage (cropw, croph);
+
+            if(settings->ciecamfloat) {
+                float d; // not used after this block
+                parent->ipf.ciecam_02float (cieCrop, float(adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, d);
+            }
+            else {
+                double dd; // not used after this block
+                parent->ipf.ciecam_02 (cieCrop,adap, begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, dd);
+            }
+        }
+        else {
+            // CIECAM is disbaled, we free up its image buffer to save some space
+            if (cieCrop) delete cieCrop; cieCrop=NULL;
+        }
+    }
     // switch back to rgb
     parent->ipf.lab2monitorRgb (labnCrop, cropImg);
-	
-	//parent->ipf.lab2monitorRgb (laboCrop, cropImg);
-	
-	//cropImg = baseCrop->to8();
-	/*
-	//	 int xref,yref;
-	xref=000;yref=000;
-	if (colortest && cropw>115 && croph>115) 
-	for(int j=1;j<5;j++){	
-		xref+=j*30;yref+=j*30;
-		int rlin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))]/255.0) * 255.0);
-		int glin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1]/255.0) * 255.0);
-		int blin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2]/255.0) * 255.0);
 
-		printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip,
-			   rlin,glin,blin);
-			   //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))],
-			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)],
-			   //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2)]);
-		//printf("after lab2rgb Lab lab2 Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-		printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
-			   labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
-			   labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
-			   labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327)q;
-	}
-	*/
-	/*
-	if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
-		xref=000;yref=000;
-		printf("dcrop final R= %d  G= %d  B= %d  \n",
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)],
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+1],
-			   cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
-	}
-	*/
+    //parent->ipf.lab2monitorRgb (laboCrop, cropImg);
+
+    //cropImg = baseCrop->to8();
+    /*
+    //     int xref,yref;
+    xref=000;yref=000;
+    if (colortest && cropw>115 && croph>115)
+    for(int j=1;j<5;j++){
+        xref+=j*30;yref+=j*30;
+        int rlin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))]/255.0) * 255.0);
+        int glin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1]/255.0) * 255.0);
+        int blin = (CurveFactory::igamma2((float)cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2]/255.0) * 255.0);
+
+        printf("after lab2rgb RGB lab2 Xr%i Yr%i Skip=%d  R=%d  G=%d  B=%d  \n",xref,yref,skip,
+               rlin,glin,blin);
+               //cropImg->data[3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))],
+               //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+1)],
+               //cropImg->data[(3*((int)(xref/skip)*cropImg->width+(int)(yref/skip))+2)]);
+        //printf("after lab2rgb Lab lab2 Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip, labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+        printf("after lab2rgb Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
+               labnCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
+               labnCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
+               labnCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327)q;
+    }
+    */
+    /*
+    if (colortest && cropImg->height>115 && cropImg->width>115) {//for testing
+        xref=000;yref=000;
+        printf("dcrop final R= %d  G= %d  B= %d  \n",
+               cropImg->data[3*xref/(skip)*(cropImg->width+1)],
+               cropImg->data[3*xref/(skip)*(cropImg->width+1)+1],
+               cropImg->data[3*xref/(skip)*(cropImg->width+1)+2]);
+    }
+    */
     if (cropImageListener) {
         // this in output space held in parallel to allow analysis like shadow/highlight
         Glib::ustring outProfile=params.icm.output;
@@ -281,16 +301,16 @@ void Crop::update (int todo) {
         int finalH = rqcroph;
         if (cropImg->getHeight()-upperBorder < finalH)
             finalH = cropImg->getHeight()-upperBorder;
-            
+
         Image8* final = new Image8 (finalW, finalH);
-		Image8* finaltrue = new Image8 (finalW, finalH);
+        Image8* finaltrue = new Image8 (finalW, finalH);
         for (int i=0; i<finalH; i++) {
             memcpy (final->data + 3*i*finalW, cropImg->data + 3*(i+upperBorder)*cropw + 3*leftBorder, 3*finalW);
-			memcpy (finaltrue->data + 3*i*finalW, cropImgtrue->data + 3*(i+upperBorder)*cropw + 3*leftBorder, 3*finalW);
-		}
+            memcpy (finaltrue->data + 3*i*finalW, cropImgtrue->data + 3*(i+upperBorder)*cropw + 3*leftBorder, 3*finalW);
+        }
         cropImageListener->setDetailedCrop (final, finaltrue, params.icm, params.crop, rqcropx, rqcropy, rqcropw, rqcroph, skip);
         delete final;
-		delete finaltrue;
+        delete finaltrue;
         delete cropImgtrue;
     }
 }
@@ -300,26 +320,23 @@ void Crop::freeAll () {
     if (settings->verbose) printf ("freeallcrop starts %d\n", (int)cropAllocated);
 
     if (cropAllocated) {
-        delete origCrop;
-        if (transCrop)
-            delete transCrop;
-        transCrop = NULL;        
-        if (resizeCrop)
-            delete resizeCrop;
-        resizeCrop = NULL;
-        delete laboCrop;
-		delete cieCrop;
-        delete labnCrop;
-        delete cropImg;
-        delete cshmap;
-   //  for (int i=0; i<croph; i++)
-    //       delete [] cbuffer[i];
-        delete [] cbuf_real;
-        delete [] cbuffer;
+        if (origCrop ) { delete    origCrop;  origCrop=NULL; }
+        if (transCrop) { delete    transCrop; transCrop=NULL; }
+        if (laboCrop ) { delete    laboCrop;  laboCrop=NULL; }
+        if (labnCrop ) { delete    labnCrop;  labnCrop=NULL; }
+        if (cropImg  ) { delete    cropImg;   cropImg=NULL; }
+        if (cieCrop  ) { delete    cieCrop;   cieCrop=NULL; }
+        if (cbuf_real) { delete [] cbuf_real; cbuf_real=NULL; }
+        if (cbuffer  ) { delete [] cbuffer;   cbuffer=NULL; }
+        if (cshmap   ) { delete    cshmap;    cshmap=NULL; }
     }
     cropAllocated = false;
 }
 
+/** @brief Handles crop's image buffer reallocation and trigger sizeChanged of SizeListener[s]
+ * If the scale changes, this method will free all buffers and reallocate ones of the new size.
+ * It will then tell to the SizeListener that size has changed (sizeChanged)
+ */
 bool Crop::setCropSizes (int rcx, int rcy, int rcw, int rch, int skip, bool internal) {
 
 if (settings->verbose) printf ("setcropsizes before lock\n");
@@ -379,8 +396,8 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
     leftBorder  = SKIPS(rqx1-bx1,skip);
     upperBorder = SKIPS(rqy1-by1,skip);
 
-    if (settings->verbose) 
-		printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh,cw,ch);
+    if (settings->verbose)
+        printf ("setsizes starts (%d, %d, %d, %d, %d, %d)\n", orW, orH, trafw, trafh,cw,ch);
 
     if (cw!=cropw || ch!=croph || orW!=trafw || orH!=trafh) {
 
@@ -392,26 +409,22 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
         trafh = orH;
 
         origCrop = new Imagefloat (trafw, trafh);
-        laboCrop = new LabImage (cropw, croph);    
-        labnCrop = new LabImage (cropw, croph);    
+        //transCrop will be allocated later, if necessary
+        laboCrop = new LabImage (cropw, croph);
+        labnCrop = new LabImage (cropw, croph);
         cropImg = new Image8 (cropw, croph);
-        cieCrop = new CieImage (cropw, croph);    
-
-        cshmap = new SHMap (cropw, croph, true);
-        
+        //cieCrop is only used in Crop::update, it will be allocated on first use and deleted if not used anymore
         cbuffer = new float*[croph];
         cbuf_real= new float[(croph+2)*cropw];
         for (int i=0; i<croph; i++)
             cbuffer[i] = cbuf_real+cropw*i+cropw;
+        cshmap = new SHMap (cropw, croph, true);
 
-        resizeCrop = NULL;
-        transCrop = NULL;
-        
         cropAllocated = true;
-        
+
         changed = true;
     }
-    
+
     cropx = bx1;
     cropy = by1;
     trafx = orx;
@@ -424,27 +437,38 @@ if (settings->verbose) printf ("setcropsizes before lock\n");
 
     return changed;
 }
-	
-// Try a simple, threadless update flag first
+
+/** @brief Look out if a new thread has to be started to process the update
+  *
+  * @return If true, a new updating thread has to be created. If false, the current updating thread will be used
+  */
 bool Crop::tryUpdate() {
-	bool needsFullUpdate = true;
-	
-	// If there are more update request, the following WHILE will collect it
-	if (updating) {
-		needsNext = true;
-		needsFullUpdate = false;
-	} else updating = true;
-	
-	return needsFullUpdate;
+    bool needsNewThread = true;
+
+    if (updating) {
+        // tells to the updater thread that a new update is pending
+        newUpdatePending = true;
+        // no need for a new thread, the current one will do the job
+        needsNewThread = false;
+    }
+    else
+        // the crop is now being updated ...well, when fullUpdate will be called
+        updating = true;
+
+    return needsNewThread;
 }
 
-// Full update, should be called via thread
+/* @brief Handles Crop updating in its own thread
+ *
+ * This method will cycle updates ss long as Crop::newUpdatePending will be true. During the processing,
+ * intermediary update will be automatically flushed by Crop::tryUpdate.
+ */
 void Crop::fullUpdate () { 
 
     parent->updaterThreadStart.lock ();
     if (parent->updaterRunning && parent->thread) {
-		// Do NOT reset changes here, since in a long chain of events it will lead to chroma_scale not being updated,
-		// causing Color::lab2rgb to return a black image on some opens
+        // Do NOT reset changes here, since in a long chain of events it will lead to chroma_scale not being updated,
+        // causing Color::lab2rgb to return a black image on some opens
         //parent->changeSinceLast = 0;
         parent->thread->join ();
     }
@@ -453,12 +477,13 @@ void Crop::fullUpdate () {
     if (parent->plistener)
         parent->plistener->setProgressState (true);
 
-    needsNext = true;
-    while (needsNext) {
-        needsNext = false;
+    // If there are more update request, the following WHILE will collect it
+    newUpdatePending = true;
+    while (newUpdatePending) {
+        newUpdatePending = false;
         update (ALL); 
     }
-    updating = false;
+    updating = false;  // end of crop update
 
     if (parent->plistener)
         parent->plistener->setProgressState (false);

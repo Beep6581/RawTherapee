@@ -155,7 +155,7 @@ namespace rtengine {
 
 		//srand((unsigned)time(0));//test with random data
 
-		const float gain = pow (2.0f, expcomp);
+		const float gain = pow (2.0f, float(expcomp));
 		float incr=1.f;
 		float noisevar_Ldetail = SQR((SQR(100.f-dnparams.Ldetail) + 50.f*(100.f-dnparams.Ldetail)) * TS * 0.5f * incr);
 

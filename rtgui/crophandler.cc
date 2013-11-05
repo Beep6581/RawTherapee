@@ -42,8 +42,10 @@ CropHandler::~CropHandler () {
         ipc->delSizeListener (this);
 
     setEnabled (false);
-    if (crop)
+    if (crop) {
         crop->destroy ();
+        crop = NULL;
+    }
     cimg.lock ();
     if (chi->pending)
         chi->destroyed = true;
