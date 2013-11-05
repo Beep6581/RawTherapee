@@ -82,15 +82,15 @@ void ImageArea::on_resized (Gtk::Allocation& req) {
 			mainCropWindow->addCropWindowListener (this);
 			mainCropWindow->setCropGUIListener (cropgl);
 			mainCropWindow->setPointerMotionListener (pmlistener);
-                        mainCropWindow->setPointerMotionHListener (pmhlistener);
+			mainCropWindow->setPointerMotionHListener (pmhlistener);
 			mainCropWindow->setPosition (0, 0);
 			mainCropWindow->setSize (get_width(), get_height(), false);  // this execute the refresh itself
 		}
 		else {
 			mainCropWindow->setSize (get_width(), get_height());
 		}
-        parent->syncBeforeAfterViews();
-	}    
+		parent->syncBeforeAfterViews();
+	}
 }
 
 void ImageArea::setImProcCoordinator (rtengine::StagedImageProcessor* ipc_) {

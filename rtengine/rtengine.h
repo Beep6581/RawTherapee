@@ -250,12 +250,13 @@ namespace rtengine {
             virtual void autoExpChanged (double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh) {}
     };
 
-	class AutoCamListener {
-		public :
-			virtual void autoCamChanged (double ccam) {}
-			virtual void adapCamChanged (double cadap) {}
-			
-	};		
+    class AutoCamListener {
+        public :
+            virtual ~AutoCamListener() {}
+            virtual void autoCamChanged (double ccam) {}
+            virtual void adapCamChanged (double cadap) {}
+    };
+
     /** This class represents a detailed part of the image (looking through a kind of window).
       * It can be created and destroyed with the appropriate members of StagedImageProcessor.
       * Several crops can be assigned to the same image.   */

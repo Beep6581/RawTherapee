@@ -37,20 +37,24 @@ class ImProcCoordinator;
 class Crop : public DetailedCrop {
 
     protected:
-        Imagefloat* origCrop, *baseCrop;
-        Imagefloat* *resizeCrop, *transCrop;
-        LabImage *laboCrop, *labnCrop;
-        Image8 *cropImg;  // permanently allocated in RAM and only renewed on size changes
-        CieImage *cieCrop;
-        float** cbuffer;
-        float * cbuf_real;
-        SHMap* cshmap;
+        // --- permanently allocated in RAM and only renewed on size changes
+        Imagefloat*  origCrop;   // "one chunk" allocation
+        Imagefloat*  transCrop;  // "one chunk" allocation, allocated if necessary
+        LabImage*    laboCrop;   // "one chunk" allocation
+        LabImage*    labnCrop;   // "one chunk" allocation
+        Image8*      cropImg;    // "one chunk" allocation
+        CieImage*    cieCrop;    // allocating 6 images, each in "one chunk" allocation
+        float *      cbuf_real;  // "one chunk" allocation
+        SHMap*       cshmap;     // per line allocation
+        // -----------------------------------------------------------------
+        float**      cbuffer;
 
-        bool updating, needsNext;
+        bool updating;         /// Flag telling if an updater thread is currently processing
+        bool newUpdatePending; /// Flag telling the updater thread that a new update is pending
         int skip;
-        int cropx, cropy, cropw, croph;         // size of the detail crop image ('skip' taken into account), with border
-        int trafx, trafy, trafw, trafh;         // the size and position to get from the imagesource that is transformed to the requested crop area
-        int rqcropx, rqcropy, rqcropw, rqcroph; // size of the requested detail crop image (the image might be smaller) (without border)
+        int cropx, cropy, cropw, croph;         /// size of the detail crop image ('skip' taken into account), with border
+        int trafx, trafy, trafw, trafh;         /// the size and position to get from the imagesource that is transformed to the requested crop area
+        int rqcropx, rqcropy, rqcropw, rqcroph; /// size of the requested detail crop image (the image might be smaller) (without border)
         int borderRequested, upperBorder, leftBorder;
 
         bool cropAllocated;
@@ -70,11 +74,15 @@ class Crop : public DetailedCrop {
         void update      (int todo);
         void setWindow   (int cx, int cy, int cw, int ch, int skip) { setCropSizes (cx, cy, cw, ch, skip, false); }
 
-        bool tryUpdate   ();  // First try, only make fullUpdate if this returns false
+        /** @brief Synchronously look out if a full update is necessary
+         * First try, only make fullUpdate if this returns false
+         */
+        bool tryUpdate   ();
+        /** @brief Asynchronously reprocess the detailed crop */
         void fullUpdate  ();  // called via thread
 
         void setListener (DetailedCropListener* il);
-        void destroy     () {}
+        void destroy     ();
         int  get_skip    () { return skip;}
 };
 }

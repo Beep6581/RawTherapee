@@ -29,8 +29,9 @@ namespace rtengine {
 extern const Settings* settings;
 
 ImProcCoordinator::ImProcCoordinator ()
-    : workimg(NULL), lastAwbEqual(0.), ipf(&params, true), scale(10), highDetailPreprocessComputed(false),
-      highDetailRawComputed(false), allocated(false),
+    : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
+      ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), scale(10),
+      highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
 
       hltonecurve(65536,0),
       shtonecurve(65536,2),//clip above
@@ -46,9 +47,9 @@ ImProcCoordinator::ImProcCoordinator ()
       lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536), lhist16CroppedCAM(65536),
       lhist16CCAM(65536), lhist16CroppedCCAM(65536),
-	  lhist16CCAMAF(65536), lhist16ClabAF(65536),
+      lhist16CCAMAF(65536), lhist16ClabAF(65536),
       histCropped(65536),
-	  lhist16Clad(65536),lhist16CroppedClad(65536),
+      lhist16Clad(65536),lhist16CroppedClad(65536),
 
       histRed(256), histRedRaw(256),
       histGreen(256), histGreenRaw(256),
@@ -57,9 +58,9 @@ ImProcCoordinator::ImProcCoordinator ()
       histToneCurve(256),
       histLCurve(256),
       histCCurve(256),
-	  histLCAM(256),
-	  histCCAM(256),
-	  histClad(256),	
+      histLCAM(256),
+      histCCAM(256),
+      histClad(256),
       bcabhist(256),
 
       rCurve(),
@@ -106,45 +107,46 @@ DetailedCrop* ImProcCoordinator::createCrop  () {
 // cropCall: calling crop, used to prevent self-updates
 void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
-    mProcessing.lock ();
+    MyMutex::MyLock processingLock(mProcessing);
 
     int numofphases = 14;
     int readyphase = 0;
 
+    // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
     ipf.setScale (scale);
 
-	// Check if any detail crops need high detail. If not, take a fast path short cut
+    // Check if any detail crops need high detail. If not, take a fast path short cut
     bool highDetailNeeded = (todo & M_HIGHQUAL);
     if (!highDetailNeeded) {
-	for (size_t i=0; i<crops.size(); i++)
-		    if (crops[i]->get_skip() == 1 ) {  // skip=1 -> full resolution
-			highDetailNeeded=true;
-			break;
-		}
+        for (size_t i=0; i<crops.size(); i++)
+            if (crops[i]->get_skip() == 1 ) {  // skip=1 -> full resolution
+                highDetailNeeded=true;
+                break;
+            }
     }
 
-	RAWParams rp = params.raw;
-	if( !highDetailNeeded ){
+    RAWParams rp = params.raw;
+    if( !highDetailNeeded ){
         // if below 100% magnification, take a fast path
-		rp.dmethod = RAWParams::methodstring[RAWParams::fast];
-		rp.ca_autocorrect  = false;
-		rp.hotdeadpix_filt = false;
-		rp.ccSteps = 0;
-		//rp.all_enhance = false;
-	}
+        rp.dmethod = RAWParams::methodstring[RAWParams::fast];
+        rp.ca_autocorrect  = false;
+        rp.hotdeadpix_filt = false;
+        rp.ccSteps = 0;
+        //rp.all_enhance = false;
+        }
 
     progress ("Applying white balance, color correction & sRGB conversion...",100*readyphase/numofphases);
     // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
     if ( (todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
-    	imgsrc->preprocess( rp, params.lensProf, params.coarse );
+        imgsrc->preprocess( rp, params.lensProf, params.coarse );
         imgsrc->getRAWHistogram( histRedRaw, histGreenRaw, histBlueRaw );
         if (highDetailNeeded)
-        	highDetailPreprocessComputed = true;
+            highDetailPreprocessComputed = true;
         else
-        	highDetailPreprocessComputed = false;
+            highDetailPreprocessComputed = false;
     }
 
-    /*  
+    /*
     Demosaic is kicked off only when 
     Detail considerations: 
         accurate detail is not displayed yet needed based on preview specifics (driven via highDetailNeeded flag)
@@ -177,7 +179,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
 
     if (todo & (M_INIT|M_LINDENOISE)) {
-        MyMutex::MyLock lock(minit);  // Also used in crop window
+        MyMutex::MyLock initLock(minit);  // Also used in crop window
 
         imgsrc->HLRecovery_Global( params.hlrecovery ); // this handles Color HLRecovery
 
@@ -215,17 +217,19 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         imgsrc->getFullSize (fw, fh, tr);
         PreviewProps pp (0, 0, fw, fh, scale);
+
+        // Will (re)allocate the preview's buffers
         setScale (scale);
+
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params)	;
 
-		//imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
+        //imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
 
         if (todo & M_LINDENOISE) {
-        	//printf("denoising!\n");
-			if (scale==1 && params.dirpyrDenoise.enabled) {
-				ipf.RGB_denoise(orig_prev, orig_prev, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
-			}
+            //printf("denoising!\n");
+            if (scale==1 && params.dirpyrDenoise.enabled)
+                ipf.RGB_denoise(orig_prev, orig_prev, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
         }
         imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
 
@@ -243,30 +247,29 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (needstransform && orig_prev==oprevi)
         oprevi = new Imagefloat (pW, pH);
     if ((todo & M_TRANSFORM) && needstransform)
-    	ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, imgsrc->getMetaData()->getFocalLen(), 
-            imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
+        ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, imgsrc->getMetaData()->getFocalLen(),
+                       imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
 
     readyphase++;
 
     progress ("Preparing shadow/highlight map...",100*readyphase/numofphases);
     if ((todo & M_BLURMAP) && params.sh.enabled) {
         double radius = sqrt (double(pW*pW+pH*pH)) / 2.0;
-		double shradius = params.sh.radius;
-		if (!params.sh.hq) shradius *= radius / 1800.0;
-		shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
-		
+        double shradius = params.sh.radius;
+        if (!params.sh.hq) shradius *= radius / 1800.0;
+        shmap->update (oprevi, shradius, ipf.lumimul, params.sh.hq, scale);
     }
     readyphase++;
 
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
-			LUTu aehist; int aehistcompr;
-			imgsrc->getAutoExpHistogram (aehist, aehistcompr);
-			ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp, 
-							params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
-			if (aeListener)
-				aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
-											params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
+            LUTu aehist; int aehistcompr;
+            imgsrc->getAutoExpHistogram (aehist, aehistcompr);
+            ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp,
+                    params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+            if (aeListener)
+                aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
+                                            params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
         }
     }
 
@@ -278,10 +281,10 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         ipf.g = imgsrc->getGamma();
         ipf.iGamma = true;
         CurveFactory::complexCurve (params.toneCurve.expcomp, params.toneCurve.black/65535.0,
-									params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
-									params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
-									ipf.g, !ipf.iGamma, params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
-									vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, scale==1 ? 1 : 1);
+                                    params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh,
+                                    params.toneCurve.shcompr, params.toneCurve.brightness, params.toneCurve.contrast,
+                                    ipf.g, !ipf.iGamma, params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
+                                    vhist16, histCropped, hltonecurve, shtonecurve, tonecurve, histToneCurve, customToneCurve1, customToneCurve2, scale==1 ? 1 : 1);
 
         CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, scale==1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale==1 ? 1 : 1);
@@ -297,8 +300,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         int x1, y1, x2, y2, pos, poscc;
         params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2); 
         lhist16.clear(); lhist16Cropped.clear();
-	    lhist16Clad.clear(); lhist16CroppedClad.clear();
-		lhist16ClabAF.clear();		
+        lhist16Clad.clear(); lhist16CroppedClad.clear();
+        lhist16ClabAF.clear();
         for (int x=0; x<pH; x++)
             for (int y=0; y<pW; y++) {
                 pos=CLIP((int)(oprevl->L[x][y]));
@@ -308,58 +311,55 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
  
     }
     readyphase++;
-		utili=false;
-		autili=false;
-		butili=false;
-		ccutili=false;
-		cclutili=false;		
+    utili=false;
+    autili=false;
+    butili=false;
+    ccutili=false;
+    cclutili=false;
     if ((todo & M_LUMACURVE) || todo==CROP) {
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
                                      lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
-    
-		}
+    }
     if (todo & M_LUMACURVE) {
-		CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-										params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, 
-										lhist16Clad,lhist16CroppedClad, histCCurve, scale==1 ? 1 : 16);
-	
-	}
-	if (todo & (M_LUMINANCE+M_COLOR) ) {
-		nprevl->CopyFrom(oprevl);
-		
-		progress ("Applying Color Boost...",100*readyphase/numofphases);
-	    int poscc;
-		
-		
-		ipf.chromiLuminanceCurve (pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili, histCCurve);
-		ipf.vibrance(nprevl);
-	if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) ipf.EPDToneMap(nprevl,5,1);
-		// for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
-		readyphase++;
-		if (scale==1) {
-			if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){		
-            progress ("Denoising luminance impulse...",100*readyphase/numofphases);
-            ipf.impulsedenoise (nprevl);
-            readyphase++;
-			}
-			if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
-			progress ("Defringing...",100*readyphase/numofphases);
-			ipf.defringe (nprevl);
-			readyphase++;
-			}
-			if (params.sharpenEdge.enabled) {
+        CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
+                                       params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, chroma_acurve, chroma_bcurve, satcurve,lhskcurve,
+                                       lhist16Clad,lhist16CroppedClad, histCCurve, scale==1 ? 1 : 16);
+    }
+    if (todo & (M_LUMINANCE+M_COLOR) ) {
+        nprevl->CopyFrom(oprevl);
+
+        progress ("Applying Color Boost...",100*readyphase/numofphases);
+        int poscc;
+
+        ipf.chromiLuminanceCurve (pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili, histCCurve);
+        ipf.vibrance(nprevl);
+        if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) ipf.EPDToneMap(nprevl,5,1);
+        // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
+        readyphase++;
+        if (scale==1) {
+            if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
+                progress ("Denoising luminance impulse...",100*readyphase/numofphases);
+                ipf.impulsedenoise (nprevl);
+                readyphase++;
+            }
+            if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
+                progress ("Defringing...",100*readyphase/numofphases);
+                ipf.defringe (nprevl);
+                readyphase++;
+            }
+            if (params.sharpenEdge.enabled) {
                 progress ("Edge sharpening...",100*readyphase/numofphases);
-				ipf.MLsharpen (nprevl);
-		        readyphase++;
-			}
-			if (params.sharpenMicro.enabled) {
-				if(( params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
-                progress ("Microcontrast...",100*readyphase/numofphases);			
-				ipf.MLmicrocontrast (nprevl);
-		        readyphase++;
-				}
-			}
-			if(((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {			
+                ipf.MLsharpen (nprevl);
+                readyphase++;
+            }
+            if (params.sharpenMicro.enabled) {
+                if(( params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
+                    progress ("Microcontrast...",100*readyphase/numofphases);
+                    ipf.MLmicrocontrast (nprevl);
+                    readyphase++;
+                }
+            }
+            if(((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
                 progress ("Sharpening...",100*readyphase/numofphases);
                     
                 float **buffer = new float*[pH];
@@ -373,84 +373,92 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 delete [] buffer;
                 readyphase++;
             }
-			if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
-//			if(params.colorappearance.enabled && !params.colorappearance.sharpcie){
-				progress ("Pyramid equalizer...",100*readyphase/numofphases);
-				ipf.dirpyrequalizer (nprevl);
-				readyphase++;
-			}
-			
+            if((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)){
+            //if(params.colorappearance.enabled && !params.colorappearance.sharpcie){
+                progress ("Pyramid equalizer...",100*readyphase/numofphases);
+                ipf.dirpyrequalizer (nprevl);
+                readyphase++;
+            }
         }
-	    //L histo  and Chroma histo for ciecam
-		// histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
+
+        //L histo  and Chroma histo for ciecam
+        // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
         int x1, y1, x2, y2, pos, posc;
-        params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2); 	
-	    lhist16CAM.clear(); lhist16CroppedCAM.clear();
-	    lhist16CCAM.clear(); lhist16CroppedCCAM.clear();
-		lhist16CCAMAF.clear();
+        params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
+        lhist16CAM.clear(); lhist16CroppedCAM.clear();
+        lhist16CCAM.clear(); lhist16CroppedCCAM.clear();
+        lhist16CCAMAF.clear();
         for (int x=0; x<pH; x++)
             for (int y=0; y<pW; y++) {
                 pos=CLIP((int)(nprevl->L[x][y]));
                 posc=CLIP((int)sqrt(nprevl->a[x][y]*nprevl->a[x][y] + nprevl->b[x][y]*nprevl->b[x][y]));
-	            if(!params.colorappearance.datacie) lhist16CCAM[posc]++;
-				if(!params.colorappearance.datacie)lhist16CAM[pos]++;
+                if(!params.colorappearance.datacie) lhist16CCAM[posc]++;
+                if(!params.colorappearance.datacie)lhist16CAM[pos]++;
                 if (y>=y1 && y<y2 && x>=x1 && x<x2) {lhist16CroppedCAM[pos]++;lhist16CroppedCCAM[posc]++;}
             }
-	LUTu dummy;
-	CurveFactory::curveLightBrightColor (
-					params.colorappearance.curveMode, params.colorappearance.curve,
-					params.colorappearance.curveMode2, params.colorappearance.curve2,
-					params.colorappearance.curveMode3, params.colorappearance.curve3,
-					lhist16CAM, lhist16CroppedCAM,histLCAM,	
-					lhist16CCAM, lhist16CroppedCCAM,histCCAM,						
-					customColCurve1,
-					customColCurve2, 
-					customColCurve3, 
-					scale==1 ? 1 : 1);
-	int  Iterates=0;
-	if(params.colorappearance.enabled){	
-	float fnum = imgsrc->getMetaData()->getFNumber  ();// F number
-	float fiso = imgsrc->getMetaData()->getISOSpeed () ;// ISO
-	float fspeed = imgsrc->getMetaData()->getShutterSpeed () ;//speed 
-	float fcomp = imgsrc->getMetaData()->getExpComp  ();//compensation + -
-	float adap2,adap;
-	double ada, ada2;
-	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap=2000.f;ada=2000.;}//if no exif data or wrong
-	else {
-	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
-	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-	E_V += expo2;
-	float expo1;//exposure raw white point
-	expo1=log2(params.raw.expos);//log2 ==>linear to EV
-	E_V += expo1;
-	adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
-	ada=ada2=(double) adap;
-	//end calculation adaptation scene luminosity
-	}	
-	int begh=0;
-	int endh=pH;
-	float d;
-	double dd;
-	float **buffer = new float*[pH];
-       for (int i=0; i<pH; i++)
-         buffer[i] = new float[pW];
-	bool execsharp=false;
-	if(scale==1) execsharp=true;	
-	if(settings->ciecamfloat){ipf.ciecam_02float (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, d);
-	if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
-	if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap2);//real value of adapt scene luminosity
-	}
-	else {ipf.ciecam_02 (ncie, ada, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, dd);
-	if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);
-	if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(ada);
-	
-	}
-		for (int i=0; i<pH; i++)
-			delete [] buffer[i];
-			delete [] buffer;
-		readyphase++;
-	}
-	}
+        LUTu dummy;
+        CurveFactory::curveLightBrightColor (
+                params.colorappearance.curveMode, params.colorappearance.curve,
+                params.colorappearance.curveMode2, params.colorappearance.curve2,
+                params.colorappearance.curveMode3, params.colorappearance.curve3,
+                lhist16CAM, lhist16CroppedCAM,histLCAM,
+                lhist16CCAM, lhist16CroppedCCAM,histCCAM,
+                customColCurve1,
+                customColCurve2,
+                customColCurve3,
+                scale==1 ? 1 : 1
+        );
+        if(params.colorappearance.enabled){
+            float fnum = imgsrc->getMetaData()->getFNumber  ();        // F number
+            float fiso = imgsrc->getMetaData()->getISOSpeed () ;       // ISO
+            float fspeed = imgsrc->getMetaData()->getShutterSpeed () ; // Speed
+            double fcomp = imgsrc->getMetaData()->getExpComp  ();      // Compensation +/-
+            double adap;
+            if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
+                adap=2000.;
+            }
+            else {
+                double E_V = fcomp + log2 (double((fnum*fnum) / fspeed / (fiso/100.f)));
+                E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+                E_V += log2(params.raw.expos);// exposure raw white point ; log2 ==> linear to EV
+                adap= powf(2.f, E_V-3.f);// cd / m2
+                // end calculation adaptation scene luminosity
+            }
+            int begh=0;
+            int endh=pH;
+            float d;
+            double dd;
+            float **buffer = new float*[pH];
+            for (int i=0; i<pH; i++)
+                buffer[i] = new float[pW];
+            bool execsharp=false;
+            if(scale==1) execsharp=true;
+
+            if(!ncie)
+                ncie = new CieImage (pW, pH);
+
+            if(settings->ciecamfloat){
+                ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, d);
+                if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
+                if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);//real value of adapt scene luminosity
+            }
+            else {
+                ipf.ciecam_02 (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, dd);
+                if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);
+                if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);
+            }
+
+            for (int i=0; i<pH; i++)
+                delete [] buffer[i];
+            delete [] buffer;
+            readyphase++;
+        }
+        else {
+            // CIECAM is disbaled, we free up its image buffer to save some space
+            if (ncie)
+                delete ncie; ncie=NULL;
+        }
+    }
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] )
@@ -458,29 +466,26 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     progress ("Conversion to RGB...",100*readyphase/numofphases);
     if (todo!=CROP) {
-        previmg->getMutex().lock();
+        MyMutex::MyLock prevImgLock(previmg->getMutex());
         try
         {
             ipf.lab2monitorRgb (nprevl, previmg);
             delete workimg;
-			workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);        
+            workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);
         }
         catch(char * str)
         {
             progress ("Error converting file...",0);
-            previmg->getMutex().unlock();
-            mProcessing.unlock ();
             return;
         }
-        previmg->getMutex().unlock();
-    }   
+    }
     if (!resultValid) {
         resultValid = true;
         if (imageListener)
             imageListener->setImage (previmg, scale, params.crop);
     }
     if (imageListener)
-    	// TODO: The WB tool should be advertised too in order to get the AutoWB's temp and green values
+        // TODO: The WB tool should be advertised too in order to get the AutoWB's temp and green values
         imageListener->imageReady (params.crop);
 
     readyphase++;
@@ -489,8 +494,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         updateLRGBHistograms ();
         hListener->histogramChanged (histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve,histCCurve, histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma);
     }
-
-    mProcessing.unlock ();
 }
 
 
@@ -500,18 +503,19 @@ void ImProcCoordinator::freeAll () {
 
     if (allocated) {
         if (orig_prev!=oprevi)
-        delete oprevi;
-        delete orig_prev;
-        delete oprevl;
-        delete nprevl;
-        delete ncie;
-       
+        delete oprevi;    oprevi    = NULL;
+        delete orig_prev; orig_prev = NULL;
+        delete oprevl;    oprevl    = NULL;
+        delete nprevl;    nprevl    = NULL;
+        if (ncie)
+            delete ncie;  ncie      = NULL;
+
         if (imageListener) {
             imageListener->delImage (previmg);
         }
         else
             delete previmg;
-		
+
         delete workimg;
         delete shmap;
 
@@ -519,6 +523,12 @@ void ImProcCoordinator::freeAll () {
     allocated = false;
 }
 
+/** @brief Handles image buffer (re)allocation and trigger sizeChanged of SizeListener[s]
+ * If the scale change, this method will free all buffers and reallocate ones of the new size.
+ * It will then tell to the SizeListener that size has changed (sizeChanged)
+ *
+ * @param prevscale New Preview's scale.
+ */
 void ImProcCoordinator::setScale (int prevscale) {
 
 if (settings->verbose) printf ("setscale before lock\n");
@@ -529,7 +539,7 @@ if (settings->verbose) printf ("setscale before lock\n");
     if (params.coarse.rotate==270) tr |= TR_R270;
     if (params.coarse.hflip)       tr |= TR_HFLIP;
     if (params.coarse.vflip)       tr |= TR_VFLIP;
-    
+
     int nW, nH;
     imgsrc->getFullSize (fw, fh, tr);
 
@@ -541,22 +551,22 @@ if (settings->verbose) printf ("setscale before lock\n");
     if (nW!=pW || nH!=pH) {
 
         freeAll ();
-    
+
         pW = nW;
         pH = nH;
-        
+
         orig_prev = new Imagefloat (pW, pH);
         oprevi = orig_prev;
-        oprevl = new LabImage (pW, pH);    
-        nprevl = new LabImage (pW, pH);    
-        ncie = new CieImage (pW, pH);    
+        oprevl = new LabImage (pW, pH);
+        nprevl = new LabImage (pW, pH);
+        //ncie is only used in ImProcCoordinator::updatePreviewImage, it will be allocated on first use and deleted if not used anymore
         previmg = new Image8 (pW, pH);
-		workimg = new Image8 (pW, pH);
+        workimg = new Image8 (pW, pH);
         shmap = new SHMap (pW, pH, true);
 
         allocated = true;
     }
-    
+
     scale = prevscale;
     resultValid = false;
     fullw = fw;
@@ -578,13 +588,13 @@ void ImProcCoordinator::updateLRGBHistograms () {
     histRed.clear();
     histGreen.clear();
     histBlue.clear();
-	
+
     for (int i=y1; i<y2; i++) {
         int ofs = (i*pW + x1)*3;
         for (int j=x1; j<x2; j++) {
-			int r=workimg->data[ofs++];
-			int g=workimg->data[ofs++];
-			int b=workimg->data[ofs++];
+            int r=workimg->data[ofs++];
+            int g=workimg->data[ofs++];
+            int b=workimg->data[ofs++];
 
             histRed[r]++;
             histGreen[g]++;
@@ -592,23 +602,22 @@ void ImProcCoordinator::updateLRGBHistograms () {
         }
     }
 
-    histLuma.clear();    
-	histChroma.clear();
+    histLuma.clear();
+    histChroma.clear();
     for (int i=y1; i<y2; i++)
         for (int j=x1; j<x2; j++) {
-		  histChroma[(int)(sqrt(nprevl->a[i][j]*nprevl->a[i][j] + nprevl->b[i][j]*nprevl->b[i][j]))/188]++;//188 = 48000/256
-		  histLuma[(int)(nprevl->L[i][j]/128)]++;
-		
-		}
-	
-	/*for (int i=0; i<256; i++) {
-		Lhist[i] = (int)(256*sqrt(Lhist[i]));
-		rhist[i] = (int)(256*sqrt(rhist[i]));
-		ghist[i] = (int)(256*sqrt(ghist[i]));
-		bhist[i] = (int)(256*sqrt(bhist[i]));
-		bcrgbhist[i] = (int)(256*sqrt(bcrgbhist[i]));
-		bcLhist[i] = (int)(256*sqrt(bcLhist[i]));
-	}*/
+            histChroma[(int)(sqrt(nprevl->a[i][j]*nprevl->a[i][j] + nprevl->b[i][j]*nprevl->b[i][j]))/188]++;//188 = 48000/256
+            histLuma[(int)(nprevl->L[i][j]/128)]++;
+        }
+
+    /*for (int i=0; i<256; i++) {
+        Lhist[i] = (int)(256*sqrt(Lhist[i]));
+        rhist[i] = (int)(256*sqrt(rhist[i]));
+        ghist[i] = (int)(256*sqrt(ghist[i]));
+        bhist[i] = (int)(256*sqrt(bhist[i]));
+        bcrgbhist[i] = (int)(256*sqrt(bcrgbhist[i]));
+        bcLhist[i] = (int)(256*sqrt(bcLhist[i]));
+    }*/
 }
 
 void ImProcCoordinator::progress (Glib::ustring str, int pr) {
@@ -657,7 +666,10 @@ void ImProcCoordinator::getCamWB (double& temp, double& green) {
 
 void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double& tgreen) {
 
-    mProcessing.lock ();
+    ColorTemp ret;
+
+    {
+    MyMutex::MyLock lock(mProcessing);
     std::vector<Coord2D> points, red, green, blue;
     for (int i=y-rect; i<=y+rect; i++)
         for (int j=x-rect; j<=x+rect; j++) 
@@ -670,25 +682,25 @@ void ImProcCoordinator::getSpotWB (int x, int y, int rect, double& temp, double&
     if (params.coarse.rotate==270) tr |= TR_R270;
     if (params.coarse.hflip)       tr |= TR_HFLIP;
     if (params.coarse.vflip)       tr |= TR_VFLIP;
-    ColorTemp ret = imgsrc->getSpotWB (red, green, blue, tr, params.wb.equal);
+    ret = imgsrc->getSpotWB (red, green, blue, tr, params.wb.equal);
     currWB = ColorTemp (params.wb.temperature, params.wb.green,params.wb.equal, params.wb.method);
     //double rr,gg,bb;
     //currWB.getMultipliers(rr,gg,bb);
  
-    mProcessing.unlock ();
+    } // end of mutex lockong
 
-	if (ret.getTemp() > 0) {
-		temp = ret.getTemp ();
-		tgreen = ret.getGreen ();
-	} else {
-		temp = currWB.getTemp ();
-		tgreen = currWB.getGreen ();
-	}
+    if (ret.getTemp() > 0) {
+        temp = ret.getTemp ();
+        tgreen = ret.getGreen ();
+    } else {
+        temp = currWB.getTemp ();
+        tgreen = currWB.getGreen ();
+    }
 }
 
 void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &h) {
 
-    mProcessing.lock ();
+    MyMutex::MyLock lock(mProcessing);
 
     LCPMapper *pLCPMap=NULL;
     if (params.lensProf.lcpFile.length() && imgsrc->getMetaData()->getFocalLen()>0) {
@@ -700,26 +712,24 @@ void ImProcCoordinator::getAutoCrop (double ratio, int &x, int &y, int &w, int &
     double fillscale = ipf.getTransformAutoFill (fullw, fullh, pLCPMap);
     if (ratio>0) {
         w = fullw * fillscale;
-    	h = w / ratio;
-    	if (h > fullh * fillscale) {
-    		h = fullh * fillscale;
-        	w = h * ratio;
-    	}
+        h = w / ratio;
+        if (h > fullh * fillscale) {
+            h = fullh * fillscale;
+            w = h * ratio;
+        }
     }
     else {
         w = fullw * fillscale;
-    	h = fullh * fillscale;
+        h = fullh * fillscale;
     }
     x = (fullw - w) / 2;
     y = (fullh - h) / 2;
-
-    mProcessing.unlock ();
 }
 
 
 void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	
-	mProcessing.lock ();
+	MyMutex::MyLock lock(mProcessing);
 	
 	int fW, fH;
 	imgsrc->getFullSize (fW, fH, 0);
@@ -758,7 +768,6 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	im16->saveTIFF (fname,16,true);
 	delete im16;
 	//im->saveJPEG (fname, 85);
-	mProcessing.unlock ();
 }
 
 void ImProcCoordinator::stopProcessing () {

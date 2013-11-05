@@ -35,8 +35,17 @@ using namespace procparams;
 
 class Crop;
 
-// Manages the image processing, espc. of the preview windows
-// There is one ImProcCoordinator per edit panel
+/** @brief Manages the image processing, espc. of the preview windows
+  *
+  * There is one ImProcCoordinator per edit panel.
+  *
+  * The ImProcCoordinator handle an sized down image representation of the full image, that is used when paning
+  * and in the Navigator object.
+  *
+  * Each ImProcCoordinator handles an rtengine::Crop list, which process images too with their own pipeline,
+  * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
+  * while detail windows are framed Crop objects.
+  */
 class ImProcCoordinator : public StagedImageProcessor {
 
     friend class Crop;
@@ -44,11 +53,11 @@ class ImProcCoordinator : public StagedImageProcessor {
     protected:
         Imagefloat *orig_prev;
         Imagefloat *oprevi;
-        LabImage *oprevl;    
-        LabImage *nprevl;    
+        LabImage *oprevl;
+        LabImage *nprevl;
         Image8 *previmg;
         Image8 *workimg;
-        CieImage *ncie;    
+        CieImage *ncie;
 
         ImageSource* imgsrc;
 
@@ -82,10 +91,10 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTu lhist16,lhist16Cropped;
         LUTu lhist16CAM,lhist16CroppedCAM;
         LUTu lhist16CCAM,lhist16CroppedCCAM;
-		LUTu lhist16CCAMAF;
- 		LUTu lhist16ClabAF;
-		LUTu histCropped;
-		LUTu lhist16Clad,lhist16CroppedClad;
+        LUTu lhist16CCAMAF;
+        LUTu lhist16ClabAF;
+        LUTu histCropped;
+        LUTu lhist16Clad,lhist16CroppedClad;
         LUTu histRed, histRedRaw;
         LUTu histGreen, histGreenRaw;
         LUTu histBlue, histBlueRaw;
@@ -94,11 +103,11 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTf rCurve;
         LUTf gCurve;
         LUTf bCurve;
-		bool utili;
-		bool autili;
-		bool butili;
-		bool ccutili;
-		bool cclutili;		
+        bool utili;
+        bool autili;
+        bool butili;
+        bool ccutili;
+        bool cclutili;
 
         ToneCurve customToneCurve1;
         ToneCurve customToneCurve2;
@@ -124,7 +133,7 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         bool resultValid;
 
-        MyMutex minit;
+        MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
         void progress (Glib::ustring str, int pr);
         void reallocAll ();
@@ -189,7 +198,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setAutoCamListener  (AutoCamListener* acl)  {acListener = acl; }
 
         void saveInputICCReference (const Glib::ustring& fname);
-        
+
         InitialImage*  getInitialImage () { return imgsrc; }
 };
 }

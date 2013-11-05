@@ -29,7 +29,7 @@ private:
 
 public:
 	int W, H;
-	float * data;
+	float * data[6];
 	float** J_p;
 	float** Q_p;
 	float** M_p;
