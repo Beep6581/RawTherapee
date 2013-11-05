@@ -2036,7 +2036,7 @@ unsigned short sget2 (unsigned char *s, rtexif::ByteOrder order) {
   else			return s[0] << 8 | s[1];
 }
 
-inline int sget4 (unsigned char *s, rtexif::ByteOrder order) {
+int sget4 (unsigned char *s, rtexif::ByteOrder order) {
 
   if (order == rtexif::INTEL)   return s[0] | s[1] << 8 | s[2] << 16 | s[3] << 24;
   else                  return s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3];
