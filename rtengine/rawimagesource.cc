@@ -289,7 +289,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 
 
 #ifdef _OPENMP
-#pragma omp parallel
+#pragma omp parallel if(!d1x)		// omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {
 #endif
     // render the requested image part
