@@ -52,6 +52,7 @@
 #include "rotate.h"
 #include "vignetting.h"
 #include "gradient.h"
+#include "pcvignette.h"
 #include "toolbar.h"
 #include "lensgeom.h"
 #include "lensgeomlistener.h"
@@ -88,6 +89,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         WhiteBalance* whitebalance;
         Vignetting* vignetting;
         Gradient* gradient;
+        PCVignette* pcvignette;
         LensGeometry* lensgeom;
         LensProfilePanel* lensProf;
         Rotate* rotate;

@@ -196,6 +196,10 @@ void ParamsEdited::set (bool v) {
 	gradient.strength = v;
 	gradient.centerX = v;
 	gradient.centerY = v;
+	pcvignette.enabled = v;
+	pcvignette.strength = v;
+	pcvignette.feather = v;
+	pcvignette.roundness = v;
 	cacorrection.red = v;
 	cacorrection.blue = v;
 	vignetting.amount = v;
@@ -450,6 +454,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         gradient.strength = gradient.strength && p.gradient.strength == other.gradient.strength;
         gradient.centerX = gradient.centerX && p.gradient.centerX == other.gradient.centerX;
         gradient.centerY = gradient.centerY && p.gradient.centerY == other.gradient.centerY;
+        pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
+        pcvignette.strength = pcvignette.strength && p.pcvignette.strength == other.pcvignette.strength;
+        pcvignette.feather = pcvignette.feather && p.pcvignette.feather == other.pcvignette.feather;
+        pcvignette.roundness = pcvignette.roundness && p.pcvignette.roundness == other.pcvignette.roundness;
         cacorrection.red = cacorrection.red && p.cacorrection.red == other.cacorrection.red;
         cacorrection.blue = cacorrection.blue && p.cacorrection.blue == other.cacorrection.blue;
         vignetting.amount = vignetting.amount && p.vignetting.amount == other.vignetting.amount;
@@ -705,12 +713,16 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 
 	if (perspective.horizontal)				toEdit.perspective.horizontal 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.horizontal + mods.perspective.horizontal : mods.perspective.horizontal;
 	if (perspective.vertical)				toEdit.perspective.vertical 	= dontforceSet && options.baBehav[ADDSET_PERSPECTIVE] ? toEdit.perspective.vertical + mods.perspective.vertical : mods.perspective.vertical;
-	if (gradient.enabled)		    			toEdit.gradient.enabled 	= mods.gradient.enabled;
-	if (gradient.degree)					toEdit.gradient.degree 	= dontforceSet && options.baBehav[ADDSET_GRADIENT_DEGREE] ? toEdit.gradient.degree + mods.gradient.degree : mods.gradient.degree;
+	if (gradient.enabled)					toEdit.gradient.enabled 	= mods.gradient.enabled;
+	if (gradient.degree)					toEdit.gradient.degree		= dontforceSet && options.baBehav[ADDSET_GRADIENT_DEGREE] ? toEdit.gradient.degree + mods.gradient.degree : mods.gradient.degree;
 	if (gradient.feather)					toEdit.gradient.feather 	= mods.gradient.feather;
 	if (gradient.strength)					toEdit.gradient.strength 	= mods.gradient.strength;
 	if (gradient.centerX)					toEdit.gradient.centerX 	= mods.gradient.centerX;
 	if (gradient.centerY)					toEdit.gradient.centerY 	= mods.gradient.centerY;
+	if (pcvignette.enabled)					toEdit.pcvignette.enabled 	= mods.pcvignette.enabled;
+	if (pcvignette.strength)				toEdit.pcvignette.strength 	= mods.pcvignette.strength;
+	if (pcvignette.feather)					toEdit.pcvignette.feather 	= mods.pcvignette.feather;
+	if (pcvignette.roundness)				toEdit.pcvignette.roundness = mods.pcvignette.roundness;
 	if (cacorrection.red)					toEdit.cacorrection.red 	= dontforceSet && options.baBehav[ADDSET_CA] ? toEdit.cacorrection.red + mods.cacorrection.red : mods.cacorrection.red;
 	if (cacorrection.blue)					toEdit.cacorrection.blue 	= dontforceSet && options.baBehav[ADDSET_CA] ? toEdit.cacorrection.blue + mods.cacorrection.blue : mods.cacorrection.blue;
 	if (vignetting.amount)					toEdit.vignetting.amount 	= dontforceSet && options.baBehav[ADDSET_VIGN_AMOUNT] ? toEdit.vignetting.amount + mods.vignetting.amount : mods.vignetting.amount;

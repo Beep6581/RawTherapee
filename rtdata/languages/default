@@ -443,8 +443,10 @@ HISTORY_MSG_205;CAM02 hot/bad pixels
 HISTORY_MSG_206;CAT02 - Adapt scene auto
 HISTORY_MSG_207;Defringing Hue curve
 HISTORY_MSG_208;Blue/Red Equalizer
-HISTORY_MSG_210;Gradient Filter
-HISTORY_MSG_211;Gradient Filter
+HISTORY_MSG_210;Graduated Filter
+HISTORY_MSG_211;Graduated Filter
+HISTORY_MSG_212;Vignette Filter
+HISTORY_MSG_213;Vignette Filter
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -659,6 +661,7 @@ PARTIALPASTE_LENSPROFILE;Lens correction profile
 PARTIALPASTE_LUMADENOISE;Luminance noise reduction
 PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
 PARTIALPASTE_METAICMGROUP;Metadata/Color Management Settings
+PARTIALPASTE_PCVIGNETTE;Vignette Filter
 PARTIALPASTE_PERSPECTIVE;Perspective
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Green equilibration
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Apply hot/dead pixel filter
@@ -1199,6 +1202,13 @@ TP_LUMADENOISE_LABEL;Luminance Noise Reduction
 TP_LUMADENOISE_RADIUS;Radius
 TP_NEUTRAL;Neutral
 TP_NEUTRAL_TIP;Reset exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not
+TP_PCVIGNETTE_FEATHER;Feather
+TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
+TP_PCVIGNETTE_LABEL;Vignette Filter
+TP_PCVIGNETTE_ROUNDNESS;Roundness
+TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness: 0=rectangle, 50=fitted ellipse, 100=circle
+TP_PCVIGNETTE_STRENGTH;Strength
+TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners)
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Vertical

@@ -74,6 +74,9 @@ void Crop::update (int todo) {
 
     ProcParams& params = parent->params;
 
+    // No need to update todo here, since it has already been changed in ImprocCoordinator::updatePreviewImage,
+    // and Crop::update ask to do ALL anyway
+
     // give possibility to the listener to modify crop window (as the full image dimensions are already known at this point)
     int wx, wy, ww, wh, ws;
     bool overrideWindow = false;
@@ -129,7 +132,7 @@ void Crop::update (int todo) {
             transCrop = new Imagefloat (cropw, croph);
 
         if ((todo & M_TRANSFORM) && needstransform)
-            parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip),
+            parent->ipf.transform (baseCrop, transCrop, cropx/skip, cropy/skip, trafx/skip, trafy/skip, SKIPS(parent->fw,skip), SKIPS(parent->fh,skip), parent->getFullWidth(), parent->getFullHeight(),
                                    parent->imgsrc->getMetaData()->getFocalLen(), parent->imgsrc->getMetaData()->getFocalLen35mm(),
                                    parent->imgsrc->getMetaData()->getFocusDist(), parent->imgsrc->getRotateDegree(), false);
         if (transCrop)

@@ -324,6 +324,15 @@ class GradientParamsEdited {
         bool centerY;
 };
 
+class PCVignetteParamsEdited {
+
+    public:
+        bool enabled;
+        bool strength;
+        bool feather;
+        bool roundness;
+};
+
 class VignettingParamsEdited {
 
     public:
@@ -462,6 +471,7 @@ class ParamsEdited {
         LensProfParamsEdited          lensProf;
         PerspectiveParamsEdited       perspective;
         GradientParamsEdited          gradient;
+        PCVignetteParamsEdited        pcvignette;
         CACorrParamsEdited            cacorrection;
         VignettingParamsEdited        vignetting;
         ChannelMixerParamsEdited      chmixer;

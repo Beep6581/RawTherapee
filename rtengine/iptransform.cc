@@ -201,7 +201,7 @@ bool ImProcFunctions::transCoord (int W, int H, int x, int y, int w, int h, int&
     return clipped;
 }
 
-void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, 
+void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
     double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage) {
 
     LCPMapper *pLCPMap=NULL;
@@ -211,12 +211,12 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
             original->width, original->height, params->coarse, rawRotationDeg);
     }
 
-    if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsGradient()))
-		transformLuminanceOnly (original, transformed, cx, cy, oW, oH);
-	else if (!needsCA() && scale!=1)
-		transformPreview (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap);
-		else
-		transformHighQuality (original, transformed, cx, cy, sx, sy, oW, oH, pLCPMap, fullImage);
+    if (!(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP()) && (needsVignetting() || needsPCVignetting() || needsGradient()))
+        transformLuminanceOnly (original, transformed, cx, cy, oW, oH, fW, fH);
+    else if (!needsCA() && scale!=1)
+        transformPreview (original, transformed, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap);
+    else
+        transformHighQuality (original, transformed, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap, fullImage);
 
     if (pLCPMap) delete pLCPMap;
 }
@@ -246,7 +246,6 @@ struct grad_params {
 	float ta, yc, xc;
 	float ys, ys_inv;
 	float scale, botmul, topmul;
-	float gamma;
 	float top_edge_0;
 	int h;
 };
@@ -322,7 +321,6 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
 		gp.ys_inv = 0;
 		gp.ys = 0;
 	}
-	gp.gamma = 1.5; // tested to be "visually pleasing"
 }
 
 static float calcGradientFactor(const struct grad_params& gp, int x, int y) {
@@ -338,10 +336,11 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y) {
 			if (gp.bright_top) {
 				val = 1.0 - val;
 			}
-			val = 2 * val - 1.0; // adjust range to -1 to 1
-			val = 0.5 * (3 * val - powf(val, 3)); // s-curve
-			val = 0.5 * (1.0 + val); // adjust range back to 0 to 1
-			val = powf(val, gp.gamma); // apply gamma
+			if (gp.scale < 1.0) {
+				val = pow(sin(val*M_PI/2), 3);
+			} else {
+				val = 1.0 - pow(cos(val*M_PI/2), 3);
+			}
 			return gp.scale + val * (1.0 - gp.scale);
 		}
 	} else {
@@ -354,33 +353,168 @@ static float calcGradientFactor(const struct grad_params& gp, int x, int y) {
 			return gp.botmul;
 		} else {
 			float val = ((float)(gy - top_edge) * gp.ys_inv);
+
 			if (gp.bright_top) {
 				val = 1.0 - val;
 			}
-			val = 2 * val - 1.0;
-			val = 0.5 * (3 * val - powf(val, 3));
-			val = 0.5 * (1.0 + val);
-			val = powf(val, gp.gamma);
+			if (gp.scale < 1.0) {
+				val = pow(sin(val*M_PI/2), 3);
+			} else {
+				val = 1.0 - pow(cos(val*M_PI/2), 3);
+			}
 			return gp.scale + val * (1.0 - gp.scale);
 		}
 	}
 }
 
-// Transform vignetting only
-void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH) {
+struct pcv_params {
+	float oe_a, oe_b, oe1_a, oe1_b, oe2_a, oe2_b;
+	float ie_mul, ie1_mul, ie2_mul;
+	float sepmix, feather;
+	int w, h, x1, x2, y1, y2;
+	int sep;
+	bool is_super_ellipse_mode, is_portrait;
+	float scale;
+	float fadeout_mul;
+};
+static void calcPCVignetteParams(int fW, int fH, int oW, int oH, const PCVignetteParams& pcvignette, const CropParams &crop, struct pcv_params& pcv) {
+
+	// ellipse formula: (x/a)^2 + (y/b)^2 = 1
+	double roundness = pcvignette.roundness / 100.0;
+	pcv.feather = pcvignette.feather / 100.0;
+	if (crop.enabled) {
+		pcv.w = (crop.w * oW) / fW;
+		pcv.h = (crop.h * oH) / fH;
+		pcv.x1 = (crop.x * oW) / fW;
+		pcv.y1 = (crop.y * oH) / fH;
+		pcv.x2 = pcv.x1+pcv.w;
+		pcv.y2 = pcv.y1+pcv.h;
+	} else {
+		pcv.x1 = 0, pcv.y1 = 0;
+		pcv.x2 = oW, pcv.y2 = oH;
+		pcv.w = oW;
+		pcv.h = oH;
+	}
+	pcv.fadeout_mul = 1.0 / (0.05 * sqrtf(oW*oW+oH*oH));
+	float short_side = (pcv.w < pcv.h) ? pcv.w : pcv.h;
+	float long_side =  (pcv.w > pcv.h) ? pcv.w : pcv.h;
+
+	pcv.sep = 2;
+	pcv.sepmix = 0;
+	pcv.oe_a = sqrt(2.0)*long_side*0.5;
+	pcv.oe_b = pcv.oe_a * short_side / long_side;
+	pcv.ie_mul = 1.0 / sqrt(2.0);
+	pcv.is_super_ellipse_mode = false;
+	pcv.is_portrait = (pcv.w < pcv.h);
+	if (roundness < 0.5) {
+		// make super-ellipse of higher and higher degree
+		pcv.is_super_ellipse_mode = true;
+		float sepf = 2 + 4*powf(1.0 - 2*roundness, 1.3); // gamma 1.3 used to balance the effect in the 0.0...0.5 roundness range
+		pcv.sep = ((int)sepf) & ~0x1;
+		pcv.sepmix = (sepf - pcv.sep) * 0.5; // 0.0 to 1.0
+		pcv.oe1_a = powf(2.0, 1.0/pcv.sep)*long_side*0.5;
+		pcv.oe1_b = pcv.oe1_a * short_side / long_side;
+		pcv.ie1_mul = 1.0 / powf(2.0, 1.0/pcv.sep);
+		pcv.oe2_a = powf(2.0, 1.0/(pcv.sep+2))*long_side*0.5;
+		pcv.oe2_b = pcv.oe2_a * short_side / long_side;
+		pcv.ie2_mul = 1.0 / powf(2.0, 1.0/(pcv.sep+2));
+	}
+	if (roundness > 0.5) {
+		// scale from fitted ellipse towards circle
+		float rad = sqrtf(pcv.w*pcv.w+pcv.h*pcv.h) / 2.0;
+		float diff_a = rad - pcv.oe_a;
+		float diff_b = rad - pcv.oe_b;
+		pcv.oe_a = pcv.oe_a + diff_a * 2*(roundness - 0.5);
+		pcv.oe_b = pcv.oe_b + diff_b * 2*(roundness - 0.5);
+	}
+	pcv.scale = powf(2, -pcvignette.strength);
+	if (pcvignette.strength >= 6.0) {
+		pcv.scale = 0.0;
+	}
+}
+
+static float calcPCVignetteFactor(const struct pcv_params& pcv, int x, int y) {
+
+	float fo = 1.0;
+	if (x < pcv.x1 || x > pcv.x2 || y < pcv.y1 || y > pcv.y2) {
+		/*
+		  The initial plan was to have 1.0 directly outside the crop box (ie no fading), but due to
+		  rounding/trunction here and there I didn't succeed matching up exactly on the pixel with
+		  the crop box. To hide that mismatch I made a fade.
+		 */
+		int dist_x = (x < pcv.x1) ? pcv.x1 - x : x - pcv.x2;
+		int dist_y = (y < pcv.y1) ? pcv.y1 - y : y - pcv.y2;
+		if (dist_x < 0) dist_x = 0;
+		if (dist_y < 0) dist_y = 0;
+		fo = sqrtf(dist_x*dist_x+dist_y*dist_y) * pcv.fadeout_mul;
+		if (fo >= 1.0) {
+			return 1.0;
+		}
+	}
+	float val, a, b;
+	if (pcv.is_portrait) {
+		a = fabs((y-pcv.y1)-pcv.h*0.5);
+		b = fabs((x-pcv.x1)-pcv.w*0.5);
+	} else {
+		a = fabs((x-pcv.x1)-pcv.w*0.5);
+		b = fabs((y-pcv.y1)-pcv.h*0.5);
+	}
+	float angle = atan2f(b, a);
+	float dist = sqrtf(a*a+b*b);
+	float dist_oe, dist_ie;
+	if (pcv.is_super_ellipse_mode) {
+		float dist_oe1 = pcv.oe1_a*pcv.oe1_b / powf(powf(pcv.oe1_b*cosf(angle), pcv.sep) + powf(pcv.oe1_a*sinf(angle), pcv.sep), 1.0/pcv.sep);
+		float dist_oe2 = pcv.oe2_a*pcv.oe2_b / powf(powf(pcv.oe2_b*cosf(angle), pcv.sep+2) + powf(pcv.oe2_a*sinf(angle), pcv.sep+2), 1.0/(pcv.sep+2));
+		float dist_ie1 = pcv.ie1_mul * dist_oe1 * (1.0 - pcv.feather);
+		float dist_ie2 = pcv.ie2_mul * dist_oe2 * (1.0 - pcv.feather);
+		dist_oe = dist_oe1 * (1.0 - pcv.sepmix) + dist_oe2 * pcv.sepmix;
+		dist_ie = dist_ie1 * (1.0 - pcv.sepmix) + dist_ie2 * pcv.sepmix;
+	} else {
+		dist_oe = pcv.oe_a*pcv.oe_b / sqrtf(pcv.oe_b*cosf(angle)*pcv.oe_b*cosf(angle) + pcv.oe_a*sinf(angle)*pcv.oe_a*sinf(angle));
+		dist_ie = pcv.ie_mul * dist_oe * (1.0 - pcv.feather);
+	}
+	if (dist <= dist_ie) {
+		return 1.0;
+	}
+
+	if (dist >= dist_oe) {
+		val = pcv.scale;
+	} else {
+		val = (dist - dist_ie) / (dist_oe - dist_ie);
+		if (pcv.scale < 1.0) {
+			val = pow(cos(val*M_PI/2), 4);
+		} else {
+			val = 1 - pow(sin(val*M_PI/2), 4);
+		}
+		val = pcv.scale + val * (1.0 - pcv.scale);
+	}
+	if (fo < 1.0) {
+		val = 1.0 * fo + val * (1.0 - fo);
+	}
+	return val;
+}
+
+void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH) {
 
 	const bool applyVignetting = needsVignetting();
 	const bool applyGradient = needsGradient();
+	const bool applyPCVignetting = needsPCVignetting();
 
 	double vig_w2, vig_h2, maxRadius, v, b, mul;
 	if (applyVignetting) {
 		calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 	}
 
-        struct grad_params gp;
-        if (applyGradient) {
-            calcGradientParams(oW, oH, params->gradient, gp);
-        }
+	struct grad_params gp;
+	if (applyGradient) {
+		calcGradientParams(oW, oH, params->gradient, gp);
+	}
+
+	struct pcv_params pcv;
+		if (applyPCVignetting) {
+		//fprintf(stderr, "%d %d | %d %d | %d %d | %d %d [%d %d]\n", fW, fH, oW, oH, transformed->width, transformed->height, cx, cy, params->crop.w, params->crop.h);
+		calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
+	}
 
 	#pragma omp parallel for if (multiThread)
 	for (int y=0; y<transformed->height; y++) {
@@ -394,7 +528,10 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 			}
 			if (applyGradient) {
 				factor *= calcGradientFactor(gp, cx+x, cy+y);
-                        }
+			}
+			if (applyPCVignetting) {
+				factor *= calcPCVignetteFactor(pcv, cx+x, cy+y);
+			}
 			transformed->r(y,x) = original->r(y,x) * factor;
 			transformed->g(y,x) = original->g(y,x) * factor;
 			transformed->b(y,x) = original->b(y,x) * factor;
@@ -403,10 +540,7 @@ void ImProcFunctions::transformLuminanceOnly (Imagefloat* original, Imagefloat* 
 }
 
 // Transform WITH scaling (opt.) and CA, cubic interpolation
-#include "cubintch.cc"
-#include "cubint.cc"
-
-void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, 
+void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
     const LCPMapper *pLCPMap, bool fullImage) {
 
 	double w2 = (double) oW  / 2.0 - 0.5;
@@ -415,9 +549,13 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
 	double vig_w2,vig_h2,maxRadius,v,b,mul;
 	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
-        struct grad_params gp;
-        if (needsGradient()) {
+	struct grad_params gp;
+	if (needsGradient()) {
 		calcGradientParams(oW, oH, params->gradient, gp);
+	}
+	struct pcv_params pcv;
+	if (needsPCVignetting()) {
+		calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
 	}
 
     float** chOrig[3];
@@ -504,13 +642,13 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
             }
 
             double r2;
-            if (needsVignetting()) {  
-            double vig_Dx = vig_x_d * cost - vig_y_d * sint;
-            double vig_Dy = vig_x_d * sint + vig_y_d * cost;
+            if (needsVignetting()) {
+                double vig_Dx = vig_x_d * cost - vig_y_d * sint;
+                double vig_Dy = vig_x_d * sint + vig_y_d * cost;
                 r2=sqrt(vig_Dx*vig_Dx + vig_Dy*vig_Dy);
             }
 
-                    for (int c=0; c < (enableCA ? 3 : 1); c++) {
+            for (int c=0; c < (enableCA ? 3 : 1); c++) {
                 double Dx = Dxc * (s + chDist[c]);
                 double Dy = Dyc * (s + chDist[c]);
 
@@ -520,22 +658,25 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                 // LCP CA
                 if (enableLCPCA) pLCPMap->correctCA(Dx,Dy,c);
 
-				// Extract integer and fractions of source screen coordinates
-				int xc = (int)Dx; Dx -= (double)xc; xc -= sx;
-				int yc = (int)Dy; Dy -= (double)yc; yc -= sy;
+                // Extract integer and fractions of source screen coordinates
+                int xc = (int)Dx; Dx -= (double)xc; xc -= sx;
+                int yc = (int)Dy; Dy -= (double)yc; yc -= sy;
 
-				// Convert only valid pixels
-				if (yc>=0 && yc<original->height && xc>=0 && xc<original->width) {
+                // Convert only valid pixels
+                if (yc>=0 && yc<original->height && xc>=0 && xc<original->width) {
 
-					// multiplier for vignetting correction
-					double vignmul = 1.0;
-					if (needsVignetting())
-						vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
-					if (needsGradient()) {
-						vignmul *= calcGradientFactor(gp, cx+x, cy+y);
-					}
+                    // multiplier for vignetting correction
+                    double vignmul = 1.0;
+                    if (needsVignetting())
+                        vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+                    if (needsGradient()) {
+                        vignmul *= calcGradientFactor(gp, cx+x, cy+y);
+                    }
+                    if (needsPCVignetting()) {
+                        vignmul *= calcPCVignetteFactor(pcv, cx+x, cy+y);
+                    }
 
-					if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2) {
+                    if (yc > 0 && yc < original->height-2 && xc > 0 && xc < original->width-2) {
                         // all interpolation pixels inside image
                         if (enableCA)
                             interpolateTransformChannelsCubic (chOrig[c], xc-1, yc-1, Dx, Dy, &(chTrans[c][y][x]), vignmul);
@@ -543,37 +684,37 @@ void ImProcFunctions::transformHighQuality (Imagefloat* original, Imagefloat* tr
                             interpolateTransformCubic (original, xc-1, yc-1, Dx, Dy, &(transformed->r(y,x)), &(transformed->g(y,x)), &(transformed->b(y,x)), vignmul);
                     } else { 
                         // edge pixels
-						int y1 = LIM(yc,   0, original->height-1);
-						int y2 = LIM(yc+1, 0, original->height-1);
-						int x1 = LIM(xc,   0, original->width-1);
-						int x2 = LIM(xc+1, 0, original->width-1);
+                        int y1 = LIM(yc,   0, original->height-1);
+                        int y2 = LIM(yc+1, 0, original->height-1);
+                        int x1 = LIM(xc,   0, original->width-1);
+                        int x2 = LIM(xc+1, 0, original->width-1);
 
-                                if (enableCA) {
-                        chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chOrig[c][y1][x2]*Dx*(1.0-Dy) + chOrig[c][y2][x1]*(1.0-Dx)*Dy + chOrig[c][y2][x2]*Dx*Dy);
-                                } else {
-                                    transformed->r(y,x) = vignmul*(original->r(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->r(y1,x2)*Dx*(1.0-Dy) + original->r(y2,x1)*(1.0-Dx)*Dy + original->r(y2,x2)*Dx*Dy);
-                                    transformed->g(y,x) = vignmul*(original->g(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->g(y1,x2)*Dx*(1.0-Dy) + original->g(y2,x1)*(1.0-Dx)*Dy + original->g(y2,x2)*Dx*Dy);
-                                    transformed->b(y,x) = vignmul*(original->b(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->b(y1,x2)*Dx*(1.0-Dy) + original->b(y2,x1)*(1.0-Dx)*Dy + original->b(y2,x2)*Dx*Dy);
-					}
-				}
+                        if (enableCA) {
+                            chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1]*(1.0-Dx)*(1.0-Dy) + chOrig[c][y1][x2]*Dx*(1.0-Dy) + chOrig[c][y2][x1]*(1.0-Dx)*Dy + chOrig[c][y2][x2]*Dx*Dy);
+                        } else {
+                            transformed->r(y,x) = vignmul*(original->r(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->r(y1,x2)*Dx*(1.0-Dy) + original->r(y2,x1)*(1.0-Dx)*Dy + original->r(y2,x2)*Dx*Dy);
+                            transformed->g(y,x) = vignmul*(original->g(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->g(y1,x2)*Dx*(1.0-Dy) + original->g(y2,x1)*(1.0-Dx)*Dy + original->g(y2,x2)*Dx*Dy);
+                            transformed->b(y,x) = vignmul*(original->b(y1,x1)*(1.0-Dx)*(1.0-Dy) + original->b(y1,x2)*Dx*(1.0-Dy) + original->b(y2,x1)*(1.0-Dx)*Dy + original->b(y2,x2)*Dx*Dy);
                         }
-                        else {
-                            if (enableCA) {
-					// not valid (source pixel x,y not inside source image, etc.)
-					chTrans[c][y][x] = 0;
-                            } else {
-                                transformed->r(y,x) = 0;
-                                transformed->g(y,x) = 0;
-                                transformed->b(y,x) = 0;
-                            }
-                        }
-			}
+                    }
+                }
+                else {
+                    if (enableCA) {
+                        // not valid (source pixel x,y not inside source image, etc.)
+                        chTrans[c][y][x] = 0;
+                    } else {
+                        transformed->r(y,x) = 0;
+                        transformed->g(y,x) = 0;
+                        transformed->b(y,x) = 0;
+                    }
+                }
+            }
         }
     }
 }
 
 // Transform WITH scaling, WITHOUT CA, simple (and fast) interpolation. Used for preview
-void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap) {
+void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LCPMapper *pLCPMap) {
 
 	double w2 = (double) oW  / 2.0 - 0.5;
 	double h2 = (double) oH  / 2.0 - 0.5;
@@ -581,10 +722,14 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
 	double vig_w2, vig_h2, maxRadius, v, b, mul;
 	calcVignettingParams(oW, oH, params->vignetting, vig_w2, vig_h2, maxRadius, v, b, mul);
 
-        struct grad_params gp;
-        if (needsGradient()) {
-		calcGradientParams(oW, oH, params->gradient, gp);
-	}
+    struct grad_params gp;
+    if (needsGradient()) {
+        calcGradientParams(oW, oH, params->gradient, gp);
+    }
+    struct pcv_params pcv;
+    if (needsPCVignetting()) {
+        calcPCVignetteParams(fW, fH, oW, oH, params->pcvignette, params->crop, pcv);
+    }
 
 	// auxiliary variables for distortion correction
     bool needsDist = needsDistortion();  // for performance
@@ -665,11 +810,13 @@ void ImProcFunctions::transformPreview (Imagefloat* original, Imagefloat* transf
             if (yc>=0 && yc<original->height && xc>=0 && xc<original->width) {
 
                 // multiplier for vignetting correction
-            	double vignmul = 1.0;
+                double vignmul = 1.0;
                 if (needsVignetting())
-                	vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
-		if (needsGradient())
-			vignmul *= calcGradientFactor(gp, cx+x, cy+y);
+                    vignmul /= std::max(v + mul * tanh (b*(maxRadius-s*r2) / maxRadius), 0.001);
+                if (needsGradient())
+                    vignmul *= calcGradientFactor(gp, cx+x, cy+y);
+                if (needsPCVignetting())
+                    vignmul *= calcPCVignetteFactor(pcv, cx+x, cy+y);
 
                 if (yc < original->height-1 && xc < original->width-1) {  
                     // all interpolation pixels inside image
@@ -739,6 +886,10 @@ bool ImProcFunctions::needsGradient () {
 	return params->gradient.enabled && fabs(params->gradient.strength) > 1e-15;
 }
 
+bool ImProcFunctions::needsPCVignetting () {
+	return params->pcvignette.enabled && fabs(params->pcvignette.strength) > 1e-15;
+}
+
 bool ImProcFunctions::needsVignetting () {
 	return params->vignetting.amount;
 }
@@ -748,7 +899,7 @@ bool ImProcFunctions::needsLCP () {
 }
 
 bool ImProcFunctions::needsTransform () {
-	return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsVignetting () || needsLCP();
+	return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP();
 }
 
 

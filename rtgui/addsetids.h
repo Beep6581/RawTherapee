@@ -70,8 +70,11 @@
 #define ADDSET_GRADIENT_FEATHER         62
 #define ADDSET_GRADIENT_STRENGTH        63
 #define ADDSET_GRADIENT_CENTER          64
+#define ADDSET_PCVIGNETTE_STRENGTH      65
+#define ADDSET_PCVIGNETTE_FEATHER       66
+#define ADDSET_PCVIGNETTE_ROUNDNESS     67
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                65 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                68 // THIS IS USED AS A DELIMITER!!
 
 #endif

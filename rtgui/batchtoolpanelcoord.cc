@@ -134,6 +134,7 @@ void BatchToolPanelCoordinator::initSession () {
 			distortion->setAdjusterBehavior (false);
 			perspective->setAdjusterBehavior (false);
 			gradient->setAdjusterBehavior (false, false, false, false);
+			pcvignette->setAdjusterBehavior (false, false, false);
 			cacorrection->setAdjusterBehavior (false);
 			sharpening->setAdjusterBehavior (false);
 			sharpenEdge->setAdjusterBehavior (false, false);
@@ -162,6 +163,7 @@ void BatchToolPanelCoordinator::initSession () {
 			distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
 			perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
 			gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
+			pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
 			cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
 			sharpening->setAdjusterBehavior (options.baBehav[ADDSET_SHARP_AMOUNT]);
 			sharpenEdge->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENEDGE_AMOUNT],options.baBehav[ADDSET_SHARPENEDGE_PASS]);
@@ -238,6 +240,9 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_GRADIENT_STRENGTH])  pparams.gradient.strength = 0;
 			if (options.baBehav[ADDSET_GRADIENT_CENTER])  pparams.gradient.centerX = 0;
 			if (options.baBehav[ADDSET_GRADIENT_CENTER])  pparams.gradient.centerY = 0;
+			if (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH])  pparams.pcvignette.strength = 0;
+			if (options.baBehav[ADDSET_PCVIGNETTE_FEATHER])  pparams.pcvignette.feather = 0;
+			if (options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS])  pparams.pcvignette.roundness = 0;
 			if (options.baBehav[ADDSET_CA])  pparams.cacorrection.red = 0;
 			if (options.baBehav[ADDSET_CA])  pparams.cacorrection.blue = 0;
 			if (options.baBehav[ADDSET_VIGN_AMOUNT])  pparams.vignetting.amount = 0;

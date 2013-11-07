@@ -256,6 +256,12 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     appendBehavList (mi, M("TP_GRADIENT_CENTER_X")+", "+M("TP_GRADIENT_CENTER_Y"), ADDSET_GRADIENT_CENTER, false);
 
     mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_PCVIGNETTE_LABEL"));
+    appendBehavList (mi, M("TP_PCVIGNETTE_STRENGTH"), ADDSET_PCVIGNETTE_STRENGTH, false);
+    appendBehavList (mi, M("TP_PCVIGNETTE_FEATHER"), ADDSET_PCVIGNETTE_FEATHER, false);
+    appendBehavList (mi, M("TP_PCVIGNETTE_ROUNDNESS"), ADDSET_PCVIGNETTE_ROUNDNESS, false);
+
+    mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CACORRECTION_LABEL"));
     appendBehavList (mi, M("TP_CACORRECTION_BLUE")+", "+M("TP_CACORRECTION_RED"), ADDSET_CA, true);
 
