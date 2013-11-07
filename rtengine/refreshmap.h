@@ -24,12 +24,14 @@
 // Use M_VOID is you wish to update the proc params without updating the preview at all !
 #define M_VOID       (1<<15)
 // Use M_MINUPDATE if you you wish to update the preview without modifying the image (think about it like a "refreshPreview")
+// Must NOT be used with other event (i.e. will be used for MINUPDATE only)
 #define M_MINUPDATE  (1<<14)
 // Force high quality
 #define M_HIGHQUAL   (1<<13)   
 
 // Elementary functions that can be done to
 // the preview image when an event occurs
+#define M_CROP        (1<<11)
 #define M_PREPROC     (1<<10)
 #define M_RAW         (1<<9)
 #define M_INIT        (1<<8)
@@ -59,13 +61,14 @@
 #define DARKFRAME       (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define FLATFIELD       (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 #define DIRPYRDENOISE   (M_COLOR|M_LUMINANCE)
-#define CROP             M_MINUPDATE
+#define CROP             M_CROP
 #define RESIZE           M_VOID
 #define EXIF             M_VOID
 #define IPTC             M_VOID
 #define DIRPYREQUALIZER	(M_COLOR|M_LUMINANCE)
 #define OUTPUTPROFIL    (M_COLOR|M_LUMINANCE)
 #define GAMMA           (M_COLOR|M_LUMINANCE)
+#define MINUPDATE        M_MINUPDATE
 #define NONE             0
 #define ALLNORAW        (M_INIT|M_LINDENOISE|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
 

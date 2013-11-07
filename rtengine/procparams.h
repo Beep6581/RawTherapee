@@ -591,6 +591,18 @@ class GradientParams {
 };
 
 /**
+  * Parameters of the post-crop vignette filter
+  */
+class PCVignetteParams {
+
+    public:
+        bool   enabled;
+	double strength;
+        int    feather;
+        int    roundness;
+};
+
+/**
   * Parameters of the vignetting correction
   */
 class VignettingParams {
@@ -786,6 +798,7 @@ class ProcParams {
         LensProfParams          lensProf;        ///< Lens correction profile parameters
         PerspectiveParams       perspective;     ///< Perspective correction parameters
         GradientParams          gradient;        ///< Gradient filter parameters
+        PCVignetteParams        pcvignette;      ///< Post-crop vignette filter parameters
         CACorrParams            cacorrection;    ///< Lens c/a correction parameters
         VignettingParams        vignetting;      ///< Lens vignetting correction parameters
         ChannelMixerParams      chmixer;         ///< Channel mixer parameters

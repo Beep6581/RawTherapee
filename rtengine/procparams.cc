@@ -338,6 +338,11 @@ void ProcParams::setDefaults () {
     gradient.centerX = 0;
     gradient.centerY = 0;
 
+    pcvignette.enabled = false;
+    pcvignette.strength = 0;
+    pcvignette.feather = 50;
+    pcvignette.roundness = 50;
+
     cacorrection.red  = 0;
     cacorrection.blue = 0;
     
@@ -837,6 +842,12 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->gradient.strength)      keyFile.set_double  ("Gradient", "Strength", gradient.strength);
     if (!pedited || pedited->gradient.centerX)       keyFile.set_integer ("Gradient", "CenterX", gradient.centerX);
     if (!pedited || pedited->gradient.centerY)       keyFile.set_integer ("Gradient", "CenterY", gradient.centerY);
+
+    // save post-crop vignette
+    if (!pedited || pedited->pcvignette.enabled)       keyFile.set_boolean ("PCVignette", "Enabled", pcvignette.enabled);
+    if (!pedited || pedited->pcvignette.strength)      keyFile.set_double  ("PCVignette", "Strength", pcvignette.strength);
+    if (!pedited || pedited->pcvignette.feather)       keyFile.set_integer ("PCVignette", "Feather", pcvignette.feather);
+    if (!pedited || pedited->pcvignette.roundness)     keyFile.set_integer ("PCVignette", "Roundness", pcvignette.roundness);
 
     // save C/A correction
     if (!pedited || pedited->cacorrection.red)       keyFile.set_double  ("CACorrection", "Red",  cacorrection.red);
@@ -1393,6 +1404,13 @@ if (keyFile.has_group ("Gradient")) {
     if (keyFile.has_key ("Gradient", "CenterY"))  { gradient.centerY  = keyFile.get_integer ("Gradient", "CenterY"); if (pedited) pedited->gradient.centerY = true; }
 }
 
+if (keyFile.has_group ("PCVignette")) {
+    if (keyFile.has_key ("PCVignette", "Enabled"))  { pcvignette.enabled  = keyFile.get_boolean ("PCVignette", "Enabled"); if (pedited) pedited->pcvignette.enabled = true; }
+    if (keyFile.has_key ("PCVignette", "Strength")) { pcvignette.strength = keyFile.get_double  ("PCVignette", "Strength");if (pedited) pedited->pcvignette.strength = true; }
+    if (keyFile.has_key ("PCVignette", "Feather"))  { pcvignette.feather  = keyFile.get_integer ("PCVignette", "Feather"); if (pedited) pedited->pcvignette.feather = true; }
+    if (keyFile.has_key ("PCVignette", "Roundness"))  { pcvignette.roundness  = keyFile.get_integer ("PCVignette", "Roundness"); if (pedited) pedited->pcvignette.roundness = true; }
+}
+
 // load c/a correction
 if (keyFile.has_group ("CACorrection")) {
     if (keyFile.has_key ("CACorrection", "Red"))  { cacorrection.red  = keyFile.get_double ("CACorrection", "Red"); if (pedited) pedited->cacorrection.red = true; }
@@ -1734,6 +1752,10 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& gradient.strength == other.gradient.strength
 		&& gradient.centerX == other.gradient.centerX
 		&& gradient.centerY == other.gradient.centerY
+		&& pcvignette.enabled == other.pcvignette.enabled
+		&& pcvignette.strength == other.pcvignette.strength
+		&& pcvignette.feather == other.pcvignette.feather
+		&& pcvignette.roundness == other.pcvignette.roundness
 		&& cacorrection.red == other.cacorrection.red
 		&& cacorrection.blue == other.cacorrection.blue
 		&& vignetting.amount == other.vignetting.amount

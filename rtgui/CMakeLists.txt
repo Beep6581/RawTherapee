@@ -10,7 +10,7 @@ set (BASESOURCEFILES
     impulsedenoise.cc dirpyrdenoise.cc epd.cc
     exifpanel.cc toolpanel.cc lensprofile.cc
     sharpening.cc vibrance.cc rgbcurves.cc
-    whitebalance.cc   vignetting.cc gradient.cc rotate.cc distortion.cc
+    whitebalance.cc   vignetting.cc gradient.cc pcvignette.cc rotate.cc distortion.cc
     crophandler.cc dirbrowser.cc
     curveeditor.cc curveeditorgroup.cc diagonalcurveeditorsubgroup.cc flatcurveeditorsubgroup.cc
     filecatalog.cc extprog.cc

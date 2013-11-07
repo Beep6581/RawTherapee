@@ -51,9 +51,9 @@ class ImProcFunctions {
 
         void calcVignettingParams(int oW, int oH, const VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul);
 
-		void transformPreview       (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap);
-		void transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH);
-		void transformHighQuality   (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, const LCPMapper *pLCPMap, bool fullImage);
+		void transformPreview       (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LCPMapper *pLCPMap);
+		void transformLuminanceOnly (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH);
+		void transformHighQuality   (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LCPMapper *pLCPMap, bool fullImage);
 
 		void sharpenHaloCtrl    (LabImage* lab, float** blurmap, float** base, int W, int H);
 		void sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float** base, int W, int H);
@@ -67,7 +67,106 @@ class ImProcFunctions {
 		bool needsGradient      ();
 		bool needsVignetting    ();
         bool needsLCP           ();
- //   static cmsUInt8Number* Mempro = NULL;		
+ //   static cmsUInt8Number* Mempro = NULL;
+
+		inline void interpolateTransformCubic (Imagefloat* src, int xs, int ys, double Dx, double Dy, float *r, float *g, float *b, double mul) {
+			const double A=-0.85;
+
+			double w[4];
+
+			{
+			double t1, t2;
+			t1 = -A*(Dx-1.0)*Dx;
+			t2 = (3.0-2.0*Dx)*Dx*Dx;
+			w[3] = t1*Dx;
+			w[2] = t1*(Dx-1.0) + t2;
+			w[1] = -t1*Dx + 1.0 - t2;
+			w[0] = -t1*(Dx-1.0);
+			}
+
+			double rd, gd, bd;
+			double yr[4], yg[4], yb[4];
+
+			for (int k=ys, kx=0; k<ys+4; k++, kx++) {
+				rd = gd = bd = 0.0;
+				for (int i=xs, ix=0; i<xs+4; i++, ix++) {
+					rd += src->r(k,i) * w[ix];
+					gd += src->g(k,i) * w[ix];
+					bd += src->b(k,i) * w[ix];
+				}
+				yr[kx] = rd; yg[kx] = gd; yb[kx] = bd;
+			}
+
+
+			{
+			double t1, t2;
+
+			t1 = -A*(Dy-1.0)*Dy;
+			t2 = (3.0-2.0*Dy)*Dy*Dy;
+			w[3] = t1*Dy;
+			w[2] = t1*(Dy-1.0) + t2;
+			w[1] = -t1*Dy + 1.0 - t2;
+			w[0] = -t1*(Dy-1.0);
+			}
+
+			rd = gd = bd = 0.0;
+			for (int i=0; i<4; i++) {
+				rd += yr[i] * w[i];
+				gd += yg[i] * w[i];
+				bd += yb[i] * w[i];
+			}
+
+			*r = rd * mul;
+			*g = gd * mul;
+			*b = bd * mul;
+
+			//  if (xs==100 && ys==100)
+			//    printf ("r=%g, g=%g\n", *r, *g);
+		}
+
+		inline void interpolateTransformChannelsCubic (float** src, int xs, int ys, double Dx, double Dy, float *r, double mul) {
+			const double A=-0.85;
+
+			double w[4];
+
+			{
+			double t1, t2;
+			t1 = -A*(Dx-1.0)*Dx;
+			t2 = (3.0-2.0*Dx)*Dx*Dx;
+			w[3] = t1*Dx;
+			w[2] = t1*(Dx-1.0) + t2;
+			w[1] = -t1*Dx + 1.0 - t2;
+			w[0] = -t1*(Dx-1.0);
+			}
+
+			double rd;
+			double yr[4];
+
+			for (int k=ys, kx=0; k<ys+4; k++, kx++) {
+				rd = 0.0;
+				for (int i=xs, ix=0; i<xs+4; i++, ix++) {
+					rd += src[k][i] * w[ix];
+				}
+				yr[kx] = rd;
+			}
+
+
+			{
+			double t1, t2;
+			t1 = -A*(Dy-1.0)*Dy;
+			t2 = (3.0-2.0*Dy)*Dy*Dy;
+			w[3] = t1*Dy;
+			w[2] = t1*(Dy-1.0) + t2;
+			w[1] = -t1*Dy + 1.0 - t2;
+			w[0] = -t1*(Dy-1.0);
+			}
+
+			rd = 0.0;
+			for (int i=0; i<4; i++)
+				rd += yr[i] * w[i];
+
+			*r = rd * mul;
+		}
 
 
 	public:
@@ -92,6 +191,7 @@ class ImProcFunctions {
 		void setScale         (double iscale);
 
 		bool needsTransform   ();
+		bool needsPCVignetting ();
 
 		void firstAnalysis    (Imagefloat* working, const ProcParams* params, LUTu & vhist16, double gamma);
 		void rgbProc          (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
@@ -107,7 +207,7 @@ class ImProcFunctions {
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
 		void sharpeningcam    (CieImage* ncie, float** buffer);
-		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH,
+		void transform        (Imagefloat* original, Imagefloat* transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH,
                                double focalLen, double focalLen35mm, float focusDist, int rawRotationDeg, bool fullImage);
 		void lab2monitorRgb   (LabImage* lab, Image8* image);
 		void resize           (Image16* src, Image16* dst, float dScale);

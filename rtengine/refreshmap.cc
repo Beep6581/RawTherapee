@@ -230,7 +230,9 @@ DEFRINGE,         // EvPFCurve,
 WHITEBALANCE,     // EvWBequal,
 WHITEBALANCE,     // EvWBequalbo,
 TRANSFORM,        // EvGradient
-TRANSFORM         // EvGradientEnabled
+TRANSFORM,        // EvGradientEnabled
+TRANSFORM,        // EvPCVignette
+TRANSFORM         // EvPCVignetteEnabled
 
 //LUMINANCECURVE    // EvCATsharpcie
 

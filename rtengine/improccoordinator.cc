@@ -112,6 +112,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     int numofphases = 14;
     int readyphase = 0;
 
+    if (todo==CROP && ipf.needsPCVignetting())
+        todo |= TRANSFORM; // Change about Crop does affect TRANSFORM
+
     // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
     ipf.setScale (scale);
 
@@ -238,8 +241,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     readyphase++;
 
     progress ("Rotate / Distortion...",100*readyphase/numofphases);
-    bool needstransform = ipf.needsTransform();
     // Remove transformation if unneeded
+    bool needstransform = ipf.needsTransform();
     if (!needstransform && orig_prev!=oprevi) {
         delete oprevi;
         oprevi = orig_prev;
@@ -247,7 +250,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (needstransform && orig_prev==oprevi)
         oprevi = new Imagefloat (pW, pH);
     if ((todo & M_TRANSFORM) && needstransform)
-        ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, imgsrc->getMetaData()->getFocalLen(),
+        ipf.transform (orig_prev, oprevi, 0, 0, 0, 0, pW, pH, fw, fh, imgsrc->getMetaData()->getFocalLen(),
                        imgsrc->getMetaData()->getFocalLen35mm(), imgsrc->getMetaData()->getFocusDist(), imgsrc->getRotateDegree(), false);
 
     readyphase++;
@@ -274,7 +277,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     }
 
     progress ("Exposure curve & CIELAB conversion...",100*readyphase/numofphases);
-    if ((todo & M_RGBCURVE) || todo==CROP) {
+    if ((todo & M_RGBCURVE) || (todo & M_CROP)) {
         if (hListener) oprevi->calcCroppedHistogram(params, scale, histCropped);
 
         // complexCurve also calculated pre-curves histogram dependend on crop
@@ -291,7 +294,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale==1 ? 1 : 1);
 
         // if it's just crop we just need the histogram, no image updates
-        if ( todo!=CROP ) {
+        if ( todo!=MINUPDATE ) {
             ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
         }
@@ -316,7 +319,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     butili=false;
     ccutili=false;
     cclutili=false;
-    if ((todo & M_LUMACURVE) || todo==CROP) {
+    if ((todo & M_LUMACURVE) || (todo & M_CROP)) {
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
                                      lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
     }
@@ -329,7 +332,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         nprevl->CopyFrom(oprevl);
 
         progress ("Applying Color Boost...",100*readyphase/numofphases);
-        int poscc;
 
         ipf.chromiLuminanceCurve (pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve,lhskcurve, lumacurve, utili, autili, butili, ccutili,cclutili, histCCurve);
         ipf.vibrance(nprevl);
@@ -465,7 +467,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             crops[i]->update (todo);  // may call ourselves
 
     progress ("Conversion to RGB...",100*readyphase/numofphases);
-    if (todo!=CROP) {
+    if (todo!=CROP && todo!=MINUPDATE) {
         MyMutex::MyLock prevImgLock(previmg->getMutex());
         try
         {
