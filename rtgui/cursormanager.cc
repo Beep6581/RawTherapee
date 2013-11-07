@@ -28,6 +28,10 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWin) {
     cResizeWidth = new Gdk::Cursor (Gdk::SB_H_DOUBLE_ARROW);
     cResizeHeight = new Gdk::Cursor (Gdk::SB_V_DOUBLE_ARROW);
     cResizeDiag = new Gdk::Cursor (Gdk::BOTTOM_RIGHT_CORNER);
+    cResizeTopLeft = new Gdk::Cursor (Gdk::TOP_LEFT_CORNER);
+    cResizeTopRight = new Gdk::Cursor (Gdk::TOP_RIGHT_CORNER);
+    cResizeBottomLeft = new Gdk::Cursor (Gdk::BOTTOM_LEFT_CORNER);
+    cResizeBottomRight = new Gdk::Cursor (Gdk::BOTTOM_RIGHT_CORNER);
     cCropMove = new Gdk::Cursor (Gdk::FLEUR);
     cCropMoving = new Gdk::Cursor (Gdk::HAND2);
     cCropSelection = new Gdk::Cursor (Gdk::CROSSHAIR);
@@ -67,6 +71,14 @@ void CursorManager::setCursor (Glib::RefPtr<Gdk::Window> window, CursorShape sha
         window->set_cursor (*cResizeHeight);
     else if (shape==CSResizeDiagonal)
         window->set_cursor (*cResizeDiag);
+    else if (shape==CSResizeTopLeft)
+        window->set_cursor (*cResizeTopLeft);
+    else if (shape==CSResizeTopRight)
+        window->set_cursor (*cResizeTopRight);
+    else if (shape==CSResizeBottomLeft)
+        window->set_cursor (*cResizeBottomLeft);
+    else if (shape==CSResizeBottomRight)
+        window->set_cursor (*cResizeBottomRight);
     else if (shape==CSSpotWB)
         window->set_cursor (*cWB);
     else if (shape==CSCropSelect)

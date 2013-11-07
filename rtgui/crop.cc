@@ -741,158 +741,194 @@ void Crop::cropMoved (int &X, int &Y, int &W, int &H) {
 
 void Crop::cropWidth1Resized (int &X, int &Y, int &W, int &H) {
 
-  if (W<0)
-    W = 0;
-  if (H<0)
-    H = 0;
-
-  if (X<0) {
-    W += X;
-    X = 0;
-  }
-  if (fixr->get_active()) {
-    double r = getRatio();
-    int W2max = min(maxw, (int)round(r*maxh));
-    if (W>W2max) {
-      X += W - W2max;
-      W = W2max;  
+    int oldXR = nx + nw;
+    if (W < 0) W = 0;
+    if (W > oldXR) W = oldXR;
+    if (fixr->get_active()) {
+        double r = getRatio();
+        H = (int)round(W / r);
+        if (H > maxh) {
+            H = maxh;
+            W = H * r;
+        }
+        ny = ny - (H - nh) / 2.0;
+        if (ny < 0) ny = 0;
+        if (ny + H > maxh) ny = maxh - H;
     }
-    int oldH = H;
-    H = (int)round(W / r);
-    Y = Y - (H - oldH) / 2;
-    if (X + W > maxw)
-      X = maxw - W;
-    if (Y + H > maxh)
-      Y = maxh - H;
-    else if (Y < 0)
-      Y = 0;
-  }
+    X = oldXR - W;
+    Y = ny;
+    nx = X;
+    nw = W;
+    nh = H;
 
-  nx = X;
-  ny = Y;
-  nw = W;
-  nh = H;
-
-  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
-//  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }
 
 void Crop::cropWidth2Resized (int &X, int &Y, int &W, int &H) {
 
-//  X = x->get_value ();
-//  Y = y->get_value ();
-  X = nx;
-  Y = ny;
+    if (W < 0) W = 0;
+    if (W > maxw - nx) W = maxw - nx;
+    if (fixr->get_active()) {
+        double r = getRatio();
+        H = (int)round(W / r);
+        if (H > maxh) {
+            H = maxh;
+            W = H * r;
+        }
+        ny = ny - (H - nh) / 2.0;
+        if (ny < 0) ny = 0;
+        if (ny + H > maxh) ny = maxh - H;
+    }
+    X = nx;
+    Y = ny;
+    nw = W;
+    nh = H;
 
-  if (W<0)
-    W = 0;
-  if (H<0)
-    H = 0;
-
-  if (W>maxw-X)
-    W = maxw-X;
-
-  if (fixr->get_active()) {
-    double r = getRatio();
-    int W2max = min(maxw, (int)round(r*maxh));
-    if (W>W2max)
-      W = W2max;  
-    int oldH = H;
-    H = (int)round(W / r);
-    Y = Y - (H - oldH) / 2;
-    if (X + W > maxw)
-      X = maxw - W;
-    if (Y + H > maxh)
-      Y = maxh - H;
-    else if (Y < 0)
-      Y = 0;
-  }
-
-  nx = X;
-  ny = Y;
-  nw = W;
-  nh = H;
-
-  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
-//  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }
 
 void Crop::cropHeight1Resized (int &X, int &Y, int &W, int &H) {
 
-  if (W<0)
-    W = 0;
-  if (H<0)
-    H = 0;
-
-  if (Y<0) {
-    H += Y;
-    Y = 0;
-  }
-
-  if (fixr->get_active()) {
-    double r = getRatio();
-    int H2max = min(maxh, (int)round(maxw / r));
-    if (H>H2max) {
-      Y += H - H2max;
-      H = H2max;  
+    int oldYB = ny + nh;
+    if (H < 0) H = 0;
+    if (H > oldYB) H = oldYB;
+    if (fixr->get_active()) {
+        double r = getRatio();
+        W = (int)round(H * r);
+        if (W > maxw) {
+            W = maxw;
+            H = W / r;
+        }
+        nx = nx - (W - nw) / 2.0;
+        if (nx < 0) nx = 0;
+        if (nx + W > maxw) nx = maxw - W;
     }
-    int oldW = W;
-    W = (int)round(H * r);
-    X = X - (W - oldW) / 2;
-    if (X + W > maxw)
-      X = maxw - W;
-    else if (X < 0)
-      X = 0;
-    if (Y + H > maxh)
-      Y = maxh - H;
-  }
+    X = nx;
+    Y = oldYB - H;
+    ny = Y;
+    nw = W;
+    nh = H;
 
-  nx = X;
-  ny = Y;
-  nw = W;
-  nh = H;
-
-  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
-//  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }
 
 void Crop::cropHeight2Resized (int &X, int &Y, int &W, int &H) {
 
-//  X = x->get_value ();
-//  Y = y->get_value ();
-  X = nx;
-  Y = ny;
+    if (H < 0) H = 0;
+    if (H > maxh - ny) H = maxh - ny;
+    if (fixr->get_active()) {
+        double r = getRatio();
+        W = (int)round(H * r);
+        if (W > maxw) {
+            W = maxw;
+            H = W / r;
+        }
+        nx = nx - (W - nw) / 2.0; // nx must be floating point to avoid drifting
+        if (nx < 0) nx = 0;
+        if (nx + W > maxw) nx = maxw - W;
+    }
+    X = nx;
+    Y = ny;
+    nw = W;
+    nh = H;
 
-  if (W<0)
-    W = 0;
-  if (H<0)
-    H = 0;
-  int H1max = maxh-Y;
-  if (H>H1max)
-    H = H1max;
-  if (fixr->get_active()) {
-    double r = getRatio ();
-    int H2max = min(maxh, (int)round (maxw / r));
-    if (H>H2max)
-      H = H2max;  
-    int oldW = W;
-    W = (int)round(H * r);
-    X = X - (W - oldW) / 2;
-    if (X + W > maxw)
-      X = maxw - W;
-    else if (X < 0)
-      X = 0;
-    if (Y + H > maxh)
-      Y = maxh - H;
-  }
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
+}
 
-  nx = X;
-  ny = Y;
-  nw = W;
-  nh = H;
+void Crop::cropTopLeftResized (int &X, int &Y, int &W, int &H) {
 
-  g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
-//  Glib::signal_idle().connect (sigc::mem_fun(*this, &Crop::refreshSpins));
+    int oldXR = nx + nw; // right side
+    int oldYB = ny + nh; // bottom side
+    if (W < 0) W = 0;
+    if (H < 0) H = 0;
+    if (W > oldXR) W = oldXR;
+    if (H > oldYB) H = oldYB;
+    if (fixr->get_active()) {
+        double r = getRatio();
+        W = (int)round(H * r);
+        if (W > oldXR) {
+            W = oldXR;
+            H = (int)round(W / r);
+        }
+    }
+    X = oldXR - W;
+    Y = oldYB - H;
+    nx = X;
+    ny = Y;
+    nw = W;
+    nh = H;
+
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
+}
+
+void Crop::cropTopRightResized (int &X, int &Y, int &W, int &H) {
+
+    int oldYB = ny + nh;
+    if (W < 0) W = 0;
+    if (H < 0) H = 0;
+    if (W > maxw - nx) W = maxw - nx;
+    if (H > oldYB) H = oldYB;
+    if (fixr->get_active()) {
+        double r = getRatio();
+        W = (int)round(H * r);
+        if (W > maxw - nx) {
+            W = maxw - nx;
+            H = (int)round(W / r);
+        }
+    }
+    X = nx;
+    Y = oldYB - H;
+    ny = Y;
+    nw = W;
+    nh = H;
+
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
+}
+
+void Crop::cropBottomLeftResized (int &X, int &Y, int &W, int &H) {
+
+    int oldXR = nx + nw;
+    if (W < 0) W = 0;
+    if (H < 0) H = 0;
+    if (W > oldXR) W = oldXR;
+    if (H > maxh - ny) H = maxh - ny;
+    if (fixr->get_active()) {
+        double r = getRatio();
+        W = (int)round(H * r);
+        if (W > oldXR) {
+            W = oldXR;
+            H = (int)round(W / r);
+        }
+    }
+    X = oldXR - W;
+    Y = ny;
+    nx = X;
+    nw = W;
+    nh = H;
+
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
+}
+
+void Crop::cropBottomRightResized (int &X, int &Y, int &W, int &H) {
+
+    if (W < 0) W = 0;
+    if (H < 0) H = 0;
+    if (W > maxw - nx) W = maxw - nx;
+    if (H > maxh - ny) H = maxh - ny;
+    if (fixr->get_active()) {
+        double r = getRatio();
+        W = (int)round(H * r);
+        if (W > maxw - nx) {
+            W = maxw - nx;
+            H = (int)round(W / r);
+        }
+    }
+    X = nx;
+    Y = ny;
+    nw = W;
+    nh = H;
+
+    g_idle_add (refreshSpinsUI, new RefreshSpinHelper (this, false));
 }
 
 void Crop::cropInit (int &x, int &y, int &w, int &h) {

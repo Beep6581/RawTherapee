@@ -59,7 +59,8 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     Gtk::VBox* ppibox;
     Gtk::VBox* sizebox;
     int maxw, maxh;
-    int nx, ny, nw, nh;
+    double nx, ny;
+    int nw, nh;
     int lastRotationDeg;
     sigc::connection xconn, yconn, wconn, hconn, econn, fconn, rconn, oconn, gconn;
     bool wDirty, hDirty, xDirty, yDirty, lastEnabled, lastFixRatio;
@@ -96,6 +97,10 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     void cropWidth2Resized  (int &x, int &y, int &w, int &h);
     void cropHeight1Resized (int &x, int &y, int &w, int &h);
     void cropHeight2Resized (int &x, int &y, int &w, int &h);
+    void cropTopLeftResized     (int &x, int &y, int &w, int &h);
+    void cropTopRightResized    (int &x, int &y, int &w, int &h);
+    void cropBottomLeftResized  (int &x, int &y, int &w, int &h);
+    void cropBottomRightResized (int &x, int &y, int &w, int &h);
     void cropInit           (int &x, int &y, int &w, int &h);
     void cropResized        (int &x, int &y, int& x2, int& y2);
     void cropManipReady     ();

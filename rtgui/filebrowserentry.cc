@@ -121,7 +121,7 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf> > FileBrowserEntry::getIconsOnImageArea ()
 
 void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) {
     
-    if (state==SCropSelecting || state==SResizeH1 || state==SResizeH2 || state==SResizeW1 || state==SResizeW2 || state==SCropMove)
+    if (state==SCropSelecting || state==SResizeH1 || state==SResizeH2 || state==SResizeW1 || state==SResizeW2 || state==SResizeTL || state==SResizeTR || state==SResizeBL || state==SResizeBR || state==SCropMove)
         drawCrop (c, prex, prey, prew, preh, 0, 0, scale, cropParams);
     else {
         rtengine::procparams::CropParams cparams = thumbnail->getProcParams().crop;
@@ -292,6 +292,42 @@ bool FileBrowserEntry::motionNotify (int x, int y) {
         updateBackBuffer ();
         parent->redrawNeeded (this);
     }
+    else if (state==SResizeTL && cropgl) { 
+        int ox = cropParams.x;
+        cropParams.x = action_x + (x-press_x) / scale;
+        cropParams.w += ox - cropParams.x;
+        int oy = cropParams.y;
+        cropParams.y = action_y + (y-press_y) / scale;
+        cropParams.h += oy - cropParams.y;
+        cropgl->cropTopLeftResized (cropParams.x, cropParams.y, cropParams.w, cropParams.h);
+        updateBackBuffer ();
+        parent->redrawNeeded (this);
+    }
+    else if (state==SResizeTR && cropgl) { 
+        cropParams.w = action_x + (x-press_x) / scale;
+        int oy = cropParams.y;
+        cropParams.y = action_y + (y-press_y) / scale;
+        cropParams.h += oy - cropParams.y;
+        cropgl->cropTopRightResized (cropParams.x, cropParams.y, cropParams.w, cropParams.h);
+        updateBackBuffer ();
+        parent->redrawNeeded (this);
+    }
+    else if (state==SResizeBL && cropgl) { 
+        int ox = cropParams.x;
+        cropParams.x = action_x + (x-press_x) / scale;
+        cropParams.w += ox - cropParams.x;
+        cropParams.h = action_y + (y-press_y) / scale;
+        cropgl->cropBottomLeftResized (cropParams.x, cropParams.y, cropParams.w, cropParams.h);
+        updateBackBuffer ();
+        parent->redrawNeeded (this);
+    }
+    else if (state==SResizeBR && cropgl) { 
+        cropParams.w = action_x + (x-press_x) / scale;
+        cropParams.h = action_y + (y-press_y) / scale;
+        cropgl->cropBottomRightResized (cropParams.x, cropParams.y, cropParams.w, cropParams.h);
+        updateBackBuffer ();
+        parent->redrawNeeded (this);
+    }
     else if (state==SCropMove && cropgl) { 
         cropParams.x = action_x + (x-press_x) / scale;
         cropParams.y = action_y + (y-press_y) / scale;
@@ -338,7 +374,43 @@ bool FileBrowserEntry::pressNotify   (int button, int type, int bstate, int x, i
     int iy = y - starty - ofsY;
     if (!b && selected && inside (x,y)) {
         if (button==1 && type==GDK_BUTTON_PRESS && state==SNormal) {
-            if (onArea (CropTop, ix, iy)) {
+            if (onArea (CropTopLeft, ix, iy)) {
+                state = SResizeTL;
+                press_x = x;
+                action_x = cropParams.x;
+                press_y = y;
+                action_y = cropParams.y;
+                cropgl = iatlistener->startCropEditing (thumbnail);
+                b = true;
+            }
+            else if (onArea (CropTopRight, ix, iy)) {
+                state = SResizeTR;
+                press_x = x;
+                action_x = cropParams.w;
+                press_y = y;
+                action_y = cropParams.y;
+                cropgl = iatlistener->startCropEditing (thumbnail);
+                b = true;
+            }
+            else if (onArea (CropBottomLeft, ix, iy)) {
+                state = SResizeBL;
+                press_x = x;
+                action_x = cropParams.x;
+                press_y = y;
+                action_y = cropParams.h;
+                cropgl = iatlistener->startCropEditing (thumbnail);
+                b = true;
+            }
+            else if (onArea (CropBottomRight, ix, iy)) {
+                state = SResizeBR;
+                press_x = x;
+                action_x = cropParams.w;
+                press_y = y;
+                action_y = cropParams.h;
+                cropgl = iatlistener->startCropEditing (thumbnail);
+                b = true;
+            }
+            else if (onArea (CropTop, ix, iy)) {
                 state = SResizeH1;
                 press_y = y;
                 action_y = cropParams.y;
@@ -418,7 +490,7 @@ bool FileBrowserEntry::releaseNotify (int button, int type, int bstate, int x, i
             iatlistener->rotateSelectionReady (rot_deg, thumbnail);
             if (iatlistener->getToolBar()) iatlistener->getToolBar()->setTool (TMHand);
         }
-        else if (cropgl && (state==SCropSelecting || state==SResizeH1 || state==SResizeH2 || state==SResizeW1 || state==SResizeW2 || state==SCropMove)) {
+        else if (cropgl && (state==SCropSelecting || state==SResizeH1 || state==SResizeH2 || state==SResizeW1 || state==SResizeW2 || state==SResizeTL || state==SResizeTR || state==SResizeBL || state==SResizeBR || state==SCropMove)) {
             cropgl->cropManipReady ();
             cropgl = NULL;
             iatlistener->cropSelectionReady ();
@@ -444,6 +516,30 @@ bool FileBrowserEntry::onArea (CursorArea a, int x, int y) {
     switch (a) {
         case CropImage:
             return x>=prex && x<prex+prew && y>=prey && y<prey+preh;
+        case CropTopLeft:
+            return cropParams.enabled && 
+                y1>=cropParams.y-cropResizeBorder && 
+                y1<=cropParams.y+cropResizeBorder &&
+                x1>=cropParams.x-cropResizeBorder && 
+                x1<=cropParams.x+cropResizeBorder;
+        case CropTopRight:
+            return cropParams.enabled && 
+                y1>=cropParams.y-cropResizeBorder && 
+                y1<=cropParams.y+cropResizeBorder &&
+                x1>=cropParams.x+cropParams.w-1-cropResizeBorder && 
+                x1<=cropParams.x+cropParams.w-1+cropResizeBorder;
+        case CropBottomLeft:
+            return cropParams.enabled && 
+                y1>=cropParams.y+cropParams.h-1-cropResizeBorder && 
+                y1<=cropParams.y+cropParams.h-1+cropResizeBorder &&
+                x1>=cropParams.x-cropResizeBorder && 
+                x1<=cropParams.x+cropResizeBorder;
+        case CropBottomRight:
+            return cropParams.enabled && 
+                y1>=cropParams.y+cropParams.h-1-cropResizeBorder && 
+                y1<=cropParams.y+cropParams.h-1+cropResizeBorder &&
+                x1>=cropParams.x+cropParams.w-1-cropResizeBorder && 
+                x1<=cropParams.x+cropParams.w-1+cropResizeBorder;
         case CropTop:
             return cropParams.enabled && 
                 x1>cropParams.x+cropResizeBorder && 
@@ -497,6 +593,14 @@ void FileBrowserEntry::updateCursor (int x, int y) {
             cursorManager.setCursor (w, CSResizeHeight);
         else if (tm==TMHand && (onArea (CropLeft, x, y) || onArea (CropRight, x, y))) 
             cursorManager.setCursor (w, CSResizeWidth);
+        else if (tm==TMHand && (onArea (CropTopLeft, x, y))) 
+            cursorManager.setCursor (w, CSResizeTopLeft);
+        else if (tm==TMHand && (onArea (CropTopRight, x, y))) 
+            cursorManager.setCursor (w, CSResizeTopRight);
+        else if (tm==TMHand && (onArea (CropBottomLeft, x, y))) 
+            cursorManager.setCursor (w, CSResizeBottomLeft);
+        else if (tm==TMHand && (onArea (CropBottomRight, x, y))) 
+            cursorManager.setCursor (w, CSResizeBottomRight);
         else if (onArea (CropImage, x, y)) { 
             if (tm==TMHand)
                 cursorManager.setCursor (w, CSArrow);
@@ -520,6 +624,14 @@ void FileBrowserEntry::updateCursor (int x, int y) {
         cursorManager.setCursor (w, CSResizeWidth);
     else if (state==SResizeH1 || state==SResizeH2)
         cursorManager.setCursor (w, CSResizeHeight);
+    else if (state==SResizeTL)
+        cursorManager.setCursor (w, CSResizeTopLeft);
+    else if (state==SResizeTR)
+        cursorManager.setCursor (w, CSResizeTopRight);
+    else if (state==SResizeBL)
+        cursorManager.setCursor (w, CSResizeBottomLeft);
+    else if (state==SResizeBR)
+        cursorManager.setCursor (w, CSResizeBottomRight);
 }
 
 void FileBrowserEntry::draw () {
