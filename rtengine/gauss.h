@@ -333,9 +333,11 @@ template<class T> void gaussHorizontalSse (T** src, T** dst, int W, int H, float
 template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, double sigma) {
 
 #ifdef __SSE__
-    gaussHorizontalSse<T> (src, dst, W, H, sigma);
-    return;
-#else
+	if(sigma < 70) { // bigger sigma only with double precision
+		gaussHorizontalSse<T> (src, dst, W, H, sigma);
+		return;
+	}
+#endif
     if (sigma<0.25) {
         // dont perform filtering
         if (src!=dst)
@@ -411,7 +413,6 @@ template<class T> void gaussHorizontal (T** src, T** dst, AlignedBufferMP<double
 
         buffer.release(pBuf);
     }
-#endif
 }
 
 #ifdef __SSE__
@@ -562,9 +563,11 @@ template<class T> void gaussVerticalSse (T** src, T** dst, int W, int H, float s
 template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> &buffer, int W, int H, double sigma) {
 
 #ifdef __SSE__
-    gaussVerticalSse<T> (src, dst, W, H, sigma);
-    return;
-#else
+	if(sigma < 70) { // bigger sigma only with double precision
+		gaussVerticalSse<T> (src, dst, W, H, sigma);
+		return;
+	}
+#endif
 
     if (sigma<0.25) {
         // dont perform filtering
@@ -642,7 +645,6 @@ template<class T> void gaussVertical (T** src, T** dst, AlignedBufferMP<double> 
 
         buffer.release(pBuf);
     }
-#endif
 }
 
 
