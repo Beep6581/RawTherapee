@@ -61,8 +61,8 @@ class CurveFactory {
             return 0.0;
         double k = sqrt ((m1-1.0)*(m1-m2)/2) / (1.0-m2);
         double l = (m1-m2) / (1.0-m2) + k;
-        double lx = log(x);
-        return m2*x + (1.0-m2)*(2.0 - exp(k*lx))*exp(l*lx);
+        double lx = xlog(x);
+        return m2*x + (1.0-m2)*(2.0 - xexp(k*lx))*xexp(l*lx);
     }
     // basic concave function between (0,0) and (1,1). m1 and m2 controls the slope at the start and end point
     static inline double baseu (double x, double m1, double m2) {
@@ -220,6 +220,12 @@ class Curve {
     int ppn;			// targeted polyline point number
     double* x;
     double* y;
+    // begin of variables used in Parametric curves only
+    double mc;
+    double mfc;
+    double msc;
+    double mhc;
+    // end of variables used in Parametric curves only
     std::vector<double> poly_x;		// X points of the faceted curve
     std::vector<double> poly_y;		// Y points of the faceted curve
     std::vector<HashEntry> hash;
