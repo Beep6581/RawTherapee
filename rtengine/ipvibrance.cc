@@ -44,32 +44,17 @@ using namespace procparams;
 
 extern const Settings* settings;
 
-void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool needed) {
-	if (needed && diagCurve) {
-		LUTf lutCurve (65536);
+void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve, bool needed) {
 
-		for (int i=0; i<=0xffff; i+= i<0xffff-skip ? skip : 1 ) {
+	if (needed && diagCurve) {
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
+		for (int i=0; i<=0xffff; i++ ) {
 			// change to [0,1] range
 			// apply custom/parametric/NURBS curve, if any
 			// and store result in a temporary array
-			lutCurve[i] = diagCurve->getVal( double(i)/65535.0 );
-		}
-
-		// if skip>1, let apply linear interpolation in the skipped points of the curve
-		if (skip > 1) {
-			int prev = 0;
-			for (int i=1; i<=0xffff-skip; i++) {
-				int iMod = i%skip;
-				if (!iMod) {
-					prev+=skip;
-					continue;
-				}
-				lutCurve[i] = ( lutCurve[prev] * (skip-iMod) + lutCurve[prev+skip]*iMod ) / skip;
-			}
-		}
-
-		for (int i=0; i<=0xffff; i++) {
-			outCurve[i] = (65535.0f * lutCurve[i]);
+			outCurve[i] = 65535.f*diagCurve->getVal( double(i)/65535.0 );
 		}
 	}
 	else {
@@ -80,7 +65,6 @@ void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool 
 }
 
 
-
 /*
  * Vibrance correction
  * copyright (c)2011  Jacques Desmis <jdesmis@gmail.com> and Jean-Christophe Frisch <natureh@free.fr>
@@ -88,10 +72,12 @@ void fillCurveArrayVib(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool 
  */
 void ImProcFunctions::vibrance (LabImage* lab) {
 
-	int skip=1; //scale==1 ? 1 : 16;
+	if (!params->vibrance.enabled)
+		return;
+//	int skip=1; //scale==1 ? 1 : 16;
 	bool skinCurveIsSet=false;
 	DiagonalCurve* dcurve = NULL;
-	dcurve = new DiagonalCurve (params->vibrance.skintonescurve, CURVES_MIN_POLY_POINTS/skip);
+	dcurve = new DiagonalCurve (params->vibrance.skintonescurve, CURVES_MIN_POLY_POINTS);
 	if (dcurve) {
 		if (!dcurve->isIdentity()) {
 			skinCurveIsSet = true;
@@ -102,7 +88,7 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 		}
 	}
 
-	if (!params->vibrance.enabled || (!skinCurveIsSet && !params->vibrance.pastels && !params->vibrance.saturated)) {
+	if (!skinCurveIsSet && !params->vibrance.pastels && !params->vibrance.saturated) {
 		if (dcurve) {
 			delete dcurve;
 			dcurve = NULL;
@@ -121,8 +107,8 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 	// skin hue curve
 	// I use diagonal because I think it's better
 	LUTf skin_curve (65536,0);
-
-	fillCurveArrayVib(dcurve, skin_curve, skip, skinCurveIsSet);
+	if(skinCurveIsSet)
+		fillCurveArrayVib(dcurve, skin_curve, skinCurveIsSet);
 	if (dcurve) {
 		delete dcurve;
 		dcurve = NULL;

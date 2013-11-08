@@ -80,6 +80,11 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn) {
                     x[8] = 1.0;
                 else
                     x[8] = p[8]/100.0;
+				mc = -xlog(2.0)/xlog(x[2]);
+				double mbase = pfull (0.5, x[8], x[6], x[5]);
+				mfc = mbase<=1e-14 ? 0.0 : xexp(xlog(mbase)/mc);			// value of the curve at the center point
+				msc = -xlog(2.0)/xlog(x[1]/x[2]);
+				mhc = -xlog(2.0)/xlog((x[3]-x[2])/(1-x[2]));
             }
         }
         if (identity) {
@@ -221,28 +226,21 @@ double DiagonalCurve::getVal (double t) const {
     case DCT_Parametric : {
         if (t<=1e-14)
             return 0.0;
-        double c = -log(2.0)/log(x[2]);
-        double tv = exp(c*log(t));
+        double tv = xexp(mc*xlog(t));
         double base = pfull (tv, x[8], x[6], x[5]);
-        double stretched = base<=1e-14 ? 0.0 : exp(log(base)/c);
+        double stretched = base<=1e-14 ? 0.0 : xexp(xlog(base)/mc);
 
-        base = pfull (0.5, x[8], x[6], x[5]);
-        double fc = base<=1e-14 ? 0.0 : exp(log(base)/c);   // value of the curve at the center point
         if (t<x[2]) {
             // add shadows effect:
-            double sc = -log(2.0)/log(x[1]/x[2]);
-            double stv = exp(sc*log(stretched/fc));
+            double stv = xexp(msc*xlog(stretched/mfc));
             double sbase = pfull (stv, x[8], x[7], 0.5);
-            double sstretched = fc*(sbase<=1e-14 ? 0.0 : exp(log(sbase)/sc));
-            return sstretched;
+            return mfc*(sbase<=1e-14 ? 0.0 : xexp(xlog(sbase)/msc));
         }
         else {
             // add highlights effect:
-            double hc = -log(2.0)/log((x[3]-x[2])/(1-x[2]));
-            double htv = exp(hc*log((stretched-fc)/(1-fc)));
+            double htv = xexp(mhc*xlog((stretched-mfc)/(1-mfc)));
             double hbase = pfull (htv, x[8], 0.5, x[4]);
-            double hstretched = fc + (1-fc)*(hbase<=1e-14 ? 0.0 : exp(log(hbase)/hc));
-            return hstretched;
+            return mfc + (1-mfc)*(hbase<=1e-14 ? 0.0 : xexp(xlog(hbase)/mhc));
         }
         break;
     }
