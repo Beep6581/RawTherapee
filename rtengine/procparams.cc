@@ -136,8 +136,8 @@ void ProcParams::setDefaults () {
     toneCurve.contrast      = 0;
     toneCurve.saturation    = 0;
     toneCurve.black         = 0;
-    toneCurve.hlcompr       = 70;
-    toneCurve.hlcomprthresh = 0;
+    toneCurve.hlcompr       = 0;
+    toneCurve.hlcomprthresh = 33;
     toneCurve.shcompr       = 50;
     toneCurve.curve.clear ();
     toneCurve.curve.push_back(DCT_Linear);
@@ -301,9 +301,9 @@ void ProcParams::setDefaults () {
 
     sh.enabled       = false;
     sh.hq            = false;
-    sh.highlights    = 10;
+    sh.highlights    = 0;
     sh.htonalwidth   = 80;
-    sh.shadows       = 10;
+    sh.shadows       = 0;
     sh.stonalwidth   = 80;
     sh.localcontrast = 0;
     sh.radius        = 40;
