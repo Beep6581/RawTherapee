@@ -82,10 +82,49 @@ Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
 		return info;
 }
 
+Glib::RefPtr<Gio::FileInfo> safe_next_file (Glib::RefPtr<Gio::FileEnumerator> &dirList)
+{
+		Glib::RefPtr<Gio::FileInfo> info;
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
+		bool retry;
+		Glib::ustring last_error = "";
+		do {
+			retry = false;
+			try {
+				info = dirList->next_file();
+			} catch (Glib::Exception& ex) {
+				printf ("%s\n", ex.what().c_str());
+				// API problem: not possible to differ between error looking at particular entry or
+				// general error scanning the directory. We do a hack by retrying and see if the
+				// error changes, if it does we can assume it's about the current filename and we
+				// should look at the next. More likely if a single file error is that the next
+				// retry is okay of course.
+				retry = (ex.what() != last_error);
+				last_error = ex.what();
+			}
+		} while (retry);
+#else
+		bool retry;
+		Glib::ustring last_error = "";
+		do {
+			retry = false;
+			std::auto_ptr<Glib::Error> error;
+			Glib::RefPtr<Gio::Cancellable> cancellable;
+			info = dirList->next_file(cancellable, error);
+			if (!info && error.get()) {
+				printf ("%s\n", error.what().c_str());
+				retry = (error.what() != last_error);
+				last_error = error.what();
+			}
+		} while (retry);
+#endif
+		return info;
+}
+
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
 # define SAFE_ENUMERATOR_CODE_START \
 				do{try {	if ((dirList = dir->enumerate_children ())) \
-						for (Glib::RefPtr<Gio::FileInfo> info = dirList->next_file(); info; info = dirList->next_file()) {
+						for (Glib::RefPtr<Gio::FileInfo> info = safe_next_file(dirList); info; info = safe_next_file(dirList)) {
 						
 # define SAFE_ENUMERATOR_CODE_END \
 				}}	catch (Glib::Exception& ex) {	printf ("%s\n", ex.what().c_str());	}}while(0)
@@ -93,7 +132,7 @@ Glib::RefPtr<Gio::FileInfo> safe_query_file_info (Glib::RefPtr<Gio::File> &file)
 # define SAFE_ENUMERATOR_CODE_START \
 				do{std::auto_ptr<Glib::Error> error;	Glib::RefPtr<Gio::Cancellable> cancellable; \
 					if ((dirList = dir->enumerate_children (cancellable, "*", Gio::FILE_QUERY_INFO_NONE, error))) \
-						for (Glib::RefPtr<Gio::FileInfo> info = dirList->next_file(cancellable, error); !error.get() && info; info = dirList->next_file(cancellable, error)) {
+						for (Glib::RefPtr<Gio::FileInfo> info = safe_next_file(dirList); info; info = safe_next_file(dirList)) {
 						
 # define SAFE_ENUMERATOR_CODE_END 	} if (error.get())	printf ("%s\n", error->what().c_str());}while (0)
 #endif
