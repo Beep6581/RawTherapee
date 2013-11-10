@@ -35,6 +35,7 @@
 // dummy values
 #define MAP_PRIVATE 1
 #define PROT_READ 1
+#define MAP_FAILED (void *)-1
 
 void* mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset)
 {
@@ -43,9 +44,10 @@ void* mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset
 	if (handle != NULL) {
 		start = MapViewOfFile(handle, FILE_MAP_COPY, 0, offset, length);
 		CloseHandle(handle);
+                return start;
 	}
 
-	return start;
+	return MAP_FAILED;
 }
 
 int munmap(void *start, size_t length)
@@ -79,7 +81,7 @@ IMFILE* fopen (const char* fname)
 	}
 
 	void* data = mmap(0,stat_buffer.st_size,PROT_READ,MAP_PRIVATE,fd,0);
-	if ( data == 0 )
+	if ( data == MAP_FAILED )
 	{
 		printf("no mmap\n");
 		close(fd);
