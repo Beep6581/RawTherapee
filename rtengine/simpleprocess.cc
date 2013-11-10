@@ -121,7 +121,6 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     // perform luma/chroma denoise
 //	CieImage *cieView;    
 
-    LabImage* labView = new LabImage (fw,fh);
     if (params.dirpyrDenoise.enabled) {
 		ipf.RGB_denoise(baseImg, baseImg, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
     }
@@ -197,6 +196,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 1);
 	CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 1);
 
+    LabImage* labView = new LabImage (fw,fh);
     ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, expcomp, hlcompr, hlcomprthresh);
 
     // Freeing baseImg because not used anymore
