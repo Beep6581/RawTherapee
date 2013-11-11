@@ -88,8 +88,8 @@ void Options::updatePaths() {
     if (Glib::path_is_absolute(profilePath)) {
         // absolute path
         if (!checkDirPath (profilePath, "")) {
-            int retVal = safe_g_mkdir_with_parents (profilePath, 511);
-            if (!retVal)
+            safe_g_mkdir_with_parents (profilePath, 511);
+            if (!checkDirPath (profilePath, "")) // had problems with mkdir_with_parents return value on OS X, just check dir again
             	printf("Error: user's profiles' directory \"%s\" creation failed\n", profilePath.c_str());
         }
         if (checkDirPath (profilePath, "Error: the specified user's profiles' path doesn't point to a directory or doesn't exist!\n")) {
@@ -117,8 +117,8 @@ void Options::updatePaths() {
         if (multiUser) {
             tmpPath = Glib::build_filename(rtdir, profilePath);
             if (!checkDirPath (tmpPath, "")) {
-                int retVal = safe_g_mkdir_with_parents (tmpPath, 511);
-                if (!retVal)
+                safe_g_mkdir_with_parents (tmpPath, 511);
+                if (!checkDirPath (tmpPath, ""))
                     printf("Error: user's profiles' directory \"%s\" creation failed\n", tmpPath.c_str());
             }
             if(checkDirPath (tmpPath, "Error: the specified user's profiles' path doesn't point to a directory!\n")) {
@@ -168,11 +168,11 @@ Glib::ustring Options::getPreferredProfilePath() {
         return "";
 }
 
-/** @brief Get the absolute path of the given filename or the "Internal" special value
+/** @brief Get the absolute path of the given filename or the "Neutral" special value
   *
   *@param profName  path + filename of the procparam to look for. A filename without path can be provided for backward compatibility.
   *                 In this case, this parameter will be update with the new format.
-  *@return Send back the absolute path of the given filename or "Internal" if "Internal" has been set to profName. Implementor will have
+  *@return Send back the absolute path of the given filename or "Neutral" if "Neutral" has been set to profName. Implementor will have
   *        to test for this particular value. If the absolute path is invalid (e.g. the file doesn't exist), it will return an empty string.
   */
 Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
@@ -186,14 +186,14 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
     if (p=="${U}") {
         // the path starts by the User virtual path
         p = getUserProfilePath();
-        Glib::ustring fullPath = p + profName.substr(4) + paramFileExtension;
+        Glib::ustring fullPath = Glib::build_filename(p, profName.substr(5) + paramFileExtension);
         if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
             return Glib::path_get_dirname(fullPath);
     }
     else if (p=="${G}") {
         // the path starts by the User virtual path
         p = getGlobalProfilePath();
-        Glib::ustring fullPath = p + profName.substr(4) + paramFileExtension;
+        Glib::ustring fullPath = Glib::build_filename(p, profName.substr(5) + paramFileExtension);
         if (!p.empty() && safe_file_test (fullPath, Glib::FILE_TEST_EXISTS))
             return Glib::path_get_dirname(fullPath);
     }
@@ -1118,6 +1118,11 @@ void Options::load () {
         cacheBaseDir = Glib::build_filename(rtdir, "cache");
 #else
         cacheBaseDir = Glib::build_filename(Glib::ustring(g_get_user_cache_dir()), Glib::ustring(CACHEFOLDERNAME));
+#endif
+
+#ifdef __APPLE__
+        // make sure .local/share exists on OS X so we don't get problems with recently-used.xbel
+        safe_g_mkdir_with_parents (g_get_user_data_dir(), 511);
 #endif
     }
 

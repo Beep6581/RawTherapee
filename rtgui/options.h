@@ -28,7 +28,11 @@
 #define STARTUPDIR_LAST    3
 
 // Default bundled profile name to use for Raw images
+#ifdef WIN32
 #define DEFPROFILE_RAW      "${G}\\Default"
+#else
+#define DEFPROFILE_RAW      "${G}/Default"
+#endif
 // Default bundled profile name to use for Standard images
 #define DEFPROFILE_IMG      "Neutral"
 // Profile name to use for internal values' profile
