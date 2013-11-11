@@ -262,18 +262,18 @@ the output). When you load a file you will see a message of current black
 and white levels and if they came from dcraw or camconst.json. If you're
 adjusting an existing camconst.json value you can just read what it is in
 the file and not need to enable verbose output. Reset exposure sliders to
-neutral, and zoom in on a clipped highlight. Move around the mouse pointer,
-it should show stable 100% on R G B. If so, the white level is not too high,
-it could however be too low. To test that, go to the raw tab and adjust the
-"whitepoint linear correction factor", reduce it until one of the channels
-is no longer 100%, and then increase 0.01 so all are 100 again. Usually you
-play around in the range 0.90 to 0.99, ie very small adjustment. Then divide
-the original white level with your adjustment to get a new larger white level,
-which you then enter in your camconst.json file. The same procedure can be
-used if the white level is too high, ie if you see pink highlights, then
-increase the correction factor above 1.0 until you just start seeing stable
-100% on all channels, and then divide the original white level to get a new
-smaller one.
+neutral, and zoom in on a large clipped highlight. Move around the mouse
+pointer within, it should show stable 100% on R G B. If so, the white level
+is not too high, it could however be too low. To test that, go to the raw tab
+and adjust the "whitepoint linear correction factor", reduce it until one of the
+channels is no longer 100%, and then increase in steps of 0.01 until all are 100
+again. Usually you play around in the range 0.90 to 0.99, ie a very small
+adjustment. Then divide the original white level with your adjustment to get a
+new larger white level, which you then enter in your camconst.json file. The
+same procedure can be used if the white level is too high, ie if you see pink
+highlights, then increase the correction factor above 1.0 until you just start
+seeing stable 100% on all channels, and then divide the original white level to
+get a new smaller one.
 
 */
 {"camera_constants": [
