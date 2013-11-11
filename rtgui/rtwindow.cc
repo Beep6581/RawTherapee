@@ -24,6 +24,53 @@
 #include "rtimage.h"
 #include "whitebalance.h"
 
+#if defined(__APPLE__)
+static gboolean
+osx_should_quit_cb (GtkosxApplication *app, gpointer data)
+{
+    RTWindow *rtWin = (RTWindow *)data;
+    return rtWin->on_delete_event(0);
+}
+
+static void
+osx_will_quit_cb (GtkosxApplication *app, gpointer data)
+{
+    RTWindow *rtWin = (RTWindow *)data;
+    rtWin->on_delete_event(0);
+    gtk_main_quit ();
+}
+
+bool RTWindow::osxFileOpenEvent(Glib::ustring path) {
+
+    CacheManager* cm = CacheManager::getInstance();
+    Thumbnail* thm= cm->getEntry( path );
+    if(thm && fpanel){
+        std::vector<Thumbnail*> entries;
+	entries.push_back(thm);
+        fpanel->fileCatalog->openRequested(entries);
+        return true;
+    }
+    return false;
+}
+
+static gboolean
+osx_open_file_cb (GtkosxApplication *app, gchar *path_, gpointer data)
+{
+    RTWindow *rtWin = (RTWindow *)data;
+    if (!argv1.empty()) {
+        // skip handling if we have a file argument or else we get double open of same file
+        return false;
+    }
+    Glib::ustring path = Glib::ustring(path_);
+    Glib::ustring suffix = path.length() > 4 ? path.substr(path.length()-3) : "";
+    suffix = suffix.lowercase();
+    if (suffix == "pp3")  {
+        path = path.substr(0, path.length()-4);
+    }
+    return rtWin->osxFileOpenEvent(path);
+}
+#endif // __APPLE__
+
 RTWindow::RTWindow ()
 :mainNB(NULL)
 ,bpanel(NULL)
@@ -49,6 +96,23 @@ RTWindow::RTWindow ()
 		}
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 
+#if defined(__APPLE__)
+    {
+        osxApp  = (GtkosxApplication *)g_object_new (GTKOSX_TYPE_APPLICATION, NULL);
+        gboolean falseval = FALSE;
+        gboolean trueval = TRUE;
+        RTWindow *rtWin = this;
+        g_signal_connect (osxApp, "NSApplicationBlockTermination", G_CALLBACK (osx_should_quit_cb), rtWin);
+        g_signal_connect (osxApp, "NSApplicationWillTerminate",  G_CALLBACK (osx_will_quit_cb), rtWin);
+        g_signal_connect (osxApp, "NSApplicationOpenFile", G_CALLBACK (osx_open_file_cb), rtWin);
+        // RT don't have a menu, but we must create a dummy one to get the default OS X app menu working
+        GtkWidget *menubar;
+        menubar = gtk_menu_bar_new ();
+        gtkosx_application_set_menu_bar (osxApp, GTK_MENU_SHELL (menubar));
+        gtkosx_application_set_use_quartz_accelerators (osxApp, FALSE);
+        gtkosx_application_ready (osxApp);
+    }
+#endif
     set_title("RawTherapee "+versionString);
     property_allow_shrink() = true;
     set_default_size(options.windowWidth, options.windowHeight);
@@ -58,7 +122,8 @@ RTWindow::RTWindow ()
     	maximize();
     else
     	unmaximize();
-    
+
+    on_delete_has_run = false;
     is_fullscreen = false;
     property_destroy_with_parent().set_value(false);
     signal_window_state_event().connect( sigc::mem_fun(*this, &RTWindow::on_window_state_event) );
@@ -211,6 +276,9 @@ RTWindow::~RTWindow()
     if(!simpleEditor)
         delete pldBridge;
     pldBridge = NULL;
+#if defined(__APPLE__)
+    g_object_unref (osxApp);
+#endif
 }
 
 void RTWindow::findVerNumbers(int* numbers, Glib::ustring versionStr) {
@@ -460,6 +528,11 @@ void RTWindow::addBatchQueueJobs (std::vector<BatchQueueEntry*> &entries) {
 }
 
 bool RTWindow::on_delete_event(GdkEventAny* event) {
+
+    if (on_delete_has_run) {
+        // on Mac OSX we can get multiple events
+        return false;
+    }
     // Check if any editor is still processing, and do NOT quit if so. Otherwise crashes and inconsistent caches
     bool isProcessing=false;
 
@@ -520,7 +593,8 @@ bool RTWindow::on_delete_event(GdkEventAny* event) {
 
     Options::save ();
     hide();
-    return true;
+    on_delete_has_run = true;
+    return false;
 }
 
 void RTWindow::showPreferences () {

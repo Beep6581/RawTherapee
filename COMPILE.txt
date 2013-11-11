@@ -455,7 +455,7 @@ OS X
       probably easier to just install all of them)
     - MacPorts
       - To install the dependencies, run:
-          sudo port install cairo +quartz -x11 pango +quartz -x11 gdk-pixbuf2 -x11 gtk2 +quartz libsigcxx2
+          sudo port install cairo +quartz -x11 pango +quartz -x11 gdk-pixbuf2 -x11 gtk2 +quartz libsigcxx2 gtk-osx-application +no_python
       - gtkmm port will fail to install. Use `-s’ option.
           sudo port -s install gtkmm
       - To install other dependencies and tools.
