@@ -25,10 +25,10 @@ typedef __m128 vfloat;
 typedef __m128i vint2;
 
 //
-
+#define LVF(x) _mm_load_ps(&x)
 #define LVFU(x) _mm_loadu_ps(&x)
 #define LC2VFU(a) _mm_shuffle_ps( LVFU(a),  _mm_loadu_ps(  (&a) + 4 ), _MM_SHUFFLE( 2,0,2,0 ) )
-
+#define ZEROV _mm_setzero_ps()
 
 static INLINE vint vrint_vi_vd(vdouble vd) { return _mm_cvtpd_epi32(vd); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return _mm_cvttpd_epi32(vd); }
@@ -105,6 +105,7 @@ static INLINE vmask vmaskf_lt(vfloat x, vfloat y) { return (__m128i)_mm_cmplt_ps
 static INLINE vmask vmaskf_le(vfloat x, vfloat y) { return (__m128i)_mm_cmple_ps(x, y); }
 static INLINE vmask vmaskf_gt(vfloat x, vfloat y) { return (__m128i)_mm_cmpgt_ps(x, y); }
 static INLINE vmask vmaskf_ge(vfloat x, vfloat y) { return (__m128i)_mm_cmpge_ps(x, y); }
+
 
 static INLINE vmask vmaski_eq(vint x, vint y) {
   __m128 s = (__m128)_mm_cmpeq_epi32(x, y);
