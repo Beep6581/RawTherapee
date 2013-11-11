@@ -18,12 +18,8 @@
 			<string>profile.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>RawTherapee Profile Data</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>PP3</string>
-			</array>
 			<key>CFBundleTypeRole</key>
-			<string>None</string>
+			<string>Editor</string>
 			<key>LSIsAppleDefaultForType</key>
 			<true/>
 			<key>LSItemContentTypes</key>
@@ -34,30 +30,54 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>CRW</string>
-				<string>crw</string>
-				<string>CR2</string>
-				<string>cr2</string>
-				<string>NEF</string>
-				<string>nef</string>
-				<string>RAF</string>
-				<string>raf</string>
-				<string>ORF</string>
-				<string>orf</string>
-				<string>MRW</string>
-				<string>mrw</string>
-				<string>SRF</string>
-				<string>srf</string>
-				<string>DCR</string>
-				<string>dcr</string>
+				<string>3FR</string>
+				<string>3fr</string>
 				<string>ARW</string>
 				<string>arw</string>
-				<string>PEF</string>
-				<string>pef</string>
-				<string>RAW</string>
-				<string>raw</string>
+				<string>CR2</string>
+				<string>cr2</string>
+				<string>CRF</string>
+				<string>crf</string>
+				<string>CRW</string>
+				<string>crw</string>
+				<string>DCR</string>
+				<string>dcr</string>
+				<string>DNG</string>
+				<string>dng</string>
+				<string>FFF</string>
+				<string>fff</string>
+				<string>IIQ</string>
+				<string>iiq</string>
+				<string>KDC</string>
+				<string>kdc</string>
+				<string>MEF</string>
+				<string>mef</string>
 				<string>MOS</string>
 				<string>mos</string>
+				<string>MRW</string>
+				<string>mrw</string>
+				<string>NEF</string>
+				<string>nef</string>
+				<string>NRW</string>
+				<string>nrw</string>
+				<string>ORF</string>
+				<string>orf</string>
+				<string>PEF</string>
+				<string>pef</string>
+				<string>RAF</string>
+				<string>raf</string>
+				<string>RAW</string>
+				<string>raw</string>
+				<string>RW2</string>
+				<string>rw2</string>
+				<string>RWZ</string>
+				<string>rwz</string>
+				<string>SR2</string>
+				<string>sr2</string>
+				<string>SRF</string>
+				<string>srf</string>
+				<string>SRW</string>
+				<string>srw</string>
 			</array>
 			<key>CFBundleTypeMIMETypes</key>
 			<array>
@@ -65,18 +85,29 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Camera Raw</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>CRW</string>
-				<string>CR2</string>
-				<string>NEF</string>
-			</array>
 			<key>CFBundleTypeRole</key>
-			<string>None</string>
+			<string>Viewer</string>
 			<key>LSIsAppleDefaultForType</key>
 			<true/>
-			<key>NSDocumentClass</key>
-			<string>PVDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>JPEG</string>
+				<string>jpeg</string>
+				<string>JPG</string>
+				<string>jpg</string>
+				<string>PNG</string>
+				<string>png</string>
+				<string>TIF</string>
+				<string>tif</string>
+				<string>TIFF</string>
+				<string>tiff</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
