@@ -287,7 +287,7 @@ MAIN_BUTTON_EXIT;Ukončiť
 MAIN_BUTTON_FULLSCREEN;Celá obrazovka
 MAIN_BUTTON_PREFERENCES;Predvoľby
 MAIN_BUTTON_PUTTOQUEUE;Vložiť do radu
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Pridať súčasný obrázok do radu na spracovanie <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Pridať súčasný obrázok do radu na spracovanie <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Vložiť do radu
 MAIN_BUTTON_SAVEAS;Ako...
 MAIN_BUTTON_SAVE;Uložiť obrázok

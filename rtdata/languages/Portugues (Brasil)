@@ -860,7 +860,7 @@ ZOOMBAR_SMALL;Pequeno
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
-!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+Q</b>
+!MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+B</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+S</b>
 !MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+E</b>
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>

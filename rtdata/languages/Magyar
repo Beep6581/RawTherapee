@@ -450,7 +450,7 @@ MAIN_BUTTON_EXIT;Kilépés
 MAIN_BUTTON_FULLSCREEN;Teljes képernyő
 MAIN_BUTTON_PREFERENCES;Beállítások
 MAIN_BUTTON_PUTTOQUEUE;Feldolgozási sorba helyez
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add hozzá a kiválasztott képet a feldolgozási sorhoz <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add hozzá a kiválasztott képet a feldolgozási sorhoz <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Feldolgozási sorba helyezés
 MAIN_BUTTON_SAVEAS;másként...
 MAIN_BUTTON_SAVE;Kép mentése

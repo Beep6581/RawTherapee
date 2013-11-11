@@ -457,7 +457,7 @@ MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_FULLSCREEN;Pantalla completa
 MAIN_BUTTON_PREFERENCES;Preferencias
 MAIN_BUTTON_PUTTOQUEUE;Poner en la cola
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Añadir imagen actual a la cola de procesamiento <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Añadir imagen actual a la cola de procesamiento <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Poner en la cola
 MAIN_BUTTON_SAVEAS;Como...
 MAIN_BUTTON_SAVE;Guardar imagen

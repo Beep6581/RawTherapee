@@ -515,7 +515,7 @@ MAIN_BUTTON_NAVPREV_TOOLTIP;エディタで開いている画像に対応する�
 MAIN_BUTTON_NAVSYNC_TOOLTIP;現在開いている画像のサムネイルを明示しエディタとファイルブラウザを同期させ、ファイルブラウザでのフィルタをクリアします \nショートカット: <b>x</b>\n\n上記と同じですが、ファイルブラウザでのフィルタをクリアしません\nショートカット: <b>y</b>\n(除外する場合、開いているファイルのサムネイルが表示されませんので注意してください).
 MAIN_BUTTON_PREFERENCES;環境設定
 MAIN_BUTTON_PUTTOQUEUE;キューに追加
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;現在の画像をキュー処理に追加\nショートカット: <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;現在の画像をキュー処理に追加\nショートカット: <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;キューに追加
 MAIN_BUTTON_SAVE;画像の保存
 MAIN_BUTTON_SAVE_TOOLTIP;現在の画像を保存\nショートカット: <b>Ctrl+S</b>

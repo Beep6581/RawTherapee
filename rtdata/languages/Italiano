@@ -502,7 +502,7 @@ MAIN_BUTTON_NAVNEXT_TOOLTIP;Individua l'immagine successiva rispetto a un'immagi
 MAIN_BUTTON_NAVPREV_TOOLTIP;Individua l'immagine precedente rispetto a un'immagine aperta per la Modifica\nScorciatoia: <b>Shift-F3</b>\n\nPer passare all'immagine precedente relativa alla miniatura selezionata in Navigate\nScorciatoia: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Sincronizza il Navigatore con la scheda di Modifica per rivelare la miniatura dell'immagine attualmente aperta, e rimuovere i filtri nel Navigatore\nScorciatoia: <b>x</b>\n\nCome sopra, ma senza cancellare i filtri nel Navigatore\nScorciatoia: <b>y</b>\n(Nota che la miniatura del file aperto, se filtrato, non verrà mostrata).
 MAIN_BUTTON_PREFERENCES;Preferenze
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Aggiungi l'immagine corrente alla coda di sviluppo.\nScorciatoia: <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Aggiungi l'immagine corrente alla coda di sviluppo.\nScorciatoia: <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Accoda
 MAIN_BUTTON_SAVE_TOOLTIP;Salva l'immagine corrente.\nSscorciatoia: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Modifica l'immagine corrente con un programma di fotoritocco.\nScorciatoia: <b>Ctrl+E</b>

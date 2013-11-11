@@ -463,7 +463,7 @@ IPTCPANEL_TRANSREFERENCE;Refer. transmissió
 MAIN_BUTTON_EXIT;Sortida
 MAIN_BUTTON_FULLSCREEN;Pantalla sencera
 MAIN_BUTTON_PREFERENCES;Preferències
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Afeg. imatge actual a la cua de procés.\nDrecera: <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Afeg. imatge actual a la cua de procés.\nDrecera: <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Posa a la cua
 MAIN_BUTTON_SAVE_TOOLTIP;Desa la imatge actual.\nDrecera: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edita la imatge actual a un editor extern.\nDrecera: <b>Ctrl+E</b>
