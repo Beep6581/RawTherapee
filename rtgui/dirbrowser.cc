@@ -222,8 +222,6 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
 #ifdef WIN32
   Glib::RefPtr<WinDirMonitor> monitor = Glib::RefPtr<WinDirMonitor>(new WinDirMonitor (iter->get_value (dtColumns.dirname), this));
   iter->set_value (dtColumns.monitor, monitor);
-#elif defined __APPLE__
-  printf("TODO fix dir->monitor_directory () for OSX\n"); 
 #else
   Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
   iter->set_value (dtColumns.monitor, monitor);

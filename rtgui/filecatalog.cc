@@ -513,9 +513,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 
 #ifdef WIN32
       wdMonitor = new WinDirMonitor (selectedDirectory, this);
-#elif defined __APPLE__
-      printf("TODO fix dir->monitor_directory () for OSX\n");
-#else  
+#else
         dirMonitor = dir->monitor_directory ();
         dirMonitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::on_dir_changed), false));
 #endif
