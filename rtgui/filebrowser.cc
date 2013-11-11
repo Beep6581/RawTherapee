@@ -236,7 +236,7 @@ FileBrowser::FileBrowser ()
     selall->add_accelerator ("activate", pmenu->get_accel_group(), GDK_a, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     trash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     untrash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Delete, Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
-    develop->add_accelerator ("activate", pmenu->get_accel_group(), GDK_Q, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
+    develop->add_accelerator ("activate", pmenu->get_accel_group(), GDK_B, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     copyprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_C, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     pasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     partpasteprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_V, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
@@ -919,7 +919,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         menuItemActivated (untrash);
         return true;
     }
-    else if ((event->keyval==GDK_Q || event->keyval==GDK_q) && ctrl) {
+    else if ((event->keyval==GDK_B || event->keyval==GDK_b) && ctrl) {
         menuItemActivated (develop);
         return true;
     }

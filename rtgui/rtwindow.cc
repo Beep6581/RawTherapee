@@ -385,6 +385,21 @@ bool RTWindow::keyPressed (GdkEventKey* event) {
 	bool ctrl = event->state & GDK_CONTROL_MASK;
 	//bool shift = event->state & GDK_SHIFT_MASK;
 
+        bool try_quit = false;
+#if defined(__APPLE__)
+        bool apple_cmd = event->state & GDK_MOD2_MASK;
+        if (event->keyval == GDK_q && apple_cmd)
+            try_quit = true;
+#else
+        if (event->keyval == GDK_q && ctrl)
+            try_quit = true;
+#endif
+        if (try_quit) {
+            if (!on_delete_event(0)) {
+                gtk_main_quit();
+            }
+        }
+
     if(event->keyval == GDK_F11)
         toggle_fullscreen();
 

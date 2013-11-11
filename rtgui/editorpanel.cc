@@ -971,7 +971,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				case GDK_s:
 					saveAsPressed();
 					return true;
-				case GDK_q:
+				case GDK_b:
 					if (!simpleEditor)
 						queueImgPressed();
 					return true;
