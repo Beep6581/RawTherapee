@@ -239,7 +239,10 @@ void FlatField::setShortcutPath(Glib::ustring path)
 #endif
 	{
 		if (lastShortcutPath != "") {
-			flatFieldFile->remove_shortcut_folder(lastShortcutPath);
+			try {
+				flatFieldFile->remove_shortcut_folder(lastShortcutPath);
+			}
+			catch (Gtk::FileChooserError &err) {}
 		}
 		lastShortcutPath = path;
 		try {
