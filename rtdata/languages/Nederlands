@@ -496,7 +496,7 @@ IPTCPANEL_TRANSREFERENCE;Trans. Reference
 MAIN_BUTTON_EXIT;Afsluiten
 MAIN_BUTTON_FULLSCREEN;Volledig scherm
 MAIN_BUTTON_PREFERENCES;Voorkeuren
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Plaats huidige foto in verwerkingsrij.\nSneltoets: <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Plaats huidige foto in verwerkingsrij.\nSneltoets: <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Plaats in verwerkingsrij
 MAIN_BUTTON_SAVE_TOOLTIP;Bewaar huidige foto.\nSneltoets: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Stuur huidige foto naar extern fotobewerkingsprogramma.\nSneltoets: <b>Ctrl+E</b>

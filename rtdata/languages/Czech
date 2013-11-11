@@ -514,7 +514,7 @@ MAIN_BUTTON_NAVNEXT_TOOLTIP;Přejít k dalšímu obrázku relativnímu k obrázk
 MAIN_BUTTON_NAVPREV_TOOLTIP;Přejít k předchozímu obrázku relativnímu k obrázku otevřenému v editoru\nZkratka: <b>Shift-F3</b>\n\nPřejít k předchozímu obrázku relativnímu k vybranému náhledu v prohlížeči souborů \nZkratka: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronizovat prohlížeč souborů s editorem pro zobrazení náhleduaktuálně otevřeného obrázku a smazání filtrů v prohlížeči souborů\nZkratka: <b>x</b>\n\nStejně jako výše, ale bez smazání filtrů v prohlížeči souborů\nZkratka: <b>y</b>\n(Náhled otevřeného obrázku nebude zobrazen pokud je filtrován).
 MAIN_BUTTON_PREFERENCES;Volby
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Vložit současný obrázek do fronty zpracování.\nZkratka: <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Vložit současný obrázek do fronty zpracování.\nZkratka: <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Vložit do fronty
 MAIN_BUTTON_SAVE_TOOLTIP;Uložit současný obrázek.\nZkratka: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editovat současný obrázek v externím editoru.\nZkratka:  <b>Ctrl+E</b> 

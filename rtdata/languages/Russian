@@ -460,7 +460,7 @@ MAIN_BUTTON_EXIT;Выход
 MAIN_BUTTON_FULLSCREEN;Полный экран
 MAIN_BUTTON_PREFERENCES;Настройки
 MAIN_BUTTON_PUTTOQUEUE;В очередь
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Поместить текущее изображение в очередь на обработку <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Поместить текущее изображение в очередь на обработку <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;В очередь
 MAIN_BUTTON_SAVEAS;Сохранить как...
 MAIN_BUTTON_SAVE;Сохранить

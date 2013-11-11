@@ -516,7 +516,7 @@ MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigue à l'image Suivante relativement à l'image 
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigue à l'image Précédente relativement à l'image ouverte dans l'Éditeur\nRaccourci: <b>Shift-F3</b>\n\nPour naviguer à l'image Précédente relativement à la vignette sélectionnée dans le Navigateur de fichiers\nRaccourci: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronise le Navigateur de fichiers avec l'Éditeur pour révéler la vignette de l'image actuellement ouverte, et efface les filtres dans le Navigateur de fichiers\nRaccourci: <b>x</b>\n\nComme ci-dessus, mais sans effacer les filtres dans le Navigateur de fichiers\nRaccourci: <b>y</b>\n(Notez que la vignette ne sera pas visible si elle a été filtrée).
 MAIN_BUTTON_PREFERENCES;Préférences
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Ajouter l'image courante à la file de traitement <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Envoyer dans la file
 MAIN_BUTTON_SAVE_TOOLTIP;Enregistrer l'image courante <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Éditer l'image courante dans l'éditeur externe <b>Ctrl+E</b>

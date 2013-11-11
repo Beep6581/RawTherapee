@@ -512,7 +512,7 @@ MAIN_BUTTON_NAVNEXT_TOOLTIP;Przejdź do następnego zdjęcia względem zdjęcia 
 MAIN_BUTTON_NAVPREV_TOOLTIP;Przejdź do poprzedniego zdjęcia wzgledem zdjęcia otwartego w Edytorze.\nSkrót: <b>Shift-F3</b> \n\nAby przejść do poprzedniego zdjęcia względem miniaturki wybranej w Nawigatorze Zdjęć:\nSkrót: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronizuj Nawigator Zdjęć z Edytorem aby ukazać miniaturkę obecnie otwartego zdjęcia, oraz usuń filtry w Nawigatorze Zdjęć.\nSkrót: <b>x</b>\n\nJak wyżej, ale bez usuwania filtrów:\nSkrót: <b>y</b>\n(Miniaturka otwartego zdjęcia nie zostanie wyświetlona jesli filtr ją ukrywa).
 MAIN_BUTTON_PREFERENCES;Ustawienia
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Dodaj bieżące zdjęcie do kolejki przetwarzania <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Dodaj bieżące zdjęcie do kolejki przetwarzania <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Wy
 MAIN_BUTTON_SAVEAS;Jako...
 MAIN_BUTTON_SAVE;Zapisz obraz

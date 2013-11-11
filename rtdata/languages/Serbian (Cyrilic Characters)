@@ -405,7 +405,7 @@ MAIN_BUTTON_EXIT;Изађи
 MAIN_BUTTON_FULLSCREEN;Цео екран
 MAIN_BUTTON_PREFERENCES;Поставке
 MAIN_BUTTON_PUTTOQUEUE;Закажи
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Додаје тренутну слику у заказане <b>Ctrl+Q</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Додаје тренутну слику у заказане <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Закажи
 MAIN_BUTTON_SAVEAS;Као...
 MAIN_BUTTON_SAVE;Сачувај

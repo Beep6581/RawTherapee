@@ -488,7 +488,7 @@ MAIN_BUTTON_NAVPREV_TOOLTIP;Flytta till föregående bild relativt den bild som 
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synkronisera filhanteraren med redigeringsläget för att uppdatera förhandsgranskningen av den nu öppna bilden, och för att nollställa filtren i filhanteraren \nKortkommando: <b>x</b>\n\nSom ovan, men utan att nollställa filtren i filhanteraren\nKortkommando: <b>y</b>\n(Notera att förhandsgranskningen av den öppna bildens  miniatyrbilder ej visas om den är filtrerad.).
 MAIN_BUTTON_PREFERENCES;Inställningar
 MAIN_BUTTON_PUTTOQUEUE;Behandla
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. Kortkommando: Ctrl+Q
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. Kortkommando: Ctrl+B
 MAIN_BUTTON_QUEUE;Placera i behandlingskön
 MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SAVE;Spara
