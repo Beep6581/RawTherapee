@@ -1,0 +1,86 @@
+.TH RAWTHERAPEE 1 "July 31, 2012"
+.SH NAME
+rawtherapee \- an advanced cross-platform program for developing raw photos.
+.SH SYNOPSIS
+\fBrawtherapee\fP [directory|image\-file]
+.br
+\fBrawtherapee\fP [\-o|\-O <output>] [\-s|\-S] [\-p <file>] [\-d] 
+[\-j[1\-100]|\-t|\-t1|\-n] [\-Y] \-c <input>
+.SH DESCRIPTION
+\fBRawTherapee\fP is an advanced program for developing raw photos and for 
+processing non-raw photos. It is non-destructive, makes use of OpenMP, supports 
+all the cameras supported by dcraw and carries out its calculations in a high 
+precision 32bit floating point engine.
+.SH OPTIONS
+.TP
+\-o <output file>|<output dir>
+select output directory.
+.TP
+\-O <output file>|<output dir>
+ select output directory and copy the PP3 file into it.
+.TP
+\-s
+use the PP3 processing profile located next to the input file (which shares 
+same name as the input file) when building the processing parameters, e.g.: for 
+IMG001.NEF there should be a IMG001.NEF.pp3 in the same directory. If such a 
+file is not found, the default values are used.
+.TP
+\-S
+like \-s but skip processing that image if its corresponding PP3 file is not 
+found.
+.TP
+\-p <PP3 file>
+specify a PP3 processing profile to be used for all conversions. You can 
+specify as many \-p options as you like (see note below).
+.TP
+\-d
+use the default raw or non-raw PP3 file to build the image's parameters 
+(specified in the options file).
+.TP
+\-j[1\-100]
+specify output to be JPEG (default). The compression value can be in the range 
+1-100. If none was specified, the default compression value is 90, balanced
+subsampling (4:2:2).
+.TP
+\-t
+specify output to be uncompressed 8 bit per channel TIFF.
+.TP
+\-t1
+specify output to be zip-compressed 8 bit per channel TIFF.
+.TP
+\-n
+specify output to be 8 bit per channel PNG with a compression value of 6.
+.TP
+\-Y
+overwrite output if present.
+
+.P
+.B Note:
+.br
+You can use partial PP3 files, in which case RawTherapee will set the
+missing values as follows:
+.br
+  The PP3 file is first built with internal default values;
+.br
+  then overridden by those found in the "default raw" or "default non-raw" photo
+profile (if \-d has been set);
+.br
+  then overridden by those found in the PP3 files provided by \-p, each one
+overriding the previous values;
+.br
+  then overridden by the sidecar file if \-s is set and if the file exists;
+.br
+  the time when the sidecar file is used depends of the position of the \-s
+switch in the command line relative to the \-p parameters
+(e.g. "\-p first.pp3 \-p second.pp3 \-s \-p fourth.pp3").
+.SH SEE ALSO
+You can find the documentation, including a detailed user manual, on the
+project's website:
+http://rawtherapee.com/blog/documentation
+.SH AUTHOR
+\fBRawTherapee\fP was originally written by Gabor Horvath of Budapest, 
+Hungary, before being relicensed as free and open-source software in January 
+2010 and being maintained by a team of people since.
+.br
+The RawTherapee Development Team comprises of passionate people from all around 
+the world.
