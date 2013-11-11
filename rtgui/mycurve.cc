@@ -38,7 +38,13 @@ MyCurve::MyCurve () : listener(NULL) {
     curveIsDirty = true;
 
     set_extension_events(Gdk::EXTENSION_EVENTS_ALL);
+#if defined (__APPLE__)
+    // Workaround: disabling POINTER_MOTION_HINT_MASK as for gtk 2.24.22 the get_pointer() function is buggy for quartz and modifier mask is not updated correctly.
+    // This workaround should be removed when bug is fixed in GTK2 or when migrating to GTK3
+    add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
+#else
     add_events(Gdk::EXPOSURE_MASK |	Gdk::POINTER_MOTION_MASK |	Gdk::POINTER_MOTION_HINT_MASK |	Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::BUTTON1_MOTION_MASK);
+#endif
     signal_style_changed().connect( sigc::mem_fun(*this, &MyCurve::styleChanged) );
 
     mcih = new MyCurveIdleHelper;
