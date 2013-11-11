@@ -26,6 +26,9 @@
 #include "progressconnector.h"
 #include "editwindow.h"
 #include "splash.h"
+#if defined(__APPLE__)
+#include <gtkosxapplication.h>
+#endif
 
 class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
 
@@ -39,6 +42,7 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         Gtk::ProgressBar prProgBar;
         PLDBridge* pldBridge;
         bool is_fullscreen;
+        bool on_delete_has_run;
         Gtk::Button * btn_fullscreen;
         
         Gtk::Image *iFullscreen, *iFullscreen_exit;
@@ -49,11 +53,17 @@ class RTWindow : public Gtk::Window, public rtengine::ProgressListener{
         bool on_expose_event_epanel(GdkEventExpose* event);
         bool on_expose_event_fpanel(GdkEventExpose* event);
         bool splashClosed(GdkEventAny* event);
+#if defined(__APPLE__)
+        GtkosxApplication *osxApp;
+#endif
 
     public:
         RTWindow ();
         ~RTWindow();
 
+#if defined(__APPLE__)
+        bool osxFileOpenEvent(Glib::ustring path);
+#endif
         void addEditorPanel (EditorPanel* ep,const std::string &name);
         void remEditorPanel (EditorPanel* ep);
         bool selectEditorPanel(const std::string &name);
