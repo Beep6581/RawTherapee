@@ -66,7 +66,13 @@ void ImageArea::on_realize()
 {
   Gtk::DrawingArea::on_realize();
 
+#if defined (__APPLE__)
+  // Workaround: disabling POINTER_MOTION_HINT_MASK as for gtk 2.24.22 the get_pointer() function is buggy for quartz and modifier mask is not updated correctly.
+  // This workaround should be removed when bug is fixed in GTK2 or when migrating to GTK3
+  add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+#else
   add_events(Gdk::EXPOSURE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+#endif
 
   Cairo::FontOptions cfo;
   cfo.set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
