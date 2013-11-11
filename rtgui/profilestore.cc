@@ -247,6 +247,10 @@ const ProfileStoreEntry* ProfileStore::findEntryFromFullPathU(Glib::ustring path
         // removing the extension
         path = path.substr(0,lastdot);
 
+    // dir separator may come from options file and may be \ or /, we convert them to G_DIR_SEPARATOR_S
+    if (path.size() > 4 && (path[4] == '/' || path[4] == '\\'))
+        path = path.substr(0,4) + G_DIR_SEPARATOR_S + path.substr(5);
+
     // removing the filename
     Glib::ustring fName = Glib::path_get_basename(path);
     if (!fName.empty()) {
