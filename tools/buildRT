@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 3.3, 2013-11-11
+# buildRT version 3.4, 2013-11-12
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -16,16 +16,16 @@ fi
 alert () {
   case "$alert_type" in
     notify-send) notify-send "RawTherapee" "$1" ;;
-        kdialog) kdialog --title "RawTherapee" --passivepopup "$(printf "%s\n" "$1")" ;;
-         zenity) zenity --notification --text="$(printf "%s\n" "$1")" ;;
-       xmessage) xmessage -nearmouse "$(printf "%s\n" "$1")" ;;
+        kdialog) kdialog --title "RawTherapee" --passivepopup "$(printf "%b\n" "$1")" ;;
+         zenity) zenity --notification --text="$(printf "%b\n" "$1")" ;;
+       xmessage) xmessage -nearmouse "$(printf "%b\n" "$1")" ;;
            none) printf "%b\n" "" "Compilation complete:" "$1" ;;
 esac
 }
 
 #--- Set some variables
 unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
-version="3.3"
+version="3.4"
 movetoPatched=""
 repo="${HOME}/rawtherapee"
 procTarget=2
@@ -62,9 +62,10 @@ while getopts "bc:np:uvh?-" opt; do
     h|\?|-)  printf "%s\n" "Usage:" "" \
                              "  $0 [-b] [-c <string>] [-n] [-p <1-9>] [-v]" "" \
                              "  -b" \
-                             "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to force build-only mode." "" \
+                             "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to
+    force build-only mode. Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
                              "  -c <string>" \
-                             "Specify a suffix to the cache and config directory names. Only alphanumerics, periods, dashes and underscores are valid. The default value is \"4\", which will result in your build of RawTherapee storing the cache in \"${HOME}/.cache/RawTherapee4\" and config in \"${HOME}/.config/RawTherapee4\". For example, use \"-c _testing\" if you want to test older or patched versions of RawTherapee without potentially damaging your cache and config files." "" \
+                             "Specify a suffix to the cache and config directory names. Only alphanumerics, periods, dashes and underscores are valid. The default value is \"4\", which will result in your build of RawTherapee storing the cache in \"${HOME}/.cache/RawTherapee4\" and config in \"${HOME}/.config/RawTherapee4\". For example, use \"-c _testing\" if you want to test older or patched versions of RawTherapee without potentially damaging your \"real\" cache and config files." "" \
                              "  -n" \
                              "Disable OpenMP." "" \
                              "  -p <1-9>" \
@@ -93,9 +94,10 @@ if (( cpuCount < 1 || cpuCount > 32 )); then
 fi
 printf "%s\n" "CPU count: ${cpuCount}"
 
+# Zenity --notification is broken in <=3.8.0, removed Zenity support for now.
+# elif hash zenity 2>/dev/null; then alert_type="zenity"
 if hash notify-send 2>/dev/null; then alert_type="notify-send"
 elif hash kdialog 2>/dev/null; then alert_type="kdialog"
-elif hash zenity 2>/dev/null; then alert_type="zenity"
 elif hash xmessage 2>/dev/null; then alert_type="xmessage"
 else alert_type="none"
 fi
