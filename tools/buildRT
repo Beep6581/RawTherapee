@@ -47,7 +47,7 @@ while getopts "bc:np:uvh?-" opt; do
                exit 1
              fi ;;
     u)       gcVer="$(curl "http://rawtherapee.googlecode.com/hg/tools/buildRT" 2>/dev/null | grep "^#.*[vV]ersion.*")" || { echo "\"curl\" program not found, please install it first."; exit 1; }
-             gcVer="${gcVer#*[[:alpha:]] }"
+             gcVer="${gcVer##*[[:alpha:]] }"
              gcVer="${gcVer%%,*}"
              latestVer="$(printf "%s\n" "$version" "$gcVer" | sort -rV | head -n 1)"
              if [[ $version = $latestVer ]]; then
@@ -62,8 +62,7 @@ while getopts "bc:np:uvh?-" opt; do
     h|\?|-)  printf "%s\n" "Usage:" "" \
                              "  $0 [-b] [-c <string>] [-n] [-p <1-9>] [-v]" "" \
                              "  -b" \
-                             "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to
-    force build-only mode. Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
+                             "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to force build-only mode." "Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
                              "  -c <string>" \
                              "Specify a suffix to the cache and config directory names. Only alphanumerics, periods, dashes and underscores are valid. The default value is \"4\", which will result in your build of RawTherapee storing the cache in \"${HOME}/.cache/RawTherapee4\" and config in \"${HOME}/.config/RawTherapee4\". For example, use \"-c _testing\" if you want to test older or patched versions of RawTherapee without potentially damaging your \"real\" cache and config files." "" \
                              "  -n" \
@@ -71,7 +70,7 @@ while getopts "bc:np:uvh?-" opt; do
                              "  -p <1-9>" \
                              "Set which processor target to use. Takes a single digit from 1 to 9. The default is 2. See ProcessorTargets.cmake" "" \
                              "  -u" \
-                             "Check for an update of buildRT on Google Code" "" \
+                             "Check for an update of buildRT on Google Code." "" \
                              "  -v" \
                              "Make compilation verbose, so you see all compiler warnings." | fold -s
              exit 0 ;;
