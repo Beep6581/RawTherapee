@@ -39,6 +39,7 @@ class BatchQueuePanel : public Gtk::VBox,
 
         Gtk::Entry* outdirTemplate;
         MyFileChooserButton* outdirFolder;
+        Gtk::Button* outdirFolderButton;
         Gtk::RadioButton* useTemplate;
         Gtk::RadioButton* useFolder;
         SaveFormatPanel* saveFormatPanel;
@@ -66,6 +67,7 @@ class BatchQueuePanel : public Gtk::VBox,
         
         void saveOptions ();
         void pathFolderChanged ();
+        void pathFolderButtonPressed ();
         void formatChanged (Glib::ustring f);
         void updateTab (int qsize);
         
