@@ -36,6 +36,19 @@ int processLoadedBatchQueueUIThread (void* data) {
     return 0;
 }
 
+static Glib::ustring makeFolderLabel(Glib::ustring path)
+{
+    if (!safe_file_test (path, Glib::FILE_TEST_IS_DIR))
+        return "(" + M("GENERAL_NONE") + ")";
+    if (path.size() > 40) {
+        size_t last_ds = path.find_last_of (G_DIR_SEPARATOR);
+        if (last_ds != Glib::ustring::npos && last_ds > 10) {
+            path = "..." + path.substr(last_ds);
+        }
+    }
+    return path;
+}
+
 BatchQueuePanel::BatchQueuePanel () {
 
     batchQueue = Gtk::manage( new BatchQueue() );
@@ -75,10 +88,32 @@ BatchQueuePanel::BatchQueuePanel () {
     Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
     useFolder = Gtk::manage (new Gtk::RadioButton (M("PREFERENCES_OUTDIRFOLDER")+":"));
     hb3->pack_start (*useFolder, Gtk::PACK_SHRINK,4);
+
+#if defined(__APPLE__) || defined(__linux__)
+    // At the time of writing (2013-11-11) the gtkmm FileChooserButton with ACTION_SELECT_FOLDER
+    // is so buggy on these platforms (OS X and Linux) that we rather employ this ugly button hack.
+    // When/if GTKMM gets fixed we can go back to use the FileChooserButton, like we do on Windows.
+    outdirFolderButton = Gtk::manage (new Gtk::Button("(" + M("GENERAL_NONE") + ")"));
+    outdirFolderButton->set_alignment(0.0, 0.0);
+    hb3->pack_start (*outdirFolderButton);
+    outdirFolderButton->signal_pressed().connect( sigc::mem_fun(*this, &BatchQueuePanel::pathFolderButtonPressed) );
+    outdirFolderButton->set_tooltip_markup (M("PREFERENCES_OUTDIRFOLDERHINT"));
+    outdirFolderButton->set_label(makeFolderLabel(options.savePathFolder));
+    Gtk::Image* folderImg = Gtk::manage (new Gtk::Image (Gtk::Stock::DIRECTORY, Gtk::ICON_SIZE_MENU));
+    folderImg->show ();
+    outdirFolderButton->set_image (*folderImg);
+    outdirFolder = 0;
+#else
     outdirFolder = Gtk::manage (new MyFileChooserButton (M("PREFERENCES_OUTDIRFOLDER"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     hb3->pack_start (*outdirFolder);
-    odvb->pack_start (*hb3, Gtk::PACK_SHRINK, 4);
+    outdirFolder->signal_current_folder_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::pathFolderChanged));
     outdirFolder->set_tooltip_markup (M("PREFERENCES_OUTDIRFOLDERHINT"));
+    if (safe_file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) 
+        outdirFolder->set_current_folder (options.savePathFolder);
+    outdirFolderButton = 0;
+#endif
+
+    odvb->pack_start (*hb3, Gtk::PACK_SHRINK, 4);
     useFolder->set_tooltip_markup (M("PREFERENCES_OUTDIRFOLDERHINT"));
     Gtk::RadioButton::Group g = useTemplate->get_group();
     useFolder->set_group (g);
@@ -91,14 +126,11 @@ BatchQueuePanel::BatchQueuePanel () {
 
     saveFormatPanel->init (options.saveFormatBatch);
     outdirTemplate->set_text (options.savePathTemplate);
-    if (safe_file_test (options.savePathFolder, Glib::FILE_TEST_IS_DIR)) 
-        outdirFolder->set_current_folder (options.savePathFolder);
     useTemplate->set_active (options.saveUsePathTemplate);
     useFolder->set_active (!options.saveUsePathTemplate);
 
     // setup signal handlers
     outdirTemplate->signal_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
-    outdirFolder->signal_current_folder_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::pathFolderChanged));
     useTemplate->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
     useFolder->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));    
     saveFormatPanel->setListener (this);
@@ -260,6 +292,22 @@ void BatchQueuePanel::saveOptions () {
     options.savePathTemplate    = outdirTemplate->get_text();
     options.saveUsePathTemplate = useTemplate->get_active();
     options.procQueueEnabled    = autoStart->get_active ();
+}
+
+void BatchQueuePanel::pathFolderButtonPressed () {
+
+    Gtk::FileChooserDialog fc(M("PREFERENCES_OUTDIRFOLDER"),Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
+    fc.add_button( Gtk::StockID("gtk-cancel"), Gtk::RESPONSE_CANCEL);
+    fc.add_button( Gtk::StockID("gtk-ok"), Gtk::RESPONSE_OK);
+    fc.set_filename(options.savePathFolder);
+    fc.set_transient_for(*parent);
+    int result = fc.run();
+    if (result == Gtk::RESPONSE_OK) {
+        if (safe_file_test(fc.get_current_folder(), Glib::FILE_TEST_IS_DIR)) {
+            options.savePathFolder = fc.get_current_folder();
+            outdirFolderButton->set_label(makeFolderLabel(options.savePathFolder));
+        }
+    }
 }
 
 // We only want to save the following when it changes,
