@@ -447,6 +447,30 @@ HISTORY_MSG_210;Graduated Filter
 HISTORY_MSG_211;Graduated Filter
 HISTORY_MSG_212;Vignette Filter
 HISTORY_MSG_213;Vignette Filter
+HISTORY_MSG_214;Black and white
+HISTORY_MSG_215;BW Channel Mixer red
+HISTORY_MSG_216;BW Channel Mixer green
+HISTORY_MSG_217;BW Channel Mixer blue
+HISTORY_MSG_218;BW red gamma
+HISTORY_MSG_219;BW green gamma
+HISTORY_MSG_220;BW blue gamma
+HISTORY_MSG_221;BW Color filter
+HISTORY_MSG_222;BW Presets
+HISTORY_MSG_223;BW Channel Mixer orange
+HISTORY_MSG_224;BW Channel Mixer yellow
+HISTORY_MSG_225;BW Channel Mixer cyan
+HISTORY_MSG_226;BW Channel Mixer magenta
+HISTORY_MSG_227;BW Channel Mixer purple
+HISTORY_MSG_228;BW Luminance equalizer
+HISTORY_MSG_229;BW Luminance equalizer
+HISTORY_MSG_230;BW Black and white mode
+HISTORY_MSG_231;BW curve
+HISTORY_MSG_232;BW curve type
+HISTORY_MSG_233;BW curve
+HISTORY_MSG_234;BW curve type
+HISTORY_MSG_235;BW Auto Channel mixer
+HISTORY_MSG_236;BW Auto Channel mixer
+HISTORY_MSG_237;BW Reset mixer
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -619,6 +643,7 @@ OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be fo
 PARTIALPASTE_BASICGROUP;Basic Settings
 PARTIALPASTE_CACORRECTION;CA correction
 PARTIALPASTE_CHANNELMIXER;Channel mixer
+PARTIALPASTE_CHANNELMIXERBW;Black and white
 PARTIALPASTE_COARSETRANS;90° rotation / flipping
 PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 PARTIALPASTE_COLORBOOST;Color boost
@@ -933,7 +958,76 @@ TP_CACORRECTION_RED;Red
 TP_CHMIXER_BLUE;Blue Channel
 TP_CHMIXER_GREEN;Green Channel
 TP_CHMIXER_LABEL;Channel Mixer
+TP_CHMIXERBW_LABEL;Black and White
 TP_CHMIXER_RED;Red Channel
+TP_BWMIX_ENABLED_LM;Enabled Black and White mode
+TP_BWMIX_ENABLED;Complementary color
+TP_BWMIX_CHANNEL;Luminance equalizer
+TP_BWMIX_VAL;L
+TP_BWMIX_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBMP mode
+TP_BWMIX_SETTING_TOOLTIP;Different presets - films - landscape - or manual settings of channel-mixer and gamma\nNormal:43/33/30 Panchromatic:33/33/33\nHyperPanchro:41/25/34 LowSensitivity:27/27/46\nHighSensitivity:30/28/42 Orthochromatic:0/42/58\nHigh Contrast:40/34/60 Luminance:30/59/11\nLandscape:66/24/10 Portrait:54/44/12\nAbsolute RGB=no compensation\nRelative RGB=compensation (sum=always 100%)\nROYGCBMP: RGB mixer + filter on Orange-Yellow-Cyan-Magenta-Purple\n Infrared -40/200/-17
+TP_BWMIX_FILTER_TOOLTIP;Effect of the color filter is similar to film photography when filter is placed in front of the lens. Color filters reduce transmission of specific range of colors and correspondingly effect their lightness. E.g. Red filter would darken the Blue sky.
+TP_BWMIX_AUTOCH;Auto
+TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
+TP_BWMIX_NEUTRAL;Reset mixer
+TP_BWMIX_NEUTRAL_TIP;Reset all values - sliders - filters - channel-mixer to default
+TP_BWMIX_RED;Mixer red
+TP_BWMIX_GREEN;Mixer green
+TP_BWMIX_BLUE;Mixer blue
+TP_BWMIX_ORA;Mixer orange filter
+TP_BWMIX_YEL;Mixer yellow filter
+TP_BWMIX_CYAN;Mixer cyan filter
+TP_BWMIX_MAG;Mixer magenta filter
+TP_BWMIX_PUR;Mixer purple filter
+TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels in desire proportions. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
+TP_BWMIX_GAM_RED;Red Channel gamma correction
+TP_BWMIX_GAM_GREEN;Green Channel gamma correction
+TP_BWMIX_GAM_BLUE;Blue Channel gamma correction
+TP_BWMIX_FILTER;Color Filter
+TP_BWMIX_FILTER0;None
+TP_BWMIX_FILTER1;Red
+TP_BWMIX_FILTER2;Red-Yellow
+TP_BWMIX_FILTER3;Yellow
+TP_BWMIX_FILTER4;Green-Yellow
+TP_BWMIX_FILTER5;Green
+TP_BWMIX_FILTER6;Blue-Green
+TP_BWMIX_FILTER7;Blue
+TP_BWMIX_FILTER8;Purple
+TP_BWMIX_SETTING;Presets
+TP_BWMIX_SET0;Normal contrast
+TP_BWMIX_SET7;Panchromatic
+TP_BWMIX_SET8;Hyper Panchromatic
+TP_BWMIX_SET5;Low Sensitivity
+TP_BWMIX_SET6;High Sensitivity
+TP_BWMIX_SET9;Orthochromatic
+TP_BWMIX_SET1;High contrast
+TP_BWMIX_SET2;Luminance
+TP_BWMIX_SET3;Landscape
+TP_BWMIX_SET4;Portrait
+TP_BWMIX_SET10;Channel-Mixer absolute RGB
+TP_BWMIX_SET11;Channel-Mixer relative RGB
+TP_BWMIX_SET12;Channel-Mixer absolute ROYGCBMP
+TP_BWMIX_SET13;Channel-Mixer relative ROYGCBMP
+TP_BWMIX_SET14;Infrared
+TP_BWMIX_GAMMA;Gamma correction
+TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel R G B as an ICC TRC curve
+TP_BWMIX_MET;Method
+TP_BWMIX_MET_TOOLTIP;Select between desaturation - mixer luminance - channel mixer
+TP_BWMIX_MET0;None
+TP_BWMIX_MET1;Desaturation
+TP_BWMIX_MET2;Luminance Equalizer
+TP_BWMIX_MET3;Channel Mixer
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\n Pay attention to extreme values that may cause artifacts
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after black and white conversion, at the end of treatment
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before black and white conversion\n May take into account the color components
+TP_BWMIX_CURVEEDITOR1;Before BW conv.
+TP_BWMIX_CURVEEDITOR2;After   BW conv.
+TP_BWMIX_TCMODE_FILMLIKE;BW Film-like
+TP_BWMIX_TCMODE_LABEL1;BW Curve before
+TP_BWMIX_TCMODE_LABEL2;BW Curve after
+TP_BWMIX_TCMODE_SATANDVALBLENDING;BW Saturation and Value Blending
+TP_BWMIX_TCMODE_STANDARD;BW Standard
+TP_BWMIX_TCMODE_WEIGHTEDSTD;BW Weighted Standard
 TP_CHROMATABERR_LABEL;Chromatic Aberration
 TP_COARSETRAF_TOOLTIP_HFLIP;Flip horizontally
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\nShortcut: <b>[</b>\n\nShortcut in Single Editor Tab: <b>Alt-[</b>

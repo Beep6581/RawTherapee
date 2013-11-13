@@ -65,6 +65,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     cacorrection        = Gtk::manage (new CACorrection ());
     hlrecovery          = Gtk::manage (new HLRecovery ());
     chmixer             = Gtk::manage (new ChMixer ());
+    chmixerbw           = Gtk::manage (new ChMixerbw ());
     resize              = Gtk::manage (new Resize ());
     crop                = Gtk::manage (new Crop ());
     icm                 = Gtk::manage (new ICMPanel ());
@@ -84,6 +85,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (exposurePanel, hlrecovery,        M("TP_HLREC_LABEL"));          toolPanels.push_back (hlrecovery);
     addPanel (colorPanel, vibrance,             M("TP_VIBRANCE_LABEL"));       toolPanels.push_back (vibrance);
     addPanel (colorPanel, chmixer,              M("TP_CHMIXER_LABEL"));        toolPanels.push_back (chmixer);
+    addPanel (colorPanel, chmixerbw,            M("TP_CHMIXERBW_LABEL"));      toolPanels.push_back (chmixerbw);
     addPanel (exposurePanel, shadowshighlights, M("TP_SHADOWSHLIGHTS_LABEL")); toolPanels.push_back (shadowshighlights);
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
     addPanel (detailsPanel, sharpenEdge,        M("TP_SHARPENEDGE_LABEL"));    toolPanels.push_back (sharpenEdge);
@@ -362,6 +364,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     if (ipc) {
         ipc->setAutoExpListener (toneCurve);
         ipc->setAutoCamListener (colorappearance);
+        ipc->setAutoBWListener (chmixerbw);
 		
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);

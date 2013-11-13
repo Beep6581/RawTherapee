@@ -349,6 +349,35 @@ class ChannelMixerParamsEdited {
         bool red[3];
         bool green[3];
         bool blue[3];
+
+};
+class ChannelMixerbwParamsEdited {
+
+    public:
+		bool enabled;
+		bool enabledLm;
+		bool bwred;
+		bool bwgreen;
+		bool bwblue;
+		bool bwredgam;
+		bool bwgreengam;
+		bool bwbluegam;
+		bool met;
+		bool fil;
+		bool set;
+		bool bworan;
+		bool bwyell;
+		bool bwcyan;
+		bool bwmag;
+		bool bwpur;
+        bool vcurve;
+        bool curve;
+        bool curveMode;
+        bool curve2;
+        bool curveMode2;
+        bool autoc;
+		
+
 };
 
 class CACorrParamsEdited {
@@ -475,6 +504,7 @@ class ParamsEdited {
         CACorrParamsEdited            cacorrection;
         VignettingParamsEdited        vignetting;
         ChannelMixerParamsEdited      chmixer;
+        ChannelMixerbwParamsEdited    chmixerbw;
         HRecParamsEdited              hlrecovery;
         ResizeParamsEdited            resize;
         ColorManagementParamsEdited   icm;

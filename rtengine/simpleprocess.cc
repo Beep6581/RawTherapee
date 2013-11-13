@@ -185,19 +185,26 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	ToneCurve customToneCurve1, customToneCurve2;
 	ColorAppearance customColCurve1, customColCurve2,customColCurve3 ;
+	ChMixerbw customToneCurvebw1;
+	ChMixerbw customToneCurvebw2;
 
 	ipf.g = imgsrc->getGamma();
 	ipf.iGamma = true;
 	CurveFactory::complexCurve (expcomp, black/65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr, ipf.g, !ipf.iGamma,
-	                            params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,
-	                            hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2);
+	                            params.toneCurve.curveMode, params.toneCurve.curve, params.toneCurve.curveMode2, params.toneCurve.curve2,						
+	                            hist16, dummy, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2 );
 	
 	CurveFactory::RGBCurve (params.rgbCurves.rcurve, rCurve, 1);
 	CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, 1);
 	CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, 1);
 
     LabImage* labView = new LabImage (fw,fh);
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, expcomp, hlcompr, hlcomprthresh);
+	
+    
+	CurveFactory::curveBW (params.chmixerbw.curveMode, params.chmixerbw.curve, params.chmixerbw.curveMode2, params.chmixerbw.curve2,
+									hist16, dummy, dummy, customToneCurvebw1, customToneCurvebw2, 1);
+	double rrm, ggm, bbm;
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, expcomp, hlcompr, hlcomprthresh);
 
     // Freeing baseImg because not used anymore
     delete baseImg;

@@ -288,6 +288,81 @@ void CurveFactory::curveLightBrightColor (
 
 }
 
+void CurveFactory::curveBW (
+		procparams::ChannelMixerbwParams::eTCModeId curveModeb, const std::vector<double>& curvePointsbw,
+		procparams::ChannelMixerbwParams::eTCModeId curveModeb2, const std::vector<double>& curvePointsbw2,
+		LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram,//for Luminance  
+		ChMixerbw & customToneCurvebw1,
+		ChMixerbw & customToneCurvebw2,
+		int skip)
+{
+	LUTf dcurve(65536,0);
+	
+	float val;
+	for (int i=0; i<32768; i++) {
+			val = (double)i / 32767.0;
+			dcurve[i] = CLIPD(val);
+		}
+
+	outBeforeCCurveHistogram.clear();
+	bool histNeeded = false;
+	
+	DiagonalCurve* tcurve = NULL;
+	customToneCurvebw2.Reset();
+
+	if (!curvePointsbw2.empty() && curvePointsbw2[0]>DCT_Linear && curvePointsbw2[0]<DCT_Unchanged) {
+		tcurve = new DiagonalCurve (curvePointsbw2, CURVES_MIN_POLY_POINTS/skip);
+		if (outBeforeCCurveHistogram /*&& histogramCropped*/)
+				histNeeded = true;
+		
+	}
+	if (tcurve) {
+		if (tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+		else
+			customToneCurvebw2.Set(tcurve);
+		delete tcurve;
+		tcurve = NULL;
+	}
+
+	customToneCurvebw1.Reset();
+
+	if (!curvePointsbw.empty() && curvePointsbw[0]>DCT_Linear && curvePointsbw[0]<DCT_Unchanged) {
+		tcurve = new DiagonalCurve (curvePointsbw, CURVES_MIN_POLY_POINTS/skip);
+		if (outBeforeCCurveHistogram /*&& histogramCropped*/)
+				histNeeded = true;
+		
+	}
+	if (tcurve) {
+		if (tcurve->isIdentity()) {
+			delete tcurve;
+			tcurve = NULL;
+		}
+		else
+			customToneCurvebw1.Set(tcurve);
+		delete tcurve;
+		tcurve = NULL;
+	}
+	// create first curve if needed
+
+	for (int i=0; i<=32768; i++) {
+		float val;
+
+			if (histNeeded) {
+				float hval = dcurve[i];
+				int hi = (int)(255.0*CLIPD(hval));
+				outBeforeCCurveHistogram[hi] += histogram[i] ;
+			}
+	}
+	
+	if (tcurve) delete tcurve;
+
+}
+
+
+
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili, double saturation, double rstprotection,
 										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,
@@ -397,6 +472,7 @@ void CurveFactory::curveLightBrightColor (
 									 LUTu & outBeforeCCurveHistogram,
 									 ToneCurve & customToneCurve1,
 									 ToneCurve & customToneCurve2,
+									 
 									 int skip) {
 		
 		
@@ -595,6 +671,8 @@ void CurveFactory::curveLightBrightColor (
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 		// create first curve if needed
 		customToneCurve1.Reset();
 
@@ -614,7 +692,48 @@ void CurveFactory::curveLightBrightColor (
 				tcurve = NULL;
 			}
 		}
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+		// create curve bw
+		// curve 2
+/*		DiagonalCurve* tbwcurve = NULL;
+		customToneCurvebw2.Reset();
+
+		if (!curvePointsbw2.empty() && curvePointsbw2[0]>DCT_Linear && curvePointsbw2[0]<DCT_Unchanged) {
+			tbwcurve = new DiagonalCurve (curvePointsbw2, CURVES_MIN_POLY_POINTS/skip);
+			if (outBeforeCCurveHistogram )
+				histNeeded = true;
+		}
+		if (tbwcurve) {
+			if (tbwcurve->isIdentity()) {
+				delete tbwcurve;
+				tbwcurve = NULL;
+			}
+			else
+				customToneCurvebw2.Set(tbwcurve);
+			delete tbwcurve;
+			tbwcurve = NULL;
+		}
+		
+		customToneCurvebw1.Reset();
+
+		if (!curvePointsbw.empty() && curvePointsbw[0]>DCT_Linear && curvePointsbw[0]<DCT_Unchanged) {
+			tbwcurve = new DiagonalCurve (curvePointsbw, CURVES_MIN_POLY_POINTS/skip);
+			if (outBeforeCCurveHistogram )
+				histNeeded = true;
+		}
+		if (tbwcurve) {
+			if (tbwcurve->isIdentity()) {
+				delete tbwcurve;
+				tbwcurve = NULL;
+			}
+			else if (curveModeb != procparams::ChannelMixerbwParams::TC_MODE_STD_BW) {
+				customToneCurvebw1.Set(tbwcurve);
+				delete tbwcurve;
+				tbwcurve = NULL;
+			}
+		}
+	*/	
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 		for (int i=0; i<=0xffff; i++) {
@@ -884,6 +1003,15 @@ void ToneCurve::Reset() {
 void ToneCurve::Set(Curve *pCurve) {
     lutToneCurve(65536);
     for (int i=0; i<65536; i++) lutToneCurve[i] = pCurve->getVal(double(i)/65535.) * 65535.;
+}
+void ChMixerbw::Reset() {
+    lutBWCurve.reset();
+}
+
+// Fill a LUT with X/Y, ranged 0xffff
+void ChMixerbw::Set(Curve *pCurve) {
+    lutBWCurve(65536);
+    for (int i=0; i<65536; i++) lutBWCurve[i] = pCurve->getVal(double(i)/65535.) * 65535.;
 }
 
 }

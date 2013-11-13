@@ -624,6 +624,42 @@ class ChannelMixerParams {
         int red[3];
         int green[3];
         int blue[3];
+		
+};
+class ChannelMixerbwParams {
+
+    public:
+        enum eTCModeId {
+            TC_MODE_STD_BW,               // Standard modes, the curve is applied on all component individually
+            TC_MODE_WEIGHTEDSTD_BW,       // Weighted standard mode
+            TC_MODE_FILMLIKE_BW,          // Film-like mode, as defined in Adobe's reference code
+            TC_MODE_SATANDVALBLENDING_BW  // Modify the Saturation and Value channel
+        };
+	
+        std::vector<double>   curve;
+        eTCModeId   curveMode;
+        std::vector<double>   curve2;
+        eTCModeId   curveMode2;
+		
+		std::vector<double>   vcurve;
+		bool 	autoc;
+        bool    enabled;
+        bool    enabledLm;
+		int bwred;
+		int bwgreen;
+		int bwblue;
+		int bwredgam;
+		int bwgreengam;
+		int bwbluegam;
+        Glib::ustring fil;
+        Glib::ustring set;
+        Glib::ustring met;
+		int bworan;
+		int bwyell;
+		int bwcyan;
+		int bwmag;
+		int bwpur;
+		
 };
 
 /**
@@ -711,6 +747,7 @@ class HSVEqualizerParams {
 		std::vector<double>   hcurve;
 		std::vector<double>   scurve;
 		std::vector<double>   vcurve;
+		
 };
 
 
@@ -802,6 +839,7 @@ class ProcParams {
         CACorrParams            cacorrection;    ///< Lens c/a correction parameters
         VignettingParams        vignetting;      ///< Lens vignetting correction parameters
         ChannelMixerParams      chmixer;         ///< Channel mixer parameters
+        ChannelMixerbwParams    chmixerbw;       ///< Channel mixer BW parameters
         HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing

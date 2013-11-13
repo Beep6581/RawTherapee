@@ -730,6 +730,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
     ColorAppearance customColCurve3;
+	ChMixerbw customToneCurvebw1;
+	ChMixerbw customToneCurvebw2;
 
 	ipf.g = gamma;
 	ipf.iGamma = true;
@@ -745,8 +747,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	
 	LabImage* labView = new LabImage (fw,fh);
 	CieImage* cieView = new CieImage (fw,fh);
-
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, expcomp, hlcompr, hlcomprthresh);
+	
+    CurveFactory::curveBW (params.chmixerbw.curveMode, params.chmixerbw.curve, params.chmixerbw.curveMode2, params.chmixerbw.curve2,
+									hist16, dummy, dummy, customToneCurvebw1, customToneCurvebw2, 16);
+	
+	double rrm, ggm, bbm;
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm,expcomp, hlcompr, hlcomprthresh);
 
     if (shmap)
         delete shmap;

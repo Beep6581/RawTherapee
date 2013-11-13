@@ -1,7 +1,7 @@
 
 [Version]
 AppVersion=4.0.11.20
-Version=309
+Version=312
 
 [Exposure]
 Auto=false
@@ -23,6 +23,28 @@ Curve2=1;0;0;0.055335968379446598;0.019762845849802379;0.12648221343873495;0.110
 Red=100;0;0;
 Green=0;100;0;
 Blue=0;0;100;
+CurveMode=Standardbw
+CurveMode2=Standard
+Curve=0;
+Curve2=0;
+bwred=43
+bwgreen=33
+bwblue=30
+bwredgam=0
+bwgreengam=0
+bwbluegam=0
+Filter=No
+Set=Nc
+bworan=33
+bwyell=33
+bwcyan=33
+bwmag=33
+bwpur=33
+Enabled=true
+EnabledLm=false
+Met=No
+VCurve=0;
+
 
 [Luminance Curve]
 Brightness=0

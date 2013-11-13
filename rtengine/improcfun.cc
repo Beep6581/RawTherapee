@@ -1843,22 +1843,19 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 }
 }
 //end CIECAM
-
-
-
-
-
-
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
-                               const ToneCurve & customToneCurve1,const ToneCurve & customToneCurve2 ) {
-    rgbProc (working, lab, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
+                               const ToneCurve & customToneCurve1,const ToneCurve & customToneCurve2, const ChMixerbw & customToneCurvebw1,const ChMixerbw & customToneCurvebw2, double &rrm, double &ggm, double &bbm  ) {
+    rgbProc (working, lab, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const ToneCurve & customToneCurve1,
-                               const ToneCurve & customToneCurve2, double expcomp, int hlcompr, int hlcomprthresh) {
+                               const ToneCurve & customToneCurve2,  const ChMixerbw & customToneCurvebw1,const ChMixerbw & customToneCurvebw2,double &rrm, double &ggm, double &bbm, double expcomp, int hlcompr, int hlcomprthresh) {
+
+
+
 
     LUTf iGammaLUTf;
     Imagefloat *tmpImage = working->copy();
@@ -1909,6 +1906,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	FlatCurve* hCurve;
 	FlatCurve* sCurve;
 	FlatCurve* vCurve;
+	FlatCurve* bwlCurve;
 
 
 	float* cossq = new float [8192];
@@ -1918,14 +1916,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	FlatCurveType hCurveType = (FlatCurveType)params->hsvequalizer.hcurve.at(0);
 	FlatCurveType sCurveType = (FlatCurveType)params->hsvequalizer.scurve.at(0);
 	FlatCurveType vCurveType = (FlatCurveType)params->hsvequalizer.vcurve.at(0);
+	FlatCurveType bwlCurveType = (FlatCurveType)params->chmixerbw.vcurve.at(0);
 	bool hCurveEnabled = hCurveType > FCT_Linear;
 	bool sCurveEnabled = sCurveType > FCT_Linear;
 	bool vCurveEnabled = vCurveType > FCT_Linear;
+	bool bwlCurveEnabled = bwlCurveType > FCT_Linear;
 
 	// TODO: We should create a 'skip' value like for CurveFactory::complexsgnCurve (rtengine/curves.cc)
 	if (hCurveEnabled) hCurve = new FlatCurve(params->hsvequalizer.hcurve);
 	if (sCurveEnabled) sCurve = new FlatCurve(params->hsvequalizer.scurve);
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
+	if (bwlCurveEnabled) bwlCurve = new FlatCurve(params->chmixerbw.vcurve);
 
 	const float exp_scale = pow (2.0, expcomp);
 	const float comp = (max(0.0, expcomp) + 1.0)*hlcompr/100.0;
@@ -1937,6 +1938,11 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     ToneCurveParams::eTCModeId curveMode2 = params->toneCurve.curveMode2;
     bool hasToneCurve1 = bool(customToneCurve1);
     bool hasToneCurve2 = bool(customToneCurve2);
+    ChannelMixerbwParams::eTCModeId curveModebw = params->chmixerbw.curveMode;
+    ChannelMixerbwParams::eTCModeId curveModebw2 = params->chmixerbw.curveMode2;
+	
+    bool hasToneCurvebw1 = bool(customToneCurvebw1);
+    bool hasToneCurvebw2 = bool(customToneCurvebw2);
 
     float chMixRR = float(params->chmixer.red[0]);
     float chMixRG = float(params->chmixer.red[1]);
@@ -1947,9 +1953,43 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     float chMixBR = float(params->chmixer.blue[0]);
     float chMixBG = float(params->chmixer.blue[1]);
     float chMixBB = float(params->chmixer.blue[2]);
-
+	bool BWchmix = params->chmixerbw.enabled;
     int shHighlights = params->sh.highlights;
     int shShadows = params->sh.shadows;
+    float bwr = float(params->chmixerbw.bwred);
+    float bwg = float(params->chmixerbw.bwgreen);
+    float bwb = float(params->chmixerbw.bwblue);
+    float bwrgam = float(params->chmixerbw.bwredgam);
+    float bwggam = float(params->chmixerbw.bwgreengam);
+    float bwbgam = float(params->chmixerbw.bwbluegam);
+    float bworan = float(params->chmixerbw.bworan);
+    float bwyell = float(params->chmixerbw.bwyell);
+    float bwcyan = float(params->chmixerbw.bwcyan);
+    float bwmag = float(params->chmixerbw.bwmag);
+    float bwpur = float(params->chmixerbw.bwpur);
+	bool blackwhite = params->chmixerbw.enabledLm;
+	int algm=0;
+	if     (params->chmixerbw.met=="No")  algm=0;
+	else if(params->chmixerbw.met=="De")  algm=1;
+	else if(params->chmixerbw.met=="Le")  algm=2;
+	else if(params->chmixerbw.met=="Ch")  algm=3;
+				//gamma correction of each channel
+	float gamvalr=125.f;
+	float gamvalg=125.f;
+	float gamvalb=125.f;
+	float autor,autog,autob;
+	if(bwrgam < 0) gamvalr=100.f;
+	if(bwggam < 0) gamvalg=100.f;
+	if(bwbgam < 0) gamvalb=100.f;
+		float gammabwr=1.f;
+		float gammabwg=1.f;
+		float gammabwb=1.f;
+		//if     (params->chmixerbw.set=="Ma" || params->chmixerbw.set=="Mr" || params->chmixerbw.set=="Fr" || params->chmixerbw.set=="Fa")  {
+		{
+						gammabwr=1.f -bwrgam/gamvalr;
+						gammabwg=1.f -bwggam/gamvalg;
+						gammabwb=1.f -bwbgam/gamvalb;
+		}
 
 	//normalize gamma to sRGB
 	double start = exp(g*log( -0.055 / ((1.0/g-1.0)*1.055 )));
@@ -1970,18 +2010,17 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 #endif
 
 	if (mixchannels) {
+	
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
-
 				float r = tmpImage->r(i,j);
 				float g = tmpImage->g(i,j);
 				float b = tmpImage->b(i,j);
 
 				//if (i==100 & j==100) printf("rgbProc input R= %f  G= %f  B= %f  \n",r,g,b);
-
 				float rmix = (r*chMixRR + g*chMixRG + b*chMixRB) / 100.f;
 				float gmix = (r*chMixGR + g*chMixGG + b*chMixGB) / 100.f;
 				float bmix = (r*chMixBR + g*chMixBG + b*chMixBB) / 100.f;
@@ -1992,7 +2031,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 			}
 		}
 	}
-
+	
+	
 	if (processSH || processLCE) {
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
@@ -2084,6 +2124,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 	if (hasToneCurve1) {
 		if (curveMode==ToneCurveParams::TC_MODE_STD){ // Standard
+		printf("STANDARD\n");
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2139,6 +2180,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 	if (hasToneCurve2) {
 		if (curveMode2==ToneCurveParams::TC_MODE_STD){ // Standard
+
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2291,7 +2333,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		}
 	}
 
-	if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
+//if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
+if (sat> -110 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
+
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2301,9 +2345,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 				float r = tmpImage->r(i,j);
 				float g = tmpImage->g(i,j);
 				float b = tmpImage->b(i,j);
-
+				float lum;
 				float h,s,v;
 				Color::rgb2hsv(r,g,b,h,s,v);
+				if(algm==2 && blackwhite /* && bwlCurveEnabled*/) sat= -75;//increase effect of luminance mixer bw
 				if (sat > 0.5f) {
 					s = (1.f-float(sat)/100.f)*s+float(sat)/100.f*(1.f-SQR(SQR(1.f-min(s,1.0f))));
 					if (s<0) s=0.f;
@@ -2311,6 +2356,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					if (sat < -0.5)
 						s *= 1.f+float(sat)/100.f;
 				}
+			
 				//HSV equalizer
 				if (hCurveEnabled) {
 					h = (hCurve->getVal(double(h)) - 0.5) * 2.f + h;
@@ -2338,18 +2384,370 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 					float valparam = vCurve->getVal((double)h)-0.5f;
 					valparam *= (1.f-SQR(SQR(1.f-min(s,1.0f))));
 					if (valparam > 0.00001f) {
-						v = (1.f-valparam)*v+valparam*(1.f-SQR(1.f-min(v,1.0f)));
+						v = (1.f-valparam)*v+ valparam*(1.f-SQR(1.f-min(v,1.0f)));// SQR (SQR  to increase action and avoid artefacts
 						if (v<0) v=0;
 					} else {
 						if (valparam < -0.00001f)
-							v *= (1.f+valparam);
+							v *= (1.f+ valparam);//1.99 to increase action
 					}
 
 				}
-				Color::hsv2rgb(h, s, v, tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+				Color::hsv2rgb(h, s, v, tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));	
+			}
+		}
+	} 
+
+	
+//black and white
+if(blackwhite){
+	if (hasToneCurvebw1) {
+		if (curveModebw==ChannelMixerbwParams::TC_MODE_STD_BW){ // Standard
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+			for (int i=0; i<tH; i++) {
+				for (int j=0; j<tW; j++) {
+					const StandardToneCurvebw& userToneCurvebw = static_cast<const StandardToneCurvebw&>(customToneCurvebw1);
+					userToneCurvebw.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+				}
+			}
+		}
+		else if (curveModebw==ChannelMixerbwParams::TC_MODE_FILMLIKE_BW){ // Adobe like
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+			for (int i=0; i<tH; i++) {
+				for (int j=0; j<tW; j++) {
+					const AdobeToneCurvebw& userToneCurvebw = static_cast<const AdobeToneCurvebw&>(customToneCurvebw1);
+					userToneCurvebw.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+				}
+			}
+		}
+		else if (curveModebw==ChannelMixerbwParams::TC_MODE_SATANDVALBLENDING_BW){ // apply the curve on the saturation and value channels
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+			for (int i=0; i<tH; i++) {
+				for (int j=0; j<tW; j++) {
+					const SatAndValueBlendingToneCurvebw& userToneCurvebw = static_cast<const SatAndValueBlendingToneCurvebw&>(customToneCurvebw1);
+					tmpImage->r(i,j) = CLIP<float>(tmpImage->r(i,j));
+					tmpImage->g(i,j) = CLIP<float>(tmpImage->g(i,j));
+					tmpImage->b(i,j) = CLIP<float>(tmpImage->b(i,j));
+
+					userToneCurvebw.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+				}
+			}
+		}
+		else if (curveModebw==ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW){ // apply the curve to the rgb channels, weighted
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+			for (int i=0; i<tH; i++) {
+				for (int j=0; j<tW; j++) {
+					const WeightedStdToneCurvebw& userToneCurvebw = static_cast<const WeightedStdToneCurvebw&>(customToneCurvebw1);
+					tmpImage->r(i,j) = CLIP<float>(tmpImage->r(i,j));
+					tmpImage->g(i,j) = CLIP<float>(tmpImage->g(i,j));
+					tmpImage->b(i,j) = CLIP<float>(tmpImage->b(i,j));
+
+					userToneCurvebw.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+				}
 			}
 		}
 	}
+}
+
+
+if(algm	==1  && blackwhite){//desaturated
+#ifdef _OPENMP 
+#pragma omp for schedule(dynamic, 5)
+#endif
+		for (int i=0; i<tH; i++) {
+			for (int j=0; j<tW; j++) {
+
+				float r = tmpImage->r(i,j);
+				float g = tmpImage->g(i,j);
+				float b = tmpImage->b(i,j);
+				float lum = (0.299f*r+0.587f*g + 0.114f*b);
+				tmpImage->r(i,j)= lum;
+				tmpImage->g(i,j)=tmpImage->r(i,j);
+				tmpImage->b(i,j)=tmpImage->r(i,j);	
+				Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);								
+			}
+		}	
+
+}
+if (algm==2 && bwlCurveEnabled && blackwhite) {//Luminance mixer
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+		for (int i=0; i<tH; i++) {
+			for (int j=0; j<tW; j++) {
+				float r = tmpImage->r(i,j);
+				float g = tmpImage->g(i,j);
+				float b = tmpImage->b(i,j);
+				float lum;
+				float h,s,v;
+				Color::rgb2hsv(r,g,b,h,s,v);
+					if (v<0) v=0; 
+					float valparam = bwlCurve->getVal((double)h)-0.5f;
+					valparam *= (1.f-(SQR(SQR(1.f-min(s,1.0f)))));
+					//float valcor=1.f/(0.501f-valparam);
+					
+					if (valparam > 0.00001f) {
+					//	v = (1.f-valparam)*v+ valparam*(1.f-(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
+					//	v = (1.f-valparam)*v+ valparam*(1.f- pow((1.f-min(v,1.0f)), 2.f+valcor));//(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
+						v *= (1.f + 4.f*valparam);
+					if (v<0) v=0;
+					} else {
+						if (valparam < -0.00001f)
+							{v *= (1.f + 4.f*valparam);//4to increase action
+							if (v<0) v=0;}
+					}
+					
+				Color::hsv2rgb(h, s, v, tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+				lum = (0.299f*tmpImage->r(i,j)+0.587f*tmpImage->g(i,j)+ 0.114f*tmpImage->b(i,j));// get luminance
+				tmpImage->r(i,j)=lum;//black and white
+				tmpImage->g(i,j)=lum;
+				tmpImage->b(i,j)=lum;
+				//correction gamma : pseudo TRC curve
+				Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);				
+				
+				}
+			}
+		}
+
+
+if(algm==3  && blackwhite) {//channel-mixer
+	if (params->chmixerbw.autoc) {
+    // auto channel-mixer 
+	float nr=0.f;
+	float ng=0.f;
+	float nb=0.f;
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif				
+		for (int i=0; i<tH; i++) {
+			for (int j=0; j<tW; j++) {
+				float rr = tmpImage->r(i,j);
+				float gg = tmpImage->g(i,j);
+				float bb = tmpImage->b(i,j);
+				nr+=rr;
+				ng+=gg;
+				nb+=bb;
+				float srgb;
+				srgb = nr+ng+nb;
+				float knr=nr/srgb;
+				float kng=ng/srgb;
+				float knb=nb/srgb;	
+				knr = 1.f/knr;
+				kng = 1.f/kng;
+				knb = 1.f/knb;
+				float sk;
+				sk=knr+kng+knb;
+				knr=100.f*knr/sk;
+				kng=100.f*kng/sk;
+				knb=100.f*knb/sk;
+				autor=knr;
+				autog=kng;
+				autob=knb;
+			}
+		}	
+	}	
+			//end auto chmix
+				float som, somm;
+				float rM,gM,bM;
+				som=bwr+bwg+bwb;				
+				float mix[3][3];
+				float val[3];
+				float in[3];
+				float kcorec=1.f;
+				//presets
+				if     (params->chmixerbw.set=="Ma" || params->chmixerbw.set=="Fa")  {rM=bwr;gM=bwg;bM=bwb;kcorec=som/100.f;}
+				else if     (params->chmixerbw.set=="Mr"  || params->chmixerbw.set=="Fr")  {rM=bwr;gM=bwg;bM=bwb;}	
+				else if(params->chmixerbw.set=="Nc") {rM=43.f;gM=33.f;bM=30.f;}
+				else if(params->chmixerbw.set=="Pa") {rM=33.3f;gM=33.3f;bM=33.3f;}
+				else if(params->chmixerbw.set=="Hp") {rM=41.f;gM=25.f;bM=34.f;}
+				else if(params->chmixerbw.set=="Ls") {rM=27.f;gM=27.f;bM=46.f;}
+				else if(params->chmixerbw.set=="Hs") {rM=30.f;gM=28.f;bM=42.f;}
+				else if(params->chmixerbw.set=="Or") {rM=0.f;gM=42.f;bM=58.f;}
+				else if(params->chmixerbw.set=="Hc") {rM=40.f;gM=34.f;bM=60.f;}
+				else if(params->chmixerbw.set=="Lu") {rM=30.f;gM=59.f;bM=11.f;}
+				else if(params->chmixerbw.set=="La") {rM=66.f;gM=24.f;bM=10.f;}
+				else if(params->chmixerbw.set=="Po") {rM=54.f;gM=44.f;bM=12.f;}
+				else if(params->chmixerbw.set=="Ir") {rM=-40.f;gM=200.f;bM=-17.f;}
+
+				if (params->chmixerbw.autoc) {rM=autor;gM=autog;bM=autob; bworan=33.f; bwyell=33.f;bwmag=33.f;bwpur=33.f;bwcyan=33.f;}  // auto channel-mixer
+				rrm=rM;
+				ggm=gM;
+				bbm=bM;
+				
+				somm=rM+gM+bM;
+				rM=rM/somm;gM=gM/somm;bM=bM/somm;
+				float koymcp=0.f;
+				
+				if(params->chmixerbw.set=="Fa" || params->chmixerbw.set=="Fr") {
+				float obM=0.f;
+				float ogM=0.f;
+				float orM=0.f;
+				
+				float ybM=0.f;
+				float yrM=0.f;
+				float ygM=0.f;
+				
+				float mgM=0.f;
+				float mrM=0.f;
+				float mbM=0.f;
+				
+				float pgM=0.f;
+				float prM=0.f;
+				float pbM=0.f;
+				
+				float crM=0.f;
+				float cgM=0.f;
+				float cbM=0.f;
+				
+				bool complem = 	params->chmixerbw.enabled;
+				
+				float fcompl = 1.f;
+				if(complem) fcompl = 3.f;
+				// ponderate filters: report to R=G=B=33
+				// I ponder RGB channel, not only orange or yellow or cyan, etc...it's my choice !
+					if(bworan !=33){//orange
+						orM=fcompl*(bworan*0.67f - 22.11f)/100.f;
+						ogM=fcompl*(-0.164f*bworan+5.412f)/100.f;	
+						if(complem) obM=(-0.492f*bworan+16.236f)/100.f;	
+						rM+=orM;
+						gM+=ogM;
+						bM+=obM;
+						koymcp += (orM+ogM+obM);
+					}
+					if(bwyell !=33){//yellow
+						yrM=fcompl*(-0.134f*bwyell +4.422f)/100.f;//22.4
+						ygM=fcompl*(0.5f*bwyell-16.5f)/100.f;	
+						if(complem) ybM=(-0.492f*bwyell+16.236f)/100.f;	
+						rM+=yrM;
+						gM+=ygM;
+						bM+=ybM;
+						koymcp += (yrM+ygM+ybM);	
+					}
+					if(bwmag !=33){//Magenta
+						mrM=fcompl*(0.67f*bwmag -22.11f)/100.f;
+						mbM=fcompl*(-0.164f*bwmag+5.412f)/100.f;	
+						if(complem) mgM=(-0.492f*bwmag+16.236f)/100.f;	
+						rM+=mrM;
+						gM+=mgM;
+						bM+=mbM;
+						koymcp += (mrM+mgM+mbM);	
+					}
+					if(bwpur!=33){//Purple
+						prM=fcompl*(-0.134f*bwpur +4.422f)/100.f;
+						pbM=fcompl*(0.5f*bwpur-16.5f)/100.f;	
+						if(complem) pgM=(-0.492f*bwpur+16.236f)/100.f;	
+						rM+=prM;
+						gM+=pgM;
+						bM+=pbM;
+						koymcp += (prM+pgM+pbM);		
+					}
+					if(bwcyan !=33){//Cyan
+						cgM=fcompl*(-0.134f*bwcyan +4.422f)/100.f;
+						cbM=fcompl*(0.5f*bwcyan-16.5f)/100.f;	
+						if(complem) crM=(-0.492f*bwcyan+16.236f)/100.f;	
+						rM+=crM;
+						gM+=cgM;
+						bM+=cbM;
+						koymcp += (crM+cgM+cbM);			
+					}
+				}
+				if(params->chmixerbw.set=="Fa")  {kcorec=koymcp+som/100.f;}
+				//Color filters
+				float filred,filgreen,filblue;
+				filred=1.f;filgreen=1.f;filblue=1.f;
+				if     (params->chmixerbw.fil=="No")  {filred=1.f;filgreen=1.f;filblue=1.f;}
+				else if     (params->chmixerbw.fil=="Re") {filred=1.f;filgreen=0.05f;filblue=0.f;} 
+				else if     (params->chmixerbw.fil=="Or")  {filred=1.f;filgreen=0.6f;filblue=0.f;}
+				else if     (params->chmixerbw.fil=="Ye") {filred=1.f;filgreen=1.f;filblue=0.05f;}
+				else if     (params->chmixerbw.fil=="Yg") {filred=0.6f;filgreen=1.f;filblue=0.3f;}
+				else if     (params->chmixerbw.fil=="Gr") {filred=0.2f;filgreen=1.f;filblue=0.3f;}
+				else if     (params->chmixerbw.fil=="Cy") {filred=0.05f;filgreen=1.f;filblue=1.f;}
+				else if     (params->chmixerbw.fil=="Bl") {filred=0.f;filgreen=0.05f;filblue=1.f;}
+				else if     (params->chmixerbw.fil=="Pu") {filred=1.f;filgreen=0.05f;filblue=1.f;}
+				
+				
+				rM = rM*filred;
+				gM = gM*filgreen;
+				bM = bM*filblue;
+				
+				rM=rM / (rM+gM+bM);
+				gM=gM / (rM+gM+bM);
+				bM=bM / (rM+gM+bM);
+				
+				mix[0][0] = rM;
+				mix[1][0] = rM;
+				mix[2][0] = rM;
+				mix[0][1] = gM;
+				mix[1][1] = gM;
+				mix[2][1] = gM;
+				mix[0][2] = bM;
+				mix[1][2] = bM;
+				mix[2][2] = bM;
+
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5) private (val, in)
+#endif
+		for (int i=0; i<tH; i++) {
+			for (int j=0; j<tW; j++) {
+				in[0] = tmpImage->r(i,j);
+				in[1] = tmpImage->g(i,j);
+				in[2] = tmpImage->b(i,j);
+				//mix channel
+				for (int end=0; end < 3 ; end++){
+					val[end]=0.f;
+					for (int beg=0; beg < 3 ; beg++) {
+						val[end] += mix[end][beg] *in[beg];						
+					}
+				}
+				tmpImage->r(i,j) = val[0]*kcorec;
+				tmpImage->g(i,j) = val[1]*kcorec;
+				tmpImage->b(i,j) = val[2]*kcorec;
+				//correction gamma : pseudo TRC curve
+				Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);				
+			}
+		} 
+		
+}
+
+if(blackwhite){//after BW conversion
+	if (hasToneCurvebw2) {
+
+		if (curveModebw2==ChannelMixerbwParams::TC_MODE_STD_BW){ // Standard
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+			for (int i=0; i<tH; i++) {
+				for (int j=0; j<tW; j++) {
+					const StandardToneCurvebw& userToneCurve = static_cast<const StandardToneCurvebw&>(customToneCurvebw2);
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+				}
+			}
+		}
+		else if (curveModebw2==ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW){ // apply the curve to the rgb channels, weighted
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+			for (int i=0; i<tH; i++) {//for ulterior usage if bw data modified
+				for (int j=0; j<tW; j++) {
+					const WeightedStdToneCurvebw& userToneCurve = static_cast<const WeightedStdToneCurvebw&>(customToneCurvebw2);
+					
+					tmpImage->r(i,j) = CLIP<float>(tmpImage->r(i,j));
+					tmpImage->g(i,j) = CLIP<float>(tmpImage->g(i,j));
+					tmpImage->b(i,j) = CLIP<float>(tmpImage->b(i,j));
+
+					userToneCurve.Apply(tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+				}
+			}
+		}
+	}
+}
 
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
@@ -2403,6 +2801,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (vCurveEnabled) delete vCurve;
 	delete [] cossq;
 }
+
 
 void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & curve) {
 
@@ -2489,7 +2888,8 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	// reference to the params structure has to be done outside of the parallelization to avoid CPU cache problem
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
 	int chromaticity = params->labCurve.chromaticity;
-	bool bwToning = params->labCurve.bwtoning;
+	bool bwToning = params->labCurve.bwtoning  /*|| params->chmixerbw.met=="Ch" */ || params->chmixerbw.enabledLm || (params->chmixerbw.bwredgam!=0 && params->chmixerbw.enabledLm) || (params->chmixerbw.bwgreengam!=0 && params->chmixerbw.enabledLm) || (params->chmixerbw.bwbluegam!=0 && params->chmixerbw.enabledLm); 
+	//if(bwToning) printf("OK bwto\n"); else printf("pas de bw\n");
 	bool LCredsk = params->labCurve.lcredsk;
 	bool ccut = ccutili;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection

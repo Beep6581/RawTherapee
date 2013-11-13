@@ -44,6 +44,7 @@
 #include "icmpanel.h"
 #include "resize.h"
 #include "chmixer.h"
+#include "chmixerbw.h"
 #include "hlrec.h"
 #include "cacorrection.h"
 #include "lensprofile.h"
@@ -100,6 +101,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ColorAppearance* colorappearance;
         Vibrance* vibrance;
         ChMixer* chmixer;
+        ChMixerbw* chmixerbw;
         Resize* resize;
         ICMPanel* icm;
         Crop* crop;

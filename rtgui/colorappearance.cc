@@ -898,7 +898,7 @@ int autoCamChangedUI (void* data) {
     return 0;
 }
 void ColorAppearance::autoCamChanged (double ccam) 
-{
+{  
     nextCcam = ccam;
     g_idle_add (autoCamChangedUI, this);
 }

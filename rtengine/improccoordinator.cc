@@ -71,7 +71,7 @@ ImProcCoordinator::ImProcCoordinator ()
       bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
 
       pW(-1), pH(-1),
-      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL),
+      plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),
       resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false)
     {}
 
@@ -293,11 +293,22 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale==1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale==1 ? 1 : 1);
 
+       CurveFactory::curveBW (params.chmixerbw.curveMode, params.chmixerbw.curve, params.chmixerbw.curveMode2, params.chmixerbw.curve2,
+									vhist16, histCropped, histToneCurve, customToneCurvebw1, customToneCurvebw2,scale==1 ? 1 : 1);
+		
+		//initialize rrm bbm ggm different from zero to avoid black screen in somme cases
+		double rrm=33.; 
+		double ggm=33.; 
+		double bbm=33.;
+		
+		
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=MINUPDATE ) {
             ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
-        }
+                         rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm,params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+		if(params.chmixerbw.enabledLm && abwListener) abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
+		// correct GUI black and white with value
+		}
 
         // compute L channel histogram
         int x1, y1, x2, y2, pos, poscc;

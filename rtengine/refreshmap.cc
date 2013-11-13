@@ -232,7 +232,31 @@ WHITEBALANCE,     // EvWBequalbo,
 TRANSFORM,        // EvGradient
 TRANSFORM,        // EvGradientEnabled
 TRANSFORM,        // EvPCVignette
-TRANSFORM         // EvPCVignetteEnabled
+TRANSFORM,         // EvPCVignetteEnabled
+RGBCURVE,         // EvBWChmixEnabled
+RGBCURVE,         // EvBWred
+RGBCURVE,         // EvBWgreen
+RGBCURVE,         // EvBWblue
+RGBCURVE,         // EvBWredgam
+RGBCURVE,         // EvBWgreengam
+RGBCURVE,         // EvBWbluegam
+RGBCURVE,         // EvBWfil
+RGBCURVE,      	  // EvBWset
+RGBCURVE,         // EvBWoran
+RGBCURVE,       	  // EvBWyell
+RGBCURVE,         // EvBWcyan
+RGBCURVE,      	  // EvBWmag
+RGBCURVE,         // EvBpur
+RGBCURVE,          //EvBWequalV
+RGBCURVE,			//EvBWChmixEnabledLm
+RGBCURVE,      	  // EvBWmet
+RGBCURVE, 			//EvToneCurvebw1
+RGBCURVE,			//EvToneCurveBWMode1
+RGBCURVE,			//EvToneCurvebw2
+RGBCURVE,			//EvToneCurveBWMode2
+RGBCURVE,  			//	EvAutoch,	
+RGBCURVE,		//	EvFixedch,	
+RGBCURVE 			//EvNeutralBW
 
 //LUMINANCECURVE    // EvCATsharpcie
 

@@ -164,10 +164,11 @@ void Crop::update (int todo) {
                    baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
                    parent->imgsrc->getGamma());
         }*/
+	double rrm, ggm, bbm;
 
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1, parent->customToneCurve2 );
+							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1, parent->customToneCurve2, parent->customToneCurvebw1, parent->customToneCurvebw2,rrm, ggm, bbm);
 
     /*xref=000;yref=000;
     if (colortest && cropw>115 && croph>115)

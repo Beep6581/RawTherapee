@@ -54,6 +54,7 @@ namespace rtengine {
 			double          protectredh;
 			bool			ciebadpixgauss;
 			int             CRI_color; // N° for display Lab value  ; 0 disabled
+		//	bool			bw_complementary;
 
         /** Creates a new instance of Settings.
           * @return a pointer to the new Settings instance. */

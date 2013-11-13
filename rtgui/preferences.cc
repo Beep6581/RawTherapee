@@ -204,7 +204,7 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi->set_value (behavColumns.label, M("TP_WBALANCE_LABEL"));
     appendBehavList (mi, M("TP_WBALANCE_TEMPERATURE"), ADDSET_WB_TEMPERATURE, true);
     appendBehavList (mi, M("TP_WBALANCE_GREEN"), ADDSET_WB_GREEN, true);
-    appendBehavList (mi, M("TP_WBALANCE_EQREDBLUE"), ADDSET_WB_EQUAL, true);
+    appendBehavList (mi, M("TP_WBALANCE_EQBLUERED"), ADDSET_WB_EQUAL, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_COLORAPP_LABEL"));
@@ -235,6 +235,12 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CHMIXER_LABEL"));
     appendBehavList (mi, M("TP_CHMIXER_RED")+", "+M("TP_CHMIXER_GREEN")+", "+M("TP_CHMIXER_BLUE"), ADDSET_CHMIXER, false);
+    
+	mi = behModel->append ();
+    mi->set_value (behavColumns.label, M("TP_CHMIXERBW_LABEL"));	
+    appendBehavList (mi, M("TP_BWMIX_RED")+", "+M("TP_BWMIX_GREEN")+", "+M("TP_BWMIX_BLUE"), ADDSET_CHMIXER_BW, false);
+    appendBehavList (mi, M("TP_BWMIX_GAM_RED")+", "+M("TP_BWMIX_GAM_GREEN")+", "+M("TP_BWMIX_GAM_BLUE"), ADDSET_CHMIXER_BWG, false);
+    appendBehavList (mi, M("TP_BWMIX_ORA")+", "+M("TP_BWMIX_YEL")+", "+M("TP_BWMIX_CYAN")+", "+M("TP_BWMIX_MAG")+", "+M("TP_BWMIX_PUR"),ADDSET_CHMIXER_BWF, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_ROTATE_LABEL"));

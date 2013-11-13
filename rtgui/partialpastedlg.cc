@@ -64,6 +64,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     // options in color:
     vibrance    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_VIBRANCE")));
     chmixer     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXER")));
+    chmixerbw   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_CHANNELMIXERBW")));
     dirpyrden   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_DIRPYRDENOISE")));
     hsveq		= Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_HSVEQUALIZER")));
 	rgbcurves   = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_RGBCURVES")));
@@ -148,6 +149,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[2]->pack_start (*hseps[2], Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*vibrance, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*chmixer, Gtk::PACK_SHRINK, 2);
+    vboxes[2]->pack_start (*chmixerbw, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hsveq, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*rgbcurves, Gtk::PACK_SHRINK, 2);
 
@@ -266,6 +268,7 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
 
     vibranceConn    = vibrance->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     chmixerConn     = chmixer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
+    chmixerbwConn   = chmixerbw->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     hsveqConn		= hsveq->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
     rgbcurvesConn   = rgbcurves->signal_toggled().connect (sigc::bind (sigc::mem_fun(*color, &Gtk::CheckButton::set_inconsistent), true));
 
@@ -497,6 +500,7 @@ void PartialPasteDlg::colorToggled () {
 
     vibranceConn.block (true);
     chmixerConn.block (true);
+    chmixerbwConn.block (true);
     hsveqConn.block (true);
     rgbcurvesConn.block (true);
     gamcsconn.block (true);
@@ -504,11 +508,13 @@ void PartialPasteDlg::colorToggled () {
 
     vibrance->set_active (color->get_active ());
     chmixer->set_active (color->get_active ());
+    chmixerbw->set_active (color->get_active ());
     hsveq->set_active (color->get_active ());
     rgbcurves->set_active (color->get_active ());
     icm->set_active (color->get_active ());
 
     vibranceConn.block (false);
+    chmixerbwConn.block (false);	
     chmixerConn.block (false);
     hsveqConn.block (false);
     rgbcurvesConn.block (false);
@@ -625,7 +631,8 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!vibrance->get_active ())    filterPE.vibrance     = falsePE.vibrance;
     if (!chmixer->get_active ())     filterPE.chmixer      = falsePE.chmixer;
-    if (!hsveq->get_active ())       filterPE.hsvequalizer = falsePE.hsvequalizer;
+    if (!chmixerbw->get_active ())   filterPE.chmixerbw    = falsePE.chmixerbw;
+	if (!hsveq->get_active ())       filterPE.hsvequalizer = falsePE.hsvequalizer;
     if (!rgbcurves->get_active ())   filterPE.rgbCurves    = falsePE.rgbCurves;
     if (!icm->get_active ())         filterPE.icm          = falsePE.icm;
 

@@ -414,6 +414,19 @@ namespace rtengine {
         b = ((rgb_xyz[2][0]*x + rgb_xyz[2][1]*y + rgb_xyz[2][2]*z)) ;
     }
 
+	void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb) {
+			// correct gamma for black and white image : pseudo TRC curve of ICC profil
+				b/=65535.0f;
+				b= pow (max(b,0.0f), gammabwb);
+				b *=65535.0f;
+				r/=65535.0f;
+				r= pow (max(r,0.0f), gammabwr);
+				r *=65535.0f;
+				g/=65535.0f;
+				g= pow (max(g,0.0f), gammabwg);
+				g *=65535.0f;
+	}
+	
     void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {
         //from Dcraw (D.Coffin)
         int i;

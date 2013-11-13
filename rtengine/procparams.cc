@@ -223,7 +223,7 @@ void ProcParams::setDefaults () {
     colorappearance.badpixsl       = 0;
     colorappearance.adapscen      = 2000.0;
     colorappearance.autoadapscen    = true;
-    colorappearance.algo          = "JC";
+    colorappearance.algo          = "No";
     colorappearance.wbmodel       = "RawT";
     colorappearance.jlight        = 0.0;
     colorappearance.qbright       = 0.0;
@@ -368,7 +368,35 @@ void ProcParams::setDefaults () {
     chmixer.blue[0] = 0;
     chmixer.blue[1] = 0;
     chmixer.blue[2] = 100;
-    
+	
+    chmixerbw.autoc  = false;	
+    chmixerbw.enabled  = true;
+    chmixerbw.enabledLm  = false;
+    chmixerbw.bwred  = 33;
+    chmixerbw.bwgreen  = 33;
+    chmixerbw.bwblue  = 33;
+    chmixerbw.bwredgam  = 0;
+    chmixerbw.bwgreengam  = 0;
+    chmixerbw.bwbluegam  = 0;
+    chmixerbw.bworan  = 33;
+    chmixerbw.bwyell  = 33;
+    chmixerbw.bwcyan  = 33;
+    chmixerbw.bwmag  = 33;
+    chmixerbw.bwpur  = 33;
+    chmixerbw.vcurve.clear ();
+    chmixerbw.vcurve.push_back (FCT_Linear);
+    chmixerbw.met = "No";	
+    chmixerbw.fil = "No";
+    chmixerbw.set = "Nc";	
+    chmixerbw.curve.clear ();
+    chmixerbw.curve.push_back(DCT_Linear);
+    chmixerbw.curveMode     = ChannelMixerbwParams::TC_MODE_STD_BW;
+    chmixerbw.curve2.clear ();
+    chmixerbw.curve2.push_back(DCT_Linear);
+    chmixerbw.curveMode2     = ChannelMixerbwParams::TC_MODE_STD_BW;
+	
+	
+	
     resize.enabled = false;
     resize.scale  = 1.0;
     resize.appliesTo = "Cropped area";
@@ -558,6 +586,68 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->chmixer.blue[0] || pedited->chmixer.blue[1] || pedited->chmixer.blue[2]) {
         Glib::ArrayHandle<int> bmix (chmixer.blue, 3, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
+    }
+	//save chmixer BW
+    if (!pedited || pedited->chmixerbw.curveMode)  {
+        Glib::ustring methodbw;
+        switch (chmixerbw.curveMode) {
+        case (ChannelMixerbwParams::TC_MODE_STD_BW):
+            methodbw = "Standardbw";
+            break;
+        case (ChannelMixerbwParams::TC_MODE_FILMLIKE_BW):
+            methodbw = "FilmLikebw";
+            break;
+        case (ChannelMixerbwParams::TC_MODE_SATANDVALBLENDING_BW):
+            methodbw = "SatAndValueBlendingbw";
+            break;
+        case (ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW):
+            methodbw = "WeightedStdbw";
+            break;
+        }
+        keyFile.set_string  ("Channel Mixer", "CurveMode", methodbw);
+    }
+	
+    if (!pedited || pedited->chmixerbw.curveMode2)  {
+        Glib::ustring methodbw2;
+        switch (chmixerbw.curveMode2) {
+        case (ChannelMixerbwParams::TC_MODE_STD_BW):
+            methodbw2 = "Standard";
+            break;
+        case (ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW):
+            methodbw2 = "WeightedStd";
+            break;
+        }
+        keyFile.set_string  ("Channel Mixer", "CurveMode2", methodbw2);
+    }
+	
+    if (!pedited || pedited->chmixerbw.curve) {
+        Glib::ArrayHandle<double> tcurvebw = chmixerbw.curve;
+        keyFile.set_double_list("Channel Mixer", "Curve", tcurvebw);
+    }
+    if (!pedited || pedited->chmixerbw.curve2) {
+        Glib::ArrayHandle<double> tcurvebw2 = chmixerbw.curve2;
+        keyFile.set_double_list("Channel Mixer", "Curve2", tcurvebw2);
+    }
+    if (!pedited || pedited->chmixerbw.autoc)      	keyFile.set_boolean ("Channel Mixer", "Autoc",  chmixerbw.autoc);	
+    if (!pedited || pedited->chmixerbw.enabled)      	keyFile.set_boolean ("Channel Mixer", "Enabled",  chmixerbw.enabled);
+    if (!pedited || pedited->chmixerbw.enabledLm)      	keyFile.set_boolean ("Channel Mixer", "EnabledLm",  chmixerbw.enabledLm);
+    if (!pedited || pedited->chmixerbw.bwred)   	   	keyFile.set_integer ("Channel Mixer", "bwred", chmixerbw.bwred);
+    if (!pedited || pedited->chmixerbw.bwgreen)      	keyFile.set_integer ("Channel Mixer", "bwgreen", chmixerbw.bwgreen);
+    if (!pedited || pedited->chmixerbw.bwblue)   	   	keyFile.set_integer ("Channel Mixer", "bwblue", chmixerbw.bwblue);
+    if (!pedited || pedited->chmixerbw.bwredgam)   	keyFile.set_integer ("Channel Mixer", "bwredgam", chmixerbw.bwredgam);
+    if (!pedited || pedited->chmixerbw.bwgreengam) 	keyFile.set_integer ("Channel Mixer", "bwgreengam", chmixerbw.bwgreengam);
+    if (!pedited || pedited->chmixerbw.bwbluegam)  	keyFile.set_integer ("Channel Mixer", "bwbluegam", chmixerbw.bwbluegam);
+    if (!pedited || pedited->chmixerbw.fil)          	keyFile.set_string  ("Channel Mixer", "Filter",  chmixerbw.fil );
+    if (!pedited || pedited->chmixerbw.met)          	keyFile.set_string  ("Channel Mixer", "Met",  chmixerbw.met );
+    if (!pedited || pedited->chmixerbw.set)          	keyFile.set_string  ("Channel Mixer", "Set",  chmixerbw.set );
+    if (!pedited || pedited->chmixerbw.bworan)   	   	keyFile.set_integer ("Channel Mixer", "bworan", chmixerbw.bworan);
+    if (!pedited || pedited->chmixerbw.bwyell)      	keyFile.set_integer ("Channel Mixer", "bwyell", chmixerbw.bwyell);
+    if (!pedited || pedited->chmixerbw.bwcyan)   	   	keyFile.set_integer ("Channel Mixer", "bwcyan", chmixerbw.bwcyan);
+    if (!pedited || pedited->chmixerbw.bwmag)      	keyFile.set_integer ("Channel Mixer", "bwmag", chmixerbw.bwmag);
+    if (!pedited || pedited->chmixerbw.bwpur)      	keyFile.set_integer ("Channel Mixer", "bwpur", chmixerbw.bwpur);
+    if (!pedited || pedited->chmixerbw.vcurve) {
+        Glib::ArrayHandle<double> vcurve = chmixerbw.vcurve;
+        keyFile.set_double_list("Channel Mixer", "VCurve", vcurve);
     }
 
     // save luma curve
@@ -1084,6 +1174,7 @@ if (keyFile.has_group ("Channel Mixer")) {
             pedited->chmixer.green[0] = pedited->chmixer.green[1] = pedited->chmixer.green[2] = true;
             pedited->chmixer.blue[0]  = pedited->chmixer.blue[1]  = pedited->chmixer.blue[2] = true;
         }
+		
         Glib::ArrayHandle<int> rmix = keyFile.get_integer_list ("Channel Mixer", "Red");
         Glib::ArrayHandle<int> gmix = keyFile.get_integer_list ("Channel Mixer", "Green");
         Glib::ArrayHandle<int> bmix = keyFile.get_integer_list ("Channel Mixer", "Blue");
@@ -1091,6 +1182,41 @@ if (keyFile.has_group ("Channel Mixer")) {
         memcpy (chmixer.green, gmix.data(), 3*sizeof(int));
         memcpy (chmixer.blue, bmix.data(), 3*sizeof(int));
     }
+	//load channel mixer BW
+    if (keyFile.has_key ("Channel Mixer", "CurveMode"))      {
+        Glib::ustring sMode = keyFile.get_string ("Channel Mixer", "CurveMode");
+        if      (sMode == "Standardbw")            chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_STD_BW;
+        else if (sMode == "FilmLikebw")            chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_FILMLIKE_BW;
+        else if (sMode == "SatAndValueBlendingbw") chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_SATANDVALBLENDING_BW;
+        else if (sMode == "WeightedStdbw")         chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW;
+        if (pedited) pedited->chmixerbw.curveMode = true; 
+    }
+    if (keyFile.has_key ("Channel Mixer", "CurveMode2"))      {
+        Glib::ustring sMode2 = keyFile.get_string ("Channel Mixer", "CurveMode2");
+        if      (sMode2 == "Standard")            chmixerbw.curveMode2 = ChannelMixerbwParams::TC_MODE_STD_BW;
+        else if (sMode2 == "WeightedStd")         chmixerbw.curveMode2 = ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW;
+        if (pedited) pedited->chmixerbw.curveMode2 = true; 
+    }
+    if (keyFile.has_key ("Channel Mixer", "Autoc"))             { chmixerbw.autoc         = keyFile.get_boolean ("Channel Mixer", "Autoc"); if (pedited) pedited->chmixerbw.autoc = true; }	
+    if (keyFile.has_key ("Channel Mixer", "Enabled"))             { chmixerbw.enabled         = keyFile.get_boolean ("Channel Mixer", "Enabled"); if (pedited) pedited->chmixerbw.enabled = true; }
+    if (keyFile.has_key ("Channel Mixer", "EnabledLm"))             { chmixerbw.enabledLm         = keyFile.get_boolean ("Channel Mixer", "EnabledLm"); if (pedited) pedited->chmixerbw.enabledLm = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwred"))   			  { chmixerbw.bwred   = keyFile.get_integer ("Channel Mixer", "bwred"); if (pedited) pedited->chmixerbw.bwred = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwgreen"))   			{ chmixerbw.bwgreen   = keyFile.get_integer ("Channel Mixer", "bwgreen"); if (pedited) pedited->chmixerbw.bwgreen = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwblue"))   			  { chmixerbw.bwblue   = keyFile.get_integer ("Channel Mixer", "bwblue"); if (pedited) pedited->chmixerbw.bwblue = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwredgam"))   			  { chmixerbw.bwredgam   = keyFile.get_integer ("Channel Mixer", "bwredgam"); if (pedited) pedited->chmixerbw.bwredgam = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwgreengam"))   			{ chmixerbw.bwgreengam   = keyFile.get_integer ("Channel Mixer", "bwgreengam"); if (pedited) pedited->chmixerbw.bwgreengam = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwbluegam"))   			  { chmixerbw.bwbluegam   = keyFile.get_integer ("Channel Mixer", "bwbluegam"); if (pedited) pedited->chmixerbw.bwbluegam = true; }
+    if (keyFile.has_key ("Channel Mixer", "Filter"))    		 {chmixerbw.fil = keyFile.get_string  ("Channel Mixer", "Filter"); if (pedited) pedited->chmixerbw.fil = true; }
+    if (keyFile.has_key ("Channel Mixer", "Set"))    		 {chmixerbw.set = keyFile.get_string  ("Channel Mixer", "Set"); if (pedited) pedited->chmixerbw.set = true; }
+    if (keyFile.has_key ("Channel Mixer", "Met"))    		 {chmixerbw.met = keyFile.get_string  ("Channel Mixer", "Met"); if (pedited) pedited->chmixerbw.met = true; }
+    if (keyFile.has_key ("Channel Mixer", "bworan"))   			  { chmixerbw.bworan   = keyFile.get_integer ("Channel Mixer", "bworan"); if (pedited) pedited->chmixerbw.bworan = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwyell"))   			{ chmixerbw.bwyell   = keyFile.get_integer ("Channel Mixer", "bwyell"); if (pedited) pedited->chmixerbw.bwyell = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwcyan"))   			  { chmixerbw.bwcyan   = keyFile.get_integer ("Channel Mixer", "bwcyan"); if (pedited) pedited->chmixerbw.bwcyan = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwmag"))   			{ chmixerbw.bwmag   = keyFile.get_integer ("Channel Mixer", "bwmag"); if (pedited) pedited->chmixerbw.bwmag = true; }
+    if (keyFile.has_key ("Channel Mixer", "bwpur"))   			{ chmixerbw.bwpur   = keyFile.get_integer ("Channel Mixer", "bwpur"); if (pedited) pedited->chmixerbw.bwpur = true; }
+     if (ppVersion>=300) {  
+   if (keyFile.has_key ("Channel Mixer", "VCurve")) {chmixerbw.vcurve = keyFile.get_double_list ("Channel Mixer", "VCurve"); if (pedited) pedited->chmixerbw.vcurve = true; }
+	}
 }
 
     // load luma curve
@@ -1766,6 +1892,27 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& !memcmp (&chmixer.red, &other.chmixer.red, 3*sizeof(int))
 		&& !memcmp (&chmixer.green, &other.chmixer.green, 3*sizeof(int))
 		&& !memcmp (&chmixer.blue, &other.chmixer.blue, 3*sizeof(int))
+		&& chmixerbw.bwred == other.chmixerbw.bwred
+		&& chmixerbw.bwgreen == other.chmixerbw.bwgreen
+		&& chmixerbw.bwblue == other.chmixerbw.bwblue
+		&& chmixerbw.bwredgam == other.chmixerbw.bwredgam
+		&& chmixerbw.bwgreengam == other.chmixerbw.bwgreengam
+		&& chmixerbw.bwbluegam == other.chmixerbw.bwbluegam
+		&& chmixerbw.fil == other.chmixerbw.fil
+		&& chmixerbw.set == other.chmixerbw.set	
+		&& chmixerbw.met == other.chmixerbw.met	
+		&& chmixerbw.bworan == other.chmixerbw.bworan
+		&& chmixerbw.bwyell == other.chmixerbw.bwyell	
+		&& chmixerbw.bwmag == other.chmixerbw.bwmag
+		&& chmixerbw.bwcyan == other.chmixerbw.bwcyan		
+		&& chmixerbw.bwpur == other.chmixerbw.bwpur	
+		&& chmixerbw.vcurve == other.chmixerbw.vcurve
+		&& chmixerbw.curve == other.chmixerbw.curve
+		&& chmixerbw.curve2 == other.chmixerbw.curve2
+        && chmixerbw.curveMode == other.chmixerbw.curveMode
+        && chmixerbw.curveMode2 == other.chmixerbw.curveMode2
+        && chmixerbw.autoc == other.chmixerbw.autoc
+		
 		&& hlrecovery.enabled == other.hlrecovery.enabled
 		&& hlrecovery.method == other.hlrecovery.method
 		&& resize.scale == other.resize.scale

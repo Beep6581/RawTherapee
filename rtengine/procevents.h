@@ -236,7 +236,31 @@ enum ProcEvent {
         EvGradientEnabled=210,
         EvPCVignette=211,
         EvPCVignetteEnabled=212,
-	NUMOFEVENTS=213
+	EvBWChmixEnabled=213,	
+	EvBWred=214,
+	EvBWgreen=215,
+	EvBWblue=216,
+	EvBWredgam=217,
+	EvBWgreengam=218,
+	EvBWbluegam=219,
+	EvBWfil=220,
+	EvBWset=221,
+	EvBWoran=222,
+	EvBWyell=223,
+	EvBWcyan=224,
+	EvBWmag=225,
+	EvBWpur=226,
+	EvBWequalV=227,
+	EvBWChmixEnabledLm=228,
+	EvBWmet=229,
+	EvToneCurvebw1=230,
+	EvToneCurveBWMode1=231,	
+	EvToneCurvebw2=232,
+	EvToneCurveBWMode2=233,	
+	EvAutoch=234,	
+	EvFixedch=235,	
+	EvNeutralBW=236,
+	NUMOFEVENTS=237
 };
 }
 #endif

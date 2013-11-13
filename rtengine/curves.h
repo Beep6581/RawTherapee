@@ -42,6 +42,7 @@ using namespace std;
 namespace rtengine {
     class ToneCurve;
     class ColorAppearance;
+    class ChMixerbw;
 
 class CurveFactory {
 
@@ -180,8 +181,20 @@ class CurveFactory {
 
   public:
     static void complexCurve (double ecomp, double black, double hlcompr, double hlcomprthresh, double shcompr, double br, double contr,
-							  double gamma_, bool igamma_, procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2, LUTu & histogram, LUTu & histogramCropped,
-							  LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2, int skip=1);
+							  double gamma_, bool igamma_, procparams::ToneCurveParams::eTCModeId curveMode, const std::vector<double>& curvePoints, procparams::ToneCurveParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2, 
+							  
+							  LUTu & histogram, LUTu & histogramCropped,
+							  LUTf & hlCurve, LUTf & shCurve,LUTf & outCurve, LUTu & outBeforeCCurveHistogram, ToneCurve & outToneCurve, ToneCurve & outToneCurve2, 
+				  
+							  int skip=1);
+	static void curveBW (
+		procparams::ChannelMixerbwParams::eTCModeId curveModeb, const std::vector<double>& curvePointsbw,
+		procparams::ChannelMixerbwParams::eTCModeId curveModeb2, const std::vector<double>& curvePointsbw2,
+		LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram, 
+		ChMixerbw & customToneCurvebw1,
+		ChMixerbw & customToneCurvebw2,
+		int skip);
+							  
 	static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili,  double saturation, double rstprotection, const std::vector<double>& acurvePoints,
 								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& cclurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, 
 								LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
@@ -311,6 +324,17 @@ class ToneCurve {
     operator bool (void) const { return lutToneCurve; }
 };
 
+class ChMixerbw {
+  public:
+    LUTf lutBWCurve;  // 0xffff range
+
+    virtual ~ChMixerbw() {};
+
+    void Reset();
+    void Set(Curve *pCurve);
+    operator bool (void) const { return lutBWCurve; }
+};
+
 class ColorAppearance {
   public:
     LUTf lutColCurve;  // 0xffff range
@@ -391,8 +415,20 @@ class StandardToneCurve : public ToneCurve {
   public:
     void Apply(float& r, float& g, float& b) const;
 };
+class StandardToneCurvebw : public ChMixerbw {
+  public:
+    void Apply(float& r, float& g, float& b) const;
+};
 
 class AdobeToneCurve : public ToneCurve {
+  private:
+    void RGBTone(float& r, float& g, float& b) const;  // helper for tone curve
+
+  public:
+    void Apply(float& r, float& g, float& b) const;
+};
+
+class AdobeToneCurvebw : public ChMixerbw {
   private:
     void RGBTone(float& r, float& g, float& b) const;  // helper for tone curve
 
@@ -405,6 +441,11 @@ class SatAndValueBlendingToneCurve : public ToneCurve {
     void Apply(float& r, float& g, float& b) const;
 };
 
+class SatAndValueBlendingToneCurvebw : public ChMixerbw {
+  public:
+    void Apply(float& r, float& g, float& b) const;
+};
+
 class WeightedStdToneCurve : public ToneCurve {
   private:
     float Triangle(float refX, float refY, float X2) const;
@@ -412,6 +453,12 @@ class WeightedStdToneCurve : public ToneCurve {
     void Apply(float& r, float& g, float& b) const;
 };
 
+class WeightedStdToneCurvebw : public ChMixerbw {
+  private:
+    float Triangle(float refX, float refY, float X2) const;
+  public:
+    void Apply(float& r, float& g, float& b) const;
+};
 
 // Standard tone curve
 inline void StandardToneCurve::Apply (float& r, float& g, float& b) const {
@@ -421,6 +468,15 @@ inline void StandardToneCurve::Apply (float& r, float& g, float& b) const {
     r = lutToneCurve[r];
     g = lutToneCurve[g];
     b = lutToneCurve[b];
+}
+// Standard tone curve
+inline void StandardToneCurvebw::Apply (float& r, float& g, float& b) const {
+
+    assert (lutBWCurve);
+
+    r = lutBWCurve[r];
+    g = lutBWCurve[g];
+    b = lutBWCurve[b];
 }
 
 // Tone curve according to Adobe's reference implementation
@@ -446,6 +502,26 @@ inline void AdobeToneCurve::Apply (float& r, float& g, float& b) const {
         else             RGBTone (g, b, r); // Case 7: g >= b >  r
     }
 }
+inline void AdobeToneCurvebw::Apply (float& r, float& g, float& b) const {
+
+    assert (lutBWCurve);
+
+    if (r >= g) {
+        if      (g > b) RGBTone (r, g, b); // Case 1: r >= g >  b
+        else if (b > r) RGBTone (b, r, g); // Case 2: b >  r >= g
+        else if (b > g) RGBTone (r, b, g); // Case 3: r >= b >  g
+        else {                             // Case 4: r >= g == b
+            r = lutBWCurve[r];
+            g = lutBWCurve[g];
+            b = g;
+        }
+    }
+    else {
+        if      (r >= b) RGBTone (g, r, b); // Case 5: g >  r >= b
+        else if (b >  g) RGBTone (b, g, r); // Case 6: b >  g >  r
+        else             RGBTone (g, b, r); // Case 7: g >= b >  r
+    }
+}
 
 inline void AdobeToneCurve::RGBTone (float& r, float& g, float& b) const {
     float rold=r,gold=g,bold=b;
@@ -454,8 +530,25 @@ inline void AdobeToneCurve::RGBTone (float& r, float& g, float& b) const {
     b = lutToneCurve[bold];
     g = b + ((r - b) * (gold - bold) / (rold - bold));
 }
+inline void AdobeToneCurvebw::RGBTone (float& r, float& g, float& b) const {
+    float rold=r,gold=g,bold=b;
+
+    r = lutBWCurve[rold];
+    b = lutBWCurve[bold];
+    g = b + ((r - b) * (gold - bold) / (rold - bold));
+}
 
 inline float WeightedStdToneCurve::Triangle(float a, float a1, float b) const {
+	if (a != b) {
+		float b1;
+		float a2 = a1 - a;
+		if (b < a) { b1 = b + a2 *      b  /     a ; }
+		else       { b1 = b + a2 * (65535.f-b) / (65535.f-a); }
+		return b1;
+	}
+	return a1;
+}
+inline float WeightedStdToneCurvebw::Triangle(float a, float a1, float b) const {
 	if (a != b) {
 		float b1;
 		float a2 = a1 - a;
@@ -489,6 +582,27 @@ inline void WeightedStdToneCurve::Apply (float& r, float& g, float& b) const {
     b = CLIP<float>(b1*0.25f + b2*0.25f + b3*0.50f);
 }
 
+inline void WeightedStdToneCurvebw::Apply (float& r, float& g, float& b) const {
+
+    assert (lutBWCurve);
+
+    float r1 = lutBWCurve[r];
+    float g1 = Triangle(r, r1, g);
+    float b1 = Triangle(r, r1, b);
+
+    float g2 = lutBWCurve[g];
+    float r2 = Triangle(g, g2, r);
+    float b2 = Triangle(g, g2, b);
+
+    float b3 = lutBWCurve[b];
+    float r3 = Triangle(b, b3, r);
+    float g3 = Triangle(b, b3, g);
+
+    r = CLIP<float>( r1*0.50f + r2*0.25f + r3*0.25f);
+    g = CLIP<float>(g1*0.25f + g2*0.50f + g3*0.25f);
+    b = CLIP<float>(b1*0.25f + b2*0.25f + b3*0.50f);
+}
+
 // Tone curve modifying the value channel only, preserving hue and saturation
 // values in 0xffff space
 inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) const {
@@ -499,6 +613,35 @@ inline void SatAndValueBlendingToneCurve::Apply (float& r, float& g, float& b) c
     float lum = (r+g+b)/3.f;
     //float lum = Color::rgbLuminance(r, g, b);
     float newLum = lutToneCurve[lum];
+    if (newLum == lum)
+    	return;
+    bool increase = newLum > lum;
+
+    Color::rgb2hsv(r, g, b, h, s, v);
+
+    if (increase) {
+    	// Linearly targeting Value = 1 and Saturation = 0
+        float coef = (newLum-lum)/(65535.f-lum);
+        float dV = (1.f-v)*coef;
+        s *= 1.f-coef;
+    	Color::hsv2rgb(h, s, v+dV, r, g, b);
+    }
+    else {
+    	// Linearly targeting Value = 0
+        float coef = (lum-newLum)/lum ;
+        float dV = v*coef;
+    	Color::hsv2rgb(h, s, v-dV, r, g, b);
+    }
+}
+
+inline void SatAndValueBlendingToneCurvebw::Apply (float& r, float& g, float& b) const {
+
+    assert (lutBWCurve);
+
+    float h, s, v;
+    float lum = (r+g+b)/3.f;
+    //float lum = Color::rgbLuminance(r, g, b);
+    float newLum = lutBWCurve[lum];
     if (newLum == lum)
     	return;
     bool increase = newLum > lum;

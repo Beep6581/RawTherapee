@@ -142,6 +142,8 @@ void BatchToolPanelCoordinator::initSession () {
 			icm->setAdjusterBehavior (false, false);
 			
 			chmixer->setAdjusterBehavior (false);
+			chmixerbw->setAdjusterBehavior (false,false, false);
+			
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false);
 			dirpyrdenoise->setAdjusterBehavior (false, false,false,false,false,false);
@@ -170,7 +172,8 @@ void BatchToolPanelCoordinator::initSession () {
 			sharpenMicro->setAdjusterBehavior (options.baBehav[ADDSET_SHARPENMICRO_AMOUNT],options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY]);
 			icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA],options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
 			
-			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER]);
+			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
+			chmixerbw->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER_BW],options.baBehav[ADDSET_CHMIXER_BWG], options.baBehav[ADDSET_CHMIXER_BWF]);
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
 			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ]);
 			dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA],options.baBehav[ADDSET_DIRPYRDN_LUMDET],options.baBehav[ADDSET_DIRPYRDN_CHROMA],options.baBehav[ADDSET_DIRPYRDN_CHROMARED],options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA]);
@@ -201,6 +204,10 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY])  pparams.sharpenMicro.uniformity = 0;
 
 			if (options.baBehav[ADDSET_CHMIXER]) for (int i=0; i<3; i++) pparams.chmixer.red[i] = pparams.chmixer.green[i] = pparams.chmixer.blue[i] = 0;
+			if (options.baBehav[ADDSET_CHMIXER_BW]) pparams.chmixerbw.bwred=pparams.chmixerbw.bwgreen=pparams.chmixerbw.bwblue = 0;
+			if (options.baBehav[ADDSET_CHMIXER_BWG]) pparams.chmixerbw.bwredgam=pparams.chmixerbw.bwgreengam=pparams.chmixerbw.bwbluegam = 0;
+			if (options.baBehav[ADDSET_CHMIXER_BWF]) pparams.chmixerbw.bworan=pparams.chmixerbw.bwyell = 0;
+
 			//if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
 
 			if (options.baBehav[ADDSET_WB_TEMPERATURE])  pparams.wb.temperature = 0;

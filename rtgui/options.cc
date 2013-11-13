@@ -157,6 +157,9 @@ void Options::updatePaths() {
         lastVibranceCurvesDir = preferredPath;
     if (loadSaveProfilePath.empty() || !safe_file_test (loadSaveProfilePath, Glib::FILE_TEST_EXISTS) || !safe_file_test (loadSaveProfilePath, Glib::FILE_TEST_IS_DIR))
         loadSaveProfilePath = preferredPath;
+    if (lastBWCurvesDir.empty() || !safe_file_test (lastBWCurvesDir, Glib::FILE_TEST_EXISTS) || !safe_file_test (lastBWCurvesDir, Glib::FILE_TEST_IS_DIR))
+        lastBWCurvesDir = preferredPath;
+		
 }
 
 Glib::ustring Options::getPreferredProfilePath() {
@@ -430,6 +433,9 @@ void Options::setDefaults () {
 			0,  // ADDSET_DIRPYRDN_CHROMABLUE			
 			0,  // ADDSET_DIRPYRDN_GAMMA
 			0,  // ADDSET_CHMIXER
+			0,  // ADDSET_CHMIXER_BW
+			0,  // ADDSET_CHMIXER_BWG	
+			0,  // ADDSET_CHMIXER_BWF			
 			0,  // ADDSET_PREPROCESS_GREENEQUIL
 			0,  // ADDSET_PREPROCESS_LINEDENOISE
 			0,  // ADDSET_RAWCACORR
@@ -504,7 +510,7 @@ void Options::setDefaults () {
 	lastIccDir = rtSettings.iccDirectory;
 	lastDarkframeDir = rtSettings.darkFramesPath;
 	lastFlatfieldDir = rtSettings.flatFieldsPath;
-
+//	rtSettings.bw_complementary = true;
 	// There is no reasonable default for curves. We can still suppose that they will take place
 	// in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
 	// of the one pointed to by the "profile" field.
@@ -517,6 +523,8 @@ void Options::setDefaults () {
 	lastToneCurvesDir = "";
 	lastVibranceCurvesDir = "";
 	lastProfilingReferenceDir = "";
+	lastBWCurvesDir = "";
+	
 }
 
 Options* Options::copyFrom (Options* other) {
@@ -720,6 +728,7 @@ if (keyFile.has_group ("Color Management")) {
 
     if (keyFile.has_key ("Color Management", "WhiteBalanceSpotSize")) whiteBalanceSpotSize      = keyFile.get_integer("Color Management", "WhiteBalanceSpotSize");
     if( keyFile.has_key ("Color Management", "GamutICC"))       rtSettings.gamutICC             = keyFile.get_boolean("Color Management", "GamutICC");
+ //   if( keyFile.has_key ("Color Management", "BWcomplement"))   rtSettings.bw_complementary     = keyFile.get_boolean("Color Management", "BWcomplement");
     if( keyFile.has_key ("Color Management", "Ciecamfloat"))    rtSettings.ciecamfloat          = keyFile.get_boolean("Color Management", "Ciecamfloat");
     if( keyFile.has_key ("Color Management", "AdobeRGB"))       rtSettings.adobe                = keyFile.get_string("Color Management", "AdobeRGB");
     if( keyFile.has_key ("Color Management", "ProPhoto"))       rtSettings.prophoto             = keyFile.get_string("Color Management", "ProPhoto");
@@ -790,6 +799,8 @@ if (keyFile.has_group ("Dialogs")) {
     safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
+    safeDirGet(keyFile, "Dialogs", "LastBWCurvesDir", lastBWCurvesDir);
+	
     safeDirGet(keyFile, "Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
     safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
@@ -1002,6 +1013,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string  ("Color Management", "Bruce", rtSettings.bruce);
     keyFile.set_integer ("Color Management", "WhiteBalanceSpotSize", whiteBalanceSpotSize);
     keyFile.set_boolean ("Color Management", "GamutICC", rtSettings.gamutICC);
+ //   keyFile.set_boolean ("Color Management", "BWcomplement", rtSettings.bw_complementary);
     keyFile.set_boolean ("Color Management", "Ciecamfloat", rtSettings.ciecamfloat);
     keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
     keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
@@ -1057,6 +1069,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_string ("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
     keyFile.set_string ("Dialogs", "LastPFCurvesDir", lastPFCurvesDir);
     keyFile.set_string ("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
+    keyFile.set_string ("Dialogs", "LastBWCurvesDir", lastBWCurvesDir);
     keyFile.set_string ("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
     keyFile.set_string ("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
     keyFile.set_string ("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);

@@ -114,6 +114,8 @@ class ImProcCoordinator : public StagedImageProcessor {
         ColorAppearance customColCurve1;
         ColorAppearance customColCurve2;
         ColorAppearance customColCurve3;
+		ChMixerbw customToneCurvebw1;
+		ChMixerbw customToneCurvebw2;
 
         LUTu rcurvehist, rcurvehistCropped, rbeforehist;
         LUTu gcurvehist, gcurvehistCropped, gbeforehist;
@@ -126,6 +128,8 @@ class ImProcCoordinator : public StagedImageProcessor {
         PreviewImageListener* imageListener;
         AutoExpListener* aeListener;
         AutoCamListener* acListener;
+        AutoBWListener* abwListener;
+		
         HistogramListener* hListener;
         std::vector<SizeListener*> sizeListeners;
 
@@ -196,6 +200,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setAutoExpListener  (AutoExpListener* ael)  {aeListener = ael; }
         void setHistogramListener(HistogramListener *h)  {hListener = h; }
         void setAutoCamListener  (AutoCamListener* acl)  {acListener = acl; }
+        void setAutoBWListener  (AutoBWListener* abw)  {abwListener = abw; }
 
         void saveInputICCReference (const Glib::ustring& fname);
 

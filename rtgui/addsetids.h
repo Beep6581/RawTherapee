@@ -73,8 +73,11 @@
 #define ADDSET_PCVIGNETTE_STRENGTH      65
 #define ADDSET_PCVIGNETTE_FEATHER       66
 #define ADDSET_PCVIGNETTE_ROUNDNESS     67
+#define ADDSET_CHMIXER_BW               68
+#define ADDSET_CHMIXER_BWG              69
+#define ADDSET_CHMIXER_BWF              70
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                68 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                71 // THIS IS USED AS A DELIMITER!!
 
 #endif

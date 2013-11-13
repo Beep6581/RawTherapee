@@ -2,12 +2,13 @@
 #define _PPVERSION_
 
 // This number have to be incremented whenever the PP3 file format is modified
-#define PPVERSION 311
+#define PPVERSION 312
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
-
+   312  2013-11-08
+	  added numerous changes to [channel mixer]
    311  2013-11-07
       [Gradient] new tool (gradient/graduated filter
       [PCVignette] new tool (vignette filter)

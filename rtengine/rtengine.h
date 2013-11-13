@@ -256,6 +256,14 @@ namespace rtengine {
             virtual void autoCamChanged (double ccam) {}
             virtual void adapCamChanged (double cadap) {}
     };
+	
+	class AutoBWListener {
+		public :
+            virtual ~AutoBWListener() {}
+			virtual void BWChanged (double redbw, double greenbw, double bluebw) {}
+			
+ 	};		
+	
 
     /** This class represents a detailed part of the image (looking through a kind of window).
       * It can be created and destroyed with the appropriate members of StagedImageProcessor.
@@ -337,6 +345,7 @@ namespace rtengine {
             virtual void        setHistogramListener    (HistogramListener *l) =0;
             virtual void        setPreviewImageListener (PreviewImageListener* l) =0;
             virtual void        setAutoCamListener      (AutoCamListener* l) =0;
+            virtual void        setAutoBWListener     	(AutoBWListener* l) =0;
 
             virtual ~StagedImageProcessor () {}
 

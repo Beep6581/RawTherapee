@@ -255,6 +255,7 @@ class Options {
     Glib::ustring lastToneCurvesDir;
     Glib::ustring lastVibranceCurvesDir;
     Glib::ustring lastProfilingReferenceDir;
+    Glib::ustring lastBWCurvesDir;
 
     Options ();
 

@@ -216,6 +216,29 @@ void ParamsEdited::set (bool v) {
 	chmixer.blue[0] = v;
 	chmixer.blue[1] = v;
 	chmixer.blue[2] = v;
+	chmixerbw.enabled   = v;
+	chmixerbw.enabledLm   = v;
+	chmixerbw.bwred   = v;
+	chmixerbw.bwgreen   = v;
+	chmixerbw.bwblue   = v;
+	chmixerbw.bwredgam   = v;
+	chmixerbw.bwgreengam   = v;
+	chmixerbw.bwbluegam   = v;
+	chmixerbw.fil   = v;
+	chmixerbw.set   = v;
+	chmixerbw.met   = v;
+	chmixerbw.bworan   = v;
+	chmixerbw.bwyell   = v;
+	chmixerbw.bwcyan   = v;
+	chmixerbw.bwmag   = v;
+	chmixerbw.bwpur   = v;	
+	chmixerbw.vcurve = v;
+	chmixerbw.curve      = v;
+    chmixerbw.curveMode  = v;
+	chmixerbw.curve2      = v;
+    chmixerbw.curveMode2  = v;
+	chmixerbw.autoc    = v;
+	
 	hlrecovery.enabled   = v;
 	hlrecovery.method    = v;
 	resize.scale     = v;
@@ -474,7 +497,28 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         chmixer.blue[0] = chmixer.blue[0] && p.chmixer.blue[0] == other.chmixer.blue[0];
         chmixer.blue[1] = chmixer.blue[1] && p.chmixer.blue[1] == other.chmixer.blue[1];
         chmixer.blue[2] = chmixer.blue[2] && p.chmixer.blue[2] == other.chmixer.blue[2];
-        hlrecovery.enabled = hlrecovery.enabled && p.hlrecovery.enabled == other.hlrecovery.enabled;
+        chmixerbw.enabled = chmixerbw.enabled && p.chmixerbw.enabled == other.chmixerbw.enabled;
+        chmixerbw.enabledLm = chmixerbw.enabledLm && p.chmixerbw.enabledLm == other.chmixerbw.enabledLm;
+        chmixerbw.bwred = chmixerbw.bwred && p.chmixerbw.bwred == other.chmixerbw.bwred;
+        chmixerbw.bwgreen = chmixerbw.bwgreen && p.chmixerbw.bwgreen == other.chmixerbw.bwgreen;
+        chmixerbw.bwblue = chmixerbw.bwblue && p.chmixerbw.bwblue == other.chmixerbw.bwblue;
+        chmixerbw.bwredgam = chmixerbw.bwredgam && p.chmixerbw.bwredgam == other.chmixerbw.bwredgam;
+        chmixerbw.bwgreengam = chmixerbw.bwgreengam && p.chmixerbw.bwgreengam == other.chmixerbw.bwgreengam;
+        chmixerbw.bwbluegam = chmixerbw.bwbluegam && p.chmixerbw.bwbluegam == other.chmixerbw.bwbluegam;
+        chmixerbw.bworan = chmixerbw.bworan && p.chmixerbw.bworan == other.chmixerbw.bworan;
+        chmixerbw.bwyell = chmixerbw.bwyell && p.chmixerbw.bwyell == other.chmixerbw.bwyell;
+        chmixerbw.bwcyan = chmixerbw.bwcyan && p.chmixerbw.bwcyan == other.chmixerbw.bwcyan;
+        chmixerbw.bwmag = chmixerbw.bwmag && p.chmixerbw.bwmag == other.chmixerbw.bwmag;
+        chmixerbw.bwpur = chmixerbw.bwpur && p.chmixerbw.bwpur == other.chmixerbw.bwpur;	
+        chmixerbw.fil = chmixerbw.fil && p.chmixerbw.fil == other.chmixerbw.fil;
+        chmixerbw.set = chmixerbw.set && p.chmixerbw.set == other.chmixerbw.set;
+        chmixerbw.vcurve = chmixerbw.vcurve && p.chmixerbw.vcurve == other.chmixerbw.vcurve;
+        chmixerbw.met = chmixerbw.met && p.chmixerbw.met == other.chmixerbw.met;
+        chmixerbw.curve = chmixerbw.curve && p.chmixerbw.curve == other.chmixerbw.curve;
+        chmixerbw.curve2 = chmixerbw.curve2 && p.chmixerbw.curve2 == other.chmixerbw.curve2;
+        chmixerbw.autoc = chmixerbw.autoc && p.chmixerbw.autoc == other.chmixerbw.autoc;
+		
+		hlrecovery.enabled = hlrecovery.enabled && p.hlrecovery.enabled == other.hlrecovery.enabled;
         hlrecovery.method = hlrecovery.method && p.hlrecovery.method == other.hlrecovery.method;
         resize.scale = resize.scale && p.resize.scale == other.resize.scale;
         resize.appliesTo = resize.appliesTo && p.resize.appliesTo == other.resize.appliesTo;
@@ -589,6 +633,28 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
 		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
 	}
+	if (chmixerbw.enabled)		toEdit.chmixerbw.enabled	= mods.chmixerbw.enabled;
+	if (chmixerbw.enabledLm)		toEdit.chmixerbw.enabledLm	= mods.chmixerbw.enabledLm;
+	if (chmixerbw.bwgreen)		toEdit.chmixerbw.bwgreen	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwgreen + mods.chmixerbw.bwgreen : mods.chmixerbw.bwgreen;
+	if (chmixerbw.bwred)			toEdit.chmixerbw.bwred	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwred + mods.chmixerbw.bwred : mods.chmixerbw.bwred;
+	if (chmixerbw.bwblue)			toEdit.chmixerbw.bwblue	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwblue + mods.chmixerbw.bwblue : mods.chmixerbw.bwblue;
+	if (chmixerbw.bwgreengam)		toEdit.chmixerbw.bwgreengam	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwgreengam + mods.chmixerbw.bwgreengam : mods.chmixerbw.bwgreengam;
+	if (chmixerbw.bwredgam)			toEdit.chmixerbw.bwredgam	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwredgam + mods.chmixerbw.bwredgam : mods.chmixerbw.bwredgam;
+	if (chmixerbw.bwbluegam)			toEdit.chmixerbw.bwbluegam	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwbluegam + mods.chmixerbw.bwbluegam : mods.chmixerbw.bwbluegam;
+	if (chmixerbw.bworan)			toEdit.chmixerbw.bworan	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bworan + mods.chmixerbw.bworan : mods.chmixerbw.bworan;
+	if (chmixerbw.bwyell)			toEdit.chmixerbw.bwyell	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwyell + mods.chmixerbw.bwyell : mods.chmixerbw.bwyell;
+	if (chmixerbw.bwcyan)			toEdit.chmixerbw.bwcyan	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwcyan + mods.chmixerbw.bwcyan : mods.chmixerbw.bwcyan;
+	if (chmixerbw.bwmag)			toEdit.chmixerbw.bwmag	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwmag + mods.chmixerbw.bwmag : mods.chmixerbw.bwmag;
+	if (chmixerbw.bwpur)			toEdit.chmixerbw.bwpur	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwpur + mods.chmixerbw.bwpur : mods.chmixerbw.bwpur;
+	if (chmixerbw.fil)				toEdit.chmixerbw.fil		= mods.chmixerbw.fil;
+	if (chmixerbw.set)				toEdit.chmixerbw.set		= mods.chmixerbw.set;
+	if (chmixerbw.met)				toEdit.chmixerbw.met		= mods.chmixerbw.met;
+	if (chmixerbw.curve)		toEdit.chmixerbw.curve      = mods.chmixerbw.curve;
+	if (chmixerbw.curveMode)	toEdit.chmixerbw.curveMode  = mods.chmixerbw.curveMode;
+	if (chmixerbw.curve2)		toEdit.chmixerbw.curve2      = mods.chmixerbw.curve2;
+	if (chmixerbw.curveMode2)	toEdit.chmixerbw.curveMode2  = mods.chmixerbw.curveMode2;
+	if (chmixerbw.vcurve)		toEdit.chmixerbw.vcurve      = mods.chmixerbw.vcurve;
+	if (chmixerbw.autoc)		toEdit.chmixerbw.autoc      = mods.chmixerbw.autoc;
 
 
 	if (sharpening.edgesonly)				toEdit.sharpening.edgesonly 	= mods.sharpening.edgesonly;
@@ -735,6 +801,18 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
 		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
 	}
+	if (chmixerbw.bwred)			toEdit.chmixerbw.bwred 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwred + mods.chmixerbw.bwred : mods.chmixerbw.bwred;
+	if (chmixerbw.bwgreen)		toEdit.chmixerbw.bwgreen 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwgreen + mods.chmixerbw.bwgreen : mods.chmixerbw.bwgreen;
+	if (chmixerbw.bwblue)			toEdit.chmixerbw.bwblue 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwblue + mods.chmixerbw.bwblue : mods.chmixerbw.bwblue;
+	if (chmixerbw.bwredgam)			toEdit.chmixerbw.bwredgam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwredgam + mods.chmixerbw.bwredgam : mods.chmixerbw.bwredgam;
+	if (chmixerbw.bwgreengam)		toEdit.chmixerbw.bwgreengam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwgreengam + mods.chmixerbw.bwgreengam : mods.chmixerbw.bwgreengam;
+	if (chmixerbw.bwbluegam)			toEdit.chmixerbw.bwbluegam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwbluegam + mods.chmixerbw.bwbluegam : mods.chmixerbw.bwbluegam;
+	if (chmixerbw.bworan)			toEdit.chmixerbw.bworan 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bworan + mods.chmixerbw.bworan : mods.chmixerbw.bworan;
+	if (chmixerbw.bwyell)		toEdit.chmixerbw.bwyell 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwyell + mods.chmixerbw.bwyell : mods.chmixerbw.bwyell;
+	if (chmixerbw.bwcyan)			toEdit.chmixerbw.bwcyan 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwcyan + mods.chmixerbw.bwcyan : mods.chmixerbw.bwcyan;
+	if (chmixerbw.bwmag)		toEdit.chmixerbw.bwmag 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwmag + mods.chmixerbw.bwmag : mods.chmixerbw.bwmag;
+	if (chmixerbw.bwpur)		toEdit.chmixerbw.bwpur 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwpur + mods.chmixerbw.bwpur : mods.chmixerbw.bwpur;
+	
 	if (hlrecovery.enabled)	toEdit.hlrecovery.enabled 	= mods.hlrecovery.enabled;
 	if (hlrecovery.method)	toEdit.hlrecovery.method 	= mods.hlrecovery.method;
 	if (resize.scale)		toEdit.resize.scale 	= mods.resize.scale;
