@@ -1,0 +1,269 @@
+#!/usr/bin/env bash
+# Use this Bash script to test RT processing speed.
+# Written by DrSlony
+# v1  2012-02-10
+# v2  2013-02-15
+# v3  2013-03-04
+# v4  2013-03-07
+# v5  2013-03-23
+# www.rawtherapee.com
+
+revision="tip"
+inFile='http://rawtherapee.com/shared/test_images/colorspace_flowers.pef'
+sidecarDefault=("Neutral.pp3" "Default.pp3")
+buildType="release"
+branch="default"
+rtExe="rawtherapee"
+repo="${HOME}/rawtherapee"
+OPTIND=1 # Reset in case getopts has been used previously in the shell.
+outFileFormat="-t"
+tmpDir="/tmp/rawtherapee-benchmark"
+runs=5
+echo
+
+howto() {
+  fold -s <<END
+Benchmark the time it takes for RawTherapee to process an image file. The designated file will be processed five times in a row, and the average time of those five runs will be calculated.
+
+All options are optional.
+
+Make sure you have no unnecessary background activity - no programs intensively using the CPU. Turn off all P2P, multimedia, graphics editing, games, database, server and other "heavy" software, otherwise the timings will be skewed. You can use the "top" and "ps ux" commands to see a list of running processes and their CPU usage.
+
+Usage:
+  ./benchmarkRT [OPTIONS]
+
+Options:
+  -a        - Run a benchmark for all the tools available in RT, one at a time.
+  -e        - Specify the whole path to (but excluding) the "rawtherapee"
+              executable.
+              e.g. "-e $HOME/rt_${branch}_${buildType}"
+
+  -h        - Print this help screen.
+
+  -i <file> - Input file name with complete path. This can be a file on your
+              hard drive or a url. The url must start with "http". The default
+              behavior if you do not use -i is to download a test file from
+              $inFile
+
+  -s <PP3-1> -s <PP3-2> -s <PP3-#> - Input sidecar file name(s) with full
+              paths. You can specify '-s <PP3-#>' zero or more times. To
+              specify multiple processing profiles, you must precede each
+              file path with '-s'. The processing profile can be a file on
+              your hard drive or a url. Only one url is handled, so if you
+              want to use multiple processing profiles, download them first.
+              The default behaviour if you do not use -s is to use the
+              "Neutral" profile.
+
+Examples:
+  Run the default benchmark (recommended)
+    ./benchmarkRT
+
+  Run a benchmark using your own image file, a RawTherpee executable in a
+  custom directory, and multiple processing profiles:
+    ./benchmarkRT -i /tmp/kittens.raw -s /tmp/kittens.raw.pp3 -s /tmp/kittens_tonemapped.raw.pp3 -s /tmp/kittens_denoised.raw.pp3
+
+Further help:
+  If you need further help, discover bugs or want to request new functionality
+  rn this script, then tell us in the forum or on IRC:
+    http://rawtherapee.com/forum/
+    http://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
+
+END
+}
+
+download () {
+  local retries=10
+  while [[ $retries -ne 0 ]]; do
+    wget --progress=dot:binary --continue --trust-server-names --tries=5 --timestamping "$1" 2>&1 | sed "s/^/\t/"
+    return=${PIPESTATUS[0]}
+    ((retries--))
+    if [[ $return -eq 0 ]]; then # I don't trust wget to only exit with 0 if it downloaded the file succesfully, so I check.
+      if [[ -f "`basename "$1"`" ]]; then
+        break
+      fi
+    fi
+    printf "%s\n\n" "Failed to download \"$1\"" "Retrying: "
+    sleep 1s
+  done
+  if [[ $retries -eq 0 ]]; then
+    printf "%s\n" "Tried to download \"$1\" 10 times but failed. Exiting."
+    exit 1
+  fi
+}
+
+while getopts "ae:h?i:s:" opt; do
+    case "$opt" in
+        a)  testAllTools=1
+            ;;
+        e)  customExeDir="${OPTARG%/}"
+            ;;
+        h|\?)
+            howto
+            exit 0
+            ;;
+        i)  inFile="$OPTARG"
+            ;;
+        s)  sidecarCustom+=("$OPTARG")
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+[ "$1" = "--" ] && shift
+
+inFileName="`basename "${inFile}"`"
+if [[ ! -e "${tmpDir}" ]]; then
+  if [[ ! -w /tmp ]]; then
+    printf "Error: /tmp is not writable.\n"
+    exit 1
+  fi
+  mkdir "$tmpDir"
+fi
+
+trap 'rm -rv "${tmpDir}"; exit 1' HUP INT QUIT ABRT TERM
+
+cd "$tmpDir"
+
+if [[ ${inFile} = http* ]]; then # if inFile is a url and if we haven't downloaded it already, then download it
+  [[ ! -e "${tmpDir}/${inFileName}" ]] && {
+    printf "%s\n\n" "${inFileName} not found in ${tmpDir}, downloading it."
+    [[ ! -w /tmp ]] && { printf "Error: /tmp is not writable.\n"; exit 1; }
+    [[ ! -e "$tmpDir" ]] && mkdir "$tmpDir"
+    cd "$tmpDir"
+    download "$inFile"
+    echo
+  }
+else # otherwise if inFile is not a url, check if it exists
+  [[ ! -e "${inFile}" ]] && { # if it doesnt exist, choke
+    printf "%s\n" "You specified" "-i ${inFile}" "but that file does not exist."
+    exit 1
+  }
+  cp "${inFile}" "${tmpDir}/${inFileName}"
+fi
+
+rtExeDirs=("${customExeDir}" "$HOME/rt_${branch}_${buildType}" "$HOME/rt_${branch}_${buildType}_patched" "$HOME/rawtherapee/")
+for rtExeDir in "${rtExeDirs[@]}"; do
+  if [[ -x "${rtExeDir}/${rtExe}" ]]; then
+    printf "%s\n" "Using RawTherapee executable:" "${rtExeDir}/${rtExe}"
+    break
+  fi
+done
+
+if [[ ! -x "${rtExeDir}/${rtExe}" ]]; then
+  printf "%s\n" "Could not find the RawTherapee executable:" "${rtExeDir}/${rtExe}" "Re-run this script using the -e flag."
+  exit 0
+fi
+
+if [[ $testAllTools -ne 1 ]]; then
+  if [[ -n "${sidecarCustom}" ]]; then # if sidecarCustom was specified
+    if [[ ${sidecarCustom} = http* ]]; then # and if sidecarCustom starts with an http
+      if [[ ! -e "${tmpDir}/$/{sidecarCustom##*/}" ]]; then # and if sidecarCustom hasn't been previously downloaded, then download it
+        printf "${sidecarCustom} not found in ${tmpDir}, downloading it.\n"
+        download "$sidecarCustom"
+      fi
+    else # else if sidecarCustom does not start with an http
+      for sidecarFile in "${sidecarCustom[@]}"; do
+        [[ ! -e "${sidecarFile}" ]] && { # then check if it exists
+        printf "You specified \"-s ${sidecarFile}\" but it does not exist. Make sure you wrote a full, absolute path, e.g.:" "  -s /tmp/kittens_denoise.raw.pp3"
+        exit 1
+      }
+      done
+      unset sidecarFiles
+      sidecarDir=""
+      sidecarFiles=("${sidecarCustom[@]}")
+    fi
+  else # if sidecarCustom was not specified, find the default ones
+    for sidecar in "${sidecarDefault[@]}"; do
+      if [[ -f "${rtExeDir}/profiles/${sidecar}" ]]; then
+        sidecarDir="${rtExeDir}/profiles/"
+      elif [[ -f "${tmpDir}/${sidecar}" ]]; then
+        sidecarDir="${tmpDir}/"
+      else
+        printf "%s\n" "" "Could not find \"${sidecar}\" in \"${rtExeDir}/profiles/\" where it was expected to be." "Downloading the latest \"${sidecar}\" from the repository." ""
+        download "https://rawtherapee.googlecode.com/hg/rtdata/profiles/${sidecar}"
+        sidecarDir="${tmpDir}/"
+      fi
+    done
+    if [[ "${sidecarDir}" = "${tmpDir}/" ]]; then
+      printf "%s\n" "Beware that the downloaded processing profiles might not be entirely compatible with the RawTherapee version you're testing. For authentic and consistent results, make sure that the PP3 files match this RawTherapee version. You can use the -p flag to point benchmarkRT to the correct PP3 file(s)." | fold -s
+    fi
+    sidecarFiles=("${sidecarDefault[@]}")
+  fi
+else
+  unset sidecarFiles avgTable
+  sidecarDir="${tmpDir}/"
+  tools=("Auto Exposure;Exposure;Auto=true" "Sharpening - Unsharp Mask;Sharpening;Enabled=true;Method=usm" "Sharpening - RL Deconvolution;Sharpening;Enabled=true;Method=rld" "Vibrance;Vibrance;Enabled=true" "Edges;SharpenEdge;Enabled=true" "Microcontrast;SharpenMicro;Enabled=true" "CIECAM02;Color appearance;Enabled=true" "Impulse Noise Reduction;Impulse Denoising;Enabled=true" "Defringe;Defringing;Enabled=true" "Noise Reduction;Directional Pyramid Denoising;Enabled=true" "Tone Mapping;EPD;Enabled=true" "Shadows/Highlights;Shadows & Highlights;Enabled=true" "Contrast by Detail Levels;Directional Pyramid Equalizer;Enabled=true" "Raw Chromatic Aberration;RAW;CA=true")
+  for i in "${!tools[@]}"; do
+    IFS=";" read toolNameHuman tool key1 key2 key3 <<< "${tools[$i]}"
+    i=`printf "%02d\n" "$i"`
+    printf "%s\n" "[${tool}]" "$key1" "$key2" "$key3" > "${sidecarDir}/${i} - ${tool}.pp3"
+    sidecarFiles+=("${i} - ${tool}.pp3;${toolNameHuman}")
+  done
+fi
+
+printf "%s\n" "" "--------------------------------------------------------------------------------" "" "Benchmark of RawTherapee"
+printf "%s\n" "`uname -srvmpio`" ""
+hash cpufreq-info 2>/dev/null && cpufreq-info -mo
+printf "%s\n" ""
+
+if [[ ! -f "${rtExeDir}/AboutThisBuild.txt" ]]; then
+  printf "%s\n" "[Could not find ${rtExeDir}/AboutThisBuild.txt]" ""
+else
+  cat "${rtExeDir}/AboutThisBuild.txt"
+fi
+
+printf "%s\n" "Photo:   ${tmpDir}/${inFileName}"
+for sidecar in "${sidecarFiles[@]}"; do
+  if [[ $testAllTools -eq 1 ]]; then
+    IFS=";" read sidecar toolNameHuman <<< "${sidecar}"
+  fi
+  printf "%s\n" "Sidecar: ${sidecarDir}${sidecar}"
+done
+echo
+
+declare -A avgTable
+unset benchmark total sidecar sorted
+for s in "${!sidecarFiles[@]}"; do
+  IFS=";" read sidecar toolNameHuman <<< "${sidecarFiles[s]}"
+  unset benchmark
+  for (( i=1; i<=${runs}; i++ )); do
+    runTime="$( { time "${rtExeDir}/${rtExe}" -o /dev/null -p "${sidecarDir}${sidecar}" "$outFileFormat" -Y -c "${tmpDir}/${inFileName}"; } 2>&1 | grep ^real; )"
+#   runTime=real 0m4.751s
+    runTime=${runTime#*[[:blank:]]}
+#   runTime=0m4.751s
+    minOnly=${runTime%m*}
+    secOnly=${runTime#*m}; secOnly=${secOnly%s*}
+    t="$( printf "%s\n" "scale=3; $secOnly+$minOnly*60" | bc )"
+#   t=4.751
+##  t="$(( $RANDOM %20 )).$(( $RANDOM %999 ))"
+#   benchmark stores time array of each run, gets reset after each PP3
+    benchmark+=("$t")
+#   total stores time array of each run, doesnt get reset, adds up total afterwards
+    total+=("$t")
+    i=`printf "%02d\n" "$i"`
+    if [[ $testAllTools -eq 1 ]]; then
+      printf "%*b" "-50" "Benchmark ${i} \"${toolNameHuman}\"" "7" "${benchmark[$i - 1]}" "" "\n" | sed 's/  /../g'
+    else
+      printf "%*b" "-50" "Benchmark ${i} \"${sidecar##*/}\"" "7" "${benchmark[$i - 1]}" "" "\n" | sed 's/  /../g'
+    fi
+  done
+  avg=$( { printf "%s" "scale=3; ("; IFS="+"; printf "%s" "${benchmark[*]}"; printf "%s\n" ") / ${#benchmark[@]}"; } | bc );
+  if [[ $testAllTools -eq 1 ]]; then
+    printf "%*b" "-50" "Benchmark \"${toolNameHuman}\" average" "7" "${avg}" "" "\n\n" | sed 's/  /../g'
+    avgTable+=(["${toolNameHuman}"]="$avg")
+  else
+    printf "%*b" "-50" "Benchmark \"${sidecar##*/}\" average" "7" "${avg}" "" "\n\n" | sed 's/  /../g'
+    avgTable+=(["${sidecar}"]="$avg")
+  fi
+done
+
+printf "%*b" "-50" "Benchmark total" "7" "`IFS=+; bc -l <<< "${total[*]}"`" "" "\n\n" | sed 's/  /../g'
+
+# Associative arrays don't return in alphanumerical order, must be sorted manually
+IFS=$'\n' sorted=($(sort <<<"${!avgTable[*]}"));
+
+printf "%s\n" "Average times for each tool:"
+for x in "${sorted[@]}"; do
+  printf "%*b" "-50" "${x}" "7" "${avgTable[$x]}" "" "\n" | sed 's/  /../g'
+done

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+cwd="$(cd "$(dirname "$0")"; pwd)"
+app="${cwd%/Contents/*}"
+etc="${cwd}"/etc
+
+# for different os x version (issue 1795)
+cups_dir=/tmp/RT4
+install -d ${cups_dir}
+cp -f /usr/lib/libcups.2.dylib ${cups_dir}
+
+export DYLD_LIBRARY_PATH="${cwd}"/lib:${cups_dir}
+export GTK_EXE_PREFIX="${cwd}"
+export GTK_DATA_PREFIX="${cwd}"
+export GTK_IM_MODULE_FILE="${etc}"/gtk-2.0/gtk.immodules
+export GDK_PIXBUF_MODULE_FILE="${etc}"/gtk-2.0/gdk-pixbuf.loaders
+export XDG_DATA_DIRS="${cwd}"/share
+export PANGO_RC_FILE="${etc}"/pango/pangorc
+
+# environment variables for X11 backend
+if test -d "${etc}"/fonts; then
+  export FONTCONFIG_PATH="${etc}"/fonts
+fi
+
+# strip out system argument
+case $1 in -psn_*) shift;; esac
+
+ln -sf "${app}" /tmp
+
+exec "${cwd}"/rawtherapee-bin "$@"
