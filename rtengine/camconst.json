@@ -300,6 +300,26 @@ highlights, then increase the correction factor above 1.0 until you just start
 seeing stable 100% on all channels, you use the same formula to calculate the
 new smaller white level.
 
+About black levels:
+-------------------
+
+Unlike for white levels it's much more common that black levels can be
+derived from the format. Either it's simply 0 (typical for Nikon cameras), or
+it can be derived from masked pixels (typical for Canon cameras) or otherwise
+be extracted from some tag. Some formats are have built-in subtraction
+information and are pre-processed by DCRaw to end up at a black level of zero
+(Phase One's IIQ). In all, you typically should not care about the black
+level in camconst.json: any information that can be derived from the raw file
+itself should not be specified in camconst.json! Sony's ARW2 is one of the
+few exceptions (which has a single black level around 512), but DCraw
+generally has good constants for these already.
+
+Currently we have chosen not to provide any guide how to measure black levels
+as we don't think it will be a common task (it's also more difficult to do
+than measure white levels). If you experience a black level issue it's more
+likely due to a format parsing bug which should be fixed in DCRaw and/or
+RawTherapee's raw format parser.
+
 */
 {"camera_constants": [
 
