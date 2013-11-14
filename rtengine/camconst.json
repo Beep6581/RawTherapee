@@ -261,19 +261,44 @@ so you get output on the console (you need to start RT from a console to see
 the output). When you load a file you will see a message of current black
 and white levels and if they came from dcraw or camconst.json. If you're
 adjusting an existing camconst.json value you can just read what it is in
-the file and not need to enable verbose output. Reset exposure sliders to
-neutral, and zoom in on a large clipped highlight. Move around the mouse
-pointer within, it should show stable 100% on R G B. If so, the white level
-is not too high, it could however be too low. To test that, go to the raw tab
-and adjust the "whitepoint linear correction factor", reduce it until one of the
-channels is no longer 100%, and then increase in steps of 0.01 until all are 100
-again. Usually you play around in the range 0.90 to 0.99, ie a very small
-adjustment. Then divide the original white level with your adjustment to get a
-new larger white level, which you then enter in your camconst.json file. The
-same procedure can be used if the white level is too high, ie if you see pink
+the file and not need to enable verbose output.
+
+Reset exposure sliders to neutral, and zoom in on a large clipped highlight.
+Move around the mouse pointer within, it should show stable 100% on R G B. If
+so, the white level is not too high, it could however be too low. To test that,
+go to the raw tab and adjust the "whitepoint linear correction factor", reduce
+it until one of the channels is no longer 100%, and then increase in steps of
+0.01 until all are 100 again. Usually you play around in the range 0.90 to
+0.99, ie a very small adjustment. When you've found this factor you should
+apply it on the old white level to find a new larger one. As RT's "whitepoint
+linear correction factor" work after blacklevel subtraction and camconst.json
+want values without it we need to do some math:
+
+BL = black level (typically something near 0, 256, 512 or 1024, find it in the
+     verbose output or if available in camconst.json)
+F =  whitepoint linear correction factor you just found out (typically in the
+     range 0.90 to 0.99 if you need to increase white level, 1.01 to 1.10 if
+     decrease)
+oldWL = old white level, found in verbose output or in camconst.json if
+        available.
+
+new white level = BL + (oldWL - BL) / F
+
+Note that if black level is 0 which it is for many cameras, the formula
+simplifies to: new white level = oldWL / F.
+
+Here's an example from a Canon 1000D: black level is 256, old white level is
+3651, whitepoint correction factor becomes 0.90, then new white level is
+256 + (3651 - 256) / 0.9 = 4028.
+
+If your camera have different black levels per channel use the smallest one
+as that yields the most conservative result.
+
+This new white level you then enter in your camconst.json file. The same
+procedure can be used if the white level is too high, ie if you see pink
 highlights, then increase the correction factor above 1.0 until you just start
-seeing stable 100% on all channels, and then divide the original white level to
-get a new smaller one.
+seeing stable 100% on all channels, you use the same formula to calculate the
+new smaller white level.
 
 */
 {"camera_constants": [
