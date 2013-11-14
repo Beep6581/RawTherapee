@@ -374,75 +374,75 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
         short trans[12]; // set first value to 0 for no change
     } table[] = {
 
-        { "Canon EOS 5D Mark III", 0, 0x3a98,  /* RT */
+        { "Canon EOS 5D Mark III", -1, 0x3a98,  /* RT */
           { 6722,-635,-963,-4287,12460,2028,-908,2162,5668 } },
-        { "Canon EOS 5D", 0, 0xe6c, /* RT */
+        { "Canon EOS 5D", -1, 0xe6c, /* RT */
           { 6319,-793,-614,-5809,13342,2738,-1132,1559,7971 } },
-        { "Canon EOS 6D", 0, 0x3c82,
+        { "Canon EOS 6D", -1, 0x3c82,
           { 7034,-804,-1014,-4420,12564,2058,-851,1994,5758 } },
-        { "Canon EOS 7D", 0, 0x3510, /* RT - Colin Walker */
+        { "Canon EOS 7D", -1, 0x3510, /* RT - Colin Walker */
           { 5962,-171,-732,-4189,12307,2099,-911,1981,6304 } },
-        { "Canon EOS 20D", 0, 0xfff,  /* RT */
+        { "Canon EOS 20D", -1, 0xfff,  /* RT */
           { 7590,-1646,-673,-4697,12411,2568,-627,1118,7295 } },
-        { "Canon EOS 40D", 0, 0x3f60,  /* RT */
+        { "Canon EOS 40D", -1, 0x3f60,  /* RT */
           { 6070,-531,-883,-5763,13647,2315,-1533,2582,6801 } },
-        { "Canon EOS 60D", 0, 0x2ff7, /* RT - Colin Walker */
+        { "Canon EOS 60D", -1, 0x2ff7, /* RT - Colin Walker */
           { 5678,-179,-718,-4389,12381,2243,-869,1819,6380 } },
-        { "Canon EOS 450D", 0, 0x390d, /* RT */
+        { "Canon EOS 450D", -1, 0x390d, /* RT */
           { 6246,-1272,-523,-5075,12357,3075,-1035,1825,7333 } },
-        { "Canon EOS 550D", 0, 0x3dd7, /* RT - Lebedev*/
+        { "Canon EOS 550D", -1, 0x3dd7, /* RT - Lebedev*/
           { 6519,-772,-703,-4994,12737,2519,-1387,2492,6175 } },
         { "Canon EOS-1D Mark III", 0, 0x3bb0,  /* RT */
           { 7406,-1592,-646,-4856,12457,2698,-432,726,7921 } },
-        { "Canon PowerShot G10", 0, 0,  /* RT */
+        { "Canon PowerShot G10", -1, -1,  /* RT */
           { 12535,-5030,-796,-2711,10134,3006,-413,1605,5264 } },
-        { "Canon PowerShot G12", 0, 0,  /* RT */
+        { "Canon PowerShot G12", -1, -1,  /* RT */
           { 12222,-4097,-1380,-2876,11016,2130,-888,1630,4434 } },
 
 
-        { "Fujifilm X100", 0, 0,  /* RT - Colin Walker */
+        { "Fujifilm X100", -1, -1,  /* RT - Colin Walker */
           { 10841,-3288,-807,-4652,12552,2344,-642,1355,7206 } },
 
 
-        { "Nikon D200", 0, 0xfbc, /* RT */
+        { "Nikon D200", -1, 0xfbc, /* RT */
           { 8498,-2633,-295,-5423,12869,2860,-777,1077,8124 } },
-        { "Nikon D3000", 0, 0, /* RT */
+        { "Nikon D3000", -1, -1, /* RT */
           { 9211,-2521,-104,-6487,14280,2394,-754,1122,8033 } },
-        { "Nikon D3100", 0, 0, /* RT */
+        { "Nikon D3100", -1, -1, /* RT */
           { 7729,-2212,-481,-5709,13148,2858,-1295,1908,8936 } },
-        { "Nikon D3S", 0, 0, /* RT */
+        { "Nikon D3S", -1, -1, /* RT */
           { 8792,-2663,-344,-5221,12764,2752,-1491,2165,8121 } },
-        { "Nikon D5200", 0, 0, // color matrix copied from D5200 DNG D65 matrix
+        { "Nikon D5200", -1, -1, // color matrix copied from D5200 DNG D65 matrix
           { 8322,-3112,-1047,-6367,14342,2179,-988,1638,6394 } },
-        { "Nikon D7000", 0, 0, /* RT - Tanveer(tsk1979) */
+        { "Nikon D7000", -1, -1, /* RT - Tanveer(tsk1979) */
           { 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 } },
-        { "Nikon D7100", 0, 0, // color matrix and WP copied from D7100 DNG D65 matrix
+        { "Nikon D7100", -1, -1, // color matrix and WP copied from D7100 DNG D65 matrix
           { 8322,-3112,-1047,-6367,14342,2179,-988,1638,6394 } },
-        { "Nikon D700", 0, 0, /* RT */
+        { "Nikon D700", -1, -1, /* RT */
           { 8364,-2503,-352,-6307,14026,2492,-1134,1512,8156 } },
-        { "Nikon COOLPIX A", 0, 0x3e00, // color matrix and WP copied from "COOLPIX A" DNG D65 matrix
+        { "Nikon COOLPIX A", -1, 0x3e00, // color matrix and WP copied from "COOLPIX A" DNG D65 matrix
           { 8198,-2239,-724,-4871,12389,2798,-1043,205,7181 } },
 
 
-        { "Olympus E-30", 0, 0xfbc,  /* RT - Colin Walker */
+        { "Olympus E-30", -1, 0xfbc,  /* RT - Colin Walker */
           { 8510,-2355,-693,-4819,12520,2578,-1029,2067,7752 } },
-        { "Olympus E-5", 0, 0xeec, /* RT - Colin Walker */
+        { "Olympus E-5", -1, 0xeec, /* RT - Colin Walker */
           { 9732,-2629,-999,-4899,12931,2173,-1243,2353,7457 } },
-        { "Olympus E-P1", 0, 0xffd, /* RT - Colin Walker */
+        { "Olympus E-P1", -1, 0xffd, /* RT - Colin Walker */
           { 8834,-2344,-804,-4691,12503,2448,-978,1919,7603 } },
-        { "Olympus E-P2", 0, 0xffd, /* RT - Colin Walker */
+        { "Olympus E-P2", -1, 0xffd, /* RT - Colin Walker */
           { 7758,-1619,-800,-5002,12886,2349,-985,1964,8305 } },
-        { "Olympus E-P3", 0, 0, /* RT - Colin Walker */
+        { "Olympus E-P3", -1, -1, /* RT - Colin Walker */
           { 7041,-1794,-336,-3790,11192,2984,-1364,2625,6217 } },
-        { "Olympus E-PL1s", 0, 0, /* RT - Colin Walker */
+        { "Olympus E-PL1s", -1, -1, /* RT - Colin Walker */
           { 9010,-2271,-838,-4792,12753,2263,-1059,2058,7589 } },
-        { "Olympus E-PL1", 0, 0, /* RT - Colin Walker */
+        { "Olympus E-PL1", -1, -1, /* RT - Colin Walker */
           { 9010,-2271,-838,-4792,12753,2263,-1059,2058,7589 } },
-        { "Olympus E-PL2", 0, 0, /* RT - Colin Walker */
+        { "Olympus E-PL2", -1, -1, /* RT - Colin Walker */
           { 11975,-3351,-1184,-4500,12639,2061,-1230,2353,7009 } },
-        { "Olympus E-PL3", 0, 0, /* RT - Colin Walker */
+        { "Olympus E-PL3", -1, -1, /* RT - Colin Walker */
           { 7041,-1794,-336,-3790,11192,2984,-1364,2625,6217 } },
-        { "Olympus XZ-1", 0, 0, /* RT - Colin Walker */
+        { "Olympus XZ-1", -1, -1, /* RT - Colin Walker */
           { 8665,-2247,-762,-2424,10372,2382,-1011,2286,5189 } },
 
 
@@ -471,29 +471,29 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
           { 7780,-2410,-806,-3913,11724,2484,-1018,2390,5298 } }, // dcraw original
 
 
-        { "Pentax K200D", 0, 0,  /* RT */
+        { "Pentax K200D", -1, -1,  /* RT */
           { 10962,-4428,-542,-5486,13023,2748,-569,842,8390 } },
 
 
-        { "Leica Camera AG M9 Digital Camera", 0, 0,  /* RT */
+        { "Leica Camera AG M9 Digital Camera", -1, -1,  /* RT */
           { 7181,-1706,-55,-3557,11409,2450,-621,2072,7533 } },
 
 
-        { "Sony DSLR-A700", 126 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT */
+        { "Sony DSLR-A700", 126 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT */
           { 6509,-1333,-137,-6171,13621,2824,-1490,2226,6952 } },
-        { "Sony DSLR-A900", 128 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT */
+        { "Sony DSLR-A900", 128 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT */
           { 5715,-1433,-410,-5603,12937,2989,-644,1247,8372 } },
-        { "SONY NEX-3", 128 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT - Colin Walker */
+        { "SONY NEX-3", 128 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT - Colin Walker */
           { 5145,-741,-123,-4915,12310,2945,-794,1489,6906 } },
-        { "SONY NEX-5", 128 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT - Colin Walker */
+        { "SONY NEX-5", 128 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT - Colin Walker */
           { 5154,-716,-115,-5065,12506,2882,-988,1715,6800 } },
-        { "Sony NEX-5N", 128 << dcraw_arw2_scaling_bugfix_shift, 0, /* RT - Colin Walker */
+        { "Sony NEX-5N", 128 << dcraw_arw2_scaling_bugfix_shift, -1, /* RT - Colin Walker */
           { 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
-        { "Sony NEX-5R", 128 << dcraw_arw2_scaling_bugfix_shift, 0,
+        { "Sony NEX-5R", 128 << dcraw_arw2_scaling_bugfix_shift, -1,
           { 6129,-1545,-418,-4930,12490,2743,-977,1693,6615 } },
-        { "SONY NEX-C3", 128 << dcraw_arw2_scaling_bugfix_shift, 0,  /* RT - Colin Walker */
+        { "SONY NEX-C3", 128 << dcraw_arw2_scaling_bugfix_shift, -1,  /* RT - Colin Walker */
           { 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 } },
-        { "Sony SLT-A77", 128 << dcraw_arw2_scaling_bugfix_shift, 0,  /* RT - Colin Walker */
+        { "Sony SLT-A77", 128 << dcraw_arw2_scaling_bugfix_shift, -1,  /* RT - Colin Walker */
           { 5126,-830,-261,-4788,12196,2934,-948,1602,7068 } },
     };
 
