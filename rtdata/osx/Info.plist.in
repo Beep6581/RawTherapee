@@ -87,8 +87,6 @@
 			<string>Camera Raw</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSIsAppleDefaultForType</key>
-			<true/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
