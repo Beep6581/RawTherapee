@@ -291,8 +291,8 @@ Here's an example from a Canon 1000D: black level is 256, old white level is
 3651, whitepoint correction factor becomes 0.90, then new white level is
 256 + (3651 - 256) / 0.9 = 4028.
 
-If your camera have different black levels per channel use the smallest one
-as that yields the most conservative result.
+If your camera have different black levels per channel use the one which
+yields the smallest white level (can be the largest or smallest, test!).
 
 This new white level you then enter in your camconst.json file. The same
 procedure can be used if the white level is too high, ie if you see pink
