@@ -983,6 +983,9 @@ TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels in desire proportions. Use Presets for
 TP_BWMIX_GAM_RED;Red Channel gamma correction
 TP_BWMIX_GAM_GREEN;Green Channel gamma correction
 TP_BWMIX_GAM_BLUE;Blue Channel gamma correction
+TP_BWMIX_MIXC;Mixer
+TP_BWMIX_GAMM;Gamma Correction
+TP_BWMIX_MIXF;Mixer Filters
 TP_BWMIX_FILTER;Color Filter
 TP_BWMIX_FILTER0;None
 TP_BWMIX_FILTER1;Red

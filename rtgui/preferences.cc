@@ -238,9 +238,9 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     
 	mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_CHMIXERBW_LABEL"));	
-    appendBehavList (mi, M("TP_BWMIX_RED")+", "+M("TP_BWMIX_GREEN")+", "+M("TP_BWMIX_BLUE"), ADDSET_CHMIXER_BW, false);
-    appendBehavList (mi, M("TP_BWMIX_GAM_RED")+", "+M("TP_BWMIX_GAM_GREEN")+", "+M("TP_BWMIX_GAM_BLUE"), ADDSET_CHMIXER_BWG, false);
-    appendBehavList (mi, M("TP_BWMIX_ORA")+", "+M("TP_BWMIX_YEL")+", "+M("TP_BWMIX_CYAN")+", "+M("TP_BWMIX_MAG")+", "+M("TP_BWMIX_PUR"),ADDSET_CHMIXER_BWF, false);
+    appendBehavList (mi, M("TP_BWMIX_MIXC"), ADDSET_CHMIXER_BW, false);
+    appendBehavList (mi, M("TP_BWMIX_GAMM"), ADDSET_CHMIXER_BWG, false);
+    appendBehavList (mi, M("TP_BWMIX_MIXF"),ADDSET_CHMIXER_BWF, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_ROTATE_LABEL"));
