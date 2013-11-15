@@ -340,6 +340,7 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
   
     dirtree->collapse_all ();
 
+    // WARNING & TODO: One should test here if the directory/file has R/W access permission to avoid crash
 
     Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path(dirname);
     if( !dir->query_exists())
@@ -348,8 +349,12 @@ void DirBrowser::open (const Glib::ustring& dirname, const Glib::ustring& fileNa
     Gtk::TreePath path = expandToDir (absDirPath);
 	dirtree->scroll_to_row (path);
 	dirtree->get_selection()->select (path);
-	for (size_t i=0; i<dllisteners.size(); i++)
-		dllisteners[i]->dirSelected (absDirPath, Glib::build_filename (absDirPath, fileName));
+	Glib::ustring absFilePath;
+	if (!fileName.empty())
+		absFilePath = Glib::build_filename (absDirPath, fileName);
+	for (size_t i=0; i<dllisteners.size(); i++) {
+		dllisteners[i]->dirSelected (absDirPath, absFilePath);
+	}
 }
 
 void DirBrowser::file_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName) {

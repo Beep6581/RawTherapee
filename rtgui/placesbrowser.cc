@@ -87,7 +87,7 @@ void PlacesBrowser::refreshPlacesList () {
     placesModel->clear ();
    
     // append home directory
-    Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (Glib::get_home_dir ());
+    Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (safe_get_user_home_dir());  // Will send back "My documents" on Windows now, which has no restricted access
     if (hfile && hfile->query_exists()) {
       try { 
         Glib::RefPtr<Gio::FileInfo> info = safe_query_file_info (hfile);

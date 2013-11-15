@@ -144,7 +144,7 @@ void FilePanel::init () {
         dirBrowser->open (argv1);
     else {
         if (options.startupDir==STARTUPDIR_HOME) 
-            dirBrowser->open (Glib::get_home_dir());
+            dirBrowser->open (safe_get_user_picture_dir());
         else if (options.startupDir==STARTUPDIR_CURRENT)
             dirBrowser->open (argv0);
         else if (options.startupDir==STARTUPDIR_CUSTOM || options.startupDir==STARTUPDIR_LAST) {
@@ -152,7 +152,7 @@ void FilePanel::init () {
                 dirBrowser->open (options.startupPath);
             else {
                 // Fallback option if the path is empty or the folder doesn't exist
-                dirBrowser->open (Glib::get_home_dir());
+                dirBrowser->open (safe_get_user_picture_dir());
             }
         }
     }
