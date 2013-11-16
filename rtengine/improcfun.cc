@@ -1953,7 +1953,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     float chMixBR = float(params->chmixer.blue[0]);
     float chMixBG = float(params->chmixer.blue[1]);
     float chMixBB = float(params->chmixer.blue[2]);
-	bool BWchmix = params->chmixerbw.enabled;
+	bool BWchmix = params->chmixerbw.enabledcc;
     int shHighlights = params->sh.highlights;
     int shShadows = params->sh.shadows;
     float bwr = float(params->chmixerbw.bwred);
@@ -1967,7 +1967,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     float bwcyan = float(params->chmixerbw.bwcyan);
     float bwmag = float(params->chmixerbw.bwmag);
     float bwpur = float(params->chmixerbw.bwpur);
-	bool blackwhite = params->chmixerbw.enabledLm;
+	bool blackwhite = params->chmixerbw.enabled;
 	int algm=0;
 	if     (params->chmixerbw.met=="No")  algm=0;
 	else if(params->chmixerbw.met=="De")  algm=1;
@@ -2606,7 +2606,7 @@ if(algm==3  && blackwhite) {//channel-mixer
 				float cgM=0.f;
 				float cbM=0.f;
 				
-				bool complem = 	params->chmixerbw.enabled;
+				bool complem = 	params->chmixerbw.enabledcc;
 				
 				float fcompl = 1.f;
 				if(complem) fcompl = 3.f;
@@ -2888,7 +2888,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	// reference to the params structure has to be done outside of the parallelization to avoid CPU cache problem
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
 	int chromaticity = params->labCurve.chromaticity;
-	bool bwToning = params->labCurve.bwtoning  /*|| params->chmixerbw.met=="Ch" */ || params->chmixerbw.enabledLm || (params->chmixerbw.bwredgam!=0 && params->chmixerbw.enabledLm) || (params->chmixerbw.bwgreengam!=0 && params->chmixerbw.enabledLm) || (params->chmixerbw.bwbluegam!=0 && params->chmixerbw.enabledLm); 
+	bool bwToning = params->labCurve.bwtoning  /*|| params->chmixerbw.met=="Ch" */ || params->chmixerbw.enabled || (params->chmixerbw.bwredgam!=0 && params->chmixerbw.enabled) || (params->chmixerbw.bwgreengam!=0 && params->chmixerbw.enabled) || (params->chmixerbw.bwbluegam!=0 && params->chmixerbw.enabled); 
 	//if(bwToning) printf("OK bwto\n"); else printf("pas de bw\n");
 	bool LCredsk = params->labCurve.lcredsk;
 	bool ccut = ccutili;

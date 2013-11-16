@@ -40,10 +40,10 @@ bwyell=33
 bwcyan=33
 bwmag=33
 bwpur=33
-Enabled=true
+Enabledcc=true
 Met=No
 VCurve=0;
-EnabledLm=false
+Enabled=false
 
 [Luminance Curve]
 Brightness=0

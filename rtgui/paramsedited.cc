@@ -216,8 +216,8 @@ void ParamsEdited::set (bool v) {
 	chmixer.blue[0] = v;
 	chmixer.blue[1] = v;
 	chmixer.blue[2] = v;
+	chmixerbw.enabledcc   = v;
 	chmixerbw.enabled   = v;
-	chmixerbw.enabledLm   = v;
 	chmixerbw.bwred   = v;
 	chmixerbw.bwgreen   = v;
 	chmixerbw.bwblue   = v;
@@ -497,8 +497,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         chmixer.blue[0] = chmixer.blue[0] && p.chmixer.blue[0] == other.chmixer.blue[0];
         chmixer.blue[1] = chmixer.blue[1] && p.chmixer.blue[1] == other.chmixer.blue[1];
         chmixer.blue[2] = chmixer.blue[2] && p.chmixer.blue[2] == other.chmixer.blue[2];
+        chmixerbw.enabledcc = chmixerbw.enabledcc && p.chmixerbw.enabledcc == other.chmixerbw.enabledcc;
         chmixerbw.enabled = chmixerbw.enabled && p.chmixerbw.enabled == other.chmixerbw.enabled;
-        chmixerbw.enabledLm = chmixerbw.enabledLm && p.chmixerbw.enabledLm == other.chmixerbw.enabledLm;
         chmixerbw.bwred = chmixerbw.bwred && p.chmixerbw.bwred == other.chmixerbw.bwred;
         chmixerbw.bwgreen = chmixerbw.bwgreen && p.chmixerbw.bwgreen == other.chmixerbw.bwgreen;
         chmixerbw.bwblue = chmixerbw.bwblue && p.chmixerbw.bwblue == other.chmixerbw.bwblue;
@@ -633,8 +633,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
 		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
 	}
+	if (chmixerbw.enabledcc)		toEdit.chmixerbw.enabledcc	= mods.chmixerbw.enabledcc;
 	if (chmixerbw.enabled)		toEdit.chmixerbw.enabled	= mods.chmixerbw.enabled;
-	if (chmixerbw.enabledLm)		toEdit.chmixerbw.enabledLm	= mods.chmixerbw.enabledLm;
 	if (chmixerbw.bwgreen)		toEdit.chmixerbw.bwgreen	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwgreen + mods.chmixerbw.bwgreen : mods.chmixerbw.bwgreen;
 	if (chmixerbw.bwred)			toEdit.chmixerbw.bwred	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwred + mods.chmixerbw.bwred : mods.chmixerbw.bwred;
 	if (chmixerbw.bwblue)			toEdit.chmixerbw.bwblue	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwblue + mods.chmixerbw.bwblue : mods.chmixerbw.bwblue;
