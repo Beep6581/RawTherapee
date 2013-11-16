@@ -158,7 +158,7 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 
 #define CLF 1
 	// assign working space
-	buffer = (char *) malloc(22*sizeof(float)*TS*TS + sizeof(char)*TS*TSH+23*CLF*64 + 63);
+	buffer = (char *) calloc(22*sizeof(float)*TS*TS + sizeof(char)*TS*TSH+23*CLF*64 + 63, 1);
 	char 	*data;
 	data = (char*)( ( uintptr_t(buffer) + uintptr_t(63)) / 64 * 64);
 
