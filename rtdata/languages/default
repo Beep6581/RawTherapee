@@ -960,12 +960,11 @@ TP_CHMIXER_GREEN;Green Channel
 TP_CHMIXER_LABEL;Channel Mixer
 TP_CHMIXERBW_LABEL;Black and White
 TP_CHMIXER_RED;Red Channel
-TP_BWMIX_ENABLED_LM;Enabled Black and White mode
-TP_BWMIX_ENABLED;Complementary color
+TP_BWMIX_CC_ENABLED;Complementary color
 TP_BWMIX_CHANNEL;Luminance equalizer
 TP_BWMIX_VAL;L
-TP_BWMIX_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBMP mode
-TP_BWMIX_SETTING_TOOLTIP;Different presets - films - landscape - or manual settings of channel-mixer and gamma\nNormal:43/33/30 Panchromatic:33/33/33\nHyperPanchro:41/25/34 LowSensitivity:27/27/46\nHighSensitivity:30/28/42 Orthochromatic:0/42/58\nHigh Contrast:40/34/60 Luminance:30/59/11\nLandscape:66/24/10 Portrait:54/44/12\nAbsolute RGB=no compensation\nRelative RGB=compensation (sum=always 100%)\nROYGCBMP: RGB mixer + filter on Orange-Yellow-Cyan-Magenta-Purple\n Infrared -40/200/-17
+TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBMP mode
+TP_BWMIX_SETTING_TOOLTIP;Different presets - films - landscape - or manual settings of channel-mixer 
 TP_BWMIX_FILTER_TOOLTIP;Effect of the color filter is similar to film photography when filter is placed in front of the lens. Color filters reduce transmission of specific range of colors and correspondingly effect their lightness. E.g. Red filter would darken the Blue sky.
 TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer

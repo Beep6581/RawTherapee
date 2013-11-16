@@ -370,8 +370,8 @@ void ProcParams::setDefaults () {
     chmixer.blue[2] = 100;
 	
     chmixerbw.autoc  = false;	
-    chmixerbw.enabled  = true;
-    chmixerbw.enabledLm  = false;
+    chmixerbw.enabledcc  = true;
+    chmixerbw.enabled  = false;
     chmixerbw.bwred  = 33;
     chmixerbw.bwgreen  = 33;
     chmixerbw.bwblue  = 33;
@@ -629,8 +629,8 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         keyFile.set_double_list("Channel Mixer", "Curve2", tcurvebw2);
     }
     if (!pedited || pedited->chmixerbw.autoc)      	keyFile.set_boolean ("Channel Mixer", "Autoc",  chmixerbw.autoc);	
+    if (!pedited || pedited->chmixerbw.enabledcc)      	keyFile.set_boolean ("Channel Mixer", "Enabledcc",  chmixerbw.enabledcc);
     if (!pedited || pedited->chmixerbw.enabled)      	keyFile.set_boolean ("Channel Mixer", "Enabled",  chmixerbw.enabled);
-    if (!pedited || pedited->chmixerbw.enabledLm)      	keyFile.set_boolean ("Channel Mixer", "EnabledLm",  chmixerbw.enabledLm);
     if (!pedited || pedited->chmixerbw.bwred)   	   	keyFile.set_integer ("Channel Mixer", "bwred", chmixerbw.bwred);
     if (!pedited || pedited->chmixerbw.bwgreen)      	keyFile.set_integer ("Channel Mixer", "bwgreen", chmixerbw.bwgreen);
     if (!pedited || pedited->chmixerbw.bwblue)   	   	keyFile.set_integer ("Channel Mixer", "bwblue", chmixerbw.bwblue);
@@ -1198,8 +1198,8 @@ if (keyFile.has_group ("Channel Mixer")) {
         if (pedited) pedited->chmixerbw.curveMode2 = true; 
     }
     if (keyFile.has_key ("Channel Mixer", "Autoc"))             { chmixerbw.autoc         = keyFile.get_boolean ("Channel Mixer", "Autoc"); if (pedited) pedited->chmixerbw.autoc = true; }	
+    if (keyFile.has_key ("Channel Mixer", "Enabledcc"))             { chmixerbw.enabledcc         = keyFile.get_boolean ("Channel Mixer", "Enabledcc"); if (pedited) pedited->chmixerbw.enabledcc = true; }
     if (keyFile.has_key ("Channel Mixer", "Enabled"))             { chmixerbw.enabled         = keyFile.get_boolean ("Channel Mixer", "Enabled"); if (pedited) pedited->chmixerbw.enabled = true; }
-    if (keyFile.has_key ("Channel Mixer", "EnabledLm"))             { chmixerbw.enabledLm         = keyFile.get_boolean ("Channel Mixer", "EnabledLm"); if (pedited) pedited->chmixerbw.enabledLm = true; }
     if (keyFile.has_key ("Channel Mixer", "bwred"))   			  { chmixerbw.bwred   = keyFile.get_integer ("Channel Mixer", "bwred"); if (pedited) pedited->chmixerbw.bwred = true; }
     if (keyFile.has_key ("Channel Mixer", "bwgreen"))   			{ chmixerbw.bwgreen   = keyFile.get_integer ("Channel Mixer", "bwgreen"); if (pedited) pedited->chmixerbw.bwgreen = true; }
     if (keyFile.has_key ("Channel Mixer", "bwblue"))   			  { chmixerbw.bwblue   = keyFile.get_integer ("Channel Mixer", "bwblue"); if (pedited) pedited->chmixerbw.bwblue = true; }

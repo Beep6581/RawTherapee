@@ -30,11 +30,11 @@ using namespace rtengine::procparams;
 ChMixerbw::ChMixerbw (): Gtk::VBox(), FoldableToolPanel(this) {
 	CurveListener::setMulti(true);
     set_border_width(4);
-	enabledLm = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_ENABLED_LM")));	
-	enabledLm->set_active (false);
+	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
+	enabled->set_active (false);
 	
-	pack_start(*enabledLm, Gtk::PACK_SHRINK, 0);
-	enabledLm->show ();
+	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
+	enabled->show ();
 
 	Gtk::HBox* metHBox = Gtk::manage (new Gtk::HBox ());
 	metHBox->set_border_width (0);
@@ -94,13 +94,13 @@ ChMixerbw::ChMixerbw (): Gtk::VBox(), FoldableToolPanel(this) {
 	hsep1->show ();
 	pack_start (*hsep1);
 
-	enabled = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_ENABLED")));
+	enabledcc = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_CC_ENABLED")));
 	
-	enabled->set_active (true);
-	enabled->set_tooltip_markup (M("TP_BWMIX_TOOLTIP"));
+	enabledcc->set_active (true);
+	enabledcc->set_tooltip_markup (M("TP_BWMIX_CC_TOOLTIP"));
 	
-	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
-	enabled->show ();
+	pack_start(*enabledcc, Gtk::PACK_SHRINK, 0);
+	enabledcc->show ();
 
 	abox = Gtk::manage (new Gtk::HBox ());
 	abox->set_border_width (2);
@@ -316,9 +316,9 @@ ChMixerbw::ChMixerbw (): Gtk::VBox(), FoldableToolPanel(this) {
 	bwbluegam->show();
 	pack_start( *bwbluegam, Gtk::PACK_SHRINK, 0);
 
-	enaLmconn    = enabledLm->signal_toggled().connect( sigc::mem_fun(*this, &ChMixerbw::enabledLm_toggled) );
-	
 	enaconn    = enabled->signal_toggled().connect( sigc::mem_fun(*this, &ChMixerbw::enabled_toggled) );
+	
+	enaccconn    = enabledcc->signal_toggled().connect( sigc::mem_fun(*this, &ChMixerbw::enabledcc_toggled) );
 	filconn = fil->signal_changed().connect ( sigc::mem_fun(*this, &ChMixerbw::filChanged) );
 	setconn = set->signal_changed().connect ( sigc::mem_fun(*this, &ChMixerbw::setChanged) );
 	metconn = met->signal_changed().connect ( sigc::mem_fun(*this, &ChMixerbw::metChanged) );
@@ -492,8 +492,8 @@ void ChMixerbw::read (const ProcParams* pp, const ParamsEdited* pedited) {
         shape->setUnChanged (!pedited->chmixerbw.curve);
         shape2->setUnChanged (!pedited->chmixerbw.curve2);
         autoch->set_inconsistent (!pedited->chmixerbw.autoc);
-		enabledLm->set_inconsistent  (!pedited->chmixerbw.enabledLm);
 		enabled->set_inconsistent  (!pedited->chmixerbw.enabled);
+		enabledcc->set_inconsistent  (!pedited->chmixerbw.enabledcc);
 		bwred->setEditedState (pedited->chmixerbw.bwred ? Edited : UnEdited);
 		bwgreen->setEditedState (pedited->chmixerbw.bwgreen ? Edited : UnEdited);
 		bwblue->setEditedState (pedited->chmixerbw.bwblue ? Edited : UnEdited);
@@ -513,14 +513,14 @@ void ChMixerbw::read (const ProcParams* pp, const ParamsEdited* pedited) {
         }	
 	}
     autoconn.block (false);	
+	enaccconn.block (true);
+	enabledcc->set_active (pp->chmixerbw.enabledcc);
+	enaccconn.block (false);
+	lastEnabledcc = pp->chmixerbw.enabledcc;
 	enaconn.block (true);
 	enabled->set_active (pp->chmixerbw.enabled);
 	enaconn.block (false);
 	lastEnabled = pp->chmixerbw.enabled;
-	enaLmconn.block (true);
-	enabledLm->set_active (pp->chmixerbw.enabledLm);
-	enaLmconn.block (false);
-	lastEnabledLm = pp->chmixerbw.enabledLm;
 	bwred->setValue (pp->chmixerbw.bwred);
 	bwgreen->setValue (pp->chmixerbw.bwgreen);
 	bwblue->setValue (pp->chmixerbw.bwblue);
@@ -541,8 +541,8 @@ void ChMixerbw::read (const ProcParams* pp, const ParamsEdited* pedited) {
 }
 
 void ChMixerbw::write (ProcParams* pp, ParamsEdited* pedited) {
+	pp->chmixerbw.enabledcc    = enabledcc->get_active ();
 	pp->chmixerbw.enabled    = enabled->get_active ();
-	pp->chmixerbw.enabledLm    = enabledLm->get_active ();
     pp->chmixerbw.autoc = autoch->get_active();
 	pp->chmixerbw.bwred = bwred->getValue ();
 	pp->chmixerbw.bwgreen = bwgreen->getValue ();
@@ -571,10 +571,10 @@ void ChMixerbw::write (ProcParams* pp, ParamsEdited* pedited) {
 	
     if (pedited) { 
         pedited->chmixerbw.vcurve = !vshape->isUnChanged ();
-		pedited->chmixerbw.enabledLm    = !enabledLm->get_inconsistent();
+		pedited->chmixerbw.enabled    = !enabled->get_inconsistent();
         pedited->chmixerbw.curve = !shape->isUnChanged ();
         pedited->chmixerbw.autoc    = !autoch->get_inconsistent();
-		pedited->chmixerbw.enabled    = !enabled->get_inconsistent();
+		pedited->chmixerbw.enabledcc    = !enabledcc->get_inconsistent();
 		pedited->chmixerbw.bwred = bwred->getEditedState ();
 		pedited->chmixerbw.bwgreen = bwgreen->getEditedState ();
 		pedited->chmixerbw.bwblue = bwblue->getEditedState ();
@@ -743,7 +743,7 @@ void ChMixerbw::setChanged () {
 	rglabel->show();
 	gglabel->show();
 	bglabel->show();
-	enabled->hide();
+	enabledcc->hide();
 	fil->set_sensitive (true);
 	
 	}
@@ -774,7 +774,7 @@ void ChMixerbw::setChanged () {
 	rglabel->show();
 	gglabel->show();
 	bglabel->show();
-	enabled->show();
+	enabledcc->show();
 	fil->set_sensitive (true);
 	
 	}
@@ -809,19 +809,19 @@ void ChMixerbw::setChanged () {
 	clabel->hide();
 	mlabel->hide();
 	plabel->hide();	
-	enabled->hide();
+	enabledcc->hide();
 	fil->set_sensitive (true);
 	
 	}
 
-	if (listener && (multiImage||enabledLm->get_active())) {
+	if (listener && (multiImage||enabled->get_active())) {
 		listener->panelChanged (EvBWset, set->get_active_text ());
 	}
 }
 
 
 void ChMixerbw::filChanged () {
-	if (listener && (multiImage||enabledLm->get_active())) {	
+	if (listener && (multiImage||enabled->get_active())) {	
 		listener->panelChanged (EvBWfil, fil->get_active_text ());
 	}
 }
@@ -830,8 +830,7 @@ void ChMixerbw::metChanged () {
 	 if(met->get_active_row_number()==3) {
 			set->show();
 			setLabel->show();
-			//enabled->show();
-			enabledLm->show();
+			enabled->show();
 			curveEditorG->hide();
 			curveEditorGBW->show();
 			curveEditorGBW2->show();
@@ -854,7 +853,7 @@ void ChMixerbw::metChanged () {
 			bwgreengam->show();
 			bwbluegam->show();
 			Gamlabel->show();	
-			enabled->hide();		
+			enabledcc->hide();		
 		}
 		if(set->get_active_row_number()==12 || set->get_active_row_number()==13) {
 			bworan->show();
@@ -867,7 +866,7 @@ void ChMixerbw::metChanged () {
 			clabel->show();
 			mlabel->show();
 			plabel->show();
-			enabled->show();
+			enabledcc->show();
 		}
 	}
 		
@@ -881,8 +880,8 @@ void ChMixerbw::metChanged () {
 		setLabel->hide();
 		fil->hide();
 		filLabel->hide();
-		enabled->hide();
-		enabledLm->show();
+		enabledcc->hide();
+		enabled->show();
 		bwred->hide();
 		bwgreen->hide();
 		bwblue->hide();
@@ -923,8 +922,8 @@ void ChMixerbw::metChanged () {
 		setLabel->hide();
 		fil->hide();
 		filLabel->hide();
-		enabled->hide();
-		enabledLm->show();
+		enabledcc->hide();
+		enabled->show();
 		curveEditorG->hide();	
 		bwred->hide();
 		bwgreen->hide();
@@ -950,8 +949,8 @@ void ChMixerbw::metChanged () {
 		setLabel->hide();
 		fil->hide();
 		filLabel->hide();
-		enabled->hide();
-		enabledLm->show();
+		enabledcc->hide();
+		enabled->show();
 		curveEditorG->hide();	
 		bwred->hide();
 		bwgreen->hide();
@@ -979,24 +978,24 @@ void ChMixerbw::metChanged () {
 		curveEditorGBW->hide();
 		curveEditorGBW2->hide();
 	 }
-	if (listener && (multiImage||enabledLm->get_active())) {
+	if (listener && (multiImage||enabled->get_active())) {
 		listener->panelChanged (EvBWmet, met->get_active_text ());
 	}
 }
 
-void ChMixerbw::enabledLm_toggled () {
+void ChMixerbw::enabled_toggled () {
 	
 	if (batchMode) {
-		if (enabledLm->get_inconsistent()) {
-			enabledLm->set_inconsistent (false);
-			enaLmconn.block (true);
-			enabledLm->set_active (false);
-			enaLmconn.block (false);
+		if (enabled->get_inconsistent()) {
+			enabled->set_inconsistent (false);
+			enaconn.block (true);
+			enabled->set_active (false);
+			enaconn.block (false);
 		}
-		else if (lastEnabledLm)
-			enabledLm->set_inconsistent (true);
+		else if (lastEnabled)
+			enabled->set_inconsistent (true);
 
-		lastEnabledLm = enabledLm->get_active ();
+		lastEnabled = enabled->get_active ();
 	}
 
 	if (listener) {
@@ -1035,23 +1034,23 @@ void ChMixerbw::neutral_pressed () {
 }
 
 
-void ChMixerbw::enabled_toggled () {
+void ChMixerbw::enabledcc_toggled () {
 	
 	if (batchMode) {
-		if (enabled->get_inconsistent()) {
-			enabled->set_inconsistent (false);
-			enaconn.block (true);
-			enabled->set_active (false);
-			enaconn.block (false);
+		if (enabledcc->get_inconsistent()) {
+			enabledcc->set_inconsistent (false);
+			enaccconn.block (true);
+			enabledcc->set_active (false);
+			enaccconn.block (false);
 		}
-		else if (lastEnabled)
-			enabled->set_inconsistent (true);
+		else if (lastEnabledcc)
+			enabledcc->set_inconsistent (true);
 
-		lastEnabled = enabled->get_active ();
+		lastEnabledcc = enabledcc->get_active ();
 	}
 
 	if (listener) {
-		if (enabled->get_active ()){
+		if (enabledcc->get_active ()){
 			listener->panelChanged (EvBWChmixEnabled, M("GENERAL_ENABLED"));
 			}
 		else {		
@@ -1188,7 +1187,7 @@ void ChMixerbw::adjusterChanged (Adjuster* a, double newval) {
         autoch->set_inconsistent (false);
     }
 
-    if (listener  && (multiImage||enabledLm->get_active())) {
+    if (listener  && (multiImage||enabled->get_active())) {
 		Glib::ustring value = a->getTextValue();		
 		if (a == bwred)
 			listener->panelChanged (EvBWred,     value );

@@ -39,8 +39,8 @@ bwyell=33
 bwcyan=33
 bwmag=33
 bwpur=33
+Enabledcc=true
 Enabled=true
-EnabledLm=true
 Met=No
 VCurve=0;
 

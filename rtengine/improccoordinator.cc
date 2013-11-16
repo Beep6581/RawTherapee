@@ -306,7 +306,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         if ( todo!=MINUPDATE ) {
             ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm,params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
-		if(params.chmixerbw.enabledLm && abwListener) abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
+		if(params.chmixerbw.enabled && abwListener) abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
 		// correct GUI black and white with value
 		}
 

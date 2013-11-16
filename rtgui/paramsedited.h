@@ -354,8 +354,8 @@ class ChannelMixerParamsEdited {
 class ChannelMixerbwParamsEdited {
 
     public:
+		bool enabledcc;
 		bool enabled;
-		bool enabledLm;
 		bool bwred;
 		bool bwgreen;
 		bool bwblue;

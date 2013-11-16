@@ -643,8 +643,8 @@ class ChannelMixerbwParams {
 		
 		std::vector<double>   vcurve;
 		bool 	autoc;
+        bool    enabledcc;
         bool    enabled;
-        bool    enabledLm;
 		int bwred;
 		int bwgreen;
 		int bwblue;

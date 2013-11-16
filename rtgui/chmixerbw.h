@@ -74,13 +74,13 @@ class ChMixerbw : public Gtk::VBox, public AdjusterListener, public FoldableTool
 	Gtk::Label* filLabel;	
 	
     Gtk::Image *imgIcon[11];
-	Gtk::CheckButton* enabledLm;
-	bool lastEnabledLm;
-	sigc::connection enaLmconn;
-	
 	Gtk::CheckButton* enabled;
-	bool lastEnabled, lastAuto;
-	sigc::connection enaconn,tcmodeconn,tcmodeconn2, autoconn, neutralconn;
+	bool lastEnabled;
+	sigc::connection enaconn;
+	
+	Gtk::CheckButton* enabledcc;
+	bool lastEnabledcc, lastAuto;
+	sigc::connection enaccconn,tcmodeconn,tcmodeconn2, autoconn, neutralconn;
     MyComboBoxText* toneCurveBW;
     MyComboBoxText* toneCurveBW2;
 	
@@ -107,8 +107,8 @@ class ChMixerbw : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void adjusterChanged (Adjuster* a, double newval);
     void setAdjusterBehavior (bool bwadd, bool bwgadd, bool bwfadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
+	void enabledcc_toggled     ();
 	void enabled_toggled     ();
-	void enabledLm_toggled     ();
     void metChanged         ();	
     void filChanged         ();
     void setChanged         ();
