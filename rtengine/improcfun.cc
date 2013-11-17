@@ -2497,13 +2497,12 @@ if (algm==2 && bwlCurveEnabled && blackwhite) {//Luminance mixer
 					//	v = (1.f-valparam)*v+ valparam*(1.f-(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
 					//	v = (1.f-valparam)*v+ valparam*(1.f- pow((1.f-min(v,1.0f)), 2.f+valcor));//(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
 						v *= (1.f + 4.f*valparam);
-					if (v<0) v=0;
 					} else {
 						if (valparam < -0.00001f)
 							{v *= (1.f + 4.f*valparam);//4to increase action
-							if (v<0) v=0;}
+							}
 					}
-					
+					CLIPD(v);
 				Color::hsv2rgb(h, s, v, tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
 				lum = (0.299f*tmpImage->r(i,j)+0.587f*tmpImage->g(i,j)+ 0.114f*tmpImage->b(i,j));// get luminance
 				tmpImage->r(i,j)=lum;//black and white
@@ -2706,9 +2705,9 @@ if(algm==3  && blackwhite) {//channel-mixer
 						val[end] += mix[end][beg] *in[beg];						
 					}
 				}
-				tmpImage->r(i,j) = val[0]*kcorec;
-				tmpImage->g(i,j) = val[1]*kcorec;
-				tmpImage->b(i,j) = val[2]*kcorec;
+				tmpImage->r(i,j) = CLIP(val[0]*kcorec);
+				tmpImage->g(i,j) = CLIP(val[1]*kcorec);
+				tmpImage->b(i,j) = CLIP(val[2]*kcorec);
 				//correction gamma : pseudo TRC curve
 				Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);				
 			}
