@@ -76,10 +76,10 @@ void Gradient::read (const ProcParams* pp, const ParamsEdited* pedited)
 void Gradient::write (ProcParams* pp, ParamsEdited* pedited)
 {
 	pp->gradient.degree = degree->getValue ();
-	pp->gradient.feather = (int)feather->getValue ();
+	pp->gradient.feather = feather->getIntValue ();
 	pp->gradient.strength = strength->getValue ();
-	pp->gradient.centerX = (int)centerX->getValue ();
-	pp->gradient.centerY = (int)centerY->getValue ();
+	pp->gradient.centerX = centerX->getIntValue ();
+	pp->gradient.centerY = centerY->getIntValue ();
 	pp->gradient.enabled = enabled->get_active();
 
 	if (pedited) {
@@ -118,30 +118,37 @@ void Gradient::setDefaults (const ProcParams* defParams, const ParamsEdited* ped
 void Gradient::adjusterChanged (Adjuster* a, double newval) {
 
 	if (listener && enabled->get_active()) {
-		listener->panelChanged (EvGradient, Glib::ustring::compose ("%1=%5\n%2=%6\n%3=%7\n%4=%8 %9", M("TP_GRADIENT_DEGREE"), M("TP_GRADIENT_FEATHER"), M("TP_GRADIENT_STRENGTH"), M("TP_GRADIENT_CENTER"), degree->getValue(), (int)feather->getValue(), strength->getValue(), (int)centerX->getValue(), (int)centerY->getValue()));
+		if (a == degree)
+			listener->panelChanged (EvGradientDegree, degree->getTextValue());
+		else if (a == feather)
+			listener->panelChanged (EvGradientFeather, feather->getTextValue());
+		else if (a == strength)
+			listener->panelChanged (EvGradientStrength, strength->getTextValue());
+		else if (a == centerX || a == centerY)
+			listener->panelChanged (EvGradientCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
 	}
 }
 
 void Gradient::enabledChanged () {
 
-    if (batchMode) {
-        if (enabled->get_inconsistent()) {
-            enabled->set_inconsistent (false);
-            enaConn.block (true);
-            enabled->set_active (false);
-            enaConn.block (false);
-        }
+	if (batchMode) {
+		if (enabled->get_inconsistent()) {
+			enabled->set_inconsistent (false);
+			enaConn.block (true);
+			enabled->set_active (false);
+			enaConn.block (false);
+		}
 	else if (lastEnabled)
-            enabled->set_inconsistent (true);
+		enabled->set_inconsistent (true);
 
-        lastEnabled = enabled->get_active ();
-    }
-    if (listener) {
-        if (enabled->get_active())
-            listener->panelChanged (EvGradientEnabled, M("GENERAL_ENABLED"));
-        else
-            listener->panelChanged (EvGradientEnabled, M("GENERAL_DISABLED"));
-    }
+		lastEnabled = enabled->get_active ();
+	}
+	if (listener) {
+		if (enabled->get_active())
+			listener->panelChanged (EvGradientEnabled, M("GENERAL_ENABLED"));
+		else
+			listener->panelChanged (EvGradientEnabled, M("GENERAL_DISABLED"));
+	}
 }
 
 void Gradient::setAdjusterBehavior (bool degreeadd, bool featheradd, bool strengthadd, bool centeradd)

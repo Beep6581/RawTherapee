@@ -356,6 +356,14 @@ ChMixerbw::ChMixerbw (): Gtk::VBox(), FoldableToolPanel(this) {
   toneCurveBW2->set_active (0);
   toneCurveBW2->set_tooltip_text(M("TP_BWMIX_TCMODE_LABEL2"));
 
+
+
+  // Delete this line when toneCurveBW2 will have more than one entry
+  toneCurveBW2->hide();
+
+
+
+
   curveEditorGBW2 = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CURVEEDITOR2"));
   curveEditorGBW2->setCurveListener (this);
 

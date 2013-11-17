@@ -62,8 +62,8 @@ void PCVignette::read (const ProcParams* pp, const ParamsEdited* pedited)
 void PCVignette::write (ProcParams* pp, ParamsEdited* pedited)
 {
 	pp->pcvignette.strength = strength->getValue ();
-	pp->pcvignette.feather = (int)feather->getValue ();
-	pp->pcvignette.roundness = (int)roundness->getValue ();
+	pp->pcvignette.feather = feather->getIntValue ();
+	pp->pcvignette.roundness = roundness->getIntValue ();
 	pp->pcvignette.enabled = enabled->get_active();
 
 	if (pedited) {
@@ -94,7 +94,12 @@ void PCVignette::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 void PCVignette::adjusterChanged (Adjuster* a, double newval) {
 
 	if (listener && enabled->get_active()) {
-		listener->panelChanged (EvPCVignette, Glib::ustring::compose ("%1=%4\n%2=%5\n%3=%6", M("TP_PCVIGNETTE_STRENGTH"), M("TP_PCVIGNETTE_FEATHER"), M("TP_PCVIGNETTE_ROUNDNESS"), strength->getValue(), (int)feather->getValue(), (int)roundness->getValue()));
+		if (a == strength)
+			listener->panelChanged (EvPCVignetteStrength, strength->getTextValue());
+		else if (a == feather)
+			listener->panelChanged (EvPCVignetteFeather, feather->getTextValue());
+		else if (a == roundness)
+			listener->panelChanged (EvPCVignetteRoundness, roundness->getTextValue());
 	}
 }
 
