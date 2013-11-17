@@ -25,7 +25,11 @@
 #include <sstream>
 #include <stdint.h>
 
+#include "../rtgui/cacheimagedata.h"
 #include "rtexif.h"
+#include "../rtengine/safegtk.h"
+#include "../rtgui/version.h"
+#include "../rtgui/ppversion.h"
 
 using namespace std;
 
@@ -175,6 +179,121 @@ void TagDirectory::printAll (unsigned int level) const {
   }
 }
 
+/** @brief Dump the TagDirectory and its sub-directories to the file 'fname'
+ *
+ * This method has been created to dump the metadata for the Custom Profile Builders.
+ * It contains an [RT General] section to communicate some parameters, then the TagDirectory follows.
+ *
+ * The key is composed as follow: "010F_Make", i.e. "tag number or ID _ tag name"
+ * Entries like:
+ *
+ * 927C_MakerNotesSony=$subdir
+ *
+ * indicates that this tag refer to a sub-directory. RT's Keywords begins with $, where & is the first char of the value.
+ * $subdir is the only keyword so far.
+ *
+ * You'll have then to check for the [EXIF/927C_MakerNotesSony] section, given that the root section
+ * is named [EXIF].
+ *
+ * WARNING: Some string will be sanitized, i.e. the new line char will be replaced by "\n". You'll
+ * have to check for this escape string if you want a correct display of the value, but your KeyFile module
+ * will most likely handle that automatically for you.
+ *
+ * @param commFNname Absolute path of the temporary communication file's name
+ * @param commFNname Absolute path of the image's file name
+ * @param commFNname Absolute path of the output profiles's file name
+ * @param defaultPParams absolute or relative path (to the application's folder) of the default ProcParams to use
+ * @param cfs pointer to a CacheImageData object that will contain common values
+ * @param flagMode will tell whether the Custom Profile Builder is called for on flagging event or for real development
+ * @param keyfile The KeyFile object to dump to. Has to be NULL (default value) on first call!
+ * @param tagDirName Name of the current TagDirectory (full path, i.e. "EXIF/MakerNotes/LensInfo"). Can be empty on first call, "EXIF" will then be used
+ *
+ * @return True if everything went fine, false otherwise
+ */
+bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams, const CacheImageData* cfs, const bool flagMode,
+                            rtengine::SafeKeyFile *keyFile, Glib::ustring tagDirName) const
+{
+
+    rtengine::SafeKeyFile *kf;
+    if (!keyFile)
+        kf = new rtengine::SafeKeyFile();
+    else
+        kf = keyFile;
+
+    if (!kf)
+        return false;
+
+    if (!keyFile || tagDirName.empty())
+        tagDirName = "EXIF";
+
+    std::vector<const TagDirectory *> tagDirList;
+    std::vector<Glib::ustring> tagDirPaths;
+
+    FILE *f;
+    if (!keyFile) {
+        // open the file in write mode
+        f = safe_g_fopen (commFName, "wt");
+        if (f==NULL) {
+            printf("TagDirectory::keyFileDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
+            delete kf;
+            return false;
+        }
+
+        kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
+        kf->set_string ("RT General", "AppVersion", VERSION);
+        kf->set_integer("RT General", "ProcParamsVersion", PPVERSION);
+        kf->set_string ("RT General", "ImageFileName", imageFName);
+        kf->set_string ("RT General", "OutputProfileFileName", profileFName);
+        kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
+        kf->set_boolean("RT General", "FlaggingMode", flagMode);
+
+        kf->set_double ("Common Data", "FNumber", cfs->fnumber);
+        kf->set_double ("Common Data", "Shutter", cfs->shutter);
+        kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
+        kf->set_integer("Common Data", "ISO", cfs->iso);
+        kf->set_string ("Common Data", "Lens", cfs->lens);
+        kf->set_string ("Common Data", "Make", cfs->camMake);
+        kf->set_string ("Common Data", "Model", cfs->camModel);
+    }
+
+  // recursively iterate over the tag list
+  for (size_t i=0; i<tags.size(); i++) {
+      std::string tagName = tags[i]->nameToString ();
+      if (tags[i]->isDirectory())
+          for (int j=0; tags[i]->getDirectory(j); j++) {
+              // Accumulating the TagDirectories to dump later
+              tagDirPaths.push_back( Glib::ustring( tagDirName + "/" + getDumpKey(tags[i]->getID(), tagName) ) );
+              tagDirList.push_back(tags[i]->getDirectory(j));
+              kf->set_string (tagDirName, getDumpKey(tags[i]->getID(), tagName), "$subdir");
+      }
+      else {
+          kf->set_string (tagDirName, getDumpKey(tags[i]->getID(), tagName), tags[i]->valueToString());
+      }
+  }
+
+  // dumping the sub-directories
+  for (size_t i=0; i< tagDirList.size(); i++)
+      tagDirList.at(i)->CPBDump(commFName, imageFName, profileFName, defaultPParams, cfs, flagMode, kf, tagDirPaths.at(i));
+
+  if (!keyFile) {
+      fprintf (f, "%s", kf->to_data().c_str());
+      fclose (f);
+      delete kf;
+  }
+
+  return true;
+}
+
+Glib::ustring TagDirectory::getDumpKey (int tagID, const Glib::ustring tagName) {
+    Glib::ustring key;
+    if (options.CPBKeys == CPBKT_TID || options.CPBKeys == CPBKT_TID_NAME)
+        key = Glib::ustring(Glib::ustring::format(std::fixed, std::hex, std::setfill(L'0'), std::setw(4), tagID));
+    if (options.CPBKeys == CPBKT_TID_NAME)
+        key += Glib::ustring("_");
+    if (options.CPBKeys == CPBKT_TID_NAME || options.CPBKeys == CPBKT_NAME)
+        key += Glib::ustring(tagName);
+    return key;
+}
 void TagDirectory::addTag (Tag* tag) {
 
   // look up if it already exists:

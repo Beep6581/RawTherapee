@@ -53,6 +53,7 @@ class SaveFormat {
 
 enum ThFileType {FT_Invalid=-1, FT_None=0, FT_Raw=1, FT_Jpeg=2, FT_Tiff=3, FT_Png=4, FT_Custom=5, FT_Tiff16=6, FT_Png16=7, FT_Custom16=8}; 
 enum PPLoadLocation {PLL_Cache=0, PLL_Input=1};
+enum CPBKeyType {CPBKT_TID=0, CPBKT_NAME=1, CPBKT_TID_NAME=2};
 
 namespace rtengine {
 	class SafeKeyFile;
@@ -155,7 +156,8 @@ class Options {
     Glib::ustring gimpDir;
     Glib::ustring psDir;
     Glib::ustring customEditorProg;
-    Glib::ustring customProfileBuilder;
+    Glib::ustring CPBPath; // Custom Profile Builder's path
+    CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
     int maxThumbnailHeight;
     std::size_t maxCacheEntries;

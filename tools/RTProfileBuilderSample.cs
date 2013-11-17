@@ -10,8 +10,16 @@ using System.Collections.Specialized;
 #endregion
 
 // *** Raw Therapee sample Custom Profile builder (version 2013-08-12) ***
-// WARNING: PP3 format may change in the future versions! If this happens there will probably be no automatic migration path, you'll have to adjust on your own.
-// This is a sample, and therefore not supported by the RT team (just by oduis)
+//
+//
+// WARNING: The command line parameters has changed since this file has been created by Oduis. The new mechanism involves a
+// temporary communication file (.ini style) to provide system parameters and metadata read by RawTherapee. This script has
+// to be updated by some C# developer in order to work.
+//
+//
+// WARNING: PP3 format may change in the future versions! If this happens there will probably be no automatic migration path,
+// you'll have to adjust on your own. This is a sample, and therefore not supported by the RT team (just by oduis)
+//
 //
 // How to use:
 // 1. Modify the GetCorrectedSettings function below according to your needs.

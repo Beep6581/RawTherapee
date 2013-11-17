@@ -372,6 +372,25 @@ Gtk::Widget* Preferences::getProcParamsPanel () {
     fpp->add (*vbpp);
     mvbpp->pack_start (*fpp, Gtk::PACK_SHRINK, 4);
 
+    // Custom profile builder box
+    Gtk::Frame* cpfrm = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CUSTPROFBUILD")) );
+    Gtk::Label* cplab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CUSTPROFBUILDPATH")+":", Gtk::ALIGN_LEFT) );
+    txtCustProfBuilderPath = Gtk::manage( new Gtk::Entry () );
+    txtCustProfBuilderPath->set_tooltip_markup (M("PREFERENCES_CUSTPROFBUILDHINT"));
+    Gtk::Label* cpltypelab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CUSTPROFBUILDKEYFORMAT")+":", Gtk::ALIGN_LEFT) );
+    custProfBuilderLabelType = Gtk::manage (new Gtk::ComboBoxText ());
+    custProfBuilderLabelType->append_text (M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID"));
+    custProfBuilderLabelType->append_text (M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME"));
+    custProfBuilderLabelType->append_text (M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID") + "_" + M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME"));
+    Gtk::Table* cpbt = Gtk::manage (new Gtk::Table (2, 2));
+    cpbt->set_border_width(4);
+    cpbt->attach (*cplab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    cpbt->attach (*txtCustProfBuilderPath, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    cpbt->attach (*cpltypelab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
+    cpbt->attach (*custProfBuilderLabelType, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    cpfrm->add (*cpbt);
+    mvbpp->pack_start (*cpfrm, Gtk::PACK_SHRINK, 4);
+
     Gtk::Frame* fdp = Gtk::manage (new Gtk::Frame (M("PREFERENCES_PROFILEHANDLING")));
     Gtk::VBox* vbdp = Gtk::manage (new Gtk::VBox ());
     vbdp->set_border_width (4);
@@ -812,26 +831,6 @@ Gtk::Widget* Preferences::getGeneralPanel () {
     mvbsd->pack_start (*fdg, Gtk::PACK_SHRINK, 4);
 
 
-    // Custom profile builder box
-    Gtk::Frame* cpfrm = Gtk::manage( new Gtk::Frame (M("PREFERENCES_CUSTPROFBUILD")) );
-
-    Gtk::HBox* cphb = Gtk::manage( new Gtk::HBox () );
-    cphb->set_border_width (4);
-    cphb->set_spacing (4);
-
-    Gtk::Label* cplab = Gtk::manage( new Gtk::Label (M("PREFERENCES_CUSTPROFBUILDPATH")+":") );
-    cphb->pack_start (*cplab, Gtk::PACK_SHRINK,4);
-
-    txtCustProfBuilderPath = Gtk::manage( new Gtk::Entry () );
-    txtCustProfBuilderPath->set_tooltip_markup (M("PREFERENCES_CUSTPROFBUILDHINT"));
-    cphb->set_tooltip_markup (M("PREFERENCES_CUSTPROFBUILDHINT"));
-    cphb->pack_start (*txtCustProfBuilderPath);
-    
-    cpfrm->add (*cphb);
-
-    mvbsd->pack_start (*cpfrm, Gtk::PACK_SHRINK, 4);
-
-
     mvbsd->set_border_width (4);
 
     tconn = theme->signal_changed().connect( sigc::mem_fun(*this, &Preferences::themeChanged) );
@@ -1143,7 +1142,8 @@ void Preferences::storePreferences () {
     else if (edOther->get_active ())
         moptions.editorToSendTo = 3;
 
-    moptions.customProfileBuilder = txtCustProfBuilderPath->get_text();
+    moptions.CPBPath = txtCustProfBuilderPath->get_text();
+    moptions.CPBKeys = CPBKeyType(custProfBuilderLabelType->get_active_row_number());
 
     moptions.rtSettings.monitorProfile      = monProfile->get_filename ();
     moptions.rtSettings.autoMonitorProfile  = cbAutoMonProfile->get_active ();
@@ -1286,7 +1286,9 @@ void Preferences::fillPreferences () {
 #endif
     editorToSendTo->set_text (moptions.customEditorProg);
 
-    txtCustProfBuilderPath->set_text(moptions.customProfileBuilder);
+    txtCustProfBuilderPath->set_text(moptions.CPBPath);
+    custProfBuilderLabelType->set_active(moptions.CPBKeys);
+
 
     if (moptions.startupDir==STARTUPDIR_CURRENT) 
         sdcurrent->set_active ();
