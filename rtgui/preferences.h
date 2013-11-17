@@ -141,6 +141,7 @@ class Preferences : public Gtk::Dialog, public ProfileStoreListener {
 	Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
     Gtk::Entry* txtCustProfBuilderPath;
+    Gtk::ComboBoxText* custProfBuilderLabelType;
 
     Gtk::CheckButton* ckbHistogramPositionLeft;
     Gtk::CheckButton* ckbShowProfileSelector;

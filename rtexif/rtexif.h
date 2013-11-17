@@ -28,6 +28,9 @@
 #include <cstdlib>
 #include <cmath>
 #include "../rtengine/procparams.h"
+#include "../rtengine/safekeyfile.h"
+
+class CacheImageData;
 
 namespace rtexif {
 
@@ -53,7 +56,6 @@ inline void sset2 (unsigned short v, unsigned char *s, ByteOrder order);
 inline void sset4 (int v, unsigned char *s, ByteOrder order);
 inline float int_to_float (int i);
 short int int2_to_signed (short unsigned int i);
-
 
 struct TIFFHeader {
 
@@ -92,6 +94,7 @@ class TagDirectory {
     const TagAttrib*  attribs;  // descriptor table to decode the tags
     ByteOrder         order;    // byte order
     TagDirectory*     parent;   // parent directory (NULL if root)
+    static Glib::ustring getDumpKey (int tagID, const Glib::ustring tagName);
 
   public:
     TagDirectory ();
@@ -125,7 +128,9 @@ class TagDirectory {
     virtual TagDirectory* clone    (TagDirectory* parent);
     virtual void     applyChange   (std::string field, std::string value);
 
-    virtual void     printAll (unsigned  int level=0) const; // reentrant debug function, keep level=0 on first call !
+    virtual void     printAll      (unsigned  int level=0) const; // reentrant debug function, keep level=0 on first call !
+    virtual bool     CPBDump       (const Glib::ustring &commFName, const Glib::ustring &imageFName, const Glib::ustring &profileFName, const Glib::ustring &defaultPParams,
+                                    const CacheImageData* cfs, const bool flagMode, rtengine::SafeKeyFile *keyFile=NULL, Glib::ustring tagDirName="") const;
     virtual void     sort     ();
 };
 

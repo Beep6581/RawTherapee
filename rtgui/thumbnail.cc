@@ -191,11 +191,22 @@ const ProcParams& Thumbnail::getProcParamsU () {
     return pparams; // there is no valid pp to return, but we have to return something
 }
 
-/*
- *  Create default params on demand and returns a new updatable object
+/** @brief  Create default params on demand and returns a new updatable object
+ *
  *  The loaded profile may be partial, but it return a complete ProcParams (i.e. without ParamsEdited)
+ *
+ *  @param returnParams Ask to return a pointer to a ProcParams object if true
+ *  @param forceCPB True if the Custom Profile Builder has to be invoked, False if the CPB has to be invoked if the profile doesn't
+ *                  exist yet. It depends on other conditions too
+ *  @param flaggingMode True if the ProcParams will be created because the file browser is being flagging an image
+ *                      (rang, to trash, color labels). This parameter is passed to the CPB.
+ *
+ *  @return Return a pointer to a ProcPamas structure to be updated if returnParams is true and if everything went fine, NULL otherwise.
  */
 rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool forceCPB, bool flaggingMode) {
+
+    static int index=0; // Will act as unique identifier during the session
+
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = NULL;
 
@@ -203,26 +214,44 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     const CacheImageData* cfs=getCacheImageData();
     Glib::ustring defaultPparamsPath = options.findProfilePath(defProf);
-    if (!options.customProfileBuilder.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
-        // For the filename etc. do NOT use streams, since they are not UTF8 safe
-        Glib::ustring cmdLine = options.customProfileBuilder + Glib::ustring(" \"") + fname + Glib::ustring("\" \"")
-        + (defaultPparamsPath == DEFPROFILE_INTERNAL ? "Neutral" : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension)) + Glib::ustring("\" ");
+    if (!options.CPBPath.empty() && !defaultPparamsPath.empty() && (!hasProcParams() || forceCPB) && cfs && cfs->exifValid) {
+        // First generate the communication file, with general values and EXIF metadata
+        rtengine::ImageMetaData* imageMetaData;
+        if (getType()==FT_Raw) {
+            rtengine::RawMetaDataLocation metaData = rtengine::Thumbnail::loadMetaDataFromRaw(fname);
+            imageMetaData = rtengine::ImageMetaData::fromFile (fname, &metaData);
+        }
+        else
+            imageMetaData = rtengine::ImageMetaData::fromFile (fname, NULL);
 
-        // ustring doesn't know int etc formatting, so take these via (unsafe) stream
-        std::ostringstream strm;
-        strm << Glib::ustring("\"") << options.cacheBaseDir.c_str() << Glib::ustring("\" ");
-        strm << flaggingMode << Glib::ustring(" ");
-        strm << cfs->fnumber << Glib::ustring(" ") << cfs->shutter << Glib::ustring(" ");
-        strm << cfs->focalLen << Glib::ustring(" ") << cfs->iso << Glib::ustring(" \"");
-        strm << cfs->lens << Glib::ustring("\" \"") << cfs->camMake << Glib::ustring("\"");
-        strm << Glib::ustring(" \"") << cfs->camModel << Glib::ustring("\"");
- 
+        Glib::ustring tmpFileName( Glib::build_filename(options.cacheBaseDir, Glib::ustring::compose("CPB_temp_%1.txt", index++)) );
+
+        const rtexif::TagDirectory* exifDir=NULL;
+        if (imageMetaData && (exifDir = imageMetaData->getExifData())) {
+            Glib::ustring outFName;
+            if (options.paramsLoadLocation==PLL_Input)
+                outFName = fname+paramFileExtension;
+            else
+                outFName = getCacheFileName("profiles")+paramFileExtension;
+            exifDir->CPBDump(tmpFileName, fname, outFName,
+                             defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension),
+                             cfs,
+                             flaggingMode);
+        }
+
+        // For the filename etc. do NOT use streams, since they are not UTF8 safe
+        Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\" \"");
+
         if (options.rtSettings.verbose)
-            printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine + strm.str()).c_str());
-        bool success = safe_spawn_command_line_sync (cmdLine + strm.str());
+            printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine).c_str());
+        bool success = safe_spawn_command_line_sync (cmdLine);
 
         // Now they SHOULD be there (and potentially "partial"), so try to load them and store it as a full procparam
         if (success) loadProcParams();
+
+        if (safe_file_test(tmpFileName, Glib::FILE_TEST_EXISTS )) safe_g_remove (tmpFileName);
+
+        if (imageMetaData) delete imageMetaData;
     }
 
     if (returnParams && hasProcParams()) {

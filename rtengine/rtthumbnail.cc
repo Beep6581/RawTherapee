@@ -215,6 +215,23 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 #define FISBLUE(filter,row,col) \
 	((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
 
+RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
+{
+	RawMetaDataLocation rml;
+	rml.exifBase = -1;
+	rml.ciffBase = -1;
+	rml.ciffLength = -1;
+
+	RawImage ri(fname);
+	int r = ri.loadRaw(false);
+	if( !r ){
+		rml.exifBase = ri.get_exifBase();
+		rml.ciffBase = ri.get_ciffBase();
+		rml.ciffLength = ri.get_ciffLen();
+	}
+	return rml;
+}
+
 Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, int &w, int &h, int fixwh, double wbEq, bool rotate)
 {
 	RawImage *ri= new RawImage (fname);
