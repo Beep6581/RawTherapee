@@ -73,11 +73,11 @@ void Vignetting::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
 void Vignetting::write (ProcParams* pp, ParamsEdited* pedited) {
 
-    pp->vignetting.amount = (int)amount->getValue ();
-    pp->vignetting.radius = (int)radius->getValue ();
-    pp->vignetting.strength = (int)strength->getValue ();
-    pp->vignetting.centerX = (int)centerX->getValue ();
-    pp->vignetting.centerY = (int)centerY->getValue ();
+    pp->vignetting.amount = amount->getIntValue ();
+    pp->vignetting.radius = radius->getIntValue ();
+    pp->vignetting.strength = strength->getIntValue ();
+    pp->vignetting.centerX = centerX->getIntValue ();
+    pp->vignetting.centerY = centerY->getIntValue ();
 
     if (pedited) { 
         pedited->vignetting.amount = amount->getEditedState ();
@@ -114,8 +114,16 @@ void Vignetting::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
 void Vignetting::adjusterChanged (Adjuster* a, double newval) {
 
-    if (listener) 
-        listener->panelChanged (EvVignetting, Glib::ustring::compose ("%1=%5\n%2=%6\n%3=%7\n%4=%8 %9", M("TP_VIGNETTING_AMOUNT"), M("TP_VIGNETTING_RADIUS"), M("TP_VIGNETTING_STRENGTH"), M("TP_VIGNETTING_CENTER"), (int)amount->getValue(), (int)radius->getValue(), (int)strength->getValue(), (int)centerX->getValue(), (int)centerY->getValue()));
+    if (listener)  {
+        if (a == amount)
+            listener->panelChanged (EvVignettingAmount, amount->getTextValue());
+        else if (a == radius)
+            listener->panelChanged (EvVignettingRadius, radius->getTextValue());
+        else if (a == strength)
+            listener->panelChanged (EvVignettingStrenght, strength->getTextValue());
+        else if (a == centerX || a == centerY)
+            listener->panelChanged (EvVignettingCenter, Glib::ustring::compose ("X=%1\nY=%2", centerX->getTextValue(), centerY->getTextValue()));
+    }
 }
 
 void Vignetting::setAdjusterBehavior (bool amountadd, bool radiusadd, bool strengthadd, bool centeradd) {

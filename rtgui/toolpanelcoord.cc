@@ -85,7 +85,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     addPanel (exposurePanel, hlrecovery,        M("TP_HLREC_LABEL"));          toolPanels.push_back (hlrecovery);
     addPanel (colorPanel, vibrance,             M("TP_VIBRANCE_LABEL"));       toolPanels.push_back (vibrance);
     addPanel (colorPanel, chmixer,              M("TP_CHMIXER_LABEL"));        toolPanels.push_back (chmixer);
-    addPanel (colorPanel, chmixerbw,            M("TP_CHMIXERBW_LABEL"));      toolPanels.push_back (chmixerbw);
+    addPanel (colorPanel, chmixerbw,            M("TP_BWMIX_LABEL"));          toolPanels.push_back (chmixerbw);
     addPanel (exposurePanel, shadowshighlights, M("TP_SHADOWSHLIGHTS_LABEL")); toolPanels.push_back (shadowshighlights);
     addPanel (detailsPanel, sharpening,         M("TP_SHARPENING_LABEL"));     toolPanels.push_back (sharpening);
     addPanel (detailsPanel, sharpenEdge,        M("TP_SHARPENEDGE_LABEL"));    toolPanels.push_back (sharpenEdge);

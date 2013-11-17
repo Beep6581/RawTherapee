@@ -801,17 +801,17 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
 		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
 	}
-	if (chmixerbw.bwred)			toEdit.chmixerbw.bwred 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwred + mods.chmixerbw.bwred : mods.chmixerbw.bwred;
+	if (chmixerbw.bwred)		toEdit.chmixerbw.bwred 		= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwred + mods.chmixerbw.bwred : mods.chmixerbw.bwred;
 	if (chmixerbw.bwgreen)		toEdit.chmixerbw.bwgreen 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwgreen + mods.chmixerbw.bwgreen : mods.chmixerbw.bwgreen;
-	if (chmixerbw.bwblue)			toEdit.chmixerbw.bwblue 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwblue + mods.chmixerbw.bwblue : mods.chmixerbw.bwblue;
-	if (chmixerbw.bwredgam)			toEdit.chmixerbw.bwredgam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwredgam + mods.chmixerbw.bwredgam : mods.chmixerbw.bwredgam;
-	if (chmixerbw.bwgreengam)		toEdit.chmixerbw.bwgreengam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwgreengam + mods.chmixerbw.bwgreengam : mods.chmixerbw.bwgreengam;
-	if (chmixerbw.bwbluegam)			toEdit.chmixerbw.bwbluegam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwbluegam + mods.chmixerbw.bwbluegam : mods.chmixerbw.bwbluegam;
-	if (chmixerbw.bworan)			toEdit.chmixerbw.bworan 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bworan + mods.chmixerbw.bworan : mods.chmixerbw.bworan;
+	if (chmixerbw.bwblue)		toEdit.chmixerbw.bwblue 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwblue + mods.chmixerbw.bwblue : mods.chmixerbw.bwblue;
+	if (chmixerbw.bwredgam)		toEdit.chmixerbw.bwredgam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwredgam + mods.chmixerbw.bwredgam : mods.chmixerbw.bwredgam;
+	if (chmixerbw.bwgreengam)	toEdit.chmixerbw.bwgreengam = dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwgreengam + mods.chmixerbw.bwgreengam : mods.chmixerbw.bwgreengam;
+	if (chmixerbw.bwbluegam)	toEdit.chmixerbw.bwbluegam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwbluegam + mods.chmixerbw.bwbluegam : mods.chmixerbw.bwbluegam;
+	if (chmixerbw.bworan)		toEdit.chmixerbw.bworan 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bworan + mods.chmixerbw.bworan : mods.chmixerbw.bworan;
 	if (chmixerbw.bwyell)		toEdit.chmixerbw.bwyell 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwyell + mods.chmixerbw.bwyell : mods.chmixerbw.bwyell;
-	if (chmixerbw.bwcyan)			toEdit.chmixerbw.bwcyan 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwcyan + mods.chmixerbw.bwcyan : mods.chmixerbw.bwcyan;
-	if (chmixerbw.bwmag)		toEdit.chmixerbw.bwmag 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwmag + mods.chmixerbw.bwmag : mods.chmixerbw.bwmag;
-	if (chmixerbw.bwpur)		toEdit.chmixerbw.bwpur 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwpur + mods.chmixerbw.bwpur : mods.chmixerbw.bwpur;
+	if (chmixerbw.bwcyan)		toEdit.chmixerbw.bwcyan 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwcyan + mods.chmixerbw.bwcyan : mods.chmixerbw.bwcyan;
+	if (chmixerbw.bwmag)		toEdit.chmixerbw.bwmag 		= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwmag + mods.chmixerbw.bwmag : mods.chmixerbw.bwmag;
+	if (chmixerbw.bwpur)		toEdit.chmixerbw.bwpur 		= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwpur + mods.chmixerbw.bwpur : mods.chmixerbw.bwpur;
 	
 	if (hlrecovery.enabled)	toEdit.hlrecovery.enabled 	= mods.hlrecovery.enabled;
 	if (hlrecovery.method)	toEdit.hlrecovery.method 	= mods.hlrecovery.method;

@@ -91,7 +91,7 @@ ALLNORAW,         // EvHRMethod,
 ALL,              // EvWProfile,
 OUTPUTPROFIL,     // EvOProfile,
 ALL,              // EvIProfile,
-TRANSFORM,        // EvVignetting,
+TRANSFORM,        // EvVignettingAmount,
 RGBCURVE,         // EvChMixer,
 RESIZE,           // EvResizeScale,
 RESIZE,           // EvResizeMethod,
@@ -229,10 +229,10 @@ LUMINANCECURVE,   // EvCATAutoadap
 DEFRINGE,         // EvPFCurve,
 WHITEBALANCE,     // EvWBequal,
 WHITEBALANCE,     // EvWBequalbo,
-TRANSFORM,        // EvGradient
+TRANSFORM,        // EvGradientDegree
 TRANSFORM,        // EvGradientEnabled
-TRANSFORM,        // EvPCVignette
-TRANSFORM,         // EvPCVignetteEnabled
+TRANSFORM,        // EvPCVignetteStrength
+TRANSFORM,        // EvPCVignetteEnabled
 RGBCURVE,         // EvBWChmixEnabled
 RGBCURVE,         // EvBWred
 RGBCURVE,         // EvBWgreen
@@ -241,22 +241,31 @@ RGBCURVE,         // EvBWredgam
 RGBCURVE,         // EvBWgreengam
 RGBCURVE,         // EvBWbluegam
 RGBCURVE,         // EvBWfil
-RGBCURVE,      	  // EvBWset
+RGBCURVE,         // EvBWset
 RGBCURVE,         // EvBWoran
-RGBCURVE,       	  // EvBWyell
+RGBCURVE,         // EvBWyell
 RGBCURVE,         // EvBWcyan
-RGBCURVE,      	  // EvBWmag
+RGBCURVE,         // EvBWmag
 RGBCURVE,         // EvBpur
-RGBCURVE,          //EvBWequalV
-RGBCURVE,			//EvBWChmixEnabledLm
-RGBCURVE,      	  // EvBWmet
-RGBCURVE, 			//EvToneCurvebw1
-RGBCURVE,			//EvToneCurveBWMode1
-RGBCURVE,			//EvToneCurvebw2
-RGBCURVE,			//EvToneCurveBWMode2
-RGBCURVE,  			//	EvAutoch,	
-RGBCURVE,		//	EvFixedch,	
-RGBCURVE 			//EvNeutralBW
+RGBCURVE,         // EvBWequalV
+RGBCURVE,         // EvBWChmixEnabledLm
+RGBCURVE,         // EvBWmet
+RGBCURVE,         // EvToneCurvebw1
+RGBCURVE,         // EvToneCurveBWMode1
+RGBCURVE,         // EvToneCurvebw2
+RGBCURVE,         // EvToneCurveBWMode2
+RGBCURVE,         // EvAutoch,
+RGBCURVE,         // EvFixedch,
+RGBCURVE,         // EvNeutralBW
+TRANSFORM,        // EvGradientFeather
+TRANSFORM,        // EvGradientStrength
+TRANSFORM,        // EvGradientCenter
+TRANSFORM,        // EvPCVignetteFeather
+TRANSFORM,        // EvPCVignetteRoundness
+TRANSFORM,        // EvVignettingRadius,
+TRANSFORM,        // EvVignettingStrength,
+TRANSFORM         // EvVignettingCenter,
+
 
 //LUMINANCECURVE    // EvCATsharpcie
 
