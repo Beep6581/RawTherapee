@@ -320,6 +320,11 @@ than measure white levels). If you experience a black level issue it's more
 likely due to a format parsing bug which should be fixed in DCRaw and/or
 RawTherapee's raw format parser.
 
+How does a black level issue look? If the image has a color cast and is
+possibly duller than normal it's likely that black levels are off. The color
+cast is typically stronger in darker colors but it can be hard to see, it's
+more often experienced as a cast over the whole image.
+
 */
 {"camera_constants": [
 
