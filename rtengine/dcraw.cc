@@ -5278,6 +5278,7 @@ guess_cfa_pc:
 	break;
       case 61450:
 	blrr = blrc = 2;
+        if (filters == UINT_MAX) filters = 0x94949494; /* RT: Fuji X100 fix for dcraw 9.19 to get proper black level parsing, hopefully works for other Fuji cameras too! */
       case 50714:			/* BlackLevel */
 	black = getreal(type);
 	if ((unsigned)(filters+1) < 1000) break;
