@@ -721,6 +721,11 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,SHORT , sonyCameraSettingsAttribs2, MOTOROLA);
                   else if(count == 1536 || count == 2048)
                       directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE  , sonyCameraSettingsAttribs3, INTEL);
+                  else {
+                      // Unknown CameraSettings
+                      delete directory;
+                      directory = NULL;
+                  }
                   makerNoteKind = TABLESUBDIR;
                   break;
               case 0x9405:
