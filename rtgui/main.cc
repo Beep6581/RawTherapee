@@ -92,7 +92,7 @@ int main(int argc, char **argv)
     setlocale(LC_ALL,"");
 
     // Uncomment the following line if you want to use the "--g-fatal-warnings" command line flag
-    gtk_init (&argc, &argv);
+    //gtk_init (&argc, &argv);
 
     Glib::thread_init();
     gdk_threads_set_lock_functions(G_CALLBACK(myGdkLockEnter), (G_CALLBACK(myGdkLockLeave)));
