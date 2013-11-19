@@ -22,15 +22,13 @@
 
 #include "imagefloat.h"
 #include "curves.h"
+#include "colortemp.h"
 #include "../rtgui/threadutils.h"
 #include <glibmm.h>
 #include <map>
 #include <string>
 
 namespace rtengine {
-    enum DCPLightType {
-        Daylight=1, Tungsten=2, Fluorescent=3, Flash=4
-    };
 
     class DCPProfile {
         struct HSBModify
@@ -39,30 +37,42 @@ namespace rtengine {
             float fSatScale;
             float fValScale;
         };
+        struct HSDTableInfo
+        {
+            int iHueDivisions, iSatDivisions, iValDivisions;
+            int iHueStep, iValStep, iArrayCount;
+            struct
+            {
+                float hScale, sScale, vScale;
+                int maxHueIndex0, maxSatIndex0, maxValIndex0;
+                int hueStep, valStep;
+            } pc;
+        };
 
         double mColorMatrix1[3][3],mColorMatrix2[3][3];
-        double mXYZCAM1[3][3],mXYZCAM2[3][3];  // compatible to RTs xyz_cam 
-        HSBModify *aDeltas1,*aDeltas2;
+        bool hasColorMatrix1, hasColorMatrix2, hasForwardMatrix1, hasForwardMatrix2, hasToneCurve, willInterpolate;
+        double mForwardMatrix1[3][3],mForwardMatrix2[3][3];
+        double temperature1, temperature2;
+        HSBModify *aDeltas1,*aDeltas2,*aLookTable;
+        HSDTableInfo DeltaInfo,LookInfo;
         short iLightSource1,iLightSource2;
-
-        int iHueDivisions, iSatDivisions, iValDivisions;
-
-        int iHueStep, iValStep, iArrayCount;
 
         AdobeToneCurve toneCurve;
 
-        void ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]);
-
-        const HSBModify* GetBestProfile(DCPLightType preferredProfile,  double (*mXYZCAM)[3]) const;
-
-        DCPLightType GetLightType(short iLightSource) const;
+        void MakeXYZCAM(ColorTemp &wb, int preferredIlluminant, double (*mXYZCAM)[3]) const;
+        const HSBModify* MakeHueSatMap(ColorTemp &wb, int preferredIlluminant, HSBModify **deleteHandle) const;
+        void ConvertDNGMatrix2XYZCAM(const double (*mColorMatrix)[3], double (*mXYZCAM)[3]) const;
+        void ConvertDNGForwardMatrix2XYZCAM(const double (*mForwardMatrix)[3], double (*mXYZCAM)[3], ColorTemp &wb) const;
+        void HSDApply(const HSDTableInfo &ti, const HSBModify *tableBase, const float hs, const float ss, const float vs, float &h, float &s, float &v) const;
 
     public:
         DCPProfile(Glib::ustring fname, bool isRTProfile);
         ~DCPProfile();
 
-        void Apply(Imagefloat *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, float rawWhiteFac=1, bool useToneCurve=false) const;
-        void Apply(Image16 *pImg, DCPLightType preferredProfile, Glib::ustring workingSpace, bool useToneCurve) const;
+        bool getHasToneCurve() { return hasToneCurve; }
+        void getIlluminants(int &i1, double &temp1, int &i2, double &temp2, bool &willInterpolate_) { i1 = iLightSource1; i2 = iLightSource2; temp1 = temperature1, temp2 = temperature2; willInterpolate_ = willInterpolate; };
+        void Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, float rawWhiteFac=1, bool useToneCurve=false) const;
+        void Apply(Image16 *pImg, int preferredIlluminant, Glib::ustring workingSpace, ColorTemp &wb, bool useToneCurve) const;
     };
 
     class DCPStore {

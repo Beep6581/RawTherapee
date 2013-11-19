@@ -681,9 +681,17 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
     while (currentJob) {
         int errorCode;
         IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData);
-        if (errorCode) 
+        if (errorCode) {
             bpl->error ("Can not load input image.");
-        currentJob = bpl->imageReady (img);
+            currentJob = NULL;
+        } else {
+            try {
+                currentJob = bpl->imageReady (img);
+            } catch (Glib::Exception& ex) {
+                bpl->error (ex.what());
+                currentJob = NULL;
+            }
+        }
     }
 }
 

@@ -283,7 +283,7 @@ HISTORY_MSG_45;Lum. Denoising Edge Tolerance
 HISTORY_MSG_46;Color Denoising
 HISTORY_MSG_47;Blend ICC highlights with matrix
 HISTORY_MSG_48;Use DCP's tone curve
-HISTORY_MSG_49;Edge Sensitive Color Denoising
+HISTORY_MSG_49;DCP Illuminant
 HISTORY_MSG_50;Shadow/Highlight
 HISTORY_MSG_51;Highlights
 HISTORY_MSG_52;Shadows
@@ -1234,6 +1234,9 @@ TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
+TP_ICM_DCPILLUMINANT;Illuminant
+TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_FILEDLGFILTERANY;Any files
 TP_ICM_FILEDLGFILTERICM;Color profiles
 TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific color profile
@@ -1252,14 +1255,9 @@ TP_ICM_LABEL;Color Management
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
 TP_ICM_OUTPUTPROFILE;Output Profile
-TP_ICM_PREFERREDPROFILE;Preferred DCP profile
-TP_ICM_PREFERREDPROFILE_1;Daylight
-TP_ICM_PREFERREDPROFILE_2;Tungsten
-TP_ICM_PREFERREDPROFILE_3;Fluorescent
-TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
 TP_ICM_TONECURVE;Use DCP's tone curve
-TP_ICM_TONECURVE_TOOLTIP;Enable to use tone curves that may be contained in DCP profiles.
+TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold

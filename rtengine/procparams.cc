@@ -408,7 +408,7 @@ void ProcParams::setDefaults () {
     icm.input   = "(cameraICC)";
     icm.blendCMSMatrix = false;
     icm.toneCurve = false;
-    icm.preferredProfile = (short)rtengine::Daylight;
+    icm.dcpIlluminant = 0;
     icm.working = "sRGB";
     icm.output  = "sRGB";
     icm.gamma  = "default";
@@ -966,7 +966,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   relativePathIfInside(fname, fnameAbsolute, icm.input));
     if (!pedited || pedited->icm.toneCurve)          keyFile.set_boolean ("Color Management", "ToneCurve",   icm.toneCurve);
     if (!pedited || pedited->icm.blendCMSMatrix)     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
-    if (!pedited || pedited->icm.preferredProfile)   keyFile.set_boolean ("Color Management", "PreferredProfile",   icm.preferredProfile);
+    if (!pedited || pedited->icm.dcpIlluminant)   keyFile.set_integer ("Color Management", "DCPIlluminant",   icm.dcpIlluminant);
     if (!pedited || pedited->icm.working)            keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
     if (!pedited || pedited->icm.output)             keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
     if (!pedited || pedited->icm.gamma)              keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
@@ -1573,7 +1573,7 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "InputProfile"))   { icm.input          = expandRelativePath(fname, "file:", keyFile.get_string ("Color Management", "InputProfile")); if (pedited) pedited->icm.input = true; }
     if (keyFile.has_key ("Color Management", "ToneCurve"))      { icm.toneCurve      = keyFile.get_boolean ("Color Management", "ToneCurve"); if (pedited) pedited->icm.toneCurve = true; }
     if (keyFile.has_key ("Color Management", "BlendCMSMatrix")) { icm.blendCMSMatrix = keyFile.get_boolean ("Color Management", "BlendCMSMatrix"); if (pedited) pedited->icm.blendCMSMatrix = true; }
-    if (keyFile.has_key ("Color Management", "PreferredProfile")) { icm.preferredProfile = keyFile.get_boolean ("Color Management", "PreferredProfile"); if (pedited) pedited->icm.preferredProfile = true; }
+    if (keyFile.has_key ("Color Management", "DCPIlluminant")) { icm.dcpIlluminant = keyFile.get_integer ("Color Management", "DCPIlluminant"); if (pedited) pedited->icm.dcpIlluminant = true; }
     if (keyFile.has_key ("Color Management", "WorkingProfile")) { icm.working        = keyFile.get_string ("Color Management", "WorkingProfile"); if (pedited) pedited->icm.working = true; }
     if (keyFile.has_key ("Color Management", "OutputProfile"))  { icm.output         = keyFile.get_string ("Color Management", "OutputProfile"); if (pedited) pedited->icm.output = true; }
     if (keyFile.has_key ("Color Management", "Gammafree"))      { icm.gamma          = keyFile.get_string ("Color Management", "Gammafree"); if (pedited) pedited->icm.gamfree = true; }
@@ -1941,7 +1941,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& icm.input == other.icm.input
 		&& icm.toneCurve == other.icm.toneCurve
 		&& icm.blendCMSMatrix == other.icm.blendCMSMatrix
-        && icm.preferredProfile == other.icm.preferredProfile
+        && icm.dcpIlluminant == other.icm.dcpIlluminant
 		&& icm.working == other.icm.working
 		&& icm.output == other.icm.output
 		&& icm.gamma == other.icm.gamma		

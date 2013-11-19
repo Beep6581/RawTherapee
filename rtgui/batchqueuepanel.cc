@@ -223,16 +223,20 @@ void BatchQueuePanel::updateTab (int qsize)
     }
 }
 
-void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied)
+void BatchQueuePanel::queueSizeChanged (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage)
 {
 	updateTab ( qsize);
 
-    if (queueEmptied) {
+    if (queueEmptied || queueError) {
         stopBatchProc ();
         fdir->set_sensitive (true);
         fformat->set_sensitive (true);
 
         SoundManager::playSoundAsync(options.sndBatchQueueDone);
+    }
+    if (queueError) {
+        Gtk::MessageDialog msgd (queueErrorMessage, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        msgd.run ();
     }
 }
 

@@ -679,7 +679,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
     // perform color space transformation
     if (isRaw)
-        RawImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, camProfile, cam2xyz, camName );
+        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, embProfile, camProfile, cam2xyz, camName );
     else
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
 

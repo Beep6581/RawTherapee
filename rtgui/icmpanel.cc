@@ -82,16 +82,20 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
     hb->show ();
-    Gtk::Label* ppl = Gtk::manage (new Gtk::Label (M("TP_ICM_PREFERREDPROFILE")+":"));
-    ppl->show ();
-    prefprof = Gtk::manage (new MyComboBoxText ());
-    prefprof->append_text (M("TP_ICM_PREFERREDPROFILE_1"));
-    prefprof->append_text (M("TP_ICM_PREFERREDPROFILE_2"));
-    prefprof->append_text (M("TP_ICM_PREFERREDPROFILE_3"));
-    prefprof->append_text (M("TP_ICM_PREFERREDPROFILE_4"));
-    prefprof->show ();
-    hb->pack_start(*ppl, Gtk::PACK_SHRINK, 4);
-    hb->pack_start(*prefprof);
+    dcpIllLabel = Gtk::manage (new Gtk::Label ("DCP " + M("TP_ICM_DCPILLUMINANT")+":"));
+    dcpIllLabel->set_tooltip_text (M("TP_ICM_DCPILLUMINANT_TOOLTIP"));
+    dcpIllLabel->show ();
+    dcpIll = Gtk::manage (new MyComboBoxText ());
+    dcpIll->set_tooltip_text (M("TP_ICM_DCPILLUMINANT_TOOLTIP"));
+    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
+    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
+    dcpIll->show ();
+    dcpTemperatures[0] = 0;
+    dcpTemperatures[1] = 0;
+    ignoreDcpSignal = true;
+    hb->pack_start(*dcpIllLabel, Gtk::PACK_SHRINK, 4);
+    hb->pack_start(*dcpIll);
     iVBox->pack_start (*hb, Gtk::PACK_SHRINK, 2);
 
     ckbToneCurve = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_TONECURVE")));
@@ -229,7 +233,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     wnames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::wpChanged) );
     onames->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::opChanged) );
     wgamma->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::gpChanged) );
-    prefprof->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::prefProfChanged) );
+    dcpIll->signal_changed().connect( sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged) );
 
     gamcsconn = freegamma->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::GamChanged));
     tcurveconn = ckbToneCurve->signal_toggled().connect ( sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
@@ -246,6 +250,100 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     show_all ();
 }
 
+void ICMPanel::updateDCP (int dcpIlluminant, Glib::ustring dcp_name) {
+
+    if (isBatchMode) {
+        ckbToneCurve->set_sensitive (true);
+        dcpIllLabel->set_sensitive (true);
+        dcpIll->set_sensitive (true);
+        if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
+            int curr_active = dcpIll->get_active_row_number();
+            ignoreDcpSignal = true;
+            dcpIll->clear_items ();
+            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
+            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
+            dcpIll->append_text (M("GENERAL_UNCHANGED"));
+            dcpTemperatures[0] = 0;
+            dcpTemperatures[1] = 0;
+            dcpIll->set_active (curr_active);
+            ignoreDcpSignal = false;
+        }
+        if (dcpIll->get_active_row_number() == -1 && dcpIlluminant == -1) {
+            dcpIll->set_active(0);
+        } else if (dcpIlluminant >= 0 && dcpIlluminant != dcpIll->get_active_row_number()) {
+            dcpIll->set_active(dcpIlluminant);
+        }
+        dcpIll->set_sensitive (true);
+        dcpIllLabel->set_sensitive (true);
+        return;
+    }
+    ckbToneCurve->set_sensitive (false);
+    dcpIllLabel->set_sensitive (false);
+    dcpIll->set_sensitive (false);
+    if (ifromfile->get_active() && dcpStore->isValidDCPFileName(dcp_name)) {
+        DCPProfile* dcp = dcpStore->getProfile(dcp_name, false);
+        if (dcp) {
+            if (dcp->getHasToneCurve()) {
+                ckbToneCurve->set_sensitive (true);
+            } else {
+                ckbToneCurve->set_active (false);
+            }
+            int i1, i2;
+            double temp1, temp2;
+            bool willInterpolate;
+            dcp->getIlluminants(i1, temp1, i2, temp2, willInterpolate);
+            if (willInterpolate) {
+                if (dcpTemperatures[0] != temp1 || dcpTemperatures[1] != temp2) {
+                    char tempstr1[64], tempstr2[64];
+                    sprintf(tempstr1, "%.0fK", temp1);
+                    sprintf(tempstr2, "%.0fK", temp2);
+                    int curr_active = dcpIll->get_active_row_number();
+                    ignoreDcpSignal = true;
+                    dcpIll->clear_items ();
+                    dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+                    dcpIll->append_text (tempstr1);
+                    dcpIll->append_text (tempstr2);
+                    dcpTemperatures[0] = temp1;
+                    dcpTemperatures[1] = temp2;
+                    dcpIll->set_active (curr_active);
+                    ignoreDcpSignal = false;
+                }
+                if (dcpIlluminant > 2) {
+                    dcpIlluminant = 0;
+                }
+                if (dcpIll->get_active_row_number() == -1 && dcpIlluminant == -1) {
+                    dcpIll->set_active(0);
+                } else if (dcpIlluminant >= 0 && dcpIlluminant != dcpIll->get_active_row_number()) {
+                    dcpIll->set_active(dcpIlluminant);
+                }
+                dcpIll->set_sensitive (true);
+                dcpIllLabel->set_sensitive (true);
+            } else {
+                if (dcpIll->get_active_row_number() != -1) {
+                    dcpIll->set_active(-1);
+                }
+            }
+        }
+    }
+    if (!dcpIllLabel->get_sensitive() && dcpIll->get_active_row_number() != 0) {
+        if (dcpTemperatures[0] != 0 || dcpTemperatures[1] != 0) {
+            int curr_active = dcpIll->get_active_row_number();
+            ignoreDcpSignal = true;
+            dcpIll->clear_items ();
+            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));
+            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 1");
+            dcpIll->append_text (M("TP_ICM_DCPILLUMINANT") + " 2");
+            if (isBatchMode)
+                dcpIll->append_text (M("GENERAL_UNCHANGED"));
+            dcpTemperatures[0] = 0;
+            dcpTemperatures[1] = 0;
+            dcpIll->set_active (curr_active);
+            ignoreDcpSignal = false;
+        }
+    }
+}
+
 void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     disableListener ();
@@ -256,33 +354,38 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
     blendcmsconn.block(true);
 
     if (pp->icm.input == "(none)" && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
-        inone->set_active (true); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
+        inone->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
+        updateDCP(pp->icm.dcpIlluminant, "");
     }
     else if (pp->icm.input == "(embedded)" || ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()==Gtk::STATE_INSENSITIVE)) {
-        iembedded->set_active (true); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
+        iembedded->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (false);
+        updateDCP(pp->icm.dcpIlluminant, "");
     }
     else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()!=Gtk::STATE_INSENSITIVE) {
-        icameraICC->set_active (true); prefprof->set_sensitive (true); ckbToneCurve->set_sensitive (true);
+        icameraICC->set_active (true);
         ckbBlendCMSMatrix->set_sensitive (true);
+        updateDCP(pp->icm.dcpIlluminant, "");
     }
     else if ((pp->icm.input == "(cameraICC)") && icameraICC->get_state()==Gtk::STATE_INSENSITIVE) {
         // this is the case when (cameraICC) is instructed by packaged profiles, but ICC file is not found
         // therefore falling back UI to explicitly reflect the (camera) option
         icamera->set_active (true);
-        prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);   // RT's own are always single-illuminant and tone curve disabled
         ckbBlendCMSMatrix->set_sensitive (false);
+        updateDCP(pp->icm.dcpIlluminant, "");
     }
     else if ((pp->icm.input == "(camera)" || pp->icm.input=="") && icamera->get_state()!=Gtk::STATE_INSENSITIVE) {
         icamera->set_active (true);
-        ckbBlendCMSMatrix->set_sensitive (false); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive (false);
+        updateDCP(pp->icm.dcpIlluminant, "");
     }
     else {
         ifromfile->set_active (true);
         oldip = pp->icm.input.substr(5);  // cut of "file:"
         ipDialog->set_filename (pp->icm.input.substr(5));
-        ckbBlendCMSMatrix->set_sensitive (true);  prefprof->set_sensitive (true); ckbToneCurve->set_sensitive (true);
+        ckbBlendCMSMatrix->set_sensitive (true);
+        updateDCP(pp->icm.dcpIlluminant, pp->icm.input.substr(5));
     }
 
     wnames->set_active_text (pp->icm.working);
@@ -295,8 +398,6 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
     if (onames->get_active_row_number()==-1)
         onames->set_active_text (M("TP_ICM_NOICM"));
-
-    prefprof->set_active(pp->icm.preferredProfile-1);
 
     ckbToneCurve->set_active (pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
@@ -321,8 +422,8 @@ void ICMPanel::read (const ProcParams* pp, const ParamsEdited* pedited) {
             wnames->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.output)
             onames->set_active_text(M("GENERAL_UNCHANGED"));
-        if (!pedited->icm.preferredProfile)
-            prefprof->set_active_text(M("GENERAL_UNCHANGED"));
+        if (!pedited->icm.dcpIlluminant)
+            dcpIll->set_active_text(M("GENERAL_UNCHANGED"));
         if (!pedited->icm.gamma){
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
             wgamma->set_active_text(M("GENERAL_UNCHANGED"));
@@ -361,7 +462,9 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
 
     pp->icm.working = wnames->get_active_text ();
     pp->icm.gamma = wgamma->get_active_text ();
-    pp->icm.preferredProfile = prefprof->get_active_row_number()+1;
+    pp->icm.dcpIlluminant = dcpIll->get_active_row_number();
+    if (pp->icm.dcpIlluminant < 0)
+        pp->icm.dcpIlluminant = 0;
 
     if (onames->get_active_text()==M("TP_ICM_NOICM"))
         pp->icm.output  = ColorManagementParams::NoICMString;
@@ -377,7 +480,7 @@ void ICMPanel::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->icm.input = !iunchanged->get_active ();
         pedited->icm.working = wnames->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.output = onames->get_active_text()!=M("GENERAL_UNCHANGED");
-        pedited->icm.preferredProfile = prefprof->get_active_text()!=M("GENERAL_UNCHANGED");
+        pedited->icm.dcpIlluminant = dcpIll->get_active_text()!=M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent ();
         pedited->icm.blendCMSMatrix = !ckbBlendCMSMatrix->get_inconsistent ();
         pedited->icm.gamma = wgamma->get_active_text()!=M("GENERAL_UNCHANGED");
@@ -433,9 +536,10 @@ void ICMPanel::gpChanged () {
     }
 }
 
-void ICMPanel::prefProfChanged() {
-    if (listener)
-        listener->panelChanged (EvPrefProfile, prefprof->get_active_text ());
+void ICMPanel::dcpIlluminantChanged() {
+    if (listener && !ignoreDcpSignal) {
+        listener->panelChanged (EvDCPIlluminant, dcpIll->get_active_text ());
+    }
 }
 
 void ICMPanel::toneCurveChanged() {
@@ -458,27 +562,28 @@ void ICMPanel::toneCurveChanged() {
 
 void ICMPanel::ipChanged () {
 
-    std::string profname;
+    Glib::ustring profname;
     if (inone->get_active()) {
         profname = "(none)";
-        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive(false);
     }
     else if (iembedded->get_active ()) {
         profname = "(embedded)";
-        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive(false);
     }
     else if (icamera->get_active ()) {
         profname = "(camera)";
-        ckbBlendCMSMatrix->set_sensitive(false); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive(false);
     }
     else if (icameraICC->get_active ()) {
         profname = "(cameraICC)";
-        ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (false); ckbToneCurve->set_sensitive (false);
+        ckbBlendCMSMatrix->set_sensitive(true);
     }
     else {
         profname = ipDialog->get_filename ();
-        ckbBlendCMSMatrix->set_sensitive(true); prefprof->set_sensitive (true); ckbToneCurve->set_sensitive (true);
+        ckbBlendCMSMatrix->set_sensitive(true);
     }
+    updateDCP(-1, profname);
 
     if (listener && profname!=oldip)
         listener->panelChanged (EvIProfile, profname);
@@ -604,6 +709,8 @@ void ICMPanel::saveReferencePressed () {
 
 void ICMPanel::setBatchMode (bool batchMode) {
 
+    isBatchMode = true;
+    ignoreDcpSignal = false;
     ToolPanel::setBatchMode (batchMode);
     iunchanged = Gtk::manage (new Gtk::RadioButton (M("GENERAL_UNCHANGED")));
     iunchanged->set_group (opts);
@@ -613,9 +720,8 @@ void ICMPanel::setBatchMode (bool batchMode) {
     onames->append_text (M("GENERAL_UNCHANGED"));
     wnames->append_text (M("GENERAL_UNCHANGED"));
     wgamma->append_text (M("GENERAL_UNCHANGED"));
-    prefprof->append_text (M("GENERAL_UNCHANGED"));
+    dcpIll->append_text (M("GENERAL_UNCHANGED"));
     gampos->showEditedCB ();
     slpos->showEditedCB ();
-
 }
 

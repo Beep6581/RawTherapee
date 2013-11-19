@@ -594,7 +594,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality, saveFormat.jpegSubSamp);
         img->free ();
 
-        if (err) throw "Unable to save output file";
+        if (err) throw Glib::FileError(Glib::FileError::FAILED, "Unable to save output file");
 
         if (saveFormat.saveParams) {
             // We keep the extension to avoid overwriting the profile when we have
@@ -848,12 +848,14 @@ struct NLParams {
     BatchQueueListener* listener;
     int qsize;
     bool queueEmptied;
+    bool queueError;
+    Glib::ustring queueErrorMessage;
 };
 
 int bqnotifylistenerUI (void* data) {
     GThreadLock lock; // All GUI acces from idle_add callbacks or separate thread HAVE to be protected
     NLParams* params = static_cast<NLParams*>(data);
-    params->listener->queueSizeChanged (params->qsize, params->queueEmptied);
+    params->listener->queueSizeChanged (params->qsize, params->queueEmptied, params->queueError, params->queueErrorMessage);
     delete params;
     return 0;
 }
@@ -871,6 +873,7 @@ void BatchQueue::notifyListener (bool queueEmptied) {
         params->qsize = fd.size();
         }
         params->queueEmptied = queueEmptied;
+        params->queueError = false;
         g_idle_add (bqnotifylistenerUI, params);
     }
 }
@@ -878,4 +881,16 @@ void BatchQueue::notifyListener (bool queueEmptied) {
 void BatchQueue::redrawNeeded (LWButton* button) {
     GThreadLock lock;
     queue_draw ();
+}
+
+void BatchQueue::error (Glib::ustring msg) {
+
+    if (listener) {
+        NLParams* params = new NLParams;
+        params->listener = listener;
+        params->queueEmptied = false;
+        params->queueError = true;
+        params->queueErrorMessage = msg;
+        g_idle_add (bqnotifylistenerUI, params);
+    }
 }

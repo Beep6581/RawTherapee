@@ -412,7 +412,7 @@ class ColorManagementParamsEdited {
         bool input;
         bool toneCurve;
         bool blendCMSMatrix;
-        bool preferredProfile;
+        bool dcpIlluminant;
         bool working;
         bool output;
 		bool gamma;

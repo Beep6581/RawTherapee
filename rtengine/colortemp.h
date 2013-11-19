@@ -62,6 +62,7 @@ class ColorTemp {
 		void update (const double rmul, const double gmul, const double bmul, const double equal) { this->equal = equal; mul2temp (rmul, gmul, bmul, this->equal, temp, green); }
 		void useDefaults (const double equal) { temp = 6504; green = 1.0; this->equal = equal; } // Values copied from procparams.cc
 
+		inline Glib::ustring getMethod() { return method; }
 		inline double getTemp ()    { return temp;  }
 		inline double getGreen ()   { return green; }
 		inline double getEqual ()   { return equal; }

@@ -30,7 +30,7 @@ class BatchQueueListener {
 
     public:
         virtual ~BatchQueueListener () {}
-        virtual void queueSizeChanged     (int qsize, bool queueEmptied) =0;
+        virtual void queueSizeChanged     (int qsize, bool queueEmptied, bool queueError, Glib::ustring queueErrorMessage) =0;
         virtual bool canStartNext         () =0;
 };
 
@@ -86,6 +86,7 @@ class BatchQueue  : public ThumbBrowserBase,
     }
 
     rtengine::ProcessingJob* imageReady (rtengine::IImage16* img);
+    void error (Glib::ustring msg);
     void setProgress (double p);
     void rightClicked (ThumbBrowserEntryBase* entry);
     bool keyPressed (GdkEventKey* event);
