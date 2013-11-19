@@ -74,6 +74,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
 
         ImageArea* iarea;
         int cropZoom; // *1000
+        unsigned int zoomVersion, exposeVersion;
 
         // crop gui listener
         CropGUIListener* cropgl;
