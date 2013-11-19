@@ -426,7 +426,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 }
 
 void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) {
-    colorSpaceConversion (image, cmp, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
+    colorSpaceConversion (image, cmp, wb, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1647,7 +1647,7 @@ void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, fl
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
+void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
 
     //MyTime t1, t2, t3;
     //t1.set ();
@@ -1657,7 +1657,7 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
 
     if (dcpProf!=NULL) {
-        dcpProf->Apply(im, (DCPLightType)cmp.preferredProfile, cmp.working, rawWhitePoint, cmp.toneCurve);
+        dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, rawWhitePoint, cmp.toneCurve);
     } else {
     // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);

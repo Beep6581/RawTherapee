@@ -70,7 +70,7 @@ enum ProcEvent {
     EvCDNEnabled=45,  // obsolete
     EvBlendCMSMatrix=46,
     EvDCPToneCurve=47,
-    EvPrefProfile=48,
+    EvDCPIlluminant=48,
     EvSHEnabled=49,
     EvSHHighlights=50,
     EvSHShadows=51,

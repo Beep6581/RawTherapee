@@ -251,7 +251,7 @@ void ParamsEdited::set (bool v) {
 	icm.input        = v;
     icm.toneCurve = v;
     icm.blendCMSMatrix = v;
-    icm.preferredProfile = v;
+    icm.dcpIlluminant = v;
 	icm.working      = v;
 	icm.output       = v;
 	icm.gamma		= v;
@@ -530,7 +530,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.input = icm.input && p.icm.input == other.icm.input;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
         icm.blendCMSMatrix = icm.blendCMSMatrix && p.icm.blendCMSMatrix == other.icm.blendCMSMatrix;
-        icm.preferredProfile = icm.preferredProfile && p.icm.preferredProfile == other.icm.preferredProfile;
+        icm.dcpIlluminant = icm.dcpIlluminant && p.icm.dcpIlluminant == other.icm.dcpIlluminant;
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
         icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
@@ -825,7 +825,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (icm.input)		    toEdit.icm.input 	    = mods.icm.input;
     if (icm.toneCurve)      toEdit.icm.toneCurve = mods.icm.toneCurve;
     if (icm.blendCMSMatrix)	toEdit.icm.blendCMSMatrix = mods.icm.blendCMSMatrix;
-    if (icm.preferredProfile) toEdit.icm.preferredProfile = mods.icm.preferredProfile;
+    if (icm.dcpIlluminant) toEdit.icm.dcpIlluminant = mods.icm.dcpIlluminant;
 	if (icm.working)		toEdit.icm.working 	    = mods.icm.working;
 	if (icm.output)		    toEdit.icm.output       = mods.icm.output;
 	//if (icm.gampos)		    toEdit.icm.gampos       = mods.icm.gampos;

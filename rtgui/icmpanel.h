@@ -46,6 +46,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         bool lastToneCurve;
         sigc::connection tcurveconn;
         bool lastBlendCMSMatrix;
+        bool isBatchMode;
         sigc::connection blendcmsconn;
 
     private:
@@ -58,7 +59,8 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Gtk::RadioButton*  icamera;
         Gtk::RadioButton*  icameraICC;
         Gtk::RadioButton*  ifromfile;
-        MyComboBoxText*    prefprof;
+        Gtk::Label*        dcpIllLabel;
+        MyComboBoxText*    dcpIll;
         Gtk::CheckButton*  ckbToneCurve;
         Gtk::CheckButton*  ckbBlendCMSMatrix;
         MyComboBoxText*    wnames;
@@ -76,9 +78,11 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         Glib::ustring      oldip;
         ICMPanelListener*  icmplistener;
 
+        bool ignoreDcpSignal;
+        double dcpTemperatures[2];
         bool enableLastICCWorkDirChange;
         Glib::ustring lastRefFilename;
-
+        void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     public:
         ICMPanel ();
 
@@ -96,7 +100,7 @@ class ICMPanel : public Gtk::VBox, public AdjusterListener, public FoldableToolP
         void GamChanged ();
         void ipSelectionChanged ();
         void blendCMSMatrixChanged();
-        void prefProfChanged();
+        void dcpIlluminantChanged();
         void toneCurveChanged();
 
         void setRawMeta (bool raw, const rtengine::ImageData* pMeta);

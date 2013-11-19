@@ -66,7 +66,7 @@ class RawImageSource : public ImageSource {
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
         static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
-        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
+        static void colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
 
     protected:
         MyMutex getImageMutex;  // locks getImage
@@ -176,11 +176,11 @@ class RawImageSource : public ImageSource {
 
         void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw);
         //static void colorSpaceConversion16 (Image16*    im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName);
-        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
-            colorSpaceConversion (im, cmp, 0.0f, embedded, camprofile, cam, camName);
+        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, ColorTemp &wb, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
+            colorSpaceConversion (im, cmp, wb, 0.0f, embedded, camprofile, cam, camName);
         }
-        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
-            colorSpaceConversion (im, cmp, float(raw.expos), embedded, camprofile, cam, camName);
+        static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
+            colorSpaceConversion (im, cmp, wb, float(raw.expos), embedded, camprofile, cam, camName);
         }
         static void inverse33 (const double (*coeff)[3], double (*icoeff)[3]);
 

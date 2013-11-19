@@ -420,6 +420,7 @@ namespace rtengine {
                         * @param img is the result of the last ProcessingJob 
                         * @return the next ProcessingJob to process */  
             virtual ProcessingJob* imageReady (IImage16* img) =0;
+            virtual void error(Glib::ustring message) =0;
     };
 /** This function performs all the image processinf steps corresponding to the given ProcessingJob. It runs in the background, thus it returns immediately,
    * When it finishes, it calls the BatchProcessingListener with the resulting image and asks for the next job. It the listener gives a new job, it goes on 

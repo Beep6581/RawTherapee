@@ -706,7 +706,7 @@ class ColorManagementParams {
         Glib::ustring input;
         bool          toneCurve;
         bool          blendCMSMatrix;
-        short preferredProfile;
+        int dcpIlluminant;
         Glib::ustring working;
         Glib::ustring output;
         static const Glib::ustring NoICMString;      
