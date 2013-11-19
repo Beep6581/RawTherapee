@@ -75,6 +75,7 @@ CropWindow::CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_,
     context->set_font_description (fontd);
     cropLabel = "100%";
     Glib::RefPtr<Pango::Layout> cllayout = parent->create_pango_layout("1000%");
+    exposeVersion = zoomVersion = 0;
  
     int iw, ih;
     cllayout->get_pixel_size (iw, ih);
@@ -803,6 +804,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
             imgH = cropHandler.cropPixbuf->get_height ();
             imgX = imgAreaX + (imgAreaW-imgW)/2;
             imgY = imgAreaY + (imgAreaH-imgH)/2;
+            exposeVersion++;
 // PERFORMANCE BOTTLENECK STARTS HERE
     //t3.set ();
 			bool showcs = iarea->indClippedPanel->showClippedShadows();
@@ -1060,7 +1062,6 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr) {
         drawSpotWBRectangle (cr);
 
     //t2.set ();
-
 //    printf ("etime --> %d, %d\n", t2.etime (t1), t4.etime (t3));
 }
 
@@ -1092,10 +1093,44 @@ void CropWindow::zoomIn (bool toCursor, int cursorX, int cursorY) {
     if (toCursor) {
         x = cursorX;
         y = cursorY;
+    } else {
+        if (zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom()) {
+            if (cropHandler.cropParams.enabled) {
+                x = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
+                y = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
+            } else {
+                int fw, fh;
+                cropHandler.getFullImageSize(fw, fh);
+                x = fw / 2;
+                y = fh / 2;
+            }
+            zoomVersion = exposeVersion;
+        } else if (zoomVersion != exposeVersion) {
+            translateCoord(xpos+imgX+imgW/2, ypos+imgY+imgH/2, x, y);
+            if (cropHandler.cropParams.enabled) {
+                // add some gravity towards crop center
+                int x1 = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
+                int y1 = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
+                double cropd = sqrt(cropHandler.cropParams.h*cropHandler.cropParams.h+cropHandler.cropParams.w*cropHandler.cropParams.w) * zoomSteps[cropZoom].zoom;
+                double imd = sqrt(imgW*imgW+imgH+imgH);
+                double d;
+                // the more we can see of the crop, the more gravity towards crop center
+                if (cropd > imd) {
+                    d = 0.8;
+                } else if (cropd < imd * 0.5) {
+                    d = 0.0;
+                } else {
+                    d = 1.6 * (cropd - imd * 0.5) / imd;
+                }
+                x = d * x + (1.0 - d) * x1;
+                y = d * y + (1.0 - d) * y1;
+            }
+            zoomVersion = exposeVersion;
+        }
     }
 
-	changeZoom (cropZoom+1, true, x, y);
-	fitZoom = false;
+    changeZoom (cropZoom+1, true, x, y);
+    fitZoom = false;
 }
 
 void CropWindow::zoomOut (bool toCursor, int cursorX, int cursorY) {
@@ -1108,13 +1143,28 @@ void CropWindow::zoomOut (bool toCursor, int cursorX, int cursorY) {
         y = cursorY;
     }
 
+    zoomVersion = exposeVersion;
     changeZoom (cropZoom-1, true, x, y);
     fitZoom = false;
 }
 
 void CropWindow::zoom11 () {
 
-    changeZoom (ZOOM11INDEX);
+    int x = -1;
+    int y = -1;
+    if (zoomSteps[cropZoom].zoom <= cropHandler.getFitZoom()) {
+        if (cropHandler.cropParams.enabled) {
+            x = cropHandler.cropParams.x + cropHandler.cropParams.w / 2;
+            y = cropHandler.cropParams.y + cropHandler.cropParams.h / 2;
+        } else {
+            int fw, fh;
+            cropHandler.getFullImageSize(fw, fh);
+            x = fw/2;
+            y = fh/2;
+        }
+        zoomVersion = exposeVersion;
+    }
+    changeZoom (ZOOM11INDEX, true, x, y);
     fitZoom = false;
 }
 
@@ -1156,6 +1206,7 @@ void CropWindow::zoomFit () {
                 cz = i;
                 break;
             }
+    zoomVersion = exposeVersion;
     changeZoom (cz);
     fitZoom = true;
 }
