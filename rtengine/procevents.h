@@ -268,7 +268,8 @@ enum ProcEvent {
 	EvVignettingRadius=242,
 	EvVignettingStrenght=243,
 	EvVignettingCenter=244,
-	NUMOFEVENTS=245
+	EvLCLCurve=245,
+	NUMOFEVENTS=246
 };
 }
 #endif

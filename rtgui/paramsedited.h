@@ -67,6 +67,7 @@ class LCurveParamsEdited {
         bool cccurve;
         bool chcurve;
         bool lccurve;
+        bool clcurve;
 };
 
 class RGBCurvesParamsEdited {

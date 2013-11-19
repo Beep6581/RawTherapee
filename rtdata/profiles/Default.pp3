@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.11.20
-Version=312
+AppVersion=4.0.11.151
+Version=313
 
 [Exposure]
 Auto=true
@@ -61,6 +61,7 @@ bCurve=0;
 ccCurve=0;
 chCurve=0;
 LcCurve=0;
+ClCurve=0;
 
 [Sharpening]
 Enabled=true
@@ -237,7 +238,7 @@ Height=900
 InputProfile=(cameraICC)
 ToneCurve=false
 BlendCMSMatrix=true
-PreferredProfile=true
+DCPIlluminant=0
 WorkingProfile=sRGB
 OutputProfile=RT_sRGB
 Gammafree=default

@@ -360,14 +360,51 @@ void CurveFactory::curveBW (
 	if (tcurve) delete tcurve;
 
 }
+// add curve Lab : C=f(L)
+void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurvePoints, LUTf & clCurve, LUTu & histogramcl, LUTu & outBeforeCLurveHistogram,int skip){
+		bool needed;
+		DiagonalCurve* dCurve = NULL;
+		LUTf dCcurve(65536,0);
+	
+		float val;
+		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+				dCcurve[i] = (float)i / 47999.0;
+		}
+		
+		if (outBeforeCLurveHistogram)		
+			outBeforeCLurveHistogram.clear();
+		bool histNeededCL = false;
 
-
+		needed = false;
+		if (!clcurvePoints.empty() && clcurvePoints[0]!=0) {
+			dCurve = new DiagonalCurve (clcurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (outBeforeCLurveHistogram)
+				histNeededCL = true;
+			
+			if (dCurve && !dCurve->isIdentity())
+				{needed = true;clcutili=true;}
+		}
+		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+			float val;
+			if (histNeededCL) {
+				float hval = dCcurve[i];
+				int hi = (int)(255.0*CLIPD(hval)); //
+				outBeforeCLurveHistogram[hi] += histogramcl[i] ;
+			}
+		}
+		
+		fillCurveArray(dCurve, clCurve, skip, needed);
+		if (dCurve) {
+			delete dCurve;
+			dCurve = NULL;
+		}
+}
 
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili, double saturation, double rstprotection,
 										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,
 										const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
-										LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogram,//for chroma
+										LUTu & histogramC, LUTu & histogramLC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogram,LUTu & outBeforeLCurveHistogram, //for chroma
 										int skip) {
 		
 		
@@ -384,6 +421,11 @@ void CurveFactory::curveBW (
 		if (outBeforeCCurveHistogram)		
 			outBeforeCCurveHistogram.clear();
 		bool histNeededC = false;
+		
+		if (outBeforeLCurveHistogram)		
+			outBeforeLCurveHistogram.clear();
+		bool histNeededLC = false;
+		
 		//-----------------------------------------------------
 
 		needed = false;
@@ -447,15 +489,27 @@ void CurveFactory::curveBW (
 		needed = false;
 		if (!lccurvePoints.empty() && lccurvePoints[0]!=0) {
 			dCurve = new DiagonalCurve (lccurvePoints, CURVES_MIN_POLY_POINTS/skip);
+			if (outBeforeLCurveHistogram /*&& histogramCropped*/)
+				histNeededLC = true;
+			
 			if (dCurve && !dCurve->isIdentity())
 				{needed = true;cclutili=true;}
 		}
+		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+			float val;
+			if (histNeededLC) {
+				float hval = dCcurve[i];
+				int hi = (int)(255.0*CLIPD(hval)); //
+				outBeforeLCurveHistogram[hi] += histogramLC[i] ;
+			}
+		}
+		
+		
 		fillCurveArray(dCurve, lhskCurve, skip, needed);
 		if (dCurve) {
 			delete dCurve;
 			dCurve = NULL;
 		}
-		
 		
 	}
 

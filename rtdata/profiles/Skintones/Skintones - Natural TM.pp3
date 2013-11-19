@@ -1,7 +1,7 @@
 
 [Version]
-AppVersion=4.0.11.20
-Version=312
+AppVersion=4.0.11.151
+Version=313
 
 [Exposure]
 Auto=false
@@ -60,6 +60,7 @@ bCurve=0;
 ccCurve=0;
 chCurve=0;
 LcCurve=0;
+ClCurve=0;
 
 [Sharpening]
 Enabled=false
@@ -218,7 +219,7 @@ Height=2836
 InputProfile=(cameraICC)
 ToneCurve=false
 BlendCMSMatrix=false
-PreferredProfile=true
+DCPIlluminant=0
 WorkingProfile=Adobe RGB
 OutputProfile=RT_sRGB
 Gammafree=default

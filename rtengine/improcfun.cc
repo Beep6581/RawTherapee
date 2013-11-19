@@ -2818,7 +2818,7 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 
 
-void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, LUTu &histCCurve) {
+void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLLCurve) {
 	int W = lold->W;
 	int H = lold->H;
    // lhskcurve.dump("lh_curve");
@@ -2832,7 +2832,12 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 		}//do not use "Munsell" if Chcurve not used
 	}
 	LUTf dCcurve(65536,0);
+	LUTf dLcurve(65536,0);
+	
 	LUTu hist16Clad(65536);
+	LUTu hist16CLlad(65536);
+	LUTu hist16LLClad(65536);
+	
 	bool chrop=false;
 	float val;
 	//preparate for histograms CIECAM
@@ -2842,7 +2847,15 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				val = (double)i / 47999.0;
 				dCcurve[i] = CLIPD(val);
 			}
+		for (int i=0; i<65535; i++) {  //# 32768*1.414  approximation maxi for chroma
+				val = (double)i / 65534.0;
+				dLcurve[i] = CLIPD(val);
+			}
+			
 		hist16Clad.clear();
+		hist16CLlad.clear();
+		hist16LLClad.clear();
+		
 	}
 #ifdef _DEBUG
 	MyTime t1e,t2e, t3e, t4e;
@@ -2891,6 +2904,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	//if(bwToning) printf("OK bwto\n"); else printf("pas de bw\n");
 	bool LCredsk = params->labCurve.lcredsk;
 	bool ccut = ccutili;
+	bool clut = clcutili;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
 	// avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
 //	bool avoidColorShift = (params->labCurve.avoidcolorshift || params->colorappearance.gamut )&& !bwToning ;
@@ -2900,15 +2914,15 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	bool gamutLch = settings->gamutLch;
 	// only if user activate Lab adjustements
 	if (avoidColorShift) {
-		if(autili || butili || ccutili ||  cclutili || chutili || utili || chromaticity)
+		if(autili || butili || ccutili ||  cclutili || chutili || clcutili || utili || chromaticity)
 			Color::LabGamutMunsell(lold, Lold, Cold, /*corMunsell*/true, /*lumaMuns*/false, params->hlrecovery.enabled, /*gamut*/true, params->icm.working, multiThread);
 	}
 
 
 #ifdef _DEBUG
-#pragma omp parallel default(shared) firstprivate(highlight, ccut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo, pW) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(highlight, ccut, clut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, MunsDebugInfo, pW) if (multiThread)
 #else
-#pragma omp parallel default(shared) firstprivate(highlight, ccut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, pW) if (multiThread)
+#pragma omp parallel default(shared) firstprivate(highlight, ccut, clut, chromaticity, bwToning, rstprotection, avoidColorShift, LCredsk, protectRed, protectRedH, gamutLch, lold, lnew, pW) if (multiThread)
 #endif
 {
 
@@ -2946,7 +2960,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 			float chromaChfactor=1.0f;
 			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
 			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
-			int poscc,posp;
+			int poscc,posp,posl;
 
 //			calculate C=f(H)
 			if (chutili) {
@@ -3012,11 +3026,41 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				btmp *= factor;
 
  			}
-				//update histogram C
-                if(pW!=1){//only with improccoordinator
-					posp=CLIP((int)sqrt((atmp*atmp + btmp*btmp)));
-					hist16Clad[posp]++;
-				}
+			if (!bwToning && clut) { // begin C=f(L)
+				float factorskin,factorsat,factor,factorskinext,interm;
+				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
+				float chromaCfactor=(clcurve[Lprov1*327.68f])/(Lprov1*327.68f);//apply C=f(L)
+				float curf=0.7f;//empirical coeff because curve is more progressive
+				float scale = 100.0f/100.1f;//reduction in normal zone for curve C
+				float scaleext=1.0f;//reduction in transition zone for curve C
+				float protect_redcur,protect_redhcur;//perhaps the same value than protect_red and protect_redh
+				float deltaHH;//HH value transition for C curve
+				protect_redcur=curf*float(protectRed);//default=60  chroma: one can put more or less if necessary...in 'option'  40...160==> curf =because curve is more progressive
+				if(protect_redcur < 20.0f) protect_redcur=20.0; // avoid too low value
+				if(protect_redcur > 180.0f) protect_redcur=180.0; // avoid too high value
+				protect_redhcur=curf*float(protectRedH);//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0 ==> curf =because curve is more progressive
+				if(protect_redhcur<0.1f) protect_redhcur=0.1f;//avoid divide by 0 and negatives values
+				if(protect_redhcur>1.0f) protect_redhcur=1.0f;//avoid too big values
+
+				deltaHH=protect_redhcur;//transition hue
+				if(chromaCfactor>0.0) Color::scalered ( rstprotection, chromaCfactor, 0.0, HH, deltaHH, scale, scaleext);//1.0
+				if(chromaCfactor>1.0) {
+					interm=(chromaCfactor-1.0f)*100.0f;
+					factorskin= 1.0f+(interm*scale)/100.0f;
+					factorskinext=1.0f+(interm*scaleext)/100.0f;
+					}
+				else {
+					factorskin= chromaCfactor; // +(1.0f-chromaCfactor)*scale;
+					factorskinext= chromaCfactor ; //+(1.0f-chromaCfactor)*scaleext;
+					}
+
+				factorsat=chromaCfactor;
+				factor=factorsat;
+				Color::transitred ( HH, Chprov1, dred, factorskin, protect_redcur, factorskinext, deltaHH, factorsat, factor);
+				atmp *= factor;
+				btmp *= factor;
+			}
+			// end C=f(L)
 
 			// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
 			if (!bwToning && ccut) {
@@ -3057,6 +3101,14 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				btmp *= factor;
 			}
 			// end chroma C=f(C)
+			
+				//update histogram C 
+                if(pW!=1){//only with improccoordinator
+					posp=CLIP((int)sqrt((atmp*atmp + btmp*btmp)));
+					hist16Clad[posp]++;
+					hist16CLlad[posp]++;
+
+				}
 
 			if (!bwToning) {	//apply curve L=f(C) for skin and rd...but also for extended color ==> near green and blue (see 'curf')
 
@@ -3086,6 +3138,11 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				float Lc = (lhskcurve[chroma*adjustr])/(chroma*adjustr);//apply L=f(C)
 				Lc=(Lc-1.0f)*zz+1.0f;//reduct action
 				Lprov1*=Lc;//adjust luminance
+				}
+				//update histo L
+                if(pW!=1){//only with improccoordinator
+					posl=CLIP((int(Lprov1*327.68f)));
+					hist16LLClad[posl]++;
 				}
 
 			Chprov1 = sqrt(SQR(atmp/327.68f)+SQR(btmp/327.68f));
@@ -3125,7 +3182,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 					Color::Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
 				}
 
-				if (utili || autili || butili || ccut ||  cclutili || chutili || chromaticity) {
+				if (utili || autili || butili || ccut || clut || cclutili || chutili || clcutili || chromaticity) {
 					float correctionHue=0.0f; // Munsell's correction
 					float correctlum=0.0f;
 
@@ -3165,13 +3222,22 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
     //update histogram C  with data chromaticity and not with CC curve
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
-			float val;
 			if (chrop) {
 				float hval = dCcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
 				histCCurve[hi] += hist16Clad[i] ;
+				histCLurve[hi] += hist16CLlad[i] ;				
 			}
 		}
+		   //update histogram L  with data luminance
+		for (int i=0; i<=65535; i++) {
+			if (chrop) {
+				float hlval = dLcurve[i];
+				int hli = (int)(255.0*CLIPD(hlval));
+				histLLCurve[hli] += hist16LLClad[i] ;				
+			}
+		}
+		
 	}
 
 #ifdef _DEBUG
@@ -3186,7 +3252,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	delete [] Lold;
 	delete [] Cold;
 
-	if (chutili) delete chCurve;
+	if (chCurve) delete chCurve;
 }
 
 

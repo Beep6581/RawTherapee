@@ -52,6 +52,7 @@ void ParamsEdited::set (bool v) {
 	labCurve.cccurve     = v;
 	labCurve.chcurve     = v;
 	labCurve.lccurve    = v;
+	labCurve.clcurve    = v;
 	labCurve.brightness  = v;
 	labCurve.contrast    = v;
 	labCurve.chromaticity    = v;
@@ -329,7 +330,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.cccurve = labCurve.cccurve && p.labCurve.cccurve == other.labCurve.cccurve;
         labCurve.chcurve = labCurve.chcurve && p.labCurve.chcurve == other.labCurve.chcurve;
         labCurve.lccurve = labCurve.lccurve && p.labCurve.lccurve == other.labCurve.lccurve;
-        labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
+        labCurve.clcurve = labCurve.clcurve && p.labCurve.clcurve == other.labCurve.clcurve;
+		labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
         labCurve.chromaticity = labCurve.chromaticity && p.labCurve.chromaticity == other.labCurve.chromaticity;
         labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
@@ -602,6 +604,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.cccurve)		toEdit.labCurve.cccurve     = mods.labCurve.cccurve;
 	if (labCurve.chcurve)		toEdit.labCurve.chcurve     = mods.labCurve.chcurve;
 	if (labCurve.lccurve)		toEdit.labCurve.lccurve    = mods.labCurve.lccurve;
+	if (labCurve.clcurve)		toEdit.labCurve.clcurve    = mods.labCurve.clcurve;
 	if (labCurve.brightness)	toEdit.labCurve.brightness   = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;
 	if (labCurve.contrast)		toEdit.labCurve.contrast 	 = dontforceSet && options.baBehav[ADDSET_LC_CONTRAST] ? toEdit.labCurve.contrast + mods.labCurve.contrast : mods.labCurve.contrast;
 	if (labCurve.chromaticity)	toEdit.labCurve.chromaticity = dontforceSet && options.baBehav[ADDSET_LC_CHROMATICITY] ? toEdit.labCurve.chromaticity + mods.labCurve.chromaticity : mods.labCurve.chromaticity;

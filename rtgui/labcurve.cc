@@ -128,23 +128,41 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	chshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP"));
 	chshape->setCurveColorProvider(this, 1);
 	
+	curveEditorG->newLine();  //  ------------------------------------------------ 3rd line
+	
 	lcshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_LC")));
 	lcshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP"));
 	// left and bottom bar uses the same caller id because the will display the same content
-	lcshape->setBottomBarColorProvider(this, 3);
+	lcshape->setBottomBarColorProvider(this, 2);
 	lcshape->setRangeLabels(
 			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE2"),
 			M("TP_LABCURVE_CURVEEDITOR_CC_RANGE3"), M("TP_LABCURVE_CURVEEDITOR_CC_RANGE4")
 	);
-	lcshape->setRangeDefaultMilestones(0.15, 0.3, 0.6);
+	lcshape->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
+	clshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_LABCURVE_CURVEEDITOR_CL")));
+	clshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP"));
+	clshape->setLeftBarColorProvider(this, 2);
+	clshape->setRangeDefaultMilestones(0.25, 0.5, 0.75);
+	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+	
+	clshape->setBottomBarBgGradient(milestones);
+	
+	
 	// Setting the gradient milestones
 
 	// from black to white
 	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
 	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
-	lshape->setBottomBarBgGradient(milestones);
+	lshape->setBottomBarBgGradient(milestones);	
 	lshape->setLeftBarBgGradient(milestones);
+	milestones.push_back( GradientMilestone(0., 0., 0., 0.) );
+	milestones.push_back( GradientMilestone(1., 1., 1., 1.) );
+	lcshape->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+	
+	lcshape->setBottomBarBgGradient(milestones);
+	
 	milestones.at(0).r = milestones.at(0).g = milestones.at(0).b = 0.1;
 	milestones.at(1).r = milestones.at(1).g = milestones.at(1).b = 0.8;
 	lcshape->setLeftBarBgGradient(milestones);
@@ -196,6 +214,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         ccshape->setUnChanged  (!pedited->labCurve.cccurve);
         chshape->setUnChanged  (!pedited->labCurve.chcurve);
         lcshape->setUnChanged  (!pedited->labCurve.lccurve);
+        clshape->setUnChanged  (!pedited->labCurve.clcurve);
     }
     else {
         //if bwtoning is enabled, chromaticity value, avoid color shift and rstprotection has no effect
@@ -240,6 +259,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     ccshape->setCurve  (pp->labCurve.cccurve);
     chshape->setCurve  (pp->labCurve.chcurve);
     lcshape->setCurve  (pp->labCurve.lccurve);
+    clshape->setCurve  (pp->labCurve.clcurve);
 
     queue_draw();
 
@@ -254,6 +274,7 @@ void LCurve::autoOpenCurve () {
     if (!active) ccshape->openIfNonlinear();
     if (!active) chshape->openIfNonlinear();
     if (!active) lcshape->openIfNonlinear();
+    if (!active) clshape->openIfNonlinear();
 	
 }
 
@@ -277,6 +298,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->labCurve.cccurve = ccshape->getCurve ();
     pp->labCurve.chcurve = chshape->getCurve ();
     pp->labCurve.lccurve = lcshape->getCurve ();
+    pp->labCurve.clcurve = clshape->getCurve ();
 
     if (pedited) {
         pedited->labCurve.brightness   = brightness->getEditedState ();
@@ -297,6 +319,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->labCurve.cccurve   = !ccshape->isUnChanged ();
         pedited->labCurve.chcurve   = !chshape->isUnChanged ();
         pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
+        pedited->labCurve.clcurve   = !clshape->isUnChanged ();
     }
 }
 
@@ -431,6 +454,8 @@ void LCurve::curveChanged (CurveEditor* ce) {
             listener->panelChanged (EvLCHCurve, M("HISTORY_CUSTOMCURVE"));
         if (ce == lcshape)
             listener->panelChanged (EvLLCCurve, M("HISTORY_CUSTOMCURVE"));
+        if (ce == clshape)
+            listener->panelChanged (EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
     }
 }
 
@@ -512,10 +537,12 @@ void LCurve::setBatchMode (bool batchMode) {
 }
 
 
-void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
+void LCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma){
 
 	lshape->updateBackgroundHistogram (histLCurve);
 	ccshape->updateBackgroundHistogram (histCCurve);
+	clshape->updateBackgroundHistogram (histCLurve);
+	lcshape->updateBackgroundHistogram (histLLCurve);
 	
 }
 

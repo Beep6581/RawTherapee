@@ -178,6 +178,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	LUTf satcurve (65536,0);
 	LUTf lhskcurve (65536,0);
 	LUTf lumacurve(65536,0);
+	LUTf clcurve (65536,0);
 
 	LUTf rCurve (65536,0);
 	LUTf gCurve (65536,0);
@@ -245,14 +246,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	bool butili=false;
 	bool ccutili=false;
 	bool cclutili=false;	
+	bool clcutili=false;	
+
 	CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,hist16, hist16, lumacurve, dummy, 1, utili);
+	CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, hist16C, dummy, 1);
 
 	CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
 								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,params.labCurve.lccurve,curve1, curve2, satcurve,lhskcurve, 
-								   hist16C, hist16C,dummy,	
+								   hist16C, hist16C, hist16C, dummy,dummy,
 								   1);
 
-	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,lumacurve, utili, autili, butili, ccutili,cclutili,dummy);
+	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,clcurve, lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy);
 	
  	if((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled))ipf.EPDToneMap(labView,5,1);
 	

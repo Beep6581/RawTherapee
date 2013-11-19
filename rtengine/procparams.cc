@@ -166,6 +166,8 @@ void ProcParams::setDefaults () {
     labCurve.chcurve.push_back(FCT_Linear);
     labCurve.lccurve.clear ();
     labCurve.lccurve.push_back(DCT_Linear);
+    labCurve.clcurve.clear ();
+    labCurve.clcurve.push_back(DCT_Linear);
 
     rgbCurves.lumamode          = false;
     rgbCurves.rcurve.clear ();
@@ -683,6 +685,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->labCurve.lccurve)  {
         Glib::ArrayHandle<double> lccurve = labCurve.lccurve;
         keyFile.set_double_list("Luminance Curve", "LcCurve", lccurve);
+    }
+    if (!pedited || pedited->labCurve.clcurve)  {
+        Glib::ArrayHandle<double> clcurve = labCurve.clcurve;
+        keyFile.set_double_list("Luminance Curve", "ClCurve", clcurve);
     }
 
     // save sharpening
@@ -1244,6 +1250,7 @@ if (keyFile.has_group ("Luminance Curve")) {
     if (keyFile.has_key ("Luminance Curve", "ccCurve"))         { labCurve.cccurve            = keyFile.get_double_list ("Luminance Curve", "ccCurve"); if (pedited) pedited->labCurve.cccurve = true; }
     if (keyFile.has_key ("Luminance Curve", "chCurve"))         { labCurve.chcurve            = keyFile.get_double_list ("Luminance Curve", "chCurve"); if (pedited) pedited->labCurve.chcurve = true; }
     if (keyFile.has_key ("Luminance Curve", "LcCurve"))         { labCurve.lccurve            = keyFile.get_double_list ("Luminance Curve", "LcCurve"); if (pedited) pedited->labCurve.lccurve = true; }
+    if (keyFile.has_key ("Luminance Curve", "ClCurve"))         { labCurve.clcurve            = keyFile.get_double_list ("Luminance Curve", "ClCurve"); if (pedited) pedited->labCurve.clcurve = true; }
 
     }
 
@@ -1747,6 +1754,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& labCurve.cccurve == other.labCurve.cccurve
 		&& labCurve.chcurve == other.labCurve.chcurve
 		&& labCurve.lccurve == other.labCurve.lccurve
+		&& labCurve.clcurve == other.labCurve.clcurve
 		&& labCurve.brightness == other.labCurve.brightness
 		&& labCurve.contrast == other.labCurve.contrast
 		&& labCurve.chromaticity == other.labCurve.chromaticity
