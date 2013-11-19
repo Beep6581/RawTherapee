@@ -28,6 +28,7 @@
 #include <iostream>
 #include "rawimagesource.h"
 #include "../rtgui/ppversion.h"
+#include "../rtgui/multilangmgr.h"
 //#include "mytime.h"
 
 #undef THREAD_PRIORITY_NORMAL
@@ -682,7 +683,7 @@ void batchProcessingThread (ProcessingJob* job, BatchProcessingListener* bpl, bo
         int errorCode;
         IImage16* img = processImage (currentJob, errorCode, bpl, tunnelMetaData);
         if (errorCode) {
-            bpl->error ("Can not load input image.");
+            bpl->error (M("MAIN_MSG_CANNOTLOAD"));
             currentJob = NULL;
         } else {
             try {
