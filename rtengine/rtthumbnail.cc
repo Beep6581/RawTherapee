@@ -736,6 +736,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LUTf curve (65536);
 	LUTf satcurve (65536);
 	LUTf lhskcurve (65536);
+	LUTf clcurve (65536);
 	
 	LUTf rCurve (65536);
 	LUTf gCurve (65536);
@@ -789,14 +790,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	bool butili=false;
 	bool ccutili=false;
 	bool cclutili=false;
+	bool clcutili=false;
+	
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, 
         hist16, hist16, curve, dummy, 16, utili);
-    CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
-								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, curve1, curve2, satcurve,lhskcurve, 
-									hist16C, hist16C, dummy,  
+	
+	CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, hist16C, dummy, 16);
+	
+    CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili,params.labCurve.chromaticity, params.labCurve.rstprotection,
+								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, curve1, curve2, satcurve,lhskcurve,
+									hist16C, hist16C, hist16C, dummy, dummy,
 								   16);
     //ipf.luminanceCurve (labView, labView, curve);
-    ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, curve, utili, autili, butili, ccutili,cclutili, dummy);
+    ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, clcurve, curve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy);
 	
 	ipf.vibrance(labView);
 	int begh = 0, endh = labView->H;

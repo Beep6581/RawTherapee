@@ -1,6 +1,6 @@
 [Version]
 AppVersion=4.0.11.0
-Version=312
+Version=313
 
 [Exposure]
 Auto=false
@@ -58,6 +58,7 @@ bCurve=0;
 ccCurve=0;
 chCurve=0;
 LcCurve=0;
+ClCurve=0;
 
 [Vibrance]
 Enabled=true

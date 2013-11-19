@@ -194,10 +194,12 @@ class CurveFactory {
 		ChMixerbw & customToneCurvebw1,
 		ChMixerbw & customToneCurvebw2,
 		int skip);
-							  
-	static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili,  double saturation, double rstprotection, const std::vector<double>& acurvePoints,
-								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& cclurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, 
-								LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
+		
+	static void curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, LUTu & histogramcl, LUTu & outBeforeCLurveHistogram, int skip);
+						  
+	static void complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & clcutili, double saturation, double rstprotection, const std::vector<double>& acurvePoints,
+								 const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve, 
+								 LUTu & histogramC, LUTu & histogramLC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogram,LUTu & outBeforeLCurveHistogram,///for chroma
 								int skip=1);
 	static void complexLCurve (double br, double contr, const std::vector<double>& curvePoints, LUTu & histogram, LUTu & histogramCropped,
 							   LUTf & outCurve, LUTu & outBeforeCCurveHistogram, int skip, bool & utili); 

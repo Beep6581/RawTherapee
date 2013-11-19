@@ -202,7 +202,7 @@ class ImProcFunctions {
 		void luminanceCurve   (LabImage* lold, LabImage* lnew, LUTf &curve);							   
 		void ciecam_02float	 (CieImage* ncie, float adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale, float** buffer, bool execsharp, float &d);
 		void ciecam_02		 (CieImage* ncie, double adap, int begh, int endh,  int pW, int pwb, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3, LUTu &histLCAM, LUTu &histCCAM,int Iterates, int scale, float** buffer, bool execsharp, double &d);
-		void chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, LUTu &histCCurve);
+		void chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf &acurve, LUTf &bcurve, LUTf & satcurve,LUTf & satclcurve, LUTf &clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLCurve);
 		void vibrance 		  (LabImage* lab);//Jacques' vibrance
 		void colorCurve       (LabImage* lold, LabImage* lnew);
 		void sharpening       (LabImage* lab, float** buffer);
