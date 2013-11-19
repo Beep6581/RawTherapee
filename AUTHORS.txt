@@ -23,6 +23,7 @@ Developement contributors, in last name alphabetical order:
   Ben S.
   Andrey Skvortsov
   Fabio Suprani
+  Anders Torger
   Ingo Weyrich
   Makoto Yoshida
 
