@@ -594,7 +594,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality, saveFormat.jpegSubSamp);
         img->free ();
 
-        if (err) throw Glib::FileError(Glib::FileError::FAILED, "Unable to save output file");
+        if (err) throw Glib::FileError(Glib::FileError::FAILED, M("MAIN_MSG_CANNOTSAVE"));
 
         if (saveFormat.saveParams) {
             // We keep the extension to avoid overwriting the profile when we have
