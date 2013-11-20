@@ -72,14 +72,14 @@ class RawImageSource : public ImageSource {
         MyMutex getImageMutex;  // locks getImage
 
         int W, H;
-        ColorTemp wb;
+        ColorTemp camera_wb;
         ProgressListener* plistener;
         float scale_mul[4]; // multiplier for each color
         float c_black[4]; // copy of cblack Dcraw for black level
         float cblacksom[4];
-        double camwb_red;
-        double camwb_green;
-        double camwb_blue;
+        double refwb_red;
+        double refwb_green;
+        double refwb_blue;
         double rgb_cam[3][3];
         double cam_rgb[3][3];
         double xyz_cam[3][3];
@@ -153,7 +153,7 @@ class RawImageSource : public ImageSource {
         void        scaleColors (int winx,int winy,int winw,int winh, const RAWParams &raw);// raw for cblack
 
         void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
-        ColorTemp   getWB       () { return wb; }
+        ColorTemp   getWB       () { return camera_wb; }
         void        getAutoWBMultipliers (double &rm, double &gm, double &bm);
         ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
         bool        isWBProviderReady () { return rawData; }
@@ -174,7 +174,7 @@ class RawImageSource : public ImageSource {
         void        getAutoExpHistogram (LUTu & histogram, int& histcompr);
         void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw);
 
-        void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw);
+        void convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw);
         //static void colorSpaceConversion16 (Image16*    im, ColorManagementParams cmp, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName);
         static void colorSpaceConversion   (Imagefloat* im, ColorManagementParams cmp, ColorTemp &wb, cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], std::string camName) {
             colorSpaceConversion (im, cmp, wb, 0.0f, embedded, camprofile, cam, camName);

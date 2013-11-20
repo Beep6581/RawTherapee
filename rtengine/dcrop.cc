@@ -123,7 +123,7 @@ void Crop::update (int todo) {
             if (skip==1 && params.dirpyrDenoise.enabled)
                 parent->ipf.RGB_denoise(origCrop, origCrop, parent->imgsrc->isRAW(), /*Roffset,*/ params.dirpyrDenoise, params.defringe, parent->imgsrc->getDirPyrDenoiseExpComp());
         }
-        parent->imgsrc->convertColorSpace(origCrop, params.icm, params.raw);
+        parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB, params.raw);
     }
 
     // transform
