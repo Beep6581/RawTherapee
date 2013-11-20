@@ -885,6 +885,17 @@ void BatchQueue::redrawNeeded (LWButton* button) {
 
 void BatchQueue::error (Glib::ustring msg) {
 
+    BatchQueueEntry* current = static_cast<BatchQueueEntry*>(fd[0]);
+    if (processing && processing->processing) {
+        // restore failed thumb
+        BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (processing);
+        bqbs->setButtonListener (this);
+        processing->addButtonSet (bqbs);
+        processing->processing = false;
+        processing->job = rtengine::ProcessingJob::create(processing->filename, processing->thumbnail->getType() == FT_Raw, processing->params);
+        processing = NULL;
+        redraw ();
+    }
     if (listener) {
         NLParams* params = new NLParams;
         params->listener = listener;
