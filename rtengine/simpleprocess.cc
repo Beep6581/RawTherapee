@@ -125,7 +125,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     if (params.dirpyrDenoise.enabled) {
 		ipf.RGB_denoise(baseImg, baseImg, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
     }
-    imgsrc->convertColorSpace(baseImg, params.icm, params.raw);
+    imgsrc->convertColorSpace(baseImg, params.icm, currWB, params.raw);
 
     // perform first analysis
     LUTu hist16 (65536);

@@ -239,7 +239,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             if (scale==1 && params.dirpyrDenoise.enabled)
                 ipf.RGB_denoise(orig_prev, orig_prev, imgsrc->isRAW(), params.dirpyrDenoise, params.defringe, imgsrc->getDirPyrDenoiseExpComp());
         }
-        imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
+        imgsrc->convertColorSpace(orig_prev, params.icm, currWB, params.raw);
 
         ipf.firstAnalysis (orig_prev, &params, vhist16, imgsrc->getGamma());
     }
@@ -783,7 +783,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	params.wb.temperature = currWB.getTemp ();
 	params.wb.green = currWB.getGreen ();
 	imgsrc->getImage (currWB, 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
-	imgsrc->convertColorSpace(im, ppar.icm, params.raw);
+	imgsrc->convertColorSpace(im, ppar.icm, currWB, params.raw);
 	Image16* im16 = im->to16();
 	delete im;
 	im16->saveTIFF (fname,16,true);

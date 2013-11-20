@@ -47,7 +47,7 @@ RawImage::~RawImage()
 /* Similar to dcraw scale_colors for coeff. calculation, but without actual pixels scaling.
  * need pixels in data[][] available
  */
-void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_)
+void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_, bool forceAutoWB)
 
 {
 	unsigned  row, col, x, y, c, sum[8];
@@ -60,7 +60,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
 		cblack_[c] = (float) this->get_cblack(c);
 		pre_mul_[c] = this->get_pre_mul(c);
 	}
-	if ( this->get_cam_mul(0) == -1 ) {
+	if ( this->get_cam_mul(0) == -1 || forceAutoWB) {
 		memset(dsum, 0, sizeof dsum);
 		for (row = 0; row < H; row += 8)
 			for (col = 0; col < W ; col += 8) {

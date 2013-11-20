@@ -215,9 +215,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     rm = imatrices.cam_rgb[0][0]*r + imatrices.cam_rgb[0][1]*g + imatrices.cam_rgb[0][2]*b;
     gm = imatrices.cam_rgb[1][0]*r + imatrices.cam_rgb[1][1]*g + imatrices.cam_rgb[1][2]*b;
     bm = imatrices.cam_rgb[2][0]*r + imatrices.cam_rgb[2][1]*g + imatrices.cam_rgb[2][2]*b;
-    rm = camwb_red / rm;
-    gm = camwb_green / gm;
-    bm = camwb_blue / bm;
+    rm = refwb_red / rm;
+    gm = refwb_green / gm;
+    bm = refwb_blue / bm;
 
     /*float mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
     rm /= mul_lum;
@@ -425,7 +425,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     //colorSpaceConversion (image, cmp, raw, embProfile, camProfile, xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 
-void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, RAWParams raw) {
+void RawImageSource::convertColorSpace(Imagefloat* image, ColorManagementParams cmp, ColorTemp &wb, RAWParams raw) {
     colorSpaceConversion (image, cmp, wb, raw, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const ImageData*>(getMetaData()))->getCamera());
 }
 	
@@ -874,19 +874,68 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     camProfile = iccStore->createFromMatrix (imatrices.xyz_cam, false, "Camera");
     inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
 
+        // First we get the "as shot" ("Camera") white balance and store it
 	float pre_mul[4];
-	ri->get_colorsCoeff( pre_mul, scale_mul, c_black);//modify  for black level
+        ri->get_colorsCoeff( pre_mul, scale_mul, c_black, false);//modify  for black level
 
-	camwb_red = ri->get_pre_mul(0) / pre_mul[0];
-	camwb_green = ri->get_pre_mul(1) / pre_mul[1];
-	camwb_blue = ri->get_pre_mul(2) / pre_mul[2];
-	initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
+	double camwb_red = ri->get_pre_mul(0) / pre_mul[0];
+	double camwb_green = ri->get_pre_mul(1) / pre_mul[1];
+	double camwb_blue = ri->get_pre_mul(2) / pre_mul[2];
+	double cam_r = imatrices.rgb_cam[0][0]*camwb_red + imatrices.rgb_cam[0][1]*camwb_green + imatrices.rgb_cam[0][2]*camwb_blue;
+	double cam_g = imatrices.rgb_cam[1][0]*camwb_red + imatrices.rgb_cam[1][1]*camwb_green + imatrices.rgb_cam[1][2]*camwb_blue;
+	double cam_b = imatrices.rgb_cam[2][0]*camwb_red + imatrices.rgb_cam[2][1]*camwb_green + imatrices.rgb_cam[2][2]*camwb_blue;
+	camera_wb = ColorTemp (cam_r, cam_g, cam_b, 1.); // as shot WB
 
-    double cam_r = imatrices.rgb_cam[0][0]*camwb_red + imatrices.rgb_cam[0][1]*camwb_green + imatrices.rgb_cam[0][2]*camwb_blue;
-    double cam_g = imatrices.rgb_cam[1][0]*camwb_red + imatrices.rgb_cam[1][1]*camwb_green + imatrices.rgb_cam[1][2]*camwb_blue;
-    double cam_b = imatrices.rgb_cam[2][0]*camwb_red + imatrices.rgb_cam[2][1]*camwb_green + imatrices.rgb_cam[2][2]*camwb_blue;
+	ColorTemp ReferenceWB;
+        double ref_r, ref_g, ref_b;
+	{
+		// ...then we re-get the constants but now with auto which gives us better demosaicing and CA auto-correct
+		// performance for strange white balance settings (such as UniWB)
+		ri->get_colorsCoeff( pre_mul, scale_mul, c_black, true);
+		refwb_red = ri->get_pre_mul(0) / pre_mul[0];
+		refwb_green = ri->get_pre_mul(1) / pre_mul[1];
+		refwb_blue = ri->get_pre_mul(2) / pre_mul[2];
+		initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
+		ref_r = imatrices.rgb_cam[0][0]*refwb_red + imatrices.rgb_cam[0][1]*refwb_green + imatrices.rgb_cam[0][2]*refwb_blue;
+		ref_g = imatrices.rgb_cam[1][0]*refwb_red + imatrices.rgb_cam[1][1]*refwb_green + imatrices.rgb_cam[1][2]*refwb_blue;
+		ref_b = imatrices.rgb_cam[2][0]*refwb_red + imatrices.rgb_cam[2][1]*refwb_green + imatrices.rgb_cam[2][2]*refwb_blue;
+		ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1.);
+	}
+	if (settings->verbose) {
+		printf("Raw As Shot White balance: temp %f, tint %f\n", camera_wb.getTemp(), camera_wb.getGreen());
+		printf("Raw Reference (auto) white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
+	}
 
-    wb = ColorTemp (cam_r, cam_g, cam_b, 1.);
+	/*{
+	        // Test code: if you want to test a specific white balance
+		ColorTemp d50wb = ColorTemp(5000.0, 1.0, 1.0, "Custom");
+		double rm,gm,bm,r,g,b;
+		d50wb.getMultipliers(r, g, b);
+		camwb_red   = imatrices.cam_rgb[0][0]*r + imatrices.cam_rgb[0][1]*g + imatrices.cam_rgb[0][2]*b;
+		camwb_green = imatrices.cam_rgb[1][0]*r + imatrices.cam_rgb[1][1]*g + imatrices.cam_rgb[1][2]*b;
+		camwb_blue  = imatrices.cam_rgb[2][0]*r + imatrices.cam_rgb[2][1]*g + imatrices.cam_rgb[2][2]*b;
+		double pre_mul[3], dmax = 0;
+		pre_mul[0] = ri->get_pre_mul(0) / camwb_red;
+		pre_mul[1] = ri->get_pre_mul(1) / camwb_green;
+		pre_mul[2] = ri->get_pre_mul(2) / camwb_blue;
+		for (int c = 0; c < 3; c++) {
+			if (dmax < pre_mul[c])
+				dmax = pre_mul[c];
+                }
+                for (int c = 0; c < 3; c++) {
+			pre_mul[c] /= dmax;
+                }
+                camwb_red *= dmax;
+                camwb_green *= dmax;
+                camwb_blue *= dmax;
+                for (int c = 0; c < 3; c++) {
+			int sat = ri->get_white(c) - ri->get_cblack(c);
+			scale_mul[c] = pre_mul[c] * 65535.0 / sat;
+                }
+                scale_mul[3] = pre_mul[1] * 65535.0 / (ri->get_white(3) - ri->get_cblack(3));
+                initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
+	}*/
+            
 
     ri->set_prefilters();
 
@@ -2224,15 +2273,15 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr) {
 
         if (ri->isBayer()) {
             for (int j=start; j<end; j++) {
-			if (ri->ISGREEN(i,j))     tmphistogram[CLIP((int)(camwb_green*rawData[i][j]))>>histcompr]+=4;
-			else if (ri->ISRED(i,j))  tmphistogram[CLIP((int)(camwb_red*  rawData[i][j]))>>histcompr]+=4;
-			else if (ri->ISBLUE(i,j)) tmphistogram[CLIP((int)(camwb_blue* rawData[i][j]))>>histcompr]+=4;
+			if (ri->ISGREEN(i,j))     tmphistogram[CLIP((int)(refwb_green*rawData[i][j]))>>histcompr]+=4;
+			else if (ri->ISRED(i,j))  tmphistogram[CLIP((int)(refwb_red*  rawData[i][j]))>>histcompr]+=4;
+			else if (ri->ISBLUE(i,j)) tmphistogram[CLIP((int)(refwb_blue* rawData[i][j]))>>histcompr]+=4;
 			} 
 			} else {
 		for (int j=start; j<end; j++) {
-                    tmphistogram[CLIP((int)(camwb_red*  rawData[i][3*j+0]))>>histcompr]++;
-                    tmphistogram[CLIP((int)(camwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
-                    tmphistogram[CLIP((int)(camwb_blue* rawData[i][3*j+2]))>>histcompr]++;
+                    tmphistogram[CLIP((int)(refwb_red*  rawData[i][3*j+0]))>>histcompr]++;
+                    tmphistogram[CLIP((int)(refwb_green*rawData[i][3*j+1]))>>histcompr]+=2;
+                    tmphistogram[CLIP((int)(refwb_blue* rawData[i][3*j+2]))>>histcompr]++;
 				}
 			}
     }
@@ -2433,9 +2482,9 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 		
 		//    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
 		
-		double reds   = avg_r/rn * camwb_red;
-		double greens = avg_g/gn * camwb_green;
-		double blues  = avg_b/bn * camwb_blue;
+		double reds   = avg_r/rn * refwb_red;
+		double greens = avg_g/gn * refwb_green;
+		double blues  = avg_b/bn * refwb_blue;
 		
 		redAWBMul   = rm = imatrices.rgb_cam[0][0]*reds + imatrices.rgb_cam[0][1]*greens + imatrices.rgb_cam[0][2]*blues;
 		greenAWBMul = gm = imatrices.rgb_cam[1][0]*reds + imatrices.rgb_cam[1][1]*greens + imatrices.rgb_cam[1][2]*blues;
@@ -2560,9 +2609,9 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end) {
 			return ColorTemp (equal);
 		}
 		else {
-			reds = reds/rn * camwb_red;
-			greens = greens/rn * camwb_green;
-			blues = blues/rn * camwb_blue;
+			reds = reds/rn * refwb_red;
+			greens = greens/rn * refwb_green;
+			blues = blues/rn * refwb_blue;
 			
 			double rm = imatrices.rgb_cam[0][0]*reds + imatrices.rgb_cam[0][1]*greens + imatrices.rgb_cam[0][2]*blues;
 			double gm = imatrices.rgb_cam[1][0]*reds + imatrices.rgb_cam[1][1]*greens + imatrices.rgb_cam[1][2]*blues;
