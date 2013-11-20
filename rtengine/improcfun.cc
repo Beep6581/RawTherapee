@@ -2847,9 +2847,10 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				val = (double)i / 47999.0;
 				dCcurve[i] = CLIPD(val);
 			}
-		for (int i=0; i<65535; i++) {  //# 32768*1.414  approximation maxi for chroma
+		for (int i=0; i<65535; i++) {  //  a
 				val = (double)i / 65534.0;
 				dLcurve[i] = CLIPD(val);
+				
 			}
 			
 		hist16Clad.clear();

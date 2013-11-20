@@ -44,7 +44,7 @@ ImProcCoordinator::ImProcCoordinator ()
       lhskcurve(65536,0),
       clcurve(65536,0),
 
-      vhist16(65536),
+      vhist16(65536),vhist16bw(65536),
       lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536), lhist16CroppedCAM(65536),
       lhist16CCAM(65536), lhist16CroppedCCAM(65536),
@@ -57,6 +57,7 @@ ImProcCoordinator::ImProcCoordinator ()
       histBlue(256), histBlueRaw(256),
       histLuma(256), histChroma(256),
       histToneCurve(256),
+      histToneCurveBW(256),
       histLCurve(256),
       histCCurve(256),
       histCLurve(256),
@@ -298,7 +299,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale==1 ? 1 : 1);
 
        CurveFactory::curveBW (params.chmixerbw.curveMode, params.chmixerbw.curve, params.chmixerbw.curveMode2, params.chmixerbw.curve2,
-									vhist16, histCropped, histToneCurve, customToneCurvebw1, customToneCurvebw2,scale==1 ? 1 : 1);
+									vhist16bw, histCropped, histToneCurveBW, customToneCurvebw1, customToneCurvebw2,scale==1 ? 1 : 1);
 		
 		//initialize rrm bbm ggm different from zero to avoid black screen in somme cases
 		double rrm=33.; 

@@ -291,7 +291,7 @@ void CurveFactory::curveLightBrightColor (
 void CurveFactory::curveBW (
 		procparams::ChannelMixerbwParams::eTCModeId curveModeb, const std::vector<double>& curvePointsbw,
 		procparams::ChannelMixerbwParams::eTCModeId curveModeb2, const std::vector<double>& curvePointsbw2,
-		LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram,//for Luminance  
+		LUTu & histogrambw, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogrambw,//for Luminance  
 		ChMixerbw & customToneCurvebw1,
 		ChMixerbw & customToneCurvebw2,
 		int skip)
@@ -304,7 +304,7 @@ void CurveFactory::curveBW (
 			dcurve[i] = CLIPD(val);
 		}
 
-	outBeforeCCurveHistogram.clear();
+	outBeforeCCurveHistogrambw.clear();
 	bool histNeeded = false;
 	
 	DiagonalCurve* tcurve = NULL;
@@ -312,7 +312,7 @@ void CurveFactory::curveBW (
 
 	if (!curvePointsbw2.empty() && curvePointsbw2[0]>DCT_Linear && curvePointsbw2[0]<DCT_Unchanged) {
 		tcurve = new DiagonalCurve (curvePointsbw2, CURVES_MIN_POLY_POINTS/skip);
-		if (outBeforeCCurveHistogram /*&& histogramCropped*/)
+		if (outBeforeCCurveHistogrambw /*&& histogramCropped*/)
 				histNeeded = true;
 		
 	}
@@ -331,7 +331,7 @@ void CurveFactory::curveBW (
 
 	if (!curvePointsbw.empty() && curvePointsbw[0]>DCT_Linear && curvePointsbw[0]<DCT_Unchanged) {
 		tcurve = new DiagonalCurve (curvePointsbw, CURVES_MIN_POLY_POINTS/skip);
-		if (outBeforeCCurveHistogram /*&& histogramCropped*/)
+		if (outBeforeCCurveHistogrambw /*&& histogramCropped*/)
 				histNeeded = true;
 		
 	}
@@ -353,7 +353,7 @@ void CurveFactory::curveBW (
 			if (histNeeded) {
 				float hval = dcurve[i];
 				int hi = (int)(255.0*CLIPD(hval));
-				outBeforeCCurveHistogram[hi] += histogram[i] ;
+				outBeforeCCurveHistogrambw[hi] += histogrambw[i] ;
 			}
 	}
 	
