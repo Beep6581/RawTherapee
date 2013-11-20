@@ -352,7 +352,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         progress ("Applying Color Boost...",100*readyphase/numofphases);
 
-        ipf.chromiLuminanceCurve (pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili,cclutili,clcutili, histCCurve, histCLurve, histLLCurve);
+        ipf.chromiLuminanceCurve (pW,nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili,cclutili,clcutili, histCCurve, histCLurve, histLLCurve, histLCurve);
         ipf.vibrance(nprevl);
         if((params.colorappearance.enabled && !params.colorappearance.tonecie) ||  (!params.colorappearance.enabled)) ipf.EPDToneMap(nprevl,5,1);
         // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled

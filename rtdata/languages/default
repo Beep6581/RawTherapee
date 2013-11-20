@@ -1266,12 +1266,12 @@ TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction
 TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_BWTONING;B&W toning
-TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH and LC curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
+TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH, LC and CL curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
 TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminance Curve
 TP_LABCURVE_CURVEEDITOR_CL;CL
-TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to the luminance
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green Saturated
 TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green Pastel
 TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red Pastel
@@ -1285,12 +1285,12 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Dull
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturated
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity C=f(C).\n\nShows the histogram of chromaticity before curve adjustements.\nFor final output refer to the main histogram panel
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to chromaticity C=f(C)
 TP_LABCURVE_CURVEEDITOR_CH;CH
-TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to the hue
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to hue C=f(H)
 TP_LABCURVE_CURVEEDITOR_LC;LC
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to the chromaticity
-TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n\nShows the histogram of L before curve adjustements.\nnFor final output refer to the main histogram panel
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to chromaticity L=f(C)
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
 TP_LABCURVE_LABEL;Lab Adjustments
 TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies to all tones
