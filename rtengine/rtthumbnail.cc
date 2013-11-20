@@ -802,7 +802,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 									hist16C, hist16C, hist16C, dummy, dummy,
 								   16);
     //ipf.luminanceCurve (labView, labView, curve);
-    ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, clcurve, curve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy);
+    ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, clcurve, curve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
 	
 	ipf.vibrance(labView);
 	int begh = 0, endh = labView->H;

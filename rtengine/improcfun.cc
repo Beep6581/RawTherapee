@@ -2818,7 +2818,7 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, LUTf & cur
 
 
 
-void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLLCurve) {
+void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* lnew, LUTf & acurve, LUTf & bcurve, LUTf & satcurve,LUTf & lhskcurve, LUTf & clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histCLurve, LUTu &histLLCurve, LUTu &histLCurve) {
 	int W = lold->W;
 	int H = lold->H;
    // lhskcurve.dump("lh_curve");
@@ -3234,7 +3234,9 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 			if (chrop) {
 				float hlval = dLcurve[i];
 				int hli = (int)(255.0*CLIPD(hlval));
-				histLLCurve[hli] += hist16LLClad[i] ;				
+				histLLCurve[hli] += hist16LLClad[i] ;
+				histLCurve[hli] += hist16LLClad[i] ;				
+				
 			}
 		}
 		

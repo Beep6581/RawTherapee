@@ -256,7 +256,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 								   hist16C, hist16C, hist16C, dummy,dummy,
 								   1);
 
-	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,clcurve, lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy);
+	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,clcurve, lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
 	
  	if((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled))ipf.EPDToneMap(labView,5,1);
 	
