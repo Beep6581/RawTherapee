@@ -33,6 +33,7 @@ extern Options options;
 ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), icmplistener(NULL), lastRefFilename("") {
 
     set_border_width(4);
+    isBatchMode = lastToneCurve = lastBlendCMSMatrix = lastgamfree = false;
 
     ipDialog = Gtk::manage (new MyFileChooserButton (M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     ipDialog->set_tooltip_text (M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
