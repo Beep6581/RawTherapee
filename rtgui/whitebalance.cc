@@ -392,6 +392,9 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
             temp->setValue (pp->wb.temperature);
             green->setValue (pp->wb.green);
             equal->setValue (pp->wb.equal);
+            cache_customTemp (pp->wb.temperature);
+            cache_customGreen (pp->wb.green);
+            cache_customEqual (pp->wb.equal);
            if (pedited) {
                 // The user may have changed the temperature and green value
                 temp->setEditedState (pedited->wb.temperature ? Edited : UnEdited);
