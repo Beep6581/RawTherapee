@@ -184,6 +184,9 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
   temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, 4750));
   green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0));
   equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0));
+  cache_customTemp (0);
+  cache_customGreen (0);
+  cache_customEqual (0);
   equal->set_tooltip_markup (M("TP_WBALANCE_EQBLUERED_TOOLTIP"));
   temp->show ();
   green->show ();
@@ -313,9 +316,13 @@ void WhiteBalance::optChanged () {
             case WBT_CUSTOM:
                 if (custom_temp>0){
                     temp->setValue (temp->getAddMode() ? 0.0 : custom_temp);
+                    green->setValue (green->getAddMode() ? 0.0 : custom_green);
+                    equal->setValue (equal->getAddMode() ? 0.0 : custom_equal);
+                } else {
+                    cache_customTemp (temp->getValue());
+                    cache_customGreen (green->getValue());
+                    cache_customEqual (equal->getValue());
                 }
-                green->setValue (green->getAddMode() ? 0.0 : custom_green);
-                equal->setValue (equal->getAddMode() ? 0.0 : custom_equal);
                 if (batchMode) {
                     temp->setEditedState (Edited);
                     green->setEditedState (Edited);
@@ -389,9 +396,9 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
         // temperature is reset to the associated temperature, or 0.0 if addMode is set.
         switch (wbValues->type) {
         case WBT_CUSTOM:
-            temp->setValue (pp->wb.temperature);
-            green->setValue (pp->wb.green);
-            equal->setValue (pp->wb.equal);
+            temp->setValue (temp->getAddMode() ? 0.0 : pp->wb.temperature);
+            green->setValue (green->getAddMode() ? 0.0 : pp->wb.green);
+            equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
             cache_customTemp (pp->wb.temperature);
             cache_customGreen (pp->wb.green);
             cache_customEqual (pp->wb.equal);
@@ -403,14 +410,20 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited) {
             break;
         case WBT_CAMERA:
             if (wbp) {
-                double ctemp; double cgreen;
+                double ctemp = -1.0; double cgreen = -1.0;
                 wbp->getCamWB (ctemp, cgreen);
 
-                // Set the camera's temperature value, or 0.0 if in ADD mode
-                temp->setValue (temp->getAddMode() ? 0.0 : ctemp);
-                // Set the camera's green value, or 0.0 if in ADD mode
-                green->setValue (green->getAddMode() ? 0.0 : cgreen);
-                equal->setValue (equal->getAddMode() ? 0.0 : 1.);
+                if (ctemp != -1.0) {
+                    // Set the camera's temperature value, or 0.0 if in ADD mode
+                    temp->setValue (temp->getAddMode() ? 0.0 : ctemp);
+                    // Set the camera's green value, or 0.0 if in ADD mode
+                    green->setValue (green->getAddMode() ? 0.0 : cgreen);
+                    equal->setValue (equal->getAddMode() ? 0.0 : 1.);
+                } else {
+                    temp->setValue (temp->getAddMode() ? 0.0 : pp->wb.temperature);
+                    green->setValue (green->getAddMode() ? 0.0 : pp->wb.green);
+                    equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
+                }
             }
             break;
         case WBT_AUTO:
@@ -497,8 +510,11 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
     if (wbp && defParams->wb.method == "Camera") {
         double ctemp; double cgreen;
         wbp->getCamWB (ctemp, cgreen);
-        temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
-        green->setDefault (green->getAddMode() ? 0 : cgreen);
+        // FIXME: Seems to be always -1.0, called too early? Broken!
+        if (ctemp != -1.0) {
+            temp->setDefault (temp->getAddMode() ? 0 : (int)ctemp);
+            green->setDefault (green->getAddMode() ? 0 : cgreen);
+        }
     }
     else if (wbp && defParams->wb.method == "Auto") {
         // this setDefaults method is called too early ; the wbp has been set,
