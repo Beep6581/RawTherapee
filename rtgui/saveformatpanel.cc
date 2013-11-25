@@ -169,5 +169,9 @@ void SaveFormatPanel::formatChanged () {
 
 void SaveFormatPanel::adjusterChanged (Adjuster* a, double newval) {
 
-    formatChanged ();
+    int act = format->get_active_row_number();
+    if (act<0 || act>4)
+        return;
+    if (listener) 
+        listener->formatChanged (fstr[act]);
 }
