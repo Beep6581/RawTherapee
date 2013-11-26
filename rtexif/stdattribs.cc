@@ -38,6 +38,39 @@ class ColorSpaceInterpreter : public ChoiceInterpreter {
 };
 ColorSpaceInterpreter colorSpaceInterpreter;
 
+class PreviewColorSpaceInterpreter : public ChoiceInterpreter {
+
+    public:
+        PreviewColorSpaceInterpreter () {
+            choices[0] = "Unknown";
+            choices[1] = "Gray Gamma 2.2";
+            choices[2] = "sRGB";
+            choices[3] = "Adobe RGB";
+            choices[4] = "ProPhoto RGB";
+        }
+};
+PreviewColorSpaceInterpreter previewColorSpaceInterpreter;
+
+class LinearSRGBInterpreter : public ChoiceInterpreter {
+
+    public:
+        LinearSRGBInterpreter () {
+            choices[0] = "Linear";
+            choices[1] = "sRGB";
+        }
+};
+LinearSRGBInterpreter linearSRGBInterpreter;
+
+class DefaultBlackRenderInterpreter : public ChoiceInterpreter {
+
+    public:
+        DefaultBlackRenderInterpreter () {
+            choices[0] = "Auto";
+            choices[1] = "None";
+        }
+};
+DefaultBlackRenderInterpreter defaultBlackRenderInterpreter;
+
 class ExposureProgramInterpreter : public ChoiceInterpreter {
 
     public:
@@ -228,6 +261,18 @@ class PhotometricInterpreter : public ChoiceInterpreter {
         }
 };
 PhotometricInterpreter photometricInterpreter;
+
+class ProfileEmbedPolicyInterpreter : public ChoiceInterpreter {
+
+    public:
+        ProfileEmbedPolicyInterpreter () {
+            choices[0] = "Allow Copying";
+            choices[1] = "Embed if Used";
+            choices[2] = "Never Embed";
+            choices[3] = "No Restrictions";
+        }
+};
+ProfileEmbedPolicyInterpreter profileEmbedPolicyInterpreter;
 
 class PlanarConfigInterpreter : public ChoiceInterpreter {
 
@@ -465,7 +510,105 @@ const TagAttrib exifAttribs[] = {
  {0, AC_WRITE,     0, 0, 0xA433, AUTO, "LensMake", &stdInterpreter},
  {0, AC_WRITE,     0, 0, 0xA434, AUTO, "LensModel", &stdInterpreter},
  {0, AC_WRITE,     0, 0, 0xA435, AUTO, "LensSerialNumber", &stdInterpreter},
- {0, AC_WRITE,     0, 0, 0xc630, AUTO, "DNGLensInfo", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xA500, AUTO, "Gamma", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC618, AUTO, "LinearizationTable", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC619, AUTO, "BlackLevelRepeatDim", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC61A, AUTO, "BlackLevel", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC61B, AUTO, "BlackLevelDeltaH", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC61C, AUTO, "BlackLevelDeltaV", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC61D, AUTO, "WhiteLevel", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC61E, AUTO, "DefaultScale", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC61F, AUTO, "DefaultCropOrigin", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC620, AUTO, "DefaultCropSize", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC621, AUTO, "ColorMatrix1", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC622, AUTO, "ColorMatrix2", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC623, AUTO, "CameraCalibration1", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC624, AUTO, "CameraCalibration2", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC625, AUTO, "ReductionMatrix1", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC626, AUTO, "ReductionMatrix2", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC627, AUTO, "AnalogBalance", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC628, AUTO, "AsShotNeutral", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC629, AUTO, "AsShotWhiteXY", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC62A, AUTO, "BaselineExposure", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC62B, AUTO, "BaselineNoise", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC62C, AUTO, "BaselineSharpness", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC62D, AUTO, "BayerGreenSplit", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC62E, AUTO, "LinearResponseLimit", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC62F, AUTO, "CameraSerialNumber", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC630, AUTO, "DNGLensInfo", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC631, AUTO, "ChromaBlurRadius", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC632, AUTO, "AntiAliasStrength", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC633, AUTO, "ShadowScale", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC65A, AUTO, "CalibrationIlluminant1", &lightSourceInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC65B, AUTO, "CalibrationIlluminant2", &lightSourceInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC65C, AUTO, "BestQualityScale", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC65D, AUTO, "RawDataUniqueID", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC68B, AUTO, "OriginalRawFileName", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC68D, AUTO, "ActiveArea", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC68E, AUTO, "MaskedAreas", &stdInterpreter},
+// {0, AC_WRITE,     0, 0, 0xC68F, AUTO, "AsShotICCProfile", & ???},
+ {0, AC_WRITE,     0, 0, 0xC690, AUTO, "AsShotPreProfileMatrix", &stdInterpreter},
+// {0, AC_WRITE,     0, 0, 0xC691, AUTO, "CurrentICCProfile", & ???},
+ {0, AC_WRITE,     0, 0, 0xC692, AUTO, "CurrentPreProfileMatrix", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6BF, AUTO, "ColorimetricReference", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6F3, AUTO, "CameraCalibrationSig", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6F4, AUTO, "ProfileCalibrationSig", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6F5, AUTO, "ProfileIFD", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6F6, AUTO, "AsShotProfileName", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6F7, AUTO, "NoiseReductionApplied", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6F8, AUTO, "ProfileName", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6F9, AUTO, "ProfileHueSatMapDims", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6FA, AUTO, "ProfileHueSatMapData1", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6FB, AUTO, "ProfileHueSatMapData2", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6FC, AUTO, "ProfileToneCurve", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6FD, AUTO, "ProfileEmbedPolicy", &profileEmbedPolicyInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC6FE, AUTO, "ProfileCopyright", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC714, AUTO, "ForwardMatrix1", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC715, AUTO, "ForwardMatrix2", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC716, AUTO, "PreviewApplicationName", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC717, AUTO, "PreviewApplicationVersion", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC718, AUTO, "PreviewSettingsName", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC719, AUTO, "PreviewSettingsDigest", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC71A, AUTO, "PreviewColorSpace", &previewColorSpaceInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC71B, AUTO, "PreviewDateTime", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC71C, AUTO, "RawImageDigest", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC71D, AUTO, "OriginalRawFileDigest", &stdInterpreter},
+// {0, AC_WRITE,     0, 0, 0xC71E, AUTO, "SubTileBlockSize", & ???},
+// {0, AC_WRITE,     0, 0, 0xC71F, AUTO, "RowInterleaveFactor", & ???},
+ {0, AC_WRITE,     0, 0, 0xC725, AUTO, "ProfileLookTableDims", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC726, AUTO, "ProfileLookTableData", &stdInterpreter},
+// {0, AC_WRITE,     0, 0, 0xC740, AUTO, "OpcodeList1", & ???},
+// {0, AC_WRITE,     0, 0, 0xC741, AUTO, "OpcodeList2", & ???},
+// {0, AC_WRITE,     0, 0, 0xC74E, AUTO, "OpcodeList3", & ???},
+ {0, AC_WRITE,     0, 0, 0xC761, AUTO, "NoiseProfile", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC763, AUTO, "TimeCodes", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC764, AUTO, "FrameRate", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC772, AUTO, "TStop", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC789, AUTO, "ReelName", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC791, AUTO, "OriginalDefaultFinalSize", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC792, AUTO, "OriginalBestQualitySize", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC793, AUTO, "OriginalDefaultCropSize", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC7A1, AUTO, "CameraLabel", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC7A3, AUTO, "ProfileHueSatMapEncoding", &linearSRGBInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC7A4, AUTO, "ProfileLookTableEncoding", &linearSRGBInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC7A5, AUTO, "BaselineExposureOffset", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC7A6, AUTO, "DefaultBlackRender", &defaultBlackRenderInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC7A7, AUTO, "NewRawImageDigest", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC7A8, AUTO, "RawToPreviewGain", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xC7B5, AUTO, "DefaultUserCrop", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFDE9, AUTO, "SerialNumber", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFDEA, AUTO, "Lens", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE4C, AUTO, "RawFile", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE4D, AUTO, "Converter", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE4E, AUTO, "WhiteBalance", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE51, AUTO, "Exposure", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE52, AUTO, "Shadows", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE53, AUTO, "Brightness", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE54, AUTO, "Contrast", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE55, AUTO, "Saturation", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE56, AUTO, "Sharpness", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE57, AUTO, "Smoothness", &stdInterpreter},
+ {0, AC_WRITE,     0, 0, 0xFE58, AUTO, "MoireFilter", &stdInterpreter},
  {-1, AC_DONTWRITE, 0, 0, 0, AUTO, "", NULL }};
 
 
