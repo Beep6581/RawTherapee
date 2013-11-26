@@ -43,12 +43,11 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
 
     //%%%%%%%%%%%%%%%%
     Gtk::CheckButton* avoidcolorshift;
-    Gtk::CheckButton* bwtoning;
     Gtk::CheckButton* lcredsk;
 	
     Adjuster* rstprotection;
     sigc::connection  bwtconn, acconn, lcconn;
-    bool lastBWTVal, lastACVal, lastLCVal;
+    bool lastACVal, lastLCVal;
 	
     //%%%%%%%%%%%%%%%%
 
@@ -68,7 +67,6 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void curveChanged (CurveEditor* ce);
     void adjusterChanged (Adjuster* a, double newval);
 	void avoidcolorshift_toggled ();
-    void bwtoning_toggled();
     void lcredsk_toggled();
 	
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve,  LUTu & histLLCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);

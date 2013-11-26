@@ -27,7 +27,9 @@
 
 #define MIN_RESET_BUTTON_HEIGHT 17
 
-Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, bool editedcb) {
+Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon) {
+
+  Gtk::HBox *hbox2=NULL;
 
   adjusterListener = NULL;
   afterReset = false;
@@ -38,7 +40,6 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   vMin = vmin;
   vMax = vmax;
   vStep = vstep;
-  initialDefaultVal = vdefault;
   addMode = false;
 
   // TODO: let the user chose the default value of Adjuster::delay, for slow machines
@@ -51,120 +52,58 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   hbox->set_border_width(0);
   hbox->set_spacing(2);
 
-  adjustmentName = Glib::ustring(vlabel);
+  editedCheckBox = NULL;
 
-  if (editedcb) {
-    label = NULL;
-    editedCheckBox = Gtk::manage (new Gtk::CheckButton (adjustmentName));
-    editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
-    hbox->pack_start (*editedCheckBox);
+  if (!vlabel.empty()) {
+    adjustmentName = vlabel;
+    label = Gtk::manage (new Gtk::Label (adjustmentName, Gtk::ALIGN_LEFT));
+  }
+
+  reset = Gtk::manage (new Gtk::Button ());
+  reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
+  reset->set_relief (Gtk::RELIEF_NONE);
+  reset->set_border_width (0);
+  reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
+
+  spin = Gtk::manage (new MySpinButton ());
+  spin->set_has_frame(false);
+  spin->set_name("FramelessSpinButton");
+
+  reset->set_size_request (-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height(): MIN_RESET_BUTTON_HEIGHT);
+
+  slider = Gtk::manage (new MyHScale ());
+  slider->set_draw_value (false);
+
+  pack_start (*hbox, true, true);
+
+  if (vlabel.empty()) {
+    // No label, everything goes in hbox
+    if (imgIcon) hbox->pack_start (*imgIcon, Gtk::PACK_SHRINK);
+    hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
+    hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
+    hbox->pack_start (*slider, true, true);
   }
   else {
-    editedCheckBox = NULL;
-    label = Gtk::manage (new Gtk::Label (adjustmentName, Gtk::ALIGN_LEFT));
+    // A label is provided, spreading the widgets in 2 rows
     hbox->pack_start (*label);
+    hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0);
+    hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
+    if (!imgIcon) {
+      pack_start (*slider, true, true);
+    }
+    else {
+      // A second HBox is necessary
+      hbox2 = Gtk::manage (new Gtk::HBox());
+      hbox2->pack_start (*imgIcon, Gtk::PACK_SHRINK);
+      hbox2->pack_start (*slider, true, true);
+      pack_start (*hbox2, true, true);
+    }
   }
-
-  reset = Gtk::manage (new Gtk::Button ());
-  reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
-  reset->set_relief (Gtk::RELIEF_NONE);
-  reset->set_border_width (0);
-  reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
-
-  hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
-  
-  spin = Gtk::manage (new MySpinButton ());
-  spin->set_has_frame(false);
-  spin->set_name("FramelessSpinButton");
-
-  hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
-
-  reset->set_size_request (-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height(): MIN_RESET_BUTTON_HEIGHT);
-
-  slider = Gtk::manage (new MyHScale ());
-  slider->set_draw_value (false);
-
-  pack_start (*hbox, false, false);
-  pack_start (*slider, false, false);
 
   setLimits (vmin, vmax, vstep, vdefault);
   
   defaultVal = shapeValue (vdefault);
-  initialDefaultVal = shapeValue (vdefault);
-  editedState = defEditedState = Irrelevant;
-  autoState = Irrelevant;
-
-  sliderChange = slider->signal_value_changed().connect( sigc::mem_fun(*this, &Adjuster::sliderChanged) );
-  spinChange = spin->signal_value_changed().connect ( sigc::mem_fun(*this, &Adjuster::spinChanged), true);
-  reset->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::resetPressed) );
-  slider->set_update_policy (Gtk::UPDATE_CONTINUOUS);
-  
-  show_all ();
-}
-
-Adjuster::Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep, double vdefault, bool editedcb) {
-
-  adjusterListener = NULL;
-  afterReset = false;
-  blocked = false;
-  automatic = NULL;
-  eventPending = false;
-
-  vMin = vmin;
-  vMax = vmax;
-  vStep = vstep;
-  initialDefaultVal = vdefault;
-  addMode = false;
-
-  // TODO: let the user chose the default value of Adjuster::delay, for slow machines
-  delay = options.adjusterDelay;		// delay is no more static, so we can set the delay individually (useful for the RAW editor tab)
-
-  set_border_width (0);
-  set_spacing (2);
-
-  hbox = Gtk::manage (new Gtk::HBox ());
-  hbox->set_border_width(0);
-  hbox->set_spacing(2);
-
-  if (editedcb) {
-    editedCheckBox = Gtk::manage (new Gtk::CheckButton ());
-    editedCheckBox->set_border_width (0);
-    editedChange = editedCheckBox->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::editedToggled) );
-	hbox->pack_start (*editedCheckBox);
-  }
-  else
-    editedCheckBox = NULL;
-    
-
-  reset = Gtk::manage (new Gtk::Button ());
-  reset->add (*Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png")));
-  reset->set_relief (Gtk::RELIEF_NONE);
-  reset->set_border_width (0);
-  reset->set_tooltip_text (M("ADJUSTER_RESET_TO_DEFAULT"));
-
-  hbox->pack_start (*imgIcon, Gtk::PACK_SHRINK);
-
-  hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
-  
-  spin = Gtk::manage (new MySpinButton ());
-  spin->set_has_frame(false);
-  spin->set_name("FramelessSpinButton");
-
-  reset->set_size_request (-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height(): MIN_RESET_BUTTON_HEIGHT);
-
-  
-  slider = Gtk::manage (new MyHScale ());
-  slider->set_draw_value (false);
-
-  hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
-  hbox->pack_start (*slider);
-
-  pack_start (*hbox, false, false);
-
-  setLimits (vmin, vmax, vstep, vdefault);
-  
-  defaultVal = shapeValue (vdefault);
-  initialDefaultVal = shapeValue (vdefault);
+  ctorDefaultVal = shapeValue (vdefault);
   editedState = defEditedState = Irrelevant;
   autoState = Irrelevant;
 
@@ -272,9 +211,7 @@ void Adjuster::spinReleased (GdkEventButton* event) {
     }
 }
 
-// Please note that it won't change the "Auto" CheckBox's state, if there
-void Adjuster::resetPressed (GdkEventButton* event) {
-
+void Adjuster::resetValue (bool toInitial) {
     if (editedState!=Irrelevant) {
         editedState = defEditedState;
         if (editedCheckBox) {
@@ -285,12 +222,26 @@ void Adjuster::resetPressed (GdkEventButton* event) {
         refreshLabelStyle ();
     }
     afterReset = true;
-    if ((event != NULL) && (event->state & GDK_CONTROL_MASK) && (event->button == 1))
-        // CTRL pressed : resetting to current default value
+    if (toInitial) {
+        // resetting to the initial editing value, when the image has been loaded
         slider->set_value (defaultVal);
+    }
+    else {
+        // resetting to the slider default value
+        if (addMode)
+            slider->set_value (0.);
+        else
+            slider->set_value (ctorDefaultVal);
+    }
+}
+
+// Please note that it won't change the "Auto" CheckBox's state, if there
+void Adjuster::resetPressed (GdkEventButton* event) {
+
+    if ((event != NULL) && (event->state & GDK_CONTROL_MASK) && (event->button == 1))
+        resetValue(true);
     else
-        // no modifier key or addMode=true : resetting to initial default value
-        slider->set_value (initialDefaultVal);
+        resetValue(false);
 }
 
 double Adjuster::shapeValue (double a) {

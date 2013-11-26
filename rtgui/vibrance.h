@@ -62,7 +62,7 @@ public:
 	void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 	void setBatchMode        (bool batchMode);
 	void trimValues          (rtengine::procparams::ProcParams* pp);
-	void setAdjusterBehavior (bool amountadd, bool passadd, bool psthreshdadd);
+	void setAdjusterBehavior (bool pastelsadd, bool saturatedadd);
 	void adjusterChanged     (Adjuster* a, double newval);
 	void adjusterChanged     (ThresholdAdjuster* a, int newBottom, int newTop);
 	void curveChanged        ();

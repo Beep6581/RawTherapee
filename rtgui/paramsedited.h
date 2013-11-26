@@ -62,8 +62,7 @@ class LCurveParamsEdited {
         bool lcurve;
         bool acurve;
         bool bcurve;
-        bool bwtoning;
-		bool lcredsk;
+        bool lcredsk;
         bool cccurve;
         bool chcurve;
         bool lccurve;
@@ -170,7 +169,7 @@ class WBParamsEdited {
 };*/
 
 class DefringeParamsEdited {
-	
+
 public:
     bool enabled;
     bool radius;
@@ -190,20 +189,20 @@ class ColorAppearanceParamsEdited {
 public:
     bool curve;
     bool curve2;
-	bool curve3;
+    bool curve3;
     bool curveMode;
     bool curveMode2;
     bool curveMode3;
     bool enabled;
     bool degree;
     bool autodegree;
-	bool autoadapscen;
+    bool autoadapscen;
     bool surround;
     bool adapscen;
     bool adaplum;
-	bool badpixsl;
+    bool badpixsl;
     bool wbmodel;
-	bool algo;
+    bool algo;
     bool jlight;
     bool qbright;
     bool chroma;
@@ -212,16 +211,14 @@ public:
     bool contrast;
     bool qcontrast;
     bool colorh;
-	bool rstprotection;
-	bool surrsource;
-	bool gamut;
-//	bool badpix;
-	bool datacie;
-	bool tonecie;
-//	bool sharpcie;
-	
+    bool rstprotection;
+    bool surrsource;
+    bool gamut;
+//  bool badpix;
+    bool datacie;
+    bool tonecie;
+//  bool sharpcie;
 };
-
 
 class DirPyrDenoiseParamsEdited {
 
@@ -230,8 +227,8 @@ public:
     bool Ldetail;
     bool luma;
     bool chroma;
-	bool redchro;
-	bool bluechro;
+    bool redchro;
+    bool bluechro;
     bool gamma;
 //    bool perform;
 	bool dmethod;
@@ -284,8 +281,8 @@ class CoarseTransformParamsEdited {
 
 class CommonTransformParamsEdited {
 
-	public:
-		bool autofill;
+   public:
+        bool autofill;
 };
 
 class RotateParamsEdited {
@@ -309,9 +306,9 @@ class LensProfParamsEdited {
 
 class PerspectiveParamsEdited {
 
-	public:
-		bool horizontal;
-		bool vertical;
+    public:
+        bool horizontal;
+        bool vertical;
 };
 
 class GradientParamsEdited {
@@ -352,33 +349,31 @@ class ChannelMixerParamsEdited {
         bool blue[3];
 
 };
-class ChannelMixerbwParamsEdited {
+class BlackWhiteParamsEdited {
 
     public:
-		bool enabledcc;
-		bool enabled;
-		bool bwred;
-		bool bwgreen;
-		bool bwblue;
-		bool bwredgam;
-		bool bwgreengam;
-		bool bwbluegam;
-		bool met;
-		bool fil;
-		bool set;
-		bool bworan;
-		bool bwyell;
-		bool bwcyan;
-		bool bwmag;
-		bool bwpur;
-        bool vcurve;
-        bool curve;
-        bool curveMode;
-        bool curve2;
-        bool curveMode2;
+        bool enabledcc;
+        bool enabled;
+        bool method;
+        bool filter;
+        bool setting;
+        bool mixerRed;
+        bool mixerOrange;
+        bool mixerYellow;
+        bool mixerGreen;
+        bool mixerCyan;
+        bool mixerBlue;
+        bool mixerMagenta;
+        bool mixerPurple;
+        bool gammaRed;
+        bool gammaGreen;
+        bool gammaBlue;
+        bool luminanceCurve;
+        bool beforeCurve;
+        bool beforeCurveMode;
+        bool afterCurve;
+        bool afterCurveMode;
         bool autoc;
-		
-
 };
 
 class CACorrParamsEdited {
@@ -392,7 +387,7 @@ class HRecParamsEdited {
 
     public:
         bool enabled;
-		bool method;
+        bool method;
 };
 
 class ResizeParamsEdited {
@@ -416,23 +411,23 @@ class ColorManagementParamsEdited {
         bool dcpIlluminant;
         bool working;
         bool output;
-		bool gamma;
-		bool gampos;
-		bool slpos;
-		bool gamfree;
-		bool freegamma;		
+        bool gamma;
+        bool gampos;
+        bool slpos;
+        bool gamfree;
+        bool freegamma;
 };
 
 class DirPyrEqualizerParamsEdited {
-	
-public:
-	bool enabled;
-	bool mult[8];
+
+    public:
+        bool enabled;
+        bool mult[8];
 };
 
 class HSVEqualizerParamsEdited {
-	
-public:
+
+    public:
         bool hcurve;
         bool scurve;
         bool vcurve;
@@ -445,7 +440,7 @@ class RAWParamsEdited {
         bool dmethod;
         bool dcbIterations;
         bool dcbEnhance;
-		bool lmmseIterations;
+        bool lmmseIterations;
         //bool allEnhance;
         bool caCorrection;
         bool caRed;
@@ -505,7 +500,7 @@ class ParamsEdited {
         CACorrParamsEdited            cacorrection;
         VignettingParamsEdited        vignetting;
         ChannelMixerParamsEdited      chmixer;
-        ChannelMixerbwParamsEdited    chmixerbw;
+        BlackWhiteParamsEdited        blackwhite;
         HRecParamsEdited              hlrecovery;
         ResizeParamsEdited            resize;
         ColorManagementParamsEdited   icm;

@@ -222,8 +222,7 @@ class LCurveParams {
         int     chromaticity;
         bool    avoidcolorshift;
         double  rstprotection;
-        bool    bwtoning;
-		bool    lcredsk;
+        bool    lcredsk;
 };
 
 /**
@@ -573,8 +572,8 @@ public:
 class PerspectiveParams {
 
     public:
-		double  horizontal;
-		double  vertical;
+        double  horizontal;
+        double  vertical;
 };
 
 /**
@@ -586,9 +585,9 @@ class GradientParams {
         bool   enabled;
         double degree;
         int    feather;
-	double strength;
-	int    centerX;
-	int    centerY;
+        double strength;
+        int    centerX;
+        int    centerY;
 };
 
 /**
@@ -598,7 +597,7 @@ class PCVignetteParams {
 
     public:
         bool   enabled;
-	double strength;
+        double strength;
         int    feather;
         int    roundness;
 };
@@ -611,9 +610,9 @@ class VignettingParams {
     public:
         int  amount;
         int  radius;
-	int  strength;
-	int  centerX;
-	int  centerY;
+        int  strength;
+        int  centerX;
+        int  centerY;
 };
 
 /**
@@ -625,9 +624,9 @@ class ChannelMixerParams {
         int red[3];
         int green[3];
         int blue[3];
-		
 };
-class ChannelMixerbwParams {
+
+class BlackWhiteParams {
 
     public:
         enum eTCModeId {
@@ -636,31 +635,30 @@ class ChannelMixerbwParams {
             TC_MODE_FILMLIKE_BW,          // Film-like mode, as defined in Adobe's reference code
             TC_MODE_SATANDVALBLENDING_BW  // Modify the Saturation and Value channel
         };
-	
-        std::vector<double>   curve;
-        eTCModeId   curveMode;
-        std::vector<double>   curve2;
-        eTCModeId   curveMode2;
-		
-		std::vector<double>   vcurve;
-		bool 	autoc;
-        bool    enabledcc;
-        bool    enabled;
-		int bwred;
-		int bwgreen;
-		int bwblue;
-		int bwredgam;
-		int bwgreengam;
-		int bwbluegam;
-        Glib::ustring fil;
-        Glib::ustring set;
-        Glib::ustring met;
-		int bworan;
-		int bwyell;
-		int bwcyan;
-		int bwmag;
-		int bwpur;
-		
+
+        std::vector<double> beforeCurve;
+        eTCModeId beforeCurveMode;
+        std::vector<double> afterCurve;
+        eTCModeId afterCurveMode;
+
+        std::vector<double> luminanceCurve;
+        bool autoc;
+        bool enabledcc;
+        bool enabled;
+        Glib::ustring filter;
+        Glib::ustring setting;
+        Glib::ustring method;
+        int mixerRed;
+        int mixerOrange;
+        int mixerYellow;
+        int mixerGreen;
+        int mixerCyan;
+        int mixerBlue;
+        int mixerMagenta;
+        int mixerPurple;
+        int gammaRed;
+        int gammaGreen;
+        int gammaBlue;
 };
 
 /**
@@ -680,7 +678,7 @@ class HRecParams {
 
     public:
         bool enabled;
-		Glib::ustring method;
+       Glib::ustring method;
 };
 
 /**
@@ -840,7 +838,7 @@ class ProcParams {
         CACorrParams            cacorrection;    ///< Lens c/a correction parameters
         VignettingParams        vignetting;      ///< Lens vignetting correction parameters
         ChannelMixerParams      chmixer;         ///< Channel mixer parameters
-        ChannelMixerbwParams    chmixerbw;       ///< Channel mixer BW parameters
+        BlackWhiteParams        blackwhite;      ///< Black & White parameters
         HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing

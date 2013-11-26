@@ -298,22 +298,22 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale==1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale==1 ? 1 : 1);
 
-       CurveFactory::curveBW (params.chmixerbw.curveMode, params.chmixerbw.curve, params.chmixerbw.curveMode2, params.chmixerbw.curve2,
-									vhist16bw, histCropped, histToneCurveBW, customToneCurvebw1, customToneCurvebw2,scale==1 ? 1 : 1);
-		
-		//initialize rrm bbm ggm different from zero to avoid black screen in somme cases
-		double rrm=33.; 
-		double ggm=33.; 
-		double bbm=33.;
-		
-		
+        CurveFactory::curveBW (params.blackwhite.beforeCurveMode, params.blackwhite.beforeCurve, params.blackwhite.afterCurveMode, params.blackwhite.afterCurve,
+                               vhist16bw, histCropped, histToneCurveBW, customToneCurvebw1, customToneCurvebw2,scale==1 ? 1 : 1);
+
+        //initialize rrm bbm ggm different from zero to avoid black screen in somme cases
+        double rrm=33.;
+        double ggm=33.;
+        double bbm=33.;
+
+
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=MINUPDATE ) {
             ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
                          rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm,params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
-		if(params.chmixerbw.enabled && abwListener) abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
-		// correct GUI black and white with value
-		}
+            if(params.blackwhite.enabled && abwListener) abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
+            // correct GUI black and white with value
+        }
 
         // compute L channel histogram
         int x1, y1, x2, y2, pos, poscc;
@@ -335,15 +335,15 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     butili=false;
     ccutili=false;
     cclutili=false;
-	clcutili=false;
+    clcutili=false;
     if ((todo & M_LUMACURVE) || (todo & M_CROP)) {
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
                                      lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
     }
     if (todo & M_LUMACURVE) {
 
-		CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, lhist16CLlad, histCLurve, scale==1 ? 1 : 16);
-		
+        CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, lhist16CLlad, histCLurve, scale==1 ? 1 : 16);
+
         CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
                                        params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve,chroma_acurve, chroma_bcurve, satcurve,lhskcurve,
                                        lhist16Clad,lhist16LLClad,lhist16CroppedClad, histCCurve, histLLCurve, scale==1 ? 1 : 16);

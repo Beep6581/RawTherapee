@@ -127,7 +127,7 @@ void BatchToolPanelCoordinator::initSession () {
 			toneCurve->setAdjusterBehavior (false, false, false, false, false, false, false, false);
 			lcurve->setAdjusterBehavior (false, false, false);
 			whitebalance->setAdjusterBehavior (false, false, false);
-			vibrance->setAdjusterBehavior (false, false, false);
+			vibrance->setAdjusterBehavior (false, false);
 			vignetting->setAdjusterBehavior (false, false, false, false);
 			colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
 			rotate->setAdjusterBehavior (false);
@@ -142,7 +142,7 @@ void BatchToolPanelCoordinator::initSession () {
 			icm->setAdjusterBehavior (false, false);
 			
 			chmixer->setAdjusterBehavior (false);
-			chmixerbw->setAdjusterBehavior (false,false, false);
+			blackwhite->setAdjusterBehavior (false,false);
 			
 			shadowshighlights->setAdjusterBehavior (false, false, false);
 			dirpyrequalizer->setAdjusterBehavior (false);
@@ -159,6 +159,7 @@ void BatchToolPanelCoordinator::initSession () {
 			toneCurve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT],options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL],options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
 			lcurve->setAdjusterBehavior (options.baBehav[ADDSET_LC_BRIGHTNESS], options.baBehav[ADDSET_LC_CONTRAST], options.baBehav[ADDSET_LC_CHROMATICITY]);
 			whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN], options.baBehav[ADDSET_WB_EQUAL]);
+			vibrance->setAdjusterBehavior (options.baBehav[ADDSET_VIBRANCE_PASTELS], options.baBehav[ADDSET_VIBRANCE_SATURATED]);
 			vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
 			colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING],options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA],options.baBehav[ADDSET_CAT_CONTRAST],options.baBehav[ADDSET_CAT_RSTPRO],options.baBehav[ADDSET_CAT_BRIGHT],options.baBehav[ADDSET_CAT_CONTRAST_Q],options.baBehav[ADDSET_CAT_CHROMA_S],options.baBehav[ADDSET_CAT_CHROMA_M],options.baBehav[ADDSET_CAT_HUE]);
 			rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
@@ -173,7 +174,7 @@ void BatchToolPanelCoordinator::initSession () {
 			icm->setAdjusterBehavior (options.baBehav[ADDSET_FREE_OUPUT_GAMMA],options.baBehav[ADDSET_FREE_OUTPUT_SLOPE]);
 			
 			chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
-			chmixerbw->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER_BW],options.baBehav[ADDSET_CHMIXER_BWG], options.baBehav[ADDSET_CHMIXER_BWF]);
+			blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES],options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
 			shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS], options.baBehav[ADDSET_SH_LOCALCONTRAST]);
 			dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ]);
 			dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA],options.baBehav[ADDSET_DIRPYRDN_LUMDET],options.baBehav[ADDSET_DIRPYRDN_CHROMA],options.baBehav[ADDSET_DIRPYRDN_CHROMARED],options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA]);
@@ -204,9 +205,10 @@ void BatchToolPanelCoordinator::initSession () {
 			if (options.baBehav[ADDSET_SHARPENMICRO_UNIFORMITY])  pparams.sharpenMicro.uniformity = 0;
 
 			if (options.baBehav[ADDSET_CHMIXER]) for (int i=0; i<3; i++) pparams.chmixer.red[i] = pparams.chmixer.green[i] = pparams.chmixer.blue[i] = 0;
-			if (options.baBehav[ADDSET_CHMIXER_BW]) pparams.chmixerbw.bwred=pparams.chmixerbw.bwgreen=pparams.chmixerbw.bwblue = 0;
-			if (options.baBehav[ADDSET_CHMIXER_BWG]) pparams.chmixerbw.bwredgam=pparams.chmixerbw.bwgreengam=pparams.chmixerbw.bwbluegam = 0;
-			if (options.baBehav[ADDSET_CHMIXER_BWF]) pparams.chmixerbw.bworan=pparams.chmixerbw.bwyell = 0;
+			if (options.baBehav[ADDSET_BLACKWHITE_HUES]) pparams.blackwhite.mixerRed=pparams.blackwhite.mixerOrange=pparams.blackwhite.mixerYellow=
+														 pparams.blackwhite.mixerGreen=pparams.blackwhite.mixerCyan=pparams.blackwhite.mixerBlue=
+														 pparams.blackwhite.mixerMagenta=pparams.blackwhite.mixerPurple=0;
+			if (options.baBehav[ADDSET_BLACKWHITE_GAMMA]) pparams.blackwhite.gammaRed=pparams.blackwhite.gammaGreen=pparams.blackwhite.gammaBlue = 0;
 
 			//if (options.baBehav[ADDSET_LD_EDGETOLERANCE])  pparams.lumaDenoise.edgetolerance = 0;
 
@@ -409,7 +411,7 @@ void BatchToolPanelCoordinator::profileChange  (const rtengine::procparams::Part
     ProcParams newParams;
     for (size_t i=0; i<selected.size(); i++) {
         newParams = initialPP[i];
-        pparamsEdited.combine (newParams, pparams, true);
+        pparamsEdited.combine (newParams, pparams, selected.size()==1);
         selected[i]->setProcParams (newParams, NULL, BATCHEDITOR, false);
     }
 

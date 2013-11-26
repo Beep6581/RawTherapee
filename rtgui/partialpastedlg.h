@@ -61,7 +61,7 @@ class PartialPasteDlg : public Gtk::Dialog {
         // options in color:
         Gtk::CheckButton* vibrance;
         Gtk::CheckButton* chmixer;
-        Gtk::CheckButton* chmixerbw;
+        Gtk::CheckButton* blackwhite;
         Gtk::CheckButton* hsveq;
         Gtk::CheckButton* rgbcurves;
        // Gtk::CheckButton* icm;

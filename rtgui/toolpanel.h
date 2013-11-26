@@ -59,12 +59,19 @@ class ToolPanel {
         virtual void trimValues      (rtengine::procparams::ProcParams* pp) { return; }
         virtual void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL) {}
         virtual void autoOpenCurve   () {}
-        
-                void disableListener () { if (tmp==NULL) tmp = listener; listener = NULL; }
+
+        /** @brief Disable the event broadcasting mechanism
+         *
+         * @return Return the previous state of the broadcast (true: enabled ; false: disabled)
+         */
+                bool disableListener () { if (tmp==NULL) tmp = listener; bool prevState = listener!=NULL; listener = NULL; return prevState; }
+
+        /** @brief Enable the event broadcasting mechanism
+         */
                 void enableListener  () { if (tmp!=NULL) listener = tmp; tmp = NULL; }
-                
+
         virtual void setBatchMode    (bool batchMode) { this->batchMode = batchMode; }
-                
+
 };
 
 class FoldableToolPanel : public ToolPanel {

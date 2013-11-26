@@ -238,9 +238,8 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
     
 	mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_BWMIX_LABEL"));
-    appendBehavList (mi, M("TP_BWMIX_MIXC"), ADDSET_CHMIXER_BW, false);
-    appendBehavList (mi, M("TP_BWMIX_GAMMA"), ADDSET_CHMIXER_BWG, false);
-    appendBehavList (mi, M("TP_BWMIX_MIXF"),ADDSET_CHMIXER_BWF, false);
+    appendBehavList (mi, M("TP_BWMIX_MIXC"), ADDSET_BLACKWHITE_HUES, false);
+    appendBehavList (mi, M("TP_BWMIX_GAMMA"), ADDSET_BLACKWHITE_GAMMA, false);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_ROTATE_LABEL"));

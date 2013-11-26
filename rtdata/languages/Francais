@@ -401,7 +401,7 @@ HISTORY_MSG_163;Courbes RVB - R
 HISTORY_MSG_164;Courbes RVB - V
 HISTORY_MSG_165;Courbes RVB - B
 HISTORY_MSG_166;Niveaux neutre
-HISTORY_MSG_167;Mode N&amp;B colorisable
+HISTORY_MSG_167;--inutilisé--
 HISTORY_MSG_168;Courbe 'CC'
 HISTORY_MSG_169;Courbe 'CT'
 HISTORY_MSG_170;Vibrance - courbe
@@ -447,30 +447,30 @@ HISTORY_MSG_210;Filtre Dégradé
 HISTORY_MSG_211;Filtre Dégradé
 HISTORY_MSG_212;Filtre Vignettage
 HISTORY_MSG_213;Filtre Vignettage - Force
-HISTORY_MSG_214;Noir et Blanc
-HISTORY_MSG_215;NB Mixeur Rouge
-HISTORY_MSG_216;NB Mixeur Vert
-HISTORY_MSG_217;NB Mixeur Bleu
-HISTORY_MSG_218;NB Gamma Rouge
-HISTORY_MSG_219;NB Gamma Vert
-HISTORY_MSG_220;NB Gamma Bleu
-HISTORY_MSG_221;NB Filtre de couleur
-HISTORY_MSG_222;NB Préréglages
-HISTORY_MSG_223;NB Mixeur Orange
-HISTORY_MSG_224;NB Mixeur Jaune
-HISTORY_MSG_225;NB Mixeur Cyan
-HISTORY_MSG_226;NB Mixeur Magenta
-HISTORY_MSG_227;NB Mixeur Pourpre
-HISTORY_MSG_228;NB Égaliseur de Luminance
-HISTORY_MSG_229;NB Égaliseur de Luminance
-HISTORY_MSG_230;NB Mode Noir et Blanc
-HISTORY_MSG_231;NB Courbe
-HISTORY_MSG_232;NB Type de courbe
-HISTORY_MSG_233;NB Courbe
-HISTORY_MSG_234;NB Type de courbe
-HISTORY_MSG_235;NB Mixeur Mode Auto
-HISTORY_MSG_236;NB Mixeur Mode Auto
-HISTORY_MSG_237;NB Réinit. Mixeur
+HISTORY_MSG_214;Noir &amp; Blanc
+HISTORY_MSG_215;N&amp;B Mixeur Rouge
+HISTORY_MSG_216;N&amp;B Mixeur Vert
+HISTORY_MSG_217;N&amp;B Mixeur Bleu
+HISTORY_MSG_218;N&amp;B Gamma Rouge
+HISTORY_MSG_219;N&amp;B Gamma Vert
+HISTORY_MSG_220;N&amp;B Gamma Bleu
+HISTORY_MSG_221;N&amp;B Filtre de couleur
+HISTORY_MSG_222;N&amp;B Préréglages
+HISTORY_MSG_223;N&amp;B Mixeur Orange
+HISTORY_MSG_224;N&amp;B Mixeur Jaune
+HISTORY_MSG_225;N&amp;B Mixeur Cyan
+HISTORY_MSG_226;N&amp;B Mixeur Magenta
+HISTORY_MSG_227;N&amp;B Mixeur Pourpre
+HISTORY_MSG_228;N&amp;B Égaliseur de Luminance
+HISTORY_MSG_229;N&amp;B Égaliseur de Luminance
+HISTORY_MSG_230;N&amp;B Mode Noir et Blanc
+HISTORY_MSG_231;N&amp;B Courbe 'Avant'
+HISTORY_MSG_232;N&amp;B Type de courbe 'Avant'
+HISTORY_MSG_233;N&amp;B Courbe 'Après'
+HISTORY_MSG_234;N&amp;B Type de courbe 'Après'
+HISTORY_MSG_235;N&amp;B Mixeur Mode Auto
+HISTORY_MSG_236;--inutilisé--
+HISTORY_MSG_237;N&amp;B Mixeur
 HISTORY_MSG_238;Filtre ND dégradé - Étendu
 HISTORY_MSG_239;Filtre ND dégradé - Force
 HISTORY_MSG_240;Filtre ND dégradé - Centre
@@ -967,73 +967,69 @@ TP_CHMIXER_BLUE;Bleu
 TP_CHMIXER_GREEN;Vert
 TP_CHMIXER_LABEL;Mixage des canaux
 TP_CHMIXER_RED;Rouge
-TP_BWMIX_LABEL;Noir&amp;Blanc
-TP_BWMIX_CC_ENABLED;Couleur complémentaire
+TP_BWMIX_LABEL;Noir & Blanc
+TP_BWMIX_CC_ENABLED;Ajuster les couleurs complémentaires
 TP_BWMIX_CHANNEL;Égaliseur de Luminance
 TP_BWMIX_VAL;L
 TP_BWMIX_CC_TOOLTIP;Activer pour permettre l'ajustage automatique des couleur complémentaire dans le mode ROJVCBMP
 TP_BWMIX_SETTING_TOOLTIP;Différents préréglages (films, paysage, ...) ou réglages manuel du mixeur de canaux
-TP_BWMIX_FILTER_TOOLTIP;Le filtre de couleur simule les prises de vue avec un filtre coloré placé devant l'objectif. Les filtre color réduisent la transmission d'une plage de couleur spécifique et en affectent donc leur luminosité. Ex: un filtre rouge assombri les ciels bleus.
+TP_BWMIX_FILTER_TOOLTIP;Le filtre de couleur simule les prises de vue avec un filtre coloré placé devant l'objectif. Les filtres colorés réduisent la transmission d'une plage de couleur spécifique et en affectent donc leur luminosité. Ex: un filtre rouge assombri les ciels bleus.
 TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_AUTOCH_TIP;Calcul les valeurs optimales du mixeur de canaux
 TP_BWMIX_NEUTRAL;Réinit. Mixeur
-TP_BWMIX_NEUTRAL_TIP;Réinitialise tous les paramètres du mixeur de canaux
+TP_BWMIX_NEUTRAL_TIP;Réinitialise tous les paramètres (filtre, mixeur de canaux) à zéro
 TP_BWMIX_RED;Rouge
 TP_BWMIX_GREEN;Vert
 TP_BWMIX_BLUE;Bleu
-TP_BWMIX_ORA;Filtre Orange
-TP_BWMIX_YEL;Filtre Jaune
-TP_BWMIX_CYAN;Filtre Cyan
-TP_BWMIX_MAG;Filtre Magenta
-TP_BWMIX_PUR;Filtre Pourpre
+TP_BWMIX_ORANGE;Orange
+TP_BWMIX_YELLOW;Jaune
+TP_BWMIX_CYAN;Cyan
+TP_BWMIX_MAGENTA;Magenta
+TP_BWMIX_PURPLE;Pourpre
 TP_BWMIX_RGB_TOOLTIP;Mixe les canaux RVB. Utilisez les Préréglages pour vous guider.\nAttention aux valeurs négatives qui peuvent causer des artefacts ou un comportement erratique.
 TP_BWMIX_GAM_RED;Canal Rouge
 TP_BWMIX_GAM_GREEN;Canal Vert
-TP_BWMIX_GAM_BLUE;Canl Bleu
+TP_BWMIX_GAM_BLUE;Canal Bleu
 TP_BWMIX_MIXC;Mixeur
 TP_BWMIX_MIXF;Mixeur de Filtres
 TP_BWMIX_FILTER;Filtre de couleur
-TP_BWMIX_FILTER0;Aucun
-TP_BWMIX_FILTER1;Rouge
-TP_BWMIX_FILTER2;Rouge-Jaune
-TP_BWMIX_FILTER3;Juane
-TP_BWMIX_FILTER4;Vert-Jaune
-TP_BWMIX_FILTER5;Vert
-TP_BWMIX_FILTER6;Bleu-Vert
-TP_BWMIX_FILTER7;Bleu
-TP_BWMIX_FILTER8;Pourpre
+TP_BWMIX_FILTER_NONE;Aucun
+TP_BWMIX_FILTER_RED;Rouge
+TP_BWMIX_FILTER_REDYELLOW;Rouge-Jaune
+TP_BWMIX_FILTER_YELLOW;Jaune
+TP_BWMIX_FILTER_GREENYELLOW;Vert-Jaune
+TP_BWMIX_FILTER_GREEN;Vert
+TP_BWMIX_FILTER_BLUEGREEN;Bleu-Vert
+TP_BWMIX_FILTER_BLUE;Bleu
+TP_BWMIX_FILTER_PURPLE;Pourpre
 TP_BWMIX_SETTING;Préréglages
-TP_BWMIX_SET0;Contrast Normal
-TP_BWMIX_SET7;Panchromatique
-TP_BWMIX_SET8;Hyper Panchromatique
-TP_BWMIX_SET5;Basse Sensibilité
-TP_BWMIX_SET6;Haute Sensibilité
-TP_BWMIX_SET9;Orthochromatique
-TP_BWMIX_SET1;Contraste Élevé
-TP_BWMIX_SET2;Luminance
-TP_BWMIX_SET3;Paysage
-TP_BWMIX_SET4;Portrait
-TP_BWMIX_SET10;Mixeur de Canaux - RVB Absolu
-TP_BWMIX_SET11;Mixeur de Canaux - RVB Relatif
-TP_BWMIX_SET12;Mixeur de Canaux - ROJVCBMP absolu
-TP_BWMIX_SET13;Mixeur de Canaux - ROJVCBMP
-TP_BWMIX_SET14;Infrarouge
+TP_BWMIX_SET_NORMCONTAST;Contraste Normal
+TP_BWMIX_SET_HIGHCONTAST;Contraste Élevé
+TP_BWMIX_SET_LUMINANCE;Luminance
+TP_BWMIX_SET_LANDSCAPE;Paysage
+TP_BWMIX_SET_PORTRAIT;Portrait
+TP_BWMIX_SET_LOWSENSIT;Basse Sensibilité
+TP_BWMIX_SET_HIGHSENSIT;Haute Sensibilité
+TP_BWMIX_SET_PANCHRO;Panchromatique
+TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatique
+TP_BWMIX_SET_ORTHOCHRO;Orthochromatique
+TP_BWMIX_SET_RGBABS;Mixeur de Canaux - RVB Absolu
+TP_BWMIX_SET_RGBREL;Mixeur de Canaux - RVB Relatif
+TP_BWMIX_SET_ROYGCBMPABS;Mixeur de Canaux - ROJVCBMP Absolu
+TP_BWMIX_SET_ROYGCBMPREL;Mixeur de Canaux - ROJVCBMP Relatif
+TP_BWMIX_SET_INFRARED;Infrarouge
 TP_BWMIX_GAMMA;Correction Gamma
-TP_BWMIX_GAM_TOOLTIP;Corrige le gamma pour chaque canaux RVB via une courbe TRC de profil ICC
+TP_BWMIX_GAM_TOOLTIP;Corrige le gamma pour chaque canaux RVB
 TP_BWMIX_MET;Méthode
-TP_BWMIX_MET_TOOLTIP;Permet de coisir entre désaturation - mixeur de luminance - mixeur de canaux
-TP_BWMIX_MET0;Aucun
-TP_BWMIX_MET1;Désaturation
-TP_BWMIX_MET2;Égaliseur de Luminance
-TP_BWMIX_MET3;Mixeur de Canaux
+TP_BWMIX_MET_DESAT;Désaturation
+TP_BWMIX_MET_LUMEQUAL;Égaliseur de Luminance
+TP_BWMIX_MET_CHANMIX;Mixeur de Canaux
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modifie la luminance en fonction de la teinte\nFaites attention aux valeurs extrêmes qui peuvent causer des artefacts
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Courbe tonale, après la conversion en N&amp;B, à la fin du traitement
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Courbe tonale, juste avant la conversion en N&amp;B\nPeut prendre en compte les composantes couleur
-TP_BWMIX_CURVEEDITOR1;Avant Conv. en N&B
-TP_BWMIX_CURVEEDITOR2;Après Conv. en N&B
+TP_BWMIX_CURVEEDITOR1;Courbe 'avant'
+TP_BWMIX_CURVEEDITOR2;Courbe 'après'
 TP_BWMIX_TCMODE_FILMLIKE;N&B Similaire Film
-TP_BWMIX_TCMODE_LABEL1;N&B Courbe Avant
-TP_BWMIX_TCMODE_LABEL2;N&B Courbe Après
 TP_BWMIX_TCMODE_SATANDVALBLENDING;N&B Mixage Saturation et Valeur
 TP_BWMIX_TCMODE_STANDARD;N&B Standard
 TP_BWMIX_TCMODE_WEIGHTEDSTD;N&B Standard Pondéré
@@ -1170,7 +1166,7 @@ TP_EPD_REWEIGHTINGITERATES;Itérations de la pondération
 TP_EPD_SCALE;Échelle
 TP_EPD_STRENGTH;Force
 TP_EPD_TOOLTIP;Vous pouvez choisir entre le mode Lab (standard) ou le mode CIECAM02.\n En activant "Compression tonale avec brillance Q CIECAM" dans le menu "Brillance + Niveau de couleur CIECAM"
-TP_EXPOSCORR_LABEL;Points Noir &amp; Blanc Raw
+TP_EXPOSCORR_LABEL;Points Noir & Blanc Raw
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
 TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de <b>Niveaux automatiques</b> afin de régler\nautomatiquement les valeurs basé sur l'analyse de l'image  
 TP_EXPOSURE_BLACKLEVEL;Noir
@@ -1263,8 +1259,6 @@ TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Ramènes les données dans le gamut de l'espace couleur de travail\npuis applique la correction de Munsell
 TP_LABCURVE_BRIGHTNESS;Luminosité
-TP_LABCURVE_BWTONING;Mode N&B colorisable
-TP_LABCURVE_BWTONING_TIP;Avec le mode <b>N&amp;B colorisable</b> activé, la Chromaticité, la courbe CC, CT et LC sont sans effet.\nLa colorisation peut être effctué en utilisant les courbes <b>a</b> et <b>b</b>.
 TP_LABCURVE_CHROMATICITY;Chromaticité
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Courbe de luminance

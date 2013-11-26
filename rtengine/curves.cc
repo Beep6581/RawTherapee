@@ -289,8 +289,8 @@ void CurveFactory::curveLightBrightColor (
 }
 
 void CurveFactory::curveBW (
-		procparams::ChannelMixerbwParams::eTCModeId curveModeb, const std::vector<double>& curvePointsbw,
-		procparams::ChannelMixerbwParams::eTCModeId curveModeb2, const std::vector<double>& curvePointsbw2,
+		procparams::BlackWhiteParams::eTCModeId curveModeb, const std::vector<double>& curvePointsbw,
+		procparams::BlackWhiteParams::eTCModeId curveModeb2, const std::vector<double>& curvePointsbw2,
 		LUTu & histogrambw, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogrambw,//for Luminance  
 		ChMixerbw & customToneCurvebw1,
 		ChMixerbw & customToneCurvebw2,
@@ -781,7 +781,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 				delete tbwcurve;
 				tbwcurve = NULL;
 			}
-			else if (curveModeb != procparams::ChannelMixerbwParams::TC_MODE_STD_BW) {
+			else if (curveModeb != procparams::BlackWhiteParams::TC_MODE_STD_BW) {
 				customToneCurvebw1.Set(tbwcurve);
 				delete tbwcurve;
 				tbwcurve = NULL;

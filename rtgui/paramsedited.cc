@@ -58,8 +58,7 @@ void ParamsEdited::set (bool v) {
 	labCurve.chromaticity    = v;
 	labCurve.avoidcolorshift = v;
 	labCurve.rstprotection   = v;
-	labCurve.bwtoning        = v;
-	labCurve.lcredsk        = v;
+	labCurve.lcredsk         = v;
 	rgbCurves.lumamode       = v;
 	rgbCurves.rcurve         = v;
 	rgbCurves.gcurve         = v;
@@ -217,29 +216,29 @@ void ParamsEdited::set (bool v) {
 	chmixer.blue[0] = v;
 	chmixer.blue[1] = v;
 	chmixer.blue[2] = v;
-	chmixerbw.enabledcc   = v;
-	chmixerbw.enabled   = v;
-	chmixerbw.bwred   = v;
-	chmixerbw.bwgreen   = v;
-	chmixerbw.bwblue   = v;
-	chmixerbw.bwredgam   = v;
-	chmixerbw.bwgreengam   = v;
-	chmixerbw.bwbluegam   = v;
-	chmixerbw.fil   = v;
-	chmixerbw.set   = v;
-	chmixerbw.met   = v;
-	chmixerbw.bworan   = v;
-	chmixerbw.bwyell   = v;
-	chmixerbw.bwcyan   = v;
-	chmixerbw.bwmag   = v;
-	chmixerbw.bwpur   = v;	
-	chmixerbw.vcurve = v;
-	chmixerbw.curve      = v;
-    chmixerbw.curveMode  = v;
-	chmixerbw.curve2      = v;
-    chmixerbw.curveMode2  = v;
-	chmixerbw.autoc    = v;
-	
+	blackwhite.enabled   = v;
+	blackwhite.enabledcc   = v;
+	blackwhite.mixerRed   = v;
+	blackwhite.mixerOrange   = v;
+	blackwhite.mixerYellow   = v;
+	blackwhite.mixerGreen   = v;
+	blackwhite.mixerCyan   = v;
+	blackwhite.mixerBlue   = v;
+	blackwhite.mixerMagenta   = v;
+	blackwhite.mixerPurple   = v;
+	blackwhite.gammaRed   = v;
+	blackwhite.gammaGreen   = v;
+	blackwhite.gammaBlue   = v;
+	blackwhite.filter   = v;
+	blackwhite.setting   = v;
+	blackwhite.method   = v;
+	blackwhite.luminanceCurve = v;
+	blackwhite.beforeCurve      = v;
+	blackwhite.beforeCurveMode  = v;
+	blackwhite.afterCurve      = v;
+	blackwhite.afterCurveMode  = v;
+	blackwhite.autoc    = v;
+
 	hlrecovery.enabled   = v;
 	hlrecovery.method    = v;
 	resize.scale     = v;
@@ -258,7 +257,7 @@ void ParamsEdited::set (bool v) {
 	icm.gamma		= v;
 	icm.freegamma		= v;
 	icm.gampos		= v;
-	icm.slpos		= v;	
+	icm.slpos		= v;
 	raw.ccSteps = v;
 	raw.dmethod = v;
 	raw.dcbIterations = v;
@@ -331,12 +330,11 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.chcurve = labCurve.chcurve && p.labCurve.chcurve == other.labCurve.chcurve;
         labCurve.lccurve = labCurve.lccurve && p.labCurve.lccurve == other.labCurve.lccurve;
         labCurve.clcurve = labCurve.clcurve && p.labCurve.clcurve == other.labCurve.clcurve;
-		labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
+        labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
         labCurve.chromaticity = labCurve.chromaticity && p.labCurve.chromaticity == other.labCurve.chromaticity;
         labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
-        labCurve.bwtoning = labCurve.bwtoning && p.labCurve.bwtoning == other.labCurve.bwtoning;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
         rgbCurves.lumamode = rgbCurves.lumamode && p.rgbCurves.lumamode == other.rgbCurves.lumamode;
         rgbCurves.rcurve = rgbCurves.rcurve && p.rgbCurves.rcurve == other.rgbCurves.rcurve;
@@ -398,9 +396,9 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         colorappearance.datacie = colorappearance.datacie && p.colorappearance.datacie == other.colorappearance.datacie;
         colorappearance.tonecie = colorappearance.tonecie && p.colorappearance.tonecie == other.colorappearance.tonecie;
    //     colorappearance.sharpcie = colorappearance.sharpcie && p.colorappearance.sharpcie == other.colorappearance.sharpcie;
-		colorappearance.curve = colorappearance.curve && p.colorappearance.curve == other.colorappearance.curve;
+        colorappearance.curve = colorappearance.curve && p.colorappearance.curve == other.colorappearance.curve;
         colorappearance.curve3 = colorappearance.curve3 && p.colorappearance.curve3 == other.colorappearance.curve3;
-		colorappearance.curve2 = colorappearance.curve2 && p.colorappearance.curve2 == other.colorappearance.curve2;
+        colorappearance.curve2 = colorappearance.curve2 && p.colorappearance.curve2 == other.colorappearance.curve2;
         colorappearance.curveMode = colorappearance.curveMode && p.colorappearance.curveMode == other.colorappearance.curveMode;
         colorappearance.curveMode2 = colorappearance.curveMode2 && p.colorappearance.curveMode2 == other.colorappearance.curveMode2;
         colorappearance.curveMode3 = colorappearance.curveMode3 && p.colorappearance.curveMode3 == other.colorappearance.curveMode3;
@@ -433,7 +431,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         dirpyrDenoise.luma = dirpyrDenoise.luma && p.dirpyrDenoise.luma == other.dirpyrDenoise.luma;
         dirpyrDenoise.Ldetail = dirpyrDenoise.Ldetail && p.dirpyrDenoise.Ldetail == other.dirpyrDenoise.Ldetail;
         dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
-		dirpyrDenoise.redchro = dirpyrDenoise.redchro && p.dirpyrDenoise.redchro == other.dirpyrDenoise.redchro;
+        dirpyrDenoise.redchro = dirpyrDenoise.redchro && p.dirpyrDenoise.redchro == other.dirpyrDenoise.redchro;
         dirpyrDenoise.bluechro = dirpyrDenoise.bluechro && p.dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro;	
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
         dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
@@ -499,28 +497,29 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         chmixer.blue[0] = chmixer.blue[0] && p.chmixer.blue[0] == other.chmixer.blue[0];
         chmixer.blue[1] = chmixer.blue[1] && p.chmixer.blue[1] == other.chmixer.blue[1];
         chmixer.blue[2] = chmixer.blue[2] && p.chmixer.blue[2] == other.chmixer.blue[2];
-        chmixerbw.enabledcc = chmixerbw.enabledcc && p.chmixerbw.enabledcc == other.chmixerbw.enabledcc;
-        chmixerbw.enabled = chmixerbw.enabled && p.chmixerbw.enabled == other.chmixerbw.enabled;
-        chmixerbw.bwred = chmixerbw.bwred && p.chmixerbw.bwred == other.chmixerbw.bwred;
-        chmixerbw.bwgreen = chmixerbw.bwgreen && p.chmixerbw.bwgreen == other.chmixerbw.bwgreen;
-        chmixerbw.bwblue = chmixerbw.bwblue && p.chmixerbw.bwblue == other.chmixerbw.bwblue;
-        chmixerbw.bwredgam = chmixerbw.bwredgam && p.chmixerbw.bwredgam == other.chmixerbw.bwredgam;
-        chmixerbw.bwgreengam = chmixerbw.bwgreengam && p.chmixerbw.bwgreengam == other.chmixerbw.bwgreengam;
-        chmixerbw.bwbluegam = chmixerbw.bwbluegam && p.chmixerbw.bwbluegam == other.chmixerbw.bwbluegam;
-        chmixerbw.bworan = chmixerbw.bworan && p.chmixerbw.bworan == other.chmixerbw.bworan;
-        chmixerbw.bwyell = chmixerbw.bwyell && p.chmixerbw.bwyell == other.chmixerbw.bwyell;
-        chmixerbw.bwcyan = chmixerbw.bwcyan && p.chmixerbw.bwcyan == other.chmixerbw.bwcyan;
-        chmixerbw.bwmag = chmixerbw.bwmag && p.chmixerbw.bwmag == other.chmixerbw.bwmag;
-        chmixerbw.bwpur = chmixerbw.bwpur && p.chmixerbw.bwpur == other.chmixerbw.bwpur;	
-        chmixerbw.fil = chmixerbw.fil && p.chmixerbw.fil == other.chmixerbw.fil;
-        chmixerbw.set = chmixerbw.set && p.chmixerbw.set == other.chmixerbw.set;
-        chmixerbw.vcurve = chmixerbw.vcurve && p.chmixerbw.vcurve == other.chmixerbw.vcurve;
-        chmixerbw.met = chmixerbw.met && p.chmixerbw.met == other.chmixerbw.met;
-        chmixerbw.curve = chmixerbw.curve && p.chmixerbw.curve == other.chmixerbw.curve;
-        chmixerbw.curve2 = chmixerbw.curve2 && p.chmixerbw.curve2 == other.chmixerbw.curve2;
-        chmixerbw.autoc = chmixerbw.autoc && p.chmixerbw.autoc == other.chmixerbw.autoc;
-		
-		hlrecovery.enabled = hlrecovery.enabled && p.hlrecovery.enabled == other.hlrecovery.enabled;
+        blackwhite.enabledcc = blackwhite.enabledcc && p.blackwhite.enabledcc == other.blackwhite.enabledcc;
+        blackwhite.enabled = blackwhite.enabled && p.blackwhite.enabled == other.blackwhite.enabled;
+        blackwhite.mixerRed = blackwhite.mixerRed && p.blackwhite.mixerRed == other.blackwhite.mixerRed;
+        blackwhite.mixerOrange = blackwhite.mixerOrange && p.blackwhite.mixerOrange == other.blackwhite.mixerOrange;
+        blackwhite.mixerYellow = blackwhite.mixerYellow && p.blackwhite.mixerYellow == other.blackwhite.mixerYellow;
+        blackwhite.mixerGreen = blackwhite.mixerGreen && p.blackwhite.mixerGreen == other.blackwhite.mixerGreen;
+        blackwhite.mixerCyan = blackwhite.mixerCyan && p.blackwhite.mixerCyan == other.blackwhite.mixerCyan;
+        blackwhite.mixerBlue = blackwhite.mixerBlue && p.blackwhite.mixerBlue == other.blackwhite.mixerBlue;
+        blackwhite.mixerMagenta = blackwhite.mixerMagenta && p.blackwhite.mixerMagenta == other.blackwhite.mixerMagenta;
+        blackwhite.mixerPurple = blackwhite.mixerPurple && p.blackwhite.mixerPurple == other.blackwhite.mixerPurple;
+        blackwhite.gammaRed = blackwhite.gammaRed && p.blackwhite.gammaRed == other.blackwhite.gammaRed;
+        blackwhite.gammaGreen = blackwhite.gammaGreen && p.blackwhite.gammaGreen == other.blackwhite.gammaGreen;
+        blackwhite.gammaBlue = blackwhite.gammaBlue && p.blackwhite.gammaBlue == other.blackwhite.gammaBlue;
+        blackwhite.filter = blackwhite.filter && p.blackwhite.filter == other.blackwhite.filter;
+        blackwhite.setting = blackwhite.setting && p.blackwhite.setting == other.blackwhite.setting;
+        blackwhite.luminanceCurve = blackwhite.luminanceCurve && p.blackwhite.luminanceCurve == other.blackwhite.luminanceCurve;
+        blackwhite.method = blackwhite.method && p.blackwhite.method == other.blackwhite.method;
+        blackwhite.beforeCurve = blackwhite.beforeCurve && p.blackwhite.beforeCurve == other.blackwhite.beforeCurve;
+        blackwhite.beforeCurveMode = blackwhite.beforeCurveMode && p.blackwhite.beforeCurveMode == other.blackwhite.beforeCurveMode;
+        blackwhite.afterCurve = blackwhite.afterCurve && p.blackwhite.afterCurve == other.blackwhite.afterCurve;
+        blackwhite.afterCurveMode = blackwhite.afterCurveMode && p.blackwhite.afterCurveMode == other.blackwhite.afterCurveMode;
+        blackwhite.autoc = blackwhite.autoc && p.blackwhite.autoc == other.blackwhite.autoc;
+        hlrecovery.enabled = hlrecovery.enabled && p.hlrecovery.enabled == other.hlrecovery.enabled;
         hlrecovery.method = hlrecovery.method && p.hlrecovery.method == other.hlrecovery.method;
         resize.scale = resize.scale && p.resize.scale == other.resize.scale;
         resize.appliesTo = resize.appliesTo && p.resize.appliesTo == other.resize.appliesTo;
@@ -536,7 +535,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         icm.working = icm.working && p.icm.working == other.icm.working;
         icm.output = icm.output && p.icm.output == other.icm.output;
         icm.gamma = icm.gamma && p.icm.gamma == other.icm.gamma;
-        icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;		
+        icm.freegamma = icm.freegamma && p.icm.freegamma == other.icm.freegamma;
         icm.gampos = icm.gampos && p.icm.gampos == other.icm.gampos;
         icm.slpos = icm.slpos && p.icm.slpos == other.icm.slpos;
         raw.ccSteps = raw.ccSteps && p.raw.ccSteps == other.raw.ccSteps;
@@ -610,8 +609,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.chromaticity)	toEdit.labCurve.chromaticity = dontforceSet && options.baBehav[ADDSET_LC_CHROMATICITY] ? toEdit.labCurve.chromaticity + mods.labCurve.chromaticity : mods.labCurve.chromaticity;
 	if (labCurve.avoidcolorshift)	toEdit.labCurve.avoidcolorshift		= mods.labCurve.avoidcolorshift;
 	if (labCurve.rstprotection)		toEdit.labCurve.rstprotection		= mods.labCurve.rstprotection;
-	if (labCurve.bwtoning)			toEdit.labCurve.bwtoning			= mods.labCurve.bwtoning;
-	if (labCurve.lcredsk)			toEdit.labCurve.lcredsk			= mods.labCurve.lcredsk;
+	if (labCurve.lcredsk)			toEdit.labCurve.lcredsk				= mods.labCurve.lcredsk;
 
 	if (rgbCurves.lumamode)					toEdit.rgbCurves.lumamode   = mods.rgbCurves.lumamode;
 	if (rgbCurves.rcurve)					toEdit.rgbCurves.rcurve     = mods.rgbCurves.rcurve;
@@ -630,36 +628,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (sharpening.radius)					toEdit.sharpening.radius 	= mods.sharpening.radius;
 	if (sharpening.amount)					toEdit.sharpening.amount 	= dontforceSet && options.baBehav[ADDSET_SHARP_AMOUNT] ? toEdit.sharpening.amount + mods.sharpening.amount : mods.sharpening.amount;
 	if (sharpening.threshold)				toEdit.sharpening.threshold = mods.sharpening.threshold;
-
-	for (int i=0; i<3; i++) {
-		if (chmixer.red[i])		toEdit.chmixer.red[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.red[i] + mods.chmixer.red[i] : mods.chmixer.red[i];
-		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
-		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
-	}
-	if (chmixerbw.enabledcc)		toEdit.chmixerbw.enabledcc	= mods.chmixerbw.enabledcc;
-	if (chmixerbw.enabled)		toEdit.chmixerbw.enabled	= mods.chmixerbw.enabled;
-	if (chmixerbw.bwgreen)		toEdit.chmixerbw.bwgreen	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwgreen + mods.chmixerbw.bwgreen : mods.chmixerbw.bwgreen;
-	if (chmixerbw.bwred)			toEdit.chmixerbw.bwred	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwred + mods.chmixerbw.bwred : mods.chmixerbw.bwred;
-	if (chmixerbw.bwblue)			toEdit.chmixerbw.bwblue	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwblue + mods.chmixerbw.bwblue : mods.chmixerbw.bwblue;
-	if (chmixerbw.bwgreengam)		toEdit.chmixerbw.bwgreengam	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwgreengam + mods.chmixerbw.bwgreengam : mods.chmixerbw.bwgreengam;
-	if (chmixerbw.bwredgam)			toEdit.chmixerbw.bwredgam	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwredgam + mods.chmixerbw.bwredgam : mods.chmixerbw.bwredgam;
-	if (chmixerbw.bwbluegam)			toEdit.chmixerbw.bwbluegam	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwbluegam + mods.chmixerbw.bwbluegam : mods.chmixerbw.bwbluegam;
-	if (chmixerbw.bworan)			toEdit.chmixerbw.bworan	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bworan + mods.chmixerbw.bworan : mods.chmixerbw.bworan;
-	if (chmixerbw.bwyell)			toEdit.chmixerbw.bwyell	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwyell + mods.chmixerbw.bwyell : mods.chmixerbw.bwyell;
-	if (chmixerbw.bwcyan)			toEdit.chmixerbw.bwcyan	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwcyan + mods.chmixerbw.bwcyan : mods.chmixerbw.bwcyan;
-	if (chmixerbw.bwmag)			toEdit.chmixerbw.bwmag	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwmag + mods.chmixerbw.bwmag : mods.chmixerbw.bwmag;
-	if (chmixerbw.bwpur)			toEdit.chmixerbw.bwpur	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwpur + mods.chmixerbw.bwpur : mods.chmixerbw.bwpur;
-	if (chmixerbw.fil)				toEdit.chmixerbw.fil		= mods.chmixerbw.fil;
-	if (chmixerbw.set)				toEdit.chmixerbw.set		= mods.chmixerbw.set;
-	if (chmixerbw.met)				toEdit.chmixerbw.met		= mods.chmixerbw.met;
-	if (chmixerbw.curve)		toEdit.chmixerbw.curve      = mods.chmixerbw.curve;
-	if (chmixerbw.curveMode)	toEdit.chmixerbw.curveMode  = mods.chmixerbw.curveMode;
-	if (chmixerbw.curve2)		toEdit.chmixerbw.curve2      = mods.chmixerbw.curve2;
-	if (chmixerbw.curveMode2)	toEdit.chmixerbw.curveMode2  = mods.chmixerbw.curveMode2;
-	if (chmixerbw.vcurve)		toEdit.chmixerbw.vcurve      = mods.chmixerbw.vcurve;
-	if (chmixerbw.autoc)		toEdit.chmixerbw.autoc      = mods.chmixerbw.autoc;
-
-
 	if (sharpening.edgesonly)				toEdit.sharpening.edgesonly 	= mods.sharpening.edgesonly;
 	if (sharpening.edges_radius)			toEdit.sharpening.edges_radius 	= mods.sharpening.edges_radius;
 	if (sharpening.edges_tolerance)			toEdit.sharpening.edges_tolerance	 = mods.sharpening.edges_tolerance;
@@ -804,17 +772,28 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 		if (chmixer.green[i])	toEdit.chmixer.green[i]	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.green[i] + mods.chmixer.green[i] : mods.chmixer.green[i];
 		if (chmixer.blue[i])	toEdit.chmixer.blue[i] 	= dontforceSet && options.baBehav[ADDSET_CHMIXER] ? toEdit.chmixer.blue[i] + mods.chmixer.blue[i] : mods.chmixer.blue[i];
 	}
-	if (chmixerbw.bwred)		toEdit.chmixerbw.bwred 		= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwred + mods.chmixerbw.bwred : mods.chmixerbw.bwred;
-	if (chmixerbw.bwgreen)		toEdit.chmixerbw.bwgreen 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwgreen + mods.chmixerbw.bwgreen : mods.chmixerbw.bwgreen;
-	if (chmixerbw.bwblue)		toEdit.chmixerbw.bwblue 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BW] ? toEdit.chmixerbw.bwblue + mods.chmixerbw.bwblue : mods.chmixerbw.bwblue;
-	if (chmixerbw.bwredgam)		toEdit.chmixerbw.bwredgam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwredgam + mods.chmixerbw.bwredgam : mods.chmixerbw.bwredgam;
-	if (chmixerbw.bwgreengam)	toEdit.chmixerbw.bwgreengam = dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwgreengam + mods.chmixerbw.bwgreengam : mods.chmixerbw.bwgreengam;
-	if (chmixerbw.bwbluegam)	toEdit.chmixerbw.bwbluegam 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWG] ? toEdit.chmixerbw.bwbluegam + mods.chmixerbw.bwbluegam : mods.chmixerbw.bwbluegam;
-	if (chmixerbw.bworan)		toEdit.chmixerbw.bworan 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bworan + mods.chmixerbw.bworan : mods.chmixerbw.bworan;
-	if (chmixerbw.bwyell)		toEdit.chmixerbw.bwyell 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwyell + mods.chmixerbw.bwyell : mods.chmixerbw.bwyell;
-	if (chmixerbw.bwcyan)		toEdit.chmixerbw.bwcyan 	= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwcyan + mods.chmixerbw.bwcyan : mods.chmixerbw.bwcyan;
-	if (chmixerbw.bwmag)		toEdit.chmixerbw.bwmag 		= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwmag + mods.chmixerbw.bwmag : mods.chmixerbw.bwmag;
-	if (chmixerbw.bwpur)		toEdit.chmixerbw.bwpur 		= dontforceSet && options.baBehav[ADDSET_CHMIXER_BWF] ? toEdit.chmixerbw.bwpur + mods.chmixerbw.bwpur : mods.chmixerbw.bwpur;
+	if (blackwhite.enabled)			toEdit.blackwhite.enabled			= mods.blackwhite.enabled;
+	if (blackwhite.method)			toEdit.blackwhite.method			= mods.blackwhite.method;
+	if (blackwhite.luminanceCurve)	toEdit.blackwhite.luminanceCurve	= mods.blackwhite.luminanceCurve;
+	if (blackwhite.autoc)			toEdit.blackwhite.autoc				= mods.blackwhite.autoc;
+	if (blackwhite.setting)			toEdit.blackwhite.setting			= mods.blackwhite.setting;
+	if (blackwhite.enabledcc)		toEdit.blackwhite.enabledcc			= mods.blackwhite.enabledcc;
+	if (blackwhite.filter)			toEdit.blackwhite.filter			= mods.blackwhite.filter;
+	if (blackwhite.mixerRed)		toEdit.blackwhite.mixerRed 			= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_HUES] ? toEdit.blackwhite.mixerRed + mods.blackwhite.mixerRed : mods.blackwhite.mixerRed;
+	if (blackwhite.mixerOrange)		toEdit.blackwhite.mixerOrange 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_HUES] ? toEdit.blackwhite.mixerOrange + mods.blackwhite.mixerOrange : mods.blackwhite.mixerOrange;
+	if (blackwhite.mixerYellow)		toEdit.blackwhite.mixerYellow 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_HUES] ? toEdit.blackwhite.mixerYellow + mods.blackwhite.mixerYellow : mods.blackwhite.mixerYellow;
+	if (blackwhite.mixerGreen)		toEdit.blackwhite.mixerGreen 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_HUES] ? toEdit.blackwhite.mixerGreen + mods.blackwhite.mixerGreen : mods.blackwhite.mixerGreen;
+	if (blackwhite.mixerCyan)		toEdit.blackwhite.mixerCyan 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_HUES] ? toEdit.blackwhite.mixerCyan + mods.blackwhite.mixerCyan : mods.blackwhite.mixerCyan;
+	if (blackwhite.mixerBlue)		toEdit.blackwhite.mixerBlue 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_HUES] ? toEdit.blackwhite.mixerBlue + mods.blackwhite.mixerBlue : mods.blackwhite.mixerBlue;
+	if (blackwhite.mixerMagenta)	toEdit.blackwhite.mixerMagenta 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_HUES] ? toEdit.blackwhite.mixerMagenta + mods.blackwhite.mixerMagenta : mods.blackwhite.mixerMagenta;
+	if (blackwhite.mixerPurple)		toEdit.blackwhite.mixerPurple 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_HUES] ? toEdit.blackwhite.mixerPurple + mods.blackwhite.mixerPurple : mods.blackwhite.mixerPurple;
+	if (blackwhite.gammaRed)		toEdit.blackwhite.gammaRed 			= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_GAMMA] ? toEdit.blackwhite.gammaRed + mods.blackwhite.gammaRed : mods.blackwhite.gammaRed;
+	if (blackwhite.gammaGreen)		toEdit.blackwhite.gammaGreen 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_GAMMA] ? toEdit.blackwhite.gammaGreen + mods.blackwhite.gammaGreen : mods.blackwhite.gammaGreen;
+	if (blackwhite.gammaBlue)		toEdit.blackwhite.gammaBlue 		= dontforceSet && options.baBehav[ADDSET_BLACKWHITE_GAMMA] ? toEdit.blackwhite.gammaBlue + mods.blackwhite.gammaBlue : mods.blackwhite.gammaBlue;
+	if (blackwhite.beforeCurve)		toEdit.blackwhite.beforeCurve		= mods.blackwhite.beforeCurve;
+	if (blackwhite.beforeCurveMode)	toEdit.blackwhite.beforeCurveMode	= mods.blackwhite.beforeCurveMode;
+	if (blackwhite.afterCurve)		toEdit.blackwhite.afterCurve		= mods.blackwhite.afterCurve;
+	if (blackwhite.afterCurveMode)	toEdit.blackwhite.afterCurveMode	= mods.blackwhite.afterCurveMode;
 	
 	if (hlrecovery.enabled)	toEdit.hlrecovery.enabled 	= mods.hlrecovery.enabled;
 	if (hlrecovery.method)	toEdit.hlrecovery.method 	= mods.hlrecovery.method;
@@ -891,7 +870,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 bool RAWParamsEdited::isUnchanged() const {
     return ccSteps && dmethod && dcbIterations && dcbEnhance && lmmseIterations/*&& allEnhance*/ && caCorrection && caRed && caBlue && greenEq
         && hotDeadPixelFilter && hotDeadPixelThresh && linenoise && darkFrame && dfAuto && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType
-	    && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
+        && exPos && exPreser && exBlackzero && exBlackone && exBlacktwo && exBlackthree && exTwoGreen;
 }
 
 bool LensProfParamsEdited::isUnchanged() const {
