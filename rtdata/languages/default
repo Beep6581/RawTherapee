@@ -401,7 +401,7 @@ HISTORY_MSG_163;RGB Curves - R
 HISTORY_MSG_164;RGB Curves - G
 HISTORY_MSG_165;RGB Curves - B
 HISTORY_MSG_166;Neutral Levels
-HISTORY_MSG_167;B&amp;W toning
+HISTORY_MSG_167;--unused--
 HISTORY_MSG_168;'CC' curve
 HISTORY_MSG_169;'CH' curve
 HISTORY_MSG_170;Vibrance - Curve
@@ -447,30 +447,30 @@ HISTORY_MSG_210;Graduated Filter
 HISTORY_MSG_211;Graduated Filter
 HISTORY_MSG_212;Vignette Filter
 HISTORY_MSG_213;Vignette Filter - Strength
-HISTORY_MSG_214;Black and White
-HISTORY_MSG_215;BW Channel Mixer Red
-HISTORY_MSG_216;BW Channel Mixer Green
-HISTORY_MSG_217;BW Channel Mixer Blue
-HISTORY_MSG_218;BW Red Gamma
-HISTORY_MSG_219;BW Green Gamma
-HISTORY_MSG_220;BW Blue Gamma
-HISTORY_MSG_221;BW Color Filter
-HISTORY_MSG_222;BW Presets
-HISTORY_MSG_223;BW Channel Mixer Orange
-HISTORY_MSG_224;BW Channel Mixer Yellow
-HISTORY_MSG_225;BW Channel Mixer Cyan
-HISTORY_MSG_226;BW Channel Mixer Magenta
-HISTORY_MSG_227;BW Channel Mixer Purple
-HISTORY_MSG_228;BW Luminance Equalizer
-HISTORY_MSG_229;BW Luminance Equalizer
-HISTORY_MSG_230;BW Black and White Mode
-HISTORY_MSG_231;BW Curve
-HISTORY_MSG_232;BW Curve Type
-HISTORY_MSG_233;BW Curve
-HISTORY_MSG_234;BW Curve Type
-HISTORY_MSG_235;BW Auto Channel Mixer
-HISTORY_MSG_236;BW Auto Channel Mixer
-HISTORY_MSG_237;BW Reset Mixer
+HISTORY_MSG_214;Black &amp; White
+HISTORY_MSG_215;B&amp;W Channel Mixer Red
+HISTORY_MSG_216;B&amp;W Channel Mixer Green
+HISTORY_MSG_217;B&amp;W Channel Mixer Blue
+HISTORY_MSG_218;B&amp;W Red Gamma
+HISTORY_MSG_219;B&amp;W Green Gamma
+HISTORY_MSG_220;B&amp;W Blue Gamma
+HISTORY_MSG_221;B&amp;W Color Filter
+HISTORY_MSG_222;B&amp;W Presets
+HISTORY_MSG_223;B&amp;W Channel Mixer Orange
+HISTORY_MSG_224;B&amp;W Channel Mixer Yellow
+HISTORY_MSG_225;B&amp;W Channel Mixer Cyan
+HISTORY_MSG_226;B&amp;W Channel Mixer Magenta
+HISTORY_MSG_227;B&amp;W Channel Mixer Purple
+HISTORY_MSG_228;B&amp;W Luminance Equalizer
+HISTORY_MSG_229;B&amp;W Luminance Equalizer
+HISTORY_MSG_230;B&amp;W Black and White Mode
+HISTORY_MSG_231;B&amp;W 'Before' Curve
+HISTORY_MSG_232;B&amp;W 'Before' Curve Type
+HISTORY_MSG_233;B&amp;W 'After' Curve
+HISTORY_MSG_234;B&amp;W 'After' Curve Type
+HISTORY_MSG_235;B&amp;W Auto Channel Mixer
+HISTORY_MSG_236;--unused--
+HISTORY_MSG_237;B&amp;W Mixer
 HISTORY_MSG_238;Gradient - Feather
 HISTORY_MSG_239;Gradient - Strength
 HISTORY_MSG_240;Gradient - Center
@@ -971,8 +971,8 @@ TP_CHMIXER_BLUE;Blue Channel
 TP_CHMIXER_GREEN;Green Channel
 TP_CHMIXER_LABEL;Channel Mixer
 TP_CHMIXER_RED;Red Channel
-TP_BWMIX_LABEL;Black&amp;White
-TP_BWMIX_CC_ENABLED;Complementary color
+TP_BWMIX_LABEL;Black & White
+TP_BWMIX_CC_ENABLED;Adjust complementary color
 TP_BWMIX_CHANNEL;Luminance Equalizer
 TP_BWMIX_VAL;L
 TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBMP mode
@@ -981,15 +981,15 @@ TP_BWMIX_FILTER_TOOLTIP;The color filter simulate shots taken with a colored fil
 TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
 TP_BWMIX_NEUTRAL;Reset mixer
-TP_BWMIX_NEUTRAL_TIP;Reset all values - sliders - filters - channel-mixer to default
+TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
 TP_BWMIX_RED;Red
 TP_BWMIX_GREEN;Green
 TP_BWMIX_BLUE;Blue
-TP_BWMIX_ORA;Orange Filter
-TP_BWMIX_YEL;Yellow Filter
-TP_BWMIX_CYAN;Cyan Filter
-TP_BWMIX_MAG;Magenta Filter
-TP_BWMIX_PUR;Purple Filter
+TP_BWMIX_ORANGE;Orange
+TP_BWMIX_YELLOW;Yellow
+TP_BWMIX_CYAN;Cyan
+TP_BWMIX_MAGENTA;Magenta
+TP_BWMIX_PURPLE;Purple
 TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
 TP_BWMIX_GAM_RED;Red Channel
 TP_BWMIX_GAM_GREEN;Green Channel
@@ -997,47 +997,43 @@ TP_BWMIX_GAM_BLUE;Blue Channel
 TP_BWMIX_MIXC;Mixer
 TP_BWMIX_MIXF;Mixer Filters
 TP_BWMIX_FILTER;Color Filter
-TP_BWMIX_FILTER0;None
-TP_BWMIX_FILTER1;Red
-TP_BWMIX_FILTER2;Red-Yellow
-TP_BWMIX_FILTER3;Yellow
-TP_BWMIX_FILTER4;Green-Yellow
-TP_BWMIX_FILTER5;Green
-TP_BWMIX_FILTER6;Blue-Green
-TP_BWMIX_FILTER7;Blue
-TP_BWMIX_FILTER8;Purple
+TP_BWMIX_FILTER_NONE;None
+TP_BWMIX_FILTER_RED;Red
+TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
+TP_BWMIX_FILTER_YELLOW;Yellow
+TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
+TP_BWMIX_FILTER_GREEN;Green
+TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
+TP_BWMIX_FILTER_BLUE;Blue
+TP_BWMIX_FILTER_PURPLE;Purple
 TP_BWMIX_SETTING;Presets
-TP_BWMIX_SET0;Normal Contrast
-TP_BWMIX_SET7;Panchromatic
-TP_BWMIX_SET8;Hyper Panchromatic
-TP_BWMIX_SET5;Low Sensitivity
-TP_BWMIX_SET6;High Sensitivity
-TP_BWMIX_SET9;Orthochromatic
-TP_BWMIX_SET1;High contrast
-TP_BWMIX_SET2;Luminance
-TP_BWMIX_SET3;Landscape
-TP_BWMIX_SET4;Portrait
-TP_BWMIX_SET10;Channel-Mixer absolute RGB
-TP_BWMIX_SET11;Channel-Mixer relative RGB
-TP_BWMIX_SET12;Channel-Mixer absolute ROYGCBMP
-TP_BWMIX_SET13;Channel-Mixer relative ROYGCBMP
-TP_BWMIX_SET14;Infrared
+TP_BWMIX_SET_NORMCONTAST;Normal Contrast
+TP_BWMIX_SET_HIGHCONTAST;High contrast
+TP_BWMIX_SET_LUMINANCE;Luminance
+TP_BWMIX_SET_LANDSCAPE;Landscape
+TP_BWMIX_SET_PORTRAIT;Portrait
+TP_BWMIX_SET_LOWSENSIT;Low Sensitivity
+TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
+TP_BWMIX_SET_PANCHRO;Panchromatic
+TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
+TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
+TP_BWMIX_SET_RGBABS;Channel-Mixer absolute RGB
+TP_BWMIX_SET_RGBREL;Channel-Mixer relative RGB
+TP_BWMIX_SET_ROYGCBMPABS;Channel-Mixer absolute ROYGCBMP
+TP_BWMIX_SET_ROYGCBMPREL;Channel-Mixer relative ROYGCBMP
+TP_BWMIX_SET_INFRARED;Infrared
 TP_BWMIX_GAMMA;Gamma Correction
-TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel RGB as an ICC TRC curve
+TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel RGB
 TP_BWMIX_MET;Method
-TP_BWMIX_MET_TOOLTIP;Select between desaturation - mixer luminance - channel mixer
-TP_BWMIX_MET0;None
-TP_BWMIX_MET1;Desaturation
-TP_BWMIX_MET2;Luminance Equalizer
-TP_BWMIX_MET3;Channel Mixer
+TP_BWMIX_MET_DESAT;Desaturation
+TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
+TP_BWMIX_MET_CHANMIX;Channel Mixer
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\nPay attention to extreme values that may cause artifacts
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the color components
-TP_BWMIX_CURVEEDITOR1;Before B&W conv.
-TP_BWMIX_CURVEEDITOR2;After B&W conv.
+TP_BWMIX_CURVEEDITOR1;'Before' curve
+TP_BWMIX_CURVEEDITOR2;'After' curve
 TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
-TP_BWMIX_TCMODE_LABEL1;B&W Curve Before
-TP_BWMIX_TCMODE_LABEL2;B&W Curve After
 TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
 TP_BWMIX_TCMODE_STANDARD;B&W Standard
 TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
@@ -1174,7 +1170,7 @@ TP_EPD_REWEIGHTINGITERATES;Reweighting Iterates
 TP_EPD_SCALE;Scale
 TP_EPD_STRENGTH;Strength
 TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
-TP_EXPOSCORR_LABEL;Raw White &amp; Black Points
+TP_EXPOSCORR_LABEL;Raw White & Black Points
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
 TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
 TP_EXPOSURE_BLACKLEVEL;Black
@@ -1265,8 +1261,6 @@ TP_IMPULSEDENOISE_THRESH;Threshold
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction
 TP_LABCURVE_BRIGHTNESS;Lightness
-TP_LABCURVE_BWTONING;B&W toning
-TP_LABCURVE_BWTONING_TIP;With the <b>B&amp;W toning</b> option enabled, the Lab Chromaticity, CC, CH, LC and CL curves are not in effect.\nToning can be achieved using the <b>a</b> and <b>b</b> curves
 TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminance Curve

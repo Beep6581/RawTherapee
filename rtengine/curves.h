@@ -188,8 +188,8 @@ class CurveFactory {
 				  
 							  int skip=1);
 	static void curveBW (
-		procparams::ChannelMixerbwParams::eTCModeId curveModeb, const std::vector<double>& curvePointsbw,
-		procparams::ChannelMixerbwParams::eTCModeId curveModeb2, const std::vector<double>& curvePointsbw2,
+		procparams::BlackWhiteParams::eTCModeId curveModeb, const std::vector<double>& curvePointsbw,
+		procparams::BlackWhiteParams::eTCModeId curveModeb2, const std::vector<double>& curvePointsbw2,
 		LUTu & histogrambw, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogrambw, 
 		ChMixerbw & customToneCurvebw1,
 		ChMixerbw & customToneCurvebw2,

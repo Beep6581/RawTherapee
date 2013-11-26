@@ -1,6 +1,6 @@
 [Version]
-AppVersion=4.0.11.151
-Version=313
+AppVersion=4.0.11.161
+Version=314
 
 [Exposure]
 Auto=true
@@ -22,33 +22,14 @@ Curve2=0;
 Red=100;0;0;
 Green=0;100;0;
 Blue=0;0;100;
-CurveMode=Standardbw
-CurveMode2=Standard
-Curve=0;
-Curve2=0;
-bwred=43
-bwgreen=33
-bwblue=30
-bwredgam=0
-bwgreengam=0
-bwbluegam=0
-Filter=No
-Set=Nc
-bworan=33
-bwyell=33
-bwcyan=33
-bwmag=33
-bwpur=33
-Enabledcc=true
-Met=No
-VCurve=0;
+
+[Black & White]
 Enabled=false
 
 [Luminance Curve]
 Brightness=0
 Contrast=10
 Chromaticity=5
-BWtoning=false
 AvoidColorShift=true
 RedAndSkinTonesProtection=0
 LCredsk=true

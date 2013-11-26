@@ -101,7 +101,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         ColorAppearance* colorappearance;
         Vibrance* vibrance;
         ChMixer* chmixer;
-        ChMixerbw* chmixerbw;
+        BlackWhite* blackwhite;
         Resize* resize;
         ICMPanel* icm;
         Crop* crop;

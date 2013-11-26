@@ -51,10 +51,6 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	hsep2->show ();
 	pack_start (*hsep2, Gtk::PACK_EXPAND_WIDGET, 4);
 	
-	bwtoning = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_BWTONING")));
-	bwtoning->set_tooltip_markup (M("TP_LABCURVE_BWTONING_TIP"));
-	pack_start (*bwtoning);
-
 	avoidcolorshift = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_AVOIDCOLORSHIFT")));
 	avoidcolorshift->set_tooltip_text (M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
 	pack_start (*avoidcolorshift, Gtk::PACK_SHRINK, 4);
@@ -70,7 +66,6 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	rstprotection->setAdjusterListener (this);
 	rstprotection->set_tooltip_text (M("TP_LABCURVE_RSTPRO_TOOLTIP"));
 	
-	bwtconn= bwtoning->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::bwtoning_toggled) );
 	acconn = avoidcolorshift->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::avoidcolorshift_toggled) );
 	lcconn = lcredsk->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::lcredsk_toggled) );
 	
@@ -202,7 +197,6 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		
 		//%%%%%%%%%%%%%%%%%%%%%%
 		rstprotection->setEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
-		bwtoning->set_inconsistent (!pedited->labCurve.bwtoning);
         avoidcolorshift->set_inconsistent (!pedited->labCurve.avoidcolorshift);
 		lcredsk->set_inconsistent (!pedited->labCurve.lcredsk);
 		
@@ -216,31 +210,18 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         lcshape->setUnChanged  (!pedited->labCurve.lccurve);
         clshape->setUnChanged  (!pedited->labCurve.clcurve);
     }
-    else {
-        //if bwtoning is enabled, chromaticity value, avoid color shift and rstprotection has no effect
-        //ccshape->set_sensitive(!(!pp->labCurve.bwtoning));
-        //chshape->set_sensitive(!(!pp->labCurve.bwtoning));
-        chromaticity->set_sensitive(!pp->labCurve.bwtoning);
-        rstprotection->set_sensitive( !pp->labCurve.bwtoning /*&& pp->labCurve.chromaticity!=0*/ );//no reason for grey rstprotection
-        avoidcolorshift->set_sensitive(!pp->labCurve.bwtoning);
-        lcredsk->set_sensitive(!pp->labCurve.bwtoning);
-
-        std::vector<GradientMilestone> milestones;
-        lcshape->setBottomBarBgGradient(milestones);
-        lcshape->refresh();
-    }
 
     brightness->setValue    (pp->labCurve.brightness);
     contrast->setValue      (pp->labCurve.contrast);
-	chromaticity->setValue  (pp->labCurve.chromaticity);
-	
+    chromaticity->setValue  (pp->labCurve.chromaticity);
+    adjusterChanged(chromaticity, pp->labCurve.chromaticity); // To update the GUI sensitiveness
+
 	//%%%%%%%%%%%%%%%%%%%%%%
 	rstprotection->setValue (pp->labCurve.rstprotection);
 
     bwtconn.block (true);
     acconn.block (true);
 	lcconn.block (true);
-    bwtoning->set_active (pp->labCurve.bwtoning);
     avoidcolorshift->set_active (pp->labCurve.avoidcolorshift);
     lcredsk->set_active (pp->labCurve.lcredsk);
 	
@@ -248,7 +229,6 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
     acconn.block (false);
 	lcconn.block (false);
 	
-    lastBWTVal = pp->labCurve.bwtoning;
     lastACVal = pp->labCurve.avoidcolorshift;
 	lastLCVal = pp->labCurve.lcredsk;
 	//%%%%%%%%%%%%%%%%%%%%%%
@@ -275,7 +255,6 @@ void LCurve::autoOpenCurve () {
     if (!active) chshape->openIfNonlinear();
     if (!active) lcshape->openIfNonlinear();
     if (!active) clshape->openIfNonlinear();
-	
 }
 
 void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
@@ -285,12 +264,11 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     pp->labCurve.chromaticity  = (int)chromaticity->getValue ();
 
     //%%%%%%%%%%%%%%%%%%%%%%
-    pp->labCurve.bwtoning        = bwtoning->get_active ();
     pp->labCurve.avoidcolorshift = avoidcolorshift->get_active ();
     pp->labCurve.lcredsk         = lcredsk->get_active ();
 
     pp->labCurve.rstprotection   = rstprotection->getValue ();
-	//%%%%%%%%%%%%%%%%%%%%%%
+    //%%%%%%%%%%%%%%%%%%%%%%
 
     pp->labCurve.lcurve  = lshape->getCurve ();
     pp->labCurve.acurve  = ashape->getCurve ();
@@ -306,7 +284,6 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->labCurve.chromaticity = chromaticity->getEditedState ();
 
         //%%%%%%%%%%%%%%%%%%%%%%
-        pedited->labCurve.bwtoning        = !bwtoning->get_inconsistent();
         pedited->labCurve.avoidcolorshift = !avoidcolorshift->get_inconsistent();
         pedited->labCurve.lcredsk         = !lcredsk->get_inconsistent();
 
@@ -327,7 +304,7 @@ void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedit
 
     brightness->setDefault (defParams->labCurve.brightness);
     contrast->setDefault (defParams->labCurve.contrast);
-	chromaticity->setDefault (defParams->labCurve.chromaticity);
+    chromaticity->setDefault (defParams->labCurve.chromaticity);
     rstprotection->setDefault (defParams->labCurve.rstprotection);
 
     if (pedited) {
@@ -396,41 +373,6 @@ void LCurve::lcredsk_toggled () {
     }
 }
 
-
-//%%%%%%%%%%%%%%%%%%%%%%
-//BW toning control changed
-void LCurve::bwtoning_toggled () {
-
-    if (batchMode) {
-        if (bwtoning->get_inconsistent()) {
-        	bwtoning->set_inconsistent (false);
-        	bwtconn.block (true);
-            bwtoning->set_active (false);
-            bwtconn.block (false);
-        }
-        else if (lastBWTVal)
-        	bwtoning->set_inconsistent (true);
-
-        lastBWTVal = bwtoning->get_active ();
-    }
-    else {
-        //ccshape->set_sensitive(!(!pp->labCurve.bwtoning));
-        //chshape->set_sensitive(!(!pp->labCurve.bwtoning));
-        chromaticity->set_sensitive( !(bwtoning->get_active ()) );
-        rstprotection->set_sensitive( !(bwtoning->get_active ()) /*&& chromaticity->getIntValue()!=0*/);
-        avoidcolorshift->set_sensitive( !(bwtoning->get_active ()) );
-        lcredsk->set_sensitive( !(bwtoning->get_active ()) );
-		
-    }
-
-    if (listener) {
-    	if (bwtoning->get_active ())
-        	listener->panelChanged (EvLBWtoning, M("GENERAL_ENABLED"));
-        else
-            listener->panelChanged (EvLBWtoning, M("GENERAL_DISABLED"));
-    }
-}
-
 //%%%%%%%%%%%%%%%%%%%%%%
 
 /*
@@ -461,29 +403,46 @@ void LCurve::curveChanged (CurveEditor* ce) {
 
 void LCurve::adjusterChanged (Adjuster* a, double newval) {
 
-    if (!listener)
-        return;
-
     Glib::ustring costr;
     if (a==brightness)
         costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), a->getValue());
-	else if (a==rstprotection)
+    else if (a==rstprotection)
         costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(1), a->getValue());
     else
         costr = Glib::ustring::format ((int)a->getValue());
 
-    if (a==brightness)
-        listener->panelChanged (EvLBrightness, costr);
-    else if (a==contrast)
-        listener->panelChanged (EvLContrast, costr);
-	else if (a==chromaticity) {
-		if (!batchMode) {
-	        rstprotection->set_sensitive( !(bwtoning->get_active ())/* && chromaticity->getIntValue()!=0*/ );
-		}
-        listener->panelChanged (EvLSaturation, costr);
-	}
-	else if (a==rstprotection)
-        listener->panelChanged (EvLRSTProtection, costr);
+    if (a==brightness) {
+        if (listener) listener->panelChanged (EvLBrightness, costr);
+    }
+    else if (a==contrast) {
+        if (listener) listener->panelChanged (EvLContrast, costr);
+    }
+    else if (a==rstprotection) {
+        if (listener) listener->panelChanged (EvLRSTProtection, costr);
+    }
+    else if (a==chromaticity) {
+        if (multiImage) {
+            //if chromaticity==-100 (lowest value), we enter the B&W mode and avoid color shift and rstprotection has no effect
+            rstprotection->set_sensitive( true );
+            avoidcolorshift->set_sensitive( true );
+            lcredsk->set_sensitive( true );
+
+            //std::vector<GradientMilestone> milestones;
+            //lcshape->setBottomBarBgGradient(milestones);
+            //lcshape->refresh();
+        }
+        else {
+            //if chromaticity==-100 (lowest value), we enter the B&W mode and avoid color shift and rstprotection has no effect
+            rstprotection->set_sensitive( int(newval)> -100 );//no reason for grey rstprotection
+            avoidcolorshift->set_sensitive( int(newval)> -100 );
+            lcredsk->set_sensitive( int(newval)> -100 );
+
+            //std::vector<GradientMilestone> milestones;
+            //lcshape->setBottomBarBgGradient(milestones);
+            //lcshape->refresh();
+        }
+        if (listener) listener->panelChanged (EvLSaturation, costr);
+    }
 }
 
 void LCurve::colorForValue (double valX, double valY, int callerId, ColorCaller *caller) {

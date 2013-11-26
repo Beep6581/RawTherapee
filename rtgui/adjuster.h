@@ -53,7 +53,7 @@ class Adjuster : public Gtk::VBox {
     sigc::connection buttonReleaseSpin;
     bool listenerReady;
     double defaultVal;			// current default value (it can change when switching from ADD or SET mode)
-    double initialDefaultVal;	// default value at construction time
+    double ctorDefaultVal;		// default value at construction time
     EditedState editedState;
     EditedState defEditedState;
     EditedState autoState;
@@ -75,8 +75,7 @@ class Adjuster : public Gtk::VBox {
 
     int delay;
 
-    Adjuster (Glib::ustring label, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
-    Adjuster (Gtk::Image *imgIcon, double vmin, double vmax, double vstep, double vdefault, bool editedCheckBox=false);
+    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon=NULL);
     virtual ~Adjuster ();
 
     // Add an "Automatic" checkbox next to the reset button.
@@ -122,6 +121,7 @@ class Adjuster : public Gtk::VBox {
     bool notifyListener ();
     void sliderReleased (GdkEventButton* event);
     void spinReleased (GdkEventButton* event);
+    void resetValue (bool toInitial);
     void resetPressed (GdkEventButton* event);
     void editedToggled ();
     double trimValue (double& val);

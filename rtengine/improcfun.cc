@@ -266,7 +266,6 @@ if(params->colorappearance.enabled) {
 	}
 	//end preparate histogram
 	int width = lab->W, height = lab->H;
-	int Np=width*height;
 	float minQ=10000.f;
 	float minM=10000.f;
 	float maxQ= -1000.f;
@@ -279,7 +278,7 @@ if(params->colorappearance.enabled) {
 	Yw=1.0;
 	double Xw, Zw;
 	double f,c,nc,yb,la,xw,yw,zw,f2,c2,nc2,yb2,la2;
-	double z,fl,n,nbb,ncb,aw;
+	double fl,n,nbb,ncb,aw;
 	double xwd,ywd,zwd;
 	int alg=0;
 	bool algepd=false;	
@@ -447,13 +446,10 @@ if(params->colorappearance.enabled) {
 		//	double J, C, h, Q, M, s, aw, fl, wh;
 			double J, C, h, Q, M, s;
 
-			double Jp,Cpr;
 			double Jpro,Cpro, hpro, Qpro, Mpro, spro;
 			bool t1L=false;
 			bool t1B=false;
-			bool t2L=false;
 			bool t2B=false;
-			int c1C=0;
 			int c1s=0;
 			int c1co=0;
 			//double n,nbb,ncb,pfl,cz,d;
@@ -633,7 +629,6 @@ if(params->colorappearance.enabled) {
 				else if (Jj>=0.f){if(!t1L)Jj=0.90f*(Jj-Jold)+Jold;else Jj=0.5f*(Jj-Jold)+Jold;}// not zero ==>artifacts	
 					
 			Jpro=(double)(Jj/327.68f);
-			t2L=true;
 		}
 	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ //
 			float coef=((aw+4.f)*(4.f/c))/100.f;
@@ -689,7 +684,6 @@ if(params->colorappearance.enabled) {
 				float ko=1.f/coef;
 				Color::skinred(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);
 			//	Cpro=Cc/coef;
-				c1C=1;
 		}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ //
 				double parsat=0.8;//0.6
@@ -842,7 +836,6 @@ if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.to
     //update histogram J
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=32768; i++) {//
-			float val;
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
@@ -852,7 +845,6 @@ if(!params->edgePreservingDecompositionUI.enabled || !params->colorappearance.to
 	}
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=48000; i++) {//
-			float valc;
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0*CLIPD(hvalc)); //
@@ -1006,8 +998,8 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 					lab->L[i][j]=Lprov1*327.68f;
 					lab->a[i][j]=327.68f*Chprov1*cos(HH);
 					lab->b[i][j]=327.68f*Chprov1*sin(HH);
-						}
-										}
+				}
+			}
 
 
 		}
@@ -1017,7 +1009,6 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
     //update histogram J and Q
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=32768; i++) {//
-			float val;
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0*CLIPD(hval)); //
@@ -1028,7 +1019,6 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 	//update color histogram M,s,C
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=48000; i++) {//
-			float valc;
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0*CLIPD(hvalc)); //
@@ -1080,7 +1070,6 @@ if(params->colorappearance.enabled) {
 	}
 	//end preparate histogram
 	int width = lab->W, height = lab->H;
-	int Np=width*height;
 	float minQ=10000.f;
 	float minM=10000.f;
 	float maxQ= -1000.f;
@@ -1093,7 +1082,7 @@ if(params->colorappearance.enabled) {
 	Yw=1.0;
 	double Xw, Zw;
 	float f,nc,yb,la,c,xw,yw,zw,f2,c2,nc2,yb2,la2;
-	float z,fl,n,nbb,ncb,aw;//d
+	float fl,n,nbb,ncb,aw;//d
 	float xwd,ywd,zwd;
 	int alg=0;
 	bool algepd=false;
@@ -1257,13 +1246,11 @@ if(params->colorappearance.enabled) {
 			//convert Lab => XYZ
 			Color::Lab2XYZ(L, a, b, x1, y1, z1);
 			float J, C, h, Q, M, s;
-			float Jp,Cpr;
+			float Jp;
 			float Jpro,Cpro, hpro, Qpro, Mpro, spro;
 			bool t1L=false;
 			bool t1B=false;
-			bool t2L=false;
 			bool t2B=false;
-			int c1C=0;
 			int c1s=0;
 			int c1co=0;
 
@@ -1428,7 +1415,6 @@ if(params->colorappearance.enabled) {
 				else if(Jj>10.f) {if(!t1L)Jj=0.8f*(Jj-Jold)+Jold;else Jj=0.4f*(Jj-Jold)+Jold;}
 				else if (Jj>=0.f){if(!t1L)Jj=0.90f*(Jj-Jold)+Jold;else Jj=0.5f*(Jj-Jold)+Jold;}// not zero ==>artifacts	
 			Jpro=(float)(Jj/327.68f);
-			t2L=true;					
 		}
 	else if (curveMode2==ColorAppearanceParams::TC_MODE_BRIGHT){ //
 			float coef=((aw+4.f)*(4.f/c))/100.f;
@@ -1483,7 +1469,6 @@ if(params->colorappearance.enabled) {
 				float sk=1;
 				float ko=1.f/coef;
 				Color::skinredfloat(Jpro, hpro, Cc, Ccold, dred, protect_red,sk,rstprotection,ko, Cpro);
-				c1C=1;
 		}
 	else if (curveMode3==ColorAppearanceParams::TC_MODE_SATUR){ //
 				float parsat=0.8f;//0.6
@@ -1632,7 +1617,6 @@ if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
     //update histogram J
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=32768; i++) {//
-			float val;
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0f*CLIPD(hval)); //
@@ -1642,7 +1626,6 @@ if(!params->colorappearance.tonecie   || !settings->autocielab){//normal
 	}
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=48000; i++) {//
-			float valc;
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0f*CLIPD(hvalc)); //
@@ -1809,7 +1792,6 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
     //update histogram J and Q
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=32768; i++) {//
-			float val;
 			if (jp) {
 				float hval = dLcurve[i];
 				int hi = (int)(255.0f*CLIPD(hval)); //
@@ -1820,7 +1802,6 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 	//update color histogram M,s,C
 	if(pW!=1){//only with improccoordinator
 		for (int i=0; i<=48000; i++) {//
-			float valc;
 			if (chropC) {
 				float hvalc = dCcurve[i];
 				int hic = (int)(255.0f*CLIPD(hvalc)); //
@@ -1916,7 +1897,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	FlatCurveType hCurveType = (FlatCurveType)params->hsvequalizer.hcurve.at(0);
 	FlatCurveType sCurveType = (FlatCurveType)params->hsvequalizer.scurve.at(0);
 	FlatCurveType vCurveType = (FlatCurveType)params->hsvequalizer.vcurve.at(0);
-	FlatCurveType bwlCurveType = (FlatCurveType)params->chmixerbw.vcurve.at(0);
+	FlatCurveType bwlCurveType = (FlatCurveType)params->blackwhite.luminanceCurve.at(0);
 	bool hCurveEnabled = hCurveType > FCT_Linear;
 	bool sCurveEnabled = sCurveType > FCT_Linear;
 	bool vCurveEnabled = vCurveType > FCT_Linear;
@@ -1926,7 +1907,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (hCurveEnabled) hCurve = new FlatCurve(params->hsvequalizer.hcurve);
 	if (sCurveEnabled) sCurve = new FlatCurve(params->hsvequalizer.scurve);
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
-	if (bwlCurveEnabled) bwlCurve = new FlatCurve(params->chmixerbw.vcurve);
+	if (bwlCurveEnabled) bwlCurve = new FlatCurve(params->blackwhite.luminanceCurve);
 
 	const float exp_scale = pow (2.0, expcomp);
 	const float comp = (max(0.0, expcomp) + 1.0)*hlcompr/100.0;
@@ -1938,9 +1919,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     ToneCurveParams::eTCModeId curveMode2 = params->toneCurve.curveMode2;
     bool hasToneCurve1 = bool(customToneCurve1);
     bool hasToneCurve2 = bool(customToneCurve2);
-    ChannelMixerbwParams::eTCModeId curveModebw = params->chmixerbw.curveMode;
-    ChannelMixerbwParams::eTCModeId curveModebw2 = params->chmixerbw.curveMode2;
-	
+    BlackWhiteParams::eTCModeId beforeCurveMode = params->blackwhite.beforeCurveMode;
+    BlackWhiteParams::eTCModeId afterCurveMode = params->blackwhite.afterCurveMode;
+
     bool hasToneCurvebw1 = bool(customToneCurvebw1);
     bool hasToneCurvebw2 = bool(customToneCurvebw2);
 
@@ -1953,26 +1934,25 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     float chMixBR = float(params->chmixer.blue[0]);
     float chMixBG = float(params->chmixer.blue[1]);
     float chMixBB = float(params->chmixer.blue[2]);
-	bool BWchmix = params->chmixerbw.enabledcc;
     int shHighlights = params->sh.highlights;
     int shShadows = params->sh.shadows;
-    float bwr = float(params->chmixerbw.bwred);
-    float bwg = float(params->chmixerbw.bwgreen);
-    float bwb = float(params->chmixerbw.bwblue);
-    float bwrgam = float(params->chmixerbw.bwredgam);
-    float bwggam = float(params->chmixerbw.bwgreengam);
-    float bwbgam = float(params->chmixerbw.bwbluegam);
-    float bworan = float(params->chmixerbw.bworan);
-    float bwyell = float(params->chmixerbw.bwyell);
-    float bwcyan = float(params->chmixerbw.bwcyan);
-    float bwmag = float(params->chmixerbw.bwmag);
-    float bwpur = float(params->chmixerbw.bwpur);
-	bool blackwhite = params->chmixerbw.enabled;
+    bool blackwhite = params->blackwhite.enabled;
+    bool complem = params->blackwhite.enabledcc;
+    float bwr = float(params->blackwhite.mixerRed);
+    float bwg = float(params->blackwhite.mixerGreen);
+    float bwb = float(params->blackwhite.mixerBlue);
+    float bwrgam = float(params->blackwhite.gammaRed);
+    float bwggam = float(params->blackwhite.gammaGreen);
+    float bwbgam = float(params->blackwhite.gammaBlue);
+    float mixerOrange = float(params->blackwhite.mixerOrange);
+    float mixerYellow = float(params->blackwhite.mixerYellow);
+    float mixerCyan = float(params->blackwhite.mixerCyan);
+    float mixerMagenta = float(params->blackwhite.mixerMagenta);
+    float mixerPurple = float(params->blackwhite.mixerPurple);
 	int algm=0;
-	if     (params->chmixerbw.met=="No")  algm=0;
-	else if(params->chmixerbw.met=="De")  algm=1;
-	else if(params->chmixerbw.met=="Le")  algm=2;
-	else if(params->chmixerbw.met=="Ch")  algm=3;
+	if     (params->blackwhite.method=="Desaturation")  algm=0;
+	else if(params->blackwhite.method=="LumEqualizer")  algm=1;
+	else if(params->blackwhite.method=="ChannelMixer")  algm=2;
 				//gamma correction of each channel
 	float gamvalr=125.f;
 	float gamvalg=125.f;
@@ -1981,15 +1961,16 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if(bwrgam < 0) gamvalr=100.f;
 	if(bwggam < 0) gamvalg=100.f;
 	if(bwbgam < 0) gamvalb=100.f;
-		float gammabwr=1.f;
-		float gammabwg=1.f;
-		float gammabwb=1.f;
-		//if     (params->chmixerbw.set=="Ma" || params->chmixerbw.set=="Mr" || params->chmixerbw.set=="Fr" || params->chmixerbw.set=="Fa")  {
-		{
-						gammabwr=1.f -bwrgam/gamvalr;
-						gammabwg=1.f -bwggam/gamvalg;
-						gammabwb=1.f -bwbgam/gamvalb;
-		}
+	float gammabwr=1.f;
+	float gammabwg=1.f;
+	float gammabwb=1.f;
+	//if     (params->blackwhite.setting=="Ma" || params->blackwhite.setting=="Mr" || params->blackwhite.setting=="Fr" || params->blackwhite.setting=="Fa")  {
+	{
+		gammabwr=1.f -bwrgam/gamvalr;
+		gammabwg=1.f -bwggam/gamvalg;
+		gammabwb=1.f -bwbgam/gamvalb;
+	}
+	bool hasgammabw = gammabwr!=1.f || gammabwg!=1.f || gammabwb!=1.f;
 
 	//normalize gamma to sRGB
 	double start = exp(g*log( -0.055 / ((1.0/g-1.0)*1.055 )));
@@ -2335,7 +2316,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 
 //if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 if (sat> -110 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
-
+	if(algm==1 && blackwhite /* && bwlCurveEnabled*/) sat= -75;//increase effect of luminance mixer bw
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2345,10 +2326,8 @@ if (sat> -110 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 				float r = tmpImage->r(i,j);
 				float g = tmpImage->g(i,j);
 				float b = tmpImage->b(i,j);
-				float lum;
 				float h,s,v;
 				Color::rgb2hsv(r,g,b,h,s,v);
-				if(algm==2 && blackwhite /* && bwlCurveEnabled*/) sat= -75;//increase effect of luminance mixer bw
 				if (sat > 0.5f) {
 					s = (1.f-float(sat)/100.f)*s+float(sat)/100.f*(1.f-SQR(SQR(1.f-min(s,1.0f))));
 					if (s<0) s=0.f;
@@ -2401,7 +2380,7 @@ if (sat> -110 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 //black and white
 if(blackwhite){
 	if (hasToneCurvebw1) {
-		if (curveModebw==ChannelMixerbwParams::TC_MODE_STD_BW){ // Standard
+		if (beforeCurveMode==BlackWhiteParams::TC_MODE_STD_BW){ // Standard
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2412,7 +2391,7 @@ if(blackwhite){
 				}
 			}
 		}
-		else if (curveModebw==ChannelMixerbwParams::TC_MODE_FILMLIKE_BW){ // Adobe like
+		else if (beforeCurveMode==BlackWhiteParams::TC_MODE_FILMLIKE_BW){ // Adobe like
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2423,7 +2402,7 @@ if(blackwhite){
 				}
 			}
 		}
-		else if (curveModebw==ChannelMixerbwParams::TC_MODE_SATANDVALBLENDING_BW){ // apply the curve on the saturation and value channels
+		else if (beforeCurveMode==BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW){ // apply the curve on the saturation and value channels
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2438,7 +2417,7 @@ if(blackwhite){
 				}
 			}
 		}
-		else if (curveModebw==ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW){ // apply the curve to the rgb channels, weighted
+		else if (beforeCurveMode==BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW){ // apply the curve to the rgb channels, weighted
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2457,7 +2436,7 @@ if(blackwhite){
 }
 
 
-if(algm	==1  && blackwhite){//desaturated
+if (algm==0  && blackwhite){//desaturated
 #ifdef _OPENMP 
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2471,12 +2450,12 @@ if(algm	==1  && blackwhite){//desaturated
 				tmpImage->r(i,j)= lum;
 				tmpImage->g(i,j)=tmpImage->r(i,j);
 				tmpImage->b(i,j)=tmpImage->r(i,j);	
-				Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);								
+				if (hasgammabw) Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);
 			}
 		}	
 
 }
-if (algm==2 && bwlCurveEnabled && blackwhite) {//Luminance mixer
+if (algm==1 && blackwhite && (bwlCurveEnabled || hasgammabw)) {//Luminance mixer
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2485,46 +2464,47 @@ if (algm==2 && bwlCurveEnabled && blackwhite) {//Luminance mixer
 				float r = tmpImage->r(i,j);
 				float g = tmpImage->g(i,j);
 				float b = tmpImage->b(i,j);
-				float lum;
-				float h,s,v;
-				Color::rgb2hsv(r,g,b,h,s,v);
-					if (v<0) v=0; 
-					float valparam = bwlCurve->getVal((double)h)-0.5f;
-					valparam *= (1.f-(SQR(SQR(1.f-min(s,1.0f)))));
-					//float valcor=1.f/(0.501f-valparam);
-					
-					if (valparam > 0.00001f) {
-					//	v = (1.f-valparam)*v+ valparam*(1.f-(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
-					//	v = (1.f-valparam)*v+ valparam*(1.f- pow((1.f-min(v,1.0f)), 2.f+valcor));//(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
-						v *= (1.f + 4.f*valparam);
-					} else {
-						if (valparam < -0.00001f)
-							{v *= (1.f + 4.f*valparam);//4to increase action
-							}
-					}
-					CLIPD(v);
-				Color::hsv2rgb(h, s, v, tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
-				lum = (0.299f*tmpImage->r(i,j)+0.587f*tmpImage->g(i,j)+ 0.114f*tmpImage->b(i,j));// get luminance
-				tmpImage->r(i,j)=lum;//black and white
-				tmpImage->g(i,j)=lum;
-				tmpImage->b(i,j)=lum;
-				//correction gamma : pseudo TRC curve
-				Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);				
-				
+				if (bwlCurveEnabled) {
+					float lum;
+					float h,s,v;
+					Color::rgb2hsv(r,g,b,h,s,v);
+						if (v<0) v=0;
+						float valparam = bwlCurve->getVal((double)h)-0.5f;
+						valparam *= (1.f-(SQR(SQR(1.f-min(s,1.0f)))));
+						//float valcor=1.f/(0.501f-valparam);
+
+						if (valparam > 0.00001f) {
+						//	v = (1.f-valparam)*v+ valparam*(1.f-(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
+						//	v = (1.f-valparam)*v+ valparam*(1.f- pow((1.f-min(v,1.0f)), 2.f+valcor));//(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
+							v *= (1.f + 4.f*valparam);
+						} else {
+							if (valparam < -0.00001f)
+								{v *= (1.f + 4.f*valparam);//4to increase action
+								}
+						}
+						CLIPD(v);
+					Color::hsv2rgb(h, s, v, tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
+					lum = (0.299f*tmpImage->r(i,j)+0.587f*tmpImage->g(i,j)+ 0.114f*tmpImage->b(i,j));// get luminance
+					tmpImage->r(i,j)=lum;//black and white
+					tmpImage->g(i,j)=lum;
+					tmpImage->b(i,j)=lum;
 				}
+				//correction gamma : pseudo TRC curve
+				if (hasgammabw) Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);
 			}
 		}
+}
 
 
-if(algm==3  && blackwhite) {//channel-mixer
-	if (params->chmixerbw.autoc) {
-    // auto channel-mixer 
-	float nr=0.f;
-	float ng=0.f;
-	float nb=0.f;
+if (algm==2  && blackwhite) {//channel-mixer
+	if (params->blackwhite.autoc) {
+		// auto channel-mixer
+		float nr=0.f;
+		float ng=0.f;
+		float nb=0.f;
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
-#endif				
+#endif
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
 				float rr = tmpImage->r(i,j);
@@ -2537,7 +2517,7 @@ if(algm==3  && blackwhite) {//channel-mixer
 				srgb = nr+ng+nb;
 				float knr=nr/srgb;
 				float kng=ng/srgb;
-				float knb=nb/srgb;	
+				float knb=nb/srgb;
 				knr = 1.f/knr;
 				kng = 1.f/kng;
 				knb = 1.f/knb;
@@ -2550,32 +2530,32 @@ if(algm==3  && blackwhite) {//channel-mixer
 				autog=kng;
 				autob=knb;
 			}
-		}	
-	}	
+		}
+	}
 			//end auto chmix
 				float som, somm;
 				float rM,gM,bM;
-				som=bwr+bwg+bwb;				
+				som=bwr+bwg+bwb;
 				float mix[3][3];
 				float val[3];
 				float in[3];
 				float kcorec=1.f;
 				//presets
-				if     (params->chmixerbw.set=="Ma" || params->chmixerbw.set=="Fa")  {rM=bwr;gM=bwg;bM=bwb;kcorec=som/100.f;}
-				else if     (params->chmixerbw.set=="Mr"  || params->chmixerbw.set=="Fr")  {rM=bwr;gM=bwg;bM=bwb;}	
-				else if(params->chmixerbw.set=="Nc") {rM=43.f;gM=33.f;bM=30.f;}
-				else if(params->chmixerbw.set=="Pa") {rM=33.3f;gM=33.3f;bM=33.3f;}
-				else if(params->chmixerbw.set=="Hp") {rM=41.f;gM=25.f;bM=34.f;}
-				else if(params->chmixerbw.set=="Ls") {rM=27.f;gM=27.f;bM=46.f;}
-				else if(params->chmixerbw.set=="Hs") {rM=30.f;gM=28.f;bM=42.f;}
-				else if(params->chmixerbw.set=="Or") {rM=0.f;gM=42.f;bM=58.f;}
-				else if(params->chmixerbw.set=="Hc") {rM=40.f;gM=34.f;bM=60.f;}
-				else if(params->chmixerbw.set=="Lu") {rM=30.f;gM=59.f;bM=11.f;}
-				else if(params->chmixerbw.set=="La") {rM=66.f;gM=24.f;bM=10.f;}
-				else if(params->chmixerbw.set=="Po") {rM=54.f;gM=44.f;bM=12.f;}
-				else if(params->chmixerbw.set=="Ir") {rM=-40.f;gM=200.f;bM=-17.f;}
+				if     (params->blackwhite.setting=="RGB-Abs" || params->blackwhite.setting=="ROYGCBMP-Abs")  {rM=bwr;gM=bwg;bM=bwb;kcorec=som/100.f;}
+				else if(params->blackwhite.setting=="RGB-Rel" || params->blackwhite.setting=="ROYGCBMP-Rel")  {rM=bwr;gM=bwg;bM=bwb;}
+				else if(params->blackwhite.setting=="NormalContrast")    {rM=43.f ;gM=33.f; bM=30.f;}
+				else if(params->blackwhite.setting=="Panchromatic")      {rM=33.3f;gM=33.3f;bM=33.3f;}
+				else if(params->blackwhite.setting=="HyperPanchromatic") {rM=41.f ;gM=25.f; bM=34.f;}
+				else if(params->blackwhite.setting=="LowSensitivity")    {rM=27.f ;gM=27.f; bM=46.f;}
+				else if(params->blackwhite.setting=="HighSensitivity")   {rM=30.f ;gM=28.f; bM=42.f;}
+				else if(params->blackwhite.setting=="Orthochromatic")    {rM=0.f  ;gM=42.f; bM=58.f;}
+				else if(params->blackwhite.setting=="HighContrast")      {rM=40.f ;gM=34.f; bM=60.f;}
+				else if(params->blackwhite.setting=="Luminance")         {rM=30.f ;gM=59.f; bM=11.f;}
+				else if(params->blackwhite.setting=="Landscape")         {rM=66.f ;gM=24.f; bM=10.f;}
+				else if(params->blackwhite.setting=="Portrait")          {rM=54.f ;gM=44.f; bM=12.f;}
+				else if(params->blackwhite.setting=="InfraRed")          {rM=-40.f;gM=200.f;bM=-17.f;}
 
-				if (params->chmixerbw.autoc) {rM=autor;gM=autog;bM=autob; bworan=33.f; bwyell=33.f;bwmag=33.f;bwpur=33.f;bwcyan=33.f;}  // auto channel-mixer
+				if (params->blackwhite.autoc) {rM=autor;gM=autog;bM=autob; mixerOrange=33.f; mixerYellow=33.f;mixerMagenta=33.f;mixerPurple=33.f;mixerCyan=33.f;}  // auto channel-mixer
 				rrm=rM;
 				ggm=gM;
 				bbm=bM;
@@ -2584,7 +2564,7 @@ if(algm==3  && blackwhite) {//channel-mixer
 				rM=rM/somm;gM=gM/somm;bM=bM/somm;
 				float koymcp=0.f;
 				
-				if(params->chmixerbw.set=="Fa" || params->chmixerbw.set=="Fr") {
+				if(params->blackwhite.setting=="ROYGCBMP-Abs" || params->blackwhite.setting=="ROYGCBMP-Rel") {
 				float obM=0.f;
 				float ogM=0.f;
 				float orM=0.f;
@@ -2605,71 +2585,70 @@ if(algm==3  && blackwhite) {//channel-mixer
 				float cgM=0.f;
 				float cbM=0.f;
 				
-				bool complem = 	params->chmixerbw.enabledcc;
 				
 				float fcompl = 1.f;
 				if(complem) fcompl = 3.f;
 				// ponderate filters: report to R=G=B=33
 				// I ponder RGB channel, not only orange or yellow or cyan, etc...it's my choice !
-					if(bworan !=33){//orange
-						orM=fcompl*(bworan*0.67f - 22.11f)/100.f;
-						ogM=fcompl*(-0.164f*bworan+5.412f)/100.f;	
-						if(complem) obM=(-0.492f*bworan+16.236f)/100.f;	
+					if(mixerOrange !=33){//orange
+						orM=fcompl*(mixerOrange*0.67f - 22.11f)/100.f;
+						ogM=fcompl*(-0.164f*mixerOrange+5.412f)/100.f;
+						if(complem) obM=(-0.492f*mixerOrange+16.236f)/100.f;
 						rM+=orM;
 						gM+=ogM;
 						bM+=obM;
 						koymcp += (orM+ogM+obM);
 					}
-					if(bwyell !=33){//yellow
-						yrM=fcompl*(-0.134f*bwyell +4.422f)/100.f;//22.4
-						ygM=fcompl*(0.5f*bwyell-16.5f)/100.f;	
-						if(complem) ybM=(-0.492f*bwyell+16.236f)/100.f;	
+					if(mixerYellow !=33){//yellow
+						yrM=fcompl*(-0.134f*mixerYellow +4.422f)/100.f;//22.4
+						ygM=fcompl*(0.5f*mixerYellow-16.5f)/100.f;
+						if(complem) ybM=(-0.492f*mixerYellow+16.236f)/100.f;
 						rM+=yrM;
 						gM+=ygM;
 						bM+=ybM;
-						koymcp += (yrM+ygM+ybM);	
+						koymcp += (yrM+ygM+ybM);
 					}
-					if(bwmag !=33){//Magenta
-						mrM=fcompl*(0.67f*bwmag -22.11f)/100.f;
-						mbM=fcompl*(-0.164f*bwmag+5.412f)/100.f;	
-						if(complem) mgM=(-0.492f*bwmag+16.236f)/100.f;	
+					if(mixerMagenta !=33){//Magenta
+						mrM=fcompl*(0.67f*mixerMagenta -22.11f)/100.f;
+						mbM=fcompl*(-0.164f*mixerMagenta+5.412f)/100.f;
+						if(complem) mgM=(-0.492f*mixerMagenta+16.236f)/100.f;
 						rM+=mrM;
 						gM+=mgM;
 						bM+=mbM;
-						koymcp += (mrM+mgM+mbM);	
+						koymcp += (mrM+mgM+mbM);
 					}
-					if(bwpur!=33){//Purple
-						prM=fcompl*(-0.134f*bwpur +4.422f)/100.f;
-						pbM=fcompl*(0.5f*bwpur-16.5f)/100.f;	
-						if(complem) pgM=(-0.492f*bwpur+16.236f)/100.f;	
+					if(mixerPurple!=33){//Purple
+						prM=fcompl*(-0.134f*mixerPurple +4.422f)/100.f;
+						pbM=fcompl*(0.5f*mixerPurple-16.5f)/100.f;
+						if(complem) pgM=(-0.492f*mixerPurple+16.236f)/100.f;
 						rM+=prM;
 						gM+=pgM;
 						bM+=pbM;
-						koymcp += (prM+pgM+pbM);		
+						koymcp += (prM+pgM+pbM);
 					}
-					if(bwcyan !=33){//Cyan
-						cgM=fcompl*(-0.134f*bwcyan +4.422f)/100.f;
-						cbM=fcompl*(0.5f*bwcyan-16.5f)/100.f;	
-						if(complem) crM=(-0.492f*bwcyan+16.236f)/100.f;	
+					if(mixerCyan !=33){//Cyan
+						cgM=fcompl*(-0.134f*mixerCyan +4.422f)/100.f;
+						cbM=fcompl*(0.5f*mixerCyan-16.5f)/100.f;
+						if(complem) crM=(-0.492f*mixerCyan+16.236f)/100.f;
 						rM+=crM;
 						gM+=cgM;
 						bM+=cbM;
-						koymcp += (crM+cgM+cbM);			
+						koymcp += (crM+cgM+cbM);
 					}
 				}
-				if(params->chmixerbw.set=="Fa")  {kcorec=koymcp+som/100.f;}
+				if(params->blackwhite.setting=="ROYGCBMP-Abs")  {kcorec=koymcp+som/100.f;}
 				//Color filters
 				float filred,filgreen,filblue;
 				filred=1.f;filgreen=1.f;filblue=1.f;
-				if     (params->chmixerbw.fil=="No")  {filred=1.f;filgreen=1.f;filblue=1.f;}
-				else if     (params->chmixerbw.fil=="Re") {filred=1.f;filgreen=0.05f;filblue=0.f;} 
-				else if     (params->chmixerbw.fil=="Or")  {filred=1.f;filgreen=0.6f;filblue=0.f;}
-				else if     (params->chmixerbw.fil=="Ye") {filred=1.f;filgreen=1.f;filblue=0.05f;}
-				else if     (params->chmixerbw.fil=="Yg") {filred=0.6f;filgreen=1.f;filblue=0.3f;}
-				else if     (params->chmixerbw.fil=="Gr") {filred=0.2f;filgreen=1.f;filblue=0.3f;}
-				else if     (params->chmixerbw.fil=="Cy") {filred=0.05f;filgreen=1.f;filblue=1.f;}
-				else if     (params->chmixerbw.fil=="Bl") {filred=0.f;filgreen=0.05f;filblue=1.f;}
-				else if     (params->chmixerbw.fil=="Pu") {filred=1.f;filgreen=0.05f;filblue=1.f;}
+				if          (params->blackwhite.filter=="None")        {filred=1.f;  filgreen=1.f;  filblue=1.f;}
+				else if     (params->blackwhite.filter=="Red")         {filred=1.f;  filgreen=0.05f;filblue=0.f;}
+				else if     (params->blackwhite.filter=="Orange")      {filred=1.f;  filgreen=0.6f; filblue=0.f;}
+				else if     (params->blackwhite.filter=="Yellow")      {filred=1.f;  filgreen=1.f;  filblue=0.05f;}
+				else if     (params->blackwhite.filter=="YellowGreen") {filred=0.6f; filgreen=1.f;  filblue=0.3f;}
+				else if     (params->blackwhite.filter=="Green")       {filred=0.2f; filgreen=1.f;  filblue=0.3f;}
+				else if     (params->blackwhite.filter=="Cyan")        {filred=0.05f;filgreen=1.f;  filblue=1.f;}
+				else if     (params->blackwhite.filter=="Blue")        {filred=0.f;  filgreen=0.05f;filblue=1.f;}
+				else if     (params->blackwhite.filter=="Purple")      {filred=1.f;  filgreen=0.05f;filblue=1.f;}
 				
 				
 				rM = rM*filred;
@@ -2702,14 +2681,14 @@ if(algm==3  && blackwhite) {//channel-mixer
 				for (int end=0; end < 3 ; end++){
 					val[end]=0.f;
 					for (int beg=0; beg < 3 ; beg++) {
-						val[end] += mix[end][beg] *in[beg];						
+						val[end] += mix[end][beg] *in[beg];
 					}
 				}
 				tmpImage->r(i,j) = CLIP(val[0]*kcorec);
 				tmpImage->g(i,j) = CLIP(val[1]*kcorec);
 				tmpImage->b(i,j) = CLIP(val[2]*kcorec);
 				//correction gamma : pseudo TRC curve
-				Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);				
+				if (hasgammabw) Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);
 			}
 		} 
 		
@@ -2718,7 +2697,7 @@ if(algm==3  && blackwhite) {//channel-mixer
 if(blackwhite){//after BW conversion
 	if (hasToneCurvebw2) {
 
-		if (curveModebw2==ChannelMixerbwParams::TC_MODE_STD_BW){ // Standard
+		if (afterCurveMode==BlackWhiteParams::TC_MODE_STD_BW){ // Standard
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2729,7 +2708,7 @@ if(blackwhite){//after BW conversion
 				}
 			}
 		}
-		else if (curveModebw2==ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW){ // apply the curve to the rgb channels, weighted
+		else if (afterCurveMode==BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW){ // apply the curve to the rgb channels, weighted
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2825,7 +2804,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	//init Flatcurve for C=f(H)
 	FlatCurve* chCurve = NULL;
 	bool chutili = false;
-	if (!params->labCurve.bwtoning) {
+	if (params->labCurve.chromaticity > -100) {
 		chCurve = new FlatCurve(params->labCurve.chcurve);
 		if (chCurve && !chCurve->isIdentity()) {
 			chutili=true;
@@ -2901,7 +2880,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	// reference to the params structure has to be done outside of the parallelization to avoid CPU cache problem
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
 	int chromaticity = params->labCurve.chromaticity;
-	bool bwToning = params->labCurve.bwtoning  /*|| params->chmixerbw.met=="Ch" */ || params->chmixerbw.enabled || (params->chmixerbw.bwredgam!=0 && params->chmixerbw.enabled) || (params->chmixerbw.bwgreengam!=0 && params->chmixerbw.enabled) || (params->chmixerbw.bwbluegam!=0 && params->chmixerbw.enabled); 
+	bool bwToning = params->labCurve.chromaticity==-100  /*|| params->blackwhite.method=="Ch" */ || params->blackwhite.enabled || params->blackwhite.gammaRed!=0 || params->blackwhite.gammaGreen!=0 || params->blackwhite.gammaBlue!=0;
 	//if(bwToning) printf("OK bwto\n"); else printf("pas de bw\n");
 	bool LCredsk = params->labCurve.lcredsk;
 	bool ccut = ccutili;
@@ -2982,7 +2961,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				// end pyramid
 		if(params->dirpyrDenoise.enabled && chromaticity ==0) chromaticity = 0.5f;  
 				
-		if(chromaticity!=0 && !bwToning){
+		if(!bwToning){
 				float chromahist;
 				float factorskin, factorsat, factor, factorskinext, interm;
 				float scale = 100.0f/100.1f;//reduction in normal zone

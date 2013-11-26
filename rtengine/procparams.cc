@@ -153,7 +153,6 @@ void ProcParams::setDefaults () {
     labCurve.lcredsk = true;
 	
     labCurve.rstprotection   = 0;
-    labCurve.bwtoning        = false;
     labCurve.lcurve.clear ();
     labCurve.lcurve.push_back(DCT_Linear);
     labCurve.acurve.clear ();
@@ -356,7 +355,7 @@ void ProcParams::setDefaults () {
     vignetting.strength = 1;
     vignetting.centerX = 0;
     vignetting.centerY = 0;
-    
+
     lensProf.lcpFile="";
     lensProf.useDist=lensProf.useVign=true;
     lensProf.useCA=false;
@@ -370,35 +369,33 @@ void ProcParams::setDefaults () {
     chmixer.blue[0] = 0;
     chmixer.blue[1] = 0;
     chmixer.blue[2] = 100;
-	
-    chmixerbw.autoc  = false;	
-    chmixerbw.enabledcc  = true;
-    chmixerbw.enabled  = false;
-    chmixerbw.bwred  = 33;
-    chmixerbw.bwgreen  = 33;
-    chmixerbw.bwblue  = 33;
-    chmixerbw.bwredgam  = 0;
-    chmixerbw.bwgreengam  = 0;
-    chmixerbw.bwbluegam  = 0;
-    chmixerbw.bworan  = 33;
-    chmixerbw.bwyell  = 33;
-    chmixerbw.bwcyan  = 33;
-    chmixerbw.bwmag  = 33;
-    chmixerbw.bwpur  = 33;
-    chmixerbw.vcurve.clear ();
-    chmixerbw.vcurve.push_back (FCT_Linear);
-    chmixerbw.met = "No";	
-    chmixerbw.fil = "No";
-    chmixerbw.set = "Nc";	
-    chmixerbw.curve.clear ();
-    chmixerbw.curve.push_back(DCT_Linear);
-    chmixerbw.curveMode     = ChannelMixerbwParams::TC_MODE_STD_BW;
-    chmixerbw.curve2.clear ();
-    chmixerbw.curve2.push_back(DCT_Linear);
-    chmixerbw.curveMode2     = ChannelMixerbwParams::TC_MODE_STD_BW;
-	
-	
-	
+
+    blackwhite.autoc  = false;	
+    blackwhite.enabledcc  = true;
+    blackwhite.enabled  = false;
+    blackwhite.mixerRed  = 33;
+    blackwhite.mixerGreen  = 33;
+    blackwhite.mixerBlue  = 33;
+    blackwhite.mixerOrange  = 33;
+    blackwhite.mixerYellow  = 33;
+    blackwhite.mixerCyan  = 33;
+    blackwhite.mixerMagenta  = 33;
+    blackwhite.mixerPurple  = 33;
+    blackwhite.gammaRed  = 0;
+    blackwhite.gammaGreen  = 0;
+    blackwhite.gammaBlue  = 0;
+    blackwhite.luminanceCurve.clear ();
+    blackwhite.luminanceCurve.push_back (FCT_Linear);
+    blackwhite.method = "Desaturation";
+    blackwhite.filter = "None";
+    blackwhite.setting = "NormalContrast";
+    blackwhite.beforeCurve.clear ();
+    blackwhite.beforeCurve.push_back(DCT_Linear);
+    blackwhite.beforeCurveMode     = BlackWhiteParams::TC_MODE_STD_BW;
+    blackwhite.afterCurve.clear ();
+    blackwhite.afterCurve.push_back(DCT_Linear);
+    blackwhite.afterCurveMode     = BlackWhiteParams::TC_MODE_STD_BW;
+
     resize.enabled = false;
     resize.scale  = 1.0;
     resize.appliesTo = "Cropped area";
@@ -406,7 +403,7 @@ void ProcParams::setDefaults () {
     resize.dataspec = 0;
     resize.width = 800;
     resize.height = 600;
-    
+
     icm.input   = "(cameraICC)";
     icm.blendCMSMatrix = false;
     icm.toneCurve = false;
@@ -418,7 +415,7 @@ void ProcParams::setDefaults () {
     icm.slpos=4.5;
     icm.freegamma = false;
   
-	dirpyrequalizer.enabled = false;    
+    dirpyrequalizer.enabled = false;
     for(int i = 0; i < 4; i ++)
     {
         dirpyrequalizer.mult[i] = 1.0;
@@ -498,7 +495,6 @@ static Glib::ustring relativePathIfInside(Glib::ustring procparams_fname, bool f
     }
     Glib::ustring dir1 = Glib::path_get_dirname(procparams_fname) + G_DIR_SEPARATOR_S;
     Glib::ustring dir2 = Glib::path_get_dirname(embedded_fname) + G_DIR_SEPARATOR_S;
-    size_t find = dir2.find(dir1);
     if (dir2.substr(0, dir1.length()) != dir1) {
         // it's in a different directory, ie not inside
         return prefix + embedded_fname;
@@ -520,7 +516,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->general.colorlabel) keyFile.set_integer ("General", "ColorLabel", colorlabel);
     if (!pedited || pedited->general.intrash)    keyFile.set_boolean ("General", "InTrash",    inTrash);
 
-    // save tonecurve:
+    // save tone curve
     if (!pedited || pedited->toneCurve.autoexp)    keyFile.set_boolean ("Exposure", "Auto",           toneCurve.autoexp);
     if (!pedited || pedited->toneCurve.clip)       keyFile.set_double  ("Exposure", "Clip",           toneCurve.clip);
     if (!pedited || pedited->toneCurve.expcomp)    keyFile.set_double  ("Exposure", "Compensation",   toneCurve.expcomp);
@@ -589,67 +585,70 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         Glib::ArrayHandle<int> bmix (chmixer.blue, 3, Glib::OWNERSHIP_NONE);
         keyFile.set_integer_list("Channel Mixer", "Blue",  bmix);
     }
-	//save chmixer BW
-    if (!pedited || pedited->chmixerbw.curveMode)  {
-        Glib::ustring methodbw;
-        switch (chmixerbw.curveMode) {
-        case (ChannelMixerbwParams::TC_MODE_STD_BW):
-            methodbw = "Standardbw";
+
+    //save Black & White
+    if (!pedited || pedited->blackwhite.enabled)      keyFile.set_boolean ("Black & White", "Enabled",             blackwhite.enabled);
+    if (!pedited || pedited->blackwhite.method)       keyFile.set_string  ("Black & White", "Method",              blackwhite.method );
+    if (!pedited || pedited->blackwhite.autoc)        keyFile.set_boolean ("Black & White", "Auto",                blackwhite.autoc);
+    if (!pedited || pedited->blackwhite.enabledcc)    keyFile.set_boolean ("Black & White", "ComplementaryColors", blackwhite.enabledcc);
+    if (!pedited || pedited->blackwhite.setting)      keyFile.set_string  ("Black & White", "Setting",             blackwhite.setting );
+    if (!pedited || pedited->blackwhite.filter)       keyFile.set_string  ("Black & White", "Filter",              blackwhite.filter );
+    if (!pedited || pedited->blackwhite.mixerRed)     keyFile.set_integer ("Black & White", "MixerRed",            blackwhite.mixerRed);
+    if (!pedited || pedited->blackwhite.mixerOrange)  keyFile.set_integer ("Black & White", "MixerOrange",         blackwhite.mixerOrange);
+    if (!pedited || pedited->blackwhite.mixerYellow)  keyFile.set_integer ("Black & White", "MixerYellow",         blackwhite.mixerYellow);
+    if (!pedited || pedited->blackwhite.mixerGreen)   keyFile.set_integer ("Black & White", "MixerGreen",          blackwhite.mixerGreen);
+    if (!pedited || pedited->blackwhite.mixerCyan)    keyFile.set_integer ("Black & White", "MixerCyan",           blackwhite.mixerCyan);
+    if (!pedited || pedited->blackwhite.mixerBlue)    keyFile.set_integer ("Black & White", "MixerBlue",           blackwhite.mixerBlue);
+    if (!pedited || pedited->blackwhite.mixerMagenta) keyFile.set_integer ("Black & White", "MixerMagenta",        blackwhite.mixerMagenta);
+    if (!pedited || pedited->blackwhite.mixerPurple)  keyFile.set_integer ("Black & White", "MixerPurple",         blackwhite.mixerPurple);
+    if (!pedited || pedited->blackwhite.gammaRed)     keyFile.set_integer ("Black & White", "GammaRed",            blackwhite.gammaRed);
+    if (!pedited || pedited->blackwhite.gammaGreen)   keyFile.set_integer ("Black & White", "GammaGreen",          blackwhite.gammaGreen);
+    if (!pedited || pedited->blackwhite.gammaBlue)    keyFile.set_integer ("Black & White", "GammaBlue",           blackwhite.gammaBlue);
+    if (!pedited || pedited->blackwhite.luminanceCurve) {
+        Glib::ArrayHandle<double> luminanceCurve = blackwhite.luminanceCurve;
+        keyFile.set_double_list("Black & White", "LuminanceCurve", luminanceCurve);
+    }
+    if (!pedited || pedited->blackwhite.beforeCurveMode) {
+        Glib::ustring mode;
+        switch (blackwhite.beforeCurveMode) {
+        case (BlackWhiteParams::TC_MODE_STD_BW):
+            mode  = "Standard";
             break;
-        case (ChannelMixerbwParams::TC_MODE_FILMLIKE_BW):
-            methodbw = "FilmLikebw";
+        case (BlackWhiteParams::TC_MODE_FILMLIKE_BW):
+            mode  = "FilmLike";
             break;
-        case (ChannelMixerbwParams::TC_MODE_SATANDVALBLENDING_BW):
-            methodbw = "SatAndValueBlendingbw";
+        case (BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW):
+            mode = "SatAndValueBlending";
             break;
-        case (ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW):
-            methodbw = "WeightedStdbw";
+        case (BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW):
+            mode = "WeightedStd";
             break;
         }
-        keyFile.set_string  ("Channel Mixer", "CurveMode", methodbw);
+        keyFile.set_string  ("Black & White", "BeforeCurveMode", mode);
     }
-	
-    if (!pedited || pedited->chmixerbw.curveMode2)  {
-        Glib::ustring methodbw2;
-        switch (chmixerbw.curveMode2) {
-        case (ChannelMixerbwParams::TC_MODE_STD_BW):
-            methodbw2 = "Standard";
+
+    if (!pedited || pedited->blackwhite.afterCurveMode) {
+        Glib::ustring mode;
+        switch (blackwhite.afterCurveMode) {
+        case (BlackWhiteParams::TC_MODE_STD_BW):
+            mode = "Standard";
             break;
-        case (ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW):
-            methodbw2 = "WeightedStd";
+        case (BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW):
+            mode = "WeightedStd";
+            break;
+        default:
             break;
         }
-        keyFile.set_string  ("Channel Mixer", "CurveMode2", methodbw2);
+        keyFile.set_string  ("Black & White", "AfterCurveMode", mode);
     }
-	
-    if (!pedited || pedited->chmixerbw.curve) {
-        Glib::ArrayHandle<double> tcurvebw = chmixerbw.curve;
-        keyFile.set_double_list("Channel Mixer", "Curve", tcurvebw);
+
+    if (!pedited || pedited->blackwhite.beforeCurve) {
+        Glib::ArrayHandle<double> tcurvebw = blackwhite.beforeCurve;
+        keyFile.set_double_list("Black & White", "BeforeCurve", tcurvebw);
     }
-    if (!pedited || pedited->chmixerbw.curve2) {
-        Glib::ArrayHandle<double> tcurvebw2 = chmixerbw.curve2;
-        keyFile.set_double_list("Channel Mixer", "Curve2", tcurvebw2);
-    }
-    if (!pedited || pedited->chmixerbw.autoc)      	keyFile.set_boolean ("Channel Mixer", "Autoc",  chmixerbw.autoc);	
-    if (!pedited || pedited->chmixerbw.enabledcc)      	keyFile.set_boolean ("Channel Mixer", "Enabledcc",  chmixerbw.enabledcc);
-    if (!pedited || pedited->chmixerbw.enabled)      	keyFile.set_boolean ("Channel Mixer", "Enabled",  chmixerbw.enabled);
-    if (!pedited || pedited->chmixerbw.bwred)   	   	keyFile.set_integer ("Channel Mixer", "bwred", chmixerbw.bwred);
-    if (!pedited || pedited->chmixerbw.bwgreen)      	keyFile.set_integer ("Channel Mixer", "bwgreen", chmixerbw.bwgreen);
-    if (!pedited || pedited->chmixerbw.bwblue)   	   	keyFile.set_integer ("Channel Mixer", "bwblue", chmixerbw.bwblue);
-    if (!pedited || pedited->chmixerbw.bwredgam)   	keyFile.set_integer ("Channel Mixer", "bwredgam", chmixerbw.bwredgam);
-    if (!pedited || pedited->chmixerbw.bwgreengam) 	keyFile.set_integer ("Channel Mixer", "bwgreengam", chmixerbw.bwgreengam);
-    if (!pedited || pedited->chmixerbw.bwbluegam)  	keyFile.set_integer ("Channel Mixer", "bwbluegam", chmixerbw.bwbluegam);
-    if (!pedited || pedited->chmixerbw.fil)          	keyFile.set_string  ("Channel Mixer", "Filter",  chmixerbw.fil );
-    if (!pedited || pedited->chmixerbw.met)          	keyFile.set_string  ("Channel Mixer", "Met",  chmixerbw.met );
-    if (!pedited || pedited->chmixerbw.set)          	keyFile.set_string  ("Channel Mixer", "Set",  chmixerbw.set );
-    if (!pedited || pedited->chmixerbw.bworan)   	   	keyFile.set_integer ("Channel Mixer", "bworan", chmixerbw.bworan);
-    if (!pedited || pedited->chmixerbw.bwyell)      	keyFile.set_integer ("Channel Mixer", "bwyell", chmixerbw.bwyell);
-    if (!pedited || pedited->chmixerbw.bwcyan)   	   	keyFile.set_integer ("Channel Mixer", "bwcyan", chmixerbw.bwcyan);
-    if (!pedited || pedited->chmixerbw.bwmag)      	keyFile.set_integer ("Channel Mixer", "bwmag", chmixerbw.bwmag);
-    if (!pedited || pedited->chmixerbw.bwpur)      	keyFile.set_integer ("Channel Mixer", "bwpur", chmixerbw.bwpur);
-    if (!pedited || pedited->chmixerbw.vcurve) {
-        Glib::ArrayHandle<double> vcurve = chmixerbw.vcurve;
-        keyFile.set_double_list("Channel Mixer", "VCurve", vcurve);
+    if (!pedited || pedited->blackwhite.afterCurve) {
+        Glib::ArrayHandle<double> tcurvebw = blackwhite.afterCurve;
+        keyFile.set_double_list("Black & White", "AfterCurve", tcurvebw);
     }
 
     // save luma curve
@@ -658,7 +657,6 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->labCurve.chromaticity)    keyFile.set_integer ("Luminance Curve", "Chromaticity",               labCurve.chromaticity);
     if (!pedited || pedited->labCurve.avoidcolorshift) keyFile.set_boolean ("Luminance Curve", "AvoidColorShift",            labCurve.avoidcolorshift);
     if (!pedited || pedited->labCurve.rstprotection)   keyFile.set_double  ("Luminance Curve", "RedAndSkinTonesProtection",  labCurve.rstprotection);
-    if (!pedited || pedited->labCurve.bwtoning)        keyFile.set_boolean ("Luminance Curve", "BWtoning",                   labCurve.bwtoning);
     if (!pedited || pedited->labCurve.lcredsk)         keyFile.set_boolean ("Luminance Curve", "LCredsk",                    labCurve.lcredsk);
 	
     if (!pedited || pedited->labCurve.lcurve)  {
@@ -1173,14 +1171,14 @@ if (keyFile.has_group ("Exposure")) {
 }
 
     // load channel mixer curve
-if (keyFile.has_group ("Channel Mixer")) {    
+if (keyFile.has_group ("Channel Mixer")) {
     if (keyFile.has_key ("Channel Mixer", "Red") && keyFile.has_key ("Channel Mixer", "Green") && keyFile.has_key ("Channel Mixer", "Blue")) {
         if (pedited) {
             pedited->chmixer.red[0]   = pedited->chmixer.red[1]   = pedited->chmixer.red[2] = true;
             pedited->chmixer.green[0] = pedited->chmixer.green[1] = pedited->chmixer.green[2] = true;
             pedited->chmixer.blue[0]  = pedited->chmixer.blue[1]  = pedited->chmixer.blue[2] = true;
         }
-		
+
         Glib::ArrayHandle<int> rmix = keyFile.get_integer_list ("Channel Mixer", "Red");
         Glib::ArrayHandle<int> gmix = keyFile.get_integer_list ("Channel Mixer", "Green");
         Glib::ArrayHandle<int> bmix = keyFile.get_integer_list ("Channel Mixer", "Blue");
@@ -1188,41 +1186,45 @@ if (keyFile.has_group ("Channel Mixer")) {
         memcpy (chmixer.green, gmix.data(), 3*sizeof(int));
         memcpy (chmixer.blue, bmix.data(), 3*sizeof(int));
     }
-	//load channel mixer BW
-    if (keyFile.has_key ("Channel Mixer", "CurveMode"))      {
-        Glib::ustring sMode = keyFile.get_string ("Channel Mixer", "CurveMode");
-        if      (sMode == "Standardbw")            chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_STD_BW;
-        else if (sMode == "FilmLikebw")            chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_FILMLIKE_BW;
-        else if (sMode == "SatAndValueBlendingbw") chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_SATANDVALBLENDING_BW;
-        else if (sMode == "WeightedStdbw")         chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW;
-        if (pedited) pedited->chmixerbw.curveMode = true; 
+}
+
+    // load black & white
+if (keyFile.has_group ("Black & White")) {
+    if (keyFile.has_key ("Black & White", "Enabled"))             { blackwhite.enabled      = keyFile.get_boolean ("Black & White", "Enabled"); if (pedited) pedited->blackwhite.enabled = true; }
+    if (keyFile.has_key ("Black & White", "Method"))              { blackwhite.method       = keyFile.get_string  ("Black & White", "Method"); if (pedited) pedited->blackwhite.method = true; }
+
+    if (keyFile.has_key ("Black & White", "Auto"))                { blackwhite.autoc        = keyFile.get_boolean ("Black & White", "Auto"); if (pedited) pedited->blackwhite.autoc = true; }
+    if (keyFile.has_key ("Black & White", "ComplementaryColors")) { blackwhite.enabledcc    = keyFile.get_boolean ("Black & White", "ComplementaryColors"); if (pedited) pedited->blackwhite.enabledcc = true; }
+    if (keyFile.has_key ("Black & White", "MixerRed"))            { blackwhite.mixerRed     = keyFile.get_integer ("Black & White", "MixerRed"); if (pedited) pedited->blackwhite.mixerRed = true; }
+    if (keyFile.has_key ("Black & White", "MixerOrange"))         { blackwhite.mixerOrange  = keyFile.get_integer ("Black & White", "MixerOrange"); if (pedited) pedited->blackwhite.mixerOrange = true; }
+    if (keyFile.has_key ("Black & White", "MixerYellow"))         { blackwhite.mixerYellow  = keyFile.get_integer ("Black & White", "MixerYellow"); if (pedited) pedited->blackwhite.mixerYellow = true; }
+    if (keyFile.has_key ("Black & White", "MixerGreen"))          { blackwhite.mixerGreen   = keyFile.get_integer ("Black & White", "MixerGreen"); if (pedited) pedited->blackwhite.mixerGreen = true; }
+    if (keyFile.has_key ("Black & White", "MixerCyan"))           { blackwhite.mixerCyan    = keyFile.get_integer ("Black & White", "MixerCyan"); if (pedited) pedited->blackwhite.mixerCyan = true; }
+    if (keyFile.has_key ("Black & White", "MixerBlue"))           { blackwhite.mixerBlue    = keyFile.get_integer ("Black & White", "MixerBlue"); if (pedited) pedited->blackwhite.mixerBlue = true; }
+    if (keyFile.has_key ("Black & White", "MixerMagenta"))        { blackwhite.mixerMagenta = keyFile.get_integer ("Black & White", "MixerMagenta"); if (pedited) pedited->blackwhite.mixerMagenta = true; }
+    if (keyFile.has_key ("Black & White", "MixerPurple"))         { blackwhite.mixerPurple  = keyFile.get_integer ("Black & White", "MixerPurple"); if (pedited) pedited->blackwhite.mixerPurple = true; }
+    if (keyFile.has_key ("Black & White", "GammaRed"))            { blackwhite.gammaRed     = keyFile.get_integer ("Black & White", "GammaRed"); if (pedited) pedited->blackwhite.gammaRed = true; }
+    if (keyFile.has_key ("Black & White", "GammaGreen"))          { blackwhite.gammaGreen   = keyFile.get_integer ("Black & White", "GammaGreen"); if (pedited) pedited->blackwhite.gammaGreen = true; }
+    if (keyFile.has_key ("Black & White", "GammaBlue"))           { blackwhite.gammaBlue    = keyFile.get_integer ("Black & White", "GammaBlue"); if (pedited) pedited->blackwhite.gammaBlue = true; }
+    if (keyFile.has_key ("Black & White", "Filter"))              { blackwhite.filter       = keyFile.get_string  ("Black & White", "Filter"); if (pedited) pedited->blackwhite.filter = true; }
+    if (keyFile.has_key ("Black & White", "Setting"))             { blackwhite.setting      = keyFile.get_string  ("Black & White", "Setting"); if (pedited) pedited->blackwhite.setting = true; }
+    if (keyFile.has_key ("Black & White", "LuminanceCurve"))      { blackwhite.luminanceCurve = keyFile.get_double_list ("Black & White", "LuminanceCurve"); if (pedited) pedited->blackwhite.luminanceCurve = true; }
+    if (keyFile.has_key ("Black & White", "BeforeCurve"))         { blackwhite.beforeCurve    = keyFile.get_double_list ("Black & White", "BeforeCurve"); if (pedited) pedited->blackwhite.beforeCurve = true; }
+    if (keyFile.has_key ("Black & White", "BeforeCurveMode")) {
+        Glib::ustring sMode = keyFile.get_string ("Black & White", "BeforeCurveMode");
+        if      (sMode == "Standard")            blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
+        else if (sMode == "FilmLike")            blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_FILMLIKE_BW;
+        else if (sMode == "SatAndValueBlending") blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW;
+        else if (sMode == "WeightedStd")         blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW;
+        if (pedited) pedited->blackwhite.beforeCurveMode = true;
     }
-    if (keyFile.has_key ("Channel Mixer", "CurveMode2"))      {
-        Glib::ustring sMode2 = keyFile.get_string ("Channel Mixer", "CurveMode2");
-        if      (sMode2 == "Standard")            chmixerbw.curveMode2 = ChannelMixerbwParams::TC_MODE_STD_BW;
-        else if (sMode2 == "WeightedStd")         chmixerbw.curveMode2 = ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW;
-        if (pedited) pedited->chmixerbw.curveMode2 = true; 
+    if (keyFile.has_key ("Black & White", "AfterCurve"))          { blackwhite.afterCurve     = keyFile.get_double_list ("Black & White", "AfterCurve"); if (pedited) pedited->blackwhite.afterCurve = true; }
+    if (keyFile.has_key ("Black & White", "AfterCurveMode"))      {
+        Glib::ustring sMode2 = keyFile.get_string ("Black & White", "AfterCurveMode");
+        if      (sMode2 == "Standard")            blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
+        else if (sMode2 == "WeightedStd")         blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW;
+        if (pedited) pedited->blackwhite.afterCurveMode = true;
     }
-    if (keyFile.has_key ("Channel Mixer", "Autoc"))             { chmixerbw.autoc         = keyFile.get_boolean ("Channel Mixer", "Autoc"); if (pedited) pedited->chmixerbw.autoc = true; }	
-    if (keyFile.has_key ("Channel Mixer", "Enabledcc"))             { chmixerbw.enabledcc         = keyFile.get_boolean ("Channel Mixer", "Enabledcc"); if (pedited) pedited->chmixerbw.enabledcc = true; }
-    if (keyFile.has_key ("Channel Mixer", "Enabled"))             { chmixerbw.enabled         = keyFile.get_boolean ("Channel Mixer", "Enabled"); if (pedited) pedited->chmixerbw.enabled = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwred"))   			  { chmixerbw.bwred   = keyFile.get_integer ("Channel Mixer", "bwred"); if (pedited) pedited->chmixerbw.bwred = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwgreen"))   			{ chmixerbw.bwgreen   = keyFile.get_integer ("Channel Mixer", "bwgreen"); if (pedited) pedited->chmixerbw.bwgreen = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwblue"))   			  { chmixerbw.bwblue   = keyFile.get_integer ("Channel Mixer", "bwblue"); if (pedited) pedited->chmixerbw.bwblue = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwredgam"))   			  { chmixerbw.bwredgam   = keyFile.get_integer ("Channel Mixer", "bwredgam"); if (pedited) pedited->chmixerbw.bwredgam = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwgreengam"))   			{ chmixerbw.bwgreengam   = keyFile.get_integer ("Channel Mixer", "bwgreengam"); if (pedited) pedited->chmixerbw.bwgreengam = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwbluegam"))   			  { chmixerbw.bwbluegam   = keyFile.get_integer ("Channel Mixer", "bwbluegam"); if (pedited) pedited->chmixerbw.bwbluegam = true; }
-    if (keyFile.has_key ("Channel Mixer", "Filter"))    		 {chmixerbw.fil = keyFile.get_string  ("Channel Mixer", "Filter"); if (pedited) pedited->chmixerbw.fil = true; }
-    if (keyFile.has_key ("Channel Mixer", "Set"))    		 {chmixerbw.set = keyFile.get_string  ("Channel Mixer", "Set"); if (pedited) pedited->chmixerbw.set = true; }
-    if (keyFile.has_key ("Channel Mixer", "Met"))    		 {chmixerbw.met = keyFile.get_string  ("Channel Mixer", "Met"); if (pedited) pedited->chmixerbw.met = true; }
-    if (keyFile.has_key ("Channel Mixer", "bworan"))   			  { chmixerbw.bworan   = keyFile.get_integer ("Channel Mixer", "bworan"); if (pedited) pedited->chmixerbw.bworan = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwyell"))   			{ chmixerbw.bwyell   = keyFile.get_integer ("Channel Mixer", "bwyell"); if (pedited) pedited->chmixerbw.bwyell = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwcyan"))   			  { chmixerbw.bwcyan   = keyFile.get_integer ("Channel Mixer", "bwcyan"); if (pedited) pedited->chmixerbw.bwcyan = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwmag"))   			{ chmixerbw.bwmag   = keyFile.get_integer ("Channel Mixer", "bwmag"); if (pedited) pedited->chmixerbw.bwmag = true; }
-    if (keyFile.has_key ("Channel Mixer", "bwpur"))   			{ chmixerbw.bwpur   = keyFile.get_integer ("Channel Mixer", "bwpur"); if (pedited) pedited->chmixerbw.bwpur = true; }
-     if (ppVersion>=300) {  
-   if (keyFile.has_key ("Channel Mixer", "VCurve")) {chmixerbw.vcurve = keyFile.get_double_list ("Channel Mixer", "VCurve"); if (pedited) pedited->chmixerbw.vcurve = true; }
-	}
 }
 
     // load luma curve
@@ -1243,7 +1245,15 @@ if (keyFile.has_group ("Luminance Curve")) {
         if (keyFile.has_key ("Luminance Curve", "RedAndSkinTonesProtection")) { labCurve.rstprotection   = keyFile.get_double  ("Luminance Curve", "RedAndSkinTonesProtection"); if (pedited) pedited->labCurve.rstprotection = true; }
     }
     if (keyFile.has_key ("Luminance Curve", "LCredsk"))         { labCurve.lcredsk            = keyFile.get_boolean     ("Luminance Curve", "LCredsk"); if (pedited) pedited->labCurve.lcredsk = true; }
-    if (keyFile.has_key ("Luminance Curve", "BWtoning"))        { labCurve.bwtoning           = keyFile.get_boolean     ("Luminance Curve", "BWtoning"); if (pedited) pedited->labCurve.bwtoning = true; }
+    if (ppVersion < 314)
+        // Backward compatibility: If BWtoning is true, Chromaticity has to be set to -100, which will produce the same effect
+        // and will enable the b&w toning mode ('a' & 'b' curves)
+        if (keyFile.has_key ("Luminance Curve", "BWtoning")) {
+            if ( keyFile.get_boolean     ("Luminance Curve", "BWtoning")) {
+                labCurve.chromaticity = -100;
+                if (pedited) pedited->labCurve.chromaticity = true;
+            }
+        }
     if (keyFile.has_key ("Luminance Curve", "LCurve"))          { labCurve.lcurve             = keyFile.get_double_list ("Luminance Curve", "LCurve"); if (pedited) pedited->labCurve.lcurve = true; }
     if (keyFile.has_key ("Luminance Curve", "aCurve"))          { labCurve.acurve             = keyFile.get_double_list ("Luminance Curve", "aCurve"); if (pedited) pedited->labCurve.acurve = true; }
     if (keyFile.has_key ("Luminance Curve", "bCurve"))          { labCurve.bcurve             = keyFile.get_double_list ("Luminance Curve", "bCurve"); if (pedited) pedited->labCurve.bcurve = true; }
@@ -1746,8 +1756,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& toneCurve.autoexp == other.toneCurve.autoexp
 		&& toneCurve.clip == other.toneCurve.clip
 		&& toneCurve.expcomp == other.toneCurve.expcomp
-        && toneCurve.curveMode == other.toneCurve.curveMode
-        && toneCurve.curveMode2 == other.toneCurve.curveMode2
+		&& toneCurve.curveMode == other.toneCurve.curveMode
+		&& toneCurve.curveMode2 == other.toneCurve.curveMode2
 		&& labCurve.lcurve == other.labCurve.lcurve
 		&& labCurve.acurve == other.labCurve.acurve
 		&& labCurve.bcurve == other.labCurve.bcurve
@@ -1760,8 +1770,7 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& labCurve.chromaticity == other.labCurve.chromaticity
 		&& labCurve.avoidcolorshift == other.labCurve.avoidcolorshift
 		&& labCurve.rstprotection == other.labCurve.rstprotection
-		&& labCurve.bwtoning == other.labCurve.bwtoning
-		&& labCurve.lcredsk == other.labCurve.lcredsk		
+		&& labCurve.lcredsk == other.labCurve.lcredsk
 		&& sharpenEdge.enabled == other.sharpenEdge.enabled
 		&& sharpenEdge.passes == other.sharpenEdge.passes
 		&& sharpenEdge.amount == other.sharpenEdge.amount
@@ -1812,9 +1821,9 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& colorappearance.badpixsl == other.colorappearance.badpixsl
 		&& colorappearance.wbmodel == other.colorappearance.wbmodel
 		&& colorappearance.algo == other.colorappearance.algo
-        && colorappearance.curveMode == other.colorappearance.curveMode
-        && colorappearance.curveMode2 == other.colorappearance.curveMode2
-        && colorappearance.curveMode3 == other.colorappearance.curveMode3				
+		&& colorappearance.curveMode == other.colorappearance.curveMode
+		&& colorappearance.curveMode2 == other.colorappearance.curveMode2
+		&& colorappearance.curveMode3 == other.colorappearance.curveMode3
 		&& colorappearance.jlight == other.colorappearance.jlight
 		&& colorappearance.qbright == other.colorappearance.qbright
 		&& colorappearance.chroma == other.colorappearance.chroma
@@ -1874,10 +1883,10 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& rotate.degree == other.rotate.degree
 		&& commonTrans.autofill == other.commonTrans.autofill
 		&& distortion.amount == other.distortion.amount
-        && lensProf.lcpFile == other.lensProf.lcpFile
-        && lensProf.useDist == other.lensProf.useDist
-        && lensProf.useVign == other.lensProf.useVign
-        && lensProf.useCA == other.lensProf.useCA
+		&& lensProf.lcpFile == other.lensProf.lcpFile
+		&& lensProf.useDist == other.lensProf.useDist
+		&& lensProf.useVign == other.lensProf.useVign
+		&& lensProf.useCA == other.lensProf.useCA
 		&& perspective.horizontal == other.perspective.horizontal
 		&& perspective.vertical == other.perspective.vertical
 		&& gradient.enabled == other.gradient.enabled
@@ -1900,27 +1909,26 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& !memcmp (&chmixer.red, &other.chmixer.red, 3*sizeof(int))
 		&& !memcmp (&chmixer.green, &other.chmixer.green, 3*sizeof(int))
 		&& !memcmp (&chmixer.blue, &other.chmixer.blue, 3*sizeof(int))
-		&& chmixerbw.bwred == other.chmixerbw.bwred
-		&& chmixerbw.bwgreen == other.chmixerbw.bwgreen
-		&& chmixerbw.bwblue == other.chmixerbw.bwblue
-		&& chmixerbw.bwredgam == other.chmixerbw.bwredgam
-		&& chmixerbw.bwgreengam == other.chmixerbw.bwgreengam
-		&& chmixerbw.bwbluegam == other.chmixerbw.bwbluegam
-		&& chmixerbw.fil == other.chmixerbw.fil
-		&& chmixerbw.set == other.chmixerbw.set	
-		&& chmixerbw.met == other.chmixerbw.met	
-		&& chmixerbw.bworan == other.chmixerbw.bworan
-		&& chmixerbw.bwyell == other.chmixerbw.bwyell	
-		&& chmixerbw.bwmag == other.chmixerbw.bwmag
-		&& chmixerbw.bwcyan == other.chmixerbw.bwcyan		
-		&& chmixerbw.bwpur == other.chmixerbw.bwpur	
-		&& chmixerbw.vcurve == other.chmixerbw.vcurve
-		&& chmixerbw.curve == other.chmixerbw.curve
-		&& chmixerbw.curve2 == other.chmixerbw.curve2
-        && chmixerbw.curveMode == other.chmixerbw.curveMode
-        && chmixerbw.curveMode2 == other.chmixerbw.curveMode2
-        && chmixerbw.autoc == other.chmixerbw.autoc
-		
+		&& blackwhite.mixerRed == other.blackwhite.mixerRed
+		&& blackwhite.mixerOrange == other.blackwhite.mixerOrange
+		&& blackwhite.mixerYellow == other.blackwhite.mixerYellow
+		&& blackwhite.mixerGreen == other.blackwhite.mixerGreen
+		&& blackwhite.mixerCyan == other.blackwhite.mixerCyan
+		&& blackwhite.mixerBlue == other.blackwhite.mixerBlue
+		&& blackwhite.mixerMagenta == other.blackwhite.mixerMagenta
+		&& blackwhite.mixerPurple == other.blackwhite.mixerPurple
+		&& blackwhite.gammaRed == other.blackwhite.gammaRed
+		&& blackwhite.gammaGreen == other.blackwhite.gammaGreen
+		&& blackwhite.gammaBlue == other.blackwhite.gammaBlue
+		&& blackwhite.filter == other.blackwhite.filter
+		&& blackwhite.setting == other.blackwhite.setting
+		&& blackwhite.method == other.blackwhite.method
+		&& blackwhite.luminanceCurve == other.blackwhite.luminanceCurve
+		&& blackwhite.beforeCurve == other.blackwhite.beforeCurve
+		&& blackwhite.afterCurve == other.blackwhite.afterCurve
+		&& blackwhite.beforeCurveMode == other.blackwhite.beforeCurveMode
+		&& blackwhite.afterCurveMode == other.blackwhite.afterCurveMode
+		&& blackwhite.autoc == other.blackwhite.autoc
 		&& hlrecovery.enabled == other.hlrecovery.enabled
 		&& hlrecovery.method == other.hlrecovery.method
 		&& resize.scale == other.resize.scale
@@ -1949,13 +1957,13 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& icm.input == other.icm.input
 		&& icm.toneCurve == other.icm.toneCurve
 		&& icm.blendCMSMatrix == other.icm.blendCMSMatrix
-        && icm.dcpIlluminant == other.icm.dcpIlluminant
+		&& icm.dcpIlluminant == other.icm.dcpIlluminant
 		&& icm.working == other.icm.working
 		&& icm.output == other.icm.output
-		&& icm.gamma == other.icm.gamma		
-		&& icm.freegamma == other.icm.freegamma			
-		&& icm.gampos == other.icm.gampos	
-		&& icm.slpos == other.icm.slpos			
+		&& icm.gamma == other.icm.gamma
+		&& icm.freegamma == other.icm.freegamma
+		&& icm.gampos == other.icm.gampos
+		&& icm.slpos == other.icm.slpos
 		&& dirpyrequalizer == other.dirpyrequalizer
 		&& hsvequalizer.hcurve == other.hsvequalizer.hcurve
 		&& hsvequalizer.scurve == other.hsvequalizer.scurve

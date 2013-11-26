@@ -766,7 +766,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LabImage* labView = new LabImage (fw,fh);
 	CieImage* cieView = new CieImage (fw,fh);
 	
-    CurveFactory::curveBW (params.chmixerbw.curveMode, params.chmixerbw.curve, params.chmixerbw.curveMode2, params.chmixerbw.curve2,
+    CurveFactory::curveBW (params.blackwhite.beforeCurveMode, params.blackwhite.beforeCurve, params.blackwhite.afterCurveMode, params.blackwhite.afterCurve,
 									hist16, dummy, dummy, customToneCurvebw1, customToneCurvebw2, 16);
 	
 	double rrm, ggm, bbm;

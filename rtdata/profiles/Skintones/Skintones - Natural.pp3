@@ -1,7 +1,7 @@
 
 [Version]
-AppVersion=4.0.11.151
-Version=313
+AppVersion=4.0.11.161
+Version=314
 
 [Exposure]
 Auto=false
@@ -23,28 +23,9 @@ Curve2=1;0;0;0.097430830039525476;0.066798418972331866;0.12648221343873495;0.110
 Red=100;0;0;
 Green=0;100;0;
 Blue=0;0;100;
-CurveMode=Standardbw
-CurveMode2=Standard
-Curve=0;
-Curve2=0;
-bwred=43
-bwgreen=33
-bwblue=30
-bwredgam=0
-bwgreengam=0
-bwbluegam=0
-Filter=No
-Set=Nc
-bworan=33
-bwyell=33
-bwcyan=33
-bwmag=33
-bwpur=33
-Enabledcc=true
-Enabled=false
-Met=No
-VCurve=0;
 
+[Black & White]
+Enabled=false
 
 [Luminance Curve]
 Brightness=0
@@ -52,7 +33,6 @@ Contrast=0
 Chromaticity=0
 AvoidColorShift=true
 RedAndSkinTonesProtection=0
-BWtoning=false
 LCredsk=true
 LCurve=3;0;0;0.063241106719367585;6.9388939039072284e-018;0.49407114624505927;0.50197628458498023;0.92885375494071132;0.99604743083003922;1;1;
 aCurve=0;

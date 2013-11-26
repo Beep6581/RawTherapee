@@ -31,8 +31,8 @@
 #define ADDSET_TC_HLCOMPTHRESH          23
 #define ADDSET_TC_SHCOMP                24
 #define ADDSET_DIRPYREQ                 25
-#define ADDSET_DIRPYRDN_LUMA   	        26
-#define ADDSET_DIRPYRDN_LUMDET 	        27
+#define ADDSET_DIRPYRDN_LUMA            26
+#define ADDSET_DIRPYRDN_LUMDET          27
 #define ADDSET_DIRPYRDN_CHROMA          28
 #define ADDSET_DIRPYRDN_CHROMARED       29
 #define ADDSET_DIRPYRDN_CHROMABLUE      30
@@ -73,11 +73,10 @@
 #define ADDSET_PCVIGNETTE_STRENGTH      65
 #define ADDSET_PCVIGNETTE_FEATHER       66
 #define ADDSET_PCVIGNETTE_ROUNDNESS     67
-#define ADDSET_CHMIXER_BW               68
-#define ADDSET_CHMIXER_BWG              69
-#define ADDSET_CHMIXER_BWF              70
+#define ADDSET_BLACKWHITE_HUES          68
+#define ADDSET_BLACKWHITE_GAMMA         69
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                71 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                70 // THIS IS USED AS A DELIMITER!!
 
 #endif

@@ -27,49 +27,45 @@ using namespace rtengine;
 using namespace rtengine::procparams;
 
 
-ChMixerbw::ChMixerbw (): Gtk::VBox(), FoldableToolPanel(this) {
+BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	CurveListener::setMulti(true);
-    set_border_width(4);
+	set_border_width(4);
+	set_spacing(4);
+
+	//----------- Enables checkbox ------------------------------
+
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
 	enabled->set_active (false);
 	
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 	enabled->show ();
+	enaconn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::enabled_toggled) );
+
+	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+
+	//----------- Method combobox ------------------------------
 
 	Gtk::HBox* metHBox = Gtk::manage (new Gtk::HBox ());
 	metHBox->set_border_width (0);
 	metHBox->set_spacing (2);
-	metHBox->set_tooltip_markup (M("TP_BWMIX_MET_TOOLTIP"));
 	Gtk::Label* metLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_MET")+":"));
 	metHBox->pack_start (*metLabel, Gtk::PACK_SHRINK);
-	met = Gtk::manage (new MyComboBoxText ());
-	met->append_text (M("TP_BWMIX_MET0"));
-	met->append_text (M("TP_BWMIX_MET1"));
-	met->append_text (M("TP_BWMIX_MET2"));
-	met->append_text (M("TP_BWMIX_MET3"));
+	method = Gtk::manage (new MyComboBoxText ());
+	method->append_text (M("TP_BWMIX_MET_DESAT"));
+	method->append_text (M("TP_BWMIX_MET_LUMEQUAL"));
+	method->append_text (M("TP_BWMIX_MET_CHANMIX"));
 
-	met->set_active (0);
-	metHBox->pack_start (*met);
+	method->set_active (0);
+	metHBox->pack_start (*method);
 	pack_start (*metHBox);
-	
-    imgIcon[0] = Gtk::manage (new RTImage ("Chanmixer-R.png"));
-    imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer-G.png"));
-    imgIcon[2] = Gtk::manage (new RTImage ("Chanmixer-B.png"));
-    imgIcon[3] = Gtk::manage (new RTImage ("Chanmixer-O.png"));
-    imgIcon[4] = Gtk::manage (new RTImage ("Chanmixer-Y.png"));
-    imgIcon[5] = Gtk::manage (new RTImage ("Chanmixer-C.png"));
-    imgIcon[6] = Gtk::manage (new RTImage ("Chanmixer-M.png"));
-    imgIcon[7] = Gtk::manage (new RTImage ("Chanmixer-P.png"));
-	
-    imgIcon[8] = Gtk::manage (new RTImage ("Chanmixer-Rgamma.png"));
-    imgIcon[9] = Gtk::manage (new RTImage ("Chanmixer-Ggamma.png"));
-    imgIcon[10] = Gtk::manage (new RTImage ("Chanmixer-Bgamma.png"));
+	methodconn = method->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::methodChanged) );
 
-  std::vector<GradientMilestone> bottomMilestonesbw;
-  bottomMilestonesbw.push_back( GradientMilestone(0., 0., 0., 0.) );
-  bottomMilestonesbw.push_back( GradientMilestone(1., 1., 1., 1.) );
-	
-	
+
+	//----------- Luminance equalizer ------------------------------
+
+	luminanceSep = Gtk::manage (new  Gtk::HSeparator());
+	pack_start (*luminanceSep);
+
 	std::vector<GradientMilestone> bottomMilestones;
 	float R, G, B;
 	// -0.1 rad < Hue < 1.6 rad
@@ -78,616 +74,588 @@ ChMixerbw::ChMixerbw (): Gtk::VBox(), FoldableToolPanel(this) {
 		Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
 		bottomMilestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
 	}
-	curveEditorG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CHANNEL"));
-	curveEditorG->setCurveListener (this);
-	vshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_BWMIX_VAL")));
-	vshape->setBottomBarBgGradient(bottomMilestones);
-	vshape->setCurveColorProvider(this, 3);
-	vshape->setTooltip(M("TP_BWMIX_CURVEEDITOR_LH_TOOLTIP"));
+	luminanceCEG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CHANNEL"));
+	luminanceCEG->setCurveListener (this);
+	luminanceCurve = static_cast<FlatCurveEditor*>(luminanceCEG->addCurve(CT_Flat, M("TP_BWMIX_VAL")));
+	luminanceCurve->setBottomBarBgGradient(bottomMilestones);
+	luminanceCurve->setCurveColorProvider(this, 3);
+	luminanceCurve->setTooltip(M("TP_BWMIX_CURVEEDITOR_LH_TOOLTIP"));
 	
-	curveEditorG->curveListComplete();
+	luminanceCEG->curveListComplete();
+	pack_start (*luminanceCEG, Gtk::PACK_SHRINK, 4);
 
-	pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
+	//----------- Auto and Reset buttons ------------------------------
 
-		
-	Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
-	hsep1->show ();
-	pack_start (*hsep1);
+	mixerFrame = Gtk::manage (new Gtk::Frame (M("TP_BWMIX_MET_CHANMIX")));
+	pack_start (*mixerFrame, Gtk::PACK_SHRINK, 0);
 
-	enabledcc = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_CC_ENABLED")));
-	
-	enabledcc->set_active (true);
-	enabledcc->set_tooltip_markup (M("TP_BWMIX_CC_TOOLTIP"));
-	
-	pack_start(*enabledcc, Gtk::PACK_SHRINK, 0);
-	enabledcc->show ();
+	Gtk::VBox *mixerVBox = Gtk::manage (new Gtk::VBox ());
+	mixerVBox->set_border_width(4);
+	mixerVBox->set_spacing(4);
 
-	abox = Gtk::manage (new Gtk::HBox ());
-	abox->set_border_width (2);
+	autoHBox = Gtk::manage (new Gtk::HBox ());
+	autoHBox->set_border_width (2);
 
 	autoch = Gtk::manage (new Gtk::ToggleButton (M("TP_BWMIX_AUTOCH")));
 	autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
-	autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &ChMixerbw::autoch_toggled) );
-	
+	autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
+
 	neutral = Gtk::manage (new Gtk::Button (M("TP_BWMIX_NEUTRAL")));
+	RTImage *resetImg = Gtk::manage (new RTImage ("gtk-undo-ltr-small.png", "gtk-undo-rtl-small.png"));
+	neutral->set_image(*resetImg);
 	neutral->set_tooltip_text (M("TP_BWMIX_NEUTRAL_TIP"));
-	neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &ChMixerbw::neutral_pressed) );
+	neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &BlackWhite::neutral_pressed) );
 	neutral->show();
-	
-	abox->pack_start (*autoch);
-	abox->pack_end (*neutral);
-	abox->pack_end (*Gtk::manage (new Gtk::Label (" "))); //spacer
-	pack_start (*abox);
 
-	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
-	
-	
-	Gtk::HBox* setHBox = Gtk::manage (new Gtk::HBox ());
-	setHBox->set_border_width (0);
-	setHBox->set_spacing (2);
-	setHBox->set_tooltip_markup (M("TP_BWMIX_SETTING_TOOLTIP"));
-	setLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_SETTING")+":"));
-	
-	setHBox->pack_start (*setLabel, Gtk::PACK_SHRINK);
-	set = Gtk::manage (new MyComboBoxText ());
-	set->append_text (M("TP_BWMIX_SET0"));
-	set->append_text (M("TP_BWMIX_SET1"));
-	set->append_text (M("TP_BWMIX_SET2"));
-	set->append_text (M("TP_BWMIX_SET3"));
-	set->append_text (M("TP_BWMIX_SET4"));
-	set->append_text (M("TP_BWMIX_SET5"));
-	set->append_text (M("TP_BWMIX_SET6"));
-	set->append_text (M("TP_BWMIX_SET7"));
-	set->append_text (M("TP_BWMIX_SET8"));
-	set->append_text (M("TP_BWMIX_SET9"));
-	set->append_text (M("TP_BWMIX_SET10"));
-	set->append_text (M("TP_BWMIX_SET11"));
-	set->append_text (M("TP_BWMIX_SET12"));
-	set->append_text (M("TP_BWMIX_SET13"));
-	set->append_text (M("TP_BWMIX_SET14"));
+	autoHBox->pack_start (*autoch);
+	autoHBox->pack_end (*neutral);
+	autoHBox->pack_end (*Gtk::manage (new Gtk::Label (" "))); //spacer
+	mixerVBox->pack_start (*autoHBox);
 
-	set->set_active (0);
-	setHBox->pack_start (*set);
-	pack_start (*setHBox);
-	
-	Gtk::HBox* filHBox = Gtk::manage (new Gtk::HBox ());
-	filHBox->set_border_width (0);
-	filHBox->set_spacing (2);
-	filHBox->set_tooltip_markup (M("TP_BWMIX_FILTER_TOOLTIP"));
-	filLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_FILTER")+":"));
-	filHBox->pack_start (*filLabel, Gtk::PACK_SHRINK);
-	fil = Gtk::manage (new MyComboBoxText ());
-	fil->append_text (M("TP_BWMIX_FILTER0"));
-	fil->append_text (M("TP_BWMIX_FILTER1"));
-	fil->append_text (M("TP_BWMIX_FILTER2"));
-	fil->append_text (M("TP_BWMIX_FILTER3"));
-	fil->append_text (M("TP_BWMIX_FILTER4"));
-	fil->append_text (M("TP_BWMIX_FILTER5"));
-	fil->append_text (M("TP_BWMIX_FILTER6"));
-	fil->append_text (M("TP_BWMIX_FILTER7"));
-	fil->append_text (M("TP_BWMIX_FILTER8"));
-	
-	fil->set_active (0);
-	filHBox->pack_start (*fil);
-	pack_start (*filHBox);
-	
-	rlabel = Gtk::manage (new Gtk::Label ());
-    rlabel->set_markup (Glib::ustring( M("TP_BWMIX_RED")));
-    rlabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*rlabel, Gtk::PACK_SHRINK, 0);
-	
-	bwred= Gtk::manage(new Adjuster (imgIcon[0],-100,200,1,33));
-	if (bwred->delay < 50) bwred->delay = 50;
-	bwred->setAdjusterListener (this);
-	bwred->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	
-	bwred->show();
-	pack_start( *bwred, Gtk::PACK_SHRINK, 0);
+	//----------- Presets combobox ------------------------------
 
-	orlabel = Gtk::manage (new Gtk::Label ());
-    orlabel->set_markup (Glib::ustring( M("TP_BWMIX_ORA")));
-    orlabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*orlabel, Gtk::PACK_SHRINK, 0);
-	
-	bworan= Gtk::manage(new Adjuster (imgIcon[3],-100,200,1,33));
-	if (bworan->delay < 50) bworan->delay = 50;
-	bworan->setAdjusterListener (this);
-	bworan->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	bworan->show();
-	pack_start( *bworan, Gtk::PACK_SHRINK, 0);
+	mixerVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-	ylabel = Gtk::manage (new Gtk::Label ());
-    ylabel->set_markup (Glib::ustring( M("TP_BWMIX_YEL")));
-    ylabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*ylabel, Gtk::PACK_SHRINK, 0);
-	
-	bwyell= Gtk::manage(new Adjuster (imgIcon[4],-100,200,1,33));
-	if (bwyell->delay < 50) bwyell->delay = 50;
-	bwyell->setAdjusterListener (this);
-	bwyell->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	bwyell->show();
-	pack_start( *bwyell, Gtk::PACK_SHRINK, 0);
+	settingHBox = Gtk::manage (new Gtk::HBox ());
+	settingHBox->set_border_width (0);
+	settingHBox->set_spacing (2);
+	settingHBox->set_tooltip_markup (M("TP_BWMIX_SETTING_TOOLTIP"));
+	Gtk::Label *settingLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_SETTING")+":"));
 
-	
-	glabel = Gtk::manage (new Gtk::Label ());
-    glabel->set_markup (Glib::ustring( M("TP_BWMIX_GREEN")));
-    glabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*glabel, Gtk::PACK_SHRINK, 0);
-	
-	bwgreen= Gtk::manage(new Adjuster (imgIcon[1],-100,200,1,33));
-	if (bwgreen->delay < 50) bwgreen->delay = 50;
-	
-	bwgreen->setAdjusterListener (this);
-	bwgreen->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	
-	bwgreen->show();
-	pack_start( *bwgreen, Gtk::PACK_SHRINK, 0);
+	Gtk::SeparatorMenuItem *menuSep1 = Gtk::manage (new Gtk::SeparatorMenuItem ());
+	Gtk::SeparatorMenuItem *menuSep2 = Gtk::manage (new Gtk::SeparatorMenuItem ());
 
-	clabel = Gtk::manage (new Gtk::Label ());
-    clabel->set_markup (Glib::ustring( M("TP_BWMIX_CYAN")));
-    clabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*clabel, Gtk::PACK_SHRINK, 0);
-	
-	bwcyan= Gtk::manage(new Adjuster (imgIcon[5],-100,200,1,33));
-	if (bwcyan->delay < 50) bwcyan->delay = 50;
-	bwcyan->setAdjusterListener (this);
-	bwcyan->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	bwcyan->show();
-	pack_start( *bwcyan, Gtk::PACK_SHRINK, 0);
-	
-	blabel = Gtk::manage (new Gtk::Label ());
-    blabel->set_markup (Glib::ustring( M("TP_BWMIX_BLUE")));
-    blabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*blabel, Gtk::PACK_SHRINK, 0);
+	settingHBox->pack_start (*settingLabel, Gtk::PACK_SHRINK);
+	setting = Gtk::manage (new MyComboBoxText ());
+	setting->append_text (M("TP_BWMIX_SET_NORMCONTAST"));
+	setting->append_text (M("TP_BWMIX_SET_HIGHCONTAST"));
+	setting->append_text (M("TP_BWMIX_SET_LUMINANCE"));
+	setting->append_text (M("TP_BWMIX_SET_LANDSCAPE"));
+	setting->append_text (M("TP_BWMIX_SET_PORTRAIT"));
+	setting->append_text (M("TP_BWMIX_SET_LOWSENSIT"));
+	setting->append_text (M("TP_BWMIX_SET_HIGHSENSIT"));
+	setting->append_text (M("TP_BWMIX_SET_PANCHRO"));
+	setting->append_text (M("TP_BWMIX_SET_HYPERPANCHRO"));
+	setting->append_text (M("TP_BWMIX_SET_ORTHOCHRO"));
+	setting->append_text (M("TP_BWMIX_SET_RGBABS"));
+	setting->append_text (M("TP_BWMIX_SET_RGBREL"));
+	setting->append_text (M("TP_BWMIX_SET_ROYGCBMPABS"));
+	setting->append_text (M("TP_BWMIX_SET_ROYGCBMPREL"));
+	setting->append_text (M("TP_BWMIX_SET_INFRARED"));
 
-	bwblue= Gtk::manage(new Adjuster (imgIcon[2],-100,200,1,33));
-	if (bwblue->delay < 50) bwblue->delay = 50;
-	
-	bwblue->setAdjusterListener (this);
-	bwblue->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	
-	bwblue->show();
-	pack_start( *bwblue, Gtk::PACK_SHRINK, 0);
+	setting->set_active (0);
+	settingHBox->pack_start (*setting);
+	mixerVBox->pack_start (*settingHBox);
+	settingconn = setting->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::settingChanged) );
 
-	mlabel = Gtk::manage (new Gtk::Label ());
-    mlabel->set_markup (Glib::ustring( M("TP_BWMIX_MAG")));
-    mlabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*mlabel, Gtk::PACK_SHRINK, 0);
-	
-	bwmag= Gtk::manage(new Adjuster (imgIcon[6],-100,200,1,33));
-	if (bwmag->delay < 50) bwmag->delay = 50;
-	bwmag->setAdjusterListener (this);
-	bwmag->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	bwmag->show();
-	pack_start( *bwmag, Gtk::PACK_SHRINK, 0);
+	//----------- Complementary Color checkbox ------------------------------
 
-	plabel = Gtk::manage (new Gtk::Label ());
-    plabel->set_markup (Glib::ustring( M("TP_BWMIX_PUR")));
-    plabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*plabel, Gtk::PACK_SHRINK, 0);
-	
-	bwpur= Gtk::manage(new Adjuster (imgIcon[7],-100,200,1,33));
-	if (bwpur->delay < 50) bwpur->delay = 50;
-	bwpur->setAdjusterListener (this);
-	bwpur->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	bwpur->show();
-	pack_start( *bwpur, Gtk::PACK_SHRINK, 0);
+	enabledccSep= Gtk::manage (new  Gtk::HSeparator());
+	mixerVBox->pack_start (*enabledccSep);
 
-    Gamlabel = Gtk::manage (new Gtk::Label ());
-    Gamlabel->set_markup (Glib::ustring("<b>") + M("TP_BWMIX_GAMMA") + Glib::ustring("</b>"));
-    Gamlabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*Gamlabel, Gtk::PACK_SHRINK, 0);
+	enabledcc = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_CC_ENABLED")));
 
-	
-	rglabel = Gtk::manage (new Gtk::Label ());
-    rglabel->set_markup (Glib::ustring( M("TP_BWMIX_GAM_RED")));
-    rglabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*rglabel, Gtk::PACK_SHRINK, 0);
-	
-	bwredgam= Gtk::manage(new Adjuster (imgIcon[8],-100,100,1,0));
-	if (bwredgam->delay < 50) bwredgam->delay = 50;
-	
-	bwredgam->setAdjusterListener (this);
-	bwredgam->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));
-	bwredgam->show();
-	pack_start( *bwredgam, Gtk::PACK_SHRINK, 0);
-	
-	gglabel = Gtk::manage (new Gtk::Label ());
-    gglabel->set_markup (Glib::ustring( M("TP_BWMIX_GAM_GREEN")));
-    gglabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*gglabel, Gtk::PACK_SHRINK, 0);
+	enabledcc->set_active (true);
+	enabledcc->set_tooltip_markup (M("TP_BWMIX_CC_TOOLTIP"));
 
-	bwgreengam= Gtk::manage(new Adjuster (imgIcon[9],-100,100,1,0));
-	if (bwgreengam->delay < 50) bwgreengam->delay = 50;
-	bwgreengam->setAdjusterListener (this);
-	bwgreengam->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));	
-	bwgreengam->show();
-	pack_start( *bwgreengam, Gtk::PACK_SHRINK, 0);
+	mixerVBox->pack_start(*enabledcc, Gtk::PACK_SHRINK, 0);
+	enabledcc->show ();
+	enaccconn = enabledcc->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::enabledcc_toggled) );
 
-	bglabel = Gtk::manage (new Gtk::Label ());
-    bglabel->set_markup (Glib::ustring( M("TP_BWMIX_GAM_BLUE")));
-    bglabel->set_alignment(Gtk::ALIGN_LEFT);
-    pack_start (*bglabel, Gtk::PACK_SHRINK, 0);
-	
-	bwbluegam= Gtk::manage(new Adjuster (imgIcon[10],-100,100,1,0));
-	if (bwbluegam->delay < 50) bwbluegam->delay = 50;
-	bwbluegam->setAdjusterListener (this);
-	bwbluegam->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));
-	bwbluegam->show();
-	pack_start( *bwbluegam, Gtk::PACK_SHRINK, 0);
+	//----------- Color Filters ------------------------------
 
-	enaconn    = enabled->signal_toggled().connect( sigc::mem_fun(*this, &ChMixerbw::enabled_toggled) );
-	
-	enaccconn    = enabledcc->signal_toggled().connect( sigc::mem_fun(*this, &ChMixerbw::enabledcc_toggled) );
-	filconn = fil->signal_changed().connect ( sigc::mem_fun(*this, &ChMixerbw::filChanged) );
-	setconn = set->signal_changed().connect ( sigc::mem_fun(*this, &ChMixerbw::setChanged) );
-	metconn = met->signal_changed().connect ( sigc::mem_fun(*this, &ChMixerbw::metChanged) );
+	filterSep = Gtk::manage (new  Gtk::HSeparator());
+	mixerVBox->pack_start (*filterSep);
 
-//----------- Curve 1 ------------------------------
-  pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+	filterHBox = Gtk::manage (new Gtk::HBox ());
+	filterHBox->set_border_width (0);
+	filterHBox->set_spacing (2);
+	filterHBox->set_tooltip_markup (M("TP_BWMIX_FILTER_TOOLTIP"));
+	Gtk::Label *filterLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_FILTER")+":"));
+	filterHBox->pack_start (*filterLabel, Gtk::PACK_SHRINK);
+	filter = Gtk::manage (new MyComboBoxText ());
+	filter->append_text (M("TP_BWMIX_FILTER_NONE"));
+	filter->append_text (M("TP_BWMIX_FILTER_RED"));
+	filter->append_text (M("TP_BWMIX_FILTER_REDYELLOW"));
+	filter->append_text (M("TP_BWMIX_FILTER_YELLOW"));
+	filter->append_text (M("TP_BWMIX_FILTER_GREENYELLOW"));
+	filter->append_text (M("TP_BWMIX_FILTER_GREEN"));
+	filter->append_text (M("TP_BWMIX_FILTER_BLUEGREEN"));
+	filter->append_text (M("TP_BWMIX_FILTER_BLUE"));
+	filter->append_text (M("TP_BWMIX_FILTER_PURPLE"));
 
-  toneCurveBW = Gtk::manage (new MyComboBoxText ());
-  toneCurveBW->append_text (M("TP_BWMIX_TCMODE_STANDARD"));
-  toneCurveBW->append_text (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
-  toneCurveBW->append_text (M("TP_BWMIX_TCMODE_FILMLIKE"));
-  toneCurveBW->append_text (M("TP_BWMIX_TCMODE_SATANDVALBLENDING"));
-  toneCurveBW->set_active (0);
-  toneCurveBW->set_tooltip_text(M("TP_BWMIX_TCMODE_LABEL1"));
+	filter->set_active (0);
+	filterHBox->pack_start (*filter);
+	mixerVBox->pack_start (*filterHBox);
+	filterconn = filter->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::filterChanged) );
 
-  curveEditorGBW = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CURVEEDITOR1"));
-  curveEditorGBW->setCurveListener (this);
+	//----------- RGB / ROYGCBMP Mixer ------------------------------
 
-  shape = static_cast<DiagonalCurveEditor*>(curveEditorGBW->addCurve(CT_Diagonal, "", toneCurveBW));
-  shape->setBottomBarBgGradient(bottomMilestonesbw);
-  shape->setLeftBarBgGradient(bottomMilestonesbw);
-  shape->setTooltip(M("TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP"));
+	imgIcon[0] = Gtk::manage (new RTImage ("Chanmixer-R.png"));
+	imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer-G.png"));
+	imgIcon[2] = Gtk::manage (new RTImage ("Chanmixer-B.png"));
+	imgIcon[3] = Gtk::manage (new RTImage ("Chanmixer-O.png"));
+	imgIcon[4] = Gtk::manage (new RTImage ("Chanmixer-Y.png"));
+	imgIcon[5] = Gtk::manage (new RTImage ("Chanmixer-C.png"));
+	imgIcon[6] = Gtk::manage (new RTImage ("Chanmixer-M.png"));
+	imgIcon[7] = Gtk::manage (new RTImage ("Chanmixer-P.png"));
 
-  // This will add the reset button at the end of the curveType buttons
-  curveEditorGBW->curveListComplete();
+	imgIcon[8]  = Gtk::manage (new RTImage ("Chanmixer-Rgamma.png"));
+	imgIcon[9]  = Gtk::manage (new RTImage ("Chanmixer-Ggamma.png"));
+	imgIcon[10] = Gtk::manage (new RTImage ("Chanmixer-Bgamma.png"));
 
-  pack_start( *curveEditorGBW, Gtk::PACK_SHRINK, 2);
+	mixerVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  tcmodeconn = toneCurveBW->signal_changed().connect( sigc::mem_fun(*this, &ChMixerbw::curveMode1Changed), true );
+	mixerRed= Gtk::manage(new Adjuster (/*M("TP_BWMIX_RED")*/"", -100, 200, 1, 33, imgIcon[0]));
+	if (mixerRed->delay < 50) mixerRed->delay = 50;
+	mixerRed->setAdjusterListener (this);
+	mixerRed->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerRed->show();
+	mixerVBox->pack_start( *mixerRed, Gtk::PACK_SHRINK, 0);
 
-//----------- Curve 2 ------------------------------
-  toneCurveBW2 = Gtk::manage (new MyComboBoxText ());
-  toneCurveBW2->append_text (M("TP_BWMIX_TCMODE_STANDARD"));
-//  toneCurveBW2->append_text (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
-  toneCurveBW2->set_active (0);
-  toneCurveBW2->set_tooltip_text(M("TP_BWMIX_TCMODE_LABEL2"));
+	mixerOrange= Gtk::manage(new Adjuster (/*M("TP_BWMIX_ORANGE")*/"", -100, 200, 1, 33, imgIcon[3]));
+	if (mixerOrange->delay < 50) mixerOrange->delay = 50;
+	mixerOrange->setAdjusterListener (this);
+	mixerOrange->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerOrange->show();
+	mixerVBox->pack_start( *mixerOrange, Gtk::PACK_SHRINK, 0);
+
+	mixerYellow= Gtk::manage(new Adjuster (/*M("TP_BWMIX_YELLOW")*/"", -100, 200, 1, 33, imgIcon[4]));
+	if (mixerYellow->delay < 50) mixerYellow->delay = 50;
+	mixerYellow->setAdjusterListener (this);
+	mixerYellow->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerYellow->show();
+	mixerVBox->pack_start( *mixerYellow, Gtk::PACK_SHRINK, 0);
+
+	mixerGreen= Gtk::manage(new Adjuster (/*M("TP_BWMIX_GREEN")*/"", -100, 200, 1, 33, imgIcon[1]));
+	if (mixerGreen->delay < 50) mixerGreen->delay = 50;
+	mixerGreen->setAdjusterListener (this);
+	mixerGreen->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerGreen->show();
+	mixerVBox->pack_start( *mixerGreen, Gtk::PACK_SHRINK, 0);
+
+	mixerCyan= Gtk::manage(new Adjuster (/*M("TP_BWMIX_CYAN")*/"", -100, 200, 1, 33, imgIcon[5]));
+	if (mixerCyan->delay < 50) mixerCyan->delay = 50;
+	mixerCyan->setAdjusterListener (this);
+	mixerCyan->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerCyan->show();
+	mixerVBox->pack_start( *mixerCyan, Gtk::PACK_SHRINK, 0);
+
+	mixerBlue= Gtk::manage(new Adjuster (/*M("TP_BWMIX_BLUE")*/"", -100, 200, 1, 33, imgIcon[2]));
+	if (mixerBlue->delay < 50) mixerBlue->delay = 50;
+	mixerBlue->setAdjusterListener (this);
+	mixerBlue->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerBlue->show();
+	mixerVBox->pack_start( *mixerBlue, Gtk::PACK_SHRINK, 0);
+
+	mixerMagenta= Gtk::manage(new Adjuster (/*M("TP_BWMIX_MAGENTA")*/"", -100, 200, 1, 33, imgIcon[6]));
+	if (mixerMagenta->delay < 50) mixerMagenta->delay = 50;
+	mixerMagenta->setAdjusterListener (this);
+	mixerMagenta->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerMagenta->show();
+	mixerVBox->pack_start( *mixerMagenta, Gtk::PACK_SHRINK, 0);
+
+	mixerPurple= Gtk::manage(new Adjuster (/*M("TP_BWMIX_PURPLE")*/"", -100, 200, 1, 33, imgIcon[7]));
+	if (mixerPurple->delay < 50) mixerPurple->delay = 50;
+	mixerPurple->setAdjusterListener (this);
+	mixerPurple->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerPurple->show();
+	mixerVBox->pack_start( *mixerPurple, Gtk::PACK_SHRINK, 0);
+
+	mixerFrame->add(*mixerVBox);
+
+	//----------- Gamma sliders ------------------------------
+
+	gammaFrame = Gtk::manage (new Gtk::Frame (M("TP_BWMIX_GAMMA")));
+	pack_start (*gammaFrame, Gtk::PACK_SHRINK, 0);
+
+	Gtk::VBox *gammaVBox = Gtk::manage (new Gtk::VBox());
+	gammaVBox->set_spacing(4);
+	gammaVBox->set_border_width(4);
 
 
+	gammaRed= Gtk::manage(new Adjuster (/*M("TP_BWMIX_GAM_RED")*/"", -100, 100, 1, 0, imgIcon[8]));
+	if (gammaRed->delay < 50) gammaRed->delay = 50;
 
-  // Delete this line when toneCurveBW2 will have more than one entry
-  toneCurveBW2->hide();
+	gammaRed->setAdjusterListener (this);
+	gammaRed->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));
+	gammaRed->show();
+	gammaVBox->pack_start( *gammaRed, Gtk::PACK_SHRINK, 0);
 
+	gammaGreen= Gtk::manage(new Adjuster (/*M("TP_BWMIX_GAM_GREEN")*/"", -100, 100, 1, 0, imgIcon[9]));
+	if (gammaGreen->delay < 50) gammaGreen->delay = 50;
+	gammaGreen->setAdjusterListener (this);
+	gammaGreen->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));	
+	gammaGreen->show();
+	gammaVBox->pack_start( *gammaGreen, Gtk::PACK_SHRINK, 0);
 
+	gammaBlue= Gtk::manage(new Adjuster (/*M("TP_BWMIX_GAM_BLUE")*/"", -100, 100, 1, 0, imgIcon[10]));
+	if (gammaBlue->delay < 50) gammaBlue->delay = 50;
+	gammaBlue->setAdjusterListener (this);
+	gammaBlue->set_tooltip_markup (M("TP_BWMIX_GAM_TOOLTIP"));
+	gammaBlue->show();
+	gammaVBox->pack_start( *gammaBlue, Gtk::PACK_SHRINK, 0);
 
+	gammaFrame->add(*gammaVBox);
 
-  curveEditorGBW2 = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CURVEEDITOR2"));
-  curveEditorGBW2->setCurveListener (this);
+	//----------- Curve 1 ------------------------------
 
-  shape2 = static_cast<DiagonalCurveEditor*>(curveEditorGBW2->addCurve(CT_Diagonal, "", toneCurveBW2));
-  shape2->setBottomBarBgGradient(bottomMilestonesbw);
-  shape2->setLeftBarBgGradient(bottomMilestonesbw);
-  shape2->setTooltip(M("TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP"));
+	std::vector<GradientMilestone> bottomMilestonesbw;
+	bottomMilestonesbw.push_back( GradientMilestone(0., 0., 0., 0.) );
+	bottomMilestonesbw.push_back( GradientMilestone(1., 1., 1., 1.) );
 
-  curveEditorGBW2->curveListComplete();
+	beforeCurveMode = Gtk::manage (new MyComboBoxText ());
+	beforeCurveMode->append_text (M("TP_BWMIX_TCMODE_STANDARD"));
+	beforeCurveMode->append_text (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
+	beforeCurveMode->append_text (M("TP_BWMIX_TCMODE_FILMLIKE"));
+	beforeCurveMode->append_text (M("TP_BWMIX_TCMODE_SATANDVALBLENDING"));
+	beforeCurveMode->set_active (0);
 
-  pack_start( *curveEditorGBW2, Gtk::PACK_SHRINK, 2);
+	beforeCurveCEG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CURVEEDITOR1"));
+	beforeCurveCEG->setCurveListener (this);
 
-  tcmodeconn2 = toneCurveBW2->signal_changed().connect( sigc::mem_fun(*this, &ChMixerbw::curveMode1Changed2), true );
-		
-  show_all();
+	beforeCurve = static_cast<DiagonalCurveEditor*>(beforeCurveCEG->addCurve(CT_Diagonal, "", beforeCurveMode));
+	beforeCurve->setBottomBarBgGradient(bottomMilestonesbw);
+	beforeCurve->setLeftBarBgGradient(bottomMilestonesbw);
+	beforeCurve->setTooltip(M("TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP"));
+
+	// This will add the reset button at the end of the curveType buttons
+	beforeCurveCEG->curveListComplete();
+
+	pack_start( *beforeCurveCEG, Gtk::PACK_SHRINK, 2);
+
+	tcmodeconn = beforeCurveMode->signal_changed().connect( sigc::mem_fun(*this, &BlackWhite::curveMode1Changed), true );
+
+	//----------- Curve 2 ------------------------------
+
+	afterCurveMode = Gtk::manage (new MyComboBoxText ());
+	afterCurveMode->append_text (M("TP_BWMIX_TCMODE_STANDARD"));
+	//  afterCurveMode->append_text (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
+	afterCurveMode->set_active (0);
+
+	afterCurveCEG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CURVEEDITOR2"));
+	afterCurveCEG->setCurveListener (this);
+
+	afterCurve = static_cast<DiagonalCurveEditor*>(afterCurveCEG->addCurve(CT_Diagonal, "", afterCurveMode));
+	afterCurve->setBottomBarBgGradient(bottomMilestonesbw);
+	afterCurve->setLeftBarBgGradient(bottomMilestonesbw);
+	afterCurve->setTooltip(M("TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP"));
+
+	afterCurveCEG->curveListComplete();
+
+	pack_start( *afterCurveCEG, Gtk::PACK_SHRINK, 2);
+
+	tcmodeconn2 = afterCurveMode->signal_changed().connect( sigc::mem_fun(*this, &BlackWhite::curveMode1Changed2), true );
+
+	show_all();
 }
-ChMixerbw::~ChMixerbw () {
-	delete curveEditorG;
-	delete curveEditorGBW;
-	delete curveEditorGBW2;
+BlackWhite::~BlackWhite () {
+	delete luminanceCEG;
+	delete beforeCurveCEG;
+	delete afterCurveCEG;
 }
 
 int BWChangedUI (void* data) {
-    GThreadLock lock; 
-    (static_cast<ChMixerbw*>(data))->BWComputed_ ();
-    return 0;
+	GThreadLock lock;
+	(static_cast<BlackWhite*>(data))->BWComputed_ ();
+	return 0;
 }
 
-void ChMixerbw::BWChanged  (double redbw, double greenbw, double bluebw){
-    nextredbw = redbw;
-    nextgreenbw = greenbw;
-    nextbluebw = bluebw;
-    g_idle_add (BWChangedUI, this);
+void BlackWhite::BWChanged  (double redbw, double greenbw, double bluebw){
+	nextredbw = redbw;
+	nextgreenbw = greenbw;
+	nextbluebw = bluebw;
+	g_idle_add (BWChangedUI, this);
 }
 
-bool ChMixerbw::BWComputed_ () {
+bool BlackWhite::BWComputed_ () {
 
-    disableListener ();
-    bwred->setValue (nextredbw);
-    bwgreen->setValue (nextgreenbw);
-    bwblue->setValue (nextbluebw);
-    enableListener ();
+	disableListener ();
+	mixerRed->setValue (nextredbw);
+	mixerGreen->setValue (nextgreenbw);
+	mixerBlue->setValue (nextbluebw);
+	enableListener ();
 
-    return false;
+	return false;
 }
 
-void ChMixerbw::read (const ProcParams* pp, const ParamsEdited* pedited) {
+void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
-    disableListener ();
-	metconn.block(true);
-    autoconn.block (true);
-    autoch->set_active (pp->chmixerbw.autoc);
-    lastAuto = pp->chmixerbw.autoc;
-	
-	if (pedited && !pedited->chmixerbw.met)
-		met->set_active (4);
-	else if (pp->chmixerbw.met=="No")
-		met->set_active (0);
-	else if (pp->chmixerbw.met=="De")
-		met->set_active (1);
-	else if (pp->chmixerbw.met=="Le")
-		met->set_active (2);
-	else if (pp->chmixerbw.met=="Ch")
-		met->set_active (3);
-	metconn.block(false);
-	metChanged();
-	
-	
-	filconn.block(true);
-	if (pedited && !pedited->chmixerbw.fil)
-		fil->set_active (9);
-	else if (pp->chmixerbw.fil=="No")
-		fil->set_active (0);
-	else if (pp->chmixerbw.fil=="Re")
-		fil->set_active (1);
-	else if (pp->chmixerbw.fil=="Or")
-		fil->set_active (2);
-	else if (pp->chmixerbw.fil=="Ye")
-		fil->set_active (3);
-	else if (pp->chmixerbw.fil=="Yg")
-		fil->set_active (4);
-	else if (pp->chmixerbw.fil=="Gr")
-		fil->set_active (5);
-	else if (pp->chmixerbw.fil=="Cy")
-		fil->set_active (6);
-	else if (pp->chmixerbw.fil=="Bl")
-		fil->set_active (7);
-	else if (pp->chmixerbw.fil=="Pu")
-		fil->set_active (8);	
-	filconn.block(false);
-	filChanged();
-
-	setconn.block(true);
-	if (pedited && !pedited->chmixerbw.set)
-		set->set_active (15);
-	else if (pp->chmixerbw.set=="Nc")
-		set->set_active (0);
-	else if (pp->chmixerbw.set=="Hc")
-		set->set_active (1);
-	else if (pp->chmixerbw.set=="Lu")
-		set->set_active (2);
-	else if (pp->chmixerbw.set=="La")
-		set->set_active (3);
-	else if (pp->chmixerbw.set=="Po")
-		set->set_active (4);
-	else if (pp->chmixerbw.set=="Ls")
-		set->set_active (5);
-	else if (pp->chmixerbw.set=="Hs")
-		set->set_active (6);		
-	else if (pp->chmixerbw.set=="Pa")
-		set->set_active (7);		
-	else if (pp->chmixerbw.set=="Hp")
-		set->set_active (8);
-	else if (pp->chmixerbw.set=="Or")
-		set->set_active (9);		
-	else if (pp->chmixerbw.set=="Ma")
-		set->set_active (10);
-	else if (pp->chmixerbw.set=="Mr")
-		set->set_active (11);
-	else if (pp->chmixerbw.set=="Fa")
-		set->set_active (12);
-	else if (pp->chmixerbw.set=="Fr")
-		set->set_active (13);
-	else if (pp->chmixerbw.set=="Ir")
-		set->set_active (14);
-
-		
-	setconn.block(false);
-	setChanged();
-	
-
-    if (pedited) {
-        vshape->setUnChanged (!pedited->chmixerbw.vcurve);
-        shape->setUnChanged (!pedited->chmixerbw.curve);
-        shape2->setUnChanged (!pedited->chmixerbw.curve2);
-        autoch->set_inconsistent (!pedited->chmixerbw.autoc);
-		enabled->set_inconsistent  (!pedited->chmixerbw.enabled);
-		enabledcc->set_inconsistent  (!pedited->chmixerbw.enabledcc);
-		bwred->setEditedState (pedited->chmixerbw.bwred ? Edited : UnEdited);
-		bwgreen->setEditedState (pedited->chmixerbw.bwgreen ? Edited : UnEdited);
-		bwblue->setEditedState (pedited->chmixerbw.bwblue ? Edited : UnEdited);
-		bwredgam->setEditedState (pedited->chmixerbw.bwredgam ? Edited : UnEdited);
-		bwgreengam->setEditedState (pedited->chmixerbw.bwgreengam ? Edited : UnEdited);
-		bwbluegam->setEditedState (pedited->chmixerbw.bwbluegam ? Edited : UnEdited);
-		bworan->setEditedState (pedited->chmixerbw.bworan ? Edited : UnEdited);
-		bwyell->setEditedState (pedited->chmixerbw.bwyell ? Edited : UnEdited);
-		bwcyan->setEditedState (pedited->chmixerbw.bwcyan ? Edited : UnEdited);
-		bwmag->setEditedState (pedited->chmixerbw.bwmag ? Edited : UnEdited);
-		bwpur->setEditedState (pedited->chmixerbw.bwpur ? Edited : UnEdited);
-        if (!pedited->chmixerbw.curveMode) {
-            toneCurveBW->set_active(4);
-        }
-        if (!pedited->chmixerbw.curveMode2) {
-            toneCurveBW2->set_active(1);
-        }	
-	}
-    autoconn.block (false);	
+	disableListener ();
+	methodconn.block(true);
+	//autoconn.block (true);
+	filterconn.block(true);
+	settingconn.block(true);
 	enaccconn.block (true);
-	enabledcc->set_active (pp->chmixerbw.enabledcc);
-	enaccconn.block (false);
-	lastEnabledcc = pp->chmixerbw.enabledcc;
 	enaconn.block (true);
-	enabled->set_active (pp->chmixerbw.enabled);
+
+
+	if (pedited && !pedited->blackwhite.setting)
+		setting->set_active (15); // "Unchanged"
+	else if (pp->blackwhite.setting=="NormalContrast")
+		setting->set_active (0);
+	else if (pp->blackwhite.setting=="HighContrast")
+		setting->set_active (1);
+	else if (pp->blackwhite.setting=="Luminance")
+		setting->set_active (2);
+	else if (pp->blackwhite.setting=="Landscape")
+		setting->set_active (3);
+	else if (pp->blackwhite.setting=="Portrait")
+		setting->set_active (4);
+	else if (pp->blackwhite.setting=="LowSensitivity")
+		setting->set_active (5);
+	else if (pp->blackwhite.setting=="HighSensitivity")
+		setting->set_active (6);
+	else if (pp->blackwhite.setting=="Panchromatic")
+		setting->set_active (7);
+	else if (pp->blackwhite.setting=="HyperPanchromatic")
+		setting->set_active (8);
+	else if (pp->blackwhite.setting=="Orthochromatic")
+		setting->set_active (9);
+	else if (pp->blackwhite.setting=="RGB-Abs")
+		setting->set_active (10);
+	else if (pp->blackwhite.setting=="RGB-Rel")
+		setting->set_active (11);
+	else if (pp->blackwhite.setting=="ROYGCBMP-Abs")
+		setting->set_active (12);
+	else if (pp->blackwhite.setting=="ROYGCBMP-Rel")
+		setting->set_active (13);
+	else if (pp->blackwhite.setting=="InfraRed")
+		setting->set_active (14);
+	settingChanged();
+
+
+	if (pedited && !pedited->blackwhite.method)
+		method->set_active (3); // "Unchanged"
+	else if (pp->blackwhite.method=="Desaturation")
+		method->set_active (0);
+	else if (pp->blackwhite.method=="LumEqualizer")
+		method->set_active (1);
+	else if (pp->blackwhite.method=="ChannelMixer")
+		method->set_active (2);
+	methodChanged();
+
+	
+	if (pedited && !pedited->blackwhite.filter)
+		filter->set_active (9); // "Unchanged"
+	else if (pp->blackwhite.filter=="None")
+		filter->set_active (0);
+	else if (pp->blackwhite.filter=="Red")
+		filter->set_active (1);
+	else if (pp->blackwhite.filter=="Orange")
+		filter->set_active (2);
+	else if (pp->blackwhite.filter=="Yellow")
+		filter->set_active (3);
+	else if (pp->blackwhite.filter=="YellowGreen")
+		filter->set_active (4);
+	else if (pp->blackwhite.filter=="Green")
+		filter->set_active (5);
+	else if (pp->blackwhite.filter=="Cyan")
+		filter->set_active (6);
+	else if (pp->blackwhite.filter=="Blue")
+		filter->set_active (7);
+	else if (pp->blackwhite.filter=="Purple")
+		filter->set_active (8);
+	filterChanged();
+
+	enabledcc->set_active (pp->blackwhite.enabledcc);
+	lastEnabledcc = pp->blackwhite.enabledcc;
+	enabled->set_active (pp->blackwhite.enabled);
+	lastEnabled = pp->blackwhite.enabled;
+
+	mixerRed->setValue (pp->blackwhite.mixerRed);
+	mixerGreen->setValue (pp->blackwhite.mixerGreen);
+	mixerBlue->setValue (pp->blackwhite.mixerBlue);
+	gammaRed->setValue (pp->blackwhite.gammaRed);
+	gammaGreen->setValue (pp->blackwhite.gammaGreen);
+	gammaBlue->setValue (pp->blackwhite.gammaBlue);
+	mixerOrange->setValue (pp->blackwhite.mixerOrange);
+	mixerYellow->setValue (pp->blackwhite.mixerYellow);
+	mixerCyan->setValue (pp->blackwhite.mixerCyan);
+	mixerMagenta->setValue (pp->blackwhite.mixerMagenta);
+	mixerPurple->setValue (pp->blackwhite.mixerPurple);
+	luminanceCurve->setCurve (pp->blackwhite.luminanceCurve);
+	beforeCurve->setCurve (pp->blackwhite.beforeCurve);
+	beforeCurveMode->set_active(pp->blackwhite.beforeCurveMode);
+	afterCurve->setCurve (pp->blackwhite.afterCurve);
+	afterCurveMode->set_active(pp->blackwhite.afterCurveMode);
+
+	autoch->set_active (pp->blackwhite.autoc);
+	lastAuto = pp->blackwhite.autoc;
+
+	if (pedited) {
+		luminanceCurve->setUnChanged (!pedited->blackwhite.luminanceCurve);
+		beforeCurve->setUnChanged (!pedited->blackwhite.beforeCurve);
+		afterCurve->setUnChanged (!pedited->blackwhite.afterCurve);
+		autoch->set_inconsistent (!pedited->blackwhite.autoc);
+		enabled->set_inconsistent  (!pedited->blackwhite.enabled);
+		enabledcc->set_inconsistent  (!pedited->blackwhite.enabledcc);
+		mixerRed->setEditedState (pedited->blackwhite.mixerRed ? Edited : UnEdited);
+		mixerGreen->setEditedState (pedited->blackwhite.mixerGreen ? Edited : UnEdited);
+		mixerBlue->setEditedState (pedited->blackwhite.mixerBlue ? Edited : UnEdited);
+		gammaRed->setEditedState (pedited->blackwhite.gammaRed ? Edited : UnEdited);
+		gammaGreen->setEditedState (pedited->blackwhite.gammaGreen ? Edited : UnEdited);
+		gammaBlue->setEditedState (pedited->blackwhite.gammaBlue ? Edited : UnEdited);
+		mixerOrange->setEditedState (pedited->blackwhite.mixerOrange ? Edited : UnEdited);
+		mixerYellow->setEditedState (pedited->blackwhite.mixerYellow ? Edited : UnEdited);
+		mixerCyan->setEditedState (pedited->blackwhite.mixerCyan ? Edited : UnEdited);
+		mixerMagenta->setEditedState (pedited->blackwhite.mixerMagenta ? Edited : UnEdited);
+		mixerPurple->setEditedState (pedited->blackwhite.mixerPurple ? Edited : UnEdited);
+		if (!pedited->blackwhite.beforeCurveMode) {
+			beforeCurveMode->set_active(4); // "Unchanged"
+		}
+		if (!pedited->blackwhite.afterCurveMode) {
+			afterCurveMode->set_active(1); // "Unchanged"
+		}
+	}
+	methodconn.block(false);
+	filterconn.block(false);
+	settingconn.block(false);
+	//autoconn.block (false);
 	enaconn.block (false);
-	lastEnabled = pp->chmixerbw.enabled;
-	bwred->setValue (pp->chmixerbw.bwred);
-	bwgreen->setValue (pp->chmixerbw.bwgreen);
-	bwblue->setValue (pp->chmixerbw.bwblue);
-	bwredgam->setValue (pp->chmixerbw.bwredgam);
-	bwgreengam->setValue (pp->chmixerbw.bwgreengam);
-	bwbluegam->setValue (pp->chmixerbw.bwbluegam);
-	bworan->setValue (pp->chmixerbw.bworan);
-	bwyell->setValue (pp->chmixerbw.bwyell);
-	bwcyan->setValue (pp->chmixerbw.bwcyan);
-	bwmag->setValue (pp->chmixerbw.bwmag);
-	bwpur->setValue (pp->chmixerbw.bwpur);
-    vshape->setCurve         (pp->chmixerbw.vcurve);
-    shape->setCurve         (pp->chmixerbw.curve);
-    toneCurveBW->set_active(pp->chmixerbw.curveMode);
-    shape2->setCurve         (pp->chmixerbw.curve2);
-    toneCurveBW2->set_active(pp->chmixerbw.curveMode2);
-    enableListener ();
+	enaccconn.block (false);
+
+	enableListener ();
 }
 
-void ChMixerbw::write (ProcParams* pp, ParamsEdited* pedited) {
-	pp->chmixerbw.enabledcc    = enabledcc->get_active ();
-	pp->chmixerbw.enabled    = enabled->get_active ();
-    pp->chmixerbw.autoc = autoch->get_active();
-	pp->chmixerbw.bwred = bwred->getValue ();
-	pp->chmixerbw.bwgreen = bwgreen->getValue ();
-	pp->chmixerbw.bwblue = bwblue->getValue ();
-	pp->chmixerbw.bwredgam = bwredgam->getValue ();
-	pp->chmixerbw.bwgreengam = bwgreengam->getValue ();
-	pp->chmixerbw.bwbluegam = bwbluegam->getValue ();
-	pp->chmixerbw.bworan = bworan->getValue ();
-	pp->chmixerbw.bwyell = bwyell->getValue ();
-	pp->chmixerbw.bwcyan = bwcyan->getValue ();
-	pp->chmixerbw.bwmag = bwmag->getValue ();
-	pp->chmixerbw.bwpur = bwpur->getValue ();
-    pp->chmixerbw.vcurve = vshape->getCurve ();
-    pp->chmixerbw.curve = shape->getCurve ();
-    pp->chmixerbw.curve2 = shape2->getCurve ();
- 
-    int tcMode = toneCurveBW->get_active_row_number();
-    if      (tcMode == 0) pp->chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_STD_BW;
-    else if (tcMode == 1) pp->chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD_BW;
-    else if (tcMode == 2) pp->chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_FILMLIKE_BW;
-    else if (tcMode == 3) pp->chmixerbw.curveMode = ChannelMixerbwParams::TC_MODE_SATANDVALBLENDING_BW;
+void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited) {
+	pp->blackwhite.enabled = enabled->get_active ();
+	pp->blackwhite.luminanceCurve = luminanceCurve->getCurve ();
+	pp->blackwhite.autoc = autoch->get_active();
+	pp->blackwhite.enabledcc = enabledcc->get_active ();
+	pp->blackwhite.mixerRed = mixerRed->getValue ();
+	pp->blackwhite.mixerGreen = mixerGreen->getValue ();
+	pp->blackwhite.mixerBlue = mixerBlue->getValue ();
+	pp->blackwhite.gammaRed = gammaRed->getValue ();
+	pp->blackwhite.gammaGreen = gammaGreen->getValue ();
+	pp->blackwhite.gammaBlue = gammaBlue->getValue ();
+	pp->blackwhite.mixerOrange = mixerOrange->getValue ();
+	pp->blackwhite.mixerYellow = mixerYellow->getValue ();
+	pp->blackwhite.mixerCyan = mixerCyan->getValue ();
+	pp->blackwhite.mixerMagenta = mixerMagenta->getValue ();
+	pp->blackwhite.mixerPurple = mixerPurple->getValue ();
+	pp->blackwhite.beforeCurve = beforeCurve->getCurve ();
+	pp->blackwhite.afterCurve = afterCurve->getCurve ();
 
-    tcMode = toneCurveBW2->get_active_row_number();
-    if      (tcMode == 0) pp->chmixerbw.curveMode2 = ChannelMixerbwParams::TC_MODE_STD_BW;
-  //  else if (tcMode == 1) pp->chmixerbw.curveMode2 = ChannelMixerbwParams::TC_MODE_WEIGHTEDSTD;
+	int tcMode = beforeCurveMode->get_active_row_number();
+	if      (tcMode == 0) pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
+	else if (tcMode == 1) pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_WEIGHTEDSTD_BW;
+	else if (tcMode == 2) pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_FILMLIKE_BW;
+	else if (tcMode == 3) pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW;
+
+	tcMode = afterCurveMode->get_active_row_number();
+	if      (tcMode == 0) pp->blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
+	//  else if (tcMode == 1) pp->blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_WEIGHTEDSTD;
 	
-    if (pedited) { 
-        pedited->chmixerbw.vcurve = !vshape->isUnChanged ();
-		pedited->chmixerbw.enabled    = !enabled->get_inconsistent();
-        pedited->chmixerbw.curve = !shape->isUnChanged ();
-        pedited->chmixerbw.autoc    = !autoch->get_inconsistent();
-		pedited->chmixerbw.enabledcc    = !enabledcc->get_inconsistent();
-		pedited->chmixerbw.bwred = bwred->getEditedState ();
-		pedited->chmixerbw.bwgreen = bwgreen->getEditedState ();
-		pedited->chmixerbw.bwblue = bwblue->getEditedState ();
-		pedited->chmixerbw.bwredgam = bwredgam->getEditedState ();
-		pedited->chmixerbw.bwgreengam = bwgreengam->getEditedState ();
-		pedited->chmixerbw.bwbluegam = bwbluegam->getEditedState ();
-		pedited->chmixerbw.fil   = fil->get_active_text()!=M("GENERAL_UNCHANGED");
-		pedited->chmixerbw.set   = set->get_active_text()!=M("GENERAL_UNCHANGED");
-		pedited->chmixerbw.met   = met->get_active_text()!=M("GENERAL_UNCHANGED");
-		pedited->chmixerbw.bworan = bworan->getEditedState ();
-		pedited->chmixerbw.bwyell = bwyell->getEditedState ();
-		pedited->chmixerbw.bwcyan = bwcyan->getEditedState ();
-		pedited->chmixerbw.bwmag = bwmag->getEditedState ();
-		pedited->chmixerbw.bwpur = bwpur->getEditedState ();
-        pedited->chmixerbw.curveMode  = toneCurveBW->get_active_row_number() != 4;
-        pedited->chmixerbw.curveMode2  = toneCurveBW2->get_active_row_number() != 1;
+	if (pedited) {
+		pedited->blackwhite.enabled = !enabled->get_inconsistent();
+		pedited->blackwhite.luminanceCurve = !luminanceCurve->isUnChanged ();
+		pedited->blackwhite.autoc = !autoch->get_inconsistent();
+		pedited->blackwhite.enabledcc = !enabledcc->get_inconsistent();
+		pedited->blackwhite.mixerRed = mixerRed->getEditedState ();
+		pedited->blackwhite.mixerGreen = mixerGreen->getEditedState ();
+		pedited->blackwhite.mixerBlue = mixerBlue->getEditedState ();
+		pedited->blackwhite.gammaRed = gammaRed->getEditedState ();
+		pedited->blackwhite.gammaGreen = gammaGreen->getEditedState ();
+		pedited->blackwhite.gammaBlue = gammaBlue->getEditedState ();
+		pedited->blackwhite.filter = filter->get_active_text()!=M("GENERAL_UNCHANGED");
+		pedited->blackwhite.setting = setting->get_active_text()!=M("GENERAL_UNCHANGED");
+		pedited->blackwhite.method = method->get_active_text()!=M("GENERAL_UNCHANGED");
+		pedited->blackwhite.mixerOrange = mixerOrange->getEditedState ();
+		pedited->blackwhite.mixerYellow = mixerYellow->getEditedState ();
+		pedited->blackwhite.mixerCyan = mixerCyan->getEditedState ();
+		pedited->blackwhite.mixerMagenta = mixerMagenta->getEditedState ();
+		pedited->blackwhite.mixerPurple = mixerPurple->getEditedState ();
+		pedited->blackwhite.beforeCurve = !beforeCurve->isUnChanged ();
+		pedited->blackwhite.beforeCurveMode = beforeCurveMode->get_active_row_number() != 4;
+		pedited->blackwhite.afterCurve = !afterCurve->isUnChanged ();
+		pedited->blackwhite.afterCurveMode = afterCurveMode->get_active_row_number() != 1;
 	}
-	if (met->get_active_row_number()==0)
-		pp->chmixerbw.met = "No";
-	else if (met->get_active_row_number()==1)
-		pp->chmixerbw.met = "De";
-	else if (met->get_active_row_number()==2)
-		pp->chmixerbw.met = "Le";
-	else if (met->get_active_row_number()==3)
-		pp->chmixerbw.met = "Ch";
-	
-	
-	if (set->get_active_row_number()==0)
-		pp->chmixerbw.set = "Nc";
-	else if (set->get_active_row_number()==1)
-		pp->chmixerbw.set = "Hc";
-	else if (set->get_active_row_number()==2)
-		pp->chmixerbw.set = "Lu";
-	else if (set->get_active_row_number()==3)
-		pp->chmixerbw.set = "La";
-	else if (set->get_active_row_number()==4)
-		pp->chmixerbw.set = "Po";
-	else if (set->get_active_row_number()==5)
-		pp->chmixerbw.set = "Ls";
-	else if (set->get_active_row_number()==6)
-		pp->chmixerbw.set = "Hs";		
-	else if (set->get_active_row_number()==7)
-		pp->chmixerbw.set = "Pa";		
-	else if (set->get_active_row_number()==8)
-		pp->chmixerbw.set = "Hp";	
-	else if (set->get_active_row_number()==9)
-		pp->chmixerbw.set = "Or";		
-	else if (set->get_active_row_number()==10)
-		pp->chmixerbw.set = "Ma";
-	else if (set->get_active_row_number()==11)
-		pp->chmixerbw.set = "Mr";
-	else if (set->get_active_row_number()==12)
-		pp->chmixerbw.set = "Fa";
-	else if (set->get_active_row_number()==13)
-		pp->chmixerbw.set = "Fr";
-	else if (set->get_active_row_number()==14)
-		pp->chmixerbw.set = "Ir";
-		
-	
-	if (fil->get_active_row_number()==0)
-		pp->chmixerbw.fil = "No";
-	else if (fil->get_active_row_number()==1)
-		pp->chmixerbw.fil = "Re";
-	else if (fil->get_active_row_number()==2)
-		pp->chmixerbw.fil = "Or";
-	else if (fil->get_active_row_number()==3)
-		pp->chmixerbw.fil = "Ye";
-	else if (fil->get_active_row_number()==4)
-		pp->chmixerbw.fil = "Yg";
-	else if (fil->get_active_row_number()==5)
-		pp->chmixerbw.fil = "Gr";
-	else if (fil->get_active_row_number()==6)
-		pp->chmixerbw.fil = "Cy";	
-	else if (fil->get_active_row_number()==7)
-		pp->chmixerbw.fil = "Bl";
-	else if (fil->get_active_row_number()==8)
-		pp->chmixerbw.fil = "Pu";	
+	if (method->get_active_row_number()==0)
+		pp->blackwhite.method = "Desaturation";
+	else if (method->get_active_row_number()==1)
+		pp->blackwhite.method = "LumEqualizer";
+	else if (method->get_active_row_number()==2)
+		pp->blackwhite.method = "ChannelMixer";
+
+	if (setting->get_active_row_number()==0)
+		pp->blackwhite.setting = "NormalContrast";
+	else if (setting->get_active_row_number()==1)
+		pp->blackwhite.setting = "HighContrast";
+	else if (setting->get_active_row_number()==2)
+		pp->blackwhite.setting = "Luminance";
+	else if (setting->get_active_row_number()==3)
+		pp->blackwhite.setting = "Landscape";
+	else if (setting->get_active_row_number()==4)
+		pp->blackwhite.setting = "Portrait";
+	else if (setting->get_active_row_number()==5)
+		pp->blackwhite.setting = "LowSensitivity";
+	else if (setting->get_active_row_number()==6)
+		pp->blackwhite.setting = "HighSensitivity";
+	else if (setting->get_active_row_number()==7)
+		pp->blackwhite.setting = "Panchromatic";
+	else if (setting->get_active_row_number()==8)
+		pp->blackwhite.setting = "HyperPanchromatic";
+	else if (setting->get_active_row_number()==9)
+		pp->blackwhite.setting = "Orthochromatic";
+	else if (setting->get_active_row_number()==10)
+		pp->blackwhite.setting = "RGB-Abs";
+	else if (setting->get_active_row_number()==11)
+		pp->blackwhite.setting = "RGB-Rel";
+	else if (setting->get_active_row_number()==12)
+		pp->blackwhite.setting = "ROYGCBMP-Abs";
+	else if (setting->get_active_row_number()==13)
+		pp->blackwhite.setting = "ROYGCBMP-Rel";
+	else if (setting->get_active_row_number()==14)
+		pp->blackwhite.setting = "InfraRed";
+
+	if (filter->get_active_row_number()==0)
+		pp->blackwhite.filter = "None";
+	else if (filter->get_active_row_number()==1)
+		pp->blackwhite.filter = "Red";
+	else if (filter->get_active_row_number()==2)
+		pp->blackwhite.filter = "Orange";
+	else if (filter->get_active_row_number()==3)
+		pp->blackwhite.filter = "Yellow";
+	else if (filter->get_active_row_number()==4)
+		pp->blackwhite.filter = "YellowGreen";
+	else if (filter->get_active_row_number()==5)
+		pp->blackwhite.filter = "Green";
+	else if (filter->get_active_row_number()==6)
+		pp->blackwhite.filter = "Cyan";
+	else if (filter->get_active_row_number()==7)
+		pp->blackwhite.filter = "Blue";
+	else if (filter->get_active_row_number()==8)
+		pp->blackwhite.filter = "Purple";
 }
-void ChMixerbw::curveChanged (CurveEditor* ce) {
+
+void BlackWhite::curveChanged (CurveEditor* ce) {
 	if (listener) {
-        if (ce == shape)
-            listener->panelChanged (EvToneCurvebw1, M("HISTORY_CUSTOMCURVE"));
-        if (ce == shape2)
-            listener->panelChanged (EvToneCurvebw2, M("HISTORY_CUSTOMCURVE"));
-		if (ce == vshape)
-			listener->panelChanged (EvBWequalV, M("HISTORY_CUSTOMCURVE"));	
+		if (ce == beforeCurve)
+			listener->panelChanged (EvBWBeforeCurve, M("HISTORY_CUSTOMCURVE"));
+		if (ce == afterCurve)
+			listener->panelChanged (EvBWAfterCurve, M("HISTORY_CUSTOMCURVE"));
+		if (ce == luminanceCurve)
+			listener->panelChanged (EvBWLuminanceEqual, M("HISTORY_CUSTOMCURVE"));
 	}
 }
 
-void ChMixerbw::curveMode1Changed () {
-    if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ChMixerbw::curveMode1Changed_));
+void BlackWhite::curveMode1Changed () {
+	if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &BlackWhite::curveMode1Changed_));
 }
-bool ChMixerbw::curveMode1Changed_ () {
-    if (listener) listener->panelChanged (EvToneCurveBWMode1, toneCurveBW->get_active_text());
-    return false;
+bool BlackWhite::curveMode1Changed_ () {
+	if (listener) listener->panelChanged (EvBWBeforeCurveMode, escapeHtmlChars(beforeCurveMode->get_active_text()));
+	return false;
 }
-void ChMixerbw::curveMode1Changed2 () {
-    if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &ChMixerbw::curveMode1Changed2_));
+void BlackWhite::curveMode1Changed2 () {
+	if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &BlackWhite::curveMode1Changed2_));
 }
-bool ChMixerbw::curveMode1Changed2_ () {
-    if (listener) listener->panelChanged (EvToneCurveBWMode2, toneCurveBW2->get_active_text());
-    return false;
+bool BlackWhite::curveMode1Changed2_ () {
+	if (listener) listener->panelChanged (EvBWAfterCurveMode, escapeHtmlChars(afterCurveMode->get_active_text()));
+	return false;
 }
 
-void ChMixerbw::colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {
+void BlackWhite::colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {
 
 	float r, g, b;
 
@@ -718,282 +686,93 @@ void ChMixerbw::colorForValue (double valX, double valY, int callerId, ColorCall
 	else {
 		printf("Error: no curve displayed!\n");
 	}
-
 }
 
 
-void ChMixerbw::setChanged () {
+void BlackWhite::settingChanged () {
 
-	if ( set->get_active_row_number()==10 || set->get_active_row_number()==11 ) {
-	bwred->show();
-	bwred->set_sensitive (true);
-	bwgreen->show();
-	bwgreen->set_sensitive (true);
-	bwblue->show();
-	bwblue->set_sensitive (true);
-	bwredgam->show();
-	bwgreengam->show();
-	bwbluegam->show();
-	bworan->hide();
-	bwyell->hide();
-	bwcyan->hide();
-	bwmag->hide();
-	bwpur->hide();
-	orlabel->hide();
-	ylabel->hide();
-	clabel->hide();
-	mlabel->hide();
-	plabel->hide();	
-	Gamlabel->show();
-	rlabel->show();
-	glabel->show();
-	blabel->show();
-	rglabel->show();
-	gglabel->show();
-	bglabel->show();
-	enabledcc->hide();
-	fil->set_sensitive (true);
-	
+	if ( setting->get_active_row_number()==10 || setting->get_active_row_number()==11 ) {
+		// RGB Channel Mixer
+		showMixer(3);
+		hideEnabledCC();
+		showFilter();
 	}
-	else if ( set->get_active_row_number()==12 || set->get_active_row_number()==13 ) {
-	bwred->show();
-	bwred->set_sensitive (true);
-	bwgreen->show();
-	bwgreen->set_sensitive (true);
-	bwblue->show();
-	bwblue->set_sensitive (true);
-	bwredgam->show();
-	bwgreengam->show();
-	bwbluegam->show();
-	bworan->show();
-	bwyell->show();
-	bwcyan->show();
-	bwmag->show();
-	bwpur->show();
-	orlabel->show();
-	ylabel->show();
-	clabel->show();
-	mlabel->show();
-	plabel->show();
-	Gamlabel->show();
-	rlabel->show();
-	glabel->show();
-	blabel->show();
-	rglabel->show();
-	gglabel->show();
-	bglabel->show();
-	enabledcc->show();
-	fil->set_sensitive (true);
-	
+	else if ( setting->get_active_row_number()==12 || setting->get_active_row_number()==13 ) {
+		// ROYGCBMP Channel Mixer
+		showMixer(7);
+		showEnabledCC();
+		showFilter();
 	}
-	else if ( set->get_active_row_number()==14 ) {
- 	fil->set_active (0);	
-	fil->set_sensitive (false);
+	else if ( setting->get_active_row_number()==14 ) {
+		// Infrared
+		filter->set_active (0);
+		hideFilter();
 	}
-	else  {
-	bwred->show();
-	bwred->set_sensitive (false);
-	bwgreen->show();
-	bwgreen->set_sensitive (false);
-	bwblue->show();
-	bwblue->set_sensitive (false);
-	rlabel->show();
-	glabel->show();
-	blabel->show();
-	rglabel->show();
-	gglabel->show();
-	bglabel->show();
-	Gamlabel->show();
-	bwredgam->show();
-	bwgreengam->show();
-	bwbluegam->show();	
-	bworan->hide();
-	bwyell->hide();
-	bwcyan->hide();
-	bwmag->hide();
-	bwpur->hide();
-	orlabel->hide();
-	ylabel->hide();
-	clabel->hide();
-	mlabel->hide();
-	plabel->hide();	
-	enabledcc->hide();
-	fil->set_sensitive (true);
-	
-	}
-
-	if (listener && (multiImage||enabled->get_active())) {
-		listener->panelChanged (EvBWset, set->get_active_text ());
-	}
-}
-
-
-void ChMixerbw::filChanged () {
-	if (listener && (multiImage||enabled->get_active())) {	
-		listener->panelChanged (EvBWfil, fil->get_active_text ());
-	}
-}
-
-void ChMixerbw::metChanged () {
-	 if(met->get_active_row_number()==3) {
-			set->show();
-			setLabel->show();
-			enabled->show();
-			curveEditorG->hide();
-			curveEditorGBW->show();
-			curveEditorGBW2->show();
-			autoch->show();
-			neutral->show();
-			fil->show();
-			filLabel->show();
-
-		if(set->get_active_row_number()==10 || set->get_active_row_number()==11 || set->get_active_row_number()==12 || set->get_active_row_number()==13){
-			bwred->show();
-			bwgreen->show();
-			bwblue->show();
-			rlabel->show();
-			glabel->show();
-			blabel->show();
-			rglabel->show();
-			gglabel->show();
-			bglabel->show();
-			bwredgam->show();
-			bwgreengam->show();
-			bwbluegam->show();
-			Gamlabel->show();	
-			enabledcc->hide();		
-		}
-		if(set->get_active_row_number()==12 || set->get_active_row_number()==13) {
-			bworan->show();
-			bwyell->show();
-			bwcyan->show();
-			bwmag->show();
-			bwpur->show();
-			orlabel->show();
-			ylabel->show();
-			clabel->show();
-			mlabel->show();
-			plabel->show();
-			enabledcc->show();
-		}
-	}
-		
-	 else if(met->get_active_row_number()==2) {
-		curveEditorG->show();
-		curveEditorGBW->show();
-		curveEditorGBW2->show();
-		autoch->hide();
-		neutral->hide();
-		set->hide();
-		setLabel->hide();
-		fil->hide();
-		filLabel->hide();
-		enabledcc->hide();
-		enabled->show();
-		bwred->hide();
-		bwgreen->hide();
-		bwblue->hide();
-		rlabel->hide();
-		glabel->hide();
-		blabel->hide();
-		bworan->hide();
-		bwyell->hide();
-		bwcyan->hide();
-		bwmag->hide();
-		bwpur->hide();
-		orlabel->hide();
-		ylabel->hide();
-		clabel->hide();
-		mlabel->hide();
-		plabel->hide();	
-		rglabel->show();
-		gglabel->show();
-		bglabel->show();
-		bwredgam->show();
-		bwgreengam->show();
-		bwbluegam->show();
-		Gamlabel->show();	
-		}
-	 else if(met->get_active_row_number()==1) {
-		curveEditorGBW->show();
-		curveEditorGBW2->show();
-		autoch->hide();
-		neutral->hide();
-		rglabel->show();
-		gglabel->show();
-		bglabel->show();
-		bwredgam->show();
-		bwgreengam->show();
-		bwbluegam->show();
-		Gamlabel->show();
-		set->hide();
-		setLabel->hide();
-		fil->hide();
-		filLabel->hide();
-		enabledcc->hide();
-		enabled->show();
-		curveEditorG->hide();	
-		bwred->hide();
-		bwgreen->hide();
-		bwblue->hide();
-		rlabel->hide();
-		glabel->hide();
-		blabel->hide();
-		bworan->hide();
-		bwyell->hide();
-		bwcyan->hide();
-		bwmag->hide();
-		bwpur->hide();
-		orlabel->hide();
-		ylabel->hide();
-		clabel->hide();
-		mlabel->hide();
-		plabel->hide();	
-		}
 	else {
-		autoch->hide();
-		neutral->hide();	
-		set->hide();
-		setLabel->hide();
-		fil->hide();
-		filLabel->hide();
-		enabledcc->hide();
-		enabled->show();
-		curveEditorG->hide();	
-		bwred->hide();
-		bwgreen->hide();
-		bwblue->hide();
-		rlabel->hide();
-		glabel->hide();
-		blabel->hide();
-		rglabel->hide();
-		gglabel->hide();
-		bglabel->hide();
-		bwredgam->hide();
-		bwgreengam->hide();
-		bwbluegam->hide();		
-		Gamlabel->hide();	
-		bworan->hide();
-		bwyell->hide();
-		bwcyan->hide();
-		bwmag->hide();
-		bwpur->hide();
-		orlabel->hide();
-		ylabel->hide();
-		clabel->hide();
-		mlabel->hide();
-		plabel->hide();	
-		curveEditorGBW->hide();
-		curveEditorGBW2->hide();
-	 }
+		// RGB Presets
+		showMixer(3, false);
+		hideEnabledCC();
+		showFilter();
+	}
+
 	if (listener && (multiImage||enabled->get_active())) {
-		listener->panelChanged (EvBWmet, met->get_active_text ());
+		listener->panelChanged (EvBWsetting, setting->get_active_text ());
 	}
 }
 
-void ChMixerbw::enabled_toggled () {
-	
-	if (batchMode) {
+
+void BlackWhite::filterChanged () {
+	if (listener && (multiImage||enabled->get_active())) {	
+		listener->panelChanged (EvBWfilter, filter->get_active_text ());
+	}
+}
+
+void BlackWhite::methodChanged () {
+	if(method->get_active_row_number()==2) {
+		// Channel Mixer
+		hideLuminance();
+
+		if(setting->get_active_row_number()==10 || setting->get_active_row_number()==11){
+			hideEnabledCC();
+			showMixer(3);
+		}
+		else if(setting->get_active_row_number()==12 || setting->get_active_row_number()==13) {
+			showEnabledCC();
+			showMixer(7);
+		}
+		else {
+			hideEnabledCC();
+			showMixer(3, false);
+		}
+		beforeCurveCEG->show();
+		afterCurveCEG->show();
+
+		bool wasEnabled = disableListener();
+		settingChanged();
+		if (wasEnabled) enableListener();
+	}
+	 else if(method->get_active_row_number()==1) {
+		// Luminance Equalizer
+		showLuminance();
+		hideMixer();
+		beforeCurveCEG->show();
+		afterCurveCEG->show();
+	}
+	else if(method->get_active_row_number()==0) {
+		// Desaturation
+		hideLuminance();
+		hideMixer();
+		beforeCurveCEG->show();
+		afterCurveCEG->show();
+	}
+	if (listener && (multiImage||enabled->get_active())) {
+		listener->panelChanged (EvBWmethod, method->get_active_text ());
+	}
+}
+
+void BlackWhite::enabled_toggled () {
+
+	if (multiImage) {
 		if (enabled->get_inconsistent()) {
 			enabled->set_inconsistent (false);
 			enaconn.block (true);
@@ -1007,44 +786,51 @@ void ChMixerbw::enabled_toggled () {
 	}
 
 	if (listener) {
-			listener->panelChanged (EvBWChmixEnabledLm, M("GENERAL_DISABLED"));
-			}
-			
+		if (enabled->get_inconsistent())
+			listener->panelChanged (EvBWChmixEnabled, M("GENERAL_UNCHANGED"));
+		else if (enabled->get_active ()) {
+			listener->panelChanged (EvBWChmixEnabled, M("GENERAL_ENABLED"));
+		}
+		else {
+			listener->panelChanged (EvBWChmixEnabled, M("GENERAL_DISABLED"));
+		}
 	}
-void ChMixerbw::neutral_pressed () {
-// This method deselects auto chmixer 
-// and sets "neutral" values to params
-
-    if (batchMode) {
-        autoch->set_inconsistent (false);
-        autoconn.block (true);
-        autoch->set_active (false);
-        autoconn.block (false);
-
-        lastAuto = autoch->get_active ();
-    }
-    else { //!batchMode
-        autoch->set_active (false);
-        autoch->set_inconsistent (false);
-    }
-    bwred->setValue(33);
-    bwgreen->setValue(33);
-    bwblue->setValue(33);
-    bworan->setValue(33);
-    bwyell->setValue(33);
-    bwmag->setValue(33);
-    bwpur->setValue(33);
-    bwcyan->setValue(33);
- 	set->set_active (11);
- 	fil->set_active (0);
-
-    listener->panelChanged (EvNeutralBW, M("GENERAL_ENABLED"));
 }
 
+void BlackWhite::neutral_pressed () {
+	// This method deselects auto chmixer and sets "neutral" values to params
+	disableListener();
 
-void ChMixerbw::enabledcc_toggled () {
-	
-	if (batchMode) {
+	if (multiImage) {
+		autoch->set_inconsistent (false);
+		autoch->set_active (false);
+
+		lastAuto = autoch->get_active ();
+	}
+	else { //!batchMode
+		autoch->set_active (false);
+	}
+	mixerRed->resetValue(false);
+	mixerGreen->resetValue(false);
+	mixerBlue->resetValue(false);
+	mixerOrange->resetValue(false);
+	mixerYellow->resetValue(false);
+	mixerMagenta->resetValue(false);
+	mixerPurple->resetValue(false);
+	mixerCyan->resetValue(false);
+	int activeSetting = setting->get_active_row_number();
+	if (activeSetting < 10 || activeSetting > 13)
+		setting->set_active (11);
+	filter->set_active (0);
+
+	enableListener();
+
+	listener->panelChanged (EvNeutralBW, M("ADJUSTER_RESET_TO_DEFAULT"));
+}
+
+void BlackWhite::enabledcc_toggled () {
+
+	if (multiImage) {
 		if (enabledcc->get_inconsistent()) {
 			enabledcc->set_inconsistent (false);
 			enaccconn.block (true);
@@ -1056,238 +842,317 @@ void ChMixerbw::enabledcc_toggled () {
 
 		lastEnabledcc = enabledcc->get_active ();
 	}
-
 	if (listener) {
-		if (enabledcc->get_active ()){
-			listener->panelChanged (EvBWChmixEnabled, M("GENERAL_ENABLED"));
-			}
-		else {		
-			listener->panelChanged (EvBWChmixEnabled, M("GENERAL_DISABLED"));
-			}
-			
+		if (enabledcc->get_inconsistent())
+			listener->panelChanged (EvBWChmixEnabledLm, M("GENERAL_UNCHANGED"));
+		else if (enabledcc->get_active ()) {
+			listener->panelChanged (EvBWChmixEnabledLm, M("GENERAL_ENABLED"));
+		}
+		else {
+			listener->panelChanged (EvBWChmixEnabledLm, M("GENERAL_DISABLED"));
+		}
 	}
 }
 
 
-void ChMixerbw::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
+void BlackWhite::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited) {
 
-	bwred->setDefault (defParams->chmixerbw.bwred);
- 	bwgreen->setDefault (defParams->chmixerbw.bwgreen);
-	bwblue->setDefault (defParams->chmixerbw.bwblue);
-	bwredgam->setDefault (defParams->chmixerbw.bwredgam);
- 	bwgreengam->setDefault (defParams->chmixerbw.bwgreengam);
-	bwbluegam->setDefault (defParams->chmixerbw.bwbluegam);
-	bworan->setDefault (defParams->chmixerbw.bworan);
- 	bwyell->setDefault (defParams->chmixerbw.bwyell);
-	bwcyan->setDefault (defParams->chmixerbw.bwcyan);
-	bwmag->setDefault (defParams->chmixerbw.bwmag);
- 	bwpur->setDefault (defParams->chmixerbw.bwpur);
-   
-    if (pedited) {
-		bwred->setDefaultEditedState (pedited->chmixerbw.bwred ? Edited : UnEdited);
-		bwgreen->setDefaultEditedState (pedited->chmixerbw.bwgreen ? Edited : UnEdited);
-		bwblue->setDefaultEditedState (pedited->chmixerbw.bwblue ? Edited : UnEdited);
-		bwredgam->setDefaultEditedState (pedited->chmixerbw.bwredgam ? Edited : UnEdited);
-		bwgreengam->setDefaultEditedState (pedited->chmixerbw.bwgreengam ? Edited : UnEdited);
-		bwbluegam->setDefaultEditedState (pedited->chmixerbw.bwbluegam ? Edited : UnEdited);
-		bworan->setDefaultEditedState (pedited->chmixerbw.bworan ? Edited : UnEdited);
-		bwyell->setDefaultEditedState (pedited->chmixerbw.bwyell ? Edited : UnEdited);
-		bwcyan->setDefaultEditedState (pedited->chmixerbw.bwcyan ? Edited : UnEdited);
-		bwmag->setDefaultEditedState (pedited->chmixerbw.bwmag ? Edited : UnEdited);
-		bwpur->setDefaultEditedState (pedited->chmixerbw.bwpur ? Edited : UnEdited);
-		}
-    else {
-		bwred->setDefaultEditedState (Irrelevant);
-		bwgreen->setDefaultEditedState (Irrelevant);
-		bwblue->setDefaultEditedState (Irrelevant);		
-		bwredgam->setDefaultEditedState (Irrelevant);
-		bwgreengam->setDefaultEditedState (Irrelevant);
-		bwbluegam->setDefaultEditedState (Irrelevant);	
-		bworan->setDefaultEditedState (Irrelevant);
-		bwyell->setDefaultEditedState (Irrelevant);
-		bwcyan->setDefaultEditedState (Irrelevant);	
-		bwmag->setDefaultEditedState (Irrelevant);
-		bwpur->setDefaultEditedState (Irrelevant);
-		}
+	mixerRed->setDefault (defParams->blackwhite.mixerRed);
+	mixerGreen->setDefault (defParams->blackwhite.mixerGreen);
+	mixerBlue->setDefault (defParams->blackwhite.mixerBlue);
+	gammaRed->setDefault (defParams->blackwhite.gammaRed);
+	gammaGreen->setDefault (defParams->blackwhite.gammaGreen);
+	gammaBlue->setDefault (defParams->blackwhite.gammaBlue);
+	mixerOrange->setDefault (defParams->blackwhite.mixerOrange);
+	mixerYellow->setDefault (defParams->blackwhite.mixerYellow);
+	mixerCyan->setDefault (defParams->blackwhite.mixerCyan);
+	mixerMagenta->setDefault (defParams->blackwhite.mixerMagenta);
+	mixerPurple->setDefault (defParams->blackwhite.mixerPurple);
+
+	if (pedited) {
+		mixerRed->setDefaultEditedState (pedited->blackwhite.mixerRed ? Edited : UnEdited);
+		mixerGreen->setDefaultEditedState (pedited->blackwhite.mixerGreen ? Edited : UnEdited);
+		mixerBlue->setDefaultEditedState (pedited->blackwhite.mixerBlue ? Edited : UnEdited);
+		gammaRed->setDefaultEditedState (pedited->blackwhite.gammaRed ? Edited : UnEdited);
+		gammaGreen->setDefaultEditedState (pedited->blackwhite.gammaGreen ? Edited : UnEdited);
+		gammaBlue->setDefaultEditedState (pedited->blackwhite.gammaBlue ? Edited : UnEdited);
+		mixerOrange->setDefaultEditedState (pedited->blackwhite.mixerOrange ? Edited : UnEdited);
+		mixerYellow->setDefaultEditedState (pedited->blackwhite.mixerYellow ? Edited : UnEdited);
+		mixerCyan->setDefaultEditedState (pedited->blackwhite.mixerCyan ? Edited : UnEdited);
+		mixerMagenta->setDefaultEditedState (pedited->blackwhite.mixerMagenta ? Edited : UnEdited);
+		mixerPurple->setDefaultEditedState (pedited->blackwhite.mixerPurple ? Edited : UnEdited);
+	}
+	else {
+		mixerRed->setDefaultEditedState (Irrelevant);
+		mixerGreen->setDefaultEditedState (Irrelevant);
+		mixerBlue->setDefaultEditedState (Irrelevant);
+		gammaRed->setDefaultEditedState (Irrelevant);
+		gammaGreen->setDefaultEditedState (Irrelevant);
+		gammaBlue->setDefaultEditedState (Irrelevant);	
+		mixerOrange->setDefaultEditedState (Irrelevant);
+		mixerYellow->setDefaultEditedState (Irrelevant);
+		mixerCyan->setDefaultEditedState (Irrelevant);
+		mixerMagenta->setDefaultEditedState (Irrelevant);
+		mixerPurple->setDefaultEditedState (Irrelevant);
+	}
 }
 
-void ChMixerbw::autoch_toggled () {
+void BlackWhite::autoch_toggled () {
 
-    if (batchMode) {
-        if (autoch->get_inconsistent()) {
-            autoch->set_inconsistent (false);
-            autoconn.block (true);
-            autoch->set_active (false);
-            autoconn.block (false);
-        }
-        else if (lastAuto)
-            autoch->set_inconsistent (true);
+	if (batchMode) {
+		if (autoch->get_inconsistent()) {
+			autoch->set_inconsistent (false);
+			autoconn.block (true);
+			autoch->set_active (false);
+			autoconn.block (false);
+		}
+		else if (lastAuto)
+			autoch->set_inconsistent (true);
 
-        lastAuto = autoch->get_active ();
+		lastAuto = autoch->get_active ();
 
-        bwred->setEditedState (UnEdited);
-        bwgreen->setEditedState (UnEdited);
-        bwblue->setEditedState (UnEdited);
-        bworan->setEditedState (UnEdited);
-        bwyell->setEditedState (UnEdited);
-        bwpur->setEditedState (UnEdited);
-        bwmag->setEditedState (UnEdited);
-        bwcyan->setEditedState (UnEdited);
+		mixerRed->setEditedState (UnEdited);
+		mixerGreen->setEditedState (UnEdited);
+		mixerBlue->setEditedState (UnEdited);
+		mixerOrange->setEditedState (UnEdited);
+		mixerYellow->setEditedState (UnEdited);
+		mixerPurple->setEditedState (UnEdited);
+		mixerMagenta->setEditedState (UnEdited);
+		mixerCyan->setEditedState (UnEdited);
 		
-        if (bwred->getAddMode())
-            bwred->setValue (33);
-        if (bwgreen->getAddMode())
-            bwgreen->setValue (33);
-        if (bwblue->getAddMode())
-            bwblue->setValue (33);
-        if (bworan->getAddMode())
-            bworan->setValue (33);
-        if (bwyell->getAddMode())
-            bwyell->setValue (33);
-        if (bwmag->getAddMode())
-            bwmag->setValue (33);
-        if (bwpur->getAddMode())
-            bwpur->setValue (33);
-        if (bwmag->getAddMode())
-            bwpur->setValue (33);
-			set->set_active (11);
-			fil->set_active (0);
+		bool wasEnabled = disableListener();
+		if (mixerRed->getAddMode())
+			mixerRed->resetValue(false);
+		if (mixerGreen->getAddMode())
+			mixerGreen->resetValue(true);
+		if (mixerBlue->getAddMode())
+			mixerBlue->resetValue(true);
+		if (mixerOrange->getAddMode())
+			mixerOrange->resetValue(true);
+		if (mixerYellow->getAddMode())
+			mixerYellow->resetValue(true);
+		if (mixerMagenta->getAddMode())
+			mixerMagenta->resetValue(true);
+		if (mixerPurple->getAddMode())
+			mixerPurple->resetValue(true);
+		if (mixerMagenta->getAddMode())
+			mixerPurple->resetValue(true);
+		setting->set_active (11);
+		filter->set_active (0);
+		if (wasEnabled) enableListener();
 
-        if (listener) {
-            if (!autoch->get_inconsistent()) {
-                if (autoch->get_active ()) {
-				
-                    listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));}
-                else
-                    listener->panelChanged (EvFixedch, M("GENERAL_DISABLED"));
-            }
-        }
-    }
-    else if (/* !batchMode && */ listener) {
-        if (autoch->get_active()) {
-			bwred->setValue(33);
-			bwgreen->setValue(33);
-			bwblue->setValue(33);
-			bworan->setValue(33);
-			bwyell->setValue(33);
-			bwmag->setValue(33);
-			bwpur->setValue(33);
-			bwcyan->setValue(33);
-			set->set_active (11);
-			fil->set_active (0);
-						
-            listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
-        }
-        else {
-            listener->panelChanged (EvFixedch, M("GENERAL_DISABLED"));
-        }
-    }
+		if (listener) {
+			if (!autoch->get_inconsistent()) {
+				if (autoch->get_active ())
+					listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));}
+				else
+					listener->panelChanged (EvAutoch, M("GENERAL_DISABLED"));
+		}
+	}
+	else {
+		if (autoch->get_active()) {
+			bool wasEnabled = disableListener();
+			mixerRed->setValue(33);
+			mixerGreen->setValue(33);
+			mixerBlue->setValue(33);
+			mixerOrange->setValue(33);
+			mixerYellow->setValue(33);
+			mixerMagenta->setValue(33);
+			mixerPurple->setValue(33);
+			mixerCyan->setValue(33);
+			setting->set_active (11);
+			filter->set_active (0);
+			if (wasEnabled) enableListener();
+
+			if (listener)
+				listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
+		}
+		else {
+			if (listener)
+				listener->panelChanged (EvAutoch, M("GENERAL_DISABLED"));
+		}
+	}
 
 }
 
+void BlackWhite::adjusterChanged (Adjuster* a, double newval) {
 
-void ChMixerbw::adjusterChanged (Adjuster* a, double newval) {
+	if (autoch->get_active() && (a==mixerRed || a==mixerGreen || a==mixerBlue || a==mixerOrange || a==mixerYellow || a==mixerMagenta || a==mixerPurple || a==mixerCyan )) {
+		autoconn.block(true);
+		autoch->set_active (false);
+		autoconn.block(false);
+		autoch->set_inconsistent (false);
+	}
 
-    if (autoch->get_active() && (a==bwred || a==bwgreen || a==bwblue || a==bworan || a==bwyell || a==bwmag || a==bwpur || a==bwcyan )) {
-        autoconn.block(true);
-        autoch->set_active (false);
-        autoconn.block(false);
-        autoch->set_inconsistent (false);
-    }
-
-    if (listener  && (multiImage||enabled->get_active())) {
-		Glib::ustring value = a->getTextValue();		
-		if (a == bwred)
-			listener->panelChanged (EvBWred,     value );
-		else if (a == bwgreen)
+	if (listener  && (multiImage||enabled->get_active())) {
+		Glib::ustring value = a->getTextValue();
+		if (a == mixerRed)
+			listener->panelChanged (EvBWred, value );
+		else if (a == mixerGreen)
 			listener->panelChanged (EvBWgreen, value );
-		else if (a == bwblue)
+		else if (a == mixerBlue)
 			listener->panelChanged (EvBWblue, value );
-		else if (a == bwgreengam)
+		else if (a == gammaGreen)
 			listener->panelChanged (EvBWgreengam, value );
-		else if (a == bwbluegam)
+		else if (a == gammaBlue)
 			listener->panelChanged (EvBWbluegam, value );
-		else if (a == bwredgam)
+		else if (a == gammaRed)
 			listener->panelChanged (EvBWredgam, value );
-		else if (a == bworan)
+		else if (a == mixerOrange)
 			listener->panelChanged (EvBWoran, value );
-		else if (a == bwyell)
+		else if (a == mixerYellow)
 			listener->panelChanged (EvBWyell, value );
-		else if (a == bwcyan)
+		else if (a == mixerCyan)
 			listener->panelChanged (EvBWcyan, value );
-		else if (a == bwmag)
+		else if (a == mixerMagenta)
 			listener->panelChanged (EvBWmag, value );
-		else if (a == bwpur)
+		else if (a == mixerPurple)
 			listener->panelChanged (EvBWpur, value );
-    }
+	}
 }
 
-void ChMixerbw::setBatchMode (bool batchMode) {
-    removeIfThere (abox, autoch, false);
-    autoch = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_AUTOCH")));
-    autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
-    autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &ChMixerbw::autoch_toggled) );
-    abox->pack_start (*autoch);
+void BlackWhite::setBatchMode (bool batchMode) {
+	removeIfThere (autoHBox, autoch, false);
+	autoch = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_AUTOCH")));
+	autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
+	autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
+	autoHBox->pack_start (*autoch);
 
-    ToolPanel::setBatchMode (batchMode);
-	bwred->showEditedCB ();
-	bwgreen->showEditedCB ();
-	bwblue->showEditedCB ();
-	bwredgam->showEditedCB ();
-	bwgreengam->showEditedCB ();
-	bwbluegam->showEditedCB ();
-	bworan->showEditedCB ();
-	bwyell->showEditedCB ();
-	bwcyan->showEditedCB ();
-	bwmag->showEditedCB ();
-	bwpur->showEditedCB ();
-	met->append_text (M("GENERAL_UNCHANGED"));
-	fil->append_text (M("GENERAL_UNCHANGED"));
-	set->append_text (M("GENERAL_UNCHANGED"));
-    curveEditorG->setBatchMode (batchMode);
-    curveEditorGBW->setBatchMode (batchMode);
-	toneCurveBW->append_text (M("GENERAL_UNCHANGED"));
-    curveEditorGBW2->setBatchMode (batchMode);
-	toneCurveBW2->append_text (M("GENERAL_UNCHANGED"));
+	ToolPanel::setBatchMode (batchMode);
+	mixerRed->showEditedCB ();
+	mixerOrange->showEditedCB ();
+	mixerYellow->showEditedCB ();
+	mixerGreen->showEditedCB ();
+	mixerCyan->showEditedCB ();
+	mixerBlue->showEditedCB ();
+	mixerMagenta->showEditedCB ();
+	mixerPurple->showEditedCB ();
+	gammaRed->showEditedCB ();
+	gammaGreen->showEditedCB ();
+	gammaBlue->showEditedCB ();
+	method->append_text (M("GENERAL_UNCHANGED"));
+	filter->append_text (M("GENERAL_UNCHANGED"));
+	setting->append_text (M("GENERAL_UNCHANGED"));
+	luminanceCEG->setBatchMode (batchMode);
+	beforeCurveCEG->setBatchMode (batchMode);
+	beforeCurveMode->append_text (M("GENERAL_UNCHANGED"));
+	afterCurveCEG->setBatchMode (batchMode);
+	afterCurveMode->append_text (M("GENERAL_UNCHANGED"));
+
+	showLuminance();
+	showFilter();
+	showEnabledCC();
+	showGamma();
+	showMixer(7);
 }
 
-void ChMixerbw::autoOpenCurve () {
-    vshape->openIfNonlinear();
-    shape->openIfNonlinear();
-    shape2->openIfNonlinear();
+void BlackWhite::autoOpenCurve () {
+	luminanceCurve->openIfNonlinear();
+	beforeCurve->openIfNonlinear();
+	afterCurve->openIfNonlinear();
 }
 
+void BlackWhite::setAdjusterBehavior (bool bwadd, bool bwgadd) {
 
-void ChMixerbw::setAdjusterBehavior (bool bwadd, bool bwgadd, bool bwfadd) {
+	mixerRed->setAddMode(bwadd);
+	mixerOrange->setAddMode(bwadd);
+	mixerYellow->setAddMode(bwadd);
+	mixerGreen->setAddMode(bwadd);
+	mixerCyan->setAddMode(bwadd);
+	mixerBlue->setAddMode(bwadd);
+	mixerMagenta->setAddMode(bwadd);
+	mixerPurple->setAddMode(bwadd);
 
-	
-	bwred->setAddMode(bwadd);
-	bwgreen->setAddMode(bwadd);
-	bwblue->setAddMode(bwadd);
-	
-	bworan->setAddMode(bwfadd);
-	bwyell->setAddMode(bwfadd);
-	bwcyan->setAddMode(bwfadd);
-	bwmag->setAddMode(bwfadd);
-	bwpur->setAddMode(bwfadd);
-
-	bwredgam->setAddMode(bwgadd);
-	bwgreengam->setAddMode(bwgadd);
-	bwbluegam->setAddMode(bwgadd);
-	
+	gammaRed->setAddMode(bwgadd);
+	gammaGreen->setAddMode(bwgadd);
+	gammaBlue->setAddMode(bwgadd);
 }
 
-void ChMixerbw::trimValues (rtengine::procparams::ProcParams* pp) {
+void BlackWhite::trimValues (rtengine::procparams::ProcParams* pp) {
 
-	bwred->trimValue (pp->chmixerbw.bwred);
-	bwgreen->trimValue (pp->chmixerbw.bwgreen);
-	bwblue->trimValue (pp->chmixerbw.bwblue);
-	bwredgam->trimValue (pp->chmixerbw.bwredgam);
-	bwgreengam->trimValue (pp->chmixerbw.bwgreengam);
-	bwbluegam->trimValue (pp->chmixerbw.bwbluegam);
-	bworan->trimValue (pp->chmixerbw.bworan);
-	bwyell->trimValue (pp->chmixerbw.bwyell);
-	bwcyan->trimValue (pp->chmixerbw.bwcyan);
-	bwmag->trimValue (pp->chmixerbw.bwmag);
-	bwpur->trimValue (pp->chmixerbw.bwpur);
+	mixerRed->trimValue (pp->blackwhite.mixerRed);
+	mixerGreen->trimValue (pp->blackwhite.mixerGreen);
+	mixerBlue->trimValue (pp->blackwhite.mixerBlue);
+	gammaRed->trimValue (pp->blackwhite.gammaRed);
+	gammaGreen->trimValue (pp->blackwhite.gammaGreen);
+	gammaBlue->trimValue (pp->blackwhite.gammaBlue);
+	mixerOrange->trimValue (pp->blackwhite.mixerOrange);
+	mixerYellow->trimValue (pp->blackwhite.mixerYellow);
+	mixerCyan->trimValue (pp->blackwhite.mixerCyan);
+	mixerMagenta->trimValue (pp->blackwhite.mixerMagenta);
+	mixerPurple->trimValue (pp->blackwhite.mixerPurple);
+}
+
+void BlackWhite::showLuminance() {
+	luminanceCEG->show();
+	luminanceSep->show();
+}
+
+void BlackWhite::hideLuminance() {
+	if (!batchMode) {
+		luminanceCEG->hide();
+		luminanceSep->hide();
+	}
+}
+
+void BlackWhite::showFilter() {
+	filterHBox->show();
+	filterSep->show();
+}
+
+void BlackWhite::hideFilter() {
+	if (!batchMode) {
+		filterHBox->hide();
+		filterSep->hide();
+	}
+}
+
+void BlackWhite::showEnabledCC() {
+	enabledcc->show();
+	enabledccSep->show();
+}
+
+void BlackWhite::hideEnabledCC() {
+	if (!batchMode) {
+		enabledcc->hide();
+		enabledccSep->hide();
+	}
+}
+
+void BlackWhite::showMixer(int nChannels, bool RGBIsSensitive) {
+	if (!batchMode && nChannels == 3) {
+		mixerRed->show();   mixerRed->set_sensitive (RGBIsSensitive);
+		mixerGreen->show(); mixerGreen->set_sensitive (RGBIsSensitive);
+		mixerBlue->show();  mixerBlue->set_sensitive (RGBIsSensitive);
+		mixerOrange->hide();
+		mixerYellow->hide();
+		mixerCyan->hide();
+		mixerMagenta->hide();
+		mixerPurple->hide();
+	}
+	else {
+		mixerRed->show();   mixerRed->set_sensitive (true);
+		mixerGreen->show(); mixerGreen->set_sensitive (true);
+		mixerBlue->show();  mixerBlue->set_sensitive (true);
+		mixerOrange->show();
+		mixerYellow->show();
+		mixerCyan->show();
+		mixerMagenta->show();
+		mixerPurple->show();
+	}
+	mixerFrame->show();
+}
+
+void BlackWhite::hideMixer() {
+	if (!batchMode)
+		mixerFrame->hide();
+}
+
+void BlackWhite::showGamma() {
+	gammaFrame->show();
+}
+
+void BlackWhite::hideGamma() {
+	if (!batchMode)
+		gammaFrame->hide();
 }

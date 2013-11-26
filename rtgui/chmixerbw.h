@@ -28,98 +28,100 @@
 #include "mycurve.h"
 #include "colorprovider.h"
 
-class ChMixerbw : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoBWListener, public CurveListener, public ColorProvider{
+class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoBWListener, public CurveListener, public ColorProvider{
 
   protected:
-	FlatCurveEditor*   vshape;
- 	CurveEditorGroup*  curveEditorG;
- 	CurveEditorGroup*  curveEditorGBW;
-    DiagonalCurveEditor* shape;
- 	CurveEditorGroup*  curveEditorGBW2;
-    DiagonalCurveEditor* shape2;
-    Gtk::ToggleButton* autoch;
-    Gtk::HBox* abox;
-    Gtk::Button* neutral;
+	FlatCurveEditor*     luminanceCurve;
+	Gtk::HSeparator*     luminanceSep;
+	CurveEditorGroup*    luminanceCEG;
+	CurveEditorGroup*    beforeCurveCEG;
+	DiagonalCurveEditor* beforeCurve;
+	MyComboBoxText*      beforeCurveMode;
+	CurveEditorGroup*    afterCurveCEG;
+	DiagonalCurveEditor* afterCurve;
+	MyComboBoxText*      afterCurveMode;
+	Gtk::ToggleButton*   autoch;
+	Gtk::HBox*           autoHBox;
+	Gtk::Button*         neutral;
 
-    Adjuster *bwred;
-    Adjuster *bwgreen;
-    Adjuster *bwblue;
-    Adjuster *bwredgam;
-    Adjuster *bwgreengam;
-    Adjuster *bwbluegam;
-    Adjuster *bworan;
-    Adjuster *bwyell;
-    Adjuster *bwcyan;
-    Adjuster *bwmag;
-    Adjuster *bwpur;
-    MyComboBoxText*   met;
-    sigc::connection  metconn;
-    MyComboBoxText*   fil;
-    sigc::connection  filconn;
-    MyComboBoxText*   set;
-    sigc::connection  setconn;
-	Gtk::Label* rlabel;	
-	Gtk::Label* glabel;	
-	Gtk::Label* blabel;	
-	Gtk::Label* rglabel;	
-	Gtk::Label* gglabel;	
-	Gtk::Label* bglabel;	
-	Gtk::Label* Gamlabel;	
-	Gtk::Label* orlabel;	
-	Gtk::Label* ylabel;	
-	Gtk::Label* clabel;	
-	Gtk::Label* mlabel;	
-	Gtk::Label* plabel;	
-	Gtk::Label* setLabel;	
-	Gtk::Label* filLabel;	
-	
-    Gtk::Image *imgIcon[11];
+	Adjuster *mixerRed;
+	Adjuster *mixerGreen;
+	Adjuster *mixerBlue;
+	Adjuster *gammaRed;
+	Adjuster *gammaGreen;
+	Adjuster *gammaBlue;
+	Adjuster *mixerOrange;
+	Adjuster *mixerYellow;
+	Adjuster *mixerCyan;
+	Adjuster *mixerMagenta;
+	Adjuster *mixerPurple;
+	MyComboBoxText*   method;
+	sigc::connection  methodconn;
+	Gtk::HBox*        filterHBox;
+	Gtk::HSeparator*  filterSep;
+	MyComboBoxText*   filter;
+	sigc::connection  filterconn;
+	Gtk::HBox*        settingHBox;
+	MyComboBoxText*   setting;
+	sigc::connection  settingconn;
+	Gtk::Frame* mixerFrame;
+	Gtk::Frame* gammaFrame;
+
+	Gtk::Image *imgIcon[11];
 	Gtk::CheckButton* enabled;
 	bool lastEnabled;
 	sigc::connection enaconn;
-	
+
+	Gtk::HSeparator* enabledccSep;
 	Gtk::CheckButton* enabledcc;
 	bool lastEnabledcc, lastAuto;
 	sigc::connection enaccconn,tcmodeconn,tcmodeconn2, autoconn, neutralconn;
-    MyComboBoxText* toneCurveBW;
-    MyComboBoxText* toneCurveBW2;
-	
+
 	double nextredbw;
 	double nextgreenbw;
 	double nextbluebw;
-	
-	
+
+	void showLuminance();
+	void hideLuminance();
+	void showFilter();
+	void hideFilter();
+	void showEnabledCC();
+	void hideEnabledCC();
+	void showMixer(int nChannels, bool RGBIsSensitive=true);
+	void hideMixer();
+	void showGamma();
+	void hideGamma();
 
   public:
 
-    ChMixerbw ();
-    ~ChMixerbw ();
+	BlackWhite ();
+	~BlackWhite ();
 
-    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
-    void setBatchMode    (bool batchMode);
-    void autoOpenCurve  ();
-	
-    void autoch_toggled ();
-    void neutral_pressed ();
-	
-    void adjusterChanged (Adjuster* a, double newval);
-    void setAdjusterBehavior (bool bwadd, bool bwgadd, bool bwfadd);
-    void trimValues          (rtengine::procparams::ProcParams* pp);
-	void enabledcc_toggled     ();
+	void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
+	void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+	void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
+	void setBatchMode    (bool batchMode);
+	void autoOpenCurve   ();
+
+	void autoch_toggled  ();
+	void neutral_pressed ();
+
+	void adjusterChanged     (Adjuster* a, double newval);
+	void setAdjusterBehavior (bool bwadd, bool bwgadd);
+	void trimValues          (rtengine::procparams::ProcParams* pp);
+	void enabledcc_toggled   ();
 	void enabled_toggled     ();
-    void metChanged         ();	
-    void filChanged         ();
-    void setChanged         ();
-    virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
-    void BWChanged (double redbw, double greenbw, double bluebw);
-	bool BWComputed_ ();
-	void curveChanged   (CurveEditor* ce);
-    void curveMode1Changed ();
-    bool curveMode1Changed_ ();
-    void curveMode1Changed2 ();
-    bool curveMode1Changed2_ ();
+	void methodChanged       ();
+	void filterChanged       ();
+	void settingChanged      ();
+	virtual void colorForValue (double valX, double valY, int callerId, ColorCaller* caller);
+	void BWChanged           (double redbw, double greenbw, double bluebw);
+	bool BWComputed_         ();
+	void curveChanged        (CurveEditor* ce);
+	void curveMode1Changed   ();
+	bool curveMode1Changed_  ();
+	void curveMode1Changed2  ();
+	bool curveMode1Changed2_ ();
 };
 
 #endif

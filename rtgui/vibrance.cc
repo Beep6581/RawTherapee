@@ -40,6 +40,8 @@ Vibrance::Vibrance () : Gtk::VBox(), FoldableToolPanel(this) {
 	enabled->set_active (false);
 	pack_start(*enabled, Gtk::PACK_SHRINK, 0);
 
+	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+
 	saturated = Gtk::manage(new Adjuster (M("TP_VIBRANCE_SATURATED"),-100.,100.,1.,0.));
 	saturated->setAdjusterListener (this);
 	saturated->set_sensitive(false);
@@ -333,7 +335,7 @@ void Vibrance::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
 	}
 }
 
-void Vibrance::setAdjusterBehavior (bool pastelsadd, bool saturatedadd, bool psthreshdadd) {
+void Vibrance::setAdjusterBehavior (bool pastelsadd, bool saturatedadd) {
 	pastels->setAddMode (pastelsadd);
 	saturated->setAddMode (saturatedadd);
 }
