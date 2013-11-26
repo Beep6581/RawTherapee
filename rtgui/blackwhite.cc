@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "chmixerbw.h"
+#include "blackwhite.h"
 #include "rtimage.h"
 #include "../rtengine/color.h"
 #include <iomanip>
@@ -706,6 +706,8 @@ void BlackWhite::settingChanged () {
 	else if ( setting->get_active_row_number()==14 ) {
 		// Infrared
 		filter->set_active (0);
+		showMixer(3, false);
+		hideEnabledCC();
 		hideFilter();
 	}
 	else {

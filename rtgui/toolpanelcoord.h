@@ -44,7 +44,7 @@
 #include "icmpanel.h"
 #include "resize.h"
 #include "chmixer.h"
-#include "chmixerbw.h"
+#include "blackwhite.h"
 #include "hlrec.h"
 #include "cacorrection.h"
 #include "lensprofile.h"
