@@ -2591,8 +2591,8 @@ if (algm==2  && blackwhite) {//channel-mixer
 				// ponderate filters: report to R=G=B=33
 				// I ponder RGB channel, not only orange or yellow or cyan, etc...it's my choice !
 					if(mixerOrange !=33){//orange
-						orM=fcompl*(mixerOrange*0.67f - 22.11f)/100.f;
-						ogM=fcompl*(-0.164f*mixerOrange+5.412f)/100.f;
+						if (mixerOrange >=33) orM=fcompl*(mixerOrange*0.67f - 22.11f)/100.f; else orM=fcompl*(-0.3f*mixerOrange +9.9f)/100.f;
+						if (mixerOrange >=33) ogM=fcompl*(-0.164f*mixerOrange+5.412f)/100.f; else ogM=fcompl*(0.4f*mixerOrange-13.2f)/100.f;
 						if(complem) obM=(-0.492f*mixerOrange+16.236f)/100.f;
 						rM+=orM;
 						gM+=ogM;
@@ -2609,8 +2609,8 @@ if (algm==2  && blackwhite) {//channel-mixer
 						koymcp += (yrM+ygM+ybM);
 					}
 					if(mixerMagenta !=33){//Magenta
-						mrM=fcompl*(0.67f*mixerMagenta -22.11f)/100.f;
-						mbM=fcompl*(-0.164f*mixerMagenta+5.412f)/100.f;
+						if(mixerMagenta >=33) mrM=fcompl*(0.67f*mixerMagenta -22.11f)/100.f;else  mrM=fcompl*(-0.3f*mixerMagenta +9.9f)/100.f;
+						if(mixerMagenta >=33) mbM=fcompl*(-0.164f*mixerMagenta+5.412f)/100.f;else mbM=fcompl*(0.4f*mixerMagenta-13.2f)/100.f;
 						if(complem) mgM=(-0.492f*mixerMagenta+16.236f)/100.f;
 						rM+=mrM;
 						gM+=mgM;
