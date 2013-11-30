@@ -1595,7 +1595,7 @@ if (keyFile.has_group ("Color Management")) {
     if (keyFile.has_key ("Color Management", "OutputProfile"))  { icm.output         = keyFile.get_string ("Color Management", "OutputProfile"); if (pedited) pedited->icm.output = true; }
     if (keyFile.has_key ("Color Management", "Gammafree"))      { icm.gamma          = keyFile.get_string ("Color Management", "Gammafree"); if (pedited) pedited->icm.gamfree = true; }
     if (keyFile.has_key ("Color Management", "Freegamma"))      { icm.freegamma      = keyFile.get_boolean ("Color Management", "Freegamma"); if (pedited) pedited->icm.freegamma = true; }
-    if (keyFile.has_key ("Color Management", "GammaVal"))       { icm.gampos         = keyFile.get_double ("Color Management", "GammaVal"); if (pedited) pedited->icm.gamma = true; }
+    if (keyFile.has_key ("Color Management", "GammaValue"))     { icm.gampos         = keyFile.get_double ("Color Management", "GammaValue"); if (pedited) pedited->icm.gampos = true; }
     if (keyFile.has_key ("Color Management", "GammaSlope"))     { icm.slpos          = keyFile.get_double ("Color Management", "GammaSlope"); if (pedited) pedited->icm.slpos = true; }
 
 }
