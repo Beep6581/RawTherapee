@@ -234,6 +234,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y) {
     if (button==1 && type==GDK_2BUTTON_PRESS && onArea (CropImage, x, y) && (state==SNormal || state==SCropImgMove)) {
         if (fitZoomEnabled) {
             if (fitZoom) {
+                state = SNormal;
+                zoomVersion = exposeVersion;
                 translateCoord (x, y, action_x, action_y);
                 changeZoom (ZOOM11INDEX, true, action_x, action_y);
                 fitZoom = false;
