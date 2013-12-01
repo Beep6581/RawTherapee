@@ -74,7 +74,18 @@ BatchQueue::BatchQueue () : processing(NULL), sequence(0), listener(NULL)  {
 
 BatchQueue::~BatchQueue ()
 {
-	delete pmenu;
+    #if PROTECT_VECTORS
+    MYWRITERLOCK(l, entryRW);
+    #endif
+
+    // The listener merges parameters with old values, so delete afterwards
+    for (size_t i=0; i<fd.size(); i++)
+    {
+        delete fd.at(i);
+    }
+    fd.clear ();
+
+    delete pmenu;
 }
 
 void BatchQueue::resizeLoadedQueue() {
@@ -349,15 +360,16 @@ bool BatchQueue::loadBatchQueue( )
                 if( pparams.load( paramsFile ) )
                     continue;
 
-                ::Thumbnail *thumb = cacheMgr->getEntry( source, &pparams );
+                ::Thumbnail *thumb = cacheMgr->getEntry( source );
                 if( thumb ){
                     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create(source, thumb->getType() == FT_Raw, pparams);
 
                     int prevh = getMaxThumbnailHeight();
                     int prevw = prevh;
-                    thumb->getThumbnailSize (prevw, prevh);
+                    thumb->getThumbnailSize (prevw, prevh, &pparams);
 
                     BatchQueueEntry *entry = new BatchQueueEntry(job, pparams,source, prevw, prevh, thumb);
+                    thumb->decreaseRef();  // Removing the refCount acquired by cacheMgr->getEntry
                     entry->setParent(this);
 
                     // BatchQueueButtonSet HAVE TO be added before resizing to take them into account
@@ -661,7 +673,7 @@ rtengine::ProcessingJob* BatchQueue::imageReady (rtengine::IImage16* img) {
             MYREADERLOCK_RELEASE(l);
             #endif
             std::vector<Glib::ustring> names;
-            Glib::ustring batchdir = options.rtdir+"/batch/";
+            Glib::ustring batchdir = Glib::build_filename(options.rtdir, "batch");
             Glib::RefPtr<Gio::File> dir = Gio::File::create_for_path (batchdir);
             safe_build_file_list (dir, names, batchdir);
             for(std::vector<Glib::ustring>::iterator iter=names.begin(); iter != names.end();iter++ )
@@ -885,7 +897,6 @@ void BatchQueue::redrawNeeded (LWButton* button) {
 
 void BatchQueue::error (Glib::ustring msg) {
 
-    BatchQueueEntry* current = static_cast<BatchQueueEntry*>(fd[0]);
     if (processing && processing->processing) {
         // restore failed thumb
         BatchQueueButtonSet* bqbs = new BatchQueueButtonSet (processing);

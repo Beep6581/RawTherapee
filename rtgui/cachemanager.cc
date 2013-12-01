@@ -64,11 +64,7 @@ void CacheManager::init () {
         safe_g_mkdir_with_parents (Glib::ustring(Glib::build_filename (baseDir, "data")), 511);
 }
 
-/*
- * if pparams is NULL (default), get the ProcParams from the cache;
- * if pparams is non NULL, compute the thumbnails with the provided pparams
- */
-Thumbnail* CacheManager::getEntry (const Glib::ustring& fname, const rtengine::procparams::ProcParams *pparams) {
+Thumbnail* CacheManager::getEntry (const Glib::ustring& fname) {
 
     Thumbnail* res = NULL;
     
@@ -98,7 +94,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname, const rtengine::p
         CacheImageData* cfs = new CacheImageData ();
         int e = cfs->load (cfname);
         if (!e && cfs->supported==true)
-            res = new Thumbnail (this, fname, cfs, pparams);
+            res = new Thumbnail (this, fname, cfs);
         if (res && !res->isSupported ()) {
             delete res;
             res = NULL;
@@ -108,7 +104,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname, const rtengine::p
 
 	// if not, create a new one
     if (!res) {
-        res = new Thumbnail (this, fname, md5, pparams);
+        res = new Thumbnail (this, fname, md5);
         if (!res->isSupported ()) {
             delete res;
             res = NULL;

@@ -33,18 +33,13 @@
 
 using namespace rtengine::procparams;
 
-Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf, const rtengine::procparams::ProcParams *pparams)
+Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf)
     : fname(fname), cfs(*cf), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL),
       pparamsValid(false), needsReProcessing(true),imageLoading(false), lastImg(NULL),
       lastW(0), lastH(0), lastScale(0), initial_(false)
 {
 
-    if (pparams) {
-        this->pparams = *pparams;
-        pparamsValid = true;
-    }
-    else
-        loadProcParams ();
+    loadProcParams ();
 
     // should be safe to use the unprotected version of loadThumbnail, since we are in the constructor
     _loadThumbnail ();
@@ -66,7 +61,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageDa
     tpp = 0;
 }
 
-Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const rtengine::procparams::ProcParams *pparams)
+Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5)
     : fname(fname), cachemgr(cm), ref(1), enqueueNumber(0), tpp(NULL), pparamsValid(false),
       needsReProcessing(true),imageLoading(false), lastImg(NULL),
       initial_(true)
@@ -74,12 +69,7 @@ Thumbnail::Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::s
 
 
     cfs.md5 = md5;
-    if (pparams) {
-        this->pparams = *pparams;
-        pparamsValid = true;
-    }
-    else
-        loadProcParams ();
+    loadProcParams ();
     _generateThumbnailImage ();
     cfs.recentlySaved = false;
 
@@ -456,11 +446,32 @@ void Thumbnail::decreaseRef ()
 	cachemgr->closeThumbnail (this); 
 }
 
-void Thumbnail::getThumbnailSize (int &w, int &h) {
-	if (imgRatio > 0.)
-		w = (int)(imgRatio * (float)h);
+void Thumbnail::getThumbnailSize (int &w, int &h, const rtengine::procparams::ProcParams *pparams) {
+	int tw_ = tw;
+	int th_ = th;
+	float imgRatio_ = imgRatio;
+
+	if (pparams) {
+		int ppCoarse = pparams->coarse.rotate;
+		if (ppCoarse >= 180) ppCoarse -= 180;
+
+		int thisCoarse = this->pparams.coarse.rotate;
+		if (thisCoarse >= 180) thisCoarse -= 180;
+
+		if (thisCoarse != ppCoarse) {
+			// different orientation -> swapping width & height
+			int tmp = th_;
+			th_ = tw_;
+			tw_ = tmp;
+			if (imgRatio_ >= 0.0001f)
+				imgRatio_ = 1.f/imgRatio_;
+		}
+	}
+
+	if (imgRatio_ > 0.)
+		w = (int)(imgRatio_ * (float)h);
 	else
-		w = tw * h / th;
+		w = tw_ * h / th_;
 }
 
 void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, int& w, int& h) {

@@ -77,8 +77,8 @@ class Thumbnail {
         Glib::ustring    getCacheFileName (Glib::ustring subdir);
         
     public:
-        Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf, const rtengine::procparams::ProcParams *pparams=NULL);
-        Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const rtengine::procparams::ProcParams *pparams=NULL);
+        Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
+        Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
         ~Thumbnail ();
         
         bool              hasProcParams ();
@@ -105,7 +105,7 @@ class Thumbnail {
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
         rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
         rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
-        void            getThumbnailSize        (int &w, int &h);
+        void            getThumbnailSize        (int &w, int &h, const rtengine::procparams::ProcParams *pparams=NULL);
         void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
 
         const Glib::ustring&  getExifString ();
