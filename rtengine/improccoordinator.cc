@@ -32,6 +32,7 @@ ImProcCoordinator::ImProcCoordinator ()
     : orig_prev(NULL), oprevi(NULL), oprevl(NULL), nprevl(NULL), previmg(NULL), workimg(NULL),
       ncie(NULL), imgsrc(NULL), shmap(NULL), lastAwbEqual(0.), ipf(&params, true), scale(10),
       highDetailPreprocessComputed(false), highDetailRawComputed(false), allocated(false),
+      bwAutoR(-9000.f), bwAutoG(-9000.f), bwAutoB(-9000.f), CAMMean(0.f),
 
       hltonecurve(65536,0),
       shtonecurve(65536,2),//clip above
@@ -47,26 +48,29 @@ ImProcCoordinator::ImProcCoordinator ()
       vhist16(65536),vhist16bw(65536),
       lhist16(65536), lhist16Cropped(65536),
       lhist16CAM(65536), lhist16CroppedCAM(65536),
-      lhist16CCAM(65536), lhist16CroppedCCAM(65536),
+      lhist16CCAM(65536),
       lhist16CCAMAF(65536), lhist16ClabAF(65536),
       histCropped(65536),
-      lhist16Clad(65536),lhist16CroppedClad(65536),lhist16CLlad(65536),
-	  lhist16LClad(65536),	  lhist16LLClad(65536),
+      lhist16Clad(65536),lhist16CLlad(65536),
+      lhist16LClad(65536), lhist16LLClad(65536),
       histRed(256), histRedRaw(256),
       histGreen(256), histGreenRaw(256),
       histBlue(256), histBlueRaw(256),
-      histLuma(256), histChroma(256),
+      histLuma(256),
       histToneCurve(256),
       histToneCurveBW(256),
       histLCurve(256),
       histCCurve(256),
       histCLurve(256),
       histLLCurve(256),
-	  
+
       histLCAM(256),
       histCCAM(256),
       histClad(256),
       bcabhist(256),
+      histChroma(256),
+
+      CAMBrightCurveJ(), CAMBrightCurveQ(),
 
       rCurve(),
       gCurve(),
@@ -116,6 +120,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
     int numofphases = 14;
     int readyphase = 0;
+
+    bwAutoR = bwAutoG = bwAutoB = -9000.f;
 
     if (todo==CROP && ipf.needsPCVignetting())
         todo |= TRANSFORM; // Change about Crop does affect TRANSFORM
@@ -298,20 +304,22 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         CurveFactory::RGBCurve (params.rgbCurves.gcurve, gCurve, scale==1 ? 1 : 1);
         CurveFactory::RGBCurve (params.rgbCurves.bcurve, bCurve, scale==1 ? 1 : 1);
 
-        CurveFactory::curveBW (params.blackwhite.beforeCurveMode, params.blackwhite.beforeCurve, params.blackwhite.afterCurveMode, params.blackwhite.afterCurve,
-                               vhist16bw, histCropped, histToneCurveBW, customToneCurvebw1, customToneCurvebw2,scale==1 ? 1 : 1);
+        CurveFactory::curveBW (params.blackwhite.beforeCurve,params.blackwhite.afterCurve, vhist16bw, histToneCurveBW, beforeToneCurveBW, afterToneCurveBW,scale==1 ? 1 : 1);
 
-        //initialize rrm bbm ggm different from zero to avoid black screen in somme cases
+        //initialize rrm bbm ggm different from zero to avoid black screen in some cases
         double rrm=33.;
         double ggm=33.;
         double bbm=33.;
 
-
         // if it's just crop we just need the histogram, no image updates
         if ( todo!=MINUPDATE ) {
             ipf.rgbProc (oprevi, oprevl, hltonecurve, shtonecurve, tonecurve, shmap, params.toneCurve.saturation,
-                         rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm,params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
-            if(params.blackwhite.enabled && abwListener) abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
+                         rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,beforeToneCurveBW, afterToneCurveBW, rrm, ggm, bbm, bwAutoR, bwAutoG, bwAutoB, params.toneCurve.expcomp, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
+            if(params.blackwhite.enabled && params.blackwhite.autoc && abwListener) {
+                if (settings->verbose)
+                    printf("ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", bwAutoR, bwAutoG, bwAutoB);
+                abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);
+            }
             // correct GUI black and white with value
         }
 
@@ -319,13 +327,13 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         int x1, y1, x2, y2, pos, poscc;
         params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2); 
         lhist16.clear(); lhist16Cropped.clear();
-        lhist16Clad.clear(); lhist16CroppedClad.clear();lhist16CLlad.clear();lhist16LLClad.clear();
+        lhist16Clad.clear(); lhist16CLlad.clear();lhist16LLClad.clear();
         lhist16ClabAF.clear();
         for (int x=0; x<pH; x++)
             for (int y=0; y<pW; y++) {
                 pos=CLIP((int)(oprevl->L[x][y]));
                 lhist16[pos]++;
-                if (y>=y1 && y<y2 && x>=x1 && x<x2) {lhist16Cropped[pos]++;lhist16CroppedClad[poscc]++;}
+                if (y>=y1 && y<y2 && x>=x1 && x<x2) {lhist16Cropped[pos]++;}
             }
  
     }
@@ -346,7 +354,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         CurveFactory::complexsgnCurve (autili, butili,ccutili,cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
                                        params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve,chroma_acurve, chroma_bcurve, satcurve,lhskcurve,
-                                       lhist16Clad,lhist16LLClad,lhist16CroppedClad, histCCurve, histLLCurve, scale==1 ? 1 : 16);
+                                       lhist16Clad, lhist16LLClad, histCCurve, histLLCurve, scale==1 ? 1 : 16);
     }
     if (todo & (M_LUMINANCE+M_COLOR) ) {
         nprevl->CopyFrom(oprevl);
@@ -408,7 +416,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         int x1, y1, x2, y2, pos, posc;
         params.crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
         lhist16CAM.clear(); lhist16CroppedCAM.clear();
-        lhist16CCAM.clear(); lhist16CroppedCCAM.clear();
+        lhist16CCAM.clear();
         lhist16CCAMAF.clear();
         for (int x=0; x<pH; x++)
             for (int y=0; y<pW; y++) {
@@ -416,7 +424,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 posc=CLIP((int)sqrt(nprevl->a[x][y]*nprevl->a[x][y] + nprevl->b[x][y]*nprevl->b[x][y]));
                 if(!params.colorappearance.datacie) lhist16CCAM[posc]++;
                 if(!params.colorappearance.datacie)lhist16CAM[pos]++;
-                if (y>=y1 && y<y2 && x>=x1 && x<x2) {lhist16CroppedCAM[pos]++;lhist16CroppedCCAM[posc]++;}
+                if (y>=y1 && y<y2 && x>=x1 && x<x2) {lhist16CroppedCAM[pos]++;}
             }
         LUTu dummy;
         CurveFactory::curveLightBrightColor (
@@ -424,7 +432,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
                 params.colorappearance.curveMode2, params.colorappearance.curve2,
                 params.colorappearance.curveMode3, params.colorappearance.curve3,
                 lhist16CAM, lhist16CroppedCAM,histLCAM,
-                lhist16CCAM, lhist16CroppedCCAM,histCCAM,
+                lhist16CCAM, histCCAM,
                 customColCurve1,
                 customColCurve2,
                 customColCurve3,
@@ -459,13 +467,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             if(!ncie)
                 ncie = new CieImage (pW, pH);
 
+            if (!CAMBrightCurveJ && (params.colorappearance.algo=="JC" || params.colorappearance.algo=="JS" || params.colorappearance.algo=="ALL"))
+                CAMBrightCurveJ(65536,0);
+            if (!CAMBrightCurveQ && (params.colorappearance.algo=="QM" || params.colorappearance.algo=="ALL"))
+                CAMBrightCurveQ(65536,0);
             if(settings->ciecamfloat){
-                ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, d);
+                ipf.ciecam_02float (ncie, float(adap), begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, execsharp, d);
                 if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*(double)d);
                 if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);//real value of adapt scene luminosity
             }
             else {
-                ipf.ciecam_02 (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, 5, 1, (float**)buffer, execsharp, dd);
+                ipf.ciecam_02 (ncie, adap, begh, endh, pW, 2, nprevl, &params, customColCurve1,customColCurve2,customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, execsharp, dd);
                 if(params.colorappearance.autodegree && acListener && params.colorappearance.enabled) acListener->autoCamChanged(100.*dd);
                 if(params.colorappearance.autoadapscen && acListener && params.colorappearance.enabled) acListener->adapCamChanged(adap);
             }
@@ -476,15 +488,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             readyphase++;
         }
         else {
-            // CIECAM is disbaled, we free up its image buffer to save some space
+            // CIECAM is disabled, we free up its image buffer to save some space
             if (ncie)
                 delete ncie; ncie=NULL;
+
+            if (CAMBrightCurveJ) CAMBrightCurveJ.reset();
+            if (CAMBrightCurveQ) CAMBrightCurveQ.reset();
         }
     }
     // process crop, if needed
     for (size_t i=0; i<crops.size(); i++)
         if (crops[i]->hasListener () && cropCall != crops[i] )
             crops[i]->update (todo);  // may call ourselves
+
+    // Flagging some LUT as dirty now, whether they have been freed up or not
+    CAMBrightCurveJ.dirty = true;
+    CAMBrightCurveQ.dirty = true;
+
 
     progress ("Conversion to RGB...",100*readyphase/numofphases);
     if (todo!=CROP && todo!=MINUPDATE) {

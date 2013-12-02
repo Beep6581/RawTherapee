@@ -187,8 +187,8 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	ToneCurve customToneCurve1, customToneCurve2;
 	ColorAppearance customColCurve1, customColCurve2,customColCurve3 ;
-	ChMixerbw customToneCurvebw1;
-	ChMixerbw customToneCurvebw2;
+	ToneCurve customToneCurvebw1;
+	ToneCurve customToneCurvebw2;
 
 	ipf.g = imgsrc->getGamma();
 	ipf.iGamma = true;
@@ -203,10 +203,13 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
     LabImage* labView = new LabImage (fw,fh);
 
 
-	CurveFactory::curveBW (params.blackwhite.beforeCurveMode, params.blackwhite.beforeCurve, params.blackwhite.afterCurveMode, params.blackwhite.afterCurve,
-	                            hist16, dummy, dummy, customToneCurvebw1, customToneCurvebw2, 1);
+	CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
 	double rrm, ggm, bbm;
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, expcomp, hlcompr, hlcomprthresh);
+    float autor, autog, autob;
+    autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
+    if (settings->verbose)
+        printf("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", autor, autog, autob);
 
     // Freeing baseImg because not used anymore
     delete baseImg;
@@ -227,16 +230,24 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	if(params.labCurve.contrast !=0) {//only use hist16 for contrast
 	
 #ifdef _OPENMP
-#pragma�omp�parallel�shared(hist16,labView, fh, fw)
+#pragma omp parallel shared(hist16,labView, fh, fw)
 #endif
 {
-#ifdef _OPENMP	
-#pragma omp for schedule(static)
+    LUTu hist16thr (65536);  // one temporary lookup table per thread
+    hist16thr.clear();
+#ifdef _OPENMP
+#pragma omp for schedule(static) nowait
 #endif
     for (int i=0; i<fh; i++)
         for (int j=0; j<fw; j++){
-            hist16[CLIP((int)((labView->L[i][j])))]++;
-			}
+            hist16thr[CLIP((int)((labView->L[i][j])))]++;
+        }
+
+#pragma omp critical
+{
+    for(int i=0;i<65536;i++)
+        hist16[i] += hist16thr[i];
+}
 }
 	
 	
@@ -253,7 +264,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
 	CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.chromaticity, params.labCurve.rstprotection,
 								   params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,params.labCurve.lccurve,curve1, curve2, satcurve,lhskcurve, 
-								   hist16C, hist16C, hist16C, dummy,dummy,
+								   hist16C, hist16C, dummy,dummy,
 								   1);
 
 	ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve,clcurve, lumacurve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
@@ -303,58 +314,60 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 					params.colorappearance.curveMode2, params.colorappearance.curve2,
 					params.colorappearance.curveMode3, params.colorappearance.curve3,
 					hist16, hist16,dummy,
-					hist16C, hist16C,dummy,	
+					hist16C, dummy,
 					customColCurve1,
 					customColCurve2,
-					customColCurve3, 					
+					customColCurve3,
 					1);
 	float adap2,adap;
 	double ada, ada2;
-	if(params.colorappearance.enabled){	
-	float fnum = imgsrc->getMetaData()->getFNumber  ();// F number
-	float fiso = imgsrc->getMetaData()->getISOSpeed () ;// ISO
-	float fspeed = imgsrc->getMetaData()->getShutterSpeed () ;//speed 
-	float fcomp = imgsrc->getMetaData()->getExpComp  ();//compensation + -
-	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap2=2000.f;ada=ada2=2000.;}//if no exif data or wrong
-	else {
-	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
-	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-	E_V += expo2;
-	float expo1;//exposure raw white point
-	expo1=log2(params.raw.expos);//log2 ==>linear to EV
-	E_V += expo1;
-	adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
-	ada=ada2=(double) adap;
-	}			
-    if (params.sharpening.enabled) {
-		float d;
-		double dd;
-		
-        float** buffer = new float*[fh];
-        for (int i=0; i<fh; i++)
-            buffer[i] = new float[fw];	
-	if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, d);
-	else ipf.ciecam_02 (cieView, ada, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, dd);
+	if(params.colorappearance.enabled){
+		float fnum = imgsrc->getMetaData()->getFNumber  ();// F number
+		float fiso = imgsrc->getMetaData()->getISOSpeed () ;// ISO
+		float fspeed = imgsrc->getMetaData()->getShutterSpeed () ;//speed
+		float fcomp = imgsrc->getMetaData()->getExpComp  ();//compensation + -
+		if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap2=2000.f;ada=ada2=2000.;}//if no exif data or wrong
+		else {
+			float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
+			float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+			E_V += expo2;
+			float expo1;//exposure raw white point
+			expo1=log2(params.raw.expos);//log2 ==>linear to EV
+			E_V += expo1;
+			adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
+			ada=ada2=(double) adap;
+		}
+		LUTf CAMBrightCurveJ;
+		LUTf CAMBrightCurveQ;
+		float CAMMean;
+		if (params.sharpening.enabled) {
+			float d;
+			double dd;
 
-	        for (int i=0; i<fh; i++)
-            delete [] buffer[i];
+			float** buffer = new float*[fh];
+			for (int i=0; i<fh; i++)
+			buffer[i] = new float[fw];
+			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d);
+			else ipf.ciecam_02 (cieView, ada, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd);
+			for (int i=0; i<fh; i++)
+			delete [] buffer[i];
 			delete [] buffer;
-			}
-			else {
+		}
+		else {
 			int f_h=2,f_w=2;
 			float d;
-			
-			double dd;
-	        float** buffer = new float*[f_h];
-			for (int i=0; i<f_h; i++)
-            buffer[i] = new float[f_w];
-if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, d);
-else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 1, (float**)buffer, true, dd);
 
-	        for (int i=0; i<f_h; i++)
-            delete [] buffer[i];
+			double dd;
+			float** buffer = new float*[f_h];
+			for (int i=0; i<f_h; i++)
+			buffer[i] = new float[f_w];
+			if(settings->ciecamfloat) ipf.ciecam_02float (cieView, adap, begh, endh,1,2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, d);
+			else ipf.ciecam_02 (cieView, adap, begh, endh,1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 1, (float**)buffer, true, dd);
+
+			for (int i=0; i<f_h; i++)
+			delete [] buffer[i];
 			delete [] buffer;
-			}
+		}
 	}	
     delete cieView;
     cieView = NULL;

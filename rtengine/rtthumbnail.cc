@@ -748,8 +748,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     ColorAppearance customColCurve1;
     ColorAppearance customColCurve2;
     ColorAppearance customColCurve3;
-	ChMixerbw customToneCurvebw1;
-	ChMixerbw customToneCurvebw2;
+	ToneCurve customToneCurvebw1;
+	ToneCurve customToneCurvebw2;
 
 	ipf.g = gamma;
 	ipf.iGamma = true;
@@ -766,11 +766,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	LabImage* labView = new LabImage (fw,fh);
 	CieImage* cieView = new CieImage (fw,fh);
 	
-    CurveFactory::curveBW (params.blackwhite.beforeCurveMode, params.blackwhite.beforeCurve, params.blackwhite.afterCurveMode, params.blackwhite.afterCurve,
-									hist16, dummy, dummy, customToneCurvebw1, customToneCurvebw2, 16);
+    CurveFactory::curveBW (params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 16);
 	
 	double rrm, ggm, bbm;
-    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm,expcomp, hlcompr, hlcomprthresh);
+    float autor, autog, autob;
+    autor = autog = autob = -9000.f; // This will ask to compute the "auto" values for the B&W tool
+    ipf.rgbProc (baseImg, labView, curve1, curve2, curve, shmap, params.toneCurve.saturation, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh);
 
     if (shmap)
         delete shmap;
@@ -799,7 +800,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 	
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili,params.labCurve.chromaticity, params.labCurve.rstprotection,
 								   params.labCurve.acurve, params.labCurve.bcurve,params.labCurve.cccurve,params.labCurve.lccurve, curve1, curve2, satcurve,lhskcurve,
-									hist16C, hist16C, hist16C, dummy, dummy,
+									hist16C, hist16C, dummy, dummy,
 								   16);
     //ipf.luminanceCurve (labView, labView, curve);
     ipf.chromiLuminanceCurve (1,labView, labView, curve1, curve2, satcurve,lhskcurve, clcurve, curve, utili, autili, butili, ccutili,cclutili, clcutili, dummy, dummy, dummy, dummy);
@@ -816,46 +817,48 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 					params.colorappearance.curveMode2, params.colorappearance.curve2,
 					params.colorappearance.curveMode3, params.colorappearance.curve3,
 					hist16, hist16, dummy,
-					hist16C, hist16C, dummy,
+					hist16C, dummy,
 					customColCurve1,
 					customColCurve2, 
 					customColCurve3, 
 					16);
 
-	int f_h=2,f_w=2;
 	if(params.colorappearance.enabled){
-	float** buffer = new float*[fh];
-	for (int i=0; i<fh; i++)
-		buffer[i] = new float[fw];
-	bool execsharp=false;
-	float d;
-	float fnum = fnumber;// F number
-	float fiso = iso;// ISO
-	float fspeed = shutter;//speed 
-	char * writ = new char[expcomp_.size() + 1];//convert expcomp_ to char
-	std::copy(expcomp_.begin(), expcomp_.end(), writ);
-	writ[expcomp_.size()] = '\0'; 
-	float fcomp = atof(writ); //compensation + -
-	delete[] writ;
-	float adap2,adap;
-	double ada, ada2;
-	if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {adap=adap=2000.f;ada=2000.;}//if no exif data or wrong
-	else {
-	float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
-	float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-	E_V += expo2;
-	float expo1;//exposure raw white point
-	expo1=log2(params.raw.expos);//log2 ==>linear to EV
-	E_V += expo1;
-	adap2 = adap= powf(2.f, E_V-3.f);//cd / m2
-	ada=ada2=(double) adap;
-	//end calculation adaptation scene luminosity
-	}
+		float** buffer = new float*[fh];
+		for (int i=0; i<fh; i++)
+			buffer[i] = new float[fw];
+		bool execsharp=false;
+		float d;
+		float fnum = fnumber;// F number
+		float fiso = iso;// ISO
+		float fspeed = shutter;//speed
+		char * writ = new char[expcomp_.size() + 1];//convert expcomp_ to char
+		std::copy(expcomp_.begin(), expcomp_.end(), writ);
+		writ[expcomp_.size()] = '\0';
+		float fcomp = atof(writ); //compensation + -
+		delete[] writ;
+		float adap;
+		if(fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f)
+			//if no exif data or wrong
+			adap=2000.f;
+		else {
+			float E_V = fcomp + log2 ((fnum*fnum) / fspeed / (fiso/100.f));
+			float expo2= params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+			E_V += expo2;
+			float expo1;//exposure raw white point
+			expo1=log2(params.raw.expos);//log2 ==>linear to EV
+			E_V += expo1;
+			adap= powf(2.f, E_V-3.f);//cd / m2
+			//end calculation adaptation scene luminosity
+		}
 
-	ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, 5, 6, (float**)buffer, execsharp, d);
-	for (int i=0; i<fh; i++)
-		delete [] buffer[i];
-	delete [] buffer; buffer=NULL;
+		LUTf CAMBrightCurveJ;
+		LUTf CAMBrightCurveQ;
+		float CAMMean;
+		ipf.ciecam_02float (cieView, adap, begh, endh, 1, 2, labView, &params,customColCurve1,customColCurve2,customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, 6, (float**)buffer, execsharp, d);
+		for (int i=0; i<fh; i++)
+			delete [] buffer[i];
+		delete [] buffer; buffer=NULL;
 	}
     // color processing
     //ipf.colorCurve (labView, labView);

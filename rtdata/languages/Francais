@@ -971,7 +971,7 @@ TP_BWMIX_LABEL;Noir & Blanc
 TP_BWMIX_CC_ENABLED;Ajuster les couleurs complémentaires
 TP_BWMIX_CHANNEL;Égaliseur de Luminance
 TP_BWMIX_VAL;L
-TP_BWMIX_CC_TOOLTIP;Activer pour permettre l'ajustage automatique des couleur complémentaire dans le mode ROJVCBMP
+TP_BWMIX_CC_TOOLTIP;Activer pour permettre l'ajustage automatique des couleur complémentaire dans le mode ROJVCBPM
 TP_BWMIX_SETTING_TOOLTIP;Différents préréglages (films, paysage, ...) ou réglages manuel du mixeur de canaux
 TP_BWMIX_FILTER_TOOLTIP;Le filtre de couleur simule les prises de vue avec un filtre coloré placé devant l'objectif. Les filtres colorés réduisent la transmission d'une plage de couleur spécifique et en affectent donc leur luminosité. Ex: un filtre rouge assombri les ciels bleus.
 TP_BWMIX_AUTOCH;Auto
@@ -992,6 +992,8 @@ TP_BWMIX_GAM_GREEN;Canal Vert
 TP_BWMIX_GAM_BLUE;Canal Bleu
 TP_BWMIX_MIXC;Mixeur
 TP_BWMIX_MIXF;Mixeur de Filtres
+TP_BWMIX_RGBLABEL;R: %1%%   V: %2%%   B: %3%%   Total: %4%%
+TP_BWMIX_RGBLABEL_HINT;Coefficients RVB finaux qui tiennent compte de toutes les options du mixeur\nTotal affiche la somme des valeurs RVB actuellement appliqué:\n- toujours 100% en mode relatif\n- supérieur (plus clair) ou inférieur (plus sombre) à 100% en mode absolu.
 TP_BWMIX_FILTER;Filtre de couleur
 TP_BWMIX_FILTER_NONE;Aucun
 TP_BWMIX_FILTER_RED;Rouge
@@ -1015,8 +1017,8 @@ TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatique
 TP_BWMIX_SET_ORTHOCHRO;Orthochromatique
 TP_BWMIX_SET_RGBABS;Mixeur de Canaux - RVB Absolu
 TP_BWMIX_SET_RGBREL;Mixeur de Canaux - RVB Relatif
-TP_BWMIX_SET_ROYGCBMPABS;Mixeur de Canaux - ROJVCBMP Absolu
-TP_BWMIX_SET_ROYGCBMPREL;Mixeur de Canaux - ROJVCBMP Relatif
+TP_BWMIX_SET_ROYGCBPMABS;Mixeur de Canaux - ROJVCBPM Absolu
+TP_BWMIX_SET_ROYGCBPMREL;Mixeur de Canaux - ROJVCBPM Relatif
 TP_BWMIX_SET_INFRARED;Infrarouge
 TP_BWMIX_GAMMA;Correction Gamma
 TP_BWMIX_GAM_TOOLTIP;Corrige le gamma pour chaque canaux RVB

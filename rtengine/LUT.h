@@ -88,7 +88,17 @@ private:
 	__m128i sizeiv __attribute__ ((aligned (16)));
 #endif
 public:
+	/// convenience flag! If one doesn't want to delete the buffer but want to flag it to be recomputed...
+	/// The user have to handle it itself, even if some method can (re)initialize it
+	bool dirty;
+
 	LUT(int s, int flags = 0xfffffff) {
+		#ifndef NDEBUG
+		if (s<=0)
+			printf("s<=0!\n");
+		assert (s>0);
+		#endif
+		dirty = true;
 		clip = flags;
 		data = new T[s];
 		owner = 1;
@@ -102,8 +112,14 @@ public:
 #endif
 	}
 	void operator ()(int s, int flags = 0xfffffff) {
+		#ifndef NDEBUG
+		if (s<=0)
+			printf("s<=0!\n");
+		assert (s>0);
+		#endif
 		if (owner&&data)
 			delete[] data;
+		dirty = true; // Assumption!
 		clip = flags;
 		data = new T[s];
 		owner = 1;
@@ -118,6 +134,15 @@ public:
 	}
 
 	LUT(int s, T * source, int flags = 0xfffffff) {
+		#ifndef NDEBUG
+		if (s<=0)
+			printf("s<=0!\n");
+		assert (s>0);
+		if (source==NULL)
+			printf("source is NULL!\n");
+		assert (source != NULL);
+		#endif
+		dirty = false;  // Assumption
 		clip = flags;
 		data = new T[s];
 		owner = 1;
@@ -134,14 +159,18 @@ public:
 		}
 	}
 
-	LUT(void) {
+	LUT() {
 		data = NULL;
 		reset();
 	}
 
 	~LUT() {
-		if (owner)
+		if (owner) {
 			delete[] data;
+			#ifndef NDEBUG
+			data=(T*)0xBAADF00D;
+			#endif
+		}
 	}
 
 	void setClip(int flags) {
@@ -321,11 +350,11 @@ public:
 		if (size) {
 		    Glib::ustring fname_ = fname + ".xyz"; // TopSolid'Design "plot" file format
 			std::ofstream f (fname_.c_str());
-			f << "$" << std::endl;;
+			f << "$" << std::endl;
 			for (unsigned int iter=0; iter<size; iter++) {
-				f << iter << ", " << data[iter] << ", 0." << std::endl;;
+				f << iter << ", " << data[iter] << ", 0." << std::endl;
 			}
-			f << "$" << std::endl;;
+			f << "$" << std::endl;
 			f.close ();
 		}
 	}
@@ -338,11 +367,13 @@ public:
 		}
 
 	void clear(void) {
-		memset(data, 0, size * sizeof(T));
+		if (data && size)
+			memset(data, 0, size * sizeof(T));
 	}
 
 	void reset(void) {
-		delete[] data;
+		if (data) delete[] data;
+		dirty = true;
 		data = NULL;
 		owner = 1;
 		size = 0;

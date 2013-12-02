@@ -30,7 +30,7 @@ namespace rtengine {
     extern const Settings* settings;
 
     LUTf Color::cachef;
-    LUTf Color::gamma2curve = 0;
+    LUTf Color::gamma2curve;
 
     LUTf Color::gammatab;
     LUTf Color::igammatab_srgb;
@@ -414,19 +414,157 @@ namespace rtengine {
         b = ((rgb_xyz[2][0]*x + rgb_xyz[2][1]*y + rgb_xyz[2][2]*z)) ;
     }
 
-	void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb) {
-			// correct gamma for black and white image : pseudo TRC curve of ICC profil
-				b/=65535.0f;
-				b= pow (max(b,0.0f), gammabwb);
-				b *=65535.0f;
-				r/=65535.0f;
-				r= pow (max(r,0.0f), gammabwr);
-				r *=65535.0f;
-				g/=65535.0f;
-				g= pow (max(g,0.0f), gammabwg);
-				g *=65535.0f;
-	}
-	
+    void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb) {
+        // correct gamma for black and white image : pseudo TRC curve of ICC profil
+        b/=65535.0f;
+        b= pow (max(b,0.0f), gammabwb);
+        b *=65535.0f;
+        r/=65535.0f;
+        r= pow (max(r,0.0f), gammabwr);
+        r *=65535.0f;
+        g/=65535.0f;
+        g= pow (max(g,0.0f), gammabwg);
+        g *=65535.0f;
+    }
+
+    /** @brief Compute the B&W constants for the B&W processing and its tool's GUI
+     *
+     * @param setting BlackWhite::setting
+     * @param setting BlackWhite::filter
+     */
+    void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::ustring &filter, float &mixerRed, float &mixerGreen,
+                  float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
+                  bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm)
+    {
+        float somm;
+        float som = mixerRed+mixerGreen+mixerBlue;
+        // rM = mixerRed, gM = mixerGreen, bM = mixerBlue !
+
+        //presets
+        if     (setting=="RGB-Abs" || setting=="ROYGCBPM-Abs")
+            kcorec=som/100.f;
+
+        if (!autoc) {
+            //if     (setting=="RGB-Abs" || setting=="ROYGCBPM-Abs")  {} //Keep the RGB mixer values as is!
+            //else if(setting=="RGB-Rel" || setting=="ROYGCBPM-Rel")  {} //Keep the RGB mixer values as is!
+            if     (setting=="NormalContrast")    { mixerRed=43.f ; mixerGreen=33.f;  mixerBlue=30.f;  }
+            else if(setting=="Panchromatic")      { mixerRed=33.3f; mixerGreen=33.3f; mixerBlue=33.3f; }
+            else if(setting=="HyperPanchromatic") { mixerRed=41.f ; mixerGreen=25.f;  mixerBlue=34.f;  }
+            else if(setting=="LowSensitivity")    { mixerRed=27.f ; mixerGreen=27.f;  mixerBlue=46.f;  }
+            else if(setting=="HighSensitivity")   { mixerRed=30.f ; mixerGreen=28.f;  mixerBlue=42.f;  }
+            else if(setting=="Orthochromatic")    { mixerRed=0.f  ; mixerGreen=42.f;  mixerBlue=58.f;  }
+            else if(setting=="HighContrast")      { mixerRed=40.f ; mixerGreen=34.f;  mixerBlue=60.f;  }
+            else if(setting=="Luminance")         { mixerRed=30.f ; mixerGreen=59.f;  mixerBlue=11.f;  }
+            else if(setting=="Landscape")         { mixerRed=66.f ; mixerGreen=24.f;  mixerBlue=10.f;  }
+            else if(setting=="Portrait")          { mixerRed=54.f ; mixerGreen=44.f;  mixerBlue=12.f;  }
+            else if(setting=="InfraRed")          { mixerRed=-40.f; mixerGreen=200.f; mixerBlue=-17.f; }
+        }
+
+        rrm=mixerRed;
+        ggm=mixerGreen;
+        bbm=mixerBlue;
+
+        somm=mixerRed+mixerGreen+mixerBlue;
+        mixerRed=mixerRed/somm; mixerGreen=mixerGreen/somm; mixerBlue=mixerBlue/somm;
+        float koymcp=0.f;
+
+        if(setting=="ROYGCBPM-Abs" || setting=="ROYGCBPM-Rel") {
+            float obM=0.f;
+            float ogM=0.f;
+            float orM=0.f;
+
+            float ybM=0.f;
+            float yrM=0.f;
+            float ygM=0.f;
+
+            float mgM=0.f;
+            float mrM=0.f;
+            float mbM=0.f;
+
+            float pgM=0.f;
+            float prM=0.f;
+            float pbM=0.f;
+
+            float crM=0.f;
+            float cgM=0.f;
+            float cbM=0.f;
+
+
+            float fcompl = 1.f;
+            if(complement) fcompl = 3.f;
+            // ponderate filters: report to R=G=B=33
+            // I ponder RGB channel, not only orange or yellow or cyan, etc...it's my choice !
+            if(mixerOrange != 33) {
+                if (mixerOrange >= 33) orM = fcompl*(mixerOrange*0.67f - 22.11f)/100.f; else orM = fcompl*(-0.3f*mixerOrange +9.9f)/100.f;
+                if (mixerOrange >= 33) ogM = fcompl*(-0.164f*mixerOrange+5.412f)/100.f; else ogM = fcompl*(0.4f*mixerOrange-13.2f)/100.f;
+                if(complement) obM =(-0.492f*mixerOrange+16.236f)/100.f;
+                mixerRed   += orM;
+                mixerGreen += ogM;
+                mixerBlue  += obM;
+                koymcp += (orM+ogM+obM);
+            }
+            if(mixerYellow != 33) {
+                yrM = fcompl*(-0.134f*mixerYellow+4.422f)/100.f;//22.4
+                ygM = fcompl*( 0.5f  *mixerYellow-16.5f )/100.f;
+                if(complement) ybM =(-0.492f*mixerYellow+16.236f)/100.f;
+                mixerRed   += yrM;
+                mixerGreen += ygM;
+                mixerBlue  += ybM;
+                koymcp += (yrM+ygM+ybM);
+            }
+            if(mixerMagenta != 33) {
+                if(mixerMagenta >= 33) mrM = fcompl*( 0.67f *mixerMagenta-22.11f)/100.f; else mrM = fcompl*(-0.3f*mixerMagenta +9.9f)/100.f;
+                if(mixerMagenta >= 33) mbM = fcompl*(-0.164f*mixerMagenta+5.412f)/100.f; else mbM = fcompl*( 0.4f*mixerMagenta-13.2f)/100.f;
+                if(complement) mgM =(-0.492f*mixerMagenta+16.236f)/100.f;
+                mixerRed   += mrM;
+                mixerGreen += mgM;
+                mixerBlue  += mbM;
+                koymcp += (mrM+mgM+mbM);
+            }
+            if(mixerPurple != 33) {
+                prM = fcompl*(-0.134f*mixerPurple+4.422f)/100.f;
+                pbM = fcompl*(0.5f*mixerPurple-16.5f)/100.f;
+                if(complement) pgM = (-0.492f*mixerPurple+16.236f)/100.f;
+                mixerRed   += prM;
+                mixerGreen += pgM;
+                mixerBlue  += pbM;
+                koymcp += (prM+pgM+pbM);
+            }
+            if(mixerCyan != 33) {
+                cgM = fcompl*(-0.134f*mixerCyan +4.422f)/100.f;
+                cbM = fcompl*(0.5f*mixerCyan-16.5f)/100.f;
+                if(complement) crM = (-0.492f*mixerCyan+16.236f)/100.f;
+                mixerRed   += crM;
+                mixerGreen += cgM;
+                mixerBlue  += cbM;
+                koymcp += (crM+cgM+cbM);
+            }
+        }
+        if(setting=="ROYGCBPM-Abs")
+            kcorec = koymcp+som/100.f;
+        //Color filters
+        float filred,filgreen,filblue;
+        filred=1.f;filgreen=1.f;filblue=1.f;
+        if          (filter=="None")        {filred=1.f;  filgreen=1.f;  filblue=1.f;}
+        else if     (filter=="Red")         {filred=1.f;  filgreen=0.05f;filblue=0.f;}
+        else if     (filter=="Orange")      {filred=1.f;  filgreen=0.6f; filblue=0.f;}
+        else if     (filter=="Yellow")      {filred=1.f;  filgreen=1.f;  filblue=0.05f;}
+        else if     (filter=="YellowGreen") {filred=0.6f; filgreen=1.f;  filblue=0.3f;}
+        else if     (filter=="Green")       {filred=0.2f; filgreen=1.f;  filblue=0.3f;}
+        else if     (filter=="Cyan")        {filred=0.05f;filgreen=1.f;  filblue=1.f;}
+        else if     (filter=="Blue")        {filred=0.f;  filgreen=0.05f;filblue=1.f;}
+        else if     (filter=="Purple")      {filred=1.f;  filgreen=0.05f;filblue=1.f;}
+
+
+        mixerRed   = mixerRed   * filred;
+        mixerGreen = mixerGreen * filgreen;
+        mixerBlue  = mixerBlue  * filblue;
+
+        mixerRed   = mixerRed   / (mixerRed + mixerGreen + mixerBlue);
+        mixerGreen = mixerGreen / (mixerRed + mixerGreen + mixerBlue);
+        mixerBlue  = mixerBlue  / (mixerRed + mixerGreen + mixerBlue);
+    }
+
     void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {
         //from Dcraw (D.Coffin)
         int i;
