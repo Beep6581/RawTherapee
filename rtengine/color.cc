@@ -563,6 +563,11 @@ namespace rtengine {
         mixerRed   = mixerRed   / (mixerRed + mixerGreen + mixerBlue);
         mixerGreen = mixerGreen / (mixerRed + mixerGreen + mixerBlue);
         mixerBlue  = mixerBlue  / (mixerRed + mixerGreen + mixerBlue);
+		if(filter!="None") {
+			som = mixerRed+mixerGreen+mixerBlue;
+			if(setting=="RGB-Abs" || setting=="ROYGCBPM-Abs") kcorec = kcorec*som;
+			}		
+		
     }
 
     void Color::calcGamma (double pwr, double ts, int mode, int imax, double &gamma0, double &gamma1, double &gamma2, double &gamma3, double &gamma4, double &gamma5) {

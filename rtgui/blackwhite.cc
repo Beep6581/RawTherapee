@@ -1051,8 +1051,8 @@ void BlackWhite::updateRGBLabel () {
 				Glib::ustring::format(std::fixed, std::setprecision(1), r*100.),
 				Glib::ustring::format(std::fixed, std::setprecision(1), g*100.),
 				Glib::ustring::format(std::fixed, std::setprecision(1), b*100.),
-				Glib::ustring::format(std::fixed, std::setprecision(0), (r+g+b)*100.))
-		);
+				Glib::ustring::format(std::fixed, std::setprecision(0), ceil(kcorrec*100./*(r+g+b)*100.)*/)))
+				);
 		// We have to update the RGB sliders too if preset values has been chosen
 		if (sSetting != "RGB-Abs" && sSetting != "RGB-Rel" && sSetting != "ROYGCBPM-Abs" && sSetting != "ROYGCBPM-Rel") {
 			mixerRed->setValue(mixR);
