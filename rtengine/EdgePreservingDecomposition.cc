@@ -382,6 +382,9 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
 		if(UNLIKELY(d[j] == 0.0f)){
 			printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: division by zero. Matrix not decomposable.\n");
 			delete ic;
+			delete[] DiagMap;
+			delete[] MaxIndizes;
+			delete[] findmap;
 			return false;
 		}
 		float id = 1.0f/d[j];
