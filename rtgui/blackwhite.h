@@ -43,6 +43,7 @@ class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToo
 	Gtk::ToggleButton*   autoch;
 	Gtk::HBox*           autoHBox;
 	Gtk::Button*         neutral;
+	Gtk::Label*          RGBLabels;
 
 	Adjuster *mixerRed;
 	Adjuster *mixerGreen;
@@ -58,13 +59,14 @@ class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToo
 	MyComboBoxText*   method;
 	sigc::connection  methodconn;
 	Gtk::HBox*        filterHBox;
-	Gtk::HSeparator*  filterSep;
+	Gtk::HSeparator*  filterSep, *filterSep2;
 	MyComboBoxText*   filter;
 	sigc::connection  filterconn;
 	Gtk::HBox*        settingHBox;
 	MyComboBoxText*   setting;
 	sigc::connection  settingconn;
 	Gtk::Frame* mixerFrame;
+	Gtk::VBox * mixerVBox;
 	Gtk::Frame* gammaFrame;
 
 	Gtk::Image *imgIcon[11];
@@ -106,6 +108,7 @@ class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToo
 	void autoch_toggled  ();
 	void neutral_pressed ();
 
+	void updateRGBLabel      ();
 	void adjusterChanged     (Adjuster* a, double newval);
 	void setAdjusterBehavior (bool bwadd, bool bwgadd);
 	void trimValues          (rtengine::procparams::ProcParams* pp);
@@ -122,6 +125,9 @@ class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToo
 	bool curveMode1Changed_  ();
 	void curveMode1Changed2  ();
 	bool curveMode1Changed2_ ();
+
+	Glib::ustring getSettingString ();
+	Glib::ustring getFilterString  ();
 };
 
 #endif

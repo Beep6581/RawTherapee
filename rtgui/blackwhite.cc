@@ -32,6 +32,10 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	set_border_width(4);
 	set_spacing(4);
 
+	nextredbw = 0.3333;
+	nextgreenbw = 0.3333;
+	nextbluebw = 0.3333;
+
 	//----------- Enables checkbox ------------------------------
 
 	enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLED")));
@@ -89,7 +93,7 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	mixerFrame = Gtk::manage (new Gtk::Frame (M("TP_BWMIX_MET_CHANMIX")));
 	pack_start (*mixerFrame, Gtk::PACK_SHRINK, 0);
 
-	Gtk::VBox *mixerVBox = Gtk::manage (new Gtk::VBox ());
+	mixerVBox = Gtk::manage (new Gtk::VBox ());
 	mixerVBox->set_border_width(4);
 	mixerVBox->set_spacing(4);
 
@@ -122,9 +126,6 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	settingHBox->set_tooltip_markup (M("TP_BWMIX_SETTING_TOOLTIP"));
 	Gtk::Label *settingLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_SETTING")+":"));
 
-	Gtk::SeparatorMenuItem *menuSep1 = Gtk::manage (new Gtk::SeparatorMenuItem ());
-	Gtk::SeparatorMenuItem *menuSep2 = Gtk::manage (new Gtk::SeparatorMenuItem ());
-
 	settingHBox->pack_start (*settingLabel, Gtk::PACK_SHRINK);
 	setting = Gtk::manage (new MyComboBoxText ());
 	setting->append_text (M("TP_BWMIX_SET_NORMCONTAST"));
@@ -139,14 +140,18 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	setting->append_text (M("TP_BWMIX_SET_ORTHOCHRO"));
 	setting->append_text (M("TP_BWMIX_SET_RGBABS"));
 	setting->append_text (M("TP_BWMIX_SET_RGBREL"));
-	setting->append_text (M("TP_BWMIX_SET_ROYGCBMPABS"));
-	setting->append_text (M("TP_BWMIX_SET_ROYGCBMPREL"));
+	setting->append_text (M("TP_BWMIX_SET_ROYGCBPMABS"));
+	setting->append_text (M("TP_BWMIX_SET_ROYGCBPMREL"));
 	setting->append_text (M("TP_BWMIX_SET_INFRARED"));
 
 	setting->set_active (0);
 	settingHBox->pack_start (*setting);
 	mixerVBox->pack_start (*settingHBox);
 	settingconn = setting->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::settingChanged) );
+
+	RGBLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
+	RGBLabels->set_tooltip_text(M("TP_BWMIX_RGBLABEL_HINT"));
+	mixerVBox->pack_start (*RGBLabels);
 
 	//----------- Complementary Color checkbox ------------------------------
 
@@ -189,16 +194,16 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	mixerVBox->pack_start (*filterHBox);
 	filterconn = filter->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::filterChanged) );
 
-	//----------- RGB / ROYGCBMP Mixer ------------------------------
+	//----------- RGB / ROYGCBPM Mixer ------------------------------
 
 	imgIcon[0] = Gtk::manage (new RTImage ("Chanmixer-R.png"));
-	imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer-G.png"));
-	imgIcon[2] = Gtk::manage (new RTImage ("Chanmixer-B.png"));
-	imgIcon[3] = Gtk::manage (new RTImage ("Chanmixer-O.png"));
-	imgIcon[4] = Gtk::manage (new RTImage ("Chanmixer-Y.png"));
-	imgIcon[5] = Gtk::manage (new RTImage ("Chanmixer-C.png"));
-	imgIcon[6] = Gtk::manage (new RTImage ("Chanmixer-M.png"));
-	imgIcon[7] = Gtk::manage (new RTImage ("Chanmixer-P.png"));
+	imgIcon[1] = Gtk::manage (new RTImage ("Chanmixer-O.png"));
+	imgIcon[2] = Gtk::manage (new RTImage ("Chanmixer-Y.png"));
+	imgIcon[3] = Gtk::manage (new RTImage ("Chanmixer-G.png"));
+	imgIcon[4] = Gtk::manage (new RTImage ("Chanmixer-C.png"));
+	imgIcon[5] = Gtk::manage (new RTImage ("Chanmixer-B.png"));
+	imgIcon[6] = Gtk::manage (new RTImage ("Chanmixer-P.png"));
+	imgIcon[7] = Gtk::manage (new RTImage ("Chanmixer-M.png"));
 
 	imgIcon[8]  = Gtk::manage (new RTImage ("Chanmixer-Rgamma.png"));
 	imgIcon[9]  = Gtk::manage (new RTImage ("Chanmixer-Ggamma.png"));
@@ -213,54 +218,57 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	mixerRed->show();
 	mixerVBox->pack_start( *mixerRed, Gtk::PACK_SHRINK, 0);
 
-	mixerOrange= Gtk::manage(new Adjuster (/*M("TP_BWMIX_ORANGE")*/"", -100, 200, 1, 33, imgIcon[3]));
-	if (mixerOrange->delay < 50) mixerOrange->delay = 50;
-	mixerOrange->setAdjusterListener (this);
-	mixerOrange->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	mixerOrange->show();
-	mixerVBox->pack_start( *mixerOrange, Gtk::PACK_SHRINK, 0);
-
-	mixerYellow= Gtk::manage(new Adjuster (/*M("TP_BWMIX_YELLOW")*/"", -100, 200, 1, 33, imgIcon[4]));
-	if (mixerYellow->delay < 50) mixerYellow->delay = 50;
-	mixerYellow->setAdjusterListener (this);
-	mixerYellow->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	mixerYellow->show();
-	mixerVBox->pack_start( *mixerYellow, Gtk::PACK_SHRINK, 0);
-
-	mixerGreen= Gtk::manage(new Adjuster (/*M("TP_BWMIX_GREEN")*/"", -100, 200, 1, 33, imgIcon[1]));
+	mixerGreen= Gtk::manage(new Adjuster (/*M("TP_BWMIX_GREEN")*/"", -100, 200, 1, 33, imgIcon[3]));
 	if (mixerGreen->delay < 50) mixerGreen->delay = 50;
 	mixerGreen->setAdjusterListener (this);
 	mixerGreen->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
 	mixerGreen->show();
 	mixerVBox->pack_start( *mixerGreen, Gtk::PACK_SHRINK, 0);
 
-	mixerCyan= Gtk::manage(new Adjuster (/*M("TP_BWMIX_CYAN")*/"", -100, 200, 1, 33, imgIcon[5]));
-	if (mixerCyan->delay < 50) mixerCyan->delay = 50;
-	mixerCyan->setAdjusterListener (this);
-	mixerCyan->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	mixerCyan->show();
-	mixerVBox->pack_start( *mixerCyan, Gtk::PACK_SHRINK, 0);
-
-	mixerBlue= Gtk::manage(new Adjuster (/*M("TP_BWMIX_BLUE")*/"", -100, 200, 1, 33, imgIcon[2]));
+	mixerBlue= Gtk::manage(new Adjuster (/*M("TP_BWMIX_BLUE")*/"", -100, 200, 1, 33, imgIcon[5]));
 	if (mixerBlue->delay < 50) mixerBlue->delay = 50;
 	mixerBlue->setAdjusterListener (this);
 	mixerBlue->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
 	mixerBlue->show();
 	mixerVBox->pack_start( *mixerBlue, Gtk::PACK_SHRINK, 0);
 
-	mixerMagenta= Gtk::manage(new Adjuster (/*M("TP_BWMIX_MAGENTA")*/"", -100, 200, 1, 33, imgIcon[6]));
-	if (mixerMagenta->delay < 50) mixerMagenta->delay = 50;
-	mixerMagenta->setAdjusterListener (this);
-	mixerMagenta->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
-	mixerMagenta->show();
-	mixerVBox->pack_start( *mixerMagenta, Gtk::PACK_SHRINK, 0);
+	filterSep2 = Gtk::manage (new  Gtk::HSeparator());
+	mixerVBox->pack_start (*filterSep2);
 
-	mixerPurple= Gtk::manage(new Adjuster (/*M("TP_BWMIX_PURPLE")*/"", -100, 200, 1, 33, imgIcon[7]));
+	mixerOrange= Gtk::manage(new Adjuster (/*M("TP_BWMIX_ORANGE")*/"", -100, 200, 1, 33, imgIcon[1]));
+	if (mixerOrange->delay < 50) mixerOrange->delay = 50;
+	mixerOrange->setAdjusterListener (this);
+	mixerOrange->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerOrange->show();
+	mixerVBox->pack_start( *mixerOrange, Gtk::PACK_SHRINK, 0);
+
+	mixerYellow= Gtk::manage(new Adjuster (/*M("TP_BWMIX_YELLOW")*/"", -100, 200, 1, 33, imgIcon[2]));
+	if (mixerYellow->delay < 50) mixerYellow->delay = 50;
+	mixerYellow->setAdjusterListener (this);
+	mixerYellow->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerYellow->show();
+	mixerVBox->pack_start( *mixerYellow, Gtk::PACK_SHRINK, 0);
+
+	mixerCyan= Gtk::manage(new Adjuster (/*M("TP_BWMIX_CYAN")*/"", -100, 200, 1, 33, imgIcon[4]));
+	if (mixerCyan->delay < 50) mixerCyan->delay = 50;
+	mixerCyan->setAdjusterListener (this);
+	mixerCyan->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerCyan->show();
+	mixerVBox->pack_start( *mixerCyan, Gtk::PACK_SHRINK, 0);
+
+	mixerPurple= Gtk::manage(new Adjuster (/*M("TP_BWMIX_PURPLE")*/"", -100, 200, 1, 33, imgIcon[6]));
 	if (mixerPurple->delay < 50) mixerPurple->delay = 50;
 	mixerPurple->setAdjusterListener (this);
 	mixerPurple->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
 	mixerPurple->show();
 	mixerVBox->pack_start( *mixerPurple, Gtk::PACK_SHRINK, 0);
+
+	mixerMagenta= Gtk::manage(new Adjuster (/*M("TP_BWMIX_MAGENTA")*/"", -100, 200, 1, 33, imgIcon[7]));
+	if (mixerMagenta->delay < 50) mixerMagenta->delay = 50;
+	mixerMagenta->setAdjusterListener (this);
+	mixerMagenta->set_tooltip_markup (M("TP_BWMIX_RGB_TOOLTIP"));
+	mixerMagenta->show();
+	mixerVBox->pack_start( *mixerMagenta, Gtk::PACK_SHRINK, 0);
 
 	mixerFrame->add(*mixerVBox);
 
@@ -376,6 +384,8 @@ bool BlackWhite::BWComputed_ () {
 	mixerBlue->setValue (nextbluebw);
 	enableListener ();
 
+	updateRGBLabel();
+
 	return false;
 }
 
@@ -388,7 +398,6 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	settingconn.block(true);
 	enaccconn.block (true);
 	enaconn.block (true);
-
 
 	if (pedited && !pedited->blackwhite.setting)
 		setting->set_active (15); // "Unchanged"
@@ -416,9 +425,9 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		setting->set_active (10);
 	else if (pp->blackwhite.setting=="RGB-Rel")
 		setting->set_active (11);
-	else if (pp->blackwhite.setting=="ROYGCBMP-Abs")
+	else if (pp->blackwhite.setting=="ROYGCBPM-Abs")
 		setting->set_active (12);
-	else if (pp->blackwhite.setting=="ROYGCBMP-Rel")
+	else if (pp->blackwhite.setting=="ROYGCBPM-Rel")
 		setting->set_active (13);
 	else if (pp->blackwhite.setting=="InfraRed")
 		setting->set_active (14);
@@ -515,6 +524,8 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	enaconn.block (false);
 	enaccconn.block (false);
 
+	updateRGBLabel();
+
 	enableListener ();
 }
 
@@ -578,55 +589,8 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited) {
 	else if (method->get_active_row_number()==2)
 		pp->blackwhite.method = "ChannelMixer";
 
-	if (setting->get_active_row_number()==0)
-		pp->blackwhite.setting = "NormalContrast";
-	else if (setting->get_active_row_number()==1)
-		pp->blackwhite.setting = "HighContrast";
-	else if (setting->get_active_row_number()==2)
-		pp->blackwhite.setting = "Luminance";
-	else if (setting->get_active_row_number()==3)
-		pp->blackwhite.setting = "Landscape";
-	else if (setting->get_active_row_number()==4)
-		pp->blackwhite.setting = "Portrait";
-	else if (setting->get_active_row_number()==5)
-		pp->blackwhite.setting = "LowSensitivity";
-	else if (setting->get_active_row_number()==6)
-		pp->blackwhite.setting = "HighSensitivity";
-	else if (setting->get_active_row_number()==7)
-		pp->blackwhite.setting = "Panchromatic";
-	else if (setting->get_active_row_number()==8)
-		pp->blackwhite.setting = "HyperPanchromatic";
-	else if (setting->get_active_row_number()==9)
-		pp->blackwhite.setting = "Orthochromatic";
-	else if (setting->get_active_row_number()==10)
-		pp->blackwhite.setting = "RGB-Abs";
-	else if (setting->get_active_row_number()==11)
-		pp->blackwhite.setting = "RGB-Rel";
-	else if (setting->get_active_row_number()==12)
-		pp->blackwhite.setting = "ROYGCBMP-Abs";
-	else if (setting->get_active_row_number()==13)
-		pp->blackwhite.setting = "ROYGCBMP-Rel";
-	else if (setting->get_active_row_number()==14)
-		pp->blackwhite.setting = "InfraRed";
-
-	if (filter->get_active_row_number()==0)
-		pp->blackwhite.filter = "None";
-	else if (filter->get_active_row_number()==1)
-		pp->blackwhite.filter = "Red";
-	else if (filter->get_active_row_number()==2)
-		pp->blackwhite.filter = "Orange";
-	else if (filter->get_active_row_number()==3)
-		pp->blackwhite.filter = "Yellow";
-	else if (filter->get_active_row_number()==4)
-		pp->blackwhite.filter = "YellowGreen";
-	else if (filter->get_active_row_number()==5)
-		pp->blackwhite.filter = "Green";
-	else if (filter->get_active_row_number()==6)
-		pp->blackwhite.filter = "Cyan";
-	else if (filter->get_active_row_number()==7)
-		pp->blackwhite.filter = "Blue";
-	else if (filter->get_active_row_number()==8)
-		pp->blackwhite.filter = "Purple";
+	pp->blackwhite.setting = getSettingString();
+	pp->blackwhite.filter = getFilterString();
 }
 
 void BlackWhite::curveChanged (CurveEditor* ce) {
@@ -698,7 +662,7 @@ void BlackWhite::settingChanged () {
 		showFilter();
 	}
 	else if ( setting->get_active_row_number()==12 || setting->get_active_row_number()==13 ) {
-		// ROYGCBMP Channel Mixer
+		// ROYGCBPM Channel Mixer
 		showMixer(7);
 		showEnabledCC();
 		showFilter();
@@ -717,6 +681,18 @@ void BlackWhite::settingChanged () {
 		showFilter();
 	}
 
+	// Checking "listener" to avoid "autoch" getting toggled off because it has to change the sliders when toggling on
+	if (listener){
+		if (multiImage && autoch->get_inconsistent())
+			autoch->set_inconsistent (false);
+		autoconn.block(true);
+		autoch->set_active (false);
+		autoconn.block(false);
+		lastAuto = false;
+	}
+
+	updateRGBLabel();
+
 	if (listener && (multiImage||enabled->get_active())) {
 		listener->panelChanged (EvBWsetting, setting->get_active_text ());
 	}
@@ -724,6 +700,18 @@ void BlackWhite::settingChanged () {
 
 
 void BlackWhite::filterChanged () {
+	// Checking "listener" to avoid "autoch" getting toggled off because it has to change the sliders when toggling on
+	if (listener){
+		if (multiImage && autoch->get_inconsistent())
+			autoch->set_inconsistent (false);
+		autoconn.block(true);
+		autoch->set_active (false);
+		autoconn.block(false);
+		lastAuto = false;
+	}
+
+	updateRGBLabel();
+
 	if (listener && (multiImage||enabled->get_active())) {	
 		listener->panelChanged (EvBWfilter, filter->get_active_text ());
 	}
@@ -803,15 +791,17 @@ void BlackWhite::neutral_pressed () {
 	// This method deselects auto chmixer and sets "neutral" values to params
 	disableListener();
 
-	if (multiImage) {
+	if (multiImage && autoch->get_inconsistent())
 		autoch->set_inconsistent (false);
-		autoch->set_active (false);
+	autoconn.block(true);
+	autoch->set_active (false);
+	autoconn.block(false);
+	lastAuto = false;
 
-		lastAuto = autoch->get_active ();
-	}
-	else { //!batchMode
-		autoch->set_active (false);
-	}
+	int activeSetting = setting->get_active_row_number();
+	if (activeSetting < 10 || activeSetting > 13)
+		setting->set_active (11);
+	filter->set_active (0);
 	mixerRed->resetValue(false);
 	mixerGreen->resetValue(false);
 	mixerBlue->resetValue(false);
@@ -820,23 +810,23 @@ void BlackWhite::neutral_pressed () {
 	mixerMagenta->resetValue(false);
 	mixerPurple->resetValue(false);
 	mixerCyan->resetValue(false);
-	int activeSetting = setting->get_active_row_number();
-	if (activeSetting < 10 || activeSetting > 13)
-		setting->set_active (11);
-	filter->set_active (0);
 
 	enableListener();
+
+	updateRGBLabel();
 
 	listener->panelChanged (EvNeutralBW, M("ADJUSTER_RESET_TO_DEFAULT"));
 }
 
 void BlackWhite::enabledcc_toggled () {
 
+	// toggling off the Complementary Colors does switch off the Auto button
 	if (multiImage) {
+		// multiple image editing (batch)
 		if (enabledcc->get_inconsistent()) {
-			enabledcc->set_inconsistent (false);
+			enabledcc->set_inconsistent (false);  // set consistent
 			enaccconn.block (true);
-			enabledcc->set_active (false);
+			enabledcc->set_active (false);  // ... and deactivated
 			enaccconn.block (false);
 		}
 		else if (lastEnabledcc)
@@ -844,6 +834,16 @@ void BlackWhite::enabledcc_toggled () {
 
 		lastEnabledcc = enabledcc->get_active ();
 	}
+
+	if (multiImage && autoch->get_inconsistent())
+		autoch->set_inconsistent (false);
+	autoconn.block(true);
+	autoch->set_active (false);
+	autoconn.block(false);
+	lastAuto = false;
+
+	updateRGBLabel();
+
 	if (listener) {
 		if (enabledcc->get_inconsistent())
 			listener->panelChanged (EvBWChmixEnabledLm, M("GENERAL_UNCHANGED"));
@@ -902,14 +902,16 @@ void BlackWhite::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 void BlackWhite::autoch_toggled () {
 
 	if (batchMode) {
-		if (autoch->get_inconsistent()) {
-			autoch->set_inconsistent (false);
-			autoconn.block (true);
-			autoch->set_active (false);
-			autoconn.block (false);
+		if (multiImage) {
+			if (autoch->get_inconsistent()) {
+				autoch->set_inconsistent (false);
+				autoconn.block (true);
+				autoch->set_active (false);
+				autoconn.block (false);
+			}
+			else if (lastAuto)
+				autoch->set_inconsistent (true);
 		}
-		else if (lastAuto)
-			autoch->set_inconsistent (true);
 
 		lastAuto = autoch->get_active ();
 
@@ -937,18 +939,19 @@ void BlackWhite::autoch_toggled () {
 			mixerMagenta->resetValue(true);
 		if (mixerPurple->getAddMode())
 			mixerPurple->resetValue(true);
-		if (mixerMagenta->getAddMode())
-			mixerPurple->resetValue(true);
+		if (mixerCyan->getAddMode())
+			mixerCyan->resetValue(true);
 		setting->set_active (11);
 		filter->set_active (0);
 		if (wasEnabled) enableListener();
 
 		if (listener) {
-			if (!autoch->get_inconsistent()) {
-				if (autoch->get_active ())
-					listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));}
-				else
-					listener->panelChanged (EvAutoch, M("GENERAL_DISABLED"));
+			if (autoch->get_inconsistent())
+				listener->panelChanged (EvAutoch, M("GENERAL_UNCHANGED"));
+			else if (autoch->get_active ())
+				listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
+			else
+				listener->panelChanged (EvAutoch, M("GENERAL_DISABLED"));
 		}
 	}
 	else {
@@ -966,6 +969,8 @@ void BlackWhite::autoch_toggled () {
 			filter->set_active (0);
 			if (wasEnabled) enableListener();
 
+			updateRGBLabel();
+
 			if (listener)
 				listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
 		}
@@ -979,12 +984,21 @@ void BlackWhite::autoch_toggled () {
 
 void BlackWhite::adjusterChanged (Adjuster* a, double newval) {
 
-	if (autoch->get_active() && (a==mixerRed || a==mixerGreen || a==mixerBlue || a==mixerOrange || a==mixerYellow || a==mixerMagenta || a==mixerPurple || a==mixerCyan )) {
+	// Checking "listener" to avoid "autoch" getting toggled off because it has to change the sliders when toggling on
+	if (listener && (a==mixerRed || a==mixerGreen || a==mixerBlue || a==mixerOrange || a==mixerYellow || a==mixerMagenta || a==mixerPurple || a==mixerCyan) ) {
+		if (multiImage && autoch->get_inconsistent())
+			autoch->set_inconsistent (false);
 		autoconn.block(true);
 		autoch->set_active (false);
 		autoconn.block(false);
-		autoch->set_inconsistent (false);
+		lastAuto = false;
 	}
+
+	if (a == mixerRed || a==mixerGreen || a== mixerBlue
+		|| a == mixerOrange || a == mixerYellow ||a == mixerCyan
+		|| a == mixerMagenta || a == mixerPurple)
+
+		updateRGBLabel();
 
 	if (listener  && (multiImage||enabled->get_active())) {
 		Glib::ustring value = a->getTextValue();
@@ -1013,12 +1027,51 @@ void BlackWhite::adjusterChanged (Adjuster* a, double newval) {
 	}
 }
 
+void BlackWhite::updateRGBLabel () {
+	if (!batchMode) {
+		float kcorrec=1.f;
+		float r, g, b;
+		if (autoch->get_active()) {
+			r = nextredbw;
+			g = nextgreenbw;
+			b = nextbluebw;
+		}
+		else {
+			r = mixerRed->getValue();
+			g = mixerGreen->getValue();
+			b = mixerBlue->getValue();
+		}
+		double mixR, mixG, mixB;
+		Glib::ustring sSetting = getSettingString();
+		Color::computeBWMixerConstants(sSetting, getFilterString(), r, g, b,
+				mixerOrange->getValue(), mixerYellow->getValue(), mixerCyan->getValue(), mixerPurple->getValue(), mixerMagenta->getValue(),
+				autoch->get_active(), enabledcc->get_active(), kcorrec, mixR, mixG, mixB);
+		RGBLabels->set_text(
+				Glib::ustring::compose(M("TP_BWMIX_RGBLABEL"),
+				Glib::ustring::format(std::fixed, std::setprecision(1), r*100.),
+				Glib::ustring::format(std::fixed, std::setprecision(1), g*100.),
+				Glib::ustring::format(std::fixed, std::setprecision(1), b*100.),
+				Glib::ustring::format(std::fixed, std::setprecision(0), (r+g+b)*100.))
+		);
+		// We have to update the RGB sliders too if preset values has been chosen
+		if (sSetting != "RGB-Abs" && sSetting != "RGB-Rel" && sSetting != "ROYGCBPM-Abs" && sSetting != "ROYGCBPM-Rel") {
+			mixerRed->setValue(mixR);
+			mixerGreen->setValue(mixG);
+			mixerBlue->setValue(mixB);
+		}
+	}
+}
+
 void BlackWhite::setBatchMode (bool batchMode) {
 	removeIfThere (autoHBox, autoch, false);
 	autoch = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_AUTOCH")));
 	autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
 	autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
 	autoHBox->pack_start (*autoch);
+
+	removeIfThere (mixerVBox, RGBLabels, false);
+	delete RGBLabels;
+	RGBLabels = NULL;
 
 	ToolPanel::setBatchMode (batchMode);
 	mixerRed->showEditedCB ();
@@ -1122,10 +1175,14 @@ void BlackWhite::hideEnabledCC() {
 }
 
 void BlackWhite::showMixer(int nChannels, bool RGBIsSensitive) {
+	if (!batchMode)
+		RGBLabels->show();
+
 	if (!batchMode && nChannels == 3) {
 		mixerRed->show();   mixerRed->set_sensitive (RGBIsSensitive);
 		mixerGreen->show(); mixerGreen->set_sensitive (RGBIsSensitive);
 		mixerBlue->show();  mixerBlue->set_sensitive (RGBIsSensitive);
+		filterSep2->hide();
 		mixerOrange->hide();
 		mixerYellow->hide();
 		mixerCyan->hide();
@@ -1136,6 +1193,7 @@ void BlackWhite::showMixer(int nChannels, bool RGBIsSensitive) {
 		mixerRed->show();   mixerRed->set_sensitive (true);
 		mixerGreen->show(); mixerGreen->set_sensitive (true);
 		mixerBlue->show();  mixerBlue->set_sensitive (true);
+		filterSep2->show();
 		mixerOrange->show();
 		mixerYellow->show();
 		mixerCyan->show();
@@ -1157,4 +1215,62 @@ void BlackWhite::showGamma() {
 void BlackWhite::hideGamma() {
 	if (!batchMode)
 		gammaFrame->hide();
+}
+
+Glib::ustring BlackWhite::getSettingString() {
+	Glib::ustring retVal;
+	if (setting->get_active_row_number()==0)
+		retVal = "NormalContrast";
+	else if (setting->get_active_row_number()==1)
+		retVal = "HighContrast";
+	else if (setting->get_active_row_number()==2)
+		retVal = "Luminance";
+	else if (setting->get_active_row_number()==3)
+		retVal = "Landscape";
+	else if (setting->get_active_row_number()==4)
+		retVal = "Portrait";
+	else if (setting->get_active_row_number()==5)
+		retVal = "LowSensitivity";
+	else if (setting->get_active_row_number()==6)
+		retVal = "HighSensitivity";
+	else if (setting->get_active_row_number()==7)
+		retVal = "Panchromatic";
+	else if (setting->get_active_row_number()==8)
+		retVal = "HyperPanchromatic";
+	else if (setting->get_active_row_number()==9)
+		retVal = "Orthochromatic";
+	else if (setting->get_active_row_number()==10)
+		retVal = "RGB-Abs";
+	else if (setting->get_active_row_number()==11)
+		retVal = "RGB-Rel";
+	else if (setting->get_active_row_number()==12)
+		retVal = "ROYGCBPM-Abs";
+	else if (setting->get_active_row_number()==13)
+		retVal = "ROYGCBPM-Rel";
+	else if (setting->get_active_row_number()==14)
+		retVal = "InfraRed";
+	return retVal;
+}
+
+Glib::ustring BlackWhite::getFilterString() {
+	Glib::ustring retVal;
+	if (filter->get_active_row_number()==0)
+		retVal = "None";
+	else if (filter->get_active_row_number()==1)
+		retVal = "Red";
+	else if (filter->get_active_row_number()==2)
+		retVal = "Orange";
+	else if (filter->get_active_row_number()==3)
+		retVal = "Yellow";
+	else if (filter->get_active_row_number()==4)
+		retVal = "YellowGreen";
+	else if (filter->get_active_row_number()==5)
+		retVal = "Green";
+	else if (filter->get_active_row_number()==6)
+		retVal = "Cyan";
+	else if (filter->get_active_row_number()==7)
+		retVal = "Blue";
+	else if (filter->get_active_row_number()==8)
+		retVal = "Purple";
+	return retVal;
 }

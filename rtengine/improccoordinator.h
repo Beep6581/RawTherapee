@@ -77,6 +77,11 @@ class ImProcCoordinator : public StagedImageProcessor {
 
         void freeAll ();
 
+        // Precomputed values used by DetailedCrop ----------------------------------------------
+
+        float bwAutoR, bwAutoG, bwAutoB;
+        float CAMMean;
+
         LUTf hltonecurve;
         LUTf shtonecurve;
         LUTf tonecurve;
@@ -91,15 +96,18 @@ class ImProcCoordinator : public StagedImageProcessor {
         LUTu vhist16,vhist16bw;
         LUTu lhist16,lhist16Cropped;
         LUTu lhist16CAM,lhist16CroppedCAM;
-        LUTu lhist16CCAM,lhist16CroppedCCAM;
+        LUTu lhist16CCAM;
         LUTu lhist16CCAMAF;
         LUTu lhist16ClabAF;
         LUTu histCropped;
-        LUTu lhist16Clad,lhist16CroppedClad,lhist16CLlad,lhist16LClad,lhist16LLClad;
+        LUTu lhist16Clad,lhist16CLlad,lhist16LClad,lhist16LLClad;
         LUTu histRed, histRedRaw;
         LUTu histGreen, histGreenRaw;
         LUTu histBlue, histBlueRaw;
-        LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve, histCLurve,  histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma;
+        LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve, histCLurve;
+        LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma;
+
+        LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
         LUTf rCurve;
         LUTf gCurve;
@@ -116,12 +124,14 @@ class ImProcCoordinator : public StagedImageProcessor {
         ColorAppearance customColCurve1;
         ColorAppearance customColCurve2;
         ColorAppearance customColCurve3;
-		ChMixerbw customToneCurvebw1;
-		ChMixerbw customToneCurvebw2;
+        ToneCurve beforeToneCurveBW;
+        ToneCurve afterToneCurveBW;
 
         LUTu rcurvehist, rcurvehistCropped, rbeforehist;
         LUTu gcurvehist, gcurvehistCropped, gbeforehist;
         LUTu bcurvehist, bcurvehistCropped, bbeforehist;
+
+        // ------------------------------------------------------------------------------------
 
         int fw, fh, tr, fullw, fullh;
         int pW, pH;
@@ -131,7 +141,7 @@ class ImProcCoordinator : public StagedImageProcessor {
         AutoExpListener* aeListener;
         AutoCamListener* acListener;
         AutoBWListener* abwListener;
-		
+
         HistogramListener* hListener;
         std::vector<SizeListener*> sizeListeners;
 

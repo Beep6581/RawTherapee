@@ -150,7 +150,7 @@ namespace rtengine {
 
 void CurveFactory::updatechroma (
 		const std::vector<double>& cccurvePoints,
-		LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
+		LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,//for chroma
 		int skip)
 {
 	LUTf dCcurve(65536,0);
@@ -184,7 +184,7 @@ void CurveFactory::curveLightBrightColor (
 		procparams::ColorAppearanceParams::eTCModeId curveMode2, const std::vector<double>& curvePoints2,
 		procparams::ColorAppearanceParams::eCTCModeId curveMode3, const std::vector<double>& curvePoints3,
 		LUTu & histogram, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogram,//for Luminance  
-		LUTu & histogramC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogramC,//for chroma
+		LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,//for chroma
 		ColorAppearance & customColCurve1,
 		ColorAppearance & customColCurve2,
 		ColorAppearance & customColCurve3,
@@ -289,12 +289,9 @@ void CurveFactory::curveLightBrightColor (
 }
 
 void CurveFactory::curveBW (
-		procparams::BlackWhiteParams::eTCModeId curveModeb, const std::vector<double>& curvePointsbw,
-		procparams::BlackWhiteParams::eTCModeId curveModeb2, const std::vector<double>& curvePointsbw2,
-		LUTu & histogrambw, LUTu & histogramCropped, LUTu & outBeforeCCurveHistogrambw,//for Luminance  
-		ChMixerbw & customToneCurvebw1,
-		ChMixerbw & customToneCurvebw2,
-		int skip)
+		const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2,
+		LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,//for Luminance
+		ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip)
 {
 	LUTf dcurve(65536,0);
 	
@@ -317,11 +314,7 @@ void CurveFactory::curveBW (
 		
 	}
 	if (tcurve) {
-		if (tcurve->isIdentity()) {
-			delete tcurve;
-			tcurve = NULL;
-		}
-		else
+		if (!tcurve->isIdentity())
 			customToneCurvebw2.Set(tcurve);
 		delete tcurve;
 		tcurve = NULL;
@@ -336,11 +329,7 @@ void CurveFactory::curveBW (
 		
 	}
 	if (tcurve) {
-		if (tcurve->isIdentity()) {
-			delete tcurve;
-			tcurve = NULL;
-		}
-		else
+		if (!tcurve->isIdentity())
 			customToneCurvebw1.Set(tcurve);
 		delete tcurve;
 		tcurve = NULL;
@@ -404,7 +393,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 	void CurveFactory::complexsgnCurve ( bool & autili,  bool & butili, bool & ccutili, bool & cclutili, double saturation, double rstprotection,
 										const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints,const std::vector<double>& cccurvePoints,
 										const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
-										LUTu & histogramC, LUTu & histogramLC, LUTu & histogramCroppedC, LUTu & outBeforeCCurveHistogram,LUTu & outBeforeLCurveHistogram, //for chroma
+										LUTu & histogramC, LUTu & histogramLC, LUTu & outBeforeCCurveHistogram,LUTu & outBeforeLCurveHistogram, //for chroma
 										int skip) {
 		
 		
@@ -414,7 +403,6 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 		DiagonalCurve* dCurve = NULL;
 		LUTf dCcurve(65536,0);
 	
-		float val;
 		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
 				dCcurve[i] = (float)i / 47999.0;
 		}
@@ -1057,15 +1045,6 @@ void ToneCurve::Reset() {
 void ToneCurve::Set(Curve *pCurve) {
     lutToneCurve(65536);
     for (int i=0; i<65536; i++) lutToneCurve[i] = pCurve->getVal(double(i)/65535.) * 65535.;
-}
-void ChMixerbw::Reset() {
-    lutBWCurve.reset();
-}
-
-// Fill a LUT with X/Y, ranged 0xffff
-void ChMixerbw::Set(Curve *pCurve) {
-    lutBWCurve(65536);
-    for (int i=0; i<65536; i++) lutBWCurve[i] = pCurve->getVal(double(i)/65535.) * 65535.;
 }
 
 }

@@ -63,11 +63,11 @@ namespace rtengine {
 
 
 extern const Settings* settings;
-LUTf ImProcFunctions::cachef ;
-LUTf ImProcFunctions::gamma2curve = 0;
+LUTf ImProcFunctions::cachef;
+LUTf ImProcFunctions::gamma2curve;
 void ImProcFunctions::initCache () {
 
-    int maxindex = 65536;
+    const int maxindex = 65536;
 	cachef(maxindex,0/*LUT_CLIP_BELOW*/);
 
 	gamma2curve(maxindex,0);
@@ -233,7 +233,9 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 }
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp, double &d)
+void ImProcFunctions::ciecam_02 (CieImage* ncie, double adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params ,
+								const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3,
+								LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, double &d)
 {
 if(params->colorappearance.enabled) {
 
@@ -241,28 +243,34 @@ if(params->colorappearance.enabled) {
 	MyTime t1e,t2e;
 	t1e.set();
 #endif
-	LUTf dLcurve(65536,0);
-	LUTu hist16JCAM(65536);
+	LUTf dLcurve;
+	LUTu hist16JCAM;
 	bool jp=false;
 	float val;
 	//preparate for histograms CIECAM
 	if(pW!=1){//only with improccoordinator
-	for (int i=0; i<32768; i++) {  //# 32768*1.414  approximation maxi for chroma
+		dLcurve(65536,0);
+		dLcurve.clear();
+		hist16JCAM(65536,0);
+		hist16JCAM.clear();
+		for (int i=0; i<32768; i++) {  //# 32768*1.414  approximation maxi for chroma
 			val = (double)i / 32767.0;
 			dLcurve[i] = CLIPD(val);
 		}
-	hist16JCAM.clear();
 	}
-	LUTf dCcurve(65536,0);
-	LUTu hist16_CCAM(65536);
+	LUTf dCcurve;
+	LUTu hist16_CCAM;
 	bool chropC=false;
 	float valc;
+
 	if(pW!=1){//only with improccoordinator
-	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+		dCcurve(65536,0);
+		hist16_CCAM(65536);
+		hist16_CCAM.clear();
+		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
 			valc = (double)i / 47999.0;
 			dCcurve[i] = CLIPD(valc);
 		}
-	hist16_CCAM.clear();
 	}
 	//end preparate histogram
 	int width = lab->W, height = lab->H;
@@ -283,47 +291,6 @@ if(params->colorappearance.enabled) {
 	int alg=0;
 	bool algepd=false;	
 	float sum=0.f;
-	float mean;
-	//LUTf for sliders J and Q
-	LUTf bright_curve (65536,0);//init curve
-	LUTf bright_curveQ (65536,0);//init curve
-
-    LUTu hist16J (65536);
-	LUTu hist16Q (65536);
-	float koef=1.0f;//rough correspondence between L and J
-    hist16J.clear();hist16Q.clear();
-    for (int i=0; i<height; i++)
- //   for (int i=begh; i<endh; i++)
-        for (int j=0; j<width; j++) {//rough correspondence between L and J
-			if(((lab->L[i][j])/327.68f)>95.) koef=1.f;
-			else if(((lab->L[i][j])/327.68f)>85.) koef=0.97f;
-			else if(((lab->L[i][j])/327.68f)>80.) koef=0.93f;
-			else if(((lab->L[i][j])/327.68f)>70.) koef=0.87f;
-			else if(((lab->L[i][j])/327.68f)>60.) koef=0.85f;
-			else if(((lab->L[i][j])/327.68f)>50.) koef=0.8f;
-			else if(((lab->L[i][j])/327.68f)>40.) koef=0.75f;
-			else if(((lab->L[i][j])/327.68f)>30.) koef=0.7f;
-			else if(((lab->L[i][j])/327.68f)>20.) koef=0.7f;
-			else if(((lab->L[i][j])/327.68f)>10.) koef=0.9f;
-			else if(((lab->L[i][j])/327.68f)>0.) koef=1.0f;
-
-            hist16J[CLIP((int)((koef*lab->L[i][j])))]++;//evaluate histogram luminance L # J
-			sum+=koef*lab->L[i][j];//evaluate mean J to calcualte Yb
-			hist16Q[CLIP((int) (32768.f*sqrt((koef*(lab->L[i][j]))/32768.f)))]++;	//for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
-	}
-	//mean=(sum/((endh-begh)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
-	mean=(sum/((height)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
-	if     (mean<15.f) yb=3.0;
-	else if(mean<30.f) yb=5.0;
-	else if(mean<40.f) yb=10.0;
-	else if(mean<45.f) yb=15.0;
-	else if(mean<50.f) yb=18.0;
-	else if(mean<55.f) yb=23.0;
-	else if(mean<60.f) yb=30.0;
-	else if(mean<70.f) yb=40.0;
-	else if(mean<80.f) yb=60.0;
-	else if(mean<90.f) yb=80.0;
-	else               yb=90.0;
 
 	bool ciedata=params->colorappearance.datacie;
 
@@ -341,6 +308,9 @@ if(params->colorappearance.enabled) {
 	else if(params->colorappearance.algo=="JS")  alg=1;
 	else if(params->colorappearance.algo=="QM")  {alg=2;algepd=true;}
 	else if(params->colorappearance.algo=="ALL")  {alg=3;algepd=true;}
+
+	bool needJ = (alg==0 || alg==1 || alg==3);
+	bool needQ = (alg==2 || alg==3);
 	//settings white point of output device - or illuminant viewing
 	if(settings->viewingdevice==0) {xwd=96.42;ywd=100.0;zwd=82.52;}//5000K
 	else if(settings->viewingdevice==1) {xwd=95.68;ywd=100.0;zwd=92.15;}//5500
@@ -394,10 +364,71 @@ if(params->colorappearance.enabled) {
     bool hasColCurve3 = bool(customColCurve3);
 
 
+	if(CAMBrightCurveJ.dirty || CAMBrightCurveQ.dirty){
+		LUTu hist16J;
+		LUTu hist16Q;
+		if (needJ) {
+			hist16J (65536);
+			hist16J.clear();
+		}
+		if (needQ) {
+			hist16Q (65536);
+			hist16Q.clear();
+		}
+		float koef=1.0f;//rough correspondence between L and J
+		for (int i=0; i<height; i++)
+	 //   for (int i=begh; i<endh; i++)
+			for (int j=0; j<width; j++) {//rough correspondence between L and J
+				float currL = lab->L[i][j]/327.68f;
+				if     (currL>95.) koef=1.f;
+				else if(currL>85.) koef=0.97f;
+				else if(currL>80.) koef=0.93f;
+				else if(currL>70.) koef=0.87f;
+				else if(currL>60.) koef=0.85f;
+				else if(currL>50.) koef=0.8f;
+				else if(currL>40.) koef=0.75f;
+				else if(currL>30.) koef=0.7f;
+				else if(currL>20.) koef=0.7f;
+				else if(currL>10.) koef=0.9f;
+				else if(currL>0.) koef=1.0f;
 
-	//evaluate lightness, contrast
-	ColorTemp::curveJ (jli, contra, 1, bright_curve,hist16J);//lightness and contrast J
-	ColorTemp::curveJ (qbri, qcontra, 1, bright_curveQ, hist16Q);//brightness and contrast Q
+				if (needJ)
+					hist16J[CLIP((int)((koef*lab->L[i][j])))]++;//evaluate histogram luminance L # J
+				if (needQ)
+					hist16Q[CLIP((int) (32768.f*sqrt((koef*(lab->L[i][j]))/32768.f)))]++;	//for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+				sum+=koef*lab->L[i][j];//evaluate mean J to calcualte Yb
+		}
+		//mean=(sum/((endh-begh)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
+		mean=(sum/((height)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
+
+		//evaluate lightness, contrast
+		if (needJ) {
+			if (!CAMBrightCurveJ) {
+				CAMBrightCurveJ(65536,0);
+				CAMBrightCurveJ.dirty = false;
+			}
+			ColorTemp::curveJ (jli, contra, 1, CAMBrightCurveJ, hist16J);//lightness and contrast J
+		}
+		if (needQ) {
+			if (!CAMBrightCurveQ) {
+				CAMBrightCurveQ(65536,0);
+				CAMBrightCurveQ.dirty = false;
+			}
+			ColorTemp::curveJ (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
+		}
+	}
+	if     (mean<15.f) yb=3.0;
+	else if(mean<30.f) yb=5.0;
+	else if(mean<40.f) yb=10.0;
+	else if(mean<45.f) yb=15.0;
+	else if(mean<50.f) yb=18.0;
+	else if(mean<55.f) yb=23.0;
+	else if(mean<60.f) yb=30.0;
+	else if(mean<70.f) yb=40.0;
+	else if(mean<80.f) yb=60.0;
+	else if(mean<90.f) yb=80.0;
+	else               yb=90.0;
+
 	int gamu=0;
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
 
@@ -476,7 +507,7 @@ if(params->colorappearance.enabled) {
 			// we cannot have all algoritms with all chroma curves
 			if(alg==1) 	{
 				// Lightness saturation
-				Jpro=(bright_curve[(float)(Jpro*327.68)])/327.68;//ligthness CIECAM02 + contrast
+				Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68)])/327.68;//ligthness CIECAM02 + contrast
 				double sres;
 				double Sp=spro/100.0;
 				double parsat=1.5;
@@ -496,7 +527,7 @@ if(params->colorappearance.enabled) {
 				}
 			else if(alg==3 || alg==0  || alg==2) {
 				double coef=32760./wh;
-				if(alg==3 || alg==2) Qpro=(bright_curveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
+				if(alg==3 || alg==2) Qpro=(CAMBrightCurveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
 				double Mp, sres;
 				double coe=pow(fl,0.25);
 				Mp=Mpro/100.0;
@@ -514,7 +545,7 @@ if(params->colorappearance.enabled) {
 				Jpro=(100.0* Qpro*Qpro) /(wh*wh);
 				Cpro= Mpro/coe;
 				spro = 100.0 * sqrt( Mpro / Qpro );
-				if(alg!=2) Jpro=(bright_curve[(float)(Jpro*327.68)])/327.68;//ligthness CIECAM02 + contrast
+				if(alg!=2) Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68)])/327.68;//ligthness CIECAM02 + contrast
 				double Cp;
 				double Sp=spro/100.0;
 				parsat=1.5;
@@ -1036,7 +1067,9 @@ if((params->colorappearance.tonecie || (params->colorappearance.tonecie && param
 
 
 // Copyright (c) 2012 Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params , const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3, LUTu & histLCAM, LUTu & histCCAM,  int Iterates, int scale, float** buffer, bool execsharp, float &d)
+void ImProcFunctions::ciecam_02float (CieImage* ncie, float adap, int begh, int endh, int pW, int pwb, LabImage* lab, const ProcParams* params,
+								const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve2,const ColorAppearance & customColCurve3,
+								LUTu & histLCAM, LUTu & histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, float** buffer, bool execsharp, float &d)
 {
 if(params->colorappearance.enabled) {
 //printf("ciecam float\n");
@@ -1044,17 +1077,20 @@ if(params->colorappearance.enabled) {
 	MyTime t1e,t2e;
 	t1e.set();
 #endif
-	LUTf dLcurve(65536,0);
-	LUTu hist16JCAM(65536);
+	LUTf dLcurve;
+	LUTu hist16JCAM;
 	bool jp=false;
 	float val;
 	//preparate for histograms CIECAM
 	if(pW!=1){//only with improccoordinator
-	for (int i=0; i<32768; i++) {  //# 32768*1.414  approximation maxi for chroma
+		dLcurve(65536, 0);
+		dLcurve.clear();
+		hist16JCAM(65536);
+		hist16JCAM.clear();
+		for (int i=0; i<32768; i++) {  //# 32768*1.414  approximation maxi for chroma
 			val = (double)i / 32767.0;
 			dLcurve[i] = CLIPD(val);
 		}
-	hist16JCAM.clear();
 	}
 	LUTf dCcurve(65536,0);
 	LUTu hist16_CCAM(65536);
@@ -1062,11 +1098,11 @@ if(params->colorappearance.enabled) {
 	float valc;
 	
 	if(pW!=1){//only with improccoordinator
-	for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
+		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
 			valc = (double)i / 47999.0;
 			dCcurve[i] = CLIPD(valc);
 		}
-	hist16_CCAM.clear();
+		hist16_CCAM.clear();
 	}
 	//end preparate histogram
 	int width = lab->W, height = lab->H;
@@ -1087,47 +1123,6 @@ if(params->colorappearance.enabled) {
 	int alg=0;
 	bool algepd=false;
 	float sum=0.f;
-	float mean;
-	//LUTf for sliders J and Q
-	LUTf bright_curve (65536,0);//init curve
-	LUTf bright_curveQ (65536,0);//init curve
-
-    LUTu hist16J (65536);
-	LUTu hist16Q (65536);
-	float koef=1.0f;//rough correspondence between L and J
-    hist16J.clear();hist16Q.clear();
-    for (int i=0; i<height; i++)
- //   for (int i=begh; i<endh; i++)
-        for (int j=0; j<width; j++) {//rough correspondence between L and J
-			if(((lab->L[i][j])/327.68f)>95.) koef=1.f;
-			else if(((lab->L[i][j])/327.68f)>85.) koef=0.97f;
-			else if(((lab->L[i][j])/327.68f)>80.) koef=0.93f;
-			else if(((lab->L[i][j])/327.68f)>70.) koef=0.87f;
-			else if(((lab->L[i][j])/327.68f)>60.) koef=0.85f;
-			else if(((lab->L[i][j])/327.68f)>50.) koef=0.8f;
-			else if(((lab->L[i][j])/327.68f)>40.) koef=0.75f;
-			else if(((lab->L[i][j])/327.68f)>30.) koef=0.7f;
-			else if(((lab->L[i][j])/327.68f)>20.) koef=0.7f;
-			else if(((lab->L[i][j])/327.68f)>10.) koef=0.9f;
-			else if(((lab->L[i][j])/327.68f)>0.) koef=1.0f;
-
-            hist16J[CLIP((int)((koef*lab->L[i][j])))]++;//evaluate histogram luminance L # J
-			sum+=koef*lab->L[i][j];//evaluate mean J to calcualte Yb
-			hist16Q[CLIP((int) (32768.f*sqrt((koef*(lab->L[i][j]))/32768.f)))]++;	//for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
-	}
-	//mean=(sum/((endh-begh)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
-	mean=(sum/((height)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
-	if     (mean<15.f) yb=3.0f;
-	else if(mean<30.f) yb=5.0f;
-	else if(mean<40.f) yb=10.0f;
-	else if(mean<45.f) yb=15.0f;
-	else if(mean<50.f) yb=18.0f;
-	else if(mean<55.f) yb=23.0f;
-	else if(mean<60.f) yb=30.0f;
-	else if(mean<70.f) yb=40.0f;
-	else if(mean<80.f) yb=60.0f;
-	else if(mean<90.f) yb=80.0f;
-	else               yb=90.0f;
 
 	bool ciedata=params->colorappearance.datacie;
 
@@ -1140,11 +1135,14 @@ if(params->colorappearance.enabled) {
 
 	//scene condition for surround
 	if(params->colorappearance.surrsource==true)  {f  = 0.85f; c  = 0.55f; nc = 0.85f;}// if user => source image has surround very dark
-	//with which algorithme
+	//with which algorithm
 	if     (params->colorappearance.algo=="JC")  alg=0;
 	else if(params->colorappearance.algo=="JS")  alg=1;
 	else if(params->colorappearance.algo=="QM")  {alg=2;algepd=true;}
 	else if(params->colorappearance.algo=="ALL") {alg=3;algepd=true;}
+
+	bool needJ = (alg==0 || alg==1 || alg==3);
+	bool needQ = (alg==2 || alg==3);
 	//settings white point of output device - or illuminant viewing
 	if(settings->viewingdevice==0) {xwd=96.42f;ywd=100.0f;zwd=82.52f;}//5000K
 	else if(settings->viewingdevice==1) {xwd=95.68f;ywd=100.0f;zwd=92.15f;}//5500
@@ -1198,10 +1196,71 @@ if(params->colorappearance.enabled) {
     bool hasColCurve3 = bool(customColCurve3);
 
 
+	if(CAMBrightCurveJ.dirty || CAMBrightCurveQ.dirty){
+		LUTu hist16J;
+		LUTu hist16Q;
+		if (needJ) {
+			hist16J (65536);
+			hist16J.clear();
+		}
+		if (needQ) {
+			hist16Q (65536);
+			hist16Q.clear();
+		}
+		float koef=1.0f;//rough correspondence between L and J
+		for (int i=0; i<height; i++)
+	//	for (int i=begh; i<endh; i++)
+			for (int j=0; j<width; j++) {//rough correspondence between L and J
+				float currL = lab->L[i][j]/327.68f;
+				if     (currL>95.) koef=1.f;
+				else if(currL>85.) koef=0.97f;
+				else if(currL>80.) koef=0.93f;
+				else if(currL>70.) koef=0.87f;
+				else if(currL>60.) koef=0.85f;
+				else if(currL>50.) koef=0.8f;
+				else if(currL>40.) koef=0.75f;
+				else if(currL>30.) koef=0.7f;
+				else if(currL>20.) koef=0.7f;
+				else if(currL>10.) koef=0.9f;
+				else if(currL>0.) koef=1.0f;
 
-	//evaluate lightness, contrast
-	ColorTemp::curveJfloat (jli, contra, 1, bright_curve,hist16J);//lightness and contrast J
-	ColorTemp::curveJfloat (qbri, qcontra, 1, bright_curveQ, hist16Q);//brightness and contrast Q
+				if (needJ)
+					hist16J[CLIP((int)((koef*lab->L[i][j])))]++;//evaluate histogram luminance L # J
+				if (needQ)
+					hist16Q[CLIP((int) (32768.f*sqrt((koef*(lab->L[i][j]))/32768.f)))]++;	//for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
+				sum+=koef*lab->L[i][j];//evaluate mean J to calculate Yb
+		}
+		//mean=(sum/((endh-begh)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
+		mean=(sum/((height)*width))/327.68f;//for Yb  for all image...if one day "pipette" we can adapt Yb for each zone
+
+		//evaluate lightness, contrast
+		if (needJ) {
+			if (!CAMBrightCurveJ) {
+				CAMBrightCurveJ(65536,0);
+				CAMBrightCurveJ.dirty = false;
+			}
+			ColorTemp::curveJfloat (jli, contra, 1, CAMBrightCurveJ, hist16J);//lightness and contrast J
+		}
+		if (needQ) {
+			if (!CAMBrightCurveQ) {
+				CAMBrightCurveQ(65536,0);
+				CAMBrightCurveQ.dirty = false;
+			}
+			ColorTemp::curveJfloat (qbri, qcontra, 1, CAMBrightCurveQ, hist16Q);//brightness and contrast Q
+		}
+	}
+	if     (mean<15.f) yb=3.0f;
+	else if(mean<30.f) yb=5.0f;
+	else if(mean<40.f) yb=10.0f;
+	else if(mean<45.f) yb=15.0f;
+	else if(mean<50.f) yb=18.0f;
+	else if(mean<55.f) yb=23.0f;
+	else if(mean<60.f) yb=30.0f;
+	else if(mean<70.f) yb=40.0f;
+	else if(mean<80.f) yb=60.0f;
+	else if(mean<90.f) yb=80.0f;
+	else               yb=90.0f;
+
 	int gamu=0;
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
 
@@ -1277,7 +1336,7 @@ if(params->colorappearance.enabled) {
 			// we cannot have all algoritms with all chroma curves
 			if(alg==1) 	{
 				// Lightness saturation
-				Jpro=(bright_curve[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
+				Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
 				float sres;
 				float Sp=spro/100.0f;
 				float parsat=1.5f;
@@ -1297,7 +1356,7 @@ if(params->colorappearance.enabled) {
 				}
 			else if(alg==3 || alg==0  || alg==2) {
 				float coef=32760.f/wh;
-				if(alg==3 || alg==2) Qpro=(bright_curveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
+				if(alg==3 || alg==2) Qpro=(CAMBrightCurveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
 				float Mp, sres;
 				float coe=pow_F(fl,0.25f);
 				Mp=Mpro/100.0f;
@@ -1315,7 +1374,7 @@ if(params->colorappearance.enabled) {
 				Jpro=(100.0f* Qpro*Qpro) /(wh*wh);
 				Cpro= Mpro/coe;
 				spro = 100.0f * sqrt( Mpro / Qpro );
-				if(alg!=2) Jpro=(bright_curve[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
+				if(alg!=2) Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
 				float Cp;
 				float Sp=spro/100.0f;
 				parsat=1.5f;
@@ -1812,31 +1871,19 @@ if((params->colorappearance.tonecie && (params->edgePreservingDecompositionUI.en
 	}
 
 	}
-	hist16JCAM.reset();
-	hist16_CCAM.reset();
-	dLcurve.reset();
-	dCcurve.reset();
-	bright_curve.reset();
-	bright_curveQ.reset();
-	hist16J.reset();
-	hist16Q.reset();
-
 }
 }
 //end CIECAM
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve,
-                               const ToneCurve & customToneCurve1,const ToneCurve & customToneCurve2, const ChMixerbw & customToneCurvebw1,const ChMixerbw & customToneCurvebw2, double &rrm, double &ggm, double &bbm  ) {
-    rgbProc (working, lab, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
+                               const ToneCurve & customToneCurve1,const ToneCurve & customToneCurve2, const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2, double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob ) {
+    rgbProc (working, lab, hltonecurve, shtonecurve, tonecurve, shmap, sat, rCurve, gCurve, bCurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2,rrm, ggm, bbm, autor, autog, autob, params->toneCurve.expcomp, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh);
 }
 
 // Process RGB image and convert to LAB space
 void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltonecurve, LUTf & shtonecurve, LUTf & tonecurve,
                                SHMap* shmap, int sat, LUTf & rCurve, LUTf & gCurve, LUTf & bCurve, const ToneCurve & customToneCurve1,
-                               const ToneCurve & customToneCurve2,  const ChMixerbw & customToneCurvebw1,const ChMixerbw & customToneCurvebw2,double &rrm, double &ggm, double &bbm, double expcomp, int hlcompr, int hlcomprthresh) {
-
-
-
+                               const ToneCurve & customToneCurve2,  const ToneCurve & customToneCurvebw1,const ToneCurve & customToneCurvebw2,double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh) {
 
     LUTf iGammaLUTf;
     Imagefloat *tmpImage = working->copy();
@@ -1852,6 +1899,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
     double lceamount = params->sh.localcontrast / 200.0;
 
     TMatrix wprof = iccStore->workingSpaceMatrix (params->icm.working);
+    TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
 
     double toxyz[3][3] = {
         {
@@ -1869,13 +1917,18 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
         }
     };
 
-	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (params->icm.working);
 	//inverse matrix user select
 	double wip[3][3] = {
 		{wiprof[0][0],wiprof[0][1],wiprof[0][2]},
 		{wiprof[1][0],wiprof[1][1],wiprof[1][2]},
 		{wiprof[2][0],wiprof[2][1],wiprof[2][2]}
 	};
+
+	double wp[3][3] = {
+		{wprof[0][0],wprof[0][1],wprof[0][2]},
+		{wprof[1][0],wprof[1][1],wprof[1][2]},
+		{wprof[2][0],wprof[2][1],wprof[2][2]}};
+
 
     bool mixchannels = (params->chmixer.red[0]!=100	|| params->chmixer.red[1]!=0     || params->chmixer.red[2]!=0   ||
 						params->chmixer.green[0]!=0 || params->chmixer.green[1]!=100 || params->chmixer.green[2]!=0 ||
@@ -1888,11 +1941,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	FlatCurve* sCurve;
 	FlatCurve* vCurve;
 	FlatCurve* bwlCurve;
-
-
-	float* cossq = new float [8192];
-	for (int i=0; i<8192; i++)
-		cossq[i] = SQR(cos(pi*(float)i/16384.0));
 
 	FlatCurveType hCurveType = (FlatCurveType)params->hsvequalizer.hcurve.at(0);
 	FlatCurveType sCurveType = (FlatCurveType)params->hsvequalizer.scurve.at(0);
@@ -1907,7 +1955,14 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if (hCurveEnabled) hCurve = new FlatCurve(params->hsvequalizer.hcurve);
 	if (sCurveEnabled) sCurve = new FlatCurve(params->hsvequalizer.scurve);
 	if (vCurveEnabled) vCurve = new FlatCurve(params->hsvequalizer.vcurve);
-	if (bwlCurveEnabled) bwlCurve = new FlatCurve(params->blackwhite.luminanceCurve);
+	if (bwlCurveEnabled) {
+		bwlCurve = new FlatCurve(params->blackwhite.luminanceCurve);
+		if (bwlCurve->isIdentity()) {
+			delete bwlCurve;
+			bwlCurve = NULL;
+			bwlCurveEnabled = false;
+		}
+	}
 
 	const float exp_scale = pow (2.0, expcomp);
 	const float comp = (max(0.0, expcomp) + 1.0)*hlcompr/100.0;
@@ -1953,11 +2008,15 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 	if     (params->blackwhite.method=="Desaturation")  algm=0;
 	else if(params->blackwhite.method=="LumEqualizer")  algm=1;
 	else if(params->blackwhite.method=="ChannelMixer")  algm=2;
-				//gamma correction of each channel
+	float kcorec=1.f;
+	//gamma correction of each channel
 	float gamvalr=125.f;
 	float gamvalg=125.f;
 	float gamvalb=125.f;
-	float autor,autog,autob;
+	double nr=0;
+	double ng=0;
+	double nb=0;
+	bool computeMixerAuto = params->blackwhite.autoc && (autor < -5000.f);
 	if(bwrgam < 0) gamvalr=100.f;
 	if(bwggam < 0) gamvalg=100.f;
 	if(bwbgam < 0) gamvalb=100.f;
@@ -2314,9 +2373,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 		}
 	}
 
-//if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
-if (sat> -110 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
-	if(algm==1 && blackwhite /* && bwlCurveEnabled*/) sat= -75;//increase effect of luminance mixer bw
+if (sat!=0 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2328,14 +2385,12 @@ if (sat> -110 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 				float b = tmpImage->b(i,j);
 				float h,s,v;
 				Color::rgb2hsv(r,g,b,h,s,v);
-				if (sat > 0.5f) {
+				if (sat > 0) {
 					s = (1.f-float(sat)/100.f)*s+float(sat)/100.f*(1.f-SQR(SQR(1.f-min(s,1.0f))));
-					if (s<0) s=0.f;
-				} else {
-					if (sat < -0.5)
-						s *= 1.f+float(sat)/100.f;
-				}
-			
+					if (s<0.f) s=0.f;
+				} else /*if (sat < 0)*/
+					s *= 1.f+float(sat)/100.f;
+
 				//HSV equalizer
 				if (hCurveEnabled) {
 					h = (hCurve->getVal(double(h)) - 0.5) * 2.f + h;
@@ -2350,10 +2405,8 @@ if (sat> -110 || hCurveEnabled || sCurveEnabled || vCurveEnabled) {
 					if (satparam > 0.00001f) {
 						s = (1.f-satparam)*s+satparam*(1.f-SQR(1.f-min(s,1.0f)));
 						if (s<0.f) s=0.f;
-					} else {
-						if (satparam < -0.00001f)
-							s *= 1.f+satparam;
-					}
+					} else if (satparam < -0.00001f)
+						s *= 1.f+satparam;
 
 				}
 				if (vCurveEnabled) {
@@ -2433,10 +2486,8 @@ if(blackwhite){
 			}
 		}
 	}
-}
 
-
-if (algm==0  && blackwhite){//desaturated
+	if (algm==0){//lightness
 #ifdef _OPENMP 
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2446,16 +2497,99 @@ if (algm==0  && blackwhite){//desaturated
 				float r = tmpImage->r(i,j);
 				float g = tmpImage->g(i,j);
 				float b = tmpImage->b(i,j);
-				float lum = (0.299f*r+0.587f*g + 0.114f*b);
-				tmpImage->r(i,j)= lum;
-				tmpImage->g(i,j)=tmpImage->r(i,j);
-				tmpImage->b(i,j)=tmpImage->r(i,j);	
-				if (hasgammabw) Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);
-			}
-		}	
 
-}
-if (algm==1 && blackwhite && (bwlCurveEnabled || hasgammabw)) {//Luminance mixer
+				// --------------------------------------------------
+
+				// Method 1: Luminosity (code taken from Gimp)
+				/*
+				float maxi = max(r, g, b);
+				float mini = min(r, g, b);
+				r = g = b = (maxi+mini)/2;
+				*/
+
+				// Method 2: Luminance (former RT code)
+				r = g = b = (0.299f*r + 0.587f*g + 0.114f*b);
+
+				// --------------------------------------------------
+
+				//gamma correction: pseudo TRC curve
+				if (hasgammabw) Color::trcGammaBW (r, g, b, gammabwr, gammabwg, gammabwb);
+
+				tmpImage->r(i,j) = r;
+				tmpImage->g(i,j) = g;
+				tmpImage->b(i,j) = b;
+			}
+		}
+	}
+
+	else if (algm==1) {//Luminance mixer in Lab mode to avoid artifacts
+
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+		for (int i=0; i<tH; i++) {
+			for (int j=0; j<tW; j++) {
+				bool highlight = params->hlrecovery.enabled;//Get the value if "highlight reconstruction" is activated
+				//rgb=>lab
+				float r = tmpImage->r(i,j);
+				float g = tmpImage->g(i,j);
+				float b = tmpImage->b(i,j);
+				float X,Y,Z;
+				float L,aa,bb;
+				Color::rgbxyz(r,g,b,X,Y,Z,wp);
+				//convert Lab
+				Color::XYZ2Lab(X, Y, Z, L, aa, bb);
+				//end rgb=>lab
+				//lab ==> Ch
+				float CC=sqrt(SQR(aa/327.68f) + SQR(bb/327.68f));//CC chromaticity in 0..180 or more
+				float HH=xatan2f(bb,aa);// HH hue in -3.141  +3.141
+				float l_r;//Luminance Lab in 0..1
+				l_r = L/32768.f;
+				if (bwlCurveEnabled) {
+					double hr;
+					Color::huelab_to_huehsv (HH, hr);//correspondance H lab ==> h hsv
+					float valparam = float((bwlCurve->getVal(hr)-0.5f) * 2.0f);//get l_r=f(H)
+					float kcc=(CC/70.f);//take Chroma into account...70 "middle" of chromaticity (arbitrary and simple), one can imagine other algorithme
+					//reduct action for low chroma and increase action for high chroma
+					valparam *= kcc; 
+					if(valparam > 0.f) { l_r = (1.f-valparam)*l_r+ valparam*(1.f-SQR(SQR(SQR(SQR(1.f-min(l_r,1.0f))))));}// SQR (SQR((SQR)  to increase action in low light	
+					else l_r *= (1.f + 2.f*valparam);//for negative
+					}
+				L=l_r*32768.f;
+				float RR,GG,BB;
+				float Lr;
+				Lr=L/327.68f;//for gamutlch
+#ifdef _DEBUG
+					bool neg=false;
+					bool more_rgb=false;
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lr,CC, RR, GG, BB, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
+#else
+					//gamut control : Lab values are in gamut
+					Color::gamutLchonly(HH,Lr,CC, RR, GG, BB, wip, highlight, 0.15f, 0.96f);
+#endif			
+				//convert CH ==> ab
+				L=Lr*327.68f;
+				float a_,b_;
+				a_=0.f;//grey
+				b_=0.f;//grey
+				//convert lab=>rgb
+				Color::Lab2XYZ(L, a_, b_, X, Y, Z);
+				float rr_,gg_,bb_;
+				Color::xyz2rgb(X,Y,Z,rr_,gg_,bb_,wip);
+
+				//gamma correction: pseudo TRC curve
+				if (hasgammabw) Color::trcGammaBW (rr_, gg_, bb_, gammabwr, gammabwg, gammabwb);
+				tmpImage->r(i,j)=rr_;
+				tmpImage->g(i,j)=gg_;
+				tmpImage->b(i,j)=bb_;
+			}
+		}
+	}
+
+
+/*
+	else if (algm==1) {//Luminance mixer
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
 #endif
@@ -2465,7 +2599,6 @@ if (algm==1 && blackwhite && (bwlCurveEnabled || hasgammabw)) {//Luminance mixer
 				float g = tmpImage->g(i,j);
 				float b = tmpImage->b(i,j);
 				if (bwlCurveEnabled) {
-					float lum;
 					float h,s,v;
 					Color::rgb2hsv(r,g,b,h,s,v);
 						if (v<0) v=0;
@@ -2473,204 +2606,127 @@ if (algm==1 && blackwhite && (bwlCurveEnabled || hasgammabw)) {//Luminance mixer
 						valparam *= (1.f-(SQR(SQR(1.f-min(s,1.0f)))));
 						//float valcor=1.f/(0.501f-valparam);
 
-						if (valparam > 0.00001f) {
-						//	v = (1.f-valparam)*v+ valparam*(1.f-(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
-						//	v = (1.f-valparam)*v+ valparam*(1.f- pow((1.f-min(v,1.0f)), 2.f+valcor));//(SQR(SQR(1.f-min(v,1.0f)))));// SQR (SQR  to increase action and avoid artefacts, but there's always a little
+						if (valparam < -0.00001f || valparam > 0.00001f)
 							v *= (1.f + 4.f*valparam);
-						} else {
-							if (valparam < -0.00001f)
-								{v *= (1.f + 4.f*valparam);//4to increase action
-								}
-						}
-						CLIPD(v);
-					Color::hsv2rgb(h, s, v, tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j));
-					lum = (0.299f*tmpImage->r(i,j)+0.587f*tmpImage->g(i,j)+ 0.114f*tmpImage->b(i,j));// get luminance
-					tmpImage->r(i,j)=lum;//black and white
-					tmpImage->g(i,j)=lum;
-					tmpImage->b(i,j)=lum;
+						v = CLIPD(v);
+					Color::hsv2rgb(h, s, v, r, g, b);
 				}
-				//correction gamma : pseudo TRC curve
-				if (hasgammabw) Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);
-			}
-		}
-}
 
+				// get luminance
+				r = g = b = (0.2126f*r + 0.7152f*g + 0.0722f*b); // (constant taken from Gimp, see https://git.gnome.org/browse/gimp/tree/libgimpcolor/gimprgb.h)
+				//r = g = b = (0.299f*r + 0.587f*g + 0.114f*b);  // (obsolete constant)
 
-if (algm==2  && blackwhite) {//channel-mixer
-	if (params->blackwhite.autoc) {
-		// auto channel-mixer
-		float nr=0.f;
-		float ng=0.f;
-		float nb=0.f;
-#ifdef _OPENMP
-#pragma omp for schedule(dynamic, 5)
-#endif
-		for (int i=0; i<tH; i++) {
-			for (int j=0; j<tW; j++) {
-				float rr = tmpImage->r(i,j);
-				float gg = tmpImage->g(i,j);
-				float bb = tmpImage->b(i,j);
-				nr+=rr;
-				ng+=gg;
-				nb+=bb;
-				float srgb;
-				srgb = nr+ng+nb;
-				float knr=nr/srgb;
-				float kng=ng/srgb;
-				float knb=nb/srgb;
-				knr = 1.f/knr;
-				kng = 1.f/kng;
-				knb = 1.f/knb;
-				float sk;
-				sk=knr+kng+knb;
-				knr=100.f*knr/sk;
-				kng=100.f*kng/sk;
-				knb=100.f*knb/sk;
-				autor=knr;
-				autog=kng;
-				autob=knb;
+				//gamma correction: pseudo TRC curve
+				if (hasgammabw) Color::trcGammaBW (r, g, b, gammabwr, gammabwg, gammabwb);
+
+				tmpImage->r(i,j) = r;
+				tmpImage->g(i,j) = g;
+				tmpImage->b(i,j) = b;
 			}
 		}
 	}
-			//end auto chmix
-				float som, somm;
-				float rM,gM,bM;
-				som=bwr+bwg+bwb;
-				float mix[3][3];
-				float val[3];
-				float in[3];
-				float kcorec=1.f;
-				//presets
-				if     (params->blackwhite.setting=="RGB-Abs" || params->blackwhite.setting=="ROYGCBMP-Abs")  {rM=bwr;gM=bwg;bM=bwb;kcorec=som/100.f;}
-				else if(params->blackwhite.setting=="RGB-Rel" || params->blackwhite.setting=="ROYGCBMP-Rel")  {rM=bwr;gM=bwg;bM=bwb;}
-				else if(params->blackwhite.setting=="NormalContrast")    {rM=43.f ;gM=33.f; bM=30.f;}
-				else if(params->blackwhite.setting=="Panchromatic")      {rM=33.3f;gM=33.3f;bM=33.3f;}
-				else if(params->blackwhite.setting=="HyperPanchromatic") {rM=41.f ;gM=25.f; bM=34.f;}
-				else if(params->blackwhite.setting=="LowSensitivity")    {rM=27.f ;gM=27.f; bM=46.f;}
-				else if(params->blackwhite.setting=="HighSensitivity")   {rM=30.f ;gM=28.f; bM=42.f;}
-				else if(params->blackwhite.setting=="Orthochromatic")    {rM=0.f  ;gM=42.f; bM=58.f;}
-				else if(params->blackwhite.setting=="HighContrast")      {rM=40.f ;gM=34.f; bM=60.f;}
-				else if(params->blackwhite.setting=="Luminance")         {rM=30.f ;gM=59.f; bM=11.f;}
-				else if(params->blackwhite.setting=="Landscape")         {rM=66.f ;gM=24.f; bM=10.f;}
-				else if(params->blackwhite.setting=="Portrait")          {rM=54.f ;gM=44.f; bM=12.f;}
-				else if(params->blackwhite.setting=="InfraRed")          {rM=-40.f;gM=200.f;bM=-17.f;}
+*/
 
-				if (params->blackwhite.autoc) {rM=autor;gM=autog;bM=autob; mixerOrange=33.f; mixerYellow=33.f;mixerMagenta=33.f;mixerPurple=33.f;mixerCyan=33.f;}  // auto channel-mixer
-				rrm=rM;
-				ggm=gM;
-				bbm=bM;
-				
-				somm=rM+gM+bM;
-				rM=rM/somm;gM=gM/somm;bM=bM/somm;
-				float koymcp=0.f;
-				
-				if(params->blackwhite.setting=="ROYGCBMP-Abs" || params->blackwhite.setting=="ROYGCBMP-Rel") {
-				float obM=0.f;
-				float ogM=0.f;
-				float orM=0.f;
-				
-				float ybM=0.f;
-				float yrM=0.f;
-				float ygM=0.f;
-				
-				float mgM=0.f;
-				float mrM=0.f;
-				float mbM=0.f;
-				
-				float pgM=0.f;
-				float prM=0.f;
-				float pbM=0.f;
-				
-				float crM=0.f;
-				float cgM=0.f;
-				float cbM=0.f;
-				
-				
-				float fcompl = 1.f;
-				if(complem) fcompl = 3.f;
-				// ponderate filters: report to R=G=B=33
-				// I ponder RGB channel, not only orange or yellow or cyan, etc...it's my choice !
-					if(mixerOrange !=33){//orange
-						if (mixerOrange >=33) orM=fcompl*(mixerOrange*0.67f - 22.11f)/100.f; else orM=fcompl*(-0.3f*mixerOrange +9.9f)/100.f;
-						if (mixerOrange >=33) ogM=fcompl*(-0.164f*mixerOrange+5.412f)/100.f; else ogM=fcompl*(0.4f*mixerOrange-13.2f)/100.f;
-						if(complem) obM=(-0.492f*mixerOrange+16.236f)/100.f;
-						rM+=orM;
-						gM+=ogM;
-						bM+=obM;
-						koymcp += (orM+ogM+obM);
-					}
-					if(mixerYellow !=33){//yellow
-						yrM=fcompl*(-0.134f*mixerYellow +4.422f)/100.f;//22.4
-						ygM=fcompl*(0.5f*mixerYellow-16.5f)/100.f;
-						if(complem) ybM=(-0.492f*mixerYellow+16.236f)/100.f;
-						rM+=yrM;
-						gM+=ygM;
-						bM+=ybM;
-						koymcp += (yrM+ygM+ybM);
-					}
-					if(mixerMagenta !=33){//Magenta
-						if(mixerMagenta >=33) mrM=fcompl*(0.67f*mixerMagenta -22.11f)/100.f;else  mrM=fcompl*(-0.3f*mixerMagenta +9.9f)/100.f;
-						if(mixerMagenta >=33) mbM=fcompl*(-0.164f*mixerMagenta+5.412f)/100.f;else mbM=fcompl*(0.4f*mixerMagenta-13.2f)/100.f;
-						if(complem) mgM=(-0.492f*mixerMagenta+16.236f)/100.f;
-						rM+=mrM;
-						gM+=mgM;
-						bM+=mbM;
-						koymcp += (mrM+mgM+mbM);
-					}
-					if(mixerPurple!=33){//Purple
-						prM=fcompl*(-0.134f*mixerPurple +4.422f)/100.f;
-						pbM=fcompl*(0.5f*mixerPurple-16.5f)/100.f;
-						if(complem) pgM=(-0.492f*mixerPurple+16.236f)/100.f;
-						rM+=prM;
-						gM+=pgM;
-						bM+=pbM;
-						koymcp += (prM+pgM+pbM);
-					}
-					if(mixerCyan !=33){//Cyan
-						cgM=fcompl*(-0.134f*mixerCyan +4.422f)/100.f;
-						cbM=fcompl*(0.5f*mixerCyan-16.5f)/100.f;
-						if(complem) crM=(-0.492f*mixerCyan+16.236f)/100.f;
-						rM+=crM;
-						gM+=cgM;
-						bM+=cbM;
-						koymcp += (crM+cgM+cbM);
-					}
-				}
-				if(params->blackwhite.setting=="ROYGCBMP-Abs")  {kcorec=koymcp+som/100.f;}
-				//Color filters
-				float filred,filgreen,filblue;
-				filred=1.f;filgreen=1.f;filblue=1.f;
-				if          (params->blackwhite.filter=="None")        {filred=1.f;  filgreen=1.f;  filblue=1.f;}
-				else if     (params->blackwhite.filter=="Red")         {filred=1.f;  filgreen=0.05f;filblue=0.f;}
-				else if     (params->blackwhite.filter=="Orange")      {filred=1.f;  filgreen=0.6f; filblue=0.f;}
-				else if     (params->blackwhite.filter=="Yellow")      {filred=1.f;  filgreen=1.f;  filblue=0.05f;}
-				else if     (params->blackwhite.filter=="YellowGreen") {filred=0.6f; filgreen=1.f;  filblue=0.3f;}
-				else if     (params->blackwhite.filter=="Green")       {filred=0.2f; filgreen=1.f;  filblue=0.3f;}
-				else if     (params->blackwhite.filter=="Cyan")        {filred=0.05f;filgreen=1.f;  filblue=1.f;}
-				else if     (params->blackwhite.filter=="Blue")        {filred=0.f;  filgreen=0.05f;filblue=1.f;}
-				else if     (params->blackwhite.filter=="Purple")      {filred=1.f;  filgreen=0.05f;filblue=1.f;}
-				
-				
-				rM = rM*filred;
-				gM = gM*filgreen;
-				bM = bM*filblue;
-				
-				rM=rM / (rM+gM+bM);
-				gM=gM / (rM+gM+bM);
-				bM=bM / (rM+gM+bM);
-				
-				mix[0][0] = rM;
-				mix[1][0] = rM;
-				mix[2][0] = rM;
-				mix[0][1] = gM;
-				mix[1][1] = gM;
-				mix[2][1] = gM;
-				mix[0][2] = bM;
-				mix[1][2] = bM;
-				mix[2][2] = bM;
+	else if (algm==2) {//channel-mixer
+		//end auto chmix
+		float mix[3][3];
+
+		if (computeMixerAuto) {
+			// auto channel-mixer
 
 #ifdef _OPENMP
-#pragma omp for schedule(dynamic, 5) private (val, in)
+#pragma omp for schedule(dynamic, 5) reduction(+:nr,ng,nb)
+#endif
+			for (int i=0; i<tH; i++) {
+				for (int j=0; j<tW; j++) {
+					nr += tmpImage->r(i,j);
+					ng += tmpImage->g(i,j);
+					nb += tmpImage->b(i,j);
+				}
+			}
+
+#ifdef _OPENMP
+#pragma omp single
+#endif
+{
+			double srgb = nr+ng+nb;
+			double knr = srgb/nr;
+			double kng = srgb/ng;
+			double knb = srgb/nb;
+			double sk = knr+kng+knb;
+			autor=(float)(100.0*knr/sk);
+			autog=(float)(100.0*kng/sk);
+			autob=(float)(100.0*knb/sk);
+}
+
+/*
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
+#endif
+			for (int i=0; i<tH; i++) {
+				for (int j=0; j<tW; j++) {
+					float rr = tmpImage->r(i,j);
+					float gg = tmpImage->g(i,j);
+					float bb = tmpImage->b(i,j);
+					nr+=rr;
+					ng+=gg;
+					nb+=bb;
+					float srgb;
+					srgb = nr+ng+nb;
+					float knr=nr/srgb;
+					float kng=ng/srgb;
+					float knb=nb/srgb;
+					knr = 1.f/knr;
+					kng = 1.f/kng;
+					knb = 1.f/knb;
+					float sk;
+					sk=knr+kng+knb;
+					knr=100.f*knr/sk;
+					kng=100.f*kng/sk;
+					knb=100.f*knb/sk;
+					autor=knr;
+					autog=kng;
+					autob=knb;
+				}
+			}
+*/
+		}
+
+		if (params->blackwhite.autoc) {
+			// auto channel-mixer
+			bwr = autor;
+			bwg = autog;
+			bwb = autob;
+			mixerOrange  = 33.f;
+			mixerYellow  = 33.f;
+			mixerMagenta = 33.f;
+			mixerPurple  = 33.f;
+			mixerCyan    = 33.f;
+		}
+
+#ifdef _OPENMP
+#pragma omp barrier
+#pragma omp single
+#endif
+{
+		Color::computeBWMixerConstants(params->blackwhite.setting, params->blackwhite.filter,
+				bwr, bwg, bwb, mixerOrange, mixerYellow, mixerCyan, mixerPurple, mixerMagenta,
+				params->blackwhite.autoc, complem, kcorec, rrm, ggm, bbm);
+}
+		mix[0][0] = bwr;
+		mix[1][0] = bwr;
+		mix[2][0] = bwr;
+		mix[0][1] = bwg;
+		mix[1][1] = bwg;
+		mix[2][1] = bwg;
+		mix[0][2] = bwb;
+		mix[1][2] = bwb;
+		mix[2][2] = bwb;
+
+		float in[3], val[3];
+
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 5)
 #endif
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
@@ -2684,17 +2740,14 @@ if (algm==2  && blackwhite) {//channel-mixer
 						val[end] += mix[end][beg] *in[beg];
 					}
 				}
-				tmpImage->r(i,j) = CLIP(val[0]*kcorec);
-				tmpImage->g(i,j) = CLIP(val[1]*kcorec);
-				tmpImage->b(i,j) = CLIP(val[2]*kcorec);
-				//correction gamma : pseudo TRC curve
+				tmpImage->r(i,j) = tmpImage->g(i,j) = tmpImage->b(i,j) = CLIP(val[0]*kcorec);
+
+				//gamma correction: pseudo TRC curve
 				if (hasgammabw) Color::trcGammaBW (tmpImage->r(i,j), tmpImage->g(i,j), tmpImage->b(i,j), gammabwr, gammabwg, gammabwb);
 			}
 		} 
-		
-}
+	}
 
-if(blackwhite){//after BW conversion
 	if (hasToneCurvebw2) {
 
 		if (afterCurveMode==BlackWhiteParams::TC_MODE_STD_BW){ // Standard
@@ -2725,7 +2778,8 @@ if(blackwhite){//after BW conversion
 			}
 		}
 	}
-}
+
+} // end blackwhite
 
 #ifdef _OPENMP
 #pragma omp for schedule(dynamic, 5)
@@ -2777,7 +2831,6 @@ if(blackwhite){//after BW conversion
 	if (hCurveEnabled) delete hCurve;
 	if (sCurveEnabled) delete sCurve;
 	if (vCurveEnabled) delete vCurve;
-	delete [] cossq;
 }
 
 
@@ -3480,7 +3533,7 @@ float rew=params->edgePreservingDecompositionUI.ReweightingIterates;
 	if(stren < 0.0f) DetailBoost = 0.0f;	//Go with effect of exponent only if uncompressing.
 
 	//Auto select number of iterates. Note that p->EdgeStopping = 0 makes a Gaussian blur.
-	if(Iterates == 0) Iterates = (unsigned int)(edgest*15.0);
+	if(Iterates == 0) Iterates = (unsigned int)(edgest*15.0f);
 
 /* Debuggery. Saves L for toying with outside of RT.
 char nm[64];
@@ -3489,7 +3542,7 @@ FILE *f = fopen(nm, "wb");
 fwrite(L, N, sizeof(float), f);
 fclose(f);*/
 
-	epd.CompressDynamicRange(L, (float)sca/skip, (float)edgest, Compression, DetailBoost, Iterates, rew, L);
+	epd.CompressDynamicRange(L, sca/float(skip), edgest, Compression, DetailBoost, Iterates, rew, L);
 
 	//Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
 	float s = (1.0f + 38.7889f)*powf(Compression, 1.5856f)/(1.0f + 38.7889f*powf(Compression, 1.5856f));

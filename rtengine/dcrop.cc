@@ -164,11 +164,13 @@ void Crop::update (int todo) {
                    baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256,
                    parent->imgsrc->getGamma());
         }*/
-	double rrm, ggm, bbm;
+    double rrm, ggm, bbm;
 
     if (todo & M_RGBCURVE)
         parent->ipf.rgbProc (baseCrop, laboCrop, parent->hltonecurve, parent->shtonecurve, parent->tonecurve, cshmap,
-							 params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1, parent->customToneCurve2, parent->customToneCurvebw1, parent->customToneCurvebw2,rrm, ggm, bbm);
+                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->customToneCurve1,
+                             parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW,rrm, ggm, bbm,
+                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB);
 
     /*xref=000;yref=000;
     if (colortest && cropw>115 && croph>115)
@@ -245,11 +247,13 @@ void Crop::update (int todo) {
 
             if(settings->ciecamfloat) {
                 float d; // not used after this block
-                parent->ipf.ciecam_02float (cieCrop, float(adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, d);
+                parent->ipf.ciecam_02float (cieCrop, float(adap), begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
+                                            dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, 1,(float**)cbuffer, execsharp, d);
             }
             else {
                 double dd; // not used after this block
-                parent->ipf.ciecam_02 (cieCrop,adap, begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3, dummy, dummy, 5, 1,(float**)cbuffer, execsharp, dd);
+                parent->ipf.ciecam_02 (cieCrop,adap, begh, endh, 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
+                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 5, 1,(float**)cbuffer, execsharp, dd);
             }
         }
         else {
@@ -465,10 +469,12 @@ bool Crop::tryUpdate() {
 
 /* @brief Handles Crop updating in its own thread
  *
- * This method will cycle updates ss long as Crop::newUpdatePending will be true. During the processing,
+ * This method will cycle updates as long as Crop::newUpdatePending will be true. During the processing,
  * intermediary update will be automatically flushed by Crop::tryUpdate.
+ *
+ * This method is called when the visible part of the crop has changed (resize, zoom, etc..), so it needs a full update
  */
-void Crop::fullUpdate () { 
+void Crop::fullUpdate () {
 
     parent->updaterThreadStart.lock ();
     if (parent->updaterRunning && parent->thread) {
