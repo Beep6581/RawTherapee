@@ -151,7 +151,7 @@ void BatchQueueEntryUpdater::terminate  () {
 
     if (!stopped) {
         // Yield to currently running thread and wait till it's finished
-        GThreadUnLock();
+        GThreadUnLock lock;
         tostop = true;
         Glib::Thread::self()->yield(); 
         if (!stopped) thread->join ();

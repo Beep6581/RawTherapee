@@ -499,7 +499,7 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
 
     *black_level = -1;
     *white_level = -1;
-    memset(trans, 0, sizeof(trans));
+    memset(trans, 0, sizeof(*trans)*12);
 
     // indicate that DCRAW wants these from constants (rather than having loaded these from RAW file
     // note: this is simplified so far, in some cases dcraw calls this when it has say the black level
