@@ -297,7 +297,6 @@ static void calcGradientParams(int oW, int oH, const GradientParams& gradient, s
 	if (gp.transpose) {
 		gp.bright_top = !gp.bright_top;
 	}
-	float *grad = (float *)malloc(w * h * sizeof(float));
 	if (gp.transpose) {
 		int tmp = w;
 		w = h;
