@@ -27,6 +27,7 @@
 #include <gtkmm.h>
 #include <giomm.h>
 #include <iostream>
+#include <tiffio.h>
 #include "rtwindow.h"
 #include <cstring>
 #include <cstdlib>
@@ -147,6 +148,9 @@ int main(int argc, char **argv)
 	   if( ret <= 0 )
 		   return ret;
    }
+
+   if( !options.rtSettings.verbose )
+       TIFFSetWarningHandler(NULL);  // avoid annoying message boxes
 
 #ifndef WIN32
    // Move the old path to the new one if the new does not exist
