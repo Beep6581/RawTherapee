@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 3.4, 2013-11-12
+# buildRT version 3.6, 2013-12-01
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -25,7 +25,7 @@ esac
 
 #--- Set some variables
 unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
-version="3.4"
+version="3.6"
 movetoPatched=""
 repo="${HOME}/rawtherapee"
 procTarget=2
@@ -83,7 +83,7 @@ printf "%s\n" "Repository: ${repo}"
 printf "%s\n" "Processor target: ${procTarget}"
 
 if [[ -z $verbose ]]; then
-  Wcflags="-Wno-unused-result"
+  Wcflags="-Wno-unused-result -Wno-aggressive-loop-optimizations"
 fi
 
 cpuCount="$(grep -c 'processor' /proc/cpuinfo)"
@@ -174,6 +174,7 @@ if [[ ! -d "${repo}" ]]; then
   hg clone https://rawtherapee.googlecode.com/hg/ "${repo}"
   cd "${repo}" || exit 1
   hg parents --template 'RawTherapee-{latesttag}.{latesttagdistance}, Latest tag: {latesttag}, Latest tag distance: {latesttagdistance}, Changeset: {rev}:{node|short}\n\n'
+  alert "Repository cloned succesfully. What would you like to do next?"
   printf "%b" "Repository cloned succesfully.\n" "Press 'q' to quit or any other key to continue... "
   read -r -n 1
   echo
@@ -181,12 +182,12 @@ if [[ ! -d "${repo}" ]]; then
   [[ $REPLY = q || $REPLY = Q ]] && { printf "%s\n" "Quitting." ""; exit 0; }
 fi
 cd "${repo}" || exit 1
-hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
 
 #--- Update or decide what to do if user edited the source code (e.g. by applying a patch)
 uncommitted="$(hg status | sed "s/^/\t/")"
 unpushed="$(hg outgoing -q | sed "s/^/\t/" || echo "Could not check for unpushed changes (check your internet connection), but continuing anyway.")"
 if [[ -z $uncommitted && -z $unpushed && -z $patched ]]; then
+  hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
   hg update -C default
   echo
   hg parents --template 'Repository head:\n  RawTherapee-{latesttag}.{latesttagdistance}\n  Latest tag: {latesttag}\n  Latest tag distance: {latesttagdistance}\n  Changeset: {rev}:{node|short}\n\n'
@@ -194,7 +195,8 @@ elif [[ -z $patched ]]; then
   printf "%s\n" "" "Warning! There are uncommitted or unpushed changes in the repository!" "Uncommitted:" "$uncommitted" "Unpushed:" "$unpushed" "" "This means that you edited the source code (e.g. applied a patch). If the script proceeds to update the repository, those changes you made to the source code might be lost. Your choices are to force the update and possibly lose the changes, not to update and to compile RT as-is, or to abort the script." | fold -s
   read -r -p "[f]orce update, [c]ompile as-is, or [a]bort? " fca
   case $fca in
-    f|F) hg update -C default
+    f|F) hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
+         hg update -C default
          echo ;;
     c|C) printf "%s\n" "Retaining edited source code and compiling RT as-is." ""
          patched="yes"
@@ -234,7 +236,9 @@ printf "%s\n" "${list[0]}"
 printf "%s\n" "------------------------------------------"
 printf "%s\n" "0 - abort - exit" "${list[@]:1}" | column -t
 printf "%s\n" "------------------------------------------" "" "Enter your choices, each number separated by a single space, e.g. 1 2" "If you don't know which option to choose, then choose the \"default\" branch, \"Release\" build type." "" | fold -s
-read -r -p "Your choices: " -a choiceNumbers
+while [[ -z $choiceNumbers ]]; do
+  read -r -p "Your choices: " -a choiceNumbers
+done
 printf "%s\n" "" "------------------------------------------"
 #sanitize
 choiceNumbers="${choiceNumbers//[^0-9 ]/}"
