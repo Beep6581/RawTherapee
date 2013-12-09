@@ -513,7 +513,9 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
         {
             ipf.lab2monitorRgb (nprevl, previmg);
             delete workimg;
-            workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, params.icm.working);
+            Glib::ustring outProfile=params.icm.output;
+            if (params.icm.output=="" || params.icm.output==ColorManagementParams::NoICMString) outProfile="sRGB";
+            workimg = ipf.lab2rgb (nprevl, 0,0,pW,pH, outProfile, true);
         }
         catch(char * str)
         {
