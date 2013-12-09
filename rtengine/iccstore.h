@@ -70,6 +70,7 @@ class ICCStore {
     public:
 
         static ICCStore* getInstance(void);
+        static cmsHPROFILE makeStdGammaProfile(cmsHPROFILE iprof);
 
         Glib::ustring    defaultMonitorProfile;  // Main monitors standard profile name, from OS
         void             findDefaultMonitorProfile();

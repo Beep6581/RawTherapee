@@ -77,6 +77,94 @@ std::vector<Glib::ustring> ICCStore::getOutputProfiles () {
 }
 
 
+cmsHPROFILE
+ICCStore::makeStdGammaProfile(cmsHPROFILE iprof)
+{
+    // forgive me for the messy code, quick hack to change gamma of an ICC profile to the RT standard gamma
+    void *buf = NULL;
+    if (!iprof) {
+        return NULL;
+    }
+    cmsUInt32Number bytesNeeded = 0;
+    cmsSaveProfileToMem(iprof, 0, &bytesNeeded);
+    if (bytesNeeded == 0) {
+        return NULL;
+    }
+    uint8_t *data = new uint8_t[bytesNeeded+1];
+    cmsSaveProfileToMem(iprof, data, &bytesNeeded);
+    const size_t len = (int)bytesNeeded;
+    const uint8_t *p = &data[128]; // skip 128 byte header
+    uint32_t tag_count;
+    memcpy(&tag_count, p, 4);
+    p += 4;
+    tag_count = ntohl(tag_count);
+
+    struct icctag {
+        uint32_t sig;
+        uint32_t offset;
+        uint32_t size;
+    } tags[tag_count];
+
+    const uint32_t gamma = 0x239;
+    int gamma_size = (gamma == 0 || gamma == 256) ? 12 : 14;
+    int data_size = (gamma_size + 3) & ~3;
+    for (int i = 0; i < tag_count; i++) {
+        memcpy(&tags[i], p, 12);
+        tags[i].sig = ntohl(tags[i].sig);
+        tags[i].offset = ntohl(tags[i].offset);
+        tags[i].size = ntohl(tags[i].size);
+        p += 12;
+        if (tags[i].sig != 0x62545243 && // bTRC
+            tags[i].sig != 0x67545243 && // gTRC
+            tags[i].sig != 0x72545243 && // rTRC
+            tags[i].sig != 0x6B545243) // kTRC
+        {
+            data_size += (tags[i].size + 3) & ~3;
+        }
+    }
+    uint32_t sz = 128 + 4 + tag_count * 12 + data_size;
+    uint8_t *nd = new uint8_t[sz];
+    memset(nd, 0, sz);
+    memcpy(nd, data, 128 + 4);
+    sz = htonl(sz);
+    memcpy(nd, &sz, 4);
+    uint32_t offset = 128 + 4 + tag_count * 12;
+    uint32_t gamma_offset = 0;
+    for (int i = 0; i < tag_count; i++) {
+        struct icctag tag;
+        tag.sig = htonl(tags[i].sig);
+        if (tags[i].sig == 0x62545243 || // bTRC
+            tags[i].sig == 0x67545243 || // gTRC
+            tags[i].sig == 0x72545243 || // rTRC
+            tags[i].sig == 0x6B545243) // kTRC
+        {
+            if (gamma_offset == 0) {
+                gamma_offset = offset;
+                uint32_t pcurve[] = { htonl(0x63757276), htonl(0), htonl(gamma_size == 12 ? 0 : 1) };
+                memcpy(&nd[offset], pcurve, 12);
+                if (gamma_size == 14) {
+                    uint16_t gm = htons(gamma);
+                    memcpy(&nd[offset+12], &gm, 2);
+                }
+                offset += (gamma_size + 3) & ~3;
+            }
+            tag.offset = htonl(gamma_offset);
+            tag.size = htonl(gamma_size);
+        } else {
+            tag.offset = htonl(offset);
+            tag.size = htonl(tags[i].size);
+            memcpy(&nd[offset], &data[tags[i].offset], tags[i].size);
+            offset += (tags[i].size + 3) & ~3;
+        }
+        memcpy(&nd[128 + 4 + i * 12], &tag, 12);
+    }
+
+    cmsHPROFILE oprof = cmsOpenProfileFromMem (nd, ntohl(sz));
+    delete [] nd;
+    delete [] data;
+    return oprof;
+}
+
 ICCStore*
 ICCStore::getInstance(void)
 {

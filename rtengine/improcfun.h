@@ -284,7 +284,7 @@ class ImProcFunctions {
 		void PF_correct_RTcam (CieImage * src, CieImage * dst, double radius, int thresh);
 		void Badpixelscam(CieImage * src, CieImage * dst, double radius, int thresh, int mode);
 
-		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);
+		Image8*     lab2rgb   (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, bool standard_gamma);
 		Image16*    lab2rgb16b (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile, Glib::ustring profi, Glib::ustring gam, bool freegamma, double gampos, double slpos, double &ga0, double &ga1, double &ga2, double &ga3, double &ga4, double &ga5, double &ga6);// for gamma output		
 		Image16*    lab2rgb16 (LabImage* lab, int cx, int cy, int cw, int ch, Glib::ustring profile);//without gamma ==>default
        // CieImage *ciec;    

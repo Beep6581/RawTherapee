@@ -408,7 +408,7 @@ void ProcParams::setDefaults () {
     icm.blendCMSMatrix = false;
     icm.toneCurve = false;
     icm.dcpIlluminant = 0;
-    icm.working = "sRGB";
+    icm.working = "ProPhoto";
     icm.output  = "sRGB";
     icm.gamma  = "default";
     icm.gampos =2.22;
