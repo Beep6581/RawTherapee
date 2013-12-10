@@ -230,7 +230,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         }
 
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
-        Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\" \"");
+        Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
 
         if (options.rtSettings.verbose)
             printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine).c_str());
