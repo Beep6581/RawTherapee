@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -722,12 +722,12 @@ class NALensDataInterpreter : public Interpreter {
             0xc6,0x67,0x4a,0xf5,0xa5,0x12,0x65,0x7e,0xb0,0xdf,0xaf,0x4e,0xb3,0x61,0x7f,0x2f } };
 
             int ver = (t->toInt (0, BYTE) - '0') * 1000 + (t->toInt (1, BYTE) - '0') * 100 + (t->toInt (2, BYTE) - '0') * 10 + (t->toInt (3, BYTE) - '0');
-            
+
             std::ostringstream ld;
             ld << "Version = " << ver << std::endl;
-            
+
             int lenstype = t->getParent()->getTag(0x0083)->toInt(0,BYTE);
-            
+
             std::ostringstream lid;
             lid.setf (std::ios_base::hex, std::ios_base::basefield);
             lid.setf (std::ios_base::uppercase);
@@ -748,7 +748,7 @@ class NALensDataInterpreter : public Interpreter {
             }
 
             unsigned char buffer[16];
-            if (d100) 
+            if (d100)
                 memcpy (buffer, t->getValue()+6, 7);
             else
                 memcpy (buffer, t->getValue()+4, 16);
@@ -769,38 +769,70 @@ class NALensDataInterpreter : public Interpreter {
                 for (int i=0; i < 16; i++)
                     buffer[i] ^= (cj += ci * ck++);
             }
-                
+
+			std::string EffectiveMaxApertureString = "";
             if (!d100) {
+			   int	EffectiveMaxApertureValue;
                if( ver<204 ){
 					ld << "ExitPupilPosition = " << (int) buffer[0] << std::endl;
 					ld << "AFAperture = "        << (int) buffer[1] << std::endl;
 					ld << "FocusPosition = "     << (int) buffer[4] << std::endl;
 					ld << "FocusDistance = "     << (int) buffer[5] << std::endl;
 					ld << "FocalLength = "       << (int) buffer[6] << std::endl;
-					ld << "EffectiveMaxAperture = "  << (int) buffer[14] << std::endl;
+					EffectiveMaxApertureValue = (int) buffer[14];
 				}else{
 					ld << "ExitPupilPosition = " << (int) buffer[0] << std::endl;
 					ld << "AFAperture = "        << (int) buffer[1] << std::endl;
 					ld << "FocusPosition = "     << (int) buffer[4] << std::endl;
 					ld << "FocusDistance = "     << (int) buffer[6] << std::endl;
 					ld << "FocalLength = "       << (int) buffer[7] << std::endl;
-					ld << "EffectiveMaxAperture = "  << (int) buffer[15] << std::endl;
+					EffectiveMaxApertureValue = (int) buffer[15];
 				}
+				switch (EffectiveMaxApertureValue) {
+					case 0x8: EffectiveMaxApertureString = "1.2";break;
+					case 0xc: EffectiveMaxApertureString = "1.4";break;
+					case 0x14: EffectiveMaxApertureString = "1.8";break;
+					case 0x18: EffectiveMaxApertureString = "2.0";break;
+					case 0x20: EffectiveMaxApertureString = "2.5";break;
+					case 0x24: EffectiveMaxApertureString = "2.8";break;
+					case 0x2a: EffectiveMaxApertureString = "3.3";break;
+					case 0x2c: EffectiveMaxApertureString = "3.5";break;
+					case 0x30: EffectiveMaxApertureString = "4.0";break;
+					case 0x34: EffectiveMaxApertureString = "4.5";break;
+					case 0x38: EffectiveMaxApertureString = "5.0";break;
+					case 0x3c: EffectiveMaxApertureString = "5.6";break;
+					case 0x40: EffectiveMaxApertureString = "6.3";break;
+					case 0x44: EffectiveMaxApertureString = "7.1";break;
+					case 0x48: EffectiveMaxApertureString = "8.0";break;
+					case 0x4e: EffectiveMaxApertureString = "9.5";break;
+					case 0x54: EffectiveMaxApertureString = "11.0";break;
+					case 0x5a: EffectiveMaxApertureString = "13.0";break;
+					case 0x5e: EffectiveMaxApertureString = "15.0";break;
+					case 0x60: EffectiveMaxApertureString = "16.0";break;
+					case 0x66: EffectiveMaxApertureString = "19.0";break;
+					case 0x6c: EffectiveMaxApertureString = "22.0";break;
+					default  : EffectiveMaxApertureString = "";
+				}
+				ld << "EffectiveMaxAperture = "  << EffectiveMaxApertureString << std::endl;
             }
-                
+
             for (int i=0; i<7; i++)
                  lid << std::setw(2) << std::setfill('0') << (int)buffer[lidoffs+i] << ' ';
-            lid << std::setw(2) << std::setfill('0') << lenstype;            
-            
+            lid << std::setw(2) << std::setfill('0') << lenstype;
+
             std::map<std::string,std::string>::iterator r = lenses.find (lid.str());
-            if (r!=lenses.end()) 
-                ld << "Lens = " << r->second;
+            if (r!=lenses.end()){
+				if(r==lenses.begin() && EffectiveMaxApertureString != "")			// first entry is for unchipped lenses
+					ld << "Lens = Unknown $FL$mm f/" << EffectiveMaxApertureString;
+				else
+					ld << "Lens = " << r->second;
+            }
             else
                 ld << "Lens = Unknown, ID=" << lid.str();
-        
+
             return ld.str();
         }
-        
+
 };
 NALensDataInterpreter naLensDataInterpreter;
 
