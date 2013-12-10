@@ -749,7 +749,7 @@ PREFERENCES_CIEART_LABEL;Use float precision instead of double
 PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CMETRICINTENT;Colorimetric intent
-PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\nReceives command line parameters to allow a rules-based processing profile generation:\n[raw/JPG path] [default processing profile path] [RT's cache folder path] [f-number] [exposure in secs] [focal length in mm] [ISO] [lens] [camera make] [camera model]\n\n<b>WARNING:</b> You are responsible of using double quotes where necessary if you're using paths containing spaces.
+PREFERENCES_CUSTPROFBUILDHINT;Executable (or script) file called when a new initial processing profile should be generated for an image.\n\nThe path of the communication file (*.ini style, a.k.a. "Keyfile") is added as a command line parameter. It contains various parameters required for the scipts and image Exif to allow a rules-based processing profile generation.\n\n<b>WARNING:</b> You are responsible for using double quotes where necessary if you're using paths containing spaces.
 PREFERENCES_CUSTPROFBUILDPATH;Executable path
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
