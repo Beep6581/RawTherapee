@@ -145,9 +145,9 @@ class NAShootingModeInterpreter : public Interpreter {
             str << "Continuous = " << (a&1 ? "Yes" : "No") << std::endl;
             str << "Delay = " << (a&2 ? "Yes" : "No") << std::endl;
             str << "PC Control = " << (a&4 ? "Yes" : "No") << std::endl;
-            str << "Exposure Bracketing = " << (a&8 ? "Yes" : "No") << std::endl;
-            str << "Auto ISO = " << (a&16 ? "Yes" : "No") << std::endl;
-            str << "White-Balance Bracketing = " << (a&32 ? "Yes" : "No") << std::endl;
+            str << "White-Balance Bracketing = " << (a&8 ? "Yes" : "No") << std::endl;
+            str << "Exposure Bracketing = " << (a&16 ? "Yes" : "No") << std::endl;
+            str << "Auto ISO = " << (a&32 ? "Yes" : "No") << std::endl;
             str << "IR Control = " << (a&64 ? "Yes" : "No");
             return str.str();
         }
