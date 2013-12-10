@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -39,7 +39,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
     size_t dotpos = fname.find_last_of ('.');
     root = NULL;
     iptc = NULL;
-                
+
     if (ri && (ri->exifBase>=0 || ri->ciffBase>=0)) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
@@ -47,7 +47,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
                 root = rtexif::ExifManager::parse (f, ri->exifBase);
                 if (root) {
                     rtexif::Tag* t = root->getTag (0x83BB);
-                    if (t) 
+                    if (t)
                         iptc = iptc_data_new_from_data ((unsigned char*)t->getValue (), (unsigned)t->getValueSize ());
                 }
             }
@@ -56,7 +56,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             fclose (f);
             extractInfo ();
         }
-    }    
+    }
     else if ((dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".jpg")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".jpeg"))) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
@@ -67,7 +67,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             iptc = iptc_data_new_from_jpeg_file (ff);
             fclose (ff);
         }
-    }    
+    }
     else if ((dotpos<fname.size()-3 && !fname.casefold().compare (dotpos, 4, ".tif")) || (dotpos<fname.size()-4 && !fname.casefold().compare (dotpos, 5, ".tiff"))) {
         FILE* f = safe_g_fopen (fname, "rb");
         if (f) {
@@ -76,11 +76,11 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
             extractInfo ();
             if (root) {
                 rtexif::Tag* t = root->getTag (0x83BB);
-                if (t) 
+                if (t)
                     iptc = iptc_data_new_from_data ((unsigned char*)t->getValue (), (unsigned)t->getValueSize ());
             }
         }
-    }    
+    }
     else {
         root = new rtexif::TagDirectory ();
         shutter = 0;
@@ -98,7 +98,7 @@ ImageData::ImageData (Glib::ustring fname, RawMetaDataLocation* ri) {
 
 void ImageData::extractInfo () {
 
-  if (!root) 
+  if (!root)
     return;
 
   make = "";
@@ -113,7 +113,7 @@ void ImageData::extractInfo () {
   iso_speed = 0;
   memset (&time, 0, sizeof(time));
   timeStamp = 0;
-  
+
   if (root->getTag ("Make")){
      make = root->getTag ("Make")->valueToString ();
      // same dcraw treatment
@@ -154,9 +154,9 @@ void ImageData::extractInfo () {
   rtexif::TagDirectory* exif = NULL;
   if (root->getTag ("Exif"))
     exif = root->getTag ("Exif")->getDirectory ();
-  
+
   if (exif) {
-  
+
     // standard exif tags
     if (exif->getTag ("ShutterSpeedValue"))
         shutter = exif->getTag ("ShutterSpeedValue")->toDouble ();
@@ -177,7 +177,7 @@ void ImageData::extractInfo () {
     int num=-3, denom=-3;
 
     // First try, offical EXIF. Set by Adobe on some DNGs
-    rtexif::Tag* pDst=exif->getTag("SubjectDistance");  
+    rtexif::Tag* pDst=exif->getTag("SubjectDistance");
     if (pDst) {
         int num, denom;
         pDst->toRational(num,denom);
@@ -188,7 +188,7 @@ void ImageData::extractInfo () {
     }
 
     if (num!=-3) {
-        if ((denom==1 && num>=10000) || num<0 || denom<0) 
+        if ((denom==1 && num>=10000) || num<0 || denom<0)
             focus_dist=10000;  // infinity
         else if (denom>0) {
             focus_dist=(float)num/denom;
@@ -232,6 +232,18 @@ void ImageData::extractInfo () {
                     lens = ldata.substr (pos + 7);
                     if (lens.compare (0, 7, "Unknown"))
                         lensOk = true;
+					else {
+						int pos = lens.find("$FL$");		// is there a placeholder for focallength?
+						if(pos != Glib::ustring::npos) {				// then fill in focallength
+							lens = lens.replace(pos,4,exif->getTag ("FocalLength")->valueToString ());
+							if(mnote->getTag ("LensType")) {
+								std::string ltype = mnote->getTag ("LensType")->valueToString ();
+								if(ltype.find("MF = Yes")!=Glib::ustring::npos)		// check, whether it's a MF lens, should be always
+									lens = lens.replace(0,7,"MF");
+								lensOk = true;
+							}
+						}
+					}
                 }
             }
             if (!lensOk && mnote->getTag ("Lens")) {
@@ -255,6 +267,14 @@ void ImageData::extractInfo () {
                 else
                     str << "Unknown " << n[0] << "-" << n[1] << "mm F/" << n[2] << "-" << n[3];
                 lens = str.str();
+                // Look whether it's MF or AF
+				if(mnote->getTag ("LensType")) {
+					std::string ltype = mnote->getTag ("LensType")->valueToString ();
+					if(ltype.find("MF = Yes")!=Glib::ustring::npos)		// check, whether it's a MF lens
+						lens = lens.replace(0,7,"MF");					// replace 'Unknwon' with 'MF'
+					else
+						lens = lens.replace(0,7,"AF");					// replace 'Unknwon' with 'AF'
+				}
             }
         }
         else if (mnote && !make.compare (0, 5, "Canon")) {
@@ -285,7 +305,7 @@ void ImageData::extractInfo () {
             }
         }
         else if (mnote && !make.compare (0, 6, "PENTAX")) {
-            if (mnote->getTag ("LensType")) 
+            if (mnote->getTag ("LensType"))
                 lens = mnote->getTag ("LensType")->valueToString ();
 
             // Try to get the FocalLength from the LensInfo structure, where length below 10mm will be correctly set
@@ -301,7 +321,7 @@ void ImageData::extractInfo () {
                 focal_len35mm = mnote->getTag ("FocalLengthIn35mmFilm")->toDouble ();
         }
         else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
-            if (mnote->getTag ("LensID")) 
+            if (mnote->getTag ("LensID"))
                 lens = mnote->getTag ("LensID")->valueToString ();
         }
         else if (mnote && !make.compare (0, 7, "OLYMPUS")) {
@@ -324,7 +344,7 @@ void ImageData::extractInfo () {
 ImageData::~ImageData () {
 
     delete root;
-    if (iptc) 
+    if (iptc)
         iptc_data_free (iptc);
 }
 
@@ -333,7 +353,7 @@ const procparams::IPTCPairs ImageData::getIPTCData () const {
     procparams::IPTCPairs iptcc;
     if (!iptc)
         return iptcc;
-   
+
     unsigned char buffer[2100];
     for (int i=0; i<16; i++) {
         IptcDataSet* ds = iptc_data_get_next_dataset (iptc, NULL, IPTC_RECORD_APP_2, strTags[i].tag);
@@ -406,7 +426,7 @@ double ImageMetaData::shutterFromString (std::string s) {
     size_t i = s.find_first_of ('/');
     if (i==std::string::npos)
         return atof (s.c_str());
-    else 
+    else
         return atof (s.substr(0,i).c_str()) / atof (s.substr(i+1).c_str());
 }
 
@@ -441,7 +461,7 @@ iptc_data_new_from_jpeg_file (FILE *infile)
 		return NULL;
 
 	d = iptc_data_new ();
-	if (!d) 
+	if (!d)
 		return NULL;
 
 	buf = (unsigned char*)iptc_mem_alloc (d->priv->mem, buf_len);
