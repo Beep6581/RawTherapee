@@ -1509,3 +1509,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
+!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values ​​actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
+!TP_BWMIX_SET_ROYGCBPMABS;Channel-Mixer absolute ROYGCBPM
+!TP_BWMIX_SET_ROYGCBPMREL;Channel-Mixer relative ROYGCBPM
