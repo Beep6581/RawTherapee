@@ -1266,7 +1266,7 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_197;CAM02 - Color curve
 !HISTORY_MSG_198;CAM02 - Color curve
 !HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
-!HISTORY_MSG_200;CAMO2 - Tone mapping using CIECAM02 Q
+!HISTORY_MSG_200;CAM02 - Tone mapping using CIECAM02 Q
 !HISTORY_MSG_201;NR - Delta Chrominance red
 !HISTORY_MSG_202;NR - Delta Chrominance blue
 !HISTORY_MSG_203;NR - Method
@@ -1275,8 +1275,43 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !HISTORY_MSG_206;CAT02 - Adapt scene auto
 !HISTORY_MSG_207;Defringing Hue curve
 !HISTORY_MSG_208;Blue/Red Equalizer
-!HISTORY_MSG_210;Gradient Filter
-!HISTORY_MSG_211;Gradient Filter
+!HISTORY_MSG_210;Graduated Filter
+!HISTORY_MSG_211;Graduated Filter
+!HISTORY_MSG_212;Vignette Filter
+!HISTORY_MSG_213;Vignette Filter - Strength
+!HISTORY_MSG_214;Black &amp; White
+!HISTORY_MSG_215;B&amp;W Channel Mixer Red
+!HISTORY_MSG_216;B&amp;W Channel Mixer Green
+!HISTORY_MSG_217;B&amp;W Channel Mixer Blue
+!HISTORY_MSG_218;B&amp;W Red Gamma
+!HISTORY_MSG_219;B&amp;W Green Gamma
+!HISTORY_MSG_220;B&amp;W Blue Gamma
+!HISTORY_MSG_221;B&amp;W Color Filter
+!HISTORY_MSG_222;B&amp;W Presets
+!HISTORY_MSG_223;B&amp;W Channel Mixer Orange
+!HISTORY_MSG_224;B&amp;W Channel Mixer Yellow
+!HISTORY_MSG_225;B&amp;W Channel Mixer Cyan
+!HISTORY_MSG_226;B&amp;W Channel Mixer Magenta
+!HISTORY_MSG_227;B&amp;W Channel Mixer Purple
+!HISTORY_MSG_228;B&amp;W Luminance Equalizer
+!HISTORY_MSG_229;B&amp;W Luminance Equalizer
+!HISTORY_MSG_230;B&amp;W Black and White Mode
+!HISTORY_MSG_231;B&amp;W 'Before' Curve
+!HISTORY_MSG_232;B&amp;W 'Before' Curve Type
+!HISTORY_MSG_233;B&amp;W 'After' Curve
+!HISTORY_MSG_234;B&amp;W 'After' Curve Type
+!HISTORY_MSG_235;B&amp;W Auto Channel Mixer
+!HISTORY_MSG_236;--unused--
+!HISTORY_MSG_237;B&amp;W Mixer
+!HISTORY_MSG_238;Gradient - Feather
+!HISTORY_MSG_239;Gradient - Strength
+!HISTORY_MSG_240;Gradient - Center
+!HISTORY_MSG_241;Vignette Filter - Feather
+!HISTORY_MSG_242;Vignette Filter - Roundness
+!HISTORY_MSG_243;Vignetting - Rayon
+!HISTORY_MSG_244;Vignetting - Strength
+!HISTORY_MSG_245;Vignetting - Center
+!HISTORY_MSG_246;CL curve
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
@@ -1285,9 +1320,11 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
 !MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
+!PARTIALPASTE_CHANNELMIXERBW;Black and white
 !PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 !PARTIALPASTE_GRADIENT;Graduated Filter
 !PARTIALPASTE_LENSPROFILE;Lens correction profile
+!PARTIALPASTE_PCVIGNETTE;Vignette Filter
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
 !PREFERENCES_BEHADDALL;All to 'Add'
@@ -1297,6 +1334,9 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PREFERENCES_CIEART;CIECAM02 optimization
 !PREFERENCES_CIEART_LABEL;Use float precision instead of double
 !PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 !PREFERENCES_D50;5000K
 !PREFERENCES_D55;5500K
 !PREFERENCES_D60;6000K
@@ -1324,6 +1364,74 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
+!TP_BWMIX_AUTOCH;Auto
+!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
+!TP_BWMIX_BLUE;Blue
+!TP_BWMIX_CC_ENABLED;Adjust complementary color
+!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode
+!TP_BWMIX_CHANNEL;Luminance Equalizer
+!TP_BWMIX_CURVEEDITOR1;'Before' curve
+!TP_BWMIX_CURVEEDITOR2;'After' curve
+!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment
+!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the color components
+!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\nPay attention to extreme values that may cause artifacts
+!TP_BWMIX_CYAN;Cyan
+!TP_BWMIX_FILTER;Color Filter
+!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
+!TP_BWMIX_FILTER_BLUE;Blue
+!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
+!TP_BWMIX_FILTER_GREEN;Green
+!TP_BWMIX_FILTER_NONE;None
+!TP_BWMIX_FILTER_PURPLE;Purple
+!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
+!TP_BWMIX_FILTER_RED;Red
+!TP_BWMIX_FILTER_TOOLTIP;The color filter simulate shots taken with a colored filter placed in front of the lens. Colored filters reduce transmission of specific range of colors and correspondingly affect their lightness. E.g. a Red filter darkens Blue skies.
+!TP_BWMIX_FILTER_YELLOW;Yellow
+!TP_BWMIX_GAMMA;Gamma Correction
+!TP_BWMIX_GAM_BLUE;Blue Channel
+!TP_BWMIX_GAM_GREEN;Green Channel
+!TP_BWMIX_GAM_RED;Red Channel
+!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel RGB
+!TP_BWMIX_GREEN;Green
+!TP_BWMIX_LABEL;Black & White
+!TP_BWMIX_MAGENTA;Magenta
+!TP_BWMIX_MET;Method
+!TP_BWMIX_MET_CHANMIX;Channel Mixer
+!TP_BWMIX_MET_DESAT;Desaturation
+!TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
+!TP_BWMIX_MIXC;Mixer
+!TP_BWMIX_MIXF;Mixer Filters
+!TP_BWMIX_NEUTRAL;Reset mixer
+!TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
+!TP_BWMIX_ORANGE;Orange
+!TP_BWMIX_PURPLE;Purple
+!TP_BWMIX_RED;Red
+!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
+!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values ​​actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
+!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
+!TP_BWMIX_SETTING;Presets
+!TP_BWMIX_SETTING_TOOLTIP;Different presets (films, landscape, ...) or manual settings of channel-mixer
+!TP_BWMIX_SET_HIGHCONTAST;High contrast
+!TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
+!TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
+!TP_BWMIX_SET_INFRARED;Infrared
+!TP_BWMIX_SET_LANDSCAPE;Landscape
+!TP_BWMIX_SET_LOWSENSIT;Low Sensitivity
+!TP_BWMIX_SET_LUMINANCE;Luminance
+!TP_BWMIX_SET_NORMCONTAST;Normal Contrast
+!TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
+!TP_BWMIX_SET_PANCHRO;Panchromatic
+!TP_BWMIX_SET_PORTRAIT;Portrait
+!TP_BWMIX_SET_RGBABS;Channel-Mixer absolute RGB
+!TP_BWMIX_SET_RGBREL;Channel-Mixer relative RGB
+!TP_BWMIX_SET_ROYGCBPMABS;Channel-Mixer absolute ROYGCBPM
+!TP_BWMIX_SET_ROYGCBPMREL;Channel-Mixer relative ROYGCBPM
+!TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
+!TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
+!TP_BWMIX_TCMODE_STANDARD;B&W Standard
+!TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
+!TP_BWMIX_VAL;L
+!TP_BWMIX_YELLOW;Yellow
 !TP_COLORAPP_ADAPTSCENE;Adaptation scene luminosity
 !TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement(cd/m²).\n 1)Calculated from the Exif data:\nShutter speed - ISO speed - F number - Camera exposure correction.\n 2)Calculated also from Raw White point and RT Exposure compensation
 !TP_COLORAPP_ADAPTVIEWING;Adaptation viewing luminosity (cd/m²)
@@ -1428,14 +1536,26 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_GRADIENT_LABEL;Graduated Filter
 !TP_GRADIENT_STRENGTH;Strength
 !TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
+!TP_ICM_DCPILLUMINANT;Illuminant
+!TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
+!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
 !TP_ICM_TONECURVE;Use DCP's tone curve
-!TP_ICM_TONECURVE_TOOLTIP;Enable to use tone curves that may be contained in DCP profiles.
+!TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
+!TP_LABCURVE_CURVEEDITOR_CL;CL
+!TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
 !TP_LABCURVE_CURVEEDITOR_LC;LC
-!TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to the chromaticity
-!TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n\nShows the histogram of L before curve adjustements.\nnFor final output refer to the main histogram panel
+!TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to chromaticity L=f(C)
+!TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
 !TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
 !TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies to all tones
 !TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
+!TP_PCVIGNETTE_FEATHER;Feather
+!TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
+!TP_PCVIGNETTE_LABEL;Vignette Filter
+!TP_PCVIGNETTE_ROUNDNESS;Roundness
+!TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness: 0=rectangle, 50=fitted ellipse, 100=circle
+!TP_PCVIGNETTE_STRENGTH;Strength
+!TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners)
 !TP_PFCURVE_CURVEEDITOR_CH;Hue
 !TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
 !TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels

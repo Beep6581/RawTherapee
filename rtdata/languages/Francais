@@ -1,3 +1,4 @@
+
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
 ABOUT_TAB_LICENSE;Licence
@@ -650,8 +651,8 @@ OPTIONS_DEFIMG_MISSING;Le profil par défaut pour les <b>images standards</b> n'
 OPTIONS_DEFRAW_MISSING;Le profil par défaut pour les <b>images Raw</b> n'a pas été trouvé ou n'a pas été réglé.\n\nVérifiez également le dossier de vos profils, il peut être manquant ou endommagé\n\nLes valeurs internes pas défaut seront utilisées.
 PARTIALPASTE_BASICGROUP;Réglages de base
 PARTIALPASTE_CACORRECTION;Aberration chromatique
-PARTIALPASTE_CHANNELMIXER;Mixage des canaux
 PARTIALPASTE_CHANNELMIXERBW;Noir et Blanc
+PARTIALPASTE_CHANNELMIXER;Mixage des canaux
 PARTIALPASTE_COARSETRANS;Rotation de 90° / symétrisation
 PARTIALPASTE_COLORAPP;CIE Modèle apparence de la couleur 2002
 PARTIALPASTE_COLORBOOST;Rehaussement couleur
@@ -960,6 +961,74 @@ TOOLBAR_TOOLTIP_CROP;Sélection du recadrage <b>C</b>
 TOOLBAR_TOOLTIP_HAND;Outil de navigation <b>N</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Sélection de la ligne d'horizon <b>S</b>
 TOOLBAR_TOOLTIP_WB;Choix du point déterminant la balance des blancs <b>W</b>
+TP_BWMIX_AUTOCH;Auto
+TP_BWMIX_AUTOCH_TIP;Calcul les valeurs optimales du mixeur de canaux
+TP_BWMIX_BLUE;Bleu
+TP_BWMIX_CC_ENABLED;Ajuster les couleurs complémentaires
+TP_BWMIX_CC_TOOLTIP;Activer pour permettre l'ajustage automatique des couleur complémentaire dans le mode ROJVCBPM
+TP_BWMIX_CHANNEL;Égaliseur de Luminance
+TP_BWMIX_CURVEEDITOR1;Courbe 'avant'
+TP_BWMIX_CURVEEDITOR2;Courbe 'après'
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Courbe tonale, après la conversion en N&amp;B, à la fin du traitement
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Courbe tonale, juste avant la conversion en N&amp;B\nPeut prendre en compte les composantes couleur
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modifie la luminance en fonction de la teinte\nFaites attention aux valeurs extrêmes qui peuvent causer des artefacts
+TP_BWMIX_CYAN;Cyan
+TP_BWMIX_FILTER;Filtre de couleur
+TP_BWMIX_FILTER_BLUEGREEN;Bleu-Vert
+TP_BWMIX_FILTER_BLUE;Bleu
+TP_BWMIX_FILTER_GREENYELLOW;Vert-Jaune
+TP_BWMIX_FILTER_GREEN;Vert
+TP_BWMIX_FILTER_NONE;Aucun
+TP_BWMIX_FILTER_PURPLE;Pourpre
+TP_BWMIX_FILTER_REDYELLOW;Rouge-Jaune
+TP_BWMIX_FILTER_RED;Rouge
+TP_BWMIX_FILTER_TOOLTIP;Le filtre de couleur simule les prises de vue avec un filtre coloré placé devant l'objectif. Les filtres colorés réduisent la transmission d'une plage de couleur spécifique et en affectent donc leur luminosité. Ex: un filtre rouge assombri les ciels bleus.
+TP_BWMIX_FILTER_YELLOW;Jaune
+TP_BWMIX_GAMMA;Correction Gamma
+TP_BWMIX_GAM_BLUE;Canal Bleu
+TP_BWMIX_GAM_GREEN;Canal Vert
+TP_BWMIX_GAM_RED;Canal Rouge
+TP_BWMIX_GAM_TOOLTIP;Corrige le gamma pour chaque canaux RVB
+TP_BWMIX_GREEN;Vert
+TP_BWMIX_LABEL;Noir & Blanc
+TP_BWMIX_MAGENTA;Magenta
+TP_BWMIX_MET;Méthode
+TP_BWMIX_MET_CHANMIX;Mixeur de Canaux
+TP_BWMIX_MET_DESAT;Désaturation
+TP_BWMIX_MET_LUMEQUAL;Égaliseur de Luminance
+TP_BWMIX_MIXC;Mixeur
+TP_BWMIX_MIXF;Mixeur de Filtres
+TP_BWMIX_NEUTRAL;Réinit. Mixeur
+TP_BWMIX_NEUTRAL_TIP;Réinitialise tous les paramètres (filtre, mixeur de canaux) à zéro
+TP_BWMIX_ORANGE;Orange
+TP_BWMIX_PURPLE;Pourpre
+TP_BWMIX_RED;Rouge
+TP_BWMIX_RGBLABEL;R: %1%%   V: %2%%   B: %3%%   Total: %4%%
+TP_BWMIX_RGBLABEL_HINT;Coefficients RVB finaux qui tiennent compte de toutes les options du mixeur\nTotal affiche la somme des valeurs RVB actuellement appliqué:\n- toujours 100% en mode relatif\n- supérieur (plus clair) ou inférieur (plus sombre) à 100% en mode absolu.
+TP_BWMIX_RGB_TOOLTIP;Mixe les canaux RVB. Utilisez les Préréglages pour vous guider.\nAttention aux valeurs négatives qui peuvent causer des artefacts ou un comportement erratique.
+TP_BWMIX_SETTING;Préréglages
+TP_BWMIX_SETTING_TOOLTIP;Différents préréglages (films, paysage, ...) ou réglages manuel du mixeur de canaux
+TP_BWMIX_SET_HIGHCONTAST;Contraste Élevé
+TP_BWMIX_SET_HIGHSENSIT;Haute Sensibilité
+TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatique
+TP_BWMIX_SET_INFRARED;Infrarouge
+TP_BWMIX_SET_LANDSCAPE;Paysage
+TP_BWMIX_SET_LOWSENSIT;Basse Sensibilité
+TP_BWMIX_SET_LUMINANCE;Luminance
+TP_BWMIX_SET_NORMCONTAST;Contraste Normal
+TP_BWMIX_SET_ORTHOCHRO;Orthochromatique
+TP_BWMIX_SET_PANCHRO;Panchromatique
+TP_BWMIX_SET_PORTRAIT;Portrait
+TP_BWMIX_SET_RGBABS;Mixeur de Canaux - RVB Absolu
+TP_BWMIX_SET_RGBREL;Mixeur de Canaux - RVB Relatif
+TP_BWMIX_SET_ROYGCBPMABS;Mixeur de Canaux - ROJVCBPM Absolu
+TP_BWMIX_SET_ROYGCBPMREL;Mixeur de Canaux - ROJVCBPM Relatif
+TP_BWMIX_TCMODE_FILMLIKE;N&B Similaire Film
+TP_BWMIX_TCMODE_SATANDVALBLENDING;N&B Mixage Saturation et Valeur
+TP_BWMIX_TCMODE_STANDARD;N&B Standard
+TP_BWMIX_TCMODE_WEIGHTEDSTD;N&B Standard Pondéré
+TP_BWMIX_VAL;L
+TP_BWMIX_YELLOW;Jaune
 TP_CACORRECTION_BLUE;Bleu
 TP_CACORRECTION_LABEL;Aberration chromatique
 TP_CACORRECTION_RED;Rouge
@@ -967,74 +1036,6 @@ TP_CHMIXER_BLUE;Bleu
 TP_CHMIXER_GREEN;Vert
 TP_CHMIXER_LABEL;Mixage des canaux
 TP_CHMIXER_RED;Rouge
-TP_BWMIX_LABEL;Noir & Blanc
-TP_BWMIX_CC_ENABLED;Ajuster les couleurs complémentaires
-TP_BWMIX_CHANNEL;Égaliseur de Luminance
-TP_BWMIX_VAL;L
-TP_BWMIX_CC_TOOLTIP;Activer pour permettre l'ajustage automatique des couleur complémentaire dans le mode ROJVCBPM
-TP_BWMIX_SETTING_TOOLTIP;Différents préréglages (films, paysage, ...) ou réglages manuel du mixeur de canaux
-TP_BWMIX_FILTER_TOOLTIP;Le filtre de couleur simule les prises de vue avec un filtre coloré placé devant l'objectif. Les filtres colorés réduisent la transmission d'une plage de couleur spécifique et en affectent donc leur luminosité. Ex: un filtre rouge assombri les ciels bleus.
-TP_BWMIX_AUTOCH;Auto
-TP_BWMIX_AUTOCH_TIP;Calcul les valeurs optimales du mixeur de canaux
-TP_BWMIX_NEUTRAL;Réinit. Mixeur
-TP_BWMIX_NEUTRAL_TIP;Réinitialise tous les paramètres (filtre, mixeur de canaux) à zéro
-TP_BWMIX_RED;Rouge
-TP_BWMIX_GREEN;Vert
-TP_BWMIX_BLUE;Bleu
-TP_BWMIX_ORANGE;Orange
-TP_BWMIX_YELLOW;Jaune
-TP_BWMIX_CYAN;Cyan
-TP_BWMIX_MAGENTA;Magenta
-TP_BWMIX_PURPLE;Pourpre
-TP_BWMIX_RGB_TOOLTIP;Mixe les canaux RVB. Utilisez les Préréglages pour vous guider.\nAttention aux valeurs négatives qui peuvent causer des artefacts ou un comportement erratique.
-TP_BWMIX_GAM_RED;Canal Rouge
-TP_BWMIX_GAM_GREEN;Canal Vert
-TP_BWMIX_GAM_BLUE;Canal Bleu
-TP_BWMIX_MIXC;Mixeur
-TP_BWMIX_MIXF;Mixeur de Filtres
-TP_BWMIX_RGBLABEL;R: %1%%   V: %2%%   B: %3%%   Total: %4%%
-TP_BWMIX_RGBLABEL_HINT;Coefficients RVB finaux qui tiennent compte de toutes les options du mixeur\nTotal affiche la somme des valeurs RVB actuellement appliqué:\n- toujours 100% en mode relatif\n- supérieur (plus clair) ou inférieur (plus sombre) à 100% en mode absolu.
-TP_BWMIX_FILTER;Filtre de couleur
-TP_BWMIX_FILTER_NONE;Aucun
-TP_BWMIX_FILTER_RED;Rouge
-TP_BWMIX_FILTER_REDYELLOW;Rouge-Jaune
-TP_BWMIX_FILTER_YELLOW;Jaune
-TP_BWMIX_FILTER_GREENYELLOW;Vert-Jaune
-TP_BWMIX_FILTER_GREEN;Vert
-TP_BWMIX_FILTER_BLUEGREEN;Bleu-Vert
-TP_BWMIX_FILTER_BLUE;Bleu
-TP_BWMIX_FILTER_PURPLE;Pourpre
-TP_BWMIX_SETTING;Préréglages
-TP_BWMIX_SET_NORMCONTAST;Contraste Normal
-TP_BWMIX_SET_HIGHCONTAST;Contraste Élevé
-TP_BWMIX_SET_LUMINANCE;Luminance
-TP_BWMIX_SET_LANDSCAPE;Paysage
-TP_BWMIX_SET_PORTRAIT;Portrait
-TP_BWMIX_SET_LOWSENSIT;Basse Sensibilité
-TP_BWMIX_SET_HIGHSENSIT;Haute Sensibilité
-TP_BWMIX_SET_PANCHRO;Panchromatique
-TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatique
-TP_BWMIX_SET_ORTHOCHRO;Orthochromatique
-TP_BWMIX_SET_RGBABS;Mixeur de Canaux - RVB Absolu
-TP_BWMIX_SET_RGBREL;Mixeur de Canaux - RVB Relatif
-TP_BWMIX_SET_ROYGCBPMABS;Mixeur de Canaux - ROJVCBPM Absolu
-TP_BWMIX_SET_ROYGCBPMREL;Mixeur de Canaux - ROJVCBPM Relatif
-TP_BWMIX_SET_INFRARED;Infrarouge
-TP_BWMIX_GAMMA;Correction Gamma
-TP_BWMIX_GAM_TOOLTIP;Corrige le gamma pour chaque canaux RVB
-TP_BWMIX_MET;Méthode
-TP_BWMIX_MET_DESAT;Désaturation
-TP_BWMIX_MET_LUMEQUAL;Égaliseur de Luminance
-TP_BWMIX_MET_CHANMIX;Mixeur de Canaux
-TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modifie la luminance en fonction de la teinte\nFaites attention aux valeurs extrêmes qui peuvent causer des artefacts
-TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Courbe tonale, après la conversion en N&amp;B, à la fin du traitement
-TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Courbe tonale, juste avant la conversion en N&amp;B\nPeut prendre en compte les composantes couleur
-TP_BWMIX_CURVEEDITOR1;Courbe 'avant'
-TP_BWMIX_CURVEEDITOR2;Courbe 'après'
-TP_BWMIX_TCMODE_FILMLIKE;N&B Similaire Film
-TP_BWMIX_TCMODE_SATANDVALBLENDING;N&B Mixage Saturation et Valeur
-TP_BWMIX_TCMODE_STANDARD;N&B Standard
-TP_BWMIX_TCMODE_WEIGHTEDSTD;N&B Standard Pondéré
 TP_CHROMATABERR_LABEL;Aberration Chromatique
 TP_COARSETRAF_TOOLTIP_HFLIP;Symétriser / axe vertical
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotation vers la gauche\nRaccourci: <b>[</b>\n\nRaccourci en mode Éditeur unique: <b>Alt-[</b>
@@ -1486,3 +1487,17 @@ ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_246;CL curve
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
+!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
+!TP_ICM_DCPILLUMINANT;Illuminant
+!TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
+!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_LABCURVE_CURVEEDITOR_CL;CL
+!TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
