@@ -78,10 +78,10 @@ template<typename T>
 class LUT {
 private:
 	// list of variables ordered to improve cache speed
-	unsigned int maxs; 
+	unsigned int maxs;
 	T * data;
 	unsigned int clip, size, owner;
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 	__m128 maxsv __attribute__ ((aligned (16)));
 	__m128 sizev __attribute__ ((aligned (16)));
 	__m128i maxsiv __attribute__ ((aligned (16)));
@@ -104,7 +104,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 		maxsv =  _mm_set1_ps( maxs );
 		maxsiv = _mm_cvttps_epi32( maxsv );
 		sizeiv =  _mm_set1_epi32( (int)(size-1) );
@@ -125,7 +125,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 		maxsv =  _mm_set1_ps( maxs );
 		maxsiv = _mm_cvttps_epi32( maxsv );
 		sizeiv =  _mm_set1_epi32( (int)(size-1) );
@@ -148,7 +148,7 @@ public:
 		owner = 1;
 		size = s;
 		maxs=size-2;
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 		maxsv =  _mm_set1_ps( size - 2);
 		maxsiv = _mm_cvttps_epi32( maxsv );
 		sizeiv =  _mm_set1_epi32( (int)(size-1) );
@@ -190,7 +190,7 @@ public:
 	      memcpy(this->data,rhs.data,rhs.size*sizeof(T));
 	      this->size=rhs.size;
 	      this->maxs=this->size-2;
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 		  this->maxsv =  _mm_set1_ps( this->size - 2);
 		  this->maxsiv = _mm_cvttps_epi32( this->maxsv );
 		  this->sizeiv =  _mm_set1_epi32( (int)(this->size-1) );
@@ -210,14 +210,14 @@ public:
 			else
 				return data[size - 1];
 		}
-		
+
 	}
-	
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 	__m128 operator[](__m128 indexv ) const {
 		printf("don't use this operator. It's not ready for production");
 		return _mm_setzero_ps();
-		
+
 		// convert floats to ints
 		__m128i	idxv =  _mm_cvttps_epi32( indexv );
 		__m128 tempv, resultv, p1v, p2v;
@@ -258,7 +258,7 @@ public:
 		tempv = _mm_shuffle_ps(tempv, tempv, _MM_SHUFFLE(1,1,1,1));
 		p2v = _mm_move_ss( p2v, tempv);
 		// now p1v is 3 2 3 1
-		
+
 		// get 1st value
 		idx = _mm_cvtsi128_si32 (_mm_shuffle_epi32(idxv,_MM_SHUFFLE(0,0,0,0)));
 		tempv = LVFU(data[idx]);
@@ -307,7 +307,7 @@ public:
 		// now p1v is 3 2 3 2
 		p1v = _mm_move_ss( p1v, tempv );
 		// now p1v is 3 2 3 1
-		
+
 		// get 1st value
 		idx = _mm_cvtsi128_si32 (idxv);
 		tempv = _mm_load_ss(&data[idx]);
@@ -342,8 +342,8 @@ public:
 		T p2 = data[idx + 1]-p1;
 		return (p1 + p2*diff);
 	}
-	
-	
+
+
 #ifndef NDEBUG
 	// Debug facility ; dump the content of the LUT in a file. No control of the filename is done
 	void dump(Glib::ustring fname) {

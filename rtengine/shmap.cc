@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -71,18 +71,18 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
     else {
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//experimental dirpyr shmap
-		
+
 		float thresh = 100*radius;//1000;
 		LUTf rangefn(0x10000);
 		float ** dirpyrlo[2];
 
 		int intfactor = 1024;//16384;
-		
+
 		//set up range functions
 		for (int i=0; i<0x10000; i++) {
 			//rangefn[i] = (int)(((thresh)/((double)(i) + (thresh)))*intfactor);
 			rangefn[i] = static_cast<int>(xexpf(-(min(10.0f,(static_cast<float>(i)*i) / (thresh*thresh))))*intfactor);
-			//if (rangefn[i]<0 || rangefn[i]>intfactor) 
+			//if (rangefn[i]<0 || rangefn[i]>intfactor)
 				//printf("i=%d rangefn=%d arg=%f \n",i,rangefn[i], float(i*i) / (thresh*thresh));
 		}
 
@@ -104,11 +104,11 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
 		}
 
 		dirpyr_shmap(dirpyrlo[1-indx], map, W, H, rangefn, level, scale );
-		
+
 
 		freeArray<float>(dirpyrlo[0], H);
 		freeArray<float>(dirpyrlo[1], H);
-		
+
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /*
@@ -122,8 +122,8 @@ void SHMap::update (Imagefloat* img, double radius, double lumi[3], bool hq, int
                     map[i][j] = (buffer[i-1][j-1]+buffer[i-1][j]+buffer[i-1][j+1]+buffer[i][j-1]+buffer[i][j]+buffer[i][j+1]+buffer[i+1][j-1]+buffer[i+1][j]+buffer[i+1][j+1])/9;
                 else
                     map[i][j] = buffer[i][j];
-*/		
-		
+*/
+
     }
     // update average, minimum, maximum
 
@@ -178,21 +178,21 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 #endif
 {
 	//scale is spacing of directional averaging weights
-	
+
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// calculate weights, compute directionally weighted average
-	
+
 	int scalewin, halfwin;
 
 	if(level < 2) {
 		halfwin = 1;
 		scalewin = halfwin*scale;
-			
+
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
 {
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 	__m128 dirwtv, valv, normv;
 #endif // __SSE2__
 	int j;
@@ -205,7 +205,7 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 		{
 			float val=0;
 			float norm=0;
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j%scale; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -215,12 +215,12 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 			}
 			data_coarse[i][j] = val/norm; // low pass filter
 		}
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 		for(; j < (width-scalewin)-3; j+=4)
 		{
 			valv= _mm_setzero_ps();
 			normv= _mm_setzero_ps();
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwtv = ( rangefn[_mm_cvttps_epi32(vabsf(LVFU(data_fine[inbr][jnbr])-LVFU(data_fine[i][j])))] );
@@ -234,7 +234,7 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 		{
 			float val=0;
 			float norm=0;
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -250,7 +250,7 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 		{
 			float val=0;
 			float norm=0;
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -265,7 +265,7 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 		{
 			float val=0;
 			float norm=0;
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<width; jnbr+=scale) {
 					dirwt = ( rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -279,16 +279,16 @@ void SHMap::dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, in
 }
 }
 else {
-	halfwin=2;	
+	halfwin=2;
 	scalewin = halfwin*scale;
 	int domker[5][5] = {{1,1,1,1,1},{1,2,2,2,1},{1,2,2,2,1},{1,2,2,2,1},{1,1,1,1,1}};
-	//generate domain kernel 
+	//generate domain kernel
 
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
 {
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 	__m128 dirwtv, valv, normv;
 	float domkerv[5][5][4] __attribute__ ((aligned (16))) = {{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{2,2,2,2},{2,2,2,2},{2,2,2,2},{1,1,1,1}},{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}}};
 
@@ -303,7 +303,7 @@ else {
 		{
 			float val=0;
 			float norm=0;
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j%scale; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -313,12 +313,12 @@ else {
 			}
 			data_coarse[i][j] = val/norm; // low pass filter
 		}
-#if defined( __SSE2__ ) && ((defined( WIN32 ) && defined( __x86_64__ )) || !defined( WIN32 ))
+#if defined( __SSE2__ ) && defined( __x86_64__ )
 		for(; j < width-scalewin-3; j+=4)
 		{
 			valv = _mm_setzero_ps();
 			normv = _mm_setzero_ps();
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwtv = ( _mm_load_ps((float*)&domkerv[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin]) * rangefn[_mm_cvttps_epi32(vabsf(LVFU(data_fine[inbr][jnbr])-LVFU(data_fine[i][j])))] );
@@ -332,7 +332,7 @@ else {
 		{
 			float val=0;
 			float norm=0;
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -348,7 +348,7 @@ else {
 		{
 			float val=0;
 			float norm=0;
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<=j+scalewin; jnbr+=scale) {
 					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -363,7 +363,7 @@ else {
 		{
 			float val=0;
 			float norm=0;
-			
+
 			for(int inbr=max(i-scalewin,i%scale); inbr<=min(i+scalewin, height-1); inbr+=scale) {
 				for (int jnbr=j-scalewin; jnbr<width; jnbr+=scale) {
 					dirwt = ( domker[(inbr-i)/scale+halfwin][(jnbr-j)/scale+halfwin] * rangefn[abs(data_fine[inbr][jnbr]-data_fine[i][j])] );
@@ -375,9 +375,9 @@ else {
 		}
 	}
 }
-	
+
 }
-	
+
 }
-	
+
 }//end of SHMap
