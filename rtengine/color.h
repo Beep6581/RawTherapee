@@ -140,7 +140,6 @@ public:
 										float &mixerBlue, float mixerOrange, float mixerYellow, float mixerCyan, float mixerPurple, float mixerMagenta,
 										bool autoc, bool complement, float &kcorec, double &rrm, double &ggm, double &bbm);
 
-	static void huelab_to_huehsv (float HH, double &hr);
 
 	// standard srgb gamma and its inverse
 	static inline double gamma2     (double x) {
@@ -219,6 +218,28 @@ public:
 	//void gamutmap(LabImage* );
 	static void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
 
+	static inline double huelab_to_huehsv2 (float HH){
+					//hr=translate Hue Lab value  (-Pi +Pi) in approximative hr (hsv values) (0 1) [red 1/6 yellow 1/6 green 1/6 cyan 1/6 blue 1/6 magenta 1/6 ]
+				// with multi linear correspondances (I expect there is no error !!)
+				double hr;
+				//allways put h between 0 and 1
+
+				if      (HH>=0.f && HH < 0.6f) 	 hr=0.11666*(double) HH + 0.93;  //hr 0.93 1. full red
+				else if (HH>=0.6f && HH < 1.4f)	 hr=0.1125*double(HH) - 0.0675;   //hr 0.0  0.09      red yellow orange          
+				else if (HH>=1.4f && HH < 2.f)	 hr=0.2666*double(HH) - 0.2833;   //hr 0.09  0.25    orange yellow             
+				else if (HH>=2.f && HH < 3.14159f) hr=0.1489*double(HH) - 0.04785;  //hr 0.25 0.42  yellow green green
+				else if (HH>=-3.14159f && HH < -2.8f) hr=0.23419*double(HH) +1.1557;  //hr 0.42 0.5  green
+				else if (HH>=-2.8f && HH < -2.3f) hr=0.16*double(HH) + 0.948;    //hr 0.5 0.58      cyan         
+				else if (HH>=-2.3f && HH < -0.9f) hr=0.12143*double(HH)+ 0.85928;    //hr 0.58 0.75   blue blue-sky            
+				else if (HH>=-0.9f && HH < -0.1f) hr=0.2125*double(HH) + 0.94125;        //hr 0.75  0.92    purple magenta          
+				else if (HH>=-0.1f && HH < 0.f)   hr=0.1*double(HH) + 0.93;        //hr 0.92  0.93    red          
+				// in case of !
+				if     (hr<0.0) hr += 1.0;
+				else if(hr>1.0) hr -= 1.0;
+				return (hr);
+	}
+	
+	
 	static inline float f2xyz(float f) {
 		const float epsilonExpInv3 = 6.0/29.0;
 		const float kappaInv = 27.0/24389.0;  // inverse of kappa

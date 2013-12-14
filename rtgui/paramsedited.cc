@@ -51,6 +51,8 @@ void ParamsEdited::set (bool v) {
 	labCurve.bcurve      = v;
 	labCurve.cccurve     = v;
 	labCurve.chcurve     = v;
+	labCurve.lhcurve     = v;
+	labCurve.hhcurve     = v;
 	labCurve.lccurve    = v;
 	labCurve.clcurve    = v;
 	labCurve.brightness  = v;
@@ -328,6 +330,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         labCurve.bcurve = labCurve.bcurve && p.labCurve.bcurve == other.labCurve.bcurve;
         labCurve.cccurve = labCurve.cccurve && p.labCurve.cccurve == other.labCurve.cccurve;
         labCurve.chcurve = labCurve.chcurve && p.labCurve.chcurve == other.labCurve.chcurve;
+        labCurve.lhcurve = labCurve.lhcurve && p.labCurve.lhcurve == other.labCurve.lhcurve;
+        labCurve.hhcurve = labCurve.hhcurve && p.labCurve.hhcurve == other.labCurve.hhcurve;
         labCurve.lccurve = labCurve.lccurve && p.labCurve.lccurve == other.labCurve.lccurve;
         labCurve.clcurve = labCurve.clcurve && p.labCurve.clcurve == other.labCurve.clcurve;
         labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
@@ -602,6 +606,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (labCurve.bcurve)		toEdit.labCurve.bcurve 	    = mods.labCurve.bcurve;
 	if (labCurve.cccurve)		toEdit.labCurve.cccurve     = mods.labCurve.cccurve;
 	if (labCurve.chcurve)		toEdit.labCurve.chcurve     = mods.labCurve.chcurve;
+	if (labCurve.lhcurve)		toEdit.labCurve.lhcurve     = mods.labCurve.lhcurve;
+	if (labCurve.hhcurve)		toEdit.labCurve.hhcurve     = mods.labCurve.hhcurve;
 	if (labCurve.lccurve)		toEdit.labCurve.lccurve    = mods.labCurve.lccurve;
 	if (labCurve.clcurve)		toEdit.labCurve.clcurve    = mods.labCurve.clcurve;
 	if (labCurve.brightness)	toEdit.labCurve.brightness   = dontforceSet && options.baBehav[ADDSET_LC_BRIGHTNESS] ? toEdit.labCurve.brightness + mods.labCurve.brightness : mods.labCurve.brightness;

@@ -118,8 +118,7 @@ float chromave=0.0f;
 				float HH=xatan2f(src->b[i][j],src->a[i][j]);
 #endif
 				double hr;
-				Color::huelab_to_huehsv (HH, hr);
-				float chparam = float((chCurve->getVal(hr)-0.5f) * 2.0f);//get C=f(H)
+				float chparam = float((chCurve->getVal((hr=Color::huelab_to_huehsv2(HH)))-0.5f) * 2.0f);//get C=f(H)
 				if(chparam > 0.f) chparam /=2.f; // reduced action if chparam > 0
 					chromaChfactor=1.0f+chparam;
 			}
@@ -398,8 +397,7 @@ if( chCurve ) {
 				float HH=xatan2f(srbb[i][j],sraa[i][j]);
 #endif
 				double hr;
-				Color::huelab_to_huehsv (HH, hr);	//approximation Cam / Lab
-				float chparam = float((chCurve->getVal(hr)-0.5f) * 2.0f);//get C=f(H)
+				float chparam = float((chCurve->getVal((hr=Color::huelab_to_huehsv2(HH)))-0.5f) * 2.0f);//get C=f(H)
 				if(chparam > 0.f) chparam /=2.f; // reduced action if chparam > 0
 				chromaChfactor=1.0f+chparam;
 			}

@@ -499,6 +499,8 @@ void Options::setDefaults () {
     rtSettings.verbose = false;
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
+    rtSettings.amchroma = 40;//between 20 and 140   low values increase effect..and also artefacts, high values reduces
+	
     rtSettings.ciecamfloat = true;
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
@@ -743,6 +745,7 @@ if (keyFile.has_group ("Color Management")) {
     if( keyFile.has_key ("Color Management", "GamutLch"))       rtSettings.gamutLch             = keyFile.get_boolean("Color Management", "GamutLch");
     if( keyFile.has_key ("Color Management", "ProtectRed"))     rtSettings.protectred           = keyFile.get_integer("Color Management", "ProtectRed");
     if( keyFile.has_key ("Color Management", "ProtectRedH"))    rtSettings.protectredh          = keyFile.get_double("Color Management", "ProtectRedH");
+    if( keyFile.has_key ("Color Management", "Amountchroma"))    rtSettings.amchroma            = keyFile.get_integer("Color Management", "Amountchroma");
 //    if( keyFile.has_key ("Color Management", "Ciebadpixgauss")) rtSettings.ciebadpixgauss       = keyFile.get_boolean("Color Management", "Ciebadpixgauss");
 
 }
@@ -1019,6 +1022,7 @@ int Options::saveToFile (Glib::ustring fname) {
     keyFile.set_boolean ("Color Management", "Ciecamfloat", rtSettings.ciecamfloat);
     keyFile.set_boolean ("Color Management", "GamutLch", rtSettings.gamutLch);
     keyFile.set_integer ("Color Management", "ProtectRed", rtSettings.protectred);
+    keyFile.set_integer ("Color Management", "Amountchroma", rtSettings.amchroma);
     keyFile.set_double  ("Color Management", "ProtectRedH", rtSettings.protectredh);
     keyFile.set_integer ("Color Management", "CRI", rtSettings.CRI_color);
 //    keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);

@@ -215,6 +215,8 @@ class LCurveParams {
         std::vector<double>   bcurve;
         std::vector<double>   cccurve;
         std::vector<double>   chcurve;
+        std::vector<double>   lhcurve;
+        std::vector<double>   hhcurve;
         std::vector<double>   lccurve;
         std::vector<double>   clcurve;
         int     brightness;

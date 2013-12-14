@@ -46,6 +46,20 @@
 #endif
 #undef CLIPD
 #define CLIPD(a) ((a)>0.0f?((a)<1.0f?(a):1.0f):0.0f)
+#define PIX_SORT(a,b) { if ((a)>(b)) {temp=(a);(a)=(b);(b)=temp;} }
+
+#define med3(a0,a1,a2,a3,a4,a5,a6,a7,a8,median) { \
+pp[0]=a0; pp[1]=a1; pp[2]=a2; pp[3]=a3; pp[4]=a4; pp[5]=a5; pp[6]=a6; pp[7]=a7; pp[8]=a8; \
+PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
+PIX_SORT(pp[0],pp[1]); PIX_SORT(pp[3],pp[4]); PIX_SORT(pp[6],pp[7]); \
+PIX_SORT(pp[1],pp[2]); PIX_SORT(pp[4],pp[5]); PIX_SORT(pp[7],pp[8]); \
+PIX_SORT(pp[0],pp[3]); PIX_SORT(pp[5],pp[8]); PIX_SORT(pp[4],pp[7]); \
+PIX_SORT(pp[3],pp[6]); PIX_SORT(pp[1],pp[4]); PIX_SORT(pp[2],pp[5]); \
+PIX_SORT(pp[4],pp[7]); PIX_SORT(pp[4],pp[2]); PIX_SORT(pp[6],pp[4]); \
+PIX_SORT(pp[4],pp[2]); median=pp[4];} //pp4 = median
+
+
+	
 
 namespace rtengine {
 
@@ -2547,13 +2561,12 @@ if(blackwhite){
 				l_r = L/32768.f;
 				if (bwlCurveEnabled) {
 					double hr;
-					Color::huelab_to_huehsv (HH, hr);//correspondance H lab ==> h hsv
-					float valparam = float((bwlCurve->getVal(hr)-0.5f) * 2.0f);//get l_r=f(H)
+					float valparam = float((bwlCurve->getVal((hr=Color::huelab_to_huehsv2(HH)))-0.5f) * 2.0f);//get l_r=f(H)
 					float kcc=(CC/70.f);//take Chroma into account...70 "middle" of chromaticity (arbitrary and simple), one can imagine other algorithme
 					//reduct action for low chroma and increase action for high chroma
 					valparam *= kcc; 
 					if(valparam > 0.f) { l_r = (1.f-valparam)*l_r+ valparam*(1.f-SQR(SQR(SQR(SQR(1.f-min(l_r,1.0f))))));}// SQR (SQR((SQR)  to increase action in low light	
-					else l_r *= (1.f + 2.f*valparam);//for negative
+					else l_r *= (1.f + valparam);//for negative
 					}
 				L=l_r*32768.f;
 				float RR,GG,BB;
@@ -2855,7 +2868,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	int H = lold->H;
    // lhskcurve.dump("lh_curve");
 	//init Flatcurve for C=f(H)
-	FlatCurve* chCurve = NULL;
+	FlatCurve* chCurve = NULL;// curve C=f(H)
 	bool chutili = false;
 	if (params->labCurve.chromaticity > -100) {
 		chCurve = new FlatCurve(params->labCurve.chcurve);
@@ -2863,6 +2876,24 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 			chutili=true;
 		}//do not use "Munsell" if Chcurve not used
 	}
+	FlatCurve* lhCurve = NULL;//curve L=f(H)
+	bool lhutili = false;
+	if (params->labCurve.chromaticity > -100) {
+		lhCurve = new FlatCurve(params->labCurve.lhcurve);
+		if (lhCurve && !lhCurve->isIdentity()) {
+			lhutili=true;
+		}
+	}
+
+	FlatCurve* hhCurve = NULL;//curve H=f(H)
+	bool hhutili = false;
+	if (params->labCurve.chromaticity > -100) {
+		hhCurve = new FlatCurve(params->labCurve.hhcurve);
+		if (hhCurve && !hhCurve->isIdentity()) {
+			hhutili=true;
+		}
+	}
+	
 	LUTf dCcurve(65536,0);
 	LUTf dLcurve(65536,0);
 	
@@ -2940,14 +2971,14 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	bool clut = clcutili;
 	double rstprotection = 100.-params->labCurve.rstprotection; // Red and Skin Tones Protection
 	// avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
-//	bool avoidColorShift = (params->labCurve.avoidcolorshift || params->colorappearance.gamut )&& !bwToning ;
 	bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
 	int protectRed = settings->protectred;
 	double protectRedH = settings->protectredh;
 	bool gamutLch = settings->gamutLch;
+	float amountchroma = (float) settings->amchroma;
 	// only if user activate Lab adjustements
 	if (avoidColorShift) {
-		if(autili || butili || ccutili ||  cclutili || chutili || clcutili || utili || chromaticity)
+		if(autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity)
 			Color::LabGamutMunsell(lold, Lold, Cold, /*corMunsell*/true, /*lumaMuns*/false, params->hlrecovery.enabled, /*gamut*/true, params->icm.working, multiThread);
 	}
 
@@ -2976,8 +3007,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 		{wprof[1][0],wprof[1][1],wprof[1][2]},
 		{wprof[2][0],wprof[2][1],wprof[2][2]}};
 
-
-#pragma omp for schedule(dynamic, 10)
+		#pragma omp for schedule(dynamic, 10)
 	for (int i=0; i<H; i++)
 		for (int j=0; j<W; j++) {
 			float LL=lold->L[i][j]/327.68f;
@@ -2993,17 +3023,83 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 			float chromaChfactor=1.0f;
 			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
 			float btmp = bcurve[lold->b[i][j]+32768.0f]-32768.0f;// curves Lab b
+			float Chprov2=Chprov1;
 			int poscc,posp,posl;
+			bool inRGB;
+			const float ClipLevel = 65535.0f;
 
+			if (lhutili) {  // L=f(H)
+				float l_r;//Luminance Lab in 0..1
+				l_r = Lprov1/100.f;	
+					{
+					double lr;
+					float khue=1.9f;//in reserve in case of!
+					float valparam = float((lhCurve->getVal(lr=Color::huelab_to_huehsv2(HH))-0.5f));//get l_r=f(H)
+					float valparamneg;
+					valparamneg=valparam;		
+					float kcc=(CC/amountchroma);//take Chroma into account...40 "middle low" of chromaticity (arbitrary and simple), one can imagine other algorithme
+					//reduct action for low chroma and increase action for high chroma 
+					valparam *= 2.f*kcc; 
+					valparamneg*= kcc;//slightly different for negative
+					if(valparam > 0.f) { l_r = (1.f-valparam)*l_r+ valparam*(1.f-SQR(((SQR(1.f-min(l_r,1.0f))))));}	
+					else {l_r *= (1.f+khue*valparamneg);}//for negative
+					}	
+					
+					Lprov1=l_r*100.f;
+					
+					Chprov2 = sqrt(SQR(atmp/327.68f)+SQR(btmp/327.68f));
+					//Gamut control especialy fot negative values slightly different of gamutlchonly
+					do {
+						inRGB=true;	
+						float2  sincosval = xsincosf(HH);
+						float aprov1=Chprov2*sincosval.y;
+						float bprov1=Chprov2*sincosval.x;
+			
+						float fy = (0.00862069f *Lprov1 )+ 0.137932f;
+						float fx = (0.002f * aprov1) + fy;
+						float fz = fy - (0.005f * bprov1);
+
+						float x_ = 65535.0f * Color::f2xyz(fx)*Color::D50x;
+						float z_ = 65535.0f * Color::f2xyz(fz)*Color::D50z;
+						float y_=(Lprov1>Color::epskap) ? 65535.0*fy*fy*fy : 65535.0*Lprov1/Color::kappa;
+						float R,G,B;
+						Color::xyz2rgb(x_,y_,z_,R,G,B,wip);
+						if (R<0.0f || G<0.0f || B<0.0f) {
+								if(Lprov1 < 0.1f) Lprov1=0.1f;
+								Chprov2*=0.95f;
+								inRGB=false;
+						}
+						else
+						if (!highlight && (R>ClipLevel || G>ClipLevel || B>ClipLevel)) {
+						if (Lprov1 > 99.999f) Lprov1 = 99.98f;
+						Chprov2 *= 0.95f;
+						inRGB = false;
+						}	
+					}
+					while (!inRGB)	;
+					
+					float2  sincosval = xsincosf(HH);			
+					atmp=327.68f*Chprov2*sincosval.y;
+					btmp=327.68f*Chprov2*sincosval.x;
+					
+			}
 //			calculate C=f(H)
 			if (chutili) {
 				double hr;
-				Color::huelab_to_huehsv (HH, hr);	
-				float chparam = float((chCurve->getVal(hr)-0.5f) * 2.0f);//get C=f(H)
+				float chparam = float((chCurve->getVal((hr=Color::huelab_to_huehsv2(HH)))-0.5f) * 2.0f);//get C=f(H)
 				chromaChfactor=1.0f+chparam;
 			}
+			
 			atmp *= chromaChfactor;//apply C=f(H)
 			btmp *= chromaChfactor;
+			
+			if (hhutili) {  // H=f(H)
+				//hue Lab in -PI +PI
+					double hr;
+					float valparam = float((hhCurve->getVal(hr=Color::huelab_to_huehsv2(HH))-0.5f) * 1.7f) +HH;//get H=f(H)  1.7 optimisation !
+					HH= valparam;
+			}
+			
 				//simulate very approximative gamut f(L) : with pyramid transition
 				float dred=55.0f;//C red value limit
 				if     (Lprov1<25.0f)   dred = 40.0f;
@@ -3215,7 +3311,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 					Color::Yuv2Lab(Y,u,v,lnew->L[i][j],lnew->a[i][j],lnew->b[i][j], wp);
 				}
 
-				if (utili || autili || butili || ccut || clut || cclutili || chutili || clcutili || chromaticity) {
+				if (utili || autili || butili || ccut || clut || cclutili || chutili || lhutili || hhutili || clcutili || chromaticity) {
 					float correctionHue=0.0f; // Munsell's correction
 					float correctlum=0.0f;
 
@@ -3245,10 +3341,12 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 //				if(Lprov1 > maxlp) maxlp=Lprov1;
 //				if(Lprov1 < minlp) minlp=Lprov1;
 				lnew->L[i][j]=Lprov1*327.68f;
+				lnew->a[i][j]=327.68f*Chprov1*cos(HH);
+				lnew->b[i][j]=327.68f*Chprov1*sin(HH);
 
 				//Luv limiter only
-				lnew->a[i][j] = atmp;
-				lnew->b[i][j] = btmp;
+				//lnew->a[i][j] = atmp;
+				//lnew->b[i][j] = btmp;
 			}
 		}
 } // end of parallelization
@@ -3288,6 +3386,9 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	delete [] Cold;
 
 	if (chCurve) delete chCurve;
+	if (lhCurve) delete lhCurve;
+	if (hhCurve) delete hhCurve;
+	
 }
 
 
@@ -3830,3 +3931,5 @@ fclose(f);*/
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 }
+#undef PIX_SORT
+#undef med3x3

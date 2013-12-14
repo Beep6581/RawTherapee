@@ -50,6 +50,7 @@ namespace rtengine {
 			bool            gamutICC;
 			bool            gamutLch;
 			bool			ciecamfloat;
+			int				amchroma;
 			int             protectred;
 			double          protectredh;
 			bool			ciebadpixgauss;

@@ -65,6 +65,8 @@ class LCurveParamsEdited {
         bool lcredsk;
         bool cccurve;
         bool chcurve;
+        bool lhcurve;
+        bool hhcurve;
         bool lccurve;
         bool clcurve;
 };
