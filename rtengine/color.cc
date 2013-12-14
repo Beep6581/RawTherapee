@@ -661,22 +661,6 @@ namespace rtengine {
         a = (500.0 * (fx - fy) );
         b = (200.0 * (fy - fz) );
     }
-
-	void Color::huelab_to_huehsv (float HH, double &hr){
-					//hr=translate Hue Lab value  (-Pi +Pi) in approximative hr (hsv values) (0 1) [red 1/6 yellow 1/6 green 1/6 cyan 1/6 blue 1/6 magenta 1/6 ]
-				// with multi linear correspondances (I expect there is no error !!)
-
-				if      (HH<-2.7f) hr=0.020380804*double(HH)+0.970281708; //Lab green                   =>hr # 0.33 ==> 0.33  0.42
-				else if (HH<-2.1f) hr=0.266666667*double(HH)+1.14;        //Lab cyan                    =>hr # 0.50 ==> 0.42  0.58
-				else if (HH<-0.9f) hr=0.141666   *double(HH)+0.8775;      //Lab blue                    =>hr # 0.67 ==> 0.58  0.75
-				else if (HH<-0.1f) hr=0.2125     *double(HH)+0.94125;     //Lab magenta (purple)        =>hr # 0.83 ==> 0.75  0.92
-				else if (HH< 1.3f) hr=0.12142857 *double(HH)+0.932142857; //Lab red and skin            =>hr # 0    ==> 0.92  1.09
-				else if (HH< 2.2f) hr=0.1666667  *double(HH)-0.1266667;   //Lab yellow and green yellow =>hr # 0.16 ==> 0.09  0.24
-				else               hr=0.0955828  *double(HH)+0.02971784;  //Lab green                   =>hr # 0.33 ==> 0.24  0.33
-				//allways put h between 0 and 1
-				if     (hr<0.0) hr += 1.0;
-				else if(hr>1.0) hr -= 1.0;
-	}
 	
     double Color::f2xyz(double f) {
         const double epsilonExpInv3 = 6.0/29.0;

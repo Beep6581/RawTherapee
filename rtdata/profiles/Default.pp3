@@ -1,6 +1,6 @@
 [Version]
 AppVersion=4.0.11.161
-Version=314
+Version=315
 
 [Exposure]
 Auto=true
@@ -40,6 +40,9 @@ ccCurve=0;
 chCurve=0;
 LcCurve=0;
 ClCurve=0;
+lhCurve=0;
+hhCurve=0;
+
 
 [Sharpening]
 Enabled=true

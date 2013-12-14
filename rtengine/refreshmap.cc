@@ -265,7 +265,9 @@ TRANSFORM,        // EvPCVignetteRoundness
 TRANSFORM,        // EvVignettingRadius,
 TRANSFORM,        // EvVignettingStrength
 TRANSFORM,        // EvVignettingCenter
-LUMINANCECURVE   // EvLCLCurve
+LUMINANCECURVE,   // EvLCLCurve
+LUMINANCECURVE,   // EvLLHCurve
+LUMINANCECURVE   // EvLHHCurve
 
 
 //LUMINANCECURVE    // EvCATsharpcie

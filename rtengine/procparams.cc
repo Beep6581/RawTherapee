@@ -163,6 +163,11 @@ void ProcParams::setDefaults () {
     labCurve.cccurve.push_back(DCT_Linear);
     labCurve.chcurve.clear ();
     labCurve.chcurve.push_back(FCT_Linear);
+    labCurve.lhcurve.clear ();
+    labCurve.lhcurve.push_back(FCT_Linear);
+    labCurve.hhcurve.clear ();
+    labCurve.hhcurve.push_back(FCT_Linear);
+	
     labCurve.lccurve.clear ();
     labCurve.lccurve.push_back(DCT_Linear);
     labCurve.clcurve.clear ();
@@ -678,6 +683,14 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->labCurve.chcurve)  {
         Glib::ArrayHandle<double> chcurve = labCurve.chcurve;
         keyFile.set_double_list("Luminance Curve", "chCurve", chcurve);
+    }
+    if (!pedited || pedited->labCurve.lhcurve)  {
+        Glib::ArrayHandle<double> lhcurve = labCurve.lhcurve;
+        keyFile.set_double_list("Luminance Curve", "lhCurve", lhcurve);
+    }
+    if (!pedited || pedited->labCurve.hhcurve)  {
+        Glib::ArrayHandle<double> hhcurve = labCurve.hhcurve;
+        keyFile.set_double_list("Luminance Curve", "hhCurve", hhcurve);
     }
 
     if (!pedited || pedited->labCurve.lccurve)  {
@@ -1259,6 +1272,8 @@ if (keyFile.has_group ("Luminance Curve")) {
     if (keyFile.has_key ("Luminance Curve", "bCurve"))          { labCurve.bcurve             = keyFile.get_double_list ("Luminance Curve", "bCurve"); if (pedited) pedited->labCurve.bcurve = true; }
     if (keyFile.has_key ("Luminance Curve", "ccCurve"))         { labCurve.cccurve            = keyFile.get_double_list ("Luminance Curve", "ccCurve"); if (pedited) pedited->labCurve.cccurve = true; }
     if (keyFile.has_key ("Luminance Curve", "chCurve"))         { labCurve.chcurve            = keyFile.get_double_list ("Luminance Curve", "chCurve"); if (pedited) pedited->labCurve.chcurve = true; }
+    if (keyFile.has_key ("Luminance Curve", "lhCurve"))         { labCurve.lhcurve            = keyFile.get_double_list ("Luminance Curve", "lhCurve"); if (pedited) pedited->labCurve.lhcurve = true; }
+    if (keyFile.has_key ("Luminance Curve", "hhCurve"))         { labCurve.hhcurve            = keyFile.get_double_list ("Luminance Curve", "hhCurve"); if (pedited) pedited->labCurve.hhcurve = true; }
     if (keyFile.has_key ("Luminance Curve", "LcCurve"))         { labCurve.lccurve            = keyFile.get_double_list ("Luminance Curve", "LcCurve"); if (pedited) pedited->labCurve.lccurve = true; }
     if (keyFile.has_key ("Luminance Curve", "ClCurve"))         { labCurve.clcurve            = keyFile.get_double_list ("Luminance Curve", "ClCurve"); if (pedited) pedited->labCurve.clcurve = true; }
 
@@ -1763,6 +1778,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& labCurve.bcurve == other.labCurve.bcurve
 		&& labCurve.cccurve == other.labCurve.cccurve
 		&& labCurve.chcurve == other.labCurve.chcurve
+		&& labCurve.lhcurve == other.labCurve.lhcurve
+		&& labCurve.hhcurve == other.labCurve.hhcurve
 		&& labCurve.lccurve == other.labCurve.lccurve
 		&& labCurve.clcurve == other.labCurve.clcurve
 		&& labCurve.brightness == other.labCurve.brightness

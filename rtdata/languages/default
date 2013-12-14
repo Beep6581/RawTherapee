@@ -479,7 +479,9 @@ HISTORY_MSG_242;Vignette Filter - Roundness
 HISTORY_MSG_243;Vignetting - Rayon
 HISTORY_MSG_244;Vignetting - Strength
 HISTORY_MSG_245;Vignetting - Center
-HISTORY_MSG_246;CL curve
+HISTORY_MSG_246;"CL" curve
+HISTORY_MSG_247;"LH" curve
+HISTORY_MSG_248;"HH" curve
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -1287,6 +1289,10 @@ TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
 TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to chromaticity L=f(C)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
+TP_LABCURVE_CURVEEDITOR_LH;LH
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
+TP_LABCURVE_CURVEEDITOR_HH;HH
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
 TP_LABCURVE_LABEL;Lab Adjustments
 TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies to all tones

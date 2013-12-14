@@ -39,6 +39,9 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     DiagonalCurveEditor* ccshape;
     DiagonalCurveEditor* lcshape;
     FlatCurveEditor*   chshape;
+    FlatCurveEditor*   lhshape;
+    FlatCurveEditor*   hhshape;
+	
     DiagonalCurveEditor* clshape;
 
     //%%%%%%%%%%%%%%%%
