@@ -446,6 +446,41 @@ HISTORY_MSG_207;色相カーブの変更
 HISTORY_MSG_208;ブルー／レッド　イコライザー
 HISTORY_MSG_210;グラデーションフィルター
 HISTORY_MSG_211;グラデーションフィルター
+HISTORY_MSG_212;ビネットフィルター
+HISTORY_MSG_213;ビネットフィルター　強さ
+HISTORY_MSG_214;白黒
+HISTORY_MSG_215;白黒　チャンネルミキサー　レッド
+HISTORY_MSG_216;白黒　チャンネルミキサー　グリーン
+HISTORY_MSG_217;白黒　チャンネルミキサー　ブルー
+HISTORY_MSG_218;白黒　レッドのガンマ
+HISTORY_MSG_219;白黒　グリーンのガンマ
+HISTORY_MSG_220;白黒　ブルーのガンマ
+HISTORY_MSG_221;白黒　カラーフィルター
+HISTORY_MSG_222;白黒　プリセット
+HISTORY_MSG_223;白黒　チャンネルミキサー　オレンジ
+HISTORY_MSG_224;白黒　チャンネルミキサー　イエロー
+HISTORY_MSG_225;白黒　チャンネルミキサー　シアン
+HISTORY_MSG_226;白黒　チャンネルミキサー　マゼンタ
+HISTORY_MSG_227;白黒　チャンネルミキサー　パープル
+HISTORY_MSG_228;白黒　輝度イコライザー
+HISTORY_MSG_229;白黒　輝度イコライザー
+HISTORY_MSG_230;白黒　白黒モード
+HISTORY_MSG_231;白黒　‘前の‘カーブ
+HISTORY_MSG_232;白黒　‘前の‘カーブのタイプ
+HISTORY_MSG_233;白黒　‘後の‘カーブ
+HISTORY_MSG_234;白黒　‘後の‘カーブのタイプ
+HISTORY_MSG_235;白黒　オートチャンネルミキサー
+HISTORY_MSG_236;未使用
+HISTORY_MSG_237;白黒　ミキサー
+HISTORY_MSG_238;グラデーションフィルター　フェザー処理
+HISTORY_MSG_239;グラデーションフィルター　強さ
+HISTORY_MSG_240;グラデーションフィルター　中央
+HISTORY_MSG_241;ビネットフィルター　フェザー処理
+HISTORY_MSG_242;ビネットフィルター　丸み
+HISTORY_MSG_243;レーヨン
+HISTORY_MSG_244;ビネットフィルター　強さ
+HISTORY_MSG_245;ビネットフィルター　中央
+HISTORY_MSG_246;CLカーブ
 HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
@@ -620,6 +655,7 @@ OPTIONS_DEFIMG_MISSING;<b>RAWではない画像</b>のデフォルプロファ�
 OPTIONS_DEFRAW_MISSING;<b>RAW画像</b>のデフォル・プロファイルが見つからないか、設定されていません\n\nプロファイル・ディレクトリを確認してください、存在しないか破損しているかもしれません\n\nデフォルト設定値が使用されます
 PARTIALPASTE_BASICGROUP;基本設定
 PARTIALPASTE_CACORRECTION;色収差補正
+PARTIALPASTE_CHANNELMIXERBW;白黒
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
 PARTIALPASTE_COARSETRANS;90° 回転 / 反転
 PARTIALPASTE_COLORAPP;CIE色の見えモデル2002
@@ -663,6 +699,7 @@ PARTIALPASTE_LENSPROFILE;レンズ補正プロファイル
 PARTIALPASTE_LUMADENOISE;輝度 ノイズ低減
 PARTIALPASTE_LUMINANCEGROUP;輝度設定
 PARTIALPASTE_METAICMGROUP;メタデータ/ICM 設定
+PARTIALPASTE_PCVIGNETTE;ビネットフィルター
 PARTIALPASTE_PERSPECTIVE;パースペクティブの補正
 PARTIALPASTE_PREPROCESS_GREENEQUIL;グリーン 平衡化
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;ホット/デッド ピクセル・フィルタを適用
@@ -720,6 +757,9 @@ PREFERENCES_CIEART_TOOLTIP;有効にした場合、 CIECAM02は倍精度浮動�
 PREFERENCES_CLIPPINGIND;クリッピング領域の表示
 PREFERENCES_CMETRICINTENT;レンダリング・インテント
 PREFERENCES_CUSTPROFBUILDHINT;画像から新規のプロファイルを作成する際に呼び出される実行ファイル (またはスクリプト)\n.PP3生成のルールに基づいたコマンドライン・パラメータを受け取ります\n[raw/JPG・パス] [デフォルトのプロファイルのパス] [f-数値] [露出時間 秒] [焦点距離 mm] [ISO] [レンズ] [カメラ]
+PREFERENCES_CUSTPROFBUILDKEYFORMAT;キーフォーマット
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;名前
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;タグID
 PREFERENCES_CUSTPROFBUILDPATH;実行ファイルのパス
 PREFERENCES_CUSTPROFBUILD;カスタム・イメージ・プロファイル・ビルダー
 PREFERENCES_CUTOVERLAYBRUSH;切り抜きマスクカラー 不透明度
@@ -948,6 +988,74 @@ TOOLBAR_TOOLTIP_CROP;切り抜き範囲選択\nショートカット:  <b>c</b>
 TOOLBAR_TOOLTIP_HAND;手の平ツール\nショートカット:  <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>直線選択</b> / <b>角度補正</b>\nショートカット: <b>s</b>\nプレビュー画像上にガイド線を描画し、垂直または水平方向を指示します。回転角度は、ガイド線の隣に表示されます。回転の中心は、プレビュー画像の中心です
 TOOLBAR_TOOLTIP_WB;スポット・ホワイトバランス\nショートカット:  <b>w</b>
+TP_BWMIX_AUTOCH;オート
+TP_BWMIX_AUTOCH_TIP;チャンネルミキサーの最適値を計算
+TP_BWMIX_BLUE;ブルー
+TP_BWMIX_CC_ENABLED;補色の調整
+TP_BWMIX_CC_TOOLTIP;ROYGCBPMモードの中で補色の調整を自動で行う
+TP_BWMIX_CHANNEL;輝度イコライザー
+TP_BWMIX_CURVEEDITOR1;‘前の‘カーブ
+TP_BWMIX_CURVEEDITOR2;‘後の‘カーブ
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;処理最終段階で白黒変換を施した後のトーンカーブ
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;色の構成を変えるかもしれない\n白黒変換を施す前のトーンカーブ
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;色相における明度を習性\n極端な修正はアーティファクトの発生に注意
+TP_BWMIX_CYAN;シアン
+TP_BWMIX_FILTER;カラーフィルター
+TP_BWMIX_FILTER_BLUEGREEN;ブルー/グリーン
+TP_BWMIX_FILTER_BLUE;ブルー
+TP_BWMIX_FILTER_GREENYELLOW;グリーン/イエロー
+TP_BWMIX_FILTER_GREEN;グリーン
+TP_BWMIX_FILTER_NONE;なし
+TP_BWMIX_FILTER_PURPLE;パープル
+TP_BWMIX_FILTER_REDYELLOW;レッド/イエロー
+TP_BWMIX_FILTER_RED;レッド
+TP_BWMIX_FILTER_TOOLTIP;カラーフィルターはレンズにカラーフィルターを装着して撮影したような効果をもたらす。カラーフィルターは特定の入光色を減らし、特定の明るさを変える。例、レッドフィルターは青空の色を暗くする。
+TP_BWMIX_FILTER_YELLOW;イエロー
+TP_BWMIX_GAMMA;ガンマ補正
+TP_BWMIX_GAM_BLUE;ブルーチャンネル
+TP_BWMIX_GAM_GREEN;グリーンチャンネル
+TP_BWMIX_GAM_RED;レッドチャンネル
+TP_BWMIX_GAM_TOOLTIP;RGB各チャンネルのガンマを修正
+TP_BWMIX_GREEN;グリーン
+TP_BWMIX_LABEL;白黒
+TP_BWMIX_MAGENTA;マゼンタ
+TP_BWMIX_MET;方法
+TP_BWMIX_MET_CHANMIX;チャンネルミキサー
+TP_BWMIX_MET_DESAT;彩度低減
+TP_BWMIX_MET_LUMEQUAL;輝度イコライザー
+TP_BWMIX_MIXC;ミキサー
+TP_BWMIX_MIXF;ミキサーフィルター
+TP_BWMIX_NEUTRAL;ミキサーのリセット
+TP_BWMIX_NEUTRAL_TIP;全ての値（フィルター、チャンネルミキサー）をデフォルトに戻す
+TP_BWMIX_ORANGE;オレンジ
+TP_BWMIX_PURPLE;パープル
+TP_BWMIX_RED;レッド
+TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
+TP_BWMIX_RGBLABEL_HINT;ミキサーオプションの全てを考慮した最終のRGBファクター\nトータルは実際に適用されたRGBの合計を表示:\n- 常に100％相対モード\n- 絶対モード100％より高い（明るい）、或いは低い（暗い）
+TP_BWMIX_RGB_TOOLTIP;RGBチャンネルをミックス。ガイダンスとしてプリセットを使う。\nマイナス値はアーティファクトの発生や誤った作用を生むことに注意
+TP_BWMIX_SETTING;プリセット
+TP_BWMIX_SETTING_TOOLTIP;異なるプリセット（フィルム調、風景。。。）、或いはチャンネルミキサーのマニュアル設定
+TP_BWMIX_SET_HIGHCONTAST;ハイコントラスト
+TP_BWMIX_SET_HIGHSENSIT;高感度
+TP_BWMIX_SET_HYPERPANCHRO;ハイパーパンクロマティック
+TP_BWMIX_SET_INFRARED;赤外線
+TP_BWMIX_SET_LANDSCAPE;風景
+TP_BWMIX_SET_LOWSENSIT;低感度
+TP_BWMIX_SET_LUMINANCE;輝度
+TP_BWMIX_SET_NORMCONTAST;普通のコントラスト
+TP_BWMIX_SET_ORTHOCHRO;オルソクロマティック
+TP_BWMIX_SET_PANCHRO;パンクロマティック
+TP_BWMIX_SET_PORTRAIT;ポートレート
+TP_BWMIX_SET_RGBABS;チャンネルミキサー　絶対RGB
+TP_BWMIX_SET_RGBREL;チャンネルミキサー　相対RGB
+TP_BWMIX_SET_ROYGCBPMABS;チャンネルミキサー　絶対ROYGCPBM
+TP_BWMIX_SET_ROYGCBPMREL;チャンネルミキサー　相対ROYGCPBM
+TP_BWMIX_TCMODE_FILMLIKE;白黒　フィルム調
+TP_BWMIX_TCMODE_SATANDVALBLENDING;白黒　彩度と明度のブレンド
+TP_BWMIX_TCMODE_STANDARD;白黒　標準
+TP_BWMIX_TCMODE_WEIGHTEDSTD;白黒　加重平均
+TP_BWMIX_VAL;L
+TP_BWMIX_YELLOW;イエロー
 TP_CACORRECTION_BLUE;ブルー
 TP_CACORRECTION_LABEL;色収差補正
 TP_CACORRECTION_RED;レッド
@@ -1150,6 +1258,9 @@ TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;マトリクスとハイライト・ブレンド
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;LUTベースのICCプロファイルを使用するときに白トビを修復
+TP_ICM_DCPILLUMINANT;光源
+TP_ICM_DCPILLUMINANT_INTERPOLATED;補間
+TP_ICM_DCPILLUMINANT_TOOLTIP;埋め込まれているDCPの光源のどちらを使うか選択。デフォルトではホワイトバランスに基づいて二つの光源の中間に補間する。この設定は二つのDCPの光源が補間サポートされる、を選択している場合に有効。
 TP_ICM_FILEDLGFILTERANY;すべてのファイル
 TP_ICM_FILEDLGFILTERICM;プロファイル ファイル
 TP_ICM_INPUTCAMERAICC;カメラ固有のプロファイル
@@ -1204,6 +1315,8 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE4;純色
 TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;色度 C=f(C).\n カーブ調整前の色度のヒストグラム\n 最終出力のメイン・ヒストグラムパネルを参照
 TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;色相に応じた色度
+TP_LABCURVE_CURVEEDITOR_CL;CL
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;輝度に応じた色度　C=f(L)
 TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;色度に応じた輝度
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;輝度 Lab L=f(L).\n  Labカーブを調整する前のLのヒストグラム\n 最終出力のメイン・ヒストグラムパネルを参照
@@ -1228,6 +1341,13 @@ TP_LUMADENOISE_LABEL;輝度 ノイズ低減
 TP_LUMADENOISE_RADIUS;半径
 TP_NEUTRAL;ニュートラル
 TP_NEUTRAL_TIP;露光量の制御をニュートラルな値にリセットします
+TP_PCVIGNETTE_FEATHER;フェザー処理
+TP_PCVIGNETTE_FEATHER_TOOLTIP;フェザー処理：　0=四隅だけ、50=中央までの半分、100=中央まで
+TP_PCVIGNETTE_LABEL;ビネットフィルター
+TP_PCVIGNETTE_ROUNDNESS;丸み
+TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;丸み：　0=長方形、50=楕円形、100=円形
+TP_PCVIGNETTE_STRENGTH;強さ
+TP_PCVIGNETTE_STRENGTH_TOOLTIP;終点位置でのフィルターの強さ（四隅）
 TP_PERSPECTIVE_HORIZONTAL;水平
 TP_PERSPECTIVE_LABEL;パースペクティブ
 TP_PERSPECTIVE_VERTICAL;垂直
@@ -1426,123 +1546,10 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_212;Vignette Filter
-!HISTORY_MSG_213;Vignette Filter - Strength
-!HISTORY_MSG_214;Black &amp; White
-!HISTORY_MSG_215;B&amp;W Channel Mixer Red
-!HISTORY_MSG_216;B&amp;W Channel Mixer Green
-!HISTORY_MSG_217;B&amp;W Channel Mixer Blue
-!HISTORY_MSG_218;B&amp;W Red Gamma
-!HISTORY_MSG_219;B&amp;W Green Gamma
-!HISTORY_MSG_220;B&amp;W Blue Gamma
-!HISTORY_MSG_221;B&amp;W Color Filter
-!HISTORY_MSG_222;B&amp;W Presets
-!HISTORY_MSG_223;B&amp;W Channel Mixer Orange
-!HISTORY_MSG_224;B&amp;W Channel Mixer Yellow
-!HISTORY_MSG_225;B&amp;W Channel Mixer Cyan
-!HISTORY_MSG_226;B&amp;W Channel Mixer Magenta
-!HISTORY_MSG_227;B&amp;W Channel Mixer Purple
-!HISTORY_MSG_228;B&amp;W Luminance Equalizer
-!HISTORY_MSG_229;B&amp;W Luminance Equalizer
-!HISTORY_MSG_230;B&amp;W Black and White Mode
-!HISTORY_MSG_231;B&amp;W 'Before' Curve
-!HISTORY_MSG_232;B&amp;W 'Before' Curve Type
-!HISTORY_MSG_233;B&amp;W 'After' Curve
-!HISTORY_MSG_234;B&amp;W 'After' Curve Type
-!HISTORY_MSG_235;B&amp;W Auto Channel Mixer
-!HISTORY_MSG_236;--unused--
-!HISTORY_MSG_237;B&amp;W Mixer
-!HISTORY_MSG_238;Gradient - Feather
-!HISTORY_MSG_239;Gradient - Strength
-!HISTORY_MSG_240;Gradient - Center
-!HISTORY_MSG_241;Vignette Filter - Feather
-!HISTORY_MSG_242;Vignette Filter - Roundness
-!HISTORY_MSG_243;Vignetting - Rayon
-!HISTORY_MSG_244;Vignetting - Strength
-!HISTORY_MSG_245;Vignetting - Center
-!HISTORY_MSG_246;CL curve
-!PARTIALPASTE_CHANNELMIXERBW;Black and white
-!PARTIALPASTE_PCVIGNETTE;Vignette Filter
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
-!TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
-!TP_BWMIX_BLUE;Blue
-!TP_BWMIX_CC_ENABLED;Adjust complementary color
-!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode
-!TP_BWMIX_CHANNEL;Luminance Equalizer
-!TP_BWMIX_CURVEEDITOR1;'Before' curve
-!TP_BWMIX_CURVEEDITOR2;'After' curve
-!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment
-!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the color components
-!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\nPay attention to extreme values that may cause artifacts
-!TP_BWMIX_CYAN;Cyan
-!TP_BWMIX_FILTER;Color Filter
-!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
-!TP_BWMIX_FILTER_BLUE;Blue
-!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
-!TP_BWMIX_FILTER_GREEN;Green
-!TP_BWMIX_FILTER_NONE;None
-!TP_BWMIX_FILTER_PURPLE;Purple
-!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
-!TP_BWMIX_FILTER_RED;Red
-!TP_BWMIX_FILTER_TOOLTIP;The color filter simulate shots taken with a colored filter placed in front of the lens. Colored filters reduce transmission of specific range of colors and correspondingly affect their lightness. E.g. a Red filter darkens Blue skies.
-!TP_BWMIX_FILTER_YELLOW;Yellow
-!TP_BWMIX_GAMMA;Gamma Correction
-!TP_BWMIX_GAM_BLUE;Blue Channel
-!TP_BWMIX_GAM_GREEN;Green Channel
-!TP_BWMIX_GAM_RED;Red Channel
-!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel RGB
-!TP_BWMIX_GREEN;Green
-!TP_BWMIX_LABEL;Black & White
-!TP_BWMIX_MAGENTA;Magenta
-!TP_BWMIX_MET;Method
-!TP_BWMIX_MET_CHANMIX;Channel Mixer
-!TP_BWMIX_MET_DESAT;Desaturation
-!TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
-!TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_MIXF;Mixer Filters
-!TP_BWMIX_NEUTRAL;Reset mixer
-!TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
-!TP_BWMIX_ORANGE;Orange
-!TP_BWMIX_PURPLE;Purple
-!TP_BWMIX_RED;Red
-!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values ​​actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
-!TP_BWMIX_SETTING;Presets
-!TP_BWMIX_SETTING_TOOLTIP;Different presets (films, landscape, ...) or manual settings of channel-mixer
-!TP_BWMIX_SET_HIGHCONTAST;High contrast
-!TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
-!TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
-!TP_BWMIX_SET_INFRARED;Infrared
-!TP_BWMIX_SET_LANDSCAPE;Landscape
-!TP_BWMIX_SET_LOWSENSIT;Low Sensitivity
-!TP_BWMIX_SET_LUMINANCE;Luminance
-!TP_BWMIX_SET_NORMCONTAST;Normal Contrast
-!TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
-!TP_BWMIX_SET_PANCHRO;Panchromatic
-!TP_BWMIX_SET_PORTRAIT;Portrait
-!TP_BWMIX_SET_RGBABS;Channel-Mixer absolute RGB
-!TP_BWMIX_SET_RGBREL;Channel-Mixer relative RGB
-!TP_BWMIX_SET_ROYGCBPMABS;Channel-Mixer absolute ROYGCBPM
-!TP_BWMIX_SET_ROYGCBPMREL;Channel-Mixer relative ROYGCBPM
-!TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
-!TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
-!TP_BWMIX_TCMODE_STANDARD;B&W Standard
-!TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
-!TP_BWMIX_VAL;L
-!TP_BWMIX_YELLOW;Yellow
-!TP_ICM_DCPILLUMINANT;Illuminant
-!TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
-!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-!TP_LABCURVE_CURVEEDITOR_CL;CL
-!TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
-!TP_PCVIGNETTE_FEATHER;Feather
-!TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
-!TP_PCVIGNETTE_LABEL;Vignette Filter
-!TP_PCVIGNETTE_ROUNDNESS;Roundness
-!TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness: 0=rectangle, 50=fitted ellipse, 100=circle
-!TP_PCVIGNETTE_STRENGTH;Strength
-!TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners)
+!HISTORY_MSG_247;"LH" curve
+!HISTORY_MSG_248;"HH" curve
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
