@@ -2965,6 +2965,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
 	int chromaticity = params->labCurve.chromaticity;
 	bool bwToning = params->labCurve.chromaticity==-100  /*|| params->blackwhite.method=="Ch" */ || params->blackwhite.enabled;
+	//if(chromaticity==-100) chromaticity==-99;
 	//if(bwToning) printf("OK bwto\n"); else printf("pas de bw\n");
 	bool LCredsk = params->labCurve.lcredsk;
 	bool ccut = ccutili;
@@ -3340,13 +3341,16 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 			else {
 //				if(Lprov1 > maxlp) maxlp=Lprov1;
 //				if(Lprov1 < minlp) minlp=Lprov1;
+				if(!bwToning){
 				lnew->L[i][j]=Lprov1*327.68f;
 				lnew->a[i][j]=327.68f*Chprov1*cos(HH);
 				lnew->b[i][j]=327.68f*Chprov1*sin(HH);
-
+				}
+				else {
 				//Luv limiter only
-				//lnew->a[i][j] = atmp;
-				//lnew->b[i][j] = btmp;
+				lnew->a[i][j] = atmp;
+				lnew->b[i][j] = btmp;
+				}
 			}
 		}
 } // end of parallelization

@@ -32,6 +32,7 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 	brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100., 100., 1., 0.));
 	contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100., 100., 1., 0.));
 	chromaticity   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CHROMATICITY"), -100., 100., 1., 0.));
+	chromaticity->set_tooltip_markup(M("TP_LABCURVE_CHROMA_TOOLTIP"));
 
 	pack_start (*brightness);
 	brightness->show ();
