@@ -1263,6 +1263,7 @@ TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
+TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction
 TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_CHROMATICITY;Chromaticity
