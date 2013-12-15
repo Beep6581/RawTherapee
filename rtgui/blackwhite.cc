@@ -335,16 +335,17 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	tcmodeconn = beforeCurveMode->signal_changed().connect( sigc::mem_fun(*this, &BlackWhite::curveMode1Changed), true );
 
 	//----------- Curve 2 ------------------------------
-
+/*
 	afterCurveMode = Gtk::manage (new MyComboBoxText ());
 	afterCurveMode->append_text (M("TP_BWMIX_TCMODE_STANDARD"));
 	//  afterCurveMode->append_text (M("TP_BWMIX_TCMODE_WEIGHTEDSTD"));
 	afterCurveMode->set_active (0);
-
+*/
 	afterCurveCEG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CURVEEDITOR2"));
 	afterCurveCEG->setCurveListener (this);
 
-	afterCurve = static_cast<DiagonalCurveEditor*>(afterCurveCEG->addCurve(CT_Diagonal, "", afterCurveMode));
+//	afterCurve = static_cast<DiagonalCurveEditor*>(afterCurveCEG->addCurve(CT_Diagonal, "", afterCurveMode));
+	afterCurve = static_cast<DiagonalCurveEditor*>(afterCurveCEG->addCurve(CT_Diagonal, ""));
 	afterCurve->setBottomBarBgGradient(bottomMilestonesbw);
 	afterCurve->setLeftBarBgGradient(bottomMilestonesbw);
 	afterCurve->setTooltip(M("TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP"));
@@ -353,7 +354,7 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 
 	pack_start( *afterCurveCEG, Gtk::PACK_SHRINK, 2);
 
-	tcmodeconn2 = afterCurveMode->signal_changed().connect( sigc::mem_fun(*this, &BlackWhite::curveMode1Changed2), true );
+//	tcmodeconn2 = afterCurveMode->signal_changed().connect( sigc::mem_fun(*this, &BlackWhite::curveMode1Changed2), true );
 
 	show_all();
 }
@@ -487,7 +488,7 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited) {
 	beforeCurve->setCurve (pp->blackwhite.beforeCurve);
 	beforeCurveMode->set_active(pp->blackwhite.beforeCurveMode);
 	afterCurve->setCurve (pp->blackwhite.afterCurve);
-	afterCurveMode->set_active(pp->blackwhite.afterCurveMode);
+//	afterCurveMode->set_active(pp->blackwhite.afterCurveMode);
 
 	autoch->set_active (pp->blackwhite.autoc);
 	lastAuto = pp->blackwhite.autoc;
@@ -513,9 +514,9 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited) {
 		if (!pedited->blackwhite.beforeCurveMode) {
 			beforeCurveMode->set_active(4); // "Unchanged"
 		}
-		if (!pedited->blackwhite.afterCurveMode) {
-			afterCurveMode->set_active(1); // "Unchanged"
-		}
+//		if (!pedited->blackwhite.afterCurveMode) {
+//			afterCurveMode->set_active(1); // "Unchanged"
+//		}
 	}
 	methodconn.block(false);
 	filterconn.block(false);
@@ -554,8 +555,8 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited) {
 	else if (tcMode == 2) pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_FILMLIKE_BW;
 	else if (tcMode == 3) pp->blackwhite.beforeCurveMode = BlackWhiteParams::TC_MODE_SATANDVALBLENDING_BW;
 
-	tcMode = afterCurveMode->get_active_row_number();
-	if      (tcMode == 0) pp->blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
+//	tcMode = afterCurveMode->get_active_row_number();
+//	if      (tcMode == 0) pp->blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_STD_BW;
 	//  else if (tcMode == 1) pp->blackwhite.afterCurveMode = BlackWhiteParams::TC_MODE_WEIGHTEDSTD;
 	
 	if (pedited) {
@@ -580,7 +581,7 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited) {
 		pedited->blackwhite.beforeCurve = !beforeCurve->isUnChanged ();
 		pedited->blackwhite.beforeCurveMode = beforeCurveMode->get_active_row_number() != 4;
 		pedited->blackwhite.afterCurve = !afterCurve->isUnChanged ();
-		pedited->blackwhite.afterCurveMode = afterCurveMode->get_active_row_number() != 1;
+//		pedited->blackwhite.afterCurveMode = afterCurveMode->get_active_row_number() != 1;
 	}
 	if (method->get_active_row_number()==0)
 		pp->blackwhite.method = "Desaturation";
@@ -611,6 +612,7 @@ bool BlackWhite::curveMode1Changed_ () {
 	if (listener) listener->panelChanged (EvBWBeforeCurveMode, escapeHtmlChars(beforeCurveMode->get_active_text()));
 	return false;
 }
+/*
 void BlackWhite::curveMode1Changed2 () {
 	if (listener)  Glib::signal_idle().connect (sigc::mem_fun(*this, &BlackWhite::curveMode1Changed2_));
 }
@@ -618,7 +620,7 @@ bool BlackWhite::curveMode1Changed2_ () {
 	if (listener) listener->panelChanged (EvBWAfterCurveMode, escapeHtmlChars(afterCurveMode->get_active_text()));
 	return false;
 }
-
+*/
 void BlackWhite::colorForValue (double valX, double valY, int callerId, ColorCaller* caller) {
 
 	float r, g, b;
@@ -1092,7 +1094,7 @@ void BlackWhite::setBatchMode (bool batchMode) {
 	beforeCurveCEG->setBatchMode (batchMode);
 	beforeCurveMode->append_text (M("GENERAL_UNCHANGED"));
 	afterCurveCEG->setBatchMode (batchMode);
-	afterCurveMode->append_text (M("GENERAL_UNCHANGED"));
+//	afterCurveMode->append_text (M("GENERAL_UNCHANGED"));
 
 	showLuminance();
 	showFilter();
