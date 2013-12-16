@@ -157,9 +157,9 @@ skip_block: ;
 		       scale_mul_[0], scale_mul_[1], scale_mul_[2], scale_mul_[3],
 		       cblack_[0], cblack_[1], cblack_[2], cblack_[3]);
 		printf("rgb_cam:[ [ %f %f %f], [%f %f %f], [%f %f %f] ]%s\n",
-		       rgb_cam[0][0], rgb_cam[1][1], rgb_cam[2][2],
-		       rgb_cam[0][0], rgb_cam[1][1], rgb_cam[2][2],
-		       rgb_cam[0][0], rgb_cam[1][1], rgb_cam[2][2],
+		       rgb_cam[0][0], rgb_cam[1][0], rgb_cam[2][0],
+		       rgb_cam[0][1], rgb_cam[1][1], rgb_cam[2][1],
+		       rgb_cam[0][2], rgb_cam[1][2], rgb_cam[2][2],
 		       (!this->isBayer()) ? " (not bayer)" : "");
 
 	}
