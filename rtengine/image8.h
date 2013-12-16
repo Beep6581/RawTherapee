@@ -38,7 +38,7 @@ class Image8 : public IImage8, public ImageIO {
 
         Image8*              copy ();
 
-        virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::HRecParams hrp);
+        virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp);
 
         virtual const char*  getType     () const { return sImage8; }
         virtual int          getBPS      () { return 8*sizeof(unsigned char); }

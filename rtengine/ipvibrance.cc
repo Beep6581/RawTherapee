@@ -122,7 +122,7 @@ void ImProcFunctions::vibrance (LabImage* lab) {
 	float limitpastelsatur =    static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_TOPLEFT])    / 100.0f;
 	float transitionweighting = static_cast<float>(params->vibrance.psthreshold.value[ThresholdSelector::TS_BOTTOMLEFT]) / 100.0f;
 
-	bool highlight = params->hlrecovery.enabled;//Get the value if "highlight reconstruction" is activated
+	bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
 	bool protectskins = params->vibrance.protectskins;
 	bool avoidcolorshift = params->vibrance.avoidcolorshift;
 

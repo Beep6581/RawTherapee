@@ -103,7 +103,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 	if (pl) pl->setProgress (0.20);
     imgsrc->demosaic( params.raw);
     if (pl) pl->setProgress (0.30);
-    imgsrc->HLRecovery_Global( params.hlrecovery );
+    imgsrc->HLRecovery_Global( params.toneCurve );
     if (pl) pl->setProgress (0.40);
 	// set the color temperature
     ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
@@ -115,7 +115,7 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
         currWB.update(rm, gm, bm, params.wb.equal);
     }
     Imagefloat* baseImg = new Imagefloat (fw, fh);
-    imgsrc->getImage (currWB, tr, baseImg, pp, params.hlrecovery, params.icm, params.raw);
+    imgsrc->getImage (currWB, tr, baseImg, pp, params.toneCurve, params.icm, params.raw);
     if (pl) pl->setProgress (0.45);
 
 

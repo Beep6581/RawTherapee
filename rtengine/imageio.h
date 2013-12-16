@@ -90,7 +90,7 @@ class ImageIO : virtual public ImageDatas {
         void                 setSampleArrangement(IIOSampleArrangement sArrangement) { sampleArrangement = sArrangement; }
         IIOSampleArrangement getSampleArrangement() { return sampleArrangement; }
 
-        virtual void    getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::HRecParams hrp) {
+        virtual void    getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp) {
             printf("getStdImage NULL!\n");
         }
 

@@ -444,7 +444,7 @@ if(params->colorappearance.enabled) {
 	else               yb=90.0;
 
 	int gamu=0;
-	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
+	bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
 
 	if(params->colorappearance.gamut==true) gamu=1;//enabled gamut control
 	xw=100.0*Xw;
@@ -1276,7 +1276,7 @@ if(params->colorappearance.enabled) {
 	else               yb=90.0f;
 
 	int gamu=0;
-	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
+	bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
 
 	if(params->colorappearance.gamut==true) gamu=1;//enabled gamut control
 	xw=100.0f*Xw;
@@ -2319,7 +2319,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 #endif
     	    for (int i=0; i<tH; i++) {
 	            for (int j=0; j<tW; j++) {
-					bool highlight = params->hlrecovery.enabled;//Get the value if "highlight reconstruction" is activated
+					bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
 
 					float r1,g1,b1, r2,g2,b2, L_1,L_2, Lfactor,a_1,b_1,x_,y_,z_,R,G,B ;
 					float y,fy, yy,fyy,x,z,fx,fz;
@@ -2543,7 +2543,7 @@ if(blackwhite){
 #endif
 		for (int i=0; i<tH; i++) {
 			for (int j=0; j<tW; j++) {
-				bool highlight = params->hlrecovery.enabled;//Get the value if "highlight reconstruction" is activated
+				bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
 				//rgb=>lab
 				float r = tmpImage->r(i,j);
 				float g = tmpImage->g(i,j);
@@ -2962,7 +2962,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 
 
 	// reference to the params structure has to be done outside of the parallelization to avoid CPU cache problem
-	bool highlight = params->hlrecovery.enabled; //Get the value if "highlight reconstruction" is activated
+	bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
 	int chromaticity = params->labCurve.chromaticity;
 	bool bwToning = params->labCurve.chromaticity==-100  /*|| params->blackwhite.method=="Ch" */ || params->blackwhite.enabled;
 	//if(chromaticity==-100) chromaticity==-99;
@@ -2980,8 +2980,9 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 	// only if user activate Lab adjustements
 	if (avoidColorShift) {
 		if(autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity)
-			Color::LabGamutMunsell(lold, Lold, Cold, /*corMunsell*/true, /*lumaMuns*/false, params->hlrecovery.enabled, /*gamut*/true, params->icm.working, multiThread);
-	}
+			Color::LabGamutMunsell(lold, Lold, Cold, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, params->icm.working, multiThread);
+
+			}
 
 
 #ifdef _DEBUG
@@ -3664,13 +3665,13 @@ fclose(f);*/
 	void ImProcFunctions::getAutoExp  (LUTu & histogram, int histcompr, double defgain, double clip,
 									   double& expcomp, int& bright, int& contr, int& black, int& hlcompr, int& hlcomprthresh) {
 
-		float scale = 65536.0;
-		float midgray=0.15;//0.18445f;//middle gray in linear gamma = 0.18445*65535
+		float scale = 65536.0f;
+		float midgray=0.1842f;//middle gray in linear gamma =1 50% luminance
 
 		int imax=65536>>histcompr;
-
-		float sum = 0, hisum=0, losum=0;
-		float ave = 0, hidev=0, lodev=0;
+		int overex=0;
+		float sum = 0.f, hisum=0.f, losum=0.f;
+		float ave = 0.f, hidev=0.f, lodev=0.f;
 		//find average luminance
 		for (int i=0; i<imax; i++) {
 			sum += histogram[i];
@@ -3684,8 +3685,8 @@ fclose(f);*/
 			median++;
 			count += histogram[median];
 		}
-		if (median==0 || ave<1) {//probably the image is a blackframe
-			expcomp=0;
+		if (median==0 || ave<1.f) {//probably the image is a blackframe
+			expcomp=0.;
 			black=0;
 			bright=0;
 			contr=0;
@@ -3696,29 +3697,29 @@ fclose(f);*/
 
 		// compute std dev on the high and low side of median
 		// and octiles of histogram
-		float octile[8]={0,0,0,0,0,0,0,0},ospread=0;
+		float octile[8]={0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f},ospread=0.f;
 		count=0;
 		for (int i=0; i<imax; i++) {
 			if (count<8) {
 				octile[count] += histogram[i];
-				if (octile[count]>sum/8 || (count==7 && octile[count]>sum/16)) {
-					octile[count]=log(1+i)/log(2);
+				if (octile[count]>sum/8.f || (count==7 && octile[count]>sum/16.f)) {
+					octile[count]=log(1.+(float)i)/log(2.f);
 					count++;// = min(count+1,7);
 				}
 			}
 			if (i<ave) {
 				//lodev += SQR(ave-i)*histogram[i];
-				lodev += (log(ave+1)-log(i+1))*histogram[i];
+				lodev += (log(ave+1.f)-log((float)i+1.))*histogram[i];
 				losum += histogram[i];
 			} else {
 				//hidev += SQR(i-ave)*histogram[i];
-				hidev += (log(i+1)-log(ave+1))*histogram[i];
+				hidev += (log((float)i+1.)-log(ave+1.f))*histogram[i];
 				hisum += histogram[i];
 			}
 
 		}
 		if (losum==0 || hisum==0) {//probably the image is a blackframe
-			expcomp=0;
+			expcomp=0.;
 			black=0;
 			bright=0;
 			contr=0;
@@ -3726,13 +3727,20 @@ fclose(f);*/
 			hlcomprthresh=0;
 			return;
 		}
-		lodev = (lodev/(log(2)*losum));
-		hidev = (hidev/(log(2)*hisum));
-		if (octile[7]>log(imax+1)/log2(2)) {
-			octile[7]=1.5*octile[6]-0.5*octile[5];
+		lodev = (lodev/(log(2.f)*losum));
+		hidev = (hidev/(log(2.f)*hisum));
+		if (octile[6]>log((float)imax+1.f)/log2(2.f)) {//if very overxposed image
+			octile[6]=1.5f*octile[5]-0.5f*octile[4];
+			overex=2;
+		}
+		
+		if (octile[7]>log((float)imax+1.f)/log2(2.f)) {//if overexposed
+			octile[7]=1.5f*octile[6]-0.5f*octile[5];
+			overex=1;
+			
 		}
 		for(int i=1; i<8; i++) {
-		  if (octile[i] == 0.0)
+		  if (octile[i] == 0.0f)
 		    octile[i] = octile[i-1];
 		}
 		// compute weighted average separation of octiles
@@ -3740,9 +3748,9 @@ fclose(f);*/
 		for (int i=1; i<6; i++) {
 			ospread += (octile[i+1]-octile[i])/max(0.5f,(i>2 ? (octile[i+1]-octile[3]) : (octile[3]-octile[i])));
 		}
-		ospread /= 5;
-		if (ospread<=0) {//probably the image is a blackframe
-			expcomp=0;
+		ospread /= 5.f;
+		if (ospread<=0.f) {//probably the image is a blackframe
+			expcomp=0.;
 			black=0;
 			bright=0;
 			contr=0;
@@ -3761,7 +3769,7 @@ fclose(f);*/
 		}
 
 		//compute clipped white point
-		int clippable = (int)(sum * clip );
+		int clippable = (int)(sum * clip/100.f );
 		clipped = 0;
 		int whiteclip = (imax) - 1;
 		while (whiteclip>1 && histogram[whiteclip]+clipped <= clippable) {
@@ -3772,11 +3780,11 @@ fclose(f);*/
 		//compute clipped black point
 		clipped = 0;
 		int shc = 0;
+		
 		while (shc<whiteclip-1 && histogram[shc]+clipped <= clippable) {
 			clipped += histogram[shc];
 			shc++;
 		}
-
 		//rescale to 65535 max
 		rawmax <<= histcompr;
 		whiteclip <<= histcompr;
@@ -3785,41 +3793,40 @@ fclose(f);*/
 		shc <<= histcompr;
 
 		//prevent division by 0
-		if (lodev==0) lodev=1;
+		if (lodev==0.f) lodev=1.f;
 
 		//compute exposure compensation as geometric mean of the amount that
 		//sets the mean or median at middle gray, and the amount that sets the estimated top
 		//of the histogram at or near clipping.
-
-		float expcomp1 = log(/*(median/ave)*//*(hidev/lodev)*/midgray*scale/(ave-shc+midgray*shc))/log(2);
-		float expcomp2 = 0.5*( (15.5f-histcompr-(2*octile[7]-octile[6])) + log(scale/rawmax)/log(2) );
-
-		/*expcomp = (expcomp1*fabs(expcomp2)+expcomp2*fabs(expcomp1))/(fabs(expcomp1)+fabs(expcomp2));
-		if (expcomp<0) {
+		float expo=log(midgray*scale/(ave-shc+midgray*shc));
+		//float expcomp1 = (log(/*(median/ave)*//*(hidev/lodev)*/midgray*scale/(ave-shc+midgray*shc))+log((hidev/lodev)))/log(2.f);
+		float expcomp1 = (log(/*(median/ave)*//*(hidev/lodev)*/midgray*scale/(ave-shc+midgray*shc)))/log(2.f);
+		float expcomp2 = 0.5f*( (15.5f-histcompr-(2.f*octile[7]-octile[6])) + log(scale/rawmax)/log(2.f) );
+		if(fabs(expcomp1)-fabs(expcomp2)> 1.f) {//for great expcomp
+		expcomp = (expcomp1*fabs(expcomp2)+expcomp2*fabs(expcomp1))/(fabs(expcomp1)+fabs(expcomp2));
+		if (expcomp<0.f) {
 			min(0.0f,max(expcomp1,expcomp2));
-		}*/
-		expcomp = 0.5 * (expcomp1 + expcomp2);
-		float gain = exp(expcomp*log(2));
+		}
+		}
+		else expcomp = 0.5 * (double)expcomp1 + 0.5 *(double) expcomp2;//for small expcomp
+		float gain = exp((float)expcomp*log(2.f));
 
+		float corr = sqrt(gain*scale/rawmax);
+		black = (int) shc*corr;
 
-		gain = /*(median/ave)*/sqrt(gain*scale/rawmax);
-		black = shc*gain;
-		expcomp = log(gain)/log(2.0);//convert to stops
-
-		black = shc*gain;
 
 		//now tune hlcompr to bring back rawmax to 65535
 		hlcomprthresh = 33;
 		//this is a series approximation of the actual formula for comp,
 		//which is a transcendental equation
-		float comp = (gain*((float)whiteclip)/scale - 1)*2;//*(1-shoulder/scale);
-		hlcompr=(int)(100*comp/(max(0.0,expcomp) + 1.0));
+		float comp = (gain*((float)whiteclip)/scale - 1.f)*2.3f;// 2.3 instead of 2 to increase slightly comp
+		hlcompr=(int)(100.*comp/(max(0.0,expcomp) + 1.0));
 		hlcompr = max(0,min(100,hlcompr));
 
 		//now find brightness if gain didn't bring ave to midgray using
 		//the envelope of the actual 'control cage' brightness curve for simplicity
 		float midtmp = gain*sqrt(median*ave)/scale;
-		if (midtmp<0.1) {
+		if (midtmp<0.1f) {
 			bright = (midgray-midtmp)*15.0/(midtmp);
 		} else {
 			bright = (midgray-midtmp)*15.0/(0.10833-0.0833*midtmp);
@@ -3828,23 +3835,42 @@ fclose(f);*/
 		bright = 0.25*/*(median/ave)*(hidev/lodev)*/max(0,bright);
 
 		//compute contrast that spreads the average spacing of octiles
-		contr = 50.0*(1.1-ospread);
+		contr = (int) 50.0f*(1.1f-ospread);
 		contr = max(0,min(100,contr));
+		//take gamma into account
+		double whiteclipg = (int)(CurveFactory::gamma2 (whiteclip * corr / 65536.0) * 65536.0);
+		
+		double gavg = 0.;
+		for (int i=0; i<65536>>histcompr; i++)
+		gavg += histogram[i] * CurveFactory::gamma2((int)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
+		if (black < gavg) {
+		int maxwhiteclip = (gavg - black) * 4 / 3 + black; // dont let whiteclip be such large that the histogram average goes above 3/4
+		if (whiteclipg < maxwhiteclip)
+		 whiteclipg = maxwhiteclip;
+		 }
+		whiteclipg = CurveFactory::igamma2 ((float)(whiteclipg/65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
+		
+		//corection with gamma
+		black = (int)((65535*black)/whiteclipg);
+		//expcomp = log(65535.0 / (whiteclipg)) / log(2.0);
 
 		//diagnostics
 		//printf ("**************** AUTO LEVELS ****************\n");
-		//printf ("gain1= %f   gain2= %f		gain= %f\n",expcomp1,expcomp2,gain);
-		//printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
-		//printf ("average: %f\n",ave);
-		//printf ("median/average: %f\n",median/ave);
-		//printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
-		//printf ("lodev: %f\n",lodev);
-		//printf ("hidev: %f\n",hidev);
-		//printf ("rawmax= %d  whiteclip= %d  gain= %f\n",rawmax,whiteclip,gain);
-
-		//printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);
-		//printf ("ospread= %f\n",ospread);
-
+		 if (settings->verbose) {
+		printf ("expcomp1= %f   expcomp2= %f gain= %f  expcomp=%f\n",expcomp1,expcomp2,gain,expcomp);
+		printf ("expo=%f\n",expo);
+		printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
+		printf ("average: %f\n",ave);
+		printf("comp=%f hlcomp: %i\n",comp, hlcompr);
+		printf ("median/average: %f\n",median/ave);
+		printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
+		printf ("lodev: %f\n",lodev);
+		printf ("hidev: %f\n",hidev);
+		printf ("imax=%d rawmax= %d  whiteclip= %d  gain= %f\n",imax,rawmax,whiteclip,gain);
+		printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);
+		printf ("ospread= %f\n",ospread);
+		printf ("overexp= %i\n",overex);
+		}
 
 		/*
 		 // %%%%%%%%%% LEGACY AUTOEXPOSURE CODE %%%%%%%%%%%%%
@@ -3871,7 +3897,6 @@ fclose(f);*/
 		 expcomp = log(65535.0 / (whiteclipg)) / log(2.0);
 
 		 if (expcomp<0.0)	expcomp = 0.0;*/
-
 		if (expcomp<-5.0)	expcomp = -5.0;
 		if (expcomp>10.0)	expcomp = 10.0;
 	}

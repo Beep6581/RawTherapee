@@ -47,7 +47,7 @@ class Imagefloat : public IImagefloat, public ImageIO {
         Image8*              to8();
         Image16*             to16();
 
-        virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::HRecParams hrp);
+        virtual void         getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp);
 
         virtual const char*  getType     () const { return sImagefloat; }
         virtual int          getBPS      () { return 8*sizeof(float); }

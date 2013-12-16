@@ -145,8 +145,9 @@ void ProcParams::setDefaults () {
     toneCurve.curve2.push_back(DCT_Linear);
     toneCurve.curveMode     = ToneCurveParams::TC_MODE_STD;
     toneCurve.curveMode2    = ToneCurveParams::TC_MODE_STD;
-    
-    labCurve.brightness      = 0;
+    toneCurve.hrenabled = false;
+    toneCurve.method  = "Blend";
+	labCurve.brightness      = 0;
     labCurve.contrast        = 0;
     labCurve.chromaticity    = 0;
     labCurve.avoidcolorshift = true;
@@ -352,8 +353,6 @@ void ProcParams::setDefaults () {
     cacorrection.red  = 0;
     cacorrection.blue = 0;
     
-    hlrecovery.enabled = false;
-    hlrecovery.method  = "Blend";
 
     vignetting.amount = 0;
     vignetting.radius = 50;
@@ -532,6 +531,9 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->toneCurve.hlcompr)    keyFile.set_integer ("Exposure", "HighlightCompr", toneCurve.hlcompr);
     if (!pedited || pedited->toneCurve.hlcomprthresh) keyFile.set_integer ("Exposure", "HighlightComprThreshold", toneCurve.hlcomprthresh);
     if (!pedited || pedited->toneCurve.shcompr)       keyFile.set_integer ("Exposure", "ShadowCompr",             toneCurve.shcompr);
+    // save highlight recovery settings
+    if (!pedited || pedited->toneCurve.hrenabled)     keyFile.set_boolean ("HLRecovery", "Enabled",  toneCurve.hrenabled);
+    if (!pedited || pedited->toneCurve.method)      keyFile.set_string  ("HLRecovery", "Method",   toneCurve.method);
     if (!pedited || pedited->toneCurve.curveMode)  {
         Glib::ustring method;
         switch (toneCurve.curveMode) {
@@ -967,9 +969,6 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->vignetting.centerX)     keyFile.set_integer ("Vignetting Correction", "CenterX", vignetting.centerX);
     if (!pedited || pedited->vignetting.centerY)     keyFile.set_integer ("Vignetting Correction", "CenterY", vignetting.centerY);
 
-    // save highlight recovery settings
-    if (!pedited || pedited->hlrecovery.enabled)     keyFile.set_boolean ("HLRecovery", "Enabled",  hlrecovery.enabled);
-    if (!pedited || pedited->hlrecovery.method)      keyFile.set_string  ("HLRecovery", "Method",   hlrecovery.method);
 
     if (!pedited || pedited->resize.enabled)         keyFile.set_boolean ("Resize", "Enabled",resize.enabled);
     if (!pedited || pedited->resize.scale)           keyFile.set_double  ("Resize", "Scale",  resize.scale);
@@ -1160,6 +1159,7 @@ if (keyFile.has_group ("Exposure")) {
     if (keyFile.has_key ("Exposure", "HighlightCompr")) { toneCurve.hlcompr       = keyFile.get_integer ("Exposure", "HighlightCompr"); if (pedited) pedited->toneCurve.hlcompr = true; }
     if (keyFile.has_key ("Exposure", "HighlightComprThreshold")) { toneCurve.hlcomprthresh = keyFile.get_integer ("Exposure", "HighlightComprThreshold"); if (pedited) pedited->toneCurve.hlcomprthresh = true; }
     if (keyFile.has_key ("Exposure", "ShadowCompr"))    { toneCurve.shcompr       = keyFile.get_integer ("Exposure", "ShadowCompr"); if (pedited) pedited->toneCurve.shcompr = true; }
+    // load highlight recovery settings
     if (toneCurve.shcompr > 100) toneCurve.shcompr = 100; // older pp3 files can have values above 100.
     if (keyFile.has_key ("Exposure", "CurveMode"))      {
         Glib::ustring sMode = keyFile.get_string ("Exposure", "CurveMode");
@@ -1181,6 +1181,10 @@ if (keyFile.has_group ("Exposure")) {
     if (keyFile.has_key ("Exposure", "Curve"))          { toneCurve.curve         = keyFile.get_double_list ("Exposure", "Curve"); if (pedited) pedited->toneCurve.curve = true; }
     if (keyFile.has_key ("Exposure", "Curve2"))         { toneCurve.curve2        = keyFile.get_double_list ("Exposure", "Curve2"); if (pedited) pedited->toneCurve.curve2 = true; }
     }
+}
+if (keyFile.has_group ("HLRecovery")) {
+    if (keyFile.has_key ("HLRecovery", "Enabled"))  { toneCurve.hrenabled  = keyFile.get_boolean ("HLRecovery", "Enabled"); if (pedited) pedited->toneCurve.hrenabled = true; }
+    if (keyFile.has_key ("HLRecovery", "Method"))   { toneCurve.method   = keyFile.get_string  ("HLRecovery", "Method"); if (pedited) pedited->toneCurve.method = true; }
 }
 
     // load channel mixer curve
@@ -1584,11 +1588,6 @@ if (keyFile.has_group ("Vignetting Correction")) {
     if (keyFile.has_key ("Vignetting Correction", "CenterY"))  { vignetting.centerY = keyFile.get_integer ("Vignetting Correction", "CenterY"); if (pedited) pedited->vignetting.centerY = true; }
 }
 
-    // load highlight recovery settings
-if (keyFile.has_group ("HLRecovery")) {
-    if (keyFile.has_key ("HLRecovery", "Enabled"))  { hlrecovery.enabled  = keyFile.get_boolean ("HLRecovery", "Enabled"); if (pedited) pedited->hlrecovery.enabled = true; }
-    if (keyFile.has_key ("HLRecovery", "Method"))   { hlrecovery.method   = keyFile.get_string  ("HLRecovery", "Method"); if (pedited) pedited->hlrecovery.method = true; }
-}
     // load resize settings
 if (keyFile.has_group ("Resize")) {
     if (keyFile.has_key ("Resize", "Enabled"))       { resize.enabled   = keyFile.get_boolean ("Resize", "Enabled"); if (pedited) pedited->resize.enabled = true; }
@@ -1773,6 +1772,8 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& toneCurve.expcomp == other.toneCurve.expcomp
 		&& toneCurve.curveMode == other.toneCurve.curveMode
 		&& toneCurve.curveMode2 == other.toneCurve.curveMode2
+		&& toneCurve.hrenabled == other.toneCurve.hrenabled
+		&& toneCurve.method == other.toneCurve.method
 		&& labCurve.lcurve == other.labCurve.lcurve
 		&& labCurve.acurve == other.labCurve.acurve
 		&& labCurve.bcurve == other.labCurve.bcurve
@@ -1946,8 +1947,6 @@ bool ProcParams::operator== (const ProcParams& other) {
 		&& blackwhite.beforeCurveMode == other.blackwhite.beforeCurveMode
 		&& blackwhite.afterCurveMode == other.blackwhite.afterCurveMode
 		&& blackwhite.autoc == other.blackwhite.autoc
-		&& hlrecovery.enabled == other.hlrecovery.enabled
-		&& hlrecovery.method == other.hlrecovery.method
 		&& resize.scale == other.resize.scale
 		&& resize.appliesTo == other.resize.appliesTo
 		&& resize.method == other.resize.method

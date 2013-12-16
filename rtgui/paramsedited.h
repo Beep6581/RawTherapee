@@ -49,6 +49,9 @@ class ToneCurveParamsEdited {
         bool autoexp;
         bool clip;
         bool expcomp;
+        bool hrenabled;
+        bool method;
+		
 };
 
 class LCurveParamsEdited {
@@ -69,6 +72,10 @@ class LCurveParamsEdited {
         bool hhcurve;
         bool lccurve;
         bool clcurve;
+		
+        bool enabled;
+        bool method;
+		
 };
 
 class RGBCurvesParamsEdited {
@@ -384,14 +391,14 @@ class CACorrParamsEdited {
         bool red;
         bool blue;
 };
-
+/*
 class HRecParamsEdited {
 
     public:
         bool enabled;
         bool method;
 };
-
+*/
 class ResizeParamsEdited {
 
     public:
@@ -503,7 +510,7 @@ class ParamsEdited {
         VignettingParamsEdited        vignetting;
         ChannelMixerParamsEdited      chmixer;
         BlackWhiteParamsEdited        blackwhite;
-        HRecParamsEdited              hlrecovery;
+ //       HRecParamsEdited              hlrecovery;
         ResizeParamsEdited            resize;
         ColorManagementParamsEdited   icm;
         RAWParamsEdited               raw;

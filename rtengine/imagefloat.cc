@@ -106,7 +106,7 @@ Imagefloat* Imagefloat::copy () {
 }
 
 // This is called by the StdImageSource class. We assume that fp images from StdImageSource don't have to deal with gamma
-void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::HRecParams hrp)
+void Imagefloat::getStdImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, bool first, procparams::ToneCurveParams hrp)
 {
 
     // compute channel multipliers

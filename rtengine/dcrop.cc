@@ -114,7 +114,7 @@ void Crop::update (int todo) {
         if (!needsinitupdate)
             setCropSizes (rqcropx, rqcropy, rqcropw, rqcroph, skip, true);
         PreviewProps pp (trafx, trafy, trafw*skip, trafh*skip, skip);
-        parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.hlrecovery, params.icm, params.raw );
+        parent->imgsrc->getImage (parent->currWB, tr, origCrop, pp, params.toneCurve, params.icm, params.raw );
         //ColorTemp::CAT02 (origCrop, &params)	;
 
         //parent->imgsrc->convertColorSpace(origCrop, params.icm);

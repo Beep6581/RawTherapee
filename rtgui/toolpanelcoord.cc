@@ -63,7 +63,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
     pcvignette          = Gtk::manage (new PCVignette ());
     perspective         = Gtk::manage (new PerspCorrection ());
     cacorrection        = Gtk::manage (new CACorrection ());
-    hlrecovery          = Gtk::manage (new HLRecovery ());
+  //  hlrecovery          = Gtk::manage (new HLRecovery ());
     chmixer             = Gtk::manage (new ChMixer ());
     blackwhite          = Gtk::manage (new BlackWhite ());
     resize              = Gtk::manage (new Resize ());
@@ -82,7 +82,7 @@ ToolPanelCoordinator::ToolPanelCoordinator () : ipc(NULL)  {
 
     addPanel (colorPanel, whitebalance,         M("TP_WBALANCE_LABEL"));       toolPanels.push_back (whitebalance);
     addPanel (exposurePanel, toneCurve,         M("TP_EXPOSURE_LABEL"));       toolPanels.push_back (toneCurve);
-    addPanel (exposurePanel, hlrecovery,        M("TP_HLREC_LABEL"));          toolPanels.push_back (hlrecovery);
+//    addPanel (exposurePanel, hlrecovery,        M("TP_HLREC_LABEL"));          toolPanels.push_back (hlrecovery);
     addPanel (colorPanel, vibrance,             M("TP_VIBRANCE_LABEL"));       toolPanels.push_back (vibrance);
     addPanel (colorPanel, chmixer,              M("TP_CHMIXER_LABEL"));        toolPanels.push_back (chmixer);
     addPanel (colorPanel, blackwhite,           M("TP_BWMIX_LABEL"));          toolPanels.push_back (blackwhite);
@@ -365,6 +365,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoExpListener (toneCurve);
         ipc->setAutoCamListener (colorappearance);
         ipc->setAutoBWListener (blackwhite);
+        ipc->setAutoHLListener (toneCurve);
 
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);
@@ -374,7 +375,7 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
     icm->setRawMeta (raw, (const rtengine::ImageData*)pMetaData); 
     lensProf->setRawMeta (raw, pMetaData); 
 
-    hlrecovery->setRaw (raw);
+    toneCurve->setRaw (raw);
     hasChanged = true;
 }
 

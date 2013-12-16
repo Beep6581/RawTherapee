@@ -180,6 +180,8 @@ class Threshold {
 class ToneCurveParams {
 
     public:
+        bool hrenabled;
+		Glib::ustring method;
 
         enum eTCModeId {
             TC_MODE_STD,               // Standard modes, the curve is applied on all component individually
@@ -202,6 +204,7 @@ class ToneCurveParams {
         int         shcompr;
         int         hlcompr;
         int         hlcomprthresh;
+		
 };
 
 /**
@@ -676,13 +679,14 @@ class CACorrParams {
 /**
   * Parameters of the highlight recovery
   */
+  /*
 class HRecParams {
 
     public:
         bool enabled;
        Glib::ustring method;
 };
-
+*/
 /**
   * Parameters of the resizing
   */
@@ -841,7 +845,7 @@ class ProcParams {
         VignettingParams        vignetting;      ///< Lens vignetting correction parameters
         ChannelMixerParams      chmixer;         ///< Channel mixer parameters
         BlackWhiteParams        blackwhite;      ///< Black & White parameters
-        HRecParams              hlrecovery;      ///< Highlight recovery parameters
+ //       HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
         RAWParams               raw;             ///< RAW parameters before demosaicing

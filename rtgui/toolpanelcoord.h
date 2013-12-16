@@ -45,7 +45,7 @@
 #include "resize.h"
 #include "chmixer.h"
 #include "blackwhite.h"
-#include "hlrec.h"
+//#include "hlrec.h"
 #include "cacorrection.h"
 #include "lensprofile.h"
 #include "distortion.h"
@@ -97,7 +97,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         Distortion* distortion;
         PerspCorrection* perspective;
         CACorrection* cacorrection;
-        HLRecovery* hlrecovery;
+  //      HLRecovery* hlrecovery;
         ColorAppearance* colorappearance;
         Vibrance* vibrance;
         ChMixer* chmixer;
