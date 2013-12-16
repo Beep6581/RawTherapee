@@ -7023,7 +7023,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
       }
       break;
     }
-  if (strcmp(make, "Sony") == 0 && table[i].black > 0 && table[i].black < 400) { // RT: arw2 scale fix
+  if (load_raw == &CLASS sony_arw2_load_raw) { // RT: arw2 scale fix
       black <<= 2;
   }
   { /* Check for RawTherapee table overrides and extensions */
