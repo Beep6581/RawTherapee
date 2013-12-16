@@ -202,7 +202,8 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw )
+
+void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw )
 {
     MyMutex::MyLock lock(getImageMutex);
 
@@ -317,7 +318,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				if (!hrp.enabled)
+				if (!hrp.hrenabled)
 				{
 					rtot=CLIP(rtot);
 					gtot=CLIP(gtot);
@@ -341,7 +342,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 				rtot*=rm;
 				gtot*=gm;
 				btot*=bm;
-				if (!hrp.enabled)
+				if (!hrp.hrenabled)
 				{
 					rtot=CLIP(rtot);
 					gtot=CLIP(gtot);
@@ -355,7 +356,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         }
 
 		//process all highlight recovery other than "Color"
-        if (hrp.enabled && hrp.method!="Color")
+        if (hrp.hrenabled && hrp.method!="Color")
 			hlRecovery (hrp.method, line_red, line_grn, line_blue, i, sx1, imwidth, skip, raw, hlmax);
 
         transLine (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, fw);
@@ -1195,10 +1196,10 @@ void RawImageSource::flushRGB() {
     }
 }
 
-void RawImageSource::HLRecovery_Global(HRecParams hrp )
+void RawImageSource::HLRecovery_Global(ToneCurveParams hrp )
 {
 	//color propagation highlight recovery 
-	if (hrp.enabled && hrp.method=="Color"){
+	if (hrp.hrenabled && hrp.method=="Color"){
 		if (settings->verbose) printf ("Applying Highlight Recovery: Color propagation...\n");
 		HLRecovery_inpaint (red,green,blue);
 		rgbSourceModified = true;

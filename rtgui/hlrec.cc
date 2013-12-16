@@ -28,6 +28,8 @@ HLRecovery::HLRecovery () : Gtk::VBox(), FoldableToolPanel(this) {
 
     enabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLE")));
     enabled->set_active (false);
+	enabled->set_tooltip_markup (M("TP_HLREC_ENA_TOOLTIP"));
+	
     pack_start (*enabled);
 
 	method = Gtk::manage (new MyComboBoxText ());
@@ -48,6 +50,27 @@ HLRecovery::HLRecovery () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	show_all ();
 }
+
+int HLChangedUI (void* data) {
+	GThreadLock lock;
+	(static_cast<HLRecovery*>(data))->HLComputed_ ();
+	return 0;
+}
+
+
+
+void HLRecovery::HLChanged  (bool hlrbool){
+
+	nexthlrbool= hlrbool;
+	g_idle_add (HLChangedUI, this);
+}
+bool HLRecovery::HLComputed_ () {
+            enaconn.block (true);
+				enabled->set_active (nexthlrbool);
+            enaconn.block (false);
+	return false;
+}
+
 
 void HLRecovery::read (const ProcParams* pp, const ParamsEdited* pedited) {
     

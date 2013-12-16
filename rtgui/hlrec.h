@@ -23,7 +23,7 @@
 #include "toolpanel.h"
 #include "guiutils.h"
 
-class HLRecovery : public Gtk::VBox, public FoldableToolPanel {
+class HLRecovery : public Gtk::VBox, public FoldableToolPanel, public rtengine::AutoHLListener{
 
   protected:
     Gtk::CheckButton*   enabled;
@@ -31,16 +31,21 @@ class HLRecovery : public Gtk::VBox, public FoldableToolPanel {
     sigc::connection    methconn;
     sigc::connection    enaconn;
     bool                lastEnabled;
+	bool				nexthlrbool;
 
   public:
 
     HLRecovery ();
+//	~HLRecovery ();
+	
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
 
     void setRaw (bool raw);
+	void HLChanged           (bool hlrbool);
+	bool HLComputed_         ();
 
     void enabledChanged     ();
 	void methodChanged		();

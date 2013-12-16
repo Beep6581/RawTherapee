@@ -46,6 +46,8 @@ void ParamsEdited::set (bool v) {
 	toneCurve.autoexp    = v;
 	toneCurve.clip       = v;
 	toneCurve.expcomp    = v;
+	toneCurve.hrenabled   = v;
+	toneCurve.method    = v;
 	labCurve.lcurve      = v;
 	labCurve.acurve      = v;
 	labCurve.bcurve      = v;
@@ -241,8 +243,6 @@ void ParamsEdited::set (bool v) {
 	blackwhite.afterCurveMode  = v;
 	blackwhite.autoc    = v;
 
-	hlrecovery.enabled   = v;
-	hlrecovery.method    = v;
 	resize.scale     = v;
 	resize.appliesTo = v;
 	resize.method    = v;
@@ -325,6 +325,8 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         toneCurve.autoexp = toneCurve.autoexp && p.toneCurve.autoexp == other.toneCurve.autoexp;
         toneCurve.clip = toneCurve.clip && p.toneCurve.clip == other.toneCurve.clip;
         toneCurve.expcomp = toneCurve.expcomp && p.toneCurve.expcomp == other.toneCurve.expcomp;
+        toneCurve.hrenabled = toneCurve.hrenabled && p.toneCurve.hrenabled == other.toneCurve.hrenabled;
+        toneCurve.method = toneCurve.method && p.toneCurve.method == other.toneCurve.method;
         labCurve.lcurve = labCurve.lcurve && p.labCurve.lcurve == other.labCurve.lcurve;
         labCurve.acurve = labCurve.acurve && p.labCurve.acurve == other.labCurve.acurve;
         labCurve.bcurve = labCurve.bcurve && p.labCurve.bcurve == other.labCurve.bcurve;
@@ -523,8 +525,6 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         blackwhite.afterCurve = blackwhite.afterCurve && p.blackwhite.afterCurve == other.blackwhite.afterCurve;
         blackwhite.afterCurveMode = blackwhite.afterCurveMode && p.blackwhite.afterCurveMode == other.blackwhite.afterCurveMode;
         blackwhite.autoc = blackwhite.autoc && p.blackwhite.autoc == other.blackwhite.autoc;
-        hlrecovery.enabled = hlrecovery.enabled && p.hlrecovery.enabled == other.hlrecovery.enabled;
-        hlrecovery.method = hlrecovery.method && p.hlrecovery.method == other.hlrecovery.method;
         resize.scale = resize.scale && p.resize.scale == other.resize.scale;
         resize.appliesTo = resize.appliesTo && p.resize.appliesTo == other.resize.appliesTo;
         resize.method = resize.method && p.resize.method == other.resize.method;
@@ -601,6 +601,8 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (toneCurve.expcomp)		toEdit.toneCurve.expcomp 	= dontforceSet && options.baBehav[ADDSET_TC_EXPCOMP] ? toEdit.toneCurve.expcomp + mods.toneCurve.expcomp : mods.toneCurve.expcomp;
 	if (toneCurve.hlcompr)		toEdit.toneCurve.hlcompr 	= dontforceSet && options.baBehav[ADDSET_TC_HLCOMPAMOUNT] ? toEdit.toneCurve.hlcompr + mods.toneCurve.hlcompr : mods.toneCurve.hlcompr;
 	if (toneCurve.hlcomprthresh) toEdit.toneCurve.hlcomprthresh	= dontforceSet && options.baBehav[ADDSET_TC_HLCOMPTHRESH] ? toEdit.toneCurve.hlcomprthresh + mods.toneCurve.hlcomprthresh : mods.toneCurve.hlcomprthresh;
+	if (toneCurve.hrenabled)	toEdit.toneCurve.hrenabled 	= mods.toneCurve.hrenabled;
+	if (toneCurve.method)		toEdit.toneCurve.method 	= mods.toneCurve.method;
 	if (labCurve.lcurve)		toEdit.labCurve.lcurve 	    = mods.labCurve.lcurve;
 	if (labCurve.acurve)		toEdit.labCurve.acurve 	    = mods.labCurve.acurve;
 	if (labCurve.bcurve)		toEdit.labCurve.bcurve 	    = mods.labCurve.bcurve;
@@ -801,8 +803,6 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (blackwhite.afterCurve)		toEdit.blackwhite.afterCurve		= mods.blackwhite.afterCurve;
 	if (blackwhite.afterCurveMode)	toEdit.blackwhite.afterCurveMode	= mods.blackwhite.afterCurveMode;
 	
-	if (hlrecovery.enabled)	toEdit.hlrecovery.enabled 	= mods.hlrecovery.enabled;
-	if (hlrecovery.method)	toEdit.hlrecovery.method 	= mods.hlrecovery.method;
 	if (resize.scale)		toEdit.resize.scale 	= mods.resize.scale;
 	if (resize.appliesTo)	toEdit.resize.appliesTo = mods.resize.appliesTo;
 	if (resize.method)		toEdit.resize.method 	= mods.resize.method;

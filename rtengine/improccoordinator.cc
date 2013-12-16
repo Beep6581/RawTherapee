@@ -81,7 +81,7 @@ ImProcCoordinator::ImProcCoordinator ()
 
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false)
+      ahlListener(NULL),resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false)
     {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {
@@ -173,8 +173,8 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
     if (   (todo & M_RAW)
         || (!highDetailRawComputed && highDetailNeeded)
-        || ( params.hlrecovery.enabled && params.hlrecovery.method!="Color" && imgsrc->IsrgbSourceModified())
-        || (!params.hlrecovery.enabled && params.hlrecovery.method=="Color" && imgsrc->IsrgbSourceModified()))
+        || ( params.toneCurve.hrenabled && params.toneCurve.method!="Color" && imgsrc->IsrgbSourceModified())
+        || (!params.toneCurve.hrenabled && params.toneCurve.method=="Color" && imgsrc->IsrgbSourceModified()))
     {
 
         if (settings->verbose) printf("Demosaic %s\n",rp.dmethod.c_str());
@@ -183,7 +183,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         if (highDetailNeeded) {
             highDetailRawComputed = true;
-            if (params.hlrecovery.enabled && params.hlrecovery.method=="Color") {
+            if (params.toneCurve.hrenabled && params.toneCurve.method=="Color") {
                 todo |= M_INIT;
             }
         }
@@ -195,8 +195,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (todo & (M_INIT|M_LINDENOISE)) {
         MyMutex::MyLock initLock(minit);  // Also used in crop window
 
-        imgsrc->HLRecovery_Global( params.hlrecovery ); // this handles Color HLRecovery
-
+        imgsrc->HLRecovery_Global( params.toneCurve ); // this handles Color HLRecovery
         if (settings->verbose) printf ("Applying white balance, color correction & sRBG conversion...\n");
         currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
         if (params.wb.method=="Camera")
@@ -234,8 +233,17 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         // Will (re)allocate the preview's buffers
         setScale (scale);
+		bool hlrbool=false;
+		int thresholdHLR=50;
+		 if (settings->verbose) printf("HLredzero=%i   HLgreenzero=%i  HLblurzero=%i \n", histRedRaw[0], histGreenRaw[0], histBlueRaw[0]);
+		 if (settings->verbose) printf("HLredMax=%i   HLgreenMax=%i  HLblueMax=%i \n", histRedRaw[255], histGreenRaw[255], histBlueRaw[255]);
+		if (params.toneCurve.autoexp) {// this enabled HLRecovery
+		//500 arbitrary values to enabled HLrecovery : not to enabled for too low values
+		if(histRedRaw[255]>thresholdHLR || histGreenRaw[255]>thresholdHLR || histBlueRaw[255]>thresholdHLR   || histRedRaw[0]>thresholdHLR || histGreenRaw[0]>thresholdHLR || histBlueRaw[0]>thresholdHLR) {params.toneCurve.hrenabled=true;hlrbool=true;} }
+            if (ahlListener) {if(hlrbool==true) ahlListener->HLChanged (hlrbool);//enabled Highlight recovery
+		}
 
-        imgsrc->getImage (currWB, tr, orig_prev, pp, params.hlrecovery, params.icm, params.raw);
+        imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params)	;
 
         //imgsrc->convertColorSpace(orig_prev, params.icm, params.raw);
@@ -278,6 +286,7 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
             LUTu aehist; int aehistcompr;
+			//histRedRaw, histGreenRaw, histBlueRaw 
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp,
                     params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
@@ -778,7 +787,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	imgsrc->getFullSize (fW, fH, 0);
 	PreviewProps pp (0, 0, fW, fH, 1);
 	ProcParams ppar = params;
-	ppar.hlrecovery.enabled = false;
+	ppar.toneCurve.hrenabled = false;
 	ppar.icm.input = "(none)";
 	Imagefloat* im = new Imagefloat (fW, fH);
 	imgsrc->preprocess( ppar.raw, ppar.lensProf, ppar.coarse );
@@ -804,7 +813,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	}
 	params.wb.temperature = currWB.getTemp ();
 	params.wb.green = currWB.getGreen ();
-	imgsrc->getImage (currWB, 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+	imgsrc->getImage (currWB, 0, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
 	imgsrc->convertColorSpace(im, ppar.icm, currWB, params.raw);
 	Image16* im16 = im->to16();
 	delete im;

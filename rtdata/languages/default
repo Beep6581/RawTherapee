@@ -1176,10 +1176,10 @@ TP_EPD_STRENGTH;Strength
 TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
 TP_EXPOSCORR_LABEL;Raw White & Black Points
 TP_EXPOSURE_AUTOLEVELS;Auto Levels
-TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
+TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis\nEnable Highlight Reconstruction if necessary
 TP_EXPOSURE_BLACKLEVEL;Black
 TP_EXPOSURE_BRIGHTNESS;Lightness
-TP_EXPOSURE_CLIP;Clip
+TP_EXPOSURE_CLIP;Clip %
 TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto level's operation
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight Recovery Threshold
 TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight Recovery Amount
@@ -1221,6 +1221,7 @@ TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
 TP_GRADIENT_LABEL;Graduated Filter
 TP_GRADIENT_STRENGTH;Strength
 TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
+TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation

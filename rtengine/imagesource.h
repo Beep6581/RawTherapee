@@ -67,13 +67,13 @@ class ImageSource : public InitialImage {
         virtual void        demosaic    (const RAWParams &raw){};
         virtual void        flushRawData       (){};
         virtual void        flushRGB           (){};
-        virtual void        HLRecovery_Global  (HRecParams hrp){};
+        virtual void        HLRecovery_Global  (ToneCurveParams hrp){};
         virtual void        HLRecovery_inpaint (float** red, float** green, float** blue){};
 
         virtual bool        IsrgbSourceModified() =0; // tracks whether cached rgb output of demosaic has been modified
 
         // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
-        virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hlp, ColorManagementParams cmp, RAWParams raw) {}
+        virtual void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hlp, ColorManagementParams cmp, RAWParams raw) {}
         // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
         virtual bool        isWBProviderReady () =0;
 

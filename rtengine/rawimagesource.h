@@ -142,7 +142,7 @@ class RawImageSource : public ImageSource {
         void        demosaic    (const RAWParams &raw);
         void        flushRawData      ();
         void        flushRGB          ();
-        void        HLRecovery_Global (HRecParams hrp);
+        void        HLRecovery_Global (ToneCurveParams hrp);
         void        refinement_lassus (int PassCount);
         void        refinement(int PassCount);
 
@@ -152,7 +152,7 @@ class RawImageSource : public ImageSource {
         void        cfaboxblur  (RawImage *riFlatFile, float* cfablur, int boxH, int boxW );
         void        scaleColors (int winx,int winy,int winw,int winh, const RAWParams &raw);// raw for cblack
 
-        void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, HRecParams hrp, ColorManagementParams cmp, RAWParams raw);
+        void        getImage    (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams hrp, ColorManagementParams cmp, RAWParams raw);
         ColorTemp   getWB       () { return camera_wb; }
         void        getAutoWBMultipliers (double &rm, double &gm, double &bm);
         ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal);
