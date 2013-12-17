@@ -7,7 +7,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -109,7 +109,7 @@ class RawImageSource : public ImageSource {
         array2D<float> rawData;  // holds preprocessed pixel values, rowData[i][j] corresponds to the ith row and jth column
 
         // the interpolated green plane:
-        array2D<float> green; 
+        array2D<float> green;
         // the interpolated red plane:
         array2D<float> red;
         // the interpolated blue plane:
@@ -207,7 +207,7 @@ class RawImageSource : public ImageSource {
         inline  void interpolate_row_rb     (float* ar, float* ab, float* pg, float* cg, float* ng, int i);
         inline  void interpolate_row_rb_mul_pp (float* ar, float* ab, float* pg, float* cg, float* ng, int i, double r_mul, double g_mul, double b_mul, int x1, int width, int skip);
 
-        int  LinEqSolve( int nDim, float* pfMatr, float* pfVect, float* pfSolution);//Emil's CA auto correction
+        int  LinEqSolve( int nDim, double* pfMatr, double* pfVect, double* pfSolution);//Emil's CA auto correction
         void CA_correct_RT	(double cared, double cablue);
         void ddct8x8s(int isgn, float a[8][8]);
         void processRawWhitepoint (float expos, float preser);  // exposure before interpolation
