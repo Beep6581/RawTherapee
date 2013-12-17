@@ -3856,7 +3856,7 @@ fclose(f);*/
 
 		//diagnostics
 		//printf ("**************** AUTO LEVELS ****************\n");
-		 if (settings->verbose) {
+	/*	 if (settings->verbose) {
 		printf ("expcomp1= %f   expcomp2= %f gain= %f  expcomp=%f\n",expcomp1,expcomp2,gain,expcomp);
 		printf ("expo=%f\n",expo);
 		printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
@@ -3871,7 +3871,7 @@ fclose(f);*/
 		printf ("ospread= %f\n",ospread);
 		printf ("overexp= %i\n",overex);
 		}
-
+*/
 		/*
 		 // %%%%%%%%%% LEGACY AUTOEXPOSURE CODE %%%%%%%%%%%%%
 		 // black point selection is based on the linear result (yielding better visual results)
