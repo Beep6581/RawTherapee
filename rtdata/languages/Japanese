@@ -1,4 +1,3 @@
-
 ABOUT_TAB_BUILD;ヴァージョン
 ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
@@ -481,6 +480,8 @@ HISTORY_MSG_243;レーヨン
 HISTORY_MSG_244;ビネットフィルター　強さ
 HISTORY_MSG_245;ビネットフィルター　中央
 HISTORY_MSG_246;CLカーブ
+HISTORY_MSG_247;"LH"　カーブ
+HISTORY_MSG_248;"HH"　カーブ
 HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
@@ -989,16 +990,16 @@ TOOLBAR_TOOLTIP_HAND;手の平ツール\nショートカット:  <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>直線選択</b> / <b>角度補正</b>\nショートカット: <b>s</b>\nプレビュー画像上にガイド線を描画し、垂直または水平方向を指示します。回転角度は、ガイド線の隣に表示されます。回転の中心は、プレビュー画像の中心です
 TOOLBAR_TOOLTIP_WB;スポット・ホワイトバランス\nショートカット:  <b>w</b>
 TP_BWMIX_AUTOCH;オート
-TP_BWMIX_AUTOCH_TIP;チャンネルミキサーの最適値を計算
+TP_BWMIX_AUTOCH_TIP;チャンネルミキサーの最適値を計算します
 TP_BWMIX_BLUE;ブルー
 TP_BWMIX_CC_ENABLED;補色の調整
-TP_BWMIX_CC_TOOLTIP;ROYGCBPMモードの中で補色の調整を自動で行う
+TP_BWMIX_CC_TOOLTIP;ROYGCBPMモードの中で補色の調整を自動で行います
 TP_BWMIX_CHANNEL;輝度イコライザー
 TP_BWMIX_CURVEEDITOR1;‘前の‘カーブ
 TP_BWMIX_CURVEEDITOR2;‘後の‘カーブ
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;処理最終段階で白黒変換を施した後のトーンカーブ
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;色の構成を変えるかもしれない\n白黒変換を施す前のトーンカーブ
-TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;色相における明度を習性\n極端な修正はアーティファクトの発生に注意
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;色相における明度を修正\n極端な修正はアーティファクトの発生に注意します
 TP_BWMIX_CYAN;シアン
 TP_BWMIX_FILTER;カラーフィルター
 TP_BWMIX_FILTER_BLUEGREEN;ブルー/グリーン
@@ -1009,7 +1010,7 @@ TP_BWMIX_FILTER_NONE;なし
 TP_BWMIX_FILTER_PURPLE;パープル
 TP_BWMIX_FILTER_REDYELLOW;レッド/イエロー
 TP_BWMIX_FILTER_RED;レッド
-TP_BWMIX_FILTER_TOOLTIP;カラーフィルターはレンズにカラーフィルターを装着して撮影したような効果をもたらす。カラーフィルターは特定の入光色を減らし、特定の明るさを変える。例、レッドフィルターは青空の色を暗くする。
+TP_BWMIX_FILTER_TOOLTIP;カラーフィルターはレンズにカラーフィルターを装着して撮影したような効果をもたらします。カラーフィルターは特定の入光色を減らし、特定の明るさを変えます。例、レッドフィルターは青空の色を暗くします。
 TP_BWMIX_FILTER_YELLOW;イエロー
 TP_BWMIX_GAMMA;ガンマ補正
 TP_BWMIX_GAM_BLUE;ブルーチャンネル
@@ -1026,13 +1027,13 @@ TP_BWMIX_MET_LUMEQUAL;輝度イコライザー
 TP_BWMIX_MIXC;ミキサー
 TP_BWMIX_MIXF;ミキサーフィルター
 TP_BWMIX_NEUTRAL;ミキサーのリセット
-TP_BWMIX_NEUTRAL_TIP;全ての値（フィルター、チャンネルミキサー）をデフォルトに戻す
+TP_BWMIX_NEUTRAL_TIP;全ての値（フィルター、チャンネルミキサー）をデフォルトに戻します
 TP_BWMIX_ORANGE;オレンジ
 TP_BWMIX_PURPLE;パープル
 TP_BWMIX_RED;レッド
 TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
 TP_BWMIX_RGBLABEL_HINT;ミキサーオプションの全てを考慮した最終のRGBファクター\nトータルは実際に適用されたRGBの合計を表示:\n- 常に100％相対モード\n- 絶対モード100％より高い（明るい）、或いは低い（暗い）
-TP_BWMIX_RGB_TOOLTIP;RGBチャンネルをミックス。ガイダンスとしてプリセットを使う。\nマイナス値はアーティファクトの発生や誤った作用を生むことに注意
+TP_BWMIX_RGB_TOOLTIP;RGBチャンネルをミックス。ガイダンスとしてプリセットを使います。\nマイナス値はアーティファクトの発生や誤った作用を起こすかもしれないことに注意します
 TP_BWMIX_SETTING;プリセット
 TP_BWMIX_SETTING_TOOLTIP;異なるプリセット（フィルム調、風景。。。）、或いはチャンネルミキサーのマニュアル設定
 TP_BWMIX_SET_HIGHCONTAST;ハイコントラスト
@@ -1073,7 +1074,7 @@ TP_COLORAPP_ADAPTSCENE;順応輝度 (cd/m2)
 TP_COLORAPP_ADAPTSCENE_TOOLTIP;撮影環境の絶対輝度\n(通常 2000cd/m2)
 TP_COLORAPP_ADAPTVIEWING;順応輝度 (cd/m2)
 TP_COLORAPP_ADAPTVIEWING_TOOLTIP;観視環境の絶対輝度\n(通常 16cd/m2)
-TP_COLORAPP_ADAP_AUTO_TOOLTIP;チェックボックッスが有効の場合（推奨）はRTがExif情報に基づいて最適値を計算します￥nto手動で行う場合はチェックボックスを無効にします
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;チェックボックッスが有効の場合（推奨）はRTがExif情報に基づいて最適値を計算します\n手動で行う場合はチェックボックスを無効にします
 TP_COLORAPP_ALGO;アルゴリズム
 TP_COLORAPP_ALGO_ALL;すべて
 TP_COLORAPP_ALGO_JC;明度 + 色度 (JC)
@@ -1297,6 +1298,7 @@ TP_LABCURVE_BRIGHTNESS;明度
 TP_LABCURVE_BWTONING;白黒トーン
 TP_LABCURVE_BWTONING_TIP;<b>白黒トーン</b> オプションを有効にすると、Lab調整の彩度は無効になります\n色調は <b>a</b> と <b>b</b> カーブで調整することができます
 TP_LABCURVE_CHROMATICITY;色度
+TP_LABCURVE_CHROMA_TOOLTIP;白黒トーンを適用するには、彩度を-100に設定します
 TP_LABCURVE_CONTRAST;コントラスト
 TP_LABCURVE_CURVEEDITOR;Lab 明度カーブ
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;グリーン・純色
@@ -1314,11 +1316,15 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE3;中間色
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;純色
 TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;色度 C=f(C).\n カーブ調整前の色度のヒストグラム\n 最終出力のメイン・ヒストグラムパネルを参照
 TP_LABCURVE_CURVEEDITOR_CH;CH
-TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;色相に応じた色度
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;色相に応じた色度 C=f(H)
 TP_LABCURVE_CURVEEDITOR_CL;CL
 TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;輝度に応じた色度　C=f(L)
+TP_LABCURVE_CURVEEDITOR_HH;HH
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;色相に応じた色相 H=f(H)
 TP_LABCURVE_CURVEEDITOR_LC;LC
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;色度に応じた輝度
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;色度に応じた輝度 L=f(C)
+TP_LABCURVE_CURVEEDITOR_LH;LH
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;色相に応じた輝度 L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;輝度 Lab L=f(L).\n  Labカーブを調整する前のLのヒストグラム\n 最終出力のメイン・ヒストグラムパネルを参照
 TP_LABCURVE_ENABLESATLIMITER;彩度制限・有効
 TP_LABCURVE_LABEL;Lab 調整
@@ -1442,7 +1448,7 @@ TP_SHARPENING_RLD_AMOUNT;適用量
 TP_SHARPENING_RLD_DAMPING;減衰
 TP_SHARPENING_RLD_ITERATIONS;繰返し
 TP_SHARPENING_THRESHOLD;しきい値
-TP_SHARPENING_TOOLTIP;CIECAM02で使用する場合、わずかに異なる効果が期待されます。違いが認められた場合、好みに合わせて調整します
+TP_SHARPENING_TOOLTIP;CIECAM02で使用する場合、わずかに異なる効果が予想されます。違いが認められた場合、好みに合わせて調整します
 TP_SHARPENING_USM;アンシャープマスク
 TP_SHARPENMICRO_AMOUNT;適用量
 TP_SHARPENMICRO_LABEL;マイクロコントラスト (Lab/CIECAM02)
@@ -1540,16 +1546,9 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 #07 a3novy: 2012-07-12, 2012-12-22 (for 4.0.9)
 #08 a3novy: 2013-04-01, 2013-04-19 (for 4.0.10)
 #09 firefly: 2013-09-10, 2013-10-28 (for 4.0.11)
-﻿
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_247;"LH" curve
-!HISTORY_MSG_248;"HH" curve
-!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
-!TP_LABCURVE_CURVEEDITOR_HH;HH
-!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
-!TP_LABCURVE_CURVEEDITOR_LH;LH
-!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
+!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
