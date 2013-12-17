@@ -20,6 +20,7 @@
 #include "iccstore.h"
 #include "dcp.h"
 #include "camconst.h"
+#include "rawimagesource.h"
 #include "improcfun.h"
 #include "improccoordinator.h"
 #include "dfmanager.h"
@@ -45,7 +46,8 @@ int init (const Settings* s, Glib::ustring baseDir, Glib::ustring userSettingsDi
     CameraConstantsStore::initCameraConstants (baseDir, userSettingsDir);
     profileStore.init ();
     ProcParams::init ();
-    Color::init();
+    Color::init ();
+    RawImageSource::init ();
     ImProcFunctions::initCache ();
     Thumbnail::initGamma ();
     delete lcmsMutex;
@@ -61,6 +63,7 @@ void cleanup () {
     Color::cleanup ();
     ImProcFunctions::cleanupCache ();
     Thumbnail::cleanupGamma ();
+    RawImageSource::cleanup ();
 }
 
 StagedImageProcessor* StagedImageProcessor::create (InitialImage* initialImage) {

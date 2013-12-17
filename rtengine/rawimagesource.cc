@@ -1696,6 +1696,48 @@ void RawImageSource::getProfilePreprocParams(cmsHPROFILE in, float& gammaFac, fl
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+static void
+lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
+{
+    float X;
+    float Y;
+    float Z;
+#define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
+    { // convert from Lab to XYZ
+        float x, y, z, fx, fy, fz;
+
+        fy = (L + 16.0f)/116.0f;
+        fx = A/500.0f + fy;
+        fz = fy - B/200.0f;
+
+        if (fy > 24.0f/116.0f) {
+            y = fy*fy*fy;
+        } else {
+            y = (fy - 16.0f/116.0f)/7.787036979f;
+        }
+        if (fx > 24.0f/116.0f) {
+            x = fx*fx*fx;
+        } else {
+            x = (fx - 16.0/116.0)/7.787036979f;
+        }
+        if (fz > 24.0f/116.0f) {
+            z = fz*fz*fz;
+        } else {
+            z = (fz - 16.0f/116.0f)/7.787036979f;
+        }
+        //0.9642, 1.0000, 0.8249 D50
+        X = x * 0.9642;
+        Y = y;
+        Z = z * 0.8249;
+    }
+    r = prophoto_xyz[0][0]*X + prophoto_xyz[0][1]*Y + prophoto_xyz[0][2]*Z;
+    g = prophoto_xyz[1][0]*X + prophoto_xyz[1][1]*Y + prophoto_xyz[1][2]*Z;
+    b = prophoto_xyz[2][0]*X + prophoto_xyz[2][1]*Y + prophoto_xyz[2][2]*Z;
+    r = CLIP01(r);
+    g = CLIP01(g);
+    b = CLIP01(b);
+}
+
 // Converts raw image including ICC input profile to working space - floating point version
 void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams &cmp, ColorTemp &wb, float rawWhitePoint, cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName) {
 
@@ -1704,23 +1746,28 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
     cmsHPROFILE in;
     DCPProfile *dcpProf;
 
-    if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) return;
+    if (!findInputProfile(cmp.input, embedded, camName, &dcpProf, in)) {
+        return;
+    }
 
     if (dcpProf!=NULL) {
+        // DCP processing
         dcpProf->Apply(im, cmp.dcpIlluminant, cmp.working, wb, rawWhitePoint, cmp.toneCurve);
-    } else {
-    // Calculate matrix for direct conversion raw>working space
+        return;
+    }
+
+    if (in==NULL) {
+        // use default camprofile, supplied by dcraw
+        // in this case we avoid using the slllllooooooowwww lcms
+
+        // Calculate matrix for direct conversion raw>working space
         TMatrix work = iccStore->workingSpaceInverseMatrix (cmp.working);
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         for (int i=0; i<3; i++)
-            for (int j=0; j<3; j++) 
-                for (int k=0; k<3; k++) 
+            for (int j=0; j<3; j++)
+                for (int k=0; k<3; k++)
                     mat[i][j] += work[i][k] * camMatrix[k][j]; // rgb_xyz * imatrices.xyz_cam
 
-
-    if (in==NULL) {
-		// use default camprofile, supplied by dcraw
-        // in this case we avoid using the slllllooooooowwww lcms
 
         #pragma omp parallel for
         for (int i=0; i<im->height; i++)
@@ -1736,188 +1783,281 @@ void RawImageSource::colorSpaceConversion (Imagefloat* im, ColorManagementParams
 
             }
     } else {
-        Imagefloat* imgPreLCMS=NULL;
-        if (cmp.blendCMSMatrix) imgPreLCMS=im->copy();
+        const bool working_space_is_prophoto = (cmp.working == "ProPhoto");
 
         // use supplied input profile
-		// color space transform is expecting data in the range (0,1)
-        #pragma omp parallel for
-		for ( int h = 0; h < im->height; ++h )
-			for ( int w = 0; w < im->width; ++w ) {
-				im->r(h,w) /= 65535.0f ;
-				im->g(h,w) /= 65535.0f ;
-				im->b(h,w) /= 65535.0f ;
-			}
 
+        /*
+          The goal here is to in addition to user-made custom ICC profiles also support profiles
+          supplied with other popular raw converters. As curves affect color rendering and
+          different raw converters deal with them differently (and few if any is as flexible
+          as RawTherapee) we cannot really expect to get the *exact* same color rendering here.
+          However we try hard to make the best out of it.
 
-        // Gamma preprocessing
-        float gammaFac, lineFac, lineSum;
-        getProfilePreprocParams(in, gammaFac, lineFac, lineSum);
+          Third-party input profiles that contain a LUT (usually A2B0 tag) often needs some preprocessing,
+          as ICC LUTs are not really designed for dealing with linear camera data. Generally one
+          must apply some sort of curve to get efficient use of the LUTs. Unfortunately how you
+          should preprocess is not standardized so there are almost as many ways as there are
+          software makers, and for each one we have to reverse engineer to find out how it has
+          been done. (The ICC files made for RT has linear LUTs)
 
-        if (gammaFac>0) {
-            #pragma omp parallel for
-		    for ( int h = 0; h < im->height; ++h )
-			    for ( int w = 0; w < im->width; ++w ) {
-				    im->r(h,w) = pow (max(im->r(h,w),0.0f), gammaFac);
-				    im->g(h,w) = pow (max(im->g(h,w),0.0f), gammaFac);
-				    im->b(h,w) = pow (max(im->b(h,w),0.0f), gammaFac);
-			    }
+          ICC profiles which only contain the <r,g,b>XYZ tags (ie only a color matrix) should
+          (hopefully) not require any pre-processing.
+
+          Some LUT ICC profiles apply a contrast curve and desaturate highlights (to give a "film-like"
+          behavior. These will generally work with RawTherapee, but will not produce good results when
+          you enable highlight recovery/reconstruction, as that data is added linearly on top of the
+          original range. RawTherapee works best with linear ICC profiles.
+        */
+
+        enum camera_icc_type {
+            CAMERA_ICC_TYPE_GENERIC, // Generic, no special pre-processing required, RTs own is this way
+            CAMERA_ICC_TYPE_PHASE_ONE, // Capture One profiles
+            CAMERA_ICC_TYPE_LEAF, // Leaf profiles, former Leaf Capture now in Capture One, made for Leaf digital backs
+            CAMERA_ICC_TYPE_NIKON // Nikon NX profiles
+        } camera_icc_type = CAMERA_ICC_TYPE_GENERIC;
+
+        float leaf_prophoto_mat[3][3];
+        { // identify ICC type
+            char copyright[256] = "";
+            char description[256] = "";
+
+            cmsGetProfileInfoASCII(in, cmsInfoCopyright, cmsNoLanguage, cmsNoCountry, copyright, 256);
+            cmsGetProfileInfoASCII(in, cmsInfoDescription, cmsNoLanguage, cmsNoCountry, description, 256);
+            camera_icc_type = CAMERA_ICC_TYPE_GENERIC;
+            // Note: order the identification with the most detailed matching first since the more general ones may also match the more detailed
+            if ((strstr(copyright, "Leaf") != NULL ||
+                 strstr(copyright, "Phase One A/S") != NULL ||
+                 strstr(copyright, "Kodak") != NULL ||
+                 strstr(copyright, "Creo") != NULL) &&
+                (strstr(description,"LF2 ") == description ||
+                 strstr(description,"LF3 ") == description ||
+                 strstr(description,"LeafLF2") == description ||
+                 strstr(description,"LeafLF3") == description ||
+                 strstr(description,"MamiyaLF2") == description ||
+                 strstr(description,"MamiyaLF3") == description))
+            {
+                camera_icc_type = CAMERA_ICC_TYPE_LEAF;
+            } else if (strstr(copyright, "Phase One A/S") != NULL) {
+                camera_icc_type = CAMERA_ICC_TYPE_PHASE_ONE;
+            } else if (strstr(copyright,"Nikon Corporation")!=NULL) {
+                camera_icc_type = CAMERA_ICC_TYPE_NIKON;
+            }
         }
 
-
-	if(settings->gamutICC)  
-	// use Prophoto to apply profil ICC, then converted to cmp.working (sRGB..., Adobe.., Wide..) to avoid color shifts due to relative colorimetric
-	// LCMS use intent for applying profil => suppression of negatives values and > 65535
-	//useful for correcting Munsell Lch
-
-	{ if( settings->verbose ) printf("With Gamut ICC correction float\n");
-		Glib::ustring profi ="ProPhoto";
-        cmsHPROFILE out = iccStore->workingSpace (profi);//Prophoto	
-	TMatrix wprof = iccStore->workingSpaceMatrix (profi);
-	TMatrix wiprof = iccStore->workingSpaceInverseMatrix (cmp.working);//sRGB .. Adobe...Wide...
-	double toxyz[3][3] = {
-        {
-        	( wprof[0][0]),
-        	( wprof[0][1]),
-        	( wprof[0][2])
-        },{
-			( wprof[1][0]		),
-			( wprof[1][1]		),
-			( wprof[1][2]		)
-        },{
-			( wprof[2][0]),
-			( wprof[2][1]),
-			( wprof[2][2])
-        }
-		};
+        // Initialize transform
+        cmsHTRANSFORM hTransform;
+        cmsHPROFILE prophoto = iccStore->workingSpace("ProPhoto"); // We always use Prophoto to apply the ICC profile to minimize problems with clipping in LUT conversion.
+        bool transform_via_pcs_lab = false;
+        bool separate_pcs_lab_highlights = false;
         lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, 
-            INTENT_RELATIVE_COLORIMETRIC,  // float is clipless, so don't trim it
-            cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
-        lcmsMutex->unlock ();
-		if (hTransform) {
-            im->ExecCMSTransform(hTransform);
-		}
-		else {
-          // create the profile from camera
-          lcmsMutex->lock ();
-          hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent,
-              cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety    
-          lcmsMutex->unlock ();
-				
-          im->ExecCMSTransform(hTransform);
-		}
-		Glib::ustring choiceprofile;
-		choiceprofile=cmp.working;
-		if(choiceprofile!="ProPhoto") {
-			#pragma omp parallel for
-			for ( int h = 0; h < im->height; ++h )
-				for ( int w = 0; w < im->width; ++w ) {//convert from Prophoto to XYZ
-					float x, y,z;
-					x = (toxyz[0][0] * im->r(h,w) + toxyz[0][1] * im->g(h,w)  + toxyz[0][2] * im->b(h,w) ) ;
-					y = (toxyz[1][0] * im->r(h,w) + toxyz[1][1] * im->g(h,w)  + toxyz[1][2] * im->b(h,w) ) ;
-					z = (toxyz[2][0] * im->r(h,w) + toxyz[2][1] * im->g(h,w)  + toxyz[2][2] * im->b(h,w) ) ;
-					//convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
-					im->r(h,w) = ((wiprof[0][0]*x + wiprof[0][1]*y + wiprof[0][2]*z)) ;
-					im->g(h,w) = ((wiprof[1][0]*x + wiprof[1][1]*y + wiprof[1][2]*z)) ;
-					im->b(h,w) = ((wiprof[2][0]*x + wiprof[2][1]*y + wiprof[2][2]*z)) ;
-				}
-		}
-			
-		cmsDeleteTransform(hTransform);
-	
-	}
-     else {	
-	 if( settings->verbose ) printf("Without Gamut ICC correction float\n");
-		cmsHPROFILE out = iccStore->workingSpace (cmp.working);	
-
-//        out = iccStore->workingSpaceGamma (wProfile);
-        lcmsMutex->lock ();
-        cmsHTRANSFORM hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, 
-            INTENT_RELATIVE_COLORIMETRIC,  // float is clipless, so don't trim it
-            cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
-        lcmsMutex->unlock ();
-
-        if (hTransform) {
-            // there is an input profile
-            im->ExecCMSTransform(hTransform);
-        } else {
-          // create the profile from camera
-          lcmsMutex->lock ();
-          hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, out, TYPE_RGB_FLT, settings->colorimetricIntent,
-              cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety    
-          lcmsMutex->unlock ();
-
-          im->ExecCMSTransform(hTransform);
-        }
-
-        cmsDeleteTransform(hTransform);
-		}
-		
-		// restore normalization to the range (0,65535) and blend matrix colors if LCMS is clipping
-        const float RecoverTresh = 65535.0 * 0.98;  // just the last few percent highlights are merged
-        #pragma omp parallel for
-		for ( int h = 0; h < im->height; ++h )
-			for ( int w = 0; w < im->width; ++w ) {
-               
-                // There might be Nikon postprocessings
-                if (lineSum>0) {
-                    im->r(h,w) *= im->r(h,w) * lineFac + lineSum;
-                    im->g(h,w) *= im->g(h,w) * lineFac + lineSum;
-                    im->b(h,w) *= im->b(h,w) * lineFac + lineSum;
-                }
-
-				im->r(h,w) *= 65535.0 ;
-				im->g(h,w) *= 65535.0 ;
-				im->b(h,w) *= 65535.0 ;
-
-                if (cmp.blendCMSMatrix) {
-                    // Red
-                    float red=im->r(h,w);
-                    if (red>RecoverTresh) {
-                        float matrixRed = mat[0][0]*imgPreLCMS->r(h,w) + mat[0][1]*imgPreLCMS->g(h,w) + mat[0][2]*imgPreLCMS->b(h,w);
-
-                        if (red>=65535.0)
-                            im->r(h,w) = matrixRed;
-                        else {
-                            float fac = (red - RecoverTresh) / (65535.0 - RecoverTresh);
-                            im->r(h,w) = (1.0-fac) * red + fac * matrixRed;
-                        }
-                    }
-
-                    // Green
-                    float green=im->g(h,w);
-                    if (green>RecoverTresh) {
-                        float matrixGreen = mat[1][0]*imgPreLCMS->r(h,w) + mat[1][1]*imgPreLCMS->g(h,w) + mat[1][2]*imgPreLCMS->b(h,w);
-
-                        if (green>=65535.0)
-                            im->g(h,w) = matrixGreen;
-                        else {
-                            float fac = (green - RecoverTresh) / (65535.0 - RecoverTresh);
-                            im->g(h,w) = (1.0-fac) * green + fac * matrixGreen;
-                        }
-                    }
-
-
-                    // Blue
-                    float blue=im->b(h,w);
-                    if (blue>RecoverTresh) {
-                        float matrixBlue = mat[2][0]*imgPreLCMS->r(h,w) + mat[2][1]*imgPreLCMS->g(h,w) + mat[2][2]*imgPreLCMS->b(h,w);
-
-                        if (blue>=65535.0)
-                            im->b(h,w) = matrixBlue;
-                        else {
-                            float fac = (blue - RecoverTresh) / (65535.0 - RecoverTresh);
-                            im->b(h,w) = (1.0-fac) * blue + fac * matrixBlue;
-                        }
-                    }
+        switch (camera_icc_type) {
+        case CAMERA_ICC_TYPE_PHASE_ONE:
+        case CAMERA_ICC_TYPE_LEAF: {
+            // These profiles have a RGB to Lab cLUT, gives gamma 1.8 output, and expects a "film-like" curve on input
+            transform_via_pcs_lab = true;
+            separate_pcs_lab_highlights = true;
+            // We transform to Lab because we can and that we avoid getting an unnecessary unmatched gamma conversion which we would need to revert.
+            hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, NULL, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+            for (int i=0; i<3; i++) {
+                for (int j=0; j<3; j++) {
+                    leaf_prophoto_mat[i][j] = 0;
+                    for (int k=0; k<3; k++)
+                        leaf_prophoto_mat[i][j] += prophoto_xyz[i][k] * camMatrix[k][j];
                 }
             }
+            break;
+        }
+        case CAMERA_ICC_TYPE_NIKON:
+        case CAMERA_ICC_TYPE_GENERIC:
+        default:
+            hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is important for thread safety
+            break;
+        }
 
-        if (imgPreLCMS!=NULL) delete imgPreLCMS;
+        lcmsMutex->unlock ();
+        if (hTransform == NULL) {
+            // Fallback: create transform from camera profile. Should not happen normally.
+            lcmsMutex->lock ();
+            hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );
+            lcmsMutex->unlock ();
+        }
+        TMatrix toxyz, torgb;
+        if (!working_space_is_prophoto) {
+            toxyz = iccStore->workingSpaceMatrix ("ProPhoto");
+            torgb = iccStore->workingSpaceInverseMatrix (cmp.working); //sRGB .. Adobe...Wide...
+        }
+
+        #ifdef _OPENMP
+        #pragma omp parallel
+        #endif
+        {
+            AlignedBuffer<float> buffer(im->width*3);
+            AlignedBuffer<float> hl_buffer(im->width*3);
+            AlignedBuffer<float> hl_scale(im->width);
+            #ifdef _OPENMP
+            #pragma omp for schedule(static)
+            #endif
+            for ( int h = 0; h < im->height; ++h ) {
+                float *p=buffer.data, *pR=im->r(h), *pG=im->g(h), *pB=im->b(h);
+
+                // Apply pre-processing
+                for ( int w = 0; w < im->width; ++w ) {
+                    float r = *(pR++);
+                    float g = *(pG++);
+                    float b = *(pB++);
+
+                    // convert to 0-1 range as LCMS expects that
+                    r /= 65535.0f;
+                    g /= 65535.0f;
+                    b /= 65535.0f;
+
+                    float maxc = max(r,g,b);
+                    if (maxc <= 1.0) {
+                        hl_scale.data[w] = 1.0;
+                    } else {
+                        // highlight recovery extend the range past the clip point, which means we can get values larger than 1.0 here.
+                        // LUT ICC profiles only work in the 0-1 range so we scale down to fit and restore after conversion.
+                        hl_scale.data[w] = 1.0 / maxc;
+                        r *= hl_scale.data[w];
+                        g *= hl_scale.data[w];
+                        b *= hl_scale.data[w];
+                    }
+
+                    switch (camera_icc_type) {
+                    case CAMERA_ICC_TYPE_PHASE_ONE:
+                        // Here we apply a curve similar to Capture One's "Film Standard" + gamma, the reason is that the LUTs embedded in the
+                        // ICCs are designed to work on such input, and if you provide it with a different curve you don't get as good result.
+                        // We will revert this curve after we've made the color transform. However when we revert the curve, we'll notice that
+                        // highlight rendering suffers due to that the LUT transform don't expand well, therefore we do a less compressed
+                        // conversion too and mix them, this gives us the highest quality and most flexible result.
+                        hl_buffer.data[3*w+0] = pow_F(r, 1.0/1.8);
+                        hl_buffer.data[3*w+1] = pow_F(g, 1.0/1.8);
+                        hl_buffer.data[3*w+2] = pow_F(b, 1.0/1.8);
+                        r = phaseOneIccCurveInv->getVal(r);
+                        g = phaseOneIccCurveInv->getVal(g);
+                        b = phaseOneIccCurveInv->getVal(b);
+                        break;
+                    case CAMERA_ICC_TYPE_LEAF: {
+                        // Leaf profiles expect that the camera native RGB has been converted to Prophoto RGB
+                        float newr = leaf_prophoto_mat[0][0]*r + leaf_prophoto_mat[0][1]*g + leaf_prophoto_mat[0][2]*b;
+                        float newg = leaf_prophoto_mat[1][0]*r + leaf_prophoto_mat[1][1]*g + leaf_prophoto_mat[1][2]*b;
+                        float newb = leaf_prophoto_mat[2][0]*r + leaf_prophoto_mat[2][1]*g + leaf_prophoto_mat[2][2]*b;
+                        hl_buffer.data[3*w+0] = pow_F(newr, 1.0/1.8);
+                        hl_buffer.data[3*w+1] = pow_F(newg, 1.0/1.8);
+                        hl_buffer.data[3*w+2] = pow_F(newb, 1.0/1.8);
+                        r = phaseOneIccCurveInv->getVal(newr);
+                        g = phaseOneIccCurveInv->getVal(newg);
+                        b = phaseOneIccCurveInv->getVal(newb);
+                        break;
+                    }
+                    case CAMERA_ICC_TYPE_NIKON:
+                        // gamma 0.5
+                        r = sqrtf(r);
+                        g = sqrtf(g);
+                        b = sqrtf(b);
+                        break;
+                    case CAMERA_ICC_TYPE_GENERIC:
+                    default:
+                        // do nothing
+                        break;
+                    }
+
+                    *(p++) = r; *(p++) = g; *(p++) = b;
+                }
+
+                // Run icc transform
+                cmsDoTransform (hTransform, buffer.data, buffer.data, im->width);
+                if (separate_pcs_lab_highlights) {
+                    cmsDoTransform (hTransform, hl_buffer.data, hl_buffer.data, im->width);
+                }
+
+                // Apply post-processing
+                p=buffer.data; pR=im->r(h); pG=im->g(h); pB=im->b(h);
+                for ( int w = 0; w < im->width; ++w ) {
+
+                    float r, g, b, hr, hg, hb;
+
+                    if (transform_via_pcs_lab) {
+                        float L = *(p++);
+                        float A = *(p++);
+                        float B = *(p++);
+                        // profile connection space CIELAB should have D50 illuminant
+                        lab2ProphotoRgbD50(L, A, B, r, g, b);
+                        if (separate_pcs_lab_highlights) {
+                            lab2ProphotoRgbD50(hl_buffer.data[3*w+0], hl_buffer.data[3*w+1], hl_buffer.data[3*w+2], hr, hg, hb);
+                        }
+                    } else {
+                        r = *(p++);
+                        g = *(p++);
+                        b = *(p++);
+                    }
+
+                    // restore pre-processing and/or add post-processing for the various ICC types
+                    switch (camera_icc_type) {
+                    default:
+                        break;
+                    case CAMERA_ICC_TYPE_PHASE_ONE:
+                    case CAMERA_ICC_TYPE_LEAF: {
+                        // note the 1/1.8 gamma, it's the gamma that the profile has applied, which we must revert before we can revert the curve
+                        r = phaseOneIccCurve->getVal(pow_F(r, 1.0/1.8));
+                        g = phaseOneIccCurve->getVal(pow_F(g, 1.0/1.8));
+                        b = phaseOneIccCurve->getVal(pow_F(b, 1.0/1.8));
+                        const float mix = 0.25; // may seem a low number, but remember this is linear space, mixing starts 2 stops from clipping
+                        const float maxc = max(r, g, b);
+                        if (maxc > mix) {
+                            float fac = (maxc - mix) / (1.0 - mix);
+                            fac = sqrtf(sqrtf(fac)); // gamma 0.25 to mix in highlight render relatively quick
+                            r = (1.0-fac) * r + fac * hr;
+                            g = (1.0-fac) * g + fac * hg;
+                            b = (1.0-fac) * b + fac * hb;
+                        }
+                        break;
+                    }
+                    case CAMERA_ICC_TYPE_NIKON: {
+                        const float lineFac = -0.4;
+                        const float lineSum = 1.35;
+                        r *= r * lineFac + lineSum;
+                        g *= g * lineFac + lineSum;
+                        b *= b * lineFac + lineSum;
+                        break;
+                    }
+                    }
+
+                    // restore highlight scaling if any
+                    if (hl_scale.data[w] != 1.0) {
+                        float fac = 1.0 / hl_scale.data[w];
+                        r *= fac;
+                        g *= fac;
+                        b *= fac;
+                    }
+
+                    // If we don't have ProPhoto as chosen working profile, convert. This conversion is clipless, ie if we convert
+                    // to a small space such as sRGB we may end up with negative values and values larger than max.
+                    if (!working_space_is_prophoto) {
+                        //convert from Prophoto to XYZ
+                        float x = (toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b ) ;
+                        float y = (toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b ) ;
+                        float z = (toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b ) ;
+                        //convert from XYZ to cmp.working  (sRGB...Adobe...Wide..)
+                        r = ((torgb[0][0]*x + torgb[0][1]*y + torgb[0][2]*z)) ;
+                        g = ((torgb[1][0]*x + torgb[1][1]*y + torgb[1][2]*z)) ;
+                        b = ((torgb[2][0]*x + torgb[2][1]*y + torgb[2][2]*z)) ;
+                    }
+
+                    // return to the 0.0 - 65535.0 range (with possible negative and > max values present)
+                    r *= 65535.0;
+                    g *= 65535.0;
+                    b *= 65535.0;
+
+                    *(pR++) = r; *(pG++) = g; *(pB++) = b;
+                }
+            }
+        } // End of parallelization
+        cmsDeleteTransform(hTransform);
     }
-    }
-        //t3.set ();
+    
+//t3.set ();
 //        printf ("ICM TIME: %d\n", t3.etime(t1));
 }
 
@@ -2698,7 +2838,53 @@ void RawImageSource::inverse33 (const double (*rgb_cam)[3], double (*cam_rgb)[3]
 	cam_rgb[2][1] = -(rgb_cam[0][1]*rgb_cam[2][0]-rgb_cam[0][0]*rgb_cam[2][1]) / nom;
 	cam_rgb[2][2] = (rgb_cam[0][1]*rgb_cam[1][0]-rgb_cam[0][0]*rgb_cam[1][1]) / nom;
 }
-	
+
+DiagonalCurve* RawImageSource::phaseOneIccCurve;
+DiagonalCurve* RawImageSource::phaseOneIccCurveInv;
+
+void RawImageSource::init () {
+
+    { // Initialize Phase One ICC curves
+
+        /* This curve is derived from TIFFTAG_TRANSFERFUNCTION of a Capture One P25+ image with applied film curve,
+           exported to TIFF with embedded camera ICC. It's assumed to be similar to most standard curves in
+           Capture One. It's not necessary to be exactly the same, it's just to be close to a typical curve to
+           give the Phase One ICC files a good working space. */
+        const double phase_one_forward[] = {
+            0.0000000000, 0.0000000000, 0.0152590219, 0.0029602502, 0.0305180438, 0.0058899825, 0.0457770657, 0.0087739376, 0.0610360876, 0.0115968566,
+            0.0762951095, 0.0143587396, 0.0915541314, 0.0171969177, 0.1068131533, 0.0201876860, 0.1220721752, 0.0232852674, 0.1373311971, 0.0264744030,
+            0.1525902190, 0.0297245747, 0.1678492409, 0.0330205234, 0.1831082628, 0.0363775082, 0.1983672847, 0.0397802701, 0.2136263066, 0.0432593271,
+            0.2288853285, 0.0467841611, 0.2441443503, 0.0503700313, 0.2594033722, 0.0540474556, 0.2746623941, 0.0577859159, 0.2899214160, 0.0616159304,
+            0.3051804379, 0.0655222400, 0.3204394598, 0.0695353628, 0.3356984817, 0.0736552987, 0.3509575036, 0.0778973068, 0.3662165255, 0.0822461280,
+            0.3814755474, 0.0867170214, 0.3967345693, 0.0913252461, 0.4119935912, 0.0960860609, 0.4272526131, 0.1009994659, 0.4425116350, 0.1060654612,
+            0.4577706569, 0.1113298238, 0.4730296788, 0.1167925536, 0.4882887007, 0.1224841688, 0.5035477226, 0.1284046693, 0.5188067445, 0.1345540551,
+            0.5340657664, 0.1409781033, 0.5493247883, 0.1476615549, 0.5645838102, 0.1546501869, 0.5798428321, 0.1619287404, 0.5951018540, 0.1695277333,
+            0.6103608759, 0.1774776837, 0.6256198978, 0.1858091096, 0.6408789197, 0.1945525292, 0.6561379416, 0.2037384604, 0.6713969635, 0.2134279393,
+            0.6866559854, 0.2236667430, 0.7019150072, 0.2345159075, 0.7171740291, 0.2460517281, 0.7324330510, 0.2583047227, 0.7476920729, 0.2714122225,
+            0.7629510948, 0.2854352636, 0.7782101167, 0.3004959182, 0.7934691386, 0.3167620356, 0.8087281605, 0.3343862058, 0.8239871824, 0.3535820554,
+            0.8392462043, 0.3745937285, 0.8545052262, 0.3977111467, 0.8697642481, 0.4232547494, 0.8850232700, 0.4515754940, 0.9002822919, 0.4830701152,
+            0.9155413138, 0.5190966659, 0.9308003357, 0.5615320058, 0.9460593576, 0.6136263066, 0.9613183795, 0.6807965209, 0.9765774014, 0.7717402914,
+            0.9918364233, 0.9052109560, 1.0000000000, 1.0000000000
+        };
+        std::vector<double> cForwardPoints;
+        cForwardPoints.push_back(double(DCT_Spline));  // The first value is the curve type
+        std::vector<double> cInversePoints;
+        cInversePoints.push_back(double(DCT_Spline));  // The first value is the curve type
+        for (int i = 0; i < sizeof(phase_one_forward)/sizeof(phase_one_forward[0]); i += 2) {
+            cForwardPoints.push_back(phase_one_forward[i+0]);
+            cForwardPoints.push_back(phase_one_forward[i+1]);
+            cInversePoints.push_back(phase_one_forward[i+1]);
+            cInversePoints.push_back(phase_one_forward[i+0]);
+        }
+        phaseOneIccCurve = new DiagonalCurve(cForwardPoints, CURVES_MIN_POLY_POINTS);
+        phaseOneIccCurveInv = new DiagonalCurve(cInversePoints, CURVES_MIN_POLY_POINTS);
+    }
+}
+
+void RawImageSource::cleanup () {
+    delete phaseOneIccCurve;
+    delete phaseOneIccCurveInv;
+}
 	
 	
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

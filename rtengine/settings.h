@@ -47,7 +47,7 @@ namespace rtengine {
 			Glib::ustring   srgb;					// default name of SRGB space profile
 			Glib::ustring   srgb10;					// default name of SRGB space profile
 			
-			bool            gamutICC;
+			bool            gamutICC; // no longer used
 			bool            gamutLch;
 			bool			ciecamfloat;
 			int				amchroma;

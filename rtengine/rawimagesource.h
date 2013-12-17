@@ -63,6 +63,8 @@ template<class T> void freeArray2 (T** a, int H) {
 class RawImageSource : public ImageSource {
 
     private:
+        static DiagonalCurve *phaseOneIccCurve;
+        static DiagonalCurve *phaseOneIccCurveInv;
         static LUTf invGrad;  // for fast_demosaic
         static LUTf initInvGrad ();
         static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
@@ -195,6 +197,8 @@ class RawImageSource : public ImageSource {
         static void HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval);
         static void HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval, double cam[3][3], double icam[3][3]);
         static void HLRecovery_blend (float* rin, float* gin, float* bin, int width, float maxval, float* pre_mul, const RAWParams &raw, float* hlmax);
+	static void init ();
+	static void cleanup ();
 
     protected:
         typedef unsigned short ushort;

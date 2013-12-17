@@ -710,7 +710,7 @@ class ColorManagementParams {
     public:
         Glib::ustring input;
         bool          toneCurve;
-        bool          blendCMSMatrix;
+        bool          blendCMSMatrix; // setting no longer used
         int dcpIlluminant;
         Glib::ustring working;
         Glib::ustring output;
