@@ -2434,6 +2434,7 @@ void CLASS sony_arw2_load_raw()
   }
   free (data);
   maximum = curve[0x7ff << 1]; // RT: fix maximum.
+  maximum = 16300; // RT: conservative white level tested on various ARW2 cameras. This constant was set in 2013-12-17, may need re-evaluation in the future.
 }
 
 void CLASS samsung_load_raw()
