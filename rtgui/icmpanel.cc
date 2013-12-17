@@ -107,7 +107,8 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
     ckbBlendCMSMatrix = Gtk::manage (new Gtk::CheckButton (M("TP_ICM_BLENDCMSMATRIX")));
     ckbBlendCMSMatrix->set_sensitive (false);
     ckbBlendCMSMatrix->set_tooltip_text (M("TP_ICM_BLENDCMSMATRIX_TOOLTIP"));
-    iVBox->pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 2);
+    // blend cms matrix no longer used
+    //iVBox->pack_start (*ckbBlendCMSMatrix, Gtk::PACK_SHRINK, 2);
 
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
     saveRef->set_image (*Gtk::manage (new RTImage ("gtk-save-large.png")));
