@@ -63,7 +63,6 @@ namespace rtengine {
 		if (lastlevel==0) return;
 		
 		int level;
-		array2D<float> buffer (srcwidth, srcheight, ARRAY2D_CLEAR_DATA);
 		
 		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
 
@@ -85,17 +84,8 @@ namespace rtengine {
 			level ++;
 		}
 		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		//initiate buffer for final image
-		for(int i = 0; i < srcheight; i++)
-			for(int j = 0; j < srcwidth; j++) {
-				//copy pixels
-				buffer[i][j] = dirpyrlo[lastlevel-1][i][j];
-			}
-		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		
+		// with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
+		float ** buffer = dirpyrlo[lastlevel-1];
 		
 		for(int level = lastlevel - 1; level > 0; level--)
 		{
@@ -136,8 +126,7 @@ namespace rtengine {
 		if (lastlevel==0) return;
 		
 		int level;
-		array2D<float> buffer (srcwidth, srcheight, ARRAY2D_CLEAR_DATA);
-		
+	
 		multi_array2D<float,maxlevel> dirpyrlo (srcwidth, srcheight);
 
 		level = 0;
@@ -158,17 +147,9 @@ namespace rtengine {
 			level ++;
 		}
 		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		//initiate buffer for final image
-		for(int i = 0; i < srcheight; i++)
-			for(int j = 0; j < srcwidth; j++) {
-				//copy pixels
-				buffer[i][j] = dirpyrlo[lastlevel-1][i][j];
-			}
 		
-		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		
+		// with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
+		float ** buffer = dirpyrlo[lastlevel-1];
 		
 		for(int level = lastlevel - 1; level > 0; level--)
 		{
