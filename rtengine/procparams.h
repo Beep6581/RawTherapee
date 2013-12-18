@@ -740,7 +740,8 @@ class DirPyrEqualizerParams {
 	
 	public:
 		bool enabled;
-		double mult[8];
+		double mult[5];
+		double threshold;
 };
 	
 /**

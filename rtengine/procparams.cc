@@ -420,11 +420,11 @@ void ProcParams::setDefaults () {
     icm.freegamma = false;
   
     dirpyrequalizer.enabled = false;
-    for(int i = 0; i < 4; i ++)
+    for(int i = 0; i < 5; i ++)
     {
         dirpyrequalizer.mult[i] = 1.0;
     }
-    dirpyrequalizer.mult[4] = 0.2;
+    dirpyrequalizer.threshold = 0.2;
     hsvequalizer.hcurve.clear ();
     hsvequalizer.hcurve.push_back (FCT_Linear);
     hsvequalizer.scurve.clear ();
@@ -953,10 +953,10 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->gradient.centerY)       keyFile.set_integer ("Gradient", "CenterY", gradient.centerY);
 
     // save post-crop vignette
-    if (!pedited || pedited->pcvignette.enabled)       keyFile.set_boolean ("PCVignette", "Enabled", pcvignette.enabled);
-    if (!pedited || pedited->pcvignette.strength)      keyFile.set_double  ("PCVignette", "Strength", pcvignette.strength);
-    if (!pedited || pedited->pcvignette.feather)       keyFile.set_integer ("PCVignette", "Feather", pcvignette.feather);
-    if (!pedited || pedited->pcvignette.roundness)     keyFile.set_integer ("PCVignette", "Roundness", pcvignette.roundness);
+    if (!pedited || pedited->pcvignette.enabled)     keyFile.set_boolean ("PCVignette", "Enabled", pcvignette.enabled);
+    if (!pedited || pedited->pcvignette.strength)    keyFile.set_double  ("PCVignette", "Strength", pcvignette.strength);
+    if (!pedited || pedited->pcvignette.feather)     keyFile.set_integer ("PCVignette", "Feather", pcvignette.feather);
+    if (!pedited || pedited->pcvignette.roundness)   keyFile.set_integer ("PCVignette", "Roundness", pcvignette.roundness);
 
     // save C/A correction
     if (!pedited || pedited->cacorrection.red)       keyFile.set_double  ("CACorrection", "Red",  cacorrection.red);
@@ -982,11 +982,11 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
     if (!pedited || pedited->icm.input)              keyFile.set_string  ("Color Management", "InputProfile",   relativePathIfInside(fname, fnameAbsolute, icm.input));
     if (!pedited || pedited->icm.toneCurve)          keyFile.set_boolean ("Color Management", "ToneCurve",   icm.toneCurve);
     if (!pedited || pedited->icm.blendCMSMatrix)     keyFile.set_boolean ("Color Management", "BlendCMSMatrix",   icm.blendCMSMatrix);
-    if (!pedited || pedited->icm.dcpIlluminant)   keyFile.set_integer ("Color Management", "DCPIlluminant",   icm.dcpIlluminant);
+    if (!pedited || pedited->icm.dcpIlluminant)      keyFile.set_integer ("Color Management", "DCPIlluminant",   icm.dcpIlluminant);
     if (!pedited || pedited->icm.working)            keyFile.set_string  ("Color Management", "WorkingProfile", icm.working);
     if (!pedited || pedited->icm.output)             keyFile.set_string  ("Color Management", "OutputProfile",  icm.output);
     if (!pedited || pedited->icm.gamma)              keyFile.set_string  ("Color Management", "Gammafree",  icm.gamma);
-    if (!pedited || pedited->icm.freegamma)          keyFile.set_boolean  ("Color Management", "Freegamma",  icm.freegamma);
+    if (!pedited || pedited->icm.freegamma)          keyFile.set_boolean ("Color Management", "Freegamma",  icm.freegamma);
     if (!pedited || pedited->icm.gampos)             keyFile.set_double  ("Color Management", "GammaValue",  icm.gampos);
     if (!pedited || pedited->icm.slpos)              keyFile.set_double  ("Color Management", "GammaSlope",  icm.slpos);
     
@@ -998,6 +998,7 @@ int ProcParams::save (Glib::ustring fname, Glib::ustring fname2, bool fnameAbsol
         ss << "Mult" << i;
         if (!pedited || pedited->dirpyrequalizer.mult[i]) keyFile.set_double("Directional Pyramid Equalizer", ss.str(), dirpyrequalizer.mult[i]);
     }
+    if (!pedited || pedited->dirpyrequalizer.threshold) keyFile.set_double ("Directional Pyramid Equalizer", "Threshold", dirpyrequalizer.threshold);
 
     // save hsv equalizer parameters
     if (!pedited || pedited->hsvequalizer.hcurve) {
@@ -1617,10 +1618,25 @@ if (keyFile.has_group ("Color Management")) {
     // load directional pyramid equalizer parameters
 if (keyFile.has_group ("Directional Pyramid Equalizer")) {
     if (keyFile.has_key ("Directional Pyramid Equalizer", "Enabled")) { dirpyrequalizer.enabled = keyFile.get_boolean ("Directional Pyramid Equalizer", "Enabled"); if (pedited) pedited->dirpyrequalizer.enabled = true; }
-    for(int i = 0; i < 5; i ++) {
-        std::stringstream ss;
-        ss << "Mult" << i;
-        if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) { dirpyrequalizer.mult[i] = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i] = true; }
+    if (ppVersion < 316) {
+        for(int i = 0; i < 5; i ++) {
+            std::stringstream ss;
+            ss << "Mult" << i;
+            if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) {
+                if(i==4) { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.threshold = true; }
+                else     { dirpyrequalizer.mult[i]   = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i]   = true; }
+            }
+        }
+        dirpyrequalizer.mult[4] = 1.0;
+    }
+    else {
+        // 5 level equalizer + dedicated threshold parameter
+        for(int i = 0; i < 5; i ++) {
+            std::stringstream ss;
+            ss << "Mult" << i;
+            if(keyFile.has_key ("Directional Pyramid Equalizer", ss.str())) { dirpyrequalizer.mult[i]  = keyFile.get_double ("Directional Pyramid Equalizer", ss.str()); if (pedited) pedited->dirpyrequalizer.mult[i]   = true; }
+        }
+        if(keyFile.has_key ("Directional Pyramid Equalizer", "Threshold")) { dirpyrequalizer.threshold = keyFile.get_double ("Directional Pyramid Equalizer", "Threshold"); if (pedited) pedited->dirpyrequalizer.threshold = true; }
     }
 }
 
@@ -1743,6 +1759,9 @@ bool operator==(const DirPyrEqualizerParams & a, const DirPyrEqualizerParams & b
 		if(a.mult[i] != b.mult[i])
 			return false;
 	}
+	if (a.threshold != b.threshold)
+		return false;
+
 	return true;
 }
 

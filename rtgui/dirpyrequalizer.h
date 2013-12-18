@@ -31,6 +31,7 @@ protected:
 
     Gtk::CheckButton * enabled;
     Adjuster* multiplier[5]; 
+    Adjuster* threshold;
 
     sigc::connection enaConn;
     sigc::connection lumaneutralPressedConn;
@@ -48,7 +49,7 @@ public:
     void write               (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
     void setDefaults         (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode        (bool batchMode);
-    void setAdjusterBehavior (bool multiplieradd);
+    void setAdjusterBehavior (bool multiplieradd, bool thresholdadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 
     void adjusterChanged (Adjuster* a, double newval);
