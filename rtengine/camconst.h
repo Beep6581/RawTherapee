@@ -17,6 +17,8 @@ class CameraConst {
   private:
     Glib::ustring make_model;
     short dcraw_matrix[12];
+    int raw_crop[4];
+    int raw_mask[8][4];
     int white_max;
     std::map<int, struct camera_const_levels> mLevels[2];
     std::map<float, float> mApertureScaling;
@@ -32,6 +34,10 @@ class CameraConst {
     bool has_dcrawMatrix(void);
     void update_dcrawMatrix(const short *other);
     const short *get_dcrawMatrix(void);
+    bool has_rawCrop(void);
+    void get_rawCrop(int& left_margin, int& top_margin, int& width, int& height);
+    bool has_rawMask(int idx);
+    void get_rawMask(int idx, int& top, int& left, int& bottom, int& right);
     int get_BlackLevel(int idx, int iso_speed);
     int get_WhiteLevel(int idx, int iso_speed, float fnumber);
     void update_Levels(const CameraConst *other);

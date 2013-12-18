@@ -22,6 +22,8 @@ extern const Settings* settings;
 CameraConst::CameraConst()
 {
 	memset(dcraw_matrix, 0, sizeof(dcraw_matrix));
+	memset(raw_crop, 0, sizeof(raw_crop));
+	memset(raw_mask, 0, sizeof(raw_mask));
 	white_max = 0;
 }
 
@@ -96,16 +98,29 @@ CameraConst::parseLevels(CameraConst *cc, int bw, void *ji_)
 	}
 
 	for (ji = ji->child; ji != NULL; ji = ji->next) {
-		int iso = 0;
+		int iso[1000] = { 0 };
+		int iso_count = 0;
 		cJSON *js = cJSON_GetObjectItem(ji, "iso");
 		if (!js) {
 			fprintf(stderr, "missing \"ranges\":\"%s\":\"iso\" object item.\n", bw ? "white" : "black");
 			return false;
-		} else if (js->type != cJSON_Number) {
-			fprintf(stderr, "\"ranges\":\"%s\":\"iso\" must be a a number.\n", bw ? "white" : "black");
+		} else if (js->type == cJSON_Number) {
+			iso[0] = js->valueint;
+			iso_count = 1;
+		} else if (js->type == cJSON_Array) {
+			int i;
+			for (js = js->child, i = 0; js != NULL && i < 1000; js = js->next, i++) {
+				if (js->type != cJSON_Number) {
+					fprintf(stderr, "\"ranges\":\"%s\":\"iso\" must be a number or an array of numbers.\n", bw ? "white" : "black");
+					return false;
+				}
+				iso[i] = js->valueint;
+			}
+			iso_count = i;
+		} else {
+			fprintf(stderr, "\"ranges\":\"%s\":\"iso\" must be an array or a number.\n", bw ? "white" : "black");
 			return false;
 		}
-		iso = js->valueint;
 		js = cJSON_GetObjectItem(ji, "levels");
 		if (!js) {
 			fprintf(stderr, "missing \"ranges\":\"%s\":\"levels\".\n", bw ? "white" : "black");
@@ -135,7 +150,9 @@ CameraConst::parseLevels(CameraConst *cc, int bw, void *ji_)
 			fprintf(stderr, "\"ranges\":\"%s\":\"levels\" must be a number or an array of numbers.\n", bw ? "white" : "black");
 			return false;
 		}
-		cc->mLevels[bw].insert(std::pair<int,struct camera_const_levels>(iso, lvl));
+		for (int i = 0; i < iso_count; i++) {
+			cc->mLevels[bw].insert(std::pair<int,struct camera_const_levels>(iso[i], lvl));
+		}
 	}
 	return true;
 }
@@ -164,6 +181,44 @@ CameraConst::parseEntry(void *cJSON_, const char *make_model)
 			}
 			cc->dcraw_matrix[i] = (short)ji->valueint;
 		}
+	}
+	ji = cJSON_GetObjectItem(js, "raw_crop");
+	if (ji) {
+		if (ji->type != cJSON_Array) {
+			fprintf(stderr, "\"raw_crop\" must be an array\n");
+			goto parse_error;
+		}
+		int i;
+		for (i = 0, ji = ji->child; i < 4 && ji != NULL; i++, ji = ji->next) {
+			if (ji->type != cJSON_Number) {
+				fprintf(stderr, "\"raw_crop\" array must contain numbers\n");
+				goto parse_error;
+			}
+			cc->raw_crop[i] = ji->valueint;
+		}
+                if (i != 4 || ji != NULL) {
+                    fprintf(stderr, "\"raw_crop\" must contain 4 numbers\n");
+                    goto parse_error;
+                }
+	}
+	ji = cJSON_GetObjectItem(js, "masked_areas");
+	if (ji) {
+		if (ji->type != cJSON_Array) {
+			fprintf(stderr, "\"masked_areas\" must be an array\n");
+			goto parse_error;
+		}
+		int i;
+		for (i = 0, ji = ji->child; i < 8 * 4 && ji != NULL; i++, ji = ji->next) {
+			if (ji->type != cJSON_Number) {
+				fprintf(stderr, "\"masked_areas\" array must contain numbers\n");
+				goto parse_error;
+			}
+			cc->raw_mask[i/4][i%4] = ji->valueint;
+		}
+                if (i % 4 != 0) {
+                    fprintf(stderr, "\"masked_areas\" array length must be divisable by 4\n");
+                    goto parse_error;
+                }
 	}
 	jranges = cJSON_GetObjectItem(js, "ranges");
 	if (jranges) {
@@ -234,6 +289,41 @@ CameraConst::get_dcrawMatrix(void)
 		return 0;
 	}
 	return dcraw_matrix;
+}
+
+bool
+CameraConst::has_rawCrop(void)
+{
+	return raw_crop[0] != 0 || raw_crop[1] != 0 || raw_crop[2] != 0 || raw_crop[3] != 0;
+}
+
+void
+CameraConst::get_rawCrop(int& left_margin, int& top_margin, int& width, int& height)
+{
+	left_margin = raw_crop[0];
+	top_margin = raw_crop[1];
+	width = raw_crop[2];
+	height = raw_crop[3];
+}
+
+bool
+CameraConst::has_rawMask(int idx)
+{
+	if (idx < 0 || idx > 7)
+		return false;
+	return (raw_mask[idx][0] | raw_mask[idx][1] | raw_mask[idx][2] | raw_mask[idx][3]) != 0;
+}
+
+void
+CameraConst::get_rawMask(int idx, int& top, int& left, int& bottom, int& right)
+{
+	top = left = bottom = right = 0;
+	if (idx < 0 || idx > 7)
+		return;
+	top =    raw_mask[idx][0];
+	left =   raw_mask[idx][1];
+	bottom = raw_mask[idx][2];
+	right =  raw_mask[idx][3];
 }
 
 void

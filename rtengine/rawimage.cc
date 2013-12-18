@@ -232,11 +232,41 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 	  fseek (ifp, data_offset, SEEK_SET);
 	  (this->*load_raw)();
 
-      if (raw_image) {
-        crop_masked_pixels();
-        free (raw_image);
-        raw_image=NULL;
-      }
+	  CameraConstantsStore* ccs = CameraConstantsStore::getInstance();
+	  CameraConst *cc = ccs->get(make, model);
+
+	  if (raw_image) {
+		  if (cc && cc->has_rawCrop()) {
+			  int lm, tm, w, h;
+			  cc->get_rawCrop(lm, tm, w, h);
+			  left_margin = lm;
+			  top_margin = tm;
+			  if (w < 0) {
+				  iwidth += w;
+				  iwidth -= left_margin;
+				  width += w;
+				  width -= left_margin;
+			  } else if (w > 0) {
+				  iwidth = width = w;
+			  }
+			  if (h < 0) {
+				  iheight += h;
+				  iheight -= top_margin;
+				  height += h;
+				  height -= top_margin;
+			  } else if (h > 0) {
+				  iheight = height = h;
+			  }
+		  }
+		  if (cc && cc->has_rawMask(0)) {
+			  for (int i = 0; i < 8 && cc->has_rawMask(i); i++) {
+				  cc->get_rawMask(i, mask[i][0], mask[i][1], mask[i][2], mask[i][3]);
+			  }
+		  }
+		  crop_masked_pixels();
+		  free (raw_image);
+		  raw_image=NULL;
+	  }
 
 	  // Load embedded profile
 	  if (profile_length) {
@@ -257,8 +287,6 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
       */
       int black_c4[4] = { -1, -1, -1, -1 };
 
-      CameraConstantsStore* ccs = CameraConstantsStore::getInstance();
-      CameraConst *cc = ccs->get(make, model);
       bool white_from_cc = false;
       bool black_from_cc = false;
       if (cc) {
@@ -296,6 +324,7 @@ int RawImage::loadRaw (bool loadData, bool closeFile)
 		     black_from_cc ? "provided by camconst.json" : "provided by dcraw");
 	      printf("white levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_white(0), get_white(1), get_white(2), get_white(3),
 		     white_from_cc ? "provided by camconst.json" : "provided by dcraw");
+	      printf("raw crop: %d %d %d %d (provided by %s)\n", left_margin, top_margin, iwidth, iheight, (cc && cc->has_rawCrop()) ? "camconst.json" : "dcraw");
 	      printf("color matrix provided by %s\n", (cc && cc->has_dcrawMatrix()) ? "camconst.json" : "dcraw");
       }
   }
