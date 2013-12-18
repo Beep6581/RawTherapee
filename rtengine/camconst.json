@@ -61,7 +61,13 @@ Examples:
         // ColorMatrix with D65 Calibration Illuminant, in dcraw format
         "dcraw_matrix": [ 7530, -1942, -255, -4318, 11390, 3362, -926, 1694, 7649 ],
         // black and white level same for all colors at all ISOs
-        "ranges": { "black": 10, "white": 1000 }
+        "ranges": { "black": 10, "white": 1000 },
+	// crop away masked sensor borders, 10 pixels left, 20 pixels top, resulting image width/height 4000x3000
+	// instead of width/height you can write a negative number which specifies how much of right/bottom border
+	// that should be removed
+	"raw_crop": [ 10, 20, 4000, 3000 ],
+	// same as MaskedAreas DNG tag, used for black level measuring here two areas defined
+	"masked_areas": [ 51, 2, 3804, 156, 51, 5794, 3804, 5792 ],
     },
 
     {
@@ -500,6 +506,8 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
     {
         "make_model": "DummyMake DummyModel",
         "dcraw_matrix": [ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 ],
+	"raw_crop": [ 10, 20, 4000, 3000 ],
+	"masked_areas": [ 51, 2, 3804, 156, 51, 5794, 3804, 5792 ],
         "ranges": {
 	    "aperture_scaling": [
 	        { "aperture": 1.2, "scale_factor": 1.1 },
@@ -507,6 +515,7 @@ Quality X: unknown, ie we knowing to little about the camera properties to know 
 	    ],
             "black": [
                 { "iso": 100 , "levels": [ 10, 20, 10, 20 ] },
+                { "iso": [100, 200] , "levels": [ 30, 40, 30 ] },
                 { "iso": 3200, "levels": [ 50, 60, 50, 60 ] }
             ],
             "white": [
