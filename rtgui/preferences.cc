@@ -279,7 +279,8 @@ Gtk::Widget* Preferences::getBatchProcPanel () {
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_DIRPYREQUALIZER_LABEL"));
-    appendBehavList (mi, M("TP_EXPOSURE_CONTRAST")+", "+M("TP_DIRPYREQUALIZER_THRESHOLD"), ADDSET_DIRPYREQ, true);
+    appendBehavList (mi, M("TP_EXPOSURE_CONTRAST"), ADDSET_DIRPYREQ, true);
+    appendBehavList (mi, M("TP_DIRPYREQUALIZER_THRESHOLD"), ADDSET_DIRPYREQ_THRESHOLD, true);
 
     mi = behModel->append ();
     mi->set_value (behavColumns.label, M("TP_PREPROCESS_LABEL"));

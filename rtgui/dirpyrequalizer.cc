@@ -30,7 +30,7 @@ DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
     enabled->set_active (true);
     pack_start(*enabled);
     enaConn = enabled->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrEqualizer::enabledToggled) );
-	enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
+    enabled->set_tooltip_markup (M("TP_SHARPENING_TOOLTIP"));
 
     Gtk::HSeparator *separator1 = Gtk::manage (new  Gtk::HSeparator());
     pack_start(*separator1, Gtk::PACK_SHRINK, 2);
@@ -55,32 +55,27 @@ DirPyrEqualizer::DirPyrEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
     Gtk::HSeparator *separator2 = Gtk::manage (new  Gtk::HSeparator());
     pack_start(*separator2, Gtk::PACK_SHRINK, 2);
 
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < 5; i++)
     {
         Glib::ustring ss;
         ss = Glib::ustring::format(i);
-        if(i == 0) {
-            ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
-            multiplier[i] = Gtk::manage ( new Adjuster (ss, 0, 4, 0.01, 1.0) );
-        } else {
-	    if(i == 3)
-                ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));    
-            multiplier[i] = Gtk::manage ( new Adjuster (ss, 0, 4, 0.01, 1.0) );
-	}
+        if     (i == 0) ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMAFINEST"));
+        else if(i == 4) ss += Glib::ustring::compose(" (%1)", M("TP_DIRPYREQUALIZER_LUMACOARSEST"));
+        multiplier[i] = Gtk::manage ( new Adjuster (ss, 0, 4, 0.01, 1.0) );
         multiplier[i]->setAdjusterListener(this);
         pack_start(*multiplier[i]);
     }
-	
-	Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
+
+    Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
     pack_start(*separator3, Gtk::PACK_SHRINK, 2);
-	
-	multiplier[4] = Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.2) );
-	multiplier[4]->setAdjusterListener(this);
-	pack_start(*multiplier[4]);
+
+    threshold = Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.2) );
+    threshold->setAdjusterListener(this);
+    pack_start(*threshold);
 
     show_all_children ();
-	
-	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 }
 
 DirPyrEqualizer::~DirPyrEqualizer () {
@@ -98,6 +93,7 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
         for(int i = 0; i < 5; i++) {
             multiplier[i]->setEditedState (pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
         }
+        threshold->setEditedState (pedited->dirpyrequalizer.threshold ? Edited : UnEdited);
     }
 
     enaConn.block (true);
@@ -108,6 +104,7 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
     for (int i = 0; i < 5; i++) {
         multiplier[i]->setValue(pp->dirpyrequalizer.mult[i]);
     }
+    threshold->setValue(pp->dirpyrequalizer.threshold);
 
     enableListener ();
 }
@@ -119,6 +116,7 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
     for (int i = 0; i < 5; i++) {
         pp->dirpyrequalizer.mult[i] = multiplier[i]->getValue();
     }
+    pp->dirpyrequalizer.threshold = threshold->getValue();
 
     if (pedited) {
 
@@ -127,6 +125,7 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited) {
         for(int i = 0; i < 5; i++) {
             pedited->dirpyrequalizer.mult[i] = multiplier[i]->getEditedState();
         }
+        pedited->dirpyrequalizer.threshold = threshold->getEditedState();
     }
 }
 
@@ -135,42 +134,51 @@ void DirPyrEqualizer::setDefaults (const ProcParams* defParams, const ParamsEdit
     for (int i = 0; i < 5; i++) {
         multiplier[i]->setDefault(defParams->dirpyrequalizer.mult[i]);
     }
+    threshold->setDefault(defParams->dirpyrequalizer.threshold);
     
     if (pedited) {
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setDefaultEditedState(pedited->dirpyrequalizer.mult[i] ? Edited : UnEdited);
         }
+        threshold->setDefaultEditedState(pedited->dirpyrequalizer.threshold ? Edited : UnEdited);
     }
     else {
         for (int i = 0; i < 5; i++) {
             multiplier[i]->setDefaultEditedState(Irrelevant);
         }
+        threshold->setDefaultEditedState(Irrelevant);
     }
 }
 
 void DirPyrEqualizer::setBatchMode (bool batchMode) {
 
     ToolPanel::setBatchMode (batchMode);
-    
+
     for (int i = 0; i < 5; i++) {
         multiplier[i]->showEditedCB();
     }
+    threshold->showEditedCB();
 }
 
 void DirPyrEqualizer::adjusterChanged (Adjuster* a, double newval) {
-    
+
     if (listener && enabled->get_active()) {
-        std::stringstream ss;
-        ss << "(";
-        int i;
-        for (i = 0; i < 5; i++) {
-            if (i > 0) {
-                ss << ", ";
-            }
-            ss << static_cast<int>(multiplier[i]->getValue());
+        if (a == threshold) {
+            listener->panelChanged (EvDirPyrEqualizerThreshold,
+                         Glib::ustring::compose("%1",
+                         Glib::ustring::format(std::fixed, std::setprecision(2), threshold->getValue()))
+            );
         }
-        ss << ")";
-        listener->panelChanged (EvDirPyrEqualizer, ss.str());
+        else {
+            listener->panelChanged (EvDirPyrEqualizer,
+                         Glib::ustring::compose("%1, %2, %3, %4, %5",
+                         Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[0]->getValue()),
+                         Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[1]->getValue()),
+                         Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[2]->getValue()),
+                         Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[3]->getValue()),
+                         Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[4]->getValue()))
+            );
+        }
     }    
 }
 
@@ -200,7 +208,7 @@ void DirPyrEqualizer::enabledToggled () {
 
 void DirPyrEqualizer::lumaneutralPressed () {
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         multiplier[i]->setValue(1.0);
         adjusterChanged(multiplier[i], 1.0);
     }
@@ -209,7 +217,7 @@ void DirPyrEqualizer::lumaneutralPressed () {
 
 void DirPyrEqualizer::lumacontrastPlusPressed () {
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         float inc = 0.05 * (4 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
         adjusterChanged(multiplier[i], multiplier[i]->getValue());
@@ -219,21 +227,23 @@ void DirPyrEqualizer::lumacontrastPlusPressed () {
 
 void DirPyrEqualizer::lumacontrastMinusPressed () {
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         float inc = -0.05 * (4 - i);
         multiplier[i]->setValue(multiplier[i]->getValue() + inc);
         adjusterChanged(multiplier[i], multiplier[i]->getValue());
     }
 }
 
-void DirPyrEqualizer::setAdjusterBehavior (bool multiplieradd) {
+void DirPyrEqualizer::setAdjusterBehavior (bool multiplieradd, bool thresholdadd) {
 
 	for (int i=0; i<5; i++)
 		multiplier[i]->setAddMode(multiplieradd);
+	threshold->setAddMode(thresholdadd);
 }
 
 void DirPyrEqualizer::trimValues (rtengine::procparams::ProcParams* pp) {
 
 	for (int i=0; i<5; i++)
 		multiplier[i]->trimValue(pp->dirpyrequalizer.mult[i]);
+	threshold->trimValue(pp->dirpyrequalizer.threshold);
 }

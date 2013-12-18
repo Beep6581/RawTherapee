@@ -271,10 +271,10 @@ class ImProcFunctions {
 		float MadMax(float * HH_Coeffs, int &max, int datalen);
 		
 		// pyramid equalizer
-		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult);//Emil's directional pyramid equalizer
-		void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, bool execdir );//Emil's directional pyramid equalizer
-		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, const double * mult  );
-		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult );
+		void dirpyr_equalizer    (float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, const double dirpyrThreshold);//Emil's directional pyramid equalizer
+		void dirpyr_equalizercam    (CieImage* ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, const double dirpyrThreshold, bool execdir );//Emil's directional pyramid equalizer
+		void dirpyr_channel      (float ** data_fine, float ** data_coarse, int width, int height, int level, int scale );
+		void idirpyr_eq_channel  (float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult, const double dirpyrThreshold );
 
 		void defringe       (LabImage* lab);
 		void defringecam    (CieImage* ncie);

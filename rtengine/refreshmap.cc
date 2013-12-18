@@ -267,7 +267,8 @@ TRANSFORM,        // EvVignettingStrength
 TRANSFORM,        // EvVignettingCenter
 LUMINANCECURVE,   // EvLCLCurve
 LUMINANCECURVE,   // EvLLHCurve
-LUMINANCECURVE   // EvLHHCurve
+LUMINANCECURVE,   // EvLHHCurve
+DIRPYREQUALIZER   // EvDirPyrEqualizerThreshold
 
 
 //LUMINANCECURVE    // EvCATsharpcie

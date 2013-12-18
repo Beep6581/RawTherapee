@@ -570,9 +570,10 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         raw.exTwoGreen = p.raw.twogreen == other.raw.twogreen;
 
         dirpyrequalizer.enabled = dirpyrequalizer.enabled && p.dirpyrequalizer.enabled == other.dirpyrequalizer.enabled;
-        for(int i = 0; i < 8; i++) {
+        for(int i = 0; i < 5; i++) {
             dirpyrequalizer.mult[i] = dirpyrequalizer.mult[i] && p.dirpyrequalizer.mult[i] == other.dirpyrequalizer.mult[i];
-        }		
+        }
+        dirpyrequalizer.threshold = dirpyrequalizer.threshold && p.dirpyrequalizer.threshold == other.dirpyrequalizer.threshold;
         hsvequalizer.hcurve = hsvequalizer.hcurve && p.hsvequalizer.hcurve == other.hsvequalizer.hcurve;
         hsvequalizer.scurve = hsvequalizer.scurve && p.hsvequalizer.scurve == other.hsvequalizer.scurve;
         hsvequalizer.vcurve = hsvequalizer.vcurve && p.hsvequalizer.vcurve == other.hsvequalizer.vcurve;
@@ -847,15 +848,16 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
     if (raw.darkFrame)          toEdit.raw.dark_frame        = mods.raw.dark_frame;
     if (raw.dfAuto)             toEdit.raw.df_autoselect     = mods.raw.df_autoselect;
 
-    if (raw.ff_file)        toEdit.raw.ff_file         = mods.raw.ff_file;         
+    if (raw.ff_file)        toEdit.raw.ff_file         = mods.raw.ff_file;
     if (raw.ff_AutoSelect)  toEdit.raw.ff_AutoSelect   = mods.raw.ff_AutoSelect;
     if (raw.ff_BlurRadius)  toEdit.raw.ff_BlurRadius   = mods.raw.ff_BlurRadius;
-    if (raw.ff_BlurType)    toEdit.raw.ff_BlurType     = mods.raw.ff_BlurType;      
+    if (raw.ff_BlurType)    toEdit.raw.ff_BlurType     = mods.raw.ff_BlurType;
 
 	if (dirpyrequalizer.enabled)	toEdit.dirpyrequalizer.enabled	= mods.dirpyrequalizer.enabled;
 	for(int i = 0; i < 5; i++) {
 		if(dirpyrequalizer.mult[i])	toEdit.dirpyrequalizer.mult[i]	= dontforceSet && options.baBehav[ADDSET_DIRPYREQ] ? toEdit.dirpyrequalizer.mult[i] + mods.dirpyrequalizer.mult[i] : mods.dirpyrequalizer.mult[i];
 	}
+	if (dirpyrequalizer.threshold)  toEdit.dirpyrequalizer.threshold= dontforceSet && options.baBehav[ADDSET_DIRPYREQ_THRESHOLD] ? toEdit.dirpyrequalizer.threshold + mods.dirpyrequalizer.threshold : mods.dirpyrequalizer.threshold;
 	if (hsvequalizer.hcurve)		toEdit.hsvequalizer.hcurve		= mods.hsvequalizer.hcurve;
 	if (hsvequalizer.scurve)		toEdit.hsvequalizer.scurve		= mods.hsvequalizer.scurve;
 	if (hsvequalizer.vcurve)		toEdit.hsvequalizer.vcurve		= mods.hsvequalizer.vcurve;

@@ -75,8 +75,9 @@
 #define ADDSET_PCVIGNETTE_ROUNDNESS     67
 #define ADDSET_BLACKWHITE_HUES          68
 #define ADDSET_BLACKWHITE_GAMMA         69
+#define ADDSET_DIRPYREQ_THRESHOLD       70
 
 // When adding items, make sure to update ADDSET_PARAM_NUM
-#define ADDSET_PARAM_NUM                70 // THIS IS USED AS A DELIMITER!!
+#define ADDSET_PARAM_NUM                71 // THIS IS USED AS A DELIMITER!!
 
 #endif

@@ -922,7 +922,7 @@ if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastc
 
 if(params->sharpening.enabled)  if(execsharp) {ImProcFunctions::sharpeningcam (ncie, (float**)buffer);}			//sharpening adapted to CIECAM 
 
-if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, true);//contrast by detail adapted to CIECAM
+if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, true);//contrast by detail adapted to CIECAM
 
 		   float Qredi= ( 4.0 / c_)  * ( a_w + 4.0 );
 		   float co_e=(pow(f_l,0.25f));
@@ -1734,7 +1734,7 @@ if (params->sharpenMicro.enabled)if(execsharp) ImProcFunctions::MLmicrocontrastc
 
 if(params->sharpening.enabled)  if(execsharp) {ImProcFunctions::sharpeningcam (ncie, (float**)buffer);}			//sharpening adapted to CIECAM
 
-if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, true);//contrast by detail adapted to CIECAM
+if(params->dirpyrequalizer.enabled) if(execsharp) dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, true);//contrast by detail adapted to CIECAM
 
 		   float Qredi= ( 4.0f / c_)  * ( a_w + 4.0f );
 		   float co_e=(pow_F(f_l,0.25f));
@@ -3513,7 +3513,7 @@ void ImProcFunctions::colorCurve (LabImage* lold, LabImage* lnew) {
 		if (params->dirpyrequalizer.enabled && lab->W>=8 && lab->H>=8) {
 
 			//dirpyrLab_equalizer(lab, lab, params->dirpyrequalizer.mult);
-			dirpyr_equalizer(lab->L, lab->L, lab->W, lab->H, params->dirpyrequalizer.mult);
+			dirpyr_equalizer(lab->L, lab->L, lab->W, lab->H, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold);
 		}
 	}
 void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, float w_h, int Wid, int Hei, int begh, int endh, float minQ, float maxQ, unsigned int Iterates, int skip){

@@ -40,7 +40,7 @@
 
 namespace rtengine {
 	
-	static const int maxlevel = 4;
+	static const int maxlevel = 5;
 	static const float noise = 2000;
 	static const float thresh = 1000;
 	
@@ -52,7 +52,7 @@ namespace rtengine {
 	//scale is spacing of directional averaging weights
 	
 	
-	void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, const double * mult)
+	void ImProcFunctions :: dirpyr_equalizer(float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, const double dirpyrThreshold )
 	{
 		int lastlevel=maxlevel;
 		
@@ -72,7 +72,7 @@ namespace rtengine {
 		int scale = scales[level];
 		//int thresh = 100 * mult[5];
 				
-		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale, mult );
+		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale );
 		
 		level = 1;
 		
@@ -80,7 +80,7 @@ namespace rtengine {
 		{
 			scale = scales[level];
 						
-			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale, mult );
+			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale );
 			
 			level ++;
 		}
@@ -99,13 +99,13 @@ namespace rtengine {
 		
 		for(int level = lastlevel - 1; level > 0; level--)
 		{
-			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, mult );
+			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, mult, dirpyrThreshold );
 		}
 		
 		
 		scale = scales[0];
 		
-		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, mult );
+		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, mult, dirpyrThreshold );
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +125,7 @@ namespace rtengine {
 
 
 	
-	void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, bool execdir )
+	void ImProcFunctions :: dirpyr_equalizercam (CieImage *ncie, float ** src, float ** dst, int srcwidth, int srcheight, const double * mult, const double dirpyrThreshold, bool execdir )
 	{
 		int lastlevel=maxlevel;
 		
@@ -145,7 +145,7 @@ namespace rtengine {
 		int scale = scales[level];
 		//int thresh = 100 * mult[5];
 				
-		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale, mult );
+		dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, scale );
 		
 		level = 1;
 		
@@ -153,7 +153,7 @@ namespace rtengine {
 		{
 			scale = scales[level];
 						
-			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale, mult );
+			dirpyr_channel(dirpyrlo[level-1], dirpyrlo[level], srcwidth, srcheight, level, scale );
 			
 			level ++;
 		}
@@ -172,13 +172,13 @@ namespace rtengine {
 		
 		for(int level = lastlevel - 1; level > 0; level--)
 		{
-			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, mult );
+			idirpyr_eq_channel(dirpyrlo[level], dirpyrlo[level-1], buffer, srcwidth, srcheight, level, mult, dirpyrThreshold );
 		}
 		
 		
 		scale = scales[0];
 		
-		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, mult );
+		idirpyr_eq_channel(dirpyrlo[0], dst, buffer, srcwidth, srcheight, 0, mult, dirpyrThreshold );
 		
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,8 +188,10 @@ namespace rtengine {
 #endif
 			for (int i=0; i<srcheight; i++) 
 				for (int j=0; j<srcwidth; j++) {
-					if(ncie->J_p[i][j] > 8.f && ncie->J_p[i][j] < 92.f) dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?
-								else dst[i][j]=src[i][j];
+					if(ncie->J_p[i][j] > 8.f && ncie->J_p[i][j] < 92.f)
+						dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?
+					else
+						dst[i][j]=src[i][j];
 				}
 		else
 			for (int i=0; i<srcheight; i++) 
@@ -201,9 +203,9 @@ namespace rtengine {
 
 
 #if defined( __SSE2__ ) && defined( WIN32 )
-__attribute__((force_align_arg_pointer)) void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, const double * mult  )
+__attribute__((force_align_arg_pointer)) void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale  )
 #else
-void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale, const double * mult  )
+void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, int width, int height, int level, int scale )
 #endif
 {
 		//scale is spacing of directional averaging weights
@@ -407,9 +409,9 @@ void ImProcFunctions::dirpyr_channel(float ** data_fine, float ** data_coarse, i
 	
 	//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult )
+	void ImProcFunctions::idirpyr_eq_channel(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, const double * mult, const double dirpyrThreshold )
 	{
-		float noisehi = 1.33*noise*mult[4]/expf(level*log(3.0)), noiselo = 0.66*noise*mult[4]/expf(level*log(3.0));
+		float noisehi = 1.33*noise*dirpyrThreshold/expf(level*log(3.0)), noiselo = 0.66*noise*dirpyrThreshold/expf(level*log(3.0));
 		LUTf irangefn (0x20000);
 
 		for (int i=0; i<0x20000; i++) {

@@ -431,7 +431,8 @@ class DirPyrEqualizerParamsEdited {
 
     public:
         bool enabled;
-        bool mult[8];
+        bool mult[5];
+        bool threshold;
 };
 
 class HSVEqualizerParamsEdited {

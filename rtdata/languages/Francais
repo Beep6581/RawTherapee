@@ -328,7 +328,7 @@ HISTORY_MSG_89;Réd. du bruit
 HISTORY_MSG_90;Réd. de bruit Luminance
 HISTORY_MSG_91;Réd. de bruit Chrominance
 HISTORY_MSG_92;Réd. de bruit Gamma
-HISTORY_MSG_93;Param. de contraste
+HISTORY_MSG_93;Param. de contraste par niv. de détail
 HISTORY_MSG_94;Contraste par niveau de détail
 HISTORY_MSG_95;Chromaticité
 HISTORY_MSG_96;Courbe 'a'
@@ -480,6 +480,7 @@ HISTORY_MSG_242;Effet Vignettage - Circularité
 HISTORY_MSG_243;Vignettage - Rayon
 HISTORY_MSG_244;Vignettage - Force
 HISTORY_MSG_245;Vignettage - Centre
+HISTORY_MSG_249;Seuil du contraste par niv. de détail
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
