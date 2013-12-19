@@ -28,6 +28,7 @@ using namespace rtengine::procparams;
 ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
   set_border_width(4);
+  set_spacing(4);
 
   CurveListener::setMulti(true);
 
@@ -64,57 +65,43 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   abox->pack_end (*Gtk::manage (new Gtk::Label (M("TP_EXPOSURE_CLIP"))));
   pack_start (*abox);
 
-
-//----------- Exposure Compensation ------------------------
-  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 10, 0.05, 0));
-  pack_start (*expcomp);
-  pack_start (*Gtk::manage (new Gtk::Label (" "))); //spacer
+//-------------- Highlight Reconstruction -----------------
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-//--------------HLRecovery from HLREC and Hl compress
-	hlrbox = Gtk::manage (new Gtk::HBox ());
-	hlrbox->set_border_width (2);
+  hrenabled = Gtk::manage (new Gtk::CheckButton (M("TP_HLREC_LABEL")));
+  hrenabled->set_active (false);
+  hrenabled->set_tooltip_markup (M("TP_HLREC_ENA_TOOLTIP"));
+  pack_start (*hrenabled);
 
-	Gtk::Label* hlrLabel = Gtk::manage (new Gtk::Label (M("TP_HLREC_LABEL")));
-	
-    hrenabled = Gtk::manage (new Gtk::CheckButton (M("GENERAL_ENABLE")));
-	
-    hrenabled->set_active (false);
-	hrenabled->set_tooltip_markup (M("TP_HLREC_ENA_TOOLTIP"));
-	hlrbox->pack_start (*hlrLabel,Gtk::PACK_SHRINK);
-	
-    hlrbox->pack_end (*hrenabled, Gtk::PACK_SHRINK);
-	hlrbox->pack_end (*Gtk::manage (new Gtk::Label (" "))); //spacer
-	
-	pack_start (*hlrbox);
-	
+  method = Gtk::manage (new MyComboBoxText ());
+  method->append_text (M("TP_HLREC_LUMINANCE"));
+  method->append_text (M("TP_HLREC_CIELAB"));
+  method->append_text (M("TP_HLREC_COLOR"));
+  method->append_text (M("TP_HLREC_BLEND"));
 
-	method = Gtk::manage (new MyComboBoxText ());
-	method->append_text (M("TP_HLREC_LUMINANCE"));
-	method->append_text (M("TP_HLREC_CIELAB"));
-	method->append_text (M("TP_HLREC_COLOR"));
-	method->append_text (M("TP_HLREC_BLEND"));
-	
-	method->set_active (0);
-	Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
-	Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_HLREC_METHOD")));
-	hb->pack_start (*lab, Gtk::PACK_SHRINK, 4);
-	hb->pack_start (*method);
-	pack_start (*hb);
+  method->set_active (0);
+  hlrbox = Gtk::manage (new Gtk::HBox ());
+  Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_HLREC_METHOD")));
+  hlrbox->pack_start (*lab, Gtk::PACK_SHRINK, 4);
+  hlrbox->pack_start (*method);
+  pack_start (*hlrbox);
 
-    enaconn  = hrenabled->signal_toggled().connect( sigc::mem_fun(*this, &ToneCurve::hrenabledChanged) );
-	methconn = method->signal_changed().connect ( sigc::mem_fun(*this, &ToneCurve::methodChanged) );
-	pack_start (*Gtk::manage (new Gtk::Label (" "))); //spacer
-	pack_start (*Gtk::manage (new  Gtk::HSeparator()));
-	
-	hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0));
-	pack_start (*hlcompr);
-	hlcomprthresh = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33));
-	pack_start (*hlcomprthresh);
+  enaconn  = hrenabled->signal_toggled().connect( sigc::mem_fun(*this, &ToneCurve::hrenabledChanged) );
+  methconn = method->signal_changed().connect ( sigc::mem_fun(*this, &ToneCurve::methodChanged) );
 
-  
-  
-//----------- Black Level ----------------------------------
+  //----------- Exposure Compensation ---------------------
+  pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+
+  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 10, 0.05, 0));
+  pack_start (*expcomp);
+
+  //----------- Highlight recovery & threshold -------------
+  hlcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTS"), 0, 500, 1, 0));
+  pack_start (*hlcompr);
+  hlcomprthresh = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD"), 0, 100, 1, 33));
+  pack_start (*hlcomprthresh);
+
+//----------- Black Level & Compression -------------------
   black = Gtk::manage (new Adjuster (M("TP_EXPOSURE_BLACKLEVEL"), -16384, 32768, 50, 0));
   pack_start (*black);
   shcompr = Gtk::manage (new Adjuster (M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50));
@@ -129,7 +116,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   pack_start (*contrast);
   saturation = Gtk::manage (new Adjuster (M("TP_EXPOSURE_SATURATION"), -100, 100, 1, 0));
   pack_start (*saturation);
-  
+
 //----------- Curve 1 ------------------------------
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
@@ -242,28 +229,32 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
         if (!pedited->toneCurve.curveMode2) {
             toneCurveMode2->set_active(4);
         }
-		
-		
     }
     if (pedited)
         hrenabled->set_inconsistent (!pedited->toneCurve.hrenabled);
     enaconn.block (true);
     hrenabled->set_active  (pp->toneCurve.hrenabled);
     enaconn.block (false);
-	
+
     if (pedited && !pedited->toneCurve.method) 
         method->set_active (4);
-	else if (pp->toneCurve.method=="Luminance")
-		method->set_active (0);
-	else if (pp->toneCurve.method=="CIELab blending")
-		method->set_active (1);
-	else if (pp->toneCurve.method=="Color")
-		method->set_active (2);
-	else if (pp->toneCurve.method=="Blend")
-		method->set_active (3);
+    else if (pp->toneCurve.method=="Luminance")
+        method->set_active (0);
+    else if (pp->toneCurve.method=="CIELab blending")
+        method->set_active (1);
+    else if (pp->toneCurve.method=="Color")
+        method->set_active (2);
+    else if (pp->toneCurve.method=="Blend")
+        method->set_active (3);
 
+    if (!batchMode) {
+        if (hrenabled->get_active())
+            hlrbox->show();
+        else
+            hlrbox->hide();
+    }
     lasthrEnabled = pp->toneCurve.hrenabled;
-	
+
     autoconn.block (false);
     tcmode2conn.block(false);
     tcmodeconn.block(false);
@@ -272,24 +263,24 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 }
 
 void ToneCurve::autoOpenCurve  () {
-		shape->openIfNonlinear();
-		shape2->openIfNonlinear();
+    shape->openIfNonlinear();
+    shape2->openIfNonlinear();
 }
 int HLChangedUI (void* data) {
-	GThreadLock lock;
-	(static_cast<ToneCurve*>(data))->HLComputed_ ();
-	return 0;
+    GThreadLock lock;
+    (static_cast<ToneCurve*>(data))->HLComputed_ ();
+    return 0;
 }
 
 void ToneCurve::HLChanged  (bool hlrbool){
-	nexthlrbool= hlrbool;
-	g_idle_add (HLChangedUI, this);
+    nexthlrbool= hlrbool;
+    g_idle_add (HLChangedUI, this);
 }
 bool ToneCurve::HLComputed_ () {
-            enaconn.block (true);
-				hrenabled->set_active (nexthlrbool);
-            enaconn.block (false);
-	return false;
+    enaconn.block (true);
+    hrenabled->set_active (nexthlrbool);
+    enaconn.block (false);
+    return false;
 }
 
 void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
@@ -319,7 +310,6 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
     else if (tcMode == 2) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_FILMLIKE;
     else if (tcMode == 3) pp->toneCurve.curveMode2 = ToneCurveParams::TC_MODE_SATANDVALBLENDING;
 
-
     if (pedited) {
         pedited->toneCurve.expcomp    = expcomp->getEditedState ();
         pedited->toneCurve.black      = black->getEditedState ();
@@ -337,26 +327,24 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 4;
     }
     if (pedited) {
-        pedited->toneCurve.method    = method->get_active_row_number()!=4;
-        pedited->toneCurve.hrenabled   = !hrenabled->get_inconsistent();
+        pedited->toneCurve.method     = method->get_active_row_number()!=4;
+        pedited->toneCurve.hrenabled  = !hrenabled->get_inconsistent();
     }
 
     pp->toneCurve.hrenabled = hrenabled->get_active();
-	if (method->get_active_row_number()==0)
-		pp->toneCurve.method = "Luminance";
-	else if (method->get_active_row_number()==1)
-		pp->toneCurve.method = "CIELab blending";
-	else if (method->get_active_row_number()==2)
-		pp->toneCurve.method = "Color";
-	else if (method->get_active_row_number()==3)
-		pp->toneCurve.method = "Blend";
-	
-	
+    if (method->get_active_row_number()==0)
+        pp->toneCurve.method = "Luminance";
+    else if (method->get_active_row_number()==1)
+        pp->toneCurve.method = "CIELab blending";
+    else if (method->get_active_row_number()==2)
+        pp->toneCurve.method = "Color";
+    else if (method->get_active_row_number()==3)
+        pp->toneCurve.method = "Blend";
 }
 
 void ToneCurve::hrenabledChanged () {
 
-    if (batchMode) {
+    if (multiImage) {
         if (hrenabled->get_inconsistent()) {
             hrenabled->set_inconsistent (false);
             enaconn.block (true);
@@ -369,18 +357,26 @@ void ToneCurve::hrenabledChanged () {
         lasthrEnabled = hrenabled->get_active ();
     }
 
+    if (!batchMode) {
+        if (hrenabled->get_active())
+            hlrbox->show();
+        else
+            hlrbox->hide();
+    }
+
     if (listener) {
         if (hrenabled->get_active ()){
-			listener->panelChanged (EvHREnabled, M("GENERAL_ENABLED"));
-			}
+            listener->panelChanged (EvHREnabled, M("GENERAL_ENABLED"));
+        }
         else {    // Switch off auto exposure if user changes enabled manually
-			if (autolevels->get_active() ) {
-				autoconn.block(true);
-				autolevels->set_active (false);
-				autoconn.block(false);
-				autolevels->set_inconsistent (false);
-			}
-			listener->panelChanged (EvHREnabled, M("GENERAL_DISABLED"));}
+            if (autolevels->get_active() ) {
+                autoconn.block(true);
+                autolevels->set_active (false);
+                autoconn.block(false);
+                autolevels->set_inconsistent (false);
+            }
+            listener->panelChanged (EvHREnabled, M("GENERAL_DISABLED"));
+        }
     }  
 }
 void ToneCurve::methodChanged () {
@@ -388,13 +384,13 @@ void ToneCurve::methodChanged () {
     if (listener) {
         if (hrenabled->get_active ())
             listener->panelChanged (EvHRMethod, method->get_active_text ());
-    }  
+    }
 }
 void ToneCurve::setRaw (bool raw) {
-    
+
     disableListener ();
-		method->set_sensitive (raw);
-		hrenabled->set_sensitive (raw);
+    method->set_sensitive (raw);
+    hrenabled->set_sensitive (raw);
     enableListener ();
 }
 
@@ -480,7 +476,7 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
         costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), a->getValue());
     else
         costr = Glib::ustring::format ((int)a->getValue());
-    
+
     if (a==expcomp) 
         listener->panelChanged (EvExpComp, costr);
     else if (a==brightness) 
@@ -491,7 +487,7 @@ void ToneCurve::adjusterChanged (Adjuster* a, double newval) {
     }
     else if (a==contrast)
         listener->panelChanged (EvContrast, costr);
-	else if (a==saturation)
+    else if (a==saturation)
         listener->panelChanged (EvSaturation, costr);
     else if (a==hlcompr)
         listener->panelChanged (EvHLCompr, costr);
@@ -517,18 +513,18 @@ void ToneCurve::neutral_pressed () {
         autolevels->set_active (false);
         autolevels->set_inconsistent (false);
     }
-    
+
     expcomp->setValue(0);
     hlcompr->setValue(0);
     hlcomprthresh->setValue(0);
     brightness->setValue(0);
     black->setValue(0);
     shcompr->setValue(50);
-	hrenabled->set_active (false);
+    hrenabled->set_active (false);
     if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     contrast->setValue(0);
     //saturation->setValue(0);
-    
+
     listener->panelChanged (EvNeutralExp, M("GENERAL_ENABLED"));
 }
 void ToneCurve::autolevels_toggled () {
@@ -563,7 +559,7 @@ void ToneCurve::autolevels_toggled () {
             hlcompr->setValue (0);
         if (hlcomprthresh->getAddMode())
             hlcomprthresh->setValue (0);
-			
+
         if (listener) {
             if (!autolevels->get_inconsistent()) {
                 if (autolevels->get_active ())
@@ -583,7 +579,6 @@ void ToneCurve::autolevels_toggled () {
             listener->panelChanged (EvFixedExp, M("GENERAL_DISABLED"));
         }
     }
-
 }
 
 void ToneCurve::clip_changed () {
@@ -668,11 +663,8 @@ bool ToneCurve::autoExpComputed_ () {
 }
 
 void ToneCurve::setBatchMode (bool batchMode) {
-//from HLrecovery
     ToolPanel::setBatchMode (batchMode);
     method->append_text (M("GENERAL_UNCHANGED"));
-//---------------
-
 
     removeIfThere (abox, autolevels, false);
     autolevels = Gtk::manage (new Gtk::CheckButton (M("TP_EXPOSURE_AUTOLEVELS")));
@@ -688,35 +680,35 @@ void ToneCurve::setBatchMode (bool batchMode) {
     shcompr->showEditedCB ();
     brightness->showEditedCB ();
     contrast->showEditedCB ();
-	saturation->showEditedCB ();
+    saturation->showEditedCB ();
 
-	toneCurveMode->append_text (M("GENERAL_UNCHANGED"));
+    toneCurveMode->append_text (M("GENERAL_UNCHANGED"));
 
     curveEditorG->setBatchMode (batchMode);
 }
 
 void ToneCurve::setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd) {
 
-	expcomp->setAddMode(expadd);
-	hlcompr->setAddMode(hlcompadd);
-	hlcomprthresh->setAddMode(hlcompthreshadd);
-	brightness->setAddMode(bradd);
-	black->setAddMode(blackadd);
-	shcompr->setAddMode(shcompadd);
-	contrast->setAddMode(contradd);
-	saturation->setAddMode(satadd);
+    expcomp->setAddMode(expadd);
+    hlcompr->setAddMode(hlcompadd);
+    hlcomprthresh->setAddMode(hlcompthreshadd);
+    brightness->setAddMode(bradd);
+    black->setAddMode(blackadd);
+    shcompr->setAddMode(shcompadd);
+    contrast->setAddMode(contradd);
+    saturation->setAddMode(satadd);
 }
 
 void ToneCurve::trimValues (rtengine::procparams::ProcParams* pp) {
 
-	expcomp->trimValue(pp->toneCurve.expcomp);
-	hlcompr->trimValue(pp->toneCurve.hlcompr);
-	hlcomprthresh->trimValue(pp->toneCurve.hlcomprthresh);
-	brightness->trimValue(pp->toneCurve.brightness);
-	black->trimValue(pp->toneCurve.black);
-	shcompr->trimValue(pp->toneCurve.shcompr);
-	contrast->trimValue(pp->toneCurve.contrast);
-	saturation->trimValue(pp->toneCurve.saturation);
+    expcomp->trimValue(pp->toneCurve.expcomp);
+    hlcompr->trimValue(pp->toneCurve.hlcompr);
+    hlcomprthresh->trimValue(pp->toneCurve.hlcomprthresh);
+    brightness->trimValue(pp->toneCurve.brightness);
+    black->trimValue(pp->toneCurve.black);
+    shcompr->trimValue(pp->toneCurve.shcompr);
+    contrast->trimValue(pp->toneCurve.contrast);
+    saturation->trimValue(pp->toneCurve.saturation);
 }
 
 void ToneCurve::updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma) {

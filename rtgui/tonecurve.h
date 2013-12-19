@@ -30,17 +30,17 @@
 class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public rtengine::AutoHLListener,public CurveListener {
 
   protected:
-  	// from HLRecovery
+    // from HLRecovery
     Gtk::CheckButton*   hrenabled;
     MyComboBoxText*     method;
     sigc::connection    methconn;
     sigc::connection    enaconn;
     bool                lasthrEnabled;
-	bool				nexthlrbool;
+    bool                nexthlrbool;
   
     Gtk::HBox* abox;
     Gtk::HBox* hlrbox;
-	
+
     Gtk::ToggleButton* autolevels;
     MySpinButton* sclip;
     Gtk::Button* neutral;
@@ -69,10 +69,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     int nextBlack;
     int nextHlcompr;
     int nextHlcomprthresh;
-	
-	
-	
-  
+
   public:
 
     ToneCurve ();
@@ -105,15 +102,12 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     bool isCurveExpanded ();
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
  
-//from HLrecovery
-	void setRaw (bool raw);
-	void HLChanged           (bool hlrbool);
-	bool HLComputed_         ();
+    void setRaw (bool raw);
+    void HLChanged (bool hlrbool);
+    bool HLComputed_  ();
 
-    void hrenabledChanged     ();
-	void methodChanged		();
-
-	
-	};
+    void hrenabledChanged ();
+    void methodChanged ();
+};
 
 #endif
