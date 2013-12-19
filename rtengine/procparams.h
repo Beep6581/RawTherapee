@@ -846,7 +846,6 @@ class ProcParams {
         VignettingParams        vignetting;      ///< Lens vignetting correction parameters
         ChannelMixerParams      chmixer;         ///< Channel mixer parameters
         BlackWhiteParams        blackwhite;      ///< Black & White parameters
- //       HRecParams              hlrecovery;      ///< Highlight recovery parameters
         ResizeParams            resize;          ///< Resize parameters
         ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
         RAWParams               raw;             ///< RAW parameters before demosaicing

@@ -792,7 +792,7 @@ void ImProcCoordinator::saveInputICCReference (const Glib::ustring& fname) {
 	Imagefloat* im = new Imagefloat (fW, fH);
 	imgsrc->preprocess( ppar.raw, ppar.lensProf, ppar.coarse );
 	imgsrc->demosaic(ppar.raw );
-	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.hlrecovery, ppar.icm, ppar.raw);
+	//imgsrc->getImage (imgsrc->getWB(), 0, im, pp, ppar.toneCurve, ppar.icm, ppar.raw);
 	ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
 	if (params.wb.method=="Camera")
 		currWB = imgsrc->getWB ();

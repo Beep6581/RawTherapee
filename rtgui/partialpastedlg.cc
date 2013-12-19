@@ -46,7 +46,6 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     // options in basic:
     wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
     exposure    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXPOSURE")));
- //   hlrec       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_HLRECONSTRUCTION")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
     epd         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
     pcvignette  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PCVIGNETTE")));
@@ -126,7 +125,6 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
     vboxes[0]->pack_start (*hseps[0], Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*wb, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*exposure, Gtk::PACK_SHRINK, 2);
-//    vboxes[0]->pack_start (*hlrec, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*epd, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*pcvignette, Gtk::PACK_SHRINK, 2);
@@ -249,7 +247,6 @@ PartialPasteDlg::PartialPasteDlg (Glib::ustring title) {
 
     wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
- //   hlrecConn       = hlrec->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));    
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     pcvignetteConn  = pcvignette->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
@@ -433,7 +430,6 @@ void PartialPasteDlg::basicToggled () {
 
     wbConn.block (true);
     exposureConn.block (true);
-//    hlrecConn.block (true);
     shConn.block (true);
     epdConn.block(true);
     pcvignetteConn.block (true);
@@ -445,7 +441,6 @@ void PartialPasteDlg::basicToggled () {
 
     wb->set_active (basic->get_active ());
     exposure->set_active (basic->get_active ());
- //   hlrec->set_active (basic->get_active ());
     sh->set_active (basic->get_active ());
     epd->set_active (basic->get_active ());
     pcvignette->set_active (basic->get_active ());
@@ -455,7 +450,6 @@ void PartialPasteDlg::basicToggled () {
 
     wbConn.block (false);
     exposureConn.block (false);
- //   hlrecConn.block (false);
     shConn.block (false);
     epdConn.block (false);
     pcvignetteConn.block (false);
@@ -613,7 +607,6 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     // Now we filter out the filter depending on the checked items
     if (!wb->get_active ())          filterPE.wb         = falsePE.wb;
     if (!exposure->get_active ())    filterPE.toneCurve  = falsePE.toneCurve;
-  //  if (!hlrec->get_active ())       filterPE.toneCurve = falsePE.toneCurve;
     if (!sh->get_active ())          filterPE.sh         = falsePE.sh;
     if (!epd->get_active ())         filterPE.edgePreservingDecompositionUI = falsePE.edgePreservingDecompositionUI;
     if (!pcvignette->get_active ())  filterPE.pcvignette = falsePE.pcvignette;

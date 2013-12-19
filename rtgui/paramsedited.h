@@ -511,7 +511,6 @@ class ParamsEdited {
         VignettingParamsEdited        vignetting;
         ChannelMixerParamsEdited      chmixer;
         BlackWhiteParamsEdited        blackwhite;
- //       HRecParamsEdited              hlrecovery;
         ResizeParamsEdited            resize;
         ColorManagementParamsEdited   icm;
         RAWParamsEdited               raw;

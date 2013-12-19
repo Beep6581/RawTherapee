@@ -597,7 +597,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
     double logDefGain = log(defGain) / log(2.0);
     int rmi, gmi, bmi;
     // Since HL recovery is not rendered in thumbs
-//    if (!isRaw || !params.hlrecovery.enabled) {
+//    if (!isRaw || !params.toneCurve.hrenabled) {
         logDefGain = 0.0;
         rmi = 1024.0 * rm * defGain / mul_lum;
         gmi = 1024.0 * gm * defGain / mul_lum;
@@ -661,12 +661,12 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
 
 /*
     // apply highlight recovery, if needed		-- CURRENTLY BROKEN DUE TO INCOMPATIBLE DATA TYPES; DO WE CARE???
-    if (isRaw && params.hlrecovery.enabled) {
+    if (isRaw && params.toneCurve.hrenabled) {
         int maxval = 65535 / defGain;
-        if (params.hlrecovery.method=="Luminance" || params.hlrecovery.method=="Color") 
+        if (params.toneCurve.method=="Luminance" || params.toneCurve.method=="Color")
             for (int i=0; i<rheight; i++)
                 RawImageSource::HLRecovery_Luminance (baseImg->r[i], baseImg->g[i], baseImg->b[i], baseImg->r[i], baseImg->g[i], baseImg->b[i], rwidth, maxval);
-        else if (params.hlrecovery.method=="CIELab blending") {
+        else if (params.toneCurve.method=="CIELab blending") {
             double icamToD50[3][3];
             RawImageSource::inverse33 (cam2xyz, icamToD50);
             for (int i=0; i<rheight; i++)
