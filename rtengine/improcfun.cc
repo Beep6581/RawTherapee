@@ -193,6 +193,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
 		cmsDeleteTransform (monitorTransform);
 	monitorTransform = NULL;
 
+#if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
     Glib::ustring monitorProfile=settings->monitorProfile;
     if (settings->autoMonitorProfile) monitorProfile=iccStore->defaultMonitorProfile;
 
@@ -204,7 +205,7 @@ void ImProcFunctions::firstAnalysis (Imagefloat* original, const ProcParams* par
             cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE );  // NOCACHE is for thread safety, NOOPTIMIZE for precision
         lcmsMutex->unlock ();
 	}
-
+#endif
 	// calculate histogram of the y channel needed for contrast curve calculation in exposure adjustments
 
 	int T = 1;
