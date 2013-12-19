@@ -507,9 +507,11 @@ Gtk::Widget* Preferences::getColorManagementPanel () {
     colt->attach (*intent, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colt->attach (*pdlabel, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*iccDir, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+#if !defined(__APPLE__) // monitor profile not supported on apple
     colt->attach (*mplabel, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK, 2, 2);
     colt->attach (*monProfile, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     colt->attach (*cbAutoMonProfile, 1, 2, 3, 4, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+#endif
     mvbcm->pack_start (*colt, Gtk::PACK_SHRINK, 4);
 
     autoMonProfileToggled();
@@ -1233,11 +1235,13 @@ void Preferences::fillPreferences () {
     forImageComboChanged(); // update the tooltip
     dateformat->set_text (moptions.dateFormat);
     panFactor->set_value(moptions.panAccelFactor);
+#if !defined(__APPLE__) // monitor profile not supported on apple
     if (safe_file_test (moptions.rtSettings.monitorProfile, Glib::FILE_TEST_EXISTS)) 
         monProfile->set_filename (moptions.rtSettings.monitorProfile);
     if (moptions.rtSettings.monitorProfile.empty())
         monProfile->set_current_folder (moptions.rtSettings.iccDirectory);
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
+#endif
 
     if (Glib::file_test (moptions.rtSettings.iccDirectory, Glib::FILE_TEST_IS_DIR)) 
         iccDir->set_current_folder (moptions.rtSettings.iccDirectory);
