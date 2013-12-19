@@ -234,7 +234,7 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
         defGain=0.0;// = log(initialGain) / log(2.0);
         //printf(" Initial gain=%f defgain=%f min=%f\n",initialGain,defGain,min);
         //printf(" rm=%f gm=%f bm=%f\n",rm,gm,bm);
-        min/=initialGain;
+        min/=refInitialGain;
    //min=(float)1.0/min;
     //else {
         //defGain = 0.0;
@@ -882,6 +882,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 	double camwb_red = ri->get_pre_mul(0) / pre_mul[0];
 	double camwb_green = ri->get_pre_mul(1) / pre_mul[1];
 	double camwb_blue = ri->get_pre_mul(2) / pre_mul[2];
+        refInitialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
 	double cam_r = imatrices.rgb_cam[0][0]*camwb_red + imatrices.rgb_cam[0][1]*camwb_green + imatrices.rgb_cam[0][2]*camwb_blue;
 	double cam_g = imatrices.rgb_cam[1][0]*camwb_red + imatrices.rgb_cam[1][1]*camwb_green + imatrices.rgb_cam[1][2]*camwb_blue;
 	double cam_b = imatrices.rgb_cam[2][0]*camwb_red + imatrices.rgb_cam[2][1]*camwb_green + imatrices.rgb_cam[2][2]*camwb_blue;
