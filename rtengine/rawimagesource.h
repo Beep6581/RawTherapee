@@ -78,7 +78,9 @@ class RawImageSource : public ImageSource {
         ProgressListener* plistener;
         float scale_mul[4]; // multiplier for each color
         float c_black[4]; // copy of cblack Dcraw for black level
+        float c_white[4];
         float cblacksom[4];
+        float ref_pre_mul[4];
         double refwb_red;
         double refwb_green;
         double refwb_blue;

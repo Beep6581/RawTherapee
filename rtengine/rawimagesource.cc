@@ -201,7 +201,23 @@ void RawImageSource::transformRect (PreviewProps pp, int tran, int &ssx1, int &s
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+static float
+calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_white[4], const float c_black[4])
+{
+    float pre_mul[4];
+    for (int c = 0; c < 4; c++) {
+        pre_mul[c] = pre_mul_[c]; // G2 == G1
+    }
+    if (pre_mul[3] == 0) {
+        pre_mul[3] = pre_mul[1];
+    }
+    float maxpremul = max(pre_mul[0], pre_mul[1], pre_mul[2], pre_mul[3]);
+    for (int c = 0; c < 4; c++) {
+        scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.0 / (c_white[c] - c_black[c]);
+    }
+    float gain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+    return gain;
+}
 
 void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, PreviewProps pp, ToneCurveParams  hrp, ColorManagementParams cmp, RAWParams raw )
 {
@@ -219,16 +235,9 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
 
     if (true) {
         // adjust gain so the maximum raw value of the least scaled channel just hits max
-        double pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
-        double maxpremul = max(pre_mul[0], pre_mul[1], pre_mul[2], pre_mul[3]);
-        double new_scale_mul[4];
-        for (int c = 0; c < 4; c++) {
-            new_scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.0 / (ri->get_white(c) - ri->get_cblack(c));
-        }
-        if (fabs(new_scale_mul[3]) < 1e-10) {
-            new_scale_mul[3] = new_scale_mul[1]; // G2 == G1
-        }
-        float gain = max(new_scale_mul[0], new_scale_mul[1], new_scale_mul[2], new_scale_mul[3]) / min(new_scale_mul[0], new_scale_mul[1], new_scale_mul[2], new_scale_mul[3]);
+        const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+        float new_scale_mul[4];
+        float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom);
         rm = new_scale_mul[0] / scale_mul[0] * gain;
         gm = new_scale_mul[1] / scale_mul[1] * gain;
         bm = new_scale_mul[2] / scale_mul[2] * gain;
@@ -874,8 +883,12 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
     camProfile = iccStore->createFromMatrix (imatrices.xyz_cam, false, "Camera");
     inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
 
+        for (int c = 0; c < 4; c++) {
+            c_white[c] = ri->get_white(c);
+        }
         // First we get the "as shot" ("Camera") white balance and store it
 	float pre_mul[4];
+        // FIXME: get_colorsCoeff not so much used nowadays, when we have calculate_scale_mul() function here
         ri->get_colorsCoeff( pre_mul, scale_mul, c_black, false);//modify  for black level
         camInitialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
 
@@ -892,10 +905,10 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 	{
 		// ...then we re-get the constants but now with auto which gives us better demosaicing and CA auto-correct
 		// performance for strange white balance settings (such as UniWB)
-		ri->get_colorsCoeff( pre_mul, scale_mul, c_black, true);
-		refwb_red = ri->get_pre_mul(0) / pre_mul[0];
-		refwb_green = ri->get_pre_mul(1) / pre_mul[1];
-		refwb_blue = ri->get_pre_mul(2) / pre_mul[2];
+		ri->get_colorsCoeff( ref_pre_mul, scale_mul, c_black, true);
+		refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
+		refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
+		refwb_blue = ri->get_pre_mul(2) / ref_pre_mul[2];
                 initialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
 		ref_r = imatrices.rgb_cam[0][0]*refwb_red + imatrices.rgb_cam[0][1]*refwb_green + imatrices.rgb_cam[0][2]*refwb_blue;
 		ref_g = imatrices.rgb_cam[1][0]*refwb_red + imatrices.rgb_cam[1][1]*refwb_green + imatrices.rgb_cam[1][2]*refwb_blue;
@@ -1437,6 +1450,9 @@ void RawImageSource::scaleColors(int winx,int winy,int winw,int winh, const RAWP
 	black_lev[3]=raw.blackthree;//G2  (only used with a Bayer filter)
 
 	for(int i=0; i<4 ;i++) cblacksom[i] = max( c_black[i]+black_lev[i], 0.0f ); // adjust black level
+        initialGain = calculate_scale_mul(scale_mul, ref_pre_mul, c_white, cblacksom); // recalculate scale colors with adjusted levels
+        //fprintf(stderr, "recalc: %f [%f %f %f %f]\n", initialGain, scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+        
 	// this seems strange, but it works
 
 		// scale image colors
