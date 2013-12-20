@@ -74,6 +74,8 @@
 #ifdef __SSE2__
 #include "sleefsseavx.c"
 #endif
+#include <assert.h>
+
 template<typename T>
 class LUT {
 private:
