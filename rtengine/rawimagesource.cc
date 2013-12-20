@@ -216,43 +216,42 @@ void RawImageSource::getImage (ColorTemp ctemp, int tran, Imagefloat* image, Pre
     rm = imatrices.cam_rgb[0][0]*r + imatrices.cam_rgb[0][1]*g + imatrices.cam_rgb[0][2]*b;
     gm = imatrices.cam_rgb[1][0]*r + imatrices.cam_rgb[1][1]*g + imatrices.cam_rgb[1][2]*b;
     bm = imatrices.cam_rgb[2][0]*r + imatrices.cam_rgb[2][1]*g + imatrices.cam_rgb[2][2]*b;
-    rm = refwb_red / rm;
-    gm = refwb_green / gm;
-    bm = refwb_blue / bm;
 
-    /*float mul_lum = 0.299*rm + 0.587*gm + 0.114*bm;
-    rm /= mul_lum;
-    gm /= mul_lum;
-    bm /= mul_lum;*/    
+    if (true) {
+        // adjust gain so the maximum raw value of the least scaled channel just hits max
+        double pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+        double maxpremul = max(pre_mul[0], pre_mul[1], pre_mul[2], pre_mul[3]);
+        double new_scale_mul[4];
+        for (int c = 0; c < 4; c++) {
+            new_scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.0 / (ri->get_white(c) - ri->get_cblack(c));
+        }
+        if (fabs(new_scale_mul[3]) < 1e-10) {
+            new_scale_mul[3] = new_scale_mul[1]; // G2 == G1
+        }
+        float gain = max(new_scale_mul[0], new_scale_mul[1], new_scale_mul[2], new_scale_mul[3]) / min(new_scale_mul[0], new_scale_mul[1], new_scale_mul[2], new_scale_mul[3]);
+        rm = new_scale_mul[0] / scale_mul[0] * gain;
+        gm = new_scale_mul[1] / scale_mul[1] * gain;
+        bm = new_scale_mul[2] / scale_mul[2] * gain;
+        //fprintf(stderr, "camera gain: %f, current wb gain: %f, diff in stops %f\n", camInitialGain, gain, log2(camInitialGain) - log2(gain));
+    } else {
+        // old scaling: used a fixed reference gain based on camera (as-shot) white balance
 
-    /*//initialGain=1.0;
-	// in floating point, should keep white point fixed and recover higher values with exposure slider
-    //if (hrp.enabled) */
-    float min = rm;
-    if (min>gm) min = gm;
-    if (min>bm) min = bm;
-        defGain=0.0;// = log(initialGain) / log(2.0);
-        //printf(" Initial gain=%f defgain=%f min=%f\n",initialGain,defGain,min);
-        //printf(" rm=%f gm=%f bm=%f\n",rm,gm,bm);
-        min/=refInitialGain;
-   //min=(float)1.0/min;
-    //else {
-        //defGain = 0.0;
-        rm /= min;
-        gm /= min;
-        bm /= min;
-    //}
-	//defGain = 0.0;//no need now for making headroom for highlights???
-    //printf("initial gain= %e\n",initialGain);
-    //TODO: normalize the gain control
+        // how much we need to scale each channel to get our new white balance
+        rm = refwb_red / rm;
+        gm = refwb_green / gm;
+        bm = refwb_blue / bm;
+        // normalize so larger multiplier becomes 1.0
+        float minval = min(rm, gm, bm);
+        rm /= minval;
+        gm /= minval;
+        bm /= minval;
+        // multiply with reference gain, ie as-shot WB
+        rm *= camInitialGain;
+        gm *= camInitialGain;
+        bm *= camInitialGain;
+    }
 
-
-
-
-
-	//if (hrp.enabled==true && hrp.method=="Color" && hrmap[0]==NULL) 
-    //    updateHLRecoveryMap_ColorPropagation ();
-
+    defGain=0.0;
     // compute image area to render in order to provide the requested part of the image
     int sx1, sy1, imwidth, imheight, fw;
     transformRect (pp, tran, sx1, sy1, imwidth, imheight, fw);
@@ -878,11 +877,11 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
         // First we get the "as shot" ("Camera") white balance and store it
 	float pre_mul[4];
         ri->get_colorsCoeff( pre_mul, scale_mul, c_black, false);//modify  for black level
+        camInitialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
 
 	double camwb_red = ri->get_pre_mul(0) / pre_mul[0];
 	double camwb_green = ri->get_pre_mul(1) / pre_mul[1];
 	double camwb_blue = ri->get_pre_mul(2) / pre_mul[2];
-        refInitialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
 	double cam_r = imatrices.rgb_cam[0][0]*camwb_red + imatrices.rgb_cam[0][1]*camwb_green + imatrices.rgb_cam[0][2]*camwb_blue;
 	double cam_g = imatrices.rgb_cam[1][0]*camwb_red + imatrices.rgb_cam[1][1]*camwb_green + imatrices.rgb_cam[1][2]*camwb_blue;
 	double cam_b = imatrices.rgb_cam[2][0]*camwb_red + imatrices.rgb_cam[2][1]*camwb_green + imatrices.rgb_cam[2][2]*camwb_blue;
@@ -897,7 +896,7 @@ int RawImageSource::load (Glib::ustring fname, bool batch) {
 		refwb_red = ri->get_pre_mul(0) / pre_mul[0];
 		refwb_green = ri->get_pre_mul(1) / pre_mul[1];
 		refwb_blue = ri->get_pre_mul(2) / pre_mul[2];
-		initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
+                initialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
 		ref_r = imatrices.rgb_cam[0][0]*refwb_red + imatrices.rgb_cam[0][1]*refwb_green + imatrices.rgb_cam[0][2]*refwb_blue;
 		ref_g = imatrices.rgb_cam[1][0]*refwb_red + imatrices.rgb_cam[1][1]*refwb_green + imatrices.rgb_cam[1][2]*refwb_blue;
 		ref_b = imatrices.rgb_cam[2][0]*refwb_red + imatrices.rgb_cam[2][1]*refwb_green + imatrices.rgb_cam[2][2]*refwb_blue;

@@ -95,7 +95,7 @@ class RawImageSource : public ImageSource {
         int max_3[3];
         float chmax[4],hlmax[4];
         double initialGain; // initial gain calculated after scale_colors
-        double refInitialGain;
+        double camInitialGain;
         double defGain;
         bool full;
         cmsHPROFILE camProfile;
