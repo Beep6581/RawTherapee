@@ -102,7 +102,7 @@ namespace rtengine {
 		
 		for (int i=0; i<srcheight; i++) 
 			for (int j=0; j<srcwidth; j++) {
-				dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?		
+				dst[i][j] = CLIP(  buffer[i][j] );  // TODO: Really a clip necessary?
 								
 			}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,14 +170,14 @@ namespace rtengine {
 			for (int i=0; i<srcheight; i++) 
 				for (int j=0; j<srcwidth; j++) {
 					if(ncie->J_p[i][j] > 8.f && ncie->J_p[i][j] < 92.f)
-						dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?
+						dst[i][j] = CLIP( buffer[i][j] );  // TODO: Really a clip necessary?
 					else
 						dst[i][j]=src[i][j];
 				}
 		else
 			for (int i=0; i<srcheight; i++) 
 				for (int j=0; j<srcwidth; j++) {
-					dst[i][j] = CLIP((int)(  buffer[i][j]  ));  // TODO: Really a clip necessary?		
+					dst[i][j] = CLIP( buffer[i][j] );  // TODO: Really a clip necessary?
 				}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	}
