@@ -428,13 +428,20 @@ void ToolPanelCoordinator::spotWBselected (int x, int y, Thumbnail* thm) {
         return;
 
 //    toolBar->setTool (TOOL_HAND);
-    if (x>0 && y>0) {
+	int rect=whitebalance->getSize ();
+	int ww= ipc->getFullWidth();
+	int hh= ipc->getFullHeight();
+	
+    if (x-rect>0 && y-rect>0 && x+rect<ww && y+rect<hh) {
         double temp;
         double green;
-        ipc->getSpotWB (x, y, whitebalance->getSize (), temp, green);
+        ipc->getSpotWB (x, y, rect, temp, green);
         whitebalance->setWB (temp, green);
     }
 }
+
+
+
 
 void ToolPanelCoordinator::autoCropRequested () {
 
