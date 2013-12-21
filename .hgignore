@@ -3,6 +3,9 @@ syntax: glob
 *~
 *.orig
 
+.cproject
+.project
+
 CMakeFiles
 Makefile
 cmake_install.cmake
