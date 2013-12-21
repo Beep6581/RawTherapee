@@ -255,10 +255,10 @@ class ImProcFunctions {
 	//	void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
 	//						   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab, wavelet_decomposition &wch, NoiImage * noi );
 		void WaveletDenoiseAll(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
-							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab, LabImage * noi );
+							   wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_abr, float noisevar_abb, LabImage * noi );
 							   
 		void WaveletDenoiseAll_BiShrink(wavelet_decomposition &WaveletCoeffs_L, wavelet_decomposition &WaveletCoeffs_a, 
-										wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_ab );
+										wavelet_decomposition &WaveletCoeffs_b, float noisevar_L, float noisevar_abr, float noisevar_abb, LabImage * noi);
 		//void BiShrink(float * ReCoeffs, float * ImCoeffs, float * ReParents, float * ImParents, 
 		//			  int W, int H, int level, int padding, float noisevar);
 		//void Shrink(float ** WavCoeffs, int W, int H, int level, float noisevar);
@@ -266,7 +266,7 @@ class ImProcFunctions {
 	//				   int W_L, int H_L, int W_ab, int H_ab, int W_h, int H_h, int skip_L, int skip_ab, int skip_h, float noisevar_L, float noisevar_ab, float **WavCoeffs_h, LabImage * noi);
 
 		void ShrinkAll(float ** WavCoeffs_L, float ** WavCoeffs_a, float ** WavCoeffs_b, int level, 
-					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_ab, LabImage * noi);
+					   int W_L, int H_L, int W_ab, int H_ab, int skip_L, int skip_ab, float noisevar_L, float noisevar_abr, float noisevar_abb,LabImage * noi);
 
 		float MadMax(float * HH_Coeffs, int &max, int datalen);
 		

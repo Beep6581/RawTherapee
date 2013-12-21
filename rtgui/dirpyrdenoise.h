@@ -36,6 +36,10 @@ class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public Foldable
     Gtk::CheckButton* enabled;
     bool lastEnabled;
     sigc::connection enaConn;
+    Gtk::CheckButton* enhance;
+    bool lastenhance;
+    sigc::connection enhanConn;
+	
 //    Gtk::CheckButton* perform;
 //    bool lastperform;
 //    sigc::connection perfconn;
@@ -54,6 +58,7 @@ class DirPyrDenoise : public Gtk::VBox, public AdjusterListener, public Foldable
 
     void adjusterChanged (Adjuster* a, double newval);
     void enabledChanged  ();
+    void enhanceChanged  ();
 //    void perform_toggled  ();
     void dmethodChanged      ();
 

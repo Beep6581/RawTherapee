@@ -3771,13 +3771,14 @@ fclose(f);*/
 
 		//compute clipped white point
 		int clippable = (int)(sum * clip/100.f );
+		int somm=sum;
 		clipped = 0;
 		int whiteclip = (imax) - 1;
 		while (whiteclip>1 && histogram[whiteclip]+clipped <= clippable) {
 			clipped += histogram[whiteclip];
 			whiteclip--;
 		}
-
+		int clipwh=clipped;
 		//compute clipped black point
 		clipped = 0;
 		int shc = 0;
@@ -3786,6 +3787,8 @@ fclose(f);*/
 			clipped += histogram[shc];
 			shc++;
 		}
+		int clipbl=clipped;
+		
 		//rescale to 65535 max
 		rawmax <<= histcompr;
 		whiteclip <<= histcompr;
@@ -3857,7 +3860,8 @@ fclose(f);*/
 
 		//diagnostics
 		//printf ("**************** AUTO LEVELS ****************\n");
-	/*	 if (settings->verbose) {
+/*		 if (settings->verbose) {
+		printf("sum=%i clip=%f clippable=%i  clipWh=%i  clipBl=%i\n",somm, clip, clippable,clipwh, clipbl);
 		printf ("expcomp1= %f   expcomp2= %f gain= %f  expcomp=%f\n",expcomp1,expcomp2,gain,expcomp);
 		printf ("expo=%f\n",expo);
 		printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);

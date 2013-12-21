@@ -470,6 +470,8 @@ class DirPyrDenoiseParams {
 
     public:
         bool    enabled;
+        bool    enhance;
+		
         bool    perform;
         double  luma;
         double  Ldetail;

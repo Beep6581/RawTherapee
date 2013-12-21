@@ -66,7 +66,8 @@ public:
 
 private:
 
-    static const int maxlevels = 8;//should be greater than any conceivable order of decimation
+  //  static const int maxlevels = 8;//should be greater than any conceivable order of decimation
+    static const int maxlevels = 9;//should be greater than any conceivable order of decimation
     
     int lvltot, subsamp;
     size_t m_w, m_h;//dimensions
@@ -306,7 +307,7 @@ public:
 		
 	private:
 		
-		static const int maxlevels = 8;//should be greater than any conceivable order of decimation
+		static const int maxlevels = 9;//should be greater than any conceivable order of decimation
 		
 		int lvltot, subsamp;
 		size_t m_w, m_h;//dimensions

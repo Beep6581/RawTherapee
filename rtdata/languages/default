@@ -435,8 +435,8 @@ HISTORY_MSG_197;CAM02 - Color curve
 HISTORY_MSG_198;CAM02 - Color curve
 HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
 HISTORY_MSG_200;CAM02 - Tone mapping using CIECAM02 Q
-HISTORY_MSG_201;NR - Delta Chrominance red
-HISTORY_MSG_202;NR - Delta Chrominance blue
+HISTORY_MSG_201;NR - Delta Chrominance red-green
+HISTORY_MSG_202;NR - Delta Chrominance blue-yellow
 HISTORY_MSG_203;NR - Method
 HISTORY_MSG_204;LMMSE Enhancement Steps
 HISTORY_MSG_205;CAM02 hot/bad pixels
@@ -483,6 +483,7 @@ HISTORY_MSG_246;"CL" curve
 HISTORY_MSG_247;"LH" curve
 HISTORY_MSG_248;"HH" curve
 HISTORY_MSG_249;Contrast by Detail Levels Threshold
+HISTORY_MSG_250;NR enhance
 HISTORY_NEWSNAPSHOTAS;As...
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -1144,7 +1145,9 @@ TP_DARKFRAME_LABEL;Dark Frame
 TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
-TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
+TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue & Yellow
+TP_DIRPYRDENOISE_ENH;Enhanced mode
+TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
 TP_DIRPYRDENOISE_CHROMA;Chrominance (Master)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -1156,7 +1159,7 @@ TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYRDENOISE_METHOD;Method
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
 TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
-TP_DIRPYRDENOISE_RED;Delta chrominance Red
+TP_DIRPYRDENOISE_RED;Delta chrominance Red & Green
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
 TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest

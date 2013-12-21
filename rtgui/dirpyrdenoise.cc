@@ -84,6 +84,11 @@ DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 //	perform->show();
 	gamma->show();
 //	perform->set_active (true);
+
+	enhance = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_ENH")));
+	enhance->set_active (false);
+	enhance->set_tooltip_text (M("TP_DIRPYRDENOISE_ENH_TOOLTIP"));
+
 	
 	pack_start (*luma);
 	pack_start (*Ldetail);
@@ -92,7 +97,10 @@ DirPyrDenoise::DirPyrDenoise () : Gtk::VBox(), FoldableToolPanel(this)  {
 	pack_start (*bluechro);
 	
 	pack_start (*gamma);
+	pack_start (*enhance);
+	
 //	pack_start (*perform);
+	enhanConn = enhance->signal_toggled().connect( sigc::mem_fun(*this, &DirPyrDenoise::enhanceChanged) );
 
 }
 
@@ -119,14 +127,17 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited) {
 
         gamma->setEditedState     (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
         enabled->set_inconsistent (!pedited->dirpyrDenoise.enabled);
+        enhance->set_inconsistent (!pedited->dirpyrDenoise.enhance);
   //      perform->set_inconsistent (!pedited->dirpyrDenoise.perform);
     }
 //	perfconn.block (true);
     enabled->set_active (pp->dirpyrDenoise.enabled);
+    enhance->set_active (pp->dirpyrDenoise.enhance);
  //   perform->set_active (pp->dirpyrDenoise.perform);
 
  //   perfconn.block (false);
     lastEnabled = pp->dirpyrDenoise.enabled;
+    lastenhance = pp->dirpyrDenoise.enhance;
 //	lastperform = pp->dirpyrDenoise.perform;	
     luma->setValue    (pp->dirpyrDenoise.luma);
     Ldetail->setValue (pp->dirpyrDenoise.Ldetail);
@@ -150,6 +161,7 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
 	pp->dirpyrDenoise.bluechro	= bluechro->getValue ();
 	pp->dirpyrDenoise.gamma		= gamma->getValue ();
 	pp->dirpyrDenoise.enabled   = enabled->get_active();
+	pp->dirpyrDenoise.enhance   = enhance->get_active();
 //	pp->dirpyrDenoise.perform   = perform->get_active();
 	
     if (pedited) {
@@ -161,6 +173,7 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited) {
         pedited->dirpyrDenoise.bluechro = bluechro->getEditedState ();
         pedited->dirpyrDenoise.gamma    = gamma->getEditedState ();
         pedited->dirpyrDenoise.enabled  = !enabled->get_inconsistent();
+        pedited->dirpyrDenoise.enhance  = !enhance->get_inconsistent();
     //    pedited->dirpyrDenoise.perform  = !perform->get_inconsistent();
     }
     if (dmethod->get_active_row_number()==0)
@@ -248,6 +261,30 @@ void DirPyrDenoise::enabledChanged () {
             listener->panelChanged (EvDPDNEnabled, M("GENERAL_DISABLED"));
     }  
 }
+
+void DirPyrDenoise::enhanceChanged () {
+	
+    if (batchMode) {
+        if (enhance->get_inconsistent()) {
+            enhance->set_inconsistent (false);
+            enhanConn.block (true);
+            enhance->set_active (false);
+            enhanConn.block (false);
+        }
+        else if (lastenhance)
+            enhance->set_inconsistent (true);
+		
+        lastenhance = enhance->get_active ();
+    }
+	
+    if (listener) {
+        if (enhance->get_active ())
+            listener->panelChanged (EvDPDNenhance, M("GENERAL_ENABLED"));
+        else
+            listener->panelChanged (EvDPDNenhance, M("GENERAL_DISABLED"));
+    }  
+}
+
 /*
 void DirPyrDenoise::perform_toggled () {
 
