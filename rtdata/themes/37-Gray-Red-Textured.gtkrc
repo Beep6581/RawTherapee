@@ -75,7 +75,7 @@ style "clearlooks-default" {
 	bg[ACTIVE]        = shade (0.7, @rt_bg_color)
 
 	fg[NORMAL]        = @rt_fg_color
-	fg[PRELIGHT]      = @rt_selected_fg_color
+	fg[PRELIGHT]      = @rt_fg_color
 	fg[SELECTED]      = @rt_selected_fg_color
 	fg[INSENSITIVE]   = mix (0.2, @rt_fg_color, @rt_bg_color)
 	fg[ACTIVE]        = @rt_fg_color
@@ -106,8 +106,6 @@ style "clearlooks-default" {
 		hint = "use-hints"
 	}
 }
-
-pixmap_path "themes/gray_textured"
 
 style "wide" {
 	xthickness = 2
@@ -206,7 +204,7 @@ style "clearlooks-scrollbar" {
 		{
 			function			= BOX
 			detail				= "trough"
-			file				= "trough2.png"
+			file				= "gray_textured/trough2.png"
 			border				= { 6,6,6,6 }
 			stretch				= TRUE
 			orientation			= VERTICAL
@@ -215,7 +213,7 @@ style "clearlooks-scrollbar" {
 		{
 			function			= BOX
 			detail				= "trough"
-			file				= "trough2-h.png"
+			file				= "gray_textured/trough2-h.png"
 			border				= { 6,6,6,6 }
 			stretch				= TRUE
 			orientation			= HORIZONTAL
@@ -223,8 +221,8 @@ style "clearlooks-scrollbar" {
 		image
 		{
 			function			= SLIDER
-			state           	= NORMAL
-			file				= "slider-h.png" 
+			state				= NORMAL
+			file				= "gray_textured/slider-h.png" 
 			border				= { 6,6,2,2 }
 			stretch				= TRUE
 			orientation			= HORIZONTAL
@@ -232,8 +230,8 @@ style "clearlooks-scrollbar" {
 		image
 		{
 			function			= SLIDER
-			state           	= PRELIGHT
-			file				= "slider-h-pre.png" 
+			state				= PRELIGHT
+			file				= "gray_textured/slider-h-pre.png" 
 			border				= { 6,6,2,2 }
 			stretch				= TRUE
 			orientation			= HORIZONTAL
@@ -241,8 +239,8 @@ style "clearlooks-scrollbar" {
 		image
 		{
 			function			= SLIDER
-			state           	= INSENSITIVE
-			file				= "slider-h-ins.png"
+			state				= INSENSITIVE
+			file				= "gray_textured/slider-h-ins.png"
 			border				= { 6,6,2,2 }
 			stretch				= TRUE
 			orientation			= HORIZONTAL
@@ -250,8 +248,8 @@ style "clearlooks-scrollbar" {
 		image
 		{
 			function			= SLIDER
-			state           	= NORMAL
-			file				= "slider-v.png" 
+			state				= NORMAL
+			file				= "gray_textured/slider-v.png" 
 			border				= { 2, 2, 6, 6 }
 			stretch				= TRUE
 			orientation			= VERTICAL
@@ -259,8 +257,8 @@ style "clearlooks-scrollbar" {
 		image
 		{
 			function			= SLIDER
-			state           	= PRELIGHT
-			file				= "slider-v-pre.png" 
+			state				= PRELIGHT
+			file				= "gray_textured/slider-v-pre.png" 
 			border				= { 2, 2, 6, 6 }
 			stretch				= TRUE
 			orientation			= VERTICAL
@@ -268,8 +266,8 @@ style "clearlooks-scrollbar" {
 		image
 		{
 			function			= SLIDER
-			state           	= INSENSITIVE
-			file				= "slider-v-ins.png"
+			state				= INSENSITIVE
+			file				= "gray_textured/slider-v-ins.png"
 			border				= { 2,2,6,6 }
 			stretch				= TRUE
 			orientation			= VERTICAL
@@ -278,176 +276,176 @@ style "clearlooks-scrollbar" {
 		{
 			function			= STEPPER
 			state				= NORMAL
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 1,1,4,4 }
 			stretch				= TRUE
 			arrow_direction		= UP
-			overlay_file		= "arrow-up.png"
+			overlay_file		= "gray_textured/arrow-up.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= PRELIGHT
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 1,1,4,4 }
 			stretch				= TRUE
 			arrow_direction		= UP
-			overlay_file		= "arrow-up-pre.png"
+			overlay_file		= "gray_textured/arrow-up-pre.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= ACTIVE
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 1,1,4,4 }
 			stretch				= TRUE
 			arrow_direction		= UP
-			overlay_file		= "arrow-up.png"
+			overlay_file		= "gray_textured/arrow-up.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= INSENSITIVE
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 1,1,4,4 }
 			stretch				= TRUE
 			arrow_direction		= UP
-			overlay_file		= "arrow-up-ins.png"
+			overlay_file		= "gray_textured/arrow-up-ins.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= NORMAL
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 1,1,4,4 }
 			stretch				= TRUE
 			arrow_direction		= DOWN
-			overlay_file		= "arrow-down.png"
+			overlay_file		= "gray_textured/arrow-down.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= PRELIGHT
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 1,1,4,4 }
 			stretch				= TRUE
 			arrow_direction		= DOWN
-			overlay_file		= "arrow-down-pre.png"
+			overlay_file		= "gray_textured/arrow-down-pre.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= ACTIVE
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 1,1,4,4 }
 			stretch				= TRUE
 			arrow_direction		= DOWN
-			overlay_file		= "arrow-down.png"
+			overlay_file		= "gray_textured/arrow-down.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= INSENSITIVE
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 1,1,4,4 }
 			stretch				= TRUE
 			arrow_direction		= DOWN
-			overlay_file		= "arrow-down-ins.png"
+			overlay_file		= "gray_textured/arrow-down-ins.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= NORMAL
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 4,4,1,1 }
 			stretch				= TRUE
 			arrow_direction		= RIGHT
-			overlay_file		= "arrow-right.png"
+			overlay_file		= "gray_textured/arrow-right.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= PRELIGHT
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 4,4,1,1 }
 			stretch				= TRUE
 			arrow_direction		= RIGHT
-			overlay_file		= "arrow-right-pre.png"
+			overlay_file		= "gray_textured/arrow-right-pre.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= ACTIVE
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 4,4,1,1 }
 			stretch				= TRUE
 			arrow_direction		= RIGHT
-			overlay_file		= "arrow-right.png"
+			overlay_file		= "gray_textured/arrow-right.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= INSENSITIVE
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 4,4,1,1 }
 			stretch				= TRUE
 			arrow_direction		= RIGHT
-			overlay_file		= "arrow-right-ins.png"
+			overlay_file		= "gray_textured/arrow-right-ins.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= NORMAL
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 4,4,1,1 }
 			stretch				= TRUE
 			arrow_direction		= LEFT
-			overlay_file		= "arrow-left.png"
+			overlay_file		= "gray_textured/arrow-left.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= PRELIGHT
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 4,4,1,1 }
 			stretch				= TRUE
 			arrow_direction		= LEFT
-			overlay_file		= "arrow-left-pre.png"
+			overlay_file		= "gray_textured/arrow-left-pre.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= ACTIVE
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 4,4,1,1 }
 			stretch				= TRUE
 			arrow_direction		= LEFT
-			overlay_file		= "arrow-left.png"
+			overlay_file		= "gray_textured/arrow-left.png"
 			overlay_stretch		= FALSE
 		}
 		image
 		{
 			function			= STEPPER
 			state				= INSENSITIVE
-			file				= "null.png"
+			file				= "gray_textured/null.png"
 			border				= { 4,4,1,1 }
 			stretch				= TRUE
 			arrow_direction		= LEFT
-			overlay_file		= "arrow-left-ins.png"
+			overlay_file		= "gray_textured/arrow-left-ins.png"
 			overlay_stretch		= FALSE
 		}
 	}
@@ -473,14 +471,14 @@ style "clearlooks-range" {
 		# image
 		# {
 		#   function		= FOCUS
-		#   file			= "null.png"
+		#   file			= "gray_textured/null.png"
 		#   stretch			= TRUE
 		# }	
 		image 
 		{
 			function		= BOX
 			detail			= "trough"
-			file			= "pbtroughh.png"
+			file			= "gray_textured/pbtroughh.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= HORIZONTAL
@@ -489,7 +487,7 @@ style "clearlooks-range" {
 		{
 			function		= BOX
 			detail			= "trough"
-			file			= "pbtroughv.png"
+			file			= "gray_textured/pbtroughv.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= VERTICAL
@@ -497,8 +495,8 @@ style "clearlooks-range" {
 		image 
 		{
 			function		= SLIDER
-			state           = NORMAL
-			file			= "rangeslider.png"
+			state			= NORMAL
+			file			= "gray_textured/rangeslider.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= HORIZONTAL
@@ -506,8 +504,8 @@ style "clearlooks-range" {
 		image 
 		{
 			function		= SLIDER
-			state           = PRELIGHT
-			file			= "rangeslider-pre.png"
+			state			= PRELIGHT
+			file			= "gray_textured/rangeslider-pre.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= HORIZONTAL
@@ -515,8 +513,8 @@ style "clearlooks-range" {
 		image 
 		{
 			function		= SLIDER
-			state           = ACTIVE
-			file			= "rangeslider-pre.png"
+			state			= ACTIVE
+			file			= "gray_textured/rangeslider-pre.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= HORIZONTAL
@@ -524,8 +522,8 @@ style "clearlooks-range" {
 		image 
 		{
 			function		= SLIDER
-			state           = INSENSITIVE
-			file			= "rangeslider-ins.png"
+			state			= INSENSITIVE
+			file			= "gray_textured/rangeslider-ins.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= HORIZONTAL
@@ -533,8 +531,8 @@ style "clearlooks-range" {
 		image 
 		{
 			function		= SLIDER
-			state           = NORMAL
-			file			= "rangeslider.png"
+			state			= NORMAL
+			file			= "gray_textured/rangeslider.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= VERTICAL
@@ -542,8 +540,8 @@ style "clearlooks-range" {
 		image 
 		{
 			function		= SLIDER
-			state           = PRELIGHT
-			file			= "rangeslider-pre.png"
+			state			= PRELIGHT
+			file			= "gray_textured/rangeslider-pre.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= VERTICAL
@@ -551,8 +549,8 @@ style "clearlooks-range" {
 		image 
 		{
 			function		= SLIDER
-			state           = ACTIVE
-			file			= "rangeslider-pre.png"
+			state			= ACTIVE
+			file			= "gray_textured/rangeslider-pre.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= VERTICAL
@@ -560,8 +558,8 @@ style "clearlooks-range" {
 		image 
 		{
 			function		= SLIDER
-			state           = INSENSITIVE
-			file			= "rangeslider-ins.png"
+			state			= INSENSITIVE
+			file			= "gray_textured/rangeslider-ins.png"
 			border			= { 6, 6, 6, 6 }
 			stretch			= TRUE
 			orientation		= VERTICAL
@@ -800,6 +798,7 @@ widget_class "*<GtkStatusbar>*" style "clearlooks-statusbar"
 widget_class "*<GtkComboBox>*" style "clearlooks-combobox"
 
 widget_class "*<GtkExpander>.<GtkLabel>" style "clearlooks-expanderLabel"
+widget_class "*<GtkExpander>.<GtkHBox>.<GtkLabel>" style "clearlooks-expanderLabel"
 
 widget_class "*<GtkMenuBar>*" style "clearlooks-menubar"
 widget_class "*<GtkMenu>*" style "clearlooks-menu"

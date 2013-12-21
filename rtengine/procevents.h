@@ -88,7 +88,7 @@ enum ProcEvent {
     EvCrop=63,
     EvCACorr=64,
     EvHREnabled=65,
-    EvHRAmount=66,
+    EvHRAmount=66,   //obsolete
     EvHRMethod=67,
     EvWProfile=68,
     EvOProfile=69,

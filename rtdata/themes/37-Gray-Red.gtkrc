@@ -75,7 +75,7 @@ style "clearlooks-default" {
 	bg[ACTIVE]        = shade (0.7, @rt_bg_color)
 
 	fg[NORMAL]        = @rt_fg_color
-	fg[PRELIGHT]      = @rt_selected_fg_color
+	fg[PRELIGHT]      = @rt_fg_color
 	fg[SELECTED]      = @rt_selected_fg_color
 	fg[INSENSITIVE]   = mix (0.2, @rt_fg_color, @rt_bg_color)
 	fg[ACTIVE]        = @rt_fg_color
@@ -450,6 +450,7 @@ widget_class "*<GtkStatusbar>*" style "clearlooks-statusbar"
 widget_class "*<GtkComboBox>*" style "clearlooks-combobox"
 
 widget_class "*<GtkExpander>.<GtkLabel>" style "clearlooks-expanderLabel"
+widget_class "*<GtkExpander>.<GtkHBox>.<GtkLabel>" style "clearlooks-expanderLabel"
 
 widget_class "*<GtkMenuBar>*" style "clearlooks-menubar"
 widget_class "*<GtkMenu>*" style "clearlooks-menu"
