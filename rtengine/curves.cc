@@ -356,8 +356,8 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 		LUTf dCcurve(65536,0);
 	
 		float val;
-		for (int i=0; i<48000; i++) {  //# 32768*1.414  approximation maxi for chroma
-				dCcurve[i] = (float)i / 47999.0;
+		for (int i=0; i<50000; i++) {  //# 32768*1.414  approximation maxi for chroma
+				dCcurve[i] = (float)i / 49999.0;
 		}
 		
 		if (outBeforeCLurveHistogram)		
@@ -373,7 +373,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 			if (dCurve && !dCurve->isIdentity())
 				{needed = true;clcutili=true;}
 		}
-		for (int i=0; i<=48000; i++) {//32768*1.414  + ...
+		for (int i=0; i<=50000; i++) {//32768*1.414  + ...
 			float val;
 			if (histNeededCL) {
 				float hval = dCcurve[i];
