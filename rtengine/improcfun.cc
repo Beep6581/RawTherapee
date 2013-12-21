@@ -3019,8 +3019,9 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 			float Chprov=CC;
 			float Chprov1=CC;
 			float memChprov=Chprov;
-			float Lprov2=LL;
+			
 			float Lin=lold->L[i][j];
+			float Lprov2=Lin;
 			lnew->L[i][j] = curve[Lin];
 			float Lprov1=(lnew->L[i][j])/327.68f;
 			float chromaChfactor=1.0f;
@@ -3158,10 +3159,12 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				btmp *= factor;
 
  			}
+			
 			if (!bwToning && clut) { // begin C=f(L)
 				float factorskin,factorsat,factor,factorskinext,interm;
 				float chroma = sqrt(SQR(atmp)+SQR(btmp)+0.001f);
-				float chromaCfactor=(clcurve[Lprov1*327.68f])/(Lprov1*327.68f);//apply C=f(L)
+			//	float chromaCfactor=(clcurve[Lprov1*327.68f])/(Lprov1*327.68f);//apply C=f(L)
+				float chromaCfactor=(clcurve[Lprov2*327.68f])/(Lprov2*327.68f);//apply C=f(L)
 				float curf=0.7f;//empirical coeff because curve is more progressive
 				float scale = 100.0f/100.1f;//reduction in normal zone for curve C
 				float scaleext=1.0f;//reduction in transition zone for curve C
@@ -3193,7 +3196,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 				btmp *= factor;
 			}
 			// end C=f(L)
-
+			
 			// I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
 			if (!bwToning && ccut) {
 				float factorskin,factorsat,factor,factorskinext,interm;
