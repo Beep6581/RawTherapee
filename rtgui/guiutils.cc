@@ -358,7 +358,6 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event) {
 
 MyComboBoxText::MyComboBoxText () {
 	set_size_request(40, -1);
-	set_border_width(2);
 }
 
 bool MyComboBoxText::on_scroll_event (GdkEventScroll* event) {
@@ -374,7 +373,6 @@ bool MyComboBoxText::on_scroll_event (GdkEventScroll* event) {
 
 MyComboBox::MyComboBox () {
 	set_size_request(40, -1);
-	set_border_width(2);
 }
 
 bool MyComboBox::on_scroll_event (GdkEventScroll* event) {

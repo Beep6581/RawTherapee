@@ -171,7 +171,7 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         
         bool hasChanged;
 
-        void addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label);
+        void addPanel (Gtk::Box* where, FoldableToolPanel* panel, Glib::ustring label, bool need100Percent=false);
         void foldThemAll (GdkEventButton* event);
         void updateVScrollbars (bool hide);
         void updateTabsHeader (bool useIcons);

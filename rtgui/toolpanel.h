@@ -87,7 +87,7 @@ class FoldableToolPanel : public ToolPanel {
 
         void setParent (Gtk::Box* parent) { parentContainer = parent; }
         Gtk::Box* getParent () { return parentContainer; }
-        void setLabel (Glib::ustring label) { exp->set_label(Glib::ustring("<b>") + label + Glib::ustring("</b>")); }
+        void setLabel (Glib::ustring label, bool need100Percent=false);
 };
 
 #endif

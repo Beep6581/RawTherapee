@@ -300,9 +300,9 @@ HISTORY_MSG_62;Lens Distortion Correction
 HISTORY_MSG_63;Snapshot Selected
 HISTORY_MSG_64;Crop Photo
 HISTORY_MSG_65;CA correction
-HISTORY_MSG_66;Highlight Recovery
-HISTORY_MSG_67;Highlight Recovery Amount
-HISTORY_MSG_68;Highlight Recovery Method
+HISTORY_MSG_66;Highlight Reconstruction
+HISTORY_MSG_67;HL Reconstruction - Amount
+HISTORY_MSG_68;HL Reconstruction - Method
 HISTORY_MSG_69;Working Color Space
 HISTORY_MSG_70;Output Color Space
 HISTORY_MSG_71;Input Color Space
@@ -1213,6 +1213,7 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Free gamma
 TP_GAMMA_OUTPUT;Output Gamma
 TP_GAMMA_SLOP;Slope (linear)
+TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 TP_GRADIENT_CENTER;Center
 TP_GRADIENT_CENTER_X;Center X
 TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge

@@ -57,3 +57,21 @@ void FoldableToolPanel::foldThemAll (GdkEventButton* event) {
 		  (static_cast<ToolPanelCoordinator*>(tmp))->foldAllButOne( parentContainer, this);
 	}
 }
+
+void FoldableToolPanel::setLabel (Glib::ustring label, bool need100Percent) {
+	if (!need100Percent)
+		exp->set_label(Glib::ustring("<b>") + label + Glib::ustring("</b>"));
+	else {
+		Gtk::Label *labelWidget = Gtk::manage (new Gtk::Label(Glib::ustring("<b>") + label + Glib::ustring("</b>")));
+		labelWidget->set_use_markup();
+		RTImage *image = Gtk::manage (new RTImage("zoom-100-identifier.png"));
+		image->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
+		Gtk::HBox *hbox = Gtk::manage (new Gtk::HBox());
+
+		hbox->set_spacing(4);
+		hbox->pack_start(*labelWidget, false, false, 0);
+		hbox->pack_end(*image, false, false, 0);
+		exp->set_label_widget(*hbox);
+		exp->set_label_fill();
+	}
+}

@@ -451,6 +451,7 @@ widget_class "*<GtkStatusbar>*" style "clearlooks-statusbar"
 widget_class "*<GtkComboBox>*" style "clearlooks-combobox"
 
 widget_class "*<GtkExpander>.<GtkLabel>" style "clearlooks-expanderLabel"
+widget_class "*<GtkExpander>.<GtkHBox>.<GtkLabel>" style "clearlooks-expanderLabel"
 
 widget_class "*<GtkMenuBar>*" style "clearlooks-menubar"
 widget_class "*<GtkMenu>*" style "clearlooks-menu"
