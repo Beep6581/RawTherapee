@@ -143,7 +143,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if( !highDetailNeeded ){
         // if below 100% magnification, take a fast path
         rp.dmethod = RAWParams::methodstring[RAWParams::fast];
-        rp.ca_autocorrect  = false;
         rp.hotdeadpix_filt = false;
         rp.ccSteps = 0;
         //rp.all_enhance = false;
