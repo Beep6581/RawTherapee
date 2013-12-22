@@ -724,6 +724,7 @@ void EditorPanel::info_toggled () {
     Glib::ustring infoString1; //1-st line
     Glib::ustring infoString2; //2-nd line
     Glib::ustring infoString3; //3-rd line
+    Glib::ustring infoString4; //4-th line
     Glib::ustring expcomp;
 
     if (!ipc || !openThm) return;
@@ -750,7 +751,12 @@ void EditorPanel::info_toggled () {
         				escapeHtmlChars(Glib::path_get_dirname(openThm->getFileName())) + G_DIR_SEPARATOR_S,
         				escapeHtmlChars(Glib::path_get_basename(openThm->getFileName()))  );
 
-        infoString = Glib::ustring::compose ("%1\n%2\n%3",infoString1, infoString2, infoString3);
+        int ww= ipc->getFullWidth();
+        int hh= ipc->getFullHeight();
+        //megapixels
+        infoString4 = Glib::ustring::compose ("<span size=\"small\">%1 MP (%2x%3)</span>", Glib::ustring::format(std::setw(4), std::fixed, std::setprecision(1), (float)ww*hh/1000000), ww, hh);
+
+        infoString = Glib::ustring::compose ("%1\n%2\n%3\n%4",infoString1, infoString2, infoString3, infoString4);
     }
     else
         infoString = M("QINFO_NOEXIF");
