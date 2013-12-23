@@ -3720,7 +3720,6 @@ fclose(f);*/
 				hidev += (log((float)i+1.)-log(ave+1.f))*histogram[i];
 				hisum += histogram[i];
 			}
-
 		}
 		if (losum==0 || hisum==0) {//probably the image is a blackframe
 			expcomp=0.;
@@ -3731,6 +3730,7 @@ fclose(f);*/
 			hlcomprthresh=0;
 			return;
 		}
+
 		lodev = (lodev/(log(2.f)*losum));
 		hidev = (hidev/(log(2.f)*hisum));
 		if (octile[6]>log((float)imax+1.f)/log2(2.f)) {//if very overxposed image
@@ -3741,11 +3741,19 @@ fclose(f);*/
 		if (octile[7]>log((float)imax+1.f)/log2(2.f)) {//if overexposed
 			octile[7]=1.5f*octile[6]-0.5f*octile[5];
 			overex=1;
-			
 		}
+
+		// store values of octile[6] and octile[7] for calculation of exposure compensation
+		// if we don't do this and the pixture is underexposed, calculation of exposure compensation assumes
+		// that it's overexposed and calculates the wrong direction
+		float oct6,oct7;
+		oct6 = octile[6];
+		oct7 = octile[7];
+		
+
 		for(int i=1; i<8; i++) {
-		  if (octile[i] == 0.0f)
-		    octile[i] = octile[i-1];
+			if (octile[i] == 0.0f)
+				octile[i] = octile[i-1];
 		}
 		// compute weighted average separation of octiles
 		// for future use in contrast setting
@@ -3800,7 +3808,8 @@ fclose(f);*/
 		shc <<= histcompr;
 
 		//prevent division by 0
-		if (lodev==0.f) lodev=1.f;
+		if (lodev==0.f)
+			lodev=1.f;
 
 		//compute exposure compensation as geometric mean of the amount that
 		//sets the mean or median at middle gray, and the amount that sets the estimated top
@@ -3808,14 +3817,21 @@ fclose(f);*/
 		float expo=log(midgray*scale/(ave-shc+midgray*shc));
 		//float expcomp1 = (log(/*(median/ave)*//*(hidev/lodev)*/midgray*scale/(ave-shc+midgray*shc))+log((hidev/lodev)))/log(2.f);
 		float expcomp1 = (log(/*(median/ave)*//*(hidev/lodev)*/midgray*scale/(ave-shc+midgray*shc)))/log(2.f);
-		float expcomp2 = 0.5f*( (15.5f-histcompr-(2.f*octile[7]-octile[6])) + log(scale/rawmax)/log(2.f) );
+		float expcomp2;
+		
+		if(overex == 0) { // image is not overexposed
+			expcomp2 = 0.5f*( (15.5f-histcompr-(2.f*oct7-oct6)) + log(scale/rawmax)/log(2.f) );
+		}
+		else {
+			expcomp2 = 0.5f*( (15.5f-histcompr-(2.f*octile[7]-octile[6])) + log(scale/rawmax)/log(2.f) );
+		}
+		
 		if(fabs(expcomp1)-fabs(expcomp2)> 1.f) {//for great expcomp
-		expcomp = (expcomp1*fabs(expcomp2)+expcomp2*fabs(expcomp1))/(fabs(expcomp1)+fabs(expcomp2));
-		if (expcomp<0.f) {
-			min(0.0f,max(expcomp1,expcomp2));
+			expcomp = (expcomp1*fabs(expcomp2)+expcomp2*fabs(expcomp1))/(fabs(expcomp1)+fabs(expcomp2));
 		}
+		else {
+			expcomp = 0.5 * (double)expcomp1 + 0.5 *(double) expcomp2;//for small expcomp
 		}
-		else expcomp = 0.5 * (double)expcomp1 + 0.5 *(double) expcomp2;//for small expcomp
 		float gain = exp((float)expcomp*log(2.f));
 
 		float corr = sqrt(gain*scale/rawmax);
@@ -3851,9 +3867,9 @@ fclose(f);*/
 		for (int i=0; i<65536>>histcompr; i++)
 		gavg += histogram[i] * CurveFactory::gamma2((int)(corr*(i<<histcompr)<65535 ? corr*(i<<histcompr) : 65535)) / sum;
 		if (black < gavg) {
-		int maxwhiteclip = (gavg - black) * 4 / 3 + black; // dont let whiteclip be such large that the histogram average goes above 3/4
-		if (whiteclipg < maxwhiteclip)
-		 whiteclipg = maxwhiteclip;
+			int maxwhiteclip = (gavg - black) * 4 / 3 + black; // dont let whiteclip be such large that the histogram average goes above 3/4
+			if (whiteclipg < maxwhiteclip)
+				whiteclipg = maxwhiteclip;
 		 }
 		whiteclipg = CurveFactory::igamma2 ((float)(whiteclipg/65535.0)) * 65535.0; //need to inverse gamma transform to get correct exposure compensation parameter
 		
@@ -3863,23 +3879,24 @@ fclose(f);*/
 
 		//diagnostics
 		//printf ("**************** AUTO LEVELS ****************\n");
-/*		 if (settings->verbose) {
-		printf("sum=%i clip=%f clippable=%i  clipWh=%i  clipBl=%i\n",somm, clip, clippable,clipwh, clipbl);
-		printf ("expcomp1= %f   expcomp2= %f gain= %f  expcomp=%f\n",expcomp1,expcomp2,gain,expcomp);
-		printf ("expo=%f\n",expo);
-		printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
-		printf ("average: %f\n",ave);
-		printf("comp=%f hlcomp: %i\n",comp, hlcompr);
-		printf ("median/average: %f\n",median/ave);
-		printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
-		printf ("lodev: %f\n",lodev);
-		printf ("hidev: %f\n",hidev);
-		printf ("imax=%d rawmax= %d  whiteclip= %d  gain= %f\n",imax,rawmax,whiteclip,gain);
-		printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);
-		printf ("ospread= %f\n",ospread);
-		printf ("overexp= %i\n",overex);
+		
+		if (settings->verbose) {
+			printf("sum=%i clip=%f clippable=%i  clipWh=%i  clipBl=%i\n",somm, clip, clippable,clipwh, clipbl);
+			printf ("expcomp1= %f   expcomp2= %f gain= %f  expcomp=%f\n",expcomp1,expcomp2,gain,expcomp);
+			printf ("expo=%f\n",expo);
+			printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
+			printf ("average: %f\n",ave);
+			printf("comp=%f hlcomp: %i\n",comp, hlcompr);
+			printf ("median/average: %f\n",median/ave);
+			printf ("lodev: %f   hidev: %f		hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
+			printf ("lodev: %f\n",lodev);
+			printf ("hidev: %f\n",hidev);
+			printf ("imax=%d rawmax= %d  whiteclip= %d  gain= %f\n",imax,rawmax,whiteclip,gain);
+			printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);
+			printf ("ospread= %f\n",ospread);
+			printf ("overexp= %i\n",overex);
 		}
-*/
+
 		/*
 		 // %%%%%%%%%% LEGACY AUTOEXPOSURE CODE %%%%%%%%%%%%%
 		 // black point selection is based on the linear result (yielding better visual results)
@@ -3906,7 +3923,7 @@ fclose(f);*/
 
 		 if (expcomp<0.0)	expcomp = 0.0;*/
 		if (expcomp<-5.0)	expcomp = -5.0;
-		if (expcomp>10.0)	expcomp = 10.0;
+		if (expcomp>12.0)	expcomp = 12.0;
 	}
 
 

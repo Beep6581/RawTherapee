@@ -92,7 +92,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   //----------- Exposure Compensation ---------------------
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 10, 0.05, 0));
+  expcomp   = Gtk::manage (new Adjuster (M("TP_EXPOSURE_EXPCOMP"), -5, 12, 0.05, 0));
   pack_start (*expcomp);
 
   //----------- Highlight recovery & threshold -------------
