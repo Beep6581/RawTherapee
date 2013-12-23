@@ -284,7 +284,7 @@ HISTORY_MSG_45;Débruitage Lum. - Tolérance des bords
 HISTORY_MSG_46;Débruitage Chromatique
 HISTORY_MSG_47;Mélange HL du profil ICC et la matrice
 HISTORY_MSG_48;Courbe tonale du profil DCP
-HISTORY_MSG_49;Débruitage Chrom. - Sensible aux bords
+HISTORY_MSG_49;Illuminant DCP
 HISTORY_MSG_50;Outil Ombres/Hautes lumières
 HISTORY_MSG_51;Accentuation des hautes lumières
 HISTORY_MSG_52;Accentuation des ombres
@@ -436,8 +436,8 @@ HISTORY_MSG_197;CAM02 - Courbe couleur
 HISTORY_MSG_198;CAM02 - Courbe couleur
 HISTORY_MSG_199;CAM02 - Montre les histogrammes CIECAM
 HISTORY_MSG_200;CAM02 - Compression tonale avec Q
-HISTORY_MSG_201;Réd. de bruit - Delta chrom. rouge
-HISTORY_MSG_202;Réd. de bruit - Delta chrom. bleu
+HISTORY_MSG_201;Réd. de bruit - Delta chrom. rouge-vert
+HISTORY_MSG_202;Réd. de bruit - Delta chrom. bleu-jaune
 HISTORY_MSG_203;Réd. de bruit - Méthode
 HISTORY_MSG_204;Niveau d'amélioration LMMSE
 HISTORY_MSG_205;CAM02 pixels chauds/morts
@@ -480,7 +480,11 @@ HISTORY_MSG_242;Effet Vignettage - Circularité
 HISTORY_MSG_243;Vignettage - Rayon
 HISTORY_MSG_244;Vignettage - Force
 HISTORY_MSG_245;Vignettage - Centre
+HISTORY_MSG_246;Courbe 'CL'
+HISTORY_MSG_247;Courbe 'LT'
+HISTORY_MSG_248;Courbe 'TT'
 HISTORY_MSG_249;Seuil du contraste par niv. de détail
+HISTORY_MSG_250;Réd. de bruit - Mode amélioré
 HISTORY_NEWSNAPSHOTAS;Sous...
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
@@ -692,7 +696,7 @@ PARTIALPASTE_IMPULSEDENOISE;Réduction du bruit d'impulsion
 PARTIALPASTE_IPTCINFO;Infos IPTC
 PARTIALPASTE_LABCURVE;Courbes Lab
 PARTIALPASTE_LENSGROUP;Réglages de l'objectif
-PARTIALPASTE_LENSPROFILE;Profile de correction d'Objectif
+PARTIALPASTE_LENSPROFILE;Profil de correction d'Objectif
 PARTIALPASTE_LUMADENOISE;Réduction du bruit de luminance
 PARTIALPASTE_LUMINANCEGROUP;Réglages de la luminance
 PARTIALPASTE_METAICMGROUP;Réglages des Métadonnées/ICM
@@ -751,7 +755,10 @@ PREFERENCES_CIEART_TOOLTIP;Si activé, les calculs CIECAM sont réalisés en pr�
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\n\nLe chemin du fichier de communication (style *.ini, aussi appelé "KeyFile") est ajouté en paramètre de la ligne de commande. Il contient divers paramètres nécessaire au script et les métadonnées Exif de l'image pour permettre la génération d'un .pp3 basé sur des règles.\n\n<b>ATTENTION:</b> Il vous appartient d'utiliser ou non des guillemets double pour spécifier des chemins si ceux-ci contiennent des espaces.
-PREFERENCES_CUSTPROFBUILDPATH_TOOLTIP;
+PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
+PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format des clés
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nom
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'image personnalisé
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
 PREFERENCES_D50;5000K
@@ -879,7 +886,7 @@ PREFERENCES_TP_LABEL;Panneau des outils:
 PREFERENCES_TP_USEICONORTEXT;Utiliser des icônes au lieu de textes
 PREFERENCES_TP_VSCROLLBAR;Cacher la barre de défilement verticale
 PREFERENCES_TUNNELMETADATA;Copier les données IPTC/XMP sans les\nchanger dans fichier de sortie
-PREFERENCES_USEBUNDLEDPROFILES;Utiliser les profiles fournis
+PREFERENCES_USEBUNDLEDPROFILES;Utiliser les profils fournis
 PREFERENCES_USESYSTEMTHEME;Utiliser le thème système
 PREFERENCES_VIEW;Réglage du point blanc du périphérique sortie (moniteur, TV, projecteur,...)
 PREFERENCES_WORKFLOW;Habitudes de travail
@@ -1139,7 +1146,9 @@ TP_DARKFRAME_LABEL;Trame Noire
 TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
-TP_DIRPYRDENOISE_BLUE;Delta chrominance Bleu
+TP_DIRPYRDENOISE_BLUE;Delta chrominance Bleu & Jaune
+TP_DIRPYRDENOISE_ENH;Mode amélioré
+TP_DIRPYRDENOISE_ENH_TOOLTIP;Augmente la qualité du débruitage, mais augmente le temps de traitement d'environ 20%
 TP_DIRPYRDENOISE_CHROMA;Chrominance (Maître)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Peut être utilisé sur les images raw et non-raw.\n\nPour les images non-raw, la réduction de bruit de luminance dépend du gamma du profil couleur d'entée. Un gamma sRGB est supposé, c'est pourquoi si l'image a un profil couleur d'un gamma différent, la réduction de bruit de luminance variera.
 TP_DIRPYRDENOISE_GAMMA;Gamma
@@ -1151,7 +1160,7 @@ TP_DIRPYRDENOISE_LUMA;Luminance
 TP_DIRPYRDENOISE_METHOD;Méthode
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Pour les images raw, les méthodes RVB ou Lab peuvent être utilisées.\n\nPour les images non-raw la méthode Lab sera utilisée, indépendamment de ce qu'indique ce bouton.
 TP_DIRPYRDENOISE_PERF;Mode RVB (images raw)
-TP_DIRPYRDENOISE_RED;Delta chrominance Rouge
+TP_DIRPYRDENOISE_RED;Delta chrominance Rouge & Vert
 TP_DIRPYRDENOISE_RGB;RVB
 TP_DIRPYREQUALIZER_LABEL;Contraste par niveaux de détail
 TP_DIRPYREQUALIZER_LUMACOARSEST;les plus gros
@@ -1172,10 +1181,11 @@ TP_EPD_STRENGTH;Force
 TP_EPD_TOOLTIP;Vous pouvez choisir entre le mode Lab (standard) ou le mode CIECAM02.\n En activant "Compression tonale avec brillance Q CIECAM" dans le menu "Brillance + Niveau de couleur CIECAM"
 TP_EXPOSCORR_LABEL;Points Noir & Blanc Raw
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
-TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de <b>Niveaux automatiques</b> afin de régler\nautomatiquement les valeurs basé sur l'analyse de l'image  
+Toggle execution of auto levels to automatically set parameter values based on image analysis\nEnable Highlight Reconstruction if necessary
+TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de Niveaux automatiques afin de régler automatiquement les valeurs basé sur l'analyse de l'image\nActive la Reconstruction des Hautes Lumières si nécessaire.
 TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
-TP_EXPOSURE_CLIP;Rognage
+TP_EXPOSURE_CLIP;Rognage %
 TP_EXPOSURE_CLIP_TIP;La fraction de pixels que l'outil <b>Niveaux automatiques</b> passera en dehors du domaine
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
@@ -1221,6 +1231,7 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Force de l'effet (EV)
 TP_HLREC_BLEND;Blend (mélange)
 TP_HLREC_CIELAB;Mélange CIELab
 TP_HLREC_COLOR;Propagation de la couleur
+TP_HLREC_ENA_TOOLTIP;Peut être activé par le bouton Niveau Auto
 TP_HLREC_LABEL;Reconstruction des hautes lumières
 TP_HLREC_LUMINANCE;Récupération de la luminance
 TP_HLREC_METHOD;Méthode: 
@@ -1232,6 +1243,9 @@ TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Mélange des hautes lumières\ndu profil ICC avec la matrice
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Activer la récupération des zones brûlées lorsque les profils ICC basés sur la LUT sont utilisés
+TP_ICM_DCPILLUMINANT;Illuminant
+TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolé
+TP_ICM_DCPILLUMINANT_TOOLTIP;Sélectionne quel illuminant DCP inclus utiliser. La valeur par défaut est "Interpolé", qui est un mix entre les 2 profils inclus basé sur la Balance des Blancs choisie. Ce paramètre n'est actif que si un fichier DCP Bi-Illuminant avec support de l'interpolation est choisi.
 TP_ICM_FILEDLGFILTERANY;Tous les fichiers
 TP_ICM_FILEDLGFILTERICM;Fichiers de profil
 TP_ICM_INPUTCAMERAICC;Profil spécifique à l'APN\nsélectionné automatiquement
@@ -1250,23 +1264,21 @@ TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Pas d'ICM: sortie sRGB
 TP_ICM_OUTPUTDLGLABEL;Choix du profil ICC de sortie...
 TP_ICM_OUTPUTPROFILE;Profil de sortie
-TP_ICM_PREFERREDPROFILE;Profil DCP préféré
-TP_ICM_PREFERREDPROFILE_1;Lumière du jour (ensoleillé)
-TP_ICM_PREFERREDPROFILE_2;Tungstène
-TP_ICM_PREFERREDPROFILE_3;Fluorescent
-TP_ICM_PREFERREDPROFILE_4;Flash
 TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
 TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
-TP_ICM_TONECURVE_TOOLTIP;Permet d'utiliser la courbe tonale contenue dans le profil DCP, si elle existe
+TP_ICM_TONECURVE_TOOLTIP;Utilise la courbe tonale DCP incluse. Ce paramètre ne sera actif que si le profil DCP contient une courbe tonale
 TP_ICM_WORKINGPROFILE;Profil de Travail
 TP_IMPULSEDENOISE_LABEL;Réduction du bruit d'impulsion
 TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Ramènes les données dans le gamut de l'espace couleur de travail\npuis applique la correction de Munsell
 TP_LABCURVE_BRIGHTNESS;Luminosité
+TP_LABCURVE_CHROMA_TOOLTIP;Pour mettre en fonction la colorisation du noir et blanc, réglez la Chromaticité à -100
 TP_LABCURVE_CHROMATICITY;Chromaticité
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Courbe de luminance
+TP_LABCURVE_CURVEEDITOR_CL;CL
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticité en fonction de la Luminance C=f(L)
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Vert saturé
 TP_LABCURVE_CURVEEDITOR_A_RANGE2;Vert pastel
 TP_LABCURVE_CURVEEDITOR_A_RANGE3;Rouge pastel
@@ -1280,12 +1292,16 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutre
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Terne
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturé
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticité en fonction de la Chromaticité.\n Histogramme de la chromaticité avant la courbe chroma.\n On peut voir le résultat dans la fenêtre Histogramme
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticité en fonction de la Chromaticité C=f(C)
 TP_LABCURVE_CURVEEDITOR_CH;CT
-TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticité en fonction de la Teinte
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticité en fonction de la Teinte C=f(T)
 TP_LABCURVE_CURVEEDITOR_LC;LC
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance en fonction de la Chromaticité
-TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance Lab L=f(L).\n Avant ajustements courbe Lab.\n on peut voir le résultat dans la fenêtre Histogramme 
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance en fonction de la Chromaticité L=f(C)
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance en fonction de la Luminance L=f(L)
+TP_LABCURVE_CURVEEDITOR_LH;LT
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance en fonction de la Teinte L=f(T)
+TP_LABCURVE_CURVEEDITOR_HH;TT
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Teinte en fonction de la Teinte T=f(T)
 TP_LABCURVE_LABEL;Ajustements Lab
 TP_LABCURVE_LCREDSK;Restreindre LC aux tons rouge et peau
 TP_LABCURVE_LCREDSK_TIP;Si activé, la courbe 'LC' est limitée au tons rouge et peau\nSi désactivé, s'applique à toutes les teintes
@@ -1434,7 +1450,7 @@ TP_WBALANCE_CLOUDY;Nuageux
 TP_WBALANCE_CUSTOM;Personnalisé
 TP_WBALANCE_DAYLIGHT;Lumière du jour (ensoleillé)
 TP_WBALANCE_EQBLUERED;Égaliseur Bleu/Rouge
-TP_WBALANCE_EQBLUERED_TOOLTIP;Permet de dévier du comportement normal de la "balance des blancs" en modulant la balance bleu/rouge.\nCeci peut être utile lorsque les conditions de prise de vue:\na) sont loins de l'illuminant strandard (ex: sous-marin)\nb) sont loins des conditions où a été réalisé le calibrage\nc) où les matrices ou les profiles ICC sont incorrect
+TP_WBALANCE_EQBLUERED_TOOLTIP;Permet de dévier du comportement normal de la "balance des blancs" en modulant la balance bleu/rouge.\nCeci peut être utile lorsque les conditions de prise de vue:\na) sont loins de l'illuminant strandard (ex: sous-marin)\nb) sont loins des conditions où a été réalisé le calibrage\nc) où les matrices ou les profils ICC sont incorrect
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
@@ -1489,17 +1505,3 @@ ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
 #00 Français
 #01 1.3.2008: Initial translation by Hombre
-
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_246;CL curve
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
-!TP_ICM_DCPILLUMINANT;Illuminant
-!TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
-!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-!TP_LABCURVE_CURVEEDITOR_CL;CL
-!TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
