@@ -1,3 +1,30 @@
+#01 2008-01-20 translated by absolution
+#02 2008-02-21 updated by mkyral (typos and some missing strings)
+#03 2008-04-24 updated by mkyral (for version 2.4m1)
+#04 2008-10-28 updated by mkyral (for version 2.4 beta1)
+#05 2010-11-25 updated by mkyral (for version 3.0)
+#06 2011-03-06 updated by mkyral (default branch)
+#07 2011-03-20 updated by mkyral (default branch)
+#08 2011-05-01 updated by mkyral
+#09 2011-05-18 updated by mkyral
+#10 2011-06-04 updated by mkyral
+#11 2011-06-12 updated by mkyral
+#12 2011-06-16 updated by mkyral
+#13 2011-07-03 updated by mkyral
+#14 2011-07-08 updated by mkyral
+#15 2011-09-04 updated by mkyral
+#16 2011-09-06 updated by mkyral
+#17 2011-11-12 updated by mkyral
+#18 2011-12-29 updated by mkyral
+#19 2012-02-22 updated by mkyral
+#20 2012-04-28 updated by mkyral
+#21 2012-10-10 updated by mkyral
+#22 2012-11-27 updated by mkyral
+#23 2013-03-12 updated by mkyral
+#24 2013-04-12 updated by mkyral
+#25 2013-09-12 updated by mkyral
+#26 2013-09-17 updated by mkyral
+#27 2013-12-09 updated by mkyral
 
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
@@ -1489,36 +1516,21 @@ ZOOMPANEL_ZOOM100;Zvětšit na 100%\nZkratka: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Přizpůsobit obrazovce \nZkratka: <b>f</b>
 ZOOMPANEL_ZOOMIN;Přiblížit \nZkratka: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddálit \nZkratka: <b>-</b>
-#00 Czech
-#01 20.1.2008: translated by absolution
-#02 21.2.2008: updated by mkyral (typos and some missing strings)
-#03 24.4.2008: updated by mkyral (for version 2.4m1)
-#04 28.10.2008: updated by mkyral (for version 2.4 beta1)
-#05 25.11.2010: updated by mkyral (for version 3.0)
-#06 06.03.2011: updated by mkyral (default branch)
-#07 20.03.2011: updated by mkyral (default branch)
-#08 01.05.2011: updated by mkyral
-#09 18.05.2011: updated by mkyral
-#10 04.06.2011: updated by mkyral
-#11 12.06.2011: updated by mkyral
-#12 16.06.2011: updated by mkyral
-#13 03.07.2011: updated by mkyral
-#14 08.07.2011: updated by mkyral
-#15 04.09.2011: updated by mkyral
-#16 06.09.2011: updated by mkyral
-#17 12.11.2011: updated by mkyral
-#18 29.12.2011: updated by mkyral
-#19 22.02.2012: updated by mkyral
-#20 28.04.2012: updated by mkyral
-#21 10.10.2012: updated by mkyral
-#22 27.11.2012: updated by mkyral
-#23 12.03.2013: updated by mkyral
-#24 12.04.2013: updated by mkyral
-#25 12.09.2013: updated by mkyral
-#26 17.09.2013: updated by mkyral
-#27 09.12.2013: updated by mkyral
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_247;'LH' curve
+!HISTORY_MSG_248;'HH' curve
+!HISTORY_MSG_249;Contrast by Detail Levels Threshold
+!HISTORY_MSG_250;NR enhance
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
+!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)

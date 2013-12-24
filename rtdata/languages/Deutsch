@@ -1,3 +1,23 @@
+#01 keenonkites; Aktualisierte Version für 2.3 beta2
+#02 phberlin; basiert auf keenonkites' Erstübersetzung
+#03 2007-12-20
+#04 2007-12-22
+#05 2008-01-08
+#06 2008-01-15
+#07 2008-02-20
+#08 2008-12-19 keenonkites, Anpassungen für 2.4beta4
+#09 2008-09-20 keenonkites, Anpassungen für 2.4m2
+#10 2008-04-04 Anpassungen für 2.4
+#11 Leichte Anpassungen (keenonkites/klonk)
+#12 Erweiterung (oduis)
+#13 Erweiterung (oduis)
+#14 Erweiterung (oduis)
+#15 Erweiterung (oduis)
+#16 2012-12-05 3.0 alpha: Erweiterung und Korrekturen (Metex)
+#17 2012-04-29 Erweiterungen und Korrekturen (MaWe)
+#18 Erweiterung (oduis)
+#19 Erweiterung (oduis)
+#20 2013-02-27 Erweiterung (cytrinox)
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -1345,25 +1365,6 @@ ZOOMPANEL_ZOOM100;Zoom 100% <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
-#00 Deutsch
-#01 (keenonkites; Aktualisierte Version für 2.3 beta2)
-#02 (phberlin; basiert auf keenonkites' Erstübersetzung)
-#03 08.01.2008/15.01.2008/20.02.2008
-#04 19.12.2008: keenonkites, Anpassungen für 2.4beta4
-#05 20.12.2007
-#06 20.9.2008: keenonkites, Anpassungen für 2.4m2
-#07 22.12.2007
-#08 4.4.2008: Anpassungen für 2.4
-#09 Leichte Anpassungen (keenonkites/klonk)
-#10 Erweiterung (oduis)
-#11 Erweiterung (oduis)
-#12 Erweiterung (oduis)
-#13 Erweiterung (oduis)
-#14 05.12.2010, 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#15 Jan'11-Apr'12: Erweiterungen und Korrekturen (MaWe, 29.04.2012)
-#16 Erweiterung (oduis)
-#17 Erweiterung (oduis)
-#18 Erweiterung (cytrinox, 27.02.2013)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -1419,7 +1420,11 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !HISTORY_MSG_243;Vignetting - Rayon
 !HISTORY_MSG_244;Vignetting - Strength
 !HISTORY_MSG_245;Vignetting - Center
-!HISTORY_MSG_246;CL curve
+!HISTORY_MSG_246;'CL' curve
+!HISTORY_MSG_247;'LH' curve
+!HISTORY_MSG_248;'HH' curve
+!HISTORY_MSG_249;Contrast by Detail Levels Threshold
+!HISTORY_MSG_250;NR enhance
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
@@ -1515,6 +1520,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
 !TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
 !TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
 !TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
@@ -1527,11 +1535,17 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !TP_GRADIENT_LABEL;Graduated Filter
 !TP_GRADIENT_STRENGTH;Strength
 !TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
+!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_PCVIGNETTE_FEATHER;Feather
 !TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
 !TP_PCVIGNETTE_LABEL;Vignette Filter

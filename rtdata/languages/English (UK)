@@ -1,4 +1,3 @@
-
 EXPORT_BYPASS_COLORDENOISE;Bypass Colour denoise
 EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Colour Suppression
 FILEBROWSER_COLORLABEL_TOOLTIP;Colour label\n\nUse dropdown menu or Shortcuts:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
@@ -370,9 +369,9 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_63;Snapshot Selected
 !HISTORY_MSG_64;Crop Photo
 !HISTORY_MSG_65;CA correction
-!HISTORY_MSG_66;Highlight Recovery
-!HISTORY_MSG_67;Highlight Recovery Amount
-!HISTORY_MSG_68;Highlight Recovery Method
+!HISTORY_MSG_66;Highlight Reconstruction
+!HISTORY_MSG_67;HL Reconstruction - Amount
+!HISTORY_MSG_68;HL Reconstruction - Method
 !HISTORY_MSG_72;Vignetting - Amount
 !HISTORY_MSG_73;Channel Mixer
 !HISTORY_MSG_74;Resize Scale
@@ -496,8 +495,8 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_196;CAM02 - Tone curve 2
 !HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
 !HISTORY_MSG_200;CAM02 - Tone mapping using CIECAM02 Q
-!HISTORY_MSG_201;NR - Delta Chrominance red
-!HISTORY_MSG_202;NR - Delta Chrominance blue
+!HISTORY_MSG_201;NR - Delta Chrominance red-green
+!HISTORY_MSG_202;NR - Delta Chrominance blue-yellow
 !HISTORY_MSG_203;NR - Method
 !HISTORY_MSG_204;LMMSE Enhancement Steps
 !HISTORY_MSG_205;CAM02 hot/bad pixels
@@ -540,7 +539,11 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_243;Vignetting - Rayon
 !HISTORY_MSG_244;Vignetting - Strength
 !HISTORY_MSG_245;Vignetting - Center
-!HISTORY_MSG_246;CL curve
+!HISTORY_MSG_246;'CL' curve
+!HISTORY_MSG_247;'LH' curve
+!HISTORY_MSG_248;'HH' curve
+!HISTORY_MSG_249;Contrast by Detail Levels Threshold
+!HISTORY_MSG_250;NR enhance
 !HISTORY_NEWSNAPSHOTAS;As...
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
@@ -1154,8 +1157,10 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_DEFRINGE_LABEL;Defringe
 !TP_DEFRINGE_RADIUS;Radius
 !TP_DEFRINGE_THRESHOLD;Threshold
-!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
+!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue & Yellow
 !TP_DIRPYRDENOISE_CHROMA;Chrominance (Master)
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
 !TP_DIRPYRDENOISE_GAMMA;Gamma
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 !TP_DIRPYRDENOISE_LABEL;Noise Reduction
@@ -1165,7 +1170,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
 !TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
-!TP_DIRPYRDENOISE_RED;Delta chrominance Red
+!TP_DIRPYRDENOISE_RED;Delta chrominance Red & Green
 !TP_DIRPYRDENOISE_RGB;RGB
 !TP_DIRPYREQUALIZER_LABEL;Contrast by Detail Levels
 !TP_DIRPYREQUALIZER_LUMACOARSEST;Coarsest
@@ -1185,10 +1190,10 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_EPD_STRENGTH;Strength
 !TP_EXPOSCORR_LABEL;Raw White & Black Points
 !TP_EXPOSURE_AUTOLEVELS;Auto Levels
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis\nEnable Highlight Reconstruction if necessary
 !TP_EXPOSURE_BLACKLEVEL;Black
 !TP_EXPOSURE_BRIGHTNESS;Lightness
-!TP_EXPOSURE_CLIP;Clip
+!TP_EXPOSURE_CLIP;Clip %
 !TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto level's operation
 !TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight Recovery Threshold
 !TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight Recovery Amount
@@ -1218,6 +1223,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_GAMMA_FREE;Free gamma
 !TP_GAMMA_OUTPUT;Output Gamma
 !TP_GAMMA_SLOP;Slope (linear)
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
 !TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
@@ -1232,6 +1238,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
 !TP_HLREC_BLEND;Blend
 !TP_HLREC_CIELAB;CIELab Blending
+!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 !TP_HLREC_LABEL;Highlight Reconstruction
 !TP_HLREC_LUMINANCE;Luminance Recovery
 !TP_HLREC_METHOD;Method:
@@ -1260,6 +1267,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_IMPULSEDENOISE_THRESH;Threshold
 !TP_LABCURVE_BRIGHTNESS;Lightness
 !TP_LABCURVE_CHROMATICITY;Chromaticity
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 !TP_LABCURVE_CONTRAST;Contrast
 !TP_LABCURVE_CURVEEDITOR;Luminance Curve
 !TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green Saturated
@@ -1280,8 +1288,12 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to hue C=f(H)
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
 !TP_LABCURVE_CURVEEDITOR_LC;LC
 !TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to chromaticity L=f(C)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
 !TP_LABCURVE_LABEL;Lab Adjustments
 !TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones

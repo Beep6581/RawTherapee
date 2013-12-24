@@ -1,3 +1,7 @@
+#01 2008-01-22 Emil Ericsson
+#02 2010 Updated by Johan Thor
+#03 2011 Updated by Johan Thor
+#04 2013-05-19 Updated Johan Thor
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande
@@ -1332,12 +1336,6 @@ ZOOMPANEL_ZOOM100;Förstora till 100%. Kortkommando: 1
 ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen. Kortkommando: F
 ZOOMPANEL_ZOOMIN;Förstora. Kortkommando: +
 ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
-#00 Swedish
-#01 Translated by Emil Ericsson
-#02 2008-01-22
-#03 Updated 2010 by Johan Thor.
-#04 Updated 2011 by Johan Thor.
-#05 Updated 2013-05-19 by Johan Thor.
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -1361,8 +1359,8 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !HISTORY_MSG_191;CAM02 - Colorfulness (M)
 !HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
 !HISTORY_MSG_200;CAM02 - Tone mapping using CIECAM02 Q
-!HISTORY_MSG_201;NR - Delta Chrominance red
-!HISTORY_MSG_202;NR - Delta Chrominance blue
+!HISTORY_MSG_201;NR - Delta Chrominance red-green
+!HISTORY_MSG_202;NR - Delta Chrominance blue-yellow
 !HISTORY_MSG_205;CAM02 hot/bad pixels
 !HISTORY_MSG_206;CAT02 - Adapt scene auto
 !HISTORY_MSG_207;Defringing Hue curve
@@ -1403,7 +1401,11 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !HISTORY_MSG_243;Vignetting - Rayon
 !HISTORY_MSG_244;Vignetting - Strength
 !HISTORY_MSG_245;Vignetting - Center
-!HISTORY_MSG_246;CL curve
+!HISTORY_MSG_246;'CL' curve
+!HISTORY_MSG_247;'LH' curve
+!HISTORY_MSG_248;'HH' curve
+!HISTORY_MSG_249;Contrast by Detail Levels Threshold
+!HISTORY_MSG_250;NR enhance
 !PARTIALPASTE_CHANNELMIXERBW;Black and white
 !PARTIALPASTE_EPD;Tone mapping
 !PARTIALPASTE_GRADIENT;Graduated Filter
@@ -1520,10 +1522,13 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
-!TP_DIRPYRDENOISE_RED;Delta chrominance Red
+!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue & Yellow
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
+!TP_DIRPYRDENOISE_RED;Delta chrominance Red & Green
 !TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis\nEnable Highlight Reconstruction if necessary
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
 !TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
@@ -1536,12 +1541,18 @@ ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
 !TP_GRADIENT_LABEL;Graduated Filter
 !TP_GRADIENT_STRENGTH;Strength
 !TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
+!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 !TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to chromaticity C=f(C)
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
 !TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
 !TP_PCVIGNETTE_FEATHER;Feather

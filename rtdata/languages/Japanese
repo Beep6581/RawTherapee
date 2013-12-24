@@ -1,3 +1,16 @@
+#01 2011-05-15 a3novy
+#02 2011-11-13 a3novy
+#03 2011-11-20 a3novy for 4.0.5
+#04 2011-12-03 a3novy for 4.0.6
+#05 2012-02-11 a3novy for 4.0.7
+#06 2012-04-04 a3novy for 4.0.8
+#07 2012-07-12 a3novy
+#08 2012-12-22 a3novy for 4.0.9
+#09 2013-04-01 a3novy
+#10 2013-04-19 a3novy for 4.0.10
+#11 2013-09-10 firefly
+#12 2013-10-28 firefly for 4.0.11
+
 ABOUT_TAB_BUILD;ヴァージョン
 ABOUT_TAB_CREDITS;クレジット
 ABOUT_TAB_LICENSE;ライセンス
@@ -1537,18 +1550,14 @@ ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;画面に合わせる\nショートカット: <b>F</b>
 ZOOMPANEL_ZOOMIN;ズームイン\nショートカット: <b>+</b>
 ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
-#01 a3novy: 2011-05-15
-#02 a3novy: 2011-11-13
-#03 a3novy: 2011-11-20 (for 4.0.5)
-#04 a3novy: 2011-12-03 (for 4.0.6)
-#05 a3novy: 2012-02-11 (for 4.0.7)
-#06 a3novy: 2012-04-04 (for 4.0.8)
-#07 a3novy: 2012-07-12, 2012-12-22 (for 4.0.9)
-#08 a3novy: 2013-04-01, 2013-04-19 (for 4.0.10)
-#09 firefly: 2013-09-10, 2013-10-28 (for 4.0.11)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!HISTORY_MSG_249;Contrast by Detail Levels Threshold
+!HISTORY_MSG_250;NR enhance
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 !TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure

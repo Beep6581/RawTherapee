@@ -1,3 +1,11 @@
+#01 2007-12-24 Mateusz Ludwin
+#02 2010-01-08 Initial update for 3.0 release by Bartosz "Simek" Kaszubowski
+#03 2011-09-06 Dariusz 'Salvadhor' Duma
+#04 2011-11-30 DrSlony
+#05 2012-01-14 DrSlony
+#06 2012-01-30 DrSlony
+#07 2012-04-02 DrSlony
+#08 2013-05-21 DrSlony
 
 ABOUT_TAB_BUILD;Wersja
 ABOUT_TAB_CREDITS;Zasługi
@@ -1414,22 +1422,6 @@ ZOOMPANEL_ZOOM100;Powiększ do 100%\nSkrót: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Dopasuj do ekranu\nSkrót: <b>f</b>
 ZOOMPANEL_ZOOMIN;Przybliż\nSkrót: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
-#00 Polish
-#01 24.12.2007
-#02 Mateusz Ludwin
-#03 -----------------------------
-#04 08.01.2010
-#05 Initial update for 3.0 release
-#06 Bartosz "Simek" Kaszubowski
-#07 -----------------------------
-#08 06.09.2011
-#09 Dariusz 'Salvadhor' Duma
-#10 The race for the bleeding edge - update for 4.x
-#11 2011-11-30 DrSlony
-#12 2012-01-14 DrSlony
-#13 2012-01-30 DrSlony
-#13 2012-04-02 DrSlony
-#14 2013-05-21 DrSlony
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -1472,7 +1464,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_243;Vignetting - Rayon
 !HISTORY_MSG_244;Vignetting - Strength
 !HISTORY_MSG_245;Vignetting - Center
-!HISTORY_MSG_246;CL curve
+!HISTORY_MSG_246;'CL' curve
+!HISTORY_MSG_247;'LH' curve
+!HISTORY_MSG_248;'HH' curve
+!HISTORY_MSG_249;Contrast by Detail Levels Threshold
+!HISTORY_MSG_250;NR enhance
 !PARTIALPASTE_CHANNELMIXERBW;Black and white
 !PARTIALPASTE_GRADIENT;Graduated Filter
 !PARTIALPASTE_PCVIGNETTE;Vignette Filter
@@ -1551,6 +1547,9 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
 !TP_BWMIX_VAL;L
 !TP_BWMIX_YELLOW;Yellow
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
 !TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
@@ -1563,11 +1562,17 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_GRADIENT_LABEL;Graduated Filter
 !TP_GRADIENT_STRENGTH;Strength
 !TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
+!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_PCVIGNETTE_FEATHER;Feather
 !TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
 !TP_PCVIGNETTE_LABEL;Vignette Filter

@@ -1,3 +1,4 @@
+#01 2010-11-16 gpopac
 
 ABOUT_TAB_BUILD;Издање
 ABOUT_TAB_CREDITS;Заслуге
@@ -1014,9 +1015,6 @@ ZOOMPANEL_ZOOM100;Повећава преглед на 100% <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Уклапа слику у величину прозора <b>Ф</b>
 ZOOMPANEL_ZOOMIN;Увећава приказ слике <b>+</b>
 ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
-#00 Serbian (Cyrilic)
-#01 by gpopac 2010-11-16
-#  Serbian translation
 ﻿HISTOGRAM_BUTTON_B;П
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1120,8 +1118,8 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !HISTORY_MSG_198;CAM02 - Color curve
 !HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
 !HISTORY_MSG_200;CAM02 - Tone mapping using CIECAM02 Q
-!HISTORY_MSG_201;NR - Delta Chrominance red
-!HISTORY_MSG_202;NR - Delta Chrominance blue
+!HISTORY_MSG_201;NR - Delta Chrominance red-green
+!HISTORY_MSG_202;NR - Delta Chrominance blue-yellow
 !HISTORY_MSG_203;NR - Method
 !HISTORY_MSG_204;LMMSE Enhancement Steps
 !HISTORY_MSG_205;CAM02 hot/bad pixels
@@ -1164,7 +1162,11 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !HISTORY_MSG_243;Vignetting - Rayon
 !HISTORY_MSG_244;Vignetting - Strength
 !HISTORY_MSG_245;Vignetting - Center
-!HISTORY_MSG_246;CL curve
+!HISTORY_MSG_246;'CL' curve
+!HISTORY_MSG_247;'LH' curve
+!HISTORY_MSG_248;'HH' curve
+!HISTORY_MSG_249;Contrast by Detail Levels Threshold
+!HISTORY_MSG_250;NR enhance
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
@@ -1402,14 +1404,16 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_COLORAPP_WBRT;WB [RT] + [output]
 !TP_CROP_GTEPASSPORT;Biometric Passport
 !TP_CROP_GTFRAME;Frame
-!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
+!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue & Yellow
 !TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 !TP_DIRPYRDENOISE_LDETAIL;Luminance Detail
 !TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
 !TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
-!TP_DIRPYRDENOISE_RED;Delta chrominance Red
+!TP_DIRPYRDENOISE_RED;Delta chrominance Red & Green
 !TP_DIRPYRDENOISE_RGB;RGB
 !TP_EPD_EDGESTOPPING;Edge Stopping
 !TP_EPD_LABEL;Tone Mapping
@@ -1417,7 +1421,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_EPD_SCALE;Scale
 !TP_EPD_STRENGTH;Strength
 !TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis
+!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis\nEnable Highlight Reconstruction if necessary
 !TP_EXPOSURE_CLIP_TIP;The fraction of pixels to be clipped in auto level's operation
 !TP_EXPOSURE_CURVEEDITOR1;Tone Curve 1
 !TP_EXPOSURE_CURVEEDITOR2;Tone Curve 2
@@ -1429,6 +1433,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_EXPOSURE_TCMODE_STANDARD;Standard
 !TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 !TP_GAMMA_CURV;Gamma
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
 !TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
@@ -1441,6 +1446,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_GRADIENT_LABEL;Graduated Filter
 !TP_GRADIENT_STRENGTH;Strength
 !TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
+!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 !TP_ICM_BLENDCMSMATRIX_TOOLTIP;Enable to recover blown highlights when using LUT based ICC profiles
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
@@ -1455,6 +1461,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
 !TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction
 !TP_LABCURVE_CHROMATICITY;Chromaticity
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 !TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green Saturated
 !TP_LABCURVE_CURVEEDITOR_A_RANGE2;Green Pastel
 !TP_LABCURVE_CURVEEDITOR_A_RANGE3;Red Pastel
@@ -1473,8 +1480,12 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to hue C=f(H)
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
 !TP_LABCURVE_CURVEEDITOR_LC;LC
 !TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to chromaticity L=f(C)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
 !TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
 !TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies to all tones
