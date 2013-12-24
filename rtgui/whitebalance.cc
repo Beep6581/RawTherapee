@@ -24,6 +24,7 @@
 
 #define MINTEMP 1500   //1200
 #define MAXTEMP 60000  //12000
+#define CENTERTEMP 4750
 #define MINGREEN 0.02
 #define MAXGREEN 5.0
 #define MINEQUAL 0.8
@@ -59,6 +60,59 @@ void WhiteBalance::cleanup () {
     for (unsigned int i=0; i<WBT_CUSTOM+1; i++) {
         wbPixbufs[i].reset();
     }
+}
+
+static double wbSlider2Temp(double sval) {
+
+    // slider range: 0 - 10000
+    double temp;
+    if (sval <= 5000) {
+        // linear below center-temp
+        temp = MINTEMP + (sval / 5000.0) * (CENTERTEMP - MINTEMP);
+    } else {
+        const double slope = (double)(CENTERTEMP - MINTEMP) / (MAXTEMP - CENTERTEMP);
+        double x = (sval - 5000) / 5000; // x 0..1
+        double y = x * slope + (1.0 - slope)*pow(x, 4.0);
+        //double y = pow(x, 4.0);
+        temp = CENTERTEMP + y * (MAXTEMP - CENTERTEMP);
+    }
+    if (temp < MINTEMP) temp = MINTEMP;
+    if (temp > MAXTEMP) temp = MAXTEMP;
+    return temp;
+}
+
+static double wbTemp2Slider(double temp) {
+
+    double sval;
+    if (temp <= CENTERTEMP) {
+        sval = ((temp - MINTEMP) / (CENTERTEMP - MINTEMP)) * 5000.0;
+    } else {
+        const double slope = (double)(CENTERTEMP - MINTEMP) / (MAXTEMP - CENTERTEMP);
+        const double y = (temp - CENTERTEMP) / (MAXTEMP - CENTERTEMP);
+        double x = pow(y, 0.25); // rough guess of x, will be a little lower
+        double y1;
+        double k = 0.1;
+        bool add = true;
+        // the y=f(x) function is a mess to invert, therefore we have this trial-refinement loop instead.
+        // from tests, worst case is about 20 iterations, ie no problem
+        for (;;) {
+            y1 = x * slope + (1.0 - slope)*pow(x, 4.0);
+            if (5000 * fabs(y1 - y) < 0.1) break;
+            if (y1 < y) {
+                if (!add) k /= 2;
+                x += k;
+                add = true;
+            } else {
+                if (add) k /= 2;
+                x -= k;
+                add = false;
+            }
+        }
+        sval = 5000.0 + x * 5000.0;
+    }
+    if (sval < 0) sval = 0;
+    if (sval > 10000) sval = 10000;
+    return sval;
 }
 
 WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL), wblistener(NULL) {
@@ -181,7 +235,7 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
 
   pack_start (*spotbox, Gtk::PACK_SHRINK, 4);
 
-  temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, 4750));
+  temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, NULL, &wbSlider2Temp, &wbTemp2Slider));
   green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0));
   equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0));
   cache_customTemp (0);

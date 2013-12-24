@@ -27,7 +27,9 @@
 
 #define MIN_RESET_BUTTON_HEIGHT 17
 
-Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon) {
+static double one2one(double val) { return val; }
+
+Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon, double2double_fun slider2value_, double2double_fun value2slider_) {
 
   Gtk::HBox *hbox2=NULL;
 
@@ -37,6 +39,8 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
   automatic = NULL;
   eventPending = false;
 
+  slider2value = slider2value_ ? slider2value_ : one2one;
+  value2slider = value2slider_ ? value2slider_ : one2one;
   vMin = vmin;
   vMax = vmax;
   vStep = vstep;
@@ -224,14 +228,14 @@ void Adjuster::resetValue (bool toInitial) {
     afterReset = true;
     if (toInitial) {
         // resetting to the initial editing value, when the image has been loaded
-        slider->set_value (defaultVal);
+	slider->set_value (addMode ? defaultVal : value2slider(defaultVal));
     }
     else {
         // resetting to the slider default value
         if (addMode)
             slider->set_value (0.);
         else
-            slider->set_value (ctorDefaultVal);
+            slider->set_value (value2slider(ctorDefaultVal));
     }
 }
 
@@ -261,8 +265,8 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
   spin->set_value (shapeValue(vdefault));
   slider->set_digits (digits);
   slider->set_increments (vstep, 2.0*vstep);
-  slider->set_range (vmin, vmax);
-  slider->set_value (shapeValue(vdefault));
+  slider->set_range (addMode ? vmin : value2slider(vmin), addMode ? vmax : value2slider(vmax));
+  slider->set_value (addMode ? shapeValue(vdefault) : value2slider(shapeValue(vdefault)));
   //defaultVal = shapeValue (vdefault);
   sliderChange.block (false);
   spinChange.block (false);
@@ -271,6 +275,7 @@ void Adjuster::setLimits (double vmin, double vmax, double vstep, double vdefaul
 void Adjuster::setAddMode(bool addM) {
 	if (addM != addMode) {
 		// Switching the Adjuster to the new mode
+		addMode = addM;
 		if (addM) {
 			// Switching to the relative mode
 			double range = -vMin + vMax;
@@ -281,7 +286,6 @@ void Adjuster::setAddMode(bool addM) {
 			// Switching to the absolute mode
 			setLimits(vMin, vMax, vStep, defaultVal);
 		}
-		addMode = addM;
 	}
 }
 
@@ -291,7 +295,7 @@ void Adjuster::spinChanged () {
     delayConnection.disconnect ();
 
   sliderChange.block (true);
-  slider->set_value (spin->get_value ());
+  slider->set_value (addMode ? spin->get_value () : value2slider(spin->get_value ()));
   sliderChange.block (false);
 
   if (delay==0) {
@@ -326,7 +330,7 @@ void Adjuster::sliderChanged () {
     delayConnection.disconnect ();
 
   spinChange.block (true);
-  spin->set_value (slider->get_value ());
+  spin->set_value (addMode ? slider->get_value () : slider2value(slider->get_value ()));
   spinChange.block (false);
 
   if (delay==0 || afterReset) {
@@ -360,7 +364,7 @@ void Adjuster::setValue (double a) {
   spinChange.block (true);
   sliderChange.block (true);
   spin->set_value (shapeValue (a));
-  slider->set_value (shapeValue (a));
+  slider->set_value (addMode ? shapeValue(a) : value2slider(shapeValue (a)));
   sliderChange.block (false);
   spinChange.block (false);
   afterReset = false;
