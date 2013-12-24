@@ -1,59 +1,63 @@
 #!/usr/bin/env bash
+
+# This script iterates through interface translation files,
+# moves comments to the front, puts translated strings next,
+# and finally looks for untranslated/missing strings by matching
+# against "default" which it then adds to the translation, each
+# line prepended by "!".
 #
-# Append translation differences on the end of all files.  Developers should run this script 
-# after changing default, so that translators can easily see what items need to be translated.
+# Developers should run it from the project root after receiving
+# a translation file from a translator:
+# cp /tmp/new_japanese_translation rtdata/languages/Japanese
+# ./tools/generateTranslationDiffs "Japanese"
 #
-# This script should be run from the project root, e.g:
-# $ ./tools/generateTranslationDiffs.sh
-#
-#####################
+# Running the script without an argument iterates through all files.
+
 tmp=temp_file
 
-cd "rtdata/languages"
-if [[ $? != 0 ]]; then
-	printf "%s\n" "You must run this script from the root of the project."
-	exit
+cd "rtdata/languages" || { printf "%s\n" "You must run this script from the root of the project."; exit 1; }
+# Build array of all interface translation files, or use user-specified ones only
+unset langFiles
+if [[ $# = 0 ]]; then
+  while read -r -d $'\0'; do
+    langFiles+=("$REPLY")
+  done < <(find . -not -iname "default" -not -iname "LICENSE" -not -iname "README" -not -iname "*.sh"  -not -iname ".*" -not -iname "$tmp" -print0)
+else
+  langFiles=("$@")
+  for langFile in "${langFiles[@]}"; do
+    if [[ ! -w $langFile ]]; then
+      printf "%s\n" "File \"$langFile\" not found or not writable." ""
+      exit 1
+    fi
+  done
 fi
 
 # First thing, we want to strip default of any "!" and duplicates.
-dos2unix *
 grep -v '^!' default | sort -Vu > "$tmp"
 mv "$tmp" "default"
 
-printf "%s\n" "Generating differences... this may take a few minutes."
+for file in "${langFiles[@]}"; do
+  t1="$(date +%s)"
+  printf "%s" "Processing $file"
+  dos2unix "$file" 2>/dev/null
+  # printf "%s\n" "Searching $file for changed strings"
 
-# Find all already-translated files
-find . -not -iname "default" -not -iname "LICENSE" -not -iname "README" -not -iname "*.sh"  -not -iname ".*" -not -iname "$tmp" |
+  unset trLines newLines
 
-# For every file found
-while read x; do 
-	printf "%s\n" "Working on differences for $x"
+  # Fill trLines with translated text
+  trLines+=("$(grep -Ev '^($|#|\!)' "$file" | sort -Vu)")
 
-  # Find every already-translated line (every line that does not start with an "!") in file "$x", then sort and copy the file to "$tmp"
-	grep -v '^!' "$x" | sort -Vu > "$tmp"
-  
-  printf "%s\n" '' '!!!!!!!!!!!!!!!!!!!!!!!!!' '! Untranslated keys follow; remove the ! prefix after an entry is translated.' '!!!!!!!!!!!!!!!!!!!!!!!!!' '' >> "$tmp"
-  
-  # Now to delete the already-translated lines and add them to $tmp
-	# Find every line that is not a comment
-	grep -v "^#" default | while read -r 'line'
-		do
-      # Set "key" to be just the key, without the ";human text"
-			key="${line%%;*}"
-      
-      # Scan the translated file $x for a translated $key
-			grep -q "^$key" "$x"
+  # KEY;String
+  # Match "default" keys with those in current translation file. If no match, add !KEY;String
+  while read -r 'defLine'; do
+    if [[ ! "${trLines[@]}" =~ "${defLine%%;*}" ]]; then
+      newLines+=("!${defLine}")
+    fi
+  done < <(grep "^[[:alnum:]].*" default)
 
-      # If it did not find a translated key in $x, 
-			if [[ $? != 0 ]]
-				then
-          # then append a "!" to the line and send it to the language file
-					printf "%s\n" "!${line}" >> "$tmp"
-			fi
-		done
-
-	# Replace the old file with the new one, with a section at the end for differences.
-	mv "$tmp" "$x"
+  # Form final translation file
+  printf "%s\n" "$(grep '^#' "$file" | sort -Vu)" "" "${trLines[@]}" "" "!!!!!!!!!!!!!!!!!!!!!!!!!" "! Untranslated keys follow; remove the ! prefix after an entry is translated." "!!!!!!!!!!!!!!!!!!!!!!!!!" "" "${newLines[@]}" > "$file"
+  t2="$(date +%s)"
+  tt=$((t2-t1))
+  printf "%s\n" " - took $tt seconds"
 done
-
-printf "%s\n" "Finished generating differences."
