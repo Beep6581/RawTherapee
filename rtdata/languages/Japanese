@@ -1,15 +1,12 @@
-#01 2011-05-15 a3novy
-#02 2011-11-13 a3novy
-#03 2011-11-20 a3novy for 4.0.5
-#04 2011-12-03 a3novy for 4.0.6
-#05 2012-02-11 a3novy for 4.0.7
-#06 2012-04-04 a3novy for 4.0.8
-#07 2012-07-12 a3novy
-#08 2012-12-22 a3novy for 4.0.9
-#09 2013-04-01 a3novy
-#10 2013-04-19 a3novy for 4.0.10
-#11 2013-09-10 firefly
-#12 2013-10-28 firefly for 4.0.11
+#01 a3novy: 2011-05-15
+#02 a3novy: 2011-11-13
+#03 a3novy: 2011-11-20 (for 4.0.5)
+#04 a3novy: 2011-12-03 (for 4.0.6)
+#05 a3novy: 2012-02-11 (for 4.0.7)
+#06 a3novy: 2012-04-04 (for 4.0.8)
+#07 a3novy: 2012-07-12, 2012-12-22 (for 4.0.9)
+#08 a3novy: 2013-04-01, 2013-04-19 (for 4.0.10)
+#09 firefly: 2013-09-10, 2013-10-28 (for 4.0.11)
 
 ABOUT_TAB_BUILD;ヴァージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -1223,7 +1220,7 @@ TP_EXPOSURE_COMPRSHADOWS;シャドウ復元
 TP_EXPOSURE_CONTRAST;コントラスト
 TP_EXPOSURE_CURVEEDITOR1;トーンカーブ1
 TP_EXPOSURE_CURVEEDITOR2;トーンカーブ2
-TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;ダブルカーブで最高の結果を達成する方法を学ぶ\nマニュアルの以下の項目を参照してください：\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;ダブルカーブで最高の結果を達成する方法を学ぶ\nマニュアルの以下の項目を参照してください：\nツールボックス＞露光タブ＞露光パネル＞トーンカーブ
 TP_EXPOSURE_CURVEEDITOR;トーンカーブ 1
 TP_EXPOSURE_EXPCOMP;露光量補正
 TP_EXPOSURE_LABEL;露光補正
@@ -1246,11 +1243,11 @@ TP_GAMMA_CURV;ガンマ
 TP_GAMMA_FREE;フリーなガンマ
 TP_GAMMA_OUTPUT;出力 ガンマ
 TP_GAMMA_SLOP;勾配（リニア）
-TP_GRADIENT_CENTER;中央
-TP_GRADIENT_CENTER_X;中央X
-TP_GRADIENT_CENTER_X_TOOLTIP;アンカーポイントXを回転: -100=左端, 0=中央, +100=右端
-TP_GRADIENT_CENTER_Y;中央Y
-TP_GRADIENT_CENTER_Y_TOOLTIP;アンカーポイントYを回転: -100=上端, 0=中央, +100=下端
+TP_GRADIENT_CENTER;中央位置
+TP_GRADIENT_CENTER_X;中央　X軸
+TP_GRADIENT_CENTER_X_TOOLTIP;アンカーポイントの位置　X軸: -100=左端, 0=中央, +100=右端
+TP_GRADIENT_CENTER_Y;中央　Y軸
+TP_GRADIENT_CENTER_Y_TOOLTIP;アンカーポイントの位置　y軸: -100=上端, 0=中央, +100=下端
 TP_GRADIENT_DEGREE;角度
 TP_GRADIENT_DEGREE_TOOLTIP;回転角度の度数
 TP_GRADIENT_FEATHER;フェザー処理
@@ -1261,6 +1258,7 @@ TP_GRADIENT_STRENGTH_TOOLTIP;終点位置でのフィルターの強さ
 TP_HLREC_BLEND;ブレンド
 TP_HLREC_CIELAB;CIELab ブレンディング
 TP_HLREC_COLOR;色の波及
+TP_HLREC_ENA_TOOLTIP;自動露光でも動作可
 TP_HLREC_LABEL;ハイライト復元
 TP_HLREC_LUMINANCE;輝度復元
 TP_HLREC_METHOD;方式: 
@@ -1363,7 +1361,7 @@ TP_NEUTRAL_TIP;露光量の制御をニュートラルな値にリセットし�
 TP_PCVIGNETTE_FEATHER;フェザー処理
 TP_PCVIGNETTE_FEATHER_TOOLTIP;フェザー処理：　0=四隅だけ、50=中央までの半分、100=中央まで
 TP_PCVIGNETTE_LABEL;ビネットフィルター
-TP_PCVIGNETTE_ROUNDNESS;丸み
+TP_PCVIGNETTE_ROUNDNESS;フィルター形状
 TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;丸み：　0=長方形、50=楕円形、100=円形
 TP_PCVIGNETTE_STRENGTH;強さ
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;終点位置でのフィルターの強さ（四隅）
@@ -1461,7 +1459,7 @@ TP_SHARPENING_RLD_AMOUNT;適用量
 TP_SHARPENING_RLD_DAMPING;減衰
 TP_SHARPENING_RLD_ITERATIONS;繰返し
 TP_SHARPENING_THRESHOLD;しきい値
-TP_SHARPENING_TOOLTIP;CIECAM02で使用する場合、わずかに異なる効果が予想されます。違いが認められた場合、好みに合わせて調整します
+TP_SHARPENING_TOOLTIP;CIECAM02で使用する場合、わずかに異なる結果が予想されます。違いが認められた場合、好みに合わせて調整します
 TP_SHARPENING_USM;アンシャープマスク
 TP_SHARPENMICRO_AMOUNT;適用量
 TP_SHARPENMICRO_LABEL;マイクロコントラスト (Lab/CIECAM02)
@@ -1485,9 +1483,9 @@ TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;縦軸は下が中間色トーン,上が純色�
 TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;中間色/純色トーン 移行の加重
 TP_VIBRANCE_SATURATED;純色トーン
 TP_VIGNETTING_AMOUNT;適用量
-TP_VIGNETTING_CENTER;中心
-TP_VIGNETTING_CENTER_X;中心 X
-TP_VIGNETTING_CENTER_Y;中心 Y
+TP_VIGNETTING_CENTER;中心位置
+TP_VIGNETTING_CENTER_X;中心 X軸
+TP_VIGNETTING_CENTER_Y;中心 Y軸
 TP_VIGNETTING_LABEL;周辺光量補正
 TP_VIGNETTING_RADIUS;半径
 TP_VIGNETTING_STRENGTH;濃度
@@ -1560,4 +1558,3 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
 !TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
 !TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
-!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
