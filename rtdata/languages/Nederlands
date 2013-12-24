@@ -453,10 +453,10 @@ HISTORY_MSG_205;CAM02 hete/dode pixels
 HISTORY_MSG_206;CAT02 - Opnameomstandigheden auto
 HISTORY_MSG_207;Verzachten Tint curve
 HISTORY_MSG_208;Blauw/Rood Mixer
-HISTORY_MSG_210;Grijsverloop Filter
+HISTORY_MSG_210;Graduated Filter - Angle
 HISTORY_MSG_211;Grijsverloop Filter
-HISTORY_MSG_212;Vignettering Filter
-HISTORY_MSG_213;Vignettering Filter - Sterkte
+HISTORY_MSG_212;Vignettering Filter - Sterkte
+HISTORY_MSG_213;Vignettering Filter
 HISTORY_MSG_214;Zwart-Wit
 HISTORY_MSG_215;ZW Kanaalmixer Rood
 HISTORY_MSG_216;ZW Kanaalmixer Groen

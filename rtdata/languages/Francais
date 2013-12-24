@@ -445,10 +445,10 @@ HISTORY_MSG_205;CAM02 pixels chauds/morts
 HISTORY_MSG_206;CAT02 - Adapt. auto à la scène
 HISTORY_MSG_207;A.C. - Teinte
 HISTORY_MSG_208;Égaliseur Bleu/Rouge
-HISTORY_MSG_210;Filtre Dégradé
+HISTORY_MSG_210;Filtre Dégradé - Angle
 HISTORY_MSG_211;Filtre Dégradé
-HISTORY_MSG_212;Filtre Vignettage
-HISTORY_MSG_213;Filtre Vignettage - Force
+HISTORY_MSG_212;Filtre Vignettage - Force
+HISTORY_MSG_213;Filtre Vignettage
 HISTORY_MSG_214;Noir &amp; Blanc
 HISTORY_MSG_215;N&amp;B Mixeur Rouge
 HISTORY_MSG_216;N&amp;B Mixeur Vert
