@@ -450,6 +450,17 @@ HISTORY_MSG_200;CAMO2 - Tone mapping mit CIECAM02 Q
 HISTORY_MSG_201;NR - Delta Chrominanz Rot
 HISTORY_MSG_202;NR - Delta Chrominanz Blau
 HISTORY_MSG_203;NR - Methode
+HISTORY_MSG_208;Blau/Rot Equalizer
+HISTORY_MSG_210;Grauverlauff. - Winkel
+HISTORY_MSG_211;Grauverlauffilter
+HISTORY_MSG_212;Vignettierungsf. - Stärke
+HISTORY_MSG_213;Vignettierungsfilter
+HISTORY_MSG_238;Grauverlauff. - Verlauf
+HISTORY_MSG_239;Grauverlauff. - Stärke
+HISTORY_MSG_240;Grauverlauff. - Rotationsachse
+HISTORY_MSG_241;Vignettierungsf. - Verlauf
+HISTORY_MSG_242;Vignettierungsf. - Rundheit
+HISTORY_MSG_249;Kontrast - Detailstufen Schwellenwert
 HISTORY_NEWSNAPSHOTAS;als...
 HISTORY_NEWSNAPSHOT;Hinzuf.
 HISTORY_NEWSNAPSHOT_TOOLTIP;Kürzel: <b>Alt-s</b>
@@ -642,6 +653,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Weißbild: Automatische Auswahl
 PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild: Unschärferadius
 PARTIALPASTE_FLATFIELDBLURTYPE;Weißbild: Unschärfetyp
 PARTIALPASTE_FLATFIELDFILE;Weißbild: Datei
+PARTIALPASTE_GRADIENT;Grauverlauffilter
 PARTIALPASTE_HLRECONSTRUCTION;Lichter wiederherstellen
 PARTIALPASTE_HLRECOVERYAMOUNT;Lichter wiederherstellen\nStärke
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Lichter wiederherstellen\nSchwellenwert
@@ -657,6 +669,7 @@ PARTIALPASTE_LENSPROFILE;Linsen-Korrekturprofil
 PARTIALPASTE_LUMADENOISE;Luminanz-Rauschfilter
 PARTIALPASTE_LUMINANCEGROUP;Gruppe Luminanzeinstellungen
 PARTIALPASTE_METAICMGROUP;Gruppe Metadaten / ICM
+PARTIALPASTE_PCVIGNETTE;Vignettierungsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektive
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Vorverarbeitung: Grün-Ausgleich
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Vorverarbeitung: Hot/Dead-Pixel-Filter anwenden
@@ -1109,6 +1122,18 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Freies Gamma
 TP_GAMMA_OUTPUT;Ausgabe-Gamma
 TP_GAMMA_SLOP;Gradient (linear)
+TP_GRADIENT_CENTER;Rotationsachse
+TP_GRADIENT_CENTER_X;Rotationsachse X
+TP_GRADIENT_CENTER_X_TOOLTIP;Ankerpunkt der Rotationsachse X: -100=linker Bildrand, 0=Bildmitte, +100=rechter Bildrand
+TP_GRADIENT_CENTER_Y;Rotationsachse Y
+TP_GRADIENT_CENTER_Y_TOOLTIP;Ankerpunkt der Rotationsachse Y: -100=oberer Bildrand, 0=Bildmitte, +100=unterer Bildrand
+TP_GRADIENT_DEGREE;Winkel
+TP_GRADIENT_DEGREE_TOOLTIP;Rotationswinkel in Grad
+TP_GRADIENT_FEATHER;Verlauf
+TP_GRADIENT_FEATHER_TOOLTIP;Breite des Verlaufs in Prozent der Bilddiagonalen
+TP_GRADIENT_LABEL;Grauverlauffilter
+TP_GRADIENT_STRENGTH;Stärke
+TP_GRADIENT_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen
 TP_HLREC_BLEND;Blending
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
@@ -1201,6 +1226,13 @@ TP_LUMADENOISE_LABEL;Luminanz-Rauschfilter
 TP_LUMADENOISE_RADIUS;Radius
 TP_NEUTRAL;Neutral
 TP_NEUTRAL_TIP;Belichtungseinstellungen auf neutrale Werte zurücksetzen
+TP_PCVIGNETTE_FEATHER;Verlauf
+TP_PCVIGNETTE_FEATHER_TOOLTIP;Verlauf: 0=nur Bildecken, 50=halbe Strecke zum Mittelpunkt, 100=bis zum Mittelpunkt
+TP_PCVIGNETTE_LABEL;Vignettierungsfilter
+TP_PCVIGNETTE_ROUNDNESS;Rundheit
+TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Rundheit: 0=Rechteck, 50=eingepasste Ellipse, 100=Kreis
+TP_PCVIGNETTE_STRENGTH;Stärke
+TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen (bezogen auf die Bildecken)
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_VERTICAL;Vertikal
@@ -1383,11 +1415,6 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !HISTORY_MSG_205;CAM02 hot/bad pixels
 !HISTORY_MSG_206;CAT02 - Adapt scene auto
 !HISTORY_MSG_207;Defringing Hue curve
-HISTORY_MSG_208;Blau/Rot Equalizer
-HISTORY_MSG_210;Grauverlauff. - Winkel
-HISTORY_MSG_211;Grauverlauffilter
-HISTORY_MSG_212;Vignettierungsf. - Stärke
-HISTORY_MSG_213;Vignettierungsfilter
 !HISTORY_MSG_214;Black &amp; White
 !HISTORY_MSG_215;B&amp;W Channel Mixer Red
 !HISTORY_MSG_216;B&amp;W Channel Mixer Green
@@ -1412,18 +1439,12 @@ HISTORY_MSG_213;Vignettierungsfilter
 !HISTORY_MSG_235;B&amp;W Auto Channel Mixer
 !HISTORY_MSG_236;--unused--
 !HISTORY_MSG_237;B&amp;W Mixer
-HISTORY_MSG_238;Grauverlauff. - Verlauf
-HISTORY_MSG_239;Grauverlauff. - Stärke
-HISTORY_MSG_240;Grauverlauff. - Rotationsachse
-HISTORY_MSG_241;Vignettierungsf. - Verlauf
-HISTORY_MSG_242;Vignettierungsf. - Rundheit
 !HISTORY_MSG_243;Vignetting - Rayon
 !HISTORY_MSG_244;Vignetting - Strength
 !HISTORY_MSG_245;Vignetting - Center
 !HISTORY_MSG_246;'CL' curve
 !HISTORY_MSG_247;'LH' curve
 !HISTORY_MSG_248;'HH' curve
-HISTORY_MSG_249;Kontrast - Detailstufen Schwellenwert
 !HISTORY_MSG_250;NR enhance
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
@@ -1432,8 +1453,6 @@ HISTORY_MSG_249;Kontrast - Detailstufen Schwellenwert
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
 !PARTIALPASTE_CHANNELMIXERBW;Black and white
-PARTIALPASTE_GRADIENT;Grauverlauffilter
-PARTIALPASTE_PCVIGNETTE;Vignettierungsfilter
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
 !PREFERENCES_BEHADDALL;All to 'Add'
@@ -1523,18 +1542,6 @@ PARTIALPASTE_PCVIGNETTE;Vignettierungsfilter
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
 !TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
 !TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
-TP_GRADIENT_CENTER;Rotationsachse
-TP_GRADIENT_CENTER_X;Rotationsachse X
-TP_GRADIENT_CENTER_X_TOOLTIP;Ankerpunkt der Rotationsachse X: -100=linker Bildrand, 0=Bildmitte, +100=rechter Bildrand
-TP_GRADIENT_CENTER_Y;Rotationsachse Y
-TP_GRADIENT_CENTER_Y_TOOLTIP;Ankerpunkt der Rotationsachse Y: -100=oberer Bildrand, 0=Bildmitte, +100=unterer Bildrand
-TP_GRADIENT_DEGREE;Winkel
-TP_GRADIENT_DEGREE_TOOLTIP;Rotationswinkel in Grad
-TP_GRADIENT_FEATHER;Verlauf
-TP_GRADIENT_FEATHER_TOOLTIP;Breite des Verlaufs in Prozent der Bilddiagonalen
-TP_GRADIENT_LABEL;Grauverlauffilter
-TP_GRADIENT_STRENGTH;Stärke
-TP_GRADIENT_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen
 !TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
@@ -1546,13 +1553,6 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen
 !TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
 !TP_LABCURVE_CURVEEDITOR_LH;LH
 !TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
-TP_PCVIGNETTE_FEATHER;Verlauf
-TP_PCVIGNETTE_FEATHER_TOOLTIP;Verlauf: 0=nur Bildecken, 50=halbe Strecke zum Mittelpunkt, 100=bis zum Mittelpunkt
-TP_PCVIGNETTE_LABEL;Vignettierungsfilter
-TP_PCVIGNETTE_ROUNDNESS;Rundheit
-TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Rundheit: 0=Rechteck, 50=eingepasste Ellipse, 100=Kreis
-TP_PCVIGNETTE_STRENGTH;Stärke
-TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen (bezogen auf die Bildecken)
 !TP_PFCURVE_CURVEEDITOR_CH;Hue
 !TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
 !TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels
