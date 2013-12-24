@@ -5,7 +5,6 @@ FILEBROWSER_POPUPCOLORLABEL;Colour label
 FILEBROWSER_SHOWUNCOLORHINT;Show images without Colour label.\nShortcut: <b>Alt-`</b>
 HISTORY_MSG_39;Colour Temperature
 HISTORY_MSG_46;Colour Denoising
-HISTORY_MSG_49;Edge Sensitive Colour Denoising
 HISTORY_MSG_69;Working Colour Space
 HISTORY_MSG_70;Output Colour Space
 HISTORY_MSG_71;Input Colour Space
@@ -15,6 +14,9 @@ HISTORY_MSG_155;Vibrance - Avoid colour shift
 HISTORY_MSG_191;CAM02 - Colourfulness (M)
 HISTORY_MSG_197;CAM02 - Colour curve
 HISTORY_MSG_198;CAM02 - Colour curve
+HISTORY_MSG_221;B&amp;W Colour Filter
+HISTORY_MSG_240;Gradient - Centre
+HISTORY_MSG_245;Vignetting - Centre
 ICMPANEL_FILEDLGFILTERICM;Colour profiles
 ICMPANEL_GAMMABEFOREINPUT;Colour Profile Applies Gamma
 ICMPANEL_INPUTDLGLABEL;Select Input Colour Profile...
@@ -48,6 +50,12 @@ PREFERENCES_SELECTICCDIRDLG;Select Colour Profile Directory...
 PREFERENCES_SELECTMONITORPROFDLG;Select Colour Profile of the Display...
 PREFERENCES_TAB_COLORMGR;Colour Management
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Centre of rotation is the geometrical centre of the image.
+TP_BWMIX_CC_ENABLED;Adjust complementary colour
+TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colours in ROYGCBPM mode
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the colour components
+TP_BWMIX_FILTER;Colour Filter
+TP_BWMIX_FILTER_TOOLTIP;The colour filter simulate shots taken with a coloured filter placed in front of the lens. Coloured filters reduce transmission of specific range of colours and correspondingly affect their lightness. E.g. a Red filter darkens Blue skies.
+TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behaviour.
 TP_COLORAPP_ALGO_QM;Brightness + Colourfulness (QM)
 TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly coloured) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
 TP_COLORAPP_CHROMA_M;Colourfulnes (M)
@@ -60,6 +68,11 @@ TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colours to take into account the v
 TP_COLORAPP_TCMODE_COLORF;Colourfulness
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input colour profile. Gamma of sRGB is assumed, thus if input image is in colour profile of a different gamma, luminance noise reduction will vary.
 TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colourfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
+TP_GRADIENT_CENTER;Centre
+TP_GRADIENT_CENTER_X;Centre X
+TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=centre, +100=right edge
+TP_GRADIENT_CENTER_Y;Centre Y
+TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=centre, +100=bottom edge
 TP_HLREC_COLOR;Colour Propagation
 TP_ICM_FILEDLGFILTERICM;Colour profiles
 TP_ICM_INPUTCAMERAICC;Auto-matched camera-specific colour profile
@@ -71,6 +84,7 @@ TP_ICM_INPUTNONE_TOOLTIP;Use no input colour profile at all. Use only in special
 TP_ICM_LABEL;Colour Management
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid colour shift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colours into gamut of the working colour space and apply Munsell correction
+TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to centre, 100=to centre
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by colour. Higher = more, lower = less.
 TP_RAW_FALSECOLOR;False Colour Suppression Steps
 TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image colour.    
@@ -78,7 +92,7 @@ TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid colour shift
 TP_VIGNETTING_CENTER;Centre
 TP_VIGNETTING_CENTER_X;Centre X
 TP_VIGNETTING_CENTER_Y;Centre Y
-
+TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -315,17 +329,25 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_DELSNAPSHOT;Del
 !HISTORY_FROMCLIPBOARD;From Clipboard
 !HISTORY_LABEL;History
+!HISTORY_MSG_1;Photo Loaded
 !HISTORY_MSG_2;PP3 Loaded
+!HISTORY_MSG_3;PP3 Changed
+!HISTORY_MSG_4;History Browsing
 !HISTORY_MSG_5;Lightness
+!HISTORY_MSG_6;Contrast
+!HISTORY_MSG_7;Black
 !HISTORY_MSG_8;Exposure Compensation
 !HISTORY_MSG_9;Highlight Compression
 !HISTORY_MSG_10;Shadow Compression
+!HISTORY_MSG_11;Tone Curve 1
 !HISTORY_MSG_12;Auto Exposure
 !HISTORY_MSG_13;Exposure Clipping
 !HISTORY_MSG_14;Luminance Lightness
+!HISTORY_MSG_15;Luminance Contrast
 !HISTORY_MSG_16;Luminance Black
 !HISTORY_MSG_17;Luminance Highlight Compr.
 !HISTORY_MSG_18;Luminance Shadow Compr.
+!HISTORY_MSG_19;'L' Curve
 !HISTORY_MSG_20;Sharpening
 !HISTORY_MSG_21;Sharpening Radius
 !HISTORY_MSG_22;Sharpening Amount
@@ -353,6 +375,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_45;Lum. Denoising Edge Tolerance
 !HISTORY_MSG_47;Blend ICC highlights with matrix
 !HISTORY_MSG_48;Use DCP's tone curve
+!HISTORY_MSG_49;DCP Illuminant
 !HISTORY_MSG_50;Shadow/Highlight
 !HISTORY_MSG_51;Highlights
 !HISTORY_MSG_52;Shadows
@@ -514,7 +537,6 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_218;B&amp;W Red Gamma
 !HISTORY_MSG_219;B&amp;W Green Gamma
 !HISTORY_MSG_220;B&amp;W Blue Gamma
-!HISTORY_MSG_221;B&amp;W Color Filter
 !HISTORY_MSG_222;B&amp;W Presets
 !HISTORY_MSG_223;B&amp;W Channel Mixer Orange
 !HISTORY_MSG_224;B&amp;W Channel Mixer Yellow
@@ -533,12 +555,10 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !HISTORY_MSG_237;B&amp;W Mixer
 !HISTORY_MSG_238;Gradient - Feather
 !HISTORY_MSG_239;Gradient - Strength
-!HISTORY_MSG_240;Gradient - Center
 !HISTORY_MSG_241;Vignette Filter - Feather
 !HISTORY_MSG_242;Vignette Filter - Roundness
 !HISTORY_MSG_243;Vignetting - Rayon
 !HISTORY_MSG_244;Vignetting - Strength
-!HISTORY_MSG_245;Vignetting - Center
 !HISTORY_MSG_246;'CL' curve
 !HISTORY_MSG_247;'LH' curve
 !HISTORY_MSG_248;'HH' curve
@@ -998,16 +1018,12 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_BWMIX_AUTOCH;Auto
 !TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
 !TP_BWMIX_BLUE;Blue
-!TP_BWMIX_CC_ENABLED;Adjust complementary color
-!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode
 !TP_BWMIX_CHANNEL;Luminance Equalizer
 !TP_BWMIX_CURVEEDITOR1;'Before' curve
 !TP_BWMIX_CURVEEDITOR2;'After' curve
 !TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment
-!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the color components
 !TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\nPay attention to extreme values that may cause artifacts
 !TP_BWMIX_CYAN;Cyan
-!TP_BWMIX_FILTER;Color Filter
 !TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
 !TP_BWMIX_FILTER_BLUE;Blue
 !TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
@@ -1016,7 +1032,6 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_BWMIX_FILTER_PURPLE;Purple
 !TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
 !TP_BWMIX_FILTER_RED;Red
-!TP_BWMIX_FILTER_TOOLTIP;The color filter simulate shots taken with a colored filter placed in front of the lens. Colored filters reduce transmission of specific range of colors and correspondingly affect their lightness. E.g. a Red filter darkens Blue skies.
 !TP_BWMIX_FILTER_YELLOW;Yellow
 !TP_BWMIX_GAMMA;Gamma Correction
 !TP_BWMIX_GAM_BLUE;Blue Channel
@@ -1039,7 +1054,6 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_BWMIX_RED;Red
 !TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
 !TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values ​​actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
 !TP_BWMIX_SETTING;Presets
 !TP_BWMIX_SETTING_TOOLTIP;Different presets (films, landscape, ...) or manual settings of channel-mixer
 !TP_BWMIX_SET_HIGHCONTAST;High contrast
@@ -1080,12 +1094,15 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_COLORAPP_ADAPTVIEWING;Adaptation viewing luminosity (cd/m²)
 !TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²)
 !TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
+!TP_COLORAPP_ALGO;Algorithm
 !TP_COLORAPP_ALGO_ALL;All
 !TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
 !TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
 !TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters
+!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
 !TP_COLORAPP_BRIGHT;Brightness (Q)
 !TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from Lab and RGB brightness
+!TP_COLORAPP_CHROMA;Chroma (C)
 !TP_COLORAPP_CHROMA_S;Saturation (S)
 !TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from Lab and RGB saturation
 !TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from Lab and RGB chroma
@@ -1112,10 +1129,12 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 !TP_COLORAPP_LIGHT;Lightness (J)
 !TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from Lab and RGB lightness
+!TP_COLORAPP_MODEL;White-Point Model
 !TP_COLORAPP_RSTPRO;Red & skin tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin tones protection (sliders and curves)
 !TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
 !TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
+!TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUND_AVER;Average
 !TP_COLORAPP_SURROUND_DARK;Dark
 !TP_COLORAPP_SURROUND_DIM;Dim
@@ -1224,11 +1243,6 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_GAMMA_OUTPUT;Output Gamma
 !TP_GAMMA_SLOP;Slope (linear)
 !TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
-!TP_GRADIENT_CENTER;Center
-!TP_GRADIENT_CENTER_X;Center X
-!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
-!TP_GRADIENT_CENTER_Y;Center Y
-!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
 !TP_GRADIENT_DEGREE;Angle
 !TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
 !TP_GRADIENT_FEATHER;Feather
@@ -1254,7 +1268,11 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
 !TP_ICM_FILEDLGFILTERANY;Any files
+!TP_ICM_INPUTCAMERA;Camera standard
+!TP_ICM_INPUTCUSTOM;Custom
 !TP_ICM_INPUTDLGLABEL;Select Input DCP/ICC Profile...
+!TP_ICM_INPUTEMBEDDED;Use embedded, if possible
+!TP_ICM_INPUTNONE;No profile
 !TP_ICM_INPUTPROFILE;Input Profile
 !TP_ICM_NOICM;No ICM: sRGB Output
 !TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
@@ -1314,7 +1332,6 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_NEUTRAL;Neutral
 !TP_NEUTRAL_TIP;Reset exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not
 !TP_PCVIGNETTE_FEATHER;Feather
-!TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
 !TP_PCVIGNETTE_LABEL;Vignette Filter
 !TP_PCVIGNETTE_ROUNDNESS;Roundness
 !TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness: 0=rectangle, 50=fitted ellipse, 100=circle
@@ -1323,6 +1340,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_PERSPECTIVE_HORIZONTAL;Horizontal
 !TP_PERSPECTIVE_LABEL;Perspective
 !TP_PERSPECTIVE_VERTICAL;Vertical
+!TP_PFCURVE_CURVEEDITOR_CH;Hue
 !TP_PREPROCESS_GREENEQUIL;Green Equilibration
 !TP_PREPROCESS_HOTDEADPIXFILT;Hot/Dead pixel filter
 !TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels
@@ -1373,6 +1391,7 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_RGBCURVES_CHANNEL;Channel
 !TP_RGBCURVES_GREEN;G
 !TP_RGBCURVES_LABEL;RGB Curves
+!TP_RGBCURVES_LUMAMODE;Luminosity Mode
 !TP_RGBCURVES_RED;R
 !TP_ROTATE_DEGREE;Degree
 !TP_ROTATE_LABEL;Rotate
@@ -1434,7 +1453,6 @@ TP_VIGNETTING_CENTER_Y;Centre Y
 !TP_WBALANCE_CUSTOM;Custom
 !TP_WBALANCE_DAYLIGHT;Daylight (sunny)
 !TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
-!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
 !TP_WBALANCE_FLASH55;Leica
 !TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 !TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta

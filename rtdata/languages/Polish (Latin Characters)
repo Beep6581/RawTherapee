@@ -1,19 +1,11 @@
-#00 Polish
-#01 24.12.2007
-#02 Mateusz Ludwin
-#03 -----------------------------
-#04 08.01.2010
-#05 Initial update for 3.0 release
-#06 Bartosz "Simek" Kaszubowski
-#07 -----------------------------
-#08 06.09.2011
-#09 Dariusz 'Salvadhor' Duma
-#10 The race for the bleeding edge - update for 4.x
-#11 2011-11-30 DrSlony
-#12 2012-01-14 DrSlony
-#13 2012-01-30 DrSlony
-#13 2012-04-02 DrSlony
-#14 2013-05-21 DrSlony
+#01 2007-12-24 Mateusz Ludwin
+#02 2010-01-08 Initial update for 3.0 release by Bartosz "Simek" Kaszubowski
+#03 2011-09-06 Dariusz 'Salvadhor' Duma
+#04 2011-11-30 DrSlony
+#05 2012-01-14 DrSlony
+#06 2012-01-30 DrSlony
+#07 2012-04-02 DrSlony
+#08 2013-05-21 DrSlony
 
 ABOUT_TAB_BUILD;Wersja
 ABOUT_TAB_CREDITS;Zaslugi

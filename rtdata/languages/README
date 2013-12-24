@@ -56,7 +56,7 @@ the characters in the language file you want to convert into Latin-only:
 
 To convert all line terminators in all language files to CRLF (dos/mac/unix)
 you can use vim:
-  a) cd ~/rawtherapee/rtdata/languages
+  a) cd rtdata/languages
      vim
   b) In vim, type:
      :set ffs=dos
