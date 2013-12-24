@@ -1,3 +1,14 @@
+#00 Nederlands
+#01 26.12.2007: door Rens Duijsens en Brent Huisman
+#02 14.03.2008: updated by reggybe
+#03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
+#04 02-05-2010: updated to rt3a1 by paul.matthijsse
+#05 03-03-2011: updated to rt3a2 by paul.matthijsse
+#06 10-10-2011: updated to rt4.0 by wim ter meer
+#07 28-11-11: updated by pm
+#08 17-05-2012: updated to rt4.0.8 by wim ter meer
+#09 27-03-2013: updated to rt4.0.10 by wim ter meer
+#10 27-11-2013: updated to rt4.1 by wim ter meer
 
 ABOUT_TAB_BUILD;Versie
 ABOUT_TAB_CREDITS;Credits
@@ -245,44 +256,44 @@ HISTORY_MSG_7;Schaduwen
 HISTORY_MSG_8;Belichtingscompensatie
 HISTORY_MSG_9;Compressie hoge lichten
 HISTORY_MSG_10;Schaduwcompressie
-HISTORY_MSG_11;Tooncurve
+HISTORY_MSG_11;Tooncurve 1
 HISTORY_MSG_12;Automatische belichting
 HISTORY_MSG_13;Drempel
-HISTORY_MSG_14;LAB: helderheid
-HISTORY_MSG_15;LAB: contrast
+HISTORY_MSG_14;Lum: helderheid
+HISTORY_MSG_15;Lum: contrast
 HISTORY_MSG_16;Lum: schaduwen
 HISTORY_MSG_17;Lum: compr. hoge lichten
 HISTORY_MSG_18;Lum: schaduwcompressie
-HISTORY_MSG_19;Luminantiecurve
-HISTORY_MSG_20;Verscherping
-HISTORY_MSG_21;Straal verscherping
-HISTORY_MSG_22;Hoeveelheid verscherping
-HISTORY_MSG_23;Drempel verscherping
-HISTORY_MSG_24;Alleen randen verscherpen
-HISTORY_MSG_25;Straal randverscherping
-HISTORY_MSG_26;Tolerantie randverscherping
-HISTORY_MSG_27;Verscherpen halocontrole
-HISTORY_MSG_28;Halocontrole hoeveelheid
+HISTORY_MSG_19;'L' Curve
+HISTORY_MSG_20;Verscherpen
+HISTORY_MSG_21;Verscherpen -Straal
+HISTORY_MSG_22;Verscherpen -Hoeveelheid 
+HISTORY_MSG_23;Verscherpen -Drempel 
+HISTORY_MSG_24;Verscherp alleen randen 
+HISTORY_MSG_25;Verscherpen -Straal randverscherping
+HISTORY_MSG_26;Verscherpen -Randtolerantie 
+HISTORY_MSG_27;Verscherpen -Halocontrole
+HISTORY_MSG_28;Halocontrole -Hoeveelheid
 HISTORY_MSG_29;Verscherpingsmethode
 HISTORY_MSG_30;Straal RL-verscherping
 HISTORY_MSG_31;Hoeveelheid RL-verscherping
 HISTORY_MSG_32;Demping RL-verscherping
 HISTORY_MSG_33;Herhaling RL-verscherping
-HISTORY_MSG_34;Vermijd kleuroversturing
-HISTORY_MSG_35;Verzadigingsbegrenzer
-HISTORY_MSG_36;Verzadigingslimiet
-HISTORY_MSG_37;Kleurversterking
-HISTORY_MSG_38;Witbalansmethode
+HISTORY_MSG_34;LCP Lensvervorming correctie
+HISTORY_MSG_35;LCP Vignettering correctie
+HISTORY_MSG_36;LCP CA correctie
+HISTORY_MSG_37;Automatische Niveaus
+HISTORY_MSG_38;Witbalans Methode
 HISTORY_MSG_39;Kleurtemperatuur
-HISTORY_MSG_40;Groentint WB
-HISTORY_MSG_41;Kleurverschuiving A
-HISTORY_MSG_42;Kleurverschuiving B
-HISTORY_MSG_43;Ruisonderdrukking luminantie
-HISTORY_MSG_44;Straal lum. ruisonderdrukking
-HISTORY_MSG_45;Randtolerantie lum. ruisonderdrukking
+HISTORY_MSG_40;Witbalans Groentint
+HISTORY_MSG_41;Tooncurve Mode 1
+HISTORY_MSG_42;Tooncurve 2
+HISTORY_MSG_43;Tooncurve Mode 2
+HISTORY_MSG_44;Lum. Straal ruisond.
+HISTORY_MSG_45;Lum. Randtolerantie ruisond.
 HISTORY_MSG_46;Ruisonderdrukking kleur
-HISTORY_MSG_47;Straal kleurruisonderdrukking
-HISTORY_MSG_48;Randtolerantie kleurruisonderdrukking
+HISTORY_MSG_47;Meng hoge lichten met matrix
+HISTORY_MSG_48;Gebruik DCP's toon curve
 HISTORY_MSG_49;DCP Illuminant
 HISTORY_MSG_50;Schaduwen/hoge lichten
 HISTORY_MSG_51;Compressie hoge lichten 
@@ -295,60 +306,60 @@ HISTORY_MSG_57;Grof roteren
 HISTORY_MSG_58;Horizontaal spiegelen
 HISTORY_MSG_59;Verticaal spiegelen
 HISTORY_MSG_60;Roteren
-HISTORY_MSG_61;Rotatie
+HISTORY_MSG_61;Automatisch uitvullen
 HISTORY_MSG_62;Corrigeer lensvervorming
 HISTORY_MSG_63;Snapshot
 HISTORY_MSG_64;Afbeelding bijsnijden
-HISTORY_MSG_65;C/A-correctie
-HISTORY_MSG_66;Repareer hoge lichten
-HISTORY_MSG_67;Repareer hoge lichten, hoeveelheid
-HISTORY_MSG_68;Repareer hoge lichten, methode
+HISTORY_MSG_65;CA-correctie
+HISTORY_MSG_66;Hoge lichten Herstellen
+HISTORY_MSG_67;HL Herstellen -Hoeveelheid
+HISTORY_MSG_68;HL Herstellen -Methode
 HISTORY_MSG_69;Kleurwerkruimte
 HISTORY_MSG_70;Uitvoerkleurruimte
 HISTORY_MSG_71;Invoerkleurruimte
-HISTORY_MSG_72;Vignettering - Hoeveelheid
+HISTORY_MSG_72;Vignettering -Hoeveelheid
 HISTORY_MSG_73;Kleurkanaal Mixer
 HISTORY_MSG_74;Schalingsinstelling
 HISTORY_MSG_75;Schalingsmethode
 HISTORY_MSG_76;Exif-metadata
 HISTORY_MSG_77;IPTC-metadata
 HISTORY_MSG_78;Schalen
-HISTORY_MSG_79;Schalen: breedte
-HISTORY_MSG_80;Schalen: hoogte
+HISTORY_MSG_79;Schalen -Breedte
+HISTORY_MSG_80;Schalen -Hoogte
 HISTORY_MSG_81;Schalen geactiveerd
 HISTORY_MSG_82;Profiel veranderd
 HISTORY_MSG_83;Hoge kwaliteit schaduwen/hoge lichten
 HISTORY_MSG_84;Perspectiefcorrectie
-HISTORY_MSG_85;Waveletcoëfficienten
-HISTORY_MSG_86;Wavelet-equalizer
-HISTORY_MSG_87;Zout&peper-ruisonderdrukking
-HISTORY_MSG_88;Zout&peper-drempel
+HISTORY_MSG_85;Lenscorrectie Profiel
+HISTORY_MSG_86;RGB Curven - Luminositeit Mode
+HISTORY_MSG_87;Spot-ruisonderdrukking
+HISTORY_MSG_88;Spot-ruisond. -Drempel
 HISTORY_MSG_89;Ruisonderdrukking
-HISTORY_MSG_90;Luminantie
-HISTORY_MSG_91;Chrominantie
-HISTORY_MSG_92;Gamma
+HISTORY_MSG_90;Ruis -Luminantie
+HISTORY_MSG_91;Ruis -Chrominantie
+HISTORY_MSG_92;Ruis -Gamma
 HISTORY_MSG_93;Detailcontrast waarde
 HISTORY_MSG_94;Detailcontrast 
-HISTORY_MSG_95;LAB: verzadiging
+HISTORY_MSG_95;Chromaticiteit
 HISTORY_MSG_96;'a'-curve
 HISTORY_MSG_97;'b'-curve
 HISTORY_MSG_98;Demozaïekproces
-HISTORY_MSG_99;Voorbewerking
+HISTORY_MSG_99;Fileter hete/dode pixels
 HISTORY_MSG_100;RGB-verzadiging
-HISTORY_MSG_101;HSV EQ: tint
-HISTORY_MSG_102;HSV EQ: verzadiging
-HISTORY_MSG_103;HSV EQ: waarde
+HISTORY_MSG_101;HSV-balans -Tint
+HISTORY_MSG_102;HSV-balans -Verzadiging
+HISTORY_MSG_103;HSV-balans -Waarde
 HISTORY_MSG_104;HSV-balans
 HISTORY_MSG_105;Randverzachting
-HISTORY_MSG_106;Randverzachting straal
-HISTORY_MSG_107;Randverzachting drempel
+HISTORY_MSG_106;Randverzachting Straal
+HISTORY_MSG_107;Randverzachting Srempel
 HISTORY_MSG_108;Drempel compr. hoge lichten
 HISTORY_MSG_109;Hoogte en breedte
 HISTORY_MSG_110;Herschalen van: 
-HISTORY_MSG_111;Vermijd kleuroversturing
-HISTORY_MSG_112;Verzadigingsbegrenzer
-HISTORY_MSG_113;Verzadigingslimiet
-HISTORY_MSG_114;DCB-herhalingen
+HISTORY_MSG_111;Vermijd kleurverschuiving
+HISTORY_MSG_112;--unused--
+HISTORY_MSG_113;Rode en huidtinten beschermen
+HISTORY_MSG_114;DCB Herhalingen
 HISTORY_MSG_115;Herhaling valse kleuren
 HISTORY_MSG_116;Verbeterd DCB
 HISTORY_MSG_117;CA-correctie Rood
@@ -365,8 +376,8 @@ HISTORY_MSG_127;Vlakveld automatische selectie
 HISTORY_MSG_128;Vlakveld verzachten straal
 HISTORY_MSG_129;Vlakveld verzachten type
 HISTORY_MSG_130;Automatische correctie lensvervorming
-HISTORY_MSG_131;Ruisonderdrukking luminantie
-HISTORY_MSG_132;Ruisonderdrukking chrominantie
+HISTORY_MSG_131;Ruisonderdrukking Luma
+HISTORY_MSG_132;Ruisonderdrukking Chroma
 HISTORY_MSG_133;Gamma
 HISTORY_MSG_134;Gamma positie
 HISTORY_MSG_135;Gamma vrij
@@ -376,15 +387,15 @@ HISTORY_MSG_138;Zwartniveau rood
 HISTORY_MSG_139;Zwartniveau blauw
 HISTORY_MSG_140;Zwartniveau groen 2
 HISTORY_MSG_141;Zwartniveau combineer groenen
-HISTORY_MSG_142;Randen verscherpen - herhalingen
-HISTORY_MSG_143;Randen verscherpen - hoeveelheid
-HISTORY_MSG_144;Microcontrast - hoeveelheid
-HISTORY_MSG_145;Microcontrast - uniformiteit
+HISTORY_MSG_142;Randen - Herhalingen
+HISTORY_MSG_143;Randen - Hoeveelheid
+HISTORY_MSG_144;Microcontrast - Hoeveelheid
+HISTORY_MSG_145;Microcontrast - Uniformiteit
 HISTORY_MSG_146;Randen verscherpen
-HISTORY_MSG_147;Randen verscherpen - alleen luminantie
+HISTORY_MSG_147;Verscherpen - alleen luminantie
 HISTORY_MSG_148;Microcontrast
 HISTORY_MSG_149;Microcontrast - 3x3 matrix
-HISTORY_MSG_150;Nabewerking demozaïek artefact/ruisonderdrukking
+HISTORY_MSG_150;Nabewerking demozaïek
 HISTORY_MSG_151;Levendigheid
 HISTORY_MSG_152;Levendigheid - Pasteltinten
 HISTORY_MSG_153;Levendigheid - Verzadigde tinten
@@ -407,7 +418,7 @@ HISTORY_MSG_169;'Ch' curve
 HISTORY_MSG_170;Levendigheid curve
 HISTORY_MSG_171;'LC' curve
 HISTORY_MSG_172;Beperk LC tot Rode en Huidtinten
-HISTORY_MSG_173;NR - Luminantie Detail
+HISTORY_MSG_173;Ruis - Luminantie Detail
 HISTORY_MSG_174;CIECAM02
 HISTORY_MSG_175;CAM02 - Chrom. aanpassing hoeveelheid
 HISTORY_MSG_176;CAM02 - Duistere Weergaveomstandigheden 
@@ -435,9 +446,9 @@ HISTORY_MSG_197;CAM02 - Kleur curve
 HISTORY_MSG_198;CAM02 - Kleur curve
 HISTORY_MSG_199;CAM02 - Toon CIECAM in histogram
 HISTORY_MSG_200;CAM02 - Tonemapping met Q
-HISTORY_MSG_201;NR - Delta Chrominantie rood
-HISTORY_MSG_202;NR - Delta Chrominantie blauw
-HISTORY_MSG_203;NR - Methode
+HISTORY_MSG_201;Ruis - Delta Chrominantie rood-groen
+HISTORY_MSG_202;Ruis - Delta Chrominantie blauw-geel
+HISTORY_MSG_203;Ruis - Methode
 HISTORY_MSG_204;LMMSE Verbetering 
 HISTORY_MSG_205;CAM02 hete/dode pixels
 HISTORY_MSG_206;CAT02 - Opnameomstandigheden auto
@@ -479,7 +490,11 @@ HISTORY_MSG_242;Vignettering Filter - Vorm
 HISTORY_MSG_243;Vignettering - Straal
 HISTORY_MSG_244;Vignettering - Sterkte
 HISTORY_MSG_245;Vignettering - Centrum
-HISTORY_MSG_246;CL curve
+HISTORY_MSG_246;'CL' curve
+HISTORY_MSG_247;'LH' curve
+HISTORY_MSG_248;'HH' curve
+HISTORY_MSG_249;Detailcontrast - Drempel
+HISTORY_MSG_250;Ruis -Verbeteren
 HISTORY_NEWSNAPSHOTAS;Als...
 HISTORY_NEWSNAPSHOT;Nieuw
 HISTORY_NEWSNAPSHOT_TOOLTIP;Sneltoets: <b>Alt-s</b>
@@ -969,7 +984,7 @@ TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_AUTOCH_TIP;Bereken optimale waardes voor de kanaalmixer.
 TP_BWMIX_BLUE;Blauw
 TP_BWMIX_CC_ENABLED;Wijzig complementaire kleur
-TP_BWMIX_CC_TOOLTIP;Automatische aanpassing van complementaire kleuren in ROYGCBMP mode.
+TP_BWMIX_CC_TOOLTIP;Automatische aanpassing van complementaire kleuren in ROYGCBPM mode.
 TP_BWMIX_CHANNEL;Luminantie Balans
 TP_BWMIX_CURVEEDITOR1;'Voor' curve
 TP_BWMIX_CURVEEDITOR2;'Na'   curve
@@ -1008,6 +1023,8 @@ TP_BWMIX_NEUTRAL_TIP;Zet alle waardes - schuifbalken - filters - kanaalmixers te
 TP_BWMIX_ORANGE;Oranje Filter
 TP_BWMIX_PURPLE;Paars Filter
 TP_BWMIX_RED;Rood
+TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Totaal: %4%%
+TP_BWMIX_RGBLABEL_HINT;RGB omrekeningsfactoren. Hierin zijn alle gekozen opties vewerkt.\nTotaal toont de som van de uit te voeren RGB factoren:\n- dit is altijd 100% in relatieve mode\n- hoger (lichter) of lager (donkerder) dan 100% in absolute mode.
 TP_BWMIX_RGB_TOOLTIP;Mix de RGB kanalen. Gebruik Voorinstellingen voor aanwijzingen.\nNegatieve waarden kunnen artefacten of onregelmatigheden veroorzaken.
 TP_BWMIX_SETTING;Voorinstellingen
 TP_BWMIX_SETTING_TOOLTIP;Verschillende voorinstellingen (film, landschap, etc.) of handmatige instellingen van de kanaalmixer.
@@ -1024,12 +1041,12 @@ TP_BWMIX_SET_PANCHRO;Panchromatisch
 TP_BWMIX_SET_PORTRAIT;Portret
 TP_BWMIX_SET_RGBABS;Kanaalmixer absolute RGB
 TP_BWMIX_SET_RGBREL;Kanaalmixer relatieve RGB
-TP_BWMIX_SET_ROYGCBMPABS;Kanaalmixer absolute ROYGCBMP
-TP_BWMIX_SET_ROYGCBMPREL;Kanaalmixer relatieve ROYGCBMP
+TP_BWMIX_SET_ROYGCBPMABS;Kanaalmixer absolute ROYGCBPM
+TP_BWMIX_SET_ROYGCBPMREL;Kanaalmixer relatieve ROYGCBPM
 TP_BWMIX_TCMODE_FILMLIKE;Z&W Film-achtig
-TP_BWMIX_TCMODE_SATANDVALBLENDING;Z&W Verzadinging en Waarde menging
-TP_BWMIX_TCMODE_STANDARD;Z&W Standaard
-TP_BWMIX_TCMODE_WEIGHTEDSTD;Z&W Gewogen Standard
+TP_BWMIX_TCMODE_SATANDVALBLENDING;Z-W Verzadinging en Waarde menging
+TP_BWMIX_TCMODE_STANDARD;Z-W Standaard
+TP_BWMIX_TCMODE_WEIGHTEDSTD;Z-W Gewogen Standard
 TP_BWMIX_VAL;L
 TP_BWMIX_YELLOW;Geel Filter
 TP_CACORRECTION_BLUE;Blauw
@@ -1141,9 +1158,11 @@ TP_DARKFRAME_LABEL;Donkerframe
 TP_DEFRINGE_LABEL;Verzachten (Lab/CIECAM02)
 TP_DEFRINGE_RADIUS;Straal
 TP_DEFRINGE_THRESHOLD;Drempel
-TP_DIRPYRDENOISE_BLUE;Delta Chrominantie Blauw
+TP_DIRPYRDENOISE_BLUE;Delta Chrominantie Blauw & Geel
 TP_DIRPYRDENOISE_CHROMA;Chrominantie
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kan worden gebruikt op raw en niet-raw afbeeldingen.\n\nVoor niet-raw afbeeldingen geldt dat ruisonderdrukking van de luminantie afhangt van het gamma van het invoerprofiel. Standaard wordt uitgegaan van het gamma van sRGB. Als de afbeelding dus een kleurprofiel heeft met een afwijkend gamma, zal de luminantie ruisonderdrukking verschillen.
+TP_DIRPYRDENOISE_ENH;Verbeteren
+TP_DIRPYRDENOISE_ENH_TOOLTIP;Verbetert de ruisonderdrukking, maar vergroot de verwerkingstijd met ongeveer 20%
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varieert de mate van ruisonderdrukking  over het bereik van tinten. Kleinere waarden beperken zich tot schaduwen, terwijl grotere waarden het bereik oprekken tot heldere tinten
 TP_DIRPYRDENOISE_LABEL;Ruisonderdrukking
@@ -1152,7 +1171,7 @@ TP_DIRPYRDENOISE_LUMA;Luminantie
 TP_DIRPYRDENOISE_METHOD;Methode
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;Voor raw afbeeldingen kan RGB of Lab methode worden gebruikt.\n\nVoor niet-raw afbeeldingen zal altijd de Lab methode worden gebruikt, ongeacht de geselecteerde methode.
 TP_DIRPYRDENOISE_PERF;RGB mode (raw afbeeldingen)
-TP_DIRPYRDENOISE_RED;Delta Chrominantie Rood
+TP_DIRPYRDENOISE_RED;Delta Chrominantie Rood & Groen
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_LABEL;Detailcontrast (Lab/CIECAM02)
 TP_DIRPYREQUALIZER_LUMACOARSEST;grofste
@@ -1173,13 +1192,13 @@ TP_EPD_STRENGTH;Sterkte
 TP_EPD_TOOLTIP;Tonemapping is mogelijk via Lab mode (standaard) of CIECAM02 mode.\n\nOm CIECAM02 Tonemapping mode te gebruiken moeten de volgende instellingen worden gekozen: \n1. CIECAM\n2. Algoritme="Helderheid + Kleurrijkheid (QM)"\n3. "Tonemapping gebruik makend van CIECAM02 helderheid (Q)"
 TP_EXPOSCORR_LABEL;RAW Witpunt en Zwartniveau
 TP_EXPOSURE_AUTOLEVELS;Autom. niveaus
-TP_EXPOSURE_AUTOLEVELS_TIP;Activeer automatische niveaus.
+TP_EXPOSURE_AUTOLEVELS_TIP;Activeer automatische niveaus\nActiveer Herstel Hoge lichten indien nodig.
 TP_EXPOSURE_BLACKLEVEL;Schaduwen
 TP_EXPOSURE_BRIGHTNESS;Helderheid
-TP_EXPOSURE_CLIP;Drempel
-TP_EXPOSURE_CLIP_TIP;Het deel van de pixels dat moet worden gecomprimeerd bij gebruik van automatische niveaus.
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Drempel herstel hoge lichten
-TP_EXPOSURE_COMPRHIGHLIGHTS;Hoge lichten comprimeren
+TP_EXPOSURE_CLIP;Clip %
+TP_EXPOSURE_CLIP_TIP;Het deel van de pixels dat moet worden hersteld bij gebruik van automatische niveaus.
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Drempel Comprimeren Hoge lichten 
+TP_EXPOSURE_COMPRHIGHLIGHTS;Comprimeren Hoge lichten 
 TP_EXPOSURE_COMPRSHADOWS;Schaduwcompressie
 TP_EXPOSURE_CONTRAST;Contrast
 TP_EXPOSURE_CURVEEDITOR1;Toon curve 1
@@ -1207,6 +1226,7 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Vrij gamma
 TP_GAMMA_OUTPUT;Uitvoer gamma
 TP_GAMMA_SLOP;Helling (lineair)
+TP_GENERAL_11SCALE_TOOLTIP;De werking is alleen zichtbaar op schaal 1:1 van het voorbeeld
 TP_GRADIENT_CENTER;Centrum
 TP_GRADIENT_CENTER_X;Centrum X
 TP_GRADIENT_CENTER_X_TOOLTIP;Rotatiepunt X-as: \n-100=linkerkant \n0=centrum \n+100=rechterkant
@@ -1222,7 +1242,8 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filtersterkte in stops
 TP_HLREC_BLEND;Mengen
 TP_HLREC_CIELAB;CIELab-blending
 TP_HLREC_COLOR;Kleurherstel
-TP_HLREC_LABEL;Repareer hoge lichten
+TP_HLREC_ENA_TOOLTIP;Kan worden geactiveerd door automatische niveaus
+TP_HLREC_LABEL;Repareer hoge Lichten
 TP_HLREC_LUMINANCE;Lichtherstel
 TP_HLREC_METHOD;Methode:
 TP_HSVEQUALIZER_CHANNEL;HSV-balans
@@ -1269,6 +1290,7 @@ TP_LABCURVE_AVOIDCOLORSHIFT;Vermijd kleurverschuiving
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Plaats de kleuren in het gamut van de kleurruimte van het werkprofiel\nen pas Munsell correctie toe
 TP_LABCURVE_BRIGHTNESS;Helderheid
 TP_LABCURVE_CHROMATICITY;Chromaticiteit
+TP_LABCURVE_CHROMA_TOOLTIP;Voor Z-W tonen, zet Chromaticiteit op -100
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminantiecurve
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Groen verzadigd
@@ -1289,8 +1311,12 @@ TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticiteit volgens Tint C=f(H)
 TP_LABCURVE_CURVEEDITOR_CL;CL
 TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticiteit volgens Luminantie C=f(L)
+TP_LABCURVE_CURVEEDITOR_HH;HH
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue volgens hue H=f(H)
 TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminantie volgens chromaticiteit L=f(C)
+TP_LABCURVE_CURVEEDITOR_LH;LH
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminantie volgens hue L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminantie volgens luminantie L=f(L)
 TP_LABCURVE_LABEL;Lab
 TP_LABCURVE_LCREDSK;Beperkt LC tot Rode en Huidtinten
@@ -1493,23 +1519,8 @@ ZOOMPANEL_ZOOM100;Zoom naar 100%\nSneltoets: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Passend in venster\nSneltoets: <b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom in\nSneltoets: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
-#00 Nederlands
-#01 26.12.2007: door Rens Duijsens en Brent Huisman
-#02 14.03.2008: updated by reggybe
-#03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
-#04 02-05-2010: updated to rt3a1 by paul.matthijsse
-#05 03-03-2011: updated to rt3a2 by paul.matthijsse
-#06 10-10-2011: updated to rt4.0 by wim ter meer
-#07 28-11-11: updated by pm
-#08 17-05-2012: updated to rt4.0.8 by wim ter meer
-#09 27-03-2013: updated to rt4.0.10 by wim ter meer
-#10 27-11-2013: updated to rt4.1 by wim ter meer
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values ​​actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_SET_ROYGCBPMABS;Channel-Mixer absolute ROYGCBPM
-!TP_BWMIX_SET_ROYGCBPMREL;Channel-Mixer relative ROYGCBPM
