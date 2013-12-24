@@ -1,3 +1,13 @@
+#01 2008-01-15 keenonkites, first translation
+#02 2008-03-03 Ioritz Ibarguren, corrections
+#03 2008-04-05 keenonkites, completed for 2.4m1
+#04 2008-04-09 Ramon, partly corrected (part of 2.3)
+#05 2008-04-29 Ramon, small correction
+#06 2008-06-09 Ramon, Adaptions regarding 2.4m1 and others
+#07 2008-09-20 keenonkites, first version for 2.4m2
+#08 2008-12-19 keenonkites, first version for 2.4beta4
+#09 2010-12-07 rickydh, some translations of untranslated keys for 3.0 alpha1
+#10 2011-12-25 plores, translation improvement, translation of untranslated strings
 
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Créditos
@@ -1260,17 +1270,6 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  */ 
-#00 Espanol
-#01 15.1.2008: keenonkites, first translation
-#02 03.03.2008: Ioritz Ibarguren, corrections
-#03 05.04.2008: keenonkites, completed for 2.4m1
-#04 09.04.2008: Ramon, partly corrected (part of 2.3)
-#05 29.04.2008: Ramon, small correction
-#06 09.06.2008: Ramon, Adaptions regarding 2.4m1 and others
-#07 20.09.2008: keenonkites, first version for 2.4m2
-#08 19.12.2008: keenonkites, first version for 2.4beta4
-#09 07.12.2010: rickydh, some translations of untranslated keys for 3.0 alpha1
-#10 25.12.2011  plores, translation improvement, translation of untranslated strings
 /*
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1323,8 +1322,8 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_198;CAM02 - Color curve
 !HISTORY_MSG_199;CAM02 - Show CIECAM02 output histograms in curves
 !HISTORY_MSG_200;CAM02 - Tone mapping using CIECAM02 Q
-!HISTORY_MSG_201;NR - Delta Chrominance red
-!HISTORY_MSG_202;NR - Delta Chrominance blue
+!HISTORY_MSG_201;NR - Delta Chrominance red-green
+!HISTORY_MSG_202;NR - Delta Chrominance blue-yellow
 !HISTORY_MSG_203;NR - Method
 !HISTORY_MSG_204;LMMSE Enhancement Steps
 !HISTORY_MSG_205;CAM02 hot/bad pixels
@@ -1367,7 +1366,11 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !HISTORY_MSG_243;Vignetting - Rayon
 !HISTORY_MSG_244;Vignetting - Strength
 !HISTORY_MSG_245;Vignetting - Center
-!HISTORY_MSG_246;CL curve
+!HISTORY_MSG_246;'CL' curve
+!HISTORY_MSG_247;'LH' curve
+!HISTORY_MSG_248;'HH' curve
+!HISTORY_MSG_249;Contrast by Detail Levels Threshold
+!HISTORY_MSG_250;NR enhance
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
@@ -1573,15 +1576,18 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 !TP_COLORAPP_WBRT;WB [RT] + [output]
 !TP_CROP_PPI;PPI=
-!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue
+!TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue & Yellow
 !TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
+!TP_DIRPYRDENOISE_ENH;Enhanced mode
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
 !TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 !TP_DIRPYRDENOISE_METHOD;Method
 !TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
 !TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
-!TP_DIRPYRDENOISE_RED;Delta chrominance Red
+!TP_DIRPYRDENOISE_RED;Delta chrominance Red & Green
 !TP_DIRPYRDENOISE_RGB;RGB
 !TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
+!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 !TP_GRADIENT_CENTER;Center
 !TP_GRADIENT_CENTER_X;Center X
 !TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
@@ -1594,11 +1600,17 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
 !TP_GRADIENT_LABEL;Graduated Filter
 !TP_GRADIENT_STRENGTH;Strength
 !TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
+!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
+!TP_LABCURVE_CURVEEDITOR_HH;HH
+!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
+!TP_LABCURVE_CURVEEDITOR_LH;LH
+!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 !TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
 !TP_PCVIGNETTE_FEATHER;Feather
 !TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center

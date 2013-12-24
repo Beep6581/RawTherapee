@@ -1,14 +1,13 @@
-#00 Nederlands
-#01 26.12.2007: door Rens Duijsens en Brent Huisman
-#02 14.03.2008: updated by reggybe
-#03 01.02.2009: updated to RT2.4-RC by paul.matthijsse
-#04 02-05-2010: updated to rt3a1 by paul.matthijsse
-#05 03-03-2011: updated to rt3a2 by paul.matthijsse
-#06 10-10-2011: updated to rt4.0 by wim ter meer
-#07 28-11-11: updated by pm
-#08 17-05-2012: updated to rt4.0.8 by wim ter meer
-#09 27-03-2013: updated to rt4.0.10 by wim ter meer
-#10 27-11-2013: updated to rt4.1 by wim ter meer
+#01 2007-12-26 Rens Duijsens en Brent Huisman
+#02 2008-03-14 updated by reggybe
+#03 2009-02-01 updated to RT2.4-RC by paul.matthijsse
+#04 2010-05-02 updated to rt3a1 by paul.matthijsse
+#05 2011-03-03 updated to rt3a2 by paul.matthijsse
+#06 2011-10-10 updated to rt4.0 by wim ter meer
+#07 2011-11-28 updated by pm
+#08 2012-05-17 updated to rt4.0.8 by wim ter meer
+#09 2013-03-27 updated to rt4.0.10 by wim ter meer
+#10 2013-11-27 updated to rt4.1 by wim ter meer
 
 ABOUT_TAB_BUILD;Versie
 ABOUT_TAB_CREDITS;Credits

@@ -1,3 +1,4 @@
+#01 2008-03-01 Initial translation by Hombre
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
@@ -755,10 +756,10 @@ PREFERENCES_CIEART_TOOLTIP;Si activé, les calculs CIECAM sont réalisés en pr�
 PREFERENCES_CLIPPINGIND;Indication du dépassement de plage dynamique
 PREFERENCES_CMETRICINTENT;Intention Colorimétrique
 PREFERENCES_CUSTPROFBUILDHINT;Fichier éxecutable (ou script) appelé lorsqu'un nouveau profil initial doit être généré pour une image.\n\nLe chemin du fichier de communication (style *.ini, aussi appelé "KeyFile") est ajouté en paramètre de la ligne de commande. Il contient divers paramètres nécessaire au script et les métadonnées Exif de l'image pour permettre la génération d'un .pp3 basé sur des règles.\n\n<b>ATTENTION:</b> Il vous appartient d'utiliser ou non des guillemets double pour spécifier des chemins si ceux-ci contiennent des espaces.
-PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;Format des clés
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nom
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
+PREFERENCES_CUSTPROFBUILDPATH;Chemin de l'exécutable
 PREFERENCES_CUSTPROFBUILD;Constructeur de profil d'image personnalisé
 PREFERENCES_CUTOVERLAYBRUSH;Masque de recadrage
 PREFERENCES_D50;5000K
@@ -1147,10 +1148,10 @@ TP_DEFRINGE_LABEL;Aberration chromatique
 TP_DEFRINGE_RADIUS;Rayon
 TP_DEFRINGE_THRESHOLD;Seuil
 TP_DIRPYRDENOISE_BLUE;Delta chrominance Bleu & Jaune
-TP_DIRPYRDENOISE_ENH;Mode amélioré
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Augmente la qualité du débruitage, mais augmente le temps de traitement d'environ 20%
 TP_DIRPYRDENOISE_CHROMA;Chrominance (Maître)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Peut être utilisé sur les images raw et non-raw.\n\nPour les images non-raw, la réduction de bruit de luminance dépend du gamma du profil couleur d'entée. Un gamma sRGB est supposé, c'est pourquoi si l'image a un profil couleur d'un gamma différent, la réduction de bruit de luminance variera.
+TP_DIRPYRDENOISE_ENH;Mode amélioré
+TP_DIRPYRDENOISE_ENH_TOOLTIP;Augmente la qualité du débruitage, mais augmente le temps de traitement d'environ 20%
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma fait varier la quantité de réduction de bruit sur l'échelle des tons. Les plus petites valeurs cibleront les ombres, les plus hautes valeurs cibleront les tons les plus clairs.
 TP_DIRPYRDENOISE_LABEL;Réduction du bruit
@@ -1181,7 +1182,6 @@ TP_EPD_STRENGTH;Force
 TP_EPD_TOOLTIP;Vous pouvez choisir entre le mode Lab (standard) ou le mode CIECAM02.\n En activant "Compression tonale avec brillance Q CIECAM" dans le menu "Brillance + Niveau de couleur CIECAM"
 TP_EXPOSCORR_LABEL;Points Noir & Blanc Raw
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
-Toggle execution of auto levels to automatically set parameter values based on image analysis\nEnable Highlight Reconstruction if necessary
 TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de Niveaux automatiques afin de régler automatiquement les valeurs basé sur l'analyse de l'image\nActive la Reconstruction des Hautes Lumières si nécessaire.
 TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
@@ -1273,12 +1273,10 @@ TP_IMPULSEDENOISE_THRESH;Seuil
 TP_LABCURVE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Ramènes les données dans le gamut de l'espace couleur de travail\npuis applique la correction de Munsell
 TP_LABCURVE_BRIGHTNESS;Luminosité
-TP_LABCURVE_CHROMA_TOOLTIP;Pour mettre en fonction la colorisation du noir et blanc, réglez la Chromaticité à -100
 TP_LABCURVE_CHROMATICITY;Chromaticité
+TP_LABCURVE_CHROMA_TOOLTIP;Pour mettre en fonction la colorisation du noir et blanc, réglez la Chromaticité à -100
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Courbe de luminance
-TP_LABCURVE_CURVEEDITOR_CL;CL
-TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticité en fonction de la Luminance C=f(L)
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Vert saturé
 TP_LABCURVE_CURVEEDITOR_A_RANGE2;Vert pastel
 TP_LABCURVE_CURVEEDITOR_A_RANGE3;Rouge pastel
@@ -1295,13 +1293,15 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturé
 TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticité en fonction de la Chromaticité C=f(C)
 TP_LABCURVE_CURVEEDITOR_CH;CT
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticité en fonction de la Teinte C=f(T)
-TP_LABCURVE_CURVEEDITOR_LC;LC
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance en fonction de la Chromaticité L=f(C)
-TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance en fonction de la Luminance L=f(L)
-TP_LABCURVE_CURVEEDITOR_LH;LT
-TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance en fonction de la Teinte L=f(T)
+TP_LABCURVE_CURVEEDITOR_CL;CL
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticité en fonction de la Luminance C=f(L)
 TP_LABCURVE_CURVEEDITOR_HH;TT
 TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Teinte en fonction de la Teinte T=f(T)
+TP_LABCURVE_CURVEEDITOR_LC;LC
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance en fonction de la Chromaticité L=f(C)
+TP_LABCURVE_CURVEEDITOR_LH;LT
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance en fonction de la Teinte L=f(T)
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance en fonction de la Luminance L=f(L)
 TP_LABCURVE_LABEL;Ajustements Lab
 TP_LABCURVE_LCREDSK;Restreindre LC aux tons rouge et peau
 TP_LABCURVE_LCREDSK_TIP;Si activé, la courbe 'LC' est limitée au tons rouge et peau\nSi désactivé, s'applique à toutes les teintes
@@ -1490,6 +1490,7 @@ TP_WBALANCE_TUNGSTEN;Tungstène
 TP_WBALANCE_WATER1;Sous-marin 1
 TP_WBALANCE_WATER2;Sous-marin 2
 TP_WBALANCE_WATER_HEADER;Sous-marin
+Toggle execution of auto levels to automatically set parameter values based on image analysis\nEnable Highlight Reconstruction if necessary
 ZOOMBAR_DETAIL;Détail
 ZOOMBAR_HUGE;Énorme
 ZOOMBAR_LARGE;Large
@@ -1503,5 +1504,8 @@ ZOOMPANEL_ZOOM100;Zoom à 100%\nRaccourcis: <b>z</b>
 ZOOMPANEL_ZOOMFITSCREEN;Ajuster à la fenêtre <b>F</b>
 ZOOMPANEL_ZOOMIN;Zoom <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom <b>-</b>
-#00 Français
-#01 1.3.2008: Initial translation by Hombre
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+

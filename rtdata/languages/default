@@ -1146,10 +1146,10 @@ TP_DEFRINGE_LABEL;Defringe
 TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
 TP_DIRPYRDENOISE_BLUE;Delta chrominance Blue & Yellow
-TP_DIRPYRDENOISE_ENH;Enhanced mode
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
 TP_DIRPYRDENOISE_CHROMA;Chrominance (Master)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
+TP_DIRPYRDENOISE_ENH;Enhanced mode
+TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
@@ -1226,10 +1226,10 @@ TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
 TP_GRADIENT_LABEL;Graduated Filter
 TP_GRADIENT_STRENGTH;Strength
 TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
-TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
+TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 TP_HLREC_LABEL;Highlight Reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
 TP_HLREC_METHOD;Method:
@@ -1269,10 +1269,10 @@ TP_ICM_WORKINGPROFILE;Working Profile
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
-TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction
 TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_CHROMATICITY;Chromaticity
+TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
 TP_LABCURVE_CONTRAST;Contrast
 TP_LABCURVE_CURVEEDITOR;Luminance Curve
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Green Saturated
@@ -1293,13 +1293,13 @@ TP_LABCURVE_CURVEEDITOR_CH;CH
 TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromaticity according to hue C=f(H)
 TP_LABCURVE_CURVEEDITOR_CL;CL
 TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
-TP_LABCURVE_CURVEEDITOR_LC;LC
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to chromaticity L=f(C)
-TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
-TP_LABCURVE_CURVEEDITOR_LH;LH
-TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
 TP_LABCURVE_CURVEEDITOR_HH;HH
 TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
+TP_LABCURVE_CURVEEDITOR_LC;LC
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminance according to chromaticity L=f(C)
+TP_LABCURVE_CURVEEDITOR_LH;LH
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
 TP_LABCURVE_LABEL;Lab Adjustments
 TP_LABCURVE_LCREDSK;Restrict LC to red and skin tones
 TP_LABCURVE_LCREDSK_TIP;If enabled, LC Curve (Luminance According to Chromaticity) is limited to red and skin tones\nIf disabled, applies to all tones
