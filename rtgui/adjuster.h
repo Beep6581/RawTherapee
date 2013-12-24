@@ -32,6 +32,7 @@ class AdjusterListener {
     virtual void adjusterAutoToggled (Adjuster* a, bool newval) {}
 };
 
+typedef double(*double2double_fun)(double val);
 
 class Adjuster : public Gtk::VBox {
 
@@ -70,12 +71,13 @@ class Adjuster : public Gtk::VBox {
 
     double shapeValue (double a);
     void   refreshLabelStyle ();
+    double2double_fun value2slider, slider2value;
 
   public:
 
     int delay;
 
-    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon=NULL);
+    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon=NULL, double2double_fun slider2value=NULL, double2double_fun value2slider=NULL);
     virtual ~Adjuster ();
 
     // Add an "Automatic" checkbox next to the reset button.
