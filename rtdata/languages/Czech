@@ -471,10 +471,10 @@ HISTORY_MSG_205;CAM02 vypálené/špatné pixely
 HISTORY_MSG_206;CAT02 automatické přizpůsobení scény
 HISTORY_MSG_207;Křivka odstínu odstranění lemu
 HISTORY_MSG_208;Korekce Modrá/červená
-HISTORY_MSG_210;Přechodový filtr
+HISTORY_MSG_210;Graduated Filter - Angle
 HISTORY_MSG_211;Přechodový filtr
-HISTORY_MSG_212;Viněta
-HISTORY_MSG_213;Viněta - síla
+HISTORY_MSG_212;Viněta - síla
+HISTORY_MSG_213;Viněta
 HISTORY_MSG_214;Černobílá fotografie
 HISTORY_MSG_215;ČB Míchání kanálů - červená
 HISTORY_MSG_216;ČB Míchání kanálů - zelená
