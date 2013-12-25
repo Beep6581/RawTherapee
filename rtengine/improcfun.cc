@@ -3021,7 +3021,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 			float memChprov=Chprov;
 			
 			float Lin=lold->L[i][j];
-			float Lprov2=Lin;
+			float Lprov2=Lin/327.68f;
 			lnew->L[i][j] = curve[Lin];
 			float Lprov1=(lnew->L[i][j])/327.68f;
 			float chromaChfactor=1.0f;
