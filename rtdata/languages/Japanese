@@ -439,7 +439,7 @@ HISTORY_MSG_191;CAM02 - 彩度 (M)
 HISTORY_MSG_192;CAM02 - 色相角
 HISTORY_MSG_193;CAM02 - トーンカーブ 1
 HISTORY_MSG_194;CAM02 - トーンカーブ 2
-HISTORY_MSG_195;CAM02 - トーンカーブ
+HISTORY_MSG_195;CAM02 - トーンカーブ 1
 HISTORY_MSG_196;CAM02 - トーンカーブ 2
 HISTORY_MSG_197;CAM02 - カラー・カーブ
 HISTORY_MSG_198;CAM02 - カラー・カーブ
@@ -453,10 +453,10 @@ HISTORY_MSG_205;CAM02 ホット／バッドピクセル
 HISTORY_MSG_206;CAT02 - 自動で順応
 HISTORY_MSG_207;色相カーブの変更
 HISTORY_MSG_208;ブルー／レッド　イコライザー
-HISTORY_MSG_210;グラデーションフィルター
+HISTORY_MSG_210;グラデーションフィルター - 角度
 HISTORY_MSG_211;グラデーションフィルター
-HISTORY_MSG_212;ビネットフィルター
-HISTORY_MSG_213;ビネットフィルター　強さ
+HISTORY_MSG_212;ビネットフィルター - 強さ
+HISTORY_MSG_213;ビネットフィルター
 HISTORY_MSG_214;白黒
 HISTORY_MSG_215;白黒　チャンネルミキサー　レッド
 HISTORY_MSG_216;白黒　チャンネルミキサー　グリーン
