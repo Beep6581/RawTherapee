@@ -37,6 +37,7 @@
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
+#include "conio.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -143,11 +144,66 @@ int main(int argc, char **argv)
    extProgStore->init();
    SoundManager::init();
 
-   if (argc>1){
-	   int ret = processLineParams( argc, argv);
-	   if( ret <= 0 )
-		   return ret;
+#ifdef WIN32
+   bool consoleOpened = false;
+
+   if (argc>1 || options.rtSettings.verbose){
+		bool stdoutRedirectedtoFile = (GetFileType(GetStdHandle(STD_OUTPUT_HANDLE)) == 0x0001);
+		bool stderrRedirectedtoFile = (GetFileType(GetStdHandle(STD_ERROR_HANDLE)) == 0x0001);
+		// no console, if stdout and stderr both are redirected to file
+		if( !(stdoutRedirectedtoFile && stderrRedirectedtoFile)) {
+			AllocConsole();
+			AttachConsole( GetCurrentProcessId() ) ;
+			// Don't allow CTRL-C in console to terminate RT
+			SetConsoleCtrlHandler( NULL, true );
+			// Set title of console
+			char consoletitle[128];
+			sprintf(consoletitle, "RawTherapee %s Console",VERSION);
+			SetConsoleTitle(consoletitle);
+			// increase size of screen buffer
+			COORD c;
+			c.X = 200;
+			c.Y = 1000;
+			SetConsoleScreenBufferSize( GetStdHandle( STD_OUTPUT_HANDLE ), c );
+			// Disable console-Cursor
+			CONSOLE_CURSOR_INFO cursorInfo;
+			cursorInfo.dwSize = 100;
+			cursorInfo.bVisible = false;
+			SetConsoleCursorInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &cursorInfo );
+			if(!stdoutRedirectedtoFile)
+				freopen( "CON", "w", stdout ) ;
+			if(!stderrRedirectedtoFile)
+				freopen( "CON", "w", stderr ) ;
+			freopen( "CON", "r", stdin ) ;
+
+			consoleOpened = true;
+
+			// printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
+			std::cout << "RawTherapee, version " << VERSION << std::endl;
+			std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
+		}
+		int ret = processLineParams( argc, argv);
+		if( ret <= 0 ) {
+			if(consoleOpened) {
+				printf("Press any key to exit RawTherapee\n");
+				FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE)); 
+				getch();
+			}
+			return ret;
+		}
    }
+#else
+   if (argc>1 || options.rtSettings.verbose){
+      // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
+      std::cout << "RawTherapee, version " << VERSION << std::endl;
+      std::cout << "WARNING: closing this window will close RawTherapee!" << std::endl << std::endl;
+      if (argc>1){
+         int ret = processLineParams( argc, argv);
+         if( ret <= 0 )
+         return ret;
+      }
+   }
+#endif
 
    if( !options.rtSettings.verbose )
        TIFFSetWarningHandler(NULL);  // avoid annoying message boxes
@@ -211,6 +267,15 @@ int main(int argc, char **argv)
    gdk_threads_leave ();
    delete rtWindow;
    rtengine::cleanup();
+
+#ifdef WIN32
+   if (consoleOpened) {
+      printf("Press any key to exit RawTherapee\n");
+      FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+      getch();
+   }
+#endif
+
    return 0;
 }
 
@@ -333,44 +398,43 @@ int processLineParams( int argc, char **argv )
 			default:
 			{
 				Glib::ustring pparamsExt = paramFileExtension.substr(1);
-        std::cerr << "RawTherapee, version " << VERSION << std::endl << std::endl;
-        std::cerr << "Usage:" << std::endl;
-        std::cerr << "  " << Glib::path_get_basename(argv[0]) << " [<selected dir>]   Start File Browser inside directory." << std::endl;
-        std::cerr << "  " << Glib::path_get_basename(argv[0]) << " <file>             Start Image Editor with file." << std::endl;
-        std::cerr << "  " << Glib::path_get_basename(argv[0]) << " -c <dir>|<files>   Convert files in batch with default parameters." << std::endl << std::endl;
-        std::cerr << "Other options used with -c (-c must be the last option):" << std::endl;
-        std::cerr << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <files>] [-d] [-j[1-100]|-t|-t1|-n] -Y -c <input>" << std::endl;
-        std::cerr << "  -o <file>|<dir>  Select output file or directory." << std::endl;
-        std::cerr << "  -O <file>|<dir>  Select output file or directory and copy " << pparamsExt << " file into it." << std::endl;
-        std::cerr << "  -s               Include the " << pparamsExt << " file next to the input file (with the same" << std::endl;
-        std::cerr << "                   name) to build the image parameters," << std::endl;
-        std::cerr << "                   e.g. for photo.raw there should be a photo.raw." << pparamsExt << " file in" << std::endl;
-        std::cerr << "                   the same directory. If the file does not exist, internal" << std::endl;
-        std::cerr << "                   default (neutral) values (not those in Default." << pparamsExt << ") will be" << std::endl;
-        std::cerr << "                   used." << std::endl;
-        std::cerr << "  -S               Like -s but skip if the " << pparamsExt << " file does not exist." << std::endl;
-        std::cerr << "  -p <file.pp3>    Specify " << pparamsExt << " file to be used for all conversions." << std::endl;
-        std::cerr << "                   You can specify as many -p options as you like (see" << std::endl;
-        std::cerr << "                   description below)." << std::endl;
-        std::cerr << "  -d               Use the default raw or non-raw " << pparamsExt << " file as set in" << std::endl;
-        std::cerr << "                   Preferences > Image Processing > Default Image Processing Parameters" << std::endl;
-        std::cerr << "  -j[1-100]        Specify output to be JPEG (on by default). Optionally add" << std::endl;
-        std::cerr << "                   compression 1-100." << std::endl;
-        std::cerr << "  -t               Specify output to be uncompressed 16-bit TIFF." << std::endl;
-        std::cerr << "  -t1              Specify output to be compressed 16-bit TIFF (ZIP compression)." << std::endl;
-        std::cerr << "  -n               Specify output to be compressed 16-bit PNG." << std::endl;
-        std::cerr << "  -Y               Overwrite output if present." << std::endl<<std::endl;
-        std::cerr << "Your " << pparamsExt << " files can be incomplete, RawTherapee will set the values as follows:" << std::endl;
-        std::cerr << "  1- A new profile is created using internal default (neutral) values" <<std::endl;
-        std::cerr << "     (hard-coded into RawTherapee)," << std::endl;
-        std::cerr << "  2- then overridden by those found in the default raw or non-raw " << pparamsExt << " file" << std::endl;
-        std::cerr << "     (if -d has been set)," << std::endl;
-        std::cerr << "  3- then overridden by those found in the " << pparamsExt << " files provided by -p, each one" << std::endl;
-        std::cerr << "     overriding the previous values," << std::endl;
-        std::cerr << "  4- then overridden by the sidecar file if -s is set and if the file exists;" << std::endl;
-        std::cerr << "     the time where the sidecar file is used depends on the position of the -s" << std::endl;
-        std::cerr << "     switch in the command line relative to the -p parameters," << std::endl;
-        std::cerr << "     e.g. -p first." << pparamsExt << " -p second." << pparamsExt << " -s -p fourth." << pparamsExt << std::endl;
+        std::cout << "Usage:" << std::endl;
+        std::cout << "  " << Glib::path_get_basename(argv[0]) << " [<selected dir>]   Start File Browser inside directory." << std::endl;
+        std::cout << "  " << Glib::path_get_basename(argv[0]) << " <file>             Start Image Editor with file." << std::endl;
+        std::cout << "  " << Glib::path_get_basename(argv[0]) << " -c <dir>|<files>   Convert files in batch with default parameters." << std::endl << std::endl;
+        std::cout << "Other options used with -c (-c must be the last option):" << std::endl;
+        std::cout << Glib::path_get_basename(argv[0]) << " [-o <output>|-O <output>] [-s|-S] [-p <files>] [-d] [-j[1-100]|-t|-t1|-n] -Y -c <input>" << std::endl;
+        std::cout << "  -o <file>|<dir>  Select output file or directory." << std::endl;
+        std::cout << "  -O <file>|<dir>  Select output file or directory and copy " << pparamsExt << " file into it." << std::endl;
+        std::cout << "  -s               Include the " << pparamsExt << " file next to the input file (with the same" << std::endl;
+        std::cout << "                   name) to build the image parameters," << std::endl;
+        std::cout << "                   e.g. for photo.raw there should be a photo.raw." << pparamsExt << " file in" << std::endl;
+        std::cout << "                   the same directory. If the file does not exist, internal" << std::endl;
+        std::cout << "                   default (neutral) values (not those in Default." << pparamsExt << ") will be" << std::endl;
+        std::cout << "                   used." << std::endl;
+        std::cout << "  -S               Like -s but skip if the " << pparamsExt << " file does not exist." << std::endl;
+        std::cout << "  -p <file.pp3>    Specify " << pparamsExt << " file to be used for all conversions." << std::endl;
+        std::cout << "                   You can specify as many -p options as you like (see" << std::endl;
+        std::cout << "                   description below)." << std::endl;
+        std::cout << "  -d               Use the default raw or non-raw " << pparamsExt << " file as set in" << std::endl;
+        std::cout << "                   Preferences > Image Processing > Default Image Processing Parameters" << std::endl;
+        std::cout << "  -j[1-100]        Specify output to be JPEG (on by default). Optionally add" << std::endl;
+        std::cout << "                   compression 1-100." << std::endl;
+        std::cout << "  -t               Specify output to be uncompressed 16-bit TIFF." << std::endl;
+        std::cout << "  -t1              Specify output to be compressed 16-bit TIFF (ZIP compression)." << std::endl;
+        std::cout << "  -n               Specify output to be compressed 16-bit PNG." << std::endl;
+        std::cout << "  -Y               Overwrite output if present." << std::endl<<std::endl;
+        std::cout << "Your " << pparamsExt << " files can be incomplete, RawTherapee will set the values as follows:" << std::endl;
+        std::cout << "  1- A new profile is created using internal default (neutral) values" <<std::endl;
+        std::cout << "     (hard-coded into RawTherapee)," << std::endl;
+        std::cout << "  2- then overridden by those found in the default raw or non-raw " << pparamsExt << " file" << std::endl;
+        std::cout << "     (if -d has been set)," << std::endl;
+        std::cout << "  3- then overridden by those found in the " << pparamsExt << " files provided by -p, each one" << std::endl;
+        std::cout << "     overriding the previous values," << std::endl;
+        std::cout << "  4- then overridden by the sidecar file if -s is set and if the file exists;" << std::endl;
+        std::cout << "     the time where the sidecar file is used depends on the position of the -s" << std::endl;
+        std::cout << "     switch in the command line relative to the -p parameters," << std::endl;
+        std::cout << "     e.g. -p first." << pparamsExt << " -p second." << pparamsExt << " -s -p fourth." << pparamsExt << std::endl;
 				return -1;
 			}
 			}
@@ -562,3 +626,4 @@ int processLineParams( int argc, char **argv )
 
 	return errors>0?-2:0;
 }
+
