@@ -37,7 +37,6 @@
 #include "rtimage.h"
 #include "version.h"
 #include "extprog.h"
-#include "conio.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -46,6 +45,7 @@
 #include <glibmm/threads.h>
 #else
 #include <glibmm/thread.h>
+#include "conio.h"
 #endif
 
 #include "../rtengine/safegtk.h"
