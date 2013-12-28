@@ -1301,23 +1301,27 @@ void FileBrowser::colorlabelRequested (std::vector<FileBrowserEntry*> tbe, int c
 }
 
 void FileBrowser::requestRanking(int rank){
+    std::vector<FileBrowserEntry*> mselected;
+    {
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
-    std::vector<FileBrowserEntry*> mselected;
     for (size_t i=0; i<selected.size(); i++)
       mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+    }
 
     rankingRequested (mselected, rank);
 }
 
 void FileBrowser::requestColorLabel(int colorlabel){
+    std::vector<FileBrowserEntry*> mselected;
+    {
     #if PROTECT_VECTORS
     MYREADERLOCK(l, entryRW);
     #endif
-    std::vector<FileBrowserEntry*> mselected;
     for (size_t i=0; i<selected.size(); i++)
       mselected.push_back (static_cast<FileBrowserEntry*>(selected[i]));
+    }
 
     colorlabelRequested (mselected, colorlabel);
 }
