@@ -10,16 +10,16 @@ Brightness=0
 Contrast=0
 Saturation=0
 Black=0
-HighlightCompr=30
+HighlightCompr=70
 HighlightComprThreshold=0
 ShadowCompr=50
-CurveMode=WeightedStd
-CurveMode2=SatAndValueBlending
-Curve=3;0;0;0.1013677790907735;0.011341564456759405;0.32302405498281778;0.2147079037800686;1;1;
-Curve2=3;0;0;0.16151202749140844;0.24319627128016638;0.59793814432989756;0.90034364261168354;1;1;
+CurveMode=Standard
+CurveMode2=Standard
+Curve=3;0;0;0.10280701754385937;0;0.22561403508771805;0.081754385964912232;0.82456140350877249;0.82456140350877249;1;1;
+Curve2=3;0;0;0.20585593677025255;0.44367403149511991;0.6315789473684208;0.89473684210526305;1;1;
 
 [HLRecovery]
-Enabled=true
+Enabled=false
 Method=Blend
 
 [Channel Mixer]
@@ -55,7 +55,7 @@ AfterCurve=0;
 Brightness=0
 Contrast=0
 Chromaticity=0
-AvoidColorShift=false
+AvoidColorShift=true
 RedAndSkinTonesProtection=0
 LCredsk=true
 LCurve=0;
@@ -69,9 +69,9 @@ LcCurve=0;
 ClCurve=0;
 
 [Vibrance]
-Enabled=false
-Pastels=50
-Saturated=50
+Enabled=true
+Pastels=20
+Saturated=20
 PSThreshold=0;75;
 ProtectSkins=false
 AvoidColorShift=true
@@ -86,7 +86,7 @@ Surround=Average
 AdaptLum=16
 Badpixsl=0
 Model=RawT
-Algorithm=JC
+Algorithm=No
 J-Light=0
 Q-Bright=0
 C-Chroma=0
@@ -109,17 +109,6 @@ Curve=0;
 Curve2=0;
 Curve3=0;
 
-[Directional Pyramid Denoising]
-Enabled=true
-Enhance=false
-Luma=0
-Ldetail=50
-Chroma=15
-Method=RGB
-Redchro=0
-Bluechro=0
-Gamma=1.7
-
 [EPD]
 Enabled=false
 Strength=0.25
@@ -130,12 +119,12 @@ ReweightingIterates=0
 [Shadows & Highlights]
 Enabled=false
 HighQuality=false
-Highlights=10
+Highlights=0
 HighlightTonalWidth=80
-Shadows=10
+Shadows=0
 ShadowTonalWidth=80
 LocalContrast=0
-Radius=30
+Radius=40
 
 [Gradient]
 Enabled=false

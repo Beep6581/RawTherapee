@@ -3,23 +3,23 @@ AppVersion=4.0.12
 Version=316
 
 [Exposure]
-Auto=false
+Auto=true
 Clip=0.02
 Compensation=0
 Brightness=0
 Contrast=0
-Saturation=0
+Saturation=5
 Black=0
-HighlightCompr=30
-HighlightComprThreshold=0
+HighlightCompr=0
+HighlightComprThreshold=33
 ShadowCompr=50
-CurveMode=WeightedStd
-CurveMode2=SatAndValueBlending
-Curve=3;0;0;0.1013677790907735;0.011341564456759405;0.32302405498281778;0.2147079037800686;1;1;
-Curve2=3;0;0;0.16151202749140844;0.24319627128016638;0.59793814432989756;0.90034364261168354;1;1;
+CurveMode=Standard
+CurveMode2=Standard
+Curve=1;0;0;0.45754265471370759;0.57906737998843294;1;1;
+Curve2=0;
 
 [HLRecovery]
-Enabled=true
+Enabled=false
 Method=Blend
 
 [Channel Mixer]
@@ -54,11 +54,11 @@ AfterCurve=0;
 [Luminance Curve]
 Brightness=0
 Contrast=0
-Chromaticity=0
-AvoidColorShift=false
+Chromaticity=5
+AvoidColorShift=true
 RedAndSkinTonesProtection=0
 LCredsk=true
-LCurve=0;
+LCurve=3;0;0;0.84892086330935235;0.69064748201438808;1;1;
 aCurve=0;
 bCurve=0;
 ccCurve=0;
@@ -108,17 +108,6 @@ CurveMode3=Chroma
 Curve=0;
 Curve2=0;
 Curve3=0;
-
-[Directional Pyramid Denoising]
-Enabled=true
-Enhance=false
-Luma=0
-Ldetail=50
-Chroma=15
-Method=RGB
-Redchro=0
-Bluechro=0
-Gamma=1.7
 
 [EPD]
 Enabled=false
