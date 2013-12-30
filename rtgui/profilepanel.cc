@@ -290,7 +290,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event) {
                     // saving the partial profile
                     PartialProfile ppTemp(true);
                     partialProfileDlg->applyPaste (ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
-                    int retCode = ppTemp.pparams->save (fname, "", ppTemp.pedited);
+                    int retCode = ppTemp.pparams->save (fname, "", true, ppTemp.pedited);
                     ppTemp.deleteInstance();
                     if (retCode)
                         writeFailed(dialog, fname);

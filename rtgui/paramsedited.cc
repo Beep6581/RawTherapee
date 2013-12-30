@@ -293,6 +293,7 @@ void ParamsEdited::set (bool v) {
 	for(int i = 0; i < 5; i++) {
 		dirpyrequalizer.mult[i] = v;
 	}
+	dirpyrequalizer.threshold = v;
 	hsvequalizer.hcurve = v;
 	hsvequalizer.scurve = v;
 	hsvequalizer.vcurve = v;
