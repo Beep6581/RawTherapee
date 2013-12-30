@@ -87,22 +87,6 @@ AvoidColorShift=true
 PastSatTog=true
 SkinTonesCurve=0;
 
-[SharpenEdge]
-Enabled=false
-Passes=2
-Strength=50
-ThreeChannels=false
-
-[SharpenMicro]
-Enabled=false
-Matrix=false
-Strength=20
-Uniformity=50
-
-[White Balance]
-Setting=Camera
-Equal=1
-
 [Color appearance]
 Enabled=false
 Degree=90
@@ -134,16 +118,6 @@ Curve=0;
 Curve2=0;
 Curve3=0;
 
-[Impulse Denoising]
-Enabled=false
-Threshold=50
-
-[Defringing]
-Enabled=false
-Radius=2
-Threshold=13
-HueCurve=1;0.16666666699999999;0;0.34999999999999998;0.34999999999999998;0.34699999999999998;0;0.34999999999999998;0.34999999999999998;0.51366742600000004;0;0.34999999999999998;0.34999999999999998;0.66894457100000004;0;0.34999999999999998;0.34999999999999998;0.82877752459999998;0.97835991;0.34999999999999998;0.34999999999999998;0.99088838270000001;0;0.34999999999999998;0.34999999999999998;
-
 [Directional Pyramid Denoising]
 Enabled=false
 Enhance=false
@@ -172,33 +146,6 @@ ShadowTonalWidth=80
 LocalContrast=0
 Radius=30
 
-[Crop]
-Enabled=false
-
-[Coarse Transformation]
-Rotate=0
-HorizontalFlip=false
-VerticalFlip=false
-
-[Common Properties for Transformations]
-AutoFill=true
-
-[Rotation]
-Degree=0
-
-[Distortion]
-Amount=0
-
-[LensProfile]
-LCPFile=
-UseDistortion=true
-UseVignette=true
-UseCA=false
-
-[Perspective]
-Horizontal=0
-Vertical=0
-
 [Gradient]
 Enabled=false
 Degree=0
@@ -213,47 +160,6 @@ Strength=0
 Feather=50
 Roundness=50
 
-[CACorrection]
-Red=0
-Blue=0
-
-[Vignetting Correction]
-Amount=0
-Radius=50
-Strength=1
-CenterX=0
-CenterY=0
-
-[Resize]
-Enabled=false
-Scale=0.23000000000000001
-AppliesTo=Cropped area
-Method=Lanczos
-DataSpecified=3
-Width=900
-Height=900
-
-[Color Management]
-InputProfile=(cameraICC)
-ToneCurve=false
-BlendCMSMatrix=true
-DCPIlluminant=0
-WorkingProfile=ProPhoto
-OutputProfile=RT_sRGB
-Gammafree=default
-Freegamma=false
-GammaValue=2.2200000000000002
-GammaSlope=4.5
-
-[Directional Pyramid Equalizer]
-Enabled=false
-Mult0=1
-Mult1=1
-Mult2=1
-Mult3=1
-Mult4=1
-Threshold=0.20000000000000001
-
 [HSV Equalizer]
 HCurve=0;
 SCurve=0;
@@ -266,28 +172,6 @@ gCurve=0;
 bCurve=0;
 
 [RAW]
-DarkFrame=
-DarkFrameAuto=false
-FlatFieldFile=
-FlatFieldAutoSelect=false
-FlatFieldBlurRadius=32
-FlatFieldBlurType=Area Flatfield
 CA=true
-CARed=0
-CABlue=0
 HotDeadPixels=true
 HotDeadPixelThresh=40
-LineDenoise=0
-GreenEqThreshold=0
-CcSteps=0
-Method=amaze
-DCBIterations=2
-DCBEnhance=false
-LMMSEIterations=2
-PreExposure=1
-PrePreserv=0
-PreBlackzero=0
-PreBlackone=0
-PreBlacktwo=0
-PreBlackthree=0
-PreTwoGreen=true

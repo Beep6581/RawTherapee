@@ -75,17 +75,6 @@ ReweightingIterates=0
 [Shadows & Highlights]
 Enabled=false
 
-[Color Management]
-ToneCurve=false
-BlendCMSMatrix=false
-DCPIlluminant=0
-WorkingProfile=ProPhoto
-OutputProfile=RT_sRGB
-Gammafree=default
-Freegamma=false
-GammaValue=2.2200000000000002
-GammaSlope=4.5
-
 [HSV Equalizer]
 HCurve=0;
 SCurve=0;
