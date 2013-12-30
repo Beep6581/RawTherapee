@@ -224,11 +224,11 @@ Glib::ustring Options::findProfilePath(Glib::ustring &profName) {
 void Options::setDefaults () {
 
     font = "sans, 8";
-    windowWidth = 900;
-    windowHeight = 560;
-    windowMaximized = false;
-    saveAsDialogWidth = 600;
-    saveAsDialogHeight = 600;
+    windowWidth = 1200;
+    windowHeight = 680;
+    windowMaximized = true;
+    saveAsDialogWidth = 920;
+    saveAsDialogHeight = 680;
     savesParamsAtExit = true;
     saveFormat.format = "jpg";
     saveFormat.jpegQuality = 90;
@@ -244,7 +244,7 @@ void Options::setDefaults () {
     saveFormatBatch.jpegSubSamp = 2;
     saveFormatBatch.pngCompression = 6;
     saveFormatBatch.pngBits = 8;
-    saveFormatBatch.tiffBits = 8;
+    saveFormatBatch.tiffBits = 16;
     saveFormatBatch.tiffUncompressed = true;
     saveFormatBatch.saveParams = true;
 
@@ -258,21 +258,21 @@ void Options::setDefaults () {
     startupDir = STARTUPDIR_LAST;
     startupPath = "";
     useBundledProfiles = true;
-    dirBrowserWidth = 200;
-    dirBrowserHeight = 150;
-    preferencesWidth = 0;
+    dirBrowserWidth = 260;
+    dirBrowserHeight = 350;
+    preferencesWidth = 800;
     preferencesHeight = 0;
-    toolPanelWidth = 300;
-    browserToolPanelWidth = 300;
-    browserToolPanelHeight = 300;
-    historyPanelWidth = 230;
+    toolPanelWidth = 390;
+    browserToolPanelWidth = 430;
+    browserToolPanelHeight = 600;
+    historyPanelWidth = 330;
     lastScale = 5;
     panAccelFactor = 5;
     lastCropSize = 1;
     fbOnlyRaw = false;
     fbShowDateTime = true;
     fbShowBasicExif = true;
-    fbShowExpComp = true;
+    fbShowExpComp = false;
     fbShowHidden = false;
     fbArrangement = 2;					// was 0
     multiUser = true;
@@ -280,9 +280,9 @@ void Options::setDefaults () {
     loadSaveProfilePath = "";			// will be corrected in load as otherwise construction fails
     version = "0.0.0.0";				// temporary value; will be correctly set in RTWindow::on_realize
     thumbSize = 240;
-    thumbSizeTab = 80;
-    thumbSizeQueue = 100;
-    sameThumbSize = true;				// preferring speed of switch between file browser and single editor tab
+    thumbSizeTab = 180;
+    thumbSizeQueue = 160;
+    sameThumbSize = false;				// preferring speed of switch between file browser and single editor tab
     showHistory = true;
     showFilePanelState = 0;				// Not used anymore ; was the thumb strip state
     showInfo = true;
@@ -303,8 +303,8 @@ void Options::setDefaults () {
     maxThumbnailHeight = 400;
     maxCacheEntries = 20000;
     thumbInterp = 1;
-    autoSuffix = false;
-    forceFormatOpts = false;
+    autoSuffix = true;
+    forceFormatOpts = true;
     saveMethodNum = 0;				// 0->immediate, 1->putToQueuHead, 2->putToQueueTail
     saveParamsFile = true;				// was false, but saving the procparams files next to the file make more sense when reorganizing file tree than in a cache
     saveParamsCache = false;			// there's no need to save the procparams files in a cache if saveParamsFile is true
@@ -330,19 +330,20 @@ void Options::setDefaults () {
     thumbnailZoomRatios.push_back (0.6);
     thumbnailZoomRatios.push_back (0.8);
     thumbnailZoomRatios.push_back (1.0);
-    overlayedFileNames = true;
+    overlayedFileNames = false;
     internalThumbIfUntouched = true; 	// if TRUE, only fast, internal preview images are taken if the image is not edited yet
     showFileNames = true;
-    tabbedUI = true;
+    tabbedUI = false;
+    mainNBVertical = true;
     multiDisplayMode = 0;
-    tunnelMetaData = false;
-    histogramPosition = 2;
+    tunnelMetaData = true;
+    histogramPosition = 1;
     histogramBar = true;
     histogramFullMode = false;
 
     rgbDenoiseThreadLimit = 0;
 
-    filledProfile = false;
+    filledProfile = true;
 
     showProfileSelector = true;
     FileBrowserToolbarSingleRow = false;
@@ -377,7 +378,7 @@ void Options::setDefaults () {
     fastexport_bypass_raw_ff             = true;
     fastexport_raw_dmethod               = "fast";
     fastexport_icm_input                 = "(camera)";
-    fastexport_icm_working               = "sRGB";
+    fastexport_icm_working               = "ProPhoto";
     fastexport_icm_output                = "RT_sRGB";
     fastexport_icm_gamma                 = "default";
     fastexport_resize_enabled            = true;
@@ -385,8 +386,8 @@ void Options::setDefaults () {
     fastexport_resize_appliesTo          = "Cropped area";
     fastexport_resize_method             = "Lanczos";
     fastexport_resize_dataspec           = 3;
-    fastexport_resize_width              = 1000;
-    fastexport_resize_height             = 1000;
+    fastexport_resize_width              = 900;
+    fastexport_resize_height             = 900;
 
     cutOverlayBrush = std::vector<double> (4);
     cutOverlayBrush[3] = 0.667;  // :-p

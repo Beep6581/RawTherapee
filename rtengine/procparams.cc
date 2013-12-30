@@ -321,10 +321,10 @@ void ProcParams::setDefaults () {
     crop.y          = -1;
     crop.w          = 15000;
     crop.h          = 15000;
-    crop.fixratio   = false;
+    crop.fixratio   = true;
     crop.ratio      = "3:2";
     crop.orientation= "Landscape";
-    crop.guide      = "None";
+    crop.guide      = "Rule of thirds";
     
     coarse.rotate   = 0;
     coarse.hflip    = false;
@@ -342,12 +342,12 @@ void ProcParams::setDefaults () {
     gradient.enabled = false;
     gradient.degree = 0;
     gradient.feather = 25;
-    gradient.strength = 0;
+    gradient.strength = 0.60;
     gradient.centerX = 0;
     gradient.centerY = 0;
 
     pcvignette.enabled = false;
-    pcvignette.strength = 0;
+    pcvignette.strength = 0.60;
     pcvignette.feather = 50;
     pcvignette.roundness = 50;
 
@@ -405,16 +405,16 @@ void ProcParams::setDefaults () {
     resize.scale  = 1.0;
     resize.appliesTo = "Cropped area";
     resize.method = "Lanczos";
-    resize.dataspec = 0;
-    resize.width = 800;
-    resize.height = 600;
+    resize.dataspec = 3;
+    resize.width = 900;
+    resize.height = 900;
 
     icm.input   = "(cameraICC)";
     icm.blendCMSMatrix = false;
     icm.toneCurve = false;
     icm.dcpIlluminant = 0;
     icm.working = "ProPhoto";
-    icm.output  = "sRGB";
+    icm.output  = "RT_sRGB";
     icm.gamma  = "default";
     icm.gampos =2.22;
     icm.slpos=4.5;
