@@ -17,7 +17,6 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef _SAVEASDLG_
-#define _SAVEASDLG_
 
 #include <gtkmm.h>
 #include "adjuster.h"
@@ -62,6 +61,7 @@ class SaveAsDialog : public Gtk::Dialog, public FormatChangeListener {
     void okPressed ();
     void cancelPressed ();
     void formatChanged (Glib::ustring f);
+    bool keyPressed (GdkEventKey* event);
 };
 
 

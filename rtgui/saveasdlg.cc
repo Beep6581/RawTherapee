@@ -97,6 +97,8 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
 
     ok->set_image (*Gtk::manage(new RTImage ("gtk-apply.png")));
     cancel->set_image (*Gtk::manage(new RTImage ("gtk-cancel.png")));
+    
+    ok->set_tooltip_markup (M("TP_SAVEDIALOG_OK_TIP"));
 
     ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );
     cancel->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::cancelPressed) );
@@ -128,6 +130,7 @@ SaveAsDialog::SaveAsDialog (Glib::ustring initialDir) {
     set_border_width (4);
     show_all_children ();
 
+    signal_key_press_event().connect( sigc::mem_fun(*this, &SaveAsDialog::keyPressed) );
 }
 
 void SaveAsDialog::saveImmediatlyClicked () {
@@ -268,4 +271,20 @@ void SaveAsDialog::setImagePath (Glib::ustring ipath) {
         fchooser->add_shortcut_folder(path);
     }
     catch (Gtk::FileChooserError &err) {}
+}
+
+
+bool SaveAsDialog::keyPressed (GdkEventKey* event) {
+
+		bool ctrl = event->state & GDK_CONTROL_MASK;
+
+		if (ctrl){
+			switch(event->keyval) {
+				case GDK_Return:  // Ctrl-Enter equivalent to pressing OK button
+				case GDK_KP_Enter:
+					SaveAsDialog::okPressed();
+					return true;
+			}
+		}
+		return false;
 }
