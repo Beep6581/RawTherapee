@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 3.6, 2013-12-01
+# buildRT version 3.7, 2013-12-30
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
@@ -25,7 +25,7 @@ esac
 
 #--- Set some variables
 unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
-version="3.6"
+version="3.7"
 movetoPatched=""
 repo="${HOME}/rawtherapee"
 procTarget=2
@@ -184,8 +184,11 @@ fi
 cd "${repo}" || exit 1
 
 #--- Update or decide what to do if user edited the source code (e.g. by applying a patch)
-uncommitted="$(hg status | sed "s/^/\t/")"
-unpushed="$(hg outgoing -q | sed "s/^/\t/" || echo "Could not check for unpushed changes (check your internet connection), but continuing anyway.")"
+# "hg outgoing" takes time, so skip if buildonly
+if [[ -z $patched ]]; then
+  uncommitted="$(hg status | sed "s/^/\t/")"
+  unpushed="$(hg outgoing -q | sed "s/^/\t/" || echo "Could not check for unpushed changes (check your internet connection), but continuing anyway.")"
+fi
 if [[ -z $uncommitted && -z $unpushed && -z $patched ]]; then
   hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
   hg update -C default

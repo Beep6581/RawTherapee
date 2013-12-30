@@ -32,7 +32,7 @@ ShadowsHighlights::ShadowsHighlights () : Gtk::VBox(), FoldableToolPanel(this) {
 
   pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-  hq = Gtk::manage (new Gtk::CheckButton (M("GENERAL_HIGH_QUALITY")));
+  hq = Gtk::manage (new Gtk::CheckButton (M("TP_SHADOWSHLIGHTS_SHARPMASK")));
   hq->set_active (false);
   pack_start (*hq);
   hqConn = hq->signal_toggled().connect( sigc::mem_fun(*this, &ShadowsHighlights::hqChanged) );
