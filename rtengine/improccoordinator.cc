@@ -81,7 +81,7 @@ ImProcCoordinator::ImProcCoordinator ()
 
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),
-      ahlListener(NULL),resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false)
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false)
     {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {
@@ -190,6 +190,19 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
             highDetailRawComputed = false;
     }
 
+    // Updating toneCurve.hrenabled if necessary
+    // It has to be done there, because the next 'if' statement will use the value computed here
+    if (todo & M_AUTOEXP) {
+        if (params.toneCurve.autoexp) {// this enabled HLRecovery
+            if (ToneCurveParams::HLReconstructionNecessary(histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
+                // switching params.toneCurve.hrenabled to true -> shouting in listener's ears!
+                params.toneCurve.hrenabled=true;
+
+                // forcing INIT to be done, to reconstruct HL again
+                todo |= M_INIT;
+            }
+        }
+    }
 
     if (todo & (M_INIT|M_LINDENOISE)) {
         MyMutex::MyLock initLock(minit);  // Also used in crop window
@@ -232,15 +245,6 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
 
         // Will (re)allocate the preview's buffers
         setScale (scale);
-		bool hlrbool=false;
-		int thresholdHLR=50;
-		 if (settings->verbose) printf("HLredzero=%i   HLgreenzero=%i  HLblurzero=%i \n", histRedRaw[0], histGreenRaw[0], histBlueRaw[0]);
-		 if (settings->verbose) printf("HLredMax=%i   HLgreenMax=%i  HLblueMax=%i \n", histRedRaw[255], histGreenRaw[255], histBlueRaw[255]);
-		if (params.toneCurve.autoexp) {// this enabled HLRecovery
-		//500 arbitrary values to enabled HLrecovery : not to enabled for too low values
-		if(histRedRaw[255]>thresholdHLR || histGreenRaw[255]>thresholdHLR || histBlueRaw[255]>thresholdHLR   || histRedRaw[0]>thresholdHLR || histGreenRaw[0]>thresholdHLR || histBlueRaw[0]>thresholdHLR) {params.toneCurve.hrenabled=true;hlrbool=true;} }
-            if (ahlListener) {if(hlrbool==true) ahlListener->HLChanged (hlrbool);//enabled Highlight recovery
-		}
 
         imgsrc->getImage (currWB, tr, orig_prev, pp, params.toneCurve, params.icm, params.raw);
         //ColorTemp::CAT02 (orig_prev, &params)	;
@@ -285,13 +289,12 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
     if (todo & M_AUTOEXP) {
         if (params.toneCurve.autoexp) {
             LUTu aehist; int aehistcompr;
-			//histRedRaw, histGreenRaw, histBlueRaw 
             imgsrc->getAutoExpHistogram (aehist, aehistcompr);
             ipf.getAutoExp (aehist, aehistcompr, imgsrc->getDefGain(), params.toneCurve.clip, params.toneCurve.expcomp,
                     params.toneCurve.brightness, params.toneCurve.contrast, params.toneCurve.black, params.toneCurve.hlcompr, params.toneCurve.hlcomprthresh);
             if (aeListener)
                 aeListener->autoExpChanged (params.toneCurve.expcomp, params.toneCurve.brightness, params.toneCurve.contrast,
-                                            params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh);
+                                            params.toneCurve.black, params.toneCurve.hlcompr,params.toneCurve.hlcomprthresh, params.toneCurve.hrenabled);
         }
     }
 

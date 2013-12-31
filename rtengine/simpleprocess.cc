@@ -100,7 +100,17 @@ IImage16* processImage (ProcessingJob* pjob, int& errorCode, ProgressListener* p
 
     PreviewProps pp (0, 0, fw, fh, 1);
     imgsrc->preprocess( params.raw, params.lensProf, params.coarse);
-	if (pl) pl->setProgress (0.20);
+
+    if (params.toneCurve.autoexp) {// this enabled HLRecovery
+        LUTu histRedRaw(256), histGreenRaw(256), histBlueRaw(256);
+        imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
+        if (ToneCurveParams::HLReconstructionNecessary(histRedRaw, histGreenRaw, histBlueRaw) && !params.toneCurve.hrenabled) {
+            params.toneCurve.hrenabled=true;
+            // WARNING: Highlight Reconstruction is being forced 'on', should we force a method here too?
+        }
+    }
+
+    if (pl) pl->setProgress (0.20);
     imgsrc->demosaic( params.raw);
     if (pl) pl->setProgress (0.30);
     imgsrc->HLRecovery_Global( params.toneCurve );

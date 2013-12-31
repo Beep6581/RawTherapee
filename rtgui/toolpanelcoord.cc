@@ -363,7 +363,6 @@ void ToolPanelCoordinator::initImage (rtengine::StagedImageProcessor* ipc_, bool
         ipc->setAutoExpListener (toneCurve);
         ipc->setAutoCamListener (colorappearance);
         ipc->setAutoBWListener (blackwhite);
-        ipc->setAutoHLListener (toneCurve);
 
         ipc->setSizeListener (crop);
         ipc->setSizeListener (resize);

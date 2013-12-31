@@ -141,7 +141,6 @@ class ImProcCoordinator : public StagedImageProcessor {
         AutoExpListener* aeListener;
         AutoCamListener* acListener;
         AutoBWListener* abwListener;
-        AutoHLListener* ahlListener;
 
         HistogramListener* hListener;
         std::vector<SizeListener*> sizeListeners;
@@ -214,7 +213,6 @@ class ImProcCoordinator : public StagedImageProcessor {
         void setHistogramListener(HistogramListener *h)  {hListener = h; }
         void setAutoCamListener  (AutoCamListener* acl)  {acListener = acl; }
         void setAutoBWListener  (AutoBWListener* abw)  {abwListener = abw; }
-        void setAutoHLListener  (AutoHLListener* ahl)  {ahlListener = ahl; }
 
         void saveInputICCReference (const Glib::ustring& fname);
 

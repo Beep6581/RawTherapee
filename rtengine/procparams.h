@@ -24,6 +24,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cmath>
+#include "LUT.h"
 
 class ParamsEdited;
 
@@ -180,8 +181,6 @@ class Threshold {
 class ToneCurveParams {
 
     public:
-        bool hrenabled;
-		Glib::ustring method;
 
         enum eTCModeId {
             TC_MODE_STD,               // Standard modes, the curve is applied on all component individually
@@ -192,6 +191,8 @@ class ToneCurveParams {
 
         bool        autoexp;
         double      clip;
+        bool        hrenabled;  // Highlight Reconstruction enabled
+        Glib::ustring method;   // Highlight Reconstruction's method
         double      expcomp;
         std::vector<double>   curve;
         std::vector<double>   curve2;
@@ -202,9 +203,10 @@ class ToneCurveParams {
         int         contrast;
         int         saturation;
         int         shcompr;
-        int         hlcompr;
-        int         hlcomprthresh;
-		
+        int         hlcompr;        // Highlight Recovery's compression
+        int         hlcomprthresh;  // Highlight Recovery's threshold
+
+        static bool HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw);
 };
 
 /**

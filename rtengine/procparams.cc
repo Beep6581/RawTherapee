@@ -47,6 +47,14 @@ const char *RAWParams::methodstring[RAWParams::numMethods]={"amaze","igv","lmmse
 const char *RAWParams::ff_BlurTypestring[RAWParams::numFlatFileBlurTypes]={/*"Parametric",*/ "Area Flatfield", "Vertical Flatfield", "Horizontal Flatfield", "V+H Flatfield"};
 std::vector<WBEntry*> WBParams::wbEntries;
 
+bool ToneCurveParams::HLReconstructionNecessary(LUTu &histRedRaw, LUTu &histGreenRaw, LUTu &histBlueRaw) {
+    if (options.rtSettings.verbose)
+        printf("histRedRaw[  0]=%07d, histGreenRaw[  0]=%07d, histBlueRaw[  0]=%07d\nhistRedRaw[255]=%07d, histGreenRaw[255]=%07d, histBlueRaw[255]=%07d\n",
+                histRedRaw[0], histGreenRaw[0], histBlueRaw[0], histRedRaw[255], histGreenRaw[255], histBlueRaw[255]);
+
+    return histRedRaw[255]>50 || histGreenRaw[255]>50 || histBlueRaw[255]>50 || histRedRaw[0]>50 || histGreenRaw[0]>50 || histBlueRaw[0]>50;
+}
+
 void WBParams::init() {
     // Creation of the different methods and its associated temperature value
     wbEntries.push_back(new WBEntry("Camera"              ,WBT_CAMERA,      M("TP_WBALANCE_CAMERA"),        0, 1.f,     1.f));

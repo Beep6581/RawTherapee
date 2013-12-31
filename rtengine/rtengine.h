@@ -242,12 +242,13 @@ namespace rtengine {
             virtual ~AutoExpListener() {}
             /** This member function is called when the auto exposure has been recomputed.
               * @param brightness is the new brightness value (in logarithmic scale)
-              * @param, bright is the new ...
+              * @param bright is the new ...
               * @param black is the new black level (measured in absolute pixel data)
               * @param contrast is the new contrast values
               * @param hlcompr is the new highlight recovery amount 
-              * #param hlcomprthresh is the new threshold for hlcompr*/
-            virtual void autoExpChanged (double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh) {}
+              * @param hlcomprthresh is the new threshold for hlcompr
+              * @param hlrecons set to true if HighLight Reconstruction is enabled */
+            virtual void autoExpChanged (double brightness, int bright, int contrast, int black, int hlcompr, int hlcomprthresh, bool hlrecons) {}
     };
 
     class AutoCamListener {
@@ -264,12 +265,6 @@ namespace rtengine {
 			
  	};		
 	
-	class AutoHLListener {
-		public :
-            virtual ~AutoHLListener() {}
-			virtual void HLChanged (bool hlrbool) {}
-			
- 	};		
 
     /** This class represents a detailed part of the image (looking through a kind of window).
       * It can be created and destroyed with the appropriate members of StagedImageProcessor.
@@ -352,7 +347,6 @@ namespace rtengine {
             virtual void        setPreviewImageListener (PreviewImageListener* l) =0;
             virtual void        setAutoCamListener      (AutoCamListener* l) =0;
             virtual void        setAutoBWListener     	(AutoBWListener* l) =0;
-            virtual void        setAutoHLListener     	(AutoHLListener* l) =0;
 
             virtual ~StagedImageProcessor () {}
 

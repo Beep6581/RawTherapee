@@ -27,7 +27,7 @@
 #include "mycurve.h"
 #include "guiutils.h"
 
-class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener, public rtengine::AutoHLListener,public CurveListener {
+class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoExpListener,public CurveListener {
 
   protected:
     // from HLRecovery
@@ -36,7 +36,6 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     sigc::connection    methconn;
     sigc::connection    enaconn;
     bool                lasthrEnabled;
-    bool                nexthlrbool;
   
     Gtk::HBox* abox;
     Gtk::HBox* hlrbox;
@@ -69,6 +68,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     int nextBlack;
     int nextHlcompr;
     int nextHlcomprthresh;
+    bool nextHLRecons;
 
   public:
 
@@ -90,7 +90,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void clip_changed ();
     bool clip_changed_ ();
     void waitForAutoExp ();
-    void autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh);
+    void autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons);
     bool autoExpComputed_ ();
     void enableAll ();
     void curveChanged (CurveEditor* ce);
@@ -103,8 +103,6 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve, LUTu & histLLCurve, LUTu & histLCAM, LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);
  
     void setRaw (bool raw);
-    void HLChanged (bool hlrbool);
-    bool HLComputed_  ();
 
     void hrenabledChanged ();
     void methodChanged ();
