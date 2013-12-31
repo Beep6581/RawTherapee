@@ -304,6 +304,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 
 	Imagefloat* tmpImg = new Imagefloat(tmpw, tmph);
 	if (ri->isBayer()) {
+		// demosaicing! (sort of)
 		for (int row = 1, y = 0; row < height - 1 && y < tmph; row += vskip, y++) {
 			rofs = row * width;
 			for (int col = firstgreen, x = 0; col < width - 1 && x < tmpw; col+= hskip, x++) {
@@ -311,10 +312,10 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 				int g = image[ofs][1];
 				int r, b;
 				if (FISRED(filter,row,col+1)) {
-					r = (image[ofs + 1][0] + image[ofs - 1][0]) >> 1;
+					r = (image[ofs + 1    ][0] + image[ofs - 1    ][0]) >> 1;
 					b = (image[ofs + width][2] + image[ofs - width][2]) >> 1;
 				} else {
-					b = (image[ofs + 1][2] + image[ofs - 1][2]) >> 1;
+					b = (image[ofs + 1    ][2] + image[ofs - 1    ][2]) >> 1;
 					r = (image[ofs + width][0] + image[ofs - width][0]) >> 1;
 				}
 				tmpImg->r(y,x) = r;
@@ -351,18 +352,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
 					continue;
 				double fr = r - ur;
 				double fc = c - uc;
-				fImg->r(row,col) = (tmpImg->r(ur,uc) * (1 - fc)
-						+ tmpImg->r(ur,uc + 1) * fc) * (1 - fr)
-						+ (tmpImg->r(ur + 1,uc) * (1 - fc)
-								+ tmpImg->r(ur + 1,uc + 1) * fc) * fr;
-				fImg->g(row,col) = (tmpImg->g(ur,uc) * (1 - fc)
-						+ tmpImg->g(ur,uc + 1) * fc) * (1 - fr)
-						+ (tmpImg->g(ur + 1,uc) * (1 - fc)
-								+ tmpImg->g(ur + 1,uc + 1) * fc) * fr;
-				fImg->b(row,col) = (tmpImg->b(ur,uc) * (1 - fc)
-						+ tmpImg->b(ur,uc + 1) * fc) * (1 - fr)
-						+ (tmpImg->b(ur + 1,uc) * (1 - fc)
-								+ tmpImg->b(ur + 1,uc + 1) * fc) * fr;
+				fImg->r(row,col) = (tmpImg->r(ur,uc)*(1-fc) + tmpImg->r(ur,uc + 1)*fc) * (1-fr)   +   (tmpImg->r(ur + 1,uc)*(1-fc) + tmpImg->r(ur + 1,uc + 1)*fc) * fr;
+				fImg->g(row,col) = (tmpImg->g(ur,uc)*(1-fc) + tmpImg->g(ur,uc + 1)*fc) * (1-fr)   +   (tmpImg->g(ur + 1,uc)*(1-fc) + tmpImg->g(ur + 1,uc + 1)*fc) * fr;
+				fImg->b(row,col) = (tmpImg->b(ur,uc)*(1-fc) + tmpImg->b(ur,uc + 1)*fc) * (1-fr)   +   (tmpImg->b(ur + 1,uc)*(1-fc) + tmpImg->b(ur + 1,uc + 1)*fc) * fr;
 			}
 		delete tmpImg;
 		tmpImg = fImg;
@@ -660,7 +652,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, int rhei
         }
 
 /*
-    // apply highlight recovery, if needed		-- CURRENTLY BROKEN DUE TO INCOMPATIBLE DATA TYPES; DO WE CARE???
+    // apply highlight recovery, if needed		-- CURRENTLY BROKEN DUE TO INCOMPATIBLE DATA TYPES, BUT HL RECOVERY AREN'T COMPUTED FOR THUMBNAILS ANYWAY...
     if (isRaw && params.toneCurve.hrenabled) {
         int maxval = 65535 / defGain;
         if (params.toneCurve.method=="Luminance" || params.toneCurve.method=="Color")

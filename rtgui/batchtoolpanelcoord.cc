@@ -310,6 +310,11 @@ void BatchToolPanelCoordinator::panelChanged (rtengine::ProcEvent event, const G
         for (size_t i=0; i<selected.size(); i++) {
             initialPP[i].toneCurve.autoexp = pparams.toneCurve.autoexp;
             initialPP[i].toneCurve.clip = pparams.toneCurve.clip;
+
+            // at this stage, we don't know if HL Reconstruction will be enabled or not (depending on the raw histogram),
+            // so we're forcing its paramseditd value to false (i.e. mixed state)
+            pparamsEdited.toneCurve.hrenabled = false;
+
             selected[i]->applyAutoExp (initialPP[i]);
         }
 

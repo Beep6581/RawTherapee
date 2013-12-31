@@ -266,22 +266,6 @@ void ToneCurve::autoOpenCurve  () {
     shape->openIfNonlinear();
     shape2->openIfNonlinear();
 }
-int HLChangedUI (void* data) {
-    GThreadLock lock;
-    (static_cast<ToneCurve*>(data))->HLComputed_ ();
-    return 0;
-}
-
-void ToneCurve::HLChanged  (bool hlrbool){
-    nexthlrbool= hlrbool;
-    g_idle_add (HLChangedUI, this);
-}
-bool ToneCurve::HLComputed_ () {
-    enaconn.block (true);
-    hrenabled->set_active (nexthlrbool);
-    enaconn.block (false);
-    return false;
-}
 
 void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 
@@ -365,18 +349,17 @@ void ToneCurve::hrenabledChanged () {
     }
 
     if (listener) {
-        if (hrenabled->get_active ()){
+        // Switch off auto exposure if user changes enabled manually
+        if (autolevels->get_active() ) {
+            autoconn.block(true);
+            autolevels->set_active (false);
+            autoconn.block(false);
+            autolevels->set_inconsistent (false);
+        }
+        if (hrenabled->get_active ())
             listener->panelChanged (EvHREnabled, M("GENERAL_ENABLED"));
-        }
-        else {    // Switch off auto exposure if user changes enabled manually
-            if (autolevels->get_active() ) {
-                autoconn.block(true);
-                autolevels->set_active (false);
-                autoconn.block(false);
-                autolevels->set_inconsistent (false);
-            }
+        else
             listener->panelChanged (EvHREnabled, M("GENERAL_DISABLED"));
-        }
     }  
 }
 void ToneCurve::methodChanged () {
@@ -520,7 +503,11 @@ void ToneCurve::neutral_pressed () {
     brightness->setValue(0);
     black->setValue(0);
     shcompr->setValue(50);
+    enaconn.block (true);
     hrenabled->set_active (false);
+    enaconn.block (false);
+    if (!batchMode)
+        hlrbox->hide();
     if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     contrast->setValue(0);
     //saturation->setValue(0);
@@ -612,6 +599,8 @@ void ToneCurve::waitForAutoExp () {
     saturation->setEnabled (false);
     curveEditorG->set_sensitive (false);
     toneCurveMode->set_sensitive (false);
+    hrenabled->set_sensitive(false);
+    method->set_sensitive(false);
 }
 
 int autoExpChangedUI (void* data) {
@@ -619,7 +608,7 @@ int autoExpChangedUI (void* data) {
     return 0;
 }
 
-void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh) {
+void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black, int hlcompr, int hlcomprthresh, bool hlrecons) {
 
     nextBlack = black;
     nextExpcomp = expcomp;
@@ -627,6 +616,7 @@ void ToneCurve::autoExpChanged (double expcomp, int bright, int contr, int black
     nextContrast = contr;
     nextHlcompr = hlcompr;
     nextHlcomprthresh = hlcomprthresh;
+    nextHLRecons = hlrecons;
     g_idle_add (autoExpChangedUI, this);
 }
 
@@ -643,6 +633,8 @@ void ToneCurve::enableAll () {
     saturation->setEnabled (true);
     curveEditorG->set_sensitive (true);
     toneCurveMode->set_sensitive (true);
+    hrenabled->set_sensitive(true);
+    method->set_sensitive(true);
 }
 
 bool ToneCurve::autoExpComputed_ () {
@@ -656,6 +648,13 @@ bool ToneCurve::autoExpComputed_ () {
     black->setValue (nextBlack);
     hlcompr->setValue (nextHlcompr);
     hlcomprthresh->setValue (nextHlcomprthresh);
+    enaconn.block (true);
+    hrenabled->set_active (nextHLRecons);
+    enaconn.block (false);
+    if (nextHLRecons)
+        hlrbox->show();
+    else if (!batchMode)
+        hlrbox->hide();
     if (!black->getAddMode()) shcompr->set_sensitive(!((int)black->getValue ()==0)); //at black=0 shcompr value has no effect
     enableListener ();
 
