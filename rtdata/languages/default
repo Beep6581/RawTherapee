@@ -230,7 +230,7 @@ HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram
 HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
-HISTOGRAM_TOOLTIP_FULL;Toggle full or scaled histogram
+HISTOGRAM_TOOLTIP_FULL;Toggle full (on) or scaled (off) histogram
 HISTOGRAM_TOOLTIP_G;Show/Hide green histogram
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELAB Luminance histogram
 HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram
@@ -1432,7 +1432,7 @@ TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Yellow
-TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to the hue
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to hue H=f(H)
 TP_VIBRANCE_LABEL;Vibrance
 TP_VIBRANCE_PASTELS;Pastel Tones
 TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones

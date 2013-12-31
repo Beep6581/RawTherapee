@@ -1404,55 +1404,55 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 
 !BATCHQUEUE_DESTFILENAME;Path and file name
 !EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
-!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: Shift-1
-!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: Shift-2
-!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: Shift-3
-!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: Shift-4
-!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: Shift-5
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: Shift - ~
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
+!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
+!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
+!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
+!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-~</b>
 !HISTORY_MSG_204;LMMSE Enhancement Steps
-!HISTORY_MSG_205;CAM02 hot/bad pixels
-!HISTORY_MSG_206;CAT02 - Adapt scene auto
-!HISTORY_MSG_207;Defringing Hue curve
-!HISTORY_MSG_214;Black &amp; White
-!HISTORY_MSG_215;B&amp;W Channel Mixer Red
-!HISTORY_MSG_216;B&amp;W Channel Mixer Green
-!HISTORY_MSG_217;B&amp;W Channel Mixer Blue
-!HISTORY_MSG_218;B&amp;W Red Gamma
-!HISTORY_MSG_219;B&amp;W Green Gamma
-!HISTORY_MSG_220;B&amp;W Blue Gamma
-!HISTORY_MSG_221;B&amp;W Color Filter
-!HISTORY_MSG_222;B&amp;W Presets
-!HISTORY_MSG_223;B&amp;W Channel Mixer Orange
-!HISTORY_MSG_224;B&amp;W Channel Mixer Yellow
-!HISTORY_MSG_225;B&amp;W Channel Mixer Cyan
-!HISTORY_MSG_226;B&amp;W Channel Mixer Magenta
-!HISTORY_MSG_227;B&amp;W Channel Mixer Purple
-!HISTORY_MSG_228;B&amp;W Luminance Equalizer
-!HISTORY_MSG_229;B&amp;W Luminance Equalizer
-!HISTORY_MSG_230;B&amp;W Black and White Mode
-!HISTORY_MSG_231;B&amp;W 'Before' Curve
-!HISTORY_MSG_232;B&amp;W 'Before' Curve Type
-!HISTORY_MSG_233;B&amp;W 'After' Curve
-!HISTORY_MSG_234;B&amp;W 'After' Curve Type
-!HISTORY_MSG_235;B&amp;W Auto Channel Mixer
+!HISTORY_MSG_205;CAM02 - Hot/bad pixels
+!HISTORY_MSG_206;CAT02 - Auto scene luminosity
+!HISTORY_MSG_207;Defringe - Hue curve
+!HISTORY_MSG_214;Black-and-White
+!HISTORY_MSG_215;B&amp;W - CM - Red
+!HISTORY_MSG_216;B&amp;W - CM - Green
+!HISTORY_MSG_217;B&amp;W - CM - Blue
+!HISTORY_MSG_218;B&amp;W - Gamma - Red
+!HISTORY_MSG_219;B&amp;W - Gamma - Green
+!HISTORY_MSG_220;B&amp;W - Gamma - Blue
+!HISTORY_MSG_221;B&amp;W - Color Filter
+!HISTORY_MSG_222;B&amp;W - Presets
+!HISTORY_MSG_223;B&amp;W - CM - Orange
+!HISTORY_MSG_224;B&amp;W - CM - Yellow
+!HISTORY_MSG_225;B&amp;W - CM - Cyan
+!HISTORY_MSG_226;B&amp;W - CM - Magenta
+!HISTORY_MSG_227;B&amp;W - CM - Purple
+!HISTORY_MSG_228;B&amp;W - Luminance Equalizer
+!HISTORY_MSG_229;B&amp;W - Luminance Equalizer
+!HISTORY_MSG_230;B&amp;W - Mode
+!HISTORY_MSG_231;B&amp;W - 'Before' Curve
+!HISTORY_MSG_232;B&amp;W - 'Before' Curve Type
+!HISTORY_MSG_233;B&amp;W - 'After' Curve
+!HISTORY_MSG_234;B&amp;W - 'After' Curve Type
+!HISTORY_MSG_235;B&amp;W - Auto Channel Mixer
 !HISTORY_MSG_236;--unused--
-!HISTORY_MSG_237;B&amp;W Mixer
-!HISTORY_MSG_243;Vignetting - Rayon
-!HISTORY_MSG_244;Vignetting - Strength
-!HISTORY_MSG_245;Vignetting - Center
+!HISTORY_MSG_237;B&amp;W - Mixer
+!HISTORY_MSG_243;VC - Radius
+!HISTORY_MSG_244;VC - Strength
+!HISTORY_MSG_245;VC - Center
 !HISTORY_MSG_246;'CL' curve
 !HISTORY_MSG_247;'LH' curve
 !HISTORY_MSG_248;'HH' curve
-!HISTORY_MSG_250;NR enhance
+!HISTORY_MSG_250;NR - Enhanced
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
 !MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
 !MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
-!PARTIALPASTE_CHANNELMIXERBW;Black and white
+!PARTIALPASTE_CHANNELMIXERBW;Black-and-White
 !PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
 !PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
 !PREFERENCES_BEHADDALL;All to 'Add'
@@ -1497,7 +1497,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !TP_BWMIX_GAM_RED;Red Channel
 !TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel RGB
 !TP_BWMIX_GREEN;Green
-!TP_BWMIX_LABEL;Black & White
+!TP_BWMIX_LABEL;Black-and-White
 !TP_BWMIX_MAGENTA;Magenta
 !TP_BWMIX_MET;Method
 !TP_BWMIX_MET_CHANMIX;Channel Mixer
@@ -1511,7 +1511,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !TP_BWMIX_PURPLE;Purple
 !TP_BWMIX_RED;Red
 !TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values ​​actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
+!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
 !TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
 !TP_BWMIX_SETTING;Presets
 !TP_BWMIX_SETTING_TOOLTIP;Different presets (films, landscape, ...) or manual settings of channel-mixer
@@ -1540,13 +1540,13 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
 !TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
 !TP_DIRPYRDENOISE_ENH;Enhanced mode
-!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
+!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase
 !TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
 !TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
 !TP_ICM_DCPILLUMINANT;Illuminant
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-!TP_LABCURVE_CHROMA_TOOLTIP;To apply Bwtoning, set Chromaticity to -100
+!TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100
 !TP_LABCURVE_CURVEEDITOR_CL;CL
 !TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
 !TP_LABCURVE_CURVEEDITOR_HH;HH
@@ -1560,7 +1560,9 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen <b>-</b>
 !TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
 !TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
 !TP_RAW_LMMSEITERATIONS;LMMSE Enhancement Steps
-!TP_RAW_LMMSE_TOOLTIP;Add gamma (step 1) - Adds  median (step 2,3,4), then Add a refinement (step 5,6) to reduce artifacts and improve the signal to noise ratio
+!TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal to noise ratio
+!TP_SAVEDIALOG_OK_TIP;Shortcut <b>Ctrl-Enter</b>
+!TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
 !TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
 !TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
 !TP_WBALANCE_WATER1;UnderWater 1

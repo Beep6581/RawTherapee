@@ -492,6 +492,8 @@ HISTORY_MSG_245;ビネットフィルター　中央
 HISTORY_MSG_246;CLカーブ
 HISTORY_MSG_247;"LH"　カーブ
 HISTORY_MSG_248;"HH"　カーブ
+HISTORY_MSG_249;ディテールコントラストのしきい値
+HISTORY_MSG_250;強力なノイズ低減
 HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
@@ -1180,6 +1182,8 @@ TP_DEFRINGE_THRESHOLD;しきい値
 TP_DIRPYRDENOISE_BLUE;色差 ブルー
 TP_DIRPYRDENOISE_CHROMA;色度 (メイン)
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;RAWと非RAW画像に使用することができます\n\n非RAW画像の輝度ノイズ低減は、入力カラープロファイルのガンマに依存します。 sRGBのガンマは、入力画像が異なるガンマのカラープロファイルであれば、輝度ノイズ低減は異なりますが、このように仮定されます
+TP_DIRPYRDENOISE_ENH;高度なモード
+TP_DIRPYRDENOISE_ENH_TOOLTIP;ノイズ低減の効力を髙めますが、代わりに演算時間が約20%増えます。
 TP_DIRPYRDENOISE_GAMMA;ガンマ
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;ガンマは、トーンの範囲全体でノイズ低減の量を変化させます。値が大きいほど明るいトーンに効果を及ぼし、値が小さいほどシャドウをターゲットにします
 TP_DIRPYRDENOISE_LABEL;ノイズ低減
@@ -1243,6 +1247,7 @@ TP_GAMMA_CURV;ガンマ
 TP_GAMMA_FREE;フリーなガンマ
 TP_GAMMA_OUTPUT;出力 ガンマ
 TP_GAMMA_SLOP;勾配（リニア）
+TP_GENERAL_11SCALE_TOOLTIP;この機能の効果や、そのサブコンポーネントの確認には、プレビューで1:1以上のスケールが必要です。
 TP_GRADIENT_CENTER;中央位置
 TP_GRADIENT_CENTER_X;中央　X軸
 TP_GRADIENT_CENTER_X_TOOLTIP;アンカーポイントの位置　X軸: -100=左端, 0=中央, +100=右端
@@ -1553,8 +1558,5 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_249;Contrast by Detail Levels Threshold
-!HISTORY_MSG_250;NR enhance
-!TP_DIRPYRDENOISE_ENH;Enhanced mode
-!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases the quality of denoise, but increases processing time approximately 20%
-!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
+!TP_SAVEDIALOG_OK_TIP;Shortcut <b>Ctrl-Enter</b>
+!TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask

@@ -75,7 +75,7 @@ DEPENDENCIES
   FFTW        fftw>=3.2.2        http://fftw.org/
   GLIB2       glib-2.0>=2.24     http://www.gtk.org/
   GLIBMM      glibmm-2.4>=2.24   http://www.gtkmm.org
-  GTK+        gtk+-2.0>=2.22     http://www.gtk.org/
+  GTK+        gtk+-2.0>=2.24.18  http://www.gtk.org/
   GTKMM       gtkmm-2.4>=2.22    http://www.gtkmm.org
   JPEG        libjpeg>=6b        http://libjpeg-turbo.virtualgl.org/
                                  http://jpegclub.org/
@@ -119,6 +119,11 @@ WINDOWS
     INSTALL THE TOOLCHAIN
       - TDM-GCC On-Demand Installer
           http://tdm-gcc.tdragon.net/download
+        GCC 4.7 is recommended, as under some conditions older
+        versions of GCC can cause artifacts. If you use GCC-4.8.*, be sure
+        to use "-fno-aggressive-loop-optimizations" otherwise dcraw might
+        fail to read the white balance of some raw formats correctly
+        (not a RT bug, see issue 2121).
         Download the "tdm-gcc-webdl" option. Run it, select "Create a new
         TDM-GCC installation" and choose the appropriate option for your
         machine: "MinGW/TDM (32-bit)" if you use a 32-bit machine, or
@@ -130,12 +135,12 @@ WINDOWS
       - CMake
           http://www.cmake.org/cmake/resources/software.html
         Use "Windows (Win32 Installer)", the newest version.
+        
+      - >=GTK+ 2.24.18
+          http://hexchat.github.io/gtk-win32/
 
-      - gtkmm-2.22
-        - 32-bit
-            http://ftp.gnome.org/pub/GNOME/binaries/win32/gtkmm/
-        - 64-bit
-            http://ftp.gnome.org/pub/GNOME/binaries/win64/gtkmm/
+      - gtkmm-2.24
+          http://sourceforge.net/projects/gtk-mingw/files/gtkmm2/
 
 
     INSTALL THE DEPENDENCIES
