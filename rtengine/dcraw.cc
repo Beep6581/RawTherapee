@@ -2349,8 +2349,10 @@ void CLASS sony_decrypt_t::operator()(unsigned *data, int len, int start, int ke
     for (p=0; p < 127; p++)
       pad[p] = htonl(pad[p]);
   }
-  while (len--)
-    *data++ ^= pad[p++ & 127] = pad[(p+1) & 127] ^ pad[(p+65) & 127];
+  while (len--){
+    *data++ ^= pad[p & 127] = pad[(p+1) & 127] ^ pad[(p+65) & 127];
+    p++;
+  }
 }
 
 void CLASS sony_load_raw()
