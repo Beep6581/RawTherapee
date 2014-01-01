@@ -894,10 +894,10 @@ void FileBrowser::openDefaultViewer (int destination) {
 }
 
 bool FileBrowser::keyPressed (GdkEventKey* event) {
-
     bool ctrl  = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
     bool alt   = event->state & GDK_MOD1_MASK;
+    bool altgr = event->state & GDK_MOD2_MASK;
 
     if ((event->keyval==GDK_C || event->keyval==GDK_c) && ctrl) {
         copyProfile ();
@@ -982,52 +982,98 @@ bool FileBrowser::keyPressed (GdkEventKey* event) {
         scrollPage(GDK_SCROLL_DOWN);
         return true;
     }
-    
-    else if (shift && !ctrl && !alt) { // rank
-        switch(event->keyval) {
-            case GDK_asciitilde:
+
+#ifdef __WIN32__
+    else if (shift && !ctrl && !alt && !altgr) { // rank
+        switch(event->hardware_keycode) {
+            case 0x30:	// 0-key
                 requestRanking (0);
                 return true;
-            case GDK_exclam:
+            case 0x31:	// 1-key
                 requestRanking (1);
                 return true;
-            case GDK_at:
+            case 0x32:  // 2-key
                 requestRanking (2);
                 return true;
-            case GDK_numbersign:
+            case 0x33:  // 3-key
                 requestRanking (3);
                 return true;
-            case GDK_dollar:
+            case 0x34:  // 4-key
                 requestRanking (4);
                 return true;
-            case GDK_percent:
+            case 0x35:  // 5-key
                 requestRanking (5);
                 return true;
         }
     }
-    
-    else if (shift && ctrl && !alt) { // color labels
-        switch(event->keyval) {
-            case GDK_asciitilde:
+    else if (shift && ctrl && !alt && !altgr) { // color labels
+        switch(event->hardware_keycode) {
+            case 0x30:	// 0-key
                 requestColorLabel (0);
                 return true;
-            case GDK_exclam:
+            case 0x31:	// 1-key
                 requestColorLabel (1);
                 return true;
-            case GDK_at:
+            case 0x32:  // 2-key
                 requestColorLabel (2);
                 return true;
-            case GDK_numbersign:
+            case 0x33:  // 3-key
                 requestColorLabel (3);
                 return true;
-            case GDK_dollar:
+            case 0x34:  // 4-key
                 requestColorLabel (4);
                 return true;
-            case GDK_percent:
+            case 0x35:  // 5-key
                 requestColorLabel (5);
                 return true;
         }
     }
+#else
+     else if (shift && !ctrl && !alt) { // rank
+         switch(event->hardware_keycode) {
+            case 0x13:
+                 requestRanking (0);
+                 return true;
+            case 0x0a:
+                 requestRanking (1);
+                 return true;
+            case 0x0b:
+                 requestRanking (2);
+                 return true;
+            case 0x0c:
+                 requestRanking (3);
+                 return true;
+            case 0x0d:
+                 requestRanking (4);
+                 return true;
+            case 0x0e:
+                 requestRanking (5);
+                 return true;
+         }
+    }
+     else if (shift && ctrl && !alt) { // color labels
+         switch(event->hardware_keycode) {
+            case 0x13:
+                 requestColorLabel (0);
+                 return true;
+            case 0x0a:
+                 requestColorLabel (1);
+                 return true;
+            case 0x0b:
+                 requestColorLabel (2);
+                 return true;
+            case 0x0c:
+                 requestColorLabel (3);
+                 return true;
+            case 0x0d:
+                 requestColorLabel (4);
+                 return true;
+            case 0x0e:
+                 requestColorLabel (5);
+                 return true;
+         }
+    }
+#endif
 
     return false;
 }

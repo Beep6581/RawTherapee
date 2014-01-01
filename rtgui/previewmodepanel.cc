@@ -208,6 +208,16 @@ int PreviewModePanel::GetbackColor(){
 	return backColor;
 }
 
+void PreviewModePanel::togglebackColor(){
+	int backColor = GetbackColor();
+	if(backColor == 0)
+		togglebackColor1();
+	else if(backColor == 1)
+		togglebackColor2();
+	else
+		togglebackColor0();
+}
+
 void PreviewModePanel::buttonToggled_backColor (Gtk::ToggleButton* tbbackColor) {
 
 	connbackColor0.block(true);

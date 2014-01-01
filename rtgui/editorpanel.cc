@@ -844,7 +844,11 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
     bool ctrl = event->state & GDK_CONTROL_MASK;
     bool shift = event->state & GDK_SHIFT_MASK;
     bool alt = event->state & GDK_MOD1_MASK;
-
+#ifdef __WIN32__
+    bool altgr = event->state & GDK_MOD2_MASK;
+#else
+    bool altgr = event->state & GDK_MOD5_MASK;
+#endif
 
     // Editor Layout
     switch(event->keyval) {
@@ -883,7 +887,17 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
         	}
 			break;
     }
-
+#ifdef __WIN32__
+    if (!alt && !ctrl && !altgr && event->hardware_keycode == 0x39 ) {
+		iareapanel->imageArea->previewModePanel->togglebackColor();
+		return true;
+    }
+#else
+    if (!alt && !ctrl && !altgr && event->hardware_keycode == 0x12 ) {
+		iareapanel->imageArea->previewModePanel->togglebackColor();
+		return true;
+    }
+#endif
     if (!alt){
 		if (!ctrl) {
 			// Normal
@@ -894,7 +908,6 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				case GDK_bracketleft:
 					tpc->coarse->rotateLeft();
 					return true;
-
 				case GDK_i:
 				case GDK_I:
 					info->set_active (!info->get_active());
@@ -913,17 +926,13 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 				case GDK_z://GDK_1
                     iareapanel->imageArea->zoomPanel->zoom11Clicked();
 					return true;
-
-				case GDK_8: //background color of the preview 0
-				    iareapanel->imageArea->previewModePanel->togglebackColor0();
-				    return true;
-				case GDK_9: //background color of the preview 1
-					iareapanel->imageArea->previewModePanel->togglebackColor1();
+/*
+#ifndef __WIN32__
+				case GDK_9: // toggle background color of the preview
+					iareapanel->imageArea->previewModePanel->togglebackColor();
 					return true;
-				case GDK_0: //background color of the preview 2
-					iareapanel->imageArea->previewModePanel->togglebackColor2();
-					return true;
-
+#endif
+*/
 				case GDK_r: //preview mode Red
                     iareapanel->imageArea->previewModePanel->toggleR();
 					return true;
@@ -996,7 +1005,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event) {
 			}
 		} //if (!ctrl)
     } //if (!alt)
-    
+
     if (alt){
     	switch (event->keyval) {
 			case GDK_s:

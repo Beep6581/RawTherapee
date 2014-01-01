@@ -57,6 +57,7 @@ class PreviewModePanel : public Gtk::HBox {
 		void togglebackColor0();
 		void togglebackColor1();
 		void togglebackColor2();
+		void togglebackColor();
 
 		sigc::connection connR, connB, connG, connL, connFocusMask, connbackColor0, connbackColor1, connbackColor2;
 
