@@ -1,7 +1,7 @@
 #01 2008-01-22 Emil Ericsson
 #02 2010 Updated by Johan Thor
 #03 2011 Updated by Johan Thor
-#04 2013-05-19 Updated Johan Thor
+#04 2014-01-01 Updated by Johan Thor
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande
@@ -69,10 +69,11 @@ EXPORT_BYPASS_RAW_CA;Förbigå (rå) reducering av kromatiska abberationer
 EXPORT_BYPASS_RAW_CCSTEPS;Förbigå [raw] undertryckande av falska färger
 EXPORT_BYPASS_RAW_DCB_ENHANCE;Förbigå [raw] förbättringssteg för DCB
 EXPORT_BYPASS_RAW_DCB_ITERATIONS;Förbigå (rå) DCB-iterationer
-EXPORT_BYPASS_RAW_DF;Förbigå (rå) svartbild
-EXPORT_BYPASS_RAW_FF;Förbigå (rå) plattfält
+EXPORT_BYPASS_RAW_DF;Förbigå (rå-) svartbild
+EXPORT_BYPASS_RAW_FF;Förbigå (rå-) plattfält
 EXPORT_BYPASS_RAW_GREENTHRESH;Förbigå (rå) grönbalansering
-EXPORT_BYPASS_RAW_LINENOISE;Bypass [raw] Linjärt brusfilter
+EXPORT_BYPASS_RAW_LINENOISE;Förbigå [raw] Linjärt brusfilter
+EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Förbigå [raw] förbättringssteg för LMMSE
 EXPORT_BYPASS_SHARPENEDGE;Förbigå kantskärpning
 EXPORT_BYPASS_SHARPENING;Förbigå skärpning
 EXPORT_BYPASS_SHARPENMICRO;Förbigå mikrokontrast
@@ -93,11 +94,12 @@ FILEBROWSER_ARRANGEMENTHINT;Växla mellan vertikal och horistonell visning av mi
 FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
 FILEBROWSER_AUTOFLATFIELD;Automatisk plattfältskorrigering
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klicka för att komma till vald sökväg
-FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren)
+FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren) Skriv en sökväg att gå till.\n<b>Ctrl-O</b> för att komma till sökfältet.\n<b>Enter</b> / <b>Ctrl-Enter</b> för att bläddra;\n<b>Esc</b> för att rensa ändringar.\n<b>Shift-Esc</b> för att ta bort fokus från sökfältet.\n\n\nPath kortkommando:\n  <b>~</b> - användarens hemkatalog\n  <b>!</b> - användarens bildkatalog
 FILEBROWSER_CACHECLEARFROMFULL;Rensa från cachen - fullständigt
 FILEBROWSER_CACHECLEARFROMPARTIAL;Rensa från cachen - delvis
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CLEARPROFILE;Återställ profilen
+FILEBROWSER_COLORLABEL_TOOLTIP;Färgetikett\n\nAnvänd menyn eller kortkommandona:\n<b>Shift-Ctrl-1</b> Röd\n<b>Shift-Ctrl-2</b> Gul\n<b>Shift-Ctrl-3</b> Grön\n<b>Shift-Ctrl-4</b> Blå\n<b>Shift-Ctrl-5</b> Lila
 FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
 FILEBROWSER_DARKFRAME;Svartbild
@@ -117,7 +119,7 @@ FILEBROWSER_FLATFIELD;Plattfält
 FILEBROWSER_MOVETODARKFDIR;Flytta till katalogen för svartbilder
 FILEBROWSER_MOVETOFLATFIELDDIR;Flytta till plattfältskatalogen
 FILEBROWSER_NEW_NAME;Nytt namn:
-FILEBROWSER_OPENDEFAULTVIEWER;Windows standardsvisare(köbehandlas)
+FILEBROWSER_OPENDEFAULTVIEWER;Windows standardsvisare (köbehandlas)
 FILEBROWSER_PARTIALPASTEPROFILE;Klistra in partiell profil
 FILEBROWSER_PASTEPROFILE;Klistra in profil
 FILEBROWSER_POPUPCANCELJOB;Avbryt
@@ -137,11 +139,12 @@ FILEBROWSER_POPUPOPEN;Öppna
 FILEBROWSER_POPUPPROCESSFAST;Lägg till i kön (Snabbexport)
 FILEBROWSER_POPUPPROCESS;Flytta till behandlingskön
 FILEBROWSER_POPUPPROFILEOPERATIONS;Profilaktiviteter
-FILEBROWSER_POPUPRANK1;Betyg 1
-FILEBROWSER_POPUPRANK2;Betyg 2
-FILEBROWSER_POPUPRANK3;Betyg 3
-FILEBROWSER_POPUPRANK4;Betyg 4
-FILEBROWSER_POPUPRANK5;Betyg 5
+FILEBROWSER_POPUPRANK1;Betyg 1 *
+FILEBROWSER_POPUPRANK2;Betyg 2 **
+FILEBROWSER_POPUPRANK3;Betyg 3 ***
+FILEBROWSER_POPUPRANK4;Betyg 4 ****
+FILEBROWSER_POPUPRANK5;Betyg 5 *****
+FILEBROWSER_POPUPRANK;Betyg
 FILEBROWSER_POPUPREMOVEINCLPROC;Ta bort från filsystemet inkl. den behandlade
 FILEBROWSER_POPUPREMOVESUBMENU;Ta bort
 FILEBROWSER_POPUPREMOVE;Ta bort från filsystemet
@@ -152,28 +155,33 @@ FILEBROWSER_POPUPUNRANK;Ta bort betyg
 FILEBROWSER_POPUPUNTRASH;Ta bort från papperskorgen
 FILEBROWSER_PROCESSINGSETTINGSHINT;Ange filformat och målkatalog
 FILEBROWSER_PROCESSINGSETTINGS;Inställningar
-FILEBROWSER_QUERYBUTTONHINT;Rensa hittafältet
-FILEBROWSER_QUERYHINT;Skriv in en del av filnamnet att söka efter. \nTryck <b>Ctrl-f</b> (i filhanteraren) för att sätta fokus i sökfältet och tryck <b>Enter</b> för att söka
+FILEBROWSER_QUERYBUTTONHINT;Rensa sökfältet
+FILEBROWSER_QUERYHINT;Skriv en <i>del av ett filnamn</i> för att söka efter en <i>kommaseparerad lista</i>.\nT. ex. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> för att komma till sökfältet.\n<b>Enter</b> för att starta sökningen.\n<b>Esc</b> för att rensa.\n<b>Shift-Esc</b> för att ta bort fokus från sökfältet.
 FILEBROWSER_QUERYLABEL; Hitta:
+FILEBROWSER_RANK1_TOOLTIP;Betyg 1 *\nKortkommando: <b>Shift-1</b>
+FILEBROWSER_RANK2_TOOLTIP;Betyg 2 *\nKortkommando: <b>Shift-2</b>
+FILEBROWSER_RANK3_TOOLTIP;Betyg 3 *\nKortkommando: <b>Shift-3</b>
+FILEBROWSER_RANK4_TOOLTIP;Betyg 4 *\nKortkommando: <b>Shift-4</b>
+FILEBROWSER_RANK5_TOOLTIP;Betyg 5 *\nKortkommando: <b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Byt namn
 FILEBROWSER_RENAMEDLGMSG;Byt namn på "%1" till:
 FILEBROWSER_SELECTDARKFRAME;Välj svartbild...
 FILEBROWSER_SELECTFLATFIELD;Välj plattfält...
-FILEBROWSER_SHOWCOLORLABEL1HINT;Visa bilder märkta som röda <b>Alt-1</b>
-FILEBROWSER_SHOWCOLORLABEL2HINT;Visa bilder märkta som gula<b>Alt-2</b>
-FILEBROWSER_SHOWCOLORLABEL3HINT;Visa bilder märkta som gröna<b>Alt-3</b>
-FILEBROWSER_SHOWCOLORLABEL4HINT;Visa bilder märkta som blå<b>Alt-4</b>
-FILEBROWSER_SHOWCOLORLABEL5HINT;Visa bilder märkta som lila <b>Alt-5</b>
-FILEBROWSER_SHOWDIRHINT;Visa alla bilder i biblioteket
-FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder <b>6</b>
-FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information
+FILEBROWSER_SHOWCOLORLABEL1HINT;Visa bilder märkta som röda.\nKortkommando: <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Visa bilder märkta som gula.\nKortkommando:<b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Visa bilder märkta som gröna.\nKortkommando:<b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Visa bilder märkta som blåa.\nKortkommando:<b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Visa bilder märkta som lila.\nKortkommando: <b>Alt-5</b>
+FILEBROWSER_SHOWDIRHINT;Återställ alla sökfilter.\nKortkommando: <b>d</b>
+FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder.\nKortkommando: <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder.\nKortkommando: <b>6</b>
+FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information.\nKortkommando: <b>i</b>\n\nKortkommando i enkelbildsläget: <b>Alt-i</b>
 FILEBROWSER_SHOWQUEUEHINT;Visa innehållet i behandlingskön
-FILEBROWSER_SHOWRANK1HINT;Visa bilder med betyg 1
-FILEBROWSER_SHOWRANK2HINT;Visa bilder med betyg 2
-FILEBROWSER_SHOWRANK3HINT;Visa bilder med betyg 3
-FILEBROWSER_SHOWRANK4HINT;Visa bilder med betyg 4
-FILEBROWSER_SHOWRANK5HINT;Visa bilder med betyg 5
+FILEBROWSER_SHOWRANK1HINT;Visa bilder med betyg 1.\nKortkommando: <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Visa bilder med betyg 2.\nKortkommando: <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Visa bilder med betyg 3.\nKortkommando: <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Visa bilder med betyg 4.\nKortkommando: <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Visa bilder med betyg 5.\nKortkommando: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Visa bilder som nyligen sparats <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Visa bilder som inte nyligen sparats <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Visa innehållet i papperskorgen
@@ -185,18 +193,19 @@ FILEBROWSER_STOPPROCESSINGHINT;Avbryt behandlingen av bilderna
 FILEBROWSER_STOPPROCESSING;Avbryt behandlingen
 FILEBROWSER_THUMBSIZE;Miniatyrbildens storlek
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Starta behandlingen automatiskt när en ny bild kommer in
+FILEBROWSER_UNRANK_TOOLTIP;Ta bort betyg\nKortkommando: <b>Shift-~</b>
 FILEBROWSER_USETEMPLATE;Använd förinställning:
-FILEBROWSER_ZOOMINHINT;Förstora miniatyrbilderna
-FILEBROWSER_ZOOMOUTHINT;Förminska miniatyrbilderna
+FILEBROWSER_ZOOMINHINT;Förstora miniatyrbilderna.\nKortkommando: <b>+</b>\n\nKortkommado i enkelbildsläget: <b>Alt-+</b>
+FILEBROWSER_ZOOMOUTHINT;Förminska miniatyrbilderna.\nKortkommando: <b>-</b>\nKortkommado i enkelbildsläget: <b>Alt--</b>
 GENERAL_ABOUT;Om
 GENERAL_AFTER;Efter
 GENERAL_AUTO;Automatisk
 GENERAL_BEFORE;Före
 GENERAL_CANCEL;Avbryt
 GENERAL_CLOSE;Stäng
-GENERAL_DISABLED;Avaktivera
+GENERAL_DISABLED;Avaktiverad
 GENERAL_DISABLE;Avaktivera
-GENERAL_ENABLED;Verkställ
+GENERAL_ENABLED;Verkställd
 GENERAL_ENABLE;Verkställ
 GENERAL_FILE;Fil
 GENERAL_HIGH_QUALITY;Hög kvalitet
@@ -218,7 +227,7 @@ HISTOGRAM_BUTTON_L;L
 HISTOGRAM_BUTTON_RAW;Råbild
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histogram
-HISTOGRAM_TOOLTIP_BAR;Visa/dölj RBG-indikatorer Klicka på höger musknapp på förhandsvisningen för att frysa
+HISTOGRAM_TOOLTIP_BAR;Visa/dölj RBG-indikatorer \nKlicka på höger musknapp på förhandsvisningen för att frysa
 HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
 HISTOGRAM_TOOLTIP_CHRO;Visa/Dölj kromananshistogrammet
 HISTOGRAM_TOOLTIP_FULL;Växla mellan fullt eller skalat histogram
@@ -397,7 +406,7 @@ HISTORY_MSG_163;RGB-kurvor - R
 HISTORY_MSG_164;RGB-kurvor - G
 HISTORY_MSG_165;RGB-kurvor - B
 HISTORY_MSG_166;Neutrala nivåer
-HISTORY_MSG_167;S/V toning
+HISTORY_MSG_167;--oanvänd--
 HISTORY_MSG_168;'CC'-kurvan
 HISTORY_MSG_169;'CH'-kurvan
 HISTORY_MSG_170;Lyster-kurvan
@@ -405,15 +414,23 @@ HISTORY_MSG_171;'LC'-kurvan
 HISTORY_MSG_172;Begränsa LC till röda färger och hudtoner
 HISTORY_MSG_173;Brusreducering - Luminansdetalj
 HISTORY_MSG_174;CIECAM02
+HISTORY_MSG_175;CAM02 - Mängd av anpassning av kroma
+HISTORY_MSG_176;CAM02 - Vyns mörka omgivning
+HISTORY_MSG_177;CAM02 - BildensVyns anpassning av luminans
+HISTORY_MSG_178;CAM02 - Vyns anpassning av luminans
 HISTORY_MSG_179;CAM02 - Modell
 HISTORY_MSG_180;CAM02 - Ljushet (J)
 HISTORY_MSG_181;CAM02 - Kroma (C)
 HISTORY_MSG_182;CAM02 - Automatisk CAT02
 HISTORY_MSG_183;CAM02 - Kontrast (J)
+HISTORY_MSG_184;CAM02 - Bild med mörk omgivning
+HISTORY_MSG_185;CAM02 - Kontroll av gamut
 HISTORY_MSG_186;CAM02 - Algoritm
+HISTORY_MSG_187;CAM02 - Röda färgers och hudtonsbevarande
 HISTORY_MSG_188;CAM02 - Ljushet (Q)
 HISTORY_MSG_189;CAM02 - Kontrast (Q)
 HISTORY_MSG_190;CAM02 - Mättnad (S)
+HISTORY_MSG_191;CAM02 - Colorfulness (M)
 HISTORY_MSG_192;CAM02 - Nyans (vinkel)
 HISTORY_MSG_193;CAM02 - Tonkurva 1
 HISTORY_MSG_194;CAM02 - Tonkurva 2
@@ -421,8 +438,57 @@ HISTORY_MSG_195;CAM02 - Tonkurva 1
 HISTORY_MSG_196;CAM02 - Tonkurva 2
 HISTORY_MSG_197;CAM02 - Färgkurva
 HISTORY_MSG_198;CAM02 - Färgkurva
+HISTORY_MSG_199;CAM02 - Visa CIECAM02 utmatningshistogram i kurvorna
+HISTORY_MSG_200;CAM02 - Tonmappning mha CIECAM02 Q
+HISTORY_MSG_201;NR - Delta krominans röd-grön
+HISTORY_MSG_202;NR - Delta krominans blå-gul
 HISTORY_MSG_203;Brusreducering - metod
 HISTORY_MSG_204;LMMSE förbättringssteg
+HISTORY_MSG_205;CAM02 heta/dåliga pixlar
+HISTORY_MSG_206;CAT02 - Anpassa automatiskt till bilden
+HISTORY_MSG_207;Överstrålning nyanskurva
+HISTORY_MSG_208;Blå/Röd equalizer
+HISTORY_MSG_210;Graderat filter - Vinkel
+HISTORY_MSG_211;Graderat filter
+HISTORY_MSG_212;Vinjetteringsfilter - Styrka
+HISTORY_MSG_213;Vinjetteringsfilter
+HISTORY_MSG_214;Svartvitt
+HISTORY_MSG_215;S/V kanalmixer Röd
+HISTORY_MSG_216;S/V kanalmixer Grön
+HISTORY_MSG_217;S/V kanalmixer Blå
+HISTORY_MSG_218;S/V Röd gamma
+HISTORY_MSG_219;S/V Grön gamma
+HISTORY_MSG_220;S/V Blå gamma
+HISTORY_MSG_221;S/V Färgfilter
+HISTORY_MSG_222;S/V Förinställningar
+HISTORY_MSG_223;S/V Kanalmixer Orange
+HISTORY_MSG_224;S/V Kanalmixer Gul
+HISTORY_MSG_225;S/V Kanalmixer Cyan
+HISTORY_MSG_226;S/V Kanalmixer Magenta
+HISTORY_MSG_227;S/V Kanalmixer Lila
+HISTORY_MSG_228;S/V Luminansequalizer
+HISTORY_MSG_229;S/V Luminansequalizer
+HISTORY_MSG_230;S/V Svartvittläge
+HISTORY_MSG_231;S/V 'Före'-kurva
+HISTORY_MSG_232;S/V 'Före'-kurvtyp
+HISTORY_MSG_233;S/V 'Efter'-kurva
+HISTORY_MSG_234;S/V 'Efter'-kurvtyp
+HISTORY_MSG_235;S/V Automatisk kanalmixer
+HISTORY_MSG_236;--oanvänd--
+HISTORY_MSG_237;S/V Mixer
+HISTORY_MSG_238;Gradient - Fjäder
+HISTORY_MSG_239;Gradient - Styrka
+HISTORY_MSG_240;Gradient - Centrum
+HISTORY_MSG_241;Vinjetteringsfilter - Fjäder
+HISTORY_MSG_242;Vinjetteringsfilter - Rundhet
+HISTORY_MSG_243;Vinjettering - Rayon
+HISTORY_MSG_244;Vinjettering - Styrka
+HISTORY_MSG_245;Vinjettering - Centrum
+HISTORY_MSG_246;'CL'-kurva
+HISTORY_MSG_247;'LH'-kurva
+HISTORY_MSG_248;'HH'-kurva
+HISTORY_MSG_249;Kontrast genom detaljnivåer
+HISTORY_MSG_250;Brusreduceringsförbättring
 HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOT_TOOLTIP;Kortkommando: <b>Alt-s</b>
@@ -444,13 +510,15 @@ ICMPANEL_OUTPUTDLGLABEL;Välj utmatnings ICC-profil...
 ICMPANEL_OUTPUTPROFILE;Utmatningsprofil
 ICMPANEL_SAVEREFERENCE;Spara referensbild för profilering
 ICMPANEL_WORKINGPROFILE;Färgrymd
-IMAGEAREA_DETAILVIEW;Detalj
+IMAGEAREA_DETAILVIEW;Detaljvy
 IPTCPANEL_AUTHORHINT;Namn på skaparen, t ex skribenten, fotografen eller den grafiska artisten (by-line)
 IPTCPANEL_AUTHORSPOSITIONHINT;Titeln på upphovsmannen/männen (byline)
 IPTCPANEL_AUTHORSPOSITION;Upphovmannens position
 IPTCPANEL_AUTHOR;Upphovsman
 IPTCPANEL_CAPTIONHINT;En beskrivning av informationen
 IPTCPANEL_CAPTIONWRITERHINT;Namnet på den person som är involverad i att skapa eller redigera eller korrigera bilden
+IPTCPANEL_CAPTIONWRITER;Upphovsman
+IPTCPANEL_CAPTION;Rubrik
 IPTCPANEL_CATEGORYHINT;Identifierar bildens titel enligt tillhandahållaren.
 IPTCPANEL_CATEGORY;Kategori
 IPTCPANEL_CITYHINT;Staden där bilden togs
@@ -491,20 +559,16 @@ MAIN_BUTTON_NAVNEXT_TOOLTIP;Flytta till nästa bild relativt den bild som är ö
 MAIN_BUTTON_NAVPREV_TOOLTIP;Flytta till föregående bild relativt den bild som är öppen i redigeringsläget \nKortkommando: <b>Shift-F3</b>\n\nFlytta till föregående bild relativt den valda miniatyrbilden i filhanteraren\nKortkommando: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synkronisera filhanteraren med redigeringsläget för att uppdatera förhandsgranskningen av den nu öppna bilden, och för att nollställa filtren i filhanteraren \nKortkommando: <b>x</b>\n\nSom ovan, men utan att nollställa filtren i filhanteraren\nKortkommando: <b>y</b>\n(Notera att förhandsgranskningen av den öppna bildens  miniatyrbilder ej visas om den är filtrerad.).
 MAIN_BUTTON_PREFERENCES;Inställningar
-MAIN_BUTTON_PUTTOQUEUE;Behandla
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. Kortkommando: Ctrl+B
 MAIN_BUTTON_QUEUE;Placera i behandlingskön
-MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SAVE;Spara
 MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild. Kortkommando: Ctrl+S
-MAIN_BUTTON_SENDTOEDITOR;Redigera
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Visa/dölj alla sidopaneler <b>m</b>
-MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärm
+MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärmsläget
 MAIN_FRAME_BATCHQUEUE;Batchkö
 MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batchkö <b>Ctrl-F3</b>
-MAIN_FRAME_EDITOR;Redigerfönster
-MAIN_FRAME_EDITOR;Redigering
+MAIN_FRAME_EDITOR;Redigeringsläget
 MAIN_FRAME_EDITOR_TOOLTIP; Redigeringsvy <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Filhanterare
 MAIN_FRAME_FILEBROWSER_TOOLTIP; Filhanteraren <b>Ctrl-F2</b>
@@ -522,8 +586,8 @@ MAIN_MSG_ERRORDURINGIMAGESAVING;Fel uppstod när bilden sparades
 MAIN_MSG_EXITJOBSINQUEUEINFO;Obehandlade bilder i behandlingskön kommer att gå förlorade om programmet stängs av.
 MAIN_MSG_EXITJOBSINQUEUEQUEST;Är du säker på att du vill avsluta? Det finns obehandlade bilder i behandlingskön.
 MAIN_MSG_IMAGEUNPROCESSED;Det här kommandot kräver att alla valda bilder behandlas i kön först.
-MAIN_MSG_JOBSINQUEUE;Arbete(n) i kö
-MAIN_MSG_NAVIGATOR;Översikt
+MAIN_MSG_JOBSINQUEUE;Bild(er) i kön
+MAIN_MSG_NAVIGATOR;Översiktsvy
 MAIN_MSG_OPERATIONCANCELLED;Åtgärden avbröts
 MAIN_MSG_PATHDOESNTEXIST;Sökvägen\n\n<b>%1</b>\n\nfinns ej. Var vänlig och ange en korrekt sökväg i inställningarna.
 MAIN_MSG_PLACES;Platser
@@ -532,24 +596,24 @@ MAIN_MSG_SETPATHFIRST;Du måste först ange en sökväg i \ninställningarna fö
 MAIN_MSG_WRITEFAILED;Misslyckades att skriva\n\n<b>"%1"</b>\n\nFörsäkra dig om att katalogen existerar och att du har rättigheter att skriva dit.
 MAIN_TAB_BASIC;Grund
 MAIN_TAB_COLOR;Färger
-MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
+MAIN_TAB_COLOR_TOOLTIP;Kortkommando: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detaljer
-MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+MAIN_TAB_DETAIL_TOOLTIP;Kortkommando: <b>Alt-d</b>
 MAIN_TAB_DEVELOP;Framkalla
 MAIN_TAB_EXIF;EXIF
-MAIN_TAB_EXPORT; Export
+MAIN_TAB_EXPORT; Snabbexport
 MAIN_TAB_EXPOSURE;Exponering
-MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
+MAIN_TAB_EXPOSURE_TOOLTIP;Kortkommando: <b>Alt-e</b>
 MAIN_TAB_FILTER;Filter
 MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
-MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
+MAIN_TAB_METADATA_TOOLTIP;Kortkommando: <b>Alt-m</b>
 MAIN_TAB_RAW;Råbild
-MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
+MAIN_TAB_RAW_TOOLTIP;Kortkommando: <b>Alt-r</b>
 MAIN_TAB_TAGGING;Etiketter
 MAIN_TAB_TRANSFORM;Omvandla
-MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+MAIN_TAB_TRANSFORM_TOOLTIP;Kortkommando: <b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_BACKCOLOR0;Bakgrundsfärg av förhandsgranskningen: <b>Temabaserad</b>\nKortkommando: <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;Bakgrundsfärg av förhandsgranskningen: <b>Svart</b>\nKortkommando: <b>9</b>
@@ -568,11 +632,11 @@ MAIN_TOOLTIP_PREVIEWR;Förhandsgranska den <b>röda kanalen</b>.\nGenväg: <b>r<
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden
 MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald katalog
 MAIN_TOOLTIP_SAVE;Spara bilden till standardkatalogen
-MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>H</b>
+MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Visa/dölj den högra panelen <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-l</b>
 MAIN_TOOLTIP_THRESHOLD;Tröskelvärde
-MAIN_TOOLTIP_TOGGLE;Växla före/efter vy. Kortkommando: B
+MAIN_TOOLTIP_TOGGLE;Växla <b>före</b>/<b>efter</b> vy. Kortkommando: <b>B</b>
 NAVIGATOR_B_NA;B = -
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = -
@@ -597,8 +661,9 @@ OPTIONS_DEFIMG_MISSING;Standardprofilen för <b>icke-råbilder</b> kunde inte hi
 OPTIONS_DEFRAW_MISSING;Standardprofilen för <b>råbilder</b> kunde inte hittas eller är inte angiven.\n\nVar vänlig kontrollera din profilmapp, den kanske ej finns  eller är skadad.\n\nInterna värden kommer att användas som standard.
 PARTIALPASTE_BASICGROUP;Grundläggande inställningar
 PARTIALPASTE_CACORRECTION;Reducera kromatiska abberationer
+PARTIALPASTE_CHANNELMIXERBW;Svartvitt
 PARTIALPASTE_CHANNELMIXER;Kanalmixer
-PARTIALPASTE_COARSETRANS;90-graders rotering
+PARTIALPASTE_COARSETRANS;Rotering 90-grader
 PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
 PARTIALPASTE_COLORBOOST;Förstärk färger
 PARTIALPASTE_COLORDENOISE;Reducera färgbrus
@@ -615,7 +680,8 @@ PARTIALPASTE_DETAILGROUP;Detaljinställningar
 PARTIALPASTE_DIALOGLABEL;Partiell inklistring av profiler
 PARTIALPASTE_DIRPYRDENOISE;Brusreducering
 PARTIALPASTE_DIRPYREQUALIZER;Kontrast genom detaljnivåer
-PARTIALPASTE_DISTORTION;Distortionsrättning
+PARTIALPASTE_DISTORTION;Distortionskorrigering
+PARTIALPASTE_EPD;Tonmappning
 PARTIALPASTE_EVERYTHING;Allt
 PARTIALPASTE_EXIFCHANGES;Förändringar i EXIF-informationen
 PARTIALPASTE_EXPOSURE;Exponering
@@ -629,16 +695,16 @@ PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdageråterställning, tröskelvärde
 PARTIALPASTE_HLRECOVERY;Högdageråterställning
 PARTIALPASTE_HSVEQUALIZER;HSV-equalizer
 PARTIALPASTE_ICMGAMMA;Gamma ut
-PARTIALPASTE_ICMSETTINGS;ICM-inställningar
+PARTIALPASTE_ICMSETTINGS;Inställningar för färgkalibrering
 PARTIALPASTE_IMPULSEDENOISE;Brusreducering mha stegsvar
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LABCURVE;Labkurva
 PARTIALPASTE_LENSGROUP;Objektivrelaterade inställningar
 PARTIALPASTE_LENSPROFILE;Objektivkorrigeringsprofil
-PARTIALPASTE_LUMACURVE;Luminanskurva
 PARTIALPASTE_LUMADENOISE;Reducera luminansbrus
 PARTIALPASTE_LUMINANCEGROUP;Luminansrelaterade inställningar
 PARTIALPASTE_METAICMGROUP;Metadata/ICM inställningar
+PARTIALPASTE_PCVIGNETTE;Vinjetteringsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektiv
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Grönbalansering
 PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Tillämpa het- och dödpixelfilter
@@ -661,7 +727,7 @@ PARTIALPASTE_RGBCURVES;RGB-kurvor
 PARTIALPASTE_ROTATION;Rotering
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Skugg- och högdageråterställning
 PARTIALPASTE_SHARPENEDGE;Kanter
-PARTIALPASTE_SHARPENING;Skärpa
+PARTIALPASTE_SHARPENING;Skärpa (Oskarp mask/RL)
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
 PARTIALPASTE_VIBRANCE;Lyster
 PARTIALPASTE_VIGNETTING;Reducera vinjettering
@@ -681,25 +747,23 @@ PREFERENCES_BLINKCLIPPED;Blinka markerade områden
 PREFERENCES_CACHECLEARALL;Återställ alla
 PREFERENCES_CACHECLEARPROFILES;Återställ profiler
 PREFERENCES_CACHECLEARTHUMBS;Ta bort cachade miniatyrbilder
-PREFERENCES_CACHEFORMAT1;Proprietär (snabbare och med bättre kvalitet)
-PREFERENCES_CACHEFORMAT2;JPEG (tar mindre plats)
 PREFERENCES_CACHEMAXENTRIES;Maximalt antal cachefiler
 PREFERENCES_CACHEOPTS;Cacheinställningar
 PREFERENCES_CACHESTRAT1;Föredra hastighet framför låg minnesanvändning
 PREFERENCES_CACHESTRAT2;Föredra låg minnesanvändning framför hastighet
 PREFERENCES_CACHESTRAT;Cachestrategi
-PREFERENCES_CACHETHUMBFORM;Miniatyrbildens format i cachen
 PREFERENCES_CACHETHUMBHEIGHT;Maximal storlek på miniatyrbilderna
-PREFERENCES_CIEART;CIECAM02 optimering
+PREFERENCES_CIEART;CIECAM02-optimering
 PREFERENCES_CIEART_LABEL;Använd flyttalsprecision istället för dubbel
 PREFERENCES_CIEART_TOOLTIP;Om aktiverat, så kommer alla CIECAM02-beräkningar att utföras med enkel precision i flyttalsformatet istället för med dubbel precision. Detta ger en liten ökning i hastigheten, till en kostnad av en försumbar kvalitetsförsämring.
-PREFERENCES_CLEARDLG_LINE1;Rensa cache
-PREFERENCES_CLEARDLG_LINE2;Det här tar kanske ett par sekunder...
-PREFERENCES_CLEARDLG_TITLE;Var vänlig vänta
 PREFERENCES_CLIPPINGIND;Markeringsindikation
 PREFERENCES_CMETRICINTENT;Kolorimetrisk återgivning
-PREFERENCES_CUSTPROFBUILDHINT;Exekverbar (eller skript) fil som anropas när en ny initial profil skall genereras för en bild. nMottar kommandoradparametrar för att tillåta generering av en regelbaserad .pp3-fil:n[Sökväg Raw/JPG] [Sökväg till standardprofil] [f-nr] [exponering i sek] [brännvidd i mm] [ISO] [Objektiv] [Kamera]
+PREFERENCES_CUSTPROFBUILDHINT;Exekverbar (eller skript) fil som anropas när en ny initial profil skall genereras för en bild. \nMottar kommandoradparametrar för att tillåta generering av en regelbaserad .pp3-fil:n[Sökväg Raw/JPG] [Sökväg till standardprofil] [f-nr] [exponering i sek] [brännvidd i mm] [ISO] [Objektiv] [Kamera]
+PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Namn
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
 PREFERENCES_CUSTPROFBUILDPATH;Exekverbar sökväg
+PREFERENCES_CUSTPROFBUILD;Custom Processing Profile Builder
 PREFERENCES_CUTOVERLAYBRUSH;Bakgrundsfärg vid beskärning
 PREFERENCES_D50;5000K
 PREFERENCES_D55;5500K
@@ -722,9 +786,9 @@ PREFERENCES_DIROTHER;Annan
 PREFERENCES_DIRSELECTDLG;Välj bildkatalog vid uppstart...
 PREFERENCES_DIRSOFTWARE;Installationskatalog
 PREFERENCES_EDITORCMDLINE;Annan kommandorad
-PREFERENCES_EDITORLAYOUT;Layout på redigeringsvyn
+PREFERENCES_EDITORLAYOUT;Layout för redigeringsvyn
 PREFERENCES_EXTERNALEDITOR;Externt bildredigeringsprogram
-PREFERENCES_FBROWSEROPTS;Filbläddrarinställningar
+PREFERENCES_FBROWSEROPTS;Inställningar för filhanteraren/miniatyrbilderna
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Filhanterarens verktygsrad som en rad (avmarkera för lågupplösta skärmar)
 PREFERENCES_FILEFORMAT;Filformat
 PREFERENCES_FLATFIELDFOUND;Hittade
@@ -745,7 +809,7 @@ PREFERENCES_GREY18;Yb=18 CIE L#50
 PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
-PREFERENCES_GTKTHEME;GTK standard
+PREFERENCES_GTKTHEME;GTK-standard
 PREFERENCES_HINT;Tips
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogrammet till vänster
 PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
@@ -757,13 +821,13 @@ PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Visa intern råbild om oredigerad
 PREFERENCES_LANGAUTODETECT;Använd oeprativsystemets språkinställning
-PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder(långsammare)
-PREFERENCES_MENUGROUPEXTPROGS;Gruppen "Öppna med"
-PREFERENCES_MENUGROUPFILEOPERATIONS;Gruppera filaktiviteter
-PREFERENCES_MENUGROUPLABEL;Gruppera etikettering
-PREFERENCES_MENUGROUPPROFILEOPERATIONS;Gruppera profilaktiviteter
-PREFERENCES_MENUGROUPRANK;Gruppera ranking
-PREFERENCES_MENUOPTIONS;Menyval
+PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder (långsammare)
+PREFERENCES_MENUGROUPEXTPROGS;Visa "Öppna med"
+PREFERENCES_MENUGROUPFILEOPERATIONS;Visa "Filaktiviteter"
+PREFERENCES_MENUGROUPLABEL;Visa "Etikett"
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Visa "Profilaktiviteter"
+PREFERENCES_MENUGROUPRANK;Visa "Betygsättning"
+PREFERENCES_MENUOPTIONS;Menyval för högerklick
 PREFERENCES_METADATA;Metadata
 PREFERENCES_MONITORICC;Skärmprofil
 PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt i flerfliksläge
@@ -805,11 +869,10 @@ PREFERENCES_SHOWONLYRAW;Visa bara RAW-filer
 PREFERENCES_SHOWPROFILESELECTOR;Visa profilväljaren
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
 PREFERENCES_SINGLETABVERTAB;Enkelfliksläge, vertikala flikar
-PREFERENCES_SINGLETABVERTAB;En-fliksläge med vertikala flikar
 PREFERENCES_SINGLETAB;Öppna en bild åt gången
 PREFERENCES_SLIMUI;Slimmat gränssnitt
 PREFERENCES_SND_BATCHQUEUEDONE;Batchkön färdig
-PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud. I Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas.
+PREFERENCES_SND_HELP;Fyll i en sökväg till ett ljud. \nI Windows kan "SystemDefault", "SystemAsterisk" o.s.v. användas. På Linuxbaserade system kan du prova med "complete", "windows-attention" o.s.v.
 PREFERENCES_SND_LNGEDITPROCDONE;När behandlingen är klar
 PREFERENCES_SND_TRESHOLDSECS;Ljudet kommer efter så här många sekunder
 PREFERENCES_SQUAREDETAILWINDOW;Kvadratiskt detaljfönster (snabbare)
@@ -826,28 +889,32 @@ PREFERENCES_TP_LABEL;Verktygspanel:
 PREFERENCES_TP_USEICONORTEXT;Använd ikoner istället för text
 PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
 PREFERENCES_TUNNELMETADATA;Tunnla oförändrad IPTC/XMP till utfilen
+PREFERENCES_USEBUNDLEDPROFILES;Visa förinstallerade profiler
 PREFERENCES_USESYSTEMTHEME;Använd systemtema
 PREFERENCES_VIEW;Utenhetens vitbalansvärde (datorskärm, TV, bildkanon, etc.)
 PREFERENCES_WORKFLOW;Arbetsflöde
 PROFILEPANEL_COPYPPASTE;Parametrar att kopiera
 PROFILEPANEL_FILEDLGFILTERANY;Vilka filer som helst
 PROFILEPANEL_FILEDLGFILTERPP;Efterbehandlingsprofiler
+PROFILEPANEL_GLOBALPROFILES;Förinstallerade profiler
 PROFILEPANEL_LABEL;Efterbehandlingsprofiler
 PROFILEPANEL_LOADDLGLABEL;Ladda efterbehandlingsparametrar...
 PROFILEPANEL_LOADPPASTE;Parametrar att ladda
 PROFILEPANEL_MODE_TIP;Ifyllnadsläge för profil.\n\nKnappen nedtryckt: partiell profil konverteras till full profil; de saknade värdena kommer att fyllas i mha standardvärden. \n\nKnapp släppt: Profilen kommer att appliceras som den är, och förändrar bara de värden som den själv innehåller.
+PROFILEPANEL_MYPROFILES;Mina profiler
 PROFILEPANEL_PASTEPPASTE;Parametrar att klistra in
 PROFILEPANEL_PCUSTOM;Egen
 PROFILEPANEL_PFILE;Från fil
-PROFILEPANEL_PLASTPHOTO;Senaste foto
+PROFILEPANEL_PINTERNAL;Neutral
+PROFILEPANEL_PLASTPHOTO;Senaste fotot
 PROFILEPANEL_PLASTSAVED;Senast sparad
 PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Spara efterbehandlingsparametrar...
 PROFILEPANEL_SAVEPPASTE;Parametrar att spara
-PROFILEPANEL_TOOLTIPCOPY;Kopiera nuvarande profil till klippbordet
-PROFILEPANEL_TOOLTIPLOAD;Ladda profil
-PROFILEPANEL_TOOLTIPPASTE; Klistra in profil från klippbordet
-PROFILEPANEL_TOOLTIPSAVE;Spara nuvarande profil
+PROFILEPANEL_TOOLTIPCOPY;Kopiera nuvarande profil till klippbordet.\n<b>Ctrl-vänsterklicka</b> för att välja de parametrar du vill kopiera
+PROFILEPANEL_TOOLTIPLOAD;Ladda profil.\n<b>Ctrl-klicka</b> för att välja de parametrar du vill ladda
+PROFILEPANEL_TOOLTIPPASTE; Klistra in profil från klippbordet.\n<b>Ctrl-klicka</b> för att välja de parametrar du vill klistra in
+PROFILEPANEL_TOOLTIPSAVE;Spara nuvarande profil.\n<b>Ctrl-klicka</b> för att välja de parametrar du vill spara
 PROGRESSBAR_BADPIXELS;Dåliga pixlar...
 PROGRESSBAR_CACORRECTION;Reducera kromatiska abberationer...
 PROGRESSBAR_DARKFRAME;Mörkbild...
@@ -868,16 +935,14 @@ PROGRESSBAR_SAVEJPEG;Sparar JPEG-fil...
 PROGRESSBAR_SAVEPNG;Sparar PNG-fil...
 PROGRESSBAR_SAVETIFF;Sparar TIFF-fil...
 PROGRESSBAR_SNAPSHOT_ADDED;Bokmärke tillagt.
-PROGRESSDLG_LOADING;Laddar bilden...
-PROGRESSDLG_PROCESSING;Bearbetar bilden...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profilen har ändrats i filhanteraren
-PROGRESSDLG_SAVING;Sparar fil...
 QINFO_FOCALLENGTH;Brännvidd
 QINFO_ISO;ISO
 QINFO_LENS;Objektiv
 QINFO_NOEXIF;EXIF-information ej tillgänglig.
 SAVEDLG_AUTOSUFFIX;Lägg automatiskt till en ändelse om filnamnet redan existerar
 SAVEDLG_FILEFORMAT;Filformat
+SAVEDLG_FORCEFORMATOPTS;Kräv att inställningar sparas
 SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filer
 SAVEDLG_PNGCOMPR;PNG-komprimering
@@ -893,85 +958,169 @@ SAVEDLG_SUBSAMP_3;Högsta kvalitet
 SAVEDLG_SUBSAMP_TOOLTIP;Högsta komprimering: 4:1:1\nBalanserad: 4:2:2\nHögsta kvalitet: 4:4:4
 SAVEDLG_TIFFFILTER;TIFF-filer
 SAVEDLG_TIFFUNCOMPRESSED;Okomprimerad TIFF
-SAVEDLG_WARNFILENAME;Filens namn
+SAVEDLG_WARNFILENAME;Filen kommer att heta
 SHCSELECTOR_TOOLTIP;Klicka på höger musknapp för att återställa \nde tre reglagens positioner
 THRESHOLDSELECTOR_BL;Nederst till vänster
 THRESHOLDSELECTOR_BR;Nederst till höger
 THRESHOLDSELECTOR_B;Nederst
-THRESHOLDSELECTOR_HINT;Håll nere  <b>Shift</b> tangenten för att flytta individuella kontrollpunkter.
+THRESHOLDSELECTOR_HINT;Håll nere  <b>Shift</b> tangenten för att flytta de olika kontrollpunkterna.
 THRESHOLDSELECTOR_TL;Överst till vänster
 THRESHOLDSELECTOR_TR;Överst till höger
 THRESHOLDSELECTOR_T;Överst
-TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde. Kortkommando: C
-TOOLBAR_TOOLTIP_HAND;Handverktyg. Kortkommando: N
-TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp. Kortkommando: S
-TOOLBAR_TOOLTIP_WB;Egen vitbalans. Kortkommando: W
+TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde.\nKortkommando: <b>c</b>
+TOOLBAR_TOOLTIP_HAND;Handverktyg. \nKortkommando:<b>h</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp. \nKortkommando:<b>s</b>\n\nDra en linje längs antingen en vertikal eller horisontell linje i bilden för att räta upp bilden. Roterationsvinkeln visas bredvid linjen du drar. Rotationscentrum är det geometriska mittpunkten i bilden.
+TOOLBAR_TOOLTIP_WB;Egen vitbalans. \nKortkommando:<b>w</b>
+TP_BWMIX_AUTOCH;Auto
+TP_BWMIX_AUTOCH_TIP;Beräkna värden som optimerar kanalmixern
+TP_BWMIX_BLUE;Blå
+TP_BWMIX_CC_ENABLED;Justera komplementär färg
+TP_BWMIX_CC_TOOLTIP;Aktivera för att tillåta automatisk justering av komplementär färg i ROYGCBPM-läget
+TP_BWMIX_CHANNEL;Luminansequalizer
+TP_BWMIX_CURVEEDITOR1;'Före'-kurva
+TP_BWMIX_CURVEEDITOR2;'Efter'-kurva
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tonkurva efter S/V-konvertering, vid slutet av behandlingen
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tonkurva precis före S/V-konverteringen\nKan ta färgkomponenterna i beaktande
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Ändra luminansen som en funktion av nyansen\nNotera extrema värden som kan orsaka artefakter
+TP_BWMIX_CYAN;Cyan
+TP_BWMIX_FILTER;Färgfilter
+TP_BWMIX_FILTER_BLUEGREEN;Blå-Grön
+TP_BWMIX_FILTER_BLUE;Blå
+TP_BWMIX_FILTER_GREENYELLOW;Grön-Gul
+TP_BWMIX_FILTER_GREEN;Grön
+TP_BWMIX_FILTER_NONE;Ingen
+TP_BWMIX_FILTER_PURPLE;Lila
+TP_BWMIX_FILTER_REDYELLOW;Röd-Gull
+TP_BWMIX_FILTER_RED;Röd
+TP_BWMIX_FILTER_TOOLTIP;Färgfiltret simulerar bilder tagna med ett färgat filter placerat framför objektivet. Färgade filter reducerar transmissionen av ett specifikt spektrum av färger och påverkar deras ljushet. T. ex. mörkar ett rött filter blå himmel.
+TP_BWMIX_FILTER_YELLOW;Gul
+TP_BWMIX_GAMMA;Gamma-korrigering
+TP_BWMIX_GAM_BLUE;Blå kanal
+TP_BWMIX_GAM_GREEN;Grön kanal
+TP_BWMIX_GAM_RED;Röd kanal
+TP_BWMIX_GAM_TOOLTIP;Korrigera gamma för varje kanal i RGB
+TP_BWMIX_GREEN;Grön
+TP_BWMIX_LABEL;Svartvitt
+TP_BWMIX_MAGENTA;Magenta
+TP_BWMIX_MET;Metod
+TP_BWMIX_MET_CHANMIX;Kanalmixer
+TP_BWMIX_MET_DESAT;Reducera mättnad
+TP_BWMIX_MET_LUMEQUAL;Luminansequalizer
+TP_BWMIX_MIXC;Blanda
+TP_BWMIX_MIXF;Blanda filter
+TP_BWMIX_NEUTRAL;Återställ mixer
+TP_BWMIX_NEUTRAL_TIP;Återställ alla värden (filter, kanalmixer) till standard
+TP_BWMIX_ORANGE;Orange
+TP_BWMIX_PURPLE;Lila
+TP_BWMIX_RED;Röd
+TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Totalt: %4%%
+TP_BWMIX_RGBLABEL_HINT;Slutliga RGB-faktorer som tar hand om alla mixerinställningar\n"Totalt" visar summan av RGB-värden som faktiskt används:\n- alltid 100% i relativt läge \n- högre (ljusare) eller lägre (mörkare) än 100% i absolut läge.
+TP_BWMIX_RGB_TOOLTIP;Blanda RGB-kanalerna. Använd förinställningar som en vägledning.\nNotera negativa värden som kan orsaka artefakter eller felaktiga beteenden.
+TP_BWMIX_SETTING;Förinställningar
+TP_BWMIX_SETTING_TOOLTIP;Olika förinställningar (film, landskap...) eller manuella inställningar av kanalmixern
+TP_BWMIX_SET_HIGHCONTAST;Hög kontrast
+TP_BWMIX_SET_HIGHSENSIT;Hög känslighet
+TP_BWMIX_SET_HYPERPANCHRO;Hyperpankromatisk
+TP_BWMIX_SET_INFRARED;Infraröd
+TP_BWMIX_SET_LANDSCAPE;Landskap
+TP_BWMIX_SET_LOWSENSIT;Låg känslighet
+TP_BWMIX_SET_LUMINANCE;Luminans
+TP_BWMIX_SET_NORMCONTAST;Normal kontrast
+TP_BWMIX_SET_ORTHOCHRO;Orthokromatisk
+TP_BWMIX_SET_PANCHRO;Pankromatisk
+TP_BWMIX_SET_PORTRAIT;Porträtt
+TP_BWMIX_SET_RGBABS;Kanalmixer, absolut RGB
+TP_BWMIX_SET_RGBREL;Kanalmixer, relativt RGB
+TP_BWMIX_SET_ROYGCBPMABS;Kanalmixer, absolut ROYGCBPM
+TP_BWMIX_SET_ROYGCBPMREL;Kanalmixer, relativt ROYGCBPM
+TP_BWMIX_TCMODE_FILMLIKE;S/V Filmlik
+TP_BWMIX_TCMODE_SATANDVALBLENDING;S/V mättnad och värdeblandning
+TP_BWMIX_TCMODE_STANDARD;S/V standard
+TP_BWMIX_TCMODE_WEIGHTEDSTD;S/V viktad standard
+TP_BWMIX_VAL;L
+TP_BWMIX_YELLOW;Gul
 TP_CACORRECTION_BLUE;Blå
 TP_CACORRECTION_LABEL;Reducera kromatiska abberationer
 TP_CACORRECTION_RED;Röd
-TP_CHMIXER_BLUE;Blå
-TP_CHMIXER_GREEN;Grön
+TP_CHMIXER_BLUE;Blå kanal
+TP_CHMIXER_GREEN;Grön kanal
 TP_CHMIXER_LABEL;Kanalmixer
-TP_CHMIXER_RED;Röd
+TP_CHMIXER_RED;Röd kanal
 TP_CHROMATABERR_LABEL;Kromatiska abberationer
-TP_COARSETRAF_DEGREE;grad:
 TP_COARSETRAF_TOOLTIP_HFLIP;Vänd horisontellt
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotera åt vänster
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotera åt höger
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotera åt vänster.\nKortkommando: <b>[</b>\n\nKortkommando i enkelbildsläge: <b>Alt-[</b>
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotera åt höger.\nKortkommando: <b>]</b>\n\nKortkommando i enkelfliksläge: <b>Alt-]</b>
 TP_COARSETRAF_TOOLTIP_VFLIP;Vänd vertikalt
+TP_COLORAPP_ADAPTSCENE;Luminans hos vyn
+TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolut luminans hos vyn (cd/m²).\n1) Beräknas från exif-informationen:\nSlutartid - ISO-tal - Bländartal - exponeringskompensation gjord av kameran.\n2) Beräknas från vitpunkten hos råbilden och RT:s reglage för exponeringskompensation
+TP_COLORAPP_ADAPTVIEWING;Betrakningsluminans (cd/m²)
+TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolut luminans hos betrakningsomgivningen\n(vanligtvis 16cd/m²)
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;Om checkboxen är aktiverad (rekommenderas) beräknar RT ett optimalt värde från exif-informationen.\nFör att sätta ett värde manuellt, avaktivera funktionen först
 TP_COLORAPP_ALGO;Algoritm
 TP_COLORAPP_ALGO_ALL;Alla
+TP_COLORAPP_ALGO_JC;Ljushet + kroma (JC)
 TP_COLORAPP_ALGO_JS;Ljushet + mättnad (JS)
+TP_COLORAPP_ALGO_QM;Ljushet + Colorfulness (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Låter dig välja mellan delmängder av eller alla parametrar.
+TP_COLORAPP_BADPIXSL;Filter för heta/dålia pixlar
+TP_COLORAPP_BADPIXSL_TOOLTIP;Dämpa heta/dåliga (ljust färgade) pixlar.\n 0=ingen effekt 1=median 2=gaussian.\n\nDe här artefakterna kommer sig av tillkortakommanden i CIECAM02. Alternativt, justera bilden så att mycket mörka skuggor undviks
 TP_COLORAPP_BRIGHT;Ljushet(Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;Ljushet i CIECAM02 tar i beaktande det vitas luminositet och skiljer sig från ljushet i  Lab och RGB
 TP_COLORAPP_CHROMA;Kroma (C)
+TP_COLORAPP_CHROMA_M;Colorfulnes (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness i CIECAM02 skiljer sig från colofulness i Lab och RGB
 TP_COLORAPP_CHROMA_S;Kroma (S)
+TP_COLORAPP_CHROMA_S_TOOLTIP;Mättnad i CIECAM02 skiljer sig från mättnad i Lab och RGB
+TP_COLORAPP_CIECAT_DEGREE;CAT02-anpassning
 TP_COLORAPP_CONTRAST;Kontrast (J)
 TP_COLORAPP_CONTRAST_Q;Kontrast(Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast i CIECAM02 för Q-reglaget; skiljer sig från kontrast i Lab och RGB
+TP_COLORAPP_CONTRAST_TOOLTIP;Kontrast i CIECAM02 för J-reglaget; skiljer sig från kontrast i Lab och RGB
 TP_COLORAPP_CURVEEDITOR1;Tonkurva 1
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Visar histogrammet hos L (Lab) före CIECAM02.\nOm checkboxen "Show CIECAM02 output histograms in curves" är aktiverad, visas histogrammet för J och Q efter CIECAM02.\n\nJ och Q visas ej i histogrammet i huvudpanelen.\n\nFör slutligt resultat, se huvudpanelens histogram
 TP_COLORAPP_CURVEEDITOR2;Tonkurva 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Används på samma sätt som med den andra tonkurvan.
 TP_COLORAPP_CURVEEDITOR3;Färgkurva
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Justera antingen kroma, mättnad eller colorfulness.\n\nVisar histogrammet hos kromaciteten (Lab) före CIECAM02.\nOm checkboxen "Show CIECAM02 output histograms in curves" är aktiverad, visas histogrammet för C, s eller M efter CIECAM02.\n\nC, s och M visas ej i histogrammet i huvudpanelen.\n\nFör slutligt resultat, se huvudpanelens histogram
+TP_COLORAPP_DATACIE;Resultat av CIECAM02-histogram i kurvor
+TP_COLORAPP_DATACIE_TOOLTIP;När detta är aktiverat, visar CIECAM02-histogram ungefärliga värden/intervall för J eller Q, och C, s eller M efter justeringar i CIECAM02.\nDet här valet påverkar inte huvudhistogrammet.\n\nNär detta är avaktiverat, visar histogrammet för CIECAM02-kurvor Lab-värden innan justeringar av CIECAM02
+TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Om den här checkboxen är aktiverad (rekommenderas), beräknar RT ett optimalt värde som sedan dels används av CAT02 och dels för hela CIECAM02.\nFör att ange ett värde manuellt, avaktivera checkboxen först (värden över 65 rekommenderas)
+TP_COLORAPP_DEGREE_TOOLTIP;Mängd CIE kromatisk anpassning 2002
 TP_COLORAPP_EQUAL;Lika med
+TP_COLORAPP_GAMUT;Kontroll av gamut (Lab)
+TP_COLORAPP_GAMUT_TOOLTIP;Tillåt kontroll av gamut i Lab-läge
 TP_COLORAPP_HUE;Nyans(h)
 TP_COLORAPP_HUE_TOOLTIP;Nyans h) - vinkel mellan 0° och 360°
-TP_COLORAPP_LABEL_CAM02;Förändra bild med CIECAM
+TP_COLORAPP_LABEL_CAM02;Bildjusteringar
+TP_COLORAPP_LABEL_SCENE;Förhållanden då bilden togs
+TP_COLORAPP_LABEL_VIEWING;Förhållanden vid betraktande
 TP_COLORAPP_LIGHT;Ljushet (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Ljushet i CIECAM02 är ej lika som de i Lab och RGB
 TP_COLORAPP_MODEL;Vitpunktsmodell
+TP_COLORAPP_MODEL_TOOLTIP;Vitpunktsmodell\n\n<b>WB [RT] + [output]:</b>\nRT:s vitbalans används för bilden, CIECAM02 sätts till D50, utmatningsenhetens vitbalans sätts i <i>Inställningar > Färghantering</i>\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT:s vitbalansinställningar används av CAT02 och utmatningsenhetens vitbalans sätts i Inställningar
 TP_COLORAPP_RSTPRO;Bevara röda färger och hudtoner
 TP_COLORAPP_RSTPRO_TOOLTIP;Bevara röda färger och hudtoner (reglage och kurvor)
+TP_COLORAPP_SHARPCIE;Skärpa, Kontrast genom detaljnivåer, Mikrokontrast och Fyll ut överstrålning med kvalitetskontroll
+TP_COLORAPP_SHARPCIE_TOOLTIP;Skärpa, Kontrast genom detaljnivåer, Mikrokontrast och Fyll ut överstrålning kommer att använda CIECAM02 om den är aktiverad
 TP_COLORAPP_SURROUND;Omgivning
 TP_COLORAPP_SURROUND_AVER;Medel
 TP_COLORAPP_SURROUND_DARK;Mörk
 TP_COLORAPP_SURROUND_DIM;Dunkelt
 TP_COLORAPP_SURROUND_EXDARK;Extremt mörkt
+TP_COLORAPP_SURROUND_TOOLTIP;Ändra toner och färger för att ta i beaktande betraktningsförhållandena för utmatningsenheten\n\n<b>Medel:</b>\nMedelljusa omgivningar (standard)\nBilden kommer ej att ändras\n\n<b>Dunkelt:</b>\nDunkla omgivningar (TV)\nBilden kommer att bli aningen mörkare \n\n<b>Mörk:</b>\nMörka omgivningar (projektor)\nBilden kommer att bli mörkare\n\n<b>Extremt mörkt:</b>\nExtremt mörka omgivningar (cutsheet)\nBilden kommer bli mycket mörk
 TP_COLORAPP_SURSOURCE;Mörk omgivning
 TP_COLORAPP_SURSOURCE_TOOLTIP;Kan användas om källbilden har en mörk kant.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Ljushet
 TP_COLORAPP_TCMODE_CHROMA;Kroma
 TP_COLORAPP_TCMODE_LABEL1;Kurvläge 1
 TP_COLORAPP_TCMODE_LABEL2;Kurvläge 2
+TP_COLORAPP_TCMODE_LABEL3;Kromaläge för kurvor
 TP_COLORAPP_TCMODE_LIGHTNESS;Ljushet
 TP_COLORAPP_TCMODE_SATUR;Mättnad
 TP_COLORAPP_TONECIE;Tone mapping som använder CIECAM02 ljushet (Q)
-TP_COLORBOOST_ACHANNEL;Kanal "a"
-TP_COLORBOOST_AMOUNT;Mängd
-TP_COLORBOOST_AVOIDCOLORCLIP;Undvik att färgen klipper
-TP_COLORBOOST_BCHANNEL;Kanal "b"
-TP_COLORBOOST_CHANNEL;Kanal
-TP_COLORBOOST_CHSEPARATE;Separat
-TP_COLORBOOST_ENABLESATLIMITER;Mättnadsbegränsning
-TP_COLORBOOST_LABEL;Färgförstärkning
-TP_COLORBOOST_SATLIMIT;Mättnadsgräns
-TP_COLORDENOISE_EDGESENSITIVE;Kantkänslighet
-TP_COLORDENOISE_EDGETOLERANCE;Kanttolerans
-TP_COLORDENOISE_LABEL;Färgbrusreducering
-TP_COLORDENOISE_RADIUS;Radie
-TP_COLORSHIFT_BLUEYELLOW;Blå-Gul
-TP_COLORSHIFT_GREENMAGENTA;Grön-Magenta
-TP_COLORSHIFT_LABEL;Färgskiftningar
-TP_CROP_DPI;DPI=
+TP_COLORAPP_TONECIE_TOOLTIP;Om det här valet ej är aktiverat, görs tonmappningen i Lab.\nOm det här valet är aktiverat, görs tonmappningen mha CIECAM02.\nTonmappningsverktyget måste vara aktiverad för att den här inställningen ska ha någon effekt
+TP_COLORAPP_WBCAM;Vitbalans [RT+CAT02] + [utmatning]
+TP_COLORAPP_WBRT;Vitbalans [RT] + [utmatning]
 TP_CROP_FIXRATIO;Fast proportion
 TP_CROP_GTDIAGONALS;Diagonalregeln
 TP_CROP_GTEPASSPORT;Biometriskt pass
@@ -984,11 +1133,11 @@ TP_CROP_GTHARMMEANS4;Harmoniskt medel 4
 TP_CROP_GTNONE;Ingen
 TP_CROP_GTRULETHIRDS;Tredjedelsregeln
 TP_CROP_GUIDETYPE;Guidetyp:
-TP_CROP_H;H
+TP_CROP_H;Höjd
 TP_CROP_LABEL;Beskär
 TP_CROP_PPI;PPI=
 TP_CROP_SELECTCROP;Välj beskärningsområde
-TP_CROP_W;B
+TP_CROP_W;Bredd
 TP_CROP_X;x
 TP_CROP_Y;y
 TP_DARKFRAME_AUTOSELECT;Välj svartbild automatiskt
@@ -996,17 +1145,21 @@ TP_DARKFRAME_LABEL;Svartbild
 TP_DEFRINGE_LABEL;Fyll ut överstrålning
 TP_DEFRINGE_RADIUS;Radie
 TP_DEFRINGE_THRESHOLD;Tröskelvärde
-TP_DETAIL_AMOUNT;Mängd
+TP_DIRPYRDENOISE_BLUE;Krominans - Blå-Gul
 TP_DIRPYRDENOISE_CHROMA;Kroma
-TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kan användas på rå- och icke-råbilder.\n\nFör icke-råbilder beror brusreduceringen (~luminans) på in-profilens gamma. Gamma hos sRGB antas, och därmed; om in-bildens profil har ett annat gammavärde, så kommer brusreduceringen att skilja sig åt.
+TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kan användas på rå- och icke-råbilder.\n\nFör icke-råbilder beror brusreduceringen (~luminans) på in-profilens gamma. Gamma hos sRGB antas, och således: om bildens profil har ett annat gammavärde, så kommer brusreduceringen att variera.
+TP_DIRPYRDENOISE_ENH;Förbättrat läge
+TP_DIRPYRDENOISE_ENH_TOOLTIP;Ökar kvaliteten på brusreduceringen till kostnad av 20 % längre beräkningstid
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varierar brusreduceringens styrka över hela skalan av toner. Mindre värden riktar sig mot de mörka partierna i bilden, medan större värden utökar effekten till högdagrarna.
 TP_DIRPYRDENOISE_LABEL;Brusreducering
+TP_DIRPYRDENOISE_LAB;Lab
 TP_DIRPYRDENOISE_LDETAIL;Luminansdetalj
 TP_DIRPYRDENOISE_LUMA;Luminans
 TP_DIRPYRDENOISE_METHOD;Metod
 TP_DIRPYRDENOISE_METHOD_TOOLTIP;För råfiler kan antingen RGB- eller Labmetoder användas.\n\nFör icke-råfiler kommer Labmetoden att användas, oavsett vad som är valt.
 TP_DIRPYRDENOISE_PERF;RGB-läge (råfiler)
+TP_DIRPYRDENOISE_RED;Krominans - Röd-Grön
 TP_DIRPYRDENOISE_RGB;RGB
 TP_DIRPYREQUALIZER_LABEL;Kontrast genom detaljnivåer
 TP_DIRPYREQUALIZER_LUMACOARSEST;Grövst
@@ -1020,40 +1173,34 @@ TP_DISTORTION_AUTO;Automatisk distorsionskorrigering
 TP_DISTORTION_AUTO_TIP;(Experimentell) Korrigera automatiskt objektivdistorsion för vissa kameror (M4/3, vissa kompaktkameror, etc.)
 TP_DISTORTION_LABEL;Distorsion
 TP_EPD_EDGESTOPPING;Stoppa vid kanter
-TP_EPD_LABEL;Tone Mapping (Lab/CIECAM02)
+TP_EPD_LABEL;Tonmappning
 TP_EPD_REWEIGHTINGITERATES;Återviktade iterationer
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Styrka
-TP_EQUALIZER_CONTRAST_MINUS;Minska kontrasten
-TP_EQUALIZER_CONTRAST_PLUS;Öka kontrasten
-TP_EQUALIZER_FINEST;Finast
-TP_EQUALIZER_LABEL;Waveletequalizer
-TP_EQUALIZER_LARGEST;Grövst
-TP_EQUALIZER_NEUTRAL;Neutral
-TP_EXPOSCORR_LABEL;Vitpunktskorrigering, råbild
+TP_EPD_TOOLTIP;Tonmappning är möjligt via Lab-läge (standard) och CIECAM02-läge.\n\nFör att aktivera CIECAM02- tonmappningsläget, aktivera följande:\n1. CIECAM02\n2. Algoritm="Ljushet + Colorfulness (QM)"\n3. "Tonmappning mha CIECAM02 ljushet (Q)"
+TP_EXPOSCORR_LABEL;Vit- och svartpunktskorrigering, råformat
 TP_EXPOSURE_AUTOLEVELS;Autonivåer
+TP_EXPOSURE_AUTOLEVELS_TIP;Slå av/på autonivåer för att automatiskt beräkna och använda värden baserat på bildanalys\nAktiverar högdageråterställning om nödvändigt
 TP_EXPOSURE_BLACKLEVEL;Svärta
-TP_EXPOSURE_BRIGHTNESS;Intensitet
-TP_EXPOSURE_CLIP;Klippnivå
-TP_EXPOSURE_CLIP_TIP;Andelen pixlar som ska klippas när auto-nivåer används.
+TP_EXPOSURE_BRIGHTNESS;Ljushet
+TP_EXPOSURE_CLIP;Klippnivå %
+TP_EXPOSURE_CLIP_TIP;Andelen pixlar som ska klippas när autonivåer används.
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Högdageråterställning, tröskelvärde
 TP_EXPOSURE_COMPRHIGHLIGHTS;Högdageråterställning
 TP_EXPOSURE_COMPRSHADOWS;Skuggåterställning
 TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR1;Tonkurva 1
 TP_EXPOSURE_CURVEEDITOR2;Tonkurva 2
-TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Var vänlig och se följande del i manualen för att lära dig hur man uppnår bästa resultat med dubbla kurvor:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
-TP_EXPOSURE_CURVEEDITOR;Tonkurva
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Beakta följande del i manualen för att se hur man uppnår bästa resultat med dubbla kurvor:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_EXPCOMP;Exponeringskompensation
 TP_EXPOSURE_LABEL;Exponering
 TP_EXPOSURE_SATURATION;Mättnad
 TP_EXPOSURE_TCMODE_FILMLIKE;Filmlik
 TP_EXPOSURE_TCMODE_LABEL1;Kurvläge 1
 TP_EXPOSURE_TCMODE_LABEL2;Kurvläge 2
-TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Mättnad och värdeblandning
+TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Mättnads- och värdeblandning
 TP_EXPOSURE_TCMODE_STANDARD;Standard
 TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Viktad standard
-TP_EXPO_AFTER; Efter interpolation (före RGB-konvertering)
 TP_FLATFIELD_AUTOSELECT;Autoval
 TP_FLATFIELD_BLURRADIUS;Oskärperadie
 TP_FLATFIELD_BLURTYPE;Oskärpetyp
@@ -1062,69 +1209,69 @@ TP_FLATFIELD_BT_HORIZONTAL;Horisontell
 TP_FLATFIELD_BT_VERTHORIZ;Vertikal + horisontell
 TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_LABEL;Plattfält
-TP_GAMMA_COMMENT;(utprofilen inaktiverad förutom "default")
 TP_GAMMA_CURV;gamma
 TP_GAMMA_FREE;Obunden gamma
-TP_GAMMA_OUTPUT;Gamma ut
-TP_GAMMA_SLOP;lutning(linjär)
+TP_GAMMA_OUTPUT;Utmatningsgamma
+TP_GAMMA_SLOP;Lutning (linjär)
+TP_GRADIENT_CENTER;Centrum
+TP_GRADIENT_CENTER_X;Centrum, X
+TP_GRADIENT_CENTER_X_TOOLTIP;Rotationspunkt, X: -100=vänstra kanten, 0=centrum, +100=högra kanten
+TP_GRADIENT_CENTER_Y;Centrum, Y
+TP_GRADIENT_CENTER_Y_TOOLTIP;Rotationspunkt, Y: -100=vänstra kanten, 0=centrum, +100=högra kanten
+TP_GRADIENT_DEGREE;Vinkel
+TP_GRADIENT_DEGREE_TOOLTIP;Rotationsvinkel i grader
+TP_GRADIENT_FEATHER;Fjäder
+TP_GRADIENT_FEATHER_TOOLTIP;Bredd på gradienten i procent av bilddiagonalen
+TP_GRADIENT_LABEL;Graderat filter
+TP_GRADIENT_STRENGTH;Styrka
+TP_GRADIENT_STRENGTH_TOOLTIP;Filterstyrka i steg
 TP_HLREC_BLEND;Blanda
 TP_HLREC_CIELAB;CIELab mix
 TP_HLREC_COLOR;Färgspridning
+TP_HLREC_ENA_TOOLTIP;Kan aktiveras av autonivåer
 TP_HLREC_LABEL;Högdageråterställning
 TP_HLREC_LUMINANCE;Bättring av luminans
 TP_HLREC_METHOD;Metod:
-TP_HSVEQUALIZER1;Röd
-TP_HSVEQUALIZER2;Orange
-TP_HSVEQUALIZER3;Gul
-TP_HSVEQUALIZER4;Grön
-TP_HSVEQUALIZER5;Vatten
-TP_HSVEQUALIZER6;Blå
-TP_HSVEQUALIZER7;Lila
-TP_HSVEQUALIZER8;Magenta
-TP_HSVEQUALIZER_CHANNEL;HSV-kanal
+TP_HSVEQUALIZER_CHANNEL;Kanal
 TP_HSVEQUALIZER_HUE;Nyans
 TP_HSVEQUALIZER_LABEL;HSV-equalizer
 TP_HSVEQUALIZER_NEUTRAL;Neutral
 TP_HSVEQUALIZER_SAT;Mättnad
 TP_HSVEQUALIZER_VAL;Värde
-TP_ICM_BLENDCMSMATRIX;Mixa högdagrar med matris.
+TP_ICM_BLENDCMSMATRIX;Mixa högdagrar med matris
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Möjliggör återskapande av utbrända högdagrar när LUT-baserade ICC-profiler används.
+TP_ICM_DCPILLUMINANT;Illuminans
+TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolerad
+TP_ICM_DCPILLUMINANT_TOOLTIP;Välj vilken inbäddad DCP- illuminans som ska användas. Standard är "interpolerad" som är en blandning mellan de två baserad på vitbalans. Valet är endast aktiverat om en dubbelt illuminerad DCP med interpoleringsstöd vald
 TP_ICM_FILEDLGFILTERANY;Vilka filer som helst
-TP_ICM_FILEDLGFILTERICM;ICC-profiler
-TP_ICM_GAMMABEFOREINPUT;Profilapplicerad gamma
-TP_ICM_INPUTCAMERAICC;Kamerastandard eller ICC
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Använd RawTherapees kameraspecifika DCP- eller ICC-färgprofiler. Dessa profiler är mer exakta än enkla matrisprofiler, men finns ej för alla kameror. Profilerna lagras i /iccprofiles/input och i /dcpprofiles katalogerna och hämtas automatiskt baserat på ett filnamn som exakt matchar kameramodellen.
-TP_ICM_INPUTCAMERA;Kameraval
-TP_ICM_INPUTCAMERA_TOOLTIP;Använd enkel färgmatris från dcraw, förbättrad version från RawTherapee (vilken som är tillgänglig baserad på kameramodell) eller inbäddad från DNG.
+TP_ICM_FILEDLGFILTERICM;Färgprofiler
+TP_ICM_INPUTCAMERAICC;Automatiskt vald kameraprofil
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Använd RawTherapees kameraspecifika DCP- eller ICC-färgprofiler. Dessa profiler är mer exakta än enkla matrisprofiler, men finns inte för alla kameror. Profilerna lagras i /iccprofiles/input- och i /dcpprofiles-katalogerna och hämtas automatiskt baserat på ett filnamn som exakt matchar kameramodellen.
+TP_ICM_INPUTCAMERA;Standard för kameran
+TP_ICM_INPUTCAMERA_TOOLTIP;Använd enkel färgmatris från dcraw, förbättrad version från RawTherapee (oavsett vilken som är tillgänglig baserad på kameramodell) eller inbäddad från DNG.
 TP_ICM_INPUTCUSTOM;Egen
-TP_ICM_INPUTCUSTOM_TOOLTIP;Välj DCP/ICC-färgprofil för kameran.
-TP_ICM_INPUTDLGLABEL;Välj inmatnings ICC-profil...
+TP_ICM_INPUTCUSTOM_TOOLTIP;Välj din egen DCP/ICC-färgprofil för kameran.
+TP_ICM_INPUTDLGLABEL;Välj färginmatningsprofil...
 TP_ICM_INPUTEMBEDDED;Använd inbäddad, om möjligt
 TP_ICM_INPUTEMBEDDED_TOOLTIP;Använd den färgprofil som är inbäddad i icke-råfiler.
 TP_ICM_INPUTNONE;Ingen profil
-TP_ICM_INPUTNONE_TOOLTIP;Använd ingen infärgprofil alls. Används bara i specialfall.
+TP_ICM_INPUTNONE_TOOLTIP;Använd ingen färginmatningsprofil alls. Används bara i specialfall.
 TP_ICM_INPUTPROFILE;Inmatningsprofil
-TP_ICM_LABEL;ICM
-TP_ICM_NOICM;Ingen ICM: sRGB-utmatning
-TP_ICM_OUTPUTDLGLABEL;Välj utmatnings ICC-profil...
+TP_ICM_LABEL;Färghantering
+TP_ICM_NOICM;Ingen färghantering: sRGB-utmatning
+TP_ICM_OUTPUTDLGLABEL;Välj färgutmatningsprofil...
 TP_ICM_OUTPUTPROFILE;Utmatningsprofil
-TP_ICM_PREFERREDPROFILE;Föredragen DCP profil
-TP_ICM_PREFERREDPROFILE_1;Dagsljus
-TP_ICM_PREFERREDPROFILE_2;Glödlampa
-TP_ICM_PREFERREDPROFILE_3;Lysrör
-TP_ICM_PREFERREDPROFILE_4;Blixt
 TP_ICM_SAVEREFERENCE;Spara referensbild för profilering
 TP_ICM_TONECURVE;Använd DCP:s tonkurva
 TP_ICM_TONECURVE_TOOLTIP;Aktivera för att använda tonkurvor som kan finnas i DCP-profilen.
 TP_ICM_WORKINGPROFILE;Färgrymd
 TP_IMPULSEDENOISE_LABEL;Brusreducering mha av stegsvar
 TP_IMPULSEDENOISE_THRESH;Tröskelvärde
-TP_LABCURVE_AVOIDCOLORCLIP;Undvik att färgen klipper
 TP_LABCURVE_AVOIDCOLORSHIFT;Undvik färgskift
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Passa färger i färgrymden och applicera Munsell-korrigering
-TP_LABCURVE_BRIGHTNESS;Intensitet
-TP_LABCURVE_BWTONING;S/V-toning
+TP_LABCURVE_BRIGHTNESS;Ljushet
 TP_LABCURVE_CHROMATICITY;Kroma
+TP_LABCURVE_CHROMA_TOOLTIP;För att åstadkomma en S/V-toning, sätt Kroma till -100
 TP_LABCURVE_CONTRAST;Kontrast
 TP_LABCURVE_CURVEEDITOR;Luminanskurva
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Grön mättad
@@ -1135,50 +1282,61 @@ TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blå mättad
 TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blå pastell
 TP_LABCURVE_CURVEEDITOR_B_RANGE3;Gul pastell
 TP_LABCURVE_CURVEEDITOR_B_RANGE4;Gul mättad
+TP_LABCURVE_CURVEEDITOR_CC;CC
 TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Svag
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastell
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Mättad
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Kroma enligt kroma C=f(C)
 TP_LABCURVE_CURVEEDITOR_CH;CH
-TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Kroma enligt nyansen
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminans enligt kroma
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Kroma enligt nyans C=f(H)
+TP_LABCURVE_CURVEEDITOR_CL;CL
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Kroma enligt luminans C=f(L)
+TP_LABCURVE_CURVEEDITOR_HH;HH
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Nyans enligt nyans H=f(H)
+TP_LABCURVE_CURVEEDITOR_LC;LC
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminans enligt kroma L=f(C)
+TP_LABCURVE_CURVEEDITOR_LH;LH
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminans enligt nyans L=f(H)
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminans enligt luminans L=f(L)
 TP_LABCURVE_ENABLESATLIMITER;Slå på mättnadsbegränsare
-TP_LABCURVE_LABEL;Labkurvor
+TP_LABCURVE_LABEL;Labjusteringar
 TP_LABCURVE_LCREDSK;Begränsa LC till röda färger och hudtoner
-TP_LABCURVE_LCREDSK_TIP;Om aktiverad så är LC-kurvan (Luminance enligt kromaciteten) begränsad till röda färger och hudtoner.\nOm ej aktiverad så appliceras den till alla färger och toner.
+TP_LABCURVE_LCREDSK_TIP;Om aktiverad så påverkar LC-kurvan enbart röda färger och hudtoner.\nOm ej aktiverad så appliceras den till alla färger och toner.
 TP_LABCURVE_RSTPROTECTION;Skydda röda färger och hudtoner
-TP_LABCURVE_SATLIMIT;Mättnadsbegränsning
-TP_LABCURVE_SATURATION;Mättnad
+TP_LABCURVE_RSTPRO_TOOLTIP;Kan användas med kromareglaget och CC-kurvan
 TP_LENSGEOM_AUTOCROP;Autobeskärning
 TP_LENSGEOM_FILL;Fyll automatiskt
-TP_LENSGEOM_LABEL;Geometri- och distorsionskorrigering
+TP_LENSGEOM_LABEL;Geometrisk- och distorsionskorrigering
 TP_LENSPROFILE_FILEDLGFILTERLCP;Objektivkorrigeringsfil
 TP_LENSPROFILE_LABEL;Objektivkorrigeringsprofil
-TP_LENSPROFILE_USECA;Använd korrigering för kromatiska abberationer
-TP_LENSPROFILE_USEDIST;Använd korrigering för distorsion
-TP_LENSPROFILE_USEVIGN;Använd korrigering för vinjettering
-TP_LUMACURVE_BLACKLEVEL;Svärta
-TP_LUMACURVE_BRIGHTNESS;Intensitet
-TP_LUMACURVE_COMPRHIGHLIGHTS;Högdageråterställning
-TP_LUMACURVE_COMPRSHADOWS;Skuggåterställning
-TP_LUMACURVE_CONTRAST;Kontrast
-TP_LUMACURVE_CURVEEDITOR;Luminanskurva
-TP_LUMACURVE_LABEL;Luminanskurva
+TP_LENSPROFILE_USECA;Korrigera för kromatiska abberationer
+TP_LENSPROFILE_USEDIST;Korrigera distorsion
+TP_LENSPROFILE_USEVIGN;Korrigera vinjettering
 TP_LUMADENOISE_EDGETOLERANCE;Kanttolerans
 TP_LUMADENOISE_LABEL;Reducering av luminansbrus
 TP_LUMADENOISE_RADIUS;Radie
 TP_NEUTRAL;Neutral
-TP_NEUTRAL_TIP;Återställ exponeringskontrollerna till nollvärden
+TP_NEUTRAL_TIP;Återställ exponeringsreglagen till neutrala värden.\nGäller för samma reglage som autonivåer, oavsett om du använder autonivåer eller ej
+TP_PCVIGNETTE_FEATHER;Fjäder
+TP_PCVIGNETTE_FEATHER_TOOLTIP;Fjäder: 0=enbart kanter, 50=halvvägs till mitten, 100=i mitten
+TP_PCVIGNETTE_LABEL;Vinjetteringsfilter
+TP_PCVIGNETTE_ROUNDNESS;Rundhet
+TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Rundhet: 0=rektangel, 50=passad ellips, 100=cirkel
+TP_PCVIGNETTE_STRENGTH;Styrka
+TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstyrka i steg (som nått till kanterna)
 TP_PERSPECTIVE_HORIZONTAL;Horisontell
 TP_PERSPECTIVE_LABEL;Perspektiv
 TP_PERSPECTIVE_VERTICAL;Vertikal
+TP_PFCURVE_CURVEEDITOR_CH;Nyans
+TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Kontrollerar överstrålning efter färg. Högre = mer, lägre = mindre.
 TP_PREPROCESS_GREENEQUIL;Grönbalansering
-TP_PREPROCESS_HOTDEADPIXFILT;Applicera het- och dödpixelfiltrering
-TP_PREPROCESS_HOTDEADPIXTHRESH;Tröskelvärde för het- eller dödpixelavkänning
+TP_PREPROCESS_HOTDEADPIXFILT;Filtrera heta- och döda pixlar
+TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Försöker att ta bort heta och döda pixlar i bilden
 TP_PREPROCESS_LABEL;Förbehandling
 TP_PREPROCESS_LINEDENOISE;Linjärt brusfilter
 TP_PREPROCESS_NO_FOUND;Inga hittade
-TP_RAWCACORR_AUTO;Reducera kromatiska abberationer
+TP_RAWCACORR_AUTO;Reducera automatiskt kromatiska abberationer
 TP_RAWCACORR_CABLUE;Blå
 TP_RAWCACORR_CARED;Röd
 TP_RAWEXPOS_BLACKONE;Svartpunktsnivå: Röd
@@ -1186,32 +1344,29 @@ TP_RAWEXPOS_BLACKS;Svartpunktsnivåer
 TP_RAWEXPOS_BLACKTHREE;Svartpunktsnivå: Grön 2
 TP_RAWEXPOS_BLACKTWO;Svartpunktsnivå: Blå
 TP_RAWEXPOS_BLACKZERO;Svartpunktsnivå: Grön 1 (ledaren)
-TP_RAWEXPOS_LINEAR;Linjär korrigeringsfaktor
-TP_RAWEXPOS_PRESER;Bevara högdagerkorrigering (EV)
+TP_RAWEXPOS_LINEAR;Vitpunktskorrigering
+TP_RAWEXPOS_PRESER;Bevara högdagrar
 TP_RAWEXPOS_TWOGREEN;Två gröna tillsammans
-TP_RAW_ALLENHANCE;Applicera reducering av artefakter och brus efter demosaicing
-TP_RAW_DCBENHANCE;Applicera DCB-förbättringssteg
+TP_RAW_ALLENHANCE;Reducering av artefakter och brus efter demosaicing
+TP_RAW_DCBENHANCE;DCB-förbättringssteg
 TP_RAW_DCBITERATIONS;Antal DCB-iterationer
-TP_RAW_DMETHODBATCH;Batch
 TP_RAW_DMETHOD;Metod
 TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Förfining av demosaicing...
-TP_RAW_DMETHOD_TOOLTIP;Notera: IGV och LMMSE är avsedda för bilder med mycket brus i.
+TP_RAW_DMETHOD_TOOLTIP;Notera: IGV och LMMSE är avsedda för bilder där mycket brus förekommer.
 TP_RAW_FALSECOLOR;Falskt färgbortträngningssteg
 TP_RAW_LABEL;Demosaicing
 TP_RAW_LMMSEITERATIONS;LMMSE förbättringssteg
-TP_RAW_LMMSE_TOOLTIP;Adderar gamma (steg 1) - adderar median (steg 2,3 och 4), slutligen adderas ett förfiningssteg (steg 5 och 6) för att reducera artefakter och för att förbättra signal-brusförhållandet.
+TP_RAW_LMMSE_TOOLTIP;Adderar gamma (steg 1) - adderar median (steg 2,3 och 4), slutligen adderas ett förfiningssteg (steg 5 och 6) för att reducera artefakter och för att förbättra signal/brusförhållandet.
 TP_RESIZE_APPLIESTO;Tillämpas på:
 TP_RESIZE_BICUBICSF;Bikubisk (Mjukare)
 TP_RESIZE_BICUBICSH;Bikubisk (Skarpare)
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BILINEAR;Bilinjär
 TP_RESIZE_CROPPEDAREA;Beskuren yta
-TP_RESIZE_DOWNSCALEB;Nedsampla (Bättre)
-TP_RESIZE_DOWNSCALEF;Skala ned (Snabbare)
 TP_RESIZE_FITBOX;Begränsad yta
 TP_RESIZE_FULLIMAGE;Hela bilden
-TP_RESIZE_FULLSIZE;Full bildstorlek:
+TP_RESIZE_FULLSIZE;Hel bildstorlek:
 TP_RESIZE_HEIGHT;Höjd
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Ändra storlek
@@ -1226,11 +1381,11 @@ TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Kanal
 TP_RGBCURVES_GREEN;G
 TP_RGBCURVES_LABEL;RGB-kurvor
+TP_RGBCURVES_LUMAMODE;Luminansläge
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminansläget</b> tillåter att bidraget från R-, G- och B-kanalerna varierar för bildens luminans utan att ändra färgerna
 TP_RGBCURVES_RED;R
-TP_ROTATE_AUTOCROP;Autobeskär
-TP_ROTATE_DEGREE;Antal grader
-TP_ROTATE_FILL;Fyll
-TP_ROTATE_LABEL;Räta upp
+TP_ROTATE_DEGREE;Grader
+TP_ROTATE_LABEL;Rotera
 TP_ROTATE_SELECTLINE;Välj rak linje
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Högdager
 TP_SHADOWSHLIGHTS_HLTONALW;Tonvidd (Högdagrar)
@@ -1257,23 +1412,28 @@ TP_SHARPENING_RLD_AMOUNT;Mängd
 TP_SHARPENING_RLD_DAMPING;Dämpning
 TP_SHARPENING_RLD_ITERATIONS;Upprepningar
 TP_SHARPENING_THRESHOLD;Tröskelvärde
-TP_SHARPENING_TOOLTIP;Förvänta dig en aningen annorlunda effekt när denna används tillsammans med CIECAM02. Om du ser en skillnad, justera efter tycke och smak.
+TP_SHARPENING_TOOLTIP;Förvänta dig en aningen annorlunda effekt när denna används tillsammans med CIECAM02.
 TP_SHARPENING_USM;Oskarp mask
 TP_SHARPENMICRO_AMOUNT;Mängd
 TP_SHARPENMICRO_LABEL;Mikrokontrast
 TP_SHARPENMICRO_MATRIX;3×3-matris istället för 5×5
 TP_SHARPENMICRO_UNIFORMITY;Enhetlighet
 TP_VIBRANCE_AVOIDCOLORSHIFT;Undivk färgskiftningar
+TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Hudtoner
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Röd/Lila
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Röd
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Röd/Gul
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Gul
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Nyans enligt nyans
 TP_VIBRANCE_LABEL;Lyster
 TP_VIBRANCE_PASTELS;Pastellfärger
+TP_VIBRANCE_PASTSATTOG;Koppla pastell- och mättade toner
 TP_VIBRANCE_PROTECTSKINS;Skydda hudfärger
-TP_VIBRANCE_PSTHRESHOLD;Tröskelvärde för pastell- eller mättnadstoner
+TP_VIBRANCE_PSTHRESHOLD;Tröskelvärde för pastell- eller mättade toner
 TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Tröskelvärde för mättnaden
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;Den vertikala axeln representerar pastelltoner vid nederkanten och mättade toner vid överkanten.\nDen horisontella axeln representerar mättnadens spännvidd.
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Viktning av pastell- eller mättade övergångar
 TP_VIBRANCE_SATURATED;Mättade färger
 TP_VIGNETTING_AMOUNT;Mängd
 TP_VIGNETTING_CENTER;Centrum
@@ -1287,6 +1447,8 @@ TP_WBALANCE_CAMERA;Kamera
 TP_WBALANCE_CLOUDY;Molnigt
 TP_WBALANCE_CUSTOM;Egen
 TP_WBALANCE_DAYLIGHT;Dagsljus (soligt)
+TP_WBALANCE_EQBLUERED;Blå/Röd equalizer
+TP_WBALANCE_EQBLUERED_TOOLTIP;Tillåt att avvika från det normala beteendet hos vitbalansen genom att modulera balansen mellan blått och rött.\nDet här kan vara användbart när förhållandena då bilden togs:\na) är långtifrån standardilluminansen (t. ex. under vattnet)\nb) är långt ifrån de förhållanden då kalibreringen gjordes \nc) där matriserna eller färgprofilerna ej är passande
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
@@ -1318,11 +1480,14 @@ TP_WBALANCE_SHADE;Skugga
 TP_WBALANCE_SIZE;Storlek:
 TP_WBALANCE_SOLUX35;Solux 3500K
 TP_WBALANCE_SOLUX41;Solux 4100K
-TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
+TP_WBALANCE_SOLUX47;Solux 4700K (tillverkare)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
-TP_WBALANCE_SPOTWB;Vitbalansväljare
+TP_WBALANCE_SPOTWB;Punktmätning av vitbalansen
 TP_WBALANCE_TEMPERATURE;Temperatur
 TP_WBALANCE_TUNGSTEN;Glödlampa
+TP_WBALANCE_WATER1;Under vattnet 1
+TP_WBALANCE_WATER2;Under vattnet 2
+TP_WBALANCE_WATER_HEADER;Under vattnet
 ZOOMBAR_DETAIL;Lupp
 ZOOMBAR_HUGE;Enorm
 ZOOMBAR_LARGE;Stor
@@ -1332,249 +1497,18 @@ ZOOMBAR_SCALE;Skala
 ZOOMBAR_SMALL;Liten
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Öppna (nytt) detaljfönster.
-ZOOMPANEL_ZOOM100;Förstora till 100%. Kortkommando: 1
-ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen. Kortkommando: F
-ZOOMPANEL_ZOOMIN;Förstora. Kortkommando: +
-ZOOMPANEL_ZOOMOUT;Förminska. Kortkommando: -
+ZOOMPANEL_ZOOM100;Förstora till 100%. \nKortkommando: <b>z</b>
+ZOOMPANEL_ZOOMFITSCREEN;Passa till skärmen. \nKortkommando: <b>f</b>
+ZOOMPANEL_ZOOMIN;Förstora. \nKortkommando: <b>+</b>
+ZOOMPANEL_ZOOMOUT;Förminska. \nKortkommando: <b>-</b>
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
-!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
-!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
-!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
-!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
-!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-~</b>
-!HISTORY_MSG_175;CAM02 - CAT02 Adaptation
-!HISTORY_MSG_176;CAM02 - Viewing surround
-!HISTORY_MSG_177;CAM02 - Scene luminosity
-!HISTORY_MSG_178;CAM02 - Viewing luminosity
-!HISTORY_MSG_184;CAM02 - Scene surround
-!HISTORY_MSG_185;CAM02 - Gamut control
-!HISTORY_MSG_187;CAM02 - Red &amp; skin tones protection
-!HISTORY_MSG_191;CAM02 - Colorfulness (M)
-!HISTORY_MSG_199;CAM02 - Output histograms
-!HISTORY_MSG_200;CAM02 - Tone mapping
-!HISTORY_MSG_201;NR - Chrominance R,G
-!HISTORY_MSG_202;NR - Chrominance B,Y
-!HISTORY_MSG_205;CAM02 - Hot/bad pixels
-!HISTORY_MSG_206;CAT02 - Auto scene luminosity
-!HISTORY_MSG_207;Defringe - Hue curve
-!HISTORY_MSG_208;WB - B-R Equalizer
-!HISTORY_MSG_210;GF - Angle
-!HISTORY_MSG_211;Graduated Filter
-!HISTORY_MSG_212;VF - Strength
-!HISTORY_MSG_213;Vignette Filter
-!HISTORY_MSG_214;Black-and-White
-!HISTORY_MSG_215;B&amp;W - CM - Red
-!HISTORY_MSG_216;B&amp;W - CM - Green
-!HISTORY_MSG_217;B&amp;W - CM - Blue
-!HISTORY_MSG_218;B&amp;W - Gamma - Red
-!HISTORY_MSG_219;B&amp;W - Gamma - Green
-!HISTORY_MSG_220;B&amp;W - Gamma - Blue
-!HISTORY_MSG_221;B&amp;W - Color Filter
-!HISTORY_MSG_222;B&amp;W - Presets
-!HISTORY_MSG_223;B&amp;W - CM - Orange
-!HISTORY_MSG_224;B&amp;W - CM - Yellow
-!HISTORY_MSG_225;B&amp;W - CM - Cyan
-!HISTORY_MSG_226;B&amp;W - CM - Magenta
-!HISTORY_MSG_227;B&amp;W - CM - Purple
-!HISTORY_MSG_228;B&amp;W - Luminance Equalizer
-!HISTORY_MSG_229;B&amp;W - Luminance Equalizer
-!HISTORY_MSG_230;B&amp;W - Mode
-!HISTORY_MSG_231;B&amp;W - 'Before' Curve
-!HISTORY_MSG_232;B&amp;W - 'Before' Curve Type
-!HISTORY_MSG_233;B&amp;W - 'After' Curve
-!HISTORY_MSG_234;B&amp;W - 'After' Curve Type
-!HISTORY_MSG_235;B&amp;W - Auto Channel Mixer
-!HISTORY_MSG_236;--unused--
-!HISTORY_MSG_237;B&amp;W - Mixer
-!HISTORY_MSG_238;GF - Feather
-!HISTORY_MSG_239;GF - Strength
-!HISTORY_MSG_240;GF - Center
-!HISTORY_MSG_241;VF - Feather
-!HISTORY_MSG_242;VF - Roundness
-!HISTORY_MSG_243;VC - Radius
-!HISTORY_MSG_244;VC - Strength
-!HISTORY_MSG_245;VC - Center
-!HISTORY_MSG_246;'CL' curve
-!HISTORY_MSG_247;'LH' curve
-!HISTORY_MSG_248;'HH' curve
-!HISTORY_MSG_249;CbDL - Threshold
-!HISTORY_MSG_250;NR - Enhanced
-!PARTIALPASTE_CHANNELMIXERBW;Black-and-White
-!PARTIALPASTE_EPD;Tone mapping
 !PARTIALPASTE_GRADIENT;Graduated filter
-!PARTIALPASTE_PCVIGNETTE;Vignette filter
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
-!PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
-!PROFILEPANEL_GLOBALPROFILES;Bundled profiles
-!PROFILEPANEL_MYPROFILES;My profiles
-!PROFILEPANEL_PINTERNAL;Neutral
-!SAVEDLG_FORCEFORMATOPTS;Force saving options
-!TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
-!TP_BWMIX_BLUE;Blue
-!TP_BWMIX_CC_ENABLED;Adjust complementary color
-!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode
-!TP_BWMIX_CHANNEL;Luminance Equalizer
-!TP_BWMIX_CURVEEDITOR1;'Before' curve
-!TP_BWMIX_CURVEEDITOR2;'After' curve
-!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment
-!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the color components
-!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\nPay attention to extreme values that may cause artifacts
-!TP_BWMIX_CYAN;Cyan
-!TP_BWMIX_FILTER;Color Filter
-!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
-!TP_BWMIX_FILTER_BLUE;Blue
-!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
-!TP_BWMIX_FILTER_GREEN;Green
-!TP_BWMIX_FILTER_NONE;None
-!TP_BWMIX_FILTER_PURPLE;Purple
-!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
-!TP_BWMIX_FILTER_RED;Red
-!TP_BWMIX_FILTER_TOOLTIP;The color filter simulate shots taken with a colored filter placed in front of the lens. Colored filters reduce transmission of specific range of colors and correspondingly affect their lightness. E.g. a Red filter darkens Blue skies.
-!TP_BWMIX_FILTER_YELLOW;Yellow
-!TP_BWMIX_GAMMA;Gamma Correction
-!TP_BWMIX_GAM_BLUE;Blue Channel
-!TP_BWMIX_GAM_GREEN;Green Channel
-!TP_BWMIX_GAM_RED;Red Channel
-!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel RGB
-!TP_BWMIX_GREEN;Green
-!TP_BWMIX_LABEL;Black-and-White
-!TP_BWMIX_MAGENTA;Magenta
-!TP_BWMIX_MET;Method
-!TP_BWMIX_MET_CHANMIX;Channel Mixer
-!TP_BWMIX_MET_DESAT;Desaturation
-!TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
-!TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_MIXF;Mixer Filters
-!TP_BWMIX_NEUTRAL;Reset mixer
-!TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
-!TP_BWMIX_ORANGE;Orange
-!TP_BWMIX_PURPLE;Purple
-!TP_BWMIX_RED;Red
-!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
-!TP_BWMIX_SETTING;Presets
-!TP_BWMIX_SETTING_TOOLTIP;Different presets (films, landscape, ...) or manual settings of channel-mixer
-!TP_BWMIX_SET_HIGHCONTAST;High contrast
-!TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
-!TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
-!TP_BWMIX_SET_INFRARED;Infrared
-!TP_BWMIX_SET_LANDSCAPE;Landscape
-!TP_BWMIX_SET_LOWSENSIT;Low Sensitivity
-!TP_BWMIX_SET_LUMINANCE;Luminance
-!TP_BWMIX_SET_NORMCONTAST;Normal Contrast
-!TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
-!TP_BWMIX_SET_PANCHRO;Panchromatic
-!TP_BWMIX_SET_PORTRAIT;Portrait
-!TP_BWMIX_SET_RGBABS;Channel-Mixer absolute RGB
-!TP_BWMIX_SET_RGBREL;Channel-Mixer relative RGB
-!TP_BWMIX_SET_ROYGCBPMABS;Channel-Mixer absolute ROYGCBPM
-!TP_BWMIX_SET_ROYGCBPMREL;Channel-Mixer relative ROYGCBPM
-!TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
-!TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
-!TP_BWMIX_TCMODE_STANDARD;B&W Standard
-!TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
-!TP_BWMIX_VAL;L
-!TP_BWMIX_YELLOW;Yellow
-!TP_COLORAPP_ADAPTSCENE;Scene luminosity
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider
-!TP_COLORAPP_ADAPTVIEWING;Viewing luminosity (cd/m²)
-!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²)
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
-!TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
-!TP_COLORAPP_ALGO_QM;Brightness + Colorfulness (QM)
-!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
-!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
-!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from Lab and RGB brightness
-!TP_COLORAPP_CHROMA_M;Colorfulnes (M)
-!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from Lab and RGB colorfulness
-!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from Lab and RGB saturation
 !TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from Lab and RGB chroma
-!TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
-!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from Lab and RGB contrast
-!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from Lab and RGB contrast
-!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel
-!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel
-!TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
-!TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
-!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
-!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
-!TP_COLORAPP_GAMUT;Gamut control (Lab)
-!TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
-!TP_COLORAPP_LABEL_SCENE;Scene Conditions
-!TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
-!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model\n\n<b>WB [RT] + [output]:</b>\nRT's white balance is used for the scene, CIECAM02 is set to D50, the output device's white balance is set in <i>Preferences > Color Management</i>\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's white balance settings are used by CAT02 and the output device's white balance is set in Preferences
-!TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
-!TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
-!TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colors to take into account the viewing conditions of the output device\n\n<b>Average:</b>\nAverage light environment (standard)\nThe image will not change\n\n<b>Dim:</b>\nDim environment (TV)\nThe image will become slighty dark\n\n<b>Dark:</b>\nDark environment (projector)\nThe image will become more dark\n\n<b>Extremly Dark:</b>\nExtremly dark environment (cutsheet)\nThe image will become very dark
 !TP_COLORAPP_TCMODE_COLORF;Colorfulness
-!TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
-!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect
-!TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
-!TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
-!TP_DIRPYRDENOISE_ENH;Enhanced mode
-!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase
-!TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
-!TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
-!TP_EXPOSURE_AUTOLEVELS_TIP;Toggle execution of auto levels to automatically set parameter values based on image analysis\nEnable Highlight Reconstruction if necessary
 !TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
-!TP_GRADIENT_CENTER;Center
-!TP_GRADIENT_CENTER_X;Center X
-!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
-!TP_GRADIENT_CENTER_Y;Center Y
-!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
-!TP_GRADIENT_DEGREE;Angle
-!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
-!TP_GRADIENT_FEATHER;Feather
-!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
-!TP_GRADIENT_LABEL;Graduated Filter
-!TP_GRADIENT_STRENGTH;Strength
-!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
-!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
-!TP_ICM_DCPILLUMINANT;Illuminant
-!TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
-!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-!TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100
-!TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromaticity according to chromaticity C=f(C)
-!TP_LABCURVE_CURVEEDITOR_CL;CL
-!TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
-!TP_LABCURVE_CURVEEDITOR_HH;HH
-!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
-!TP_LABCURVE_CURVEEDITOR_LH;LH
-!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
-!TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
-!TP_LABCURVE_RSTPRO_TOOLTIP;Can be used with the Chromaticity slider and the CC curve.
-!TP_PCVIGNETTE_FEATHER;Feather
-!TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
-!TP_PCVIGNETTE_LABEL;Vignette Filter
-!TP_PCVIGNETTE_ROUNDNESS;Roundness
-!TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness: 0=rectangle, 50=fitted ellipse, 100=circle
-!TP_PCVIGNETTE_STRENGTH;Strength
-!TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners)
-!TP_PFCURVE_CURVEEDITOR_CH;Hue
-!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
-!TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels
-!TP_RGBCURVES_LUMAMODE;Luminosity Mode
-!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.
 !TP_SAVEDIALOG_OK_TIP;Shortcut <b>Ctrl-Enter</b>
 !TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
-!TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Hue according to hue H=f(H)
-!TP_VIBRANCE_PASTSATTOG;Link pastel and saturated tones
-!TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;The vertical axis represents pastel tones at the bottom and saturated tones at the top.\nThe horizontal axis represents the saturation range.
-!TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/saturated transition's weighting
-!TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
-!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
-!TP_WBALANCE_WATER1;UnderWater 1
-!TP_WBALANCE_WATER2;UnderWater 2
-!TP_WBALANCE_WATER_HEADER;UnderWater
