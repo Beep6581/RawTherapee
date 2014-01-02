@@ -103,7 +103,7 @@ FILEBROWSER_CACHECLEARFROMFULL;Czyszczenie pamieci podrecznej - pelne
 FILEBROWSER_CACHECLEARFROMPARTIAL;Czyszczenie pamieci podrecznej - czesciowe
 FILEBROWSER_CACHE;Pamiec podreczna
 FILEBROWSER_CLEARPROFILE;Wyczysc profil
-FILEBROWSER_COLORLABEL_TOOLTIP;Kolorowe etykiety\n\nUzyj za pomoca rozwijanej listy lub skrotow:\nShift-Ctrl-1 Czerwona\nShift-Ctrl-2 Zolta\nShift-Ctrl-3 Zielona\nShift-Ctrl-4 Niebieska\nShift-Ctrl-5 Purpurowa
+FILEBROWSER_COLORLABEL_TOOLTIP;Kolorowe etykiety\n\nUzyj za pomoca rozwijanej listy lub skrotow:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Czerwona\n<b>Shift-Ctrl-2</b> Zolta\n<b>Shift-Ctrl-3</b> Zielona\n<b>Shift-Ctrl-4</b> Niebieska\n<b>Shift-Ctrl-5</b> Purpurowa
 FILEBROWSER_COPYPROFILE;Kopiuj profil
 FILEBROWSER_CURRENT_NAME;Obecna nazwa:
 FILEBROWSER_DARKFRAME;Czarna klatka
@@ -188,7 +188,7 @@ FILEBROWSER_SHOWRANK5HINT;Pokazuje zdjecia ocenione na 5 gwiazdek
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Pokazuje ostatnio zapisane zdjecia <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Pokazuje niezapisywane ostatnio zdjecia <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Pokazuje zawartosc kosza
-FILEBROWSER_SHOWUNCOLORHINT;Pokazuje zdjecia bez kolorowej etykiety <b>Alt-`</b>
+FILEBROWSER_SHOWUNCOLORHINT;Pokazuje zdjecia bez kolorowej etykiety <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Pokazuje nieocenione zdjecia
 FILEBROWSER_STARTPROCESSINGHINT;Rozpoczyna przetwarzanie/zapisywanie plikow z kolejki
 FILEBROWSER_STARTPROCESSING;Rozpocznij przetwarzanie
@@ -196,7 +196,7 @@ FILEBROWSER_STOPPROCESSINGHINT;Zatrzymuje przetwarzanie zdjec
 FILEBROWSER_STOPPROCESSING;Zatrzymaj przetwarzanie
 FILEBROWSER_THUMBSIZE;Rozmiar minaturek
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Rozpocznij przetwarzanie automatycznie gdy pojawi sie nowe zadanie
-FILEBROWSER_UNRANK_TOOLTIP;Usun ocene\nSkrot: Shift - ~
+FILEBROWSER_UNRANK_TOOLTIP;Usun ocene\nSkrot: <b>Shift-0</b>
 FILEBROWSER_USETEMPLATE;Uzyj szablonu:
 FILEBROWSER_ZOOMINHINT;Zwieksza rozmiar miniaturek
 FILEBROWSER_ZOOMOUTHINT;Zmniejsza rozmiar miniaturek

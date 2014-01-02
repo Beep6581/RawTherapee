@@ -99,7 +99,7 @@ FILEBROWSER_CACHECLEARFROMFULL;Rensa från cachen - fullständigt
 FILEBROWSER_CACHECLEARFROMPARTIAL;Rensa från cachen - delvis
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CLEARPROFILE;Återställ profilen
-FILEBROWSER_COLORLABEL_TOOLTIP;Färgetikett\n\nAnvänd menyn eller kortkommandona:\n<b>Shift-Ctrl-1</b> Röd\n<b>Shift-Ctrl-2</b> Gul\n<b>Shift-Ctrl-3</b> Grön\n<b>Shift-Ctrl-4</b> Blå\n<b>Shift-Ctrl-5</b> Lila
+FILEBROWSER_COLORLABEL_TOOLTIP;Färgetikett\n\nAnvänd menyn eller kortkommandona:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Röd\n<b>Shift-Ctrl-2</b> Gul\n<b>Shift-Ctrl-3</b> Grön\n<b>Shift-Ctrl-4</b> Blå\n<b>Shift-Ctrl-5</b> Lila
 FILEBROWSER_COPYPROFILE;Kopiera profil
 FILEBROWSER_CURRENT_NAME;Nuvarande namn:
 FILEBROWSER_DARKFRAME;Svartbild
@@ -185,7 +185,7 @@ FILEBROWSER_SHOWRANK5HINT;Visa bilder med betyg 5.\nKortkommando: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Visa bilder som nyligen sparats <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Visa bilder som inte nyligen sparats <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Visa innehållet i papperskorgen
-FILEBROWSER_SHOWUNCOLORHINT;Visa bilder utan färgetikett <b>Alt-`</b>
+FILEBROWSER_SHOWUNCOLORHINT;Visa bilder utan färgetikett <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Visa icke-betygsatta bilder
 FILEBROWSER_STARTPROCESSINGHINT;Starta behandlingen och spara bilderna i behandlingskön
 FILEBROWSER_STARTPROCESSING;Starta behandlingen
@@ -193,7 +193,7 @@ FILEBROWSER_STOPPROCESSINGHINT;Avbryt behandlingen av bilderna
 FILEBROWSER_STOPPROCESSING;Avbryt behandlingen
 FILEBROWSER_THUMBSIZE;Miniatyrbildens storlek
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Starta behandlingen automatiskt när en ny bild kommer in
-FILEBROWSER_UNRANK_TOOLTIP;Ta bort betyg\nKortkommando: <b>Shift-~</b>
+FILEBROWSER_UNRANK_TOOLTIP;Ta bort betyg\nKortkommando: <b>Shift-0</b>
 FILEBROWSER_USETEMPLATE;Använd förinställning:
 FILEBROWSER_ZOOMINHINT;Förstora miniatyrbilderna.\nKortkommando: <b>+</b>\n\nKortkommado i enkelbildsläget: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Förminska miniatyrbilderna.\nKortkommando: <b>-</b>\nKortkommado i enkelbildsläget: <b>Alt--</b>

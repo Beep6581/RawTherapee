@@ -99,7 +99,7 @@ FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CLEARPROFILE;Clear
-FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Label\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_COPYPROFILE;Copy
 FILEBROWSER_CURRENT_NAME;Current name:
 FILEBROWSER_DARKFRAME;Dark frame

@@ -122,7 +122,7 @@ FILEBROWSER_CACHECLEARFROMFULL;Vymazat z cache - úplně
 FILEBROWSER_CACHECLEARFROMPARTIAL;Vymazat z cache - částečně
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CLEARPROFILE;Smazat
-FILEBROWSER_COLORLABEL_TOOLTIP;Barevný štítek\n\nPoužijte výběr ze seznamu nebo klávesové zkratky:\nShift-Ctrl-1 Červený\nShift-Ctrl-2 Žlutý\nShift-Ctrl-3 Zelený\nShift-Ctrl-4 Modrý\nShift-Ctrl-5 Fialový
+FILEBROWSER_COLORLABEL_TOOLTIP;Barevný štítek\n\nPoužijte výběr ze seznamu nebo klávesové zkratky:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Červený\n<b>Shift-Ctrl-2</b> Žlutý\n<b>Shift-Ctrl-3</b> Zelený\n<b>Shift-Ctrl-4</b> Modrý\n<b>Shift-Ctrl-5</b> Fialový
 FILEBROWSER_COPYPROFILE;Kopírovat
 FILEBROWSER_CURRENT_NAME;Současné jméno:
 FILEBROWSER_DARKFRAME;Tmavý snímek
@@ -208,15 +208,15 @@ FILEBROWSER_SHOWRANK5HINT;Ukázat obrázky hodnocené 5 hvězdičkami.\nZkratka:
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Ukázat naposledy uložené obrázky.\nZkratka: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Ukázat naposledy neuložené obrázky.\nZkratka: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Ukázat obsah koše.\nZkratka: <b>T</b>
-FILEBROWSER_SHOWUNCOLORHINT;Ukázat obrázky bez barevného štítku.\nZkratka: <b>Alt-`</b>
-FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky.\nZkratka: <b>`</b>
+FILEBROWSER_SHOWUNCOLORHINT;Ukázat obrázky bez barevného štítku.\nZkratka: <b>Alt-0</b>
+FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky.\nZkratka: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Spustit zpracování obrázků ve frontě
 FILEBROWSER_STARTPROCESSING;Spustit zpracování
 FILEBROWSER_STOPPROCESSINGHINT;Zastavit zpracování obrázků ve frontě
 FILEBROWSER_STOPPROCESSING;Zastavit zpracovávaní
 FILEBROWSER_THUMBSIZE;Velikost náhledu
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Automatické spuštění zpracování po vložení nové úlohy
-FILEBROWSER_UNRANK_TOOLTIP;Zrušit hodnocení\nZkratka: Shift - ~
+FILEBROWSER_UNRANK_TOOLTIP;Zrušit hodnocení\nZkratka: <b>Shift-0</b>
 FILEBROWSER_USETEMPLATE;Použít šablonu:
 FILEBROWSER_ZOOMINHINT;Zvětšit velikosti náhledů.\nZkratka:  <b>+</b>\n\nZkratka v módu jedné karty editoru: <b>Alt +</b>
 FILEBROWSER_ZOOMOUTHINT;Zmenšit velikosti náhledů.\nZkratka: <b>-</b>\n\nZkratka v módu jedné karty editoru: <b>Alt -</b>

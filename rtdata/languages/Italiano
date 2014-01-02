@@ -179,8 +179,8 @@ FILEBROWSER_SHOWRANK5HINT;Mostra le immagini classificate con 5 stelle.\nScorcia
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostra le immagini salvate di recente.\nScorciatoia: <b>Alt-7<b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra le immagini salvate non di recente.\nScorciatoia: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Mostra il contenuto del cestino.\nScorciatoia: <b>T</b>
-FILEBROWSER_SHOWUNCOLORHINT;Mostra le immagini senza etichetta colorata.\nScorciatoia: <b>Alt-`</b>
-FILEBROWSER_SHOWUNRANKHINT;Mostra le immagini non classificate.\nScorciatoia: <b>`</b>
+FILEBROWSER_SHOWUNCOLORHINT;Mostra le immagini senza etichetta colorata.\nScorciatoia: <b>Alt-0</b>
+FILEBROWSER_SHOWUNRANKHINT;Mostra le immagini non classificate.\nScorciatoia: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Inizia a sviluppare le immagini nella Coda
 FILEBROWSER_STARTPROCESSING;Comincia a sviluppare
 FILEBROWSER_STOPPROCESSINGHINT;Ferma lo sviluppo delle immagini nella Coda
@@ -1346,13 +1346,13 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
 !FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
 !FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 !FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-~</b>
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-0</b>
 !HISTORY_MSG_205;CAM02 - Hot/bad pixels
 !HISTORY_MSG_206;CAT02 - Auto scene luminosity
 !HISTORY_MSG_207;Defringe - Hue curve

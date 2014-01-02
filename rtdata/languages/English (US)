@@ -94,7 +94,7 @@
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CACHE;Cache
 !FILEBROWSER_CLEARPROFILE;Clear
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_COPYPROFILE;Copy
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
@@ -180,15 +180,15 @@
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved.\nShortcut: <b>Alt-6</b>
 !FILEBROWSER_SHOWTRASHHINT;Show content of the trash.\nShortcut: <b>T</b>
-!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
-!FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>`</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-0</b>
+!FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>0</b>
 !FILEBROWSER_STARTPROCESSINGHINT;Start processing the images in the queue
 !FILEBROWSER_STARTPROCESSING;Start Processing
 !FILEBROWSER_STOPPROCESSINGHINT;Stop processing the images in the queue
 !FILEBROWSER_STOPPROCESSING;Stop Processing
 !FILEBROWSER_THUMBSIZE;Thumbnail size
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-~</b>
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-0</b>
 !FILEBROWSER_USETEMPLATE;Use template:
 !FILEBROWSER_ZOOMINHINT;Increase thumbnail size.\nShortcut: <b>+</b>\n\nShortcut in Single Editor Tab Mode: <b>Alt-+</b>
 !FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\nShortcut: <b>-</b>\n\nShortcut in Single Editor Tab Mode: <b>Alt--</b>
