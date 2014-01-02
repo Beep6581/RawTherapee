@@ -140,7 +140,7 @@ FILEBROWSER_SHOWRANK5HINT;Prikazuje slike ocenjene sa 5 zvezdica
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Prikazuje nedavno sačuvane slike  <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Prikazuje slike koje nisu skoro sačuvane <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Prikazuje slike u smeću
-FILEBROWSER_SHOWUNCOLORHINT;Prikazuje slike koje nisu označene bojom <b>Alt-`</b>
+FILEBROWSER_SHOWUNCOLORHINT;Prikazuje slike koje nisu označene bojom <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Prikaži neocenjene slike
 FILEBROWSER_STARTPROCESSINGHINT;Počinje obradu i čuvanje zakazanih slika
 FILEBROWSER_STARTPROCESSING;Započni obradu
@@ -1053,7 +1053,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !EXPORT_RESIZEMETHOD;Resize Method
 !EXTPROGTARGET_1;raw
 !EXTPROGTARGET_2;queue-processed
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
@@ -1062,7 +1062,7 @@ ZOOMPANEL_ZOOMOUT;Umanjuje prikaz slike <b>-</b>
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
 !FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 !FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-~</b>
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-0</b>
 !GENERAL_AUTO;Automatic
 !GENERAL_CLOSE;Close
 !GENERAL_WARNING;Warning

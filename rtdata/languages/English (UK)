@@ -1,6 +1,6 @@
 EXPORT_BYPASS_COLORDENOISE;Bypass Colour denoise
 EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Colour Suppression
-FILEBROWSER_COLORLABEL_TOOLTIP;Colour label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Label\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+FILEBROWSER_COLORLABEL_TOOLTIP;Colour label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_POPUPCOLORLABEL;Colour label
 FILEBROWSER_SHOWUNCOLORHINT;Show images without Colour label.\nShortcut: <b>Alt-0</b>
 HISTORY_MSG_46;Colour Denoising

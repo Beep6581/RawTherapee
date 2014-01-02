@@ -657,7 +657,7 @@ ZOOMBAR_SMALL;קטן
 !FILEBROWSER_CACHECLEARFROMFULL;Clear from cache - full
 !FILEBROWSER_CACHECLEARFROMPARTIAL;Clear from cache - partial
 !FILEBROWSER_CACHE;Cache
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_CURRENT_NAME;Current name:
 !FILEBROWSER_DARKFRAME;Dark frame
 !FILEBROWSER_DELETEDLGMSGINCLPROC;Are you sure you want to delete the selected <b>%1</b> files <b>including</b> a queue-processed version?
@@ -702,9 +702,9 @@ ZOOMBAR_SMALL;קטן
 !FILEBROWSER_SHOWEXIFINFO;Show Exif info.\nShortcut: <b>i</b>\n\nShortcut in Single Editor Tab Mode: <b>Alt-i</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show images recently saved.\nShortcut: <b>Alt-7</b>
 !FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show images not recently saved.\nShortcut: <b>Alt-6</b>
-!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-`</b>
+!FILEBROWSER_SHOWUNCOLORHINT;Show images without Color label.\nShortcut: <b>Alt-0</b>
 !FILEBROWSER_TOOLTIP_STOPPROCESSING;Start processing automatically when a new job arrives
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-~</b>
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-0</b>
 !FILEBROWSER_USETEMPLATE;Use template:
 !GENERAL_AFTER;After
 !GENERAL_AUTO;Automatic

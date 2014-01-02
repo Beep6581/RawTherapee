@@ -173,11 +173,11 @@ FILEBROWSER_PROCESSINGSETTINGS;Einstellungen
 FILEBROWSER_QUERYBUTTONHINT;Nebenstehenden Suchfilter zurücksetzen
 FILEBROWSER_QUERYHINT;Nur Dateien anzeigen, deren Namen die angegebene\nZeichenkette beinhalten\n<b>Strg+F</b> (im Dateimanager) zum Setzen des Fokus\n<b>Eingabe</b> zum Suchen
 FILEBROWSER_QUERYLABEL; Suche:
-FILEBROWSER_RANK1_TOOLTIP;Bewertung 1 *\n <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Bewertung 2 *\n <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Bewertung 3 *\n <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Bewertung 4 *\n <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Bewertung 5 *\n <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Bewertung 1 *\n<b>Shift-1</b>
+FILEBROWSER_RANK2_TOOLTIP;Bewertung 2 *\n<b>Shift-2</b>
+FILEBROWSER_RANK3_TOOLTIP;Bewertung 3 *\n<b>Shift-3</b>
+FILEBROWSER_RANK4_TOOLTIP;Bewertung 4 *\n<b>Shift-4</b>
+FILEBROWSER_RANK5_TOOLTIP;Bewertung 5 *\n<b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
 FILEBROWSER_RENAMEDLGMSG;Umbenennen der Datei "%1" nach:
 FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
@@ -200,15 +200,15 @@ FILEBROWSER_SHOWRANK5HINT;Nur mit 5 Sternen bewertete Bilder anzeigen <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Nur kürzlich gespeicherte Bilder anzeigen <b>Alt+7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Nur nicht kürzlich gespeicherte Bilder anzeigen <b>Alt+6</b>
 FILEBROWSER_SHOWTRASHHINT;Inhalt des Papierkorbs anzeigen <b>T</b>
-FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen <b>Alt+`</b>
-FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen <b>`</b>
+FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen <b>Alt+0</b>
+FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Verarbeitung/Speichern der Bilder in der Warteschlange starten
 FILEBROWSER_STARTPROCESSING;Verarbeitung starten
 FILEBROWSER_STOPPROCESSINGHINT;Verarbeitung der Bilder stoppen
 FILEBROWSER_STOPPROCESSING;Verarbeitung stoppen
 FILEBROWSER_THUMBSIZE;Größe der Vorschau
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Bei neuem Job die Verarbeitung automatisch starten
-FILEBROWSER_UNRANK_TOOLTIP;Bewertung entfernen\n <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Bewertung entfernen\n<b>Shift-0</b>
 FILEBROWSER_USETEMPLATE;Vorlage verwenden:
 FILEBROWSER_ZOOMINHINT;Voransichten vergrößern <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;Voransichten verkleinern <b>-</b>

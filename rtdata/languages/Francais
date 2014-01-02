@@ -96,7 +96,7 @@ FILEBROWSER_CACHECLEARFROMFULL;Supprimer du cache (complet)
 FILEBROWSER_CACHECLEARFROMPARTIAL;Supprimer du cache (partiel)
 FILEBROWSER_CACHE;Cache
 FILEBROWSER_CLEARPROFILE;Remettre le profil à zéro
-FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou le raccourci clavier:\nShift-Ctrl-1 Red\nShift-Ctrl-2 Yellow\nShift-Ctrl-3 Green\nShift-Ctrl-4 Blue\nShift-Ctrl-5 Purple
+FILEBROWSER_COLORLABEL_TOOLTIP;Label couleur\n\nUtilisez le menu déroulant ou le raccourci clavier:\n<b>Shift-Ctrl-0</b> pas de couleur\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_COPYPROFILE;Copier le profil
 FILEBROWSER_CURRENT_NAME;Nom courant:
 FILEBROWSER_DARKFRAME;Trame Noire
@@ -155,11 +155,11 @@ FILEBROWSER_PROCESSINGSETTINGS;Réglages
 FILEBROWSER_QUERYBUTTONHINT;Effacer la recherche
 FILEBROWSER_QUERYHINT;Taper la <i>partie du nom</i> du fichier à chercher ou une <i>liste spéarée par des virgules</i>.\nEx: <i>1001.1004.1199</i>\n\n<b>Ctrl-F</b> pour placer le curseur dans le champ de saisie.\n<b>Entrée</b> pour lancer la recherche\n<b>Esc</b> pour effacer.\n<b>Shift-Esc</b> pour enlever le focus.
 FILEBROWSER_QUERYLABEL;Chercher: 
-FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nRaccourci: Shift-1
-FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nRaccourci: Shift-2
-FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nRaccourci: Shift-3
-FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nRaccourci: Shift-4
-FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nRaccourci: Shift-5
+FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nRaccourci: <b>Shift-1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nRaccourci: <b>Shift-2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nRaccourci: <b>Shift-3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nRaccourci: <b>Shift-4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nRaccourci: <b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renommage du fichier
 FILEBROWSER_RENAMEDLGMSG;Renommer le fichier "%1" en:
 FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
@@ -182,15 +182,15 @@ FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Afficher les images sauvegardées récemment <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT; Afficher les images non sauvegardées récemment <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille <b>T</b>
-FILEBROWSER_SHOWUNCOLORHINT;Afficher les images sans label de couleur <b>Alt-`</b>
-FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile  <b>`</b>
+FILEBROWSER_SHOWUNCOLORHINT;Afficher les images sans label de couleur <b>Alt-0</b>
+FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile  <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Démarre le traitement/sauvegarde des images dans la file
 FILEBROWSER_STARTPROCESSING;Démarrer le traitement
 FILEBROWSER_STOPPROCESSINGHINT;Arrête le traitement des images
 FILEBROWSER_STOPPROCESSING;Arrêter le traitement
 FILEBROWSER_THUMBSIZE;Taille vign.
 FILEBROWSER_TOOLTIP_STOPPROCESSING;Démarrer automatiquement le traitement à l'arrivée d'une nouvelle tâche
-FILEBROWSER_UNRANK_TOOLTIP;Effacer le rang\nRaccourci: Shift - ~
+FILEBROWSER_UNRANK_TOOLTIP;Effacer le rang\nRaccourci: <b>Shift-0</b>
 FILEBROWSER_USETEMPLATE;Utiliser le modèle:
 FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes.\nRaccourcis: <b>+</b>\n\nRaccourcis dans le mode Éditeur unique:  <b>Alt +</b>
 FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes.\nRaccourcis: <b>-</b>\n\nRaccourcis dans le mode Éditeur unique:  <b>Alt -</b>

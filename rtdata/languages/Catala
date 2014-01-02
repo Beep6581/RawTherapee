@@ -174,8 +174,8 @@ FILEBROWSER_SHOWRANK5HINT;Exposa imatges de 5 estrelles.\nDrecera: <b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostra últimes imatges desades.\nDrecera: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra imatges no recentment desades.\nDrecera: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera.\nDrecera: <b>T</b>
-FILEBROWSER_SHOWUNCOLORHINT;Mostra imatges sense etiqueta de color.\nDrecera: <b>Alt-`</b>
-FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang.\nDrecera: <b>`</b>
+FILEBROWSER_SHOWUNCOLORHINT;Mostra imatges sense etiqueta de color.\nDrecera: <b>Alt-0</b>
+FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang.\nDrecera: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Inicia el processament de les imatges de la cua
 FILEBROWSER_STARTPROCESSING;Inicia procés
 FILEBROWSER_STOPPROCESSINGHINT;Atura processament d'imatges de la cua
@@ -1180,13 +1180,13 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 
 !BATCHQUEUE_DESTFILENAME;Path and file name
 !EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
 !FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
 !FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
 !FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-~</b>
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-0</b>
 !GENERAL_AUTO;Automatic
 !GENERAL_CLOSE;Close
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
