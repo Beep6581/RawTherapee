@@ -969,7 +969,7 @@ THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control poin
 THRESHOLDSELECTOR_TL;Top-left
 THRESHOLDSELECTOR_TR;Top-right
 THRESHOLDSELECTOR_T;Top
-TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>
+TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>\nMove the crop area using Shift + mouse drag
 TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
 TOOLBAR_TOOLTIP_WB;Spot white balance.\nShortcut: <b>w</b>
