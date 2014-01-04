@@ -112,6 +112,7 @@ ICMPanel::ICMPanel () : Gtk::VBox(), FoldableToolPanel(this), iunchanged(NULL), 
 
     saveRef = Gtk::manage (new Gtk::Button (M("TP_ICM_SAVEREFERENCE")));
     saveRef->set_image (*Gtk::manage (new RTImage ("gtk-save-large.png")));
+    saveRef->set_tooltip_markup (M("TP_ICM_SAVEREFERENCE_TOOLTIP"));
     iVBox->pack_start (*saveRef, Gtk::PACK_SHRINK, 2);
 
     iFrame->add(*iVBox);
@@ -669,7 +670,7 @@ void ICMPanel::saveReferencePressed () {
 
     if (!icmplistener)
         return;
-    Gtk::FileChooserDialog dialog(M("TP_ICM_SAVEREFERENCEDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_SAVE);
+    Gtk::FileChooserDialog dialog(M("TP_ICM_SAVEREFERENCE"), Gtk::FILE_CHOOSER_ACTION_SAVE);
     FileChooserLastFolderPersister persister(&dialog, options.lastProfilingReferenceDir);
     dialog.set_current_name (lastRefFilename);
 
