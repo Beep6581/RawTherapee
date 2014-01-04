@@ -32,8 +32,9 @@ else
   done
 fi
 
-# First thing, we want to strip default of any "!" and duplicates.
-grep -v '^!' default | sort -Vu > "$tmp"
+# First thing, fix default, so move comments to front, then strip the rest of any "!" and duplicates.
+grep "^#.*" default > "$tmp"
+grep -Ev '^[!|#]' default | sort -Vu >> "$tmp"
 mv "$tmp" "default"
 
 for file in "${langFiles[@]}"; do
