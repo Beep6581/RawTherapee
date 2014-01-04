@@ -79,7 +79,7 @@ EXPORT_BYPASS_SHARPENING;Förbigå skärpning
 EXPORT_BYPASS_SHARPENMICRO;Förbigå mikrokontrast
 EXPORT_BYPASS_SH_HQ;Förbigå skuggor/högdagrar (hög kvalitet)
 EXPORT_FASTEXPORTOPTIONS;<b>Inställningar för snabbexport</b>
-EXPORT_INSTRUCTIONS;Snabbexport erbjuder snabbare konvertering genom att åsidosätta tidskrävande verktyg och framkallningsinställningar. Batchkön körs då med dessa inställningar istället, så länge det här alternativet är valt. Den här metoden rekommenderas för snabb konvertering där användningsområdet tillåter en lägre kvalitet på de färdiga bilderna. Genom att använda det här alternativet görs inga modifieringar till bildens framkallningsinställningar.
+EXPORT_INSTRUCTIONS;Snabbexport erbjuder snabbare konvertering genom att åsidosätta tidskrävande verktyg och framkallningsinställningar. Batchkön körs då med dessa, mindre krävande, inställningar istället så länge det här alternativet är valt. Den här metoden rekommenderas för de konverteringar där användningsområdet tillåter en lägre kvalitet på de färdiga bilderna. Genom att använda det här alternativet görs inga modifieringar i bildens normala framkallningsinställningar.
 EXPORT_MAXHEIGHT;Maximal höjd:
 EXPORT_MAXWIDTH;Maximal vidd:  
 EXPORT_PUTTOQUEUEFAST; Lägg till i kö för snabbexport
@@ -94,7 +94,7 @@ FILEBROWSER_ARRANGEMENTHINT;Växla mellan vertikal och horistonell visning av mi
 FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
 FILEBROWSER_AUTOFLATFIELD;Automatisk plattfältskorrigering
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klicka för att komma till vald sökväg
-FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren) Skriv en sökväg att gå till.\n<b>Ctrl-O</b> för att komma till sökfältet.\n<b>Enter</b> / <b>Ctrl-Enter</b> för att bläddra;\n<b>Esc</b> för att rensa ändringar.\n<b>Shift-Esc</b> för att ta bort fokus från sökfältet.\n\n\nPath kortkommando:\n  <b>~</b> - användarens hemkatalog\n  <b>!</b> - användarens bildkatalog
+FILEBROWSER_BROWSEPATHHINT;Skriv in en sökväg och tryck Enter (Ctrl-Enter i filhanteraren).\n<b>Ctrl-O</b> för att komma till sökfältet.\n<b>Enter</b> / <b>Ctrl-Enter</b> för att bläddra;\n<b>Esc</b> för att rensa ändringar.\n<b>Shift-Esc</b> för att ta bort fokus från sökfältet.\n\n\nPath kortkommando:\n  <b>~</b> - användarens hemkatalog\n  <b>!</b> - användarens bildkatalog
 FILEBROWSER_CACHECLEARFROMFULL;Rensa från cachen - fullständigt
 FILEBROWSER_CACHECLEARFROMPARTIAL;Rensa från cachen - delvis
 FILEBROWSER_CACHE;Cache
@@ -401,7 +401,7 @@ HISTORY_MSG_158;Styrka
 HISTORY_MSG_159;Stoppa vid kanter.
 HISTORY_MSG_160;Skala
 HISTORY_MSG_161;Återviktade iterationer
-HISTORY_MSG_162;Tone Mapping
+HISTORY_MSG_162;Tonmappning
 HISTORY_MSG_163;RGB-kurvor - R
 HISTORY_MSG_164;RGB-kurvor - G
 HISTORY_MSG_165;RGB-kurvor - B
@@ -427,10 +427,10 @@ HISTORY_MSG_184;CAM02 - Bild med mörk omgivning
 HISTORY_MSG_185;CAM02 - Kontroll av gamut
 HISTORY_MSG_186;CAM02 - Algoritm
 HISTORY_MSG_187;CAM02 - Röda färgers och hudtonsbevarande
-HISTORY_MSG_188;CAM02 - Ljushet (Q)
+HISTORY_MSG_188;CAM02 - Intensitet (Q)
 HISTORY_MSG_189;CAM02 - Kontrast (Q)
 HISTORY_MSG_190;CAM02 - Mättnad (S)
-HISTORY_MSG_191;CAM02 - Colorfulness (M)
+HISTORY_MSG_191;CAM02 - Färgmättnad (M)
 HISTORY_MSG_192;CAM02 - Nyans (vinkel)
 HISTORY_MSG_193;CAM02 - Tonkurva 1
 HISTORY_MSG_194;CAM02 - Tonkurva 2
@@ -498,15 +498,15 @@ HISTORY_SETTO;Ställ in till
 HISTORY_SNAPSHOTS;Bokmärken
 HISTORY_SNAPSHOT;Bokmärke
 ICMPANEL_FILEDLGFILTERANY;Vilka filer som helst
-ICMPANEL_FILEDLGFILTERICM;ICC profilfiler
+ICMPANEL_FILEDLGFILTERICM;Färgprofiler
 ICMPANEL_GAMMABEFOREINPUT;Profilapplicerad gamma
 ICMPANEL_INPUTCAMERA;Kameraval
 ICMPANEL_INPUTCUSTOM;Egen
-ICMPANEL_INPUTDLGLABEL;Välj inmatnings ICC-profil...
-ICMPANEL_INPUTEMBEDDED;Använd inbäddad, om möjligt
-ICMPANEL_INPUTPROFILE;Inmatningsprofil
+ICMPANEL_INPUTDLGLABEL;Välj inmatningsfärgprofil...
+ICMPANEL_INPUTEMBEDDED;Använd inbäddad profil om möjligt
+ICMPANEL_INPUTPROFILE;Inmatningsfärgprofil
 ICMPANEL_NOICM;Ingen ICM: sRGB-utmatning
-ICMPANEL_OUTPUTDLGLABEL;Välj utmatnings ICC-profil...
+ICMPANEL_OUTPUTDLGLABEL;Välj utmatningsfärgprofil...
 ICMPANEL_OUTPUTPROFILE;Utmatningsprofil
 ICMPANEL_SAVEREFERENCE;Spara referensbild för profilering
 ICMPANEL_WORKINGPROFILE;Färgrymd
@@ -559,19 +559,19 @@ MAIN_BUTTON_NAVNEXT_TOOLTIP;Flytta till nästa bild relativt den bild som är ö
 MAIN_BUTTON_NAVPREV_TOOLTIP;Flytta till föregående bild relativt den bild som är öppen i redigeringsläget \nKortkommando: <b>Shift-F3</b>\n\nFlytta till föregående bild relativt den valda miniatyrbilden i filhanteraren\nKortkommando: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synkronisera filhanteraren med redigeringsläget för att uppdatera förhandsgranskningen av den nu öppna bilden, och för att nollställa filtren i filhanteraren \nKortkommando: <b>x</b>\n\nSom ovan, men utan att nollställa filtren i filhanteraren\nKortkommando: <b>y</b>\n(Notera att förhandsgranskningen av den öppna bildens  miniatyrbilder ej visas om den är filtrerad.).
 MAIN_BUTTON_PREFERENCES;Inställningar
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. Kortkommando: Ctrl+B
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön. \nKortkommando: Ctrl+b
 MAIN_BUTTON_QUEUE;Placera i behandlingskön
 MAIN_BUTTON_SAVE;Spara
-MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild. Kortkommando: Ctrl+S
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. Kortkommando: Ctrl+E
-MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Visa/dölj alla sidopaneler <b>m</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild. \nKortkommando: <b>Ctrl+s</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram. \nKortkommando: <b>Ctrl+e</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Visa/dölj alla sidopaneler. \nKortkommando: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Avsluta helskärmsläget
 MAIN_FRAME_BATCHQUEUE;Batchkö
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batchkö <b>Ctrl-F3</b>
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Batchkö \nKortkommando: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Redigeringsläget
-MAIN_FRAME_EDITOR_TOOLTIP; Redigeringsvy <b>Ctrl-F4</b>
+MAIN_FRAME_EDITOR_TOOLTIP; Redigeringsvy \nKortkommando: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Filhanterare
-MAIN_FRAME_FILEBROWSER_TOOLTIP; Filhanteraren <b>Ctrl-F2</b>
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Filhanteraren \nKortkommando<b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Platser
 MAIN_FRAME_PLACES_ADD;Lägg till
 MAIN_FRAME_PLACES_DEL;Ta bort
@@ -615,12 +615,12 @@ MAIN_TAB_TAGGING;Etiketter
 MAIN_TAB_TRANSFORM;Omvandla
 MAIN_TAB_TRANSFORM_TOOLTIP;Kortkommando: <b>Alt-t</b>
 MAIN_TOGGLE_BEFORE_AFTER;B|A
-MAIN_TOOLTIP_BACKCOLOR0;Bakgrundsfärg av förhandsgranskningen: <b>Temabaserad</b>\nKortkommando: <b>8</b>
+MAIN_TOOLTIP_BACKCOLOR0;Bakgrundsfärg av förhandsgranskningen: <b>Temabaserad</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Bakgrundsfärg av förhandsgranskningen: <b>Svart</b>\nKortkommando: <b>9</b>
-MAIN_TOOLTIP_BACKCOLOR2;Bakgrundsfärg av förhandsgranskningen: <b>Vit</b>\nKortkommando: <b>0</b>
+MAIN_TOOLTIP_BACKCOLOR2;Bakgrundsfärg av förhandsgranskningen: <b>Vit</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lås</b> / <b>Lås upp</b> <b>före-vyn</b> \n\n<b>Lås</b>: behåll <b>före-vyn</b> oförändrad.\nAnvändbart för att utvärdera den sammanlagda effekten av flera stegs redigering. Dessutom kan jämförelser göras gentemot varje annat steg i historiken. \n\n<b>Lås upp</b>: <b>Före-vyn</b> kommer hela tiden visa ett tidigare steg jämfört med <b>efter-vyn</b>, och visar därmed effekten av det verktyg som används för tillfället.
-MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen. Kortkommando: F
-MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen. Kortkommando: H
+MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen. Kortkommando: <b>f</b>
+MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen. Kortkommando: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Markerad högdagerindikation
 MAIN_TOOLTIP_INDCLIPPEDS;Markerad skuggindikation
 MAIN_TOOLTIP_PREFERENCES;Ställ in inställningar
@@ -689,6 +689,7 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Välj plattfält automatiskt
 PARTIALPASTE_FLATFIELDBLURRADIUS;Oskärperadie för plattfält
 PARTIALPASTE_FLATFIELDBLURTYPE;Oskärpetyp hos plattfältet
 PARTIALPASTE_FLATFIELDFILE;Plattfältsfil
+PARTIALPASTE_GRADIENT;Graderat filter
 PARTIALPASTE_HLRECONSTRUCTION;Högdageråterställning
 PARTIALPASTE_HLRECOVERYAMOUNT;Högdageråterställningsmängd
 PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdageråterställning, tröskelvärde
@@ -755,10 +756,10 @@ PREFERENCES_CACHESTRAT;Cachestrategi
 PREFERENCES_CACHETHUMBHEIGHT;Maximal storlek på miniatyrbilderna
 PREFERENCES_CIEART;CIECAM02-optimering
 PREFERENCES_CIEART_LABEL;Använd flyttalsprecision istället för dubbel
-PREFERENCES_CIEART_TOOLTIP;Om aktiverat, så kommer alla CIECAM02-beräkningar att utföras med enkel precision i flyttalsformatet istället för med dubbel precision. Detta ger en liten ökning i hastigheten, till en kostnad av en försumbar kvalitetsförsämring.
+PREFERENCES_CIEART_TOOLTIP;Om aktiverat, så kommer alla CIECAM02-beräkningar att utföras med enkel precision i flyttalsformatet istället för med dubbel precision. Detta ger en liten sänkning av beräkningstiden, till ett pris av en försumbar kvalitetsförsämring.
 PREFERENCES_CLIPPINGIND;Markeringsindikation
 PREFERENCES_CMETRICINTENT;Kolorimetrisk återgivning
-PREFERENCES_CUSTPROFBUILDHINT;Exekverbar (eller skript) fil som anropas när en ny initial profil skall genereras för en bild. \nMottar kommandoradparametrar för att tillåta generering av en regelbaserad .pp3-fil:n[Sökväg Raw/JPG] [Sökväg till standardprofil] [f-nr] [exponering i sek] [brännvidd i mm] [ISO] [Objektiv] [Kamera]
+PREFERENCES_CUSTPROFBUILDHINT;Exekverbar (eller skript) fil som anropas när en ny initial profil skall genereras för en bild. \nMottar kommandoradparametrar för att tillåta generering av en regelbaserad .pp3-fil:n[Sökväg Raw/JPG] [Sökväg till standardprofil] [bländartal] [exponering i sek] [brännvidd i mm] [ISO] [Objektiv] [Kamera]
 PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Namn
 PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
@@ -857,9 +858,9 @@ PREFERENCES_PSPATH;Adobe Photoshops installationskatalog
 PREFERENCES_RGBDTL_LABEL;Maximalt antal trådar för brusreducering
 PREFERENCES_RGBDTL_TOOLTIP;Brusreduceringen kräver ungefär 128MB RAM för en 10MPix bild och 512MB för en 40 MPix, och ytterligare 128MB per tråd. Ju mer trådar som körs parallellt, desto snabbare går beräkningarna. Ange värdet "0" för att automatiskt använda så många trådar som möjligt.
 PREFERENCES_SELECTFONT;Välj typsnitt
-PREFERENCES_SELECTICCDIRDLG;Välj ICC-profil katalog...
+PREFERENCES_SELECTICCDIRDLG;Välj katalog för färgprofiler...
 PREFERENCES_SELECTLANG;Välj språk
-PREFERENCES_SELECTMONITORPROFDLG;Välj ICC-profil för skärmen...
+PREFERENCES_SELECTMONITORPROFDLG;Välj färgprofil för skärmen...
 PREFERENCES_SELECTTHEME;Välj tema
 PREFERENCES_SET;Aktivera
 PREFERENCES_SHOWBASICEXIF;Visa grundlig EXIF-information
@@ -963,11 +964,11 @@ SHCSELECTOR_TOOLTIP;Klicka på höger musknapp för att återställa \nde tre re
 THRESHOLDSELECTOR_BL;Nederst till vänster
 THRESHOLDSELECTOR_BR;Nederst till höger
 THRESHOLDSELECTOR_B;Nederst
-THRESHOLDSELECTOR_HINT;Håll nere  <b>Shift</b> tangenten för att flytta de olika kontrollpunkterna.
+THRESHOLDSELECTOR_HINT;Håll nere <b>Shift</b> tangenten för att flytta de olika kontrollpunkterna.
 THRESHOLDSELECTOR_TL;Överst till vänster
 THRESHOLDSELECTOR_TR;Överst till höger
 THRESHOLDSELECTOR_T;Överst
-TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde.\nKortkommando: <b>c</b>
+TOOLBAR_TOOLTIP_CROP;Välj beskärningsområde.\nKortkommando: <b>c</b>\nFlytta beskärningsområdet genom att hålla nere Shift och vänstermusknapp och flytta musen.
 TOOLBAR_TOOLTIP_HAND;Handverktyg. \nKortkommando:<b>h</b>
 TOOLBAR_TOOLTIP_STRAIGHTEN;Räta upp. \nKortkommando:<b>s</b>\n\nDra en linje längs antingen en vertikal eller horisontell linje i bilden för att räta upp bilden. Roterationsvinkeln visas bredvid linjen du drar. Rotationscentrum är det geometriska mittpunkten i bilden.
 TOOLBAR_TOOLTIP_WB;Egen vitbalans. \nKortkommando:<b>w</b>
@@ -1060,20 +1061,21 @@ TP_COLORAPP_ALGO;Algoritm
 TP_COLORAPP_ALGO_ALL;Alla
 TP_COLORAPP_ALGO_JC;Ljushet + kroma (JC)
 TP_COLORAPP_ALGO_JS;Ljushet + mättnad (JS)
-TP_COLORAPP_ALGO_QM;Ljushet + Colorfulness (QM)
+TP_COLORAPP_ALGO_QM;Intensitet + färgmättnad (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Låter dig välja mellan delmängder av eller alla parametrar.
 TP_COLORAPP_BADPIXSL;Filter för heta/dålia pixlar
 TP_COLORAPP_BADPIXSL_TOOLTIP;Dämpa heta/dåliga (ljust färgade) pixlar.\n 0=ingen effekt 1=median 2=gaussian.\n\nDe här artefakterna kommer sig av tillkortakommanden i CIECAM02. Alternativt, justera bilden så att mycket mörka skuggor undviks
-TP_COLORAPP_BRIGHT;Ljushet(Q)
-TP_COLORAPP_BRIGHT_TOOLTIP;Ljushet i CIECAM02 tar i beaktande det vitas luminositet och skiljer sig från ljushet i  Lab och RGB
+TP_COLORAPP_BRIGHT;Intensitet (Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;Intensitet i CIECAM02 tar i beaktande det vitas luminositet och skiljer sig från ljushet i  Lab och RGB
 TP_COLORAPP_CHROMA;Kroma (C)
-TP_COLORAPP_CHROMA_M;Colorfulnes (M)
-TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness i CIECAM02 skiljer sig från colofulness i Lab och RGB
+TP_COLORAPP_CHROMA_M;Färgmättnad (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;Färgmättnad i CIECAM02 skiljer sig från colofulness i Lab och RGB
 TP_COLORAPP_CHROMA_S;Kroma (S)
 TP_COLORAPP_CHROMA_S_TOOLTIP;Mättnad i CIECAM02 skiljer sig från mättnad i Lab och RGB
+TP_COLORAPP_CHROMA_TOOLTIP;Kroma i CIECAM02 skiljer sig åt från kroma i Lab och RGB
 TP_COLORAPP_CIECAT_DEGREE;CAT02-anpassning
 TP_COLORAPP_CONTRAST;Kontrast (J)
-TP_COLORAPP_CONTRAST_Q;Kontrast(Q)
+TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast i CIECAM02 för Q-reglaget; skiljer sig från kontrast i Lab och RGB
 TP_COLORAPP_CONTRAST_TOOLTIP;Kontrast i CIECAM02 för J-reglaget; skiljer sig från kontrast i Lab och RGB
 TP_COLORAPP_CURVEEDITOR1;Tonkurva 1
@@ -1110,14 +1112,15 @@ TP_COLORAPP_SURROUND_EXDARK;Extremt mörkt
 TP_COLORAPP_SURROUND_TOOLTIP;Ändra toner och färger för att ta i beaktande betraktningsförhållandena för utmatningsenheten\n\n<b>Medel:</b>\nMedelljusa omgivningar (standard)\nBilden kommer ej att ändras\n\n<b>Dunkelt:</b>\nDunkla omgivningar (TV)\nBilden kommer att bli aningen mörkare \n\n<b>Mörk:</b>\nMörka omgivningar (projektor)\nBilden kommer att bli mörkare\n\n<b>Extremt mörkt:</b>\nExtremt mörka omgivningar (cutsheet)\nBilden kommer bli mycket mörk
 TP_COLORAPP_SURSOURCE;Mörk omgivning
 TP_COLORAPP_SURSOURCE_TOOLTIP;Kan användas om källbilden har en mörk kant.
-TP_COLORAPP_TCMODE_BRIGHTNESS;Ljushet
+TP_COLORAPP_TCMODE_BRIGHTNESS;Intensitet
 TP_COLORAPP_TCMODE_CHROMA;Kroma
+TP_COLORAPP_TCMODE_COLORF;Färgmättnad
 TP_COLORAPP_TCMODE_LABEL1;Kurvläge 1
 TP_COLORAPP_TCMODE_LABEL2;Kurvläge 2
 TP_COLORAPP_TCMODE_LABEL3;Kromaläge för kurvor
 TP_COLORAPP_TCMODE_LIGHTNESS;Ljushet
 TP_COLORAPP_TCMODE_SATUR;Mättnad
-TP_COLORAPP_TONECIE;Tone mapping som använder CIECAM02 ljushet (Q)
+TP_COLORAPP_TONECIE;Tonmappning som använder CIECAM02 ljushet (Q)
 TP_COLORAPP_TONECIE_TOOLTIP;Om det här valet ej är aktiverat, görs tonmappningen i Lab.\nOm det här valet är aktiverat, görs tonmappningen mha CIECAM02.\nTonmappningsverktyget måste vara aktiverad för att den här inställningen ska ha någon effekt
 TP_COLORAPP_WBCAM;Vitbalans [RT+CAT02] + [utmatning]
 TP_COLORAPP_WBRT;Vitbalans [RT] + [utmatning]
@@ -1149,7 +1152,7 @@ TP_DIRPYRDENOISE_BLUE;Krominans - Blå-Gul
 TP_DIRPYRDENOISE_CHROMA;Kroma
 TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Kan användas på rå- och icke-råbilder.\n\nFör icke-råbilder beror brusreduceringen (~luminans) på in-profilens gamma. Gamma hos sRGB antas, och således: om bildens profil har ett annat gammavärde, så kommer brusreduceringen att variera.
 TP_DIRPYRDENOISE_ENH;Förbättrat läge
-TP_DIRPYRDENOISE_ENH_TOOLTIP;Ökar kvaliteten på brusreduceringen till kostnad av 20 % längre beräkningstid
+TP_DIRPYRDENOISE_ENH_TOOLTIP;Ökar kvaliteten på brusreduceringen till priset av 20 % längre beräkningstid
 TP_DIRPYRDENOISE_GAMMA;Gamma
 TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varierar brusreduceringens styrka över hela skalan av toner. Mindre värden riktar sig mot de mörka partierna i bilden, medan större värden utökar effekten till högdagrarna.
 TP_DIRPYRDENOISE_LABEL;Brusreducering
@@ -1177,7 +1180,7 @@ TP_EPD_LABEL;Tonmappning
 TP_EPD_REWEIGHTINGITERATES;Återviktade iterationer
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Styrka
-TP_EPD_TOOLTIP;Tonmappning är möjligt via Lab-läge (standard) och CIECAM02-läge.\n\nFör att aktivera CIECAM02- tonmappningsläget, aktivera följande:\n1. CIECAM02\n2. Algoritm="Ljushet + Colorfulness (QM)"\n3. "Tonmappning mha CIECAM02 ljushet (Q)"
+TP_EPD_TOOLTIP;Tonmappning är möjligt via Lab-läge (standard) och CIECAM02-läge.\n\nFör att aktivera CIECAM02- tonmappningsläget, aktivera följande:\n1. CIECAM02\n2. Algoritm="Intensitet + Färgmättnad (QM)"\n3. "Tonmappning mha CIECAM02 ljushet (Q)"
 TP_EXPOSCORR_LABEL;Vit- och svartpunktskorrigering, råformat
 TP_EXPOSURE_AUTOLEVELS;Autonivåer
 TP_EXPOSURE_AUTOLEVELS_TIP;Slå av/på autonivåer för att automatiskt beräkna och använda värden baserat på bildanalys\nAktiverar högdageråterställning om nödvändigt
@@ -1191,7 +1194,7 @@ TP_EXPOSURE_COMPRSHADOWS;Skuggåterställning
 TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR1;Tonkurva 1
 TP_EXPOSURE_CURVEEDITOR2;Tonkurva 2
-TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Beakta följande del i manualen för att se hur man uppnår bästa resultat med dubbla kurvor:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Se följande del i manualen hur man uppnår bästa resultat med dubbla kurvor:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_EXPCOMP;Exponeringskompensation
 TP_EXPOSURE_LABEL;Exponering
 TP_EXPOSURE_SATURATION;Mättnad
@@ -1213,6 +1216,7 @@ TP_GAMMA_CURV;gamma
 TP_GAMMA_FREE;Obunden gamma
 TP_GAMMA_OUTPUT;Utmatningsgamma
 TP_GAMMA_SLOP;Lutning (linjär)
+TP_GENERAL_11SCALE_TOOLTIP;Effekten från det här verktyget eller några av dess underkomponenter är endast synliga då de betraktas i 1:1-skala
 TP_GRADIENT_CENTER;Centrum
 TP_GRADIENT_CENTER_X;Centrum, X
 TP_GRADIENT_CENTER_X_TOOLTIP;Rotationspunkt, X: -100=vänstra kanten, 0=centrum, +100=högra kanten
@@ -1250,7 +1254,7 @@ TP_ICM_INPUTCAMERAICC_TOOLTIP;Använd RawTherapees kameraspecifika DCP- eller IC
 TP_ICM_INPUTCAMERA;Standard för kameran
 TP_ICM_INPUTCAMERA_TOOLTIP;Använd enkel färgmatris från dcraw, förbättrad version från RawTherapee (oavsett vilken som är tillgänglig baserad på kameramodell) eller inbäddad från DNG.
 TP_ICM_INPUTCUSTOM;Egen
-TP_ICM_INPUTCUSTOM_TOOLTIP;Välj din egen DCP/ICC-färgprofil för kameran.
+TP_ICM_INPUTCUSTOM_TOOLTIP;Välj din egen DCP/ICC-profil för kameran.
 TP_ICM_INPUTDLGLABEL;Välj färginmatningsprofil...
 TP_ICM_INPUTEMBEDDED;Använd inbäddad, om möjligt
 TP_ICM_INPUTEMBEDDED_TOOLTIP;Använd den färgprofil som är inbäddad i icke-råfiler.
@@ -1387,12 +1391,14 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Grader
 TP_ROTATE_LABEL;Rotera
 TP_ROTATE_SELECTLINE;Välj rak linje
+TP_SAVEDIALOG_OK_TIP;Kortkommando: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Högdager
 TP_SHADOWSHLIGHTS_HLTONALW;Tonvidd (Högdagrar)
 TP_SHADOWSHLIGHTS_LABEL;Skugg- och högdageråterställning
 TP_SHADOWSHLIGHTS_LOCALCONTR;Lokal kontrast
 TP_SHADOWSHLIGHTS_RADIUS;Radie
 TP_SHADOWSHLIGHTS_SHADOWS;Skuggor
+TP_SHADOWSHLIGHTS_SHARPMASK;Skarp mask
 TP_SHADOWSHLIGHTS_SHTONALW;Tonvidd (Skuggor)
 TP_SHARPENEDGE_AMOUNT;Mängd
 TP_SHARPENEDGE_LABEL;Kanter
@@ -1506,9 +1512,3 @@ ZOOMPANEL_ZOOMOUT;Förminska. \nKortkommando: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!PARTIALPASTE_GRADIENT;Graduated filter
-!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from Lab and RGB chroma
-!TP_COLORAPP_TCMODE_COLORF;Colorfulness
-!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
-!TP_SAVEDIALOG_OK_TIP;Shortcut <b>Ctrl-Enter</b>
-!TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
