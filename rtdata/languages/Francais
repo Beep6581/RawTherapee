@@ -1265,6 +1265,7 @@ TP_ICM_NOICM;Pas d'ICM: sortie sRGB
 TP_ICM_OUTPUTDLGLABEL;Choix du profil ICC de sortie...
 TP_ICM_OUTPUTPROFILE;Profil de sortie
 TP_ICM_SAVEREFERENCE;Utiliser l'image comme profil de référence
+TP_ICM_SAVEREFERENCE_TOOLTIP;Sauvegarde une image TIFF linéaire avant que le profil d'entrée ne soit appliqué. Le résultat peut être utilisé à des fins de calibrage, pour générer un profil APN.
 TP_ICM_TONECURVE;Utiliser la courbe tonale du profil DCP
 TP_ICM_TONECURVE_TOOLTIP;Utilise la courbe tonale DCP incluse. Ce paramètre ne sera actif que si le profil DCP contient une courbe tonale
 TP_ICM_WORKINGPROFILE;Profil de Travail
