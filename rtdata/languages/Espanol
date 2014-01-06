@@ -1,25 +1,76 @@
-#01 2008-01-15 keenonkites, first translation
-#02 2008-03-03 Ioritz Ibarguren, corrections
-#03 2008-04-05 keenonkites, completed for 2.4m1
-#04 2008-04-09 Ramon, partly corrected (part of 2.3)
-#05 2008-04-29 Ramon, small correction
-#06 2008-06-09 Ramon, Adaptions regarding 2.4m1 and others
-#07 2008-09-20 keenonkites, first version for 2.4m2
-#08 2008-12-19 keenonkites, first version for 2.4beta4
-#09 2010-12-07 rickydh, some translations of untranslated keys for 3.0 alpha1
-#10 2011-12-25 plores, translation improvement, translation of untranslated strings
+#01 Latin America - Spanish
+#02 Conventions used to keep the same writing style along new texts and versions
+#03
+#04  Abreviaturas (Abbreviations)
+#05  -----------------------------
+#06   AC: Aberración cromática (fringe)
+#07   B&N: Blanco y Negro (Black & White)
+#08   CV: Corrección de Viñeteado (Vignette Filter: in Transform tab)
+#09  FG: Filtro con Gradiente (Gradient Filter)
+#10   FV: Filtrar Viñeteado (Vignette Filter: in Exposure tab)
+#11   MC: Mezclador de canales (Channel Mixer)
+#12   RGB: Modelo de color Rojo Verde Azul (Red Green Blue)
+#13   WB: Balance de blancos (White Balance)
+#14
+#15  Convención de traducción de términos importantes,
+#16  sin equivalente estándar o poco conocidos en español:
+#17  ---------------------------------------------
+#18   Artifacts: Elementos extraños
+#19   Brightness: Brillo
+#20   Checkbox: Casilla (seleccionada/desmarcada)
+#21   Chroma: Crominancia (**, definida en es.wikipedia)
+#22   Chromatic: Cromática (*)
+#23   Chromaticity: Cromaticidad (**)
+#24   Colorfulness: Colorido
+#25   Cyan: Cian (*)
+#26   Dim: Luz tenue
+#27   Feather: Difuminado
+#28   Illuminant: Iluminante
+#29   Lightness: Claridad
+#30   Luminance: Luminancia (*)
+#31   Luminosity: Luminosidad
+#32   Mapping: Mapeo (*)
+#33   Sharpening: Enfoque
+#34   Slider: Control deslizante
+#35   Tone Curve: Curva tonal
+#36   Vibrance: Vibranza
+#37
+#38   (*) Término incluido en diccionario RAE
+#39   (**) Término no incluido en diccionario RAE
+#40
+#41  Términos conservados en Inglés por no tener traducción breve
+#42  al español en el sentido usado por RT/fotografía digital
+#43   Dark Frame
+#44   ICM (Image Color Management)
+#45   Gamut
+#46   Gamma
+#47   Raw
+#48
+#49 2008-01-15 keenonkites, first translation
+#50 2008-03-03 Ioritz Ibarguren, corrections
+#51 2008-04-05 keenonkites, completed for 2.4m1
+#52 2008-04-09 Ramon, partly corrected (part of 2.3)
+#53 2008-04-29 Ramon, small correction
+#54 2008-06-09 Ramon, Adaptions regarding 2.4m1 and others
+#55 2008-09-20 keenonkites, first version for 2.4m2
+#56 2008-12-19 keenonkites, first version for 2.4beta4
+#57 2010-12-07 rickydh, some translations of untranslated keys for 3.0 alpha1
+#58 2011-12-25 plores, translation improvement, translation of untranslated strings
+#59 2013-01-03 OdeLama, translation of untranslated strings
 
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Créditos
 ABOUT_TAB_LICENSE;Licencia
+ABOUT_TAB_RELEASENOTES;Notas de la versión
 ABOUT_TAB_SPLASH;Splash
 ADJUSTER_RESET_TO_DEFAULT;Restablece los valores predeterminados
 BATCHQUEUE_AUTOSTART;Inicio automático
+BATCHQUEUE_DESTFILENAME;Ruta y nombre del archivo
 BATCH_PROCESSING;Proceso por lotes
 CURVEEDITOR_CURVES;Curvas
 CURVEEDITOR_CURVE;Curva
 CURVEEDITOR_CUSTOM;Personalizado
-CURVEEDITOR_DARKS;Penumbras
+CURVEEDITOR_DARKS;Oscuros
 CURVEEDITOR_FILEDLGFILTERANY;Cualquier archivo
 CURVEEDITOR_FILEDLGFILTERCURVE;Archivos de curvas
 CURVEEDITOR_HIGHLIGHTS;Luces altas
@@ -32,7 +83,7 @@ CURVEEDITOR_PARAMETRIC;Paramétrica
 CURVEEDITOR_SAVEDLGLABEL;Guardar curva...
 CURVEEDITOR_SHADOWS;Sombras
 CURVEEDITOR_TOOLTIPCOPY;Copiar curva actual al portapapeles
-CURVEEDITOR_TOOLTIPLINEAR;Restablecer la curva a lineal
+CURVEEDITOR_TOOLTIPLINEAR;Restablecer la curva a linea recta
 CURVEEDITOR_TOOLTIPLOAD;Abrir una curva desde un archivo
 CURVEEDITOR_TOOLTIPPASTE;Pegar curva desde el portapapeles
 CURVEEDITOR_TOOLTIPSAVE;Guardar curva actual
@@ -45,7 +96,7 @@ EXIFFILTER_EXPOSURECOMPENSATION;Compensación de exposición (EV)
 EXIFFILTER_FILETYPE;Tipo de archivo
 EXIFFILTER_FOCALLEN;Distancia focal
 EXIFFILTER_ISO;ISO
-EXIFFILTER_LENS;Objetivo
+EXIFFILTER_LENS;Lente
 EXIFFILTER_METADATAFILTER;Activar filtros de metadatos
 EXIFFILTER_SHUTTER;Tiempo de exposición
 EXIFPANEL_ADDEDITHINT;Agregar atributo nuevo o cambiar atributo
@@ -66,47 +117,51 @@ EXPORT_BYPASS_ALL;Seleccionar / deseleccionar todo
 EXPORT_BYPASS_COLORDENOISE;Saltar Reducción de ruido de color
 EXPORT_BYPASS_DEFRINGE;Saltar Quitar borde púrpura
 EXPORT_BYPASS_DIRPYRDENOISE;Saltar Reducción de ruido
-EXPORT_BYPASS_DIRPYREQUALIZER;Saltar Contraste mediante niveles de detalle
+EXPORT_BYPASS_DIRPYREQUALIZER;Saltar Contraste por niveles de detalle
 EXPORT_BYPASS_LUMADENOISE;Saltar Reducción de ruido de luminancia
-EXPORT_BYPASS_RAW_ALL_ENHANCE;Saltar Reducción de ruido/artefactos postdemosaicado
+EXPORT_BYPASS_RAW_ALL_ENHANCE;Saltar Reducción de Ruido/artefactos post-interpolado
 EXPORT_BYPASS_RAW_CA;Saltar [raw] Corrección de aberración cromática
 EXPORT_BYPASS_RAW_CCSTEPS;Saltar [raw] Supresión de falso color
-EXPORT_BYPASS_RAW_DCB_ENHANCE;Saltar [raw] Aplicar paso de mejora DCB
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Saltar [raw] Aplicar pasos de mejora DCB
 EXPORT_BYPASS_RAW_DCB_ITERATIONS;Saltar [raw] Iteraciones DCB
-EXPORT_BYPASS_RAW_DF;Saltar [raw] Imagen en oscuridad
+EXPORT_BYPASS_RAW_DF;Saltar [raw] <i>Dark Frame</i>
 EXPORT_BYPASS_RAW_FF;Saltar [raw] Campo plano
 EXPORT_BYPASS_RAW_GREENTHRESH;Saltar [raw] Equilibrado del verde
 EXPORT_BYPASS_RAW_LINENOISE;Saltar [raw] Filtro de ruido de línea
+EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Saltar [raw] Aplicar pasos de mejora LMMSE
 EXPORT_BYPASS_SHARPENEDGE;Saltar Enfoque de bordes
 EXPORT_BYPASS_SHARPENING;Saltar Enfoque
-EXPORT_BYPASS_SHARPENMICRO;Saltar Microcontraste 
-EXPORT_BYPASS_SH_HQ;Saltar Sombras/Luces altas (Alta calidad)
+EXPORT_BYPASS_SHARPENMICRO;Saltar Microcontraste
+EXPORT_BYPASS_SH_HQ;Saltar Máscara de Enfoque Sombras/Luces
 EXPORT_FASTEXPORTOPTIONS;<b>Opciones de Exportación Rápida</b>
-EXPORT_INSTRUCTIONS;Las opciones de Exportación Rápida proporcionan la posibilidad de saltarse pasos de revelado que consumen mucho tiempo y recursos, ejecutando en su lugar el procesamiento de la cola utilizando los ajustes de Exportación Rápida. Este método se recomienda para generar más rápidamente imágenes de menor resolución cuando la velocidad es prioritaria, o cuando se desea cambiar el tamaño de una o muchas imágenes de salida sin modificar sus parámetros de revelado.
+EXPORT_INSTRUCTIONS;Las opciones de Exportación Rápida proporcionan la posibilidad de saltarse pasos de revelado que consumen mucho tiempo y recursos, ejecutando en su lugar el procesamiento de la cola utilizando los ajustes de Exportación Rápida. Se recomienda este método para generar más rápidamente imágenes de menor resolución: cuando la velocidad es prioritaria, o cuando se desea cambiar el tamaño de una o muchas imágenes de salida sin modificar sus parámetros de revelado.
 EXPORT_MAXHEIGHT;Altura máxima:
 EXPORT_MAXWIDTH;Anchura máxima:
-EXPORT_PUTTOQUEUEFAST;  Poner en la cola para Exportación Rápida
-EXPORT_RAW_DMETHOD;Método de demosaicado
+EXPORT_PUTTOQUEUEFAST;  Poner en la cola de Exportación Rápida
+EXPORT_RAW_DMETHOD;Método de interpolado
 EXPORT_RESIZEMETHOD;Método de cambio de tamaño
+EXTPROGTARGET_1;Raw
+EXTPROGTARGET_2;procesada en cola
 FILEBROWSER_ADDDELTEMPLATE;Añadir/Borrar plantillas...
 FILEBROWSER_APPLYPROFILE;Aplicar perfil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplicar perfil (parcial)
 FILEBROWSER_ARRANGEMENTHINT;Cambiar disposición de las miniaturas entre horizontal y vertical
-FILEBROWSER_AUTODARKFRAME;Auto Imagen en oscuridad
+FILEBROWSER_AUTODARKFRAME;Auto <i>Dark Frame</i>
 FILEBROWSER_AUTOFLATFIELD;Auto Campo plano
 FILEBROWSER_BROWSEPATHBUTTONHINT;Pulsar para examinar la carpeta seleccionada
-FILEBROWSER_BROWSEPATHHINT;Escribir el path a examinar (<b>Ctrl-o</b> poner el foco en el cuadro de texto,<b>Ctrl-Enter</b> para examinar en el Explorador de Archivos)
-FILEBROWSER_CACHECLEARFROMFULL;Limpiar del caché (completo)
-FILEBROWSER_CACHECLEARFROMPARTIAL;Limpiar del caché (parcial)
-FILEBROWSER_CACHE;Cache
+FILEBROWSER_BROWSEPATHHINT;Ingrese la ruta a examinar \n<b>Ctrl-O</b> poner el foco en campo con la ruta\n<b>Enter</b> / <b>Ctrl-Enter</b> para examinar allí;\n<b>Esc</b>Para quitar los cambios.\n<b>Shift-Esc</b> Para quitar el foco.\n\n\nAbreviaturas de ruta:\n  <b>~</b> - Carpeta hogar del usuario\n  <b>!</b> - Carpeta de imágenes del usuario
+FILEBROWSER_CACHECLEARFROMFULL;Limpiar del caché - Total
+FILEBROWSER_CACHECLEARFROMPARTIAL;Limpiar del caché - Parcial
+FILEBROWSER_CACHE;Caché
 FILEBROWSER_CLEARPROFILE;Borrar perfil
+FILEBROWSER_COLORLABEL_TOOLTIP;Etiquetar con color\n\nUse menú desplegable o atajos de teclado:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Rojo\n<b>Shift-Ctrl-2</b> Amarillo\n<b>Shift-Ctrl-3</b> Verde\n<b>Shift-Ctrl-4</b> Azul\n<b>Shift-Ctrl-5</b> Púrpura
 FILEBROWSER_COPYPROFILE;Copiar perfil
 FILEBROWSER_CURRENT_NAME;Nombre actual:
-FILEBROWSER_DARKFRAME;Imagen en oscuridad
+FILEBROWSER_DARKFRAME;<i>Dark Frame</i>
 FILEBROWSER_DELETEDLGLABEL;Confirmación de borrar archivos
-FILEBROWSER_DELETEDLGMSGINCLPROC;¿Seguro que quieres borrar los %1 archivos seleccionados INCLUYENDO la versión procesada en la cola?
-FILEBROWSER_DELETEDLGMSG;¿Seguro que quieres borrar los %1 archivos seleccionados?
-FILEBROWSER_EMPTYTRASHHINT;Borrar archivos de la papelera definitivamente
+FILEBROWSER_DELETEDLGMSGINCLPROC;¿Seguro que quiere borrar los <b>%1</b> archivos seleccionados <b>incluyendo</b> la versión procesada en la cola?
+FILEBROWSER_DELETEDLGMSG;¿Seguro que quiere borrar los <b>%1</b> archivos seleccionados?
+FILEBROWSER_EMPTYTRASHHINT;Borrar definitivamente los archivos en la papelera
 FILEBROWSER_EMPTYTRASH;Vaciar papelera
 FILEBROWSER_EXEC_CPB;Ejecutar generador de perfiles de imagen del usuario
 FILEBROWSER_EXIFFILTERAPPLYHINT;Activar/desactivar filtro Exif en el explorador de archivos
@@ -116,9 +171,10 @@ FILEBROWSER_EXIFFILTERSETTINGSHINT;Cambiar ajustes del filtro Exif
 FILEBROWSER_EXIFFILTERSETTINGS;Ajuste
 FILEBROWSER_EXTPROGMENU;Abrir con
 FILEBROWSER_FLATFIELD;Campo plano
-FILEBROWSER_MOVETODARKFDIR;Mover a carpeta de Imágenes en oscuridad
+FILEBROWSER_MOVETODARKFDIR;Mover a carpeta de <i>Dark Frame</i>s
 FILEBROWSER_MOVETOFLATFIELDDIR;Mover a carpeta de campo plano
 FILEBROWSER_NEW_NAME;Nuevo nombre:
+FILEBROWSER_OPENDEFAULTVIEWER;Ventana predeterminada de visualización (procesada en cola)
 FILEBROWSER_PARTIALPASTEPROFILE;Pegar perfil parcialmente
 FILEBROWSER_PASTEPROFILE;Pegar perfil
 FILEBROWSER_POPUPCANCELJOB;Cancelar trabajo
@@ -131,68 +187,77 @@ FILEBROWSER_POPUPCOLORLABEL5;Etiqueta: Púrpura
 FILEBROWSER_POPUPCOLORLABEL;Etiquetar con un color
 FILEBROWSER_POPUPCOPYTO;Copiar a...
 FILEBROWSER_POPUPFILEOPERATIONS;Operaciones con archivos
-FILEBROWSER_POPUPMOVEEND;Desplazar al fin de la cola
-FILEBROWSER_POPUPMOVEHEAD;Desplazar al comienzo de la cola
+FILEBROWSER_POPUPMOVEEND;Mover hacia el final de la cola
+FILEBROWSER_POPUPMOVEHEAD;Mover hacia el inicio de la cola
 FILEBROWSER_POPUPMOVETO;Mover a...
 FILEBROWSER_POPUPOPEN;Abrir
 FILEBROWSER_POPUPPROCESSFAST;Poner en la cola (exportación rápida)
 FILEBROWSER_POPUPPROCESS;Poner en la cola
 FILEBROWSER_POPUPPROFILEOPERATIONS;Operaciones con perfiles
-FILEBROWSER_POPUPRANK1;Valorar con 1 estrella
-FILEBROWSER_POPUPRANK2;Valorar con 2 estrellas
-FILEBROWSER_POPUPRANK3;Valorar con 3 estrellas
-FILEBROWSER_POPUPRANK4;Valorar con 4 estrellas
-FILEBROWSER_POPUPRANK5;Valorar con 5 estrellas
-FILEBROWSER_POPUPRANK;Valorar
-FILEBROWSER_POPUPREMOVEINCLPROC;Borrar del sistema junto con resultado batch
-FILEBROWSER_POPUPREMOVE;Borrar del sistema
+FILEBROWSER_POPUPRANK1;Rango 1 *
+FILEBROWSER_POPUPRANK2;Rango 2 **
+FILEBROWSER_POPUPRANK3;Rango 3 ***
+FILEBROWSER_POPUPRANK4;Rango 4 ****
+FILEBROWSER_POPUPRANK5;Rango 5 *****
+FILEBROWSER_POPUPRANK;Asignar rango
+FILEBROWSER_POPUPREMOVEINCLPROC;Borrar con salida de la cola
+FILEBROWSER_POPUPREMOVESUBMENU;Remover
+FILEBROWSER_POPUPREMOVE;Borrar
 FILEBROWSER_POPUPRENAME;Renombrar
 FILEBROWSER_POPUPSELECTALL;Seleccionar todo
-FILEBROWSER_POPUPTRASH;Desplazar a la papelera
+FILEBROWSER_POPUPTRASH;Mover a la papelera
 FILEBROWSER_POPUPUNRANK;Quitar valoración
-FILEBROWSER_POPUPUNTRASH;Salvar de la papelera
-FILEBROWSER_PROCESSINGSETTINGSHINT;Ajustar formato de archivo y carpeta de salida
+FILEBROWSER_POPUPUNTRASH;Sacar de la papelera
+FILEBROWSER_PROCESSINGSETTINGSHINT;Establecer formato de archivo y carpeta de salida
 FILEBROWSER_PROCESSINGSETTINGS;Ajustes
 FILEBROWSER_QUERYBUTTONHINT;Borrar la búsqueda
-FILEBROWSER_QUERYHINT;Escribir una parte del nombre del archivo a buscar \n<b>Ctrl-f</b> poner el foco (en el explorador de archivos);\n<b>Enter</b> para buscar
+FILEBROWSER_QUERYHINT;Escriba <i>parte del nombre del archivo</i> a buscar, o una <i>lista separada con comas</i>.\nP.ej. <i>1001,1004,1199</i>\n\n<b>Ctrl-F</b> Para poner el foco en el campo Buscar.\n<b>Enter</b> Para iniciar la búsqueda.\n<b>Esc</b> Para limpiar.\n<b>Shift-Esc</b> Para quitar el foco.
 FILEBROWSER_QUERYLABEL; Buscar:
+FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nAtajo<b>Shift-1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nAtajo<b>Shift-2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nAtajo<b>Shift-3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nAtajo<b>Shift-4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nAtajo<b>Shift-5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renombrar archivo
 FILEBROWSER_RENAMEDLGMSG;Renombrar archivo "%1"a:
-FILEBROWSER_SELECTDARKFRAME;Seleccionar imagen en oscuridad...
+FILEBROWSER_SELECTDARKFRAME;Seleccionar <i>Dark Frame</i>...
 FILEBROWSER_SELECTFLATFIELD;Seleccionar campo plano...
 FILEBROWSER_SHOWCOLORLABEL1HINT;Mostrar imágenes etiquetadas con Rojo <b>Alt-1</b>
 FILEBROWSER_SHOWCOLORLABEL2HINT;Mostrar imágenes etiquetadas con Amarillo <b>Alt-2</b>
 FILEBROWSER_SHOWCOLORLABEL3HINT;Mostrar imágenes etiquetadas con Verde <b>Alt-3</b>
 FILEBROWSER_SHOWCOLORLABEL4HINT;Mostrar imágenes etiquetadas con Azul <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Mostrar imágenes etiquetadas con Púrpura <b>Alt-5</b>
-FILEBROWSER_SHOWDIRHINT;Mostrar todas imágenes de la carpeta
-FILEBROWSER_SHOWEDITEDHINT;Mostrar imágenes editadas <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imágenes no editadas <b>6</b>
-FILEBROWSER_SHOWEXIFINFO;Mostrar información EXIF <b>i</b>
+FILEBROWSER_SHOWDIRHINT;Quitar todos los filtros.\nAtajo: <b>d</b>
+FILEBROWSER_SHOWEDITEDHINT;Mostrar imágenes editadas.\nAtajo: <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imágenes no editadas.\nAtajo: <b>6</b>
+FILEBROWSER_SHOWEXIFINFO;Mostrar datos Exif.\nAtajo: <b>i</b>\n\nAtajo en modo editor simple: <b>Alt-I</b>
 FILEBROWSER_SHOWQUEUEHINT;Mostrar contenido de la cola de procesamiento
-FILEBROWSER_SHOWRANK1HINT;Mostrar imágenes con 1 estrella
-FILEBROWSER_SHOWRANK2HINT;Mostrar imágenes con 2 estrellas
-FILEBROWSER_SHOWRANK3HINT;Mostrar imágenes con 3 estrellas
-FILEBROWSER_SHOWRANK4HINT;Mostrar imágenes con 4 estrellas
-FILEBROWSER_SHOWRANK5HINT;Mostrar imágenes con 5 estrellas
-FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostrar imágenes guardadas recientemente <b>Alt-7</b>
-FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostrar imágenes no guardadas recientemente <b>Alt-6</b>
-FILEBROWSER_SHOWTRASHHINT;Mostrar contenido de la papelera
-FILEBROWSER_SHOWUNCOLORHINT;Mostrar imágenes sin etiqueta de color <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Mostrar imágenes sin valoración
+FILEBROWSER_SHOWRANK1HINT;Mostrar imágenes con 1 estrella.\nAtajo: <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Mostrar imágenes con 2 estrellas.\nAtajo: <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Mostrar imágenes con 3 estrellas.\nAtajo: <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Mostrar imágenes con 4 estrellas.\nAtajo: <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Mostrar imágenes con 5 estrellas.\nAtajo: <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostrar imágenes guardadas recientemente.\nAtajo: <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostrar imágenes no guardadas recientemente.\nAtajo: <b>Alt-6</b>
+FILEBROWSER_SHOWTRASHHINT;Mostrar el contenido de la papelera.\nAtajo: <b>t</b>
+FILEBROWSER_SHOWUNCOLORHINT;Mostrar imágenes sin etiqueta de color.\nAtajo: <b>Alt-0</b>
+FILEBROWSER_SHOWUNRANKHINT;Mostrar imágenes sin rango.\nAtajo: <b>0</b>
 FILEBROWSER_STARTPROCESSINGHINT;Iniciar procesamiento de imágenes en la cola
 FILEBROWSER_STARTPROCESSING;Iniciar procesamiento
 FILEBROWSER_STOPPROCESSINGHINT;Parar procesamiento de imágenes en la cola
 FILEBROWSER_STOPPROCESSING;Parar procesamiento
 FILEBROWSER_THUMBSIZE;Tamaño miniatura
-FILEBROWSER_TOOLTIP_STOPPROCESSING;Iniciar procesamiento automáticamente cuando llega un nuevo trabajo
+FILEBROWSER_TOOLTIP_STOPPROCESSING;Iniciar automáticamente el procesamiento cuando llega un nuevo trabajo
+FILEBROWSER_UNRANK_TOOLTIP;Sin Rango\nAtajo<b>Shift - 0</b>
 FILEBROWSER_USETEMPLATE;Utilizar plantilla:
-FILEBROWSER_ZOOMINHINT;Agrandar miniatura
-FILEBROWSER_ZOOMOUTHINT;Reducir miniatura
+FILEBROWSER_ZOOMINHINT;Agrandar miniatura.\nAtajo: <b>+</b>\n\nAtajo en modo editor simple: <b>Alt-+</b>
+FILEBROWSER_ZOOMOUTHINT;Reducir miniatura.\nAtajo: <b>-</b>\n\nAtajo en modo editor simple: <b>Alt--</b>
 GENERAL_ABOUT;Acerca de
 GENERAL_AFTER;Después
+GENERAL_AUTO;Automático
 GENERAL_BEFORE;Antes
 GENERAL_CANCEL;Cancelar
+GENERAL_CLOSE;Cerrar
 GENERAL_DISABLED;Desactivado
 GENERAL_DISABLE;Desactivar
 GENERAL_ENABLED;Activado
@@ -208,7 +273,9 @@ GENERAL_OK;Aceptar
 GENERAL_PORTRAIT;Retrato
 GENERAL_SAVE;Guardar
 GENERAL_UNCHANGED;(Sin cambios)
+GENERAL_WARNING;Advertencia
 GENERAL_YES;Sí
+HISTOGRAM_BUTTON_BAR;RGB
 HISTOGRAM_BUTTON_B;B
 HISTOGRAM_BUTTON_G;G
 HISTOGRAM_BUTTON_L;L
@@ -216,12 +283,13 @@ HISTOGRAM_BUTTON_RAW;Raw
 HISTOGRAM_BUTTON_R;R
 HISTOGRAM_LABEL;Histograma
 HISTOGRAM_TOOLTIP_BAR;Mostrar/Ocultar barra indicadora RGB\nHacer clic con el botón derecho del ratón en la previsualización para congelar/descongelar
-HISTOGRAM_TOOLTIP_B;Mostrar/Ocultar histograma AZUL
+HISTOGRAM_TOOLTIP_B;Mostrar/Ocultar histograma <b>Azul</b>
+HISTOGRAM_TOOLTIP_CHRO;Mostrar/Ocultar histograma de cromaticidad
 HISTOGRAM_TOOLTIP_FULL;Cambiar entre histograma completo o escalado
-HISTOGRAM_TOOLTIP_G;Mostrar/Ocultar histograma VERDE
-HISTOGRAM_TOOLTIP_L;Mostrar/Ocultar histograma de Luminancia CIELAB
-HISTOGRAM_TOOLTIP_RAW;Mostrar/ocultar histograma RAW
-HISTOGRAM_TOOLTIP_R;Mostrar/Ocultar histograma ROJO
+HISTOGRAM_TOOLTIP_G;Mostrar/Ocultar histograma <b>Verde</b>
+HISTOGRAM_TOOLTIP_L;Mostrar/Ocultar histograma de <b>Luminancia CIELAB</b>
+HISTOGRAM_TOOLTIP_RAW;Mostrar/ocultar histograma <b>Raw</b>
+HISTOGRAM_TOOLTIP_R;Mostrar/Ocultar histograma <b>Rojo</b>
 HISTORY_CHANGED;Cambiado
 HISTORY_CUSTOMCURVE;Curva a medida
 HISTORY_DELSNAPSHOT;Quitar instantánea
@@ -237,58 +305,58 @@ HISTORY_MSG_7;Negro
 HISTORY_MSG_8;Compensación de exposición
 HISTORY_MSG_9;Compresión de luces altas
 HISTORY_MSG_10;Compresión de sombras
-HISTORY_MSG_11;Curva de tono
+HISTORY_MSG_11;Curva de tonal 1
 HISTORY_MSG_12;Exposición automática
 HISTORY_MSG_13;Recorte de exposición
-HISTORY_MSG_14;Luminancia - Brillo
-HISTORY_MSG_15;Luminancia - Contraste
+HISTORY_MSG_14;Lab - Claridad
+HISTORY_MSG_15;Lab - Contraste
 HISTORY_MSG_16;Luminancia - Negro
 HISTORY_MSG_17;Luminancia - Compr. de luces altas
 HISTORY_MSG_18;Luminancia - Compr. de sombras
-HISTORY_MSG_19;Luminancia - Curva
+HISTORY_MSG_19;Curva 'L'
 HISTORY_MSG_20;Enfoque
 HISTORY_MSG_21;Enfoque - Radio
 HISTORY_MSG_22;Enfoque - Cantidad
 HISTORY_MSG_23;Enfoque - Umbral
-HISTORY_MSG_24;Enfocar sólo bordes
+HISTORY_MSG_24;Enfoque - Sólo bordes
 HISTORY_MSG_25;Enfoque - Radio de detección de bordes
 HISTORY_MSG_26;Enfoque - Tolerancia de bordes
 HISTORY_MSG_27;Enfoque - Control de halo
-HISTORY_MSG_28;Control de Halo - Cantidad
-HISTORY_MSG_29;Enfoque - Método
+HISTORY_MSG_28;Enfoque - Cantidad de Control de Halo
+HISTORY_MSG_29;Método de Enfoque
 HISTORY_MSG_30;Deconvolución - Radio
 HISTORY_MSG_31;Deconvolución - Cantidad
 HISTORY_MSG_32;Deconvolución - Amortiguación
 HISTORY_MSG_33;Deconvolución - Iteraciones
-HISTORY_MSG_34;Evitar recorte de colores
-HISTORY_MSG_35;Limitador de saturación
-HISTORY_MSG_36;Límite de saturación
-HISTORY_MSG_37;Aumento de colores
-HISTORY_MSG_38;Equilibrio de Blancos - Método
+HISTORY_MSG_34;LCP - Corrección de distorsión
+HISTORY_MSG_35;LCP - Corrección de Viñeta
+HISTORY_MSG_36;LCP - Corrección Aberr.Crom.
+HISTORY_MSG_37;Niveles automáticos
+HISTORY_MSG_38;Método de Balance de Blancos
 HISTORY_MSG_39;Temperatura de color
 HISTORY_MSG_40;Equilibrio de Blancos - Tinte
-HISTORY_MSG_41;Curva de tono modo 1
-HISTORY_MSG_42;Curva de tono 2
-HISTORY_MSG_43;Curva de tono modo 2
+HISTORY_MSG_41;Curva tonal modo 1
+HISTORY_MSG_42;Curva tonal 2
+HISTORY_MSG_43;Curva tonal modo 2
 HISTORY_MSG_44;Red. ruido de lum. - Radio
 HISTORY_MSG_45;Red. ruido de lum. - Tolerancia de Bordes
 HISTORY_MSG_46;Red. ruido de color
 HISTORY_MSG_47;Mezcla luces altas ICC con matriz
 HISTORY_MSG_48;Usar curva de tono DCP
-HISTORY_MSG_49;Red. ruido de color - Sensible a bordes
-HISTORY_MSG_50;Herramienta Sombras/Luces altas
-HISTORY_MSG_51;Aumento de luces altas
-HISTORY_MSG_52;Aumento de sombras
-HISTORY_MSG_53;Luces altas - Ancho tonal
-HISTORY_MSG_54;Sombras - Ancho tonal
-HISTORY_MSG_55;Contraste local
-HISTORY_MSG_56;Sombras/Luces altas - Radio
+HISTORY_MSG_49;Iluminante DCP
+HISTORY_MSG_50;Sombras/Luces altas (S/LA)
+HISTORY_MSG_51;S/LA - Luces altas
+HISTORY_MSG_52;S/LA - Sombras
+HISTORY_MSG_53;S/LA - Ancho tonal Luces Altas
+HISTORY_MSG_54;S/LA - Ancho tonal Sombras
+HISTORY_MSG_55;S/LA - Contraste local
+HISTORY_MSG_56;S/LA - Radio
 HISTORY_MSG_57;Rotación basta
 HISTORY_MSG_58;Volteo horizontal
 HISTORY_MSG_59;Volteo vertical
 HISTORY_MSG_60;Rotación
 HISTORY_MSG_61;Auto relleno
-HISTORY_MSG_62;Corrección de distorsión del objetivo
+HISTORY_MSG_62;Corrección de distorsión
 HISTORY_MSG_63;Marcador seleccionado
 HISTORY_MSG_64;Recortar foto
 HISTORY_MSG_65;Corrección aberraciones cromáticas
@@ -309,49 +377,49 @@ HISTORY_MSG_79;Cambiar tamaño - Anchura
 HISTORY_MSG_80;Cambiar tamaño - Altura
 HISTORY_MSG_81;Cambio tamaño activado
 HISTORY_MSG_82;Perfil cambiado
-HISTORY_MSG_83;Alta calidad Sombras/Luces Altas
+HISTORY_MSG_83;Sombras/Luces Altas - Enfoque
 HISTORY_MSG_84;Corrección de perspectiva
-HISTORY_MSG_85;Coeficientes wavelet
-HISTORY_MSG_86;Ecualizador wavelet
-HISTORY_MSG_87;Reducción ruido impulsivo
-HISTORY_MSG_88;Umbral reducc. ruido impuls.
-HISTORY_MSG_89;Reducción de ruido
-HISTORY_MSG_90;NR - Luminancia
-HISTORY_MSG_91;NR - Crominancia
-HISTORY_MSG_92;NR - Gamma
-HISTORY_MSG_93;Contraste por niveles de detalle - Valor
+HISTORY_MSG_85;Perfil Corrector de Lente
+HISTORY_MSG_86;Curvas RGB - Modo luminosidad
+HISTORY_MSG_87;Impulsar Reducción de Ruido
+HISTORY_MSG_88;Impulsar RR - Umbral
+HISTORY_MSG_89;Reducción de ruido (RR)
+HISTORY_MSG_90;RR - Luminancia
+HISTORY_MSG_91;RR - Crominancia Maestra
+HISTORY_MSG_92;RR - Gamma
+HISTORY_MSG_93;Contraste/niveles de detalle - Valor
 HISTORY_MSG_94;Contraste por niveles de detalle
-HISTORY_MSG_95;Cromaticidad
+HISTORY_MSG_95;Lab - Cromaticidad
 HISTORY_MSG_96;Curva 'a'
 HISTORY_MSG_97;Curva 'b'
-HISTORY_MSG_98;Método de desmosaicado
-HISTORY_MSG_99;Preprocesamiento
-HISTORY_MSG_100;Saturación RGB
-HISTORY_MSG_101;Ecualizador HSV - Tono
+HISTORY_MSG_98;Método de Interpolación
+HISTORY_MSG_99;Filtra píxel muerto/caliente
+HISTORY_MSG_100;Saturación
+HISTORY_MSG_101;Ecualizador HSV - Matiz
 HISTORY_MSG_102;Ecualizador HSV - Saturación
 HISTORY_MSG_103;Ecualizador HSV - Valor
 HISTORY_MSG_104;Ecualizador HSV
 HISTORY_MSG_105;Quitar borde púrpura
 HISTORY_MSG_106;Quitar borde púrpura - Radio
 HISTORY_MSG_107;Quitar borde púrpura - Umbral
-HISTORY_MSG_108;Umbral de compresión de luces altas
+HISTORY_MSG_108;Umbral de compres. de luces altas
 HISTORY_MSG_109;Tamaño del rectángulo limitador
 HISTORY_MSG_110;Cambio de tamaño aplica a
-HISTORY_MSG_111;Evitar recorte de colores
-HISTORY_MSG_112;Limitador de saturación
-HISTORY_MSG_113;Protección de rojos y tonos de piel
+HISTORY_MSG_111;Lab - Evita deriva de color
+HISTORY_MSG_112;--Sin Uso--
+HISTORY_MSG_113;Lab - Protección
 HISTORY_MSG_114;Iteraciones DCB
-HISTORY_MSG_115;Iteraciones de falso color
+HISTORY_MSG_115;Supresión de color falso
 HISTORY_MSG_116;DCB mejorado
-HISTORY_MSG_117;Corrección CA - Rojo
-HISTORY_MSG_118;Corrección CA - Azul
+HISTORY_MSG_117;Corrección AC - Rojo
+HISTORY_MSG_118;Corrección AC - Azul
 HISTORY_MSG_119;Filtro de ruido de línea
-HISTORY_MSG_120;Umbral de equilibrado de verde
-HISTORY_MSG_121;Corrección automática CA
-HISTORY_MSG_122;Auto selección archivo imagen en oscuridad
-HISTORY_MSG_123;Archivo de imagen en oscuridad
-HISTORY_MSG_124;Corrección lineal de exposición
-HISTORY_MSG_125;Corrección de exposición preservando HL
+HISTORY_MSG_120;Equilibrado de verde
+HISTORY_MSG_121;Corrección automática AC
+HISTORY_MSG_122;Auto selección de arch. <i>Dark Frame</i>
+HISTORY_MSG_123;Archivo <i>Dark Frame</i>
+HISTORY_MSG_124;Corrección de punto blanco
+HISTORY_MSG_125;Preservar Luces Altas
 HISTORY_MSG_126;Archivo de campo plano
 HISTORY_MSG_127;Auto selección archivo de campo plano
 HISTORY_MSG_128;Radio de difuminado de campo plano
@@ -359,96 +427,173 @@ HISTORY_MSG_129;Tipo de difuminado de campo plano
 HISTORY_MSG_130;Corrección automática de distorsión
 HISTORY_MSG_131;Reducción de ruido de luminancia
 HISTORY_MSG_132;Reducción de ruido de crominancia
-HISTORY_MSG_133;Gamma
-HISTORY_MSG_134;Posición de gamma
+HISTORY_MSG_133;Gamma de salida
+HISTORY_MSG_134;Gamma libre
 HISTORY_MSG_135;Gamma libre
 HISTORY_MSG_136;Pendiente de gamma
 HISTORY_MSG_137;Nivel de negro - Verde 1
 HISTORY_MSG_138;Nivel de negro - Rojo
 HISTORY_MSG_139;Nivel de negro - Azul
 HISTORY_MSG_140;Nivel de negro - Verde 2
-HISTORY_MSG_141;Nivel de negro de ambos verdes juntos
+HISTORY_MSG_141;Nivel de negro - Vincular verdes
 HISTORY_MSG_142;Claridad - Pasos
 HISTORY_MSG_143;Claridad - Intensidad de gradiente
-HISTORY_MSG_144;Microcontraste - cantidad
-HISTORY_MSG_145;Microcontraste - uniformidad
-HISTORY_MSG_146;Enfoque Claridad - Activado
-HISTORY_MSG_147;Claridad - Sólo luminancia
-HISTORY_MSG_148;Microcontraste
-HISTORY_MSG_149;Microcontraste - matriz 3x3
-HISTORY_MSG_150;Reducción de artefactos/ruido post desmosaicado
-HISTORY_MSG_151;Vibranza
-HISTORY_MSG_152;Vibranza - Tonos pastel
-HISTORY_MSG_153;Vibranza - Tonos saturados
-HISTORY_MSG_154;Vibranza - Proteger tonos de piel
-HISTORY_MSG_155;Vibranza - Evitar deriva de color
-HISTORY_MSG_156;Vibranza - Enlazar tonos pastel y saturados
-HISTORY_MSG_157;Vibranza - Umbral pastel/saturado
-HISTORY_MSG_158;Intensidad
-HISTORY_MSG_159;Parada en los bordes
-HISTORY_MSG_160;Escala
-HISTORY_MSG_161;Iteraciones de reponderación
-HISTORY_MSG_162;Mapeo de tonos
-HISTORY_MSG_163;Curvas RGB - R
-HISTORY_MSG_164;Curvas RGB - G
-HISTORY_MSG_165;Curvas RGB - B
+HISTORY_MSG_144;Micro-contraste - Cantidad
+HISTORY_MSG_145;Micro-contraste - Uniformidad
+HISTORY_MSG_146;Enfoque de bordes (EB)
+HISTORY_MSG_147;EB - Sólo luminancia
+HISTORY_MSG_148;Micro-contraste
+HISTORY_MSG_149;Micro-contraste - matriz 3x3
+HISTORY_MSG_150;Reducción artefactos/ruido post interpolado
+HISTORY_MSG_151;Vibranza (Vib)
+HISTORY_MSG_152;Vib - Tonos pastel
+HISTORY_MSG_153;Vib - Tonos saturados
+HISTORY_MSG_154;Vib - Proteger tonos piel
+HISTORY_MSG_155;Vib - Evitar deriva de color
+HISTORY_MSG_156;Vib - Enlazar tonos pastel y saturados
+HISTORY_MSG_157;Vib - Umbral pastel/saturado
+HISTORY_MSG_158;MT - Intensidad
+HISTORY_MSG_159;MT - Parada en los bordes
+HISTORY_MSG_160;MT - Escala
+HISTORY_MSG_161;MT - Iteraciones de reponderación
+HISTORY_MSG_162;Mapeo tonal (MT)
+HISTORY_MSG_163;Curvas RGB - Rojo
+HISTORY_MSG_164;Curvas RGB - Verde
+HISTORY_MSG_165;Curvas RGB - Azul
 HISTORY_MSG_166;Niveles neutros
-HISTORY_MSG_167;Toneado B/N
-HISTORY_MSG_168;Curva 'Cc'
-HISTORY_MSG_169;Curva 'Ch'
-HISTORY_MSG_170;Vibranza - Curva
+HISTORY_MSG_167;-No se usa--
+HISTORY_MSG_168;Curva 'CC'
+HISTORY_MSG_169;Curva 'CH'
+HISTORY_MSG_170;Vib - Curva
 HISTORY_MSG_171;Curva 'LC'
-HISTORY_MSG_172;Restringir 'LC' a los tonos rojos y de piel
-HISTORY_MSG_173;NR - Detalle de la luminancia
+HISTORY_MSG_172;Lab - Restringe 'LC'
+HISTORY_MSG_173;RR - Detalle en luminancia
+HISTORY_MSG_174;CIECAM02
+HISTORY_MSG_175;CAM02 - Adaptación CAT02
+HISTORY_MSG_176;CAM02 - Entorno de visualización
+HISTORY_MSG_177;CAM02 - Luminosidad de escena
+HISTORY_MSG_178;CAM02 - Luz de visualización
+HISTORY_MSG_179;CAM02 - Modelo de punto blanco
+HISTORY_MSG_180;CAM02 - Claridad (J)
+HISTORY_MSG_181;CAM02 - Crominancia (C)
+HISTORY_MSG_182;CAM02 - CAT02 Automático
+HISTORY_MSG_183;CAM02 - Contraste (J)
+HISTORY_MSG_184;CAM02 - Alrededor de escena
+HISTORY_MSG_185;CAM02 - Control de <i>gamut</i>
+HISTORY_MSG_186;CAM02 - Algoritmo
+HISTORY_MSG_187;CAM02 - Proteje tonos rojos &amp; piel
+HISTORY_MSG_188;CAM02 - Brillo(Q)
+HISTORY_MSG_189;CAM02 - Contraste (Q)
+HISTORY_MSG_190;CAM02 - Saturación (S)
+HISTORY_MSG_191;CAM02 - Colorido (M)
+HISTORY_MSG_192;CAM02 - Matiz (ángulo)
+HISTORY_MSG_193;CAM02 - Curva tonal 1
+HISTORY_MSG_194;CAM02 - Curva tonal 2
+HISTORY_MSG_195;CAM02 - Curva tonal 1
+HISTORY_MSG_196;CAM02 - Curva tonal 2
+HISTORY_MSG_197;CAM02 - Curva de Color
+HISTORY_MSG_198;CAM02 - Curva de Color
+HISTORY_MSG_199;CAM02 - Histogramas de salida
+HISTORY_MSG_200;CAMO2 - Mapeo tonal
+HISTORY_MSG_201;RR - Crominancia Ro,Ve
+HISTORY_MSG_202;RR - Crominancia Az,Am
+HISTORY_MSG_203;RR - Método
+HISTORY_MSG_204;Pasos de mejora LMMSE
+HISTORY_MSG_205;CAM02 - Píxel caliente/muerto
+HISTORY_MSG_206;CAT02 - Luz de escena auto.
+HISTORY_MSG_207;Elimina AC - Matices
+HISTORY_MSG_208;WB - Ecualizador Az-Ro
+HISTORY_MSG_210;FG - Ángulo
+HISTORY_MSG_211;Filtro Gradiente (FG)
+HISTORY_MSG_212;FV - Intensidad
+HISTORY_MSG_213;Filtro quitar Viñeteado
+HISTORY_MSG_214;Blanco y Negro
+HISTORY_MSG_215;B&amp;N - MC - Rojo
+HISTORY_MSG_216;B&amp;N - MC - Verde
+HISTORY_MSG_217;B&amp;N - MC - Azul
+HISTORY_MSG_218;B&amp;N - Gamma - Rojo
+HISTORY_MSG_219;B&amp;N - Gamma - Verde
+HISTORY_MSG_220;B&amp;N - Gamma - Azul
+HISTORY_MSG_221;B&amp;N - Filtro de color
+HISTORY_MSG_222;B&amp;N - Preestablecidos
+HISTORY_MSG_223;B&amp;N - MC - Naranja
+HISTORY_MSG_224;B&amp;N - MC - Amarillo
+HISTORY_MSG_225;B&amp;N - MC - Cian
+HISTORY_MSG_226;B&amp;N - MC - Magenta
+HISTORY_MSG_227;B&amp;N - MC - Púrpura
+HISTORY_MSG_228;B&amp;N - Ecualiza Luminancia
+HISTORY_MSG_229;B&amp;N - Ecualiza Luminancia
+HISTORY_MSG_230;B&amp;N - Modo
+HISTORY_MSG_231;B&amp;N - Curva 'Antes'
+HISTORY_MSG_232;B&amp;N - Tipo de curva 'Antes'
+HISTORY_MSG_233;B&amp;N - Curva 'Después'
+HISTORY_MSG_234;B&amp;N - Tipo de curva 'Después'
+HISTORY_MSG_235;B&amp;N - Mezcla canales Auto.
+HISTORY_MSG_236;--Sin uso--
+HISTORY_MSG_237;B&amp;N - Mezclador
+HISTORY_MSG_238;FG - Difuminado
+HISTORY_MSG_239;FG - Intensidad
+HISTORY_MSG_240;FG - Centro
+HISTORY_MSG_241;FV - Difuminado
+HISTORY_MSG_242;FV - Redondez
+HISTORY_MSG_243;CV - Radio
+HISTORY_MSG_244;CV - Intensidad
+HISTORY_MSG_245;CV - Centro
+HISTORY_MSG_246;Curva 'CL'
+HISTORY_MSG_247;Curva 'LM'
+HISTORY_MSG_248;Curva 'MM'
+HISTORY_MSG_249;CpND - Umbral
+HISTORY_MSG_250;RR - Mejorado
 HISTORY_NEWSNAPSHOTAS;Como...
-HISTORY_NEWSNAPSHOT;Instantánea nueva
+HISTORY_NEWSNAPSHOT;Agregar
+HISTORY_NEWSNAPSHOT_TOOLTIP;Atajo: <b>Alt-s</b>
 HISTORY_NEWSSDIALOGLABEL;Etiqueta de la instantánea:
-HISTORY_NEWSSDIALOGTITLE;Añadir instantánea nueva
+HISTORY_NEWSSDIALOGTITLE;Añadir nueva instantánea
 HISTORY_SETTO;Ajustado a
 HISTORY_SNAPSHOTS;Instantáneas
 HISTORY_SNAPSHOT;Instantánea
 ICMPANEL_FILEDLGFILTERANY;Cualquier archivo
-ICMPANEL_FILEDLGFILTERICM;Archivos de perfiles ICC
+ICMPANEL_FILEDLGFILTERICM;Perfiles de color
 ICMPANEL_GAMMABEFOREINPUT;El perfil aplica Gamma
 ICMPANEL_INPUTCAMERA;Valores predeterminados de la cámara
 ICMPANEL_INPUTCUSTOM;A medida
 ICMPANEL_INPUTDLGLABEL;Seleccionar perfil ICC de entrada...
 ICMPANEL_INPUTEMBEDDED;Usar incrustado, si es posible
-ICMPANEL_INPUTPROFILE;Perfil de entrada
-ICMPANEL_NOICM;Ningún MIC: Salida sRGB 
-ICMPANEL_OUTPUTDLGLABEL;Seleccionar perfil ICC de salida...
-ICMPANEL_OUTPUTPROFILE;Perfil de salida
-ICMPANEL_SAVEREFERENCE;Guardar imagen de referencia para el perfilado
-ICMPANEL_WORKINGPROFILE;Perfil de trabajo
+ICMPANEL_INPUTPROFILE;Perfil de color de entrada
+ICMPANEL_NOICM;Sin ICM: Salida sRGB
+ICMPANEL_OUTPUTDLGLABEL;Seleccionar perfil de color de salida...
+ICMPANEL_OUTPUTPROFILE;Perfil de color de salida
+ICMPANEL_SAVEREFERENCE;Guardar imagen de referencia para perfilado
+ICMPANEL_WORKINGPROFILE;Perfil de color de trabajo
 IMAGEAREA_DETAILVIEW;Vista de detalle
-IPTCPANEL_AUTHORHINT;Nombre del creador del objeto, por ejemplo el escritor, el fotógrafo o el artista gráfico (By-line).
-IPTCPANEL_AUTHORSPOSITIONHINT;Título del creador o de los creadores del objeto (By-line Title).
+IPTCPANEL_AUTHORHINT;Nombre del <b>creador</b> del objeto, por ejemplo el escritor, el fotógrafo o el artista gráfico.
+IPTCPANEL_AUTHORSPOSITIONHINT;Título o cargo del creador o de los creadores del objeto.
 IPTCPANEL_AUTHORSPOSITION;Tratamiento o título del autor
 IPTCPANEL_AUTHOR;Autor
-IPTCPANEL_CAPTIONHINT;Descripción textual de la información (Caption - Abstract).
-IPTCPANEL_CAPTIONWRITERHINT;Nombre de la persona que escribió, modificó o corrigió la imagen o leyenda/resumen (Writer - Editor).
+IPTCPANEL_CAPTIONHINT;<b>Descripción</b> textual de la información (Leyenda).
+IPTCPANEL_CAPTIONWRITERHINT;Nombre de la persona que escribió, modificó o corrigió la imagen o leyenda/resumen.
 IPTCPANEL_CAPTIONWRITER;Autor de la leyenda
 IPTCPANEL_CAPTION;Leyenda
-IPTCPANEL_CATEGORYHINT;Código de tres letras que identifica el sujeto de la imagen en opinión del proveedor (Category).
+IPTCPANEL_CATEGORYHINT;Identificador del tema de la imagen según el proveedor (Categoría).
 IPTCPANEL_CATEGORY;Categoría
-IPTCPANEL_CITYHINT;Origen de la imagen: Ciudad (City).
+IPTCPANEL_CITYHINT;Ciudad Origen de la imagen.
 IPTCPANEL_CITY;Ciudad
 IPTCPANEL_COPYHINT;Copiar ajustes IPTC al portapapeles
-IPTCPANEL_COPYRIGHTHINT;Cualquier llamada de atención necesaria sobre los derechos de autor (Copyright Notice).
+IPTCPANEL_COPYRIGHTHINT;Cualquier aviso/nota necesario sobre los derechos de autor.
 IPTCPANEL_COPYRIGHT;Derechos de autor
-IPTCPANEL_COUNTRYHINT;Origen de la imagen: Pais (Country - Primary Location Name).
+IPTCPANEL_COUNTRYHINT;Nombre de la Ciudad/Locación principal donde la imagen fue creada.
 IPTCPANEL_COUNTRY;País
-IPTCPANEL_CREDITHINT;Identifica el proveedor de la imagen, no tiene que ser el creador o el propietario (Credit).
+IPTCPANEL_CREDITHINT;Identifica el proveedor de la imagen, que no necesariamente el dueño o creador.
 IPTCPANEL_CREDIT;Créditos
-IPTCPANEL_DATECREATEDHINT;Fecha de creación del contenido intelectual de la imagen; Formato: AAAAMMDD (Date Created).
+IPTCPANEL_DATECREATEDHINT;Fecha de creación del contenido intelectual de la imagen; Formato: AAAAMMDD.
 IPTCPANEL_DATECREATED;Fecha de creación
 IPTCPANEL_EMBEDDEDHINT;Reiniciar a los datos IPTC incrustados en el archivo de la imagen
 IPTCPANEL_EMBEDDED;Incrustado
-IPTCPANEL_HEADLINEHINT;Una anotación publicable que provee una sinopsis de los contenidos de la imagen (Headline).
-IPTCPANEL_HEADLINE;Titular
-IPTCPANEL_INSTRUCTIONSHINT;Otras instrucciones editoriales sobre el uso de la imagen (Special Instructions).
+IPTCPANEL_HEADLINEHINT;Una anotación publicable que provee una sinopsis de los contenidos de la imagen.
+IPTCPANEL_HEADLINE;Encabezado
+IPTCPANEL_INSTRUCTIONSHINT;Otras instrucciones editoriales sobre el uso de la imagen (Términos de uso).
 IPTCPANEL_INSTRUCTIONS;Instrucciones
-IPTCPANEL_KEYWORDSHINT;Palabras clave que hacen la búsqueda de la imagen mas fácil (Keywords).
+IPTCPANEL_KEYWORDSHINT;Palabras clave que facilitan la búsqueda de la imagen.
 IPTCPANEL_KEYWORDS;Palabras clave
 IPTCPANEL_PASTEHINT;Pegar ajustes IPTC desde el portapapeles
 IPTCPANEL_PROVINCEHINT;Origen de la imagen: Estado/Provincia (Province-State).
@@ -457,31 +602,34 @@ IPTCPANEL_RESETHINT;Reiniciar a los ajustes predeterminados del perfil.
 IPTCPANEL_RESET;Reiniciar
 IPTCPANEL_SOURCEHINT;Propietario original del contenido intelectual de la imagen (Source).
 IPTCPANEL_SOURCE;Fuente
-IPTCPANEL_SUPPCATEGORIESHINT;Afinado del sujeto de la imagen (Supplemental Categories).
+IPTCPANEL_SUPPCATEGORIESHINT;Datos adicionales del tema de la imagen.
 IPTCPANEL_SUPPCATEGORIES;Categorías suplementarias
-IPTCPANEL_TITLEHINT;Referencia concisa de la imagen (Object Name).
+IPTCPANEL_TITLEHINT;Descripción breve de la imagen.
 IPTCPANEL_TITLE;Título
-IPTCPANEL_TRANSREFERENCEHINT;Un código que representa el lugar de la transmisión original (Original Transmission Reference).
-IPTCPANEL_TRANSREFERENCE;Ref. trans. original
-MAIN_BUTTON_EXIT;Exit
+IPTCPANEL_TRANSREFERENCEHINT;Código representando el lugar de la transmisión original.
+IPTCPANEL_TRANSREFERENCE;Ref. Transm. original
+MAIN_BUTTON_EXIT;Salir
 MAIN_BUTTON_FULLSCREEN;Pantalla completa
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Navegar hasta la imagen Siguiente a la que está abierta en el editor:\n<b>Shift-F4</b>\n\nPara navegar hasta la imagen Siguiente a aquella cuya miniatura está seleccionada en el Explorador de Archivos:\n<b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Navegar hasta la imagen Anterior a la que está abierta en el editor:\n<b>Shift-F3</b>\n\nPara navegar hasta la imagen Anterior a aquella cuya miniatura está seleccionada en el Explorador de Archivos:\n<b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Sincronizar el Navegador de Archivos con el Editor para mostrar la miniatura de la imagen actualmente abierta y quitar los filtros en el Navegador de Archivos:\n<b>x</b>\n\nPara hacer lo dicho anteriormente, pero sin quitar los filtros en el Navegador de Archivos:\n<b>y</b>\n(Note que la miniatura del archivo abierto no será mostrada si los filtros la excluyen).
 MAIN_BUTTON_PREFERENCES;Preferencias
 MAIN_BUTTON_PUTTOQUEUE;Poner en la cola
-MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Añadir imagen actual a la cola de procesamiento <b>Ctrl+B</b>
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Añadir imagen actual a la cola de procesamiento.\nAtajo:  <b>Ctrl+B</b>
 MAIN_BUTTON_QUEUE;Poner en la cola
 MAIN_BUTTON_SAVEAS;Como...
 MAIN_BUTTON_SAVE;Guardar imagen
-MAIN_BUTTON_SAVE_TOOLTIP;Guardar imagen actual <b>Ctrl+S</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Guardar imagen actual.\nAtajo: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR;Abrir con editor
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editar imagen actual en editor externo <b>Ctrl+E</b>
-MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostrar/ocultar todos los paneles laterales <b>m</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Editar imagen actual en editor externo.\nAtajo: <b>Ctrl+E</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostrar/ocultar todos los paneles laterales.\nAtajo: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Salir de Pantalla completa
-MAIN_FRAME_BATCHQUEUE;Cola por lotes
-MAIN_FRAME_BATCHQUEUE_TOOLTIP; Cola por lotes  <b>Ctrl-F3</b>
+MAIN_FRAME_BATCHQUEUE;Cola de lotes
+MAIN_FRAME_BATCHQUEUE_TOOLTIP; Cola de lotes.\nAtajo: <b>Ctrl-F3</b>
 MAIN_FRAME_EDITOR;Editor
-MAIN_FRAME_EDITOR_TOOLTIP; Editor  <b>Ctrl-F4</b>
+MAIN_FRAME_EDITOR_TOOLTIP; Editor.\nAtajo: <b>Ctrl-F4</b>
 MAIN_FRAME_FILEBROWSER;Explorador de archivos
-MAIN_FRAME_FILEBROWSER_TOOLTIP; Explorador de archivos <b>Ctrl-F2</b>
+MAIN_FRAME_FILEBROWSER_TOOLTIP; Explorador de archivos.\nAtajo: <b>Ctrl-F2</b>
 MAIN_FRAME_PLACES;Ubicaciones
 MAIN_FRAME_PLACES_ADD;Añadir
 MAIN_FRAME_PLACES_DEL;Borrar
@@ -489,59 +637,64 @@ MAIN_FRAME_RECENT;Carpetas recientes
 MAIN_MSG_ALREADYEXISTS;Este archivo ya existe.
 MAIN_MSG_CANNOTLOAD;No se puede abrir imagen
 MAIN_MSG_CANNOTSAVE;Error al guardar archivo
-MAIN_MSG_CANNOTSTARTEDITOR;Problema abriendo con editor.
-MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Por favor ajuste las preferencias.
+MAIN_MSG_CANNOTSTARTEDITOR;Problema abriendo editor.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Por favor ajuste la ruta correcta en las "Preferencias".
 MAIN_MSG_EMPTYFILENAME;Nombre de archivo no especificado
-MAIN_MSG_ERRORDURINGIMAGESAVING;Error al guardar imagen
-MAIN_MSG_EXITJOBSINQUEUEINFO;Saliendo del programa, las imágenes no terminadas en la cola se perderán.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;¿Estás seguro de que quieres salir? Hay imágenes no terminadas en la cola.
-MAIN_MSG_JOBSINQUEUE;trabajo(s) en cola
+MAIN_MSG_ERRORDURINGIMAGESAVING;Error durante guardado de imagen
+MAIN_MSG_EXITJOBSINQUEUEINFO;Saliendo del programa: las imágenes en la cola, aún no procesadas, se perderán.
+MAIN_MSG_EXITJOBSINQUEUEQUEST;¿Está seguro de que desea salir? Hay imágenes aún no procesadas en la cola.
+MAIN_MSG_IMAGEUNPROCESSED;Este comando requiere primero que todas las imágenes seleccionadas sean procesadas en cola.
+MAIN_MSG_JOBSINQUEUE;trabajo(s) en la cola
 MAIN_MSG_NAVIGATOR;Navegador
+MAIN_MSG_OPERATIONCANCELLED;Operación cancelada
+MAIN_MSG_PATHDOESNTEXIST;La ruta\n\n<b>%1</b>\n\nno existe. Por favor, establezca una ruta correcta en la ventana de Preferencias.
 MAIN_MSG_PLACES;Ubicaciones
-MAIN_MSG_QOVERWRITE;¿Quieres reemplazarlo?
+MAIN_MSG_QOVERWRITE;¿Quiere sobre-escribirlo?
+MAIN_MSG_SETPATHFIRST;Para poder usar esta función, primero tiene que establecer una \nruta objetivo en la ventana de Preferencias!
+MAIN_MSG_WRITEFAILED;Falla al escribir\n\n<b>"%1"</b>\n\nAsegurese de que el folder exista y que usted tenga permiso de escritura sobre él.
 MAIN_TAB_BASIC;Básicos
 MAIN_TAB_COLOR;Color
-MAIN_TAB_COLOR_TOOLTIP;<b>Alt-c</b>
+MAIN_TAB_COLOR_TOOLTIP;Atajo: <b>Alt-C</b>
 MAIN_TAB_DETAIL;Detalle
-MAIN_TAB_DETAIL_TOOLTIP;<b>Alt-d</b>
+MAIN_TAB_DETAIL_TOOLTIP;Atajo: <b>Alt-D</b>
 MAIN_TAB_DEVELOP;Revelar
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT; Exportar
+MAIN_TAB_EXPORT; Exportación Rápida
 MAIN_TAB_EXPOSURE;Exposición
-MAIN_TAB_EXPOSURE_TOOLTIP;<b>Alt-e</b>
+MAIN_TAB_EXPOSURE_TOOLTIP;Atajo: <b>Alt-E</b>
 MAIN_TAB_FILTER;Filtro
-MAIN_TAB_ICM;GIC
+MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadatos
-MAIN_TAB_METADATA_TOOLTIP;<b>Alt-m</b>
-MAIN_TAB_RAW;RAW
-MAIN_TAB_RAW_TOOLTIP;<b>Alt-r</b>
+MAIN_TAB_METADATA_TOOLTIP;Atajo: <b>Alt-M</b>
+MAIN_TAB_RAW;Raw
+MAIN_TAB_RAW_TOOLTIP;Atajo: <b>Alt-R</b>
 MAIN_TAB_TAGGING;Etiquetado
 MAIN_TAB_TRANSFORM;Transformar
-MAIN_TAB_TRANSFORM_TOOLTIP;<b>Alt-t</b>
+MAIN_TAB_TRANSFORM_TOOLTIP;Atajo: <b>Alt-T</b>
 MAIN_TOGGLE_BEFORE_AFTER;A|D
-MAIN_TOOLTIP_BACKCOLOR0;Color de fondo de la previsualización: <b>Color del tema</b>\nAtajo de teclado: <b>8</b>
-MAIN_TOOLTIP_BACKCOLOR1;Color de fondo de la previsualización: <b>Negro</b>\nAtajo de teclado: <b>9</b>
-MAIN_TOOLTIP_BACKCOLOR2;Color de fondo de la previsualización: <b>Blanco</b>\nAtajo de teclado: <b>0</b>
+MAIN_TOOLTIP_BACKCOLOR0;Color de fondo de la previsualización: <b>Color del tema</b>\nAtajo: <b>8</b>
+MAIN_TOOLTIP_BACKCOLOR1;Color de fondo de la previsualización: <b>Negro</b>\nAtajo: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Color de fondo de la previsualización: <b>Blanco</b>\nAtajo: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Bloquear</b> / <b>Desbloquear</b> la vista <b>Antes</b>\n\n<b>Bloquear</b>: la vista <b>Antes</b> permanece inalterada - \nútil para evaluar el efecto acumulativo de varias herramientas.\nAdemás, se puede hacer una comparación con cualquier estado en el Historial\n\n<b>Desbloquear</b>: la vista <b>Antes</b> seguirá a la vista <b>Después</b> un paso por detrás, mostrando la imagen antes del efecto de la herramienta que se está usando
-MAIN_TOOLTIP_HIDEFP;Mostrar/Ocultar panel inferior (explorador carpetas y arch. tecla F)
-MAIN_TOOLTIP_HIDEHP;Mostrar/Ocultar panel izquierdo (incluyendo historial, tecla H)
-MAIN_TOOLTIP_INDCLIPPEDH;Indicación de luces altas recortadas
-MAIN_TOOLTIP_INDCLIPPEDS;Indicación de sombras recortadas
+MAIN_TOOLTIP_HIDEFP;Mostrar/Ocultar panel inferior (explorador carpetas y archivos).\nAtajo: <b>f</b>
+MAIN_TOOLTIP_HIDEHP;Mostrar/Ocultar panel izquierdo (incluyendo historial).\nAtajo: <b>i</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Indicación de luces altas recortadas.\nAtajo: <b>&lt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Indicación de sombras recortadas.\nAtajo: <b>&gt;</b>
 MAIN_TOOLTIP_PREFERENCES;Ajustar preferencias
-MAIN_TOOLTIP_PREVIEWB;Previsualización <b>Canal azul</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Previsualización <b>Máscara de foco</b>
-MAIN_TOOLTIP_PREVIEWG;Previsualización <b>Canal verde</b>
-MAIN_TOOLTIP_PREVIEWL;Previsualización <b>Luminosidad</b>\n0.299*R + 0.587*G + 0.114*B
-MAIN_TOOLTIP_PREVIEWR;Previsualización <b>Canal rojo</b>
-MAIN_TOOLTIP_QINFO; Información breve de la imagen
+MAIN_TOOLTIP_PREVIEWB;Previsualización <b>Canal azul</b>.\nAtajo: <b>b</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Previsualización <b>Máscara de Foco</b>.\nAtajo: <b>Shift-F</b>\n\nMás preciso en imágenes con poca profundidad de campo, bajo ruido y a mayores niveles de aumento\n\nPara mejorar la precisión en imágenes con ruido evalúe usando menor aumento (10%-30%)\n\nPreview es realizada más lentamente cuando la Máscara de Foco esta activa.
+MAIN_TOOLTIP_PREVIEWG;Previsualización <b>Canal verde</b>.\nAtajo: <b>g</b>
+MAIN_TOOLTIP_PREVIEWL;Previsualización <b>Luminosidad</b>.\nAtajo: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
+MAIN_TOOLTIP_PREVIEWR;Previsualización <b>Canal rojo</b>.\nAtajo: <b>r</b>
+MAIN_TOOLTIP_QINFO; Información breve de la imagen.\nAtajo: <b>i</b>
 MAIN_TOOLTIP_SAVEAS;Guardar imagen a una carpeta seleccionada
 MAIN_TOOLTIP_SAVE;Guardar imagen a la carpeta predeterminada
-MAIN_TOOLTIP_SHOWHIDELP1;Mostrar/ocultar el panel izquierdo <b>l</b>
-MAIN_TOOLTIP_SHOWHIDERP1;Mostrar/ocultar el panel derecho <b>Alt-l</b>
-MAIN_TOOLTIP_SHOWHIDETP1;Mostrar/ocultar el panel superior <b>Shift-l</b>
+MAIN_TOOLTIP_SHOWHIDELP1;Mostrar/ocultar el panel izquierdo.\nAtajo: <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Mostrar/ocultar el panel derecho.\nAtajo: <b>Alt-L</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Mostrar/ocultar el panel superior.\nAtajo: <b>Shift-L</b>
 MAIN_TOOLTIP_THRESHOLD;Umbral
-MAIN_TOOLTIP_TOGGLE;Cambiar vista antes/después <b>B</b>
+MAIN_TOOLTIP_TOGGLE;Cambiar vista antes/después.\nAtajo: <b>Shift-B</b>
 NAVIGATOR_B_NA;B = n/a
 NAVIGATOR_B_VALUE;B = %1
 NAVIGATOR_G_NA;G = n/a
@@ -560,28 +713,33 @@ NAVIGATOR_S_NA;S = n/a
 NAVIGATOR_S_VALUE;S = %1
 NAVIGATOR_V_NA;V = n/a
 NAVIGATOR_V_VALUE;V = %1
+NAVIGATOR_XY_FULL;Ancho = %1, Alto = %2
 NAVIGATOR_XY_NA;x = n/a, y = n/a
+OPTIONS_DEFIMG_MISSING;El perfil predeterminado para <b>fotos no raw</b> no se pudo encontrar o no está establecido.\n\nPor favor verifique su folder de perfiles, puede estar dañado o no existir.\n\nSe usarán valores predeterminados internos.
+OPTIONS_DEFRAW_MISSING;El perfil predeterminado para <b>fotos raw</b>  no se pudo encontrar o no está establecido.\n\nPor favor verifique su folder de perfiles, puede estar dañado o no existir.\n\nSe usarán valores predeterminados internos.
 PARTIALPASTE_BASICGROUP;Ajustes básicos
 PARTIALPASTE_CACORRECTION;Corrección de aberraciones cromáticas
+PARTIALPASTE_CHANNELMIXERBW;Blanco y Negro
 PARTIALPASTE_CHANNELMIXER;Mezclador de canales
-PARTIALPASTE_COARSETRANS;Rotar 90 grados / voltear
+PARTIALPASTE_COARSETRANS;Rotar 90º/ voltear
+PARTIALPASTE_COLORAPP;Modelo CIE 2002 de apariencia de color
 PARTIALPASTE_COLORBOOST;Aumento de colores
 PARTIALPASTE_COLORDENOISE;Reducción de ruido de color
 PARTIALPASTE_COLORGROUP;Ajustes de color
-PARTIALPASTE_COLORMIXER;Mezclador de canal
+PARTIALPASTE_COLORMIXER;Mezclador de colores
 PARTIALPASTE_COLORSHIFT;Cambio de colores
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto relleno
-PARTIALPASTE_COMPOSITIONGROUP;Ajustes relativos a la transformación
+PARTIALPASTE_COMPOSITIONGROUP;Ajustes de composición
 PARTIALPASTE_CROP;Recortar
-PARTIALPASTE_DARKFRAMEAUTOSELECT;Auto Selección de imagen en oscuridad
-PARTIALPASTE_DARKFRAMEFILE;Archivo de imagen en oscuridad
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Auto Selección de <i>Dark Frame</i>
+PARTIALPASTE_DARKFRAMEFILE;Archivo de <i>Dark Frame</i>
 PARTIALPASTE_DEFRINGE;Eliminar borde púrpura
 PARTIALPASTE_DETAILGROUP;Ajustes de detalle
-PARTIALPASTE_DIALOGLABEL;Pegar perfil de procesamiento parcialmente
+PARTIALPASTE_DIALOGLABEL;Pegar parcialmente perfil de procesamiento
 PARTIALPASTE_DIRPYRDENOISE;Reducción de ruido
-PARTIALPASTE_DIRPYREQUALIZER;Contraste mediante niveles de detalle
-PARTIALPASTE_DISTORTION;Distorsión
-PARTIALPASTE_EPD;Mapeo de tonos
+PARTIALPASTE_DIRPYREQUALIZER;Contraste por niveles de detalle
+PARTIALPASTE_DISTORTION;Corrección de Distorsión
+PARTIALPASTE_EPD;Mapeo tonal
 PARTIALPASTE_EVERYTHING;Todo
 PARTIALPASTE_EXIFCHANGES;Cambio en datos Exif
 PARTIALPASTE_EXPOSURE;Exposición
@@ -590,43 +748,48 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
 PARTIALPASTE_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
 PARTIALPASTE_FLATFIELDFILE;Archivo de campo plano
 PARTIALPASTE_GRADIENTSHARPEN;Nitidez por gradiente (bordes)
-PARTIALPASTE_HLRECONSTRUCTION;Recuperación de luces altas
+PARTIALPASTE_HLRECONSTRUCTION;Reconstrucción de luces altas
+PARTIALPASTE_HLRECOVERYAMOUNT;Cantidad de recuperación de luces altas
+PARTIALPASTE_HLRECOVERYTHRESHOLD;Umbral de recuperación de luces altas
 PARTIALPASTE_HLRECOVERY;Recuperación de luces altas
 PARTIALPASTE_HSVEQUALIZER;Ecualizador HSV
 PARTIALPASTE_ICMGAMMA;Gamma de salida
-PARTIALPASTE_ICMSETTINGS;Ajustes GIC
-PARTIALPASTE_IMPULSEDENOISE;Reducción de ruido impulsivo
-PARTIALPASTE_IPTCINFO;Informaciones IPTC
-PARTIALPASTE_LABCURVE;Curva Lab
-PARTIALPASTE_LENSGROUP;Ajustes relativos al objetivo
+PARTIALPASTE_ICMSETTINGS;Ajustes de Gestión de Color
+PARTIALPASTE_IMPULSEDENOISE;Impulsar Reducción de ruido
+PARTIALPASTE_IPTCINFO;Información IPTC
+PARTIALPASTE_LABCURVE;Ajustes Lab
+PARTIALPASTE_LENSGROUP;Ajustes relativos al lente
+PARTIALPASTE_LENSPROFILE;Perfil de corrección de lente
 PARTIALPASTE_LUMACURVE;Curva de luminancia
 PARTIALPASTE_LUMADENOISE;Reducción de ruido de luminancia
 PARTIALPASTE_LUMINANCEGROUP;Ajustes de luminancia
-PARTIALPASTE_METAICMGROUP;Ajustes de metadatos/GIC
+PARTIALPASTE_METAICMGROUP;Ajustes de metadatos/Gestión de color
 PARTIALPASTE_MICROCONTRAST;Microcontraste
+PARTIALPASTE_PCVIGNETTE;Filtro quitar viñeteado
 PARTIALPASTE_PERSPECTIVE;Perspectiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Equilibrio del verde
-PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
+PARTIALPASTE_PREPROCESS_HOTDEADPIXFILT;Filtrar píxel caliente/muerto
 PARTIALPASTE_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
-PARTIALPASTE_RAWCACORR_AUTO;Auto corrección CA
-PARTIALPASTE_RAWCACORR_CABLUE;CA Azul
-PARTIALPASTE_RAWCACORR_CARED;CA Rojo
+PARTIALPASTE_RAWCACORR_AUTO;Auto corrección de Aberración Cromática
+PARTIALPASTE_RAWCACORR_CABLUE;AC Azul
+PARTIALPASTE_RAWCACORR_CARED;AC Rojo
 PARTIALPASTE_RAWEXPOS_BLACK;Nivel de negro
-PARTIALPASTE_RAWEXPOS_LINEAR;Factor de corr. lineal de exposición
-PARTIALPASTE_RAWEXPOS_PRESER;Corr. de exposición preservando HL (EV)
+PARTIALPASTE_RAWEXPOS_LINEAR;Corrección de punto blanco
+PARTIALPASTE_RAWEXPOS_PRESER;Preservar Luces Altas
 PARTIALPASTE_RAWGROUP;Ajustes Raw
-PARTIALPASTE_RAW_ALLENHANCE;Aplicar reducción de ruido/artefactos post-desmosaicado
+PARTIALPASTE_RAW_ALLENHANCE;Aplicar reducción de ruido/artefactos post-interpolado
 PARTIALPASTE_RAW_DCBENHANCE;Aplicar paso de mejora DCB
 PARTIALPASTE_RAW_DCBITERATIONS;Número de iteraciones DCB
-PARTIALPASTE_RAW_DMETHOD;Método de demosaicado
-PARTIALPASTE_RAW_FALSECOLOR;Pasos de supresión de falso color de demosaicado
+PARTIALPASTE_RAW_DMETHOD;Método de interpolado
+PARTIALPASTE_RAW_FALSECOLOR;Pasos de supresión de falso color de interpolado
+PARTIALPASTE_RAW_LMMSEITERATIONS;Pasos de mejora LMMSE
 PARTIALPASTE_RESIZE;Cambiar tamaño
 PARTIALPASTE_RGBCURVES;Curvas RGB
 PARTIALPASTE_ROTATION;Rotar
 PARTIALPASTE_SHADOWSHIGHLIGHTS;Sombras/Luces altas
 PARTIALPASTE_SHARPENEDGE;Bordes
 PARTIALPASTE_SHARPENING;Enfoque
-PARTIALPASTE_SHARPENMICRO;Microcontraste
+PARTIALPASTE_SHARPENMICRO;Micro-contraste
 PARTIALPASTE_VIBRANCE;Vibranza
 PARTIALPASTE_VIGNETTING;Corrección de viñeteo
 PARTIALPASTE_WAVELETEQUALIZER;Ecualizador de wavelets
@@ -634,9 +797,14 @@ PARTIALPASTE_WHITEBALANCE;Equilibrio de blancos
 POPUPBUTTON_SELECTOPTIONHINT;RMB para cambiar opción
 PREFERENCES_ADD;Añadir
 PREFERENCES_APPLNEXTSTARTUP;aplicado al próximo arranque
-PREFERENCES_AUTOMONPROFILE;Usar automáticamente el perfil de sistema operativo del monitor principal
-PREFERENCES_BATCH_PROCESSING;Proceso por lotes
+PREFERENCES_AUTOMONPROFILE;Usar perfil de color del monitor principal en el sistema operativo 
+PREFERENCES_BATCH_PROCESSING;Procesamiento por lotes
+PREFERENCES_BEHADDALLHINT;Establezca todos los parámetros del modo <b>Agregar</b>.\nLos ajustes de parámetros en el panel de la herramienta de lotes serán <b>deltas</b> de los valores guardados
+PREFERENCES_BEHADDALL;Todo para 'Agregar'
 PREFERENCES_BEHAVIOR;Comportamiento
+PREFERENCES_BEHSETALLHINT;Todos los parámetros para el modo <b>Establecer</b>.\nLos ajustes de parámetros en el panel de la herramienta de lotes serán serán <b>absolutos</b>, se mostrarán los valores vigentes
+PREFERENCES_BEHSETALL;Todo para 'Establecer'
+PREFERENCES_BLACKBODY;Tungsteno
 PREFERENCES_BLINKCLIPPED;Parpadear áreas cortadas
 PREFERENCES_CABLUE;Correcc. manual aberr. cromát. Azul
 PREFERENCES_CACHECLEARALL;Borrar todo
@@ -645,50 +813,60 @@ PREFERENCES_CACHECLEARTHUMBS;Borrar miniaturas
 PREFERENCES_CACHEFORMAT1;Propio (más rápido y mejor calidad)
 PREFERENCES_CACHEFORMAT2;JPEG (menos consumo de disco duro)
 PREFERENCES_CACHEMAXENTRIES;Cantidad máxima de entradas en la memoria intermedia
-PREFERENCES_CACHEOPTS;Ajustar memoria intermedia
-PREFERENCES_CACHESTRAT1;Preferir velocidad sobre consumo de memoria
-PREFERENCES_CACHESTRAT2;Preferir consumo de memoria bajo sobre velocidad
-PREFERENCES_CACHESTRAT;Estrategia de la memoria intermedia
+PREFERENCES_CACHEOPTS;Opciones de memoria intermedia
+PREFERENCES_CACHESTRAT1;Preferir velocidad antes que bajo consumo de memoria
+PREFERENCES_CACHESTRAT2;Preferir bajo consumo de memoria antes que velocidad
+PREFERENCES_CACHESTRAT;Estrategia de memoria intermedia
 PREFERENCES_CACHETHUMBFORM;Formato de las miniaturas
 PREFERENCES_CACHETHUMBHEIGHT;Altura máxima de las miniaturas
 PREFERENCES_CACORRECTION;Aplicar autocorrección aberr. cromát.
 PREFERENCES_CARED;Correcc. manual aberr. cromát. Rojo
+PREFERENCES_CIEART;Optimización CIECAM02
+PREFERENCES_CIEART_LABEL;Usar precisión flotante simple en lugar de doble.
+PREFERENCES_CIEART_TOOLTIP;Si se habilita, los cálculos CIECAM02 se realizan con precisión flotante simple en lugar de doble. Esto provee un pequeño aumento en la velocidad de cálculo a expensas de una casi imperceptible pérdida de calidad
 PREFERENCES_CLEARDLG_LINE1;Borrando memoria intermedia
 PREFERENCES_CLEARDLG_LINE2;Puede durar unos segundos.
 PREFERENCES_CLEARDLG_TITLE;Aguardar, por favor
 PREFERENCES_CLIPPINGIND;Indicación de recortes
 PREFERENCES_CMETRICINTENT;Intento colorimétrico
-PREFERENCES_CUSTPROFBUILDHINT;Archivo ejecutable (o script) invocado para generar un nuevo perfil inicial para una imagen.\nRecibe parámetros de línea de orden para permitir la generación de perfiles .pp3 basada en reglas:\n[Path RAW/JPG] [Path al perfil por omisión] [número f] [exposición en segundos] [longitud focal en mm] [ISO] [Lente] [Cámara]
-PREFERENCES_CUSTPROFBUILDPATH;Path al programa ejecutable
-PREFERENCES_CUSTPROFBUILD;Programa generador de perfiles de imagen del usuario
-PREFERENCES_CUTOVERLAYBRUSH;Pincel para ventana de recorte
+PREFERENCES_CUSTPROFBUILDHINT;Archivo ejecutable (o script) invocado un nuevo perfil de procesamiento inicial debe ser generado para una imagen.\n\nLa ruta del archivo de comunicación (estilo .ini) es agregado como parámetro de comando en línea. Éste contiene diversos parámetros requeridos y metadatos Exif de la imagen para permitir la generación de perfiles de procesamientos basados en reglas.\n\n<b>ADVERTENCIA:</b>Usted es responsable de colocar comillas donde se requieren cuando se usan rutas conteniendo espacios en blanco.
+PREFERENCES_CUSTPROFBUILDKEYFORMAT;Clave de formato
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Nombre
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;ID Etiqueta
+PREFERENCES_CUSTPROFBUILDPATH;Ruta al programa ejecutable
+PREFERENCES_CUSTPROFBUILD;Programa generador de perfiles de procesamiento de imagen del usuario
+PREFERENCES_CUTOVERLAYBRUSH;Recortar máscara de color/transparencia
+PREFERENCES_D50;5000ºK
+PREFERENCES_D55;5500ºK
+PREFERENCES_D60;6000ºK
+PREFERENCES_D65;6500ºK
 PREFERENCES_DARKFRAMEFOUND;Encontrado
 PREFERENCES_DARKFRAMESHOTS;disparos
 PREFERENCES_DARKFRAMETEMPLATES;plantillas
-PREFERENCES_DARKFRAME;Imagen en oscuridad
-PREFERENCES_DATEFORMATFRAME;Formato de fechas
-PREFERENCES_DATEFORMATHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%y</b><i> : año</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPor ejemplo, la fecha en Argentina es:</i>\n<b>%d/%m/%y</b>
-PREFERENCES_DATEFORMAT;Formato de fechas
+PREFERENCES_DARKFRAME;<i>Dark Frame</i>
+PREFERENCES_DATEFORMATFRAME;Formato de fecha
+PREFERENCES_DATEFORMATHINT;<i>Puede usar las siguientes variables :</i>\n<b>%y</b><i> : año</i>\n<b>%m</b><i> : mes</i>\n<b>%d</b><i> : dia</i>\n<i>\nPor ejemplo, la fecha en formato Húngaro es: </i>\n<b>%y/%m/%d</b>
+PREFERENCES_DATEFORMAT;Formato de fecha
 PREFERENCES_DCBENHANCE;Aplicar paso mejora DCB
 PREFERENCES_DCBITERATIONS;Número iteraciones DCB
 PREFERENCES_DEFAULTLANG;Idioma predeterminado
-PREFERENCES_DEFAULTTHEME;Estilo predeterminado
-PREFERENCES_DEMOSAICINGALGO;Algoritmo de desmosaicado
-PREFERENCES_DIRDARKFRAMES;Carpeta de imágenes en oscuridad
+PREFERENCES_DEFAULTTHEME;Tema predeterminado
+PREFERENCES_DEMOSAICINGALGO;Algoritmo de interpolado
+PREFERENCES_DIRDARKFRAMES;Carpeta de <i>Dark Frame</i>s
 PREFERENCES_DIRHOME;Carpeta de usuario
 PREFERENCES_DIRLAST;Última carpeta visitada
 PREFERENCES_DIROTHER;Otro
 PREFERENCES_DIRSELECTDLG;Seleccionar carpeta de imágenes en el arranque...
 PREFERENCES_DIRSOFTWARE;Carpeta de instalación
 PREFERENCES_DMETHOD;Método
-PREFERENCES_EDITORCMDLINE;Otro mandato
-PREFERENCES_EDITORLAYOUT;Aspecto del editor
+PREFERENCES_EDITORCMDLINE;Otra línea de comando
+PREFERENCES_EDITORLAYOUT;Disposición del editor
 PREFERENCES_EXPOS;Exposición antes de interpolación:\ncorrección (lineal)
 PREFERENCES_EXTERNALEDITOR;Editor externo
 PREFERENCES_FALSECOLOR;Pasos de supresión de colores falsos
-PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos
+PREFERENCES_FBROWSEROPTS;Opciones del explorador de archivos/Miniaturas
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Barra de herramientas del explorador en una sola fila (deseleccionar para pantallas de baja resolución)
-PREFERENCES_FILEFORMAT;Formato de archivos
+PREFERENCES_FILEFORMAT;Formato de archivo
 PREFERENCES_FLATFIELDAUTOSELECT;Selección automática de campo plano
 PREFERENCES_FLATFIELDBLURRADIUS;Radio de difuminado de campo plano
 PREFERENCES_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
@@ -698,35 +876,46 @@ PREFERENCES_FLATFIELDSDIR;Carpeta de archivos de campo plano
 PREFERENCES_FLATFIELDSHOTS;disparos
 PREFERENCES_FLATFIELDTEMPLATES;plantillas
 PREFERENCES_FLATFIELD;Campo plano
-PREFERENCES_FORIMAGE;Para archivos de imágenes
-PREFERENCES_FORRAW;Para archivos RAW
+PREFERENCES_FLUOF2;Fluorescente F2
+PREFERENCES_FLUOF7;Fluorescente F7
+PREFERENCES_FLUOF11;Fluorescente F11
+PREFERENCES_FORIMAGE;Para fotos de tipo diferente a raw
+PREFERENCES_FORRAW;Para fotos Raw
 PREFERENCES_GIMPPATH;Carpeta de instalación de GIMP
 PREFERENCES_GREENEQUIL;Equilibrado del verde
-PREFERENCES_GTKTHEME;Estilo de GTK predeterminado
+PREFERENCES_GREY05;Yb=05 CIE L#30
+PREFERENCES_GREY10;Yb=10 CIE L#40
+PREFERENCES_GREY15;Yb=15 CIE L#45
+PREFERENCES_GREY18;Yb=18 CIE L#50
+PREFERENCES_GREY23;Yb=23 CIE L#55
+PREFERENCES_GREY30;Yb=30 CIE L#60
+PREFERENCES_GREY40;Yb=40 CIE L#70
+PREFERENCES_GREY;Luminancia (%) Yb del dispositivo de salida
+PREFERENCES_GTKTHEME;Tema GTK predeterminado
 PREFERENCES_HINT;Consejo
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histograma en panel izquierdo
 PREFERENCES_HLTHRESHOLD;Umbral de luces altas cortadas
 PREFERENCES_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
-PREFERENCES_ICCDIR;Carpeta de perfiles ICC
-PREFERENCES_IMPROCPARAMS;Parámetros predeterminados de procesamiento de imágenes
+PREFERENCES_ICCDIR;Carpeta con perfiles de color ICC
+PREFERENCES_IMPROCPARAMS;Parámetros de procesamiento de imágenes predeterminados
 PREFERENCES_INTENT_ABSOLUTE;Colorimétrico absoluto
 PREFERENCES_INTENT_PERCEPTUAL;Perceptual
 PREFERENCES_INTENT_RELATIVE;Colorimétrico relativo
 PREFERENCES_INTENT_SATURATION;Saturación
-PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Mostrar miniatura interna RAW si no se ha editado
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Mostrar miniatura JPEG incrustada si foto Raw no se ha editado
 PREFERENCES_LANGAUTODETECT;Usar configuración de idioma del SO
 PREFERENCES_LINEDENOISE;Filtro de ruido de línea
 PREFERENCES_LIVETHUMBNAILS;Miniaturas 'en vivo' (más lento)
 PREFERENCES_MENUGROUPEXTPROGS;Grupo "Abrir con"
-PREFERENCES_MENUGROUPFILEOPERATIONS;Operaciones en un grupo de archivos
-PREFERENCES_MENUGROUPLABEL;Etiquetado de grupo
-PREFERENCES_MENUGROUPPROFILEOPERATIONS;Operaciones en un grupo de perfiles
-PREFERENCES_MENUGROUPRANK;Puntuación de grupo
-PREFERENCES_MENUOPTIONS;Opciones de menú
+PREFERENCES_MENUGROUPFILEOPERATIONS;Grupo "Operaciones de archivo"
+PREFERENCES_MENUGROUPLABEL;Grupo "Etiquetado con color"
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Grupo "Operaciones de Perfil de Procesamiento"
+PREFERENCES_MENUGROUPRANK;Grupo "Asignar Rango"
+PREFERENCES_MENUOPTIONS;Opciones de menú de contexto
 PREFERENCES_METADATA;Metadatos
 PREFERENCES_MONITORICC;Perfil de pantalla
-PREFERENCES_MULTITABDUALMON;Modo de varias pestañas, si está disponible en segundo monitor
-PREFERENCES_MULTITAB;Modo de varias pestañas
+PREFERENCES_MULTITABDUALMON;Modo Editor de varias pestañas, si está disponible en segundo monitor
+PREFERENCES_MULTITAB;Modo Editor de varias pestañas
 PREFERENCES_OUTDIRFOLDERHINT;Guardar las imágenes creadas en una carpeta elegida
 PREFERENCES_OUTDIRFOLDER;Guardar en carpeta
 PREFERENCES_OUTDIRHINT;<i>Se pueden usar las variables siguientes:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEstas variables son referencias a las carpetas y subrutas de las rutas del lugar donde se encuentra la imagen RAW.\n\nPor ejemplo, si abres </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>, los valores de las variables son:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nSi quieres guardar la imagen de salida en el lugar original, usa:\n</i><b>%p1/%f\n</b><i>\nSi quieres guardar la imagen de salida en una carpeta 'convertida' dentro de la carpeta original, usa:\n</i><b>%p1/convertida/%f\n</b><i>\nSi quieres guardar la imagen de salida en la carpeta '/home/tom/convertida' conservando la misma subcarpeta de fechas, usa:\n</i><b>%p2/convertida/%d1/%f</b>
@@ -735,38 +924,40 @@ PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
 PREFERENCES_OUTDIR;Carpeta de salida
 PREFERENCES_OVERLAY_FILENAMES;Superponer nombres de archivo en miniaturas
 PREFERENCES_OVERWRITEOUTPUTFILE;Sobreescribir archivos de salida existentes
-PREFERENCES_PANFACTORFRAME;Aceleración del panning
+PREFERENCES_PANFACTORFRAME;Aceleración del paneo
 PREFERENCES_PANFACTORLABEL;Factor
-PREFERENCES_PARSEDEXTADDHINT;Entra una extensión y pulsa este botón para agregar a la lista
+PREFERENCES_PARSEDEXTADDHINT;Ingrese una extensión y pulse este botón para agregarla a la lista
 PREFERENCES_PARSEDEXTADD;Agregar extensión
-PREFERENCES_PARSEDEXTDELHINT;Borrar extensión de la lista
+PREFERENCES_PARSEDEXTDELHINT;Borrar de la lista las extensiones seleccionadas
 PREFERENCES_PARSEDEXT;Extensiones analizadas
 PREFERENCES_PRESER;Exposición antes de interpolación:\npreservar luces altas (EV)
 PREFERENCES_PROFILEHANDLING;Tratamiento de perfiles de procesamiento
 PREFERENCES_PROFILELOADPR;Prioridad de perfiles cuando se abre imagen
 PREFERENCES_PROFILEPRCACHE;Perfil en memoria intermedia
-PREFERENCES_PROFILEPRFILE;Perfil junto con imagen de entrada
+PREFERENCES_PROFILEPRFILE;Perfil junto a imagen de entrada
 PREFERENCES_PROFILESAVECACHE;Guardar perfiles de procesamiento en memoria intermedia
 PREFERENCES_PROFILESAVEINPUT;Guardar perfiles de procesamiento junto con imagen de entrada
 PREFERENCES_PROPERTY;Propiedad
 PREFERENCES_PSPATH;Carpeta de instalación de Adobe Photoshop
+PREFERENCES_RGBDTL_LABEL;Número máximo de hilos para reducción de ruido
+PREFERENCES_RGBDTL_TOOLTIP;La Reducción de Ruido requiere como base 128MB de RAM para una imagen de 10MPix o 512MB para una imagen de 40MPix; más 128MB RAM por hilo de proceso.\nMientras más hilos corren en paralelo, más rápido es el procesamiento. Coloque “0” para que automáticamente se use tantos hilos como sea posible según la capacidad de su equipo.
 PREFERENCES_SELECTFONT;Seleccionar fuente
-PREFERENCES_SELECTICCDIRDLG;Seleccionar carpeta de perfiles ICC...
+PREFERENCES_SELECTICCDIRDLG;Seleccionar carpeta de perfiles de color...
 PREFERENCES_SELECTLANG;Seleccionar idioma
-PREFERENCES_SELECTMONITORPROFDLG;Seleccionar perfil ICC de la pantalla...
-PREFERENCES_SELECTTHEME;Seleccionar estilo
+PREFERENCES_SELECTMONITORPROFDLG;Seleccionar perfil de color de la pantalla...
+PREFERENCES_SELECTTHEME;Seleccionar tema
 PREFERENCES_SET;Establecer
-PREFERENCES_SHOWBASICEXIF;Mostrar datos EXIF básicos
+PREFERENCES_SHOWBASICEXIF;Mostrar datos Exif básicos
 PREFERENCES_SHOWDATETIME;Mostrar fecha y hora
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Mostrar compensación de exposición
 PREFERENCES_SHOWONLYRAW;Mostrar solo archivos RAW
-PREFERENCES_SHOWPROFILESELECTOR;Mostrar selector de perfiles
+PREFERENCES_SHOWPROFILESELECTOR;Mostrar selector de perfiles de procesamiento
 PREFERENCES_SHTHRESHOLD;Umbral de sombras cortadas
-PREFERENCES_SINGLETABVERTAB;Modo de pestaña única, pestañas verticales
-PREFERENCES_SINGLETAB;Modo de pestaña única
+PREFERENCES_SINGLETABVERTAB;Modo Editor de pestaña única, pestañas verticales
+PREFERENCES_SINGLETAB;Modo Editor de pestaña única
 PREFERENCES_SLIMUI;Interfase gráfica adelgazada
 PREFERENCES_SND_BATCHQUEUEDONE;Trabajos en cola finalizados
-PREFERENCES_SND_HELP;Introducir el path o dejar en blanco (sin sonido). En Windows, usar "SystemDefault", "SystemAsterisk" etc. para los sonidos del sistema
+PREFERENCES_SND_HELP;Introducir el path o dejar en blanco (sin sonido). En Windows, usar "SystemDefault", "SystemAsterisk" etc. para los sonidos del sistema\nEn Linux use "complete", "window-attention" etc. para los sonidos del sistema.
 PREFERENCES_SND_LNGEDITPROCDONE;Procesado del editor terminado
 PREFERENCES_SND_TRESHOLDSECS;después de seg.
 PREFERENCES_SQUAREDETAILWINDOW;Ventana de detalle cuadrada (más rápido)
@@ -776,32 +967,43 @@ PREFERENCES_TAB_COLORMGR;Gestión del color
 PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Procesamiento de imágenes
 PREFERENCES_TAB_OUTPUT;Opciones de salida
+PREFERENCES_TAB_PERFORMANCE;Rendimiento
 PREFERENCES_TAB_SOUND;Sonidos
 PREFERENCES_THUMBSIZE;Tamaño de miniaturas
 PREFERENCES_TP_LABEL;Panel de herramientas:
 PREFERENCES_TP_USEICONORTEXT;Usar iconos de pestaña en lugar de texto
 PREFERENCES_TP_VSCROLLBAR;Ocultar barra de desplazamiento vertical del panel de herramientas
-PREFERENCES_TUNNELMETADATA;Traspasar IPTC/XMP sin cambios al fichero de salida
-PREFERENCES_USESYSTEMTHEME; Usar tema del sistema
-PREFERENCES_WORKFLOW;Flujo de trabajo
+PREFERENCES_TUNNELMETADATA;Copiar IPTC/XMP sin cambios al fichero de salida (cuando etiquete con otro programa)
+PREFERENCES_USEBUNDLEDPROFILES;Usar perfiles empaquetados
+PREFERENCES_USESYSTEMTHEME;Usar tema del sistema
+PREFERENCES_VIEW;Balance de blancos establecido en el dispositivo de salida (monitor, TV, proyector, etc.)
+PREFERENCES_WORKFLOW;Disposición
+PROFILEPANEL_COPYPPASTE;Parámetros a copiar
 PROFILEPANEL_FILEDLGFILTERANY;Cualquier archivo
 PROFILEPANEL_FILEDLGFILTERPP;Perfiles de procesamiento
+PROFILEPANEL_GLOBALPROFILES;Perfiles empaquetados
 PROFILEPANEL_LABEL;Perfiles de procesamiento
 PROFILEPANEL_LOADDLGLABEL;Cargar parámetros de procesamiento...
+PROFILEPANEL_LOADPPASTE;Parámetros a cargar
+PROFILEPANEL_MODE_TIP;Modo de procesamiento de perfiles.\n\n<b>Botón presionado</b>: los perfiles parciales son completados; Los valores faltantes son llenados usando valores predeterminados de fábrica.\n\n<b>Botón liberado</b>: Los perfiles son aplicados tal como están, alterando solo los valores que contienen; los parámetros sin valores en el perfil se dejan en la imagen tal como están.
+PROFILEPANEL_MYPROFILES;Mis perfiles
+PROFILEPANEL_PASTEPPASTE;Parámetros
 PROFILEPANEL_PCUSTOM;A medida
 PROFILEPANEL_PFILE;Desde archivo
+PROFILEPANEL_PINTERNAL;Neutro
 PROFILEPANEL_PLASTPHOTO;Última foto
 PROFILEPANEL_PLASTSAVED;Último guardado
 PROFILEPANEL_PROFILE;Perfil
 PROFILEPANEL_SAVEDLGLABEL;Guardar parámetros de procesamiento...
-PROFILEPANEL_TOOLTIPCOPY;Copiar parámetros de procesamiento al portapapeles
-PROFILEPANEL_TOOLTIPLOAD;Cargar perfil de un archivo
-PROFILEPANEL_TOOLTIPPASTE; Pegar perfil del portapapeles
-PROFILEPANEL_TOOLTIPSAVE;Guardar perfil actual
+PROFILEPANEL_SAVEPPASTE;Parámetros a guardar
+PROFILEPANEL_TOOLTIPCOPY;Copiar parámetros de procesamiento al portapapeles.\n<b>Ctrl-click</b> para seleccionar los parámetros a copiar
+PROFILEPANEL_TOOLTIPLOAD;Cargar perfil de un archivo.\n<b>Ctrl-click</b> para seleccionar los parámetros a cargar
+PROFILEPANEL_TOOLTIPPASTE; Pegar perfil del portapapeles.\n<b>Ctrl-click</b> para seleccionar los parámetros a pegar
+PROFILEPANEL_TOOLTIPSAVE;Guardar perfil actual.\n<b>Ctrl-click</b> para seleccionar los parámetros a guardar
 PROGRESSBAR_BADPIXELS;Píxeles dañados...
-PROGRESSBAR_CACORRECTION;Corrección CA...
-PROGRESSBAR_DARKFRAME;Imagen en oscuridad...
-PROGRESSBAR_DECODING;Descodificando archivo RAW...
+PROGRESSBAR_CACORRECTION;Corrección AC...
+PROGRESSBAR_DARKFRAME;<i>Dark Frame</i>...
+PROGRESSBAR_DECODING;Decodificando archivo RAW...
 PROGRESSBAR_DEMOSAICING;Interpolando mosaico...
 PROGRESSBAR_GREENEQUIL;Equilibrado del verde...
 PROGRESSBAR_LINEDENOISE;Eliminando ruido de línea...
@@ -810,28 +1012,32 @@ PROGRESSBAR_LOADING;Abriendo imagen...
 PROGRESSBAR_LOADJPEG;Abriendo archivo JPEG...
 PROGRESSBAR_LOADPNG;Abriendo archivo PNG...
 PROGRESSBAR_LOADTIFF;Abriendo archivo TIFF...
-PROGRESSBAR_PROCESSING;Procesando imagen...
+PROGRESSBAR_NOIMAGES;No se han encontrado imágenes
+PROGRESSBAR_PROCESSING;Procesando la imagen...
+PROGRESSBAR_PROCESSING_PROFILESAVED;Se guardó el perfil de procesamiento
 PROGRESSBAR_READY;Listo
 PROGRESSBAR_SAVEJPEG;Guardando archivo JPEG...
 PROGRESSBAR_SAVEPNG;Guardando archivo PNG...
 PROGRESSBAR_SAVETIFF;Guardando archivo TIFF...
+PROGRESSBAR_SNAPSHOT_ADDED;Se añadió instantánea
 PROGRESSDLG_LOADING;Abriendo archivo...
 PROGRESSDLG_PROCESSING;Procesando imagen...
-PROGRESSDLG_PROFILECHANGEDINBROWSER;Perfil cambiado en explorador
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Perfil de procesamiento cambiado en explorador
 PROGRESSDLG_SAVING;Guardando archivo...
 QINFO_FOCALLENGTH;Longitud focal
 QINFO_ISO;ISO
-QINFO_LENS;Objetivo
+QINFO_LENS;Lente
 QINFO_NOEXIF;No hay datos EXIF.
-SAVEDLG_AUTOSUFFIX;Añade un sufijo automáticamente si el archivo existe
+SAVEDLG_AUTOSUFFIX;Automáticamente añade un sufijo cuando el archivo ya existe
 SAVEDLG_FILEFORMAT;Formato de archivo
-SAVEDLG_JPEGQUAL;Calidad JPEG 
+SAVEDLG_FORCEFORMATOPTS;Opciones de guardar forzado
+SAVEDLG_JPEGQUAL;Calidad JPEG
 SAVEDLG_JPGFILTER;Archivos JPEG
 SAVEDLG_PNGCOMPR;Compresión PNG
 SAVEDLG_PNGFILTER;Archivos PNG
-SAVEDLG_PUTTOQUEUEHEAD;Poner al principio de la cola
-SAVEDLG_PUTTOQUEUETAIL;Poner al fin de la cola
-SAVEDLG_PUTTOQUEUE;Poner en la cola
+SAVEDLG_PUTTOQUEUEHEAD;Poner al principio de la cola de procesamiento
+SAVEDLG_PUTTOQUEUETAIL;Poner al final de la cola de procesamiento
+SAVEDLG_PUTTOQUEUE;Poner en la cola de procesamiento
 SAVEDLG_SAVEIMMEDIATELY;Guardar inmediatamente
 SAVEDLG_SAVESPP;Guardar parámetros de procesamiento con la imagen
 SAVEDLG_SUBSAMP;Submuestreo
@@ -841,26 +1047,95 @@ SAVEDLG_SUBSAMP_3;Máxima calidad
 SAVEDLG_SUBSAMP_TOOLTIP;Máxima compresión: 4:1:1\nBalanceado: 4:2:2\nMáxima calidad: 4:4:4
 SAVEDLG_TIFFFILTER;Archivos TIFF
 SAVEDLG_TIFFUNCOMPRESSED;TIFF sin compresión
-SHCSELECTOR_TOOLTIP;Pulsar el botón derecho del ratón para restablecer\nla posición de los tres deslizadores
+SAVEDLG_WARNFILENAME;Se asignará nombre al archivo
+SHCSELECTOR_TOOLTIP;Pulsar el botón derecho del ratón para restablecer la posición de los tres controles deslizantes
 THRESHOLDSELECTOR_BL;Inferior izquierdo
 THRESHOLDSELECTOR_BR;Inferior derecho
 THRESHOLDSELECTOR_B;Inferior
-THRESHOLDSELECTOR_HINT;Pulsar la tecla <b>Mayús</b> para mover los puntos de control individuales.
+THRESHOLDSELECTOR_HINT;Mantenga la tecla <b>Mayús</b> presionada para mover puntos de control individuales.
 THRESHOLDSELECTOR_TL;Superior izquierdo
 THRESHOLDSELECTOR_TR;Superior derecho
 THRESHOLDSELECTOR_T;Superior
-TOOLBAR_TOOLTIP_CROP;Elección de recorte (tecla C)
-TOOLBAR_TOOLTIP_HAND;Herramienta mano (tecla N)
-TOOLBAR_TOOLTIP_STRAIGHTEN;Elección de línea recta (tecla S)
-TOOLBAR_TOOLTIP_WB;Muestrea equilibrio de blancos (tecla W)
+TOOLBAR_TOOLTIP_CROP;Selección de <b>recorte</b>.\nAtajo: <b>c</b>
+TOOLBAR_TOOLTIP_HAND;Herramienta mano.\nAtajo: <b>h</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Enderezado</b> / <b>Rotación Fina</b>.\nAtajo: <b>s</b>\n\nIndique la vertical u horizontal trazando una línea guía sobre la vista previa de la imagen. El ángulo de rotación será mostrado al continuación de la línea guía. El centro de la imagen es el centro de rotación.
+TOOLBAR_TOOLTIP_WB;Muestrea equilibrio de blancos.\nAtajo: <b>w</b>
+TP_BWMIX_AUTOCH;Auto
+TP_BWMIX_AUTOCH_TIP;Calcular valores óptimos para el Mezclador de Canales
+TP_BWMIX_BLUE;Azul
+TP_BWMIX_CC_ENABLED;Ajustar color complementario
+TP_BWMIX_CC_TOOLTIP;Permite el ajuste automático de colores complementarios en modo RNAmVCAzPM
+TP_BWMIX_CHANNEL;Ecualizador de luminancia
+TP_BWMIX_CURVEEDITOR1;Curva 'Antes'
+TP_BWMIX_CURVEEDITOR2;Curva 'Después'
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Curva tonal, luego de conversión a B&N, aplicada al final del tratamiento
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Curva tonal, aplicada antes de conversión a B&N\nPuede ser afectada por los colores de los componentes
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modifica luminancia en función del matiz (hue)\nTenga en cuenta que valores extremos pueden introducir elementos artificiales.
+TP_BWMIX_CYAN;Cian
+TP_BWMIX_FILTER;Filtro de color
+TP_BWMIX_FILTER_BLUEGREEN;Azul-Verde
+TP_BWMIX_FILTER_BLUE;Azul
+TP_BWMIX_FILTER_GREENYELLOW;Verde-Amarillo
+TP_BWMIX_FILTER_GREEN;Verde
+TP_BWMIX_FILTER_NONE;Ninguno
+TP_BWMIX_FILTER_PURPLE;Púrpura
+TP_BWMIX_FILTER_REDYELLOW;Rojo-Amarillo
+TP_BWMIX_FILTER_RED;Rojo
+TP_BWMIX_FILTER_TOOLTIP;El filtro de color simula fotos tomadas con un filtro de color colocado frente a la lente de la cámara. Los filtros de colores reducen el paso de un rango específico de colores, afectando correspondientemente su claridad. Por ejemplo, un filtro rojo oscurece cielos azules.
+TP_BWMIX_FILTER_YELLOW;Amarillo
+TP_BWMIX_GAMMA;Corrección de <i>Gamma</i>
+TP_BWMIX_GAM_BLUE;Canal Azul
+TP_BWMIX_GAM_GREEN;Canal Verde
+TP_BWMIX_GAM_RED;Canal Rojo
+TP_BWMIX_GAM_TOOLTIP;Corrige la <i>Gamma</i> de cada canal RGB
+TP_BWMIX_GREEN;Verde
+TP_BWMIX_LABEL;Blanco y Negro
+TP_BWMIX_MAGENTA;Magenta
+TP_BWMIX_MET;Método
+TP_BWMIX_MET_CHANMIX;Mezclador de canales
+TP_BWMIX_MET_DESAT;Des-saturación
+TP_BWMIX_MET_LUMEQUAL;Ecualizador de Luminancia
+TP_BWMIX_MIXC;Mezclador
+TP_BWMIX_MIXF;Filtros mezcladores
+TP_BWMIX_NEUTRAL;Restablece el mezclador
+TP_BWMIX_NEUTRAL_TIP;Restablece todos los parámetros (filtro, mezclador de canales) a sus valores predeterminados.
+TP_BWMIX_ORANGE;Naranja
+TP_BWMIX_PURPLE;Púrpura
+TP_BWMIX_RED;Rojo
+TP_BWMIX_RGBLABEL;R: %1%%   V: %2%%   A: %3%%   Total: %4%%
+TP_BWMIX_RGBLABEL_HINT;Factores finales RGB tomando en cuenta todas las opciones del mezclador\n<b>Total</b> muestra la suma de los valores RGB actualmente aplicados:\n- <b>En modo relativo</b> Siempre 100% \n- <b>En modo absoluto</b> mayor (más claro) o menor (más oscuro) que 100%
+TP_BWMIX_RGB_TOOLTIP;Mezcla de canales RGB. Use como guía valores pre-establecidos.\nTenga en cuenta que valores negativos pueden introducir elementos extraños (artifacts) o resultados erráticos.
+TP_BWMIX_SETTING;Predeterminados
+TP_BWMIX_SETTING_TOOLTIP;Diversos pre-establecidos (película, paisaje, ...) o ajustes manuales del mezclador de canales
+TP_BWMIX_SET_HIGHCONTAST;Alto Contraste
+TP_BWMIX_SET_HIGHSENSIT;Alta sensibilidad
+TP_BWMIX_SET_HYPERPANCHRO;Hiper Pancromático
+TP_BWMIX_SET_INFRARED;Infrarrojo
+TP_BWMIX_SET_LANDSCAPE;Paisaje
+TP_BWMIX_SET_LOWSENSIT;Baja Sensibilidad
+TP_BWMIX_SET_LUMINANCE;Luminancia
+TP_BWMIX_SET_NORMCONTAST;Contraste Normal
+TP_BWMIX_SET_ORTHOCHRO;Orto-cromático
+TP_BWMIX_SET_PANCHRO;Pancromático
+TP_BWMIX_SET_PORTRAIT;Retrato
+TP_BWMIX_SET_RGBABS;Mezclador de canales RGB Absoluto
+TP_BWMIX_SET_RGBREL;Mezclador de canales RGB Relativo
+TP_BWMIX_SET_ROYGCBPMABS;Mezclador de canales RNAmVCAzPM Absoluto
+TP_BWMIX_SET_ROYGCBPMREL;Mezclador de canales RNAmVCAzPM Relativo
+TP_BWMIX_TCMODE_FILMLIKE;B&N emulando película
+TP_BWMIX_TCMODE_SATANDVALBLENDING;Saturación y combinación de valores B&N
+TP_BWMIX_TCMODE_STANDARD;B&N Estándar
+TP_BWMIX_TCMODE_WEIGHTEDSTD;B&N Estándar Ponderado
+TP_BWMIX_VAL;L
+TP_BWMIX_YELLOW;Amarillo
 TP_CACORRECTION_BLUE;Azul
 TP_CACORRECTION_LABEL;Corrección de aberraciones cromáticas
 TP_CACORRECTION_RED;Rojo
-TP_CHMIXER_BLUE;Azul
-TP_CHMIXER_GREEN;Verde
-TP_CHMIXER_LABEL;Mezclador de canal
-TP_CHMIXER_RED;Rojo
-TP_CHROMATABERR_LABEL;Aberración cromática
+TP_CHMIXER_BLUE;Canal Azul
+TP_CHMIXER_GREEN;Canal Verde
+TP_CHMIXER_LABEL;Mezclador de canales
+TP_CHMIXER_RED;Canal Rojo
+TP_CHROMATABERR_LABEL;Aberración cromática (AC)
 TP_CLARITY_LABEL;Claridad y nitidez
 TP_CLARITY_MATRIX;Matriz 3x3 en lugar de 5x5
 TP_CLARITY_MICRO;Microcontraste (textura)
@@ -869,10 +1144,83 @@ TP_CLARITY_SHARPEN;Nitidez por gradiente (bordes)
 TP_CLARITY_STRENGTH;Intensidad de gradiente
 TP_CLARITY_THREE;Sólo luminancia
 TP_COARSETRAF_DEGREE;Grados:
-TP_COARSETRAF_TOOLTIP_HFLIP;Voltear horizontalmente
-TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotar a la izquierda
+TP_COARSETRAF_TOOLTIP_HFLIP;Voltear horizontalmente.\nAtajo: <b>[</b>
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotar a la izquierda.\nAtajo: <b>]</b>
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotar a la derecha
 TP_COARSETRAF_TOOLTIP_VFLIP;Voltear verticalmente
+TP_COLORAPP_ADAPTSCENE;Adaptación a la luminosidad de la escena
+TP_COLORAPP_ADAPTSCENE_TOOLTIP;Luminancia absoluta del entorno de la escena (cd/m²).\n1) Calculado en base a datos Exif: \nTiempo de Exposición - Velocidad ISO - Número F de apertura - Corrección de exposición\n2) Calculado a partir del Punto Blanco raw y Compensación de Exposición RT.
+TP_COLORAPP_ADAPTVIEWING;Adaptación a la luminosidad de visualización (cd/m²)
+TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Luminancia absoluta del entorno de visualización\n(usualmente 16cd/m²)
+TP_COLORAPP_ADAP_AUTO_TOOLTIP;Si la casilla está seleccionada (como se recomienda) RT calcula el valor óptimo a partir de los datos Exif.\nPara establecer el valor manualmente, primero desmarque la casilla
+TP_COLORAPP_ALGO;Algoritmo
+TP_COLORAPP_ALGO_ALL;Todo
+TP_COLORAPP_ALGO_JC;Claridad + Crominancia (JC)
+TP_COLORAPP_ALGO_JS;Claridad + Saturación (JS)
+TP_COLORAPP_ALGO_QM;Brillo + Colorido (QM)
+TP_COLORAPP_ALGO_TOOLTIP;Le permite elegir entre subconjuntos de parámetros o todos los parámetros
+TP_COLORAPP_BADPIXSL;Filtro de píxeles calientes/muertos
+TP_COLORAPP_BADPIXSL_TOOLTIP;Supresión de píxeles calientes/muertos (con coloreado brillante).\n 0=No effect 1=Mediana 2=Gaussiano.\n\nEstos elementos extraños son causados por limitaciones de CIECAM02. Como alternativa, ajuste la imagen para evitar sombras muy oscuras.
+TP_COLORAPP_BRIGHT;Brillo (Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;En CIECAM02 el Brillo tiene en cuenta la luminosidad de los blancos y es diferente al de Lab y al de RGB
+TP_COLORAPP_CHROMA;Crominancia (C)
+TP_COLORAPP_CHROMA_M;Colorido (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;El Colorido CIECAM02 es diferente al de Lab y al de RGB
+TP_COLORAPP_CHROMA_S;Saturación (S)
+TP_COLORAPP_CHROMA_S_TOOLTIP;La Saturación CIECAM02 es diferente a la de Lab y a la de RGB
+TP_COLORAPP_CHROMA_TOOLTIP;Crominancia en CIECAM02 es diferente a la de Lab y a la de RGB
+TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptación
+TP_COLORAPP_CONTRAST;Contraste (J)
+TP_COLORAPP_CONTRAST_Q;Contraste (Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contraste en CIECAM02 para el control deslizante Q; es diferente al contraste en Lab y en RGB
+TP_COLORAPP_CONTRAST_TOOLTIP;Contraste en CIECAM02 para el control deslizante J; es diferente al contraste en Lab y en RGB
+TP_COLORAPP_CURVEEDITOR1;Curva tonal 1
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Muestra el <b>histograma L (de Lab) antes</b> de CIECAM02.\nSi la casilla "Muestra en las curvas histogramas de salida CIECAM02" está seleccionada, muestra <b>los histogramas de J o Q después</b> de CIECAM02.\n\nJ y Q no se muestran en el histograma del panel principal.\n\nVea el histograma de salida final en el panel principal
+TP_COLORAPP_CURVEEDITOR2;Curva tonal 2
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Por favor, consulte RawPedia para aprender cómo obtener mejores resultados usando dos curvas tonales
+TP_COLORAPP_CURVEEDITOR3;Curva de color
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Ajusta Crominancia, Saturación o Colorido.\n\nMuestra el <b>histograma de Cromaticidad (Lab) antes</b> de los ajustes CIECAM02.\nSi la casilla "Muestra en las curvas histogramas de salida CIECAM02" está seleccionada, muestra el <b>histograma de C, s o M después</b> de CIECAM02.\n\nC, s y M no se muestran en el histograma del panel principal.\n\nVea el histograma de salida final en el panel principal
+TP_COLORAPP_DATACIE;Muestra en las curvas histogramas de salida CIECAM02
+TP_COLORAPP_DATACIE_TOOLTIP;Si está seleccionada, los histogramas en las curvas CIECAM02 muestran aproximadamente <b>valores/rangos de J o Q, y C, s o M después</b> de los ajustes CIECAM02.\nEsta selección no influye en el histograma del panel principal.\n\nCuando no está seleccionada, los histogramas en las curvas CIECAM02 muestran <b>valores Lab antes</b> de los ajustes CIECAM02
+TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Si la casilla está seleccionada (como se recomienda), RT calcula el valor óptimo, que es usado por CAT02, y también por todo CIECAM02.\nPara establecer manualmente el valor, primero desmarque la casilla (se recomienda usar valores mayores a 65)
+TP_COLORAPP_DEGREE_TOOLTIP;Cantidad de transformación de adaptación cromática CIE 2002
+TP_COLORAPP_EQUAL;Igual
+TP_COLORAPP_GAMUT;Control de Gamut (Lab)
+TP_COLORAPP_GAMUT_TOOLTIP;Permite control de gamut en modo Lab
+TP_COLORAPP_HUE;Matiz (h)
+TP_COLORAPP_HUE_TOOLTIP;Matiz (h) - ángulo entre 0° y 360°
+TP_COLORAPP_LABEL;CIE Modelo de Apariencia de Color 2002
+TP_COLORAPP_LABEL_CAM02;Ajustes de imagen
+TP_COLORAPP_LABEL_SCENE;Condiciones de la escena
+TP_COLORAPP_LABEL_VIEWING;Condiciones de visualización
+TP_COLORAPP_LIGHT;Claridad (J)
+TP_COLORAPP_LIGHT_TOOLTIP;Claridad en CIECAM02 es diferente a la de Lab y a la de RGB
+TP_COLORAPP_MODEL;Modelo de punto blanco
+TP_COLORAPP_MODEL_TOOLTIP;Modelo de Punto Blanco\n\n<b>WB [RT] + [salida]:</b>\nEl Balance de Blancos de RT es usado para la escena, CIECAM02 es establecido a D50, y el Balance de Blancos del dispositivo de salida es el establecido en <i>Preferencias > Gestión de Color</i>\n\n<b>WB [RT+CAT02] + [salida]:</b>\nEl Balance de Blancos de RT es usado por CAT02 y el del dispositivo de salida es el establecido en preferencias
+TP_COLORAPP_RSTPRO; Protección de tonos rojos y color piel
+TP_COLORAPP_RSTPRO_TOOLTIP;Protección de tonos rojos y color piel (curvas y controles deslizantes)
+TP_COLORAPP_SHARPCIE;Enfoque, Contraste por niveles de detalle, Micro-contraste &amp; Eliminación de AC con Q/C
+TP_COLORAPP_SHARPCIE_TOOLTIP;Si se selecciona, Enfoque, Contraste por niveles de detalle, Micro-contraste &amp; Eliminación de AC usarán CIECAM02
+TP_COLORAPP_SURROUND;Entorno
+TP_COLORAPP_SURROUND_AVER;Promedio
+TP_COLORAPP_SURROUND_DARK;Oscuro
+TP_COLORAPP_SURROUND_DIM;Luz Tenue
+TP_COLORAPP_SURROUND_EXDARK;Muy oscuro
+TP_COLORAPP_SURROUND_TOOLTIP;Cambia la tonalidad y color de la imagen teniendo en cuenta las condiciones de visualización en el dispositivo de salida\n\n<b>Promedio:</b>\nEntorno con iluminación media(estándar)\nLa imagen no cambiará\n\n<b>\n\n<b>Luz Tenue:</b>\nAmbiente a media luz (TV)\nLa imagen se pondrá ligeramente oscura\n\n<b>Oscuro:</b>\nEntorno oscuro (proyector)\nLa imagen se pondrá más oscura\n\n<b>Muy Oscuro:</b>\nEntorno extremadamente oscuro\nLa imagen se podrá bien oscura
+TP_COLORAPP_SURSOURCE;Entorno oscuro
+TP_COLORAPP_SURSOURCE_TOOLTIP;Puede usarse si la imagen original tiene borde oscuro.
+TP_COLORAPP_TCMODE_BRIGHTNESS;Brillo
+TP_COLORAPP_TCMODE_CHROMA;Crominancia
+TP_COLORAPP_TCMODE_COLORF;Colorido
+TP_COLORAPP_TCMODE_LABEL1;Curva modo 1
+TP_COLORAPP_TCMODE_LABEL2;Curve modo 2
+TP_COLORAPP_TCMODE_LABEL3;Curva en modo crominancia
+TP_COLORAPP_TCMODE_LIGHTNESS;Claridad
+TP_COLORAPP_TCMODE_SATUR;Saturación
+TP_COLORAPP_TONECIE;Mapeo tonal usando Brillo (Q) CIECAM02.
+TP_COLORAPP_TONECIE_TOOLTIP;Si esta opción no está seleccionada, el mapeo tonal se hace usando el espacio de color Lab.\nSi esta opción está seleccionada, el mapeo tonal se hace usando CIECAM02.\nLa herramienta de mapeo tonal debe de estar habilitada para que esta selección tenga efecto
+TP_COLORAPP_WBCAM;BalBlanco [RT+CAT02] + [salida]
+TP_COLORAPP_WBRT;BalBlanco [RT] + [salida]
 TP_COLORBOOST_ACHANNEL;canal "a"
 TP_COLORBOOST_AMOUNT;Cantidad
 TP_COLORBOOST_AVOIDCOLORCLIP;Evitar recorte de colores
@@ -905,22 +1253,33 @@ TP_CROP_GTRULETHIRDS;Regla de los tercios
 TP_CROP_GUIDETYPE;Clase de guía:
 TP_CROP_H;Al
 TP_CROP_LABEL;Recortar
-TP_CROP_SELECTCROP;    Seleccionar recorte
-TP_CROP_W;An
+TP_CROP_PPI;Ptos/Pulgada=
+TP_CROP_SELECTCROP;Seleccionar recorte
+TP_CROP_W;Ancho
 TP_CROP_X;x
 TP_CROP_Y;y
 TP_DARKFRAME_AUTOSELECT;Auto selección
-TP_DARKFRAME_LABEL;Imagen en oscuridad
+TP_DARKFRAME_LABEL;<i>Dark Frame</i>
 TP_DEFRINGE_LABEL;Quitar borde púrpura
 TP_DEFRINGE_RADIUS;Radio
 TP_DEFRINGE_THRESHOLD;Umbral
 TP_DETAIL_AMOUNT;Cantidad
-TP_DIRPYRDENOISE_CHROMA;Crominancia
+TP_DIRPYRDENOISE_BLUE;Crominancia - Azul-Amarillo
+TP_DIRPYRDENOISE_CHROMA;Crominancia - Maestra
+TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Puede usarse en imágenes Raw y no Raw.\n\nPara imágenes no Raw la reducción del ruido en la luminancia depende de la gamma en el perfil de color de entrada. Se asume la gamma de sRGB, de manera que si la imagen tiene un perfil de color con otra gamma, la reducción del ruido en la luminancia va a variar.
+TP_DIRPYRDENOISE_ENH_TOOLTIP;Incrementa la calidad de la Reducción de Ruido a costa de un incremento de 20% en el tiempo de procesamiento
 TP_DIRPYRDENOISE_GAMMA;Gamma
+TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma hace variar la fuerza de reducción del ruido a lo largo del rango tonal.\n\n Valores pequeños dirigen la reducción hacia las sombras, mientras que valores grandes extienden el efecto hasta los tonos brillantes
+TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Mediante Gamma se varía la intensidad de la Reducción de Ruido a lo largo del rango tonal. Valores pequeños están dirigidos a las sombras, mientras que valores grandes estiran el efecto hacia los tonos brillantes
 TP_DIRPYRDENOISE_LABEL;Reducción de ruido
-TP_DIRPYRDENOISE_LDETAIL;Detalle de la luminancia
+TP_DIRPYRDENOISE_LDETAIL;Detalle en luminancia
 TP_DIRPYRDENOISE_LUMA;Luminancia
-TP_DIRPYREQUALIZER_LABEL;Contraste mediante niveles de detalle
+TP_DIRPYRDENOISE_METHOD;Método
+TP_DIRPYRDENOISE_METHOD_TOOLTIP;Para imágenes Raw puede usarse tanto el método RGB como el Lab.\n\nPara imágenes no Raw el método Lab será usado, ignorando el método seleccionado.
+TP_DIRPYRDENOISE_PERF;Modo RGB (imagen raw)
+TP_DIRPYRDENOISE_RED;Crominancia - Rojo-Verde
+TP_DIRPYRDENOISE_RGB;RGB
+TP_DIRPYREQUALIZER_LABEL;Contraste por niveles de detalle
 TP_DIRPYREQUALIZER_LUMACOARSEST;Más grueso
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Contraste-
 TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Contraste+
@@ -929,34 +1288,34 @@ TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutro
 TP_DIRPYREQUALIZER_THRESHOLD;Umbral
 TP_DISTORTION_AMOUNT;Cantidad
 TP_DISTORTION_AUTO;Auto corrección de distorsión
-TP_DISTORTION_AUTO;    Corrección automática de distorsión
-TP_DISTORTION_AUTO_TIP;(Experimental) Corrige automáticamente la distorsión de la lente para algunas cámaras (M4/3, algunas compactas DC, etc.)
-TP_DISTORTION_LABEL;Distorsión
+TP_DISTORTION_AUTO_TIP;(Experimental) Corrige automáticamente la distorsión de la lente para algunas cámaras (Micro 4/3, algunas compactas DC, etc.)
+TP_DISTORTION_LABEL;Corrección de Distorsión
 TP_EPD_EDGESTOPPING;Parada en los bordes
-TP_EPD_LABEL;Mapeo de tonos
+TP_EPD_LABEL;Mapeo tonal
 TP_EPD_REWEIGHTINGITERATES;Iteraciones de reponderación
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensidad
+TP_EPD_TOOLTIP;El mapeo tonal puede hacerse en modo Lab (estándar) y en modo CIECAM02.\n\nPara activar mapeo tonal modo CIECAM02 haga los siguientes ajustes:\n1. CIECAM02\n2. Algoritmo="Brillo + Colorido (QM)"\n3. "Mapeo tonal usando Brillo CIECAM02 (Q)"
 TP_EQUALIZER_CONTRAST_MINUS;Contraste-
 TP_EQUALIZER_CONTRAST_PLUS;Contraste+
 TP_EQUALIZER_FINEST;muy fino
 TP_EQUALIZER_LABEL;Ecualizador de wavelets
 TP_EQUALIZER_LARGEST;muy grueso
 TP_EQUALIZER_NEUTRAL;Neutro
-TP_EXPOSCORR_LABEL;Exposición
+TP_EXPOSCORR_LABEL;Puntos Blanco y Negro (Raw)
 TP_EXPOSURE_AUTOLEVELS;Niveles automáticos
-TP_EXPOSURE_AUTOLEVELS_TIP;Ejecuta Niveles Automáticos. Establece automáticamente los valores de los parámetros basándose en el análisis de la imagen
+TP_EXPOSURE_AUTOLEVELS_TIP;Ejecuta Niveles Automáticos. Establece automáticamente los valores de los parámetros basándose en el análisis de la imagen\nHabilita la reconstrucción de luces altas si es necesario
 TP_EXPOSURE_BLACKLEVEL;Negro
 TP_EXPOSURE_BRIGHTNESS;Brillo
-TP_EXPOSURE_CLIP;Recorte
+TP_EXPOSURE_CLIP;Recorte %
 TP_EXPOSURE_CLIP_TIP;Fracción de los píxeles que se recortará en una operación de Niveles Automáticos
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Umbral de recuperación de luces altas
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compresión de luces altas
 TP_EXPOSURE_COMPRSHADOWS;Compresión de sombras
 TP_EXPOSURE_CONTRAST;Contraste
-TP_EXPOSURE_CURVEEDITOR1;Curva de tono 1
-TP_EXPOSURE_CURVEEDITOR2;Curva de tono 2
-TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Consultar la siguiente sección del manual para saber más sobre cómo obtener los mejores resultados con la curva doble:\nLa caja de herramientas > Pestaña Exposición > Panel de Exposición > Curva de tono
+TP_EXPOSURE_CURVEEDITOR1;Curva tonal 1
+TP_EXPOSURE_CURVEEDITOR2;Curva tonal 2
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Por favor, consulte RawPedia para aprender cómo obtener mejores resultados usando dos curvas tonales
 TP_EXPOSURE_EXPCOMP;Comp. de exposición
 TP_EXPOSURE_LABEL;Exposición
 TP_EXPOSURE_SATURATION;Saturación
@@ -980,12 +1339,26 @@ TP_GAMMA_CURV;Gamma
 TP_GAMMA_FREE;Gamma libre
 TP_GAMMA_OUTPUT;Gamma de salida
 TP_GAMMA_SLOP;Pendiente (lineal)
+TP_GENERAL_11SCALE_TOOLTIP;El efecto de esta herramienta o el de alguno de sus componentes solo es apreciable en escala de vista previa 1:1
+TP_GRADIENT_CENTER;Centro
+TP_GRADIENT_CENTER_X;Centro X
+TP_GRADIENT_CENTER_X_TOOLTIP;Ancla X del punto de rotación:\n-100=borde izquierdo\n0=centro\n+100=borde derecho
+TP_GRADIENT_CENTER_Y;Centro Y
+TP_GRADIENT_CENTER_Y_TOOLTIP;Ancla Y del punto de rotación:\n-100=borde superior\n0=centro\n+100=borde inferior
+TP_GRADIENT_DEGREE;Ángulo
+TP_GRADIENT_DEGREE_TOOLTIP;Ángulo de rotación en grados
+TP_GRADIENT_FEATHER;Difuminado
+TP_GRADIENT_FEATHER_TOOLTIP;Ancho del gradiente expresado como porcentaje de la diagonal de la imagen
+TP_GRADIENT_LABEL;Filtro con gradiente
+TP_GRADIENT_STRENGTH;Intensidad
+TP_GRADIENT_STRENGTH_TOOLTIP;Fuerza del filtro en pasos de exposición
 TP_HLREC_BLEND;Mezcla
-TP_HLREC_CIELAB;Superposición de CIELab
+TP_HLREC_CIELAB;Mezclado CIELab
 TP_HLREC_COLOR;Propagación de color
+TP_HLREC_ENA_TOOLTIP;Puede activarse mediante exposición automática
 TP_HLREC_LABEL;Recuperación de luces altas
 TP_HLREC_LUMINANCE;Recuperación de luminancia
-TP_HLREC_METHOD;Método: 
+TP_HLREC_METHOD;Método:
 TP_HSVEQUALIZER1;Rojo
 TP_HSVEQUALIZER2;Amarillo
 TP_HSVEQUALIZER3;Lima
@@ -994,31 +1367,34 @@ TP_HSVEQUALIZER5;Aqua
 TP_HSVEQUALIZER6;Azul
 TP_HSVEQUALIZER7;Púrpura
 TP_HSVEQUALIZER8;Magenta
-TP_HSVEQUALIZER_CHANNEL;Canal HSV
-TP_HSVEQUALIZER_HUE;Tono
+TP_HSVEQUALIZER_CHANNEL;Canal
+TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;Ecualizador HSV
 TP_HSVEQUALIZER_NEUTRAL;Neutro
-TP_HSVEQUALIZER_SAT;Saturación
-TP_HSVEQUALIZER_VAL;Valor
-TP_ICM_BLENDCMSMATRIX;Mezclar las luces altas con matriz
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
+TP_ICM_BLENDCMSMATRIX;Mezclar las luces altas ICC con matriz
 TP_ICM_BLENDCMSMATRIX_TOOLTIP;Permite recuperar luces altas quemadas cuando se usan perfiles ICC basados en LUT
+TP_ICM_DCPILLUMINANT;Iluminante
+TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolado
+TP_ICM_DCPILLUMINANT_TOOLTIP;Seleccione el Iluminante a emplear. El valor predeterminado es "interpolado", que es una mezcla entre dos basados en el Balance de Blancos. Este ajuste es posible solo si un Iluminante dual DCP con soporte de interpolación es seleccionado.
 TP_ICM_FILEDLGFILTERANY;Cualquier archivo
-TP_ICM_FILEDLGFILTERICM;Archivos de perfiles ICC
+TP_ICM_FILEDLGFILTERICM;Perfiles de color
 TP_ICM_GAMMABEFOREINPUT;El perfil aplica gamma
-TP_ICM_INPUTCAMERAICC;Estándar de cámara o ICC
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Usa el perfil de color ICC default de RawTherapee. Más preciso que la matriz, pero sólo disponible para algunas cámaras.
-TP_ICM_INPUTCAMERA;Valores predeterminados de la cámara
-TP_ICM_INPUTCAMERA_TOOLTIP;Usa una matriz de color simple (default) en DCRAW o incluida en DNG
+TP_ICM_INPUTCAMERAICC;Perfil de la cámara (auto-matched)
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Usa perfil de color de entrada específico de la cámara de RawTherapee. Estos perfiles son más precisos que los de matriz de color simple. No están disponibles para todas las cámaras. Estos perfiles son guardados en las carpetas /iccprofiles/input y /dcpprofiles instaladas con RT. Son automáticamente elegidas buscando coincidencia entre el nombre del archivo con la marca y el modelo exacto de la cámara.
+TP_ICM_INPUTCAMERA;Cámara estándar
+TP_ICM_INPUTCAMERA_TOOLTIP;Usa una versión de la matriz de color simple de dcraw mejorada por RT (cualquiera que esté disponible basándose en el modelo de la cámara) o incrustada en DNG
 TP_ICM_INPUTCUSTOM;A medida
-TP_ICM_INPUTCUSTOM_TOOLTIP;Seleccione su propio perfil de color ICC para la cámara
-TP_ICM_INPUTDLGLABEL;Seleccionar perfil ICC de entrada...
+TP_ICM_INPUTCUSTOM_TOOLTIP;Seleccione su propio perfil de color DCP/ICC para la cámara
+TP_ICM_INPUTDLGLABEL;Seleccionar perfil DCP/ICC de entrada...
 TP_ICM_INPUTEMBEDDED;Usar incrustado, si es posible
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Usar el perfil de color incluido en archivos no RAW
-TP_ICM_INPUTNONE;Sin perfil
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Usar el perfil de color incrustado en archivos no RAW
+TP_ICM_INPUTNONE;Sin perfil de color
 TP_ICM_INPUTNONE_TOOLTIP;No usar ningún perfil de color. Utilizar sólo en casos especiales.
 TP_ICM_INPUTPROFILE;Perfil de entrada
-TP_ICM_LABEL;GIC
-TP_ICM_NOICM;Ningún MIC: Salida sRGB
+TP_ICM_LABEL;Gestión de color
+TP_ICM_NOICM;Sin ICM: Salida sRGB
 TP_ICM_OUTPUTDLGLABEL;Seleccionar perfil ICC de salida...
 TP_ICM_OUTPUTPROFILE;Perfil de salida
 TP_ICM_PREFERREDPROFILE;Perfil DCP preferido
@@ -1026,20 +1402,21 @@ TP_ICM_PREFERREDPROFILE_1;Luz de día
 TP_ICM_PREFERREDPROFILE_2;Tungsteno
 TP_ICM_PREFERREDPROFILE_3;Fluorescente
 TP_ICM_PREFERREDPROFILE_4;Flash
-TP_ICM_SAVEREFERENCEDLGLABEL;Guardar imagen de referencia para el perfilado
+TP_ICM_SAVEREFERENCEDLGLABEL;Guardar imagen de referencia para perfilado
 TP_ICM_SAVEREFERENCE;Guardar imagen de referencia para el perfilado
-TP_ICM_TONECURVE;Usar curva de tono DCP
+TP_ICM_TONECURVE;Usar la curva de tonal DCP incrustada. Este ajuste es posible solo si el DCP seleccionado contiene una curva tonal.
 TP_ICM_TONECURVE_TOOLTIP;Activa el uso de las curvas de tono que pueden contener los perfiles DCP.
 TP_ICM_WORKINGPROFILE;Perfil de trabajo
-TP_IMPULSEDENOISE_LABEL;Reducc. ruido impulsivo
+TP_IMPULSEDENOISE_LABEL;Impulsar Reducc. ruido
 TP_IMPULSEDENOISE_THRESH;Umbral
 TP_LABCURVE_AVOIDCOLORCLIP;Evitar recorte de colores
 TP_LABCURVE_AVOIDCOLORSHIFT;Evitar desplazamiento de colores
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Encaja los colores dentro de la gama del espacio de color de trabajo\ny aplica la corrección de Munsell
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Encaja los colores dentro de la gama del espacio de color de trabajo y aplica la corrección de Munsell
 TP_LABCURVE_BRIGHTNESS;Brillo
 TP_LABCURVE_BWTONING;Mapeo de tonos B/N
 TP_LABCURVE_BWTONING_TIP;Con la opción <b>Mapeo de tonos B/N</b> activada, la cromaticidad Lab y las curvas Cc y Ch no tienen efecto.\nEl mapeo de tonos puede conseguirse usando las curvas <b>a</b> y <b>b</b>
 TP_LABCURVE_CHROMATICITY;Cromaticidad
+TP_LABCURVE_CHROMA_TOOLTIP;Para aplicar mapeo tonal en blanco y negro, establezca la Cromaticidad a -100
 TP_LABCURVE_CONTRAST;Contraste
 TP_LABCURVE_CURVEEDITOR;Curva de luminancia
 TP_LABCURVE_CURVEEDITOR_A_RANGE1;Verde saturado
@@ -1055,25 +1432,32 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutros
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Mates
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Saturados
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Cromaticidad de acuerdo con la Cromaticidad
-TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Cromaticidad de acuerdo con el Tono
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminancia de acuerdo con la Cromaticidad
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Cromaticidad en función de la Cromaticidad C=f(C)
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Cromaticidad en función del Matiz C=f(M)
+TP_LABCURVE_CURVEEDITOR_CL;CL
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Cromaticidad en función de la Luminancia C=f(L)
+TP_LABCURVE_CURVEEDITOR_HH;MM
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Matiz en función del Matiz M=f(M)
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminancia en función de  la Cromaticidad L=f(C)
+TP_LABCURVE_CURVEEDITOR_LH;LM
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminancia en función del Matiz L=f(M)
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminancia en función de la Luminancia L=f(L)
 TP_LABCURVE_ENABLESATLIMITER;Activar limitador de saturación
-TP_LABCURVE_LABEL;Curvas Lab
-TP_LABCURVE_LCREDSK;Curva LC - Tonos rojos y de piel
-TP_LABCURVE_LCREDSK_TIP;Si se activa, 'Curva LC' está limitada a los tonos rojos y de piel\nSi se desactiva, se actúa sobre todos los colores
-TP_LABCURVE_RSTPROTECTION;Protección de rojos y tonos de piel
+TP_LABCURVE_LABEL;Ajustes Lab
+TP_LABCURVE_LCREDSK;Restringe LC a tonos rojos y piel
+TP_LABCURVE_LCREDSK_TIP;Si se activa, 'Curva LC' afecta solo a los tonos rojos y piel\nSi se desactiva, se aplica a todos los colores
+TP_LABCURVE_RSTPROTECTION;Protección de rojos y tonos piel
 TP_LABCURVE_RSTPRO_TOOLTIP;Puede usarse con el deslizador Cromaticidad y con la curva CC.
 TP_LABCURVE_SATLIMIT;Límite de saturación
 TP_LABCURVE_SATURATION;Saturación
 TP_LENSGEOM_AUTOCROP;Auto recorte
 TP_LENSGEOM_FILL;Auto relleno
-TP_LENSGEOM_LABEL;Objetivo / Geometría
+TP_LENSGEOM_LABEL;Lente / Geometría
 TP_LENSPROFILE_FILEDLGFILTERLCP;Archivos de correción de lente
 TP_LENSPROFILE_LABEL;Perfil de corrección de lente
-TP_LENSPROFILE_USECA;Usar corrección de CA
-TP_LENSPROFILE_USEDIST;Usar corrección de distorsión
-TP_LENSPROFILE_USEVIGN;Usar corrección de viñeteo
+TP_LENSPROFILE_USECA;Corrección de AC
+TP_LENSPROFILE_USEDIST;Corrección de distorsión
+TP_LENSPROFILE_USEVIGN;Corrección de viñeteo
 TP_LUMACURVE_BLACKLEVEL;Negro
 TP_LUMACURVE_BRIGHTNESS;Brillo
 TP_LUMACURVE_COMPRHIGHLIGHTS;Compresión de luces altas
@@ -1087,10 +1471,19 @@ TP_LUMADENOISE_RADIUS;Radio
 TP_MLMICRO_STRENGTH;Intensidad
 TP_MLMICRO_UNIFORMITY;Uniformidad
 TP_NEUTRAL;Neutro
-TP_NEUTRAL_TIP;Restablecer controles de exposición a valores neutros
+TP_NEUTRAL_TIP;Restablecer controles de exposición a valores neutros\nAplica a los mismos controles que son afectados por Niveles Automáticos, sin importar si usa o no Niveles Automáticos
+TP_PCVIGNETTE_FEATHER;Difuminado
+TP_PCVIGNETTE_FEATHER_TOOLTIP;Difuminación: \n0=Solo Esquinas\n50=Hasta medio camino al centro\n100=Hasta el Centro
+TP_PCVIGNETTE_LABEL;Filtro quitar Viñeteado
+TP_PCVIGNETTE_ROUNDNESS;Redondez
+TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Redondez:\n0=Rectangular\n50=Elíptica\n100=Circular
+TP_PCVIGNETTE_STRENGTH;Intensidad
+TP_PCVIGNETTE_STRENGTH_TOOLTIP;Intensidad del filtro en pasos de exposición (alcanzada en las esquinas)
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspectiva
 TP_PERSPECTIVE_VERTICAL;Vertical
+TP_PFCURVE_CURVEEDITOR_CH;Matiz
+TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controla la fuerza de reducción de bordes coloridos (AC):\n\n Alto = más\n\nbajo = menos.
 TP_PREPROCESS_DARKFRAME;Imagen en oscuridad
 TP_PREPROCESS_DFAUTOSELECT;Selección automática
 TP_PREPROCESS_FLATFIELDAUTOSELECT;Selección automática de campo plano
@@ -1099,8 +1492,10 @@ TP_PREPROCESS_FLATFIELDBLURTYPE;Tipo de difuminado de campo plano
 TP_PREPROCESS_FLATFIELDFILE;Archivo de campo plano
 TP_PREPROCESS_GREENEQUIL;Equilibrado del verde
 TP_PREPROCESS_HOTDEADPIXFILT;Aplicar filtro de píxel dañado
+TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Intenta eliminar píxeles calientes o muertos
 TP_PREPROCESS_LABEL;Preprocesado
 TP_PREPROCESS_LINEDENOISE;Filtro de ruido de línea
+TP_PREPROCESS_NO_FOUND;No encontrado
 TP_RAWCACORR_AUTO;Auto corrección
 TP_RAWCACORR_CABLUE;Azul
 TP_RAWCACORR_CARED;Rojo
@@ -1108,18 +1503,23 @@ TP_RAWEXPOS_BLACKONE;Nivel de negro: Rojo
 TP_RAWEXPOS_BLACKS;Niveles de negro
 TP_RAWEXPOS_BLACKTHREE;Nivel de negro: Verde 2
 TP_RAWEXPOS_BLACKTWO;Nivel de negro: Azul
-TP_RAWEXPOS_BLACKZERO;Nivel de negro: Verde 1 (director)
-TP_RAWEXPOS_LINEAR;Factor de corrección lineal
-TP_RAWEXPOS_PRESER;Corrección preservando HL (EV)
-TP_RAWEXPOS_TWOGREEN;Los dos verdes juntos
+TP_RAWEXPOS_BLACKZERO;Nivel de negro: Verde 1 (líder)
+TP_RAWEXPOS_LINEAR;Corrección de punto blanco
+TP_RAWEXPOS_PRESER;Preservación de Luces Altas
+TP_RAWEXPOS_TWOGREEN;Vincular verdes
 TP_RAWPANEL_DEMOSAICING;Desmosaicado
 TP_RAWPANEL_PREPROCESSING;Preprocesado
 TP_RAW_ALLENHANCE;Aplicar reducción de ruido/artefactos post-desmosaicado
 TP_RAW_DCBENHANCE;Aplicar paso de mejora DCB
 TP_RAW_DCBITERATIONS;Número de iteraciones DCB
 TP_RAW_DMETHOD;Método
-TP_RAW_FALSECOLOR;Pasos de supresión de falso color
+TP_RAW_DMETHOD_PROGRESSBAR;%1 interpolando mosaico...
+TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Refinando la interpolación del mosaico...
+TP_RAW_DMETHOD_TOOLTIP;Nota: IGV y LMMSE están dedicados a imágenes tomadas con grandes velocidades ISO
+TP_RAW_FALSECOLOR;Pasos de supresión de color falso
 TP_RAW_LABEL;Desmosaicado
+TP_RAW_LMMSEITERATIONS;Pasos de mejora LMMSE
+TP_RAW_LMMSE_TOOLTIP;Agregar gamma (paso 1)\n Agregar mediana (pasos 2,3,4)\nAgregar refinamientos (pasos 5,6) para reducir objetos espurios y mejorar la relación señal a ruido
 TP_RESIZE_APPLIESTO;Aplica a:
 TP_RESIZE_BICUBICSF;Bicúbica (más suave)
 TP_RESIZE_BICUBICSH;Bicúbica (más enfocado)
@@ -1130,31 +1530,38 @@ TP_RESIZE_DOWNSCALEB;Reducir resolución (más calidad)
 TP_RESIZE_DOWNSCALEF;Reducir resolución (más velocidad)
 TP_RESIZE_FITBOX;Rectángulo límite
 TP_RESIZE_FULLIMAGE;Imagen completa
-TP_RESIZE_FULLSIZE;Tamaño de imagen completo:
+TP_RESIZE_FULLSIZE;Tamaño de imagen completa:
 TP_RESIZE_HEIGHT;Altura
 TP_RESIZE_H;Al:
 TP_RESIZE_LABEL;Cambiar tamaño
 TP_RESIZE_LANCZOS;Lanczos
-TP_RESIZE_METHOD;Método: 
+TP_RESIZE_METHOD;Método:
 TP_RESIZE_NEAREST;Más cercano
 TP_RESIZE_SCALE;Escala
 TP_RESIZE_SPECIFY;Especificar:
 TP_RESIZE_WIDTH;Anchura
 TP_RESIZE_W;An:
+TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Canal
+TP_RGBCURVES_GREEN;G
 TP_RGBCURVES_LABEL;Curvas RGB
+TP_RGBCURVES_LUMAMODE;Modo Luminosidad
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Modo Luminosidad</b> permite variar el aporte de los canales <b>R</b>ojo, <b>V</b>erde y <b>A</b>zul a la luminosidad de la imagen, sin modificar el color de la misma.
+TP_RGBCURVES_RED;R
 TP_ROTATE_AUTOCROP;Recorte automático
 TP_ROTATE_DEGREE;Grados
 TP_ROTATE_FILL;Llenar
 TP_ROTATE_LABEL;Rotar
-TP_ROTATE_SELECTLINE;    Seleccionar línea recta
+TP_ROTATE_SELECTLINE;Seleccionar línea recta
+TP_SAVEDIALOG_OK_TIP;Atajo <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Luces altas
-TP_SHADOWSHLIGHTS_HLTONALW;Ancho tonal
+TP_SHADOWSHLIGHTS_HLTONALW;Ancho tonal de Luces Altas
 TP_SHADOWSHLIGHTS_LABEL;Sombras/Luces altas
 TP_SHADOWSHLIGHTS_LOCALCONTR;Contraste local
 TP_SHADOWSHLIGHTS_RADIUS;Radio
 TP_SHADOWSHLIGHTS_SHADOWS;Sombras
-TP_SHADOWSHLIGHTS_SHTONALW;Ancho tonal
+TP_SHADOWSHLIGHTS_SHARPMASK;Máscara de enfoque
+TP_SHADOWSHLIGHTS_SHTONALW;Ancho tonal de Sombras
 TP_SHARPENEDGE_AMOUNT;Cantidad
 TP_SHARPENEDGE_LABEL;Bordes
 TP_SHARPENEDGE_PASSES;Iteraciones
@@ -1173,6 +1580,7 @@ TP_SHARPENING_RLD_AMOUNT;Cantidad
 TP_SHARPENING_RLD_DAMPING;Amortiguación
 TP_SHARPENING_RLD_ITERATIONS;Iteraciones
 TP_SHARPENING_THRESHOLD;Umbral
+TP_SHARPENING_TOOLTIP;Espere un efecto ligeramente diferente cuando es usado en combinación con CIECAM02. Si la diferencia es notable ajuste a su gusto.
 TP_SHARPENING_USM;Máscara de enfoque
 TP_SHARPENMICRO_AMOUNT;Cantidad
 TP_SHARPENMICRO_LABEL;Microcontraste
@@ -1185,7 +1593,7 @@ TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Rojo/Púrpura
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Rojo
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Rojo/Amarillo
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Amarillo
-TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Tono de acuerdo con Tono
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Matiz en función de Matiz M=f(M)
 TP_VIBRANCE_LABEL;Vibranza
 TP_VIBRANCE_PASTELS;Tonos pastel
 TP_VIBRANCE_PASTSATTOG;Enlazar tonos pastel y saturados
@@ -1207,6 +1615,8 @@ TP_WBALANCE_CAMERA;Cámara
 TP_WBALANCE_CLOUDY;Nublado
 TP_WBALANCE_CUSTOM;A medida
 TP_WBALANCE_DAYLIGHT;Luz de día (soleado)
+TP_WBALANCE_EQBLUERED;Ecualizador Azul/Rojo
+TP_WBALANCE_EQBLUERED_TOOLTIP;Permite desviarse del comportamiento normal del Balance de Blancos regulando el balance azul/rojo.\nEsto puede ser útil para fotografía en condiciones que:\na) Están lejos de tener una iluminación estándar (p. ej. Subacuático)\nb) Están lejos de las condiciones para las que se hizo la calibración de la cámara\nc) Donde las matrices o perfiles ICC disponibles son inadecuados
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;Estándar, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
@@ -1243,6 +1653,9 @@ TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Muestra eq. bl.
 TP_WBALANCE_TEMPERATURE;Temperatura
 TP_WBALANCE_TUNGSTEN;Tungsteno
+TP_WBALANCE_WATER1;Subacuático 1
+TP_WBALANCE_WATER2;Subacuático 2
+TP_WBALANCE_WATER_HEADER;Subacuático
 ZOOMBAR_DETAIL;Detalle
 ZOOMBAR_HUGE;Enorme
 ZOOMBAR_LARGE;Grande
@@ -1252,392 +1665,13 @@ ZOOMBAR_SCALE;Escala
 ZOOMBAR_SMALL;Pequeño
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Abrir (nueva) ventana de detalle
-ZOOMPANEL_ZOOM100;Zoom al 100% <b>z</b>
-ZOOMPANEL_ZOOMFITSCREEN;Ajustar a pantalla <b>f</b>
-ZOOMPANEL_ZOOMIN;Aumentar Zoom <b>+</b>
-ZOOMPANEL_ZOOMOUT;Reducir Zoom <b>-</b>
- *
- *  Copyright (c) **PUT ALL THE CONTRIBUTORS HERE**
- *  GNU General Public License for more details.
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  RawTherapee is distributed in the hope that it will be useful,
- *  RawTherapee is free software: you can redistribute it and/or modify
- *  This file is part of RawTherapee.
- *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- */ 
-/*
+ZOOMPANEL_ZOOM100;Zoom al 100%\nAtajo: <b>z</b>
+ZOOMPANEL_ZOOMFITSCREEN;Ajustar a pantalla\nAtajo: <b>f</b>
+ZOOMPANEL_ZOOMIN;Aumentar Zoom\nAtajo: <b>+</b>
+ZOOMPANEL_ZOOMOUT;Reducir Zoom\nAtajo: <b>-</b>
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!ABOUT_TAB_RELEASENOTES;Release Notes
-!BATCHQUEUE_DESTFILENAME;Path and file name
-!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!EXTPROGTARGET_1;raw
-!EXTPROGTARGET_2;queue-processed
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
-!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
-!FILEBROWSER_POPUPREMOVESUBMENU;Remove
-!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
-!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
-!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
-!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
-!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank\nShortcut: <b>Shift-0</b>
-!GENERAL_AUTO;Automatic
-!GENERAL_CLOSE;Close
-!GENERAL_WARNING;Warning
-!HISTOGRAM_BUTTON_BAR;RGB
-!HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
-!HISTORY_MSG_174;CIECAM02
-!HISTORY_MSG_175;CAM02 - CAT02 Adaptation
-!HISTORY_MSG_176;CAM02 - Viewing surround
-!HISTORY_MSG_177;CAM02 - Scene luminosity
-!HISTORY_MSG_178;CAM02 - Viewing luminosity
-!HISTORY_MSG_179;CAM02 - White-Point Model
-!HISTORY_MSG_180;CAM02 - Lightness (J)
-!HISTORY_MSG_181;CAM02 - Chroma (C)
-!HISTORY_MSG_182;CAM02 - Automatic CAT02
-!HISTORY_MSG_183;CAM02 - Contrast (J)
-!HISTORY_MSG_184;CAM02 - Scene surround
-!HISTORY_MSG_185;CAM02 - Gamut control
-!HISTORY_MSG_186;CAM02 - Algorithm
-!HISTORY_MSG_187;CAM02 - Red &amp; skin tones protection
-!HISTORY_MSG_188;CAM02 - Brightness (Q)
-!HISTORY_MSG_189;CAM02 - Contrast (Q)
-!HISTORY_MSG_190;CAM02 - Saturation (S)
-!HISTORY_MSG_191;CAM02 - Colorfulness (M)
-!HISTORY_MSG_192;CAM02 - Hue (h)
-!HISTORY_MSG_193;CAM02 - Tone curve 1
-!HISTORY_MSG_194;CAM02 - Tone curve 2
-!HISTORY_MSG_195;CAM02 - Tone curve 1
-!HISTORY_MSG_196;CAM02 - Tone curve 2
-!HISTORY_MSG_197;CAM02 - Color curve
-!HISTORY_MSG_198;CAM02 - Color curve
-!HISTORY_MSG_199;CAM02 - Output histograms
-!HISTORY_MSG_200;CAM02 - Tone mapping
-!HISTORY_MSG_201;NR - Chrominance R,G
-!HISTORY_MSG_202;NR - Chrominance B,Y
-!HISTORY_MSG_203;NR - Method
-!HISTORY_MSG_204;LMMSE Enhancement Steps
-!HISTORY_MSG_205;CAM02 - Hot/bad pixels
-!HISTORY_MSG_206;CAT02 - Auto scene luminosity
-!HISTORY_MSG_207;Defringe - Hue curve
-!HISTORY_MSG_208;WB - B-R Equalizer
-!HISTORY_MSG_210;GF - Angle
-!HISTORY_MSG_211;Graduated Filter
-!HISTORY_MSG_212;VF - Strength
-!HISTORY_MSG_213;Vignette Filter
-!HISTORY_MSG_214;Black-and-White
-!HISTORY_MSG_215;B&amp;W - CM - Red
-!HISTORY_MSG_216;B&amp;W - CM - Green
-!HISTORY_MSG_217;B&amp;W - CM - Blue
-!HISTORY_MSG_218;B&amp;W - Gamma - Red
-!HISTORY_MSG_219;B&amp;W - Gamma - Green
-!HISTORY_MSG_220;B&amp;W - Gamma - Blue
-!HISTORY_MSG_221;B&amp;W - Color Filter
-!HISTORY_MSG_222;B&amp;W - Presets
-!HISTORY_MSG_223;B&amp;W - CM - Orange
-!HISTORY_MSG_224;B&amp;W - CM - Yellow
-!HISTORY_MSG_225;B&amp;W - CM - Cyan
-!HISTORY_MSG_226;B&amp;W - CM - Magenta
-!HISTORY_MSG_227;B&amp;W - CM - Purple
-!HISTORY_MSG_228;B&amp;W - Luminance Equalizer
-!HISTORY_MSG_229;B&amp;W - Luminance Equalizer
-!HISTORY_MSG_230;B&amp;W - Mode
-!HISTORY_MSG_231;B&amp;W - 'Before' Curve
-!HISTORY_MSG_232;B&amp;W - 'Before' Curve Type
-!HISTORY_MSG_233;B&amp;W - 'After' Curve
-!HISTORY_MSG_234;B&amp;W - 'After' Curve Type
-!HISTORY_MSG_235;B&amp;W - Auto Channel Mixer
-!HISTORY_MSG_236;--unused--
-!HISTORY_MSG_237;B&amp;W - Mixer
-!HISTORY_MSG_238;GF - Feather
-!HISTORY_MSG_239;GF - Strength
-!HISTORY_MSG_240;GF - Center
-!HISTORY_MSG_241;VF - Feather
-!HISTORY_MSG_242;VF - Roundness
-!HISTORY_MSG_243;VC - Radius
-!HISTORY_MSG_244;VC - Strength
-!HISTORY_MSG_245;VC - Center
-!HISTORY_MSG_246;'CL' curve
-!HISTORY_MSG_247;'LH' curve
-!HISTORY_MSG_248;'HH' curve
-!HISTORY_MSG_249;CbDL - Threshold
-!HISTORY_MSG_250;NR - Enhanced
-!HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
-!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the Next image relative to image open in Editor\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the Next image relative to thumbnail selected in File Browser\nShortcut: <b>F4</b>
-!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the Previous image relative to image open in Editor\nShortcut: <b>Shift-F3</b> \n\nTo navigate to the Previous image relative to thumbnail selected in File Browser\nShortcut: <b>F3</b>
-!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser with the Editor to reveal the thumbnail of the currently open image, and clear filters in File Browser \nShortcut: <b>x</b>\n\nAs above, but without clearing filters in File Browser\nShortcut: <b>y</b>\n(Note that thumbnail of the open file will not be shown if filtered out).
-!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
-!MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
-!MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
-!MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
-!MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
-!NAVIGATOR_XY_FULL;Width = %1, Height = %2
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\nDefault internal values will be used.
-!PARTIALPASTE_CHANNELMIXERBW;Black-and-White
-!PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight compression
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight compression threshold
-!PARTIALPASTE_LENSPROFILE;Lens correction profile
-!PARTIALPASTE_PCVIGNETTE;Vignette filter
-!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values
-!PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed
-!PREFERENCES_BEHSETALL;All to 'Set'
-!PREFERENCES_BLACKBODY;Tungsten
-!PREFERENCES_CIEART;CIECAM02 optimization
-!PREFERENCES_CIEART_LABEL;Use float precision instead of double
-!PREFERENCES_CIEART_TOOLTIP;If enabled, CIECAM02 calculations are performed in the single-precision floating-point format instead of the double-precision one. This provides a small increase in speed at the expense of a negligible loss of quality
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
-!PREFERENCES_D50;5000K
-!PREFERENCES_D55;5500K
-!PREFERENCES_D60;6000K
-!PREFERENCES_D65;6500K
-!PREFERENCES_FLUOF2;Fluorescent F2
-!PREFERENCES_FLUOF7;Fluorescent F7
-!PREFERENCES_FLUOF11;Fluorescent F11
-!PREFERENCES_GREY05;Yb=05 CIE L#30
-!PREFERENCES_GREY10;Yb=10 CIE L#40
-!PREFERENCES_GREY15;Yb=15 CIE L#45
-!PREFERENCES_GREY18;Yb=18 CIE L#50
-!PREFERENCES_GREY23;Yb=23 CIE L#55
-!PREFERENCES_GREY30;Yb=30 CIE L#60
-!PREFERENCES_GREY40;Yb=40 CIE L#70
-!PREFERENCES_GREY;Output device's Yb luminance (%)
-!PREFERENCES_RGBDTL_LABEL;Max number of threads for Noise Reduction
-!PREFERENCES_RGBDTL_TOOLTIP;Noise Reduction requires a baseline of about 128MB RAM for a 10MPix image or 512MB for a 40MPix image, and additionally 128MB RAM per thread. The more threads run in parallel, the faster the computation. Leave the setting at "0" to automatically use as many threads as possible.
-!PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
-!PREFERENCES_VIEW;Output device's white balance (monitor, TV, projector, viewing, etc.)
-!PROFILEPANEL_COPYPPASTE;Parameters to copy
-!PROFILEPANEL_GLOBALPROFILES;Bundled profiles
-!PROFILEPANEL_LOADPPASTE;Parameters to load
-!PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
-!PROFILEPANEL_MYPROFILES;My profiles
-!PROFILEPANEL_PASTEPPASTE;Parameters to paste
-!PROFILEPANEL_PINTERNAL;Neutral
-!PROFILEPANEL_SAVEPPASTE;Parameters to save
-!PROGRESSBAR_NOIMAGES;No images found
-!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
-!PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
-!SAVEDLG_FORCEFORMATOPTS;Force saving options
-!SAVEDLG_WARNFILENAME;File will be named
-!TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_AUTOCH_TIP;Calculate values optimizing channel-mixer
-!TP_BWMIX_BLUE;Blue
-!TP_BWMIX_CC_ENABLED;Adjust complementary color
-!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode
-!TP_BWMIX_CHANNEL;Luminance Equalizer
-!TP_BWMIX_CURVEEDITOR1;'Before' curve
-!TP_BWMIX_CURVEEDITOR2;'After' curve
-!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment
-!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion\nMay take into account the color components
-!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Modify luminance in function of hue\nPay attention to extreme values that may cause artifacts
-!TP_BWMIX_CYAN;Cyan
-!TP_BWMIX_FILTER;Color Filter
-!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
-!TP_BWMIX_FILTER_BLUE;Blue
-!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
-!TP_BWMIX_FILTER_GREEN;Green
-!TP_BWMIX_FILTER_NONE;None
-!TP_BWMIX_FILTER_PURPLE;Purple
-!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
-!TP_BWMIX_FILTER_RED;Red
-!TP_BWMIX_FILTER_TOOLTIP;The color filter simulate shots taken with a colored filter placed in front of the lens. Colored filters reduce transmission of specific range of colors and correspondingly affect their lightness. E.g. a Red filter darkens Blue skies.
-!TP_BWMIX_FILTER_YELLOW;Yellow
-!TP_BWMIX_GAMMA;Gamma Correction
-!TP_BWMIX_GAM_BLUE;Blue Channel
-!TP_BWMIX_GAM_GREEN;Green Channel
-!TP_BWMIX_GAM_RED;Red Channel
-!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each channel RGB
-!TP_BWMIX_GREEN;Green
-!TP_BWMIX_LABEL;Black-and-White
-!TP_BWMIX_MAGENTA;Magenta
-!TP_BWMIX_MET;Method
-!TP_BWMIX_MET_CHANMIX;Channel Mixer
-!TP_BWMIX_MET_DESAT;Desaturation
-!TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
-!TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_MIXF;Mixer Filters
-!TP_BWMIX_NEUTRAL;Reset mixer
-!TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
-!TP_BWMIX_ORANGE;Orange
-!TP_BWMIX_PURPLE;Purple
-!TP_BWMIX_RED;Red
-!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all of the mixer options\nTotal displays the sum of RGB values actually applied:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use Presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
-!TP_BWMIX_SETTING;Presets
-!TP_BWMIX_SETTING_TOOLTIP;Different presets (films, landscape, ...) or manual settings of channel-mixer
-!TP_BWMIX_SET_HIGHCONTAST;High contrast
-!TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
-!TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
-!TP_BWMIX_SET_INFRARED;Infrared
-!TP_BWMIX_SET_LANDSCAPE;Landscape
-!TP_BWMIX_SET_LOWSENSIT;Low Sensitivity
-!TP_BWMIX_SET_LUMINANCE;Luminance
-!TP_BWMIX_SET_NORMCONTAST;Normal Contrast
-!TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
-!TP_BWMIX_SET_PANCHRO;Panchromatic
-!TP_BWMIX_SET_PORTRAIT;Portrait
-!TP_BWMIX_SET_RGBABS;Channel-Mixer absolute RGB
-!TP_BWMIX_SET_RGBREL;Channel-Mixer relative RGB
-!TP_BWMIX_SET_ROYGCBPMABS;Channel-Mixer absolute ROYGCBPM
-!TP_BWMIX_SET_ROYGCBPMREL;Channel-Mixer relative ROYGCBPM
-!TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
-!TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
-!TP_BWMIX_TCMODE_STANDARD;B&W Standard
-!TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
-!TP_BWMIX_VAL;L
-!TP_BWMIX_YELLOW;Yellow
-!TP_COLORAPP_ADAPTSCENE;Scene luminosity
-!TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider
-!TP_COLORAPP_ADAPTVIEWING;Viewing luminosity (cd/m²)
-!TP_COLORAPP_ADAPTVIEWING_TOOLTIP;Absolute luminance of the viewing environnement\n(usually 16cd/m²)
-!TP_COLORAPP_ADAP_AUTO_TOOLTIP;If the checkbox is checked (recommended) RT calculates an optimum value from Exif data.\nTo set the value manually, uncheck the checkbox first
-!TP_COLORAPP_ALGO;Algorithm
-!TP_COLORAPP_ALGO_ALL;All
-!TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
-!TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
-!TP_COLORAPP_ALGO_QM;Brightness + Colorfulness (QM)
-!TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters
-!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
-!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n 0=no effect 1=median 2=gaussian.\n\nThese artifacts are due to limitations of CIECAM02. Alternatively, adjust the image to avoid very dark shadows.
-!TP_COLORAPP_BRIGHT;Brightness (Q)
-!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from Lab and RGB brightness
-!TP_COLORAPP_CHROMA;Chroma (C)
-!TP_COLORAPP_CHROMA_M;Colorfulnes (M)
-!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from Lab and RGB colorfulness
-!TP_COLORAPP_CHROMA_S;Saturation (S)
-!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from Lab and RGB saturation
-!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from Lab and RGB chroma
-!TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
-!TP_COLORAPP_CONTRAST;Contrast (J)
-!TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast in CIECAM02 for the Q slider; it differs from Lab and RGB contrast
-!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast in CIECAM02 for the J slider; it differs from Lab and RGB contrast
-!TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel
-!TP_COLORAPP_CURVEEDITOR2;Tone curve 2
-!TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
-!TP_COLORAPP_CURVEEDITOR3;Color curve
-!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (Lab) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel
-!TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
-!TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
-!TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
-!TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
-!TP_COLORAPP_EQUAL;Equal
-!TP_COLORAPP_GAMUT;Gamut control (Lab)
-!TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
-!TP_COLORAPP_HUE;Hue (h)
-!TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°
-!TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
-!TP_COLORAPP_LABEL_CAM02;Image Adjustments
-!TP_COLORAPP_LABEL_SCENE;Scene Conditions
-!TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
-!TP_COLORAPP_LIGHT;Lightness (J)
-!TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from Lab and RGB lightness
-!TP_COLORAPP_MODEL;WP Model
-!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model\n\n<b>WB [RT] + [output]:</b>\nRT's white balance is used for the scene, CIECAM02 is set to D50, the output device's white balance is set in <i>Preferences > Color Management</i>\n\n<b>WB [RT+CAT02] + [output]:</b>\nRT's white balance settings are used by CAT02 and the output device's white balance is set in Preferences
-!TP_COLORAPP_RSTPRO;Red & skin tones protection
-!TP_COLORAPP_RSTPRO_TOOLTIP;Red and skin tones protection (sliders and curves)
-!TP_COLORAPP_SHARPCIE;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe with Q/C
-!TP_COLORAPP_SHARPCIE_TOOLTIP;Sharpening, Contrast by Detail Levels, Microcontrast & Defringe will use CIECAM02 if enabled.
-!TP_COLORAPP_SURROUND;Surround
-!TP_COLORAPP_SURROUND_AVER;Average
-!TP_COLORAPP_SURROUND_DARK;Dark
-!TP_COLORAPP_SURROUND_DIM;Dim
-!TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-!TP_COLORAPP_SURROUND_TOOLTIP;Change tones and colors to take into account the viewing conditions of the output device\n\n<b>Average:</b>\nAverage light environment (standard)\nThe image will not change\n\n<b>Dim:</b>\nDim environment (TV)\nThe image will become slighty dark\n\n<b>Dark:</b>\nDark environment (projector)\nThe image will become more dark\n\n<b>Extremly Dark:</b>\nExtremly dark environment (cutsheet)\nThe image will become very dark
-!TP_COLORAPP_SURSOURCE;Dark surround
-!TP_COLORAPP_SURSOURCE_TOOLTIP;Can be used if source image has a dark border
-!TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
-!TP_COLORAPP_TCMODE_CHROMA;Chroma
-!TP_COLORAPP_TCMODE_COLORF;Colorfulness
-!TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
-!TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
-!TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
-!TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
-!TP_COLORAPP_TCMODE_SATUR;Saturation
-!TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
-!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in Lab space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect
-!TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
-!TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_CROP_PPI;PPI=
-!TP_DIRPYRDENOISE_BLUE;Chrominance - Blue-Yellow
-!TP_DIRPYRDENOISE_ENABLED_TOOLTIP;Can be used on raw and non-raw images.\n\nFor non-raw images noise reduction of luminance depends on gamma of the input color profile. Gamma of sRGB is assumed, thus if input image is in color profile of a different gamma, luminance noise reduction will vary.
-!TP_DIRPYRDENOISE_ENH;Enhanced mode
-!TP_DIRPYRDENOISE_ENH_TOOLTIP;Increases noise reduction quality at the expense of a 20% processing time increase
-!TP_DIRPYRDENOISE_GAMMA_TOOLTIP;Gamma varies noise reduction strength across the range of tones. Smaller values will target shadows, while larger values will stretch the effect to the brighter tones.
-!TP_DIRPYRDENOISE_METHOD;Method
-!TP_DIRPYRDENOISE_METHOD_TOOLTIP;For raw images either RGB or Lab methods can be used.\n\nFor non-raw images Lab method will be used, regardless of the selection.
-!TP_DIRPYRDENOISE_PERF;RGB mode (raw images)
-!TP_DIRPYRDENOISE_RED;Chrominance - Red-Green
-!TP_DIRPYRDENOISE_RGB;RGB
-!TP_EPD_TOOLTIP;Tone mapping is possible via Lab mode (standard) and CIECAM02 mode.\n\nTo engage CIECAM02 tone mapping mode enable the following settings:\n1. CIECAM02\n2. Algorithm="Brightness + Colorfulness (QM)"\n3. "Tone mapping using CIECAM02 brightness (Q)"
-!TP_GENERAL_11SCALE_TOOLTIP;The effect of this tool or some of its sub-component is only visible at 1:1 preview scale.
-!TP_GRADIENT_CENTER;Center
-!TP_GRADIENT_CENTER_X;Center X
-!TP_GRADIENT_CENTER_X_TOOLTIP;Rotation anchor point X: -100=left edge, 0=center, +100=right edge
-!TP_GRADIENT_CENTER_Y;Center Y
-!TP_GRADIENT_CENTER_Y_TOOLTIP;Rotation anchor point Y: -100=top edge, 0=center, +100=bottom edge
-!TP_GRADIENT_DEGREE;Angle
-!TP_GRADIENT_DEGREE_TOOLTIP;Rotation angle in degrees
-!TP_GRADIENT_FEATHER;Feather
-!TP_GRADIENT_FEATHER_TOOLTIP;Gradient width in percent of the image diagonal
-!TP_GRADIENT_LABEL;Graduated Filter
-!TP_GRADIENT_STRENGTH;Strength
-!TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops
-!TP_HLREC_ENA_TOOLTIP;Could be activated by automatic exposure
-!TP_ICM_DCPILLUMINANT;Illuminant
-!TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
-!TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only enabled if a Dual-Illuminant DCP with interpolation support is selected.
-!TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100
-!TP_LABCURVE_CURVEEDITOR_CL;CL
-!TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromaticity according to luminance C=f(L)
-!TP_LABCURVE_CURVEEDITOR_HH;HH
-!TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Hue according to hue H=f(H)
-!TP_LABCURVE_CURVEEDITOR_LH;LH
-!TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H)
-!TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance according to luminance L=f(L)
-!TP_PCVIGNETTE_FEATHER;Feather
-!TP_PCVIGNETTE_FEATHER_TOOLTIP;Feathering: 0=corners only, 50=halfway to center, 100=to center
-!TP_PCVIGNETTE_LABEL;Vignette Filter
-!TP_PCVIGNETTE_ROUNDNESS;Roundness
-!TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness: 0=rectangle, 50=fitted ellipse, 100=circle
-!TP_PCVIGNETTE_STRENGTH;Strength
-!TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners)
-!TP_PFCURVE_CURVEEDITOR_CH;Hue
-!TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Controls defringe strength by color. Higher = more, lower = less.
-!TP_PREPROCESS_HOTDEADPIXFILT_TOOLTIP;Try to suppress hot and dead pixels
-!TP_PREPROCESS_NO_FOUND;None found
-!TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaicing...
-!TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaicing refinement...
-!TP_RAW_DMETHOD_TOOLTIP;Note: IGV and LMMSE are dedicated to high ISO images
-!TP_RAW_LMMSEITERATIONS;LMMSE Enhancement Steps
-!TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (steps 5-6) to reduce artifacts and improve the signal to noise ratio
-!TP_RGBCURVES_BLUE;B
-!TP_RGBCURVES_GREEN;G
-!TP_RGBCURVES_LUMAMODE;Luminosity Mode
-!TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity Mode</b> allows to vary the contribution of R, G and B channels to the Luminosity of the image, without altering image color.
-!TP_RGBCURVES_RED;R
-!TP_SAVEDIALOG_OK_TIP;Shortcut <b>Ctrl-Enter</b>
-!TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
-!TP_SHARPENING_TOOLTIP;Expect a slightly different effect when used with CIECAM02. If difference is observed, adjust to taste.
-!TP_WBALANCE_EQBLUERED;Blue/Red Equalizer
-!TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behavior of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
-!TP_WBALANCE_WATER1;UnderWater 1
-!TP_WBALANCE_WATER2;UnderWater 2
-!TP_WBALANCE_WATER_HEADER;UnderWater
+!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. Result can be used for calibration purposes, generation of a camera profile.
