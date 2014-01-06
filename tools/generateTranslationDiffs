@@ -12,8 +12,24 @@
 # ./tools/generateTranslationDiffs "Japanese"
 #
 # Running the script without an argument iterates through all files.
+#
+# Locale files are generated automatically:
+# - English (UK)
+# - Polish (Latin Characters)
 
 tmp=temp_file
+if [[ -w $tmp ]]; then
+  rm -v "$tmp"
+fi
+
+abort () {
+  printf "%s\n" "" "Aborting"
+  rm -v "$tmp"
+  exit 1
+}
+
+trap 'abort' HUP INT QUIT ABRT TERM
+
 
 cd "rtdata/languages" || { printf "%s\n" "You must run this script from the root of the project."; exit 1; }
 # Build array of all interface translation files, or use user-specified ones only
@@ -21,7 +37,7 @@ unset langFiles
 if [[ $# = 0 ]]; then
   while read -r -d $'\0'; do
     langFiles+=("$REPLY")
-  done < <(find . -not -iname "default" -not -iname "LICENSE" -not -iname "README" -not -iname "*.sh"  -not -iname ".*" -not -iname "$tmp" -print0)
+  done < <(find . -not -iname "default" -not -iname "LICENSE" -not -iname "README" -not -iname "*.sh"  -not -iname ".*" -not -iname "$tmp" -not -iname "English (UK)" -not -iname "Polish (Latin Characters)" -print0)
 else
   langFiles=("$@")
   for langFile in "${langFiles[@]}"; do
@@ -32,9 +48,22 @@ else
   done
 fi
 
+getComments () {
+  grep -E "^#.+" "$1" | sort -Vu
+}
+
+getChanged () {
+  grep -Ev '^(!|#|$)' "$1" | sort -Vu
+}
+
+getUnchanged () {
+  grep -E "^\!.+" "$1" | sort -Vu
+}
+
 # First thing, fix default, so move comments to front, then strip the rest of any "!" and duplicates.
-grep "^#.*" default > "$tmp"
-grep -Ev '^[!|#]' default | sort -Vu >> "$tmp"
+dos2unix default 2>/dev/null
+getComments default > "$tmp"
+getChanged default >> "$tmp"
 mv "$tmp" "default"
 
 for file in "${langFiles[@]}"; do
@@ -42,11 +71,9 @@ for file in "${langFiles[@]}"; do
   printf "%s" "Processing $file"
   dos2unix "$file" 2>/dev/null
   # printf "%s\n" "Searching $file for changed strings"
-
   unset trLines newLines
-
   # Fill trLines with translated text
-  trLines+=("$(grep -Ev '^($|#|\!)' "$file" | sort -Vu)")
+  trLines+=("$(getChanged "$file")")
 
   # KEY;String
   # Match "default" keys with those in current translation file. If no match, add !KEY;String
@@ -54,11 +81,35 @@ for file in "${langFiles[@]}"; do
     if [[ ! "${trLines[@]}" =~ "${defLine%%;*}" ]]; then
       newLines+=("!${defLine}")
     fi
-  done < <(grep "^[[:alnum:]].*" default)
+  done < <(getChanged default)
 
   # Form final translation file
-  printf "%s\n" "$(grep '^#' "$file" | sort -Vu)" "" "${trLines[@]}" "" "!!!!!!!!!!!!!!!!!!!!!!!!!" "! Untranslated keys follow; remove the ! prefix after an entry is translated." "!!!!!!!!!!!!!!!!!!!!!!!!!" "" "${newLines[@]}" > "$file"
+  if [[ -n "$(getComments "$file")" ]]; then
+    printf "%s\n" "$(getComments "$file")" "" >> "$tmp"
+  fi
+  if [[ -n "${trLines[@]}" ]]; then
+    printf "%s\n" "${trLines[@]}" "" >> "$tmp"
+  fi
+  if [[ -n "${newLines[@]}" ]]; then
+    printf "%s\n" "!!!!!!!!!!!!!!!!!!!!!!!!!" "! Untranslated keys follow; remove the ! prefix after an entry is translated." "!!!!!!!!!!!!!!!!!!!!!!!!!" "" "${newLines[@]}" >> "$tmp"
+  fi
+  mv "$tmp" "$file"
   t2="$(date +%s)"
   tt=$((t2-t1))
   printf "%s\n" " - took $tt seconds"
 done
+
+case "${langFiles[@]}" in
+  *"./English (US)"*) printf "%s\n" "Creating English (UK) file"
+                      getComments "English (US)" > "English (UK)"
+                      grep -Ei ".+;.*(color|behavior|center).*" default | \
+                      sed -e '/^#/d' -e 'h;s/^[^;]*;//; s/olor/olour/g; x;s/;.*//;G;s/\n/;/' \
+                        -e 'h;s/^[^;]*;//; s/ehavior/ehaviour/g; x;s/;.*//;G;s/\n/;/' \
+                        -e 'h;s/^[^;]*;//; s/center/centre/g; x;s/;.*//;G;s/\n/;/' \
+                        -e 'h;s/^[^;]*;//; s/Center/Centre/g; x;s/;.*//;G;s/\n/;/' >> English\ \(UK\)
+                      grep -Evi ".+;.*(color|behavior|center).*" "English (US)" | grep -Ev "^#" >> "English (UK)"
+                      ;;&
+  *"./Polish"*)       printf "%s\n" "Creating Polish (Latin Characters) file"
+                      sed 'y/ĄĆĘŁŃÓŚŹŻąćęłńóśźż/ACELNOSZZacelnoszz/' < Polish > "Polish (Latin Characters)"
+                      ;;&
+esac
