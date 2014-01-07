@@ -2,7 +2,6 @@
 #01 Developers should add translations to this file and then run the 'generateTranslationDiffs' Bash script to update other locales.
 #02 Translators please append a comment with the date of translation and your name(s) as used in the RawTherapee forum or Google Code project to the top of your translation, e.g.:
 #03 2525-12-24 Zager and Evans
-
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Credits
 ABOUT_TAB_LICENSE;License

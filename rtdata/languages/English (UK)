@@ -1,6 +1,6 @@
 EXPORT_BYPASS_COLORDENOISE;Bypass Colour denoise
 EXPORT_BYPASS_RAW_CCSTEPS;Bypass [raw] False Colour Suppression
-FILEBROWSER_COLORLABEL_TOOLTIP;Colour label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
+FILEBROWSER_COLORLABEL_TOOLTIP;Colour label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Colour\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 FILEBROWSER_POPUPCOLORLABEL;Colour label
 FILEBROWSER_SHOWUNCOLORHINT;Show images without Colour label.\nShortcut: <b>Alt-0</b>
 HISTORY_MSG_46;Colour Denoising
@@ -91,6 +91,9 @@ TP_VIGNETTING_CENTER;Centre
 TP_VIGNETTING_CENTER_X;Centre X
 TP_VIGNETTING_CENTER_Y;Centre Y
 TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "white balance" by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater)\nb) are far from conditions where calibrations were performed\nc) where the matrices or ICC profiles are unsuitable
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ABOUT_TAB_BUILD;Version
 !ABOUT_TAB_CREDITS;Credits
@@ -1008,7 +1011,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !THRESHOLDSELECTOR_TL;Top-left
 !THRESHOLDSELECTOR_TR;Top-right
 !THRESHOLDSELECTOR_T;Top
-!TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>
+!TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>\nMove the crop area using Shift + mouse drag
 !TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
 !TOOLBAR_TOOLTIP_WB;Spot white balance.\nShortcut: <b>w</b>
 !TP_BWMIX_AUTOCH;Auto
@@ -1275,6 +1278,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of "wh
 !TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
 !TP_ICM_OUTPUTPROFILE;Output Profile
 !TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
+!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. Result can be used for calibration purposes, generation of a camera profile.
 !TP_ICM_TONECURVE;Use DCP's tone curve
 !TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
 !TP_ICM_WORKINGPROFILE;Working Profile
