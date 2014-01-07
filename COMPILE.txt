@@ -73,6 +73,7 @@ DEPENDENCIES
   EXIV2       exiv2>=0.19        http://www.exiv2.org/
   EXPAT       expat>=2.1.0       http://expat.sourceforge.net/
   FFTW        fftw>=3.2.2        http://fftw.org/
+  GCC         gcc>=4.7           http://gcc.gnu.org/
   GLIB2       glib-2.0>=2.24     http://www.gtk.org/
   GLIBMM      glibmm-2.4>=2.24   http://www.gtkmm.org
   GTK+        gtk+-2.0>=2.24.18  http://www.gtk.org/
@@ -120,10 +121,7 @@ WINDOWS
       - TDM-GCC On-Demand Installer
           http://tdm-gcc.tdragon.net/download
         GCC 4.7 is recommended, as under some conditions older
-        versions of GCC can cause artifacts. If you use GCC-4.8.*, be sure
-        to use "-fno-aggressive-loop-optimizations" otherwise dcraw might
-        fail to read the white balance of some raw formats correctly
-        (not a RT bug, see issue 2121).
+        versions of GCC can cause artifacts.
         Download the "tdm-gcc-webdl" option. Run it, select "Create a new
         TDM-GCC installation" and choose the appropriate option for your
         machine: "MinGW/TDM (32-bit)" if you use a 32-bit machine, or
