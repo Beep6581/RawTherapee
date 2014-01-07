@@ -44,8 +44,8 @@ PREAMBLE
   mercurial.
 
   In short, once you cd into your clone of the RawTherapee source code
-  repository, using version "4.0.10" as an example:
-  1. Check out the desired hg tag: hg update "4.0.11"
+  repository, using version "4.1" as an example:
+  1. Check out the desired hg tag: hg update "4.1"
   2. Run tools/generateReleaseInfo to generate ReleaseInfo.cmake:
       ./tools/generateReleaseInfo
   3. The repository is now ready to be made into a public tarball:
