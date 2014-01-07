@@ -1,3 +1,7 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
 !ABOUT_TAB_BUILD;Version
 !ABOUT_TAB_CREDITS;Credits
 !ABOUT_TAB_LICENSE;License
@@ -609,9 +613,9 @@
 !MAIN_TAB_TRANSFORM;Transform
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
 !MAIN_TOGGLE_BEFORE_AFTER;B|A
-!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>8</b>
+!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>0</b>
+!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lock</b> / <b>Unlock</b> the <b>Before</b> view\n\n<b>Lock</b>: keep the <b>Before</b> view unchanged.\nUseful to evaluate the cumulative effect of multiple tools.\nAdditionally, comparisons can be made to any state in the History\n\n<b>Unlock</b>: the <b>Before</b> view will follow the <b>After</b> view one step behind, showing the image before the effect of the currently used tool.
 !MAIN_TOOLTIP_HIDEFP;Show/Hide the bottom panel (directory and file browser).\nShortcut: <b>f</b>
 !MAIN_TOOLTIP_HIDEHP;Show/Hide the left panel (including the history).\nShortcut: <b>l</b>
@@ -964,7 +968,7 @@
 !THRESHOLDSELECTOR_TL;Top-left
 !THRESHOLDSELECTOR_TR;Top-right
 !THRESHOLDSELECTOR_T;Top
-!TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>
+!TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>\nMove the crop area using Shift + mouse drag
 !TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
 !TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
 !TOOLBAR_TOOLTIP_WB;Spot white balance.\nShortcut: <b>w</b>
@@ -1263,6 +1267,7 @@
 !TP_ICM_OUTPUTDLGLABEL;Select Output ICC Profile...
 !TP_ICM_OUTPUTPROFILE;Output Profile
 !TP_ICM_SAVEREFERENCE;Save Reference Image for Profiling
+!TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. Result can be used for calibration purposes, generation of a camera profile.
 !TP_ICM_TONECURVE;Use DCP's tone curve
 !TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only enabled if the selected DCP has a tone curve.
 !TP_ICM_WORKINGPROFILE;Working Profile
