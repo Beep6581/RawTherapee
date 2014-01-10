@@ -77,7 +77,7 @@ class Adjuster : public Gtk::VBox {
 
     int delay;
 
-    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon=NULL, double2double_fun slider2value=NULL, double2double_fun value2slider=NULL);
+    Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1=NULL, Gtk::Image *imgIcon2=NULL, double2double_fun slider2value=NULL, double2double_fun value2slider=NULL);
     virtual ~Adjuster ();
 
     // Add an "Automatic" checkbox next to the reset button.

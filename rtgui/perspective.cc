@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "perspective.h"
+#include "rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -25,10 +26,15 @@ PerspCorrection::PerspCorrection () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	set_border_width(4);
 
-	horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 0.1, 0));
+    Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-h1.png"));
+    Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-h2.png"));
+    Gtk::Image* ipersVL =   Gtk::manage (new RTImage ("perspective-v1.png"));
+    Gtk::Image* ipersVR =   Gtk::manage (new RTImage ("perspective-v2.png"));
+
+	horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 0.1, 0, ipersHL, ipersHR));
 	horiz->setAdjusterListener (this);
 
-	vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_VERTICAL"), -100, 100, 0.1, 0));
+	vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_VERTICAL"), -100, 100, 0.1, 0, ipersVL, ipersVR));
 	vert->setAdjusterListener (this);
 
     pack_start (*horiz);

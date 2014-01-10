@@ -29,7 +29,7 @@
 
 static double one2one(double val) { return val; }
 
-Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon, double2double_fun slider2value_, double2double_fun value2slider_) {
+Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep, double vdefault, Gtk::Image *imgIcon1, Gtk::Image *imgIcon2, double2double_fun slider2value_, double2double_fun value2slider_) {
 
   Gtk::HBox *hbox2=NULL;
 
@@ -82,9 +82,10 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
 
   if (vlabel.empty()) {
     // No label, everything goes in hbox
-    if (imgIcon) hbox->pack_start (*imgIcon, Gtk::PACK_SHRINK);
+    if (imgIcon1) hbox->pack_start (*imgIcon1, Gtk::PACK_SHRINK, 0);
     hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0); 
     hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
+    if (imgIcon2) hbox->pack_start (*imgIcon2, Gtk::PACK_SHRINK, 0);
     hbox->pack_start (*slider, true, true);
   }
   else {
@@ -92,14 +93,15 @@ Adjuster::Adjuster (Glib::ustring vlabel, double vmin, double vmax, double vstep
     hbox->pack_start (*label);
     hbox->pack_end (*reset, Gtk::PACK_SHRINK, 0);
     hbox->pack_end (*spin, Gtk::PACK_SHRINK, 0);
-    if (!imgIcon) {
+    if (!imgIcon1 || !imgIcon2) {
       pack_start (*slider, true, true);
     }
     else {
       // A second HBox is necessary
       hbox2 = Gtk::manage (new Gtk::HBox());
-      hbox2->pack_start (*imgIcon, Gtk::PACK_SHRINK);
+      if (imgIcon1) hbox2->pack_start (*imgIcon1, Gtk::PACK_SHRINK, 0);
       hbox2->pack_start (*slider, true, true);
+      if (imgIcon2) hbox2->pack_start (*imgIcon2, Gtk::PACK_SHRINK, 0);
       pack_start (*hbox2, true, true);
     }
   }

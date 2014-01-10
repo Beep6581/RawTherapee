@@ -37,7 +37,10 @@ Distortion::Distortion (): Gtk::VBox(), FoldableToolPanel(this) {
     autoDistor->show();
     pack_start (*autoDistor);
 
-    distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0));
+    Gtk::Image* idistL =   Gtk::manage (new RTImage ("distortion-pincushion.png"));
+    Gtk::Image* idistR =   Gtk::manage (new RTImage ("distortion-barrel.png"));
+
+    distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0, idistL, idistR));
     distor->setAdjusterListener (this); 
     distor->show();
     pack_start (*distor);

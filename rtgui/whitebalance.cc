@@ -235,9 +235,16 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
 
   pack_start (*spotbox, Gtk::PACK_SHRINK, 4);
 
-  temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, NULL, &wbSlider2Temp, &wbTemp2Slider));
-  green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0));
-  equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0));
+  Gtk::Image* itempL =  Gtk::manage (new RTImage ("ajd-wb-temp1.png"));
+  Gtk::Image* itempR =  Gtk::manage (new RTImage ("ajd-wb-temp2.png"));
+  Gtk::Image* igreenL = Gtk::manage (new RTImage ("ajd-wb-green1.png"));
+  Gtk::Image* igreenR = Gtk::manage (new RTImage ("ajd-wb-green2.png"));
+  Gtk::Image* iblueredL = Gtk::manage (new RTImage ("ajd-wb-bluered1.png"));
+  Gtk::Image* iblueredR = Gtk::manage (new RTImage ("ajd-wb-bluered2.png"));
+
+  temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
+  green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
+  equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0, iblueredL, iblueredR));
   cache_customTemp (0);
   cache_customGreen (0);
   cache_customEqual (0);
@@ -246,7 +253,15 @@ WhiteBalance::WhiteBalance () : Gtk::VBox(), FoldableToolPanel(this), wbp(NULL),
   green->show ();
   equal->show ();
 
+  /*  Gtk::HBox* boxgreen = Gtk::manage (new Gtk::HBox ());
+  boxgreen->show ();
+
+  boxgreen->pack_start(*igreenL);
+  boxgreen->pack_start(*green);
+  boxgreen->pack_start(*igreenR);*/
+
   pack_start (*temp);
+  //pack_start (*boxgreen);
   pack_start (*green);
   pack_start (*equal);
 

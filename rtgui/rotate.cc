@@ -32,7 +32,11 @@ Rotate::Rotate () : Gtk::VBox(), FoldableToolPanel(this) {
 
   rlistener = NULL;
 
-  degree = Gtk::manage (new Adjuster (M("TP_ROTATE_DEGREE"), -45, 45, 0.01, 0));
+  //TODO the action of the rotation slider is counter-intuitive
+  Gtk::Image* irotateL =   Gtk::manage (new RTImage ("rotate-right-2.png"));
+  Gtk::Image* irotateR =   Gtk::manage (new RTImage ("rotate-left-2.png"));
+
+  degree = Gtk::manage (new Adjuster (M("TP_ROTATE_DEGREE"), -45, 45, 0.01, 0, irotateL, irotateR));
   degree->setAdjusterListener (this); 
   pack_start (*degree);
 

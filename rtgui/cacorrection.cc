@@ -18,6 +18,7 @@
  */
 #include "cacorrection.h"
 #include <iomanip>
+#include "rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -26,10 +27,15 @@ CACorrection::CACorrection () : Gtk::VBox(), FoldableToolPanel(this) {
 
     set_border_width(4);
 
-    red = Gtk::manage (new Adjuster (M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0));
+    Gtk::Image* icaredL =   Gtk::manage (new RTImage ("ajd-ca-red1.png"));
+    Gtk::Image* icaredR =   Gtk::manage (new RTImage ("ajd-ca-red2.png"));
+    Gtk::Image* icablueL =  Gtk::manage (new RTImage ("ajd-ca-blue1.png"));
+    Gtk::Image* icablueR =  Gtk::manage (new RTImage ("ajd-ca-blue2.png"));
+
+    red = Gtk::manage (new Adjuster (M("TP_CACORRECTION_RED"), -0.005, 0.005, 0.0001, 0, icaredL, icaredR));
     red->setAdjusterListener (this); 
 
-    blue = Gtk::manage (new Adjuster (M("TP_CACORRECTION_BLUE"), -0.005, 0.005, 0.0001, 0));
+    blue = Gtk::manage (new Adjuster (M("TP_CACORRECTION_BLUE"), -0.005, 0.005, 0.0001, 0, icablueL, icablueR));
     blue->setAdjusterListener (this); 
 
     pack_start (*red);
