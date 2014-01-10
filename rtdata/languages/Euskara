@@ -11,7 +11,6 @@ CURVEEDITOR_TOOLTIPLOAD;Artxibo batetik kurba ireki
 CURVEEDITOR_TOOLTIPSAVE;Uneko kurba gorde
 EXIFFILTER_APERTURE;Aperture
 EXIFFILTER_CAMERA;Camera
-EXIFFILTER_DIALOGLABEL;Exif Filter
 EXIFFILTER_FOCALLEN;Focal Length
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lens
@@ -31,18 +30,12 @@ EXIFPANEL_RESETHINT;Reset the selected tags to their original values
 EXIFPANEL_RESET;Reset
 EXIFPANEL_SUBDIRECTORY;Subdirectory
 FILEBROWSER_APPLYPROFILE;Apply profile
-FILEBROWSER_ARRANGEMENTHINT;Change between vertical/horizontal alignment of thumbnails
 FILEBROWSER_CLEARPROFILE;Clear profile
 FILEBROWSER_COPYPROFILE;Copy profile
 FILEBROWSER_DELETEDLGLABEL;File delete confirmation
 FILEBROWSER_DELETEDLGMSG;Are you sure you want to delete the selected %1 files?
 FILEBROWSER_EMPTYTRASHHINT;Permanently delete the files of the trash
 FILEBROWSER_EMPTYTRASH;Empty Trash
-FILEBROWSER_EXIFFILTERAPPLYHINT;Switch on/off exif filter of the file browser
-FILEBROWSER_EXIFFILTERAPPLY;Apply
-FILEBROWSER_EXIFFILTERLABEL;Exif Filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Change settings of the exif filter
-FILEBROWSER_EXIFFILTERSETTINGS;Setup
 FILEBROWSER_PARTIALPASTEPROFILE;Partial paste
 FILEBROWSER_PASTEPROFILE;Paste profile
 FILEBROWSER_POPUPCANCELJOB;Cancel job
@@ -50,23 +43,15 @@ FILEBROWSER_POPUPMOVEEND;Move to end of queue
 FILEBROWSER_POPUPMOVEHEAD;Move to head of queue
 FILEBROWSER_POPUPOPEN;Open
 FILEBROWSER_POPUPPROCESS;Put to processing queue
-FILEBROWSER_POPUPRANK1;Rank 1
-FILEBROWSER_POPUPRANK2;Rank 2
-FILEBROWSER_POPUPRANK3;Rank 3
-FILEBROWSER_POPUPRANK4;Rank 4
-FILEBROWSER_POPUPRANK5;Rank 5
 FILEBROWSER_POPUPREMOVE;Remove from filesystem
 FILEBROWSER_POPUPRENAME;Rename
 FILEBROWSER_POPUPSELECTALL;Select all
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
-FILEBROWSER_PROCESSINGSETTINGSHINT;Set the file format and output directory
-FILEBROWSER_PROCESSINGSETTINGS;Settings
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RENAMEDLGMSG;Rename file "%1" to:
 FILEBROWSER_SHOWDIRHINT;Show all images of the directory
-FILEBROWSER_SHOWQUEUEHINT;Show content of the processing queue
 FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1 star
 FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2 star
 FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3 star
@@ -88,14 +73,11 @@ GENERAL_DISABLE;Ezestatu
 GENERAL_ENABLED;Gaitua
 GENERAL_ENABLE;Gaitu
 GENERAL_LANDSCAPE;Paisaia
-GENERAL_LOAD;Ireki
 GENERAL_NA;n/a
 GENERAL_NO;Ez
 GENERAL_OK;Onartu
 GENERAL_PORTRAIT;Erretratua
 GENERAL_SAVE;Gorde
-GENERAL_YES;Bai
-HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_B;Erakutsi/Ezkutatu urdin histograma
 HISTOGRAM_TOOLTIP_G;Erakutsi/Ezkutatu berde histograma
 HISTOGRAM_TOOLTIP_L;Erakutsi/Ezkutatu CIELAB argitasun histograma
@@ -186,28 +168,9 @@ HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Resize width
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
-HISTORY_NEWSNAPSHOTAS;Honela...
 HISTORY_NEWSNAPSHOT;Argazki berria
-HISTORY_NEWSSDIALOGLABEL;Argazkiaren etiketa:
-HISTORY_NEWSSDIALOGTITLE;Argazki berria gehitu
-HISTORY_SETTO;Honetara doitua
 HISTORY_SNAPSHOTS;Argazkiak
 HISTORY_SNAPSHOT;Argazkia
-ICMPANEL_FILEDLGFILTERANY;Artxibo guztiak
-ICMPANEL_FILEDLGFILTERICM;ICC profilen artxiboak
-ICMPANEL_GAMMABEFOREINPUT;Profile applies Gamma
-ICMPANEL_INPUTCAMERA;Kameraren jatorrizko balioak
-ICMPANEL_INPUTCUSTOM;Neurrira
-ICMPANEL_INPUTDLGLABEL;Sarrerako ICC profila hautatu...
-ICMPANEL_INPUTEMBEDDED;Txertatutakoa erabili, egonez gero
-ICMPANEL_INPUTPROFILE;Sarrerako profila
-ICMPANEL_NOICM;ICM-rik ez: sRGB irteera 
-ICMPANEL_OUTPUTDLGLABEL;Irteerako ICC profila hautatu...
-ICMPANEL_OUTPUTPROFILE;Irteera profila
-ICMPANEL_SAVEREFERENCE;Save reference image for profiling
-ICMPANEL_WORKINGPROFILE;Lan profila
-IMAGEAREA_DETAILVIEW;Zehaztasun bista
-IPTCPANEL_AUTHORHINT;Name of the creator of the object, e.g. writer, photographer or graphic artist (By-line).
 IPTCPANEL_AUTHORSPOSITIONHINT;Title of the creator or creators of the object (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Author's position
 IPTCPANEL_AUTHOR;Author
@@ -249,9 +212,7 @@ IPTCPANEL_TITLEHINT;A shorthand reference for the image (Object Name).
 IPTCPANEL_TITLE;Title
 IPTCPANEL_TRANSREFERENCEHINT;A code representing the location of original transmission (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
-MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Ezarpenak
-MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;Honela...
 MAIN_BUTTON_SAVE;Irudia gorde
 MAIN_BUTTON_SENDTOEDITOR;Send to editor
@@ -266,51 +227,35 @@ MAIN_MSG_CANNOTLOAD;Ezin dut irudia ireki
 MAIN_MSG_CANNOTSAVE;Errorea irudia gordetzen
 MAIN_MSG_CANNOTSTARTEDITOR;Can not start editor.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Please set the correct path in the "Preferences" dialog.
-MAIN_MSG_EXITJOBSINQUEUEINFO;Unprocessed images in the queue will be lost on exit.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Are you sure you want to exit? There are unprocessed images waiting in the queue.
-MAIN_MSG_JOBSINQUEUE;lana(k) ilaran
 MAIN_MSG_QOVERWRITE;Gainidatzi?
-MAIN_TAB_BASIC;Oinarrizkoak
 MAIN_TAB_COLOR;Color
 MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Exposure
 MAIN_TAB_FILTER;Filter
-MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Bihurtu
-MAIN_TOOLTIP_HIDEFP;Erakutsi/Ezkutatu behe panela (arakatzailea, shortcut key: F)
 MAIN_TOOLTIP_HIDEHP;Erakutsi/Ezkutatu ezker panela (historia, shortcut key: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Mozturiko argi adierazlea
 MAIN_TOOLTIP_INDCLIPPEDS;Mozturiko itzal adierazlea
-MAIN_TOOLTIP_PREFERENCES;Ezarpenak doitu
 MAIN_TOOLTIP_QINFO; Irudiaren informazio laburra
-MAIN_TOOLTIP_SAVEAS;Irudia hautatutako karpeta batera gorde
-MAIN_TOOLTIP_SAVE;Irudia lehenetsiriko karpetara gorde
 PARTIALPASTE_BASICGROUP;Basic settings
 PARTIALPASTE_CACORRECTION;C/A correction
 PARTIALPASTE_COARSETRANS;90 deg rotation / flipping
-PARTIALPASTE_COLORBOOST;Color boost
-PARTIALPASTE_COLORDENOISE;Color denoise
 PARTIALPASTE_COLORGROUP;Color related settings
-PARTIALPASTE_COLORMIXER;Color mixer
-PARTIALPASTE_COLORSHIFT;Color shift
 PARTIALPASTE_COMPOSITIONGROUP;Composition settings
 PARTIALPASTE_CROP;Crop
 PARTIALPASTE_DIALOGLABEL;Partial paste processing profile
 PARTIALPASTE_DISTORTION;Distortion correction
 PARTIALPASTE_EXIFCHANGES;Changes to exif data
 PARTIALPASTE_EXPOSURE;Exposure
-PARTIALPASTE_HLRECOVERY;Highlight recovery
 PARTIALPASTE_ICMSETTINGS;ICM settings
 PARTIALPASTE_IPTCINFO;IPTC info
 PARTIALPASTE_LENSGROUP;Lens related settings
 PARTIALPASTE_LUMACURVE;Luminance curve
-PARTIALPASTE_LUMADENOISE;Luminance noise reduction
-PARTIALPASTE_LUMINANCEGROUP;Luminance related settings
 PARTIALPASTE_METAICMGROUP;Metadata/ICM settings
 PARTIALPASTE_RESIZE;Resize
 PARTIALPASTE_ROTATION;Rotation
@@ -327,9 +272,6 @@ PREFERENCES_CACHEFORMAT1;Proprietary (faster and better quality)
 PREFERENCES_CACHEFORMAT2;JPEG (smaller disk footprint)
 PREFERENCES_CACHEMAXENTRIES;Maximal Number of Cache Entries
 PREFERENCES_CACHEOPTS;Cache Options
-PREFERENCES_CACHESTRAT1;Prefer Speed to Low Memory Consumption
-PREFERENCES_CACHESTRAT2;Prefer Low Memory Consumption to Speed
-PREFERENCES_CACHESTRAT;Cache Strategy
 PREFERENCES_CACHETHUMBFORM;Cache Thumbnail Format
 PREFERENCES_CACHETHUMBHEIGHT;Maximal Thumbnail Height
 PREFERENCES_CLEARDLG_LINE1;Clearing cache
@@ -341,7 +283,6 @@ PREFERENCES_DATEFORMATHINT;<i>You can use the following formatting strings:</i>\
 PREFERENCES_DATEFORMAT;Data formatua
 PREFERENCES_DEFAULTLANG;Hizkuntza
 PREFERENCES_DEFAULTTHEME;Default theme
-PREFERENCES_DEMOSAICINGALGO;Demosaikatze algoritmoa
 PREFERENCES_DIRHOME;Etxe karpeta
 PREFERENCES_DIRLAST;Azkena ikusitako karpeta
 PREFERENCES_DIROTHER;Besterik
@@ -355,7 +296,6 @@ PREFERENCES_FORIMAGE;Irudi artxiboetarako
 PREFERENCES_FORRAW;RAW artxiboetarako
 PREFERENCES_GIMPPATH;GIMP installation directory
 PREFERENCES_GTKTHEME;GTK default
-PREFERENCES_HINT;Gomendioa
 PREFERENCES_HLTHRESHOLD;Moztutako argien muga
 PREFERENCES_ICCDIR;ICC profilen karpeta
 PREFERENCES_IMPROCPARAMS;Irudi prozesurako aukera lehenetsiak
@@ -363,11 +303,9 @@ PREFERENCES_INTENT_ABSOLUTE;Kolorimetriko absolutua
 PREFERENCES_INTENT_PERCEPTUAL;Petzeptuala
 PREFERENCES_INTENT_RELATIVE;Kolorimetriko erlatiboa
 PREFERENCES_INTENT_SATURATION;Saturazioa
-PREFERENCES_LIVETHUMBNAILS;Live Thumbnails (slower)
 PREFERENCES_MONITORICC;Pantaila profilak
 PREFERENCES_OUTDIRFOLDERHINT;Put the saved images to the seledted folder
 PREFERENCES_OUTDIRFOLDER;Save to folder
-PREFERENCES_OUTDIRHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>You can use the following formatting strings:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nThese formatting strings refer to the directories and sub-paths of the path of the raw file.\n\nFor example, if </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i>has been opened, the meaning of the formatting strings are:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nIf you want to save the output image where the original is, write:\n</i><b>%p1/%f\n</b><i>\nIf you want to save the output image in a directory 'converted' located the directory of the original, write:\n</i><b>%p1/converted/%f\n</b><i>\nIf you want to save the output image in directory '/home/tom/converted' with keeping the same subdirectory of dates, write:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Use Template
 PREFERENCES_OUTDIR;Irteera karpeta
@@ -382,37 +320,28 @@ PREFERENCES_PROFILEPRFILE;Profile Next to the Input File
 PREFERENCES_PROFILESAVECACHE;Save Processing Parameters to the Cache
 PREFERENCES_PROFILESAVEINPUT;Save Processing Parameters Next to the Input File
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
-PREFERENCES_SELECTICCDIRDLG;ICC profilen carpeta hautatu...
 PREFERENCES_SELECTLANG;Hizkuntza hautatu
-PREFERENCES_SELECTMONITORPROFDLG;Pantaila profilen karpeta hautatu...
 PREFERENCES_SELECTTHEME;Select theme
 PREFERENCES_SHOWBASICEXIF;Oinarrizko EXIF datuak bistaratu
 PREFERENCES_SHOWDATETIME;Data eta ordua bistratu
-PREFERENCES_SHOWONLYRAW;RAW artxiboak bakarrik erakutsi
 PREFERENCES_SHTHRESHOLD;Moztutako itzalen muga
 PREFERENCES_STARTUPIMDIR;Abioako irudien karpeta
 PREFERENCES_TAB_BROWSER;Artxibo arakatzailea
 PREFERENCES_TAB_COLORMGR;Kolore kudeaketa
 PREFERENCES_TAB_GENERAL;Orokorra
 PREFERENCES_TAB_IMPROC;Irudien prozesua
-PREFERENCES_TAB_OUTPUT;Irteera aukerak
-PREFERENCES_THUMBSIZE;Miniaturen tamaina
 PROFILEPANEL_FILEDLGFILTERANY;Artxibo guztiak
 PROFILEPANEL_FILEDLGFILTERPP;Prozesu profilak
 PROFILEPANEL_LABEL;Prozesu profilak
 PROFILEPANEL_LOADDLGLABEL;Profilaren aldagaiak ireki...
 PROFILEPANEL_PCUSTOM;Neurrira
 PROFILEPANEL_PFILE;Artxibotik
-PROFILEPANEL_PLASTPHOTO;Azken argazkia
 PROFILEPANEL_PLASTSAVED;Gordtako azkena
-PROFILEPANEL_PROFILE;Profilak
 PROFILEPANEL_SAVEDLGLABEL;Profilaren aldagaiak gorde...
 PROFILEPANEL_TOOLTIPCOPY;Copy current profile to clipboard
 PROFILEPANEL_TOOLTIPLOAD;Profila artxibotik ireki
 PROFILEPANEL_TOOLTIPPASTE; Paste profile from clipboard
 PROFILEPANEL_TOOLTIPSAVE;Uneko profila gorde
-PROGRESSBAR_DECODING;RAW artxiboa dekodetzen...
-PROGRESSBAR_DEMOSAICING;Demosaikatzen...
 PROGRESSBAR_LOADING;Irudia ireki...
 PROGRESSBAR_LOADJPEG;JPG artxiboa irekitzen...
 PROGRESSBAR_LOADPNG;PNG artxiboa irekitzen...
@@ -425,15 +354,12 @@ PROGRESSBAR_SAVETIFF;TIFF artxiboa gordetzen...
 PROGRESSDLG_LOADING;Loading file...
 PROGRESSDLG_PROCESSING;Processing image...
 PROGRESSDLG_SAVING;Saving file...
-QINFO_FOCALLENGTH;Fokal luzera
 QINFO_ISO;ISO
-QINFO_LENS;Lens
 QINFO_NOEXIF;Ez dago EXIF daturik.
 SAVEDLG_FILEFORMAT;Artxiboaren formatua
 SAVEDLG_JPEGQUAL;JPEG kalitatea 
 SAVEDLG_JPGFILTER;JPEG artxiboak
 SAVEDLG_PNGCOMPR;PNG konpresioa
-SAVEDLG_PNGFILTER;PNG artxiboak
 SAVEDLG_PUTTOQUEUEHEAD;Put to the head of the processing queue
 SAVEDLG_PUTTOQUEUETAIL;Put to the end of the processing queue
 SAVEDLG_PUTTOQUEUE;Put into processing queue
@@ -515,7 +441,6 @@ TP_ICM_INPUTEMBEDDED;Txertatutakoa erabili, egonez gero
 TP_ICM_INPUTPROFILE;Sarrerako profila
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;ICM-rik ez: sRGB irteera
-TP_ICM_OUTPUTDLGLABEL;Irteerako ICC profila hautatu...
 TP_ICM_OUTPUTPROFILE;Irteera profila
 TP_ICM_SAVEREFERENCE;Save reference image for profiling
 TP_ICM_WORKINGPROFILE;Lan profila
@@ -526,16 +451,12 @@ TP_LUMACURVE_COMPRSHADOWS;Itzal konpresioa
 TP_LUMACURVE_CONTRAST;Kontrastea
 TP_LUMACURVE_CURVEEDITOR;Argitasun kurba
 TP_LUMACURVE_LABEL;Argitasun kurba
-TP_LUMADENOISE_EDGETOLERANCE;Ertz tolerantzia
-TP_LUMADENOISE_LABEL;Argitasun zarata murrizketa
-TP_LUMADENOISE_RADIUS;Erradioa
 TP_RAW_DMETHOD;Metodoa
 TP_RAW_FALSECOLOR;Okerreko kolore ezabaketa atalak
 TP_RESIZE_BICUBICSF;Bikubikoa (Biguna)
 TP_RESIZE_BICUBICSH;Bikubikoa (Fokatua)
 TP_RESIZE_BICUBIC;Bikubikoa
 TP_RESIZE_BILINEAR;Bilineala
-TP_RESIZE_FULLSIZE;Irudi tamaina osoa:
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Tamaina aldatu
 TP_RESIZE_METHOD;Metodoa: 
@@ -581,13 +502,6 @@ TP_WBALANCE_METHOD;Metodoa
 TP_WBALANCE_SIZE;Tamaina:
 TP_WBALANCE_SPOTWB;Z/B Puntuala
 TP_WBALANCE_TEMPERATURE;Tenperatura
-ZOOMBAR_DETAIL;Xehetasuna
-ZOOMBAR_HUGE;Ikaragarria
-ZOOMBAR_LARGE;Handia
-ZOOMBAR_NORMAL;Arrunta
-ZOOMBAR_PREVIEW;Aurrebista
-ZOOMBAR_SCALE;Eskala
-ZOOMBAR_SMALL;Txikia
 ﻿#
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -668,20 +582,14 @@ ZOOMBAR_SMALL;Txikia
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
 !FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
-!FILEBROWSER_POPUPCOLORLABEL0;Label: None
-!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
-!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
-!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
-!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
-!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
 !FILEBROWSER_POPUPCOLORLABEL;Color label
 !FILEBROWSER_POPUPCOPYTO;Copy to...
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 !FILEBROWSER_POPUPPROFILEOPERATIONS;Processing Profile Operations
+!FILEBROWSER_POPUPRANK;Rank
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
-!FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 !FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box.\n<b>Enter</b> to commence search.\n<b>Esc</b> to clear.\n<b>Shift-Esc</b> to remove focus.
 !FILEBROWSER_QUERYLABEL; Find:
@@ -711,16 +619,9 @@ ZOOMBAR_SMALL;Txikia
 !GENERAL_BEFORE;Before
 !GENERAL_CLOSE;Close
 !GENERAL_FILE;File
-!GENERAL_HIGH_QUALITY;High quality
 !GENERAL_NONE;None
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_WARNING;Warning
-!HISTOGRAM_BUTTON_BAR;RGB
-!HISTOGRAM_BUTTON_B;B
-!HISTOGRAM_BUTTON_G;G
-!HISTOGRAM_BUTTON_L;L
-!HISTOGRAM_BUTTON_RAW;Raw
-!HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
 !HISTOGRAM_TOOLTIP_FULL;Toggle full (on) or scaled (off) histogram
@@ -908,12 +809,10 @@ ZOOMBAR_SMALL;Txikia
 !MAIN_FRAME_EDITOR_TOOLTIP;Editor.\nShortcut: <b>Ctrl-F4</b>
 !MAIN_FRAME_FILEBROWSER_TOOLTIP;File Browser.\nShortcut: <b>Ctrl-F2</b>
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
-!MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
-!MAIN_MSG_PLACES;Places
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
 !MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
@@ -924,7 +823,6 @@ ZOOMBAR_SMALL;Txikia
 !MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
-!MAIN_TOGGLE_BEFORE_AFTER;B|A
 !MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
@@ -978,9 +876,6 @@ ZOOMBAR_SMALL;Txikia
 !PARTIALPASTE_FLATFIELDBLURTYPE;Flat field blur type
 !PARTIALPASTE_FLATFIELDFILE;Flat field file
 !PARTIALPASTE_GRADIENT;Graduated filter
-!PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight compression
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight compression threshold
 !PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
@@ -1008,7 +903,6 @@ ZOOMBAR_SMALL;Txikia
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
-!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_ADD;Add
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
@@ -1105,11 +999,6 @@ ZOOMBAR_SMALL;Txikia
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
-!PROGRESSBAR_BADPIXELS;Bad pixels...
-!PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe...
-!PROGRESSBAR_GREENEQUIL;Green equilibrating...
-!PROGRESSBAR_LINEDENOISE;Line denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
@@ -1168,7 +1057,6 @@ ZOOMBAR_SMALL;Txikia
 !TP_BWMIX_MET_DESAT;Desaturation
 !TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
 !TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_MIXF;Mixer Filters
 !TP_BWMIX_NEUTRAL;Reset mixer
 !TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
 !TP_BWMIX_ORANGE;Orange
@@ -1237,7 +1125,6 @@ ZOOMBAR_SMALL;Txikia
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
-!TP_COLORAPP_EQUAL;Equal
 !TP_COLORAPP_GAMUT;Gamut control (Lab)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 !TP_COLORAPP_HUE;Hue (h)
@@ -1358,7 +1245,6 @@ ZOOMBAR_SMALL;Txikia
 !TP_HSVEQUALIZER_CHANNEL;Channel
 !TP_HSVEQUALIZER_HUE;H
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
-!TP_HSVEQUALIZER_NEUTRAL;Neutral
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix

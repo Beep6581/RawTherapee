@@ -32,7 +32,6 @@ CURVEEDITOR_TYPE;Típus:
 EDITWINDOW_TITLE;Kép szerkesztése
 EXIFFILTER_APERTURE;Rekesz
 EXIFFILTER_CAMERA;Fényképezőgép
-EXIFFILTER_DIALOGLABEL;EXIF szűrő
 EXIFFILTER_EXPOSURECOMPENSATION;Expozíciókompenzáció (FÉ)
 EXIFFILTER_FILETYPE;Állománytípus
 EXIFFILTER_FOCALLEN;Fókusztávolság
@@ -83,7 +82,6 @@ EXPORT_RESIZEMETHOD;Átméretezés algoritmusa
 FILEBROWSER_ADDDELTEMPLATE;Sablon hozzáadása/törlése...
 FILEBROWSER_APPLYPROFILE;Feldolgozási paraméter hozzárendelése
 FILEBROWSER_APPLYPROFILE_PARTIAL;Profil alkalmazása (részleges)
-FILEBROWSER_ARRANGEMENTHINT;Váltás az előnézeti képek függőleges/vízszintes elrendezése között
 FILEBROWSER_AUTODARKFRAME;Auto referencia feketekép (dark frame)
 FILEBROWSER_AUTOFLATFIELD;Auto Flat Field
 FILEBROWSER_BROWSEPATHBUTTONHINT;Kattints a kiválasztott útvonal böngészéséhez
@@ -101,11 +99,6 @@ FILEBROWSER_DELETEDLGMSG;Biztosan törölni kívánja a kijelölt %1 képet?
 FILEBROWSER_EMPTYTRASHHINT;A kukában lévő képek végleges, állományrendszerből történő eltávolítása.
 FILEBROWSER_EMPTYTRASH;Kuka ürítése
 FILEBROWSER_EXEC_CPB;Egyedi profil készítő futtatása
-FILEBROWSER_EXIFFILTERAPPLYHINT;Az EXIF szűrő ki-/bekapcsolása
-FILEBROWSER_EXIFFILTERAPPLY;Aktív
-FILEBROWSER_EXIFFILTERLABEL;EXIF szűrő
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Az EXIF szűrő beállítása
-FILEBROWSER_EXIFFILTERSETTINGS;Beállítások
 FILEBROWSER_FLATFIELD;Flat Field
 FILEBROWSER_MOVETODARKFDIR;Mozgatás a 'dark frame' könyvtárba
 FILEBROWSER_MOVETOFLATFIELDDIR;Flat Fields könyvtárba mozgatás
@@ -113,12 +106,6 @@ FILEBROWSER_NEW_NAME;Új név:
 FILEBROWSER_PARTIALPASTEPROFILE;Részleges beillesztés
 FILEBROWSER_PASTEPROFILE;Feldolgozási paraméterek beillesztése
 FILEBROWSER_POPUPCANCELJOB;Eltávolítás a sorból
-FILEBROWSER_POPUPCOLORLABEL0;Címke: Nincs
-FILEBROWSER_POPUPCOLORLABEL1;Címke: Piros
-FILEBROWSER_POPUPCOLORLABEL2;Címke: Sárga
-FILEBROWSER_POPUPCOLORLABEL3;Címke: Zöld
-FILEBROWSER_POPUPCOLORLABEL4;Címke: Kék
-FILEBROWSER_POPUPCOLORLABEL5;Címke: Lila
 FILEBROWSER_POPUPCOLORLABEL;Színcímke
 FILEBROWSER_POPUPCOPYTO;Másolás máshová...
 FILEBROWSER_POPUPFILEOPERATIONS;Állományműveletek
@@ -129,21 +116,13 @@ FILEBROWSER_POPUPOPEN;Megnyitás szerkesztésre
 FILEBROWSER_POPUPPROCESSFAST;Feldolgozási sorba helyez (expressz export)
 FILEBROWSER_POPUPPROCESS;Feldolgozási sorba helyezés
 FILEBROWSER_POPUPPROFILEOPERATIONS;Profilműveletek
-FILEBROWSER_POPUPRANK1;Jelölés 1 csillaggal
-FILEBROWSER_POPUPRANK2;Jelölés 2 csillaggal
-FILEBROWSER_POPUPRANK3;Jelölés 3 csillaggal
-FILEBROWSER_POPUPRANK4;Jelölés 4 csillaggal
-FILEBROWSER_POPUPRANK5;Jelölés 5 csillaggal
 FILEBROWSER_POPUPREMOVEINCLPROC;Törlés (feldolgozási sorból is)
-FILEBROWSER_POPUPREMOVESUBMENU;Eltávolítás
 FILEBROWSER_POPUPREMOVE;Törlés (végleges)
 FILEBROWSER_POPUPRENAME;Átnevezés
 FILEBROWSER_POPUPSELECTALL;Mindent kijelöl
 FILEBROWSER_POPUPTRASH;Kukába dobás
 FILEBROWSER_POPUPUNRANK;Jelölés megszüntetése
 FILEBROWSER_POPUPUNTRASH;Visszaállítás a kukából
-FILEBROWSER_PROCESSINGSETTINGSHINT;A fájl formátum és a célkönyvtár beállítása
-FILEBROWSER_PROCESSINGSETTINGS;Beállítások
 FILEBROWSER_QUERYBUTTONHINT;Találati lista ürítése
 FILEBROWSER_QUERYHINT;Írd  be a keresett állomány  nevét vagy abból egy töredéket.\n<b>Ctrl-F</b> megnyomásával (az állományböngészőben) a fókuszt a keresőmezőre helyezheted.\n<b>Enter</b> indítja a keresést.
 FILEBROWSER_QUERYLABEL; Keresés:
@@ -160,7 +139,6 @@ FILEBROWSER_SHOWDIRHINT;A könyvtárban lévő összes kép mutatása
 FILEBROWSER_SHOWEDITEDHINT;Szerkesztett képek megjelenítése.\nGyorsbillentyű: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Még nem szerkesztett képek megjelenítése.\nGyorsbillentyű: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;EXIF info megjelenítése: <b>i</b>
-FILEBROWSER_SHOWQUEUEHINT;A feldolgozási sor tartalmának mutatása
 FILEBROWSER_SHOWRANK1HINT;1 csillaggal jelölt képek mutatása
 FILEBROWSER_SHOWRANK2HINT;2 csillaggal jelölt képek mutatása
 FILEBROWSER_SHOWRANK3HINT;3 csillaggal jelölt képek mutatása
@@ -189,9 +167,7 @@ GENERAL_DISABLE;Kikapcsol
 GENERAL_ENABLED;Engedélyezve
 GENERAL_ENABLE;Engedélyez
 GENERAL_FILE;Állomány
-GENERAL_HIGH_QUALITY;Jó minőségben
 GENERAL_LANDSCAPE;Fekvő
-GENERAL_LOAD;Betöltés
 GENERAL_NA;n/a
 GENERAL_NONE;Nincs
 GENERAL_NO;Nem
@@ -199,14 +175,6 @@ GENERAL_OK;OK
 GENERAL_PORTRAIT;Álló
 GENERAL_SAVE;Mentés
 GENERAL_UNCHANGED;(Változatlan)
-GENERAL_YES;Igen
-HISTOGRAM_BUTTON_BAR;RGB
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_LABEL;Hisztogram
 HISTOGRAM_TOOLTIP_BAR;RGB jelzősáv megjelenítése/elrejtése.\nKattints jobb gombbal a kép előnézetére a fagyasztáshoz / feloldáshoz.
 HISTOGRAM_TOOLTIP_B;Kék csatorna hisztogrammja (mutat/elrejt)
 HISTOGRAM_TOOLTIP_G;Zöld csatorna hisztogrammja (mutat/elrejt)
@@ -384,28 +352,9 @@ HISTORY_MSG_163;RGB görbék - R
 HISTORY_MSG_164;RGB görbék - G
 HISTORY_MSG_165;RGB görbék - B
 HISTORY_MSG_166;Semleges szintek
-HISTORY_NEWSNAPSHOTAS;címkével...
 HISTORY_NEWSNAPSHOT;Új
-HISTORY_NEWSSDIALOGLABEL;Pillanatkép cimkéje:
-HISTORY_NEWSSDIALOGTITLE;Új pillanatkép
-HISTORY_SETTO;új érték:
 HISTORY_SNAPSHOTS;Pillanatképek
 HISTORY_SNAPSHOT;Pillanatkép
-ICMPANEL_FILEDLGFILTERANY;Minden fájl
-ICMPANEL_FILEDLGFILTERICM;ICC színprofil fájl
-ICMPANEL_GAMMABEFOREINPUT;Gamma korrekció a bemeneti profil előtt
-ICMPANEL_INPUTCAMERA;Fényképezőgép szerinti alapértelmezett
-ICMPANEL_INPUTCUSTOM;Saját
-ICMPANEL_INPUTDLGLABEL;Bemeneti színprofil kiválasztása...
-ICMPANEL_INPUTEMBEDDED;Beágyazott profil, ha van
-ICMPANEL_INPUTPROFILE;Bemeneti színprofil
-ICMPANEL_NOICM;Nincs színkezelés: sRGB kimenet
-ICMPANEL_OUTPUTDLGLABEL;Kimeneti színprofil kiválasztása...
-ICMPANEL_OUTPUTPROFILE;Kimeneti színprofil
-ICMPANEL_SAVEREFERENCE;Referencia kép mentése profil kalibráláshoz
-ICMPANEL_WORKINGPROFILE;Munka színprofil
-IMAGEAREA_DETAILVIEW;Részlet nézet
-IPTCPANEL_AUTHORHINT;A kép létrehozójának neve, pl. író, fényképész, grafikus művész (By-line)
 IPTCPANEL_AUTHORSPOSITIONHINT;A kép létrehozójának munkaköre illetve titulusa (By-line Title)
 IPTCPANEL_AUTHORSPOSITION;Szerző titulusa
 IPTCPANEL_AUTHOR;Szerző
@@ -447,12 +396,10 @@ IPTCPANEL_TITLEHINT;A kép rövid azonosítója (Object Name)
 IPTCPANEL_TITLE;Címke
 IPTCPANEL_TRANSREFERENCEHINT;A továbbítás helyének megjelölése (Original Transmission Reference)
 IPTCPANEL_TRANSREFERENCE;Továbbítás helye
-MAIN_BUTTON_EXIT;Kilépés
 MAIN_BUTTON_FULLSCREEN;Teljes képernyő
 MAIN_BUTTON_PREFERENCES;Beállítások
 MAIN_BUTTON_PUTTOQUEUE;Feldolgozási sorba helyez
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Add hozzá a kiválasztott képet a feldolgozási sorhoz <b>Ctrl+B</b>
-MAIN_BUTTON_QUEUE;Feldolgozási sorba helyezés
 MAIN_BUTTON_SAVEAS;másként...
 MAIN_BUTTON_SAVE;Kép mentése
 MAIN_BUTTON_SAVE_TOOLTIP;Kiválasztott kép mentése <b>Ctrl+S</b>
@@ -476,14 +423,8 @@ MAIN_MSG_CANNOTSAVE;Hiba történt az állomány mentése közben!
 MAIN_MSG_CANNOTSTARTEDITOR;A megadott külső program nem indítható.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Állítsa be a helyes elérési utat a "Beállítások" ablakban.
 MAIN_MSG_EMPTYFILENAME;Üres állománynév
-MAIN_MSG_ERRORDURINGIMAGESAVING;Hiba történt a kép mentése során!
-MAIN_MSG_EXITJOBSINQUEUEINFO;A sorban álló feldolgozatlan képek kilépéskor el fognak veszni.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Biztos, hogy ki akar lépni? Feldolgozatlan képek vannak a feldolgozási sorban.
-MAIN_MSG_JOBSINQUEUE;tennivaló vár a sorban
 MAIN_MSG_NAVIGATOR;Navigátor
-MAIN_MSG_PLACES;Helyek
 MAIN_MSG_QOVERWRITE;Felülírjam?
-MAIN_TAB_BASIC;Alap
 MAIN_TAB_COLOR;Színek
 MAIN_TAB_COLOR_TOOLTIP;Gyorsbillentyű: <b>Alt-C</b>
 MAIN_TAB_DETAIL;Részletek
@@ -494,7 +435,6 @@ MAIN_TAB_EXPORT; Exportálás
 MAIN_TAB_EXPOSURE;Expozíció
 MAIN_TAB_EXPOSURE_TOOLTIP;Gyorsbillentyű: <b>Alt-E</b>
 MAIN_TAB_FILTER;Szűrők
-MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metaadatok
 MAIN_TAB_METADATA_TOOLTIP;Gyorsbillentyű: <b>Alt-M</b>
@@ -503,21 +443,16 @@ MAIN_TAB_RAW_TOOLTIP;Gyorsbillentyű: <b>Alt-R</b>
 MAIN_TAB_TAGGING;Címkézés
 MAIN_TAB_TRANSFORM;Transzformáció
 MAIN_TAB_TRANSFORM_TOOLTIP;Gyorsbillentyű: <b>Alt-T</b>
-MAIN_TOGGLE_BEFORE_AFTER;E|U
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Zárolás</b> / <b>Feloldás</b> az <b>Előtte</b> nézetben\n\n<b>Zárolás</b>: az <b>Előtte</b> nézet változatlanul tartása.\nHasznos több eszköz összeadódó hatásának megítélésére.\nSegítségével az előzményekben szereplő bármely állapot összehasonlítható a zárolttal.\n\n<b>Feloldás</b>: az <b>Előtte</b> nézet egy lépéssel követi az <b>Utána</b>nézetet, vagyis a legutoljára használt eszköz előtti állapotot mutatja.
-MAIN_TOOLTIP_HIDEFP;A fájlkezelő alsó panel elrejtése/megjelenítése (Gyorsbillentyű: F)
 MAIN_TOOLTIP_HIDEHP;Az előzményeket is tartalmazó bal panel elrejtése/megjelenítése (Gyorsbillentyű: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Túlexponált területek jelzése
 MAIN_TOOLTIP_INDCLIPPEDS;Alulexponált területek jelzése
-MAIN_TOOLTIP_PREFERENCES;Beállítások megváltoztatása
 MAIN_TOOLTIP_PREVIEWB;A <b>kék csatorna</b> előnézete.\nGyorsbillentyű: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;A <b>fókuszmaszk</b> előnézete.\nGyorsbillentyű: <b>Shift-F</b>\n\nPontosabb a kis mélységélességű, alacsony zajú és erősebben zoomolt képeken.\n\nA felismerés pontosságának növeléséhez használd az eszközt 10-30%-os nagyítás mellett.\n\nAz előnézet frissítése bekapcsolt fókuszmaszk mellett lassabb.
 MAIN_TOOLTIP_PREVIEWG;A <b>Green csatorna</b> előnézete.\nGyorsbillentyű: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;A <b>luminencia</b> (luminosity) előnézete.\nGyorsbillentyű: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;A <b>vörös csatorna</b> előnézete.\nGyorsbillentyű: <b>r</b>
 MAIN_TOOLTIP_QINFO;Néhány fontos információ megjelenítése a képről
-MAIN_TOOLTIP_SAVEAS;A kép mentése a kiválasztott könyvtárba
-MAIN_TOOLTIP_SAVE;A kép mentése az alapértelmezett könyvtárba az alapértelmezett néven
 MAIN_TOOLTIP_SHOWHIDELP1;Bal oldali panel megjelenítése/elrejtése.\nGyorsbillentyű: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Jobb oldali panel megjelenítése/elrejtése.\nGyorsbillentyű: <b>Alt-L</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Felső panel megjelenítése/elrejtése.\nGyorsbillentyű: <b>Shift-L</b>
@@ -546,11 +481,7 @@ PARTIALPASTE_BASICGROUP;Alapbeállítások
 PARTIALPASTE_CACORRECTION;Kromatikus aberráció
 PARTIALPASTE_CHANNELMIXER;Színkeverő
 PARTIALPASTE_COARSETRANS;90 fokonkénti forgatás/tükrözés
-PARTIALPASTE_COLORBOOST;Színtelítettség
-PARTIALPASTE_COLORDENOISE;Színzaj-csökkentés
 PARTIALPASTE_COLORGROUP;Színeket érintő beállítások
-PARTIALPASTE_COLORMIXER;Színkeverő
-PARTIALPASTE_COLORSHIFT;Színeltolás
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Automatikus bejelölés
 PARTIALPASTE_COMPOSITIONGROUP;Kompozíciós beállítások
 PARTIALPASTE_CROP;Vágás
@@ -570,10 +501,6 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;FF automatikus kiválasztása
 PARTIALPASTE_FLATFIELDBLURRADIUS;FF elmosás sugara
 PARTIALPASTE_FLATFIELDBLURTYPE;FF elmosás típusa
 PARTIALPASTE_FLATFIELDFILE;Flat field (FF) állomány
-PARTIALPASTE_HLRECONSTRUCTION;Csúcsfény-helyreállítá
-PARTIALPASTE_HLRECOVERYAMOUNT;Csúcsfény-helyreállítás mértéke
-PARTIALPASTE_HLRECOVERYTHRESHOLD;Csúcsfény-helyreállítás küszöbe
-PARTIALPASTE_HLRECOVERY;Kiégett részletek megmentése
 PARTIALPASTE_HSVEQUALIZER;HSV Equalizer
 PARTIALPASTE_ICMGAMMA;Kimeneti gamma
 PARTIALPASTE_ICMSETTINGS;ICM beállítások
@@ -582,8 +509,6 @@ PARTIALPASTE_IPTCINFO;IPTC információk
 PARTIALPASTE_LABCURVE;Lab görbe
 PARTIALPASTE_LENSGROUP;Objektív optikai hibáinak javítása
 PARTIALPASTE_LUMACURVE;Luminancia görbe
-PARTIALPASTE_LUMADENOISE;Luminanciazaj-csökkentés
-PARTIALPASTE_LUMINANCEGROUP;Luminanciát érintő beállítások
 PARTIALPASTE_METAICMGROUP;Metaadat/Színprofil beállítások
 PARTIALPASTE_PERSPECTIVE;Perspektíva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Zöldegyensúly
@@ -610,7 +535,6 @@ PARTIALPASTE_SHARPENING;Élesítés
 PARTIALPASTE_SHARPENMICRO;Mikrokontraszt
 PARTIALPASTE_VIBRANCE;Vibrancia
 PARTIALPASTE_VIGNETTING;Peremsötétedés
-PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 PARTIALPASTE_WHITEBALANCE;Fehéregyensúly
 PREFERENCES_ADD;Hozzáadás
 PREFERENCES_APPLNEXTSTARTUP;újraindítás után érvényes
@@ -625,9 +549,6 @@ PREFERENCES_CACHEFORMAT1;Egyedi (gyorsabb és szebb)
 PREFERENCES_CACHEFORMAT2;JPEG (kisebb a háttértáron)
 PREFERENCES_CACHEMAXENTRIES;Gyorsítótárban tárolt képek max. száma
 PREFERENCES_CACHEOPTS;Gyorsítótár beállítások
-PREFERENCES_CACHESTRAT1;Inkább gyors, mint memóriatakarékos
-PREFERENCES_CACHESTRAT2;Inkább memóriatakarékos, mint gyors
-PREFERENCES_CACHESTRAT;Gyorsítótár stratégia
 PREFERENCES_CACHETHUMBFORM;Előnézeti kép formátuma
 PREFERENCES_CACHETHUMBHEIGHT;Előnézeti kép maximális magassága
 PREFERENCES_CLEARDLG_LINE1;Gyorsítótár ürítése
@@ -648,7 +569,6 @@ PREFERENCES_DATEFORMATHINT;<i>A következő jeleket lehet használni:</i>\n<b>%y
 PREFERENCES_DATEFORMAT;Dátumformátum
 PREFERENCES_DEFAULTLANG;Alapértelmezett nyelv
 PREFERENCES_DEFAULTTHEME;Alapértelmezett kinézet
-PREFERENCES_DEMOSAICINGALGO;Bayer interpoláció
 PREFERENCES_DIRDARKFRAMES;Dark frame könyvtára
 PREFERENCES_DIRHOME;Saját könyvtár
 PREFERENCES_DIRLAST;Utoljára látogatott könyvtár
@@ -670,7 +590,6 @@ PREFERENCES_FORIMAGE;Egyéb képekhez
 PREFERENCES_FORRAW;RAW állományokhoz
 PREFERENCES_GIMPPATH;GIMP telepítési könyvtára
 PREFERENCES_GTKTHEME;Alap GTK kinézet
-PREFERENCES_HINT;Tipp
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Hisztogram a bal oldali panelen
 PREFERENCES_HLTHRESHOLD;Küszöbérték kiégett területekhez
 PREFERENCES_ICCDIR;ICC profilok könyvtára
@@ -681,7 +600,6 @@ PREFERENCES_INTENT_RELATIVE;Relatív kolorimetrikus
 PREFERENCES_INTENT_SATURATION;Színtelítettség
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Nyers beágyazott előnézeti kép megjelenése, amíg szerkesztetlen a kép
 PREFERENCES_LANGAUTODETECT;Oprendszer nyelvének használata
-PREFERENCES_LIVETHUMBNAILS;Élő előnézeti képek (lassabb)
 PREFERENCES_MENUGROUPFILEOPERATIONS;Állományműveletek csoportosítása
 PREFERENCES_MENUGROUPLABEL;Címkézés csoportosítása
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Profilműveletek csoportosítása
@@ -693,7 +611,6 @@ PREFERENCES_MULTITABDUALMON;Több fül mód második kijelzővel (ha elérhető)
 PREFERENCES_MULTITAB;Több szerkesztőfül
 PREFERENCES_OUTDIRFOLDERHINT;Ha ezt a lehetőséget választja, az összes feldolgozott kép ebbe a könyvtárba kerül
 PREFERENCES_OUTDIRFOLDER;Mentés ebbe a könyvtárba:
-PREFERENCES_OUTDIRHINT;<i>A következő jeleket lehet használni:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEzek a jelek a megnyitott kép elérési útvonalának részeire vonatkoznak.\n\nPéldául, ha a </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> képet nyitjuk meg, ezek a jelek a következőket jelentik:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHa oda szeretnéd menteni a kész képet, ahol az eredeti volt, az alábbiakat kell beírni:\n</i><b>%p1/%f\n</b><i>\nHa a kész képet az eredeti könyvtárán belül egy "converted" alkönyvtárba szeretnéd menteni, az alábbiakat kell beírni:\n</i><b>%p1/converted/%f\n</b><i>\nHa a kész képeket  a '/home/tom/converted' könyvtárba szeretnéd menteni az eredeti, dátumot tartalmazó alkönyvtár megtartásával, írd ezt:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>A következő jeleket lehet használni:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nEzek a jelek a megnyitott kép elérési útvonalának részeire vonatkoznak.\n\nPéldául, ha a </i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> képet nyitjuk meg, ezek a jelek a következőket jelentik:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\nHa oda kívánja menteni a kész képet, ahol az eredeti volt, az alábbiakat kell beírni:\n</i><b>%p1/%f\n</b><i>\nHa a kész képet az eredeti könyvtárán belül egy "converted" alkönyvtárba kívánja menteni, az alábbiakat kell beírni:\n</i><b>%p1/converted/%f\n</b><i>\nHa a kész képeket  a '/home/tom/converted' könyvtárba kívánja menteni az eredeti, dátumot tartalmazó alkönyvtár megtartásával, írja ezt:\n</i><b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Sablon használata
 PREFERENCES_OUTDIR;Kimeneti alapértelmezett könyvtár
@@ -714,15 +631,12 @@ PREFERENCES_PROFILESAVEINPUT;Feldolgozási paraméterek mentése a kép mellé
 PREFERENCES_PROPERTY;Property
 PREFERENCES_PSPATH;Adobe Photoshop telepítési könyvtára
 PREFERENCES_SELECTFONT;Betűtípus kiválasztása
-PREFERENCES_SELECTICCDIRDLG;ICC profilok könyvtárának kiválasztása...
 PREFERENCES_SELECTLANG;Nyelv kiválasztása
-PREFERENCES_SELECTMONITORPROFDLG;Monitor ICC profiljának kiválasztása...
 PREFERENCES_SELECTTHEME;Kinézet kiválasztása
 PREFERENCES_SET;Beállítás
 PREFERENCES_SHOWBASICEXIF;Fontosabb EXIF információk megjelenítése
 PREFERENCES_SHOWDATETIME;Felvétel dátumának és idejének megjelenítése
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Expozíciókompenzáció megjelenítése
-PREFERENCES_SHOWONLYRAW;Csak a RAW fájok megjelenítése
 PREFERENCES_SHOWPROFILESELECTOR;Profilválasztó megjelenítése
 PREFERENCES_SHTHRESHOLD;Küszöbérték bebukott árnyékokhoz
 PREFERENCES_SINGLETABVERTAB;Egyetlen fül mód, függőleges előnézeti képek
@@ -738,9 +652,7 @@ PREFERENCES_TAB_BROWSER;Fájl böngésző
 PREFERENCES_TAB_COLORMGR;Színkezelés
 PREFERENCES_TAB_GENERAL;Általános
 PREFERENCES_TAB_IMPROC;Képfeldolgozás
-PREFERENCES_TAB_OUTPUT;Állománymentési beállítások
 PREFERENCES_TAB_SOUND;Hangok
-PREFERENCES_THUMBSIZE;Képek mérete a böngészőben
 PREFERENCES_TP_LABEL;Eszközök panel:
 PREFERENCES_TP_USEICONORTEXT;Ikonok használata szöveg helyett a füleken
 PREFERENCES_TP_VSCROLLBAR;Függőleges görgetősáv elrejtése
@@ -756,22 +668,13 @@ PROFILEPANEL_LOADPPASTE;Betöltendő paraméterek
 PROFILEPANEL_PASTEPPASTE;Beillesztendő paraméterek
 PROFILEPANEL_PCUSTOM;Egyedi
 PROFILEPANEL_PFILE;Fáljból
-PROFILEPANEL_PLASTPHOTO;Előző fotó
 PROFILEPANEL_PLASTSAVED;Legutóbb használt
-PROFILEPANEL_PROFILE;Beállítások
 PROFILEPANEL_SAVEDLGLABEL;Feldolgozási beállítások mentése...
 PROFILEPANEL_SAVEPPASTE;Mentendő paraméterek
 PROFILEPANEL_TOOLTIPCOPY;Feldolgozási beállítások vágólapra mentése
 PROFILEPANEL_TOOLTIPLOAD;Feldolgozási beállítások betöltése
 PROFILEPANEL_TOOLTIPPASTE;Feldolgozási beállítások beillesztése a vágólapról
 PROFILEPANEL_TOOLTIPSAVE;Feldolgozási beállítások mentése
-PROGRESSBAR_BADPIXELS;Hibás pixelek...
-PROGRESSBAR_CACORRECTION;Színihiba-javítás (CA korrekció
-PROGRESSBAR_DARKFRAME;Fekete referenciakép (dark frame)...
-PROGRESSBAR_DECODING;Raw állomány dekódolása...
-PROGRESSBAR_DEMOSAICING;Bayer interpoláció...
-PROGRESSBAR_GREENEQUIL;Zöldegyensúly...
-PROGRESSBAR_LINEDENOISE;Soronkénti zajszűrés...
 PROGRESSBAR_LOADINGTHUMBS;Előnézeti képek betöltése...
 PROGRESSBAR_LOADING;Kép betöltése...
 PROGRESSBAR_LOADJPEG;JPEG fájl betöltése...
@@ -786,9 +689,7 @@ PROGRESSDLG_LOADING;Fájl betöltése...
 PROGRESSDLG_PROCESSING;Kép feldolgozása...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;A profil az állományböngészőben megváltozott
 PROGRESSDLG_SAVING;Fájl mentése...
-QINFO_FOCALLENGTH;Fokális távolság
 QINFO_ISO;ISO
-QINFO_LENS;Objektív
 QINFO_NOEXIF;EXIF adat nem áll rendelkezésre.
 RBATCHQUEUE_AUTOSTART;Autoindítás
 SAVEDLG_AUTOSUFFIX;Utótag hozzáadása automatikusan, ha az állomány már létezik
@@ -796,7 +697,6 @@ SAVEDLG_FILEFORMAT;Állományformátum
 SAVEDLG_JPEGQUAL;JPEG Minőség
 SAVEDLG_JPGFILTER;JPEG fájlok
 SAVEDLG_PNGCOMPR;PNG Tömörítés
-SAVEDLG_PNGFILTER;PNG fájlok
 SAVEDLG_PUTTOQUEUEHEAD;Feldolgozási sorba helyezés az első helyre
 SAVEDLG_PUTTOQUEUETAIL;Feldolgozási sorba helyezés az utolsó helyre
 SAVEDLG_PUTTOQUEUE;Feldolgozási sorba helyezés
@@ -933,7 +833,6 @@ TP_HSVEQUALIZER8;Magenta
 TP_HSVEQUALIZER_CHANNEL;HSV Csatorna
 TP_HSVEQUALIZER_HUE;Színárnyalat
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
-TP_HSVEQUALIZER_NEUTRAL;Semleges
 TP_HSVEQUALIZER_SAT;Színtelítettség
 TP_HSVEQUALIZER_VAL;Színérték
 TP_ICM_BLENDCMSMATRIX;Csúcsfények és mátrix egybemosása
@@ -955,7 +854,6 @@ TP_ICM_INPUTNONE_TOOLTIP;Bemeneti színprofil teljes mellőzése. Csak különle
 TP_ICM_INPUTPROFILE;Bemeneti színprofil
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Nincs színkezelés: sRGB kimenet
-TP_ICM_OUTPUTDLGLABEL;Kimeneti színprofil kiválasztása...
 TP_ICM_OUTPUTPROFILE;Kimeneti színprofil
 TP_ICM_SAVEREFERENCE;Referenciakép mentése profilkalibráláshoz
 TP_ICM_WORKINGPROFILE;Feldolgozási színprofil
@@ -979,9 +877,6 @@ TP_LUMACURVE_COMPRSHADOWS;Sötét tónusok tömörítése
 TP_LUMACURVE_CONTRAST;Kontraszt
 TP_LUMACURVE_CURVEEDITOR;Luminanciagörbe
 TP_LUMACURVE_LABEL;Luminancia
-TP_LUMADENOISE_EDGETOLERANCE;Éltolerancia
-TP_LUMADENOISE_LABEL;Luminanciazaj-csökkentés
-TP_LUMADENOISE_RADIUS;Sugár
 TP_NEUTRAL;Semleges
 TP_NEUTRAL_TIP;Expozíciós paraméterek visszaállítása a semleges értékre
 TP_PERSPECTIVE_HORIZONTAL;Vízszintes
@@ -1020,7 +915,6 @@ TP_RESIZE_DOWNSCALEB;Downscale (Jobb minőség)
 TP_RESIZE_DOWNSCALEF;Downscale (Gyorsabb)
 TP_RESIZE_FITBOX;Határolókeret
 TP_RESIZE_FULLIMAGE;Teljes kép
-TP_RESIZE_FULLSIZE;Képméret:
 TP_RESIZE_HEIGHT;Magasság
 TP_RESIZE_H;M:
 TP_RESIZE_LABEL;Átméretezés
@@ -1126,13 +1020,6 @@ TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Mintavétel
 TP_WBALANCE_TEMPERATURE;Színhőmérséklet
 TP_WBALANCE_TUNGSTEN;Tungsten
-ZOOMBAR_DETAIL;Részlet nézet
-ZOOMBAR_HUGE;Nagyobb
-ZOOMBAR_LARGE;Nagy
-ZOOMBAR_NORMAL;Normál
-ZOOMBAR_PREVIEW;Előnézet
-ZOOMBAR_SCALE;Kicsinyítés
-ZOOMBAR_SMALL;KicsiHISTOGRAM_BUTTON_B;B
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;(Új) lupe megnyitása
 ZOOMPANEL_ZOOM100;Nagyítás 100%-ra <b>z</b>
@@ -1151,6 +1038,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !FILEBROWSER_COLORLABEL_TOOLTIP;Color label\n\nUse dropdown menu or Shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
 !FILEBROWSER_EXTPROGMENU;Open with
 !FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
+!FILEBROWSER_POPUPRANK;Rank
 !FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
 !FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
 !FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
@@ -1356,7 +1244,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_BWMIX_MET_DESAT;Desaturation
 !TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
 !TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_MIXF;Mixer Filters
 !TP_BWMIX_NEUTRAL;Reset mixer
 !TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
 !TP_BWMIX_ORANGE;Orange
@@ -1424,7 +1311,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
-!TP_COLORAPP_EQUAL;Equal
 !TP_COLORAPP_GAMUT;Gamut control (Lab)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 !TP_COLORAPP_HUE;Hue (h)

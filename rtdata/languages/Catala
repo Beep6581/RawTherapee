@@ -32,7 +32,6 @@ CURVEEDITOR_TYPE;Tipus:
 EDITWINDOW_TITLE;Edita imatge
 EXIFFILTER_APERTURE;Obertura
 EXIFFILTER_CAMERA;Càmera
-EXIFFILTER_DIALOGLABEL;Filtre Exif
 EXIFFILTER_EXPOSURECOMPENSATION;Compensació d'exposició (EV)
 EXIFFILTER_FILETYPE;Tipus de fitxer
 EXIFFILTER_FOCALLEN;Distància focal
@@ -85,7 +84,6 @@ EXTPROGTARGET_2;cua processada
 FILEBROWSER_ADDDELTEMPLATE;Afeg/Treu plantilles...
 FILEBROWSER_APPLYPROFILE;Aplica
 FILEBROWSER_APPLYPROFILE_PARTIAL;Aplica - parcial
-FILEBROWSER_ARRANGEMENTHINT;Canvia entre alineació vertical/horitzontal de les minifotos
 FILEBROWSER_AUTODARKFRAME;Auto marc fosc
 FILEBROWSER_AUTOFLATFIELD;Auto camp pla
 FILEBROWSER_BROWSEPATHBUTTONHINT;Clic per navegar al path escollit
@@ -103,11 +101,6 @@ FILEBROWSER_DELETEDLGMSG;Segur que voleu esborrar els <b>%1</b> fitxers?
 FILEBROWSER_EMPTYTRASHHINT;Buida permanentment la paperera
 FILEBROWSER_EMPTYTRASH;Buida paperera
 FILEBROWSER_EXEC_CPB;Constructor de perfils propis
-FILEBROWSER_EXIFFILTERAPPLYHINT;Commuta on/off el filtre exif del gestor de fitxers
-FILEBROWSER_EXIFFILTERAPPLY;Aplica
-FILEBROWSER_EXIFFILTERLABEL;Filtre Exif
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Canvia ajustos del filtre Exif
-FILEBROWSER_EXIFFILTERSETTINGS;Ajustos
 FILEBROWSER_EXTPROGMENU;Obre amb
 FILEBROWSER_FLATFIELD;Camp pla
 FILEBROWSER_MOVETODARKFDIR;Canvia al directori de camps foscos
@@ -117,12 +110,6 @@ FILEBROWSER_OPENDEFAULTVIEWER;Visor per omissió (cua-processat)
 FILEBROWSER_PARTIALPASTEPROFILE;Enganxa - parcialment
 FILEBROWSER_PASTEPROFILE;Enganxa
 FILEBROWSER_POPUPCANCELJOB;Cancel·la treball
-FILEBROWSER_POPUPCOLORLABEL0;Etiqueta: Cap
-FILEBROWSER_POPUPCOLORLABEL1;Etiqueta: Vermell
-FILEBROWSER_POPUPCOLORLABEL2;Etiqueta: Groc
-FILEBROWSER_POPUPCOLORLABEL3;Etiqueta: Verd
-FILEBROWSER_POPUPCOLORLABEL4;Etiqueta: Blau
-FILEBROWSER_POPUPCOLORLABEL5;Etiqueta: Porpra
 FILEBROWSER_POPUPCOLORLABEL;Color d'etiqueta
 FILEBROWSER_POPUPCOPYTO;Copia a...
 FILEBROWSER_POPUPFILEOPERATIONS;Operacions amb fitxers
@@ -133,22 +120,14 @@ FILEBROWSER_POPUPOPEN;Obre
 FILEBROWSER_POPUPPROCESSFAST;Posa a la cua (export. ràpida)
 FILEBROWSER_POPUPPROCESS;Posa a la cua
 FILEBROWSER_POPUPPROFILEOPERATIONS;Processant operacions de perfil
-FILEBROWSER_POPUPRANK1;Rang 1 *
-FILEBROWSER_POPUPRANK2;Rang 2 **
-FILEBROWSER_POPUPRANK3;Rang 3 ***
-FILEBROWSER_POPUPRANK4;Rang 4 ****
-FILEBROWSER_POPUPRANK5;Rang 5 *****
 FILEBROWSER_POPUPRANK;Rang
 FILEBROWSER_POPUPREMOVEINCLPROC;Esborra amb sortida de la cua
-FILEBROWSER_POPUPREMOVESUBMENU;Suprimeix
 FILEBROWSER_POPUPREMOVE;Esborra el fitxer
 FILEBROWSER_POPUPRENAME;Reanomena
 FILEBROWSER_POPUPSELECTALL;Selec. tot
 FILEBROWSER_POPUPTRASH;Llença a la paperera
 FILEBROWSER_POPUPUNRANK;Treu el rang
 FILEBROWSER_POPUPUNTRASH;Recup. de la paperera
-FILEBROWSER_PROCESSINGSETTINGSHINT;Indica format de fitxer i directori de sortida
-FILEBROWSER_PROCESSINGSETTINGS;Ajustos
 FILEBROWSER_QUERYBUTTONHINT;Neteja la recerca
 FILEBROWSER_QUERYHINT;Escriviu <i>part del nom d'un fitxer</i> a cercar o bé <i>llista amb comes com a separadort</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> entra a la finestra de text a cercar (en el gestor de fitxers).\n<b>Enter</b> comença a buscar.\n<b>Escape</b> neteja.
 FILEBROWSER_QUERYLABEL; Cerca: 
@@ -165,7 +144,6 @@ FILEBROWSER_SHOWDIRHINT;Neteja tots els filtres.\nDrecera: <b>D</b>
 FILEBROWSER_SHOWEDITEDHINT;Mostra imatges editades.\nDrecera: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Mostra imatges no editades.\nDrecera: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostra dades EXIF.\nDrecera: <b>i</b>
-FILEBROWSER_SHOWQUEUEHINT;Mostra el contingut de la cua de procés
 FILEBROWSER_SHOWRANK1HINT;Exposa imatges d' 1 estrella.\nDrecera: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Exposa imatges de 2 estrelles.\nDrecera: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Exposa imatges de 3 estrelles.\nDrecera: <b>3</b>
@@ -194,9 +172,7 @@ GENERAL_DISABLE;Inactiva
 GENERAL_ENABLED;Activat
 GENERAL_ENABLE;Activa
 GENERAL_FILE;Fitxer
-GENERAL_HIGH_QUALITY;Alta qualitat
 GENERAL_LANDSCAPE;Horitzontal
-GENERAL_LOAD;Carrega
 GENERAL_NA;n/a
 GENERAL_NONE;No cap
 GENERAL_NO;No
@@ -205,14 +181,6 @@ GENERAL_PORTRAIT;Vertical
 GENERAL_SAVE;Desa
 GENERAL_UNCHANGED;(No canviat)
 GENERAL_WARNING;Avís
-GENERAL_YES;Sí
-HISTOGRAM_BUTTON_BAR;RGB
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_LABEL;Histograma
 HISTOGRAM_TOOLTIP_BAR;Mostra/amaga la barra indicadora RGB\nClic botó dret a la previsualització per a congelar/descongelar
 HISTOGRAM_TOOLTIP_B;Mostra/amaga l'histograma BLAU
 HISTOGRAM_TOOLTIP_FULL;Canvia entre histograma complet o escalat
@@ -398,28 +366,9 @@ HISTORY_MSG_170;Vibrància - corba
 HISTORY_MSG_171;Corba 'LC'
 HISTORY_MSG_172;Restriccció LC als tons vermell i pell
 HISTORY_MSG_173;RS - Detall de la luminància
-HISTORY_NEWSNAPSHOTAS;Com...
 HISTORY_NEWSNAPSHOT;Afegeix
-HISTORY_NEWSSDIALOGLABEL;Etiqueta d'instantània:
-HISTORY_NEWSSDIALOGTITLE;Afegir instant.
-HISTORY_SETTO;Fixat a
 HISTORY_SNAPSHOTS;Instantànies
 HISTORY_SNAPSHOT;Instantània
-ICMPANEL_FILEDLGFILTERANY;Tots els fitxers
-ICMPANEL_FILEDLGFILTERICM;Perfils de color
-ICMPANEL_GAMMABEFOREINPUT;El perfil de color aplica Gama
-ICMPANEL_INPUTCAMERA;Propi de la càmera
-ICMPANEL_INPUTCUSTOM;Especial
-ICMPANEL_INPUTDLGLABEL;Selecc. perfil de color d'entrada...
-ICMPANEL_INPUTEMBEDDED;Usar l'encastat si és possible
-ICMPANEL_INPUTPROFILE;Perfil de color d'entrada
-ICMPANEL_NOICM;No cap perfil: Sortida sRGB
-ICMPANEL_OUTPUTDLGLABEL;Selecc. perfil de color de sortida...
-ICMPANEL_OUTPUTPROFILE;Perfil de color de sortida
-ICMPANEL_SAVEREFERENCE;Desa com a imatge de ref. als perfils
-ICMPANEL_WORKINGPROFILE;Perfil de color de treball
-IMAGEAREA_DETAILVIEW;Vista de detall
-IPTCPANEL_AUTHORHINT;Nom del creador de l'objecte, p.e. escriptor, fotògraf o artista gràfic (By-line).
 IPTCPANEL_AUTHORSPOSITIONHINT;Títol del(s) creador(s) de l'objecte (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Tractament o títol de l'autor
 IPTCPANEL_AUTHOR;Autor
@@ -461,11 +410,9 @@ IPTCPANEL_TITLEHINT;Referència breu de la imatge (Object Name).
 IPTCPANEL_TITLE;Títol
 IPTCPANEL_TRANSREFERENCEHINT;Codi que indica el lloc de la transmissió original (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Refer. transmissió
-MAIN_BUTTON_EXIT;Sortida
 MAIN_BUTTON_FULLSCREEN;Pantalla sencera
 MAIN_BUTTON_PREFERENCES;Preferències
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Afeg. imatge actual a la cua de procés.\nDrecera: <b>Ctrl+B</b>
-MAIN_BUTTON_QUEUE;Posa a la cua
 MAIN_BUTTON_SAVE_TOOLTIP;Desa la imatge actual.\nDrecera: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edita la imatge actual a un editor extern.\nDrecera: <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostra/amaga panells laterals.\nDrecera: <b>m</b>
@@ -486,15 +433,9 @@ MAIN_MSG_CANNOTSAVE;Error desant el fitxer
 MAIN_MSG_CANNOTSTARTEDITOR;No es pot iniciar l'editor
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Poseu el path correcte en el diàleg "Preferències".
 MAIN_MSG_EMPTYFILENAME;Nom de fitxer no indicat!
-MAIN_MSG_ERRORDURINGIMAGESAVING;Error en desar la imatge
-MAIN_MSG_EXITJOBSINQUEUEINFO;Les imatges no processades de la cua es perdran en sortir.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Segur que voleu sortir? Hi ha imatges no processades a la cua.
 MAIN_MSG_IMAGEUNPROCESSED;Això requereix que totes les imatges seleccionades siguin abans processades a la cua.
-MAIN_MSG_JOBSINQUEUE;Treball(s) a la cua.
 MAIN_MSG_NAVIGATOR;Navegador
-MAIN_MSG_PLACES;Llocs
 MAIN_MSG_QOVERWRITE;El voleu sobreescriure?
-MAIN_TAB_BASIC;Bàsic
 MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;Drecera: <b>Alt-C</b>
 MAIN_TAB_DETAIL;Detall
@@ -505,7 +446,6 @@ MAIN_TAB_EXPORT; Exporta
 MAIN_TAB_EXPOSURE;Exposició
 MAIN_TAB_EXPOSURE_TOOLTIP;Drecera: <b>Alt-E</b>
 MAIN_TAB_FILTER;Filtre
-MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadades
 MAIN_TAB_METADATA_TOOLTIP;Drecera: <b>Alt-M</b>
@@ -514,24 +454,19 @@ MAIN_TAB_RAW_TOOLTIP;Drecera: <b>Alt-R</b>
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Transforma
 MAIN_TAB_TRANSFORM_TOOLTIP;Drecera: <b>Alt-T</b>
-MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_BACKCOLOR0;Color de fons de la vista prèvia: <b>basat en tema</b>\nDrecera: <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;Color de fons de la vista prèvia: <b>Negre</b>\nDrecera: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Color de fons de la vista prèvia: <b>Blanc</b>\nDrecera: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Bloca</b> / <b>Desbloca</b> el <b>abans</b> vista\n\n<b>Bloca</b>: conserva la <b>abans</b> vista sense canvis.\nütil per a valorar l'efecte acumulatiu de moltes eines.\nA més, es poden fer comparacions amb qualsevol punt de la història\n\n<b>Desbloca</b>: el <b>abans</b> la vista romandrà <b>després</b> vista d'un pas enrera, mostrant la imatge abans de l'efecte de l'eina present.
-MAIN_TOOLTIP_HIDEFP;Mostra/amaga panell inferior (directori i gestor de fitxers).\nDrecera: <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Mostra/amaga panell esquerre (incloent la història).\nDrecera: <b>1</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Indicador de pèrdues en clars.\nDrecera: <b>&lt</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Indicador de pèrdues en foscos.\nDrecera: <b>&gt</b>
-MAIN_TOOLTIP_PREFERENCES;Fixa preferències
 MAIN_TOOLTIP_PREVIEWB;Previsualitza <b>Canal blau</b>.\nDrecera: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Previsualitza <b>reenfocament</b>.\nDrecera: <b>Majús-F</b>\n\nMés pecís en imatges amb poca profunditat de camp, poc soroll i gran zoom\n\nPer a millorar la precisa detecció en imatges amb soroll proveu amb zoom més petit: 10-30%\n\nLa vista prèvia surt més lenta amb el reenfocament activat.
 MAIN_TOOLTIP_PREVIEWG;Previsualitza <b>Canal verd</b>.\nDrecera: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Previsualitza <b>Lluminositat</b>.\nDrecera: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Previsualitza <b>Canal vermell</b>.\nDrecera: <b>r</b>
 MAIN_TOOLTIP_QINFO;Info breu de la imatge.\nDrecera: <b>i</b>
-MAIN_TOOLTIP_SAVEAS;Desa la imatge en directori escollit
-MAIN_TOOLTIP_SAVE;Desa la imatge al directori per omissió
 MAIN_TOOLTIP_SHOWHIDELP1;Mostra/amaga panell esquerre.\nDrecera: <b>1</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Mostra/amaga panell dret.\nDrecera: <b>Alt-L</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Mostra/amaga panell superior.\nDrecera: <b>Majús-L</b>
@@ -563,11 +498,7 @@ PARTIALPASTE_BASICGROUP;Ajustos bàsics
 PARTIALPASTE_CACORRECTION;Correcció A. C.(Aberració Cromàtica)
 PARTIALPASTE_CHANNELMIXER;Barrejador de canals
 PARTIALPASTE_COARSETRANS;Rotació 90 graus/ inversió
-PARTIALPASTE_COLORBOOST;Augment de color
-PARTIALPASTE_COLORDENOISE;Dessorollar color
 PARTIALPASTE_COLORGROUP;Ajustos de color
-PARTIALPASTE_COLORMIXER;Barrejador de color
-PARTIALPASTE_COLORSHIFT;Canvi de color
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-omple
 PARTIALPASTE_COMPOSITIONGROUP;Ajustos de composició
 PARTIALPASTE_CROP;Cropa
@@ -587,10 +518,6 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;Auto-sel. Camp Pla
 PARTIALPASTE_FLATFIELDBLURRADIUS;Radi borrositat CP
 PARTIALPASTE_FLATFIELDBLURTYPE;Tipus borrositat CP
 PARTIALPASTE_FLATFIELDFILE;Fitxer de camp pla
-PARTIALPASTE_HLRECONSTRUCTION;Reconstrucc. clars intensos
-PARTIALPASTE_HLRECOVERYAMOUNT;Quant. recup. clars intensos
-PARTIALPASTE_HLRECOVERYTHRESHOLD;Llindar recup. clars intensos
-PARTIALPASTE_HLRECOVERY;Recup. de clars intensos
 PARTIALPASTE_HSVEQUALIZER;Equalitzador HSV
 PARTIALPASTE_ICMGAMMA;Sortida gama
 PARTIALPASTE_ICMSETTINGS;Ajustos gestió de color
@@ -599,8 +526,6 @@ PARTIALPASTE_IPTCINFO;Dades IPTC
 PARTIALPASTE_LABCURVE;Ajustos Lab
 PARTIALPASTE_LENSGROUP;Ajustos de l'objectiu
 PARTIALPASTE_LENSPROFILE;Perfil de correcció de l'objectiu
-PARTIALPASTE_LUMADENOISE;Reducció de soroll de luminància
-PARTIALPASTE_LUMINANCEGROUP;Ajustos de luminància
 PARTIALPASTE_METAICMGROUP;Ajustos Metadades/gestió de color
 PARTIALPASTE_PERSPECTIVE;Perspectiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Equilibri verd
@@ -627,7 +552,6 @@ PARTIALPASTE_SHARPENING;Enfocant (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_VIBRANCE;Vibrància
 PARTIALPASTE_VIGNETTING;Correcció del vorafosc
-PARTIALPASTE_WAVELETEQUALIZER;Equalitzador d'ónula
 PARTIALPASTE_WHITEBALANCE;Balanç de blancs
 PREFERENCES_ADD;AFEG
 PREFERENCES_APPLNEXTSTARTUP;Efectiu en reiniciar
@@ -642,9 +566,6 @@ PREFERENCES_CACHEFORMAT1;Propi (ràpid i millor qualitat)
 PREFERENCES_CACHEFORMAT2;JPEG (ocupa menys espai al disc)
 PREFERENCES_CACHEMAXENTRIES;Màxim nombre d'entrades a la mem. cau
 PREFERENCES_CACHEOPTS;Opcions memòria cau
-PREFERENCES_CACHESTRAT1;Preferir rapidesa a baix ús de memòria
-PREFERENCES_CACHESTRAT2;Preferir baix ús de memòria a rapidesa
-PREFERENCES_CACHESTRAT;Estratègia del cau
 PREFERENCES_CACHETHUMBFORM;Format del cau en minifoto
 PREFERENCES_CACHETHUMBHEIGHT;Màxima alçada de minifoto
 PREFERENCES_CLIPPINGIND;Indicador de pèrdues
@@ -662,7 +583,6 @@ PREFERENCES_DATEFORMATHINT;<i>Podeu fer servir les següents cadenes formatades:
 PREFERENCES_DATEFORMAT;Format de data
 PREFERENCES_DEFAULTLANG;Idioma per omissió
 PREFERENCES_DEFAULTTHEME;Tema per omissió
-PREFERENCES_DEMOSAICINGALGO;Algoritme de demosaicat
 PREFERENCES_DIRDARKFRAMES;Carpeta de marcs foscos
 PREFERENCES_DIRHOME;directori home
 PREFERENCES_DIRLAST;Últim directori usat
@@ -684,7 +604,6 @@ PREFERENCES_FORIMAGE;Per a imatge no raw
 PREFERENCES_FORRAW;Per fitxers RAW
 PREFERENCES_GIMPPATH;Directori d'instal. del GIMP
 PREFERENCES_GTKTHEME;GTK per omissió
-PREFERENCES_HINT;Consell
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histograma al panell esquerre
 PREFERENCES_HLTHRESHOLD;Llindar pèrdues en clars
 PREFERENCES_ICCDIR;Directori dels perfils de color
@@ -695,7 +614,6 @@ PREFERENCES_INTENT_RELATIVE;Colorimètric relatiu
 PREFERENCES_INTENT_SATURATION;Saturació
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Mostra la mini JPEG encastada si el raw no està editat
 PREFERENCES_LANGAUTODETECT;Usa idioma del sistema
-PREFERENCES_LIVETHUMBNAILS;Minifotos vives (lent)
 PREFERENCES_MENUGROUPEXTPROGS;Grup "Obrir amb"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Grup "Operacions amb fitxers"
 PREFERENCES_MENUGROUPLABEL;Grup "Etiqueta de color"
@@ -708,7 +626,6 @@ PREFERENCES_MULTITABDUALMON;Mode multitreball en segon monitor, si se'n té un
 PREFERENCES_MULTITAB;Mode multitreball
 PREFERENCES_OUTDIRFOLDERHINT;Posa les imatges desades al directori seleccionat
 PREFERENCES_OUTDIRFOLDER;Desa al directori
-PREFERENCES_OUTDIRHINT;Podeu emprar les següents cadenes de format:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nAquest tipus de format es refereix a les diferents parts del path de localització de la fotografia, o alguns dels seus atributs.\n\nPer exemple, si la foto en curs té aquest path:\n<b><i>/home/tom/fotos/2010-10-31/dsc0042.nef</i></b>\nel significat del format és:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/fotos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> serà canviat pel rang de la foto.  Si la foto no té rang, %r es convertirà en '0'.  Si la foto és a la paperera bin, %r es convertirà en 'x'.\n\nSi desitgeu desar la imatge on hi ha l'original, escriviu:\n<b>%p1/%f</b>\n\nSi desitgeu desar la imatge en un directori que es digui "<i>refetes</i>" situat en el directori de la imatge oberta, escriviu:\n<b>%p1/refetes/%f</b>\n\nSi desitgeu desar la imatge en un directori que es digui "<i>/home/tom/fotos/refetes/2010-10-31</i>", escriviu:\n<b>%p2/refetes/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;Podeu fer servir les següents cadenes de format:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nAquest format es basa en les diferents parts del path d'una fotografia o bé alguns dels seus atributs.\n\nPer exemple, si la foto en curs està localitzada a:\n<b><i>/home/tom/fotos/2010-10-31/dsc0042.nef</i></b>\nel significat de les cadenes de format és:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>fotos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/fotos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/fotos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> es canviarà pel rang de la foto.  Si la foto no té rang, %r es convertirà en un '0'.  Si la foto és a la paperera bin, %r es convertirà en 'x'.\n\nSi desitgeu desar la imatge actual on hi ha l'original, escriviu:\n<b>%p1/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>refetes</i>" sota el directori de la imatge oberta, escriviu:\n<b>%p1/refetes/%f</b>\n\nSi desitgeu desar la imatge actual en un directori de nom "<i>/home/tom/photos/refetes/2010-10-31</i>", escriviu:\n<b>%p2/refetes/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Usar plantilla
 PREFERENCES_OUTDIR;Directori de sortida
@@ -729,15 +646,12 @@ PREFERENCES_PROFILESAVEINPUT;Desa els paràm. de procés juntament amb la imatge
 PREFERENCES_PROPERTY;Propietat
 PREFERENCES_PSPATH;Directori d'instal. d'Adobe Photoshop
 PREFERENCES_SELECTFONT;Selec. font
-PREFERENCES_SELECTICCDIRDLG;Directori de perfils de color...
 PREFERENCES_SELECTLANG;Seleccionar idioma
-PREFERENCES_SELECTMONITORPROFDLG;Selecc. perfil de color del monitor...
 PREFERENCES_SELECTTHEME;Seleccionar tema
 PREFERENCES_SET;Fixa
 PREFERENCES_SHOWBASICEXIF;Mostra principals dades Exif
 PREFERENCES_SHOWDATETIME;Indica data i hora
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Mostra compensació d'exposició
-PREFERENCES_SHOWONLYRAW;Exposa només fitxers RAW
 PREFERENCES_SHOWPROFILESELECTOR;Mostra selector de perfils de processat
 PREFERENCES_SHTHRESHOLD;Llindar pèrdues en foscos
 PREFERENCES_SINGLETABVERTAB;Mode simple treball, vistes verticals
@@ -753,9 +667,7 @@ PREFERENCES_TAB_BROWSER;Gestor de fitxers
 PREFERENCES_TAB_COLORMGR;Gestió del color
 PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Processament de la imatge
-PREFERENCES_TAB_OUTPUT;Opcions de sortida
 PREFERENCES_TAB_SOUND;Sons
-PREFERENCES_THUMBSIZE;Tamany minifoto
 PREFERENCES_TP_LABEL;Panell d'eines:
 PREFERENCES_TP_USEICONORTEXT;Usa les icones tab en comptes de text
 PREFERENCES_TP_VSCROLLBAR;Amaga la barra d'eines vertical
@@ -771,22 +683,13 @@ PROFILEPANEL_LOADPPASTE;Paràmetres a carregar
 PROFILEPANEL_PASTEPPASTE;Paràmetres a afegir
 PROFILEPANEL_PCUSTOM;Especial
 PROFILEPANEL_PFILE;Del fitxer
-PROFILEPANEL_PLASTPHOTO;Darrera foto
 PROFILEPANEL_PLASTSAVED;Darrera desada
-PROFILEPANEL_PROFILE;Perfil
 PROFILEPANEL_SAVEDLGLABEL;Desar paràm. de postprocés...
 PROFILEPANEL_SAVEPPASTE;Paràmetres a desar
 PROFILEPANEL_TOOLTIPCOPY;Copia perfil actual al portapapers.\n<b>Ctrl-click</b> per seleccionar els paràmetres a copiar
 PROFILEPANEL_TOOLTIPLOAD;Carrega perfil d'un fitxer.\n<b>Ctrl-click</b> per seleccionar els paràmetres a carregar
 PROFILEPANEL_TOOLTIPPASTE; Enganxa perfil del portapapers.\n<b>Ctrl-click</b> per seleccionar els paràmetres a enganxar
 PROFILEPANEL_TOOLTIPSAVE;Desa l'actual com a perfil.\n<b>Ctrl-click</b> per seleccionar els paràmetres a desar
-PROGRESSBAR_BADPIXELS;Píxels dolents...
-PROGRESSBAR_CACORRECTION;Correcció AC...
-PROGRESSBAR_DARKFRAME;Marc fost...
-PROGRESSBAR_DECODING;Decodificant fitxer RAW...
-PROGRESSBAR_DEMOSAICING;Demosaicant...
-PROGRESSBAR_GREENEQUIL;Equilibri verd...
-PROGRESSBAR_LINEDENOISE;Línia desoroll...
 PROGRESSBAR_LOADINGTHUMBS;Carregant minifotos...
 PROGRESSBAR_LOADING;Carregant imatge...
 PROGRESSBAR_LOADJPEG;Carregant fitxer JPEG...
@@ -799,16 +702,13 @@ PROGRESSBAR_SAVEJPEG;Desant fitxer JPEG...
 PROGRESSBAR_SAVEPNG;Desant fitxer PNG...
 PROGRESSBAR_SAVETIFF;Desant fitxer TIFF...
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Processant perfil canviat al navegador
-QINFO_FOCALLENGTH;Distància focal
 QINFO_ISO;ISO
-QINFO_LENS;Objectiu
 QINFO_NOEXIF;No hi ha dades Exif.
 SAVEDLG_AUTOSUFFIX;Afegeix automàticament un sufix si el fitxer ja hi és
 SAVEDLG_FILEFORMAT;Format del fitxer
 SAVEDLG_JPEGQUAL;Qualitat JPEG
 SAVEDLG_JPGFILTER;Fitxers JPEG
 SAVEDLG_PNGCOMPR;Compressió PNG
-SAVEDLG_PNGFILTER;Fitxers PNG
 SAVEDLG_PUTTOQUEUEHEAD;Posa al principi de la cua de procés
 SAVEDLG_PUTTOQUEUETAIL;Posa a la fi de la cua de procés
 SAVEDLG_PUTTOQUEUE;Posa a la cua de procés
@@ -935,7 +835,6 @@ TP_HLREC_METHOD;Mètode:
 TP_HSVEQUALIZER_CHANNEL;Canal HSV
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV Equalitzador
-TP_HSVEQUALIZER_NEUTRAL;Neutral
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Barreja clars intensos del perfil de color amb la matriu
@@ -956,7 +855,6 @@ TP_ICM_INPUTNONE_TOOLTIP;No aplicar perfil de color d'entrada tret de casos espe
 TP_ICM_INPUTPROFILE;Perfil d'entrada
 TP_ICM_LABEL;Gestió de color
 TP_ICM_NOICM;No cap ICM: Sortida  sRGB
-TP_ICM_OUTPUTDLGLABEL;Selecc. perfil de sortida ICC...
 TP_ICM_OUTPUTPROFILE;Perfil de sortida
 TP_ICM_PREFERREDPROFILE;Perfil DCP preferit
 TP_ICM_PREFERREDPROFILE_1;Llum de dia
@@ -1008,9 +906,6 @@ TP_LENSPROFILE_LABEL;Perfil de correcció de lent
 TP_LENSPROFILE_USECA;Usa correcció AC
 TP_LENSPROFILE_USEDIST;Correcció de distorsió
 TP_LENSPROFILE_USEVIGN;Correcció de vores fosques
-TP_LUMADENOISE_EDGETOLERANCE;Tolerància vores
-TP_LUMADENOISE_LABEL;Reducció de soroll de luminància
-TP_LUMADENOISE_RADIUS;Radi
 TP_NEUTRAL;Neutral
 TP_NEUTRAL_TIP;Torna els controls d'exposició a valors neutrals
 TP_PERSPECTIVE_HORIZONTAL;Horitzontal
@@ -1046,7 +941,6 @@ TP_RESIZE_BILINEAR;Bilinear
 TP_RESIZE_CROPPEDAREA;Àrea cropada
 TP_RESIZE_FITBOX;Capsa d'inclusió
 TP_RESIZE_FULLIMAGE;Imatge sencera
-TP_RESIZE_FULLSIZE;Tamany imatge sencera:
 TP_RESIZE_HEIGHT;Alt
 TP_RESIZE_H;A:
 TP_RESIZE_LABEL;Canviar tamany
@@ -1160,13 +1054,6 @@ TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Punt b. blancs
 TP_WBALANCE_TEMPERATURE;Temperatura
 TP_WBALANCE_TUNGSTEN;Tungstèn
-ZOOMBAR_DETAIL;Detall
-ZOOMBAR_HUGE;Enorme
-ZOOMBAR_LARGE;Gran
-ZOOMBAR_NORMAL;Normal
-ZOOMBAR_PREVIEW;Previsualització
-ZOOMBAR_SCALE;Escala
-ZOOMBAR_SMALL;Petit
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Obre una altra finestra de detall
 ZOOMPANEL_ZOOM100;Zoom 100%\nDrecera: <b>z</b>
@@ -1353,7 +1240,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_BWMIX_MET_DESAT;Desaturation
 !TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
 !TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_MIXF;Mixer Filters
 !TP_BWMIX_NEUTRAL;Reset mixer
 !TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
 !TP_BWMIX_ORANGE;Orange
@@ -1421,7 +1307,6 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
-!TP_COLORAPP_EQUAL;Equal
 !TP_COLORAPP_GAMUT;Gamut control (Lab)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 !TP_COLORAPP_HUE;Hue (h)

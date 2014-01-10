@@ -42,7 +42,6 @@ CURVEEDITOR_TYPE;タイプ:
 EDITWINDOW_TITLE;画像編集
 EXIFFILTER_APERTURE;絞り
 EXIFFILTER_CAMERA;カメラ
-EXIFFILTER_DIALOGLABEL;Exif情報
 EXIFFILTER_EXPOSURECOMPENSATION;露光量補正 (EV)
 EXIFFILTER_FILETYPE;ファイル タイプ
 EXIFFILTER_FOCALLEN;焦点距離
@@ -96,7 +95,6 @@ EXTPROGTARGET_2;キュー処理
 FILEBROWSER_ADDDELTEMPLATE;テンプレートの追加/削除...
 FILEBROWSER_APPLYPROFILE;プロファイルの適用
 FILEBROWSER_APPLYPROFILE_PARTIAL;プロファイルの適用 (一部)
-FILEBROWSER_ARRANGEMENTHINT;サムネイル整列 縦/横
 FILEBROWSER_AUTODARKFRAME;オート・ダークフレーム
 FILEBROWSER_AUTOFLATFIELD;オート・フラットフィールド
 FILEBROWSER_BROWSEPATHBUTTONHINT;クリックで選択したパスをブラウズ
@@ -115,11 +113,6 @@ FILEBROWSER_DELETEDLGMSG;選択済みのファイル <b>%1</b> を削除して�
 FILEBROWSER_EMPTYTRASHHINT;ゴミ箱のファイルを完全に削除する
 FILEBROWSER_EMPTYTRASH;ゴミ箱を空にする
 FILEBROWSER_EXEC_CPB;カスタム・プロファイルビルダーを実行
-FILEBROWSER_EXIFFILTERAPPLYHINT;Exifフィルタのon/off ファイルブラウザの切り替え
-FILEBROWSER_EXIFFILTERAPPLY;適用
-FILEBROWSER_EXIFFILTERLABEL;Exifフィルタ
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Exifフィルタの設定を変える
-FILEBROWSER_EXIFFILTERSETTINGS;セットアップ
 FILEBROWSER_EXTPROGMENU;..で開く
 FILEBROWSER_FLATFIELD;フラットフィールド
 FILEBROWSER_MOVETODARKFDIR;ダークフレーム・ディレクトリに移動
@@ -129,12 +122,6 @@ FILEBROWSER_OPENDEFAULTVIEWER;Windowsのデフォルト・ビューア（キュ�
 FILEBROWSER_PARTIALPASTEPROFILE;プロファイルの貼り付け　-　一部
 FILEBROWSER_PASTEPROFILE;プロファイルの貼り付け
 FILEBROWSER_POPUPCANCELJOB;ジョブ キャンセル
-FILEBROWSER_POPUPCOLORLABEL0;ラベル: なし
-FILEBROWSER_POPUPCOLORLABEL1;ラベル: レッド
-FILEBROWSER_POPUPCOLORLABEL2;ラベル: イエロー
-FILEBROWSER_POPUPCOLORLABEL3;ラベル: グリーン
-FILEBROWSER_POPUPCOLORLABEL4;ラベル: ブルー
-FILEBROWSER_POPUPCOLORLABEL5;ラベル: パープル
 FILEBROWSER_POPUPCOLORLABEL;カラー・ラベル
 FILEBROWSER_POPUPCOPYTO;コピーします...
 FILEBROWSER_POPUPFILEOPERATIONS;ファイルの操作
@@ -145,22 +132,14 @@ FILEBROWSER_POPUPOPEN;開く
 FILEBROWSER_POPUPPROCESSFAST;キューに追加 (高速書き出し)
 FILEBROWSER_POPUPPROCESS;キューに追加
 FILEBROWSER_POPUPPROFILEOPERATIONS;プロファイルの操作
-FILEBROWSER_POPUPRANK1;ランク 1 *
-FILEBROWSER_POPUPRANK2;ランク 2 **
-FILEBROWSER_POPUPRANK3;ランク 3 ***
-FILEBROWSER_POPUPRANK4;ランク 4 ****
-FILEBROWSER_POPUPRANK5;ランク 5 *****
 FILEBROWSER_POPUPRANK;ランク
 FILEBROWSER_POPUPREMOVEINCLPROC;ファイルシステムとバッチの結果から削除
-FILEBROWSER_POPUPREMOVESUBMENU;削除
 FILEBROWSER_POPUPREMOVE;ファイルシステムから削除
 FILEBROWSER_POPUPRENAME;名前変更
 FILEBROWSER_POPUPSELECTALL;全選択
 FILEBROWSER_POPUPTRASH;ゴミ箱へ移動
 FILEBROWSER_POPUPUNRANK;ランクなし
 FILEBROWSER_POPUPUNTRASH;ゴミ箱から移動
-FILEBROWSER_PROCESSINGSETTINGSHINT;ファイル形式と出力ディレクトリを設定
-FILEBROWSER_PROCESSINGSETTINGS;設定
 FILEBROWSER_QUERYBUTTONHINT;検索ボックス内のヒントをクリア
 FILEBROWSER_QUERYHINT;検索する<i>ファイル名の一部を入力</i> 、或いは<i>カンマで区切ったファイル名のリスト</i>\n　例 <i>1001,1004,1199</i>\n\n<b>Ctrl-F</b> 検索テキストボックスにフォーカス\n<b>Enter</b> 検索を開始\n<b>Esc</b> クリア\n<b>Shift-Esc</b>フォーカスを削除
 FILEBROWSER_QUERYLABEL; 検索:
@@ -182,7 +161,6 @@ FILEBROWSER_SHOWDIRHINT;全てのフィルターをクリア\nショートカッ
 FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示\nショートカット: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示\nショートカット: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;EXIF情報を表示\nショートカット: <b>i</b>\n\nシングル・エディタ・タブのショートカット: <b>Alt-i</b>
-FILEBROWSER_SHOWQUEUEHINT;処理するキューの内容を表示
 FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示\nショートカット: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示\nショートカット: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;３つ星ランクを表示\nショートカット: <b>3</b>
@@ -214,9 +192,7 @@ GENERAL_DISABLE;無効
 GENERAL_ENABLED;有効
 GENERAL_ENABLE;有効
 GENERAL_FILE;ファイル
-GENERAL_HIGH_QUALITY;高画質
 GENERAL_LANDSCAPE;横
-GENERAL_LOAD;読み込み
 GENERAL_NA;n/a
 GENERAL_NONE;なし
 GENERAL_NO;No
@@ -225,14 +201,6 @@ GENERAL_PORTRAIT;縦
 GENERAL_SAVE;保存
 GENERAL_UNCHANGED;(変更なし)
 GENERAL_WARNING;警告
-GENERAL_YES;Yes
-HISTOGRAM_BUTTON_BAR;RGB
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_LABEL;ヒストグラム
 HISTOGRAM_TOOLTIP_BAR;RGBインジケーター・バーの表示/非表示\nプレビュー画像上でマウスの右ボタンクリックで 固定/開放
 HISTOGRAM_TOOLTIP_B;ブルー・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_CHRO;色度・ヒストグラム 表示/非表示
@@ -495,29 +463,10 @@ HISTORY_MSG_247;"LH"　カーブ
 HISTORY_MSG_248;"HH"　カーブ
 HISTORY_MSG_249;ディテールコントラストのしきい値
 HISTORY_MSG_250;ノイズ低減　-　強化
-HISTORY_NEWSNAPSHOTAS;ラベル
 HISTORY_NEWSNAPSHOT;追加
 HISTORY_NEWSNAPSHOT_TOOLTIP;ショートカット: <b>Alt-s</b>
-HISTORY_NEWSSDIALOGLABEL;スナップのラベル:
-HISTORY_NEWSSDIALOGTITLE;新しいスナップショットの追加
-HISTORY_SETTO;設定: 
 HISTORY_SNAPSHOTS;スナップショット
 HISTORY_SNAPSHOT;スナップショット
-ICMPANEL_FILEDLGFILTERANY;すべてのファイル
-ICMPANEL_FILEDLGFILTERICM;ICCプロファイル ファイル
-ICMPANEL_GAMMABEFOREINPUT;プロファイルにガンマ適用
-ICMPANEL_INPUTCAMERA;カメラのデフォルト値
-ICMPANEL_INPUTCUSTOM;カスタム
-ICMPANEL_INPUTDLGLABEL;入力 ICC プロファイルを選択...
-ICMPANEL_INPUTEMBEDDED;埋め込み使用, 可能なら
-ICMPANEL_INPUTPROFILE;入力プロファイル
-ICMPANEL_NOICM;No ICM: sRGB 出力
-ICMPANEL_OUTPUTDLGLABEL;出力カラープロファイルを選択...
-ICMPANEL_OUTPUTPROFILE;出力カラープロファイル
-ICMPANEL_SAVEREFERENCE;プロファイリングのための画像を保存
-ICMPANEL_WORKINGPROFILE;作業カラープロファイル
-IMAGEAREA_DETAILVIEW;ディテール
-IPTCPANEL_AUTHORHINT;作成者の名前、作家、写真家またはグラフィックスアーティスト(署名).
 IPTCPANEL_AUTHORSPOSITIONHINT;作成者の肩書または作品の作成者(署名 タイトル).
 IPTCPANEL_AUTHORSPOSITION;作成者の肩書
 IPTCPANEL_AUTHOR;作成者
@@ -559,14 +508,12 @@ IPTCPANEL_TITLEHINT;画像のタイトルを簡略に (タイトル).
 IPTCPANEL_TITLE;タイトル
 IPTCPANEL_TRANSREFERENCEHINT;オリジナルの送信証明の位置を表すコード (オリジナル 送信証明).
 IPTCPANEL_TRANSREFERENCE;送信証明
-MAIN_BUTTON_EXIT;終了
 MAIN_BUTTON_FULLSCREEN;フルスクリーン
 MAIN_BUTTON_NAVNEXT_TOOLTIP;エディタで開いている画像に対応する次の画像に移動します\nショートカット: <b>Shift-F4</b>\n\nファイルブラウザで選択したサムネイルに対応する次の画像に移動するには\nショートカット: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;エディタで開いている画像に対応する前の画像に移動します\nショートカット: <b>Shift-F3</b>\n\nファイルブラウザで選択したサムネイルに対応する前の画像に移動するには\nショートカット: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;現在開いている画像のサムネイルを明示しエディタとファイルブラウザを同期させ、ファイルブラウザでのフィルタをクリアします \nショートカット: <b>x</b>\n\n上記と同じですが、ファイルブラウザでのフィルタをクリアしません\nショートカット: <b>y</b>\n(除外する場合、開いているファイルのサムネイルが表示されませんので注意してください).
 MAIN_BUTTON_PREFERENCES;環境設定
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;現在の画像をキュー処理に追加\nショートカット: <b>Ctrl+b</b>
-MAIN_BUTTON_QUEUE;キューに追加
 MAIN_BUTTON_SAVE_TOOLTIP;現在の画像を保存\nショートカット: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;現在の画像を外部エディタで編集\nショートカット: <b>Ctrl+e</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;表示/非表示 すべてのパネル\nショートカット: <b>m</b>
@@ -587,19 +534,13 @@ MAIN_MSG_CANNOTSAVE;ファイル保存エラー
 MAIN_MSG_CANNOTSTARTEDITOR;エディタを開始することができません
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;"環境設定"で正しいパスを設定してください
 MAIN_MSG_EMPTYFILENAME;未定義のファイル名
-MAIN_MSG_ERRORDURINGIMAGESAVING;画像の保存中にエラー
-MAIN_MSG_EXITJOBSINQUEUEINFO;未処理画像の順番は終了時に失われます
-MAIN_MSG_EXITJOBSINQUEUEQUEST;キュー待ちの画像がありますが、終了しますか？
 MAIN_MSG_IMAGEUNPROCESSED;このコマンドは、先に選択されたすべての画像をキュー処理する必要があります
-MAIN_MSG_JOBSINQUEUE;キューにあるジョブ
 MAIN_MSG_NAVIGATOR;ナビゲータ
 MAIN_MSG_OPERATIONCANCELLED;操作キャンセル
 MAIN_MSG_PATHDOESNTEXIST;パス\n\n<b>%1</b>\n\がありません。設定ウィンドウで正しいパスを設定してください
-MAIN_MSG_PLACES;場所
 MAIN_MSG_QOVERWRITE;上書きしますか？
 MAIN_MSG_SETPATHFIRST;この関数を使用するには、最初に環境設定でターゲット・パスを設定する必要があります！
 MAIN_MSG_WRITEFAILED;書き込みに失敗しました\n\n<b>"%1"</b>\n\nフォルダが在るか書き込み権限を持っているか確認してください
-MAIN_TAB_BASIC;ベーシック
 MAIN_TAB_COLOR;カラー
 MAIN_TAB_COLOR_TOOLTIP;ショートカット: <b>Alt-c</b>
 MAIN_TAB_DETAIL;ディテール
@@ -610,7 +551,6 @@ MAIN_TAB_EXPORT; 書き出し
 MAIN_TAB_EXPOSURE;露光
 MAIN_TAB_EXPOSURE_TOOLTIP;ショートカット: <b>Alt-e</b>
 MAIN_TAB_FILTER;絞り込み
-MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;メタデータ
 MAIN_TAB_METADATA_TOOLTIP;ショートカット: <b>Alt-m</b>
@@ -619,24 +559,19 @@ MAIN_TAB_RAW_TOOLTIP;ショートカット: <b>Alt-r</b>
 MAIN_TAB_TAGGING;タグ付け
 MAIN_TAB_TRANSFORM;変形
 MAIN_TAB_TRANSFORM_TOOLTIP;ショートカット: <b>Alt-t</b>
-MAIN_TOGGLE_BEFORE_AFTER;補正 前|後
 MAIN_TOOLTIP_BACKCOLOR0;プレビューの背景色を指定します: <b>テーマに基づく</b>\nショートカット: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;プレビューの背景色を指定します: <b>黒</b>\nショートカットt: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;プレビューの背景色を指定します: <b>白</b>\nショートカット: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>固定</b> / <b>固定解除</b> - <b>補正前</b> の表示設定\n\n<b>固定</b>: <b>補正前</b>をそのまま表示し変更されません\n複数のツールの累積効果を評価するのに役立ちます\nさらに、比較は履歴上のどこからでも行うことができます\n\n<b>固定解除</b>: 現在使用のツールの効果が <b>補正後</b> に表示され、その1段階前が <b>補正前</b> に表示されます
-MAIN_TOOLTIP_HIDEFP;ボタンパネル 表示/非表示(ディレクトリとファイルブラウザ)\nショートカット: <b>f</b>
 MAIN_TOOLTIP_HIDEHP;左パネル 表示/非表示 (履歴含む)\nショートカット:  <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;ハイライト・クリッピング領域の表示\nショートカット: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;シャドウ・クリッピング領域の表示\nショートカット: <b>&gt;</b>
-MAIN_TOOLTIP_PREFERENCES;設定する
 MAIN_TOOLTIP_PREVIEWB;<b>ブルー チャンネル</b>表示\nショートカット: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;<b>フォーカス・マスク</b>表示\nショートカット: <b>Shift-f</b>\n\n浅い被写界深度、低ノイズ、高ズームの画像の場合は、より正確に\n\nノイズの多い画像に対しては、検出精度を向上させるため10から30%縮小して評価します\n\nフォーカス・マスクをオンにすると表示に時間が掛かります
 MAIN_TOOLTIP_PREVIEWG;<b>グリーン チャンネル</b>表示\nショートカット: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;<b>輝度</b>表示\nショートカット: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;<b>レッド チャンネル</b>表示\nショートカット: <b>r</b>
 MAIN_TOOLTIP_QINFO;画像の情報\nショートカット: <b>i</b>
-MAIN_TOOLTIP_SAVEAS;フォルダを選択して保存
-MAIN_TOOLTIP_SAVE;デフォルトのフォルダに保存
 MAIN_TOOLTIP_SHOWHIDELP1;表示/非表示 左パネル\nショートカット: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;表示/非表示 右パネル\nショートカット: <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;表示/非表示 上パネル\nショートカット: <b>Shift-l</b>
@@ -670,11 +605,7 @@ PARTIALPASTE_CHANNELMIXERBW;白黒
 PARTIALPASTE_CHANNELMIXER;チャンネル・ミキサー
 PARTIALPASTE_COARSETRANS;90° 回転 / 反転
 PARTIALPASTE_COLORAPP;CIE色の見えモデル2002
-PARTIALPASTE_COLORBOOST;発色補正
-PARTIALPASTE_COLORDENOISE;カラー ノイズ低減
 PARTIALPASTE_COLORGROUP;カラー 設定
-PARTIALPASTE_COLORMIXER;カラー ミキサー
-PARTIALPASTE_COLORSHIFT;カラー シフト
 PARTIALPASTE_COMMONTRANSFORMPARAMS;オート・フィル
 PARTIALPASTE_COMPOSITIONGROUP;変形 設定
 PARTIALPASTE_CROP;切り抜き
@@ -695,10 +626,6 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;フラットフィールド ぼかし半径
 PARTIALPASTE_FLATFIELDBLURTYPE;フラットフィールド ぼかしタイプ
 PARTIALPASTE_FLATFIELDFILE;フラットフィールド ファイル
 PARTIALPASTE_GRADIENT;グラデーションフィルター
-PARTIALPASTE_HLRECONSTRUCTION;ハイライト復元
-PARTIALPASTE_HLRECOVERYAMOUNT;ハイライト復元 適用量
-PARTIALPASTE_HLRECOVERYTHRESHOLD;ハイライト復元 しきい値
-PARTIALPASTE_HLRECOVERY;ハイライト復元
 PARTIALPASTE_HSVEQUALIZER;HSV イコライザ
 PARTIALPASTE_ICMGAMMA;出力ガンマ
 PARTIALPASTE_ICMSETTINGS;ICM 設定
@@ -707,8 +634,6 @@ PARTIALPASTE_IPTCINFO;IPTC 情報
 PARTIALPASTE_LABCURVE;Lab 調整
 PARTIALPASTE_LENSGROUP;レンズ設定
 PARTIALPASTE_LENSPROFILE;レンズ補正プロファイル
-PARTIALPASTE_LUMADENOISE;輝度 ノイズ低減
-PARTIALPASTE_LUMINANCEGROUP;輝度設定
 PARTIALPASTE_METAICMGROUP;メタデータ/ICM 設定
 PARTIALPASTE_PCVIGNETTE;ビネットフィルター
 PARTIALPASTE_PERSPECTIVE;パースペクティブの補正
@@ -737,7 +662,6 @@ PARTIALPASTE_SHARPENING;シャープ化 (USM/RL)
 PARTIALPASTE_SHARPENMICRO;マイクロコントラスト
 PARTIALPASTE_VIBRANCE;自然な彩度
 PARTIALPASTE_VIGNETTING;周辺光量補正
-PARTIALPASTE_WAVELETEQUALIZER;ウェーブレット・イコライザ
 PARTIALPASTE_WHITEBALANCE;ホワイトバランス
 PREFERENCES_ADD;追加
 PREFERENCES_APPLNEXTSTARTUP;要再起動
@@ -755,9 +679,6 @@ PREFERENCES_CACHECLEARPROFILES;プロファイルのクリア
 PREFERENCES_CACHECLEARTHUMBS;サムネイルのクリア
 PREFERENCES_CACHEMAXENTRIES;最大キャッシュエントリー数
 PREFERENCES_CACHEOPTS;キャッシュ オプション
-PREFERENCES_CACHESTRAT1;スピード重視
-PREFERENCES_CACHESTRAT2;メモリ消費重視
-PREFERENCES_CACHESTRAT;キャッシュ運用の方針
 PREFERENCES_CACHETHUMBHEIGHT;サムネイル縦の最大値
 PREFERENCES_CIEART;CIECAM02 最適化
 PREFERENCES_CIEART_LABEL;倍精度の代わりに単精度浮動小数点を使用
@@ -784,7 +705,6 @@ PREFERENCES_DATEFORMATHINT;<i>次の書式を使用することができます:<
 PREFERENCES_DATEFORMAT;日付の形式
 PREFERENCES_DEFAULTLANG;デフォルトの言語
 PREFERENCES_DEFAULTTHEME;デフォルトテーマ
-PREFERENCES_DEMOSAICINGALGO;デモザイクのアルゴリズム
 PREFERENCES_DIRDARKFRAMES;ダークフレーム・ディレクトリ
 PREFERENCES_DIRHOME;ホーム・ディレクトリ
 PREFERENCES_DIRLAST;最近参照したディレクトリ
@@ -817,7 +737,6 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;出力デバイスの Yb 輝度 (%)
 PREFERENCES_GTKTHEME;GTK デフォルト
-PREFERENCES_HINT;ヒント
 PREFERENCES_HISTOGRAMPOSITIONLEFT;左パネルにヒストグラム
 PREFERENCES_HLTHRESHOLD;ハイライト・クリッピング領域のしきい値
 PREFERENCES_ICCDIR;カラープロファイルを含むディレクトリ
@@ -828,7 +747,6 @@ PREFERENCES_INTENT_RELATIVE;相対的な色域を維持
 PREFERENCES_INTENT_SATURATION;彩度
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;RAWファイルが未編集の場合 JPEGのサムネイルを表示
 PREFERENCES_LANGAUTODETECT;OSの言語設定を使用
-PREFERENCES_LIVETHUMBNAILS;ライブ・サムネイル (遅い)
 PREFERENCES_MENUGROUPEXTPROGS;"..で開く"のグループ
 PREFERENCES_MENUGROUPFILEOPERATIONS;"ファイル操作"のグループ
 PREFERENCES_MENUGROUPLABEL;"カラーラベル"のグループ
@@ -841,7 +759,6 @@ PREFERENCES_MULTITABDUALMON;マルチ編集タブモード（セカンド・モ�
 PREFERENCES_MULTITAB;マルチ編集タブモード
 PREFERENCES_OUTDIRFOLDERHINT;選択したフォルダに画像を保存します
 PREFERENCES_OUTDIRFOLDER;フォルダに保存
-PREFERENCES_OUTDIRHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;次の書式文字を使用することができます:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...<b>%r</b>\n\nこれらの書式文字は画像パス名のそれぞれ別々の部分、画像の属性を参照します\n\n例えば、次の画像を処理中の場合は:\n\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\n書式文字の意味するものは:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b>は写真のランクに置き換えられます。評価なしは％rは'0 'に置換されます。画像がごみ箱にある場合、％rは'X'に置換されます\n\n元画像と同じ場所に出力したい場合はこのように書きます:\n<b>%p1/%f</b>\n\n処理画像のディレクトリ下 "<i>converted</i>" という名前のディレクトリに出力画像を保存したい場合このように書きます:\n<b>%p1/converted/%f</b>\n\n"<i>/home/tom/photos/converted/2010-10-31</i>" という名前のディレクトリに出力画像を保存したい場合はこのように書きます:\n<b>%p2/converted/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;テンプレートを使う
 PREFERENCES_OUTDIR;出力ディレクトリ
@@ -864,15 +781,12 @@ PREFERENCES_PSPATH;Adobe Photoshop のインストール・ディレクトリ
 PREFERENCES_RGBDTL_LABEL;ノイズ低減のスレッドの最大数
 PREFERENCES_RGBDTL_TOOLTIP;ノイズ低減は、10メガピクセル画像では128MB程度、40メガピクセル画像では512MBを必要とします、そして更にスレッドごとに128MBが必要です。複数のスレッドを同時に実行すると演算が速くなります。自動的にできる限り多くのスレッドを使用するには"0"の設定のままにします
 PREFERENCES_SELECTFONT;フォント選択
-PREFERENCES_SELECTICCDIRDLG;ICCプロファイル・ディレクトリ選択...
 PREFERENCES_SELECTLANG;言語選択
-PREFERENCES_SELECTMONITORPROFDLG;ディスプレイのICCプロファイルを選択...
 PREFERENCES_SELECTTHEME;テーマの選択
 PREFERENCES_SET;設定
 PREFERENCES_SHOWBASICEXIF;基本Exif情報を表示
 PREFERENCES_SHOWDATETIME;日付表示
 PREFERENCES_SHOWEXPOSURECOMPENSATION;露光補正追加
-PREFERENCES_SHOWONLYRAW;RAWファイルのみ表示
 PREFERENCES_SHOWPROFILESELECTOR;プロファイル・セレクタの表示
 PREFERENCES_SHTHRESHOLD;シャドウ・クリッピング領域のしきい値
 PREFERENCES_SINGLETABVERTAB;シングル編集タブモード, 垂直タブ
@@ -888,10 +802,8 @@ PREFERENCES_TAB_BROWSER;ファイルブラウザ
 PREFERENCES_TAB_COLORMGR;カラーマネジメント
 PREFERENCES_TAB_GENERAL;一般
 PREFERENCES_TAB_IMPROC;画像処理
-PREFERENCES_TAB_OUTPUT;出力オプション
 PREFERENCES_TAB_PERFORMANCE;パフォーマンス
 PREFERENCES_TAB_SOUND;サウンド
-PREFERENCES_THUMBSIZE;サムネイルのサイズ
 PREFERENCES_TP_LABEL;ツール パネル:
 PREFERENCES_TP_USEICONORTEXT;テキストの代わりにタブアイコンを使用
 PREFERENCES_TP_VSCROLLBAR;ツールパネルの垂直スクロールバーを隠す
@@ -913,22 +825,13 @@ PROFILEPANEL_PASTEPPASTE;貼り付けるパラメータ
 PROFILEPANEL_PCUSTOM;カスタム
 PROFILEPANEL_PFILE;ファイルから
 PROFILEPANEL_PINTERNAL;ニュートラル
-PROFILEPANEL_PLASTPHOTO;更新済の写真
 PROFILEPANEL_PLASTSAVED;更新済
-PROFILEPANEL_PROFILE;プロファイル
 PROFILEPANEL_SAVEDLGLABEL;処理プロファイルを保存...
 PROFILEPANEL_SAVEPPASTE;保存するパラメータ
 PROFILEPANEL_TOOLTIPCOPY;クリップボードに現在のプロファイルをコピーします\nCtrl-クリックでコピーするパラメータを選択します
 PROFILEPANEL_TOOLTIPLOAD;ファイルからプロファイルを読み込みます\nCtrl-クリックで読み込むパラメータを選択します
 PROFILEPANEL_TOOLTIPPASTE; クリップボードからプロファイルを貼り付けます\nCtrl-クリックで貼り付けるパラメータを選択します
 PROFILEPANEL_TOOLTIPSAVE;現在のプロファイルを保存\nCtrl-クリックで保存するパラメータを選択します
-PROGRESSBAR_BADPIXELS;バッドピクセル...
-PROGRESSBAR_CACORRECTION;色収差補正...
-PROGRESSBAR_DARKFRAME;ダークフレーム...
-PROGRESSBAR_DECODING;rawファイルデコード中...
-PROGRESSBAR_DEMOSAICING;デモザイク処理中...
-PROGRESSBAR_GREENEQUIL;グリーン 平衡化...
-PROGRESSBAR_LINEDENOISE;ライン ノイズ低減...
 PROGRESSBAR_LOADINGTHUMBS;サムネイルの読み込み...
 PROGRESSBAR_LOADING;画像読み込み中...
 PROGRESSBAR_LOADJPEG;JPEGファイル読み込み中...
@@ -943,9 +846,7 @@ PROGRESSBAR_SAVEPNG;PNGファイル保存中...
 PROGRESSBAR_SAVETIFF;TIFFファイル保存中...
 PROGRESSBAR_SNAPSHOT_ADDED;スナップショット追加
 PROGRESSDLG_PROFILECHANGEDINBROWSER;ブラウザでプロファイルの変更
-QINFO_FOCALLENGTH;焦点距離
 QINFO_ISO;ISO
-QINFO_LENS;レンズ
 QINFO_NOEXIF;Exifデータがありません
 SAVEDLG_AUTOSUFFIX;ファイルが存在する場合、自動的に末尾に文字を加える
 SAVEDLG_FILEFORMAT;ファイル形式
@@ -953,7 +854,6 @@ SAVEDLG_FORCEFORMATOPTS;強制保存オプション
 SAVEDLG_JPEGQUAL;JPEG 品質
 SAVEDLG_JPGFILTER;JPEG ファイル
 SAVEDLG_PNGCOMPR;PNG 圧縮
-SAVEDLG_PNGFILTER;PNG ファイル
 SAVEDLG_PUTTOQUEUEHEAD;キュー処理の最初に追加
 SAVEDLG_PUTTOQUEUETAIL;キュー処理の最後に追加
 SAVEDLG_PUTTOQUEUE;キュー処理に追加
@@ -1015,7 +915,6 @@ TP_BWMIX_MET_CHANMIX;チャンネルミキサー
 TP_BWMIX_MET_DESAT;彩度低減
 TP_BWMIX_MET_LUMEQUAL;輝度イコライザー
 TP_BWMIX_MIXC;ミキサー
-TP_BWMIX_MIXF;ミキサーフィルター
 TP_BWMIX_NEUTRAL;ミキサーのリセット
 TP_BWMIX_NEUTRAL_TIP;全ての値（フィルター、チャンネルミキサー）をデフォルトに戻します
 TP_BWMIX_ORANGE;オレンジ
@@ -1095,7 +994,6 @@ TP_COLORAPP_DATACIE;カーブにCIECAM02出力のヒストグラムを表示
 TP_COLORAPP_DATACIE_TOOLTIP;有効の場合、CIECAM02カーブのヒストグラムは、JかQ、CIECAM02調整後のCかs、またはMの値/範囲の近似値を表示します\nこの選択はメイン・ヒストグラムパネルには影響を与えません\n\n無効の場合、CIECAM02カーブのヒストグラムは、CIECAM調整前のLab値を表示します
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;チェックボックスが有効の場合 (推奨)\nRTは、CAT02で使用され、更にCIECAM02全体で使用する最適値を算出します\n手動で値を設定するには、チェックボックスを無効にします (65以上の値を推奨)
 TP_COLORAPP_DEGREE_TOOLTIP;CIE色順応変換2002（CAT02)の量
-TP_COLORAPP_EQUAL;同等
 TP_COLORAPP_GAMUT;色域制御 (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Labモードの色域制御を許可
 TP_COLORAPP_HUE;色相 (h)
@@ -1247,7 +1145,6 @@ TP_HLREC_METHOD;方式:
 TP_HSVEQUALIZER_CHANNEL;HSV チャンネル
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV イコライザ
-TP_HSVEQUALIZER_NEUTRAL;ニュートラル
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;マトリクスとハイライト・ブレンド
@@ -1271,7 +1168,6 @@ TP_ICM_INPUTNONE_TOOLTIP;すべてにカラープロファイルを使用しな�
 TP_ICM_INPUTPROFILE;入力プロファイル
 TP_ICM_LABEL;カラー・マネジメント
 TP_ICM_NOICM;No ICM: sRGB 出力
-TP_ICM_OUTPUTDLGLABEL;出力 ICC プロファイルを選択...
 TP_ICM_OUTPUTPROFILE;出力プロファイル
 TP_ICM_SAVEREFERENCE;プロファイリングを参照する画像を保存
 TP_ICM_SAVEREFERENCE_TOOLTIP;入力プロファイルが適用される前のリニアなTIFF画像を保存します。キャリブレーション目的やカメラプロファイルの作成などに使います。
@@ -1325,9 +1221,6 @@ TP_LENSPROFILE_LABEL;レンズ補正 プロファイル
 TP_LENSPROFILE_USECA;色収差補正
 TP_LENSPROFILE_USEDIST;歪曲収差補正
 TP_LENSPROFILE_USEVIGN;周辺光量補正
-TP_LUMADENOISE_EDGETOLERANCE;エッジの許容度
-TP_LUMADENOISE_LABEL;輝度 ノイズ低減
-TP_LUMADENOISE_RADIUS;半径
 TP_NEUTRAL;ニュートラル
 TP_NEUTRAL_TIP;露光量補正のスライダー値をニュートラルにリセットします。\n自動露光補正の調整値ついても同様にリセットされます
 TP_PCVIGNETTE_FEATHER;フェザー処理
@@ -1378,7 +1271,6 @@ TP_RESIZE_BILINEAR;バイリニア
 TP_RESIZE_CROPPEDAREA;切り抜き領域
 TP_RESIZE_FITBOX;バウンディング・ボックス
 TP_RESIZE_FULLIMAGE;全画像
-TP_RESIZE_FULLSIZE;全画像サイズ:
 TP_RESIZE_HEIGHT;高さ
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;リサイズ
@@ -1502,13 +1394,6 @@ TP_WBALANCE_TUNGSTEN;タングステン
 TP_WBALANCE_WATER1;水中 1
 TP_WBALANCE_WATER2;水中 2
 TP_WBALANCE_WATER_HEADER;水中
-ZOOMBAR_DETAIL;ディテール
-ZOOMBAR_HUGE;特大
-ZOOMBAR_LARGE;大
-ZOOMBAR_NORMAL;標準
-ZOOMBAR_PREVIEW;表示
-ZOOMBAR_SCALE;スケール
-ZOOMBAR_SMALL;小
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;新規ディテール ウィンドウを開く
 ZOOMPANEL_ZOOM100;100%にズーム\nショートカット: <b>z</b>

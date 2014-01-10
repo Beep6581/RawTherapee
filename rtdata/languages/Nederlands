@@ -42,7 +42,6 @@ CURVEEDITOR_TYPE;Type:
 EDITWINDOW_TITLE;Bewerk afbeelding
 EXIFFILTER_APERTURE;Diafragma
 EXIFFILTER_CAMERA;Camera
-EXIFFILTER_DIALOGLABEL;Exif-filter
 EXIFFILTER_EXPOSURECOMPENSATION;Belichtingscompensatie (EV)
 EXIFFILTER_FILETYPE;Bestandstype
 EXIFFILTER_FOCALLEN;Brandpuntsafstand
@@ -96,7 +95,6 @@ EXTPROGTARGET_2;verwerkingsrij
 FILEBROWSER_ADDDELTEMPLATE;Voeg sjablonen toe of verwijder...
 FILEBROWSER_APPLYPROFILE;Pas profiel toe
 FILEBROWSER_APPLYPROFILE_PARTIAL;Pas profiel toe (gedeeltelijk)
-FILEBROWSER_ARRANGEMENTHINT;Verticale/horizontale uitlijning miniaturen
 FILEBROWSER_AUTODARKFRAME;Automatisch donkerframe
 FILEBROWSER_AUTOFLATFIELD;Selecteer automatisch vlakveldopname
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klik om te navigeren naar het gekozen pad
@@ -115,11 +113,6 @@ FILEBROWSER_DELETEDLGMSG;Weet u zeker dat u de geselecteerde %1 bestanden wilt v
 FILEBROWSER_EMPTYTRASHHINT;Verwijder bestanden in prullenbak voorgoed
 FILEBROWSER_EMPTYTRASH;Leeg prullenbak
 FILEBROWSER_EXEC_CPB;Start externe/eigen profielgenerator
-FILEBROWSER_EXIFFILTERAPPLYHINT;Pas Exif-filter toe op bestandsnavigator
-FILEBROWSER_EXIFFILTERAPPLY;Activeer
-FILEBROWSER_EXIFFILTERLABEL;Exif-filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Stel Exif-filter in
-FILEBROWSER_EXIFFILTERSETTINGS;Stel in
 FILEBROWSER_EXTPROGMENU;Open met
 FILEBROWSER_FLATFIELD;Vlakveld
 FILEBROWSER_MOVETODARKFDIR;Verplaats naar map met donkerframes
@@ -129,12 +122,6 @@ FILEBROWSER_OPENDEFAULTVIEWER;Windows standaard viewer (verwerkingsrij)
 FILEBROWSER_PARTIALPASTEPROFILE;Gedeeltelijk plakken
 FILEBROWSER_PASTEPROFILE;Plak profiel
 FILEBROWSER_POPUPCANCELJOB;Verwijder uit verwerkingsrij
-FILEBROWSER_POPUPCOLORLABEL0;Label: Geen
-FILEBROWSER_POPUPCOLORLABEL1;Label: Rood
-FILEBROWSER_POPUPCOLORLABEL2;Label: Geel
-FILEBROWSER_POPUPCOLORLABEL3;Label: Groen
-FILEBROWSER_POPUPCOLORLABEL4;Label: Blauw
-FILEBROWSER_POPUPCOLORLABEL5;Label: Paars
 FILEBROWSER_POPUPCOLORLABEL;Kleur label
 FILEBROWSER_POPUPCOPYTO;Kopieer naar...
 FILEBROWSER_POPUPFILEOPERATIONS;Bestandsbewerkingen
@@ -145,21 +132,13 @@ FILEBROWSER_POPUPOPEN;Open
 FILEBROWSER_POPUPPROCESSFAST;Plaats in verwerkingsrij voor Snelle Export
 FILEBROWSER_POPUPPROCESS;Plaats in verwerkingsrij
 FILEBROWSER_POPUPPROFILEOPERATIONS;Profielbewerkingen
-FILEBROWSER_POPUPRANK1;Waardeer met 1 ster
-FILEBROWSER_POPUPRANK2;Waardeer met 2 sterren 
-FILEBROWSER_POPUPRANK3;Waardeer met 3 sterren
-FILEBROWSER_POPUPRANK4;Waardeer met 4 sterren
-FILEBROWSER_POPUPRANK5;Waardeer met 5 sterren
 FILEBROWSER_POPUPREMOVEINCLPROC;Verwijder (met bestand in verwerkingsrij)
-FILEBROWSER_POPUPREMOVESUBMENU;Verwijder
 FILEBROWSER_POPUPREMOVE;Verwijder van bestandssysteem
 FILEBROWSER_POPUPRENAME;Hernoem
 FILEBROWSER_POPUPSELECTALL;Alles selecteren
 FILEBROWSER_POPUPTRASH;Verplaats naar prullenbak
 FILEBROWSER_POPUPUNRANK;Verwijder sterwaardering
 FILEBROWSER_POPUPUNTRASH;Haal terug uit prullenbak
-FILEBROWSER_PROCESSINGSETTINGSHINT;Kies bestandsformaat en doelmap
-FILEBROWSER_PROCESSINGSETTINGS;Instellingen
 FILEBROWSER_QUERYBUTTONHINT;Wis zoekopdracht
 FILEBROWSER_QUERYHINT;Typ een deel van de bestandsnaam \n<b>Ctrl-f</b> Zet focus;\n<b>Enter</b> Zoeken
 FILEBROWSER_QUERYLABEL; Zoeken:
@@ -181,7 +160,6 @@ FILEBROWSER_SHOWDIRHINT;Toon alle foto's in map
 FILEBROWSER_SHOWEDITEDHINT;Toon bewerkte foto's <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Toon niet-bewerkte foto's <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Toon EXIF-info
-FILEBROWSER_SHOWQUEUEHINT;Toon inhoud verwerkingsrij
 FILEBROWSER_SHOWRANK1HINT;Toon foto's met 1 ster 
 FILEBROWSER_SHOWRANK2HINT;Toon foto's met 2 sterren 
 FILEBROWSER_SHOWRANK3HINT;Toon foto's met 3 sterren 
@@ -213,9 +191,7 @@ GENERAL_DISABLE;Deactiveren
 GENERAL_ENABLED;Geactiveerd
 GENERAL_ENABLE;Activeer
 GENERAL_FILE;Bestand
-GENERAL_HIGH_QUALITY;Hoge kwaliteit
 GENERAL_LANDSCAPE;Landschap
-GENERAL_LOAD;Laden
 GENERAL_NA;nvt.
 GENERAL_NONE;Geen
 GENERAL_NO;Nee
@@ -224,14 +200,6 @@ GENERAL_PORTRAIT;Portret
 GENERAL_SAVE;Opslaan
 GENERAL_UNCHANGED;(Onveranderd)
 GENERAL_WARNING;Waarschuwing
-GENERAL_YES;Ja
-HISTOGRAM_BUTTON_BAR;RGB
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_BAR;Toon/verberg RGB-indicatie\nRechtermuisklik op foto om te starten/stoppen
 HISTOGRAM_TOOLTIP_B;Toon/verberg blauw histogram
 HISTOGRAM_TOOLTIP_CHRO;Toon/Verberg Chromaticiteit histogram
@@ -494,29 +462,10 @@ HISTORY_MSG_247;'LH' curve
 HISTORY_MSG_248;'HH' curve
 HISTORY_MSG_249;Detailcontrast - Drempel
 HISTORY_MSG_250;Ruis -Verbeteren
-HISTORY_NEWSNAPSHOTAS;Als...
 HISTORY_NEWSNAPSHOT;Nieuw
 HISTORY_NEWSNAPSHOT_TOOLTIP;Sneltoets: <b>Alt-s</b>
-HISTORY_NEWSSDIALOGLABEL;Naam snapshot:
-HISTORY_NEWSSDIALOGTITLE;Voeg nieuw snapshot toe
-HISTORY_SETTO;Instellen
 HISTORY_SNAPSHOTS;Snapshots
 HISTORY_SNAPSHOT;Nieuw
-ICMPANEL_FILEDLGFILTERANY;Alle bestanden
-ICMPANEL_FILEDLGFILTERICM;ICC-profielbestanden
-ICMPANEL_GAMMABEFOREINPUT;Profiel past gamma toe
-ICMPANEL_INPUTCAMERA;Camera
-ICMPANEL_INPUTCUSTOM;Handmatig
-ICMPANEL_INPUTDLGLABEL;Selecteer invoer-ICC-profiel...
-ICMPANEL_INPUTEMBEDDED;Gebruik ingebed profiel indien mogelijk
-ICMPANEL_INPUTPROFILE;Invoerprofiel
-ICMPANEL_NOICM;Geen ICM: sRGB-uitvoer
-ICMPANEL_OUTPUTDLGLABEL;Selecteer uitvoer-ICC-profiel...
-ICMPANEL_OUTPUTPROFILE;Uitvoerprofiel
-ICMPANEL_SAVEREFERENCE;Bewaar referentiefoto tbv. profiling
-ICMPANEL_WORKINGPROFILE;Werkprofiel
-IMAGEAREA_DETAILVIEW;Detailvenster
-IPTCPANEL_AUTHORHINT;Naam van de maker van het object, bijv. schrijver, fotograaf of ontwerper (By-line)
 IPTCPANEL_AUTHORSPOSITIONHINT;Titel van de maker(s) van het object (By-line Title)
 IPTCPANEL_AUTHORSPOSITION;Positie van de maker
 IPTCPANEL_AUTHOR;Auteur
@@ -558,14 +507,12 @@ IPTCPANEL_TITLEHINT;Een korte referentienaam voor de foto (Objectnaam)
 IPTCPANEL_TITLE;Titel
 IPTCPANEL_TRANSREFERENCEHINT;Een code die de locatie van de oorspronkelijke transmissie representeert (Original Transmission Reference)
 IPTCPANEL_TRANSREFERENCE;Trans. Reference
-MAIN_BUTTON_EXIT;Afsluiten
 MAIN_BUTTON_FULLSCREEN;Volledig scherm
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigeer naar de volgende afbeelding relatief ten opzichte van de geopende afbeelding in de Editor\nSnelkoppeling: <b>Shift-F4</b>\n\nNavigeer naar de volgende afbeelding relatief ten opzichte van de miniatuur geselecteerd in de Bestandsnavigator\nSnelkoppeling: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Navigeer naar de vorige afbeelding relatief ten opzichte van de geopende afbeelding in de Editor\nShortcut: <b>Shift-F3</b> \n\nNavigeer naar de vorige afbeelding relatief ten opzichte van de miniatuur geselecteerd in de Bestandsnavigator\nSnelkoppeling: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchroniseer de Bestandsnavigator met de Editor om de miniatuur te tonen van de huidig geopende afbeelding, en verwijder de filters in de Bestandsnavigator \nSnelkoppeling: <b>x</b>\n\nAls voorgaand, maar zonder het verwijderen van de filters in de Bestandsnavigator \nSnelkoppeling: <b>y</b>\n(NB de miniatuur van de geopende afbeelding zal niet worden getoond indien gefilterd)
 MAIN_BUTTON_PREFERENCES;Voorkeuren
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Plaats huidige foto in verwerkingsrij.\nSneltoets: <b>Ctrl+B</b>
-MAIN_BUTTON_QUEUE;Plaats in verwerkingsrij
 MAIN_BUTTON_SAVE_TOOLTIP;Bewaar huidige foto.\nSneltoets: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Stuur huidige foto naar extern fotobewerkingsprogramma.\nSneltoets: <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Toon/verberg alle zijpanelen.\nSneltoets: <b>m</b>
@@ -586,19 +533,13 @@ MAIN_MSG_CANNOTSAVE;Fout bij opslaan van de afbeelding
 MAIN_MSG_CANNOTSTARTEDITOR;Kan fotoprogramma niet starten. 
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Geef juiste pad op in 'Voorkeuren'.
 MAIN_MSG_EMPTYFILENAME;Geen bestandsnaam opgegeven!
-MAIN_MSG_ERRORDURINGIMAGESAVING;Fout tijdens opslaan foto
-MAIN_MSG_EXITJOBSINQUEUEINFO;Foto's in de verwerkingsrij zullen niet verwerkt worden bij afsluiten.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Weet u zeker dat u wilt stoppen? De verwerkingsrij bevat nog foto's.
 MAIN_MSG_IMAGEUNPROCESSED;Deze opdracht vereist dat alle geselecteerde foto's eerst moeten zijn verwerkt.
-MAIN_MSG_JOBSINQUEUE;Bewerking(en) in de wachtrij
 MAIN_MSG_NAVIGATOR;Navigator
 MAIN_MSG_OPERATIONCANCELLED;Opdracht afgebroken
 MAIN_MSG_PATHDOESNTEXIST;Het pad\n\n<b>%1</b>\n\nbestaat niet. Zet een correct pad bij Voorkeuren.
-MAIN_MSG_PLACES;Locaties
 MAIN_MSG_QOVERWRITE;Wilt u het bestand overschrijven?
 MAIN_MSG_SETPATHFIRST;Specificeer eerst een doelmap in Voorkeuren  \nom deze functionaliteit te kunnen gebruiken!
 MAIN_MSG_WRITEFAILED;Niet opgeslagen\n\n<b>"%1"</b>\n\nControleer of de map bestaat en dat u schrijfrechten heeft.
-MAIN_TAB_BASIC;Grondwaarde
 MAIN_TAB_COLOR;Kleur
 MAIN_TAB_COLOR_TOOLTIP;Sneltoets: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detail
@@ -609,7 +550,6 @@ MAIN_TAB_EXPORT; Exporteren
 MAIN_TAB_EXPOSURE;Belichting
 MAIN_TAB_EXPOSURE_TOOLTIP;Sneltoets: <b>Alt-e</b>
 MAIN_TAB_FILTER;Filter
-MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_METADATA_TOOLTIP;Sneltoets: <b>Alt-m</b>
@@ -618,24 +558,19 @@ MAIN_TAB_RAW_TOOLTIP;Sneltoets: <b>Alt-r</b>
 MAIN_TAB_TAGGING;Tags
 MAIN_TAB_TRANSFORM;Transformeer
 MAIN_TAB_TRANSFORM_TOOLTIP;Sneltoets: <b>Alt-t</b>
-MAIN_TOGGLE_BEFORE_AFTER;V-N
 MAIN_TOOLTIP_BACKCOLOR0;Achtergrond kleur van het voorbeeld: <b>Thema-based</b>\nSneltoets: <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;Achtergrond kleur van het voorbeeld: <b>Zwart</b>\nSneltoets: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Achtergrond kleur van het voorbeeld: <b>Wit</b>\nSneltoets: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vergrendel</b> / <b>Ontgrendel</b> de <b>Voor</b>afbeelding.\n\n<b>Vergrendel</b>: hou de <b>Voor</b>afbeelding ongewijzigd.\nDit is handig om het cumulatieve effect van meerdere gereedschappen te beoordelen.\nBovendien kan er worden vergeleken met elke stap in de geschiedenislijst.\n\n<b>Ontgrendel</b>: de <b>Voor</b>afbeelding volgt een stap achter de <b>Na</b>afbeelding en laat de afbeelding zien zonder het effect van het huidige gereedschap.
-MAIN_TOOLTIP_HIDEFP;Toon/verberg onderpaneel (bestandsnavigator).\nSneltoets: <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Toon/verberg linkerpaneel (geschiedenis).\nSneltoets: <b>H</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Overbelichtingsindicatie.\nSneltoets: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Onderbelichtingsindicatie.\nSneltoets: <b>&gt;</b>
-MAIN_TOOLTIP_PREFERENCES;Voorkeuren en instellingen
 MAIN_TOOLTIP_PREVIEWB;Bekijk het <b>Blauwe kanaal</b>.\nSneltoets: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Bekijk het <b>Focus Masker</b>.\nSneltoets: <b>Shift-F</b>\n\nAccurater bij afbeeldingen met geringe scherptediepte, weinig ruis en hogere zoomniveaus.\n\nBekijk de afbeelding op lagere zoomniveaus (10-30%) om de accuratesse te vergroten bij afbeeldingen met veel ruis.\n\nHet voorbeeld wordt langzamer aangemaakt als Focus Masker aanstaat.
 MAIN_TOOLTIP_PREVIEWG;Bekijk het <b>Groene kanaal</b>.\nSneltoets: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Bekijk de <b>Luminositeit</b>.\nSneltoets: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Bekijk het <b>Rode kanaal</b>.\nSneltoets: <b>r</b>
 MAIN_TOOLTIP_QINFO;Beknopte fotogegevens
-MAIN_TOOLTIP_SAVEAS;Bewaar foto in andere map/ander formaat
-MAIN_TOOLTIP_SAVE;Bewaar foto in standaardmap
 MAIN_TOOLTIP_SHOWHIDELP1;Toon/verberg linkerpaneel.\nSneltoets: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Toon/verberg rechterpaneel.\nSneltoets: <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Toon/verberg bovenste paneel.\nSneltoets: <b>Shift-l</b>
@@ -669,11 +604,7 @@ PARTIALPASTE_CHANNELMIXERBW;Zwart-Wit
 PARTIALPASTE_CHANNELMIXER;Kleurkanaal mixer
 PARTIALPASTE_COARSETRANS;90 graden roteren/spiegelen
 PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
-PARTIALPASTE_COLORBOOST;Kleurversterking
-PARTIALPASTE_COLORDENOISE;Ruisonderdrukking kleur
 PARTIALPASTE_COLORGROUP;Kleurgerelateerde instellingen
-PARTIALPASTE_COLORMIXER;Kleurenmixer
-PARTIALPASTE_COLORSHIFT;Kleuroversturing
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Automatisch uitvullen
 PARTIALPASTE_COMPOSITIONGROUP;Compositie-instellingen
 PARTIALPASTE_CROP;Bijsnijden
@@ -694,10 +625,6 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;Vlakveld verzachting straal
 PARTIALPASTE_FLATFIELDBLURTYPE;Vlakveld verzachting type
 PARTIALPASTE_FLATFIELDFILE;Vlakveldopname
 PARTIALPASTE_GRADIENT;Grijsverloop Filter
-PARTIALPASTE_HLRECONSTRUCTION;Repareer hoge lichten
-PARTIALPASTE_HLRECOVERYAMOUNT;Hoge lichten comprimeren: hoeveelheid
-PARTIALPASTE_HLRECOVERYTHRESHOLD;Hoge lichten comprimeren: drempel
-PARTIALPASTE_HLRECOVERY;Repareer hoge lichten
 PARTIALPASTE_HSVEQUALIZER;HSV-balans
 PARTIALPASTE_ICMGAMMA;Uitvoer gamma
 PARTIALPASTE_ICMSETTINGS;ICM-instellingen
@@ -706,8 +633,6 @@ PARTIALPASTE_IPTCINFO;IPTC-informatie
 PARTIALPASTE_LABCURVE;LAB-curve
 PARTIALPASTE_LENSGROUP;Lensgerelateerde instellingen
 PARTIALPASTE_LENSPROFILE;Lens correctie profiel
-PARTIALPASTE_LUMADENOISE;Ruisonderdrukking luminantie
-PARTIALPASTE_LUMINANCEGROUP;Instellingen luminantie
 PARTIALPASTE_METAICMGROUP;Metadata/ICM-instellingen
 PARTIALPASTE_PCVIGNETTE;Vignettering Filter
 PARTIALPASTE_PERSPECTIVE;Perspectief
@@ -736,7 +661,6 @@ PARTIALPASTE_SHARPENING;Verscherping
 PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_VIBRANCE;Levendigheid
 PARTIALPASTE_VIGNETTING;Vignetteringscorrectie
-PARTIALPASTE_WAVELETEQUALIZER;Wavelet-equalizer
 PARTIALPASTE_WHITEBALANCE;Witbalans
 PREFERENCES_ADD;Toevoegen
 PREFERENCES_APPLNEXTSTARTUP;herstart vereist
@@ -754,9 +678,6 @@ PREFERENCES_CACHECLEARPROFILES;Wis profielen
 PREFERENCES_CACHECLEARTHUMBS;Wis miniaturen
 PREFERENCES_CACHEMAXENTRIES;Maximaal aantal elementen in cache
 PREFERENCES_CACHEOPTS;Cache-opties
-PREFERENCES_CACHESTRAT1;Sneller, meer geheugenbeslag
-PREFERENCES_CACHESTRAT2;Langzamer, minder geheugenbeslag
-PREFERENCES_CACHESTRAT;Cache-strategie
 PREFERENCES_CACHETHUMBHEIGHT;Maximale hoogte miniaturen
 PREFERENCES_CIEART;CIECAM02 optimalisatie
 PREFERENCES_CIEART_LABEL;Gebruik float precisie in plaats van double
@@ -783,7 +704,6 @@ PREFERENCES_DATEFORMATHINT;<i>U kunt de volgende formaten gebruiken:</i>\n<b>%y<
 PREFERENCES_DATEFORMAT;Datumformaat
 PREFERENCES_DEFAULTLANG;Standaardtaal
 PREFERENCES_DEFAULTTHEME;Standaardthema
-PREFERENCES_DEMOSAICINGALGO;Demozaïek-algoritme
 PREFERENCES_DIRDARKFRAMES;Map met donkerframes
 PREFERENCES_DIRHOME;Standaardmap
 PREFERENCES_DIRLAST;Laatst bezochte map
@@ -816,7 +736,6 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Uitvoerapparaat's Yb luminantie (%)
 PREFERENCES_GTKTHEME;GTK standaard
-PREFERENCES_HINT;Voorbeeld
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram in linkerpaneel
 PREFERENCES_HLTHRESHOLD;Grenswaarde overbelichting
 PREFERENCES_ICCDIR;Map met ICC-profielen
@@ -827,7 +746,6 @@ PREFERENCES_INTENT_RELATIVE;Relatieve colorimetrie
 PREFERENCES_INTENT_SATURATION;Verzadiging
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Toon interne RAW-miniatuur indien onbewerkt
 PREFERENCES_LANGAUTODETECT;Gebruik taalinstellingen pc
-PREFERENCES_LIVETHUMBNAILS;Live-miniaturen (langzamer)
 PREFERENCES_MENUGROUPEXTPROGS;Groepeer open met
 PREFERENCES_MENUGROUPFILEOPERATIONS;Groepeer bestandsbewerkingen
 PREFERENCES_MENUGROUPLABEL;Groepeer labelen
@@ -840,7 +758,6 @@ PREFERENCES_MULTITABDUALMON;Multi-tab, indien beschikbaar op tweede monitor
 PREFERENCES_MULTITAB;Multi-tab: elke foto opent in nieuw tabvenster
 PREFERENCES_OUTDIRFOLDERHINT;Sla foto's op in andere map
 PREFERENCES_OUTDIRFOLDER;Sla op in map
-PREFERENCES_OUTDIRHINT;<i>U kunt de volgende formaten gebruiken:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nDeze formaten hebben betrekking op de mappen, submappen en atributen van het RAW-bestand.\n\nAls bijvoorbeeld</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> is geopend, hebben deze formaten de volgende betekenis:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=foto, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n<b>%r</b> wordt vervangen door de rank van de foto.  Als de foto geen rank heeft, wordt %r vervangen door '0'.  Als de foto in de prullenbak zit zal %r worden vervangen door 'x'.\n\nWanneer de geconverteerde RAW-foto in dezelfde map moet komen als het origineel, schrijf dan:\n</i><b>%p1/%f\n</b><i>\nIndien u de geconverteerde RAW-foto in een map genaamd 'geconverteerd' wilt plaatsen die een submap is van de oorspronkelijke locatie, schrijft u:\n</i><b>%p1/geconverteerd/%f\n</b><i>\nWilt u het geconverteerde RAW-bestand bewaren in map '/home/tom/geconverteerd' met behoud van dezelfde submap met datums, schrijf dan:\n</i><b>%p2/geconverteerd/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>U kunt de volgende formaten gebruiken:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nDeze formaten hebben betrekking op de mappen, submappen en atributen van het RAW-bestand.\n\nAls bijvoorbeeld</i> <b>/home/tom/image/02-09-2006/dsc0012.nef</b><i> is geopend, hebben deze formaten de volgende betekenis:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=foto, ...\n%p1=/home/tom/image/02-09-2006, %p2=/home/tom/image, p3=/home/tom, ...\n</b><i>\n<b>%r</b> wordt vervangen door de rank van de foto.  Als de foto geen rank heeft, wordt %r vervangen door '0'.  Als de foto in de prullenbak zit zal %r worden vervangen door 'x'.\n\nWanneer de geconverteerde RAW-foto in dezelfde map moet komen als het origineel, schrijf dan:\n</i><b>%p1/%f\n</b><i>\nIndien u de geconverteerde RAW-foto in een map genaamd 'geconverteerd' wilt plaatsen die een submap is van de oorspronkelijke locatie, schrijft u:\n</i><b>%p1/geconverteerd/%f\n</b><i>\nWilt u het geconverteerde RAW-bestand bewaren in map '/home/tom/geconverteerd' met behoud van dezelfde submap met datums, schrijf dan:\n</i><b>%p2/geconverteerd/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Gebruik sjabloon
 PREFERENCES_OUTDIR;Uitvoermap
@@ -863,15 +780,12 @@ PREFERENCES_PSPATH;Installatiemap Adobe Photoshop
 PREFERENCES_RGBDTL_LABEL;Maximum aantal 'threads' voor Ruisonderdrukking
 PREFERENCES_RGBDTL_TOOLTIP;Ruisonderdrukking gebruikt ongeveer 128MB RAM voor een 10MPix afbeelding of 512MB voor een 40MPix afbeelding en additioneel 128MB RAM per thread. Hoe meer threads parallel worden gebruikt, hoe sneller de  bewerking. Laat de instelling op "0" staan om automatisch het maximale aantal threads te gebruiken dat mogelijk is.
 PREFERENCES_SELECTFONT;Kies lettertype
-PREFERENCES_SELECTICCDIRDLG;Selecteer ICC-profielmap...
 PREFERENCES_SELECTLANG;Selecteer taal
-PREFERENCES_SELECTMONITORPROFDLG;Selecteer ICC-profielmap van de monitor...
 PREFERENCES_SELECTTHEME;Kies thema
 PREFERENCES_SET;Activeer
 PREFERENCES_SHOWBASICEXIF;Toon standaard Exif-info
 PREFERENCES_SHOWDATETIME;Toon datum en tijd
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Toon belichtingscompensatie
-PREFERENCES_SHOWONLYRAW;Toon alleen RAW-bestanden
 PREFERENCES_SHOWPROFILESELECTOR;Toon profielkiezer
 PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
 PREFERENCES_SINGLETABVERTAB;Enkel-tab ('filmstrip') modus met verticale tabs
@@ -887,10 +801,8 @@ PREFERENCES_TAB_BROWSER;Bestandsnavigator
 PREFERENCES_TAB_COLORMGR;Kleurbeheer
 PREFERENCES_TAB_GENERAL;Algemeen
 PREFERENCES_TAB_IMPROC;Beeldverwerking
-PREFERENCES_TAB_OUTPUT;Uitvoeropties
 PREFERENCES_TAB_PERFORMANCE;Prestaties
 PREFERENCES_TAB_SOUND;Geluiden
-PREFERENCES_THUMBSIZE;Miniatuurgrootte
 PREFERENCES_TP_LABEL;Gereedschapspaneel:
 PREFERENCES_TP_USEICONORTEXT;Gebruik iconen ipv. tekst voor de tabbladen
 PREFERENCES_TP_VSCROLLBAR;Verberg de schuifbalk van het gereedschapspaneel
@@ -912,22 +824,13 @@ PROFILEPANEL_PASTEPPASTE;Te plakken parameters
 PROFILEPANEL_PCUSTOM;Handmatig
 PROFILEPANEL_PFILE;Uit bestand
 PROFILEPANEL_PINTERNAL;Neutraal
-PROFILEPANEL_PLASTPHOTO;Laatste afbeelding
 PROFILEPANEL_PLASTSAVED;Laatst opgeslagen
-PROFILEPANEL_PROFILE;Profiel
 PROFILEPANEL_SAVEDLGLABEL;Bewaar profiel...
 PROFILEPANEL_SAVEPPASTE;Te bewaren parameters
 PROFILEPANEL_TOOLTIPCOPY;Kopieer huidig profiel naar klembord
 PROFILEPANEL_TOOLTIPLOAD;Laad profiel uit bestand
 PROFILEPANEL_TOOLTIPPASTE; Plak profiel van klembord
 PROFILEPANEL_TOOLTIPSAVE;Bewaar huidig profiel
-PROGRESSBAR_BADPIXELS;Slechte pixels...
-PROGRESSBAR_CACORRECTION;CA-correctie...
-PROGRESSBAR_DARKFRAME;Donkerframe... 
-PROGRESSBAR_DECODING;Laden RAW-bestand...
-PROGRESSBAR_DEMOSAICING;Demozaïek-algoritme...
-PROGRESSBAR_GREENEQUIL;Groenbalans...
-PROGRESSBAR_LINEDENOISE;Lijnruisfilter...
 PROGRESSBAR_LOADINGTHUMBS;Miniaturen laden...
 PROGRESSBAR_LOADING;Afbeelding laden...
 PROGRESSBAR_LOADJPEG;Laden JPEG-bestand...
@@ -942,9 +845,7 @@ PROGRESSBAR_SAVEPNG;Opslaan PNG-bestand...
 PROGRESSBAR_SAVETIFF;Opslaan TIFF-bestand...
 PROGRESSBAR_SNAPSHOT_ADDED;Snapshot toegevoegd
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profiel veranderd in bestandsnavigator
-QINFO_FOCALLENGTH;Brandpuntsafstand
 QINFO_ISO;ISO
-QINFO_LENS;Objectief
 QINFO_NOEXIF;Exif-gegevens niet beschikbaar.
 SAVEDLG_AUTOSUFFIX;Voeg automatisch ophogend nummer (-1, -2..) toe als bestand al bestaat
 SAVEDLG_FILEFORMAT;Bestandstype
@@ -952,7 +853,6 @@ SAVEDLG_FORCEFORMATOPTS;Forceer opties voor opslaan
 SAVEDLG_JPEGQUAL;JPEG-kwaliteit
 SAVEDLG_JPGFILTER;JPEG-bestanden
 SAVEDLG_PNGCOMPR;PNG-compressie
-SAVEDLG_PNGFILTER;PNG-bestanden
 SAVEDLG_PUTTOQUEUEHEAD;Plaats vooraan in verwerkingsrij
 SAVEDLG_PUTTOQUEUETAIL;Plaats achteraan in verwerkingsrij
 SAVEDLG_PUTTOQUEUE;Plaats in verwerkingsrij
@@ -1016,7 +916,6 @@ TP_BWMIX_MET_DESAT;Desatureren
 TP_BWMIX_MET_LUMEQUAL;Luminantie Balans
 TP_BWMIX_MET_TOOLTIP;Keuze uit Desatureren - Luminantie Balans  - Kanaalmixer.
 TP_BWMIX_MIXC;Mixer
-TP_BWMIX_MIXF;Mixer Filters
 TP_BWMIX_NEUTRAL;Terug naar beginwaarde
 TP_BWMIX_NEUTRAL_TIP;Zet alle waardes - schuifbalken - filters - kanaalmixers terug naar de standaard waarde.
 TP_BWMIX_ORANGE;Oranje Filter
@@ -1096,7 +995,6 @@ TP_COLORAPP_DATACIE;Toont CIECAM02 uitvoer in het histogram van de curven
 TP_COLORAPP_DATACIE_TOOLTIP;Indien aangezet, tonen de histogrammen van de CIECAM02 curven bij benadering de waarden/reeksen voor J of Q, en C, s of M na de CIECAM02 aanpassingen.\nDit beïnvloed niet het hoofd histogram paneel.\n\nIndien uitgezet tonen de histogrammen van de CIECAM02 curven de Lab waarden zoals deze waren voor de CIECAM02 aanpassingen
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Als het keuzevakje is aangezet (aanbevolen), dan berekent RT een optimale waarde. Deze wordt gebruikt door CAT02 en door CIECAM02.\nOm de waarden handmatig in te stellen moet het keuzevakje worden uitgezet (waarden groter dan 65 worden aanbevolen)
 TP_COLORAPP_DEGREE_TOOLTIP;Hoeveelheid van CIE Chromatic Adaptation Transform 2002
-TP_COLORAPP_EQUAL;Gelijk
 TP_COLORAPP_GAMUT;Gamut controle (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Sta gamut controle toe in Lab mode
 TP_COLORAPP_HUE;Tint (h)
@@ -1248,7 +1146,6 @@ TP_HLREC_METHOD;Methode:
 TP_HSVEQUALIZER_CHANNEL;HSV-balans
 TP_HSVEQUALIZER_HUE;Tint
 TP_HSVEQUALIZER_LABEL;HSV-balans
-TP_HSVEQUALIZER_NEUTRAL;Neutraal
 TP_HSVEQUALIZER_SAT;Verzadiging
 TP_HSVEQUALIZER_VAL;Waarde
 TP_ICM_BLENDCMSMATRIX;Meng hoge lichten met matrix
@@ -1272,7 +1169,6 @@ TP_ICM_INPUTNONE_TOOLTIP;Gebruik geen invoerprofiel. Alleen toepassen in special
 TP_ICM_INPUTPROFILE;Invoerprofiel
 TP_ICM_LABEL;Kleurbeheer
 TP_ICM_NOICM;Geen ICM: sRGB-uitvoer
-TP_ICM_OUTPUTDLGLABEL;Selecteer uitvoer-ICC-profiel...
 TP_ICM_OUTPUTPROFILE;Uitvoerprofiel
 TP_ICM_PREFERREDPROFILE;Voorkeur DCP-Profiel
 TP_ICM_PREFERREDPROFILE_1;Daglicht
@@ -1330,9 +1226,6 @@ TP_LENSPROFILE_LABEL;Lenscorrectie Profielen
 TP_LENSPROFILE_USECA;Gebruik CA correctie
 TP_LENSPROFILE_USEDIST;Gebruik lensvervorming correctie
 TP_LENSPROFILE_USEVIGN;Gebruik vignettering correctie
-TP_LUMADENOISE_EDGETOLERANCE;Randtolerantie
-TP_LUMADENOISE_LABEL;Ruisonderdrukking op luminantie
-TP_LUMADENOISE_RADIUS;Straal
 TP_NEUTRAL;Neutraal
 TP_NEUTRAL_TIP;Alle belichtingsinstellingen naar 0
 TP_PCVIGNETTE_FEATHER;Straal
@@ -1383,7 +1276,6 @@ TP_RESIZE_BILINEAR;Bilineair
 TP_RESIZE_CROPPEDAREA;Uitsnede
 TP_RESIZE_FITBOX;Breedte en hoogte
 TP_RESIZE_FULLIMAGE;Hele foto
-TP_RESIZE_FULLSIZE;Volledige beeldgrootte:
 TP_RESIZE_HEIGHT;Hoogte
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Grootte aanpassen
@@ -1505,13 +1397,6 @@ TP_WBALANCE_TUNGSTEN;Tungsten (wolfraam)
 TP_WBALANCE_WATER1;Onderwater 1
 TP_WBALANCE_WATER2;Onderwater 2
 TP_WBALANCE_WATER_HEADER;Onderwater
-ZOOMBAR_DETAIL;Detailvenster
-ZOOMBAR_HUGE;Groter
-ZOOMBAR_LARGE;Groot
-ZOOMBAR_NORMAL;Normaal
-ZOOMBAR_PREVIEW;Afbeelding
-ZOOMBAR_SCALE;Schaal
-ZOOMBAR_SMALL;Klein
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Open (nieuw) detailvenster
 ZOOMPANEL_ZOOM100;Zoom naar 100%\nSneltoets: <b>z</b>
@@ -1523,6 +1408,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!FILEBROWSER_POPUPRANK;Rank
 !TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. Result can be used for calibration purposes, generation of a camera profile.
 !TP_SAVEDIALOG_OK_TIP;Shortcut <b>Ctrl-Enter</b>
 !TP_SHADOWSHLIGHTS_SHARPMASK;Sharp mask
