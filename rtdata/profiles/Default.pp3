@@ -5,7 +5,7 @@ Version=316
 [Exposure]
 Auto=true
 Clip=0.02
-Saturation=5
+Saturation=10
 CurveMode=Standard
 CurveMode2=Standard
 Curve=0;
@@ -47,7 +47,7 @@ AfterCurve=0;
 [Luminance Curve]
 Brightness=0
 Contrast=0
-Chromaticity=5
+Chromaticity=0
 AvoidColorShift=true
 RedAndSkinTonesProtection=0
 LCredsk=true
