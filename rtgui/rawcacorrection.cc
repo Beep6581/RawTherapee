@@ -20,6 +20,7 @@
 #include "guiutils.h"
 #include "../rtengine/safegtk.h"
 #include <sstream>
+#include "rtimage.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -28,12 +29,17 @@ RAWCACorr::RAWCACorr () : Gtk::VBox(), FoldableToolPanel(this)
 {
 	set_border_width(4);
 
+    Gtk::Image* icaredL =   Gtk::manage (new RTImage ("ajd-ca-red1.png"));
+    Gtk::Image* icaredR =   Gtk::manage (new RTImage ("ajd-ca-red2.png"));
+    Gtk::Image* icablueL =  Gtk::manage (new RTImage ("ajd-ca-blue1.png"));
+    Gtk::Image* icablueR =  Gtk::manage (new RTImage ("ajd-ca-blue2.png"));
+
 	caAutocorrect = Gtk::manage(new Gtk::CheckButton((M("TP_RAWCACORR_AUTO"))));
-	caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"),-4.0,4.0,0.1,0));
+	caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"),-4.0,4.0,0.1,0,icaredL,icaredR));
 	caRed->setAdjusterListener (this);
 	if (caRed->delay < 1000) caRed->delay = 1000;
 	caRed->show();
-	caBlue = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CABLUE"),-4.0,4.0,0.1,0));
+	caBlue = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CABLUE"),-4.0,4.0,0.1,0,icablueL,icablueR));
 	caBlue->setAdjusterListener (this);
 	if (caBlue->delay < 1000) caBlue->delay = 1000;
 	caBlue->show();
