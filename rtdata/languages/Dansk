@@ -11,7 +11,6 @@ CURVEEDITOR_TOOLTIPLOAD;Indlæs kurve fra fil
 CURVEEDITOR_TOOLTIPSAVE;Gem nuværende kurve
 EXIFFILTER_APERTURE;Blænde
 EXIFFILTER_CAMERA;Kamera
-EXIFFILTER_DIALOGLABEL;Exif Filter
 EXIFFILTER_FOCALLEN;Brændvidde
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
@@ -31,18 +30,12 @@ EXIFPANEL_RESETHINT;Gendan valgte tags til de oprindelige værdier
 EXIFPANEL_RESET;Gendan
 EXIFPANEL_SUBDIRECTORY;Undermappe
 FILEBROWSER_APPLYPROFILE;Anvend profil
-FILEBROWSER_ARRANGEMENTHINT;Skifte mellem lodret og vandret tilpasning af miniaturer
 FILEBROWSER_CLEARPROFILE;Ryd profil
 FILEBROWSER_COPYPROFILE;Kopier profil
 FILEBROWSER_DELETEDLGLABEL;Bekræft sletning af fil
 FILEBROWSER_DELETEDLGMSG;Er du sikker på, at du vil slette de %1 valgte filer?
 FILEBROWSER_EMPTYTRASHHINT;Slet filerne i papirkurv permanent
 FILEBROWSER_EMPTYTRASH;Tøm papirkurv
-FILEBROWSER_EXIFFILTERAPPLYHINT;Slå exif filter til eller fra i filbrowseren
-FILEBROWSER_EXIFFILTERAPPLY;Anvend
-FILEBROWSER_EXIFFILTERLABEL;Exif filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Skift indstillinger på exif filteret
-FILEBROWSER_EXIFFILTERSETTINGS;Indstillinger
 FILEBROWSER_PARTIALPASTEPROFILE;Indsæt delvist
 FILEBROWSER_PASTEPROFILE;Indsæt profil
 FILEBROWSER_POPUPCANCELJOB;Annuler opgave
@@ -50,23 +43,15 @@ FILEBROWSER_POPUPMOVEEND;Flyt til slutning af køen
 FILEBROWSER_POPUPMOVEHEAD;Flyt til starten af køen
 FILEBROWSER_POPUPOPEN;Åbn
 FILEBROWSER_POPUPPROCESS;Sæt i opgavekø
-FILEBROWSER_POPUPRANK1;Vurdering 1
-FILEBROWSER_POPUPRANK2;Vurdering 2
-FILEBROWSER_POPUPRANK3;Vurdering 3
-FILEBROWSER_POPUPRANK4;Vurdering 4
-FILEBROWSER_POPUPRANK5;Vurdering 5
 FILEBROWSER_POPUPREMOVE;fjern fra filsystem
 FILEBROWSER_POPUPRENAME;Omdøb
 FILEBROWSER_POPUPSELECTALL;Vælg alt
 FILEBROWSER_POPUPTRASH;Flyt til papirkurv
 FILEBROWSER_POPUPUNRANK;Fjern vurdering
 FILEBROWSER_POPUPUNTRASH;Fjern fra papirkurv
-FILEBROWSER_PROCESSINGSETTINGSHINT;Vælg filformat og destinationsmappe
-FILEBROWSER_PROCESSINGSETTINGS;Indstillinger
 FILEBROWSER_RENAMEDLGLABEL;Omdøb fil
 FILEBROWSER_RENAMEDLGMSG;Omdøb filen "%1" til:
 FILEBROWSER_SHOWDIRHINT;Vis alle billeder i mappen
-FILEBROWSER_SHOWQUEUEHINT;Vis indhold i opgavekøen
 FILEBROWSER_SHOWRANK1HINT;Vis billeder vurderet med 1 stjerne
 FILEBROWSER_SHOWRANK2HINT;Vis billeder vurderet med 2 stjerner
 FILEBROWSER_SHOWRANK3HINT;Vis billeder vurderet med 3 stjerner
@@ -88,14 +73,11 @@ GENERAL_DISABLE;Fravælg
 GENERAL_ENABLED;Valgt
 GENERAL_ENABLE;Vælg
 GENERAL_LANDSCAPE;Bredformat
-GENERAL_LOAD;Indlæs
 GENERAL_NA;Ikke muligt
 GENERAL_NO;Nej
 GENERAL_OK;OK
 GENERAL_PORTRAIT;Højformat
 GENERAL_SAVE;Gem
-GENERAL_YES;Ja
-HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_B;Vis/skjul blåt histogram
 HISTOGRAM_TOOLTIP_G;Vis/skjul grønt histogram
 HISTOGRAM_TOOLTIP_L;Vis/skjul CIELAB histogram
@@ -186,28 +168,9 @@ HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Resize width
 HISTORY_MSG_80;Resize height
 HISTORY_MSG_81;Resize enabled
-HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Tilføj...
-HISTORY_NEWSSDIALOGLABEL;Mærke på snapshot:
-HISTORY_NEWSSDIALOGTITLE;Tilføj nyt snapshot
-HISTORY_SETTO;Sæt til
 HISTORY_SNAPSHOTS;Snapshots
 HISTORY_SNAPSHOT;Snapshot
-ICMPANEL_FILEDLGFILTERANY;Alle filer
-ICMPANEL_FILEDLGFILTERICM;ICC Profil-filer
-ICMPANEL_GAMMABEFOREINPUT;Profil anvender Gamma
-ICMPANEL_INPUTCAMERA;Kamerastandard
-ICMPANEL_INPUTCUSTOM;Brugervalgt
-ICMPANEL_INPUTDLGLABEL;Vælg Input ICC-profil...
-ICMPANEL_INPUTEMBEDDED;Brug indlejrede, hvis mulligt
-ICMPANEL_INPUTPROFILE;Input-profil
-ICMPANEL_NOICM;No ICM: sRGB output
-ICMPANEL_OUTPUTDLGLABEL;Vælg output ICC-profil...
-ICMPANEL_OUTPUTPROFILE;Output-profil
-ICMPANEL_SAVEREFERENCE;Gem referencebillede til profilering
-ICMPANEL_WORKINGPROFILE;Nuværende profil
-IMAGEAREA_DETAILVIEW;Se detaljer
-IPTCPANEL_AUTHORHINT;Navn på skaberen af projektet, fx forfatter, fotograf eller grafisk kunstner (byline).
 IPTCPANEL_AUTHORSPOSITIONHINT;Stillingsbetegnelse for skaberen eller skaberne af objektet (byline titel).
 IPTCPANEL_AUTHORSPOSITION;Forfatterens stilling
 IPTCPANEL_AUTHOR;Forfatter
@@ -249,9 +212,7 @@ IPTCPANEL_TITLEHINT;En kort beskrivelse af billedet.
 IPTCPANEL_TITLE;Titel
 IPTCPANEL_TRANSREFERENCEHINT;En kode, der repræsenterer placeringen for den originale overlevering.
 IPTCPANEL_TRANSREFERENCE;Overleveringsreference
-MAIN_BUTTON_EXIT;Exit
 MAIN_BUTTON_PREFERENCES;Indstillinger
-MAIN_BUTTON_QUEUE;Put to queue
 MAIN_BUTTON_SAVEAS;Som...
 MAIN_BUTTON_SAVE;Gem billede
 MAIN_BUTTON_SENDTOEDITOR;Send til redigeringsprogram
@@ -266,51 +227,35 @@ MAIN_MSG_CANNOTLOAD;Kan ikke indlæse billede
 MAIN_MSG_CANNOTSAVE;Kan ikke gemme filen
 MAIN_MSG_CANNOTSTARTEDITOR;Kan ikke starte redigeringsprogram.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Brug venligst den korrekte sti i dialogboksen "Indstillinger".
-MAIN_MSG_EXITJOBSINQUEUEINFO;Ubearbejdede billeder i køen vil blive mistet, når du lukker.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;er du sikker på, at du vil lukke? Der er ubearbejdede billeder, som venter i køen.
-MAIN_MSG_JOBSINQUEUE;Opgave(r) i køen
 MAIN_MSG_QOVERWRITE;Vil du overskrive?
-MAIN_TAB_BASIC;Grundlæggende
 MAIN_TAB_COLOR;Farver
 MAIN_TAB_DETAIL;Detaljer
 MAIN_TAB_DEVELOP;Develop
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPOSURE;Eksponering
 MAIN_TAB_FILTER;Filter
-MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_TAGGING;Tagging
 MAIN_TAB_TRANSFORM;Justér
-MAIN_TOOLTIP_HIDEFP;Vis/skjul panelet i bunden (stifinder og filbrowser, genvejstast: F)
 MAIN_TOOLTIP_HIDEHP;Vis/skjul panelet til venstre (heriblandt Historie, genvejstast: H)
 MAIN_TOOLTIP_INDCLIPPEDH;Markér udbrændte højlys
 MAIN_TOOLTIP_INDCLIPPEDS;Markér udbrændte skygger
-MAIN_TOOLTIP_PREFERENCES;Vælg indstillinger
 MAIN_TOOLTIP_QINFO;Udvalgte oplysninger om billedet
-MAIN_TOOLTIP_SAVEAS;Gem billedet i en valgfri mappe
-MAIN_TOOLTIP_SAVE;Gem billedet i standardmappen
 PARTIALPASTE_BASICGROUP;Grundlæggende indstillinger
 PARTIALPASTE_CACORRECTION;Kromatisk aberration
 PARTIALPASTE_COARSETRANS;Drej/vend 90 grader
-PARTIALPASTE_COLORBOOST;Forstærk farver
-PARTIALPASTE_COLORDENOISE;Fjern farvestøj
 PARTIALPASTE_COLORGROUP;Farverelaterede indstillinger
-PARTIALPASTE_COLORMIXER;Farveblander
-PARTIALPASTE_COLORSHIFT;Farveskift
 PARTIALPASTE_COMPOSITIONGROUP;Kompositionsindstillinger
 PARTIALPASTE_CROP;Beskær
 PARTIALPASTE_DIALOGLABEL;Delvist indsætte bearbejdningsprofil
 PARTIALPASTE_DISTORTION;Fortegning
 PARTIALPASTE_EXIFCHANGES;Ændringer til exif-data
 PARTIALPASTE_EXPOSURE;Eksponering
-PARTIALPASTE_HLRECOVERY;Red højlys
 PARTIALPASTE_ICMSETTINGS;ICM-indstillinger
 PARTIALPASTE_IPTCINFO;IPTC-info
 PARTIALPASTE_LENSGROUP;Objektivrelaterede indstillinger
 PARTIALPASTE_LUMACURVE;Kurve
-PARTIALPASTE_LUMADENOISE;Fjern lysstøj
-PARTIALPASTE_LUMINANCEGROUP;Lysrelaterede indstillinger
 PARTIALPASTE_METAICMGROUP;Metadata-/ICM-indstillinger
 PARTIALPASTE_RESIZE;Ret størrelse
 PARTIALPASTE_ROTATION;Rotér
@@ -327,9 +272,6 @@ PREFERENCES_CACHEFORMAT1;Proprietær (hurtigere og bedre kvalitet)
 PREFERENCES_CACHEFORMAT2;JPEG (fylder mindre på disken)
 PREFERENCES_CACHEMAXENTRIES;Maksimalt antal indskrivninger i cache
 PREFERENCES_CACHEOPTS;Cache-indstillinger
-PREFERENCES_CACHESTRAT1;Foretræk hastighed frem for lavt hukommelsesforbrug
-PREFERENCES_CACHESTRAT2;Foretræk lavt hukommelsesforbrug frem for hastighed
-PREFERENCES_CACHESTRAT;Cache-strategi
 PREFERENCES_CACHETHUMBFORM;Cache miniature-format
 PREFERENCES_CACHETHUMBHEIGHT;Maksimal miniaturehøjde
 PREFERENCES_CLEARDLG_LINE1;Rydder cache
@@ -341,7 +283,6 @@ PREFERENCES_DATEFORMATHINT;<i>Du kan bruge følgende formatindstillinger:</i>\n<
 PREFERENCES_DATEFORMAT;Datoformat
 PREFERENCES_DEFAULTLANG;Sprog
 PREFERENCES_DEFAULTTHEME;Tema
-PREFERENCES_DEMOSAICINGALGO;Algoritme til rekonstruktion
 PREFERENCES_DIRHOME;Standardmappe
 PREFERENCES_DIRLAST;Sidst anvendte mappe
 PREFERENCES_DIROTHER;Andet
@@ -355,7 +296,6 @@ PREFERENCES_FORIMAGE;Til billedfiler
 PREFERENCES_FORRAW;Til RAW-filer
 PREFERENCES_GIMPPATH;Installationsmappe til GIMP
 PREFERENCES_GTKTHEME;GTK-standard
-PREFERENCES_HINT;Hentydning
 PREFERENCES_HLTHRESHOLD;Tærskel for udbrændte højlys
 PREFERENCES_ICCDIR;Mappe med ICC-profiler
 PREFERENCES_IMPROCPARAMS;Normale billedbehandlingsparametre
@@ -363,11 +303,9 @@ PREFERENCES_INTENT_ABSOLUTE;Absolut Colorimetrisk
 PREFERENCES_INTENT_PERCEPTUAL;Opfattelsesorienteret
 PREFERENCES_INTENT_RELATIVE;Relativ Colorimetrisk
 PREFERENCES_INTENT_SATURATION;Mætning
-PREFERENCES_LIVETHUMBNAILS;Opdaterede miniaturer (langsommere)
 PREFERENCES_MONITORICC;Skærmprofil
 PREFERENCES_OUTDIRFOLDERHINT;Læg det gemte billede i den valgte mappe
 PREFERENCES_OUTDIRFOLDER;Gem i mappe
-PREFERENCES_OUTDIRHINT;<i>Du kan benytte følgende formatstrenge:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDisse formatstrenge henviser til mapperne og undermapperne for RAW-filens sti.\n\nFx, hvis filen </i> <b>/Users\Peter\Pictures/02-09-2006/dsc0012.nef</b><i>er blevet åbnet, er betydningen af formatstrengen:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/Users\Peter\Pictures/02-09-2006, %p2=/Users\Peter\Pictures, p3=/Users\Peter\Pictures, ...\n</b><i>\nhvis du vil gemme output-billedet i samme mappe som originalen, skal du skrive:\n</i><b>%p1/%f\n</b><i>\nHvis du vil gemme output-billedet i en mappe, der hedder 'konverteret', som er placeret i originalens mappe, skal du skrive:\n</i><b>%p1/konverteret/%f\n</b><i>\nHvis du vil gemme output-billedet i mappen Users\Peter\Pictures\konverteret og beholde den samme undermappe med dato, skal du skrive:\n</i><b>%p2/konverteret/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;<i>Du kan benytte følgende formatstrenge:</i>\n<b>%f, %d1, %d2, ..., %p1, %p2, ...</b>\n<i>\nDisse formatstrenge henviser til mapperne og undermapperne for RAW-filens sti.\n\nFx, hvis filen </i> <b>/Users\Peter\Pictures/02-09-2006/dsc0012.nef</b><i>er blevet åbnet, er betydningen af formatstrengen:\n</i><b>%f=dsc0012, %d1=02-09-2006, %d2=image, ...\n%p1=/Users\Peter\Pictures/02-09-2006, %p2=/Users\Peter\Pictures, p3=/Users\Peter\Pictures, ...\n</b><i>\nhvis du vil gemme output-billedet i samme mappe som originalen, skal du skrive:\n</i><b>%p1/%f\n</b><i>\nHvis du vil gemme output-billedet i en mappe, der hedder 'konverteret', som er placeret i originalens mappe, skal du skrive:\n</i><b>%p1/konverteret/%f\n</b><i>\nHvis du vil gemme output-billedet i mappen Users\Peter\Pictures\konverteret og beholde den samme undermappe med dato, skal du skrive:\n</i><b>%p2/konverteret/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Brug skabelon
 PREFERENCES_OUTDIR;Output-mappe
@@ -382,37 +320,28 @@ PREFERENCES_PROFILEPRFILE;Profil sammen med input-filen
 PREFERENCES_PROFILESAVECACHE;Gem bearbejdningsparametre i cache
 PREFERENCES_PROFILESAVEINPUT;Gem bearbejdningsparametre sammen med input-filen
 PREFERENCES_PSPATH;Installationsmappe til Adobe Photoshop
-PREFERENCES_SELECTICCDIRDLG;Vælg mappe med ICC-profiler...
 PREFERENCES_SELECTLANG;Vælg sprog
-PREFERENCES_SELECTMONITORPROFDLG;Vælg skærmens ICC-profil...
 PREFERENCES_SELECTTHEME;Vælg tema
 PREFERENCES_SHOWBASICEXIF;Vis grundlæggende exif-data
 PREFERENCES_SHOWDATETIME;Vis dato og tid
-PREFERENCES_SHOWONLYRAW;Vis kun RAW-filer
 PREFERENCES_SHTHRESHOLD;Tærskel for udbrændte skygger
 PREFERENCES_STARTUPIMDIR;Billedmappe ved opstart
 PREFERENCES_TAB_BROWSER;Filbrowser
 PREFERENCES_TAB_COLORMGR;Farvestyring
 PREFERENCES_TAB_GENERAL;Generelt
 PREFERENCES_TAB_IMPROC;Billedbehandling
-PREFERENCES_TAB_OUTPUT;Output-indstillinger
-PREFERENCES_THUMBSIZE;Størrelse på miniaturer
 PROFILEPANEL_FILEDLGFILTERANY;Alle filer
 PROFILEPANEL_FILEDLGFILTERPP;Efterbehandlingsprofiler
 PROFILEPANEL_LABEL;Efterbehandlingsprofiler
 PROFILEPANEL_LOADDLGLABEL;Indlæs efterbehandlingsparametre...
 PROFILEPANEL_PCUSTOM;Brugervalgt
 PROFILEPANEL_PFILE;Fra fil
-PROFILEPANEL_PLASTPHOTO;Seneste foto
 PROFILEPANEL_PLASTSAVED;Senest gemte
-PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Gem efterbehandlingsparametre...
 PROFILEPANEL_TOOLTIPCOPY;Kopier nuværende profil til udklipsholder
 PROFILEPANEL_TOOLTIPLOAD;Indlæs en profil fra fil
 PROFILEPANEL_TOOLTIPPASTE; Indsæt profil fra udklipsholder
 PROFILEPANEL_TOOLTIPSAVE;Gem nuværende profil
-PROGRESSBAR_DECODING;Afkoder RAW-fil...
-PROGRESSBAR_DEMOSAICING;Analyserer...
 PROGRESSBAR_LOADING;Indlæser billede...
 PROGRESSBAR_LOADJPEG;Indlæser JPEG-fil...
 PROGRESSBAR_LOADPNG;Indlæser PNG-fil...
@@ -425,15 +354,12 @@ PROGRESSBAR_SAVETIFF;Gemmer TIFF-fil...
 PROGRESSDLG_LOADING;Indlæser fil...
 PROGRESSDLG_PROCESSING;bearbejder billede...
 PROGRESSDLG_SAVING;Gemmer fil...
-QINFO_FOCALLENGTH;Brændvidde
 QINFO_ISO;ISO
-QINFO_LENS;Objektiv
 QINFO_NOEXIF;Exif-data ikke tilgængelig.
 SAVEDLG_FILEFORMAT;Filformat
 SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filer
 SAVEDLG_PNGCOMPR;PNG-komprimering
-SAVEDLG_PNGFILTER;PNG-filer
 SAVEDLG_PUTTOQUEUEHEAD;Sæt i begyndelsen af bearbejdningskøen
 SAVEDLG_PUTTOQUEUETAIL;Sæt i enden af bearbejdningskøen
 SAVEDLG_PUTTOQUEUE;Sæt i bearbejdningskø
@@ -515,7 +441,6 @@ TP_ICM_INPUTEMBEDDED;Brug indlejrede, hvis muligt
 TP_ICM_INPUTPROFILE;Input profil
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;No ICM: sRGB output
-TP_ICM_OUTPUTDLGLABEL;Vælg output ICC-profil...
 TP_ICM_OUTPUTPROFILE;Output profil
 TP_ICM_SAVEREFERENCE;Gem referencebillede til profilering
 TP_ICM_WORKINGPROFILE;Arbejdsprofil
@@ -526,16 +451,12 @@ TP_LUMACURVE_COMPRSHADOWS;Komprimering af skygger
 TP_LUMACURVE_CONTRAST;Skygger
 TP_LUMACURVE_CURVEEDITOR;Kurve for lysforhold
 TP_LUMACURVE_LABEL;Kurve for lysforhold
-TP_LUMADENOISE_EDGETOLERANCE;Kanttolerance
-TP_LUMADENOISE_LABEL;Lysstøj
-TP_LUMADENOISE_RADIUS;Radius
 TP_RAW_DMETHOD;Metode
 TP_RAW_FALSECOLOR;Antal trin til undertrykkelse af forkert farve
 TP_RESIZE_BICUBICSF;Bikubisk (blødere)
 TP_RESIZE_BICUBICSH;Bikubisk (skarpere)
 TP_RESIZE_BICUBIC;Bikubisk
 TP_RESIZE_BILINEAR;Bilineær
-TP_RESIZE_FULLSIZE;Fuld billedstørrelse:
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Skift størrelse
 TP_RESIZE_METHOD;Metode: 
@@ -581,13 +502,6 @@ TP_WBALANCE_METHOD;Metode
 TP_WBALANCE_SIZE;Størrelse:
 TP_WBALANCE_SPOTWB;Mål WB
 TP_WBALANCE_TEMPERATURE;Temperatur
-ZOOMBAR_DETAIL;Detalje
-ZOOMBAR_HUGE;Kæmpe
-ZOOMBAR_LARGE;Stor
-ZOOMBAR_NORMAL;Normal
-ZOOMBAR_PREVIEW;Forhåndsvisning
-ZOOMBAR_SCALE;Skalér
-ZOOMBAR_SMALL;Lille
 ﻿ADJUSTER_RESET_TO_DEFAULT;Nulstil til standard
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -668,20 +582,14 @@ ZOOMBAR_SMALL;Lille
 !FILEBROWSER_MOVETOFLATFIELDDIR;Move to flat fields directory
 !FILEBROWSER_NEW_NAME;New name:
 !FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
-!FILEBROWSER_POPUPCOLORLABEL0;Label: None
-!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
-!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
-!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
-!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
-!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
 !FILEBROWSER_POPUPCOLORLABEL;Color label
 !FILEBROWSER_POPUPCOPYTO;Copy to...
 !FILEBROWSER_POPUPFILEOPERATIONS;File Operations
 !FILEBROWSER_POPUPMOVETO;Move to...
 !FILEBROWSER_POPUPPROCESSFAST;Put to Queue (Fast export)
 !FILEBROWSER_POPUPPROFILEOPERATIONS;Processing Profile Operations
+!FILEBROWSER_POPUPRANK;Rank
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete with output from queue
-!FILEBROWSER_POPUPREMOVESUBMENU;Remove
 !FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 !FILEBROWSER_QUERYHINT;Type a <i>partial filename</i> to search for or a <i>comma-separated list</i>.\nE.g. <i>1001,1004,1199</i> \n\n<b>Ctrl-F</b> to focus to the Find text box.\n<b>Enter</b> to commence search.\n<b>Esc</b> to clear.\n<b>Shift-Esc</b> to remove focus.
 !FILEBROWSER_QUERYLABEL; Find:
@@ -711,16 +619,9 @@ ZOOMBAR_SMALL;Lille
 !GENERAL_BEFORE;Before
 !GENERAL_CLOSE;Close
 !GENERAL_FILE;File
-!GENERAL_HIGH_QUALITY;High quality
 !GENERAL_NONE;None
 !GENERAL_UNCHANGED;(Unchanged)
 !GENERAL_WARNING;Warning
-!HISTOGRAM_BUTTON_BAR;RGB
-!HISTOGRAM_BUTTON_B;B
-!HISTOGRAM_BUTTON_G;G
-!HISTOGRAM_BUTTON_L;L
-!HISTOGRAM_BUTTON_RAW;Raw
-!HISTOGRAM_BUTTON_R;R
 !HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar\nClick right mouse button on image preview to freeze/unfreeze
 !HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram
 !HISTOGRAM_TOOLTIP_FULL;Toggle full (on) or scaled (off) histogram
@@ -908,12 +809,10 @@ ZOOMBAR_SMALL;Lille
 !MAIN_FRAME_EDITOR_TOOLTIP;Editor.\nShortcut: <b>Ctrl-F4</b>
 !MAIN_FRAME_FILEBROWSER_TOOLTIP;File Browser.\nShortcut: <b>Ctrl-F2</b>
 !MAIN_MSG_EMPTYFILENAME;Filename unspecified!
-!MAIN_MSG_ERRORDURINGIMAGESAVING;Error during image saving
 !MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue processed first.
 !MAIN_MSG_NAVIGATOR;Navigator
 !MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
 !MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoesn't exist. Please set a correct path in the Preference window.
-!MAIN_MSG_PLACES;Places
 !MAIN_MSG_SETPATHFIRST;You have to set a target path first in Preferences\nin order to use this function!
 !MAIN_MSG_WRITEFAILED;Failed to write\n\n<b>"%1"</b>\n\nMake sure that the folder exists and that you have write permission to it.
 !MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
@@ -924,7 +823,6 @@ ZOOMBAR_SMALL;Lille
 !MAIN_TAB_RAW;Raw
 !MAIN_TAB_RAW_TOOLTIP;Shortcut: <b>Alt-r</b>
 !MAIN_TAB_TRANSFORM_TOOLTIP;Shortcut: <b>Alt-t</b>
-!MAIN_TOGGLE_BEFORE_AFTER;B|A
 !MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>Theme-based</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>Black</b>\nShortcut: <b>9</b>
 !MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>White</b>\nShortcut: <b>9</b>
@@ -978,9 +876,6 @@ ZOOMBAR_SMALL;Lille
 !PARTIALPASTE_FLATFIELDBLURTYPE;Flat field blur type
 !PARTIALPASTE_FLATFIELDFILE;Flat field file
 !PARTIALPASTE_GRADIENT;Graduated filter
-!PARTIALPASTE_HLRECONSTRUCTION;Highlight reconstruction
-!PARTIALPASTE_HLRECOVERYAMOUNT;Highlight compression
-!PARTIALPASTE_HLRECOVERYTHRESHOLD;Highlight compression threshold
 !PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 !PARTIALPASTE_ICMGAMMA;Output gamma
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
@@ -1008,7 +903,6 @@ ZOOMBAR_SMALL;Lille
 !PARTIALPASTE_SHARPENEDGE;Edges
 !PARTIALPASTE_SHARPENMICRO;Microcontrast
 !PARTIALPASTE_VIBRANCE;Vibrance
-!PARTIALPASTE_WAVELETEQUALIZER;Wavelet equalizer
 !PREFERENCES_ADD;Add
 !PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
 !PREFERENCES_BATCH_PROCESSING;Batch Processing
@@ -1105,11 +999,6 @@ ZOOMBAR_SMALL;Lille
 !PROFILEPANEL_PASTEPPASTE;Parameters to paste
 !PROFILEPANEL_PINTERNAL;Neutral
 !PROFILEPANEL_SAVEPPASTE;Parameters to save
-!PROGRESSBAR_BADPIXELS;Bad pixels...
-!PROGRESSBAR_CACORRECTION;CA correction...
-!PROGRESSBAR_DARKFRAME;Darkframe...
-!PROGRESSBAR_GREENEQUIL;Green equilibrating...
-!PROGRESSBAR_LINEDENOISE;Line denoise...
 !PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 !PROGRESSBAR_NOIMAGES;No images found
 !PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
@@ -1168,7 +1057,6 @@ ZOOMBAR_SMALL;Lille
 !TP_BWMIX_MET_DESAT;Desaturation
 !TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
 !TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_MIXF;Mixer Filters
 !TP_BWMIX_NEUTRAL;Reset mixer
 !TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
 !TP_BWMIX_ORANGE;Orange
@@ -1237,7 +1125,6 @@ ZOOMBAR_SMALL;Lille
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
-!TP_COLORAPP_EQUAL;Equal
 !TP_COLORAPP_GAMUT;Gamut control (Lab)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 !TP_COLORAPP_HUE;Hue (h)
@@ -1358,7 +1245,6 @@ ZOOMBAR_SMALL;Lille
 !TP_HSVEQUALIZER_CHANNEL;Channel
 !TP_HSVEQUALIZER_HUE;H
 !TP_HSVEQUALIZER_LABEL;HSV Equalizer
-!TP_HSVEQUALIZER_NEUTRAL;Neutral
 !TP_HSVEQUALIZER_SAT;S
 !TP_HSVEQUALIZER_VAL;V
 !TP_ICM_BLENDCMSMATRIX;Blend ICC highlights with matrix

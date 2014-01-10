@@ -39,7 +39,6 @@ CURVEEDITOR_TYPE;Тип:
 EDITWINDOW_TITLE;Редактор
 EXIFFILTER_APERTURE;Диафрагма
 EXIFFILTER_CAMERA;Камера
-EXIFFILTER_DIALOGLABEL;Фильтр Exif
 EXIFFILTER_EXPOSURECOMPENSATION;Компенсация экспозиции (EV)
 EXIFFILTER_FILETYPE;Тип фильтра
 EXIFFILTER_FOCALLEN;Фокусное расстояние
@@ -93,7 +92,6 @@ EXTPROGTARGET_2;в очереди обработки
 FILEBROWSER_ADDDELTEMPLATE;Добавить/удалить шаблоны...
 FILEBROWSER_APPLYPROFILE;Применить
 FILEBROWSER_APPLYPROFILE_PARTIAL;Применить - частично
-FILEBROWSER_ARRANGEMENTHINT;Вертикальное/горизонтальное расположение эскизов
 FILEBROWSER_AUTODARKFRAME;Автоматический темновой кадр
 FILEBROWSER_AUTOFLATFIELD;Автоматическое плоское поле
 FILEBROWSER_BROWSEPATHBUTTONHINT;Нажмите кнопку мыши чтобы перейти к выбранному каталогу
@@ -112,11 +110,6 @@ FILEBROWSER_DELETEDLGMSG;Вы уверены, что хотите удалить
 FILEBROWSER_EMPTYTRASHHINT;Удалить файлы из корзины без возможности восстановления
 FILEBROWSER_EMPTYTRASH;Очистить корзину
 FILEBROWSER_EXEC_CPB;Создание собственного профиля
-FILEBROWSER_EXIFFILTERAPPLYHINT;Включение/выключения фильтра Exif в браузере
-FILEBROWSER_EXIFFILTERAPPLY;Применить
-FILEBROWSER_EXIFFILTERLABEL;Фильтр Exif
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Настройка параметров фильтра Exif
-FILEBROWSER_EXIFFILTERSETTINGS;Настройка
 FILEBROWSER_EXTPROGMENU;Открыть с помощью
 FILEBROWSER_FLATFIELD;Плоское поле
 FILEBROWSER_MOVETODARKFDIR;Переместить в папку темновых кадров
@@ -126,12 +119,6 @@ FILEBROWSER_OPENDEFAULTVIEWER;Программа просмотра в Windows �
 FILEBROWSER_PARTIALPASTEPROFILE;Частичная вставка
 FILEBROWSER_PASTEPROFILE;Вставить профиль
 FILEBROWSER_POPUPCANCELJOB;Отменить задание
-FILEBROWSER_POPUPCOLORLABEL0;Пометка: нет
-FILEBROWSER_POPUPCOLORLABEL1;Пометка: Красным
-FILEBROWSER_POPUPCOLORLABEL2;Пометка: Желтым
-FILEBROWSER_POPUPCOLORLABEL3;Пометка: Зеленым
-FILEBROWSER_POPUPCOLORLABEL4;Пометка: Синим
-FILEBROWSER_POPUPCOLORLABEL5;Пометка: Фиолетовым
 FILEBROWSER_POPUPCOLORLABEL;Цветовая пометка
 FILEBROWSER_POPUPCOPYTO;Скопировать в...
 FILEBROWSER_POPUPFILEOPERATIONS;Действия с файлами
@@ -142,22 +129,14 @@ FILEBROWSER_POPUPOPEN;Открыть
 FILEBROWSER_POPUPPROCESSFAST;Поставить в очередь (Быстрый экспорт)
 FILEBROWSER_POPUPPROCESS;Поместить в очередь на обработку
 FILEBROWSER_POPUPPROFILEOPERATIONS;Обработка операций профиля
-FILEBROWSER_POPUPRANK1;Рейтинг 1 *
-FILEBROWSER_POPUPRANK2;Рейтинг 2 **
-FILEBROWSER_POPUPRANK3;Рейтинг 3 ***
-FILEBROWSER_POPUPRANK4;Рейтинг 4 ****
-FILEBROWSER_POPUPRANK5;Рейтинг 5 *****
 FILEBROWSER_POPUPRANK;Рейтинг
 FILEBROWSER_POPUPREMOVEINCLPROC;Удалить с диска и результатов пакетной обработки
-FILEBROWSER_POPUPREMOVESUBMENU;Удалить
 FILEBROWSER_POPUPREMOVE;Удалить с диска
 FILEBROWSER_POPUPRENAME;Переименовать
 FILEBROWSER_POPUPSELECTALL;Выбрать все
 FILEBROWSER_POPUPTRASH;Удалить в корзину
 FILEBROWSER_POPUPUNRANK;Снять рейтинг
 FILEBROWSER_POPUPUNTRASH;Удалить из корзины
-FILEBROWSER_PROCESSINGSETTINGSHINT;Задать формат файла и выходной каталог
-FILEBROWSER_PROCESSINGSETTINGS;Параметры
 FILEBROWSER_QUERYBUTTONHINT;Очистить поисковой запрос
 FILEBROWSER_QUERYHINT;Введите <i>часть искомого имени файла</i> или <i>список разделённый запятыми</i> (пробелы значимы).\nНапример <i>1001,1005,1042</i> \n\n<b>Ctrl-F</b> для переключения на диалог поиска текста.\n<b>Enter</b> для начала поиска.\n<b>Shift-Esc</b> для снятия фокуса
 FILEBROWSER_QUERYLABEL; Найти:
@@ -179,7 +158,6 @@ FILEBROWSER_SHOWDIRHINT;Сбросить все фильтры.\nГорячая 
 FILEBROWSER_SHOWEDITEDHINT;Показать измененные изображения.\nГорячая клавиша: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Показать не измененные изображения.\nГорячая клавиша: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Показать информацию EXIF.\nГорячая клавиша: <b>i</b>\n\nГорячая клавиша в режиме Одиночного редактора: <b>Alt-i</b>
-FILEBROWSER_SHOWQUEUEHINT;Показать содержимое очереди на обработку
 FILEBROWSER_SHOWRANK1HINT;Показать изображения с рейтингом 1.\nГорячая клавиша: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Показать изображения с рейтингом 2.\nГорячая клавиша: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Показать изображения с рейтингом 3.\nГорячая клавиша: <b>3</b>
@@ -211,9 +189,7 @@ GENERAL_DISABLE;Выключить
 GENERAL_ENABLED;Включено
 GENERAL_ENABLE;Включить
 GENERAL_FILE;Файл
-GENERAL_HIGH_QUALITY;Высокое качество
 GENERAL_LANDSCAPE;Альбомный
-GENERAL_LOAD;Загрузить
 GENERAL_NA;Н/Д
 GENERAL_NONE;Нет
 GENERAL_NO;Нет
@@ -222,14 +198,6 @@ GENERAL_PORTRAIT;Портретный
 GENERAL_SAVE;Сохранить
 GENERAL_UNCHANGED;(не менялось)
 GENERAL_WARNING;Внимание
-GENERAL_YES;Да
-HISTOGRAM_BUTTON_BAR;RGB
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_LABEL;Гистограмма
 HISTOGRAM_TOOLTIP_BAR;Показать/скрыть панель отображения RGB\nНажмите правую кнопку мыши на предпросмотре изображения, чтобы заблокировать/разблокировать его
 HISTOGRAM_TOOLTIP_B;Показать/скрыть синий канал гистограммы
 HISTOGRAM_TOOLTIP_CHRO;Показать/скрыть хроматическую гистограмму
@@ -492,29 +460,10 @@ HISTORY_MSG_247;Кривая 'LH'
 HISTORY_MSG_248;Кривая 'HH'
 HISTORY_MSG_249;CbDL: Порог
 HISTORY_MSG_250;ПШ: Улучшенный
-HISTORY_NEWSNAPSHOTAS;Как...
 HISTORY_NEWSNAPSHOT;Добавить
 HISTORY_NEWSNAPSHOT_TOOLTIP;Горячая клавиша: <b>Alt-s</b>
-HISTORY_NEWSSDIALOGLABEL;Название снимка:
-HISTORY_NEWSSDIALOGTITLE;Добавить снимок
-HISTORY_SETTO;Установить в
 HISTORY_SNAPSHOTS;Снимки
 HISTORY_SNAPSHOT;Снимок
-ICMPANEL_FILEDLGFILTERANY;Любые файлы
-ICMPANEL_FILEDLGFILTERICM;Цветовые профили
-ICMPANEL_GAMMABEFOREINPUT;Применять гамму для профиля
-ICMPANEL_INPUTCAMERA;По умолчанию для камеры
-ICMPANEL_INPUTCUSTOM;Пользовательский
-ICMPANEL_INPUTDLGLABEL;Выберите входной ICC профиль...
-ICMPANEL_INPUTEMBEDDED;Использовать встроенный, если возможно
-ICMPANEL_INPUTPROFILE;Входной профиль
-ICMPANEL_NOICM;Без ICM: sRGB на выходе
-ICMPANEL_OUTPUTDLGLABEL;Выберите выходной ICC профиль...
-ICMPANEL_OUTPUTPROFILE;Выходной профиль
-ICMPANEL_SAVEREFERENCE;Сохранить исходное изображение для профилирования
-ICMPANEL_WORKINGPROFILE;Рабочий профиль
-IMAGEAREA_DETAILVIEW;Детальный просмотр
-IPTCPANEL_AUTHORHINT;Имя создателя объекта (писателя, фотографа или художника) (By-line)
 IPTCPANEL_AUTHORSPOSITIONHINT;Название автора или авторов объекта (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Позиция автора
 IPTCPANEL_AUTHOR;Автор
@@ -556,14 +505,12 @@ IPTCPANEL_TITLEHINT;Простое описание изображения (Obje
 IPTCPANEL_TITLE;Название
 IPTCPANEL_TRANSREFERENCEHINT;Код, облегчающий отслеживание изображения при передаче в обработку на сторону (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Код поддержки
-MAIN_BUTTON_EXIT;Выход
 MAIN_BUTTON_FULLSCREEN;Полный экран
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Перейти к следующему изображению относительно открытого в редакторе\nГорячая клавиша: <b>Shift+F4</b>\n\nПерейти к следущему изображению относительно выбранного в файловом браузере\nгорячая клавиша <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Перейти к предыдущему изображению относительно открытого в редакторе\nгорячая клавиша: <b>Shift+F4</b>\n\nПерейти к предыдущему изображению относительно выбранного в файловом браузере\nгорячая клавиша <b>F4</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Синхронизировать файловый браузер с редактором чтоб показать эскиз открытого изображения и очистить фильтры браузера файлов\nгорячая клавиша: <b>x</b>\n\nТо же, но без очистки фильтров\nгорячая клавиша: <b>y</b>\n(<i>Обратите внимание</i> что эскиз открытого в редакторе файла не будет показан если не подпадает под текущие фильтры).
 MAIN_BUTTON_PREFERENCES;Настройки
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Поместить текущее изображение в очередь на обработку.\nГорячая клавиша <b>Ctrl+B</b>
-MAIN_BUTTON_QUEUE;В очередь
 MAIN_BUTTON_SAVE_TOOLTIP;Сохранить текущее изображение.\nГорячая клавиша <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Редактировать изображение во внешнем редакторе.\nГорячая клавиша <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Показать/скрыть все боковые панели.\nГорячая клавиша <b>m</b>
@@ -584,19 +531,13 @@ MAIN_MSG_CANNOTSAVE;Ошибка при сохранении файла
 MAIN_MSG_CANNOTSTARTEDITOR;не удалось запустить редактор.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Пожалуйста, установите правильный каталог в диалоге "Настройки".
 MAIN_MSG_EMPTYFILENAME;Имя файла не указано!
-MAIN_MSG_ERRORDURINGIMAGESAVING;Ошибка при сохранении изображения
-MAIN_MSG_EXITJOBSINQUEUEINFO;Необработанные изображения, находящиеся в очереди,будут утеряны при выходе из программы.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Вы уверены, что хотите выйти из программы? В очереди остались необработанные изображения.
 MAIN_MSG_IMAGEUNPROCESSED;Для выполнения этой команды нужно, чтобы все изображения в очереди сперва были обработаны.
-MAIN_MSG_JOBSINQUEUE;Идёт обработка
 MAIN_MSG_NAVIGATOR;Навигатор
 MAIN_MSG_OPERATIONCANCELLED;Операция отменена
 MAIN_MSG_PATHDOESNTEXIST;Путь\n\n<b>%1</b>\n\nне существует. Пожалуйста, установите корректный путь в окне настроек.
-MAIN_MSG_PLACES;Закладки
 MAIN_MSG_QOVERWRITE;Вы хотите перезаписать его?
 MAIN_MSG_SETPATHFIRST;Прежде необходимо установить целевой каталог в настройках\nчтоб использовать эту функцию!
 MAIN_MSG_WRITEFAILED;Не удалось записать\n\n<b>"%1"</b>.\n\nУбедитесь, что каталог существует и у вас есть права на запись в него.
-MAIN_TAB_BASIC;Основные
 MAIN_TAB_COLOR;Цвет
 MAIN_TAB_COLOR_TOOLTIP;Горячая клавиша: <b>Alt-C</b>
 MAIN_TAB_DETAIL;Детализация
@@ -607,7 +548,6 @@ MAIN_TAB_EXPORT; Экспорт
 MAIN_TAB_EXPOSURE;Экспозиция
 MAIN_TAB_EXPOSURE_TOOLTIP;Горячая клавиша: <b>Alt-E</b>
 MAIN_TAB_FILTER;Фильтр
-MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Метаданные
 MAIN_TAB_METADATA_TOOLTIP;Горячая клавиша: <b>Alt-M</b>
@@ -616,24 +556,19 @@ MAIN_TAB_RAW_TOOLTIP;Горячая клавиша: <b>Alt-R</b>
 MAIN_TAB_TAGGING;Метки
 MAIN_TAB_TRANSFORM;Преобразования
 MAIN_TAB_TRANSFORM_TOOLTIP;Горячая клавиша: <b>Alt-T</b>
-MAIN_TOGGLE_BEFORE_AFTER;Д|П
 MAIN_TOOLTIP_BACKCOLOR0;Фоновый цвет предпросмотра: <b>Как в теме</b>\nГорячая клавиша: <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;Фоновый цвет предпросмотра: <b>Черный</b>\nГорячая клавиша: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Фоновый цвет предпросмотра: <b>Белый</b>\nГорячая клавиша: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Заблокировать</b> / <b>Разблокировать</b> <b>предыдущий</b> вид\n\n<b>Заблокировать</b>: сохраняет <b>предыдущий</b> вид неизменным.\nПолезно для оценки общего эффекта от применения нескольких инструментов.\nК тому же, сравнения могут быть произведены на любом состоянии истории\n\n<b>Разблокировать</b>: <b>предыдущий</b> вид будет следовать сразу за <b>следующим</b>, показывая состояние изображения до применения текущего инструмента.
-MAIN_TOOLTIP_HIDEFP;Показать/скрыть нижнюю панель (каталоги и список файлов).\nГорячая клавиша: F
 MAIN_TOOLTIP_HIDEHP;Показать/скрыть левую панель (включая историю).\nГорячая клавиша: H
 MAIN_TOOLTIP_INDCLIPPEDH;Индикатор пересветов.\nГорячая клавиша: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Индикатор затемнений.\nГорячая клавиша: <b>&gt;</b>
-MAIN_TOOLTIP_PREFERENCES;задать настройки
 MAIN_TOOLTIP_PREVIEWB;Просмотреть <b>канал синего</b>.\nГорячая клавиша: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Просмотреть <b>Маску резкости</b>.\nГорячая клавиша: <b>Shift-F</b>\n\nБолее точна на изображениях с небольшой глубиной резкости, малым шумом и при большем приближении изображения\n\nДля улучшения определения на шумных изображениях используйте на маленьком зуме 10-30%\n\nПредпросмотр просчитывается медленнее со включенной маской резкости.
 MAIN_TOOLTIP_PREVIEWG;Просмотреть <b>канал зеленого</b>.\nГорячая клавиша: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Просмотреть <b>Световую составляющую</b>.\nГорячая клавиша: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Просмотреть <b>канал красного</b>.\nГорячая клавиша: <b>r</b>
 MAIN_TOOLTIP_QINFO;Информация об изображении.\nГорячая клавиша<b>i</b>
-MAIN_TOOLTIP_SAVEAS;Сохранить изображение в...
-MAIN_TOOLTIP_SAVE;Сохранить изображение в каталог по умолчанию
 MAIN_TOOLTIP_SHOWHIDELP1;Показать/скрыть левую панель <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Показать/скрыть правую панель <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Показать/скрыть верхнюю панель <b>Shift-l</b>
@@ -667,11 +602,7 @@ PARTIALPASTE_CHANNELMIXERBW;Чёрный-и-Белый
 PARTIALPASTE_CHANNELMIXER;Смешение каналов
 PARTIALPASTE_COARSETRANS;поворот на 90 гр. / отражение
 PARTIALPASTE_COLORAPP;Модель Представления Цветов CIE 2002
-PARTIALPASTE_COLORBOOST;Усиление цвета
-PARTIALPASTE_COLORDENOISE;Удаление цветового шума
 PARTIALPASTE_COLORGROUP;Настройка цвета
-PARTIALPASTE_COLORMIXER;Цветовой микшер
-PARTIALPASTE_COLORSHIFT;Цветовой сдвиг
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Автозаполнение
 PARTIALPASTE_COMPOSITIONGROUP;Параметры компоновки
 PARTIALPASTE_CROP;Кадрирование
@@ -692,10 +623,6 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;Радиус размытия ПП
 PARTIALPASTE_FLATFIELDBLURTYPE;Тип размытия ПП
 PARTIALPASTE_FLATFIELDFILE;Файл плоского поля (ПП)
 PARTIALPASTE_GRADIENT;Градиентный фильтр
-PARTIALPASTE_HLRECONSTRUCTION;Восстановление пересветов
-PARTIALPASTE_HLRECOVERYAMOUNT;Сила восстановления пересветов
-PARTIALPASTE_HLRECOVERYTHRESHOLD;Порог восстановления пересветов
-PARTIALPASTE_HLRECOVERY;Восстановление светов
 PARTIALPASTE_HSVEQUALIZER;HSV Эквалайзер
 PARTIALPASTE_ICMGAMMA;Выходная гамма
 PARTIALPASTE_ICMSETTINGS;Параметры ICM
@@ -704,8 +631,6 @@ PARTIALPASTE_IPTCINFO;Данные IPTC
 PARTIALPASTE_LABCURVE;Настройка Lab
 PARTIALPASTE_LENSGROUP;Параметры связанные с объективом
 PARTIALPASTE_LENSPROFILE;Профиль коррекции объектива
-PARTIALPASTE_LUMADENOISE;Удаление яркостного шума
-PARTIALPASTE_LUMINANCEGROUP;Настройка параметров яркости
 PARTIALPASTE_METAICMGROUP;Настройка метаданных/параметров ICM
 PARTIALPASTE_PCVIGNETTE;Фильтр виньетирования
 PARTIALPASTE_PERSPECTIVE;Перспектива
@@ -734,7 +659,6 @@ PARTIALPASTE_SHARPENING;Повышение резкости
 PARTIALPASTE_SHARPENMICRO;Микроконтраст
 PARTIALPASTE_VIBRANCE;Резонанс
 PARTIALPASTE_VIGNETTING;Коррекция виньетирования
-PARTIALPASTE_WAVELETEQUALIZER;Вейвлет эквалайзер
 PARTIALPASTE_WHITEBALANCE;Баланс белого
 PREFERENCES_ADD;Добавить
 PREFERENCES_APPLNEXTSTARTUP;нужен перезапуск
@@ -752,9 +676,6 @@ PREFERENCES_CACHECLEARPROFILES;Удалить параметры обработ�
 PREFERENCES_CACHECLEARTHUMBS;Удалить эскизы
 PREFERENCES_CACHEMAXENTRIES;Максимальное число элементов в кэше
 PREFERENCES_CACHEOPTS;Параметры кэширования
-PREFERENCES_CACHESTRAT1;Выше скорость - больше расход ОЗУ
-PREFERENCES_CACHESTRAT2;Меньше расход памяти - скорость ниже
-PREFERENCES_CACHESTRAT;Стратегия кэширования
 PREFERENCES_CACHETHUMBHEIGHT;Максимальная высота эскиза
 PREFERENCES_CIEART;Оптимизация CIECAM02
 PREFERENCES_CIEART_LABEL;Использовать числа с плавающей запятой вместо двойной точности
@@ -781,7 +702,6 @@ PREFERENCES_DATEFORMATHINT;Вы можете использовать следу
 PREFERENCES_DATEFORMAT;Формат даты
 PREFERENCES_DEFAULTLANG;Язык по умолчанию
 PREFERENCES_DEFAULTTHEME;Тема по умолчанию
-PREFERENCES_DEMOSAICINGALGO;Алгоритм демозаика
 PREFERENCES_DIRDARKFRAMES;Каталог размещения темновых кадров
 PREFERENCES_DIRHOME;Домашний каталог
 PREFERENCES_DIRLAST;Последний каталог
@@ -814,7 +734,6 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Яркость (Yb) устройства вывода (%)
 PREFERENCES_GTKTHEME;по умолчанию GTK
-PREFERENCES_HINT;Подсказка
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Гистограмма на левой панели
 PREFERENCES_HLTHRESHOLD;Порог срабатывания пересветов
 PREFERENCES_ICCDIR;Каталог ICC профилей
@@ -825,7 +744,6 @@ PREFERENCES_INTENT_RELATIVE;Относительное колориметрич�
 PREFERENCES_INTENT_SATURATION;По насыщенности
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Показывать встроенную в Raw миниатюру если файл не отредактирован
 PREFERENCES_LANGAUTODETECT;Использовать язык ОС
-PREFERENCES_LIVETHUMBNAILS;Эскизы в реальном времени (медленно)
 PREFERENCES_MENUGROUPEXTPROGS;Группа "Открыть с помощью"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Группа "Действия с файлами"
 PREFERENCES_MENUGROUPLABEL;Группа "Цветовая пометка"
@@ -860,15 +778,12 @@ PREFERENCES_PSPATH;Каталог установки Adobe Photoshop
 PREFERENCES_RGBDTL_LABEL;Максимальное количество потоков для Шумоподавления
 PREFERENCES_RGBDTL_TOOLTIP;Шумоподавление требует в среднем 128М оперативной памяти для изображения в 10MPix или 512 для 40MPix и дополнительно 128MB на поток. Чем больше потоков запущено параллельно, тем быстре рассчёт. Оставьте "0" чтоб автоматически использовать столько потоков, сколько это возможно.
 PREFERENCES_SELECTFONT;Выбрать шрифт
-PREFERENCES_SELECTICCDIRDLG;Выберите каталог для ICC профиля...
 PREFERENCES_SELECTLANG;Выберите язык
-PREFERENCES_SELECTMONITORPROFDLG;Выберите каталог для ICC профиля монитора...
 PREFERENCES_SELECTTHEME;Выбрать тему
 PREFERENCES_SET;Установить
 PREFERENCES_SHOWBASICEXIF;Показывать основные Exif данные
 PREFERENCES_SHOWDATETIME;Показывать дату и время
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Добавить компенсацию выдержки
-PREFERENCES_SHOWONLYRAW;Показывать только raw-файлы
 PREFERENCES_SHOWPROFILESELECTOR;Показать выбор профиля обработки
 PREFERENCES_SHTHRESHOLD;Порог обрезки теней
 PREFERENCES_SINGLETABVERTAB;Одна вкладкой редактирования, вертикальные вкладки
@@ -884,10 +799,8 @@ PREFERENCES_TAB_BROWSER;Файловый браузер
 PREFERENCES_TAB_COLORMGR;Управление цветом
 PREFERENCES_TAB_GENERAL;Основные настройки
 PREFERENCES_TAB_IMPROC;Обработка изображения
-PREFERENCES_TAB_OUTPUT;Сохранение
 PREFERENCES_TAB_PERFORMANCE;Производительность
 PREFERENCES_TAB_SOUND;Звуки
-PREFERENCES_THUMBSIZE;Размер миниатюры
 PREFERENCES_TP_LABEL;Панель инструментов:
 PREFERENCES_TP_USEICONORTEXT;Использовать в закладках иконки вместо текста
 PREFERENCES_TP_VSCROLLBAR;Спрятать вертикальную полосу прокрутки
@@ -909,22 +822,13 @@ PROFILEPANEL_PASTEPPASTE;Параметры для вставки
 PROFILEPANEL_PCUSTOM;Пользовательский
 PROFILEPANEL_PFILE;Из файла
 PROFILEPANEL_PINTERNAL;Нейтральный
-PROFILEPANEL_PLASTPHOTO;Из прошлого изображения
 PROFILEPANEL_PLASTSAVED;Последний сохранённый
-PROFILEPANEL_PROFILE;Профиль
 PROFILEPANEL_SAVEDLGLABEL;Сохранить профиль обработки...
 PROFILEPANEL_SAVEPPASTE;Параметры для сохранения
 PROFILEPANEL_TOOLTIPCOPY;Скопировать текущий профиль в буфер обмена.\n<b>Ctrl+click</b> для выбора параметров для копирования
 PROFILEPANEL_TOOLTIPLOAD;Загрузить профиль из файла\n<b>Ctrl+click</b> для выбора параметров для загрузки
 PROFILEPANEL_TOOLTIPPASTE;Вставить профиль из буфера обмена\n<b>Ctrl+click</b> для выбора параметров для вставки
 PROFILEPANEL_TOOLTIPSAVE;Сохранить текущий профиль\n<b>Ctrl+click</b> для выбора параметров для сохранения
-PROGRESSBAR_BADPIXELS;Битые пиксели...
-PROGRESSBAR_CACORRECTION;Коррекция ХА...
-PROGRESSBAR_DARKFRAME;Темновой кадр... 
-PROGRESSBAR_DECODING;Декодирование raw файла...
-PROGRESSBAR_DEMOSAICING;Построение изображения...
-PROGRESSBAR_GREENEQUIL;Выравнивание зелёного...
-PROGRESSBAR_LINEDENOISE;Линейное удаление шума...
 PROGRESSBAR_LOADINGTHUMBS;Загрузка миниатюр...
 PROGRESSBAR_LOADING;Загрузка изображения...
 PROGRESSBAR_LOADJPEG;Чтение JPEG файла...
@@ -939,9 +843,7 @@ PROGRESSBAR_SAVEPNG;Сохранение PNG файла...
 PROGRESSBAR_SAVETIFF;Сохранение TIFF файла...
 PROGRESSBAR_SNAPSHOT_ADDED;Снимок добавлен
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Профиль изменён в браузере
-QINFO_FOCALLENGTH;Фокусное расстояние
 QINFO_ISO;ISO
-QINFO_LENS;Объектив
 QINFO_NOEXIF;Данные Exif недоступны
 SAVEDLG_AUTOSUFFIX;Автоматически добавлять суффикс если файл существует
 SAVEDLG_FILEFORMAT;Формат файла
@@ -949,7 +851,6 @@ SAVEDLG_FORCEFORMATOPTS;Принудительно установить наст
 SAVEDLG_JPEGQUAL;Качество JPEG
 SAVEDLG_JPGFILTER;Файлы JPEG
 SAVEDLG_PNGCOMPR;Сжатие PNG
-SAVEDLG_PNGFILTER;Файлы PNG
 SAVEDLG_PUTTOQUEUEHEAD;Поместить в начало очереди на обработку
 SAVEDLG_PUTTOQUEUETAIL;Поместить в конец очереди на обработку
 SAVEDLG_PUTTOQUEUE;Поместить в очередь на обработку
@@ -1011,7 +912,6 @@ TP_BWMIX_MET_CHANMIX;Миксер каналов
 TP_BWMIX_MET_DESAT;Обесцвечивание
 TP_BWMIX_MET_LUMEQUAL;Яркостный Эквалайзер
 TP_BWMIX_MIXC;Миксер
-TP_BWMIX_MIXF;Миксер фильтров
 TP_BWMIX_NEUTRAL;Сбросить
 TP_BWMIX_NEUTRAL_TIP;Сбросить все значения (фильтр, миксер каналов) на умолчательные
 TP_BWMIX_ORANGE;Оранжевый
@@ -1135,7 +1035,6 @@ TP_HLREC_METHOD;Метод:
 TP_HSVEQUALIZER_CHANNEL;Канал
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;Эквалайзер HSV
-TP_HSVEQUALIZER_NEUTRAL;Нейтральный
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Смешивать засветы с матрицей
@@ -1156,7 +1055,6 @@ TP_ICM_INPUTNONE_TOOLTIP;Не применять входящий цветово
 TP_ICM_INPUTPROFILE;Входной профиль
 TP_ICM_LABEL;ICM
 TP_ICM_NOICM;Без ICM: sRGB на выходе
-TP_ICM_OUTPUTDLGLABEL;Выберите выходной ICC профиль...
 TP_ICM_OUTPUTPROFILE;Выходной профиль
 TP_ICM_SAVEREFERENCE;Сохранить исходное изображение для профилирования
 TP_ICM_WORKINGPROFILE;Рабочий профиль
@@ -1196,9 +1094,6 @@ TP_LENSPROFILE_LABEL;Профиль коррекции искажений объ
 TP_LENSPROFILE_USECA;Использовать коррекцию ХА
 TP_LENSPROFILE_USEDIST;Использовать коррекцию дисторсии
 TP_LENSPROFILE_USEVIGN;Использовать коррекцию виньетирования
-TP_LUMADENOISE_EDGETOLERANCE;Устойчивость к границам контуров
-TP_LUMADENOISE_LABEL;Удаление шума
-TP_LUMADENOISE_RADIUS;радиус
 TP_NEUTRAL;Нейтральный
 TP_NEUTRAL_TIP;Сбросить настройки выдержки на средние значения
 TP_PERSPECTIVE_HORIZONTAL;Горизонтальная
@@ -1234,7 +1129,6 @@ TP_RESIZE_BILINEAR;Билинейный
 TP_RESIZE_CROPPEDAREA;Кадрированной области
 TP_RESIZE_FITBOX;Ограничивающей рамке
 TP_RESIZE_FULLIMAGE;Полному изображению
-TP_RESIZE_FULLSIZE;Размер изображения:
 TP_RESIZE_HEIGHT;высоту
 TP_RESIZE_H;В:
 TP_RESIZE_LABEL;Изменение размера
@@ -1348,13 +1242,6 @@ TP_WBALANCE_SOLUX47_NG;Solux 4700K (Нац. галерея)
 TP_WBALANCE_SPOTWB;Указать точку белого
 TP_WBALANCE_TEMPERATURE;Температура
 TP_WBALANCE_TUNGSTEN;Вольфрамовый
-ZOOMBAR_DETAIL;Увеличение
-ZOOMBAR_HUGE;Максимальное
-ZOOMBAR_LARGE;Большое
-ZOOMBAR_NORMAL;Среднее
-ZOOMBAR_PREVIEW;Предпросмотр
-ZOOMBAR_SCALE;Масштаб
-ZOOMBAR_SMALL;Минимальное
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Новое окно детального просмотра
 ZOOMPANEL_ZOOM100;Масштаб 100% <b>z</b>
@@ -1366,7 +1253,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!PREFERENCES_OUTDIRHINT;You can use the following formatting strings:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>\n\nThese formatting strings refer to the different parts of the photo's pathname or some attributes of the photo.\n\nFor example, if the photo being processed has the following pathname:\n<b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b>\nthe meaning of the formatting strings are:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the rank of the photo.  If the photo is unranked, %r will be replaced by '0'.  If the photo is in the trash bin, %r will be replaced by 'x'.\n\nIf you want to save the output image where the original is, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a directory named "<i>converted</i>" located in the directory of the opened image, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in a directory named "<i>/home/tom/photos/converted/2010-10-31</i>", write:\n<b>%p2/converted/%d1/%f</b>
 !TP_COLORAPP_ADAPTSCENE;Scene luminosity
 !TP_COLORAPP_ADAPTSCENE_TOOLTIP;Absolute luminance of the scene environement (cd/m²).\n1) Calculated from the Exif data:\nShutter speed - ISO speed - F number - camera exposure correction.\n2) Calculated from the raw white point and RT's Exposure Compensation slider
 !TP_COLORAPP_ADAPTVIEWING;Viewing luminosity (cd/m²)
@@ -1403,7 +1289,6 @@ ZOOMPANEL_ZOOMOUT;Удалить <b>-</b>
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show Lab values before CIECAM02 adjustments
 !TP_COLORAPP_DEGREE_AUTO_TOOLTIP;If the check-box is checked (recommended), RT calculates an optimum value, which is then used by CAT02, and also for the entire CIECAM02.\nTo set the value manually, uncheck the check-box first (values above 65 are recommended)
 !TP_COLORAPP_DEGREE_TOOLTIP;Amount of CIE Chromatic Adaptation Transform 2002
-!TP_COLORAPP_EQUAL;Equal
 !TP_COLORAPP_GAMUT;Gamut control (Lab)
 !TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in Lab mode
 !TP_COLORAPP_HUE;Hue (h)

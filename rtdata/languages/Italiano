@@ -37,7 +37,6 @@ CURVEEDITOR_TYPE;Tipologia:
 EDITWINDOW_TITLE;Modifica immagine
 EXIFFILTER_APERTURE;Diaframma
 EXIFFILTER_CAMERA;Fotocamera
-EXIFFILTER_DIALOGLABEL;Filtro Exif
 EXIFFILTER_EXPOSURECOMPENSATION;Compensazione dell'Esposizione (EV)
 EXIFFILTER_FILETYPE;Tipo file
 EXIFFILTER_FOCALLEN;Lunghezza focale
@@ -90,7 +89,6 @@ EXTPROGTARGET_2;Lavorato dalla Coda
 FILEBROWSER_ADDDELTEMPLATE;Aggiungi/Rimuovi schemi...
 FILEBROWSER_APPLYPROFILE;Applica
 FILEBROWSER_APPLYPROFILE_PARTIAL;Applica (parziale)
-FILEBROWSER_ARRANGEMENTHINT;Commuta fra disposizione verticale o orizzontale delle miniature
 FILEBROWSER_AUTODARKFRAME;Dark Frame automatico
 FILEBROWSER_AUTOFLATFIELD;Flat Field automatico
 FILEBROWSER_BROWSEPATHBUTTONHINT;Premi per aprire il percorso inserito
@@ -108,11 +106,6 @@ FILEBROWSER_DELETEDLGMSG;Sei certo di voler eliminare i %1 file selezionati?
 FILEBROWSER_EMPTYTRASHHINT;Elimina definitivamente i file dal cestino
 FILEBROWSER_EMPTYTRASH;Svuota cestino
 FILEBROWSER_EXEC_CPB;Generatore profili personalizzati
-FILEBROWSER_EXIFFILTERAPPLYHINT;Abilita/Disabilita il filtro exif nel navigatore
-FILEBROWSER_EXIFFILTERAPPLY;Applica
-FILEBROWSER_EXIFFILTERLABEL;Filtro Exif
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Modifica le impostazioni del filtro exif
-FILEBROWSER_EXIFFILTERSETTINGS;Imposta
 FILEBROWSER_EXTPROGMENU;Apri con
 FILEBROWSER_FLATFIELD;Flat Field
 FILEBROWSER_MOVETODARKFDIR;Sposta nella cartella dei Dark Frame
@@ -122,12 +115,6 @@ FILEBROWSER_OPENDEFAULTVIEWER;Visualiatore predefinito di Windows (lavorato dall
 FILEBROWSER_PARTIALPASTEPROFILE;Incolla - parziale
 FILEBROWSER_PASTEPROFILE;Incolla
 FILEBROWSER_POPUPCANCELJOB;Annulla lavoro
-FILEBROWSER_POPUPCOLORLABEL0;Etichetta: Nessuna
-FILEBROWSER_POPUPCOLORLABEL1;Etichetta: Rossa
-FILEBROWSER_POPUPCOLORLABEL2;Etichetta: Gialla
-FILEBROWSER_POPUPCOLORLABEL3;Etichetta: Verde
-FILEBROWSER_POPUPCOLORLABEL4;Etichetta: Blu
-FILEBROWSER_POPUPCOLORLABEL5;Etichetta: Viola
 FILEBROWSER_POPUPCOLORLABEL;Etichetta colorata
 FILEBROWSER_POPUPCOPYTO;Copia in...
 FILEBROWSER_POPUPFILEOPERATIONS;Operazioni sui file
@@ -138,22 +125,14 @@ FILEBROWSER_POPUPOPEN;Apri
 FILEBROWSER_POPUPPROCESSFAST;Aggiungi alla Coda (Esportazione Rapida)
 FILEBROWSER_POPUPPROCESS;Aggiungi alla Coda
 FILEBROWSER_POPUPPROFILEOPERATIONS;Operazioni sui Profili di Sviluppo
-FILEBROWSER_POPUPRANK1;Classifica 1 *
-FILEBROWSER_POPUPRANK2;Classifica 2 **
-FILEBROWSER_POPUPRANK3;Classifica 3 ***
-FILEBROWSER_POPUPRANK4;Classifica 4 ****
-FILEBROWSER_POPUPRANK5;Classifica 5 *****
 FILEBROWSER_POPUPRANK;Classificazione
 FILEBROWSER_POPUPREMOVEINCLPROC;Elimina (assieme a quanto sviluppato nella coda)
-FILEBROWSER_POPUPREMOVESUBMENU;Elimina
 FILEBROWSER_POPUPREMOVE;Elimina
 FILEBROWSER_POPUPRENAME;Rinomina
 FILEBROWSER_POPUPSELECTALL;Seleziona tutto
 FILEBROWSER_POPUPTRASH;Sposta nel cestino
 FILEBROWSER_POPUPUNRANK;Declassifica
 FILEBROWSER_POPUPUNTRASH;Rimuovi dal cestino
-FILEBROWSER_PROCESSINGSETTINGSHINT;Scegli il formato del file e la cartella di destinazione
-FILEBROWSER_PROCESSINGSETTINGS;Impostazioni
 FILEBROWSER_QUERYBUTTONHINT;Azzera la ricerca
 FILEBROWSER_QUERYHINT;Scrivi <i>una parte del nome del file</i> da cercare o una <i>lista separata da virgole</i>\nEsempio: <i>1001,1004,1199</i>\n\n<b>Ctrl-f</b> per selezionare la parola (solo nel Navigatore);\n<b>Invio</b> per avviare la ricerca\n<b>Esc<\b> per cancellare.
 FILEBROWSER_QUERYLABEL; Cerca:
@@ -170,7 +149,6 @@ FILEBROWSER_SHOWDIRHINT;Rimuovi tutti i filtri <b>D</b>
 FILEBROWSER_SHOWEDITEDHINT;Mostra immagini modificate.\nScorciatoia: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Mostra immagini non modificate.\nScorciatoia: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostra informazioni EXIF.\nScorciatoia: <b>i</b>
-FILEBROWSER_SHOWQUEUEHINT;Mostra il contenuto della Coda di Sviluppo
 FILEBROWSER_SHOWRANK1HINT;Mostra le immagini classificate con 1 stella.\nScorciatoia: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Mostra le immagini classificate con 2 stelle.\nScorciatoia: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Mostra le immagini classificate con 3 stelle.\nScorciatoia: <b>3</b>
@@ -201,9 +179,7 @@ GENERAL_DISABLE;Disabilita
 GENERAL_ENABLED;Abilitato
 GENERAL_ENABLE;Abilita
 GENERAL_FILE;File
-GENERAL_HIGH_QUALITY;Qualità alta
 GENERAL_LANDSCAPE;Panorama
-GENERAL_LOAD;Carica
 GENERAL_NA;n/d
 GENERAL_NONE;Nessuno
 GENERAL_NO;No
@@ -212,14 +188,6 @@ GENERAL_PORTRAIT;Ritratto
 GENERAL_SAVE;Salva
 GENERAL_UNCHANGED;(Invariato)
 GENERAL_WARNING;Attenzione
-GENERAL_YES;Sì
-HISTOGRAM_BUTTON_BAR;RGB
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_RAW;Raw
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_LABEL;Istogramma
 HISTOGRAM_TOOLTIP_BAR;Mostra/Nascondi la barra RBG\nPremi il tasto destro del mouse sull'anteprima dell'immagine per bloccarla/sbloccarla
 HISTOGRAM_TOOLTIP_B;Mostra/Nascondi l'istogramma del Blu
 HISTOGRAM_TOOLTIP_CHRO;Mostra/Nascondi l'istogramma di cromaticità
@@ -437,29 +405,10 @@ HISTORY_MSG_201;Riduzione Rumore - Delta Crominanza Rosso
 HISTORY_MSG_202;Riduzione Rumore - Delta Crominanza Blu
 HISTORY_MSG_203;Riduzione Rumore - Metodo
 HISTORY_MSG_204;Passaggi di miglioramento LMMSE
-HISTORY_NEWSNAPSHOTAS;Come...
 HISTORY_NEWSNAPSHOT;Aggiungi
 HISTORY_NEWSNAPSHOT_TOOLTIP;Scorciatoia: <b>Alt-s</b>
-HISTORY_NEWSSDIALOGLABEL;Etichetta dell'istantanea:
-HISTORY_NEWSSDIALOGTITLE;Aggiungi nuova istantanea
-HISTORY_SETTO;Imposta a
 HISTORY_SNAPSHOTS;Istantanee
 HISTORY_SNAPSHOT;Istantanea
-ICMPANEL_FILEDLGFILTERANY;Qualsiasi file
-ICMPANEL_FILEDLGFILTERICM;Profili Colore
-ICMPANEL_GAMMABEFOREINPUT;Il profilo applica il Gamma
-ICMPANEL_INPUTCAMERA;Predefinito della fotocamera
-ICMPANEL_INPUTCUSTOM;Personalizzato
-ICMPANEL_INPUTDLGLABEL;Seleziona il profilo colore di ingresso...
-ICMPANEL_INPUTEMBEDDED;Incorporato, se disponibile
-ICMPANEL_INPUTPROFILE;Profilo colore di ingresso
-ICMPANEL_NOICM;Nessun ICM: uscita sRGB
-ICMPANEL_OUTPUTDLGLABEL;Seleziona il profilo colore di uscita...
-ICMPANEL_OUTPUTPROFILE;Profilo colore di uscita
-ICMPANEL_SAVEREFERENCE;Salva immagine di riferimento per la profilazione
-ICMPANEL_WORKINGPROFILE;Profilo colore di lavoro
-IMAGEAREA_DETAILVIEW;Vista Dettaglio
-IPTCPANEL_AUTHORHINT;Nome del creatore dell'opera, es. scrittore, fotografo o artista grafico (By-line).
 IPTCPANEL_AUTHORSPOSITIONHINT;Titolo del creatore o creatori dell'opera (By-line Title).
 IPTCPANEL_AUTHORSPOSITION;Qualifica dell'Autore
 IPTCPANEL_AUTHOR;Autore
@@ -501,14 +450,12 @@ IPTCPANEL_TITLEHINT;Un'abbreviazione che alluda all'immagine (Object Name).
 IPTCPANEL_TITLE;Titolo
 IPTCPANEL_TRANSREFERENCEHINT;Un codice che rappresenta l'ubicazione da cui è avvenuta la trasmissione originaria (Original Transmission Reference).
 IPTCPANEL_TRANSREFERENCE;Riferimento Trasm.
-MAIN_BUTTON_EXIT;Esci
 MAIN_BUTTON_FULLSCREEN;Schermo intero
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Individua l'immagine successiva rispetto a un'immagine aperta per la Modifica\nScorciatoia: <b>Shift-F4</b>\n\nPer passare alla successiva immagine relativa alla miniatura selezionata nel Navigatore\nScorciatoia: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Individua l'immagine precedente rispetto a un'immagine aperta per la Modifica\nScorciatoia: <b>Shift-F3</b>\n\nPer passare all'immagine precedente relativa alla miniatura selezionata in Navigate\nScorciatoia: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Sincronizza il Navigatore con la scheda di Modifica per rivelare la miniatura dell'immagine attualmente aperta, e rimuovere i filtri nel Navigatore\nScorciatoia: <b>x</b>\n\nCome sopra, ma senza cancellare i filtri nel Navigatore\nScorciatoia: <b>y</b>\n(Nota che la miniatura del file aperto, se filtrato, non verrà mostrata).
 MAIN_BUTTON_PREFERENCES;Preferenze
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Aggiungi l'immagine corrente alla coda di sviluppo.\nScorciatoia: <b>Ctrl+B</b>
-MAIN_BUTTON_QUEUE;Accoda
 MAIN_BUTTON_SAVE_TOOLTIP;Salva l'immagine corrente.\nSscorciatoia: <b>Ctrl+S</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Modifica l'immagine corrente con un programma di fotoritocco.\nScorciatoia: <b>Ctrl+E</b>
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Mostra/Nascondi tutti i pannelli laterali.\nScorciatoia: <b>m</b>
@@ -529,19 +476,13 @@ MAIN_MSG_CANNOTSAVE;Errore nel salvare il file!
 MAIN_MSG_CANNOTSTARTEDITOR;Non riesco ad avviare il programma di fotoritocco.
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Inserisci il percorso corretto nelle "Preferenze".
 MAIN_MSG_EMPTYFILENAME;Nome del file non specificato!
-MAIN_MSG_ERRORDURINGIMAGESAVING;Errore durante il salvataggio dell'immagine
-MAIN_MSG_EXITJOBSINQUEUEINFO;Uscendo si perderanno le immagini in coda non ancora sviluppate.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Sei certo di voler uscire? Ci sono immagini non ancora sviluppate nella coda.
 MAIN_MSG_IMAGEUNPROCESSED;Questo comando richiede che tutte le immagini selezionate vengano prima elaborate nella coda.
-MAIN_MSG_JOBSINQUEUE;lavoro/i in coda
 MAIN_MSG_NAVIGATOR;Navigatore
 MAIN_MSG_OPERATIONCANCELLED;Operatione annullata
 MAIN_MSG_PATHDOESNTEXIST;Il percorso\n\n<b>%1</b>\n\nnon esiste. Imposta un percorso corretto nella finestra Preferenze.
-MAIN_MSG_PLACES;Risorse
 MAIN_MSG_QOVERWRITE;Intendi sovrascriverlo?
 MAIN_MSG_SETPATHFIRST;Per utilizzare questa funzione\ndevi impostare un percorso nelle Preferenze.
 MAIN_MSG_WRITEFAILED;Impossibile scrivere\n\n<b>"%1"</b>\n\nAssicurati che la cartella esista e di averne i permessi di scrittura.
-MAIN_TAB_BASIC;Principale
 MAIN_TAB_COLOR;Colore
 MAIN_TAB_COLOR_TOOLTIP;Scorciatoia: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Dettaglio
@@ -552,7 +493,6 @@ MAIN_TAB_EXPORT; Esporta
 MAIN_TAB_EXPOSURE;Esposizione
 MAIN_TAB_EXPOSURE_TOOLTIP;Scorciatoia: <b>Alt-e</b>
 MAIN_TAB_FILTER;Filtro
-MAIN_TAB_ICM;Gestione Colore
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadati
 MAIN_TAB_METADATA_TOOLTIP;Scorciatoia: <b>Alt-m</b>
@@ -561,24 +501,19 @@ MAIN_TAB_RAW_TOOLTIP;Scorciatoia: <b>Alt-r</b>
 MAIN_TAB_TAGGING;Etichettatura
 MAIN_TAB_TRANSFORM;Trasformazione
 MAIN_TAB_TRANSFORM_TOOLTIP;Scorciatoia: <b>Alt-t</b>
-MAIN_TOGGLE_BEFORE_AFTER;P|D
 MAIN_TOOLTIP_BACKCOLOR0;Colore di sfondo dell'anteprima: <b>Basato sul tema</b>\nScorciatoia: <b>8</b>
 MAIN_TOOLTIP_BACKCOLOR1;Colore di sfondo dell'anteprima: <b>Nero</b>\nScorciatoia: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Colore di sfondo dell'anteprima: <b>Bianco</b>\nScorciatoia: <b>0</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Blocca</b>/<b>Sblocca</b> la vista <b>Prima</b>\n\n<b>Blocca</b>: Conserva la vista <b>Prima</b>.\nUtile per valutare l'effetto cumulativo di diversi strumenti.\nIn più, possono essere fatti paragoni con ogni passo della cronologia.\n\n<b>Sblocca</b>: la vista <b>Prima</b> segue di un passo la vista <b>Dopo</b>, mostrando l'immagine prima dell'effetto dello strumento corrente.
-MAIN_TOOLTIP_HIDEFP;Mostra/Nascondi il pannello dei pulsanti (cartelle e navigatore di file).\nScorciatoia: <b>F</b>
 MAIN_TOOLTIP_HIDEHP;Mostra/Nascondi il pannello sinistro (inclusa la cronologia)\nScorciatoia: <b>H</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Indicazione delle alteluci tosate.\nScorciatoia: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Indicazione delle ombre tosate.\nScorciatoia: <b>&gt;</b>
-MAIN_TOOLTIP_PREFERENCES;Imposta preferenze
 MAIN_TOOLTIP_PREVIEWB;Anteprima del <b>Canale Blu</b>.\nScorciatoia: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Anteprima della <b>Focus Mask</b>.\nScorciatoia: <b>Maiuscolo-F</b>\n\nPiù accurato su immagini con bassa profondità di campo, poco rumore e ad elevati livelli di zoom.\n\nPer aumentare l'accuratezza della rilevazione su immagini con molto rumore, riduci le dimensioni del 10-30%.\n\nIl calcolo dell'anteprima viene rallentato con la Focus Mask attivata.
 MAIN_TOOLTIP_PREVIEWG;Anteprima del <b>Canale Verde</b>.\nScorciatoia: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Anteprima della <b>Luminosità</b>.\nScorciatoia: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Anteprima del <b>Canale Rosso</b>.\nScorciatoia: <b>r</b>
 MAIN_TOOLTIP_QINFO;Informazioni generali sullo scatto.\nScorciatoia: <b>i</b>
-MAIN_TOOLTIP_SAVEAS;Salva l'immagine nella cartella selezionata
-MAIN_TOOLTIP_SAVE;Salva l'immagine nella cartella predefinita
 MAIN_TOOLTIP_SHOWHIDELP1;Mostra/Nascondi il pannello sinistro.\nScorciatoia: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Mostra/Nascondi il pannello destro.\nScorciatoia: <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Mostra/Nascondi il pannello superiore.\nScorciatoia: <b>Maiuscolo-l</b>
@@ -611,11 +546,7 @@ PARTIALPASTE_CACORRECTION;Correzione AC
 PARTIALPASTE_CHANNELMIXER;Miscelatore Canali
 PARTIALPASTE_COARSETRANS;Rotazione di 90°/Riflessione
 PARTIALPASTE_COLORAPP;Modello di Aspetto Colore CIE 2002
-PARTIALPASTE_COLORBOOST;Potenziamento colore
-PARTIALPASTE_COLORDENOISE;Riduzione Rumore di Crominanza
 PARTIALPASTE_COLORGROUP;Parametri relativi al colore
-PARTIALPASTE_COLORMIXER;Miscelatore colore
-PARTIALPASTE_COLORSHIFT;Color shift
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Riadatta
 PARTIALPASTE_COMPOSITIONGROUP;Parametri di composizione
 PARTIALPASTE_CROP;Ritaglio
@@ -635,10 +566,6 @@ PARTIALPASTE_FLATFIELDAUTOSELECT;FF - Autoselezione
 PARTIALPASTE_FLATFIELDBLURRADIUS;FF - Raggio di sfocamento
 PARTIALPASTE_FLATFIELDBLURTYPE;FF - Modalità di sfocamento
 PARTIALPASTE_FLATFIELDFILE;File Flat Field (FF)
-PARTIALPASTE_HLRECONSTRUCTION;Ricostruzione Alteluci
-PARTIALPASTE_HLRECOVERYAMOUNT;Quantità di Recupero Alteluci
-PARTIALPASTE_HLRECOVERYTHRESHOLD;Soglia di Recupero Alteluci
-PARTIALPASTE_HLRECOVERY;Recupero Alteluci
 PARTIALPASTE_HSVEQUALIZER;Equalizzatore HSV
 PARTIALPASTE_ICMGAMMA;Gamma di uscita
 PARTIALPASTE_ICMSETTINGS;Impostazioni Gestione Colore
@@ -647,8 +574,6 @@ PARTIALPASTE_IPTCINFO;Informazioni IPTC
 PARTIALPASTE_LABCURVE;Regolazioni Lab
 PARTIALPASTE_LENSGROUP;Impostazioni dell'Obiettivo
 PARTIALPASTE_LENSPROFILE;Profilo di Correzione dell'Obiettivo
-PARTIALPASTE_LUMADENOISE;Riduzione rumore di Luminanza
-PARTIALPASTE_LUMINANCEGROUP;Impostazioni di luminanza
 PARTIALPASTE_METAICMGROUP;Impostazioni di metadati e Gestione Colore
 PARTIALPASTE_PERSPECTIVE;Prospettiva
 PARTIALPASTE_PREPROCESS_GREENEQUIL;Bilanciamento del verde
@@ -676,7 +601,6 @@ PARTIALPASTE_SHARPENING;Nitidezza (MDC/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontrasto
 PARTIALPASTE_VIBRANCE;Vividezza
 PARTIALPASTE_VIGNETTING;Correzione Vignettatura
-PARTIALPASTE_WAVELETEQUALIZER;Equalizzatore Wavelet
 PARTIALPASTE_WHITEBALANCE;Bilanciamento del bianco
 PREFERENCES_ADD;Somma
 PREFERENCES_APPLNEXTSTARTUP;applicato al prossimo avvio
@@ -694,9 +618,6 @@ PREFERENCES_CACHECLEARPROFILES;Rimuovi i profili di sviluppo
 PREFERENCES_CACHECLEARTHUMBS;Rimuovi le miniature
 PREFERENCES_CACHEMAXENTRIES;Numero massimo di voci in memoria
 PREFERENCES_CACHEOPTS;Opzioni della memoria del programma
-PREFERENCES_CACHESTRAT1;Privilegia la rapidità al minore consumo di memoria
-PREFERENCES_CACHESTRAT2;Privilegia il minore consumo di memoria alla rapidità
-PREFERENCES_CACHESTRAT;Strategia di precaricamento
 PREFERENCES_CACHETHUMBHEIGHT;Massima altezza delle miniature
 PREFERENCES_CIEART;Ottimizzazione CIECAM02
 PREFERENCES_CIEART_LABEL;Utilizza precisione singola anziché doppia
@@ -720,7 +641,6 @@ PREFERENCES_DATEFORMATHINT;<i>Puoi usare le seguenti stringhe di formattazione:<
 PREFERENCES_DATEFORMAT;Formato della data
 PREFERENCES_DEFAULTLANG;Lingua predefinita
 PREFERENCES_DEFAULTTHEME;Tema predefinito
-PREFERENCES_DEMOSAICINGALGO;Algoritmo di demosaicizzazione
 PREFERENCES_DIRDARKFRAMES;Cartella dei fotogrammi di fondo (Dark Frame)
 PREFERENCES_DIRHOME;Cartella personale dell'utente (home directory)
 PREFERENCES_DIRLAST;Ultima cartella visitata
@@ -753,7 +673,6 @@ PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GREY;Luminosità Yb del dispositivo di uscita (%)
 PREFERENCES_GTKTHEME;Predefinito GTK
-PREFERENCES_HINT;Suggerimento
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Istogramma nel pannello sinistro
 PREFERENCES_HLTHRESHOLD;Soglia per le alteluci tosate
 PREFERENCES_ICCDIR;Cartella profili colore
@@ -764,7 +683,6 @@ PREFERENCES_INTENT_RELATIVE;Colorimetrico Relativo
 PREFERENCES_INTENT_SATURATION;Saturazione
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Mostra miniatura JPEG incorporata, se il raw non è stato lavorato
 PREFERENCES_LANGAUTODETECT;Usa l'impostazione di lingua del sistema
-PREFERENCES_LIVETHUMBNAILS;Miniature sincronizzate (più lento)
 PREFERENCES_MENUGROUPEXTPROGS;Raggruppa "Apri con"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Raggruppa "Operazioni sui file"
 PREFERENCES_MENUGROUPLABEL;Raggruppa "Etichette"
@@ -777,7 +695,6 @@ PREFERENCES_MULTITABDUALMON;Modalità a Schede Multiple (se disponibile sul seco
 PREFERENCES_MULTITAB;Modalità a Schede Multiple
 PREFERENCES_OUTDIRFOLDERHINT;Mette le immagini salvate nella cartella scelta
 PREFERENCES_OUTDIRFOLDER;Salva nella cartella
-PREFERENCES_OUTDIRHINT;Puoi usare le seguenti stringhe di formattazione:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nQueste stringhe di formattazione si riferiscono ai vari livelli del percorso in cui si trova la foto.\n\nPer esempio, se la foto sviluppata si trovasse nel seguente percorso:\n<b><i>/home/mario/foto/31-10-2010/dsc0042.nef</i></b>\nil significato delle stringhe di formattazione sarebbe:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>mario</i>\n<b>%d2</b> = <i>foto</i>\n<b>%d1</b> = <i>31-10-2010</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/mario/foto/31-10-2010/</i>\n<b>%p2</b> = <i>/home/mario/foto/</i>\n<b>%p3</b> = <i>/home/mario/</i>\n<b>%p4</b> = <i>/home/</i>\n\nSe vuoi salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n<b>%p1/%f</b>\n\nSe vuoi salvare l'immagine finale in una cartella chiamata "<i>sviluppate</i>" situata nella cartella degli originali, scrivi:\n<b>%p1/sviluppate/%f</b>\n\nSe intendi salvare l'immagine
 PREFERENCES_OUTDIRTEMPLATEHINT;Puoi usare le seguenti stringhe di formattazione:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ...\n\nQueste stringhe di formattazione si riferiscono ai vari livelli del percorso in cui si trova la foto.\n\nPer esempio, se la foto sviluppata si trovasse nel seguente percorso:\n<b><i>/home/mario/foto/31-10-2010/dsc0042.nef</i></b>\nil significato delle stringhe di formattazione sarebbe:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>mario</i>\n<b>%d2</b> = <i>foto</i>\n<b>%d1</b> = <i>31-10-2010</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/mario/foto/31-10-2010/</i>\n<b>%p2</b> = <i>/home/mario/foto/</i>\n<b>%p3</b> = <i>/home/mario/</i>\n<b>%p4</b> = <i>/home/</i>\n\nSe vuoi salvare l'immagine finale nella stessa posizione dove si trova l'originale, scrivi:\n<b>%p1/%f</b>\n\nSe vuoi salvare l'immagine finale in una cartella chiamata "<i>sviluppate</i>" situata nella cartella degli originali, scrivi:\n<b>%p1/sviluppate/%f</b>\n\nSe intendi salvare l'
 PREFERENCES_OUTDIRTEMPLATE;Usa lo schema
 PREFERENCES_OUTDIR;Cartella di destinazione
@@ -800,15 +717,12 @@ PREFERENCES_PSPATH;Cartella d'installazione di Adobe Photoshop
 PREFERENCES_RGBDTL_LABEL;Numero massimo di thread per la Riduzione Rumore
 PREFERENCES_RGBDTL_TOOLTIP;La Riduzione Rumore richiede un minimo di circa 128MB di RAM per un'immagine di 10MPixel o 512MB per una di 40MPixel più 128MB di RAM per ogni thread. Più thread vengono eseguiti in parallelo, più rapida sarà l'elaborazione. Lascia l'impostazione a "0" per usare automaticamente quanti più thread possibili.
 PREFERENCES_SELECTFONT;Seleziona un carattere
-PREFERENCES_SELECTICCDIRDLG;Seleziona la cartella dei Profili Colore...
 PREFERENCES_SELECTLANG;Seleziona la lingua
-PREFERENCES_SELECTMONITORPROFDLG;Seleziona il Profilo Colore dello schermo...
 PREFERENCES_SELECTTHEME;Seleziona un tema
 PREFERENCES_SET;Imposta
 PREFERENCES_SHOWBASICEXIF;Mostra dati Exif di base
 PREFERENCES_SHOWDATETIME;Mostra data e ora
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Accoda compensazione dell'esposizione
-PREFERENCES_SHOWONLYRAW;Mostra solo file Raw
 PREFERENCES_SHOWPROFILESELECTOR;Mostra il selettore di profilo di sviluppo
 PREFERENCES_SHTHRESHOLD;Soglia per le ombre tosate
 PREFERENCES_SINGLETABVERTAB;Modalità a Scheda Singola, schede verticali
@@ -824,10 +738,8 @@ PREFERENCES_TAB_BROWSER;Navigatore di file
 PREFERENCES_TAB_COLORMGR;Gestione Colore
 PREFERENCES_TAB_GENERAL;Generale
 PREFERENCES_TAB_IMPROC;Elaborazione immagine
-PREFERENCES_TAB_OUTPUT;Opzioni di salvataggio
 PREFERENCES_TAB_PERFORMANCE;Prestazioni
 PREFERENCES_TAB_SOUND;Suoni
-PREFERENCES_THUMBSIZE;Dimensione delle miniature
 PREFERENCES_TP_LABEL;Pannello Strumenti:
 PREFERENCES_TP_USEICONORTEXT;Utilizza le icone delle schede anziché il testo
 PREFERENCES_TP_VSCROLLBAR;Nascondi la barra di scorrimento verticale
@@ -845,22 +757,13 @@ PROFILEPANEL_MODE_TIP;Modalità di riempimento del Profilo di Sviluppo.\n\nPulsa
 PROFILEPANEL_PASTEPPASTE;Parametri da incollare
 PROFILEPANEL_PCUSTOM;Personalizzato
 PROFILEPANEL_PFILE;Da file
-PROFILEPANEL_PLASTPHOTO;Ultima foto
 PROFILEPANEL_PLASTSAVED;Ultimo salvato
-PROFILEPANEL_PROFILE;Profilo
 PROFILEPANEL_SAVEDLGLABEL;Salvo i parametri di sviluppo...
 PROFILEPANEL_SAVEPPASTE;Parametri da salvare
 PROFILEPANEL_TOOLTIPCOPY;Copia il profilo corrente negli appunti.\n<b>Ctrl-click</b> per selezionare i parametri da copiare
 PROFILEPANEL_TOOLTIPLOAD;Carica profilo da file.\n<b>Ctrl-click</b> per selezionare i parametri da caricare
 PROFILEPANEL_TOOLTIPPASTE;Incolla il profilo dagli appunti.\n<b>Ctrl-click</b> per selezionare i parametri da incollare
 PROFILEPANEL_TOOLTIPSAVE;Salva il profilo corrente.\n<b>Ctrl-click</b> per selezionare i parametri da salvare
-PROGRESSBAR_BADPIXELS;Pixel difettosi...
-PROGRESSBAR_CACORRECTION;Correzione AC...
-PROGRESSBAR_DARKFRAME;Dark Frame...
-PROGRESSBAR_DECODING;Decodifica del file raw...
-PROGRESSBAR_DEMOSAICING;Demosaicizzazione...
-PROGRESSBAR_GREENEQUIL;Bilanciamento del verde...
-PROGRESSBAR_LINEDENOISE;Riduzione rumore a bande...
 PROGRESSBAR_LOADINGTHUMBS;Caricamento delle miniature...
 PROGRESSBAR_LOADING;Caricamento dell'immagine...
 PROGRESSBAR_LOADJPEG;Caricamento del file JPEG...
@@ -875,9 +778,7 @@ PROGRESSBAR_SAVEPNG;Salvataggio del file PNG...
 PROGRESSBAR_SAVETIFF;Salvataggio del file TIFF...
 PROGRESSBAR_SNAPSHOT_ADDED;Istantanea aggiunta
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profilo di sviluppo modificato nel navigatore
-QINFO_FOCALLENGTH;Lunghezza focale
 QINFO_ISO;ISO
-QINFO_LENS;Obiettivo
 QINFO_NOEXIF;Dati Exif non disponibili.
 SAVEDLG_AUTOSUFFIX;Aggiungi automaticamente un suffisso se il file esiste già
 SAVEDLG_FILEFORMAT;Formato file
@@ -885,7 +786,6 @@ SAVEDLG_FORCEFORMATOPTS;Opzioni di salvataggio forzato
 SAVEDLG_JPEGQUAL;Qualità JPEG
 SAVEDLG_JPGFILTER;File JPEG
 SAVEDLG_PNGCOMPR;Compressione PNG
-SAVEDLG_PNGFILTER;File PNG
 SAVEDLG_PUTTOQUEUEHEAD;Metti in cima alla coda di sviluppo
 SAVEDLG_PUTTOQUEUETAIL;Metti in fondo alla coda di sviluppo
 SAVEDLG_PUTTOQUEUE;Inserisci nella coda di sviluppo
@@ -956,7 +856,6 @@ TP_COLORAPP_DATACIE;Mostra gli istogrammi di uscita CIECAM02 nelle curve
 TP_COLORAPP_DATACIE_TOOLTIP;Quando abilitato, gli istogrammi nelle curve CIECAM02 mostrano valori e intervalli approssimati di J o Q, e C, s o M dopo le regolazioni CIECAM02.\nQuesta selezione non ha effetto nel pannello Istogramma principale.\n\nQuando disabilitato, gli istogrammi nelle curve CIECAM02 mostrano i valori Lab, come sono prima delle regolazioni CIECAM02.
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Se abilitato (raccomandato), RT calcola un valore ottimale, che sarà utilizzato da CAT02, e anche per l'intero CIECAM02.\nDisabilitare per impostare il valore manualmente (sono raccomandati valori superiori a 65).
 TP_COLORAPP_DEGREE_TOOLTIP;Quantità di Trasformazione di Adattamento Cromatico CIE 2002
-TP_COLORAPP_EQUAL;Uguale
 TP_COLORAPP_GAMUT;Controllo Gamut (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Consenti il controllo gamut nella modalità Lab
 TP_COLORAPP_HUE;Tinta (h)
@@ -1092,7 +991,6 @@ TP_HLREC_METHOD;Metodo:
 TP_HSVEQUALIZER_CHANNEL;Canale HSV
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;Equalizzatore HSV
-TP_HSVEQUALIZER_NEUTRAL;Neutro
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_BLENDCMSMATRIX;Miscela le alteluci ICC con matrix
@@ -1113,7 +1011,6 @@ TP_ICM_INPUTNONE_TOOLTIP;Non applicare un profilo colore. Da utilizzare solo in 
 TP_ICM_INPUTPROFILE;Profilo di ingresso
 TP_ICM_LABEL;Gestione Colore
 TP_ICM_NOICM;Nessun ICM: uscita in sRGB
-TP_ICM_OUTPUTDLGLABEL;Seleziona il profilo ICC di uscita...
 TP_ICM_OUTPUTPROFILE;Profilo di Uscita
 TP_ICM_PREFERREDPROFILE;Profilo DCP preferito
 TP_ICM_PREFERREDPROFILE_1;Luce Diurna
@@ -1166,9 +1063,6 @@ TP_LENSPROFILE_LABEL;Profilo di Correzione dell'Obiettivo
 TP_LENSPROFILE_USECA;Correzione dell'Aberrazione Cromatica (AC)
 TP_LENSPROFILE_USEDIST;Correzione della Distorsione
 TP_LENSPROFILE_USEVIGN;Correzione della Vignettatura
-TP_LUMADENOISE_EDGETOLERANCE;Tolleranza bordi
-TP_LUMADENOISE_LABEL;Riduzione Rumore di Luminanza
-TP_LUMADENOISE_RADIUS;Raggio
 TP_NEUTRAL;Neutrale
 TP_NEUTRAL_TIP;Riporta i controlli dell'esposizione ai valori neutrali.\nVale per gli stessi controlli cui è applicato Livelli Automatici, indipendentemente dal fatto che Livelli Automatici sia abilitato.
 TP_PERSPECTIVE_HORIZONTAL;Orizzontale
@@ -1209,7 +1103,6 @@ TP_RESIZE_BILINEAR;Bilineare
 TP_RESIZE_CROPPEDAREA;Zona ritagliata
 TP_RESIZE_FITBOX;Riquadro delimitato
 TP_RESIZE_FULLIMAGE;Tutta l'immagine
-TP_RESIZE_FULLSIZE;Dimensione dell'intera immagine:
 TP_RESIZE_HEIGHT;Altezza
 TP_RESIZE_H;A:
 TP_RESIZE_LABEL;Ridimensiona
@@ -1326,13 +1219,6 @@ TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Punto BB manuale
 TP_WBALANCE_TEMPERATURE;Temperatura
 TP_WBALANCE_TUNGSTEN;Tungsteno
-ZOOMBAR_DETAIL;Dettaglio
-ZOOMBAR_HUGE;Enorme
-ZOOMBAR_LARGE;Grande
-ZOOMBAR_NORMAL;Normale
-ZOOMBAR_PREVIEW;Anteprima
-ZOOMBAR_SCALE;Scala
-ZOOMBAR_SMALL;Piccola
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Apri (nuova) finestra di dettaglio
 ZOOMPANEL_ZOOM100;Ingrandimento al 100%.\nScorciatoia: <b>z</b>
@@ -1444,7 +1330,6 @@ ZOOMPANEL_ZOOMOUT;Rimpicciolisci.\nScorciatoia: <b>-</b>
 !TP_BWMIX_MET_DESAT;Desaturation
 !TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
 !TP_BWMIX_MIXC;Mixer
-!TP_BWMIX_MIXF;Mixer Filters
 !TP_BWMIX_NEUTRAL;Reset mixer
 !TP_BWMIX_NEUTRAL_TIP;Reset all values (filter, channel-mixer) to default
 !TP_BWMIX_ORANGE;Orange

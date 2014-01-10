@@ -35,7 +35,6 @@ CURVEEDITOR_TYPE;Typ:
 EDITWINDOW_TITLE;Bildredigering
 EXIFFILTER_APERTURE;Bländare
 EXIFFILTER_CAMERA;Kamera
-EXIFFILTER_DIALOGLABEL;EXIF-filter
 EXIFFILTER_EXPOSURECOMPENSATION;Exponeringskompensation (EV)
 EXIFFILTER_FILETYPE;Filtyp
 EXIFFILTER_FOCALLEN;Brännvidd
@@ -89,7 +88,6 @@ EXTPROGTARGET_2;köhanterad
 FILEBROWSER_ADDDELTEMPLATE;Lägg till/ta bort förinställningar...
 FILEBROWSER_APPLYPROFILE;Använd profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Applicera profil (partiell)
-FILEBROWSER_ARRANGEMENTHINT;Växla mellan vertikal och horistonell visning av miniatyrbilder
 FILEBROWSER_AUTODARKFRAME;Automatisk svartbild
 FILEBROWSER_AUTOFLATFIELD;Automatisk plattfältskorrigering
 FILEBROWSER_BROWSEPATHBUTTONHINT;Klicka för att komma till vald sökväg
@@ -108,11 +106,6 @@ FILEBROWSER_DELETEDLGMSG;Är du säker på att du vill ta bort de valda %1 filer
 FILEBROWSER_EMPTYTRASHHINT;Ta bort papperskorgens filer permanent
 FILEBROWSER_EMPTYTRASH;Töm papperskorgen
 FILEBROWSER_EXEC_CPB;Egen profilskapare
-FILEBROWSER_EXIFFILTERAPPLYHINT;Visa/dölj EXIF-filtret i filhanteraren
-FILEBROWSER_EXIFFILTERAPPLY;Använd
-FILEBROWSER_EXIFFILTERLABEL;EXIF-filter
-FILEBROWSER_EXIFFILTERSETTINGSHINT;Ändra inställningar för EXIF-filtret
-FILEBROWSER_EXIFFILTERSETTINGS;Inställningar
 FILEBROWSER_EXTPROGMENU;Öppna med
 FILEBROWSER_FLATFIELD;Plattfält
 FILEBROWSER_MOVETODARKFDIR;Flytta till katalogen för svartbilder
@@ -122,12 +115,6 @@ FILEBROWSER_OPENDEFAULTVIEWER;Windows standardsvisare (köbehandlas)
 FILEBROWSER_PARTIALPASTEPROFILE;Klistra in partiell profil
 FILEBROWSER_PASTEPROFILE;Klistra in profil
 FILEBROWSER_POPUPCANCELJOB;Avbryt
-FILEBROWSER_POPUPCOLORLABEL0;Etikett: Ingen
-FILEBROWSER_POPUPCOLORLABEL1;Etikett: Röd
-FILEBROWSER_POPUPCOLORLABEL2;Etikett: Gul
-FILEBROWSER_POPUPCOLORLABEL3;Etikett: Grön
-FILEBROWSER_POPUPCOLORLABEL4;Etikett: Blå
-FILEBROWSER_POPUPCOLORLABEL5;Etikett: Lila
 FILEBROWSER_POPUPCOLORLABEL;Färgetikett
 FILEBROWSER_POPUPCOPYTO;Kopiera till...
 FILEBROWSER_POPUPFILEOPERATIONS;Filaktiviteter
@@ -138,22 +125,14 @@ FILEBROWSER_POPUPOPEN;Öppna
 FILEBROWSER_POPUPPROCESSFAST;Lägg till i kön (Snabbexport)
 FILEBROWSER_POPUPPROCESS;Flytta till behandlingskön
 FILEBROWSER_POPUPPROFILEOPERATIONS;Profilaktiviteter
-FILEBROWSER_POPUPRANK1;Betyg 1 *
-FILEBROWSER_POPUPRANK2;Betyg 2 **
-FILEBROWSER_POPUPRANK3;Betyg 3 ***
-FILEBROWSER_POPUPRANK4;Betyg 4 ****
-FILEBROWSER_POPUPRANK5;Betyg 5 *****
 FILEBROWSER_POPUPRANK;Betyg
 FILEBROWSER_POPUPREMOVEINCLPROC;Ta bort från filsystemet inkl. den behandlade
-FILEBROWSER_POPUPREMOVESUBMENU;Ta bort
 FILEBROWSER_POPUPREMOVE;Ta bort från filsystemet
 FILEBROWSER_POPUPRENAME;Byt namn
 FILEBROWSER_POPUPSELECTALL;Markera allt
 FILEBROWSER_POPUPTRASH;Flytta till papperskorgen
 FILEBROWSER_POPUPUNRANK;Ta bort betyg
 FILEBROWSER_POPUPUNTRASH;Ta bort från papperskorgen
-FILEBROWSER_PROCESSINGSETTINGSHINT;Ange filformat och målkatalog
-FILEBROWSER_PROCESSINGSETTINGS;Inställningar
 FILEBROWSER_QUERYBUTTONHINT;Rensa sökfältet
 FILEBROWSER_QUERYHINT;Skriv en <i>del av ett filnamn</i> för att söka efter en <i>kommaseparerad lista</i>.\nT. ex. <i>1001,1004,1199</i>\n\n<b>Ctrl-F</b> för att komma till sökfältet.\n<b>Enter</b> för att starta sökningen.\n<b>Esc</b> för att rensa.\n<b>Shift-Esc</b> för att ta bort fokus från sökfältet.
 FILEBROWSER_QUERYLABEL; Hitta:
@@ -175,7 +154,6 @@ FILEBROWSER_SHOWDIRHINT;Återställ alla sökfilter.\nKortkommando: <b>d</b>
 FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder.\nKortkommando: <b>7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder.\nKortkommando: <b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information.\nKortkommando: <b>i</b>\n\nKortkommando i enkelbildsläget: <b>Alt-i</b>
-FILEBROWSER_SHOWQUEUEHINT;Visa innehållet i behandlingskön
 FILEBROWSER_SHOWRANK1HINT;Visa bilder med betyg 1.\nKortkommando: <b>1</b>
 FILEBROWSER_SHOWRANK2HINT;Visa bilder med betyg 2.\nKortkommando: <b>2</b>
 FILEBROWSER_SHOWRANK3HINT;Visa bilder med betyg 3.\nKortkommando: <b>3</b>
@@ -207,9 +185,7 @@ GENERAL_DISABLE;Avaktivera
 GENERAL_ENABLED;Aktiverad
 GENERAL_ENABLE;Aktivera
 GENERAL_FILE;Fil
-GENERAL_HIGH_QUALITY;Hög kvalitet
 GENERAL_LANDSCAPE;Landskap
-GENERAL_LOAD;Ladda
 GENERAL_NA;Ej tillgänglig
 GENERAL_NONE;Inga
 GENERAL_NO;Nej
@@ -218,14 +194,6 @@ GENERAL_PORTRAIT;Porträtt
 GENERAL_SAVE;Spara
 GENERAL_UNCHANGED;(Oförändrad)
 GENERAL_WARNING;Varning
-GENERAL_YES;Ja
-HISTOGRAM_BUTTON_BAR;RGB
-HISTOGRAM_BUTTON_B;B
-HISTOGRAM_BUTTON_G;G
-HISTOGRAM_BUTTON_L;L
-HISTOGRAM_BUTTON_RAW;Råbild
-HISTOGRAM_BUTTON_R;R
-HISTOGRAM_LABEL;Histogram
 HISTOGRAM_TOOLTIP_BAR;Visa/dölj RBG-indikatorer\nKlicka på höger musknapp på förhandsvisningen för att frysa
 HISTOGRAM_TOOLTIP_B;Visa/dölj blått histogram
 HISTOGRAM_TOOLTIP_CHRO;Visa/Dölj kromananshistogrammet
@@ -488,29 +456,10 @@ HISTORY_MSG_247;'LH'-kurva
 HISTORY_MSG_248;'HH'-kurva
 HISTORY_MSG_249;Kontrast genom detaljnivåer
 HISTORY_MSG_250;Brusreduceringsförbättring
-HISTORY_NEWSNAPSHOTAS;Som...
 HISTORY_NEWSNAPSHOT;Nytt
 HISTORY_NEWSNAPSHOT_TOOLTIP;Kortkommando: <b>Alt-s</b>
-HISTORY_NEWSSDIALOGLABEL;Namn på bokmärket:
-HISTORY_NEWSSDIALOGTITLE;Lägg till nytt bokmärke
-HISTORY_SETTO;Ställ in till
 HISTORY_SNAPSHOTS;Bokmärken
 HISTORY_SNAPSHOT;Bokmärke
-ICMPANEL_FILEDLGFILTERANY;Vilka filer som helst
-ICMPANEL_FILEDLGFILTERICM;Färgprofiler
-ICMPANEL_GAMMABEFOREINPUT;Profilapplicerad gamma
-ICMPANEL_INPUTCAMERA;Kameraval
-ICMPANEL_INPUTCUSTOM;Egen
-ICMPANEL_INPUTDLGLABEL;Välj inmatningsfärgprofil...
-ICMPANEL_INPUTEMBEDDED;Använd inbäddad profil, om möjligt
-ICMPANEL_INPUTPROFILE;Inmatningsfärgprofil
-ICMPANEL_NOICM;Ingen färghantering: sRGB-utmatning
-ICMPANEL_OUTPUTDLGLABEL;Välj utmatningsfärgprofil...
-ICMPANEL_OUTPUTPROFILE;Utmatningsprofil
-ICMPANEL_SAVEREFERENCE;Spara referensbild för profilering
-ICMPANEL_WORKINGPROFILE;Färgrymd
-IMAGEAREA_DETAILVIEW;Detaljvy
-IPTCPANEL_AUTHORHINT;Namn på skaparen, t ex skribenten, fotografen eller den grafiska artisten (by-line)
 IPTCPANEL_AUTHORSPOSITIONHINT;Titeln på upphovsmannen/männen (byline)
 IPTCPANEL_AUTHORSPOSITION;Upphovmannens position
 IPTCPANEL_AUTHOR;Upphovsman
@@ -552,14 +501,12 @@ IPTCPANEL_TITLEHINT;En kortfattad bildreferens
 IPTCPANEL_TITLE;Titel
 IPTCPANEL_TRANSREFERENCEHINT;En kod som representerar platsen för överföring
 IPTCPANEL_TRANSREFERENCE;Överföringsreferens
-MAIN_BUTTON_EXIT;Avsluta
 MAIN_BUTTON_FULLSCREEN;Helskärm
 MAIN_BUTTON_NAVNEXT_TOOLTIP;Flytta till nästa bild relativt den bild som är öppen i redigeringsvyn\nKortkommando: <b>Shift-F4</b>\n\nFlytta till nästa bild relativt den valda miniatyrbilden i filvyn\nKortkommando: <b>F4</b>
 MAIN_BUTTON_NAVPREV_TOOLTIP;Flytta till föregående bild relativt den bild som är öppen i redigeringsvyn\nKortkommando: <b>Shift-F3</b>\n\nFlytta till föregående bild relativt den valda miniatyrbilden i filvyn\nKortkommando: <b>F3</b>
 MAIN_BUTTON_NAVSYNC_TOOLTIP;Synkronisera filvyn med redigeringsvyn för att uppdatera förhandsgranskningen av den nu öppna bilden, och för att nollställa filtren i filvyn.\nKortkommando: <b>x</b>\n\nSom ovan, men utan att nollställa filtren i filvyn\nKortkommando: <b>y</b>\n(Notera att förhandsgranskningen av den öppna bildens  miniatyrbilder ej visas om den är filtrerad.).
 MAIN_BUTTON_PREFERENCES;Inställningar
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Lägg till nuvarande bild i behandlingskön.\nKortkommando: Ctrl+b
-MAIN_BUTTON_QUEUE;Placera i behandlingskön
 MAIN_BUTTON_SAVE;Spara
 MAIN_BUTTON_SAVE_TOOLTIP;Spara nuvarande bild.\nKortkommando: <b>Ctrl+s</b>
 MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigera nuvarande bild i externt bildredigeringsprogram.\nKortkommando: <b>Ctrl+e</b>
@@ -581,19 +528,13 @@ MAIN_MSG_CANNOTSAVE;Fel uppstod när bilden sparades
 MAIN_MSG_CANNOTSTARTEDITOR;Kan ej starta externt redigeringsprogram
 MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Var vänlig och ange rätt sökväg i inställningarna
 MAIN_MSG_EMPTYFILENAME;Ospecificerat filnamn!
-MAIN_MSG_ERRORDURINGIMAGESAVING;Fel uppstod när bilden sparades
-MAIN_MSG_EXITJOBSINQUEUEINFO;Obehandlade bilder i behandlingskön kommer att gå förlorade om programmet stängs av.
-MAIN_MSG_EXITJOBSINQUEUEQUEST;Är du säker på att du vill avsluta? Det finns obehandlade bilder i behandlingskön.
 MAIN_MSG_IMAGEUNPROCESSED;Det här kommandot kräver att alla valda bilder behandlas i kön först.
-MAIN_MSG_JOBSINQUEUE;Bild(er) i kön
 MAIN_MSG_NAVIGATOR;Översiktsvy
 MAIN_MSG_OPERATIONCANCELLED;Åtgärden avbröts
 MAIN_MSG_PATHDOESNTEXIST;Sökvägen\n\n<b>%1</b>\n\nfinns ej. Var vänlig och ange en korrekt sökväg i inställningarna.
-MAIN_MSG_PLACES;Platser
 MAIN_MSG_QOVERWRITE;Vill du skriva över den?
 MAIN_MSG_SETPATHFIRST;Du måste först ange en sökväg i\ninställningarna för att använda denna funktion!
 MAIN_MSG_WRITEFAILED;Misslyckades att skriva\n\n<b>"%1"</b>\n\nFörsäkra dig om att katalogen existerar och att du har rättighet att skriva där.
-MAIN_TAB_BASIC;Grund
 MAIN_TAB_COLOR;Färger
 MAIN_TAB_COLOR_TOOLTIP;Kortkommando: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detaljer
@@ -604,7 +545,6 @@ MAIN_TAB_EXPORT; Snabbexport
 MAIN_TAB_EXPOSURE;Exponering
 MAIN_TAB_EXPOSURE_TOOLTIP;Kortkommando: <b>Alt-e</b>
 MAIN_TAB_FILTER;Filter
-MAIN_TAB_ICM;ICM
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_METADATA_TOOLTIP;Kortkommando: <b>Alt-m</b>
@@ -613,24 +553,19 @@ MAIN_TAB_RAW_TOOLTIP;Kortkommando: <b>Alt-r</b>
 MAIN_TAB_TAGGING;Etiketter
 MAIN_TAB_TRANSFORM;Omvandla
 MAIN_TAB_TRANSFORM_TOOLTIP;Kortkommando: <b>Alt-t</b>
-MAIN_TOGGLE_BEFORE_AFTER;B|A
 MAIN_TOOLTIP_BACKCOLOR0;Bakgrundsfärg: <b>Temabaserad</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR1;Bakgrundsfärg: <b>Svart</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Bakgrundsfärg: <b>Vit</b>\nKortkommando: <b>9</b>
 MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lås</b> / <b>Lås upp</b> <b>före-vyn</b>\n\n<b>Lås</b>: behåll <b>före-vyn</b> oförändrad.\nAnvändbart för att utvärdera den sammanlagda effekten av flera stegs redigering. Dessutom kan jämförelser göras gentemot varje annat steg i historiken.\n\n<b>Lås upp</b>: <b>Före-vyn</b> kommer hela tiden visa ett tidigare steg jämfört med <b>efter-vyn</b>, och visar därmed effekten av det verktyg som användes senast.
-MAIN_TOOLTIP_HIDEFP;Visa/göm den nedre panelen. Kortkommando: <b>f</b>
 MAIN_TOOLTIP_HIDEHP;Visa/göm den vänstra panelen. Kortkommando: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Markera högdagerindikation.\nKortkommando: <b>&lt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Markera skuggindikation.\nKortkommando: <b>&gt;</b>
-MAIN_TOOLTIP_PREFERENCES;Ange inställningar
 MAIN_TOOLTIP_PREVIEWB;Förhandsgranska den <b>blå kanalen</b>.\nGenväg: <b>b</b>
 MAIN_TOOLTIP_PREVIEWFOCUSMASK;Förhandsgranska <b>fokusmasken</b>.\nKortkommando: <b>Shift-f</b>\n\nNoggrannare på bilder med kort skärpedjup, lågt brus och där en hög zoom-grad är vald.\n\nFör att förbättra detekteringen för brusiga bilder, utvärdera vid en zoom-grad om 10-30%\n\nFörhandsvisningen görs långsammare med fokusmasken påslagen.
 MAIN_TOOLTIP_PREVIEWG;Förhandsgranska den <b>gröna kanalen</b>.\nGenväg: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Förhandsgranska <b>ljusstyrkan</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Förhandsgranska den <b>röda kanalen</b>.\nGenväg: <b>r</b>
 MAIN_TOOLTIP_QINFO;Visa kortfattad information om bilden\nKortkommando: <b>i</b>
-MAIN_TOOLTIP_SAVEAS;Spara bilden till en vald katalog
-MAIN_TOOLTIP_SAVE;Spara bilden till standardkatalogen
 MAIN_TOOLTIP_SHOWHIDELP1;Visa/dölj vänstra panelen <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Visa/dölj den högra panelen <b>Alt-l</b>
 MAIN_TOOLTIP_SHOWHIDETP1;Visa/dölj den översta panelen <b>Shift-l</b>
@@ -664,11 +599,7 @@ PARTIALPASTE_CHANNELMIXERBW;Svartvitt
 PARTIALPASTE_CHANNELMIXER;Kanalmixer
 PARTIALPASTE_COARSETRANS;Rotering 90-grader
 PARTIALPASTE_COLORAPP;CIE Color Appearance Model 2002
-PARTIALPASTE_COLORBOOST;Förstärk färger
-PARTIALPASTE_COLORDENOISE;Reducera färgbrus
 PARTIALPASTE_COLORGROUP;Färgrelaterade inställningar
-PARTIALPASTE_COLORMIXER;Färgmixer
-PARTIALPASTE_COLORSHIFT;Färgskift
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Autofyll
 PARTIALPASTE_COMPOSITIONGROUP;Komponeringsinställningar
 PARTIALPASTE_CROP;Beskär
@@ -689,10 +620,6 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;Oskärperadie för plattfält
 PARTIALPASTE_FLATFIELDBLURTYPE;Oskärpetyp hos plattfältet
 PARTIALPASTE_FLATFIELDFILE;Plattfältsfil
 PARTIALPASTE_GRADIENT;Graderat filter
-PARTIALPASTE_HLRECONSTRUCTION;Högdageråterställning
-PARTIALPASTE_HLRECOVERYAMOUNT;Högdagerkomprimering
-PARTIALPASTE_HLRECOVERYTHRESHOLD;Högdagerkomprimering, tröskelvärde
-PARTIALPASTE_HLRECOVERY;Högdageråterställning
 PARTIALPASTE_HSVEQUALIZER;HSV-equalizer
 PARTIALPASTE_ICMGAMMA;Utmatningsgamma
 PARTIALPASTE_ICMSETTINGS;Färghanteringsinställningar
@@ -701,8 +628,6 @@ PARTIALPASTE_IPTCINFO;IPTC-info
 PARTIALPASTE_LABCURVE;Labjusteringar
 PARTIALPASTE_LENSGROUP;Objektivrelaterade inställningar
 PARTIALPASTE_LENSPROFILE;Objektivkorrigeringsprofil
-PARTIALPASTE_LUMADENOISE;Reducera luminansbrus
-PARTIALPASTE_LUMINANCEGROUP;Luminansrelaterade inställningar
 PARTIALPASTE_METAICMGROUP;Metadata/ICM inställningar
 PARTIALPASTE_PCVIGNETTE;Vinjetteringsfilter
 PARTIALPASTE_PERSPECTIVE;Perspektiv
@@ -731,7 +656,6 @@ PARTIALPASTE_SHARPENING;Skärpa (Oskarp mask/RL)
 PARTIALPASTE_SHARPENMICRO;Mikrokontrast
 PARTIALPASTE_VIBRANCE;Lyster
 PARTIALPASTE_VIGNETTING;Reducera vinjettering
-PARTIALPASTE_WAVELETEQUALIZER;Waveletequalizer
 PARTIALPASTE_WHITEBALANCE;Vitbalans
 PREFERENCES_ADD;Lägg till
 PREFERENCES_APPLNEXTSTARTUP;Kräver omstart av RawTherapee
@@ -749,9 +673,6 @@ PREFERENCES_CACHECLEARPROFILES;Återställ profiler
 PREFERENCES_CACHECLEARTHUMBS;Ta bort cachade miniatyrbilder
 PREFERENCES_CACHEMAXENTRIES;Maximalt antal cachefiler
 PREFERENCES_CACHEOPTS;Cacheinställningar
-PREFERENCES_CACHESTRAT1;Föredra hastighet framför låg minnesanvändning
-PREFERENCES_CACHESTRAT2;Föredra låg minnesanvändning framför hastighet
-PREFERENCES_CACHESTRAT;Cachestrategi
 PREFERENCES_CACHETHUMBHEIGHT;Maximal höjd på miniatyrbilderna
 PREFERENCES_CIEART;CIECAM02-optimering
 PREFERENCES_CIEART_LABEL;Använd flyttalsprecision istället för dubbel
@@ -778,7 +699,6 @@ PREFERENCES_DATEFORMATHINT;Du kan använda följande format:\n<b>%y</b>: år\n<b
 PREFERENCES_DATEFORMAT;Datumformat
 PREFERENCES_DEFAULTLANG;Förvalt språk
 PREFERENCES_DEFAULTTHEME;Förvalt tema
-PREFERENCES_DEMOSAICINGALGO;Algoritm för demosaicing
 PREFERENCES_DIRDARKFRAMES;Katalog för svartbilder
 PREFERENCES_DIRHOME;Hemkatalog
 PREFERENCES_DIRLAST;Senaste besökta katalog
@@ -810,7 +730,6 @@ PREFERENCES_GREY23;Yb=23 CIE L#55
 PREFERENCES_GREY30;Yb=30 CIE L#60
 PREFERENCES_GREY40;Yb=40 CIE L#70
 PREFERENCES_GTKTHEME;GTK-standard
-PREFERENCES_HINT;Tips
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogrammet till vänster
 PREFERENCES_HLTHRESHOLD;Tröskelvärde för högdagrar
 PREFERENCES_ICCDIR;Katalog för färgprofiler
@@ -821,7 +740,6 @@ PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
 PREFERENCES_INTENT_SATURATION;Mättnad
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Visa intern råbild om oredigerad
 PREFERENCES_LANGAUTODETECT;Använd operativsystemets språkinställning
-PREFERENCES_LIVETHUMBNAILS;Alltid uppdaterade miniatyrbilder (långsammare)
 PREFERENCES_MENUGROUPEXTPROGS;Visa "Öppna med"
 PREFERENCES_MENUGROUPFILEOPERATIONS;Visa "Filaktiviteter"
 PREFERENCES_MENUGROUPLABEL;Visa "Etikett"
@@ -834,7 +752,6 @@ PREFERENCES_MULTITABDUALMON;Visa bild på andra skärmen, om möjligt, i flerfli
 PREFERENCES_MULTITAB;Öppna bilderna i olika flikar
 PREFERENCES_OUTDIRFOLDERHINT;Spara de behandlade bilderna i den valda katalogen
 PREFERENCES_OUTDIRFOLDER;Spara till katalog
-PREFERENCES_OUTDIRHINT;Du kan använda följande format:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här formaten hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012\n%d1=2010-09-02\n%d2=bilder\n%p1=/home/tom/bilder/2010-09-02,\n%p2=/home/tom/bilder\n%p3=/home/tom\n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATEHINT;Du kan använda följande format:\n<b>%f, %d1, %d2, %p1, %p2</b>\n\nDe här format hänvisar till katalogerna och underkatalogerna till råbildens sökväg.\n\nTill exempel, om <b>/home/tom/bilder/2010-09-02/dsc0012.nef</b>har öppnats, betyder formatsträngen följande:\n<b>%f=dsc0012\n%d1=2010-09-02\n%d2=bilder\n%p1=/home/tom/bilder/2010-09-02,\n%p2=/home/tom/bilder\n%p3=/home/tom\n</b>\nOm du vill spara den behandlade filen där originalet finns, skriver du:\n<b>%p1/%f\n</b>\nOm du vill spara den behandlade filen i en katalog som heter "Konverterade filer", belägen i originalets katalog, skriver du:\n<b>%p1/Konverterade filer/%f\n</b>\nOm du vill spara den behandlade filen i en katalog "/home/tom/Konverterade filer" där du behåller samma underkatalog med datum, skriver du:\n<b>%p2/Konverterade filer/%d1/%f</b>
 PREFERENCES_OUTDIRTEMPLATE;Använd förinställning
 PREFERENCES_OUTDIR;Utmatningskatalog
@@ -857,15 +774,12 @@ PREFERENCES_PSPATH;Adobe Photoshops installationskatalog
 PREFERENCES_RGBDTL_LABEL;Maximalt antal trådar för brusreducering
 PREFERENCES_RGBDTL_TOOLTIP;Brusreduceringen kräver ungefär 128MB RAM för en 10MPix bild och 512MB för en 40 MPix, och ytterligare 128MB per tråd. Ju fler trådar som körs parallellt, desto snabbare går beräkningarna. Ange värdet "0" för att automatiskt använda så många trådar som möjligt.
 PREFERENCES_SELECTFONT;Välj typsnitt
-PREFERENCES_SELECTICCDIRDLG;Välj katalog för färgprofiler...
 PREFERENCES_SELECTLANG;Välj språk
-PREFERENCES_SELECTMONITORPROFDLG;Välj färgprofil för skärmen...
 PREFERENCES_SELECTTHEME;Välj tema
 PREFERENCES_SET;Ange
 PREFERENCES_SHOWBASICEXIF;Visa grundlig Exif-information
 PREFERENCES_SHOWDATETIME;Visa datum och tid
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Lägg till exponeringskompensation
-PREFERENCES_SHOWONLYRAW;Visa bara råbilder
 PREFERENCES_SHOWPROFILESELECTOR;Visa profilväljaren
 PREFERENCES_SHTHRESHOLD;Tröskelvärde för skuggor
 PREFERENCES_SINGLETABVERTAB;Enkelfliksläge, vertikala flikar
@@ -881,10 +795,8 @@ PREFERENCES_TAB_BROWSER;Filbläddrare
 PREFERENCES_TAB_COLORMGR;Färghantering
 PREFERENCES_TAB_GENERAL;Allmän
 PREFERENCES_TAB_IMPROC;Bildbehandling
-PREFERENCES_TAB_OUTPUT;Utmatningsinställningar
 PREFERENCES_TAB_PERFORMANCE;Prestanda
 PREFERENCES_TAB_SOUND;Ljud
-PREFERENCES_THUMBSIZE;Miniatyrbildstorlek
 PREFERENCES_TP_LABEL;Verktygspanel:
 PREFERENCES_TP_USEICONORTEXT;Använd ikoner istället för text
 PREFERENCES_TP_VSCROLLBAR;Göm verktygpanelens vertikala skrollist
@@ -906,22 +818,13 @@ PROFILEPANEL_PASTEPPASTE;Parametrar att klistra in
 PROFILEPANEL_PCUSTOM;Egen
 PROFILEPANEL_PFILE;Från fil
 PROFILEPANEL_PINTERNAL;Neutral
-PROFILEPANEL_PLASTPHOTO;Senaste fotot
 PROFILEPANEL_PLASTSAVED;Senast sparad
-PROFILEPANEL_PROFILE;Profil
 PROFILEPANEL_SAVEDLGLABEL;Spara efterbehandlingsparametrar...
 PROFILEPANEL_SAVEPPASTE;Parametrar att spara
 PROFILEPANEL_TOOLTIPCOPY;Kopiera nuvarande profil till klippbordet.\n<b>Ctrl-vänsterklicka</b> för att välja de parametrar du vill kopiera
 PROFILEPANEL_TOOLTIPLOAD;Ladda profil.\n<b>Ctrl-klicka</b> för att välja de parametrar du vill ladda
 PROFILEPANEL_TOOLTIPPASTE; Klistra in profil från klippbordet.\n<b>Ctrl-klicka</b> för att välja de parametrar du vill klistra in
 PROFILEPANEL_TOOLTIPSAVE;Spara nuvarande profil.\n<b>Ctrl-klicka</b> för att välja de parametrar du vill spara
-PROGRESSBAR_BADPIXELS;Dåliga pixlar...
-PROGRESSBAR_CACORRECTION;Reducera kromatiska abberationer...
-PROGRESSBAR_DARKFRAME;Mörkbild...
-PROGRESSBAR_DECODING;Avkodar råbild...
-PROGRESSBAR_DEMOSAICING;Demosaicing...
-PROGRESSBAR_GREENEQUIL;Grönbalansera...
-PROGRESSBAR_LINEDENOISE;Linjär brusreducering...
 PROGRESSBAR_LOADINGTHUMBS;Laddar miniatyrbilder...
 PROGRESSBAR_LOADING;Laddar bild...
 PROGRESSBAR_LOADJPEG;Laddar JPEG-fil...
@@ -936,9 +839,7 @@ PROGRESSBAR_SAVEPNG;Sparar PNG-fil...
 PROGRESSBAR_SAVETIFF;Sparar TIFF-fil...
 PROGRESSBAR_SNAPSHOT_ADDED;Bokmärke tillagt.
 PROGRESSDLG_PROFILECHANGEDINBROWSER;Profilen har ändrats i filhanteraren
-QINFO_FOCALLENGTH;Brännvidd
 QINFO_ISO;ISO
-QINFO_LENS;Objektiv
 QINFO_NOEXIF;Exif-information ej tillgänglig.
 SAVEDLG_AUTOSUFFIX;Lägg automatiskt till en ändelse om filnamnet redan existerar
 SAVEDLG_FILEFORMAT;Filformat
@@ -946,7 +847,6 @@ SAVEDLG_FORCEFORMATOPTS;Kräv att inställningar sparas
 SAVEDLG_JPEGQUAL;JPEG-kvalitet
 SAVEDLG_JPGFILTER;JPEG-filer
 SAVEDLG_PNGCOMPR;PNG-komprimering
-SAVEDLG_PNGFILTER;PNG-filer
 SAVEDLG_PUTTOQUEUEHEAD;Flytta längst fram i behandlingskön
 SAVEDLG_PUTTOQUEUETAIL;Flytta längst bak i behandlingskön
 SAVEDLG_PUTTOQUEUE;Lägg till i behandlingskön
@@ -1007,7 +907,6 @@ TP_BWMIX_MET_CHANMIX;Kanalmixer
 TP_BWMIX_MET_DESAT;Reducera mättnad
 TP_BWMIX_MET_LUMEQUAL;Luminansequalizer
 TP_BWMIX_MIXC;Blanda
-TP_BWMIX_MIXF;Blanda filter
 TP_BWMIX_NEUTRAL;Återställ mixer
 TP_BWMIX_NEUTRAL_TIP;Återställ alla värden (filter, kanalmixer) till standard
 TP_BWMIX_ORANGE;Orange
@@ -1087,7 +986,6 @@ TP_COLORAPP_DATACIE;Resultat av CIECAM02-histogram i kurvor
 TP_COLORAPP_DATACIE_TOOLTIP;När detta är aktiverat, visar CIECAM02-histogram ungefärliga värden/intervall för J eller Q, och C, s eller M efter justeringar i CIECAM02.\nDet här valet påverkar inte huvudhistogrammet.\n\nNär detta är avaktiverat, visar histogrammet för CIECAM02-kurvor Lab-värden innan justeringar av CIECAM02
 TP_COLORAPP_DEGREE_AUTO_TOOLTIP;Om den här checkboxen är aktiverad (rekommenderas), beräknar RT ett optimalt värde som sedan dels används av CAT02 och dels för hela CIECAM02.\nFör att ange ett värde manuellt, avaktivera checkboxen först (värden över 65 rekommenderas)
 TP_COLORAPP_DEGREE_TOOLTIP;Mängd CIE kromatisk anpassning 2002
-TP_COLORAPP_EQUAL;Lika med
 TP_COLORAPP_GAMUT;Kontroll av gamut (Lab)
 TP_COLORAPP_GAMUT_TOOLTIP;Tillåt kontroll av gamut i Lab-läge
 TP_COLORAPP_HUE;Nyans(h)
@@ -1238,7 +1136,6 @@ TP_HLREC_METHOD;Metod:
 TP_HSVEQUALIZER_CHANNEL;Kanal
 TP_HSVEQUALIZER_HUE;Nyans
 TP_HSVEQUALIZER_LABEL;HSV-equalizer
-TP_HSVEQUALIZER_NEUTRAL;Neutral
 TP_HSVEQUALIZER_SAT;Mättnad
 TP_HSVEQUALIZER_VAL;Värde
 TP_ICM_BLENDCMSMATRIX;Mixa högdagrar med matris
@@ -1262,7 +1159,6 @@ TP_ICM_INPUTNONE_TOOLTIP;Använd ingen färginmatningsprofil alls. Används bara
 TP_ICM_INPUTPROFILE;Inmatningsprofil
 TP_ICM_LABEL;Färghantering
 TP_ICM_NOICM;Ingen färghantering: sRGB-utmatning
-TP_ICM_OUTPUTDLGLABEL;Välj färgutmatningsprofil...
 TP_ICM_OUTPUTPROFILE;Utmatningsprofil
 TP_ICM_SAVEREFERENCE;Spara referensbild för profilering
 TP_ICM_SAVEREFERENCE_TOOLTIP;Spara den linjära TIFF-bilden innan inmatningsprofilen appliceras. Detta kan användas för kalibreringsändamål eller generering av en kameraprofil.
@@ -1317,9 +1213,6 @@ TP_LENSPROFILE_LABEL;Objektivkorrigeringsprofil
 TP_LENSPROFILE_USECA;Korrigera för kromatiska abberationer
 TP_LENSPROFILE_USEDIST;Korrigera distorsion
 TP_LENSPROFILE_USEVIGN;Korrigera vinjettering
-TP_LUMADENOISE_EDGETOLERANCE;Kanttolerans
-TP_LUMADENOISE_LABEL;Reducering av luminansbrus
-TP_LUMADENOISE_RADIUS;Radie
 TP_NEUTRAL;Neutral
 TP_NEUTRAL_TIP;Återställ exponeringsreglagen till neutrala värden.\nGäller för samma reglage som autonivåer, oavsett om du använder autonivåer eller ej
 TP_PCVIGNETTE_FEATHER;Fjäder
@@ -1370,7 +1263,6 @@ TP_RESIZE_BILINEAR;Bilinjär
 TP_RESIZE_CROPPEDAREA;Beskuren yta
 TP_RESIZE_FITBOX;Begränsad yta
 TP_RESIZE_FULLIMAGE;Hela bilden
-TP_RESIZE_FULLSIZE;Hel bildstorlek:
 TP_RESIZE_HEIGHT;Höjd
 TP_RESIZE_H;H:
 TP_RESIZE_LABEL;Ändra storlek
@@ -1494,13 +1386,6 @@ TP_WBALANCE_TUNGSTEN;Glödlampa
 TP_WBALANCE_WATER1;Under vattnet 1
 TP_WBALANCE_WATER2;Under vattnet 2
 TP_WBALANCE_WATER_HEADER;Under vattnet
-ZOOMBAR_DETAIL;Lupp
-ZOOMBAR_HUGE;Enorm
-ZOOMBAR_LARGE;Stor
-ZOOMBAR_NORMAL;Normal
-ZOOMBAR_PREVIEW;Förhandsvisning
-ZOOMBAR_SCALE;Skala
-ZOOMBAR_SMALL;Liten
 ZOOMPANEL_100;(100%)
 ZOOMPANEL_NEWCROPWINDOW;Öppna (nytt) detaljfönster.
 ZOOMPANEL_ZOOM100;Förstora till 100%.\nKortkommando: <b>z</b>
