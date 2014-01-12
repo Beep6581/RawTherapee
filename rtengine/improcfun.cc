@@ -522,6 +522,8 @@ if(params->colorappearance.enabled) {
 			// we cannot have all algoritms with all chroma curves
 			if(alg==1) 	{
 				// Lightness saturation
+				if(Jpro > 99.9f)
+					Jpro = 99.9f;
 				Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68)])/327.68;//ligthness CIECAM02 + contrast
 				double sres;
 				double Sp=spro/100.0;
@@ -542,7 +544,12 @@ if(params->colorappearance.enabled) {
 				}
 			else if(alg==3 || alg==0  || alg==2) {
 				double coef=32760./wh;
-				if(alg==3 || alg==2) Qpro=(CAMBrightCurveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
+				if(alg==3 || alg==2) {
+					if(Qpro*coef > 32767.0f)
+						Qpro=(CAMBrightCurveQ[(float)32767.0f])/coef;//brightness and contrast
+					else
+						Qpro=(CAMBrightCurveQ[(float)(Qpro*coef)])/coef;//brightness and contrast
+				}
 				double Mp, sres;
 				double coe=pow(fl,0.25);
 				Mp=Mpro/100.0;
@@ -560,7 +567,11 @@ if(params->colorappearance.enabled) {
 				Jpro=(100.0* Qpro*Qpro) /(wh*wh);
 				Cpro= Mpro/coe;
 				spro = 100.0 * sqrt( Mpro / Qpro );
-				if(alg!=2) Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68)])/327.68;//ligthness CIECAM02 + contrast
+				if(alg!=2) {
+					if(Jpro > 99.9f)
+						Jpro = 99.9f;
+					Jpro=(CAMBrightCurveJ[(float)(Jpro*327.68f)])/327.68f;//ligthness CIECAM02 + contrast
+				}
 				double Cp;
 				double Sp=spro/100.0;
 				parsat=1.5;
