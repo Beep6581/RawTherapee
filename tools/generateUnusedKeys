@@ -4,9 +4,13 @@
 # a .cc or .h file. Those that do not are printed to screen, and the
 # user is asked if they should be deleted from all language files.
 #
-# Keys in commented-out sections are not skipped.
-# It does not handle dynamically built keys, like
-#   HISTORY_MSG_xxx
+# Keys in commented-out sections are not skipped, so they will remain
+# in the language files.
+# It does not handle dynamically built keys:
+#   HISTORY_MSG_
+#   EXTPROGTARGET_
+#   FILEBROWSER_POPUPRANK
+#   FILEBROWSER_POPUPCOLORLABEL
 #
 # Run the script from the project root:
 #   ./tools/generateUnusedKeys
@@ -27,7 +31,6 @@ abort () {
 }
 
 trap 'abort' HUP INT QUIT ABRT TERM
-
 
 cd "rtdata/languages" || { printf "%s\n" "You must run this script from the root of the project."; exit 1; }
 # Build array of all interface translation files, or use user-specified ones only
@@ -57,7 +60,10 @@ while read -r 'defLine'; do
     printf "  %s\n" "${defLine%%;*}"
     delLines+=("${defLine%%;*}")
   fi
-done < <(grep -Ev "^(#|$)|HISTORY_MSG_|EXTPROGTARGET_" "default" | sed "s/EXTPROGTARGET_[0-9]*/EXTPROGTARGET_/" | sort -Vu)
+done < <(grep -Ev "^(#|$)|HISTORY_MSG_" "default" | sed -e "s/EXTPROGTARGET_[0-9]*/EXTPROGTARGET_/" -e "s/FILEBROWSER_POPUPCOLORLABEL[0-9]*/FILEBROWSER_POPUPCOLORLABEL/" -e "s/FILEBROWSER_POPUPRANK[0-9]*/FILEBROWSER_POPUPRANK/" | sort -Vu)
+# The grep/sed line above lists keys to ignore.
+# Dynamically built keys like HISTORY_MSG_1 can't be grepped in the code,
+# so it renames KEY_1-KEY_9 to KEY_ so that they can be grepped and therefore ignored.
 
 t2="$(date +%s)"
 tt=$((t2-t1))
