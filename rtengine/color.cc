@@ -968,11 +968,11 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 #ifdef _DEBUG
         neg=false, more_rgb=false;
 #endif
+        float2  sincosval = xsincosf(HH);
         do {
             inGamut=true;
 
             //Lprov1=LL;
-            float2  sincosval = xsincosf(HH);
             float aprov1=Chprov1*sincosval.y;
             float bprov1=Chprov1*sincosval.x;
 
@@ -993,22 +993,26 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
 #ifdef _DEBUG
                 neg=true;
 #endif
-                if (Lprov1 < 0.01f) Lprov1 = 0.01f;
+                if (Lprov1 < 0.01f)
+					Lprov1 = 0.01f;
                 Chprov1 *= higherCoef; // decrease the chromaticity value
-                if (Chprov1 <= 3.0f) Lprov1 += lowerCoef;
+                if (Chprov1 <= 3.0f)
+					Lprov1 += lowerCoef;
                 inGamut = false;
-                } else
-                // if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
-                if (!isHLEnabled && (R>ClipLevel || G>ClipLevel || B>ClipLevel)) {
+			} else if (!isHLEnabled && (R>ClipLevel || G>ClipLevel || B>ClipLevel)) {
+
+				// if "highlight reconstruction" is enabled or the point is completely white (clipped, no color), don't control Gamut
 #ifdef _DEBUG
-                more_rgb=true;
+				more_rgb=true;
 #endif
-                if (Lprov1 > 99.999f) Lprov1 = 99.98f;
-                Chprov1 *= higherCoef;
-                if (Chprov1 <= 3.0f) Lprov1 -= lowerCoef;
-                inGamut = false;
-            }
-        }
+				if (Lprov1 > 99.999f)
+					Lprov1 = 99.98f;
+				Chprov1 *= higherCoef;
+				if (Chprov1 <= 3.0f)
+					Lprov1 -= lowerCoef;
+				inGamut = false;
+			}
+		}
         while (!inGamut);
         //end first gamut control
     }
@@ -1061,7 +1065,7 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
         float correctlum=0.0;
         float correctionHuechroma=0.0;
 
-    #pragma omp for schedule(dynamic, 10)
+#pragma omp for schedule(dynamic, 10)
         for (int i=0; i<height; i++)
             for (int j=0; j<width; j++) {
                 float HH=xatan2f(lab->b[i][j],lab->a[i][j]);
@@ -1069,7 +1073,9 @@ munsDbgInfo->maxdhue[idx] = MAX(munsDbgInfo->maxdhue[idx], absCorrectionHue);
                 float Lprov1=lab->L[i][j]/327.68f;
                 float Loldd, Coldd;
                 if(gamut) {
+#ifdef _DEBUG
                     bool neg, more_rgb;
+#endif
                     float R, G, B;
 
                     //gamut control : Lab values are in gamut
