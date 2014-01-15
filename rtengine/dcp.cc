@@ -823,7 +823,7 @@ void DCPProfile::Apply(Imagefloat *pImg, int preferredIlluminant, Glib::ustring 
         }
     }
 
-    if (deleteTableHandle) delete deleteTableHandle;
+    if (deleteTableHandle) delete[] deleteTableHandle;
 }
 
 // Integer variant is legacy, only used for thumbs. Simply take the matrix here
