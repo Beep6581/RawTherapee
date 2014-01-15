@@ -233,7 +233,7 @@ LCPProfile::LCPProfile(Glib::ustring fname) {
     XML_SetUserData(parser, (void *)this);
 
 
-    isFisheye=inCamProfiles=firstLIDone=inPerspect=inAlternateLensID=false;
+    isFisheye=inCamProfiles=firstLIDone=inPerspect=inAlternateLensID=inAlternateLensNames=false;
     sensorFormatFactor=1;
     for (int i=0;i<MaxPersModelCount;i++) aPersModel[i]=NULL;
     persModelCount=0; *inInvalidTag=0;
@@ -445,7 +445,7 @@ void LCPProfile::calcParams(int mode, float focalLength, float focusDist, float 
         }
 
         //printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", mode, focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow); 
-    } else printf("Error: LCP file contained no parameters\n");
+    } else printf("Error: LCP file contained no %s parameters\n",mode==0 ? "vignette" : mode == 1 ? "distortion" : "CA" );
 }
 
 void LCPProfile::print() const {
@@ -470,7 +470,8 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
 
     if (!strcmp("CameraProfiles",src)) pProf->inCamProfiles=true;
     if (!strcmp("AlternateLensIDs",src)) pProf->inAlternateLensID=true;
-    if (!pProf->inCamProfiles || pProf->inAlternateLensID) return;
+    if (!strcmp("AlternateLensNames",src)) pProf->inAlternateLensNames=true;
+    if (!pProf->inCamProfiles || pProf->inAlternateLensID || pProf->inAlternateLensNames) return;
 
     if (!strcmp("li",src)) {
         pProf->pCurPersModel=new LCPPersModel();
@@ -520,7 +521,7 @@ void XMLCALL LCPProfile::XmlStartHandler(void *pLCPProfile, const char *el, cons
 void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, int len) {
     LCPProfile *pProf=static_cast<LCPProfile*>(pLCPProfile);
 
-    if (!pProf->inCamProfiles || pProf->inAlternateLensID || *pProf->inInvalidTag) return;
+    if (!pProf->inCamProfiles || pProf->inAlternateLensID || pProf->inAlternateLensNames || *pProf->inInvalidTag) return;
 
     // Check if it contains non-whitespaces (there are several calls to this for one tag unfortunately)
     bool onlyWhiteSpace=true;
@@ -588,7 +589,7 @@ void XMLCALL LCPProfile::XmlTextHandler(void *pLCPProfile, const XML_Char *s, in
         pProf->pCurCommon->scaleFac=atof(raw);
     else if (!strcmp("ResidualMeanError",tag)) 
         pProf->pCurCommon->meanErr=atof(raw);
-    else if (!strcmp("RadialDistortParam1",tag) || !strcmp("VignetteModelParam1",tag)) 
+    else if (!strcmp("RadialDistortParam1",tag) || !strcmp("VignetteModelParam1",tag))
         pProf->pCurCommon->param[0]=atof(raw);
     else if (!strcmp("RadialDistortParam2",tag) || !strcmp("VignetteModelParam2",tag)) 
         pProf->pCurCommon->param[1]=atof(raw);
@@ -611,8 +612,9 @@ void XMLCALL LCPProfile::XmlEndHandler(void *pLCPProfile, const char *el) {
 
     if (strstr(el,":CameraProfiles")) pProf->inCamProfiles=false;
     if (strstr(el,":AlternateLensIDs")) pProf->inAlternateLensID=false;
+    if (strstr(el,":AlternateLensNames")) pProf->inAlternateLensNames=false;
 
-    if (!pProf->inCamProfiles || pProf->inAlternateLensID) return;
+    if (!pProf->inCamProfiles || pProf->inAlternateLensID || pProf->inAlternateLensNames) return;
 
     if (strstr(el,":PerspectiveModel") || strstr(el,":FisheyeModel"))
         pProf->inPerspect=false;
