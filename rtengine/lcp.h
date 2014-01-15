@@ -63,7 +63,7 @@ namespace rtengine {
 
     class LCPProfile {
         // Temporary data for parsing
-        bool inCamProfiles,firstLIDone,inPerspect,inAlternateLensID;
+        bool inCamProfiles,firstLIDone,inPerspect,inAlternateLensID,inAlternateLensNames;
         char lastTag[256],inInvalidTag[256];
         LCPPersModel* pCurPersModel;
         LCPModelCommon* pCurCommon;
