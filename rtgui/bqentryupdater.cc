@@ -121,6 +121,10 @@ void BatchQueueEntryUpdater::processThread () {
             thumbInterp (current.oimg, current.ow, current.oh, img, neww, current.newh);
             current.listener->updateImage (img, neww, current.newh, current.ow, current.oh, newBuffer?current.oimg:NULL);
         }
+		if(current.oimg) {
+			delete[] current.oimg;
+			current.oimg = NULL;
+		}
     }
 
     stopped = true;
