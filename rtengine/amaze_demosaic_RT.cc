@@ -296,12 +296,20 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 			const __m128 c65535v = _mm_set1_ps( 65535.0f );
 			__m128	tempv;
 			for (rr=rrmin; rr < rrmax; rr++){
-				for (row=rr+top, cc=ccmin; cc < ccmax; cc+=4) {
+				for (row=rr+top, cc=ccmin; cc < ccmax-3; cc+=4) {
 					indx1=rr*TS+cc;
 					tempv = LVFU(rawData[row][cc+left]) / c65535v;
 					_mm_store_ps( &cfa[indx1], tempv );
 					_mm_store_ps( &rgbgreen[indx1], tempv );
 				}
+				for (; cc < ccmax; cc++) {
+					indx1=rr*TS+cc;
+					cfa[indx1] = (rawData[row][cc+left])/65535.0f;
+					if(FC(rr,cc)==1)
+						rgbgreen[indx1] = cfa[indx1];
+						
+				}
+
 			}
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			//fill borders
@@ -1308,25 +1316,35 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 #endif
 			float	temp;
 			for (rr=16; rr<rr1-16; rr++) {
-				if((FC(rr,2)&1)==1)
-					for (cc=16,indx=rr*TS+cc,row=rr+top; cc<cc1-16; cc+=2,indx++) {
+				if((FC(rr,2)&1)==1) {
+					for (cc=16,indx=rr*TS+cc,row=rr+top; cc<cc1-16-(cc1&1); cc+=2,indx++) {
 						col = cc + left;
 						temp = 	1.0f/((hvwt[(indx-v1)>>1])+(1.0f-hvwt[(indx+1)>>1])+(1.0f-hvwt[(indx-1)>>1])+(hvwt[(indx+v1)>>1]));
 						red[row][col]=65535.0f*(rgbgreen[indx]-	((hvwt[(indx-v1)>>1])*Dgrb[0][(indx-v1)>>1]+(1.0f-hvwt[(indx+1)>>1])*Dgrb[0][(indx+1)>>1]+(1.0f-hvwt[(indx-1)>>1])*Dgrb[0][(indx-1)>>1]+(hvwt[(indx+v1)>>1])*Dgrb[0][(indx+v1)>>1])*
 							temp);
 						blue[row][col]=65535.0f*(rgbgreen[indx]- ((hvwt[(indx-v1)>>1])*Dgrb[1][(indx-v1)>>1]+(1.0f-hvwt[(indx+1)>>1])*Dgrb[1][(indx+1)>>1]+(1.0f-hvwt[(indx-1)>>1])*Dgrb[1][(indx-1)>>1]+(hvwt[(indx+v1)>>1])*Dgrb[1][(indx+v1)>>1])*
 							temp);
-						
+
 						indx++;
 						col++;
 						red[row][col]=65535.0f*(rgbgreen[indx]-Dgrb[0][indx>>1]);
 						blue[row][col]=65535.0f*(rgbgreen[indx]-Dgrb[1][indx>>1]);
 					}
-				else
-					for (cc=16,indx=rr*TS+cc,row=rr+top; cc<cc1-16; cc+=2,indx++) {
+					if(cc1&1) { // width of tile is odd
+						col = cc + left;
+						temp = 	1.0f/((hvwt[(indx-v1)>>1])+(1.0f-hvwt[(indx+1)>>1])+(1.0f-hvwt[(indx-1)>>1])+(hvwt[(indx+v1)>>1]));
+						red[row][col]=65535.0f*(rgbgreen[indx]-	((hvwt[(indx-v1)>>1])*Dgrb[0][(indx-v1)>>1]+(1.0f-hvwt[(indx+1)>>1])*Dgrb[0][(indx+1)>>1]+(1.0f-hvwt[(indx-1)>>1])*Dgrb[0][(indx-1)>>1]+(hvwt[(indx+v1)>>1])*Dgrb[0][(indx+v1)>>1])*
+							temp);
+						blue[row][col]=65535.0f*(rgbgreen[indx]- ((hvwt[(indx-v1)>>1])*Dgrb[1][(indx-v1)>>1]+(1.0f-hvwt[(indx+1)>>1])*Dgrb[1][(indx+1)>>1]+(1.0f-hvwt[(indx-1)>>1])*Dgrb[1][(indx-1)>>1]+(hvwt[(indx+v1)>>1])*Dgrb[1][(indx+v1)>>1])*
+							temp);
+					}
+				}
+				else {
+					for (cc=16,indx=rr*TS+cc,row=rr+top; cc<cc1-16-(cc1&1); cc+=2,indx++) {
 						col = cc + left;
 						red[row][col]=65535.0f*(rgbgreen[indx]-Dgrb[0][indx>>1]);
 						blue[row][col]=65535.0f*(rgbgreen[indx]-Dgrb[1][indx>>1]);
+
 						indx++;
 						col++;
 						temp = 	1.0f/((hvwt[(indx-v1)>>1])+(1.0f-hvwt[(indx+1)>>1])+(1.0f-hvwt[(indx-1)>>1])+(hvwt[(indx+v1)>>1]));
@@ -1334,9 +1352,15 @@ SSEFUNCTION void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw,
 							temp);
 						blue[row][col]=65535.0f*(rgbgreen[indx]- ((hvwt[(indx-v1)>>1])*Dgrb[1][(indx-v1)>>1]+(1.0f-hvwt[(indx+1)>>1])*Dgrb[1][(indx+1)>>1]+(1.0f-hvwt[(indx-1)>>1])*Dgrb[1][(indx-1)>>1]+(hvwt[(indx+v1)>>1])*Dgrb[1][(indx+v1)>>1])*
 							temp);
-						
 					}
+					if(cc1&1) { // width of tile is odd
+						col = cc + left;
+						red[row][col]=65535.0f*(rgbgreen[indx]-Dgrb[0][indx>>1]);
+						blue[row][col]=65535.0f*(rgbgreen[indx]-Dgrb[1][indx>>1]);
+					}
+				}
 			}
+
 
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
