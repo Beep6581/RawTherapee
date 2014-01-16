@@ -1,13 +1,17 @@
-#01 a3novy: 2011-05-15
-#02 a3novy: 2011-11-13
-#03 a3novy: 2011-11-20 (for 4.0.5)
-#04 a3novy: 2011-12-03 (for 4.0.6)
-#05 a3novy: 2012-02-11 (for 4.0.7)
-#06 a3novy: 2012-04-04 (for 4.0.8)
-#07 a3novy: 2012-07-12, 2012-12-22 (for 4.0.9)
-#08 a3novy: 2013-04-01, 2013-04-19 (for 4.0.10)
-#09 firefly: 2013-09-10, 2013-10-28 (for 4.0.11)
-#10 firefly: 2014-01-07 (for new default)
+#01 2011-05-15 a3novy
+#02 2011-11-13 a3novy
+#03 2011-11-20 a3novy
+#04 2011-12-03 a3novy
+#05 2012-02-11 a3novy
+#06 2012-04-04 a3novy
+#07 2012-07-12 a3novy
+#08 2012-12-22 a3novy
+#09 2013-04-01 a3novy
+#10 2013-04-19 a3novy
+#11 2013-09-10 firefly
+#12 2013-10-28 firefly
+#13 2014-01-07 firefly
+#14 2014-01-15 firefly
 
 ABOUT_TAB_BUILD;ヴァージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -222,16 +226,16 @@ HISTORY_MSG_5;明度
 HISTORY_MSG_6;コントラスト
 HISTORY_MSG_7;黒
 HISTORY_MSG_8;露光量補正
-HISTORY_MSG_9;ハイライト復元
-HISTORY_MSG_10;シャドウ復元
+HISTORY_MSG_9;ハイライト圧縮
+HISTORY_MSG_10;シャドウ圧縮
 HISTORY_MSG_11;トーンカーブ 1
 HISTORY_MSG_12;自動露光補正
 HISTORY_MSG_13;露光 クリッピング
 HISTORY_MSG_14;Lab　-　明度
 HISTORY_MSG_15;Lab　-　コントラスト
 HISTORY_MSG_16;輝度 黒レベル
-HISTORY_MSG_17;輝度 ハイライト復元
-HISTORY_MSG_18;輝度 シャドウ復元
+HISTORY_MSG_17;輝度 ハイライト圧縮
+HISTORY_MSG_18;輝度 シャドウ圧縮
 HISTORY_MSG_19;'L'カーブ
 HISTORY_MSG_20;シャープ化
 HISTORY_MSG_21;シャープ化 半径
@@ -280,7 +284,7 @@ HISTORY_MSG_63;スナップショット選択
 HISTORY_MSG_64;写真切り抜き
 HISTORY_MSG_65;色収差補正
 HISTORY_MSG_66;ハイライト復元
-HISTORY_MSG_67;ハイライト復元 適用量
+HISTORY_MSG_67;ハイライト復元 量
 HISTORY_MSG_68;ハイライト復元 方式
 HISTORY_MSG_69;作業カラースペース
 HISTORY_MSG_70;出力カラースペース
@@ -321,7 +325,7 @@ HISTORY_MSG_104;HSV イコライザ
 HISTORY_MSG_105;フリンジ低減
 HISTORY_MSG_106;フリンジ低減 半径
 HISTORY_MSG_107;フリンジ低減 しきい値
-HISTORY_MSG_108;ハイライト復元 しきい値
+HISTORY_MSG_108;ハイライト圧縮 しきい値
 HISTORY_MSG_109;リサイズ バウンディングボックス
 HISTORY_MSG_110;リサイズ適用
 HISTORY_MSG_111;Lab　-　色ずれ回避
@@ -416,7 +420,7 @@ HISTORY_MSG_199;CAM02 - カーブでCIECAM02出力のヒストグラムを表示
 HISTORY_MSG_200;CAM02 - CIECAM02 Q でトーンマッピング
 HISTORY_MSG_201;ノイズ低減 - 色差 レッド
 HISTORY_MSG_202;ノイズ低減 - 色差 ブルー
-HISTORY_MSG_203;ノイズ - 方式
+HISTORY_MSG_203;ノイズ低減 - 方式
 HISTORY_MSG_204;LMMSE 拡張処理
 HISTORY_MSG_205;CAM02 ホット／バッドピクセル
 HISTORY_MSG_206;CAT02 - 自動で順応
@@ -442,7 +446,7 @@ HISTORY_MSG_226;白黒　チャンネルミキサー　マゼンタ
 HISTORY_MSG_227;白黒　チャンネルミキサー　パープル
 HISTORY_MSG_228;白黒　輝度イコライザ
 HISTORY_MSG_229;白黒　輝度イコライザ
-HISTORY_MSG_230;白黒　白黒モード
+HISTORY_MSG_230;白黒　モード
 HISTORY_MSG_231;白黒　‘前の‘カーブ
 HISTORY_MSG_232;白黒　‘前の‘カーブのタイプ
 HISTORY_MSG_233;白黒　‘後の‘カーブ
@@ -458,7 +462,7 @@ HISTORY_MSG_242;ビネットフィルター　形状
 HISTORY_MSG_243;半径
 HISTORY_MSG_244;ビネットフィルター　強さ
 HISTORY_MSG_245;ビネットフィルター　中央
-HISTORY_MSG_246;CLカーブ
+HISTORY_MSG_246;‘CL’カーブ
 HISTORY_MSG_247;"LH"　カーブ
 HISTORY_MSG_248;"HH"　カーブ
 HISTORY_MSG_249;ディテールコントラストのしきい値
@@ -1092,11 +1096,11 @@ TP_EXPOSURE_AUTOLEVELS;自動露光補正
 TP_EXPOSURE_AUTOLEVELS_TIP;画像を解析し露光補正を自動で設定をします
 TP_EXPOSURE_BLACKLEVEL;黒レベル
 TP_EXPOSURE_BRIGHTNESS;明るさ
-TP_EXPOSURE_CLIP;クリップ
+TP_EXPOSURE_CLIP;クリップ　％
 TP_EXPOSURE_CLIP_TIP;自動露光補正で切り捨てられるハイライトとシャドウ部分の割合
-TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;ハイライト復元 しきい値
-TP_EXPOSURE_COMPRHIGHLIGHTS;ハイライト復元 適用量
-TP_EXPOSURE_COMPRSHADOWS;シャドウ復元
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;ハイライト圧縮 しきい値
+TP_EXPOSURE_COMPRHIGHLIGHTS;ハイライト圧縮
+TP_EXPOSURE_COMPRSHADOWS;シャドウ圧縮
 TP_EXPOSURE_CONTRAST;コントラスト
 TP_EXPOSURE_CURVEEDITOR1;トーンカーブ1
 TP_EXPOSURE_CURVEEDITOR2;トーンカーブ2
@@ -1176,7 +1180,7 @@ TP_ICM_TONECURVE_TOOLTIP;DCPのプロファイルに含まれているトーン�
 TP_ICM_WORKINGPROFILE;作業プロファイル
 TP_IMPULSEDENOISE_LABEL;インパルス ノイズ低減
 TP_IMPULSEDENOISE_THRESH;しきい値
-TP_LABCURVE_AVOIDCOLORCLIP;カラークリッピング回避
+TP_LABCURVE_AVOIDCOLORSHIFT;色ずれを回避
 TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;作業色空間の色域に色を合わせ、マンセル補正を適用します
 TP_LABCURVE_BRIGHTNESS;明度
 TP_LABCURVE_CHROMATICITY;色度
@@ -1354,7 +1358,7 @@ TP_WBALANCE_CLOUDY;曇天
 TP_WBALANCE_CUSTOM;カスタム
 TP_WBALANCE_DAYLIGHT;昼光 (晴天)
 TP_WBALANCE_EQBLUERED;ブルー／レッド　イコライザー
-TP_WBALANCE_EQBLUERED_TOOLTIP;赤と青を調整することで、ホワイトバランスの作用を通常とは異なるものにします。\nこれは次のような撮影条件の場合に役立つでしょう：\na)光源が標準的なものと大きく異なる場合（例、水中）\nb)キャリブレーションの範囲から大きく外れている場合\nc)カラーマトリクスやICCプロファイルが不適当な場合
+TP_WBALANCE_EQBLUERED_TOOLTIP;ブルーとレッドを調整することで、ホワイトバランスの作用を通常とは異なるものにします。\nこれは次のような撮影条件の場合に役立つでしょう：\na)光源が標準的なものと大きく異なる場合（例、水中）\nb)キャリブレーションの範囲から大きく外れている場合\nc)カラーマトリクスやICCプロファイルが不適当な場合
 TP_WBALANCE_FLASH55;Leica
 TP_WBALANCE_FLASH60;標準, Canon, Pentax, Olympus
 TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
