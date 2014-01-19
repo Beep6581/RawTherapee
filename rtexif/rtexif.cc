@@ -764,7 +764,7 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       offsetFirst = 13;  // LensInfo3
                   else if( strstr(model, "K-5") || strstr(model, "K-r") )
                       offsetFirst = 12;  // LensInfo4
-                  else if( strstr(model, "K-01") )
+                  else if( strstr(model, "K-01") || strstr(model, "K-30"))
                       offsetFirst = 15;  // LensInfo5
                   directory = new TagDirectory*[2];
                   directory[1] = NULL;
