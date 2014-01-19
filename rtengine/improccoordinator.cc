@@ -81,7 +81,9 @@ ImProcCoordinator::ImProcCoordinator ()
 
       pW(-1), pH(-1),
       plistener(NULL), imageListener(NULL), aeListener(NULL), hListener(NULL),acListener(NULL), abwListener(NULL),
-      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false)
+      resultValid(false), changeSinceLast(0), updaterRunning(false), destroying(false),utili(false),autili(false),
+	  butili(false),ccutili(false),cclutili(false),clcutili(false)
+
     {}
 
 void ImProcCoordinator::assign (ImageSource* imgsrc) {
@@ -349,17 +351,23 @@ void ImProcCoordinator::updatePreviewImage (int todo, Crop* cropCall) {
  
     }
     readyphase++;
-    utili=false;
-    autili=false;
-    butili=false;
-    ccutili=false;
-    cclutili=false;
-    clcutili=false;
+//    utili=false;
+//    autili=false;
+//    butili=false;
+//    ccutili=false;
+//    cclutili=false;
+//    clcutili=false;
     if ((todo & M_LUMACURVE) || (todo & M_CROP)) {
+		utili = false;
         CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, lhist16, lhist16Cropped,
                                      lumacurve, histLCurve, scale==1 ? 1 : 16, utili);
     }
     if (todo & M_LUMACURVE) {
+		autili=false;
+		butili=false;
+		ccutili=false;
+		cclutili=false;
+		clcutili=false;
 
         CurveFactory::curveCL(clcutili, params.labCurve.clcurve, clcurve, lhist16CLlad, histCLurve, scale==1 ? 1 : 16);
 
