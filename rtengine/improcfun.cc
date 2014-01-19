@@ -3272,7 +3272,7 @@ void ImProcFunctions::chromiLuminanceCurve (int pW, LabImage* lold, LabImage* ln
 
 				float skbeg=-0.05f;//begin hue skin
 				float skend=1.60f;//end hue skin
-				const float chrmin=20.0f;//to avoid artefact, because L curve is not a real curve for luminance
+				const float chrmin=50.0f;//to avoid artefact, because L curve is not a real curve for luminance
 				float aa,bb;
 				float zz=0.0f;
 				float yy=0.0f;

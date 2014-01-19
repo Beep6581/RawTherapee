@@ -1,12 +1,14 @@
 #ifndef _PPVERSION_
 #define _PPVERSION_
 
-// This number have to be incremented whenever the PP3 file format is modified
-#define PPVERSION 316
+// This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
+#define PPVERSION 317
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   317  2014-01-19
+		changes to behaviour of LC curve, Issue 2209
    315  2013-12-12
 		add LH et HH curve to lab mode
    313  2013-11-19
