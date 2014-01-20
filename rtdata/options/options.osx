@@ -12,8 +12,8 @@ MultiUser=true
 
 [File Browser]
 # Image filename extensions to be looked for, and their corresponding search state (0/1 -> skip/include)
-ParseExtensions=3fr;arw;cr2;crf;crw;dcr;dng;fff;iiq;jpg;jpeg;kdc;mef;mos;mrw;nef;nrw;orf;pef;png;raf;raw;rw2;rwz;sr2;srf;srw;tif;tiff;
-ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;
+ParseExtensions=3fr;arw;cr2;crf;crw;dcr;dng;fff;iiq;jpg;jpeg;kdc;mef;mos;mrw;nef;nrw;orf;pef;png;raf;raw;rw2;rwl;rwz;sr2;srf;srw;tif;tiff;
+ParseExtensionsEnabled=1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;
 
 [Output]
 PathTemplate=%p1/converted/%f
