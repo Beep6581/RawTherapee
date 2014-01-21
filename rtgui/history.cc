@@ -198,7 +198,7 @@ void History::procParamsChanged (ProcParams* params, ProcEvent ev, Glib::ustring
     if (ev==EvPhotoLoaded)
         initHistory ();
     // construct formatted list content
-    Glib::ustring text = Glib::ustring::compose ("<b>%1</b>", eventDescrArray[ev]);
+    Glib::ustring text = Glib::ustring::compose ("%1", eventDescrArray[ev]);
 
     Glib::RefPtr<Gtk::TreeSelection> selection = hTreeView->get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
