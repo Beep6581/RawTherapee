@@ -1,0 +1,486 @@
+#
+#  This file is part of RawTherapee.
+#
+#  Copyright (c) 2004-2011 Gabor Horvath <hgabor@rawtherapee.com>
+#
+#  RawTherapee is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+# 
+#  RawTherapee is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Please keep this gtkrc in sync with the other ones from Clearlooks based themes.
+
+gtk-color-scheme = "rt_salt_pinch:#843382\nrt_base_color:#525252\nrt_fg_color:#979797\nrt_tooltip_fg_color:#A0A0A0\nrt_selected_bg_color:#5D235C\nrt_selected_fg_color:#CDCDCD\nrt_text_color:#A2A2A2\nrt_bg_color:#404040\nrt_tooltip_bg_color:#252525"
+
+style "clearlooks-default" {
+	xthickness = 1
+	ythickness = 1
+
+	#######################
+	# Style Properties
+	#######################
+	GtkButton::child-displacement-x = 1
+	GtkButton::child-displacement-y = 1
+	GtkButton::default-border = { 0, 0, 0, 0 }
+	GtkButton::image-spacing = 4
+	GtkToolButton::icon-spacing = 4
+
+	GtkCheckButton::indicator-size = 14
+
+	GtkPaned::handle-size = 6
+
+	GtkRange::trough-border = 0
+	GtkRange::slider-width = 15
+	GtkRange::stepper-size = 15
+
+	GtkScale::slider-width = 14
+	GtkScale::slider-length = 30
+	GtkScale::trough-side-details = 0
+
+	GtkScrollbar::min-slider-length = 30
+	GtkMenuBar::internal-padding = 0
+	GtkExpander::expander-size = 18
+	GtkExpander::expander-spacing = 0
+	GtkToolbar::internal-padding = 1
+	GtkTreeView::expander-size = 12
+	GtkTreeView::vertical-separator = 0
+
+	GtkMenu::horizontal-padding = 0
+	GtkMenu::vertical-padding = 0
+
+	WnckTasklist::fade-overlay-rect = 0
+	# The following line hints to gecko (and possibly other appliations)
+	# that the entry should be drawn transparently on the canvas.
+	# Without this, gecko will fill in the background of the entry.
+	GtkEntry::honors-transparent-bg-hint = 1
+
+	GtkEntry::progress-border = { 2, 2, 2, 2 }
+
+	####################
+	# Color Definitions
+	####################
+	bg[NORMAL]        = @rt_bg_color
+	bg[PRELIGHT]      = shade (1.02, @rt_bg_color)
+	bg[SELECTED]      = @rt_selected_bg_color
+	bg[INSENSITIVE]   = @rt_bg_color
+	bg[ACTIVE]        = shade (0.9, @rt_bg_color)
+
+	fg[NORMAL]        = @rt_fg_color
+	fg[PRELIGHT]      = @rt_fg_color
+	fg[SELECTED]      = @rt_selected_fg_color
+	fg[INSENSITIVE]   = mix (0.2, @rt_fg_color, @rt_bg_color)
+	fg[ACTIVE]        = @rt_fg_color
+
+	text[NORMAL]      = @rt_text_color
+	text[PRELIGHT]    = @rt_text_color
+	text[SELECTED]    = @rt_selected_fg_color
+	text[INSENSITIVE] = darker (@rt_bg_color)
+	text[ACTIVE]      = @rt_selected_fg_color
+
+	base[NORMAL]      = @rt_base_color
+	base[PRELIGHT]    = shade (0.95, @rt_bg_color)
+	base[SELECTED]    = @rt_selected_bg_color
+	base[INSENSITIVE] = @rt_bg_color
+	base[ACTIVE]      = shade (0.9, @rt_selected_bg_color)
+
+	engine "clearlooks" {
+		colorize_scrollbar = TRUE
+		reliefstyle = 1
+		menubarstyle = 2
+		toolbarstyle = 1
+		animation = FALSE
+		radius = 3.0
+		# style between CLASSIC, GLOSSY, INVERTED and GUMMY
+		style = GUMMY
+
+		# Set a hint to disable backward compatibility fallbacks.
+		hint = "use-hints"
+	}
+}
+
+style "wide" {
+	xthickness = 2
+	ythickness = 2
+}
+
+style "wider" {
+	xthickness = 3
+	ythickness = 3
+}
+
+style "clearlooks-entry" {
+	xthickness = 3
+	ythickness = 3
+
+	bg[SELECTED] = mix (1.4, @rt_selected_bg_color, @rt_base_color)
+	fg[SELECTED] = @rt_selected_fg_color
+
+	engine "clearlooks" {
+		focus_color = shade (0.65, @rt_selected_bg_color)
+	}
+}
+
+style "clearlooks-paned" {
+
+	bg[PRELIGHT] = shade (0.9, @rt_bg_color)
+
+	engine "clearlooks" {
+		hint = "paned"
+	}
+}
+
+style "clearlooks-HSV" {
+
+	engine "clearlooks" {
+		hint = "HSV"
+		disable_focus = TRUE
+	}
+}
+
+style "clearlooks-spinbutton" {
+
+	engine "clearlooks" {
+		hint = "spinbutton"
+	}
+}
+
+style "clearlooks-framelessspinbutton" {
+
+	# IMPORTANT!
+	# base[NORMAL] must have the same color than notebook bg[NORMAL]
+	base[NORMAL]       = shade (1.02, @rt_bg_color)
+}
+
+style "clearlooks-scale" {
+	xthickness = 2
+	ythickness = 2
+
+	bg[NORMAL]        = shade (1.30, @rt_bg_color)
+	bg[PRELIGHT]      = shade (1.40, @rt_bg_color)
+	# when GtkScale::trough-side-details = 1, bg[SELECTED] set the color of the slider background on the left of the knob
+	#bg[SELECTED]      = @rt_bg_color
+
+	engine "clearlooks" {
+		focus_color = @rt_selected_bg_color
+		hint = "scale"
+	}
+}
+
+style "clearlooks-thresholdselector" {
+
+	bg[ACTIVE]   = shade (1.40, @rt_bg_color)
+	bg[PRELIGHT] = shade (1.70, @rt_bg_color)
+}
+
+style "clearlooks-vscale" {
+
+	engine "clearlooks" {
+		hint = "vscale"
+	}
+}
+
+style "clearlooks-hscale" {
+
+	engine "clearlooks" {
+		hint = "hscale"
+	}
+}
+
+style "clearlooks-scrollbar" {
+	xthickness = 2
+	ythickness = 2
+
+	bg[SELECTED]      = shade (1.15, @rt_bg_color)
+
+	engine "clearlooks" {
+		hint = "scrollbar"
+	}
+}
+
+style "clearlooks-hscrollbar" {
+
+	engine "clearlooks" {
+		hint = "hscrollbar"
+	}
+}
+
+style "clearlooks-vscrollbar" {
+
+	engine "clearlooks" {
+		hint = "vscrollbar"
+	}
+}
+
+style "clearlooks-notebook_bg" {
+
+	# IMPORTANT!
+	# If you modify bg[NORMAL] here under, you must set clearlooks-framelessspinbutton -> base[NORMAL] to the very same value
+	bg[NORMAL]        = shade (1.02, @rt_bg_color)
+	bg[ACTIVE]        = shade (0.80, @rt_bg_color)
+}
+
+style "clearlooks-combobox" {
+
+	text[NORMAL]      = @rt_fg_color
+	text[PRELIGHT]    = @rt_fg_color
+	text[SELECTED]    = @rt_selected_fg_color
+	text[INSENSITIVE] = mix (0.2, @rt_fg_color, @rt_bg_color)
+	text[ACTIVE]      = @rt_fg_color
+}
+
+style "clearlooks-button" {
+
+	bg[NORMAL]        = shade (0.93, @rt_bg_color)
+	bg[PRELIGHT]      = shade (0.85, @rt_bg_color)
+	bg[ACTIVE]        = shade (0.70, @rt_bg_color)
+
+	engine "clearlooks"
+	{
+		hint	= "button"
+	}
+}
+
+style "clearlooks-histButton" {
+
+	GtkButton::child-displacement-x = 0
+	GtkButton::child-displacement-y = 0
+}
+
+# The color is changed by the notebook_bg style, this style
+# changes the x/ythickness
+style "clearlooks-notebook" {
+	xthickness = 3
+	ythickness = 3
+
+	bg[SELECTED]      = @rt_salt_pinch
+}
+
+style "clearlooks-statusbar" {
+
+	engine "clearlooks" {
+		hint = "statusbar"
+	}
+}
+
+style "clearlooks-comboboxentry" {
+
+	engine "clearlooks" {
+		# Note:
+		# If you set the appears-as-list option on comboboxes in the theme,
+		# then you should set this hint on the combobox instead.
+		hint = "comboboxentry"
+	}
+}
+
+style "clearlooks-expander" {
+
+	fg[NORMAL]        = @rt_salt_pinch
+	fg[PRELIGHT]      = @rt_salt_pinch
+	fg[INSENSITIVE]   = @rt_salt_pinch
+
+	bg[PRELIGHT]      = mix(0.75, @rt_selected_bg_color, @rt_bg_color)
+
+	base[NORMAL]      = @rt_salt_pinch
+	base[PRELIGHT]    = @rt_salt_pinch
+	base[INSENSITIVE] = @rt_salt_pinch
+
+	engine "clearlooks" {
+		hint = "expander"
+	}
+}
+
+style "clearlooks-expanderLabel" {
+
+	fg[NORMAL]   = "#a0a0a0"
+	fg[PRELIGHT] = "#d0d0d0"
+}
+
+style "clearlooks-menubar" {
+
+	engine "clearlooks" {
+		hint = "menubar"
+	}
+}
+
+style "clearlooks-menu" {
+	xthickness = 0
+	ythickness = 0
+
+	bg[NORMAL]      = shade (0.70, @rt_bg_color)
+
+	engine "clearlooks" {
+		radius = 0.0
+	}
+}
+
+style "clearlooks-menu_item" {
+	xthickness = 2
+	ythickness = 3
+
+	fg[PRELIGHT]      = @rt_selected_fg_color
+	text[NORMAL]      = @rt_fg_color
+	text[PRELIGHT]    = @rt_selected_fg_color
+}
+
+# This style is there to modify the separator menu items. The goals are:
+# 1. Get a specific height.
+# 2. The line should go to the edges (ie. no border at the left/right)
+style "clearlooks-separator_menu_item" {
+	xthickness = 1
+	ythickness = 0
+
+	GtkSeparatorMenuItem::horizontal-padding = 0
+	GtkWidget::wide-separators = 1
+	GtkWidget::separator-width = 1
+	GtkWidget::separator-height = 7
+}
+
+style "clearlooks-frame_title" {
+
+	fg[NORMAL]        = lighter (@rt_fg_color)
+	fg[PRELIGHT]      = lighter (@rt_fg_color)
+	fg[ACTIVE]        = lighter (@rt_fg_color)
+	fg[SELECTED]      = lighter (@rt_fg_color)
+}
+
+style "clearlooks-partialPasteHeaderSep" {
+
+	bg[NORMAL]        = mix (0.25, @rt_fg_color, @rt_bg_color)
+}
+
+style "clearlooks-treeview" {
+
+	base[ACTIVE]      = mix(0.50, @rt_selected_bg_color, @rt_base_color)
+
+	engine "clearlooks" {
+		hint = "treeview"
+	}
+}
+
+# The almost useless progress bar style
+style "clearlooks-progressbar" {
+	xthickness = 1
+	ythickness = 1
+
+	fg[PRELIGHT]      = @rt_selected_fg_color
+
+	engine "clearlooks" {
+		# Explicitly set the radius for the progress bars inside menu items.
+		radius = 3.0
+
+		hint = "progressbar"
+	}
+}
+
+# This style is based on the clearlooks-default style, so that the colors from the button
+# style are overriden again.
+style "clearlooks-treeview_header" = "clearlooks-default" {
+	xthickness = 2
+	ythickness = 1
+
+	bg[NORMAL] = shade (0.80, @rt_bg_color)
+
+	engine "clearlooks" {
+		radius = 0.0
+		hint = "treeview-header"
+	}
+}
+
+style "clearlooks-tooltips" {
+	xthickness = 4
+	ythickness = 4
+
+	bg[NORMAL]        = @rt_tooltip_bg_color
+	fg[NORMAL]        = @rt_tooltip_fg_color
+}
+
+###############################################################################
+# The following part of the gtkrc applies the different styles to the widgets.
+###############################################################################
+
+# The clearlooks-default style is applied to every widget
+class "GtkWidget" style "clearlooks-default"
+
+class "GtkSeparator" style "wide"
+class "GtkFrame" style "wide"
+class "GtkCalendar" style "wide"
+class "GtkCheckButton" style "wider"
+class "GtkRadioButton" style "wider"
+class "GtkEntry" style "clearlooks-entry"
+
+class "GtkPaned" style "clearlooks-paned"
+class "GtkSpinButton" style "clearlooks-spinbutton"
+class "GtkScale" style "clearlooks-scale"
+class "GtkVScale" style "clearlooks-vscale"
+class "GtkHScale" style "clearlooks-hscale"
+class "GtkScrollbar" style "clearlooks-scrollbar"
+class "GtkHScrollbar" style "clearlooks-hscrollbar"
+class "GtkVScrollbar" style "clearlooks-vscrollbar"
+
+class "GtkExpander" style "clearlooks-expander"
+class "GtkHSV" style "clearlooks-HSV"
+
+# General matching follows. The order is choosen so that the right styles override
+# each other. EG. progressbar needs to be more important than the menu match.
+widget_class "*<GtkNotebook>" style "clearlooks-notebook_bg"
+# This is not perfect, it could be done better.
+# (That is modify *every* widget in the notebook, and change those back that
+# we really don't want changed)
+widget_class "*<GtkNotebook>*<GtkEventBox>" style "clearlooks-notebook_bg"
+widget_class "*<GtkNotebook>*<GtkDrawingArea>" style "clearlooks-notebook_bg"
+widget_class "*<GtkNotebook>*<GtkLayout>" style "clearlooks-notebook_bg"
+widget_class "*<GtkNotebook>*<GtkViewport>" style "clearlooks-notebook_bg"
+widget_class "*<GtkNotebook>*<GtkScrolledWindow>" style "clearlooks-notebook_bg"
+
+widget_class "*<GtkButton>" style "clearlooks-button"
+widget_class "*<GtkNotebook>" style "clearlooks-notebook"
+widget_class "*<GtkStatusbar>*" style "clearlooks-statusbar"
+
+#widget_class "*<GtkComboBoxEntry>*" style "clearlooks-comboboxentry"
+widget_class "*<GtkComboBox>*" style "clearlooks-combobox"
+
+widget_class "*<GtkExpander>.<GtkLabel>" style "clearlooks-expanderLabel"
+widget_class "*<GtkExpander>.<GtkHBox>.<GtkLabel>" style "clearlooks-expanderLabel"
+
+widget_class "*<GtkMenuBar>*" style "clearlooks-menubar"
+widget_class "*<GtkMenu>*" style "clearlooks-menu"
+widget_class "*<GtkMenuItem>*" style "clearlooks-menu_item"
+widget_class "*<GtkSeparatorMenuItem>*" style "clearlooks-separator_menu_item"
+
+widget_class "*.<GtkFrame>.<GtkLabel>" style "clearlooks-frame_title"
+widget_class "*.<GtkTreeView>*" style "clearlooks-treeview"
+
+widget_class "*<GtkProgress>" style "clearlooks-progressbar"
+
+# Treeview headers (and similar stock GTK+ widgets)
+widget_class "*.<GtkTreeView>.<GtkButton>" style "clearlooks-treeview_header"
+widget_class "*.<GtkCTree>.<GtkButton>" style "clearlooks-treeview_header"
+widget_class "*.<GtkList>.<GtkButton>" style "clearlooks-treeview_header"
+widget_class "*.<GtkCList>.<GtkButton>" style "clearlooks-treeview_header"
+
+widget "*.partialPasteHeader.*" style "clearlooks-frame_title"
+widget "*.partialPasteHeaderSep" style "clearlooks-partialPasteHeaderSep"
+widget "*.histButton" style "clearlooks-histButton"
+widget "*.FramelessSpinButton" style "clearlooks-framelessspinbutton"
+widget "*.ThresholdSelector" style "clearlooks-thresholdselector"
+
+# The window of the tooltip is called "gtk-tooltip"
+##################################################################
+# FIXME:
+# This will not work if one embeds eg. a button into the tooltip.
+# As far as I can tell right now we will need to rework the theme
+# quite a bit to get this working correctly.
+# (It will involve setting different priorities, etc.)
+##################################################################
+widget "gtk-tooltip*" style "clearlooks-tooltips"
+
+gtk-icon-theme-name="Dark"

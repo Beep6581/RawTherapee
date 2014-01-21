@@ -1,0 +1,382 @@
+#!/usr/bin/env bash
+# Written by DrSlony
+# buildRT version 3.7, 2013-12-30
+# Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
+# www.rawtherapee.com
+# www.londonlight.org
+
+head -n 4 $0 | tail -n 2
+echo
+
+if [[ $UID -eq 0 ]]; then
+  printf "%s\n" "Do not run this script as root!" "Aborting"
+  exit 1
+fi
+
+alert () {
+  case "$alert_type" in
+    notify-send) notify-send "RawTherapee" "$1" ;;
+        kdialog) kdialog --title "RawTherapee" --passivepopup "$(printf "%b\n" "$1")" ;;
+         zenity) zenity --notification --text="$(printf "%b\n" "$1")" ;;
+       xmessage) xmessage -nearmouse "$(printf "%b\n" "$1")" ;;
+           none) printf "%b\n" "" "Compilation complete:" "$1" ;;
+esac
+}
+
+#--- Set some variables
+unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
+version="3.7"
+movetoPatched=""
+repo="${HOME}/rawtherapee"
+procTarget=2
+
+while getopts "bc:np:uvh?-" opt; do
+  case "${opt}" in
+    b)       patched="yes"
+             movetoPatched="_patched"
+             printf "%s\n" "Buildonly flag detected, will not hg pull or update" ;;
+    c)       dCacheNameSuffix="$OPTARG"
+             #sanitize
+             dCacheNameSuffix=${dCacheNameSuffix//[^\.\-_a-zA-Z0-9]/};
+             printf "%s\n" "Cache and config name suffix: $dCacheNameSuffix" ;;
+    n)       noomp="-DOPTION_OMP=OFF"
+             printf "%s\n" "OpenMP disabled" ;;
+    p)       procTarget="$OPTARG"
+             if [[ $procTarget -lt 1 || $procTarget -gt 9 ]]; then
+               printf "%s\n" "Invalid processor target value." "Use a value from 1 to 9, e.g." "./buildRT -p 1" "See ProcessorTargets.cmake" "Aborting"
+               exit 1
+             fi ;;
+    u)       gcVer="$(curl "http://rawtherapee.googlecode.com/hg/tools/buildRT" 2>/dev/null | grep "^#.*[vV]ersion.*")" || { echo "\"curl\" program not found, please install it first."; exit 1; }
+             gcVer="${gcVer##*[[:alpha:]] }"
+             gcVer="${gcVer%%,*}"
+             latestVer="$(printf "%s\n" "$version" "$gcVer" | sort -rV | head -n 1)"
+             if [[ $version = $latestVer ]]; then
+               printf "%s\n" "You are using the latest version of buildRT, $version"
+               exit 0
+             else
+               printf "%s\n" "You are using version $version but version $gcVer is available on Google Code." "You can download the Google Code version from this URL:" "  https://rawtherapee.googlecode.com/hg/tools/buildRT" "Replace it with this script, and remember to run \"chmod +x buildRT\""
+               exit 0
+             fi ;;
+    v)       verbose=yes
+             printf "%s\n" "Verbose mode, I will spam your screen with warnings" ;;
+    h|\?|-)  printf "%s\n" "Usage:" "" \
+                             "  $0 [-b] [-c <string>] [-n] [-p <1-9>] [-v]" "" \
+                             "  -b" \
+                             "Build-only mode. buildRT uses \"hg update -C default\" to update your source code repository to the newest revision, however doing so might destroy any uncommitted or unpushed changes you made or any patches you applied. With the -b flag the script will not update the source code, so that you can easily compile RawTherapee with whatever patches you manually applied. buildRT should automatically detect if you modified the source code, but you can use this flag to force build-only mode." "Generally when compiling patched RT versions you want to keep the cache and config folders separate, so consider using \"-b -c _testing\"" "" \
+                             "  -c <string>" \
+                             "Specify a suffix to the cache and config directory names. Only alphanumerics, periods, dashes and underscores are valid. The default value is \"4\", which will result in your build of RawTherapee storing the cache in \"${HOME}/.cache/RawTherapee4\" and config in \"${HOME}/.config/RawTherapee4\". For example, use \"-c _testing\" if you want to test older or patched versions of RawTherapee without potentially damaging your \"real\" cache and config files." "" \
+                             "  -n" \
+                             "Disable OpenMP." "" \
+                             "  -p <1-9>" \
+                             "Set which processor target to use. Takes a single digit from 1 to 9. The default is 2. See ProcessorTargets.cmake" "" \
+                             "  -u" \
+                             "Check for an update of buildRT on Google Code." "" \
+                             "  -v" \
+                             "Make compilation verbose, so you see all compiler warnings." | fold -s
+             exit 0 ;;
+  esac
+done
+shift $((OPTIND-1))
+[ "$1" = "--" ] && shift
+
+printf "%s\n" "Repository: ${repo}"
+printf "%s\n" "Processor target: ${procTarget}"
+
+if [[ -z $verbose ]]; then
+  Wcflags="-Wno-unused-result -Wno-aggressive-loop-optimizations"
+fi
+
+cpuCount="$(grep -c 'processor' /proc/cpuinfo)"
+# We can assume that if grep returns more than 32 lines (CPUs), or nothing at all, something's wrong
+if (( cpuCount < 1 || cpuCount > 32 )); then
+  cpuCount="1"
+fi
+printf "%s\n" "CPU count: ${cpuCount}"
+
+# Zenity --notification is broken in <=3.8.0, removed Zenity support for now.
+# elif hash zenity 2>/dev/null; then alert_type="zenity"
+if hash notify-send 2>/dev/null; then alert_type="notify-send"
+elif hash kdialog 2>/dev/null; then alert_type="kdialog"
+elif hash xmessage 2>/dev/null; then alert_type="xmessage"
+else alert_type="none"
+fi
+
+# list from http://linuxmafia.com/faq/Admin/release-files.html
+distributions=(
+"Annvix /etc/annvix-release"
+"Arch /etc/arch-release"
+"Arklinux /etc/arklinux-release"
+"Aurox /etc/aurox-release"
+"BlackCat /etc/blackcat-release"
+"Cobalt /etc/cobalt-release"
+"Conectiva /etc/conectiva-release"
+"Debian /etc/debian_version"
+"Fedora /etc/fedora-release"
+"Gentoo /etc/gentoo-release"
+"Immunix /etc/immunix-release"
+"Knoppix knoppix_version"
+"Linux-From-Scratch /etc/lfs-release"
+"Linux-PPC /etc/linuxppc-release"
+"Mandrake /etc/mandrake-release"
+"Mandriva_Mandrake /etc/mandriva-release /etc/mandrake-release /etc/mandrakelinux-release"
+"Mint /etc/linuxmint/info"
+"MkLinux /etc/mklinux-release"
+"Novell /etc/nld-release"
+"PLD /etc/pld-release"
+"RedHat /etc/redhat-release"
+"CentOS /etc/centos-release"
+"Slackware /etc/slackware-version"
+"SME /etc/e-smith-release"
+"Solaris /etc/release"
+"SunJDS /etc/sun-release"
+"SUSE /etc/SuSE-release"
+"TinySofa /etc/tinysofa-release"
+"TurboLinux /etc/turbolinux-release"
+"Ubuntu /etc/lsb-release"
+"UltraPenguin /etc/ultrapenguin-release"
+"United /etc/UnitedLinux-release"
+"VA-Linux /etc/va-release"
+"YellowDog /etc/yellowdog-release"
+)
+for element in "${distributions[@]}"; do
+  read distro loc1 loc2 loc3 <<< "$element"
+  for loc in $loc1 $loc2 $loc3
+  do
+    # distribution=${distro} because if none of the elements match, distro will =YellowDog (last item in the list)
+    # add "break 2;" to the end if we really want to, but Ubuntu gets detected as Debian first, then as Ubuntu,
+    # so we might want to not break the loop.
+    [[ -e "$loc" ]] && distribution=${distro}
+    [[ "$distribution" = Gentoo ]] && break 2
+  done
+done
+if [[ -z ${distribution} ]]; then
+  printf "%s\n" "" "Could not automatically detect your distribution. Please enter your distribution's name below followed immediately by the version, without any spaces or punctuation marks, and hit enter to confirm, e.g. \"Ubuntu1310\", \"Mint15\" or \"OpenSUSE123\"" | fold -s
+  read distribution
+  #sanitize
+  distribution=${distribution//[^a-zA-Z0-9]/}
+fi
+printf "%s\n" "Distribution: ${distribution}";
+
+bits="$(uname -m)" || { printf "%s\n" "Is your system a 32-bit or 64-bit one?" "Enter 32 or 64 and hit enter: "; read bits; bits=${bits//[^0-9]/}; }
+if [[ $bits = *64* ]]; then
+  bits=64
+else
+  bits=32
+fi
+printf "%s\n" "System: ${bits}-bit" ""
+
+#--- Check script dependencies
+hash hg 2>/dev/null || { echo >&2 "Mercurial not found, install Mercurial first and then re-run this script."; exit 1; }
+
+#--- Clone and/or pull
+if [[ ! -d "${repo}" ]]; then
+  printf "%s\n" "${repo} not found, cloning from GoogleCode..."
+  hg clone https://rawtherapee.googlecode.com/hg/ "${repo}"
+  cd "${repo}" || exit 1
+  hg parents --template 'RawTherapee-{latesttag}.{latesttagdistance}, Latest tag: {latesttag}, Latest tag distance: {latesttagdistance}, Changeset: {rev}:{node|short}\n\n'
+  alert "Repository cloned succesfully. What would you like to do next?"
+  printf "%b" "Repository cloned succesfully.\n" "Press 'q' to quit or any other key to continue... "
+  read -r -n 1
+  echo
+  echo
+  [[ $REPLY = q || $REPLY = Q ]] && { printf "%s\n" "Quitting." ""; exit 0; }
+fi
+cd "${repo}" || exit 1
+
+#--- Update or decide what to do if user edited the source code (e.g. by applying a patch)
+# "hg outgoing" takes time, so skip if buildonly
+if [[ -z $patched ]]; then
+  uncommitted="$(hg status | sed "s/^/\t/")"
+  unpushed="$(hg outgoing -q | sed "s/^/\t/" || echo "Could not check for unpushed changes (check your internet connection), but continuing anyway.")"
+fi
+if [[ -z $uncommitted && -z $unpushed && -z $patched ]]; then
+  hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
+  hg update -C default
+  echo
+  hg parents --template 'Repository head:\n  RawTherapee-{latesttag}.{latesttagdistance}\n  Latest tag: {latesttag}\n  Latest tag distance: {latesttagdistance}\n  Changeset: {rev}:{node|short}\n\n'
+elif [[ -z $patched ]]; then
+  printf "%s\n" "" "Warning! There are uncommitted or unpushed changes in the repository!" "Uncommitted:" "$uncommitted" "Unpushed:" "$unpushed" "" "This means that you edited the source code (e.g. applied a patch). If the script proceeds to update the repository, those changes you made to the source code might be lost. Your choices are to force the update and possibly lose the changes, not to update and to compile RT as-is, or to abort the script." | fold -s
+  read -r -p "[f]orce update, [c]ompile as-is, or [a]bort? " fca
+  case $fca in
+    f|F) hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
+         hg update -C default
+         echo ;;
+    c|C) printf "%s\n" "Retaining edited source code and compiling RT as-is." ""
+         patched="yes"
+         movetoPatched="_patched" ;;
+    *)   printf "%s\n" "User aborted" ""
+         exit 0 ;;
+  esac
+else
+  printf "%s\n" "Retaining edited source code and compiling RT as-is." ""
+  movetoPatched="_patched"
+fi
+
+#--- Print the menu
+branches=()
+if [[ -z $patched ]]; then
+  while read -r branch; do
+    branches+=("$branch")
+  done < <(hg branches -q)
+else
+  branches="$(hg branch)"
+fi
+num="1"
+# Can't print the list[0] "clone repository" text nicely when using "column -t",
+# so fill list[0] with junk to start counting from 1 and printf the 0 option manually later on
+list[0]="#   -  Branch       - Buildtype"
+buildTypes=("Release" "Debug")
+for branch in "${branches[@]}"; do
+  for buildType in "${buildTypes[@]}"; do
+    list+=("$num - ${branch} - ${buildType}")
+    ((num++))
+  done
+done
+((num--))
+# ^ Because of num++ in the for loop increasing a number after the last list item
+printf "%s\n" "------------------------------------------"
+printf "%s\n" "${list[0]}"
+printf "%s\n" "------------------------------------------"
+printf "%s\n" "0 - abort - exit" "${list[@]:1}" | column -t
+printf "%s\n" "------------------------------------------" "" "Enter your choices, each number separated by a single space, e.g. 1 2" "If you don't know which option to choose, then choose the \"default\" branch, \"Release\" build type." "" | fold -s
+while [[ -z $choiceNumbers ]]; do
+  read -r -p "Your choices: " -a choiceNumbers
+done
+printf "%s\n" "" "------------------------------------------"
+#sanitize
+choiceNumbers="${choiceNumbers//[^0-9 ]/}"
+
+#--- Compile the chosen builds
+for choiceNumber in ${choiceNumbers[*]}; do
+  if [[ $choiceNumber = 0 ]]; then
+    printf "%s\n" "User exited."
+    exit 0;
+  fi
+  read -r _ _ branch _ buildType < <(printf "%s\n" "${list[$choiceNumber]}")
+  # This seems useless  "$branch != default"
+  # if [[ -z $patched && $branch != default ]]; then
+  if [[ -z $patched ]]; then
+    printf "%s\n" "" "Updating to branch $branch"
+    hg update -C "$branch" || exit 1
+  fi
+  echo
+  printf "%-15b %b\n" "Starting to compile:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "" ""
+  rev="$(hg parents --template {rev})"
+
+  # Clean up leftovers from previous successful or failed builds
+  [[ -d "${repo}/${buildType}" ]] && { printf "%s\n" "Found old build directory \"${repo}/$buildType\". Removing it."; rm -rf "${repo}/${buildType}"; }
+  [[ -d "${repo}/rawtherapee" ]] && { printf "%s\n" "Found old build directory \"${repo}/rawtherapee\". Removing it."; rm -rf "${repo}/rawtherapee"; }
+  [[ -d "${repo}/build" ]] && { printf "%s\n" "Found old build directory \"${repo}/build\". Removing it."; rm -rf "${repo}/build"; }
+  [[ -d "${HOME}/rt_${branch}_${buildType}${movetoPatched}" ]] && {
+  printf "%s\n" "Found old build directory ${HOME}/rt_${branch}_${buildType}${movetoPatched}" "To proceed you must either delete it, or choose a suffix for the destination folder for this build."
+  read -r -p "[d]elete old build, [r]ename this build destination folder, or [a]bort "
+  echo
+  case $REPLY in
+    d|D) rm -rf "${HOME}/rt_${branch}_${buildType}${movetoPatched}" || exit 1 ;;
+    r|R) printf "%s\n" "The build will be saved to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}X\" where \"X\" will be replaced with whatever suffix you choose next. Only alphanumerics, dashes and underscores are valid." | fold -s
+         read -r -p "Suffix: "
+         movetoPatched="${REPLY//[^\.\-_a-zA-Z0-9]/}"
+         printf "%s\n" "Build will be compiled to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}\"" ;;
+    a|A) printf "%s\n" "Cannot proceed if old build directory exists." "Remove it or rename it, then re-run this script." "Aborting"
+         exit 0 ;;
+      *) printf "%s\n" "Unknown response \"$REPLY\""
+  esac
+  }
+
+  # Clean up old CMake junk
+  cd "${repo}" || exit 1
+  printf "%s\n" "" "Cleaning out old CMake files"
+  make clean || { printf "%s\n" "Error while running \"make clean\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
+  ./clean.sh || { printf "%s\n" "Error while running \"./clean.sh\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
+  echo
+
+  # print current line in script:
+  # printf "%s\n" "LINENO is \"$LINENO\", BASH_LINENO[i] is \"${BASH_LINENO[$i]}\". Patched is $patched"
+
+  printf "%s\n" "" "Starting compilation:"
+  verLatesttag="$(hg parents --template '{latesttag}')"
+  verLatesttagdistance="$(hg parents --template '{latesttagdistance}')"
+  [[ -z $dCacheNameSuffix ]] && dCacheNameSuffix="${verLatesttag%%.*}"
+
+  mkdir "${repo}/build" || exit 1
+  # As of changeset 1930:067e362c6f28 on Mon Jun 25 2012, revision number 1930, RT supports and encourages out-of-source builds.
+  if (( rev < 1930 )); then
+    cmake \
+      -DCMAKE_BUILD_TYPE="$buildType" \
+      -DPROC_TARGET_NUMBER="$procTarget" \
+      -DCMAKE_C_FLAGS="-pipe" \
+      -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS $Wcflags" \
+      "$noomp" \
+      -DCMAKE_INSTALL_PREFIX="build" \
+      -DBUILD_BUNDLE="ON" \
+      -DBINDIR="." \
+      -DDATADIR="." \
+      -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" \
+      || { echo "Error during cmake, exiting."; exit 1; }
+  else
+    cd "${repo}/build"
+    cmake \
+      -DCMAKE_BUILD_TYPE="$buildType" \
+      -DPROC_TARGET_NUMBER="$procTarget" \
+      -DCMAKE_C_FLAGS="-pipe" \
+      -DCMAKE_CXX_FLAGS="$CMAKE_C_FLAGS $Wcflags" \
+      "$noomp" \
+      -DCMAKE_INSTALL_PREFIX="build" \
+      -DBUILD_BUNDLE="ON" \
+      -DBINDIR="." \
+      -DDATADIR="." \
+      -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" ../ \
+      || { echo "Error during cmake, exiting."; exit 1; }
+  fi
+
+  time { make -j${cpuCount} install; } || { printf "%s\n" "" "Error during make, exiting."; exit 1; }
+  printf "%-15b %b\n" "" "" "RawTherapee compiled:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "\tCache:" "${HOME}/.cache/RawTherapee${dCacheNameSuffix}" "\tConfig:" "${HOME}/.config/RawTherapee${dCacheNameSuffix}" "" ""
+
+  # RT used to build into various places over the years.
+  # We want to end up with the build in a folder called "<repo>/build/rawtherapee" regardless of which old version you compile, and then to zip it, so we move dirs around:
+  if (( rev < 1930 )); then
+    if [[ -d "${repo}/${buildType}" ]]; then
+      printf "%s\n" "Moving \"${repo}/${buildType}\" to \"${repo}/build/rawtherapee\""
+      mv "${repo}/${buildType}" "${repo}/build/rawtherapee"
+    elif [[ -d "${repo}/rawtherapee" ]]; then
+      printf "%s\n" "Moving \"${repo}/rawtherapee\" to \"${repo}/build/rawtherapee\""
+      mv "${repo}/rawtherapee" "${repo}/build/rawtherapee"
+    elif [[ ! -d "${repo}/build" ]]; then
+      { printf "%s\n" "Could not find the \"build\" directory containing the compiled RawTherapee in ${repo}" "Please notify DrSlony in the forum:" "http://rawtherapee.com/forum/viewtopic.php?f=10&t=3001#p22213" "" "Exiting"; exit 1; }
+    fi
+  elif [[ -d "${repo}/build/${buildType}" ]]; then
+    printf "%s\n" "Moving \"${repo}/build/${buildType}\" to \"${repo}/build/rawtherapee\""
+    mv "${repo}/build/${buildType}" "${repo}/build/rawtherapee"
+  fi
+
+  echo
+  cd "${repo}/build"
+  # ${repo}/build/AboutThisBuild.txt doesn't exist with older versions
+  # Put "AboutThisBuild.txt" alongside the "rawtherapee" dir for the zip so that the website can extract the needed info when uploading the build (no other reason)
+  if [[ ! -e AboutThisBuild.txt ]]; then
+    cp "rawtherapee/AboutThisBuild.txt" AboutThisBuild.txt || { printf "%s\n" "Could not copy ${repo}/build/rawtherapee/AboutThisBuild.txt to ${repo}/build/AboutThisBuild.txt, exiting."; exit 1; }
+  fi
+
+  cat AboutThisBuild.txt || { printf "%s\n" "${repo}/build/AboutThisBuild.txt not found, exiting."; exit 1; }
+
+  if [[ -z $patched ]]; then
+    printf "%s\n" "Zipping the compiled RawTherapee dir \"${repo}/build/rawtherapee\" and putting it in \"/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip\""
+    [[ -e "/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip" ]] && { rm "/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip" || exit 1; }
+    zip -Xrq "/tmp/RawTherapee_${branch}_${distribution}_${bits}_${verLatesttag}.${verLatesttagdistance}_${buildType}.zip" AboutThisBuild.txt rawtherapee
+  fi
+
+  # Now that the zip is ready, the build can be moved to ~/rt_<branch>_<buildType><_patched>
+  printf "%s\n" "" "Moving \"${repo}/build/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}\""
+  mv "${repo}/build/rawtherapee" "${HOME}/rt_${branch}_${buildType}${movetoPatched}" || { printf "%s\n" "" "Could not move \"${repo}/build/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}\", exiting."; exit 1; }
+
+  printf "%-15b %b\n" "" "" "Build ready:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget"
+  printf "%s\n" "" "To run RawTherapee, fire up a terminal and type:" "~/rt_${branch}_${buildType}${movetoPatched}/rawtherapee" "" "------------------------------------------"
+  alert "RawTherapee-${verLatesttag}.${verLatesttagdistance} ready.\nChoice number ${choiceNumber}, branch: ${branch}, type: ${buildType}, target: ${procTarget}"
+done
+
+# builds=( /tmp/RawTherapee* ); for f in ${builds[@]}; do echo ${f#/tmp/}; done
+if [[ -z $patched ]]; then
+  printf "%s\n" "RawTherapee zipped builds ready in /tmp"
+  ls -lh /tmp/RawTherapee*
+fi
+printf "%s\n" "" "Finished building all chosen versions of RawTherapee"

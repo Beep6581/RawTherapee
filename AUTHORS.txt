@@ -1,0 +1,41 @@
+
+Project initiator:
+
+  Gábor Horváth <hgabor@rawtherapee.com>
+
+Developement contributors, in last name alphabetical order:
+
+  Jacques Desmis
+  Oliver Duis
+  Maciek Dworak
+  Michael Ezra
+  Jean-Christophe Frisch
+  Steve Herrell
+  Philippe Hupé
+  Wolfgang Kuehnel
+  Guokai Ma
+  Emil Martinec
+  Wyatt Olson
+  Jacek Poplawski
+  Ilia Popov
+  Philip Rinn
+  Jan Rinze
+  Ben S.
+  Andrey Skvortsov
+  Fabio Suprani
+  Anders Torger
+  Ingo Weyrich
+  Makoto Yoshida
+
+Other contributors (profiles, ideas, mockups, testing, forum activity, translations, etc.), in last name/nickname alphabetical order:
+
+  Thorsten Bartolomäus
+  Patrik Brunner
+  Fernando Carello
+  M. Dávid Gyurkó
+  Arturs Jekabsons
+  Lebarhon
+  Karl Loncarek
+  Paul Matthijsse
+  Alberto Righetto
+  Colin Walker
