@@ -22,6 +22,7 @@
 #include <iomanip>
 #include <cmath>
 #include "guiutils.h"
+#include "edit.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -81,6 +82,7 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	luminanceCEG = new CurveEditorGroup (options.lastBWCurvesDir, M("TP_BWMIX_CHANNEL"));
 	luminanceCEG->setCurveListener (this);
 	luminanceCurve = static_cast<FlatCurveEditor*>(luminanceCEG->addCurve(CT_Flat, M("TP_BWMIX_VAL")));
+	luminanceCurve->setEditID(EUID_BlackWhiteLuminance, BT_SINGLEPLANE_FLOAT);
 	luminanceCurve->setBottomBarBgGradient(bottomMilestones);
 	luminanceCurve->setCurveColorProvider(this, 3);
 	luminanceCurve->setTooltip(M("TP_BWMIX_CURVEEDITOR_LH_TOOLTIP"));
@@ -323,6 +325,7 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 	beforeCurveCEG->setCurveListener (this);
 
 	beforeCurve = static_cast<DiagonalCurveEditor*>(beforeCurveCEG->addCurve(CT_Diagonal, "", beforeCurveMode));
+	beforeCurve->setEditID(EUID_BlackWhiteBeforeCurve, BT_IMAGEFLOAT);
 	beforeCurve->setBottomBarBgGradient(bottomMilestonesbw);
 	beforeCurve->setLeftBarBgGradient(bottomMilestonesbw);
 	beforeCurve->setTooltip(M("TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP"));
@@ -346,6 +349,7 @@ BlackWhite::BlackWhite (): Gtk::VBox(), FoldableToolPanel(this) {
 
 //	afterCurve = static_cast<DiagonalCurveEditor*>(afterCurveCEG->addCurve(CT_Diagonal, "", afterCurveMode));
 	afterCurve = static_cast<DiagonalCurveEditor*>(afterCurveCEG->addCurve(CT_Diagonal, ""));
+	afterCurve->setEditID(EUID_BlackWhiteAfterCurve, BT_SINGLEPLANE_FLOAT);
 	afterCurve->setBottomBarBgGradient(bottomMilestonesbw);
 	afterCurve->setLeftBarBgGradient(bottomMilestonesbw);
 	afterCurve->setTooltip(M("TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP"));
@@ -1107,6 +1111,11 @@ void BlackWhite::autoOpenCurve () {
 	luminanceCurve->openIfNonlinear();
 	beforeCurve->openIfNonlinear();
 	afterCurve->openIfNonlinear();
+}
+void BlackWhite::setEditProvider (EditDataProvider *provider) {
+	luminanceCurve->setEditProvider(provider);
+	beforeCurve->setEditProvider(provider);
+	afterCurve->setEditProvider(provider);
 }
 
 void BlackWhite::setAdjusterBehavior (bool bwadd, bool bwgadd) {

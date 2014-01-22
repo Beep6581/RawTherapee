@@ -44,6 +44,7 @@ RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
 	curveEditorG->setCurveListener (this);
 
 	Rshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_RED")));
+	Rshape->setEditID(EUID_RGB_R, BT_SINGLEPLANE_FLOAT);
 	milestones.push_back( GradientMilestone(0.0, 0.0, 0.0, 0.0) );
 	milestones.push_back( GradientMilestone(1.0, 1.0, 0.0, 0.0) );
 	Rshape->setBottomBarBgGradient(milestones);
@@ -51,11 +52,13 @@ RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	milestones[1].r = 0.0; milestones[1].g = 1.0;
 	Gshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_GREEN")));
+	Gshape->setEditID(EUID_RGB_G, BT_SINGLEPLANE_FLOAT);
 	Gshape->setBottomBarBgGradient(milestones);
 	Gshape->setLeftBarBgGradient(milestones);
 
 	milestones[1].g = 0.0; milestones[1].b = 1.0;
 	Bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_BLUE")));
+	Bshape->setEditID(EUID_RGB_G, BT_SINGLEPLANE_FLOAT);
 	Bshape->setBottomBarBgGradient(milestones);
 	Bshape->setLeftBarBgGradient(milestones);
 
@@ -92,6 +95,12 @@ void RGBCurves::read (const ProcParams* pp, const ParamsEdited* pedited) {
     Bshape->setCurve         (pp->rgbCurves.bcurve);
 
     enableListener ();
+}
+
+void RGBCurves::setEditProvider (EditDataProvider *provider) {
+    Rshape->setEditProvider(provider);
+    Gshape->setEditProvider(provider);
+    Bshape->setEditProvider(provider);
 }
 
 void RGBCurves::autoOpenCurve  () {

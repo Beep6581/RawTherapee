@@ -113,9 +113,16 @@ public:
 	virtual ~CurveEditorSubGroup();
 	int getValUnchanged() { return valUnchanged; }
 	int getValLinear() { return valLinear; }
+	void updateEditButton(CurveEditor* curve, Gtk::ToggleButton *button, sigc::connection &connection);
 	virtual void updateBackgroundHistogram (CurveEditor* ce) {}
 	virtual void switchGUI() = 0;
 	virtual void refresh(CurveEditor *curveToRefresh) = 0;
+	virtual void editModeSwitchedOff() = 0;
+
+	virtual void pipetteMouseOver(EditDataProvider *provider, int modifierKey) =0;
+	virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) =0;
+	virtual void pipetteButton1Released(EditDataProvider *provider) =0;
+	virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) =0;
 
 protected:
 

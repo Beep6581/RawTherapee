@@ -88,7 +88,6 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     void notifyListener ();
     void sizeChanged    (int w, int h, int ow, int oh);
     void trim           (rtengine::procparams::ProcParams* pp, int ow, int oh);
-    
     void readOptions    ();
     void writeOptions   ();
 
@@ -104,6 +103,7 @@ class Crop : public Gtk::VBox, public CropGUIListener, public FoldableToolPanel,
     void cropInit           (int &x, int &y, int &w, int &h);
     void cropResized        (int &x, int &y, int& x2, int& y2);
     void cropManipReady     ();
+    bool inImageArea        (int x, int y);
     double getRatio         ();
 
     void setCropPanelListener (CropPanelListener* cl) { clistener = cl; }

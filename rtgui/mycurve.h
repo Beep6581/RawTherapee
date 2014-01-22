@@ -65,6 +65,9 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 	friend class MyCurveIdleHelper;
 
 	protected:
+		float pipetteR, pipetteG, pipetteB;  /// RGB values from the PipetteDataProvider ; if a channel is set to -1.0f, it is not used
+		float pipetteVal; /// Effective pipette value, i.e. where to create the point; if a point already exist near this value, it'll be used
+
 		CurveListener* listener;
 		ColoredBar *leftBar;
 		ColoredBar *bottomBar;
@@ -95,7 +98,7 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		enum ResizeState sized;
 		bool curveIsDirty;
 
-	    virtual std::vector<double> get_vector (int veclen) = 0;
+		virtual std::vector<double> get_vector (int veclen) = 0;
 		int getGraphMinSize() { return GRAPH_SIZE + RADIUS + 1; }
 		bool snapCoordinateX(double testedVal, double realVal);
 		bool snapCoordinateY(double testedVal, double realVal);
@@ -114,11 +117,16 @@ class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller {
 		void forceResize() { sized = RS_Force; }
 		void refresh();
 		void setCurveDirty () { curveIsDirty = true; }
-	    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+		void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
 		virtual std::vector<double> getPoints () = 0;
 		virtual void setPoints (const std::vector<double>& p) = 0;
 		virtual bool handleEvents (GdkEvent* event) = 0;
 		virtual void reset (double identityValue=0.5) = 0;
+
+		virtual void pipetteMouseOver (EditDataProvider *provider, int modifierKey) =0;
+		virtual void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) =0;
+		virtual void pipetteButton1Released(EditDataProvider *provider) =0;
+		virtual void pipetteDrag(EditDataProvider *provider, int modifierKey) =0;
 
 		static int getBarWidth() { return options.slimUI ? CBAR_WIDTH_SLIM : CBAR_WIDTH_STD; }
 };

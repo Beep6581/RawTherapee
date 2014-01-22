@@ -22,6 +22,7 @@
 #include "popuptogglebutton.h"
 #include "../rtengine/LUT.h"
 #include "coloredbar.h"
+#include "edit.h"
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
@@ -36,7 +37,7 @@ class CurveEditorSubGroup;
  * This class is an interface between RT and the curve editor group ; it handles the methods
  * related to a specific curve. It is created by CurveEditorGroup::addCurve
  */
-class CurveEditor {
+class CurveEditor : public EditSubscriber {
 
 	friend class CurveEditorGroup;
 	friend class CurveEditorSubGroup;
@@ -55,6 +56,8 @@ class CurveEditor {
 		PopUpToggleButton* curveType;
 		LUTu histogram;	// histogram values
 		bool bgHistValid;
+
+		bool remoteDrag;
 
 		int selected;
 
@@ -116,6 +119,15 @@ class CurveEditor {
 		sigc::signal<void> signal_curvegraph_leave();
 		sigc::signal<void> signal_curvepoint_click();
 		sigc::signal<void> signal_curvepoint_release();
+
+		void switchOffEditMode ();
+		bool mouseOver(int modifierKey);
+		bool button1Pressed(int modifierKey);
+		bool button1Released();
+		bool drag(int modifierKey);
+		CursorShape getCursor(int objectID);
+
+
 };
 
 
