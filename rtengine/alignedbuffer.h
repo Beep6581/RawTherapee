@@ -36,8 +36,9 @@ public:
     T* data ;
     bool inUse;
 
-    /* size is the number of elements of size T, i.e. allocated size will be sizeof(T)*size ; set it to 0 if you want to defer the allocation
-     * align is expressed in bytes; SSE instructions need 128 bits alignment, which mean 16 bytes, which is the default value
+     /** @brief Allocate aligned memory
+     * @param size Number of elements of size T to allocate, i.e. allocated size will be sizeof(T)*size ; set it to 0 if you want to defer the allocation
+     * @param align Expressed in bytes; SSE instructions need 128 bits alignment, which mean 16 bytes, which is the default value
      */
     AlignedBuffer (size_t size=0, size_t align=16) : real(NULL), alignment(align), allocatedSize(0), data(NULL), inUse(false) {
         if (size)
@@ -48,11 +49,17 @@ public:
         if (real) free(real);
     }
 
-    /* Allocate the the "size" amount of elements of "structSize" length each
-     * params:
-     * @size: number of elements to allocate
-     * @structSize: if non null, will let you override the default struct's size (unit: byte)
-     */
+    /** @brief Return true if there's no memory allocated
+    */
+    bool isEmpty() {
+        return allocatedSize==0;
+    }
+
+    /** @brief Allocate the the "size" amount of elements of "structSize" length each
+    * @param size number of elements to allocate
+    * @param structSize if non null, will let you override the default struct's size (unit: byte)
+    * @return True is everything went fine, including freeing memory when size==0, false if the allocation failed
+    */
     bool resize(size_t size, int structSize=0) {
         if (allocatedSize != size) {
             if (!size) {
@@ -61,11 +68,24 @@ public:
                 real = NULL;
                 data = NULL;
                 inUse = false;
+                allocatedSize = 0;
             }
             else {
                 int sSize = structSize ? structSize : sizeof(T);
+                size_t oldAllocatedSize = allocatedSize;
                 allocatedSize = size*sSize;
-                real = realloc(real, allocatedSize+alignment);
+
+                // realloc were used here to limit memory fragmentation, specially when the size was smaller than the previous one.
+                // But realloc copies the content to the eventually new location, which is unnecessary. To avoid this performance penalty,
+                // we're freeing the memory and allocate it again if the new size is bigger.
+
+                if (allocatedSize < oldAllocatedSize)
+                    real = realloc(real, allocatedSize+alignment);
+                else {
+                    if (real) free (real);
+                    real = malloc(allocatedSize+alignment);
+                }
+
                 if (real) {
                     //data = (T*)( (uintptr_t)real + (alignment-((uintptr_t)real)%alignment) );
                     data = (T*)( ( uintptr_t(real) + uintptr_t(alignment-1)) / alignment * alignment);

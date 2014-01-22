@@ -45,7 +45,7 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	CPointsCurve->setType (FCT_MinMaxCPoints);
 	CPointsCurveBox->pack_start (*CPointsCurve, Gtk::PACK_EXPAND_WIDGET, 0);
 
-	Gtk::HBox* CPointsbbox = Gtk::manage (new Gtk::HBox ());
+	Gtk::HBox*CPointsbbox = Gtk::manage (new Gtk::HBox ());
 	CPointsbbox->set_spacing(4);
 
 	pasteCPoints = Gtk::manage (new Gtk::Button ());
@@ -56,11 +56,15 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	saveCPoints->add (*Gtk::manage (new RTImage ("gtk-save-large.png")));
 	loadCPoints = Gtk::manage (new Gtk::Button ());
 	loadCPoints->add (*Gtk::manage (new RTImage ("gtk-open.png")));
+	editCPoints = Gtk::manage (new Gtk::ToggleButton());
+	editCPoints->add (*Gtk::manage (new RTImage ("editmodehand.png")));
+	editCPoints->hide();
 
 	CPointsbbox->pack_end (*pasteCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_end (*copyCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_end (*saveCPoints, Gtk::PACK_SHRINK, 0);
 	CPointsbbox->pack_end (*loadCPoints, Gtk::PACK_SHRINK, 0);
+	CPointsbbox->pack_start(*editCPoints, Gtk::PACK_SHRINK, 0);
 
 	CPointsCurveBox->pack_end (*CPointsbbox, Gtk::PACK_SHRINK, 0);
 	CPointsCurveBox->show_all ();
@@ -69,6 +73,7 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 	loadCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::loadPressed) );
 	copyCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::copyPressed) );
 	pasteCPoints->signal_clicked().connect( sigc::mem_fun(*this, &FlatCurveEditorSubGroup::pastePressed) );
+	editCPointsConn = editCPoints->signal_toggled().connect( sigc::bind(sigc::mem_fun(*this, &FlatCurveEditorSubGroup::editToggled), editCPoints) );
 
 	saveCPoints->set_tooltip_text (M("CURVEEDITOR_TOOLTIPSAVE"));
 	loadCPoints->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLOAD"));
@@ -106,6 +111,66 @@ void FlatCurveEditorSubGroup::refresh(CurveEditor *curveToRefresh) {
 			// ... do nothing
 			break;
 		}
+	}
+}
+
+/*
+ * Switch off the edit button
+ */
+void FlatCurveEditorSubGroup::editModeSwitchedOff () {
+	// toggling off all edit buttons, even if only one is toggle on
+	editCPointsConn.block(true);    editCPoints->set_active(false);    editCPointsConn.block(false);
+}
+
+void FlatCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, int modifierKey) {
+	CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
+	switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
+	case (FCT_MinMaxCPoints):
+		CPointsCurve->pipetteMouseOver(provider, modifierKey);
+		CPointsCurve->setDirty(true);
+		break;
+	default:	// (DCT_Linear, DCT_Unchanged)
+		// ... do nothing
+		break;
+	}
+}
+
+void FlatCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) {
+	CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
+	switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
+	case (FCT_MinMaxCPoints):
+		CPointsCurve->pipetteButton1Pressed(provider, modifierKey);
+		CPointsCurve->setDirty(true);
+		break;
+	default:	// (DCT_Linear, DCT_Unchanged)
+		// ... do nothing
+		break;
+	}
+}
+
+void FlatCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provider) {
+	CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
+	switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
+	case (FCT_MinMaxCPoints):
+		CPointsCurve->pipetteButton1Released(provider);
+		CPointsCurve->setDirty(true);
+		break;
+	default:	// (DCT_Linear, DCT_Unchanged)
+		// ... do nothing
+		break;
+	}
+}
+
+void FlatCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int modifierKey) {
+	CurveEditor *curveEditor = static_cast<FlatCurveEditor*>(parent->displayedCurve);
+	switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
+	case (FCT_MinMaxCPoints):
+		CPointsCurve->pipetteDrag(provider, modifierKey);
+		CPointsCurve->setDirty(true);
+		break;
+	default:	// (DCT_Linear, DCT_Unchanged)
+		// ... do nothing
+		break;
 	}
 }
 
@@ -182,6 +247,7 @@ void FlatCurveEditorSubGroup::switchGUI() {
 			CPointsCurve->setColorProvider(dCurve->getCurveColorProvider(), dCurve->getCurveCallerId());
 			CPointsCurve->setColoredBar(leftBar, bottomBar);
 			CPointsCurve->forceResize();
+			updateEditButton(dCurve, editCPoints, editCPointsConn);
 			parent->pack_start (*CPointsCurveBox);
 			CPointsCurveBox->check_resize();
 			break;
@@ -290,6 +356,23 @@ void FlatCurveEditorSubGroup::pastePressed () {
 	}
 	return;
 }
+
+void FlatCurveEditorSubGroup::editToggled (Gtk::ToggleButton *button) {
+	FlatCurveEditor* dCurve = static_cast<FlatCurveEditor*>(parent->displayedCurve);
+	if (!dCurve)
+		// should never happen!
+		return;
+
+	if (button->get_active()) {
+		dCurve->subscribe();
+		CPointsCurve->notifyListener ();
+
+	}
+	else {
+		dCurve->unsubscribe();
+	}
+}
+
 
 /*
  * Store the curves of the currently displayed type from the widgets to the CurveEditor object

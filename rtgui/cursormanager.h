@@ -21,7 +21,12 @@
 
 #include <gtkmm.h>
 
-enum CursorShape {CSArrow, CSOpenHand, CSClosedHand, CSMove, CSMoveLeft, CSMoveRight, CSResizeWidth, CSResizeHeight, CSResizeDiagonal, CSResizeTopLeft, CSResizeTopRight, CSResizeBottomLeft, CSResizeBottomRight, CSSpotWB, CSCropSelect, CSStraighten, CSPlus, CSWait, CSEmpty};
+enum CursorShape {
+    CSArrow, CSOpenHand, CSClosedHand, CSMove, CSMoveLeft,
+    CSMoveRight, CSResizeWidth, CSResizeHeight, CSResizeDiagonal,
+    CSResizeTopLeft, CSResizeTopRight, CSResizeBottomLeft, CSResizeBottomRight,
+    CSSpotWB, CSCropSelect, CSStraighten, CSPlus, CSWait, CSEmpty
+};
 
 class CursorManager {
 

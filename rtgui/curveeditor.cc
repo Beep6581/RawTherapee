@@ -132,6 +132,7 @@ std::vector<double> FlatCurveEditor::getCurve () {
 CurveEditor::CurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) {
 
 	bgHistValid = false;
+	remoteDrag = false;
 	selected = DCT_Linear;
 	bottomBarCP = NULL;
 	leftBarCP = NULL;
@@ -287,4 +288,53 @@ sigc::signal<void> CurveEditor::signal_curvepoint_click() {
 
 sigc::signal<void> CurveEditor::signal_curvepoint_release() {
 	return sig_curvepoint_release;
+}
+
+void CurveEditor::switchOffEditMode () {
+	if (EditSubscriber::getEditID() != EUID_None) {
+		// switching off the toggle button
+		if (group->displayedCurve == this) {
+			subGroup->editModeSwitchedOff();
+		}
+	}
+	EditSubscriber::switchOffEditMode();  // disconnect
+}
+
+bool CurveEditor::mouseOver(int modifierKey) {
+	EditDataProvider* provider = getEditProvider();
+	subGroup->pipetteMouseOver(provider, modifierKey);
+	subGroup->refresh(this);
+	return true; // return true will ask the preview to be redrawn, for the cursor
+}
+
+bool CurveEditor::button1Pressed(int modifierKey) {
+	EditDataProvider* provider = getEditProvider();
+	if (provider->object) {
+		subGroup->pipetteButton1Pressed(provider, modifierKey);
+		remoteDrag = true;
+	}
+	subGroup->refresh(this);
+	return true;
+}
+
+bool CurveEditor::button1Released() {
+	EditDataProvider* provider = getEditProvider();
+	subGroup->pipetteButton1Released(provider);
+	remoteDrag = false;
+	subGroup->refresh(this);
+	return true;
+}
+
+bool CurveEditor::drag(int modifierKey) {
+	EditDataProvider* provider = getEditProvider();
+	subGroup->pipetteDrag(provider, modifierKey);
+	subGroup->refresh(this);
+	return false;
+}
+
+CursorShape CurveEditor::getCursor(int objectID) {
+	printf("CurveEditor::getCursor\n");
+	if (remoteDrag)
+		return CSResizeHeight;
+	return CSOpenHand;
 }

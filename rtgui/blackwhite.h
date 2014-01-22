@@ -104,6 +104,7 @@ class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToo
 	void setDefaults     (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
 	void setBatchMode    (bool batchMode);
 	void autoOpenCurve   ();
+	void setEditProvider (EditDataProvider *provider);
 
 	void autoch_toggled  ();
 	void neutral_pressed ();

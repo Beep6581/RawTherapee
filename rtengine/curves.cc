@@ -701,11 +701,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 				histNeeded = true;
 		}
 		if (tcurve) {
-			if (tcurve->isIdentity()) {
-				delete tcurve;
-				tcurve = NULL;
-			}
-			else
+			if (!tcurve->isIdentity())
 				customToneCurve2.Set(tcurve);
 			delete tcurve;
 			tcurve = NULL;
@@ -724,15 +720,10 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 				histNeeded = true;
 		}
 		if (tcurve) {
-			if (tcurve->isIdentity()) {
-				delete tcurve;
-				tcurve = NULL;
-			}
-			else if (curveMode != procparams::ToneCurveParams::TC_MODE_STD) {
+			if (!tcurve->isIdentity())
 				customToneCurve1.Set(tcurve);
-				delete tcurve;
-				tcurve = NULL;
-			}
+			delete tcurve;
+			tcurve = NULL;
 		}
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -779,7 +770,7 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 		for (int i=0; i<=0xffff; i++) {
-			float val;
+			float val = dcurve[i];;
 
 			if (histNeeded) {
 				float fi=i;
@@ -789,13 +780,6 @@ void CurveFactory::curveCL ( bool & clcutili,const std::vector<double>& clcurveP
 				//	hval = igamma2 (hval);
 				int hi = (int)(255.0*(hval));
 				outBeforeCCurveHistogram[hi] += histogram/*Cropped*/[i] ;
-			}
-
-			// apply custom/parametric/NURBS curve, if any
-			if (tcurve) {
-				val = tcurve->getVal (dcurve[i]);  // TODO: getVal(double) is very slow! Optimize with a LUTf
-			} else {
-				val = dcurve[i];
 			}
 
 			// if inverse gamma is needed, do it (standard sRGB inverse gamma is applied)

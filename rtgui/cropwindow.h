@@ -33,6 +33,7 @@ class CropWindow;
 class CropWindowListener {
     
     public:
+        virtual ~CropWindowListener() {}
         virtual void cropPositionChanged   (CropWindow*) {}
         virtual void cropWindowSizeChanged (CropWindow*) {}
         virtual void cropZoomChanged       (CropWindow*) {}
@@ -40,7 +41,7 @@ class CropWindowListener {
 };
 
 class ImageArea;
-class CropWindow : public LWButtonListener, public CropHandlerListener {
+class CropWindow : public LWButtonListener, public CropHandlerListener, public EditCoordSystem {
 
         // state management
         ImgEditState state;                  // current state of user (see enum State)
@@ -84,29 +85,40 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
         
         CropWindow* observedCropWin;
 
-        bool onArea              (CursorArea a, int x, int y);
-        void updateCursor        (int x, int y);
-        void drawDecoration      (Cairo::RefPtr<Cairo::Context> cr);
-        void drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr);
-        void drawSpotWBRectangle (Cairo::RefPtr<Cairo::Context> cr);
-        void drawObservedFrame   (Cairo::RefPtr<Cairo::Context> cr, int rw=0, int rh=0);
-        void translateCoord      (int phyx, int phyy, int& imgx, int& imgy);
-        void changeZoom          (int zoom, bool notify=true, int centerx=-1, int centery=-1);
-        void getObservedFrameArea(int& x, int& y, int& w, int& h, int rw=0, int rh=0);
+        bool onArea                    (CursorArea a, int x, int y);
+        void updateCursor              (int x, int y);
+        void drawDecoration            (Cairo::RefPtr<Cairo::Context> cr);
+        void drawStraightenGuide       (Cairo::RefPtr<Cairo::Context> cr);
+        void drawScaledSpotRectangle   (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
+        void drawUnscaledSpotRectangle (Cairo::RefPtr<Cairo::Context> cr, int rectSize);
+        void drawObservedFrame         (Cairo::RefPtr<Cairo::Context> cr, int rw=0, int rh=0);
+        void changeZoom                (int zoom, bool notify=true, int centerx=-1, int centery=-1);
+        void getObservedFrameArea      (int& x, int& y, int& w, int& h, int rw=0, int rh=0);
 
     public:
         CropHandler cropHandler;
         CropWindow (ImageArea* parent, rtengine::StagedImageProcessor* ipc_, bool isLowUpdatePriority_);
-        virtual ~CropWindow ();
 
         void setDecorated       (bool decorated)    { this->decorated = decorated; }
         void setFitZoomEnabled  (bool fze)          { fitZoomEnabled = fze; }
         void setObservedCropWin (CropWindow* cw)    { observedCropWin = cw; }
 
+        void screenCoordToCropBuffer (int phyx, int phyy, int& cropx, int& cropy);
+        void screenCoordToImage (int phyx, int phyy, int& imgx, int& imgy);
+        void imageCoordToScreen (int imgx, int imgy, int& phyx, int& phyy);
+        int scaleValueToImage (int value);
+        float scaleValueToImage (float value);
+        double scaleValueToImage (double value);
+        int scaleValueToScreen (int value);
+        float scaleValueToScreen (float value);
+        double scaleValueToScreen (double value);
+
         void setPosition (int x, int y);
         void getPosition (int& x, int& y);
         void setSize     (int w, int h, bool norefresh=false);
         void getSize     (int& w, int& h);
+
+        void leaveNotify (GdkEventCrossing* event);
 
         // zoomlistener interface
         void zoomIn      (bool toCursor=false, int cursorX=-1, int cursorY=-1);
@@ -124,7 +136,7 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
 
         void buttonPress   (int button, int num, int state, int x, int y);
         void buttonRelease (int button, int num, int state, int x, int y);
-        void pointerMoved  (int x, int y);
+        void pointerMoved  (int bstate, int x, int y);
 
         void expose        (Cairo::RefPtr<Cairo::Context> cr);
 
@@ -154,6 +166,8 @@ class CropWindow : public LWButtonListener, public CropHandlerListener {
 
         void remoteMove      (int deltaX, int deltaY);
         void remoteMoveReady ();
+
+        EditDataProvider* getImageArea();
 };
 
 #endif

@@ -33,10 +33,12 @@ protected:
 
 	MyFlatCurve* CPointsCurve;
 
-	Gtk::Button* saveCPoints;
-	Gtk::Button* loadCPoints;
-	Gtk::Button* copyCPoints;
-	Gtk::Button* pasteCPoints;
+	Gtk::Button*       saveCPoints;
+	Gtk::Button*       loadCPoints;
+	Gtk::Button*       copyCPoints;
+	Gtk::Button*       pasteCPoints;
+	Gtk::ToggleButton* editCPoints;
+	sigc::connection   editCPointsConn;
 
 public:
 	FlatCurveEditorSubGroup(CurveEditorGroup* prt, Glib::ustring& curveDir);
@@ -46,6 +48,11 @@ public:
 	//virtual void updateBackgroundHistogram (CurveEditor* ce);
 	void switchGUI();
 	void refresh(CurveEditor *curveToRefresh);
+	void editModeSwitchedOff();
+	void pipetteMouseOver(EditDataProvider *provider, int modifierKey);
+	void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
+	void pipetteButton1Released(EditDataProvider *provider);
+	void pipetteDrag(EditDataProvider *provider, int modifierKey);
 
 protected:
 	void storeCurveValues (CurveEditor* ce, const std::vector<double>& p);
@@ -58,6 +65,7 @@ protected:
 	bool curveReset (int cType, double iValue);
 	void removeEditor ();
 	const std::vector<double> getCurveFromGUI (int type);
+	void editToggled (Gtk::ToggleButton *button);
 };
 
 #endif

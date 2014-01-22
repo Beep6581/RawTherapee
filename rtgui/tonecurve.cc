@@ -21,6 +21,7 @@
 #include <sigc++/class_slot.h>
 #include <iomanip>
 #include "ppversion.h"
+#include "edit.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -132,6 +133,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   curveEditorG->setCurveListener (this);
 
   shape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "", toneCurveMode));
+  shape->setEditID(EUID_ToneCurve1, BT_IMAGEFLOAT);
   shape->setBottomBarBgGradient(bottomMilestones);
   shape->setLeftBarBgGradient(bottomMilestones);
 
@@ -156,6 +158,7 @@ ToneCurve::ToneCurve () : Gtk::VBox(), FoldableToolPanel(this) {
   curveEditorG2->setCurveListener (this);
 
   shape2 = static_cast<DiagonalCurveEditor*>(curveEditorG2->addCurve(CT_Diagonal, "", toneCurveMode2));
+  shape2->setEditID(EUID_ToneCurve2, BT_IMAGEFLOAT);
   shape2->setBottomBarBgGradient(bottomMilestones);
   shape2->setLeftBarBgGradient(bottomMilestones);
 
@@ -265,6 +268,11 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited) {
 void ToneCurve::autoOpenCurve  () {
     shape->openIfNonlinear();
     shape2->openIfNonlinear();
+}
+
+void ToneCurve::setEditProvider  (EditDataProvider *provider) {
+    shape->setEditProvider(provider);
+    shape2->setEditProvider(provider);
 }
 
 void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited) {

@@ -107,9 +107,9 @@ void ImProcFunctions::lab2monitorRgb (LabImage* lab, Image8* image) {
         int H = lab->H;
         unsigned char * data = image->data;
 
-#ifdef _OPENMP
-#pragma omp parallel for schedule(static) firstprivate(lab, data, W, H) if (multiThread)
-#endif
+//#ifdef _OPENMP
+//#pragma omp parallel for schedule(static) firstprivate(lab, data, W, H) if (multiThread)
+//#endif
 		for (int i=0; i<H; i++) {
 			float* rL = lab->L[i];
 			float* ra = lab->a[i];

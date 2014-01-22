@@ -43,10 +43,11 @@ class RGBCurves : public Gtk::VBox, public AdjusterListener, public FoldableTool
     RGBCurves ();
     ~RGBCurves ();
 
-    void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL); 
-    void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
-    void setBatchMode   (bool batchMode);
-    void autoOpenCurve  ();
+    void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL);
+    void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL);
+    void setBatchMode    (bool batchMode);
+    void setEditProvider (EditDataProvider *provider);
+    void autoOpenCurve   ();
 
     void curveChanged (CurveEditor* ce);
     void updateCurveBackgroundHistogram (LUTu & histToneCurve, LUTu & histLCurve, LUTu & histCCurve, LUTu & histCLurve,  LUTu & histLLCurve, LUTu & histLCAM,  LUTu & histCCAM, LUTu & histRed, LUTu & histGreen, LUTu & histBlue, LUTu & histLuma);

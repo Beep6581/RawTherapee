@@ -27,12 +27,9 @@
 #include "../rtengine/safegtk.h"
 #include "rtimage.h"
 
-CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), cl(NULL) {
-	curveEditors.clear();
-	displayedCurve = 0;
-	numberOfPackedCurve = 0;
-	flatSubGroup = 0;
-	diagonalSubGroup = 0;
+CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), curve_reset(NULL),
+                                    displayedCurve(0), flatSubGroup(0), diagonalSubGroup(0), cl(NULL), numberOfPackedCurve(0)
+{
 
 	// We set the label to the one provided as parameter, even if it's an empty string
 	curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel+":", Gtk::ALIGN_LEFT));
@@ -328,6 +325,21 @@ CurveEditorSubGroup::CurveEditorSubGroup(Glib::ustring& curveDir) : curveDir(cur
 CurveEditorSubGroup::~CurveEditorSubGroup() {
 	if (leftBar) delete leftBar;
 	if (bottomBar) delete bottomBar;
+}
+
+void CurveEditorSubGroup::updateEditButton(CurveEditor* curve, Gtk::ToggleButton *button, sigc::connection &connection) {
+	if (curve->getEditID() == EUID_None) {
+		button->hide();
+	}
+	else {
+		button->show();
+		bool prevstate = connection.block(true);
+		if (curve->isCurrentSubscriber())
+			button->set_active(true);
+		else
+			button->set_active(false);
+		if (!prevstate) connection.block(false);
+	}
 }
 
 Glib::ustring CurveEditorSubGroup::outputFile () {

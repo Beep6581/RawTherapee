@@ -30,9 +30,10 @@
 #include "zoompanel.h"
 #include "indclippedpanel.h"
 #include "previewmodepanel.h"
+#include "edit.h"
 
 class ImageAreaPanel;
-class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
+class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public EditDataProvider {
 
     friend class ZoomPanel;
 
@@ -42,9 +43,9 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     Glib::RefPtr<Pango::Layout> ilayout;
     Glib::RefPtr<Pango::Layout> deglayout;
     Glib::RefPtr<Gdk::Pixbuf>   ipixbuf;
-	bool showClippedH, showClippedS;
+    bool showClippedH, showClippedS;
 
-    ImageAreaPanel* parent;   
+    ImageAreaPanel* parent;
   
     std::list<CropWindow*> cropWins;
     PreviewHandler* previewHandler;
@@ -55,8 +56,8 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     bool        dirty;
     CropWindow* focusGrabber;
     CropGUIListener* cropgl;
-	PointerMotionListener* pmlistener;
-	PointerMotionListener* pmhlistener;
+    PointerMotionListener* pmlistener;
+    PointerMotionListener* pmhlistener;
     ImageAreaToolListener* listener;
 
     CropWindow* getCropWindow (int x, int y);
@@ -64,21 +65,21 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
   public:
     CropWindow* mainCropWindow;
     ZoomPanel* zoomPanel;
-	IndicateClippedPanel* indClippedPanel;
-	PreviewModePanel* previewModePanel;
-	ImageArea* iLinkedImageArea; // used to set a reference to the Before image area, which is set when before/after view is enabled
+    IndicateClippedPanel* indClippedPanel;
+    PreviewModePanel* previewModePanel;
+    ImageArea* iLinkedImageArea; // used to set a reference to the Before image area, which is set when before/after view is enabled
 
     ImageArea (ImageAreaPanel* p);
     ~ImageArea ();
-    
+
     void setImProcCoordinator (rtengine::StagedImageProcessor* ipc_);
     void setPreviewModePanel(PreviewModePanel* previewModePanel_){previewModePanel = previewModePanel_;};
     void setIndicateClippedPanel(IndicateClippedPanel* indClippedPanel_){indClippedPanel = indClippedPanel_;};
-    
+
     void getScrollImageSize (int& w, int& h);
     void getScrollPosition  (int& x, int& y);
     void setScrollPosition  (int x, int y);     // called by the imageareapanel when the scrollbars have been changed
-    
+
     // enabling and setting text of info area
     void setInfoText (Glib::ustring text);
     void infoEnabled (bool e);
@@ -90,6 +91,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     bool on_button_press_event  (GdkEventButton* event);
     bool on_button_release_event (GdkEventButton* event);
     bool on_scroll_event        (GdkEventScroll* event);
+    bool on_leave_notify_event  (GdkEventCrossing* event);
     void on_resized             (Gtk::Allocation& req);
     void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
     void syncBeforeAfterViews       ();
@@ -100,7 +102,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     void            setImageAreaToolListener (ImageAreaToolListener* l) { listener = l; }
     void            setPreviewHandler        (PreviewHandler* ph);
     PreviewHandler* getPreviewHandler        ()                         { return previewHandler; }
-    
+
     void grabFocus          (CropWindow* cw);
     void unGrabFocus        ();
     void addCropWindow      ();
@@ -112,12 +114,16 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener {
     void spotWBSelected     (int x, int y);
     int  getSpotWBRectSize  ();
     void redraw             ();
-    
+
     void zoomFit     ();
     double getZoom   ();  
     void   setZoom   (double zoom);  
-    
-    // cropwindowlistener interface
+
+    // EditDataProvider interface
+    void subscribe(EditSubscriber *subscriber);
+    void unsubscribe();
+
+    // CropWindowListener interface
     void cropPositionChanged   (CropWindow* cw);
     void cropWindowSizeChanged (CropWindow* cw);  
     void cropZoomChanged       (CropWindow* cw);
