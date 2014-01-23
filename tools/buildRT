@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Written by DrSlony
-# buildRT version 3.7, 2013-12-30
+# buildRT version 3.8, 2014-01-23
 # Please report bugs or enhancements to http://code.google.com/p/rawtherapee/issues/list
 # www.rawtherapee.com
 # www.londonlight.org
 
-head -n 4 $0 | tail -n 2
+head -n 4 $0 | tail -n 2 | sed $'1s/.\+/\E[1m&\E[0m/'
 echo
 
 if [[ $UID -eq 0 ]]; then
@@ -25,7 +25,7 @@ esac
 
 #--- Set some variables
 unset choiceNumber choiceNumbers buildType buildTypes list branch branches repo
-version="3.7"
+version="3.8"
 movetoPatched=""
 repo="${HOME}/rawtherapee"
 procTarget=2
@@ -173,11 +173,10 @@ if [[ ! -d "${repo}" ]]; then
   printf "%s\n" "${repo} not found, cloning from GoogleCode..."
   hg clone https://rawtherapee.googlecode.com/hg/ "${repo}"
   cd "${repo}" || exit 1
-  hg parents --template 'RawTherapee-{latesttag}.{latesttagdistance}, Latest tag: {latesttag}, Latest tag distance: {latesttagdistance}, Changeset: {rev}:{node|short}\n\n'
+  hg parents --template '\nRepository state:\n  Branch: {branch}\n  RawTherapee-{latesttag}.{latesttagdistance}\n  Changeset: {rev}:{node|short}\n  Latest tag: {latesttag}\n\n'
   alert "Repository cloned succesfully. What would you like to do next?"
   printf "%b" "Repository cloned succesfully.\n" "Press 'q' to quit or any other key to continue... "
   read -r -n 1
-  echo
   echo
   [[ $REPLY = q || $REPLY = Q ]] && { printf "%s\n" "Quitting." ""; exit 0; }
 fi
@@ -193,7 +192,6 @@ if [[ -z $uncommitted && -z $unpushed && -z $patched ]]; then
   hg pull || echo "Could not \"hg pull\" (check your internet connection), but continuing anyway."
   hg update -C default
   echo
-  hg parents --template 'Repository head:\n  RawTherapee-{latesttag}.{latesttagdistance}\n  Latest tag: {latesttag}\n  Latest tag distance: {latesttagdistance}\n  Changeset: {rev}:{node|short}\n\n'
 elif [[ -z $patched ]]; then
   printf "%s\n" "" "Warning! There are uncommitted or unpushed changes in the repository!" "Uncommitted:" "$uncommitted" "Unpushed:" "$unpushed" "" "This means that you edited the source code (e.g. applied a patch). If the script proceeds to update the repository, those changes you made to the source code might be lost. Your choices are to force the update and possibly lose the changes, not to update and to compile RT as-is, or to abort the script." | fold -s
   read -r -p "[f]orce update, [c]ompile as-is, or [a]bort? " fca
@@ -211,56 +209,57 @@ else
   printf "%s\n" "Retaining edited source code and compiling RT as-is." ""
   movetoPatched="_patched"
 fi
+hg parents --template 'Repository state:\n  Branch: {branch}\n  RawTherapee-{latesttag}.{latesttagdistance}\n  Changeset: {rev}:{node|short}\n  Latest tag: {latesttag}\n\n'
 
 #--- Print the menu
 branches=()
 if [[ -z $patched ]]; then
   while read -r branch; do
     branches+=("$branch")
-  done < <(hg branches -q)
+  done < <(hg branches -aq | sort -f)
 else
   branches="$(hg branch)"
 fi
+
+# Make the menu list
+list=("0" "[abort]" "[exit]")
 num="1"
-# Can't print the list[0] "clone repository" text nicely when using "column -t",
-# so fill list[0] with junk to start counting from 1 and printf the 0 option manually later on
-list[0]="#   -  Branch       - Buildtype"
 buildTypes=("Release" "Debug")
 for branch in "${branches[@]}"; do
   for buildType in "${buildTypes[@]}"; do
-    list+=("$num - ${branch} - ${buildType}")
+    list+=("$num" "${branch}" "${buildType}")
     ((num++))
   done
 done
-((num--))
-# ^ Because of num++ in the for loop increasing a number after the last list item
-printf "%s\n" "------------------------------------------"
-printf "%s\n" "${list[0]}"
-printf "%s\n" "------------------------------------------"
-printf "%s\n" "0 - abort - exit" "${list[@]:1}" | column -t
-printf "%s\n" "------------------------------------------" "" "Enter your choices, each number separated by a single space, e.g. 1 2" "If you don't know which option to choose, then choose the \"default\" branch, \"Release\" build type." "" | fold -s
+
+printf "%s\n" "---------------------------------------------"
+printf "%s\t%s\t%s\n" "#" "Branch" "Build Type" "${list[@]}" | column -t -s $'\t' -c 3 | sed $'1s/.\+/\E[1m&\E[0m/'
+printf "%s\n" "---------------------------------------------" "" "Enter your choices, each number separated by a single space, e.g. 3 4" "If you don't know which option to choose, then choose the \"default\" branch, \"Release\" build type." "" | fold -s
+
 while [[ -z $choiceNumbers ]]; do
   read -r -p "Your choices: " -a choiceNumbers
 done
-printf "%s\n" "" "------------------------------------------"
+printf "%s\n" "" "---------------------------------------------" ""
 #sanitize
 choiceNumbers="${choiceNumbers//[^0-9 ]/}"
 
 #--- Compile the chosen builds
-for choiceNumber in ${choiceNumbers[*]}; do
+for choiceNumber in "${choiceNumbers[@]}"; do
   if [[ $choiceNumber = 0 ]]; then
     printf "%s\n" "User exited."
     exit 0;
   fi
-  read -r _ _ branch _ buildType < <(printf "%s\n" "${list[$choiceNumber]}")
+  # ${array[@]:offset:length}
+  # choiceNumber*3 to get the human menu choice to match the correct array index, and then +1 so we offset to branch and buildType, not #.
+  IFS=$'\t' read -r branch buildType < <(printf "%s\t%s\n" "${list[@]:$(($((choiceNumber*3))+1)):2}")
   # This seems useless  "$branch != default"
   # if [[ -z $patched && $branch != default ]]; then
   if [[ -z $patched ]]; then
-    printf "%s\n" "" "Updating to branch $branch"
+    printf "%s\n" "Updating to branch $branch"
     hg update -C "$branch" || exit 1
   fi
   echo
-  printf "%-15b %b\n" "Starting to compile:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "" ""
+  printf "%-15b %b\n" "\E[1mStarting to compile\E[0m:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" ""
   rev="$(hg parents --template {rev})"
 
   # Clean up leftovers from previous successful or failed builds
@@ -288,10 +287,6 @@ for choiceNumber in ${choiceNumbers[*]}; do
   printf "%s\n" "" "Cleaning out old CMake files"
   make clean || { printf "%s\n" "Error while running \"make clean\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
   ./clean.sh || { printf "%s\n" "Error while running \"./clean.sh\", aborting." "Easiest solution: delete ${repo} and re-run buildRT."; exit 1; }
-  echo
-
-  # print current line in script:
-  # printf "%s\n" "LINENO is \"$LINENO\", BASH_LINENO[i] is \"${BASH_LINENO[$i]}\". Patched is $patched"
 
   printf "%s\n" "" "Starting compilation:"
   verLatesttag="$(hg parents --template '{latesttag}')"
@@ -328,6 +323,7 @@ for choiceNumber in ${choiceNumbers[*]}; do
       -DCACHE_NAME_SUFFIX="$dCacheNameSuffix" ../ \
       || { echo "Error during cmake, exiting."; exit 1; }
   fi
+  echo
 
   time { make -j${cpuCount} install; } || { printf "%s\n" "" "Error during make, exiting."; exit 1; }
   printf "%-15b %b\n" "" "" "RawTherapee compiled:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget" "\tCache:" "${HOME}/.cache/RawTherapee${dCacheNameSuffix}" "\tConfig:" "${HOME}/.config/RawTherapee${dCacheNameSuffix}" "" ""
@@ -370,7 +366,7 @@ for choiceNumber in ${choiceNumbers[*]}; do
   mv "${repo}/build/rawtherapee" "${HOME}/rt_${branch}_${buildType}${movetoPatched}" || { printf "%s\n" "" "Could not move \"${repo}/build/rawtherapee\" to \"${HOME}/rt_${branch}_${buildType}${movetoPatched}\", exiting."; exit 1; }
 
   printf "%-15b %b\n" "" "" "Build ready:" "" "\tChoice number:" "$choiceNumber" "\tBranch:" "$branch" "\tBuild type:" "$buildType" "\tTarget:" "$procTarget"
-  printf "%s\n" "" "To run RawTherapee, fire up a terminal and type:" "~/rt_${branch}_${buildType}${movetoPatched}/rawtherapee" "" "------------------------------------------"
+  printf "%b\n" "" "\E[1mTo run RawTherapee\E[0m, fire up a terminal and type:" "~/rt_${branch}_${buildType}${movetoPatched}/rawtherapee" "" "------------------------------------------"
   alert "RawTherapee-${verLatesttag}.${verLatesttagdistance} ready.\nChoice number ${choiceNumber}, branch: ${branch}, type: ${buildType}, target: ${procTarget}"
 done
 
