@@ -22,6 +22,7 @@
 class CropGUIListener {
 
   public:
+    virtual ~CropGUIListener() {}
     virtual void cropMoved          (int &x, int &y, int &w, int &h) =0;
     virtual void cropWidth1Resized  (int &x, int &y, int &w, int &h) =0;
     virtual void cropWidth2Resized  (int &x, int &y, int &w, int &h) =0;
@@ -34,6 +35,7 @@ class CropGUIListener {
     virtual void cropInit           (int &x, int &y, int &w, int &h) =0;
     virtual void cropResized        (int &x, int &y, int& x2, int& y2) =0;
     virtual void cropManipReady     () =0;
+    virtual bool inImageArea        (int x, int y) =0;
     virtual double getRatio         () =0;
 };
 

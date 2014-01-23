@@ -42,16 +42,19 @@ HSVEqualizer::HSVEqualizer () : Gtk::VBox(), FoldableToolPanel(this) {
 	curveEditorG->setCurveListener (this);
 
 	hshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_HUE")));
+	hshape->setEditID(EUID_HSV_H, BT_SINGLEPLANE_FLOAT);
 	hshape->setBottomBarBgGradient(bottomMilestones);
 	//hshape->setLeftBarColorProvider(this);  Not working yet
 	hshape->setCurveColorProvider(this, 1);
 
 	sshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_SAT")));
+	sshape->setEditID(EUID_HSV_S, BT_SINGLEPLANE_FLOAT);
 	sshape->setBottomBarBgGradient(bottomMilestones);
 	//sshape->setLeftBarColorProvider(this);  Not working yet
 	sshape->setCurveColorProvider(this, 2);
 
 	vshape = static_cast<FlatCurveEditor*>(curveEditorG->addCurve(CT_Flat, M("TP_HSVEQUALIZER_VAL")));
+	vshape->setEditID(EUID_HSV_V, BT_SINGLEPLANE_FLOAT);
 	vshape->setBottomBarBgGradient(bottomMilestones);
 	//vshape->setLeftBarColorProvider(this);  Not working yet
 	vshape->setCurveColorProvider(this, 3);
@@ -86,6 +89,12 @@ void HSVEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited) {
     vshape->setCurve         (pp->hsvequalizer.vcurve);
 	
     enableListener ();
+}
+
+void HSVEqualizer::setEditProvider (EditDataProvider *provider) {
+    hshape->setEditProvider(provider);
+    sshape->setEditProvider(provider);
+    vshape->setEditProvider(provider);
 }
 
 void HSVEqualizer::autoOpenCurve () {

@@ -33,7 +33,7 @@ namespace rtengine {
 
 	template<typename _Tp>
 	inline const _Tp LIM01(const _Tp& a) {
-		return std::max(_Tp(1),std::min(a,_Tp(0)));
+		return std::max(_Tp(0),std::min(a,_Tp(1)));
 	}
 
 	template<typename _Tp>

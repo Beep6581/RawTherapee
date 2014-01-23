@@ -19,6 +19,7 @@
 #include "labcurve.h"
 #include <iomanip>
 #include "../rtengine/improcfun.h"
+#include "edit.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -81,7 +82,8 @@ LCurve::LCurve () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L"));
 	lshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP"));
-	
+	lshape->setEditID(EUID_Lab_LCurve, BT_SINGLEPLANE_FLOAT);
+
 	ashape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "a"));
 	ashape->setRangeLabels(
 			M("TP_LABCURVE_CURVEEDITOR_A_RANGE1"), M("TP_LABCURVE_CURVEEDITOR_A_RANGE2"),
@@ -274,6 +276,11 @@ void LCurve::autoOpenCurve () {
     if (!active) lcshape->openIfNonlinear();
     if (!active) clshape->openIfNonlinear();
 }
+
+void LCurve::setEditProvider  (EditDataProvider *provider) {
+    lshape->setEditProvider(provider);
+}
+
 
 void LCurve::write (ProcParams* pp, ParamsEdited* pedited) {
 

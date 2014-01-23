@@ -26,6 +26,7 @@
 #include "image16.h"
 #include "imagesource.h"
 #include "procevents.h"
+#include "editbuffer.h"
 #include "../rtgui/threadutils.h"
 
 namespace rtengine {
@@ -34,18 +35,20 @@ using namespace procparams;
 
 class ImProcCoordinator;
 
-class Crop : public DetailedCrop {
+class Crop : public DetailedCrop, public EditBuffer {
 
     protected:
         // --- permanently allocated in RAM and only renewed on size changes
         Imagefloat*  origCrop;   // "one chunk" allocation
-        Imagefloat*  transCrop;  // "one chunk" allocation, allocated if necessary
         LabImage*    laboCrop;   // "one chunk" allocation
         LabImage*    labnCrop;   // "one chunk" allocation
         Image8*      cropImg;    // "one chunk" allocation
-        CieImage*    cieCrop;    // allocating 6 images, each in "one chunk" allocation
         float *      cbuf_real;  // "one chunk" allocation
         SHMap*       cshmap;     // per line allocation
+
+        // --- automatically allocated and deleted when necessary, and only renewed on size changes
+        Imagefloat*  transCrop;    // "one chunk" allocation, allocated if necessary
+        CieImage*    cieCrop;      // allocating 6 images, each in "one chunk" allocation
         // -----------------------------------------------------------------
         float**      cbuffer;
 
@@ -63,13 +66,17 @@ class Crop : public DetailedCrop {
         MyMutex cropMutex;
         ImProcCoordinator* parent;
 
+        EditUniqueID getCurrEditID();
         bool setCropSizes (int cx, int cy, int cw, int ch, int skip, bool internal);
         void freeAll ();
 
     public:
-        Crop             (ImProcCoordinator* parent);
+        Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider);
         virtual ~Crop    ();
-    
+
+        void mLock       () { cropMutex.lock(); }
+        void mUnlock     () { cropMutex.lock(); }
+        void setEditSubscriber(EditSubscriber* newSubscriber);
         bool hasListener () { return cropImageListener; }
         void update      (int todo);
         void setWindow   (int cx, int cy, int cw, int ch, int skip) { setCropSizes (cx, cy, cw, ch, skip, false); }
@@ -81,9 +88,11 @@ class Crop : public DetailedCrop {
         /** @brief Asynchronously reprocess the detailed crop */
         void fullUpdate  ();  // called via thread
 
-        void setListener (DetailedCropListener* il);
-        void destroy     ();
-        int  get_skip    () { return skip;}
+        void setListener    (DetailedCropListener* il);
+        void destroy        ();
+        int  get_skip       () { return skip;}
+        int  getLeftBorder  () { return leftBorder; }
+        int  getUpperBorder () { return upperBorder; }
 };
 }
 #endif

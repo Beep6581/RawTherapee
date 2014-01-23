@@ -176,6 +176,10 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void updateVScrollbars (bool hide);
         void updateTabsHeader (bool useIcons);
 
+    private:
+
+        EditDataProvider *editDataProvider;
+
     public:
     
         CoarsePanel* coarse;
@@ -252,7 +256,11 @@ class ToolPanelCoordinator :    public ToolPanelListener,
         void updateTabsUsesIcons (bool useIcons);
         bool handleShortcutKey (GdkEventKey* event);
 
+        // ToolBarListener interface
         void toolSelected (ToolMode tool);
+        void editModeSwitchedOff ();
+
+        void setEditProvider(EditDataProvider *provider);
 };
 
 #endif

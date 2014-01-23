@@ -21,15 +21,23 @@
 
 #include <gtkmm.h>
 #include "toolenum.h"
+#include "rtimage.h"
 
 class ToolBarListener {
 
   public:
+    virtual ~ToolBarListener() {}
+    /// Callback when a tool is selected
     virtual void toolSelected (ToolMode tool) {}
 
+    /// Callback when the Edit mode is stopped
+    virtual void editModeSwitchedOff () {}
 };
 
 class ToolBar : public Gtk::HBox {
+  private:
+    RTImage* handimg;
+    RTImage* editinghandimg;
 
   protected:
     Gtk::ToggleButton* handTool;
@@ -38,6 +46,7 @@ class ToolBar : public Gtk::HBox {
     Gtk::ToggleButton* straTool;
     ToolBarListener* listener;
     ToolMode current;
+    bool editingMode;  // true if the cursor is being used to remotely edit tool's values
     sigc::connection  handConn;
     sigc::connection  wbConn;
     sigc::connection  cropConn;
@@ -45,11 +54,15 @@ class ToolBar : public Gtk::HBox {
 
   public:
     ToolBar ();
+    ~ToolBar ();
 
     void     setTool (ToolMode tool);
     ToolMode getTool () { return current; }
 
     void setToolBarListener (ToolBarListener* tpl) { listener = tpl; }
+
+    void startEditMode();
+    void stopEditMode();
 
     void hand_pressed ();
     void wb_pressed ();
