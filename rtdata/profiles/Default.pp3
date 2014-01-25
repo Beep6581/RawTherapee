@@ -173,5 +173,5 @@ bCurve=0;
 
 [RAW]
 CA=true
-HotDeadPixels=true
+HotDeadPixels=false
 HotDeadPixelThresh=40
