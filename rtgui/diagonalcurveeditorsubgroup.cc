@@ -255,12 +255,18 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff () {
 	bool prevState;
 	prevState = editCustomConn.block(true);
 	editCustom->set_active(false);
+	customCurve->pipetteMouseOver(NULL, 0);
+	customCurve->setDirty(true);
 	if (!prevState) editCustomConn.block(false);
 	prevState = editNURBSConn.block(true);
 	editNURBS->set_active(false);
+	NURBSCurve->pipetteMouseOver(NULL, 0);
+	NURBSCurve->setDirty(true);
 	if (!prevState) editNURBSConn.block(false);
 	prevState = editParamConn.block(true);
 	editParam->set_active(false);
+	paramCurve->pipetteMouseOver(NULL, 0);
+	paramCurve->setDirty(true);
 	if (!prevState) editParamConn.block(false);
 }
 

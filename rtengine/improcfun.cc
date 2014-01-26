@@ -3226,7 +3226,12 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 			
 			float Lin=lold->L[i][j];
 			float Lprov2=Lin/327.68f;
+
+			if (editID == EUID_Lab_LCurve)
+				editWhatever->v(i,j) = LIM01<float>(Lin/32768.0f);
+
 			lnew->L[i][j] = curve[Lin];
+
 			float Lprov1=(lnew->L[i][j])/327.68f;
 			float chromaChfactor=1.0f;
 			float atmp = acurve[lold->a[i][j]+32768.0f]-32768.0f;// curves Lab a
@@ -3291,9 +3296,6 @@ void ImProcFunctions::chromiLuminanceCurve (EditBuffer *editBuffer, int pW, LabI
 				atmp=327.68f*Chprov2*sincosval.y;
 				btmp=327.68f*Chprov2*sincosval.x;
 			}
-
-			if (editID == EUID_Lab_LCurve)
-				editWhatever->v(i,j) = LIM01<float>(Lprov1/100.f);
 
 //			calculate C=f(H)
 			if (chutili) {

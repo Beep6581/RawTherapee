@@ -73,6 +73,11 @@ public:
 		this->y = y;
 	}
 
+	void setFromPolar(float radius, float angle) {
+		x = radius * cos(angle/(2*M_PI));
+		y = radius * sin(angle/(2*M_PI));
+	}
+
 	void operator+=(const Coord & rhs) {
 		x += rhs.x;
 		y += rhs.y;
@@ -197,7 +202,7 @@ public:
 
 	virtual void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) =0;
 	virtual void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) =0;
-	virtual void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) =0;
+	virtual void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) =0;
 };
 
 class Circle : public Geometry {
@@ -213,7 +218,7 @@ public:
 
 	void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
 	void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-	void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) =0;
+	void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
 };
 
 class Line : public Geometry {
@@ -227,7 +232,7 @@ public:
 
 	void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
 	void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-	void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) =0;
+	void drawToMOChannel   (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
 };
 
 class Polyline : public Geometry {
@@ -239,7 +244,24 @@ public:
 
 	void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
 	void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
-	void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *parent, EditCoordSystem &coordSystem) =0;
+	void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+};
+
+class Rectangle : public Geometry {
+public:
+	Coord topLeft;
+	Coord bottomRight;
+	bool filled;
+
+	Rectangle() : topLeft(0,0), bottomRight(10,10), filled(false) {}
+
+	void setXYWH(int left, int top, int width, int height);
+	void setXYXY(int left, int top, int right, int bottom);
+	void setXYWH(Coord topLeft, Coord widthHeight);
+	void setXYXY(Coord topLeft, Coord bottomRight);
+	void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+	void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
+	void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem);
 };
 
 /// @brief Method for client tools needing Edit information
@@ -331,6 +353,7 @@ public:
 	virtual CursorShape getCursor(int objectID);
 	int                 getPipetteRectSize() { return 8; } // TODO: make a GUI
 	EditSubscriber*     getCurrSubscriber();
+	virtual void        getImageSize (int &w, int&h) =0;
 };
 
 #endif

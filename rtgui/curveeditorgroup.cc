@@ -200,6 +200,12 @@ void CurveEditorGroup::typeSelectionChanged (CurveEditor* ce, int n) {
 void CurveEditorGroup::curveTypeToggled(CurveEditor* ce) {
 	bool curveRestored = false;
 
+	if (displayedCurve) {
+		EditDataProvider* editProvider = displayedCurve->getEditProvider();
+		if (editProvider && editProvider->getCurrSubscriber() == displayedCurve)
+			displayedCurve->switchOffEditMode();
+	}
+
 	// Looking for the button state
 	if (ce->curveType->get_active()) {
 		// The button is now pressed, so we have to first hide all other CurveEditor
@@ -328,7 +334,7 @@ CurveEditorSubGroup::~CurveEditorSubGroup() {
 }
 
 void CurveEditorSubGroup::updateEditButton(CurveEditor* curve, Gtk::ToggleButton *button, sigc::connection &connection) {
-	if (curve->getEditID() == EUID_None) {
+	if (!curve->getEditProvider() || curve->getEditID() == EUID_None) {
 		button->hide();
 	}
 	else {

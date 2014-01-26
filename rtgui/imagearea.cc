@@ -294,6 +294,15 @@ void ImageArea::unsubscribe() {
         listener->getToolBar()->stopEditMode ();
 }
 
+void ImageArea::getImageSize (int &w, int&h) {
+    if (ipc) {
+        w = ipc->getFullWidth();
+        h = ipc->getFullHeight();
+    }
+    else
+        w = h = 0;
+}
+
 void ImageArea::grabFocus (CropWindow* cw) {
     
     focusGrabber = cw;

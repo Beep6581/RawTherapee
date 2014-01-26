@@ -119,7 +119,11 @@ void FlatCurveEditorSubGroup::refresh(CurveEditor *curveToRefresh) {
  */
 void FlatCurveEditorSubGroup::editModeSwitchedOff () {
 	// toggling off all edit buttons, even if only one is toggle on
-	editCPointsConn.block(true);    editCPoints->set_active(false);    editCPointsConn.block(false);
+	bool prevState = editCPointsConn.block(true);
+	editCPoints->set_active(false);
+	CPointsCurve->pipetteMouseOver(NULL, 0);
+	CPointsCurve->setDirty(true);
+	if (!prevState) editCPointsConn.block(false);
 }
 
 void FlatCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, int modifierKey) {

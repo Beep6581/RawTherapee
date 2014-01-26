@@ -354,6 +354,129 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr
 	}
 }
 
+void Rectangle::setXYWH(int left, int top, int width, int height) {
+	topLeft.set(left, top);
+	bottomRight.set(left+width, top+height);
+}
+
+void Rectangle::setXYXY(int left, int top, int right, int bottom) {
+	topLeft.set(left, top);
+	bottomRight.set(right, bottom);
+}
+
+void Rectangle::setXYWH(Coord topLeft, Coord widthHeight) {
+	this->topLeft = topLeft;
+	this->bottomRight = topLeft + widthHeight;
+}
+
+void Rectangle::setXYXY(Coord topLeft, Coord bottomRight) {
+	this->topLeft = topLeft;
+	this->bottomRight = bottomRight;
+}
+
+void Rectangle::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
+	if ((flags & ACTIVE)) {
+		cr->set_source_rgb (outerLineColor.getR(), outerLineColor.getG(), outerLineColor.getB());
+
+		Coord tl, br;
+		cr->set_line_width( getOuterLineWidth() );
+
+		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(topLeft.x, topLeft.y, tl.x, tl.y);
+		else if (datum == CLICKED_POINT) tl = topLeft + editBuffer->getDataProvider()->posScreen;
+		else if (datum == CURSOR)        tl = topLeft +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
+
+		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(bottomRight.x, bottomRight.y, br.x, br.y);
+		else if (datum == CLICKED_POINT) br = bottomRight + editBuffer->getDataProvider()->posScreen;
+		else if (datum == CURSOR)        br = bottomRight +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
+
+		cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+
+		if (filled) {
+			cr->fill_preserve();
+			cr->stroke();
+		}
+		else
+			cr->fill();
+	}
+}
+
+void Rectangle::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
+	if (flags & ACTIVE) {
+		Coord tl, br;
+		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(topLeft.x, topLeft.y, tl.x, tl.y);
+		else if (datum == CLICKED_POINT) tl = topLeft + editBuffer->getDataProvider()->posScreen;
+		else if (datum == CURSOR)        tl = topLeft +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
+
+		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(bottomRight.x, bottomRight.y, br.x, br.y);
+		else if (datum == CLICKED_POINT) br = bottomRight + editBuffer->getDataProvider()->posScreen;
+		else if (datum == CURSOR)        br = bottomRight +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
+
+		cr->set_source_rgb (innerLineColor.getR(), innerLineColor.getG(), innerLineColor.getB());
+
+		if (filled) {
+			cr->set_line_width( innerLineWidth );
+			cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+			if (innerLineWidth > 0.) {
+				cr->fill_preserve();
+				cr->stroke();
+			}
+			else
+				cr->fill();
+		}
+		else if (innerLineWidth > 0.) {
+			cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+			cr->stroke();
+		}
+	}
+}
+
+void Rectangle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, Cairo::RefPtr<Cairo::Context> &cr2, unsigned short id, rtengine::EditBuffer *editBuffer, EditCoordSystem &coordSystem) {
+	if (flags & ACTIVE) {
+		cr->set_line_width( getMouseOverLineWidth() );
+
+		Coord tl, br;
+		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(topLeft.x, topLeft.y, tl.x, tl.y);
+		else if (datum == CLICKED_POINT) tl = topLeft + editBuffer->getDataProvider()->posScreen;
+		else if (datum == CURSOR)        tl = topLeft +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
+
+		if      (datum == IMAGE)         coordSystem.imageCoordToScreen(bottomRight.x, bottomRight.y, br.x, br.y);
+		else if (datum == CLICKED_POINT) br = bottomRight + editBuffer->getDataProvider()->posScreen;
+		else if (datum == CURSOR)        br = bottomRight +editBuffer->getDataProvider()->posScreen + editBuffer->getDataProvider()->deltaPrevScreen;
+
+		// drawing the lower byte's value
+		unsigned short a = (id+1) & 0xFF;
+		cr->set_source_rgba (0.,0., 0., double(a)/255.);
+		cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+		if (filled) {
+			if (innerLineWidth > 0.) {
+				cr->fill_preserve();
+				cr->stroke();
+			}
+			else
+				cr->fill();
+		}
+		else
+			cr->stroke();
+
+		// drawing the higher byte's value
+		if (editBuffer->getObjectMode() == OM_65535) {
+			a = (id+1)>>8;
+			cr2->set_source_rgba (0.,0., 0., double(a)/255.);
+			cr->rectangle(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
+			if (filled) {
+				if (innerLineWidth > 0.) {
+					cr2->fill_preserve();
+					cr2->stroke();
+				}
+				else
+					cr2->fill();
+			}
+			else
+				cr2->stroke();
+		}
+	}
+}
+
 EditSubscriber::EditSubscriber () : ID(EUID_None), editingType(ET_PIPETTE), bufferType(BT_SINGLEPLANE_FLOAT), provider(NULL) {}
 
 void EditSubscriber::setEditProvider(EditDataProvider *provider) {
@@ -411,6 +534,9 @@ EditDataProvider::EditDataProvider() : currSubscriber(NULL), object(0), posScree
 }
 
 void EditDataProvider::subscribe(EditSubscriber *subscriber) {
+	if (currSubscriber)
+		currSubscriber->switchOffEditMode();
+
 	currSubscriber = subscriber;
 }
 
