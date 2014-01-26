@@ -177,26 +177,32 @@ void MyFlatCurve::draw () {
 
         if (n > 1) {
             if (pipetteR > -1.f) {
+                cr->set_source_rgba (1., 0., 0., 0.5); // WARNING: assuming that red values are stored in pipetteR, which might not be the case!
                 cr->move_to (double(graphX)+1.5 + double(graphW-3)*pipetteR, double(graphY)-1.5);
                 cr->rel_line_to (0, double(-graphH+3));
                 cr->stroke ();
             }
             if (pipetteG > -1.f) {
+                cr->set_source_rgba (0., 1., 0., 0.5); // WARNING: assuming that green values are stored in pipetteG, which might not be the case!
                 cr->move_to (double(graphX)+1.5 + double(graphW-3)*pipetteG, double(graphY)-1.5);
                 cr->rel_line_to (0, double(-graphH+3));
                 cr->stroke ();
             }
             if (pipetteB > -1.f) {
+                cr->set_source_rgba (0., 0., 1., 0.5); // WARNING: assuming that blue values are stored in pipetteB, which might not be the case!
                 cr->move_to (double(graphX)+1.5 + double(graphW-3)*pipetteB, double(graphY)-1.5);
                 cr->rel_line_to (0, double(-graphH+3));
                 cr->stroke ();
             }
         }
         if (pipetteVal > -1.f) {
-            cr->set_source_rgb (1., 0., 0.);
+            cr->set_line_width (2.);
+            c = style->get_fg (state);
+            cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
             cr->move_to (double(graphX)+1.5 + double(graphW-3)*pipetteVal, double(graphY)-1.5);
             cr->rel_line_to (0, double(-graphH+3));
             cr->stroke ();
+            cr->set_line_width (1.);
         }
     }
     // draw the color feedback of the control points
@@ -884,6 +890,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 			new_type = CSArrow;
 			lit_point = -1;
 			tanHandlesDisplayed = false;
+			pipetteR = pipetteG = pipetteB = -1.f;
 			setDirty(true);
 			draw ();
 		}
@@ -901,6 +908,13 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 }
 
 void MyFlatCurve::pipetteMouseOver (EditDataProvider *provider, int modifierKey) {
+	if (!provider) {
+		// occurs when leaving the preview area -> cleanup the curve editor
+		pipetteR = pipetteG = pipetteB = -1.f;
+		lit_point = -1;
+		return;
+	}
+
 	pipetteR = provider->pipetteVal[0];
 	pipetteG = provider->pipetteVal[1];
 	pipetteB = provider->pipetteVal[2];

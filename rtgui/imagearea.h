@@ -122,6 +122,7 @@ class ImageArea : public Gtk::DrawingArea, public CropWindowListener, public Edi
     // EditDataProvider interface
     void subscribe(EditSubscriber *subscriber);
     void unsubscribe();
+    void getImageSize (int &w, int&h);
 
     // CropWindowListener interface
     void cropPositionChanged   (CropWindow* cw);

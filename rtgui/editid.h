@@ -20,7 +20,7 @@
 #define _EDITID_H_
 
 
-/// @brief List of editing operation
+/// @brief List of pipette editing operation
 enum EditUniqueID {
 	EUID_None,  /// special value (default)
 

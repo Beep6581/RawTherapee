@@ -58,7 +58,7 @@ RGBCurves::RGBCurves () : Gtk::VBox(), FoldableToolPanel(this) {
 
 	milestones[1].g = 0.0; milestones[1].b = 1.0;
 	Bshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, M("TP_RGBCURVES_BLUE")));
-	Bshape->setEditID(EUID_RGB_G, BT_SINGLEPLANE_FLOAT);
+	Bshape->setEditID(EUID_RGB_B, BT_SINGLEPLANE_FLOAT);
 	Bshape->setBottomBarBgGradient(milestones);
 	Bshape->setLeftBarBgGradient(milestones);
 
