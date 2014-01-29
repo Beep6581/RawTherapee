@@ -737,11 +737,10 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
               default:
                   goto defsubdirs;
               }
-          }else if (!strncmp(make, "PENTAX", 6)) {
+          }else if ((!strncmp(make, "PENTAX", 6)) || (!strncmp(make, "RICOH", 5) && !strncmp(model, "PENTAX", 6))) { // Either the former Pentax brand or the RICOH brand + PENTAX model"
               switch( tag ){
-              case 0x005c:
+              case 0x007d:
               case 0x0205:
-              case 0x0206:
               case 0x0208:
               case 0x0216:
                   directory = new TagDirectory*[2];
@@ -755,6 +754,36 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                   directory[0] = new TagDirectoryTable (parent, f, valuesize,0,LONG , attrib->subdirAttribs, order);
                   makerNoteKind = TABLESUBDIR;
                   break;
+              case 0x005c:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  if (count == 4)       // SRInfo
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxSRInfoAttribs, order);
+                  else if (count == 2)  // SRInfo2
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxSRInfo2Attribs, order);
+                  else {
+                      // Unknown SRInfo
+                      delete directory;
+                      directory = NULL;
+                  }
+                  makerNoteKind = TABLESUBDIR;
+                  break;
+              case 0x0206:
+                  directory = new TagDirectory*[2];
+                  directory[1] = NULL;
+                  if (count == 21)       // AEInfo2
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfo2Attribs, order);
+                  else if (count == 48)  // AEInfo3
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfo3Attribs, order);
+                  else if (count <= 25)  // AEInfo
+                      directory[0] = new TagDirectoryTable (parent, f, valuesize,0,BYTE , pentaxAEInfoAttribs, order);
+                  else {
+                      // Unknown AEInfo
+                      delete directory;
+                      directory = NULL;
+                  }
+                  makerNoteKind = TABLESUBDIR;
+                  break;
               case 0x0207:
               {   // There are 2 format pentaxLensDataAttribs
                   int offsetFirst = 4;  // LensInfo2
@@ -766,6 +795,9 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
                       offsetFirst = 12;  // LensInfo4
                   else if( strstr(model, "K-01") || strstr(model, "K-30"))
                       offsetFirst = 15;  // LensInfo5
+                  else if(!strncmp(make, "RICOH", 5)) { // all PENTAX camera model produced under the RICOH era uses LensInfo5, for now...
+                      offsetFirst = 15;  // LensInfo5 too
+                  }
                   directory = new TagDirectory*[2];
                   directory[1] = NULL;
                   directory[0] = new TagDirectoryTable (parent, f, valuesize,offsetFirst,BYTE , attrib->subdirAttribs, order);
@@ -919,6 +951,14 @@ bool Tag::parseMakerNote(FILE* f, int base, ByteOrder bom )
         directory = new TagDirectory*[2];
         directory[0] = new TagDirectory (parent, f, base, pentaxAttribs, bom);
         directory[1] = NULL;
+    } else if ( (make.find( "RICOH" ) != std::string::npos ) && (model.find("PENTAX") != std::string::npos) ) {
+        makerNoteKind = HEADERIFD;
+        valuesize = 10;
+        value = new unsigned char[10];
+        fread (value, 1, 10, f);
+        directory = new TagDirectory*[2];
+        directory[0] = new TagDirectory (parent, f, ftell (f)-10, pentaxAttribs, bom);
+        directory[1] = NULL;
     } else if ( make.find( "FUJIFILM" ) != std::string::npos ) {
         makerNoteKind = FUJI;
         valuesize = 12;
@@ -1050,11 +1090,13 @@ int Tag::toInt (int ofs, TagType astype) {
   if (astype == INVALID)
     astype = type;
   switch (astype) {
+    //case SBYTE: return (signed char)(value[ofs]);
+    case SBYTE: return int((reinterpret_cast<signed char*>(value))[ofs]);
     case BYTE:  return value[ofs];
     case ASCII: return 0;
-    case SSHORT:return (int)int2_to_signed(sget2 (value+ofs, getOrder())); 
+    case SSHORT:return (int)int2_to_signed(sget2 (value+ofs, getOrder()));
     case SHORT: return (int)sget2 (value+ofs, getOrder());
-    case SLONG:  
+    case SLONG:
     case LONG:  return (int)sget4 (value+ofs, getOrder());
     case SRATIONAL: 
     case RATIONAL: a = (int)sget4 (value+ofs+4, getOrder()); return a==0 ? 0 : (int)sget4 (value+ofs, getOrder()) / a;
@@ -1073,15 +1115,16 @@ double Tag::toDouble (int ofs) {
 
   double ud, dd;
   switch (type) {
+    case SBYTE: return (double)(int((reinterpret_cast<signed char*>(value))[ofs]));
     case BYTE:  return (double)((int)value[ofs]);
     case ASCII: return 0.0;
-    case SSHORT:return (double)int2_to_signed(sget2 (value+ofs, getOrder()));  
+    case SSHORT:return (double)int2_to_signed(sget2 (value+ofs, getOrder()));
     case SHORT: return (double)((int)sget2 (value+ofs, getOrder()));
-    case SLONG:  
+    case SLONG:
     case LONG:  return (double)((int)sget4 (value+ofs, getOrder()));
-    case SRATIONAL: 
+    case SRATIONAL:
     case RATIONAL: ud = (int)sget4 (value+ofs, getOrder()); dd = (int)sget4 (value+ofs+4, getOrder()); return dd==0. ? 0. : (double)ud / (double)dd;
-    case FLOAT:     
+    case FLOAT:
         conv.i=sget4 (value+ofs, getOrder());
         return conv.f;  // IEEE FLOATs are already C format, they just need a recast
 
@@ -2089,7 +2132,7 @@ int ExifManager::createTIFFHeader (const TagDirectory* root, const rtengine::pro
 
     TagDirectory* cl;
     if (root)
-	cl = (const_cast<TagDirectory*>(root))->clone (NULL);
+    cl = (const_cast<TagDirectory*>(root))->clone (NULL);
     else
         cl = new TagDirectory (NULL, ifdAttribs, INTEL);
 

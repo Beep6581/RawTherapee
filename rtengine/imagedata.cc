@@ -118,7 +118,7 @@ void ImageData::extractInfo () {
      make = root->getTag ("Make")->valueToString ();
      // same dcraw treatment
      static const char *corp[] =
-       { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX",
+       { "Canon", "NIKON", "EPSON", "KODAK", "Kodak", "OLYMPUS", "PENTAX", "RICOH",
          "MINOLTA", "Minolta", "Konica", "CASIO", "Sinar", "Phase One",
          "SAMSUNG", "Mamiya", "MOTOROLA", "Leaf" };
      for (size_t i=0; i < (sizeof(corp)/sizeof(*corp)); i++)
@@ -304,7 +304,7 @@ void ImageData::extractInfo () {
                 }
             }
         }
-        else if (mnote && !make.compare (0, 6, "PENTAX")) {
+        else if (mnote && (!make.compare (0, 6, "PENTAX") || (!make.compare (0, 5, "RICOH") && !model.compare (0, 6, "PENTAX")))) {
             if (mnote->getTag ("LensType"))
                 lens = mnote->getTag ("LensType")->valueToString ();
 
