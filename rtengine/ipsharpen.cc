@@ -195,15 +195,23 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 		return;
 
 	int W = lab->W, H = lab->H;
-	float** b3;
+	float** b3 = NULL;
+	float** labCopy = NULL;
+	
 	if (params->sharpening.edgesonly) {
 		b3 = new float*[H];
 		for (int i=0; i<H; i++)
 			b3[i] = new float[W];
 	}
-#ifdef _OPENMP
+
+	if (params->sharpening.halocontrol && !params->sharpening.edgesonly) {
+		// We only need the lab parameter copy in this special case
+	    labCopy = new float*[H];
+		for( int i=0; i<H; i++ ) {
+		    labCopy[i] = new float[W];
+		}
+	}
 #pragma omp parallel
-#endif
 	{
 
 
@@ -236,10 +244,25 @@ void ImProcFunctions::sharpening (LabImage* lab, float** b2) {
 				lab->L[i][j] = lab->L[i][j] + delta;
 			}
 	}
-	else
+	else {
+		if (!params->sharpening.edgesonly) {
+			// make a deep copy of lab->L
+#pragma omp for
+			for( int i=0; i<H; i++ )
+				for( int j=0; j<W; j++ )
+					labCopy[i][j] = lab->L[i][j];
+			base = labCopy;
+		}
 		sharpenHaloCtrl (lab, b2, base, W, H);
+	}
 
 	} // end parallel
+
+	if (params->sharpening.halocontrol && !params->sharpening.edgesonly) {
+		// delete the deep copy
+		for( int i=0; i<H; i++ ) delete[] labCopy[i];
+		delete[] labCopy;
+	}
 
 	if (params->sharpening.edgesonly) {
 		for (int i=0; i<H; i++)
@@ -254,7 +277,7 @@ void ImProcFunctions::sharpenHaloCtrl (LabImage* lab, float** blurmap, float** b
 	float sharpFac = params->sharpening.amount * 0.01f;
 	float** nL = base;
 
-#pragma omp parallel for if (multiThread)
+#pragma omp for
 	for (int i=2; i<H-2; i++) {
 		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min_, max_, labL;
 		for (int j=2; j<W-2; j++) {
@@ -968,11 +991,21 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2) {
 
 	int W = ncie->W, H = ncie->H;
 	float** b3;
+    float** ncieCopy;
+
 	if (params->sharpening.edgesonly) {
 		b3 = new float*[H];
 		for (int i=0; i<H; i++)
 			b3[i] = new float[W];
 	}
+
+    if (params->sharpening.halocontrol && !params->sharpening.edgesonly) {
+        // We only need the lab parameter copy in this special case
+        ncieCopy = new float*[H];
+        for( int i=0; i<H; i++ ) {
+            ncieCopy[i] = new float[W];
+        }
+    }
 #ifdef _OPENMP
 #pragma omp parallel
 #endif
@@ -1009,10 +1042,25 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2) {
 				if(ncie->J_p[i][j] > 8.0f && ncie->J_p[i][j] < 92.0f) ncie->sh_p[i][j] = ncie->sh_p[i][j] + delta;
 			}
 	}
-	else
+	else {
+        if (!params->sharpening.edgesonly) {
+            // make a deep copy of lab->L
+#pragma omp for
+            for( int i=0; i<H; i++ )
+                for( int j=0; j<W; j++ )
+                    ncieCopy[i][j] = ncie->sh_p[i][j];
+            base = ncieCopy;
+        }
 		sharpenHaloCtrlcam (ncie, b2, base, W, H);
+	}
 
 	} // end parallel
+
+    if (params->sharpening.halocontrol && !params->sharpening.edgesonly) {
+        // delete the deep copy
+        for( int i=0; i<H; i++ ) delete[] ncieCopy[i];
+        delete[] ncieCopy;
+    }
 
 	if (params->sharpening.edgesonly) {
 		for (int i=0; i<H; i++)
@@ -1027,7 +1075,7 @@ void ImProcFunctions::sharpenHaloCtrlcam (CieImage* ncie, float** blurmap, float
 	float sharpFac = params->sharpening.amount * 0.01f;
 	float** nL = base;
 
-#pragma omp parallel for if (multiThread)
+#pragma omp for
 	for (int i=2; i<H-2; i++) {
 		float max1=0, max2=0, min1=0, min2=0, maxn, minn, np1, np2, np3, min_, max_, labL;
 		for (int j=2; j<W-2; j++) {
