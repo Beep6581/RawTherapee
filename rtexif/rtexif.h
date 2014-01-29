@@ -34,7 +34,7 @@ class CacheImageData;
 
 namespace rtexif {
 
-enum TagType {INVALID=0, BYTE=1, ASCII=2, SHORT=3, LONG=4, RATIONAL=5, UNDEFINED=7, SSHORT=8, SLONG=9, SRATIONAL=10, FLOAT=11, DOUBLE=12, OLYUNDEF=13, AUTO=98, SUBDIR=99};
+enum TagType {INVALID=0, BYTE=1, ASCII=2, SHORT=3, LONG=4, RATIONAL=5, SBYTE=6, UNDEFINED=7, SSHORT=8, SLONG=9, SRATIONAL=10, FLOAT=11, DOUBLE=12, OLYUNDEF=13, AUTO=98, SUBDIR=99};
 enum ActionCode {
     AC_DONTWRITE,  // don't write it to the output
     AC_WRITE,      // write it to the output
@@ -187,15 +187,16 @@ class Tag {
    void initRational   (int num, int den);
 
     // get basic tag properties
-    int                  getID     () const { return tag; }
-    int                  getCount  () const { return count; }
-    TagType              getType   () const { return (attrib && attrib->type > INVALID && attrib->type < AUTO) ? attrib->type : type; }
-    unsigned char*       getValue  () const { return value; }
-    const TagAttrib*     getAttrib () const { return attrib; }
-    inline ByteOrder     getOrder  () const { return parent ? parent->getOrder() : INTEL; }
-    inline TagDirectory* getParent () const { return parent; }
-    int                  getValueSize () const { return valuesize; }
-    bool                 getOwnMemory() const { return allocOwnMemory; }
+    int                  getID          () const { return tag; }
+    int                  getCount       () const { return count; }
+    TagType              getType        () const { return (attrib && attrib->type > INVALID && attrib->type < AUTO) ? attrib->type : type; }
+    unsigned char*       getValue       () const { return value; }
+    signed char*         getSignedValue () const { return reinterpret_cast<signed char*>(value); }
+    const TagAttrib*     getAttrib      () const { return attrib; }
+    inline ByteOrder     getOrder       () const { return parent ? parent->getOrder() : INTEL; }
+    inline TagDirectory* getParent      () const { return parent; }
+    int                  getValueSize   () const { return valuesize; }
+    bool                 getOwnMemory   () const { return allocOwnMemory; }
 
     // read/write value
     int     toInt         (int ofs=0, TagType astype=INVALID);
@@ -270,6 +271,7 @@ class Interpreter {
         virtual double toDouble(Tag* t, int ofs=0) {
             double ud, dd;
             switch (t->getType()) {
+                case SBYTE: return double(int(t->getSignedValue()[ofs]));
                 case BYTE:  return (double)((int)t->getValue()[ofs]);
                 case ASCII: return 0.0;
                 case SSHORT:return (double)int2_to_signed(sget2 (t->getValue()+ofs, t->getOrder()));
@@ -289,6 +291,7 @@ class Interpreter {
             if (astype == INVALID || astype==AUTO)
                 astype = t->getType();
             switch (astype) {
+                case SBYTE: return int(t->getSignedValue()[ofs]);
                 case BYTE:  return t->getValue()[ofs];
                 case ASCII: return 0;
                 case SSHORT:return (int)int2_to_signed(sget2 (t->getValue()+ofs, t->getOrder()));
@@ -440,10 +443,14 @@ extern const TagAttrib canonAttribs[];
 extern const TagAttrib pentaxAttribs[];
 extern const TagAttrib pentaxLensDataAttribs[];
 extern const TagAttrib pentaxLensInfoQAttribs[];
+extern const TagAttrib pentaxLensCorrAttribs[];
 extern const TagAttrib pentaxAEInfoAttribs[];
+extern const TagAttrib pentaxAEInfo2Attribs[];
+extern const TagAttrib pentaxAEInfo3Attribs[];
 extern const TagAttrib pentaxCameraSettingsAttribs[];
 extern const TagAttrib pentaxFlashInfoAttribs[];
 extern const TagAttrib pentaxSRInfoAttribs[];
+extern const TagAttrib pentaxSRInfo2Attribs[];
 extern const TagAttrib pentaxBatteryInfoAttribs[];
 extern const TagAttrib pentaxCameraInfoAttribs[];
 extern const TagAttrib fujiAttribs[];

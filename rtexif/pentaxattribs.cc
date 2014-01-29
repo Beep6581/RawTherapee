@@ -52,6 +52,40 @@ class PAOnOffInterpreter : public ChoiceInterpreter {
 };
 PAOnOffInterpreter paOnOffInterpreter;
 
+class PAShakeReductionInterpreter : public ChoiceInterpreter {
+    public:
+        PAShakeReductionInterpreter () {
+            choices[  0] = "Off";
+            choices[  1] = "On";
+            choices[  4] = "On (4)";
+            choices[  5] = "On but Disabled";
+            choices[  6] = "On (Video)";
+            choices[  7] = "On (7)";
+            choices[ 15] = "On (15)";
+            choices[ 39] = "On (mode 2)";
+            choices[135] = "On (135)";
+            choices[167] = "On (mode 1)";
+        }
+};
+PAShakeReductionInterpreter paShakeReductionInterpreter;
+
+class PAShakeReduction2Interpreter : public ChoiceInterpreter {
+    public:
+        PAShakeReduction2Interpreter () {
+            choices[ 0] = "Off";
+            choices[ 1] = "On";
+            choices[ 4] = "Off (AA simulation off)";
+            choices[ 5] = "On but Disabled";
+            choices[ 6] = "On (Video)";
+            choices[ 7] = "On (AA simulation off)";
+            choices[12] = "Off (AA simulation type 1)";
+            choices[15] = "On (AA simulation type 1)";
+            choices[20] = "Off (AA simulation type 2)";
+            choices[23] = "On (AA simulation type 2)";
+        }
+};
+PAShakeReduction2Interpreter paShakeReduction2Interpreter;
+
 class PAPictureModeInterpreter : public ChoiceInterpreter {
     public:
         PAPictureModeInterpreter () {
@@ -105,6 +139,73 @@ class PAPictureModeInterpreter : public ChoiceInterpreter {
         }
 };
 PAPictureModeInterpreter paPictureModeInterpreter;
+
+class PASceneModeInterpreter : public ChoiceInterpreter {
+    public:
+        PASceneModeInterpreter () {
+            choices[ 0] = "Off";
+            choices[ 1] = "HDR";
+            choices[ 4] = "Auto PICT";
+            choices[ 5] = "Portrait";
+            choices[ 6] = "Landscape";
+            choices[ 7] = "Macro";
+            choices[ 8] = "Sport";
+            choices[ 9] = "Night Scene Portrait";
+            choices[10] = "No Flash";
+            choices[11] = "Night Scene";
+            choices[12] = "Surf & Snow";
+            choices[14] = "Sunset";
+            choices[15] = "Kids";
+            choices[16] = "Pet";
+            choices[17] = "Candlelight";
+            choices[18] = "Museum";
+            choices[20] = "Food";
+            choices[21] = "Stage Lighting";
+            choices[22] = "Night Snap";
+            choices[25] = "Night Scene HDR";
+            choices[26] = "Blue Sky";
+            choices[27] = "Forest";
+            choices[29] = "Backlight Silhouette";
+        }
+};
+PASceneModeInterpreter paSceneModeInterpreter;
+
+class PAAEProgramModeInterpreter : public ChoiceInterpreter {
+    public:
+        PAAEProgramModeInterpreter () {
+            choices[  0] = "M, P or TAv";
+            choices[  1] = "Av, B or X";
+            choices[  2] = "Tv";
+            choices[  3] = "Sv or Green Mode";
+            choices[  8] = "Hi-speed Program";
+            choices[ 11] = "Hi-speed Program (P-Shift)";
+            choices[ 16] = "DOF Program";
+            choices[ 19] = "DOF Program (P-Shift)";
+            choices[ 24] = "MTF Program";
+            choices[ 27] = "MTF Program (P-Shift)";
+            choices[ 35] = "Standard";
+            choices[ 43] = "Portrait";
+            choices[ 51] = "Landscape";
+            choices[ 59] = "Macro";
+            choices[ 67] = "Sport";
+            choices[ 75] = "Night Scene Portrait";
+            choices[ 83] = "No Flash";
+            choices[ 91] = "Night Scene";
+            choices[ 99] = "Surf & Snow";
+            choices[104] = "Night Snap";
+            choices[107] = "Text";
+            choices[115] = "Sunset";
+            choices[123] = "Kids";
+            choices[131] = "Pet";
+            choices[139] = "Candlelight";
+            choices[144] = "SCN";
+            choices[147] = "Museum";
+            choices[160] = "Program";
+            choices[184] = "Shallow DOF Program";
+            choices[216] = "HDR";
+        }
+};
+PAAEProgramModeInterpreter paAEProgramModeInterpreter;
 
 class PAFlashModeInterpreter : public ChoiceInterpreter {
     public:
@@ -261,11 +362,11 @@ PAISOInterpreter paISOInterpreter;
 
 class PAFNumberInterpreter: public Interpreter {
 public:
-	PAFNumberInterpreter () {}
+    PAFNumberInterpreter () {}
     virtual std::string toString (Tag* t) {
-    	char buffer[32];
-    	double v = t->toDouble()/10;
-    	if( v < 0. || v > 1000. ) return "undef";
+        char buffer[32];
+        double v = t->toDouble()/10;
+        if( v < 0. || v > 1000. ) return "undef";
         sprintf (buffer, "%.1f", v );
         return buffer;
     }
@@ -291,11 +392,14 @@ class PAWhiteBalanceInterpreter : public ChoiceInterpreter {
             choices[3] = "Fluorescent";
             choices[4] = "Tungsten";
             choices[5] = "Manual";
-            choices[6] = "DaylightFluorescent";
-            choices[7] = "DaywhiteFluorescent";
-            choices[8] = "WhiteFluorescent";
+            choices[6] = "Daylight Fluorescent";
+            choices[7] = "Day White Fluorescent";
+            choices[8] = "White Fluorescent";
             choices[9] = "Flash";
             choices[10] = "Cloudy";
+            choices[11] = "Warm White Fluorescent";
+            choices[14] = "Multi Auto";
+            choices[15] = "Color Temperature Enhancement";
             choices[17] = "Kelvin";
             choices[65534] = "Unknown";
             choices[65535] = "User Selected";
@@ -315,7 +419,7 @@ class PAWhiteBalanceModeInterpreter : public ChoiceInterpreter {
             choices[8] = "Auto (WhiteFluorescent)";
             choices[10] = "Auto (Cloudy)";
             choices[65534] = "Preset (Fireworks?)";
-            choices[65535] = "User-Selected";        
+            choices[65535] = "User-Selected";
         }
 };
 PAWhiteBalanceModeInterpreter paWhiteBalanceModeInterpreter;
@@ -437,20 +541,30 @@ class PADriveModeInterpreter : public ChoiceInterpreter{
 	std::map<int,std::string> choices3;
 public:
 	PADriveModeInterpreter(){
-		choices[0] = "Single-frame";
-		choices[1] = "Continuous";
-		choices[2] = "Continuous (Hi)";
-		choices[3] = "Burst";
-		choices[255] = "Video";
-		choices1[0] = "No Timer";
-		choices1[1] = "Self-timer (12 s)";
-		choices1[2] = "Self-timer (2 s)";
+		choices[0]    = "Single-frame";
+		choices[1]    = "Continuous";
+		choices[2]    = "Continuous (Lo)";
+		choices[3]    = "Burst";
+		choices[4]    = "Continuous (Medium)";
+		choices[255]  = "Video";
+		choices1[0]   = "No Timer";
+		choices1[1]   = "Self-timer (12 s)";
+		choices1[2]   = "Self-timer (2 s)";
+		choices1[15]  = "Video";
+		choices1[16]  = "Mirror Lock-up";
 		choices1[255] = "n/a";
-		choices2[0] = "Shutter Button";
-		choices2[1] = "Remote Control (3 s delay)";
-		choices2[2] = "Remote Control";
-		choices3[0] = "Single Exposure";
-		choices3[1] = "Multiple Exposure";
+		choices2[0]   = "Shutter Button";
+		choices2[1]   = "Remote Control (3 s delay)";
+		choices2[2]   = "Remote Control";
+		choices2[4]   = "Remote Continuous Shooting";
+		choices3[0]   = "Single Exposure";
+		choices3[1]   = "Multiple Exposure";
+		choices3[15]  = "Interval Movie";
+		choices3[16]  = "HDR";
+		choices3[32]  = "HDR Strong 1";
+		choices3[48]  = "HDR Strong 2";
+		choices3[64]  = "HDR Strong 3";
+		choices3[224] = "HDR Auto";
 		choices3[255] = "Video";
 	}
     virtual std::string toString (Tag* t) {
@@ -807,6 +921,162 @@ public:
 };
 PAHighISONoiseInterpreter paHighISONoiseInterpreter;
 
+class PAMonochromeFilterEffectInterpreter: public ChoiceInterpreter {
+public:
+	PAMonochromeFilterEffectInterpreter(){
+		choices[1] = "Green";
+		choices[2] = "Yellow";
+		choices[3] = "Orange";
+		choices[4] = "Red";
+		choices[5] = "Magenta";
+		choices[6] = "Blue";
+		choices[7] = "Cyan";
+		choices[8] = "Infrared";
+		choices[65535] = "None";
+	}
+};
+PAMonochromeFilterEffectInterpreter paMonochromeFilterEffectInterpreter;
+
+class PAMonochromeToningInterpreter: public ChoiceInterpreter {
+public:
+	PAMonochromeToningInterpreter(){
+		choices[0] = "-4";
+		choices[1] = "-3";
+		choices[2] = "-2";
+		choices[3] = "-1";
+		choices[4] = "0";
+		choices[5] = "1";
+		choices[6] = "2";
+		choices[7] = "3";
+		choices[8] = "4";
+		choices[65535] = "None";
+	}
+};
+PAMonochromeToningInterpreter paMonochromeToningInterpreter;
+
+class PAShadowCorrectionInterpreter: public ChoiceInterpreter {
+public:
+	PAShadowCorrectionInterpreter(){
+		choices[        0 ] = "Off";
+		choices[        1 ] = "On";
+		choices[        2 ] = "Auto 2";
+		choices[ 1<<8 | 1 ] = "Weak";
+		choices[ 1<<8 | 2 ] = "Normal";
+		choices[ 1<<8 | 3 ] = "Strong";
+		choices[ 2<<8 | 4 ] = "Auto";
+	}
+
+	virtual std::string toString (Tag* t) {
+		int idx = 0;
+		if (t->getCount() == 1)
+			idx = t->toInt(0,BYTE);
+		else if (t->getCount() == 2)
+			idx = t->toInt(0,BYTE) << 8 | t->toInt(1,BYTE);
+
+		std::map<int,std::string>::iterator r  = choices.find (idx);
+		std::ostringstream s;
+		s << ((r !=choices.end())? r->second : "n/a");
+		return s.str();
+	}
+};
+PAShadowCorrectionInterpreter paShadowCorrectionInterpreter;
+
+class PAISOAutoParametersInterpreter: public ChoiceInterpreter {
+public:
+	PAISOAutoParametersInterpreter(){
+		choices[1] = "Slow";
+		choices[2] = "Standard";
+		choices[3] = "Fast";
+	}
+	virtual std::string toString (Tag* t) {
+		std::map<int,std::string>::iterator r  = choices.find (t->toInt(0,BYTE));
+		std::ostringstream s;
+		s << ((r !=choices.end())? r->second : "n/a");
+		return s.str();
+	}
+};
+PAISOAutoParametersInterpreter paISOAutoParametersInterpreter;
+
+class PABleachBypassToningInterpreter: public ChoiceInterpreter {
+public:
+	PABleachBypassToningInterpreter(){
+		choices[1] = "Green";
+		choices[2] = "Yellow";
+		choices[3] = "Orange";
+		choices[4] = "Red";
+		choices[5] = "Magenta";
+		choices[6] = "Purple";
+		choices[7] = "Blue";
+		choices[8] = "Cyan";
+		choices[65535] = "Off";
+	}
+};
+PABleachBypassToningInterpreter paBleachBypassToningInterpreter;
+
+class PABlurControlInterpreter: public ChoiceInterpreter {
+public:
+	PABlurControlInterpreter(){
+		choices[0] = "Off";
+		choices[1] = "Low";
+		choices[2] = "Medium";
+		choices[3] = "High";
+	}
+	virtual std::string toString (Tag* t) {
+		std::map<int,std::string>::iterator r  = choices.find (t->toInt(0,BYTE));
+		std::ostringstream s;
+		s << ((r !=choices.end())? r->second : "n/a");
+		return s.str();
+	}
+};
+PABlurControlInterpreter paBlurControlInterpreter;
+
+class PAHDRInterpreter: public ChoiceInterpreter {
+	std::map<int,std::string> choices1;
+	std::map<int,std::string> choices2;
+public:
+	PAHDRInterpreter(){
+		choices[0]    = "Off";
+		choices[1]    = "HDR Auto";
+		choices[2]    = "HDR 1";
+		choices[3]    = "HDR 2";
+		choices[4]    = "HDR 3";
+
+		choices1[0]   = "Auto-align Off";
+		choices1[1]   = "Auto-align On";
+
+		choices2[0]   = "n/a";
+		choices2[1]   = "1 EV";
+		choices2[2]   = "2 EV";
+		choices2[4]   = "3 EV";
+	}
+	virtual std::string toString (Tag* t) {
+		std::map<int,std::string>::iterator r  = choices.find  (t->toInt(0,BYTE));
+		std::map<int,std::string>::iterator r1 = choices1.find (t->toInt(1,BYTE));
+		std::map<int,std::string>::iterator r2 = choices2.find (t->toInt(2,BYTE));
+		std::ostringstream s;
+		s << ((r !=choices.end() )?  r->second : "") << std::endl;
+		s << ((r1!=choices1.end())? r1->second : "") << std::endl;
+		s << ((r2!=choices2.end())? r2->second : "");
+		return s.str();
+	}
+};
+PAHDRInterpreter paHDRInterpreter;
+
+class PACrossProcessInterpreter: public ChoiceInterpreter {
+public:
+	PACrossProcessInterpreter(){
+		choices[ 0] = "Off";
+		choices[ 1] = "Randow";
+		choices[ 2] = "Preset 1";
+		choices[ 3] = "Preset 2";
+		choices[ 4] = "Preset 3";
+		choices[33] = "Favorite 1";
+		choices[34] = "Favorite 2";
+		choices[35] = "Favorite 3";
+	}
+};
+PACrossProcessInterpreter paCrossProcessInterpreter;
+
 class PAPowerSourceInterpreter: public ChoiceInterpreter {
 public:
 	PAPowerSourceInterpreter(){
@@ -848,6 +1118,26 @@ public:
     }
 };
 PALensInfoQInterpreter paLensInfoQInterpreter;
+
+class PAFlashExposureCompInterpreter: public Interpreter {
+public:
+    PAFlashExposureCompInterpreter(){}
+    virtual std::string toString (Tag* t){
+        int a;
+        if (t->getCount() == 1) a = t->toInt(0, SLONG) / 256; // int32u
+        else                    a = t->toInt(0, SBYTE) / 6;   // int8u[2]
+        char buffer[10];
+        sprintf (buffer, "%d", a );
+        return buffer;
+    }
+    virtual double toDouble (Tag* t, int ofs){
+        int a;
+        if (t->getCount() == 1) a = t->toInt(0, SLONG) / 256; // int32u
+        else                    a = t->toInt(0, SBYTE) / 6;   // int8u[2]
+        return double(a);
+    }
+};
+PAFlashExposureCompInterpreter paFlashExposureCompInterpreter;
 
 class PAFocalLengthInterpreter: public Interpreter {
 public:
@@ -895,20 +1185,37 @@ public:
 };
 PALensDataFocalLengthInterpreter paLensDataFocalLengthInterpreter;
 
-class PAMaxApertureInterpreter: public Interpreter {
-	public:
-	   PAMaxApertureInterpreter(){}
+class PAISOfInterpreter: public Interpreter {
+    public:
+       PAISOfInterpreter(){}
        virtual std::string toString (Tag* t){
-    	   int a = t->toInt(0,BYTE);
-    	   a &= 0x7F;
-    	   if(a>1){
-    		  char buffer[32];
-    		  double v = pow(2.0, (a-1)/32.0);
-    		  if( v < 0. || v > 1000. ) return "undef";
-              sprintf (buffer, "%.1f", v );
-              return buffer;
-    	   }else
-    		  return "n/a";
+           int a = t->toInt(0,BYTE);
+           char buffer[32];
+           double v = 100.*exp(double(a-32)*log(2.)/8.);
+           sprintf (buffer, "%.1f", v );
+           return buffer;
+       }
+       virtual double toDouble (Tag* t, int ofs){
+           int a = t->toInt(0,BYTE);
+           return 100.*exp(double(a-32)*log(2.)/8.);
+       }
+};
+PAISOfInterpreter paISOfInterpreter;
+
+class PAMaxApertureInterpreter: public Interpreter {
+    public:
+       PAMaxApertureInterpreter(){}
+       virtual std::string toString (Tag* t){
+           int a = t->toInt(0,BYTE);
+           a &= 0x7F;
+           if(a>1){
+               char buffer[32];
+               double v = pow(2.0, (a-1)/32.0);
+               if( v < 0. || v > 1000. ) return "undef";
+               sprintf (buffer, "%.1f", v );
+               return buffer;
+           }else
+               return "n/a";
        }
        virtual double toDouble (Tag* t, int ofs){
            int a = t->toInt(0,BYTE);
@@ -920,6 +1227,74 @@ class PAMaxApertureInterpreter: public Interpreter {
        }
 };
 PAMaxApertureInterpreter paMaxApertureInterpreter;
+
+class PAAEXvInterpreter: public Interpreter {
+    public:
+       PAAEXvInterpreter(){}
+       virtual std::string toString (Tag* t){
+           int a = t->toInt(0,BYTE);
+           char buffer[32];
+           double v = double(a-64)/8.;
+           sprintf (buffer, "%.1f", v );
+           return buffer;
+       }
+       virtual double toDouble (Tag* t, int ofs){
+           int a = t->toInt(0,BYTE);
+           return double(a-64)/8.;
+       }
+};
+PAAEXvInterpreter paAEXvInterpreter;
+
+class PAAEBXvInterpreter: public Interpreter {
+    public:
+       PAAEBXvInterpreter(){}
+       virtual std::string toString (Tag* t){
+           int a = t->toInt(0,SBYTE);
+           char buffer[32];
+           double v = double(a)/8.;
+           sprintf (buffer, "%.1f", v );
+           return buffer;
+       }
+       virtual double toDouble (Tag* t, int ofs){
+           int a = t->toInt(0,SBYTE);
+           return double(a)/8.;
+       }
+};
+PAAEBXvInterpreter paAEBXvInterpreter;
+
+class PAApertureInterpreter: public Interpreter {
+    public:
+       PAApertureInterpreter(){}
+       virtual std::string toString (Tag* t){
+           int a = t->toInt(0,BYTE);
+           char buffer[32];
+           double v = exp((double(a)-68.)*log(2.)/16.);
+           sprintf (buffer, "%.1f", v );
+           return buffer;
+       }
+       virtual double toDouble (Tag* t, int ofs){
+           int a = t->toInt(0,BYTE);
+           return exp((double(a)-68.)*log(2.)/16.);
+       }
+};
+PAApertureInterpreter paApertureInterpreter;
+
+class PAExposureTimeInterpreter: public Interpreter {
+    public:
+       PAExposureTimeInterpreter(){}
+       virtual std::string toString (Tag* t){
+           int a = t->toInt(0,BYTE);
+           char buffer[32];
+           double v = 24.*exp(-(double(a)-32.)*log(2.)/8.);
+           sprintf (buffer, "%.6f", v );
+           return buffer;
+       }
+       virtual double toDouble (Tag* t, int ofs){
+           int a = t->toInt(0,BYTE);
+           return 24.*exp(-(double(a)-32.)*log(2.)/8.);
+       }
+};
+PAExposureTimeInterpreter paExposureTimeInterpreter;
 
 class PANominalMinApertureInterpreter: public Interpreter {
 public:
@@ -1311,7 +1686,7 @@ const TagAttrib pentaxAttribs[] = {
  {0, AC_WRITE,  0, 0, 0x0047, AUTO, "CameraTemperature", &stdInterpreter},
  {0, AC_WRITE,  0, 0, 0x0048, AUTO, "AELock", &paOnOffInterpreter},
  {0, AC_WRITE,  0, 0, 0x0049, AUTO, "NoiseReduction", &paOnOffInterpreter},
- {0, AC_WRITE,  0, 0, 0x004d, AUTO, "FlashExposureComp", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x004d, AUTO, "FlashExposureComp", &paFlashExposureCompInterpreter},
  {0, AC_WRITE,  0, 0, 0x004f, AUTO, "ImageTone", &stdInterpreter},
  {0, AC_WRITE,  0, 0, 0x0050, AUTO, "ColorTemperature", &stdInterpreter},
  {0, AC_WRITE,  0, pentaxSRInfoAttribs, 0x005c, AUTO, "ShakeReductionInfo", &stdInterpreter},
@@ -1319,6 +1694,19 @@ const TagAttrib pentaxAttribs[] = {
  {0, AC_WRITE,  0, 0, 0x0069, AUTO, "DynamicRangeExpansion", &paOnOffInterpreter},
  {0, AC_WRITE,  0, 0, 0x0071, AUTO, "HighISONoiseReduction", &paHighISONoiseInterpreter},
  {0, AC_WRITE,  0, 0, 0x0072, AUTO, "AFAdjustment", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0073, AUTO, "MonochromeFilterEffect", &paMonochromeFilterEffectInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0074, AUTO, "MonochromeToning", &paMonochromeToningInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0076, AUTO, "FaceDetect", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0077, AUTO, "FaceDetectFrameSize", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0079, AUTO, "ShadowCorrection", &paShadowCorrectionInterpreter},
+ {0, AC_WRITE,  0, 0, 0x007a, AUTO, "ISOAutoParameters", &paISOAutoParametersInterpreter},
+ {0, AC_WRITE,  0, 0, 0x007b, AUTO, "CrossProcess", &paCrossProcessInterpreter},
+ {0, AC_WRITE,  0, pentaxLensCorrAttribs, 0x007d, AUTO, "LensCorr", &stdInterpreter},
+ {0, AC_WRITE,  0, 0, 0x007f, AUTO, "BleachBypassToning", &paBleachBypassToningInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0082, AUTO, "BlurControl", &paBlurControlInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0085, AUTO, "HDR", &paHDRInterpreter},
+ {0, AC_WRITE,  0, 0, 0x0088, AUTO, "NeutralDensityFilter", &paOnOffInterpreter},
+ {0, AC_WRITE,  0, 0, 0x008b, AUTO, "ISO", &stdInterpreter},
  {0, AC_WRITE,  0, 0, 0x0200, AUTO, "BlackPoint", &stdInterpreter},
  {0, AC_WRITE,  0, 0, 0x0201, AUTO, "WhitePoint", &stdInterpreter},
  {0, AC_WRITE,  0, 0, 0x0203, AUTO, "ColorMatrixA", &stdInterpreter},
@@ -1352,9 +1740,14 @@ const TagAttrib pentaxAttribs[] = {
 
 const TagAttrib pentaxSRInfoAttribs[] = {
  {0, AC_WRITE, 0, 0,  0, AUTO, "SRResult", &paSRResultInterpreter},
- {0, AC_WRITE, 0, 0,  1, AUTO, "ShakeReduction", &paOnOffInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "ShakeReduction", &paShakeReductionInterpreter},
  {0, AC_WRITE, 0, 0,  2, AUTO, "SRHalfPressTime", &stdInterpreter},
  {0, AC_WRITE, 0, 0,  3, AUTO, "SRFocalLength", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
+
+const TagAttrib pentaxSRInfo2Attribs[] = {
+ {0, AC_WRITE, 0, 0,  0, AUTO, "SRResult", &paSRResultInterpreter},    // assuming it's the same interpreter, but that's not sure
+ {0, AC_WRITE, 0, 0,  1, AUTO, "ShakeReduction", &paShakeReduction2Interpreter},
  {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxLensDataAttribs[] = {
@@ -1367,6 +1760,12 @@ const TagAttrib pentaxLensDataAttribs[] = {
 const TagAttrib pentaxLensInfoQAttribs[] = {
  {0, AC_WRITE, 0, 0, 12, AUTO, "LensModel", &paLensModelQInterpreter},
  {0, AC_WRITE, 0, 0, 42, AUTO, "LensInfo", &paLensInfoQInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
+
+const TagAttrib pentaxLensCorrAttribs[] = {
+ {0, AC_WRITE, 0, 0, 0, AUTO, "DistortionCorrection", &paOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 1, AUTO, "ChromaticAberrationCorrection", &paOnOffInterpreter},
+ {0, AC_WRITE, 0, 0, 2, AUTO, "VignettingCorrection", &paOnOffInterpreter},
  {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxCameraSettingsAttribs[] = {
@@ -1386,18 +1785,43 @@ const TagAttrib pentaxCameraSettingsAttribs[] = {
  {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxAEInfoAttribs[] = {
- {0, AC_WRITE, 0, 0,  0, AUTO, "AEExposureTime", &stdInterpreter},
- {0, AC_WRITE, 0, 0,  1, AUTO, "AEAperture", &stdInterpreter},
- {0, AC_WRITE, 0, 0,  2, AUTO, "AE_ISO", &stdInterpreter},
- {0, AC_WRITE, 0, 0,  3, AUTO, "AEXv", &stdInterpreter},
- {0, AC_WRITE, 0, 0,  4, AUTO, "AEBXv", &stdInterpreter},
- {0, AC_WRITE, 0, 0,  5, AUTO, "AEMinExposureTime", &stdInterpreter},
- {0, AC_WRITE, 0, 0,  6, AUTO, "AEProgramMode", &stdInterpreter},
- {0, AC_WRITE, 0, 0,  9, AUTO, "AEMaxAperture", &stdInterpreter},
- {0, AC_WRITE, 0, 0, 10, AUTO, "AEMaxAperture2", &stdInterpreter},
- {0, AC_WRITE, 0, 0, 11, AUTO, "AEMinAperture", &stdInterpreter},
+ {0, AC_WRITE, 0, 0,  0, AUTO, "AEExposureTime", &paExposureTimeInterpreter},
+ {0, AC_WRITE, 0, 0,  1, AUTO, "AEAperture", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0,  2, AUTO, "AE_ISO", &paISOfInterpreter},
+ {0, AC_WRITE, 0, 0,  3, AUTO, "AEXv", &paAEXvInterpreter},
+ {0, AC_WRITE, 0, 0,  4,SBYTE, "AEBXv", &paAEBXvInterpreter},
+ {0, AC_WRITE, 0, 0,  5, AUTO, "AEMinExposureTime", &paExposureTimeInterpreter},
+ {0, AC_WRITE, 0, 0,  6, AUTO, "AEProgramMode", &paAEProgramModeInterpreter},
+ {0, AC_WRITE, 0, 0,  9, AUTO, "AEMaxAperture", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 10, AUTO, "AEMaxAperture2", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 11, AUTO, "AEMinAperture", &paApertureInterpreter},
  {0, AC_WRITE, 0, 0, 12, AUTO, "AEMeteringMode", &stdInterpreter},
- {0, AC_WRITE, 0, 0, 14, AUTO, "FlashExposureCompSet", &stdInterpreter},
+ {0, AC_WRITE, 0, 0, 14,SBYTE, "FlashExposureCompSet", &stdInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
+
+const TagAttrib pentaxAEInfo2Attribs[] = {
+ {0, AC_WRITE, 0, 0,  2, AUTO, "AEExposureTime", &paExposureTimeInterpreter},
+ {0, AC_WRITE, 0, 0,  3, AUTO, "AEAperture", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0,  4, AUTO, "AE_ISO", &paISOfInterpreter},
+ {0, AC_WRITE, 0, 0,  5, AUTO, "AEXv", &paAEXvInterpreter},
+ {0, AC_WRITE, 0, 0,  6,SBYTE, "AEBXv", &paAEBXvInterpreter},
+ {0, AC_WRITE, 0, 0,  8,SBYTE, "AEError", &stdInterpreter},
+ //{0, AC_WRITE, 0, 0, 11, AUTO, "AEApertureSteps", &},
+ {0, AC_WRITE, 0, 0, 15, AUTO, "SceneMode", &paSceneModeInterpreter},
+ {0, AC_WRITE, 0, 0, 16, AUTO, "AEMaxAperture", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 17, AUTO, "AEMaxAperture2", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 18, AUTO, "AEMinAperture", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 19, AUTO, "AEMinExposureTime", &paExposureTimeInterpreter},
+ {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
+
+const TagAttrib pentaxAEInfo3Attribs[] = {
+ {0, AC_WRITE, 0, 0, 16, AUTO, "AEExposureTime", &paExposureTimeInterpreter},
+ {0, AC_WRITE, 0, 0, 17, AUTO, "AEAperture", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 18, AUTO, "AE_ISO", &paISOfInterpreter},
+ {0, AC_WRITE, 0, 0, 28, AUTO, "AEMaxAperture", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 29, AUTO, "AEMaxAperture2", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 30, AUTO, "AEMinAperture", &paApertureInterpreter},
+ {0, AC_WRITE, 0, 0, 31, AUTO, "AEMinExposureTime", &paExposureTimeInterpreter},
  {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};
 
 const TagAttrib pentaxFlashInfoAttribs[] = {
