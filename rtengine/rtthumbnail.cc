@@ -162,7 +162,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     // did we succeed?
     if ( err ) 
     {
-        printf("loadfromMemory: error\n");
+        printf("Could not extract thumb from %s\n",fname.data());
         delete img;
         delete ri;
         return NULL;
