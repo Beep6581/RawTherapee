@@ -105,9 +105,10 @@ class MyFlatCurve : public MyCurve {
 		void movePoint(bool moveX, bool moveY);
 		void defaultCurve (double iVal=0.5);
 		void interpolate ();
-		void getCursorPosition(GdkEvent* event);
+		void getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifier);
 		void getMouseOverArea ();
 		bool getHandles(int n);
+		CursorShape motionNotify(CursorShape type, double minDistanceX, double minDistanceY, int num);
 		std::vector<double> get_vector (int veclen);
 
 	public:
@@ -120,6 +121,11 @@ class MyFlatCurve : public MyCurve {
 		bool handleEvents (GdkEvent* event);
 		void reset (double identityValue=0.5);
 		//void updateBackgroundHistogram (unsigned int* hist);
+
+		void pipetteMouseOver (EditDataProvider *provider, int modifierKey);
+		void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
+		void pipetteButton1Released(EditDataProvider *provider);
+		void pipetteDrag(EditDataProvider *provider, int modifierKey);
 };
 
 #endif

@@ -204,11 +204,11 @@ bool ImageArea::on_expose_event(GdkEventExpose* event) {
 bool ImageArea::on_motion_notify_event (GdkEventMotion* event) {
 
     if (focusGrabber) 
-        focusGrabber->pointerMoved (event->x, event->y);
+        focusGrabber->pointerMoved (event->state, event->x, event->y);
     else {
         CropWindow* cw = getCropWindow (event->x, event->y);
         if (cw) 
-            cw->pointerMoved (event->x, event->y);
+            cw->pointerMoved (event->state, event->x, event->y);
     }
     return true;
 }
@@ -256,6 +256,52 @@ bool ImageArea::on_button_release_event (GdkEventButton* event) {
     return true;
 }
 
+bool ImageArea::on_leave_notify_event  (GdkEventCrossing* event) {
+    if (focusGrabber)
+        focusGrabber->leaveNotify (event);
+    else {
+    	printf("ImageArea::1\n");
+        CropWindow* cw = getCropWindow (event->x, event->y);
+        if (cw) {
+        	printf("ImageArea::appel\n");
+            cw->leaveNotify (event);
+        }
+    }
+    return true;
+}
+
+void ImageArea::subscribe(EditSubscriber *subscriber) {
+    mainCropWindow->cropHandler.setEditSubscriber(subscriber);
+    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+        (*i)->cropHandler.setEditSubscriber(subscriber);
+
+    EditDataProvider::subscribe(subscriber);
+
+    if (listener && listener->getToolBar())
+        listener->getToolBar()->startEditMode ();
+}
+
+
+void ImageArea::unsubscribe() {
+    EditDataProvider::unsubscribe();
+    // Ask the Crops to free-up edit mode buffers
+    mainCropWindow->cropHandler.setEditSubscriber(NULL);
+    for (std::list<CropWindow*>::iterator i=cropWins.begin(); i!=cropWins.end(); i++)
+        (*i)->cropHandler.setEditSubscriber(NULL);
+    setToolHand();
+
+    if (listener && listener->getToolBar())
+        listener->getToolBar()->stopEditMode ();
+}
+
+void ImageArea::getImageSize (int &w, int&h) {
+    if (ipc) {
+        w = ipc->getFullWidth();
+        h = ipc->getFullHeight();
+    }
+    else
+        w = h = 0;
+}
 
 void ImageArea::grabFocus (CropWindow* cw) {
     
@@ -469,8 +515,9 @@ ToolMode ImageArea::getToolMode () {
 
 void ImageArea::setToolHand () { 
     
-    if (listener && listener->getToolBar())
-        listener->getToolBar()->setTool (TMHand); 
+    if (listener && listener->getToolBar()) {
+        listener->getToolBar()->setTool (TMHand);
+    }
 }
 
 int ImageArea::getSpotWBRectSize  () { 

@@ -23,7 +23,6 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-extern Glib::ustring argv0;
 extern Options options;
 
 class RefreshSpinHelper {
@@ -431,6 +430,10 @@ void Crop::trim (ProcParams* pp, int ow, int oh) {
 			pp->crop.fixratio = false;
 		}
 	}
+}
+
+bool Crop::inImageArea (int x, int y) {
+	return x>=0 && x<maxw && y>=0 && y<maxh;
 }
 
 void Crop::selectPressed () {

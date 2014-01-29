@@ -21,11 +21,13 @@
 
 #include "../rtengine/rtengine.h"
 #include "threadutils.h"
+#include "edit.h"
 #include <gtkmm.h>
 
 class CropHandlerListener {
 
     public:
+        virtual ~CropHandlerListener() {}
         virtual void cropImageUpdated    () {}
         virtual void cropWindowChanged   () {}
         virtual void initialImageArrived () {}
@@ -78,6 +80,7 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
         ~CropHandler ();
 
         void    setCropHandlerListener (CropHandlerListener* l) { listener = l; }
+        void    setEditSubscriber      (EditSubscriber* newSubscriber);
 
         void    newImage    (rtengine::StagedImageProcessor* ipc_);
         void    setZoom     (int z, int centerx=-1, int centery=-1);
@@ -91,6 +94,8 @@ class CropHandler : public rtengine::DetailedCropListener, public rtengine::Size
 
         void    setEnabled (bool e);
         bool    getEnabled ();
+
+        rtengine::DetailedCrop* getCrop() { return crop; }
 
         // DetailedCropListener interface
         void    setDetailedCrop (rtengine::IImage8* im, rtengine::IImage8* imworking,rtengine::procparams::ColorManagementParams cmp,

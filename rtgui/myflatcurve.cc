@@ -166,8 +166,47 @@ void MyFlatCurve::draw () {
 
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
+    // draw the pipette values
+    if (pipetteR > -1.f || pipetteG > -1.f || pipetteB > -1.f) {
+        cr->set_line_width (0.75);
+        cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+        int n=0;
+        if (pipetteR > -1.f) ++n;
+        if (pipetteG > -1.f) ++n;
+        if (pipetteB > -1.f) ++n;
+
+        if (n > 1) {
+            if (pipetteR > -1.f) {
+                cr->set_source_rgba (1., 0., 0., 0.5); // WARNING: assuming that red values are stored in pipetteR, which might not be the case!
+                cr->move_to (double(graphX)+1.5 + double(graphW-3)*pipetteR, double(graphY)-1.5);
+                cr->rel_line_to (0, double(-graphH+3));
+                cr->stroke ();
+            }
+            if (pipetteG > -1.f) {
+                cr->set_source_rgba (0., 1., 0., 0.5); // WARNING: assuming that green values are stored in pipetteG, which might not be the case!
+                cr->move_to (double(graphX)+1.5 + double(graphW-3)*pipetteG, double(graphY)-1.5);
+                cr->rel_line_to (0, double(-graphH+3));
+                cr->stroke ();
+            }
+            if (pipetteB > -1.f) {
+                cr->set_source_rgba (0., 0., 1., 0.5); // WARNING: assuming that blue values are stored in pipetteB, which might not be the case!
+                cr->move_to (double(graphX)+1.5 + double(graphW-3)*pipetteB, double(graphY)-1.5);
+                cr->rel_line_to (0, double(-graphH+3));
+                cr->stroke ();
+            }
+        }
+        if (pipetteVal > -1.f) {
+            cr->set_line_width (2.);
+            c = style->get_fg (state);
+            cr->set_source_rgb (c.get_red_p(), c.get_green_p(), c.get_blue_p());
+            cr->move_to (double(graphX)+1.5 + double(graphW-3)*pipetteVal, double(graphY)-1.5);
+            cr->rel_line_to (0, double(-graphH+3));
+            cr->stroke ();
+            cr->set_line_width (1.);
+        }
+    }
     // draw the color feedback of the control points
-    if (colorProvider) {
+    else if (colorProvider) {
 
         //if (curve.type!=FCT_Parametric)
             for (int i=0; i<(int)curve.x.size(); ++i) {
@@ -424,7 +463,6 @@ bool MyFlatCurve::getHandles(int n) {
 bool MyFlatCurve::handleEvents (GdkEvent* event) {
 
 	CursorShape new_type = cursor_type;
-	int src, dst;
 	std::vector<double>::iterator itx, ity, itlt, itrt;
 
 	snapToElmt = -100;
@@ -434,11 +472,11 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 	/* graphW and graphH are the size of the graph */
 	calcDimensions();
 
-	minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
-	minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
-
 	if ((graphW < 0) || (graphH < 0))
 		return false;
+
+	minDistanceX = double(MIN_DISTANCE) / double(graphW-1);
+	minDistanceY = double(MIN_DISTANCE) / double(graphH-1);
 
 	switch (event->type) {
 	case Gdk::CONFIGURE: {
@@ -477,7 +515,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				add_modal_grab ();
 
 				// get the pointer position
-				getCursorPosition(event);
+				getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
 				getMouseOverArea();
 
 				// hide the tangent handles
@@ -563,8 +601,8 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 	case Gdk::BUTTON_RELEASE:
 		//if (curve.type!=FCT_Parametric) {
 			if (buttonPressed && event->button.button == 1) {
+				int src, dst;
 				buttonPressed = false;
-				enum MouseOverAreas prevArea = area;
 				remove_modal_grab ();
 
 				// Removing any deleted point if we were previously modifying the point position
@@ -607,7 +645,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 				lit_point = -1;
 
 				// get the pointer position
-				getCursorPosition(event);
+				getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
 				getMouseOverArea();
 
 				switch (area) {
@@ -659,7 +697,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 			snapToElmt = -100;
 
 			// get the pointer position
-			getCursorPosition(event);
+			getCursorPosition(Gdk::EventType(event->type), event->motion.is_hint!=0, int(event->button.x), int(event->button.y), Gdk::ModifierType(event->button.state));
 			getMouseOverArea();
 
 			if (editedHandle == FCT_EditedHandle_CPointUD) {
@@ -852,6 +890,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 			new_type = CSArrow;
 			lit_point = -1;
 			tanHandlesDisplayed = false;
+			pipetteR = pipetteG = pipetteB = -1.f;
 			setDirty(true);
 			draw ();
 		}
@@ -866,6 +905,165 @@ bool MyFlatCurve::handleEvents (GdkEvent* event) {
 		cursorManager.setCursor(cursor_type);
 	}
 	return retval;
+}
+
+void MyFlatCurve::pipetteMouseOver (EditDataProvider *provider, int modifierKey) {
+	if (!provider) {
+		// occurs when leaving the preview area -> cleanup the curve editor
+		pipetteR = pipetteG = pipetteB = -1.f;
+		lit_point = -1;
+		return;
+	}
+
+	pipetteR = provider->pipetteVal[0];
+	pipetteG = provider->pipetteVal[1];
+	pipetteB = provider->pipetteVal[2];
+	pipetteVal = 0.f;
+	int n = 0;
+	if (pipetteR != -1.f) {
+		pipetteVal += pipetteR;
+		++n;
+	}
+	if (pipetteG != -1.f) {
+		pipetteVal += pipetteG;
+		++n;
+	}
+	if (pipetteB != -1.f) {
+		pipetteVal += pipetteB;
+		++n;
+	}
+	if (n>1)
+		pipetteVal /= n;
+	else if (!n)
+		pipetteVal = -1.f;
+
+	snapToElmt = -100;
+
+	/* graphW and graphH are the size of the graph */
+	calcDimensions();
+
+	if ((graphW < 0) || (graphH < 0))
+		return;
+
+	int previous_lit_point = lit_point;
+
+	// hide the handles
+	tanHandlesDisplayed = false;
+
+	// get the pointer position
+	int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
+	getCursorPosition(Gdk::EventType(Gdk::BUTTON_PRESS), false, px, graphY, Gdk::ModifierType(modifierKey));
+	getMouseOverArea();
+
+	if (area==FCT_Area_Point)
+		area = FCT_Area_V;
+
+	snapToMinDistY = snapToMinDistX = 10.;
+	snapToValY = snapToValX = 0.;
+
+	if (editedHandle==FCT_EditedHandle_None && lit_point != previous_lit_point) {
+		setDirty(true);
+		draw ();
+	}
+}
+
+void MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) {
+	buttonPressed = true;
+
+	// get the pointer position
+	int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
+	getCursorPosition(Gdk::EventType(Gdk::BUTTON_PRESS), false, px, graphY, Gdk::ModifierType(modifierKey));
+	getMouseOverArea();
+
+	// hide the tangent handles
+	tanHandlesDisplayed = false;
+
+	// Action on BUTTON_PRESS and no edited point
+	switch (area) {
+
+	case (FCT_Area_Insertion):
+	{
+		rtengine::FlatCurve rtCurve(getPoints(), 200);
+
+		std::vector<double>::iterator itx, ity, itlt, itrt;
+		int num = (int)curve.x.size();
+
+		/* insert a new control point */
+		if (num > 0) {
+			if (clampedX > curve.x[closest_point])
+				++closest_point;
+		}
+		itx = curve.x.begin();
+		ity = curve.y.begin();
+		itlt = curve.leftTangent.begin();
+		itrt = curve.rightTangent.begin();
+		for (int i=0; i<closest_point; i++) { itx++; ity++; itlt++; itrt++; }
+		curve.x.insert (itx, 0);
+		curve.y.insert (ity, 0);
+		curve.leftTangent.insert (itlt, 0);
+		curve.rightTangent.insert (itrt, 0);
+		num++;
+
+		// the graph is refreshed only if a new point is created
+		curve.x[closest_point] = clampedX;
+		curve.y[closest_point] = clampedY = rtCurve.getVal(pipetteVal);
+		curve.leftTangent[closest_point] = 0.35;
+		curve.rightTangent[closest_point] = 0.35;
+
+		curveIsDirty = true;
+		setDirty(true);
+		draw ();
+		notifyListener ();
+
+		lit_point = closest_point;
+
+		// point automatically activated
+		editedHandle = FCT_EditedHandle_CPointY;
+		ugpX = curve.x[lit_point];
+		ugpY = curve.y[lit_point];
+		break;
+	}
+	case (FCT_Area_V):
+		editedHandle = FCT_EditedHandle_CPointY;
+		ugpX = curve.x[lit_point];
+		ugpY = curve.y[lit_point];
+		break;
+	default:
+		break;
+	}
+
+}
+
+void MyFlatCurve::pipetteButton1Released(EditDataProvider *provider) {
+	buttonPressed = false;
+	remove_modal_grab ();
+
+	editedHandle = FCT_EditedHandle_None;
+	lit_point = -1;
+
+	// get the pointer position
+	int px = graphX + int(float(graphW)*pipetteVal);  // WARNING: converting pipetteVal from float to int, precision loss here!
+	getCursorPosition(Gdk::EventType(Gdk::BUTTON_PRESS), false, px, graphY, Gdk::ModifierType(0));
+	getMouseOverArea();
+
+	setDirty(true);
+	draw ();
+	//notifyListener ();
+}
+
+void MyFlatCurve::pipetteDrag(EditDataProvider *provider, int modifierKey) {
+
+	snapToMinDistY = snapToMinDistX = 10.;
+	snapToValY = snapToValX = 0.;
+	snapToElmt = -100;
+
+	// get the pointer position
+	getCursorPosition(Gdk::MOTION_NOTIFY, false, cursorX+graphX, graphY+provider->deltaScreen.y, Gdk::ModifierType(modifierKey));
+	getMouseOverArea();
+
+	if (editedHandle == FCT_EditedHandle_CPointY) {
+		movePoint(false, true);
+	}
 }
 
 void MyFlatCurve::movePoint(bool moveX, bool moveY) {
@@ -1055,28 +1253,28 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY) {
 }
 
 // Set datas relative to cursor position
-void MyFlatCurve::getCursorPosition(GdkEvent* event) {
+void MyFlatCurve::getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifierKey) {
 	int tx, ty;
 	int prevCursorX, prevCursorY;
 	double incrementX = 1. / double(graphW);
 	double incrementY = 1. / double(graphH);
 
-	switch (event->type) {
+	switch (evType) {
 	case (Gdk::MOTION_NOTIFY) :
-		if (event->motion.is_hint) {
+		if (isHint) {
 			get_window()->get_pointer (tx, ty, mod_type);
 		}
 		else {
-			tx = (int)event->button.x;
-			ty = (int)event->button.y;
-			mod_type = (Gdk::ModifierType)event->button.state;
+			tx = evX;
+			ty = evY;
+			mod_type = modifierKey;
 		}
 		break;
 	case (Gdk::BUTTON_PRESS) :
 	case (Gdk::BUTTON_RELEASE) :
-		tx = (int)event->button.x;
-		ty = (int)event->button.y;
-		mod_type = (Gdk::ModifierType)event->button.state;
+		tx = evX;
+		ty = evY;
+		mod_type = modifierKey;
 		break;
 	default :
 		// The cursor position is not available
@@ -1170,6 +1368,7 @@ void MyFlatCurve::getMouseOverArea () {
 				}
 			}
 		}
+
 		if (minDist <= minDistanceX) {
 			// the cursor is over the point
 			area = FCT_Area_Point;

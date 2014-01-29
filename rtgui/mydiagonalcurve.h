@@ -65,8 +65,9 @@ class MyDiagonalCurve : public MyCurve {
 		bool bghistvalid;
 		void draw (int handle);
 		void interpolate ();
-		void getCursorPosition(GdkEvent* event);
+		void getCursorPosition(Gdk::EventType evType, bool isHint, int evX, int evY, Gdk::ModifierType modifierKey);
 		void findClosestPoint();
+		CursorShape motionNotify(CursorShape type, double minDistanceX, double minDistanceY, int num);
 		std::vector<double> get_vector (int veclen);
 
 	public:
@@ -79,6 +80,11 @@ class MyDiagonalCurve : public MyCurve {
 		void setActiveParam (int ac);
 		void reset (double identityValue=0.5);
 		void updateBackgroundHistogram (LUTu & hist);
+
+		void pipetteMouseOver (EditDataProvider *provider, int modifierKey);
+		void pipetteButton1Pressed(EditDataProvider *provider, int modifierKey);
+		void pipetteButton1Released(EditDataProvider *provider);
+		void pipetteDrag(EditDataProvider *provider, int modifierKey);
 };
 
 #endif

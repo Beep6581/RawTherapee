@@ -132,6 +132,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::VSeparator* vsepz4 = Gtk::manage (new Gtk::VSeparator ());
 
     iareapanel = new ImageAreaPanel ();
+    tpc->setEditProvider(iareapanel->imageArea);
 
     Gtk::HBox* toolBarPanel = Gtk::manage (new Gtk::HBox ());
     toolBarPanel->pack_start (*hidehp, Gtk::PACK_SHRINK, 1);

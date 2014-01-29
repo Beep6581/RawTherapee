@@ -21,7 +21,7 @@
 #include <cstring>
 #include <gdkmm/types.h>
 
-MyCurve::MyCurve () : listener(NULL) {
+MyCurve::MyCurve () : pipetteR(-1.f), pipetteG(-1.f), pipetteB(-1.f), pipetteVal(-1.f), listener(NULL) {
 
     cursor_type = CSArrow;
     graphX = get_allocation().get_width() - RADIUS * 2;
