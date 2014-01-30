@@ -130,13 +130,13 @@ Radius=40
 Enabled=false
 Degree=0
 Feather=25
-Strength=0
+Strength=0.6
 CenterX=0
 CenterY=0
 
 [PCVignette]
 Enabled=false
-Strength=0
+Strength=0.6
 Feather=50
 Roundness=50
 
