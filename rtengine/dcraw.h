@@ -55,7 +55,7 @@ public:
     ,RT_whitelevel_from_constant(0)
     ,RT_blacklevel_from_constant(0)
     ,RT_matrix_from_constant(0)
-    ,use_auto_wb(0),use_camera_wb(0),use_camera_matrix(-1)
+    ,use_auto_wb(0),use_camera_wb(0),use_camera_matrix(1)
     ,output_color(1),output_bps(8),output_tiff(0),med_passes(0),no_auto_bright(0)
 	,getbithuff(this,ifp,zero_after_ff)
 	,ph1_bithuff(this,ifp,order)	
@@ -84,7 +84,7 @@ protected:
     unsigned thumb_length, meta_length, profile_length;
     unsigned thumb_misc, *oprof, fuji_layout, shot_select, multi_out;
     unsigned tiff_nifds, tiff_samples, tiff_bps, tiff_compress;
-    unsigned black, cblack[4], maximum, mix_green, raw_color, zero_is_bad;
+    unsigned black, cblack[4102], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags;
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
@@ -333,7 +333,7 @@ void bad_pixels (const char *cfname);
 void subtract (const char *fname);
 void gamma_curve (double pwr, double ts, int mode, int imax);
 void pseudoinverse (double (*in)[3], double (*out)[3], int size);
-void cam_xyz_coeff (double cam_xyz[4][3]);
+void cam_xyz_coeff (float rgb_cam[3][4], double cam_xyz[4][3]);
 void hat_transform (float *temp, float *base, int st, int size, int sc);
 void wavelet_denoise();
 void scale_colors();
