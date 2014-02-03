@@ -384,6 +384,8 @@ class BlackWhiteParamsEdited {
         bool afterCurve;
         bool afterCurveMode;
         bool autoc;
+		bool algo;
+		
 };
 
 class CACorrParamsEdited {

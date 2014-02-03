@@ -243,6 +243,7 @@ void ParamsEdited::set (bool v) {
 	blackwhite.afterCurve      = v;
 	blackwhite.afterCurveMode  = v;
 	blackwhite.autoc    = v;
+	blackwhite.algo    = v;
 
 	resize.scale     = v;
 	resize.appliesTo = v;
@@ -528,6 +529,7 @@ void ParamsEdited::initFrom (const std::vector<rtengine::procparams::ProcParams>
         blackwhite.afterCurve = blackwhite.afterCurve && p.blackwhite.afterCurve == other.blackwhite.afterCurve;
         blackwhite.afterCurveMode = blackwhite.afterCurveMode && p.blackwhite.afterCurveMode == other.blackwhite.afterCurveMode;
         blackwhite.autoc = blackwhite.autoc && p.blackwhite.autoc == other.blackwhite.autoc;
+        blackwhite.algo = blackwhite.algo && p.blackwhite.algo == other.blackwhite.algo;
         resize.scale = resize.scale && p.resize.scale == other.resize.scale;
         resize.appliesTo = resize.appliesTo && p.resize.appliesTo == other.resize.appliesTo;
         resize.method = resize.method && p.resize.method == other.resize.method;
@@ -807,6 +809,7 @@ void ParamsEdited::combine (rtengine::procparams::ProcParams& toEdit, const rten
 	if (blackwhite.beforeCurveMode)	toEdit.blackwhite.beforeCurveMode	= mods.blackwhite.beforeCurveMode;
 	if (blackwhite.afterCurve)		toEdit.blackwhite.afterCurve		= mods.blackwhite.afterCurve;
 	if (blackwhite.afterCurveMode)	toEdit.blackwhite.afterCurveMode	= mods.blackwhite.afterCurveMode;
+	if (blackwhite.algo)			toEdit.blackwhite.algo				= mods.blackwhite.algo;
 	
 	if (resize.scale)		toEdit.resize.scale 	= mods.resize.scale;
 	if (resize.appliesTo)	toEdit.resize.appliesTo = mods.resize.appliesTo;
