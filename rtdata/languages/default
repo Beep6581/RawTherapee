@@ -456,6 +456,7 @@ HISTORY_MSG_247;'LH' curve
 HISTORY_MSG_248;'HH' curve
 HISTORY_MSG_249;CbDL - Threshold
 HISTORY_MSG_250;NR - Enhanced
+HISTORY_MSG_251;B&amp;W - Algorithm
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOTS;Snapshots
@@ -939,6 +940,10 @@ TP_BWMIX_TCMODE_STANDARD;B&W Standard
 TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
 TP_BWMIX_VAL;L
 TP_BWMIX_YELLOW;Yellow
+TP_BWMIX_ALGO;Algorithm OYCPM
+TP_BWMIX_ALGO_LI;Linear
+TP_BWMIX_ALGO_SP;Special effects
+TP_BWMIX_ALGO_TOOLTIP;Linear :will produce a normal linear response\nSpecial effects: will produce special effects by mixing non-linear channels
 TP_CACORRECTION_BLUE;Blue
 TP_CACORRECTION_LABEL;Chromatic Aberration Correction
 TP_CACORRECTION_RED;Red

@@ -649,6 +649,7 @@ class BlackWhiteParams {
         eTCModeId beforeCurveMode;
         std::vector<double> afterCurve;
         eTCModeId afterCurveMode;
+        Glib::ustring algo;
 
         std::vector<double> luminanceCurve;
         bool autoc;

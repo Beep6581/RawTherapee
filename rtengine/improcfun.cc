@@ -2731,7 +2731,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, LUTf & hltone
 				mixerCyan    = 33.f;
 			}
 
-			Color::computeBWMixerConstants(params->blackwhite.setting, params->blackwhite.filter,
+			Color::computeBWMixerConstants(params->blackwhite.setting, params->blackwhite.filter,params->blackwhite.algo,
 					bwr, bwg, bwb, mixerOrange, mixerYellow, mixerCyan, mixerPurple, mixerMagenta,
 					params->blackwhite.autoc, complem, kcorec, rrm, ggm, bbm);
 
@@ -3890,7 +3890,7 @@ fclose(f);*/
 
 		//diagnostics
 		//printf ("**************** AUTO LEVELS ****************\n");
-		
+		/*
 		if (settings->verbose) {
 			printf("sum=%i clip=%f clippable=%i  clipWh=%i  clipBl=%i\n",somm, clip, clippable,clipwh, clipbl);
 			printf ("expcomp1= %f   expcomp2= %f gain= %f  expcomp=%f\n",expcomp1,expcomp2,gain,expcomp);
@@ -3907,7 +3907,7 @@ fclose(f);*/
 			printf ("ospread= %f\n",ospread);
 			printf ("overexp= %i\n",overex);
 		}
-
+		*/
 		/*
 		 // %%%%%%%%%% LEGACY AUTOEXPOSURE CODE %%%%%%%%%%%%%
 		 // black point selection is based on the linear result (yielding better visual results)

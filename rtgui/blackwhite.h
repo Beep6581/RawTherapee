@@ -44,6 +44,10 @@ class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToo
 	Gtk::HBox*           autoHBox;
 	Gtk::Button*         neutral;
 	Gtk::Label*          RGBLabels;
+    MyComboBoxText*   algo;
+    sigc::connection  algoconn;
+	Gtk::Label*          alLabel;
+	Gtk::HBox*        algoHBox;
 
 	Adjuster *mixerRed;
 	Adjuster *mixerGreen;
@@ -125,9 +129,12 @@ class BlackWhite : public Gtk::VBox, public AdjusterListener, public FoldableToo
 	bool curveMode1Changed_  ();
 	void curveMode1Changed2  ();
 	bool curveMode1Changed2_ ();
+    void algoChanged         ();
 
 	Glib::ustring getSettingString ();
 	Glib::ustring getFilterString  ();
+	Glib::ustring getalgoString  ();
+	
 };
 
 #endif
