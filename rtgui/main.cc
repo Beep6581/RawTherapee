@@ -140,7 +140,13 @@ int main(int argc, char **argv)
   
    mainThread = Glib::Thread::self();
 
-   Options::load ();
+   if (!Options::load ()) {
+       Gtk::Main m(&argc, &argv);
+       Gtk::MessageDialog msgd ("Fatal error!\nThe RT_SETTINGS and/or RT_PATH environment variables are set, but use a relative path. The path must be absolute!", true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+       msgd.run ();
+       return -2;
+   }
+
    extProgStore->init();
    SoundManager::init();
 
