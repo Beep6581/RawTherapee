@@ -1094,34 +1094,56 @@ int Options::saveToFile (Glib::ustring fname) {
     }
 }
 
-void Options::load () {
+bool Options::load () {
 
-	// Find the application data path
+    // Find the application data path
 
-#ifdef WIN32
-	const gchar* dataPath;
-	Glib::ustring dPath;
+    const gchar* path;
+    Glib::ustring dPath;
 
-	dataPath = g_getenv("RT_CACHE");
-	if (dataPath != NULL)
-		rtdir = Glib::ustring(dataPath);
-	else {
+    path = g_getenv("RT_SETTINGS");
+    if (path != NULL) {
+        rtdir = Glib::ustring(path);
+        if (!Glib::path_is_absolute(rtdir))
+            return false;
+    }
+    else {
+        #ifdef WIN32
         WCHAR pathW[MAX_PATH]={0}; char pathA[MAX_PATH];
 
         if (SHGetSpecialFolderPathW(NULL,pathW,CSIDL_LOCAL_APPDATA,false)) {
             WideCharToMultiByte(CP_UTF8,0,pathW,-1,pathA,MAX_PATH,0,0);
             rtdir = Glib::build_filename(Glib::ustring(pathA), Glib::ustring(CACHEFOLDERNAME));
-		}
-	}
-#else
-    rtdir = Glib::build_filename(Glib::ustring(g_get_user_config_dir ()), Glib::ustring(CACHEFOLDERNAME));
-#endif
+        }
+        #else
+        rtdir = Glib::build_filename(Glib::ustring(g_get_user_config_dir ()), Glib::ustring(CACHEFOLDERNAME));
+        #endif
+    }
+
+    if (options.rtSettings.verbose)
+        printf("Settings directory (rtdir) = %s\n", rtdir.c_str());
 
     // Set the cache folder in RT's base folder
     cacheBaseDir = Glib::build_filename(argv0, "cache");
 
     // Read the global option file (the one located in the application's base folder)
     options.readFromFile (Glib::build_filename(argv0, "options"));
+
+    // Modify the path of the cache folder to the one provided in RT_CACHE environment variable
+    path = g_getenv("RT_CACHE");
+    if (path != NULL) {
+        cacheBaseDir = Glib::ustring(path);
+        if (!Glib::path_is_absolute(cacheBaseDir))
+            return false;
+    }
+    // No environment variable provided, so falling back to the multi user mode, is enabled
+    else if (options.multiUser) {
+        #ifdef WIN32
+        cacheBaseDir = Glib::build_filename(rtdir, "cache");
+        #else
+        cacheBaseDir = Glib::build_filename(Glib::ustring(g_get_user_cache_dir()), Glib::ustring(CACHEFOLDERNAME));
+        #endif
+    }
 
     // Check if RT is installed in Multi-User mode
     if (options.multiUser) {
@@ -1133,18 +1155,15 @@ void Options::load () {
             // Save the option file
             options.saveToFile (Glib::build_filename(rtdir, "options"));
         }
-        // Modify the path of the cache folder to the user's personal folder
-#ifdef WIN32
-        cacheBaseDir = Glib::build_filename(rtdir, "cache");
-#else
-        cacheBaseDir = Glib::build_filename(Glib::ustring(g_get_user_cache_dir()), Glib::ustring(CACHEFOLDERNAME));
-#endif
 
 #ifdef __APPLE__
         // make sure .local/share exists on OS X so we don't get problems with recently-used.xbel
         safe_g_mkdir_with_parents (g_get_user_data_dir(), 511);
 #endif
     }
+
+    if (options.rtSettings.verbose)
+        printf("Cache directory (cacheBaseDir) = %s\n", cacheBaseDir.c_str());
 
     // Update profile's path and recreate it if necessary
     options.updatePaths();
@@ -1212,6 +1231,8 @@ void Options::load () {
 	langMgr.load(localeTranslation, new MultiLangMgr(languageTranslation, new MultiLangMgr(defaultTranslation)));
 
 	rtengine::init (&options.rtSettings, argv0, rtdir);
+
+	return true;
 }
 
 void Options::save () {
