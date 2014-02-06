@@ -64,6 +64,7 @@ class LCurve : public Gtk::VBox, public AdjusterListener, public FoldableToolPan
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited=NULL);
     void setBatchMode   (bool batchMode);
     void autoOpenCurve  ();
+    void setEditProvider     (EditDataProvider *provider);
     void setAdjusterBehavior (bool bradd, bool contradd, bool satadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
 

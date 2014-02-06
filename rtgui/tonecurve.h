@@ -82,6 +82,7 @@ class ToneCurve : public Gtk::VBox, public AdjusterListener, public FoldableTool
     void setAdjusterBehavior (bool expadd, bool hlcompadd, bool hlcompthreshadd, bool bradd, bool blackadd, bool shcompadd, bool contradd, bool satadd);
     void trimValues          (rtengine::procparams::ProcParams* pp);
     void autoOpenCurve       ();
+    void setEditProvider     (EditDataProvider *provider);
 
 
     void adjusterChanged (Adjuster* a, double newval);

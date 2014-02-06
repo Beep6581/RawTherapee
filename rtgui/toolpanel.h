@@ -25,6 +25,7 @@
 #include "../rtengine/procparams.h"
 #include "multilangmgr.h"
 #include "paramsedited.h"
+#include "edit.h"
 
 class ToolPanel;
 class FoldableToolPanel;
@@ -54,6 +55,7 @@ class ToolPanel {
            Gtk::Box* getParent       () { return NULL; }
                 void setMultiImage   (bool m) { multiImage = m; }
                 void setListener     (ToolPanelListener* tpl) { listener = tpl; }
+        virtual void setEditProvider (EditDataProvider *provider) {}
         virtual void read            (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited=NULL) {}
         virtual void write           (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited=NULL) {}
         virtual void trimValues      (rtengine::procparams::ProcParams* pp) { return; }
