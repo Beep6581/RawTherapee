@@ -309,6 +309,7 @@ int processLineParams( int argc, char **argv )
 	bool useDefault=false;
 	unsigned int sideCarFilePos = 0;
 	int compression=100;
+	int subsampling=3;
 	int bits=-1;
 	std::string outputType = "";
 	unsigned errors=0;
@@ -359,8 +360,29 @@ int processLineParams( int argc, char **argv )
 				overwriteFiles =true;
 				break;
 			case 'j':
-				outputType = "jpg";
-				sscanf(&argv[iArg][2],"%d",&compression);
+				if (strlen(argv[iArg]) > 2 && argv[iArg][2] == 's') {
+					if (strlen(argv[iArg])==3) {
+						std::cerr << "Error: the -js switch requires a mandatory value!" << std::endl;
+						deleteProcParams(processingParams);
+						return -3;
+					}
+					// looking for the subsampling parameter
+					sscanf(&argv[iArg][3],"%d",&subsampling);
+					if (subsampling < 1 || subsampling > 3) {
+						std::cerr << "Error: the value accompanying the -js switch has to be in the [1-3] range!" << std::endl;
+						deleteProcParams(processingParams);
+						return -3;
+					}
+				}
+				else {
+					outputType = "jpg";
+					sscanf(&argv[iArg][2],"%d",&compression);
+					if (compression < 0 || compression > 100) {
+						std::cerr << "Error: the value accompanying the -j switch has to be in the [0-100] range!" << std::endl;
+						deleteProcParams(processingParams);
+						return -3;
+					}
+				}
 				break;
 			case 't':
 				outputType = "tif";
@@ -425,7 +447,11 @@ int processLineParams( int argc, char **argv )
         std::cout << "  -d               Use the default raw or non-raw " << pparamsExt << " file as set in" << std::endl;
         std::cout << "                   Preferences > Image Processing > Default Image Processing Parameters" << std::endl;
         std::cout << "  -j[1-100]        Specify output to be JPEG (on by default). Optionally add" << std::endl;
-        std::cout << "                   compression 1-100." << std::endl;
+        std::cout << "                   compression 1-100 (default value: 100)." << std::endl;
+        std::cout << "  -js1-3           Specify the JPEG subsampling parameter, where:" << std::endl;
+        std::cout << "                   1 = Best compression:         2x2, 1x1, 1x1 (4:1:1) - default of the JPEG library" << std::endl;
+        std::cout << "                   2 = Widely used normal ratio: 2x1, 1x1, 1x1 (4:2:2)" << std::endl;
+        std::cout << "                   3 = Best quality:             1x1, 1x1, 1x1 (4:4:4)" << std::endl;
         std::cout << "  -t               Specify output to be uncompressed 16-bit TIFF." << std::endl;
         std::cout << "  -t1              Specify output to be compressed 16-bit TIFF (ZIP compression)." << std::endl;
         std::cout << "  -n               Specify output to be compressed 16-bit PNG." << std::endl;
@@ -459,6 +485,7 @@ int processLineParams( int argc, char **argv )
 			if (outputType == "jpg") {
 				options.saveFormat.format = outputType;
 				options.saveFormat.jpegQuality = compression;
+				options.saveFormat.jpegSubSamp = subsampling;
 			} else if (outputType == "tif") {
 				options.saveFormat.format = outputType;
 			} else if (outputType == "png") {
@@ -604,7 +631,7 @@ int processLineParams( int argc, char **argv )
         }
 		// save image to disk
 		if( outputType=="jpg" )
-			errorCode = resultImage->saveAsJPEG( outputFile, compression );
+			errorCode = resultImage->saveAsJPEG( outputFile, compression, subsampling );
 		else if( outputType=="tif" )
 			errorCode = resultImage->saveAsTIFF( outputFile, bits, compression==0  );
 		else if( outputType=="png" )
